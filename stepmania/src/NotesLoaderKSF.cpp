@@ -260,9 +260,8 @@ void KSFLoader::LoadTags( const CString &str, Song &out )
 bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 {
 	MsdFile msd;
-	bool bResult = msd.ReadFile( sPath );
-	if( !bResult )
-		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
+	if( !msd.ReadFile( sPath ) )
+		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
 
 	float BPMPos2 = -1, BPM2 = -1, BPMPos3 = -1, BPM3 = -1;;
 

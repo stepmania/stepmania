@@ -337,9 +337,8 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 	m_sLoadingFile = sPath;
 
 	MsdFile msd;
-	bool bResult = msd.ReadFile( sPath );
-	if( !bResult )
-		RageException::Throw( "Error opening file '%s' for reading.", sPath.c_str() );
+	if( !msd.ReadFile( sPath ) )
+		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
