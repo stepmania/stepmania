@@ -21,7 +21,7 @@ cp -a autoconf $PRODUCTVER/
 cp -a Utils $PRODUCTVER/
 cp -a src $PRODUCTVER/
 
-cp BUGS COPYING.txt NEWS README-FIRST.html README-GUIDELINES Makefile.am aclocal.m4 \
+cp COPYING.txt NEWS README-FIRST.html Makefile.am aclocal.m4 \
    configure Makefile.in configure.ac   $PRODUCTVER
 
 echo Pruning...
