@@ -27,6 +27,29 @@ ActorCommands::~ActorCommands()
 		Unregister();
 }
 
+ActorCommands::ActorCommands( const ActorCommands& cpy )
+{
+	m_sLuaFunctionName = GetNextFunctionName();
+
+	/* We need to make a new function, since we'll be unregistered separately.  Set
+	 * the function by reference, so we don't make a new function unless we're actually
+	 * changed. */
+	ostringstream s;
+	s << m_sLuaFunctionName << " = " << cpy.GetFunctionName();
+
+	CString s2 = s.str();
+	LUA->RunScript( s2 );
+}
+
+ActorCommands &ActorCommands::operator=( const ActorCommands& cpy )
+{
+	if( this == &cpy )
+		return *this;
+
+	*this = cpy;
+	return *this;
+}
+
 CString ActorCommands::GetFunctionName() const
 {
 	return m_sLuaFunctionName;

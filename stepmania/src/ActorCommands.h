@@ -11,6 +11,8 @@ class ActorCommands
 public:
 	ActorCommands( const Commands& cmds );
 	~ActorCommands();
+	ActorCommands( const ActorCommands& cpy );
+	ActorCommands &operator=( const ActorCommands& cpy );
 
 
 	CString GetFunctionName() const;
