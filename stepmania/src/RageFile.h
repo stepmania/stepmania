@@ -69,7 +69,7 @@ public:
 	int PutLine( const CString &str );
 
 	void EnableCRC32( bool on=true );
-	bool GetCRC32( unsigned *iRet );
+	bool GetCRC32( uint32_t *iRet );
 
 protected:
 	void SetError( const CString &err );
