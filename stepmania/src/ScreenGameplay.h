@@ -64,6 +64,7 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
+	virtual bool UsesBackground() const { return false; }
 
 protected:
 	void TweenOnScreen();
