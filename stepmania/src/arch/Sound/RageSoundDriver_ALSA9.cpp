@@ -192,7 +192,7 @@ void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 	if( bEOF )
 	{
 		stream_pool[i]->state = stream_pool[i]->FLUSHING;
-		stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPosition();
+		stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPlayPos();
 	}
 	else
 		stream_pool[i]->state = stream_pool[i]->PLAYING;
