@@ -31,11 +31,14 @@
  *			 player could actually view all banners long enough to transition to them
  *			 all in the course of one song select screen.
  *
- * If a texture is already loaded with a different policy, loading it again with
- * Default is normal; keep the original policy.  Other cases generally shouldn't
- * happen, so warn and keep the original policy.
+ * Policy priority is in the order CACHED, VOLATILE, DEFAULT.  Textures that are
+ * loaded DEFAULT can be changed to VOLATILE and CACHED; VOLATILE textures can only
+ * be changed to CACHED.  CACHED flags are normally set explicitly on a per-texture
+ * basis.  VOLATILE flags are set for all banners, but banners which are explicitly
+ * set to CACHED should stay CACHED.  Finally, all textures, when they're finally used,
+ * are loaded as NORMAL, and that should never override.
  */
-		
+	
 #include "RageTextureManager.h"
 #include "RageBitmapTexture.h"
 #include "arch/MovieTexture/MovieTexture.h"
@@ -157,20 +160,14 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 void RageTextureManager::CacheTexture( RageTextureID ID )
 {
 	RageTexture* pTexture = LoadTextureInternal( ID );
-	if( pTexture->m_Policy == RageTexture::TEX_DEFAULT )
-		pTexture->m_Policy = RageTexture::TEX_CACHED;
-	else if( pTexture->m_Policy != RageTexture::TEX_CACHED )
-		LOG->Warn( "RageTextureManager::CacheTexture(%s): texture is %i, which?", ID.filename.c_str(), pTexture->m_Policy );
+	pTexture->m_Policy = min( pTexture->m_Policy, RageTexture::TEX_CACHED );
 	UnloadTexture( pTexture );
 }
 
 void RageTextureManager::VolatileTexture( RageTextureID ID )
 {
 	RageTexture* pTexture = LoadTextureInternal( ID );
-	if( pTexture->m_Policy == RageTexture::TEX_DEFAULT )
-		pTexture->m_Policy = RageTexture::TEX_VOLATILE;
-	else if( pTexture->m_Policy != RageTexture::TEX_VOLATILE )
-		LOG->Warn( "RageTextureManager::VolatileTexture(%s): texture is %i, which?", ID.filename.c_str(), pTexture->m_Policy );
+	pTexture->m_Policy = min( pTexture->m_Policy, RageTexture::TEX_VOLATILE );
 	UnloadTexture( pTexture );
 }
 
