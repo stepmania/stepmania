@@ -146,14 +146,14 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		return;
 	done = true;
 
-	InitializeErrorHandler();
-
 	if( DoesFileExist("/proc/asound/version") )
 	{
 		const CString ver = GetRedirContents("/proc/asound/version");
 		LOG->Info( "ALSA: %s", ver.c_str() );
 	}
-	
+
+	InitializeErrorHandler();
+
 	int card = -1;
 	while( dsnd_card_next( &card ) >= 0 && card >= 0 )
 	{
