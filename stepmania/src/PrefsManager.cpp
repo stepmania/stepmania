@@ -231,8 +231,11 @@ void PrefsManager::Init()
 	m_bAnisotropicFiltering = false;
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
+
+	/* Write machine stats takes too long for many people; disable it by default. */
+	m_bWriteMachineStatsHtml = false;
+
 	/* Most people use local profiles, so writing profile stats is redundant. */
-	m_bWriteMachineStatsHtml = true;
 	m_bWriteProfileStatsHtml = false;
 
 	m_bEditorShowBGChangesPlay = false;
