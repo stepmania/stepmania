@@ -64,16 +64,10 @@ void RageException::Throw(const char *fmt, ...)
 
 void RageException::ThrowNonfatal(const char *fmt, ...)
 {
-    va_list	va;
-    va_start(va, fmt);
-    CString error = vssprintf( fmt, va );
-    va_end(va);
+	va_list	va;
+	va_start(va, fmt);
+	CString error = vssprintf( fmt, va );
+	va_end(va);
 
-	if(LOG)
-	{
-		LOG->Trace("Nonfatal exception thrown: %s", error.c_str());
-		LOG->Flush();
-	}
-	
 	throw RageException( error );
 }
