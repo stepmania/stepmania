@@ -244,24 +244,31 @@ float RageSound_Linux::GetPlayLatency() const {
 
 RageSound_Linux::RageSound_Linux() {
 	last_pos = 0;
+	shutdown = false;
 	MixerThreadPtr = SDL_CreateThread(MixerThread_start,this);
 }
 	
 RageSound_Linux::~RageSound_Linux() {
 	LOG->Trace("RageSoundDriver_Linux::~RageSoundDriver_Linux(): Shutting down mixer thread ...");
+	shutdown = true;
 	SDL_WaitThread(MixerThreadPtr, NULL);
 	LOG->Trace("Mixer thread shut down.");
 	CloseAudio();
-}
-
-void RageSound_Linux::MixerThread() {
-	;
 }
 
 int RageSound_Linux::MixerThread_start(void *p) {
 	((RageSound_Linux *) p)->MixerThread();
 	return 0;
 }
+	
+	
+void RageSound_Linux::MixerThread() {
+	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
+	 * assigns it; we might get here before that happens, though. */
+	while(!SOUNDMAN && !shutdown) sleep(10);
+	while(!shutdown) { while (GetData()); }
+}
+	
 	
 	
 	

@@ -35,6 +35,7 @@ class RageSound_Linux : public RageSoundDriver {
 	Sint16 *chunks[8];	/* chunks of sound buffer */
 	snd_pcm_t *playback_handle; /* Handle for PCM device */
 	int last_pos;
+	bool shutdown;
 
 	void RecoverState(long state); /* Recover from various states */
 
