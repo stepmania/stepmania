@@ -95,6 +95,7 @@ static void SetPalette( unsigned TexResource )
 
 		// Cards that don't support palettes with alpha will crash unless
 		// all entires have full alpha.
+		// XXX: Since we disable FMT_PAL in SupportsTextureFormat, can we remove this? -glenn
 		if( ! (g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
 			for(int j=0; j<256; j++)
 				pal.p[j].peFlags = 255;
@@ -166,6 +167,9 @@ static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		  0x0000FF,
 		  0x000000 }
 	}, {
+		/* BGRA (N/A; OpenGL only) */
+		0, { 0,0,0,0 }
+	}, {
 		/* Paletted */
 		8,
 		{ 0,0,0,0 } /* N/A */
@@ -183,6 +187,7 @@ static D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] =
 #else
 	D3DFMT_A8R8G8B8,
 #endif
+	D3DFMT_UNKNOWN, /* no BGR */
 	D3DFMT_P8
 };
 
@@ -555,6 +560,9 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
 	if( pixfmt == FMT_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
 		return false;
 
+	if(	D3DFORMATS[pixfmt] == D3DFMT_UNKNOWN )
+		return false;
+
 	D3DFORMAT d3dfmt = D3DFORMATS[pixfmt];
 	HRESULT hr = g_pd3d->CheckDeviceFormat( 
 		D3DADAPTER_DEFAULT,
@@ -563,6 +571,8 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt )
 		0,
 		D3DRTYPE_TEXTURE,
 		d3dfmt);
+	if(FAILED(hr))
+		LOG->Trace("format %i not supported", pixfmt);
     return SUCCEEDED( hr );
 }
 
@@ -910,20 +920,24 @@ unsigned RageDisplay_D3D::CreateTexture(
 		g_TexResourceToTexturePalette[uTexHandle] = pal;
 	}
 
-	UpdateTexture( uTexHandle, pixfmt, img, 0, 0, img->w, img->h );
+	UpdateTexture( uTexHandle, img, 0, 0, img->w, img->h );
 
 	return uTexHandle;
 }
 
 void RageDisplay_D3D::UpdateTexture( 
 	unsigned uTexHandle, 
-	PixelFormat pixfmt,
-	SDL_Surface*& img,
+	SDL_Surface* img,
 	int xoffset, int yoffset, int width, int height )
 {
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
 	ASSERT( pTex != NULL );
 	
+	/* Make sure that the pixel format of the image is legit.  We don't actually
+	 * care, but the OpenGL renderer does, so make sure people coding in the D3D
+	 * renderer don't accidentally break the OpenGL one. */
+	FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
+
 	RECT rect; 
 	rect.left = xoffset;
 	rect.top = yoffset;
@@ -933,6 +947,29 @@ void RageDisplay_D3D::UpdateTexture(
 	D3DLOCKED_RECT lr;
 	pTex->LockRect( 0, &lr, &rect, 0 );
 	
+	D3DSURFACE_DESC desc;
+	pTex->GetLevelDesc(0, &desc);
+	ASSERT( xoffset+width <= int(desc.Width) );
+	ASSERT( yoffset+height <= int(desc.Height) );
+
+	int texpixfmt;
+	for(texpixfmt = 0; texpixfmt < NUM_PIX_FORMATS; ++texpixfmt)
+		if(D3DFORMATS[texpixfmt] == desc.Format) break;
+	ASSERT( texpixfmt != NUM_PIX_FORMATS );
+
+	SDL_Surface *Texture = CreateSurfaceFromPixfmt(PixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
+	SDL_Rect area;
+	area.x = area.y = 0;
+	area.w = (Uint16) width;
+	area.h = (Uint16) height;
+	SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
+//	SDL_SetColorKey( img, 0, 0 );
+//	SDL_BlitSurface( img, &area, Texture, &area );
+	mySDL_BlitSurface( img, Texture, width, height, false );
+
+	SDL_FreeSurface( Texture );
+
+#if 0
 	// copy each row
 	int bytes_per_pixel = img->format->BytesPerPixel;
 	for( int y=rect.top; y<rect.bottom; y++ )
@@ -941,6 +978,7 @@ void RageDisplay_D3D::UpdateTexture(
 		char* dst = (char*)lr.pBits    + y*lr.Pitch   + rect.left*bytes_per_pixel;
 		memcpy( dst, src, (rect.right-rect.left)*bytes_per_pixel );
 	}
+#endif
 	pTex->UnlockRect( 0 );
 }
 

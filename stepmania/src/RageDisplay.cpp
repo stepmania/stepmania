@@ -17,6 +17,7 @@
 #include "RageMath.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
+#include "SDL_utils.h"
 
 //
 // Statistics stuff
@@ -565,4 +566,36 @@ RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNe
    float xmax = ymax * aspect;
 
    return GetFrustrumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
+}
+
+SDL_Surface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
+						void *pixels, int width, int height, int pitch )
+{
+	const PixelFormatDesc *tpf = GetPixelFormatDesc(pixfmt);
+
+	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(
+		pixels, width, height, tpf->bpp, pitch,
+		tpf->masks[0], tpf->masks[1], tpf->masks[2], tpf->masks[3]);
+
+	return surf;
+}
+
+PixelFormat RageDisplay::FindPixelFormat( 
+	int bpp, int Rmask, int Gmask, int Bmask, int Amask )
+{
+	PixelFormatDesc tmp = { bpp, Rmask, Gmask, Bmask, Amask };
+
+	int pixfmt;
+	for(pixfmt = 0; pixfmt < NUM_PIX_FORMATS; ++pixfmt)
+	{
+		const PixelFormatDesc *pf = GetPixelFormatDesc(PixelFormat(pixfmt));
+		if(!SupportsTextureFormat( PixelFormat(pixfmt) ))
+			continue;
+
+		if(memcmp(pf, &tmp, sizeof(tmp)))
+			continue;
+		return PixelFormat(pixfmt);
+	}
+
+	return NUM_PIX_FORMATS;
 }

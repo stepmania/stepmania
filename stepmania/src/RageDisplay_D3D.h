@@ -24,8 +24,7 @@ public:
 	unsigned CreateTexture( PixelFormat pixfmt, SDL_Surface*& img );
 	void UpdateTexture( 
 		unsigned uTexHandle, 
-		PixelFormat pixfmt,	// this must be the same as what was passed to CreateTexture
-		SDL_Surface*& img,
+		SDL_Surface* img,
 		int xoffset, int yoffset, int width, int height 
 		);
 	void DeleteTexture( unsigned uTexHandle );

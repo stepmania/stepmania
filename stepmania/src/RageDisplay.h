@@ -43,6 +43,8 @@ enum PixelFormat {
 	FMT_RGB5A1,
 	FMT_RGB5,
 	FMT_RGB8,
+	/* This may not be as well-supported as RGBA; it's used to speed up DirectShow. */
+	FMT_BGR8,
 	FMT_PAL,
 	NUM_PIX_FORMATS
 };
@@ -128,8 +130,7 @@ public:
 		) = 0;
 	virtual void UpdateTexture( 
 		unsigned uTexHandle, 
-		PixelFormat pixfmt,	// this must be the same as what was passed to CreateTexture
-		SDL_Surface*& img,
+		SDL_Surface* img,
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
 	virtual void DeleteTexture( unsigned uTexHandle ) = 0;
@@ -228,6 +229,9 @@ public:
 		float znear,   
 		float zfar );
 	RageMatrix GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar);
+
+	SDL_Surface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
+	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask );
 
 protected:
 	const RageMatrix* GetProjection();

@@ -73,7 +73,9 @@ namespace GLExt {
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT = NULL;
 PFNGLCOLORTABLEPROC GLExt::glColorTableEXT = NULL;
 PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT = NULL;
-bool	g_bEXT_texture_env_combine = true;
+bool g_bEXT_texture_env_combine = true;
+bool g_bGL_EXT_bgra = true;
+
 /* OpenGL system information that generally doesn't change at runtime. */
 
 /* Range and granularity of points and lines: */
@@ -98,7 +100,7 @@ LowLevelWindow *wind;
 
 static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	{
-		/* B8G8R8A8 */
+		/* R8G8B8A8 */
 		32,
 		{ 0xFF000000,
 		  0x00FF0000,
@@ -133,6 +135,13 @@ static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		  0x0000FF,
 		  0x000000 }
 	}, {
+		/* B8G8R8A8 */
+		24,
+		{ 0x0000FF,
+		  0x00FF00,
+		  0xFF0000,
+		  0x000000 }
+	}, {
 		/* Paletted */
 		8,
 		{ 0,0,0,0 } /* N/A */
@@ -148,7 +157,7 @@ struct GLPixFmtInfo_t {
 	 * is not, but all SDL masks are affected by endianness, so GL_UNSIGNED_BYTE
 	 * is reversed.  This isn't endian-safe. */
 	{
-		/* B8G8R8A8 */
+		/* R8G8B8A8 */
 		GL_RGBA8,
 		GL_RGBA,
 		GL_UNSIGNED_BYTE,
@@ -171,6 +180,11 @@ struct GLPixFmtInfo_t {
 		/* B8G8R8 */
 		GL_RGB8,
 		GL_RGB,
+		GL_UNSIGNED_BYTE,
+	}, {
+		/* B8G8R8 */
+		GL_RGB8,
+		GL_BGR,
 		GL_UNSIGNED_BYTE,
 	}, {
 		/* Paletted */
@@ -367,6 +381,7 @@ void SetupExtensions()
 	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
 	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
+	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures();
 
 	// Checks for known bad drivers
@@ -515,6 +530,8 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt )
 	{
 	case FMT_PAL:
 		return GLExt::glColorTableEXT && GLExt::glGetColorTableParameterivEXT;
+	case FMT_BGR8:
+		return g_bGL_EXT_bgra;
 	default:
 		return true;	// No way to query this in OGL.  You pass it a format and hope it doesn't have to convert.
 	}
@@ -983,13 +1000,37 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 void RageDisplay_OGL::UpdateTexture( 
 	unsigned uTexHandle, 
-	PixelFormat pixfmt,
-	SDL_Surface*& img,
+	SDL_Surface* img,
 	int xoffset, int yoffset, int width, int height )
 {
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
+
+	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
+	SDL_Surface *imgconv = NULL;
+	
+	if( pixfmt == NUM_PIX_FORMATS )
+	{
+		LOG->Trace("guh");
+		/* The source isn't in a supported, known pixel format.  We need to convert
+		 * it ourself.  Just convert it to RGBA8, and let OpenGL convert it back
+		 * down to whatever the actual pixel format is.  This is a very slow code
+		 * path, which should almost never be used. */
+		pixfmt = FMT_RGBA8;
+		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+
+		SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
+
+		SDL_Rect area;
+		area.x = area.y = 0;
+		area.w = short(width);
+		area.h = short(height);
+		imgconv = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, width, height,
+			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
+		SDL_BlitSurface(img, &area, imgconv, &area);
+		img = imgconv;
+	}
 
 //	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
 	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
@@ -1003,6 +1044,9 @@ void RageDisplay_OGL::UpdateTexture(
 	/* Must unset PixelStore when we're done! */
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
+
+	if( imgconv )
+		SDL_FreeSurface( imgconv );
 }
 
 CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
