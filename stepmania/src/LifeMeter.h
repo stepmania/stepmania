@@ -28,8 +28,12 @@ public:
 	virtual void Update( float fDeltaTime ) { ActorFrame::Update(fDeltaTime); };
 
 	virtual void SongEnded() {};
+	/* Change life after receiving a tap note grade.  This *is* called for
+	 * the head of hold notes. */
 	virtual void ChangeLife( TapNoteScore score ) = 0;
-	virtual void ChangeLife( HoldNoteScore score ) = 0;
+	/* Change life after receiving a hold note grade.  tscore is the score
+	 * received for the initial tap note. */
+	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore ) = 0;
 	virtual void OnDancePointsChange() = 0;	// look in GAMESTATE and update the display
 	virtual bool IsInDanger() = 0;
 	virtual bool IsHot() = 0;

@@ -126,7 +126,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		m_bFailedEarlier = true;
 }
 
-void LifeMeterBattery::ChangeLife( HoldNoteScore score )
+void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 	switch( score )
 	{

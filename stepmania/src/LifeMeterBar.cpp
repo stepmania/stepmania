@@ -320,7 +320,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	m_fLifeVelocity += fDeltaLife;
 }
 
-void LifeMeterBar::ChangeLife( HoldNoteScore score )
+void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 
 }

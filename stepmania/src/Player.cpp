@@ -212,12 +212,13 @@ void Player::Update( float fDeltaTime )
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
+		// if they got a bad score or haven't stepped on the corresponding tap yet
+		const TapNoteScore tns = m_TapNoteScores[hn.m_iTrack][iHoldStartIndex];
+
 		if( hn.m_fStartBeat < fSongBeat && fSongBeat < hn.m_fEndBeat )	// if the song beat is in the range of this hold
 		{
-			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration;
-			// if they got a bad score or haven't stepped on the corresponding tap yet
-			const TapNoteScore tns = m_TapNoteScores[hn.m_iTrack][iHoldStartIndex];
 			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
+			const bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI )  ||  PREFSMAN->m_bAutoPlay  ||  GAMESTATE->m_bDemonstration;
 
 			m_NoteField.m_bIsHoldingHoldNote[i] = bIsHoldingButton && bSteppedOnTapNote;	// set host flag so NoteField can do intelligent drawing
 
@@ -250,7 +251,7 @@ void Player::Update( float fDeltaTime )
 		if( fLife == 0 )	// the player has not pressed the button for a long time!
 		{
 			hns = HNS_NG;
-			HandleNoteScore( hns );
+			HandleNoteScore( hns, tns );
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
 			m_NoteField.m_HoldNoteScores[i] = HNS_NG;	// update the NoteField display
 		}
@@ -261,7 +262,7 @@ void Player::Update( float fDeltaTime )
 			// At this point fLife > 0, or else we would have marked it NG above
 			fLife = 1;
 			hns = HNS_OK;
-			HandleNoteScore( hns );
+			HandleNoteScore( hns, tns );
 			m_GhostArrowRow.TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
 			m_NoteField.m_fHoldNoteLife[i] = fLife;		// update the NoteField display
@@ -665,7 +666,7 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 		m_pScore->SetScore( fScore );
 }
 
-void Player::HandleNoteScore( HoldNoteScore score )
+void Player::HandleNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore )
 {
 	// don't accumulate points if AutoPlay is on.
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
@@ -675,10 +676,14 @@ void Player::HandleNoteScore( HoldNoteScore score )
 	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( score );
 	GAMESTATE->m_HoldNoteScores[m_PlayerNumber][score] ++;
 
-	if( m_pLifeMeter )
-		m_pLifeMeter->ChangeLife( score );
-	if( m_pLifeMeter )
-		m_pLifeMeter->OnDancePointsChange();	// refresh Oni life meter
+	if( m_pLifeMeter ) {
+		if( score == HNS_NG ) {
+			m_pLifeMeter->ChangeLife( score, TapNoteScore );
+		
+			// refresh Oni life meter
+			m_pLifeMeter->OnDancePointsChange();
+		}
+	}
 }
 
 float Player::GetMaxBeatDifference()

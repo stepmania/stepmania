@@ -28,7 +28,7 @@ public:
 	virtual void DrawPrimitives();
 
 	virtual void ChangeLife( TapNoteScore score );
-	virtual void ChangeLife( HoldNoteScore score );
+	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore  );
 	virtual void AfterLifeChanged();
 	virtual void OnDancePointsChange() {};	// this life meter doesn't care
 	virtual bool IsInDanger();
