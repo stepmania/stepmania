@@ -43,6 +43,7 @@ ScreenHowToPlay::ScreenHowToPlay()
 
 	if(!PREFSMAN->m_bHowToPlay)
 	{
+		m_Menu.ImmedOffScreenToMenu();
 		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
 		return;
 	}
