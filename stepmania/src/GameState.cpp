@@ -213,7 +213,7 @@ void GameState::PlayersFinalized()
 			GAMESTATE->m_PlayerOptions[pn].Init();
 			GAMESTATE->ApplyModifiers( pn, pProfile->m_sDefaultModifiers );
 		}
-		// Only set the sort order if it wasn't already set by a ModeChoice
+		// Only set the sort order if it wasn't already set by a ModeChoice (or by an earlier profile)
 		if( m_SortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
 			m_SortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_LastDifficulty != DIFFICULTY_INVALID )
