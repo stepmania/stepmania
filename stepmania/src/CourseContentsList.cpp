@@ -76,7 +76,9 @@ void CourseContentsList::SetFromGameState()
 		const TrailEntry* pte[NUM_PLAYERS];
 		FOREACH_EnabledPlayer(pn)
 		{
-			Trail* pTrail = GAMESTATE->m_pCurTrail[pn];		
+			Trail* pTrail = GAMESTATE->m_pCurTrail[pn];
+			if( pTrail == NULL )
+				continue;
 			pte[pn] = &pTrail->m_vEntries[i];
 		}
 		display.LoadFromTrailEntry( m_iNumContents+1, pte );
