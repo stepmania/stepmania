@@ -370,7 +370,7 @@ void ScreenGameplay::Init()
 	m_ShowScoreboard=false;
 
 	//the following is only used in SMLAN/SMOnline
-	if( NSMAN->useSMserver )
+	if( NSMAN->useSMserver && ( !GAMESTATE->PlayerUsingBothSides() ) )
 	{
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
 		if( pn != PLAYER_INVALID )
