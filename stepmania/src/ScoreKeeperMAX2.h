@@ -14,7 +14,6 @@
 
 #include "ScoreKeeper.h"
 #include "NoteDataWithScoring.h"
-#include "GameState.h"
 class Steps;
 
 class ScoreKeeperMAX2: public ScoreKeeper

@@ -15,7 +15,6 @@
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
-#include "GameState.h"
 #include "RageSounds.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"

@@ -13,7 +13,6 @@
 #include "ScreenGameOver.h"
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
-#include "GameState.h"
 #include "RageSounds.h"
 #include "ThemeManager.h"
 
@@ -27,10 +26,6 @@ const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 ScreenGameOver::ScreenGameOver( CString sName ) : Screen( sName )
 {
-	/* Don't reset; this isn't necessarily the last screen.  Let the attract
-	 * loop reset. */
-//	GAMESTATE->Reset();
-
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenGameOver background") );
 	this->AddChild( &m_Background );
 

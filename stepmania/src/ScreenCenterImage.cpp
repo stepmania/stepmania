@@ -18,7 +18,6 @@
 #include "RageLog.h"
 #include "InputMapper.h"
 #include "GameManager.h"
-#include "GameState.h"
 #include "RageSounds.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"

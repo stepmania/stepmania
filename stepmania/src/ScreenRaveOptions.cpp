@@ -20,7 +20,6 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
-#include "GameState.h"
 
 #define PREV_SCREEN			THEME->GetMetric ("ScreenRaveOptions","PrevScreen")
 #define NEXT_SCREEN			THEME->GetMetric ("ScreenRaveOptions","NextScreen")

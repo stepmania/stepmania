@@ -16,7 +16,6 @@
 #include "RageSounds.h"
 #include "RageLog.h"
 #include "SongManager.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "AnnouncerManager.h"
 #include "Sprite.h"
