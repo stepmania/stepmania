@@ -23,26 +23,23 @@ void RageModelGeometry::OptimizeBones()
     {
 		msMesh& mesh = m_Meshes[i];
 
+		if( mesh.Vertices.empty() )
+			continue;	// nothing to optimize
+
 		// check to see if all vertices have the same bone index
 		bool bAllVertsUseSameBone = true;
 		
-		char nBoneIndex;
-		if( !mesh.Vertices.empty() )
-			nBoneIndex = mesh.Vertices[0].bone;
-		else
-			nBoneIndex = (char)-1;
+		char nBoneIndex	= mesh.Vertices[0].bone;
 
-		if( nBoneIndex != -1 )
+		for (unsigned j = 1; j < mesh.Vertices.size(); j++)
 		{
-			for (unsigned j = 1; j < mesh.Vertices.size(); j++)
+			if( mesh.Vertices[j].bone != nBoneIndex )
 			{
-				if( mesh.Vertices[j].bone != nBoneIndex )
-				{
-					bAllVertsUseSameBone = false;
-					break;
-				}
+				bAllVertsUseSameBone = false;
+				break;
 			}
 		}
+
 		if( bAllVertsUseSameBone )
 		{
 			mesh.nBoneIndex = nBoneIndex;
