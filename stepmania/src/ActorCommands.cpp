@@ -28,10 +28,17 @@ void ParsedCommand::Set( const CString &sCommand )
 
 	vTokens.resize( vsTokens.size() );
 
-	for( unsigned j=0; j<vsTokens.size(); j++ )
+	for( unsigned i=0; i<vsTokens.size(); i++ )
 	{
-		const CString &sToken = vsTokens[j];
-		vTokens[j].Set( sToken );
+		CString &sToken = vsTokens[i];
+
+		// TRICKY: The first parameter is the command name.  This is case 
+		// insensitive.  Convert it to lowercase now so that we can do 
+		// case sensitive compares later.
+		if( i == 0 )
+			sToken.MakeLower();
+
+		vTokens[i].Set( sToken );
 	}
 }
 

@@ -618,13 +618,8 @@ void Actor::AddRotationR( float rot )
 
 void Actor::Command( const CString &sCommands )
 {
-	// Convert to lower so we can do case insensitive compared later.
-	// TODO: Is this the best place to convert?
-	CString sCommandsLower = sCommands;
-	sCommandsLower.MakeLower();
-
 	vector<ParsedCommand> vCommands;
- 	ParseCommands( sCommandsLower, vCommands );
+ 	ParseCommands( sCommands, vCommands );
 
 	for( unsigned i=0; i<vCommands.size(); i++ )
 		this->HandleCommand( vCommands[i] );
