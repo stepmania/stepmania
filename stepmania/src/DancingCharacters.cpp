@@ -119,7 +119,7 @@ void DancingCharacters::Update( float fDelta )
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( GAMESTATE->IsPlayerEnabled(p) )
-				m_Character[p].Update( fDelta );
+				m_Character[p].Update( fDelta*fUpdateScale );
 		}
 	}
 
