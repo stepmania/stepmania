@@ -258,6 +258,8 @@ void NetworkSyncManager::ReportSongOver()
 
 void NetworkSyncManager::ReportStyle() 
 {
+	if (!useSMserver)
+		return;
 	ClearPacket( m_packet );
 	Write1( m_packet, 6 );
 	Write1( m_packet, (int8_t) GAMESTATE->GetNumPlayersEnabled() );
