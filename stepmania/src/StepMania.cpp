@@ -911,7 +911,6 @@ int main(int argc, char* argv[])
 {
 #ifdef _XBOX
 	int argc = 1;
-	XGetCustomLaunchData();
 #endif
 
 	g_argc = argc;
