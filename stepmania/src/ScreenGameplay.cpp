@@ -53,9 +53,7 @@
 #define PREV_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )				THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
-#define STATICBG_X THEME->GetMetricI ("ScreenGameplay","StaticBGX")
-#define STATICBG_Y THEME->GetMetricI ("ScreenGameplay","StaticBGY")
-#define EVAL_ON_FAIL THEME->GetMetricB ("ScreenGameplay", "ShowEvaluationOnFail")
+#define EVAL_ON_FAIL							THEME->GetMetricB("ScreenGameplay","ShowEvaluationOnFail")
 
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -1326,28 +1324,18 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		m_DancingState != STATE_OUTRO  &&
 		!m_Back.IsTransitioning() )
 	{
-		/* If we have a large miss combo on both players, allow bailing out by holding
-		 * the START button of all active players.  This gives a way to "give up" when
-		 * a back button isn't available that won't be accidentally (or maliciously)
-		 * triggered.  Doing this is treated as failing the song, unlike BACK, since
-		 * it's always available. */
-
-		/* However, if this is also a style button, don't do this. (pump center = start) */
+		/* Allow bailing out by holding the START button of all active players.  This
+		 * gives a way to "give up" when a back button isn't available.  Doing this is
+		 * treated as failing the song, unlike BACK, since it's always available.
+		 *
+		 * However, if this is also a style button, don't do this. (pump center = start) */
 		if( MenuI.button == MENU_BUTTON_START && !StyleI.IsValid() )
 		{
 			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
 			if( type==IET_RELEASE )
 				AbortGiveUp();
-			else if( m_GiveUpTimer.IsZero() )
+			else if( type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
-				for ( int pn=0; pn<NUM_PLAYERS; pn++ )
-				{
-					if( !GAMESTATE->IsHumanPlayer(pn) )
-						continue;
-					if( GAMESTATE->m_CurStageStats.iCurMissCombo[pn] < 30 )
-						return;
-				}
-
 				m_textDebug.SetText( "Continue holding START to give up" );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
@@ -1520,11 +1508,13 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	// handle a step or battle item activate
 	//
 	if( type==IET_FIRST_PRESS && 
-		!PREFSMAN->m_bAutoPlay && 
 		StyleI.IsValid() &&
 		GAMESTATE->IsPlayerEnabled( StyleI.player ) )
 	{
-		m_Player[StyleI.player].Step( StyleI.col, DeviceI.ts ); 
+		AbortGiveUp();
+		
+		if( !PREFSMAN->m_bAutoPlay )
+			m_Player[StyleI.player].Step( StyleI.col, DeviceI.ts ); 
 	}
 //	else if( type==IET_FIRST_PRESS && 
 //		!PREFSMAN->m_bAutoPlay && 
@@ -2061,9 +2051,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		default:
 			ASSERT(0);
 		}
-	case SM_MissComboAborted:
-		AbortGiveUp();
-		break;
 	}
 }
 
