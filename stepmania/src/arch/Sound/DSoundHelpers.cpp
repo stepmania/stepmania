@@ -20,11 +20,6 @@ BOOL CALLBACK DSound::EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCS
 	return TRUE;
 }
 
-/* The PortAudio directsound code does this.  I'm not sure if it actually matters;
- * it's an experiment based on some recent reports.  (The default primary buffer
- * mode is 22050 8-bit.  However, we mix through secondary buffers, and I'm not sure
- * when the primary buffer mode matters there--I'm certainly not getting 22050 8-bit
- * sound.) */
 void DSound::SetPrimaryBufferMode()
 {
 #ifndef _XBOX
@@ -397,7 +392,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 
 	/* Increment last_cursor_pos to point at where the data we're about to
 	 * ask for will actually be played. */
-	last_cursor_pos += num_bytes_empty / samplesize();
+	last_cursor_pos += num_bytes_empty / bytes_per_frame();
 
 	buffer_locked = true;
 
@@ -414,8 +409,8 @@ int DSoundBuf::GetPosition() const
 {
 	DWORD cursor, junk;
 	buf->GetCurrentPosition(&cursor, &junk);
-	int cursor_frames = int(cursor) / samplesize();
-	int write_cursor_frames = write_cursor  / samplesize();
+	int cursor_frames = int(cursor) / bytes_per_frame();
+	int write_cursor_frames = write_cursor  / bytes_per_frame();
 
 	int frames_behind = write_cursor_frames - cursor_frames;
 	if(frames_behind <= 0)

@@ -12,10 +12,10 @@
 
 /* samples */
 const int channels = 2;
-const int samplesize = channels*2; /* 16-bit */
+const int bytes_per_frame = channels*2; /* 16-bit */
 const int samplerate = 44100;
 const int buffersize_frames = 1024*4;	/* in frames */
-const int buffersize = buffersize_frames * samplesize; /* in bytes */
+const int buffersize = buffersize_frames * bytes_per_frame; /* in bytes */
 
 /* We'll fill the buffer in chunks this big.  This should evenly divide the
  * buffer size. */
@@ -154,7 +154,7 @@ void RageSound_DSound_Software::StopMixing(RageSound *snd)
 	delete sounds[i];
 	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
 
-	/* If nothing is playing, reset the sample count; this is just to
+	/* If nothing is playing, reset the frame count; this is just to
      * prevent eventual overflow. */
 	if(sounds.empty())
 		str_ds->Reset();

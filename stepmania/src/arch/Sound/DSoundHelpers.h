@@ -31,8 +31,8 @@ class DSoundBuf
 
 	int buffersize;
 	
-	int buffersize_frames() const { return buffersize / samplesize(); }
-	int samplesize() const { return channels*samplebits/8; }
+	int buffersize_frames() const { return buffersize / bytes_per_frame(); }
+	int bytes_per_frame() const { return channels*samplebits/8; }
 
 	int write_cursor, buffer_bytes_filled; /* bytes */
 	int last_cursor_pos; /* frames */
