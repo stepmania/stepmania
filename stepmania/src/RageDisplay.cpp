@@ -53,6 +53,7 @@ bool RageDisplay::SetVideoMode( VideoModeParams p )
 	err = this->TryVideoMode(p,bNeedReloadTextures);
 	if( err == "" )
 		return bNeedReloadTextures;
+	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	
 	// fall back
 	p.windowed = false;
