@@ -120,20 +120,14 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	if( !IsAbsolutePath )
 		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
 
-	/* Change to the directory that crash dumps should be logged to. */
+	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
+	 * written through RageFile.  See also RageFileManager::RageFileManager. */
 #if defined(_WIN32)
 	chdir( DirOfExecutable + "/.." );
 #elif defined(LINUX)
-	/* XXX Don't do this yet since it breaks SM because RageFileManager only
-	 * mounts the cwd for linux at the moment.
-	 */
-#if 0
 	const char *home = getenv("HOME");
 	if( home )
 		chdir( home );
-#else
-	chdir(DirOfExecutable);
-#endif
 #elif defined(DARWIN)
 	chdir(DirOfExecutable + "/../../..");
 #endif
