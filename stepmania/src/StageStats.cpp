@@ -316,10 +316,7 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 		 * then that extra part of the combo must have come from a previous song.
 		 * Remember it separately. */
 		if( ComboList[pn].size() == 1 )
-		{
 			ComboList[pn][0].rollover = cnt-1;
-			cnt = 1;
-		}
 	}
 
 	Combo_t &combo = ComboList[pn].back();

@@ -80,8 +80,12 @@ struct StageStats
 		/* Combo size, in steps. */
 		int cnt;
 
-		/* Combo rollover from the last song (see UpdateComboList for details). */
+		/* Size of the combo that didn't come from this stage (rollover from the last song). 
+		 * (This is a subset of cnt.) */
 		int rollover;
+
+		/* Get the size of the combo that came from this song. */
+		int GetStageCnt() const { return cnt - rollover; }
 
 		Combo_t(): start(0), size(0), cnt(0), rollover(0) { }
 		bool IsZero() const { return start < 0; }

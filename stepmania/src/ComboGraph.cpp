@@ -13,16 +13,16 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 	int MaxComboSize = 0;
 	unsigned i;
 	for( i = 0; i < s.ComboList[pn].size(); ++i )
-		MaxComboSize = max( MaxComboSize, s.ComboList[pn][i].cnt );
+		MaxComboSize = max( MaxComboSize, s.ComboList[pn][i].GetStageCnt() );
 
 	float width = -1;
 	for( i = 0; i < s.ComboList[pn].size(); ++i )
 	{
 		const StageStats::Combo_t &combo = s.ComboList[pn][i];
-		if( combo.cnt < MinComboSizeToShow )
+		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; /* too small */
 
-		const bool IsMax = (combo.cnt == MaxComboSize);
+		const bool IsMax = (combo.GetStageCnt() == MaxComboSize);
 
 		LOG->Trace("combo %i is %f+%f", i, combo.start, combo.size);
 		Sprite *sprite = new Sprite;
@@ -48,10 +48,10 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 	for( i = 0; i < s.ComboList[pn].size(); ++i )
 	{
 		const StageStats::Combo_t &combo = s.ComboList[pn][i];
-		if( combo.cnt < MinComboSizeToShow )
+		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; /* too small */
 	
-		const bool IsMax = (combo.cnt == MaxComboSize);
+		const bool IsMax = (combo.GetStageCnt() == MaxComboSize);
 		if( !IsMax )
 			continue;
 
@@ -65,7 +65,7 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		const float CenterXPos = SCALE( CenterPercent, 0.0f, 1.0f, -width/2.0f, width/2.0f );
 		text->SetX( CenterXPos );
 
-		text->SetText( ssprintf("%i",combo.cnt) );
+		text->SetText( ssprintf("%i",combo.GetStageCnt()) );
 		text->Command( "diffusealpha,0;sleep,.5f;linear,.3;diffusealpha,1" );
 
 		m_Actors.push_back( text );
