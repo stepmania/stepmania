@@ -7,6 +7,9 @@
 
 #include "archutils/Win32/AppInstance.h"
 #include "archutils/Win32/WindowIcon.h"
+#include "archutils/Win32/GetFileInformation.h"
+
+#include <set>
 
 static const CString g_sClassName = CString(PRODUCT_NAME) + " LowLevelWindow_Win32";
 
@@ -17,6 +20,26 @@ static bool g_bHasFocus = true;
 static bool g_bLastHasFocus = true;
 static HICON g_hIcon = NULL;
 static bool m_bWideWindowClass;
+
+CString GetNewWindow()
+{
+	HWND h = GetForegroundWindow();
+	if( h == NULL )
+		return "(NULL)";
+
+	DWORD iProcessID;
+	GetWindowThreadProcessId( h, &iProcessID );
+
+	CString sName;
+	GetProcessFileName( iProcessID, sName );
+
+	sName = Basename(sName);
+
+	if( h == GetShellWindow() )
+		sName += " (shell)";
+
+	return sName;
+}
 
 LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -29,7 +52,17 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 		LOG->Trace("WM_ACTIVATE (%i, %i)",
 			bInactive, bMinimized );
 		g_bHasFocus = !bInactive && !bMinimized;
+		if( !g_bHasFocus )
+		{
+			CString sName = GetNewWindow();
+			static set<CString> sLostFocusTo;
+			sLostFocusTo.insert( sName );
+			CString sStr;
+			for( set<CString>::const_iterator it = sLostFocusTo.begin(); it != sLostFocusTo.end(); ++it )
+				sStr += (sStr.size()?", ":"") + *it;
 
+			LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
+		}
 		return 0;
 	}
 
