@@ -19,6 +19,7 @@ class Actor
 public:
 	Actor();
 	virtual ~Actor() { }
+	void Reset();
 
 	enum TweenType { 
 		TWEEN_LINEAR, 
@@ -45,25 +46,8 @@ public:
 		RageColor   diffuse[4];
 		RageColor   glow;
 
-		void Init()
-		{
-			pos	= RageVector3( 0, 0, 0 );
-			rotation = RageVector3( 0, 0, 0 );
-			scale = RageVector3( 1, 1, 1 );
-			for(int i=0; i<4; i++) 
-				diffuse[i] = RageColor( 1, 1, 1, 1 );
-			glow = RageColor( 1, 1, 1, 0 );
-		};
-
-		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
-		{
-			average_out.pos			= ts1.pos	  + (ts2.pos		- ts1.pos	  )*fPercentBetween;
-			average_out.scale		= ts1.scale	  + (ts2.scale		- ts1.scale   )*fPercentBetween;
-			average_out.rotation	= ts1.rotation+ (ts2.rotation	- ts1.rotation)*fPercentBetween;
-			for(int i=0; i<4; i++) 
-				average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
-			average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;
-		}
+		void Init();
+		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
 	};
 
 	// let subclasses override
@@ -182,26 +166,11 @@ public:
 
 	enum HorizAlign { align_left, align_center, align_right };
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
-	virtual void SetHorizAlign( CString s )
-	{
-		s.MakeLower();
-		if     (s=="left")		m_HorizAlign = align_left;
-		else if(s=="center")	m_HorizAlign = align_center;
-		else if(s=="right")		m_HorizAlign = align_right;
-		else	ASSERT(0);
-	}
+	virtual void SetHorizAlign( CString s );
 
 	enum VertAlign { align_top, align_middle, align_bottom };
 	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
-	virtual void SetVertAlign( CString s )
-	{
-		s.MakeLower();
-		if     (s=="top")		m_VertAlign = align_top;
-		else if(s=="middle")	m_VertAlign = align_middle;
-		else if(s=="bottom")	m_VertAlign = align_bottom;
-		else	ASSERT(0);
-	}
-
+	virtual void SetVertAlign( CString s );
 
 
 	// effects
@@ -250,16 +219,7 @@ public:
 	//
 	// other properties
 	//
-	void SetShadowLength( float fLength )
-	{
-		if( fLength==0 )
-			m_bShadow = false;
-		else
-		{
-			m_fShadowLength = fLength;
-			m_bShadow = true;
-		}
-	}
+	void SetShadowLength( float fLength );
 	void EnableShadow( bool b )	{ m_bShadow = b; }
 
 

@@ -18,10 +18,12 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 
-
-Actor::Actor()
+/* This is Reset instead of Init since many derived classes have Init() functions
+ * that shouldn't change the position of the actor. */
+void Actor::Reset()
 {
-	m_bFirstUpdate = true;
+	m_TweenStates.clear();
+	m_TweenInfo.clear();
 
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
@@ -45,6 +47,12 @@ Actor::Actor()
 	m_bTextureWrapping = false;
 	m_bIsAnimating = true;
 	m_bBlendAdd = false;
+}
+
+Actor::Actor()
+{
+	Reset();
+	m_bFirstUpdate = true;
 }
 
 void Actor::Draw()
@@ -339,6 +347,24 @@ void Actor::ScaleTo( const RectI &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
+void Actor::SetHorizAlign( CString s )
+{
+	s.MakeLower();
+	if     (s=="left")		m_HorizAlign = align_left;
+	else if(s=="center")	m_HorizAlign = align_center;
+	else if(s=="right")		m_HorizAlign = align_right;
+	else	ASSERT(0);
+}
+
+void Actor::SetVertAlign( CString s )
+{
+	s.MakeLower();
+	if     (s=="top")		m_VertAlign = align_top;
+	else if(s=="middle")	m_VertAlign = align_middle;
+	else if(s=="bottom")	m_VertAlign = align_bottom;
+	else	ASSERT(0);
+}
+
 void Actor::StretchTo( const RectI &r )
 {
 	RectF r2( (float)r.left, (float)r.top, (float)r.right, (float)r.bottom );
@@ -468,6 +494,17 @@ void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 	m_vEffectMagnitude[1] = fMaxZoom;
 }
 
+
+void Actor::SetShadowLength( float fLength )
+{
+	if( fLength==0 )
+		m_bShadow = false;
+	else
+	{
+		m_fShadowLength = fLength;
+		m_bShadow = true;
+	}
+}
 
 void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff )
 {
@@ -685,4 +722,24 @@ float Actor::GetTweenTimeLeft() const
 		tot += m_TweenInfo[i].m_fTimeLeftInTween;
 
 	return tot;
+}
+
+void Actor::TweenState::Init()
+{
+	pos	= RageVector3( 0, 0, 0 );
+	rotation = RageVector3( 0, 0, 0 );
+	scale = RageVector3( 1, 1, 1 );
+	for(int i=0; i<4; i++) 
+		diffuse[i] = RageColor( 1, 1, 1, 1 );
+	glow = RageColor( 1, 1, 1, 0 );
+}
+
+void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
+{
+	average_out.pos			= ts1.pos	  + (ts2.pos		- ts1.pos	  )*fPercentBetween;
+	average_out.scale		= ts1.scale	  + (ts2.scale		- ts1.scale   )*fPercentBetween;
+	average_out.rotation	= ts1.rotation+ (ts2.rotation	- ts1.rotation)*fPercentBetween;
+	for(int i=0; i<4; i++) 
+		average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
+	average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;
 }
