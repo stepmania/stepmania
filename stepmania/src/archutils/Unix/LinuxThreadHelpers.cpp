@@ -3,7 +3,7 @@
 #include "global.h"
 #include "LinuxThreadHelpers.h"
 #include "RageUtil.h"
-
+#include "RageThreads.h"
 #include "Backtrace.h"
 #include "archutils/Unix/RunningUnderValgrind.h"
 
@@ -118,7 +118,7 @@ static int PtraceDetach( int ThreadID )
 
 
 /* Get this thread's ID (this may be a TID or a PID). */
-uint64_t GetCurrentThreadId()
+static uint64_t GetCurrentThreadIdInternal()
 {
 	/* If we're under Valgrind, neither the PID nor the TID is associated with the
 	 * thread.  Return the pthread ID.  This can't be used to kill threads, etc.,
@@ -146,6 +146,27 @@ uint64_t GetCurrentThreadId()
 	}
 
 	return getpid();
+}
+
+uint64_t GetCurrentThreadId()
+{
+#if defined(HAVE_TLS)
+	/* This is called each time we lock a mutex, and gettid() is a little slow, so
+	 * cache the result if we support TLS. */
+	if( RageThread::GetSupportsTLS() )
+	{
+		static thread_local uint64_t cached_tid = 0;
+		static thread_local bool cached = false;
+		if( !cached )
+		{
+			cached_tid = GetCurrentThreadIdInternal();
+			cached = true;
+		}
+		return cached_tid;
+	}
+#endif
+
+	return GetCurrentThreadIdInternal();
 }
 
 int SuspendThread( uint64_t ThreadID )
