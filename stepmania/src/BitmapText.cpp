@@ -353,18 +353,17 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 					sCurLine = "";
 					iCurLineWidth = 0;
 				} 
+				else if( iCurLineWidth + iWidthToAdd <= iWrapWidthPixels )	// will fit on current line
+				{
+					sCurLine += sToAdd;
+					iCurLineWidth += iWidthToAdd;
+				}
 				else
-					if( iCurLineWidth + iWidthToAdd <= iWrapWidthPixels )	// will fit on current line
-					{
-						sCurLine += sToAdd;
-						iCurLineWidth += iWidthToAdd;
-					}
-					else
-					{
-						m_wTextLines.push_back( CStringToWstring(sCurLine) );
-						sCurLine = sWord;
-						iCurLineWidth = iWidthWord;
-					}
+				{
+					m_wTextLines.push_back( CStringToWstring(sCurLine) );
+					sCurLine = sWord;
+					iCurLineWidth = iWidthWord;
+				}
 			}
 		}
 		m_wTextLines.push_back( CStringToWstring(sCurLine) );
