@@ -213,37 +213,37 @@ MemoryCardState MemoryCardManager::GetCardState( PlayerNumber pn )
 		return MEMORY_CARD_STATE_READY;
 }
 
-void MemoryCardManager::LockCards( bool bLock )
+void MemoryCardManager::LockCards()
 {
-	bool bWasLocked = m_bCardsLocked;
-	m_bCardsLocked = bLock;
-	
-	if( !bLock )
-	{
-		// clear too late flag
-		FOREACH_PlayerNumber( p )
-			m_bTooLate[p] = false;
-	}
-	
-	if( !bWasLocked && bLock )
-	{
-		LOG->Trace( "do the final mount" );
-		
-		FOREACH_EnabledPlayer( p )
-		{
-			if( m_Device[p].IsBlank() )	// they don't have an assigned card
-				continue;
-			
-			MountCard( p );
-		}
-	}
+	if( m_bCardsLocked )
+		return;
 
-	if( !bLock )
+	m_bCardsLocked = true;
+	
+	LOG->Trace( "do the final mount" );
+	
+	FOREACH_EnabledPlayer( p )
 	{
-		m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
+		if( m_Device[p].IsBlank() )	// they don't have an assigned card
+			continue;
+		
+		MountCard( p );
 	}
 }
 
+void MemoryCardManager::UnlockCards()
+{
+	m_bCardsLocked = false;
+	
+	// clear too late flag
+	FOREACH_PlayerNumber( p )
+		m_bTooLate[p] = false;
+	
+	m_pDriver->SetMountThreadState( MemoryCardDriver::detect_and_mount );
+}
+
+
+/* Used by TransferStatsFromMachine, TransferStatsToMachine.  Should block. */
 void MemoryCardManager::TryMountAllCards()
 {
 	FOREACH_EnabledPlayer( p )
@@ -255,6 +255,8 @@ void MemoryCardManager::TryMountAllCards()
 	}
 }
 
+/* When m_bMemoryCardsMountOnlyWhenNecessary, called in EndGame just before writing the
+ * profile.  Should block. */
 void MemoryCardManager::MountAllUsedCards()
 {
 	FOREACH_EnabledPlayer( p )
@@ -337,7 +339,7 @@ bool MemoryCardManager::PathIsMemCard( CString sDir ) const
 	FOREACH_PlayerNumber( p )
 		if( !sDir.Left(MEM_CARD_MOUNT_POINT[p].size()).CompareNoCase( MEM_CARD_MOUNT_POINT[p] ) )
 			return true;
-		return false;
+	return false;
 }
 
 bool MemoryCardManager::IsNameAvailable( PlayerNumber pn ) const

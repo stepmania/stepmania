@@ -108,7 +108,7 @@ void GameState::Reset()
 {
 	EndGame();
 	
-	MEMCARDMAN->LockCards( true );
+	MEMCARDMAN->LockCards();
 	
 	ASSERT( THEME );
 
@@ -216,7 +216,7 @@ void GameState::BeginGame()
 	// even if attract sounds are set to off.
 	m_iNumTimesThroughAttract = -1;
 
-	MEMCARDMAN->LockCards( false );
+	MEMCARDMAN->UnlockCards();
 }
 
 void GameState::PlayersFinalized()
@@ -227,7 +227,7 @@ void GameState::PlayersFinalized()
 	m_bPlayersFinalized = true;
 
 	MEMCARDMAN->PauseMountingThread();
-	MEMCARDMAN->LockCards( true );	// this does a mount
+	MEMCARDMAN->LockCards();	// this does a mount
 
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
