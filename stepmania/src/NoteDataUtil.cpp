@@ -802,7 +802,7 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, float f
 
 	// transform notes
 	for( int t=0; t<inout.GetNumTracks(); t++ )
-		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex ) 			
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( tempNoteData, r, iStartIndex, iEndIndex ) 			
 			tempNoteDataOut.SetTapNote( t, r, tempNoteData.GetTapNote(iTakeFromTrack[t], r) );
 
 	if( tt == super_shuffle )
@@ -835,6 +835,7 @@ void NoteDataUtil::Backwards( NoteData &inout )
 void NoteDataUtil::SwapSides( NoteData &inout )
 {
 	inout.ConvertHoldNotesTo4s();
+	/* XXX: This is broken. */
 	for( int t=0; t<inout.GetNumTracks()/2; t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK( inout, t, r )
