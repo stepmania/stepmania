@@ -169,10 +169,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Screen.h">
 			</File>
 			<File
+				RelativePath="ScreenAlbums.cpp">
+			</File>
+			<File
+				RelativePath="ScreenAlbums.h">
+			</File>
+			<File
 				RelativePath="ScreenAppearanceOptions.cpp">
 			</File>
 			<File
 				RelativePath="ScreenAppearanceOptions.h">
+			</File>
+			<File
+				RelativePath="ScreenAttract.cpp">
+			</File>
+			<File
+				RelativePath="ScreenAttract.h">
 			</File>
 			<File
 				RelativePath="ScreenCaution.cpp">
@@ -232,12 +244,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenGraphicOptions.h">
 			</File>
 			<File
-				RelativePath="ScreenHowToPlay.cpp">
-			</File>
-			<File
-				RelativePath="ScreenHowToPlay.h">
-			</File>
-			<File
 				RelativePath="ScreenInputOptions.cpp">
 			</File>
 			<File
@@ -269,12 +275,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenMusicScroll.h">
-			</File>
-			<File
-				RelativePath="ScreenNetworkWaiting.cpp">
-			</File>
-			<File
-				RelativePath="ScreenNetworkWaiting.h">
 			</File>
 			<File
 				RelativePath="ScreenOptions.cpp">
