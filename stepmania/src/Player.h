@@ -17,6 +17,11 @@
 #include "Sprite.h"
 #include "SpriteSequence.h"
 
+#include "ColorArrow.h"
+#include "GrayArrow.h"
+#include "GhostArrow.h"
+
+
 
 const int MAX_NUM_COLUMNS = 8;
 
@@ -67,18 +72,23 @@ protected:
 	void UpdateColorArrows( const float& fDeltaTime );
 	float GetColorArrowYPos( int iStepIndex, float fSongBeat );
 	void DrawColorArrows();
-	Sprite		m_sprColorArrow[MAX_NUM_COLUMNS];
+//	Sprite		m_sprColorArrow[MAX_NUM_COLUMNS];
 	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
+	ColorArrow	m_ColorArrow[MAX_NUM_COLUMNS];
 
 
 	// gray arrows
 	void SetGrayArrowsX( int iX );
+	void SetGhostArrowsX( int iX );
 	void UpdateGrayArrows( const float& fDeltaTime );
 	void DrawGrayArrows();
 	void GrayArrowStep( int index );
 	void GrayArrowGhostStep( int index );
-	Sprite		m_sprGrayArrow[MAX_NUM_COLUMNS];
-	Sprite		m_sprGrayArrowGhost[MAX_NUM_COLUMNS];
+//	Sprite		m_sprGrayArrow[MAX_NUM_COLUMNS];
+//	Sprite		m_sprGrayArrowGhost[MAX_NUM_COLUMNS];
+	GrayArrow	m_GrayArrow[MAX_NUM_COLUMNS];
+	GhostArrow	m_GhostArrow[MAX_NUM_COLUMNS];
+
 
 	// judgement
 	void SetJudgementX( int iX );

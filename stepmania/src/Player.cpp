@@ -35,12 +35,8 @@ const float ARROW_X_OFFSET[6] = {
 };
 
 const float GRAY_ARROW_Y					= ARROW_SIZE * 1.5;
-const float GRAY_ARROW_POP_UP_TIME			= 0.30f;
 const float ARROW_GAP						= 70;
 const int NUM_FRAMES_IN_COLOR_ARROW_SPRITE	= 12;
-
-const CString SPRITE_COLOR_ARROW = "Sprites\\Color Arrow.sprite";
-const CString SPRITE_GRAY_ARROW = "Sprites\\Gray Arrow.sprite";
 
 
 const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
@@ -173,19 +169,12 @@ Player::Player()
 
 	for( int c=0; c < MAX_NUM_COLUMNS; c++ ) {
 		// gray arrows
-		m_sprGrayArrow[c].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
-		m_sprGrayArrow[c].SetRotation( m_ColumnToRotation[c] );
+		m_GrayArrow[c].SetRotation( m_ColumnToRotation[c] );
 
-		m_sprGrayArrowGhost[c].LoadFromSpriteFile( SPRITE_GRAY_ARROW );
-		m_sprGrayArrowGhost[c].SetRotation( m_ColumnToRotation[c] );
-		m_sprGrayArrowGhost[c].StopAnimating();
-		m_sprGrayArrowGhost[c].SetState( 1 );
-		m_sprGrayArrowGhost[c].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_GhostArrow[c].SetRotation( m_ColumnToRotation[c] );
 
 		// color arrows
-		m_sprColorArrow[c].LoadFromSpriteFile( SPRITE_COLOR_ARROW );
-		m_sprColorArrow[c].StopAnimating();
-		m_sprColorArrow[c].SetRotation( m_ColumnToRotation[c] );
+		m_ColorArrow[c].SetRotation( m_ColumnToRotation[c] );
 	}
 
 	// judgement
@@ -217,6 +206,7 @@ void Player::SetX( float fX )
 	m_fArrowsCenterX = fX;
 
 	SetGrayArrowsX(fX); 
+	SetGhostArrowsX(fX); 
 	SetColorArrowsX(fX);	
 	SetJudgementX(fX);	
 	SetComboX(fX);	
@@ -430,52 +420,62 @@ float Player::GetArrowColumnX( int iColNum )
 void Player::UpdateGrayArrows( const float &fDeltaTime )
 {
 	for( int i=0; i < m_iNumColumns; i++ ) {
-		m_sprGrayArrow[i].Update( fDeltaTime );
-		m_sprGrayArrowGhost[i].Update( fDeltaTime );
+		m_GrayArrow[i].Update( fDeltaTime );
+		m_GhostArrow[i].Update( fDeltaTime );
 	}
 }
 
 void Player::DrawGrayArrows()
 {
 	for( int i=0; i<m_iNumColumns; i++ )
-		m_sprGrayArrow[i].Draw();
+		//m_sprGrayArrow[i].Draw();
+		m_GrayArrow[i].Draw();
 }
 
 void Player::SetGrayArrowsX( int iNewX )
 {
 	for( int i=0; i<m_iNumColumns; i++ )
-		m_sprGrayArrow[i].SetXY(  GetArrowColumnX(i), GRAY_ARROW_Y );
+		//m_sprGrayArrow[i].SetXY(  GetArrowColumnX(i), GRAY_ARROW_Y );
+		m_GrayArrow[i].SetXY(  GetArrowColumnX(i), GRAY_ARROW_Y );
+}
+
+void Player::SetGhostArrowsX( int iNewX )
+{
+	for( int i=0; i<m_iNumColumns; i++ )
+		m_GhostArrow[i].SetXY(  GetArrowColumnX(i), GRAY_ARROW_Y );
 }
 
 void Player::SetColorArrowsX( int iNewX )
 {
 	for( int i=0; i<m_iNumColumns; i++ )
-		m_sprColorArrow[i].SetX( GetArrowColumnX(i) );
-
+		m_ColorArrow[i].SetX( GetArrowColumnX(i) );
 }
 
 void Player::GrayArrowStep( int index )
 {
-	m_sprGrayArrow[index].SetZoom( 0.50 );
-	m_sprGrayArrow[index].BeginTweening( GRAY_ARROW_POP_UP_TIME );
-	m_sprGrayArrow[index].SetTweenZoom( 1.0f );
+	m_GrayArrow[index].Step();
 }
 
 void Player::GrayArrowGhostStep( int index )
 {
-	m_sprGrayArrowGhost[index].SetXY( GetArrowColumnX(index), GRAY_ARROW_Y );
-	m_sprGrayArrowGhost[index].SetZoom( 1 );
-	m_sprGrayArrowGhost[index].SetDiffuseColor( D3DXCOLOR(1,1,0.5f,1) );
-	m_sprGrayArrowGhost[index].BeginTweening( 0.3f );
-	m_sprGrayArrowGhost[index].SetTweenZoom( 1.5 );
-	m_sprGrayArrowGhost[index].SetTweenDiffuseColor( D3DXCOLOR(1,1,0.5f,0) );		
+	m_GhostArrow[index].Step();
 }
 
 void Player::UpdateColorArrows( const float &fDeltaTime )
 {
+	int iIndexFirstArrowToDraw = BeatToStepIndex( m_fSongBeat - 2.0f );	// 2 beats earlier
+	if( iIndexFirstArrowToDraw < 0 ) iIndexFirstArrowToDraw = 0;
+	int iIndexLastArrowToDraw  = BeatToStepIndex( m_fSongBeat + 7.0f );	// 7 beats later
 
+	for( int c=0; c < m_iNumColumns; c++ ) 
+		m_ColorArrow[c].Update( fDeltaTime );
+		
 }
 
+
+// 
+// modified to add color shifting to the arrow texture
+//
 void Player::DrawColorArrows()
 {
 	//RageLog( "ColorArrows::Draw(%f)", fSongBeat );
@@ -494,17 +494,15 @@ void Player::DrawColorArrows()
 		{		
 			float fYPos = GetColorArrowYPos( i, m_fSongBeat );
 
-			// calculate which frame to display
-			int iFrameNo = iBaseFrameNo + m_iColorArrowFrameOffset[i];
-			iFrameNo = iFrameNo % NUM_FRAMES_IN_COLOR_ARROW_SPRITE;
+			float fPercentToTop = (float)(fYPos - (float)GRAY_ARROW_Y) / (SCREEN_HEIGHT - GRAY_ARROW_Y);
 				
 			//RageLog( "iYPos: %d, iFrameNo: %d, m_OriginalStep[i]: %d", iYPos, iFrameNo, m_OriginalStep[i] );
 
 			for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
 				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
-					m_sprColorArrow[c].SetY( fYPos );
-					m_sprColorArrow[c].SetState( iFrameNo );
-					m_sprColorArrow[c].Draw();
+					m_ColorArrow[c].SetY( fYPos );
+					m_ColorArrow[c].CalculateColor( fPercentToTop );
+					m_ColorArrow[c].Draw();
 				}
 			}
 
@@ -513,11 +511,9 @@ void Player::DrawColorArrows()
 	}	// end foreach arrow to draw
 
 	for( i=0; i<m_iNumColumns; i++ ) {
-		m_sprGrayArrowGhost[i].Draw();
+		m_GhostArrow[i].Draw();
 	}
 }
-
-
 
 
 
