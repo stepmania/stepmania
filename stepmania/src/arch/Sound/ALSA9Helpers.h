@@ -18,9 +18,11 @@ private:
 	snd_pcm_t *pcm;
 
 	bool Recover( int r );
-	void SetHWParams();
+	bool SetHWParams();
 
 public:
+	static void GetSoundCardDebugInfo();
+		
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 
 	/* If samplerate is DYNAMIC_SAMPLERATE, then call SetSampleRate before

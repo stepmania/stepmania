@@ -71,7 +71,6 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
 	if( state != STOPPING )
 	{
-		LOG->Trace("%p pp %i", this, pcm->GetPlayPos() );
 		const unsigned got = snd->GetPCM( (char *) buf, len, pcm->GetPlayPos() );
 
 		if( got < len )
@@ -90,6 +89,8 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 		/* Silence the buffer. */
 		memset( buf, 0, len );
 	}
+
+	RageSoundManager::AttenuateBuf( buf, max_writeahead*samples_per_frame, SOUNDMAN->GetMixVolume() );
 
 	pcm->Write( buf, frames_to_fill );
 
@@ -212,9 +213,8 @@ RageSound_ALSA9::RageSound_ALSA9()
 	shutdown = false;
 
 	/* Create a bunch of streams and put them into the stream pool. */
-	for(int i = 0; i < 8; ++i)
+	for( int i = 0; i < 32; ++i )
 	{
-//		LOG->Trace("%i\n", i);
 		Alsa9Buf *newbuf;
 		try {
 			newbuf = new Alsa9Buf( Alsa9Buf::HW_HARDWARE, channels, Alsa9Buf::DYNAMIC_SAMPLERATE );
@@ -240,7 +240,7 @@ RageSound_ALSA9::RageSound_ALSA9()
 		stream_pool.push_back(s);
 	}
 
-	LOG->Trace("Got %i hardware buffers", stream_pool.size());
+	LOG->Info("ALSA: Got %i hardware buffers", stream_pool.size());
 
 	MixingThread.SetName( "RageSound_ALSA9" );
 	MixingThread.Create( MixerThread_start, this );
