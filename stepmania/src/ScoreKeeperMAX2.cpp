@@ -248,6 +248,26 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	// Do count additions in judge totals.
 	GAMESTATE->m_CurStageStats.iTapNoteScores[m_PlayerNumber][scoreOfLastTap] += 1;
 
+	//
+	// Regular combo
+	//
+	
+/*
+  http://www.aaroninjapan.com/ddr2.html
+
+  Note on ONI Mode scoring
+  
+  Your combo counter only increased with a "Marvelous/Perfect", and double Marvelous/Perfect steps (left and right, etc.)
+  only add 1 to your combo instead of 2. The combo counter thus becomes a "Marvelous/Perfect" counter. 
+*/
+	/* True if a jump is one to combo, false if combo is purely based on tap count. */
+	const bool ComboIsPerRow = (GAMESTATE->m_PlayMode == PLAY_MODE_ONI);
+	const int ComboCountIfHit = ComboIsPerRow? 1: iNumTapsInRow;
+	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
+
+	if( scoreOfLastTap >= MinScoreToContinueCombo )
+		GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] += ComboCountIfHit;
+
 /*
   http://www.aaroninjapan.com/ddr2.html
 
@@ -318,27 +338,6 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 		m_iCurToastyCombo = 0;
 		break;
 	}
-
-	//
-	// Regular combo
-	//
-	int &iCurCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
-	
-/*
-  http://www.aaroninjapan.com/ddr2.html
-
-  Note on ONI Mode scoring
-  
-  Your combo counter only increased with a "Marvelous/Perfect", and double Marvelous/Perfect steps (left and right, etc.)
-  only add 1 to your combo instead of 2. The combo counter thus becomes a "Marvelous/Perfect" counter. 
-*/
-	/* True if a jump is one to combo, false if combo is purely based on tap count. */
-	const bool ComboIsPerRow = (GAMESTATE->m_PlayMode == PLAY_MODE_ONI);
-	const int ComboCountIfHit = ComboIsPerRow? 1: iNumTapsInRow;
-	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
-
-	if( scoreOfLastTap >= MinScoreToContinueCombo )
-		iCurCombo += ComboCountIfHit;
 }
 
 
