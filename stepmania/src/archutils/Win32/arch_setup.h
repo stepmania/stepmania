@@ -36,5 +36,9 @@
 #undef max
 #define NOMINMAX /* make sure Windows doesn't try to define this */
 
+/* Windows is missing some basic math functions: */
+#define NEED_TRUNCF
+#define NEED_ROUNDF
+
 #endif
 
