@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "GameManager.h"
+#include "Style.h"
 
 //
 // Defines specific to JukeboxMenu
@@ -53,7 +54,7 @@ JukeboxMenu::JukeboxMenu()
 
 
 	// fill in data structures
-	GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, m_Styles );
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, m_Styles );
 	SONGMAN->GetGroupNames( m_sGroups );
 	m_sGroups.insert( m_sGroups.begin(), "ALL MUSIC" );
 	m_sDifficulties.push_back( "all difficulties" );

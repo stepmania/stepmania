@@ -1,7 +1,7 @@
 #ifndef STEPMANIA_H
 #define STEPMANIA_H
 
-#include "Game.h"
+class GameDef;
 
 #ifdef _XBOX
 #include "Xbox Compilance\stdafx.h"
@@ -15,7 +15,7 @@ void ExitGame();
 void ResetGame( bool ReturnToFirstScreen=true );
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );
 void SaveGamePrefsToDisk();
-void ChangeCurrentGame( Game g );
+void ChangeCurrentGame( const GameDef* g );
 void FocusChanged( bool bHasFocus );
 
 // If successful, return filename of screenshot in sDir, else return ""

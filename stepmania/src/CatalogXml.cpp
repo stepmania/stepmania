@@ -136,7 +136,7 @@ void SaveCatalogXml()
 
 		{
 			vector<StepsType> vStepsTypes;
-			GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, vStepsTypes );
+			GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypes );
 			for( vector<StepsType>::const_iterator iter = vStepsTypes.begin(); iter != vStepsTypes.end(); iter++ )
 			{
 				XNode* pNode2 = pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
@@ -156,7 +156,7 @@ void SaveCatalogXml()
 
 		{
 			vector<const Style*> vpStyle;
-			GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, vpStyle );
+			GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vpStyle );
 			FOREACH( const Style*, vpStyle, pStyle )
 			{
 				if( !SHOW_STYLE(*pStyle) )

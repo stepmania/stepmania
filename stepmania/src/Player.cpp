@@ -24,6 +24,7 @@
 #include "ScreenManager.h"
 #include "StageStats.h"
 #include "ArrowEffects.h"
+#include "GameDef.h"
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");

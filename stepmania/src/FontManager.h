@@ -4,9 +4,9 @@
 #define FONTMANAGER_H
 
 #include "RageUtil.h"
-#include "Game.h"
 
 class Font;
+class GameDef;
 
 class FontManager
 {
@@ -24,8 +24,8 @@ public:
 	 * adjustment of fonts in ScreenTestFonts at the moment. */
 	void ReloadFonts();
 
-	static longchar MakeGameGlyph(wchar_t c, Game g);
-	static bool ExtractGameGlyph(longchar ch, wchar_t &c, Game &g);
+	static longchar MakeGameGlyph(wchar_t c, const GameDef* g);
+	static bool ExtractGameGlyph(longchar ch, wchar_t &c, const GameDef*& g);
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

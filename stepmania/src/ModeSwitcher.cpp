@@ -9,6 +9,7 @@
 #include "song.h"
 #include "ActorUtil.h"
 #include "GameManager.h"
+#include "GameDef.h"
 
 #define PREVMODE_X		THEME->GetMetricF("ModeSwitcher","PrevModeX")
 #define PREVMODE_Y		THEME->GetMetricF("ModeSwitcher","PrevModeY")
@@ -75,7 +76,7 @@ CString ModeSwitcher::GetStyleName()
 				case DIFFICULTY_BEGINNER: sDiff[i] = "Beginner\n"; break;
 				case DIFFICULTY_EASY:
 				{
-					if(GAMESTATE->m_CurGame == GAME_PUMP)
+					if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 					{
 						sDiff[i] = "Normal\n"; break;
 					}
@@ -86,7 +87,7 @@ CString ModeSwitcher::GetStyleName()
 				} 
 				case DIFFICULTY_MEDIUM:
 				{
-					if(GAMESTATE->m_CurGame == GAME_PUMP)
+					if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 					{
 						sDiff[i] = "Hard\n"; break;
 					}
@@ -97,7 +98,7 @@ CString ModeSwitcher::GetStyleName()
 				} 				
 				case DIFFICULTY_HARD:
 				{
-					if(GAMESTATE->m_CurGame == GAME_PUMP)
+					if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 					{
 						sDiff[i] = "Crazy\n"; break;
 					}
@@ -138,7 +139,7 @@ CString ModeSwitcher::GetNextStyleName()
 				{
 					case DIFFICULTY_BEGINNER:
 					{
-						if(GAMESTATE->m_CurGame == GAME_PUMP)
+						if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 						{
 							sDiff[i] = "Normal\n"; break;
 						}
@@ -149,7 +150,7 @@ CString ModeSwitcher::GetNextStyleName()
 					} 				
 					case DIFFICULTY_EASY:
 					{
-						if(GAMESTATE->m_CurGame == GAME_PUMP)
+						if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 						{
 							sDiff[i] = "Hard\n"; break;
 						}
@@ -160,7 +161,7 @@ CString ModeSwitcher::GetNextStyleName()
 					} 	
 					case DIFFICULTY_MEDIUM:
 					{
-						if(GAMESTATE->m_CurGame == GAME_PUMP)
+						if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 						{
 							sDiff[i] = "Crazy\n"; break;
 						}
@@ -211,7 +212,7 @@ CString ModeSwitcher::GetPrevStyleName()
 				{
 					case DIFFICULTY_CHALLENGE:
 					{
-						if(GAMESTATE->m_CurGame == GAME_PUMP)
+						if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 						{
 							sDiff[i] = "Crazy\n"; break;
 						}
@@ -223,7 +224,7 @@ CString ModeSwitcher::GetPrevStyleName()
 					case DIFFICULTY_EASY: sDiff[i] = "Beginner\n"; break;
 					case DIFFICULTY_MEDIUM:
 					{
-						if(GAMESTATE->m_CurGame == GAME_PUMP)
+						if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 						{
 							sDiff[i] = "Normal\n"; break;
 						}
@@ -234,7 +235,7 @@ CString ModeSwitcher::GetPrevStyleName()
 					} 					
 					case DIFFICULTY_HARD:
 					{
-						if(GAMESTATE->m_CurGame == GAME_PUMP)
+						if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 						{
 							sDiff[i] = "Hard\n"; break;
 						}
@@ -268,7 +269,7 @@ CString ModeSwitcher::GetPrevStyleName()
 
 void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 {
-	if(GAMESTATE->m_CurGame == GAME_PUMP)
+	if(GAMESTATE->m_pCurGame->m_szName == CString("pump"))
 	{
 		if(GAMESTATE->IsPlayerEnabled(pn))
 		{
@@ -297,7 +298,7 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 
 		// Make a list of all styles for the current Game.
 		vector<const Style*> vPossibleStyles;
-		GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, vPossibleStyles );
+		GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vPossibleStyles );
 		ASSERT( !vPossibleStyles.empty() );
 
 		int index = 0;

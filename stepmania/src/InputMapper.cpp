@@ -9,6 +9,8 @@
 #include "PrefsManager.h"
 #include "RageInput.h"
 #include "arch/arch.h"
+#include "GameDef.h"
+#include "Style.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
@@ -41,7 +43,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
 			ClearFromInputMap( GameInput((GameController)i,(GameButton)j), 2 );
 
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	for( int c=0; c<MAX_GAME_CONTROLLERS; c++ )
 	{
 		for( int b=0; b<pGameDef->m_iButtonsPerController; b++ )
@@ -59,7 +61,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 
 struct AutoJoyMapping
 {
-	Game game;
+	const char *szGame;
 	const char *szDriverRegex;	// reported by InputHandler
 	const char *szControllerName;	// the product name of the controller
 	struct Mapping {
@@ -83,7 +85,7 @@ struct AutoJoyMapping
 const AutoJoyMapping g_AutoJoyMappings[] = 
 {
 	{
-		GAME_DANCE,
+		"dance",
 		"GIC USB Joystick",
 		"Boom USB convertor (black/gray)",
 		{
@@ -95,7 +97,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"4 axis 16 button joystick",
 		"PC Magic Box",
 		{
@@ -107,7 +109,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"GamePad Pro USB ",	// yes, there is a space at the end
 		"GamePad Pro USB",
 		{
@@ -127,7 +129,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"SideWinder Game Pad USB version 1.0",
 		"SideWinder Game Pad USB",
 		{
@@ -147,7 +149,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"4 axis 12 button joystick with hat switch",
 		"Super Joy Box 5",
 		{
@@ -169,7 +171,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"MP-8866 Dual USB Joypad",
 		"Super Dual Box",
 		{
@@ -191,7 +193,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"NTPAD",
 		"NTPAD",
 		{
@@ -213,7 +215,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"Psx Gamepad",
 		"PSXPAD",
 		{
@@ -235,7 +237,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"XBOX Gamepad Plugin V0.01",
 		"X-Box gamepad",
 		{
@@ -255,7 +257,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_DANCE,
+		"dance",
 		"0b43:0003", // The EMS USB2 doesn't provide a model string, so Linux 
 					 // just gives us the VendorID and ModelID in hex.
 		"EMS USB2",
@@ -280,7 +282,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
-		GAME_PUMP,
+		"pump",
 		"Pump USB",
 		"Pump USB pad",
 		{
@@ -308,6 +310,8 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 	int iNumJoysticksMapped = 0;
 
+	const GameDef* pGameDef = GAMESTATE->m_pCurGame;
+
 	for( unsigned i=0; i<vDevices.size(); i++ )
 	{
 		InputDevice device = vDevices[i];
@@ -316,42 +320,45 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 
+			if( pGameDef != GAMESTATE->GetGameDefFromString(mapping.szGame) )
+				continue;	// games don't match
+
 			CString sDriverRegex = mapping.szDriverRegex;
 			Regex regex( sDriverRegex );
-			if( regex.Compare(sDescription) )
+			if( !regex.Compare(sDescription) )
+				continue;	// driver names don't match
+
+			//
+			// We have a mapping for this joystick
+			//
+			GameController gc = (GameController)iNumJoysticksMapped;
+			if( gc >= GAME_CONTROLLER_INVALID )
+				break;	// stop mapping.  We already mapped one device for each game controller.
+
+			LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
+				iNumJoysticksMapped+1, mapping.szDriverRegex, mapping.szControllerName );
+
+			for( int k=0; !mapping.maps[k].IsEndMarker(); k++ )
 			{
-				//
-				// We have a mapping for this joystick
-				//
-				GameController gc = (GameController)iNumJoysticksMapped;
-				if( gc >= GAME_CONTROLLER_INVALID )
-					break;	// stop mapping.  We already mapped one device for each game controller.
-
-				LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
-					iNumJoysticksMapped+1, mapping.szDriverRegex, mapping.szControllerName );
-
-				for( int k=0; !mapping.maps[k].IsEndMarker(); k++ )
+				GameController map_gc = gc;
+				if( mapping.maps[k].SecondController )
 				{
-					GameController map_gc = gc;
-					if( mapping.maps[k].SecondController )
-					{
-						map_gc = (GameController)(map_gc+1);
+					map_gc = (GameController)(map_gc+1);
 
-						/* If that pushed it over, then it's a second controller for
-						 * a joystick that's already a second controller, so we'll
-						 * just ignore it.  (This can happen if eg. two primary
-						 * Pump pads are connected.) */
-						if( map_gc >= GAME_CONTROLLER_INVALID )
-							continue;
-					}
-
-					DeviceInput di( device, mapping.maps[k].deviceButton );
-					GameInput gi( map_gc, mapping.maps[k].gb );
-					SetInputMap( di, gi, mapping.maps[k].iSlotIndex );
+					/* If that pushed it over, then it's a second controller for
+					 * a joystick that's already a second controller, so we'll
+					 * just ignore it.  (This can happen if eg. two primary
+					 * Pump pads are connected.) */
+					if( map_gc >= GAME_CONTROLLER_INVALID )
+						continue;
 				}
 
-				iNumJoysticksMapped++;
+				DeviceInput di( device, mapping.maps[k].deviceButton );
+				GameInput gi( map_gc, mapping.maps[k].gb );
+				SetInputMap( di, gi, mapping.maps[k].iSlotIndex );
 			}
+
+			iNumJoysticksMapped++;
 		}
 	}
 }

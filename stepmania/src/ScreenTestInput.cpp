@@ -11,7 +11,7 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
-
+#include "GameDef.h"
 
 
 ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements( sClassName )

@@ -12,6 +12,8 @@
 #include "GameState.h"
 #include "InputMapper.h"
 #include "StepMania.h"
+#include "GameDef.h"
+#include "Foreach.h"
 
 static void GetDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
@@ -82,12 +84,11 @@ static void MoveData( int &sel, bool &opt, bool ToSel )
 
 static void GameChoices( CStringArray &out )
 {
-	vector<Game> aGames;
+	vector<const GameDef*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	for( unsigned i=0; i<aGames.size(); i++ )
+	FOREACH( const GameDef*, aGames, g )
 	{
-		Game game = aGames[i];
-		CString sGameName = GAMEMAN->GetGameDefForGame(game)->m_szName;
+		CString sGameName = (*g)->m_szName;
 		sGameName.MakeUpper();
 		out.push_back( sGameName );
 	}
@@ -97,14 +98,14 @@ static void GameSel( int &sel, bool ToSel, const CStringArray &choices )
 {
 	if( ToSel )
 	{
-		const CString sCurGameName = GAMEMAN->GetGameDefForGame(GAMESTATE->m_CurGame)->m_szName;
+		const CString sCurGameName = GAMESTATE->m_pCurGame->m_szName;
 
 		sel = 0;
 		for(unsigned i = 0; i < choices.size(); ++i)
 			if( !stricmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
-		vector<Game> aGames;
+		vector<const GameDef*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		ChangeCurrentGame( aGames[sel] );
 	}

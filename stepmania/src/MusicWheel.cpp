@@ -22,6 +22,7 @@
 #include "SongUtil.h"
 #include "CourseUtil.h"
 #include "Foreach.h"
+#include "Style.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")

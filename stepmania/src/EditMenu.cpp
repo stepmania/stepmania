@@ -98,7 +98,7 @@ EditMenu::EditMenu()
 
 	// fill in data structures
 	SONGMAN->GetGroupNames( m_sGroups );
-	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, m_StepsTypes );
+	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_StepsTypes );
 	
 	ChangeToRow( (Row)0 );
 	OnRowValueChanged( (Row)0 );

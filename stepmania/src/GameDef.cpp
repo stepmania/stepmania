@@ -9,7 +9,7 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
-int	GameDef::GetNumGameplayButtons()
+int	GameDef::GetNumGameplayButtons() const
 {
 	int iIndexOfStart = ButtonNameToIndex( "Start" );
 	ASSERT( iIndexOfStart != GAME_BUTTON_INVALID );

@@ -265,7 +265,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	// calculate which StepsTypes to show
 	vector<StepsType> aStepsTypesToShow;
 	{
-		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, aStepsTypesToShow );
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, aStepsTypesToShow );
 
 		// subtract hidden StepsTypes
 		{

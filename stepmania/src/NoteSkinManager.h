@@ -2,11 +2,11 @@
 #define NoteSkinMANAGER_H
 
 #include "RageTypes.h"
-#include "Game.h"
 #include "PlayerNumber.h"
 #include "IniFile.h"
 #include <map>
 
+class GameDef;
 
 class NoteSkinManager
 {
@@ -14,10 +14,10 @@ public:
 	NoteSkinManager();
 	~NoteSkinManager();
 
-	void RefreshNoteSkinData( Game game );
-	void GetNoteSkinNames( Game game, CStringArray &AddTo );
-	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current Game in GAMESTATE
-	bool DoesNoteSkinExist( CString sSkinName );	// looks up current Game in GAMESTATE
+	void RefreshNoteSkinData( const GameDef* game );
+	void GetNoteSkinNames( const GameDef* game, CStringArray &AddTo );
+	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current const GameDef* in GAMESTATE
+	bool DoesNoteSkinExist( CString sSkinName );	// looks up current const GameDef* in GAMESTATE
 
 	CString GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sElement, bool bOptional=false );
 	CString GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional=false );
@@ -43,7 +43,7 @@ protected:
 	};
 	void LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& data_out );
 	map<CString,NoteSkinData> m_mapNameToData;
-	Game m_CurGame;
+	const GameDef* m_pCurGame;
 };
 
 

@@ -130,7 +130,7 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 		m_pLifeMeterBar->FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 	}
 
-	GAMESTATE->m_pCurStyle = GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_CurGame);
+	GAMESTATE->m_pCurStyle = GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame);
 
 	if( USEPLAYER )
 	{

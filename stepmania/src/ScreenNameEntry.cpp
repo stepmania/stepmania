@@ -16,6 +16,7 @@
 #include "ProfileManager.h"
 #include "NoteFieldPositioning.h"
 #include "StageStats.h"
+#include "GameDef.h"
 
 
 //

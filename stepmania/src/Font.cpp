@@ -276,7 +276,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	ASSERT(c >= 0 && c <= 0xFFFFFF);
 
 	/* See if there's a game-specific version of this character. */
-	int gc = FontManager::MakeGameGlyph(c, GAMESTATE->m_CurGame);
+	int gc = FontManager::MakeGameGlyph(c, GAMESTATE->m_pCurGame);
 	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(gc);
 
 	/* If there isn't, try the regular character. */
@@ -509,7 +509,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				 */
 				CString codepoint = val.substr(4); /* "CODEPOINT" */
 			
-				Game game = GAME_INVALID;
+				const GameDef* pGame = NULL;
 
 				if(codepoint.find_first_of(' ') != codepoint.npos)
 				{
@@ -518,9 +518,9 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 					CString gamename = codepoint.substr(0, pos);
 					codepoint = codepoint.substr(pos+1);
 
-					game = GameManager::StringToGameType(gamename);
+					pGame = GameManager::StringToGameType(gamename);
 
-					if(game == GAME_INVALID)
+					if(pGame == NULL)
 					{
 						LOG->Warn( "Font definition '%s' uses unknown game type '%s'",
 							ini.GetPath().c_str(), gamename.c_str() );
@@ -546,9 +546,9 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 					continue;
 				}
 
-				if(game != GAME_INVALID)
+				if(pGame != NULL)
 				{
-					longchar lc = FontManager::MakeGameGlyph(c, game);
+					longchar lc = FontManager::MakeGameGlyph(c, pGame);
 					cfg.CharToGlyphNo[lc] = atoi(data);
 				} else {
 					cfg.CharToGlyphNo[c] = atoi(data);

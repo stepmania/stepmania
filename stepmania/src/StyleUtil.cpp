@@ -2,13 +2,14 @@
 #include "StyleUtil.h"
 #include "GameManager.h"
 #include "XmlFile.h"
+#include "GameDef.h"
 
 
 void StyleID::FromStyle( const Style *p )
 {
 	if( p )
 	{
-		sGame = GAMEMAN->GetGameDefForGame(p->m_Game)->m_szName;
+		sGame = p->m_pGameDef->m_szName;
 		sStyle = p->m_szName;
 	}
 	else
@@ -20,11 +21,11 @@ void StyleID::FromStyle( const Style *p )
 
 const Style *StyleID::ToStyle() const
 {
-	Game game = GameManager::StringToGameType( sGame );
-	if( game == GAME_INVALID )
+	const GameDef* pGame = GameManager::StringToGameType( sGame );
+	if( pGame == NULL )
 		return NULL;
 
-	return GAMEMAN->GameAndStringToStyle( game, sStyle );
+	return GAMEMAN->GameAndStringToStyle( pGame, sStyle );
 }
 
 XNode* StyleID::CreateNode() const

@@ -21,6 +21,7 @@
 #include "LightsManager.h"
 #include "CodeDetector.h"
 #include "CommonMetrics.h"
+#include "GameDef.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -73,7 +74,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );	// do this after Reset!
 
 
-	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
+	m_sprLogo.Load( THEME->GetPathG("ScreenLogo",GAMESTATE->GetCurrentGameDef()->m_szName) );
 	m_sprLogo.Command( PREFSMAN->GetCoinMode()==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
 	this->AddChild( &m_sprLogo );
 
@@ -287,19 +288,24 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME) ||
 		CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME2) )
 	{
-		for( int i=0; i<NUM_GAMES; i++ )
-		{
-			GAMESTATE->m_CurGame = (Game)(GAMESTATE->m_CurGame+1);
-			wrap( (int&)GAMESTATE->m_CurGame, NUM_GAMES );
-			
-			if( GAMEMAN->IsGameEnabled(GAMESTATE->m_CurGame) )
-				break;	// found the first enabled game.  Stop searching.
-		}
+		vector<const GameDef*> vGames;
+		GAMEMAN->GetEnabledGames( vGames );
+		ASSERT( !vGames.empty() );
+		vector<const GameDef*>::iterator iter = find(vGames.begin(),vGames.end(),GAMESTATE->m_pCurGame);
+		ASSERT( iter != vGames.end() );
+
+		iter++;	// move to the next game
+
+		// wrap
+		if( iter == vGames.end() )
+			iter = vGames.begin();
+
+		GAMESTATE->m_pCurGame = *iter;
 
 		/* Reload the theme if it's changed, but don't back to the initial screen. */
 		ResetGame( false );
 
-		SCREENMAN->SystemMessage( ssprintf("Game: %s",GAMESTATE->GetCurrentGameDef()->m_szName) );
+		SCREENMAN->SystemMessage( CString("Game: ") + GAMESTATE->GetCurrentGameDef()->m_szName );
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 	}
 

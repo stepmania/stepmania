@@ -41,7 +41,7 @@ GameState::GameState()
 {
 	m_pPosition = NULL;
 
-	m_CurGame = GAME_DANCE;
+	m_pCurGame = NULL;
 	m_iCoins = 0;
 	m_timeGameStarted.SetZero();
 	m_bIsOnSystemMenu = false;
@@ -122,7 +122,7 @@ void GameState::Reset()
 	m_BeatToNoteSkinRev = 0;
 	m_iNumStagesOfThisSong = 0;
 
-	NOTESKIN->RefreshNoteSkinData( this->m_CurGame );
+	NOTESKIN->RefreshNoteSkinData( this->m_pCurGame );
 
 	m_iGameSeed = rand();
 	m_iRoundSeed = rand();
@@ -784,10 +784,10 @@ int GameState::GetNumSidesJoined() const
 	return iNumSidesJoined;
 }
 
-GameDef* GameState::GetCurrentGameDef()
+const GameDef* GameState::GetCurrentGameDef()
 {
-	ASSERT( m_CurGame != GAME_INVALID );	// the game must be set before calling this
-	return GAMEMAN->GetGameDefForGame( m_CurGame );
+	ASSERT( m_pCurGame != NULL );	// the game must be set before calling this
+	return m_pCurGame;
 }
 
 const Style* GameState::GetCurrentStyle() const

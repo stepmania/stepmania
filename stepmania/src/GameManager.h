@@ -3,11 +3,11 @@
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
-#include "GameDef.h"
-#include "Style.h"
-#include "Game.h"
 class IniFile;
+class Style;
+class GameDef;
 
+#include "GameConstantsAndTypes.h"
 
 class GameManager
 {
@@ -15,24 +15,25 @@ public:
 	GameManager();
 	~GameManager();
 
-	GameDef*	GetGameDefForGame( Game g );
-	
-	void	GetStylesForGame( Game game, vector<const Style*>& aStylesAddTo, bool editor=false );
+	void	GetStylesForGame( const GameDef* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
 	void	GetAllStyles( vector<const Style*>& aStylesAddTo, bool editor=false );
-	void	GetStepsTypesForGame( Game game, vector<StepsType>& aStepsTypeAddTo );
+	void	GetStepsTypesForGame( const GameDef* pGame, vector<StepsType>& aStepsTypeAddTo );
 	const Style*	GetEditorStyleForStepsType( StepsType st );
-	const Style*	GetDemonstrationStyleForGame( Game game );
-	const Style*	GetHowToPlayStyleForGame( Game game );
+	const Style*	GetDemonstrationStyleForGame( const GameDef* pGame );
+	const Style*	GetHowToPlayStyleForGame( const GameDef* pGame );
 
-	void GetEnabledGames( vector<Game>& aGamesOut );
-	bool IsGameEnabled( Game game );
+	void GetEnabledGames( vector<const GameDef*>& aGamesOut );
+	const GameDef* GetDefaultGame();
+	bool IsGameEnabled( const GameDef* pGame );
+	int GetIndexFromGame( const GameDef* pGame );
+	const GameDef* GetGameFromIndex( int index );
 
 	static int StepsTypeToNumTracks( StepsType st );
 	static StepsType StringToStepsType( CString sStepsType );
 	static CString StepsTypeToString( StepsType st );
 	static CString StepsTypeToThemedString( StepsType st );
-	static Game StringToGameType( CString sGameType );
-	const Style* GameAndStringToStyle( Game game, CString sStyle );
+	static const GameDef* StringToGameType( CString sGameType );
+	const Style* GameAndStringToStyle( const GameDef* pGame, CString sStyle );
 	static CString StyleToThemedString( const Style* s );
 };
 

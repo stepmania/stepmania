@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include <map>
+#include "GameManager.h"
 
 FontManager*	FONT	= NULL;	// global and accessable from anywhere in our program
 
@@ -30,19 +31,21 @@ FontManager::~FontManager()
 
 /* A longchar is at least 32 bits.  If c & 0xFF000000, it's a game-custom
  * character; game 0 is 0x0100nnnn, game 1 is 0x0200nnnn, and so on. */
-longchar FontManager::MakeGameGlyph(wchar_t c, Game g)
+longchar FontManager::MakeGameGlyph(wchar_t c, const GameDef* g)
 {
 	ASSERT(c >= 0 && c <= 0xFFFF);
-	ASSERT(g >= 0 && g <= 0xFF);
-	return longchar (((g+1) << 24) + c);
+	int index = GAMEMAN->GetIndexFromGame(g);
+	ASSERT(index >= 0 && index <= 0xFF);
+	return longchar (((index+1) << 24) + c);
 }
 
-bool FontManager::ExtractGameGlyph(longchar ch, wchar_t &c, Game &g)
+bool FontManager::ExtractGameGlyph(longchar ch, wchar_t &cOut, const GameDef *&gOut)
 {
 	if((ch & 0xFF000000) == 0) return false; /* not a game glyph */
 	
-	g = Game((ch >> 24) - 1);
-	c = wchar_t(ch & 0xFFFF);
+	int index = (ch >> 24) - 1;
+	gOut = GAMEMAN->GetGameFromIndex( index );
+	cOut = wchar_t(ch & 0xFFFF);
 
 	return true;
 }

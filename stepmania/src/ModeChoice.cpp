@@ -14,13 +14,14 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "MemoryCardManager.h"
 #include "song.h"
+#include "GameDef.h"
 
 void ModeChoice::Init()
 {
 	m_sName = "";
 	m_bInvalid = true;
 	m_iIndex = -1;
-	m_game = GAME_INVALID;
+	m_pGameDef = NULL;
 	m_pStyle = NULL;
 	m_pm = PLAY_MODE_INVALID;
 	m_dc = DIFFICULTY_INVALID;
@@ -48,7 +49,7 @@ bool ModeChoice::DescribesCurrentModeForAllPlayers() const
 
 bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 {
-	if( m_game != GAME_INVALID && m_game != GAMESTATE->m_CurGame )
+	if( m_pGameDef != NULL && m_pGameDef != GAMESTATE->m_pCurGame )
 		return false;
 	if( m_pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != m_pm )
 		return false;
@@ -120,9 +121,9 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 
 		if( sName == "game" )
 		{
-			Game game = GAMEMAN->StringToGameType( sValue );
-			if( game != GAME_INVALID )
-				m_game = game;
+			const GameDef* pGame = GAMEMAN->StringToGameType( sValue );
+			if( pGame != NULL )
+				m_pGameDef = pGame;
 			else
 				m_bInvalid |= true;
 		}
@@ -130,7 +131,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 
 		if( sName == "style" )
 		{
-			const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sValue );
+			const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
 			if( style )
 				m_pStyle = style;
 			else
@@ -269,7 +270,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 		// This is correct for dance (ie, no rave for solo and doubles),
 		// and should be okay for pump .. not sure about other game types.
 		// Techno Motion scales down versus arrows, though, so allow this.
-		if( style->m_iColsPerPlayer >= 6 && GAMESTATE->m_CurGame != GAME_TECHNO )
+		if( style->m_iColsPerPlayer >= 6 && CString(GAMESTATE->m_pCurGame->m_szName) == "techno" )
 			return false;
 		
 		/* Don't allow battle modes if the style takes both sides. */
@@ -403,8 +404,8 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 
-	if( m_game != GAME_INVALID )
-		GAMESTATE->m_CurGame = m_game;
+	if( m_pGameDef != NULL )
+		GAMESTATE->m_pCurGame = m_pGameDef;
 	if( m_pm != PLAY_MODE_INVALID )
 		GAMESTATE->m_PlayMode = m_pm;
 
@@ -484,7 +485,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 
 bool ModeChoice::IsZero() const
 {
-	if( m_game != GAME_INVALID ||
+	if( m_pGameDef != NULL ||
 		m_pm != PLAY_MODE_INVALID ||
 		m_pStyle != NULL ||
 		m_dc != DIFFICULTY_INVALID ||

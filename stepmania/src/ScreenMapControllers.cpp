@@ -11,6 +11,7 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
+#include "GameDef.h"
 
 
 #define EVEN_LINE_IN		THEME->GetMetric("ScreenMapControllers","EvenLineIn")

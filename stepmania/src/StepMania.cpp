@@ -29,6 +29,7 @@
 #include "Screen.h"
 #include "CodeDetector.h"
 #include "CommonMetrics.h"
+#include "GameDef.h"
 
 //
 // StepMania global classes
@@ -187,7 +188,7 @@ void ResetGame( bool ReturnToFirstScreen )
 	ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 
-	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
+	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 
 	/*
 	GameState::Reset() will switch the NoteSkin
@@ -689,14 +690,14 @@ static void RestoreAppPri()
 #define GAMEPREFS_INI_PATH "Data/GamePrefs.ini"
 #define STATIC_INI_PATH "Data/Static.ini"
 
-void ChangeCurrentGame( Game g )
+void ChangeCurrentGame( const GameDef* g )
 {
-	ASSERT( g >= 0 && g < NUM_GAMES );
+	ASSERT( g );
 
 	SaveGamePrefsToDisk();
 	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
 
-	GAMESTATE->m_CurGame = g;
+	GAMESTATE->m_pCurGame = g;
 
 	ReadGamePrefsFromDisk( false );
 	INPUTMAPPER->ReadMappingsFromDisk();
@@ -710,8 +711,12 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ASSERT( GAMESTATE );
 	ASSERT( ANNOUNCER );
 	ASSERT( THEME );
+	ASSERT( GAMESTATE );
 
+	if( GAMESTATE->m_pCurGame == NULL )
+		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+
 	IniFile ini;
 	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
 	ini.ReadFile( STATIC_INI_PATH );	// it's OK if this fails, too
@@ -734,9 +739,9 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 		CString sGame;
 		if( ini.GetValue("Options", "Game", sGame) )
 		{
-			GAMESTATE->m_CurGame = GAMEMAN->StringToGameType( sGame );
-			if( GAMESTATE->m_CurGame == GAME_INVALID )
-				GAMESTATE->m_CurGame = (Game)0;
+			GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( sGame );
+			if( GAMESTATE->m_pCurGame == NULL )
+				GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
 		}
 	}
 }
@@ -1302,7 +1307,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			THEME->ReloadMetrics();
 			TEXTUREMAN->ReloadAll();
 			SCREENMAN->ReloadCreditsText();
-			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
+			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 			CodeDetector::RefreshCacheItems();
 		
 

@@ -38,7 +38,7 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 
 	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
 	{
-		CString sIconFileName = ssprintf("MenuElements icon %s", GAMESTATE->GetCurrentStyle()->m_szName );
+		CString sIconFileName = CString("MenuElements icon ") + GAMESTATE->GetCurrentStyle()->m_szName;
 		m_sprStyleIcon.SetName( "StyleIcon" );
 		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
 		m_sprStyleIcon.StopAnimating();

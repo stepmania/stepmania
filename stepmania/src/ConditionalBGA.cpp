@@ -250,7 +250,7 @@ void ConditionalBGA::Load(CString szScreenName)
 					{
 						LOG->Info( "Style:%s", asStyles[d].c_str() );
 
-						m_bgainfo[bgano].styles.push_back(GAMEMAN->GameAndStringToStyle(GAMESTATE->m_CurGame,asStyles[d]));
+						m_bgainfo[bgano].styles.push_back(GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,asStyles[d]));
 					}
 
 				}

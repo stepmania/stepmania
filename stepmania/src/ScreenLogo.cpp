@@ -8,7 +8,7 @@
 ScreenLogo::ScreenLogo( CString sName ) : ScreenAttract( sName )
 {
 	m_sprLogo.SetName( "Logo" );
-	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
+	m_sprLogo.Load( THEME->GetPathG("ScreenLogo",GAMESTATE->GetCurrentGameDef()->m_szName) );
 	ON_COMMAND( m_sprLogo );
 	this->AddChild( &m_sprLogo );
 

@@ -38,11 +38,12 @@ class Style;
 class GameDef
 {
 public:
-	char	m_szName[60];
-	char	m_szDescription[60];
+	const char *m_szName;
+	const char *m_szDescription;
+
 	int		m_iNumControllers;
 	int		m_iButtonsPerController;
-	int		GetNumGameplayButtons();
+	int		GetNumGameplayButtons() const;
 	char	m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
 	char	m_szSecondaryFunction[MAX_GAME_BUTTONS][60];	// displayed on the mapping screen
 	GameButton	m_DedicatedMenuButton[NUM_MENU_BUTTONS];

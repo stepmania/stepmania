@@ -8,6 +8,8 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "RageLog.h"
+#include "GameDef.h"
+#include "Style.h"
 
 #define NEXT_SCREEN				THEME->GetMetric("ScreenStyleSplash","NextScreen")
 #define NONSTOP_SCREEN				THEME->GetMetric("ScreenStyleSplash","NonstopScreen")

@@ -24,20 +24,20 @@ static map<CString,CString> g_PathCache;
 
 NoteSkinManager::NoteSkinManager()
 {
-	m_CurGame = GAME_INVALID;
+	m_pCurGame = NULL;
 }
 
 NoteSkinManager::~NoteSkinManager()
 {
 }
 
-void NoteSkinManager::RefreshNoteSkinData( Game game )
+void NoteSkinManager::RefreshNoteSkinData( const GameDef* game )
 {
 	/* Reload even if we don't need to, so exiting out of the menus refreshes the note
 	 * skin list (so you don't have to restart to see new noteskins). */
-	m_CurGame = GAMESTATE->m_CurGame;
+	m_pCurGame = GAMESTATE->m_pCurGame;
 
-	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
+	const GameDef* pGameDef = game;
 
 	// clear path cache
 	g_PathCache.clear();
@@ -80,8 +80,8 @@ void NoteSkinManager::LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& dat
 void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 {
 	/* If the skin data for the current game isn't already load it, load it now. */
-	if( m_CurGame != GAMESTATE->m_CurGame )
-		RefreshNoteSkinData( GAMESTATE->m_CurGame );
+	if( m_pCurGame != GAMESTATE->m_pCurGame )
+		RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 
 	/* Don't call GetNoteSkinNames below, since we don't want to call RefreshNoteSkinData; it's
 	 * slow. */
@@ -103,7 +103,7 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 	}
 }
 
-void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
+void NoteSkinManager::GetNoteSkinNames( const GameDef* game, CStringArray &AddTo )
 {
 	RefreshNoteSkinData( game );
 
@@ -114,7 +114,7 @@ void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
 	}
 
 	/* Put the note skins back. */
-	RefreshNoteSkinData( GAMESTATE->m_CurGame );
+	RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 }
 
 
