@@ -919,13 +919,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 *   4. Don't display the song at all.
 			 *
 			 * We're doing #3.  I'm not sure which is best.
-			 *
-			 * We have to pause the music, not stop it.  If we stop it,
-			 * its position will be 0, and we'll render the *start*
-			 * of the song while we tween out, which looks really strange.
-			 * -glenn
 			 */
-			/* but with the new sound code, Stop leaves the position alone -glenn (XXX remove this comment) */
 			m_soundMusic.StopPlaying();
 
 			this->ClearMessageQueue();
