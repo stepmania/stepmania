@@ -12,6 +12,7 @@ public:
 	LunaActorFrame() { LUA->Register( Register ); }
 
 	static int propagate( T* p, lua_State *L )	{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
+	static int SetUpdateRate( T* p, lua_State *L )	{ p->SetUpdateRate( FArg(1) ); return 0; }
 	static int GetChild( T* p, lua_State *L )
 	{
 		Actor *pChild = p->GetChild( SArg(1) );
@@ -25,6 +26,7 @@ public:
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( propagate )
+		ADD_METHOD( SetUpdateRate )
 		ADD_METHOD( GetChild )
 		LunaActor<T>::Register( L );
 	}
@@ -68,7 +70,9 @@ public:
 	virtual void SetZWrite( bool b );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
-	
+
+	void SetUpdateRate( float fUpdateRate ) { m_fUpdateRate = fUpdateRate; }
+
 	void SetPropagateCommands( bool b );
 
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
