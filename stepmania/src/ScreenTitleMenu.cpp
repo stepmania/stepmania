@@ -112,16 +112,18 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	switch( PREFSMAN->m_iCoinMode )
 	{
 	case COIN_HOME:
-		for( unsigned i=0; i<m_aModeChoices.size(); i++ )
 		{
-			m_textChoice[i].LoadFromFont( THEME->GetPathToF("ScreenTitleMenu choices") );
-			m_textChoice[i].SetHorizAlign( (enum Actor::HorizAlign)MENU_TEXT_ALIGN );
-			m_textChoice[i].SetText( NAME(i) );
-			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
-			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
-			m_textChoice[i].EnableShadow( true );
-			this->AddChild( &m_textChoice[i] );
-		}	
+			for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+			{
+				m_textChoice[i].LoadFromFont( THEME->GetPathToF("ScreenTitleMenu choices") );
+				m_textChoice[i].SetHorizAlign( (enum Actor::HorizAlign)MENU_TEXT_ALIGN );
+				m_textChoice[i].SetText( NAME(i) );
+				m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
+				m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
+				m_textChoice[i].EnableShadow( true );
+				this->AddChild( &m_textChoice[i] );
+			}	
+		}
 		break;
 	case COIN_PAY:
 	case COIN_FREE:
