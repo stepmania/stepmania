@@ -175,7 +175,15 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 {
 	hand.type = ROW_CHARACTER;
 	row.bOneChoiceForAllPlayers = false;
-	row.choices.push_back( ENTRY_NAME("Off") );
+	hand.Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
+
+	{
+		row.choices.push_back( ENTRY_NAME("Off") );
+		ModeChoice mc;
+		mc.m_pCharacter = GAMESTATE->GetDefaultCharacter();
+		hand.ListEntries.push_back( mc );
+	}
+
 	vector<Character*> apCharacters;
 	GAMESTATE->GetCharacters( apCharacters );
 	for( unsigned i=0; i<apCharacters.size(); i++ )
@@ -183,6 +191,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 		Character* pCharacter = apCharacters[i];
 		CString s = pCharacter->m_sName;
 		s.MakeUpper();
+
 		row.choices.push_back( s ); 
 		ModeChoice mc;
 		mc.m_pCharacter = pCharacter;
