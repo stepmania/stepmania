@@ -33,7 +33,7 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 	{
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			if( this->GetTapNote(t, i) != TAP_EMPTY && GetTapNoteScore(t, i) >= tns )
+			if( this->GetTapNote(t, i).type != TapNote::empty && GetTapNoteScore(t, i) >= tns )
 				iNumSuccessfulTapNotes++;
 		}
 	}
@@ -59,11 +59,10 @@ int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const 
 		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			switch( GetTapNote(t, i) )
+			switch( GetTapNote(t, i).type )
 			{
-			case TAP_TAP:		
-			case TAP_HOLD_HEAD: 
-			case TAP_ADDITION:	
+			case TapNote::tap:		
+			case TapNote::hold_head: 
 				iNumNotesThisIndex++;
 				minTapNoteScore = min( minTapNoteScore, GetTapNoteScore(t, i) );
 			}
@@ -112,7 +111,7 @@ int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) 
 	{
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			if( this->GetTapNote(t, i) == TAP_MINE && GetTapNoteScore(t, i) != TNS_HIT_MINE )
+			if( this->GetTapNote(t,i).type == TapNote::mine  &&  GetTapNoteScore(t, i) != TNS_HIT_MINE )
 				iNumSuccessfulMinesNotes++;
 		}
 	}
@@ -143,7 +142,9 @@ int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) 
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			TapNote tn = GetTapNoteX(t, i);
-			if( tn == TAP_MINE || tn == TAP_EMPTY ) // mines don't count
+			if( tn.type == TapNote::empty )
+				continue;
+			if( tn.type == TapNote::mine ) // mines don't count
 				continue;
 			if( GetTapNoteScore(t, i) <= TNS_BOO )
 				Missed = true;
@@ -188,7 +189,7 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
 		/* Don't coun, or else the score 
 		 * will always be TNS_NONE. */
 		TapNote tn = GetTapNote(t, row);
-		if( tn == TAP_EMPTY || tn == TAP_MINE ) 
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine) 
 			continue;
 		score = min( score, GetTapNoteScore(t, row) );
 	}
@@ -212,7 +213,7 @@ int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
 	{
 		/* Skip empty tracks and mines */
 		TapNote tn = GetTapNote(t, row);
-		if( tn == TAP_EMPTY || tn == TAP_MINE ) 
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine ) 
 			continue;
 
 		TapNoteScore tns = GetTapNoteScore(t, row);

@@ -3,6 +3,7 @@
 
 #include "NotesLoader.h"
 #include "GameConstantsAndTypes.h"
+#include "NoteTypes.h"
 
 class Song;
 class Steps;
@@ -10,7 +11,7 @@ class Steps;
 class BMSLoader: public NotesLoader
 {
 	bool LoadFromBMSFile( const CString &sPath, Steps &out1 );
-	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut );
+	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, TapNote &tapNoteOut );
 	void PushTrackNumForMagic( int iTrackNum );
 	StepsType CheckTracksMagic();
 	void ResetTracksMagic();

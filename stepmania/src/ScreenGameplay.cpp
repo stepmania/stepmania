@@ -1510,7 +1510,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			{	
 				// Somehow, step data was getting majorly corrupted, therefor causing light
 				// signals to be sent at incorrect times where notes were not even present.
-				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ) != TAP_EMPTY);
+				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
 				bBlinkCabinetLight[cl] |= bBlink;
 			}
 			FOREACH_EnabledPlayer( pn )
@@ -1518,7 +1518,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				for( int t=0; t<m_Player[pn].GetNumTracks(); t++ )
 				{
 					TapNote tn = m_Player[pn].GetTapNote(t,r);
-					bool bBlink = (tn != TAP_EMPTY && tn != TAP_MINE);
+					bool bBlink = (tn.type != TapNote::empty && tn.type != TapNote::mine);
 					if( bBlink )
 					{
 						StyleInput si( pn, t );

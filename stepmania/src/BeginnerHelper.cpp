@@ -335,9 +335,9 @@ void BeginnerHelper::Update( float fDeltaTime )
 			// Find all steps on this row, in order to show the correct animations
 			int iStep = 0;
 			const int iNumTracks = m_NoteData[pn].GetNumTracks(); 
-			for(int k=0; k<iNumTracks; k++)
-				if(m_NoteData[pn].GetTapNote(k, iRow) == TAP_TAP)
-					iStep |= 1 << k;
+			for( int t=0; t<iNumTracks; t++ )
+				if( m_NoteData[pn].GetTapNote(t,iRow).type == TapNote::tap )
+					iStep |= 1 << t;
 			
 			// Assign new data
 			this->Step(pn, iStep);

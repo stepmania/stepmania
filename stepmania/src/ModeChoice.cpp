@@ -15,6 +15,7 @@
 #include "MemoryCardManager.h"
 #include "song.h"
 #include "Game.h"
+#include "Style.h"
 
 void ModeChoice::Init()
 {

@@ -20,6 +20,7 @@
 #include "MemoryCardManager.h"
 #include "XmlFile.h"
 #include "StepsUtil.h"
+#include "Style.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program

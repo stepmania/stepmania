@@ -3,6 +3,7 @@
 #include "GameManager.h"
 #include "XmlFile.h"
 #include "Game.h"
+#include "Style.h"
 
 
 void StyleID::FromStyle( const Style *p )

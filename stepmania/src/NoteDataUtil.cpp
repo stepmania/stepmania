@@ -95,21 +95,22 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 				for( int c=0; c<min(sMeasureLine.GetLength(),out.GetNumTracks()); c++ )
 				{
 					TapNote t;
-					switch(sMeasureLine[c])
+					char ch = sMeasureLine[c];
+					switch( ch )
 					{
-					case '0': t = TAP_EMPTY; break;
-					case '1': t = TAP_TAP; break;
-					case '2': t = TAP_HOLD_HEAD; break;
-					case '3': t = TAP_HOLD_TAIL; break;
+					case '0': t = TAP_EMPTY;				break;
+					case '1': t = TAP_ORIGINAL_TAP;			break;
+					case '2': t = TAP_ORIGINAL_HOLD_HEAD;	break;
+					case '3': t = TAP_ORIGINAL_HOLD_TAIL;	break;
 	//				case 'm':
 					// Don't be loose with the definition.  Use only 'M' since
 					// that's what we've been writing to disk.  -Chris
-					case 'M': t = TAP_MINE; break;
-					
+					case 'M': 
+						t = TAP_ORIGINAL_MINE;		break;					
 					default: 
-						if( sMeasureLine[c] >= 'a' && sMeasureLine[c] <= 'z' )
+						if( ch >= 'a' && ch <= 'z' )
 						{
-							t = sMeasureLine[c];
+							t.Set( TapNote::attack, TapNote::original, ch - 'a' );
 						}
 						else
 						{
@@ -118,7 +119,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 							 * due to invalid data.  We should probably check for this when
 							 * we load SM data for the first time ... */
 							// ASSERT(0); 
-							t = TAP_EMPTY; 
+							t = TAP_EMPTY;
 						}
 						break;
 					}
@@ -154,7 +155,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 			if( asBits[0].empty() )
 				continue;
 
-			TapNote tn = asBits[0][0];
+			int attack_index = asBits[0][0] - 'a';
 			
 			Attack attack;
 			attack.level = ATTACK_LEVEL_1;
@@ -162,7 +163,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 			attack.sModifier.Replace( '.', ',' );	// we couldn't use comma here because the map item separator is a comma
 			attack.fSecsRemaining = strtof( asBits[2], NULL );
 			
-			out.GetAttackMap()[tn] = attack;
+			out.GetAttackMap()[attack_index] = attack;
 		}
 	}
 }
@@ -206,23 +207,17 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 				{
 					TapNote tn = in.GetTapNote(t, r);
 					char c;
-					switch( tn )
+					switch( tn.type )
 					{
-					case TAP_EMPTY:		c = '0'; break;
-					case TAP_TAP:		c = '1'; break;
-					case TAP_HOLD_HEAD: c = '2'; break;
-					case TAP_HOLD_TAIL: c = '3'; break;
-					case TAP_MINE:		c = 'M'; break;
+					case TapNote::empty:		c = '0'; break;
+					case TapNote::tap:			c = '1'; break;
+					case TapNote::hold_head:	c = '2'; break;
+					case TapNote::hold_tail:	c = '3'; break;
+					case TapNote::mine:			c = 'M'; break;
+					case TapNote::attack:		c = 'a' + (char)tn.attackIndex ; break;
 					default: 
-						if( IsTapAttack(tn) )
-						{
-							c = tn;
-						}
-						else
-						{
-							ASSERT(0);
-							c = '0'; 
-						}
+						ASSERT(0);
+						c = '0'; 
 						break;
 					}
 					sRet.append(1, c);
@@ -239,15 +234,16 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 		// 
 		CStringArray asLines;
 
-		for( map<TapNote,Attack>::const_iterator iter = in_.GetAttackMap().begin();
+		for( map<unsigned,Attack>::const_iterator iter = in_.GetAttackMap().begin();
 			iter != in_.GetAttackMap().end();
 			iter++ )
 		{
-			TapNote tn = iter->first;
+			int attackIndex = iter->first;
+			char ch = 'a' + (char)attackIndex;
 			Attack attack = iter->second;
 			attack.sModifier.Replace( ',', '.' );	// comma is the map item separator
 
-			asLines.push_back( ssprintf("%c=%s=%f,\n", tn, attack.sModifier.c_str(), attack.fSecsRemaining) );
+			asLines.push_back( ssprintf("%c=%s=%f,\n", ch, attack.sModifier.c_str(), attack.fSecsRemaining) );
 		}
 
 		attacks_out = join( ",", asLines );
@@ -298,8 +294,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 			if( r )
 			for( int t=0; t<=Original.GetNumTracks(); t++ )
 			{
-				if( Original.GetTapNote(t, r) == TAP_HOLD &&
-					Original.GetTapNote(t, r-1) == TAP_HOLD)
+				if( Original.GetTapNote(t,r).type == TapNote::hold &&
+					Original.GetTapNote(t,r-1).type == TapNote::hold )
 				{
 					bHoldCrossesThisMeasure = true;
 					break;
@@ -355,7 +351,7 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 			int &iTrackTo = DestRow[i];
 
 			const TapNote iStepFrom = in.GetTapNote( iTrackFrom, row );
-			if( iStepFrom == TAP_EMPTY )
+			if( iStepFrom.type == TapNote::empty )
 				continue;
 
 			if( LastSourceTrack[iTrackTo] != iTrackFrom &&
@@ -404,12 +400,12 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 		 * don't write huge streams of tap notes. */
 		bool bHoldNoteOnThisRow = false;
 		for( int t=0; t<Original.GetNumTracks(); t++ )
-			if( Original.GetTapNote( t, r ) == TAP_HOLD )
+			if( Original.GetTapNote(t,r).type == TapNote::hold )
 				bHoldNoteOnThisRow = true;
 
 		for( int t=0; t<out.GetNumTracks(); t++ )
 		{
-			TapNote tn = bHoldNoteOnThisRow? TAP_HOLD:TAP_TAP;
+			TapNote tn = bHoldNoteOnThisRow ? TAP_ORIGINAL_HOLD : TAP_ORIGINAL_TAP;
 			out.SetTapNote( t, r, tn );
 		}
 	}
@@ -524,7 +520,7 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBea
 			continue;	// skip
 
 		in.RemoveHoldNote( i );
-		in.SetTapNote( hn.iTrack, hn.iStartRow, TAP_TAP );
+		in.SetTapNote( hn.iTrack, hn.iStartRow, TAP_ORIGINAL_TAP );
 	}
 }
 
@@ -548,12 +544,12 @@ void NoteDataUtil::RemoveSimultaneousNotes(NoteData &in, int iMaxSimultaneous, f
 		int iTracksToRemove = max( 0, iTotalTracksPressed - iMaxSimultaneous );
 		for( int t=0; iTracksToRemove>0 && t<in.GetNumTracks(); t++ )
 		{
-			if( in.GetTapNote(t,r) == TAP_TAP )
+			if( in.GetTapNote(t,r).type == TapNote::tap )
 			{
 				in.SetTapNote( t, r, TAP_EMPTY );
 				iTracksToRemove--;
 			}
-			else if( in.GetTapNote(t,r) == TAP_HOLD_HEAD )
+			else if( in.GetTapNote(t,r).type == TapNote::hold_head )
 			{
 				int i;
 				for( i=0; i<in.GetNumHoldNotes(); i++ )
@@ -591,8 +587,8 @@ void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 	int iRowEnd = BeatToNoteRow(fEndBeat);
 	for( int t=0; t<in.GetNumTracks(); t++ )
 		for( int r=iRowStart; r<=iRowEnd; r++ ) 
-			if( in.GetTapNote(t,r)==TAP_MINE )
-				in.SetTapNote(t,r,TAP_EMPTY);
+			if( in.GetTapNote(t,r).type == TapNote::mine )
+				in.SetTapNote( t, r, TAP_EMPTY );
 }
 
 
@@ -747,7 +743,7 @@ static void SuperShuffleTaps( NoteData &in, int iStartIndex, int iEndIndex )
 		for( int t1=0; t1<in.GetNumTracks(); t1++ )
 		{
 			TapNote tn1 = in.GetTapNote(t1, r);
-			if( tn1==TAP_HOLD )
+			if( tn1.type == TapNote::hold )
 				continue;
 
 			// a tap that is not part of a hold
@@ -756,7 +752,7 @@ static void SuperShuffleTaps( NoteData &in, int iStartIndex, int iEndIndex )
 			{
 				const int t2 = rand() % in.GetNumTracks();
 				TapNote tn2 = in.GetTapNote(t2, r);
-				if( tn2==TAP_HOLD )	// a tap that is not part of a hold
+				if( tn2.type == TapNote::hold )	// a tap that is not part of a hold
 					continue;
 
 				// swap
@@ -856,7 +852,7 @@ void NoteDataUtil::Little(NoteData &in, float fStartBeat, float fEndBeat)
 	for( i=0; i<=max_row; i+=1 ) 
 		if( i % ROWS_PER_BEAT != 0 )
 			for( int c=0; c<in.GetNumTracks(); c++ ) 
-				in.SetTapNote(c, i, TAP_EMPTY);
+				in.SetTapNote( c, i, TAP_EMPTY );
 
 	for( i=in.GetNumHoldNotes()-1; i>=0; i-- )
 		if( fmodf(in.GetHoldNote(i).GetStartBeat(),1) != 0 )	// doesn't start on a beat
@@ -906,11 +902,11 @@ void NoteDataUtil::Wide( NoteData &in, float fStartBeat, float fEndBeat )
 			iTrackToAdd--;
 		CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
 
-		if( in.GetTapNote(iTrackToAdd, i) != TAP_EMPTY )
+		if( in.GetTapNote(iTrackToAdd, i).type != TapNote::empty )
 		{
 			iTrackToAdd = (iTrackToAdd+1) % in.GetNumTracks();
 		}
-		in.SetTapNote(iTrackToAdd, i, TAP_ADDITION);
+		in.SetTapNote(iTrackToAdd, i, TAP_ADDITION_TAP);
 	}
 
 	in.Convert4sToHoldNotes();
@@ -1029,7 +1025,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 		}
 
 done_looking_for_track_to_add:
-		in.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION);
+		in.SetTapNote(iTrackOfNoteToAdd, iRowToAdd, TAP_ADDITION_TAP);
 	}
 
 	in.Convert4sToHoldNotes();
@@ -1057,8 +1053,8 @@ void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 			if( iRowCount>=iPlaceEveryRows )
 			{
 				for( int t=0; t<in.GetNumTracks(); t++ )
-					if( in.GetTapNote(t,r) == TAP_TAP )
-						in.SetTapNote(t,r,TAP_MINE);
+					if( in.GetTapNote(t,r).type == TapNote::tap )
+						in.SetTapNote(t,r,TAP_ADDITION_MINE);
 				
 				iRowCount = 0;
 				if( iPlaceEveryRows == 6 )
@@ -1087,12 +1083,12 @@ void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 			continue;
 	
 		// Add a mine right after the hold end.
-		in.SetTapNote(hn.iTrack,iMineRow,TAP_MINE);
+		in.SetTapNote( hn.iTrack, iMineRow, TAP_ADDITION_MINE );
 
 		// Convert all notes in this row to mines.
 		for( int t=0; t<in.GetNumTracks(); t++ )
-			if( in.GetTapNote(t,iMineRow) == TAP_TAP )
-				in.SetTapNote(t,iMineRow,TAP_MINE);
+			if( in.GetTapNote(t,iMineRow).type == TapNote::tap )
+				in.SetTapNote(t,iMineRow,TAP_ADDITION_MINE);
 
 		iRowCount = 0;
 	}
@@ -1148,7 +1144,7 @@ void NoteDataUtil::Echo( NoteData &in, float fStartBeat, float fEndBeat )
 				continue;	// don't lay
 		}
 
-		in.SetTapNote( iEchoTrack, iRowEcho, TAP_ADDITION );
+		in.SetTapNote( iEchoTrack, iRowEcho, TAP_ADDITION_TAP );
 	}
 }
 
@@ -1177,7 +1173,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 			if( iTrackAddedThisRow > iSimultaneousHolds )
 				break;
 
-			if( in.GetTapNote(t,r) == TAP_TAP )
+			if( in.GetTapNote(t,r).type == TapNote::tap )
 			{
 				// Find the ending row for this hold
 				int iTapsLeft = iSimultaneousHolds;
@@ -1191,7 +1187,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 
 					// If there are two taps in a row on the same track, 
 					// don't convert the earlier one to a hold.
-					if( in.GetTapNote(t,r2) != TAP_EMPTY )
+					if( in.GetTapNote(t,r2).type != TapNote::empty )
 						goto dont_add_hold;
 
 					set<int> tracksDown;
@@ -1238,7 +1234,7 @@ void NoteDataUtil::Stomp( NoteData &in, StepsType st, float fStartBeat, float fE
 
 		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
-			if( in.GetTapNote(t, r) == TAP_TAP )	// there is a tap here
+			if( in.GetTapNote(t, r).type == TapNote::tap )	// there is a tap here
 			{
 				// Look to see if there is enough empty space on either side of the note
 				// to turn this into a jump.
@@ -1261,7 +1257,7 @@ void NoteDataUtil::Stomp( NoteData &in, StepsType st, float fStartBeat, float fE
 					continue;
 
 				int iOppositeTrack = iTrackMapping[t];
-				in.SetTapNote( iOppositeTrack, r, TAP_ADDITION );
+				in.SetTapNote( iOppositeTrack, r, TAP_ADDITION_TAP );
 			}
 		}
 	}		
@@ -1322,20 +1318,20 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 				continue;
 
 			TapNote note = in.GetTapNote(c, iOldIndex);
-			if( note == TAP_EMPTY )
+			if( note.type == TapNote::empty )
 				continue;
 
 			in.SetTapNote(c, iOldIndex, TAP_EMPTY);
 
 			const TapNote oldnote = in.GetTapNote(c, iNewIndex);
-			if( note == TAP_TAP &&
-				(oldnote == TAP_HOLD_HEAD || oldnote == TAP_HOLD_TAIL) )
+			if( note.type == TapNote::tap &&
+				(oldnote.type == TapNote::hold_head || oldnote.type == TapNote::hold_tail) )
 				continue; // HoldNotes override TapNotes
 
 			/* If two hold note boundaries are getting snapped together,
 			 * merge them. */
-			if( (note == TAP_HOLD_HEAD && oldnote == TAP_HOLD_TAIL) ||
-				(note == TAP_HOLD_TAIL && oldnote == TAP_HOLD_HEAD))
+			if( (note.type == TapNote::hold_head && oldnote.type == TapNote::hold_tail) ||
+				(note.type == TapNote::hold_tail && oldnote.type == TapNote::hold_head) )
 				note = TAP_EMPTY;
 			
 			in.SetTapNote(c, iNewIndex, note );
@@ -1414,7 +1410,7 @@ void NoteDataUtil::CollapseToOne( NoteData &in )
 	int max_row = in.GetLastRow();
 	for( int r=0; r<=max_row; r++ )
 		for( int t=0; t<in.GetNumTracks(); t++ )
-			if( in.GetTapNote(t,r) != TAP_EMPTY )
+			if( in.GetTapNote(t,r).type != TapNote::empty )
 			{
 				TapNote tn = in.GetTapNote(t,r);
 				in.SetTapNote(t, r, TAP_EMPTY);
@@ -1431,7 +1427,7 @@ void NoteDataUtil::CollapseLeft( NoteData &in )
 	{
 		int iNumTracksFilled = 0;
 		for( int t=0; t<in.GetNumTracks(); t++ )
-			if( in.GetTapNote(t,r) != TAP_EMPTY )
+			if( in.GetTapNote(t,r).type != TapNote::empty )
 			{
 				TapNote tn = in.GetTapNote(t,r);
 				in.SetTapNote(t, r, TAP_EMPTY);
@@ -1540,7 +1536,7 @@ bool NoteDataUtil::RowPassesValidMask( NoteData &in, int row, const bool bValidM
 {
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		if( !bValidMask[t] && in.GetTapNote(t,row) != TAP_EMPTY )
+		if( !bValidMask[t] && in.GetTapNote(t,row).type != TapNote::empty )
 			return false;
 	}
 
@@ -1551,8 +1547,12 @@ void NoteDataUtil::ConvertAdditionsToRegular( NoteData &in )
 {
 	for( int r=0; r<=in.GetLastRow(); r++ )
 		for( int t=0; t<in.GetNumTracks(); t++ )
-			if( in.GetTapNote(t,r) == TAP_ADDITION )
-				in.SetTapNote(t,r,TAP_TAP);
+			if( in.GetTapNote(t,r).source == TapNote::addition )
+			{
+				TapNote tn = in.GetTapNote(t,r);
+				tn.source = TapNote::original;
+				in.SetTapNote( t, r, tn );
+			}
 }
 
 void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, StepsType st, Song* pSong )
@@ -1692,7 +1692,7 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, fl
 		for( int t=0; t<temp2.GetNumTracks(); t++ )
 		{
 			TapNote tn = temp2.GetTapNote( t, r );
-			if( tn != TAP_EMPTY )
+			if( tn.type != TapNote::empty )
 			{
 				temp2.SetTapNote( t, r, TAP_EMPTY );
 

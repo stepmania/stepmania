@@ -1,68 +1,57 @@
 #ifndef NOTE_TYPES_H
 #define NOTE_TYPES_H
 
-#include "PlayerOptions.h"
+struct TapNote
+{
+	enum Type { 
+		empty, 
+		tap, 
+		hold_head,	// graded like a TAP_TAP
+		hold_tail,	/* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
+		hold,		/* In 4s mode, holds and TAP_HOLD_HEAD are deleted and TAP_HOLD is added: */
+		mine,		// don't step!
+		attack,
+	};
+	unsigned type : 3;	// no unsigned enum support in VC++
+	enum Source {
+		original,	// part of the original NoteData
+		addition,	// additional note added by a transform
+		removed,	// Removed taps, e.g. in Little - play keysounds here as if
+					// judged Perfect, but don't bother rendering or judging this
+					// step.  Also used for when we implement auto-scratch in BM,
+					// and for if/when we do a "reduce" modifier that cancels out
+					// all but N keys on a line [useful for BM->DDR autogen, too].
+					// Removed hold body (...why?) - acts as follows:
+					// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
+					//     we've already hit the start of the sound (?? we put Holds Off on?)
+					//     then this is triggered automatically to keep the sound going
+					// 2 - if we're NOT [anything else], we ignore this.
+					// Equivalent to all 4s aside from the first one.
+	};
+	unsigned source : 2;	// only valid if type!=empty
+	unsigned attackIndex : 3;	// attack index
+	// bit field sizes should add to 8 bits.
 
-// '1' = tap note
-// '2' = hold note begin
-// '3' = hold note end  ('1' can also end a HoldNote) ('3' without a matching '2' is ignored
-// ... for future expansion
+	void Set( Type type_, Source source_, unsigned attackIndex_ )
+	{
+		type = type_;
+		source = source_;
+		attackIndex = attackIndex_;
+	}
+};
 
+const unsigned MAX_NUM_ATTACKS = 2*2*2;	// 3 bits to hold the attack index currently
 
-typedef unsigned char TapNote;
+extern TapNote TAP_EMPTY;				// '0'
+extern TapNote TAP_ORIGINAL_TAP;		// '1'
+extern TapNote TAP_ORIGINAL_HOLD_HEAD;	// '2'
+extern TapNote TAP_ORIGINAL_HOLD_TAIL;	// '3'
+extern TapNote TAP_ORIGINAL_HOLD;		// '4'
+extern TapNote TAP_ORIGINAL_MINE;		// 'M'
+extern TapNote TAP_ADDITION_TAP;
+extern TapNote TAP_ADDITION_MINE;
 
-static const TapNote TAP_EMPTY		= '0';
-static const TapNote TAP_TAP		= '1'; /* impatient? */
-static const TapNote TAP_HOLD_HEAD	= '2';	// graded like a TAP_TAP
-
-/* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
-static const TapNote TAP_HOLD_TAIL	= '3';
-
-/* In 4s mode, holds and TAP_HOLD_HEAD are deleted and TAP_HOLD is added: */
-static const TapNote TAP_HOLD		= '4';
-
-// additional note added by a transform
-static const TapNote TAP_ADDITION	= '5';
-
-// mine note - don't step!
-static const TapNote TAP_MINE		= '6';
-
-// TAP_ADD_HOLD is to TAP_HOLD what TAP_ADDITION is to TAP_TAP.
-// There is no equivalent for TAP_MINE.
-static const TapNote TAP_ADD_HOLD	= '7';	// is this supposed to be TAP_ADD_HOLD_HEAD? -Chris
-
-
-// BM-specific
-// Removed taps, e.g. in Little - play keysounds here as if
-// judged Perfect, but don't bother rendering or judging this
-// step.  Also used for when we implement auto-scratch in BM,
-// and for if/when we do a "reduce" modifier that cancels out
-// all but N keys on a line [useful for BM->DDR autogen, too].
-static const TapNote TAP_REMOVED	= '8';
-
-// KM-specific
-// Removed hold body (...why?) - acts as follows:
-// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
-//     we've already hit the start of the sound (?? we put Holds Off on?)
-//     then this is triggered automatically to keep the sound going
-// 2 - if we're NOT [anything else], we ignore this.
-// Equivalent to all 4s aside from the first one.
-static const TapNote TAP_REMOVED_HOLD_BODY	= ':';
-
-// KM-specific
-// A hold removed by Little, I guess.
-static const TapNote TAP_REMOVED_HOLD_HEAD	= '.';
-
-// KM-specific
-// Kills an auto-sound from a hold.
-static const TapNote TAP_REMOVED_HOLD_TAIL	= '\'';
-
-// step for an item
-static const TapNote TAP_ATTACK_BEGIN		= 'a';
-static const TapNote TAP_ATTACK_END			= 'z';
-
-inline bool IsTapAttack( TapNote tn ) { return tn>=TAP_ATTACK_BEGIN && tn<=TAP_ATTACK_END; }
-
+// TODO: Don't have a hard-coded track limit.
 enum 
 {
 	TRACK_1 = 0,

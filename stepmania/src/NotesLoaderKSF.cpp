@@ -192,9 +192,9 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 			TapNote tap;
 			switch(sRowString[t])
 			{
-			case '0': tap = TAP_EMPTY; break;
-			case '1': tap = TAP_TAP; break;
-			default: ASSERT(0); tap = TAP_EMPTY; break;
+			case '0':	tap = TAP_EMPTY;			break;
+			case '1':	tap = TAP_ORIGINAL_TAP;		break;
+			default:	ASSERT(0); tap = TAP_EMPTY;	break;
 			}
 
 			notedata.SetTapNote(t, row, tap);

@@ -23,6 +23,7 @@
 #include "StageStats.h"
 #include "StepsUtil.h"
 #include "Foreach.h"
+#include "Style.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;

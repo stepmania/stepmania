@@ -200,7 +200,7 @@ void ScreenHowToPlay::Step()
 	{
 		const int iNumTracks = m_NoteData.GetNumTracks();
 		for( int k=0; k<iNumTracks; k++ )
-			if( m_NoteData.GetTapNote(k, iNoteRow ) == TAP_TAP )
+			if( m_NoteData.GetTapNote(k, iNoteRow).type == TapNote::tap )
 				iStep |= 1 << k;
 
 		switch( iStep )

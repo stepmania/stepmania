@@ -17,6 +17,7 @@
 #include "StyleUtil.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
+#include "Style.h"
 
 #define SHOW_PLAY_MODE(pm)				THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)					THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))

@@ -582,10 +582,10 @@ void NoteField::DrawPrimitives()
 		for( i=iLastIndexToDraw; i>=iFirstIndexToDraw; --i )	//	 for each row
 		{	
 			TapNote tn = GetTapNote(c, i);
-			if( tn == TAP_EMPTY )	// no note here
+			if( tn.type == TapNote::empty )	// no note here
 				continue;	// skip
 			
-			if( tn == TAP_HOLD_HEAD )	// this is a HoldNote begin marker.  Grade it, but don't draw
+			if( tn.type == TapNote::hold_head )	// this is a HoldNote begin marker.  Grade it, but don't draw
 				continue;	// skip
 
 			// TRICKY: If boomerang is on, then all notes in the range 
@@ -601,7 +601,7 @@ void NoteField::DrawPrimitives()
 			bool bHoldNoteBeginsOnThisBeat = false;
 			for( int c2=0; c2<GetNumTracks(); c2++ )
 			{
-				if( GetTapNote(c2, i) == TAP_HOLD_HEAD )
+				if( GetTapNote(c2, i).type == TapNote::hold_head)
 				{
 					bHoldNoteBeginsOnThisBeat = true;
 					break;
@@ -615,9 +615,9 @@ void NoteField::DrawPrimitives()
 				bIsInSelectionRange = m_fBeginMarker<=fBeat && fBeat<=m_fEndMarker;
 			}
 
-			bool bIsAddition = (tn == TAP_ADDITION);
-			bool bIsMine = (tn == TAP_MINE);
-			bool bIsAttack = IsTapAttack(tn);
+			bool bIsAddition = (tn.source == TapNote::addition);
+			bool bIsMine = (tn.type == TapNote::mine);
+			bool bIsAttack = (tn.type == TapNote::attack);
 
 			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );

@@ -597,7 +597,7 @@ int PlayerMinus::GetClosestNoteDirectional( int col, float fBeat, float fMaxBeat
 		int iCurrentIndex = iIndexStartLookingAt + (iDirection * delta);
 
 		if( iCurrentIndex < 0) continue;
-		if( GetTapNote(col, iCurrentIndex) == TAP_EMPTY) continue; /* no note here */
+		if( GetTapNote(col, iCurrentIndex).type == TapNote::empty) continue; /* no note here */
 		if( GetTapNoteScore(col, iCurrentIndex) != TNS_NONE ) continue;	/* this note has a score already */
 
 		return iCurrentIndex;
@@ -678,11 +678,11 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 		{
-		case PC_HUMAN: {
+		case PC_HUMAN:
 
-			switch( tn )
+			switch( tn.type )
 			{
-			case TAP_MINE:
+			case TapNote::mine:
 				// stepped too close to mine?
 				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Mine) )
 				{
@@ -698,42 +698,38 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				}
 				break;
 
-			default:	// not a mine
-				if( IsTapAttack(tn) )
+			case TapNote::attack:
+				score = TNS_NONE;	// don't score this as anything
+				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Attack) )
 				{
-					score = TNS_NONE;	// don't score this as anything
-					if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Attack) )
-					{
-						m_soundAttackLaunch.Play();
-						// put attack in effect
-						Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
-						GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
+					m_soundAttackLaunch.Play();
+					// put attack in effect
+					Attack attack = this->GetAttackAt( col, iIndexOverlappingNote );
+					GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[m_PlayerNumber], attack );
 
-						// remove all TapAttacks on this row
-						for( int t=0; t<this->GetNumTracks(); t++ )
+					// remove all TapAttacks on this row
+					for( int t=0; t<this->GetNumTracks(); t++ )
+					{
+						TapNote tn = this->GetTapNote(t, iIndexOverlappingNote);
+						if( tn.type == TapNote::attack )
 						{
-							TapNote tn = this->GetTapNote(t, iIndexOverlappingNote);
-							if( IsTapAttack(tn) )
-							{
-								this->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-								m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
-							}
+							this->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
+							m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 						}
 					}
 				}
-				else	// !IsTapAttack
-				{
-					if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_MARVELOUS;
-					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )	score = TNS_PERFECT;
-					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_GREAT;
-					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )		score = TNS_GOOD;
-					else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )		score = TNS_BOO;
-					else	score = TNS_NONE;
-				}
+				break;
+			default:
+				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_MARVELOUS;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Perfect) )	score = TNS_PERFECT;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Great) )		score = TNS_GREAT;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Good) )		score = TNS_GOOD;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Boo) )		score = TNS_BOO;
+				else	score = TNS_NONE;
 				break;
 			}
 			break;
-		}
+		
 		case PC_CPU:
 		case PC_AUTOPLAY:
 			switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
@@ -748,14 +744,14 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 			// TRICKY:  We're asking the AI to judge mines.  consider TNS_GOOD and below
 			// as "mine was hit" and everything else as "mine was avoided"
-			if( tn == TAP_MINE )
+			if( tn.type == TapNote::mine )
 			{
 				// The CPU hits a lot of mines.  Only consider hitting the 
 				// first mine for a row.  We know we're the first mine if 
 				// there are are no mines to the left of us.
 				for( int t=0; t<col; t++ )
 				{
-					if( TAP_MINE == GetTapNote(t,iIndexOverlappingNote) )	// there's a mine to the left of us
+					if( GetTapNote(t,iIndexOverlappingNote).type == TapNote::mine )	// there's a mine to the left of us
 						return;	// avoid
 				}
 
@@ -789,7 +785,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				return;
 
 
-			if( IsTapAttack(tn)  &&  score > TNS_GOOD )
+			if( tn.type == TapNote::attack  &&  score > TNS_GOOD )
 			{
 				m_soundAttackLaunch.Play();
 				score = TNS_NONE;	// don't score this as anything
@@ -802,7 +798,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				for( int t=0; t<this->GetNumTracks(); t++ )
 				{
 					TapNote tn = this->GetTapNote(t, iIndexOverlappingNote);
-					if( IsTapAttack(tn) )
+					if( tn.type == TapNote::attack )
 					{
 						this->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
 						m_pNoteField->SetTapNote(col, iIndexOverlappingNote, TAP_EMPTY);	// remove from NoteField
@@ -863,11 +859,10 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		if( m_pSecondaryScoreKeeper )
 			m_pSecondaryScoreKeeper->HandleTapScore( score );
 
-		switch( tn )
+		switch( tn.type )
 		{
-		case TAP_TAP:
-		case TAP_HOLD_HEAD:
-		case TAP_ADDITION:
+		case TapNote::tap:
+		case TapNote::hold_head:
 			// don't the row if this note is a mine or tap attack
 			if( IsRowCompletelyJudged(iIndexOverlappingNote) )
 				OnRowCompletelyJudged( iIndexOverlappingNote );
@@ -945,8 +940,8 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	{
 		TapNote tn = GetTapNote(c, iIndexThatWasSteppedOn);
 
-		if( tn == TAP_EMPTY )	continue; /* no note in this col */
-		if( tn == TAP_MINE )	continue; /* don't flash on mines b/c they're supposed to be missed */
+		if( tn.type == TapNote::empty )	continue; /* no note in this col */
+		if( tn.type == TapNote::mine )	continue; /* don't flash on mines b/c they're supposed to be missed */
 
 		// If the score is great or better, remove the note from the screen to 
 		// indicate success.  (Or always if blind is on.)
@@ -1011,10 +1006,12 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		bool MissedNoteOnThisRow = false;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			if( GetTapNote(t, r) == TAP_EMPTY) continue; /* no note here */
-			if( GetTapNoteScore(t, r) != TNS_NONE ) continue; /* note here is already hit */
+			if( GetTapNote(t, r).type == TapNote::empty) /* no note here */
+				continue; 
+			if( GetTapNoteScore(t, r) != TNS_NONE ) /* note here is already hit */
+				continue; 
 			
-			if( GetTapNote(t, r) != TAP_MINE )
+			if( GetTapNote(t, r).type != TapNote::mine )
 			{
 				// A normal note.  Penalize for not stepping on it.
 				MissedNoteOnThisRow = true;
@@ -1047,7 +1044,7 @@ void PlayerMinus::CrossedRow( int iNoteRow )
 	if( GAMESTATE->m_PlayerController[m_PlayerNumber] != PC_HUMAN )
 	{
 		for( int t=0; t<GetNumTracks(); t++ )
-			if( GetTapNote(t, iNoteRow) != TAP_EMPTY )
+			if( GetTapNote(t, iNoteRow).type != TapNote::empty )
 				if( GetTapNoteScore(t, iNoteRow) == TNS_NONE )
 					Step( t, now );
 	}
@@ -1059,7 +1056,7 @@ void PlayerMinus::CrossedMineRow( int iNoteRow )
 	RageTimer now;
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		if( GetTapNote(t,iNoteRow) == TAP_MINE )
+		if( GetTapNote(t,iNoteRow).type == TapNote::mine )
 		{
 			const StyleInput StyleI( m_PlayerNumber, t );
 			const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
@@ -1091,7 +1088,8 @@ void PlayerMinus::RandomiseNotes( int iNoteRow )
 		const TapNote t1 = GetTapNote(t, NewNoteRow);
 		const TapNote t2 = GetTapNote(iRandomTrackToSwapWith, NewNoteRow);
 
-		if( (t1 == TAP_TAP || t1 == TAP_EMPTY) && (t2 == TAP_TAP || t2 == TAP_EMPTY) )
+		if( (t1.type == TapNote::tap || t1.type == TapNote::empty) && 
+			(t2.type == TapNote::tap || t2.type == TapNote::empty) )
 		{
 			SetTapNote(t, NewNoteRow, t2);
 			SetTapNote(iRandomTrackToSwapWith, NewNoteRow, t1);

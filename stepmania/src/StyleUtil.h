@@ -1,8 +1,8 @@
 #ifndef STYLEUTIL_H
 #define STYLEUTIL_H
 
-#include "Style.h"
-
+class Style;
+class Song;
 struct XNode;
 
 class StyleID

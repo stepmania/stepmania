@@ -17,7 +17,7 @@ class NoteData
 
 	vector<HoldNote>	m_HoldNotes;
 
-	map<TapNote,Attack>	m_AttackMap;
+	map<unsigned,Attack>	m_AttackMap;
 
 	/* Pad m_TapNotes so it includes the row "rows". */
 	void PadTapNotes(int rows);
@@ -36,14 +36,15 @@ public:
 	void SetNumTracks( int iNewNumTracks );
 
 	// TODO: Think of better accessors
-	const map<TapNote,Attack>& GetAttackMap() const { return m_AttackMap; }
-	map<TapNote,Attack>& GetAttackMap() { return m_AttackMap; }
+	const map<unsigned,Attack>& GetAttackMap() const { return m_AttackMap; }
+	map<unsigned,Attack>& GetAttackMap() { return m_AttackMap; }
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
 	inline TapNote GetTapNote(unsigned track, int row) const
 	{
-		if(row < 0 || row >= (int) m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
+		if(row < 0 || row >= (int) m_TapNotes[track].size()) 
+			return TAP_EMPTY;
 		return m_TapNotes[track][row];
 	}
 	void ReserveRows( int row );

@@ -30,6 +30,7 @@
 #include "CatalogXml.h"
 #include "Foreach.h"
 #include "StageStats.h"
+#include "Style.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 

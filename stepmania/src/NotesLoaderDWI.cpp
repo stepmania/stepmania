@@ -266,9 +266,9 @@ bool DWILoader::LoadFromDWITokens(
 					DWIcharToNoteCol( c, (GameController)pad, iCol1, iCol2 );
 
 					if( iCol1 != -1 )
-						newNoteData.SetTapNote(iCol1, iIndex, TAP_TAP);
+						newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_TAP);
 					if( iCol2 != -1 )
-						newNoteData.SetTapNote(iCol2, iIndex, TAP_TAP);
+						newNoteData.SetTapNote(iCol2, iIndex, TAP_ORIGINAL_TAP);
 
 					if( sStepData[i] == '!' )
 					{
@@ -278,9 +278,9 @@ bool DWILoader::LoadFromDWITokens(
 						DWIcharToNoteCol( holdChar, (GameController)pad, iCol1, iCol2 );
 
 						if( iCol1 != -1 )
-							newNoteData.SetTapNote(iCol1, iIndex, TAP_HOLD_HEAD);
+							newNoteData.SetTapNote(iCol1, iIndex, TAP_ORIGINAL_HOLD_HEAD);
 						if( iCol2 != -1 )
-							newNoteData.SetTapNote(iCol2, iIndex, TAP_HOLD_HEAD);
+							newNoteData.SetTapNote(iCol2, iIndex, TAP_ORIGINAL_HOLD_HEAD);
 
 					}
 				}

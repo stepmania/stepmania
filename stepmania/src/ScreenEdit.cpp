@@ -726,7 +726,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 			}
 
-			if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) != TAP_EMPTY )
+			if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex).type != TapNote::empty )
 			{
 				m_NoteFieldEdit.SetTapNote( iCol, iSongIndex, TAP_EMPTY );
 				return;
@@ -735,7 +735,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			// Hold LShift to lay mine, hold RShift to lay an attack
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
 			{
-				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_MINE );
+				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
 			}
 			else if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) )
 			{
@@ -744,7 +744,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 			else
 			{
-				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_TAP );
+				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_TAP );
 			}
 		}
 		break;
@@ -1214,7 +1214,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			if( iRow < 0 )
 				break;
 
-			m_NoteFieldRecord.SetTapNote(iCol, iRow, TAP_TAP);
+			m_NoteFieldRecord.SetTapNote(iCol, iRow, TAP_ORIGINAL_TAP);
 			m_NoteFieldRecord.Step( iCol, TNS_MARVELOUS );
 		}
 		break;

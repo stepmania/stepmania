@@ -128,16 +128,16 @@ StepsType BMSLoader::CheckTracksMagic()
 	}
 }
 
-void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut )
+void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, TapNote &tapNoteOut )
 {
 	if( iBMSTrack > 40 )
 	{
-		cNoteCharOut = '2';
+		tapNoteOut = TAP_ORIGINAL_HOLD_HEAD;
 		iBMSTrack -= 40;
 	}
 	else
 	{
-		cNoteCharOut = '1';
+		tapNoteOut = TAP_ORIGINAL_TAP;
 	}
 
 	switch( iBMSTrack )
@@ -293,12 +293,12 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 					const int iNoteIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
 									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
 					int iColumnNumber;
-					char cNoteChar;
+					TapNote tapNoteOut;
 
-					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, cNoteChar );
+					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, tapNoteOut );
 
 					if( iColumnNumber != -1 )
-						pNoteData->SetTapNote(iColumnNumber, iNoteIndex, cNoteChar);
+						pNoteData->SetTapNote(iColumnNumber, iNoteIndex, tapNoteOut);
 				}
 			}
 		}

@@ -21,6 +21,7 @@
 #include "StageStats.h"
 #include "RageDisplay.h"
 #include "Foreach.h"
+#include "Style.h"
 
 
 //
