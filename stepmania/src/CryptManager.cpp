@@ -36,8 +36,6 @@ CryptManager::CryptManager()
 	//
 	// generate keys if none are available
 	//
-	/* This is crashing in crypto51/integer.cpp CryptoPP::RecursiveInverseModPower2
-	 * in Linux. -glenn */
 	if( PREFSMAN->m_bSignProfileData )
 	{
 		if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
@@ -86,13 +84,15 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 	if( !IsAFile(sMessageFilename) )
 		return;
 
-	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
-	// be wrapped in a try catch?
+	try {
+		RageFileSource privFile(sPrivFilename, true);
+		RSASSA_PKCS1v15_SHA_Signer priv(privFile);
+		AutoSeededRandomPool rng;
 
-	RageFileSource privFile(sPrivFilename, true);
-	RSASSA_PKCS1v15_SHA_Signer priv(privFile);
-	AutoSeededRandomPool rng;
-	RageFileSource f(sMessageFilename, true, new SignerFilter(rng, priv, new RageFileSink(sSignatureFile)));
+		RageFileSource f(sMessageFilename, true, new SignerFilter(rng, priv, new RageFileSink(sSignatureFile)));
+	} catch( const CryptoPP::Exception &s ) {
+		LOG->Warn( "SignFileToFile failed: %s", s.what() );
+	}
 }
 
 bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
@@ -110,24 +110,26 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 	if( !IsAFile(sSignatureFile) )
 		return false;
 
-	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
-	// be wrapped in a try catch?
+	try {
+		/* XXX: This is opening sPubFilename for RageFile::WRITE instead of READ. */
+		RageFileSource pubFile(sPubFilename, true);
+		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
-	/* XXX: This is opening sPubFilename for RageFile::WRITE instead of READ. */
-	RageFileSource pubFile(sPubFilename, true);
-	RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
+		RageFileSource signatureFile(sSignatureFile, true);
+		if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+			return false;
+		SecByteBlock signature(pub.SignatureLength());
+		signatureFile.Get(signature, signature.size());
 
-	RageFileSource signatureFile(sSignatureFile, true);
-	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		VerifierFilter *verifierFilter = new VerifierFilter(pub);
+		verifierFilter->Put(signature, pub.SignatureLength());
+		RageFileSource f(sMessageFilename, true, verifierFilter);
+
+		return verifierFilter->GetLastResult();
+	} catch( const CryptoPP::Exception &s ) {
+		LOG->Warn( "VerifyFileWithFile(%s,%s) failed: %s", sPath.c_str(), sSignatureFile.c_str(), s.what() );
 		return false;
-	SecByteBlock signature(pub.SignatureLength());
-	signatureFile.Get(signature, signature.size());
-
-	VerifierFilter *verifierFilter = new VerifierFilter(pub);
-	verifierFilter->Put(signature, pub.SignatureLength());
-	RageFileSource f(sMessageFilename, true, verifierFilter);
-
-	return verifierFilter->GetLastResult();
+	}
 }
 
 bool CryptManager::Verify( CString sPath, CString sSignature )
@@ -143,20 +145,25 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
 	// be wrapped in a try catch?
 
-	RageFileSource pubFile(sPubFilename, true);
-	RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
+	try {
+		RageFileSource pubFile(sPubFilename, true);
+		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
-	StringSource signatureFile(sSignature, true);
-	if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		StringSource signatureFile(sSignature, true);
+		if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+			return false;
+		SecByteBlock signature(pub.SignatureLength());
+		signatureFile.Get(signature, signature.size());
+
+		VerifierFilter *verifierFilter = new VerifierFilter(pub);
+		verifierFilter->Put(signature, pub.SignatureLength());
+		RageFileSource f(sMessageFilename, true, verifierFilter);
+
+		return verifierFilter->GetLastResult();
+	} catch( const CryptoPP::Exception &s ) {
+		LOG->Warn( "Verify(%s,sig) failed: %s", sPath.c_str(), s.what() );
 		return false;
-	SecByteBlock signature(pub.SignatureLength());
-	signatureFile.Get(signature, signature.size());
-
-	VerifierFilter *verifierFilter = new VerifierFilter(pub);
-	verifierFilter->Put(signature, pub.SignatureLength());
-	RageFileSource f(sMessageFilename, true, verifierFilter);
-
-	return verifierFilter->GetLastResult();
+	}
 }
 
 
