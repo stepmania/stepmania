@@ -340,7 +340,7 @@ void EditCoursesMenu::Start()
 			g_CourseEntryMenu.rows[high_meter].choices.clear();
 			g_CourseEntryMenu.rows[high_meter].defaultChoice = 0;
 
-			for( i=0; i<=MAX_METER; i++ )
+			for( i=0; i<=(int)MAX_METER; i++ )
 			{
 				CString sMeter = (i==0) ? "Don't care" : ssprintf("%d", i);
 				g_CourseEntryMenu.rows[low_meter].choices.push_back( sMeter );
