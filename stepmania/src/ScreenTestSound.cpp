@@ -19,6 +19,7 @@
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
+#include "RageUtil.h"
 
 ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 {	

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "GhostArrow.h"
 #include "NoteSkinManager.h"
+#include "RageUtil.h"
 
 GhostArrow::GhostArrow()
 {

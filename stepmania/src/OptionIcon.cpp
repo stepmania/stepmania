@@ -2,6 +2,7 @@
 #include "OptionIcon.h"
 #include "ThemeManager.h"
 #include "PlayerOptions.h"
+#include "RageUtil.h"
 
 #define TEXT_OFFSET_X	THEME->GetMetricF("OptionIcon","TextOffsetX")
 #define TEXT_OFFSET_Y	THEME->GetMetricF("OptionIcon","TextOffsetY")

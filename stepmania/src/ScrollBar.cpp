@@ -2,6 +2,7 @@
 #include "ScrollBar.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
+#include "RageUtil.h"
 
 
 ScrollBar::ScrollBar()

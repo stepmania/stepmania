@@ -16,6 +16,7 @@
 #include "ThemeManager.h"
 #include "LuaHelpers.h"
 #include "ModeChoice.h"
+#include "RageUtil.h"
 
 #define CHOICES						THEME->GetMetric (m_sName,"Choices")
 #define CONDITION(choice)			THEME->GetMetric (m_sName,"Condition"+choice)

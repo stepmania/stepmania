@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ProTimingDisplay.h"
 #include "ThemeManager.h"
+#include "RageUtil.h"
 
 static CachedThemeMetric	MARVELOUS_COMMAND	("ProTimingDisplay","MarvelousCommand");
 static CachedThemeMetric	PERFECT_COMMAND		("ProTimingDisplay","PerfectCommand");
