@@ -174,7 +174,7 @@ RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMat
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
 RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
-RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h RageTexture.cpp RageTexture.h \
+RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h RageTexture.cpp RageTexture.h RageTextureID.cpp RageTextureID.h \
 RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h RageTimer.cpp RageTimer.h RageTypes.h \
 RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h RageUtil_FileDB.cpp RageUtil_FileDB.h \
 $(RageSoundFileReaders)
