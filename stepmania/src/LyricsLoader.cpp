@@ -43,6 +43,8 @@ bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
 			break;
 		}
 
+		utf8_remove_bom( line );
+
 		if(!line.compare(0, 2, "//"))
 			continue;
 		
