@@ -34,7 +34,7 @@ float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBea
 
 float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float fSongBeat ) 
 {
-	float fColOffsetFromCenter = iColNum - (GAME->GetCurrentStyleDef()->m_iColsPerPlayer-1)/2.0f;
+	float fColOffsetFromCenter = iColNum - (GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer-1)/2.0f;
 	float fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE;
 	
 	switch( po.m_EffectType )

@@ -53,7 +53,7 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 		m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
 		break;
 	case SM_DoneOpening:
-		if( PREFS->m_GameOptions.m_bAnnouncer )
+		if( PREFSMAN->m_bAnnouncer )
 			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_CAUTION) );
 		break;
 	case SM_GoToSelectMusic:

@@ -48,10 +48,10 @@ ScreenStage::ScreenStage( bool bTryExtraStage )
 	}
 	else // !bTryExtraStage
 	{
-		int iStageNo = PREFS->GetStageNumber();
-		bool bFinal = PREFS->IsFinalStage();
+		int iStageNo = PREFSMAN->GetStageNumber();
+		bool bFinal = PREFSMAN->IsFinalStage();
 
-		CString sStagePrefix = PREFS->GetStageText();
+		CString sStagePrefix = PREFSMAN->GetStageText();
 		m_ptextStage->SetText( sStagePrefix + " Stage" );
 		m_ptextStage->SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
@@ -74,7 +74,7 @@ ScreenStage::ScreenStage( bool bTryExtraStage )
 	m_ptextStage->SetZoomX( 2 );
 	m_ptextStage->SetZoomY( 0 );
 	m_ptextStage->BeginTweeningQueued( 0.6f );	// sleep
-	m_ptextStage->BeginTweeningQueued( 0.5f );	// sleep
+	m_ptextStage->BeginTweeningQueued( 0.3f );	// sleep
 	m_ptextStage->SetTweenZoom( 2 );
 	m_ptextStage->SetTweenXY( CENTER_X, CENTER_Y );
 	this->AddActor( m_ptextStage );
@@ -88,7 +88,7 @@ ScreenStage::ScreenStage( bool bTryExtraStage )
 	m_psprUnderscore->BeginTweeningQueued( 0.4f );	// open
 	float fDestZoom = m_ptextStage->GetWidestLineWidthInSourcePixels() * m_ptextStage->GetZoomX() / m_psprUnderscore->GetUnzoomedWidth();
 	m_psprUnderscore->SetTweenZoomX( fDestZoom );
-	m_psprUnderscore->BeginTweeningQueued( 0.1f );	// sleep
+	m_psprUnderscore->BeginTweeningQueued( 0.3f );	// sleep
 	m_psprUnderscore->BeginTweeningQueued( 0.4f );	// close
 	m_psprUnderscore->SetTweenZoomX( 0 );
 	this->AddActor( m_psprUnderscore );

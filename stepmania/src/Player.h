@@ -43,9 +43,9 @@ public:
 	void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore );
+	void Load( PlayerNumber player_no, StyleDef *pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore );
 	void CrossedIndex( int iIndex );
-	void HandlePlayerStep( float fSongBeat, ColumnNumber col, float fMaxBeatDiff );
+	void HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff );
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 
 	ScoreSummary GetScoreSummary();
@@ -53,8 +53,8 @@ public:
 	bool IsThereANoteAtIndex( int iIndex );
 
 protected:
-	void CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxBeatDiff );
-	void OnRowDestroyed( float fSongBeat, ColumnNumber col, float fMaxBeatDiff, int iStepIndex );
+	void CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff );
+	void OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int iStepIndex );
 
 	float			m_fSongBeat;
 	PlayerNumber	m_PlayerNumber;

@@ -37,7 +37,7 @@ NoteField::NoteField()
 }
 
 
-void NoteField::Load( NoteData* pNoteData, PlayerNumber p, PlayerOptions po, float fNumBeatsToDrawBehind, float fNumBeatsToDrawAhead, NoteFieldMode mode )
+void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, float fNumBeatsToDrawBehind, float fNumBeatsToDrawAhead, NoteFieldMode mode )
 {
 	m_PlayerOptions = po;
 	m_fNumBeatsToDrawBehind = fNumBeatsToDrawBehind;
@@ -50,10 +50,10 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, PlayerOptions po, flo
 	for( int c=0; c<m_iNumTracks; c++ ) 
 	{
 		CArray<D3DXCOLOR,D3DXCOLOR>	arrayTweenColors;
-		GAME->GetTweenColors( p, c, arrayTweenColors );
+		GAMEMAN->GetTweenColors( p, c, arrayTweenColors );
 
-		m_ColorNote[c].m_sprColorPart.Load( GAME->GetPathToGraphic( p, c, GRAPHIC_NOTE_COLOR_PART) );
-		m_ColorNote[c].m_sprGrayPart.Load( GAME->GetPathToGraphic( p, c, GRAPHIC_NOTE_GRAY_PART) );
+		m_ColorNote[c].m_sprColorPart.Load( GAMEMAN->GetPathToGraphic( p, c, GRAPHIC_NOTE_COLOR_PART) );
+		m_ColorNote[c].m_sprGrayPart.Load( GAMEMAN->GetPathToGraphic( p, c, GRAPHIC_NOTE_GRAY_PART) );
 	}
 
 
@@ -61,7 +61,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, PlayerOptions po, flo
 		m_HoldNoteLife[i] = 1;		// start with full life
 
 
-	ASSERT( m_iNumTracks == GAME->GetCurrentStyleDef()->m_iColsPerPlayer );
+	ASSERT( m_iNumTracks == GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
 
 void NoteField::Update( float fDeltaTime, float fSongBeat )

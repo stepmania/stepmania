@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  Class: GrayArrowRow
@@ -9,16 +10,10 @@
 -----------------------------------------------------------------------------
 */
 
-
-#ifndef _GrayArrowRow_H_
-#define _GrayArrowRow_H_
-
-
 #include "GrayArrow.h"
 #include "ActorFrame.h"
 #include "StyleDef.h"
 #include "GameConstantsAndTypes.h"
-
 
 
 class GrayArrowRow : public ActorFrame
@@ -28,7 +23,7 @@ public:
 	virtual void Update( float fDeltaTime, float fSongBeat );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerOptions po );
+	void Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po );
 
 	void Step( int iCol );
 	
@@ -39,5 +34,3 @@ protected:
 
 	GrayArrow	m_GrayArrow[MAX_NOTE_TRACKS];
 };
-
-#endif

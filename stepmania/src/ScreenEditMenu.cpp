@@ -59,7 +59,7 @@ ScreenEditMenu::ScreenEditMenu()
 	SONGMAN->GetGroupNames( m_sGroups );
 	m_iSelectedGroup = 0;
 	m_iSelectedSong = 0;
-	m_iSelectedStyle = 0;
+	m_CurNotesType = NOTES_TYPE_DANCE_SINGLE;
 	m_iSelectedNotes = 0;
 
 	m_textGroup.Load( THEME->GetPathTo(FONT_HEADER1) );
@@ -72,10 +72,10 @@ ScreenEditMenu::ScreenEditMenu()
 	m_textSong.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
 	this->AddActor( &m_textSong );
 
-	m_textStyle.Load( THEME->GetPathTo(FONT_HEADER1) );
-	m_textStyle.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
-	m_textStyle.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
-	this->AddActor( &m_textStyle );
+	m_textNotesType.Load( THEME->GetPathTo(FONT_HEADER1) );
+	m_textNotesType.SetXY( GAME_STYLE_X, GAME_STYLE_Y );
+	m_textNotesType.SetDiffuseColor( D3DXCOLOR(0.7f,0.7f,0.7f,1) );
+	this->AddActor( &m_textNotesType );
 
 	m_textNotes.Load( THEME->GetPathTo(FONT_HEADER1) );
 	m_textNotes.SetXY( STEPS_X, STEPS_Y );
@@ -153,7 +153,7 @@ void ScreenEditMenu::BeforeRowChange()
 {
 	m_textGroup.SetEffectNone();
 	m_textSong.SetEffectNone();
-	m_textStyle.SetEffectNone();
+	m_textNotesType.SetEffectNone();
 	m_textNotes.SetEffectNone();
 }
 
@@ -161,10 +161,10 @@ void ScreenEditMenu::AfterRowChange()
 {
 	switch( m_SelectedRow )
 	{
-	case ROW_GROUP:		m_textGroup.SetEffectGlowing();			break;
-	case ROW_SONG:		m_textSong.SetEffectGlowing();			break;
-	case ROW_GAME_MODE:	m_textStyle.SetEffectGlowing();	break;
-	case ROW_STEPS:		m_textNotes.SetEffectGlowing();		break;
+	case ROW_GROUP:			m_textGroup.SetEffectGlowing();			break;
+	case ROW_SONG:			m_textSong.SetEffectGlowing();			break;
+	case ROW_NOTES_TYPE:	m_textNotesType.SetEffectGlowing();		break;
+	case ROW_STEPS:			m_textNotes.SetEffectGlowing();			break;
 	default:		ASSERT(false);
 	}
 }
@@ -188,24 +188,17 @@ void ScreenEditMenu::OnSongChange()
 
 	m_textSong.SetText( GetSelectedSong()->GetMainTitle() );
 
-	m_sStyles.RemoveAll();
-	m_sStyles.Add( "single" );
-	m_sStyles.Add( "versus" );
-	m_sStyles.Add( "double" );
-	m_sStyles.Add( "couple" );
-	m_sStyles.Add( "solo" );
-
-	OnDanceStyleChange();
+	OnNotesTypeChange();
 }
 
-void ScreenEditMenu::OnDanceStyleChange()
+void ScreenEditMenu::OnNotesTypeChange()
 {
-	m_iSelectedStyle = clamp( m_iSelectedStyle, 0, m_sStyles.GetSize()-1 );
+	m_CurNotesType = (NotesType)clamp( m_CurNotesType, 0, NUM_NOTES_TYPES );
 
-	m_textStyle.SetText( GetSelectedStyle() );
+	m_textNotesType.SetText( NotesTypeToString( GetSelectedNotesType() ) );
 
 	m_pNotess.RemoveAll();
-	GetSelectedSong()->GetNotessThatMatchGameAndStyle( "dance", GetSelectedStyle(), m_pNotess );
+	GetSelectedSong()->GetNotesThatMatch( GetSelectedNotesType(), m_pNotess );
 	SortNotesArrayByDifficultyClass( m_pNotess );
 	m_pNotess.Add( NULL );		// marker for "(NEW)"
 	m_iSelectedNotes = 0;
@@ -261,11 +254,11 @@ void ScreenEditMenu::MenuLeft( PlayerNumber p )
 		m_iSelectedSong--;
 		OnSongChange();
 		break;
-	case ROW_GAME_MODE:
-		if( m_iSelectedStyle == 0 )	// can't go left any further
+	case ROW_NOTES_TYPE:
+		if( m_CurNotesType == 0 )	// can't go left any further
 			return;
-		m_iSelectedStyle--;
-		OnDanceStyleChange();
+		m_CurNotesType = NotesType( m_CurNotesType-1 );
+		OnNotesTypeChange();
 		break;
 	case ROW_STEPS:
 		if( m_iSelectedNotes == 0 )	// can't go left any further
@@ -294,11 +287,11 @@ void ScreenEditMenu::MenuRight( PlayerNumber p )
 		m_iSelectedSong++;
 		OnSongChange();
 		break;
-	case ROW_GAME_MODE:
-		if( m_iSelectedStyle == m_sStyles.GetSize()-1 )	// can't go right any further
+	case ROW_NOTES_TYPE:
+		if( m_CurNotesType == NUM_NOTES_TYPES-1 )	// can't go right any further
 			return;
-		m_iSelectedStyle++;
-		OnDanceStyleChange();
+		m_CurNotesType = NotesType( m_CurNotesType+1 );
+		OnNotesTypeChange();
 		break;
 	case ROW_STEPS:
 		if( m_iSelectedNotes == m_pNotess.GetSize()-1 )	// can't go right any further
@@ -318,7 +311,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber p )
 	MUSIC->Stop();
 
 	SONGMAN->m_pCurSong = GetSelectedSong();
-	GAME->m_sCurrentStyle = GetSelectedStyle();
+	GAMEMAN->m_CurNotesType = GetSelectedNotesType();
 	SONGMAN->m_pCurNotes[PLAYER_1] = GetSelectedNotes();
 
 	m_soundSelect.PlayRandom();

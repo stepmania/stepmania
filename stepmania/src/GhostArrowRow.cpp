@@ -24,21 +24,24 @@ GhostArrowRow::GhostArrowRow()
 	m_iNumCols = 0;
 }
 
-void GhostArrowRow::Load( PlayerOptions po )
+void GhostArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po )
 {
 	m_PlayerOptions = po;
 
-	StyleDef* pStyleDef = GAME->GetCurrentStyleDef();
-	GameDef* pGameDef = GAME->GetCurrentGameDef();
+	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GhostArrowRow[c].Load( GAME->GetPathToGraphic(PLAYER_1, c, GRAPHIC_TAP_EXPLOSION_DIM) );
-		m_GhostArrowRowBright[c].Load( GAME->GetPathToGraphic(PLAYER_1, c, GRAPHIC_TAP_EXPLOSION_BRIGHT) );
-		m_HoldGhostArrowRow[c].Load( GAME->GetPathToGraphic(PLAYER_1, c, GRAPHIC_HOLD_EXPLOSION) );
+		m_GhostArrowRow[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_TAP_EXPLOSION_DIM) );
+		m_GhostArrowRowBright[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_TAP_EXPLOSION_BRIGHT) );
+		m_HoldGhostArrowRow[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_HOLD_EXPLOSION) );
+
+		m_GhostArrowRow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+		m_GhostArrowRowBright[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
+		m_HoldGhostArrowRow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}
 }
 

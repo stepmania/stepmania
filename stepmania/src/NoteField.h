@@ -37,7 +37,7 @@ public:
 		MODE_EDITING,
 	};
 	
-	void Load( NoteData* pNoteData, PlayerNumber p, PlayerOptions po, float fNumArrowsToDrawBehind, float fNumArrowsToDrawAhead, NoteFieldMode mode );
+	void Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, float fNumArrowsToDrawBehind, float fNumArrowsToDrawAhead, NoteFieldMode mode );
 	void RemoveTapNoteRow( int iIndex );
 	void SetHoldNoteLife( int iIndex, float fLife );
 

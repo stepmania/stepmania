@@ -24,12 +24,16 @@ public:
 	virtual void DrawPrimitives();
 
 	virtual void ChangeLife( TapNoteScore score );
-	virtual float GetLifePercentage();
+	virtual bool IsDoingGreat();
+	virtual bool IsAboutToFail();
+	virtual bool HasFailed();
 
 private:
 	D3DXCOLOR GetColor( float fPercentIntoSection );
+	void ResetBarVelocity();
 
 	float		m_fLifePercentage;
 	float		m_fTrailingLifePercentage;	// this approaches m_fLifePercentage
 	float		m_fLifeVelocity;	// how m_fTrailingLifePercentage approaches m_fLifePercentage
+	bool		m_bHasFailed;
 };

@@ -44,6 +44,7 @@ public:
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture();
 
 protected:
+
 	virtual void Create( 
 		DWORD dwMaxSize, 
 		DWORD dwTextureColorDepth, 
@@ -52,6 +53,7 @@ protected:
 		bool bDither,
 		bool bStretch
 		);
+
 
 	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 };

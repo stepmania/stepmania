@@ -69,7 +69,7 @@ void NoteData::SkipOverDataInCacheFile( FILE* file )
 }
 
 
-void NoteData::ClearRange( NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd )
+void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	// delete old TapNotes in the range
 	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
@@ -99,7 +99,7 @@ void NoteData::ClearRange( NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd )
 
 }
 	
-void NoteData::CopyRange( NoteData* pFrom, NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd )
+void NoteData::CopyRange( NoteData* pFrom, int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	ASSERT( pFrom->m_iNumTracks == m_iNumTracks );
 
@@ -727,7 +727,7 @@ float NoteData::GetFreezeRadarValue( float fSongSeconds )
 }
 
 
-void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, TrackNumber iNewToOriginalTrack[] )
+void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNewToOriginalTrack[] )
 {
 	// init
 	for( int i=0; i<MAX_NOTE_TRACKS; i++ )

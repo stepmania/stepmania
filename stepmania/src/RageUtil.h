@@ -114,4 +114,10 @@ HINSTANCE GotoURL(LPCTSTR url);
 
 void WriteStringToFile( FILE* file, CString s );
 void ReadStringFromFile( FILE* file, CString& s );
+void WriteIntToFile( FILE* file, int i );
+void ReadIntFromFile( FILE* file, int& i );
+void WriteFloatToFile( FILE* file, float f );
+void ReadFloatFromFile( FILE* file, float& f );
+void WriteUlongToFile( FILE* file, ULONG u );
+void ReadUlongFromFile( FILE* file, ULONG& u );
 

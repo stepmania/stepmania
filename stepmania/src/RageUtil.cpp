@@ -442,3 +442,38 @@ void ReadStringFromFile( FILE* file, CString& s )
 }
 
 
+void WriteIntToFile( FILE* file, int i )
+{
+	fprintf( file, "%d\n", i );
+}
+
+void ReadIntFromFile( FILE* file, int& i )
+{
+	fscanf( file, "%d\n", &i );
+}
+
+
+void WriteFloatToFile( FILE* file, float f )
+{
+	fprintf( file, "%f\n", f );
+}
+
+void ReadFloatFromFile( FILE* file, float& f )
+{
+	fscanf( file, "%f\n", &f );
+}
+
+
+
+void WriteUlongToFile( FILE* file, ULONG u )
+{
+	fprintf( file, "%u\n", u );
+}
+
+void ReadUlongFromFile( FILE* file, ULONG& u )
+{
+	fscanf( file, "%u\n", &u );
+}
+
+
+

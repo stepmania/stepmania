@@ -161,6 +161,9 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_MenuTimer:
+		MenuStart(PLAYER_1);
+		break;
 	case SM_GoToPrevState:
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
@@ -229,6 +232,7 @@ void ScreenSelectGroup::AfterChange()
 	else
 		sGroupBannerPath = THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER);
 
+	// There is too much Z-fighting when we rotate this, so fake a rotation with a squash
 	m_GroupInfoFrame.Set( sGroupBannerPath, arraySongs.GetSize() );
 }
 

@@ -24,19 +24,19 @@ GrayArrowRow::GrayArrowRow()
 	m_iNumCols = 0;
 }
 
-void GrayArrowRow::Load( PlayerOptions po )
+void GrayArrowRow::Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po )
 {
 	m_PlayerOptions = po;
 
-	StyleDef* pStyleDef = GAME->GetCurrentStyleDef();
-	GameDef* pGameDef = GAME->GetCurrentGameDef();
+	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
 	// init arrow rotations
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GrayArrow[c].Load( GAME->GetPathToGraphic(PLAYER_1, c, GRAPHIC_RECEPTOR) );
+		m_GrayArrow[c].Load( GAMEMAN->GetPathToGraphic(pn, c, GRAPHIC_RECEPTOR) );
+		m_GrayArrow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 	}
 	
 }

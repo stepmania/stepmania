@@ -50,7 +50,7 @@ ScreenSelectGame::ScreenSelectGame() :
 
 	// populate g_SelectGameLines
 	CStringArray arrayGameNames;
-	GAME->GetGameNames( arrayGameNames );
+	GAMEMAN->GetGameNames( arrayGameNames );
 	for( int i=0; i<arrayGameNames.GetSize(); i++ )
 		strcpy( g_SelectGameLines[0].szOptionsText[i], arrayGameNames[i] );
 
@@ -66,23 +66,25 @@ ScreenSelectGame::ScreenSelectGame() :
 
 void ScreenSelectGame::ImportOptions()
 {
-	for( int i=0; i<m_OptionLineData[0].iNumOptions; i++ )
-	{
-		if( 0 == strcmp(GAME->m_sCurrentGame, m_OptionLineData[0].szOptionsText[i]) )
-		{
-			CString sGameName = m_OptionLineData[0].szOptionsText[i];
-			if( sGameName == GAME->m_sCurrentGame )
-				m_iSelectedOption[0][SG_GAME] = i;
-		}
-	}
+	m_iSelectedOption[0][SG_GAME] = GAMEMAN->GetCurrentGame();
 }
 
 void ScreenSelectGame::ExportOptions()
 {
-	int iOption = m_iSelectedOption[0][SG_GAME];
-	CString sGameName = m_OptionLineData[0].szOptionsText[iOption];
-	GAME->SwitchGame( sGameName );
-	THEME->SwitchTheme( sGameName );
+	// Switch the current style to the frist style of the selected game
+	Game game = (Game)m_iSelectedOption[0][SG_GAME];
+	switch( game )
+	{
+	case GAME_DANCE:	GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;	break;
+	case GAME_PUMP:		GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;	break;
+	default:	ASSERT(0);	// invalid Game
+	}
+
+	// Try to switch themes to a theme with the same name as the current game
+	CStringArray asGameNames;
+	GAMEMAN->GetGameNames( asGameNames );
+	CString sGameName = asGameNames[game];
+	THEME->SwitchTheme( sGameName );	
 }
 
 void ScreenSelectGame::GoToPrevState()

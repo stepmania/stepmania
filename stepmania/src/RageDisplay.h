@@ -41,8 +41,7 @@ public:
 	RageDisplay( HWND hWnd );
 	~RageDisplay();
 	bool SwitchDisplayMode( 
-		const bool bWindowed, const DWORD dwWidth, const DWORD dwHeight, 
-		const DWORD dwBPP, const DWORD dwFlags );
+		const bool bWindowed, const DWORD dwWidth, const DWORD dwHeight, const DWORD dwBPP );
 
 	LPDIRECT3D8 GetD3D()					{ return m_pd3d; };
 	inline LPDIRECT3DDEVICE8 GetDevice()	{ return m_pd3dDevice; };

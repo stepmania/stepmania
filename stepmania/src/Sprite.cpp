@@ -16,6 +16,7 @@
 #include <math.h>
 #include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
+#include "PrefsManager.h"
 
 
 Sprite::Sprite()
@@ -191,7 +192,12 @@ void Sprite::Update( float fDeltaTime )
 
 void Sprite::DrawPrimitives()
 {
-	DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );	// offset so that pixels are aligned to texels
+	// offset so that pixels are aligned to texels
+	if( PREFSMAN->m_bHighDetail )	// 640x480
+		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
+	else		// 320x240
+		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
+//		DISPLAY->TranslateLocal( -1, -1, 0 );	// offset so that pixels are aligned to texels
 
 	if( m_pTexture == NULL )
 		return;

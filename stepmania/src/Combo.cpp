@@ -27,7 +27,7 @@ Combo::Combo()
 	m_textComboNumber.Load( THEME->GetPathTo(FONT_COMBO_NUMBERS) );
 	m_textComboNumber.TurnShadowOn();
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
-	m_textComboNumber.SetX( -20 );
+	m_textComboNumber.SetX( -10 );
 
 	m_textComboNumber.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 	m_sprCombo.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible

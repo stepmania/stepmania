@@ -46,8 +46,11 @@ RageBitmapTexture::RageBitmapTexture(
 
 	m_pd3dTexture = NULL;
 
-	Create( dwMaxSize, dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
+	//if( !LoadFromCacheFile() )
+		Create( dwMaxSize, dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 	
+	//SaveToCache();
+
 	CreateFrameRects();
 }
 
@@ -114,6 +117,7 @@ void RageBitmapTexture::Create(
 		case 1:		fmtTexture = D3DFMT_A1R5G5B5;	break;
 		default:	fmtTexture = D3DFMT_A4R4G4B4;	break;
 		}
+		break;
 	case 32:
 		fmtTexture = D3DFMT_A8R8G8B8;
 		break;

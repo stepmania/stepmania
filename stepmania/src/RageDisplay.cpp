@@ -105,8 +105,7 @@ RageDisplay::~RageDisplay()
 // Desc:
 //-----------------------------------------------------------------------------
 bool RageDisplay::SwitchDisplayMode( 
-	const bool bWindowed, const DWORD dwWidth, const DWORD dwHeight, 
-	const DWORD dwBPP, const DWORD dwFlags )
+	const bool bWindowed, const DWORD dwWidth, const DWORD dwHeight, const DWORD dwBPP )
 {
 	LOG->WriteLine( "RageDisplay::SwitchDisplayModes( %d, %u, %u, %u )", bWindowed, dwWidth, dwHeight, dwBPP );
 

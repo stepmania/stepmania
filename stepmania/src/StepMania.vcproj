@@ -102,7 +102,7 @@
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
-				DebugInformationFormat="0"/>
+				DebugInformationFormat="3"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -174,16 +174,16 @@
 				RelativePath="ScreenGameOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenGameOver.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameOver.h">
+			</File>
+			<File
 				RelativePath="ScreenGameplay.cpp">
 			</File>
 			<File
 				RelativePath="ScreenGameplay.h">
-			</File>
-			<File
-				RelativePath="ScreenGraphicOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenGraphicOptions.h">
 			</File>
 			<File
 				RelativePath="ScreenManager.cpp">
@@ -512,6 +512,12 @@
 				RelativePath="CroppedSprite.h">
 			</File>
 			<File
+				RelativePath="DifficultyBanner.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyBanner.h">
+			</File>
+			<File
 				RelativePath=".\DifficultyIcon.cpp">
 			</File>
 			<File
@@ -552,6 +558,12 @@
 			</File>
 			<File
 				RelativePath="MenuElements.h">
+			</File>
+			<File
+				RelativePath="MenuTimer.cpp">
+			</File>
+			<File
+				RelativePath="MenuTimer.h">
 			</File>
 			<File
 				RelativePath=".\MusicSortDisplay.cpp">
@@ -597,7 +609,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Actors used in Dancing"
+			Name="Actors used in Gameplay"
 			Filter="">
 			<File
 				RelativePath=".\ArrowEffects.cpp">
@@ -676,6 +688,9 @@
 			</File>
 			<File
 				RelativePath=".\Judgement.h">
+			</File>
+			<File
+				RelativePath="LifeMeter.cpp">
 			</File>
 			<File
 				RelativePath="LifeMeter.h">

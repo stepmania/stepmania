@@ -22,21 +22,20 @@
 #include "SongManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
+#include "ScreenGameOver.h"
 
 //
 // Defines specific to GameScreenTitleMenu
 //
-
-const float COLUMN_LEFT_SINGLE		=	(SCREEN_WIDTH*1/4);
-const float COLUMN_RIGHT_SINGLE		=	(SCREEN_WIDTH*3/4);
-const float COLUMN_LEFT_DOUBLE		=	(COLUMN_LEFT_SINGLE+30);
-const float COLUMN_RIGHT_DOUBLE		=	(COLUMN_RIGHT_SINGLE-30);
 
 const float LIFE_X[NUM_PLAYERS] = { CENTER_X-180, CENTER_X+180 };
 const float LIFE_Y				= SCREEN_TOP+28;
 
 const float SCORE_X[NUM_PLAYERS] = { CENTER_X-214, CENTER_X+214 };
 const float SCORE_Y				 = SCREEN_BOTTOM-38;
+
+const float DIFFICULTY_X[NUM_PLAYERS]	= { SCREEN_LEFT+50, SCREEN_RIGHT-50 };
+const float DIFFICULTY_Y				= SCREEN_BOTTOM-80;
 
 const float MAX_SECONDS_CAN_BE_OFF_BY	=	0.20f;
 
@@ -57,7 +56,7 @@ const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+121);
 const ScreenMessage	SM_ShowFailed			= ScreenMessage(SM_User+122);
 const ScreenMessage	SM_PlayFailComment		= ScreenMessage(SM_User+123);
 const ScreenMessage	SM_HideFailed			= ScreenMessage(SM_User+124);
-const ScreenMessage	SM_GoToSelectSong		= ScreenMessage(SM_User+125);
+const ScreenMessage	SM_GoToScreenAfterFail		= ScreenMessage(SM_User+125);
 
 
 
@@ -72,67 +71,52 @@ ScreenGameplay::ScreenGameplay()
 	m_pSong = SONGMAN->m_pCurSong;
 
 
-
-	// Get the current StyleDef definition (used below)
-	StyleDef* pStyleDef = GAME->GetCurrentStyleDef();
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
-			continue;
-
-		NoteData* pOriginalNoteData = SONGMAN->m_pCurNotes[p]->GetNoteData();
-		
-		NoteData newNoteData;
-		GAME->GetCurrentStyleDef()->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, newNoteData );
-
-		m_Player[p].Load( 
-			(PlayerNumber)p,
-			&newNoteData, 
-			PREFS->m_PlayerOptions[p],
-			&m_LifeMeter[p],
-			&m_ScoreDisplay[p]
-		);
-
-	}
-
-
 	m_Background.LoadFromSong( SONGMAN->m_pCurSong );
 	m_Background.SetDiffuseColor( D3DXCOLOR(0.4f,0.4f,0.4f,1) );
 	this->AddActor( &m_Background );
 
 
+	// Get the current StyleDef definition (used below)
+	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+
+		float fDifficultyY = DIFFICULTY_Y;
+		if( PREFSMAN->m_PlayerOptions[p].m_bReverseScroll )
+			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y;
+		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
+		m_DifficultyBanner[p].SetFromNotes( SONGMAN->m_pCurNotes[p] );
+		this->AddActor( &m_DifficultyBanner[p] );
 
 
-	// init players
-	if( GAME->m_sCurrentStyle == "single" )
-	{
-		m_Player[PLAYER_1].SetX( COLUMN_LEFT_SINGLE );
-		this->AddActor( &m_Player[PLAYER_1] );
-	}
-	else if( GAME->m_sCurrentStyle == "versus" || GAME->m_sCurrentStyle == "couple" )
-	{
-		m_Player[PLAYER_1].SetX( COLUMN_LEFT_SINGLE );
-		this->AddActor( &m_Player[PLAYER_1] );
-		m_Player[PLAYER_2].SetX( COLUMN_RIGHT_SINGLE );
-		this->AddActor( &m_Player[PLAYER_2] );
-	}
-	else if( GAME->m_sCurrentStyle == "double" || GAME->m_sCurrentStyle == "solo" )
-	{
-		m_Player[PLAYER_1].SetX( CENTER_X );
-		this->AddActor( &m_Player[PLAYER_1] );
-	}
-	else
-		ASSERT( false );	// invalid style
+		NoteData* pOriginalNoteData = SONGMAN->m_pCurNotes[p]->GetNoteData();
+		
+		NoteData newNoteData;
+		GAMEMAN->GetCurrentStyleDef()->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, newNoteData );
 
+		m_Player[p].SetX( (float) GAMEMAN->GetCurrentStyleDef()->m_iCenterX[p] );
+		m_Player[p].Load( 
+			(PlayerNumber)p,
+			GAMEMAN->GetCurrentStyleDef(),
+			&newNoteData, 
+			PREFSMAN->m_PlayerOptions[p],
+			&m_LifeMeter[p],
+			&m_ScoreDisplay[p]
+		);
+
+		this->AddActor( &m_Player[p] );
+	}
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_LifeMeter[p].SetPlayerOptions( PREFS->m_PlayerOptions[p] );
+		m_LifeMeter[p].SetPlayerOptions( PREFSMAN->m_PlayerOptions[p] );
 		m_LifeMeter[p].SetXY( LIFE_X[p], LIFE_Y );
 		m_LifeMeter[p].SetZoomX( 256 );
 		m_LifeMeter[p].SetZoomY( 20 );
@@ -151,13 +135,13 @@ ScreenGameplay::ScreenGameplay()
 	m_textSmallStage.TurnShadowOff();
 	m_textSmallStage.SetXY( CENTER_X, 60 );
 	m_textSmallStage.SetDiffuseColor( D3DXCOLOR(0.3f,1,1,1) );
-	m_textSmallStage.SetText( PREFS->GetStageText() );
+	m_textSmallStage.SetText( PREFSMAN->GetStageText() );
 	this->AddActor( &m_textSmallStage );
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
 		m_ScoreDisplay[p].SetXY( SCORE_X[p], SCORE_Y );
@@ -243,13 +227,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 		m_Player[p].Update( fDeltaTime, fSongBeat, fMaxBeatDifference );
 	}
 
 	// check for fail
-	switch( PREFS->m_SongOptions.m_FailType )
+	switch( PREFSMAN->m_SongOptions.m_FailType )
 	{
 	case SongOptions::FAIL_ARCADE:
 	case SongOptions::FAIL_END_OF_SONG:
@@ -263,17 +247,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 		bool bAllFailed = true;
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAME->IsPlayerEnabled(PlayerNumber(p)) )
+			if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 				continue;
 
-			const float fLifePercentage = m_LifeMeter[p].GetLifePercentage();
-
-			if( fLifePercentage > 0.3f )
+			if( !m_LifeMeter[p].IsAboutToFail() )
 			{
 				bAllAboutToFail = false;
 				bAllFailed = false;
 			}
-			else if( fLifePercentage > 0.0f )	// dead.  Let the message handler choose to fail or not
+			else if( !m_LifeMeter[p].HasFailed() )
 			{
 				bAllFailed = false;
 			}
@@ -304,7 +286,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			this->SendScreenMessage( SM_SongEnded, 1 );
 	
 		// Check to see if it's time to play a gameplay comment
-		if( PREFS->m_GameOptions.m_bAnnouncer )
+		if( PREFSMAN->m_bAnnouncer )
 		{
 			m_fTimeLeftBeforeDancingComment -= fDeltaTime;
 			if( m_fTimeLeftBeforeDancingComment <= 0 )
@@ -322,7 +304,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 
 
-	if( PREFS->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
+	if( PREFSMAN->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
 	{
 		// 
 		// play assist ticks
@@ -342,10 +324,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( !GAME->IsPlayerEnabled( (PlayerNumber)p ) )
+				if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;		// skip
 
 				bAnyoneHasANote |= m_Player[p].IsThereANoteAtIndex( i );
+				break;	// this will only play the tick for the first player that is joined
 			}
 		}
 
@@ -413,7 +396,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_User+2:
 		m_sprReady.StartFocusing();
-		if( PREFS->m_GameOptions.m_bAnnouncer )
+		if( PREFSMAN->m_bAnnouncer )
 			m_announcerReady.PlayRandom();
 		break;
 	case SM_User+3:
@@ -423,11 +406,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_User+5:
 		m_sprHereWeGo.StartFocusing();
-		if( PREFS->m_GameOptions.m_bAnnouncer )
+		if( PREFSMAN->m_bAnnouncer )
 			m_announcerHereWeGo.PlayRandom();
 		m_Background.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0.8f,1) );
 		m_soundMusic.Play();
-		m_soundMusic.SetPlaybackRate( PREFS->m_SongOptions.m_fMusicRate );
+		m_soundMusic.SetPlaybackRate( PREFSMAN->m_SongOptions.m_fMusicRate );
 		break;
 	case SM_User+6:
 		break;
@@ -442,7 +425,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	// received while STATE_DANCING
 	case SM_LifeIs0:
-		if( PREFS->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE )	// fail them now!
+		if( PREFSMAN->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE )	// fail them now!
 			this->SendScreenMessage( SM_BeginFailed, 0 );
 		m_DancingState = STATE_OUTRO;
 		break;
@@ -457,7 +440,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		else	// cleared
 		{
 			m_StarWipe.CloseWipingRight( SM_ShowCleared );
-			if( PREFS->m_GameOptions.m_bAnnouncer )
+			if( PREFSMAN->m_bAnnouncer )
 				m_announcerCleared.PlayRandom();	// crowd cheer
 		}
 		m_DancingState = STATE_OUTRO;
@@ -473,9 +456,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_GoToResults, 1 );
 		break;
 	case SM_GoToResults:
-		// send score summaries to the PREFS object so ScreenResults can grab it.
-		PREFS->m_ScoreSummary[PLAYER_1] = m_Player[PLAYER_1].GetScoreSummary();
-		PREFS->m_ScoreSummary[PLAYER_2] = m_Player[PLAYER_2].GetScoreSummary();
+		// send score summaries to the PREFSMAN object so ScreenResults can grab it.
+		PREFSMAN->m_ScoreSummary[PLAYER_1] = m_Player[PLAYER_1].GetScoreSummary();
+		PREFSMAN->m_ScoreSummary[PLAYER_2] = m_Player[PLAYER_2].GetScoreSummary();
 		SCREENMAN->SetNewScreen( new ScreenResults );
 		break;
 
@@ -487,7 +470,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_ShowFailed, 0.2f );
 		break;
 	case SM_ShowFailed:
-		if( PREFS->m_GameOptions.m_bAnnouncer )
+		if( PREFSMAN->m_bAnnouncer )
 			m_soundFail.PlayRandom();
 
 		// make the background invisible so we don't waste mem bandwidth drawing it
@@ -509,7 +492,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SendMessageToTopScreen( SM_HideFailed, 3.0f );
 		break;
 	case SM_PlayFailComment:
-		if( PREFS->m_GameOptions.m_bAnnouncer )
+		if( PREFSMAN->m_bAnnouncer )
 			m_announcerFailComment.PlayRandom();
 		break;
 	case SM_HideFailed:
@@ -517,10 +500,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_sprFailed.BeginTweening(1.0f);
 		m_sprFailed.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
-		SCREENMAN->SendMessageToTopScreen( SM_GoToSelectSong, 1.5f );
+		SCREENMAN->SendMessageToTopScreen( SM_GoToScreenAfterFail, 1.5f );
 		break;
-	case SM_GoToSelectSong:
-		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+	case SM_GoToScreenAfterFail:
+		if( PREFSMAN->m_bEventMode )
+			SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+		else
+			SCREENMAN->SetNewScreen( new ScreenGameOver );
 		break;
 	}
 

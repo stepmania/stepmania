@@ -1,15 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: ScreenMessage.h
+ File: ScreenMessage
 
- Desc: 
+ Desc: Definition of common ScreenMessages
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _ScreenMessage_H_
-#define _ScreenMessage_H_
 
 
 // common ScreenMessages
@@ -21,7 +20,6 @@ enum ScreenMessage {
 	SM_DoneOpeningWipingRight,
 	SM_LosingInputFocus,
 	SM_RegainingInputFocus,
+	SM_MenuTimer,
 	SM_User	= 100
 };
-
-#endif

@@ -60,8 +60,7 @@ void Notes::WriteToCacheFile( FILE* file )
 {
 	LOG->WriteLine( "Notes::WriteToCacheFile()" );
 
-	WriteStringToFile( file, m_sIntendedGame );
-	WriteStringToFile( file, m_sIntendedStyle );
+	fprintf( file, "%d\n", m_NotesType );
 	WriteStringToFile( file, m_sDescription );
 	WriteStringToFile( file, m_sCredit );
 	fprintf( file, "%d\n", m_DifficultyClass );
@@ -82,8 +81,7 @@ void Notes::ReadFromCacheFile( FILE* file, bool bLoadNoteData )
 {
 	LOG->WriteLine( "Notes::ReadFromCacheFile( %d )", bLoadNoteData );
 
-	ReadStringFromFile( file, m_sIntendedGame );
-	ReadStringFromFile( file, m_sIntendedStyle );
+	fscanf( file, "%d\n", &m_NotesType );
 	ReadStringFromFile( file, m_sDescription );
 	ReadStringFromFile( file, m_sCredit );
 	fscanf( file, "%d\n", &m_DifficultyClass );
@@ -112,8 +110,6 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	LOG->WriteLine( "Notes::LoadFromBMSFile( '%s' )", sPath );
 
 	this->GetNoteData();	// make sure NoteData is loaded
-
-	m_sIntendedGame = "dance";
 
 // BMS encoding:
 // 4&8panel: Player1  Player2
@@ -199,14 +195,14 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 			switch( atoi(value_data) )
 			{
 			case 1:		// 4 or 6 single
-				m_sIntendedStyle = "single";
+				m_NotesType = NOTES_TYPE_DANCE_SINGLE;
 				// if the mode should be solo, then we'll update m_DanceStyle below when we read in step data
 				break;
 			case 2:		// couple/battle
-				m_sIntendedStyle = "couple";
+				m_NotesType = NOTES_TYPE_DANCE_COUPLE;
 				break;
 			case 3:		// double
-				m_sIntendedStyle = "double";
+				m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
 				break;
 			}
 		}
@@ -229,7 +225,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 
 			// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
 			if( m_sDescription.Find("6") != -1 )
-				m_sIntendedStyle = "solo";
+				m_NotesType = NOTES_TYPE_DANCE_SOLO;
 			
 		}
 		if( -1 != value_name.Find("#playlevel") ) 
@@ -273,7 +269,9 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 		}
 	}
 	
-	if( m_sIntendedStyle == "single" || m_sIntendedStyle == "double" || m_sIntendedStyle == "couple" )	// if there are 4 panels, then we have to flip the Up and Up+Right bits
+	if( m_NotesType == NOTES_TYPE_DANCE_SINGLE  || 
+		m_NotesType == NOTES_TYPE_DANCE_DOUBLE  || 
+		m_NotesType == NOTES_TYPE_DANCE_COUPLE )	// if there are 4 panels, then we have to flip the Up and Up+Right bits
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// for each TapNote
 		{
@@ -293,25 +291,14 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 	// we're done reading in all of the BMS values
 
 	CMap<int, int, int, int>  mapDanceNoteToNoteDataColumn;
-	if( m_sIntendedStyle == "single" )
+	if( m_NotesType == NOTES_TYPE_DANCE_SINGLE )
 	{
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
 	}
-	else if( m_sIntendedStyle == "double" )
-	{
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
-		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
-	}
-	else if( m_sIntendedStyle == "couple" )
+	else if( m_NotesType == NOTES_TYPE_DANCE_DOUBLE )
 	{
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
@@ -322,7 +309,18 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
 	}
-	else if( m_sIntendedStyle == "solo" )
+	else if( m_NotesType == NOTES_TYPE_DANCE_COUPLE )
+	{
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_LEFT] = 4;
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_DOWN] = 5;
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
+		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
+	}
+	else if( m_NotesType == NOTES_TYPE_DANCE_SOLO )
 	{
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
@@ -462,24 +460,22 @@ bool Notes::LoadFromDWITokens(
 {
 	LOG->WriteLine( "Notes::LoadFromDWITokens()" );
 
-	m_sIntendedGame = "dance";
-
-	if(		 sMode == "#SINGLE" )	m_sIntendedStyle = "single";
-	else if( sMode == "#DOUBLE" )	m_sIntendedStyle = "double";
-	else if( sMode == "#COUPLE" )	m_sIntendedStyle = "couple";
-	else if( sMode == "#SOLO" )		m_sIntendedStyle = "solo";
-	else							FatalError( "Unrecognized DWI mode '%s'", sMode );
+	if(		 sMode == "#SINGLE" )	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
+	else if( sMode == "#DOUBLE" )	m_NotesType = NOTES_TYPE_DANCE_DOUBLE;
+	else if( sMode == "#COUPLE" )	m_NotesType = NOTES_TYPE_DANCE_COUPLE;
+	else if( sMode == "#SOLO" )		m_NotesType = NOTES_TYPE_DANCE_SOLO;
+	else					LOG->WriteLine( "Unrecognized DWI mode '%s'", sMode );
 
 
 	CMap<int, int, int, int>  mapDanceNoteToNoteDataColumn;
-	if( m_sIntendedStyle == "single" )
+	if( m_NotesType == NOTES_TYPE_DANCE_SINGLE )
 	{
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UP] = 2;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_RIGHT] = 3;
 	}
-	else if( m_sIntendedStyle == "double" || m_sIntendedStyle == "couple" )
+	else if( m_NotesType == NOTES_TYPE_DANCE_DOUBLE  ||  m_NotesType == NOTES_TYPE_DANCE_COUPLE )
 	{
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_DOWN] = 1;
@@ -490,7 +486,7 @@ bool Notes::LoadFromDWITokens(
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_UP] = 6;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD2_RIGHT] = 7;
 	}
-	else if( m_sIntendedStyle == "solo" )
+	else if( m_NotesType == NOTES_TYPE_DANCE_SOLO )
 	{
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_LEFT] = 0;
 		mapDanceNoteToNoteDataColumn[DANCE_NOTE_PAD1_UPLEFT] = 1;
@@ -667,16 +663,9 @@ bool Notes::LoadFromNotesFile( const CString &sPath )
 		sValueName.TrimRight();
 
 		// handle the data
-		if( sValueName == "#GAME" )
-		{
-			m_sIntendedGame = arrayValueTokens[1];
-			m_sIntendedGame.MakeLower();
-		}
-		else if( sValueName == "#STYLE" )
-		{
-			m_sIntendedStyle = arrayValueTokens[1];
-			m_sIntendedStyle.MakeLower();
-		}
+		if( sValueName == "#TYPE" )
+			m_NotesType = StringToNotesType( arrayValueTokens[1] );
+
 		else if( sValueName == "#DESCRIPTION" )
 			m_sDescription = arrayValueTokens[1];
 
@@ -714,14 +703,13 @@ void Notes::SaveToSMDir( CString sSongDir )
 
 	int i;
 
-	CString sNewNotesFilePath = sSongDir + ssprintf("%s-%s-%s.notes", m_sIntendedGame, m_sIntendedStyle, m_sDescription);
+	CString sNewNotesFilePath = sSongDir + ssprintf("%s-%s.notes", NotesTypeToString(m_NotesType), m_sDescription);
 
 	CStdioFile file;	
 	if( !file.Open( sNewNotesFilePath, CFile::modeWrite | CFile::modeCreate ) )
-		FatalError( ssprintf("Error opening Notes file '%s' for writing.", sNewNotesFilePath) );
+		FatalError( "Error opening Notes file '%s' for writing.", sNewNotesFilePath );
 
-	file.WriteString( ssprintf("#GAME:%s;\n", m_sIntendedGame) );
-	file.WriteString( ssprintf("#STYLE:%s;\n", m_sIntendedStyle) );
+	file.WriteString( ssprintf("#TYPE:%s;\n", NotesTypeToString(m_NotesType)) );
 	file.WriteString( ssprintf("#DESCRIPTION:%s;\n", m_sDescription) );
 	file.WriteString( ssprintf("#CREDIT:%s;\n", m_sCredit) );
 	file.WriteString( ssprintf("#METER:%d;\n", m_iMeter) );

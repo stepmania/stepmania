@@ -197,7 +197,7 @@ void Song::GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainT
 CString Song::GetCacheFilePath()
 {
 	ULONG hash = GetHashForString( m_sSongDir );
-	return ssprintf( "Cache\\%u", hash );
+	return ssprintf( "Cache\\%u.song", hash );
 }
 
 bool Song::LoadFromSongDir( CString sDir )
@@ -914,23 +914,15 @@ void Song::TidyUpData()
 }
 
 
-void Song::GetNotessThatMatchGameAndStyle( CString sGame, CString sStyle, CArray<Notes*, Notes*>& arrayAddTo )
+void Song::GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo )
 {
 	for( int i=0; i<m_arrayNotes.GetSize(); i++ )	// for each of the Song's Notes
-	{
-		Notes* pCurNotes = &m_arrayNotes[i];
-		
-		if( sGame == pCurNotes->m_sIntendedGame && 
-			( sStyle == pCurNotes->m_sIntendedStyle || (sStyle == "versus" && pCurNotes->m_sIntendedStyle == "single") ) )
-		{
-			arrayAddTo.Add( pCurNotes );
-		}
-	}
-
+		if( m_arrayNotes[i].m_NotesType == nt )
+			arrayAddTo.Add( &m_arrayNotes[i] );
 }
 
 
-const int FILE_CACHE_VERSION = 9;	// increment this when the cache file format changes
+const int FILE_CACHE_VERSION = 10;	// increment this when the cache file format changes
 
 void Song::SaveToCacheFile()
 {
@@ -1173,10 +1165,10 @@ void Song::SaveToSMDir()
 
 }
 
-Grade Song::GetGradeForDifficultyClass( CString sGame, CString sStyle, DifficultyClass dc )
+Grade Song::GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc )
 {
 	CArray<Notes*, Notes*> arrayNotess;
-	this->GetNotessThatMatchGameAndStyle( sGame, sStyle, arrayNotess );
+	this->GetNotesThatMatch( nt, arrayNotess );
 	SortNotesArrayByDifficultyClass( arrayNotess );
 
 	for( int i=0; i<arrayNotess.GetSize(); i++ )

@@ -24,30 +24,41 @@ public:
 	PrefsManager();
 	~PrefsManager();
 
-	ScoreSummary	m_ScoreSummary[NUM_PLAYERS];	// for passing from Dancing to Results
+	// Options that ARE saved between sessions
+	enum WindowMode{ WINDOW_MODE_FULLSCREEN, WINDOW_MODE_WINDOWED, WINDOW_MODE_MAXIMIZED, NUM_WINDOW_MODES };
+	WindowMode		m_WindowMode;
+	bool			m_bHighDetail;
+	bool			m_bHighTextureDetail;
+	bool			m_bIgnoreJoyAxes;
+	bool			m_bShowFPS;
+	bool			m_bUseRandomVis;
+	bool			m_bAnnouncer;
+	bool			m_bEventMode;
+	int				m_iNumArcadeStages;
+	int				m_iDifficulty;
+
+	void ReadPrefsFromDisk();
+	void SavePrefsToDisk();
+
+
+	// Options that are NOT saved between sessions
+	DifficultyClass	m_PreferredDifficultyClass[NUM_PLAYERS];
 	SongSortOrder	m_SongSortOrder;				// used by MusicWheel and should be saved until the app exits
-	GameMode		m_GameMode;
-	int				m_iCurrentStage;				// number of stages played +1
+	PlayMode		m_PlayMode;
+	int				m_iCurrentStage;				// starts at 1, and is incremented with each Stage Clear
 
 	int				GetStageNumber();
 	bool			IsFinalStage();
 	CString			GetStageText();
 
-	DifficultyClass			m_PreferredDifficultyClass[NUM_PLAYERS];
-	GameOptions				m_GameOptions;
-	bool					m_bWindowed;
-	GraphicProfile			m_GraphicProfile;
-	GraphicProfileOptions*	GetCustomGraphicProfileOptions();
-	GraphicProfileOptions*	GetCurrentGraphicProfileOptions();
-	PlayerOptions			m_PlayerOptions[NUM_PLAYERS];
-	SongOptions				m_SongOptions;
+
+	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
+	SongOptions		m_SongOptions;
+
+	ScoreSummary	m_ScoreSummary[NUM_PLAYERS];	// for passing from Dancing to Results
 
 
-	void ReadPrefsFromDisk();
-	void SavePrefsToDisk();
-
-protected:
 };
 
 
-extern PrefsManager*	PREFS;	// global and accessable from anywhere in our program
+extern PrefsManager*	PREFSMAN;	// global and accessable from anywhere in our program

@@ -14,164 +14,385 @@
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
-GameManager*	GAME = NULL;	// global and accessable from anywhere in our program
+GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
 
-#define DANCE_PAD_BUTTON_LEFT		INSTRUMENT_BUTTON_1
-#define DANCE_PAD_BUTTON_RIGHT		INSTRUMENT_BUTTON_2
-#define DANCE_PAD_BUTTON_UP			INSTRUMENT_BUTTON_3
-#define DANCE_PAD_BUTTON_DOWN		INSTRUMENT_BUTTON_4
-#define DANCE_PAD_BUTTON_UPLEFT		INSTRUMENT_BUTTON_5
-#define DANCE_PAD_BUTTON_UPRIGHT	INSTRUMENT_BUTTON_6
-#define DANCE_PAD_BUTTON_NEXT		INSTRUMENT_BUTTON_7
-#define DANCE_PAD_BUTTON_BACK		INSTRUMENT_BUTTON_8
-#define NUM_DANCE_PAD_BUTTONS		8
+InstrumentButton	DANCE_BUTTON_LEFT		= (InstrumentButton)0;
+InstrumentButton	DANCE_BUTTON_RIGHT		= (InstrumentButton)1;
+InstrumentButton	DANCE_BUTTON_UP			= (InstrumentButton)2;
+InstrumentButton	DANCE_BUTTON_DOWN		= (InstrumentButton)3;
+InstrumentButton	DANCE_BUTTON_UPLEFT		= (InstrumentButton)4;
+InstrumentButton	DANCE_BUTTON_UPRIGHT	= (InstrumentButton)5;
+InstrumentButton	DANCE_BUTTON_SELECT		= (InstrumentButton)6;
+InstrumentButton	DANCE_BUTTON_START		= (InstrumentButton)7;
+int					NUM_DANCE_BUTTONS		= 8;
 
+InstrumentButton	PUMP_BUTTON_UPLEFT		= (InstrumentButton)0;
+InstrumentButton	PUMP_BUTTON_UPRIGHT		= (InstrumentButton)1;
+InstrumentButton	PUMP_BUTTON_CENTER		= (InstrumentButton)2;
+InstrumentButton	PUMP_BUTTON_DOWNLEFT	= (InstrumentButton)3;
+InstrumentButton	PUMP_BUTTON_DOWNRIGHT	= (InstrumentButton)4;
+InstrumentButton	PUMP_BUTTON_SELECT		= (InstrumentButton)5;
+int					NUM_PUMP_BUTTONS		= 6;
+
+
+const int DANCE_COL_SPACING = 64;
+const int DANCE_6PANEL_VERSUS_COL_SPACING = 54;
+const int PUMP_COL_SPACING = 60;
+
+
+GameDef g_GameDefs[NUM_GAMES] = 
+{
+	{	// GAME_DANCE
+		"dance",					// m_szName
+		"Dance Dance Revolution",	// m_szDescription
+		2,							// m_iNumInstruments
+		NUM_DANCE_BUTTONS,			// m_iButtonsPerInstrument
+		{	// m_szButtonNames
+			"Left",
+			"Right",
+			"Up",
+			"Down",
+			"UpLeft",
+			"UpRight",
+			"Back",
+			"Start"
+		},
+		{	// m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to m_szButtonNames
+			DANCE_BUTTON_LEFT,		// MENU_BUTTON_LEFT
+			DANCE_BUTTON_RIGHT,		// MENU_BUTTON_RIGHT
+			DANCE_BUTTON_UP,		// MENU_BUTTON_UP
+			DANCE_BUTTON_DOWN,		// MENU_BUTTON_DOWN
+			DANCE_BUTTON_START,		// MENU_BUTTON_START
+			DANCE_BUTTON_SELECT,	// MENU_BUTTON_BACK
+		},
+	},
+	{	// GAME_DANCE
+		"pump",				// m_szName
+		"Pump It Up",		// m_szDescription
+		2,					// m_iNumInstruments
+		NUM_DANCE_BUTTONS,	// m_iButtonsPerInstrument
+		{	// m_szButtonNames
+			"UpLeft",
+			"UpRight",
+			"Center",
+			"DownLeft",
+			"DownRight",
+			"Back"
+		},
+		{	// m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to m_szButtonNames
+			PUMP_BUTTON_UPLEFT,		// MENU_BUTTON_LEFT
+			PUMP_BUTTON_UPRIGHT,	// MENU_BUTTON_RIGHT
+			PUMP_BUTTON_DOWNRIGHT,	// MENU_BUTTON_UP
+			PUMP_BUTTON_DOWNLEFT,	// MENU_BUTTON_DOWN
+			PUMP_BUTTON_CENTER,		// MENU_BUTTON_START
+			PUMP_BUTTON_SELECT,		// MENU_BUTTON_BACK
+		},
+	},
+};
+
+
+StyleDef g_StyleDefSingle = 
+	{	// STYLE_DANCE_SINGLE
+		"dance-single",						// m_szName
+		NOTES_TYPE_DANCE_SINGLE,			// m_NotesType
+		StyleDef::ONE_PLAYER_USES_ONE_SIDE,	// m_StyleType
+		{ 160, 480 },						// m_iCenterX
+		4,									// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0, 1, 2, 3
+		},
+	};
+
+
+
+
+StyleDef g_StyleDefs[NUM_STYLES] = 
+{
+	{	// STYLE_DANCE_SINGLE
+		"dance-single",						// m_szName
+		NOTES_TYPE_DANCE_SINGLE,			// m_NotesType
+		StyleDef::ONE_PLAYER_USES_ONE_SIDE,	// m_StyleType
+		{ 160, 480 },						// m_iCenterX
+		4,									// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0, 1, 2, 3
+		},
+	},
+	{	// STYLE_DANCE_VERSUS
+		"dance-versus",							// m_szName
+		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
+		StyleDef::TWO_PLAYERS_USE_TWO_SIDES,	// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		4,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0, 1, 2, 3
+		},
+	},
+	{	// STYLE_DANCE_DOUBLE
+		"dance-double",							// m_szName
+		NOTES_TYPE_DANCE_DOUBLE,				// m_NotesType
+		StyleDef::ONE_PLAYER_USES_TWO_SIDES,	// m_StyleType
+		{ 320, 320 },							// m_iCenterX
+		8,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*3.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*2.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_UP,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_6,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_7,	INSTRUMENT_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*2.5f },
+				{ TRACK_8,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*3.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*3.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*2.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_UP,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_6,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_7,	INSTRUMENT_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*2.5f },
+				{ TRACK_8,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*3.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5,6,7
+		},
+	},
+	{	// StyleDef
+		"dance-couple",							// m_szName
+		NOTES_TYPE_DANCE_SINGLE,				// m_NotesType
+		StyleDef::TWO_PLAYERS_USE_TWO_SIDES,	// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		4,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_2,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,	-DANCE_COL_SPACING*0.5f },
+				{ TRACK_3,	INSTRUMENT_2,	DANCE_BUTTON_UP,	+DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,	+DANCE_COL_SPACING*1.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3
+		},
+	},
+	{	// STYLE_DANCE_SOLO
+		"dance-solo",						// m_szName
+		NOTES_TYPE_DANCE_SOLO,				// m_NotesType
+		StyleDef::ONE_PLAYER_USES_ONE_SIDE,	// m_StyleType
+		{ 240, 400 },						// m_iCenterX
+		6,									// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,		-DANCE_COL_SPACING*2.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_UPLEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,		-DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_UP,		+DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	INSTRUMENT_1,	DANCE_BUTTON_UPRIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_6,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,		+DANCE_COL_SPACING*2.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,		-DANCE_COL_SPACING*2.5f },
+				{ TRACK_2,	INSTRUMENT_2,	DANCE_BUTTON_UPLEFT,	-DANCE_COL_SPACING*1.5f },
+				{ TRACK_3,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,		-DANCE_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_2,	DANCE_BUTTON_UP,		+DANCE_COL_SPACING*0.5f },
+				{ TRACK_5,	INSTRUMENT_2,	DANCE_BUTTON_UPRIGHT,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_6,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,		+DANCE_COL_SPACING*2.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,1,2,3,4,5
+		},
+	},
+	{	// STYLE_DANCE_SOLO_VERSUS 
+		"dance-solo-versus",				// m_szName
+		NOTES_TYPE_DANCE_SOLO,				// m_NotesType
+		StyleDef::ONE_PLAYER_USES_ONE_SIDE,	// m_StyleType
+		{ 160, 480 },						// m_iCenterX
+		6,									// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	DANCE_BUTTON_LEFT,		-DANCE_6PANEL_VERSUS_COL_SPACING*2.5f },
+				{ TRACK_2,	INSTRUMENT_1,	DANCE_BUTTON_UPLEFT,	-DANCE_6PANEL_VERSUS_COL_SPACING*1.5f },
+				{ TRACK_3,	INSTRUMENT_1,	DANCE_BUTTON_DOWN,		-DANCE_6PANEL_VERSUS_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_1,	DANCE_BUTTON_UP,		+DANCE_6PANEL_VERSUS_COL_SPACING*0.5f },
+				{ TRACK_5,	INSTRUMENT_1,	DANCE_BUTTON_UPRIGHT,	+DANCE_6PANEL_VERSUS_COL_SPACING*1.5f },
+				{ TRACK_6,	INSTRUMENT_1,	DANCE_BUTTON_RIGHT,		+DANCE_6PANEL_VERSUS_COL_SPACING*2.5f },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	DANCE_BUTTON_LEFT,		-DANCE_6PANEL_VERSUS_COL_SPACING*2.5f },
+				{ TRACK_2,	INSTRUMENT_2,	DANCE_BUTTON_UPLEFT,	-DANCE_6PANEL_VERSUS_COL_SPACING*1.5f },
+				{ TRACK_3,	INSTRUMENT_2,	DANCE_BUTTON_DOWN,		-DANCE_6PANEL_VERSUS_COL_SPACING*0.5f },
+				{ TRACK_4,	INSTRUMENT_2,	DANCE_BUTTON_UP,		+DANCE_6PANEL_VERSUS_COL_SPACING*0.5f },
+				{ TRACK_5,	INSTRUMENT_2,	DANCE_BUTTON_UPRIGHT,	+DANCE_6PANEL_VERSUS_COL_SPACING*1.5f },
+				{ TRACK_6,	INSTRUMENT_2,	DANCE_BUTTON_RIGHT,		+DANCE_6PANEL_VERSUS_COL_SPACING*2.5f },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,5,1,4,2,3		// outside in
+		},
+	},
+	{	// PUMP_STYLE_SINGLE
+		"single",								// m_szName
+		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
+		StyleDef::ONE_PLAYER_USES_ONE_SIDE,		// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		5,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*2 },
+				{ TRACK_2,	INSTRUMENT_1,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*1 },
+				{ TRACK_3,	INSTRUMENT_1,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*0 },
+				{ TRACK_4,	INSTRUMENT_1,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*1 },
+				{ TRACK_5,	INSTRUMENT_1,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*2 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*2 },
+				{ TRACK_2,	INSTRUMENT_2,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*1 },
+				{ TRACK_3,	INSTRUMENT_2,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*0 },
+				{ TRACK_4,	INSTRUMENT_2,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*1 },
+				{ TRACK_5,	INSTRUMENT_2,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*2 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,2,4,1,3
+		},
+	},
+	{	// PUMP_STYLE_VERSUS
+		"pump-versus",							// m_szName
+		NOTES_TYPE_PUMP_SINGLE,					// m_NotesType
+		StyleDef::TWO_PLAYERS_USE_TWO_SIDES,	// m_StyleType
+		{ 160, 480 },							// m_iCenterX
+		5,										// m_iColsPerPlayer
+		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
+			{	// PLAYER_1
+				{ TRACK_1,	INSTRUMENT_1,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*2 },
+				{ TRACK_2,	INSTRUMENT_1,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*1 },
+				{ TRACK_3,	INSTRUMENT_1,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*0 },
+				{ TRACK_4,	INSTRUMENT_1,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*1 },
+				{ TRACK_5,	INSTRUMENT_1,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*2 },
+			},
+			{	// PLAYER_2
+				{ TRACK_1,	INSTRUMENT_2,	PUMP_BUTTON_DOWNLEFT,	-PUMP_COL_SPACING*2 },
+				{ TRACK_2,	INSTRUMENT_2,	PUMP_BUTTON_UPLEFT,		-PUMP_COL_SPACING*1 },
+				{ TRACK_3,	INSTRUMENT_2,	PUMP_BUTTON_CENTER,		+PUMP_COL_SPACING*0 },
+				{ TRACK_4,	INSTRUMENT_2,	PUMP_BUTTON_UPRIGHT,	+PUMP_COL_SPACING*1 },
+				{ TRACK_5,	INSTRUMENT_2,	PUMP_BUTTON_DOWNRIGHT,	+PUMP_COL_SPACING*2 },
+			},
+		},
+		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+			0,2,4,1,3
+		},
+	},
+};
 
 
 GameManager::GameManager()
 {
-	m_iNumGameDefs = 0;
-	ReadGamesAndStylesFromDir( "Games" );
-	SwitchGame( "dance" );
-	SwitchStyle( "single" );
-}
+	m_CurStyle = STYLE_DANCE_SINGLE;
 
-GameManager::~GameManager()
-{
-	for( int i=0; i<m_iNumGameDefs; i++ )
-		delete m_pGameDefs[i];
-}
-
-void GameManager::ReadGamesAndStylesFromDir( CString sDir )
-{
-	// trim off the trailing slash if any
-	sDir.TrimRight( "/\\" );
-
-	// Find all group directories in "Games" folder
-	CStringArray arrayGameNames;
-	GetDirListing( sDir+"\\*.*", arrayGameNames, true );
-	SortCStringArray( arrayGameNames );
+	CStringArray asSkinNames;	
+	GetSkinNames( asSkinNames );
+	for( int p=0; p<NUM_PLAYERS; ++p )
+		m_sCurrentSkin[p] = asSkinNames[0];
 	
-	for( int i=0; i< arrayGameNames.GetSize(); i++ )	// for each dir in /Songs/
-	{
-		CString sGameName = arrayGameNames[i];
-
-		if( 0 == stricmp( sGameName, "cvs" ) )	// the directory called "CVS"
-			continue;		// ignore it
-
-		CString sGameDir = ssprintf( "%s\\%s", sDir, sGameName );  // game file must have same name as dir
-		m_pGameDefs[m_iNumGameDefs++] = new GameDef(sGameDir);
-	}
+	m_sMasterPlayerNumber = PLAYER_1;
 }
 
-GameDef* GameManager::GetGameDef( CString sGame )
-{
-	for( int i=0; i<m_iNumGameDefs; i++ )
-	{
-		if( m_pGameDefs[i]->m_sName == sGame )
-			return m_pGameDefs[i];
-	}
 
-	return NULL;
+Game GameManager::GetCurrentGame()
+{
+	return StyleToGame( m_CurStyle );
 }
 
-StyleDef* GameManager::GetStyleDef( CString sGame, CString sStyle )
+GameDef* GameManager::GetCurrentGameDef()
 {
-	GameDef* pGameDef = GetGameDef( sGame );
-
-	return pGameDef->GetStyleDef( sStyle );
-
-	return NULL;
+	return &g_GameDefs[ GetCurrentGame() ];
 }
 
-void GameManager::SwitchGame( CString sGame )
+StyleDef* GameManager::GetCurrentStyleDef()
 {
-	m_sCurrentGame = sGame;
-	m_pCurrentGameDef = GetGameDef( sGame );
-	if( m_pCurrentGameDef == NULL )
-		FatalError( "SwitchGame failed.  The game '%s' is not present.", sGame );
+	return &g_StyleDefs[ m_CurStyle ];
+}
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_sCurrentSkin[p] = m_pCurrentGameDef->m_sSkinFolders[0];
+void GameManager::GetGameNames( CStringArray &AddTo )
+{
+	for( int i=0; i<NUM_GAMES; i++ )
+		AddTo.Add( g_GameDefs[i].m_szName );
+}
+
+void GameManager::GetSkinNames( CStringArray &AddTo )
+{
+	GetCurrentGameDef()->GetSkinNames( AddTo );
+}
+
+bool GameManager::IsPlayerEnabled( PlayerNumber pn )
+{
+	return ( pn == m_sMasterPlayerNumber ) ||  
+		( GetCurrentStyleDef()->m_StyleType == StyleDef::TWO_PLAYERS_USE_TWO_SIDES );
 };
 
-void GameManager::SwitchStyle( CString sStyle )
+CString GameManager::GetPathToGraphic( const PlayerNumber p, const int col, const GameButtonGraphic gbg )
 {
-	m_sCurrentStyle = sStyle;
-	m_pCurrentStyleDef = GetStyleDef( m_sCurrentGame, sStyle );
-	ASSERT( m_pCurrentStyleDef != NULL );
-};
-
-void GameManager::SwitchSkin( PlayerNumber p, CString sSkin )
-{
-	if( !m_pCurrentGameDef->HasASkinNamed( sSkin ) )
-		FatalError( "The current game doesn't have a skin named '%s'.", sSkin );
-		
-	m_sCurrentSkin[p] = sSkin;
+	StyleInput si( p, col );
+	GameInput gi = GetCurrentStyleDef()->StyleInputToGameInput( si );
+	InstrumentButton b = gi.button;
+	return GetCurrentGameDef()->GetPathToGraphic( m_sCurrentSkin[p], b, gbg );
 }
 
-void GameManager::GetGameNames( CStringArray &arrayGameNames )
+void GameManager::GetTweenColors( const PlayerNumber p, const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )
 {
-	for( int i=0; i<m_iNumGameDefs; i++ )
-		arrayGameNames.Add( m_pGameDefs[i]->m_sName );
-}
-
-
-void GameManager::GetStyleNames( CString sGameName, CStringArray &arrayStyleNames )
-{
-	GameDef* pGameDef = GetGameDef( sGameName );
-
-	for( int i=0; i<pGameDef->m_iNumStyleDefs; i++ )
-	{
-		arrayStyleNames.Add( pGameDef->m_pStyleDefs[i]->m_sName );
-	}
-}
-
-
-void GameManager::GetSkinNames( CString sGameName, CStringArray &arraySkinNames )
-{
-	GameDef* pGameDef = GetGameDef( sGameName );
-
-	for( int i=0; i<pGameDef->m_iNumSkinFolders; i++ )
-		arraySkinNames.Add( pGameDef->m_sSkinFolders[i] );
-}
-
-bool GameManager::IsPlayerEnabled( PlayerNumber PlayerNo )
-{
-	StyleDef* pStyleDef = GetCurrentStyleDef();
-	ASSERT( pStyleDef != NULL );
-
-	switch( pStyleDef->m_iNumPlayers )
-	{
-	case 1:
-		switch( PlayerNo )
-		{
-		case PLAYER_1:	return true;
-		case PLAYER_2:	return false;
-		default:	ASSERT( false );
-		}
-		break;
-	case 2:
-		switch( PlayerNo )
-		{
-		case PLAYER_1:	return true;
-		case PLAYER_2:	return true;
-		default:	ASSERT( false );
-		}
-		break;
-	default:
-		ASSERT( false );	// invalid m_iNumPlayers
-	}
-
-	return false;
-}
-
-void GameManager::GetTweenColors( const PlayerNumber p, const ColumnNumber col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo )
-{
-	GameDef* pGameDef = GetCurrentGameDef();
-	StyleDef* pStyleDef = GetCurrentStyleDef();
 	StyleInput StyleI( p, col );
-	GameInput GameI = pStyleDef->StyleInputToGameInput( StyleI );
-
-	pGameDef->GetTweenColors( m_sCurrentSkin[p], GameI.button, aTweenColorsAddTo );
+	GameInput GameI = GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+	GetCurrentGameDef()->GetTweenColors( m_sCurrentSkin[p], GameI.button, aTweenColorsAddTo );
 }

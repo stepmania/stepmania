@@ -1,15 +1,15 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: MenuElements.h
 
- Desc: Base class for menu Screens.
+ Desc: Displays common components of menu screens:
+	Background, Top Bar, Bottom Bar, help message, credits or PlayerOptions, style icon,
+	Menu Timer
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
-#ifndef _MenuElements_H_
-#define _MenuElements_H_
-
 
 
 #include "Screen.h"
@@ -17,6 +17,7 @@
 #include "BitmapText.h"
 #include "RandomSample.h"
 #include "TransitionFade.h"
+#include "MenuTimer.h"
 
 
 const float MENU_ELEMENTS_TWEEN_TIME	=	0.30f;
@@ -51,16 +52,21 @@ protected:
 	void SetTopEdgeOffScreen();
 
 
-	Sprite	m_sprBG;
-	Sprite	m_sprTopEdge;
-	Sprite	m_sprBottomEdge;
+	Sprite		m_sprBG;
+
+	// stuff in the top bar
+	ActorFrame	m_frameTopBar;
+	Sprite		m_sprTopEdge;
+	MenuTimer	m_MenuTimer;
+	
+	// stuff in the bottom bar
+	ActorFrame	m_frameBottomBar;
+	Sprite		m_sprBottomEdge;
+
+	// stuff in the main frame
 	BitmapText	m_textHelp;
+
 
 	RageSoundSample m_soundSwoosh;
 	RageSoundSample m_soundBack;
 };
-
-
-
-
-#endif

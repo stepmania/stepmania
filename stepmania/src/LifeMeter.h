@@ -25,7 +25,8 @@ public:
 	void SetBeat( float fSongBeat ) { m_fSongBeat = fSongBeat; };
 
 	virtual void ChangeLife( TapNoteScore score ) = 0;
-	virtual float GetLifePercentage() = 0;
+	virtual bool IsAboutToFail() = 0;
+	virtual bool HasFailed() = 0;
 
 protected:
 	float m_fSongBeat;

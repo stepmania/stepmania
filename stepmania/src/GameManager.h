@@ -21,47 +21,21 @@ class GameManager
 {
 public:
 	GameManager();
-	~GameManager();
 
-	void ReadGamesAndStylesFromDir( CString sDir );
-	void SwitchGame( CString sGame );
-	void SwitchStyle( CString sStyle );
-	void SwitchSkin( PlayerNumber p, CString sSkin );
+	Style			m_CurStyle;
+	NotesType		m_CurNotesType;		// only used in Edit
+	CString			m_sCurrentSkin[NUM_PLAYERS];
+	PlayerNumber	m_sMasterPlayerNumber;
 
-	CString				m_sCurrentGame;		// currently only "dance"
-	CString				m_sCurrentStyle;	// currently only "single", "versus", "double", "couple", "solo"
-	inline GameDef*		GetCurrentGameDef()	{ return m_pCurrentGameDef; };
-	inline StyleDef*	GetCurrentStyleDef() { return m_pCurrentStyleDef; };
-	CString				m_sCurrentSkin[NUM_PLAYERS];		// 
+	Game			GetCurrentGame();	// inferred from m_CurStyle
+	GameDef*		GetCurrentGameDef();
+	StyleDef*		GetCurrentStyleDef();
 
-	void GetGameNames( CStringArray &arrayGameNames );
-	void GetStyleNames( CString sGameName, CStringArray &arrayStyleNames );
-	void GetSkinNames( CString sGameName, CStringArray &arraySkinNames );
-	void GetSkinNames( CStringArray &arraySkinNames ) { GetSkinNames( m_sCurrentGame, arraySkinNames ); };
-
+	void GetGameNames( CStringArray &AddTo );
+	void GetSkinNames( CStringArray &AddTo );
 	bool IsPlayerEnabled( PlayerNumber PlayerNo );
-
-	// graphic stuff
-	CString GetPathToGraphic( const PlayerNumber p, const ColumnNumber col, const GameButtonGraphic gbg )
-	{
-		StyleInput si( p, col );
-		GameInput gi = GetCurrentStyleDef()->StyleInputToGameInput( si );
-		InstrumentButton b = gi.button;
-		return GetCurrentGameDef()->GetPathToGraphic( m_sCurrentSkin[p], b, gbg );
-	}
-	void GetTweenColors( const PlayerNumber p, const ColumnNumber col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );
-
-
-protected:
-	int			m_iNumGameDefs;
-	GameDef*	m_pGameDefs[MAX_GAME_DEFS];
-
-	GameDef*	m_pCurrentGameDef;
-	StyleDef*	m_pCurrentStyleDef;
-
-	GameDef*	GetGameDef( CString sGame );
-	StyleDef*	GetStyleDef( CString sGame, CString sStyle );
+	CString GetPathToGraphic( const PlayerNumber p, const int col, const GameButtonGraphic gbg );
+	void GetTweenColors( const PlayerNumber p, const int col, CArray<D3DXCOLOR,D3DXCOLOR> &aTweenColorsAddTo );
 };
 
-
-extern GameManager*	GAME;	// global and accessable from anywhere in our program
+extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program

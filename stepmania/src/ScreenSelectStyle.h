@@ -58,7 +58,7 @@ private:
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;
 
-	int m_iSelectedStyle;
+	int m_iSelection;
 
 
 	TransitionKeepAlive m_Fade;

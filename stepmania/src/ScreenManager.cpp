@@ -94,7 +94,7 @@ void ScreenManager::Draw()
 	if( m_textSystemMessage.GetDiffuseColor().a != 0 )
 		m_textSystemMessage.Draw();
 
-	if( PREFS  &&  PREFS->m_GameOptions.m_bShowFPS )
+	if( PREFSMAN  &&  PREFSMAN->m_bShowFPS )
 	{
 		m_textFPS.SetText( ssprintf("%3.0f FPS", DISPLAY->GetFPS()) );
 		m_textFPS.Draw();

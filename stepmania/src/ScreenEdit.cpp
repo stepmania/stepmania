@@ -74,30 +74,30 @@ ScreenEdit::ScreenEdit()
 	m_GranularityIndicator.SetZoom( 0.5f );
 
 	m_GrayArrowRowEdit.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
-	m_GrayArrowRowEdit.Load( m_PlayerOptions );
+	m_GrayArrowRowEdit.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions );
 	m_GrayArrowRowEdit.SetZoom( 0.5f );
 
 	NoteData noteData;
-	noteData.m_iNumTracks = GAME->GetCurrentStyleDef()->m_iColsPerPlayer;
+	noteData.m_iNumTracks = GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer;
 	if( SONGMAN->m_pCurNotes[PLAYER_1] != NULL )
 		noteData = *SONGMAN->m_pCurNotes[PLAYER_1]->GetNoteData();
 
 	m_NoteFieldEdit.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
+	m_NoteFieldEdit.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
 
 	m_rectRecordBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
 
 	m_GrayArrowRowRecord.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
-	m_GrayArrowRowRecord.Load( m_PlayerOptions );
+	m_GrayArrowRowRecord.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions );
 	m_GrayArrowRowRecord.SetZoom( 1.0f );
 
 	m_NoteFieldRecord.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( &noteData, PLAYER_1, m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
+	m_NoteFieldRecord.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
 
-	m_Player.Load( PLAYER_1, &noteData, PlayerOptions(), NULL, NULL );
+	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), &noteData, PlayerOptions(), NULL, NULL );
 	m_Player.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
 
 	m_Fade.SetClosed();
@@ -371,9 +371,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				// allocate a new Notes
 				SONGMAN->m_pCurSong->m_arrayNotes.SetSize( SONGMAN->m_pCurSong->m_arrayNotes.GetSize() + 1 );
 				pNotes = &SONGMAN->m_pCurSong->m_arrayNotes[ SONGMAN->m_pCurSong->m_arrayNotes.GetSize()-1 ];
-				pNotes->m_sIntendedGame = GAME->m_sCurrentGame;
-				pNotes->m_sIntendedStyle = GAME->m_sCurrentStyle;
-				pNotes->m_sDescription = "Untitled Edit";
+				pNotes->m_NotesType = GAMEMAN->m_CurNotesType;
+				pNotes->m_sDescription = "Untitled";
 				pNotes->m_iMeter = 1;
 			}
 
@@ -500,7 +499,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_Mode = MODE_PLAY;
 
-			m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, PlayerOptions(), NULL, NULL );
+			m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), (NoteData*)&m_NoteFieldEdit, PlayerOptions(), NULL, NULL );
 
 			m_rectRecordBack.BeginTweening( 0.5f );
 			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );

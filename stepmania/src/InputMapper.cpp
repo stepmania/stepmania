@@ -20,7 +20,7 @@ InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our p
 
 InputMapper::InputMapper()
 {
-	m_sCurrentGame = GAME->m_sCurrentGame;
+	m_sCurrentGame = GAMEMAN->GetCurrentGameDef()->m_szName;
 
 	ReadMappingsFromDisk();
 }
@@ -35,7 +35,7 @@ InputMapper::~InputMapper()
 
 void InputMapper::ReadMappingsFromDisk()
 {
-	ASSERT( GAME != NULL );
+	ASSERT( GAMEMAN != NULL );
 
 	IniFile ini;
 	ini.SetPath( m_sCurrentGame + ".ini" );
@@ -196,12 +196,12 @@ struct HardCodedMenuKey
 
 const HardCodedMenuKey g_HardCodedMenuKeys[] =
 {
-	{ DEVICE_KEYBOARD,	DIK_UP,		PLAYER_1, MENU_BUTTON_UP },
-	{ DEVICE_KEYBOARD,	DIK_DOWN,	PLAYER_1, MENU_BUTTON_DOWN },
-	{ DEVICE_KEYBOARD,	DIK_LEFT,	PLAYER_1, MENU_BUTTON_LEFT },
-	{ DEVICE_KEYBOARD,	DIK_RIGHT,	PLAYER_1, MENU_BUTTON_RIGHT },
-	{ DEVICE_KEYBOARD,	DIK_RETURN,	PLAYER_1, MENU_BUTTON_START },
-	{ DEVICE_KEYBOARD,	DIK_ESCAPE,	PLAYER_1, MENU_BUTTON_BACK },
+	{ DEVICE_KEYBOARD,	DIK_UP,		PLAYER_2, MENU_BUTTON_UP },
+	{ DEVICE_KEYBOARD,	DIK_DOWN,	PLAYER_2, MENU_BUTTON_DOWN },
+	{ DEVICE_KEYBOARD,	DIK_LEFT,	PLAYER_2, MENU_BUTTON_LEFT },
+	{ DEVICE_KEYBOARD,	DIK_RIGHT,	PLAYER_2, MENU_BUTTON_RIGHT },
+	{ DEVICE_KEYBOARD,	DIK_RETURN,	PLAYER_2, MENU_BUTTON_START },
+	{ DEVICE_KEYBOARD,	DIK_ESCAPE,	PLAYER_2, MENU_BUTTON_BACK },
 };
 const int NUM_HARD_CODED_MENU_KEYS = sizeof(g_HardCodedMenuKeys) / sizeof(HardCodedMenuKey);
 
@@ -235,25 +235,25 @@ DeviceInput InputMapper::MenuToDevice( MenuInput MenuI )
 
 void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 {
-	StyleDef* pStyleDef = GAME->GetCurrentStyleDef();
+	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
 	StyleI = pStyleDef->GameInputToStyleInput( GameI );
 }
 
 void InputMapper::GameToMenu( GameInput GameI, MenuInput &MenuI )
 {
-	GameDef* pGameDef = GAME->GetCurrentGameDef();
+	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
 	MenuI = pGameDef->GameInputToMenuInput( GameI );
 }
 
 void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
 {
-	StyleDef* pStyleDef = GAME->GetCurrentStyleDef();
+	StyleDef* pStyleDef = GAMEMAN->GetCurrentStyleDef();
 	GameI = pStyleDef->StyleInputToGameInput( StyleI );
 }
 
 void InputMapper::MenuToGame( MenuInput MenuI, GameInput &GameI )
 {
-	GameDef* pGameDef = GAME->GetCurrentGameDef();
+	GameDef* pGameDef = GAMEMAN->GetCurrentGameDef();
 	GameI = pGameDef->MenuInputToGameInput( MenuI );
 }
 

@@ -14,7 +14,6 @@
 #include "ScreenCaution.h"
 #include "ScreenMapInstruments.h"
 #include "ScreenGameOptions.h"
-#include "ScreenGraphicOptions.h"
 #include "ScreenSynchronizeMenu.h"
 #include "ScreenEdit.h"
 #include "GameConstantsAndTypes.h"
@@ -27,6 +26,7 @@
 #include "RageLog.h"
 #include "SongManager.h"
 #include "AnnouncerManager.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 //
@@ -38,17 +38,16 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"NONSTOP MODE",
 	"ENDLESS MODE",
 	"ONI MODE",
-	"SELECT GAME",
-	"MAP INSTRUMENTS",
+	"SWITCH GAME",
+	"CONFIG INSTRUMENTS",
 	"GAME OPTIONS",
-	"GRAPHIC OPTIONS",
 	"SYNCHRONIZE",
 	"EDIT/RECORD",
 	"EXIT",
 };
 
 const float CHOICES_START_Y		= 52;
-const float CHOICES_GAP_Y		= 34;
+const float CHOICES_GAP_Y		= 38;
 
 const float HELP_X				= CENTER_X;
 const float HELP_Y				= SCREEN_HEIGHT-55;
@@ -60,7 +59,6 @@ const ScreenMessage SM_GoToSelectStyle		=	ScreenMessage(SM_User+3);
 const ScreenMessage SM_GoToSelectGame		=	ScreenMessage(SM_User+4);
 const ScreenMessage SM_GoToMapInstruments	=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_GoToGameOptions		=	ScreenMessage(SM_User+6);
-const ScreenMessage SM_GoToGraphicOptions	=	ScreenMessage(SM_User+7);
 const ScreenMessage SM_GoToSynchronize		=	ScreenMessage(SM_User+9);
 const ScreenMessage SM_GoToEdit				=	ScreenMessage(SM_User+10);
 const ScreenMessage SM_DoneOpening			=	ScreenMessage(SM_User+11);
@@ -188,7 +186,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_DoneOpening:
-		if( PREFS->m_GameOptions.m_bAnnouncer )
+		if( PREFSMAN->m_bAnnouncer )
 			m_soundTitle.PlayRandom();
 		break;
 	case SM_PlayAttract:
@@ -208,9 +206,6 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToGameOptions:
 		SCREENMAN->SetNewScreen( new ScreenGameOptions );
-		break;
-	case SM_GoToGraphicOptions:
-		SCREENMAN->SetNewScreen( new ScreenGraphicOptions );
 		break;
 	case SM_GoToSynchronize:
 		SCREENMAN->SetNewScreen( new ScreenSynchronizeMenu );
@@ -275,10 +270,7 @@ void ScreenTitleMenu::MenuStart( PlayerNumber p )
 	{
 	case CHOICE_GAME_MODE:
 		m_soundSelect.PlayRandom();
-		if( PREFS->m_GameOptions.m_bShowCaution )
-			m_Fade.CloseWipingRight( SM_GoToCaution );
-		else
-			m_Fade.CloseWipingRight( SM_GoToSelectStyle );
+		m_Fade.CloseWipingRight( SM_GoToCaution );
 		return;
 	case CHOICE_SELECT_GAME:
 		m_soundSelect.PlayRandom();
@@ -291,10 +283,6 @@ void ScreenTitleMenu::MenuStart( PlayerNumber p )
 	case CHOICE_GAME_OPTIONS:
 		m_soundSelect.PlayRandom();
 		m_Fade.CloseWipingRight( SM_GoToGameOptions );
-		return;
-	case CHOICE_GRAPHIC_OPTIONS:
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToGraphicOptions );
 		return;
 	case CHOICE_SYNCHRONIZE:
 		m_soundSelect.PlayRandom();
@@ -311,13 +299,13 @@ void ScreenTitleMenu::MenuStart( PlayerNumber p )
 		return;
 /*	case CHOICE_HELP:
 		m_soundSelect.PlayRandom();
-		PREFS->m_bWindowed = false;
+		PREFSMAN->m_bWindowed = false;
 		ApplyGraphicOptions();
 		GotoURL( "Docs/index.htm" );
 		return;
 	case CHOICE_CHECK_FOR_UPDATE:
 		m_soundSelect.PlayRandom();
-		PREFS->m_bWindowed = false;
+		PREFSMAN->m_bWindowed = false;
 		ApplyGraphicOptions();
 		GotoURL( "http://www.stepmania.com" );
 		return;

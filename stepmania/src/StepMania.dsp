@@ -39,21 +39,21 @@ RSC=rc.exe
 # PROP Use_MFC 1
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "../"
-# PROP Intermediate_Dir "../Release"
+# PROP Intermediate_Dir "../Release-StackTrace"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /Ob2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
+# ADD CPP /nologo /MT /W3 /GX /Zi /O2 /Ob2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
+# ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 /nologo /subsystem:windows /machine:I386
+# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-StackTrace.exe"
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Debug"
 
@@ -200,7 +200,7 @@ SOURCE=.\Font.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameConstants.h
+SOURCE=.\GameConstantsAndTypes.h
 # End Source File
 # Begin Source File
 
@@ -504,6 +504,14 @@ SOURCE=.\CroppedSprite.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DifficultyBanner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyBanner.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\DifficultyIcon.cpp
 # End Source File
 # Begin Source File
@@ -557,6 +565,14 @@ SOURCE=.\MenuElements.cpp
 # Begin Source File
 
 SOURCE=.\MenuElements.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MenuTimer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MenuTimer.h
 # End Source File
 # Begin Source File
 
@@ -932,14 +948,6 @@ SOURCE=.\ScreenSelectGroup.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenSelectMode.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectMode.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenSelectMusic.cpp
 # End Source File
 # Begin Source File
@@ -1000,11 +1008,11 @@ SOURCE=.\ScreenTitleMenu.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\AnnoncerManager.cpp
+SOURCE=.\AnnouncerManager.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\AnnoncerManager.h
+SOURCE=.\AnnouncerManager.h
 # End Source File
 # Begin Source File
 

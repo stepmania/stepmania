@@ -23,52 +23,75 @@ LifeMeterBar::LifeMeterBar()
 	m_fLifePercentage = 0.5f;
 	m_fTrailingLifePercentage = 0;
 	m_fLifeVelocity = 0;
+
+	ResetBarVelocity();
 }
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
 {
+	bool bWasDoingGreat = IsDoingGreat();
+
 	switch( score )
 	{
-	case TNS_PERFECT:	m_fLifePercentage += m_po.m_fLifeAdjustments[m_po.LIFE_PERFECT];	break;
-	case TNS_GREAT:		m_fLifePercentage += m_po.m_fLifeAdjustments[m_po.LIFE_GREAT];	break;
-	case TNS_GOOD:		m_fLifePercentage += m_po.m_fLifeAdjustments[m_po.LIFE_GOOD];	break;
-	case TNS_BOO:		m_fLifePercentage += m_po.m_fLifeAdjustments[m_po.LIFE_BOO];		break;
-	case TNS_MISS:		m_fLifePercentage += m_po.m_fLifeAdjustments[m_po.LIFE_MISS];	break;
+	case TNS_PERFECT:	m_fLifePercentage += 0.03f;	break;
+	case TNS_GREAT:		m_fLifePercentage += 0.01f;	break;
+	case TNS_GOOD:		m_fLifePercentage += 0.00f;	break;
+	case TNS_BOO:		m_fLifePercentage -= 0.05f;	break;
+	case TNS_MISS:		m_fLifePercentage -= 0.10f;	break;
 	}
 
+	bool bIsDoingGreat = IsDoingGreat();
+
+	if( bWasDoingGreat && !bIsDoingGreat )
+		m_fLifePercentage -= 0.10f;		// make it take a while to get back to "doing great"
+
 	m_fLifePercentage = clamp( m_fLifePercentage, 0, 1 );
+	
+	ResetBarVelocity();
 }
 
-float LifeMeterBar::GetLifePercentage() 
+void LifeMeterBar::ResetBarVelocity()
+{
+	// update bar animation
+	const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
+
+	m_fLifeVelocity = fDelta * 5;	// change in life percent per second
+}
+
+bool LifeMeterBar::IsDoingGreat() 
 { 
-	return m_fLifePercentage; 
+	return m_fLifePercentage == 1; 
+}
+
+bool LifeMeterBar::IsAboutToFail() 
+{ 
+	return m_fLifePercentage < 0.3f; 
+}
+
+bool LifeMeterBar::HasFailed() 
+{ 
+	return m_bHasFailed; 
 }
 
 void LifeMeterBar::Update( float fDeltaTime )
 {
-	const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
+	m_fLifeVelocity *= 1-fDeltaTime*2;	// dampen
 
-	m_fLifeVelocity += fDelta * fDeltaTime;
-
-	m_fLifeVelocity = clamp( m_fLifeVelocity, -0.30f, 0.30f );
-
-	m_fLifeVelocity *= 1-fDeltaTime*2;
-
-	if( fDelta != 0 )
+	if( fabsf(m_fLifeVelocity) < 0.01f )
 	{
-		int j=9;
-	}
-
-	if( fabsf(m_fLifeVelocity) < 0.01f  &&  fabsf(fDelta) < 0.01f )
-	{
-		m_fTrailingLifePercentage += fDelta/2;
+		// snap
+		m_fTrailingLifePercentage = m_fLifePercentage;
 		m_fLifeVelocity = 0;
 	}
 	else
 	{
-		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime*4;
+
+		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
 		m_fTrailingLifePercentage = clamp( m_fTrailingLifePercentage, 0, 1 );
 	}
+
+	if( m_fLifePercentage == 0 )
+		m_bHasFailed = true;
 }
 
 
@@ -80,7 +103,7 @@ const D3DXCOLOR COLOR_FULL_2	= D3DXCOLOR(1,1,0,1);
 D3DXCOLOR LifeMeterBar::GetColor( float fPercentIntoSection )
 {
 	float fPercentColor1 = fabsf( fPercentIntoSection*2 - 1 );
-	fPercentColor1 *= fPercentColor1 * fPercentColor1;
+	fPercentColor1 *= fPercentColor1 * fPercentColor1 * fPercentColor1;	// make the color bunch around one side
 	if( m_fLifePercentage == 1 )
 		return COLOR_FULL_1 * fPercentColor1 + COLOR_FULL_2 * (1-fPercentColor1);
 	else

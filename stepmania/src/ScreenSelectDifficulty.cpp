@@ -100,7 +100,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAME->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
 		ThemeElement te;
@@ -178,6 +178,12 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_MenuTimer:
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				MenuStart( (PlayerNumber)p );
+		}
+		break;
 	case SM_GoToPrevState:
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
@@ -296,7 +302,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAME->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
 		m_sprArrow[p].BeginTweening( 0.3f );
@@ -343,7 +349,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAME->IsPlayerEnabled((PlayerNumber)p) )
+		if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
 
 		int iSelection = m_iSelection[p];

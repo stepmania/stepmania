@@ -121,14 +121,12 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 	//	matNewWorld = matTemp * matNewWorld;
 
 	// replace with...
-	if( m_temp_rotation.z != 0 )
-	{
-		DISPLAY->RotateZ( m_temp_rotation.z );
-	}    
+	if( m_temp_rotation.x != 0 )
+		DISPLAY->RotateX( m_temp_rotation.x );
 	if( m_temp_rotation.y != 0 )
-	{
 		DISPLAY->RotateY( m_temp_rotation.y );
-	}    
+	if( m_temp_rotation.z != 0 )
+		DISPLAY->RotateZ( m_temp_rotation.z );
 
 
 

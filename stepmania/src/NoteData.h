@@ -39,9 +39,9 @@ enum TapNoteScore {
 
 struct HoldNote
 {
-	TrackNumber m_iTrack;	
-	NoteIndex m_iStartIndex;
-	NoteIndex m_iEndIndex;
+	int m_iTrack;	
+	int m_iStartIndex;
+	int m_iEndIndex;
 };
 
 enum HoldNoteResult 
@@ -102,12 +102,12 @@ public:
 	HoldNote	m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];
 	int			m_iNumHoldNotes;
 
-	void ClearRange( NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd );
+	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll() { ClearRange( 0, MAX_TAP_NOTE_ROWS ); };
-	void CopyRange( NoteData* pFrom, NoteIndex iNoteIndexBegin, NoteIndex iNoteIndexEnd );
+	void CopyRange( NoteData* pFrom, int iNoteIndexBegin, int iNoteIndexEnd );
 	void CopyAll( NoteData* pFrom ) { m_iNumTracks = pFrom->m_iNumTracks; CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS ); };
 
-	inline bool IsRowEmpty( NoteIndex index )
+	inline bool IsRowEmpty( int index )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
 			if( m_TapNotes[t][index] != '0' )
@@ -134,7 +134,7 @@ public:
 	float GetFreezeRadarValue( float fSongSeconds );
 
 	// Transformations
-	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, TrackNumber iNewToOriginalTrack[] );
+	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, int iNewToOriginalTrack[] );
 
 	void CropToLeftSide();
 	void CropToRightSide();

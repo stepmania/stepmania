@@ -168,16 +168,16 @@ void WheelItemDisplay::RefreshGrades()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAME->IsPlayerEnabled( (PlayerNumber)p ) )
+		if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
 		{
 			m_GradeDisplay[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 			continue;
 		}
 
-		const DifficultyClass dc = PREFS->m_PreferredDifficultyClass[p];
+		const DifficultyClass dc = PREFSMAN->m_PreferredDifficultyClass[p];
 		if( m_pSong )	// this is a song display
 		{
-			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAME->m_sCurrentGame, GAME->m_sCurrentStyle, dc );
+			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAMEMAN->GetCurrentStyleDef()->m_NotesType, dc );
 			m_GradeDisplay[p].SetGrade( grade );
 			m_GradeDisplay[p].SetDiffuseColor( PlayerToColor((PlayerNumber)p) );
 		}
@@ -279,7 +279,7 @@ MusicWheel::MusicWheel()
 	
 
 
-	m_SortOrder = PREFS->m_SongSortOrder;
+	m_SortOrder = PREFSMAN->m_SongSortOrder;
 	m_MusicSortDisplay.Set( m_SortOrder );
 	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
 
@@ -331,7 +331,7 @@ MusicWheel::MusicWheel()
 
 MusicWheel::~MusicWheel()
 {
-	PREFS->m_SongSortOrder = m_SortOrder;
+	PREFSMAN->m_SongSortOrder = m_SortOrder;
 }
 
 void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItemDatas, SongSortOrder so )
@@ -349,7 +349,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		Song* pSong = SONGMAN->m_pSongs[i];
 
 		CArray<Notes*, Notes*> arraySteps;
-		pSong->GetNotessThatMatchGameAndStyle( GAME->m_sCurrentGame, GAME->m_sCurrentStyle, arraySteps );
+		pSong->GetNotesThatMatch( GAMEMAN->GetCurrentStyleDef()->m_NotesType, arraySteps );
 
 		if( arraySteps.GetSize() > 0 )
 			arraySongs.Add( pSong );
@@ -600,7 +600,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 
 void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and top score
 {
-	DifficultyClass dc = PREFS->m_PreferredDifficultyClass[pn];
+	DifficultyClass dc = PREFSMAN->m_PreferredDifficultyClass[pn];
 	Song* pSong = SONGMAN->m_pCurSong;
 	Notes* m_pNotes = SONGMAN->m_pCurNotes[pn];
 	

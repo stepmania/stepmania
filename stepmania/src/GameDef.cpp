@@ -18,124 +18,6 @@
 #include "StyleDef.h"
 
 
-GameDef::GameDef( CString sGameDir )
-{
-	LOG->WriteLine( "GameDef::GameDef( '%s )", sGameDir );
-
-	sGameDir.TrimRight( "/\\" );	// trim off the trailing slash if any
-	m_sGameDir = sGameDir + "\\";
-
-	// extract the game name
-	CString sThrowAway;
-	splitrelpath( sGameDir, sThrowAway, m_sName, sThrowAway );
-
-	//
-	// Parse the .game definition file
-	//
-	CString sGameFilePath = ssprintf("%s\\%s.game", sGameDir, m_sName);
-	IniFile ini;
-	ini.SetPath( sGameFilePath );
-	if( !ini.ReadFile() )
-		FatalError( "Error reading game definition file '%s'.", sGameFilePath );
-
-
-	CString sGameName;
-	ini.GetValue( "Game", "Name", sGameName );
-	if( sGameName != m_sName )
-		FatalError( "Game name in '%s' doesn't match the directory name.", sGameFilePath );
-
-	ini.GetValue( "Game", "Description", m_sDescription );
-
-	ini.GetValueI( "Game", "NumInstruments", m_iNumInstruments );
-	if( m_iNumInstruments != 2 )
-		FatalError( "Invalid value for NumInstruments in '%s'.", sGameFilePath );
-
-	ini.GetValueI( "Game", "ButtonsPerInstrument", m_iButtonsPerInstrument );
-	if( m_iButtonsPerInstrument < 1  ||  m_iButtonsPerInstrument > MAX_INSTRUMENT_BUTTONS )
-		FatalError( "Invalid value for ButtonsPerInstrument in '%s'.", sGameFilePath );
-
-	CString sButtonsString;
-	ini.GetValue( "Game", "ButtonNames", sButtonsString );
-	CStringArray arrayButtonNames;
-	split( sButtonsString, ",", arrayButtonNames );
-	if( arrayButtonNames.GetSize() != m_iButtonsPerInstrument )
-		FatalError( "Button names do not match number of buttons in '%s'.", sGameFilePath );
-	for( int i=0; i<m_iButtonsPerInstrument; i++ )
-		m_sButtonNames[i] = arrayButtonNames[i];
-
-	CString sMenuButtonsString;
-	ini.GetValue( "Game", "MenuButtons", sMenuButtonsString );
-	CStringArray arrayMenuButtonNames;
-	split( sMenuButtonsString, ",", arrayMenuButtonNames );
-	if( arrayMenuButtonNames.GetSize() != NUM_MENU_BUTTONS )
-		FatalError( "Invalid number of menu buttons in '%s'.", sGameFilePath );
-	for( i=0; i<NUM_MENU_BUTTONS; i++ )
-		m_iMenuButtons[i] = ButtonNameToIndex( arrayMenuButtonNames[i] );
-	
-
-
-	//
-	// Look for a StyleDefs in this game folder
-	//
-	m_iNumStyleDefs = 0;
-	CStringArray arrayStyleFiles;
-	GetDirListing( ssprintf("%s\\*.style", sGameDir), arrayStyleFiles );
-	SortCStringArray( arrayStyleFiles );
-
-	for( i=0; i<arrayStyleFiles.GetSize(); i++ )	// for each style
-	{
-		CString sStyleFileName = arrayStyleFiles[i];
-
-		if( 0 == stricmp( sStyleFileName, "cvs" ) )	// the directory called "CVS"
-			continue;		// ignore it
-
-		CString sStyleFilePath = ssprintf("%s\\%s", sGameDir, sStyleFileName);
-
-		// add the new style
-		m_pStyleDefs[m_iNumStyleDefs++] = new StyleDef( this, sStyleFilePath );
-	}
-
-
-
-	//
-	// Look for a note skins in this game folder
-	//
-	m_iNumSkinFolders = 0;
-	CStringArray arraySkinFolders;
-	GetDirListing( ssprintf("%s\\*.", sGameDir), arraySkinFolders, true );
-	SortCStringArray( arraySkinFolders );
-
-	if( arraySkinFolders.GetSize() == 0 )
-		FatalError( "The Game directory '%s' must contain at least one skin.", sGameFilePath );
-
-	for( i=0; i<arraySkinFolders.GetSize(); i++ )	// for each skin folder
-	{
-		CString sSkinFolder = arraySkinFolders[i];
-
-		if( 0 == stricmp( sSkinFolder, "cvs" ) )	// the directory called "CVS"
-			continue;		// ignore it
-
-		m_sSkinFolders[m_iNumSkinFolders++] = sSkinFolder;
-	}
-
-}
-
-GameDef::~GameDef() 
-{
-	for( int i=0; i<m_iNumStyleDefs; i++ )
-		delete m_pStyleDefs[i];
-}
-
-StyleDef* GameDef::GetStyleDef( CString sStyle )
-{
-	for( int i=0; i<m_iNumStyleDefs; i++ )
-	{
-		if( m_pStyleDefs[i]->m_sName == sStyle )
-			return m_pStyleDefs[i];
-	}
-	return NULL;
-}
-
 CString GameDef::ElementToGraphicSuffix( const GameButtonGraphic gbg ) 
 {
 	CString sAssetPath;		// fill this in below
@@ -158,8 +40,8 @@ CString GameDef::ElementToGraphicSuffix( const GameButtonGraphic gbg )
 
 CString GameDef::GetPathToGraphic( const CString sSkinName, const int iInstrumentButton, const GameButtonGraphic gbg ) 
 {
-	const CString sSkinDir	= ssprintf("%s\\%s\\", m_sGameDir, sSkinName);
-	const CString sButtonName = m_sButtonNames[ iInstrumentButton ];
+	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
+	const CString sButtonName = m_szButtonNames[ iInstrumentButton ];
 	const CString sGraphicSuffix = ElementToGraphicSuffix( gbg );
 
 	CStringArray arrayPossibleFileNames;		// fill this with the possible files
@@ -178,8 +60,8 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const int iInstrumen
 
 void GameDef::GetTweenColors( const CString sSkinName, const int iInstrumentButton, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors )
 {
-	const CString sSkinDir	= ssprintf("%s\\%s\\", m_sGameDir, sSkinName);
-	const CString sButtonName = m_sButtonNames[ iInstrumentButton ];
+	const CString sSkinDir	= ssprintf("Skins\\%s\\%s\\", m_szName, sSkinName);
+	const CString sButtonName = m_szButtonNames[ iInstrumentButton ];
 
 	const CString sColorsFilePath = sSkinDir + sButtonName + ".colors";
 
@@ -201,3 +83,42 @@ void GameDef::GetTweenColors( const CString sSkinName, const int iInstrumentButt
 	return;
 }
 
+void GameDef::GetSkinNames( CStringArray &AddTo )
+{
+	CString sBaseSkinFolder = "Skins\\" + CString(m_szName) + "\\";
+	GetDirListing( sBaseSkinFolder + "*.*", AddTo, true );
+	if( AddTo.GetSize() == 0 )
+		FatalError( "The folder '%s' must contain at least one skin.", sBaseSkinFolder );
+}
+
+bool GameDef::HasASkinNamed( CString sSkin )
+{
+	CStringArray asSkinNames;
+	GetSkinNames( asSkinNames );
+
+	for( int i=0; i<asSkinNames.GetSize(); i++ )
+		if( asSkinNames[i] == sSkin )
+			return true;
+
+	return false;
+}
+
+void GameDef::AssertSkinsAreComplete()
+{
+	CStringArray asSkinNames;
+	GetSkinNames( asSkinNames );
+
+	for( int i=0; i<asSkinNames.GetSize(); i++ )
+	{
+		CString sSkin = asSkinNames[i];
+		CString sGameSkinFolder = "Skins\\" + sSkin + "\\";
+
+		for( int i=0; i<NUM_GAME_BUTTON_GRAPHICS; i++ )
+		{
+			GameButtonGraphic gbg = (GameButtonGraphic)i;
+			CString sPathToGraphic = GetPathToGraphic( sSkin, INSTRUMENT_1, gbg );
+			if( !DoesFileExist(sPathToGraphic) )
+				FatalError( "Game button graphic at %s is missing.", sPathToGraphic );
+		}		
+	}
+}

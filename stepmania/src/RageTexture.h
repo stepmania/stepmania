@@ -88,22 +88,24 @@ protected:
 	virtual void CreateFrameRects();
 	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
 
+	virtual CString GetCacheFilePath();
+	virtual bool LoadFromCacheFile();
+	virtual void SaveToCacheFile();
+
 	CString				m_sFilePath;
 	LPDIRECT3DDEVICE8   m_pd3dDevice;
-//	LPDIRECT3DTEXTURE8  m_pd3dTexture;
 
 	int				m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
 	int				m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory
 	int				m_iImageWidth,		m_iImageHeight;		// dimensions of the image in the texture
-	D3DFORMAT		m_TextureFormat; 
+	int				m_iFramesWide,		m_iFramesHigh;		// The number of frames of animation in each row and column of this texture
+	D3DFORMAT       m_TextureFormat;
 
-	// The number of frames of animation in each row and column of this texture.
-	int				m_iFramesWide, m_iFramesHigh;
 	
-
 	// RECTs that hold the bounds of each frame in the bitmap.
 	// e.g., if the texture has 4 frames of animation, the SrcRect for each frame would
 	// be in m_FrameRects[0..4].
 	CArray<FRECT, FRECT&>	m_TextureCoordRects;	
-
 };
+
+

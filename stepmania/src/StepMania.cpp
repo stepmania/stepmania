@@ -47,6 +47,7 @@
 #include "ScreenPlayerOptions.h"
 #include "ScreenMusicScroll.h"
 #include "ScreenSelectMusic.h"
+#include "ScreenGameplay.h"
 
 // error catcher stuff
 #include "ErrorCatcher/ErrorCatcher.h"
@@ -105,6 +106,7 @@ HRESULT		RestoreObjects();			// restore game objects after a display mode change
 VOID		DestroyObjects();			// deallocate game objects when we're done with them
 
 void ApplyGraphicOptions();	// Set the display mode according to the user's preferences
+
 
 //-----------------------------------------------------------------------------
 // Name: WinMain()
@@ -186,17 +188,15 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	ShowWindow( g_hWndMain, SW_HIDE );
 
 
-
-#ifdef DEBUG
-#define BCATCHERRORS false
+	// Don't catch errors if we're running in the debugger.  This way, the debugger
+	// will give us a nice stack trace.
+#ifdef _DEBUG
+	#define bCatchErrors false
 #else
-#define BCATCHERRORS true
+	#define bCatchErrors true
 #endif
 
-
-	bool bSuccess = RunAndCatchErrors( MainLoop, BCATCHERRORS );
-
-	
+	bool bSuccess = RunAndCatchErrors( MainLoop, bCatchErrors );
 
 
 
@@ -279,6 +279,7 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 			CString sMessage = ssprintf("%s", GetError() );
 			if( GetErrorHr() != 0 )
 				sMessage += ssprintf(" ('%d - %s)'", GetErrorHr(), DXGetErrorString8(GetErrorHr()) );
+			sMessage +=	ssprintf("\n\nStack Trace: (PDB file required for function names)", GetStackTrace() );
 			sMessage +=	ssprintf("\n\n%s", GetStackTrace() );
 			sMessage.Replace( "\n", "\r\n" );
 			SendDlgItemMessage( 
@@ -415,14 +416,13 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
             switch( LOWORD(wParam) )
             {
 				case IDM_TOGGLEFULLSCREEN:
-					PREFS->m_bWindowed = !PREFS->m_bWindowed;
+					PREFSMAN->m_WindowMode = PrefsManager::WindowMode( PREFSMAN->m_WindowMode+1 );
+					if( PREFSMAN->m_WindowMode >= PrefsManager::NUM_WINDOW_MODES )
+						PREFSMAN->m_WindowMode = PrefsManager::WindowMode( 0 );
 					ApplyGraphicOptions();
 					return 0;
 				case IDM_CHANGEDETAIL:
-					if( PREFS->m_GraphicProfile == PROFILE_LOW )
-						PREFS->m_GraphicProfile = PROFILE_MEDIUM;
-					else
-						PREFS->m_GraphicProfile  = PROFILE_LOW;
+					PREFSMAN->m_bHighDetail = !PREFSMAN->m_bHighDetail;
 					ApplyGraphicOptions();
 					return 0;
                case IDM_EXIT:
@@ -496,10 +496,10 @@ HRESULT CreateObjects( HWND hWnd )
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageSoundStream;
 	INPUTMAN= new RageInput( hWnd );
-	PREFS	= new PrefsManager;
+	PREFSMAN	= new PrefsManager;
 	DISPLAY	= new RageDisplay( hWnd );
 	SONGMAN	= new SongManager;		// this takes a long time to load
-	GAME	= new GameManager;
+	GAMEMAN	= new GameManager;
 	THEME	= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter();
@@ -526,9 +526,10 @@ HRESULT CreateObjects( HWND hWnd )
 	//SCREENMAN->SetNewScreen( new ScreenSandbox );
 	//SCREENMAN->SetNewScreen( new ScreenResults );
 	//SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
-	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	//SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	//SCREENMAN->SetNewScreen( new ScreenGameplay );
 	//SCREENMAN->SetNewScreen( new ScreenMusicScroll );
-	//SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+	SCREENMAN->SetNewScreen( new ScreenSelectMusic );
 	//SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 
 
@@ -554,10 +555,10 @@ void DestroyObjects()
 	SAFE_DELETE( INPUTFILTER );
 	SAFE_DELETE( ANNOUNCER );
 	SAFE_DELETE( THEME );
-	SAFE_DELETE( GAME );
+	SAFE_DELETE( GAMEMAN );
 	SAFE_DELETE( SONGMAN );
 	SAFE_DELETE( DISPLAY );
-	SAFE_DELETE( PREFS );
+	SAFE_DELETE( PREFSMAN );
 	SAFE_DELETE( INPUTMAN );
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
@@ -755,39 +756,39 @@ void ApplyGraphicOptions()
 {
 	InvalidateObjects();
 
-	GraphicProfileOptions *pGPO = PREFS->GetCurrentGraphicProfileOptions();
-
-	bool bWindowed			= PREFS->m_bWindowed;
-	CString sProfileName	= pGPO->m_szProfileName;
-	DWORD dwWidth			= pGPO->m_iWidth;
-	DWORD dwHeight			= pGPO->m_iHeight;
-	DWORD dwDisplayBPP		= pGPO->m_iDisplayColor;
-	DWORD dwTextureBPP		= pGPO->m_iTextureColor;
-	DWORD dwMaxTextureSize	= pGPO->m_iMaxTextureSize;
-	DWORD dwFlags = 0;	// not used anymore
+	bool bWindowed			= PREFSMAN->m_WindowMode != PrefsManager::WINDOW_MODE_FULLSCREEN;
+	bool bMaximized			= PREFSMAN->m_WindowMode == PrefsManager::WINDOW_MODE_MAXIMIZED;
+	CString sProfileName	= PREFSMAN->m_bHighDetail ? "High Detail" : "Low Detail";
+	DWORD dwWidth			= PREFSMAN->m_bHighDetail ? 640 : 320;
+	DWORD dwHeight			= PREFSMAN->m_bHighDetail ? 480 : 240;
+	DWORD dwDisplayBPP		= PREFSMAN->m_bHighDetail ? 16 : 16;
+	DWORD dwTextureBPP		= PREFSMAN->m_bHighDetail ? 16 : 16;
+	DWORD dwMaxTextureSize	= PREFSMAN->m_bHighDetail ? 
+		(PREFSMAN->m_bHighTextureDetail ? 1024 : 512) : 
+		(PREFSMAN->m_bHighTextureDetail ? 512 : 256);
 
 	//
 	// If the requested resolution doesn't work, keep switching until we find one that does.
 	//
-	if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+	if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
 	{
 		// We failed.  Try full screen with same params.
 		bWindowed = false;
-		if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+		if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
 		{
 			// Failed again.  Try 16 BPP
 			dwDisplayBPP = 16;
-			if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+			if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
 			{
 				// Failed again.  Try 640x480
 				dwWidth = 640;
 				dwHeight = 480;
-				if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+				if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
 				{
 					// Failed again.  Try 320x240
 					dwWidth = 320;
 					dwHeight = 240;
-					if( !DISPLAY->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwDisplayBPP, dwFlags ) )
+					if( !DISPLAY->SwitchDisplayMode(bWindowed, dwWidth, dwHeight, dwDisplayBPP) )
 					{
 						FatalError( "Tried every possible display mode, and couldn't find one that works." );
 					}
@@ -804,14 +805,11 @@ void ApplyGraphicOptions()
 
 	RestoreObjects();
 
-	PREFS->SavePrefsToDisk();
+	PREFSMAN->SavePrefsToDisk();
 
 	if( SCREENMAN )
 	{
 		CString sMessage = ssprintf("%s - %s detail", bWindowed ? "Windowed" : "FullScreen", sProfileName );
-		if( PREFS->m_GraphicProfile == PROFILE_CUSTOM )
-			sMessage += ssprintf(" - %ux%u - %u color, %u texture", dwWidth, dwHeight, dwDisplayBPP, dwTextureBPP);
-
 		SCREENMAN->SystemMessage( sMessage );
 	}
 }

@@ -116,7 +116,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 {
 	LOG->WriteLine( "ScreenSelectStyle::ScreenSelectStyle()" );
 
-	m_iSelectedStyle = 0;	// single
+	m_iSelection = 0;	// single
 
 
 	for( int i=0; i<NUM_STYLE_PADS; i++ )
@@ -252,6 +252,9 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 
 	switch( SM )
 	{
+	case SM_MenuTimer:
+		MenuStart(PLAYER_1);
+		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
@@ -266,7 +269,7 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	case SM_UpdateAnimations:
 		for( int i=0; i<NUM_STYLE_DANCERS; i++ )
 			m_sprDancer[i].StopAnimating();
-		switch( m_iSelectedStyle )
+		switch( m_iSelection )
 		{
 		case 0:		m_sprDancer[0].StartAnimating();										break;
 		case 1:		m_sprDancer[1].StartAnimating();	m_sprDancer[2].StartAnimating();	break;
@@ -280,11 +283,11 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectStyle::MenuLeft( PlayerNumber p )
 {
-	if( m_iSelectedStyle == 0 )		// can't go left any further
+	if( m_iSelection == 0 )		// can't go left any further
 		return;
 
 	BeforeChange();
-	m_iSelectedStyle = m_iSelectedStyle - 1;
+	m_iSelection = m_iSelection - 1;
 	m_soundChange.Stop();
 	m_soundChange.PlayRandom();
 	AfterChange();
@@ -293,11 +296,11 @@ void ScreenSelectStyle::MenuLeft( PlayerNumber p )
 
 void ScreenSelectStyle::MenuRight( PlayerNumber p )
 {
-	if( m_iSelectedStyle == NUM_DANCE_STYLES-1 )		// can't go right any further
+	if( m_iSelection == NUM_DANCE_STYLES-1 )		// can't go right any further
 		return;
 
 	BeforeChange();
-	m_iSelectedStyle = m_iSelectedStyle + 1;
+	m_iSelection = m_iSelection + 1;
 	m_soundChange.Stop();
 	m_soundChange.PlayRandom();
 	AfterChange();
@@ -305,19 +308,23 @@ void ScreenSelectStyle::MenuRight( PlayerNumber p )
 
 void ScreenSelectStyle::MenuStart( PlayerNumber p )
 {
-	GAME->m_sCurrentStyle = DANCE_STYLES[m_iSelectedStyle];
+	GAMEMAN->m_CurStyle = Style( m_iSelection );
+	GAMEMAN->m_sMasterPlayerNumber = p;
 
-	if( GAME->m_sCurrentStyle == "single" )
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE) );
-	else if( GAME->m_sCurrentStyle == "versus" )
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS) );
-	else if( GAME->m_sCurrentStyle == "double" )
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_COMMENT_DOUBLE) );
-	else if( GAME->m_sCurrentStyle == "couple" )
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_COMMENT_COUPLE) );
-	else if( GAME->m_sCurrentStyle == "solo" )
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_COMMENT_SOLO) );
-
+	AnnouncerElement ae;
+	switch( GAMEMAN->m_CurStyle )
+	{
+		case STYLE_DANCE_SINGLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
+		case STYLE_DANCE_VERSUS:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
+		case STYLE_DANCE_DOUBLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_DOUBLE;		break;
+		case STYLE_DANCE_COUPLE:		ae = ANNOUNCER_SELECT_STYLE_COMMENT_COUPLE;		break;
+		case STYLE_DANCE_SOLO:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SOLO;		break;
+		case STYLE_DANCE_SOLO_VERSUS:	ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
+		case STYLE_PUMP_SINGLE:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_SINGLE;		break;
+		case STYLE_PUMP_VERSUS:			ae = ANNOUNCER_SELECT_STYLE_COMMENT_VERSUS;		break;
+		default:	ASSERT(0);	break;	// invalid Style
+	}
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ae) );
 
 	this->ClearMessageQueue();
 
@@ -343,7 +350,7 @@ void ScreenSelectStyle::MenuBack( PlayerNumber p )
 
 void ScreenSelectStyle::BeforeChange()
 {
-	switch( m_iSelectedStyle )
+	switch( m_iSelection )
 	{
 	case 0:
 		m_sprDancer[0].BeginTweening( TWEEN_TIME );
@@ -378,16 +385,16 @@ void ScreenSelectStyle::AfterChange()
 {
 	this->ClearMessageQueue();
 
-	m_textExplanation1.SetText( TEXT_EXPLANATION1[m_iSelectedStyle] );
+	m_textExplanation1.SetText( TEXT_EXPLANATION1[m_iSelection] );
 	m_textExplanation1.SetZoomX( 0 );
 	m_textExplanation1.BeginTweening( 0.6f );
 	m_textExplanation1.SetTweenZoomX( EXPLANATION1_ZOOM_X );
 
-	m_textExplanation2.SetText( TEXT_EXPLANATION2[m_iSelectedStyle] );
+	m_textExplanation2.SetText( TEXT_EXPLANATION2[m_iSelection] );
 	m_textExplanation2.StopTweening();
 	m_textExplanation2.SetZoomX( 0 );
 
-	switch( m_iSelectedStyle )
+	switch( m_iSelection )
 	{
 	case 0:
 		m_sprPad[0].BeginTweening( TWEEN_TIME );
@@ -498,8 +505,8 @@ void ScreenSelectStyle::TweenOnScreen()
 	m_textExplanation2.SetZoomX( 0 );
 
 	m_sprStyleIcon.SetState( 0 );
-	m_textExplanation1.SetText( TEXT_EXPLANATION1[m_iSelectedStyle] );
-	m_textExplanation2.SetText( TEXT_EXPLANATION2[m_iSelectedStyle] );
+	m_textExplanation1.SetText( TEXT_EXPLANATION1[m_iSelection] );
+	m_textExplanation2.SetText( TEXT_EXPLANATION2[m_iSelection] );
 
 	this->SendScreenMessage( SM_TweenExplanation2, 1 );
 	this->SendScreenMessage( SM_UpdateAnimations, TWEEN_TIME );

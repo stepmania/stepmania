@@ -10,86 +10,56 @@
 -----------------------------------------------------------------------------
 */
 
+/////////////////////////////
+// Screen Dimensions
+/////////////////////////////
+#define	SCREEN_WIDTH	(640)
+#define	SCREEN_HEIGHT	(480)
 
-#define		SCREEN_WIDTH	(640)
-#define		SCREEN_HEIGHT	(480)
+#define	SCREEN_LEFT		(0)
+#define	SCREEN_RIGHT	(SCREEN_WIDTH)
+#define	SCREEN_TOP		(0)
+#define	SCREEN_BOTTOM	(SCREEN_HEIGHT)
 
-#define		SCREEN_LEFT		(0)
-#define		SCREEN_RIGHT	(SCREEN_WIDTH)
-#define		SCREEN_TOP		(0)
-#define		SCREEN_BOTTOM	(SCREEN_HEIGHT)
-
-#define		CENTER_X		(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
-#define		CENTER_Y		(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
+#define	CENTER_X		(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
+#define	CENTER_Y		(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
 
 
-const int MAX_NOTE_TRACKS	=	16;
+/////////////////////////
+// Note definitions
+/////////////////////////
+typedef unsigned char TapNote;
 
+enum 
+{
+	TRACK_1 = 0,
+	TRACK_2,
+	TRACK_3,
+	TRACK_4,
+	TRACK_5,
+	TRACK_6,
+	TRACK_7,
+	TRACK_8,
+	TRACK_9,
+	TRACK_10,
+	TRACK_11,
+	TRACK_12,
+	TRACK_13,
+	TRACK_14,
+	TRACK_15,
+	TRACK_16,
+	MAX_NOTE_TRACKS		// leave this at the end
+};
 
 const int MAX_MEASURES		= 200;	// this should be long enough to hold 10:00 minute songs (
 const int BEATS_PER_MEASURE = 4;
 const int MAX_BEATS			= MAX_MEASURES * BEATS_PER_MEASURE;
 
-const int ELEMENTS_PER_BEAT	= 12;	// It is important that this number is evenly divisible by 2, 3, 4, and 8
+const int ELEMENTS_PER_BEAT	= 12;	// It is important that this number is evenly divisible by 2, 3, and 4.
 const int ELEMENTS_PER_MEASURE = ELEMENTS_PER_BEAT * BEATS_PER_MEASURE;
 const int MAX_TAP_NOTE_ROWS = MAX_BEATS*ELEMENTS_PER_BEAT;
 
 const int MAX_HOLD_NOTE_ELEMENTS = 200;
-
-enum RadarCatrgory	// starting from 12-o'clock rotating clockwise
-{
-	RADAR_STREAM = 0,
-	RADAR_VOLTAGE,
-	RADAR_AIR,
-	RADAR_CHAOS,
-	RADAR_FREEZE,
-	NUM_RADAR_VALUES	// leave this at the end
-};
-
-enum DifficultyClass 
-{ 
-	CLASS_EASY,		// corresponds to Basic
-	CLASS_MEDIUM,	// corresponds to Trick, Another, Standard
-	CLASS_HARD,		// corresponds to Maniac, SSR, Heavy
-	NUM_DIFFICULTY_CLASSES
-};
-
-enum GameMode
-{
-	GAME_MODE_ARCADE,
-	GAME_MODE_FREE_PLAY,
-	GAME_MODE_NONSTOP,
-	NUM_GAME_MODES
-};
-
-enum GameButtonGraphic { 
-	GRAPHIC_NOTE_COLOR_PART,
-	GRAPHIC_NOTE_GRAY_PART,
-	GRAPHIC_RECEPTOR,
-	GRAPHIC_TAP_EXPLOSION_BRIGHT,
-	GRAPHIC_TAP_EXPLOSION_DIM,
-	GRAPHIC_HOLD_EXPLOSION,
-	NUM_GAME_BUTTON_GRAPHICS	// leave this at the end
-};
-
-
-enum PlayerNumber {
-	PLAYER_1 = 0,
-	PLAYER_2,
-	NUM_PLAYERS,	// leave this at the end
-	PLAYER_NONE
-};
-
-inline D3DXCOLOR PlayerToColor( PlayerNumber p ) 
-{
-	switch( p )
-	{
-		case PLAYER_1:	return D3DXCOLOR(0.4f,1.0f,0.8f,1);	// sea green
-		case PLAYER_2:	return D3DXCOLOR(1.0f,0.5f,0.2f,1);	// orange
-		default:	ASSERT( false ); return D3DXCOLOR(1,1,1,1);
-	}
-};
-inline D3DXCOLOR PlayerToColor( int p ) { return PlayerToColor( (PlayerNumber)p ); }
 
 enum NoteType 
 { 
@@ -146,10 +116,112 @@ inline D3DXCOLOR GetNoteColorFromIndex( int iStepIndex )
 	return D3DXCOLOR(0.5f,0.5f,0.5f,1);
 };
 
-typedef unsigned char TapNote;
-typedef unsigned char TrackNumber;
-typedef unsigned short NoteIndex;
-typedef TrackNumber ColumnNumber;
+enum RadarCatrgory	// starting from 12-o'clock rotating clockwise
+{
+	RADAR_STREAM = 0,
+	RADAR_VOLTAGE,
+	RADAR_AIR,
+	RADAR_CHAOS,
+	RADAR_FREEZE,
+	NUM_RADAR_VALUES	// leave this at the end
+};
+
+enum DifficultyClass 
+{ 
+	CLASS_EASY,		// corresponds to Basic
+	CLASS_MEDIUM,	// corresponds to Trick, Another, Standard
+	CLASS_HARD,		// corresponds to Maniac, SSR, Heavy
+	NUM_DIFFICULTY_CLASSES
+};
+
+inline D3DXCOLOR DifficultyClassToColor( DifficultyClass dc )
+{
+	switch( dc )
+	{
+	case CLASS_EASY:	return D3DXCOLOR(1,1,0,1);	// yellow
+	case CLASS_MEDIUM:	return D3DXCOLOR(1,0,0,1);	// red
+	case CLASS_HARD:	return D3DXCOLOR(0,1,0,1);	// green
+	default:	ASSERT(0);	return D3DXCOLOR();	// invalid DifficultyClass
+	}
+}
+
+enum NotesType
+{
+	NOTES_TYPE_DANCE_SINGLE = 0,
+	NOTES_TYPE_DANCE_DOUBLE,
+	NOTES_TYPE_DANCE_COUPLE,
+	NOTES_TYPE_DANCE_SOLO,
+	NOTES_TYPE_PUMP_SINGLE,
+	NOTES_TYPE_PUMP_VERSUS,
+	NUM_NOTES_TYPES		// leave this at the end
+};
+
+inline int NotesTypeToNumColumns( NotesType nt )
+{
+	switch( nt )
+	{
+	case NOTES_TYPE_DANCE_SINGLE:	return 4;
+	case NOTES_TYPE_DANCE_DOUBLE:	return 8;
+	case NOTES_TYPE_DANCE_COUPLE:	return 8;
+	case NOTES_TYPE_DANCE_SOLO:		return 6;
+	case NOTES_TYPE_PUMP_SINGLE:	return 5;
+	default:	ASSERT(0);		return -1;	// invalid NotesType
+	}
+}
+
+inline NotesType StringToNotesType( CString sNotesType )
+{
+	if     ( sNotesType == "dance-single" )	return NOTES_TYPE_DANCE_SINGLE;
+	else if( sNotesType == "dance-double" )	return NOTES_TYPE_DANCE_DOUBLE;
+	else if( sNotesType == "dance-couple" )	return NOTES_TYPE_DANCE_COUPLE;
+	else if( sNotesType == "dance-solo" )	return NOTES_TYPE_DANCE_SOLO;
+	else if( sNotesType == "pump-single" )	return NOTES_TYPE_PUMP_SINGLE;
+	else	ASSERT(0);	return NOTES_TYPE_DANCE_SINGLE;	// invalid NotesType
+}
+
+inline CString NotesTypeToString( NotesType nt )
+{
+	switch( nt )
+	{
+	case NOTES_TYPE_DANCE_SINGLE:	return "dance-single";
+	case NOTES_TYPE_DANCE_DOUBLE:	return "dance-double";
+	case NOTES_TYPE_DANCE_COUPLE:	return "dance-couple";
+	case NOTES_TYPE_DANCE_SOLO:		return "dance-solo";
+	case NOTES_TYPE_PUMP_SINGLE:	return "pump-single";
+	default:	ASSERT(0);		return "";	// invalid NotesType
+	}
+}
+
+
+//////////////////////////
+// Play mode stuff
+//////////////////////////
+enum PlayMode
+{
+	PLAY_MODE_ARCADE,
+	PLAY_MODE_NONSTOP,
+	PLAY_MODE_ENDLESS,
+	NUM_PLAY_MODES
+};
+
+enum PlayerNumber {
+	PLAYER_1 = 0,
+	PLAYER_2,
+	NUM_PLAYERS,	// leave this at the end
+	PLAYER_NONE
+};
+
+inline D3DXCOLOR PlayerToColor( PlayerNumber p ) 
+{
+	switch( p )
+	{
+		case PLAYER_1:	return D3DXCOLOR(0.4f,1.0f,0.8f,1);	// sea green
+		case PLAYER_2:	return D3DXCOLOR(1.0f,0.5f,0.2f,1);	// orange
+		default:	ASSERT( false ); return D3DXCOLOR(1,1,1,1);
+	}
+};
+inline D3DXCOLOR PlayerToColor( int p ) { return PlayerToColor( (PlayerNumber)p ); }
+
 
 enum SongSortOrder { 
 	SORT_GROUP, 
@@ -160,70 +232,52 @@ enum SongSortOrder {
 };
 
 
-
-struct GameOptions
+///////////////////////////////
+// Game/Style definition stuff
+///////////////////////////////
+enum Game
 {
-	GameOptions() 
+	GAME_DANCE,
+	GAME_PUMP,
+	NUM_GAMES	// leave this at the end
+};
+
+enum Style
+{
+	STYLE_DANCE_SINGLE,
+	STYLE_DANCE_VERSUS,
+	STYLE_DANCE_DOUBLE,
+	STYLE_DANCE_COUPLE,
+	STYLE_DANCE_SOLO,
+	STYLE_DANCE_SOLO_VERSUS,
+	STYLE_PUMP_SINGLE,
+	STYLE_PUMP_VERSUS,
+	NUM_STYLES	// leave this at the end
+};
+
+inline Game StyleToGame( Style s )
+{
+	switch( s )
 	{
-		m_bIgnoreJoyAxes = false;
-		m_bShowFPS = true;
-		m_bUseRandomVis = false;
-		m_bAnnouncer = true;
-		m_bEventMode = false;
-		m_bShowCaution = true;
-		m_bShowSelectDifficulty = true;
-		m_bShowSelectGroup = true;
-		m_iNumArcadeStages = 3;
-		m_iDifficulty = 4;
-	};
-	bool m_bIgnoreJoyAxes;
-	bool m_bShowFPS;
-	bool m_bUseRandomVis;
-	bool m_bAnnouncer;
-	bool m_bEventMode;
-	bool m_bShowCaution;
-	bool m_bShowSelectDifficulty;
-	bool m_bShowSelectGroup;
-	int	m_iNumArcadeStages;
-	int m_iDifficulty;
-};
-
-enum GraphicProfile
-{
-	PROFILE_SUPER_LOW = 0,
-	PROFILE_LOW,
-	PROFILE_MEDIUM,
-	PROFILE_HIGH,
-	PROFILE_CUSTOM,
-	NUM_GRAPHIC_PROFILES
-};
-
-struct GraphicProfileOptions
-{
-	char m_szProfileName[30];
-	int m_iWidth;
-	int m_iHeight;
-	int m_iMaxTextureSize;
-	int m_iDisplayColor;
-	int m_iTextureColor;
-	bool m_bBackgrounds;
-};
-
-inline DWORD GetHeightFromWidth( DWORD dwWidth )
-{
-	switch( dwWidth )
-	{
-	case 320:	return 240;
-	case 400:	return 300;
-	case 512:	return 384;
-	case 640:	return 480;
-	case 800:	return 600;
-	case 1024:	return 768;
-	case 1280:	return 1024;
-	default:	return 480;
+	case STYLE_DANCE_SINGLE:
+	case STYLE_DANCE_VERSUS:
+	case STYLE_DANCE_DOUBLE:
+	case STYLE_DANCE_COUPLE:
+	case STYLE_DANCE_SOLO:
+	case STYLE_DANCE_SOLO_VERSUS:
+		return GAME_DANCE;
+	case STYLE_PUMP_SINGLE:
+	case STYLE_PUMP_VERSUS:
+		return GAME_PUMP;
+	default:
+		ASSERT(0);	// invalid Style
+		return GAME_DANCE;
 	}
 }
 
+///////////////////////////
+// Options stuff
+///////////////////////////
 
 struct PlayerOptions
 {
@@ -235,15 +289,8 @@ struct PlayerOptions
 		m_bLittle = false;
 		m_bReverseScroll = false;
 		m_ColorType = COLOR_ARCADE;
-		m_bAllowFreezeArrows = true;
+		m_bHoldNotes = true;
 		m_DrainType = DRAIN_NORMAL;
-
-		m_fInitialLifePercentage = 0.5f;
-		m_fLifeAdjustments[LIFE_PERFECT] =	 0.010f;
-		m_fLifeAdjustments[LIFE_GREAT]	=	 0.005f;
-		m_fLifeAdjustments[LIFE_GOOD]	=	 0.000f;
-		m_fLifeAdjustments[LIFE_BOO]		=	-0.015f;
-		m_fLifeAdjustments[LIFE_MISS]	=	-0.030f;
 	};
 
 	float m_fArrowScrollSpeed;
@@ -257,13 +304,9 @@ struct PlayerOptions
 	bool m_bReverseScroll;
 	enum ColorType { COLOR_ARCADE=0, COLOR_NOTE, COLOR_FLAT, COLOR_PLAIN };
 	ColorType m_ColorType;
-	bool m_bAllowFreezeArrows;
+	bool m_bHoldNotes;
 	enum DrainType { DRAIN_NORMAL=0, DRAIN_NO_RECOVER, DRAIN_SUDDEN_DEATH };
 	DrainType m_DrainType;
-
-	float m_fInitialLifePercentage;
-	enum LifeAdjustmentType { LIFE_PERFECT=0, LIFE_GREAT, LIFE_GOOD, LIFE_BOO, LIFE_MISS, NUM_LIFE_ADJUSTMENTS };
-	float m_fLifeAdjustments[NUM_LIFE_ADJUSTMENTS];
 };
 
 struct SongOptions
@@ -272,8 +315,6 @@ struct SongOptions
 		m_FailType = FAIL_ARCADE;
 		m_AssistType = ASSIST_NONE;
 		m_fMusicRate = 1.0f;
-		m_fMusicPitch = 0.0f;
-		m_bShowMeasureBars = false;
 	};
 
 	enum FailType { FAIL_ARCADE=0, FAIL_END_OF_SONG, FAIL_OFF };
@@ -281,8 +322,6 @@ struct SongOptions
 	enum AssistType { ASSIST_NONE=0, ASSIST_TICK };
 	AssistType m_AssistType;
 	float m_fMusicRate;
-	float m_fMusicPitch;
-	bool m_bShowMeasureBars;
 };
 
 

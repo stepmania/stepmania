@@ -98,7 +98,7 @@ public:
 	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut );
 	float GetElapsedTimeFromBeat( float fBeat );
-	void GetNotessThatMatchGameAndStyle( CString sGame, CString sStyle, CArray<Notes*, Notes*>& arrayAddTo );
+	void GetNotesThatMatch( NotesType nt, CArray<Notes*, Notes*>& arrayAddTo );
 
 	int GetNumTimesPlayed()
 	{
@@ -114,7 +114,7 @@ public:
 	bool HasChangedSinceLastSave()	{ return m_bChangedSinceSave;	}
 	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
 
-	Grade GetGradeForDifficultyClass( CString sGame, CString sStyle, DifficultyClass dc );
+	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc );
 
 
 private:

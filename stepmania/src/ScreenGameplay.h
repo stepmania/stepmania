@@ -23,6 +23,7 @@
 #include "Background.h"
 #include "LifeMeterBar.h"
 #include "ScoreDisplayRolling.h"
+#include "DifficultyBanner.h"
 
 
 class ScreenGameplay : public Screen
@@ -49,8 +50,8 @@ private:
 
 	float			m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
 
-	Song*		m_pSong;
-	bool		m_bHasFailed;
+	Song*			m_pSong;
+	bool			m_bHasFailed;
 
 	Background		m_Background;
 
@@ -72,6 +73,8 @@ private:
 	MotionBlurSprite	m_sprFailed;
 
 	Player		m_Player[NUM_PLAYERS];
+
+	DifficultyBanner	m_DifficultyBanner[NUM_PLAYERS];
 
 	RandomSample	m_soundFail;
 	RandomSample	m_announcerReady;

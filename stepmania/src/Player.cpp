@@ -65,7 +65,7 @@ Player::Player()
 }
 
 
-void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore )
+void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore )
 {
 	//LOG->WriteLine( "Player::Load()", );
 	this->CopyAll( pNoteData );
@@ -76,7 +76,7 @@ void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOpti
 	m_pLifeMeter = pLM;
 	m_pScore = pScore;
 
-	if( !po.m_bAllowFreezeArrows )
+	if( !po.m_bHoldNotes )
 		this->RemoveHoldNotes();
 
 	this->Turn( po.m_TurnType );
@@ -84,7 +84,7 @@ void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOpti
 	if( po.m_bLittle )
 		this->MakeLittle();
 
-	m_NoteField.Load( (NoteData*)this, player_no, po, 1.5f, 5.5f, NoteField::MODE_DANCING );
+	m_NoteField.Load( (NoteData*)this, player_no, pStyleDef, po, 1.5f, 5.5f, NoteField::MODE_DANCING );
 	
 	for( int t=0; t<pNoteData->m_iNumTracks; t++ )
 	{
@@ -92,8 +92,8 @@ void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOpti
 			m_TapNotesOriginal[t][r] = pNoteData->m_TapNotes[t][r];
 	}
 
-	m_GrayArrowRow.Load( po );
-	m_GhostArrowRow.Load( po );
+	m_GrayArrowRow.Load( player_no, pStyleDef, po );
+	m_GhostArrowRow.Load( player_no, pStyleDef, po );
 
 	m_frameJudgeAndCombo.SetY( FRAME_JUDGE_AND_COMBO_Y );
 	m_Combo.SetY( po.m_bReverseScroll ?  -COMBO_Y_OFFSET : COMBO_Y_OFFSET );
@@ -141,7 +141,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 		const int iCol = hn.m_iTrack;
 		const StyleInput StyleI( m_PlayerNumber, hn.m_iTrack );
-		const GameInput GameI = GAME->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
+		const GameInput GameI = GAMEMAN->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 
 		// update the life
 		if( fStartBeat < m_fSongBeat && m_fSongBeat < fEndBeat )	// if the song beat is in the range of this hold
@@ -265,7 +265,7 @@ bool Player::IsThereANoteAtIndex( int iIndex )
 
 
 
-void Player::HandlePlayerStep( float fSongBeat, ColumnNumber col, float fMaxBeatDiff )
+void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 {
 	//LOG->WriteLine( "Player::HandlePlayerStep()" );
 
@@ -348,7 +348,7 @@ void Player::HandlePlayerStep( float fSongBeat, ColumnNumber col, float fMaxBeat
 }
 
 
-void Player::CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxBeatDiff )
+void Player::CheckForCompleteRow( float fSongBeat, int col, float fMaxBeatDiff )
 {
 	//LOG->WriteLine( "Player::CheckForCompleteRow()" );
 
@@ -408,7 +408,7 @@ void Player::CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxB
 	}
 }
 
-void Player::OnRowDestroyed( float fSongBeat, ColumnNumber col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
+void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
 {
 	float fStepBeat = NoteRowToBeat( (float)iIndexThatWasSteppedOn );
 

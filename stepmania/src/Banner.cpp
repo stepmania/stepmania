@@ -30,12 +30,15 @@ void Banner::Update( float fDeltaTime )
 	{
         m_fPercentScrolling += fDeltaTime/2;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
+
+		FRECT* pTextureRect = m_pTexture->GetTextureCoordRect(0);
+
 		float fTexCoords[8] = 
 		{
-            0+m_fPercentScrolling, 1,	// bottom left
-			0+m_fPercentScrolling, 0,	// top left
-			1+m_fPercentScrolling, 1,	// bottom right
-			1+m_fPercentScrolling, 0,	// top right
+			0+m_fPercentScrolling, pTextureRect->bottom,	// bottom left
+			0+m_fPercentScrolling, pTextureRect->top,		// top left
+			1+m_fPercentScrolling, pTextureRect->bottom,	// bottom right
+			1+m_fPercentScrolling, pTextureRect->top,		// top right
 		};
 		Sprite::SetCustomTextureCoords( fTexCoords );
 	}
@@ -43,7 +46,7 @@ void Banner::Update( float fDeltaTime )
 
 bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	TurnOffRoulette();
+	m_bScrolling = false;
 
 	Sprite::TurnShadowOff();
 
@@ -57,38 +60,22 @@ bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 bool Banner::LoadFromGroup( CString sGroupName )
 {
-	TurnOffRoulette();
+	m_bScrolling = true;
 
 	CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 
-	if( sGroupBannerPath == "" )
+	if( sGroupBannerPath != "" )
 		Banner::Load( sGroupBannerPath );
 	else
-		Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+		Banner::Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SECTION_BANNER) );
 
 	return true;
 }
 
 bool Banner::LoadRoulette()
 {
-	Banner::Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_ROULETTE_BANNER), false, 0, 0, false, true );
-	TurnOnRoulette();
+	Banner::Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_ROULETTE_BANNER), false, 0, 0, false, false );
+	m_bScrolling = true;
 
 	return true;
 }
-
-void Banner::TurnOnRoulette()
-{
-	m_bScrolling = true;
-	m_fPercentScrolling = 0;
-
-	SetEffectGlowing( 1, D3DXCOLOR(1,0,0,0), D3DXCOLOR(1,0,0,0.5f) );
-}
-
-void Banner::TurnOffRoulette()
-{
-	m_bScrolling = false;
-
-	SetEffectNone();
-}
-

@@ -58,7 +58,7 @@ ScreenSongOptions::ScreenSongOptions() :
 
 void ScreenSongOptions::ImportOptions()
 {
-	SongOptions &so = PREFS->m_SongOptions;
+	SongOptions &so = PREFSMAN->m_SongOptions;
 
 	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
 	m_iSelectedOption[0][SO_ASSIST] = so.m_AssistType;
@@ -80,13 +80,11 @@ void ScreenSongOptions::ImportOptions()
 	else if( so.m_fMusicRate ==  1.0f )		m_iSelectedOption[0][SO_PITCH] = 5;
 	else if( so.m_fMusicRate ==  1.5f )		m_iSelectedOption[0][SO_PITCH] = 6;
 	else									m_iSelectedOption[0][SO_PITCH] = 3;
-
-	m_iSelectedOption[0][SO_BARS] = so.m_bShowMeasureBars ? 1 : 0;
 }
 
 void ScreenSongOptions::ExportOptions()
 {
-	SongOptions &so = PREFS->m_SongOptions;
+	SongOptions &so = PREFSMAN->m_SongOptions;
 
 	so.m_FailType = (SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
 	so.m_AssistType = (SongOptions::AssistType)m_iSelectedOption[0][SO_ASSIST];
@@ -102,21 +100,6 @@ void ScreenSongOptions::ExportOptions()
 	case 6:	so.m_fMusicRate = 1.30f;	break;
 	default:	ASSERT( false );
 	}
-
-	switch( m_iSelectedOption[0][SO_PITCH] )
-	{
-	case 0:	so.m_fMusicPitch = -1.5f;	break;
-	case 1:	so.m_fMusicPitch = -1.0f;	break;
-	case 2:	so.m_fMusicPitch = -0.5f;	break;
-	case 3:	so.m_fMusicPitch =  0.0f;	break;
-	case 4:	so.m_fMusicPitch =  0.5f;	break;
-	case 5:	so.m_fMusicPitch =  1.0f;	break;
-	case 6:	so.m_fMusicPitch =  1.5f;	break;
-	default:	ASSERT( false );
-	}
-
-	so.m_bShowMeasureBars = m_iSelectedOption[0][SO_BARS] ? true : false;
-
 }
 
 void ScreenSongOptions::GoToPrevState()

@@ -38,12 +38,7 @@ public:
 	bool LoadFromGroup( CString sGroupName );
 	bool LoadRoulette();
 
-	bool IsRouletteOn() { return m_bScrolling; };
-	void TurnOnRoulette();
-	void TurnOffRoulette();
-
 protected:
-
 	bool m_bScrolling;
 	float m_fPercentScrolling;
 };

@@ -17,9 +17,18 @@
 #include "MenuInput.h"
 
 
-
 const int MAX_STYLES_PER_GAME = 10;
-const int MAX_SKIN_PATHS = 16;
+
+
+enum GameButtonGraphic { 
+	GRAPHIC_NOTE_COLOR_PART,
+	GRAPHIC_NOTE_GRAY_PART,
+	GRAPHIC_RECEPTOR,
+	GRAPHIC_TAP_EXPLOSION_BRIGHT,
+	GRAPHIC_TAP_EXPLOSION_DIM,
+	GRAPHIC_HOLD_EXPLOSION,
+	NUM_GAME_BUTTON_GRAPHICS	// leave this at the end
+};
 
 
 class StyleDef;
@@ -27,42 +36,28 @@ class StyleDef;
 class GameDef
 {
 public:
-	GameDef( CString sGameDir );
-	~GameDef();
+	char	m_szName[60];
+	char	m_szDescription[60];
+	int		m_iNumInstruments;
+	int		m_iButtonsPerInstrument;
+	char	m_szButtonNames[60][MAX_INSTRUMENT_BUTTONS];	// e.g. "left", "right", "middle C", "snare"
 
-	CString m_sGameDir;
-	CString m_sName;
-	CString m_sDescription;
+//	int ButtonNameToIndex( const CString &sButtonName )
+//	{
+//		for( int i=0; i<m_iButtonsPerInstrument; i++ ) 
+//			if( m_sButtonNames[i] == sButtonName )
+//				return i;
+//		return -1;
+//	}
 
-	// instrument stuff
-	int m_iNumInstruments;
-	int m_iButtonsPerInstrument;
-	CString m_sButtonNames[MAX_INSTRUMENT_BUTTONS];	// e.g. "left", "right", "middle C", "snare"
-	int ButtonNameToIndex( const CString &sButtonName )
-	{
-		for( int i=0; i<m_iButtonsPerInstrument; i++ ) 
-			if( m_sButtonNames[i] == sButtonName )
-				return i;
-		return -1;
-	}
 	int m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to m_sButtonNames
 
-	int m_iNumStyleDefs;
-	StyleDef* m_pStyleDefs[MAX_STYLES_PER_GAME];
-	StyleDef* GetStyleDef( CString sStyle );
 
+	// skin stuff
+	void GetSkinNames( CStringArray &asSkinNames );
+	bool HasASkinNamed( CString sSkin );
+	void AssertSkinsAreComplete();
 
-	// graphic stuff
-	int		m_iNumSkinFolders;
-	CString m_sSkinFolders[MAX_SKIN_PATHS];		// path to skin folders relative to m_sGameDir
-	bool HasASkinNamed( CString sSkin )
-	{
-		for( int i=0; i<m_iNumSkinFolders; i++ )
-			if( m_sSkinFolders[i] == sSkin )
-				return true;
-
-		return false;
-	}
 	CString GetPathToGraphic( const CString sSkinName, const int iInstrumentButton, const GameButtonGraphic gbg );
 	void	GetTweenColors( const CString sSkinName, const int iInstrumentButton, CArray<D3DXCOLOR,D3DXCOLOR> &arrayTweenColors );
 	CString ElementToGraphicSuffix( const GameButtonGraphic gbg );

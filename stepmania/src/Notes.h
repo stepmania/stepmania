@@ -35,12 +35,28 @@ public:
 	void SaveToSMDir( CString sSongDir );
 	void WriteToCacheFile( FILE* file );
 
+	//
+
 public:
-	CString			m_sIntendedGame;
-	CString			m_sIntendedStyle;
+	NotesType		m_NotesType;
 	CString			m_sDescription;			// This text is displayed next to thte number of feet when a song is selected
 	CString			m_sCredit;				// name of the person who created these Notes
 	DifficultyClass m_DifficultyClass;		// this is inferred from m_sDescription
+
+	// Color is a function of DifficultyClass and Intended Style
+	D3DXCOLOR GetColor()
+	{
+		CString sDescription = m_sDescription;
+		sDescription.MakeLower();
+
+		if( -1 != sDescription.Find("battle") )
+			return D3DXCOLOR(1,0.5f,0,1);	// orange
+		else if( -1 != m_sDescription.Find("couple") )
+			return D3DXCOLOR(0,0,1,1);		// blue
+		else 
+			return DifficultyClassToColor( m_DifficultyClass ); 
+	}
+
 	int				m_iMeter;				// difficulty from 1-10
 	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
 	

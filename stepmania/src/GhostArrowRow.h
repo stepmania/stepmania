@@ -26,7 +26,7 @@ public:
 	void Update( float fDeltaTime, float fSongBeat );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerOptions po );
+	void Load( PlayerNumber pn, StyleDef* pStyleDef, PlayerOptions po );
 	
 	void TapNote( int iCol, TapNoteScore score, bool bBright );
 	void HoldNote( int iCol );

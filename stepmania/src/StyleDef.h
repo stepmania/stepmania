@@ -34,21 +34,25 @@ class GameDef;
 class StyleDef
 {
 public:
-	StyleDef( GameDef* pGameDef, CString sStyleFilePath );
-
+	char		m_szName[60];
+	NotesType	m_NotesType;	// the notes format that this style reads.  
+								// For example, the "dance versus" reads the Notes with the tag "dance-single".
+	enum StyleType
+	{
+		ONE_PLAYER_USES_ONE_SIDE,	// e.g. single
+		TWO_PLAYERS_USE_TWO_SIDES,	// e.g. versus
+		ONE_PLAYER_USES_TWO_SIDES,	// e.g. double
+	};
+	StyleType	m_StyleType;		// Defines how many players are allowed to play this Style.
+	int			m_iCenterX[NUM_PLAYERS];	// center of the player
+	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
 	struct ColumnInfo 
 	{ 
-		TrackNumber track;	// take note data from this track
+		int track;					// take note data from this track
 		InstrumentNumber number;	// use this instrument to hit a note on this track
 		InstrumentButton button;	// use this button to hit a note on this track
-		int	iX;				// x position of the column
+		float	fXOffset;			// x position of the column relative to player center
 	};
-
-	CString		m_sName;	// name of the style.  e.g. "single", "double"
-	CString		m_sDescription;	
-	CString		m_sReadsTag;	// name of the style that we can read.  For example, the style named "versus" reads the NoteData with the tag "dance-single"
-	int			m_iNumPlayers;	// either 1 or 2
-	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
 	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 

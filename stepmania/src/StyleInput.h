@@ -18,7 +18,7 @@ struct StyleInput
 	bool operator==( const StyleInput &other ) { return player == other.player && col == other.col; };
 
 	PlayerNumber player;
-	ColumnNumber col;
+	int col;
 
 	inline bool IsBlank() const { return player == PLAYER_NONE; };
 	inline bool IsValid() const { return !IsBlank(); };

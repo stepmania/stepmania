@@ -250,7 +250,7 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber p )
 {
 	LOG->WriteLine( "ScreenSelectMusic::EasierDifficulty( %d )", p );
 
-	if( !GAME->IsPlayerEnabled(p) )
+	if( !GAMEMAN->IsPlayerEnabled(p) )
 		return;
 	if( m_arrayNotes.GetSize() == 0 )
 		return;
@@ -267,7 +267,7 @@ void ScreenSelectMusic::HarderDifficulty( PlayerNumber p )
 {
 	LOG->WriteLine( "ScreenSelectMusic::HarderDifficulty( %d )", p );
 
-	if( !GAME->IsPlayerEnabled(p) )
+	if( !GAMEMAN->IsPlayerEnabled(p) )
 		return;
 	if( m_arrayNotes.GetSize() == 0 )
 		return;
@@ -287,6 +287,9 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 	switch( SM )
 	{
+	case SM_MenuTimer:
+		MenuStart(PLAYER_1);
+		break;
 	case SM_GoToPrevState:
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
@@ -357,7 +360,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 			bool bIsHard = false;
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( !GAME->IsPlayerEnabled( (PlayerNumber)p ) )
+				if( !GAMEMAN->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;	// skip
 				if( SONGMAN->m_pCurNotes[p]->m_iMeter >= 9 )
 					bIsHard = true;
@@ -408,7 +411,7 @@ void ScreenSelectMusic::MenuBack( PlayerNumber p )
 
 void ScreenSelectMusic::AfterNotesChange( PlayerNumber p )
 {
-	if( !GAME->IsPlayerEnabled(p) )
+	if( !GAMEMAN->IsPlayerEnabled(p) )
 		return;
 	
 	m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize()-1 );	// bounds clamping
@@ -444,12 +447,12 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 		{
-			pSong->GetNotessThatMatchGameAndStyle( GAME->m_sCurrentGame, GAME->m_sCurrentStyle, m_arrayNotes );
+			pSong->GetNotesThatMatch( GAMEMAN->GetCurrentStyleDef()->m_NotesType, m_arrayNotes );
 			SortNotesArrayByDifficultyClass( m_arrayNotes );
 			m_SongInfoFrame.SetFromSong( pSong );
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( !GAME->IsPlayerEnabled( PlayerNumber(p) ) )
+				if( !GAMEMAN->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
 				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize() ) ;
 			}
