@@ -62,17 +62,17 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		m_bChosen[p] = false;
 	}
 	
-	NUM_MODES = 0;
+	m_NumModes = 0;
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
 		m_ModeChoices.push_back( m_aModeChoices[c] );
-		NUM_MODES++;
+		m_NumModes++;
 	}
 	
 	m_sprIconBar.Load( THEME->GetPathToG("ScreenSelectDifficultyEX icon bar.png") );
 	this->AddChild( &m_sprIconBar );
 
-	for( unsigned k=0; k < NUM_MODES || k <= 7 ; k++ )
+	for( unsigned k=0; k < m_NumModes || k <= 7 ; k++ )
 	{
 		CString MOO = m_aModeChoices[k].name;
 		if( IsValidModeName(MOO) )
@@ -374,7 +374,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 	if( !IsACourse( m_iChoice[pn] ) || !AnotherPlayerSelected)
 	{
 		// Disable the courses
-		for( unsigned e=0; e < NUM_MODES || e <= 7; e++ )
+		for( unsigned e=0; e < m_NumModes || e <= 7; e++ )
 		{
 			if( IsACourse(e) )
 			{

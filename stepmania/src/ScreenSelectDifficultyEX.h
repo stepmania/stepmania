@@ -54,7 +54,7 @@ protected:
 
 
 /* Icon Bar stuff */
-	int	NUM_MODES;
+	unsigned m_NumModes;
 	DifficultyIcon	m_sprDifficultyIcon[8];
 	Sprite	m_sprIconBar;
 	BitmapText	m_textDifficultyText[8];
