@@ -446,6 +446,7 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	Config(*pOriginal);
 	m_iNumTracks = iNewNumTracks;
 
+
 	int iCurTrackOffset = 0;
 	int iTrackOffsetMin = 0;
 	int iTrackOffsetMax = abs( iNewNumTracks - pOriginal->m_iNumTracks );
@@ -454,18 +455,33 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	int iLastRow = pOriginal->GetLastRow();
 	for( int r=0; r<=iLastRow; )
 	{
+#if 0
+		const int tocopy = ROWS_PER_MEASURE*4;
+
 		// copy notes in this measure
 		for( int t=0; t<pOriginal->m_iNumTracks; t++ )
 		{
-			/* Copy a measure's worth of rows.  This is an optimization; it's
-			 * faster to copy row-wise than track-wise. */
-			do {
+			/* Copy a measure worth of rows.  This is an optimization; it's
+			 * faster to copy row-wise than track-wise.  XXX: This was broken
+			 * when I profiled it; it might not be much faster, so re-profile this. */
+			for(int i = 0; i < tocopy && r+i <= iLastRow; ++i) {
 				int iOldTrack = t;
 				int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-				this->SetTapNote(iNewTrack, r, pOriginal->GetTapNote(iOldTrack, r));
-				r++;
-			} while (r<=iLastRow && r % (ROWS_PER_MEASURE*4) == 0 );
+				this->SetTapNote(iNewTrack, r+i, pOriginal->GetTapNote(iOldTrack, r+i));
+			}
 		}
+
+		r += tocopy;
+#else
+		// copy notes in this measure
+		for( int t=0; t<pOriginal->m_iNumTracks; t++ )
+		{
+			int iOldTrack = t;
+			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
+            this->SetTapNote(iNewTrack, r, pOriginal->GetTapNote(iOldTrack, r));
+		}
+		r++;
+#endif
 
 		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
 		{
