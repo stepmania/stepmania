@@ -670,6 +670,18 @@ void RageDisplay::LoadMenuPerspective(float fovDegrees)
 	}
 }
 
+/* Getting rid of GLU calls.  We don't use them much, and it's just another
+ * library. */
+static void rgluPerspective(GLfloat fovy, GLfloat aspect, GLfloat zNear, GLfloat zFar)
+{
+   GLfloat ymax = zNear * tanf(fovy * PI / 360.0f);
+   GLfloat ymin = -ymax;
+   GLfloat xmin = ymin * aspect;
+   GLfloat xmax = ymax * aspect;
+
+   glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
+}
+
 /* Switch from orthogonal to perspective view.
  *
  * Tricky: we want to maintain all of the zooms, rotations and translations
@@ -703,7 +715,7 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc, float near_clip
 	glPushMatrix();
 	glLoadIdentity();
 	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
-	gluPerspective(fov, aspect, near_clip, far_clip);
+	rgluPerspective(fov, aspect, near_clip, far_clip);
 
 
 	/* Flip the Y coordinate, so positive numbers go down. */
