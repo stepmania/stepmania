@@ -556,8 +556,19 @@ CString DerefRedir(const CString &path)
 /* XXX: This can be used to read one line from any file; rename it. */
 CString GetRedirContents(const CString &path)
 {
-	RageFile file(path);
-	CString sNewFileName = file.GetLine();
+	RageFile file;
+	if( !file.Open(path) )
+	{
+		LOG->Warn( "GetRedirContents(%s): %s", path.c_str(), file.GetError().c_str() );
+		return "";
+	}
+	
+	CString sNewFileName;
+	if( file.GetLine( sNewFileName ) == -1 )
+	{
+		LOG->Warn( "GetRedirContents(%s): %s", path.c_str(), file.GetError().c_str() );
+		return "";
+	}
 	
 	StripCrnl(sNewFileName);
 	return sNewFileName;
@@ -1193,7 +1204,8 @@ bool FileRead(RageFile& f, CString& sOut)
 {
 	if (f.AtEOF())
 		return false;
-	sOut = f.GetLine();
+	if( f.GetLine(sOut) == -1 )
+		return false;
 	return true;
 }
 
