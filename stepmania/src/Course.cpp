@@ -75,7 +75,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			if(!sSongDir.GetLength()) {
 			    /* Err. */
 			    LOG->Trace( "Course file \"%s\" has an empty #SONG.  Ignored.",
-				            sPath.GetString(), sSongDir.GetString());
+				            (const char *) sPath, (const char *) sSongDir);
 			    continue;
 			}
 
@@ -102,7 +102,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			{
 			    LOG->Warn( "Course file \"%s\" path \"%s\" should contain "
 						   "at most one backslash; ignored.",
-				           sPath.GetString(), sSongDir.GetString());
+				           (const char *) sPath, (const char *) sSongDir);
 			    continue;
 			}
 
@@ -118,7 +118,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 				int SongDir_no = split_SongDir.GetSize()-1;
 
 				while( split_no >= 0 && SongDir_no >= 0 ) {
-				    if( stricmp(splitted[split_no--].GetString(), split_SongDir[SongDir_no--].GetString() ) )
+				    if( stricmp(splitted[split_no--], split_SongDir[SongDir_no--] ) )
 						matches=false;
 				}
 
