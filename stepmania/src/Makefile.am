@@ -100,14 +100,14 @@ StepMania = StdString.h \
 		StepMania.cpp StepMania.h \
 		global.cpp global.h
 
-LoadingWindow = arch/LoadingWindow/LoadingWindow.h arch/LoadingWindow/LoadingWindow.cpp \
+LoadingWindow = arch/LoadingWindow/LoadingWindow.h \
 		arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
 endif
 
-Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
+Sound = arch/Sound/RageSoundDriver.h \
 	arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h \
 	arch/Sound/RageSoundDriver_Generic_Software.cpp arch/Sound/RageSoundDriver_Generic_Software.h
 
@@ -139,11 +139,11 @@ if HAVE_FFMPEG
 MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
 endif
 
-Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
+Lights = arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
 MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h
-LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h arch/LowLevelWindow/LowLevelWindow.cpp
+LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h
 
 ArchUtils =
 
@@ -202,7 +202,7 @@ endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
 	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
-	   arch/arch_default.h arch/arch_platform.h
+	   arch/arch.h arch/arch.cpp arch/arch_default.h arch/arch_platform.h
 
 RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
 
