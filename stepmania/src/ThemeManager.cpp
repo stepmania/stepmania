@@ -368,7 +368,8 @@ void ThemeManager::NextTheme()
 {
 	CStringArray as;
 	GetThemeNames( as );
-	for( unsigned i=0; i<as.size(); i++ )
+	unsigned i;
+	for( i=0; i<as.size(); i++ )
 		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
 			break;
 	int iNewIndex = (i+1)%as.size();

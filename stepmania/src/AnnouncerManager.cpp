@@ -166,7 +166,8 @@ void AnnouncerManager::NextAnnouncer()
 		SwitchAnnouncer( as[0] );
 	else
 	{
-		for( unsigned i=0; i<as.size(); i++ )
+		unsigned i;
+		for( i=0; i<as.size(); i++ )
 			if( as[i].CompareNoCase(m_sCurAnnouncerName)==0 )
 				break;
 		if( i==as.size()-1 )
