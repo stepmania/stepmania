@@ -60,7 +60,7 @@ class LyricsLoader;
 class ScreenGameplay : public Screen
 {
 public:
-	ScreenGameplay( CString sName, bool bDemonstration );
+	ScreenGameplay( CString sName, bool bDemonstration = false );
 	void Init();
 	virtual ~ScreenGameplay();
 
