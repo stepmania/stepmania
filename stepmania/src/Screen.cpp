@@ -66,7 +66,34 @@ void Screen::Update( float fDeltaTime )
 	
 	unsigned i;
 	for( i=0; i<m_QueuedMessages.size(); i++ )
-		m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
+	{
+		/* Hack:
+		 *
+		 * If we simply subtract time and then send messages, we have a problem.
+		 * Messages are queued to arrive at specific times, and those times line
+		 * up with things like tweens finishing.  If we send the message at the
+		 * exact time given, then it'll be on the same cycle that would be rendering
+		 * the last frame of a tween (such as an object going off the screen).  However,
+		 * when we send the message, we're likely to set up a new screen, which
+		 * causes everything to stop in place; this results in actors occasionally
+		 * not quite finishing their tweens.
+		 *
+		 * Let's delay all messages that have a non-zero time an extra frame. 
+		 *
+		 * XXX: For some reason, I had to make this delay messages for *two* frames to
+		 * make this effect go away.  (SMMAX2 menu header tweens.)  I'm not sure why.
+		 */
+		if(m_QueuedMessages[i].fDelayRemaining > 0.0001f)
+		{
+			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
+			m_QueuedMessages[i].fDelayRemaining = max(m_QueuedMessages[i].fDelayRemaining, 0.0001f);
+		} else {
+			/* Two 0.00008 delays add up to at least one 0.0001 delay, but don't count
+			 * Update(0)s.  This is hacky, until I figure out why the second frame
+			 * delay is needed ... */
+			m_QueuedMessages[i].fDelayRemaining -= max(fDeltaTime, 0.00008f);
+		}
+	}
 
 	/* Now dispatch messages.  If the number of messages on the queue changes
 	 * within HandleScreenMessage, someone cleared messages on the queue.  This
