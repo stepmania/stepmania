@@ -16,6 +16,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/poll.h>
 
 const CString TEMP_MOUNT_POINT = "@mctemp/";
 
@@ -132,119 +133,113 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
       LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
       return;
     }
-
-  time_t lastModTime = 0;
-
+  
   vector<UsbStorageDeviceEx> vDevicesLastSeen;
-
+  
   while( !m_bShutdown )
     {      
-      struct stat st;
-      if( fstat(fd, &st) == -1 )
-        {
-	  LOG->Warn( "stat '%s' failed: %s", USB_DEVICE_LIST_FILE, strerror(errno) );
-	  close( fd );
-	  return;
-        }
-
-      bool bChanged = st.st_mtime != lastModTime;
-      lastModTime = st.st_mtime;
-
-      // TRICKY: The file time only has a resolution of one second.  So, if the file
-      // changes more than one time in one second, we'll only pick up the first change.
-      // Hack around this by continually scanning for changes in any second that we detect
-      // a change.
-      if( bChanged || time(NULL)+1 <= lastModTime )
+      pollfd pfd = { fd, POLLIN, 0 };
+      int ret = poll( &pfd, 1, 100 );
+      switch( ret )
 	{
-	  // TRICKY: We're waiting for a change in the USB device list, but 
-	  // the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
-	  // on the USB device list because the usb-storage descriptors are separate files per 
-	  // device.  So, sleep for a little bit of time after we detect a new USB device and give
-	  // usb-storage a chance to initialize.  
-	  usleep(1000*300);
-
-	  vector<UsbStorageDeviceEx> vDevicesNow;
-	  GetNewStorageDevices( vDevicesNow );
-
-	  vector<UsbStorageDeviceEx> &vNew = vDevicesNow;
-	  vector<UsbStorageDeviceEx> &vOld = vDevicesLastSeen;
-
-	  // check for disconnects
-	  vector<UsbStorageDeviceEx*> vDisconnects;
-	  for( unsigned i=0; i<vOld.size(); i++ )
-	    {
-	      UsbStorageDeviceEx &old = vOld[i];
-	      if( find(vNew.begin(),vNew.end(),old) == vNew.end() )// didn't find
-		{
-		  LOG->Trace( ssprintf("Disconnected bus %d port %d level %d path %s", old.iBus, old.iPort, old.iLevel, old.sOsMountDir.c_str()) );
-		  vDisconnects.push_back( &old );
-		}
-	    }
-
-	  // check for connects
-          vector<UsbStorageDeviceEx*> vConnects;
-	  for( unsigned i=0; i<vNew.size(); i++ )
-	    {
-	      UsbStorageDeviceEx &newd = vNew[i];
-	      if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )// didn't find
-		{
-		  LOG->Trace( ssprintf("Connected bus %d port %d level %d path %s", newd.iBus, newd.iPort, newd.iLevel, newd.sOsMountDir.c_str()) );
-		  vConnects.push_back( &newd );
-		}
-	    }
-
-	  // unmount all disconnects
-	  for( unsigned i=0; i<vDisconnects.size(); i++ )
-	    {
-	      UsbStorageDeviceEx &d = *vDisconnects[i];
-	      CString sCommand = "umount " + d.sOsMountDir;
-	      ExecuteCommand( sCommand );
-	    }
-	  
-	  // mount all connects
-	  for( unsigned i=0; i<vConnects.size(); i++ )
-	    {	  
-	      UsbStorageDeviceEx &d = *vConnects[i];
-	      CString sCommand;
-	      
-	      // unmount this device before trying to mount it.  If this device
-	      // wasn't unmounted before, then our mount call will fail and the 
-	      // mount may contain an out-of-date view of the files on the device.
-              sCommand = "umount " + d.sOsMountDir;
-              ExecuteCommand( sCommand );   // don't care if this fails
-
-	      sCommand = "mount " + d.sOsMountDir;
-	      bool bMountedSuccessfully = ExecuteCommand( sCommand );
-
-	      d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
-
-			// read name
-			this->Mount( &d, TEMP_MOUNT_POINT );
-			FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
-			Profile profile;
-			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-			profile.LoadEditableDataFromDir( sProfileDir );
-			d.sName = profile.GetDisplayName();
-
-	      LOG->Trace( "write test %s", d.bWriteTestSucceeded ? "succeeded" : "failed" );
-	    }
-
-	  if( !vDisconnects.empty() || !vConnects.empty() )	  
-	    {
-	      LockMut( m_mutexStorageDevices );
-	      m_bStorageDevicesChanged = true;
-	      m_vStorageDevices = vDevicesNow;
-	      for( unsigned i=0; i<m_vStorageDevices.size(); i++ )
-		{
-		  UsbStorageDeviceEx &d = m_vStorageDevices[i];
-		  LOG->Trace( "index %d, bWriteTestSucceeded %d", i, d.bWriteTestSucceeded );
-		}
-	    }
-
-	  vDevicesLastSeen = vDevicesNow;
+	case 1:
+	  // file changed.  Fall through.
+	  break;
+	case 0: // no change.  Poll again.
+	  continue;
+	case -1:
+	  LOG->Warn( "Error polling" );
+	  continue;
 	}
-      usleep( 1000*100 );  // 100 ms
+
+      // TRICKY: We're waiting for a change in the USB device list, but 
+      // the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
+      // on the USB device list because the usb-storage descriptors are separate files per 
+      // device.  So, sleep for a little bit of time after we detect a new USB device and give
+      // usb-storage a chance to initialize.  
+      usleep(1000*300);
+      
+      vector<UsbStorageDeviceEx> vDevicesNow;
+      GetNewStorageDevices( vDevicesNow );
+      
+      vector<UsbStorageDeviceEx> &vNew = vDevicesNow;
+      vector<UsbStorageDeviceEx> &vOld = vDevicesLastSeen;
+      
+      // check for disconnects
+      vector<UsbStorageDeviceEx*> vDisconnects;
+      for( unsigned i=0; i<vOld.size(); i++ )
+	{
+	  UsbStorageDeviceEx &old = vOld[i];
+	  if( find(vNew.begin(),vNew.end(),old) == vNew.end() )// didn't find
+	    {
+	      LOG->Trace( ssprintf("Disconnected bus %d port %d level %d path %s", old.iBus, old.iPort, old.iLevel, old.sOsMountDir.c_str()) );
+	      vDisconnects.push_back( &old );
+	    }
+	}
+      
+      // check for connects
+      vector<UsbStorageDeviceEx*> vConnects;
+      for( unsigned i=0; i<vNew.size(); i++ )
+	{
+	  UsbStorageDeviceEx &newd = vNew[i];
+	  if( find(vOld.begin(),vOld.end(),newd) == vOld.end() )// didn't find
+	    {
+	      LOG->Trace( ssprintf("Connected bus %d port %d level %d path %s", newd.iBus, newd.iPort, newd.iLevel, newd.sOsMountDir.c_str()) );
+	      vConnects.push_back( &newd );
+	    }
+	}
+      
+      // unmount all disconnects
+      for( unsigned i=0; i<vDisconnects.size(); i++ )
+	{
+	  UsbStorageDeviceEx &d = *vDisconnects[i];
+	  CString sCommand = "umount " + d.sOsMountDir;
+	  ExecuteCommand( sCommand );
+	}
+      
+      // mount all connects
+      for( unsigned i=0; i<vConnects.size(); i++ )
+	{	  
+	  UsbStorageDeviceEx &d = *vConnects[i];
+	  CString sCommand;
+	  
+	  // unmount this device before trying to mount it.  If this device
+	  // wasn't unmounted before, then our mount call will fail and the 
+	  // mount may contain an out-of-date view of the files on the device.
+	  sCommand = "umount " + d.sOsMountDir;
+	  ExecuteCommand( sCommand );   // don't care if this fails
+	  
+	  sCommand = "mount " + d.sOsMountDir;
+	  bool bMountedSuccessfully = ExecuteCommand( sCommand );
+	  
+	  d.bWriteTestSucceeded = bMountedSuccessfully && TestWrite( d.sOsMountDir );
+	  
+	  // read name
+	  this->Mount( &d, TEMP_MOUNT_POINT );
+	  FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+	  Profile profile;
+	  CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+	  profile.LoadEditableDataFromDir( sProfileDir );
+	  d.sName = profile.GetDisplayName();
+	  
+	  LOG->Trace( "write test %s", d.bWriteTestSucceeded ? "succeeded" : "failed" );
+	}
+      
+      if( !vDisconnects.empty() || !vConnects.empty() )	  
+	{
+	  LockMut( m_mutexStorageDevices );
+	  m_bStorageDevicesChanged = true;
+	  m_vStorageDevices = vDevicesNow;
+	  for( unsigned i=0; i<m_vStorageDevices.size(); i++ )
+	    {
+	      UsbStorageDeviceEx &d = m_vStorageDevices[i];
+	      LOG->Trace( "index %d, bWriteTestSucceeded %d", i, d.bWriteTestSucceeded );
+	    }
+	}
+      
+      vDevicesLastSeen = vDevicesNow;
     }
+
   CHECKPOINT;
 }
 
