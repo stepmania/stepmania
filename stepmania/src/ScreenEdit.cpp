@@ -2158,6 +2158,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					{
 						NoteData temp( m_Clipboard );
 						int iNumUsedTracks = NoteDataUtil::GetNumUsedTracks( temp );
+						if( iNumUsedTracks == 0 )
+							break;
 						temp.SetNumTracks( iNumUsedTracks );
 						NoteDataUtil::LoadTransformedSlidingWindow( temp, m_Clipboard, m_Clipboard.GetNumTracks() );
 						NoteDataUtil::FixImpossibleRows( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
