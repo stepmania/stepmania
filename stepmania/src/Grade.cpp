@@ -28,7 +28,10 @@ CString GradeToString( Grade g )
 
 CString GradeToThemedString( Grade g )
 {
-	return THEME->GetMetric( "Grade",GradeToString(g) );
+	CString s = GradeToString(g);
+	if( !THEME->HasMetric("Grade",s) )
+		return "???";
+	return THEME->GetMetric( "Grade",s );
 }
 
 CString GradeToOldString( Grade g )
