@@ -18,8 +18,21 @@
 NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 {
     NetPlayerClient = new EzSockets;
-    if (argc > 1)
-        Connect(argv[1],8765);
+	m_ServerVersion = 0;
+
+    if (argc > 2)
+        if (Connect(argv[1],8765) == true)
+		{
+			useSMserver = true;
+			int ClientCommand=3;
+			NetPlayerClient->send((char*) &ClientCommand, 4);
+			NetPlayerClient->receive(m_ServerVersion);
+				//If network play is desired
+				//AND the connection works
+				//Halt until we know what server 
+				//version we're dealing with
+		} else
+			useSMserver = false;
     else
         useSMserver = false;
 }

@@ -34,6 +34,8 @@ private:
 	int m_combo;
     bool useSMserver;
     EzSockets *NetPlayerClient;
+
+	int m_ServerVersion; //ServerVersion
     
     struct netHolder		//Data structure used for sending data to server
     {
