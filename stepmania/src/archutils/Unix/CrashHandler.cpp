@@ -452,6 +452,12 @@ void CrashSignalHandler( int signal )
 		return;
 #endif
 
+	if( g_argv == 0 || g_argc < 1 )
+	{
+		safe_print(fileno(stderr), "Crash handler failed: g_argv or g_argc not set\n", NULL);
+		_exit(1);
+	}
+	
 	static int received = 0;
 	static pid_t childpid = 0;
 
