@@ -59,6 +59,7 @@ public:
 
 private:
 	bool AnyStillEntering() const;
+	void AllFinished();
 	void PositionCharsAndCursor( int pn );
 	void Finish( PlayerNumber pn );
 	void UpdateSelectionText( int pn );
@@ -76,6 +77,8 @@ private:
 	vector<int>		m_AlphabetLetter[NUM_PLAYERS];
 	int				m_SelectedChar[NUM_PLAYERS];
 	AutoActor		m_sprOutOfRanking[NUM_PLAYERS];	// shown if didn't make any high scores
+	Sprite			m_sprNameFrame[NUM_PLAYERS];
+	BitmapText		m_textSelection[NUM_PLAYERS];
 
 	/* Feat display: */
 	struct FeatDisplay
@@ -91,14 +94,10 @@ private:
 
 	vector<FeatDisplay>		m_FeatDisplay[NUM_PLAYERS];
 	
-	Sprite			m_sprNameFrame[NUM_PLAYERS];
-
-
 	RageSound		m_soundChange;
 	RageSound		m_soundKey;
 	RageSound		m_soundInvalid;
 
-	BitmapText		m_textSelection[NUM_PLAYERS];
 	wstring			m_sSelection[NUM_PLAYERS];
 	bool			m_bStillEnteringName[NUM_PLAYERS];
 	bool			m_bGoToNextScreenWhenCardsRemoved;

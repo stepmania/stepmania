@@ -595,7 +595,7 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	OFF_COMMAND( m_sprCursor[pn] );
 
 	if( !AnyStillEntering() )
-		StartTransitioning( SM_GoToNextScreen );
+		AllFinished();
 }
 
 void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
@@ -611,7 +611,7 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 {
 	if( !AnyStillEntering() )
 	{
-		StartTransitioning( SM_GoToNextScreen );
+		AllFinished();
 		return;
 	}
 
@@ -692,4 +692,16 @@ void ScreenNameEntryTraditional::MenuRight( PlayerNumber pn, const InputEventTyp
 	wrap( m_SelectedChar[pn], m_textAlphabet[pn].size() );
 	PositionCharsAndCursor( pn );
 	m_soundChange.Play();
+}
+
+void ScreenNameEntryTraditional::AllFinished()
+{
+	StartTransitioning( SM_GoToNextScreen );
+
+	FOREACH_HumanPlayer( pn )
+	{
+		OFF_COMMAND( m_sprOutOfRanking[pn] );
+		OFF_COMMAND( m_sprNameFrame[pn] );
+		OFF_COMMAND( m_textSelection[pn] );
+	}
 }
