@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DebugInfoHunt.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 
 #include <d3d8.h>
 #pragma comment(lib, "d3d8.lib")
