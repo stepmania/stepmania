@@ -1,14 +1,17 @@
-TODO (last updated 11/12/03)
+TODO (last updated 11/03/03)
 (Note 1: anyone who wants to dump stuff off on me, add it to the bottom of the list and put your initials at the beginning - I'll take a look at doing it)
 (Note 2: if you've done something that's in my list, mark it off)
 
-(111203	) Finish NOTE noteskin
-(111203	) Refix autogen from the *&@$ing idiocy in the rewrite
+(110303	) Editor -> Convert Pause To Beats
+(110303	) Editor -> Convert Beat To Pause
+(110303	) Editor -> Additional scaling factors (3:2, 4:3 and inverses come to mind)
+(	) Editor and other places -> 48th (turquoise), 64th (green) and 192nd (50% grey) additions
+(110303	) Editor -> Fine-adjust (Alt-F9/10) for pauses (.005 seconds) 
 (	) Editor -> 3-place pause display
-(	) Editor -> Editor.ini
+(	) Editor -> coarse adjustment (x10) with Ctrl
 (	) Course loader -> Allow random mods (mod name: RMODS :->)
 (	) Courses -> Remove massive bug where arrows are rendered incorrectly and do not disappear
-(111203	) Music wheel -> why the hell is the autogen logo appearing in Pop N' Music on pnm-nine steps
+(	) Music wheel -> why the hell is the autogen logo appearing in Pop N' Music on pnm-nine steps
 (-------) --- anything below this line waits until release of 4.0 ---
 (	) Song ID system
 (	) ScreenInformation
