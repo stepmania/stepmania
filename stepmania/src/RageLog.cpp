@@ -163,7 +163,7 @@ void RageLog::Write( int where, CString str)
 #ifdef DEBUG
 	Flush();
 #else
-	if(where & TO_INFO)
+	if(where & WRITE_TO_INFO)
 		Flush();
 #endif
 }
