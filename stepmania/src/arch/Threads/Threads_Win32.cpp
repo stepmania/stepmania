@@ -54,6 +54,9 @@ int ThreadImpl_Win32::Wait()
 	DWORD ret;
 	GetExitCodeThread( ThreadHandle, &ret );
 
+	CloseHandle( ThreadHandle );
+	ThreadHandle = NULL;
+
 	return ret;
 }
 
