@@ -15,9 +15,6 @@
 
 #include "GameTypes.h"
 
-typedef unsigned char TapNote;
-typedef unsigned char TrackNumber;
-typedef unsigned short NoteIndex;
 // '1' = tap note
 // '2' = hold note begin
 // '3' = hold note end  ('1' can also end a HoldNote)

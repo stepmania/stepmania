@@ -134,37 +134,54 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 	}
 }
 
-void SongManager::LoadDWISongDir( CString sDir )
+
+void SongManager::LoadDWISongDir( CString DWIHome )
 {
 	// trim off the trailing slash if any
-	sDir.TrimRight( "/\\" );
+	DWIHome.TrimRight( "/\\" );
 
+	// this has to be fixed, DWI doesn't put files
+	// in it's DWI folder.  It puts them in Songs/<MIX>/<SONGNAME>
+	// so what we have to do, is go to the DWI directory (which will
+	// be changeable by the user so they don't have to copy everything
+	// over and have two copies of everything
 	// Find all directories in "DWIs" folder
 	CStringArray arrayDirs;
-	GetDirListing( "DWI Support\\DWIs\\*.*", arrayDirs, true );
-	SortCStringArray( arrayDirs );
+	CStringArray MixDirs;
+	// now we've got the listing of the mix directories
+	// and we need to use THOSE directories to find our
+	// dwis
+	GetDirListing( ssprintf("%s\\Songs\\*.*", DWIHome ), MixDirs, true );
+	SortCStringArray( MixDirs );
 	
-	for( int i=0; i< arrayDirs.GetSize(); i++ )	// for each dir in /DWIs/
+	for( int i=0; i< MixDirs.GetSize(); i++ )	// for each dir in /Songs/
 	{
-		CString sDirName = arrayDirs[i];
+		// the dir name will most likely be something like
+		// Dance Dance Revolution 4th Mix, etc.
+		CString sDirName = MixDirs[i];
 		sDirName.MakeLower();
 		if( sDirName == "cvs" )	// ignore the directory called "CVS"
 			continue;
-		
-		// Find all DWIs in this directory
-		CStringArray arrayDWIFiles;
-		GetDirListing( ssprintf("DWI Support\\DWIs\\%s\\*.dwi", sDirName), arrayDWIFiles );
-		SortCStringArray( arrayDWIFiles );
+		GetDirListing( ssprintf("%s\\Songs\\%s\\*.*", DWIHome, MixDirs[i]), arrayDirs,  true);
+		SortCStringArray(arrayDirs, true);
 
-		for( int j=0; j< arrayDWIFiles.GetSize(); j++ )	// for each DWI file
+		for( int b = 0; b < arrayDirs.GetSize(); b++)
 		{
-			CString sDWIFileName = arrayDWIFiles[j];
-			sDWIFileName.MakeLower();
+			// Find all DWIs in this directory
+			CStringArray arrayDWIFiles;
+			GetDirListing( ssprintf("%s\\Songs\\%s\\%s\\*.dwi", DWIHome, MixDirs[i], arrayDirs[b]), arrayDWIFiles, false);
+			SortCStringArray( arrayDWIFiles );
 
-			// load DWIs from the sub dirs
-			Song* pNewSong = new Song;
-			pNewSong->LoadFromDWIFile( ssprintf("DWI Support\\DWIs\\%s\\%s", sDirName, sDWIFileName) );
-			m_pSongs.Add( pNewSong );
+			for( int j=0; j< arrayDWIFiles.GetSize(); j++ )	// for each DWI file
+			{
+				CString sDWIFileName = arrayDWIFiles[j];
+				sDWIFileName.MakeLower();
+
+				// load DWIs from the sub dirs
+				Song* pNewSong = new Song;
+				pNewSong->LoadFromDWIFile( ssprintf("%s\\Songs\\%s\\%s\\%s", DWIHome, MixDirs[i], arrayDirs[b], sDWIFileName) );
+				m_pSongs.Add( pNewSong );
+			}
 		}
 	}
 }
@@ -228,7 +245,7 @@ void SongManager::ReadStatisticsFromDisk()
 			Song* pSong = NULL;
 			for( i=0; i<m_pSongs.GetSize(); i++ )
 			{
-				if( m_pSongs[i]->GetFullTitle() == szSongName )	// match!
+				if( m_pSongs[i]->GetMainTitle() == szSongName )	// match!
 				{
 					pSong = m_pSongs[i];
 					break;
@@ -290,7 +307,7 @@ void SongManager::SaveStatisticsToDisk()
 
 			// Each value has the format "SongName::NoteMetadataName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s", pSong->GetFullTitle(), pNoteMetadata->m_sDescription );
+			CString sName = ssprintf( "%s::%s", pSong->GetMainTitle(), pNoteMetadata->m_sDescription );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
 				pNoteMetadata->m_iNumTimesPlayed,

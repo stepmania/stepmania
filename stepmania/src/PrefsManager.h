@@ -12,16 +12,11 @@
 -----------------------------------------------------------------------------
 */
 
-
-#include "RageInput.h"
 #include "GameTypes.h"
-
 
 
 const int NUM_PAD_TO_DEVICE_SLOTS	= 3;	// three device inputs may map to one pad input
 
-
-class Song;
 
 class PrefsManager
 {
@@ -31,12 +26,16 @@ public:
 
 	ScoreSummary	m_ScoreSummary[NUM_PLAYERS];	// for passing from Dancing to Results
 	SongSortOrder	m_SongSortOrder;				// used by MusicWheel and should be saved until the app exits
+	GameMode		m_GameMode;
 	int				m_iCurrentStage;				// number of stages played +1
 	CString			GetStageText();
 
 	DifficultyClass m_PreferredDifficultyClass[NUM_PLAYERS];
 	GameOptions		m_GameOptions;
-	GraphicOptions	m_GraphicOptions;
+	bool			m_bWindowed;
+	GraphicProfile	m_GraphicProfile;
+	GraphicProfileOptions*	GetCustomGraphicProfileOptions();
+	GraphicProfileOptions*	GetCurrentGraphicProfileOptions();
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];
 	SongOptions		m_SongOptions;
 

@@ -33,11 +33,16 @@ public:
 	RageTexture* LoadTexture( CString sTexturePath, const DWORD dwHints = 0, const bool bForceReload = false );
 	bool IsTextureLoaded( CString sTexturePath );
 	void UnloadTexture( CString sTexturePath );
+	void ReloadAll();
 
-	void SetMaxTextureSize( const DWORD dwMaxSize ) { m_dwMaxTextureSize = dwMaxSize; };
+	void SetPrefs( const DWORD dwMaxSize, const DWORD dwTextureColorDepth )
+	{
+		ASSERT( m_dwMaxTextureSize >= 64 );
+		m_dwMaxTextureSize = dwMaxSize; 
+		m_dwTextureColorDepth = dwTextureColorDepth;
+		ReloadAll(); 
+	};
 	DWORD GetMaxTextureSize() { return m_dwMaxTextureSize; };
-
-	void SetTextureColorDepth( const DWORD dwTextureColorDepth ) { m_dwTextureColorDepth = dwTextureColorDepth; };
 	DWORD GetTextureColorDepth() { return m_dwTextureColorDepth; };
 
 protected:

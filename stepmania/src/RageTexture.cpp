@@ -20,7 +20,12 @@
 //-----------------------------------------------------------------------------
 // RageTexture constructor
 //-----------------------------------------------------------------------------
-RageTexture::RageTexture( RageScreen* pScreen, const CString &sFilePath )
+RageTexture::RageTexture(
+	RageScreen* pScreen, 
+	const CString &sFilePath, 
+	const DWORD dwMaxSize, 
+	const DWORD dwTextureColorDepth,
+	const DWORD dwHints )
 {
 //	HELPER.Log( "RageTexture::RageTexture()" );
 
@@ -52,6 +57,7 @@ void RageTexture::CreateFrameRects()
 	///////////////////////////////////
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	///////////////////////////////////
+	m_TextureCoordRects.RemoveAll();
 	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y
 	{
 		for( int i=0; i<m_iFramesWide; i++ )	// traverse along X (important that this is the inner loop)

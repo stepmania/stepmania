@@ -13,7 +13,7 @@
 #include "RageUtil.h"
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
-#include "ColorArrow.h"
+#include "ColorNote.h"
 #include "ArrowEffects.h"
 #include "GameManager.h"
 
@@ -31,7 +31,7 @@ void GhostArrowRow::Load( PlayerOptions po )
 	StyleDef* pStyleDef = GAME->GetCurrentStyleDef();
 	GameDef* pGameDef = GAME->GetCurrentGameDef();
 
-	m_iNumCols = pStyleDef->GetColsPerPlayer();
+	m_iNumCols = pStyleDef->m_iColsPerPlayer;
 
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 

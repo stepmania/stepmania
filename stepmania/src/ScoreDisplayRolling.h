@@ -28,6 +28,7 @@ public:
 	ScoreDisplayRolling();
 
 	void SetScore( float fNewScore );
+	void SetScore( int iNewScore );
 	float GetScore();
 	void AddToScore( TapNoteScore score, int iCurCombo );
 

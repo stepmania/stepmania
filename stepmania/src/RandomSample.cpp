@@ -45,28 +45,6 @@ bool RandomSample::LoadSoundDir( CString sDir )
 	return true;
 }
 	
-bool RandomSample::LoadRandomSample( CString sSetFilePath )
-{
-	CStdioFile file;
-	if( !file.Open(sSetFilePath, CFile::modeRead|CFile::shareDenyNone) )
-		FatalError( ssprintf("Error opening sound set file '%s'.", sSetFilePath) );
-
-	
-	// Split for the directory of the sound set file.  We'll need it below
-	CString sDir, sFileName, sExtension;
-	splitrelpath( sSetFilePath, sDir, sFileName, sExtension );
-
-
-	CString line;
-	while( file.ReadString(line) )
-	{
-		if( line != "" )
-			LoadSound( sDir + line );
-	}
-
-	return true;
-}
-	
 bool RandomSample::LoadSound( CString sSoundFilePath )
 {
 	HELPER.Log( "RandomSample::LoadSound( %s )", sSoundFilePath );
@@ -89,7 +67,14 @@ void RandomSample::PlayRandom()
 	}
 	else
 	{
-		int iIndexToPlay = rand() % m_pSamples.GetSize();
+		int iIndexToPlay;
+		for( int i=0; i<5; i++ )
+		{
+			iIndexToPlay = rand() % m_pSamples.GetSize();
+			if( iIndexToPlay != m_iIndexLastPlayed )
+				break;
+		}
+
 		m_pSamples[iIndexToPlay]->Play();
 		m_iIndexLastPlayed = iIndexToPlay;
 	}

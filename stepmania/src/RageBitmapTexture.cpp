@@ -36,7 +36,7 @@ RageBitmapTexture::RageBitmapTexture(
 	const DWORD dwMaxSize, 
 	const DWORD dwTextureColorDepth,
 	const DWORD dwHints ) :
-	RageTexture( pScreen, sFilePath )
+	RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, dwHints )
 {
 //	HELPER.Log( "RageBitmapTexture::RageBitmapTexture()" );
 
@@ -52,6 +52,16 @@ RageBitmapTexture::~RageBitmapTexture()
 	SAFE_RELEASE(m_pd3dTexture);
 }
 
+void RageBitmapTexture::Reload( 	
+	const DWORD dwMaxSize, 
+	const DWORD dwTextureColorDepth,
+	const DWORD dwHints )
+{
+	SAFE_RELEASE(m_pd3dTexture);
+	Create( dwMaxSize, dwTextureColorDepth, dwHints );
+	// leave m_iRefCount alone!
+	CreateFrameRects();
+}
 
 //-----------------------------------------------------------------------------
 // GetTexture
@@ -113,11 +123,8 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
         FatalErrorHr( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
 	}
 
-	D3DCAPS8 caps;
-	m_pd3dDevice->GetDeviceCaps( &caps );
-	
 	// find out what the min texture size is
-	dwMaxSize = min( dwMaxSize, caps.MaxTextureWidth );
+	dwMaxSize = min( dwMaxSize, SCREEN->GetDeviceCaps().MaxTextureWidth );
 
 	bScaleImageToTextureSize = ddii.Width > dwMaxSize || ddii.Height > dwMaxSize;
 	
@@ -132,8 +139,8 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
 	if( FAILED( hr = D3DXCreateTextureFromFileEx( 
 		m_pd3dDevice,				// device
 		m_sFilePath,				// soure file
-		D3DX_DEFAULT,	// width 
-		D3DX_DEFAULT,	// height 
+		bScaleImageToTextureSize ? dwMaxSize : D3DX_DEFAULT,	// width 
+		bScaleImageToTextureSize ? dwMaxSize : D3DX_DEFAULT,	// height 
 		bCreateMipMaps ? 4 : 0,		// mip map levels
 		0,							// usage (is a render target?)
 		fmtTexture,					// our preferred texture format
@@ -174,5 +181,16 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
 		m_iImageWidth	= m_iSourceWidth;
 		m_iImageHeight	= m_iSourceHeight;
 	}
+
+	HELPER.Log( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bScaleImageToTextureSize = %d, source %d,%d;  image %d,%d.", 
+		m_sFilePath, 
+		GetTextureWidth(), 
+		GetTextureHeight(),
+		bScaleImageToTextureSize,
+		m_iSourceWidth,
+		m_iSourceHeight,
+		m_iImageWidth,
+		m_iImageHeight
+		);
 }
 

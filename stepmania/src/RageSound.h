@@ -27,6 +27,8 @@ public:
 
 	float GetPlayLatency() { return m_info.latency / 1000.0f; };
 
+	void PlayOnceStreamed( CString sPath );
+
 private:
 	HWND		m_hWndApp;	// this is set on GRAPHICS_Create()
 	BASS_INFO	m_info;

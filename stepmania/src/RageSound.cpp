@@ -75,4 +75,15 @@ RageSound::~RageSound()
 	BASS_Free();
 }
 
+void RageSound::PlayOnceStreamed( CString sPath )
+{
+	HSTREAM hStream = BASS_StreamCreateFile( FALSE, (void*)((LPCTSTR)sPath), 0, 0, BASS_STREAM_AUTOFREE );
+	if( hStream == NULL )
+		FatalError( "RageSound: Error creating stream." );
+
+	if( FALSE == BASS_StreamPlay( hStream, FALSE, 0 ) )
+		FatalError( "RageSound: Error playing a sound stream." );
+
+	// this stream will free itself when stopped 
+}
 

@@ -6,6 +6,7 @@
  Desc: See header.
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -17,14 +18,40 @@
 #include "GameConstants.h"
 
 
+float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5.0f * iValueIndex; }
+
+
 GrooveRadar::GrooveRadar()
 {
 	m_sprRadarBase.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_BASE) );
 	this->AddActor( &m_sprRadarBase );
 
-	m_sprRadarWords.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_WORDS) );
-	m_sprRadarWords.SetY( -10 );
-	this->AddActor( &m_sprRadarWords );
+	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+	{
+		const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f;
+		const float fRotation = RADAR_VALUE_ROTATION(c);
+		float fX = cosf(fRotation) * fRadius;
+		
+		// push the labels out a little
+		switch( c )
+		{
+		case 0:												break;
+		case 1:
+		case 4: if( fabsf(fX) > 1 ) fX += fX/fabsf(fX) * 40;	break;
+		case 2:
+		case 3: if( fabsf(fX) > 1 ) fX += fX/fabsf(fX) * 50;	break;
+		default:	ASSERT( false );
+		}
+
+		const float fY = -sinf(fRotation) * fRadius * 1.15f;
+		
+
+		m_sprRadarLabels[c].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_RADAR_WORDS) );
+		m_sprRadarLabels[c].StopAnimating();
+		m_sprRadarLabels[c].SetState( c );
+		m_sprRadarLabels[c].SetXY( fX, fY );
+		this->AddActor( &m_sprRadarLabels[c] );
+	}
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -112,7 +139,7 @@ void GrooveRadar::RenderPrimitives()
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] ) * fRadius;
-			const float fRotation = D3DX_PI/2 + D3DX_PI*2 / 5.0f * i;
+			const float fRotation = RADAR_VALUE_ROTATION(i);
 			const float fX = cosf(fRotation) * fDistFromCenter;
 			const float fY = -sinf(fRotation) * fDistFromCenter;
 
@@ -137,7 +164,7 @@ void GrooveRadar::RenderPrimitives()
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] ) * fRadius;
 			const float fDistFromCenterInner = fDistFromCenter-2;
 			const float fDistFromCenterOutter = fDistFromCenter+2;
-			const float fRotation = D3DX_PI/2 + D3DX_PI*2 / 5.0f * i;
+			const float fRotation = RADAR_VALUE_ROTATION(i);
 			const float fXInner = cosf(fRotation) * fDistFromCenterInner;
 			const float fXOutter = cosf(fRotation) * fDistFromCenterOutter;
 			const float fYInner = -sinf(fRotation) * fDistFromCenterInner;

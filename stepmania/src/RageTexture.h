@@ -1,18 +1,16 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: RageTexture.h
+ Class: RageTexture
 
- Desc: Abstract class for a texture with metadata.
+ Desc: Abstract class for a texture and holds metadata.
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-class RageTexture;
 
-
-#ifndef _RAGETEXTURE_H_
-#define _RAGETEXTURE_H_
 
 
 #include "RageScreen.h"
@@ -41,16 +39,26 @@ public:
 class RageTexture
 {
 public:
-	RageTexture( RageScreen* pScreen, const CString &sFilePath );
-	virtual ~RageTexture() PURE;
+	RageTexture( 
+		RageScreen* pScreen, 
+		const CString &sFilePath, 
+		const DWORD dwMaxSize, 
+		const DWORD dwTextureColorDepth,
+		const DWORD dwHints );
+	virtual ~RageTexture() = 0;
 
-	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() PURE;
+	virtual void Reload( 
+		const DWORD dwMaxSize, 
+		const DWORD dwTextureColorDepth,
+		const DWORD dwHints ) = 0;
+
+	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() = 0;
 
 	int GetSourceWidth()	{return m_iSourceWidth;};
 	int GetSourceHeight()	{return m_iSourceHeight;};
 	int GetTextureWidth()	{return m_iTextureWidth;};
 	int GetTextureHeight()	{return m_iTextureHeight;};
-	int GetImageWidth()	{return m_iImageWidth;};
+	int GetImageWidth()		{return m_iImageWidth;};
 	int GetImageHeight()	{return m_iImageHeight;};
 
 	int GetFramesWide()  {return m_iFramesWide;};
@@ -92,6 +100,3 @@ protected:
 	CArray<FRECT, FRECT&>	m_TextureCoordRects;	
 
 };
-
-
-#endif

@@ -58,9 +58,6 @@ Font::Font( const CString &sFontFilePath )
 	m_sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
 	m_sTexturePath.MakeLower();
 
-	// is this the first time the texture is being loaded?
-	bool bFirstTimeBeingLoaded = !TEXTURE->IsTextureLoaded( m_sTexturePath );
-
 
 	m_pTexture = TEXTURE->LoadTexture( m_sTexturePath, 0, false );
 	assert( m_pTexture != NULL );
@@ -74,7 +71,7 @@ Font::Font( const CString &sFontFilePath )
 	{
 		// sanity check
 		if( sCharacters.GetLength() != (int)m_pTexture->GetNumFrames() )
-			FatalError( ssprintf("The characters in '%s' does not match the number of frames in the texture.", m_sFontFilePath) );
+			FatalError( "The characters in '%s' does not match the number of frames in the texture.", m_sFontFilePath );
 
 		// set the char to frame number map
 		for( int i=0; i<sCharacters.GetLength(); i++ )
@@ -87,11 +84,28 @@ Font::Font( const CString &sFontFilePath )
 	}
 	else	// the font file creator did not supply characters.  Assume this is a full low ASCII set.
 	{
-		for( int i=0; i<MAX_FONT_CHARS; i++ )
-			m_iCharToFrameNo[i] = i;
+		switch( m_pTexture->GetNumFrames() )
+		{
+		case 256:		// ASCII 0-255
+			{
+			for( int i=0; i<256; i++ )
+				m_iCharToFrameNo[i] = i;
+			}
+			break;
+		case 128:		// ASCII 32-159
+			{
+			for( int i=32; i<160; i++ )
+				m_iCharToFrameNo[i] = i-32;
+			}
+			break;
+		default:
+			FatalError( "No characters were specified in '%s' and the font is not a standard ASCII set.", m_sFontFilePath );
+		}
+
 	}
 
 	m_bCapitalsOnly = ("1" == ini.GetValue("Font", "CapitalsOnly"));
+	m_fDrawExtraPercent = (float)ini.GetValueF("Font", "DrawExtraPercent");
 
 
 	//
@@ -119,26 +133,6 @@ Font::Font( const CString &sFontFilePath )
 			m_iFrameNoToWidth[i] = m_pTexture->GetSourceFrameWidth();
 		}
 	}
-
-
-	//
-	// Tweak the textures frame rectangles so we don't draw extra 
-	// to the left and right of the character, saving us fill rate.
-	//
-	if( bFirstTimeBeingLoaded )
-	{
-		for( int i=0; i<(int)m_pTexture->GetNumFrames(); i++ )
-		{
-			FRECT* pFrect = m_pTexture->GetTextureCoordRect( i );
-
-			float fPixelsToChopOff = (float)m_iFrameNoToWidth[i] - m_pTexture->GetSourceFrameWidth();
-			float fTexCoordsToChopOff = fPixelsToChopOff / m_pTexture->GetSourceWidth();
-
-			pFrect->left  -= fTexCoordsToChopOff/2;
-			pFrect->right += fTexCoordsToChopOff/2;
-		}
-	}
-
 }
 
 

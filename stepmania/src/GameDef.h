@@ -10,7 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "StyleDef.h"
 #include "NoteMetadata.h"
 #include "NoteData.h"
 #include "GameInput.h"
@@ -20,29 +19,51 @@
 
 
 const int MAX_STYLES_PER_GAME = 10;
+const int MAX_SKIN_PATHS = 16;
 
 
+class StyleDef;
 
-struct GameDef
+class GameDef
 {
 public:
+	GameDef( CString sGameDir );
+	~GameDef();
 
-	LPCTSTR m_szName;
-	LPCTSTR m_szDescription;
-	LPCTSTR m_szGraphicPath;
+	CString m_sGameDir;
+	CString m_sName;
+	CString m_sDescription;
 
 	// instrument stuff
 	int m_iNumInstruments;
-	int m_iNumButtons;
-	LPCTSTR m_szButtonNames[NUM_INSTRUMENT_BUTTONS];	// e.g. "left", "right", "middle C", "snare"
-	int m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to InstrumentButton
+	int m_iButtonsPerInstrument;
+	CString m_sButtonNames[MAX_INSTRUMENT_BUTTONS];	// e.g. "left", "right", "middle C", "snare"
+	int ButtonNameToIndex( const CString &sButtonName )
+	{
+		for( int i=0; i<m_iButtonsPerInstrument; i++ ) 
+			if( m_sButtonNames[i] == sButtonName )
+				return i;
+		return -1;
+	}
+	int m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to m_sButtonNames
 
 	int m_iNumStyleDefs;
-	StyleDef m_StyleDefs[MAX_STYLES_PER_GAME];
+	StyleDef* m_pStyleDefs[MAX_STYLES_PER_GAME];
+	StyleDef* GetStyleDef( CString sStyle );
 
 
 	// graphic stuff
-	CString GetPathToGraphic( const int iInstrumentButton, const GameButtonGraphic gbg );
+	int		m_iNumSkinFolders;
+	CString m_sSkinFolders[MAX_SKIN_PATHS];		// path to skin folders relative to m_sGameDir
+	bool HasASkinNamed( CString sSkin )
+	{
+		for( int i=0; i<m_iNumSkinFolders; i++ )
+			if( m_sSkinFolders[i] == sSkin )
+				return true;
+
+		return false;
+	}
+	CString GetPathToGraphic( const CString sSkinName, const int iInstrumentButton, const GameButtonGraphic gbg );
 	CString ElementToGraphicSuffix( const GameButtonGraphic gbg );
 
 

@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  File: NoteData.cpp
 
- Desc: A pattern of ColorArrows that past Y==0.
+ Desc: A pattern of ColorNotes that past Y==0.
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
@@ -166,7 +166,7 @@ int NoteData::GetNumTapNotes()
 
 	for( int i=0; i<MAX_TAP_NOTE_ELEMENTS; i++ )
 	{
-		for( int t=0; i<m_iNumTracks; t++ )
+		for( int t=0; t<m_iNumTracks; t++ )
 		{
 			if( m_TapNotes[t][i] != '0' )
 				iNumSteps++;

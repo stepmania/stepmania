@@ -49,14 +49,16 @@ void NoteField::Load( NoteData* pNoteData, PlayerOptions po, float fNumBeatsToDr
 	// init arrow rotations and X positions
 	for( int c=0; c<m_iNumTracks; c++ ) 
 	{
-		m_ColorArrow[c].m_sprColorPart.Load( GAME->GetPathToGraphic( PLAYER_1, c, GRAPHIC_NOTE_COLOR_PART) );
-		m_ColorArrow[c].m_sprGrayPart.Load( GAME->GetPathToGraphic( PLAYER_1, c, GRAPHIC_NOTE_GRAY_PART) );
-		float fColOffsetFromCenter = c - (m_iNumTracks-1)/2.0f;
-		m_ColorArrow[c].SetX( fColOffsetFromCenter*ARROW_SIZE );
+		m_ColorNote[c].m_sprColorPart.Load( GAME->GetPathToGraphic( PLAYER_1, c, GRAPHIC_NOTE_COLOR_PART) );
+		m_ColorNote[c].m_sprGrayPart.Load( GAME->GetPathToGraphic( PLAYER_1, c, GRAPHIC_NOTE_GRAY_PART) );
 	}
 
 
-	ASSERT( m_iNumTracks == GAME->GetCurrentStyleDef()->GetColsPerPlayer() );
+	for( int i=0; i<MAX_HOLD_NOTE_ELEMENTS; i++ )
+		m_HoldNoteLife[i] = 1;		// start with full life
+
+
+	ASSERT( m_iNumTracks == GAME->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
 
 void NoteField::Update( float fDeltaTime, float fSongBeat )
@@ -68,7 +70,7 @@ void NoteField::Update( float fDeltaTime, float fSongBeat )
 
 
 
-void NoteField::DrawTapNote( const int iCol, const float fIndex )
+void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const D3DXCOLOR color )
 {
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, fIndex, m_fSongBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
@@ -76,61 +78,47 @@ void NoteField::DrawTapNote( const int iCol, const float fIndex )
 	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
 	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
 
-	m_ColorArrow[iCol].SetXY( fXPos, fYPos );
-	m_ColorArrow[iCol].SetRotation( fRotation );
-	m_ColorArrow[iCol].SetColorPartFromIndexAndBeat( (int)fIndex, m_fSongBeat, m_PlayerOptions.m_ColorType );
-	m_ColorArrow[iCol].SetGrayPartFromIndexAndBeat( (int)fIndex, m_fSongBeat );
-	m_ColorArrow[iCol].SetAlpha( fAlpha );
-	m_ColorArrow[iCol].Draw();
+	D3DXCOLOR colorLeading, colorTrailing;	// of the color part.  Alpha here be overwritten with fAlpha!
+	if( color.a == -1 )	// indicated "NULL"
+		m_ColorNote[iCol].GetEdgeColorsFromIndexAndBeat( roundf(fIndex), m_fSongBeat, m_PlayerOptions.m_ColorType, colorLeading, colorTrailing );
+	else
+		colorLeading = colorTrailing = color;
+
+	const float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
+	int iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat( roundf(fIndex), m_fSongBeat );
+
+
+	ColorNoteInstance instance = { fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iGrayPartFrameNo };
+	cni = instance;
 }
 
-void NoteField::DrawTapNote( const int iCol, const float fIndex, const D3DXCOLOR color )
+void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActive, const float fIndex, const HoldNote &hn, const float fHoldNoteLife )
 {
+	const int iCol = hn.m_iTrack;
+
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, fIndex, m_fSongBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
 	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
 	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
 	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
 
-	m_ColorArrow[iCol].SetXY( fXPos, fYPos );
-	m_ColorArrow[iCol].SetRotation( fRotation );
-	m_ColorArrow[iCol].SetDiffuseColor( color );
-	m_ColorArrow[iCol].SetGrayPartFromIndexAndBeat( (int)fIndex, m_fSongBeat );
-	m_ColorArrow[iCol].SetAlpha( fAlpha );
-	m_ColorArrow[iCol].Draw();
-}
 
-void NoteField::DrawHoldNoteColorPart( const int iCol, const float fIndex, const HoldNote &hn, const float fHoldNoteLife )
-{
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, fIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
-	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
-	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
+	int iGrayPartFrameNo;
+	if( bActive  &&  m_Mode == MODE_DANCING )
+		iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFull();
+	else
+		iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoClear();
 
-	D3DXCOLOR color( (fIndex-hn.m_iStartIndex)/(hn.m_iEndIndex-hn.m_iStartIndex), 1, 0, 1 ); // color shifts from green to yellow
-	color *= 1 - (1-fHoldNoteLife) / 1.2f;
-	color.a = 1;
+	const float fPercentIntoHold = (fIndex-hn.m_iStartIndex)/(hn.m_iEndIndex-hn.m_iStartIndex);
+	D3DXCOLOR colorLeading( fPercentIntoHold, 1, 0, 1 ); // color shifts from green to yellow
+	colorLeading *= fHoldNoteLife;
+	colorLeading.a = 1;
+	D3DXCOLOR colorTrailing = colorLeading;
 
-	m_ColorArrow[iCol].SetXY( fXPos, fYPos );
-	m_ColorArrow[iCol].SetRotation( fRotation );
-	m_ColorArrow[iCol].SetDiffuseColor( color );	
-	m_ColorArrow[iCol].SetAlpha( fAlpha );
-	m_ColorArrow[iCol].DrawColorPart();
-}
+	const float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
 
-void NoteField::DrawHoldNoteGrayPart( const int iCol, const float fIndex, const HoldNote &hn, const float fHoldNoteLife )
-{
-	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, fIndex, m_fSongBeat );
-	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
-	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
-	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
-
-	m_ColorArrow[iCol].SetXY( fXPos, fYPos );
-	m_ColorArrow[iCol].SetRotation( fRotation );
-	m_ColorArrow[iCol].SetAlpha( fAlpha );
-	m_ColorArrow[iCol].DrawGrayPart();
+	ColorNoteInstance instance = { fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iGrayPartFrameNo };
+	cni = instance;
 }
 
 void NoteField::DrawMeasureBar( const int iIndex, const int iMeasureNo )
@@ -176,7 +164,6 @@ void NoteField::RenderPrimitives()
 
 	//HELPER.Log( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
-
 	//
 	// Draw measure bars
 	//
@@ -205,15 +192,28 @@ void NoteField::RenderPrimitives()
 	}
 
 	//
-	// Draw all TapNotes
+	// Optimization is very important here because there are so many arrows to draw.  We're going 
+	// to draw the arrows in order of column.  This will let us fill up a vertex buffer of arrows 
+	// so we can draw them in one swoop without texture or state changes.
 	//
-	for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
-	{				
-		if( !IsRowEmpty(i) )
-		{
-			//HELPER.Log( "iYPos: %d, iFrameNo: %d, m_OriginalStep[i]: %d", iYPos, iFrameNo, m_OriginalStep[i] );
 
-			// See if there is a hold step that begins on this beat.  Terribly inefficient!
+
+	for( int c=0; c<m_iNumTracks; c++ )	// for each arrow column
+	{
+		const int MAX_COLOR_NOTE_INSTANCES = 300;
+		ColorNoteInstance instances[MAX_COLOR_NOTE_INSTANCES];
+		int iCount = 0;		// number of valid elements in instances
+
+
+		//
+		// Draw all TapNotes in this column
+		//
+		for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )	//	 for each row
+		{	
+			if( m_TapNotes[c][i] == '0' )
+				continue;	// no note here
+			
+			// See if there is a hold step that begins on this beat.  Not pretty...
 			bool bHoldNoteOnThisBeat = false;
 			for( int j=0; j<m_iNumHoldNotes; j++ )
 			{
@@ -224,92 +224,66 @@ void NoteField::RenderPrimitives()
 				}
 			}
 
-			for( int c=0; c<m_iNumTracks; c++ )	// for each arrow column
+			if( bHoldNoteOnThisBeat )
+				CreateTapNoteInstance( instances[iCount++], c, (float)i, D3DXCOLOR(0,1,0,1) );
+			else
+				CreateTapNoteInstance( instances[iCount++], c, (float)i );
+		}
+
+
+		//
+		// Draw all HoldNotes in this column
+		//
+		for( i=0; i<m_iNumHoldNotes; i++ )
+		{
+			HoldNote &hn = m_HoldNotes[i];
+
+			if( hn.m_iTrack != c )	// this HoldNote doesn't belong to this column
+				continue;
+
+			// If no part of this HoldNote is on the screen, skip it
+			if( !( iIndexFirstArrowToDraw <= hn.m_iEndIndex && hn.m_iEndIndex <= iIndexLastArrowToDraw  ||
+				iIndexFirstArrowToDraw <= hn.m_iStartIndex  && hn.m_iStartIndex <= iIndexLastArrowToDraw  ||
+				hn.m_iStartIndex < iIndexFirstArrowToDraw && hn.m_iEndIndex > iIndexLastArrowToDraw ) )
 			{
-				if( m_TapNotes[c][i] != '0' ) 	// this column is still unstepped on?
-				{
-					if( bHoldNoteOnThisBeat )
-						DrawTapNote( c, (float)i, D3DXCOLOR(0,1,0,1) );
-					else
-						DrawTapNote( c, (float)i );
-				}
+				continue;
 			}
 
 
-		}	// end if there is a step
-	}	// end foreach arrow to draw
-
-	//
-	// Draw all HoldNotes
-	//
-	for( i=0; i<m_iNumHoldNotes; i++ )
-	{
-		HoldNote &hn = m_HoldNotes[i];
-
-		// If no part of this HoldNote is on the screen, skip it
-		if( !( iIndexFirstArrowToDraw <= hn.m_iEndIndex && hn.m_iEndIndex <= iIndexLastArrowToDraw  ||
-			   iIndexFirstArrowToDraw <= hn.m_iStartIndex  && hn.m_iStartIndex <= iIndexLastArrowToDraw  ||
-			   hn.m_iStartIndex < iIndexFirstArrowToDraw && hn.m_iEndIndex > iIndexLastArrowToDraw ) )
-		{
-			continue;
-		}
+			const int iCol = hn.m_iTrack;
+			const float fHoldNoteLife = m_HoldNoteLife[i];
+			const bool bActive = NoteIndexToBeat(hn.m_iStartIndex) > m_fSongBeat  &&  m_fSongBeat < NoteIndexToBeat(hn.m_iEndIndex);
 
 
-		int iCol = hn.m_iTrack;
-		float fHoldNoteLife = m_HoldNoteLife[i];
-		
-		bool bActive = NoteIndexToBeat(hn.m_iStartIndex) > m_fSongBeat  &&  m_fSongBeat < NoteIndexToBeat(hn.m_iEndIndex);
+			// draw the gray parts
+			for( float j=(float)hn.m_iStartIndex;
+				j<=hn.m_iEndIndex; 
+				j+=INDICIES_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed )	// for each arrow in the run
+			{
+ 				// check if this arrow is off the the screen
+				if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
+					continue;	// skip this arrow
 
-		if( bActive  &&  m_Mode == MODE_DANCING )
-			m_ColorArrow[iCol].SetGrayPartFull();
-		else
-			m_ColorArrow[iCol].SetGrayPartClear();
+				if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteIndexToBeat(j) < m_fSongBeat )
+					continue;		// don't draw
 
+				CreateHoldNoteInstance( instances[iCount++], bActive, j, hn, fHoldNoteLife );
+			}
 
-		// draw the gray parts
-		for( float j=(float)hn.m_iStartIndex;
-			 j<=hn.m_iEndIndex; 
-			 j+=INDICIES_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed )	// for each arrow in the run
-		{
- 			// check if this arrow is off the the screen
-			if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j)
-				continue;	// skip this arrow
+			// draw the first arrow on top of the others
+			j = (float)hn.m_iStartIndex;
 
 			if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteIndexToBeat(j) < m_fSongBeat )
-				continue;		// don't draw
-
-			DrawHoldNoteGrayPart( iCol, j, hn, fHoldNoteLife );
+				;		// don't draw
+			else
+				CreateHoldNoteInstance( instances[iCount++], bActive, j, hn, fHoldNoteLife );
 		}
-
-		// draw the color parts
-		for( j=(float)hn.m_iStartIndex; 
-			 j<=hn.m_iEndIndex; 
-			 j+=INDICIES_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed )	// for each arrow in the run
-		{
-			// check if this arrow is off the the screen
-			if( j < iIndexFirstArrowToDraw || iIndexLastArrowToDraw < j )
-				continue;	// skip this arrow
-
-			if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteIndexToBeat(j) < m_fSongBeat )
-				continue;		// don't draw
-
-			DrawHoldNoteColorPart( iCol, j, hn, fHoldNoteLife );
-		}
-
 		
-		// draw the first arrow on top of the others
-		j = (float)hn.m_iStartIndex;
-
-		if( fHoldNoteLife > 0  &&  m_Mode == MODE_DANCING  &&  NoteIndexToBeat(j) < m_fSongBeat )
-		{
-			;		// don't draw
-		}
-		else
-		{
-			DrawHoldNoteGrayPart( iCol, j, hn, fHoldNoteLife );
-			DrawHoldNoteColorPart( iCol, j, hn, fHoldNoteLife );
-		}
+		const bool bDrawAddPass = m_PlayerOptions.m_AppearanceType != PlayerOptions::APPEARANCE_VISIBLE;
+		if( iCount > 0 )
+			m_ColorNote[c].DrawList( iCount, instances, bDrawAddPass );
 	}
+
 }
 
 

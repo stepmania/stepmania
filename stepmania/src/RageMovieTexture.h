@@ -74,8 +74,18 @@ protected:
 class RageMovieTexture : public RageTexture
 {
 public:
-	RageMovieTexture( RageScreen* pScreen, const CString &sFilePath );
+	RageMovieTexture( 
+		RageScreen* pScreen, 
+		const CString &sFilePath, 
+		const DWORD dwMaxSize, 
+		const DWORD dwTextureColorDepth,
+		const DWORD dwHints );
 	virtual ~RageMovieTexture();
+
+	virtual void Reload( 
+		const DWORD dwMaxSize, 
+		const DWORD dwTextureColorDepth,
+		const DWORD dwHints );
 
 	LPDIRECT3DTEXTURE8 GetD3DTexture();
 

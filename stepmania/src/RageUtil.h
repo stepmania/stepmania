@@ -56,6 +56,7 @@ inline float froundf( const float f, const float fRoundInterval )
 }
 
 bool IsAnInt( LPCTSTR s );
+float TimeToSeconds( CString sHMS );
 
 
 CString ssprintf( LPCTSTR fmt, ...);

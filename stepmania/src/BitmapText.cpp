@@ -15,6 +15,7 @@
 #include "FontManager.h"
 #include "RageHelper.h"
 #include "ErrorCatcher/ErrorCatcher.h"
+#include "PrefsManager.h"
 
 
 D3DXCOLOR RAINBOW_COLORS[] = { 
@@ -74,6 +75,8 @@ bool BitmapText::Load( const CString &sFontFilePath )
 
 void BitmapText::SetText( CString sText )
 {
+	//HELPER.Log( "BitmapText::SetText()" );
+
 	if( m_pFont->m_bCapitalsOnly )
 		sText.MakeUpper();
 
@@ -120,6 +123,10 @@ void BitmapText::SetText( CString sText )
 		if( m_iLineWidths[l] > m_iWidestLineWidth )
 			m_iWidestLineWidth = m_iLineWidths[l];
 	}
+
+	// fill the RageScreen's vertex buffer with what we're going to draw 
+	//RebuildVertexBuffer();
+
 }
 
 
@@ -127,6 +134,10 @@ void BitmapText::SetText( CString sText )
 
 void BitmapText::RebuildVertexBuffer()
 {
+	//HELPER.Log( "BitmapText::RebuildVertexBuffer()" );
+
+
+
 	RageTexture* pTexture = m_pFont->m_pTexture;
 
 
@@ -139,6 +150,8 @@ void BitmapText::RebuildVertexBuffer()
 
 	// make the object in logical units centered at the origin
 	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
+	//LPDIRECT3DVERTEXBUFFER8 pVB = m_pVB;
+
 	CUSTOMVERTEX* v;
 	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
@@ -185,11 +198,12 @@ void BitmapText::RebuildVertexBuffer()
 			// HACK:
 			// The right side of any italic letter is being cropped.  So, we're going to draw a little bit
 			// to the right of the normal character.
-			const float fPercentExtra = min( 
-				0.20f, 
-				(iFrameWidth-iCharWidth)/(float)iFrameWidth 
-				);
-			
+			const float fPercentExtra = min( m_pFont->m_fDrawExtraPercent, (iFrameWidth-iCharWidth)/(float)iFrameWidth );	// don't draw from the adjacent frame
+
+
+			//
+			// set vertex positions
+			//
 			const float fExtraPixels = fPercentExtra * pTexture->GetSourceFrameWidth();
 
 			// first triangle
@@ -204,28 +218,28 @@ void BitmapText::RebuildVertexBuffer()
 			v[m_iNumV++].p = D3DXVECTOR3( iX+fExtraPixels,	iY+iHeight/2.0f, 0 );	// bottom right
 
 
+			//
 			// set texture coordinates
+			//
 			m_iNumV -= 6;
 
-			FRECT* pTexCoordRect = pTexture->GetTextureCoordRect( iFrameNo );
+			FRECT frectTexCoords = *pTexture->GetTextureCoordRect( iFrameNo );
+
+			// Tweak the textures frame rectangles so we don't draw extra 
+			// to the left and right of the character, saving us fill rate.
+			float fPixelsToChopOff = pTexture->GetSourceFrameWidth() - (float)iCharWidth;
+			float fTexCoordsToChopOff = fPixelsToChopOff / pTexture->GetSourceWidth();
+			frectTexCoords.left  += fTexCoordsToChopOff/2;
+			frectTexCoords.right -= fTexCoordsToChopOff/2;
 
 			const float fExtraTexCoords = fPercentExtra * pTexture->GetTextureFrameWidth() / pTexture->GetTextureWidth();
 
-			v[m_iNumV].tu = pTexCoordRect->left;					v[m_iNumV++].tv = pTexCoordRect->top;		// top left
-			v[m_iNumV].tu = pTexCoordRect->left;					v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom left
-			v[m_iNumV].tu = pTexCoordRect->right + fExtraTexCoords;	v[m_iNumV++].tv = pTexCoordRect->top;		// top right
-			v[m_iNumV].tu = v[m_iNumV-1].tu;						v[m_iNumV++].tv = v[m_iNumV-1].tv;			// top right
-			v[m_iNumV].tu = v[m_iNumV-3].tu;						v[m_iNumV++].tv = v[m_iNumV-3].tv;			// bottom left
-			v[m_iNumV].tu = pTexCoordRect->right + fExtraTexCoords;	v[m_iNumV++].tv = pTexCoordRect->bottom;	// bottom right
-
-/*
-			v[m_iNumV].tu = 0.0f;		v[m_iNumV++].tv = 1.0f-1.0f/16;		// top left
-			v[m_iNumV].tu = 0.0f;		v[m_iNumV++].tv = 1.0f;				// bottom left
-			v[m_iNumV].tu = 1.0f/16;	v[m_iNumV++].tv = 1.0f-1.0f/16;		// top right
-			v[m_iNumV].tu = 1.0f/16;	v[m_iNumV++].tv = 1.0f-1.0f/16;		// top right
-			v[m_iNumV].tu = 0.0f;		v[m_iNumV++].tv = 1.0f;				// bottom left
-			v[m_iNumV].tu = 1.0f/16;	v[m_iNumV++].tv = 1.0f;				// bottom right
-*/
+			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.top );		// top left
+			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.bottom );	// bottom left
+			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.top );		// top right
+			v[m_iNumV++].t = v[m_iNumV-1].t;																// top right
+			v[m_iNumV++].t = v[m_iNumV-3].t;																// bottom left
+			v[m_iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.bottom );	// bottom right
 		}
 
 		iY += iHeight;
@@ -252,6 +266,7 @@ void BitmapText::RenderPrimitives()
 
 
 	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
+	//LPDIRECT3DVERTEXBUFFER8 pVB = m_pVB;
 	CUSTOMVERTEX* v;
 
 
@@ -259,10 +274,6 @@ void BitmapText::RenderPrimitives()
 	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
 	pd3dDevice->SetTexture( 0, pTexture->GetD3DTexture() );
 
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
-	pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
-	//pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
-	//pd3dDevice->SetRenderState( D3DRS_DESTBLEND, bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
 	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
 	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, m_bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
 
@@ -276,7 +287,7 @@ void BitmapText::RenderPrimitives()
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_bShadow )
+		if( m_bShadow  &&  PREFS  &&  PREFS->GetCurrentGraphicProfileOptions()->m_bShadows )
 		{
 			SCREEN->PushMatrix();
 			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
@@ -334,10 +345,10 @@ void BitmapText::RenderPrimitives()
 		
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );//bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+		pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 
 		pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumV/3 );
 	}

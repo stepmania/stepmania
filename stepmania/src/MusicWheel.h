@@ -26,6 +26,8 @@
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
 #include "Window.h"	// for WindowMessage
+#include "ScoreDisplayRolling.h"	// for WindowMessage
+
 
 const int NUM_WHEEL_ITEMS_TO_DRAW	=	11;
 
@@ -63,7 +65,6 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 
-	void SetDiffuseColor( D3DXCOLOR c );
 
 	CString GetSectionName()
 	{
@@ -71,6 +72,8 @@ public:
 	};
 
 	void LoadFromWheelItemData( WheelItemData* pWID );
+	void RefreshGrades();
+	void SetDiffuseColor( D3DXCOLOR c );
 
 	// for a section
 	Sprite			m_sprSectionBar;
@@ -101,6 +104,7 @@ public:
 	void PrevMusic();
 	void NextMusic();
 	void NextSort();
+	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
 
 	float GetBannerY( float fPosOffsetsFromMiddle );
 	float GetBannerBrightness( float fPosOffsetsFromMiddle );
@@ -121,6 +125,8 @@ protected:
 	Sprite		m_sprSelectionOverlay;
 
 	MusicSortDisplay	m_MusicSortDisplay;
+	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
+	ScoreDisplayRolling	m_HighScore[NUM_PLAYERS];
 
 	SongSortOrder m_SortOrder;
 
@@ -148,9 +154,9 @@ protected:
 
 
 	// having sounds here causes a crash in Bass.  What the heck!?!?!
-	RandomSample m_soundChangeMusic;
-	RandomSample m_soundChangeSort;
-	RandomSample m_soundExpand;
+	RageSoundSample m_soundChangeMusic;
+	RageSoundSample m_soundChangeSort;
+	RageSoundSample m_soundExpand;
 
 
 
@@ -174,7 +180,7 @@ protected:
 //				sTemp = "NUM";
 //			return sTemp;
 		case SORT_TITLE:	
-			sTemp = pSong->GetFullTitle();
+			sTemp = pSong->GetMainTitle();
 			sTemp.MakeUpper();
 			sTemp = (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
 			if( IsAnInt(sTemp) )

@@ -38,8 +38,7 @@ Actor::Actor()
 	m_fVibrationDistance =  5.0f;
 	m_bVisibleThisFrame =  FALSE;
 
-	if( PREFS )	m_bShadow = PREFS->m_GraphicOptions.m_bShadows;
-	else		m_bShadow = true;
+	m_bShadow = true;
 	m_fShadowLength = 4;
 
 	m_bBlendAdd = false;

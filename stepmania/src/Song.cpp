@@ -72,7 +72,7 @@ Song::Song()
 {
 	m_bChangedSinceSave = false;
 	m_fOffsetInSeconds = 0;
-	m_fMusicSampleStartBeat = m_fMusicSampleEndBeat = -1;
+	m_fMusicSampleStartSeconds = m_fMusicSampleLengthSeconds = -1;
 	m_dwMusicBytes = 0;
 }
 
@@ -298,17 +298,17 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 
 		// handle the data
-if( -1 != value_name.Find("#title") ) 
+		if( -1 != value_name.Find("#title") ) 
 		{
-			m_sTitle = value_data;
 			// strip NoteMetadata type out of description leaving only song title (looks like 'B4U <BASIC>')
-			m_sTitle.Replace( "(ANOTHER)", "" );
-			m_sTitle.Replace( "(BASIC)", "" );
-			m_sTitle.Replace( "(MANIAC)", "" );
-			m_sTitle.Replace( "<ANOTHER>", "" );
-			m_sTitle.Replace( "<BASIC>", "" );
-			m_sTitle.Replace( "<MANIAC>", "" );
+			value_data.Replace( "(ANOTHER)", "" );
+			value_data.Replace( "(BASIC)", "" );
+			value_data.Replace( "(MANIAC)", "" );
+			value_data.Replace( "<ANOTHER>", "" );
+			value_data.Replace( "<BASIC>", "" );
+			value_data.Replace( "<MANIAC>", "" );
 
+			GetMainAndSubTitlesFromFullTitle( value_data, m_sMainTitle, m_sSubTitle );
 		}
 		else if( -1 != value_name.Find("#artist") ) 
 		{
@@ -481,8 +481,9 @@ bool Song::LoadFromDWIFile( CString sPath )
 			m_sMusicPath = CString("DWI Support\\") + arrayValueTokens[1];
 
 		else if( sValueName == "#TITLE" )
-			m_sTitle = arrayValueTokens[1];
-
+		{
+			GetMainAndSubTitlesFromFullTitle( arrayValueTokens[1], m_sMainTitle, m_sSubTitle );
+		}
 		else if( sValueName == "#ARTIST" )
 			m_sArtist = arrayValueTokens[1];
 
@@ -498,6 +499,12 @@ bool Song::LoadFromDWIFile( CString sPath )
 		else if( sValueName == "#GAP" )
 			// the units of GAP is 1/1000 second
 			m_fOffsetInSeconds = -atoi( arrayValueTokens[1] ) / 1000.0f;
+
+		else if( sValueName == "#SAMPLESTART" )
+			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
+
+		else if( sValueName == "#SAMPLELENGTH" )
+			m_fMusicSampleLengthSeconds = TimeToSeconds(  arrayValueTokens[1] );
 
 		else if( sValueName == "#FREEZE" )
 		{
@@ -648,7 +655,13 @@ bool Song::LoadFromSMDir( CString sDir )
 
 		// handle the data
 		if( sValueName == "#TITLE" )
-			m_sTitle = arrayValueTokens[1];
+			GetMainAndSubTitlesFromFullTitle( arrayValueTokens[1], m_sMainTitle, m_sSubTitle );
+
+		if( sValueName == "#MAINTITLE" )
+			m_sMainTitle = arrayValueTokens[1];
+
+		if( sValueName == "#SUBTITLE" )
+			m_sSubTitle = arrayValueTokens[1];
 
 		else if( sValueName == "#ARTIST" )
 			m_sArtist = arrayValueTokens[1];
@@ -678,18 +691,14 @@ bool Song::LoadFromSMDir( CString sDir )
 		else if( sValueName == "#MUSICBYTES" )
 			m_dwMusicBytes = atoi( arrayValueTokens[1] );
 
+		else if( sValueName == "#SAMPLESTART" )
+			m_fMusicSampleStartSeconds = TimeToSeconds( arrayValueTokens[1] );
+
+		else if( sValueName == "#SAMPLELENGTH" )
+			m_fMusicSampleLengthSeconds = TimeToSeconds( arrayValueTokens[1] );
+
 		else if( sValueName == "#OFFSET" )
 			m_fOffsetInSeconds = (float)atof( arrayValueTokens[1] );
-
-		else if( sValueName == "#MUSICSAMPLERANGE" )
-		{
-			CStringArray arrayBeatValues;
-			split( arrayValueTokens[1], ",", arrayBeatValues );
-
-			m_fMusicSampleStartBeat = (float)atof( arrayBeatValues[0] );
-			m_fMusicSampleEndBeat = (float)atof( arrayBeatValues[1] );
-			
-		}
 
 		else if( sValueName == "#FREEZES" )
 		{
@@ -748,9 +757,10 @@ bool Song::LoadFromSMDir( CString sDir )
 
 void Song::TidyUpData()
 {
-	if( m_sTitle == "" )	m_sTitle = "Untitled song";
-	m_sTitle.TrimRight();
-	if( m_sArtist == "" )	m_sArtist = "Unknown artist";
+	m_sMainTitle.TrimRight();
+	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
+	m_sSubTitle.TrimRight();
+	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	if( m_BPMSegments.GetSize() == 0 )
 		FatalError( "No #BPM specified in '%s.'", GetSongFilePath() );
 
@@ -1008,7 +1018,8 @@ void Song::Save()
 	if( !file.Open( m_sSongFilePath, CFile::modeWrite | CFile::modeCreate ) )
 		FatalError( "Error opening song file '%s' for writing.", m_sSongFilePath );
 
-	file.WriteString( ssprintf("#TITLE:%s;\n", m_sTitle) );
+	file.WriteString( ssprintf("#MAINTITLE:%s;\n", m_sMainTitle) );
+	file.WriteString( ssprintf("#SUBTITLE:%s;\n", m_sSubTitle) );
 	file.WriteString( ssprintf("#ARTIST:%s;\n", m_sArtist) );
 	file.WriteString( ssprintf("#CREDIT:%s;\n", m_sCredit) );
 	
@@ -1054,6 +1065,9 @@ void Song::Save()
 
 	file.WriteString( ssprintf("#MUSICBYTES:%u;\n", m_dwMusicBytes) );
 	file.WriteString( ssprintf("#OFFSET:%f;\n", m_fOffsetInSeconds) );
+
+	file.WriteString( ssprintf("#SAMPLESTART:%f;\n", m_fMusicSampleStartSeconds) );
+	file.WriteString( ssprintf("#SAMPLELENGTH:%f;\n", m_fMusicSampleLengthSeconds) );
 
 	file.WriteString( "#FREEZES:" );
 	for( i=0; i<m_FreezeSegments.GetSize(); i++ )
@@ -1113,8 +1127,8 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 	Song* pSong1 = *(Song**)arg1;
 	Song* pSong2 = *(Song**)arg2;
 	
-	CString sTitle1 = pSong1->GetFullTitle();
-	CString sTitle2 = pSong2->GetFullTitle();
+	CString sTitle1 = pSong1->GetMainTitle();
+	CString sTitle2 = pSong2->GetMainTitle();
 
 	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
 	CString sFilePath2 = pSong2->GetSongFilePath();

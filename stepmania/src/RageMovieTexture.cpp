@@ -242,8 +242,13 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 //-----------------------------------------------------------------------------
 // RageMovieTexture constructor
 //-----------------------------------------------------------------------------
-RageMovieTexture::RageMovieTexture( RageScreen* pScreen, const CString &sFilePath ) :
-  RageTexture( pScreen, sFilePath )
+RageMovieTexture::RageMovieTexture( 
+	RageScreen* pScreen, 
+	const CString &sFilePath, 
+	const DWORD dwMaxSize, 
+	const DWORD dwTextureColorDepth,
+	const DWORD dwHints ) :
+  RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, dwHints )
 {
 	HELPER.Log( "RageBitmapTexture::RageBitmapTexture()" );
 
@@ -262,6 +267,15 @@ RageMovieTexture::~RageMovieTexture()
 	SAFE_RELEASE(m_pd3dTexture[0]);
 	SAFE_RELEASE(m_pd3dTexture[1]);
 }
+
+void RageMovieTexture::Reload( 
+		const DWORD dwMaxSize, 
+		const DWORD dwTextureColorDepth,
+		const DWORD dwHints )
+{
+	// do nothing
+}
+
 
 //-----------------------------------------------------------------------------
 // GetTexture

@@ -18,19 +18,22 @@
 #include "RageMusic.h"
 #include "WindowManager.h"	// for sending SM_PlayMusicSample
 #include "RageHelper.h"
+#include "GameConstants.h"
 
 
 
 
 const float SWITCH_MUSIC_TIME	=	0.3f;
 
-const float SORT_ICON_ON_SCREEN_X	=	146;
-const float SORT_ICON_ON_SCREEN_Y	=	0;
+const float SORT_ICON_ON_SCREEN_X	=	-140;
+const float SORT_ICON_ON_SCREEN_Y	=	-180;
 
-const float SORT_ICON_OFF_SCREEN_X	=	SORT_ICON_ON_SCREEN_X + 64;
-const float SORT_ICON_OFF_SCREEN_Y	=	SORT_ICON_ON_SCREEN_Y;
+const float SORT_ICON_OFF_SCREEN_X	=	SORT_ICON_ON_SCREEN_X;
+const float SORT_ICON_OFF_SCREEN_Y	=	SORT_ICON_ON_SCREEN_Y - 64;
 
 
+const float SCORE_X				=	86;
+const float SCORE_Y[NUM_PLAYERS] = { -34, 34 };
 
 
 D3DXCOLOR COLOR_BANNER_TINTS[] = { 
@@ -147,25 +150,14 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		break;
 	case TYPE_SONG:
 		{
-		
 		m_Banner.LoadFromSong( m_pSong );
-		m_Banner.SetDiffuseColor( m_colorTint );
+		D3DXCOLOR color = m_colorTint;
+		color.r += 0.4f;
+		color.g += 0.4f;
+		color.b += 0.4f;
+		m_Banner.SetDiffuseColor( color );
 		m_MusicStatusDisplay.SetType( m_MusicStatusDisplayType );
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( GAME->IsPlayerEnabled( (PlayerNumber)p ) )
-			{
-				const DifficultyClass dc = PREFS->m_PreferredDifficultyClass[p];
-				const Grade grade = m_pSong->GetGradeForDifficultyClass( GAME->m_sCurrentGame, GAME->m_sCurrentStyle, dc );
-				m_GradeDisplay[p].SetGrade( grade );
-				m_GradeDisplay[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			}
-			else // !IsPlayerEnabled
-			{
-				m_GradeDisplay[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-			}
-		}
-
+		RefreshGrades();
 		}
 		break;
 	default:
@@ -173,8 +165,24 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 	}
 }
 
-
-
+void WheelItemDisplay::RefreshGrades()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( GAME->IsPlayerEnabled( (PlayerNumber)p ) )
+		{
+			const DifficultyClass dc = PREFS->m_PreferredDifficultyClass[p];
+			ASSERT( m_pSong != NULL );
+			const Grade grade = m_pSong->GetGradeForDifficultyClass( GAME->m_sCurrentGame, GAME->m_sCurrentStyle, dc );
+			m_GradeDisplay[p].SetGrade( grade );
+			m_GradeDisplay[p].SetDiffuseColor( PLAYER_COLOR[p] );
+		}
+		else // !IsPlayerEnabled
+		{
+			m_GradeDisplay[p].SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		}
+	}
+}
 
 
 void WheelItemDisplay::SetDiffuseColor( D3DXCOLOR c )
@@ -199,7 +207,7 @@ void WheelItemDisplay::SetDiffuseColor( D3DXCOLOR c )
 
 	m_textSectionName.SetDiffuseColor( colorTempLetter );
 
-	D3DXCOLOR colorTempDisplay = D3DXCOLOR( 1, 1 ,1, c.a);
+	D3DXCOLOR colorTempDisplay = D3DXCOLOR( 1, 1, 1, c.a);
 
 	m_MusicStatusDisplay.SetDiffuseColor( colorTempDisplay );
 }
@@ -246,18 +254,33 @@ MusicWheel::MusicWheel()
 { 
 	HELPER.Log( "MusicWheel::MusicWheel()" );
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_sprHighScoreFrame[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SCORE_FRAME) );
+		m_sprHighScoreFrame[p].SetXY( SCORE_X, SCORE_Y[p] );
+		this->AddActor( &m_sprHighScoreFrame[p] );
+
+		m_HighScore[p].SetXY( SCORE_X, SCORE_Y[p]*0.97f );
+		m_HighScore[p].SetZoom( 0.6f );
+		this->AddActor( &m_HighScore[p] );
+	}
+	
+	m_sprHighScoreFrame[1].SetZoomY( -1 );	// flip vertically
+
+
 	m_sprSelectionOverlay.Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SONG_HIGHLIGHT) );
 	m_sprSelectionOverlay.SetXY( 0, 0 );
-	m_sprSelectionOverlay.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	// invisible
-	m_sprSelectionOverlay.SetEffectGlowing( 1.5f, D3DXCOLOR(1,1,1,0.1f), D3DXCOLOR(1,1,1,1) );
+	m_sprSelectionOverlay.SetDiffuseColor( D3DXCOLOR(1,1,1,0.3f) );
+	m_sprSelectionOverlay.SetEffectGlowing( 1.0f, D3DXCOLOR(1,1,1,0.2f), D3DXCOLOR(1,1,1,0.8f) );
+	this->AddActor( &m_sprSelectionOverlay );
 
-	m_MusicSortDisplay.SetZ( -2 );
 	m_MusicSortDisplay.SetXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
-	
+	m_MusicSortDisplay.SetEffectGlowing( 1.0f );
 	this->AddActor( &m_MusicSortDisplay );
 
 
-	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SWITCH_MUSIC) );
+
+	m_soundChangeMusic.Load( THEME->GetPathTo(SOUND_SWITCH_MUSIC), 10 );
 	m_soundChangeSort.Load( THEME->GetPathTo(SOUND_SWITCH_SORT) );
 	m_soundExpand.Load( THEME->GetPathTo(SOUND_EXPAND) );
 
@@ -606,6 +629,22 @@ void MusicWheel::RebuildWheelItemDisplays()
 
 }
 
+void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and top score
+{
+	DifficultyClass dc = PREFS->m_PreferredDifficultyClass[pn];
+	Song* pSong = SONG->m_pCurSong;
+	NoteMetadata* m_pNoteMetadata = SONG->m_pCurNoteMetadata[pn];
+	
+	m_HighScore[pn].SetScore( (float)m_pNoteMetadata->m_iTopScore );
+
+	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	{
+		WheelItemDisplay& display = m_WheelItemDisplays[i];
+		display.RefreshGrades();
+	}
+}
+
+
 
 void MusicWheel::RenderPrimitives()
 {
@@ -627,17 +666,12 @@ void MusicWheel::RenderPrimitives()
 	}
 
 
-
-	m_sprSelectionOverlay.Draw();
-
 	ActorFrame::RenderPrimitives();
 }
 
 void MusicWheel::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-
-	m_sprSelectionOverlay.Update( fDeltaTime );
 
 
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
@@ -772,7 +806,7 @@ void MusicWheel::PrevMusic()
 
 	m_WheelState = STATE_SWITCHING_MUSIC;
 	m_fTimeLeftInState = SWITCH_MUSIC_TIME;
-	m_soundChangeMusic.PlayRandom();
+	m_soundChangeMusic.Play();
 }
 
 void MusicWheel::NextMusic()
@@ -805,7 +839,7 @@ void MusicWheel::NextMusic()
 
 	m_WheelState = STATE_SWITCHING_MUSIC;
 	m_fTimeLeftInState = SWITCH_MUSIC_TIME;
-	m_soundChangeMusic.PlayRandom();
+	m_soundChangeMusic.Play();
 }
 
 void MusicWheel::NextSort()
@@ -822,7 +856,7 @@ void MusicWheel::NextSort()
 
 	MUSIC->Stop();
 
-	m_soundChangeSort.PlayRandom();
+	m_soundChangeSort.Play();
 	m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_END );
 	m_MusicSortDisplay.SetTweenXY( SORT_ICON_OFF_SCREEN_X, SORT_ICON_OFF_SCREEN_Y );
 
@@ -846,7 +880,7 @@ bool MusicWheel::Select()
 		RebuildWheelItemDisplays();
 
 
-		m_soundExpand.PlayRandom();
+		m_soundExpand.Play();
 
 
 		m_iSelection = 0;	// reset in case we can't find the last selected song

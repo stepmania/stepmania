@@ -44,6 +44,7 @@
 #include "WindowResults.h"
 #include "WindowTitleMenu.h"
 #include "WindowPlayerOptions.h"
+#include "WindowMusicScroll.h"
 
 #include "ScreenDimensions.h"
 
@@ -409,15 +410,14 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 
 		case WM_COMMAND:
 		{
-			GraphicOptions &go = PREFS->m_GraphicOptions;
             switch( LOWORD(wParam) )
             {
 				case IDM_TOGGLEFULLSCREEN:
-					go.m_bWindowed = !go.m_bWindowed;
+					PREFS->m_bWindowed = !PREFS->m_bWindowed;
 					ApplyGraphicOptions();
 					return 0;
 				case IDM_CHANGEDETAIL:
-					go.m_Profile = GraphicProfile( (go.m_Profile+1)%NUM_GRAPHIC_PROFILES );
+					PREFS->m_GraphicProfile = GraphicProfile( (PREFS->m_GraphicProfile+1)%NUM_GRAPHIC_PROFILES );
 					ApplyGraphicOptions();
 					return 0;
                case IDM_EXIT:
@@ -525,6 +525,7 @@ HRESULT CreateObjects( HWND hWnd )
 	//WM->SetNewWindow( new WindowResults );
 	//WM->SetNewWindow( new WindowPlayerOptions );
 	WM->SetNewWindow( new WindowTitleMenu );
+	//WM->SetNewWindow( new WindowMusicScroll );
 
 
     DXUtil_Timer( TIMER_START );    // Start the accurate timer
@@ -710,6 +711,7 @@ void Render()
 
 				SCREEN->ResetMatrixStack();
 
+
 				// draw the game
 				WM->Draw();
 
@@ -743,88 +745,16 @@ void ApplyGraphicOptions()
 {
 	InvalidateObjects();
 
-	GraphicOptions &go = PREFS->m_GraphicOptions;
+	GraphicProfileOptions *pGPO = PREFS->GetCurrentGraphicProfileOptions();
 
-	bool bWindowed = go.m_bWindowed;
-
-	//
-	// fill these in below depending on the profile
-	//
-	CString sProfileName;
-	DWORD dwWidth, dwHeight;
-	DWORD dwDisplayBPP;
-	DWORD dwTextureBPP;
-	DWORD dwMaxTextureSize;
-	bool bShadows;
-	bool bBackgrounds;
-	
-	switch( go.m_Profile )
-	{
-	case PROFILE_SUPER_LOW:
-		sProfileName = "Super Low";
-		dwWidth = 320;
-		dwHeight = 240;
-		dwDisplayBPP = 16;
-		dwTextureBPP = 16;
-		dwMaxTextureSize = 256;
-		bShadows = false;
-		bBackgrounds = false;
-		break;
-	case PROFILE_LOW:
-		sProfileName = "Low";
-		dwWidth = 400;
-		dwHeight = 300;
-		dwDisplayBPP = 16;
-		dwTextureBPP = 16;
-		dwMaxTextureSize = 256;
-		bShadows = false;
-		bBackgrounds = true;
-		break;
-	case PROFILE_MEDIUM:
-		sProfileName = "Medium";
-		dwWidth = 640;
-		dwHeight = 480;
-		dwDisplayBPP = 16;
-		dwTextureBPP = 16;
-		dwMaxTextureSize = 512;
-		bShadows = false;
-		bBackgrounds = true;
-		break;
-	case PROFILE_HIGH:
-		sProfileName = "High";
-		dwWidth = 640;
-		dwHeight = 480;
-		dwDisplayBPP = 16;
-		dwTextureBPP = 16;
-		dwMaxTextureSize = 1024;
-		bShadows = true;
-		bBackgrounds = true;
-		break;
-	case PROFILE_CUSTOM:
-		sProfileName = "Custom";
-		dwWidth = go.m_iResolution;
-		switch( dwWidth )
-		{
-		case 320:	dwHeight = 240;		break;
-		case 400:	dwHeight = 300;		break;
-		case 512:	dwHeight = 384;		break;
-		case 640:	dwHeight = 480;		break;
-		case 800:	dwHeight = 600;		break;
-		case 1024:	dwHeight = 768;		break;
-		case 1280:	dwHeight = 1024;	break;
-		default:	dwHeight = 480;		break;
-		}
-		dwDisplayBPP = go.m_iDisplayColor;
-		dwTextureBPP = go.m_iTextureColor;
-		dwMaxTextureSize = go.m_iMaxTextureSize;
-		bShadows = go.m_bShadows;
-		bBackgrounds = go.m_bBackgrounds;
-		break;
-	default:
-		ASSERT( false );
-	}
-
-	DWORD dwFlags = 0;	// not used
+	bool bWindowed			= PREFS->m_bWindowed;
+	CString sProfileName	= pGPO->m_szProfileName;
+	DWORD dwWidth			= pGPO->m_dwWidth;
+	DWORD dwHeight			= pGPO->m_dwHeight;
+	DWORD dwDisplayBPP		= pGPO->m_dwDisplayColor;
+	DWORD dwTextureBPP		= pGPO->m_dwTextureColor;
+	DWORD dwMaxTextureSize	= pGPO->m_dwMaxTextureSize;
+	DWORD dwFlags = 0;	// not used anymore
 
 	//
 	// If the requested resolution doesn't work, keep switching until we find one that does.
@@ -860,10 +790,7 @@ void ApplyGraphicOptions()
 	// Let the texture manager know about our preferences
 	//
 	if( TEXTURE != NULL )
-	{
-		TEXTURE->SetMaxTextureSize( dwMaxTextureSize );
-		TEXTURE->SetTextureColorDepth( dwTextureBPP );
-	}
+		TEXTURE->SetPrefs( dwMaxTextureSize, dwTextureBPP );
 
 	RestoreObjects();
 
@@ -871,11 +798,9 @@ void ApplyGraphicOptions()
 
 	if( WM )
 	{
-		CString sMessage;
-		if( sProfileName == "Custom" )
-			sMessage = ssprintf("%s - %ux%u - %u color, %u texture", bWindowed ? "Windowed" : "FullScreen", dwWidth, dwHeight, dwDisplayBPP, dwTextureBPP);
-		else
-			sMessage = ssprintf("%s - %s detail", bWindowed ? "Windowed" : "FullScreen", sProfileName );
+		CString sMessage = ssprintf("%s - %s detail", bWindowed ? "Windowed" : "FullScreen", sProfileName );
+		if( PREFS->m_GraphicProfile == PROFILE_CUSTOM )
+			sMessage += ssprintf(" - %ux%u - %u color, %u texture", dwWidth, dwHeight, dwDisplayBPP, dwTextureBPP);
 
 		WM->SystemMessage( sMessage );
 	}

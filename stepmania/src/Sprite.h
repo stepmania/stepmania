@@ -37,6 +37,7 @@ public:
 			return LoadFromTexture( sFilePath, dwHints, bForceReload );
 	};
 	void UnloadTexture();
+	RageTexture* GetTexture() { return m_pTexture; };
 
 	virtual void RenderPrimitives();
 	virtual void Update( float fDeltaTime );

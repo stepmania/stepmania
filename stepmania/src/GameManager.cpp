@@ -11,6 +11,7 @@
 */
 
 #include "GameManager.h"
+#include "ErrorCatcher/ErrorCatcher.h"
 
 
 GameManager*	GAME = NULL;	// global and accessable from anywhere in our program
@@ -26,141 +27,49 @@ GameManager*	GAME = NULL;	// global and accessable from anywhere in our program
 #define NUM_DANCE_PAD_BUTTONS		8
 
 
-//
-// ----------------------------------
-//   This is where all Games and Styles are definied.  
-//   If you want to add support for new games or styles, do it here.
-// ----------------------------------
-//
-GameDef g_GameDefs[] = 
-{
-	{
-		"dance",					// m_szName
-		"Dance Dance Revolution",	// m_szDescription
-		"",							// m_szGraphicPath
-
-		2,							// m_iNumInstruments
-		NUM_DANCE_PAD_BUTTONS,		// m_iNumButtons
-		{ "Left", "Right", "Up", "Down", "UpLeft", "UpRight", "Next", "Back" },	// m_sButtonNames[NUM_INSTRUMENT_BUTTONS]
-		{	// m_iMenuButtons
-			DANCE_PAD_BUTTON_LEFT,
-			DANCE_PAD_BUTTON_RIGHT,
-			DANCE_PAD_BUTTON_UP,
-			DANCE_PAD_BUTTON_DOWN,
-			DANCE_PAD_BUTTON_NEXT,
-			DANCE_PAD_BUTTON_BACK,
-		},
-		5,							// m_iNumStyleDefs
-		{ // StyleDef list
-			{	// StyleDef
-				"single",	// m_szName
-				"single",	// m_szReads
-				1,			// m_iNumPlayers
-				4,			// m_iNumTracks
-				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
-					{	// player 1
-						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
-						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
-						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
-						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
-					}
-				},
-			},
-			{	// StyleDef
-				"versus",	// m_szName
-				"single",	// m_szReads
-				1,			// m_iNumPlayers
-				4,			// m_iNumTracks
-				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
-					{	// player 1
-						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
-						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
-						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
-						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
-					},
-					{	// player 2
-						{ 0, INSTRUMENT_2, DANCE_PAD_BUTTON_LEFT },		// column 1
-						{ 1, INSTRUMENT_2, DANCE_PAD_BUTTON_DOWN },		// column 2
-						{ 2, INSTRUMENT_2, DANCE_PAD_BUTTON_UP },		// column 3
-						{ 3, INSTRUMENT_2, DANCE_PAD_BUTTON_RIGHT },	// column 4
-					}
-
-				},
-			},
-			{	// StyleDef
-				"double",	// m_szName
-				"double",	// m_szReads
-				1,			// m_iNumPlayers
-				8,			// m_iNumTracks
-				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
-					{	// player 1
-						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
-						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
-						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
-						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
-						{ 4, INSTRUMENT_2, DANCE_PAD_BUTTON_LEFT },		// column 5
-						{ 5, INSTRUMENT_2, DANCE_PAD_BUTTON_DOWN },		// column 6
-						{ 6, INSTRUMENT_2, DANCE_PAD_BUTTON_UP },		// column 7
-						{ 7, INSTRUMENT_2, DANCE_PAD_BUTTON_RIGHT },	// column 8
-					},
-				},
-			},
-			{	// StyleDef
-				"couple",	// m_szName
-				"couple",	// m_szReads
-				1,			// m_iNumPlayers
-				8,			// m_iNumTracks
-				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
-					{	// player 1
-						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
-						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 2
-						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 3
-						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 4
-					},
-					{	// player 2
-						{ 4, INSTRUMENT_2, DANCE_PAD_BUTTON_LEFT },		// column 1
-						{ 5, INSTRUMENT_2, DANCE_PAD_BUTTON_DOWN },		// column 2
-						{ 6, INSTRUMENT_2, DANCE_PAD_BUTTON_UP },		// column 3
-						{ 7, INSTRUMENT_2, DANCE_PAD_BUTTON_RIGHT },	// column 4
-					}
-
-				},
-			},
-			{	// StyleDef
-				"solo",		// m_szName
-				"solo",		// m_szReads
-				1,			// m_iNumPlayers
-				6,			// m_iNumTracks
-				{	// m_StyleInputToGameInput[NUM_PLAYERS][NUM_NOTE_COLS];
-					{	// player 1
-						{ 0, INSTRUMENT_1, DANCE_PAD_BUTTON_LEFT },		// column 1
-						{ 1, INSTRUMENT_1, DANCE_PAD_BUTTON_UPLEFT },	// column 2
-						{ 2, INSTRUMENT_1, DANCE_PAD_BUTTON_DOWN },		// column 3
-						{ 3, INSTRUMENT_1, DANCE_PAD_BUTTON_UP },		// column 4
-						{ 4, INSTRUMENT_1, DANCE_PAD_BUTTON_UPRIGHT },	// column 5
-						{ 5, INSTRUMENT_1, DANCE_PAD_BUTTON_RIGHT },	// column 6
-					}
-				},
-			},
-
-		}
-	}
-};
-
 
 GameManager::GameManager()
 {
+	m_iNumGameDefs = 0;
+	ReadGamesAndStylesFromDir( "Games" );
 	SwitchGame( "dance" );
 	SwitchStyle( "single" );
 }
 
+GameManager::~GameManager()
+{
+	for( int i=0; i<m_iNumGameDefs; i++ )
+		delete m_pGameDefs[i];
+}
+
+void GameManager::ReadGamesAndStylesFromDir( CString sDir )
+{
+	// trim off the trailing slash if any
+	sDir.TrimRight( "/\\" );
+
+	// Find all group directories in "Games" folder
+	CStringArray arrayGameNames;
+	GetDirListing( sDir+"\\*.*", arrayGameNames, true );
+	SortCStringArray( arrayGameNames );
+	
+	for( int i=0; i< arrayGameNames.GetSize(); i++ )	// for each dir in /Songs/
+	{
+		CString sGameName = arrayGameNames[i];
+
+		if( 0 == stricmp( sGameName, "cvs" ) )	// the directory called "CVS"
+			continue;		// ignore it
+
+		CString sGameDir = ssprintf( "%s\\%s", sDir, sGameName );  // game file must have same name as dir
+		m_pGameDefs[m_iNumGameDefs++] = new GameDef(sGameDir);
+	}
+}
 
 GameDef* GameManager::GetGameDef( CString sGame )
 {
-	for( int i=0; i<NUM_GAME_DEFS; i++ )
+	for( int i=0; i<m_iNumGameDefs; i++ )
 	{
-		if( g_GameDefs[i].m_szName == sGame )
-			return &g_GameDefs[i];
+		if( m_pGameDefs[i]->m_sName == sGame )
+			return m_pGameDefs[i];
 	}
 
 	return NULL;
@@ -170,13 +79,44 @@ StyleDef* GameManager::GetStyleDef( CString sGame, CString sStyle )
 {
 	GameDef* pGameDef = GetGameDef( sGame );
 
-	for( int i=0; i<pGameDef->m_iNumStyleDefs; i++ )
-	{
-		if( pGameDef->m_StyleDefs[i].m_szName == sStyle )
-			return &pGameDef->m_StyleDefs[i];
-	}
+	return pGameDef->GetStyleDef( sStyle );
 
 	return NULL;
+}
+
+
+void GameManager::GetGameNames( CStringArray &arrayGameNames )
+{
+	for( int i=0; i<MAX_GAME_DEFS; i++ )
+		arrayGameNames.Add( m_pGameDefs[i]->m_sName );
+}
+
+
+void GameManager::GetStyleNames( CString sGameName, CStringArray &arrayStyleNames )
+{
+	GameDef* pGameDef = GetGameDef( sGameName );
+
+	for( int i=0; i<pGameDef->m_iNumStyleDefs; i++ )
+	{
+		arrayStyleNames.Add( pGameDef->m_pStyleDefs[i]->m_sName );
+	}
+}
+
+
+void GameManager::GetSkinNames( CString sGameName, CStringArray &arraySkinNames )
+{
+	GameDef* pGameDef = GetGameDef( sGameName );
+
+	for( int i=0; i<pGameDef->m_iNumSkinFolders; i++ )
+		arraySkinNames.Add( pGameDef->m_sSkinFolders[i] );
+}
+
+void GameManager::SwitchSkin( PlayerNumber p, CString sSkin )
+{
+	if( !m_pCurrentGameDef->HasASkinNamed( sSkin ) )
+		FatalError( "The current game doesn't have a skin named '%s'.", sSkin );
+		
+	m_sCurrentSkin[p] = sSkin;
 }
 
 

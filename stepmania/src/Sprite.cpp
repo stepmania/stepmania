@@ -222,29 +222,28 @@ void Sprite::RenderPrimitives()
 	CUSTOMVERTEX* v;
 	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-	// shift by one pixel because sprites are not aligned (why?!?)
-	v[0].p = D3DXVECTOR3( quadVerticies.left+1,		quadVerticies.bottom,	0 );	// bottom left
-	v[1].p = D3DXVECTOR3( quadVerticies.left+1,		quadVerticies.top,		0 );	// top left
-	v[2].p = D3DXVECTOR3( quadVerticies.right+1,	quadVerticies.bottom,	0 );	// bottom right
-	v[3].p = D3DXVECTOR3( quadVerticies.right+1,	quadVerticies.top,		0 );	// top right
+	v[0].p = D3DXVECTOR3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
+	v[1].p = D3DXVECTOR3( quadVerticies.left,	quadVerticies.top,		0 );	// top left
+	v[2].p = D3DXVECTOR3( quadVerticies.right,	quadVerticies.bottom,	0 );	// bottom right
+	v[3].p = D3DXVECTOR3( quadVerticies.right,	quadVerticies.top,		0 );	// top right
 
 
 	if( m_bUsingCustomTexCoords ) 
 	{
-		v[0].tu = m_CustomTexCoords[0];		v[0].tv = m_CustomTexCoords[1];	// bottom left
-		v[1].tu = m_CustomTexCoords[2];		v[1].tv = m_CustomTexCoords[3];	// top left
-		v[2].tu = m_CustomTexCoords[4];		v[2].tv = m_CustomTexCoords[5];	// bottom right
-		v[3].tu = m_CustomTexCoords[6];		v[3].tv = m_CustomTexCoords[7];	// top right
+		v[0].t = D3DXVECTOR2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
+		v[1].t = D3DXVECTOR2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
+		v[2].t = D3DXVECTOR2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
+		v[3].t = D3DXVECTOR2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
 	} 
 	else 
 	{
 		UINT uFrameNo = m_iStateToFrame[m_iCurState];
 		FRECT* pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
 
-		v[0].tu = pTexCoordRect->left;		v[0].tv = pTexCoordRect->bottom;	// bottom left
-		v[1].tu = pTexCoordRect->left;		v[1].tv = pTexCoordRect->top;		// top left
-		v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
-		v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
+		v[0].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
+		v[1].t = D3DXVECTOR2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
+		v[2].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
+		v[3].t = D3DXVECTOR2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
 	}
 
 
@@ -270,7 +269,7 @@ void Sprite::RenderPrimitives()
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_bShadow )
+		if( m_bShadow  &&  PREFS  &&  PREFS->GetCurrentGraphicProfileOptions()->m_bShadows )
 		{
 			SCREEN->PushMatrix();
 			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units

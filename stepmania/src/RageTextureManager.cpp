@@ -71,7 +71,10 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD 
 	if( m_mapPathToTexture.Lookup( sTexturePath, pTexture ) )	// if the texture already exists in the map
 	{
 		pTexture->m_iRefCount++;
-		HELPER.Log( ssprintf("RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount) );
+		if( bForceReload )
+			pTexture->Reload( m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
+
+		HELPER.Log( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
 	}
 	else	// the texture is not already loaded
 	{
@@ -79,17 +82,13 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD 
 		splitpath( false, sTexturePath, sDrive, sDir, sFName, sExt );
 
 		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-			pTexture = (RageTexture*) new RageMovieTexture( m_pScreen, sTexturePath );
+			pTexture = (RageTexture*) new RageMovieTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
 		else
 			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
 
 
-		HELPER.Log( "RageTextureManager: Loading '%s' (%ux%u) from disk.  It has %d references", 
-			sTexturePath, 
-			pTexture->GetTextureWidth(), 
-			pTexture->GetTextureHeight(),
-			pTexture->m_iRefCount 
-			);
+		HELPER.Log( "RageTextureManager: Finished loading '%s' - %d references.", sTexturePath );
+
 
 		m_mapPathToTexture.SetAt( sTexturePath, pTexture );
 	}
@@ -135,12 +134,25 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 		}
 		else
 		{
-			HELPER.Log( ssprintf("RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount) );
+			HELPER.Log( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
 		}
 	}
 	else // texture not found
 	{
-		FatalError( ssprintf("Tried to Unload texture '%s' that wasn't loaded.", sTexturePath) );
+		FatalError( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath );
 	}
 	
+}
+
+void RageTextureManager::ReloadAll()
+{
+	for( POSITION pos = m_mapPathToTexture.GetStartPosition(); pos != NULL;  )
+	{
+		CString sPath;
+		RageTexture* pTexture;
+
+		m_mapPathToTexture.GetNextAssoc( pos, sPath, pTexture );
+		
+		pTexture->Reload( m_dwMaxTextureSize, m_dwTextureColorDepth, 0 );	// this not entirely correct.  Hints are lost!
+	}
 }

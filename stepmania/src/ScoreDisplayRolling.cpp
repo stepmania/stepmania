@@ -34,6 +34,11 @@ ScoreDisplayRolling::ScoreDisplayRolling()
 }
 
 
+void ScoreDisplayRolling::SetScore( int iNewScore ) 
+{ 
+	SetScore( (float)iNewScore );
+}
+
 void ScoreDisplayRolling::SetScore( float fNewScore ) 
 { 
 	m_fScore = fNewScore;

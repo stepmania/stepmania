@@ -240,8 +240,6 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
     // Obtain an interface to the enumerated joystick.
 	if( i >= NUM_JOYSTICKS  )
 	    return DIENUM_STOP;		// we only care about the first 4 
-	else
-		ASSERT( false );	// we should never get here since the app is only initialized once
 
 	HRESULT hr = pDI->CreateDevice( pdidInstance->guidInstance, 
 									&pInput->m_pJoystick[i++], 

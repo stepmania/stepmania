@@ -28,6 +28,21 @@ bool IsAnInt( LPCTSTR s )
 	return true;
 }
 
+float TimeToSeconds( CString sHMS )
+{
+	CStringArray arrayBits;
+	split( sHMS, ":", arrayBits, false );
+
+	while( arrayBits.GetSize() < 3 )
+		arrayBits.InsertAt( 0, "0" );	// pad missing bits
+
+	float fSeconds = 0;
+	fSeconds += atoi( arrayBits[0] ) * 60 * 60;
+	fSeconds += atoi( arrayBits[1] ) * 60;
+	fSeconds += (float)atof( arrayBits[2] );
+
+	return fSeconds;
+}
 
 
 //-----------------------------------------------------------------------------

@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  Class: GrooveRadar
@@ -5,12 +6,9 @@
  Desc: The song's GrooveRadar displayed in SelectSong.
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _GrooveRadar_H_
-#define _GrooveRadar_H_
-
 
 #include "ActorFrame.h"
 #include "Sprite.h"
@@ -40,9 +38,5 @@ protected:
 	float m_fValuesOld[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
 
 	Sprite m_sprRadarBase;
-	Sprite m_sprRadarWords;
+	Sprite m_sprRadarLabels[NUM_RADAR_CATEGORIES];
 };
-
-
-
-#endif

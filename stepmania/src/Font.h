@@ -35,6 +35,7 @@ public:
 
 	RageTexture* m_pTexture;
 	bool m_bCapitalsOnly;
+	float m_fDrawExtraPercent;	// for italic fonts
 
 	int m_iCharToFrameNo[MAX_FONT_CHARS];
 	int	m_iFrameNoToWidth[MAX_FONT_CHARS];	// in soure coordinate space

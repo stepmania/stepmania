@@ -13,7 +13,7 @@ enum InstrumentNumber
 {
 	INSTRUMENT_1 = 0,
 	INSTRUMENT_2,
-	NUM_INSTRUMENTS,	// leave this at the end
+	MAX_INSTRUMENTS,	// leave this at the end
 	INSTRUMENT_NONE,
 };
 
@@ -35,7 +35,7 @@ enum InstrumentButton
 	INSTRUMENT_BUTTON_14,
 	INSTRUMENT_BUTTON_15,
 	INSTRUMENT_BUTTON_16,
-	NUM_INSTRUMENT_BUTTONS,		// leave this at the end
+	MAX_INSTRUMENT_BUTTONS,		// leave this at the end
 	INSTRUMENT_BUTTON_NONE
 };
 

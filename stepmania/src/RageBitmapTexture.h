@@ -42,6 +42,11 @@ public:
 		);
 	~RageBitmapTexture();
 
+	virtual void Reload( 
+		const DWORD dwMaxSize, 
+		const DWORD dwTextureColorDepth,
+		const DWORD dwHints );
+
 	virtual LPDIRECT3DTEXTURE8 GetD3DTexture();
 
 protected:

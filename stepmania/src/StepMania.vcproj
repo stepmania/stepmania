@@ -71,26 +71,26 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release and Debug"
-			IntermediateDirectory="Release and Debug"
+			OutputDirectory="./.."
+			IntermediateDirectory="./../Release"
 			ConfigurationType="1"
 			UseOfMFC="1"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2"
-			WholeProgramOptimization="FALSE">
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="3"
-				GlobalOptimizations="FALSE"
-				InlineFunctionExpansion="0"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="TRUE"
 				FavorSizeOrSpeed="1"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS"
 				StringPooling="TRUE"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="FALSE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="FALSE"
@@ -183,12 +183,6 @@
 				RelativePath=".\WindowEditMenu.h">
 			</File>
 			<File
-				RelativePath="WindowEnding.cpp">
-			</File>
-			<File
-				RelativePath="WindowEnding.h">
-			</File>
-			<File
 				RelativePath=".\WindowGameOptions.cpp">
 			</File>
 			<File
@@ -210,10 +204,22 @@
 				RelativePath=".\WindowMessage.h">
 			</File>
 			<File
+				RelativePath="WindowMusicScroll.cpp">
+			</File>
+			<File
+				RelativePath="WindowMusicScroll.h">
+			</File>
+			<File
 				RelativePath=".\WindowOptions.cpp">
 			</File>
 			<File
 				RelativePath=".\WindowOptions.h">
+			</File>
+			<File
+				RelativePath="WindowOptionsType2.cpp">
+			</File>
+			<File
+				RelativePath="WindowOptionsType2.h">
 			</File>
 			<File
 				RelativePath=".\WindowPlayerOptions.cpp">
@@ -246,10 +252,22 @@
 				RelativePath="WindowSelectDifficulty.h">
 			</File>
 			<File
+				RelativePath="WindowSelectGame.cpp">
+			</File>
+			<File
+				RelativePath="WindowSelectGame.h">
+			</File>
+			<File
 				RelativePath="WindowSelectGroup.cpp">
 			</File>
 			<File
 				RelativePath="WindowSelectGroup.h">
+			</File>
+			<File
+				RelativePath="WindowSelectMode.cpp">
+			</File>
+			<File
+				RelativePath="WindowSelectMode.h">
 			</File>
 			<File
 				RelativePath="WindowSelectMusic.cpp">
@@ -652,10 +670,10 @@
 				RelativePath=".\Background.h">
 			</File>
 			<File
-				RelativePath=".\ColorArrow.cpp">
+				RelativePath="ColorNote.cpp">
 			</File>
 			<File
-				RelativePath=".\ColorArrow.h">
+				RelativePath="ColorNote.h">
 			</File>
 			<File
 				RelativePath=".\Combo.cpp">
@@ -716,6 +734,12 @@
 			</File>
 			<File
 				RelativePath=".\Judgement.h">
+			</File>
+			<File
+				RelativePath="LifeMeterBar.cpp">
+			</File>
+			<File
+				RelativePath="LifeMeterBar.h">
 			</File>
 			<File
 				RelativePath=".\LifeMeterPills.cpp">

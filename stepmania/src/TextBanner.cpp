@@ -46,27 +46,27 @@ bool TextBanner::LoadFromSong( Song* pSong )
 		return true;
 	}
 
-	CString sTitle = pSong->GetFullTitle();
-	CString sSubTitle;
+	CString sMainTitle = pSong->GetMainTitle();
+	CString sSubTitle = pSong->GetSubTitle();
 
-	m_textTitle.SetText( sTitle );
+	m_textTitle.SetText( sMainTitle );
 	m_textSubTitle.SetText( sSubTitle );
-	m_textArtist.SetText( "/ " + pSong->GetArtist() );
+	m_textArtist.SetText( "/" + pSong->GetArtist() );
 
 	
 	float fTitleZoom, fSubTitleZoom, fArtistZoom;
 
 	if( sSubTitle == "" )
 	{
-		fTitleZoom = 0.9f;
+		fTitleZoom = 1.0f;
 		fSubTitleZoom = 0.0f;
-		fArtistZoom = 0.5f;
+		fArtistZoom = 0.6f;
 	}
 	else
 	{
-		fTitleZoom = 0.6f;
-		fSubTitleZoom = 0.3f;
-		fArtistZoom = 0.5f;
+		fTitleZoom = 0.8f;
+		fSubTitleZoom = 0.6f;
+		fArtistZoom = 0.6f;
 	}
 
 	m_textTitle.SetZoom( fTitleZoom );
@@ -90,14 +90,14 @@ bool TextBanner::LoadFromSong( Song* pSong )
 
 	if( sSubTitle == "" )
 	{
-		m_textTitle.SetY( -6 );
+		m_textTitle.SetY( -7 );
 		m_textSubTitle.SetY( 0 );
 		m_textArtist.SetY( 9 );
 	}
 	else
 	{
 		m_textTitle.SetY( -10 );
-		m_textSubTitle.SetY( -4 );
+		m_textSubTitle.SetY( 0 );
 		m_textArtist.SetY( 10 );
 	}
 

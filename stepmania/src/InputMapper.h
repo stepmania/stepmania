@@ -66,7 +66,7 @@ protected:
 	CString m_sCurrentGame;
 
 	// all the DeviceInputs that map to a GameInput
-	DeviceInput m_GItoDI[NUM_INSTRUMENTS][NUM_INSTRUMENT_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];
+	DeviceInput m_GItoDI[MAX_INSTRUMENTS][MAX_INSTRUMENT_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];
 
 	// lookup for efficiency from a DeviceInput to a GameInput
 	// This is repopulated every time m_PItoDI changes by calling UpdateTempDItoPI().

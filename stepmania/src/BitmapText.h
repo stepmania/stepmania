@@ -53,6 +53,7 @@ protected:
 	int		m_iWidestLineWidth;					// in source pixels
 
 	// recalculate on RebuildVertexBuffer()
+//	LPDIRECT3DVERTEXBUFFER8 m_pVB;
 	int		m_iNumV;		// number of verticies we filled in the vertex buffer
 
 	bool m_bRainbow;

@@ -7,8 +7,13 @@
 	Styles define a set of columns for each player, and information about those
 	columns, like what Instruments are used play those columns and what track 
 	to use to populate the column's notes.
-	A "track" is the term used to descibe a particular note in NoteData space.
-	A "column" is the term used to describe a particular note in Style space.
+	A "track" is the term used to descibe a particular vertical sting of note 
+	in NoteData.
+	A "column" is the term used to describe the vertical string of notes that 
+	a player sees on the screen while they're playing.  Column notes are 
+	picked from a track, but columns and tracks don't have a 1-to-1 
+	correspondance.  For example, dance-versus has 8 columns but only 4 tracks
+	because two players place from the same set of 4 tracks.
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
 	Chris Danford
@@ -21,31 +26,36 @@
 #include "GameInput.h"
 
 
-typedef TrackNumber NoteColumn;
-const int MAX_NOTE_COLUMNS = MAX_NOTE_TRACKS;
+const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 
 
-struct StyleDef
+class GameDef;
+
+class StyleDef
 {
 public:
+	StyleDef( GameDef* pGameDef, CString sStyleFilePath );
 
-	LPCTSTR m_szName;	// name of the style.  e.g. "single", "double"
-	LPCTSTR m_szReads;	// name of the style that we can read.  For example, the style named "versus" reads the NoteData with the tag "single"
+	struct ColumnInfo 
+	{ 
+		TrackNumber track;	// take note data from this track
+		InstrumentNumber number;	// use this instrument to hit a note on this track
+		InstrumentButton button;	// use this button to hit a note on this track
+		int	iX;				// x position of the column
+	};
 
-	int		m_iNumPlayers;	// either 1 or 2
-	int		m_iNumTracks;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
-
-	inline int GetColsPerPlayer() { return m_iNumTracks/m_iNumPlayers; };
-
-	struct GameInputAndTrack { TrackNumber track; InstrumentNumber number; InstrumentButton button; };
-
-	GameInputAndTrack m_StyleInputToGameInputAndTrack[NUM_PLAYERS][MAX_NOTE_COLUMNS];	// maps each players' column to a track in the NoteData
-
+	CString		m_sName;	// name of the style.  e.g. "single", "double"
+	CString		m_sDescription;	
+	CString		m_sReadsTag;	// name of the style that we can read.  For example, the style named "versus" reads the NoteData with the tag "dance-single"
+	int			m_iNumPlayers;	// either 1 or 2
+	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
+	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
+	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 
 	inline GameInput StyleInputToGameInput( const StyleInput StyleI )
 	{
-		InstrumentNumber n = m_StyleInputToGameInputAndTrack[StyleI.player][StyleI.col].number;
-		InstrumentButton b = m_StyleInputToGameInputAndTrack[StyleI.player][StyleI.col].button;
+		InstrumentNumber n = m_ColumnInfo[StyleI.player][StyleI.col].number;
+		InstrumentButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
 		return GameInput( n, b );
 	};
 
@@ -55,8 +65,8 @@ public:
 		{
 			for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 			{
-				if( m_StyleInputToGameInputAndTrack[p][t].number == GameI.number  &&
-					m_StyleInputToGameInputAndTrack[p][t].button == GameI.button )
+				if( m_ColumnInfo[p][t].number == GameI.number  &&
+					m_ColumnInfo[p][t].button == GameI.button )
 				{
 					return StyleInput( (PlayerNumber)p, t );
 				}
@@ -67,16 +77,16 @@ public:
 
 	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData &newNoteData )
 	{
-		TrackNumber iNewToOriginalTrack[MAX_NOTE_COLUMNS];
-		for( int col=0; col<GetColsPerPlayer(); col++ )
+		TrackNumber iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
+		for( int col=0; col<m_iColsPerPlayer; col++ )
 		{
-			GameInputAndTrack GIAT = m_StyleInputToGameInputAndTrack[p][col];
-			TrackNumber originalTrack = GIAT.track;
+			ColumnInfo colInfo = m_ColumnInfo[p][col];
+			TrackNumber originalTrack = colInfo.track;
 			
 			iNewToOriginalTrack[col] = originalTrack;
 		}
 		
-		newNoteData.LoadTransformed( pOriginal, GetColsPerPlayer(), iNewToOriginalTrack );
+		newNoteData.LoadTransformed( pOriginal, m_iColsPerPlayer, iNewToOriginalTrack );
 	}
 
 };

@@ -79,9 +79,9 @@ void InputMapper::SaveMappingsToDisk()
 
 
 	// iterate over our input map and write all mappings to the ini file
-	for( int i=0; i<NUM_INSTRUMENTS; i++ )
+	for( int i=0; i<MAX_INSTRUMENTS; i++ )
 	{
-		for( int j=0; j<NUM_INSTRUMENT_BUTTONS; j++ )
+		for( int j=0; j<MAX_INSTRUMENT_BUTTONS; j++ )
 		{
 			CString sNameString, sValueString;
 			
@@ -118,9 +118,9 @@ void InputMapper::ClearFromInputMap( DeviceInput DeviceI )
 {
 	// search for where this DeviceI maps to
 
-	for( int p=0; p<NUM_INSTRUMENTS; p++ )
+	for( int p=0; p<MAX_INSTRUMENTS; p++ )
 	{
-		for( int b=0; b<NUM_INSTRUMENT_BUTTONS; b++ )
+		for( int b=0; b<MAX_INSTRUMENT_BUTTONS; b++ )
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
@@ -156,9 +156,9 @@ void InputMapper::UpdateTempDItoGI()
 
 
 	// repopulate m_tempDItoGI
-	for( int n=0; n<NUM_INSTRUMENTS; n++ )
+	for( int n=0; n<MAX_INSTRUMENTS; n++ )
 	{
-		for( int b=0; b<NUM_INSTRUMENT_BUTTONS; b++ )
+		for( int b=0; b<MAX_INSTRUMENT_BUTTONS; b++ )
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{

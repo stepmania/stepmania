@@ -29,12 +29,8 @@ public:
 
 		sExt.MakeLower();
 
-		if( sExt == "" )
-			return LoadSoundDir( sFilePath );
-		else if( sExt == "set" )
-			return LoadRandomSample( sFilePath );
-		else 
-			return LoadSound( sFilePath );
+		if( sExt == "" )	return LoadSoundDir( sFilePath );
+		else				return LoadSound( sFilePath );
 	};
 
 	void PlayRandom();
@@ -43,7 +39,6 @@ public:
 
 private:
 	bool LoadSoundDir( CString sDir );
-	bool LoadRandomSample( CString sSetFilePath );
 	bool LoadSound( CString sSoundFilePath );
 
 

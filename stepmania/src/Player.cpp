@@ -23,9 +23,7 @@
 const float JUDGEMENT_Y			= CENTER_Y;
 const float ARROWS_Y			= SCREEN_TOP + ARROW_SIZE * 1.5f;
 const float HOLD_JUDGEMENT_Y	= ARROWS_Y + 80;
-const float LIFEMETER_Y			= SCREEN_TOP + 30;
 const float COMBO_Y				= CENTER_Y + 60;
-const float SCORE_Y				= SCREEN_HEIGHT - 40;
 
 const float HOLD_ARROW_NG_TIME	=	0.27f;
 
@@ -48,6 +46,8 @@ Player::Player()
 	}
 	m_iNumHoldNotes = 0;
 
+	m_pLifeMeter = NULL;
+	m_pScore = NULL;
 
 	this->AddActor( &m_GrayArrowRow );
 	this->AddActor( &m_NoteField );
@@ -56,18 +56,19 @@ Player::Player()
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddActor( &m_HoldJudgement[c] );
 	this->AddActor( &m_Combo );
-	this->AddActor( &m_LifeMeter );
-	this->AddActor( &m_Score );
 }
 
 
-void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOptions& po )
+void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOptions& po, LifeMeterBar* pLM, ScoreDisplayRolling* pScore )
 {
 	//HELPER.Log( "Player::Load()", );
 	this->CopyAll( pNoteData );
 
 	m_PlayerNumber = player_no;
 	m_PlayerOptions = po;
+
+	m_pLifeMeter = pLM;
+	m_pScore = pScore;
 
 	if( !po.m_bAllowFreezeArrows )
 		this->RemoveHoldNotes();
@@ -84,18 +85,13 @@ void Player::Load( PlayerNumber player_no, NoteData* pNoteData, const PlayerOpti
 
 
 	m_Combo.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - COMBO_Y : COMBO_Y );
-	m_LifeMeter.SetY( LIFEMETER_Y );
 	m_Judgement.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - JUDGEMENT_Y : JUDGEMENT_Y );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		m_HoldJudgement[c].SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - HOLD_JUDGEMENT_Y : HOLD_JUDGEMENT_Y );
-	m_Score.SetY( SCORE_Y );	
 
 	m_NoteField.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	m_GrayArrowRow.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	m_GhostArrowRow.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
-	
-	// Load options into Life Meter
-	m_LifeMeter.SetPlayerOptions(po);
 }
 
 void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference )
@@ -112,7 +108,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 		m_Judgement.SetJudgement( TNS_MISS );
 		m_Combo.EndCombo();
 		for( int i=0; i<iNumMisses; i++ )
-			m_LifeMeter.ChangeLife( TNS_MISS );
+			m_pLifeMeter->ChangeLife( TNS_MISS );
 	}
 
 
@@ -175,7 +171,7 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 	ActorFrame::Update( fDeltaTime );
 
-	m_LifeMeter.SetBeat( fSongBeat );
+	m_pLifeMeter->SetBeat( fSongBeat );
 
 	m_GrayArrowRow.Update( fDeltaTime, fSongBeat );
 	m_NoteField.Update( fDeltaTime, fSongBeat );
@@ -233,10 +229,6 @@ void Player::RenderPrimitives()
 	for( int c=0; c<m_iNumTracks; c++ )
 		m_HoldJudgement[c].Draw();
 	m_Combo.Draw();
-	m_LifeMeter.Draw();
-	m_Score.Draw();
-
-
 }
 
 bool Player::IsThereANoteAtIndex( int iIndex )
@@ -259,7 +251,7 @@ bool Player::IsThereANoteAtIndex( int iIndex )
 
 
 
-void Player::HandlePlayerStep( float fSongBeat, NoteColumn col, float fMaxBeatDiff )
+void Player::HandlePlayerStep( float fSongBeat, ColumnNumber col, float fMaxBeatDiff )
 {
 	//HELPER.Log( "Player::HandlePlayerStep()" );
 
@@ -304,8 +296,8 @@ void Player::HandlePlayerStep( float fSongBeat, NoteColumn col, float fMaxBeatDi
 
 				// update the judgement, score, and life
 				m_Judgement.SetJudgement( score );
-				m_Score.AddToScore( score, m_Combo.GetCurrentCombo() );
-				m_LifeMeter.ChangeLife( score );
+				m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );
+				m_pLifeMeter->ChangeLife( score );
 
 				// show the gray arrow ghost
 				m_GhostArrowRow.TapNote( col, score, m_Combo.GetCurrentCombo() > 100 );
@@ -331,7 +323,7 @@ void Player::HandlePlayerStep( float fSongBeat, NoteColumn col, float fMaxBeatDi
 }
 
 
-void Player::CheckForCompleteRow( float fSongBeat, NoteColumn col, float fMaxBeatDiff )
+void Player::CheckForCompleteRow( float fSongBeat, ColumnNumber col, float fMaxBeatDiff )
 {
 	//HELPER.Log( "Player::CheckForCompleteRow()" );
 
@@ -391,7 +383,7 @@ void Player::CheckForCompleteRow( float fSongBeat, NoteColumn col, float fMaxBea
 	}
 }
 
-void Player::OnRowDestroyed( float fSongBeat, NoteColumn col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
+void Player::OnRowDestroyed( float fSongBeat, ColumnNumber col, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
 {
 	float fStepBeat = NoteIndexToBeat( (float)iIndexThatWasSteppedOn );
 
@@ -412,12 +404,13 @@ void Player::OnRowDestroyed( float fSongBeat, NoteColumn col, float fMaxBeatDiff
 
 	// update the judgement, score, and life
 	m_Judgement.SetJudgement( score );
-	m_Score.AddToScore( score, m_Combo.GetCurrentCombo() );
-	m_LifeMeter.ChangeLife( score );
+	m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );
+	m_pLifeMeter->ChangeLife( score );
 
 
 	// remove this row from the NoteField
-	m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
+	if ( ( score == TNS_PERFECT ) || ( score == TNS_GREAT ) )
+		m_NoteField.RemoveTapNoteRow( iIndexThatWasSteppedOn );
 
 	// show ghost arrows
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column
@@ -479,7 +472,7 @@ ScoreSummary Player::GetScoreSummary()
 		}
 	}
 	scoreSummary.max_combo = m_Combo.GetMaxCombo();
-	scoreSummary.score = m_Score.GetScore();
+	scoreSummary.score = m_pScore ? m_pScore->GetScore() : 0;
 	
 	return scoreSummary;
 }
@@ -507,7 +500,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 		{
 			m_TapNoteScores[i] = TNS_MISS;
 			iNumMissesFound++;
-			m_LifeMeter.ChangeLife( TNS_MISS );
+			m_pLifeMeter->ChangeLife( TNS_MISS );
 		}
 	}
 

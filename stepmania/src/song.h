@@ -56,7 +56,7 @@ public:
 	CString GetSongFileDir()		{return m_sSongDir; };
 	CString GetGroupName()			{return m_sGroupName; };
 	CString GetMusicPath()			{return m_sMusicPath; };
-	void GetMusicSampleRange( float &fStartBeatOut, float &fEndBeatOut ) { fStartBeatOut = m_fMusicSampleStartBeat; fEndBeatOut = m_fMusicSampleEndBeat; };
+	void GetMusicSampleRange( float &fStartSec, float &fEndSec ) { fStartSec = m_fMusicSampleStartSeconds; fEndSec = m_fMusicSampleStartSeconds + m_fMusicSampleLengthSeconds; };
 	CString GetBannerPath()			{return m_sBannerPath; };
 	CString GetBackgroundPath()		{return m_sBackgroundPath; };
 	CString GetBackgroundMoviePath(){return m_sBackgroundMoviePath; };
@@ -70,38 +70,28 @@ public:
 	bool HasCDTitle()			{return m_sCDTitlePath != ""		&&  DoesFileExist(GetCDTitlePath()); };
 
 
-	CString GetFullTitle()		{return m_sTitle; };
-	void GetMainTitleAndSubTitle( CString &sMainTitleOut, CString &sSubTitleOut )
+	CString GetMainTitle()		{return m_sMainTitle; };
+	CString GetSubTitle()		{return m_sSubTitle; };
+	void GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
 	{
 		char szSeps[] = { '-', '~' };
 		for( int i=0; i<sizeof(szSeps); i++ )
 		{
 			const char c = szSeps[i];
-			int iBeginIndex = m_sTitle.Find( c );
+			int iBeginIndex = sFullTitle.Find( c );
 			if( iBeginIndex == -1 )
 				continue;
-			int iEndIndex = m_sTitle.Find( c, iBeginIndex+1 );	
+			int iEndIndex = sFullTitle.Find( c, iBeginIndex+1 );	
 			if( iEndIndex == -1 )
 				continue;
-			sMainTitleOut = m_sTitle.Left( iBeginIndex-1 );
-			sSubTitleOut = m_sTitle.Mid( iBeginIndex, iEndIndex-iBeginIndex+1 );
+			sMainTitleOut = sFullTitle.Left( iBeginIndex-1 );
+			sSubTitleOut = sFullTitle.Mid( iBeginIndex, iEndIndex-iBeginIndex+1 );
 			return;
 		}
-		sMainTitleOut = m_sTitle; 
+		sMainTitleOut = sFullTitle; 
 		sSubTitleOut = ""; 
 	};	
-	CString GetMainTitle()
-	{
-		CString sMainTitle, sSubTitle;
-		GetMainTitleAndSubTitle( sMainTitle, sSubTitle );
-		return sMainTitle;
-	};
-	CString GetSubTitle()
-	{
-		CString sMainTitle, sSubTitle;
-		GetMainTitleAndSubTitle( sMainTitle, sSubTitle );
-		return sSubTitle;
-	};
+
 	CString GetArtist()				{return m_sArtist; };
 	CString GetCredit()				{return m_sCredit; };
 	float GetBeatOffsetInSeconds()	{return m_fOffsetInSeconds; };
@@ -143,14 +133,15 @@ private:
 	CString m_sGroupName;
 
 	bool	m_bChangedSinceSave;
-	CString	m_sTitle;
+	CString	m_sMainTitle;
+	CString	m_sSubTitle;
 	CString	m_sArtist;
 	CString	m_sCredit;
 	float	m_fOffsetInSeconds;
 
 	CString	m_sMusicPath;
 	DWORD	m_dwMusicBytes;
-	float	m_fMusicSampleStartBeat, m_fMusicSampleEndBeat;
+	float	m_fMusicSampleStartSeconds, m_fMusicSampleLengthSeconds;
 	CString	m_sBannerPath;
 	CString	m_sBackgroundPath;
 	CString	m_sBackgroundMoviePath;

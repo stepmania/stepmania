@@ -284,6 +284,14 @@ SOURCE=.\WindowOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowOptionsType2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowOptionsType2.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowPlayerOptions.cpp
 # End Source File
 # Begin Source File
@@ -324,11 +332,27 @@ SOURCE=.\WindowSelectDifficulty.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowSelectGame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectGame.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowSelectGroup.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\WindowSelectGroup.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectMode.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowSelectMode.h
 # End Source File
 # Begin Source File
 
@@ -860,11 +884,11 @@ SOURCE=.\Background.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ColorArrow.cpp
+SOURCE=.\ColorNote.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ColorArrow.h
+SOURCE=.\ColorNote.h
 # End Source File
 # Begin Source File
 
@@ -945,6 +969,14 @@ SOURCE=.\Judgement.cpp
 # Begin Source File
 
 SOURCE=.\Judgement.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterBar.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterBar.h
 # End Source File
 # Begin Source File
 
