@@ -214,7 +214,9 @@ public:
 	// you want to use a profile on different machines that don't 
 	// have the same key, or else the profile's data will be discarded.
 	bool			m_bSignProfileData;
-	bool			m_bWriteMachineStatsHtml, m_bWriteProfileStatsHtml;
+	
+	bool			m_bWriteMachineStatsHtml;
+	bool			m_bWritePlayerStatsHtml;
 
 	/* Editor prefs: */
 	bool			m_bEditorShowBGChangesPlay;

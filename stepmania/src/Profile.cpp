@@ -696,7 +696,7 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 
 	const bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile()); // XXX
 	if( (bThisIsMachineProfile && PREFSMAN->m_bWriteMachineStatsHtml) ||
-		(!bThisIsMachineProfile && PREFSMAN->m_bWriteProfileStatsHtml) )
+		(!bThisIsMachineProfile && PREFSMAN->m_bWritePlayerStatsHtml) )
 		SaveStatsWebPageToDir( sDir );
 
 	//

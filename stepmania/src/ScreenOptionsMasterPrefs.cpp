@@ -219,10 +219,10 @@ static void SaveStats( int &sel, bool ToSel, const CStringArray &choices )
 	if( ToSel )
 	{
 		sel = (PREFSMAN->m_bWriteMachineStatsHtml)? 1:0;
-		sel |= (PREFSMAN->m_bWriteProfileStatsHtml)? 2:0;
+		sel |= (PREFSMAN->m_bWritePlayerStatsHtml)? 2:0;
 	} else {
 		PREFSMAN->m_bWriteMachineStatsHtml = !!(sel&1);
-		PREFSMAN->m_bWriteProfileStatsHtml = !!(sel&2);
+		PREFSMAN->m_bWritePlayerStatsHtml = !!(sel&2);
 	}
 }
 
