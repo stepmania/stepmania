@@ -84,8 +84,8 @@ public:
 	// statistics
 	bool IsThereANoteAtRow( int iRow ) const;
 
-	float GetFirstBeat();	// return the beat number of the first note
-	int GetFirstRow();
+	float GetFirstBeat() const;	// return the beat number of the first note
+	int GetFirstRow() const;
 	float GetLastBeat() const;	// return the beat number of the last note
 	int GetLastRow() const;
 	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS ) const;

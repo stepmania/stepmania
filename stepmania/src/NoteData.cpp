@@ -165,12 +165,12 @@ bool NoteData::IsThereANoteAtRow( int iRow ) const
 }
 
 
-int NoteData::GetFirstRow()
+int NoteData::GetFirstRow() const
 { 
 	return BeatToNoteRow( GetFirstBeat() );
 }
 
-float NoteData::GetFirstBeat()			
+float NoteData::GetFirstBeat() const		
 { 
 	float fEarliestBeatFoundSoFar = MAX_BEATS;
 	
@@ -443,37 +443,25 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	int bOffsetIncreasing = true;
 
 	int iLastRow = pOriginal->GetLastRow();
-	for( int r=0; r<=iLastRow; r++ )
+	for( int r=0; r<=iLastRow; )
 	{
 		// copy notes in this measure
 		for( int t=0; t<pOriginal->m_iNumTracks; t++ )
 		{
-			int iOldTrack = t;
-			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			if( pOriginal->GetTapNote(iOldTrack, r) != TAP_EMPTY )
+			/* Copy a measure's worth of rows.  This is an optimization; it's
+			 * faster to copy row-wise than track-wise. */
+			do {
+				int iOldTrack = t;
+				int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
 				this->SetTapNote(iNewTrack, r, pOriginal->GetTapNote(iOldTrack, r));
+				r++;
+			} while (r<=iLastRow && r % (ROWS_PER_MEASURE*4) == 0 );
 		}
 
 		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
 		{
 			// See if there is a hold crossing the beginning of this measure
 			bool bHoldCrossesThisMeasure = false;
-#if 0
-			pOriginal->Convert4sToHoldNotes();
-			for( int i=0; i<pOriginal->GetNumHoldNotes(); i++ )
-			{
-				const HoldNote& hn = pOriginal->GEtHoldNote(i);
-				/* Bug here: NoteRowToBeat() may have floating point error,
-				 * so we need to do an epsilon here.  But we can do this in
-				 * 4s easier anyway ... XXX -glenn */
-				if( hn.m_fStartBeat < NoteRowToBeat(r)  &&  hn.m_fEndBeat > NoteRowToBeat(r) )
-				{
-					bHoldCrossesThisMeasure = true;
-					break;
-				}
-			}
-			pOriginal->ConvertHoldNotesTo4s();
-#endif
 
 			if( r )
 			for( int t=0; t<=pOriginal->m_iNumTracks; t++ )
@@ -500,7 +488,6 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	pOriginal->Convert4sToHoldNotes();
 	Convert4sToHoldNotes();
 }
-
 
 void NoteData::PadTapNotes(int rows)
 {
