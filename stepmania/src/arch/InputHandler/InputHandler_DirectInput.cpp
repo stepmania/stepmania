@@ -9,6 +9,7 @@
 #include "SDL_utils.h"
 #include "archutils/Win32/AppInstance.h"
 #include "InputFilter.h"
+#include "PrefsManager.h"
 
 #include "InputHandler_DirectInputHelper.h"
 
@@ -20,7 +21,6 @@ static vector<DIDevice> Devices;
 
 /* Number of joysticks found: */
 static int g_NumJoysticks;
-
 
 static BOOL CALLBACK EnumDevices( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
 {
@@ -55,12 +55,32 @@ static BOOL CALLBACK EnumDevices( const DIDEVICEINSTANCE *pdidInstance, void *pC
 	return DIENUM_CONTINUE;
 }
 
+static void CheckForDirectInputDebugMode()
+{
+	HKEY    hkey;
+	if (RegOpenKey(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\DirectInput", &hkey) != ERROR_SUCCESS)
+		return;
+
+	long val;
+	DWORD nSize = sizeof(val);
+	if( RegQueryValueEx(hkey, "emulation", NULL, NULL, (LPBYTE)&val, &nSize) == ERROR_SUCCESS ) 
+	{
+		if( val&0x8 )
+			LOG->Warn("DirectInput keyboard debug mode appears to be enabled.  This reduces\n"
+			          "input timing accuracy significantly.  Disabling this is strongly recommended." );
+	}
+	RegCloseKey(hkey);
+}
+
 InputHandler_DInput::InputHandler_DInput()
 {
 	LOG->Trace( "InputHandler_DInput::InputHandler_DInput()" );
-	g_NumJoysticks = 0;
-	AppInstance inst;
+
+	CheckForDirectInputDebugMode();
 	
+	shutdown = false;
+	g_NumJoysticks = 0;
+	AppInstance inst;	
 	HRESULT hr = DirectInputCreate(/* SDL_Instance */inst.Get(), DIRECTINPUT_VERSION, &dinput, NULL);
 	if ( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
@@ -97,6 +117,11 @@ InputHandler_DInput::InputHandler_DInput()
 			Devices[i].buttons,
 			Devices[i].buffered? "buffered": "unbuffered" );
 	}
+
+	if( PREFSMAN->m_bThreadedInput )
+		InputThreadPtr = SDL_CreateThread(InputThread_Start, this);
+	else
+		InputThreadPtr = NULL;
 }
 
 
@@ -110,6 +135,14 @@ bool InputHandler_DInput::OpenDevice(DIDevice &device)
 
 InputHandler_DInput::~InputHandler_DInput()
 {
+	if( InputThreadPtr )
+	{
+		shutdown = true;
+		LOG->Trace("Shutting down DirectInput thread ...");
+		SDL_WaitThread(InputThreadPtr, NULL);
+		LOG->Trace("DirectInput thread shut down.");
+	}
+
 	for( unsigned i = 0; i < Devices.size(); ++i )
 		Devices[i].Close();
 
@@ -182,6 +215,8 @@ HRESULT GetDeviceState(LPDIRECTINPUTDEVICE2 dev, int size, void *ptr)
 	return hr;
 }
 
+/* This doesn't take a timestamp; instead, we let InputHandler::ButtonPressed figure
+ * it out.  Be sure to call InputHandler::Update() between each poll. */
 void InputHandler_DInput::UpdatePolled(DIDevice &device)
 {
 	if( device.type == device.KEYBOARD )
@@ -282,25 +317,13 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device)
 	}
 }
 
-void InputHandler_DInput::UpdateBuffered(DIDevice &device)
+void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 {
 	DWORD numevents;
 	DIDEVICEOBJECTDATA evtbuf[INPUT_QSIZE];
 
 	numevents = INPUT_QSIZE;
-	HRESULT hr = IDirectInputDevice2_GetDeviceData(
-			device.Device, sizeof(DIDEVICEOBJECTDATA),
-						evtbuf, &numevents, 0);
-	if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
-	{
-		hr = IDirectInputDevice2_Acquire(device.Device);
-		hr = IDirectInputDevice2_GetDeviceData(
-			device.Device, sizeof(DIDEVICEOBJECTDATA),
-						evtbuf, &numevents, 0);
-	}
-
-	if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
-		return;
+	HRESULT hr = IDirectInputDevice2_GetDeviceData( device.Device, sizeof(DIDEVICEOBJECTDATA), evtbuf, &numevents, 0);
 
 	/* Handle the events */
 	if ( hr != DI_OK )
@@ -322,11 +345,11 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device)
 			switch(in.type)
 			{
 			case in.KEY:
-				ButtonPressed(DeviceInput(dev, in.num), !!(evtbuf[i].dwData & 0x80));
+				ButtonPressed(DeviceInput(dev, in.num, tm), !!(evtbuf[i].dwData & 0x80));
 				break;
 
 			case in.BUTTON:
-				ButtonPressed(DeviceInput(dev, JOY_1 + in.num), !!evtbuf[i].dwData);
+				ButtonPressed(DeviceInput(dev, JOY_1 + in.num, tm), !!evtbuf[i].dwData);
 				break;
 
 			case in.AXIS:
@@ -348,17 +371,17 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device)
 					continue;
 				}
 
-				ButtonPressed(DeviceInput(dev, up), int(evtbuf[i].dwData) < -50);
-				ButtonPressed(DeviceInput(dev, down), int(evtbuf[i].dwData) > 50);
+				ButtonPressed(DeviceInput(dev, up, tm), int(evtbuf[i].dwData) < -50);
+				ButtonPressed(DeviceInput(dev, down, tm), int(evtbuf[i].dwData) > 50);
 				break;
 			}
 			case in.HAT:
 		    {
 				const int pos = TranslatePOV(evtbuf[i].dwData);
-				ButtonPressed(DeviceInput(dev, JOY_HAT_UP), !!(pos & SDL_HAT_UP));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN), !!(pos & SDL_HAT_DOWN));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT), !!(pos & SDL_HAT_LEFT));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT), !!(pos & SDL_HAT_RIGHT));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & SDL_HAT_UP));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & SDL_HAT_DOWN));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & SDL_HAT_LEFT));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & SDL_HAT_RIGHT));
 		    }
 			}
 		}
@@ -366,7 +389,7 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device)
 }
 
 
-void InputHandler_DInput::Update(float fDeltaTime)
+void InputHandler_DInput::PollAndAcquireDevices()
 {
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
@@ -381,14 +404,101 @@ void InputHandler_DInput::Update(float fDeltaTime)
 
 			IDirectInputDevice2_Poll( Devices[i].Device );
 		}
+	}
+}
 
-		if( Devices[i].buffered )
-			UpdateBuffered( Devices[i] );
-		else
-			UpdatePolled( Devices[i] );
+void InputHandler_DInput::Update(float fDeltaTime)
+{
+	if( InputThreadPtr == NULL )
+	{
+		PollAndAcquireDevices();
+
+		RageTimer zero;
+		zero.SetZero();
+		for( unsigned i = 0; i < Devices.size(); ++i )
+		{
+			if( Devices[i].buffered )
+				UpdateBuffered( Devices[i], zero );
+			else
+				UpdatePolled( Devices[i] );
+		}
+
+		InputHandler::UpdateTimer();
+	}
+}
+
+
+void InputHandler_DInput::InputThread()
+{
+	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
+		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set DirectInput thread priority"));
+
+	unsigned i;
+	vector<DIDevice*> BufferedDevices, UnbufferedDevices;
+	HANDLE Handle = CreateEvent(NULL, FALSE, FALSE, NULL);
+	for( i = 0; i < Devices.size(); ++i )
+	{
+		if( !Devices[i].buffered )
+		{
+			UnbufferedDevices.push_back( &Devices[i] );
+			continue;
+		}
+        
+		BufferedDevices.push_back( &Devices[i] );
+		HRESULT hr = IDirectInputDevice2_SetEventNotification(Devices[i].Device, Handle);
+		if( FAILED(hr) )
+			LOG->Warn("IDirectInputDevice2_SetEventNotification failed on %i", i);
 	}
 
-	InputHandler::Update( fDeltaTime );
+	/* If we have any polled devices, we need a fast loop. */
+	int Delay = UnbufferedDevices.size()? 2:50;
+	LOG->Trace( "DirectInput thread is running at %ims", Delay );
+
+	while(!shutdown)
+	{
+		VDCHECKPOINT;
+		if( BufferedDevices.size() )
+		{
+			/* Update buffered devices. */
+			PollAndAcquireDevices();
+
+			int ret = WaitForSingleObjectEx( Handle, Delay, true );
+			if( ret == -1 )
+			{
+				LOG->Trace( werr_ssprintf(GetLastError(), "WaitForMultipleObjectsEx failed") );
+				continue;
+			}
+
+			if( ret == WAIT_OBJECT_0 )
+			{
+				RageTimer now;
+				for( i = 0; i < BufferedDevices.size(); ++i )
+					UpdateBuffered( *BufferedDevices[i], now );
+			}
+		}
+		VDCHECKPOINT;
+
+		if( UnbufferedDevices.size() )
+		{
+			PollAndAcquireDevices();
+			for( i = 0; i < UnbufferedDevices.size(); ++i )
+				UpdatePolled( *UnbufferedDevices[i] );
+		}
+
+		InputHandler::UpdateTimer();
+
+		/* If we have no buffered devices, we didn't delay at WaitForMultipleObjectsEx. */
+		if( BufferedDevices.size() == 0 )
+			SDL_Delay( 2 );
+		VDCHECKPOINT;
+	}
+	VDCHECKPOINT;
+
+	for( i = 0; i < Devices.size(); ++i )
+		if( Devices[i].buffered )
+	        IDirectInputDevice2_SetEventNotification( Devices[i].Device, NULL );
+
+	CloseHandle(Handle);
 }
 
 void InputHandler_DInput::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)

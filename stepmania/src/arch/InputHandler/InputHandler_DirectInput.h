@@ -2,13 +2,21 @@
 #define INPUTHANDLER_DIRECTINPUT_H
 
 #include "InputHandler.h"
+#include "SDL_Thread.h"
 
 struct DIDevice;
 class InputHandler_DInput: public InputHandler
 {
+	SDL_Thread *InputThreadPtr;
+	bool shutdown;
+
 	bool OpenDevice(DIDevice &joystick);
 	void UpdatePolled(DIDevice &device);
-	void UpdateBuffered(DIDevice &device);
+	void UpdateBuffered(DIDevice &device, const RageTimer &tm);
+	void PollAndAcquireDevices();
+
+	static int InputThread_Start( void *p ) { ((InputHandler_DInput *) p)->InputThread();  return 0; }
+	void InputThread();
 
 public:
 	InputHandler_DInput();
