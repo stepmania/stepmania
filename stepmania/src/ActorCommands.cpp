@@ -19,7 +19,7 @@
 void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxIndexAccessed )
 {
 	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %u.",
-		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, command.vTokens.size() );
+		command.GetOriginalCommandString().c_str(), iMaxIndexAccessed+1, unsigned(command.vTokens.size()) );
 	LOG->Warn( sError );
 	HOOKS->MessageBoxOK( sError );
 }

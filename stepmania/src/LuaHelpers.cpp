@@ -97,7 +97,7 @@ void LoadFromString( lua_State *L, const CString &str )
 static jmp_buf jbuf;
 static CString jbuf_error;
 
-int LuaPanic( lua_State *L )
+static int LuaPanic( lua_State *L )
 {
 	CString err;
 	Lua::PopStack( L, err );
@@ -107,6 +107,7 @@ int LuaPanic( lua_State *L )
 	 * an exception from there. */
 	jbuf_error = err;
 	longjmp( jbuf, 1 );
+    return 0; // control never reaches here but quiets warning
 }
 
 bool Lua::RunExpression( const CString &str )

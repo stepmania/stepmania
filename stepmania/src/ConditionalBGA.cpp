@@ -527,7 +527,8 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 			else // we have to check the history of grades to ensure they met the spec asked
 			{
 				LOG->Info("Checking Grade History");
-				LOG->Info("Stage Stats Size: %d NumConditionalGrades: %d",g_vPlayedStageStats.size(),info.grades.size());
+				LOG->Info("Stage Stats Size: %u NumConditionalGrades: %u",
+                          unsigned(g_vPlayedStageStats.size()), unsigned(info.grades.size()));
 				bool foundavalidgradeforstage = false;
 				for(unsigned d=info.grades.size()-1,g=g_vPlayedStageStats.size()-1;d>0;d--,g--)
 				{
