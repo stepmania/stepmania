@@ -3,10 +3,10 @@
 #ifndef SOCKET_H
 #define SOCKET_H
 
-#pragma comment(lib, "sdl_net/lib/SDL.lib")
-#pragma comment(lib, "sdl_net/lib/SDL_net.lib")
+#pragma comment(lib, "../SDL-1.2.5/lib/SDL.lib")
+#pragma comment(lib, "../SDL_net-1.2.4/lib/SDL_net.lib")
 
-#include "sdl_net/include/SDL_net.h"
+#include "../SDL_net-1.2.4/include/SDL_net.h"
 
 //HACK: SDL_net doesn't appear to have a way to get the host name
 //		which I need to resolve the machine's ip address
