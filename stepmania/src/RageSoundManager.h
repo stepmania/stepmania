@@ -9,6 +9,7 @@
 class RageSound;
 class RageSoundBase;
 class RageSoundDriver;
+struct RageSoundParams;
 
 class RageSoundManager
 {
@@ -43,7 +44,7 @@ public:
 
 	void PlayOnce( CString sPath );
 
-	RageSound *PlaySound(RageSound &snd);
+	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params );
 	void StopPlayingSound(RageSound &snd);
 
 	/* A list of all sounds that currently exist.  RageSound adds and removes

@@ -98,7 +98,7 @@ int RageSoundManager::GetDriverSampleRate( int rate ) const
 	return driver->GetSampleRate( rate );
 }
 
-RageSound *RageSoundManager::PlaySound(RageSound &snd)
+RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *params )
 {
 	LockMut(lock);
 
@@ -113,8 +113,12 @@ RageSound *RageSoundManager::PlaySound(RageSound &snd)
 		owned_sounds.insert(sound_to_play);
 	}
 
+	if( params )
+		sound_to_play->SetParams( *params );
+
 	// Move to the start position.
-	sound_to_play->SetPositionSeconds();
+	sound_to_play->SetPositionSeconds( sound_to_play->GetParams().m_StartSecond );
+
 	sound_to_play->StartPlaying();
 
 	return sound_to_play;

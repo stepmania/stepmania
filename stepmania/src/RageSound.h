@@ -32,6 +32,7 @@ struct RageSoundParams
 
 	/* Amount of time to fade out at the end. */
 	float m_FadeLength;
+	void SetNoFade() { m_FadeLength = 0; }
 
 	float m_Volume;
 
@@ -41,6 +42,7 @@ struct RageSoundParams
 	/* Number of samples input and output when changing speed.  Currently,
 	 * this is either 1/1, 5/4 or 4/5. */
 	int speed_input_samples, speed_output_samples;
+	void SetPlaybackRate( float fScale );
 
 	bool AccurateSync;
 
@@ -52,7 +54,10 @@ struct RageSoundParams
 	 * M_LOOP restarts.
 	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound. */
 	enum StopMode_t {
-		M_STOP, M_LOOP, M_CONTINUE
+		M_STOP, /* stop when finished */
+		M_LOOP, /* loop */
+		M_CONTINUE, /* keep playing silence */
+		M_AUTO /* obey filename hints */
 	} StopMode;
 };
 
@@ -82,37 +87,27 @@ public:
 	bool Load(CString fn, int precache = 2);
 	void Unload();
 
-	void SetStopMode( RageSoundParams::StopMode_t m );
-	RageSoundParams::StopMode_t GetStopMode() const;
-
-	void SetStartSeconds(float secs = 0); /* default = beginning */
-	void SetLengthSeconds(float secs = -1); /* default = no length limit */
 	void StartPlaying();
 	void StopPlaying();
 
 	CString GetError() const { return error; }
 	bool Error() const { return !error.empty(); }
 
-	RageSound *Play();
+	RageSound *Play( const RageSoundParams *params=NULL );
 	void Stop();
 
 	float GetLengthSeconds();
 	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
 	int GetSampleRate() const;
-	bool SetPositionSeconds( float fSeconds = -1);
+	bool SetPositionSeconds( float fSeconds );
 	CString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return playing; }
 
-	void SetAccurateSync( bool yes=true );
-	void SetPlaybackRate( float fScale );
-	void SetFadeLength( float fSeconds );
-	void SetVolume( float fVolume );
-	float GetVolume() const;
-	void SetNoFade() { SetFadeLength(0); }
 	float GetPlaybackRate() const;
-	void SetStartTime( const RageTimer &tm );
 	RageTimer GetStartTime() const;
-	void SetBalance( float f );
+	float GetVolume() const;
+	void SetParams( const RageSoundParams &p );
+	const RageSoundParams &GetParams() const { return m_Param; }
 
 private:
 	/* If we were copied from another RageSound, this will point to it; otherwise
@@ -164,6 +159,7 @@ private:
 	int GetData(char *buffer, int size);
 	void Fail(CString reason);
 	int Bytes_Available() const;
+	RageSoundParams::StopMode_t GetStopMode() const; /* resolves M_AUTO */
 
 	static void RateChange(char *buf, int &cnt, int speed_input_samples, int speed_output_samples, int channels);
 

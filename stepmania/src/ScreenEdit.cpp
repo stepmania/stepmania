@@ -373,8 +373,6 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 
 	m_soundMusic.Load(m_pSong->GetMusicPath());
-	m_soundMusic.SetAccurateSync(true);
-	m_soundMusic.SetStopMode( RageSoundParams::M_CONTINUE );
 
 	m_soundAssistTick.Load(		THEME->GetPathToS("ScreenEdit assist tick") );
 }
@@ -417,8 +415,9 @@ void ScreenEdit::PlayTicks()
 		fSecondsUntil /= m_soundMusic.GetPlaybackRate(); /* 2x music rate means the time until the tick is halved */
 
 		RageTimer when = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
-		m_soundAssistTick.SetStartTime( when );
-		m_soundAssistTick.Play();
+		RageSoundParams p;
+		p.StartTime = when;
+		m_soundAssistTick.Play( &p );
 	}
 }
 
@@ -1941,9 +1940,12 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					m_Foreground.LoadFromSong( m_pSong );
 				}
 
-				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-				m_soundMusic.SetPositionSeconds( fStartSeconds );
-				m_soundMusic.StartPlaying();
+				RageSoundParams p;
+				p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+				p.m_StartSecond = fStartSeconds;
+				p.AccurateSync = true;
+				p.StopMode = RageSoundParams::M_CONTINUE;
+				m_soundMusic.Play( &p );
 			}
 			break;
 		case record:
@@ -1970,9 +1972,12 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 
-				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-				m_soundMusic.SetPositionSeconds( fStartSeconds );
-				m_soundMusic.StartPlaying();
+				RageSoundParams p;
+				p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+				p.m_StartSecond = fStartSeconds;
+				p.AccurateSync = true;
+				p.StopMode = RageSoundParams::M_CONTINUE;
+				m_soundMusic.Play( &p );
 			}
 			break;
 		case insert_and_shift:

@@ -60,7 +60,7 @@ RageSoundParams::RageSoundParams():
 	m_Balance = 0; // center
 	speed_input_samples = speed_output_samples = 1;
 	AccurateSync = false;
-	StopMode = RageSoundParams::M_STOP;
+	StopMode = M_AUTO;
 }
 
 RageSound::RageSound()
@@ -153,13 +153,6 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	m_sFilePath = sSoundFilePath;
 	position = 0;
 
-	
-	// Check for "loop" hint
-	if( m_sFilePath.Find("loop") != -1 )
-		SetStopMode( RageSoundParams::M_LOOP );
-	else
-		SetStopMode( RageSoundParams::M_STOP );
-
 	CString error;
 	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
 	if( Sample == NULL )
@@ -190,20 +183,6 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	}
 
 	return true;
-}
-
-void RageSound::SetStartSeconds( float secs )
-{
-	ASSERT(!playing);
-	m_Param.m_StartSecond = secs;
-}
-
-void RageSound::SetLengthSeconds(float secs)
-{
-	RAGE_ASSERT_M( secs == -1 || secs >= 0, ssprintf("%f",secs) );
-	ASSERT(!playing);
-	
-	m_Param.m_LengthSeconds = secs;
 }
 
 /* Read data at the rate we're playing it.  We only do this to smooth out the rate
@@ -522,8 +501,8 @@ void RageSound::StartPlaying()
 	LockMut(SOUNDMAN->lock);
 
 	// If no volume is set, use the default.
-	if( GetVolume() == -1 )
-		SetVolume( SOUNDMAN->GetMixVolume() );
+	if( m_Param.m_Volume == -1 )
+		m_Param.m_Volume = SOUNDMAN->GetMixVolume();
 
 	stopped_position = -1;
 
@@ -560,9 +539,9 @@ void RageSound::StopPlaying()
 	pos_map.clear();
 }
 
-RageSound *RageSound::Play()
+RageSound *RageSound::Play( const RageSoundParams *params )
 {
-	return SOUNDMAN->PlaySound(*this);
+	return SOUNDMAN->PlaySound( *this, params );
 }
 
 void RageSound::Stop()
@@ -788,46 +767,16 @@ bool RageSound::SetPositionFrames( int frames )
 	return true;
 }
 
-void RageSound::SetStopMode( RageSoundParams::StopMode_t m )
+void RageSoundParams::SetPlaybackRate( float NewSpeed )
 {
-	m_Param.StopMode = m;
-}
-
-RageSoundParams::StopMode_t RageSound::GetStopMode() const
-{
-	return m_Param.StopMode;
-}
-
-void RageSound::SetAccurateSync( bool yes )
-{
-	m_Param.AccurateSync = yes;
-}
-
-void RageSound::SetPlaybackRate( float NewSpeed )
-{
-	LockMut(SOUNDMAN->lock);
-
-	if(GetPlaybackRate() == NewSpeed)
-		return;
-
 	if( NewSpeed == 1.00f )
 	{
-		m_Param.speed_input_samples = 1; m_Param.speed_output_samples = 1;
+		speed_input_samples = 1; speed_output_samples = 1;
 	} else {
 		/* Approximate it to the nearest tenth. */
-		m_Param.speed_input_samples = int( roundf(NewSpeed * 10) );
-		m_Param.speed_output_samples = 10;
+		speed_input_samples = int( roundf(NewSpeed * 10) );
+		speed_output_samples = 10;
 	}
-}
-
-void RageSound::SetFadeLength( float fSeconds )
-{
-	m_Param.m_FadeLength = fSeconds;
-}
-
-void RageSound::SetVolume( float fVolume )
-{
-	m_Param.m_Volume = fVolume;
 }
 
 float RageSound::GetVolume() const
@@ -840,19 +789,25 @@ float RageSound::GetPlaybackRate() const
 	return float(m_Param.speed_input_samples) / m_Param.speed_output_samples;
 }
 
-void RageSound::SetStartTime( const RageTimer &tm )
-{
-	m_Param.StartTime = tm;
-}
-
 RageTimer RageSound::GetStartTime() const
 {
 	return m_Param.StartTime;
 }
 
-void RageSound::SetBalance( float f )
+void RageSound::SetParams( const RageSoundParams &p )
 {
-	m_Param.m_Balance = f;
+	m_Param = p;
+}
+
+RageSoundParams::StopMode_t RageSound::GetStopMode() const
+{
+	if( m_Param.StopMode != RageSoundParams::M_AUTO )
+		return m_Param.StopMode;
+
+	if( m_sFilePath.Find("loop") != -1 )
+		return RageSoundParams::M_LOOP;
+	else
+		return RageSoundParams::M_STOP;
 }
 
 /*

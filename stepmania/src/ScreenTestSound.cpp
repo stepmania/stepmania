@@ -57,7 +57,10 @@ ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 //s[0].s.SetStartSeconds(45);
 //s[0].s.SetPositionSeconds();
 // s[4].s.SetLengthSeconds(1);
-s[0].s.SetPlaybackRate(1.20f);
+	RageSoundParams p;
+	p.SetPlaybackRate( 1.20f );
+	s[0].s.SetParams( p );
+
 //s[0].s.SetStopMode(RageSound::M_LOOP);
 //s[0].s.Play();
 
@@ -92,9 +95,9 @@ void ScreenTestSound::UpdateText(int n)
 		"%s",
 		n+1, fn.c_str(),
 		s[n].s.IsPlaying()? "Playing":"Stopped",
-		s[n].s.GetStopMode() == RageSoundParams::M_STOP?
+		s[n].s.GetParams().StopMode == RageSoundParams::M_STOP?
 			"Stop when finished":
-		s[n].s.GetStopMode() == RageSoundParams::M_CONTINUE?
+		s[n].s.GetParams().StopMode == RageSoundParams::M_CONTINUE?
 			"Continue until stopped":
 			"Loop",
 		pos.size()? pos.c_str(): "none playing",
@@ -130,13 +133,26 @@ void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType ty
 			s[selected].s.Stop();
 			break;
 		case 'l':
-			s[selected].s.SetStopMode(RageSoundParams::M_LOOP);
+			{
+				RageSoundParams p = s[selected].s.GetParams();
+				p.StopMode = RageSoundParams::M_LOOP;
+				s[selected].s.SetParams( p );
+			}
+
 			break;
 		case 'a':
-			s[selected].s.SetStopMode(RageSoundParams::M_STOP);
+			{
+				RageSoundParams p = s[selected].s.GetParams();
+				p.StopMode = RageSoundParams::M_STOP;
+				s[selected].s.SetParams( p );
+			}
 			break;
 		case 'c':
-			s[selected].s.SetStopMode(RageSoundParams::M_CONTINUE);
+			{
+				RageSoundParams p = s[selected].s.GetParams();
+				p.StopMode = RageSoundParams::M_CONTINUE;
+				s[selected].s.SetParams( p );
+			}
 			break;
 
 /*		case SDLK_LEFT:

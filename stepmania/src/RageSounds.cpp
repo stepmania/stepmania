@@ -133,19 +133,15 @@ void StartPlayingMusic( const RageTimer &when, const MusicToPlay &ToPlay, MusicP
 
 	Playing.m_Music->Load( ToPlay.file, false );
 
+	RageSoundParams p;
+	p.m_StartSecond = ToPlay.start_sec;
+	p.m_LengthSeconds = ToPlay.length_sec;
+	p.m_FadeLength = ToPlay.fade_len;
+	p.StartTime = when;
 	if( ToPlay.force_loop )
-		Playing.m_Music->SetStopMode( RageSound::M_LOOP );
+		p.StopMode = RageSoundParams::M_LOOP;
 
-	Playing.m_Music->SetStartSeconds( ToPlay.start_sec );
-
-	if( ToPlay.length_sec == -1 )
-		Playing.m_Music->SetLengthSeconds();
-	else
-		Playing.m_Music->SetLengthSeconds( ToPlay.length_sec );
-
-	Playing.m_Music->SetFadeLength( ToPlay.fade_len );
-	Playing.m_Music->SetPositionSeconds();
-	Playing.m_Music->SetStartTime( when );
+	Playing.m_Music->SetPositionSeconds( p.m_StartSecond );
 	Playing.m_Music->StartPlaying();
 }
 
