@@ -380,6 +380,23 @@ void UnlockManager::UnlockCode( int num )
 	PROFILEMAN->GetMachineProfile()->m_UnlockedSongs.insert( num );
 }
 
+void UnlockManager::PreferUnlockCode( int iCode )
+{
+	LOG->Trace( "look for %i", iCode );
+	for( unsigned i = 0; i < m_SongEntries.size(); ++i )
+	{
+		UnlockEntry &pEntry = m_SongEntries[i];
+		if( pEntry.m_iCode != iCode )
+			continue;
+	LOG->Trace( "found %i, %p", iCode, pEntry.m_pSong );
+
+		if( pEntry.m_pSong != NULL )
+			GAMESTATE->m_pPreferredSong = pEntry.m_pSong;
+		if( pEntry.m_pCourse != NULL )
+			GAMESTATE->m_pPreferredCourse = pEntry.m_pCourse;
+	}
+}
+
 int UnlockManager::GetNumUnlocks() const
 {
 	return m_SongEntries.size();
@@ -394,10 +411,12 @@ public:
 	LunaUnlockManager() { LUA->Register( Register ); }
 
 	static int UnlockCode( T* p, lua_State *L )			{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
+	static int PreferUnlockCode( T* p, lua_State *L )	{ int iCode = IArg(1); p->PreferUnlockCode(iCode); return 0; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( UnlockCode )
+		ADD_METHOD( PreferUnlockCode )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

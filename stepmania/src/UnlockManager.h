@@ -71,6 +71,12 @@ public:
 	// Unlock an entry by code.
 	void UnlockCode( int num );
 
+	/*
+	 * If a code is associated with at least one song or course, set the preferred song
+	 * and/or course in GAMESTATE to them.
+	 */
+	void PreferUnlockCode( int iCode );
+
 	// Unlocks a song.
 	void UnlockSong( const Song *song );
 
