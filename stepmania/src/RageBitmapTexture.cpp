@@ -187,10 +187,6 @@ void RageBitmapTexture::Create()
 				/* Bits of alpha in the source: */
 				int src_alpha_bits = 8 - img->format->Aloss;
 
-				/* Aloss is wrong when BytesPerPixel == 1. */
-				if( img->format->BytesPerPixel == 1 )
-					src_alpha_bits = 8;
-
 				/* Don't use more than we were hinted to. */
 				src_alpha_bits = min( actualID.iAlphaBits, src_alpha_bits );
 
