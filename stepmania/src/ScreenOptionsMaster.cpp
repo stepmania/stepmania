@@ -159,10 +159,13 @@ void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, C
 	row.bOneChoiceForAllPlayers = true;
 	hand.type = ROW_CONFIG;
 
-	hand.opt = ConfOption::Find( param );
-	if( hand.opt == NULL )
+	ConfOption *pConfOption = ConfOption::Find( param );
+	if( pConfOption == NULL )
 		RageException::Throw( "Invalid Conf type \"%s\"", param.c_str() );
 
+	pConfOption->UpdateAvailableOptions();
+
+	hand.opt = pConfOption;
 	hand.opt->MakeOptionsList( row.choices );
 
 	row.name = hand.opt->name;
@@ -370,7 +373,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 
 	case ROW_CONFIG:
 		{
-			int iSelection = hand.opt->Get( row.choices );
+			int iSelection = hand.opt->Get();
 			SelectExactlyOne( iSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?1:0), vbSelectedOut );
 			return;
 		}
@@ -464,13 +467,13 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 			int sel = GetOneSelection(vbSelected) - (m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?1:0);
 
 			/* Get the original choice. */
-			int Original = hand.opt->Get( row.choices );
+			int Original = hand.opt->Get();
 
 			/* Apply. */
-			hand.opt->Put( sel, row.choices );
+			hand.opt->Put( sel );
 
 			/* Get the new choice. */
-			int New = hand.opt->Get( row.choices );
+			int New = hand.opt->Get();
 
 			/* If it didn't change, don't return any side-effects. */
 			if( Original == New )

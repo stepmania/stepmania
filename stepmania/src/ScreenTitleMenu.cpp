@@ -122,8 +122,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	m_textLifeDifficulty.LoadFromFont( THEME->GetPathF(m_sName,"LifeDifficulty") );
 	m_textLifeDifficulty.RunCommands( LIFE_DIFFICULTY_ON_COMMAND );
 	int iLifeDifficulty;
-	const CStringArray dummy;
-	LifeDifficulty( iLifeDifficulty, true, dummy );	
+	LifeDifficulty( iLifeDifficulty, true, NULL );	
 	iLifeDifficulty++;	// LifeDifficulty returns an index
 	m_textLifeDifficulty.SetText( ssprintf( "life difficulty %d", iLifeDifficulty ) );
 	this->AddChild( &m_textLifeDifficulty );

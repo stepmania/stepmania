@@ -11,23 +11,27 @@ static const int MAX_OPTIONS=16;
 
 struct ConfOption
 {
-	static const ConfOption *Find( CString name );
+	static ConfOption *Find( CString name );
 
 	/* Name of this option.  It's helpful to delimit this with newlines, as it'll
 	 * be the default display title. */
 	CString name;
-	typedef void (*MoveData_t)( int &sel, bool ToSel, const CStringArray &choices );
+	typedef void (*MoveData_t)( int &sel, bool ToSel, const ConfOption *pConfOption );
 	MoveData_t MoveData;
 
-	/* If MakeOptionsListCB is set, it'll be called by MakeOptionsList; otherwise
-	 * the contents of names is returned. */
+	/* For dynamic options, update the options.  Since this changes the available
+	 * options, this may invalidate the offsets returned by Get() and Put(). */
+	void UpdateAvailableOptions();
+
+	/* Return the list of available selections; Get() and Put() use indexes into this
+	 * array.  UpdateAvailableOptions() should be called before using this. */
 	void MakeOptionsList( CStringArray &out ) const;
 
-	inline int Get( const CStringArray &choices ) const { int sel; MoveData( sel, true, choices ); return sel; }
-	inline void Put( int sel, const CStringArray &choices ) const { MoveData( sel, false, choices ); }
+	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
+	inline void Put( int sel ) const { MoveData( sel, false, this ); }
 	int GetEffects() const;
 
-	ConfOption( const char *n, void (*m)( int &sel, bool in, const CStringArray &choices  ),
+	ConfOption( const char *n, MoveData_t m,
 		const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		name = n;
@@ -38,7 +42,7 @@ struct ConfOption
 #undef PUSH
 	}
 
-	ConfOption( const char *n, void (*m)( int &sel, bool in, const CStringArray &choices ),
+	ConfOption( const char *n, MoveData_t m,
 			void (*lst)( CStringArray &out ) )
 	{
 		name = n;
@@ -54,7 +58,7 @@ private:
 
 
 // HACK: This is used by ScreenTitleMenu
-void LifeDifficulty( int &sel, bool ToSel, const CStringArray &choices );
+void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption );
 
 
 #endif

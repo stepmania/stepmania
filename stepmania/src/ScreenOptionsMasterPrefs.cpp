@@ -76,7 +76,7 @@ static void MoveData( int &sel, bool &opt, bool ToSel )
 }
 
 #define MOVE( name, opt ) \
-	static void name( int &sel, bool ToSel, const CStringArray &choices ) \
+	static void name( int &sel, bool ToSel, const ConfOption *pConfOption ) \
 	{ \
 		MoveData( sel, opt, ToSel ); \
 	}
@@ -94,8 +94,11 @@ static void GameChoices( CStringArray &out )
 	}
 }
 
-static void GameSel( int &sel, bool ToSel, const CStringArray &choices )
+static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	CStringArray choices;
+	pConfOption->MakeOptionsList( choices );
+
 	if( ToSel )
 	{
 		const CString sCurGameName = GAMESTATE->m_pCurGame->m_szName;
@@ -116,8 +119,11 @@ static void LanguageChoices( CStringArray &out )
 	THEME->GetLanguages( out );
 }
 
-static void Language( int &sel, bool ToSel, const CStringArray &choices )
+static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	CStringArray choices;
+	pConfOption->MakeOptionsList( choices );
+
 	if( ToSel )
 	{
 		sel = 0;
@@ -137,8 +143,11 @@ static void ThemeChoices( CStringArray &out )
 	THEME->GetThemeNames( out );
 }
 
-static void Theme( int &sel, bool ToSel, const CStringArray &choices )
+static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	CStringArray choices;
+	pConfOption->MakeOptionsList( choices );
+
 	if( ToSel )
 	{
 		sel = 0;
@@ -158,8 +167,11 @@ static void AnnouncerChoices( CStringArray &out )
 	out.insert( out.begin(), "OFF" );
 }
 
-static void Announcer( int &sel, bool ToSel, const CStringArray &choices )
+static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	CStringArray choices;
+	pConfOption->MakeOptionsList( choices );
+
 	if( ToSel )
 	{
 		sel = 0;
@@ -179,8 +191,11 @@ static void DefaultNoteSkinChoices( CStringArray &out )
 		out[i].MakeUpper();
 }
 
-static void DefaultNoteSkin( int &sel, bool ToSel, const CStringArray &choices )
+static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	CStringArray choices;
+	pConfOption->MakeOptionsList( choices );
+
 	if( ToSel )
 	{
 		PlayerOptions po;
@@ -220,13 +235,13 @@ MOVE( ShowDanger,			(bool&)PREFSMAN->m_bShowDanger );
 MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
 MOVE( BeginnerHelper,		(bool&)PREFSMAN->m_bShowBeginnerHelper );
 
-static void BGBrightness( int &sel, bool ToSel, const CStringArray &choices )
+static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
 	MoveMap( sel, (float&)PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void NumBackgrounds( int &sel, bool ToSel, const CStringArray &choices )
+static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5,10,15,20 };
 	MoveMap( sel, (int&)PREFSMAN->m_iNumBackgrounds, ToSel, mapping, ARRAYSIZE(mapping) );
@@ -239,7 +254,7 @@ MOVE( AutoPlay,				(bool&)PREFSMAN->m_bAutoPlay );
 MOVE( BackDelayed,			(bool&)PREFSMAN->m_bDelayedBack );
 MOVE( OptionsNavigation,	(bool&)PREFSMAN->m_bArcadeOptionsNavigation );
 
-static void WheelSpeed( int &sel, bool ToSel, const CStringArray &choices )
+static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5, 10, 15, 25 };
 	MoveMap( sel, (int&)PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
@@ -257,25 +272,25 @@ MOVE( UnlockSystem,			(bool&)PREFSMAN->m_bUseUnlockSystem );
 /* Coin options */
 MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
 
-static void CoinModeNoHome( int &sel, bool ToSel, const CStringArray &choices )
+static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2 };
 	MoveMap( sel, (int&)PREFSMAN->m_iCoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
+static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7,8 };
 	MoveMap( sel, (int&)PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void Premium( int &sel, bool ToSel, const CStringArray &choices )
+static void Premium( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::Premium mapping[] = { PrefsManager::NO_PREMIUM,PrefsManager::DOUBLES_PREMIUM,PrefsManager::JOINT_PREMIUM };
 	MoveMap( sel, PREFSMAN->m_Premium, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
+static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7 };
 	MoveMap( sel, (int&)PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
@@ -286,31 +301,31 @@ MOVE( EventMode,			(bool&)PREFSMAN->m_bEventMode );
 MOVE( MenuTimer,			(bool&)PREFSMAN->m_bMenuTimer );
 MOVE( ScoringType,			PREFSMAN->m_iScoringType );
 
-static void JudgeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
+static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
 	MoveMap( sel, (float&)PREFSMAN->m_fJudgeWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-void LifeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
+void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
 	MoveMap( sel, (float&)PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void ShowSongOptions( int &sel, bool ToSel, const CStringArray &choices )
+static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::Maybe mapping[] = { PrefsManager::NO,PrefsManager::YES,PrefsManager::ASK };
 	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void ShowNameEntry( int &sel, bool ToSel, const CStringArray &choices )
+static void ShowNameEntry( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::GetRankingName mapping[] = { PrefsManager::RANKING_OFF, PrefsManager::RANKING_ON, PrefsManager::RANKING_LIST };
 	MoveMap( sel, PREFSMAN->m_iGetRankingName, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
+static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	if( ToSel )
 	{
@@ -367,7 +382,7 @@ struct res_t
 	}
 };
 
-static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices )
+static void DisplayResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const res_t mapping[] =
 	{
@@ -389,31 +404,31 @@ static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices
 	}
 }
 
-static void DisplayColor( int &sel, bool ToSel, const CStringArray &choices )
+static void DisplayColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
 	MoveMap( sel, (int&)PREFSMAN->m_iDisplayColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void TextureResolution( int &sel, bool ToSel, const CStringArray &choices )
+static void TextureResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 256,512,1024,2048 };
 	MoveMap( sel, (int&)PREFSMAN->m_iMaxTextureResolution, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void TextureColor( int &sel, bool ToSel, const CStringArray &choices )
+static void TextureColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
 	MoveMap( sel, (int&)PREFSMAN->m_iTextureColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void MovieColor( int &sel, bool ToSel, const CStringArray &choices )
+static void MovieColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
 	MoveMap( sel, (int&)PREFSMAN->m_iMovieColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
+static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
 	MoveMap( sel, (int&)PREFSMAN->m_iRefreshRate, ToSel, mapping, ARRAYSIZE(mapping) );
@@ -423,14 +438,14 @@ static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
 MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
 MOVE( AttractSoundFrequency,PREFSMAN->m_iAttractSoundFrequency );
 
-static void SoundVolume( int &sel, bool ToSel, const CStringArray &choices )
+static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
 	MoveMap( sel, (float&)PREFSMAN->m_fSoundVolume, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 
-static const ConfOption g_ConfOptions[] =
+static ConfOption g_ConfOptions[] =
 {
 	/* Select game */
 	ConfOption( "Game",					GameSel, GameChoices ),
@@ -552,11 +567,11 @@ int ConfOption::GetEffects() const
 	return ret;
 }
 
-const ConfOption *ConfOption::Find( CString name )
+ConfOption *ConfOption::Find( CString name )
 {
 	for( unsigned i = 0; g_ConfOptions[i].name != ""; ++i )
 	{
-		const ConfOption *opt = &g_ConfOptions[i];
+		ConfOption *opt = &g_ConfOptions[i];
 
 		CString match(opt->name);
 		match.Replace("\n", "");
@@ -572,15 +587,18 @@ const ConfOption *ConfOption::Find( CString name )
 	return NULL;
 }
 
+void ConfOption::UpdateAvailableOptions()
+{
+	if( MakeOptionsListCB != NULL )
+	{
+		names.clear();
+		MakeOptionsListCB( names );
+	}
+}
+
 void ConfOption::MakeOptionsList( CStringArray &out ) const
 {
-	if( MakeOptionsListCB == NULL )
-	{
-		out = names;
-		return;
-	}
-
-	MakeOptionsListCB( out );
+	out = names;
 }
 
 /*
