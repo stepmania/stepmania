@@ -142,22 +142,9 @@ void RageSound::Unload()
 	databuf.clear();
 }
 
-/* This is called upon fatal failure.  Replace the sound with silence. */
 void RageSound::Fail(CString reason)
 {
-	delete Sample;
-	Sample = NULL;
-
-	LOG->Warn("sound error %s", reason.c_str());
-	/* XXX: we can't do this anymore, and it was a hack anyway */
-	/* XXX 
-	 * full_buf.append(0, 1024); should be OK, but VC6 is broken ... */
-	basic_string<char> empty(1024, 0);
-//	full_buf.insert(full_buf.end(), empty.begin(), empty.end());
-	position = 0;
-	
-	LOG->Warn("Decoding %s failed: %s",
-		GetLoadedFilePath().c_str(), reason.c_str() );
+	LOG->Warn("Decoding %s failed: %s", GetLoadedFilePath().c_str(), reason.c_str() );
 
 	error = reason;
 }
@@ -343,17 +330,15 @@ int RageSound::FillBuf(int bytes)
 		if(cnt == 0)
 			return got_something; /* EOF */
 
-		RateChange(inbuf, cnt, speed_input_samples, speed_output_samples, channels);
-
 		if(cnt == -1)
 		{
-			/* XXX untested */
 			Fail(Sample->GetError());
 
-			/* Pretend we got data; we actually just switched to a non-streaming
-			 * buffer. */
-			return true;
+			/* Pretend we got EOF. */
+			return 0;
 		}
+
+		RateChange(inbuf, cnt, speed_input_samples, speed_output_samples, channels);
 
 		/* Add the data to the buffer. */
 		databuf.write((const char *) inbuf, cnt);
