@@ -73,6 +73,8 @@ private:
 	bool m_bUsbStorageDevicesChanged;
 	vector<UsbStorageDevice> m_aUsbStorageDevices;
 
+	vector<UsbStorageDevice> m_aMountedDevices;
+
 	enum
 	{
 		REQ_MOUNT,
@@ -135,11 +137,20 @@ void ThreadedMemoryCardWorker::HandleRequest( int iRequest )
 	{
 	case REQ_MOUNT:
 		m_bResult = m_pDriver->Mount( &m_RequestDevice );
+		m_aMountedDevices.push_back( m_RequestDevice );
 		break;
 
 	case REQ_UNMOUNT:
+	{
 		m_pDriver->Unmount( &m_RequestDevice );
+		vector<UsbStorageDevice>::iterator it = 
+			find( m_aMountedDevices.begin(), m_aMountedDevices.end(), m_RequestDevice );
+		if( it == m_aMountedDevices.end() )
+			LOG->Warn( "Unmounted a device that wasn't mounted" );
+		else
+			m_aMountedDevices.erase( it );
 		break;
+	}
 
 	case REQ_FLUSH:
 		m_pDriver->Flush( &m_RequestDevice );
@@ -152,6 +163,13 @@ void ThreadedMemoryCardWorker::HandleRequest( int iRequest )
 
 void ThreadedMemoryCardWorker::RequestTimedOut()
 {
+	/* We timed out, so the current operation will abort.  The unmount request
+	 * may be skipped, if it's attempted during the timeout, so unmount all
+	 * mounted devices. */
+	for( unsigned i = 0; i < m_aMountedDevices.size(); ++i )
+		m_pDriver->Unmount( &m_aMountedDevices[i] );
+
+	m_aMountedDevices.clear();
 }
 
 void ThreadedMemoryCardWorker::DoHeartbeat()
@@ -244,8 +262,6 @@ MemoryCardManager::MemoryCardManager()
 		m_State[p] = MEMORY_CARD_STATE_NO_CARD;
 	}
 	
-	m_bPlayersFinalized = false;
-
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
 	m_soundReady.Load( THEME->GetPathS("MemoryCardManager","ready"), true );
 	m_soundError.Load( THEME->GetPathS("MemoryCardManager","error"), true );
@@ -396,7 +412,7 @@ void MemoryCardManager::CheckStateChanges()
 
 		MemoryCardState state = MEMORY_CARD_STATE_INVALID;
 
-		if( m_bPlayersFinalized )
+		if( m_bCardsLocked )
 		{
 			if( m_FinalDevice[p].m_State == UsbStorageDevice::STATE_NONE )
 			{
@@ -482,6 +498,44 @@ void MemoryCardManager::LockCards()
 	if( m_bCardsLocked )
 		return;
 
+	g_pWorker->SetTimeout( 5 );
+
+	/* If either player's card is in STATE_CHECKING, we need to give it a chance
+	 * to finish up before returning. */
+	while( !g_pWorker->IsTimedOut() )
+	{
+		/* Check for changes. */
+		Update(0);
+
+		bool bEitherPlayerIsChecking = false;
+		FOREACH_PlayerNumber( p )
+			if( m_Device[p].m_State == UsbStorageDevice::STATE_CHECKING )
+				bEitherPlayerIsChecking = true;
+		if( !bEitherPlayerIsChecking )
+			break;
+
+		/* Only if we need to, wait for something to happen.  If we time out waiting for
+		 *a heartbeat, give up. */
+		if( !g_pWorker->WaitForOneHeartbeat() )
+			break;
+	}
+
+	g_pWorker->SetTimeout( -1 );
+
+	/* Set the final state. */
+	CheckStateChanges();
+
+	FOREACH_PlayerNumber( p )
+	{
+		/* If the card in this player's slot is ready, then use it.  If there is
+		 * no card ready when we finalize, clear m_FinalDevice. */
+		if( m_Device[p].m_State == UsbStorageDevice::STATE_READY )
+			m_FinalDevice[p] = m_Device[p];
+		else
+			m_FinalDevice[p] = UsbStorageDevice();
+	}
+
+	/* Set this last, since it changes the behavior of CheckStateChanges. */
 	m_bCardsLocked = true;
 }
 
@@ -489,11 +543,10 @@ void MemoryCardManager::UnlockCards()
 {
 	m_bCardsLocked = false;
 	
-	// clear too late flag
-//	FOREACH_PlayerNumber( p )
-//		m_State[p] = MEMORY_CARD_STATE_NO_CARD;
-
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
+
+	/* If a memory card was inserted too late last game, allow it now. */
+	CheckStateChanges();
 }
 
 /* Called just before reading or writing to the memory card.  Should block. */
@@ -553,7 +606,7 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 	if( !m_bMounted[pn] )
 		return;
 
-	/* Leave our own filesystem drivers mounted. */
+	/* Leave our own filesystem drivers mounted.  Unmount the kernel mount. */
 	g_pWorker->Unmount( &m_Device[pn] );
 
 	m_bMounted[pn] = false;
@@ -580,58 +633,6 @@ void MemoryCardManager::FlushAndReset()
 	}
 	
 	g_pWorker->Reset();	// forces cards to be re-detected
-}
-
-void MemoryCardManager::SetPlayersFinalized( bool bOn )
-{
-	m_bPlayersFinalized = bOn;
-
-	if( !bOn )
-	{
-		m_bPlayersFinalized = false;
-
-		/* If a memory card was inserted too late last game, allow it now. */
-		CheckStateChanges();
-		return;
-	}
-
-//	g_pWorker->SetTimeout( 10 );
-//	ASSERT( g_pWorker->TimeoutEnabled() );
-
-	/* XXX: wait */
-
-	FOREACH_PlayerNumber( p )
-	{
-		/* If the card in this player's slot is ready, then use it. */
-		// XXX: share code with Update(): keep updating until timed out or
-		// STATE_READY or STATE_NONE
-		UsbStorageDevice &d = m_Device[p];
-
-		/* Set the final state. */
-		switch( d.m_State )
-		{
-		case UsbStorageDevice::STATE_READY:
-			m_State[p] = MEMORY_CARD_STATE_READY;
-			m_FinalDevice[p] = d;
-			break;
-
-		case UsbStorageDevice::STATE_NONE:
-			m_State[p] = MEMORY_CARD_STATE_NO_CARD;
-			break;
-
-		case UsbStorageDevice::STATE_CHECKING:
-		case UsbStorageDevice::STATE_WRITE_ERROR:
-			m_State[p] = MEMORY_CARD_STATE_WRITE_ERROR;
-			break;
-
-		default:
-			FAIL_M( ssprintf("%i", d.m_State) );
-		}
-
-		/* If there is no card ready when we finalize, the final device must be blank. */
-		if( m_State[p] != MEMORY_CARD_STATE_READY )
-			m_FinalDevice[p] = UsbStorageDevice();
-	}
 }
 
 bool MemoryCardManager::PathIsMemCard( CString sDir ) const
@@ -663,9 +664,7 @@ void MemoryCardManager::PauseMountingThread()
 
 void MemoryCardManager::UnPauseMountingThread()
 {
-	g_pWorker->SetMountThreadState( 
-		m_bCardsLocked ? 
-		ThreadedMemoryCardWorker::detect_and_dont_mount : ThreadedMemoryCardWorker::detect_and_mount );
+	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
 
 	/* End the timeout period. */
 	g_pWorker->SetTimeout( -1 );

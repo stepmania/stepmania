@@ -46,6 +46,7 @@
 #include "GameplayMessages.h"
 #include "Style.h"
 #include "LuaManager.h"
+#include "MemoryCardManager.h"
 
 //
 // Defines
@@ -95,6 +96,10 @@ ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
 void ScreenGameplay::Init()
 {
 	Screen::Init();
+
+	/* Pause MEMCARDMAN.  If a memory card is remove, we don't want to interrupt the
+	 * player by making a noise until the game finishes. */
+	MEMCARDMAN->PauseMountingThread();
 
 	if( GAMESTATE->m_bDemonstrationOrJukebox )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
@@ -779,6 +784,8 @@ ScreenGameplay::~ScreenGameplay()
 
 	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
 	
+	MEMCARDMAN->UnPauseMountingThread();
+
     FOREACH_PlayerNumber(p)
 	{
 		SAFE_DELETE( m_pLifeMeter[p] );

@@ -23,12 +23,14 @@ public:
 	void UnlockCards();
 	void MountCard( PlayerNumber pn );
 	void UnmountCard( PlayerNumber pn );
+
+	/* When paused, no changes in memory card state will be noticed until unpaused. */
+	void PauseMountingThread();
+	void UnPauseMountingThread();
 	
 	void FlushAndReset();	// force all files to be flushed to mounted memory cards
 
-	/* If bOn is true, and a card is still initializing, block until it's ready. */
-	void SetPlayersFinalized( bool bOn );
-	bool GetPlayersFinalized() const { return m_bPlayersFinalized; }
+	bool GetCardsLocked() const { return m_bCardsLocked; }
 
 	bool PathIsMemCard( CString sDir ) const;
 
@@ -36,8 +38,6 @@ public:
 	CString GetName( PlayerNumber pn ) const;
 
 protected:
-	void PauseMountingThread();	// call this before mouting, reading, or writing to memory card
-	void UnPauseMountingThread();	// call this when done mouting, reading, or writing to memory card
 	void CheckStateChanges();
 
 	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
@@ -50,8 +50,6 @@ protected:
 	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
 
 	MemoryCardState m_State[NUM_PLAYERS];
-
-	bool	m_bPlayersFinalized;
 
 	RageSound m_soundReady;
 	RageSound m_soundError;
