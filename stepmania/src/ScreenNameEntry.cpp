@@ -118,6 +118,10 @@ ScreenNameEntry::ScreenNameEntry() : Screen("ScreenNameEntry")
 
 
 
+	/* Save options.  We'll reset them to display letters, and we must put them
+	 * back when we're done. */
+	GAMESTATE->StoreSelectedOptions();
+
 	// reset Player and Song Options
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
@@ -365,6 +369,8 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 		{
+			GAMESTATE->RestoreSelectedOptions();
+
 			Grade max_grade = GRADE_E;
 			vector<Song*> vSongs;
 			StageStats stats;
