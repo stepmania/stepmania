@@ -807,6 +807,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Preference.cpp">
 			</File>
 			<File
+				RelativePath="Preference.h">
+			</File>
+			<File
 				RelativePath="Profile.cpp">
 			</File>
 			<File
