@@ -22,9 +22,12 @@
 #include <math.h>
 
 
-#define LABEL_OFFSET_X( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
-#define LABEL_OFFSET_Y( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
-#define DISABLE_RADAR THEME->GetMetricI("GrooveRadar","DisableRadar")
+#define LABEL_OFFSET_X( i )			THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
+#define LABEL_OFFSET_Y( i )			THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
+#define LABEL_ON_COMMAND			THEME->GetMetric ("GrooveRadar","LabelOnCommand")
+#define LABEL_ON_DELAY				THEME->GetMetricF("GrooveRadar","LabelOnDelay")
+#define LABEL_ON_COMMAND_POST_DELAY THEME->GetMetric ("GrooveRadar","LabelOnCommandPostDelay")
+#define DISABLE_RADAR				THEME->GetMetricI("GrooveRadar","DisableRadar")
 
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
@@ -49,21 +52,10 @@ void GrooveRadar::TweenOnScreen()
 {
 	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
 	{
-		float fOriginalX = m_sprRadarLabels[c].GetX();
-		m_sprRadarLabels[c].SetX( fOriginalX - 100 );
-		m_sprRadarLabels[c].SetZoom( 1.5f );
-		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,0) );
-
-		m_sprRadarLabels[c].BeginTweening( 0.6f+0.2f*c );	// sleep
-
-		m_sprRadarLabels[c].BeginTweening( 0.1f );	// begin fading on screen
-		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,1) );
-		
-		m_sprRadarLabels[c].BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );	// fly to the right
-		m_sprRadarLabels[c].SetX( fOriginalX );
-		m_sprRadarLabels[c].SetZoom( 1 );
-		m_sprRadarLabels[c].SetGlow( RageColor(1,1,1,0) );
-		m_sprRadarLabels[c].SetDiffuse( RageColor(1,1,1,1) );
+		m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
+		m_sprRadarLabels[c].Command( LABEL_ON_COMMAND );
+		m_sprRadarLabels[c].BeginTweening( LABEL_ON_DELAY*c );	// sleep
+		m_sprRadarLabels[c].Command( LABEL_ON_COMMAND_POST_DELAY );
 	}
 	m_GrooveRadarValueMap.TweenOnScreen();
 }
