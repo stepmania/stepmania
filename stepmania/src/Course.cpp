@@ -871,10 +871,10 @@ void Course::UpdateCourseStats()
 	vector<Info> ci;
 	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
 
-	for(i = 0; i < m_entries.size(); i++)
+	for(i = 0; i < ci.size(); i++)
 	{
 		// courses with random/players best-worst songs should go at the end
-		if (m_entries[i].type != Entry::fixed)
+		if (m_entries[ ci[i].CourseIndex ].type != Entry::fixed)
 		{
 			SortOrder_AvgDifficulty = 9999999; // large number
 			SortOrder_Ranking = 3;
