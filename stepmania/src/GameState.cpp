@@ -764,8 +764,8 @@ struct SongAndSteps
 {
 	Song* pSong;
 	Steps* pSteps;
-	bool operator==( const SongAndSteps& other ) { return pSong==other.pSong && pSteps==other.pSteps; }
-	bool operator<( const SongAndSteps& other ) { return pSong<=other.pSong && pSteps<=other.pSteps; }
+	bool operator==( const SongAndSteps& other ) const { return pSong==other.pSong && pSteps==other.pSteps; }
+	bool operator<( const SongAndSteps& other ) const { return pSong<=other.pSong && pSteps<=other.pSteps; }
 };
 
 void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut )
@@ -788,7 +788,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			//
 			vector<SongAndSteps> vSongAndSteps;
 
-			for( i=0; i<(int)m_vPlayedStageStats.size(); i++ )
+			for( i=0; i<m_vPlayedStageStats.size(); i++ )
 			{
 				SongAndSteps sas;
 				sas.pSong = m_vPlayedStageStats[i].pSong;
@@ -803,7 +803,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			vector<SongAndSteps>::iterator toDelete = unique( vSongAndSteps.begin(), vSongAndSteps.end() );
 			vSongAndSteps.erase(toDelete, vSongAndSteps.end());
 
-			for( i=0; i<(int)vSongAndSteps.size(); i++ )
+			for( i=0; i<vSongAndSteps.size(); i++ )
 			{
 				Song* pSong = vSongAndSteps[i].pSong;
 				Steps* pSteps = vSongAndSteps[i].pSteps;
