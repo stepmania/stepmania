@@ -757,6 +757,15 @@ void NoteDataUtil::Quick( NoteData &in, float fStartBeat, float fEndBeat )
 	InsertIntelligentTaps(in,0.5f,0.25f,1.0f,false,fStartBeat,fEndBeat);	// add 16ths between 8ths
 }
 
+// Due to popular request by people annoyed with the "new" implementation of Quick, we now have
+// this BMR-izer for your steps.  Use with caution.
+void NoteDataUtil::BMRize( NoteData &in, float fStartBeat, float fEndBeat )
+{
+	InsertIntelligentTaps(in,1.0f,0.5f,1.0f,false,fStartBeat,fEndBeat);	// add 8ths between 4ths
+	InsertIntelligentTaps(in,0.5f,0.25f,0.5f,false,fStartBeat,fEndBeat); // then add 16ths between ALL 8ths
+	// ...net result: OUCH. :-)
+}
+
 void NoteDataUtil::Skippy( NoteData &in, float fStartBeat, float fEndBeat )
 {
 	InsertIntelligentTaps(in,1.0f,0.75f,1.0f,true,fStartBeat,fEndBeat);	// add 16ths between 4ths
@@ -784,9 +793,12 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fWindowSizeBeats, 
 		int iRowEarlier = i;
 		int iRowLater = i + rows_per_window;
 		int iRowToAdd = i + insert_row_offset;
-		if( in.GetNumTapNonEmptyTracks(iRowEarlier)!=1 || in.GetNumTracksWithTap(iRowEarlier)!=1 )
+		// following two lines have been changed because the behavior of treating hold-heads
+		// as different from taps doesn't feel right, and because we need to check
+		// against TAP_ADDITION with the BMRize mod.
+		if( in.GetNumTapNonEmptyTracks(iRowEarlier)!=1 || in.GetNumTracksWithTapOrHoldHead(iRowEarlier)!=1 )
 			continue;
-		if( in.GetNumTapNonEmptyTracks(iRowLater)!=1 || in.GetNumTracksWithTap(iRowLater)!=1 )
+		if( in.GetNumTapNonEmptyTracks(iRowLater)!=1 || in.GetNumTracksWithTapOrHoldHead(iRowLater)!=1 )
 			continue;
 		// there is a 4th and 8th note surrounding iRowBetween
 		
@@ -1350,6 +1362,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_WIDE] )		NoteDataUtil::Wide(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BIG] )		NoteDataUtil::Big(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_QUICK] )		NoteDataUtil::Quick(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BMRIZE] )		NoteDataUtil::BMRize(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_SKIPPY] )		NoteDataUtil::Skippy(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_MINES] )		NoteDataUtil::AddMines(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO]	)		NoteDataUtil::Echo(nd, fStartBeat, fEndBeat);

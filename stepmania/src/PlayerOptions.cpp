@@ -150,6 +150,7 @@ CString PlayerOptions::GetString() const
 	if( m_bTransforms[TRANSFORM_WIDE] )		sReturn += "Wide, ";
 	if( m_bTransforms[TRANSFORM_BIG] )		sReturn += "Big, ";
 	if( m_bTransforms[TRANSFORM_QUICK] )	sReturn += "Quick, ";
+	if( m_bTransforms[TRANSFORM_BMRIZE] )	sReturn += "BMRize, ";
 	if( m_bTransforms[TRANSFORM_SKIPPY] )	sReturn += "Skippy, ";
 	if( m_bTransforms[TRANSFORM_MINES] )	sReturn += "Mines, ";
 	if( m_bTransforms[TRANSFORM_ECHO] )		sReturn += "Echo, ";
@@ -278,6 +279,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "wide" )		m_bTransforms[TRANSFORM_WIDE] = on;
 		else if( sBit == "big" )		m_bTransforms[TRANSFORM_BIG] = on;
 		else if( sBit == "quick" )		m_bTransforms[TRANSFORM_QUICK] = on;
+		else if( sBit == "bmrize" )		m_bTransforms[TRANSFORM_BMRIZE] = on;
 		else if( sBit == "skippy" )		m_bTransforms[TRANSFORM_SKIPPY] = on;
 		else if( sBit == "mines" )		m_bTransforms[TRANSFORM_MINES] = on;
 		else if( sBit == "echo" )		m_bTransforms[TRANSFORM_ECHO] = on;
