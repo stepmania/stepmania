@@ -41,7 +41,7 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, bool b
 	SET_XY_AND_ON_COMMAND( m_textPercent );
 	this->AddChild( &m_textPercent );
 
-	if( !PREFSMAN->m_bDancePointsForOni && PERCENT_USE_REMAINDER )
+	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
 	{
 		m_textPercentRemainder.SetName( ssprintf("PercentRemainderP%d",pn+1) );
 		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(m_sName,"remainder") );
@@ -56,7 +56,7 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, bool b
 void PercentageDisplay::TweenOffScreen()
 {
 	OFF_COMMAND( m_textPercent );
-	if( !PREFSMAN->m_bDancePointsForOni && PERCENT_USE_REMAINDER )
+	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
 		OFF_COMMAND( m_textPercentRemainder );
 }
 
