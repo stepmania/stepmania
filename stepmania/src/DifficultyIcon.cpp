@@ -23,7 +23,7 @@ bool DifficultyIcon::Load( CString sPath )
 {
 	Sprite::Load( sPath );
 	if( GetNumStates() != 6  &&  GetNumStates() != 12 )
-		throw RageException( "The difficulty icon graphic '%s' must have 6 or 12 states.", sPath.GetString() );
+		RageException::Throw( "The difficulty icon graphic '%s' must have 6 or 12 states.", sPath.GetString() );
 	StopAnimating();
 	return true;
 }

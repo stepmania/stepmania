@@ -247,7 +247,7 @@ void BitmapText::DrawPrimitives()
 			const char c = szLine[j];
 			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
 			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-				throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath.GetString(), c );
+				RageException::Throw( "The font '%s' does not implement the character '%c'", m_sFontFilePath.GetString(), c );
 			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];
 
 			// The right side of any italic letter is being cropped.  So, we're going to draw a little bit

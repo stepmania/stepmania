@@ -1246,7 +1246,7 @@ void GameManager::SwitchNoteSkin( CString sNewNoteSkin )
 		CString sPath = GetCurNoteSkinDir() + "metrics.ini";
 		m_pIniFile->SetPath(sPath);
 		if( !m_pIniFile->ReadFile() )
-			throw RageException( "Could not read NoteSkin metrics file '%s'", sPath.GetString() );
+			RageException::Throw( "Could not read NoteSkin metrics file '%s'", sPath.GetString() );
 	}
 }
 
@@ -1261,7 +1261,7 @@ CString GameManager::GetMetric( CString sClassName, CString sValue )	// looks in
 {
 	CString sReturn;
 	if( !m_pIniFile->GetValue( sClassName, sValue, sReturn ) )
-		throw RageException( "Could not read metric '%s - %s' from '%smetrics.ini'", sClassName.GetString(), sValue.GetString(), GetCurNoteSkinDir().GetString() );
+		RageException::Throw( "Could not read metric '%s - %s' from '%smetrics.ini'", sClassName.GetString(), sValue.GetString(), GetCurNoteSkinDir().GetString() );
 	return sReturn;
 }
 
@@ -1296,6 +1296,10 @@ RageColor GameManager::GetMetricC( CString sClassName, CString sValueName )
 	return RageColor(r,g,b,a);
 }
 
+__declspec(noreturn) void blah()
+{
+
+}
 
 CString GameManager::GetPathTo( const int col, CString sElementName )	// looks in GAMESTATE for the current Style
 {
@@ -1320,7 +1324,7 @@ CString GameManager::GetPathTo( const int col, CString sElementName )	// looks i
 	if( !arrayPossibleFileNames.empty() )
 		return arrayPossibleFileNames[0];
 
-	throw RageException( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName.GetString(), sElementName.GetString(), sDir.GetString() );
+	RageException::Throw( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName.GetString(), sElementName.GetString(), sDir.GetString() );
 }
 
 void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )

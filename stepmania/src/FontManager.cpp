@@ -106,7 +106,7 @@ void FontManager::UnloadFont( CString sFontFilePath )
 	Font* pFont;
 	std::map<CString, Font*>::iterator p = m_mapPathToFont.find(sFontFilePath);
 	if(p == m_mapPathToFont.end())
-		throw RageException( "Tried to Unload a font that wasn't loaded. '%s'", sFontFilePath.GetString() );
+		RageException::Throw( "Tried to Unload a font that wasn't loaded. '%s'", sFontFilePath.GetString() );
 
 	pFont=p->second;
 	pFont->m_iRefCount--;
