@@ -444,7 +444,7 @@ bool UnlockSystem::ReadValues( CString filename)
 
 	data.SetPath(filename);
 
-	if (data.ReadFile())
+	if (!data.ReadFile())
 		return false;
 
 	data.GetValueF( "Unlock", "ArcadePointsAccumulated",	ArcadePoints );
