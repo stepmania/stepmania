@@ -91,7 +91,7 @@ void NoteData::Config( const NoteData &From )
 void NoteData::CopyAll( NoteData* pFrom )
 {
 	Config(*pFrom);
-	m_HoldNotes.clear();
+	ClearAll();
 	CopyRange( pFrom, 0, pFrom->GetLastRow() );
 }
 
