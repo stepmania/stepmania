@@ -39,6 +39,8 @@ ScreenEditMenu::ScreenEditMenu()
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
+	GAMESTATE->m_CurStyle = STYLE_NONE;
+
 	Selector.SetXY( 0, 0 );
 //	Selector.AllowNewNotes();
 	this->AddSubActor( &Selector );
@@ -149,9 +151,9 @@ void ScreenEditMenu::MenuStart( PlayerNumber p )
 
 	m_soundSelect.PlayRandom();
 
-	m_Menu.TweenOffScreenToBlack( SM_None, false  );
+	m_Menu.TweenOffScreenToBlack( SM_GoToNextScreen, false  );
 
-	m_Fade.CloseWipingRight( SM_GoToNextScreen );
+	m_Fade.CloseWipingRight( SM_None );
 }
 
 void ScreenEditMenu::MenuBack( PlayerNumber p )

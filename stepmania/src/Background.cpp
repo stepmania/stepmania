@@ -73,7 +73,7 @@ Background::Background()
 	m_sprDangerBackground.StretchTo( RECT_BACKGROUND );
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
-	m_quadBGBrightness.SetDiffuseColor( D3DXCOLOR(0,0,0,1-0.5f) );
+	m_quadBGBrightness.SetDiffuseColor( D3DXCOLOR(0,0,0,1-PREFSMAN->m_fBGBrightness) );
 
 	m_quadBorder[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorder[0].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );

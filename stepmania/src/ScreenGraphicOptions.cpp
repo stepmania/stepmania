@@ -42,7 +42,7 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Refresh Rate",	11, {"MAX","DEFAULT","60","70","72","75","80","85","90","100","120"} },
 	{ "Show Stats",		2,  {"OFF","ON"} },
 	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
-	{ "BG Brightness",	5,  {"20%","40%","60%","80%","100%"} },
+	{ "BG Brightness",	11,  {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
 	{ "Movie Decode",	4,  {"1ms","2ms","3ms","4ms"} },
 	{ "BG For Banner",	2,  {"NO", "YES (slow)"} },
 };
@@ -166,14 +166,7 @@ void ScreenGraphicOptions::ImportOptions()
 
 	m_iSelectedOption[0][GO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][GO_BGMODE]					= PREFSMAN->m_BackgroundMode;
-
-	if(      PREFSMAN->m_fBGBrightness == 0.2f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 0;
-	else if( PREFSMAN->m_fBGBrightness == 0.4f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 1;
-	else if( PREFSMAN->m_fBGBrightness == 0.6f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 2;
-	else if( PREFSMAN->m_fBGBrightness == 0.8f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 3;
-	else if( PREFSMAN->m_fBGBrightness == 1.0f )	m_iSelectedOption[0][GO_BGBRIGHTNESS] = 4;
-	else											m_iSelectedOption[0][GO_BGBRIGHTNESS] = 2;
-	
+	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= roundf( PREFSMAN->m_fBGBrightness*10 ); 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
 	m_iSelectedOption[0][GO_BGIFNOBANNER]			= PREFSMAN->m_bUseBGIfNoBanner ? 1:0;
 }
@@ -215,17 +208,7 @@ void ScreenGraphicOptions::ExportOptions()
 
 	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][GO_SHOWSTATS] == 1;
 	PREFSMAN->m_BackgroundMode			= PrefsManager::BackgroundMode( m_iSelectedOption[0][GO_BGMODE] );
-
-	switch( m_iSelectedOption[0][GO_BGBRIGHTNESS] )
-	{
-	case 0:	PREFSMAN->m_fBGBrightness = 0.2f;	break;
-	case 1:	PREFSMAN->m_fBGBrightness = 0.4f;	break;
-	case 2:	PREFSMAN->m_fBGBrightness = 0.6f;	break;
-	case 3:	PREFSMAN->m_fBGBrightness = 0.8f;	break;
-	case 4:	PREFSMAN->m_fBGBrightness = 1.0f;	break;
-	default:	ASSERT(0);
-	}
-
+	PREFSMAN->m_fBGBrightness			= m_iSelectedOption[0][GO_BGBRIGHTNESS] / 10.0f;
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
 	PREFSMAN->m_bUseBGIfNoBanner		= m_iSelectedOption[0][GO_BGIFNOBANNER] == 1;
 }

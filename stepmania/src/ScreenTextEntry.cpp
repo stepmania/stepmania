@@ -100,8 +100,6 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		m_textAnswer.SetText( m_sAnswer );
 		break;
 	}
-
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )

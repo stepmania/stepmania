@@ -49,12 +49,18 @@ const float PLAYER_X		=	EDIT_X;
 const float PLAYER_Y		=	SCREEN_TOP;
 
 const float MENU_ITEM_X			=	CENTER_X-200;
-const float MENU_ITEM_START_Y	=	SCREEN_TOP + 30;
-const float MENU_ITEM_SPACING_Y	=	20;
+const float MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
+const float MENU_ITEM_SPACING_Y	=	18;
 
 const CString HELP_TEXT = 
-	"Esc: show menu\n"
-	"Hold F1 to show more commands\n"
+	"Esc: show command menu\n"
+//	"Hold F1 to show more commands\n"
+	"Hold keys for faster change:\n"
+	"F7/F8: Decrease/increase BPM at cur beat\n"
+	"F9/F10: Dec/inc freeze secs at cur beat\n"
+	"F11/F12: Decrease/increase music offset\n"
+	"[/]: Dec/inc sample music start\n"
+	"{/}: Dec/inc sample music length\n"
 	"Up/Down: change beat\n"
 	"Left/Right: change snap\n"
 	"PgUp/PgDn: jump 1 measure\n"
@@ -63,8 +69,8 @@ const CString HELP_TEXT =
 	"To create a hold note, hold a number key\n" 
 	"      while changing the beat pressing Up/Down\n";
 
-const CString SHORTCUT_TEXT = 
-	"S: save changes\n"
+const CString SHORTCUT_TEXT = "";
+/*	"S: save changes\n"
 	"W: save as SM and DWI (lossy)\n"
 	"Enter/Space: set begin/end selection markers\n"
 	"G/H/J/K/L: Snap selection to nearest\n"
@@ -76,38 +82,41 @@ const CString SHORTCUT_TEXT =
 	"C: Copy selected area\n"
 	"V: Paste at current beat\n"
 	"D: Toggle difficulty\n"
+	"E: Edit description\n"
+	"A: Edit main title\n"
+	"U: Edit sub title\n"
+	"B: Add/Edit background change\n"
 	"Ins: Insert blank beat\n"
 	"Del: Delete current beat and shift\n"
-	"       Hold keys for faster change:\n"
-	"F7/F8: Decrease/increase BPM at cur beat\n"
-	"F9/F10: Dec/inc freeze secs at cur beat\n"
-	"F11/F12: Decrease/increase music offset\n"
-	"[/]: Dec/inc sample music start\n"
-	"{/}: Dec/inc sample music length\n"
 	"M: Play sample music\n";
+*/
 
 const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
-	"Set begin marker (Enter)",
-	"Set end marker (Space)",
-	"(P)lay selection",
-	"(R)ecord in selection",
-	"(T)oggle Play/Record rate",
-	"Cut selection (X)",
-	"Copy selection (C)",
-	"Paste clipboard at current beat (V)",
-	"Toggle (D)ifficulty",
-	"Add (B)ackground change",
-	"(Ins)ert blank beat and shift down",
-	"(Del)ete blank beat and shift up",
-	"Snap selection to nearest quarter note (G)",
-	"Snap selection to nearest eighth note (H)",
-	"Snap selection to nearest triplet (J)",
-	"Snap selection to nearest sixteenth note (K)",
-	"Snap selection to nearest triplet or sixteenth note (L)",
-	"Play sample (M)usic",
-	"(S)ave changes",
-	"Save as D(W)I and SM (lossy)",
-	"(Q)uit"
+	"Enter:  Set begin marker (Enter)",
+	"Space:  Set end marker (Space)",
+	"P:      Play selection",
+	"R:      Record in selection",
+	"T:      Toggle Play/Record rate",
+	"X:      Cut selection",
+	"C:      Copy selection",
+	"V:      Paste clipboard at current beat",
+	"D:      Toggle difficulty",
+	"E:      Edit description",
+	"A:      Edit main title",
+	"U:      Edit subtitle",
+	"I:      Toggle assist tick",
+	"B:      Add/Edit background change at current beat",
+	"Ins:    Insert blank beat and shift down",
+	"Del:    Delete blank beat and shift up",
+	"G:      Snap selection to nearest quarter note",
+	"H:      Snap selection to nearest eighth note",
+	"J:      Snap selection to nearest triplet",
+	"K:      Snap selection to nearest sixteenth note",
+	"L:      Snap selection to nearest triplet or sixteenth note",
+	"M:      Play sample music",
+	"S:      Save changes",
+	"W:      Save as DWI (lossy)",
+	"Q:      Quit"
 };
 int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_RETURN,
@@ -119,6 +128,10 @@ int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_C,
 	DIK_V,
 	DIK_D,
+	DIK_E,
+	DIK_A,
+	DIK_U,
+	DIK_I,
 	DIK_B,
 	DIK_INSERT,
 	DIK_DELETE,
@@ -143,11 +156,10 @@ ScreenEdit::ScreenEdit()
 
 	// set both players to joined so the credit message doesn't show
 	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
 		GAMESTATE->m_bSideIsJoined[p] = true;
-	}
 	SCREENMAN->RefreshCreditsMessages();
 
+	m_iRowLastCrossed = -1;
 
 	m_pSong = GAMESTATE->m_pCurSong;
 
@@ -245,7 +257,7 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.SetText( HELP_TEXT );
 
 	m_rectShortcutsBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_rectShortcutsBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+	m_rectShortcutsBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
 
 	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textShortcuts.SetXY( SHORTCUTS_X, SHORTCUTS_Y );
@@ -263,6 +275,8 @@ ScreenEdit::ScreenEdit()
 
 
 	m_soundMusic.Load( m_pSong->GetMusicPath(), true );	// enable accurate sync
+
+	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 
 	for( int i=0; i<NUM_MENU_ITEMS; i++ )
 	{
@@ -370,14 +384,6 @@ void ScreenEdit::Update( float fDeltaTime )
 			m_fTrailingBeat += fDelta * fDeltaTime*5;
 	}
 
-
-//	float fSongBeat, fBPS;
-///	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
-
-//	fPositionSeconds += 0.08f;	// HACK:  The assist ticks are playing too late, so make them play a tiny bit earlier
-//	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
-//	LOG->Trace( "fPositionSeconds = %f, fSongBeat = %f, fBPS = %f", fPositionSeconds, fSongBeat, fBPS );
-
 	if( m_EditMode == MODE_MENU )
 	{
 		for( int i=0; i<NUM_MENU_ITEMS; i++ )
@@ -387,6 +393,36 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_NoteFieldEdit.Update( fDeltaTime );
 
 	int iIndexNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );	
+
+
+
+
+	// 
+	// play assist ticks
+	//
+	// Sound cards have a latency between when a sample is Play()ed and when the sound
+	// will start coming out the speaker.  Compensate for this by boosting
+	// fPositionSeconds ahead
+	if( m_EditMode == MODE_PLAYING  &&  GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
+	{
+		fPositionSeconds += (SOUND->GetPlayLatency()+0.018f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.015 seconds to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
+		GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
+
+		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+		iRowNow = max( 0, iRowNow );
+		static int iRowLastCrossed = 0;
+
+		bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
+
+		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+			bAnyoneHasANote |= m_Player.IsThereANoteAtRow( r );
+
+		if( bAnyoneHasANote )
+			m_soundAssistTick.Play();
+
+		iRowLastCrossed = iRowNow;
+	}
+
 
 
 	CString sNoteType;
@@ -399,11 +435,12 @@ void ScreenEdit::Update( float fDeltaTime )
 	default:  ASSERT(0);
 	}
 
+
+	// Only update stats every 100 frames because it's slow
 	static int iNumTapNotes = 0, iNumHoldNotes = 0;
 	static int iCounter = 0;
-
 	iCounter++;
-	if( iCounter % 30 == 0 )
+	if( iCounter % 100 == 0 )
 	{
 		iNumTapNotes = m_NoteFieldEdit.GetNumTapNotes();
 		iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
@@ -416,7 +453,10 @@ void ScreenEdit::Update( float fDeltaTime )
 		"Play/Record rate: %.1f\n"
 		"Difficulty = %s\n"
 		"Description = %s\n"
+		"Main title = %s\n"
+		"Sub title = %s\n"
 		"Num notes tap: %d, hold: %d\n"
+		"Assist tick is %s\n"
 		"MusicOffsetSeconds: %.2f\n"
 		"Preview start: %.2f, length = %.2f\n",
 		sNoteType,
@@ -425,7 +465,10 @@ void ScreenEdit::Update( float fDeltaTime )
 		GAMESTATE->m_SongOptions.m_fMusicRate,
 		DifficultyClassToString( m_pNotes->m_DifficultyClass ),
 		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription : "no description",
+		m_pSong->m_sMainTitle,
+		m_pSong->m_sSubTitle,
 		iNumTapNotes, iNumHoldNotes,
+		GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK ? "ON" : "OFF",
 		m_pSong->m_fBeat0OffsetInSeconds,
 		m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds
 		) );
@@ -505,6 +548,46 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	}
 }
 
+// Begin helper functions for InputEdit
+
+void AddBGChange( CString sBGName )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+
+	for( int i=0; i<pSong->m_BackgroundChanges.GetSize(); i++ )
+	{
+		if( pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+			break;
+	}
+
+	if( i != pSong->m_BackgroundChanges.GetSize() )	// there is already a BGChange here
+		pSong->m_BackgroundChanges.RemoveAt( i );
+
+	// create a new BGChange
+	if( sBGName != "" )
+		pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
+}
+
+void ChangeDescription( CString sNew )
+{
+	Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+	pNotes->m_sDescription = sNew;
+}
+
+void ChangeMainTitle( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sMainTitle = sNew;
+}
+
+void ChangeSubTitle( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sSubTitle = sNew;
+}
+
+// End helper functions for InputEdit
+
 void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( DeviceI.device != DEVICE_KEYBOARD )
@@ -577,8 +660,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			// copy edit into current Notes
 			Song* pSong = GAMESTATE->m_pCurSong;
 			Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+			
+			// strip out the autogen marker if any.  The autogen marker would have caused these Notes not to be saved to disk.
+			pNotes->m_sDescription.Replace( " (autogen)", "" );
 
-			ASSERT( pNotes  );
+			ASSERT( pNotes );
 /*
 			if( pNotes == NULL )
 			{
@@ -753,7 +839,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			MenuItemGainFocus( m_iMenuSelection );
 
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
 		}
 		break;
 	case DIK_P:
@@ -769,7 +855,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
 
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
 
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 			float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
@@ -795,7 +881,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			m_EditMode = MODE_RECORDING;
 			m_rectRecordBack.BeginTweening( 0.5f );
-			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+			m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.8f) );
 
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 			float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
@@ -882,6 +968,18 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 
+	case DIK_E:
+		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->m_sDescription, ChangeDescription, NULL );
+		break;
+
+	case DIK_A:
+		SCREENMAN->TextEntry( SM_None, "Edit song main title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sMainTitle, ChangeMainTitle, NULL );
+		break;
+
+	case DIK_U:
+		SCREENMAN->TextEntry( SM_None, "Edit song sub title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitle, ChangeSubTitle, NULL );
+		break;
+
 	case DIK_B:
 		{
 			CString sOldBackground;
@@ -895,6 +993,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			SCREENMAN->TextEntry( SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL );
 		}
+		break;
+
+	case DIK_I:
+		if( GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK )
+			GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_NONE;
+		else
+			GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
 		break;
 
 	case DIK_F7:
@@ -1020,24 +1125,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 	}
-}
-
-void ScreenEdit::AddBGChange( CString sBGName )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-
-	for( int i=0; i<pSong->m_BackgroundChanges.GetSize(); i++ )
-	{
-		if( pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-			break;
-	}
-
-	if( i != pSong->m_BackgroundChanges.GetSize() )	// there is already a BGChange here
-		pSong->m_BackgroundChanges.RemoveAt( i );
-
-	// create a new BGChange
-	if( sBGName != "" )
-		pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
 }
 
 void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

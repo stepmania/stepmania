@@ -53,10 +53,6 @@ GhostArrowBright::GhostArrowBright()
 
 
 	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-
-	// set the length of each frame so the animation plays in exactly 1 pop up time
-	for( int i=0; i<Sprite::GetNumStates(); i++ )
-		Sprite::m_fDelay[i] = g_fShowSeconds2 / (float)Sprite::GetNumStates();
 }
 
 void GhostArrowBright::Update( float fDeltaTime )
@@ -66,6 +62,11 @@ void GhostArrowBright::Update( float fDeltaTime )
 
 void GhostArrowBright::Step( TapNoteScore score )
 {
+	// HACK: set the length of each frame so the animation plays in exactly 1 pop up time.
+	//    We can't do this in the constructor because the image hasn't been loaded yet
+	for( int i=0; i<Sprite::GetNumStates(); i++ )
+		Sprite::m_fDelay[i] = g_fShowSeconds2 / (float)Sprite::GetNumStates();
+
 	D3DXCOLOR colorStart, colorEnd;
 	switch( score )
 	{
