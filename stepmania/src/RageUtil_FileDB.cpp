@@ -20,8 +20,18 @@
 #endif
 
 
-struct File {
-	istring name;
+struct File
+{
+	CString name;
+	CString lname;
+
+	void SetName( const CString &fn )
+	{
+		name = fn;
+                lname = name;
+		lname.MakeLower();
+	}
+	
 	bool dir;
 	int size;
 	/* Modification time of the file.  The contents of this is undefined, except that
@@ -29,14 +39,21 @@ struct File {
 	int mtime;
 
 	File() { dir=false; size=-1; mtime=-1; }
-	File( istring fn ): name(fn) { dir=false; size=-1; mtime=-1; }
+	File( const CString &fn )
+	{
+		SetName( fn );
+		dir=false; size=-1; mtime=-1;
+	}
 	
-	bool operator== (const File &rhs) const { return name==rhs.name; }
-	bool operator< (const File &rhs) const { return name<rhs.name; }
+	bool operator== (const File &rhs) const { return lname==rhs.lname; }
+	bool operator< (const File &rhs) const { return lname<rhs.lname; }
 
-	bool equal(const File &rhs) const { return name == rhs.name; }
-	bool equal(const CString &rhs) const {
-		return !stricmp(name.c_str(), rhs.c_str());
+	bool equal(const File &rhs) const { return lname == rhs.lname; }
+	bool equal(const CString &rhs) const
+	{
+		CString l = rhs;
+		l.MakeLower();
+		return lname == l;
 	}
 };
 
@@ -81,7 +98,7 @@ void FileSet::LoadFromDir(const CString &dir)
 			continue;
 
 		File f;
-		f.name=fd.cFileName;
+		f.SetName( fd.cFileName );
 		f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 		f.size = fd.nFileSizeLow;
 		f.mtime = fd.ftLastWriteTime.dwLowDateTime;
@@ -94,7 +111,7 @@ void FileSet::LoadFromDir(const CString &dir)
 	if( OldDir == -1 )
 		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
 
-	if( chdir(dir.c_str()) == -1 )
+	if( chdir(dir) == -1 )
 	{
 		/* Only log once per dir. */
 		if( LOG )
@@ -110,7 +127,7 @@ void FileSet::LoadFromDir(const CString &dir)
 		if(!strcmp(ent->d_name, "..")) continue;
 		
 		File f;
-		f.name=ent->d_name;
+		f.SetName( ent->d_name );
 		
 		struct stat st;
 		if( stat(ent->d_name, &st) == -1 )
@@ -145,7 +162,7 @@ void FileSet::GetFilesMatching(const CString &beginning, const CString &containi
 {
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
-	set<File>::const_iterator i = files.lower_bound(File(beginning.c_str()));
+	set<File>::const_iterator i = files.lower_bound( File(beginning) );
 	for( ; i != files.end(); ++i)
 	{
 		if(bOnlyDirs && !i->dir) continue;
@@ -153,14 +170,14 @@ void FileSet::GetFilesMatching(const CString &beginning, const CString &containi
 		/* Check beginning. Once we hit a filename that no longer matches beginning,
 		 * we're past all possible matches in the sort, so stop. */
 		if(beginning.size() > i->name.size()) break; /* can't start with it */
-		if(strnicmp(i->name.c_str(), beginning.c_str(), beginning.size())) break; /* doesn't start with it */
+		if(strnicmp(i->name, beginning, beginning.size())) break; /* doesn't start with it */
 
 		/* Position the end starts on: */
 		int end_pos = int(i->name.size())-int(ending.size());
 
 		/* Check end. */
 		if(end_pos < 0) continue; /* can't end with it */
-		if(stricmp(i->name.c_str()+end_pos, ending.c_str())) continue; /* doesn't end with it */
+		if( stricmp(i->name.c_str()+end_pos, ending) ) continue; /* doesn't end with it */
 
 		/* Check containing.  Do this last, since it's the slowest (substring
 		 * search instead of string match). */
@@ -171,30 +188,30 @@ void FileSet::GetFilesMatching(const CString &beginning, const CString &containi
 			if(pos + containing.size() > unsigned(end_pos)) continue; /* found it but it overlaps with the end */
 		}
 
-		out.push_back(i->name.c_str());
+		out.push_back( i->name );
 	}
 }
 
 void FileSet::GetFilesEqualTo(const CString &str, vector<CString> &out, bool bOnlyDirs) const
 {
-	set<File>::const_iterator i = files.find(File(str.c_str()));
+	set<File>::const_iterator i = files.find( File(str) );
 	if(i == files.end())
 		return;
 
 	if(bOnlyDirs && !i->dir)
 		return;
 
-	out.push_back(i->name.c_str());
+	out.push_back( i->name );
 }
 
 bool FileSet::DoesFileExist(const CString &path) const
 {
-	return files.find(File(path.c_str())) != files.end();
+	return files.find( File(path) ) != files.end();
 }
 
 bool FileSet::IsADirectory(const CString &path) const
 {
-	set<File>::const_iterator i = files.find(File(path.c_str()));
+	set<File>::const_iterator i = files.find( File(path) );
 	if(i == files.end())
 		return false;
 	return i->dir;
@@ -202,7 +219,7 @@ bool FileSet::IsADirectory(const CString &path) const
 
 bool FileSet::IsAFile(const CString &path) const
 {
-	set<File>::const_iterator i = files.find(File(path.c_str()));
+	set<File>::const_iterator i = files.find( File(path) );
 	if(i == files.end())
 		return false;
 	return !i->dir;
@@ -210,7 +227,7 @@ bool FileSet::IsAFile(const CString &path) const
 
 int FileSet::GetFileSize(const CString &path) const
 {
-	set<File>::const_iterator i = files.find(File(path.c_str()));
+	set<File>::const_iterator i = files.find( File(path) );
 	if(i == files.end())
 		return -1;
 	return i->size;
@@ -218,7 +235,7 @@ int FileSet::GetFileSize(const CString &path) const
 
 int FileSet::GetFileModTime(const CString &path) const
 {
-	set<File>::const_iterator i = files.find(File(path.c_str()));
+	set<File>::const_iterator i = files.find( File(path) );
 	if(i == files.end())
 		return -1;
 	return i->mtime;
@@ -258,10 +275,10 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 
 class FilenameDB
 {
-	FileSet &GetFileSet(CString dir, bool ResolveCase = true);
+	FileSet &GetFileSet( CString dir );
 
 	/* Directories we have cached: */
-	map<istring, FileSet *> dirs;
+	map<CString, FileSet *> dirs;
 
 	void GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
 	void GetFilesMatching(const CString &dir, 
@@ -290,7 +307,7 @@ bool FilenameDB::DoesFileExist( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet(Dir.c_str());
+	FileSet &fs = GetFileSet( Dir );
 	return fs.DoesFileExist(Name);
 }
 
@@ -298,7 +315,7 @@ bool FilenameDB::IsAFile( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet(Dir.c_str());
+	FileSet &fs = GetFileSet( Dir );
 	return fs.IsAFile(Name);
 }
 
@@ -306,7 +323,7 @@ bool FilenameDB::IsADirectory( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet(Dir.c_str());
+	FileSet &fs = GetFileSet( Dir );
 
 #ifdef _XBOX
 	if ( ( Dir == "D:\\" ) && ( Name == "" ) )
@@ -320,7 +337,7 @@ int FilenameDB::GetFileSize( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet(Dir.c_str());
+	FileSet &fs = GetFileSet( Dir );
 	return fs.GetFileSize(Name);
 }
 
@@ -328,7 +345,7 @@ int FilenameDB::GetFileModTime( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
-	FileSet &fs = GetFileSet(Dir.c_str());
+	FileSet &fs = GetFileSet( Dir );
 	return fs.GetFileModTime(Name);
 }
 
@@ -376,13 +393,13 @@ bool FilenameDB::ResolvePath(CString &path)
 
 void FilenameDB::GetFilesMatching(const CString &dir, const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs)
 {
-	FileSet &fs = GetFileSet(dir.c_str());
+	FileSet &fs = GetFileSet( dir );
 	fs.GetFilesMatching(beginning, containing, ending, out, bOnlyDirs);
 }
 
 void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
 {
-	FileSet &fs = GetFileSet(dir.c_str());
+	FileSet &fs = GetFileSet( dir );
 	fs.GetFilesEqualTo(fn, out, bOnlyDirs);
 }
 
@@ -412,20 +429,22 @@ void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vect
 	}
 }
 
-FileSet &FilenameDB::GetFileSet(CString dir, bool ResolveCase)
+FileSet &FilenameDB::GetFileSet( CString dir )
 {
 	/* Normalize the path. */
 	dir.Replace("\\", SLASH); /* foo\bar -> foo/bar */
 	dir.Replace("/", SLASH); /* foo//bar -> foo/bar */
 	dir.Replace("//", SLASH); /* foo//bar -> foo/bar */
+	CString lower = dir;
+	lower.MakeLower();
 
 	FileSet *ret;
-	map<istring, FileSet *>::iterator i = dirs.find(dir.c_str());
+	map<CString, FileSet *>::iterator i = dirs.find( dir );
 	bool reload = false;
 	if(i == dirs.end())
 	{
 		ret = new FileSet;
-		dirs[dir.c_str()] = ret;
+		dirs[lower] = ret;
 		reload = true;
 	}
 	else
@@ -438,14 +457,9 @@ FileSet &FilenameDB::GetFileSet(CString dir, bool ResolveCase)
 	if(reload)
 	{
 		CString RealDir = dir;
-		if(ResolveCase)
-		{
-			/* Resolve path cases (path/Path -> PATH/path). */
-			ResolvePath(RealDir);
 
-			/* Alias this name, too. */
-			dirs[RealDir.c_str()] = ret;
-		}
+		/* Resolve path cases (path/Path -> PATH/path). */
+		ResolvePath( RealDir );
 
 		ret->LoadFromDir(RealDir);
 	}
@@ -455,7 +469,7 @@ FileSet &FilenameDB::GetFileSet(CString dir, bool ResolveCase)
 void FilenameDB::FlushDirCache()
 {
 	set<FileSet *> freed;
-	for( map<istring, FileSet *>::iterator i = dirs.begin(); i != dirs.end(); ++i )
+	for( map<CString, FileSet *>::iterator i = dirs.begin(); i != dirs.end(); ++i )
 	{
 		if( freed.find(i->second) != freed.end() )
 			continue;
@@ -506,11 +520,6 @@ void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool
 			start++;
 		}
 	}
-
-//	LOG->Trace( "dir is '%s'", sPath.c_str() );
-//	LOG->Trace( "Found:" );
-//	for( unsigned i=0; i<AddTo.size(); i++ )
-//		LOG->Trace( AddTo[i] );
 }
 
 bool ResolvePath(CString &path) { return FDB.ResolvePath(path); }
@@ -542,7 +551,7 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 static bool DoStat(CString sPath, struct stat *st)
 {
 	TrimRight(sPath, "/\\");
-    return stat(sPath.c_str(), st) != -1;
+    return stat(sPath, st) != -1;
 }
 bool DoesFileExist( const CString &sPath )
 {
