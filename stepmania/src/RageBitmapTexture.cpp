@@ -31,7 +31,8 @@
  * this may or may not need adjustment for OpenGL. */
 struct PixFmt_t {
 	int bpp;
-	GLenum type;
+	GLenum type; /* data format */
+	GLenum internalfmt; /* target format */
 	unsigned int masks[4];
 } PixFmtMasks[] = {
 	/* XXX: GL_UNSIGNED_SHORT_4_4_4_4 is affected by endianness; GL_UNSIGNED_BYTE
@@ -41,6 +42,7 @@ struct PixFmt_t {
 		/* B8G8R8A8 */
 		32,
 		GL_UNSIGNED_BYTE,
+		GL_RGBA8,
 		{ 0x000000FF,
 		  0x0000FF00,
 		  0x00FF0000,
@@ -49,6 +51,7 @@ struct PixFmt_t {
 		/* B4G4R4A4 */
 		16,
 		GL_UNSIGNED_SHORT_4_4_4_4,
+		GL_RGBA4,
 		{ 0xF000,
 		  0x0F00,
 		  0x00F0,
@@ -57,6 +60,7 @@ struct PixFmt_t {
 		/* B5G5R5A1 */
 		16,
 		GL_UNSIGNED_SHORT_5_5_5_1,
+		GL_RGB5_A1,
 		{ 0xF800,
 		  0x07C0,
 		  0x003E,
@@ -115,7 +119,7 @@ void RageBitmapTexture::Reload( RageTextureID ID )
  *    m_iImageWidth, m_iImageHeight
  *    m_iFramesWide, m_iFramesHigh
  */
-SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt, GLenum &fmtTexture)
+SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 {
 	// look in the file name for a format hints
 	CString HintString = GetFilePath();
@@ -134,8 +138,9 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt, GLenum &fmtTexture)
 	if(img == NULL)
 		RageException::Throw( "Couldn't load %s: %s", GetFilePath(), SDL_GetError() );
 
+	GLenum fmtTexture;
 	/* Figure out which texture format to use. */
-	if( m_ActualID.iColorDepth == 16 )	
+	if( m_ActualID.iColorDepth == 16 )
 	{
 		/* Bits of alpha in the source: */
 		int src_alpha_bits = 8 - img->format->Aloss;
@@ -164,7 +169,7 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt, GLenum &fmtTexture)
 			break;
 		}
 	} 
-	else if( m_ActualID.iColorDepth == 32 )
+	else if( m_ActualID.iColorDepth == 32)
 		fmtTexture = GL_RGBA8;
 	else
 		RageException::Throw( "Invalid color depth: %d bits", m_ActualID.iColorDepth );
@@ -259,17 +264,18 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt, GLenum &fmtTexture)
 void RageBitmapTexture::Create()
 {
 	int pixfmt;
-	GLenum fmtTexture;
-	SDL_Surface *img = CreateImg(pixfmt, fmtTexture);
 
-		if(!m_uGLTextureID)
+	SDL_Surface *img = CreateImg(pixfmt);
+
+	if(!m_uGLTextureID)
 		glGenTextures(1, &m_uGLTextureID);
 
 	DISPLAY->SetTexture(this);
+
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, fmtTexture, img->w, img->h, 0,
+	glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, img->w, img->h, 0,
 			GL_RGBA, PixFmtMasks[pixfmt].type, img->pixels);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
