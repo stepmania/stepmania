@@ -9,13 +9,13 @@
 -----------------------------------------------------------------------------
 */
 
+#ifndef SCREEN_SELECT_STYLE_H
+#define SCREEN_SELECT_STYLE_H
+
 #include "Screen.h"
 #include "Sprite.h"
-#include "BitmapText.h"
 #include "TransitionFade.h"
-#include "Quad.h"
 #include "RandomSample.h"
-#include "Quad.h"
 #include "MenuElements.h"
 
 
@@ -63,4 +63,4 @@ private:
 	Style	GetSelectedStyle() { return m_aPossibleStyles[m_iSelection]; };
 };
 
-
+#endif

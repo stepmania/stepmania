@@ -8,15 +8,10 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
+#ifndef SCREEN_MACHINE_OPTIONS_H
+#define SCREEN_MACHINE_OPTIONS_H
 
-#include "Screen.h"
 #include "ScreenOptions.h"
-#include "Sprite.h"
-#include "BitmapText.h"
-#include "RandomSample.h"
-#include "TransitionFade.h"
-#include "Quad.h"
-
 
 class ScreenMachineOptions : public ScreenOptions
 {
@@ -30,3 +25,5 @@ private:
 	void GoToNextState();
 	void GoToPrevState();
 };
+
+#endif

@@ -9,14 +9,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
 #include "ScreenOptions.h"
-#include "Sprite.h"
-#include "BitmapText.h"
-#include "RandomSample.h"
-#include "TransitionFade.h"
-#include "Quad.h"
-
 
 class ScreenInputOptions : public ScreenOptions
 {
