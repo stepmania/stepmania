@@ -20,6 +20,8 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 
 	LRCFile lrc;
 	bool bResult = lrc.ReadFile( sPath );
+	CString	m_sLastFoundColor = "0x00ff00";
+
 	if( !bResult )
 		RageException::Throw( "Error opening file '%s' for reading.", sPath.GetString() );
 	
@@ -39,35 +41,29 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 		}
 
 		// handle the data
-		if( 0==stricmp(sValueName,"COLOUR") )
+		if( 0==stricmp(sValueName,"COLOUR") || 0==stricmp(sValueName,"COLOR") )
 		{
-			// set color var here
-			LOG->Trace("\n\n\n Got color tag from lyric file \n\n\n");
+			// set color var here for this segment
+			m_sLastFoundColor = sValueData;
 			continue;
 		}
 
 		else
 		{
 			/* If we've gotten this far, and no other statement caught
-			   this value before this does, assume it's a time value.
-			   Add the lyric segment! */
+			   this value before this does, assume it's a time value. */		
 			
-			// For the sorting routine, we need a numerical version of the 'time'
-				CString	sTempTime = sValueName.GetBuffer();
-				sTempTime.Replace( ".", "" );
-				sTempTime.Replace( ":", "." );
-
-				// float	m_fStartTime = (float)atof(sTempTime);	// hush "variable not referenced"
-				CString m_sLyric = sValueData;
-				CString	m_sStartTime = sValueName;
-			//--
+			LyricSegment	LYRICSTRING;
+			LYRICSTRING.m_sColor = m_sLastFoundColor;
+			LYRICSTRING.m_fStartTime = TimeToSeconds(sValueName);
+			LYRICSTRING.m_sLyric = sValueData;
 			
-			//LyricSegment	MOOZ;
-			//MOOZ.m_fStartTime = (float)atof((LPCTSTR)sTempTime);
-			//MOOZ.m_sStartTime = sValueName.GetBuffer();
-			//MOOZ.m_sLyric = sValueData.GetBuffer();
-
-			//out.AddLyricSegment( LyricSegment( m_fStartTime, m_sLyric, m_sStartTime ) );
+			LYRICSTRING.m_sLyric.Replace( "\\", "\\" ); // to avoid possible screw-ups 
+							    						// if someone uses a \ for whatever
+												        // reason in their lyrics -- Miryokuteki
+			
+			LYRICSTRING.m_sLyric.Replace( "|","\n" ); // Pipe symbols denote a new line in LRC files
+			out.AddLyricSegment( LYRICSTRING );
 		}
 		
 	}

@@ -83,7 +83,6 @@ const float TWEEN_TIME		= 0.5f;
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
-
 ScreenSelectMusic::ScreenSelectMusic()
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );

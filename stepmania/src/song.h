@@ -51,11 +51,11 @@ void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChange
 
 struct LyricSegment
 {
-	LyricSegment() { m_fStartTime = -1; };
-	LyricSegment( float a, CString m_sLyric, CString m_sStartTime ) { m_fStartTime = a, m_sLyric = m_sLyric, m_sStartTime = m_sStartTime; };
-	float	m_fStartTime; // For the sorting routine
+	float	m_fStartTime;
 	CString m_sLyric;
-	CString m_sStartTime;
+	CString m_sColor;	/* This will eventually be a RAGECOLOR, but until a function
+						   is made to convert a hex color to RAGECOLOR, it's a CString.
+						   This allows for multiple colors of lyric blocks. -- Miryokuteki */
 };
 
 

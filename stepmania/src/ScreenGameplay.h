@@ -90,6 +90,8 @@ protected:
 
 	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
 	float				m_fLyricsTime;
+	int					m_iCurLyricNumber;
+	bool				m_bHasLyrics;
 
 
 	Background			m_Background;

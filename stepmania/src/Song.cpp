@@ -77,16 +77,6 @@ void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChange
 	sort( arrayBackgroundChanges.begin(), arrayBackgroundChanges.end(), CompareBackgroundChanges );
 }
 
-static int CompareLyricSegments(const LyricSegment &seg1, const LyricSegment &seg2)
-{
-	return seg1.m_fStartTime < seg2.m_fStartTime;
-}
-
-void SortLyricSegmentsArray( vector<LyricSegment> &arrayLyricSegments )
-{
-	sort( arrayLyricSegments.begin(), arrayLyricSegments.end(), CompareLyricSegments );
-}
-
 
 //////////////////////////////
 // Song
@@ -137,7 +127,6 @@ void Song::AddBackgroundChange( BackgroundChange seg )
 void Song::AddLyricSegment( LyricSegment seg )
 {
 	m_LyricSegments.push_back( seg );
-	SortLyricSegmentsArray( m_LyricSegments );
 }
 
 
@@ -308,36 +297,6 @@ bool Song::LoadWithoutCache( CString sDir )
 
 	bool success = ld->LoadFromDir( sDir, *this );
 	delete ld;
-
-	LOG->Trace("\n\n\n SONG NAME:: %s", this->GetDisplayMainTitle().GetBuffer() );
-	/*
-	if( this->GetDisplayMainTitle().GetBuffer() == "Future Girls" )
-	 * This is incorrect; it's comparing two string pointers, which doesn't
-	 * work like you expect.  Drop the "GetBuffer".
-     *
-	 * I don't believe we should be loading lyrics into Song directly, as part of
-	 * the data.  Instead, I'd treat it as a separate resource (like images
-	 * and movies) and load it on demand; eg. into a LyricsDisplay actor.  The
-	 * primary reason is that it's more modular: the Song class is already too
-	 * monolithic.  (Note that lyrics can get substantially more detailed; for
-	 * example, we might want to add SSA support.)
-	 *
-	 * I'm still undecided, personally, as to whether we should ultimately
-	 * store lyrics inside the SM or in a separate file, but since we'll want
-	 * to support LRC anyway (which is what you're doing) and we don't need to
-	 * actually write it to disk at this point, we don't have to decide on this yet.
-	 * (I'm leaning to changing my opinion to leaving it in a separate file, but
-	 * I need to think on it some more.)
-	 *
-	 * -glenn */
-/*	if( this->GetDisplayMainTitle() == "Future Girls" ) <- this is what you wanted
-	{
-		LOG->Trace("AAA");
-	} */
-	if( HasLyrics() )
-	{
-		LOG->Trace("\n\n\n LOAD LYRICS HERE!! \n\n\n");	
-	}
 
 	if(!success)
 		return false;
@@ -603,8 +562,8 @@ void Song::TidyUpData()
 
 
 	LOG->Trace("Looking for lyrics..");
-	//if( HasLyrics() )
-	//{
+	if( HasLyrics() )
+	{
 		//Check if there is a lyric file in here
 		CStringArray arrayLyricFiles;
 		GetDirListing(m_sSongDir + CString("*.lrc"), arrayLyricFiles );
@@ -614,7 +573,7 @@ void Song::TidyUpData()
 			LyricsLoader	ll;
 			ll.LoadFromLRCFile(m_sLyricsFile.GetBuffer(), *GAMESTATE->m_pCurSong);
 		}
-	//}
+	}
 
 
 
@@ -1260,8 +1219,15 @@ CString Song::GetBannerPath() const
 
 CString Song::GetLyricsPath() const
 {
-	LOG->Trace("\n\n\n TRYING TO GET LYRICS FROM:: %s%s", m_sSongDir.GetString(), m_sBannerFile.GetString());
-	return m_sSongDir+m_sLyricsFile;
+	//LOG->Trace("\n\n\n TRYING TO GET LYRICS FROM:: %s%s", m_sSongDir, m_sLyricsFile);
+		CStringArray arrayLyricFiles;
+		GetDirListing(m_sSongDir + CString("*.lrc"), arrayLyricFiles );
+		if(	!arrayLyricFiles.empty() )
+		{
+			return m_sSongDir+arrayLyricFiles[0];
+		}
+		
+		return CString("NULL");
 }
 
 CString Song::GetCDTitlePath() const
