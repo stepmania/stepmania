@@ -292,7 +292,10 @@ bool ScreenEdit::EditToDevice( EditButton button, int iSlotNum, DeviceInput &Dev
 {
 	ASSERT( iSlotNum < NUM_EDIT_TO_DEVICE_SLOTS );
 	const MapEditToDI *pCurrentMap = GetCurrentMap();
-	DeviceI = pCurrentMap->button[button][iSlotNum];
+	if( pCurrentMap->button[button][iSlotNum].IsValid() )
+		DeviceI = pCurrentMap->button[button][iSlotNum];
+	else if( pCurrentMap->hold[button][iSlotNum].IsValid() )
+		DeviceI = pCurrentMap->hold[button][iSlotNum];
 	return DeviceI.IsValid();
 }
 
