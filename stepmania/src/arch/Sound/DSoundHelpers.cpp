@@ -321,13 +321,15 @@ void DSoundBuf::SetVolume(float vol)
 	volume = new_volume;
 }
 
-/* Determine if "pos" is between "start" and "end", for a circular buffer. */
+/* Determine if "pos" is between "start" and "end", for a circular buffer.  Note that
+ * a start/end pos is ambiguous when start == end; it can mean that the buffer is
+ * completely full or completely empty; this function treats it as completely empty. */
 static bool contained( int start, int end, int pos )
 {
 	if( end >= start ) /* start ... pos ... end */
-		return start <= pos && pos <= end;
+		return start <= pos && pos < end;
 	else
-		return pos >= start || pos <= end;
+		return pos >= start || pos < end;
 }
 
 DSoundBuf::~DSoundBuf()
@@ -400,7 +402,7 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend )
 	wrap( first_byte_filled, buffersize );
 
 	/* If the end of the play cursor has data, we haven't underrun. */
-	if( contained(first_byte_filled, write_cursor, cursorend) )
+	if( buffer_bytes_filled > 0 && contained(first_byte_filled, write_cursor, cursorend) )
 		return;
 
 	/* Extend the writeahead to force fill as much as required to stop underrunning.
