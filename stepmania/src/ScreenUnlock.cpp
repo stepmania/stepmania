@@ -202,7 +202,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		float SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows * 3 + NumberUnlocks + 4);
 
 
-		for(i=1; i < UNLOCK_TEXT_SCROLL_ROWS; i++)
+		for(i=1; i <= UNLOCK_TEXT_SCROLL_ROWS; i++)
 		{
 			if (i > LastUnlocks.size())
 				continue;
