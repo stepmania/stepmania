@@ -1,10 +1,13 @@
 ----------------------- Version 3.01 ---------------------------
+NEW FEATURE: DWI SAMPLESTART and SAMPLELENGTH in milliseconds is now
+         supported.
 CHANGE:  Courses are no longer limited to 300 songs.
 CHANGE:  The radar display is improved.
 NEW FEATURE: The Caution and Select Group screens can now be disabled.
 CHANGE:  OKs now count as a step in score calculation.
 CHANGE:  Maximum number of hold steps removed.
-BUG FIX:  Fixed "autogen doesn't generate patterns for all difficulties for some songs"
+BUG FIX:  Fixed "autogen doesn't generate patterns for all difficulties for
+         some songs"
 BUG FIX:  Fixed incorrect "show" value in "show!hold" being written in DWIs
 BUG FIX:  Fixed "song ends early after adding an edit then playing"
 BUG FIX:  Oni score now displays a % sign after the score.
