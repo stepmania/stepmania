@@ -16,7 +16,7 @@ SaveSignals *saved_sigs;
 static int signals[] = {
 	SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL, SIGINT, SIGABRT,
 	SIGQUIT, SIGSEGV, SIGTRAP, SIGTERM, SIGVTALRM, SIGXCPU, SIGXFSZ,
-#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
+#if defined(HAVE_DECL_SIGPWR)
 	SIGPWR,
 #endif
 	-1
@@ -65,6 +65,7 @@ static int find_stack_direction()
 	return find_stack_direction2( &c );
 }
 
+#if defined(LINUX)
 /* Create a stack with a barrier page at the end to guard against stack overflow. */
 static void *CreateStack( int size )
 {
@@ -100,6 +101,7 @@ static void *CreateStack( int size )
 
 	return p;
 }
+#endif
 
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose(handler h)
@@ -108,15 +110,17 @@ void SignalHandler::OnClose(handler h)
 	{
 		saved_sigs = new SaveSignals;
 
-		/* Allocate a separate signal stack.  This makes the crash handler work
-		 * if we run out of stack space. */
+		void *p = NULL;
+
+#if defined(LINUX)
 		/* Ugh.  Signal stack + pthreads + Linux 2.4 = crash or hang. */
 		CString system;
 		int version;
 		GetKernel( system, version );
 
+		/* Allocate a separate signal stack.  This makes the crash handler work
+		 * if we run out of stack space. */
 		const int AltStackSize = 1024*64;
-		void *p = NULL;
 		if( version > 20500 )
 			p = CreateStack( AltStackSize );
 
@@ -132,6 +136,7 @@ void SignalHandler::OnClose(handler h)
 				p = NULL; /* no SA_ONSTACK */
 			}
 		}
+#endif
 		
 		struct sigaction sa;
 
