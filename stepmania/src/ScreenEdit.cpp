@@ -1172,6 +1172,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				HandleAreaMenuChoice( shift_pauses_forward, NULL );
 			else
 				HandleAreaMenuChoice( insert_and_shift, NULL );
+			SCREENMAN->PlayInvalidSound();
 		break;
 	case SDLK_DELETE:
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
@@ -1179,7 +1180,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				HandleAreaMenuChoice( shift_pauses_backward, NULL );
 			else
 				HandleAreaMenuChoice( delete_and_shift, NULL );
-			
+			SCREENMAN->PlayInvalidSound();
 		break;
 	}
 }
