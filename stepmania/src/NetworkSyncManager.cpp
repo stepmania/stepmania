@@ -30,6 +30,8 @@
 #include "song.h"
 #include "SongManager.h"
 #include "GameState.h"
+#include "StageStats.h"
+#include "Steps.h"
 
 
 #define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectMusic","NextScreen")
@@ -222,9 +224,21 @@ void NetworkSyncManager::ReportSongOver()
 	netHolder SendNetPack;	//Create packet to send to server
 
 	SendNetPack.m_playerID = 21; // Song over Packet player ID
-	SendNetPack.m_combo=0;
-	SendNetPack.m_score=0;
+
+
 	SendNetPack.m_step=0;
+
+	FOREACH_EnabledPlayer( pn2 )
+	{
+		if (pn2==PLAYER_1)
+			SendNetPack.m_step+=g_CurStageStats.GetGrade(pn2);
+		if (pn2==PLAYER_2)
+			SendNetPack.m_step+=g_CurStageStats.GetGrade(pn2)*256;
+	}
+
+	
+	SendNetPack.m_score=0;
+	SendNetPack.m_combo=0;
 	SendNetPack.m_life=0;
 	
 
@@ -250,10 +264,25 @@ void NetworkSyncManager::StartRequest()
 	netHolder SendNetPack;
 
 	SendNetPack.m_playerID = 20; // Song Start Request Packet player ID
-	SendNetPack.m_combo=0;
-	SendNetPack.m_score=0;
-	SendNetPack.m_step=0;
+
+	//Report Step difficulties 
+
+	Steps * tSteps;
+
+	tSteps = g_CurStageStats.pSteps[PLAYER_1];
+	if (tSteps!=NULL)
+	{
+		SendNetPack.m_step=tSteps->GetMeter();
+	}
+
+	tSteps = g_CurStageStats.pSteps[PLAYER_2];
+	if (tSteps!=NULL)
+	{
+		SendNetPack.m_step+=tSteps->GetMeter()*256;
+	}
+	SendNetPack.m_score = 0;
 	SendNetPack.m_life=0;
+	SendNetPack.m_combo=0;
 
 	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 	

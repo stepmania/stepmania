@@ -62,6 +62,9 @@ private:
     
     struct netHolder		//Data structure used for sending data to server
     {
+
+		//NOTICE: Order of variables in this struct matters
+		//if order is changed, server would need to be re-written
         int m_playerID;	//PID (also used for Commands)
         int m_step;		//SID (StepID, 0-6 for Miss to Marv, 7,8 for boo and ok)
         int m_score;	//Player's Score
