@@ -888,7 +888,9 @@ void ScreenGameplay::LoadNextSong()
 		else if( GAMESTATE->IsCpuPlayer(p) )
 		{
 			GAMESTATE->m_PlayerController[p] = PC_CPU;
-			GAMESTATE->m_iCpuSkill[p] = SCALE( GAMESTATE->m_pCurNotes[p]->GetMeter(), MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
+			int iMeter = GAMESTATE->m_pCurNotes[p]->GetMeter();
+			int iNewSkill = SCALE( iMeter, MIN_METER, MAX_METER, 0, NUM_SKILL_LEVELS-1 );
+			GAMESTATE->m_iCpuSkill[p] = iNewSkill;
 		}
 		else if( PREFSMAN->m_bAutoPlay )
 			GAMESTATE->m_PlayerController[p] = PC_AUTOPLAY;

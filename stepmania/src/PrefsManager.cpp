@@ -80,7 +80,7 @@ PrefsManager::PrefsManager()
 	m_fLifeDeltaOKPercentChange =			+0.008f;
 	m_fLifeDeltaNGPercentChange =			-0.080f;
 
-	m_fTugMeterMarvelousPercentChange =		+0.008f;
+	m_fTugMeterMarvelousPercentChange =		+0.010f;
 	m_fTugMeterPerfectPercentChange =		+0.008f;
 	m_fTugMeterGreatPercentChange =			+0.004f;
 	m_fTugMeterGoodPercentChange =			+0.000f;
@@ -121,7 +121,7 @@ PrefsManager::PrefsManager()
 	m_fGradePercentC = 0.45f;
 	m_fGradePercentD = 0;
 	
-	m_fSuperMeterMarvelousPercentChange =	+0.08f;
+	m_fSuperMeterMarvelousPercentChange =	+0.10f;
 	m_fSuperMeterPerfectPercentChange =		+0.08f;
 	m_fSuperMeterGreatPercentChange =		+0.04f;
 	m_fSuperMeterGoodPercentChange =		+0.00f;
