@@ -354,20 +354,6 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 		throw;
 	}
 
-#if defined(unix)
-	{
-		SDL_SysWMinfo info;
-		SDL_VERSION(&info.version);
-		if ( SDL_GetWMInfo(&info) < 0 )
-		{
-			LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
-			return;
-		}
-		g_X11Display = info.info.x11.display;
-	}
-#endif
-
-
 	// Log driver details
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
 	LOG->Info("OGL Renderer: %s", glGetString(GL_RENDERER));
@@ -679,6 +665,19 @@ CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		if(TEXTUREMAN)
 			TEXTUREMAN->InvalidateTextures();
 	}
+
+#if defined(unix)
+	{
+		SDL_SysWMinfo info;
+		SDL_VERSION(&info.version);
+
+		g_X11Display = NULL;
+		if ( SDL_GetWMInfo(&info) < 0 )
+			LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
+		else
+			g_X11Display = info.info.x11.display;
+	}
+#endif
 
 	this->SetDefaultRenderStates();
 	DumpOpenGLDebugInfo();
