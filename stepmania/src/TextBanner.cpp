@@ -30,27 +30,28 @@ TextBanner::TextBanner()
 	m_textSubTitle.SetHorizAlign( align_left );
 	m_textArtist.SetHorizAlign( align_left );
 
-	m_rect.ScaleToCover( CRect( -TEXT_BANNER_WIDTH/2,
-								-TEXT_BANNER_HEIGHT/2,
-								TEXT_BANNER_WIDTH/2,
-								TEXT_BANNER_HEIGHT/2 )
-								);
-	//this->AddActor( &m_rect );
-
 	this->AddActor( &m_textTitle );
 	this->AddActor( &m_textSubTitle );
 	this->AddActor( &m_textArtist );
 }
 
 
-bool TextBanner::LoadFromSong( Song &song )
+bool TextBanner::LoadFromSong( Song* pSong )
 {
-	CString sTitle = song.GetTitle();
+	if( pSong == NULL )
+	{
+		m_textTitle.SetText( "" );
+		m_textSubTitle.SetText( "" );
+		m_textArtist.SetText( "" );
+		return true;
+	}
+
+	CString sTitle = pSong->GetTitle();
 	CString sSubTitle;
 
 	m_textTitle.SetText( sTitle );
 	m_textSubTitle.SetText( sSubTitle );
-	m_textArtist.SetText( "/" + song.GetArtist() );
+	m_textArtist.SetText( "/" + pSong->GetArtist() );
 
 	
 	float fTitleZoom, fSubTitleZoom, fArtistZoom;

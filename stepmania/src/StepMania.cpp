@@ -30,6 +30,8 @@
 #include "WindowTitleMenu.h"
 #include "WindowPlayerOptions.h"
 
+#include "ScreenDimensions.h"
+
 #include <DXUtil.h>
 
 //-----------------------------------------------------------------------------
@@ -45,12 +47,9 @@
 const CString g_sAppName		= "StepMania";
 const CString g_sAppClassName	= "StepMania Class";
 
-
-HWND		g_hWndMain;				// Main Window Handle
-HINSTANCE	g_hInstance;			// The Handle to Window Instance
-
-#include "ScreenDimensions.h"
-
+HWND		g_hWndMain;		// Main Window Handle
+HINSTANCE	g_hInstance;	// The Handle to Window Instance
+HANDLE		g_hMutex;		// Used to check if an instance of our app is already
 const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
 
 
@@ -65,6 +64,7 @@ BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
 //-----------------------------------------------------------------------------
 // Main game functions
 LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
 void Update();			// Update the game logic
 void Render();			// Render a frame
@@ -78,8 +78,6 @@ VOID		DestroyObjects();			// deallocate game objects when we're done with them
 
 BOOL SwitchDisplayMode();// BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP );
 
-BOOL WeAreAlone( LPSTR szName );
-
 
 //-----------------------------------------------------------------------------
 // Name: WinMain()
@@ -87,113 +85,233 @@ BOOL WeAreAlone( LPSTR szName );
 //-----------------------------------------------------------------------------
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 {
-	if( !WeAreAlone("StepMania") )
+
+#ifndef DEBUG	// don't use error handler in Release mode
+	try
 	{
-		RageError( "StepMania is already running!" );
-	}
-
-	// Make sure the current directory is the root program directory
-	if( !DoesFileExist("Songs") )
-	{
-		// change dir to path of the execuctable
-		TCHAR szFullAppPath[MAX_PATH];
-		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-		
-		// strip off executable name
-		LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
-		*pLastBackslash = '\0';	// terminate the string
-
-		SetCurrentDirectory(szFullAppPath);
-	}
-
-
-    CoInitialize (NULL);    // Initialize COM
-
-    // Register the window class
-	WNDCLASS wndClass = { 
-		0,
-		WndProc,	// callback handler
-		0,			// cbClsExtra; 
-		0,			// cbWndExtra; 
-		hInstance,
-		LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) ), 
-		LoadCursor( hInstance, IDC_ARROW),
-		(HBRUSH)GetStockObject( BLACK_BRUSH ),
-		NULL,				// lpszMenuName; 
-		g_sAppClassName	// lpszClassName; 
-	}; 
- 	RegisterClass( &wndClass );
-
-
-	// Set the window's initial width
-    RECT rcWnd;
-    SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
-    AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
-
-
-	// Create our main window
-	g_hWndMain = CreateWindow(
-				  g_sAppClassName,// pointer to registered class name
-				  g_sAppName,		// pointer to window name
-				  g_dwWindowStyle,	// window style
-				  CW_USEDEFAULT,	// horizontal position of window
-				  CW_USEDEFAULT,	// vertical position of window
-				  RECTWIDTH(rcWnd),	// window width
-				  RECTHEIGHT(rcWnd),// window height
-				  NULL,				// handle to parent or owner window
-				  NULL,				// handle to menu, or child-window identifier
-				  hInstance,		// handle to application instance
-				  NULL				// pointer to window-creation data
-				);
- 	if( NULL == g_hWndMain )
-		exit(1);
-
-
-	// Load keyboard accelerators
-	HACCEL hAccel = LoadAccelerators( NULL, MAKEINTRESOURCE(IDR_MAIN_ACCEL) );
-
-
-	// run the game
-	CreateObjects( g_hWndMain );	// Create the game objects
-
-	// Now we're ready to recieve and process Windows messages.
-	MSG msg;
-	ZeroMemory( &msg, sizeof(msg) );
-
-
-	while( WM_QUIT != msg.message  )
-	{
-		// Look for messages, if none are found then 
-		// update the state and display it
-		if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
+#endif
+		// Check to see if the app is already running.
+		g_hMutex = CreateMutex( NULL, TRUE, g_sAppName );
+		if( GetLastError() == ERROR_ALREADY_EXISTS )
 		{
-	        GetMessage(&msg, NULL, 0, 0 );
+			CloseHandle( g_hMutex );
+			RageError( "StepMania is already running!" );
+		}
 
-			// Translate and dispatch the message
-			if( 0 == TranslateAccelerator( g_hWndMain, hAccel, &msg ) )
+		// Make sure the current directory is the root program directory
+		if( !DoesFileExist("Songs") )
+		{
+			// change dir to path of the execuctable
+			TCHAR szFullAppPath[MAX_PATH];
+			GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
+			
+			// strip off executable name
+			LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
+			*pLastBackslash = '\0';	// terminate the string
+
+			SetCurrentDirectory(szFullAppPath);
+		}
+
+
+		CoInitialize (NULL);    // Initialize COM
+
+		// Register the window class
+		WNDCLASS wndClass = { 
+			0,
+			WndProc,	// callback handler
+			0,			// cbClsExtra; 
+			0,			// cbWndExtra; 
+			hInstance,
+			LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) ), 
+			LoadCursor( hInstance, IDC_ARROW),
+			(HBRUSH)GetStockObject( BLACK_BRUSH ),
+			NULL,				// lpszMenuName; 
+			g_sAppClassName	// lpszClassName; 
+		}; 
+ 		RegisterClass( &wndClass );
+
+
+		// Set the window's initial width
+		RECT rcWnd;
+		SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
+		AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
+
+
+		// Create our main window
+		g_hWndMain = CreateWindow(
+					  g_sAppClassName,// pointer to registered class name
+					  g_sAppName,		// pointer to window name
+					  g_dwWindowStyle,	// window style
+					  CW_USEDEFAULT,	// horizontal position of window
+					  CW_USEDEFAULT,	// vertical position of window
+					  RECTWIDTH(rcWnd),	// window width
+					  RECTHEIGHT(rcWnd),// window height
+					  NULL,				// handle to parent or owner window
+					  NULL,				// handle to menu, or child-window identifier
+					  hInstance,		// handle to application instance
+					  NULL				// pointer to window-creation data
+					);
+ 		if( NULL == g_hWndMain )
+			exit(1);
+
+
+		// Load keyboard accelerators
+		HACCEL hAccel = LoadAccelerators( NULL, MAKEINTRESOURCE(IDR_MAIN_ACCEL) );
+
+		// run the game
+		CreateObjects( g_hWndMain );	// Create the game objects
+
+		// Now we're ready to recieve and process Windows messages.
+		MSG msg;
+		ZeroMemory( &msg, sizeof(msg) );
+
+
+		while( WM_QUIT != msg.message  )
+		{
+			// Look for messages, if none are found then 
+			// update the state and display it
+			if( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
 			{
-				TranslateMessage( &msg ); 
-				DispatchMessage( &msg );
+				GetMessage(&msg, NULL, 0, 0 );
+
+				// Translate and dispatch the message
+				if( 0 == TranslateAccelerator( g_hWndMain, hAccel, &msg ) )
+				{
+					TranslateMessage( &msg ); 
+					DispatchMessage( &msg );
+				}
 			}
-		}
-		else	// No messages are waiting.  Render a frame during idle time.
-		{
-			Update();
-			Render();
-			//if( !g_bFullscreen )
-			::Sleep(0 );	// give some time for the movie decoding thread
-		}
-	}	// end  while( WM_QUIT != msg.message  )
+			else	// No messages are waiting.  Render a frame during idle time.
+			{
+				Update();
+				Render();
+				//if( !g_bFullscreen )
+				::Sleep(0 );	// give some time for the movie decoding thread
+			}
+		}	// end  while( WM_QUIT != msg.message  )
 
 
-	// clean up after a normal exit 
-	DestroyObjects();			// deallocate our game objects and leave fullscreen
-	DestroyWindow( g_hWndMain );
-	UnregisterClass( g_sAppClassName, hInstance );
-	CoUninitialize();			// Uninitialize COM
+		// clean up after a normal exit 
+		CloseHandle( g_hMutex );
+		DestroyObjects();			// deallocate our game objects and leave fullscreen
+		DestroyWindow( g_hWndMain );
+		UnregisterClass( g_sAppClassName, hInstance );
+		CoUninitialize();			// Uninitialize COM
+
+#ifndef DEBUG	// don't use error handler in Release mode
+	}	
+	catch(...)	// catch all exceptions
+	{
+		CloseHandle( g_hMutex );
+		DestroyObjects();			// deallocate our game objects and leave fullscreen
+		ShowWindow( g_hWndMain, SW_HIDE );
+
+		DialogBox(
+			hInstance,
+			MAKEINTRESOURCE(IDD_ERROR_DIALOG),
+			NULL,
+			ErrorWndProc
+			);
+		exit( 1 );
+
+		DestroyWindow( g_hWndMain );
+		UnregisterClass( g_sAppClassName, hInstance );
+		CoUninitialize();			// Uninitialize COM
+	}
+#endif
+
 	return 0L;
 }
 
+
+//-----------------------------------------------------------------------------
+// Name: ErrorWndProc()
+// Desc: Callback for all Windows messages
+//-----------------------------------------------------------------------------
+BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+	switch( msg )
+	{
+	case WM_INITDIALOG:
+		{
+			CString sError;
+			CStdioFile file;
+			if( file.Open("error.txt", CFile::modeRead) )
+			{
+				CString sBuffer;
+				while( file.ReadString(sBuffer) )
+				{
+					sError += sBuffer + "\r\n";
+				}
+			}
+			sError.TrimRight();
+			if( sError == "" )
+				sError = "Program Crash.  Click 'View Log' for trace.";
+			SendDlgItemMessage( 
+				hWnd, 
+				IDC_EDIT_ERROR, 
+				WM_SETTEXT, 
+				0, 
+				(LPARAM)(LPCTSTR)sError 
+				);
+		}
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_BUTTON_VIEW_LOG:
+			{
+				PROCESS_INFORMATION pi;
+				STARTUPINFO	si;
+				ZeroMemory( &si, sizeof(si) );
+
+				CreateProcess(
+					NULL,		// pointer to name of executable module
+					"notepad.exe log.txt",		// pointer to command line string
+					NULL,  // process security attributes
+					NULL,   // thread security attributes
+					false,  // handle inheritance flag
+					0, // creation flags
+					NULL,  // pointer to new environment block
+					NULL,   // pointer to current directory name
+					&si,  // pointer to STARTUPINFO
+					&pi  // pointer to PROCESS_INFORMATION
+				);
+			}
+			break;
+		case IDC_BUTTON_REPORT:
+			GotoURL( "Docs/report.htm" );
+			break;
+		case IDC_BUTTON_RESTART:
+			{
+				// Launch StepMania
+				PROCESS_INFORMATION pi;
+				STARTUPINFO	si;
+				ZeroMemory( &si, sizeof(si) );
+
+				CreateProcess(
+					NULL,		// pointer to name of executable module
+					"stepmania.exe",		// pointer to command line string
+					NULL,  // process security attributes
+					NULL,   // thread security attributes
+					false,  // handle inheritance flag
+					0, // creation flags
+					NULL,  // pointer to new environment block
+					NULL,   // pointer to current directory name
+					&si,  // pointer to STARTUPINFO
+					&pi  // pointer to PROCESS_INFORMATION
+				);
+			}
+			EndDialog( hWnd, 0 );
+			break;
+			// fall through
+		case IDOK:
+			EndDialog( hWnd, 0 );
+			break;
+		}
+	}
+	return FALSE;
+}
 
 
 //-----------------------------------------------------------------------------
@@ -647,21 +765,6 @@ BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 	return true;
 }
 
-
-//-----------------------------------------------------------------------------
-// Name: WeAreAlone()
-// Desc:	check for DirectX 8
-//-----------------------------------------------------------------------------
-BOOL WeAreAlone (LPSTR szName)
-{
-   HANDLE hMutex = CreateMutex (NULL, TRUE, szName);
-   if (GetLastError() == ERROR_ALREADY_EXISTS)
-   {
-      CloseHandle(hMutex);
-      return FALSE;
-   }
-   return TRUE;
-}
 
 
 

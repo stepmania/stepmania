@@ -66,8 +66,6 @@ bool IsAnInt( CString s )
 //-----------------------------------------------------------------------------
 void RageLogStart()
 {
-#if defined(DEBUG) | defined(_DEBUG)
-
 	DeleteFile( g_sLogFileName );
 	DeleteFile( g_sErrorFileName );
 
@@ -82,8 +80,6 @@ void RageLogStart()
 	RageLog( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		     st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 	RageLog( "\n" );
-
-#endif
 }
 
 
@@ -99,7 +95,9 @@ void RageLog( LPCTSTR fmt, ...)
     CString sBuff = vssprintf( fmt, va );
 	sBuff += "\n";
 
-	fprintf(g_fileLog, sBuff);
+	fprintf(g_fileLog, sBuff); 
+	fclose( g_fileLog );
+	g_fileLog = fopen( g_sLogFileName, "w" );
 }
 
 void RageLogHr( HRESULT hr, LPCTSTR fmt, ...)
@@ -408,13 +406,17 @@ VOID DisplayErrorAndDie( CString sError )
 	}
 	sError += "\n\n" + fromClipboard;
 	*/
-	
+#ifdef DEBUG	// don't use error handler in Release mode
+	AfxMessageBox( sError );
+	exit(1);
+#else
 	FILE* fp = fopen( g_sErrorFileName, "w" );
-
 	fprintf( fp, sError );
 	fclose( fp );
-
-	exit(1);
+	// generate an exception so the error handler shows
+	int d = 0;
+	int ksg = 3/d;
+#endif
 }
 
 

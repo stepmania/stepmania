@@ -35,13 +35,13 @@ const WindowMessage SM_PlaySongSample	=	WindowMessage(SM_User+48);
 
 
 
-class WheelItem : public ActorFrame
+class WheelItem : public Actor
 {
 public:
-	WheelItem() 
-	{
-		m_pSong = NULL;
-	};
+	WheelItem();
+
+	virtual void Update( float fDeltaTime );
+	virtual void RenderPrimitives();
 
 	void SetTintColor( D3DXCOLOR c );
 	void SetDiffuseColor( D3DXCOLOR c );
@@ -52,9 +52,8 @@ public:
 		return m_textSectionName.GetText();
 	};
 
-	void LoadFromSong( Song &song );
+	void LoadFromSong( Song* pSong );
 	void LoadFromSectionName( CString sSectionName );
-
 
 	// common
 	enum WheelItemType { TYPE_SECTION, TYPE_MUSIC };

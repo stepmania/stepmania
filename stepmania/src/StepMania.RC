@@ -125,6 +125,29 @@ END
 //
 
 SPLASH                  BITMAP  DISCARDABLE     "splash.bmp"
+BITMAP_ERROR            BITMAP  DISCARDABLE     "error.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ERROR_DIALOG DIALOG DISCARDABLE  0, 0, 332, 234
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+CAPTION "StepMania Error"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT_ERROR,5,80,320,80,ES_CENTER | ES_MULTILINE | 
+                    ES_AUTOHSCROLL | ES_READONLY | NOT WS_TABSTOP
+    DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
+    CONTROL         129,IDC_STATIC,"Static",SS_BITMAP,0,0,258,37
+    LTEXT           "We're sorry.  An error has occurred while running StepMania.\r\n\r\nMore specific details about the error may be listeted in the box below:",
+                    IDC_STATIC,7,47,298,28
+    PUSHBUTTON      "Restart StepMania",IDC_BUTTON_RESTART,175,215,80,15
+    PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,120,190,80,15
+    PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,120,170,80,15
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

@@ -28,6 +28,7 @@ public:
 	{
 		Load( THEME->GetPathTo(GRAPHIC_MUSIC_STATUS_ICONS) );
 		StopAnimating();
+		SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
 		m_bIsNew = false;
 		m_Rank = NO_CROWN;
@@ -36,10 +37,13 @@ public:
 
 		SetDiffuseColor( D3DXCOLOR(0,0,0,0) );	// invisible
 	}
-	void SetNew( bool bIsNew )
+	void SetIsNew( bool bIsNew )
 	{
 		m_bIsNew = bIsNew;
-		SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
+		if( m_bIsNew )
+			SetDiffuseColor( D3DXCOLOR(1,1,1,1) );	// visible
+		else
+			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// invisible
 		SetState( 0 );
 	};
 	void SetBlinking( bool bIsBlinking )

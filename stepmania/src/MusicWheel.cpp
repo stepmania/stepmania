@@ -54,23 +54,27 @@ const int NUM_SECTION_TINTS = sizeof(COLOR_SECTION_TINTS) / sizeof(D3DXCOLOR);
 D3DXCOLOR COLOR_SECTION_LETTER = D3DXCOLOR(1,1,0.3f,1);
 
 
-
-void WheelItem::LoadFromSong( Song &song )
+WheelItem::WheelItem()
 {
+	m_pSong = NULL;
+}
+
+
+void WheelItem::LoadFromSong( Song* pSong )
+{
+	ASSERT( pSong != NULL );
+	
+	m_pSong = pSong;
+
 	m_WheelItemType = TYPE_MUSIC;
 
+	m_MusicStatusDisplay.SetIsNew( m_pSong->GetNumTimesPlayed() == 0 );
 	m_MusicStatusDisplay.SetXY( -132, 0 );
-	this->AddActor( &m_MusicStatusDisplay );
 	
+	m_Banner.LoadFromSong( pSong );
 	m_Banner.SetHorizAlign( align_left );
 	m_Banner.SetXY( 15, 0 );
-	this->AddActor( &m_Banner );
-
-
-	m_pSong = &song;
-	m_Banner.LoadFromSong( song );
-	m_MusicStatusDisplay.SetNew( m_pSong->GetNumTimesPlayed() == 0 );
-};
+}
 
 
 void WheelItem::LoadFromSectionName( CString sSectionName )
@@ -79,18 +83,16 @@ void WheelItem::LoadFromSectionName( CString sSectionName )
 
 	m_sprSectionBackground.Load( THEME->GetPathTo(GRAPHIC_SECTION_BACKGROUND) );
 	m_sprSectionBackground.SetXY( -30, 0 );
-	this->AddActor( &m_sprSectionBackground );
 
 	m_textSectionName.Load( THEME->GetPathTo(FONT_OUTLINE) );
 	m_textSectionName.TurnShadowOff();
 	m_textSectionName.SetText( sSectionName );
 	m_textSectionName.SetHorizAlign( align_left );
-	m_textSectionName.SetXY( -100, 0 );
+	m_textSectionName.SetXY( -85, 0 );
 	m_textSectionName.SetDiffuseColor( COLOR_SECTION_LETTER );
 	m_textSectionName.SetZoom( 1.5f );
-	this->AddActor( &m_textSectionName );
+}
 
-};
 
 void WheelItem::SetTintColor( D3DXCOLOR c )
 {
@@ -99,7 +101,7 @@ void WheelItem::SetTintColor( D3DXCOLOR c )
 
 void WheelItem::SetDiffuseColor( D3DXCOLOR c )
 {
-	ActorFrame::SetDiffuseColor( c );
+	Actor::SetDiffuseColor( c );
 
 
 	D3DXCOLOR colorTempTint = m_colorTint;
@@ -122,6 +124,35 @@ void WheelItem::SetDiffuseColor( D3DXCOLOR c )
 
 };
 
+void WheelItem::Update( float fDeltaTime )
+{
+	switch( m_WheelItemType )
+	{
+	case TYPE_SECTION:
+		m_sprSectionBackground.Update( fDeltaTime );
+		m_textSectionName.Update( fDeltaTime );
+		break;
+	case TYPE_MUSIC:
+		m_MusicStatusDisplay.Update( fDeltaTime );
+		m_Banner.Update( fDeltaTime );
+		break;
+	}
+}
+
+void WheelItem::RenderPrimitives()
+{
+	switch( m_WheelItemType )
+	{
+	case TYPE_SECTION:
+		m_sprSectionBackground.Draw();
+		m_textSectionName.Draw();
+		break;
+	case TYPE_MUSIC:
+		m_MusicStatusDisplay.Draw();
+		m_Banner.Draw();
+		break;
+	}
+}
 
 
 
@@ -222,8 +253,7 @@ void MusicWheel::RebuildWheelItems()
 		ASSERT( true );	// unhandled SORT_ORDER
 	}
 
-
-
+		
 	m_WheelItems.RemoveAll();	// clear out the previous wheel items...
 
 	// ...and load new ones
@@ -238,7 +268,7 @@ void MusicWheel::RebuildWheelItems()
 			for( int i=0; i< arraySongs.GetSize(); i++ )
 			{
 				Song* pSong = arraySongs[i];
-				m_WheelItems[i].LoadFromSong( *pSong );
+				m_WheelItems[i].LoadFromSong( pSong );
 				m_WheelItems[i].SetTintColor( *m_mapGroupNameToColorPtr[pSong->GetGroupName()] );
 			}
 		}
@@ -269,7 +299,7 @@ void MusicWheel::RebuildWheelItems()
 				if( sThisSection == m_sExpandedSectionName )	// this song is in the expanded section
 				{
 					WheelItem &WI = m_WheelItems[iCurWheelItem++];
-					WI.LoadFromSong( *pSong );
+					WI.LoadFromSong( pSong );
 					WI.SetTintColor( *m_mapGroupNameToColorPtr[pSong->GetGroupName()] );
 				}
 			}

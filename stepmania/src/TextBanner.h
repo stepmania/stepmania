@@ -26,13 +26,10 @@ class TextBanner : public ActorFrame
 {
 public:
 	TextBanner();
-	bool LoadFromSong( Song &song );
+	bool LoadFromSong( Song* pSong );
 
 private:
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
-
-	RectangleActor m_rect;
-
 };
 
 

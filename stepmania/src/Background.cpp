@@ -13,6 +13,7 @@
 #include "RageUtil.h"
 #include "ScreenDimensions.h"
 #include "ThemeManager.h"
+#include "RageBitmapTexture.h"
 
 
 const CString VIS_DIR = "Visualizations\\";
@@ -45,10 +46,8 @@ bool Background::LoadFromSong( Song &song )
 	else
 	{
 		// load the static background (if available), and a visualization
-		if( song.HasBackground() )
-			m_sprSongBackground.Load( song.GetBackgroundPath() );
-		else
-			m_sprSongBackground.Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND) );
+		if( song.HasBackground() )	m_sprSongBackground.Load( song.GetBackgroundPath(), HINT_DITHER );
+		else						m_sprSongBackground.Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), HINT_DITHER );
 
 		m_sprSongBackground.StretchTo( CRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT ) );
 		m_sprSongBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
