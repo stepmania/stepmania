@@ -29,6 +29,7 @@ class Inventory;
 #include "TimingAssist.h"
 #include "Character.h"
 #include "Attack.h"
+#include "MeterDisplay.h"
 
 // messages sent by Combo
 const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
@@ -148,6 +149,7 @@ protected:
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 	BitmapText			m_textSongTitle;
+	MeterDisplay		m_meterSongPosition;
 
 	Player				m_Player[NUM_PLAYERS];
 

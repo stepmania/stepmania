@@ -57,6 +57,7 @@
 #define SHOW_LIFE_METER_FOR_DISABLED_PLAYERS	THEME->GetMetricB("ScreenGameplay","ShowLifeMeterForDisabledPlayers")
 #define EVAL_ON_FAIL							THEME->GetMetricB("ScreenGameplay","ShowEvaluationOnFail")
 #define SHOW_SCORE_IN_RAVE						THEME->GetMetricB("ScreenGameplay","ShowScoreInRave")
+#define SONG_POSITION_METER_WIDTH				THEME->GetMetricF("ScreenGameplay","SongPositionMeterWidth")
 
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -270,11 +271,13 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
+	m_Background.SetZ( 2 );	// behind everything else
 	this->AddChild( &m_Background );
 	
 	m_sprStaticBackground.SetName( "StaticBG" );
 	m_sprStaticBackground.Load( THEME->GetPathToG("ScreenGameplay Static Background"));
 	SET_XY( m_sprStaticBackground );
+	m_sprStaticBackground.SetZ( 2 );	// behind everything else
 	this->AddChild(&m_sprStaticBackground);
 
 	if( !bDemonstration )	// only load if we're going to use it
@@ -410,6 +413,13 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	m_textSongTitle.SetName( "SongTitle" );
 	SET_XY( m_textSongTitle );
 	this->AddChild( &m_textSongTitle );
+
+
+	m_meterSongPosition.Load( THEME->GetPathToG("ScreenGameplay song position meter"), SONG_POSITION_METER_WIDTH );
+	m_meterSongPosition.SetName( "SongPositionMeter" );
+	SET_XY( m_meterSongPosition );
+	this->AddChild( &m_meterSongPosition );
+
 
 	m_MaxCombo.LoadFromNumbers( THEME->GetPathToN("ScreenGameplay max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
@@ -653,12 +663,14 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	}
 
 
+
 	/* LoadNextSong first, since that positions some elements which need to be
 	 * positioned before we TweenOnScreen. */
 	LoadNextSong();
 
 	TweenOnScreen();
 
+	this->SortByZ();
 
 	if( !bDemonstration )	// only load if we're going to use it
 	{
@@ -1277,6 +1289,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 	}
 
+	//
+	// update give up timer
+	//
 	if( !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 4.0f )
 	{
 		m_GiveUpTimer.SetZero();
@@ -1292,6 +1307,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		this->PostScreenMessage( SM_NotesEnded, 0 );
 	}
 
+	//
+	// update assist ticks
+	//
 	bool bPlayTicks = IsTimeToPlayTicks();
 	if( bPlayTicks )
 	{
@@ -1299,6 +1317,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			m_soundAssistTick.Play();
 	}
 
+	//
+	// update lights
+	//
 	static float s_fSecsLeftOnUpperLights = 0;
 	if( bPlayTicks )
 	{
@@ -1316,6 +1337,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 		LIGHTSMAN->SetAllUpperLights( true );
 	else
 		LIGHTSMAN->SetAllUpperLights( false );
+
+	//
+	// update song position meter
+	//
+	float fPercentPositionSong = GAMESTATE->m_fMusicSeconds / GAMESTATE->m_pCurSong->m_fMusicLengthSeconds;
+	CLAMP( fPercentPositionSong, 0, 1 );
+	m_meterSongPosition.SetPercent( fPercentPositionSong );
 }
 
 /* Set g_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send
@@ -2191,6 +2219,7 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
 	ON_COMMAND( m_textSongTitle );
+	ON_COMMAND( m_meterSongPosition );
 	if( m_pCombinedLifeMeter )
 		ON_COMMAND( *m_pCombinedLifeMeter );
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -2219,6 +2248,7 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );
 	OFF_COMMAND( m_textSongTitle );
+	OFF_COMMAND( m_meterSongPosition );
 	if( m_pCombinedLifeMeter )
 		OFF_COMMAND( *m_pCombinedLifeMeter );
 	for( int p=0; p<NUM_PLAYERS; p++ )
