@@ -41,6 +41,12 @@ protected:
 	Sprite *GetHoldBodySprite( float fNoteBeat, bool bActive );
 	Sprite *GetHoldBottomCapSprite( float fNoteBeat, bool bActive );
 
+	void DrawHoldBottomCap( const HoldNote& hn, const bool bActive, float fYHead, float fYTail, int	fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow );
+	void DrawHoldTopCap( const HoldNote& hn, const bool bActive, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow );
+	void DrawHoldBody( const HoldNote& hn, const bool bActive, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow );
+	void DrawHoldTail( const HoldNote& hn, const bool bActive, float fYTail, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow );
+	void DrawHoldHead( const HoldNote& hn, const bool bActive, float fYHead, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow );
+
 	PlayerNumber m_PlayerNumber;	// to look up PlayerOptions
 
 	struct NoteMetricCache_t *cache;

@@ -384,6 +384,308 @@ Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bActive )
 }
 
 
+void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bActive, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+{
+	//
+	// Draw the top cap (always wavy)
+	//
+	const int size = 4096;
+	static RageSpriteVertex queue[size];
+	Sprite* pSprTopCap = GetHoldTopCapSprite( hn.fStartBeat, bActive );
+
+	// draw manually in small segments
+	RageSpriteVertex *v = &queue[0];
+	RageTexture* pTexture = pSprTopCap->GetTexture();
+	const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
+	DISPLAY->SetTexture( pTexture );
+	DISPLAY->SetBlendMode( BLEND_NORMAL );
+	DISPLAY->SetBackfaceCull( false );
+	DISPLAY->SetTextureWrapping(false);
+
+	const float fFrameWidth  = pSprTopCap->GetUnzoomedWidth();
+	const float fFrameHeight = pSprTopCap->GetUnzoomedHeight();
+	const float fYCapTop	 = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
+	const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
+
+	for( float fY=fYCapTop; fY<fYCapBottom; fY+=fYStep )
+	{
+		const float fYTop					= fY;
+		const float fStepHeight				= min( fYStep, fFrameHeight );
+		const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
+		const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
+		const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
+		const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
+		const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
+		const float fXTopLeft				= fXTop - fFrameWidth/2;
+		const float fXTopRight				= fXTop + fFrameWidth/2;
+		const float fXBottomLeft			= fXBottom - fFrameWidth/2;
+		const float fXBottomRight			= fXBottom + fFrameWidth/2;
+		const float fTopDistFromHeadTop		= fYTop - fYCapTop;
+		const float fBottomDistFromHeadTop	= fYBottom - fYCapTop;
+		const float fTexCoordTop			= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
+		const float fTexCoordBottom			= SCALE( fBottomDistFromHeadTop, 0, fFrameHeight, pRect->top, pRect->bottom );
+		ASSERT( fTexCoordTop>=-0.0001 && fTexCoordBottom<=1.0001 ); /* allow for rounding error */
+		const float fTexCoordLeft			= pRect->left;
+		const float fTexCoordRight			= pRect->right;
+		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
+		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
+		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
+		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
+
+		if( bGlow && colorGlowTop.a==0 && colorGlowBottom.a==0 )
+			continue;
+		if( !bGlow && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
+			continue;
+
+		v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bGlow? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+		v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bGlow? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bGlow? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
+		v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bGlow? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+		v+=4;
+		if( v-queue >= size )
+			break;
+	}
+	DISPLAY->DrawQuads( queue, v-queue );
+}
+
+void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bActive, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+{
+	//
+	// Draw the body (always wavy)
+	//
+	const int size = 4096;
+	static RageSpriteVertex queue[size];
+
+	Sprite* pSprBody = GetHoldBodySprite( hn.fStartBeat, bActive );
+
+	// draw manually in small segments
+	RageSpriteVertex *v = &queue[0];
+	RageTexture* pTexture = pSprBody->GetTexture();
+	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
+	DISPLAY->SetTexture( pTexture );
+	DISPLAY->SetBlendMode( BLEND_NORMAL );
+	DISPLAY->SetBackfaceCull( false );
+	DISPLAY->SetTextureWrapping( true );
+
+
+	const float fFrameWidth  = pSprBody->GetUnzoomedWidth();
+	const float fFrameHeight = pSprBody->GetUnzoomedHeight();
+	const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
+	const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
+	
+	// top to bottom
+	for( float fY=fYBodyTop; fY<=fYBodyBottom; fY+=fYStep )
+	{
+		const float fYTop					= fY;
+		const float fYBottom				= min( fY+fYStep, fYBodyBottom );
+		const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
+		const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
+		const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
+		const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
+		const float fXTopLeft				= fXTop - fFrameWidth/2;
+		const float fXTopRight				= fXTop + fFrameWidth/2;
+		const float fXBottomLeft			= fXBottom - fFrameWidth/2;
+		const float fXBottomRight			= fXBottom + fFrameWidth/2;
+		const float fTopDistFromBodyBottom		= fYBodyBottom - fYTop;
+		const float fBottomDistFromBodyBottom	= fYBodyBottom - fYBottom;
+				float fTexCoordTop			= SCALE( fTopDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
+				float fTexCoordBottom			= SCALE( fBottomDistFromBodyBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
+		if( fTexCoordTop < 0 )
+		{
+			int iToSubtract = (int)fTexCoordTop - 1;
+			fTexCoordTop -= iToSubtract;
+			fTexCoordBottom -= iToSubtract;
+		}
+		else if( fTexCoordBottom > 2 )
+		{
+			int iToSubtract = (int)fTexCoordBottom;
+			fTexCoordTop -= iToSubtract;
+			fTexCoordBottom -= iToSubtract;
+		}
+		ASSERT( fTexCoordTop>=0 && fTexCoordBottom>=0 );
+		ASSERT( fTexCoordTop<=2 && fTexCoordBottom<=2 );
+		const float fTexCoordLeft			= pRect->left;
+		const float fTexCoordRight			= pRect->right;
+		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
+		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
+		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
+		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
+
+		if( bGlow && colorGlowTop.a==0 && colorGlowBottom.a==0 )
+			continue;
+		if( !bGlow && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
+			continue;
+
+		v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bGlow? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bGlow? colorGlowTop    : colorDiffuseTop;		v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bGlow? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
+		v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bGlow? colorGlowBottom : colorDiffuseBottom;	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+		v+=4;
+		if( v-queue >= size )
+			break;
+	}	
+	DISPLAY->DrawQuads( queue, v-queue );
+}
+
+void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bActive, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+{
+	//
+	// Draw the bottom cap (always wavy)
+	//
+	const int size = 4096;
+	static RageSpriteVertex queue[size];
+
+	Sprite* pBottomCap = GetHoldBottomCapSprite( hn.fStartBeat, bActive );
+
+	// draw manually in small segments
+	RageSpriteVertex *v = &queue[0];
+	RageTexture* pTexture = pBottomCap->GetTexture();
+	const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
+	DISPLAY->SetTexture( pTexture );
+	DISPLAY->SetBlendMode( BLEND_NORMAL );
+	DISPLAY->SetBackfaceCull( false );
+	DISPLAY->SetTextureWrapping(false);
+
+	const float fFrameWidth		= pBottomCap->GetUnzoomedWidth();
+	const float fFrameHeight	= pBottomCap->GetUnzoomedHeight();
+	const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
+	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
+
+	// don't draw any part of the tail that is before the middle of the head
+	float fY=max( fYCapTop, fYHead );
+	for( ; fY<fYCapBottom; fY+=fYStep )	
+	{
+		const float fYTop					= fY;
+		const float fStepHeight				= min( fYStep, fFrameHeight );
+		const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
+		const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
+		const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
+		const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
+		const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
+		const float fXTopLeft				= fXTop - fFrameWidth/2;
+		const float fXTopRight				= fXTop + fFrameWidth/2;
+		const float fXBottomLeft			= fXBottom - fFrameWidth/2;
+		const float fXBottomRight			= fXBottom + fFrameWidth/2;
+		const float fTopDistFromTailTop		= fYTop - fYCapTop;
+		const float fBottomDistFromTailTop	= fYBottom - fYCapTop;
+		const float fTexCoordTop			= SCALE( fTopDistFromTailTop,    0, fFrameHeight, pRect->top, pRect->bottom );
+		const float fTexCoordBottom			= SCALE( fBottomDistFromTailTop, 0, fFrameHeight, pRect->top, pRect->bottom );
+		const float fTexCoordLeft			= pRect->left;
+		const float fTexCoordRight			= pRect->right;
+		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
+		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
+		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
+		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
+		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
+		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
+
+		if( bGlow && colorGlowTop.a==0 && colorGlowBottom.a==0 )
+			continue;
+		if( !bGlow && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
+			continue;
+
+		v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bGlow ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+		v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bGlow ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bGlow ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
+		v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bGlow ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+		v+=4;
+		if( v-queue >= size )
+			break;
+	}
+	DISPLAY->DrawQuads( queue, v-queue );
+}
+
+void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bActive, float fYTail, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+{
+	//
+	// Draw the tail
+	//
+	Actor* pSprTail = GetHoldTailActor( hn.fStartBeat, bActive );
+
+	const float fY				= fYTail;
+	const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
+	const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
+	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
+	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
+	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
+
+	pSprTail->SetXY( fX, fY );
+	pSprTail->SetZ( fZ );
+	
+	if( bGlow )
+	{
+		pSprTail->SetDiffuse( RageColor(1,1,1,0) );
+		pSprTail->SetGlow( colorGlow );
+	}
+	else
+	{
+		pSprTail->SetDiffuse( colorDiffuse );
+		pSprTail->SetGlow( RageColor(0,0,0,0) );
+	}
+	pSprTail->Draw();
+}
+
+void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bActive, float fYHead, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
+{
+	//
+	// Draw the head
+	//
+	Actor* pActor = GetHoldHeadActor( hn.fStartBeat, bActive );
+
+	// draw with normal Sprite
+	const float fY				= fYHead;
+	const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
+	const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
+	const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
+	const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
+	const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	const RageColor colorGlow	= RageColor(1,1,1,fGlow);
+
+	pActor->SetXY( fX, fY );
+	pActor->SetZ( fZ );
+
+	if( bGlow )
+	{
+		pActor->SetDiffuse( RageColor(1,1,1,0) );
+		pActor->SetGlow( colorGlow );
+	}
+	else
+	{
+		pActor->SetDiffuse( colorDiffuse );
+		pActor->SetGlow( RageColor(0,0,0,0) );
+	}
+
+	if( cache->m_bUseLighting )
+	{
+		DISPLAY->SetLighting( true );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			RageColor(0.1f,0.1f,0.1f,1), 
+			RageColor(1,1,1,1),
+			RageColor(1,1,1,1),
+			RageVector3(1, 0, +1) );
+	}
+
+	pActor->Draw();
+
+	if( cache->m_bUseLighting )
+	{
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
+	}
+}
+
 void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly )
 {
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
@@ -406,319 +708,20 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	const float fColorScale		= 1*fLife + (1-fLife)*cache->m_fHoldNGGrayPercent;
 
-
-	//
-	// draw from tail to head (so head appears on top)
-	//
-
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
-	const int size = 4096;
-	static RageSpriteVertex queue[size];
+	if( bDrawGlowOnly )
+		DISPLAY->SetTextureModeGlow();
+	else
+		DISPLAY->SetTextureModeModulate();
+	DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
+	DrawHoldBottomCap( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	DrawHoldBody( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	DrawHoldTopCap( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
-	//
-	// Draw the bottom cap (always wavy)
-	//
-	{
-		Sprite* pBottomCap = GetHoldBottomCapSprite( hn.fStartBeat, bActive );
-
-		// draw manually in small segments
-		RageSpriteVertex *v = &queue[0];
-		RageTexture* pTexture = pBottomCap->GetTexture();
-		const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
-		DISPLAY->SetTexture( pTexture );
-		DISPLAY->SetBlendMode( BLEND_NORMAL );
-		DISPLAY->SetBackfaceCull( false );
-		DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
-		if( bDrawGlowOnly )
-			DISPLAY->SetTextureModeGlow();
-		else
-			DISPLAY->SetTextureModeModulate();
-		DISPLAY->SetTextureWrapping(false);
-
-		const float fFrameWidth		= pBottomCap->GetUnzoomedWidth();
-		const float fFrameHeight	= pBottomCap->GetUnzoomedHeight();
-		const float fYCapTop		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail;
-		const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
-
-		// don't draw any part of the tail that is before the middle of the head
-		float fY=max( fYCapTop, fYHead );
-		for( ; fY<fYCapBottom; fY+=fYStep )	
-		{
-			const float fYTop					= fY;
-			const float fStepHeight				= min( fYStep, fFrameHeight );
-			const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
-			const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
-			const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
-			const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
-			const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
-			const float fXTopLeft				= fXTop - fFrameWidth/2;
-			const float fXTopRight				= fXTop + fFrameWidth/2;
-			const float fXBottomLeft			= fXBottom - fFrameWidth/2;
-			const float fXBottomRight			= fXBottom + fFrameWidth/2;
-			const float fTopDistFromTailTop		= fYTop - fYCapTop;
-			const float fBottomDistFromTailTop	= fYBottom - fYCapTop;
-			const float fTexCoordTop			= SCALE( fTopDistFromTailTop,    0, fFrameHeight, pRect->top, pRect->bottom );
-			const float fTexCoordBottom			= SCALE( fBottomDistFromTailTop, 0, fFrameHeight, pRect->top, pRect->bottom );
-			const float fTexCoordLeft			= pRect->left;
-			const float fTexCoordRight			= pRect->right;
-			const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
-			const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-			const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
-			const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-			const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
-			const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-			const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
-			const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
-
-			if( bDrawGlowOnly && colorGlowTop.a==0 && colorGlowBottom.a==0 )
-				continue;
-			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
-				continue;
-
-			v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-			v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-			v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-			v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
-			v+=4;
-			if( v-queue >= size )
-				break;
-		}
-		DISPLAY->DrawQuads( queue, v-queue );
-	}
-
-	//
-	// Draw the body (always wavy)
-	//
-	{
-		Sprite* pSprBody = GetHoldBodySprite( hn.fStartBeat, bActive );
-
-		// draw manually in small segments
-		RageSpriteVertex *v = &queue[0];
-		RageTexture* pTexture = pSprBody->GetTexture();
-		const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
-		DISPLAY->SetTexture( pTexture );
-		DISPLAY->SetBlendMode( BLEND_NORMAL );
-		DISPLAY->SetBackfaceCull( false );
-		DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
-		if( bDrawGlowOnly )
-			DISPLAY->SetTextureModeGlow();
-		else
-			DISPLAY->SetTextureModeModulate();
-		DISPLAY->SetTextureWrapping( true );
-
-
-		const float fFrameWidth  = pSprBody->GetUnzoomedWidth();
-		const float fFrameHeight = pSprBody->GetUnzoomedHeight();
-		const float fYBodyTop = fYHead + cache->m_iStartDrawingHoldBodyOffsetFromHead;
-		const float fYBodyBottom = fYTail + cache->m_iStopDrawingHoldBodyOffsetFromTail;
-		
-		// top to bottom
-		for( float fY=fYBodyTop; fY<=fYBodyBottom; fY+=fYStep )
-		{
-			const float fYTop					= fY;
-			const float fYBottom				= min( fY+fYStep, fYBodyBottom );
-			const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
-			const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
-			const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
-			const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
-			const float fXTopLeft				= fXTop - fFrameWidth/2;
-			const float fXTopRight				= fXTop + fFrameWidth/2;
-			const float fXBottomLeft			= fXBottom - fFrameWidth/2;
-			const float fXBottomRight			= fXBottom + fFrameWidth/2;
-			const float fTopDistFromBodyBottom		= fYBodyBottom - fYTop;
-			const float fBottomDistFromBodyBottom	= fYBodyBottom - fYBottom;
-				  float fTexCoordTop			= SCALE( fTopDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
-				  float fTexCoordBottom			= SCALE( fBottomDistFromBodyBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
-			if( fTexCoordTop < 0 )
-			{
-				int iToSubtract = (int)fTexCoordTop - 1;
-				fTexCoordTop -= iToSubtract;
-				fTexCoordBottom -= iToSubtract;
-			}
-			else if( fTexCoordBottom > 2 )
-			{
-				int iToSubtract = (int)fTexCoordBottom;
-				fTexCoordTop -= iToSubtract;
-				fTexCoordBottom -= iToSubtract;
-			}
-			ASSERT( fTexCoordTop>=0 && fTexCoordBottom>=0 );
-			ASSERT( fTexCoordTop<=2 && fTexCoordBottom<=2 );
-			const float fTexCoordLeft			= pRect->left;
-			const float fTexCoordRight			= pRect->right;
-			const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
-			const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-			const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
-			const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-			const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
-			const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-			const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
-			const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
-
-			if( bDrawGlowOnly && colorGlowTop.a==0 && colorGlowBottom.a==0 )
-				continue;
-			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
-				continue;
-
-			v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-			v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-			v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-			v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
-			v+=4;
-			if( v-queue >= size )
-				break;
-		}	
-		DISPLAY->DrawQuads( queue, v-queue );
-	}
-
-	//
-	// Draw the top cap (always wavy)
-	//
-	{
-		Sprite* pSprTopCap = GetHoldTopCapSprite( hn.fStartBeat, bActive );
-
-		// draw manually in small segments
-		RageSpriteVertex *v = &queue[0];
-		RageTexture* pTexture = pSprTopCap->GetTexture();
-		const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
-		DISPLAY->SetTexture( pTexture );
-		DISPLAY->SetBlendMode( BLEND_NORMAL );
-		DISPLAY->SetBackfaceCull( false );
-		DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
-		if( bDrawGlowOnly )
-			DISPLAY->SetTextureModeGlow();
-		else
-			DISPLAY->SetTextureModeModulate();
-		DISPLAY->SetTextureWrapping(false);
-
-		const float fFrameWidth  = pSprTopCap->GetUnzoomedWidth();
-		const float fFrameHeight = pSprTopCap->GetUnzoomedHeight();
-		const float fYCapTop	 = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
-		const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
-
-		for( float fY=fYCapTop; fY<fYCapBottom; fY+=fYStep )
-		{
-			const float fYTop					= fY;
-			const float fStepHeight				= min( fYStep, fFrameHeight );
-			const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
-			const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYTop );
-			const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYBottom );
-			const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYTop );
-			const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYBottom );
-			const float fXTopLeft				= fXTop - fFrameWidth/2;
-			const float fXTopRight				= fXTop + fFrameWidth/2;
-			const float fXBottomLeft			= fXBottom - fFrameWidth/2;
-			const float fXBottomRight			= fXBottom + fFrameWidth/2;
-			const float fTopDistFromHeadTop		= fYTop - fYCapTop;
-			const float fBottomDistFromHeadTop	= fYBottom - fYCapTop;
-			const float fTexCoordTop			= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
-			const float fTexCoordBottom			= SCALE( fBottomDistFromHeadTop, 0, fFrameHeight, pRect->top, pRect->bottom );
-			ASSERT( fTexCoordTop>=-0.0001 && fTexCoordBottom<=1.0001 ); /* allow for rounding error */
-			const float fTexCoordLeft			= pRect->left;
-			const float fTexCoordRight			= pRect->right;
-			const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, fYTop, fPercentFadeToFail );
-			const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-			const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, fYTop, fPercentFadeToFail );
-			const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, fYBottom, fPercentFadeToFail );
-			const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
-			const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-			const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
-			const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
-
-			if( bDrawGlowOnly && colorGlowTop.a==0 && colorGlowBottom.a==0 )
-				continue;
-			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
-				continue;
-
-			v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-			v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-			v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-			v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
-			v+=4;
-			if( v-queue >= size )
-				break;
-		}
-		DISPLAY->DrawQuads( queue, v-queue );
-	}
-
-	//
-	// Draw the tail
-	//
-	{
-		Actor* pSprTail = GetHoldTailActor( hn.fStartBeat, bActive );
-
-		const float fY				= fYTail;
-		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
-		const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
-		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
-		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
-		const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-		const RageColor colorGlow	= RageColor(1,1,1,fGlow);
-
-		pSprTail->SetXY( fX, fY );
-		pSprTail->SetZ( fZ );
-		
-		if( bDrawGlowOnly )
-		{
-			pSprTail->SetDiffuse( RageColor(1,1,1,0) );
-			pSprTail->SetGlow( colorGlow );
-		}
-		else
-		{
-			pSprTail->SetDiffuse( colorDiffuse );
-			pSprTail->SetGlow( RageColor(0,0,0,0) );
-		}
-		pSprTail->Draw();
-	}
-
-	//
-	// Draw the head
-	//
-	{
-		Actor* pActor = GetHoldHeadActor( hn.fStartBeat, bActive );
-
-		// draw with normal Sprite
-		const float fY				= fYHead;
-		const float fX				= ArrowGetXPos( m_PlayerNumber, iCol, fY );
-		const float fZ				= ArrowGetZPos(	m_PlayerNumber, iCol, fY );
-		const float	fAlpha			= ArrowGetAlpha( m_PlayerNumber, fY, fPercentFadeToFail );
-		const float	fGlow			= ArrowGetGlow( m_PlayerNumber, fY, fPercentFadeToFail );
-		const RageColor colorDiffuse= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
-		const RageColor colorGlow	= RageColor(1,1,1,fGlow);
-
-		pActor->SetXY( fX, fY );
-		pActor->SetZ( fZ );
-
-		if( bDrawGlowOnly )
-		{
-			pActor->SetDiffuse( RageColor(1,1,1,0) );
-			pActor->SetGlow( colorGlow );
-		}
-		else
-		{
-			pActor->SetDiffuse( colorDiffuse );
-			pActor->SetGlow( RageColor(0,0,0,0) );
-		}
-
-		if( cache->m_bUseLighting )
-		{
-			DISPLAY->SetLighting( true );
-			DISPLAY->SetLightDirectional( 
-				0, 
-				RageColor(0.1f,0.1f,0.1f,1), 
-				RageColor(1,1,1,1),
-				RageColor(1,1,1,1),
-				RageVector3(1, 0, +1) );
-		}
-
-		pActor->Draw();
-
-		if( cache->m_bUseLighting )
-		{
-			DISPLAY->SetLightOff( 0 );
-			DISPLAY->SetLighting( false );
-		}
-	}
+	/* These set the texture mode themselves. */
+	DrawHoldTail( hn, bActive, fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	DrawHoldHead( hn, bActive, fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
