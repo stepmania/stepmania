@@ -17,6 +17,7 @@ Andrew Livy
 #include "Quad.h"
 #include "MenuElements.h"
 #include "ScrollingList.h"
+#include "MenuBGAnims.h"
 
 /* Class Definition */
 
@@ -47,6 +48,9 @@ protected:
 	Sprite	m_sprControllers[NUM_PLAYERS];
 
 	CArray<Style,Style> m_aPossibleStyles;
+
+	MenuBGAnims m_BGAnim[10];
+
 	ScrollingList m_ScrollingList;
 	void RefreshStylesAndList();
 

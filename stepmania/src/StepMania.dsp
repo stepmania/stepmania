@@ -56,10 +56,10 @@ LINK32=link.exe
 # ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /map /debug /machine:I386
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania
+TargetDir=\Stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc           	cl            /Zl            /nologo            /c            verstub.cpp            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc            	cl             /Zl             /nologo             /c             verstub.cpp             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -91,10 +91,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /profile /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania
+TargetDir=\Stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc           	cl            /Zl            /nologo            /c            verstub.cpp            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc            	cl             /Zl             /nologo             /c             verstub.cpp             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -724,6 +724,14 @@ SOURCE=.\GroupList.cpp
 # Begin Source File
 
 SOURCE=.\GroupList.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MenuBgAnims.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MenuBGAnims.h
 # End Source File
 # Begin Source File
 

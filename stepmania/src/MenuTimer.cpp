@@ -38,6 +38,18 @@ MenuTimer::MenuTimer()
 	m_soundBeep.Load( THEME->GetPathTo("Sounds","menu timer") );
 }
 
+void MenuTimer::StealthTimer( int iActive )
+{
+	if ( iActive == 0 ) // we wanna keep everything as it is...
+	{
+		m_soundBeep.Load( THEME->GetPathTo("Sounds","menu timer") ); // reload the sound
+	}
+	else if ( iActive == 1 ) // otherwise we wanna make the timer invisible and silent....
+	{
+		m_soundBeep.Unload(); // unload the sound
+	}
+	// else take no action
+}
 
 void MenuTimer::Update( float fDeltaTime ) 
 { 

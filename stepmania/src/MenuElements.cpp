@@ -53,6 +53,22 @@ MenuElements::MenuElements()
 	this->AddChild( &m_Invisible );
 }
 
+void MenuElements::StealthTimer( int iActive )
+{
+
+	m_MenuTimer.StealthTimer( iActive ); // go a bit deeper... get rid of the sound...
+
+	if (iActive == 0) // if we wanna hide the timer... 
+	{
+		m_MenuTimer.SetXY( TIMER_X, TIMER_Y ); // set it off-screen
+	}
+	else if (iActive == 1) // we wanna hide the timer
+	{
+		m_MenuTimer.SetXY( 999.0f, 999.0f ); // otherwise position it off-screen
+	}
+	// else... take no action :)
+}
+
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds )
 {
 	LOG->Trace( "MenuElements::MenuElements()" );

@@ -40,6 +40,7 @@ public:
 	void StallTimer();
 	void StopTimer();
 
+	void StealthTimer( int iActive );
 	void DrawTopLayer();
 	void DrawBottomLayer();
 

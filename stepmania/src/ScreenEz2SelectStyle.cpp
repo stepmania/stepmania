@@ -51,6 +51,15 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;	// the only mode you can select on this screen
+	
+	/*********** TODO: MAKE THIS WORK FOR ALL GAME STYLES! *************/
+	for (int i=0; i<=3; i++)
+	{
+		this->AddChild( &m_BGAnim[i] );	
+		m_BGAnim[i].UpdateMetrics(i);
+		m_BGAnim[i].SetZoom(0.0f); // hide the background
+	}
+	m_BGAnim[0].SetZoom(1.0f);
 
 
 	m_ScrollingList.SetXY( CENTER_X, CENTER_Y );
@@ -92,6 +101,7 @@ ScreenEz2SelectStyle::ScreenEz2SelectStyle()
 
 	TweenOnScreen();
 	m_Menu.TweenOnScreenFromBlack( SM_None );
+
 }
 
 /************************************
@@ -235,14 +245,22 @@ void ScreenEz2SelectStyle::MenuBack( PlayerNumber pn )
 
 void ScreenEz2SelectStyle::MenuLeft( PlayerNumber pn )
 {
+	m_BGAnim[m_ScrollingList.GetSelection()].SetZoom(0.0f); // hide old background
 	m_ScrollingList.Left();
 	m_soundChange.Play();
+	m_BGAnim[m_ScrollingList.GetSelection()].SetZoom(1.0f); // show new background
+
+//	m_BGAnim.UpdateMetrics(m_ScrollingList.GetSelection());
 }
 
 void ScreenEz2SelectStyle::MenuRight( PlayerNumber pn )
 {
+	m_BGAnim[m_ScrollingList.GetSelection()].SetZoom(0.0f); // hide old background
 	m_ScrollingList.Right();
 	m_soundChange.Play();
+	m_BGAnim[m_ScrollingList.GetSelection()].SetZoom(1.0f); // show new background
+
+//	m_BGAnim.UpdateMetrics(m_ScrollingList.GetSelection());
 }
 
 /************************************
@@ -278,6 +296,13 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber pn )
 		
 		RefreshStylesAndList();
 		m_ScrollingList.SetSelection( 0 );
+
+		/********** TODO: MAKE IT WORK FOR ALL GAME TYPES! ************/
+		for (int i=0; i<=3; i++)
+		{
+			m_BGAnim[i].SetZoom(0.0f); // hide the background
+		}
+		m_BGAnim[0].SetZoom(1.0f);
 	}
 	else
 	{

@@ -29,6 +29,8 @@ public:
 	void StopTimer();
 	void StallTimer();
 
+	void StealthTimer(int iActive);
+
 protected:
 	float m_fSecondsLeft;
 	float m_fStallSeconds;

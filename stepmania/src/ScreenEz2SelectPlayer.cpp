@@ -34,7 +34,7 @@ const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 #define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectPlayer","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectPlayer","TimerSeconds")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectPlayer","NextScreen")
-
+#define SILENT_WAIT				THEME->GetMetricI("ScreenEz2SelectPlayer","SilentWait")
 
 const float TWEEN_TIME		= 0.35f;
 
@@ -222,8 +222,9 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	else
 	{
 		// give the other player a little time to join
-		m_Menu.SetTimer( 3 );
+		m_Menu.SetTimer( 1 );
 		m_Menu.StartTimer();
+		m_Menu.StealthTimer( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
 	}
 }
 
