@@ -893,36 +893,45 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 void MovieTexture_FFMpeg::Update(float fDeltaTime)
 {
-	if( !m_bThreaded )
+	/* We might need to decode more than one frame per update.  However, there
+	 * have been bugs in ffmpeg that cause it to not handle EOF properly, which
+	 * could make this never return, so let's play it safe. */
+	int iMax = 4;
+	while( --iMax )
 	{
-		/* If we don't have a frame decoded, decode one. */
-		if( m_ImageWaiting == FRAME_NONE )
-			DecodeFrame();
-
-		/* If we have a frame decoded, see if it's time to display it. */
-		if( m_ImageWaiting == FRAME_DECODED )
+		if( !m_bThreaded )
 		{
-			float fTime = CheckFrameTime();
-			if( fTime > 0 )
-				return;
-			else if( fTime == -1 )
-				DiscardFrame();
-			else
-				ConvertFrame();
+			/* If we don't have a frame decoded, decode one. */
+			if( m_ImageWaiting == FRAME_NONE )
+				DecodeFrame();
+
+			/* If we have a frame decoded, see if it's time to display it. */
+			if( m_ImageWaiting == FRAME_DECODED )
+			{
+				float fTime = CheckFrameTime();
+				if( fTime > 0 )
+					return;
+				else if( fTime == -1 )
+					DiscardFrame();
+				else
+					ConvertFrame();
+			}
 		}
+
+		/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
+		* the decoder thread may sit around waiting for it, even though Pause and Play
+		* calls, causing the clock to keep running. */
+		if( m_ImageWaiting != FRAME_WAITING )
+			return;
+		CHECKPOINT;
+
+		UpdateFrame();
+		
+		if( m_bThreaded )
+			m_BufferFinished.Post();
 	}
 
-	/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
-	 * the decoder thread may sit around waiting for it, even though Pause and Play
-	 * calls, causing the clock to keep running. */
-	if( m_ImageWaiting != FRAME_WAITING )
-		return;
-	CHECKPOINT;
-
-	UpdateFrame();
-	
-	if( m_bThreaded )
-		m_BufferFinished.Post();
+	LOG->MapLog( "ffmpeg_looping", "MovieTexture_FFMpeg::Update looping" );
 }
 
 /* Call from the main thread when m_ImageWaiting == FRAME_WAITING to update the
