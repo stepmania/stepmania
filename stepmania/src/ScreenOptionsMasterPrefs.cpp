@@ -209,9 +209,10 @@ MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
 MOVE( Translations,			PREFSMAN->m_bShowNative );
 MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
 
-/* Autogen options */
+/* Misc. options */
 MOVE( AutogenMissingTypes,	PREFSMAN->m_bAutogenMissingTypes );
 MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
+MOVE( CheckSongCacheOnLoad,	PREFSMAN->m_bCheckSongCacheOnLoad );
 
 /* Background options */
 MOVE( BackgroundMode,		PREFSMAN->m_BackgroundMode );
@@ -420,9 +421,10 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Translations",			Translations,		"ROMANIZATION","NATIVE LANGUAGE"),
 	ConfOption( "Lyrics",				Lyrics,				"HIDE","SHOW"),
 
-	/* Autogen options */
+	/* Misc options */
 	ConfOption( "Autogen\nMissing Types", AutogenMissingTypes, "OFF","ON" ),
 	ConfOption( "Autogen\nGroup Courses", AutogenGroupCourses, "OFF","ON" ),
+	ConfOption( "Fast\nLoad",			  CheckSongCacheOnLoad,"OFF","ON" ),
 
 	/* Background options */
 	ConfOption( "Background\nMode",		BackgroundMode,		"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),
