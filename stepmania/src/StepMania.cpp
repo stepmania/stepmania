@@ -818,8 +818,22 @@ static void MountTreeOfZips( const CString &dir )
 }
 
 #ifdef _XBOX
+/*
+extern int SDL_main(int argc, char *argv[]);
+
+void __cdecl main()
+{
+	SDL_main(0, NULL);
+}
+*/
 char *xboxargv[] = { "d:\\default.xbe" };
 extern RageDisplay::VideoModeParams	g_CurrentParams;
+/*
+void __cdecl main()
+{
+	main(0, xboxargv);
+}
+*/
 #endif
 
 int main(int argc, char* argv[])

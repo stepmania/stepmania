@@ -1,7 +1,7 @@
 #include <xtl.h>
 #include <stdio.h>
 #include "custom_launch_params.h"
-#include "undocumented.h"
+#include "SDLx-0.02\SDL\src\cdrom\xbox\undocumented.h"
 
 
 CUSTOM_LAUNCH_DATA g_launchData  ;
@@ -104,7 +104,7 @@ void XReturnToLaunchingXBE( )
 	if ( g_launchReturnXBE )
 	{
 		LD_LAUNCH_DASHBOARD LaunchData = { XLD_LAUNCH_DASHBOARD_MAIN_MENU };
-		XWriteTitleInfoAndRebootA( g_launchData.szLaunchXBEOnExit, g_launchData.szRemap_D_As, LDT_TITLE, 0, &LaunchData);
+		//XWriteTitleInfoAndRebootA( g_launchData.szLaunchXBEOnExit, g_launchData.szRemap_D_As, LDT_TITLE, 0, &LaunchData);
 	}
 	else
 	{
@@ -140,8 +140,7 @@ void XLaunchNewImageWithParams( char *szXBEName, char *szMap_D_As, PCUSTOM_LAUNC
 
 	dwTitleID = GetXbeID( szDevice ) ;
 
-	XWriteTitleInfoAndRebootA( szXBEName, szMap_D_As, LDT_TITLE, dwTitleID, pLaunchData); 
-	
+	//XWriteTitleInfoAndRebootA( szXBEName, szMap_D_As, LDT_TITLE, dwTitleID, pLaunchData); 
 }
 
 
