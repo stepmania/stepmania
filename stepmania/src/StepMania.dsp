@@ -98,6 +98,10 @@ CPP=cl.exe
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_XBOX" /D "_DEBUG" /YX /FD /G6 /Ztmp /c
 # ADD CPP /nologo /W3 /Gm /GX /Zi /Od /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_sound-1.0.0" /D "WIN32" /D "_XBOX" /D "_DEBUG" /D "OGG_ONLY" /YX /FD /G6 /Ztmp /c
 # Begin Special Build Tool
+IntDir=.\Debug
+TargetDir=\stepmania\stepmania
+TargetName=default
+SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                	cl                                                                                                                                                                                                                                 /Zl                                                                                                                                                                                                                                 /nologo                                                                                                                                                                                                                                 /c                                                                                                                                                                                                                                 verstub.cpp \
                                                                                                                                                                                                                                                                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
@@ -176,6 +180,10 @@ CPP=cl.exe
 # ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /I "SDL_sound-1.0.0" /D "WIN32" /D "_XBOX" /D "NDEBUG" /YX"global.h" /FD /c
 # SUBTRACT CPP /Fr
 # Begin Special Build Tool
+IntDir=.\StepMania___Xbox_Release
+TargetDir=\stepmania\stepmania
+TargetName=default
+SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                 	cl                                                                                                                                                                                                                                  /Zl                                                                                                                                                                                                                                  /nologo                                                                                                                                                                                                                                  /c                                                                                                                                                                                                                                  verstub.cpp \
                                                                                                                                                                                                                                                                     /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
@@ -2461,6 +2469,25 @@ SOURCE=.\arch\MemoryCard\MemoryCardDriver.h
 # Begin Source File
 
 SOURCE=.\arch\MemoryCard\MemoryCardDriver_Null.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MemoryCard\MemoryCardDriver_Windows.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MemoryCard\MemoryCardDriver_Windows.h
 # End Source File
 # End Group
 # Begin Source File

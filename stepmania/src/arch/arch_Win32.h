@@ -15,6 +15,8 @@
 
 #include "Lights/LightsDriver_Win32Parallel.h"
 
+#include "MemoryCard/MemoryCardDriver_Windows.h"
+
 #undef SUPPORT_SDL_INPUT
 
 #endif

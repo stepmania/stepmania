@@ -1001,6 +1001,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					<File
 						RelativePath="arch\MemoryCard\MemoryCardDriver_Null.h">
 					</File>
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriver_Windows.cpp">
+					</File>
+					<File
+						RelativePath="arch\MemoryCard\MemoryCardDriver_Windows.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

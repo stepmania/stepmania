@@ -172,6 +172,8 @@ MemoryCardDriver *MakeMemoryCardDriver()
 
 #ifdef LINUX
 	ret = new MemoryCardDriver_Linux;
+#elif _WINDOWS
+	ret = new MemoryCardDriver_Windows;
 #endif
 	if( !ret )
 		ret = new MemoryCardDriver_Null;
