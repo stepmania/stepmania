@@ -41,6 +41,7 @@ struct ThreadSlot
 	char ThreadFormattedOutput[1024];
 
 	bool used;
+	uint64_t id;
 
 	ThreadImpl *pImpl;
 
@@ -63,9 +64,12 @@ struct ThreadSlot
 	ThreadSlot() { Init(); }
 	void Init()
 	{
-		used = false;
+		id = GetInvalidThreadId();
 		CurCheckpoint = NumCheckpoints = 0;
 		pImpl = NULL;
+
+		/* Reset used last; otherwise, a thread creation might pick up the slot. */
+		used = false;
 	}
 
 	const char *GetThreadName() const;
@@ -109,11 +113,8 @@ const char *ThreadSlot::GetFormattedCheckpoint( int lineno )
 static ThreadSlot g_ThreadSlots[MAX_THREADS];
 struct ThreadSlot *g_pUnknownThreadSlot = NULL;
 
-/* This locks all unused thread slots; once a slot is marked "used", this is no longer
- * relevant.  A thread must be fully set up before being marked used.  This is intended
- * to allow access to g_ThreadSlots without locking, since GetThreadSlotFromID is called
- * on every CHECKPOINT.  (XXX: there are race conditions on Wait(); I wish TLS was
- * more standard ...) */
+/* Lock this mutex before using or modifying pImpl.  Other values are just identifiers,
+ * so possibly racing over them is harmless (simply using a stale thread ID, etc). */
 static RageMutex g_ThreadSlotsLock("ThreadSlots");
 
 static int FindEmptyThreadSlot()
@@ -136,9 +137,7 @@ static ThreadSlot *GetThreadSlotFromID( uint64_t iID )
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
-		if( &g_ThreadSlots[entry] == g_pUnknownThreadSlot )
-			continue;
-		if( g_ThreadSlots[entry].pImpl->GetThreadId() == iID )
+		if( g_ThreadSlots[entry].id == iID )
 			return &g_ThreadSlots[entry];
 	}
 	return NULL;
@@ -196,6 +195,7 @@ void RageThread::Create( int (*fn)(void *), void *data )
 
 	/* Start a thread using our own startup function. */
 	m_pSlot->pImpl = MakeThread( fn, data );
+	m_pSlot->id = m_pSlot->pImpl->GetThreadId();
 	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", name.c_str() );
 
 	/* Only after everything in the slot is valid, mark the slot used, so all
@@ -225,6 +225,7 @@ static struct SetupUnknownThread
 		LockMut(g_ThreadSlotsLock);
 		int slot = FindEmptyThreadSlot();
 		strcpy( g_ThreadSlots[slot].name, "Unknown thread" );
+		g_ThreadSlots[slot].id = GetInvalidThreadId();
 		g_pUnknownThreadSlot = &g_ThreadSlots[slot];
 		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Unknown thread" );
 		g_ThreadSlots[slot].used = true;
@@ -251,6 +252,8 @@ int RageThread::Wait()
 	ASSERT( m_pSlot->pImpl != NULL );
 	int ret = m_pSlot->pImpl->Wait();
 
+	LockMut(g_ThreadSlotsLock);
+
 	delete m_pSlot->pImpl;
 	m_pSlot->pImpl = NULL;
 	m_pSlot->Init();
@@ -267,9 +270,7 @@ void RageThread::HaltAllThreads( bool Kill )
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
-		if( &g_ThreadSlots[entry] == g_pUnknownThreadSlot )
-			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].pImpl->GetThreadId() )
+		if( ThisThreadID == g_ThreadSlots[entry].id )
 			continue;
 		g_ThreadSlots[entry].pImpl->Halt( Kill );
 	}
@@ -282,9 +283,7 @@ void RageThread::ResumeAllThreads()
 	{
 		if( !g_ThreadSlots[entry].used )
 			continue;
-		if( &g_ThreadSlots[entry] == g_pUnknownThreadSlot )
-			continue;
-		if( ThisThreadID == g_ThreadSlots[entry].pImpl->GetThreadId() )
+		if( ThisThreadID == g_ThreadSlots[entry].id )
 			continue;
 
 		g_ThreadSlots[entry].pImpl->Resume();
@@ -529,8 +528,13 @@ void RageMutex::Lock()
 			OtherSlot? OtherSlot->GetThreadName(): "(???" ")" );
 
 #if defined(CRASH_HANDLER) && !defined(DARWIN)
+		/* Don't leave g_ThreadSlotsLock when we call ForceCrashHandlerDeadlock. */
+		g_ThreadSlotsLock.Lock();
+		uint64_t CrashHandle = OtherSlot? OtherSlot->pImpl->GetCrashHandle():0;
+		g_ThreadSlotsLock.Unlock();
+
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
-		ForceCrashHandlerDeadlock( sReason, OtherSlot? OtherSlot->pImpl->GetCrashHandle():0 );
+		ForceCrashHandlerDeadlock( sReason, CrashHandle );
 #else
 		RageException::Throw( "%s", sReason.c_str() );
 #endif
