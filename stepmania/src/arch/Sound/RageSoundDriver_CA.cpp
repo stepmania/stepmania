@@ -183,7 +183,7 @@ RageSound_CA::RageSound_CA()
 
 	const Desc& procFormat = FindClosestFormat( procFormats, mFormat );
 	stream.SetCurrentIOProcFormat( procFormat );
-	//mFormat = OTHER; // XXX Temporary
+
 	LOG->Info("Proc format is %s.",
 			  mFormat == EXACT ? "exact" : (mFormat == CANONICAL ?
 											"canonical" : "other"));
@@ -309,9 +309,9 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
 			// Convert from signed 16 bit int to signed 32 bit float
 			for (unsigned i = 0; i < buf.mDataByteSize; i += 4)
 			{
-				int16_t val = *(++ip);
+				int16_t val = *(ip++);
 				
-				*(++fp) = val / (val < 0 ? 32768.0f : 32767.0f);
+				*(fp++) = val / (val < 0 ? 32768.0f : 32767.0f);
 			}
 		}
 		
