@@ -62,7 +62,6 @@ private:
 
 	RandomSample m_soundChange;
 	RandomSample m_soundSelect;
-	RandomSample m_soundFlyOff;
 
 	CStringArray m_asGroupNames;
 	int m_iSelection;
