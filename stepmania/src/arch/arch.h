@@ -24,7 +24,8 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers);
 /* Define the default list of sound drivers for each arch.  It's
  * OK to list drivers that may not be available. */
 #if defined(LINUX)
-	#define DEFAULT_SOUND_DRIVER_LIST "ALSA9,OSS,Null"
+	/* XXX: Prefer OSS until I investigate problems with the ALSA driver. */
+	#define DEFAULT_SOUND_DRIVER_LIST "OSS,ALSA9,Null"
 #elif defined(DARWIN)
 	#define DEFAULT_SOUND_DRIVER_LIST "CoreAudio,QT,QT1"
 #elif defined(_WINDOWS)
