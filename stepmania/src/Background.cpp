@@ -17,6 +17,7 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageLog.h"
+#include "RageTextureManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
@@ -228,6 +229,8 @@ void Background::LoadFromSong( Song* pSong )
 {
 	Unload();
 
+	TEXTUREMAN->DisableOddDimensionWarning();
+
 	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
 	const float fYZoom = RECT_BACKGROUND.GetHeight() / (float)SCREEN_HEIGHT;
 
@@ -356,6 +359,8 @@ void Background::LoadFromSong( Song* pSong )
 	m_BGADanger.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 	m_BGADanger.SetZoomX( fXZoom );
 	m_BGADanger.SetZoomY( fYZoom );	
+
+	TEXTUREMAN->EnableOddDimensionWarning();
 }
 
 

@@ -866,8 +866,10 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 
 			const CString CDTitlePath = pSong->HasCDTitle()? pSong->GetCDTitlePath():g_sFallbackCDTitlePath;
+			TEXTUREMAN->DisableOddDimensionWarning();
 			m_sprCDTitleFront.Load( CDTitlePath );
 			m_sprCDTitleBack.Load( CDTitlePath );
+			TEXTUREMAN->EnableOddDimensionWarning();
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 

@@ -27,6 +27,7 @@
 #include "RageDisplay.h"
 #include "ActorUtil.h"
 #include "StepMania.h"	// for HOOKS
+#include "RageTextureManager.h"
 
 
 const float PARTICLE_SPEED = 300;
@@ -546,6 +547,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValueF( sLayer, "TileVelocityX", m_fTileVelocityX );
 	ini.GetValueF( sLayer, "TileVelocityY", m_fTileVelocityY );
 
+	if( IsBanner )
+		TEXTUREMAN->DisableOddDimensionWarning();
 
 	switch( m_Type )
 	{
@@ -613,6 +616,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	default:
 		ASSERT(0);
 	}
+	if( IsBanner )
+		TEXTUREMAN->EnableOddDimensionWarning();
 
 	bool bStartOnRandomFrame = false;
 	ini.GetValueB( sLayer, "StartOnRandomFrame", bStartOnRandomFrame );
