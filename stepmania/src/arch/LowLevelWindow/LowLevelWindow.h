@@ -13,7 +13,7 @@ public:
 
 	/* Set the video mode as close to the requested settings as possible.  They're
 	 * hints only; it's better to get the wrong mode than to bail out. */
-	virtual bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync ) = 0;
+	virtual bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile ) = 0;
 
 	virtual void SwapBuffers() = 0;
 	virtual void Update(float fDeltaTime) { }

@@ -95,8 +95,9 @@ void ApplyGraphicOptions()
 		PREFSMAN->m_iDisplayHeight, 
 		PREFSMAN->m_iDisplayColorDepth, 
 		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync );
-
+		PREFSMAN->m_bVsync,
+		THEME->GetMetric("Common","WindowTitle"),
+		THEME->GetPathToG("Common window icon") );
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
 		PREFSMAN->m_bDelayedTextureDelete, 
@@ -145,30 +146,6 @@ void ResetGame()
 }
 
 static void GameLoop();
-#include "SDL_utils.h"
-#include "SDL_image.h"
-#include "SDL_rotozoom.h"
-#include "StepMania.xpm" /* icon */
-
-static void SetIcon()
-{
-	if(!SDL_WasInit(SDL_INIT_VIDEO))
-		return;
-
-	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
-	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
-
-	/* Windows icons are 32x32 and SDL can't resize them for us, which
-	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
-	 * this is here just in case it changes.) */
-	ConvertSDLSurface(srf, srf->w, srf->h,
-		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-	zoomSurface(srf, 32, 32);
-
-	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
-	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
-	SDL_FreeSurface(srf);
-}
 
 static bool ChangeAppPri()
 {
@@ -259,11 +236,6 @@ int main(int argc, char* argv[])
 
 	LoadingWindow *loading_window = MakeLoadingWindow();
 
-	/* We might be using SDL, so set generic window properties (icon and caption).
-	 * Be careful; we might not have an SDL window at all. */
-	SDL_WM_SetCaption("StepMania", "StepMania");
-	SetIcon();
-
 	loading_window->Paint();
 
 	// changed to use time.  GetTimeSinceStart is silly because it always return 0! -Chris
@@ -299,7 +271,9 @@ int main(int argc, char* argv[])
 		PREFSMAN->m_iDisplayHeight, 
 		PREFSMAN->m_iDisplayColorDepth, 
 		PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync );
+		PREFSMAN->m_bVsync,
+		THEME->GetMetric("Common","WindowTitle"),
+		THEME->GetPathToG("Common window icon") );
 	TEXTUREMAN	= new RageTextureManager();
 	TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
@@ -309,10 +283,6 @@ int main(int argc, char* argv[])
 	/* Now that we've started DISPLAY, we can set up event masks. */
 	SDL_EventState(SDL_QUIT, SDL_ENABLE);
 	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
-
-	/* We might have a new window, so let's make sure window properties are still set. */
-	SDL_WM_SetCaption("StepMania", "StepMania");
-	SetIcon();
 
 	/* Grab the window manager specific information */
 	SDL_SysWMinfo info;

@@ -69,13 +69,13 @@ class RageDisplay
 	friend class RageTexture;
 
 public:
-	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync );
+	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
 	~RageDisplay();
 	void Update(float fDeltaTime);
 
 	bool IsSoftwareRenderer();
 
-	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync );
+	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
 
 	/* Call this when the resolution has been changed externally: */
 	void ResolutionChanged();

@@ -2,8 +2,10 @@
 
 #include "SDL_utils.h"
 #include "SDL_image.h"
+#include "SDL_rotozoom.h"
 #include "LoadingWindow_SDL.h"
 #include "loading.xpm"
+#include "StepMania.xpm" /* icon */
 
 LoadingWindow_SDL::LoadingWindow_SDL()
 {
@@ -11,23 +13,37 @@ LoadingWindow_SDL::LoadingWindow_SDL()
     if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
         RageException::Throw( "Couldn't initialize SDL: %s\n", SDL_GetError() );
 
-	/* Load the BMP file into a surface */
+	/* Set window title and icon */
+	SDL_WM_SetCaption("StepMania", "StepMania");
+
+	SDL_Surface *srf = IMG_ReadXPMFromArray(icon);
+	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
+
+	/* Windows icons are 32x32 and SDL can't resize them for us, which
+	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
+	 * this is here just in case it changes.) */
+	ConvertSDLSurface(srf, srf->w, srf->h,
+		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	zoomSurface(srf, 32, 32);
+
+	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
+	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
+	SDL_FreeSurface(srf);
+
+
+	/* Load the BMP - we need it's dimensions */
     SDL_Surface *image = IMG_ReadXPMFromArray(loading);
     if( image == NULL )
         RageException::Throw("Couldn't load loading.bmp: %s\n",SDL_GetError());
 
-    /* Initialize the display in a 640x480 16-bit mode */
+    /* Initialize the window */
     loading_screen = SDL_SetVideoMode(image->w, image->h, 16, SDL_SWSURFACE|SDL_ANYFORMAT|SDL_NOFRAME);
     if( loading_screen == NULL )
         RageException::Throw( "Couldn't initialize loading window: %s\n", SDL_GetError() );
 
-    /* Blit onto the screen surface */
     SDL_BlitSurface(image, NULL, loading_screen, NULL);
 
-    /* Free the allocated BMP surface */
     SDL_FreeSurface(image);
-
-
 }
 
 LoadingWindow_SDL::~LoadingWindow_SDL()

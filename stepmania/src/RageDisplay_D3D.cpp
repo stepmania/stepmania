@@ -28,6 +28,8 @@
 #include "SDL_video.h"	// for SDL_Surface
 #include "SDL_utils.h"
 #include "Dxerr8.h"
+#include "SDL_image.h"	// for setting icon
+#include "SDL_rotozoom.h"	// for setting icon
 
 #include "arch/arch.h"
 
@@ -166,7 +168,7 @@ const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 };
 
 
-RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync )
+RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
 	LOG->Trace( "RageDisplay::RageDisplay()" );
 
@@ -242,7 +244,7 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	}
 
 
-	SetVideoMode( windowed, width, height, bpp, rate, vsync );
+	SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
 }
 
 void RageDisplay::Update(float fDeltaTime)
@@ -350,17 +352,29 @@ HWND GetHwnd()
 }
 #endif
 
-bool IsWin98()
-{
-	OSVERSIONINFO version;
-	version.dwOSVersionInfoSize=sizeof(version);
-	GetVersionEx(&version);
-	return version.dwMajorVersion == 4;
-}
 
 /* Set the video mode. */
-bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
+bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
+	/* Set SDL window title and icon -before- creating the window */
+	SDL_WM_SetCaption(sWindowTitle, "");
+
+	SDL_Surface *srf = IMG_Load(sIconFile);
+	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
+
+	/* Windows icons are 32x32 and SDL can't resize them for us, which
+	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
+	 * this is here just in case it changes.) */
+	ConvertSDLSurface(srf, srf->w, srf->h,
+		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	zoomSurface(srf, 32, 32);
+
+	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
+	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
+	SDL_FreeSurface(srf);
+
+
+	
 	// HACK: On Windows 98, we can't call SDL_SetVideoMode while D3D is full screen.
 	// It will result in "SDL_SetVideoMode  failed: DirectDraw2::CreateSurface(PRIMARY): 
 	// Not in exclusive access mode".  So, we'll Reset the D3D device, then resize the 
@@ -486,7 +500,7 @@ int RageDisplay::GetMaxTextureSize() const
 void RageDisplay::BeginFrame()
 {
 	if( g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
-		SetVideoMode( g_Windowed, g_CurrentWidth, g_CurrentHeight, g_CurrentBPP, 0, 0 );
+		SetVideoMode( g_Windowed, g_CurrentWidth, g_CurrentHeight, g_CurrentBPP, 0, 0, "", "" );	// FIXME: preserve prefs
 
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
@@ -906,7 +920,6 @@ void RageDisplay::SetAlphaTest( bool b )
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAREF,         0 );
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
 }
-
 
 RageMatrix RageDisplay::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {

@@ -106,13 +106,13 @@ void GetGLExtensions(set<string> &ext)
 		ext.insert(lst[i]);
 }
 
-RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync )
+RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
 	LOG->Trace( "RageDisplay::RageDisplay()" );
 
 	wind = MakeLowLevelWindow();
 
-	SetVideoMode( windowed, width, height, bpp, rate, vsync );
+	SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
 
 	// Log driver details
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
@@ -258,10 +258,10 @@ void RageDisplay::ResolutionChanged()
 
 /* Set the video mode.  In some cases, changing the video mode will reset
  * the rendering context; returns true if we need to reload textures. */
-bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
+bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
 //	LOG->Trace( "RageDisplay::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
-	bool NewOpenGLContext = wind->SetVideoMode( windowed, width, height, bpp, rate, vsync );
+	bool NewOpenGLContext = wind->SetVideoMode( windowed, width, height, bpp, rate, vsync, sWindowTitle, sIconFile );
 
 	if(NewOpenGLContext)
 	{

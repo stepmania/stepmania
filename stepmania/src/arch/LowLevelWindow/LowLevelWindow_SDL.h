@@ -12,7 +12,7 @@ public:
 	LowLevelWindow_SDL();
 	~LowLevelWindow_SDL();
 	void *GetProcAddress(CString s);
-	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync );
+	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile );
 	void SwapBuffers();
 	void Update(float fDeltaTime);
 

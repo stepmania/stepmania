@@ -1,6 +1,7 @@
 #include "global.h"
 #include "LowLevelWindow_SDL.h"
-
+#include "SDL_image.h"	// for setting icon
+#include "SDL_rotozoom.h"	// for setting icon
 #include "RageLog.h"
 #include "RageDisplay.h" // for REFRESH_DEFAULT
 
@@ -23,7 +24,7 @@ void *LowLevelWindow_SDL::GetProcAddress(CString s)
 	return SDL_GL_GetProcAddress(s);
 }
 
-bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
+bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
@@ -39,6 +40,26 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 	SDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
 
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
+
+
+	/* Set SDL window title and icon -before- creating the window */
+	SDL_WM_SetCaption(sWindowTitle, "");
+
+	SDL_Surface *srf = IMG_Load(sIconFile);
+	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
+
+	/* Windows icons are 32x32 and SDL can't resize them for us, which
+	 * causes mask corruption.  (Actually, the above icon *is* 32x32;
+	 * this is here just in case it changes.) */
+	ConvertSDLSurface(srf, srf->w, srf->h,
+		32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	zoomSurface(srf, 32, 32);
+
+	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
+	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
+	SDL_FreeSurface(srf);
+
+
 
 	Windowed = false;
 
@@ -152,7 +173,9 @@ void LowLevelWindow_SDL::Update(float fDeltaTime)
 					DISPLAY->GetHeight(), 
 					DISPLAY->GetBPP(), 
 					0, 
-					0 );
+					0,
+					"",
+					"" );	// FIXME: preserve prefs
 			}
 			break;
 		}
