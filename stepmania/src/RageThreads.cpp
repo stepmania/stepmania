@@ -571,7 +571,7 @@ void RageMutex::Lock()
 		const CString sReason = ssprintf( "Thread deadlock on mutex %s between %s and %s",
 			GetName().c_str(), ThisSlotName.c_str(), OtherSlotName.c_str() );
 
-#if defined(CRASH_HANDLER) && !defined(DARWIN)
+#if defined(CRASH_HANDLER)
 		/* Don't leave g_ThreadSlotsLock when we call ForceCrashHandlerDeadlock. */
 		g_ThreadSlotsLock.Lock();
 		uint64_t CrashHandle = OtherSlot? OtherSlot->id:0;
