@@ -117,21 +117,11 @@ protected:
 	RageSound		m_SoundToggleOff;
 
 	// metrics
-	ThemeMetric<float>				ARROWS_X;
-	ThemeMetric<float>				LABELS_X;
-	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
 	ThemeMetric<int>				NUM_ROWS_SHOWN;
 	ThemeMetric1D<float>			ROW_Y;
 	ThemeMetric<float>				ROW_Y_OFF_SCREEN_TOP;
 	ThemeMetric<float>				ROW_Y_OFF_SCREEN_CENTER;
 	ThemeMetric<float>				ROW_Y_OFF_SCREEN_BOTTOM;
-	ThemeMetric<float>				ITEMS_ZOOM;
-	ThemeMetric<float>				ITEMS_START_X;
-	ThemeMetric<float>				ITEMS_END_X;
-	ThemeMetric<float>				ITEMS_GAP_X;
-	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
-	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
-	ThemeMetric1D<float>			ICONS_X;
 	ThemeMetric1D<float>			EXPLANATION_X;
 	ThemeMetric1D<float>			EXPLANATION_Y;
 	ThemeMetric1D<apActorCommands>	EXPLANATION_ON_COMMAND;
@@ -142,15 +132,11 @@ protected:
 	ThemeMetric<float>				SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>				SCROLL_BAR_TIME;
 	ThemeMetric<float>				EXPLANATION_ZOOM;
-	ThemeMetric<RageColor>			COLOR_SELECTED;
-	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
-	ThemeMetric<RageColor>			COLOR_DISABLED;
 	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
 	ThemeMetric<apActorCommands>	FRAME_OFF_COMMAND;
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
-	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
 };
 
 #endif

@@ -84,13 +84,9 @@ public:
 	~OptionRow();
 
 	void Clear();
+	void LoadMetrics( const CString &sType );
 	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown );
-	void LoadExit(
-		const CString &sFontPath,
-		const CString &sExitText,
-		float fItemLongRowSharedX,
-		float fItemZoom
-		);
+	void LoadExit();
 	void LoadOptionIcon( PlayerNumber pn, const CString &sText );
 
 	void ImportOptions();
@@ -98,32 +94,16 @@ public:
 
 	void AfterImportOptions( 
 		Font* pFont, 
-		float fItemStartX, 
-		float fItemGapX, 
-		float fItemEndX, 
-		float fItemLongRowSharedX,
-		const ThemeMetric1D<float> &fItemLongRowX,
-		float fItemZoom, 
-		bool bCapitalizeAllOptionNames,
-		const CString &sFontItemPath,
-		const CString &sFontTitlePath,
 		const CString &sTitle,
-		const CString &sBulletPath,
-		float fLabelX, 
-		float fArrowX,
-		float fY,
-		const ThemeMetric<apActorCommands> &cmdLabelOn
+		float fY
 		);
 	void DetachHandler();
 
 	void PositionUnderlines( bool bShowUnderlines, float fTweenSeconds );
-	void PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenSeconds );
-	void UpdateText( bool bCapitalizeAllOptionNames );
+	void PositionIcons( float fTweenSeconds );
+	void UpdateText();
 	void UpdateEnabledDisabled( 
 		bool bThisRowHasFocus[NUM_PLAYERS], 
-		const RageColor &colorFocus, 
-		const RageColor &colorNoFocus, 
-		const RageColor &colorDisabled, 
 		float fTweenSeconds );
 
 	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;
@@ -166,6 +146,7 @@ public:
 	virtual void HandleMessage( const CString& sMessage );
 
 protected:
+	CString 					m_sType;
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;
 	OptionRowHandler*		m_pHand;
@@ -179,6 +160,22 @@ protected:
 	float m_fY;
 	bool m_bHidden; // currently off screen
 
+	
+	// metrics
+	ThemeMetric<float>				ARROWS_X;
+	ThemeMetric<float>				LABELS_X;
+	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
+	ThemeMetric<float>				ITEMS_ZOOM;
+	ThemeMetric<float>				ITEMS_START_X;
+	ThemeMetric<float>				ITEMS_END_X;
+	ThemeMetric<float>				ITEMS_GAP_X;
+	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
+	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
+	ThemeMetric1D<float>			ICONS_X;
+	ThemeMetric<RageColor>			COLOR_SELECTED;
+	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
+	ThemeMetric<RageColor>			COLOR_DISABLED;
+	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
 };
 
 #endif

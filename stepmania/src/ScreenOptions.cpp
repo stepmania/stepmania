@@ -68,8 +68,6 @@
 const float TWEEN_SECONDS = 0.3f;
 
 CString ROW_Y_NAME( size_t r )					{ return ssprintf("Row%dY",r+1); }
-CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
-CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
 CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
 CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",p+1); }
 CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",p+1); }
@@ -77,21 +75,11 @@ CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%
 
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName),
-	ARROWS_X   						(m_sName,"ArrowsX"),
-	LABELS_X						(m_sName,"LabelsX"),
-	LABELS_ON_COMMAND				(m_sName,"LabelsOnCommand"),
 	NUM_ROWS_SHOWN					(m_sName,"NumRowsShown"),
 	ROW_Y							(m_sName,ROW_Y_NAME,NUM_ROWS_SHOWN),
 	ROW_Y_OFF_SCREEN_TOP			(m_sName,"RowYOffScreenTop"),
 	ROW_Y_OFF_SCREEN_CENTER			(m_sName,"RowYOffScreenCenter"),
 	ROW_Y_OFF_SCREEN_BOTTOM			(m_sName,"RowYOffScreenBottom"),
-	ITEMS_ZOOM						(m_sName,"ItemsZoom"),
-	ITEMS_START_X					(m_sName,"ItemsStartX"),
-	ITEMS_END_X						(m_sName,"ItemsEndX"),
-	ITEMS_GAP_X						(m_sName,"ItemsGapX"),
-	ITEMS_LONG_ROW_X				(m_sName,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS),
-	ITEMS_LONG_ROW_SHARED_X			(m_sName,"ItemsLongRowSharedX"),
-	ICONS_X							(m_sName,ICONS_X_NAME,NUM_PLAYERS),
 	EXPLANATION_X					(m_sName,EXPLANATION_X_NAME,NUM_PLAYERS),
 	EXPLANATION_Y					(m_sName,EXPLANATION_Y_NAME,NUM_PLAYERS),
 	EXPLANATION_ON_COMMAND			(m_sName,EXPLANATION_ON_COMMAND_NAME,NUM_PLAYERS),
@@ -102,15 +90,11 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SCROLL_BAR_HEIGHT				(m_sName,"ScrollBarHeight"),
 	SCROLL_BAR_TIME					(m_sName,"ScrollBarTime"),
 	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
-	COLOR_SELECTED					(m_sName,"ColorSelected"),
-	COLOR_NOT_SELECTED				(m_sName,"ColorNotSelected"),
-	COLOR_DISABLED					(m_sName,"ColorDisabled"),
 	SHOW_BPM_IN_SPEED_TITLE			(m_sName,"ShowBpmInSpeedTitle"),
 	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
 	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
-	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
-	CAPITALIZE_ALL_OPTION_NAMES		(m_sName,"CapitalizeAllOptionNames")
+	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY")
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 }
@@ -169,6 +153,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
+		row.LoadMetrics( m_sName );
 		row.LoadNormal( vDefs[r], vHands[r], bFirstRowGoesDown );
 
 		this->ImportOptions( r );
@@ -181,21 +166,8 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 
 		row.AfterImportOptions( 
 			pFont, 
-			ITEMS_START_X, 
-			ITEMS_GAP_X, 
-			ITEMS_END_X, 
-			ITEMS_LONG_ROW_SHARED_X,
-			ITEMS_LONG_ROW_X,
-			ITEMS_ZOOM, 
-			CAPITALIZE_ALL_OPTION_NAMES,
-			THEME->GetPathF(m_sName,"item"),
-			THEME->GetPathF(m_sName,"title"),
 			GetExplanationTitle( r ),
-			THEME->GetPathG(m_sName,"bullet"),
-			LABELS_X,
-			ARROWS_X,
-			fY,
-			LABELS_ON_COMMAND
+			fY
 			);
 	}
 
@@ -233,12 +205,8 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	m_Rows.push_back( new OptionRow() );
 	OptionRow &row = *m_Rows.back();
-	row.LoadExit(
-		THEME->GetPathF(m_sName,"item"),
-		THEME->GetMetric("OptionNames","Exit"),
-		ITEMS_LONG_ROW_SHARED_X,
-		ITEMS_ZOOM
-		);
+	row.LoadMetrics( m_sName );
+	row.LoadExit();
 
 	m_framePage.AddChild( &row );
 
@@ -426,7 +394,7 @@ void ScreenOptions::PositionIcons()
 	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 	{
 		OptionRow &row = *m_Rows[i];
-		row.PositionIcons( ICONS_X, TWEEN_SECONDS );
+		row.PositionIcons( TWEEN_SECONDS );
 			continue;
 	}
 }
@@ -494,7 +462,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 void ScreenOptions::UpdateText( int iRow )
 {
 	OptionRow &row = *m_Rows[iRow];
-	row.UpdateText( CAPITALIZE_ALL_OPTION_NAMES );
+	row.UpdateText();
 }
 
 void ScreenOptions::UpdateEnabledDisabled( int r )
@@ -507,9 +475,6 @@ void ScreenOptions::UpdateEnabledDisabled( int r )
 
 	row.UpdateEnabledDisabled( 
 		bRowHasFocus, 
-		COLOR_SELECTED, 
-		COLOR_NOT_SELECTED, 
-		COLOR_DISABLED, 
 		TWEEN_SECONDS );
 }
 

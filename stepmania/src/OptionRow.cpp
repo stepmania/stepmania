@@ -24,6 +24,8 @@ StringToX( LayoutType );
 
 const CString NEXT_ROW_NAME = "NextRow";
 
+CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
+CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
 
 OptionRow::OptionRow()
 {
@@ -72,6 +74,25 @@ void OptionRow::DetachHandler()
 	m_pHand = NULL;
 }
 
+void OptionRow::LoadMetrics( const CString &sType )
+{
+	m_sType = sType;
+	ARROWS_X   						.Load(m_sType,"ArrowsX");
+	LABELS_X						.Load(m_sType,"LabelsX");
+	LABELS_ON_COMMAND				.Load(m_sType,"LabelsOnCommand");
+	ITEMS_ZOOM						.Load(m_sType,"ItemsZoom");
+	ITEMS_START_X					.Load(m_sType,"ItemsStartX");
+	ITEMS_END_X						.Load(m_sType,"ItemsEndX");
+	ITEMS_GAP_X						.Load(m_sType,"ItemsGapX");
+	ITEMS_LONG_ROW_X				.Load(m_sType,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
+	ITEMS_LONG_ROW_SHARED_X			.Load(m_sType,"ItemsLongRowSharedX");
+	ICONS_X							.Load(m_sType,ICONS_X_NAME,NUM_PLAYERS);
+	COLOR_SELECTED					.Load(m_sType,"ColorSelected");
+	COLOR_NOT_SELECTED				.Load(m_sType,"ColorNotSelected");
+	COLOR_DISABLED					.Load(m_sType,"ColorDisabled");
+	CAPITALIZE_ALL_OPTION_NAMES		.Load(m_sType,"CapitalizeAllOptionNames");
+}
+
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
 {
 	m_RowDef = def;
@@ -112,23 +133,27 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 
 void OptionRow::AfterImportOptions( 
 	Font* pFont, 
-	float fItemStartX, 
-	float fItemGapX, 
-	float fItemEndX, 
-	float fItemLongRowSharedX,
-	const ThemeMetric1D<float> &fItemLongRowX,
-	float fItemZoom, 
-	bool bCapitalizeAllOptionNames,
-	const CString &sFontItemPath,
-	const CString &sFontTitlePath,
 	const CString &sTitle,
-	const CString &sBulletPath,
-	float fLabelX, 
-	float fArrowX,
-	float fY,
-	const ThemeMetric<apActorCommands> &cmdLabelOn
+	float fY
 	)
 {
+	/*
+	ITEMS_START_X, 
+	ITEMS_GAP_X, 
+	ITEMS_END_X, 
+	ITEMS_LONG_ROW_SHARED_X,
+	ITEMS_LONG_ROW_X,
+	ITEMS_ZOOM, 
+	CAPITALIZE_ALL_OPTION_NAMES,
+	THEME->GetPathF(m_sType,"item"),
+	THEME->GetPathF(m_sType,"title"),
+	THEME->GetPathG(m_sType,"bullet"),
+	LABELS_X,
+	ARROWS_X,
+	LABELS_ON_COMMAND
+*/
+
+	
 	// Make all selections the same if bOneChoiceForAllPlayers
 	if( m_RowDef.bOneChoiceForAllPlayers )
 	{
@@ -174,19 +199,19 @@ void OptionRow::AfterImportOptions(
 
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
-		float fX = fItemStartX;
+		float fX = ITEMS_START_X;
 		
 		for( unsigned c=0; c<m_RowDef.choices.size(); c++ )
 		{
 			CString sText = m_RowDef.choices[c];
-			if( bCapitalizeAllOptionNames )
+			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
-			fX += fItemZoom * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
+			fX += ITEMS_ZOOM * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
 			
 			if( c != m_RowDef.choices.size()-1 )
-				fX += fItemGapX;
+				fX += ITEMS_GAP_X;
 
-			if( fX > fItemEndX ) 
+			if( fX > ITEMS_END_X ) 
 			{
 				m_RowDef.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 				break;
@@ -208,22 +233,22 @@ void OptionRow::AfterImportOptions(
 
 			const int iChoiceInRowWithFocus = m_iChoiceInRowWithFocus[p];
 
-			bt->LoadFromFont( sFontItemPath );
+			bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 			CString sText = m_RowDef.choices[iChoiceInRowWithFocus];
-			if( bCapitalizeAllOptionNames )
+			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
 			bt->SetText( sText );
-			bt->SetZoom( fItemZoom );
+			bt->SetZoom( ITEMS_ZOOM );
 			bt->SetShadowLength( 0 );
 
 			if( m_RowDef.bOneChoiceForAllPlayers )
 			{
-				bt->SetX( fItemLongRowSharedX );
+				bt->SetX( ITEMS_LONG_ROW_SHARED_X );
 				break;	// only initialize one item since it's shared
 			}
 			else
 			{
-				bt->SetX( fItemLongRowX.GetValue(p) );
+				bt->SetX( ITEMS_LONG_ROW_X.GetValue(p) );
 			}
 		}
 
@@ -242,18 +267,18 @@ void OptionRow::AfterImportOptions(
 
 	case LAYOUT_SHOW_ALL_IN_ROW:
 		{
-			float fX = fItemStartX;
+			float fX = ITEMS_START_X;
 			for( unsigned c=0; c<m_RowDef.choices.size(); c++ )
 			{
 				// init text
 				BitmapText *bt = new BitmapText;
 				m_textItems.push_back( bt );
-				bt->LoadFromFont( sFontItemPath );
+				bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 				CString sText = m_RowDef.choices[c];
-				if( bCapitalizeAllOptionNames )
+				if( CAPITALIZE_ALL_OPTION_NAMES )
 					sText.MakeUpper();
 				bt->SetText( sText );
-				bt->SetZoom( fItemZoom );
+				bt->SetZoom( ITEMS_ZOOM );
 				bt->SetShadowLength( 0 );
 
 				// set the X position of each item in the line
@@ -271,7 +296,7 @@ void OptionRow::AfterImportOptions(
 					ul->SetWidth( truncf(fItemWidth) );
 				}
 
-				fX += fItemWidth/2 + fItemGapX;
+				fX += fItemWidth/2 + ITEMS_GAP_X;
 			}
 		}
 		break;
@@ -287,13 +312,13 @@ void OptionRow::AfterImportOptions(
 			this->AddChild( m_Underline[p][c] );
 
 
-	m_textTitle.LoadFromFont( sFontTitlePath );
+	m_textTitle.LoadFromFont( THEME->GetPathF(m_sType,"title") );
 	m_textTitle.SetText( sTitle );
-	m_textTitle.SetXY( fLabelX, fY );
-	m_textTitle.RunCommands( cmdLabelOn );
+	m_textTitle.SetXY( LABELS_X, fY );
+	m_textTitle.RunCommands( LABELS_ON_COMMAND );
 
-	m_sprBullet.Load( sBulletPath );
-	m_sprBullet.SetXY( fArrowX, fY );
+	m_sprBullet.Load( THEME->GetPathG(m_sType,"bullet") );
+	m_sprBullet.SetXY( ARROWS_X, fY );
 	
 	// set the Y position of each item in the line
 	for( unsigned c=0; c<m_textItems.size(); c++ )
@@ -307,23 +332,24 @@ void OptionRow::AfterImportOptions(
 			m_iChoiceInRowWithFocus[p] = 0;	
 }
 
-void OptionRow::LoadExit(
-	const CString &sFontPath,
-	const CString &sExitText,
-	float fItemLongRowSharedX,
-	float fItemZoom
-	)
+void OptionRow::LoadExit()
 {
+	/*
+			THEME->GetPathF(m_sType,"item"),
+		THEME->GetMetric("OptionNames","Exit"),
+		ITEMS_LONG_ROW_SHARED_X,
+		ITEMS_ZOOM
+*/
 	m_RowType = OptionRow::ROW_EXIT;
 
 	BitmapText *bt = new BitmapText;
 	m_textItems.push_back( bt );
 
-	bt->LoadFromFont( sFontPath );
-	bt->SetText( sExitText );
-	bt->SetZoom( fItemZoom );
+	bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
+	bt->SetText( THEME->GetMetric("OptionNames","Exit") );
+	bt->SetZoom( ITEMS_ZOOM );
 	bt->SetShadowLength( 0 );
-	bt->SetX( fItemLongRowSharedX );
+	bt->SetX( ITEMS_LONG_ROW_SHARED_X );
 	this->AddChild( bt );
 
 	FOREACH_PlayerNumber( p )
@@ -375,8 +401,11 @@ void OptionRow::PositionUnderlines( bool bShowUnderlines, float fTweenSeconds )
 	}
 }
 
-void OptionRow::PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenSeconds )
+void OptionRow::PositionIcons( float fTweenSeconds )
 {
+	/*
+	ICONS_X
+	*/
 	if( m_RowType == OptionRow::ROW_EXIT )
 		return;
 
@@ -388,7 +417,7 @@ void OptionRow::PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenS
 
 		int iWidth, iX, iY;			// We only use iY
 		GetWidthXY( p, iChoiceWithFocus, iWidth, iX, iY );
-		icon.SetX( fIconX.GetValue(p) );
+		icon.SetX( ICONS_X.GetValue(p) );
 
 		if( icon.GetDestY() != m_fY )
 		{
@@ -402,8 +431,11 @@ void OptionRow::PositionIcons( const ThemeMetric1D<float> &fIconX, float fTweenS
 	}
 }
 
-void OptionRow::UpdateText( bool bCapitalizeAllOptionNames )
+void OptionRow::UpdateText()
 {
+	/*
+	CAPITALIZE_ALL_OPTION_NAMES
+	*/
 	switch( m_RowDef.layoutType )
 	{
 	case LAYOUT_SHOW_ONE_IN_ROW:
@@ -416,7 +448,7 @@ void OptionRow::UpdateText( bool bCapitalizeAllOptionNames )
 			item_no = min( item_no, m_textItems.size()-1 );
 
 			CString sText = m_RowDef.choices[iChoiceWithFocus];
-			if( bCapitalizeAllOptionNames )
+			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
 			m_textItems[item_no]->SetText( sText );
 		}
@@ -426,11 +458,14 @@ void OptionRow::UpdateText( bool bCapitalizeAllOptionNames )
 
 void OptionRow::UpdateEnabledDisabled( 
 	bool bThisRowHasFocus[NUM_PLAYERS], 
-	const RageColor &colorFocus, 
-	const RageColor &colorNoFocus, 
-	const RageColor &colorDisabled, 
 	float fTweenSeconds )
 {
+	/*
+		COLOR_SELECTED, 
+		COLOR_NOT_SELECTED, 
+		COLOR_DISABLED, 
+	*/
+
 	bool bThisRowHasFocusByAny = false;
 	FOREACH_HumanPlayer( p )
 		bThisRowHasFocusByAny |= bThisRowHasFocus[p];
@@ -442,7 +477,7 @@ void OptionRow::UpdateEnabledDisabled(
 	float fDiffuseAlpha = m_bHidden? 0.0f:1.0f;
 
 	/* Don't tween selection colors at all. */
-	RageColor color = bThisRowHasFocusByAny ? colorFocus:colorNoFocus;
+	RageColor color = bThisRowHasFocusByAny ? COLOR_SELECTED:COLOR_NOT_SELECTED;
 	m_sprBullet.SetGlobalDiffuseColor( color );
 	m_textTitle.SetGlobalDiffuseColor( color );
 
@@ -469,11 +504,11 @@ void OptionRow::UpdateEnabledDisabled(
 			bool bRowEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
 			
 			if( bThisRowHasFocus[pn] )
-				color = colorFocus;
+				color = COLOR_SELECTED;
 			else if( bRowEnabled )
-				color = colorNoFocus;
+				color = COLOR_NOT_SELECTED;
 			else
-				color = colorDisabled;
+				color = COLOR_DISABLED;
 
 			color.a = (bRowEnabled && !m_bHidden) ? 1.0f:0.0f;
 
@@ -508,7 +543,7 @@ void OptionRow::UpdateEnabledDisabled(
 	if( m_RowType == OptionRow::ROW_EXIT )
 	{
 		if( bThisRowHasFocusByAll )
-			m_textItems[0]->SetEffectDiffuseShift( 1.0f, colorFocus, colorNoFocus );
+			m_textItems[0]->SetEffectDiffuseShift( 1.0f, COLOR_SELECTED, COLOR_NOT_SELECTED );
 		else
 			m_textItems[0]->SetEffectNone();
 	}
@@ -621,7 +656,7 @@ void OptionRow::Reload()
 		{
 			ASSERT( m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW );
 			m_RowDef = def;
-			UpdateText( true );
+			UpdateText();
 		}
 		break;
 	case OptionRow::ROW_EXIT:
