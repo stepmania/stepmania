@@ -429,6 +429,8 @@ FileSet &FilenameDB::GetFileSet(CString dir, bool ResolveCase)
 
 void FilenameDB::FlushDirCache()
 {
+	for( map<istring, FileSet *>::iterator i = dirs.begin(); i != dirs.end(); ++i )
+		delete i->second;
 	dirs.clear();
 }
 
