@@ -159,7 +159,7 @@ public:
 };
 
 /* Convert floating-point 0..1 value to integer 0..255 value. */
-inline unsigned char FTOC(float a) { return (unsigned char)(max(min(a, 1.f), 0.f) * 255.f); }
+inline unsigned char FTOC(float a) { return (unsigned char)(a * 255.f); }
 
 /* Color type used only in vertex lists.  OpenGL expects colors in
  * r, g, b, a order, independent of endianness, so storing them this
