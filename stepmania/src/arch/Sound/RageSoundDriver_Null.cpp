@@ -11,10 +11,12 @@ void RageSound_Null::Update( float fDeltaTime )
 	/* "Play" frames. */
 	while( last_cursor_pos < GetPosition(NULL)+1024 )
 	{
-		int16_t buf[512*channels];
-		this->Mix( buf, 512, last_cursor_pos, GetPosition(NULL) );
-		last_cursor_pos += 512;
+		int16_t buf[256*channels];
+		this->Mix( buf, 256, last_cursor_pos, GetPosition(NULL) );
+		last_cursor_pos += 256;
 	}
+
+	RageSound_Generic_Software::Update( fDeltaTime );
 }
 
 int64_t RageSound_Null::GetPosition( const RageSoundBase *snd ) const
