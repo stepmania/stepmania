@@ -26,6 +26,7 @@ void ModeChoice::Init()
 	m_sModifiers = "";
 	m_sAnnouncer = "";
 	m_sScreen = "";
+	m_pSong = NULL;
 	m_pSteps = NULL;
 	m_pCharacter = NULL;
 	m_CourseDifficulty = COURSE_DIFFICULTY_INVALID;
@@ -78,6 +79,8 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 			return false;
 	}
 
+	if( m_pSong && GAMESTATE->m_pCurSong != m_pSong )
+		return false;
 	if( m_pSteps && GAMESTATE->m_pCurNotes[pn] != m_pSteps )
 		return false;
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
@@ -161,6 +164,13 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 			m_sModifiers += sValue;
 		}
 		
+		if( sName == "song" )
+		{
+			m_pSong = SONGMAN->FindSong( sValue );
+			if( m_pSong == NULL )
+				m_bInvalid |= true;
+		}
+
 		if( sName == "screen" )
 			m_sScreen = sValue;
 	}
@@ -285,6 +295,8 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
 	if( m_sModifiers != "" )
 		GAMESTATE->ApplyModifiers( pn, m_sModifiers );
+	if( m_pSong )
+		GAMESTATE->m_pCurSong = m_pSong;
 	if( m_pSteps )
 		GAMESTATE->m_pCurNotes[pn] = m_pSteps;
 	if( m_pCharacter )
@@ -321,6 +333,7 @@ bool ModeChoice::IsZero() const
 		m_dc != DIFFICULTY_INVALID ||
 		m_sAnnouncer != "" ||
 		m_sModifiers != "" ||
+		m_pSong != NULL || 
 		m_pSteps != NULL || 
 		m_pCharacter != NULL || 
 		m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )

@@ -16,6 +16,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 
+class Song;
 class Steps;
 class Character;
 
@@ -42,6 +43,7 @@ struct ModeChoice		// used in SelectMode
 	CString		m_sAnnouncer;
 	CString		m_sModifiers;
 	CString		m_sScreen;
+	Song*		m_pSong;
 	Steps*		m_pSteps;
 	Character*	m_pCharacter;
 	CourseDifficulty	m_CourseDifficulty;
