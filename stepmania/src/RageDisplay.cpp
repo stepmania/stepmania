@@ -202,26 +202,17 @@ bool RageDisplay::SwitchDisplayMode(
 			fmtDisplay = fmtBackBuffer = arrayBackBufferFormats[i];
 		}
 
-		LOG->Trace( "Testing format: display %d, back buffer %d, windowed %d...", fmtDisplay, fmtBackBuffer, bWindowed );
+		LOG->Trace( CString(i? "That won't work.  ":"") +
+					"Testing format: display %d, back buffer %d, windowed %d...",
+					fmtDisplay, fmtBackBuffer, bWindowed );
 
-		hr = m_pd3d->CheckDeviceType( 
-			D3DADAPTER_DEFAULT, 
-			D3DDEVTYPE_HAL, 
-			fmtDisplay, 
-			fmtBackBuffer, 
-			bWindowed
-		);
+		hr = m_pd3d->CheckDeviceType( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
+			fmtDisplay, fmtBackBuffer, bWindowed );
 
 		if( SUCCEEDED(hr) )
-		{
-			LOG->Trace( "This will work." );
 			break;	// done searching
-		}
-		else
-		{
-			LOG->Trace( "This won't work.  Keep searching." );
-		}
 	}
+	LOG->Trace( "This will work." );
 
 	if( i == arrayBackBufferFormats.GetSize() )		// we didn't find an appropriate format
 	{
