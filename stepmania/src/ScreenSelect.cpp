@@ -95,64 +95,11 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 {
 //	LOG->Trace( "ScreenSelect::Input()" );
 
-	if( MenuI.IsValid() && MenuI.button==MENU_BUTTON_START )
+	if( Screen::JoinInput(DeviceI, type, GameI, MenuI, StyleI) )
 	{
-		PlayerNumber pn = MenuI.player;
-		if( GAMESTATE->m_bPlayersCanJoin )
-		{
-			if( pn!=PLAYER_INVALID  && !GAMESTATE->m_bSideIsJoined[pn] )
-			{
-				/* I think JP should allow playing two-pad singleplayer modes (doubles),
-				* but not two-pad two-player modes (battle).  (Battle mode isn't "joint".)
-				* That means we should leave player-entry logic alone and simply enable
-				* couples mode if JP is on and only one person has clicked in.  (However,
-				* that means we'll display couples even if we don't really know if we have
-				* a second pad, which is a little annoying.) 
-				*
-				* Also, credit deduction should be handled in StepMania.cpp (along with
-				* the coin logic) using GAMESTATE->m_bPlayersCanJoin, since there
-				* are other screens you can join (eg ScreenCaution). -glenn */
-				
-				/* Joint premium on a DDR machine does allow two player modes with a single
-				 * credit.		-Chris 
-				*/
-
-				/* Indeed, I can see three different premium settings here:
-				AnyPlayersTwoCoins (2 coins for doubles and 2 coins for versus)
-				OnePlayerOneCoin (1 coin for doubles, but 2 coins for versus (like pump and ez2))
-				TwoPlayerOneCoin (1 coin for doubles / versus play)
-				perhaps we should change the joint premium system to work this way?
-				That way we can support all gametypes.
-				*/
-
-				if( PREFSMAN->m_iCoinMode == COIN_PAY )
-				{
-					if( !PREFSMAN->m_bJointPremium )
-					{
-						if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-						{
-							/* Joint Premium is NOT enabled, and we do not have enough credits */
-							return;
-						}
-
-						/* Joint Premium is NOT enabled, but we have enough credits. Pay up! */
-						GAMESTATE->m_iCoins -= PREFSMAN->m_iCoinsPerCredit;
-					}
-				}
-
-				/* If credits had to be used, it's already taken care of.. add the player */
-				SOUND->PlayOnce( THEME->GetPathToS("Common start") );
-				GAMESTATE->m_bSideIsJoined[pn] = true;
-				SCREENMAN->RefreshCreditsMessages();
-				this->UpdateSelectableChoices();
-				return;
-			}
-		}
+		this->UpdateSelectableChoices();
+		return;
 	}
-
-// For some reason the menu likes to take 10 seconds to transition O_o
-// quite noticeable pause... and in the meantime the player is sitting there
-// wondering why their keys aren't working... even ESC... @_@
 
 	if( m_Menu.IsTransitioning() )
 		return;
