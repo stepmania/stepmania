@@ -493,7 +493,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			 * map 1=2 is the same as
 			 * range unicode #1-1=2
 			 */
-			CString codepoint = val.substr(4); /* "XXXX" */
+			CString codepoint = val.substr(4); /* "CODEPOINT" */
 		
 			Game game = GAME_INVALID;
 
@@ -507,8 +507,11 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				game = GameManager::StringToGameType(gamename);
 
 				if(game == GAME_INVALID)
-					RageException::Throw( "Font definition '%s' uses unknown game type '%s'",
+				{
+					LOG->Warn( "Font definition '%s' uses unknown game type '%s'",
 						ini.GetPath().GetString(), gamename.GetString() );
+					continue;
+				}
 			}
 
 			longchar c=-1;
@@ -518,8 +521,11 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				c = FontCharAliases::GetChar(codepoint);
 
 			if(c == -1)
-				RageException::Throw( "Font definition '%s' has an invalid value '%s'.",
+			{
+				LOG->Warn("Font definition '%s' has an invalid value '%s'.",
 					ini.GetPath().GetString(), val.GetString() );
+				continue;
+			}
 
 			if(game != GAME_INVALID) c = FontManager::MakeGameGlyph(c, game);
 
