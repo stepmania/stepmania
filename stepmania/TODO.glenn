@@ -7,36 +7,17 @@ low-pri to bother bringing up on the list.
 
 ********
 
-For the gameplay screen, we transition to the "Stage" display, sit
-around for a long time, fade out the Stage display, then load the
-gameplay screen and tween it in.
-
 It'd be nice if we could go straight from one screen to another, tweening
 one off and the other on simultaneously (with a delay so it doesn't
 look like a jumble, but in parallel).
 
 Here's the idea:
 
-First, allow "buffering" a screen.  This loads the screen in the
-ScreenManager, but doesn't actually display it, so we have control
-over when it starts tweening in.  Screens will need to be adjusted
-to only load actors in the ctor, and receive a startup message to
-do the rest.
-
-This alone will let us load the gameplay screen while the stage
-screen is still displayed.  Currently, we wait four seconds, fade
-out, then spend another second or two loading; we should load then
-sleep for the remainder, so we always get four seconds (and less
-if we get rushed along by the start button).
-
-Once that's done, we can go a step further: render the prepped screen
-after it's loaded, set up crossfades (instead of two successive plain
-fades) which look as good but don't take as much time; and tween in
-parallel.
-
-(Once *that's* done, we can figure out if we want to use this for
-tweening menus, too.  For example, old screen shows its keepalive,
-preps the new menu, hides its keepalive, then both tween.)
+Old menu displays its keepalive, and preps the new screen.  Then, add
+the new screen to the top of the screen stack, the old menu hides its
+keepalive, then the old screen tweens out while the new screen tweens
+in.  (This will need some tuning; they shouldn't both start at once, since
+there'll be too much onscreen and it'll just look like a jumble.)
 
 ********
 We have different kinds of things we want to trace, and different
