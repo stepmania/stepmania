@@ -86,10 +86,10 @@ void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
  * DWI announcers transparently, too. */
 static const char *aliases[][2] = {
 	/* ScreenSelectDifficulty compatibility: */
-	{ "ScreenSelectDifficulty comment arcade-beginner", "select difficulty comment beginner" },
-	{ "ScreenSelectDifficulty comment arcade-easy", "select difficulty comment easy" },
-	{ "ScreenSelectDifficulty comment arcade-medium", "select difficulty comment medium" },
-	{ "ScreenSelectDifficulty comment arcade-hard", "select difficulty comment hard" },
+	{ "ScreenSelectDifficulty comment beginner", "select difficulty comment beginner" },
+	{ "ScreenSelectDifficulty comment easy", "select difficulty comment easy" },
+	{ "ScreenSelectDifficulty comment medium", "select difficulty comment medium" },
+	{ "ScreenSelectDifficulty comment hard", "select difficulty comment hard" },
 	{ "ScreenSelectDifficulty comment oni", "select difficulty comment oni" },
 	{ "ScreenSelectDifficulty comment nonstop", "select difficulty comment nonstop" },
 	{ "ScreenSelectDifficulty comment endless", "select difficulty comment endless" },
