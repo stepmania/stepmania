@@ -2,26 +2,21 @@
 -----------------------------------------------------------------------------
  File: ScreenSongOptions.h
 
- Desc: Select a song.
-
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
 #ifndef SCREEN_SONG_OPTIONS_H
 #define SCREEN_SONG_OPTIONS_H
 
-#include "ScreenOptions.h"
+#include "ScreenOptionsMaster.h"
 
-class ScreenSongOptions : public ScreenOptions
+class ScreenSongOptions : public ScreenOptionsMaster
 {
 public:
 	ScreenSongOptions( CString sName );
 	static CString GetNextScreen();
 
 private:
-	void ImportOptions();
-	void ExportOptions();
-
 	void GoToNextState();
 	void GoToPrevState();
 };
