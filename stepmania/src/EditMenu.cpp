@@ -140,6 +140,8 @@ EditMenu::EditMenu()
 		FOREACH_Difficulty( dc )
 			m_vDifficulties.push_back( dc );
 	}
+
+	m_vSourceDifficulties.push_back( DIFFICULTY_INVALID );	// "blank"
 	FOREACH_Difficulty( dc )
 		m_vSourceDifficulties.push_back( dc );
 
@@ -377,7 +379,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_vpSourceSteps.clear();
 		FOREACH( Difficulty, m_vSourceDifficulties, dc )
 		{
-			if( *dc == DIFFICULTY_EDIT )
+			if( *dc == DIFFICULTY_INVALID )
+			{
+				m_vpSourceSteps.push_back( NULL );
+			}
+			else if( *dc == DIFFICULTY_EDIT )
 			{
 				vector<Steps*> v;
 				GetSelectedSong()->GetSteps( v, GetSelectedSourceStepsType(), DIFFICULTY_EDIT );
@@ -396,42 +402,51 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		}
 		// fall through
 	case ROW_SOURCE_STEPS:
-		m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
-		m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 		{
-			CString s;
-			Steps *pSourceSteps = GetSelectedSourceSteps();
-			if( pSourceSteps  &&  GetSelectedSourceDifficulty() == DIFFICULTY_EDIT )
-				s = pSourceSteps->GetDescription() + " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
+			m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
+			m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
+			{
+				CString s;
+				Steps *pSourceSteps = GetSelectedSourceSteps();
+				if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
+					s = "Blank";
+				else if( pSourceSteps  &&  GetSelectedSourceDifficulty() == DIFFICULTY_EDIT )
+					s = pSourceSteps->GetDescription() + " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
+				else
+					s = DifficultyToThemedString(GetSelectedSourceDifficulty());
+				m_textValue[ROW_SOURCE_STEPS].SetText( s );
+			}
+			bool bHideMeter = false;
+			if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
+			{
+				bHideMeter = true;
+			}
+			else if( GetSelectedSourceSteps() )
+			{
+				m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
+				m_textSourceMeter.SetText( ssprintf("%d", GetSelectedSourceSteps()->GetMeter()) );
+				m_textSourceMeter.SetDiffuse( SONGMAN->GetDifficultyColor( GetSelectedSourceSteps()->GetDifficulty() ) );
+			}
 			else
-				s = DifficultyToThemedString(GetSelectedSourceDifficulty());
-			m_textValue[ROW_SOURCE_STEPS].SetText( s );
-		}
-		if( GetSelectedSourceSteps() )
-		{
-			m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
-			m_textSourceMeter.SetText( ssprintf("%d", GetSelectedSourceSteps()->GetMeter()) );
-			m_textSourceMeter.SetDiffuse( SONGMAN->GetDifficultyColor( GetSelectedSourceSteps()->GetDifficulty() ) );
-		}
-		else
-		{
-			m_SourceMeter.SetFromMeterAndDifficulty( 0, GetSelectedSourceDifficulty() );
-			m_textSourceMeter.SetText( ssprintf("%d", 0) );
-		}
-		m_SourceMeter.SetHidden( GetSelectedSteps() ? true : false );
-		m_textSourceMeter.SetHidden( (GetSelectedSteps() == false && GetSelectedSourceSteps()) ? false : true );
+			{
+				m_SourceMeter.SetFromMeterAndDifficulty( 0, GetSelectedSourceDifficulty() );
+				m_textSourceMeter.SetText( ssprintf("%d", 0) );
+			}
+			m_SourceMeter.SetHidden( (bHideMeter || GetSelectedSteps()) );
+			m_textSourceMeter.SetHidden( bHideMeter || !(GetSelectedSteps() == false && GetSelectedSourceSteps()) );
 
-		m_Actions.clear();
-		if( GetSelectedSteps() )
-		{
-			m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
-			m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
+			m_Actions.clear();
+			if( GetSelectedSteps() )
+			{
+				m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
+				m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
+			}
+			else
+			{
+				m_Actions.push_back( EDIT_MENU_ACTION_CREATE );
+			}
+			m_iSelection[ROW_ACTION] = 0;
 		}
-		else
-		{
-			m_Actions.push_back( EDIT_MENU_ACTION_CREATE );
-		}
-		m_iSelection[ROW_ACTION] = 0;
 		// fall through
 	case ROW_ACTION:
 		m_textValue[ROW_ACTION].SetText( EditMenuActionToThemedString(GetSelectedAction()) );
