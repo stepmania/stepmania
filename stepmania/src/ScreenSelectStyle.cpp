@@ -106,12 +106,18 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 	this->UpdateSelectableChoices();
 
-	m_sprJointPremium.SetName( "JointPremium" );
+	m_sprPremium.SetName( "Premium" );
 
-	if( PREFSMAN->m_Premium==PrefsManager::JOINT_PREMIUM )
+	switch( PREFSMAN->m_Premium )
 	{
-		m_sprJointPremium.Load( THEME->GetPathToG(m_sName + " joint premium") );
-		this->AddChild( &m_sprJointPremium );
+	case PrefsManager::DOUBLES_PREMIUM:
+		m_sprPremium.Load( THEME->GetPathToG(m_sName + " doubles premium") );
+		this->AddChild( &m_sprPremium );
+		break;
+	case PrefsManager::JOINT_PREMIUM:
+		m_sprPremium.Load( THEME->GetPathToG(m_sName + " joint premium") );
+		this->AddChild( &m_sprPremium );
+		break;
 	}
 
 
@@ -129,7 +135,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 	}
 	SET_XY_AND_ON_COMMAND( m_sprExplanation );
 	SET_XY_AND_ON_COMMAND( m_sprWarning );
-	SET_XY_AND_ON_COMMAND( m_sprJointPremium );
+	SET_XY_AND_ON_COMMAND( m_sprPremium );
 
 	// let AfterChange tween Picture and Info
 }
@@ -203,7 +209,7 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	OFF_COMMAND( m_sprWarning );
 	OFF_COMMAND( m_sprPicture[m_iSelection] );
 	OFF_COMMAND( m_sprInfo[m_iSelection] );
-	OFF_COMMAND( m_sprJointPremium );
+	OFF_COMMAND( m_sprPremium );
 }
 
 int ScreenSelectStyle::GetSelectionIndex( PlayerNumber pn )

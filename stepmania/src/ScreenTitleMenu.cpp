@@ -72,10 +72,19 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	CodeDetector::RefreshCacheItems();
 
-	if( PREFSMAN->m_Premium==PrefsManager::JOINT_PREMIUM )
-	{		
-		m_JointPremium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu joint premium") );
-		this->AddChild( &m_JointPremium );
+	if( PREFSMAN->m_iCoinMode != COIN_HOME )
+	{
+		switch( PREFSMAN->m_Premium )
+		{
+		case PrefsManager::DOUBLES_PREMIUM:
+			m_Premium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu doubles premium") );
+			this->AddChild( &m_Premium );
+			break;
+		case PrefsManager::JOINT_PREMIUM:
+			m_Premium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu joint premium") );
+			this->AddChild( &m_Premium );
+			break;
+		}
 	}
 
 	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );

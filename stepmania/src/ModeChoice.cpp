@@ -170,7 +170,7 @@ int GetSidesRequiredToPlayStyle( Style style )
 	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
 		return 2;
 	case StyleDef::ONE_PLAYER_TWO_CREDITS:
-		return (PREFSMAN->m_Premium == PrefsManager::DOUBLE_FOR_1CREDIT) ? 1 : 2;
+		return (PREFSMAN->m_Premium == PrefsManager::DOUBLES_PREMIUM) ? 1 : 2;
 	default:
 		ASSERT(0);
 		return 1;

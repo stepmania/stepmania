@@ -265,7 +265,7 @@ static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
 
 static void Premium( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const PrefsManager::Premium mapping[] = { PrefsManager::NO_PREMIUM,PrefsManager::DOUBLE_FOR_1CREDIT,PrefsManager::JOINT_PREMIUM };
+	const PrefsManager::Premium mapping[] = { PrefsManager::NO_PREMIUM,PrefsManager::DOUBLES_PREMIUM,PrefsManager::JOINT_PREMIUM };
 	MoveMap( sel, PREFSMAN->m_Premium, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 

@@ -43,7 +43,7 @@ protected:
 	Sprite		m_sprInfo[MAX_MODE_CHOICES];
 	Sprite		m_sprExplanation;
 	Sprite		m_sprWarning;
-	Sprite		m_sprJointPremium;
+	Sprite		m_sprPremium;
 	
 	RageSound m_soundChange;
 	RageSound m_soundSelect;

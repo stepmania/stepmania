@@ -52,7 +52,7 @@ private:
 	RageTimer		TimeToDemonstration;
 
 	BGAnimation		m_CoinMode;
-	BGAnimation		m_JointPremium;
+	BGAnimation		m_Premium;
 
 	Transition		m_AttractOut;
 };
