@@ -2,7 +2,7 @@
 #define CRASH_HANDLER_INTERNAL_H
 
 #include "Backtrace.h"
-#define BACKTRACE_MAX_SIZE 1024
+#define BACKTRACE_MAX_SIZE 128
 
 struct CrashData
 {
@@ -12,17 +12,13 @@ struct CrashData
 		SIGNAL,
 
 		/* We're forcing a crash (eg. failed ASSERT). */
-		FORCE_CRASH_THIS_THREAD,
-
-		/* Deadlock detected; give a stack trace for two threads. */
-		FORCE_CRASH_DEADLOCK
+		FORCE_CRASH,
 	} type;
 
 	/* Everything except FORCE_CRASH_THIS_THREAD: */
-	const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-
-	/* FORCE_CRASH_DEADLOCK only: */
-	const void *BacktracePointers2[BACKTRACE_MAX_SIZE];
+	enum { MAX_BACKTRACE_THREADS = 32 };
+	const void *BacktracePointers[MAX_BACKTRACE_THREADS][BACKTRACE_MAX_SIZE];
+	char m_ThreadName[MAX_BACKTRACE_THREADS][128];
 
 	/* SIGNAL only: */
 	int signal;

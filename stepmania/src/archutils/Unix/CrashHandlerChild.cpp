@@ -307,8 +307,7 @@ static void child_process()
 	}
 	break;
     }
-    case CrashData::FORCE_CRASH_THIS_THREAD:
-    case CrashData::FORCE_CRASH_DEADLOCK:
+    case CrashData::FORCE_CRASH:
 	crash.reason[ sizeof(crash.reason)-1] = 0;
 	reason = crash.reason;
 	break;
@@ -322,12 +321,12 @@ static void child_process()
         fprintf(CrashDump, Checkpoints[i]);
     fprintf(CrashDump, "\n");
 
-    output_stack_trace( CrashDump, crash.BacktracePointers );
-    fprintf(CrashDump, "\n");
-    if( crash.type == CrashData::FORCE_CRASH_DEADLOCK )
+    for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )
     {
-	    fprintf(CrashDump, "Deadlocked with:\n");
-	    output_stack_trace( CrashDump, crash.BacktracePointers2 );
+	    if( !crash.BacktracePointers[i][0] )
+		    break;
+	    fprintf( CrashDump, "Thread: %s\n", crash.m_ThreadName[i] );
+	    output_stack_trace( CrashDump, crash.BacktracePointers[i] );
 	    fprintf(CrashDump, "\n");
     }
 

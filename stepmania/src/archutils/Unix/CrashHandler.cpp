@@ -280,12 +280,8 @@ static void RunCrashHandler( const CrashData *crash )
 			safe_print( fileno(stderr), "Fatal signal (", SignalName(crash->signal), ")", NULL );
 			break;
 
-		case CrashData::FORCE_CRASH_DEADLOCK:
-			safe_print( fileno(stderr), "Deadlock (", crash->reason, ")", NULL );
-			break;
-
-		case CrashData::FORCE_CRASH_THIS_THREAD:
-			safe_print( fileno(stderr), "Crash handler failed an assertion: \"", crash->reason, "\"", NULL );
+		case CrashData::FORCE_CRASH:
+			safe_print( fileno(stderr), "Crash handler failed: \"", crash->reason, "\"", NULL );
 			break;
 
 		default:
@@ -357,34 +353,18 @@ void ForceCrashHandler( const char *reason )
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
 
-	crash.type = CrashData::FORCE_CRASH_THIS_THREAD;
+	crash.type = CrashData::FORCE_CRASH;
 	strncpy( crash.reason, reason, sizeof(crash.reason) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
-	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, NULL );
+	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, NULL );
 
 	RunCrashHandler( &crash );
 }
 
-void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *ctx )
+void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 {
-	CrashData crash;
-	memset( &crash, 0, sizeof(crash) );
-
-	crash.type = CrashData::FORCE_CRASH_DEADLOCK;
-	strncpy( crash.reason, reason, min(sizeof(crash.reason) - 1, reason.length()) );
-	crash.reason[ sizeof(crash.reason)-1 ] = 0;
-
-	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, NULL );
-	GetBacktrace( crash.BacktracePointers2, BACKTRACE_MAX_SIZE, ctx );
-
-	RunCrashHandler( &crash );
-}
-
-/* iCrashHandle comes from ThreadImpl_Pthreads::GetThreadId. */
-void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle )
-{
-	if ( iCrashHandle == GetInvalidThreadId() )
+	if ( iID == GetInvalidThreadId() )
 	{
 		ForceCrashHandler( reason );
 		_exit(1);
@@ -399,13 +379,25 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle )
 #if defined(DARWIN)
 	SuspendThread(iCrashHandle);
 #endif
-	if( !GetThreadBacktraceContext( iCrashHandle, &ctx ) )
-	{
+	CrashData crash;
+	memset( &crash, 0, sizeof(crash) );
+
+	crash.type = CrashData::FORCE_CRASH;
+
+	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, NULL );
+
+	if( !GetThreadBacktraceContext( iID, &ctx ) )
 		reason += "; GetThreadBacktraceContext failed";
-		ForceCrashHandler( reason );
-	}
 	else
-		ForceCrashHandlerDeadlock( reason, &ctx );
+		GetBacktrace( crash.BacktracePointers[1], BACKTRACE_MAX_SIZE, &ctx );
+
+	strncpy( crash.m_ThreadName[0], RageThread::GetCurThreadName(), sizeof(crash.m_ThreadName[0])-1 );
+	strncpy( crash.m_ThreadName[1], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+
+	strncpy( crash.reason, reason, min(sizeof(crash.reason) - 1, reason.length()) );
+	crash.reason[ sizeof(crash.reason)-1 ] = 0;
+
+	RunCrashHandler( &crash );
 
 	_exit(1);
 }
@@ -423,7 +415,9 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 
 	BacktraceContext ctx;
 	GetSignalBacktraceContext( &ctx, uc );
-	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, &ctx );
+	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, &ctx );
+
+	strncpy( crash.m_ThreadName[0], RageThread::GetCurThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
 	RunCrashHandler( &crash );
 }

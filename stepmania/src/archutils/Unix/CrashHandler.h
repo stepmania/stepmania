@@ -3,7 +3,6 @@
 
 void ForceCrashHandler( const char *reason );
 struct BacktraceContext;
-void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *ctx );
 void ForceCrashHandlerDeadlock( CString reason, uint64_t CrashHandle );
 void CrashHandlerHandleArgs( int argc, char* argv[] );
 void InitializeCrashHandler();
