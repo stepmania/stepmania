@@ -201,7 +201,7 @@ void RageSound_Generic_Software::DecodeThread()
 			{
 				/* If there are more than min_fill_frames available, check for
 				 * rate clamping. */
-				if( pSound->buffer.num_readable()*samples_per_block >= min_fill_frames )
+				if( pSound->buffer.num_readable()*samples_per_block >= unsigned(min_fill_frames) )
 				{
 					/* Don't write more than two chunks worth of data in one
 					 * iteration.  Since we delay for one chunk period per loop,
