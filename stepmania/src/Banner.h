@@ -16,8 +16,8 @@
 #include "Song.h"
 
 
-const float BANNER_WIDTH	= 250;
-const float BANNER_HEIGHT	= 100;
+const float BANNER_WIDTH	= 253;
+const float BANNER_HEIGHT	= 94;
 
 
 class Banner : public Sprite

@@ -37,7 +37,7 @@ void TransitionStarWipe::RenderPrimitives()
 		return;
 	}
 
-	float fPercentOpen = GetPercentageOpen();
+	float fPercentOpen = 1-GetPercentageOpen();
 	/*
 	switch( m_TransitionState )
 	{

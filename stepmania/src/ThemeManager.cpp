@@ -173,15 +173,12 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case SOUND_EDIT_CHANGE_LINE:			sAssetPath = "Sounds\\edit change line";			break;
 		case SOUND_EDIT_CHANGE_SNAP:			sAssetPath = "Sounds\\edit change snap";			break;
 
-		case FONT_OUTLINE:						sAssetPath = "Fonts\\Outline";						break;
-		case FONT_CAPITALS:						sAssetPath = "Fonts\\Capitals";						break;
-		case FONT_NORMAL:						sAssetPath = "Fonts\\Normal";						break;
-		case FONT_FUTURISTIC:					sAssetPath = "Fonts\\Futuristic";					break;
-		case FONT_BOLD_NUMBERS:					sAssetPath = "Fonts\\Bold Numbers";					break;
-		case FONT_LCD_NUMBERS:					sAssetPath = "Fonts\\LCD Numbers";					break;
+		case FONT_BOLD:							sAssetPath = "Fonts\\Bold";							break;
+		case FONT_COMBO_NUMBERS:				sAssetPath = "Fonts\\Combo Numbers";				break;
 		case FONT_FEET:							sAssetPath = "Fonts\\Feet";							break;
-		case FONT_COMBO_NUMBERS:				sAssetPath = "Fonts\\MAX Numbers";					break;
-		case FONT_SCORE_NUMBERS:				sAssetPath = "Fonts\\Bold Numbers";					break;
+		case FONT_NORMAL:						sAssetPath = "Fonts\\Normal";						break;
+		case FONT_SCORE_NUMBERS:				sAssetPath = "Fonts\\Score Numbers";				break;
+		case FONT_TEXT_BANNER:					sAssetPath = "Fonts\\Text Banner";					break;
 
 		case ANNOUNCER_ATTRACT:					sAssetPath = "Announcer\\attract";					break;
 		case ANNOUNCER_BAD_COMMENT:				sAssetPath = "Announcer\\bad comment";				break;

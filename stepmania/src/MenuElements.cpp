@@ -55,6 +55,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_textHelp.SetText( sHelpText );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectBlinking();
+	m_textHelp.SetShadowLength( 2 );
 
 	
 	m_soundSwoosh.Load( THEME->GetPathTo(SOUND_MENU_SWOOSH) );

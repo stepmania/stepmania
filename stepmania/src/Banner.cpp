@@ -19,6 +19,8 @@
 
 bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
+	Sprite::TurnShadowOff();
+
 	if( pSong == NULL )					Banner::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER), TEXTURE_HINT_NOMIPMAPS );
 	else if( pSong->HasBanner() )		Banner::Load( pSong->GetBannerPath(), TEXTURE_HINT_NOMIPMAPS );
 	else if( pSong->HasBackground() )	Banner::Load( pSong->GetBackgroundPath(), TEXTURE_HINT_NOMIPMAPS );
@@ -37,9 +39,7 @@ bool Banner::Load( const CString &sFilePath, DWORD dwHints, bool bForceReload )
 
 void Banner::CropToRightSize()
 {
-	Sprite::TurnShadowOff();
-
-	int iSourceWidth		= m_pTexture->GetSourceWidth();
+	int iSourceWidth	= m_pTexture->GetSourceWidth();
 	int iSourceHeight	= m_pTexture->GetSourceHeight();
 
 	// save the original X&Y.  We're going to resore them later.
@@ -54,14 +54,23 @@ void Banner::CropToRightSize()
 			0.98f,	0.22f,	// bottom right
 			0.78f,	0.02f,	// top right
 		};
-		SetCustomImageCoords( fCustomImageCoords );
+		Sprite::SetCustomImageCoords( fCustomImageCoords );
 		
 		SetWidth(  BANNER_WIDTH );
 		SetHeight( BANNER_HEIGHT );
 		SetZoom( 1 );
 	}
-	else	// this is a normal sized banner
+	else if( iSourceWidth * 2 > iSourceHeight )
 	{
+		Sprite::StopUsingCustomCoords();
+		Sprite::StretchTo( CRect(0, 0,
+									(int)BANNER_WIDTH,
+									(int)BANNER_HEIGHT )
+							 );		
+	}
+	else	// this is probably a background graphic or something not intended to be a banner
+	{
+		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
 		Sprite::ScaleToCover( CRect(0, 0,

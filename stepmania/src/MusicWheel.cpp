@@ -89,12 +89,12 @@ WheelItemDisplay::WheelItemDisplay()
 	m_sprSectionBackground.Load( THEME->GetPathTo(GRAPHIC_SECTION_BACKGROUND) );
 	m_sprSectionBackground.SetXY( -30, 0 );
 
-	m_textSectionName.Load( THEME->GetPathTo(FONT_OUTLINE) );
+	m_textSectionName.Load( THEME->GetPathTo(FONT_BOLD) );
 	m_textSectionName.TurnShadowOff();
-	m_textSectionName.SetHorizAlign( align_center );
+	m_textSectionName.SetHorizAlign( align_left );
 	m_textSectionName.SetVertAlign( align_middle );
-	m_textSectionName.SetXY( m_sprSectionBackground.GetX(), 0 );
-	m_textSectionName.SetZoom( 1.5f );
+	m_textSectionName.SetXY( m_sprSectionBackground.GetX() - m_sprSectionBackground.GetUnzoomedWidth()/2 + 10, 0 );
+	m_textSectionName.SetZoom( 1.2f );
 	m_textSectionName.SetDiffuseColor( COLOR_SECTION_LETTER );
 }
 
@@ -123,14 +123,19 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 			int iIndexSplit = m_sSectionName.Find( ' ', m_sSectionName.GetLength()/3 );
 			m_sSectionName.SetAt( iIndexSplit, '\n' );
 
-			m_textSectionName.SetZoom( 0.75f );
+			m_textSectionName.SetZoom( 0.6f );
 			m_textSectionName.SetText( m_sSectionName );
 		}
 		else	// this is a short name
 		{
-			m_textSectionName.SetZoom( 1.5f );
+			m_textSectionName.SetZoom( 1.2f );
 			m_textSectionName.SetText( m_sSectionName );
 		}
+		float fTextWidth, fSpriteWidth;
+		fTextWidth = m_textSectionName.GetWidestLineWidthInSourcePixels() * m_textSectionName.GetZoom();
+		fSpriteWidth = m_sprSectionBackground.GetUnzoomedWidth() * m_sprSectionBackground.GetZoom() - 20;
+		if( fTextWidth > fSpriteWidth  )
+			m_textSectionName.SetZoomX( m_textSectionName.GetZoom() * fSpriteWidth / fTextWidth );
 		m_sprSectionBackground.SetDiffuseColor( m_colorTint );
 		break;
 	case TYPE_MUSIC:

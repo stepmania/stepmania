@@ -38,6 +38,7 @@ public:
 	ScoreSummary	m_ScoreSummary[NUM_PLAYERS];	// for passing from Dancing to Results
 	SongSortOrder	m_SongSortOrder;				// used by MusicWheel and should be saved until the app exits
 	int				m_iCurrentStage;				// number of stages played +1
+	CString GetStageText();
 
 	GameOptions		m_GameOptions;
 	GraphicOptions	m_GraphicOptions;

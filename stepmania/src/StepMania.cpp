@@ -29,7 +29,7 @@
 #include "FontManager.h"
 
 #include "WindowSandbox.h"
-#include "WindowMenuResults.h"
+#include "WindowResults.h"
 #include "WindowTitleMenu.h"
 #include "WindowPlayerOptions.h"
 
@@ -488,7 +488,7 @@ HRESULT CreateObjects( HWND hWnd )
 
 	//WM->SetNewWindow( new WindowLoading );
 	//WM->SetNewWindow( new WindowSandbox );
-	//WM->SetNewWindow( new WindowMenuResults );
+	//WM->SetNewWindow( new WindowResults );
 	//WM->SetNewWindow( new WindowPlayerOptions );
 	WM->SetNewWindow( new WindowTitleMenu );
 

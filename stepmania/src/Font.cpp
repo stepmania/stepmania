@@ -90,6 +90,8 @@ Font::Font( const CString &sFontFilePath )
 			m_iCharToFrameNo[i] = i;
 	}
 
+	m_bCapitalsOnly = ("1" == ini.GetValue("Font", "CapitalsOnly"));
+
 
 	//
 	// load character widths

@@ -27,7 +27,7 @@
 #include "MusicStatusDisplay.h"
 #include "Window.h"	// for WindowMessage
 
-const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
+const int NUM_WHEEL_ITEMS_TO_DRAW	=	11;
 
 const float FADE_TIME			=	0.5f;
 

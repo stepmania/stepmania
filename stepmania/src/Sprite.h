@@ -30,6 +30,7 @@ public:
 
 	virtual bool Load( CString sFilePath, DWORD dwHints = 0, bool bForceReload = false )
 	{
+		ASSERT( sFilePath != "" );
 		if( sFilePath.Right(7) == ".sprite" )
 			return LoadFromSpriteFile( sFilePath, dwHints, bForceReload  );
 		else 
@@ -52,6 +53,7 @@ public:
 	void SetCustomSourceRect( FRECT rectSourceCoords );	// in source pixel space
 	void SetCustomImageRect( FRECT rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
+	void StopUsingCustomCoords();
 
 protected:
 

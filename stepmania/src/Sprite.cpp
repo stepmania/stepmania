@@ -178,7 +178,7 @@ void Sprite::Update( float fDeltaTime )
 
 void Sprite::RenderPrimitives()
 {
-	SCREEN->Translate( -0.5f, -0.5f, 0 );	// offset so that pixels are aligned to texels
+	SCREEN->TranslateLocal( -0.5f, -0.5f, 0 );	// offset so that pixels are aligned to texels
 
 	if( m_pTexture == NULL )
 		return;
@@ -264,7 +264,7 @@ void Sprite::RenderPrimitives()
 		if( m_bShadow )
 		{
 			SCREEN->PushMatrix();
-			SCREEN->Translate( 5, 5, 0 );	// shift by 5 units
+			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
@@ -381,5 +381,10 @@ void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: bottom left
 	}
 
 	SetCustomTextureCoords( fImageCoords );
+}
+
+void Sprite::StopUsingCustomCoords()
+{
+	m_bUsingCustomTexCoords = false;
 }
 

@@ -34,9 +34,13 @@ public:
 	CString m_sTexturePath;
 
 	RageTexture* m_pTexture;
+	bool m_bCapitalsOnly;
 
 	int m_iCharToFrameNo[MAX_FONT_CHARS];
 	int	m_iFrameNoToWidth[MAX_FONT_CHARS];	// in soure coordinate space
+
+protected:
+
 };
 
 

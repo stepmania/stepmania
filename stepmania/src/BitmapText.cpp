@@ -54,8 +54,11 @@ bool BitmapText::Load( const CString &sFontFilePath )
 
 
 
-void BitmapText::SetText( const CString &sText )
+void BitmapText::SetText( CString sText )
 {
+	if( m_pFont->m_bCapitalsOnly )
+		sText.MakeUpper();
+
 	//
 	// save the string and crop if necessary
 	//
@@ -258,7 +261,7 @@ void BitmapText::RenderPrimitives()
 		if( m_bShadow )
 		{
 			SCREEN->PushMatrix();
-			SCREEN->Translate( 5, 5, 0 );	// shift by 5 units
+			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
 			pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 

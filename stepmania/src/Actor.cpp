@@ -40,6 +40,7 @@ Actor::Actor()
 
 	if( PREFS )	m_bShadow = PREFS->m_GraphicOptions.m_bShadows;
 	else		m_bShadow = true;
+	m_fShadowLength = 5;
 
 	m_bBlendAdd = false;
 }

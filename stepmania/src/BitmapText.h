@@ -30,7 +30,7 @@ public:
 
 
 	bool Load( const CString &sFontName );
-	void SetText( const CString &sText );
+	void SetText( CString sText );
 
 	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };
 

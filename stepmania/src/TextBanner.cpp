@@ -18,9 +18,9 @@
 
 TextBanner::TextBanner()
 {
-	m_textTitle.Load( THEME->GetPathTo(FONT_FUTURISTIC) );
-	m_textSubTitle.Load( THEME->GetPathTo(FONT_FUTURISTIC) );
-	m_textArtist.Load( THEME->GetPathTo(FONT_FUTURISTIC) );
+	m_textTitle.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
+	m_textSubTitle.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
+	m_textArtist.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
 
 	m_textTitle.SetX( -TEXT_BANNER_WIDTH/2 );
 	m_textSubTitle.SetX( -TEXT_BANNER_WIDTH/2 );

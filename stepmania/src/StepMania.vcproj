@@ -145,6 +145,12 @@
 				RelativePath=".\Window.h">
 			</File>
 			<File
+				RelativePath="WindowAdvancedOptions.cpp">
+			</File>
+			<File
+				RelativePath="WindowAdvancedOptions.h">
+			</File>
+			<File
 				RelativePath=".\WindowCaution.cpp">
 			</File>
 			<File
@@ -205,12 +211,6 @@
 				RelativePath=".\WindowMenu.h">
 			</File>
 			<File
-				RelativePath=".\WindowMenuResults.cpp">
-			</File>
-			<File
-				RelativePath=".\WindowMenuResults.h">
-			</File>
-			<File
 				RelativePath=".\WindowMessage.h">
 			</File>
 			<File
@@ -230,6 +230,12 @@
 			</File>
 			<File
 				RelativePath=".\WindowPrompt.h">
+			</File>
+			<File
+				RelativePath="WindowResults.cpp">
+			</File>
+			<File
+				RelativePath="WindowResults.h">
 			</File>
 			<File
 				RelativePath=".\WindowSandbox.cpp">
@@ -545,6 +551,18 @@
 			</File>
 			<File
 				RelativePath=".\GranularityIndicator.h">
+			</File>
+			<File
+				RelativePath="GrooveRadar.cpp">
+			</File>
+			<File
+				RelativePath="GrooveRadar.h">
+			</File>
+			<File
+				RelativePath="InfoFrame.cpp">
+			</File>
+			<File
+				RelativePath="InfoFrame.h">
 			</File>
 			<File
 				RelativePath="MenuElements.cpp">

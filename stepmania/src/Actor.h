@@ -160,6 +160,7 @@ public:
 	// other properties
 	void TurnShadowOn()		{ m_bShadow = true; };
 	void TurnShadowOff()	{ m_bShadow = false; };
+	void SetShadowLength( const float fLength )	{ m_fShadowLength = fLength; };
 
 	void SetBlendModeAdd() 		{ m_bBlendAdd = true; }; 
 	void SetBlendModeNormal() 	{ m_bBlendAdd = false; };
@@ -268,6 +269,7 @@ protected:
 	// other properties
 	//
 	bool	m_bShadow;
+	float	m_fShadowLength;
 	bool	m_bBlendAdd;
 
 };

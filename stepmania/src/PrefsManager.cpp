@@ -103,6 +103,7 @@ void PrefsManager::ReadPrefsFromDisk()
 			if( name_string == "TextureColor" )			m_GraphicOptions.m_iTextureColor	= atoi( value_string );
 			if( name_string == "Shadows" )				m_GraphicOptions.m_bShadows			= ( value_string == "1" );
 			if( name_string == "30fpsLock" )			m_GraphicOptions.m_b30fpsLock		= ( value_string == "1" );
+			if( name_string == "Backgrounds" )			m_GraphicOptions.m_bBackgrounds		= ( value_string == "1" );
 		}
 	}
 
@@ -140,6 +141,7 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValue( "GraphicOptions", "TextureColor",		ssprintf("%d", m_GraphicOptions.m_iTextureColor) );
 	ini.SetValue( "GraphicOptions", "Shadows",			m_GraphicOptions.m_bShadows ? "1":"0" );
 	ini.SetValue( "GraphicOptions", "30fpsLock",		m_GraphicOptions.m_b30fpsLock ? "1":"0" );
+	ini.SetValue( "GraphicOptions", "Backgrounds",		m_GraphicOptions.m_bBackgrounds ? "1":"0" );
 
 
 	ini.SetValue( "GameOptions", "IgnoreJoyAxes",		m_GameOptions.m_bIgnoreJoyAxes ? "1":"0" );
@@ -414,6 +416,31 @@ bool PrefsManager::IsButtonDown( PlayerInput PlayerI )
 	PadInput PadI;
 	PlayerToPad( PlayerI, PadI );
 	return IsButtonDown( PadI );
+}
+
+
+CString PrefsManager::GetStageText()
+{
+	if( m_iCurrentStage == 3 )
+		return "Final";
+
+	CString sNumberSuffix;
+	if( ( (m_iCurrentStage/10) % 10 ) == 1 )	// in the teens (e.g. 19, 213)
+	{
+		sNumberSuffix = "th";
+	}
+	else	// not in the teens
+	{
+		const int iLastDigit = m_iCurrentStage%10;
+		switch( iLastDigit )
+		{
+		case 1:	sNumberSuffix = "st";	break;
+		case 2:	sNumberSuffix = "nd";	break;
+		case 3:	sNumberSuffix = "rd";	break;
+		default:sNumberSuffix = "th";	break;
+		}
+	}
+	return ssprintf( "%d%s", PREFS->m_iCurrentStage, sNumberSuffix );
 }
 
 
