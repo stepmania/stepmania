@@ -167,6 +167,16 @@ ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString
 	}
 } 
 
+ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxRetryCancel( CString sMessage, CString ID )
+{
+	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_RETRYCANCEL ) )
+	{
+	case IDRETRY:	return retry;
+	default:	ASSERT(0);
+	case IDCANCEL:	return cancel;
+	}
+} 
+
 void ArchHooks_Win32::RestartProgram()
 {
 	Win32RestartProgram();
