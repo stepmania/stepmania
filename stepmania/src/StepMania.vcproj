@@ -942,6 +942,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
 					</File>
 					<File
+						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.cpp">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.h">
+					</File>
+					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.cpp">
 					</File>
 					<File
@@ -1898,6 +1904,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="SDL_utils.h">
+				</File>
+				<File
+					RelativePath="ezsockets.cpp">
+				</File>
+				<File
+					RelativePath="ezsockets.h">
 				</File>
 				<File
 					RelativePath="glext.h">
