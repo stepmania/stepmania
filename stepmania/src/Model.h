@@ -48,8 +48,6 @@ public:
 
 	virtual void HandleCommand( const ParsedCommand &command );
 
-//	int m_iRefCount;
-
 private:
     RageModelGeometry	*m_pGeometry;
 

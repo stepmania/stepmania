@@ -90,7 +90,7 @@ void Model::LoadMilkshapeAscii( CString sPath )
 	LoadPieces( sPath, sPath, sPath );
 }
 
-void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBomesPath )
+void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBonesPath )
 {
 	Clear();
 
@@ -99,16 +99,16 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 
 	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
 
-	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBomesPath );
+	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath );
 
 	//
     // Setup temp vertices (if necessary)
 	//
 	bool bHasAnyPerVertexBones = false;
-	for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 	{
-		msMesh& mesh = m_pGeometry->m_Meshes[i];
-		for (int j = 0; j < (int)mesh.Vertices.size(); j++)
+		const msMesh& mesh = m_pGeometry->m_Meshes[i];
+		for( unsigned j = 0; j < mesh.Vertices.size(); ++j )
 		{
 			if( mesh.Vertices[j].bone != -1 )
 			{
