@@ -299,10 +299,10 @@ int FFMpeg_Helper::ReadPacket()
  * and 1 if we have a frame (we may have more data in the packet). */
 int FFMpeg_Helper::DecodePacket()
 {
-	if( current_packet_offset == -1 )
+	if( eof == 0 && current_packet_offset == -1 )
 		return 0; /* no packet */
 
-	while( eof == 1 || current_packet_offset < pkt.size )
+	while( eof == 1 || (eof == 0 && current_packet_offset < pkt.size) )
 	{
 		if ( GetNextTimestamp )
 		{
@@ -742,12 +742,16 @@ bool MovieTexture_FFMpeg::DecodeFrame()
 	{
 		m_bWantRewind = false;
 
+		/* When resetting the clock, set it back by the length of the last frame,
+		 * so it has a proper delay. */
+		float fDelay = decoder->LastFrameDelay;
+
 		/* Restart. */
 		DestroyDecoder();
 		CreateDecoder();
 
 		decoder->Init();
-		m_Clock = 0;
+		m_Clock = -fDelay;
 		return false;
 	}
 
