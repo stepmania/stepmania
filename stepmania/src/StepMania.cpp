@@ -813,22 +813,7 @@ static void MountTreeOfZips( const CString &dir )
 }
 
 #ifdef _XBOX
-/*
-extern int SDL_main(int argc, char *argv[]);
-
-void __cdecl main()
-{
-	SDL_main(0, NULL);
-}
-*/
 char *xboxargv[] = { "d:\\default.xbe" };
-extern RageDisplay::VideoModeParams	g_CurrentParams;
-/*
-void __cdecl main()
-{
-	main(0, xboxargv);
-}
-*/
 #endif
 
 #if defined(HAVE_VERSION_INFO)
@@ -1493,32 +1478,6 @@ void FocusChanged( bool bHasFocus )
 		RestoreAppPri();
 }
 
-static void HandleSDLEvents()
-{
-	// process all queued events
-	SDL_Event event;
-	while(SDL_GetEvent(event, SDL_QUITMASK|SDL_ACTIVEEVENTMASK))
-	{
-		switch(event.type)
-		{
-		case SDL_QUIT:
-			LOG->Trace("SDL_QUIT: shutting down");
-			ExitGame();
-			break;
-
-		case SDL_ACTIVEEVENT:
-			{
-				/* We don't care about mouse focus. */
-				if(event.active.state == SDL_APPMOUSEFOCUS)
-					break;
-
-				uint8_t i = SDL_GetAppState();
-				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
-			}
-		}
-	}
-}
-
 static void CheckSkips( float fDeltaTime )
 {
 	if( !PREFSMAN->m_bLogSkips )
@@ -1548,9 +1507,6 @@ static void GameLoop()
 	RageTimer timer;
 	while(!g_bQuitting)
 	{
-		/* This needs to be called before anything that handles SDL events. */
-		SDL_PumpEvents();
-		HandleSDLEvents();
 
 		/*
 		 * Update
