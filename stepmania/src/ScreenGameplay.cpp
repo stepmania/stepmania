@@ -402,7 +402,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 
-	this->AddChild(&m_LyricDisplay);
+	if(PREFSMAN->m_bShowLyrics)
+		this->AddChild(&m_LyricDisplay);
 	
 
 	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","header2") );
@@ -658,14 +659,9 @@ void ScreenGameplay::LoadNextSong()
 
 	// Load lyrics
 	// XXX: don't load this here
-	if( PREFSMAN->m_bShowLyrics == true )
-	{
-		LyricsLoader	LL;
-		if( GAMESTATE->m_pCurSong->HasLyrics()  )
-		{
-			LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
-		}
-	}
+	LyricsLoader LL;
+	if( GAMESTATE->m_pCurSong->HasLyrics()  )
+		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
