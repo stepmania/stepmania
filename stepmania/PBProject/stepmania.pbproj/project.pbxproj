@@ -641,6 +641,7 @@
 			fileRef = AA1CD941060AE571003702C4;
 			isa = PBXBuildFile;
 			settings = {
+				COMPILER_FLAGS = "-g2 -O0";
 			};
 		};
 		AA1CD944060AE571003702C4 = {
@@ -997,7 +998,7 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "/usr/include   \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\" ";
+				HEADER_SEARCH_PATHS = "/usr/include   \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\" ../src/archutils/Darwin/PublicUtility";
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/lib;
@@ -1356,6 +1357,13 @@
 				AAF7435C06110E8D00B19AD1,
 				AAF7435E06110EC300B19AD1,
 				AAF74591061181F700B19AD1,
+				AA34EC7A0611A500003E5955,
+				AA34ECF70611C9A7003E5955,
+				AA34ECF90611C9A9003E5955,
+				AA34ECFC0611C9AD003E5955,
+				AA34ECFD0611C9B8003E5955,
+				AA34ECFF0611C9C7003E5955,
+				AA34ED000611D8C2003E5955,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3293,6 +3301,11 @@
 				AA1CD943060AE571003702C4,
 				AAF7435B06110E8D00B19AD1,
 				AAF74590061181F700B19AD1,
+				AA34EC790611A500003E5955,
+				AA34ECF80611C9A8003E5955,
+				AA34ECFA0611C9AA003E5955,
+				AA34ECFB0611C9AC003E5955,
+				AA34ECFE0611C9C6003E5955,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4844,6 +4857,94 @@
 			path = StepMania.app;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA34EC770611A500003E5955 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = CAHelpers.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA34EC780611A500003E5955 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CAHelpers.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA34EC790611A500003E5955 = {
+			fileRef = AA34EC770611A500003E5955;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34EC7A0611A500003E5955 = {
+			fileRef = AA34EC780611A500003E5955;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECF70611C9A7003E5955 = {
+			fileRef = AAF744B306116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECF80611C9A8003E5955 = {
+			fileRef = AAF744B206116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECF90611C9A9003E5955 = {
+			fileRef = AAF744B106116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECFA0611C9AA003E5955 = {
+			fileRef = AAF744B006116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECFB0611C9AC003E5955 = {
+			fileRef = AAF744B406116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECFC0611C9AD003E5955 = {
+			fileRef = AAF744B506116B0500B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECFD0611C9B8003E5955 = {
+			fileRef = AAF744E706116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECFE0611C9C6003E5955 = {
+			fileRef = AAF744F306116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ECFF0611C9C7003E5955 = {
+			fileRef = AAF744F406116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA34ED000611D8C2003E5955 = {
+			fileRef = AAF744DA06116B0600B19AD1;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AA3F283B04BE6DDC00D02EE9 = {
 			fileEncoding = 30;
@@ -8193,6 +8294,8 @@
 		};
 		AA6E012D04771299005F316C = {
 			children = (
+				AA34EC770611A500003E5955,
+				AA34EC780611A500003E5955,
 				AA1CD941060AE571003702C4,
 				AA1CD942060AE571003702C4,
 				AABE37030497CF85005F316C,
@@ -15354,143 +15457,19 @@
 		};
 		AAF744A306116B0500B19AD1 = {
 			children = (
-				AAF744A406116B0500B19AD1,
-				AAF744AB06116B0500B19AD1,
-				AAF744AC06116B0500B19AD1,
-				AAF744AD06116B0500B19AD1,
-				AAF744AE06116B0500B19AD1,
-				AAF744AF06116B0500B19AD1,
 				AAF744B006116B0500B19AD1,
 				AAF744B106116B0500B19AD1,
 				AAF744B206116B0500B19AD1,
 				AAF744B306116B0500B19AD1,
 				AAF744B406116B0500B19AD1,
 				AAF744B506116B0500B19AD1,
-				AAF744B606116B0500B19AD1,
-				AAF744B706116B0500B19AD1,
-				AAF744B806116B0500B19AD1,
-				AAF744B906116B0500B19AD1,
-				AAF744BA06116B0500B19AD1,
-				AAF744BB06116B0500B19AD1,
-				AAF744BC06116B0500B19AD1,
-				AAF744BD06116B0500B19AD1,
-				AAF744BE06116B0500B19AD1,
-				AAF744BF06116B0500B19AD1,
-				AAF744C006116B0600B19AD1,
-				AAF744C106116B0600B19AD1,
-				AAF744C206116B0600B19AD1,
-				AAF744C306116B0600B19AD1,
-				AAF744C406116B0600B19AD1,
-				AAF744C506116B0600B19AD1,
-				AAF744C606116B0600B19AD1,
-				AAF744C706116B0600B19AD1,
-				AAF744C806116B0600B19AD1,
-				AAF744C906116B0600B19AD1,
-				AAF744CA06116B0600B19AD1,
-				AAF744CB06116B0600B19AD1,
-				AAF744CC06116B0600B19AD1,
-				AAF744CD06116B0600B19AD1,
-				AAF744CE06116B0600B19AD1,
-				AAF744CF06116B0600B19AD1,
-				AAF744D006116B0600B19AD1,
-				AAF744D106116B0600B19AD1,
-				AAF744D206116B0600B19AD1,
-				AAF744D306116B0600B19AD1,
-				AAF744D406116B0600B19AD1,
-				AAF744D506116B0600B19AD1,
-				AAF744D606116B0600B19AD1,
-				AAF744D706116B0600B19AD1,
-				AAF744D806116B0600B19AD1,
-				AAF744D906116B0600B19AD1,
 				AAF744DA06116B0600B19AD1,
-				AAF744DB06116B0600B19AD1,
-				AAF744DC06116B0600B19AD1,
-				AAF744DD06116B0600B19AD1,
-				AAF744DE06116B0600B19AD1,
-				AAF744DF06116B0600B19AD1,
-				AAF744E006116B0600B19AD1,
-				AAF744E106116B0600B19AD1,
-				AAF744E206116B0600B19AD1,
-				AAF744E306116B0600B19AD1,
-				AAF744E406116B0600B19AD1,
-				AAF744E506116B0600B19AD1,
-				AAF744E606116B0600B19AD1,
 				AAF744E706116B0600B19AD1,
-				AAF744E806116B0600B19AD1,
-				AAF744E906116B0600B19AD1,
-				AAF744EA06116B0600B19AD1,
-				AAF744EB06116B0600B19AD1,
-				AAF744EC06116B0600B19AD1,
-				AAF744ED06116B0600B19AD1,
-				AAF744EE06116B0600B19AD1,
-				AAF744EF06116B0600B19AD1,
-				AAF744F006116B0600B19AD1,
-				AAF744F106116B0600B19AD1,
-				AAF744F206116B0600B19AD1,
 				AAF744F306116B0600B19AD1,
 				AAF744F406116B0600B19AD1,
-				AAF744F506116B0600B19AD1,
-				AAF744F606116B0600B19AD1,
-				AAF744F706116B0600B19AD1,
-				AAF744F806116B0600B19AD1,
-				AAF744F906116B0600B19AD1,
-				AAF744FA06116B0600B19AD1,
-				AAF744FB06116B0600B19AD1,
-				AAF744FC06116B0600B19AD1,
-				AAF744FD06116B0600B19AD1,
-				AAF744FE06116B0600B19AD1,
-				AAF744FF06116B0600B19AD1,
 			);
 			isa = PBXGroup;
 			path = PublicUtility;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744A406116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = AudioFilePlay.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744AB06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAAudioBufferList.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744AC06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAAudioBufferList.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744AD06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAAudioChannelLayout.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744AE06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAAudioChannelLayout.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744AF06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAAudioChannelLayoutObject.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -15542,294 +15521,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		AAF744B606116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAAudioStreamBasicDesc.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744B706116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAAudioStreamBasicDesc.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744B806116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAAudioTimeStamp.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744B906116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAAudioTimeStamp.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744BA06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAAudioUnit.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744BB06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAAudioUnit.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744BC06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAAudioValueRange.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744BD06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAAutoDisposer.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744BE06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CABufferList.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744BF06116B0500B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CABufferList.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C006116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CACFArray.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C106116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFArray.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C206116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFData.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C306116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CACFDictionary.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C406116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFDictionary.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C506116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CACFMachPort.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C606116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFMachPort.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C706116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CACFMessagePort.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C806116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFMessagePort.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744C906116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CACFNumber.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744CA06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFNumber.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744CB06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFObject.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744CC06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CACFRunLoopTimer.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744CD06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFRunLoopTimer.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744CE06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CACFString.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744CF06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CACFString.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D006116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAComponent.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D106116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAComponent.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D206116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAComponentDescription.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D306116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAComponentDescription.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D406116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAConditionalMacros.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D506116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CADebugger.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D606116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CADebugger.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D706116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CADebugMacros.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D806116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CADebugMacros.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744D906116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CADebugPrintf.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		AAF744DA06116B0600B19AD1 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -15838,195 +15529,11 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		AAF744DB06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAGuard.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744DC06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAGuard.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744DD06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAHALIOCycleTelemetryClient.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744DE06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAHALIOCycleTelemetryClient.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744DF06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAHALTelemetry.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E006116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAHostTimeBase.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E106116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAHostTimeBase.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E206116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAIOObject.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E306116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CALatencyLog.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E406116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CALatencyLog.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E506116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CALogMacros.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E606116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAPersistence.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		AAF744E706116B0600B19AD1 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			path = CAPrefix.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E806116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAPresetFile.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744E906116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAPresetFile.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744EA06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAProcess.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744EB06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAProcess.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744EC06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAPThread.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744ED06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAPThread.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744EE06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAReferenceCounted.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744EF06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CASampleTools.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F006116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CASampleTools.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F106116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CASharedLibrary.cp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F206116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CASharedLibrary.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -16043,94 +15550,6 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			path = CAStreamBasicDescription.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F506116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CATink.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F606116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CATokenMap.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F706116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = CAVolumeCurve.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F806116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = CAVolumeCurve.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744F906116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = "Debugging++.h";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744FA06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = FormatConverterClient.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744FB06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = kdebug.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744FC06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.c;
-			path = latency.c;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744FD06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = latency.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744FE06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = MatrixMixerVolumes.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AAF744FF06116B0600B19AD1 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = MatrixMixerVolumes.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
