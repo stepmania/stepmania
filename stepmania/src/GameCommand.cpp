@@ -560,9 +560,6 @@ void GameCommand::ApplyToAllPlayers() const
 
 void GameCommand::Apply( PlayerNumber pn ) const
 {
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return;
-
 	vector<PlayerNumber> vpns;
 	vpns.push_back( pn );
 	Apply( vpns );
