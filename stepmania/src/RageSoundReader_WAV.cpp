@@ -101,6 +101,7 @@ struct WavReaderPCM: public WavReader
 	{
 		const int iBytesPerSec = m_WavData.m_iSampleRate * m_WavData.m_iChannels * m_WavData.m_iBitsPerSample / 8;
 		int iByte = (int) ((int64_t(iMS) * iBytesPerSec) / 1000);
+		iByte = Quantize( iByte, m_WavData.m_iChannels * m_WavData.m_iBitsPerSample / 8 );
 		if( iByte > m_WavData.m_iDataChunkSize )
 		{
 			m_File.Seek( m_WavData.m_iDataChunkSize+m_WavData.m_iDataChunkPos );
