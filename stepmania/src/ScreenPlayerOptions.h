@@ -23,6 +23,8 @@ private:
 	bool        m_bGoToOptions;
 	bool        m_bAskOptionsMessage;
 	Sprite      m_sprOptionsMessage;
+
+	RageSound	m_CancelAll;
 	
 	AutoActor	m_sprCancelAll[NUM_PLAYERS];
 };

@@ -47,6 +47,10 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	m_bAcceptedChoices = false;
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == PrefsManager::YES );
 
+	CString sPath = THEME->GetPathS( m_sName,"cancel all", true );
+	if( sPath != "" )
+		m_CancelAll.Load( sPath, true );
+
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
 	FOREACH_HumanPlayer( pn )
@@ -123,7 +127,8 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
 	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
-		SOUND->PlayOnce( THEME->GetPathS(m_sName,"cancel all") );
+		if( m_CancelAll.IsLoaded() )
+			m_CancelAll.Play();
 		
 		// apply the game default mods, but not the Profile saved mods
 		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
