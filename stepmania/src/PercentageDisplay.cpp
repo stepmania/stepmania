@@ -97,6 +97,11 @@ void PercentageDisplay::Refresh()
 			// TRICKY: printf will round, but we want to truncate.  Otherwise, we may display a percent
 			// score that's too high and doesn't match up with the calculated grade.
 			float fTruncInterval = powf(0.1f, (float) PERCENT_TOTAL_SIZE-1);
+			
+			// TRICKY: ftruncf is rounding 1.0000000 to 0.99990004.  Give a little boost to 
+			// fPercentDancePoints to correct for this.
+			fPercentDancePoints += 0.000001f;
+
 			fPercentDancePoints = ftruncf( fPercentDancePoints, fTruncInterval );
 			
 			sNumToDisplay = ssprintf( "%*.*f%%", (int) PERCENT_TOTAL_SIZE, (int) PERCENT_DECIMAL_PLACES, fPercentDancePoints*100 );
