@@ -53,7 +53,13 @@ char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bC
 
 CString NotesWriterDWI::NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4, char cNoteCol5, char cNoteCol6 )
 {
-	char cShow = NotesToDWIChar( cNoteCol1!='0', cNoteCol2!='0', cNoteCol3!='0', cNoteCol4!='0', cNoteCol5!='0', cNoteCol6!='0' );
+	char cShow = NotesToDWIChar( 
+		cNoteCol1!='0'&&cNoteCol1!='2', 
+		cNoteCol2!='0'&&cNoteCol2!='2', 
+		cNoteCol3!='0'&&cNoteCol3!='2', 
+		cNoteCol4!='0'&&cNoteCol4!='2', 
+		cNoteCol5!='0'&&cNoteCol5!='2', 
+		cNoteCol6!='0'&&cNoteCol6!='2' );
 	char cHold = NotesToDWIChar( cNoteCol1=='2', cNoteCol2=='2', cNoteCol3=='2', cNoteCol4=='2', cNoteCol5=='2', cNoteCol6=='2' );
 	
 	if( cHold != '0' )
@@ -250,6 +256,9 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 
 	for( int i=0; i<out.m_apNotes.GetSize(); i++ ) 
 	{
+		if( -1 != out.m_apNotes[i]->m_sDescription.Find("autogen") )
+			continue;	// don't save autogen notes
+
 		if(!WriteDWINotesTag( fp, *out.m_apNotes[i] ))
 			continue;
 

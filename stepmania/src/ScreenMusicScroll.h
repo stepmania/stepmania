@@ -17,7 +17,7 @@
 #include "MenuElements.h"
 
 
-const int MAX_MUSIC_LINES = 20;
+const int MAX_MUSIC_LINES = 1200;
 const int MAX_CREDIT_LINES = 100;
 const int MAX_TOTAL_LINES = MAX_MUSIC_LINES + MAX_CREDIT_LINES;
 
