@@ -671,12 +671,9 @@ void Actor::Command( CString sCommandString )
 
 float Actor::GetCommandLength( CString command )
 {
-	class NullActor: public Actor
-	{
-		void DrawPrimitives() { }
-	} temp;
-
+	Actor temp;
 	temp.Command(command);
+
 	return temp.GetTweenTimeLeft();
 }
 

@@ -25,6 +25,8 @@
 #include "Screen.h"
 #include "SongManager.h"
 
+#include "BitmapText.h"
+#include "Quad.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -332,21 +334,6 @@ void ScreenManager::Update( float fDeltaTime )
 	m_SystemLayer->Update( fDeltaTime );
 }
 
-
-void ScreenManager::Restore()
-{
-	// Restore all CurrentScreens (back to front)
-	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-		m_ScreenStack[i]->Restore();
-	m_SystemLayer->Restore();
-}
-
-void ScreenManager::Invalidate()
-{
-	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-		m_ScreenStack[i]->Invalidate();
-	m_SystemLayer->Invalidate();
-}
 
 void ScreenManager::Draw()
 {

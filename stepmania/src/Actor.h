@@ -67,20 +67,16 @@ public:
 	};
 
 	// let subclasses override
-
-	/* Do subclasses really need to override tweening?  Tween data should
-	 * probably be private ... - glenn */
-	virtual void Restore() {};
-	virtual void Invalidate() {};
-
 	virtual void Draw();		// calls, BeginDraw, DrawPrimitives, EndDraw
 	virtual void BeginDraw();	// pushes transform onto world matrix stack
-	virtual void DrawPrimitives() = 0;	// override with Actor specific action
+	virtual void DrawPrimitives() {}	// override with Actor specific action
 	virtual void EndDraw();		// pops transform from world matrix stack
 	bool IsFirstUpdate();
 	virtual void Update( float fDeltaTime );
 	virtual void UpdateTweening( float fDeltaTime );
 
+	/* Do subclasses really need to override tweening?  Tween data should
+	 * probably be private ... - glenn */
 	/* Return the current coordinates, not the destination coordinates;
 	 * that's what the old behavior was, at least, and it's what ScreenMusicScroll
 	 * expects.  I could see uses for knowing the destination coords, though,

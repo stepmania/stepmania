@@ -14,8 +14,6 @@
 
 
 #include "RageInputDevice.h"
-#include "BitmapText.h"
-#include "Quad.h"
 #include "ScreenMessage.h"
 #include "InputFilter.h"
 #include "GameInput.h"
@@ -33,8 +31,6 @@ public:
 	~ScreenManager();
 
 	// pass these messages along to the current state
-	void Restore();
-	void Invalidate();
 	void Update( float fDeltaTime );
 	void Draw();
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

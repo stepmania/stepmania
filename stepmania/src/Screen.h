@@ -27,10 +27,6 @@ public:
 
 	virtual void AddChild( Actor* pActor );
 
-	// let subclass override if they want
-	virtual void Restore() {};
-	virtual void Invalidate() {};
-
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	static bool ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if CoinMode changed
