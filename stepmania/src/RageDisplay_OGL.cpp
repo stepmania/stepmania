@@ -410,10 +410,11 @@ static void CheckPalettedTextures( bool LowColor )
 		}
 	}
 
-	GLenum glError = glGetError();
+	GLenum glError;
+	glError = glGetError();
 	if( glError != GL_NO_ERROR )
 	{
-		error = "glTexImage2D failed";
+		error = ssprintf("glTexImage2D failed (%s)", GLToString(glError).c_str() );
 		goto fail;
 	}
 
@@ -423,7 +424,7 @@ static void CheckPalettedTextures( bool LowColor )
 	glError = glGetError();
 	if( glError != GL_NO_ERROR )
 	{
-		error = "glColorTableEXT failed";
+		error = ssprintf("glColorTableEXT failed (%s)", GLToString(glError).c_str() );
 		goto fail;
 	}
 
