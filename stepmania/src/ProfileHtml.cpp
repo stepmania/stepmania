@@ -275,8 +275,8 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			TABLE_LINE2( "UsingProfileDefaultModifiers",	pProfile->m_bUsingProfileDefaultModifiers );
 			TABLE_LINE2( "DefaultModifiers",				pProfile->m_sDefaultModifiers );
 			TABLE_LINE2( "TotalPlays",						pProfile->m_iTotalPlays );
-			TABLE_LINE2( "TotalPlay",						SecondsToHHMMSS(pProfile->m_iTotalPlaySeconds) );
-			TABLE_LINE2( "TotalGameplay",					SecondsToHHMMSS(pProfile->m_iTotalGameplaySeconds) );
+			TABLE_LINE2( "TotalPlay",						SecondsToHHMMSS( (float) pProfile->m_iTotalPlaySeconds) );
+			TABLE_LINE2( "TotalGameplay",					SecondsToHHMMSS( (float) pProfile->m_iTotalGameplaySeconds) );
 			TABLE_LINE2( "CurrentCombo",					pProfile->m_iCurrentCombo );
 			TABLE_LINE2( "TotalCaloriesBurned",				pProfile->GetDisplayTotalCaloriesBurned() );
 			TABLE_LINE2( "LastPlayedMachineName",			pProfile->m_sLastPlayedMachineName );
