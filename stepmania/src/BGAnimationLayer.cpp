@@ -120,6 +120,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath 
 		"tileflipx",
 		"tileflipy",
 		"tilepulse",
+		"stretchscrollhorizontal"
 	};
 
 	for( int i=0; i<NUM_EFFECTS; i++ )
@@ -178,6 +179,18 @@ found_effect:
 			default:
 				ASSERT(0);
 			}
+		}
+		break;
+	case EFFECT_STRETCH_SCROLL_H:
+		{
+			m_iNumSprites = 1;
+			RageTexturePrefs prefs;
+			prefs.bStretch = true;
+			m_Sprites[0].Load( sPath, prefs );
+			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,0,SCREEN_RIGHT,m_Sprites[0].GetUnzoomedHeight()) );
+			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
+			m_vTexCoordVelocity = RageVector2(+0.5f,0);
+			m_Sprites[0].SetY(m_fStretchScrollH_Y);
 		}
 		break;
 	case EFFECT_STRETCH_SPIN:
@@ -295,6 +308,7 @@ found_effect:
 		ini.GetValueF( "BGAnimationLayer", "TexCoordVelocityX", m_vTexCoordVelocity.x );
 		ini.GetValueF( "BGAnimationLayer", "TexCoordVelocityY", m_vTexCoordVelocity.y );
 		ini.GetValueF( "BGAnimationLayer", "RotationalVelocity", m_fRotationalVelocity );
+		ini.GetValueF( "BGAnimationLayer", "SetY", m_fStretchScrollH_Y );
 	}
 }
 
@@ -333,6 +347,9 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 		m_Sprites[i].Update( fDeltaTime );
 	}
 
+	if(m_Effect == EFFECT_STRETCH_SCROLL_H)
+		m_Sprites[0].SetY(m_fStretchScrollH_Y);
+
 	switch( m_Effect )
 	{
 	case EFFECT_CENTER:
@@ -342,6 +359,7 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 	case EFFECT_STRETCH_SCROLL_RIGHT:
 	case EFFECT_STRETCH_SCROLL_UP:
 	case EFFECT_STRETCH_SCROLL_DOWN:
+	case EFFECT_STRETCH_SCROLL_H:
 		float fTexCoords[8];
 		m_Sprites[0].GetCustomTextureCoords( fTexCoords );
 

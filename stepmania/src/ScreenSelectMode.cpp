@@ -130,6 +130,21 @@ ScreenSelectMode::ScreenSelectMode()
 
 	RefreshModeChoices();
 
+	if( SELECTION_SPECIFIC_BG_ANIMATIONS )
+	{
+		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+
+		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
+		{
+			CString sChoiceName = m_apPossibleModeChoices[i]->name;
+			m_Infotext[i].Load( THEME->GetPathTo("Graphics",ssprintf("select mode infotext %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
+			m_Infotext[i].SetXY( GUIDE_X, GUIDE_Y );
+			this->AddChild( &m_Infotext[i] );
+			m_Infotext[i].SetDiffuse( RageColor(0,0,0,0));
+		}
+	}
+	AfterChange();
+
 	TweenOnScreen();
 	m_Menu.TweenOnScreenFromBlack( SM_None );
 
@@ -281,6 +296,20 @@ void ScreenSelectMode::MenuBack( PlayerNumber pn )
 
 void ScreenSelectMode::AfterChange()
 {
+	if( SELECTION_SPECIFIC_BG_ANIMATIONS )
+	{
+		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
+		{
+			if(i == m_ScrollingList.GetSelection())
+			{
+				m_Infotext[i].SetDiffuse(RageColor(1,1,1,1));
+			}
+			else
+			{
+				m_Infotext[i].SetDiffuse(RageColor(0,0,0,0));
+			}
+		}
+	}
 //	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 //	const ModeChoice& choice = m_aPossibleModeChoices[ m_ScrollingList.GetSelection() ];
 }

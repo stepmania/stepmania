@@ -56,6 +56,8 @@ protected:
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;
 
+	Sprite m_Infotext[MAX_MODE_CHOICES];
+
 	CArray<ModeChoice*,ModeChoice*> m_apPossibleModeChoices;
 
 	ScrollingList m_ScrollingList;

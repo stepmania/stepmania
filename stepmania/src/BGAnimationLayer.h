@@ -72,6 +72,7 @@ protected:
 		EFFECT_TILE_FLIP_X,
 		EFFECT_TILE_FLIP_Y,
 		EFFECT_TILE_PULSE,
+		EFFECT_STRETCH_SCROLL_H,
 		NUM_EFFECTS		// leave this at the end
 	};
 	Effect	m_Effect;
@@ -80,6 +81,7 @@ protected:
 
 	RageVector2 m_vTexCoordVelocity;
 	float m_fRotationalVelocity;
+	float m_fStretchScrollH_Y;
 };
 
 #endif
