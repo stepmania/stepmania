@@ -13,7 +13,7 @@
 #include "NoteDataUtil.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-
+#include "PlayerOptions.h"
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
 {
@@ -890,3 +890,33 @@ void NoteDataUtil::Mines( NoteData &in )
 					in.SetTapNote(t,r,TAP_MINE);
 			}
 }
+
+void NoteDataUtil::TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType st )
+{
+	if( !po.m_bHoldNotes )
+		RemoveHoldNotes( nd );
+
+	switch( po.m_Turn )
+	{
+	case PlayerOptions::TURN_NONE:																			break;
+	case PlayerOptions::TURN_MIRROR:		NoteDataUtil::Turn( nd, st, NoteDataUtil::mirror );			break;
+	case PlayerOptions::TURN_LEFT:			NoteDataUtil::Turn( nd, st, NoteDataUtil::left );			break;
+	case PlayerOptions::TURN_RIGHT:			NoteDataUtil::Turn( nd, st, NoteDataUtil::right );			break;
+	case PlayerOptions::TURN_SHUFFLE:		NoteDataUtil::Turn( nd, st, NoteDataUtil::shuffle );			break;
+	case PlayerOptions::TURN_SUPER_SHUFFLE:	NoteDataUtil::Turn( nd, st, NoteDataUtil::super_shuffle );	break;
+	default:		ASSERT(0);
+	}
+
+	switch( po.m_Transform )
+	{
+	case PlayerOptions::TRANSFORM_NONE:											break;
+	case PlayerOptions::TRANSFORM_LITTLE:		NoteDataUtil::Little(nd);	break;
+	case PlayerOptions::TRANSFORM_WIDE:			NoteDataUtil::Wide(nd);		break;
+	case PlayerOptions::TRANSFORM_BIG:			NoteDataUtil::Big(nd);		break;
+	case PlayerOptions::TRANSFORM_QUICK:		NoteDataUtil::Quick(nd);		break;
+	case PlayerOptions::TRANSFORM_SKIPPY:		NoteDataUtil::Skippy(nd);	break;
+	case PlayerOptions::TRANSFORM_MINES:		NoteDataUtil::Mines(nd);		break;
+	default:		ASSERT(0);
+	}
+}
+

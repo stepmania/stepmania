@@ -18,6 +18,7 @@
 #include "NoteTypes.h"
 #include "NoteData.h"
 
+struct PlayerOptions;
 
 /* Utils for NoteData.  Things should go in here if they can be (cleanly and
  * efficiently) implemented using only NoteData's primitives; this improves
@@ -74,6 +75,8 @@ namespace NoteDataUtil
 
 	// Remove all tap notes that fail this mask
 	void EliminateNonPassingTaps( NoteData &in, int row, const bool bValidMask[] ); 
+
+	void TransformNoteData( NoteData &nd, PlayerOptions &po, StepsType st );
 };
 
 #endif

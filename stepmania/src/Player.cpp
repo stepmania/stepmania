@@ -122,33 +122,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	if( m_pScore )
 		m_pScore->Init( pn );
 
-	if( !GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes )
-		NoteDataUtil::RemoveHoldNotes(*this);
-
-	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-
-	switch( GAMESTATE->m_PlayerOptions[pn].m_Turn )
-	{
-	case PlayerOptions::TURN_NONE:																			break;
-	case PlayerOptions::TURN_MIRROR:		NoteDataUtil::Turn( *this, st, NoteDataUtil::mirror );			break;
-	case PlayerOptions::TURN_LEFT:			NoteDataUtil::Turn( *this, st, NoteDataUtil::left );			break;
-	case PlayerOptions::TURN_RIGHT:			NoteDataUtil::Turn( *this, st, NoteDataUtil::right );			break;
-	case PlayerOptions::TURN_SHUFFLE:		NoteDataUtil::Turn( *this, st, NoteDataUtil::shuffle );			break;
-	case PlayerOptions::TURN_SUPER_SHUFFLE:	NoteDataUtil::Turn( *this, st, NoteDataUtil::super_shuffle );	break;
-	default:		ASSERT(0);
-	}
-
-	switch( GAMESTATE->m_PlayerOptions[pn].m_Transform )
-	{
-	case PlayerOptions::TRANSFORM_NONE:											break;
-	case PlayerOptions::TRANSFORM_LITTLE:		NoteDataUtil::Little(*this);	break;
-	case PlayerOptions::TRANSFORM_WIDE:			NoteDataUtil::Wide(*this);		break;
-	case PlayerOptions::TRANSFORM_BIG:			NoteDataUtil::Big(*this);		break;
-	case PlayerOptions::TRANSFORM_QUICK:		NoteDataUtil::Quick(*this);		break;
-	case PlayerOptions::TRANSFORM_SKIPPY:		NoteDataUtil::Skippy(*this);	break;
-	case PlayerOptions::TRANSFORM_MINES:		NoteDataUtil::Mines(*this);		break;
-	default:		ASSERT(0);
-	}
+	/* Apply transforms. */
+	NoteDataUtil::TransformNoteData( *this, GAMESTATE->m_PlayerOptions[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
 	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
