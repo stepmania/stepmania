@@ -57,6 +57,7 @@ namespace RageSurfaceUtils
 	RageSurface *MakeDummySurface( int height, int width );
 
 	void ApplyHotPinkColorKey( RageSurface *&img );
+	void FlipVertically( RageSurface *img );
 };
 
 #endif

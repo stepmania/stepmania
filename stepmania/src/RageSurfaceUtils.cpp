@@ -950,6 +950,23 @@ void RageSurfaceUtils::ApplyHotPinkColorKey( RageSurface *&img )
 	}
 }
 
+void RageSurfaceUtils::FlipVertically( RageSurface *img )
+{
+	const int pitch = img->pitch;
+	const int bytes_per_row = img->format->BytesPerPixel * img->w;
+	char *row = new char[bytes_per_row];
+
+	for( int y=0; y < img->h/2; y++ )
+	{
+		int y2 = img->h-1-y;
+		memcpy( row, img->pixels + pitch * y, bytes_per_row );
+		memcpy( img->pixels + pitch * y, img->pixels + pitch * y2, bytes_per_row );
+		memcpy( img->pixels + pitch * y2, row, bytes_per_row  );
+	}
+
+	delete [] row;
+}
+
 /*
  * (c) 2001-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

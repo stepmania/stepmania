@@ -830,17 +830,8 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	             GL_UNSIGNED_BYTE, image->pixels);
 	AssertNoGLError();
 
-	// flip vertically
-	int pitch = image->pitch;
-	int bytes_per_row = image->format->BytesPerPixel * width;
-	char *row = new char[bytes_per_row];
-	for( int y=0; y<wind->GetVideoModeParams().height/2; y++ )
-	{
-		memcpy( row, (char *)image->pixels + pitch * y, bytes_per_row );
-		memcpy( (char *)image->pixels + pitch * y, (char *)image->pixels + pitch * (height-1-y), bytes_per_row );
-		memcpy( (char *)image->pixels + pitch * (height-1-y), row, bytes_per_row  );
-	}
-	delete [] row;
+	RageSurfaceUtils::FlipVertically( image );
+
 	return image;
 }
 
