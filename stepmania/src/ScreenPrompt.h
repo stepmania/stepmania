@@ -9,6 +9,7 @@
 #include "Quad.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
+#include "ScreenManager.h"
 
 
 class ScreenPrompt : public Screen
@@ -16,29 +17,53 @@ class ScreenPrompt : public Screen
 public:
 	ScreenPrompt( CString sName );
 	virtual void Init();
-	ScreenPrompt( CString sText, bool bYesNoPrompt=false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
+	ScreenPrompt( 
+		CString sText, 
+		PromptType type = PROMPT_OK, 
+		PromptAnswer defaultAnswer = ANSWER_NO, 
+		void(*OnYes)(void*) = NULL, 
+		void(*OnNo)(void*) = NULL, 
+		void* pCallbackData = NULL 
+		);
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	static bool s_bLastAnswer;
+	static PromptAnswer s_LastAnswer;
 
 protected:
+	bool CanGoLeft() { return m_Answer > 0; }
+	bool CanGoRight()
+	{
+		switch( m_PromptType )
+		{
+		case PROMPT_OK:
+			return false;
+		case PROMPT_YES_NO:
+			return m_Answer < ANSWER_NO;
+		case PROMPT_YES_NO_CANCEL:
+			return m_Answer < ANSWER_CANCEL;
+		default:
+			ASSERT(0);
+		}
+		return false;
+	}
+	void Change( int dir );
 	void MenuLeft( PlayerNumber pn );
 	void MenuRight( PlayerNumber pn );
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
 	CString			m_sText;
-	BGAnimation					m_Background;
+	BGAnimation		m_Background;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;
-	BitmapText		m_textAnswer[2];	// "YES" or "NO"
-	bool			m_bYesNoPrompt;		// false = OK prompt, true = YES/NO prompt
-	bool			m_bAnswer;		// true = "YES", false = "NO";
-	ScreenMessage	m_SMSendWhenDone;
+	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];
+	PromptType		m_PromptType;
+	PromptAnswer	m_Answer;
+	ScreenMessage	m_SMSendWhenDone;	// don't send on ANSWER_CANCEL
 	void(*m_pOnYes)(void*);
 	void(*m_pOnNo)(void*);
 	void* m_pCallbackData;

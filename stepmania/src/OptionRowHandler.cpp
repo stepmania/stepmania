@@ -1168,7 +1168,7 @@ public:
 			break;
 		case EDIT_MENU_ACTION_DELETE:
 			ASSERT( pSteps );
-			SCREENMAN->Prompt( SM_None, "These notes will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurNotes );
+			SCREENMAN->Prompt( SM_None, "These notes will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurNotes );
 			break;
 		case EDIT_MENU_ACTION_COPY:
 			ASSERT( !pSteps );

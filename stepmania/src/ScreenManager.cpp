@@ -470,13 +470,13 @@ void ScreenManager::AddNewScreenToTop( const CString &sScreenName, ScreenMessage
 #include "ScreenTextEntry.h"
 #include "ScreenMiniMenu.h"
 
-void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenPrompt( sText, bYesNo, bDefaultAnswer, OnYes, OnNo, pCallbackData);
+	Screen *pNewScreen = new ScreenPrompt( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
 	pNewScreen->Init();
 	SetFromNewScreen( pNewScreen, true );
 

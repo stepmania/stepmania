@@ -161,7 +161,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_DoneDeleting:
-		if( ScreenPrompt::s_bLastAnswer )
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
 			CString sProfileID = GetSelectedProfileID();
 			CString sName = GetSelectedProfileName();
@@ -196,7 +196,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		if( sProfileID=="" )
 			SCREENMAN->PlayInvalidSound();
 		else
-			SCREENMAN->Prompt( SM_DoneDeleting, ssprintf("Delete profile %s '%s'?",sProfileID.c_str(),sName.c_str()), true );
+			SCREENMAN->Prompt( SM_DoneDeleting, ssprintf("Delete profile %s '%s'?",sProfileID.c_str(),sName.c_str()), PROMPT_YES_NO, ANSWER_NO );
 		break;
 	}
 	case PO_RENAME_:

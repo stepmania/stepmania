@@ -172,7 +172,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
-		SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurSteps );
+		SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
 		m_Selector.RefreshAll();
 		return;
 	case EDIT_MENU_ACTION_COPY:

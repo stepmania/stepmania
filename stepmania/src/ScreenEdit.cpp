@@ -29,6 +29,7 @@
 #include "ScreenTextEntry.h"
 #include "Style.h"
 #include "ActorUtil.h"
+#include "ScreenPrompt.h"
 
 const float RECORD_HOLD_SECONDS = 0.3f;
 
@@ -1641,7 +1642,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		break;
 
 	case SM_DoExit:
-		m_Out.StartTransitioning( SM_GoToNextScreen );
+		if( ScreenPrompt::s_LastAnswer != ANSWER_CANCEL )
+			m_Out.StartTransitioning( SM_GoToNextScreen );
 		break;
 
 	case SM_GainFocus:
@@ -1796,7 +1798,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			g_DoReload = false;
 			SCREENMAN->Prompt( SM_DoReloadFromDisk,
 				"Do you want to reload from disk?\n\nThis will destroy all changes.",
-				true, false, ReloadFromDisk, NULL, NULL );
+				PROMPT_YES_NO, ANSWER_NO, ReloadFromDisk, NULL, NULL );
 			break;
 		case player_options:
 			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
@@ -1925,7 +1927,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			SCREENMAN->Prompt(
 				SM_DoExit,
 				"Do you want to save changes before exiting?",
-				true, true, DoSave );
+				PROMPT_YES_NO_CANCEL, ANSWER_NO, DoSave );
 			break;
 		default:
 			ASSERT(0);

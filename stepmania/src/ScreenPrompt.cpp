@@ -15,16 +15,23 @@
 #define PROMPT_X	(SCREEN_CENTER_X)
 #define PROMPT_Y	(SCREEN_CENTER_Y + 120)
 
-bool ScreenPrompt::s_bLastAnswer = false;
+PromptAnswer ScreenPrompt::s_LastAnswer = ANSWER_YES;
 
 //REGISTER_SCREEN_CLASS( ScreenPrompt );
-ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData ) :
+ScreenPrompt::ScreenPrompt( 
+	CString sText, 
+	PromptType type, 
+	PromptAnswer defaultAnswer, 
+	void(*OnYes)(void*), 
+	void(*OnNo)(void*), 
+	void* pCallbackData 
+	) :
   Screen("ScreenPrompt")
 {
 	m_bIsTransparent = true;	// draw screens below us
 
-	m_bYesNoPrompt = bYesNoPrompt;
-	m_bAnswer = bDefaultAnswer;
+	m_PromptType = type;
+	m_Answer = defaultAnswer;
 	m_pOnYes = OnYes;
 	m_pOnNo = OnNo;
 	m_pCallbackData = pCallbackData;
@@ -39,7 +46,7 @@ void ScreenPrompt::Init()
 	m_Background.PlayCommand("On");
 	this->AddChild( &m_Background );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textQuestion.LoadFromFont( THEME->GetPathF("ScreenPrompt","question") );
 	m_textQuestion.SetText( m_sText );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
@@ -47,33 +54,40 @@ void ScreenPrompt::Init()
 	m_rectAnswerBox.SetDiffuse( RageColor(0.5f,0.5f,1.0f,0.7f) );
 	this->AddChild( &m_rectAnswerBox );
 
-	m_textAnswer[0].LoadFromFont( THEME->GetPathF("ScreenPrompt","answer") );
-	m_textAnswer[1].LoadFromFont( THEME->GetPathF("ScreenPrompt","answer") );
-	m_textAnswer[0].SetY( PROMPT_Y );
-	m_textAnswer[1].SetY( PROMPT_Y );
-	this->AddChild( &m_textAnswer[0] );
-	this->AddChild( &m_textAnswer[1] );
-
+	for( int i=0; i<NUM_PROMPT_ANSWERS; i++ )
+	{
+		m_textAnswer[i].LoadFromFont( THEME->GetPathF("ScreenPrompt","answer") );
+		m_textAnswer[i].SetY( PROMPT_Y );
+		this->AddChild( &m_textAnswer[i] );
+	}
 	
-
-	if( m_bYesNoPrompt )
+	switch( m_PromptType )
 	{
-		m_textAnswer[0].SetText( "NO" );
-		m_textAnswer[1].SetText( "YES" );
-		m_textAnswer[0].SetX( PROMPT_X+50 );
-		m_textAnswer[1].SetX( PROMPT_X-50 );
-	}
-	else
-	{
-		m_textAnswer[0].SetText( "OK" );
-		m_textAnswer[0].SetX( PROMPT_X );
+	case PROMPT_OK:
+		m_textAnswer[ANSWER_YES].	SetText( "OK" );
+		m_textAnswer[ANSWER_YES].	SetX( PROMPT_X );
+		break;
+	case PROMPT_YES_NO:
+		m_textAnswer[ANSWER_YES].	SetText( "YES" );
+		m_textAnswer[ANSWER_NO].	SetText( "NO" );
+		m_textAnswer[ANSWER_YES].	SetX( PROMPT_X-50 );
+		m_textAnswer[ANSWER_NO].	SetX( PROMPT_X+50 );
+		break;
+	case PROMPT_YES_NO_CANCEL:
+		m_textAnswer[ANSWER_YES].	SetText( "YES" );
+		m_textAnswer[ANSWER_NO].	SetText( "NO" );
+		m_textAnswer[ANSWER_CANCEL].SetText( "CANCEL" );
+		m_textAnswer[ANSWER_YES].	SetX( PROMPT_X-120 );
+		m_textAnswer[ANSWER_NO].	SetX( PROMPT_X-20 );
+		m_textAnswer[ANSWER_CANCEL].SetX( PROMPT_X+150 );
+		break;
 	}
 
-	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
-	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetUnzoomedWidth()+10.0f );
+	m_rectAnswerBox.SetXY( m_textAnswer[m_Answer].GetX(), m_textAnswer[m_Answer].GetY() );
+	m_rectAnswerBox.SetZoomX( m_textAnswer[m_Answer].GetUnzoomedWidth()+10.0f );
 	m_rectAnswerBox.SetZoomY( 30 );
 
-	m_textAnswer[m_bAnswer].SetEffectGlowShift();
+	m_textAnswer[m_Answer].SetEffectGlowShift();
 
 	m_In.Load( THEME->GetPathB("ScreenPrompt","in") );
 	m_In.StartTransitioning();
@@ -135,29 +149,31 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
+void ScreenPrompt::Change( int dir )
+{
+	m_textAnswer[m_Answer].SetEffectNone();
+	m_Answer = (PromptAnswer)(m_Answer+dir);
+	ASSERT( m_Answer >= 0  &&  m_Answer < NUM_PROMPT_ANSWERS );  
+	m_textAnswer[m_Answer].SetEffectGlowShift();
+
+	m_rectAnswerBox.StopTweening();
+	m_rectAnswerBox.BeginTweening( 0.2f );
+	m_rectAnswerBox.SetXY( m_textAnswer[m_Answer].GetX(), m_textAnswer[m_Answer].GetY() );
+	m_rectAnswerBox.SetZoomX( m_textAnswer[m_Answer].GetUnzoomedWidth()+10.0f );
+
+	SOUND->PlayOnce( THEME->GetPathS("ScreenPrompt","change") );
+}
+
 void ScreenPrompt::MenuLeft( PlayerNumber pn )
 {
-	if( !m_bYesNoPrompt )
-		return;
-
-	MenuRight( pn );
+	if( CanGoLeft() )
+		Change( -1 );
 }
 
 void ScreenPrompt::MenuRight( PlayerNumber pn )
 {
-	if( !m_bYesNoPrompt )
-		return;
-
-	m_textAnswer[m_bAnswer].SetEffectNone();
-	m_bAnswer = !m_bAnswer;
-	m_textAnswer[m_bAnswer].SetEffectGlowShift();
-
-	m_rectAnswerBox.StopTweening();
-	m_rectAnswerBox.BeginTweening( 0.2f );
-	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
-	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetUnzoomedWidth()+10.0f );
-
-	SOUND->PlayOnce( THEME->GetPathS("ScreenPrompt","change") );
+	if( CanGoRight() )
+		Change( +1 );
 }
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
@@ -170,27 +186,29 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	m_rectAnswerBox.BeginTweening( 0.2f );
 	m_rectAnswerBox.SetDiffuse( RageColor(1,1,1,0) );
 
-	m_textAnswer[m_bAnswer].SetEffectNone();
+	m_textAnswer[m_Answer].SetEffectNone();
 
-	m_textAnswer[0].BeginTweening( 0.2f );
-	m_textAnswer[0].SetDiffuse( RageColor(1,1,1,0) );
-	m_textAnswer[1].BeginTweening( 0.2f );
-	m_textAnswer[1].SetDiffuse( RageColor(1,1,1,0) );
+	for( int i=0; i<NUM_PROMPT_ANSWERS; i++ )
+	{
+		m_textAnswer[i].BeginTweening( 0.2f );
+		m_textAnswer[i].SetDiffuse( RageColor(1,1,1,0) );
+	}
 
 	SCREENMAN->PlayStartSound();
 
-	if( m_bAnswer )
+	switch( m_Answer )
 	{
+	case ANSWER_YES:
 		if( m_pOnYes )
 			m_pOnYes(m_pCallbackData);
-	}
-	else
-	{
+		break;
+	case ANSWER_NO:
 		if( m_pOnNo )
 			m_pOnNo(m_pCallbackData);
+		break;
 	}
 
-	s_bLastAnswer = m_bAnswer;
+	s_LastAnswer = m_Answer;
 }
 
 void ScreenPrompt::MenuBack( PlayerNumber pn )

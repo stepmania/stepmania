@@ -1981,7 +1981,7 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 		ASSERT(0);
 	}
 
-	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, false, SaveChanges, RevertChanges, &m_apSongsQueue );
+	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, PROMPT_YES_NO, ANSWER_NO, SaveChanges, RevertChanges, &m_apSongsQueue );
 }
 
 /*

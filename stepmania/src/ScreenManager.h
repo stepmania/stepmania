@@ -18,6 +18,22 @@ class BGAnimation;
 struct lua_State;
 
 
+enum PromptType
+{
+	PROMPT_OK,
+	PROMPT_YES_NO,
+	PROMPT_YES_NO_CANCEL
+};
+
+enum PromptAnswer
+{
+	ANSWER_YES,
+	ANSWER_NO,
+	ANSWER_CANCEL,
+	NUM_PROMPT_ANSWERS
+};
+
+
 typedef Screen* (*CreateScreenFn)(const CString& sClassName);
 
 class ScreenManager
@@ -40,7 +56,7 @@ public:
 	
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName, ScreenMessage messageSendOnPop );
-	void Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
+	void Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, PromptType type = PROMPT_OK, PromptAnswer defaultAnswer = ANSWER_NO, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 	void Password( ScreenMessage SM_SendWhenDone, const CString &sText, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL ); 
 	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
 	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
