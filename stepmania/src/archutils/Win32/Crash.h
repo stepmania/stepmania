@@ -18,23 +18,6 @@
 #ifndef f_CRASH_H
 #define f_CRASH_H
 
-#ifdef f_CRASH_CPP
-#define EXTERN
-#else
-#define EXTERN extern
-#endif
-
-#define CHECKPOINT_COUNT		(2)
-
-struct VirtualDubThreadState {
-	unsigned long			dwThreadId;
-	void *					hThread;
-};
-
-EXTERN __declspec(thread) VirtualDubThreadState g_PerThreadState;
-
-void VirtualDubInitializeThread();
-void VirtualDubDeinitializeThread();
 extern long __stdcall CrashHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 
 /* Exactly as advertised.  (This will bring up the crash handler even

@@ -27,7 +27,6 @@
 
 #include "resource.h"
 #include "crash.h"
-#include "CrashList.h"
 #include "ProductInfo.h"
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog and Flush */
@@ -68,15 +67,6 @@ static void SpliceProgramPath(char *buf, int bufsiz, const char *fn) {
 	strcpy(pszFile, fn);
 }
 
-
-
-
-
-
-
-
-
-
 struct VDDebugInfoContext {
 	void *pRawBlock;
 
@@ -96,62 +86,6 @@ static VDDebugInfoContext g_debugInfo;
 
 BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-
-///////////////////////////////////////////////////////////////////////////
-//
-//	Nina's per-thread debug logs are really handy, so I back-ported
-//	them to 1.x.  These are lightweight in comparison, however.
-//
-
-VirtualDubThreadState __declspec(thread) g_PerThreadState;
-__declspec(thread)
-struct {
-	ListNode node;
-	VirtualDubThreadState *pState;
-} g_PerThreadStateNode;
-
-class VirtualDubThreadStateNode : public ListNode2<VirtualDubThreadStateNode> {
-public:
-	VirtualDubThreadState *pState;
-};
-
-static CRITICAL_SECTION g_csPerThreadState;
-static List2<VirtualDubThreadStateNode> g_listPerThreadState;
-static LONG g_nThreadsTrackedMinusOne = -1;
-
-void VirtualDubInitializeThread() {
-	DWORD dwThreadId = GetCurrentThreadId();
-
-	if (!InterlockedIncrement(&g_nThreadsTrackedMinusOne)) {
-		InitializeCriticalSection(&g_csPerThreadState);
-	}
-
-	EnterCriticalSection(&g_csPerThreadState);
-
-	g_PerThreadState.hThread = NULL;
-	if (DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), (HANDLE *)&g_PerThreadState.hThread, NULL, FALSE, DUPLICATE_SAME_ACCESS))
-	{
-		g_PerThreadState.dwThreadId = dwThreadId;
-
-		g_PerThreadStateNode.pState = &g_PerThreadState;
-		g_listPerThreadState.AddTail((ListNode2<VirtualDubThreadStateNode> *)&g_PerThreadStateNode);
-	}
-
-	LeaveCriticalSection(&g_csPerThreadState);
-}
-
-void VirtualDubDeinitializeThread() {
-	EnterCriticalSection(&g_csPerThreadState);
-
-	((ListNode2<VirtualDubThreadStateNode> *)&g_PerThreadStateNode)->Remove();
-
-	LeaveCriticalSection(&g_csPerThreadState);
-
-	if (g_PerThreadState.hThread)
-		CloseHandle((HANDLE)g_PerThreadState.hThread);
-
-	InterlockedDecrement(&g_nThreadsTrackedMinusOne);
-}
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -225,26 +159,7 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	 * it to hide.  Hmmmmm. */
 	ShowWindow( g_hWndMain, SW_HIDE );
 
-	/////////////////////////
-	//
-	// QUICKLY: SUSPEND ALL THREADS THAT AREN'T US.
-
-	EnterCriticalSection(&g_csPerThreadState);
-
-	try {
-		DWORD dwCurrentThread = GetCurrentThreadId();
-
-		for(List2<VirtualDubThreadStateNode>::fwit it = g_listPerThreadState.begin(); it; ++it) {
-			const VirtualDubThreadState *pState = it->pState;
-
-			if (pState->dwThreadId && pState->dwThreadId != dwCurrentThread) {
-				SuspendThread((HANDLE)pState->hThread);
-			}
-		}
-	} catch(...) {
-	}
-
-	LeaveCriticalSection(&g_csPerThreadState);
+	RageThread::HaltAllThreads( false );
 
 	static bool InHere = false;
 	if(InHere)
@@ -555,9 +470,8 @@ bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename)
 
 	HANDLE h = CreateFile(pszFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
-	if (INVALID_HANDLE_VALUE == h) {
+	if (INVALID_HANDLE_VALUE == h)
 		return false;
-	}
 
 	do {
 		DWORD dwFileSize = GetFileSize(h, NULL);
@@ -633,30 +547,12 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 
 	if (pr < pr_limit) {
 		const char *fn_name = GetNameFromHeap(pctx->pFuncNameHeap, idx);
-		const char *class_name = NULL;
-		const char *prefix = "";
 
-		if (!*fn_name) {
+		if (!*fn_name)
 			fn_name = "(special)";
-		} else if (*fn_name < 32) {
-			int class_idx;
-
-			class_idx = (((unsigned char*)fn_name)[0] - 1)*128 + (((unsigned char*)fn_name)[1] - 1);
-			class_name = GetNameFromHeap(pctx->pClassNameHeap, class_idx);
-
-			fn_name += 2;
-
-			if (*fn_name == 1) {
-				fn_name = class_name;
-			} else if (*fn_name == 2) {
-				fn_name = class_name;
-				prefix = "~";
-			} else if (*fn_name < 32)
-				fn_name = "(special)";
-		}
 
 		// ehh... where's my wsnprintf?  _snprintf() might allocate memory or locks....
-		return wsprintf(buf, "%s%s%s%s", class_name?class_name:"", class_name?"::":"", prefix, fn_name) >= 0
+		return wsprintf(buf, "%s", fn_name) >= 0
 				? rva
 				: -1;
 	}
