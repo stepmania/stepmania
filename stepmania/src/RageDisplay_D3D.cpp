@@ -1293,12 +1293,16 @@ void RageDisplay_D3D::SetAlphaTest( bool b )
 
 RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf )
 {
-	// D3DXMatrixOrthoOffCenterRH
-	RageMatrix m(
-		2/(r-l),      0,            0,           0,
-		0,            2/(t-b),      0,           0,
-		0,            0,            -1/(zf-zn),  0,
-		-(r+l)/(r-l), -(t+b)/(t-b), -zn/(zf-zn),  1 );
+	RageMatrix m = RageDisplay::GetOrthoMatrix( l, r, b, t, zn, zf );
+
+	/* Convert from OpenGL's [-1,+1] Z values to D3D's [0,+1]. */
+	RageMatrix tmp;
+	RageMatrixScaling( &tmp, 1, 1, 0.5f );
+	RageMatrixMultiply( &m, &tmp, &m );
+
+	RageMatrixTranslation( &tmp, 0, 0, 0.5f );
+	RageMatrixMultiply( &m, &tmp, &m );
+
 	return m;
 }
 
