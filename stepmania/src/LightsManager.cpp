@@ -113,9 +113,20 @@ void LightsManager::Update( float fDeltaTime )
 	case LIGHTMODE_DEMONSTRATION:
 	case LIGHTMODE_GAMEPLAY:
 		{
+			int i;
+
+			// top lights are controlled my ScreenGameplay
+			//for( int i=0; i<4; i++ )
+			//	m_pDriver->SetLight( (Light)i, bOn );
+
+			// menu lights are always off
+			for( i=4; i<6; i++ )
+				m_pDriver->SetLight( (Light)i, false );
+
+			// bass lights
 			float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
 			bool bOn = fBeatPercentage < 0.1 || fBeatPercentage > 0.9; 
-			for( int i=0; i<8; i++ )
+			for( i=7; i<8; i++ )
 				m_pDriver->SetLight( (Light)i, bOn );
 		}
 		break;
@@ -197,4 +208,12 @@ void LightsManager::Update( float fDeltaTime )
 void LightsManager::SetLightMode( LightMode lm )
 {
 	m_LightMode = lm;
+}
+
+void LightsManager::SetAllUpperLights( bool bOn )
+{
+	for( int i=0; i<4; i++ )
+	{
+		m_pDriver->SetLight( (Light)i, bOn );
+	}
 }

@@ -1090,7 +1090,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 static void HandleInputEvents(float fDeltaTime)
 {
 	INPUTFILTER->Update( fDeltaTime );
-	LIGHTSMAN->Update( fDeltaTime );
 	
 	static InputEventArray ieArray;
 	ieArray.clear();	// empty the array
@@ -1203,6 +1202,8 @@ static void GameLoop()
 
 		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );
+
+		LIGHTSMAN->Update( fDeltaTime );
 
 		HOOKS->Update( fDeltaTime );
 

@@ -1228,8 +1228,30 @@ void ScreenGameplay::Update( float fDeltaTime )
 		this->PostScreenMessage( SM_NotesEnded, 0 );
 	}
 
-	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
-		m_soundAssistTick.Play();
+	bool bPlayTicks = IsTimeToPlayTicks();
+	if( bPlayTicks )
+	{
+		if( GAMESTATE->m_SongOptions.m_bAssistTick )
+			m_soundAssistTick.Play();
+	}
+
+	static float s_fSecsLeftOnUpperLights = 0;
+	if( bPlayTicks )
+	{
+		float fSecsPerBeat = 1.f/GAMESTATE->m_fCurBPS;
+		float fSecsToLight = fSecsPerBeat*.2;
+		s_fSecsLeftOnUpperLights = fSecsToLight;
+	}
+	else
+	{
+		s_fSecsLeftOnUpperLights -= fDeltaTime;
+		if( s_fSecsLeftOnUpperLights < 0 )
+			s_fSecsLeftOnUpperLights = 0;
+	}
+	if( s_fSecsLeftOnUpperLights>0 )
+		LIGHTSMAN->SetAllUpperLights( true );
+	else
+		LIGHTSMAN->SetAllUpperLights( false );
 }
 
 /* Set m_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send

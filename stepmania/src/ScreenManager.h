@@ -47,6 +47,7 @@ public:
 	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
 	void PopTopScreen( ScreenMessage SM = SM_None );
 	void SystemMessage( CString sMessage );
+	void SystemMessageNoAnimate( CString sMessage );
 
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
 	void SendMessageToTopScreen( ScreenMessage SM );

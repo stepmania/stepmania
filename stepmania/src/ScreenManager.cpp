@@ -69,6 +69,7 @@ class ScreenSystemLayer: public Screen
 public:
 	ScreenSystemLayer();
 	void SystemMessage( CString sMessage );
+	void SystemMessageNoAnimate( CString sMessage );
 	void RefreshCreditsMessages();
 	void Update( float fDeltaTime );
 };
@@ -140,12 +141,23 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 
 void ScreenSystemLayer::SystemMessage( CString sMessage )
 {
-	m_textSystemMessage.StopTweening();
+	m_textSystemMessage.FinishTweening();
 	m_textSystemMessage.SetText( sMessage );
-	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,1) );
+	m_textSystemMessage.SetDiffuseAlpha( 1 );
 	m_textSystemMessage.SetX( -640 );
 	m_textSystemMessage.BeginTweening( 0.5f );
 	m_textSystemMessage.SetX( 4 );
+	m_textSystemMessage.BeginTweening( 5 );
+	m_textSystemMessage.BeginTweening( 0.5f );
+	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
+}
+
+void ScreenSystemLayer::SystemMessageNoAnimate( CString sMessage )
+{
+	m_textSystemMessage.FinishTweening();
+	m_textSystemMessage.SetText( sMessage );
+	m_textSystemMessage.SetX( 4 );
+	m_textSystemMessage.SetDiffuseAlpha( 1 );
 	m_textSystemMessage.BeginTweening( 5 );
 	m_textSystemMessage.BeginTweening( 0.5f );
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
@@ -644,6 +656,12 @@ void ScreenManager::SystemMessage( CString sMessage )
 {
 	LOG->Trace( "%s", sMessage.c_str() );
 	m_SystemLayer->SystemMessage( sMessage );
+}
+
+void ScreenManager::SystemMessageNoAnimate( CString sMessage )
+{
+	LOG->Trace( "%s", sMessage.c_str() );
+	m_SystemLayer->SystemMessageNoAnimate( sMessage );
 }
 
 void ScreenManager::RefreshCreditsMessages()

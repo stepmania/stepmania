@@ -57,6 +57,7 @@ public:
 	void Update( float fDeltaTime );
 
 	void SetLightMode( LightMode lm );
+	void SetAllUpperLights( bool bOn );
 
 private:
 	void SetLight( Light light, bool bOn );

@@ -34,6 +34,7 @@
 #include "ArchHooks/ArchHooks_none.h"
 #include "Sound/RageSoundDriver_Null.h"
 #include "Lights/LightsDriver_Null.h"
+#include "Lights/LightsDriver_SystemMessage.h"
 
 #if defined(SUPPORT_OPENGL)
 #include "LowLevelWindow/LowLevelWindow_SDL.h"

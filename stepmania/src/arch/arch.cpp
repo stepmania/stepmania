@@ -155,6 +155,7 @@ LightsDriver *MakeLightsDriver(CString driver)
 #ifdef LINUX
 	if(!driver.CompareNoCase("Serial")) ret = new LightsDriver_LinuxSerial;
 #endif
+	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
 	if(!driver.CompareNoCase("Null")) ret = new LightsDriver_Null;
 	if( !ret )
 	{
