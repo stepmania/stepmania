@@ -1218,7 +1218,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				PRINT_LINE_I( "NumTimesPlayed", pSteps->m_MemCardDatas[mc].iNumTimesPlayed );
 				
 				vector<Steps::MemCardData::HighScore>& vHighScores = pSteps->m_MemCardDatas[mc].vHighScores;
-				for( int i=0; i<vHighScores.size(); i++ )
+				for( unsigned i=0; i<vHighScores.size(); i++ )
 				{
 					Steps::MemCardData::HighScore &hs = vHighScores[i];
 					CString sName = ssprintf("#%d",i+1);
