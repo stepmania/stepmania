@@ -353,6 +353,22 @@ void Sprite::Update( float fDelta )
 		fTexCoords[6] += fDelta*m_fTexCoordVelocityX;
 		fTexCoords[7] += fDelta*m_fTexCoordVelocityY;
 
+		/* When wrapping, avoid gradual loss of precision and sending unreasonably large
+		 * texture coordinates to the renderer by pushing texture coordinates back to 0.
+		 * As long as we adjust all four coordinates by the same amount,this won't be visible. */
+		if( m_bTextureWrapping )
+		{
+			const float fXAdjust = floor( fTexCoords[0] ), fYAdjust = floor( fTexCoords[1] );
+			fTexCoords[0] -= fXAdjust;
+			fTexCoords[2] -= fXAdjust;
+			fTexCoords[4] -= fXAdjust;
+			fTexCoords[6] -= fXAdjust;
+			fTexCoords[1] -= fYAdjust;
+			fTexCoords[3] -= fYAdjust;
+			fTexCoords[5] -= fYAdjust;
+			fTexCoords[7] -= fYAdjust;
+		}
+
 		Sprite::SetCustomTextureCoords( fTexCoords );
 	}
 }
