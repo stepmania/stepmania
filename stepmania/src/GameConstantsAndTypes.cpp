@@ -7,6 +7,7 @@
 #include "Foreach.h"
 #include "PrefsManager.h"
 #include "LuaManager.h"
+#include "GameManager.h"
 
 
 static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
@@ -23,6 +24,19 @@ static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
 };
 XToString( RadarCategory );
 XToThemedString( RadarCategory, NUM_RADAR_CATEGORIES );
+
+
+void LuaStepsType(lua_State* L)
+{
+	FOREACH_StepsType( st )
+	{
+		CString s = GAMEMAN->StepsTypeToString( st );
+		s.MakeUpper();
+		s.Replace('-','_');
+		LUA->SetGlobal( "STEPS_TYPE_"+s, st );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaStepsType );
 
 
 static const CString PlayModeNames[NUM_PLAY_MODES] = {
@@ -277,6 +291,28 @@ void LuaGoalType(lua_State* L)
 	}
 }
 REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
+
+
+static const CString EditMenuActionNames[NUM_EDIT_MENU_ACTIONS] = {
+	"Edit",
+	"Delete",
+	"Copy",
+	"Autogen",
+	"Blank"
+};
+XToString( EditMenuAction );
+StringToX( EditMenuAction );
+void LuaEditMenuAction(lua_State* L)
+{
+	FOREACH_EditMenuAction( ema )
+	{
+		CString s = EditMenuActionNames[ema];
+		s.MakeUpper();
+		LUA->SetGlobal( "EDIT_MENU_ACTION_"+s, ema );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaEditMenuAction );
+
 
 
 #include "LuaFunctions.h"
