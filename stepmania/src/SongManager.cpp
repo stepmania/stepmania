@@ -212,10 +212,10 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		SortCStringArray( arraySongDirs );
 
-		unsigned j;
+		LOG->Trace("Attempting to load %i songs from \"%s\"", arraySongDirs.size(), (sDir+sGroupDirName).c_str() );
 		int loaded = 0;
 
-		for( j=0; j< arraySongDirs.size(); j++ )	// for each song dir
+		for( unsigned j=0; j< arraySongDirs.size(); j++ )	// for each song dir
 		{
 			CString sSongDirName = arraySongDirs[j];
 
@@ -239,6 +239,8 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
             m_pSongs.push_back( pNewSong );
 			loaded++;
 		}
+
+		LOG->Trace("Loaded %i songs from \"%s\"", loaded, (sDir+sGroupDirName).c_str() );
 
 		/* Don't add the group name if we didn't load any songs in this group. */
 		if(!loaded) continue;
