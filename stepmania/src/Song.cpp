@@ -677,7 +677,7 @@ void Song::TidyUpData()
 	unsigned i;
 	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
-		if( m_sBannerFile != "" && m_sCDTitleFile != "" && m_sBackgroundFile != "" )
+		if( HasBanner() && HasCDTitle() && HasBackground() )
 			break; /* done */
 
 		// ignore DWI "-char" graphics
