@@ -16,6 +16,8 @@ class ScreenProfileOptions : public ScreenOptions
 public:
 	ScreenProfileOptions();
 
+	virtual void MenuStart( PlayerNumber pn );
+
 private:
 	void ImportOptions();
 	void ExportOptions();

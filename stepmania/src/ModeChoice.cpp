@@ -144,5 +144,11 @@ void ModeChoice::Apply( PlayerNumber pn )
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 
 
-	PROFILEMAN->TryLoadProfile( pn );
+	//
+	// We know what players are joined at the time we set the Style
+	//
+	if( style != STYLE_INVALID )
+	{
+		PROFILEMAN->TryLoadProfile( pn );
+	}
 }

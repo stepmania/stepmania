@@ -56,8 +56,6 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	this->AddChild( &m_textQuestion );
 
 	m_rectAnswerBox.SetDiffuse( RageColor(0.5f,0.5f,1.0f,0.7f) );
-	this->AddChild( &m_rectAnswerBox );
-
 	m_rectAnswerBox.SetXY( ANSWER_X, ANSWER_Y );
 	m_rectAnswerBox.SetZoomX( ANSWER_WIDTH );
 	m_rectAnswerBox.SetZoomY( ANSWER_HEIGHT );

@@ -254,7 +254,7 @@ public:
 	bool IsNew() const;
 	bool IsEasy( StepsType nt ) const;
 	bool HasEdits( StepsType nt ) const;
-	Grade GetGradeForDifficulty( const StyleDef *s, PlayerNumber pn, Difficulty dc ) const;
+	Grade GetGradeForDifficulty( const StyleDef *s, MemoryCard card, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;
 	int	GetNumNotesWithGrade( Grade g ) const;

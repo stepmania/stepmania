@@ -36,10 +36,10 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define SONGS_DIR				BASE_PATH "Songs" SLASH
 #define COURSES_DIR				BASE_PATH "Courses" SLASH
 #define STATS_PATH				BASE_PATH "stats.html"
-const CString CATEGORY_RANKING_FILE = BASE_PATH "Data" SLASH "CategoryRanking.dat";
-const CString COURSE_RANKING_FILE = BASE_PATH "Data" SLASH "CourseRanking.dat";
-const CString NOTES_SCORES_FILE[NUM_MEMORY_CARDS] = { BASE_PATH "Data" SLASH "Player1NotesScores.dat", BASE_PATH "Data" SLASH "Player2NotesScores.dat", BASE_PATH "Data" SLASH "MachineNotesScores.dat" };
-const CString COURSE_SCORES_FILE[NUM_MEMORY_CARDS] = { BASE_PATH "Data" SLASH "Player1CourseScores.dat", BASE_PATH "Data" SLASH "Player2CourseScores.dat", BASE_PATH "Data" SLASH "MachineCourseScores.dat" };
+const CString CATEGORY_RANKING_FILE =		BASE_PATH "Data" SLASH "CategoryRanking.dat";
+const CString COURSE_RANKING_FILE =			BASE_PATH "Data" SLASH "CourseRanking.dat";
+const CString MACHINE_NOTES_SCORES_FILE =	"Data" SLASH "MachineNotesScores.dat";
+const CString MACHINE_COURSE_SCORES_FILE =	"Data" SLASH "MachineCourseScores.dat";
 const int CATEGORY_RANKING_VERSION = 1;
 const int COURSE_RANKING_VERSION = 1;
 const int NOTES_SCORES_VERSION = 2;
@@ -122,11 +122,8 @@ void SongManager::SaveMachineScoresToDisk()
 {
 	SaveCategoryRankingsToFile( CATEGORY_RANKING_FILE );
 	SaveCourseRankingsToFile( COURSE_RANKING_FILE );
-	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
-	{
-		SaveNoteScoresToFile( NOTES_SCORES_FILE[c], c );
-		SaveCourseScoresToFile( COURSE_SCORES_FILE[c], c );
-	}
+	SaveNoteScoresToFile( MACHINE_NOTES_SCORES_FILE, MEMORY_CARD_MACHINE );
+	SaveCourseScoresToFile( MACHINE_COURSE_SCORES_FILE, MEMORY_CARD_MACHINE );
 }
 
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
@@ -485,18 +482,9 @@ void SongManager::InitMachineScoresFromDisk()
 
 	// category ranking
 	ReadCategoryRankingsFromFile( CATEGORY_RANKING_FILE );
-
-	// course ranking
 	ReadCourseRankingsFromFile( COURSE_RANKING_FILE );
-
-	int c;
-	// notes scores
-	for( c=0; c<NUM_MEMORY_CARDS; c++ )
-		ReadNoteScoresFromFile( NOTES_SCORES_FILE[c], c );
-
-	// course scores
-	for( c=0; c<NUM_MEMORY_CARDS; c++ )
-		ReadCourseScoresFromFile( COURSE_SCORES_FILE[c], c );
+	ReadNoteScoresFromFile( MACHINE_NOTES_SCORES_FILE, MEMORY_CARD_MACHINE );
+	ReadCourseScoresFromFile( MACHINE_COURSE_SCORES_FILE, MEMORY_CARD_MACHINE );
 }
 
 void SongManager::ReadSM300NoteScores()
@@ -1178,12 +1166,6 @@ Course* SongManager::GetCourseFromName( CString sName )
 			return m_pCourses[i];
 
 	return NULL;
-}
-
-
-bool SongManager::IsUsingMemoryCard( PlayerNumber pn )
-{
-	return true;
 }
 
 

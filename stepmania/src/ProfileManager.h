@@ -15,18 +15,38 @@
 
 #include "PlayerNumber.h"
 
+struct Profile
+{
+	Profile() { Init(); }
+	void Init()
+	{
+		m_sDisplayName = "";
+		m_sLastUsedHighScoreName = "";
+	}
+
+	bool LoadFromIni( CString sIniPath );
+	bool WriteToIni( CString sIniPath );
+	CString m_sDisplayName;
+	CString m_sLastUsedHighScoreName;
+};
+
 class ProfileManager
 {
 public:
 	ProfileManager();
 	~ProfileManager();
 
-	void GetProfileNames( vector<CString> &asNamesOut );
+	void CreateProfile( CString sDisplayName );
+
+	bool DoesProfileExist( CString sProfile );
+
+	void GetProfiles( vector<CString> &asProfilesOut );
+	void GetProfileDisplayNames( vector<CString> &asNamesOut );
 
 	void TryLoadProfile( PlayerNumber pn );
 	void UnloadProfile( PlayerNumber pn );
 
-	CString sGetDisplayName( PlayerNumber pn ) { ASSERT(!m_sProfileDir[pn].empty()); return m_sProfileDir[pn]; }
+	CString GetDisplayName( PlayerNumber pn );
 
 	bool IsUsingProfile( PlayerNumber pn ) { return !m_sProfileDir[pn].empty(); }
 
@@ -38,8 +58,7 @@ private:
 	CString m_sProfileDir[NUM_PLAYERS];
 	bool m_bUsingMemoryCard[NUM_PLAYERS];
 
-	// cached from profile.ini
-	CString m_sDisplayName[NUM_PLAYERS];
+	Profile	m_Profile[NUM_PLAYERS];
 };
 
 

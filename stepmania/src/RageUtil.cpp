@@ -363,6 +363,11 @@ bool CreateDirectories( CString Path )
 	return true;
 }
 
+bool Rename( const char *oldname, const char *newname )
+{
+	return 0 == rename( oldname, newname );
+}
+
 #if 0
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {

@@ -27,6 +27,7 @@
 #include "BitmapText.h"
 #include "Quad.h"
 #include "RageTextureManager.h"
+#include "ProfileManager.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -182,6 +183,8 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			ASSERT(0);
 		}
 		
+		if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
+			sText += "  " + PROFILEMAN->GetDisplayName((PlayerNumber)p);
 		m_textCreditInfo[p].SetText( sText );
 	}
 }

@@ -380,6 +380,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenPlayerOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenProfileOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenProfileOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenPrompt.cpp">
 			</File>
 			<File
@@ -1830,6 +1836,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\PrefsManager.h">
+			</File>
+			<File
+				RelativePath="ProfileManager.cpp">
+			</File>
+			<File
+				RelativePath="ProfileManager.h">
 			</File>
 			<File
 				RelativePath="ScreenManager.cpp">

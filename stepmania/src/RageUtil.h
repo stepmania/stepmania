@@ -201,6 +201,7 @@ CString join(const CString &Deliminator, const CStringArray& Source);
 
 CString GetCwd();
 bool CreateDirectories( CString Path );
+bool Rename( const char *oldname, const char *newname );
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 
 unsigned int GetHashForString( CString s );

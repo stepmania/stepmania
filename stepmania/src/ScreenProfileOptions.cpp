@@ -25,6 +25,7 @@ enum {
 	PO_PLAYER2,
 	PO_CREATE_NEW,
 	PO_DELETE_,
+	PO_RENAME_,
 	NUM_GAMEPLAY_OPTIONS_LINES
 };
 
@@ -33,6 +34,7 @@ OptionRow g_ProfileOptionsLines[NUM_GAMEPLAY_OPTIONS_LINES] = {
 	OptionRow( "Player2\nProfile",	true ),
 	OptionRow( "Create\nNew",		true, "PRESS START" ),
 	OptionRow( "Delete",			true ),
+	OptionRow( "Rename",			true ),
 };
 
 ScreenProfileOptions::ScreenProfileOptions() :
@@ -41,19 +43,20 @@ ScreenProfileOptions::ScreenProfileOptions() :
 	LOG->Trace( "ScreenProfileOptions::ScreenProfileOptions()" );
 
 	g_ProfileOptionsLines[PO_PLAYER1].choices.clear();
-	PROFILEMAN->GetProfileNames( g_ProfileOptionsLines[PO_PLAYER1].choices );
-	if( g_ProfileOptionsLines[PO_PLAYER1].choices.empty() )
-		g_ProfileOptionsLines[PO_PLAYER1].choices.push_back( "-NONE-" );
+	g_ProfileOptionsLines[PO_PLAYER1].choices.push_back( "-NONE-" );
+	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_PLAYER1].choices );
 
 	g_ProfileOptionsLines[PO_PLAYER2].choices.clear();
-	PROFILEMAN->GetProfileNames( g_ProfileOptionsLines[PO_PLAYER2].choices );
-	if( g_ProfileOptionsLines[PO_PLAYER2].choices.empty() )
-		g_ProfileOptionsLines[PO_PLAYER2].choices.push_back( "-NONE-" );
+	g_ProfileOptionsLines[PO_PLAYER2].choices.push_back( "-NONE-" );
+	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_PLAYER2].choices );
 
 	g_ProfileOptionsLines[PO_DELETE_].choices.clear();
-	PROFILEMAN->GetProfileNames( g_ProfileOptionsLines[PO_DELETE_].choices );
-	if( g_ProfileOptionsLines[PO_DELETE_].choices.empty() )
-		g_ProfileOptionsLines[PO_DELETE_].choices.push_back( "-NONE-" );
+	g_ProfileOptionsLines[PO_DELETE_].choices.push_back( "-NONE-" );
+	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_DELETE_].choices );
+
+	g_ProfileOptionsLines[PO_RENAME_].choices.clear();
+	g_ProfileOptionsLines[PO_RENAME_].choices.push_back( "-NONE-" );
+	PROFILEMAN->GetProfileDisplayNames( g_ProfileOptionsLines[PO_RENAME_].choices );
 
 	Init( 
 		INPUTMODE_TOGETHER, 
@@ -67,27 +70,40 @@ ScreenProfileOptions::ScreenProfileOptions() :
 
 void ScreenProfileOptions::ImportOptions()
 {
+	vector<CString> vsProfiles;
+	PROFILEMAN->GetProfiles( vsProfiles );
+
 	CStringArray::iterator iter;
 
 	iter = find( 
-		g_ProfileOptionsLines[PO_PLAYER1].choices.begin(),
-		g_ProfileOptionsLines[PO_PLAYER1].choices.end(),
+		vsProfiles.begin(),
+		vsProfiles.end(),
 		PREFSMAN->m_sDefaultProfile[PLAYER_1] );
-	if( iter != g_ProfileOptionsLines[PO_PLAYER1].choices.end() )
-		m_iSelectedOption[0][PO_PLAYER1]			= iter - g_ProfileOptionsLines[PO_PLAYER1].choices.begin();
+	if( iter != vsProfiles.end() )
+		m_iSelectedOption[0][PO_PLAYER1] = iter - vsProfiles.begin() + 1;
 
 	iter = find( 
-		g_ProfileOptionsLines[PO_PLAYER2].choices.begin(),
-		g_ProfileOptionsLines[PO_PLAYER2].choices.end(),
-		PREFSMAN->m_sDefaultProfile[PLAYER_2] );
-	if( iter != g_ProfileOptionsLines[PO_PLAYER2].choices.end() )
-		m_iSelectedOption[0][PO_PLAYER2]			= iter - g_ProfileOptionsLines[PO_PLAYER2].choices.begin();
+		vsProfiles.begin(),
+		vsProfiles.end(),
+		PREFSMAN->m_sDefaultProfile[PO_PLAYER2] );
+	if( iter != vsProfiles.end() )
+		m_iSelectedOption[0][PO_PLAYER2] = iter - vsProfiles.begin() + 1;
 }
 
 void ScreenProfileOptions::ExportOptions()
 {
-	PREFSMAN->m_sDefaultProfile[PLAYER_1] = g_ProfileOptionsLines[PO_PLAYER1].choices[m_iSelectedOption[0][PO_PLAYER1]];
-	PREFSMAN->m_sDefaultProfile[PLAYER_2] = g_ProfileOptionsLines[PO_PLAYER2].choices[m_iSelectedOption[0][PO_PLAYER2]];
+	vector<CString> vsProfiles;
+	PROFILEMAN->GetProfiles( vsProfiles );
+
+	if( m_iSelectedOption[0][PO_PLAYER1] > 0 )
+		PREFSMAN->m_sDefaultProfile[PLAYER_1] = vsProfiles[m_iSelectedOption[0][PO_PLAYER1]-1];
+	else
+		PREFSMAN->m_sDefaultProfile[PLAYER_1] = "";
+
+	if( m_iSelectedOption[0][PO_PLAYER2] > 0 )
+		PREFSMAN->m_sDefaultProfile[PLAYER_2] = vsProfiles[m_iSelectedOption[0][PO_PLAYER2]-1];
+	else
+		PREFSMAN->m_sDefaultProfile[PLAYER_2] = "";
 }
 
 void ScreenProfileOptions::GoToPrevState()
@@ -95,8 +111,49 @@ void ScreenProfileOptions::GoToPrevState()
 	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
+void CreateProfile( CString sDisplayName )
+{
+	PROFILEMAN->CreateProfile( sDisplayName );
+	SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	
+}
+
 void ScreenProfileOptions::GoToNextState()
 {
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
+}
+
+void ScreenProfileOptions::MenuStart( PlayerNumber pn )
+{
+	vector<CString> vsProfiles;
+	PROFILEMAN->GetProfiles( vsProfiles );
+
+	switch( GetCurrentRow() )
+	{
+	case PO_CREATE_NEW:
+		SCREENMAN->TextEntry( SM_None, "Enter a profile name", "", CreateProfile );
+		return;
+	case PO_DELETE_:
+		{
+			CString sProfile;
+			if( m_iSelectedOption[0][PO_DELETE_] > 0 )
+				sProfile = vsProfiles[m_iSelectedOption[0][PO_DELETE_]-1];
+			else
+				sProfile = "";
+		}
+		break;
+	case PO_RENAME_:
+		{
+			CString sProfile;
+			if( m_iSelectedOption[0][PO_RENAME_] > 0 )
+				sProfile = vsProfiles[m_iSelectedOption[0][PO_RENAME_]-1];
+			else
+				sProfile = "";
+
+//			SCREENMAN->TextEntry( SM_None, "Enter a profile name", "NewProfile", SetProfile );
+		}
+		break;
+	default:
+		ScreenOptions::MenuStart( pn );
+	}
 }

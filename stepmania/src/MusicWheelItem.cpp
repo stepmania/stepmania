@@ -26,6 +26,7 @@
 #include "Steps.h"
 #include "song.h"
 #include "Course.h"
+#include "ProfileManager.h"
 
 
 // WheelItem stuff
@@ -186,8 +187,7 @@ void MusicWheelItem::RefreshGrades()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !data->m_pSong  ||	// this isn't a song display
-			!GAMESTATE->IsHumanPlayer(p)  ||
-			!SONGMAN->IsUsingMemoryCard((PlayerNumber)p) )
+			!GAMESTATE->IsHumanPlayer(p) )
 		{
 			m_GradeDisplay[p].SetDiffuse( RageColor(1,1,1,0) );
 			continue;
@@ -198,7 +198,12 @@ void MusicWheelItem::RefreshGrades()
 			dc = GAMESTATE->m_pCurNotes[p]->GetDifficulty();
 		else
 			dc = GAMESTATE->m_PreferredDifficulty[p];
-		const Grade grade = data->m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), (PlayerNumber)p, dc );
+		Grade grade;
+		if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
+			grade = data->m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), (MemoryCard)p, dc );
+		else
+			grade = data->m_pSong->GetGradeForDifficulty( GAMESTATE->GetCurrentStyleDef(), MEMORY_CARD_MACHINE, dc );
+
 		m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
 	}
 

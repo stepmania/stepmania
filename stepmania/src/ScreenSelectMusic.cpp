@@ -34,6 +34,7 @@
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "Course.h"
+#include "ProfileManager.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -886,8 +887,19 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 //	m_BPMDisplay.BeginTweening( 0.2f );
 //	m_BPMDisplay.SetZoomY( 1.2f );
 
-	if( pNotes && SONGMAN->IsUsingMemoryCard(pn) )
-		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, pNotes->m_MemCardScores[pn].iScore) );
+	if( pNotes )
+	{
+		int iScore;
+		if( PROFILEMAN->IsUsingProfile(pn) )
+			iScore = pNotes->m_MemCardScores[pn].iScore;
+		else
+			iScore = pNotes->m_MemCardScores[MEMORY_CARD_MACHINE].iScore;
+		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+	}
+	else
+	{
+		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, 0) );
+	}
 
 	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
 	if( pNotes && pNotes->IsAutogen() )

@@ -89,12 +89,6 @@ public:
 	void InitMachineScoresFromDisk();
 	void SaveMachineScoresToDisk();
 
-	bool MemoryCardIsInserted( PlayerNumber pn );
-	bool IsUsingMemoryCard( PlayerNumber pn );
-
-	void LoadMemoryCardScores( PlayerNumber pn );
-	void SaveMemoryCardScores( PlayerNumber pn );
-
 	struct MachineScore
 	{
 		int iScore;
@@ -104,6 +98,18 @@ public:
 	void UpdateBest();
 
 	void UpdateRankingCourses();
+
+	void ReadSM300NoteScores();
+	void ReadNoteScoresFromFile( CString fn, int c );
+	void ReadCourseScoresFromFile( CString fn, int c );
+	void ReadCategoryRankingsFromFile( CString fn );
+	void ReadCourseRankingsFromFile( CString fn );
+
+	void SaveNoteScoresToFile( CString fn, int c );
+	void SaveCourseScoresToFile( CString fn, int c );
+	void SaveCategoryRankingsToFile( CString fn );
+	void SaveCourseRankingsToFile( CString fn );
+
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( CString sDir );
@@ -112,17 +118,7 @@ protected:
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
 
-	void ReadSM300NoteScores();
-	void ReadNoteScoresFromFile( CString fn, int c );
-	void ReadCourseScoresFromFile( CString fn, int c );
-	void ReadCategoryRankingsFromFile( CString fn );
-	void ReadCourseRankingsFromFile( CString fn );
 	Song *FindSong( CString sGroup, CString sSong );
-
-	void SaveNoteScoresToFile( CString fn, int c );
-	void SaveCourseScoresToFile( CString fn, int c );
-	void SaveCategoryRankingsToFile( CString fn );
-	void SaveCourseRankingsToFile( CString fn );
 
 	void WriteStatsWebPage();
 
