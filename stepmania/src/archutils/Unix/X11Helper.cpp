@@ -66,7 +66,7 @@ static bool pApplyMasks()
 	if(XSelectInput(X11Helper::Dpy, X11Helper::Win, finalMask) == 0) { return false; }
 
 	// Sync, so that the event mask applies now.
-	XSync(X11Helper::Dpy, false);
+	XSync(X11Helper::Dpy, False);
 
 	return true;
 }
