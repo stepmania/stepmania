@@ -64,6 +64,9 @@ protected:
 
 	// keep track of where we are and what we're doing
 	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
+	/* The location we were at when shift was pressed, or
+	 * -1 when shift isn't pressed: */
+	float shiftAnchor;
 
 	NoteData			m_Clipboard;
 
