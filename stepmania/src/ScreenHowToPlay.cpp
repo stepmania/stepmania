@@ -140,12 +140,11 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		
-		vector<Steps *> notes;
-		m_Song.GetSteps( notes, pStyle->m_StepsType );
-		ASSERT( notes.size() >= 1 );
+		Steps *pSteps = m_Song.GetStepsByDescription( pStyle->m_StepsType, "" );
+		ASSERT_M( pSteps != NULL, ssprintf("%i", pStyle->m_StepsType) );
 
 		NoteData TempNoteData;
-		notes[0]->GetNoteData( &TempNoteData );
+		pSteps->GetNoteData( &TempNoteData );
 		pStyle->GetTransformedNoteDataForStyle( PLAYER_1, &TempNoteData, &m_NoteData );
 
 		GAMESTATE->m_pCurSong = &m_Song;
