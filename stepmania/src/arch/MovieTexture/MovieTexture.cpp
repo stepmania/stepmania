@@ -43,7 +43,7 @@ bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 	
 	if (!file.IsOpen())
 		HANDLE_ERROR("Could not open file.");
-	if (!file.Seek(0x70, SEEK_SET))
+	if ( !file.Seek(0x70) )
 		HANDLE_ERROR("Could not seek.");
 	type = "    ";
 	if (file.Read((char *)type.c_str(), 4) != 4)
@@ -51,7 +51,7 @@ bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 	for (i=0; i<4; ++i)
 		if (type[i] < 0x20 || type[i] > 0x7E) type[i] = '?';
 	
-	if (!file.Seek(0xBC, SEEK_SET))
+	if ( !file.Seek(0xBC) )
 		HANDLE_ERROR("Could not seek.");
 	handler = "    ";
 	if (file.Read((char *)handler.c_str(), 4) != 4)
