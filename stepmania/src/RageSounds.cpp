@@ -340,9 +340,8 @@ static float GetFrameTimingAdjustment( float fDeltaTime )
 	if( fabsf(fExtraDelay) >= fExpectedDelay )
 		return 0;
 
-	/* Subtract the extra delay.  (We might have delayed too little, in which case we'll return
-	 * a positive number; this is normal.) */
-	return -fExtraDelay;
+	/* Subtract the extra delay. */
+	return min( -fExtraDelay, 0 );
 }
 
 void RageSounds::Update( float fDeltaTime )
