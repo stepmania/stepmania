@@ -14,7 +14,7 @@ public:
 
 protected:
 	int m_iChangeMask;
-	CString m_sNextScreen;
+	CString m_sExportedNextScreen;	// from an OptionRowHandler
 
 	vector<OptionRowHandler*> OptionRowHandlers;
 	

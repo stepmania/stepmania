@@ -122,7 +122,7 @@ void ScreenOptionsMaster::BeginFadingOut()
 {
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
 	* honor it. */
-	m_sNextScreen = "";
+	m_sExportedNextScreen = "";
 
 	int iCurRow = this->GetCurrentRow();
 	ASSERT( iCurRow >= 0 && iCurRow < (int)m_Rows.size() );
@@ -134,14 +134,11 @@ void ScreenOptionsMaster::BeginFadingOut()
 		OptionRowHandler *pHand = OptionRowHandlers[iCurRow];
 		CString sScreen = pHand->GetAndEraseScreen( iChoice );
 		if( !sScreen.empty() )
-			m_sNextScreen = sScreen;
+			m_sExportedNextScreen = sScreen;
 	}
 
-	// NEXT_SCREEN;
-	if( m_sNextScreen == "" )
-		m_sNextScreen = NEXT_SCREEN;
-
-	if( !m_sNextScreen.empty() )
+	// If options set a NextScreen or one is specified in metrics, then fade out
+	if( m_sExportedNextScreen != "" || NEXT_SCREEN != "" )
 		ScreenOptions::BeginFadingOut();
 }
 
@@ -149,8 +146,10 @@ void ScreenOptionsMaster::GoToNextScreen()
 {
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
-	else if( m_sNextScreen != "" )
-		SCREENMAN->SetNewScreen( m_sNextScreen );
+	else if( m_sExportedNextScreen != "" )
+		SCREENMAN->SetNewScreen( m_sExportedNextScreen );
+	else if( NEXT_SCREEN != "" )
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 }
 
 void ScreenOptionsMaster::GoToPrevScreen()
@@ -247,7 +246,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			if( m_iChangeMask & OPT_RESET_GAME )
 			{
 				ResetGame();
-				m_sNextScreen = "";
+				m_sExportedNextScreen = "";
 			}
 
 			if( m_iChangeMask & OPT_APPLY_SOUND )
@@ -259,7 +258,8 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 				SONGMAN->SetPreferences();
 
 			CHECKPOINT;
-			this->GoToNextScreen();
+			if( !(m_iChangeMask & OPT_RESET_GAME) )
+				this->GoToNextScreen();
 		}
 		break;
 	default:
