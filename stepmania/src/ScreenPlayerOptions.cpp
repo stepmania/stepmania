@@ -152,8 +152,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
 	if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START )
-		FOREACH_HumanPlayer( p )
-			UpdateDisqualified( p );
+		UpdateDisqualified( pn );
 }
 
 void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
