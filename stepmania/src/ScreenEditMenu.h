@@ -33,9 +33,6 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	void BeforeRowChange();
-	void AfterRowChange();
-
 	void OnGroupChange();
 	void OnSongChange();
 	void OnNotesTypeChange();
@@ -86,6 +83,7 @@ private:
 	RandomSample	m_soundChangeMusic;
 	RandomSample	m_soundSelect;
 
+	void ChangeSelectedRow( SelectedRow row );
 };
 
 

@@ -100,8 +100,7 @@ ScreenEditMenu::ScreenEditMenu()
 
 
 	// data structures
-	m_SelectedRow = ROW_GROUP;
-	AfterRowChange();
+	ChangeSelectedRow(ROW_GROUP);
 
 	SONGMAN->GetGroupNames( m_sGroups );
 	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
@@ -216,17 +215,16 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 	
-void ScreenEditMenu::BeforeRowChange()
+void ScreenEditMenu::ChangeSelectedRow( SelectedRow row )
 {
 	m_textGroup.SetEffectNone();
 	m_sprArrowLeft.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	m_sprArrowRight.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	m_textNotesType.SetEffectNone();
 	m_textNotes.SetEffectNone();
-}
 
-void ScreenEditMenu::AfterRowChange()
-{
+	m_SelectedRow = row;
+	
 	switch( m_SelectedRow )
 	{
 	case ROW_GROUP:			m_textGroup.SetEffectGlowing();			break;
@@ -295,9 +293,7 @@ void ScreenEditMenu::MenuUp( const PlayerNumber p )
 	if( m_SelectedRow == 0 )	// can't go up any further
 		return;	
 
-	BeforeRowChange();
-	m_SelectedRow = SelectedRow(m_SelectedRow-1);
-	AfterRowChange();
+	ChangeSelectedRow(SelectedRow(m_SelectedRow-1));
 }
 
 void ScreenEditMenu::MenuDown( const PlayerNumber p )
@@ -305,9 +301,7 @@ void ScreenEditMenu::MenuDown( const PlayerNumber p )
 	if( m_SelectedRow == NUM_ROWS-1 )	// can't go down any further
 		return;	
 
-	BeforeRowChange();
-	m_SelectedRow = SelectedRow(m_SelectedRow+1);
-	AfterRowChange();
+	ChangeSelectedRow(SelectedRow(m_SelectedRow+1));
 }
 
 void ScreenEditMenu::MenuLeft( const PlayerNumber p )
