@@ -775,7 +775,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		/* If this is a top-level font (not a subfont), load the default font first. */
 		CStringArray ImportList;
 		if(LoadStack.size() == 1)
-			ImportList.push_back("default font");
+			ImportList.push_back("Common default");
 
 		/* Check to see if we need to import any other fonts.  Do this
 		 * before loading this font, so any characters in this font

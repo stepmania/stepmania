@@ -1066,6 +1066,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="GroupList.h">
 			</File>
 			<File
+				RelativePath="HelpDisplay.cpp">
+			</File>
+			<File
+				RelativePath="HelpDisplay.h">
+			</File>
+			<File
 				RelativePath="JukeboxMenu.cpp">
 			</File>
 			<File
@@ -1166,12 +1172,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\TextBanner.h">
-			</File>
-			<File
-				RelativePath=".\TipDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\TipDisplay.h">
 			</File>
 			<File
 				RelativePath="WheelNotifyIcon.cpp">

@@ -56,7 +56,7 @@ Combo::Combo()
 	m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 	this->AddChild( &m_sprCombo );
 
-	m_textComboNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","Combo numbers") );
+	m_textComboNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","Combo") );
 	m_textComboNumber.EnableShadow( true );
 	m_textComboNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textComboNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );

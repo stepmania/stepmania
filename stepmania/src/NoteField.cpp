@@ -32,7 +32,7 @@ const float ROWS_BETWEEN_HOLD_BITS	= 1 / HOLD_NOTE_BITS_PER_ROW;
 
 NoteField::NoteField()
 {
-	m_textMeasureNumber.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textMeasureNumber.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 
 	m_rectMarkerBar.EnableShadow( false );

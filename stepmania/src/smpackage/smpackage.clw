@@ -16,7 +16,7 @@ Resource1=IDR_MAINFRAME
 Resource2=IDD_EXPORTER
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_CONVERT_THEME
+Resource3=IDD_MENU
 Class5=EnterName
 Resource4=IDD_DIALOG_NAME
 Class6=EditInsallations
@@ -24,7 +24,7 @@ Resource5=IDD_INSTALL
 Class7=MainMenuDlg
 Resource6=IDD_EDIT_INSTALLATIONS
 Class8=ConvertThemeDlg
-Resource7=IDD_MENU
+Resource7=IDD_CONVERT_THEME
 Class9=EditMetricsDlg
 Resource8=IDD_EDIT_METRICS
 

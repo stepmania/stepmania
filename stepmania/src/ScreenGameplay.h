@@ -129,8 +129,8 @@ protected:
 	TransitionBGAnimation	m_In;
 	TransitionBGAnimation	m_Back;
 
-	BitmapText			m_textSurviveTime;	// only shown in extra stage
-	BitmapText			m_StageName;
+	BitmapText			m_textSurviveTime;	// used in extra stage
+	BitmapText			m_textSongTitle;
 
 	Player				m_Player[NUM_PLAYERS];
 

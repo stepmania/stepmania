@@ -47,7 +47,7 @@ ScreenJukeboxMenu::ScreenJukeboxMenu()
 	this->AddChild( &m_Menu );
 
 
-	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );

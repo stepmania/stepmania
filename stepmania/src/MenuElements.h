@@ -17,7 +17,7 @@
 #include "Sprite.h"
 #include "MenuTimer.h"
 #include "TransitionBGAnimation.h"
-#include "TipDisplay.h"
+#include "HelpDisplay.h"
 #include "BGAnimation.h"
 
 
@@ -51,7 +51,7 @@ public:	// let owner tinker with these objects
 	Sprite				m_sprStyleIcon;
 	MenuTimer			m_MenuTimer;
 	Sprite				m_sprFooter;
-	TipDisplay			m_textHelp;
+	HelpDisplay			m_textHelp;
 
 	TransitionBGAnimation	m_In;
 	TransitionBGAnimation	m_Out;

@@ -70,7 +70,7 @@ ScreenMapControllers::ScreenMapControllers()
 		{			
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_GAME_TO_DEVICE_SLOTS+s], LINE_START_Y + b*LINE_GAP_Y );
 				m_textMappedTo[p][b][s].SetZoom( 0.5f );
 				m_textMappedTo[p][b][s].SetShadowLength( 2 );
@@ -79,7 +79,7 @@ ScreenMapControllers::ScreenMapControllers()
 		}
 	}	
 
-	m_textError.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textError.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textError.SetText( "" );
 	m_textError.SetXY( CENTER_X, CENTER_Y );
 	m_textError.SetDiffuse( RageColor(0,1,0,0) );

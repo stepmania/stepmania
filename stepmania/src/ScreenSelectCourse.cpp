@@ -83,14 +83,14 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
-	m_textNumSongs.LoadFromFont( THEME->GetPathTo("Fonts","ScreenSelectCourse num songs") );
-	m_textNumSongs.SetXY( STAGES_X, STAGES_Y );
+	m_textNumSongs.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectCourse num songs") );
 	m_textNumSongs.EnableShadow( false );
+	m_textNumSongs.SetXY( STAGES_X, STAGES_Y );
 	this->AddChild( &m_textNumSongs );
 
-	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","ScreenSelectCourse total time") );
-	m_textTime.SetXY( TIME_X, TIME_Y );
+	m_textTime.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectCourse total time") );
 	m_textTime.EnableShadow( false );
+	m_textTime.SetXY( TIME_X, TIME_Y );
 	this->AddChild( &m_textTime );
 
 	m_CourseContentsFrame.SetXY( CONTENTS_X, CONTENTS_Y );

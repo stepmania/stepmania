@@ -133,7 +133,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup frame") );
 	this->AddChild( &m_sprFrame );
 
-	m_textNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectGroup numbers") );
+	m_textNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectGroup num songs") );
 	this->AddChild( &m_textNumber );
 	
 	m_sprContents.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup contents") );

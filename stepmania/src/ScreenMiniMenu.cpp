@@ -57,7 +57,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 	
 	float fHeightOfAll = (m_Def.rows.size()-1)*SPACING_Y;
 
-	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textTitle.SetText( m_Def.title );
 	m_textTitle.SetXY( CENTER_X, CENTER_Y - fHeightOfAll/2 - 30 );
 	m_textTitle.SetZoom( 0.8f );
@@ -75,7 +75,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 		float fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
 
-		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 		m_textLabel[i].SetText( line.name );
 		m_textLabel[i].SetY( fY );
 		m_textLabel[i].SetZoom( ZOOM_NOT_SELECTED );
@@ -84,7 +84,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		this->AddChild( &m_textLabel[i] );
 
 		CString sText = line.choices.empty() ? "" : line.choices[line.defaultChoice];
-		m_textAnswer[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textAnswer[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
  		m_textAnswer[i].SetText( sText );
 		m_textAnswer[i].SetY( fY );
 		m_textAnswer[i].SetZoom( ZOOM_NOT_SELECTED );

@@ -11,7 +11,7 @@ float g_TweenInTime, g_TweenOutTime;
 
 LyricDisplay::LyricDisplay()
 {
-	m_textLyrics.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textLyrics.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textLyrics.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild(&m_textLyrics);
 

@@ -65,7 +65,7 @@ public:
 
 ScreenSystemLayer::ScreenSystemLayer()
 {
-	m_textSystemMessage.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textSystemMessage.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
 	m_textSystemMessage.SetVertAlign( Actor::align_top );
 	m_textSystemMessage.SetXY( 4.0f, 4.0f );
@@ -74,7 +74,7 @@ ScreenSystemLayer::ScreenSystemLayer()
 	m_textSystemMessage.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild(&m_textSystemMessage);
 
-	m_textStats.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textStats.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textStats.SetXY( STATS_X, STATS_Y );
 	m_textStats.SetHorizAlign( Actor::align_right );
 	m_textStats.SetVertAlign( Actor::align_top );
@@ -82,7 +82,7 @@ ScreenSystemLayer::ScreenSystemLayer()
 	m_textStats.SetShadowLength( 2 );
 	this->AddChild(&m_textStats);
 
-	m_textSysTime.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textSysTime.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textSysTime.SetXY( 4.0f, 40.0f );
 	m_textSysTime.SetHorizAlign( Actor::align_left );
 	m_textSysTime.SetVertAlign( Actor::align_top );
@@ -93,7 +93,7 @@ ScreenSystemLayer::ScreenSystemLayer()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","credits") );
+		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","ScreenManager credits") );
 		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
 		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
 		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
@@ -120,7 +120,7 @@ ScreenSystemLayer::ScreenSystemLayer()
 		/* This is somewhat big.  Let's put it on the right side, where it'll
 		 * obscure the 2P side during gameplay; there's nowhere to put it that
 		 * doesn't obscure something, and it's just a diagnostic. */
-		m_Skips[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_Skips[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 		m_Skips[i].SetXY( SKIP_LEFT, SKIP_TOP + SKIP_Y_DIST*i );
 		m_Skips[i].SetHorizAlign( Actor::align_left );
 		m_Skips[i].SetVertAlign( Actor::align_top );

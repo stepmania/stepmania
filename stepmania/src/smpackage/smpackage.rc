@@ -183,7 +183,7 @@ BEGIN
     CONTROL         144,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     LISTBOX         IDC_LIST_THEMES,7,44,88,186,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Convert from 3.0 to 4.0",IDC_BUTTON_CONVERT,170,51,95,
+    PUSHBUTTON      "Convert from 3.0 to 4.0",IDC_BUTTON_CONVERT,164,51,95,
                     15,WS_DISABLED
     LTEXT           "This will convert the element names in a SM 3.0 theme to the SM 4.0 theme names.  A converted theme will no longer be compatible with StepMania 3.0, so make a backup.  This tool does not convert theme metrics.",
                     IDC_STATIC,110,71,210,33

@@ -27,8 +27,8 @@ MenuTimer::MenuTimer()
 	m_fStallSeconds = 0;
 	m_bPaused = false;
 
-	m_textDigit1.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer numbers") );
-	m_textDigit2.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer numbers") );
+	m_textDigit1.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer") );
+	m_textDigit2.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer") );
 
 	m_textDigit1.EnableShadow( false );
 	m_textDigit2.EnableShadow( false );

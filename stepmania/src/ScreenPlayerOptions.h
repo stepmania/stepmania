@@ -31,10 +31,6 @@ private:
 
 	void GoToNextState();
 	void GoToPrevState();
-
-	bool		m_bAcceptedChoices;
-	bool		m_bGoToOptions;
-	Sprite		m_sprOptionsMessage;
 };
 
 

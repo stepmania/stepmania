@@ -277,7 +277,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
+		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathTo("Numbers","ScreenGameplay song num") );
 		m_textCourseSongNumber[p].EnableShadow( false );
 		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
 		m_textCourseSongNumber[p].SetText( "" );
@@ -316,13 +316,13 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_sprScoreFrame.SetXY( SCORE_FRAME_X, SCORE_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprScoreFrame );
 
-	m_StageName.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
-	m_StageName.EnableShadow( false );
-	m_StageName.SetXY( STAGENAME_X, STAGENAME_Y );
-	m_StageName.SetZoom( STAGENAME_ZOOM );
-	this->AddChild( &m_StageName );
+	m_textSongTitle.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay song title") );
+	m_textSongTitle.EnableShadow( false );
+	m_textSongTitle.SetXY( STAGENAME_X, STAGENAME_Y );
+	m_textSongTitle.SetZoom( STAGENAME_ZOOM );
+	this->AddChild( &m_textSongTitle );
 
-	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay max combo numbers") );
+	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay max combo") );
 	m_MaxCombo.SetXY( MAXCOMBO_X, MAXCOMBO_Y );
 	m_MaxCombo.SetZoom( MAXCOMBO_ZOOM );
 	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* TODO: Make this work for both players */
@@ -355,7 +355,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_pScoreDisplay[p]->SetZoom( SCORE_ZOOM );
 		this->AddChild( m_pScoreDisplay[p] );
 		
-		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 		m_textPlayerOptions[p].EnableShadow( false );
 		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X(p), PLAYER_OPTIONS_Y(p,bExtra) );
 		m_textPlayerOptions[p].SetZoom( 0.5f );
@@ -363,7 +363,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
 
-	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textSongOptions.EnableShadow( false );
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y(bExtra) );
 	m_textSongOptions.SetZoom( 0.5f );
@@ -387,7 +387,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		this->AddChild(&m_LyricDisplay);
 	
 
-	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","header2") );
+	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay autoplay") );
 	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
 	if( !bDemonstration )	// only load if we're not in demonstration of jukebox
 		this->AddChild( &m_textAutoPlay );
@@ -429,7 +429,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		this->AddChild( &m_In );
 
 
-		m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 		m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
 		m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 		this->AddChild( &m_textDebug );
@@ -441,7 +441,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
 		{
-			m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","survive time") );
+			m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay survive time") );
 			m_textSurviveTime.EnableShadow( false );
 			m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 			m_textSurviveTime.SetText( "" );
@@ -579,7 +579,7 @@ void ScreenGameplay::LoadNextSong()
 	m_Background.BeginTweening( 2 );
 	m_Background.SetTweenDiffuse( RageColor(1,1,1,1) );
 
-	m_StageName.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
+	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 
 	/* XXX: set it to the current BPM, not the range */
 	float fMinBPM, fMaxBPM;
@@ -1471,7 +1471,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					fMaxSurviveSeconds = max( fMaxSurviveSeconds, GAMESTATE->m_CurStageStats.fAliveSeconds[p] );
 			ASSERT( fMaxSurviveSeconds > 0 );
-			m_textSurviveTime.SetText( "TIME  " + SecondsToTime(fMaxSurviveSeconds) );
+			m_textSurviveTime.SetText( SecondsToTime(fMaxSurviveSeconds) );
 			m_textSurviveTime.BeginTweening( 0.3f );	// sleep
 			m_textSurviveTime.BeginTweening( 0.3f );	// fade in
 			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,1) );

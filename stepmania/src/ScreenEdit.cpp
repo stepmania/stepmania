@@ -276,7 +276,7 @@ ScreenEdit::ScreenEdit()
 	m_sprHelp.SetHorizAlign( Actor::align_left );
 	m_sprHelp.SetXY( HELP_X, HELP_Y );
 
-	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
 	m_textHelp.SetHorizAlign( Actor::align_left );
 	m_textHelp.SetVertAlign( Actor::align_top );
@@ -287,7 +287,7 @@ ScreenEdit::ScreenEdit()
 	m_sprInfo.SetHorizAlign( Actor::align_right );
 	m_sprInfo.SetXY( INFO_X, INFO_Y );
 
-	m_textInfo.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textInfo.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textInfo.SetXY( INFO_TEXT_X, INFO_TEXT_Y );
 	m_textInfo.SetHorizAlign( Actor::align_left );
 	m_textInfo.SetVertAlign( Actor::align_top );

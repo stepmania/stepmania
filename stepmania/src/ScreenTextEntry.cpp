@@ -52,7 +52,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_Fade.CloseWipingRight();
 	this->AddChild( &m_Fade );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textQuestion.SetText( sQuestion );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );

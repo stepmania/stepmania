@@ -31,7 +31,7 @@ TransitionOniFade::TransitionOniFade()
 
 	m_quadStrip.StretchTo( RectI(SCREEN_LEFT, int(CENTER_Y-30), SCREEN_RIGHT, int(CENTER_Y+30)) );
 	
-	m_textSongInfo.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textSongInfo.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textSongInfo.EnableShadow( false );
 	m_textSongInfo.SetZoom( 0.5f );
 	m_textSongInfo.SetXY( CENTER_X, CENTER_Y );

@@ -67,9 +67,9 @@ TextBanner::TextBanner()
 	g_fThreeLinesSubTitleY = THREE_LINES_SUB_TITLE_Y;
 	g_fThreeLinesArtistY = THREE_LINES_ARTIST_Y;
 	
-	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
-	m_textSubTitle.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
-	m_textArtist.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
+	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","TextBanner") );
+	m_textSubTitle.LoadFromFont( THEME->GetPathTo("Fonts","TextBanner") );
+	m_textArtist.LoadFromFont( THEME->GetPathTo("Fonts","TextBanner") );
 
 	m_textTitle.SetX( -g_fWidth/2 );
 	m_textSubTitle.SetX( -g_fWidth/2 );

@@ -117,7 +117,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	this->AddChild( &m_GrooveRadar );
 
-	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	this->AddChild( &m_textSongOptions );
 
 	this->AddChild( &m_MusicWheel );
@@ -154,7 +154,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_sprHighScoreFrame[p].SetState( p );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
-		m_textHighScore[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectMusic score numbers") );
+		m_textHighScore[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectMusic score") );
 		m_textHighScore[p].EnableShadow( false );
 		m_textHighScore[p].SetDiffuse( PlayerToColor(p) );
 		this->AddChild( &m_textHighScore[p] );

@@ -57,13 +57,13 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	if( bPlayerEnabled )
 		this->AddChild( &m_sprBattery );
 
-	m_textNumLives.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery life numbers") );
+	m_textNumLives.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery lives") );
 	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
 	m_textNumLives.EnableShadow( false );
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 
-	m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery percent numbers") );
+	m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery percent") );
 	m_textPercent.EnableShadow( false );
 	m_textPercent.SetZoom( 0.7f );
 	if(PREFSMAN->m_bDancePointsForOni)

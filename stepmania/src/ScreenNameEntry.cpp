@@ -172,14 +172,14 @@ ScreenNameEntry::ScreenNameEntry()
 
 			float ColX = pStyleDef->m_iCenterX[p] + pStyleDef->m_ColumnInfo[p][t].fXOffset;
 
-			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","ranking") );
+			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","ScreenNameEntry letters") );
 			m_textSelectedChars[p][t].SetX( ColX );
 			m_textSelectedChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textSelectedChars[p][t].SetDiffuse( g_SelectedCharsColor );
 			m_textSelectedChars[p][t].SetZoom( CHARS_ZOOM_LARGE );
 			this->AddChild( &m_textSelectedChars[p][t] );		// draw these manually
 			
-			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","ranking") );
+			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","ScreenNameEntry letters") );
 			m_textScrollingChars[p][t].SetX( ColX );
 			m_textScrollingChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textScrollingChars[p][t].SetDiffuse( g_ScrollingCharsColor );

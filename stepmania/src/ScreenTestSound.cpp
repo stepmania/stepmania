@@ -27,7 +27,7 @@ ScreenTestSound::ScreenTestSound()
 	this->AddChild(&HEEEEEEEEELP);
 
 	HEEEEEEEEELP.SetXY(450, 400);
-	HEEEEEEEEELP.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	HEEEEEEEEELP.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	HEEEEEEEEELP.SetZoom(.5);
 	HEEEEEEEEELP.SetText(
 		"p  Play\n"
@@ -39,7 +39,7 @@ ScreenTestSound::ScreenTestSound()
 	for(i = 0; i < nsounds; ++i)
 	{
 		this->AddChild(&s[i].txt);
-		s[i].txt.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		s[i].txt.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 		s[i].txt.SetZoom(.5);
 	}
 

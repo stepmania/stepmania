@@ -43,7 +43,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_Fade.CloseWipingRight();
 	this->AddChild( &m_Fade );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 	m_textQuestion.SetText( sText );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );

@@ -211,20 +211,40 @@ bool FilesAreIdentical( CString sPath1, CString sPath2 )
 	FILE* fp1 = fopen( sPath1, "r" );
 	FILE* fp2 = fopen( sPath2, "r" );
 
+	bool bReturn;
+
 	if( GetFileSizeInBytes(sPath1) != GetFileSizeInBytes(sPath2) )
-		return false;
+	{
+		bReturn = false;
+		goto clean_up;
+	}
 
 	char buffer1[1024], buffer2[1024];
 	ZERO( buffer1 );
 	ZERO( buffer2 );
 	while( !feof(fp1) )
 	{
-		fread( buffer1, 1, sizeof(buffer1), fp1 );
-		fread( buffer2, 1, sizeof(buffer2), fp2 );
-		if( memcmp( buffer1, buffer2, sizeof(buffer1) ) != 0 )
-			return false;
+		int size1 = fread( buffer1, 1, sizeof(buffer1), fp1 );
+		int size2 = fread( buffer2, 1, sizeof(buffer2), fp2 );
+		if( size1 != size2 )
+		{
+			bReturn = false;
+			goto clean_up;
+		}
+		if( memcmp( buffer1, buffer2, sizeof(size1) ) != 0 )
+		{
+			bReturn = false;
+			goto clean_up;
+		}
 	}
-	return true;
+
+	bReturn = true;
+	goto clean_up;
+
+clean_up:
+	fclose( fp1 );
+	fclose( fp2 );
+	return bReturn;
 }
 
 CString StripExtension( CString sPath )
@@ -298,7 +318,8 @@ void ConvertThemeDlg::OnButtonAnalyze()
 
 			if( sThemeElement.CompareNoCase(sBaseElement)==0 )	// file names match
 			{
-				if( FilesAreIdentical( asThemeFilePaths[i], asBaseFilePaths[j] ) )
+				bFoundMatch = true;
+ 				if( FilesAreIdentical( asThemeFilePaths[i], asBaseFilePaths[j] ) )
 					asRedundant.Add( asThemeFilePaths[i] );
 				break;	// skip to next file in asThemeFilePaths
 			}
@@ -320,8 +341,8 @@ void ConvertThemeDlg::OnButtonAnalyze()
 		fprintf( fp, asRedundant[i] + "\n" );
 	fprintf( fp, "\n" );
 	fprintf( fp, "The following elements are possibly MISNAMED.\n"
-		"    (These files do not have a corresponding element in\n"
-		"    the base theme.  This likely means that there is an error in the file name.)\n" );
+		"    (These files do not have a corresponding element in the base theme.\n"
+		"    This likely means that there is an error in the file name.)\n" );
 	for( i=0; i<asWarning.GetSize(); i++ )
 		fprintf( fp, asWarning[i] + "\n" );
 	fclose( fp );

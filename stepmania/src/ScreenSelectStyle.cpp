@@ -52,7 +52,7 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 		CString sIconPath = THEME->GetPathTo("Graphics",sIconElementName);
 		if( sIconPath.empty() )	// element doesn't exist
 		{
-			m_textIcon[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+			m_textIcon[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
 			m_textIcon[i].SetText( mc.name );
 			m_textIcon[i].SetZoom(0.5f);
 			this->AddChild( &m_textIcon[i] );

@@ -76,7 +76,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		ASSERT(0);
 	}
 	
-	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","help") );
+	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","ScreenTitleMenu help") );
 	CString sHelpText;
 	switch( PREFSMAN->m_CoinMode )
 	{
@@ -99,7 +99,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		int i;
 		for( i=0; i<NUM_CHOICES; i++ )
 		{
-			m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","titlemenu") );
+			m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","ScreenTitleMenu choices") );
 			m_textChoice[i].SetText( ChoiceToString((Choice)i) );
 			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );

@@ -131,7 +131,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	m_framePage.AddChild( &m_textOptions[i][0] );
 
 	// add explanation here so it appears on top
-	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","option explanation") );
+	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions explanation") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetZoom( EXPLANATION_ZOOM );
 	m_textExplanation.SetShadowLength( 2 );
@@ -177,7 +177,7 @@ void ScreenOptions::InitOptionsText()
 
 		BitmapText &title = m_textOptionLineTitles[i];
 
-		title.LoadFromFont( THEME->GetPathTo("Fonts","option title") );
+		title.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions title") );
 		CString sText = optline.name;
 
 		title.SetText( sText );
@@ -199,7 +199,7 @@ void ScreenOptions::InitOptionsText()
 		{
 			BitmapText &option = m_textOptions[i][j];
 
-			option.LoadFromFont( THEME->GetPathTo("Fonts","option item") );
+			option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
 			option.SetText( optline.choices[j] );
 			option.SetZoom( ITEMS_ZOOM );
 			option.EnableShadow( false );
@@ -213,7 +213,7 @@ void ScreenOptions::InitOptionsText()
 	}
 
 	BitmapText &option = m_textOptions[i][0];
-	option.LoadFromFont( THEME->GetPathTo("Fonts","option item") );
+	option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
 	option.SetText( "EXIT" );
 	option.SetZoom( ITEMS_ZOOM );
 	option.SetShadowLength( 2 );

@@ -29,7 +29,7 @@ BPMDisplay::BPMDisplay()
 	m_fTimeLeftInState = 0;
 	m_bExtraStage = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
-	m_textBPM.LoadFromNumbers( THEME->GetPathTo("Numbers","BPMDisplay numbers") );
+	m_textBPM.LoadFromNumbers( THEME->GetPathTo("Numbers","BPMDisplay") );
 	m_textBPM.EnableShadow( false );
 	m_textBPM.SetHorizAlign( Actor::align_right );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
@@ -56,7 +56,7 @@ void BPMDisplay::Update( float fDeltaTime )
 		if( m_fTimeLeftInState < 0 )
 		{
 			// XXX: the numbers font doesn't have "?".
-			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? "%%%" : ssprintf("%03.0f",RandomFloat(0,600)) ); 
+			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? "xxx" : ssprintf("%03.0f",RandomFloat(0,600)) ); 
 			m_fTimeLeftInState = 0.2f;		// reset timer
 		}
 	}
