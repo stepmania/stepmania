@@ -298,6 +298,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	unsigned i;
 
 	// Roulette isn't a choice when selecting a course
+	/* Do we really need to do this?  Seems like an optimization that
+	 * doesn't win anything.  (And the other sort orders aren't used,
+	 * either ...) -glenn */
 	if( so == SongSortOrder(SORT_ROULETTE) )
 	{
 		switch( GAMESTATE->m_PlayMode )
@@ -305,9 +308,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			break;
-		default:
             return;
+		default:
+			break;
 		}
 	}
 
@@ -525,6 +528,8 @@ void MusicWheel::RebuildWheelItemDisplays()
 		m_iSelection = 0;
 	
 	iIndex -= NUM_WHEEL_ITEMS_TO_DRAW/2;
+
+	ASSERT(m_CurWheelItemData.size());
 	while(iIndex < 0)
 		iIndex += m_CurWheelItemData.size();
 
