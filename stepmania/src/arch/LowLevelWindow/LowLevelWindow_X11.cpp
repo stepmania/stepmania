@@ -6,11 +6,6 @@
 #include <math.h>	// ceil()
 #include <GL/glx.h>	// All sorts of stuff...
 
-X11Helper::Callback_t helperCallback
-{
-	
-}
-
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	if(!X11Helper::Go() ) { RageException::Throw("Failed to establish a connection with the X server."); }
