@@ -816,6 +816,22 @@ CString WcharToUTF8( wchar_t c )
 	return CString(buf, cnt);
 }
 
+#if !defined(WIN32)
+/* XXX autoconf this */
+int memicmp(const char *s1, const char *s2, size_t n)
+{
+	while(n)
+	{
+		char c1 = tolower(*s1);
+		char c2 = tolower(*s2);
+		if(c1 < c2) return -1;
+		if(c1 > c2) return 1;
+		s1++; s2++;
+	}
+	return 0;
+}
+#endif
+
 /* ASCII-only case insensitivity. */
 struct char_traits_char_nocase: public char_traits<char>
 {
