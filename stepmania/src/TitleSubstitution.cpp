@@ -173,6 +173,8 @@ TitleSubst::TitleSubst()
 	AddTrans("^Demon Road$", "", "", "&oni;&michi;", "", "");
 	AddTrans("^Kidou 2$", "", "", "&oni;&michi; 2", "", "");
 	AddTrans("^Demon Road 2$", "", "", "&oni;&michi; 2", "", "");
+	AddTrans("^Love$", "", "", "Love &whiteheart;", "", "");
+	AddTrans("^Love Love$", "", "", "Love &whiteheart;", "", "");
 }
 
 TitleSubst::~TitleSubst()
