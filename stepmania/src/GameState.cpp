@@ -887,8 +887,15 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 
 	m_bAttackBeganThisUpdate[target] = true;
 
-	m_ActiveAttacks[target].push_back( a );
+	/* If fStartSecond is -1, it means "launch as soon as possible".  For m_ActiveAttacks,
+	 * mark the real time it's starting (now), so Update() can know when the attack started
+	 * so it can be removed later.  For m_ModsToApply, leave the -1 in, so Player::Update
+	 * knows to apply attack transforms correctly.  (yuck) */
 	m_ModsToApply[target].push_back( a );
+	if( a.fStartSecond == -1 )
+		a.fStartSecond = GAMESTATE->m_fMusicSeconds;
+	m_ActiveAttacks[target].push_back( a );
+
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( target );
 }
 
