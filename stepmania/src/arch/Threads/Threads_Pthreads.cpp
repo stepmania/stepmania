@@ -122,13 +122,12 @@ bool MutexImpl_Pthreads::Lock()
 #if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK)
 	if( UseTimedlock() )
 	{
-		int len = 30; /* seconds */
+		int len = 10; /* seconds */
 		int tries = 2;
 
 		while( tries-- )
 		{
-			/* Wait for 30 seconds.  This timeout has to be long enough to allow for 
-			 * for a call to 'mount' to timeout.  If it takes longer than that, we're 
+			/* Wait for ten seconds.  If it takes longer than that, we're 
 			 * probably deadlocked. */
 			timeval tv;
 			gettimeofday( &tv, NULL );
