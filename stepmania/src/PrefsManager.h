@@ -152,6 +152,7 @@ public:
 	CString			m_sVideoRenderers;
 	bool			m_bAntiAliasing;
 	CString			m_sSoundDrivers;
+	int			m_iSoundWriteAhead;
 	CString			m_sMovieDrivers;
 	CString			m_sLightsDriver;
 	float			m_fSoundVolume;

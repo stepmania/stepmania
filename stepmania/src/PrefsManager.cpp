@@ -171,6 +171,11 @@ PrefsManager::PrefsManager()
 	m_bInterlaced = false;
 #endif
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
+	/* Number of frames to write ahead; usually 44100 frames per second.
+	 * (Number of millisec would be more flexible, but it's more useful to
+	 * specify numbers directly.) This is purely a troubleshooting option
+	 * and is not honored by all sound drivers. */
+	m_iSoundWriteAhead = 0;
 	m_sMovieDrivers = DEFAULT_MOVIE_DRIVER_LIST;
 
 	// StepMania.cpp sets these on first run:
@@ -287,6 +292,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "MusicWheelUsesSections",			(int&)m_MusicWheelUsesSections );
 	ini.GetValue( "Options", "MusicWheelSwitchSpeed",			m_iMusicWheelSwitchSpeed );
 	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
+	ini.GetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 	ini.GetValue( "Options", "MovieDrivers",					m_sMovieDrivers );
 	ini.GetValue( "Options", "EasterEggs",						m_bEasterEggs );
 	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
@@ -516,6 +522,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "DemonstrationSound",				m_bDemonstrationSound );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
+	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
@@ -529,7 +536,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
 		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
 
-	ini.SetValue ( "Options", "AdditionalSongFolders", 			join(",", m_asAdditionalSongFolders) );
+	ini.SetValue( "Options", "AdditionalSongFolders", 			join(",", m_asAdditionalSongFolders) );
 
 	ini.SetValue( "Debug", "Logging",							m_bLogging );
 	ini.SetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
