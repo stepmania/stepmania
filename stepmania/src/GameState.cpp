@@ -215,8 +215,9 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
 {
-	if( GAMESTATE->m_bIsOnSystemMenu )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
-		return true;				// allow input from both sides
+	// no longer necessary
+//	if( GAMESTATE->m_bIsOnSystemMenu )	// if no style set (we're in TitleMenu, ConfigInstruments or something)
+//		return true;				// allow input from both sides
 
 	if( m_CurStyle == STYLE_INVALID )	// no style chosen
 		if( this->m_bPlayersCanJoin )	

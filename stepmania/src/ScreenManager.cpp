@@ -434,12 +434,16 @@ void ScreenManager::SetNewScreen( CString sClassName )
 
 	/* If this is a system menu, don't let the operator key touch it! 
 		However, if you add an options screen, please include it here -- Miryokuteki */
-	if(	sClassName == "ScreenOptionsMenu" || sClassName == "ScreenMachineOptions" || 
-		 sClassName == "ScreenOptions" || sClassName == "ScreenInputOptions" || 
-		 sClassName == "ScreenGraphicOptions" || sClassName == "ScreenGameplayOptions" || 
-		 sClassName == "ScreenMapControllers" || sClassName == "ScreenPlayerOptions" || 
-		 sClassName == "ScreenAppearanceOptions" || sClassName == "ScreenEdit" || 
-		 sClassName == "ScreenEditMenu" || sClassName == "ScreenSoundOptions") 
+	if(	sClassName == "ScreenOptionsMenu" ||
+		sClassName == "ScreenMachineOptions" || 
+		sClassName == "ScreenInputOptions" || 
+		sClassName == "ScreenGraphicOptions" || 
+		sClassName == "ScreenGameplayOptions" || 
+		sClassName == "ScreenMapControllers" || 
+		sClassName == "ScreenAppearanceOptions" || 
+		sClassName == "ScreenEdit" || 
+		sClassName == "ScreenEditMenu" || 
+		sClassName == "ScreenSoundOptions" ) 
 		GAMESTATE->m_bIsOnSystemMenu = true;
 	else 
 		GAMESTATE->m_bIsOnSystemMenu = false;
