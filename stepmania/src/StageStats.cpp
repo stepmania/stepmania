@@ -74,7 +74,7 @@ void StageStats::AddStats( const StageStats& other )
 	}
 }
 
-Grade StageStats::GetGrade( PlayerNumber pn )
+Grade StageStats::GetGrade( PlayerNumber pn ) const
 {
 	ASSERT( GAMESTATE->IsPlayerEnabled(pn) );	// shouldn't be calling this is player isn't joined!
 
