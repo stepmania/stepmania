@@ -26,7 +26,7 @@ const int GLOW_IF_METER_GREATER_THAN		=	9;
 
 DifficultyMeter::DifficultyMeter()
 {
-	BitmapText::LoadFromTextureAndChars( THEME->GetPathTo("Graphics","DifficultyMeter bar 2x1"), "10" );
+	BitmapText::LoadFromTextureAndChars( THEME->GetPathToG("DifficultyMeter bar 2x1"), "10" );
 
 	SetFromNotes( NULL );
 }

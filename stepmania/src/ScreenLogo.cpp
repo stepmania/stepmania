@@ -24,17 +24,17 @@
 
 ScreenLogo::ScreenLogo() : ScreenAttract("ScreenLogo")
 {
-	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
+	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.Command( LOGO_ON_COMMAND );
 	this->AddChild( &m_sprLogo );
 
-	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textVersion.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textVersion.Command( VERSION_ON_COMMAND );
 	m_textVersion.SetText( "CVS" );
 	this->AddChild( &m_textVersion );
 
 
-	m_textSongs.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textSongs.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textSongs.Command( SONGS_ON_COMMAND );
 	m_textSongs.SetText( ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses()) );
 	this->AddChild( &m_textSongs );

@@ -59,13 +59,13 @@ public:
 		CString sGraphicPath;
 		
 		sGraphicPath = ssprintf("LifeMeterBar %snormal", bExtra?"extra ":"");
-		m_sprStreamNormal.Load( THEME->GetPathTo("Graphics", sGraphicPath) );
+		m_sprStreamNormal.Load( THEME->GetPathToG( sGraphicPath) );
 
 		sGraphicPath = ssprintf("LifeMeterBar %shot", bExtra?"extra ":"");
-		m_sprStreamHot.Load( THEME->GetPathTo("Graphics", sGraphicPath) );
+		m_sprStreamHot.Load( THEME->GetPathToG( sGraphicPath) );
 
 		sGraphicPath = ssprintf("LifeMeterBar %sframe", bExtra?"extra ":"");
-		m_sprFrame.Load( THEME->GetPathTo("Graphics", sGraphicPath) );
+		m_sprFrame.Load( THEME->GetPathToG( sGraphicPath) );
 	}
 
 	Sprite		m_sprStreamNormal;

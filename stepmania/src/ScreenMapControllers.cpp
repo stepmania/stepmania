@@ -50,7 +50,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 		CString sName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[b];
 		CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[b];
 
-		m_textName[b].LoadFromFont( THEME->GetPathTo("Fonts","Common title") );
+		m_textName[b].LoadFromFont( THEME->GetPathToF("Common title") );
 		m_textName[b].SetXY( CENTER_X, LINE_START_Y + b*LINE_GAP_Y-6 );
 
 		m_textName[b].SetText( sName );
@@ -58,7 +58,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 		m_textName[b].SetShadowLength( 2 );
 		this->AddChild( &m_textName[b] );
 
-		m_textName2[b].LoadFromFont( THEME->GetPathTo("Fonts","Common title") );
+		m_textName2[b].LoadFromFont( THEME->GetPathToF("Common title") );
 		m_textName2[b].SetXY( CENTER_X, LINE_START_Y + b*LINE_GAP_Y+6 );
 		m_textName2[b].SetText( sSecondary );
 		m_textName2[b].SetZoom( 0.5f );
@@ -69,7 +69,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 		{			
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathToF("Common normal") );
 				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_GAME_TO_DEVICE_SLOTS+s], LINE_START_Y + b*LINE_GAP_Y );
 				m_textMappedTo[p][b][s].SetZoom( 0.5f );
 				m_textMappedTo[p][b][s].SetShadowLength( 2 );
@@ -78,7 +78,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 		}
 	}	
 
-	m_textError.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textError.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textError.SetText( "" );
 	m_textError.SetXY( CENTER_X, CENTER_Y );
 	m_textError.SetDiffuse( RageColor(0,1,0,0) );
@@ -95,7 +95,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 	m_Menu.Load( "ScreenMapControllers", false );	// no timer
 	this->AddChild( &m_Menu );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMapControllers music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenMapControllers music") );
 
 	Refresh();
 }
@@ -143,7 +143,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= SDLK_F1 && DeviceI.button <= SDLK_F12) )
 		{
 			m_textError.SetText( "That key can not be mapped." );
-			SOUNDMAN->PlayOnce( THEME->GetPathTo( "sounds","menu invalid" ) );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("Common invalid" ) );
 			m_textError.StopTweening();
 			m_textError.SetDiffuse( RageColor(0,1,0,1) );
 			m_textError.BeginTweening( 3 );
@@ -234,7 +234,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_iCurButton++;
 			break;
 		case SDLK_ESCAPE: /* Quit the screen. */
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 			m_Menu.StartTransitioning( SM_GoToNextScreen );		
 			break;
 		case SDLK_RETURN: /* Change the selection. */

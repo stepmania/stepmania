@@ -65,9 +65,9 @@ void Inventory::Load( PlayerNumber pn )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			m_soundAcquireItem.Load( THEME->GetPathTo("Sounds","Inventory aquire item") );
-			m_soundUseItem.Load( THEME->GetPathTo("Sounds","Inventory use item") );
-			m_soundItemEnding.Load( THEME->GetPathTo("Sounds","Inventory item ending") );
+			m_soundAcquireItem.Load( THEME->GetPathToS("Inventory aquire item") );
+			m_soundUseItem.Load( THEME->GetPathToS("Inventory use item") );
+			m_soundItemEnding.Load( THEME->GetPathToS("Inventory item ending") );
 		}
 	}
 }

@@ -28,13 +28,13 @@ BPMDisplay::BPMDisplay()
 	m_fTimeLeftInState = 0;
 	m_CountingState = holding_down;
 
-	m_textBPM.LoadFromNumbers( THEME->GetPathTo("Numbers","BPMDisplay") );
+	m_textBPM.LoadFromNumbers( THEME->GetPathToN("BPMDisplay") );
 	m_textBPM.EnableShadow( false );
 	m_textBPM.SetHorizAlign( Actor::align_right );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	m_textBPM.SetXY( 0, 0 );
 
-	m_sprLabel.Load( THEME->GetPathTo("Graphics","BPMDisplay label") );
+	m_sprLabel.Load( THEME->GetPathToG("BPMDisplay label") );
 	m_sprLabel.EnableShadow( false );
 	m_sprLabel.SetDiffuse( NORMAL_COLOR );
 	m_sprLabel.SetHorizAlign( Actor::align_left );

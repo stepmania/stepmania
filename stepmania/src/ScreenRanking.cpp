@@ -47,47 +47,47 @@ const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 {
-	m_textCategory.LoadFromFont( THEME->GetPathTo("Fonts","ScreenRanking title") );
+	m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
 	m_textCategory.EnableShadow( false );
 	m_textCategory.SetXY( CATEGORY_X, CATEGORY_Y );
 	this->AddChild( &m_textCategory );
 
-	m_textType.LoadFromFont( THEME->GetPathTo("Fonts","ScreenRanking title") );
+	m_textType.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
 	m_textType.EnableShadow( false );
 	m_textType.SetXY( TYPE_X, TYPE_Y );
 	this->AddChild( &m_textType );
 
 	for( int i=0; i<NUM_RANKING_LINES; i++ )
 	{
-		m_sprBullets[i].Load( THEME->GetPathTo("Graphics",("ScreenRanking bullets 1x5")) );
+		m_sprBullets[i].Load( THEME->GetPathToG(("ScreenRanking bullets 1x5")) );
 		m_sprBullets[i].SetXY( BULLETS_START_X+LINE_SPACING_X*i, BULLETS_START_Y+LINE_SPACING_Y*i );
 		m_sprBullets[i].SetDiffuse( RageColor(1,1,1,0) );
 		m_sprBullets[i].StopAnimating();
 		m_sprBullets[i].SetState(i);
 		this->AddChild( &m_sprBullets[i] );
 
-		m_textNames[i].LoadFromFont( THEME->GetPathTo("Fonts","ScreenRanking letters") );
+		m_textNames[i].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
 		m_textNames[i].EnableShadow( false );
 		m_textNames[i].SetXY( NAMES_START_X+LINE_SPACING_X*i, NAMES_START_Y+LINE_SPACING_Y*i );
 		m_textNames[i].SetZoom( TEXT_ZOOM );
 		m_textNames[i].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textNames[i] );
 
-		m_textScores[i].LoadFromFont( THEME->GetPathTo("Fonts","ScreenRanking letters") );
+		m_textScores[i].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
 		m_textScores[i].EnableShadow( false );
 		m_textScores[i].SetXY( SCORES_START_X+LINE_SPACING_X*i, SCORES_START_Y+LINE_SPACING_Y*i );
 		m_textScores[i].SetZoom( TEXT_ZOOM );
 		m_textScores[i].SetHorizAlign( Actor::align_right );
 		this->AddChild( &m_textScores[i] );
 
-		m_textPoints[i].LoadFromFont( THEME->GetPathTo("Fonts","ScreenRanking letters") );
+		m_textPoints[i].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
 		m_textPoints[i].EnableShadow( false );
 		m_textPoints[i].SetXY( POINTS_START_X+LINE_SPACING_X*i, POINTS_START_Y+LINE_SPACING_Y*i );
 		m_textPoints[i].SetZoom( TEXT_ZOOM );
 		m_textPoints[i].SetHorizAlign( Actor::align_right );
 		this->AddChild( &m_textPoints[i] );
 		
-		m_textTime[i].LoadFromFont( THEME->GetPathTo("Fonts","ScreenRanking letters") );
+		m_textTime[i].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
 		m_textTime[i].EnableShadow( false );
 		m_textTime[i].SetXY( TIME_START_X+LINE_SPACING_X*i, TIME_START_Y+LINE_SPACING_Y*i );
 		m_textTime[i].SetZoom( TEXT_ZOOM );

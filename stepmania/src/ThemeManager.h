@@ -16,6 +16,8 @@
 
 class IniFile;
 
+enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, NUM_ELEMENT_CATEGORIES };
+
 class ThemeManager
 {
 public:
@@ -27,8 +29,12 @@ public:
 	void SwitchTheme( CString sThemeName );
 	CString GetCurThemeName() { return m_sCurThemeName; };
 
-	CString GetPathTo( CString sAssetCategory, CString sFileName );	// looks up the current theme in PREFSMAN
-	CString GetPathToOptional( CString sAssetCategory, CString sFileName );	// looks up the current theme in PREFSMAN
+	CString GetPathTo( ElementCategory category, CString sFileName, bool bOptional=false );
+	CString GetPathToB( CString sFileName ) { return GetPathTo(BGAnimations,sFileName); };
+	CString GetPathToF( CString sFileName ) { return GetPathTo(Fonts,sFileName); };
+	CString GetPathToG( CString sFileName ) { return GetPathTo(Graphics,sFileName); };
+	CString GetPathToN( CString sFileName ) { return GetPathTo(Numbers,sFileName); };
+	CString GetPathToS( CString sFileName ) { return GetPathTo(Sounds,sFileName); };
 
 	bool		HasMetric( CString sClassName, CString sValueName );
 	CString		GetMetricRaw( CString sClassName, CString sValueName );
@@ -40,7 +46,7 @@ public:
 
 protected:
 	void GetAllThemeNames( CStringArray& AddTo );
-	CString GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName );
+	CString GetPathTo( CString sThemeName, ElementCategory category, CString sFileName );
 	static CString GetThemeDirFromName( const CString &sThemeName );
 	CString GetElementDir( CString sThemeName );
 	static CString GetMetricsPathFromName( CString sThemeName );

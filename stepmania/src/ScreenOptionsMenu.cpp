@@ -66,7 +66,7 @@ ScreenOptionsMenu::ScreenOptionsMenu() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenOptionsMenu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenOptionsMenu music") );
 }
 
 /* We depend on the SM options navigation for this screen, not arcade. */

@@ -48,10 +48,10 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("
 
 	m_sName = sClassName;
 
-	m_SoundChangeCol.Load( THEME->GetPathTo("Sounds","ScreenOptions change") );
-	m_SoundNextRow.Load( THEME->GetPathTo("Sounds","ScreenOptions next") );
-	m_SoundPrevRow.Load( THEME->GetPathTo("Sounds","ScreenOptions prev") );
-	m_SoundStart.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_SoundChangeCol.Load( THEME->GetPathToS("ScreenOptions change") );
+	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next") );
+	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev") );
+	m_SoundStart.Load( THEME->GetPathToS("Common start") );
 
 	m_Menu.Load( sClassName, bEnableTimer, false );	// no style icon
 	this->AddChild( &m_Menu );
@@ -59,7 +59,7 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );
 
-	m_sprPage.Load( THEME->GetPathTo("Graphics",sClassName+" page") );
+	m_sprPage.Load( THEME->GetPathToG(sClassName+" page") );
 	m_sprPage.SetXY( CENTER_X, CENTER_Y );
 	m_framePage.AddChild( &m_sprPage );
 
@@ -133,7 +133,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	m_framePage.AddChild( &m_textItems[i][0] );
 
 	// add explanation here so it appears on top
-	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions explanation") );
+	m_textExplanation.LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetZoom( EXPLANATION_ZOOM );
 	m_textExplanation.SetShadowLength( 2 );
@@ -182,7 +182,7 @@ void ScreenOptions::InitOptionsText()
 
 		BitmapText &title = m_textTitles[i];
 
-		title.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions title") );
+		title.LoadFromFont( THEME->GetPathToF("ScreenOptions title") );
 		CString sText = optline.name;
 
 		title.SetText( sText );
@@ -194,7 +194,7 @@ void ScreenOptions::InitOptionsText()
 
 
 		Sprite &bullet = m_sprBullets[i];
-		bullet.Load( THEME->GetPathTo("Graphics","ScreenOptions bullet") );
+		bullet.Load( THEME->GetPathToG("ScreenOptions bullet") );
 		bullet.SetXY( ARROWS_X, fY );
 
 
@@ -204,7 +204,7 @@ void ScreenOptions::InitOptionsText()
 		{
 			BitmapText &option = m_textItems[i][j];
 
-			option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
+			option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 			option.SetText( optline.choices[j] );
 			option.SetZoom( ITEMS_ZOOM );
 			option.EnableShadow( false );
@@ -232,7 +232,7 @@ void ScreenOptions::InitOptionsText()
 
 					int iChoiceInRow = m_iSelectedOption[p][i];
 
-					option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
+					option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 					option.SetText( m_OptionRow[i].choices[iChoiceInRow] );
 					option.SetZoom( ITEMS_ZOOM );
 					option.EnableShadow( false );
@@ -246,7 +246,7 @@ void ScreenOptions::InitOptionsText()
 	}
 
 	BitmapText &option = m_textItems[i][0];
-	option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
+	option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 	option.SetText( "EXIT" );
 	option.SetZoom( ITEMS_ZOOM );
 	option.SetShadowLength( 2 );

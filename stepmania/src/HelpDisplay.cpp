@@ -24,7 +24,7 @@ HelpDisplay::HelpDisplay()
 {
 	LOG->Trace( "HelpDisplay::HelpDisplay()" );
 
-	m_textTip.LoadFromFont( THEME->GetPathTo("Fonts","HelpDisplay") );
+	m_textTip.LoadFromFont( THEME->GetPathToF("HelpDisplay") );
 	m_textTip.SetEffectDiffuseBlink();
 	m_textTip.EnableShadow( false );
 	this->AddChild( &m_textTip );

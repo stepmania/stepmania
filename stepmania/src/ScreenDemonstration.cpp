@@ -56,7 +56,7 @@ ScreenDemonstration::ScreenDemonstration() : ScreenJukebox( PrepareForDemonstrat
 	}
 
 
-	m_Overlay.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenDemonstration overlay") );
+	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenDemonstration overlay") );
 	this->AddChild( &m_Overlay );
 
 	this->MoveToTail( &m_In );

@@ -20,7 +20,7 @@ DifficultyRating::DifficultyRating()
 	for(int i=0; i<iMaxElements; i++)
 	{
 		Sprite* pNewSprite = new Sprite;
-		pNewSprite->Load( THEME->GetPathTo("Graphics","Select Music DifficultyRatingIcon") );
+		pNewSprite->Load( THEME->GetPathToG("Select Music DifficultyRatingIcon") );
 		m_apSprites.push_back( pNewSprite );
 		m_apSprites[i]->SetDiffuse( RageColor(1,1,1,0) );
 	}

@@ -58,7 +58,7 @@ ScreenSelectGame::ScreenSelectGame() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectGame music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectGame music") );
 }
 
 void ScreenSelectGame::ImportOptions()

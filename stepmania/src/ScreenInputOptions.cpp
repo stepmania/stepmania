@@ -56,7 +56,7 @@ ScreenInputOptions::ScreenInputOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenInputOptions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenInputOptions music") );
 }
 
 void ScreenInputOptions::ImportOptions()

@@ -135,11 +135,11 @@ ScreenJukebox::ScreenJukebox( bool bDemonstration ) : ScreenGameplay( PrepareFor
 		return;
 	}
 
-	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenDemonstration in") );
+	m_In.Load( THEME->GetPathToB("ScreenDemonstration in") );
 	this->AddChild( &m_In );
 	m_In.StartTransitioning();
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenDemonstration out") );
+	m_Out.Load( THEME->GetPathToB("ScreenDemonstration out") );
 	this->AddChild( &m_Out );
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
@@ -188,7 +188,7 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 				SOUNDMAN->StopMusic();
 				/* We already played the it was a coin was inserted.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
-					SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common coin") );
+					SOUNDMAN->PlayOnce( THEME->GetPathToS("Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;

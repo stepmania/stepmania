@@ -168,7 +168,7 @@ ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 	GAMESTATE->Reset();		// so that credits message for both players will show
 
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenCredits background") );
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenCredits background") );
 	this->AddChild( &m_Background );
 
 	vector<Song*> arraySongs;
@@ -187,11 +187,11 @@ ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 
 		CroppedSprite* pBackground = new CroppedSprite;
 		pBackground->SetCroppedSize( BACKGROUNDS_WIDTH, BACKGROUNDS_HEIGHT );
-		pBackground->LoadBG( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background") );
+		pBackground->LoadBG( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background") );
 		m_vBackgrounds.push_back( pBackground );
 
 		Sprite* pFrame = new Sprite;
-		pFrame->Load( THEME->GetPathTo("Graphics","ScreenCredits background frame") );
+		pFrame->Load( THEME->GetPathToG("ScreenCredits background frame") );
 		m_vFrames.push_back( pFrame );
 	}
 	m_ScrollerBackgrounds.Load( m_vBackgrounds, BACKGROUNDS_BASE_X, BACKGROUNDS_BASE_Y, BACKGROUNDS_VELOCITY_X, BACKGROUNDS_VELOCITY_Y, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
@@ -203,7 +203,7 @@ ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 	for( i=0; i<NUM_CREDIT_LINES; i++ )
 	{
 		BitmapText* pText = new BitmapText;
-		pText->LoadFromFont( THEME->GetPathTo("Fonts","ScreenCredits titles") );
+		pText->LoadFromFont( THEME->GetPathToF("ScreenCredits titles") );
 		pText->SetText( CREDIT_LINES[i].text );
 		switch( CREDIT_LINES[i].colorIndex )
 		{
@@ -219,21 +219,21 @@ ScreenCredits::ScreenCredits() : Screen("ScreenCredits")
 	this->AddChild( &m_ScrollerTexts );
 	
 
-	m_Overlay.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenCredits overlay") );
+	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenCredits overlay") );
 	this->AddChild( &m_Overlay );
 
-	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenCredits in") );
+	m_In.Load( THEME->GetPathToB("ScreenCredits in") );
 	this->AddChild( &m_In );	// draw and update manually
 	m_In.StartTransitioning();
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenCredits out") );
+	m_Out.Load( THEME->GetPathToB("ScreenCredits out") );
 	this->AddChild( &m_Out );	// draw and update manually
 
 	this->PostScreenMessage( SM_BeginFadingOut, m_ScrollerTexts.GetTotalSecsToScroll() );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenCredits music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenCredits music") );
 }
 
 ScreenCredits::~ScreenCredits()

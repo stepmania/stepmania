@@ -66,7 +66,7 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenAppearanceOptions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenAppearanceOptions music") );
 }
 
 void ScreenAppearanceOptions::ImportOptions()

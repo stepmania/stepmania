@@ -193,7 +193,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	/* !! Working on this.. having probs loading the BG sequences -- Miryokuteki */
 		
 		//this->AddChild( &m_bhDancer );
-		//m_bhDancer.Load( THEME->GetPathTo("Graphics", "select difficulty ex picture easy") );
+		//m_bhDancer.Load( THEME->GetPathToG( "select difficulty ex picture easy") );
 			//m_bhDancer.SetXY( -100,-100 );  //<-- causing entire screen to offset!
 		//m_bhDancer.SetDiffuse( RageColor(1,1,1,1) );
 		//m_bhDancer.SetEffectGlowShift( 0.5f );
@@ -236,7 +236,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 			this->AddChild( &m_ActiveItemList[p] );
 		}
 
-		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","ScreenGameplay oni gameover") );
+		m_sprOniGameOver[p].Load( THEME->GetPathToG("ScreenGameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
 		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
@@ -259,7 +259,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		sLifeFrameName = "ScreenGameplay oni life frame";
 	else 
 		sLifeFrameName = "ScreenGameplay life frame";
-	m_sprLifeFrame.Load( THEME->GetPathTo("Graphics",sLifeFrameName) );
+	m_sprLifeFrame.Load( THEME->GetPathToG(sLifeFrameName) );
 	m_sprLifeFrame.SetXY( LIFE_FRAME_X, LIFE_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprLifeFrame );
 
@@ -285,7 +285,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay song num") );
+		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
 		m_textCourseSongNumber[p].EnableShadow( false );
 		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
 		m_textCourseSongNumber[p].SetText( "" );
@@ -297,7 +297,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenGameplay stage "+GAMESTATE->GetStageText()) );
+		m_sprStage.Load( THEME->GetPathToG("ScreenGameplay stage "+GAMESTATE->GetStageText()) );
 		m_sprStage.SetXY( STAGE_X, STAGE_Y(bExtra) );
 		this->AddChild( &m_sprStage );
 		break;
@@ -323,17 +323,17 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		sScoreFrameName = "ScreenGameplay oni score frame";
 	else 
 		sScoreFrameName = "ScreenGameplay score frame";
-	m_sprScoreFrame.Load( THEME->GetPathTo("Graphics",sScoreFrameName) );
+	m_sprScoreFrame.Load( THEME->GetPathToG(sScoreFrameName) );
 	m_sprScoreFrame.SetXY( SCORE_FRAME_X, SCORE_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprScoreFrame );
 
-	m_textSongTitle.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay song title") );
+	m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenGameplay song title") );
 	m_textSongTitle.EnableShadow( false );
 	m_textSongTitle.SetXY( STAGENAME_X, STAGENAME_Y );
 	m_textSongTitle.SetZoom( STAGENAME_ZOOM );
 	this->AddChild( &m_textSongTitle );
 
-	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay max combo") );
+	m_MaxCombo.LoadFromNumbers( THEME->GetPathToN("ScreenGameplay max combo") );
 	m_MaxCombo.SetXY( MAXCOMBO_X, MAXCOMBO_Y );
 	m_MaxCombo.SetZoom( MAXCOMBO_ZOOM );
 	m_MaxCombo.SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iCurCombo[GAMESTATE->m_MasterPlayerNumber]) ); /* TODO: Make this work for both players */
@@ -369,7 +369,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_pScoreDisplay[p]->SetZoom( SCORE_ZOOM );
 		this->AddChild( m_pScoreDisplay[p] );
 		
-		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textPlayerOptions[p].EnableShadow( false );
 		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_X(p), PLAYER_OPTIONS_Y(p,bExtra) );
 		m_textPlayerOptions[p].SetZoom( 0.5f );
@@ -377,7 +377,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		this->AddChild( &m_textPlayerOptions[p] );
 	}
 
-	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textSongOptions.EnableShadow( false );
 	m_textSongOptions.SetXY( SONG_OPTIONS_X, SONG_OPTIONS_Y(bExtra) );
 	m_textSongOptions.SetZoom( 0.5f );
@@ -391,7 +391,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","ScreenGameplay difficulty icons 2x5") );
+		m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenGameplay difficulty icons 2x5") );
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 	}
@@ -401,7 +401,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		this->AddChild(&m_LyricDisplay);
 	
 
-	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay autoplay") );
+	m_textAutoPlay.LoadFromFont( THEME->GetPathToF("ScreenGameplay autoplay") );
 	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
 	if( !bDemonstration )	// only load if we're not in demonstration of jukebox
 		this->AddChild( &m_textAutoPlay );
@@ -430,44 +430,44 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	
 	if( !bDemonstration )	// only load if we're going to use it
 	{
-		m_Ready.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay ready") );
+		m_Ready.Load( THEME->GetPathToB("ScreenGameplay ready") );
 		this->AddChild( &m_Ready );
 
-		m_Go.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay go") );
+		m_Go.Load( THEME->GetPathToB("ScreenGameplay go") );
 		this->AddChild( &m_Go );
 
-		m_Cleared.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay cleared") );
+		m_Cleared.Load( THEME->GetPathToB("ScreenGameplay cleared") );
 		this->AddChild( &m_Cleared );
 
-		m_Failed.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay failed") );
+		m_Failed.Load( THEME->GetPathToB("ScreenGameplay failed") );
 		this->AddChild( &m_Failed );
 
 		if( GAMESTATE->IsFinalStage() )	// only load if we're going to use it
-			m_Extra.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay extra1") );
+			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra1") );
 		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
-			m_Extra.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay extra2") );
+			m_Extra.Load( THEME->GetPathToB("ScreenGameplay extra2") );
 		this->AddChild( &m_Extra );
 
-		m_Toasty.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay toasty") );
+		m_Toasty.Load( THEME->GetPathToB("ScreenGameplay toasty") );
 		this->AddChild( &m_Toasty );
 
-		m_In.Load( THEME->GetPathTo("BGAnimations","ScreenGameplay in") );
+		m_In.Load( THEME->GetPathToB("ScreenGameplay in") );
 		this->AddChild( &m_In );
 
 
-		m_textDebug.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+		m_textDebug.LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
 		m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 		this->AddChild( &m_textDebug );
 
 
-		m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
+		m_Back.Load( THEME->GetPathToB("Common back") );
 		this->AddChild( &m_Back );
 
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
 		{
-			m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay survive time") );
+			m_textSurviveTime.LoadFromFont( THEME->GetPathToF("ScreenGameplay survive time") );
 			m_textSurviveTime.EnableShadow( false );
 			m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 			m_textSurviveTime.SetText( "" );
@@ -486,7 +486,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	if( !bDemonstration )	// only load if we're going to use it
 	{
-		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","ScreenGameplay oni die") );
+		m_soundOniDie.Load(				THEME->GetPathToS("ScreenGameplay oni die") );
 		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready"), 1 );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra"), 1 );
@@ -510,7 +510,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
 		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
-		m_soundAssistTick.Load(			THEME->GetPathTo("Sounds","ScreenGameplay assist tick") );
+		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick") );
 	}
 
 	// Get the transitions rolling on the first update.
@@ -987,7 +987,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
 		{
 			m_DancingState = STATE_OUTRO;
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common back") );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("Common back") );
 			/* Hmm.  There are a bunch of subtly different ways we can
 			 * tween out: 
 			 *   1. Keep rendering the song, and keep it moving.  This might

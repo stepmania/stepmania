@@ -27,8 +27,8 @@ MenuTimer::MenuTimer()
 	m_fStallSeconds = 0;
 	m_bPaused = false;
 
-	m_textDigit1.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer") );
-	m_textDigit2.LoadFromNumbers( THEME->GetPathTo("Numbers","MenuTimer") );
+	m_textDigit1.LoadFromNumbers( THEME->GetPathToN("MenuTimer") );
+	m_textDigit2.LoadFromNumbers( THEME->GetPathToN("MenuTimer") );
 
 	m_textDigit1.EnableShadow( false );
 	m_textDigit2.EnableShadow( false );
@@ -42,7 +42,7 @@ MenuTimer::MenuTimer()
 	this->AddChild( &m_textDigit1 );
 	this->AddChild( &m_textDigit2 );
 
-	m_soundBeep.Load( THEME->GetPathTo("Sounds","MenuTimer tick") );
+	m_soundBeep.Load( THEME->GetPathToS("MenuTimer tick") );
 }
 
 void MenuTimer::EnableStealth( bool bStealth )
@@ -56,7 +56,7 @@ void MenuTimer::EnableStealth( bool bStealth )
 	}
 	else
 	{
-		m_soundBeep.Load( THEME->GetPathTo("Sounds","MenuTimer tick") ); // reload the sound
+		m_soundBeep.Load( THEME->GetPathToS("MenuTimer tick") ); // reload the sound
 		m_textDigit1.SetZoomY( 1 );	
 		m_textDigit2.SetZoomY( 1 );
 	}

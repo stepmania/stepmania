@@ -28,11 +28,11 @@ void GroupList::Load( const CStringArray& asGroupNames )
 		float fX = START_X + i*SPACING_X;
 		float fY = START_Y + i*SPACING_Y;
 
-		m_sprButton[i].Load( THEME->GetPathTo("Graphics","GroupList bar") );
+		m_sprButton[i].Load( THEME->GetPathToG("GroupList bar") );
 		m_sprButton[i].SetXY( fX, fY );
 		this->AddChild( &m_sprButton[i] );
 
-		m_screenLabels[i].LoadFromFont( THEME->GetPathTo("Fonts","GroupList label") );
+		m_screenLabels[i].LoadFromFont( THEME->GetPathToF("GroupList label") );
 		m_screenLabels[i].SetXY( fX, fY );
 		m_screenLabels[i].SetShadowLength( 2 );
 		this->AddChild( &m_screenLabels[i] );

@@ -35,7 +35,7 @@ Judgment::Judgment()
 	BOO_COMMAND.Refresh();
 	MISS_COMMAND.Refresh();
 
-	m_sprJudgment.Load( THEME->GetPathTo("Graphics","Judgment 1x6") );
+	m_sprJudgment.Load( THEME->GetPathToG("Judgment 1x6") );
 	m_sprJudgment.StopAnimating();
 	Reset();
 	this->AddChild( &m_sprJudgment );

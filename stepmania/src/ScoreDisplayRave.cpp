@@ -22,7 +22,7 @@ ScoreDisplayRave::ScoreDisplayRave()
 {
 	LOG->Trace( "ScoreDisplayRave::ScoreDisplayRave()" );
 
-	m_textCurrentAttack.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textCurrentAttack.LoadFromFont( THEME->GetPathToF("Common normal") );
 	this->AddChild( &m_textCurrentAttack );
 }
 

@@ -122,9 +122,9 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 			m_aModeChoices.push_back( mc );
 		
 		
-		CString sBGAnimationDir = THEME->GetPathToOptional("BGAnimations",ssprintf("%s %s",m_sName.GetString(),mc.name));
+		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, ssprintf("%s %s",m_sName.GetString(),mc.name), true);	// true="optional"
 		if( sBGAnimationDir == "" )
-			sBGAnimationDir = THEME->GetPathTo("BGAnimations",m_sName+" background");
+			sBGAnimationDir = THEME->GetPathToB(m_sName+" background");
 		m_BGAnimations[c].LoadFromAniDir( sBGAnimationDir );
 	}
 
@@ -133,7 +133,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sName+" music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS(m_sName+" music") );
 }
 
 
@@ -197,7 +197,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 				}
 
 				/* If credits had to be used, it's already taken care of.. add the player */
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+				SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 				GAMESTATE->m_bSideIsJoined[pn] = true;
 				SCREENMAN->RefreshCreditsMessages();
 				this->UpdateSelectableChoices();

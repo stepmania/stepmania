@@ -53,7 +53,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_Fade.CloseWipingRight();
 	this->AddChild( &m_Fade );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textQuestion.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textQuestion.SetText( sQuestion );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
@@ -66,12 +66,12 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_rectAnswerBox.SetZoomY( ANSWER_HEIGHT );
 	this->AddChild( &m_rectAnswerBox );
 
-	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textAnswer.LoadFromFont( THEME->GetPathToF("header1") );
 	m_textAnswer.SetXY( ANSWER_X, ANSWER_Y );
 	UpdateText();
 	this->AddChild( &m_textAnswer );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common prompt") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common prompt") );
 }
 
 void ScreenTextEntry::UpdateText()
@@ -201,7 +201,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	m_textAnswer.BeginTweening( 0.2f );
 	m_textAnswer.SetDiffuse( RageColor(1,1,1,0) );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 
 	if( m_bCancelled ) {
 		if( m_pOnCancel ) m_pOnCancel();

@@ -36,7 +36,7 @@ GrooveGraph::GrooveGraph()
 		m_Mountains[c].SetXY( fX, -20 );
 		this->AddChild( &m_Mountains[c] );
 
-		m_sprLabels[c].Load( THEME->GetPathTo("Graphics","GrooveGraph labels 1x5") );
+		m_sprLabels[c].Load( THEME->GetPathToG("GrooveGraph labels 1x5") );
 		m_sprLabels[c].StopAnimating();
 		m_sprLabels[c].SetState( c );
 		m_sprLabels[c].SetXY( fX, +10 );

@@ -29,6 +29,14 @@ ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the pro
 
 const CString BASE_THEME_NAME = "default";
 const CString THEMES_DIR  = "Themes/";
+const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
+{
+	"BGAnimations",
+	"Fonts",
+	"Graphics",
+	"Numbers",
+	"Sounds"
+};
 
 ThemeManager::ThemeManager()
 {
@@ -117,54 +125,47 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 	return THEMES_DIR + sThemeName + "/";
 }
 
-CString ThemeManager::GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName ) 
+CString ThemeManager::GetPathTo( CString sThemeName, ElementCategory category, CString sFileName ) 
 {
 #if defined(WIN32) // XXX arch?
 try_element_again:
 #endif
-	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
 
 	const CString sThemeDir = GetThemeDirFromName( sThemeName );
+	const CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
 	CStringArray asElementPaths;
 
-	/* First, look for redirs. */
-	GetDirListing( sThemeDir + sAssetCategory+"/"+sFileName + ".redir",
-					asElementPaths, false, true );
+	// If sFileName already has an extension, we're looking for a specific file
+	bool bLookingForSpecificFile = sFileName.find_last_of('.') != sFileName.npos;
+	bool bDirsOnly = category==BGAnimations;
 
-	static const char *graphic_masks[] = {
-		"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif",
-		"*.avi", "*.mpg", "*.mpeg", NULL
-	};
-	static const char *sound_masks[] = { ".set", ".mp3", ".ogg", ".wav", NULL };
-	static const char *font_masks[] = { "*.ini", NULL };//, "*.png", "*.jpg", "*.bmp", "*.gif",  NULL };
-	static const char *numbers_masks[] = { "*.png", NULL };
-	static const char *bganimations_masks[] = { "", NULL };
-	static const char *blank_mask[] = { "", NULL };
-	const char **asset_masks = NULL;
-	if( sAssetCategory == "graphics" ) asset_masks = graphic_masks;
-	else if( sAssetCategory == "sounds" ) asset_masks = sound_masks;
-	else if( sAssetCategory == "fonts" ) asset_masks = font_masks;
-	else if( sAssetCategory == "numbers" ) asset_masks = numbers_masks;
-	else if( sAssetCategory == "bganimations" ) asset_masks = bganimations_masks;
-	else ASSERT(0); // Unknown theme asset category
+	if( bLookingForSpecificFile )
+	{
+		GetDirListing( sThemeDir + sCategory+"/"+sFileName, asElementPaths, bDirsOnly, true );
+	}
+	else	// look for all files starting with sFileName that have types we can use
+	{
+		/* First, look for redirs. */
+		GetDirListing( sThemeDir + sCategory+"/"+sFileName + ".redir",
+						asElementPaths, false, true );
 
-	/* If the theme asset name has an extension, don't add
-	 * a mask.  This should only happen with redirs. */
-	if(sFileName.find_last_of('.') != sFileName.npos)
-		asset_masks = blank_mask;
+		static const char *masks[NUM_ELEMENT_CATEGORIES][12] = {
+			{ "", NULL },
+			{ "*.ini", NULL },
+			{"*.sprite", "*.png", "*.jpg", "*.bmp", "*.gif","*.avi", "*.mpg", "*.mpeg", NULL},
+			{ "*.png", NULL },
+			{ ".set", ".mp3", ".ogg", ".wav", NULL },
+		};		
+		const char **asset_masks = masks[category];
 
-	bool DirsOnly=false;
-	if( sAssetCategory == "bganimations" )
-		DirsOnly=true;
-
-	for(int i = 0; asset_masks[i]; ++i)
-		GetDirListing( sThemeDir + sAssetCategory+"/" + sFileName + asset_masks[i],
-						asElementPaths, DirsOnly, true );
-
-	if( sAssetCategory == "fonts" )
-		Font::WeedFontNames(asElementPaths, sFileName);
+		for( int i = 0; asset_masks[i]; ++i )
+			GetDirListing( sThemeDir + sCategory+"/" + sFileName + asset_masks[i],
+							asElementPaths, bDirsOnly, true );
+		if( category == Fonts )
+			Font::WeedFontNames(asElementPaths, sFileName);
+	}
 	
 
 	if( asElementPaths.size() > 1 )
@@ -174,7 +175,7 @@ try_element_again:
 		CString message = ssprintf( 
 			"There is more than one theme element element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
-			sThemeName.GetString(), sAssetCategory.GetString(), sFileName.GetString() );
+			sThemeName.GetString(), sCategory.GetString(), sFileName.GetString() );
 							
 #if defined(WIN32) // XXX arch?
 		if( DISPLAY->IsWindowed() )
@@ -203,9 +204,8 @@ try_element_again:
 			CString sNewFileName = GetRedirContents(sPath);
 			
 			/* backwards-compatibility hack */
-			if( sAssetCategory == "fonts" )
-				if( sAssetCategory == "fonts" )
-					sNewFileName.Replace(" 16x16.png", "");
+			if( category == Fonts )
+				sNewFileName.Replace(" 16x16.png", "");
 
 			/* Search again.  For example, themes/default/Fonts/foo might redir
 			* to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
@@ -215,7 +215,7 @@ try_element_again:
 			* up resolving to the overridden background. */
 			/* Use GetPathToOptional because we don't want report that there's an element
 			 * missing.  Instead we want to report that the redirect is invalid. */
-			CString sNewPath = GetPathToOptional(sAssetCategory, sNewFileName);
+			CString sNewPath = GetPathTo(category, sNewFileName, true);
 
 			if( !sNewPath.empty() )
 				return sNewPath;
@@ -237,27 +237,24 @@ try_element_again:
 	}
 }
 
-CString ThemeManager::GetPathToOptional( CString sAssetCategory, CString sFileName ) 
-{
-	CString ret = GetPathTo( m_sCurThemeName, sAssetCategory, sFileName);
-	if( !ret.empty() )	// we found something
-		return ret;
-	ret = GetPathTo( BASE_THEME_NAME, sAssetCategory, sFileName);
-	return ret;
-}
-
-CString ThemeManager::GetPathTo( CString sAssetCategory, CString sFileName ) 
+CString ThemeManager::GetPathTo( ElementCategory category, CString sFileName, bool bOptional ) 
 {
 #if defined(DEBUG) && defined(WIN32)
 try_element_again:
 #endif
 
-	CString ret = GetPathToOptional( sAssetCategory, sFileName ) ;
+	CString ret = GetPathTo( m_sCurThemeName, category, sFileName);
 	if( !ret.empty() )	// we found something
 		return ret;
+	ret = GetPathTo( BASE_THEME_NAME, category, sFileName);
+	if( !ret.empty() )	// we found something
+		return ret;
+	else if( bOptional )
+		return "";
 
 #if defined(DEBUG) && defined(WIN32)
-	CString sMessage = ssprintf("The theme element '%s/%s' is missing.",sAssetCategory.GetString(),sFileName.GetString());
+	CString sCategory = ELEMENT_CATEGORY_STRING[category];
+	CString sMessage = ssprintf("The theme element '%s/%s' is missing.",sCategory.GetString(),sFileName.GetString());
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:
@@ -265,7 +262,7 @@ try_element_again:
 		goto try_element_again;
 	case IDCANCEL:
 		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-			sAssetCategory.GetString(),
+			sCategory.GetString(),
 			sFileName.GetString(), 
 			GetThemeDirFromName(m_sCurThemeName).GetString(), 
 			GetThemeDirFromName(BASE_THEME_NAME).GetString() );
@@ -275,15 +272,15 @@ try_element_again:
 
 	LOG->Warn( 
 		"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-		sAssetCategory.GetString(),
+		sCategory.GetString(),
 		sFileName.GetString(), 
 		GetThemeDirFromName(m_sCurThemeName).GetString(), 
 		GetThemeDirFromName(BASE_THEME_NAME).GetString() );
 
 	/* Err? */
 	if(sFileName == "_missing")
-		RageException::Throw("_missing element missing from %s/%s", GetThemeDirFromName(BASE_THEME_NAME).GetString(), sAssetCategory.GetString() );
-	return GetPathTo( sAssetCategory, "_missing" );
+		RageException::Throw("_missing element missing from %s/%s", GetThemeDirFromName(BASE_THEME_NAME).GetString(), sCategory.GetString() );
+	return GetPathTo( category, "_missing" );
 }
 
 

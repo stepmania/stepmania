@@ -114,7 +114,7 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	m_bChosen = false;
 
 	m_sprExplanation.SetName( "Explanation" );
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup explanation") );
+	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectGroup explanation") );
 	this->AddChild( &m_sprExplanation );
 
 	// these guys get loaded SetSong and TweenToSong
@@ -123,15 +123,15 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	this->AddChild( &m_Banner );
 
 	m_sprFrame.SetName( "Frame" );
-	m_sprFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup frame") );
+	m_sprFrame.Load( THEME->GetPathToG("ScreenSelectGroup frame") );
 	this->AddChild( &m_sprFrame );
 
 	m_textNumber.SetName( "Number" );
-	m_textNumber.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectGroup num songs") );
+	m_textNumber.LoadFromNumbers( THEME->GetPathToN("ScreenSelectGroup num songs") );
 	this->AddChild( &m_textNumber );
 	
 	m_sprContents.SetName( "Contents" );
-	m_sprContents.Load( THEME->GetPathTo("Graphics","ScreenSelectGroup contents") );
+	m_sprContents.Load( THEME->GetPathToG("ScreenSelectGroup contents") );
 	this->AddChild( &m_sprContents );
 
 	m_MusicList.SetName( "MusicList" );
@@ -142,12 +142,12 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	this->AddChild( &m_GroupList );
 
 
-	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectGroup change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundChange.Load( THEME->GetPathToS("ScreenSelectGroup change") );
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectGroup music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectGroup music") );
 
 	AfterChange();
 	TweenOnScreen();

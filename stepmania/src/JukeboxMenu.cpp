@@ -34,7 +34,7 @@ JukeboxMenu::JukeboxMenu()
 
 	for( i=0; i<2; i++ )
 	{
-		m_sprArrows[i].Load( THEME->GetPathTo("Graphics",ssprintf("JukeboxMenu %s",(i==0?"left":"right"))) );
+		m_sprArrows[i].Load( THEME->GetPathToG(ssprintf("JukeboxMenu %s",(i==0?"left":"right"))) );
 		m_sprArrows[i].SetX( ARROWS_X(i) );
 		this->AddChild( &m_sprArrows[i] );
 	}
@@ -45,22 +45,22 @@ JukeboxMenu::JukeboxMenu()
 
 	for( i=0; i<NUM_ROWS; i++ )
 	{
-		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","Common title") );
+		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common title") );
 		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
 		m_textLabel[i].SetText( RowToString((Row)i) );
 		m_textLabel[i].SetZoom( 0.8f );
 		m_textLabel[i].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textLabel[i] );
 
-		m_textValue[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+		m_textValue[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textValue[i].SetXY( ROW_VALUE_X(i), ROW_Y(i) );
 		m_textValue[i].SetText( "blah" );
 		m_textValue[i].SetZoom( 0.8f );
 		this->AddChild( &m_textValue[i] );
 	}
 
-	m_soundChangeRow.Load( THEME->GetPathTo("sounds","JukeboxMenu row") );
-	m_soundChangeValue.Load( THEME->GetPathTo("sounds","JukeboxMenu value") );
+	m_soundChangeRow.Load( THEME->GetPathToS("JukeboxMenu row") );
+	m_soundChangeValue.Load( THEME->GetPathToS("JukeboxMenu value") );
 
 
 	// fill in data structures

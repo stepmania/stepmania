@@ -785,7 +785,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		split(imports, ",", ImportList, true);
 		for(unsigned i = 0; i < ImportList.size(); ++i)
 		{
-			CString path = THEME->GetPathTo("Fonts", ImportList[i]);
+			CString path = THEME->GetPathToF( ImportList[i]);
 			Font subfont;
 			subfont.Load(path, "");
 			MergeFont(subfont);

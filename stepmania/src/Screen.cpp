@@ -186,7 +186,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 
 		SCREENMAN->RefreshCreditsMessages();
 
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 
 		return true;
 	}

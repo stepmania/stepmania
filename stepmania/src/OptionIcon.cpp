@@ -25,11 +25,11 @@
 
 OptionIcon::OptionIcon()
 {
-	m_spr.Load( THEME->GetPathTo("Graphics","OptionIcon frame 3x2") );
+	m_spr.Load( THEME->GetPathToG("OptionIcon frame 3x2") );
 	m_spr.StopAnimating();
 	this->AddChild( &m_spr );
 
-	m_text.LoadFromFont( THEME->GetPathTo("Fonts","OptionIcon") );
+	m_text.LoadFromFont( THEME->GetPathToF("OptionIcon") );
 	m_text.EnableShadow( false );
 	m_text.SetZoom( TEXT_ZOOM );
 	m_text.SetXY( TEXT_OFFSET_X, TEXT_OFFSET_Y );

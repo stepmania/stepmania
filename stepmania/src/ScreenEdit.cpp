@@ -237,7 +237,7 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
 	NOTESKIN->SwitchNoteSkin( PLAYER_1, "note" );	// change noteskin before loading all of the edit Actors
 
-	m_BGAnimation.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenEdit background") );
+	m_BGAnimation.LoadFromAniDir( THEME->GetPathToB("ScreenEdit background") );
 
 	shiftAnchor = -1;
 	m_SnapDisplay.SetXY( EDIT_X, EDIT_GRAY_Y );
@@ -274,38 +274,38 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 
 	m_Fade.SetClosed();
 
-	m_sprHelp.Load( THEME->GetPathTo("Graphics","ScreenEdit help") );
+	m_sprHelp.Load( THEME->GetPathToG("ScreenEdit help") );
 	m_sprHelp.SetHorizAlign( Actor::align_left );
 	m_sprHelp.SetXY( HELP_X, HELP_Y );
 
-	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textHelp.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
 	m_textHelp.SetHorizAlign( Actor::align_left );
 	m_textHelp.SetVertAlign( Actor::align_top );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetText( HELP_TEXT );
 
-	m_sprInfo.Load( THEME->GetPathTo("Graphics","ScreenEdit Info") );
+	m_sprInfo.Load( THEME->GetPathToG("ScreenEdit Info") );
 	m_sprInfo.SetHorizAlign( Actor::align_right );
 	m_sprInfo.SetXY( INFO_X, INFO_Y );
 
-	m_textInfo.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textInfo.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textInfo.SetXY( INFO_TEXT_X, INFO_TEXT_Y );
 	m_textInfo.SetHorizAlign( Actor::align_left );
 	m_textInfo.SetVertAlign( Actor::align_top );
 	m_textInfo.SetZoom( 0.5f );
 	//m_textInfo.SetText();	// set this below every frame
 
-	m_soundChangeLine.Load( THEME->GetPathTo("Sounds","ScreenEdit line") );
-	m_soundChangeSnap.Load( THEME->GetPathTo("Sounds","ScreenEdit snap") );
-	m_soundMarker.Load(		THEME->GetPathTo("Sounds","ScreenEdit marker") );
+	m_soundChangeLine.Load( THEME->GetPathToS("ScreenEdit line") );
+	m_soundChangeSnap.Load( THEME->GetPathToS("ScreenEdit snap") );
+	m_soundMarker.Load(		THEME->GetPathToS("ScreenEdit marker") );
 
 
 	m_soundMusic.Load(m_pSong->GetMusicPath());
 	m_soundMusic.SetAccurateSync(true);
 	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
 
-	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","ScreenEdit assist tick") );
+	m_soundAssistTick.Load(		THEME->GetPathToS("ScreenEdit assist tick") );
 
 	m_Fade.OpenWipingRight();
 }
@@ -1203,7 +1203,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				GAMESTATE->m_pCurSong->Save();
 
 				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEdit save") );
+				SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEdit save") );
 			}
 			break;
 		case player_options:

@@ -82,7 +82,7 @@ void Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 void Banner::LoadAllMusic()
 {
-	Load( THEME->GetPathTo("Graphics","Banner all") );
+	Load( THEME->GetPathToG("Banner all") );
 	m_bScrolling = false;
 }
 
@@ -105,12 +105,12 @@ void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 
 void Banner::LoadFallback()
 {
-	Load( THEME->GetPathTo("Graphics","Banner fallback") );
+	Load( THEME->GetPathToG("Banner fallback") );
 }
 
 void Banner::LoadRoulette()
 {
-	RageTextureID ID(THEME->GetPathTo("Graphics","Banner roulette"));
+	RageTextureID ID(THEME->GetPathToG("Banner roulette"));
 	ID.iMipMaps = 0;
 	Load( ID );
 	m_bScrolling = true;
@@ -118,7 +118,7 @@ void Banner::LoadRoulette()
 
 void Banner::LoadRandom()
 {
-	RageTextureID ID(THEME->GetPathTo("Graphics","Banner random"));
+	RageTextureID ID(THEME->GetPathToG("Banner random"));
 	ID.iMipMaps = 0;
 	Load( ID );
 	m_bScrolling = true;

@@ -44,7 +44,7 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 
 	GAMESTATE->Reset();		// so that credits message for both players will show
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenMusicScroll background") );
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenMusicScroll background") );
 	this->AddChild( &m_Background );
 
 
@@ -57,7 +57,7 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 	for( i=0; i<min(arraySongs.size(), MAX_MUSIC_LINES); i++ )
 	{
 		Song* pSong = arraySongs[i];
-		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","ScreenMusicScroll titles") );
+		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathToF("ScreenMusicScroll titles") );
 		m_textLines[m_iNumLines].SetText( pSong->GetFullDisplayTitle(), pSong->GetFullTranslitTitle() );
 		m_textLines[m_iNumLines].SetDiffuse( SONGMAN->GetSongColor(pSong) );
 		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
@@ -67,7 +67,7 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 
 //	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
 //	{
-//		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathTo("Fonts","ScreenMusicScroll titles") );
+//		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathToF("ScreenMusicScroll titles") );
 //		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
 //		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
 //
@@ -84,16 +84,16 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 	
 	this->PostScreenMessage( SM_BeginFadingOut, 0.2f * i + 3.0f );
 
-	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenMusicScroll in") );
+	m_In.Load( THEME->GetPathToB("ScreenMusicScroll in") );
 //	this->AddChild( &m_In );	// draw and update manually
 	m_In.StartTransitioning();
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenMusicScroll out") );
+	m_Out.Load( THEME->GetPathToB("ScreenMusicScroll out") );
 //	this->AddChild( &m_Out );	// draw and update manually
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMusicScroll music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenMusicScroll music") );
 }
 
 

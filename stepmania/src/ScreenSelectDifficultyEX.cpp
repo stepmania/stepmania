@@ -50,10 +50,10 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		m_ModeChoices.push_back( m_aModeChoices[c] );
 	}
 	
-	//m_sprMore.Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficultyEX more page1") );
+	//m_sprMore.Load( THEME->GetPathToG( "ScreenSelectDifficultyEX more page1") );
 	//m_framePages.AddChild( &m_sprMore );
 
-	//m_sprExplanation.Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficultyEX explanation") );
+	//m_sprExplanation.Load( THEME->GetPathToG( "ScreenSelectDifficultyEX explanation") );
 	//m_sprExplanation.StopAnimating();
 	//m_sprExplanation.SetState( 1 );
 	//m_framePages.AddChild( &m_sprExplanation );
@@ -70,17 +70,17 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[0].name );
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[0].name );
 		
-		m_sprPicture[p].Load( THEME->GetPathTo("Graphics",sPictureFile) );
+		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		m_sprPicture[p].SetX( PICTURE_X(p) );
 		m_sprPicture[p].SetY( PICTURE_Y(p) );
 		m_framePages.AddChild( &m_sprPicture[p] );
 		
-		m_sprInfo[p].Load( THEME->GetPathTo("Graphics",sInfoFile) );
+		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
 		m_sprInfo[p].SetX( INFO_X(p) );
 		m_sprInfo[p].SetY( INFO_Y(p) );
 		m_framePages.AddChild( &m_sprInfo[p] );	
 
-		m_sprCursor[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficultyEX cursor 2x1") );
+		m_sprCursor[p].Load( THEME->GetPathToG( "ScreenSelectDifficultyEX cursor 2x1") );
 		m_sprCursor[p].SetZoom( 0 );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
@@ -88,7 +88,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 		m_sprCursor[p].SetY( fCursorY );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
-		m_sprOK[p].Load( THEME->GetPathTo("Graphics", "ScreenSelectDifficultyEX ok 2x1") );
+		m_sprOK[p].Load( THEME->GetPathToG( "ScreenSelectDifficultyEX ok 2x1") );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
 		m_sprOK[p].SetDiffuse( RageColor(1,1,1,1) );
@@ -99,8 +99,8 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 
 	this->AddChild( &m_framePages );
 	
-	m_soundChange.Load( THEME->GetPathTo("Sounds", "ScreenSelectDifficulty change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds", "Common start") );
+	m_soundChange.Load( THEME->GetPathToS( "ScreenSelectDifficulty change") );
+	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	m_fLockInputTime = LOCK_INPUT_SECONDS;
@@ -213,8 +213,8 @@ void ScreenSelectDifficultyEX::SetAllPlayersSelection( int iChoice, bool bSwitch
 		
 		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[m_iChoice[p]].name );
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
-		m_sprInfo[p].Load( THEME->GetPathTo( "Graphics", sInfoFile ) );
-		m_sprPicture[p].Load( THEME->GetPathTo( "Graphics", sPictureFile ) );
+		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
+		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 	}
 	
 	m_soundChange.Play();
@@ -265,8 +265,8 @@ void ScreenSelectDifficultyEX::Change( PlayerNumber pn, int iNewChoice )
 		m_iChoice[p] = iNewChoice;
 		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[m_iChoice[p]].name );
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[m_iChoice[p]].name );
-		m_sprInfo[p].Load( THEME->GetPathTo( "Graphics", sInfoFile ) );
-		m_sprPicture[p].Load( THEME->GetPathTo( "Graphics", sPictureFile ) );
+		m_sprInfo[p].Load( THEME->GetPathToG(sInfoFile) );
+		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 	}
 	
 	m_soundChange.Play();

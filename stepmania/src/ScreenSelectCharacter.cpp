@@ -75,7 +75,7 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprTitle[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCharacter title 2x2") );
+		m_sprTitle[p].Load( THEME->GetPathToG("ScreenSelectCharacter title 2x2") );
 		m_sprTitle[p].SetState( GAMESTATE->IsHumanPlayer(p) ? p : 2+p );
 		m_sprTitle[p].StopAnimating();
 		m_sprTitle[p].Command( TITLE_ON_COMMAND(p) );
@@ -85,11 +85,11 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 		m_sprCharacter[p].Command( CHARACTER_ON_COMMAND(p) );
 		this->AddChild( &m_sprCharacter[p] );
 
-		m_sprCharacterArrows[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCharacter character arrows") );
+		m_sprCharacterArrows[p].Load( THEME->GetPathToG("ScreenSelectCharacter character arrows") );
 		m_sprCharacterArrows[p].Command( CHARACTER_ARROWS_ON_COMMAND(p) );
 		this->AddChild( &m_sprCharacterArrows[p] );
 
-		m_sprAttackFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCharacter attack frame 1x2") );
+		m_sprAttackFrame[p].Load( THEME->GetPathToG("ScreenSelectCharacter attack frame 1x2") );
 		m_sprAttackFrame[p].StopAnimating();
 		m_sprAttackFrame[p].SetState( p );
 		m_sprAttackFrame[p].Command( ATTACK_FRAME_ON_COMMAND(p) );
@@ -104,24 +104,24 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 				this->AddChild( &m_AttackIcons[p][i][j] );
 			}
 
-		m_sprLevelCursor[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCharacter level cursor") );
+		m_sprLevelCursor[p].Load( THEME->GetPathToG("ScreenSelectCharacter level cursor") );
 		int iLevelIndex = m_iSelectedLevelIndex[p];
 		m_sprLevelCursor[p].SetXY( LEVEL_CURSOR_X(p,iLevelIndex), LEVEL_CURSOR_Y(p,iLevelIndex) );
-		m_sprLevelCursor[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCharacter level cursor") );
+		m_sprLevelCursor[p].Load( THEME->GetPathToG("ScreenSelectCharacter level cursor") );
 		this->AddChild( &m_sprLevelCursor[p] );
 	}
 
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectCharacter explanation") );
+	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectCharacter explanation") );
 	m_sprExplanation.Command( EXPLANATION_ON_COMMAND );
 	this->AddChild( &m_sprExplanation );
 
 
-	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectCharacter change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundChange.Load( THEME->GetPathToS("ScreenSelectCharacter change") );
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectCharacter music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectCharacter music") );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{

@@ -54,7 +54,7 @@ Background::Background()
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
 
-	m_BGADanger.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenGameplay danger") );
+	m_BGADanger.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay danger") );
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-PREFSMAN->m_fBGBrightness) );
@@ -219,7 +219,7 @@ void Background::LoadFromSong( Song* pSong )
 	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
 	const float fYZoom = RECT_BACKGROUND.GetHeight() / (float)SCREEN_HEIGHT;
 
-	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
+	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
 
 	// Load the static background that will before notes start and after notes end
 	{

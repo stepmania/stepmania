@@ -48,17 +48,17 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 
 	m_sName = sClassName;
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sName+" background") );
+	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName+" background") );
 	this->AddChild( &m_Background );
 
-	m_sprHeader.Load( THEME->GetPathTo("Graphics",m_sName+" header") );
+	m_sprHeader.Load( THEME->GetPathToG(m_sName+" header") );
 	m_sprHeader.Command( HEADER_ON_COMMAND );
 	this->AddChild( &m_sprHeader );
 
 	if( bLoadStyleIcon  &&  GAMESTATE->m_CurStyle != STYLE_INVALID )
 	{
 		CString sIconFileName = ssprintf("MenuElements icon %s", GAMESTATE->GetCurrentStyleDef()->m_szName );
-		m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",sIconFileName) );
+		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
 		m_sprStyleIcon.StopAnimating();
 		m_sprStyleIcon.Command( STYLE_ICON_ON_COMMAND );
 		this->AddChild( &m_sprStyleIcon );
@@ -71,7 +71,7 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 		m_MenuTimer.Disable();
 	this->AddChild( &m_MenuTimer );
 
-	m_sprFooter.Load( THEME->GetPathTo("Graphics",m_sName+" footer") );
+	m_sprFooter.Load( THEME->GetPathToG(m_sName+" footer") );
 	m_sprFooter.Command( FOOTER_ON_COMMAND );
 	this->AddChild( &m_sprFooter );
 
@@ -82,17 +82,17 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer, bool bLoadStyleI
 	this->AddChild( &m_textHelp );
 
 
-	m_In.Load( THEME->GetPathTo("BGAnimations",m_sName+" in") );
+	m_In.Load( THEME->GetPathToB(m_sName+" in") );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations",m_sName+" out") );
+	m_Out.Load( THEME->GetPathToB(m_sName+" out") );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
+	m_Back.Load( THEME->GetPathToB("Common back") );
 	this->AddChild( &m_Back );
 
 
-	m_soundBack.Load( THEME->GetPathTo("Sounds","Common back") );
+	m_soundBack.Load( THEME->GetPathToS("Common back") );
 
 	m_bStartedTransitionIn = false;
 }

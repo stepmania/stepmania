@@ -63,7 +63,7 @@ ScreenSelectMode::ScreenSelectMode() : Screen("ScreenSelectMode")
 
 
 	/*********** TODO: MAKE THIS WORK FOR ALL GAME STYLES! *************/
-	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectMode list frame"));
+	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenSelectMode list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListFrame );
 
@@ -72,17 +72,17 @@ ScreenSelectMode::ScreenSelectMode() : Screen("ScreenSelectMode")
 	m_ScrollingList.SetNumberVisible( 9 );
 	this->AddChild( &m_ScrollingList );
 
-	m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","ScreenSelectMode list highlight"));
+	m_ChoiceListHighlight.Load( THEME->GetPathToG("ScreenSelectMode list highlight"));
 	m_ChoiceListHighlight.SetXY( CENTER_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListHighlight );
 
-	m_Guide.Load( THEME->GetPathTo("Graphics","select mode guide"));
+	m_Guide.Load( THEME->GetPathToG("select mode guide"));
 	m_Guide.SetXY( GUIDE_X, GUIDE_Y );
 	this->AddChild( &m_Guide );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMode join frame 1x2") );
+		m_sprJoinFrame[p].Load( THEME->GetPathToG("ScreenSelectMode join frame 1x2") );
 		m_sprJoinFrame[p].StopAnimating();
 		m_sprJoinFrame[p].SetState( p );
 		m_sprJoinFrame[p].SetXY( JOIN_FRAME_X(p), JOIN_FRAME_Y(p) );
@@ -91,7 +91,7 @@ ScreenSelectMode::ScreenSelectMode() : Screen("ScreenSelectMode")
 		if( GAMESTATE->m_bSideIsJoined[p] )
 			m_sprJoinFrame[p].SetZoomY( 0 );
 
-		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","ScreenSelectMode join message 2x2") );
+		m_sprJoinMessage[p].Load( THEME->GetPathToG("ScreenSelectMode join message 2x2") );
 		m_sprJoinMessage[p].StopAnimating();
 		m_sprJoinMessage[p].SetState( p );
 		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
@@ -115,12 +115,12 @@ ScreenSelectMode::ScreenSelectMode() : Screen("ScreenSelectMode")
 	m_Menu.Load( "ScreenSelectMode" );
 	this->AddChild( &m_Menu );
 
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
-	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectMode change"), true );
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
+	m_soundChange.Load( THEME->GetPathToS("ScreenSelectMode change"), true );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select mode intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectMode music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectMode music") );
 
 	RefreshModeChoices();
 
@@ -131,7 +131,7 @@ ScreenSelectMode::ScreenSelectMode() : Screen("ScreenSelectMode")
 		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
 		{
 			CString sChoiceName = m_apPossibleModeChoices[i]->name;
-			m_Infotext[i].Load( THEME->GetPathTo("Graphics",ssprintf("ScreenSelectMode infotext %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
+			m_Infotext[i].Load( THEME->GetPathToG(ssprintf("ScreenSelectMode infotext %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
 			m_Infotext[i].SetXY( GUIDE_X, GUIDE_Y );
 			this->AddChild( &m_Infotext[i] );
 			m_Infotext[i].SetDiffuse( RageColor(0,0,0,0));
@@ -256,7 +256,7 @@ void ScreenSelectMode::RefreshModeChoices()
 	for( unsigned j=0; j<m_apPossibleModeChoices.size(); j++ )
 	{
 		const ModeChoice* pChoice = m_apPossibleModeChoices[j];
-		asGraphicPaths.push_back( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName.GetString(), pChoice->name) ) );
+		asGraphicPaths.push_back( THEME->GetPathToG( ssprintf("select mode choice %s %s", sGameName.GetString(), pChoice->name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
@@ -269,7 +269,7 @@ void ScreenSelectMode::RefreshModeChoices()
 		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
 		{
 			CString sChoiceName = m_apPossibleModeChoices[i]->name;
-			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
+			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathToB(ssprintf("select mode %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
 		}
 	}
 }

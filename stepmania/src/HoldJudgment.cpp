@@ -26,7 +26,7 @@ HoldJudgment::HoldJudgment()
 	OK_COMMAND.Refresh();
 	NG_COMMAND.Refresh();
 
-	m_sprJudgment.Load( THEME->GetPathTo("Graphics","HoldJudgment 1x2") );
+	m_sprJudgment.Load( THEME->GetPathToG("HoldJudgment 1x2") );
 	m_sprJudgment.StopAnimating();
 	Reset();
 	this->AddChild( &m_sprJudgment );

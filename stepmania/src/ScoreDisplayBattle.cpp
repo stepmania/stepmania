@@ -26,7 +26,7 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 	{
 		float fX = (float)SCALE(i,0.f,2.f,-60.f,60.f);
 
-		m_ItemFrame[i].Load( THEME->GetPathTo("Graphics","ScoreDisplayBattle frames") );
+		m_ItemFrame[i].Load( THEME->GetPathToG("ScoreDisplayBattle frames") );
 		m_ItemFrame[i].SetX( fX );
 		m_ItemFrame[i].StopAnimating();
 		m_ItemFrame[i].SetState( i );
@@ -60,7 +60,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 			else
 			{
 				// TODO:  Cache all of the icon graphics so we don't load them dynamically from disk.
-				m_ItemIcon[s].Load( THEME->GetPathTo("Graphics","ScoreDisplayBattle icon "+sNewItem) );
+				m_ItemIcon[s].Load( THEME->GetPathToG("ScoreDisplayBattle icon "+sNewItem) );
 				m_ItemIcon[s].StopTweening();
 				m_ItemIcon[s].Command( "diffuse,1,1,1,1;zoom,1;"
 					"sleep,0.1;linear,0;diffusealpha,0;"

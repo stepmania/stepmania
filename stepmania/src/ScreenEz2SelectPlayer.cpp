@@ -58,12 +58,12 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer() : Screen("ScreenEz2SelectPlayer")
 	m_Menu.Load( "ScreenEz2SelectPlayer" );
 	this->AddChild( &m_Menu );
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenEz2SelectPlayer background") );
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenEz2SelectPlayer background") );
 	this->AddChild( &m_Background ); // animated background =)
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprJoinFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEz2SelectPlayer join frame 1x2") );
+		m_sprJoinFrame[p].Load( THEME->GetPathToG("ScreenEz2SelectPlayer join frame 1x2") );
 		m_sprJoinFrame[p].StopAnimating();
 		m_sprJoinFrame[p].SetState( p );
 		m_sprJoinFrame[p].SetXY( JOIN_FRAME_X(p), JOIN_FRAME_Y(p) );
@@ -72,7 +72,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer() : Screen("ScreenEz2SelectPlayer")
 		if( GAMESTATE->m_bSideIsJoined[p] )
 			m_sprJoinFrame[p].SetZoomY( 0 );
 
-		m_sprJoinMessage[p].Load( THEME->GetPathTo("Graphics","ScreenEz2SelectPlayer join message 2x2") );
+		m_sprJoinMessage[p].Load( THEME->GetPathToG("ScreenEz2SelectPlayer join message 2x2") );
 		m_sprJoinMessage[p].StopAnimating();
 		m_sprJoinMessage[p].SetState( p );
 		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
@@ -92,11 +92,11 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer() : Screen("ScreenEz2SelectPlayer")
 		}
 	}
 
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectPlayer music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectPlayer music") );
 
 	TweenOnScreen();
 }

@@ -28,7 +28,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
 	// init the text
-	m_text.LoadFromNumbers( THEME->GetPathTo("Numbers","ScoreDisplayNormal") );
+	m_text.LoadFromNumbers( THEME->GetPathToN("ScoreDisplayNormal") );
 	m_text.EnableShadow( false );
 
 	m_fScore = 0;

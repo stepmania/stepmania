@@ -81,7 +81,7 @@ MusicWheel::MusicWheel()
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
 
-	m_sprSelectionOverlay.Load( THEME->GetPathTo("Graphics","MusicWheel highlight") );
+	m_sprSelectionOverlay.Load( THEME->GetPathToG("MusicWheel highlight") );
 	m_sprSelectionOverlay.SetXY( 0, 0 );
 	m_sprSelectionOverlay.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprSelectionOverlay.SetEffectGlowShift( 1.0f, RageColor(1,1,1,0.4f), RageColor(1,1,1,1) );
@@ -92,11 +92,11 @@ MusicWheel::MusicWheel()
 	this->AddChild( &m_ScrollBar );
 	
 	/* We play a lot of this one, so precache it. */
-	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","MusicWheel change"), true );
-	m_soundChangeSort.Load(		THEME->GetPathTo("Sounds","MusicWheel sort") );
-	m_soundExpand.Load(			THEME->GetPathTo("Sounds","MusicWheel expand") );
-	m_soundStart.Load(			THEME->GetPathTo("Sounds","Common start") );
-	m_soundLocked.Load(			THEME->GetPathTo("Sounds","MusicWheel locked") );
+	m_soundChangeMusic.Load(	THEME->GetPathToS("MusicWheel change"), true );
+	m_soundChangeSort.Load(		THEME->GetPathToS("MusicWheel sort") );
+	m_soundExpand.Load(			THEME->GetPathToS("MusicWheel expand") );
+	m_soundStart.Load(			THEME->GetPathToS("Common start") );
+	m_soundLocked.Load(			THEME->GetPathToS("MusicWheel locked") );
 
 
 	// init m_mapGroupNameToBannerColor

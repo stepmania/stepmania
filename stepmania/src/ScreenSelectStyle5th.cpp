@@ -123,7 +123,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 	int i;
 	for( i=0; i<NUM_STYLE_PADS; i++ )
 	{
-		m_sprPad[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style pad game %d style %d",GAMESTATE->m_CurGame,i)) );
+		m_sprPad[i].Load( THEME->GetPathToG(ssprintf("select style pad game %d style %d",GAMESTATE->m_CurGame,i)) );
 //		m_sprPad[i].SetXY( PAD_X[i], PAD_Y[i] );
 //		m_sprPad[i].SetZoom( 1 );
 		this->AddChild( &m_sprPad[i] );
@@ -132,7 +132,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 
 	for( i=0; i<NUM_STYLE_DANCERS; i++ )
 	{
-		m_sprDancer[i].Load( THEME->GetPathTo("Graphics",ssprintf("select style player game %d style %d",GAMESTATE->m_CurGame,i)) );
+		m_sprDancer[i].Load( THEME->GetPathToG(ssprintf("select style player game %d style %d",GAMESTATE->m_CurGame,i)) );
 		m_sprDancer[i].SetVertAlign( Actor::align_top );
 //		m_sprDancer[i].SetXY( DANCER_X[i], DANCER_Y[i] );
 //		m_sprDancer[i].SetZoom( 2 );
@@ -141,14 +141,14 @@ ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 	}
 
 
-	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",ssprintf("select style icons game %d",GAMESTATE->m_CurGame)) );
+	m_sprStyleIcon.Load( THEME->GetPathToG(ssprintf("select style icons game %d",GAMESTATE->m_CurGame)) );
 	m_sprStyleIcon.EnableShadow( false );
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( ICON_X, ICON_Y );
 	this->AddChild( &m_sprStyleIcon );
 
 
-	m_textExplanation1.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textExplanation1.LoadFromFont( THEME->GetPathToF("header1") );
 	m_textExplanation1.SetDiffuse( RageColor(0,0.7f,0,1) );
 	m_textExplanation1.SetXY( EXPLANATION1_X, EXPLANATION1_Y );
 	m_textExplanation1.SetZ( 1 );
@@ -157,7 +157,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 	m_textExplanation1.SetHorizAlign( BitmapText::align_left );
 	this->AddChild( &m_textExplanation1 );
 
-	m_textExplanation2.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textExplanation2.LoadFromFont( THEME->GetPathToF("header1") );
 	m_textExplanation2.SetDiffuse( RageColor(0,0.7f,0,1) );
 	m_textExplanation2.SetXY( EXPLANATION2_X, EXPLANATION2_Y );
 	m_textExplanation2.SetZ( 1 );
@@ -169,12 +169,12 @@ ScreenSelectStyle5th::ScreenSelectStyle5th() : Screen("ScreenSelectStyle5th")
 	m_Menu.Load( "ScreenSelectStyle5th" );
 	this->AddChild( &m_Menu );
 
-	m_soundChange.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle5th change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundChange.Load( THEME->GetPathToG("ScreenSelectStyle5th change") );
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select style intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectStyle5th music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectStyle5th music") );
 
 	m_soundChange.PlayRandom();
 	TweenOnScreen();

@@ -39,8 +39,8 @@ LifeMeterBattery::LifeMeterBattery()
 	m_fBatteryBlinkTime = 0;
 
 	
-	m_soundGainLife.Load( THEME->GetPathTo("Sounds","LifeMeterBattery gain") );
-	m_soundLoseLife.Load( THEME->GetPathTo("Sounds","LifeMeterBattery lose") );
+	m_soundGainLife.Load( THEME->GetPathToS("LifeMeterBattery gain") );
+	m_soundLoseLife.Load( THEME->GetPathToS("LifeMeterBattery lose") );
 }
 
 void LifeMeterBattery::Load( PlayerNumber pn )
@@ -49,21 +49,21 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled(pn);
 
-	m_sprFrame.Load( THEME->GetPathTo("Graphics","LifeMeterBattery frame") );
+	m_sprFrame.Load( THEME->GetPathToG("LifeMeterBattery frame") );
 	this->AddChild( &m_sprFrame );
 
-	m_sprBattery.Load( THEME->GetPathTo("Graphics","LifeMeterBattery lives 1x4") );
+	m_sprBattery.Load( THEME->GetPathToG("LifeMeterBattery lives 1x4") );
 	m_sprBattery.StopAnimating();
 	if( bPlayerEnabled )
 		this->AddChild( &m_sprBattery );
 
-	m_textNumLives.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery lives") );
+	m_textNumLives.LoadFromNumbers( THEME->GetPathToN("LifeMeterBattery lives") );
 	m_textNumLives.SetDiffuse( RageColor(1,1,1,1) );
 	m_textNumLives.EnableShadow( false );
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 
-	m_textPercent.LoadFromNumbers( THEME->GetPathTo("Numbers","LifeMeterBattery percent") );
+	m_textPercent.LoadFromNumbers( THEME->GetPathToN("LifeMeterBattery percent") );
 	m_textPercent.EnableShadow( false );
 	m_textPercent.SetZoom( 0.7f );
 	if(PREFSMAN->m_bDancePointsForOni)

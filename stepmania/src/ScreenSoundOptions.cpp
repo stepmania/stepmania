@@ -47,7 +47,7 @@ ScreenSoundOptions::ScreenSoundOptions() :
 	Init( INPUTMODE_BOTH, g_SoundOptionsLines, NUM_SOUND_OPTIONS_LINES, false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSoundOptions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSoundOptions music") );
 }
 
 void ScreenSoundOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

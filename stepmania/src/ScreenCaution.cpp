@@ -37,22 +37,22 @@ ScreenCaution::ScreenCaution() : Screen( "ScreenCaution" )
 		return;
 	}
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenCaution background") );
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenCaution background") );
 	this->AddChild( &m_Background );
 	
-	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenCaution in") );
+	m_In.Load( THEME->GetPathToB("ScreenCaution in") );
 	m_In.StartTransitioning( SM_DoneOpening );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenCaution out") );
+	m_Out.Load( THEME->GetPathToB("ScreenCaution out") );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
+	m_Back.Load( THEME->GetPathToB("Common back") );
 	this->AddChild( &m_Back );
 
 	this->PostScreenMessage( SM_StartClosing, 3 );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenCaution music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenCaution music") );
 }
 
 
@@ -97,6 +97,6 @@ void ScreenCaution::MenuBack( PlayerNumber pn )
 		return;
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common back") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common back") );
 }
 

@@ -37,21 +37,21 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 
 	// We have to do initialization in the first update because this->GetElementName() won't
 	// work until the object has been fully constructed.
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",m_sName+" background") );
+	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName+" background") );
 	this->AddChild( &m_Background );
 
-	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenAttract in") );
+	m_In.Load( THEME->GetPathToB("ScreenAttract in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenAttract out") );
+	m_Out.Load( THEME->GetPathToB("ScreenAttract out") );
 	this->AddChild( &m_Out );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
 
-	m_soundStart.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundStart.Load( THEME->GetPathToS("Common start") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds",m_sName + " music") );	// DO loop.  -Chris
+	SOUNDMAN->PlayMusic( THEME->GetPathToS(m_sName + " music") );	// DO loop.  -Chris
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 
@@ -99,7 +99,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				SOUNDMAN->StopMusic();
 				/* We already played the it was a coin was inserted.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
-					SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common coin") );
+					SOUNDMAN->PlayOnce( THEME->GetPathToS("Common coin") );
 				SDL_Delay( 800 );	// do a little pause, like the arcade does
 				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 				break;

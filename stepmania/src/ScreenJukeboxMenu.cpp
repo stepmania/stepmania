@@ -47,15 +47,15 @@ ScreenJukeboxMenu::ScreenJukeboxMenu() : Screen("ScreenJukeboxMenu")
 	this->AddChild( &m_Menu );
 
 
-	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
-	m_soundInvalid.Load( THEME->GetPathTo("Sounds","Common invalid") );
+	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenJukeboxMenu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenJukeboxMenu music") );
 }
 
 
@@ -138,7 +138,7 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 
 
 	SOUNDMAN->StopMusic();
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 

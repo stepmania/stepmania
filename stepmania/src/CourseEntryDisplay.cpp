@@ -46,10 +46,10 @@
 
 CourseEntryDisplay::CourseEntryDisplay()
 {
-	m_sprFrame.Load( THEME->GetPathTo("Graphics","CourseEntryDisplay bar") );
+	m_sprFrame.Load( THEME->GetPathToG("CourseEntryDisplay bar") );
 	this->AddChild( &m_sprFrame );
 
-	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","CourseEntryDisplay number") );
+	m_textNumber.LoadFromFont( THEME->GetPathToF("CourseEntryDisplay number") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.EnableShadow( false );
 	this->AddChild( &m_textNumber );
@@ -57,18 +57,18 @@ CourseEntryDisplay::CourseEntryDisplay()
 	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
 	this->AddChild( &m_TextBanner );
 
-	m_textFoot.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","CourseEntryDisplay difficulty 2x1"),"10" );
+	m_textFoot.LoadFromTextureAndChars( THEME->GetPathToG("CourseEntryDisplay difficulty 2x1"),"10" );
 	m_textFoot.SetXY( FOOT_X, FOOT_Y );
 	m_textFoot.EnableShadow( false );
 	this->AddChild( &m_textFoot );
 
-	m_textDifficultyNumber.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textDifficultyNumber.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textDifficultyNumber.SetXY( DIFFICULTY_X, DIFFICULTY_Y );
 	m_textDifficultyNumber.SetZoom( DIFFICULTY_ZOOM );
 	m_textDifficultyNumber.EnableShadow( false );
 	this->AddChild( &m_textDifficultyNumber );
 
-	m_textModifiers.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textModifiers.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textModifiers.SetXY( MODIFIERS_X, MODIFIERS_Y );
 	m_textModifiers.SetZoom( MODIFIERS_ZOOM );
 	m_textModifiers.SetHorizAlign( (Actor::HorizAlign)MODIFIERS_HORIZ_ALIGN );

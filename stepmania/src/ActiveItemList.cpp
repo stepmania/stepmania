@@ -35,7 +35,7 @@ void ActiveItemList::Init( PlayerNumber pn )
 
 	for( i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
 	{
-		m_text[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+		m_text[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_text[i].SetZoom( TEXT_ZOOM );
 //		m_text[i].SetText( "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" );
 		this->AddChild( &m_text[i] );

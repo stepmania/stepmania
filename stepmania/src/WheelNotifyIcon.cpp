@@ -23,7 +23,7 @@
 
 WheelNotifyIcon::WheelNotifyIcon()
 {
-	Load( THEME->GetPathTo("Graphics","WheelNotifyIcon icons 4x2") );
+	Load( THEME->GetPathToG("WheelNotifyIcon icons 4x2") );
 	StopAnimating();
 }
 

@@ -57,17 +57,17 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 {
 	SOUNDMAN->StopMusic();
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenStage "+GAMESTATE->GetStageText()) );
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenStage "+GAMESTATE->GetStageText()) );
 	this->AddChild( &m_Background );
 
-	m_In.Load( THEME->GetPathTo("BGAnimations","ScreenStage in") );
+	m_In.Load( THEME->GetPathToB("ScreenStage in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathTo("BGAnimations","ScreenStage out") );
+	m_Out.Load( THEME->GetPathToB("ScreenStage out") );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathTo("BGAnimations","Common back") );
+	m_Back.Load( THEME->GetPathToB("Common back") );
 	this->AddChild( &m_Back );
 	
 	/* Prep the new screen once the animation is complete.  This way, we
@@ -137,14 +137,14 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //	int i;
 //	for( i=0; i<4; i++ )
 //	{
-//		m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","ScreenStage parts 5x3") );
+//		m_sprNumbers[i].Load( THEME->GetPathToG("ScreenStage parts 5x3") );
 //
 //		if( g_StageType != STAGE_TYPE_EZ2 ) // DONT DIFFUSE COLORS FOR EZ2. Coz we actually set the color in the .png
 //			m_sprNumbers[i].SetDiffuse( GAMESTATE->GetStageColor() );
 //
 //		m_sprNumbers[i].StopAnimating();
 //	}
-//	m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage stage") );	// we may load a different graphic into here later
+//	m_sprStage.Load( THEME->GetPathToG("ScreenStage stage") );	// we may load a different graphic into here later
 //	m_sprStage.SetDiffuse( GAMESTATE->GetStageColor() );
 //
 //
@@ -206,22 +206,22 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //		}
 //		break;
 //	case MODE_FINAL:
-//		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage final") );
+//		m_sprStage.Load( THEME->GetPathToG("ScreenStage final") );
 //		break;
 //	case MODE_EXTRA1:
-//		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage extra1") );
+//		m_sprStage.Load( THEME->GetPathToG("ScreenStage extra1") );
 //		break;
 //	case MODE_EXTRA2:
-//		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage extra2") );
+//		m_sprStage.Load( THEME->GetPathToG("ScreenStage extra2") );
 //		break;
 //	case MODE_NONSTOP:
-//		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage nonstop") );
+//		m_sprStage.Load( THEME->GetPathToG("ScreenStage nonstop") );
 //		break;
 //	case MODE_ONI:
-//		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage oni") );
+//		m_sprStage.Load( THEME->GetPathToG("ScreenStage oni") );
 //		break;
 //	case MODE_ENDLESS:
-//		m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenStage endless") );
+//		m_sprStage.Load( THEME->GetPathToG("ScreenStage endless") );
 //		break;
 //	default:
 //		ASSERT(0);
@@ -262,7 +262,7 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //	if( g_StageType == STAGE_TYPE_PUMP )
 //	{
 //		const Song* pSong = GAMESTATE->m_pCurSong;
-//		m_sprSongBackground.Load( (pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background") );
+//		m_sprSongBackground.Load( (pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathToG("fallback background") );
 //		m_sprSongBackground.StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 //
 //		/* Move the stage numbers downward, so they don't overlay the
@@ -319,7 +319,7 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //
 //		for (i=0; i<3; i++) // Load In The Background Graphics
 //		{
-//			m_sprbg[i].Load( THEME->GetPathTo("Graphics","stage elements") );
+//			m_sprbg[i].Load( THEME->GetPathToG("stage elements") );
 //			m_sprbg[i].StopAnimating();
 //			m_sprbg[i].SetState( i+bg_modeoffset ); // We wanna use i to load in an element from the graphicmap OR the offset will
 //													// give us alternative locations if we're in final
@@ -332,7 +332,7 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //		
 //		if (stage_mode == MODE_FINAL) 
 //		{
-//			m_sprbgxtra.Load( THEME->GetPathTo("Graphics","stage elements") ); // get the graphic
+//			m_sprbgxtra.Load( THEME->GetPathToG("stage elements") ); // get the graphic
 //			m_sprbgxtra.StopAnimating(); 
 //			m_sprbgxtra.SetState( bg_modeoffset ); // use the first element of the offset for this graphic
 //			m_sprbgxtra.SetXY( CENTER_X-30, CENTER_Y+180); // set it's initial XY coordinates
@@ -395,9 +395,9 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //
 //		for (i=0; i<2; i++) // specify the font file.
 //		{
-//			m_ez2ukm[i].LoadFromFont( THEME->GetPathTo("Fonts","Stage ez2") );
+//			m_ez2ukm[i].LoadFromFont( THEME->GetPathToF("Stage ez2") );
 //			m_ez2ukm[i].EnableShadow( false );
-//			m_stagedesc[i].LoadFromFont( THEME->GetPathTo("Fonts","Stage ez2") );
+//			m_stagedesc[i].LoadFromFont( THEME->GetPathToF("Stage ez2") );
 //			m_stagedesc[i].EnableShadow( false );
 //		}
 //
@@ -464,7 +464,7 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //		{
 //			for (i=0; i<20; i++) // 20 blobs...
 //			{
-//				m_sprScrollingBlobs[j][i].Load( THEME->GetPathTo("Graphics","stage elements") ); // load the graphics
+//				m_sprScrollingBlobs[j][i].Load( THEME->GetPathToG("stage elements") ); // load the graphics
 //				m_sprScrollingBlobs[j][i].StopAnimating();
 //				m_sprScrollingBlobs[j][i].SetState( 3+bg_modeoffset ); // shuffle the state according to offset
 //																		// (final uses different blobs)
@@ -511,7 +511,7 @@ ScreenStage::ScreenStage() : Screen("ScreenStage")
 //
 //
 //		// write the stage name
-//		m_stagename.LoadFromFont( THEME->GetPathTo("Fonts","Stage ez2") );
+//		m_stagename.LoadFromFont( THEME->GetPathToF("Stage ez2") );
 //		m_stagename.EnableShadow( false );
 //
 //		m_stagename.SetXY( CENTER_X+400, CENTER_Y-30+element_y_offsets );  // set initial position			

@@ -46,7 +46,7 @@ ScreenAutogenOptions::ScreenAutogenOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenAutogenOptions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenAutogenOptions music") );
 }
 
 void ScreenAutogenOptions::ImportOptions()

@@ -55,7 +55,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	if( PREFSMAN->m_CoinMode!=PrefsManager::COIN_HOME  &&  PREFSMAN->m_bJointPremium )
 	{		
-		m_JointPremium.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenTitleMenu joint premium") );
+		m_JointPremium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu joint premium") );
 		this->AddChild( &m_JointPremium );
 	}
 
@@ -65,18 +65,18 @@ ScreenTitleMenu::ScreenTitleMenu()
 		// do nothing
 		break;
 	case PrefsManager::COIN_PAY:
-		m_CoinMode.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenTitleMenu pay") );
+		m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu pay") );
 		this->AddChild( &m_CoinMode );
 		break;
 	case PrefsManager::COIN_FREE:
-		m_CoinMode.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ScreenTitleMenu free") );
+		m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu free") );
 		this->AddChild( &m_CoinMode );
 		break;
 	default:
 		ASSERT(0);
 	}
 	
-	m_textHelp.LoadFromFont( THEME->GetPathTo("Fonts","ScreenTitleMenu help") );
+	m_textHelp.LoadFromFont( THEME->GetPathToF("ScreenTitleMenu help") );
 	CString sHelpText;
 	switch( PREFSMAN->m_CoinMode )
 	{
@@ -99,7 +99,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		int i;
 		for( i=0; i<NUM_CHOICES; i++ )
 		{
-			m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","ScreenTitleMenu choices") );
+			m_textChoice[i].LoadFromFont( THEME->GetPathToF("ScreenTitleMenu choices") );
 			m_textChoice[i].SetText( ChoiceToString((Choice)i) );
 			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
@@ -120,9 +120,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 
 	m_soundAttract.Load( ANNOUNCER->GetPathTo("title menu attract") );
-	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenTitleMenu change") );	
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
-	m_soundInvalid.Load( THEME->GetPathTo("Sounds","Common invalid") );
+	m_soundChange.Load( THEME->GetPathToS("ScreenTitleMenu change") );	
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
+	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
 
 	m_Choice = CHOICE_GAME_START;
 
@@ -130,7 +130,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		LoseFocus( i );
 	GainFocus( m_Choice );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenTitleMenu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenTitleMenu music") );
 
 	this->PostScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 

@@ -40,7 +40,7 @@ ScreenStyleSplash::ScreenStyleSplash() : Screen("ScreenStyleSplash")
 	CString sStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
 	int iDifficulty = GAMESTATE->m_PreferredDifficulty[0];
 
-	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.GetString(),sStyleName.GetString(),iDifficulty) ) );
+	m_Background.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.GetString(),sStyleName.GetString(),iDifficulty) ) );
 	this->AddChild( &m_Background );
 	
 	m_Menu.Load( "ScreenStyleSplash" );
@@ -90,7 +90,7 @@ void ScreenStyleSplash::MenuBack( PlayerNumber pn )
 		return;
 	this->ClearMessageQueue();
 	m_Menu.Back( SM_GoToPrevScreen );
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu back") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("menu back") );
 }
 
 void ScreenStyleSplash::DrawPrimitives()

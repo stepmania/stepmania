@@ -63,7 +63,7 @@ ScreenInstructions::ScreenInstructions() : Screen("ScreenInstructions")
 
 	CString sHowToPlayPath;
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_INVALID )
-		sHowToPlayPath = THEME->GetPathTo("Graphics","ScreenInstructions "+PlayModeToString(GAMESTATE->m_PlayMode)) ;
+		sHowToPlayPath = THEME->GetPathToG("ScreenInstructions "+PlayModeToString(GAMESTATE->m_PlayMode)) ;
 	else
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before showing ScreenInstructions." );
 
@@ -76,7 +76,7 @@ ScreenInstructions::ScreenInstructions() : Screen("ScreenInstructions")
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_DECELERATE );
 	m_sprHowToPlay.SetX( CENTER_X );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenInstructions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenInstructions music") );
 }
 
 ScreenInstructions::~ScreenInstructions()

@@ -144,7 +144,7 @@ void BGAnimationLayer::LoadFromVisualization( CString sMoviePath )
 void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
+	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
 
 	Init();
 	CString lcPath = sPath;
@@ -464,7 +464,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		if(pSong && pSong->HasBackground())
 			sPath = pSong->GetBackgroundPath();
 		else
-			sPath = THEME->GetPathTo("Graphics","Common fallback background");
+			sPath = THEME->GetPathToG("Common fallback background");
 	} else {
 		if( sPath == "" )
 			RageException::Throw( "In the ini file for BGAnimation '%s', '%s' is missing a the line 'File='.", sAniDir.GetString(), sLayer.GetString() );

@@ -63,20 +63,20 @@ MusicWheelItem::MusicWheelItem()
 	m_TextBanner.SetHorizAlign( align_left );
 	m_TextBanner.SetXY( SONG_NAME_X, 0 );
 
-	m_sprSongBar.Load( THEME->GetPathTo("Graphics","MusicWheelItem song") );
+	m_sprSongBar.Load( THEME->GetPathToG("MusicWheelItem song") );
 	m_sprSongBar.SetXY( 0, 0 );
 
-	m_sprSectionBar.Load( THEME->GetPathTo("Graphics","MusicWheelItem section") );
+	m_sprSectionBar.Load( THEME->GetPathToG("MusicWheelItem section") );
 	m_sprSectionBar.SetXY( 0, 0 );
 
-	m_textSectionName.LoadFromFont( THEME->GetPathTo("Fonts","MusicWheelItem section") );
+	m_textSectionName.LoadFromFont( THEME->GetPathToF("MusicWheelItem section") );
 	m_textSectionName.EnableShadow( false );
 	m_textSectionName.SetVertAlign( align_middle );
 	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
 	m_textSectionName.SetZoom( SECTION_ZOOM );
 
 
-	m_textRoulette.LoadFromFont( THEME->GetPathTo("Fonts","MusicWheelItem roulette") );
+	m_textRoulette.LoadFromFont( THEME->GetPathToF("MusicWheelItem roulette") );
 	m_textRoulette.EnableShadow( false );
 	m_textRoulette.TurnRainbowOn();
 	m_textRoulette.SetZoom( ROULETTE_ZOOM );
@@ -84,12 +84,12 @@ MusicWheelItem::MusicWheelItem()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathTo("Graphics","MusicWheelItem grades") );
+		m_GradeDisplay[p].Load( THEME->GetPathToG("MusicWheelItem grades") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
 	}
 
-	m_textCourse.LoadFromFont( THEME->GetPathTo("Fonts","MusicWheelItem course") );
+	m_textCourse.LoadFromFont( THEME->GetPathToF("MusicWheelItem course") );
 	m_textCourse.EnableShadow( false );
 	m_textCourse.SetZoom( COURSE_ZOOM );
 	m_textCourse.SetHorizAlign( align_left );

@@ -64,7 +64,7 @@ ScreenMachineOptions::ScreenMachineOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenMachineOptions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
 }
 
 void ScreenMachineOptions::ImportOptions()

@@ -260,11 +260,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 				m_LargeBanner.Command( LARGE_BANNER_ON_COMMAND );
 				this->AddChild( &m_LargeBanner );
 
-				m_sprLargeBannerFrame.Load( THEME->GetPathTo("Graphics","ScreenEvaluation banner frame") );
+				m_sprLargeBannerFrame.Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
 				m_sprLargeBannerFrame.Command( LARGE_BANNER_ON_COMMAND );
 				this->AddChild( &m_sprLargeBannerFrame );
 
-				m_sprStage.Load( THEME->GetPathTo("Graphics","ScreenEvaluation stage "+GAMESTATE->GetStageText()) );
+				m_sprStage.Load( THEME->GetPathToG("ScreenEvaluation stage "+GAMESTATE->GetStageText()) );
 				m_sprStage.Command( STAGE_ON_COMMAND );
 				this->AddChild( &m_sprStage );
 
@@ -273,12 +273,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 					if( !GAMESTATE->IsPlayerEnabled(p) )
 						continue;	// skip
 
-					m_DifficultyIcon[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation difficulty icons 1x5") );
+					m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenEvaluation difficulty icons 1x5") );
 					m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
 					m_DifficultyIcon[p].Command( DIFFICULTY_ICON_ON_COMMAND(p) );
 					this->AddChild( &m_DifficultyIcon[p] );
 					
-					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
 					CString sPO = GAMESTATE->m_PlayerOptions[p].GetString();
 					sPO.Replace( ", ", "\n" );
 					m_textPlayerOptions[p].Command( PLAYER_OPTIONS_ON_COMMAND(p) );
@@ -296,7 +296,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 					m_SmallBanner[i].Command( SMALL_BANNER_ON_COMMAND(i) );
 					this->AddChild( &m_SmallBanner[i] );
 
-					m_sprSmallBannerFrame[i].Load( THEME->GetPathTo("Graphics","ScreenEvaluation banner frame") );
+					m_sprSmallBannerFrame[i].Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
 					m_sprSmallBannerFrame[i].Command( SMALL_BANNER_ON_COMMAND(i) );
 					this->AddChild( &m_sprSmallBannerFrame[i] );
 				}
@@ -309,7 +309,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 				m_LargeBanner.Command( LARGE_BANNER_ON_COMMAND );
 				this->AddChild( &m_LargeBanner );
 
-				m_sprLargeBannerFrame.Load( THEME->GetPathTo("Graphics","ScreenEvaluation banner frame") );
+				m_sprLargeBannerFrame.Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
 				m_sprLargeBannerFrame.Command( LARGE_BANNER_ON_COMMAND );
 				this->AddChild( &m_sprLargeBannerFrame );
 			}
@@ -329,13 +329,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_sprGradeFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation grade frame 1x2") );
+			m_sprGradeFrame[p].Load( THEME->GetPathToG("ScreenEvaluation grade frame 1x2") );
 			m_sprGradeFrame[p].StopAnimating();
 			m_sprGradeFrame[p].SetState( p );
 			m_sprGradeFrame[p].Command( GRADE_FRAME_ON_COMMAND(p) );
 			this->AddChild( &m_sprGradeFrame[p] );
 
-			m_Grades[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation grades") );
+			m_Grades[p].Load( THEME->GetPathToG("ScreenEvaluation grades") );
 			m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
 			m_Grades[p].Command( GRADE_ON_COMMAND(p) );
 			if( SPIN_GRADES )
@@ -351,7 +351,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	{
 		for( p=0; p<NUM_PLAYERS; p++ ) 
 		{
-			m_sprPercentFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation percent frame 1x2") );
+			m_sprPercentFrame[p].Load( THEME->GetPathToG("ScreenEvaluation percent frame 1x2") );
 			m_sprPercentFrame[p].StopAnimating();
 			m_sprPercentFrame[p].SetState( p );
 			m_sprPercentFrame[p].Command( PERCENT_FRAME_ON_COMMAND(p) );
@@ -359,12 +359,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			if( !PREFSMAN->m_bDancePointsForOni )
 			{
-				m_textPercentWhole[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation percent") );
+				m_textPercentWhole[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
 				m_textPercentWhole[p].EnableShadow( false );
 				m_textPercentWhole[p].Command( PERCENT_WHOLE_ON_COMMAND(p) );
 				this->AddChild( &m_textPercentWhole[p] );
 
-				m_textPercentRemainder[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation percent") );
+				m_textPercentRemainder[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
 				m_textPercentRemainder[p].EnableShadow( false );
 				m_textPercentRemainder[p].Command( PERCENT_REMAINDER_ON_COMMAND(p) );
 				this->AddChild( &m_textPercentRemainder[p] );
@@ -379,7 +379,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			}
 			else	// PREFSMAN->m_bDancePointsForOni
 			{
-				m_textDancePoints[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation percent") );
+				m_textDancePoints[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
 				m_textDancePoints[p].EnableShadow( false );
 				m_textDancePoints[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
 				m_textDancePoints[p].Command( DANCE_POINTS_ON_COMMAND(p) );
@@ -398,7 +398,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_sprBonusFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation bonus frame 2x1") );
+			m_sprBonusFrame[p].Load( THEME->GetPathToG("ScreenEvaluation bonus frame 2x1") );
 			m_sprBonusFrame[p].StopAnimating();
 			m_sprBonusFrame[p].SetState( p );
 			m_sprBonusFrame[p].Command( BONUS_FRAME_ON_COMMAND(p) );
@@ -406,14 +406,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 			{
-				m_sprPossibleBar[p][r].Load( THEME->GetPathTo("Graphics","ScreenEvaluation bars possible 1x2") );
+				m_sprPossibleBar[p][r].Load( THEME->GetPathToG("ScreenEvaluation bars possible 1x2") );
 				m_sprPossibleBar[p][r].StopAnimating();
 				m_sprPossibleBar[p][r].SetState( p );
 				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarPossible[p][r] );
 				m_sprPossibleBar[p][r].Command( BAR_POSSIBLE_ON_COMMAND(r,p) );
 				this->AddChild( &m_sprPossibleBar[p][r] );
 
-				m_sprActualBar[p][r].Load( THEME->GetPathTo("Graphics","ScreenEvaluation bars actual 1x2") );
+				m_sprActualBar[p][r].Load( THEME->GetPathToG("ScreenEvaluation bars actual 1x2") );
 				m_sprActualBar[p][r].StopAnimating();
 				m_sprActualBar[p][r].SetState( p );
 				m_sprActualBar[p][r].SetWidth( m_sprActualBar[p][r].GetUnzoomedWidth() * stageStats.fRadarActual[p][r] );
@@ -435,13 +435,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_sprSurvivedFrame[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation survived frame 2x1") );
+			m_sprSurvivedFrame[p].Load( THEME->GetPathToG("ScreenEvaluation survived frame 2x1") );
 			m_sprSurvivedFrame[p].StopAnimating();
 			m_sprSurvivedFrame[p].SetState( p );
 			m_sprSurvivedFrame[p].Command( SURVIVED_FRAME_ON_COMMAND(p) );
 			this->AddChild( &m_sprSurvivedFrame[p] );
 
-			m_textSurvivedNumber[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation stage") );
+			m_textSurvivedNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation stage") );
 			m_textSurvivedNumber[p].EnableShadow( false );
 			m_textSurvivedNumber[p].SetText( ssprintf("%02d", stageStats.iSongsPlayed[p]) );
 			m_textSurvivedNumber[p].Command( SURVIVED_NUMBER_ON_COMMAND(p) );
@@ -460,7 +460,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 		if( SHOW_JUDGMENT(l) )
 		{
-			m_sprJudgeLabels[l].Load( THEME->GetPathTo("Graphics","ScreenEvaluation judge labels 1x8") );
+			m_sprJudgeLabels[l].Load( THEME->GetPathToG("ScreenEvaluation judge labels 1x8") );
 			m_sprJudgeLabels[l].StopAnimating();
 			m_sprJudgeLabels[l].SetState( l );
 			m_sprJudgeLabels[l].Command( JUDGE_LABEL_ON_COMMAND(l) );
@@ -471,7 +471,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 				if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;	// skip
 
-				m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation judge") );
+				m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation judge") );
 				m_textJudgeNumbers[l][p].EnableShadow( false );
 				m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
 				m_textJudgeNumbers[l][p].Command( JUDGE_NUMBER_ON_COMMAND(l,p) );
@@ -503,7 +503,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		int s;
 		for( s=0; s<NUM_SCORE_LINES; s++ )
 		{
-			m_sprScoreLabel.Load( THEME->GetPathTo("Graphics","ScreenEvaluation score labels 1x2") );
+			m_sprScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation score labels 1x2") );
 			m_sprScoreLabel.SetState( s );
 			m_sprScoreLabel.StopAnimating();
 			m_sprScoreLabel.Command( SCORE_LABEL_ON_COMMAND );
@@ -515,7 +515,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_textScore[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation score") );
+			m_textScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation score") );
 			m_textScore[p].EnableShadow( false );
 			m_textScore[p].SetDiffuse( PlayerToColor(p) );
 			m_textScore[p].Command( SCORE_NUMBER_ON_COMMAND(p) );
@@ -531,7 +531,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	//
 	if( SHOW_TIME_AREA )
 	{
-		m_sprTimeLabel.Load( THEME->GetPathTo("Graphics","ScreenEvaluation score labels 1x2") );
+		m_sprTimeLabel.Load( THEME->GetPathToG("ScreenEvaluation score labels 1x2") );
 		m_sprTimeLabel.SetState( 1 );
 		m_sprTimeLabel.StopAnimating();
 		m_sprTimeLabel.Command( TIME_LABEL_ON_COMMAND );
@@ -542,7 +542,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_textTime[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenEvaluation score") );
+			m_textTime[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation score") );
 			m_textTime[p].EnableShadow( false );
 			m_textTime[p].SetDiffuse( PlayerToColor(p) );
 			m_textTime[p].Command( TIME_NUMBER_ON_COMMAND(p) );
@@ -559,7 +559,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	{
 		if( bNewRecord[p] )
 		{
-			m_sprNewRecord[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation new record") );
+			m_sprNewRecord[p].Load( THEME->GetPathToG("ScreenEvaluation new record") );
 			m_sprNewRecord[p].Command( NEW_RECORD_ON_COMMAND(p) );
 			this->AddChild( &m_sprNewRecord[p] );
 		}
@@ -572,14 +572,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	
 	if( m_bTryExtraStage )
 	{
-		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics",GAMESTATE->IsExtraStage()?"ScreenEvaluation try extra2":"ScreenEvaluation try extra1") );
+		m_sprTryExtraStage.Load( THEME->GetPathToG(GAMESTATE->IsExtraStage()?"ScreenEvaluation try extra2":"ScreenEvaluation try extra1") );
 		m_sprTryExtraStage.Command( TRY_EXTRA_STAGE_ON_COMMAND );
 		this->AddChild( &m_sprTryExtraStage );
 
 		if( GAMESTATE->IsExtraStage() )
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEvaluation try extra2") );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEvaluation try extra2") );
 		else
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEvaluation try extra1") );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEvaluation try extra1") );
 	}
 	else if( bOneHasNewRecord  &&  ANNOUNCER->HasSoundsFor("evaluation new record") )
 	{
@@ -611,7 +611,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	}
 
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenEvaluation music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
 }
 
 

@@ -34,8 +34,8 @@ void RaveHelper::Load( PlayerNumber pn )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			m_soundLaunchAttack.Load( THEME->GetPathTo("Sounds",ssprintf("RaveHelper launch attack p%d",p+1)) );
-			m_soundAttackEnding.Load( THEME->GetPathTo("Sounds",ssprintf("RaveHelper attack end p%d",p+1)) );
+			m_soundLaunchAttack.Load( THEME->GetPathToS(ssprintf("RaveHelper launch attack p%d",p+1)) );
+			m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("RaveHelper attack end p%d",p+1)) );
 		}
 	}
 }

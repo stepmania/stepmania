@@ -58,7 +58,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 	
 	float fHeightOfAll = (m_Def.rows.size()-1)*SPACING_Y;
 
-	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textTitle.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textTitle.SetText( m_Def.title );
 	m_textTitle.SetXY( CENTER_X, CENTER_Y - fHeightOfAll/2 - 30 );
 	m_textTitle.SetZoom( 0.8f );
@@ -76,7 +76,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 		float fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
 
-		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textLabel[i].SetText( line.name );
 		m_textLabel[i].SetY( fY );
 		m_textLabel[i].SetZoom( ZOOM_NOT_SELECTED );
@@ -85,7 +85,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		this->AddChild( &m_textLabel[i] );
 
 		CString sText = line.choices.empty() ? "" : line.choices[line.defaultChoice];
-		m_textAnswer[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+		m_textAnswer[i].LoadFromFont( THEME->GetPathToF("Common normal") );
  		m_textAnswer[i].SetText( sText );
 		m_textAnswer[i].SetY( fY );
 		m_textAnswer[i].SetZoom( ZOOM_NOT_SELECTED );
@@ -125,7 +125,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		m_textAnswer[k].SetX( fAnswerX );
 	}
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common prompt") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common prompt") );
 }
 
 void ScreenMiniMenu::Update( float fDeltaTime )
@@ -214,7 +214,7 @@ void ScreenMiniMenu::MenuStart( PlayerNumber pn )
 {
 	m_Fade.OpenWipingRight( SM_GoToOK );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 
 	s_iLastLine = m_iCurLine;
 	COPY( s_iLastAnswers, m_iCurAnswers );
@@ -231,7 +231,7 @@ void ScreenMiniMenu::BeforeLineChanged()
 	m_textAnswer[m_iCurLine].SetEffectNone();
 	m_textLabel[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
 	m_textAnswer[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMiniMenu row") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
 }
 
 void ScreenMiniMenu::AfterLineChanged()
@@ -244,7 +244,7 @@ void ScreenMiniMenu::AfterLineChanged()
 
 void ScreenMiniMenu::AfterAnswerChanged()
 {
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMiniMenu row") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
 	int iAnswerInRow = m_iCurAnswers[m_iCurLine];
 	CString sAnswerText = m_Def.rows[m_iCurLine].choices[iAnswerInRow];
 	m_textAnswer[m_iCurLine].SetText( sAnswerText );

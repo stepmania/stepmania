@@ -42,14 +42,14 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 		// Load icon
 		//
 		CString sIconElementName = ssprintf("ScreenSelectStyle icon %s", mc.name );
-		CString sIconPath = THEME->GetPathTo("Graphics",sIconElementName);
+		CString sIconPath = THEME->GetPathToG(sIconElementName);
 
 		m_textIcon[i].SetName( ssprintf("Icon%d",i+1) );
 		m_sprIcon[i].SetName( ssprintf("Icon%d",i+1) );
 
 		if( sIconPath.empty() )	// element doesn't exist
 		{
-			m_textIcon[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+			m_textIcon[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 			m_textIcon[i].SetText( mc.name );
 			m_textIcon[i].SetZoom(0.5f);
 			this->AddChild( &m_textIcon[i] );
@@ -65,7 +65,7 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 		// Load Picture
 		//
 		CString sPictureElementName = ssprintf("ScreenSelectStyle picture %s", mc.name );
-		CString sPicturePath = THEME->GetPathTo("Graphics",sPictureElementName);
+		CString sPicturePath = THEME->GetPathToG(sPictureElementName);
 		if( sPicturePath != "" )
 		{
 			m_sprPicture[i].SetName( ssprintf("Picture") );
@@ -79,7 +79,7 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 		// Load info
 		//
 		CString sInfoElementName = ssprintf("ScreenSelectStyle info %s", mc.name );
-		CString sInfoPath = THEME->GetPathTo("Graphics",sInfoElementName);
+		CString sInfoPath = THEME->GetPathToG(sInfoElementName);
 		if( sInfoPath != "" )
 		{
 			m_sprInfo[i].SetName( ssprintf("Info") );
@@ -91,11 +91,11 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 
 
 	m_sprWarning.SetName( "Warning" );
-	m_sprWarning.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle warning") );
+	m_sprWarning.Load( THEME->GetPathToG("ScreenSelectStyle warning") );
 	this->AddChild( &m_sprWarning );
 		
 	m_sprExplanation.SetName( "Explanation" );
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle explanation") );
+	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectStyle explanation") );
 	this->AddChild( &m_sprExplanation );
 		
 
@@ -112,13 +112,13 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 	if( PREFSMAN->m_bJointPremium )
 	{
 		m_sprJointPremium.SetName( "JointPremium" );
-		m_sprJointPremium.Load( THEME->GetPathTo("Graphics","ScreenSelectStyle joint premium") );
+		m_sprJointPremium.Load( THEME->GetPathToG("ScreenSelectStyle joint premium") );
 		this->AddChild( &m_sprJointPremium );
 	}
 
 
-	m_soundChange.Load( THEME->GetPathTo("Sounds","ScreenSelectStyle change") );
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
+	m_soundChange.Load( THEME->GetPathToS("ScreenSelectStyle change") );
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
 
 
 	//

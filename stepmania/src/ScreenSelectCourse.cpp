@@ -62,7 +62,7 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 
 	CodeDetector::RefreshCacheItems();
  
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectCourse music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -71,7 +71,7 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 	m_Menu.Load( "ScreenSelectCourse" );
 	this->AddChild( &m_Menu );
 
-	m_sprExplanation.Load( THEME->GetPathTo("Graphics","ScreenSelectCourse explanation") );
+	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectCourse explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	this->AddChild( &m_sprExplanation );
 
@@ -79,16 +79,16 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
 	this->AddChild( &m_Banner );
 
-	m_sprBannerFrame.Load( THEME->GetPathTo("Graphics","ScreenSelectCourse banner frame") );
+	m_sprBannerFrame.Load( THEME->GetPathToG("ScreenSelectCourse banner frame") );
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
-	m_textNumSongs.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectCourse num songs") );
+	m_textNumSongs.LoadFromNumbers( THEME->GetPathToN("ScreenSelectCourse num songs") );
 	m_textNumSongs.EnableShadow( false );
 	m_textNumSongs.SetXY( STAGES_X, STAGES_Y );
 	this->AddChild( &m_textNumSongs );
 
-	m_textTime.LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenSelectCourse total time") );
+	m_textTime.LoadFromNumbers( THEME->GetPathToN("ScreenSelectCourse total time") );
 	m_textTime.EnableShadow( false );
 	m_textTime.SetXY( TIME_X, TIME_Y );
 	this->AddChild( &m_textTime );
@@ -104,7 +104,7 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 			continue;	// skip
 
-		m_sprHighScoreFrame[p].Load( THEME->GetPathTo("Graphics","ScreenSelectCourse score frame") );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathToG("ScreenSelectCourse score frame") );
 		m_sprHighScoreFrame[p].StopAnimating();
 		m_sprHighScoreFrame[p].SetState( p );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
@@ -116,7 +116,7 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 		this->AddChild( &m_HighScore[p] );
 	}	
 
-	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","ScreenSelectCourse options message 1x2") );
+	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenSelectCourse options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoomY( 0 );
@@ -124,14 +124,14 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 //	this->AddChild( &m_sprOptionsMessage );	// draw and update manually
 
 
-	m_soundSelect.Load( THEME->GetPathTo("Sounds","Common start") );
-	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","ScreenSelectCourse options") );
-	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","ScreenSelectCourse difficulty") );
+	m_soundSelect.Load( THEME->GetPathToS("Common start") );
+	m_soundOptionsChange.Load( THEME->GetPathToS("ScreenSelectCourse options") );
+	m_soundChangeNotes.Load( THEME->GetPathToS("ScreenSelectCourse difficulty") );
 
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenSelectCourse music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenSelectCourse music") );
 
 	UpdateOptionsDisplays();
 

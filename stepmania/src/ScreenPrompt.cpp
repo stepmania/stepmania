@@ -44,7 +44,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_Fade.CloseWipingRight();
 	this->AddChild( &m_Fade );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textQuestion.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textQuestion.SetText( sText );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
@@ -52,8 +52,8 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	m_rectAnswerBox.SetDiffuse( RageColor(0.5f,0.5f,1.0f,0.7f) );
 	this->AddChild( &m_rectAnswerBox );
 
-	m_textAnswer[0].LoadFromFont( THEME->GetPathTo("Fonts","_shared1") );
-	m_textAnswer[1].LoadFromFont( THEME->GetPathTo("Fonts","_shared1") );
+	m_textAnswer[0].LoadFromFont( THEME->GetPathToF("_shared1") );
+	m_textAnswer[1].LoadFromFont( THEME->GetPathToF("_shared1") );
 	m_textAnswer[0].SetY( PROMPT_Y );
 	m_textAnswer[1].SetY( PROMPT_Y );
 	this->AddChild( &m_textAnswer[0] );
@@ -80,7 +80,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 
 	m_textAnswer[m_bAnswer].SetEffectGlowShift();
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common prompt") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common prompt") );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )
@@ -152,7 +152,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
 	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenPrompt change") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenPrompt change") );
 }
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
@@ -172,7 +172,7 @@ void ScreenPrompt::MenuStart( PlayerNumber pn )
 	m_textAnswer[1].BeginTweening( 0.2f );
 	m_textAnswer[1].SetDiffuse( RageColor(1,1,1,0) );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+	SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 
 	if( m_bAnswer )
 		if( m_pOnYes )

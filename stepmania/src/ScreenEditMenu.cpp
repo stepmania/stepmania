@@ -48,13 +48,13 @@ ScreenEditMenu::ScreenEditMenu() : Screen("ScreenEditMenu")
 	this->AddChild( &m_Menu );
 
 
-	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenEditMenu music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenEditMenu music") );
 }
 
 
@@ -157,7 +157,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		// Prepare prepare for ScreenEdit
 		ASSERT( pNotes );
 		SOUNDMAN->StopMusic();
-		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common start") );
+		SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
 		break;
 	case EditMenu::ACTION_DELETE:
@@ -177,7 +177,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Notes created from copy." );
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEditMenu create") );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -195,7 +195,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Notes created from AutoGen." );
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEditMenu create") );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
@@ -212,7 +212,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Blank Notes created." );
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEditMenu create") );
+			SOUNDMAN->PlayOnce( THEME->GetPathToS("ScreenEditMenu create") );
 			m_Selector.RefreshNotes();
 			pSong->Save();
 		}

@@ -69,7 +69,7 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenGraphicOptions music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenGraphicOptions music") );
 }
 
 void ScreenGraphicOptions::ImportOptions()
