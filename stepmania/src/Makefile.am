@@ -206,7 +206,7 @@ RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
 RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h \
 RageSurface_Load.cpp RageSurface_Load.h RageSurface_Load_PNG.cpp RageSurface_Load_PNG.h \
 RageSurface_Load_JPEG.cpp RageSurface_Load_JPEG.h RageSurface_Load_GIF.cpp RageSurface_Load_GIF.h \
-RageSurface_Load_BMP.cpp RageSurface_Load_BMP.h \
+RageSurface_Load_BMP.cpp RageSurface_Load_BMP.h RageSurface_Load_XPM.cpp RageSurface_Load_XPM.h \
 RageTexture.cpp RageTexture.h \
 RageTextureID.cpp RageTextureID.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h \
 RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
@@ -262,7 +262,6 @@ main_LDADD = \
 		  $(LUA_LIBS) \
 		  $(SDL_LIBS) \
 		  $(XLIBS) \
-		  -lSDL_image \
 		  $(srcdir)/libresample/libresample.a
 
 stepmania_SOURCES = $(main_SOURCES)

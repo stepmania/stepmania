@@ -71,14 +71,6 @@ fi
 # not sure
 # SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
-AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
-if test "$have_SDL_image" = "no"; then
-  echo
-  echo "*** SDL_image is required to build StepMania; please make sure that"
-  echo "*** it is installed to continue the build process."
-  exit 1
-fi
-
 have_libpng=yes
 AC_SEARCH_LIBS(png_create_read_struct, [png], ,  have_libpng=no)
 AC_CHECK_HEADER(png.h, , have_libpng=no)
