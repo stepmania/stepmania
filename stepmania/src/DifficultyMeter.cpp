@@ -19,17 +19,46 @@
 #include "Steps.h"
 #include "Course.h"
 #include "SongManager.h"
+#include "ActorUtil.h"
 
 
-#define NUM_FEET_IN_METER						THEME->GetMetricI("DifficultyMeter","NumFeetInMeter")
-#define MAX_FEET_IN_METER						THEME->GetMetricI("DifficultyMeter","MaxFeetInMeter")
-#define GLOW_IF_METER_GREATER_THAN				THEME->GetMetricI("DifficultyMeter","GlowIfMeterGreaterThan")
+#define NUM_FEET_IN_METER						THEME->GetMetricI(m_sName,"NumFeetInMeter")
+#define MAX_FEET_IN_METER						THEME->GetMetricI(m_sName,"MaxFeetInMeter")
+#define GLOW_IF_METER_GREATER_THAN				THEME->GetMetricI(m_sName,"GlowIfMeterGreaterThan")
 
 
 DifficultyMeter::DifficultyMeter()
 {
-	BitmapText::LoadFromTextureAndChars( THEME->GetPathToG("DifficultyMeter bar 2x1"), "10" );
+	this->AddChild( &m_textFeet );
+}
 
+/* sID experiment:
+ *
+ * Names of an actor, "Foo":
+ * [Foo]
+ * Metric=abc
+ *
+ * [ScreenSomething]
+ * FooP1X=20
+ * FooP2Y=30
+ *
+ * Graphics\Foo under p1
+ *
+ * We want to call it different things in different contexts: we may only want one
+ * set of internal metrics for a given use, but separate metrics for each player at
+ * the screen level, and we may or may not want separate names at the asset level.
+ *
+ * As is, we tend to end up having to either duplicate [Foo] to [FooP1] and [FooP2]
+ * or not use m_sName for [Foo], which limits its use.  Let's try using a separate
+ * name for internal metrics.  I'm not sure if this will cause more confusion than good,
+ * so I'm trying it first in only this object.
+ */
+
+void DifficultyMeter::Load()
+{
+	m_textFeet.SetName( "Feet" );
+	m_textFeet.LoadFromTextureAndChars( THEME->GetPathToG( ssprintf("%s bar 2x1", m_sName.c_str())), "10" );
+	SET_XY_AND_ON_COMMAND( &m_textFeet );
 	Unset();
 }
 
@@ -42,7 +71,7 @@ void DifficultyMeter::SetFromNotes( const Steps* pNotes )
 	}
 
 	SetMeter( pNotes->GetMeter() );
-	SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
+	m_textFeet.SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
 }
 
 void DifficultyMeter::SetFromCourse( const Course* pCourse )
@@ -68,13 +97,13 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse )
 		c = SONGMAN->GetDifficultyColor( DIFFICULTY_HARD );
 	else
 		c = SONGMAN->GetDifficultyColor( DIFFICULTY_CHALLENGE );
-	SetDiffuse( c );
+	m_textFeet.SetDiffuse( c );
 }
 
 void DifficultyMeter::Unset()
 {
-	SetEffectNone();
-	SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	m_textFeet.SetEffectNone();
+	m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
 	SetMeter( 0 );
 }
 
@@ -98,10 +127,10 @@ void DifficultyMeter::SetMeter( int iMeter )
 		if( f<iMeter )
 			sNewText += "1";
 
-	SetText( sNewText );
+	m_textFeet.SetText( sNewText );
 
 	if( iMeter > GLOW_IF_METER_GREATER_THAN )
-		SetEffectGlowShift();
+		m_textFeet.SetEffectGlowShift();
 	else
-		SetEffectNone();
+		m_textFeet.SetEffectNone();
 }
