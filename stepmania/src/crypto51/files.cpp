@@ -112,7 +112,7 @@ unsigned int FileStore::CopyRangeTo2(BufferedTransformation &target, unsigned lo
 		return 0;	// don't try to seek beyond the end of file
 	}
 	m_stream->seekg(newPosition);
-	unsigned long total = 0;
+
 	try
 	{
 		assert(!m_waiting);

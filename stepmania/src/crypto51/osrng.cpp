@@ -87,7 +87,7 @@ void NonblockingRng::GenerateBlock(byte *output, unsigned int size)
 	if (!CryptGenRandom(m_Provider.GetProviderHandle(), size, output))
 		throw OS_RNG_Err("CryptGenRandom");
 #else
-	if (read(m_fd, output, size) != size)
+	if (read(m_fd, output, size) != int(size))
 		throw OS_RNG_Err("read /dev/urandom");
 #endif
 }

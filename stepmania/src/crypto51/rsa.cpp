@@ -9,7 +9,8 @@
 #include "sha.h"
 #include "algparam.h"
 
-#include "oaep.cpp"
+//This isn't in the repository and doesn't seem to be used
+//#include "oaep.cpp"
 
 NAMESPACE_BEGIN(CryptoPP)
 
@@ -73,6 +74,7 @@ class RSAPrimeSelector : public PrimeSelector
 {
 public:
 	RSAPrimeSelector(const Integer &e) : m_e(e) {}
+    virtual ~RSAPrimeSelector() { }
 	bool IsAcceptable(const Integer &candidate) const {return RelativelyPrime(m_e, candidate-Integer::One());}
 	Integer m_e;
 };
