@@ -189,10 +189,9 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 		if( PREFSMAN->m_iCoinMode == COIN_PAY )
 			iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
-		// If using premium, subtract credits only after choosing a style,
-		// not when the players join.
-		bool bUsingPremium = PREFSMAN->m_bVersusForOneCredit || PREFSMAN->m_bDoubleForOneCredit;
-		if( bUsingPremium )
+		// If joint premium don't take away a credit for the 2nd join.
+		if( PREFSMAN->m_Premium == PrefsManager::JOINT_PREMIUM  &&  
+			GAMESTATE->GetNumSidesJoined() == 1 )
 			iCoinsToCharge = 0;
 
 		if( GAMESTATE->m_iCoins < iCoinsToCharge )

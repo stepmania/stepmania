@@ -199,16 +199,21 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
 			if( pProfile )
 				sPlayerInfo = pProfile->m_sName;
-			else if( GAMESTATE->m_bPlayersCanJoin )
-				sPlayerInfo = PLAYER_INFO_INSERT_CARD;
-			else if( GAMESTATE->m_bIsOnSystemMenu )
+			else if( GAMESTATE->m_bIsOnSystemMenu ) // no mem card
 				sPlayerInfo = "";
-			else
-				sPlayerInfo = PLAYER_INFO_NO_CARD;
+			else if( PREFSMAN->m_sMemoryCardDir[p]!="" )
+			{
+				if( GAMESTATE->m_bPlayersCanJoin )
+					sPlayerInfo = PLAYER_INFO_INSERT_CARD;
+				else
+					sPlayerInfo = PLAYER_INFO_NO_CARD;
+			}
 		}
 		else if( GAMESTATE->m_bPlayersCanJoin )
 		{
-			if( PREFSMAN->m_iCoinMode==COIN_PAY && GAMESTATE->m_iCoins<PREFSMAN->m_iCoinsPerCredit )
+			if( PREFSMAN->m_iCoinMode==COIN_PAY  && 
+				PREFSMAN->m_Premium!=PrefsManager::JOINT_PREMIUM  &&
+				GAMESTATE->m_iCoins<PREFSMAN->m_iCoinsPerCredit )
 				sPlayerInfo = PLAYER_INFO_INSERT_MORE;
 			else
 				sPlayerInfo = PLAYER_INFO_PRESS_START;

@@ -1012,10 +1012,3 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 		*aFeats[i].pStringToFill = name;
 	}
 }
-
-bool GameState::UsingPremiumAndPaying()
-{
-	return
-		(PREFSMAN->m_bVersusForOneCredit || PREFSMAN->m_bDoubleForOneCredit) &&
-		PREFSMAN->m_iCoinMode == COIN_PAY;
-}

@@ -93,18 +93,10 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 {
 //	LOG->Trace( "ScreenSelect::Input()" );
 
-	if( GAMESTATE->UsingPremiumAndPaying() )
+	if( Screen::JoinInput(DeviceI, type, GameI, MenuI, StyleI) )
 	{
-		if( MenuI.IsValid() && MenuI.button==MENU_BUTTON_COIN && GAMESTATE->m_iCoins==PREFSMAN->m_iCoinsPerCredit*2 )
-			this->UpdateSelectableChoices();
-	}
-	else
-	{
-		if( Screen::JoinInput(DeviceI, type, GameI, MenuI, StyleI) )
-		{
-			this->UpdateSelectableChoices();
-			return;	// don't let the screen handle the MENU_START press
-		}
+		this->UpdateSelectableChoices();
+		return;	// don't let the screen handle the MENU_START press
 	}
 
 	if( m_Menu.IsTransitioning() )

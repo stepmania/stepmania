@@ -62,6 +62,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
+
 	/* XXX We really need two common calls: 1, something run when exiting from gameplay
 	 * (to do this reset), and 2, something run when entering gameplay, to apply default
 	 * options.  Having special cases in attract screens and the title menu to reset
@@ -71,7 +72,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	CodeDetector::RefreshCacheItems();
 
-	if( GAMESTATE->UsingPremiumAndPaying() )
+	if( PREFSMAN->m_Premium==PrefsManager::JOINT_PREMIUM )
 	{		
 		m_JointPremium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu joint premium") );
 		this->AddChild( &m_JointPremium );

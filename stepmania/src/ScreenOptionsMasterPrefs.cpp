@@ -263,8 +263,11 @@ static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
 	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-MOVE( VersusPremium,			PREFSMAN->m_bVersusForOneCredit );
-MOVE( DoublePremium,			PREFSMAN->m_bDoubleForOneCredit );
+static void Premium( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const PrefsManager::Premium mapping[] = { PrefsManager::NO_PREMIUM,PrefsManager::DOUBLE_FOR_1CREDIT,PrefsManager::JOINT_PREMIUM };
+	MoveMap( sel, PREFSMAN->m_Premium, ToSel, mapping, ARRAYSIZE(mapping) );
+}
 
 static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
 {
@@ -454,8 +457,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Progressive\nNonstop Lifebar",ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY"),
 	ConfOption( "Default\nFail Type",	DefaultFailType,	"ARCADE","END OF SONG","OFF" ),	
 	ConfOption( "Coins Per\nCredit",	CoinsPerCredit,		"1","2","3","4","5","6","7","8" ),
-	ConfOption( "Versus\nPremium",		VersusPremium,	"OFF (2 credits)","ON (1 credit)" ),
-	ConfOption( "Double\nPremium",		DoublePremium,	"OFF (2 credits)","ON (1 credit)" ),
+	ConfOption( "Premium",				Premium,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ),
 	ConfOption( "Show Song\nOptions",	ShowSongOptions,	"HIDE","SHOW","ASK" ),
 	ConfOption( "Show Name\nEntry",     ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ),
 

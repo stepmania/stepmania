@@ -72,8 +72,8 @@ public:
 	int 			m_iMarvelousTiming;
 	int				m_iCoinMode;
 	int				m_iCoinsPerCredit;
-	bool			m_bVersusForOneCredit;
-	bool			m_bDoubleForOneCredit;
+	enum Premium { NO_PREMIUM, DOUBLE_FOR_1CREDIT, JOINT_PREMIUM };
+	Premium			m_Premium;
 	bool			m_bPickExtraStage;
 	bool			m_bComboContinuesBetweenSongs;
 	float			m_fLongVerSongSeconds;

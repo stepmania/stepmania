@@ -161,22 +161,6 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 	}
 }
 
-int GetCreditsRequiredToPlayStyle( Style style )
-{
-	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
-	{
-	case StyleDef::ONE_PLAYER_ONE_CREDIT:
-		return 1;
-	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-		return PREFSMAN->m_bVersusForOneCredit ? 1 : 2;
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:
-		return PREFSMAN->m_bDoubleForOneCredit ? 1 : 2;
-	default:
-		ASSERT(0);
-		return 1;
-	}
-}
-
 int GetSidesRequiredToPlayStyle( Style style )
 {
 	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
@@ -184,8 +168,9 @@ int GetSidesRequiredToPlayStyle( Style style )
 	case StyleDef::ONE_PLAYER_ONE_CREDIT:
 		return 1;
 	case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-	case StyleDef::ONE_PLAYER_TWO_CREDITS:
 		return 2;
+	case StyleDef::ONE_PLAYER_TWO_CREDITS:
+		return (PREFSMAN->m_Premium == PrefsManager::DOUBLE_FOR_1CREDIT) ? 1 : 2;
 	default:
 		ASSERT(0);
 		return 1;
@@ -199,21 +184,11 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 	if ( m_style != STYLE_INVALID )
 	{
-		int iNumCreditsInserted = GAMESTATE->m_iCoins/PREFSMAN->m_iCoinsPerCredit;
-		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
 		int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
 		int iNumSidesRequired = GetSidesRequiredToPlayStyle(m_style);
 		
-		if( GAMESTATE->UsingPremiumAndPaying() )
-		{
-			if( iNumCreditsInserted < iNumCreditsRequired )
-				return false;
-		}
-		else
-		{
-			if( iNumSidesRequired != iNumSidesJoined )
-				return false;
-		}
+		if( iNumSidesRequired != iNumSidesJoined )
+			return false;
 	}
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
@@ -296,15 +271,6 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 			break;
 		default:
 			ASSERT(0);
-		}
-
-		// If using a premium setting, subtract coins only after choosing a style.
-		int iNumCoinsInserted = GAMESTATE->m_iCoins;
-		int iNumCoinsRequired = PREFSMAN->m_iCoinsPerCredit*GetCreditsRequiredToPlayStyle(m_style);
-		if( GAMESTATE->UsingPremiumAndPaying() )
-		{
-			ASSERT( iNumCoinsInserted >= iNumCoinsRequired );
-			GAMESTATE->m_iCoins -= iNumCoinsRequired;
 		}
 	}
 	if( m_dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
