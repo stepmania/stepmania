@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc, only */
 #include "RageThreads.h"
@@ -233,6 +234,15 @@ void CrashSignalHandler( int signal )
 		_exit(1);
 	}
 	
+	/* Block SIGPIPE, so we get EPIPE. */
+	struct sigaction sa;
+	sa.sa_handler = SIG_IGN;
+	if( sigaction( SIGPIPE, &sa, NULL ) != 0 )
+	{
+		safe_print(fileno(stderr), "sigaction() failed: %s", strerror(errno), NULL);
+		/* non-fatal */
+	}
+	       
 	static int received = 0;
 	static pid_t childpid = 0;
 
