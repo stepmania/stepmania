@@ -116,6 +116,7 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,253,39,71,14
     LTEXT           "Select Installation:",IDC_STATIC,7,42,66,11
+    PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,83,215,79,15
 END
 
 IDD_DIALOG_NAME DIALOG DISCARDABLE  0, 0, 261, 58

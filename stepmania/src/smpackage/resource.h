@@ -18,6 +18,7 @@
 #define IDC_BUTTON_EXPORT_AS_ONE        1002
 #define IDC_BUTTON_BACK                 1003
 #define IDC_BUTTON_EXPORT_AS_INDIVIDUAL 1003
+#define IDC_BUTTON_OPEN                 1004
 #define IDC_EDIT_MESSAGE1               1005
 #define IDC_EDIT_MESSAGE3               1006
 #define IDC_EDIT_MESSAGE2               1007

@@ -52,6 +52,7 @@ protected:
 	afx_msg void OnButtonPlay();
 	afx_msg void OnButtonEdit();
 	afx_msg void OnSelchangeComboDir();
+	afx_msg void OnButtonOpen();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP(CSmpackageExportDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_PLAY, OnButtonPlay)
 	ON_BN_CLICKED(IDC_BUTTON_EDIT, OnButtonEdit)
 	ON_CBN_SELCHANGE(IDC_COMBO_DIR, OnSelchangeComboDir)
+	ON_BN_CLICKED(IDC_BUTTON_OPEN, OnButtonOpen)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -494,4 +495,33 @@ void CSmpackageExportDlg::RefreshTree()
 	for( int i=0; i<aItems.GetSize(); i++ )
 		if( m_tree.GetItemText(aItems[i]).CompareNoCase("CVS")==0 )
 			m_tree.DeleteItem( aItems[i] );
+}
+
+void CSmpackageExportDlg::OnButtonOpen() 
+{
+	// TODO: Add your control notification handler code here
+	
+	char szCurDir[MAX_PATH];
+	GetCurrentDirectory( MAX_PATH, szCurDir );
+
+	char szCommandToExecute[MAX_PATH] = "explorer ";
+	strcat( szCommandToExecute, szCurDir );
+
+
+	PROCESS_INFORMATION pi;
+	STARTUPINFO	si;
+	ZeroMemory( &si, sizeof(si) );
+
+	CreateProcess(
+		NULL,		// pointer to name of executable module
+		szCommandToExecute,		// pointer to command line string
+		NULL,  // process security attributes
+		NULL,   // thread security attributes
+		false,  // handle inheritance flag
+		0, // creation flags
+		NULL,  // pointer to new environment block
+		NULL,   // pointer to current directory name
+		&si,  // pointer to STARTUPINFO
+		&pi  // pointer to PROCESS_INFORMATION
+	);
 }
