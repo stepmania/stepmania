@@ -203,3 +203,18 @@ static const CString PeakComboAwardNames[NUM_PEAK_COMBO_AWARDS] = {
 XToString( PeakComboAward );
 XToThemedString( PeakComboAward );
 StringToX( PeakComboAward );
+
+
+#include "LuaFunctions.h"
+#define LuaXToString(X)	\
+CString Lua##X##ToString( int n ) \
+{ return X##ToString( (X) n ); } \
+LuaFunction_Int( X##ToString, Lua##X##ToString(a1) ); /* register it */
+
+#define LuaStringToX(X)	\
+X LuaStringTo##X( CString s ) \
+{ return (X) StringTo##X( s ); } \
+LuaFunction_Str( StringTo##X, LuaStringTo##X(str) ); /* register it */
+
+LuaXToString( Difficulty );
+LuaStringToX( Difficulty );
