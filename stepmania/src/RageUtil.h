@@ -26,14 +26,24 @@
 inline int RECTCENTERX(RECT rect) { return rect.left + (rect.right-rect.left)/2; }
 inline int RECTCENTERY(RECT rect) { return rect.top + (rect.bottom-rect.top)/2; }
 
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
+#undef min
+#undef max
+#define NOMINMAX /* make sure Windows doesn't try to define this */
 
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
+template <class T> 
+inline const T & max(const T &a, const T &b) { return a > b? a:b; }
 
+template <class T> 
+inline const T & min(const T &a, const T &b) { return a < b? a:b; }
+
+/* Common harmless mismatches. */
+inline float min(float a, int b) { return a < b? a:b; }
+inline float max(float a, int b) { return a > b? a:b; }
+inline float min(int a, float b) { return a < b? a:b; }
+inline float max(int a, float b) { return a > b? a:b; }
+
+/* Traditional defines.  Only use this if you absolutely need
+ * a constant value. */
 #ifndef MAX
 #define MAX(a,b)            (((a) > (b)) ? (a) : (b))
 #endif
