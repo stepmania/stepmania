@@ -1531,8 +1531,19 @@ int MusicWheel::GetPreferredSelectionForRandomOrPortal()
 	// difficulties of each player
 	vector<Difficulty> vDifficultiesToRequire;
 	FOREACH_HumanPlayer(p)
-		if( GAMESTATE->m_PreferredDifficulty[p] != DIFFICULTY_INVALID )
-			vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
+	{
+		if( GAMESTATE->m_PreferredDifficulty[p] == DIFFICULTY_INVALID )
+			continue;	// skip
+
+		// TRICKY: Don't require that edits be present if perferred 
+		// difficulty is DIFFICULTY_EDIT.  Otherwise, players could use this 
+		// to set up a 100% chance of getting a particular locked song by 
+		// having a single edit for a locked song.
+		if( GAMESTATE->m_PreferredDifficulty[p] == DIFFICULTY_EDIT )
+			continue;	// skip
+
+		vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
+	}
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
