@@ -107,7 +107,7 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 		{
 			CString message = ssprintf( 
 				"There is more than one file that matches "
-				"'%s/%s'.  Please remove all but one of these matches.",
+				"'%s'.  Please remove all but one of these matches.",
 				ID.filename.c_str() );
 
 			RageException::Throw( message ); 
