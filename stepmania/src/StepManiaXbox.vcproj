@@ -470,6 +470,12 @@ cl                                                                              
 				RelativePath="ScreenProfileOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenNetworkOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetworkOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenPrompt.cpp">
 			</File>
 			<File
