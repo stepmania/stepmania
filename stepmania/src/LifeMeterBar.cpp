@@ -211,7 +211,7 @@ public:
 		m_quadMask.Draw();
 
 		// draw mask for horizontal chambers
-		rect.left	= (LONG)(-g_iMeterWidth/2 + fRightPercent*g_iMeterWidth); 
+		rect.left	= (int)(-g_iMeterWidth/2 + fRightPercent*g_iMeterWidth); 
 		rect.top	= -g_iMeterHeight/2;
 		rect.right	= +g_iMeterWidth/2;
 		rect.bottom	= +g_iMeterHeight/2;
