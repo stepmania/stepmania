@@ -560,7 +560,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 	{
 		if( m_State == PAUSE_DECODER )
 		{
-			SDL_Delay( 5 );
+			SDL_Delay( 10 );
 			
 			/* The video isn't running; skip time. */
 			Timer.GetDeltaTime();
