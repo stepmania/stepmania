@@ -494,6 +494,7 @@ void ScreenEdit::UpdateTextInfo()
 
 	CString sText;
 	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
+	sText += ssprintf( "Current Second:\n     %.2f\n",		m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.c_str() );
 	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).c_str() );
 	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).c_str() );
@@ -1481,6 +1482,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
+			
+				// reload the music to fix sync problems
+				m_soundMusic.Load(m_pSong->GetMusicPath());
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
@@ -1507,6 +1511,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker - 4;	// give a 1 measure lead-in
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
+
+				// reload the music to fix sync problems
+				m_soundMusic.Load(m_pSong->GetMusicPath());
 				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				m_soundMusic.SetPositionSeconds( fStartSeconds );
 				m_soundMusic.StartPlaying();
