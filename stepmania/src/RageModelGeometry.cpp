@@ -66,7 +66,7 @@ void RageModelGeometry::OptimizeBones()
 	}
 }
 
-#define THROW RageException::Throw( "Parse at line %d: '%s'", sLine.c_str() );
+#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() );
 
 void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 {
