@@ -8,6 +8,7 @@ class ArchHooks_Xbox: public ArchHooks
 {
 public:
 	ArchHooks_Xbox();
+	~ArchHooks_Xbox();
 };
 
 #undef ARCH_HOOKS

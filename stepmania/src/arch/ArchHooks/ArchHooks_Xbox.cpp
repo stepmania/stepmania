@@ -35,6 +35,11 @@ ArchHooks_Xbox::ArchHooks_Xbox()
 	XGetCustomLaunchData();
 }
 
+ArchHooks_Xbox::~ArchHooks_Xbox()
+{
+	XReturnToLaunchingXBE();
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
