@@ -45,9 +45,9 @@ struct TapNote
 		Type type_, 
 		Source source_, 
 		bool bAttack_,
-		unsigned attackIndex_, 
+		uint8_t attackIndex_, 
 		bool bKeysound_,
-		unsigned keysoundIndex_ )
+		uint16_t keysoundIndex_ )
 	{
 		type = type_;
 		source = source_;
