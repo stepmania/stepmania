@@ -4,9 +4,9 @@
 #include "RageFile.h"
 
 // crypt headers
-#include "files.h"
-#include "filters.h"
-#include "cryptlib.h"
+#include "crypto51/files.h"
+#include "crypto51/filters.h"
+#include "crypto51/cryptlib.h"
 
 using namespace CryptoPP;
 
