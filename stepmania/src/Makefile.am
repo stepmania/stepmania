@@ -288,6 +288,7 @@ all_test_SOURCES = \
 		RageException.cpp \
 		RageLog.cpp \
 		RageMath.cpp RageMath.h \
+		RageSurface_Load.cpp RageSurface_Load.h RageSurface_Load_PNG.cpp RageSurface_Load_PNG.h \
 		RageThreads.cpp \
 		RageTimer.cpp RageTimer.h \
 		RageUtil.cpp \
