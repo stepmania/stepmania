@@ -1284,7 +1284,11 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 		return;
 
 	/* Update miss combo, and handle "combo stopped" messages. */
+	/* When is m_pPlayerStageStats NULL?  Would it be cleaner to pass Player a dummy
+	 * PlayerStageStats in this case, instead of having to carefully check for NULL
+	 * every time we use it? -glenn */
 	int iDummy = 0;
+	int &iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : iDummy;
 	int &iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurMissCombo : iDummy;
 	switch( scoreOfLastTap )
 	{
@@ -1301,7 +1305,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	
 	case TNS_GOOD:
 	case TNS_BOO:
-		if( iCurMissCombo > 50 )
+		if( iCurCombo > 50 )
 			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 		iCurMissCombo = 0;
 		break;
@@ -1310,12 +1314,8 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 		ASSERT( 0 );
 	}
 
-	/* The score keeper updates the hit combo. */
-	int &iCurCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurCombo : iDummy;
-	/* Remember the old combo for handling announcers. */
-	const int iOldCombo = 0;
-	if( m_pPlayerStageStats )
-		m_pPlayerStageStats->iCurCombo;
+	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
+	const int iOldCombo = iCurCombo;
 
 	if( m_pPrimaryScoreKeeper != NULL )
 		m_pPrimaryScoreKeeper->HandleTapRowScore( scoreOfLastTap, iNumTapsInRow );
