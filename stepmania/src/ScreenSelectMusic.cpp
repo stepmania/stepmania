@@ -1235,7 +1235,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 {
-	SOUND->StopMusic();
+	m_BackgroundLoader.Abort();
 
 	Cancel( SM_GoToPrevScreen );
 }
