@@ -1448,11 +1448,11 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, fl
 	const int iFirstRowAtEndOfRegion = min( nd.GetLastRow(), BeatToNoteRowNotRounded(fEndBeat) );
 	const int iScaledFirstRowAfterRegion = (int)((fStartBeat + (fEndBeat - fStartBeat) * fScale) * ROWS_PER_BEAT);
 
-	if (fStartBeat != 0)
-		temp1.CopyRange( &nd, 0, fStartBeat * ROWS_PER_BEAT );
-	if (nd.GetLastRow() > iFirstRowAtEndOfRegion)
+	if( fStartBeat != 0 )
+		temp1.CopyRange( &nd, 0, BeatToNoteRowNotRounded(fStartBeat) );
+	if( nd.GetLastRow() > iFirstRowAtEndOfRegion )
 		temp1.CopyRange( &nd, iFirstRowAtEndOfRegion, nd.GetLastRow(), iScaledFirstRowAfterRegion);
-	temp2.CopyRange( &nd, fStartBeat * ROWS_PER_BEAT, iFirstRowAtEndOfRegion );
+	temp2.CopyRange( &nd, BeatToNoteRowNotRounded(fStartBeat), iFirstRowAtEndOfRegion );
 	nd.ClearAll();
 
 	for( int r=0; r<=temp2.GetLastRow(); r++ )
