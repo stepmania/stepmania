@@ -19,8 +19,8 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "stepmania-CVS-20030209.exe"
-;OutFile "stepmania301.exe"
+OutFile "StepMania-CVS-20030209.exe"
+;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
 SetCompress auto ; (can be off or force)
@@ -144,14 +144,15 @@ File /r "NoteSkins\dance\flat"
 File /r "NoteSkins\dance\note"
 
 SetOutPath "$INSTDIR\NoteSkins\pump"
-File /r "NoteSkins\pump\classic" ; what the heck, they're tiny
-;File /r "NoteSkins\pump\shiny"	; not in CVS anymore? -Chris
+File /r "NoteSkins\pump\Classic" ; what the heck, they're tiny
+File /r "NoteSkins\pump\default"
 
-SetOutPath "$INSTDIR\NoteSkins\ez2"
-File /r "NoteSkins\ez2\original"
+; temporarily disabled--noteskin needs updating
+;SetOutPath "$INSTDIR\NoteSkins\ez2"
+;File /r "NoteSkins\ez2\original"
 
-SetOutPath "$INSTDIR\NoteSkins\para"
-File /r "NoteSkins\para\original"
+;SetOutPath "$INSTDIR\NoteSkins\para"
+;File /r "NoteSkins\para\original"
 
 CreateDirectory "$INSTDIR\RandomMovies"
 SetOutPath "$INSTDIR\RandomMovies"
