@@ -5,7 +5,7 @@
  Desc: See header.
 
  Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
-	curewater
+	Andrew Wong
 -----------------------------------------------------------------------------
 */
 
@@ -29,6 +29,9 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	CString sSP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->SongPointsUntilNextUnlock() );
 
 	CString PointDisplay = THEME->GetMetric("ScreenUnlock", "TypeOfPointsToDisplay");
+	
+	CString IconCommand = 
+		THEME->GetMetric("ScreenUnlock", "UnlockIconCommand");
 
 	for(int i=1; i <= THEME->GetMetricI("ScreenUnlock", "NumUnlocks"); i++)
 	{
@@ -41,6 +44,8 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		Song *pSong = SONGMAN->FindSong("", THEME->GetMetric("ScreenUnlock", ssprintf("Unlock%dSong", i)) );
 		if( pSong == NULL )
 			continue;
+
+		Unlocks[i].Command(IconCommand);
 
 		const bool SongIsLocked = GAMESTATE->m_pUnlockingSys->SongIsLocked( pSong );
 		if ( !SongIsLocked )
@@ -65,4 +70,10 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	PointsUntilNextUnlock.SetZoom( THEME->GetMetricF("ScreenUnlock","PointsZoom") );
 	SET_XY( PointsUntilNextUnlock );
 	this->AddChild( &PointsUntilNextUnlock );
+
+	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
+
+	this->PostScreenMessage( SM_BeginFadingOut, 
+		THEME->GetMetricI("ScreenUnlock", "TimeToDisplay") );
+
 }

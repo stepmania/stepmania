@@ -10,7 +10,7 @@
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Kevin Slaughter
-	curewater
+	Andrew Wong
 -----------------------------------------------------------------------------
 */
 enum UnlockTypes { UNLOCK_AP, UNLOCK_DP, UNLOCK_SP,

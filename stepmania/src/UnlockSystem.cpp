@@ -6,7 +6,7 @@
 
  Copyright (c) 2001-2003 by the person(s) listed below.  All rights reserved.
 	Kevin Slaughter
-	curewater
+	Andrew Wong
 -----------------------------------------------------------------------------
 */
 
@@ -31,9 +31,11 @@ UnlockSystem::UnlockSystem()
 bool UnlockSystem::RouletteUnlock( const Song *song )
 {
 	SongEntry *p = FindSong( song );
+	if (!p) return false;                       // does not exist
 	if (p->m_iRouletteSeed == 0) return false;  // already unlocked
 
 	PREFSMAN->m_RouletteSeeds[p->m_iRouletteSeed] = '1';
+	PREFSMAN->SaveGamePrefsToDisk();
 	return true;
 }
 
