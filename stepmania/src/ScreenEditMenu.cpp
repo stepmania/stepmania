@@ -63,11 +63,7 @@ void DeleteCurSteps( void* pThrowAway )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSong->RemoveSteps( pStepsToDelete );
-	if( HOME_EDIT_MODE )
-	{
-		SCREENMAN->AddNewScreenToTop( "ScreenMemcardSaveEditsAfterDeleteSteps", SM_None );
-	}
-	else
+	if( !HOME_EDIT_MODE )
 	{
 		pSong->Save();
 		SCREENMAN->ZeroNextUpdate();
@@ -89,6 +85,14 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( "ScreenEdit" );
+		break;
+	case SM_Success:
+		LOG->Trace( "Delete successful; deleting steps from memory" );
+		g_pScreenEditMenu = this;
+		DeleteCurSteps( NULL );
+		break;
+	case SM_Failure:
+		LOG->Trace( "Delete failed; not deleting steps" );
 		break;
 	}
 }
@@ -178,8 +182,15 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
-		SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
-		g_pScreenEditMenu = this;
+		if( HOME_EDIT_MODE )
+		{
+			SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps", SM_None );
+		}
+		else
+		{
+			g_pScreenEditMenu = this;
+			SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
+		}
 		break;
 	case EDIT_MENU_ACTION_COPY:
 	case EDIT_MENU_ACTION_AUTOGEN:
