@@ -1,5 +1,6 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
-BUG FIX:  Fix editor saving "file .sm".
+BUG FIX:  Fix editor saving files with an extra space at the end
+	of the filename.
 NEW FEATURE:  #SELECTABLE:YES, NO, ROULETTE.
 NEW FEATURE:  Added assist tick toggle to editor.
 NEW FEATURE:  Added editing of text fields to editor.
