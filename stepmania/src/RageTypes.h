@@ -123,7 +123,8 @@ public:
     RageColor operator - ( const RageColor& other ) const	{ return RageColor( r-other.r, g-other.g, b-other.b, a-other.a ); }
     RageColor operator * ( const RageColor& other ) const	{ return RageColor( r*other.r, g*other.g, b*other.b, a*other.a ); }
     RageColor operator * ( float f ) const					{ return RageColor( r*f, g*f, b*f, a*f ); }
-//    RageColor operator / ( float f ) const					{ return RageColor( r/f, g/f, b/f, a/f ); }
+	// Divide is useful for using with the SCALE macro
+    RageColor operator / ( float f ) const					{ return RageColor( r/f, g/f, b/f, a/f ); }
 
 	friend RageColor operator * ( float f, const RageColor& other )	{ return other*f; }		// What is this for?  Did I add this?  -Chris
 

@@ -182,6 +182,12 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 				float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				m_tempState.scale *= fZoom;
+				
+				// Use the color as a Vector3 to scale the effect for added control
+				RageColor c = SCALE( fPercentOffset, 0.f, 1.f, m_effectColor1, m_effectColor2 );
+				m_tempState.scale.x *= c.r;
+				m_tempState.scale.y *= c.g;
+				m_tempState.scale.z *= c.b;
 			}
 			break;
 		default:
@@ -868,23 +874,23 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 void Actor::SetBlendMode( const CString &s )
 {
 	if     (s.CompareNoCase("normal")==0)	SetBlendMode( BLEND_NORMAL );
-	else if(s.CompareNoCase("add")==0)	SetBlendMode( BLEND_ADD );
+	else if(s.CompareNoCase("add")==0)		SetBlendMode( BLEND_ADD );
 	else if(s.CompareNoCase("noeffect")==0)	SetBlendMode( BLEND_NO_EFFECT );
 	else	ASSERT(0);
 }
 
 void Actor::SetCullMode( const CString &s )
 {
-	if     (s.CompareNoCase("back")==0)	SetCullMode( CULL_BACK );
+	if     (s.CompareNoCase("back")==0)		SetCullMode( CULL_BACK );
 	else if(s.CompareNoCase("front")==0)	SetCullMode( CULL_FRONT );
-	else if(s.CompareNoCase("none")==0)	SetCullMode( CULL_NONE );
+	else if(s.CompareNoCase("none")==0)		SetCullMode( CULL_NONE );
 	else	ASSERT(0);
 }
 
 void Actor::SetZTestMode( const CString &s )
 {
 	// for metrics backward compatibility
-	if(s.CompareNoCase("off")==0)			SetZTestMode( ZTEST_OFF );
+	if(s.CompareNoCase("off")==0)				SetZTestMode( ZTEST_OFF );
 	else if(s.CompareNoCase("writeonpass")==0)	SetZTestMode( ZTEST_WRITE_ON_PASS );
 	else if(s.CompareNoCase("writeonfail")==0)	SetZTestMode( ZTEST_WRITE_ON_FAIL );
 	else	ASSERT(0);
