@@ -82,6 +82,9 @@ const CString GetPath(const CString& ID)
     [panel setCanChooseDirectories:YES];
     [panel setResolvesAliases:YES];
     [panel setAllowsMultipleSelection:NO];
+    [panel setPrompt:@"Install"];
+    [panel setCanCreateDirectories:YES];
+    [panel setTitle:@"Choose a location to install."];
     int result = [panel runModalForTypes:[NSArray array]]; // No extensions
 
     if (result != NSOKButton)
