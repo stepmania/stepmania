@@ -1017,27 +1017,28 @@ void NoteDataUtil::Wide( NoteData &in )
 	int max_row = in.GetLastRow();
 	for( int i=0; i<=max_row; i+=ROWS_PER_BEAT ) 
 	{
-		int iNum = in.GetNumTapNonEmptyTracks(i);
-		if( iNum == 1 )
-		{
-			// add a note determinitsitcally
-			int iBeat = (int)roundf( NoteRowToBeat(i) );
-			int iTrackOfNote = in.GetFirstNonEmptyTrack(i);
-			int iTrackToAdd = iTrackOfNote + (iBeat%5)-2;	// won't be more than 2 tracks away from the existing note
-			CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
-			if( iTrackToAdd == iTrackOfNote )
-				iTrackToAdd++;
-			CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
-			if( iTrackToAdd == iTrackOfNote )
-				iTrackToAdd--;
-			CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
+		if( in.GetNumTapNonEmptyTracks(i) != 1 )
+			continue;	// skip
+		if( in.GetNumTracksWithTap(i) != 1 )
+			continue;	// skip
 
-			if( in.GetTapNote(iTrackToAdd, i) != TAP_EMPTY )
-			{
-				iTrackToAdd = (iTrackToAdd+1) % in.GetNumTracks();
-			}
-			in.SetTapNote(iTrackToAdd, i, TAP_TAP);
+		// add a note determinitsitcally
+		int iBeat = (int)roundf( NoteRowToBeat(i) );
+		int iTrackOfNote = in.GetFirstTrackWithTap(i);
+		int iTrackToAdd = iTrackOfNote + (iBeat%5)-2;	// won't be more than 2 tracks away from the existing note
+		CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
+		if( iTrackToAdd == iTrackOfNote )
+			iTrackToAdd++;
+		CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
+		if( iTrackToAdd == iTrackOfNote )
+			iTrackToAdd--;
+		CLAMP( iTrackToAdd, 0, in.GetNumTracks()-1 );
+
+		if( in.GetTapNote(iTrackToAdd, i) != TAP_EMPTY )
+		{
+			iTrackToAdd = (iTrackToAdd+1) % in.GetNumTracks();
 		}
+		in.SetTapNote(iTrackToAdd, i, TAP_TAP);
 	}
 
 	in.Convert4sToHoldNotes();
@@ -1065,9 +1066,9 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval )
 		int iRowEarlier = i;
 		int iRowLater = i + rows_per_interval;
 		int iRowMiddle = i + rows_per_interval/2;
-		if( in.GetNumTapNonEmptyTracks(iRowEarlier) != 1 )
+		if( in.GetNumTapNonEmptyTracks(iRowEarlier)!=1 || in.GetNumTracksWithTap(iRowEarlier)!=1 )
 			continue;
-		if( in.GetNumTapNonEmptyTracks(iRowLater) != 1 )
+		if( in.GetNumTapNonEmptyTracks(iRowLater)!=1 || in.GetNumTracksWithTap(iRowLater)!=1 )
 			continue;
 		// there is a 4th and 8th note surrounding iRowBetween
 		

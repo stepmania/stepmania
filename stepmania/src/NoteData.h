@@ -82,6 +82,21 @@ public:
 				return t;
 		return -1;
 	}
+	inline int GetNumTracksWithTap( int index ) const
+	{
+		int iNum = 0;
+		for( int t=0; t<m_iNumTracks; t++ )
+			if( GetTapNote(t, index) == TAP_TAP )
+				iNum++;
+		return iNum;
+	}
+	inline int GetFirstTrackWithTap( int index ) const
+	{
+		for( int t=0; t<m_iNumTracks; t++ )
+			if( GetTapNote(t, index) == TAP_TAP )
+				return t;
+		return -1;
+	}
 
 	// used in edit/record
 	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
