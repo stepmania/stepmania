@@ -1275,6 +1275,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->RestoreSelectedOptions();	// restore the edit and playback options
 		}
 		break;
+	case SM_GainFocus:
+		/* We do this ourself. */
+		SOUND->HandleSongTimer( false );
+		break;
 	}
 }
 
