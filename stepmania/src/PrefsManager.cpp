@@ -161,7 +161,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 
 	ini.GetValueB( "Options", "Windowed",					m_bWindowed );
 #ifdef _XBOX
-	ini.GetValueB( "Options", "Progressive",				m_bProgressive );
+	ini.GetValueB( "Options", "ProgressiveScan",			m_bProgressive );
 	ini.GetValueB( "Options", "PAL",						m_bPAL );
 #endif
 	ini.GetValueI( "Options", "DisplayWidth",				m_iDisplayWidth );
@@ -300,7 +300,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "HiddenSongs",				m_bHiddenSongs );
 	ini.SetValueB( "Options", "Vsync",						m_bVsync );
 #ifdef _XBOX
-	ini.SetValueB( "Options", "Progressive",				m_bProgressive );
+	ini.SetValueB( "Options", "ProgressiveScan",			m_bProgressive );
 	ini.SetValueB( "Options", "PAL",						m_bPAL );
 #endif
 	ini.SetValueB( "Options", "HowToPlay",					m_bInstructions );
