@@ -523,7 +523,7 @@ void PlayerMinus::DrawHoldJudgments()
 }
 
 /* It's OK for this function to search a little more than was requested. */
-int PlayerMinus::GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsDistance, int iDirection  )
+int PlayerMinus::GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsDistance, int iDirection  ) const
 {
 	// look for the closest matching step
 	const int iIndexStartLookingAt = BeatToNoteRow( fBeat );
@@ -547,7 +547,7 @@ int PlayerMinus::GetClosestNoteDirectional( int col, float fBeat, float fMaxBeat
 	return -1;
 }
 
-int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind )
+int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind ) const
 {
 	int Fwd = GetClosestNoteDirectional(col, fBeat, fMaxBeatsAhead, 1);
 	int Back = GetClosestNoteDirectional(col, fBeat, fMaxBeatsBehind, -1);
@@ -1231,6 +1231,7 @@ void PlayerMinus::FadeToFail()
 	m_pNoteField->FadeToFail();
 }
 
+/* XXX: Why's m_NoteField in a separate class, again?  Is that still needed? */
 void Player::Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper )
 {
 	PlayerMinus::Load( player_no, pNoteData, pLM, pCombinedLM, pScoreDisplay, pSecondaryScoreDisplay, pInventory, pPrimaryScoreKeeper, pSecondaryScoreKeeper, &m_NoteField );

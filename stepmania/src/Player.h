@@ -53,7 +53,7 @@ public:
 	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
 	void FadeToFail();
-	int GetDancingCharacterState() { return m_iDCState; };
+	int GetDancingCharacterState() const { return m_iDCState; };
 	void SetCharacterState(int iDCState) { m_iDCState = iDCState; };
 	void ApplyWaitingTransforms();
 
@@ -66,8 +66,8 @@ protected:
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 
-	int GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection );
-	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind );
+	int GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection ) const;
+	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind ) const;
 
 	static float GetMaxStepDistanceSeconds();
 
