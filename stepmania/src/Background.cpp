@@ -18,6 +18,7 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "Command.h"
+#include "ActorUtil.h"
 
 #include <set>
 
@@ -160,6 +161,12 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
+		/* If default.xml exists, use the regular generic actor load.  However,
+		 * if it's an old BGAnimation.ini, load it ourself so we can set bGeneric
+		 * to false. */
+		if( DoesFileExist(asFiles[0] + "/default.xml") )
+			return ActorUtil::MakeActor( asFiles[0] );
+
 		pTempBGA = new BGAnimation;
 		pTempBGA->LoadFromAniDir( asFiles[0], false );
 		return pTempBGA;
