@@ -357,6 +357,10 @@ RageDisplay *CreateDisplay()
 
 	CStringArray asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
+
+	if( asRenderers.empty() )
+		RageException::Throw("No video renderers attempted.");
+
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
 		CString sRenderer = asRenderers[i];
@@ -398,9 +402,6 @@ RageDisplay *CreateDisplay()
 		else
 			RageException::Throw("Unknown video renderer value: %s", sRenderer.c_str() );
 	}
-
-	if( asRenderers.empty() )
-		error += "No video renderers attempted.\n\n";
 
 	RageException::Throw( error );
 }
