@@ -97,7 +97,8 @@ RageSound::~RageSound()
 	SOUNDMAN->lock.Unlock();
 }
 
-RageSound::RageSound(const RageSound &cpy)
+RageSound::RageSound(const RageSound &cpy):
+	RageDriverSound( cpy )
 {
 	ASSERT(SOUNDMAN);
 	LockMut(SOUNDMAN->lock);
