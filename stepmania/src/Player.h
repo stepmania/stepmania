@@ -60,6 +60,8 @@ protected:
 	void HandleTapRowScore( unsigned row );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 	void HandleAutosync(float fNoteOffset);
+	void DrawTapJudgments();
+	void DrawHoldJudgments();
 
 	int GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection );
 	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind );

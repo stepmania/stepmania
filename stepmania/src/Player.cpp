@@ -46,6 +46,8 @@ CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","GrayArrowsYReverse");
 CachedThemeMetricF HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
 CachedThemeMetricF HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
 CachedThemeMetricI	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
+CachedThemeMetricB	TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
+CachedThemeMetricB	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
 #define START_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
 #define MAX_PRO_TIMING_ERROR		THEME->GetMetricI("Player","MaxProTimingError")
@@ -64,7 +66,9 @@ PlayerMinus::PlayerMinus()
 	HOLD_JUDGMENT_Y_STANDARD.Refresh();
 	HOLD_JUDGMENT_Y_REVERSE.Refresh();
 	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
-
+	TAP_JUDGMENTS_UNDER_FIELD.Refresh();
+	HOLD_JUDGMENTS_UNDER_FIELD.Refresh();
+	
 	m_PlayerNumber = PLAYER_INVALID;
 
 	m_pLifeMeter = NULL;
@@ -429,6 +433,12 @@ void PlayerMinus::DrawPrimitives()
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
 		m_Combo.Draw();
 
+	if( TAP_JUDGMENTS_UNDER_FIELD )
+		DrawTapJudgments();
+
+	if( HOLD_JUDGMENTS_UNDER_FIELD )
+		DrawHoldJudgments();
+
 	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
 	float fSkew = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fSkew;
 	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(0)>0.5;
@@ -470,14 +480,26 @@ void PlayerMinus::DrawPrimitives()
 	DISPLAY->PopMatrix();
 
 
-	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
-	{
-		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bProTiming )
-			m_ProTimingDisplay.Draw();
-		else
-			m_Judgment.Draw();
-	}
+	if( !TAP_JUDGMENTS_UNDER_FIELD )
+		DrawTapJudgments();
 
+	if( !TAP_JUDGMENTS_UNDER_FIELD )
+		DrawHoldJudgments();
+}
+
+void PlayerMinus::DrawTapJudgments()
+{
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind )
+		return;
+
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bProTiming )
+		m_ProTimingDisplay.Draw();
+	else
+		m_Judgment.Draw();
+}
+
+void PlayerMinus::DrawHoldJudgments()
+{
 	for( int c=0; c<GetNumTracks(); c++ )
 		m_HoldJudgment[c].Draw();
 }
