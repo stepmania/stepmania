@@ -312,7 +312,7 @@ void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 		vbSelectedOut[i] = i==iSelection;
 }
 
-void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int rowno, vector<bool> &vbSelectedOut )
+void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -353,7 +353,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 				}
 				else
 				{
-					if( mc.DescribesCurrentMode( (PlayerNumber) pn) )
+					if( mc.DescribesCurrentMode(  pn) )
 					{
 						UseFallbackOption = false;
 						if( !row.bMultiSelect )
@@ -405,14 +405,12 @@ void ScreenOptionsMaster::ImportOptions()
 
 		if( data.bOneChoiceForAllPlayers )
 		{
-			ImportOption( data, hand, 0, i, row.m_vbSelected[0] );
+			ImportOption(data, hand, PLAYER_1, i, row.m_vbSelected[0] );
 		}
 		else
 		{
-			FOREACH_PlayerNumber( p )
+			FOREACH_HumanPlayer( p )
 			{
-				if( !GAMESTATE->IsHumanPlayer(p) )
-					continue;	// skip
 				ImportOption( data, hand, p, i, row.m_vbSelected[p] );
 			}
 		}
@@ -447,7 +445,7 @@ int GetOneSelection( const vector<bool> &vbSelected )
 }
 
 /* Returns an OPT mask. */
-int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, const vector<bool> &vbSelected )
+int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -456,10 +454,10 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 	case ROW_CHARACTER:
 	case ROW_STEP:
 		{
-			hand.Default.Apply( (PlayerNumber)pn );
+			hand.Default.Apply( pn );
 			for( unsigned i=0; i<vbSelected.size(); i++ )
 				if( vbSelected[i] )
-					hand.ListEntries[i].Apply( (PlayerNumber)pn );
+					hand.ListEntries[i].Apply( pn );
 		}
 		break;
 
@@ -505,11 +503,8 @@ void ScreenOptionsMaster::ExportOptions()
 		const OptionRowData &data = m_OptionRowAlloc[i];
 		Row &row = *m_Rows[i];
 
-		FOREACH_PlayerNumber( p )
+		FOREACH_HumanPlayer( p )
 		{
-			if( !GAMESTATE->IsHumanPlayer(p) )
-				continue;
-
 			vector<bool> &vbSelected = row.m_vbSelected[p];
 
 			ChangeMask |= ExportOption( data, hand, p, vbSelected );
@@ -589,11 +584,8 @@ void ScreenOptionsMaster::GoToPrevState()
 
 void ScreenOptionsMaster::RefreshIcons()
 {
-	FOREACH_PlayerNumber( p )	// foreach player
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;
-
         for( unsigned i=0; i<m_Rows.size(); ++i )     // foreach options line
 		{
 			if( m_Rows[i]->Type == Row::ROW_EXIT )
@@ -646,7 +638,7 @@ void ScreenOptionsMaster::RefreshIcons()
 			if( data.bOneChoiceForAllPlayers )
 				sIcon = "";
 
-			LoadOptionIcon( (PlayerNumber)p, i, sIcon );
+			LoadOptionIcon( p, i, sIcon );
 		}
 	}
 }

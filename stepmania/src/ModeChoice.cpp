@@ -39,7 +39,7 @@ bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
 
 bool ModeChoice::DescribesCurrentModeForAllPlayers() const
 {
-	FOREACH_PlayerNumber( pn )
+	FOREACH_HumanPlayer( pn )
 		if( !DescribesCurrentMode(pn) )
 			return false;
 
