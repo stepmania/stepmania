@@ -62,6 +62,7 @@ protected:
 
 	RageSound			m_soundSelect;
 	RageSound			m_soundOptionsChange;
+	RageSound			m_soundChangeNotes;
 };
 
 

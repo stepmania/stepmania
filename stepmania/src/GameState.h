@@ -48,6 +48,7 @@ public:
 	int				m_iCoins;			// not "credits"
 	PlayerNumber	m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool			m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
+	bool			m_bDifficultCourses; //used in nonstop
 	int				GetNumSidesJoined()
 	{ 
 		int iNumSidesJoined = 0;

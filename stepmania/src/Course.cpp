@@ -29,6 +29,7 @@ Course::Course()
 	m_bIsAutoGen = false;
 	m_bRepeat = false;
 	m_bRandomize = false;
+	m_bDifficult = false;
 	m_iLives = -1;
 
 	//
@@ -602,6 +603,41 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 			}
 		}
 	}
+}
+
+bool Course::MakeNormal()
+{
+	if( !m_bRepeat && m_iLives == -1 ) // nonstop only, not oni or endless
+		if(m_bDifficult) //only make it easy if it's already difficult
+		{
+			unsigned c;
+			for( c = 0; c < m_entries.size(); c++)
+			{
+				if( m_entries[c].difficulty == DIFFICULTY_BEGINNER || m_entries[c].difficulty == DIFFICULTY_INVALID ) // don't suddenly make things invalid or worse
+					continue;
+
+				m_entries[c].difficulty = Difficulty(m_entries[c].difficulty - 1);
+			}
+			m_bDifficult = false;
+			return true;
+		}
+	return false;
+}
+bool Course::MakeDifficult()
+{
+	if( !m_bRepeat && m_iLives == -1 ) // nonstop only, not oni or endless
+		if(!m_bDifficult) //only make it difficult once
+		{
+			unsigned c;
+			for( c = 0; c < m_entries.size(); c++)
+			{
+				if( m_entries[c].difficulty < DIFFICULTY_CHALLENGE ) // don't suddenly make things invalid or worse
+					m_entries[c].difficulty = Difficulty(m_entries[c].difficulty + 1);
+			}
+			m_bDifficult = true;
+			return true;
+		}
+	return false;
 }
 
 

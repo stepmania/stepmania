@@ -78,6 +78,7 @@ void GameState::Reset()
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
 	m_bAllow2ndExtraStage = true;
+	m_bDifficultCourses = false;
 
 	m_pCurSong = NULL;
 	for( p=0; p<NUM_PLAYERS; p++ )

@@ -128,6 +128,8 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music options") );
+	m_soundChangeNotes.Load( THEME->GetPathTo("Sounds","select music notes") );
+
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
@@ -246,6 +248,27 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 		UpdateOptionsDisplays();
 		return;
 	}
+
+	if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
+	{
+		if( m_MusicWheel.GetSelectedCourse()->MakeNormal() )
+		{
+			m_soundChangeNotes.Play();
+			GAMESTATE->m_bDifficultCourses = false;
+			SCREENMAN->SendMessageToTopScreen(SM_SongChanged,0);
+		}	
+	}
+
+	if( CodeDetector::EnteredHarderDifficulty(GameI.controller) )
+	{
+		if( m_MusicWheel.GetSelectedCourse()->MakeDifficult() )
+		{
+			m_soundChangeNotes.Play();
+			GAMESTATE->m_bDifficultCourses = true;
+			SCREENMAN->SendMessageToTopScreen(SM_SongChanged,0);
+		}	
+	}
+
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
