@@ -8,7 +8,7 @@
 
 DifficultyDisplay::DifficultyDisplay()
 {
-	float fWidth = 0;
+	float fHeight = 0;
 	int diff;
 	for( diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
 	{
@@ -17,15 +17,15 @@ DifficultyDisplay::DifficultyDisplay()
 		m_difficulty[diff].StopAnimating();
 		this->AddChild( &m_difficulty[diff] );
 
-		fWidth += m_difficulty[diff].GetUnzoomedWidth();
+		fHeight += m_difficulty[diff].GetUnzoomedHeight();
 	}
 
-	float fX = -fWidth/2;
+	float fY = -fHeight/2;
 	for( diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
 	{
 		m_difficulty[diff].SetHorizAlign( align_left );
-		m_difficulty[diff].SetX( fX );
-		fX += m_difficulty[diff].GetUnzoomedWidth();
+		m_difficulty[diff].SetY( fY );
+		fY += m_difficulty[diff].GetUnzoomedHeight();
 	}
 }
 
