@@ -1614,7 +1614,6 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, 
 	return pixfmt;
 }
 
-bool g_bFoobar=false; /* temp hack */
 unsigned RageDisplay_OGL::CreateTexture( 
 	PixelFormat pixfmt,
 	RageSurface* img,
@@ -1714,15 +1713,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 	
 	FlushGLErrors();
-	if( g_bFoobar )
-	{
-		FILE *tmp = fopen("testing.raw", "w+b");
-		ASSERT( tmp );
-		fwrite( img->pixels, img->h * img->pitch, 1, tmp );
-		fclose(tmp);
-		LOG->Trace("masks: %08x %08x %08x %08x", img->fmt.Rmask, img->fmt.Gmask, img->fmt.Bmask, img->fmt.Amask);
-	}
-
 
 	if( bGenerateMipMaps )
 	{

@@ -60,12 +60,10 @@ void RageBitmapTexture::Reload()
  * Dither forces dithering when loading 16-bit textures.
  * Stretch forces the loaded image to fill the texture completely.
  */
-extern bool g_bFoobar; /* temp hack */
 void RageBitmapTexture::Create()
 {
 	RageTextureID actualID = GetID();
-g_bFoobar = ( Basename(actualID.filename) == "pledge.png" );
-if( g_bFoobar ) LOG->Trace("save %s", actualID.filename.c_str());
+
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into a RageSurface. */
 	CString error;
