@@ -4,6 +4,7 @@ ScreenEzSelectPlayer,cpp
 Desc: See Header
 Copyright (C):
 Andrew Livy
+Chris Danford
 *****************************************/
 
 /* Includes */
@@ -184,7 +185,7 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		MenuStart(PLAYER_1);
+		MenuStart( PLAYER_INVALID );
 		m_Menu.StopTimer();
 
 		TweenOffScreen();
@@ -195,7 +196,24 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		// Put the mode choice into effect
+		int iSelection = m_ScrollingList.GetSelection();
+		const ModeChoice& choice = m_aPossibleModeChoices[ iSelection ];
+		GAMESTATE->m_CurStyle = choice.style;
+		GAMESTATE->m_PlayMode = choice.pm;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			GAMESTATE->m_PreferredDifficulty[p] = choice.dc;
+
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+			break;
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
+			break;
+		}
 		break;
 	}
 }
@@ -207,15 +225,18 @@ void ScreenSelectMode::RefreshModeChoices()
 	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_aPossibleModeChoices );
 	ASSERT( m_aPossibleModeChoices.GetSize() > 0 );
 
+	// remove ModeChoices that won't work with the current number of players
+	for( int i=m_aPossibleModeChoices.GetSize()-1; i>=0; i-- )
+		if( m_aPossibleModeChoices[i].numSidesJoinedToPlay != iNumSidesJoined )
+			m_aPossibleModeChoices.RemoveAt( i );
+
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 
 	CStringArray asGraphicPaths;
 	for( int i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
 	{
 		const ModeChoice& choice = m_aPossibleModeChoices[i];
-
-		if( choice.numSidesJoinedToPlay == iNumSidesJoined )
-			asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName, choice.name) ) );
+		asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName, choice.name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
@@ -286,6 +307,9 @@ presses the button bound to start
 ************************************/
 void ScreenSelectMode::MenuStart( PlayerNumber pn )
 {
+	if( pn == PLAYER_INVALID )
+		pn = GAMESTATE->m_MasterPlayerNumber;
+
 	if( !GAMESTATE->m_bSideIsJoined[pn] )
 	{
 		// join them
@@ -311,12 +335,6 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 	{
 		// made a selection
 		m_soundSelect.Play();
-
-		const ModeChoice& choice = m_aPossibleModeChoices[ m_ScrollingList.GetSelection() ];
-		GAMESTATE->m_CurStyle = choice.style;
-		GAMESTATE->m_PlayMode = choice.pm;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			GAMESTATE->m_PreferredDifficulty[p] = choice.dc;
 
 		TweenOffScreen();
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );

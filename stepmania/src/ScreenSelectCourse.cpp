@@ -46,6 +46,7 @@
 #define WHEEL_Y				THEME->GetMetricF("ScreenSelectCourse","WheelY")
 #define SCORE_X( p )		THEME->GetMetricF("ScreenSelectCourse",ssprintf("ScoreP%dX",p+1))
 #define SCORE_Y( i )		THEME->GetMetricF("ScreenSelectCourse",ssprintf("ScoreP%dY",i+1))
+#define SCORE_ZOOM			THEME->GetMetricF("ScreenSelectCourse","ScoreZoom")
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectCourse","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectCourse","TimerSeconds")
 
@@ -113,7 +114,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_HighScore[p].SetXY( SCORE_X(p), SCORE_Y(p) );
-		m_HighScore[p].SetZoom( 0.6f );
+		m_HighScore[p].SetZoom( SCORE_ZOOM );
 		m_HighScore[p].SetDiffuse( PlayerToColor(p) );
 		this->AddChild( &m_HighScore[p] );
 	}	
