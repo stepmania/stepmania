@@ -11,7 +11,8 @@ struct UsbStorageDevice
 		iBus = -1;
 		iPort = -1;
 		iLevel = -1;
-		iUsbStorageIndex = -1;
+		iScsiIndex = -1;
+		sScsiDevice = "";
 		sSerial = "";
 		sOsMountDir = "";
 	};
@@ -19,7 +20,8 @@ struct UsbStorageDevice
 	int iPort;
 	int iLevel;
 	CString sSerial;
-	int iUsbStorageIndex;
+	int iScsiIndex;
+  CString sScsiDevice;
 	CString	sOsMountDir;	// WITHOUT trailing slash
 	CString	sName;	// Name in the profile on the memory card.  
 					// This is passed here because it's read in the mounting thread.
