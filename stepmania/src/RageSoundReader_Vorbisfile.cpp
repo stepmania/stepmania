@@ -70,7 +70,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 	if(f == NULL)
 	{
 		SetError(ssprintf("ogg fopen(%s) failed: %s", filename.c_str(), strerror(errno)));
-		return OPEN_MATCH_BUT_FAIL;
+		return OPEN_NO_MATCH;
 	}
 
 	int ret = ov_open(f, vf, NULL, 0);
@@ -206,6 +206,11 @@ int RageSoundReader_Vorbisfile::GetSampleRate() const
 	ASSERT(vi != NULL);
 
 	return vi->rate;
+}
+
+RageSoundReader_Vorbisfile::RageSoundReader_Vorbisfile()
+{
+	vf = NULL;
 }
 
 RageSoundReader_Vorbisfile::~RageSoundReader_Vorbisfile()

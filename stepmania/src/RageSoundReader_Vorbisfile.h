@@ -21,6 +21,7 @@ public:
 	int SetPosition_Fast(int ms) { return SetPosition(ms, false); }
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const;
+	RageSoundReader_Vorbisfile();
 	~RageSoundReader_Vorbisfile();
 	SoundReader *Copy() const;
 };

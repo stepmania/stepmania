@@ -511,6 +511,11 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( CString filename_ 
 	Input_Buffer_Ratio = 1;
 	filename = filename_;
     rw = fopen(filename, "rb");
+	if( !rw )
+	{
+		SetError( ssprintf("Couldn't open file: %s", strerror(errno)) );
+		return OPEN_NO_MATCH;
+	}
 
     memset(&fmt, 0, sizeof(fmt));
 

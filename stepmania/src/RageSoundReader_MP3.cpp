@@ -689,7 +689,11 @@ SoundReader_FileReader::OpenResult RageSoundReader_MP3::Open( CString filename_ 
 {
 	filename = filename_;
     rw = fopen(filename, "rb");
-	ASSERT( rw );
+	if( !rw )
+	{
+		SetError( ssprintf("Couldn't open file: %s", strerror(errno)) );
+		return OPEN_NO_MATCH;
+	}
 
 	int ret = fseek( this->rw, 0, SEEK_END );
 	ASSERT( ret != -1 );
