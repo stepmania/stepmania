@@ -1380,6 +1380,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromSongOptions:
 		// coming back from PlayerOptions or SongOptions
 		GAMESTATE->StoreSelectedOptions();
+
+		// stop any music that screen may have been playing
+		SOUND->StopMusic();
+
 		break;
 	case SM_BackFromInsertAttack:
 		{
