@@ -19,8 +19,7 @@ static float g_fTimeBeforeSlow, g_fTimeBeforeFast, g_fTimeBetweenSlow, g_fTimeBe
 InputFilter::InputFilter()
 {
 	queuemutex = new RageMutex("InputFilter");
-	memset( m_BeingHeld, 0, sizeof(m_BeingHeld) );
-	memset( m_fSecsHeld, 0, sizeof(m_fSecsHeld) );
+	memset( m_ButtonState, 0, sizeof(m_ButtonState) );
 
 	Reset();
 	ResetRepeatRate();
@@ -54,13 +53,17 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 {
 	LockMut(*queuemutex);
 
-	if(m_BeingHeld[di.device][di.button] == Down)
+	ButtonState &bs = m_ButtonState[di.device][di.button];
+
+	bs.m_Level = di.level;
+
+	if( bs.m_BeingHeld == Down )
 		return;
 
 	const bool WasBeingPressed = IsBeingPressed( di );
 
-	m_BeingHeld[di.device][di.button] = Down;
-	m_fSecsHeld[di.device][di.button] = 0;
+	bs.m_BeingHeld = Down;
+	bs.m_fSecsHeld = 0;
 	if( WasBeingPressed != IsBeingPressed(di) )
 	{
 		InputEventType iet = IsBeingPressed(di)? IET_FIRST_PRESS:IET_RELEASE;
@@ -97,7 +100,7 @@ void InputFilter::Update(float fDeltaTime)
 
 	// Don't reconstruct "di" inside the loop.  This line alone is 
 	// taking 4% of the CPU on a P3-666.
-	DeviceInput di( (InputDevice)0,0,now);
+	DeviceInput di( (InputDevice)0,0,1.0f,now);
 
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
 	{
@@ -105,14 +108,24 @@ void InputFilter::Update(float fDeltaTime)
 
 		for( int b=0; b < NUM_DEVICE_BUTTONS[d]; b++ )	// foreach button
 		{
+			ButtonState &bs = m_ButtonState[d][b];
 			di.button = b;
+			di.level = bs.m_Level;
 
-			if( !IsBeingPressed(di) )
+			/* Generate IET_LEVEL_CHANGED events. */
+			if( bs.m_LastLevel != bs.m_Level )
+			{
+				queue.push_back( InputEvent(di,IET_LEVEL_CHANGED) );
+				bs.m_LastLevel = bs.m_Level;
+			}
+
+			/* Generate IET_FAST_REPEAT and IET_SLOW_REPEAT events. */
+			if( !bs.m_BeingHeld )
 				continue;
 
-			const float fOldHoldTime = m_fSecsHeld[d][b];
-			m_fSecsHeld[d][b] += fDeltaTime;
-			const float fNewHoldTime = m_fSecsHeld[d][b];
+			const float fOldHoldTime = bs.m_fSecsHeld;
+			bs.m_fSecsHeld += fDeltaTime;
+			const float fNewHoldTime = bs.m_fSecsHeld;
 
 			float fTimeBetweenRepeats;
 			InputEventType iet;
@@ -140,17 +153,17 @@ void InputFilter::Update(float fDeltaTime)
 
 bool InputFilter::IsBeingPressed( DeviceInput di )
 {
-	return m_BeingHeld[di.device][di.button];
+	return m_ButtonState[di.device][di.button].m_BeingHeld;
 }
 
 float InputFilter::GetSecsHeld( DeviceInput di )
 {
-	return m_fSecsHeld[di.device][di.button];
+	return m_ButtonState[di.device][di.button].m_fSecsHeld;
 }
 
 void InputFilter::ResetKeyRepeat( DeviceInput di )
 {
-	m_fSecsHeld[di.device][di.button] = 0;
+	m_ButtonState[di.device][di.button].m_fSecsHeld = 0;
 }
 
 void InputFilter::GetInputEvents( InputEventArray &array )
