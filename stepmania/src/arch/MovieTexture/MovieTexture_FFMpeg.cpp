@@ -9,6 +9,8 @@
 #include "SDL_utils.h"
 #include "SDL_endian.h"
 
+#include <errno.h>
+
 namespace avcodec
 {
 #if defined(_WIN32)
@@ -486,6 +488,7 @@ static avcodec::URLProtocol RageProtocol =
 	NULL,
 	URLRageFile_seek,
 	URLRageFile_close,
+	NULL
 };
 
 static void InitProtocol()
