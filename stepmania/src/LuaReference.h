@@ -26,6 +26,9 @@ public:
 	/* Return true if set.  (SetFromNil() counts as being set.) */
 	bool IsSet() const;
 
+	/* Return the referenced type, or LUA_TNONE if not set. */
+	int GetLuaType() const;
+
 	static void ReRegisterAll();	// call this after resetting Lua
 
 protected:
@@ -38,6 +41,20 @@ private:
 	void Unregister();
 	void ReRegister();
 	int m_iReference;
+};
+
+/* Evaluate an expression that returns an object; store the object in a reference.
+ * For example, evaluating "{ 1, 2, 3 }" will result in a reference to a table. */
+class LuaExpression: public LuaReference
+{
+public:
+	void SetFromExpression( const CString &sExpression );
+
+protected:
+	virtual void Register();
+
+private:
+	CString m_sExpression;
 };
 
 #endif

@@ -66,6 +66,14 @@ bool LuaReference::IsSet() const
 	return m_iReference != LUA_NOREF;
 }
 
+int LuaReference::GetLuaType() const
+{
+	this->PushSelf();
+	int iRet = lua_type( LUA->L, -1 );
+	lua_pop( LUA->L, 1 );
+	return iRet;
+}
+
 void LuaReference::Register()
 {
 }
@@ -97,6 +105,20 @@ void LuaReference::ReRegister()
 	Register();
 }
 
+
+void LuaExpression::SetFromExpression( const CString &sExpression )
+{
+	m_sExpression = sExpression;
+	Register();
+}
+
+void LuaExpression::Register()
+{
+	LUA->RunScript( "return " + m_sExpression, 1 );
+
+	/* Store the result. */
+	this->SetFromStack();
+}
 
 /*
  * (c) 2005 Glenn Maynard, Chris Danford
