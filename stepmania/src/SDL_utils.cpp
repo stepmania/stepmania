@@ -588,20 +588,31 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 		return NULL;
 
 	SurfaceHeader h;
-	if(fread(&h, sizeof(h), 1, f) != 1) return NULL;
-
+	if( fread(&h, sizeof(h), 1, f) != 1 )
+	{
+		fclose(f);
+		return NULL;
+	}
+	
 	SDL_Color palette[256];
 	if(h.bpp == 8)
-		if(fread(palette, 256 * sizeof(SDL_Color), 1, f) != 1) return NULL;
-
-	int size = h.height * h.pitch;
-	char *pixels = (char *) malloc(size);
-	if(fread(pixels, size, 1, f) != 1) return NULL;
+		if( fread(palette, 256 * sizeof(SDL_Color), 1, f) != 1 )
+		{
+			fclose(f);
+			return NULL;
+		}
 
 	/* Create the surface. */
-	SDL_Surface *img = SDL_CreateRGBSurfaceFrom(pixels,
+	SDL_Surface *img = SDL_CreateRGBSurface(
 			h.width, h.height, h.bpp, h.pitch,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask);
+
+	if( fread(img->pixels, h.height * h.pitch, 1, f) != 1 )
+	{
+		fclose(f);
+		SDL_FreeSurface( img );
+		return NULL;
+	}
 
 	/* Set the palette. */
 	if( h.bpp == 8 )
