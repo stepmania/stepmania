@@ -69,7 +69,8 @@ void BeginnerHelper::SetFlash( CString sFilename, float fX, float fY )
 
 void BeginnerHelper::Initialize( int iDancePadType, NoteData *pNotes )
 {
-	// Copy the note data from our caller.
+	// Copy the note data
+	ASSERT(pNotes != NULL);
 	m_NoteData.CopyAll(pNotes);
 
 	// Load the StepCircle, Background, and flash animation
