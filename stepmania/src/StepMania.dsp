@@ -59,10 +59,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania\Program
+TargetDir=\StepMania CVS\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                 	cl                                                                                                                                 /Zl                                                                                                                                 /nologo                                                                                                                                 /c                                                                                                                                 verstub.cpp                                                                                                                                 /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                  	cl                                                                                                                                  /Zl                                                                                                                                  /nologo                                                                                                                                  /c                                                                                                                                  verstub.cpp                                                                                                                                  /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -96,10 +96,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none /debug
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania\Program
+TargetDir=\StepMania CVS\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                                                  	cl                                                                                           /Zl                                                                                           /nologo                                                                                           /c                                                                                           verstub.cpp                                                                                           /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                                                   	cl                                                                                            /Zl                                                                                            /nologo                                                                                            /c                                                                                            verstub.cpp                                                                                            /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -2956,6 +2956,14 @@ SOURCE=.\NetworkSyncManager.cpp
 # Begin Source File
 
 SOURCE=.\NetworkSyncManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NetworkSyncServer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NetworkSyncServer.h
 # End Source File
 # Begin Source File
 

@@ -4,6 +4,7 @@
 #define NetworkSyncManager_H
 
 #include "PlayerNumber.h"
+
 class LoadingWindow;
 
 const int NETPROTOCOLVERSION=1;
@@ -19,6 +20,7 @@ enum NSScoreBoardColumn
 #define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, NUM_NSSB_CATEGORIES, sc )
 
 class EzSockets;
+class StepManiaLanServer;
 
 class PacketFunctions
 {
@@ -110,6 +112,9 @@ private:
 	bool Listen(unsigned short port);
 
 	PacketFunctions m_packet;
+
+	bool isLanServer;
+	StepManiaLanServer *LANserver;
 
 #endif
 };

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "NetworkSyncManager.h"
+#include "NetworkSyncServer.h"
 
 NetworkSyncManager *NSMAN;
 
@@ -41,11 +42,21 @@ const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
-	ld->SetText("Initilizing Network...");
+	if( GetCommandlineArgument( "runserver" )) {
+		ld->SetText("Initilizing server...");
+		LANserver = new StepManiaLanServer;
+		isLanServer = true;
+		GetCommandlineArgument( "runserver", &LANserver->servername );
+	} else {
+		isLanServer = false;
+	}
+	
+	ld->SetText("Initilizing Client Network...");
     NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
-    
+
+   
 	useSMserver = false;
 	m_startupStatus = 0;	//By default, connection not tried.
 
@@ -58,6 +69,11 @@ NetworkSyncManager::~NetworkSyncManager ()
     if (useSMserver)
         NetPlayerClient->close();
 	delete NetPlayerClient;
+
+	if( isLanServer ) {
+		LANserver->ServerStop();
+		delete LANserver;
+	}
 }
 
 void NetworkSyncManager::CloseConnection()
@@ -111,10 +127,23 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	//system, and not wait.
 	
 	bool dontExit = true;
-	NetPlayerClient->blocking = true;
+
+	//Don't block if the server is running
+	if( isLanServer ) {
+		NetPlayerClient->blocking = false;
+	} else {
+		NetPlayerClient->blocking = true;
+	}
 
 	//Following packet must get through, so we block for it.
+	//If we are serving we do not block for this.
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
+
+	//If we are serving, do this so we properly connect
+	//to the server.
+	if( isLanServer ) {
+		LANserver->ServerUpdate();
+	}
 
 	m_packet.ClearPacket();
 
@@ -128,6 +157,7 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 		//Only allow passing on handshake. 
 		//Otherwise scoreboard updates and such will confuse us.
 	}
+
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = m_packet.Read1();
 	m_ServerName = m_packet.ReadNT();
@@ -140,10 +170,15 @@ void NetworkSyncManager::StartUp()
 {
 	CString ServerIP;
 
+	if( isLanServer ) {
+		LANserver->ServerStart();
+	}
+
 	if( GetCommandlineArgument( "netip", &ServerIP ) )
 		PostStartUp(ServerIP);
 	else if( GetCommandlineArgument( "listen" ) )
 		PostStartUp("LISTEN");
+
 }
 
 
@@ -341,9 +376,16 @@ void NetworkSyncManager::StartRequest(short position)
 	//way I know how to get precievably instantanious results
 
 	bool dontExit=true;
-	NetPlayerClient->blocking=true;
+
+	//Don't block if we are server.
+	if (isLanServer) {
+		NetPlayerClient->blocking=false;
+	} else {
+		NetPlayerClient->blocking=true;
+	}
 
 	//The following packet HAS to get through, so we turn blocking on for it as well
+	//Don't block if we are serving
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 	
 	LOG->Trace("Waiting for RECV");
@@ -386,6 +428,10 @@ void NetworkSyncManager::DisplayStartupStatus()
 
 void NetworkSyncManager::Update(float fDeltaTime)
 {
+	if (isLanServer) {
+		LANserver->ServerUpdate();
+	}
+
 	if (useSMserver)
 		ProcessInput();
 }
