@@ -39,7 +39,7 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 					const float fOldHoldTime = m_fTimeHeld[d][b];
 					m_fTimeHeld[d][b] += fDeltaTime;
 					const float fNewHoldTime = m_fTimeHeld[d][b];
-					
+
 					float fTimeBetweenRepeats;
 					InputEventType iet;
 					if( fOldHoldTime > TIME_BEFORE_SLOW_REPEATS )
@@ -58,8 +58,10 @@ void InputFilter::GetInputEvents( InputEventArray &array, float fDeltaTime )
 							array.Add( InputEvent(di,iet) );
 					}
 				}
-				else	// !INPUTMAN->IsBeingPressed(di)
+				else {	// !INPUTMAN->IsBeingPressed(di)
 					m_fTimeHeld[d][b] = 0;
+					array.Add( InputEvent(di,IET_RELEASE) );
+				}
 			}
 			else	// !INPUTMAN->WasBeingPressed(di)
 			{
