@@ -45,7 +45,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 67;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 68;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -422,6 +422,12 @@ void Song::TidyUpData()
 	sound.Load( GetMusicPath() );
 	m_fMusicLengthSeconds = sound.GetLengthSeconds();
 
+
+	// We're going to try and do something intelligent here...
+	// The MusicSampleStart always seems to be about 100-120 beats into 
+	// the song regardless of BPM.  Let's take a shot-in-the dark guess.
+	if( m_fMusicSampleStartSeconds == 0 )
+		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
 
 	//
 	// Here's the problem:  We have a directory full of images.  We want to determine which 
