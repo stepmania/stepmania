@@ -189,7 +189,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "MovieColorDepth",				m_iMovieColorDepth );
 	ini.GetValueI( "Options", "MaxTextureResolution",			m_iMaxTextureResolution );
 	ini.GetValueI( "Options", "RefreshRate",					m_iRefreshRate );
-//	ini.GetValueB( "Options", "IgnoreJoyAxes",					m_bIgnoreJoyAxes );
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",		m_bOnlyDedicatedMenuButtons );
 	ini.GetValueB( "Options", "ShowStats",						m_bShowStats );
 	ini.GetValueI( "Options", "BackgroundMode",					(int&)m_BackgroundMode );
@@ -308,7 +307,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "MovieColorDepth",				m_iMovieColorDepth );
 	ini.SetValueI( "Options", "MaxTextureResolution",			m_iMaxTextureResolution );
 	ini.SetValueI( "Options", "RefreshRate",					m_iRefreshRate );
-//	ini.SetValueB( "Options", "IgnoreJoyAxes",					m_bIgnoreJoyAxes );
 	ini.SetValueB( "Options", "UseDedicatedMenuButtons",		m_bOnlyDedicatedMenuButtons );
 	ini.SetValueB( "Options", "ShowStats",						m_bShowStats );
 	ini.SetValueI( "Options", "BackgroundMode",					m_BackgroundMode);
