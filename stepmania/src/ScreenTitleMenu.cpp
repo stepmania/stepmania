@@ -126,6 +126,11 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_Fade.OpenWipingRight( SM_DoneOpening );
 	this->AddActor( &m_Fade );
 
+	/* ENSURE that the correct announcer is in place for GAME_DANCE (the default game) */
+	if (GAME_DANCE == GAMEMAN->m_CurGame)
+	{
+		ANNOUNCER->SwitchAnnouncer( "default" );	
+	}
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_GAME_NAME) );
 
@@ -169,7 +174,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_DoneOpening:
 		if( PREFSMAN->m_bAnnouncer )
+		{
 			m_soundTitle.PlayRandom();
+		}
 		break;
 	case SM_PlayAttract:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_TITLE_MENU_ATTRACT) );
@@ -268,8 +275,8 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 		return;
 	case CHOICE_SELECT_GAME:
 		m_soundInvalid.PlayRandom();
-		//m_soundSelect.PlayRandom();
-		//m_Fade.CloseWipingRight( SM_GoToSelectGame );
+	//	m_soundSelect.PlayRandom();
+	//	m_Fade.CloseWipingRight( SM_GoToSelectGame );
 		return;
 	case CHOICE_MAP_INSTRUMENTS:
 		m_soundSelect.PlayRandom();
