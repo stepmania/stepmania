@@ -1464,7 +1464,7 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 		m_textInputTips.PlayCommand( "On" );
 		m_textInfo.PlayCommand( "On" );
 	}
-	m_textPlayRecordHelp.SetHidden( em != MODE_PLAYING );
+	m_textPlayRecordHelp.SetHidden( em == MODE_EDITING );
 	m_SnapDisplay.SetHidden( em != MODE_EDITING );
 	m_NoteFieldEdit.SetHidden( em != MODE_EDITING );
 	m_NoteFieldRecord.SetHidden( em != MODE_RECORDING );
