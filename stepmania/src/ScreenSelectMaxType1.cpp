@@ -179,7 +179,14 @@ void ScreenSelectMaxType1::MenuStart( PlayerNumber pn )
 	//
 	// TweenOffScreen
 	//
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	unsigned i;
+
+	/* Stop all tweens where they are, since we might have selected before
+	 * we finished tweening in. */
+	for( i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->StopTweening();
+
+	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
 		m_sprIcon[i].Command( ICON_OFF_COMMAND(i) );
 		m_textIcon[i].Command( ICON_OFF_COMMAND(i) );
