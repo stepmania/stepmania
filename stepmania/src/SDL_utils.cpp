@@ -187,7 +187,7 @@ void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4])
 
 /* SDL_SetPalette only works when SDL video has been initialized, even on software
  * surfaces. */
-void mySDL_SetPalette(SDL_Surface *dst, SDL_Color *colors, int start, int cnt)
+void mySDL_SetPalette(SDL_Surface *dst, const SDL_Color *colors, int start, int cnt)
 {
 	ASSERT( dst->format->palette );
 	ASSERT( start+cnt <= dst->format->palette->ncolors );
@@ -1169,7 +1169,7 @@ void mySDL_FixupPalettedAlpha( SDL_Surface *img )
 void mySDL_AddColorKey( SDL_Surface *img, Uint32 color )
 {
 	ASSERT_M( img->format->BitsPerPixel == 8, ssprintf( "%i", img->format->BitsPerPixel) );
-	ASSERT_M( (int) color < img->format->palette->ncolors, ssprintf("%i < %i", color, img->format->palette->ncolors ) );
+	ASSERT_M( color < (Uint32) img->format->palette->ncolors, ssprintf("%i < %i", color, img->format->palette->ncolors ) );
 	img->format->palette->colors[ color ].unused = 0;
 }
 
