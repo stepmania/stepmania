@@ -2,6 +2,7 @@
 #include "RageFileManager.h"
 #include "RageFileDriver.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include <errno.h>
 
 RageFileManager *FILEMAN = NULL;
@@ -120,8 +121,6 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
 	ASSERT( Root != "" );
-	if( Root.Right(1) != "/" )
-		Root += '/';
 
 	RageFileDriver *driver = NULL;
 	if( !Type.CompareNoCase("DIR") )
@@ -130,7 +129,11 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	}
 
 	if( !driver )
+	{
+		LOG->Warn("Can't mount unknown VFS type \"%s\", root \"%s\"", Type.c_str(), Root.c_str() );
 		return;
+	}
+
 	LoadedDriver ld;
 	ld.driver = driver;
 	ld.MountPoint = MountPoint;

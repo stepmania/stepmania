@@ -40,6 +40,8 @@ public:
 RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
 	root(root_)
 {
+	if( root.Right(1) != "/" )
+		root += '/';
 }
 
 void FDB_GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
