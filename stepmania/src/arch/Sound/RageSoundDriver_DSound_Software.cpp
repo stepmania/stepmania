@@ -36,6 +36,10 @@ void RageSound_DSound_Software::MixerThread()
 {
 	InitThreadData("Mixer thread");
 	VDCHECKPOINT;
+
+	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
+	 * assigns it; we might get here before that happens, though. */
+	while(!SOUNDMAN && !shutdown) Sleep(10);
 	
 	while(!shutdown) {
 		Sleep(10);
