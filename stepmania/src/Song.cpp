@@ -774,26 +774,26 @@ void Song::AddAutoGenNotes()
 			}
 		}
 
-		if( ntBestMatch != -1 )
+		if( ntBestMatch == -1 )
+			continue;
+
+		for( int j=0; j<m_apNotes.GetSize(); j++ )
 		{
-			for( int j=0; j<m_apNotes.GetSize(); j++ )
-			{
-				Notes* pOriginalNotes = m_apNotes[j];
-				if( pOriginalNotes->m_NotesType != ntBestMatch )
-					continue;	// skip
+			Notes* pOriginalNotes = m_apNotes[j];
+			if( pOriginalNotes->m_NotesType != ntBestMatch )
+				continue;	// skip
 
-				Notes* pNewNotes = new Notes;
-				pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
-				pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
-				pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
-				pNewNotes->m_NotesType		= ntMissing;
+			Notes* pNewNotes = new Notes;
+			pNewNotes->m_Difficulty		= pOriginalNotes->m_Difficulty;
+			pNewNotes->m_iMeter			= pOriginalNotes->m_iMeter;
+			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription + " (autogen)";
+			pNewNotes->m_NotesType		= ntMissing;
 
-				NoteData originalNoteData, newNoteData;
-				pOriginalNotes->GetNoteData( &originalNoteData );
-				newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
-				pNewNotes->SetNoteData( &newNoteData );
-				this->m_apNotes.Add( pNewNotes );
-			}
+			NoteData originalNoteData, newNoteData;
+			pOriginalNotes->GetNoteData( &originalNoteData );
+			newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfMissing );
+			pNewNotes->SetNoteData( &newNoteData );
+			this->m_apNotes.Add( pNewNotes );
 		}
 	}
 }
