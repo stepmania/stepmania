@@ -193,7 +193,7 @@ void InitializeBacktrace()
 }
 
 /* backtrace() for x86 Linux, tested with kernel 2.4.18, glibc 2.3.1. */
-static void do_backtrace( const void **buf, size_t size, BacktraceContext *ctx )
+static void do_backtrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	/* Read /proc/pid/maps to find the address range of the stack. */
 	const void *readable_begin[1024], *readable_end[1024];
@@ -244,7 +244,7 @@ static void do_backtrace( const void **buf, size_t size, BacktraceContext *ctx )
 	buf[i] = NULL;
 }
 
-void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx )
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	InitializeBacktrace();
 	
@@ -263,7 +263,7 @@ void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx )
 
 void InitializeBacktrace() { }
 	
-void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx )
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	InitializeBacktrace();
 
@@ -291,7 +291,7 @@ typedef struct Frame {
 
 void InitializeBacktrace() { }
 
-void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx )
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
     FramePtr frame = FramePtr(GetCrashedFramePtr());
     unsigned i;
@@ -306,7 +306,7 @@ void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx )
 #warning Undefined BACKTRACE_METHOD_*
 void InitializeBacktrace() { }
 
-void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx )
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
     buf[0] = BACKTRACE_METHOD_NOT_AVAILABLE;
     buf[1] = NULL;

@@ -21,7 +21,7 @@ void InitializeBacktrace();
  * null-terminated.  If ctx is NULL, retrieve the current backtrace; otherwise
  * retrieve a backtrace for the given context.  (Not all backtracers may
  * support contexts.) */
-void GetBacktrace( const void **buf, size_t size, BacktraceContext *ctx = NULL );
+void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx = NULL );
 
 /* Set up a BacktraceContext to get a backtrace for a thread.  ThreadID may
  * be the current thread. */
