@@ -107,7 +107,6 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 				m_sprScroll[c][0].Load( THEME->GetPathG(m_sName,ssprintf("Scroll Choice%s",mc.m_sName.c_str())) );
 				m_sprScroll[c][0]->SetName( ssprintf("Scroll") );
-				m_sprScroll[c][0]->PlayCommand( "Init" );
 				m_Scroller[0].AddChild( m_sprScroll[c][0] );
 			}
 		}
@@ -131,7 +130,6 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 					m_sprScroll[c][p].Load( THEME->GetPathG(m_sName,ssprintf("Scroll Choice%s P%d",mc.m_sName.c_str(),p+1)) );
 					m_sprScroll[c][p]->SetName( ssprintf("ScrollP%d",p+1) );
-					m_sprScroll[c][p]->PlayCommand( "Init" );
 					m_Scroller[p].AddChild( m_sprScroll[c][p] );
 				}
 			}

@@ -113,6 +113,10 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 			sCmdName = sKeyName.Left( sKeyName.size()-7 );
 		AddCommand( sCmdName, apac );
 	}
+
+	/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
+	 * modify draw order between BGAs in a Foreground. */
+	PlayCommand( "Init" );
 }
 
 void Actor::Draw()

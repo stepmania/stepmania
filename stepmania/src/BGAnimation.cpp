@@ -179,15 +179,6 @@ void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	DEBUG_ASSERT( pNode->m_sName == "BGAnimation" );
 
-	CString sInitCommand;
-	if( pNode->GetAttrValue( "InitCommand", sInitCommand ) )
-	{
-		/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
-		 * modify draw order between BGAs in a Foreground.  Most things should be done
-		 * in metrics.ini commands, not here. */
-		this->RunCommands( ActorCommands(ParseCommands(sInitCommand)) );
-	}
-
 	ActorScroller::LoadFromNode( sDir, pNode );
 
 	this->RunCommandsOnChildren( ActorCommands(ParseCommands("PlayCommand,Init")) );
