@@ -13,23 +13,24 @@ class RageSoundBase
 public:
 	virtual ~RageSoundBase() { }
 	virtual void StopPlaying() = 0;
-	virtual int GetPCM( char *buffer, int size, int64_t sampleno ) = 0;
+	virtual int GetPCM( char *buffer, int size, int64_t frameno ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual float GetVolume() const = 0;
 	virtual CString GetLoadedFilePath() const = 0;
 };
 
+struct RageSoundParams;
+
 class RageSound: public RageSoundBase
 {
 public:
-	/* M_STOP (default) stops the sound after m_LengthSamples have been played.
-	 * M_LOOP restarts from m_StartSample.
-	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the
-	 * actual sound. */
+	/* M_STOP (default) stops the sound at the end.
+	 * M_LOOP restarts.
+	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound. */
 	enum StopMode_t {
 		M_STOP, M_LOOP, M_CONTINUE
-	} StopMode;
+	};
 
 	RageSound();
 	~RageSound();
@@ -54,8 +55,8 @@ public:
 	bool Load(CString fn, int precache = 2);
 	void Unload();
 
-	void SetStopMode(StopMode_t m) { StopMode = m; }
-	StopMode_t GetStopMode() const { return StopMode; }
+	void SetStopMode( StopMode_t m );
+	StopMode_t GetStopMode() const;
 
 	void SetStartSeconds(float secs = 0); /* default = beginning */
 	void SetLengthSeconds(float secs = -1); /* default = no length limit */
@@ -72,18 +73,18 @@ public:
 	float GetPositionSeconds( bool *approximate=NULL, RageTimer *Timestamp=NULL ) const;
 	int GetSampleRate() const;
 	bool SetPositionSeconds( float fSeconds = -1);
-	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
+	void SetAccurateSync( bool yes=true );
 	void SetPlaybackRate( float fScale );
 	void SetFadeLength( float fSeconds );
 	void SetNoFade() { SetFadeLength(0); }
-	void SetVolume( float fVolume ) { m_Volume = fVolume; }
-	float GetVolume() const { return m_Volume; }
-	float GetPlaybackRate() const { return float(speed_input_samples) / speed_output_samples; }
+	void SetVolume( float fVolume );
+	float GetVolume() const;
+	float GetPlaybackRate() const;
 	bool IsPlaying() const { return playing; }
 	CString GetLoadedFilePath() const { return m_sFilePath; }
-	void SetStartTime( const RageTimer &tm ) { StartTime = tm; }
-	RageTimer GetStartTime() const { return StartTime; }
-	void SetBalance( float f ) { m_Balance = f; }
+	void SetStartTime( const RageTimer &tm );
+	RageTimer GetStartTime() const;
+	void SetBalance( float f );
 
 private:
 	/* If we were copied from another RageSound, this will point to it; otherwise
@@ -96,7 +97,8 @@ private:
 
 	/* Sound blocks we've sent out recently through GetPCM.  We keep track
 	 * of each block for the last four calls of GetPCM. */
-	struct pos_map_t {
+	struct pos_map_t
+	{
 		/* Frame number from the POV of the sound driver: */
 		int64_t frameno;
 
@@ -114,20 +116,11 @@ private:
 	
 	CString m_sFilePath;
 
-	/* The amount of data to play (or loop): */
-	int m_StartSample, m_LengthSamples;
+	RageSoundParams *m_Param;
 	
 	/* Current position of the output sound; if < 0, nothing will play until it
-	 * becomes positive.  This is recorded in samples, to avoid rounding error. */
+	 * becomes positive.  This is recorded in frames, to avoid rounding error. */
 	int		position;
-
-	/* Amount of time to fade out at the end. */
-	float fade_length;
-
-	float m_Volume;
-
-	/* Pan: -1, left; 1, right */
-	float m_Balance;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position
@@ -136,25 +129,15 @@ private:
 	int64_t stopped_position;
 	bool    playing;
 
-	/* Number of samples input and output when changing speed.  Currently,
-	 * this is either 1/1, 5/4 or 4/5. */
-	int speed_input_samples, speed_output_samples;
-	bool AccurateSync;
-
-	/* Optional driver feature: time to actually start playing sounds.  If zero, or if not
-	 * supported, it'll start immediately. */
-	RageTimer StartTime;
-
 	CString error;
 
 	int64_t GetPositionSecondsInternal( bool *approximate=NULL ) const;
-	bool SetPositionSamples( int samples = -1 );
+	bool SetPositionFrames( int frames = -1 );
 	int GetData(char *buffer, int size);
 	void Fail(CString reason);
 	int Bytes_Available() const;
 
-	static void RateChange(char *buf, int &cnt,
-				int speed_input_samples, int speed_output_samples, int channels);
+	static void RateChange(char *buf, int &cnt, int speed_input_samples, int speed_output_samples, int channels);
 
 public:
 	/* Used by RageSoundManager: */
@@ -172,7 +155,7 @@ public:
 #endif
 /*
 -----------------------------------------------------------------------------
- Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
+ Copyright (c) 2002-2004 by the person(s) listed below.  All rights reserved.
 	Glenn Maynard
 -----------------------------------------------------------------------------
 */
