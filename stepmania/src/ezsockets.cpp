@@ -85,7 +85,7 @@ bool EzSockets::listen()
 // to whoever edited this:
 // please do not assume LINUX is defined if you're compiling on linux!
 // it will not compile properly.
-#if defined(WIN32)
+#if defined(WIN32) || defined(DARWIN)
 	typedef int socklen_t;
 #endif
 
