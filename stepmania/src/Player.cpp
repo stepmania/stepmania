@@ -336,6 +336,10 @@ void PlayerMinus::Update( float fDeltaTime )
 	{
 		const GameState::TransformToApply_t &tr = GAMESTATE->m_TransformsToApply[m_PlayerNumber][j];
 
+		/* Note that runtime effects like these currently must not change hold
+		 * notes.  CopyRange below converts through 4s, which means the hold note
+		 * array will be reconstructed; if hold notes end up in a different order,
+		 * they won't align with this->m_HoldNoteScores. */
 		LOG->Trace( "Applying transform from %f to %f", tr.fStartBeat, tr.fEndBeat );
 		switch( tr.trans )
 		{
@@ -822,6 +826,7 @@ void PlayerMinus::RandomiseNotes( int iNoteRow )
 {
 	const int NewNoteRow = (int)(iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed); // change the row to look ahead from based upon their speed mod
 
+	bool UpdateNoteField = false;
 	int iNumOfTracks = GetNumTracks();
 	for( int t=0; t+1 < iNumOfTracks; t++ )
 	{
@@ -833,10 +838,11 @@ void PlayerMinus::RandomiseNotes( int iNoteRow )
 		{
 			SetTapNote(t, NewNoteRow, t2);
 			SetTapNote(iRandomTrackToSwapWith, NewNoteRow, t1);
+			UpdateNoteField = true;
 		}
 	}
-
-	m_pNoteField->CopyRange( this, NewNoteRow, NewNoteRow, NewNoteRow );
+	if( UpdateNoteField )
+		m_pNoteField->CopyRange( this, NewNoteRow, NewNoteRow, NewNoteRow );
 }
 
 void PlayerMinus::HandleTapRowScore( unsigned row )
