@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "ScreenDimensions.h"
+#include "arch/Dialog/Dialog.h"
 
 #include <csetjmp>
 #include <cassert>
@@ -107,7 +108,8 @@ void LoadFromString( lua_State *L, const CString &str )
 	{
 		CString err;
 		Lua::PopStack( L, err );
-		RageException::Throw( "Error loading script \"%s\": %s", str.c_str(), err.c_str() );
+		CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
+		Dialog::OK( sError, "LUA_ERROR" );
 	}
 }
 
@@ -193,10 +195,6 @@ void Lua::PrepareExpression( CString &sInOut )
 	// comment out HTML style color values
 	sInOut.Replace( "#", "--" );
 	
-	// HACK: Some actor commands ("screen,") have illegal Lua characters.
-	sInOut.Replace( " ", "" );
-	sInOut.Replace( "/", "" );
-
 	// Remove leading +, eg. "+50"; Lua doesn't handle that.
 	if( sInOut.size() >= 1 && sInOut[0] == '+' )
 		sInOut.erase( 0, 1 );
@@ -212,7 +210,8 @@ void RunExpression( const CString &str )
 	{
 		CString err;
 		Lua::PopStack( L, err );
-		RageException::Throw( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
+		CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
+		Dialog::OK( sError, "LUA_ERROR" );
 	}
 
 	ASSERT_M( lua_gettop(L) == 1, ssprintf("%i", lua_gettop(L)) );
