@@ -148,7 +148,7 @@ public:
 
 	float LastFrameDelay;
 
-	float pts, last_IP_pts;
+	float pts;
 
 	avcodec::AVPacket pkt;
 	int current_packet_offset;
@@ -195,7 +195,7 @@ void FFMpeg_Helper::Init()
 	GetNextTimestamp = true;
 	CurrentTimestamp = 0, Last_IP_Timestamp = 0;
 	LastFrameDelay = 0;
-	pts = last_IP_pts = -1;
+	pts = -1;
 	FrameNumber = -1; /* decode one frame and you're on the 0th */
 	TimestampOffset = 0;
 
@@ -306,8 +306,8 @@ int FFMpeg_Helper::DecodePacket()
 	{
 		if ( GetNextTimestamp )
 		{
-			if (pkt.pts != int64_t(AV_NOPTS_VALUE))
-				pts = (float)pkt.pts / AV_TIME_BASE;
+			if (pkt.dts != int64_t(AV_NOPTS_VALUE))
+				pts = (float)pkt.dts / AV_TIME_BASE;
 			else
 				pts = -1;
 			GetNextTimestamp = false;
@@ -344,12 +344,6 @@ int FFMpeg_Helper::DecodePacket()
 		}
 
 		GetNextTimestamp = true;
-
-		if ( m_stream->codec.has_b_frames &&
-				frame.pict_type != FF_B_TYPE )
-		{
-			swap( pts, last_IP_pts );
-		}
 
 		if (pts != -1)
 		{
