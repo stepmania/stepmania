@@ -245,6 +245,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
 	PRINT_OPEN(f, sTitle );
+	if( vpSongs.size() )
 	{
 		SortSongPointerArrayByNumPlays( vpSongs, pProfile, true );
 		Song* pSongPopularThreshold = vpSongs[ vpSongs.size()*2/3 ];
