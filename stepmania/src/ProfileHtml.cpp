@@ -60,7 +60,7 @@ void TranslatedWrite( RageFile &f, CString s )
 static int g_Level = 1;
 
 inline CString MakeUniqueId()												{ CString s="id"+ssprintf("%d%d%d",rand(),rand(),rand()); return s; }
-inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded,CString sID){ g_Level++; ASSERT(g_Level>0 && g_Level<6); TranslatedWrite(f,ssprintf("<div class='section%d'>\n" "<h%d onClick='expandIt(%s); return false' CLASS='outline'>%s</h%d>\n" "<DIV ID='%s' CLASS='%s'>\n", g_Level, g_Level, sID.c_str(), sName.c_str(), g_Level, sID.c_str(), bExpanded?"visibletext":"hiddentext") ); }
+inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded,CString sID){ g_Level++; ASSERT(g_Level>0 && g_Level<6); TranslatedWrite(f,ssprintf("<div class='section%d'>\n" "<h%d onClick=\"toggle('%s');\" CLASS='outline'>%s</h%d>\n" "<DIV ID='%s'%s>\n", g_Level, g_Level, sID.c_str(), sName.c_str(), g_Level, sID.c_str(), bExpanded?"":" CLASS='hiddentext'") ); }
 inline void PRINT_OPEN(RageFile &f,CString sName,bool bExpanded=false)		{ PRINT_OPEN(f,sName,bExpanded,MakeUniqueId()); }
 inline void PRINT_CLOSE(RageFile &f)										{ TranslatedWrite(f, "</div>\n" "</div>\n" ); g_Level--; ASSERT(g_Level>=0); }
 
@@ -1402,33 +1402,19 @@ void SaveStatsWebPage(
 <head>\n\
 <META HTTP-EQUIV=\"Content-Type\" Content=\"text/html; charset=UTF-8\">\n\
 <title>%s</title>\n\
-<SCRIPT LANGUAGE=\"JavaScript\" TYPE=\"text/javascript\">\n\
-<!-- // hide from old browsers\n\
-\n\
-// hide text from MSIE browsers\n\
-\n\
-with (document)\n\
-{\n\
-	write(\"<STYLE TYPE='text/css'>\");\n\
-	if (navigator.appName == 'Microsoft Internet Explorer')\n\
-		{\n\
-		write(\".hiddentext {display:none} .visibletext {display:block} .outline {cursor:hand; text-decoration:underline}\");\n\
-		}\n\
-	write(\"</STYLE>\");\n\
+<script language=\"JavaScript\"><!--\n\
+function toggle(object) {\n\
+    if (document.getElementById && document.getElementById(object) != null)\n\
+         node = document.getElementById(object).style.display = (document.getElementById(object).style.display=='block') ? 'none' : 'block';\n\
+    else if (document.layers && document.layers[object] != null)\n\
+        document.layers[object].display = (document.layers[object].display=='block') ? 'none' : 'block';\n\
+    else if (document.all)\n\
+         document.all[object].style.display = (document.all[object].style.display=='block') ? 'none' : 'block';\n\
 }\n\
-\n\
-// show text on click for MSIE browsers\n\
-\n\
-function expandIt(whichEl)\n\
-{\n\
-	if (navigator.appName == 'Microsoft Internet Explorer')\n\
-		{\n\
-		whichEl.style.display = (whichEl.style.display == \"block\" ) ? \"none\" : \"block\";\n\
-		}\n\
-	else return;\n\
-}\n\
-// end hiding from old browsers -->\n\
-</SCRIPT>\n\
+//--></script>\n\
+<style type='text/css'><!--\n\
+.hiddentext {display:none} .outline {cursor:hand; text-decoration:underline}\n\
+//--></style>\n\
 <link rel='stylesheet' type='text/css' href='%s'>\n\
 </head>\n\
 <body>",
