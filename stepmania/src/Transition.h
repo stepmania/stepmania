@@ -34,8 +34,6 @@ protected:
 		transitioning, 
 		finished 
 	} m_State;
-	float	m_fSecsIntoTransition;
-
 
 	BGAnimation	m_BGAnimation;
 	float	m_fLengthSeconds;

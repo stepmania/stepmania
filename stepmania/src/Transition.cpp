@@ -9,7 +9,6 @@
 Transition::Transition()
 {
 	m_State = waiting;
-	m_fSecsIntoTransition = 0.0f;
 }
 
 void Transition::Load( CString sBGAniDir )
@@ -22,7 +21,6 @@ void Transition::Load( CString sBGAniDir )
 	m_fLengthSeconds = m_BGAnimation.GetTweenTimeLeft();
 
 	m_State = waiting;
-	m_fSecsIntoTransition = 0.0f;
 
 	// load sound from file specified by ini, or use the first sound in the directory
 	IniFile ini;
@@ -45,30 +43,23 @@ void Transition::Load( CString sBGAniDir )
 
 void Transition::Update( float fDeltaTime )
 {
+	if( m_State != transitioning )
+		return;
+
+	/* Start the transition on the first update, not in the ctor, so
+	 * we don't play a sound while our parent is still loading. */
+	if( m_bFirstUpdate )
+		m_sound.PlayRandom();
+
 	Actor::Update( fDeltaTime );
 
-	if( m_State == transitioning )
+	if( m_BGAnimation.GetTweenTimeLeft() == 0 )	// over
 	{
-		/* Start the transition on the first update, not in the ctor, so
-		 * we don't play a sound while our parent is still loading. */
-		if( m_fSecsIntoTransition==0 )	// first update
-		{
-			m_sound.PlayRandom();
-
-			// stop the sound from playing multiple times on an Update(0)
-			m_fSecsIntoTransition+=0.000001f;	
-		}
-
-		m_BGAnimation.Update( fDeltaTime );
-		if( m_fSecsIntoTransition > m_fLengthSeconds )	// over
-		{
-			SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
-			m_fSecsIntoTransition = 0.0;
-			m_State = finished;
-		}
-		else
-			m_fSecsIntoTransition += fDeltaTime;
+		SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
+		m_State = finished;
 	}
+
+	m_BGAnimation.Update( fDeltaTime );
 }
 
 bool Transition::EarlyAbortDraw()
@@ -88,7 +79,6 @@ void Transition::StartTransitioning( ScreenMessage send_when_done )
 
 	m_MessageToSendWhenDone = send_when_done;
 	m_State = transitioning;
-	m_fSecsIntoTransition = 0.0;
 }
 
 float Transition::GetLengthSeconds() const
