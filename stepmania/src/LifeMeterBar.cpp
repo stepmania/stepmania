@@ -334,7 +334,15 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 
 void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
-
+	/* The initial tap note score (which we happen to have in have in
+	 * tscore) has already been reported to the above function.  If the
+	 * hold end result was an NG, count it as a miss; if the end result
+	 * was an OK, count a perfect.  (Remember, this is just life meter
+	 * computation, not scoring.) */
+	if(score == HNS_NG)
+		ChangeLife(TNS_MISS);
+	else if(score == HNS_OK)
+		ChangeLife(TNS_PERFECT);
 }
 
 void LifeMeterBar::AfterLifeChanged()
