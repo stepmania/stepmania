@@ -117,8 +117,7 @@ MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/Movi
 endif
 
 Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
-		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h \
-		arch/Lights/LightsDriver_LinuxWeedTech.cpp arch/Lights/LightsDriver_LinuxWeedTech.h
+		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
 MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h \
 	     arch/MemoryCard/MemoryCardDriverThreaded.cpp arch/MemoryCard/MemoryCardDriverThreaded.h
@@ -142,6 +141,7 @@ endif
 if UNIX
 ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
 Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
+Lights += arch/Lights/LightsDriver_LinuxWeedTech.cpp arch/Lights/LightsDriver_LinuxWeedTech.h
 
 ArchUtils +=    archutils/Unix/AssertionHandler.cpp \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
