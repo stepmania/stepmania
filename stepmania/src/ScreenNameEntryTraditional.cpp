@@ -374,7 +374,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				}
 
 				m_FeatDisplay[p][i].m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
-				m_FeatDisplay[p][i].m_Difficulty.Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional difficulty icons 1x%d",NUM_DIFFICULTIES)) );
+				m_FeatDisplay[p][i].m_Difficulty.Load( THEME->GetPathToG("ScreenNameEntryTraditional difficulty icons") );
 				if( GAMESTATE->IsCourseMode() )
 					m_FeatDisplay[p][i].m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
 				else
