@@ -1011,6 +1011,12 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F2))
+	{
+		THEME->ReloadMetrics();
+		TEXTUREMAN->ReloadAll();
+		return true;
+	}
 #ifndef DARWIN
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 	{
