@@ -122,24 +122,7 @@ RageColor Notes::GetColor() const
 void Notes::TidyUpData()
 {
 	if( GetDifficulty() == DIFFICULTY_INVALID )
-	{
-		CString sDescription = GetDescription();
-		sDescription.MakeLower();
-		if( sDescription == "beginner" )		SetDifficulty(DIFFICULTY_BEGINNER);
-		else if( sDescription == "easy" )		SetDifficulty(DIFFICULTY_EASY);
-		else if( sDescription == "basic" )		SetDifficulty(DIFFICULTY_EASY);
-		else if( sDescription == "light" )		SetDifficulty(DIFFICULTY_EASY);
-		else if( sDescription == "medium" )		SetDifficulty(DIFFICULTY_MEDIUM);
-		else if( sDescription == "another" )	SetDifficulty(DIFFICULTY_MEDIUM);
-		else if( sDescription == "trick" )		SetDifficulty(DIFFICULTY_MEDIUM);
-		else if( sDescription == "standard" )	SetDifficulty(DIFFICULTY_MEDIUM);
-		else if( sDescription == "hard" )		SetDifficulty(DIFFICULTY_HARD);
-		else if( sDescription == "ssr" )		SetDifficulty(DIFFICULTY_HARD);
-		else if( sDescription == "maniac" )		SetDifficulty(DIFFICULTY_HARD);
-		else if( sDescription == "heavy" )		SetDifficulty(DIFFICULTY_HARD);
-		else if( sDescription == "smaniac" )	SetDifficulty(DIFFICULTY_CHALLENGE);
-		else if( sDescription == "challenge" )	SetDifficulty(DIFFICULTY_CHALLENGE);
-	}
+		SetDifficulty(StringToDifficulty(GetDescription()));
 	
 	if( GetDifficulty() == DIFFICULTY_INVALID )
 	{

@@ -30,14 +30,26 @@ CString DifficultyToString( Difficulty dc )
 	}
 }
 
+/* We prefer the above names; recognize a number of others, too.  (They'l
+ * get normalized when written to SMs, etc.) */
 Difficulty StringToDifficulty( CString sDC )
 {
-	for( int i=0; i<NUM_DIFFICULTIES; i++ )
-	{
-		Difficulty dc = (Difficulty)i;
-		if( sDC == DifficultyToString(dc) )
-			return dc;
-	}
+	sDC.MakeLower();
+	if( sDC == "beginner" )			return DIFFICULTY_BEGINNER;
+	else if( sDC == "easy" )		return DIFFICULTY_EASY;
+	else if( sDC == "basic" )		return DIFFICULTY_EASY;
+	else if( sDC == "light" )		return DIFFICULTY_EASY;
+	else if( sDC == "medium" )		return DIFFICULTY_MEDIUM;
+	else if( sDC == "another" )		return DIFFICULTY_MEDIUM;
+	else if( sDC == "trick" )		return DIFFICULTY_MEDIUM;
+	else if( sDC == "standard" )	return DIFFICULTY_MEDIUM;
+	else if( sDC == "hard" )		return DIFFICULTY_HARD;
+	else if( sDC == "ssr" )			return DIFFICULTY_HARD;
+	else if( sDC == "maniac" )		return DIFFICULTY_HARD;
+	else if( sDC == "heavy" )		return DIFFICULTY_HARD;
+	else if( sDC == "smaniac" )		return DIFFICULTY_CHALLENGE;
+	else if( sDC == "challenge" )	return DIFFICULTY_CHALLENGE;
+
 	return DIFFICULTY_INVALID;
 }
 
