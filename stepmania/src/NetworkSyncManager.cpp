@@ -11,7 +11,7 @@ void NetworkSyncManager::PostStartUp( CString ServerIP ) { }
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { return false; }
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
 void NetworkSyncManager::ReportSongOver() { }
-void NetworkSyncManager::StartRequest() { }
+void NetworkSyncManager::StartRequest(int position) { }
 void NetworkSyncManager::DisplayStartupStatus() { }
 void NetworkSyncManager::Update( float fDeltaTime ) { }
 
@@ -22,6 +22,7 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 #include "StepMania.h"
 #include "ScreenManager.h"
 #include "song.h"
+#include "Course.h"
 #include "GameState.h"
 #include "StageStats.h"
 #include "Steps.h"
@@ -222,7 +223,7 @@ void NetworkSyncManager::ReportSongOver()
 	return;
 }
 
-void NetworkSyncManager::StartRequest() 
+void NetworkSyncManager::StartRequest(short position) 
 {
 	if (!useSMserver)
 		return ;
@@ -248,10 +249,25 @@ void NetworkSyncManager::StartRequest()
 		ctr = uint8_t(ctr+tSteps->GetMeter());
 
 	Write1(m_packet,ctr);
+	
+	//Notify server if this is for sync or not.
+	ctr = position*16;
+	Write1(m_packet,ctr);
 
-	WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sMainTitle);
-	WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sSubTitle);
-	WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sArtist);
+	if (GAMESTATE->m_pCurSong !=NULL) {
+		WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sMainTitle);
+		WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sSubTitle);
+		WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sArtist);
+	} else {
+		WriteNT(m_packet,"");
+		WriteNT(m_packet,"");
+		WriteNT(m_packet,"");
+	}
+
+	if (GAMESTATE->m_pCurCourse != NULL)
+		WriteNT(m_packet,GAMESTATE->m_pCurCourse->GetFullDisplayTitle());
+	else
+		WriteNT(m_packet,CString(""));
 
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 	

@@ -382,7 +382,7 @@ void ScreenGameplay::Init()
 	// if you wait too long at the second checkpoint, you will
 	// appear dead when you begin your game.
 	//
-	NSMAN->StartRequest(); 
+	NSMAN->StartRequest(0); 
 
 
 
@@ -1059,7 +1059,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 
 	//Secondary (Precice) start request 
 	//used for syncing up songs.
-	NSMAN->StartRequest(); 
+	NSMAN->StartRequest(1); 
 
 	m_soundMusic.Play( &p );
 
