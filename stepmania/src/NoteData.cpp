@@ -159,7 +159,7 @@ CString NoteData::GetSMNoteDataString()
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	this->ConvertHoldNotesTo4s();
-	/* XXX: if iNoteIndexEnd == m_TapNotes[0].size(), just erase() */
+	/* XXX: if iNoteIndexEnd >= m_TapNotes[0].size(), just erase() */
 	for( int c=0; c<m_iNumTracks; c++ )
 	{
 		for( int i=iNoteIndexBegin; i <= iNoteIndexEnd && i < MAX_TAP_NOTE_ROWS; i++ )
@@ -280,7 +280,8 @@ float NoteData::GetFirstBeat()
 	
 	int i;
 
-	for( i=0; i<MAX_TAP_NOTE_ROWS; i++ )
+	int rows = GetLastRow();
+	for( i=0; i<=rows; i++ )
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -673,15 +674,16 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 	// Any note will end a hold (not just a TAP_HOLD_TAIL).  This makes parsing DWIs much easier.
 	// Plus, allowing tap notes in the middle of a hold doesn't make sense!
 
+	int rows = GetLastRow();
 	for( int col=0; col<m_iNumTracks; col++ )	// foreach column
 	{
-		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
+		for( int i=0; i<=rows; i++ )	// foreach TapNote element
 		{
 			if( GetTapNote(col, i) != TAP_HOLD_HEAD )	// this is a HoldNote begin marker
 				continue;
 			SetTapNote(col, i, TAP_EMPTY);
 
-			for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
+			for( int j=i+1; j<=rows; j++ )	// search for end of HoldNote
 			{
 				// end hold on the next note we see
 				if( GetTapNote(col, j) == TAP_EMPTY )
@@ -859,7 +861,8 @@ float NoteData::GetChaosRadarValue( float fSongSeconds )
 {
 	// count number of triplets or 16ths
 	int iNumChaosNotes = 0;
-	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
+	int rows = GetLastRow();
+	for( int r=0; r<=rows; r++ )
 	{
 		if( !IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
 			iNumChaosNotes++;
@@ -1015,6 +1018,7 @@ void NoteData::PadTapNotes(int rows)
 {
 	int needed = rows - m_TapNotes[0].size() + 1;
 	if(needed < 0) return;
+	needed += 100; /* optimization: give it a little more than it needs */
 	for(int track = 0; track < m_iNumTracks; ++track)
 		m_TapNotes[track].insert(m_TapNotes[track].end(), needed, TAP_EMPTY);
 }
