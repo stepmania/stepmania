@@ -434,14 +434,18 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 
 void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	
 	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
 	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 		if( PROFILEMAN->IsUsingProfile(pn) )
 			PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
 		else
 			iPersonalIndexOut = -1;
-		PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
+
+		// don't leave machine high scores for edits
+		if( pSteps->GetDifficulty() != DIFFICULTY_EDIT )
+			PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
 	}
 
 	if( PROFILEMAN->IsUsingProfile(pn) )

@@ -129,12 +129,14 @@ void StepsID::FromSteps( const Steps *p )
 		st = STEPS_TYPE_INVALID;
 		dc = DIFFICULTY_INVALID;
 		sDescription = "";
+		uHash = 0;
 	}
 	else
 	{
 		st = p->m_StepsType;
 		dc = p->GetDifficulty();
 		sDescription = p->GetDescription();
+		uHash = p->GetHash();
 	}
 }
 
