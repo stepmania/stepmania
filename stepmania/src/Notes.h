@@ -16,6 +16,15 @@
 #include "Grade.h"
 class NoteData;
 
+enum NotesDisplayType
+{
+	NOTES_DISPLAY_EASY,
+	NOTES_DISPLAY_MEDIUM,
+	NOTES_DISPLAY_HARD,
+	NOTES_DISPLAY_S_HARD,
+	NOTES_DISPLAY_CHALLENGE,
+	NOTES_DISPLAY_BATTLE
+};
 
 struct Notes
 {
@@ -29,15 +38,16 @@ public:
 
 public:
 	NotesType		m_NotesType;
-	CString			m_sDescription;			// This text is displayed next to thte number of feet when a song is selected
-	Difficulty m_Difficulty;		// this is inferred from m_sDescription
-	int				m_iMeter;				// difficulty from 1-10
+	CString			m_sDescription;		// This text is displayed next to thte number of feet when a song is selected
+	Difficulty		m_Difficulty;		// difficulty classification
+	int				m_iMeter;			// difficulty rating from 1-10
 	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
 
 	CString			m_sSMNoteData;
 	void			GetNoteData( NoteData* pNoteDataOut ) const;
 	void			SetNoteData( NoteData* pNewNoteData );
-	D3DXCOLOR GetColor() const;
+	NotesDisplayType GetNotesDisplayType() const;
+	D3DXCOLOR		GetColor() const;
 	
 	// Statistics
 	Grade m_TopGrade;

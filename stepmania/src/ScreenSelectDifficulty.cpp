@@ -107,6 +107,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		case 2: sHeaderFile = "select difficulty hard header";		sPictureFile = "select difficulty hard picture";	break;
 		case 3: sHeaderFile = "select difficulty oni header";		sPictureFile = "select difficulty oni picture";		break;
 		case 4: sHeaderFile = "select difficulty endless header";	sPictureFile = "select difficulty endless picture";	break;
+		default:	ASSERT(0);
 		}
 		m_sprPicture[d].Load( THEME->GetPathTo("Graphics",sPictureFile) );
 		m_sprPicture[d].SetXY( ITEM_X(d), ITEM_Y(d) );
@@ -305,7 +306,7 @@ bool ScreenSelectDifficulty::IsItemOnPage2( int iItemIndex )
 {
 	ASSERT( iItemIndex >= 0  &&  iItemIndex < NUM_DIFFICULTY_ITEMS );
 
-	return iItemIndex >= NUM_DIFFICULTIES;
+	return iItemIndex >= NUM_ITEMS_ON_PAGE_1;
 }
 
 bool ScreenSelectDifficulty::SelectedSomethingOnPage2()

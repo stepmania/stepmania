@@ -77,7 +77,6 @@ const float TWEEN_TIME		= 0.5f;
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
-const ScreenMessage SM_PlaySongSample		=	ScreenMessage(SM_User+3);	
 
 
 
@@ -135,6 +134,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_sprDifficultyFrame[p].SetState( p );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
+		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x6") );
 		m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
 		this->AddChild( &m_DifficultyIcon[p] );
 	}
@@ -234,6 +234,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
+	m_fPlaySampleCountdown = 0;
 
 	UpdateOptionsDisplays();
 
@@ -377,6 +378,13 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 void ScreenSelectMusic::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+
+	if( m_fPlaySampleCountdown > 0 )
+	{
+		m_fPlaySampleCountdown -= fDeltaTime;
+		if( m_fPlaySampleCountdown < 0 )
+			this->PlayMusicSample();
+	}
 
 	float fNewRotation = m_sprCDTitle.GetRotationY()+D3DX_PI*fDeltaTime/2;
 	fNewRotation = fmodf( fNewRotation, D3DX_PI*2 );
@@ -529,9 +537,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			MUSIC->Stop();
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 		}
-		break;
-	case SM_PlaySongSample:
-		PlayMusicSample();
 		break;
 	case SM_SongChanged:
 		AfterMusicChange();
@@ -686,7 +691,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	if( m_pNotes )
 		m_HighScore[pn].SetScore( (float)m_pNotes->m_iTopScore );
 
-	m_DifficultyIcon[pn].SetFromNotes( pNotes );
+	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
 	m_FootMeter[pn].SetFromNotes( pNotes );
 	m_GrooveRadar.SetFromNotes( pn, pNotes );
 	m_MusicWheel.NotesChanged( pn );
@@ -721,7 +726,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SONG:
 		{
 			MUSIC->Stop();
-			this->SendScreenMessage( SM_PlaySongSample, SAMPLE_MUSIC_DELAY );
+			m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 
 			for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
 				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), pn, m_arrayNotes[pn] );
@@ -743,8 +748,13 @@ void ScreenSelectMusic::AfterMusicChange()
 				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
 				for( int i=0; i<m_arrayNotes[p].GetSize(); i++ )
+				{
 					if( m_arrayNotes[p][i]->m_Difficulty == GAMESTATE->m_PreferredDifficulty[p] )
+					{
 						m_iSelection[p] = i;
+						break;
+					}
+				}
 
 				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes[p].GetSize() ) ;
 			}

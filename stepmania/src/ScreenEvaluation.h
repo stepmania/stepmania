@@ -20,6 +20,7 @@
 #include "ScoreDisplayNormal.h"
 #include "StageBox.h"
 #include "BannerWithFrame.h"
+#include "DifficultyIcon.h"
 
 
 const int NUM_JUDGE_LINES =	7;	// perfect, great, good, boo, miss, ok, max_combo
@@ -48,6 +49,7 @@ protected:
 
 	BannerWithFrame		m_BannerWithFrame[STAGES_TO_SHOW_IN_SUMMARY];
 	BitmapText			m_textStage;
+	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
 	// used in arcade
 	Sprite				m_sprGradeFrame[NUM_PLAYERS];

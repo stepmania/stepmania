@@ -16,6 +16,9 @@
 #include "PrefsManager.h"
 
 
+const int NUM_FEET_IN_METER					=	10;
+const int GLOW_IF_METER_GREATER_THAN		=	9;
+
 
 FootMeter::FootMeter()
 {
@@ -30,16 +33,12 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 	{
 		SetDiffuse( D3DXCOLOR(1,1,1,1) );
 		SetNumFeet( pNotes->m_iMeter );
-		if( pNotes->m_iMeter >= 10 )
+		if( pNotes->m_iMeter > GLOW_IF_METER_GREATER_THAN )
 			this->SetEffectGlowing();
 		else
 			this->SetEffectNone();
 
 		SetDiffuse( pNotes->GetColor() );
-//		this->StopTweening();
-//		this->SetZoom( 1.1f );
-//		this->BeginTweening( 0.3f, TWEEN_BOUNCE_BEGIN );
-//		this->SetTweenZoom( 1 );
 	}
 	else
 	{
@@ -52,12 +51,11 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 void FootMeter::SetNumFeet( int iNumFeet )
 {
 	CString sNewText;
-	for( int f=0; f<=9; f++ )
+	for( int f=0; f<NUM_FEET_IN_METER; f++ )
 		sNewText += (f<iNumFeet) ? "1" : "0";
-	for( f=10; f<=12; f++ )
+	for( f=NUM_FEET_IN_METER; f<=13; f++ )
 		if( f<iNumFeet )
 			sNewText += "1";
 
 	SetText( sNewText );
-
 }

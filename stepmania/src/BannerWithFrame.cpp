@@ -25,22 +25,11 @@ BannerWithFrame::BannerWithFrame()
 
 	this->AddChild( &m_Banner );
 	this->AddChild( &m_sprBannerFrame );
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		float fX = (m_sprBannerFrame.GetUnzoomedWidth()/2-26) * (p==PLAYER_1 ? -1 : 1 );
-		float fY = m_sprBannerFrame.GetUnzoomedHeight()/2-26;
-		m_Icon[p].SetX( fX );
-		m_Icon[p].SetY( fY );
-		this->AddChild( &m_Icon[p] );
-	}
 }
 
 void BannerWithFrame::LoadFromSongAndNotes( Song* pSong, Notes* pNotes[NUM_PLAYERS] )
 {
 	LoadFromSong( pSong );
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_Icon[p].SetFromNotes( pNotes[p] );	// NULL pNotes menas icon is hidden
 }
 
 void BannerWithFrame::LoadFromSong( Song* pSong )

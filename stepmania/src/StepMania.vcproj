@@ -678,10 +678,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="CroppedSprite.h">
 			</File>
 			<File
-				RelativePath=".\DifficultyIcon.cpp">
+				RelativePath="DifficultyIcon.cpp">
 			</File>
 			<File
-				RelativePath=".\DifficultyIcon.h">
+				RelativePath="DifficultyIcon.h">
 			</File>
 			<File
 				RelativePath="FadingBanner.cpp">
@@ -842,12 +842,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\Combo.h">
-			</File>
-			<File
-				RelativePath="DifficultyBanner.cpp">
-			</File>
-			<File
-				RelativePath="DifficultyBanner.h">
 			</File>
 			<File
 				RelativePath=".\FocusingSprite.cpp">

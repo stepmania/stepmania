@@ -203,16 +203,20 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			out.m_apNotes.Add( pNewNotes );
 
 			if( iNumParams != 7 )
-				throw RageException( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath, iNumParams, 7 );
-
-			LoadFromSMTokens( 
-				sParams[1], 
-				sParams[2], 
-				sParams[3], 
-				sParams[4], 
-				sParams[5], 
-				sParams[6],
-				*pNewNotes);
+			{
+				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath, iNumParams, 7 );
+			}
+			else
+			{
+				LoadFromSMTokens( 
+					sParams[1], 
+					sParams[2], 
+					sParams[3], 
+					sParams[4], 
+					sParams[5], 
+					sParams[6],
+					*pNewNotes);
+			}
 		}
 
 		else

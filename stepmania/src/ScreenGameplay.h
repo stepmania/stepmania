@@ -23,7 +23,7 @@
 #include "Background.h"
 #include "LifeMeter.h"
 #include "ScoreDisplay.h"
-#include "DifficultyBanner.h"
+#include "DifficultyIcon.h"
 #include "TransitionFadeWipe.h"
 #include "TransitionOniFade.h"
 
@@ -113,7 +113,7 @@ private:
 
 	Player				m_Player[NUM_PLAYERS];
 
-	DifficultyBanner	m_DifficultyBanner[NUM_PLAYERS];
+	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber pn );

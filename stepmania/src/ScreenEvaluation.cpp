@@ -28,6 +28,8 @@
 #define BANNER_Y				THEME->GetMetricF("ScreenEvaluation","BannerY")
 #define STAGE_X					THEME->GetMetricF("ScreenEvaluation","StageX")
 #define STAGE_Y					THEME->GetMetricF("ScreenEvaluation","StageY")
+#define DIFFICULTY_ICON_X( p )	THEME->GetMetricF("ScreenEvaluation",ssprintf("DifficultyIconP%dX",p+1))
+#define DIFFICULTY_ICON_Y( p )	THEME->GetMetricF("ScreenEvaluation",ssprintf("DifficultyIconP%dY",p+1))
 #define GRADE_X( p )			THEME->GetMetricF("ScreenEvaluation",ssprintf("GradeP%dX",p+1))
 #define GRADE_Y					THEME->GetMetricF("ScreenEvaluation","GradeY")
 #define PERCENT_BASE_X( p )		THEME->GetMetricF("ScreenEvaluation",ssprintf("PercentBaseP%dX",p+1))
@@ -186,7 +188,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	switch( m_ResultMode )
 	{
 	case RM_ARCADE_STAGE:
-		m_BannerWithFrame[0].LoadFromSongAndNotes( GAMESTATE->m_pCurSong, GAMESTATE->m_pCurNotes );
+		m_BannerWithFrame[0].LoadFromSong( GAMESTATE->m_pCurSong );
 		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 		this->AddChild( &m_BannerWithFrame[0] );
 
@@ -197,6 +199,15 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
 		this->AddChild( &m_textStage );
 
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;	// skip
+			m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x6") );
+			m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
+			m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
+			this->AddChild( &m_DifficultyIcon[p] );
+		}
 		break;
 	case RM_ARCADE_SUMMARY:
 		{
@@ -623,6 +634,9 @@ void ScreenEvaluation::TweenOnScreen()
 	m_textStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 	m_textStage.SetTweenY( fOriginalY );
 
+	for( p=0; p<NUM_PLAYERS; p++ ) 
+		m_DifficultyIcon[p].FadeOn( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
 		fOriginalY = m_sprJudgeLabels[i].GetY();
@@ -712,6 +726,9 @@ void ScreenEvaluation::TweenOffScreen()
 		m_BannerWithFrame[i].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 	m_textStage.FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
+
+	for( p=0; p<NUM_PLAYERS; p++ ) 
+		m_DifficultyIcon[p].FadeOff( 0, "foldy", MENU_ELEMENTS_TWEEN_TIME );
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{

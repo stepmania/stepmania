@@ -307,8 +307,9 @@ ScreenGameplay::ScreenGameplay()
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_DifficultyBanner[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
-		this->AddChild( &m_DifficultyBanner[p] );
+		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","gameplay difficulty icons 2x6") );
+		m_DifficultyIcon[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
+		this->AddChild( &m_DifficultyIcon[p] );
 	}
 
 
@@ -539,7 +540,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 			ShowOniGameOver((PlayerNumber)p);
 
 
-		m_DifficultyBanner[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
+		m_DifficultyIcon[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
 
 
 		NoteData originalNoteData;
@@ -1448,12 +1449,12 @@ void ScreenGameplay::TweenOnScreen()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		float fOriginalX = m_DifficultyBanner[p].GetX();
-		m_DifficultyBanner[p].SetX( (p==PLAYER_1) ? fOriginalX-200 : fOriginalX+200 );
+		float fOriginalX = m_DifficultyIcon[p].GetX();
+		m_DifficultyIcon[p].SetX( (p==PLAYER_1) ? fOriginalX-200 : fOriginalX+200 );
 		if( !GAMESTATE->m_bDemonstration )
-			m_DifficultyBanner[p].BeginTweening( 0.5f );	// sleep
-		m_DifficultyBanner[p].BeginTweening( 1 );
-		m_DifficultyBanner[p].SetTweenX( fOriginalX );
+			m_DifficultyIcon[p].BeginTweening( 0.5f );	// sleep
+		m_DifficultyIcon[p].BeginTweening( 1 );
+		m_DifficultyIcon[p].SetTweenX( fOriginalX );
 	}
 }
 

@@ -52,8 +52,6 @@ enum Difficulty
 	CLASS_INVALID
 };
 
-D3DXCOLOR DifficultyToColor( Difficulty dc );
-
 CString DifficultyToString( Difficulty dc );
 
 Difficulty StringToDifficulty( CString sDC );

@@ -33,7 +33,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 97;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 99;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -543,6 +543,20 @@ void Song::TidyUpData()
 			m_fLastBeat = fLastBeat;
 		else
 			m_fLastBeat = max( m_fLastBeat, fLastBeat );
+	}
+
+	// challenge notes are encoded as smaniac.  If there is only one Notes for 
+	// a NotesType and it's "smaniac", then convert it to "Challenge"
+	for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
+	{
+		CArray<Notes*,Notes*> apNotes;
+		GetNotesThatMatch( nt, apNotes );
+		if( apNotes.GetSize() == 1 )
+			if( 0 == apNotes[0]->m_sDescription.CompareNoCase("smaniac") )
+			{
+				apNotes[0]->m_sDescription = "Challenge";
+				apNotes[0]->m_Difficulty = DIFFICULTY_HARD;
+			}
 	}
 }
 

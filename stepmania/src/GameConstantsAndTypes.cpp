@@ -15,21 +15,7 @@
 
 #define COLOR_P1		THEME->GetMetricC("Common","ColorP1")
 #define COLOR_P2		THEME->GetMetricC("Common","ColorP2")
-#define COLOR_EASY		THEME->GetMetricC("Common","ColorEasy")
-#define COLOR_MEDIUM	THEME->GetMetricC("Common","ColorMedium")
-#define COLOR_HARD		THEME->GetMetricC("Common","ColorHard")
 
-
-D3DXCOLOR DifficultyToColor( Difficulty dc )
-{
-	switch( dc )
-	{
-	case DIFFICULTY_EASY:	return COLOR_EASY;
-	case DIFFICULTY_MEDIUM:	return COLOR_MEDIUM;
-	case DIFFICULTY_HARD:	return COLOR_HARD;
-	default:	ASSERT(0);	return D3DXCOLOR();	// invalid Difficulty
-	}
-}
 
 CString DifficultyToString( Difficulty dc )
 {

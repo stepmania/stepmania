@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: BannerWithFrame
 
- Desc: bonus meters and max combo number.
+ Desc: show the banner inside a frame.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -13,7 +13,6 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "Banner.h"
-#include "DifficultyIcon.h"
 class Song;
 class Course;
 
@@ -31,5 +30,4 @@ protected:
 
 	Sprite		m_sprBannerFrame;
 	Banner		m_Banner;
-	DifficultyIcon	m_Icon[NUM_PLAYERS];
 };

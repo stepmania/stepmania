@@ -17,7 +17,9 @@
 #include "MenuElements.h"
 
 
-const int NUM_DIFFICULTY_ITEMS = NUM_DIFFICULTIES + 2;	// easy, medium, hard, Oni, Endless
+const int NUM_ITEMS_ON_PAGE_1 = 3;	// easy, medium, hard, 
+const int NUM_ITEMS_ON_PAGE_2 = 2;	// Oni, Endless
+const int NUM_DIFFICULTY_ITEMS = NUM_ITEMS_ON_PAGE_1 + NUM_ITEMS_ON_PAGE_2;
 const int NUM_PAGES = 2;	// easy-medium-hard, Oni
 
 class ScreenSelectDifficulty : public Screen

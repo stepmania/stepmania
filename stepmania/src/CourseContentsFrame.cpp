@@ -66,16 +66,16 @@ void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
 	m_textNumber.SetText( ssprintf("%d", iNum) );
 
 	D3DXCOLOR colorGroup = SONGMAN->GetSongColor( pSong );
-	D3DXCOLOR colorDifficulty = DifficultyToColor( pNotes->m_Difficulty );
+	D3DXCOLOR colorNotes = pNotes->GetColor();
 
 	m_TextBanner.LoadFromSong( pSong );
 	m_TextBanner.SetDiffuse( colorGroup );
 
 	m_textFoot.SetText( "1" );
-	m_textFoot.SetDiffuse( colorDifficulty );
+	m_textFoot.SetDiffuse( colorNotes );
 
 	m_textDifficultyNumber.SetText( ssprintf("%d", pNotes->m_iMeter) );
-	m_textDifficultyNumber.SetDiffuse( colorDifficulty );
+	m_textDifficultyNumber.SetDiffuse( colorNotes );
 }
 
 
