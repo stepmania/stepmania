@@ -26,8 +26,8 @@
 //
 // Old file versions for backward compatibility
 //
-const CString STYLE_XSL		= "Style.xsl";
-const CString STYLE_CSS		= "Style.css";
+const CString STATS_XSL		= "Stats.xsl";
+const CString COMMON_XSL	= "Common.xsl";
 
 #define GUID_SIZE_BYTES 8
 
@@ -670,7 +670,7 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 			xml.AppendChild( SaveCoinDataCreateNode() );
 
 		DISP_OPT opts = optDefault;
-		opts.stylesheet = STYLE_XSL;
+		opts.stylesheet = STATS_XSL;
 		bool bSaved = xml.SaveToFile(fn, &opts);
 		
 		// Update file cache, or else IsAFile in CryptManager won't see this new file.
@@ -1233,8 +1233,9 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 {
 	ASSERT( PROFILEMAN );
 
-	FileCopy( THEME->GetPathO("Profile",STYLE_XSL), sDir+STYLE_XSL );
-	FileCopy( THEME->GetPathO("Profile",STYLE_CSS), sDir+STYLE_CSS );
+	FileCopy( THEME->GetPathO("Profile",STATS_XSL), sDir+STATS_XSL );
+	FileCopy( THEME->GetPathO("Profile",CATALOG_XSL), sDir+CATALOG_XSL );
+	FileCopy( THEME->GetPathO("Profile",COMMON_XSL), sDir+COMMON_XSL );
 	FileCopy( CATALOG_XML_FILE, sDir+CATALOG_XML );
 }
 

@@ -1,0 +1,1875 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<xsl:import href="Common.xsl"/>
+	
+
+	<!-- Main Template -->
+
+	<xsl:template match="/Stats">
+		<xsl:call-template name="MainTemplate">
+			<xsl:with-param name="FullHeader" select="1" />
+			<xsl:with-param name="DocName" select="name()" />
+			<xsl:with-param name="Content">
+				<xsl:call-template name="Instructions" />
+				<xsl:apply-templates select="/Stats/GeneralData" />
+				<xsl:apply-templates mode="Popularity" select="/Stats/SongScores | /Stats/CourseScores" />
+				<xsl:apply-templates mode="TopScores" select="/Stats/SongScores | /Stats/CourseScores"/>
+				<xsl:apply-templates mode="Completeness" select="/Stats/SongScores | /Stats/CourseScores"/>
+				<xsl:apply-templates select="/Stats/ScreenshotData" />
+				<xsl:apply-templates select="/Stats/CalorieData" />
+				<xsl:apply-templates select="/Stats/RecentSongScores" />
+				<xsl:apply-templates select="/Stats/RecentCourseScores" />
+				<xsl:apply-templates select="/Stats/CoinData" />
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+	
+	
+	
+	<!-- Instructions -->
+	
+	<xsl:template name="Instructions">
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				Instructions
+			</xsl:with-param>
+			<xsl:with-param name="text">
+
+				<h2>Overview</h2>
+				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+					<tr>
+						<td>
+							This file contains all your game profile data. Please read the instructions below before modifying or moving any files on your memory card. Modifying files may result in irreversible loss of your data.
+						</td>
+					</tr>
+				</xsl:element>
+				
+				<hr />
+				
+				<h2>Description of Files</h2>
+				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+					<tr>
+						<td><a href="Edits/" target="_new">Edits/</a></td>
+						<td>
+							This directory contains edit step files that you've created yourself or downloaded from the internet.
+							<xsl:call-template name="CollapsibleTextTable">
+								<xsl:with-param name="title">More Info</xsl:with-param>
+								<xsl:with-param name="text">
+									You can place up to 200 .edit files in this directory.  The edit file format is similar to an .sm file, except that it has only two tags: 
+									<br />
+									#SONG:&lt;SongDirectory&gt;;
+									<br />
+									#NOTES:&lt;StepsType&gt;:&lt;Description&gt;:&lt;Difficulty&gt;:&lt;Meter&gt;:&lt;RadarValues&gt;:&lt;NoteData&gt;;
+								</xsl:with-param>
+							</xsl:call-template>
+						</td>
+					</tr>
+					<tr>
+						<td><a href="Screenshots/" target="_new">Screenshots/</a></td>
+						<td>
+							All screenshots that you take are saved in this directory.
+							<xsl:call-template name="CollapsibleTextTable">
+								<xsl:with-param name="title">More Info</xsl:with-param>
+								<xsl:with-param name="text">
+									This directory contains all screenshots that you've captured while playing the game. The Screenshots section of Stats.xml shows thumbnails score details for all screens you've captured. 
+									<br />
+									The MD5 hash for a screenshot file can be used to verify that the screenshot has not been modified since it was first saved.
+									<br />
+									If your memory card is full, you can free space by deleting some of the screenshot .jpg files or moving them to another disk.
+								</xsl:with-param>
+							</xsl:call-template>
+						</td>
+					</tr>
+					<tr>
+						<td>Catalog.xml</td>
+						<td>Contains game data used by Stats.xml.</td>
+					</tr>
+					<tr>
+						<td>DontShare.sig</td>
+						<td>
+							DontShare.sig is a digital signature that's required by the game when it loads your memory card data. This is a secret file that you shouldn't share with anyone else.
+							<xsl:call-template name="CollapsibleTextTable">
+								<xsl:with-param name="title">More Info</xsl:with-param>
+								<xsl:with-param name="text">
+									You can freely share Stats.xml and Stats.xml.sig with other players or submit these files for internet ranking. However, you should always keep DontShare.sig private. 
+									Without the DontShare.sig, another player will not be able to load your saved data and pass it off as their own.
+								</xsl:with-param>
+							</xsl:call-template>
+						</td>
+					</tr>
+					<tr>
+						<td><a href="Editable.ini" target="_new">Editable.ini</a></td>
+						<td>
+							Holds preferences that you can edit using your home computer. You can open this file using any text editor program and save changes.
+						</td>
+					</tr>
+					<tr>
+						<td>Stats.xml</td>
+						<td>You're looking at this file now. It contains all of your saved scores, statistics, and preferences. The game reads this data when you insert your memory card.</td>
+					</tr>
+					<tr>
+						<td>Stats.xml.sig</td>
+						<td>
+							This is the digital signature for Stats.xml.
+							<xsl:call-template name="CollapsibleTextTable">
+								<xsl:with-param name="title">More Info</xsl:with-param>
+								<xsl:with-param name="text">
+									Digital signatures are used to verify that your data hasn't been modified outside of the game. This prevents cheaters from changing their score data and passing it off as real.
+									<br />
+									If any of Stats.xml, Stats.xml.sig, or DontShare.sig have been modified outside of the game, your memory card data will be ignores and overridden after the next save.  It's important that you don't modify any of these three files because doing so will render your data permanently unusable.
+								</xsl:with-param>
+							</xsl:call-template>
+						</td>
+					</tr>
+				</xsl:element>
+				
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+
+
+
+
+	<!-- GeneralData-->
+		
+		
+	<xsl:template match="/Stats/GeneralData">
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				General Data
+			</xsl:with-param>
+			<xsl:with-param name="text">
+
+				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+					<xsl:call-template name="DataTableGenerator">
+						<xsl:with-param name="cols" select="2" />
+						<xsl:with-param name="nodeset" select="*[text() and name() != 'NumExtraStagesPassed' and name() != 'NumExtraStagesFailed' and name() != 'NumToasties'] | Song | Course" />
+					</xsl:call-template>
+				</xsl:element>
+				
+				<hr/>
+				
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Song Count by PlayMode</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+								<xsl:variable name="NumSongsPlayedByPlayMode" select="NumSongsPlayedByPlayMode" />
+								<xsl:for-each select="$Catalog/Types/PlayMode">
+									<xsl:call-template name="PrintVerticalDataRow">
+										<xsl:with-param name="name">
+											<xsl:apply-templates select="." />
+										</xsl:with-param>
+										<xsl:with-param name="value">
+											<xsl:variable name="blah" select="." />
+											<xsl:value-of select="sum($NumSongsPlayedByPlayMode/*[name()=$blah])" />
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:for-each>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+				
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Song Count by Style</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+								<xsl:variable name="NumSongsPlayedByStyle" select="NumSongsPlayedByStyle" />
+								<xsl:for-each select="$Catalog/Types/Style">
+									<xsl:call-template name="PrintVerticalDataRow">
+										<xsl:with-param name="name">
+											<xsl:apply-templates select="." />
+										</xsl:with-param>
+										<xsl:with-param name="value">
+											<xsl:variable name="blah" select="." />
+											<xsl:value-of select="sum($NumSongsPlayedByStyle/*[@Game = $blah/@Game and @Style = $blah/@Style])" />
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:for-each>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+				
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Song Count by Difficulty</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+								<xsl:variable name="NumSongsPlayedByDifficulty" select="NumSongsPlayedByDifficulty" />
+								<xsl:for-each select="$Catalog/Types/Difficulty">
+									<xsl:call-template name="PrintVerticalDataRow">
+										<xsl:with-param name="name">
+											<xsl:apply-templates select="." />
+										</xsl:with-param>
+										<xsl:with-param name="value">
+											<xsl:variable name="blah" select="." />
+											<xsl:value-of select="sum($NumSongsPlayedByDifficulty/*[name()=$blah])" />
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:for-each>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+				
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Song Count by Meter</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+								<xsl:variable name="NumSongsPlayedByMeter" select="NumSongsPlayedByMeter" />
+								<xsl:for-each select="$Catalog/Types/Meter">
+									<xsl:call-template name="PrintVerticalDataRow">
+										<xsl:with-param name="name">
+											<xsl:apply-templates select="." />
+										</xsl:with-param>
+										<xsl:with-param name="value">
+											<xsl:variable name="blah" select="." />
+											<xsl:value-of select="sum($NumSongsPlayedByMeter/*[name()=$blah])" />
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:for-each>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+				
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Passed Count by Grade</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+								<xsl:variable name="NumSongsPassedByGrade" select="NumSongsPassedByGrade" />
+								<xsl:for-each select="$Catalog/Types/Grade">
+									<xsl:call-template name="PrintVerticalDataRow">
+										<xsl:with-param name="name">
+											<xsl:apply-templates select="." />
+										</xsl:with-param>
+										<xsl:with-param name="value">
+											<xsl:variable name="blah" select="." />
+											<xsl:value-of select="sum($NumSongsPassedByGrade/*[name()=$blah])" />
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:for-each>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+				
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Passed Count by PlayMode</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+								<xsl:variable name="NumSongsPassedByPlayMode" select="NumSongsPassedByPlayMode" />
+								<xsl:for-each select="$Catalog/Types/PlayMode">
+									<xsl:call-template name="PrintVerticalDataRow">
+										<xsl:with-param name="name">
+											<xsl:apply-templates select="." />
+										</xsl:with-param>
+										<xsl:with-param name="value">
+											<xsl:variable name="blah" select="." />
+											<xsl:value-of select="sum($NumSongsPassedByPlayMode/*[name()=$blah])" />
+										</xsl:with-param>
+									</xsl:call-template>
+								</xsl:for-each>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+
+			</xsl:with-param>
+		</xsl:call-template>
+					
+	</xsl:template>		
+		
+
+	
+	
+
+	<!-- Popularity -->
+	
+	<xsl:template mode="Popularity" match="/Stats/SongScores | /Stats/CourseScores">
+		<xsl:variable name="Type" select="substring-before(name(),'Scores')" />
+		<xsl:variable name="SubType">
+			<xsl:if test="$Type='Song'">Steps</xsl:if>
+			<xsl:if test="$Type='Course'">Trail</xsl:if>
+		</xsl:variable>
+
+
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				<xsl:value-of select="$Type" /><xsl:text> Popularity</xsl:text>
+			</xsl:with-param>
+			<xsl:with-param name="text">
+
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Ranking</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+						
+								<xsl:variable name="TotalPlays" select="sum(*/*/HighScoreList/NumTimesPlayed)" />
+								<xsl:for-each select="Song | Course">
+									<xsl:sort select="sum(*/HighScoreList/NumTimesPlayed)" data-type="number" order="descending"/>
+								
+									<xsl:call-template name="PrintVerticalDataRow">
+										<xsl:with-param name="rank">
+											<xsl:value-of select="position()"/>
+										</xsl:with-param>
+										<xsl:with-param name="name">
+											<xsl:apply-templates select="@Dir | @Path" />
+										</xsl:with-param>
+										<xsl:with-param name="value">
+											<xsl:call-template name="PrintPercentage" >
+												<xsl:with-param name="cals" select="sum(*/HighScoreList/NumTimesPlayed) div $TotalPlays" />
+											</xsl:call-template>
+										</xsl:with-param>
+									</xsl:call-template>
+
+								</xsl:for-each>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+			
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">Unplayed</xsl:with-param>
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintVerticalDataTable">
+							<xsl:with-param name="text">
+
+								<xsl:for-each select="$Catalog/*/*[name(.)=$Type]">
+								<xsl:sort select="sum(*/HighScoreList/NumTimesPlayed)" data-type="number" order="descending"/>
+									<xsl:variable name="Dir" select="@Dir" />
+									<xsl:variable name="Path" select="@Path" />
+									<xsl:variable name="NumPlays" select="sum(/Stats/*/*[@Dir=$Dir or @Path=$Path]/*/HighScoreList/NumTimesPlayed)" />
+									<xsl:if test="$NumPlays = 0">
+										<xsl:call-template name="PrintVerticalDataRow">
+											<xsl:with-param name="name">
+												<xsl:apply-templates select="@Dir | @Path"/>
+											</xsl:with-param>
+										</xsl:call-template>
+									</xsl:if>
+								</xsl:for-each>
+								
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+			
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title"><xsl:value-of select="$SubType" /> Ranking</xsl:with-param>
+					<xsl:with-param name="text">
+
+						<xsl:variable name="SubTypes" select="*/*" />
+					
+						<xsl:for-each select="$Catalog/Types/StepsType">
+							<xsl:variable name="StepsType" select="." />
+							<xsl:variable name="TotalPlays" select="sum($SubTypes[@StepsType=$StepsType]/HighScoreList/NumTimesPlayed)" />
+					
+							<xsl:call-template name="CollapsibleSubSection">
+								<xsl:with-param name="title">
+									<xsl:apply-templates select="$StepsType" />
+								</xsl:with-param>
+								<xsl:with-param name="text">
+									<xsl:element name="table" use-attribute-sets="DataTableAttr">
+										<xsl:for-each select="$SubTypes[@StepsType=$StepsType]">
+										<xsl:sort select="sum(HighScoreList/NumTimesPlayed)" data-type="number" order="descending"/>
+											<xsl:variable name="Dir" select="../@Dir" />
+											<xsl:variable name="Path" select="../@Path" />
+											<xsl:text> </xsl:text>
+											<tr>
+												<td>
+													<xsl:value-of select="position()" />
+												</td>
+												<td>
+													<xsl:apply-templates select="../@Dir | ../@Path" />
+												</td>
+												<td>
+													<xsl:apply-templates select="@Difficulty | @CourseDifficulty" />
+												</td>
+												<td>
+													<span class="dyndata">
+														<xsl:call-template name="PrintPercentage" >
+															<xsl:with-param name="cals" select="sum(HighScoreList/NumTimesPlayed) div $TotalPlays" />
+														</xsl:call-template>
+													</span>	
+												</td>
+											</tr>
+										</xsl:for-each>
+									</xsl:element>
+								</xsl:with-param>
+							</xsl:call-template>
+							
+						</xsl:for-each>
+						
+					</xsl:with-param>
+				</xsl:call-template>
+				
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+	
+	
+
+	
+	<!-- TopScores for SongScores and CourseScores -->
+	
+	<xsl:template mode="TopScores" match="/Stats/SongScores | /Stats/CourseScores">
+		<xsl:variable name="Type" select="substring-before(name(),'Scores')" />
+		<xsl:variable name="SubType">
+			<xsl:if test="$Type='Song'">Steps</xsl:if>
+			<xsl:if test="$Type='Course'">Trail</xsl:if>
+		</xsl:variable>
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				<xsl:value-of select="$Type" /> Top Scores
+			</xsl:with-param>
+			<xsl:with-param name="text">
+				<xsl:apply-templates mode="TopScores" select="Song | Course" />
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>		
+
+	<xsl:template match="Song | Course">
+		<xsl:variable name="Dir" select="@Dir" />
+		<xsl:variable name="Path" select="@Path" />
+		<xsl:variable name="MainTitle" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/MainTitle" />
+		<xsl:variable name="SubTitle" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/SubTitle" />
+		<xsl:value-of select="$MainTitle | $SubTitle" />
+	</xsl:template>		
+	
+	<xsl:template mode="TopScores" match="Song | Course">
+		<xsl:variable name="Dir" select="@Dir" />
+		<xsl:variable name="Path" select="@Path" />
+		<xsl:variable name="MainTitle" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/MainTitle" />
+		<xsl:variable name="SubTitle" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/SubTitle" />
+		<xsl:call-template name="CollapsibleSubSection">
+			<xsl:with-param name="title">
+				<xsl:apply-templates select="@Dir | @Path" />
+			</xsl:with-param>
+			<xsl:with-param name="text">
+				<xsl:apply-templates select="Steps | Trail" />
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>		
+	
+	<xsl:template match="Steps | Trail">
+		<xsl:call-template name="CollapsibleSubSection">
+			<xsl:with-param name="title">
+				<xsl:apply-templates select="." mode="AttributeTitleGenerator" />
+			</xsl:with-param>
+			<xsl:with-param name="text">
+				<xsl:apply-templates select="HighScoreList" />
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>		
+
+	
+	<xsl:template match="HighScoreList">
+		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+			<xsl:call-template name="DataTableGenerator">
+				<xsl:with-param name="cols" select="2" />
+				<xsl:with-param name="nodeset" select="*[text()]" />
+			</xsl:call-template>
+		</xsl:element>
+		<xsl:apply-templates select="HighScore" />
+	</xsl:template>		
+
+	<xsl:template match="HighScore">
+		<xsl:call-template name="CollapsibleSubSection">
+			<xsl:with-param name="title">
+				<xsl:apply-templates select="PercentDP"/><xsl:text> </xsl:text><xsl:apply-templates select="Grade"/><xsl:text> </xsl:text><xsl:value-of select="Name"/>
+			</xsl:with-param>
+			<xsl:with-param name="text">
+				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+					<xsl:call-template name="DataTableGenerator">
+						<xsl:with-param name="cols" select="2" />
+						<xsl:with-param name="nodeset" select="*[text()]" />
+					</xsl:call-template>
+				</xsl:element>
+
+				<xsl:call-template name="CollapsibleSubSection">
+					<xsl:with-param name="title">
+						Details
+					</xsl:with-param>
+					<xsl:with-param name="text">
+
+						<xsl:for-each select="./*[count(*) &gt; 0]">
+							<h2>
+								<xsl:if test="name()='TapNoteScores'">Tap Scores</xsl:if>
+								<xsl:if test="name()='HoldNoteScores'">Hold Scores</xsl:if>
+								<xsl:if test="name()='RadarValues'">Stats</xsl:if>
+							</h2>
+							<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+								<xsl:call-template name="DataTableGenerator">
+									<xsl:with-param name="cols" select="2" />
+									<xsl:with-param name="nodeset" select="*[text()]" />
+								</xsl:call-template>
+							</xsl:element>
+							<xsl:if test="position()!=last()">
+								<hr />
+							</xsl:if>
+						</xsl:for-each>
+
+					</xsl:with-param>
+				</xsl:call-template>		
+			</xsl:with-param>
+		</xsl:call-template>		
+	</xsl:template>		
+
+	
+	
+
+	<!-- Completeness -->
+	
+	<xsl:template mode="Completeness" match="/Stats/SongScores | /Stats/CourseScores">
+		<xsl:variable name="ScoresName" select="translate(name(), ' ', ' ')" />
+		<xsl:variable name="Type" select="substring-before(name(),'Scores')" />
+		<xsl:variable name="SubType">
+			<xsl:if test="$Type='Song'">Steps</xsl:if>
+			<xsl:if test="$Type='Course'">Trail</xsl:if>
+		</xsl:variable>
+		<xsl:variable name="DifficultyName">
+			<xsl:if test="$Type = 'Song'">Difficulty</xsl:if>
+			<xsl:if test="$Type = 'Course'">CourseDifficulty</xsl:if>
+		</xsl:variable>
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				<xsl:value-of select="$Type" /> Completeness
+			</xsl:with-param>
+			<xsl:with-param name="text">
+
+				<xsl:for-each select="$Catalog/Types/StepsType">
+					<xsl:variable name="StepsType" select="." />
+
+					<xsl:call-template name="CollapsibleSubSection">
+						<xsl:with-param name="title">
+							<xsl:value-of select="$StepsType" />
+						</xsl:with-param>
+						<xsl:with-param name="text">
+
+
+							<xsl:variable name="ActualO" select="sum(/Stats/*/*[name()=$ScoresName]/*/*[@StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+							<xsl:variable name="PossibleO" select="count($Catalog/*/*[name()=$Type]/*[@StepsType=$StepsType])" />
+							
+
+							<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+								<tr>
+									<td>
+										<xsl:if test="$PossibleO = 0">
+											<xsl:call-template name="PrintPercentage">
+												<xsl:with-param name="cals" select="0" />
+											</xsl:call-template>
+										</xsl:if>
+										<xsl:if test="$PossibleO != 0">
+											<font size="+2">
+												<xsl:call-template name="PrintPercentage">
+													<xsl:with-param name="cals" select="$ActualO div $PossibleO" />
+												</xsl:call-template>
+											</font>
+										</xsl:if>
+									</td>
+								</tr>
+							</xsl:element>
+							
+							
+							<hr />
+
+
+
+							<h2>Breakdown</h2>
+
+							<table>
+
+								<tr>
+									<td> </td>
+									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
+										<xsl:variable name="Difficulty" select="." />
+										<td>
+											<xsl:apply-templates select="$Difficulty"/>
+										</td>
+									</xsl:for-each>
+								</tr>
+								
+								<tr>
+									<td>Actual</td>
+									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
+										<xsl:variable name="Difficulty" select="." />
+										<xsl:variable name="Actual" select="sum(/Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+										<xsl:variable name="Possible" select="count($Catalog/*/*[name()=$Type]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType])" />
+										
+										<td>
+											<span class="dyndata">
+												<xsl:call-template name="PrintCalories">
+													<xsl:with-param name="cals" select="$Actual" />
+												</xsl:call-template>
+											</span>
+										</td>
+										
+									</xsl:for-each>
+								</tr>
+
+								<tr>
+									<td>Possible</td>
+									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
+										<xsl:variable name="Difficulty" select="." />
+										<xsl:variable name="Actual" select="sum(/Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+										<xsl:variable name="Possible" select="count($Catalog/*/*[name()=$Type]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType])" />
+										
+										<td>
+											<span class="dyndata">
+												<xsl:call-template name="PrintCalories">
+													<xsl:with-param name="cals" select="$Possible" />
+												</xsl:call-template>
+											</span>
+										</td>
+										
+									</xsl:for-each>
+								</tr>
+
+								<tr>
+									<td>Percentage</td>
+									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
+										<xsl:variable name="Difficulty" select="." />
+										<xsl:variable name="Actual" select="sum(/Stats/*[name()=$ScoresName]/*/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]/HighScoreList/HighScore[1]/PercentDP)" />
+										<xsl:variable name="Possible" select="count($Catalog/*/*[name()=$Type]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType])" />
+										
+										<td>
+											<span class="dyndata">
+												<xsl:if test="$Possible = 0">
+													<xsl:call-template name="PrintPercentage">
+														<xsl:with-param name="cals" select="0" />
+													</xsl:call-template>
+												</xsl:if>
+												<xsl:if test="$Possible != 0">
+													<xsl:call-template name="PrintPercentage">
+														<xsl:with-param name="cals" select="$Actual div $Possible" />
+													</xsl:call-template>
+												</xsl:if>
+											</span>
+										</td>
+										
+									</xsl:for-each>
+								</tr>
+
+							</table>
+
+
+							<hr />
+
+
+
+
+
+
+
+
+
+							<table>
+
+								<tr>
+									<td> </td>
+									<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
+										<xsl:variable name="Difficulty" select="." />
+										<td><xsl:apply-templates select="$Difficulty"/></td>
+									</xsl:for-each>
+								</tr>
+																
+								<xsl:for-each select="$Catalog/*/*[name()=$Type]">
+									<xsl:variable name="Dir" select="@Dir" />
+									<xsl:variable name="Path" select="@Path" />
+									<tr>
+										<td><xsl:apply-templates select="@Dir | @Path"/></td>
+										<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]">
+											<xsl:variable name="Difficulty" select="." />
+											<xsl:variable name="StatsSong" select="/Stats/*/*[@Dir=$Dir or @Path=$Path]/Steps[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
+											<xsl:variable name="CatalogSong" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
+											<td>
+												<xsl:if test="count($CatalogSong) &gt; 0">
+													<xsl:apply-templates select="$CatalogSong/Meter"/>
+													<xsl:text> </xsl:text>
+													<span class="dyndata">
+														<xsl:apply-templates select="$StatsSong/HighScoreList/HighScore[1]/PercentDP" />
+													</span>
+												</xsl:if>
+											</td>
+										</xsl:for-each>
+									</tr>
+								</xsl:for-each>
+								
+							</table>
+				
+						</xsl:with-param>
+					</xsl:call-template>		
+				</xsl:for-each>
+			</xsl:with-param>
+		</xsl:call-template>		
+	</xsl:template>
+	
+	
+
+
+	<!-- RecentSongScores and RecentCourseScores -->
+	
+	<xsl:template match="/Stats/RecentSongScores | /Stats/RecentCourseScores">
+		<xsl:variable name="Type" select="substring-after(substring-before(name(),'Scores'),'Recent')" />
+		
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				<xsl:value-of select="$Type" /> Recent Scores
+			</xsl:with-param>
+			<xsl:with-param name="text">
+				<xsl:for-each select="HighScoreForASongAndSteps | HighScoreForACourseAndTrail">
+					<xsl:sort select="./*/HighScore/DateTime" order="descending" />
+					<xsl:apply-templates select="." />
+					<xsl:if test="position() != last()">
+						<hr />
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:with-param>
+		</xsl:call-template>
+
+	</xsl:template>		
+	
+	
+	<xsl:template match="HighScoreForASongAndSteps | HighScoreForACourseAndTrail">
+		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+			<tr>
+				<td>
+					<xsl:apply-templates select="*/@Dir | */@Path" />
+				</td>
+				<td>
+					<xsl:apply-templates select="*/@StepsType" />
+				</td>
+				<td>
+					<xsl:apply-templates select="*/@Difficulty | */@CourseDifficulty" />
+				</td>
+			</tr>
+		</xsl:element>
+		<xsl:apply-templates select="HighScore" />
+	</xsl:template>		
+	
+
+
+
+
+	
+	<!-- ScreenshotData -->
+		
+		
+	<xsl:template match="/Stats/ScreenshotData">
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				Screenshots
+			</xsl:with-param>
+			<xsl:with-param name="text">
+				<xsl:for-each select="Screenshot">
+					<xsl:sort select="HighScore/DateTime" order="descending" />
+					<xsl:apply-templates select="." />
+				</xsl:for-each>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>		
+	
+	<xsl:template match="Screenshot">
+		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+			<tr>
+				<td style="background: #F4F6F7;">
+					<a>
+						<xsl:attribute name="href"><xsl:value-of select="concat('Screenshots/',FileName)" /></xsl:attribute>
+						<xsl:attribute name="target">_new</xsl:attribute>
+						<img>
+							<xsl:attribute name="src"><xsl:value-of select="concat('Screenshots/',FileName)" /></xsl:attribute>
+							<xsl:attribute name="width">160</xsl:attribute>
+							<xsl:attribute name="height">120</xsl:attribute>
+							<xsl:attribute name="style">border-width: 0</xsl:attribute>
+						</img>
+					</a>
+				</td>
+				<td style="background: #F4F6F7;">
+					<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+						<xsl:call-template name="DataTableGenerator">
+							<xsl:with-param name="cols" select="2" />
+							<xsl:with-param name="nodeset" select="*[text()]" />
+						</xsl:call-template>
+					</xsl:element>
+					<xsl:apply-templates select="HighScore" />
+				</td>
+			</tr>
+		</xsl:element>
+	</xsl:template>		
+	
+
+	
+	<!-- CoinData -->
+		
+		
+	<xsl:template match="/Stats/CoinData">
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				Coin Counts
+			</xsl:with-param>
+			<xsl:with-param name="text">
+			
+				<xsl:for-each select="*">
+				
+					<xsl:call-template name="CollapsibleTopSection">
+						<xsl:with-param name="title">
+							<xsl:value-of select="name()" />
+						</xsl:with-param>
+						<xsl:with-param name="text">
+						
+				
+							<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+								<xsl:call-template name="DataTableGenerator">
+									<xsl:with-param name="cols" select="2" />
+									<xsl:with-param name="nodeset" select="./*[text()]" />
+								</xsl:call-template>
+							</xsl:element>
+					
+						</xsl:with-param>
+					</xsl:call-template>
+							
+				</xsl:for-each>
+			
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>		
+	
+	<xsl:template match="Screenshot">
+		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+			<tr>
+				<td style="background: #F4F6F7;">
+					<a>
+						<xsl:attribute name="href"><xsl:value-of select="concat('Screenshots/',FileName)" /></xsl:attribute>
+						<xsl:attribute name="target">_new</xsl:attribute>
+						<img>
+							<xsl:attribute name="src"><xsl:value-of select="concat('Screenshots/',FileName)" /></xsl:attribute>
+							<xsl:attribute name="width">160</xsl:attribute>
+							<xsl:attribute name="height">120</xsl:attribute>
+							<xsl:attribute name="style">border-width: 0</xsl:attribute>
+						</img>
+					</a>
+				</td>
+				<td style="background: #F4F6F7;">
+					<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+						<xsl:call-template name="DataTableGenerator">
+							<xsl:with-param name="cols" select="2" />
+							<xsl:with-param name="nodeset" select="*[text()]" />
+						</xsl:call-template>
+					</xsl:element>
+					<xsl:apply-templates select="HighScore" />
+				</td>
+			</tr>
+		</xsl:element>
+	</xsl:template>		
+	
+
+	
+	<!-- CalorieData -->
+		
+		
+	<xsl:template match="/Stats/CalorieData">
+
+		<xsl:call-template name="CollapsibleTopSection">
+			<xsl:with-param name="title">
+				Calories
+			</xsl:with-param>
+			<xsl:with-param name="text">
+
+				<xsl:variable name="Cals" select="../GeneralData/TotalCaloriesBurned" />
+				<xsl:variable name="NumSongs" select="sum(../GeneralData/NumSongsPlayedByPlayMode/*)" />
+				<xsl:variable name="GameplaySeconds" select="../GeneralData/TotalGameplaySeconds" />
+
+				<xsl:call-template name="PrintHorizontalDataTable">
+					<xsl:with-param name="text">
+						<xsl:call-template name="PrintHorizontalDataCell">
+							<xsl:with-param name="name">All time</xsl:with-param>
+							<xsl:with-param name="value">
+								<xsl:call-template name="PrintCalories">
+									<xsl:with-param name="cals" select="$Cals" />
+								</xsl:call-template>
+							</xsl:with-param>
+						</xsl:call-template>
+						<xsl:call-template name="PrintHorizontalDataCell">
+							<xsl:with-param name="name">Per Song</xsl:with-param>
+							<xsl:with-param name="value">
+								<xsl:call-template name="PrintCalories">
+									<xsl:with-param name="cals" select="$Cals div $NumSongs" />
+								</xsl:call-template>
+							</xsl:with-param>
+						</xsl:call-template>
+						<xsl:call-template name="PrintHorizontalDataCell">
+							<xsl:with-param name="name">Per Minute of Gameplay</xsl:with-param>
+							<xsl:with-param name="value">
+								<xsl:call-template name="PrintCalories">
+									<xsl:with-param name="cals" select="$Cals div ($GameplaySeconds div 60)" />
+								</xsl:call-template>
+							</xsl:with-param>
+						</xsl:call-template>
+					</xsl:with-param>
+				</xsl:call-template>
+				
+				<hr/>
+
+				<h2>By Week</h2>
+				<xsl:variable name="firstDateJulian">
+					<xsl:call-template name="calculate-julian-day2">
+						<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[1]/@Date" />
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:variable name="lastDateJulian">
+					<xsl:call-template name="calculate-julian-day2">
+						<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:variable name="lastDateDayOfWeek">
+					<xsl:call-template name="calculate-day-of-the-week2">
+						<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:variable name="lastDateJulianRoundedToWeek" select="$lastDateJulian - $lastDateDayOfWeek" />
+				<table>
+					<tr>
+						<td></td>
+						<td>Sun</td>
+						<td>Mon</td>
+						<td>Tue</td>
+						<td>Wed</td>
+						<td>Thu</td>
+						<td>Fri</td>
+						<td>Sat</td>
+					</tr>	
+					<xsl:call-template name="PrintWeeksRecursive">
+						<xsl:with-param name="beginDayJulian" select="$lastDateJulianRoundedToWeek" />
+						<xsl:with-param name="stopDayJulian" select="$firstDateJulian" />
+					</xsl:call-template>
+				</table>
+
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>		
+	
+	
+	<xsl:template name="PrintWeeksRecursive">
+	    <xsl:param name="beginDayJulian" />
+	    <xsl:param name="stopDayJulian" />
+	    <xsl:variable name="endDayJulian" select="$beginDayJulian+6" />
+	    <td>
+			Week of 
+			<xsl:call-template name="format-julian-day">
+				<xsl:with-param name="julian-day" select="$beginDayJulian" />
+			</xsl:call-template>
+		</td>
+	    <td>
+	        <xsl:call-template name="CaloriesForJulianDay">
+				<xsl:with-param name="dayJulian" select="$beginDayJulian+0" />
+			</xsl:call-template>
+		</td>
+	    <td>
+	        <xsl:call-template name="CaloriesForJulianDay">
+				<xsl:with-param name="dayJulian" select="$beginDayJulian+1" />
+			</xsl:call-template>
+		</td>
+	    <td>
+	        <xsl:call-template name="CaloriesForJulianDay">
+				<xsl:with-param name="dayJulian" select="$beginDayJulian+2" />
+			</xsl:call-template>
+		</td>
+	    <td>
+	        <xsl:call-template name="CaloriesForJulianDay">
+				<xsl:with-param name="dayJulian" select="$beginDayJulian+3" />
+			</xsl:call-template>
+		</td>
+	    <td>
+	        <xsl:call-template name="CaloriesForJulianDay">
+				<xsl:with-param name="dayJulian" select="$beginDayJulian+4" />
+			</xsl:call-template>
+		</td>
+	    <td>
+	        <xsl:call-template name="CaloriesForJulianDay">
+				<xsl:with-param name="dayJulian" select="$beginDayJulian+5" />
+			</xsl:call-template>
+		</td>
+	    <td>
+	        <xsl:call-template name="CaloriesForJulianDay">
+				<xsl:with-param name="dayJulian" select="$beginDayJulian+6" />
+			</xsl:call-template>
+		</td>
+		<xsl:if test="$beginDayJulian &gt; $stopDayJulian">
+			<xsl:variable name="nextBeginDayJulian" select="$beginDayJulian - 7" />
+	        <xsl:call-template name="PrintWeeksRecursive">
+				<xsl:with-param name="beginDayJulian" select="$nextBeginDayJulian" />
+				<xsl:with-param name="stopDayJulian" select="$stopDayJulian" />
+			</xsl:call-template>
+	    </xsl:if>
+	</xsl:template>
+	
+	<xsl:template name="CaloriesForJulianDay">
+	    <xsl:param name="dayJulian" />
+		<xsl:variable name="date">
+			<xsl:call-template name="format-julian-day">
+				<xsl:with-param name="julian-day" select="$dayJulian" />
+			</xsl:call-template>
+		</xsl:variable>
+	    <xsl:variable name="cals" select="/Stats/CalorieData/CaloriesBurned[@Date=$date]" />
+	    <xsl:if test="$cals">
+			<xsl:call-template name="PrintCalories">
+				<xsl:with-param name="cals" select="$cals" />
+			</xsl:call-template>
+	    </xsl:if>
+	</xsl:template>
+	
+	
+	<xsl:template name="calculate-julian-day2">
+	    <xsl:param name="date"/><!--2004-04-20-->
+
+		<xsl:variable name="year"><!--2004-->
+			<xsl:value-of select="substring-before($date,'-')"/>
+		</xsl:variable>	
+		<xsl:variable name="month-day"><!--04-20-->
+			<xsl:value-of select="substring-after($date,'-')"/>
+		</xsl:variable>
+		<xsl:variable name="month"><!--04-->
+			<xsl:value-of select="substring-before($month-day,'-')"/>
+		</xsl:variable>
+		<xsl:variable name="day"><!--20-->
+			<xsl:value-of select="substring-after($month-day,'-')"/>
+		</xsl:variable>
+		
+		<xsl:call-template name="calculate-julian-day">
+			<xsl:with-param name="year" select="$year"/>
+			<xsl:with-param name="month" select="$month"/>
+			<xsl:with-param name="day" select="$day"/>
+		</xsl:call-template>
+		
+	</xsl:template>
+		
+	<xsl:template name="calculate-julian-day">
+		<xsl:param name="year" /><!--2004-->
+		<xsl:param name="month" /><!--04-->
+		<xsl:param name="day" /><!--20-->
+		
+		<xsl:variable name="a" select="floor((14 - $month) div 12)"/>
+		<xsl:variable name="y" select="$year + 4800 - $a"/>
+		<xsl:variable name="m" select="$month + 12 * $a - 3"/>
+		<xsl:value-of select="$day + floor((153 * $m + 2) div 5) + $y * 365 + floor($y div 4) - floor($y div 100) + floor($y div 400) - 32045"/>
+	</xsl:template>
+
+	<xsl:template name="format-julian-day">
+		<xsl:param name="julian-day"/>
+		<xsl:param name="format" select="'%Y-%m-%d'"/>
+
+		<xsl:variable name="a" select="$julian-day + 32044"/>
+		<xsl:variable name="b" select="floor((4 * $a + 3) div 146097)"/>
+		<xsl:variable name="c" select="$a - floor(($b * 146097) div 4)"/>
+
+		<xsl:variable name="d" select="floor((4 * $c + 3) div 1461)"/>
+		<xsl:variable name="e" select="$c - floor((1461 * $d) div 4)"/>
+		<xsl:variable name="m" select="floor((5 * $e + 2) div 153)"/>
+
+		<xsl:variable name="day" select="$e - floor((153 * $m + 2) div 5) + 1"/>
+		<xsl:variable name="month" select="$m + 3 - 12 * floor($m div 10)"/>
+		<xsl:variable name="year" select="$b * 100 + $d - 4800 + floor($m div 10)"/>
+
+		<xsl:call-template name="format-date-time">
+			<xsl:with-param name="year" select="$year"/>
+			<xsl:with-param name="month" select="$month"/>
+			<xsl:with-param name="day" select="$day"/>
+			<xsl:with-param name="format" select="$format"/>
+		</xsl:call-template>
+		
+	</xsl:template>
+	
+
+	
+  <xsl:template name="calculate-day-of-the-week">
+    <xsl:param name="year"/>
+    <xsl:param name="month"/>
+    <xsl:param name="day"/>
+
+    <xsl:variable name="a" select="floor((14 - $month) div 12)"/>
+    <xsl:variable name="y" select="$year - $a"/>
+    <xsl:variable name="m" select="$month + 12 * $a - 2"/>
+
+    <xsl:value-of select="($day + $y + floor($y div 4) - floor($y div 100) + floor($y div 400) + floor((31 * $m) div 12)) mod 7"/>
+
+  </xsl:template>
+
+
+  <xsl:template name="calculate-day-of-the-week2">
+	<xsl:param name="date"/><!--2004-04-20-->
+	
+	<xsl:variable name="month-day"><!--04-20-->
+		<xsl:value-of select="substring-after($date,'-')"/>
+	</xsl:variable>
+	<xsl:variable name="month"><!--04-->
+		<xsl:value-of select="substring-before($month-day,'-')"/>
+	</xsl:variable>
+	<xsl:variable name="day"><!--20-->
+		<xsl:value-of select="substring-after($month-day,'-')"/>
+	</xsl:variable>
+	<xsl:variable name="year"><!--2004-->
+		<xsl:value-of select="substring-before($date,'-')"/>
+	</xsl:variable>	
+
+    <xsl:variable name="a" select="floor((14 - $month) div 12)"/>
+    <xsl:variable name="y" select="$year - $a"/>
+    <xsl:variable name="m" select="$month + 12 * $a - 2"/>
+
+    <xsl:value-of select="($day + $y + floor($y div 4) - floor($y div 100) + floor($y div 400) + floor((31 * $m) div 12)) mod 7"/>
+
+  </xsl:template>
+
+
+
+  <xsl:template name="get-day-of-the-week-name">
+    <xsl:param name="day-of-the-week"/>
+
+    <xsl:choose>
+      <xsl:when test="$day-of-the-week = 0">Sunday</xsl:when>
+      <xsl:when test="$day-of-the-week = 1">Monday</xsl:when>
+      <xsl:when test="$day-of-the-week = 2">Tuesday</xsl:when>
+      <xsl:when test="$day-of-the-week = 3">Wednesday</xsl:when>
+      <xsl:when test="$day-of-the-week = 4">Thursday</xsl:when>
+      <xsl:when test="$day-of-the-week = 5">Friday</xsl:when>
+      <xsl:when test="$day-of-the-week = 6">Saturday</xsl:when>
+      <xsl:otherwise>error: <xsl:value-of select="$day-of-the-week"/></xsl:otherwise>
+    </xsl:choose>
+
+  </xsl:template>
+
+
+
+  <xsl:template name="get-day-of-the-week-abbreviation">
+    <xsl:param name="day-of-the-week"/>
+
+    <xsl:choose>
+      <xsl:when test="$day-of-the-week = 0">Sun</xsl:when>
+      <xsl:when test="$day-of-the-week = 1">Mon</xsl:when>
+      <xsl:when test="$day-of-the-week = 2">Tue</xsl:when>
+      <xsl:when test="$day-of-the-week = 3">Wed</xsl:when>
+      <xsl:when test="$day-of-the-week = 4">Thu</xsl:when>
+      <xsl:when test="$day-of-the-week = 5">Fri</xsl:when>
+      <xsl:when test="$day-of-the-week = 6">Sat</xsl:when>
+      <xsl:otherwise>error: <xsl:value-of select="$day-of-the-week"/></xsl:otherwise>
+    </xsl:choose>
+
+  </xsl:template>
+
+
+
+  <xsl:template name="get-month-abbreviation">
+    <xsl:param name="month"/>
+
+    <xsl:choose>
+      <xsl:when test="$month = 1">Jan</xsl:when>
+      <xsl:when test="$month = 2">Feb</xsl:when>
+      <xsl:when test="$month = 3">Mar</xsl:when>
+      <xsl:when test="$month = 4">Apr</xsl:when>
+      <xsl:when test="$month = 5">May</xsl:when>
+      <xsl:when test="$month = 6">Jun</xsl:when>
+      <xsl:when test="$month = 7">Jul</xsl:when>
+      <xsl:when test="$month = 8">Aug</xsl:when>
+      <xsl:when test="$month = 9">Sep</xsl:when>
+      <xsl:when test="$month = 10">Oct</xsl:when>
+      <xsl:when test="$month = 11">Nov</xsl:when>
+      <xsl:when test="$month = 12">Dec</xsl:when>
+      <xsl:otherwise>error: <xsl:value-of select="$month"/></xsl:otherwise>
+    </xsl:choose>
+
+  </xsl:template>
+
+
+
+  <xsl:template name="get-month-name">
+    <xsl:param name="month"/>
+
+    <xsl:choose>
+      <xsl:when test="$month = 1">January</xsl:when>
+      <xsl:when test="$month = 2">February</xsl:when>
+      <xsl:when test="$month = 3">March</xsl:when>
+      <xsl:when test="$month = 4">April</xsl:when>
+      <xsl:when test="$month = 5">May</xsl:when>
+      <xsl:when test="$month = 6">June</xsl:when>
+      <xsl:when test="$month = 7">July</xsl:when>
+      <xsl:when test="$month = 8">August</xsl:when>
+      <xsl:when test="$month = 9">September</xsl:when>
+      <xsl:when test="$month = 10">October</xsl:when>
+      <xsl:when test="$month = 11">November</xsl:when>
+      <xsl:when test="$month = 12">December</xsl:when>
+      <xsl:otherwise>error: <xsl:value-of select="$month"/></xsl:otherwise>
+    </xsl:choose>
+
+  </xsl:template>
+
+
+
+  <xsl:template name="calculate-week-number">
+    <xsl:param name="year"/>
+    <xsl:param name="month"/>
+    <xsl:param name="day"/>
+
+    <xsl:variable name="J">
+      <xsl:call-template name="calculate-julian-day">
+        <xsl:with-param name="year" select="$year"/>
+        <xsl:with-param name="month" select="$month"/>
+        <xsl:with-param name="day" select="$day"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="d4" select="($J + 31741 - ($J mod 7)) mod 146097 mod 36524 mod 1461"/>
+    <xsl:variable name="L" select="floor($d4 div 1460)"/>
+    <xsl:variable name="d1" select="(($d4 - $L) mod 365) + $L"/>
+
+    <xsl:value-of select="floor($d1 div 7) + 1"/>
+
+  </xsl:template>
+
+
+
+  <xsl:template name="format-date-time">
+    <xsl:param name="year"/>
+    <xsl:param name="month"/>
+    <xsl:param name="day"/>
+    <xsl:param name="hour"/>
+    <xsl:param name="minute"/>
+    <xsl:param name="second"/>
+    <xsl:param name="time-zone"/>
+    <xsl:param name="format" select="'%Y-%m-%dT%H:%M:%S%z'"/>
+
+    <xsl:value-of select="substring-before($format, '%')"/>
+
+    <xsl:variable name="code" select="substring(substring-after($format, '%'), 1, 1)"/>
+
+    <xsl:choose>
+
+      <!-- Abbreviated weekday name -->
+      <xsl:when test="$code='a'">
+        <xsl:variable name="day-of-the-week">
+          <xsl:call-template name="calculate-day-of-the-week">
+            <xsl:with-param name="year" select="$year"/>
+            <xsl:with-param name="month" select="$month"/>
+            <xsl:with-param name="day" select="$day"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:call-template name="get-day-of-the-week-abbreviation">
+          <xsl:with-param name="day-of-the-week" select="$day-of-the-week"/>
+        </xsl:call-template>
+      </xsl:when>
+
+      <!-- Full weekday name -->
+      <xsl:when test="$code='A'">
+        <xsl:variable name="day-of-the-week">
+          <xsl:call-template name="calculate-day-of-the-week">
+            <xsl:with-param name="year" select="$year"/>
+            <xsl:with-param name="month" select="$month"/>
+            <xsl:with-param name="day" select="$day"/>
+          </xsl:call-template>
+        </xsl:variable>
+        <xsl:call-template name="get-day-of-the-week-name">
+          <xsl:with-param name="day-of-the-week" select="$day-of-the-week"/>
+        </xsl:call-template>
+      </xsl:when>
+
+      <!-- Abbreviated month name -->
+      <xsl:when test="$code='b'">
+        <xsl:call-template name="get-month-abbreviation">
+          <xsl:with-param name="month" select="$month"/>
+        </xsl:call-template>
+      </xsl:when>
+
+      <!-- Full month name -->
+      <xsl:when test="$code='B'">
+        <xsl:call-template name="get-month-name">
+          <xsl:with-param name="month" select="$month"/>
+        </xsl:call-template>
+      </xsl:when>
+
+      <!-- Date and time representation appropriate for locale -->
+      <xsl:when test="$code='c'">
+        <xsl:text>[not implemented]</xsl:text>
+      </xsl:when>
+
+      <!-- Day of month as decimal number (01 - 31) -->
+      <xsl:when test="$code='d'">
+        <xsl:if test="$day &lt; 10">0</xsl:if>
+        <xsl:value-of select="number($day)"/>
+      </xsl:when>
+
+      <!-- Hour in 24-hour format (00 - 23) -->
+      <xsl:when test="$code='H'">
+        <xsl:if test="$hour &lt; 10">0</xsl:if>
+        <xsl:value-of select="number($hour)"/>
+      </xsl:when>
+
+      <!-- Hour in 12-hour format (01 - 12) -->
+      <xsl:when test="$code='I'">
+        <xsl:choose>
+          <xsl:when test="$hour = 0">12</xsl:when>
+          <xsl:when test="$hour &lt; 10">0<xsl:value-of select="$hour - 0"/></xsl:when>
+          <xsl:when test="$hour &lt; 13"><xsl:value-of select="$hour - 0"/></xsl:when>
+          <xsl:when test="$hour &lt; 22">0<xsl:value-of select="$hour - 12"/></xsl:when>
+          <xsl:otherwise><xsl:value-of select="$hour - 12"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+
+      <!-- Day of year as decimal number (001 - 366) -->
+      <xsl:when test="$code='j'">
+        <xsl:text>[not implemented]</xsl:text>
+      </xsl:when>
+
+      <!-- Month as decimal number (01 - 12) -->
+      <xsl:when test="$code='m'">
+        <xsl:if test="$month &lt; 10">0</xsl:if>
+        <xsl:value-of select="number($month)"/>
+      </xsl:when>
+
+      <!-- Minute as decimal number (00 - 59) -->
+      <xsl:when test="$code='M'">
+        <xsl:if test="$minute &lt; 10">0</xsl:if>
+        <xsl:value-of select="number($minute)"/>
+      </xsl:when>
+
+      <!-- Current locale's A.M./P.M. indicator for 12-hour clock -->
+      <xsl:when test="$code='p'">
+        <xsl:choose>
+          <xsl:when test="$hour &lt; 12">AM</xsl:when>
+          <xsl:otherwise>PM</xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+
+      <!-- Second as decimal number (00 - 59) -->
+      <xsl:when test="$code='S'">
+        <xsl:if test="$second &lt; 10">0</xsl:if>
+        <xsl:value-of select="number($second)"/>
+      </xsl:when>
+
+      <!-- Week of year as decimal number, with Sunday as first day of week (00 - 53) -->
+      <xsl:when test="$code='U'">
+        <!-- add 1 to day -->
+        <xsl:call-template name="calculate-week-number">
+          <xsl:with-param name="year" select="$year"/>
+          <xsl:with-param name="month" select="$month"/>
+          <xsl:with-param name="day" select="$day + 1"/>
+        </xsl:call-template>
+      </xsl:when>
+
+      <!-- Weekday as decimal number (0 - 6; Sunday is 0) -->
+      <xsl:when test="$code='w'">
+        <xsl:call-template name="calculate-day-of-the-week">
+          <xsl:with-param name="year" select="$year"/>
+          <xsl:with-param name="month" select="$month"/>
+          <xsl:with-param name="day" select="$day"/>
+        </xsl:call-template>
+      </xsl:when>
+
+      <!-- Week of year as decimal number, with Monday as first day of week (00 - 53) -->
+      <xsl:when test="$code='W'">
+        <xsl:call-template name="calculate-week-number">
+          <xsl:with-param name="year" select="$year"/>
+          <xsl:with-param name="month" select="$month"/>
+          <xsl:with-param name="day" select="$day"/>
+        </xsl:call-template>
+      </xsl:when>
+
+      <!-- Date representation for current locale -->
+      <xsl:when test="$code='x'">
+        <xsl:text>[not implemented]</xsl:text>
+      </xsl:when>
+
+      <!-- Time representation for current locale -->
+      <xsl:when test="$code='X'">
+        <xsl:text>[not implemented]</xsl:text>
+      </xsl:when>
+
+      <!-- Year without century, as decimal number (00 - 99) -->
+      <xsl:when test="$code='y'">
+        <xsl:text>[not implemented]</xsl:text>
+      </xsl:when>
+
+      <!-- Year with century, as decimal number -->
+      <xsl:when test="$code='Y'">
+        <xsl:value-of select="concat(substring('000', string-length(number($year))), $year)"/>
+      </xsl:when>
+
+      <!-- Time-zone name or abbreviation; no characters if time zone is unknown -->
+      <xsl:when test="$code='z'">
+        <xsl:value-of select="$time-zone"/>
+      </xsl:when>
+
+      <!-- Percent sign -->
+      <xsl:when test="$code='%'">
+        <xsl:text>%</xsl:text>
+      </xsl:when>
+
+    </xsl:choose>
+
+    <xsl:variable name="remainder" select="substring(substring-after($format, '%'), 2)"/>
+
+    <xsl:if test="$remainder">
+      <xsl:call-template name="format-date-time">
+        <xsl:with-param name="year" select="$year"/>
+        <xsl:with-param name="month" select="$month"/>
+        <xsl:with-param name="day" select="$day"/>
+        <xsl:with-param name="hour" select="$hour"/>
+        <xsl:with-param name="minute" select="$minute"/>
+        <xsl:with-param name="second" select="$second"/>
+        <xsl:with-param name="time-zone" select="$time-zone"/>
+        <xsl:with-param name="format" select="$remainder"/>
+      </xsl:call-template>
+    </xsl:if>
+
+  </xsl:template>
+  
+	<!-- Main Categories End - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	<!-- General Name Templates -->	
+	
+	<xsl:template match="*" mode="name" priority="-1">
+		<!-- Strip the trailing 's' -->	
+		<xsl:variable name="Type" select="substring(name(..),1,string-length(name(..))-1)" />
+		<xsl:call-template name="Translate">
+			<xsl:with-param name="Type" select="$Type" />
+			<xsl:with-param name="Value" select="name()" />
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="StepsType | @StepsType | Difficulty | @Difficulty | CourseDifficulty | @CourseDifficulty | Grade | @Grade | PlayMode | @PlayMode | Meter | @Meter">
+		<xsl:call-template name="Translate">
+			<xsl:with-param name="Type" select="name()" />
+			<xsl:with-param name="Value" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template match="LastDifficulty">
+		<xsl:call-template name="Translate">
+			<xsl:with-param name="Type" select="'Difficulty'" />
+			<xsl:with-param name="Value" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template match="LastCourseDifficulty">
+		<xsl:call-template name="Translate">
+			<xsl:with-param name="Type" select="'CourseDifficulty'" />
+			<xsl:with-param name="Value" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template name="Translate">
+		<xsl:param name="Type" />
+		<xsl:param name="Value" />
+		<xsl:variable name="node" select="$Catalog/Types/*[name()=$Type and text()=$Value]" />
+		<xsl:if test="count($node) &gt; 0">
+			<xsl:value-of select="$node/@DisplayAs" />
+		</xsl:if>
+		<xsl:if test="count($node) = 0">
+			<xsl:value-of select="$Value" />
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="Style">
+		<xsl:call-template name="Translate">
+			<xsl:with-param name="Type" select="name(@Style)" />
+			<xsl:with-param name="Value" select="@Style" />
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template match="Dir | @Dir | LastSong | Path | @Path | LastCourse">
+		<xsl:variable name="DirOrPath" select="translate(., ' ', ' ')" />
+		<xsl:variable name="SongOrCourse" select="$Catalog/*/*[@Dir=$DirOrPath or @Path=$DirOrPath]" />
+		<xsl:if test="count($SongOrCourse) &gt; 0">
+			<xsl:value-of select="$SongOrCourse/MainTitle" />
+			<xsl:text> </xsl:text>
+			<xsl:value-of select="$SongOrCourse/SubTitle" />
+		</xsl:if>
+		<xsl:if test="count($SongOrCourse) = 0">
+			<xsl:value-of select="." />
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="//*[contains(name(),'Modifiers')]">
+		<xsl:call-template name="TranslateModifiers">
+			<xsl:with-param name="mods" select="." />
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template name="TranslateModifiers">
+		<xsl:param name="mods" />
+		<xsl:variable name="before" select="substring-before($mods,', ')" />
+		<xsl:variable name="after" select="substring-after($mods,', ')" />
+		<xsl:if test="$before = ''">
+			<xsl:call-template name="Translate">
+				<xsl:with-param name="Type" select="'Modifier'" />
+				<xsl:with-param name="Value" select="$mods" />
+			</xsl:call-template>
+		</xsl:if>
+		<xsl:if test="$before != ''">
+			<xsl:call-template name="Translate">
+				<xsl:with-param name="Type" select="'Modifier'" />
+				<xsl:with-param name="Value" select="$before" />
+			</xsl:call-template>
+			<xsl:text>, </xsl:text>
+			<xsl:call-template name="TranslateModifiers">
+				<xsl:with-param name="mods" select="$after" />
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="PercentDP | @PercentDP">
+		<xsl:apply-templates mode="percentage" select="." />
+	</xsl:template>
+	
+	<xsl:template mode="percentage" match="//*">
+		<xsl:call-template name="PrintPercentage">
+			<xsl:with-param name="cals" select="." />
+		</xsl:call-template>
+	</xsl:template>
+
+	<xsl:template name="PrintPercentage">
+		<xsl:param name="cals" />
+		<xsl:value-of select="format-number($cals*100,'00.00')" />%
+	</xsl:template>
+
+	<xsl:template match="//*[(contains(name(),'Total') or contains(name(),'Num') or name()='Score' or contains(name(),'Combo') or contains(name(..),'TapNoteScores') or name(..)='HoldNoteScores' or (name(..)='RadarValues' and not(contains(text(),'.')))) and text()]">
+		<xsl:call-template name="PrintDecimal">
+			<xsl:with-param name="cals" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template name="PrintDecimal">
+		<xsl:param name="cals" />
+		<xsl:value-of select="format-number($cals,'#,##0')" />
+	</xsl:template>
+
+	<xsl:template match="//*[contains(name(),'Calories') or contains(name(),'Seconds')]">
+		<xsl:call-template name="PrintCalories">
+			<xsl:with-param name="cals" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template match="//*[name(..)='RadarValues' and contains(text(),'.')]">
+		<xsl:call-template name="PrintPercentage">
+			<xsl:with-param name="cals" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template name="PrintCalories">
+		<xsl:param name="cals" />
+		<xsl:value-of select="format-number($cals,'#,##0.0')" />
+	</xsl:template>
+
+	<xsl:template match="//*[contains(name(),'Is') or contains(name(),'Using')]">
+		<xsl:if test=".!='0'">
+			true
+		</xsl:if>
+		<xsl:if test=".='0'">
+			false
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="//*[contains(name(),'Guid')]">
+		<xsl:if test="$Catalog/InternetRankingViewGuidUrl != ''">
+			<xsl:element name="a">
+				<xsl:attribute name="href">
+					<xsl:value-of select="$Catalog/InternetRankingViewGuidUrl" />?Guid=<xsl:value-of select="." />
+				</xsl:attribute>
+				<xsl:attribute name="target">
+					_new
+				</xsl:attribute>
+				<xsl:value-of select="." />
+			</xsl:element>
+		</xsl:if>
+		<xsl:if test="$Catalog/InternetRankingViewGuidUrl = ''">
+			<xsl:value-of select="." />
+		</xsl:if>
+	</xsl:template>
+
+	
+	
+	
+
+
+	<!-- DataTable Elements -->
+	
+	<xsl:template match="*" mode="DataTableElement" priority="-1">
+		<xsl:param name="nowrap" />
+		<tr>
+			<xsl:element name="td">
+				<xsl:attribute name="class">valuename</xsl:attribute>										
+				<xsl:if test="$nowrap != ''">
+					<xsl:attribute name="nowrap">nowrap</xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates select="." mode="name" />
+			</xsl:element>
+			<td>&#160;</td>
+			<xsl:element name="td">
+				<xsl:attribute name="class">dyndata</xsl:attribute>										
+				<xsl:if test="$nowrap != ''">
+					<xsl:attribute name="nowrap">nowrap</xsl:attribute>
+				</xsl:if>
+				<xsl:apply-templates select="." />
+			</xsl:element>
+			<td>&#160;&#160;&#160;</td>
+		</tr>
+	</xsl:template>
+
+	
+	<xsl:template name="PrintHorizontalDataTable">
+		<xsl:param name="text" />
+		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+			<tr>
+				<xsl:copy-of select="$text" />
+			</tr>
+		</xsl:element>
+	</xsl:template>
+
+
+	<xsl:template name="PrintHorizontalDataCell">
+		<xsl:param name="name" />
+		<xsl:param name="value" />
+		<td>
+			<xsl:element name="table" use-attribute-sets="DataTableAttr">
+				<tr>
+					<xsl:element name="td">
+						<xsl:attribute name="class">valuename</xsl:attribute>										
+						<xsl:copy-of select="$name" />
+					</xsl:element>
+					<td>&#160;&#160;</td>
+					<xsl:element name="td">
+						<xsl:attribute name="class">dyndata</xsl:attribute>										
+						<xsl:copy-of select="$value" />
+					</xsl:element>
+				</tr>
+			</xsl:element>
+		</td>
+	</xsl:template>
+
+	<xsl:template name="PrintVerticalDataTable">
+		<xsl:param name="text" />
+		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+			<tr>
+				<td>
+					<xsl:element name="table" use-attribute-sets="DataTableAttr">
+						<xsl:copy-of select="$text" />
+					</xsl:element>
+				</td>
+			</tr>
+		</xsl:element>
+	</xsl:template>
+
+	<xsl:template name="PrintVerticalDataRow">
+		<xsl:param name="rank" select="''" />
+		<xsl:param name="name" />
+		<xsl:param name="value" select="''" />
+		<tr>
+			<xsl:if test="$rank != ''">
+				<xsl:element name="td">
+					<xsl:attribute name="class">valuename</xsl:attribute>										
+					<xsl:copy-of select="$rank" />
+				</xsl:element>
+				<td>&#160;&#160;</td>
+			</xsl:if>
+			<xsl:element name="td">
+				<xsl:attribute name="class">valuename</xsl:attribute>										
+				<xsl:copy-of select="$name" />
+			</xsl:element>
+			<xsl:if test="$value != ''">
+				<td>&#160;&#160;</td>
+				<xsl:element name="td">
+					<xsl:attribute name="class">dyndata</xsl:attribute>										
+					<xsl:copy-of select="$value" />
+				</xsl:element>
+			</xsl:if>
+		</tr>
+	</xsl:template>
+
+
+
+
+	<!-- Table Generator -->
+
+	<xsl:template name="TableGenerator">
+		<xsl:param name="cols" select="2" />
+		<xsl:param name="nodeset" />
+		<xsl:param name="nodecounter" select="1" />
+		<xsl:param name="trid" />
+		<tr name="{$trid}">
+			<xsl:apply-templates select="$nodeset[position() >= $nodecounter and position() &lt; $nodecounter + $cols]" mode="TableGeneratorColumn">
+				<xsl:with-param name="rownode" select="$nodecounter" />
+				<xsl:with-param name="total" select="count($nodeset)" />
+			</xsl:apply-templates>
+			<xsl:if test="$nodecounter > 1 and ( $nodecounter + $cols > count($nodeset) ) and count($nodeset) mod $cols != 0">
+				<xsl:apply-templates select="$nodeset[1]" mode="TableGeneratorColumn">
+					<xsl:with-param name="emptycounter" select="$cols - ( count($nodeset) mod $cols )" />
+				</xsl:apply-templates>
+			</xsl:if>
+		</tr>
+		<xsl:if test="$nodecounter + $cols &lt;= count($nodeset)">
+			<xsl:call-template name="TableGenerator">
+				<xsl:with-param name="cols" select="$cols" />
+				<xsl:with-param name="nodecounter" select="$nodecounter + $cols" />
+				<xsl:with-param name="nodeset" select="$nodeset" />
+				<xsl:with-param name="trid" select="$trid" />
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+
+	<xsl:template match="*" mode="TableGeneratorColumn">
+		<xsl:param name="emptycounter" select="0" />
+		<xsl:param name="rownode" select="1" />
+		<xsl:param name="total" select="1" />
+		<xsl:variable name="current" select="$rownode + position() - 1" />
+		<td>
+			<xsl:choose>
+				<xsl:when test="$emptycounter > 0">
+					&#160;
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select=".">
+						<xsl:with-param name="current" select="$current" />
+						<xsl:with-param name="total" select="$total" />
+					</xsl:apply-templates>
+				</xsl:otherwise>
+			</xsl:choose>
+		</td>
+		<xsl:if test="$emptycounter > 1">
+			<xsl:apply-templates select="." mode="TableGeneratorColumn">
+				<xsl:with-param name="emptycounter" select="$emptycounter - 1" />
+			</xsl:apply-templates>
+		</xsl:if>
+	</xsl:template>
+	
+	
+	
+	
+	
+	
+
+
+	<!-- Title Generator -->
+
+	<xsl:template mode="AttributeTitleGenerator" match="*">
+		<xsl:for-each select="@*">
+			<xsl:apply-templates select="." />
+			<xsl:text> </xsl:text>
+		</xsl:for-each>
+	</xsl:template>
+
+
+
+	<!-- DataTable Generator -->
+
+	<xsl:template name="DataTableGenerator">
+		<xsl:param name="cols" select="2" />
+		<xsl:param name="nodeset" />
+		<xsl:param name="nodecounter" select="1" />
+		<xsl:variable name="skip" select="ceiling( count($nodeset) div $cols )" />
+		<td valign="top">
+			<xsl:element name="table" use-attribute-sets="DataTableAttr">
+				<xsl:apply-templates select="$nodeset[(position() >= $nodecounter) and (position() &lt; ($nodecounter + $skip))]" mode="DataTableElement" />
+			</xsl:element>
+		</td>
+		<xsl:if test="($nodecounter + $skip) &lt;= count($nodeset)">
+			<xsl:call-template name="DataTableGenerator">
+				<xsl:with-param name="cols" select="$cols" />
+				<xsl:with-param name="nodecounter" select="$nodecounter + $skip" />
+				<xsl:with-param name="nodeset" select="$nodeset" />
+				<xsl:with-param name="skip" select="$skip" />
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+	
+	
+	
+	<!-- CollapsibleTextTable -->
+		
+	<xsl:template name="CollapsibleTextTable">
+		<xsl:param name="title" />
+		<xsl:param name="text" />
+		<xsl:call-template name="CollapsibleSubSection">
+			<xsl:with-param name="title" select="$title" />
+			<xsl:with-param name="text">
+				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+					<tr>
+						<td>
+							<xsl:copy-of select="$text" />
+						</td>
+					</tr>
+				</xsl:element>
+			</xsl:with-param>
+		</xsl:call-template>
+	</xsl:template>
+	
+	
+	<xsl:template name="CollapsibleSubSection">
+		<xsl:param name="title" />
+		<xsl:param name="text" />
+		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+			<tr>
+				<xsl:element name="th" use-attribute-sets="ToggleLinkAttr">
+					<xsl:attribute name="class">main</xsl:attribute>
+					<xsl:call-template name="ToggleDisplayImage" />
+					<xsl:text> </xsl:text><xsl:value-of select="$title" />
+				</xsl:element>
+			</tr>
+			<tr name="hide">
+				<td style="background: #F4F6F7;">
+					<xsl:copy-of select="$text" />
+				</td>
+			</tr>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template name="CollapsibleTopSection">
+		<xsl:param name="title" />
+		<xsl:param name="text" />
+		<xsl:element name="table" use-attribute-sets="TopLevelTableAttr">
+			<tr>
+				<xsl:element name="th" use-attribute-sets="ToggleLinkAttr">
+					<xsl:attribute name="class">main</xsl:attribute>
+					<xsl:call-template name="ToggleDisplayImage" />
+					<xsl:text> </xsl:text><xsl:value-of select="$title" />
+				</xsl:element>
+			</tr>
+			<tr name="hide">
+				<td style="background: #F4F6F7;">
+					<xsl:copy-of select="$text" />
+				</td>
+			</tr>
+		</xsl:element>
+	</xsl:template>
+
+
+	
+	<!-- Link for hiding & displaying data -->
+		
+	<xsl:template name="ToggleDisplayImage">
+		<img name="toggleImage" align="absmiddle" class="hidden" /><span>▼</span><span>►</span>
+	</xsl:template>
+
+	
+
+	
+
+	<!-- That's it -->
+	
+</xsl:stylesheet>
+

@@ -24,10 +24,9 @@
 #define INTERNET_RANKING_HOME_URL		THEME->GetMetric ("CatalogXml","InternetRankingHomeUrl")
 #define INTERNET_RANKING_UPLOAD_URL		THEME->GetMetric ("CatalogXml","InternetRankingUploadUrl")
 #define INTERNET_RANKING_VIEW_GUID_URL	THEME->GetMetric ("CatalogXml","InternetRankingViewGuidUrl")
-#define STATS_TITLE						THEME->GetMetric ("CatalogXml","StatsTitle")
-#define STATS_HEADER					THEME->GetMetric ("CatalogXml","StatsHeader")
-#define STATS_FOOTER_TEXT				THEME->GetMetric ("CatalogXml","StatsFooterText")
-#define STATS_FOOTER_LINK				THEME->GetMetric ("CatalogXml","StatsFooterLink")
+#define PRODUCT_TITLE					THEME->GetMetric ("CatalogXml","ProductTitle")
+#define FOOTER_TEXT						THEME->GetMetric ("CatalogXml","FooterText")
+#define FOOTER_LINK						THEME->GetMetric ("CatalogXml","FooterLink")
 
 void SaveCatalogXml()
 {
@@ -38,80 +37,100 @@ void SaveCatalogXml()
 	XNode xml;
 	xml.name = "Catalog";
 
-	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
-	for( unsigned i=0; i<vpSongs.size(); i++ )
 	{
-		Song* pSong = vpSongs[i];
-		
-		if( pSong->IsTutorial() )
-			continue;	// skip
+		XNode* pNode = xml.AppendChild( "Songs" );
 
-		SongID songID;
-		songID.FromSong( pSong );
-
-		XNode* pSongNode = songID.CreateNode();
-
-		xml.AppendChild( pSongNode );
-
-		pSongNode->AppendChild( "MainTitle", pSong->GetDisplayMainTitle() );
-		pSongNode->AppendChild( "SubTitle", pSong->GetDisplaySubTitle() );
-
-		FOREACH_StepsType( st )
+		vector<Song*> vpSongs = SONGMAN->GetAllSongs();
+		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{
-			FOREACH_Difficulty( dc )
+			Song* pSong = vpSongs[i];
+			
+			if( pSong->IsTutorial() )
+				continue;	// skip
+
+			SongID songID;
+			songID.FromSong( pSong );
+
+			XNode* pSongNode = songID.CreateNode();
+
+			pNode->AppendChild( pSongNode );
+
+			pSongNode->AppendChild( "MainTitle", pSong->GetDisplayMainTitle() );
+			pSongNode->AppendChild( "SubTitle", pSong->GetDisplaySubTitle() );
+
+			set<Difficulty> vDiffs;
+			GAMESTATE->GetDifficultiesToShow( vDiffs );
+
+			FOREACH_StepsType( st )
 			{
-				Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );	// no autogen
-				if( pSteps == NULL )
+				if( !SHOW_STEPS_TYPE(st) )
 					continue;	// skip
 
-				StepsID stepsID;
-				stepsID.FromSteps( pSteps );
+				for( set<Difficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				{
+					Steps* pSteps = pSong->GetStepsByDifficulty( st, *iter, false );	// no autogen
+					if( pSteps == NULL )
+						continue;	// skip
 
-				XNode* pStepsIDNode = stepsID.CreateNode();
-				pSongNode->AppendChild( pStepsIDNode );
-				
-				pStepsIDNode->AppendChild( "Meter", pSteps->GetMeter() );
-				pStepsIDNode->AppendChild( pSteps->GetRadarValues().CreateNode() );
+					StepsID stepsID;
+					stepsID.FromSteps( pSteps );
+
+					XNode* pStepsIDNode = stepsID.CreateNode();
+					pSongNode->AppendChild( pStepsIDNode );
+					
+					pStepsIDNode->AppendChild( "Meter", pSteps->GetMeter() );
+					pStepsIDNode->AppendChild( pSteps->GetRadarValues().CreateNode() );
+				}
 			}
 		}
 	}
 
 
-	vector<Course*> vpCourses;
-	SONGMAN->GetAllCourses( vpCourses, false );
-	for( unsigned i=0; i<vpCourses.size(); i++ )
 	{
-		Course* pCourse = vpCourses[i];
+		XNode* pNode = xml.AppendChild( "Courses" );
 
-		CourseID courseID;
-		courseID.FromCourse( pCourse );
-
-		XNode* pCourseNode = courseID.CreateNode();
-
-		xml.AppendChild( pCourseNode );
-
-		pCourseNode->AppendChild( "MainTitle", pCourse->GetDisplayMainTitle() );
-		pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
-		pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
-
-		FOREACH_StepsType( st )
+		vector<Course*> vpCourses;
+		SONGMAN->GetAllCourses( vpCourses, false );
+		for( unsigned i=0; i<vpCourses.size(); i++ )
 		{
-			FOREACH_CourseDifficulty( cd )
-			{
-				Trail *pTrail = pCourse->GetTrail( st, cd );
-				if( pTrail == NULL )
-					continue;
-				if( !pTrail->m_vEntries.size() )
-					continue;
-				
-				TrailID trailID;
-				trailID.FromTrail( pTrail );
+			Course* pCourse = vpCourses[i];
 
-				XNode* pTrailIDNode = trailID.CreateNode();
-				pCourseNode->AppendChild( pTrailIDNode );
-				
-				pTrailIDNode->AppendChild( "Meter", pTrail->GetMeter() );
-				pTrailIDNode->AppendChild( pTrail->GetRadarValues().CreateNode() );
+			CourseID courseID;
+			courseID.FromCourse( pCourse );
+
+			XNode* pCourseNode = courseID.CreateNode();
+
+			pNode->AppendChild( pCourseNode );
+
+			pCourseNode->AppendChild( "MainTitle", pCourse->GetDisplayMainTitle() );
+			pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
+			pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
+
+			set<CourseDifficulty> vDiffs;
+			GAMESTATE->GetCourseDifficultiesToShow( vDiffs );
+
+			FOREACH_StepsType( st )
+			{
+				if( !SHOW_STEPS_TYPE(st) )
+					continue;	// skip
+
+				for( set<CourseDifficulty>::const_iterator iter = vDiffs.begin(); iter != vDiffs.end(); iter++ )
+				{
+					Trail *pTrail = pCourse->GetTrail( st, *iter );
+					if( pTrail == NULL )
+						continue;
+					if( !pTrail->m_vEntries.size() )
+						continue;
+					
+					TrailID trailID;
+					trailID.FromTrail( pTrail );
+
+					XNode* pTrailIDNode = trailID.CreateNode();
+					pCourseNode->AppendChild( pTrailIDNode );
+					
+					pTrailIDNode->AppendChild( "Meter", pTrail->GetMeter() );
+					pTrailIDNode->AppendChild( pTrail->GetRadarValues().CreateNode() );
+				}
 			}
 		}
 	}
@@ -229,12 +248,13 @@ void SaveCatalogXml()
 	xml.AppendChild( "InternetRankingHomeUrl", INTERNET_RANKING_HOME_URL );
 	xml.AppendChild( "InternetRankingUploadUrl", INTERNET_RANKING_UPLOAD_URL );
 	xml.AppendChild( "InternetRankingViewGuidUrl", INTERNET_RANKING_VIEW_GUID_URL );
-	xml.AppendChild( "StatsTitle", STATS_TITLE );
-	xml.AppendChild( "StatsHeader", STATS_HEADER );
-	xml.AppendChild( "StatsFooterText", STATS_FOOTER_TEXT );
-	xml.AppendChild( "StatsFooterLink", STATS_FOOTER_LINK );
+	xml.AppendChild( "ProductTitle", PRODUCT_TITLE );
+	xml.AppendChild( "FooterText", FOOTER_TEXT );
+	xml.AppendChild( "FooterLink", FOOTER_LINK );
 
-	xml.SaveToFile(fn);
+	DISP_OPT opts = optDefault;
+	opts.stylesheet = CATALOG_XSL;
+	xml.SaveToFile(fn, &opts);
 
 	LOG->Trace( "Done." );
 }
