@@ -591,6 +591,14 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 	m_TapNotes[track][row]=t;
 }
 
+void NoteData::SetTapNoteAttack( int track, int row, CString sMods, float fDurationSeconds )
+{
+	if(row < 0) return;
+
+	PadTapNotes(row);
+	m_TapNotes[track][row]=TAP_TAP;
+}
+
 void NoteData::EliminateAllButOneTap(int row)
 {
 	if(row < 0) return;
