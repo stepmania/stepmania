@@ -403,12 +403,12 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 	return g_GroupColors[i%NUM_GROUP_COLORS];
 }
 
-RageColor SongManager::GetSongColor( Song* pSong )
+RageColor SongManager::GetSongColor( const Song* pSong )
 {
 	ASSERT( pSong );
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
-		Notes* pNotes = pSong->m_apNotes[i];
+		const Notes* pNotes = pSong->m_apNotes[i];
 		if( pNotes->m_iMeter == 10 )
 			return EXTRA_COLOR;
 	}

@@ -39,7 +39,7 @@ public:
 	CString GetGroupBannerPath( CString sGroupName );
 	void GetGroupNames( CStringArray &AddTo );
 	RageColor GetGroupColor( const CString &sGroupName );
-	RageColor GetSongColor( Song* pSong );
+	RageColor GetSongColor( const Song* pSong );
 
 	static CString ShortenGroupName( const CString &sOrigGroupName );
 
