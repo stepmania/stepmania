@@ -130,7 +130,7 @@ protected:
 	Transition	m_Draw;
 	Transition	m_In;
 	Transition	m_Back;
-	BGAnimation	m_Overlay;
+	AutoActor	m_Overlay;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 	BitmapText			m_textSongTitle;

@@ -653,9 +653,9 @@ void ScreenGameplay::Init()
 		SET_XY( m_textDebug );
 		this->AddChild( &m_textDebug );
 
-		m_Overlay.LoadFromAniDir( THEME->GetPathB(m_sName,"Overlay") );
-		m_Overlay.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
-		this->AddChild( &m_Overlay );
+		m_Overlay.Load( THEME->GetPathB(m_sName,"overlay") );
+		m_Overlay->SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
+		this->AddChild( m_Overlay );
 
 		m_In.Load( THEME->GetPathB(m_sName,"in") );
 		m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
@@ -2420,7 +2420,7 @@ void ScreenGameplay::TweenOnScreen()
 		FOREACH_NSScoreBoardColumn( sc )
 			ON_COMMAND( m_Scoreboard[sc] );
 
-	m_Overlay.PlayCommand("On");
+	m_Overlay->PlayCommand("On");
 }
 
 void ScreenGameplay::TweenOffScreen()
@@ -2455,7 +2455,7 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_DifficultyMeter[p] );
 	}
-	m_Overlay.PlayCommand("Off");
+	m_Overlay->PlayCommand("Off");
 
 	if (m_ShowScoreboard)
 		FOREACH_NSScoreBoardColumn( sc )
