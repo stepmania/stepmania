@@ -487,7 +487,7 @@ static void ReportThreadStacks(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS
 }
 
 static void ReportCrashData(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc) {
-	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
+//	const EXCEPTION_RECORD *const pRecord = (const EXCEPTION_RECORD *)pExc->ExceptionRecord;
 	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
 	int i, tos;
 
@@ -1039,7 +1039,7 @@ bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src) {
 
 	// Check version number
 
-	int write_version = (src[1]-'0')*10 + (src[2] - '0');
+//	int write_version = (src[1]-'0')*10 + (src[2] - '0');
 	int compat_version = (src[4]-'0')*10 + (src[5] - '0');
 
 	if (compat_version > 1)
