@@ -1723,7 +1723,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					// don't move the step from where it is, just move everything later
 					NoteDataUtil::ShiftRows( m_NoteFieldEdit, GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
 				}
-				
+			// Hello and welcome to I FEEL STUPID :-)
+			break;
 			}
 		default:
 			ASSERT(0);
