@@ -109,7 +109,7 @@ void SongManager::CategoryData::AddHighScore( HighScore hs, int &iIndexOut )
 	{
 		vHighScores.insert( vHighScores.begin()+i, hs );
 		iIndexOut = i;
-		if( vHighScores.size() > NUM_RANKING_LINES )
+		if( int(vHighScores.size()) > NUM_RANKING_LINES )
 			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
 	}
 }
