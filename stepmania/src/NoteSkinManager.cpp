@@ -231,32 +231,68 @@ CString NoteSkinManager::GetPathToFromPlayerAndButton( PlayerNumber pn, CString 
 	return GetPathToFromNoteSkinAndButton( sNoteSkinName, sButtonName, sElement, bOptional );
 }
 
+CString NoteSkinManager::GetPathToFromNoteSkinAndButtonInternal( CString NoteSkin, CString sButtonName, CString sElement )
+{
+	CString ret;
+	if( ret.empty() )
+		ret = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement );
+	if( ret.empty() ) // Search game default NoteSkin
+		ret = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement );
+	if( ret.empty() ) // Search global default NoteSkin
+		ret = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement );
+	return ret;
+}
+
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
 {
-	CString ret = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sButtonName+" "+sElement );
-	if( !ret.empty() )	// we found something
-		return ret;
+	CString sPath = GetPathToFromNoteSkinAndButtonInternal( NoteSkin, sButtonName, sElement );
+	if( sPath == "" )
+	{
+		if( bOptional )
+		{
+			g_Cache[CacheString] = sPath;
+			return sPath;
+		}
 
-	// Search game default NoteSkin
-	ret = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sButtonName+" "+sElement );
-	if( !ret.empty() )	// we found something
-		return ret;
-
-	// Search global default NoteSkin
-	ret = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, "Fallback "+sElement );
-	if( !ret.empty() )	// we found something
-		return ret;
-
-	if( bOptional )
-		return "";
-	else
 		RageException::Throw( "The NoteSkin element '%s %s' could not be found in '%s', '%s', or '%s'.", 
 			sButtonName.c_str(), sElement.c_str(), 
 			GetNoteSkinDir(NoteSkin).c_str(),
 			GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
 			GLOBAL_BASE_NOTESKIN_DIR.c_str() );
-}
+	}
 
+	while( GetExtension(sPath) == "redir" )
+	{
+		CString sNewFileName = GetRedirContents(sPath);
+		CString sRealPath;
+		if( sRealPath == "" )
+			sRealPath = GetPathToFromDir( GetNoteSkinDir(NoteSkin), sNewFileName );
+		if( sRealPath == "" )
+			sRealPath = GetPathToFromDir( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME), sNewFileName );
+		if( sRealPath == "" )
+			sRealPath = GetPathToFromDir( GLOBAL_BASE_NOTESKIN_DIR, sNewFileName );
+
+		if( sRealPath == "" )
+		{
+			CString message = ssprintf(
+					"NoteSkinManager:  The redirect '%s' points to the file '%s', which does not exist. "
+					"Verify that this redirect is correct.",
+					sPath.c_str(), sNewFileName.c_str());
+
+			if( ArchHooks::retry == HOOKS->MessageBoxAbortRetryIgnore(message) )
+			{
+				FlushDirCache();
+				continue;
+			}
+
+			RageException::Throw( "%s", message.c_str() ); 
+		}
+		
+		sPath = sRealPath;
+	}
+
+	return sPath;
+}
 
 CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName )
 {
@@ -281,29 +317,5 @@ CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName )
 		HOOKS->MessageBoxOK( sError );
 	}
 	
-	CString sPath = matches[0];
-
-	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
-	if( !bIsARedirect )
-	{
-		return sPath;
-	}
-	else	// bIsARedirect
-	{
-		CString sNewFileName = GetRedirContents(sPath);
-		
-		CString sNewPath = GetPathToFromDir(sDir, sNewFileName);
-
-		if( !sNewPath.empty() )
-			return sNewPath;
-		else
-		{
-			CString message = ssprintf(
-					"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
-					"Verify that this redirect is correct.",
-					sPath.c_str(), sNewFileName.c_str());
-
-			RageException::Throw( "%s", message.c_str() ); 
-		}
-	}
+	return matches[0];
 }
