@@ -1087,7 +1087,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( HOOKS );
 
 #ifdef _XBOX
-	XReturnToLaunchingXBE() ;
+	XReturnToLaunchingXBE();
 #endif
 
 	return 0;
