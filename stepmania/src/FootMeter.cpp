@@ -53,7 +53,8 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 void FootMeter::SetNumFeet( int iNumFeet )
 {
 	CString sNewText;
-	for( int f=0; f<NUM_FEET_IN_METER; f++ )
+	int f;
+	for( f=0; f<NUM_FEET_IN_METER; f++ )
 		sNewText += (f<iNumFeet) ? "1" : "0";
 	for( f=NUM_FEET_IN_METER; f<=13; f++ )
 		if( f<iNumFeet )

@@ -41,8 +41,9 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 	default:
 		ASSERT(0);	return MenuInput(); // invalid m_StyleType
 	};
-
-	for( int i=0; i<NUM_MENU_BUTTONS; i++ )
+	
+	int i;
+	for( i=0; i<NUM_MENU_BUTTONS; i++ )
 		if( m_DedicatedMenuButton[i] == GameI.button )
 			return MenuInput( pn, (MenuButton)i );
 
