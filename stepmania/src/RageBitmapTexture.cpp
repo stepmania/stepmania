@@ -180,7 +180,7 @@ if( g_bFoobar ) LOG->Trace("save %s", actualID.filename.c_str());
 		case 16:
 			{
 				/* Bits of alpha in the source: */
-				int src_alpha_bits = 8 - img->format->Aloss;
+				int src_alpha_bits = 8 - img->format->Loss[3];
 
 				/* Don't use more than we were hinted to. */
 				src_alpha_bits = min( actualID.iAlphaBits, src_alpha_bits );

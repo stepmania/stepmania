@@ -70,14 +70,12 @@ void RageSurfaceUtils::GetRGBAV( uint32_t pixel, const RageSurface *src, uint8_t
 {
 	GetRawRGBAV(pixel, src->fmt, v);
 	const RageSurfaceFormat *fmt = src->format;
-	v[0] = v[0] << fmt->Rloss;
-	v[1] = v[1] << fmt->Gloss;
-	v[2] = v[2] << fmt->Bloss;
+	for( int c = 0; c < 4; ++c )
+		v[c] = v[c] << fmt->Loss[c];
+
 	// Correct for surfaces that don't have an alpha channel.
-	if( fmt->Aloss == 8)
+	if( fmt->Loss[3] == 8 )
 		v[3] = 255;
-	else
-		v[3] = v[3] << fmt->Aloss;
 }
 
 void RageSurfaceUtils::GetRGBAV( const uint8_t *p, const RageSurface *src, uint8_t *v )
@@ -110,10 +108,10 @@ void RageSurfaceUtils::SetRawRGBAV( uint8_t *p, const RageSurface *src, const ui
 /* Inverse of GetRGBAV. */
 uint32_t RageSurfaceUtils::SetRGBAV( const RageSurfaceFormat *fmt, const uint8_t *v )
 {
-	return 	(v[0] >> fmt->Rloss) << fmt->Rshift |
-			(v[1] >> fmt->Gloss) << fmt->Gshift |
-			(v[2] >> fmt->Bloss) << fmt->Bshift |
-			(v[3] >> fmt->Aloss) << fmt->Ashift;
+	return 	(v[0] >> fmt->Loss[0]) << fmt->Shift[0] |
+			(v[1] >> fmt->Loss[1]) << fmt->Shift[1] |
+			(v[2] >> fmt->Loss[2]) << fmt->Shift[2] |
+			(v[3] >> fmt->Loss[3]) << fmt->Shift[3];
 }
 
 void RageSurfaceUtils::SetRGBAV( uint8_t *p, const RageSurface *src, const uint8_t *v )
@@ -803,7 +801,7 @@ RageSurface *RageSurfaceUtils::LoadSurface( CString file )
  */
 RageSurface *RageSurfaceUtils::PalettizeToGrayscale( const RageSurface *src_surf, int GrayBits, int AlphaBits )
 {
-	AlphaBits = min( AlphaBits, 8-src_surf->format->Aloss );
+	AlphaBits = min( AlphaBits, 8-src_surf->format->Loss[3] );
 	
 	const int TotalBits = GrayBits + AlphaBits;
 	ASSERT( TotalBits <= 8 );
