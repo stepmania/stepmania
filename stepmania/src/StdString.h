@@ -415,8 +415,13 @@ inline SS_NOTHROW int sslen(const std::string& s)
 // -----------------------------------------------------------------------------
 // sstolower/sstoupper -- convert characters to upper/lower case
 // -----------------------------------------------------------------------------
-inline char sstoupper(char ch)		{ return (char)::toupper(ch); }
-inline char sstolower(char ch)		{ return (char)::tolower(ch); }
+//inline char sstoupper(char ch)		{ return (char)::toupper(ch); }
+//inline char sstolower(char ch)		{ return (char)::tolower(ch); }
+/* Our strings are UTF-8; instead of having to play around with locales,
+ * let's just manually toupper ASCII only.  If we really want to play with
+ * Unicode cases, we can do it ourself in RageUtil. */
+inline char sstoupper(char ch)		{ return (ch >= 'a' && ch <= 'z')? char(ch + 'A' - 'a'): ch; }
+inline char sstolower(char ch)		{ return (ch >= 'A' && ch <= 'Z')? char(ch + 'a' - 'A'): ch; }
 
 // -----------------------------------------------------------------------------
 // ssasn: assignment functions -- assign "sSrc" to "sDst"
@@ -542,7 +547,7 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // -----------------------------------------------------------------------------
 // ssupr/sslwr: Uppercase/Lowercase conversion functions
 // -----------------------------------------------------------------------------
-#ifdef SS_ANSI
+// #ifdef SS_ANSI
 	template<typename CT>
 	inline void sslwr(CT* pT, size_t nLen)
 	{
@@ -555,7 +560,8 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 		for ( CT* p = pT; static_cast<size_t>(p - pT) < nLen; ++p)
 			*p = (CT)sstoupper(*p);
 	}
-#else  // #else we must be on Win32
+#if 0
+// #else  // #else we must be on Win32
 	#ifdef _MBCS
 		inline void	ssupr(PSTR pA, size_t /*nLen*/)
 		{
@@ -575,8 +581,8 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 			_strlwr(pA);
 		}
 	#endif
-#endif // #ifdef SS_ANSI
-
+// #endif // #ifdef SS_ANSI
+#endif
 // -----------------------------------------------------------------------------
 //  vsprintf/vswprintf or _vsnprintf/_vsnwprintf equivalents.  In standard
 //  builds we can't use _vsnprintf/_vsnwsprintf because they're MS extensions.
