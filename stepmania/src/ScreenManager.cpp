@@ -60,7 +60,7 @@ ScreenManager::ScreenManager()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","credits") );
 		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
 		m_textCreditInfo[p].SetZoom( 0.5f );
 		m_textCreditInfo[p].SetDiffuse( D3DXCOLOR(1,1,1,1) );
