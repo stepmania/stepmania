@@ -39,8 +39,6 @@
 
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
-	unsigned i;
-
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
@@ -52,6 +50,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	
 	CString IconCommand = ICON_COMMAND;
 
+	int i;
 	for(i=1; i <= NUM_UNLOCKS; i++)
 	{
 		Sprite* entry = new Sprite;
@@ -155,7 +154,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 			if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NUM_UNLOCKS)
 			{
-				float TargetRow = -0.5 + i + UNLOCK_TEXT_SCROLL_ROWS - NUM_UNLOCKS;
+				float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NUM_UNLOCKS;
 				float StopOffPoint = ScrollingTextEndY - TargetRow / UNLOCK_TEXT_SCROLL_ROWS * (ScrollingTextEndY - ScrollingTextStartY);
 				float FirstCycleTime = (UNLOCK_TEXT_SCROLL_ROWS - TargetRow) * SECS_PER_CYCLE;
 				float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
@@ -183,7 +182,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 				if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NUM_UNLOCKS)
 				{
-					float TargetRow = -0.5 + i + UNLOCK_TEXT_SCROLL_ROWS - NUM_UNLOCKS;
+					float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NUM_UNLOCKS;
 					float StopOffPoint = ScrollingTextEndY - TargetRow / UNLOCK_TEXT_SCROLL_ROWS * (ScrollingTextEndY - ScrollingTextStartY);
 					float FirstCycleTime = (UNLOCK_TEXT_SCROLL_ROWS - TargetRow) * SECS_PER_CYCLE;
 					float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
@@ -213,7 +212,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
 		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
 		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
-		float ScrollingTextZoom = UNLOCK_TEXT_SCROLL_ZOOM;
+		// float ScrollingTextZoom = UNLOCK_TEXT_SCROLL_ZOOM;
 		float ScrollingTextRows = UNLOCK_TEXT_SCROLL_ROWS;
 		float MaxWidth = UNLOCK_TEXT_SCROLL_MAX_WIDTH;
 		float SecondsToScroll = TIME_TO_DISPLAY - 1;
@@ -222,7 +221,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 		for(i=1; i <= UNLOCK_TEXT_SCROLL_ROWS; i++)
 		{
-			if (i > LastUnlocks.size())
+			if (i > (int) LastUnlocks.size())
 				continue;
 
 			int NextIcon = LastUnlocks[LastUnlocks.size() - i];
@@ -268,10 +267,10 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		}
 	}
 
-	for(i=(item.size() - 1); (int)i>=0; i--)
+	for(i = item.size() - 1; i >= 0; i--)
 		this->AddChild(item[i]);
 
-	for(i=(ItemIcons.size() - 1); (int)i>=0; i--)
+	for(i = ItemIcons.size() - 1; i >= 0; i--)
 		this->AddChild(ItemIcons[i]);
 
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
