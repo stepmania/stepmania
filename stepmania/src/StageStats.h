@@ -25,6 +25,7 @@ struct StageStats
 	void AddStats( const StageStats& other );		// accumulate
 	Grade GetGrade( PlayerNumber pn );
 	bool OnePassed() const;
+	bool AllFailed() const;
 	float GetPercentDancePoints( PlayerNumber pn ) const;
 
 	Song*	pSong;

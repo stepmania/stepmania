@@ -145,6 +145,15 @@ bool StageStats::OnePassed() const
 	return false;
 }
 
+bool StageStats::AllFailed() const
+{
+	for( int pn=0; pn<NUM_PLAYERS; pn++ )
+		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(pn)) )
+			if( !GAMESTATE->m_CurStageStats.bFailed[pn] )
+				return false;
+	return true;
+}
+
 float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 {
 	if( iPossibleDancePoints[pn] == 0 )

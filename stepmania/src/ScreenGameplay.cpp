@@ -1630,11 +1630,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			/* If all players have *really* failed (bFailed, not the life meter or
 			 * bFailedEarlier): */
-			bool bAllReallyFailed = true;
-			for( p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-					if( !GAMESTATE->m_CurStageStats.bFailed[p] )
-						bAllReallyFailed = false;
+			const bool bAllReallyFailed = GAMESTATE->m_CurStageStats.AllFailed();
 
 			if( !bAllReallyFailed && !IsLastSong() )
 			{
