@@ -2,6 +2,7 @@
 
 #include "RageLog.h"
 #include "SignalHandler.h"
+#include "GetSysInfo.h"
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -63,7 +64,14 @@ void SignalHandler::OnClose(handler h)
 
 		/* Allocate a separate signal stack.  This makes the crash handler work
 		 * if we run out of stack space. */
-		void *p = mmap( NULL, SIGSTKSZ, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+		/* Ugh.  Signal stack + pthreads + Linux 2.4 = crash or hang. */
+		CString system;
+		int version;
+		GetKernel( system, version );
+		void *p = NULL;
+		if( version > 0x020500 )
+			p = mmap( NULL, SIGSTKSZ, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+
 		if( p == (void *) -1 )
 			p = malloc( SIGSTKSZ );
 
