@@ -57,15 +57,20 @@ public:
 		m_quadMask.SetZ( 1 );
 
 		CString sGraphicPath;
-		
+		RageTextureID ID;
+		ID.bStretch = true;
+
 		sGraphicPath = ssprintf("LifeMeterBar %snormal", bExtra?"extra ":"");
-		m_sprStreamNormal.Load( THEME->GetPathToG( sGraphicPath) );
+		ID.filename = THEME->GetPathToG(sGraphicPath);
+		m_sprStreamNormal.Load( ID );
 
 		sGraphicPath = ssprintf("LifeMeterBar %shot", bExtra?"extra ":"");
-		m_sprStreamHot.Load( THEME->GetPathToG( sGraphicPath) );
+		ID.filename = THEME->GetPathToG(sGraphicPath);
+		m_sprStreamHot.Load( ID );
 
 		sGraphicPath = ssprintf("LifeMeterBar %sframe", bExtra?"extra ":"");
-		m_sprFrame.Load( THEME->GetPathToG( sGraphicPath) );
+		ID.filename = THEME->GetPathToG(sGraphicPath);
+		m_sprFrame.Load( ID );
 	}
 
 	Sprite		m_sprStreamNormal;
