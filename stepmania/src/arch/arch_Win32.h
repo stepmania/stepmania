@@ -17,6 +17,7 @@
 
 #include "MemoryCard/MemoryCardDriver_Windows.h"
 
+#define HAVE_FFMPEG
 #undef SUPPORT_SDL_INPUT
 
 #endif
