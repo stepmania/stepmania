@@ -975,11 +975,6 @@ void ScreenEvaluation::CommitScores(
 					ASSERT( pCourse );
 					Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
-					// don't save scores for a failed Nonstop
-					// DO save scores for a failed Oni/Endless
-					if( stageStats.bFailed[p] && pCourse->IsNonstop() )
-						continue;
-
 					PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 				}
 				break;
