@@ -112,7 +112,7 @@ RageSound::RageSound(const RageSound &cpy):
 	 * copy this down here. */
 	m_sFilePath = cpy.m_sFilePath;
 
-	/* Register ourselves, so we receive Update()s.  We have a different ID than
+	/* Register ourself, so we receive Update()s.  We have a different ID than
 	 * our parent. */
 	ID = SOUNDMAN->RegisterSound( this );
 }
