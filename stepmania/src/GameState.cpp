@@ -727,7 +727,7 @@ bool GameState::ShowMarvelous() const
 	return false;
 }
 
-void GameState::GetCharacters( vector<Character*> apCharactersOut )
+void GameState::GetCharacters( vector<Character*> &apCharactersOut )
 {
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 		if( m_pCharacters[i]->m_sName.CompareNoCase("default")!=0 )
@@ -741,7 +741,7 @@ Character* GameState::GetRandomCharacter()
 	if( apCharacters.size() )
 		return m_pCharacters[rand()%apCharacters.size()];
 	else
-		return NULL;
+		return GetDefaultCharacter();
 }
 
 Character* GameState::GetDefaultCharacter()
@@ -752,5 +752,6 @@ Character* GameState::GetDefaultCharacter()
 			return m_pCharacters[i];
 	}
 
+	ASSERT(0);
 	return NULL;
 }

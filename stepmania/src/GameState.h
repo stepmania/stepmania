@@ -96,7 +96,7 @@ public:
 				return true;
 		return false;
 	}
-	void GetCharacters( vector<Character*> apCharactersOut );
+	void GetCharacters( vector<Character*> &apCharactersOut );
 	Character* GameState::GetRandomCharacter();
 	Character* GameState::GetDefaultCharacter();
 
