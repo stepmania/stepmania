@@ -177,6 +177,7 @@ public:
 	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	virtual void StopTweening();
 	virtual void FinishTweening();
+	virtual void HurryTweening( float factor );
 	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
 	virtual TweenState& DestTweenState()	// where Actor will end when its tween finish
 	{

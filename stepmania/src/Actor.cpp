@@ -361,6 +361,14 @@ void Actor::FinishTweening()
 	StopTweening();
 }
 
+void Actor::HurryTweening( float factor )
+{
+	for( unsigned i = 0; i < m_TweenInfo.size(); ++i )
+	{
+		m_TweenInfo[i].m_fTimeLeftInTween *= factor;
+		m_TweenInfo[i].m_fTweenTime *= factor;
+	}
+}
 
 void Actor::ScaleTo( const RectI &rect, StretchType st )
 {

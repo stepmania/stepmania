@@ -105,6 +105,15 @@ void ActorFrame::FinishTweening()
 		m_SubActors[i]->FinishTweening();
 }
 
+void ActorFrame::HurryTweening( float factor )
+{
+	Actor::HurryTweening( factor );
+
+	// set all sub-Actors
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->HurryTweening( factor );
+}
+
 float ActorFrame::GetTweenTimeLeft() const
 {
 	float m = Actor::GetTweenTimeLeft();

@@ -30,6 +30,7 @@ public:
 
 	virtual void SetUseZBuffer( bool b );
 	virtual void FinishTweening();
+	virtual void HurryTweening( float factor );
 	
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
