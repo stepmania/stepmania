@@ -79,6 +79,7 @@ public:
 
 
 	void LoadFromCRSFile( CString sPath );
+	void Save();
 	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
 

@@ -242,6 +242,60 @@ void Course::LoadFromCRSFile( CString sPath )
 }
 
 
+void Course::Save()
+{
+	ASSERT( !m_bIsAutogen );
+
+	FILE* fp = fopen( m_sPath, "w" );
+	if( fp == NULL )
+	{
+		LOG->Warn( "Could not write course file '%s'.", m_sPath.GetString() );
+		return;
+	}
+
+	fprintf( fp, "#COURSE:%s;\n", m_sName.GetString() );
+	fprintf( fp, "#REPEAT:%s;\n", m_bRepeat ? "YES" : "NO" );
+	fprintf( fp, "#LIVES:%i;\n", m_iLives );
+	fprintf( fp, "#EXTRA:%i;\n", m_iExtra );
+
+	for( unsigned i=0; i<m_entries.size(); i++ )
+	{
+		const Entry& entry = m_entries[i];
+
+		switch( entry.type )
+		{
+		case Entry::fixed:
+			fprintf( fp, "#SONG:%s", entry.pSong->GetSongDir().GetString() );
+			break;
+		case Entry::random:
+			fprintf( fp, "#SONG:*" );
+			break;
+		case Entry::random_within_group:
+			fprintf( fp, "#SONG:%s/*", entry.group_name.GetString() );
+			break;
+		case Entry::players_best:
+			fprintf( fp, "#SONG:PlayersBest%d", entry.players_index+1 );
+			break;
+		case Entry::players_worst:
+			fprintf( fp, "#SONG:PlayersWorst%d", entry.players_index+1 );
+			break;
+		default:
+			ASSERT(0);
+		}
+
+		if( entry.difficulty != DIFFICULTY_INVALID )
+			fprintf( fp, ":%s", DifficultyToString(entry.difficulty).GetString() );
+	
+		if( entry.low_meter != -1  &&  entry.high_meter != -1 )
+			fprintf( fp, ":%d..%d", entry.low_meter, entry.high_meter );
+
+		fprintf( fp, ";\n" );
+	}
+
+	fclose( fp );
+}
+
+
 void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup )
 {
 	m_bIsAutogen = true;
