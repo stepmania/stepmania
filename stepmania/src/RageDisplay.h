@@ -178,6 +178,8 @@ public:
 
 	virtual void SaveScreenshot( CString sPath ) = 0;
 
+	virtual CString GetTextureDiagnostics( unsigned id ) const { return ""; }
+
 protected:
 	// Return true if mode change was successful.
 	// bNewDeviceOut is set true if a new device was created and textures

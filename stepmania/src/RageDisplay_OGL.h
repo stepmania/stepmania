@@ -59,6 +59,8 @@ public:
 	void DrawIndexedTriangles( const RageVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices );
 	void DrawLineStrip( const RageVertex v[], int iNumVerts, float LineWidth );
 
+	CString GetTextureDiagnostics( unsigned id ) const;
+
 	void SaveScreenshot( CString sPath );
 protected:
 	bool TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );

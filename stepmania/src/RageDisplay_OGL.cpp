@@ -533,6 +533,10 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 	SDL_FreeSurface( temp );
 }
 
+CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
+{
+	return "";
+}
 
 RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
 
