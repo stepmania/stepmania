@@ -741,7 +741,8 @@ static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 	glMatrixMode( GL_PROJECTION );	\
 	glLoadMatrixf( (const float*)GetProjectionTop() );	\
 	RageMatrix modelView;	\
-	RageMatrixMultiply( &modelView, GetViewTop(), GetWorldTop() );	\
+	RageMatrixMultiply( &modelView, GetCentering(), GetViewTop() );	\
+	RageMatrixMultiply( &modelView, &modelView, GetWorldTop() );	\
 	glMatrixMode( GL_MODELVIEW );	\
 	glLoadMatrixf( (const float*)&modelView );	\
 

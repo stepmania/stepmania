@@ -247,6 +247,12 @@ public:
 	void LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY );
 	void LoadLookAt( float fov, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up );
 
+	/* Centering matrix */
+	void CenteringTranslate( float x, float y, float z );
+	void CenteringScale( float x, float y, float z );
+	void ResetCentering();
+
+
 	SDL_Surface *CreateSurfaceFromPixfmt( PixelFormat pixfmt, void *pixels, int width, int height, int pitch );
 	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask );
 
@@ -257,7 +263,13 @@ protected:
 	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ) = 0; 
 	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf ); 
 
+	//
+	// Matrix that adjusts position and scale of image on the screen
+	//
+	RageMatrix m_Centering;
+
 	// Called by the RageDisplay derivitives
+	const RageMatrix* GetCentering() { return &m_Centering; }
 	const RageMatrix* GetProjectionTop();
 	const RageMatrix* GetViewTop();
 	const RageMatrix* GetWorldTop();

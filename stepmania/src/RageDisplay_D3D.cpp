@@ -243,11 +243,12 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		LOG->Trace( 
 			"Driver: %s\n"
 			"Description: %s\n"
-			"Max texture size: %d\n",
+			"Max texture size: %d\n"
+			"Alpha in palette: %s\n",
 			identifier.Driver, 
 			identifier.Description,
-			g_DeviceCaps.MaxTextureWidth
-			);
+			g_DeviceCaps.MaxTextureWidth,
+			(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) ? "yes" : "no" );
 
 		LOG->Trace( "This display adaptor supports the following modes:" );
 		D3DDISPLAYMODE mode;
