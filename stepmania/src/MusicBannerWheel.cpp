@@ -334,9 +334,14 @@ void MusicBannerWheel::PlayMusicSample()
 	Song* pSong = GetSelectedSong();
 	if( pSong  &&  pSong->HasMusic() )
 	{
-		SOUND->PlayMusic(pSong->GetMusicPath(), true,
-			pSong->m_fMusicSampleStartSeconds,
-			pSong->m_fMusicSampleLengthSeconds);
+		if(SOUND->GetMusicPath().CompareNoCase(pSong->GetMusicPath())) // dont play the same sound over and over
+		{
+			
+			SOUND->StopMusic();
+			SOUND->PlayMusic(pSong->GetMusicPath(), true,
+				pSong->m_fMusicSampleStartSeconds,
+				pSong->m_fMusicSampleLengthSeconds);
+		}
 	}
 }
 

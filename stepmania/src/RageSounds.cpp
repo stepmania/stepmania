@@ -26,6 +26,8 @@ CString RageSounds::GetMusicPath() const
 void RageSounds::PlayMusic(CString file, bool force_loop, float start_sec, float length_sec, float fade_len)
 {
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), music->GetLoadedFilePath().c_str());
+	CString loaded = music->GetLoadedFilePath();
+	
 	if(music->IsPlaying())
 	{
 		if( !music->GetLoadedFilePath().CompareNoCase(file) )
