@@ -178,23 +178,22 @@ void BPMDisplay::SetBPM( const Song* pSong )
 void BPMDisplay::SetBPM( const Course* pCourse )
 {
 	ASSERT( pCourse );
-	vector<Song*> vSongs;
-	vector<Notes*> vNotes;
-	vector<CString> vsModifiers;
-	pCourse->GetStageInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
-	ASSERT( vSongs.size() );
+	vector<Course::Info> ci;
+	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+
+	ASSERT( ci.size() );
 
 	vector<float> BPMS;
-	for( unsigned i = 0; i < vSongs.size(); ++i )
+	for( unsigned i = 0; i < ci.size(); ++i )
 	{
-		if( pCourse->IsMysterySong(i) )
+		if( ci[i].Random )
 		{
 			BPMS.push_back( -1 );
 			continue;
 		}
 
-		Song *pSong = vSongs[i];
+		Song *pSong = ci[i].Song;
 		ASSERT( pSong );
 		switch( pSong->m_DisplayBPMType )
 		{

@@ -370,81 +370,97 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongs
  */
 bool Course::HasDifficult( NotesType nt ) const
 {
-	if( ContainsAnyMysterySongs() )
-	{
-		for( unsigned i=0; i<m_entries.size(); i++ )
-		{
-			if( m_entries[i].type != Entry::random && m_entries[i].type != Entry::random_within_group )
-				continue;
-
-			/* CHALLENGE doesn't get any harder. */
-			if( m_entries[i].difficulty == DIFFICULTY_CHALLENGE )
-				continue;
-
-			/* 10..10 doesn't get any harder. */
-			if( m_entries[i].difficulty == DIFFICULTY_INVALID &&
-				m_entries[i].low_meter == MAX_BOTTOM_RANGE &&
-				m_entries[i].high_meter == MAX_BOTTOM_RANGE )
-				continue;
-
-			return true;
-		}
-		return false;
-	}
-
-	/* We don't have any random songs.  Check to see if any songs would change
-	 * if difficult. */
+	/* Check to see if any songs would change if difficult. */
 	const bool OldDifficulty = GAMESTATE->m_bDifficultCourses;
 
-	vector<Song*> vSongs, vHardSongs;
-	vector<Notes*> vNotes, vHardNotes;
-	vector<CString> vsIgnore;
+	vector<Info> Normal, Hard;
 
 	GAMESTATE->m_bDifficultCourses = false;
-	GetStageInfo( vSongs, vNotes, vsIgnore, nt );
+	GetCourseInfo( nt, Normal );
 	GAMESTATE->m_bDifficultCourses = true;
-	GetStageInfo( vHardSongs, vHardNotes, vsIgnore, nt );
+	GetCourseInfo( nt, Hard );
 	GAMESTATE->m_bDifficultCourses = OldDifficulty;
 
-	if( vSongs.size() != vHardSongs.size() )
+	if( Normal.size() != Hard.size() )
 		return true; /* it changed */
 
-	for( unsigned i=0; i<vSongs.size(); i++ )
-		if( vSongs[i] != vHardSongs[i] || vNotes[i] != vHardNotes[i] )
+	for( unsigned i=0; i<Normal.size(); i++ )
+	{
+		if( Normal[i].CourseIndex != Hard[i].CourseIndex )
+			return true; /* it changed */
+
+		if( Normal[i].Random )
+		{
+			const Entry &e = m_entries[ Normal[i].CourseIndex ];
+			
+			/* Difficulties under CHALLENGE change by getting harder. */
+			if( e.difficulty < DIFFICULTY_CHALLENGE )
+				return true;
+
+			/* Meters under MAX_BOTTOM_RANGE..MAX_BOTTOM_RANGE change by getting harder. */
+			if( e.difficulty != DIFFICULTY_INVALID &&
+				e.low_meter < MAX_BOTTOM_RANGE &&
+				e.high_meter < MAX_BOTTOM_RANGE )
+				return true;
+			continue;
+		}
+		
+		if( Normal[i].Song != Hard[i].Song || Normal[i].Notes != Hard[i].Notes )
 			return true;
+	}
 	return false;
 }
 
 bool Course::IsPlayableIn( NotesType nt ) const
 {
-	/* XXX: Is this good enough?  This needs to be guaranteed: if we say
-	 * a course is playable and it's not, we'll crash in ScreenGameplay. */
-
-	vector<Song*> vSongs;
-	vector<Notes*> vNotes;
-	vector<CString> vsModifiers;
-	GetStageInfo( vSongs, vNotes, vsModifiers, nt);
-	
-	return vNotes.size() > 0;
+	vector<Info> ci;
+	GetCourseInfo( nt, ci );
+	return ci.size() > 0;
 }
 
 
-void Course::GetStageInfo( 
-	vector<Song*>& vSongsOut, 
-	vector<Notes*>& vNotesOut, 
-	vector<CString>& vsModifiersOut, 
+bool Course::GetFirstStageInfo(
+	Song*& pSongOut, 
+	Notes*& pNotesOut, 
+	CString& sModifiersOut, 
 	NotesType nt ) const
+{
+	vector<Info> ci;
+	GetCourseInfo( nt, ci );
+
+	if( ci.empty() )
+		return false;
+	
+	pSongOut = ci[0].Song;
+	pNotesOut = ci[0].Notes;
+	sModifiersOut = ci[0].Modifiers;
+	return true;
+}
+
+void Course::GetCourseInfo( NotesType nt, vector<Course::Info> &ci ) const
 {
 	vector<Entry> entries = m_entries;
 
 	if( m_bRandomize )
 		random_shuffle( entries.begin(), entries.end() );
 
-	vector<Song*> vSongsByMostPlayed;
+	vector<Song*> vSongsByMostPlayed = SONGMAN->GetBestSongs();
+	// filter out songs that don't have both medium and hard steps and long ver sons
+	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
+	{
+		Song* pSong = vSongsByMostPlayed[j];
+		if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
+			pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
+			!pSong->GetNotes(nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes)  ||
+			!pSong->GetNotes(nt, DIFFICULTY_HARD, PREFSMAN->m_bAutogenMissingTypes) )
+			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
+	}
 
 	vector<Song*> AllSongsShuffled = SONGMAN->GetAllSongs();
 	random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end() );
 	int CurSong = 0; /* Current offset into AllSongsShuffled */
+
+	ci.clear(); 
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
@@ -500,26 +516,6 @@ void Course::GetStageInfo(
 		case Entry::best:
 		case Entry::worst:
 			{
-				if(vSongsByMostPlayed.size() == 0)
-				{
-					/* Probably the first time getting here; fill it in just once. */
-					/* XXX: This is still expensive enough to cause a noticable
-					 * frame drop when scrolling over best/worst entries. */
-					vSongsByMostPlayed = SONGMAN->GetAllSongs();
-					SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
-					
-					// filter out songs that don't have both medium and hard steps and long ver sons
-					for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
-					{
-						Song* pSong = vSongsByMostPlayed[j];
-						if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
-							pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
-							!pSong->GetNotes(nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes)  ||
-							!pSong->GetNotes(nt, DIFFICULTY_HARD, PREFSMAN->m_bAutogenMissingTypes) )
-							vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
-					}
-				}
-
 				if( e.players_index >= (int)vSongsByMostPlayed.size() )
 					break;
 
@@ -567,36 +563,13 @@ void Course::GetStageInfo(
 			}
 		}
 
-		vSongsOut.push_back( pSong ); 
-		vNotesOut.push_back( pNotes ); 
-		vsModifiersOut.push_back( e.modifiers );
+		Info cinfo;
+		cinfo.Song = pSong;
+		cinfo.Notes = pNotes;
+		cinfo.Modifiers = e.modifiers;
+		cinfo.Random = ( e.type == Entry::random || e.type == Entry::random_within_group );
+		ci.push_back( cinfo ); 
 	}
-
-
-}
-
-bool Course::GetFirstStageInfo(
-	Song*& pSongOut, 
-	Notes*& pNotesOut, 
-	CString& sModifiersOut, 
-	NotesType nt ) const
-{
-	vector<Song*> vSongs; 
-	vector<Notes*> vNotes; 
-	vector<CString> vsModifiers;
-
-	GetStageInfo(
-		vSongs, 
-		vNotes, 
-		vsModifiers, 
-		nt );
-	if( vSongs.empty() )
-		return false;
-	
-	pSongOut = vSongs[0]; 
-	pNotesOut = vNotes[0]; 
-	sModifiersOut = vsModifiers[0];
-	return true;
 }
 
 RageColor Course::GetColor() const
@@ -610,18 +583,6 @@ RageColor Course::GetColor() const
 		return RageColor(0,1,0,1);	// green
 }
 
-bool Course::IsMysterySong( int stage ) const
-{
-	switch( m_entries[stage].type )
-	{
-	case Entry::fixed:					return false;
-	case Entry::random:					return true;
-	case Entry::random_within_group:	return true;
-	case Entry::best:			return false;
-	case Entry::worst:			return false;
-	default:		ASSERT(0);			return true;
-	}
-}
 
 Difficulty Course::GetDifficulty( int stage ) const
 {
@@ -646,31 +607,18 @@ void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) c
 	}
 }
 
-bool Course::ContainsAnyMysterySongs() const
-{
-	for( unsigned i=0; i<m_entries.size(); i++ )
-		if( IsMysterySong(i) )
-			return true;
-	return false;
-}
-
 bool Course::GetTotalSeconds( float& fSecondsOut ) const
 {
-	if( ContainsAnyMysterySongs() )
-		return false;
-	
-	vector<Song*> vSongsOut;
-	vector<Notes*> vNotesOut;
-	vector<CString> vsModifiersOut;
-	GetStageInfo(
-		vSongsOut, 
-		vNotesOut, 
-		vsModifiersOut, 
-		NOTES_TYPE_DANCE_SINGLE );	// doesn't matter
+	vector<Info> ci;
+	GetCourseInfo( NOTES_TYPE_DANCE_SINGLE, ci );
 
 	fSecondsOut = 0;
-	for( unsigned i=0; i<vSongsOut.size(); i++ )
-		fSecondsOut += vSongsOut[i]->m_fMusicLengthSeconds;
+	for( unsigned i=0; i<ci.size(); i++ )
+	{
+		if( ci[i].Random )
+			return false;
+		fSecondsOut += ci[i].Song->m_fMusicLengthSeconds;
+	}
 	return true;
 }
 

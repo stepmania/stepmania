@@ -54,32 +54,27 @@ void CourseContentsList::SetFromCourse( Course* pCourse )
 
 	m_iNumContents = 0; 
 
-	vector<Song*> vSongs;
-	vector<Notes*> vNotes;
-	vector<CString> vsModifiers;
-	pCourse->GetStageInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+	vector<Course::Info> ci;
+	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
 
-	for( int i=0; i<min((int)vSongs.size(), MAX_TOTAL_CONTENTS); i++ )
+	for( int i=0; i<min((int)ci.size(), MAX_TOTAL_CONTENTS); i++ )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
 	
-		if( pCourse->IsMysterySong(i) )
+		if( ci[i].Random )
 		{
 			Difficulty dc = pCourse->GetDifficulty(i);
 			int iMeterLow, iMeterHigh;
 			pCourse->GetMeterRange(i, iMeterLow, iMeterHigh);
 
 			if( dc == DIFFICULTY_INVALID )
-				display.LoadFromMeterRange( m_iNumContents+1, iMeterLow, iMeterHigh, vsModifiers[i] );
+				display.LoadFromMeterRange( m_iNumContents+1, iMeterLow, iMeterHigh, ci[i].Modifiers );
 			else
-				display.LoadFromDifficulty( m_iNumContents+1, dc, vsModifiers[i] );
+				display.LoadFromDifficulty( m_iNumContents+1, dc, ci[i].Modifiers );
 		}
 		else
 		{
-			Song* pSong = vSongs[i];
-			Notes* pNotes = vNotes[i];
-			CString sModifiers = vsModifiers[i];
-			display.LoadFromSongAndNotes( m_iNumContents+1, pSong, pNotes, vsModifiers[i] );
+			display.LoadFromSongAndNotes( m_iNumContents+1, ci[i].Song, ci[i].Notes, ci[i].Modifiers );
 		}
 		
 		m_iNumContents ++;

@@ -59,10 +59,23 @@ public:
 	bool		m_bDifficult; // only make something difficult once
 	int			m_iLives;	// -1 means use bar life meter
 
+	struct Info
+	{
+		Info(): Song(NULL), Notes(NULL), Random(false) { }
+		Song*	Song;
+		Notes*	Notes;
+		CString	Modifiers;
+		bool	Random;
+		/* Corresponding entry in m_entries: */
+		int		CourseIndex;
+	};
+	// Dereferences course_entries and returns only the playable Songs and Notes
+	void GetCourseInfo( NotesType nt, vector<Info> &ci ) const;
+
 	int GetEstimatedNumStages() const { return m_entries.size(); }
 	bool HasDifficult( NotesType nt ) const;
 	bool IsPlayableIn( NotesType nt ) const;
-	void GetStageInfo(		// Derefrences course_entries and returns only the playable Songs and Notes
+	void GetStageInfo(
 		vector<Song*>& vSongsOut, 
 		vector<Notes*>& vNotesOut, 
 		vector<CString>& vsModifiersOut, 
@@ -73,10 +86,8 @@ public:
 		CString& sModifiersOut, 
 		NotesType nt ) const;
 	RageColor GetColor() const;
-	bool IsMysterySong( int stage ) const;
 	Difficulty GetDifficulty( int stage ) const;
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const;
-	bool ContainsAnyMysterySongs() const;
 	bool GetTotalSeconds( float& fSecondsOut ) const;
 
 	bool IsNonstop() const { return !m_bRepeat && m_iLives <= 0; } 	// use bar life meter

@@ -145,12 +145,17 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	//
 	if( GAMESTATE->IsCourseMode() )
 	{
-		Course* pCourse = GAMESTATE->m_pCurCourse;
-		pCourse->GetStageInfo( m_apSongsQueue, m_apNotesQueue[0], m_asModifiersQueue[0], GAMESTATE->GetCurrentStyleDef()->m_NotesType );
-		for( int p=1; p<NUM_PLAYERS; p++ )
+		vector<Course::Info> ci;
+		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			m_apNotesQueue[p] = m_apNotesQueue[0];
-			m_asModifiersQueue[p] = m_asModifiersQueue[0];
+			m_apNotesQueue[p].clear();
+			m_asModifiersQueue[p].clear();
+			for( unsigned c=0; c<ci.size(); ++c )
+			{
+				m_apNotesQueue[p].push_back( ci[c].Notes );
+				m_asModifiersQueue[p].push_back( ci[c].Modifiers );
+			}
 		}
 	}
 	else
