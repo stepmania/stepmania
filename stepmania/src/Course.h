@@ -62,40 +62,32 @@ public:
 
 	struct Info
 	{
-		Info(): pSong(NULL), pNotes(NULL), Random(false) { }
+		Info(): pSong(NULL), pNotes(NULL), Random(false), Difficult(false) { }
 		Song*	pSong;
 		Notes*	pNotes;
 		CString	Modifiers;
 		bool	Random;
+		bool	Difficult; /* set to true if this is the difficult version */
 		/* Corresponding entry in m_entries: */
 		int		CourseIndex;
 	};
+
 	// Dereferences course_entries and returns only the playable Songs and Notes
-	void GetCourseInfo( NotesType nt, vector<Info> &ci ) const;
+	void GetCourseInfo( NotesType nt, vector<Info> &ci, int Difficult = -1 ) const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
 	bool HasDifficult( NotesType nt ) const;
 	bool IsPlayableIn( NotesType nt ) const;
-	void GetStageInfo(
-		vector<Song*>& vSongsOut, 
-		vector<Notes*>& vNotesOut, 
-		vector<CString>& vsModifiersOut, 
-		NotesType nt ) const;
-	bool GetFirstStageInfo(
-		Song*& pSongOut, 
-		Notes*& pNotesOut, 
-		CString& sModifiersOut, 
-		NotesType nt ) const;
 	RageColor GetColor() const;
 	Difficulty GetDifficulty( const Info &stage ) const;
 	void GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const;
 	bool GetTotalSeconds( float& fSecondsOut ) const;
 
-	bool IsNonstop() const { return !m_bRepeat && m_iLives <= 0; } 	// use bar life meter
-	bool IsOni() const { return !m_bRepeat && m_iLives > 0; } 	// use battery life meter
-	bool IsEndless() const { return m_bRepeat; }
+	bool IsNonstop() const { return GetPlayMode() == PLAY_MODE_NONSTOP; }
+	bool IsOni() const { return GetPlayMode() == PLAY_MODE_ONI; }
+	bool IsEndless() const { return GetPlayMode() == PLAY_MODE_ENDLESS; }
 	PlayMode GetPlayMode() const;
-	int GetMeter() const;
+	int GetMeter( int Difficult = -1 ) const;
 
 	void LoadFromCRSFile( CString sPath );
 	void Save();
@@ -129,7 +121,7 @@ public:
 
 private:
 	void SetDefaultScore();
-	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const;
+	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, int Difficult = -1 ) const;
 };
 
 
