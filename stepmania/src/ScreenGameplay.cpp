@@ -1663,6 +1663,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	// received while STATE_DANCING
 	case SM_NotesEnded:
 		{
+			/* Need to Finish before calling GetActualRadarValue, for GetMaxCombo. */
+			GAMESTATE->m_CurStageStats.Finish();
+
 			// save any statistics
 			int p;
 			for( p=0; p<NUM_PLAYERS; p++ )
