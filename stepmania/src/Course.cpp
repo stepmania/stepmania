@@ -267,6 +267,5 @@ static int CompareCoursePointersByDifficulty(const Course* pCourse1, const Cours
 
 void SortCoursePointerArrayByDifficulty( CArray<Course*,Course*> &apCourses )
 {
-	sort( apCourses.GetData(), apCourses.GetData()+apCourses.GetSize(), 
-		CompareCoursePointersByDifficulty );
+	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByDifficulty );
 }

@@ -685,8 +685,7 @@ bool CompareCStringsDesc(const CString &str1, const CString &str2)
 
 void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAscending )
 {
-	sort( arrayCStrings.GetData(),
-			arrayCStrings.GetData()+arrayCStrings.GetSize(),
+	sort( arrayCStrings.begin(), arrayCStrings.end(),
 			bSortAscending?CompareCStringsAsc:CompareCStringsDesc);
 }
 

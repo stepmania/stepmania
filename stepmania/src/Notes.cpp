@@ -211,7 +211,6 @@ bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2
 
 void SortNotesArrayByDifficulty( CArray<Notes*,Notes*> &arraySteps )
 {
-	sort( arraySteps.GetData(), arraySteps.GetData()+arraySteps.GetSize(),
-		CompareNotesPointersByDifficulty );
+	sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
 }
 

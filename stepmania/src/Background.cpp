@@ -41,8 +41,7 @@ int CompareBGSegments(const BGSegment &seg1, const BGSegment &seg2)
 
 void SortBGSegmentArray( CArray<BGSegment,BGSegment&> &arrayBGSegments )
 {
-	sort( arrayBGSegments.GetData(), arrayBGSegments.GetData()+arrayBGSegments.GetSize(),
-		CompareBGSegments );
+	sort( arrayBGSegments.begin(), arrayBGSegments.end(), CompareBGSegments );
 }
 
 

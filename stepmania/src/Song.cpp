@@ -43,8 +43,7 @@ static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
 
 void SortBPMSegmentsArray( CArray<BPMSegment,BPMSegment&> &arrayBPMSegments )
 {
-	sort( arrayBPMSegments.GetData(),
-		arrayBPMSegments.GetData()+arrayBPMSegments.GetSize(), CompareBPMSegments );
+	sort( arrayBPMSegments.begin(), arrayBPMSegments.end(), CompareBPMSegments );
 }
 
 static int CompareStopSegments(const StopSegment &seg1, const StopSegment &seg2)
@@ -54,8 +53,7 @@ static int CompareStopSegments(const StopSegment &seg1, const StopSegment &seg2)
 
 void SortStopSegmentsArray( CArray<StopSegment,StopSegment&> &arrayStopSegments )
 {
-	sort( arrayStopSegments.GetData(),
-		arrayStopSegments.GetData()+arrayStopSegments.GetSize(), CompareStopSegments );
+	sort( arrayStopSegments.begin(), arrayStopSegments.end(), CompareStopSegments );
 }
 
 int CompareBackgroundChanges(const BackgroundChange &seg1, const BackgroundChange &seg2)
@@ -65,8 +63,7 @@ int CompareBackgroundChanges(const BackgroundChange &seg1, const BackgroundChang
 
 void SortBackgroundChangesArray( CArray<BackgroundChange,BackgroundChange&> &arrayBackgroundChanges )
 {
-	sort( arrayBackgroundChanges.GetData(), 
-		arrayBackgroundChanges.GetData()+arrayBackgroundChanges.GetSize(), CompareBackgroundChanges );
+	sort( arrayBackgroundChanges.begin(), arrayBackgroundChanges.end(), CompareBackgroundChanges );
 }
 
 
@@ -891,9 +888,7 @@ int CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 
 void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.GetData(), 
-		arraySongPointers.GetData()+arraySongPointers.GetSize(),
-		   CompareSongPointersByTitle );
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByTitle );
 }
 
 int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
@@ -922,9 +917,7 @@ int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 
 void SortSongPointerArrayByDifficulty( CArray<Song*, Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.GetData(), 
-		arraySongPointers.GetData()+arraySongPointers.GetSize(),
-		   CompareSongPointersByDifficulty );
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByDifficulty );
 }
 
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
@@ -943,9 +936,7 @@ bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 
 void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.GetData(), 
-		arraySongPointers.GetData()+arraySongPointers.GetSize(),
-		   CompareSongPointersByBPM );
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByBPM );
 }
 
 
@@ -963,9 +954,7 @@ int CompareSongPointersByArtist(const Song *pSong1, const Song *pSong2)
 
 void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.GetData(), 
-		arraySongPointers.GetData()+arraySongPointers.GetSize(),
-		   CompareSongPointersByArtist );
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByArtist );
 }
 
 int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
@@ -984,9 +973,7 @@ int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 
 void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.GetData(), 
-		arraySongPointers.GetData()+arraySongPointers.GetSize(),
-		   CompareSongPointersByGroup );
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGroup );
 }
 
 int CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
@@ -1003,9 +990,7 @@ int CompareSongPointersByMostPlayed(const Song *pSong1, const Song *pSong2)
 
 void SortSongPointerArrayByMostPlayed( CArray<Song*, Song*> &arraySongPointers )
 {
-	sort( arraySongPointers.GetData(), 
-		arraySongPointers.GetData()+arraySongPointers.GetSize(),
-		   CompareSongPointersByMostPlayed );
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByMostPlayed );
 }
 
 bool Song::NormallyDisplayed() const 
