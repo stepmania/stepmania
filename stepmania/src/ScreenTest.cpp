@@ -48,7 +48,7 @@ ScreenTest::ScreenTest()
 	SetScreen(0);
 }
 
-void ScreenTest::Update(float f) { current->Update(f); }
+void ScreenTest::Update(float f) { current->Update(f); Screen::Update(f); }
 void ScreenTest::HandleScreenMessage( const ScreenMessage SM ) { current->HandleScreenMessage(SM); }
 void ScreenTest::Draw() { current->Draw(); }
 
