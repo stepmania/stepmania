@@ -46,8 +46,6 @@ using namespace std;
 #endif
 #include <dinput.h>
 
-#include "STDCarray.h"
-
 #if 0
 #include "StdString.h"
 
@@ -89,6 +87,9 @@ inline const T& min(const T &a, const T &b, P Pr)
 #endif
 
 #endif
+
+#include "STDCarray.h"
+#define CStringArray StdCArray<CString,CString>
 
 /* Include this here to make sure our assertion handler is always
  * used.  (This file is a dependency of most everything anyway,
