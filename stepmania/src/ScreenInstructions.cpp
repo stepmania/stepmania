@@ -19,7 +19,7 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 	//
 	// Skip this screen unless someone chose easy or beginner
 	//
-	if( !PREFSMAN->m_bInstructions )
+	if( !PREFSMAN->m_bShowInstructions )
 	{
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;

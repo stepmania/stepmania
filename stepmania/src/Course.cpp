@@ -549,14 +549,14 @@ struct SortTrailEntry
 
 CString Course::GetDisplayMainTitle() const
 {
-	if( !PREFSMAN->m_bShowNative )
+	if( !PREFSMAN->m_bShowNativeLanguage )
 		return GetTranslitMainTitle();
 	return m_sMainTitle;
 }
 
 CString Course::GetDisplaySubTitle() const
 {
-	if( !PREFSMAN->m_bShowNative )
+	if( !PREFSMAN->m_bShowNativeLanguage )
 		return GetTranslitSubTitle();
 	return m_sSubTitle;
 }

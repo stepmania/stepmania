@@ -1257,19 +1257,19 @@ CString Song::GetBackgroundPath() const
 
 CString Song::GetDisplayMainTitle() const
 {
-	if(!PREFSMAN->m_bShowNative) return GetTranslitMainTitle();
+	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitMainTitle();
 	return m_sMainTitle;
 }
 
 CString Song::GetDisplaySubTitle() const
 {
-	if(!PREFSMAN->m_bShowNative) return GetTranslitSubTitle();
+	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitSubTitle();
 	return m_sSubTitle;
 }
 
 CString Song::GetDisplayArtist() const
 {
-	if(!PREFSMAN->m_bShowNative) return GetTranslitArtist();
+	if(!PREFSMAN->m_bShowNativeLanguage) return GetTranslitArtist();
 	return m_sArtist;
 }
 

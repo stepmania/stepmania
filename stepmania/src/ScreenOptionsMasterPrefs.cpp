@@ -199,14 +199,14 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const CStringArray &choices )
 }
 
 /* Appearance options */
-MOVE( Instructions,			PREFSMAN->m_bInstructions );
-MOVE( Caution,				PREFSMAN->m_bShowDontDie );
+MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
+MOVE( Caution,				PREFSMAN->m_bShowCaution );
 MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
 MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 MOVE( WheelSections,		PREFSMAN->m_MusicWheelUsesSections );
 MOVE( CourseSort,			PREFSMAN->m_iCourseSortOrder );
 MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
-MOVE( Translations,			PREFSMAN->m_bShowNative );
+MOVE( Translations,			PREFSMAN->m_bShowNativeLanguage );
 MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
 
 /* Misc. options */
@@ -236,7 +236,7 @@ static void NumBackgrounds( int &sel, bool ToSel, const CStringArray &choices )
 MOVE( AutoMapOnJoyChange,	PREFSMAN->m_bAutoMapOnJoyChange );
 MOVE( MenuButtons,			PREFSMAN->m_bOnlyDedicatedMenuButtons );
 MOVE( AutoPlay,				PREFSMAN->m_bAutoPlay );
-MOVE( BackDelayed,			PREFSMAN->m_bDelayedEscape );
+MOVE( BackDelayed,			PREFSMAN->m_bDelayedBack );
 MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
 
 static void WheelSpeed( int &sel, bool ToSel, const CStringArray &choices )

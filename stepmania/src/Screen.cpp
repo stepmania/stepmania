@@ -101,7 +101,7 @@ void Screen::Update( float fDeltaTime )
 
 void Screen::MenuBack(	PlayerNumber pn, const InputEventType type )
 {
-	if(!PREFSMAN->m_bDelayedEscape || type==IET_SLOW_REPEAT || type==IET_FAST_REPEAT)
+	if(!PREFSMAN->m_bDelayedBack || type==IET_SLOW_REPEAT || type==IET_FAST_REPEAT)
 		MenuBack(pn); 
 }
 

@@ -1703,7 +1703,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 
 		if( MenuI.button == MENU_BUTTON_BACK && 
-			((!PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS) ||
+			((!PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS) ||
 			(DeviceI.device==DEVICE_KEYBOARD && (type==IET_SLOW_REPEAT||type==IET_FAST_REPEAT)) ||
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT)) )
 		{
@@ -1732,7 +1732,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			return;
 		}
 
-		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS)
+		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS)
 		{
 			m_textDebug.SetText( "Continue holding BACK to quit" );
 			m_textDebug.StopTweening();
@@ -1742,7 +1742,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			return;
 		}
 		
-		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedEscape && type==IET_RELEASE )
+		if( MenuI.button == MENU_BUTTON_BACK && PREFSMAN->m_bDelayedBack && type==IET_RELEASE )
 		{
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 1/8.f );

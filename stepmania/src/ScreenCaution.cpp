@@ -17,7 +17,7 @@ const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 REGISTER_SCREEN_CLASS( ScreenCaution );
 ScreenCaution::ScreenCaution( CString sName ) : Screen( sName )
 {
-	if(!PREFSMAN->m_bShowDontDie)
+	if(!PREFSMAN->m_bShowCaution)
 	{
 		this->PostScreenMessage( SM_GoToNextScreen, 0.f );
 		return;

@@ -167,11 +167,11 @@ void PrefsManager::Init()
 	m_fSuperMeterPercentChangeNG =			-0.20f;
 	m_bMercifulSuperMeter = true;
 
-	m_bDelayedEscape = true;
-	m_bInstructions = true;
-	m_bShowDontDie = true;
+	m_bDelayedBack = true;
+	m_bShowInstructions = true;
+	m_bShowCaution = true;
 	m_bShowSelectGroup = true;
-	m_bShowNative = true;
+	m_bShowNativeLanguage = true;
 	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;
 	m_bDelayedTextureDelete = true;
@@ -464,13 +464,13 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "SuperMeterPercentChangeNG",		m_fSuperMeterPercentChangeNG );
 	ini.GetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
 
-	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
+	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedBack );
 	ini.GetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.GetValue( "Options", "Vsync",							m_bVsync );
-	ini.GetValue( "Options", "HowToPlay",						m_bInstructions );
-	ini.GetValue( "Options", "Caution",							m_bShowDontDie );
+	ini.GetValue( "Options", "ShowInstructions",				m_bShowInstructions );
+	ini.GetValue( "Options", "ShowCaution",						m_bShowCaution );
 	ini.GetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
-	ini.GetValue( "Options", "ShowNative",						m_bShowNative );
+	ini.GetValue( "Options", "ShowNativeLanguage",				m_bShowNativeLanguage );
 	ini.GetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
 	ini.GetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.GetValue( "Options", "TexturePreload",					m_bTexturePreload );
@@ -721,15 +721,15 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "SuperMeterPercentChangeNG",		m_fSuperMeterPercentChangeNG );
 	ini.SetValue( "Options", "MercifulSuperMeter",				m_bMercifulSuperMeter );
 
-	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
+	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedBack );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );
 	ini.SetValue( "Options", "Interlaced",						m_bInterlaced );
 	ini.SetValue( "Options", "PAL",								m_bPAL );
-	ini.SetValue( "Options", "HowToPlay",						m_bInstructions );
-	ini.SetValue( "Options", "Caution",							m_bShowDontDie );
+	ini.SetValue( "Options", "ShowInstructions",				m_bShowInstructions );
+	ini.SetValue( "Options", "ShowCaution",						m_bShowCaution );
 	ini.SetValue( "Options", "ShowSelectGroup",					m_bShowSelectGroup );
-	ini.SetValue( "Options", "ShowNative",						m_bShowNative );
+	ini.SetValue( "Options", "ShowNativeLanguage",				m_bShowNativeLanguage );
 	ini.SetValue( "Options", "ArcadeOptionsNavigation",			m_bArcadeOptionsNavigation );
 	ini.SetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
 	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );

@@ -128,9 +128,9 @@ public:
 	bool			m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 
 	bool			m_bAutoPlay;
-	bool			m_bDelayedEscape;
-	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
-	bool			m_bShowNative;
+	bool			m_bDelayedBack;
+	bool			m_bShowInstructions, m_bShowCaution, m_bShowSelectGroup;
+	bool			m_bShowNativeLanguage;
 	bool			m_bArcadeOptionsNavigation;
 	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
