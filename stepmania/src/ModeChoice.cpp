@@ -313,12 +313,18 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 		/* If you've paid too much already, don't allow the mode.  (If we allow this,
 		 * the credits will be "refunded" in Apply(), but that's confusing.) */
-		if( PREFSMAN->m_iCoinMode == COIN_PAY && iNumCreditsPaid > iNumCreditsRequired )
-		{
-			if( why )
-				*why = ssprintf( "too many credits paid (%i > %i)", iNumCreditsPaid, iNumCreditsRequired );
-			return false;
-		}
+		/* Do allow the mode if they've already joined in more credits than 
+		 * are required.  Otherwise, people who put in two credits to play 
+		 * doubles on a doubles-premium machiune will get locked out.
+		 * the refund logic isn't that awkward because you never see the 
+		 * credits number jump up - the credits display is hidden if both 
+		 * sides are joined. -Chris */
+		//if( PREFSMAN->m_iCoinMode == COIN_PAY && iNumCreditsPaid > iNumCreditsRequired )
+		//{
+		//	if( why )
+		//		*why = ssprintf( "too many credits paid (%i > %i)", iNumCreditsPaid, iNumCreditsRequired );
+		//	return false;
+		//}
 
 		/* If both sides are joined, disallow singles modes, since easy to select them
 		 * accidentally, instead of versus mode. */
