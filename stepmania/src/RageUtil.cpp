@@ -166,6 +166,24 @@ CString Commify( int iNum )
 	return sReturn;
 }
 
+CString AddNumberSuffix( int i )
+{
+	CString sSuffix;
+	switch( i%10 )
+	{
+	case 1:         sSuffix = "st"; break;
+	case 2:         sSuffix = "nd"; break;
+	case 3:         sSuffix = "rd"; break;
+	default:        sSuffix = "th"; break;
+	}
+
+	// "11th", "113th", etc.
+	if( ((i%100) / 10) == 1 )
+		sSuffix = "th";
+
+	return ssprintf("%i", i) + sSuffix;
+}
+
 struct tm GetLocalTime()
 {
 	const time_t t = time(NULL);
