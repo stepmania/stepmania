@@ -279,16 +279,11 @@ void ScreenEvaluation::Init()
 	this->AddChild( &m_bgOverlay );
 
 	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
-	switch( m_Type )
-	{
-	case stage:
-	case course:
-		if( m_bFailed )
-			m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
-		else
-			m_sndPassFail.Load( THEME->GetPathS(m_sName, "passed") );
-		m_sndPassFail.Play();
-	}
+	if( m_bFailed )
+ 		m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
+	else
+		m_sndPassFail.Load( THEME->GetPathS(m_sName, "passed") );
+	m_sndPassFail.Play();
 
 	m_bgCondBga.Load(m_sName);
 
