@@ -89,7 +89,7 @@ public:
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
-	int m_fTotalCaloriesBurned;
+	float m_fTotalCaloriesBurned;
 	int m_iTotalDancePoints;
 	int m_iNumExtraStagesPassed;
 	int m_iNumExtraStagesFailed;
