@@ -254,8 +254,6 @@ void RageFileDriverZip::ParseZipfile()
 
 	zip.Seek( ec.offset_start_central_directory );
 
-	bool endsig_found = false;
-
 	/* Loop through files in central directory. */
     while(1)
     {
@@ -270,8 +268,9 @@ void RageFileDriverZip::ParseZipfile()
 			 * compatible with the number of entries as stored in the end_central record? */
 			if( Files.size() == (unsigned)ec.total_entries_central_dir )
 			{
-				/* yes, so look if we ARE back at the end_central record */
-				endsig_found = ( sig == end_central_sig );
+				/* Are we at the end_central record? */
+				if( sig != end_central_sig )
+					LOG->Warn( "%s: expected end central file header signature not found", zip.GetPath().c_str() );
 			} else {
 				LOG->Warn( "%s: expected central file header signature not found", zip.GetPath().c_str() );
 			}
