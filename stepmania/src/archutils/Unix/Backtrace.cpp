@@ -214,10 +214,6 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 		if( val != stack_block1 && val != stack_block2 )
 			break;
 
-		/* XXX */
-		//if( frame->return_address == (void*) CrashSignalHandler )
-		//	continue;
-
 		if( frame->return_address )
 			buf[i++] = frame->return_address;
 
