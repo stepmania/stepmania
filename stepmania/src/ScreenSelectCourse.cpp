@@ -146,6 +146,8 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassNam
 
 	AfterCourseChange();
 	TweenOnScreen();
+
+	this->SortByZ();
 }
 
 

@@ -155,6 +155,8 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX( CString sClassName ) : Scree
 	TweenOnScreen();
 
 	SetAllPlayersSelection( 0, false );
+
+	this->SortByZ();
 }
 
 void ScreenSelectDifficultyEX::Update( float fDelta )

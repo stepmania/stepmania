@@ -323,6 +323,8 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 
 	this->PostScreenMessage( SM_BeginFadingOut, TIME_TO_DISPLAY );
+
+	this->SortByZ();
 }
 
 ScreenUnlock::~ScreenUnlock()

@@ -174,6 +174,8 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : Screen( sCl
 			m_sprIcons[p][i].Command( ICONS_ON_COMMAND(p) );
 	}
 	TweenOnScreen();
+
+	this->SortByZ();
 }
 
 

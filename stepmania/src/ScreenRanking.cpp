@@ -851,6 +851,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 		ASSERT(0);
 		return 0;
 	}
+
+	this->SortByZ();
 }
 
 void ScreenRanking::TweenPageOffScreen()

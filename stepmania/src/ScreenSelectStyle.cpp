@@ -141,6 +141,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 	SET_XY_AND_ON_COMMAND( m_sprPremium );
 
 	// let AfterChange tween Picture and Info
+	this->SortByZ();
 }
 
 void ScreenSelectStyle::MenuLeft( PlayerNumber pn )

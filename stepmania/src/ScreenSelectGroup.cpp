@@ -148,6 +148,8 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName 
 	AfterChange();
 	TweenOnScreen();
 	m_GroupList.SetSelection(0);
+
+	this->SortByZ();
 }
 
 
