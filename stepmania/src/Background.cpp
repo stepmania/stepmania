@@ -109,11 +109,13 @@ void Background::Unload()
 		 iter++ )
 		delete iter->second;
 	m_BGAnimations.clear();
-	
+	m_RandomBGAnimations.clear();
 	m_aBGChanges.clear();
+
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
+	m_iCurBGChangeIndex = 0;
 }
 
 void Background::LoadFromAniDir( CString sAniDir )
