@@ -1007,7 +1007,7 @@ void NoteDataUtil::Wide( NoteData &in )
 
 	// make all all quarter notes jumps
 	int max_row = in.GetLastRow();
-	for( int i=0; i<=max_row; i+=ROWS_PER_BEAT ) 
+	for( int i=0; i<=max_row; i+=ROWS_PER_BEAT*2 ) // every even beat
 	{
 		if( in.GetNumTapNonEmptyTracks(i) != 1 )
 			continue;	// skip.  Don't place during holds

@@ -384,12 +384,39 @@ HWND GetHwnd()
 /* Set the video mode. */
 bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )
 {
+	HRESULT hr;
+
 	if( FindBackBufferType( windowed, bpp ) == -1 )	// no possible back buffer formats
 		return false;
 
 	/* Set SDL window title and icon -before- creating the window */
 	SDL_WM_SetCaption(sWindowTitle, "");
 	mySDL_WM_SetIcon( sIconFile );
+
+
+	/* Round to the nearest valid fullscreen resolution */
+	if( !windowed )
+	{
+		if(      width <= 320 )		width = 320;
+		else if( width <= 400 )		width = 400;
+		else if( width <= 512 )		width = 512;
+		else if( width <= 640 )		width = 640;
+		else if( width <= 800 )		width = 800;
+		else if( width <= 1024 )	width = 1024;
+		else if( width <= 1280 )	width = 1280;
+
+		switch( width )
+		{
+		case 320:	height = 240;	break;
+		case 400:	height = 300;	break;
+		case 512:	height = 384;	break;
+		case 640:	height = 480;	break;
+		case 800:	height = 600;	break;
+		case 1024:	height = 768;	break;
+		case 1280:	height = 1024;	break;
+		default:	ASSERT(0);
+		}
+	}
 
 	
 	// HACK: On Windows 98, we can't call SDL_SetVideoMode while D3D is full screen.
@@ -435,7 +462,6 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 
 	if( bCreateNewDevice )		// device is not yet created.  We need to create it
 	{
-		HRESULT hr;
 		hr = g_pd3d->CreateDevice(
 			D3DADAPTER_DEFAULT, 
 			D3DDEVTYPE_HAL, 
@@ -456,7 +482,12 @@ bool RageDisplay_D3D::SetVideoMode( bool windowed, int width, int height, int bp
 	}
 	else
 	{
-		g_pd3dDevice->Reset( &g_d3dpp );
+		hr = g_pd3dDevice->Reset( &g_d3dpp );
+		if( FAILED(hr) )
+		{
+			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+			RageException::Throw( "g_pd3dDevice->Reset failed: '%s'", DXGetErrorString8(hr) );
+		}
 	}
 	
 	if( this->IsWindowed() )

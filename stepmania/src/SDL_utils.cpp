@@ -563,6 +563,12 @@ Uint8 mySDL_EventState(Uint8 type, int state)
 
 void mySDL_WM_SetIcon( CString sIconFile )
 {
+	if( sIconFile.empty() )
+	{
+		SDL_WM_SetIcon(NULL, NULL);
+		return;
+	}
+
 	SDL_Surface *srf = IMG_Load(sIconFile);
 	SDL_SetColorKey( srf, SDL_SRCCOLORKEY, SDL_MapRGB(srf->format, 0xFF, 0, 0xFF));
 
