@@ -35,6 +35,8 @@ MemoryCardManager::MemoryCardManager()
 	}
 	m_pDriver->GetStorageDevices( m_vStorageDevices );
 
+	m_bDontPlaySoundsOnce = false;
+
 	m_soundReady.Load( THEME->GetPathToS("MemoryCardManager ready") );
 	m_soundError.Load( THEME->GetPathToS("MemoryCardManager error") );
 	m_soundTooLate.Load( THEME->GetPathToS("MemoryCardManager too late") );
@@ -248,15 +250,20 @@ match:
 				}
 			}
 
-			// play sound
-			if( m_bWriteError[p] )
-				m_soundError.Play();
-			else if( m_bTooLate[p] )
-				m_soundTooLate.Play();
-			else
-				m_soundReady.Play();
+			if( !m_bDontPlaySoundsOnce )
+			{
+				// play sound
+				if( m_bWriteError[p] )
+					m_soundError.Play();
+				else if( m_bTooLate[p] )
+					m_soundTooLate.Play();
+				else
+					m_soundReady.Play();
+			}
 		}
 	}
+
+	m_bDontPlaySoundsOnce = false;
 }
 
 void MemoryCardManager::FlushAndReset()
@@ -271,6 +278,8 @@ void MemoryCardManager::FlushAndReset()
 	}
 
 	m_pDriver->ResetUsbStorage();	// forces cards to be re-detected
+
+	m_bDontPlaySoundsOnce = true;
 }
 
 bool MemoryCardManager::PathIsMemCard( CString sDir ) const
