@@ -16,11 +16,7 @@
 //-----------------------------------------------------------------------------
 //#pragma comment(lib, "winmm.lib") 
 #pragma comment(lib, "dxerr8.lib")
-
-// #define IL_DEBUG
-//#include <il/il.h>
-//#include <il/ilut.h>
-
+ 
 //-----------------------------------------------------------------------------
 // Includes
 //-----------------------------------------------------------------------------
@@ -52,12 +48,10 @@ RageBitmapTexture::RageBitmapTexture(
 
 	m_pd3dTexture = NULL;
 
-
 	//if( !LoadFromCacheFile() )
 		Create( dwMaxSize, dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 	
 	//SaveToCache();
-
 
 	CreateFrameRects();
 }
@@ -66,15 +60,7 @@ RageBitmapTexture::~RageBitmapTexture()
 {
 	SAFE_RELEASE(m_pd3dTexture);
 }
-/*
-unsigned NextPower2(unsigned Num)
-{
-	ILuint Power2 = 1;
-	if (Num == 0) return 1;
-	for (; Power2 < Num; Power2 <<= 1);
-	return Power2;
-}
-*/
+
 void RageBitmapTexture::Reload( 	
 	DWORD dwMaxSize, 
 	DWORD dwTextureColorDepth,
@@ -109,79 +95,6 @@ void RageBitmapTexture::Create(
 	)
 {
 	HRESULT hr;
-
-#if 0
-	unsigned ilNum;
-	ilGenImages(1, &ilNum);
-
-	ilBindImage(ilNum);	
-	if( int err = ilGetError() ) throw RageException( "Error loading %s: %s", m_sFilePath, iluErrorString(err) );
-
-	// annoying
-	ilLoadImage((ILstring)( (const char *) m_sFilePath ));
-	if( int err = ilGetError() ) throw RageException( "Error loading %s: %s", m_sFilePath, iluErrorString(err) );
-
-	m_iSourceWidth = ilGetInteger(IL_IMAGE_WIDTH);
-	m_iSourceHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-
-	/* Texture sizes need to be a power of two. */
-	m_iTextureWidth = NextPower2(ilGetInteger(IL_IMAGE_WIDTH));
-	m_iTextureHeight = NextPower2(ilGetInteger(IL_IMAGE_HEIGHT));
-
-	// ...	
-	if(ilGetInteger(IL_IMAGE_FORMAT) != IL_BGRA)
-		ilConvertImage(IL_BGRA, IL_UNSIGNED_BYTE);
-
-	/* If either texture dimension is too big, cap it. */
-	m_iTextureWidth = min(m_iTextureWidth, int(dwMaxSize));
-	m_iTextureHeight = min(m_iTextureHeight, int(dwMaxSize));
-
-	/* If we're stretching the image to the texture's resolution, change it: */
-	if(bStretch) {
-		m_iImageWidth = m_iTextureWidth;
-		m_iImageHeight = m_iTextureHeight;
-	} else {
-		m_iImageWidth = m_iSourceWidth;
-		m_iImageHeight = m_iSourceHeight;
-	}
-
-	/* Scale it if necessary. */
-	iluScale(m_iImageWidth, m_iImageHeight, 4);
-
-	if (FAILED(hr=m_pd3dDevice->CreateTexture(m_iTextureWidth, m_iTextureHeight,
-		1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture)))
-		throw RageException( hr, "IDirect3DDevice8::CreateTexture() failed for file '%s'.", m_sFilePath );
-
-	D3DLOCKED_RECT Rect;
-	if (FAILED(hr=m_pd3dTexture->LockRect(0, &Rect, NULL, 0)))
-		throw RageException( hr, "IDirect3DDevice8::LockRect() failed for file '%s'.", m_sFilePath );
-
-	unsigned long *from = (unsigned long *) ilGetData(),
-		*to = (unsigned long *) Rect.pBits;
-
-	for(int row = 0; row < m_iImageHeight; ++row)
-	{
-		for(int col = 0; col < m_iImageWidth; ++col) {
-			unsigned pixel = from[row*m_iImageWidth+col];
-			
-			if(pixel == 0xFFFF00FF) pixel = 0x00000000;	
-			to[row*m_iTextureWidth+col] = pixel;
-		}
-	}
-	
-	m_pd3dTexture->UnlockRect(0);
-
-	D3DSURFACE_DESC ddsd;
-	if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) ) 
-		throw RageException( hr, "Could not get level Description of D3DX texture!" );
-
-	m_TextureFormat		= ddsd.Format;	
-
-	ilDeleteImages(1, &ilNum);
-
-#endif
-
-#if 1
 
 	// look in the file name for a format hints
 	m_sFilePath.MakeLower();
@@ -301,7 +214,6 @@ void RageBitmapTexture::Create(
 		m_iImageHeight	= m_iSourceHeight;
 	}
 
-#endif
 	LOG->Trace( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bStretch = %d, source %d,%d;  image %d,%d.", 
 		m_sFilePath, 
 		GetTextureWidth(), 
