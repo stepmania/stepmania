@@ -439,7 +439,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		this->AddChild( &m_Back );
 
 
-		if( GAMESTATE->IsExtraStage() )	// only load if we're going to use it
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
 		{
 			m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay survive time") );
 			m_textSurviveTime.EnableShadow( false );
