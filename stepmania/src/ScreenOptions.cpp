@@ -1116,21 +1116,23 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		switch( m_OptionsNavigation )
 		{
 		case NAV_THREE_KEY:
-		{
-			bool bAllOnExit = true;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
-					bAllOnExit = false;
+			{
+				bool bAllOnExit = true;
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
+						bAllOnExit = false;
 
-			if( m_Rows[m_iCurrentRow[pn]]->Type != Row::ROW_EXIT )	// not on exit
-				MenuDown( pn, type );	// can't go down any more
-			else if( bAllOnExit && type == IET_FIRST_PRESS )
-				StartGoToNextState();
-		}
+				if( m_Rows[m_iCurrentRow[pn]]->Type != Row::ROW_EXIT )	// not on exit
+					MenuDown( pn, type );	// can't go down any more
+				else if( bAllOnExit && type == IET_FIRST_PRESS )
+					StartGoToNextState();
+			}
+			break;
 		case NAV_THREE_KEY_MENU:
 		case NAV_FIVE_KEY:
 			if( type == IET_FIRST_PRESS )	// m_SMOptionsNavigation
 				StartGoToNextState();
+			break;
 		}
 	}
 }
