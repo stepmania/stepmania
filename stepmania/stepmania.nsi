@@ -287,6 +287,8 @@ RMDir /r "$INSTDIR\Courses\Samples"
 RMDir "$INSTDIR\Courses"
 
 Delete "$INSTDIR\NoteSkins\instructions.txt"
+RMDir /r "$INSTDIR\NoteSkins\common\default"
+RMDir "$INSTDIR\NoteSkins\common"
 RMDir /r "$INSTDIR\NoteSkins\dance\default"
 RMDir /r "$INSTDIR\NoteSkins\dance\flat"
 RMDir /r "$INSTDIR\NoteSkins\dance\note"
