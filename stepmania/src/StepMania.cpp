@@ -325,36 +325,145 @@ static void CheckSettings()
 
 static const CString D3DURL = "http://search.microsoft.com/gomsuri.asp?n=1&c=rp_BestBets&siteid=us&target=http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en";
 
-#define VIDEOCARDS_INI_PATH BASE_PATH "Data" SLASH "VideoCardDefaults.ini"
 
-static CString GetMatchingVideocardDefaults( IniFile &ini, const CString &sVideoDriver )
+struct VideoCardDefaults
 {
-	IniFile::const_iterator i;
-	for( i = ini.begin(); i != ini.end(); ++i )
+	char szDriverRegex[200];
+	char szVideoRenderers[200];
+	int iWidth;
+	int iHeight;
+	int iDisplayColor;
+	int iTextureColor;
+	bool bAntiAliasing;
+} const g_VideoCardDefaults[] = 
+{
 	{
-		const CString &sKey = i->first;
+		"Voodoo3|3dfx",
+		"d3d,opengl",
+		640,
+		480,
+		16,
+		16,
+		0	// broken, causes black screen
+	},
+	{
+		"GeForce|Radeon",
+		"opengl,d3d",
+		640,
+		480,
+		32,
+		32,	// 32 bit textures are faster to load
+		1	// hardware accelerated
+	},
+	{
+		"TNT|Vanta|M64",
+		"opengl,d3d",
+		640,
+		480,
+		16,	// ease out on the fill rate a bit
+		16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
+		1	// hardware accelerated
+	},
+	{
+		"G200|G250|G400",
+		"d3d,opengl",
+		640,
+		480,
+		16,
+		16,
+		0	// broken, causes black screen
+	},
+	{
+		"Savage",
+		"d3d",
+			// OpenGL is unusable on my Savage IV with even the latest drivers.  
+			// It draws 30 frames of gibberish then crashes.  This happens even with
+			// simple NeHe demos.  -Chris
+		640,
+		480,
+		16,
+		16,
+		false
+	},
+	{
+		"XPERT@PLAY|IIC|RAGE PRO|RAGE LT PRO",	// Rage Pro chip, Rage IIC chip
+		"d3d",
+			// OpenGL is not hardware accelerated, despite the fact that the 
+			// drivers come with an ICD.  Also, the WinXP driver performance 
+			// is terrible and supports only 640.  The ATI driver is usable.
+			// -Chris
+		400,	// lower resolution for 60fps
+		300,
+		16,
+		16,
+		0
+	},
+	{
+		"RAGE MOBILITY-M1",
+		"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
+		400,	// lower resolution for 60fps
+		300,
+		16,
+		16,
+		0
+	},
+	{
+		"Intel.*82810|Intel.*82815",
+		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
 
-		CString sDriverRegex;
-		if( !ini.GetValue( sKey, "DriverRegex", sDriverRegex ) )
-		{
-			LOG->Warn("%s entry %s is missing DriverRegex; ignored.", VIDEOCARDS_INI_PATH, sKey.c_str());
-			continue;
-		}
+		512,	// lower resolution for 60fps
+		384,
+		16,
+		16,
+		0
+	},
+	{
+		// Cards that have problems with OpenGL:
+		// ASSERT fail somewhere in RageDisplay_OpenGL "Trident Video Accelerator CyberBlade"
+		// bug 764499: ASSERT fail after glDeleteTextures for "SiS 650_651_740"
+		// bug 764830: ASSERT fail after glDeleteTextures for "VIA Tech VT8361/VT8601 Graphics Controller"
+		// bug 791950: AV in glsis630!DrvSwapBuffers for "SiS 630/730"
+		"Trident Video Accelerator CyberBlade|VIA.*VT|SiS 6*",
+		"d3d,opengl",
+		640,
+		480,
+		16,
+		16,
+		0
+	},
+	{
+		"Voodoo3|3dfx",
+		"d3d,opengl",
+		640,
+		480,
+		16,
+		16,
+		0
+	},
+	{
+		"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
+		"opengl",
+		640,
+		480,
+		16,
+		16,
+		1		// Right now, they've got to have NVidia or ATi Cards anyway..
+	},
+	{
+		// Default graphics settings used for all cards that don't match above.
+		// This must be the very last entry!
+		"",
+		"opengl,d3d",
+		640,
+		480,
+		16,
+		16,
+		0
+		// AA is slow on some cards, so let's selectively enable it on cards we know are hardware
+		// accelerated.  Enabling AA on a G400 slows screenSelectMusic from 45fps to 35fps.
+	},
+};
 
-		TrimLeft( sDriverRegex );
-		TrimRight( sDriverRegex );
-
-		Regex regex( sDriverRegex );
-		if( regex.Compare(sVideoDriver) )
-		{
-			LOG->Trace( "Card matches '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
-			return sKey;
-		}
-	}
-
-	ASSERT(0);
-	return "";
-}
 
 static CString GetVideoDriverName()
 {
@@ -372,40 +481,53 @@ static void CheckVideoDefaultSettings()
 	
 	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver );
 
-	IniFile ini;
-	ini.SetPath( VIDEOCARDS_INI_PATH );
-	if(!ini.ReadFile())
-		RageException::Throw( "Couldn't read \"%s\": %s.", VIDEOCARDS_INI_PATH, ini.error.c_str() );
+	const VideoCardDefaults* pDefaults = NULL;
+	
+	for( int i=0; i<ARRAYSIZE(g_VideoCardDefaults); i++ )
+	{
+		pDefaults = &g_VideoCardDefaults[i];
 
-	const CString sKey = GetMatchingVideocardDefaults( ini, sVideoDriver );
+		CString sDriverRegex = pDefaults->szDriverRegex;
+		Regex regex( sDriverRegex );
+		if( regex.Compare(sVideoDriver) )
+		{
+			LOG->Trace( "Card matches '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
+			break;
+		}
+	}
 
-	CString sVideoRenderers;
-	ini.GetValue( sKey, "Renderers", sVideoRenderers );
+	ASSERT( pDefaults );	// we must have matched at least one
+
+	CString sVideoRenderers = pDefaults->szVideoRenderers;
 
 	bool SetDefaultVideoParams=false;
 	if( PREFSMAN->m_sVideoRenderers == "" )
 	{
-		SetDefaultVideoParams=true;
+		SetDefaultVideoParams = true;
 		LOG->Trace( "Applying defaults for %s.", sVideoDriver.c_str() );
-	} else if( PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver ) {
-		SetDefaultVideoParams=true;
+	}
+	else if( PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver ) 
+	{
+		SetDefaultVideoParams = true;
 		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.c_str(), sVideoDriver.c_str() );
 	}
 		
 	if( SetDefaultVideoParams )
 	{
-		ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
-		ini.GetValue( sKey, "Width", PREFSMAN->m_iDisplayWidth );
-		ini.GetValue( sKey, "Height", PREFSMAN->m_iDisplayHeight );
-		ini.GetValue( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
-		ini.GetValue( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
-		ini.GetValue( sKey, "MovieColor", PREFSMAN->m_iMovieColorDepth );
-		ini.GetValue( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
+		PREFSMAN->m_sVideoRenderers = pDefaults->szVideoRenderers;
+		PREFSMAN->m_iDisplayWidth = pDefaults->iWidth;
+		PREFSMAN->m_iDisplayHeight = pDefaults->iHeight;
+		PREFSMAN->m_iDisplayColorDepth = pDefaults->iDisplayColor;
+		PREFSMAN->m_iTextureColorDepth = pDefaults->iTextureColor;
+		PREFSMAN->m_iMovieColorDepth = pDefaults->iTextureColor;
+		PREFSMAN->m_bAntiAliasing = pDefaults->bAntiAliasing;
 
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver = GetVideoDriverName();
-	} else if( PREFSMAN->m_sVideoRenderers.CompareNoCase(sVideoRenderers) ) {
-		LOG->Warn("Video renderer list has been changed from \"%s\" to \"%s\"",
+	}
+	else if( PREFSMAN->m_sVideoRenderers.CompareNoCase(sVideoRenderers) )
+	{
+		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
 				sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.c_str() );
 	}
 }
