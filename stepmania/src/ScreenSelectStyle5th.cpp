@@ -165,7 +165,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	this->AddChild( &m_textExplanation2 );
 	
 	m_Menu.Load( 	
-		THEME->GetPathTo("Graphics","select style background"), 
+		THEME->GetPathTo("BGAnimations","select style"), 
 		THEME->GetPathTo("Graphics","select style top edge"),
 		HELP_TEXT, false, true, TIMER_SECONDS
 		);

@@ -41,7 +41,8 @@ MenuElements::MenuElements()
 	this->AddChild( &m_sprStyleIcon );
 	this->AddChild( &m_MenuTimer );
 	this->AddChild( &m_sprBottomEdge );
-	this->AddChild( &m_sprBG );
+	this->AddChild( &m_Background );
+	this->AddChild( &m_quadBrightness );
 	this->AddChild( &m_textHelp );
 
 	m_KeepAlive.SetOpened();
@@ -74,9 +75,10 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	LOG->Trace( "MenuElements::MenuElements()" );
 
 
-	m_sprBG.Load( sBackgroundPath );
-	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
-	m_sprBG.TurnShadowOff();
+	m_Background.LoadFromAniDir( sBackgroundPath );
+
+	m_quadBrightness.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_quadBrightness.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 
 	m_sprTopEdge.Load( sTopEdgePath );
 	m_sprTopEdge.SetXY( TOP_EDGE_X, TOP_EDGE_Y );
@@ -224,9 +226,9 @@ void MenuElements::TweenBottomLayerOnScreen()
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBottomEdge.SetTweenY( fOriginalY );
 
-	m_sprBG.SetDiffuse( D3DXCOLOR(0,0,0,1) );
-	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
-	m_sprBG.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+	m_quadBrightness.SetDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBrightness.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
+	m_quadBrightness.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
 }
 
 void MenuElements::TweenBottomLayerOffScreen()
@@ -236,11 +238,11 @@ void MenuElements::TweenBottomLayerOffScreen()
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );
 	m_sprBottomEdge.SetTweenY( fOriginalY + 100 );
 
-	m_sprBG.SetDiffuse( D3DXCOLOR(1,1,1,1) );
-	m_sprBG.StopTweening();
-	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*3/2.0f );	// sleep
-	m_sprBG.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );	// fade
-	m_sprBG.SetTweenDiffuse( D3DXCOLOR(0,0,0,1) );
+	m_quadBrightness.SetDiffuse( D3DXCOLOR(0,0,0,0) );
+	m_quadBrightness.StopTweening();
+	m_quadBrightness.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*3/2.0f );	// sleep
+	m_quadBrightness.BeginTweening( MENU_ELEMENTS_TWEEN_TIME/2 );	// fade
+	m_quadBrightness.SetTweenDiffuse( D3DXCOLOR(0,0,0,1) );
 }
 
 void MenuElements::TweenOnScreenFromBlack( ScreenMessage smSendWhenDone )
@@ -293,7 +295,8 @@ void MenuElements::DrawBottomLayer()
 {
 	BeginDraw();
 
-	m_sprBG.Draw();
+	m_Background.Draw();
+	m_quadBrightness.Draw();
 
 	EndDraw();
 }

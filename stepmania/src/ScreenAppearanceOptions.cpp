@@ -43,7 +43,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
 	ScreenOptions(
-		THEME->GetPathTo("Graphics","appearance options background"),
+		THEME->GetPathTo("BGAnimations","appearance options"),
 		THEME->GetPathTo("Graphics","appearance options page"),
 		THEME->GetPathTo("Graphics","appearance options top edge")
 		)

@@ -232,7 +232,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	// Init graphic elements
 	//////////////////////////
 	m_Menu.Load(
-		THEME->GetPathTo("Graphics","evaluation background"), 
+		THEME->GetPathTo("BGAnimations","evaluation"), 
 		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
 		HELP_TEXT, true, true, TIMER_SECONDS 
 		);
@@ -244,8 +244,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )	// If EZ2 wants to hide this graphic, place it somewhere off screen using theme metrics
 			continue;	// skip
 
+		m_ScoreDisplay[p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation score numbers") );
 		m_ScoreDisplay[p].SetXY( SCORE_NUMBERS_X(p), SCORE_Y );
-		m_ScoreDisplay[p].SetZoomY( 0.9f );
+		m_ScoreDisplay[p].SetZoomY( 1.0 );
 		m_ScoreDisplay[p].SetDiffuse( PlayerToColor(p) );
 		this->AddChild( &m_ScoreDisplay[p] );
 	}
@@ -511,10 +512,10 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 		{
-			m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation score numbers") );
+			m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathTo("Numbers","evaluation judge numbers") );
 			m_textJudgeNumbers[l][p].TurnShadowOff();
 			m_textJudgeNumbers[l][p].SetXY( JUDGE_X(m_ResultMode==RM_ONI,p,l), JUDGE_Y(l) );
-			m_textJudgeNumbers[l][p].SetZoom( 0.7f );
+			m_textJudgeNumbers[l][p].SetZoom( 1.0f );
 			m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
 			this->AddChild( &m_textJudgeNumbers[l][p] );
 		}

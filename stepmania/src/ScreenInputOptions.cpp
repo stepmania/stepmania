@@ -43,7 +43,7 @@ OptionRowData g_InputOptionsLines[NUM_INPUT_OPTIONS_LINES] = {
 
 ScreenInputOptions::ScreenInputOptions() :
 	ScreenOptions(
-		THEME->GetPathTo("Graphics","input options background"),
+		THEME->GetPathTo("BGAnimations","input options"),
 		THEME->GetPathTo("Graphics","input options page"),
 		THEME->GetPathTo("Graphics","input options top edge")
 		)

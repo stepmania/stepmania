@@ -46,6 +46,7 @@
 #define SONG_NUMBER_Y( p, e )			THEME->GetMetricF("ScreenGameplay",ssprintf("SongNumberP%d%sY",p+1,e?"Extra":""))
 #define SCORE_X( p )					THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreP%dX",p+1))
 #define SCORE_Y( p, e )					THEME->GetMetricF("ScreenGameplay",ssprintf("ScoreP%d%sY",p+1,e?"Extra":""))
+#define SCORE_ZOOM						THEME->GetMetricF("ScreenGameplay","ScoreZoom")
 #define PLAYER_OPTIONS_X( p )			THEME->GetMetricF("ScreenGameplay",ssprintf("PlayerOptionsP%dX",p+1))
 #define PLAYER_OPTIONS_Y( p, e )		THEME->GetMetricF("ScreenGameplay",ssprintf("PlayerOptionsP%d%sY",p+1,e?"Extra":""))
 #define SONG_OPTIONS_X					THEME->GetMetricF("ScreenGameplay","SongOptionsX")
@@ -279,7 +280,7 @@ ScreenGameplay::ScreenGameplay()
 
 		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
 		m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
-		m_pScoreDisplay[p]->SetZoom( 0.8f );
+		m_pScoreDisplay[p]->SetZoom( SCORE_ZOOM );
 		m_pScoreDisplay[p]->SetDiffuse( PlayerToColor(p) );
 		this->AddChild( m_pScoreDisplay[p] );
 		

@@ -35,7 +35,7 @@ ScreenHowToPlay::ScreenHowToPlay()
 	LOG->Trace( "ScreenHowToPlay::ScreenHowToPlay()" );
 
 	m_Menu.Load(
-		THEME->GetPathTo("Graphics","How To Play Background"), 
+		THEME->GetPathTo("BGAnimations","How To Play"), 
 		THEME->GetPathTo("Graphics","How To Play Top Edge"), 
 		HELP_TEXT, false, true, TIMER_SECONDS
 		);

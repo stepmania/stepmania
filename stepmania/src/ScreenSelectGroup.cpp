@@ -116,7 +116,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_bChosen = false;
 
 	m_Menu.Load(
-		THEME->GetPathTo("Graphics","select group background") , 
+		THEME->GetPathTo("BGAnimations","select group") , 
 		THEME->GetPathTo("Graphics","select group top edge"),
 		HELP_TEXT, true, true, TIMER_SECONDS
 		);

@@ -36,10 +36,10 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 			this->SetEffectNone();
 
 		SetDiffuse( pNotes->GetColor() );
-		this->StopTweening();
-		this->SetZoom( 1.1f );
-		this->BeginTweening( 0.3f, TWEEN_BOUNCE_BEGIN );
-		this->SetTweenZoom( 1 );
+//		this->StopTweening();
+//		this->SetZoom( 1.1f );
+//		this->BeginTweening( 0.3f, TWEEN_BOUNCE_BEGIN );
+//		this->SetTweenZoom( 1 );
 	}
 	else
 	{

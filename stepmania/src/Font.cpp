@@ -57,7 +57,7 @@ Font::Font( const CString &sASCIITexturePath )
 	// load character widths
 	for( i=0; i<256; i++ )
 		if( !ini.GetValueI( "Char Widths", ssprintf("%d",i), m_iFrameNoToWidth[i] ) )
-			throw RageException( "Error reading 'Char Widths from '%s'.", sIniPath );
+			throw RageException( "Error reading width value '%d' from '%s'.", i, sIniPath );
 
 	m_bCapitalsOnly = false;
 	ini.GetValueB( "Char Widths", "CapitalsOnly", m_bCapitalsOnly );

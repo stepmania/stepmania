@@ -67,7 +67,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_bGoToOptions = false;
 
 	m_Menu.Load(
-		THEME->GetPathTo("Graphics","select course background"), 
+		THEME->GetPathTo("BGAnimations","select course"), 
 		THEME->GetPathTo("Graphics","select course top edge"),
 		HELP_TEXT, true, true, TIMER_SECONDS 
 		);

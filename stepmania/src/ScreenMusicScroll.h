@@ -38,10 +38,10 @@ public:
 
 private:
 
-	Sprite			m_sprBackground;
-	BitmapText		m_textLines[MAX_TOTAL_LINES];
-	int				m_iNumLines;
-	float			m_fTimeLeftInScreen;
+	BackgroundAnimation	m_Background;
+	BitmapText			m_textLines[MAX_TOTAL_LINES];
+	int					m_iNumLines;
+	float				m_fTimeLeftInScreen;
 
 	TransitionFade	m_Fade;
 

@@ -63,17 +63,7 @@ Background::Background()
 
 	m_BackgroundMode = MODE_STATIC_BG;
 
-	CStringArray asPossibleDangerMovies;
-	GetDirListing( RANDOMMOVIES_DIR+"danger.avi", asPossibleDangerMovies, false, true );
-	GetDirListing( RANDOMMOVIES_DIR+"danger.mpg", asPossibleDangerMovies, false, true );
-	GetDirListing( RANDOMMOVIES_DIR+"danger.mpeg", asPossibleDangerMovies, false, true );
-
-	if( asPossibleDangerMovies.GetSize()>0 )
-		m_BGADanger.LoadFromMovie( asPossibleDangerMovies[0], true, false );
-	else if( DoesFileExist(BG_ANIMS_DIR+"danger\\") )
-		m_BGADanger.LoadFromAniDir( BG_ANIMS_DIR+"danger\\", "" );
-	else
-		PREFSMAN->m_bShowDanger = false;
+	m_BGADanger.LoadFromAniDir( THEME->GetPathTo("BGAnimations","danger") );
 
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuse( D3DXCOLOR(0,0,0,1-PREFSMAN->m_fBGBrightness) );
@@ -258,9 +248,9 @@ void Background::LoadFromSong( Song* pSong )
 			{
 				CStringArray arrayPossibleAnims;
 				GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
-				// strip out "cvs" and "danger"
+				// strip out "cvs"
 				for( int i=arrayPossibleAnims.GetSize()-1; i>=0; i-- )
-					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs")  ||  -1!=arrayPossibleAnims[i].Find("anger") )
+					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") )
 						arrayPossibleAnims.RemoveAt(i);
 				for( i=0; i<4 && arrayPossibleAnims.GetSize()>0; i++ )
 				{
@@ -278,10 +268,7 @@ void Background::LoadFromSong( Song* pSong )
 				GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPossibleMovies, false, true );
 				GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPossibleMovies, false, true );
 				GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPossibleMovies, false, true );
-				for( int i=arrayPossibleMovies.GetSize()-1; i>=0; i-- )
-					if( -1!=arrayPossibleMovies[i].Find("anger") )
-						arrayPossibleMovies.RemoveAt(i);
-				for( i=0; i<4 && arrayPossibleMovies.GetSize()>0; i++ )
+				for( int i=0; i<4 && arrayPossibleMovies.GetSize()>0; i++ )
 				{
 					int index = rand() % arrayPossibleMovies.GetSize();
 					pTempBGA = new BackgroundAnimation;

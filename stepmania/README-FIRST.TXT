@@ -849,7 +849,7 @@ will be blurry.
 Whenever possible:
 * Keep your images to dimensions smaller or equal to 256x256.
 * Make your images have an even number for each dimension (e.g. 286x120 is 
-will appear less blurr than 285x119).  The reason behind this has to do with
+will appear less blurry than 285x119).  The reason behind this has to do with
 how 3D accelerators represent screen coordinates with floating point numbers,
 not integers.
 

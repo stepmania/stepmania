@@ -89,7 +89,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	int p;
 	
 	m_Menu.Load(
-		THEME->GetPathTo("Graphics","select difficulty background"), 
+		THEME->GetPathTo("BGAnimations","select difficulty"), 
 		THEME->GetPathTo("Graphics","select difficulty top edge"),
 		HELP_TEXT, true, true, TIMER_SECONDS
 		);

@@ -42,7 +42,7 @@ OptionRowData g_SelectGameLines[NUM_SELECT_GAME_LINES] =
 
 ScreenSelectGame::ScreenSelectGame() :
 	ScreenOptions(
-		THEME->GetPathTo("Graphics","select game background"),
+		THEME->GetPathTo("BGAnimations","select game"),
 		THEME->GetPathTo("Graphics","select game page"),
 		THEME->GetPathTo("Graphics","select game top edge")
 		)

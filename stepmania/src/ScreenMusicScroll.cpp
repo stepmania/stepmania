@@ -42,7 +42,7 @@ const CString CREDIT_LINES[] =
 	"",
 	"",
 	"GRAPHICS:",
-	"TofuBoy (Lucas Tang)",
+	"v1ral (Lucas Tang)",
 	"SPiGuMuS",
 	"DJ McFox (Ryan McKanna)",
 	"Cloud34 (Lamden Travis)",
@@ -140,9 +140,8 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	GAMESTATE->Reset();		// so that credits message for both players will show
 
-	m_sprBackground.Load( THEME->GetPathTo("Graphics","music scroll background") );
-	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	this->AddChild( &m_sprBackground );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","music scroll") );
+	this->AddChild( &m_Background );
 
 
 	CArray<Song*, Song*> arraySongs;

@@ -31,9 +31,8 @@ ScreenCaution::ScreenCaution()
 {
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	m_sprCaution.Load( THEME->GetPathTo("Graphics","caution") );
-	m_sprCaution.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	this->AddChild( &m_sprCaution );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","caution") );
+	this->AddChild( &m_Background );
 	
 	m_Wipe.OpenWipingRight( SM_DoneOpening );
 	this->AddChild( &m_Wipe );

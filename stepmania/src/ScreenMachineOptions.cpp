@@ -47,7 +47,7 @@ OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 
 ScreenMachineOptions::ScreenMachineOptions() :
 	ScreenOptions(
-		THEME->GetPathTo("Graphics","machine options background"),
+		THEME->GetPathTo("BGAnimations","machine options"),
 		THEME->GetPathTo("Graphics","machine options page"),
 		THEME->GetPathTo("Graphics","machine options top edge")
 		)

@@ -17,6 +17,7 @@
 #include "TransitionFade.h"
 #include "TransitionFadeWipe.h"
 #include "RandomSample.h"
+#include "BackgroundAnimation.h"
 
 
 class ScreenCaution : public Screen
@@ -30,8 +31,8 @@ public:
 protected:
 	void MenuStart( PlayerNumber pn );
 	void MenuBack(	PlayerNumber pn );
-	Sprite m_sprCaution;
-	TransitionFade	m_Wipe;
+	BackgroundAnimation m_Background;
+	TransitionFade		m_Wipe;
 	TransitionFadeWipe	m_FadeWipe;
 };
 

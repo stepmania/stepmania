@@ -1,21 +1,15 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenSelectGame.h
+ File: ScreenSelectGame
 
- Desc: Select a song.
+ Desc: Switch the current game
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
 #include "ScreenOptions.h"
-#include "Sprite.h"
-#include "BitmapText.h"
-#include "RandomSample.h"
-#include "TransitionFade.h"
-#include "Quad.h"
-#include "AnnouncerManager.h"
 
 class ScreenSelectGame : public ScreenOptions
 {

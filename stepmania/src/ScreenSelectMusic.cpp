@@ -89,7 +89,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	int p;
 
 	m_Menu.Load(
-		THEME->GetPathTo("Graphics","select music background"), 
+		THEME->GetPathTo("BGAnimations","select music"), 
 		THEME->GetPathTo("Graphics","select music top edge"),
 		HELP_TEXT, true, true, TIMER_SECONDS 
 		);

@@ -23,10 +23,13 @@
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
 
-#define STATS_X				THEME->GetMetricF("ScreenManager","StatsX")
-#define STATS_Y				THEME->GetMetricF("ScreenManager","StatsY")
-#define CREDITS_X( p )		THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dX",p+1))
-#define CREDITS_Y( p )		THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dY",p+1))
+#define STATS_X					THEME->GetMetricF("ScreenManager","StatsX")
+#define STATS_Y					THEME->GetMetricF("ScreenManager","StatsY")
+#define CREDITS_X( p )			THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dX",p+1))
+#define CREDITS_Y( p )			THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dY",p+1))
+#define CREDITS_COLOR			THEME->GetMetricC("ScreenManager","CreditsColor")
+#define CREDITS_SHADOW_LENGTH	THEME->GetMetricF("ScreenManager","CreditsShadowLength")
+#define CREDITS_ZOOM			THEME->GetMetricF("ScreenManager","CreditsZoom")
 
 
 ScreenManager::ScreenManager()
@@ -40,14 +43,7 @@ ScreenManager::ScreenManager()
 	m_textStats.SetZoom( 0.5f );
 	m_textStats.SetShadowLength( 2 );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","credits") );
-		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
-		m_textCreditInfo[p].SetZoom( 0.5f );
-		m_textCreditInfo[p].SetDiffuse( D3DXCOLOR(1,1,1,1) );
-		m_textCreditInfo[p].SetShadowLength( 2 );
-	}
+	// set credits properties on RefreshCreditsMessage
 
 	m_textSystemMessage.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
@@ -243,8 +239,9 @@ void ScreenManager::LoadPreppedScreen()
 
 void ScreenManager::SetNewScreen( Screen *pNewScreen )
 {
-	// move current screen to ScreenToDelete
 	RefreshCreditsMessages();
+
+	// move current screen to ScreenToDelete
 	m_ScreensToDelete.Copy( m_ScreenStack );
 
 	m_ScreenStack.RemoveAll();
@@ -327,8 +324,14 @@ void ScreenManager::RefreshCreditsMessages()
 	// update joined
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_textCreditInfo[p].LoadFromFont( THEME->GetPathTo("Fonts","credits") );
+		m_textCreditInfo[p].SetXY( CREDITS_X(p), CREDITS_Y(p) );
+		m_textCreditInfo[p].SetZoom( CREDITS_ZOOM );
+		m_textCreditInfo[p].SetDiffuse( CREDITS_COLOR );
+		m_textCreditInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+
 		if(      GAMESTATE->m_bSideIsJoined[p] )	m_textCreditInfo[p].SetText( "" );
 		else if( GAMESTATE->m_bPlayersCanJoin )	m_textCreditInfo[p].SetText( "PRESS START" );
-		else									m_textCreditInfo[p].SetText( "CREDIT(s) 0 / 0" );
+		else									m_textCreditInfo[p].SetText( "CREDIT(S) 0 / 0" );
 	}
 }

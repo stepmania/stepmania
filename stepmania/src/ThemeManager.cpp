@@ -145,11 +145,13 @@ try_element_again:
 	static const char *sound_masks[] = { ".set", ".mp3", ".ogg", ".wav", ".redir", NULL };
 	static const char *font_masks[] = { " 16x16.png", ".redir", NULL };
 	static const char *numbers_masks[] = { " 5x3.png", ".redir", NULL };
+	static const char *bganimations_masks[] = { ".", ".redir", NULL };
 	const char **asset_masks = NULL;
 	if( sAssetCategory == "graphics" ) asset_masks = graphic_masks;
 	else if( sAssetCategory == "sounds" ) asset_masks = sound_masks;
 	else if( sAssetCategory == "fonts" ) asset_masks = font_masks;
 	else if( sAssetCategory == "numbers" ) asset_masks = numbers_masks;
+	else if( sAssetCategory == "bganimations" ) asset_masks = bganimations_masks;
 	else ASSERT(0); // Unknown theme asset category
 	int i;
 	for(i = 0; asset_masks[i]; ++i)

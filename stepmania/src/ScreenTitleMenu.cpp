@@ -97,9 +97,8 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 
 
-	m_sprBG.Load( THEME->GetPathTo("Graphics","title menu background") );
-	m_sprBG.StretchTo( CRect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT) );
-	this->AddChild( &m_sprBG );
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","title menu") );
+	this->AddChild( &m_Background );
 
 	m_sprLogo.Load( THEME->GetPathTo("Graphics",ssprintf("title menu logo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
 	m_sprLogo.SetXY( LOGO_X, LOGO_Y );
