@@ -59,7 +59,7 @@ ScreenSelectCharacter::ScreenSelectCharacter()
 	{
 		m_iSelectedCharacter[p] = 0;
 		m_iSelectedLevelIndex[p] = 0;
-		if( GAMESTATE->IsPlayerEnabled(p) )
+		if( GAMESTATE->IsHumanPlayer(p) )
 			m_SelectionRow[p] = CHOOSING_HUMAN_CHARACTER;
 	}
 
@@ -342,7 +342,8 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 
 	bool bAllAreFinished = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		bAllAreFinished &= (m_SelectionRow[p] == FINISHED_CHOOSING);
+		if( GAMESTATE->IsHumanPlayer(p) )
+			bAllAreFinished &= (m_SelectionRow[p] == FINISHED_CHOOSING);
 
 	if( bAllAreFinished )
 	{

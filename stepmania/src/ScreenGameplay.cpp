@@ -229,9 +229,12 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	
 		m_TimingAssist.Load((PlayerNumber)p, &m_Player[p]);
 
-		m_ActiveItemList[p].Init( (PlayerNumber)p );
-		/* Position it in LoadNextSong. */
-		this->AddChild( &m_ActiveItemList[p] );
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+		{
+			m_ActiveItemList[p].Init( (PlayerNumber)p );
+			/* Position it in LoadNextSong. */
+			this->AddChild( &m_ActiveItemList[p] );
+		}
 
 		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","ScreenGameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
@@ -411,11 +414,17 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_Inventory[p].Load( (PlayerNumber)p );
-		this->AddChild( &m_Inventory[p] );
+		if( GAMESTATE->m_PlayMode==PLAY_MODE_BATTLE )
+		{
+			m_Inventory[p].Load( (PlayerNumber)p );
+			this->AddChild( &m_Inventory[p] );
+		}
 
-		m_RaveHelper[p].Load( (PlayerNumber)p );
-		this->AddChild( &m_RaveHelper[p] );
+		if( GAMESTATE->m_PlayMode==PLAY_MODE_RAVE )
+		{
+			m_RaveHelper[p].Load( (PlayerNumber)p );
+			this->AddChild( &m_RaveHelper[p] );
+		}
 	}
 
 	

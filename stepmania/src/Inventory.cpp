@@ -50,11 +50,12 @@ void ReloadItems()
 
 Inventory::Inventory()
 {
-	ReloadItems();
 }
 
 void Inventory::Load( PlayerNumber pn )
 {
+	ReloadItems();
+
 	m_PlayerNumber = pn;
 	m_iLastSeenCombo = 0;
 

@@ -25,20 +25,23 @@
 
 ActiveItemList::ActiveItemList()
 {
-	for( int i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
-	{
-		m_text[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
-		m_text[i].SetZoom( TEXT_ZOOM );
-//		m_text[i].SetText( "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" );
-		this->AddChild( &m_text[i] );
-	}
 }
 
 void ActiveItemList::Init( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	for( int i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
+	int i;
+
+	for( i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
+	{
+		m_text[i].LoadFromFont( THEME->GetPathTo("Fonts","Common normal") );
+		m_text[i].SetZoom( TEXT_ZOOM );
+//		m_text[i].SetText( "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" );
+		this->AddChild( &m_text[i] );
+	}
+
+	for( i=0; i<MAX_ACTIVE_ITEMS_LINES; i++ )
 	{
 		m_text[i].SetHorizAlign( (Actor::HorizAlign)TEXT_HORIZ_ALIGN(pn) );
 		bool bReverse = GAMESTATE->m_PlayerOptions[pn].m_fReverseScroll == 1;
