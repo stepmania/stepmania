@@ -182,7 +182,11 @@ void MemoryCardManager::AssignUnassignedCards()
 				{
 					UsbStorageDevice &usd = vUnassignedDevices[i];
 					if( usd.sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p]) == 0 )	// match
+					{
+						LOG->Trace( "dir match:  iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
+							usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
 						goto match;
+					}
 				}
 			}
 
@@ -199,6 +203,8 @@ void MemoryCardManager::AssignUnassignedCards()
 					PREFSMAN->m_iMemoryCardUsbPort[p] != usd.iPortOnHub )
 					continue;	// not a match
 
+				LOG->Trace( "bus/port match:  iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
+					usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
 				goto match;
 			}
 			
