@@ -130,6 +130,7 @@ bool TryToStartQueuedMusic( float fOldSeconds, float fNewSeconds )
 	return true;
 }
 
+/* maybe, instead of delaying the start, keep using the old time and tween to the new one? */
 void RageSounds::Update( float fDeltaTime )
 {
 	const float fOldSeconds = GAMESTATE->m_fMusicSeconds;
@@ -167,7 +168,6 @@ void RageSounds::Update( float fDeltaTime )
 		{
 			/* There's no song playing.  Fake it. */
 			GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Timing );
-			LOG->Trace("fake time %f, beat %f", GAMESTATE->m_fMusicSeconds, GAMESTATE->m_fSongBeat);
 		}
 	}
 
