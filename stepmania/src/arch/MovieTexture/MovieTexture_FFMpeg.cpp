@@ -446,7 +446,6 @@ try {
 	CHECKPOINT;
 
 	StartThread();
-    Play();
 }
 catch(...)
 {
@@ -723,7 +722,7 @@ bool MovieTexture_FFMpeg::DecodeFrame()
 {
 	ASSERT_M( m_ImageWaiting == FRAME_NONE, ssprintf("%i", m_ImageWaiting) );
 
-	if( m_State != PLAYING )
+	if( m_State == DECODER_QUIT )
 		return false;
 	CHECKPOINT;
 
@@ -848,20 +847,15 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 	while( m_State != DECODER_QUIT )
 	{
-		if( m_State == PAUSE_DECODER )
-		{
-			/* We aren't feeding frames, so we aren't waiting; don't chew CPU. 
-			 * This needs to be relatively short so that we wake up quickly 
-			 * from being paused or for changes in m_Rate. */
-			usleep( 10000 );
-			continue;
-		}
-
 		if( m_ImageWaiting == FRAME_NONE )
 			DecodeFrame();
 
+		/* If we still have no frame, we're at EOF and we didn't loop. */
 		if( m_ImageWaiting != FRAME_DECODED )
+		{
+			usleep( 10000 );
 			continue;
+		}
 
 		const float fTime = CheckFrameTime();
 		if( fTime == -1 )	// skip frame
@@ -958,7 +952,7 @@ void MovieTexture_FFMpeg::Reload()
 void MovieTexture_FFMpeg::StartThread()
 {
 	ASSERT( m_State == DECODER_QUIT );
-	m_State = PAUSE_DECODER;
+	m_State = DECODER_RUNNING;
 	m_DecoderThread.SetName( ssprintf("MovieTexture_FFMpeg(%s)", GetID().filename.c_str()) );
 	
 	if( m_bThreaded )
@@ -988,16 +982,6 @@ void MovieTexture_FFMpeg::StopThread()
 	LOG->Trace("Decoder thread shut down.");
 }
 
-void MovieTexture_FFMpeg::Play()
-{
-    m_State = PLAYING;
-}
-
-void MovieTexture_FFMpeg::Pause()
-{
-    m_State = PAUSE_DECODER;
-}
-
 void MovieTexture_FFMpeg::SetPosition( float fSeconds )
 {
     ASSERT( m_State != DECODER_QUIT );
@@ -1018,10 +1002,6 @@ void MovieTexture_FFMpeg::SetPosition( float fSeconds )
 /* This is used to decode data. */
 void MovieTexture_FFMpeg::DecodeSeconds( float fSeconds )
 {
-	/* If we're paused, then ignore time passing. */
-	if( m_State != PLAYING )
-		return;
-
 	m_Clock += fSeconds * m_Rate;
 
 	/* If we're not threaded, we want to be sure to decode any new frames now,

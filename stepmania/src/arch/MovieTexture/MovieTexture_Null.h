@@ -25,12 +25,8 @@ public:
     unsigned GetTexHandle() const { return texHandle; }
     void Update(float delta) { }
     void Reload() { }
-    void Play() { playing = true; }
-    void Pause() { playing = false; }
-    void Stop() { playing = false; }
     void SetPosition(float seconds) { }
     void SetPlaybackRate(float rate) { }
-    bool IsPlaying() const { return playing; }
     void SetLooping(bool looping=true) { loop = looping; }
 };
 

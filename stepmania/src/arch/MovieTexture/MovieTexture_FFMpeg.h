@@ -26,12 +26,9 @@ public:
 
 	virtual void Reload();
 
-	virtual void Play();
-	virtual void Pause();
 	virtual void SetPosition( float fSeconds );
 	virtual void DecodeSeconds( float fSeconds );
 	virtual void SetPlaybackRate( float fRate ) { m_Rate=fRate; }
-	virtual bool IsPlaying() const { return m_State == PLAYING; }
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
 	unsigned GetTexHandle() const { return m_uTexHandle; }
 
@@ -62,7 +59,7 @@ private:
 	 *
 	 * PLAYING: The decoder thread is running.
 	 */
-	enum State { DECODER_QUIT, PAUSE_DECODER, PLAYING } m_State;
+	enum State { DECODER_QUIT, DECODER_RUNNING } m_State;
 
 	unsigned m_uTexHandle;
 

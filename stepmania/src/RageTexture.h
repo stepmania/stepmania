@@ -17,13 +17,10 @@ public:
 	virtual unsigned GetTexHandle() const = 0;	// accessed by RageDisplay
 
 	// movie texture/animated texture stuff
-	virtual void Play() {}
-	virtual void Pause() {}
 	virtual void SetPosition( float fSeconds ) {} // seek
 	virtual void DecodeSeconds( float fSeconds ) {} // decode
 	virtual void SetPlaybackRate( float fRate ) {}
 	virtual bool IsAMovie() const { return false; }
-	virtual bool IsPlaying() const { return false; }
 	void SetLooping(bool looping) { }
 
 	int GetSourceWidth() const	{return m_iSourceWidth;}
