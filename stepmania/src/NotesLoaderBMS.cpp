@@ -918,6 +918,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
 			else if( sTag.find('a') != sTag.npos )
 				pSteps->SetDifficulty( DIFFICULTY_HARD );
+			// XXX: Can also match (double), but should match [B] or [B7]
+			else if( sTag.find('b') != sTag.npos )
+				pSteps->SetDifficulty( DIFFICULTY_BEGINNER );
 			// Other tags I've seen here include (5KEYS) (10KEYS) (7keys) (14keys) (dp) [MIX] [14] (14 Keys Mix)
 			// XXX: I'm sure [MIX] means something... anyone know?
 		}
