@@ -586,6 +586,9 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 #if defined (WITHOUT_NETWORKING)
 #else
 	ini.GetValue( "Options", "LastConnectedServer",				m_sLastServer );
+	ini.GetValue( "Options", "ServerWaitSeconds",				m_fStartWait );
+	if ( m_fStartWait == 0.0 )
+		m_fStartWait = 2;
 #endif
 
 	FOREACH( IPreference*, *g_pvpSubscribers, p ) (*p)->ReadFrom( ini );
@@ -836,6 +839,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 #if defined (WITHOUT_NETWORKING)
 #else
 	ini.SetValue( "Options", "LastConnectedServer",				m_sLastServer );
+	ini.SetValue( "Options", "ServerWaitSeconds",				m_fStartWait );
 #endif
 
 	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->WriteTo( ini );

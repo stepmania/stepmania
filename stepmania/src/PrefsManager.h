@@ -287,8 +287,8 @@ public:
 #else
 	/* Network Info */
 	CString			m_sLastServer;
+	float			m_fStartWait;
 #endif
-
 
 	//
 	// For self-registering prefs
