@@ -20,7 +20,6 @@
 
 const CString TEMP_MOUNT_POINT = "@mctemp/";
 
-static const char *USB_DEVICE_LIST_FILE = "/proc/bus/usb/devices";
 static const char *ETC_MTAB = "/etc/mtab";
 
 void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
@@ -128,18 +127,12 @@ static bool ExecuteCommand( CCStringRef sCommand )
 
 MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 {
-	m_fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
-	if( m_fd == -1 )
-		LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
-	
 	this->StartThread();
 }
 
 MemoryCardDriverThreaded_Linux::~MemoryCardDriverThreaded_Linux()
 {
 	this->StopThread();
-	if( m_fd != -1 )
-		close( m_fd );
 }
 
 void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
@@ -196,12 +189,6 @@ bool UsbStorageDevicesChanged()
 
 void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 {
-	if( m_fd == -1 )
-	{
-		usleep( 50000 );
-		return;
-	}
-	
 	bool bNeedToDoAnyMounts = false;
 	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
 	{

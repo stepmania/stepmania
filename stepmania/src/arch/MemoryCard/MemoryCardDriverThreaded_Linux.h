@@ -16,7 +16,6 @@ protected:
 	virtual void ResetUsbStorage();
 	virtual void MountThreadDoOneUpdate();
 
-	int m_fd;
 	vector<UsbStorageDevice> m_vDevicesLastSeen;
 };
 
