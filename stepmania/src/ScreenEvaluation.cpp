@@ -190,7 +190,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 		this->AddChild( &m_BannerWithFrame[0] );
 
-		m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+		m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","evalstage") );
 		m_textStage.TurnShadowOff();
 		m_textStage.SetXY( STAGE_X, STAGE_Y );
 		m_textStage.SetZoom( 0.5f );
@@ -234,7 +234,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","evaluation background"), 
 		THEME->GetPathTo("Graphics",m_ResultMode==RM_ARCADE_SUMMARY?"evaluation summary top edge":"evaluation top edge"),
-		HELP_TEXT, true, TIMER_SECONDS 
+		HELP_TEXT, true, true, TIMER_SECONDS 
 		);
 	this->AddChild( &m_Menu );
 
@@ -520,28 +520,20 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		//	Chris:  If EZ2 wants to hide these things, place them off screen using theme metrics
 		if( bNewRecord[p] )
 		{
-			m_textNewRecord[p].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-			m_textNewRecord[p].SetXY( NEW_RECORD_X(p), NEW_RECORD_Y );
-			m_textNewRecord[p].SetShadowLength( 2 );
-			m_textNewRecord[p].SetText( "IT'S A NEW RECORD!" );
-			m_textNewRecord[p].SetZoom( 0.5f );
-			m_textNewRecord[p].SetEffectGlowing( 1.0f );
-			this->AddChild( &m_textNewRecord[p] );
+			m_sprNewRecord[p].Load( THEME->GetPathTo("Graphics","evaluation new record") );
+			m_sprNewRecord[p].SetXY( NEW_RECORD_X(p), NEW_RECORD_Y );
+			m_sprNewRecord[p].SetEffectGlowing( 1.0f );
+			this->AddChild( &m_sprNewRecord[p] );
 		}
 	}
 		
 	
 	if( m_bTryExtraStage )
 	{
-		m_textTryExtraStage.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-		m_textTryExtraStage.SetXY( TRY_EXTRA_STAGE_X, TRY_EXTRA_STAGE_Y );
-		if( GAMESTATE->IsExtraStage() )
-			m_textTryExtraStage.SetText( "One More ExtraStage!!!" );
-		else
-			m_textTryExtraStage.SetText( "Try ExtraStage!!!" );
-		m_textTryExtraStage.SetZoom( 1 );
-		m_textTryExtraStage.SetEffectGlowing( 1.0f );
-		this->AddChild( &m_textTryExtraStage );
+		m_sprTryExtraStage.Load( THEME->GetPathTo("Graphics",GAMESTATE->IsExtraStage()?"evaluation try extra stage1":"evaluation try extra stage2") );
+		m_sprTryExtraStage.SetXY( TRY_EXTRA_STAGE_X, TRY_EXTRA_STAGE_Y );
+		m_sprTryExtraStage.SetEffectGlowing( 1.0f );
+		this->AddChild( &m_sprTryExtraStage );
 
 		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","evaluation extra stage") );
 	}
@@ -678,7 +670,7 @@ void ScreenEvaluation::TweenOnScreen()
 		apActorsInGradeOrPercentFrame.Add( &m_sprPercentFrame[p] );
 		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentLarge[p] );
 		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentSmall[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_textNewRecord[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_sprNewRecord[p] );
 		for( i=0; i<apActorsInGradeOrPercentFrame.GetSize(); i++ )
 		{
 			float fOriginalZoomY = apActorsInGradeOrPercentFrame[i]->GetZoomY();
@@ -688,10 +680,10 @@ void ScreenEvaluation::TweenOnScreen()
 		}
 	}
 	
-	float fOriginalZoomY = m_textTryExtraStage.GetZoomY();
-	m_textTryExtraStage.SetZoomY( 0 );
-	m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_textTryExtraStage.SetTweenZoomY( fOriginalZoomY );
+	float fOriginalZoomY = m_sprTryExtraStage.GetZoomY();
+	m_sprTryExtraStage.SetZoomY( 0 );
+	m_sprTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_sprTryExtraStage.SetTweenZoomY( fOriginalZoomY );
 }
 
 void ScreenEvaluation::TweenOffScreen()
@@ -758,7 +750,7 @@ void ScreenEvaluation::TweenOffScreen()
 		apActorsInGradeOrPercentFrame.Add( &m_sprPercentFrame[p] );
 		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentLarge[p] );
 		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentSmall[p] );
-		apActorsInGradeOrPercentFrame.Add( &m_textNewRecord[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_sprNewRecord[p] );
 		for( i=0; i<apActorsInGradeOrPercentFrame.GetSize(); i++ )
 		{
 			apActorsInGradeOrPercentFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
@@ -766,8 +758,8 @@ void ScreenEvaluation::TweenOffScreen()
 		}
 	}
 	
-	m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_textTryExtraStage.SetTweenZoomY( 0 );
+	m_sprTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+	m_sprTryExtraStage.SetTweenZoomY( 0 );
 }
 
 

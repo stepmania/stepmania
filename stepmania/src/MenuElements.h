@@ -34,7 +34,7 @@ public:
 
 	virtual void DrawPrimitives();
 
-	void Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bTimerEnabled, int iTimerSeconds );
+	void Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds );
 	void SetTimer( int iTimerSeconds );
 	void StartTimer();
 	void StallTimer();

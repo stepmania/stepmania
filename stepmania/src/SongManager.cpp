@@ -29,22 +29,14 @@ const CString g_sStatisticsFileName = "statistics.ini";
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
 #define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
 
-const int NUM_GROUP_COLORS = 7;
-D3DXCOLOR GROUP_COLORS[NUM_GROUP_COLORS];
-
+D3DXCOLOR g_GroupColors[30];
 D3DXCOLOR g_ExtraColor;
 
 
 SongManager::SongManager( void(*callback)() )
 {
-	// Loading these theme metrics is slow, so only do it ever 20th time.
-	GROUP_COLORS[0] = GROUP_COLOR_1;
-	GROUP_COLORS[1] = GROUP_COLOR_2;
-	GROUP_COLORS[2] = GROUP_COLOR_3;
-	GROUP_COLORS[3] = GROUP_COLOR_4;
-	GROUP_COLORS[4] = GROUP_COLOR_5;
-	GROUP_COLORS[5] = GROUP_COLOR_6;
-	GROUP_COLORS[6] = GROUP_COLOR_7;
+	for( int i=0; i<NUM_GROUP_COLORS; i++ )
+		g_GroupColors[i] = GROUP_COLOR( i );
 	g_ExtraColor = EXTRA_COLOR;
 
 	InitSongArrayFromDisk( callback );
@@ -55,8 +47,6 @@ SongManager::SongManager( void(*callback)() )
 
 SongManager::~SongManager()
 {
-	// BUG FIX: Stats will no longer save if you're in autoplay mode - Andy.
-	// BUG BUG FIX: if user used autoplay, the evaluation screen already detects this...
 	SaveStatisticsToDisk();
 	FreeSongArray();
 }
@@ -368,7 +358,7 @@ D3DXCOLOR SongManager::GetGroupColor( const CString &sGroupName )
 	}
 	ASSERT( i != m_arrayGroupNames.GetSize() );	// this is not a valid group
 
-	return GROUP_COLORS[i%NUM_GROUP_COLORS];
+	return g_GroupColors[i%NUM_GROUP_COLORS];
 }
 
 D3DXCOLOR SongManager::GetSongColor( Song* pSong )

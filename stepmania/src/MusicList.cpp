@@ -6,6 +6,7 @@
  * can add a setting that changes which metric group we pull
  * settings out of, so it can be configured separately. */
 #define TITLES_START_X		THEME->GetMetricF("ScreenSelectGroup","TitlesStartX")
+#define TITLES_WIDTH		THEME->GetMetricF("ScreenSelectGroup","TitlesWidth")
 #define TITLES_SPACING_X	THEME->GetMetricF("ScreenSelectGroup","TitlesSpacingX")
 #define TITLES_START_Y		THEME->GetMetricF("ScreenSelectGroup","TitlesStartY")
 #define TITLES_COLUMNS		THEME->GetMetricI("ScreenSelectGroup","TitlesColumns")
@@ -17,7 +18,7 @@ MusicList::MusicList()
 
 	for( int i=0; i<TITLES_COLUMNS; i++ )
 	{
-		m_textTitles[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+		m_textTitles[i].LoadFromFont( THEME->GetPathTo("Fonts","small titles") );
 		m_textTitles[i].SetXY( TITLES_START_X + i*TITLES_SPACING_X, TITLES_START_Y );
 		m_textTitles[i].SetHorizAlign( Actor::align_left );
 		m_textTitles[i].SetVertAlign( Actor::align_top );
@@ -76,7 +77,7 @@ void MusicList::SetGroupNo(int group)
 	for( int c=0; c<TITLES_COLUMNS; c++ )
 	{
 		m_textTitles[c].SetText( m_ContentsText[CurGroup].ContentsText[c] );
-		m_textTitles[c].CropToWidth( int(TITLES_SPACING_X/m_textTitles[c].GetZoom()) );
+		m_textTitles[c].CropToWidth( int(TITLES_WIDTH/m_textTitles[c].GetZoom()) );
 	}
 }
 

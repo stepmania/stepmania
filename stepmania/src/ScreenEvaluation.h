@@ -74,10 +74,10 @@ protected:
 	Sprite				m_sprScoreLabel;
 	ScoreDisplayNormal	m_ScoreDisplay[NUM_PLAYERS];
 
-	BitmapText			m_textNewRecord[NUM_PLAYERS];
+	Sprite				m_sprNewRecord[NUM_PLAYERS];
 
 	bool				m_bTryExtraStage;
-	BitmapText			m_textTryExtraStage;
+	Sprite				m_sprTryExtraStage;
 };
 
 class ScreenFinalEvaluation : public ScreenEvaluation

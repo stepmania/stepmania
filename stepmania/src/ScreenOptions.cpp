@@ -47,7 +47,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	m_Menu.Load(
 		sBackgroundPath, 
 		sTopEdgePath, 
-		HELP_TEXT, true, TIMER_SECONDS
+		HELP_TEXT, false, true, TIMER_SECONDS
 		);
 	this->AddChild( &m_Menu );
 
@@ -77,7 +77,7 @@ ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sPagePath, CStrin
 	ZeroMemory(&m_OptionDim, sizeof(m_OptionDim));
 }
 
-void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines )
+void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines, bool bUseIcons )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
@@ -85,6 +85,7 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 	m_InputMode = im;
 	m_OptionLineData = optionLineData;
 	m_iNumOptionLines = iNumOptionLines;
+	m_bUseIcons = bUseIcons;
 
 
 	this->ImportOptions();
@@ -105,7 +106,7 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 			m_Underline[p][l].Load( (PlayerNumber)p, true );
 			m_framePage.AddChild( &m_Underline[p][l] );
 
-			m_OptionIcons[p][l].Load( (PlayerNumber)p, "BLAH", false );
+			m_OptionIcons[p][l].Load( (PlayerNumber)p, "", false );
 			m_framePage.AddChild( &m_OptionIcons[p][l] );
 		}
 
@@ -131,6 +132,7 @@ void ScreenOptions::Init( InputMode im, OptionLineData optionLineData[], int iNu
 	InitOptionsText();
 	PositionUnderlines();
 	PositionIcons();
+	RefreshIcons();
 	PositionHighlights();
 }
 
@@ -165,7 +167,6 @@ void ScreenOptions::InitOptionsText()
 		BitmapText &title = m_textOptionLineTitles[i];
 
 		title.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
-		title.SetLineHeight( 20 );
 		CString sText = optline.szTitle;
 		sText.Replace( " ", "\n" );
 		title.SetText( sText );
@@ -260,6 +261,22 @@ void ScreenOptions::PositionIcons()
 	}
 }
 
+void ScreenOptions::RefreshIcons()
+{
+	// Set the position of the underscores showing the current choice for each option line.
+	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
+	{
+		for( int i=0; i<m_iNumOptionLines; i++ )	// foreach options line
+		{
+			OptionIcon &icon = m_OptionIcons[p][i];
+
+			int iSelection = m_iSelectedOption[p][i];
+			CString sSelection = m_OptionLineData[i].szOptionsText[iSelection];
+			icon.Load( (PlayerNumber)p, m_bUseIcons ? sSelection : "", false );
+		}
+	}
+}
+
 
 void ScreenOptions::PositionHighlights()
 {
@@ -338,6 +355,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 void ScreenOptions::OnChange()
 {
 	PositionUnderlines();
+	RefreshIcons();
 }
 
 

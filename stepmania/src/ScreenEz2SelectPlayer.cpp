@@ -69,7 +69,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select player background"), 
 		THEME->GetPathTo("Graphics","select player top edge"),
-		HELP_TEXT, true, TIMER_SECONDS
+		HELP_TEXT, false, true, TIMER_SECONDS
 		);
 	this->AddChild( &m_Menu );
 

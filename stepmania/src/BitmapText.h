@@ -33,7 +33,6 @@ public:
 
 	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };
 	void CropToWidth( int iWidthInSourcePixels );
-	void SetLineHeight( int iLineHeight )	{ m_iLineHeight = iLineHeight; };
 
 	virtual void DrawPrimitives();
 
@@ -51,7 +50,6 @@ protected:
 	int		m_iNumLines;
 	int		m_iLineWidths[MAX_TEXT_LINES];	// in source pixels
 	int		m_iWidestLineWidth;					// in source pixels
-	int		m_iLineHeight;
 
 	bool m_bRainbow;
 };

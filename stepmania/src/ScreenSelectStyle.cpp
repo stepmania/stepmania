@@ -88,7 +88,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	m_Menu.Load( 	
 		THEME->GetPathTo("Graphics","select style background"), 
 		THEME->GetPathTo("Graphics","select style top edge"),
-		HELP_TEXT, true, TIMER_SECONDS
+		HELP_TEXT, false, true, TIMER_SECONDS
 		);
 	this->AddChild( &m_Menu );
 

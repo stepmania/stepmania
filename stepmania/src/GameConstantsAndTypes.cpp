@@ -16,15 +16,18 @@
 
 #define COLOR_P1		THEME->GetMetricC("Common","ColorP1")
 #define COLOR_P2		THEME->GetMetricC("Common","ColorP2")
+#define COLOR_EASY		THEME->GetMetricC("Common","ColorEasy")
+#define COLOR_MEDIUM	THEME->GetMetricC("Common","ColorMedium")
+#define COLOR_HARD		THEME->GetMetricC("Common","ColorHard")
 
 
 D3DXCOLOR DifficultyClassToColor( DifficultyClass dc )
 {
 	switch( dc )
 	{
-	case CLASS_EASY:	return D3DXCOLOR(1,1,0,1);	// yellow
-	case CLASS_MEDIUM:	return D3DXCOLOR(1,0,0,1);	// red
-	case CLASS_HARD:	return D3DXCOLOR(0,1,0,1);	// green
+	case CLASS_EASY:	return COLOR_EASY;
+	case CLASS_MEDIUM:	return COLOR_MEDIUM;
+	case CLASS_HARD:	return COLOR_HARD;
 	default:	ASSERT(0);	return D3DXCOLOR();	// invalid DifficultyClass
 	}
 }

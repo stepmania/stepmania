@@ -25,11 +25,10 @@
 //
 // Defines specific to ScreenEditMenu
 //
-const float EXPLANATION_X		=	CENTER_X;
-const float EXPLANATION_Y		=	SCREEN_BOTTOM - 70;
-const CString EXPLANATION_TEXT	= 
-	"In this mode, you can edit existing notes patterns,\n"
-	"create note patterns, or synchronize notes with the music.";
+#define EXPLANATION_X				THEME->GetMetricF("ScreenEditMenu","ExplanationX")
+#define EXPLANATION_Y				THEME->GetMetricF("ScreenEditMenu","ExplanationY")
+#define EXPLANATION_TEXT			THEME->GetMetric("ScreenEditMenu","ExplanationText")
+#define HELP_TEXT					THEME->GetMetric("ScreenEditMenu","HelpText")
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
@@ -48,8 +47,7 @@ ScreenEditMenu::ScreenEditMenu()
 	m_Menu.Load( 
 		THEME->GetPathTo("Graphics","edit menu background"), 
 		THEME->GetPathTo("Graphics","edit menu top edge"),
-		ssprintf("%c %c change line    %c %c change value    START to continue", char(3), char(4), char(1), char(2) ),
-		false, 99 
+		HELP_TEXT, false, false, 99 
 		);
 	this->AddChild( &m_Menu );
 

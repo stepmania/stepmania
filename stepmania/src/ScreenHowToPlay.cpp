@@ -37,7 +37,7 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","How To Play Background"), 
 		THEME->GetPathTo("Graphics","How To Play Top Edge"), 
-		HELP_TEXT, true, TIMER_SECONDS
+		HELP_TEXT, false, true, TIMER_SECONDS
 		);
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	this->AddChild( &m_Menu );

@@ -62,8 +62,8 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 	Init( 
 		INPUTMODE_PLAYERS, 
 		g_PlayerOptionsLines, 
-		NUM_PLAYER_OPTIONS_LINES
-		);
+		NUM_PLAYER_OPTIONS_LINES,
+		true );
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("player options intro") );
 }

@@ -81,14 +81,14 @@ WheelItemDisplay::WheelItemDisplay()
 	m_sprSectionBar.Load( THEME->GetPathTo("Graphics","select music section bar") );
 	m_sprSectionBar.SetXY( 0, 0 );
 
-	m_textSectionName.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textSectionName.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel section") );
 	m_textSectionName.TurnShadowOff();
 	m_textSectionName.SetVertAlign( align_middle );
 	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
 	m_textSectionName.SetZoom( SECTION_ZOOM );
 
 
-	m_textRoulette.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
+	m_textRoulette.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel roulette") );
 	m_textRoulette.TurnShadowOff();
 	m_textRoulette.SetText( "ROULETTE" );
 	m_textRoulette.TurnRainbowOn();
@@ -102,7 +102,7 @@ WheelItemDisplay::WheelItemDisplay()
 		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
 	}
 
-	m_textCourse.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
+	m_textCourse.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel course") );
 	m_textCourse.TurnShadowOff();
 	m_textCourse.SetZoom( COURSE_ZOOM );
 	m_textCourse.SetHorizAlign( align_left );

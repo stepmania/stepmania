@@ -65,11 +65,11 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 {
 	LOG->Trace( "ScreenGraphicOptions::ScreenGraphicOptions()" );
 
-	Init( 
+	Init(
 		INPUTMODE_BOTH, 
 		g_GraphicOptionsLines, 
-		NUM_GRAPHIC_OPTIONS_LINES
-		);
+		NUM_GRAPHIC_OPTIONS_LINES,
+		false );
 	UpdateRefreshRates();
 	m_Menu.StopTimer();
 

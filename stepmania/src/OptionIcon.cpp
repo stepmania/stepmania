@@ -20,6 +20,7 @@
 #define TEXT_V_ALIGN	THEME->GetMetricI("OptionIcon","TextVAlign")
 #define TEXT_WIDTH		THEME->GetMetricI("OptionIcon","TextWidth")
 #define TEXT_ZOOM		THEME->GetMetricF("OptionIcon","TextZoom")
+#define UPPERCASE		THEME->GetMetricB("OptionIcon","Uppercase")
 
 
 OptionIcon::OptionIcon()
@@ -39,6 +40,16 @@ OptionIcon::OptionIcon()
 
 void OptionIcon::Load( PlayerNumber pn, CString sText, bool bHeader )
 {
+	static CString sStopWords[] = { "OFF", "VISIBLE", "VIVID" };
+	const int iNumStopWords = sizeof(sStopWords)/sizeof(sStopWords[0]);
+	
+	for( int i=0; i<iNumStopWords; i++ )
+		if( sText == sStopWords[i] )
+			sText = "";
+
+	if( UPPERCASE )
+		sText.MakeUpper();
+
 	bool bVacant = (sText=="");
 	m_spr.SetState( pn*3 + (bHeader?0:(bVacant?1:2)) );
 

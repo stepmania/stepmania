@@ -22,9 +22,9 @@ const float TEXT_BANNER_HEIGHT	= 40;
 
 TextBanner::TextBanner()
 {
-	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
-	m_textSubTitle.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
-	m_textArtist.LoadFromFont( THEME->GetPathTo("Fonts","text banner") );
+	m_textTitle.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
+	m_textSubTitle.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
+	m_textArtist.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
 
 	m_textTitle.SetX( -TEXT_BANNER_WIDTH/2 );
 	m_textSubTitle.SetX( -TEXT_BANNER_WIDTH/2 );

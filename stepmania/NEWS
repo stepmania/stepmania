@@ -1,4 +1,6 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+CHANGE:  Font format is not simpler.  See README for details.
+NEW FEATURE:  Option Icons.
 NEW FEATURE:  Best sort now shows only top 30 songs.
 NEW FEATURE:  Option codes on the Select Music and Select Course screens
 	Codes are defined in the metrics.ini file and thus can be edited and

@@ -48,7 +48,7 @@ protected:
 
 	Sprite				m_sprBannerFrame;
 	FadingBanner		m_Banner;
-	BitmapText			m_textNumStages;
+	BitmapText			m_textNumSongs;
 	BitmapText			m_textTime;
 	CourseContentsFrame	m_CourseContentsFrame;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];

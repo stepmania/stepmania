@@ -44,7 +44,7 @@ class ScreenOptions : public Screen
 {
 public:
 	ScreenOptions( CString sBackgroundPath, CString sPagePath, CString sTopEdgePath );
-	void Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines );
+	void Init( InputMode im, OptionLineData optionLineData[], int iNumOptionLines, bool bUseIcons );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -58,6 +58,7 @@ protected:
 	void GetWidthXY( PlayerNumber p, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
 	void PositionUnderlines();
 	void PositionIcons();
+	void RefreshIcons();
 	void PositionHighlights();
 	void TweenHighlight( PlayerNumber player_no );
 	virtual void OnChange();
@@ -74,6 +75,7 @@ protected:
 	void MenuDown( PlayerNumber p );
 
 	InputMode		m_InputMode;
+	bool			m_bUseIcons;
 
 	OptionLineData* m_OptionLineData;
 	int				m_iNumOptionLines;

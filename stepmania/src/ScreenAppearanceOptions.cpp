@@ -51,8 +51,8 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 	Init( 
 		INPUTMODE_BOTH, 
 		g_AppearanceOptionsLines, 
-		NUM_APPEARANCE_OPTIONS_LINES
-		);
+		NUM_APPEARANCE_OPTIONS_LINES,
+		false );
 	m_Menu.StopTimer();
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","appearance options music") );

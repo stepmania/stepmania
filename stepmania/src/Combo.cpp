@@ -29,13 +29,13 @@ Combo::Combo()
 {
 	Reset();
 
-	m_sprCombo.Load( THEME->GetPathTo("Graphics", "gameplay combo") );
+	m_sprCombo.Load( THEME->GetPathTo("Graphics", "gameplay combo label") );
 	m_sprCombo.TurnShadowOn();
 	m_sprCombo.StopAnimating();
 	m_sprCombo.SetX( 40 );
 	m_sprCombo.SetZoom( 1.0f );
 
-	m_textComboNumber.LoadFromFont( THEME->GetPathTo("Fonts","combo numbers") );
+	m_textComboNumber.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay combo numbers 5x2"), "0123456789" );
 	m_textComboNumber.TurnShadowOn();
 	m_textComboNumber.SetHorizAlign( Actor::align_right );
 	m_textComboNumber.SetX( 0 );

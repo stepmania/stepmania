@@ -19,7 +19,7 @@
 
 FootMeter::FootMeter()
 {
-	LoadFromFont( THEME->GetPathTo("Fonts","meter") );
+	BitmapText::LoadFromTextureAndChars( THEME->GetPathTo("Graphics","select music meter 2x1"), "10" );
 
 	SetFromNotes( NULL );
 }

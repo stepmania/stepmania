@@ -147,7 +147,7 @@ try_element_again:
 		"*.avi", "*.mpg", "*.mpeg", NULL
 	};
 	static const char *sound_masks[] = { ".set", ".mp3", ".ogg", ".wav", ".redir", NULL };
-	static const char *font_masks[] = { ".font", ".redir", NULL };
+	static const char *font_masks[] = { " 16x16.png", ".redir", NULL };
 	const char **asset_masks = NULL;
 	if( sAssetCategory == "graphics" ) asset_masks = graphic_masks;
 	else if( sAssetCategory == "sounds" ) asset_masks = sound_masks;
@@ -231,7 +231,10 @@ try_metric_again:
 
 	CString sValue;
 	if( m_pIniMetrics->GetValue(sScreenName,sValueName,sValue) )
+	{
+		sValue.Replace("::","\n");	// "::" means newline since you can't use line breaks in an ini file.
 		return sValue;
+	}
 
 #ifdef _DEBUG
 	if( IDRETRY == AfxMessageBox( ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sScreenName,sValueName), MB_RETRYCANCEL ) )

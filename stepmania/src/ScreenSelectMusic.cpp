@@ -89,7 +89,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select music background"), 
 		THEME->GetPathTo("Graphics","select music top edge"),
-		HELP_TEXT, true, TIMER_SECONDS 
+		HELP_TEXT, true, true, TIMER_SECONDS 
 		);
 	this->AddChild( &m_Menu );
 
@@ -180,7 +180,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 		m_sprMeterFrame[p].SetState( p );
 		this->AddChild( &m_sprMeterFrame[p] );
 
-		m_FootMeter[p].LoadFromFont( THEME->GetPathTo("Fonts","meter") );
 		m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
 		m_FootMeter[p].SetShadowLength( 2 );
 		this->AddChild( &m_FootMeter[p] );
@@ -212,7 +211,7 @@ ScreenSelectMusic::ScreenSelectMusic()
 	this->AddChild( &m_MusicSortDisplay );
 
 
-	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","stage") );
+	m_textHoldForOptions.LoadFromFont( THEME->GetPathTo("Fonts","select music stage") );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
 	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
@@ -272,7 +271,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	
 	m_textSongOptions.FadeOn( 0, "fade", TWEEN_TIME );
 	
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{		
 		m_OptionIconRow[p].FadeOn( 0, "foldy", TWEEN_TIME );
 //		fOriginalZoomY = m_textPlayerOptions[p].GetZoomY();
@@ -317,7 +316,7 @@ void ScreenSelectMusic::TweenOffScreen()
 
 	m_textSongOptions.FadeOff( 0, "fade", TWEEN_TIME );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_OptionIconRow[p].FadeOff( 0, "foldy", TWEEN_TIME );
 //		m_textPlayerOptions[p].FadeOff( 0, "fade", TWEEN_TIME );

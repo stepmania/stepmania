@@ -53,7 +53,7 @@ MenuElements::MenuElements()
 	this->AddChild( &m_Invisible );
 }
 
-void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bTimerEnabled, int iTimerSeconds )
+void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText, bool bShowStyleIcon, bool bTimerEnabled, int iTimerSeconds )
 {
 	LOG->Trace( "MenuElements::MenuElements()" );
 
@@ -68,7 +68,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	m_sprStyleIcon.Load( THEME->GetPathTo("Graphics",ssprintf("menu style icons game %d",GAMESTATE->m_CurGame)) );
 	m_sprStyleIcon.StopAnimating();
 	m_sprStyleIcon.SetXY( STYLE_ICON_X, STYLE_ICON_Y );
-	if( GAMESTATE->m_CurStyle == STYLE_NONE )
+	if( GAMESTATE->m_CurStyle == STYLE_NONE  ||  !bShowStyleIcon )
 		m_sprStyleIcon.SetDiffuse( D3DXCOLOR(1,1,1,0) );
 	else
 	{
@@ -91,7 +91,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	CStringArray asHelpTips;
-	split( sHelpText, "::", asHelpTips );
+	split( sHelpText, "\n", asHelpTips );
 	m_textHelp.SetTips( asHelpTips );
 	m_textHelp.SetZoom( 0.5f );
 

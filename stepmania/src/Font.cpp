@@ -21,130 +21,67 @@
 #include <stdio.h>
 #include <assert.h>
 
-Font::Font( const CString &sFontFilePath )
+Font::Font( const CString &sASCIITexturePath )
 {
-	//LOG->Trace( "Font::LoadFromFontName(%s)", sFontFilePath );
-	for( int i=0; i<MAX_FONT_CHARS; i++ )
+	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath );
+
+	int i;
+
+	for( i=0; i<MAX_FONT_CHARS; i++ )
 	{
 		m_iCharToFrameNo[i] = -1;
 		m_iFrameNoToWidth[i] = -1;
 	}
 
-	m_bCapitalsOnly = false;
-	m_fDrawExtraPercent = 0;
-
-
 	m_iRefCount = 1;
 
-	m_sFontFilePath = sFontFilePath;	// save 
-
-
-	//
-	// Split for the directory.  We'll need it below
-	//
-	CString sFontDir, sFontFileName, sFontExtension;
-	splitrelpath( sFontFilePath, sFontDir, sFontFileName, sFontExtension );
-
-	//
-	// Read .font file
-	//
-	IniFile ini;
-	ini.SetPath( m_sFontFilePath );
-	if( !ini.ReadFile() )
-		throw RageException( "Error opening Font file '%s'.", m_sFontFilePath );
-
-
-	//
 	// load texture
-	//
-	CString sTextureFile;
-	ini.GetValue( "Font", "Texture", sTextureFile );
-	if( sTextureFile == "" )
-		throw RageException( "Error reading value 'Texture' from %s.", m_sFontFilePath );
-
-	m_sTexturePath = sFontDir + sTextureFile;	// save the path of the new texture
+	m_sTexturePath = sASCIITexturePath;
 	m_sTexturePath.MakeLower();
-
-
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
-	assert( m_pTexture != NULL );
+	ASSERT( m_pTexture != NULL );
+	if( m_pTexture->GetNumFrames() != 16*16 )
+		throw RageException( "The font '%s' has only %d frames.  All fonts must have 16*16 frames.", m_sTexturePath );
 
+	for( i=0; i<256; i++ )
+		m_iCharToFrameNo[i] = i;
 
-	//
-	// find out what characters are in this font
-	//
-	CString sCharacters;
-	if( ini.GetValue("Font", "Characters", sCharacters) )		// the creator supplied characters
-	{
-		// sanity check
-		if( sCharacters.GetLength() != m_pTexture->GetNumFrames() )
-			throw RageException( "The characters in '%s' does not match the number of frames in the texture."
-						"The font has %d characters, and the texture has %d frames.",
-						m_sFontFilePath, sCharacters.GetLength(), m_pTexture->GetNumFrames() );
+	// Find .ini widths path from texture path
+	CString sDir, sFileName, sExtension;
+	splitrelpath( sASCIITexturePath, sDir, sFileName, sExtension );
+	const CString sIniPath = sDir + sFileName + ".ini";
+	IniFile ini;
+	ini.SetPath( sIniPath );
+	ini.ReadFile();
 
-		// set the char to frame number map
-		for( int i=0; i<sCharacters.GetLength(); i++ )
-		{
-			char c = sCharacters[i];
-			int iFrameNo = i; 
-
-			m_iCharToFrameNo[c] = iFrameNo;
-		}
-	}
-	else	// the font file creator did not supply characters.  Assume this is a full low ASCII set.
-	{
-		switch( m_pTexture->GetNumFrames() )
-		{
-		case 256:		// ASCII 0-255
-			{
-			for( int i=0; i<256; i++ )
-				m_iCharToFrameNo[i] = i;
-			}
-			break;
-		case 128:		// ASCII 32-159
-			{
-			for( int i=32; i<128+32; i++ )
-				m_iCharToFrameNo[i] = i-32;
-			}
-			break;
-		default:
-			throw RageException( "No characters were specified in '%s' and the font is not a standard ASCII set.", m_sFontFilePath );
-		}
-
-	}
-
-	ini.GetValueB( "Font", "CapitalsOnly", m_bCapitalsOnly );
-	ini.GetValueF( "Font", "DrawExtraPercent", m_fDrawExtraPercent );
-
-
-	//
 	// load character widths
-	//
-	CString sWidthsValue;
-	if( ini.GetValue("Font", "Widths", sWidthsValue) )		// the creator supplied widths
-	{
-		CStringArray asCharWidths;
-		asCharWidths.SetSize( 0, 256 );
-		split( sWidthsValue, ",", asCharWidths );
+	for( i=0; i<256; i++ )
+		if( !ini.GetValueI( "Char Widths", ssprintf("%d",i), m_iFrameNoToWidth[i] ) )
+			throw RageException( "Error reading 'Char Widths from '%s'.", sIniPath );
 
-		if( asCharWidths.GetSize() != m_pTexture->GetNumFrames() )
-			throw RageException( "The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%d).", 
-				m_sFontFilePath, asCharWidths.GetSize(), m_pTexture->GetNumFrames() );
+	m_bCapitalsOnly = false;
+	ini.GetValueB( "Char Widths", "CapitalsOnly", m_bCapitalsOnly );
 
-		for( int i=0; i<asCharWidths.GetSize(); i++ )
-		{
-			m_iFrameNoToWidth[i] = atoi( asCharWidths[i] );
-			if( m_iFrameNoToWidth[i]%2 == 1 )
-				m_iFrameNoToWidth[i]++;
-		}
-	}
-	else	// The font file creator didn't supply widths.  Assume each character is the width of the frame.
+	m_iDrawExtraPixelsLeft = 0;
+	ini.GetValueI( "Char Widths", "DrawExtraPixelsLeft", m_iDrawExtraPixelsLeft );
+
+	m_iDrawExtraPixelsRight = 0;
+	ini.GetValueI( "Char Widths", "DrawExtraPixelsRight", m_iDrawExtraPixelsRight );
+
+	int iAddToAllWidths = 0;
+	if( ini.GetValueI( "Char Widths", "AddToAllWidths", iAddToAllWidths ) )
 	{
-		for( int i=0; i<(int)m_pTexture->GetNumFrames(); i++ )
-		{
-			m_iFrameNoToWidth[i] = m_pTexture->GetSourceFrameWidth();
-		}
+		for( int i=0; i<256; i++ )
+			m_iFrameNoToWidth[i] += iAddToAllWidths;
 	}
+
+	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
+	ini.GetValueI( "Char Widths", "LineHeight", m_iLineSpacing );
+
+	// force widths to even number
+	for( i=0; i<256; i++ )
+		if( m_iFrameNoToWidth[i]%2 == 1 )
+			m_iFrameNoToWidth[i]++;
 }
 
 
@@ -159,23 +96,21 @@ Font::Font( const CString &sTexturePath, const CString& sCharacters )
 	}
 
 	m_bCapitalsOnly = false;
-	m_fDrawExtraPercent = 0;
-
+	m_iDrawExtraPixelsLeft = 0;
+	m_iDrawExtraPixelsRight = 0;
 
 	m_iRefCount = 1;
-
-	m_sFontFilePath = sTexturePath;	// save 
-
 
 	//
 	// load texture
 	//
-	m_sTexturePath = sTexturePath;	// save the path of the new texture
+	m_sTexturePath = sTexturePath;	// save
 	m_sTexturePath.MakeLower();
 
 
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
-	assert( m_pTexture != NULL );
+	ASSERT( m_pTexture != NULL );
+	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
 
 
 	//
@@ -183,9 +118,8 @@ Font::Font( const CString &sTexturePath, const CString& sCharacters )
 	//
 	// sanity check
 	if( sCharacters.GetLength() != m_pTexture->GetNumFrames() )
-		throw RageException( "The characters in '%s' does not match the number of frames in the texture."
-					"The font has %d frames, and the texture has %d frames.",
-					m_sFontFilePath, sCharacters.GetLength(), m_pTexture->GetNumFrames() );
+		throw RageException( "The image '%s' doesn't have the correct number of frames.  It has %d frames but should have %d frames.",
+					m_sTexturePath, m_pTexture->GetNumFrames(), sCharacters.GetLength() );
 
 	// set the char to frame number map
 	for( i=0; i<sCharacters.GetLength(); i++ )
@@ -218,7 +152,7 @@ int Font::GetLineWidthInSourcePixels( const char *szLine, int iLength )
 		const char c = szLine[i];
 		const int iFrameNo = m_iCharToFrameNo[c];
 		if( iFrameNo == -1 )	// this font doesn't impelemnt this character
-			throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
+			throw RageException( "The font '%s' does not implement the character '%c'", m_sTexturePath, c );
 
 		iLineWidth += m_iFrameNoToWidth[iFrameNo];
 	}

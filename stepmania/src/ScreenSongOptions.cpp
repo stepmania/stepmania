@@ -50,8 +50,8 @@ ScreenSongOptions::ScreenSongOptions() :
 
 	Init( INPUTMODE_BOTH, 
 		g_SongOptionsLines, 
-		NUM_SONG_OPTIONS_LINES
-		);
+		NUM_SONG_OPTIONS_LINES,
+		false );
 }
 
 void ScreenSongOptions::ImportOptions()

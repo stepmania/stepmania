@@ -22,7 +22,7 @@ public:
 	FontManager();
 	~FontManager();
 
-	Font* LoadFont( CString sFontOrTextureFilePath, CString sChars );
+	Font* LoadFont( CString sFontOrTextureFilePath, CString sChars = "" );
 	bool IsFontLoaded( CString sFontPath );
 	void UnloadFont( CString sFontPath );
 

@@ -124,7 +124,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select group background") , 
 		THEME->GetPathTo("Graphics","select group top edge"),
-		HELP_TEXT, true, TIMER_SECONDS
+		HELP_TEXT, true, true, TIMER_SECONDS
 		);
 	this->AddChild( &m_Menu );
 
@@ -141,7 +141,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	m_sprFrame.SetXY( FRAME_X, FRAME_Y );
 	this->AddChild( &m_sprFrame );
 
-	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","select group num songs") );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.SetHorizAlign( Actor::align_right );
 	m_textNumber.TurnShadowOff();

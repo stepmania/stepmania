@@ -67,7 +67,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","select course background"), 
 		THEME->GetPathTo("Graphics","select course top edge"),
-		HELP_TEXT, true, TIMER_SECONDS 
+		HELP_TEXT, true, true, TIMER_SECONDS 
 		);
 	this->AddChild( &m_Menu );
 
@@ -79,12 +79,12 @@ ScreenSelectCourse::ScreenSelectCourse()
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
-	m_textNumStages.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
-	m_textNumStages.SetXY( STAGES_X, STAGES_Y );
-	m_textNumStages.TurnShadowOff();
-	this->AddChild( &m_textNumStages );
+	m_textNumSongs.LoadFromFont( THEME->GetPathTo("Fonts","select course num songs") );
+	m_textNumSongs.SetXY( STAGES_X, STAGES_Y );
+	m_textNumSongs.TurnShadowOff();
+	this->AddChild( &m_textNumSongs );
 
-	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","select course total time") );
 	m_textTime.SetXY( TIME_X, TIME_Y );
 	m_textTime.TurnShadowOff();
 	this->AddChild( &m_textTime );
@@ -151,7 +151,7 @@ void ScreenSelectCourse::DrawPrimitives()
 
 void ScreenSelectCourse::TweenOnScreen()
 {
-	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumStages, &m_textTime };
+	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumSongs, &m_textTime };
 	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInCourseInfoFrame) / sizeof(Actor*);
 	int i;
 	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
@@ -181,7 +181,7 @@ void ScreenSelectCourse::TweenOnScreen()
 
 void ScreenSelectCourse::TweenOffScreen()
 {
-	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumStages, &m_textTime };
+	Actor* pActorsInCourseInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_textNumSongs, &m_textTime };
 	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInCourseInfoFrame) / sizeof(Actor*);
 	int i;
 	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
@@ -348,7 +348,7 @@ void ScreenSelectCourse::AfterCourseChange()
 		{
 			Course* pCourse = m_MusicWheel.GetSelectedCourse();
 
-			m_textNumStages.SetText( ssprintf("%d", pCourse->m_iStages) );
+			m_textNumSongs.SetText( ssprintf("%d", pCourse->m_iStages) );
 			float fTotalSeconds = 0;
 			for( int i=0; i<pCourse->m_iStages; i++ )
 				fTotalSeconds += pCourse->m_apSongs[i]->m_fMusicLengthSeconds;

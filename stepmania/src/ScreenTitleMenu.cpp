@@ -47,6 +47,8 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 #define SONGS_Y							THEME->GetMetricF("ScreenTitleMenu","SongsY")
 #define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenTitleMenu","ColorNotSelected")
 #define COLOR_SELECTED					THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
+#define ZOOM_NOT_SELECTED				THEME->GetMetricF("ScreenTitleMenu","ZoomNotSelected")
+#define ZOOM_SELECTED					THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
 #define SECONDS_BEFORE_DEMONSTRATION	THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeDemonstration")
 #define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenAttract")
 #define HELP_TEXT						THEME->GetMetric("ScreenTitleMenu","HelpText")
@@ -138,7 +140,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	for( int i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
 	{
-		m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+		m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","titlemenu") );
 		m_textChoice[i].SetText( CHOICE_TEXT[i] );
 		m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 		m_textChoice[i].SetShadowLength( 5 );
@@ -161,6 +163,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 
 	m_TitleMenuChoice = CHOICE_GAME_START;
+
+	for( i=0; i<NUM_TITLE_MENU_CHOICES; i++ )
+		LoseFocus( i );
 	GainFocus( m_TitleMenuChoice );
 	
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","title menu music") );
@@ -294,20 +299,17 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenTitleMenu::LoseFocus( int iChoiceIndex )
 {
-	m_soundChange.PlayRandom();
-
 	m_textChoice[iChoiceIndex].SetEffectNone();
 	m_textChoice[iChoiceIndex].StopTweening();
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
-	m_textChoice[iChoiceIndex].SetTweenZoom( 0.9f );
-
+	m_textChoice[iChoiceIndex].SetTweenZoom( ZOOM_NOT_SELECTED );
 }
 
 void ScreenTitleMenu::GainFocus( int iChoiceIndex )
 {
 	m_textChoice[iChoiceIndex].StopTweening();
 	m_textChoice[iChoiceIndex].BeginTweening( 0.3f );
-	m_textChoice[iChoiceIndex].SetTweenZoom( 1.2f );
+	m_textChoice[iChoiceIndex].SetTweenZoom( ZOOM_SELECTED );
 	D3DXCOLOR color1, color2;
 	color1 = COLOR_SELECTED;
 	color2 = color1 * 0.5f;
@@ -324,6 +326,8 @@ void ScreenTitleMenu::MenuUp( PlayerNumber p )
 	
 	m_TitleMenuChoice = TitleMenuChoice( m_TitleMenuChoice-1 );
 
+	m_soundChange.PlayRandom();
+
 	GainFocus( m_TitleMenuChoice );
 }
 
@@ -336,6 +340,8 @@ void ScreenTitleMenu::MenuDown( PlayerNumber p )
 		m_TitleMenuChoice = (TitleMenuChoice)-1; // wrap around
 
 	m_TitleMenuChoice = TitleMenuChoice( m_TitleMenuChoice+1 );
+
+	m_soundChange.PlayRandom();
 
 	GainFocus( m_TitleMenuChoice );
 }

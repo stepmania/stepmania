@@ -207,7 +207,7 @@ ScreenGameplay::ScreenGameplay()
 	this->AddChild( &m_sprTopFrame );
 
 
-	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
+	m_textStageNumber.LoadFromFont( THEME->GetPathTo("Fonts","gameplay stage") );
 	m_textStageNumber.TurnShadowOff();
 	m_textStageNumber.SetXY( STAGE_X, STAGE_Y(bExtra) );
 	m_textStageNumber.SetText( GAMESTATE->GetStageText() );
@@ -295,7 +295,7 @@ ScreenGameplay::ScreenGameplay()
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		m_DifficultyBanner[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bReverse[p],bExtra) );
+		m_DifficultyBanner[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
 		this->AddChild( &m_DifficultyBanner[p] );
 	}
 
@@ -353,7 +353,7 @@ ScreenGameplay::ScreenGameplay()
 	this->AddChild( &m_Fade );
 
 
-	m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
+	m_textSurviveTime.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay survive time numbers 7x2"), "01234 :56789%." );
 	m_textSurviveTime.TurnShadowOff();
 	m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 	m_textSurviveTime.SetText( "" );

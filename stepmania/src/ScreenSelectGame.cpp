@@ -69,8 +69,8 @@ ScreenSelectGame::ScreenSelectGame() :
 	Init( 
 		INPUTMODE_BOTH, 
 		g_SelectGameLines, 
-		NUM_SELECT_GAME_LINES
-		);
+		NUM_SELECT_GAME_LINES,
+		false );
 
 	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select game music") );
 }

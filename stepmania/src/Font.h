@@ -20,7 +20,7 @@ class Font
 protected:
 
 public:
-	Font( const CString &sFontPath );
+	Font( const CString &sASCIITexturePath );
 	Font( const CString &sTexturePath, const CString& sChars );
 	~Font();
 
@@ -28,12 +28,12 @@ public:
 
 	int m_iRefCount;
 
-	CString m_sFontFilePath;
 	CString m_sTexturePath;
 
 	RageTexture* m_pTexture;
 	bool m_bCapitalsOnly;
-	float m_fDrawExtraPercent;	// for italic fonts
+	int m_iDrawExtraPixelsLeft, m_iDrawExtraPixelsRight;	// for italic fonts
+	int m_iLineSpacing;
 
 	int m_iCharToFrameNo[MAX_FONT_CHARS];
 	int	m_iFrameNoToWidth[MAX_FONT_CHARS];	// in soure coordinate space

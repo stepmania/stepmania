@@ -70,7 +70,7 @@ BitmapText::BitmapText()
 BitmapText::~BitmapText()
 {
 	if( m_pFont )
-		FONT->UnloadFont( m_pFont->m_sFontFilePath );
+		FONT->UnloadFont( m_pFont->m_sTexturePath );
 }
 
 bool BitmapText::LoadFromFont( CString sFontFilePath )
@@ -78,9 +78,18 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 	LOG->Trace( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
 
 	// load font
-	m_pFont = FONT->LoadFont( sFontFilePath, "" );
+	m_pFont = FONT->LoadFont( sFontFilePath );
 
-	m_iLineHeight = m_pFont->m_pTexture->GetSourceFrameHeight();
+	return true;
+}
+
+
+bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
+{
+	LOG->Trace( "BitmapText::LoadFromTextureAndChars(%s)", sTexturePath );
+
+	// load font
+	m_pFont = FONT->LoadFont( sTexturePath, sChars );
 
 	return true;
 }
@@ -184,14 +193,15 @@ void BitmapText::DrawPrimitives()
 
 
 	const int iHeight = pTexture->GetSourceFrameHeight();	// height of a character
+	const int iLineSpacing = m_pFont->m_iLineSpacing;			// spacing between lines
 	const int iFrameWidth = pTexture->GetSourceFrameWidth();	// width of a character frame in logical units
 
 	int iY;	//	 the center position of the first row of characters
 	switch( m_VertAlign )
 	{
-	case align_bottom:	iY = -(m_iNumLines)	  * m_iLineHeight		+ m_iLineHeight/2;	break;
-	case align_middle:	iY = -(m_iNumLines-1) * m_iLineHeight/2;					break;
-	case align_top:		iY =								+ m_iLineHeight/2;	break;
+	case align_bottom:	iY = -(m_iNumLines)	  * iLineSpacing		+ iLineSpacing/2;	break;
+	case align_middle:	iY = -(m_iNumLines-1) * iLineSpacing/2;					break;
+	case align_top:		iY =								+ iLineSpacing/2;	break;
 	default:		ASSERT( false );
 	}
 
@@ -219,21 +229,18 @@ void BitmapText::DrawPrimitives()
 				throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
 			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];
 
-			// HACK:
 			// The right side of any italic letter is being cropped.  So, we're going to draw a little bit
 			// to the right of the normal character.
-			const float fPercentExtra = min( m_pFont->m_fDrawExtraPercent, (iFrameWidth-iCharWidth)/(float)iFrameWidth );	// don't draw from the adjacent frame
-
+			const int iDrawExtraPixelsLeft = min( m_pFont->m_iDrawExtraPixelsLeft, (iFrameWidth-iCharWidth)/2 );
+			const int iDrawExtraPixelsRight = min( m_pFont->m_iDrawExtraPixelsRight, (iFrameWidth-iCharWidth)/2 );
 
 			//
 			// set vertex positions
 			//
-			const float fExtraPixels = fPercentExtra * pTexture->GetSourceFrameWidth();
-
-			v[iNumV++].p = D3DXVECTOR3( (float)iX,					iY-iHeight/2.0f, 0 );	// top left
-			v[iNumV++].p = D3DXVECTOR3( iX+iCharWidth+fExtraPixels, iY-iHeight/2.0f, 0 );	// top right
-			v[iNumV++].p = D3DXVECTOR3( (float)iX,					iY+iHeight/2.0f, 0 );	// bottom left
-			v[iNumV++].p = D3DXVECTOR3( iX+iCharWidth+fExtraPixels, iY+iHeight/2.0f, 0 );	// bottom right
+			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft,										iY-iHeight/2.0f, 0 );	// top left
+			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY-iHeight/2.0f, 0 );	// top right
+			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft,										iY+iHeight/2.0f, 0 );	// bottom left
+			v[iNumV++].p = D3DXVECTOR3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY+iHeight/2.0f, 0 );	// bottom right
 
 			iX += iCharWidth;
 
@@ -251,15 +258,16 @@ void BitmapText::DrawPrimitives()
 			frectTexCoords.left  += fTexCoordsToChopOff/2;
 			frectTexCoords.right -= fTexCoordsToChopOff/2;
 
-			const float fExtraTexCoords = fPercentExtra * pTexture->GetTextureFrameWidth() / pTexture->GetTextureWidth();
+			const float fExtraTexCoordsLeft = iDrawExtraPixelsLeft / (float)pTexture->GetSourceWidth();
+			const float fExtraTexCoordsRight = iDrawExtraPixelsRight / (float)pTexture->GetSourceWidth();
 
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.top );		// top left
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.top );		// top right
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left,					frectTexCoords.bottom );	// bottom left
-			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoords, frectTexCoords.bottom );	// bottom right
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.top );		// top left
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.top );		// top right
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.bottom );	// bottom left
+			v[iNumV++].t = D3DXVECTOR2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.bottom );	// bottom right
 		}
 
-		iY += m_iLineHeight;
+		iY += iLineSpacing;
 	}
 
 
