@@ -121,7 +121,7 @@ RageBitmapTexture::RageBitmapTexture( RageTextureID name ) :
 RageBitmapTexture::~RageBitmapTexture()
 {
 	if(m_uGLTextureID)
-		glDeleteTextures(1, &m_uGLTextureID);
+		glDeleteTextures(1,reinterpret_cast<GLuint*>(&m_uGLTextureID));
 }
 
 void RageBitmapTexture::Reload()
@@ -131,7 +131,7 @@ void RageBitmapTexture::Reload()
 
 	if(m_uGLTextureID) 
 	{
-		glDeleteTextures(1, &m_uGLTextureID);
+		glDeleteTextures(1, reinterpret_cast<GLuint*>(&m_uGLTextureID));
 		m_uGLTextureID = 0;
 	}
 
@@ -304,7 +304,7 @@ void RageBitmapTexture::Create()
 	SDL_Surface *img = CreateImg(desired_rgba_pixfmt);
 
 	if(!m_uGLTextureID)
-		glGenTextures(1, &m_uGLTextureID);
+		glGenTextures(1, reinterpret_cast<GLuint*>(&m_uGLTextureID));
 	ASSERT(m_uGLTextureID);
 	
 	DISPLAY->SetTexture(this);
@@ -392,7 +392,7 @@ retry:
 		GLExt::glColorTableEXT(GL_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 
 		int RealFormat = 0;
-		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, &RealFormat);
+		GLExt::glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT, reinterpret_cast<GLint*>(&RealFormat));
 		if(RealFormat != GL_RGBA8)
 		{
 			/* This is a case I don't expect to happen; if it does, log,
@@ -445,7 +445,7 @@ retry:
 	if(img->format->BitsPerPixel == 8)
 	{
 		int size = 0;
-		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), reinterpret_cast<GLint*>(&size));
 		if(size != 8)
 		{
 			/* I don't know any reason this should actually fail (paletted textures
