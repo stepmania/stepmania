@@ -651,7 +651,7 @@ RageColor Course::GetColor() const
 		break;
 
 	case PrefsManager::COURSE_SORT_METER:
-		if (GetMeter() > 100)
+		if ( !IsFixed() )
 			return RageColor(0,0,1,1);  // blue
 		if (GetMeter() > 8.5)
 			return RageColor(1,0,0,1);  // red
@@ -662,7 +662,7 @@ RageColor Course::GetColor() const
 		return RageColor(0,1,0,1); // green
 
 	case PrefsManager::COURSE_SORT_METER_SUM:
-		if (SortOrder_TotalDifficulty > 100000)
+		if ( !IsFixed() )
 			return RageColor(0,0,1,1);  // blue
 		if (SortOrder_TotalDifficulty >= 40)
 			return RageColor(1,0,0,1);  // red
@@ -686,6 +686,18 @@ RageColor Course::GetColor() const
 	}
 }
 
+bool Course::IsFixed() const
+{
+	for(unsigned i = 0; i < m_entries.size(); i++)
+	{
+		if ( m_entries[i].type == COURSE_ENTRY_FIXED )
+			continue;
+
+		return false;
+	}
+
+	return true;
+}
 
 Difficulty Course::GetDifficulty( const Info &stage ) const
 {

@@ -123,6 +123,8 @@ public:
 	PlayMode GetPlayMode() const;
 	float GetMeter( int Difficult = -1 ) const;
 
+	bool IsFixed() const;
+
 	void LoadFromCRSFile( CString sPath );
 	void Save();
 	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
