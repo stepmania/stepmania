@@ -139,7 +139,7 @@ EditMenu::~EditMenu()
 
 }
 
-void EditMenu::RefreshSteps()
+void EditMenu::RefreshAll()
 {
 	OnRowValueChanged( ROW_SONG );
 }
@@ -278,16 +278,18 @@ void EditMenu::OnRowValueChanged( Row row )
 		// fall through
 	case ROW_STEPS:
 		{
-			CString s = DifficultyToThemedString(GetSelectedDifficulty());
+			CString s;
 			Steps *pSteps = GetSelectedSteps();
 			if( pSteps  &&  GetSelectedDifficulty() == DIFFICULTY_EDIT )
-				s += " - " + pSteps->GetDescription();
-			m_textValue[ROW_STEPS].SetText( s );
-			if( GetSelectedSteps() )
-				m_Meter.SetFromSteps( GetSelectedSteps() );
+				s = pSteps->GetDescription() + " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
 			else
-				m_Meter.SetFromMeterAndDifficulty( 0, GetSelectedDifficulty() );
+				s = DifficultyToThemedString(GetSelectedDifficulty());
+			m_textValue[ROW_STEPS].SetText( s );
 		}
+		if( GetSelectedSteps() )
+			m_Meter.SetFromSteps( GetSelectedSteps() );
+		else
+			m_Meter.SetFromMeterAndDifficulty( 0, GetSelectedDifficulty() );
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
 		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
@@ -310,7 +312,15 @@ void EditMenu::OnRowValueChanged( Row row )
 	case ROW_SOURCE_STEPS:
 		m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 		m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
-		m_textValue[ROW_SOURCE_STEPS].SetText( DifficultyToThemedString(GetSelectedSourceDifficulty()) );
+		{
+			CString s;
+			Steps *pSourceSteps = GetSelectedSourceSteps();
+			if( pSourceSteps  &&  GetSelectedSourceDifficulty() == DIFFICULTY_EDIT )
+				s = pSourceSteps->GetDescription() + " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
+			else
+				s = DifficultyToThemedString(GetSelectedSourceDifficulty());
+			m_textValue[ROW_SOURCE_STEPS].SetText( s );
+		}
 		if( GetSelectedSourceSteps() )
 			m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
 		else

@@ -76,7 +76,7 @@ public:
 		return s[a];
 	}
 
-	void RefreshSteps();
+	void RefreshAll();
 
 
 	CString		GetSelectedGroup() const			{ ASSERT(m_iSelection[ROW_GROUP] < (int)m_sGroups.size());				return m_sGroups[m_iSelection[ROW_GROUP]]; }

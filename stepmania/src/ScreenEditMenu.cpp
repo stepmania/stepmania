@@ -54,7 +54,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_RefreshSelector:
-		m_Selector.RefreshSteps();
+		m_Selector.RefreshAll();
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
@@ -103,7 +103,7 @@ static CString GetCopyDescription( const Steps *pSourceSteps )
 		s = pSourceSteps->GetDescription();
 	else
 		s = DifficultyToThemedString( pSourceSteps->GetDifficulty() );
-	return "From " + s;
+	return s;
 }
 
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
@@ -146,7 +146,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	case EditMenu::ACTION_DELETE:
 		ASSERT( pSteps );
 		SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurSteps );
-		m_Selector.RefreshSteps();
+		m_Selector.RefreshAll();
 		return;
 	case EditMenu::ACTION_COPY:
 		ASSERT( !pSteps );
@@ -162,8 +162,12 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		
 			SCREENMAN->SystemMessage( "Steps created from copy." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			m_Selector.RefreshSteps();
 			pSong->Save();
+
+			GAMESTATE->m_pCurSong.Set( pSong );
+			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
+
+			m_Selector.RefreshAll();
 		}
 		return;
 	case EditMenu::ACTION_AUTOGEN:
@@ -181,8 +185,12 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 				
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			m_Selector.RefreshSteps();
 			pSong->Save();
+
+			GAMESTATE->m_pCurSong.Set( pSong );
+			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
+
+			m_Selector.RefreshAll();
 		}
 		return;
 	case EditMenu::ACTION_BLANK:
@@ -199,7 +207,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		
 			SCREENMAN->SystemMessage( "Blank Steps created." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			m_Selector.RefreshSteps();
+			m_Selector.RefreshAll();
 			pSong->Save();
 		}
 		return;
