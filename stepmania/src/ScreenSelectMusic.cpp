@@ -306,10 +306,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_sprNonPresence[p] );
 	}
 
-	m_Overlay.SetName( "Overlay");
-	m_Overlay.LoadFromAniDir( THEME->GetPathB(m_sName, "overlay"));
-	this->AddChild( &m_Overlay );
-
 	m_bgOptionsOut.Load( THEME->GetPathToB(m_sName+" options out") );
 //	this->AddChild( &m_bgOptionsOut ); // drawn on top
 	m_bgNoOptionsOut.Load( THEME->GetPathToB(m_sName+" no options out") );
@@ -514,7 +510,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
 	ON_COMMAND( m_MachineRank );
-	ON_COMMAND( m_Overlay );
+	ON_COMMAND( m_sprOverlay );
 
 	FOREACH_HumanPlayer( p )
 	{		
@@ -568,7 +564,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprCourseHasMods );
 	OFF_COMMAND( m_Artist );
 	OFF_COMMAND( m_MachineRank );
-	OFF_COMMAND( m_Overlay );
+	OFF_COMMAND( m_sprOverlay );
 
 	FOREACH_HumanPlayer( p )
 	{		

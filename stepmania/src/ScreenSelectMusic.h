@@ -22,7 +22,6 @@
 #include "HelpDisplay.h"
 #include "PaneDisplay.h"
 #include "Character.h"
-#include "BGAnimation.h"
 #include "RageUtil_BackgroundLoader.h"
 
 class ScreenSelectMusic : public ScreenWithMenuElements
@@ -110,7 +109,6 @@ protected:
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 
-	BGAnimation			m_Overlay;
 	Transition			m_bgOptionsOut;
 	Transition			m_bgNoOptionsOut;
 
