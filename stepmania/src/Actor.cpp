@@ -729,7 +729,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="additiveblend" )	SetBlendMode( bParam(1) ? BLEND_ADD : BLEND_NORMAL );
 	else if( sName=="blend" )			SetBlendMode( sParam(1) );
 	else if( sName=="zbuffer" )			SetUseZBuffer( bParam(1) );
-	else if( sName=="ztest" )			SetZTest( bParam(1) );
+	else if( sName=="ztest" )			SetZTestMode( bParam(1)?ZTEST_WRITE_ON_PASS:ZTEST_OFF );
 	else if( sName=="ztestmode" )		SetZTestMode( sParam(1) );
 	else if( sName=="zwrite" )			SetZWrite( bParam(1) );
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
@@ -890,10 +890,7 @@ void Actor::SetZTestMode( CString s )
 	s.MakeLower();
 	
 	// for metrics backward compatibility
-	if     (s=="1")				SetZTestMode( ZTEST_WRITE_ON_PASS );
-	else if(s=="0")				SetZTestMode( ZTEST_OFF );
-	
-	else if(s=="off")			SetZTestMode( ZTEST_OFF );
+	if(s=="off")			SetZTestMode( ZTEST_OFF );
 	else if(s=="writeonpass")	SetZTestMode( ZTEST_WRITE_ON_PASS );
 	else if(s=="writeonfail")	SetZTestMode( ZTEST_WRITE_ON_FAIL );
 	else	ASSERT(0);

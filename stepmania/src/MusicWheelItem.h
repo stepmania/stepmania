@@ -30,7 +30,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void SetZTest( bool b );
+	virtual void SetZTestMode( ZTestMode mode );
 	virtual void SetZWrite( bool b );
 	
 	void LoadFromWheelItemData( WheelItemData* pWID );

@@ -131,7 +131,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
-	m_Banner.SetZTest( true );	// do have to pass the z test
+	m_Banner.SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
 	m_Banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );

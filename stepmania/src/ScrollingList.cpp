@@ -515,7 +515,7 @@ void ScrollingList::DrawPrimitives()
 				if(!m_iBouncingState)
 					m_apCSprites[iIndexToDraw1]->SetZoom( 1.0f - (ZOOM_OFFSET * i) );
 				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_SELECTED + RageColor(0,0,0,(1.0f - (FADE_OFFSET * i))) );
-				m_apCSprites[iIndexToDraw1]->SetZTest( true );	// do have to pass the z test
+				m_apCSprites[iIndexToDraw1]->SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
 				m_sprBannerMask.Draw();
@@ -548,12 +548,12 @@ void ScrollingList::DrawPrimitives()
 				m_apCSprites[iIndexToDraw2]->SetZoom( 1.0f - (ZOOM_OFFSET * i) );
 				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_NOT_SELECTED + RageColor(0,0,0,(- (FADE_OFFSET * i))) );
 				m_apCSprites[iIndexToDraw2]->SetDiffuse( COLOR_NOT_SELECTED + RageColor(0,0,0,(- (FADE_OFFSET * i))) );
-				m_apCSprites[iIndexToDraw1]->SetZTest( true );	// do have to pass the z test
+				m_apCSprites[iIndexToDraw1]->SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
 				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw1]->Draw();
-				m_apCSprites[iIndexToDraw2]->SetZTest( true );	// do have to pass the z test
+				m_apCSprites[iIndexToDraw2]->SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw2]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw2]->GetZoom());
 				m_sprBannerMask.Draw();

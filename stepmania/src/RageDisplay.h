@@ -195,10 +195,8 @@ public:
 	virtual bool IsZTestEnabled() const = 0;
 	virtual bool IsZWriteEnabled() const = 0;
 	virtual void SetZWrite( bool b ) = 0;
-	void SetZTest( bool b ) { SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); }
 	virtual void SetZTestMode( ZTestMode mode ) = 0;
 	virtual void ClearZBuffer() = 0;
-	void SetZBuffer( bool b ) { SetZWrite(b); SetZTest(b); } // shortcut
 
 	virtual void SetCullMode( CullMode mode ) = 0;
 	

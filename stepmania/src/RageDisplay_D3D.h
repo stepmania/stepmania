@@ -53,7 +53,6 @@ public:
 	bool IsZWriteEnabled() const;
 	bool IsZTestEnabled() const;
 	void SetZWrite( bool b );
-	void SetZTest( bool b );
 	void SetZTestMode( ZTestMode mode );
 	void ClearZBuffer();
 	void SetCullMode( CullMode mode );

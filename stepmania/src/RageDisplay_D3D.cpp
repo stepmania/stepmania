@@ -1056,6 +1056,7 @@ void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 	case ZTEST_WRITE_ON_FAIL:	dw = D3DCMP_GREATER;	break;
 	default:	ASSERT( 0 );
 	}
+	g_pd3dDevice->SetRenderState( D3DRS_ZFUNC, dw );
 }
 
 void RageDisplay_D3D::ClearZBuffer()

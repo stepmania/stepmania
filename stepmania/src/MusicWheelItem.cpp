@@ -316,12 +316,12 @@ void MusicWheelItem::DrawPrimitives()
 }
 
 
-void MusicWheelItem::SetZTest( bool b )
+void MusicWheelItem::SetZTestMode( ZTestMode mode )
 {
-	ActorFrame::SetZTest( b );
+	ActorFrame::SetZTestMode( mode );
 
 	// set all sub-Actors
-	m_All.SetZTest( b );
+	m_All.SetZTestMode( mode );
 }
 
 void MusicWheelItem::SetZWrite( bool b )

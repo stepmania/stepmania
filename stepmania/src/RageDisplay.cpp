@@ -197,7 +197,8 @@ void RageDisplay::SetDefaultRenderStates()
 {
 	SetLighting( false );
 	SetCullMode( CULL_NONE );
-	SetZBuffer( false );
+	SetZWrite( false ); 
+	SetZTestMode( ZTEST_OFF );
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );
 	SetTextureFiltering( true );
