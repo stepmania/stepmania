@@ -2,7 +2,7 @@ bin_PROGRAMS = stepmania
 TESTS = test_audio_readers test_file_readers test_timing_data test_threads
 tests: $(TESTS)
 if BUILD_TESTS
-bin_PROGRAMS += $(TESTS)
+noinst_PROGRAMS = $(TESTS)
 endif
 
 AM_LDFLAGS =
