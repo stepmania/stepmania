@@ -190,7 +190,13 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( m_Fade.IsClosing() )
 		return;
-	
+
+	if(DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F1 && type == IET_FIRST_PRESS)
+	{
+		this->SendScreenMessage( SM_FadeToDemonstration, 0 );
+		return;
+	}
+
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -403,6 +409,12 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 
 void ScreenTitleMenu::MenuBack( PlayerNumber pn )
 {	
-	this->SendScreenMessage( SM_FadeToDemonstration, 0 );
+	if(m_TitleMenuChoice == CHOICE_EXIT)
+		return;
+
+	LoseFocus( m_TitleMenuChoice );
+	m_TitleMenuChoice = CHOICE_EXIT;
+	m_soundChange.PlayRandom();
+	GainFocus( m_TitleMenuChoice );
 }
 
