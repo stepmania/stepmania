@@ -27,6 +27,7 @@ public:
 
 	void SetGrade( Grade g );
 	void SpinAndSettleOn( Grade g );
+	void SettleImmediately();
 
 protected:
 	

@@ -119,3 +119,8 @@ void GradeDisplay::SpinAndSettleOn( Grade g )
 
 	m_fTimeLeftInScroll = SCROLL_TIME;
 }
+
+void GradeDisplay::SettleImmediately()
+{
+	m_fTimeLeftInScroll = 0;
+}
