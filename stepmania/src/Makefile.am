@@ -153,6 +153,8 @@ GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMap
 ModeSwitcher.cpp ModeSwitcher.h NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h SongManager.cpp SongManager.h \
 ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h StepmaniaTemplates.cpp
 
+PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
+
 Sound_OSS = \
 	arch/Sound/RageSoundDriver_OSS.cpp \
 	arch/Sound/RageSoundDriver_OSS.h
@@ -174,7 +176,8 @@ Sound += $(Sound_OSS)
 endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
-		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
+		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) 
+		    $(PCRE) \
 	            arch/arch.cpp \
 		    arch/InputHandler/InputHandler_SDL.cpp \
 		    arch/InputHandler/InputHandler_SDL.h \
