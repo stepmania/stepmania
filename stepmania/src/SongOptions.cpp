@@ -91,11 +91,26 @@ void SongOptions::FromString( CString sOptions )
 			ASSERT( ret == 1 );
 		}
 
+		CStringArray asParts;
+		split( sBit, " ", asParts, true );
+		bool on = true;
+		if( asParts.size() > 1 )
+		{
+			sBit = asParts[1];
+
+			if( asParts[0] == "no" )
+				on = false;
+		}
+
 		if(	     sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "death" )			m_DrainType = DRAIN_SUDDEN_DEATH;
+		else if( sBit == "failarcade" )		m_FailType = FAIL_ARCADE;
 		else if( sBit == "failendofsong" )	m_FailType = FAIL_END_OF_SONG;
 		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
+		else if( sBit == "assisttick" )		m_bAssistTick = on;
+		else if( sBit == "autosync" )		m_bAutoSync = on;
+		else if( sBit == "savescore" )		m_bSaveScore = on;
 	}
 }

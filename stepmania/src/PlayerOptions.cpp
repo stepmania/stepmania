@@ -60,6 +60,16 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	fapproach( m_fSkew, other.m_fSkew, fDeltaSeconds );
 }
 
+static CString AddPart( float level, CString name )
+{
+	if( level == 0 )
+		return "";
+
+	const CString LevelStr = (level == 1)? "": ssprintf( "%i%% ", int(level*100) );
+
+	return LevelStr + name + ", ";
+}
+
 CString PlayerOptions::GetString()
 {
 	CString sReturn;
@@ -87,34 +97,34 @@ CString PlayerOptions::GetString()
 		sReturn += s + ", ";
 	}
 
-	if( m_fAccels[ACCEL_BOOST]==1 )		sReturn += "Boost, ";
-	if( m_fAccels[ACCEL_BRAKE]==1 )		sReturn += "Brake, ";
-	if( m_fAccels[ACCEL_WAVE]==1 )		sReturn += "Wave, ";
-	if( m_fAccels[ACCEL_EXPAND]==1 )	sReturn += "Expand, ";
-	if( m_fAccels[ACCEL_BOOMERANG]==1 )	sReturn += "Boomerang, ";
+	sReturn += AddPart( m_fAccels[ACCEL_BOOST],		"Boost" );
+	sReturn += AddPart( m_fAccels[ACCEL_BRAKE],		"Brake" );
+	sReturn += AddPart( m_fAccels[ACCEL_WAVE],		"Wave" );
+	sReturn += AddPart( m_fAccels[ACCEL_EXPAND],	"Expand" );
+	sReturn += AddPart( m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
-	if( m_fEffects[EFFECT_DRUNK]==1 )	sReturn += "Drunk, ";
-	if( m_fEffects[EFFECT_DIZZY]==1 )	sReturn += "Dizzy, ";
-	if( m_fEffects[EFFECT_MINI]==1 )	sReturn += "Mini, ";
-	if( m_fEffects[EFFECT_FLIP]==1 )	sReturn += "Flip, ";
-	if( m_fEffects[EFFECT_TORNADO]==1 )	sReturn += "Tornado, ";
-	if( m_fEffects[EFFECT_TIPSY]==1 )	sReturn += "Tipsy, ";
-	if( m_fEffects[EFFECT_BUMPY]==1 )	sReturn += "Bumpy, ";
-	if( m_fEffects[EFFECT_BEAT]==1 )	sReturn += "Beat, ";
+	sReturn += AddPart( m_fEffects[EFFECT_DRUNK],	"Drunk" );
+	sReturn += AddPart( m_fEffects[EFFECT_DIZZY],	"Dizzy" );
+	sReturn += AddPart( m_fEffects[EFFECT_MINI],	"Mini" );
+	sReturn += AddPart( m_fEffects[EFFECT_FLIP],	"Flip" );
+	sReturn += AddPart( m_fEffects[EFFECT_TORNADO],	"Tornado" );
+	sReturn += AddPart( m_fEffects[EFFECT_TIPSY],	"Tipsy" );
+	sReturn += AddPart( m_fEffects[EFFECT_BUMPY],	"Bumpy" );
+	sReturn += AddPart( m_fEffects[EFFECT_BEAT],	"Beat" );
 
-	if( m_fAppearances[APPEARANCE_HIDDEN]==1 )	sReturn += "Hidden, ";
-	if( m_fAppearances[APPEARANCE_SUDDEN]==1 )	sReturn += "Sudden, ";
-	if( m_fAppearances[APPEARANCE_STEALTH]==1 )	sReturn += "Stealth, ";
-	if( m_fAppearances[APPEARANCE_BLINK]==1 )	sReturn += "Blink, ";
-	if( m_fAppearances[APPEARANCE_RANDOMVANISH]==1) sReturn += "RandomVanish, ";
+	sReturn += AddPart( m_fAppearances[APPEARANCE_HIDDEN],	"Hidden" );
+	sReturn += AddPart( m_fAppearances[APPEARANCE_SUDDEN],	"Sudden" );
+	sReturn += AddPart( m_fAppearances[APPEARANCE_STEALTH],	"Stealth" );
+	sReturn += AddPart( m_fAppearances[APPEARANCE_BLINK],	"Blink" );
+	sReturn += AddPart( m_fAppearances[APPEARANCE_RANDOMVANISH],	"RandomVanish" );
 
-	if( m_fScrolls[SCROLL_REVERSE]==1 )		sReturn += "Reverse, ";
-	if( m_fScrolls[SCROLL_SPLIT]==1 )		sReturn += "Split, ";
-	if( m_fScrolls[SCROLL_ALTERNATE]==1 )	sReturn += "Alternate, ";
+	sReturn += AddPart( m_fScrolls[SCROLL_REVERSE],	"Reverse" );
+	sReturn += AddPart( m_fScrolls[SCROLL_SPLIT],	"Split" );
+	sReturn += AddPart( m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
 
-	if( m_fDark == 1)				sReturn += "Dark, ";
+	sReturn += AddPart( m_fDark, "Dark");
 
-	if( m_fBlind == 1)				sReturn += "Blind, ";
+	sReturn += AddPart( m_fBlind,	"Blind");
 
 	switch( m_Turn )
 	{
@@ -188,31 +198,56 @@ void PlayerOptions::FromString( CString sOptions )
 			m_bTimeSpacing = false;
 			int ret = sscanf( matches[0], "%f", &m_fScrollSpeed );
 			ASSERT( ret == 1 );
+			continue;
 		}
 
 		else if( sscanf( sBit, "C%d", &i1 ) == 1 )
 		{
 			m_bTimeSpacing = true;
 			m_fScrollBPM = (float) i1;
+			continue;
 		}
-		else if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = 1;
-		else if( sBit == "brake" || sBit == "land" )		m_fAccels[ACCEL_BRAKE] = 1;
-		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = 1;
-		else if( sBit == "expand" )		m_fAccels[ACCEL_EXPAND] = 1;
-		else if( sBit == "boomerang" )	m_fAccels[ACCEL_BOOMERANG] = 1;
-		else if( sBit == "drunk" )		m_fEffects[EFFECT_DRUNK] = 1;
-		else if( sBit == "dizzy" )		m_fEffects[EFFECT_DIZZY] = 1;
-		else if( sBit == "mini" )		m_fEffects[EFFECT_MINI] = 1;
-		else if( sBit == "flip" )		m_fEffects[EFFECT_FLIP] = 1;
-		else if( sBit == "tornado" )	m_fEffects[EFFECT_TORNADO] = 1;
-		else if( sBit == "tipsy" )		m_fEffects[EFFECT_TIPSY] = 1;
-		else if( sBit == "bumpy" )		m_fEffects[EFFECT_BUMPY] = 1;
-		else if( sBit == "beat" )		m_fEffects[EFFECT_BEAT] = 1;
-		else if( sBit == "hidden" )		m_fAppearances[APPEARANCE_HIDDEN] = 1;
-		else if( sBit == "sudden" )		m_fAppearances[APPEARANCE_SUDDEN] = 1;
-		else if( sBit == "stealth" )	m_fAppearances[APPEARANCE_STEALTH] = 1;
-		else if( sBit == "blink" )		m_fAppearances[APPEARANCE_BLINK] = 1;
-		else if( sBit == "randomvanish" ) m_fAppearances[APPEARANCE_RANDOMVANISH] = 1;
+
+		/* "drunk"
+		 * "no drunk"
+		 * "150% drunk" */
+
+		float level = 1;
+		CStringArray asParts;
+		split( sBit, " ", asParts, true );
+
+		if( asParts.size() > 1 )
+		{
+			sBit = asParts[1];
+
+			if( asParts[0] == "no" )
+				level = 0;
+			else
+			{
+				sscanf( asParts[0], "%f", &level );
+				level /= 100.0f;
+			}
+		}
+
+		const bool on = (level > 0.5f);
+			if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = level;
+		else if( sBit == "brake" || sBit == "land" )		m_fAccels[ACCEL_BRAKE] = level;
+		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = level;
+		else if( sBit == "expand" )		m_fAccels[ACCEL_EXPAND] = level;
+		else if( sBit == "boomerang" )	m_fAccels[ACCEL_BOOMERANG] = level;
+		else if( sBit == "drunk" )		m_fEffects[EFFECT_DRUNK] = level;
+		else if( sBit == "dizzy" )		m_fEffects[EFFECT_DIZZY] = level;
+		else if( sBit == "mini" )		m_fEffects[EFFECT_MINI] = level;
+		else if( sBit == "flip" )		m_fEffects[EFFECT_FLIP] = level;
+		else if( sBit == "tornado" )	m_fEffects[EFFECT_TORNADO] = level;
+		else if( sBit == "tipsy" )		m_fEffects[EFFECT_TIPSY] = level;
+		else if( sBit == "bumpy" )		m_fEffects[EFFECT_BUMPY] = level;
+		else if( sBit == "beat" )		m_fEffects[EFFECT_BEAT] = level;
+		else if( sBit == "hidden" )		m_fAppearances[APPEARANCE_HIDDEN] = level;
+		else if( sBit == "sudden" )		m_fAppearances[APPEARANCE_SUDDEN] = level;
+		else if( sBit == "stealth" )	m_fAppearances[APPEARANCE_STEALTH] = level;
+		else if( sBit == "blink" )		m_fAppearances[APPEARANCE_BLINK] = level;
+		else if( sBit == "randomvanish" ) m_fAppearances[APPEARANCE_RANDOMVANISH] = level;
 		else if( sBit == "mirror" )		m_Turn = TURN_MIRROR;
 		else if( sBit == "left" )		m_Turn = TURN_LEFT;
 		else if( sBit == "right" )		m_Turn = TURN_RIGHT;
@@ -224,23 +259,28 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "quick" )		m_Transform = TRANSFORM_QUICK;
 		else if( sBit == "skippy" )		m_Transform = TRANSFORM_SKIPPY;
 		else if( sBit == "mines" )		m_Transform = TRANSFORM_MINES;
-		else if( sBit == "reverse" )	m_fScrolls[SCROLL_REVERSE] = 1;
-		else if( sBit == "split" )		m_fScrolls[SCROLL_SPLIT] = 1;
-		else if( sBit == "alternate" )	m_fScrolls[SCROLL_ALTERNATE] = 1;
-		else if( sBit == "noholds" )	m_bHoldNotes = false;
-		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
-		else if( sBit == "dark" )		m_fDark = 1;
-		else if( sBit == "blind" )		m_fBlind = 1;
-		else if( sBit == "timingassist")m_bTimingAssist = true;
-		else if( sBit == "protiming")	m_bProTiming = true;
+		else if( sBit == "reverse" )	m_fScrolls[SCROLL_REVERSE] = level;
+		else if( sBit == "split" )		m_fScrolls[SCROLL_SPLIT] = level;
+		else if( sBit == "alternate" )	m_fScrolls[SCROLL_ALTERNATE] = level;
+		else if( sBit == "noholds" )	m_bHoldNotes = !on;
+		else if( sBit == "nofreeze" )	m_bHoldNotes = !on;
+		else if( sBit == "dark" )		m_fDark = level;
+		else if( sBit == "blind" )		m_fBlind = level;
+		else if( sBit == "timingassist")m_bTimingAssist = on;
+		else if( sBit == "protiming")	m_bProTiming = on;
 		else if( sBit == "incoming" )	{ m_fSkew = 1; m_fPerspectiveTilt = -1; }
 		else if( sBit == "space" )		{ m_fSkew = 1; m_fPerspectiveTilt = +1; }
 		else if( sBit == "hallway" )	{ m_fSkew = 0; m_fPerspectiveTilt = -1; }
 		else if( sBit == "distant" )	{ m_fSkew = 0; m_fPerspectiveTilt = +1; }
 		else if( GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
 			m_sPositioning = sBit;
+		else if( sBit == "nopositioning" )
+			m_sPositioning = "";
 		else if( NOTESKIN->DoesNoteSkinExist(sBit) )
 			m_sNoteSkin = sBit;
+		else if( sBit == "nonoteskin" )
+			m_sNoteSkin = "default";
+
 		// XXX: this warns about song options
 		//else
 		//	LOG->Warn( "Modifier '%s' not recognized.", sBit.c_str() );
