@@ -38,9 +38,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define EXPLANATION_ZOOM	THEME->GetMetricF("ScreenOptions","ExplanationZoom")
 #define COLOR_SELECTED		THEME->GetMetricC("ScreenOptions","ColorSelected")
 #define COLOR_NOT_SELECTED	THEME->GetMetricC("ScreenOptions","ColorNotSelected")
-
-const int total = 10;
-const int halfsize = total / 2;
+#define NUM_SHOWN_ITEMS		THEME->GetMetricI("ScreenOptions","NumShownItems")
 
 ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("ScreenOptions")
 {
@@ -569,6 +567,9 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenOptions::PositionItems()
 {
+	const int total = NUM_SHOWN_ITEMS;
+	const int halfsize = total / 2;
+
 	/* Total number of rows, including "EXIT". */
 	const int NumRows = m_iNumOptionRows + 1;
 
