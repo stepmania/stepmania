@@ -149,7 +149,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
 		{
-			// #DISPLAYBPM:[xxx,xxx]|[xxx]|[*]; 
+			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
 			if( sParams[1] == "*" )
 				out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
 			else 
