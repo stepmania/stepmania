@@ -293,7 +293,7 @@ void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
 {
 	if(mixbuf.size() < size)
 	{
-		basic_string<Sint32> empty(size-mixbuf.size(), 0);
+		basic_string<Sint32, char_traits_Sint32> empty(size-mixbuf.size(), 0);
 
 		mixbuf.insert(mixbuf.end(), empty.begin(), empty.end());
 	}
