@@ -54,7 +54,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 
 	if( GetCommandlineArgument( "runserver" ))
 	{
-		ld->SetText("Initilizing server...");
+		ld->SetText("Initializing server...");
 		LANserver = new StepManiaLanServer;
 		isLanServer = true;
 		GetCommandlineArgument( "runserver", &LANserver->servername );
@@ -62,7 +62,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	else
 		isLanServer = false;
 	
-	ld->SetText("Initilizing Client Network...");
+	ld->SetText("Initializing Client Network...");
     NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
@@ -236,7 +236,7 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 {
 	LOG->Info("Beginning to connect");
 
-    NetPlayerClient->create(); // Initilize Socket
+    NetPlayerClient->create(); // Initialize Socket
     useSMserver = NetPlayerClient->connect(addy, port);
     
 	return useSMserver;
@@ -253,7 +253,7 @@ bool NetworkSyncManager::Listen(unsigned short port)
 	EzSockets * EZListener = new EzSockets;
 
 	EZListener->create();
-	NetPlayerClient->create(); // Initilize Socket
+	NetPlayerClient->create(); // Initialize Socket
 
 	EZListener->bind(8765);
     
