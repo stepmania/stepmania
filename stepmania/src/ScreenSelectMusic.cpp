@@ -442,6 +442,33 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
+
+	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage && MenuI.button == MENU_BUTTON_START )
+	{
+		//Check if user selected the extrastage from the course file
+		Song* pSongSel; //Song user selected
+		Song* pSongCourse; //Song from the Extra Course or that we picked
+		Notes* pNotes;
+		PlayerOptions po;
+		SongOptions so;
+		SONGMAN->GetExtraStageInfo( false, GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSongCourse, pNotes, po, so );
+		
+		if( pSongCourse == NULL )
+		{
+			//no song defined, so allow anyways... This means there was no course, and we couldn't find an applicable song for EX1
+			GAMESTATE->m_bAllow2ndExtraStage = true;
+		}
+		else
+		{
+			pSongSel = m_MusicWheel.GetSelectedSong();
+
+			/*Enable 2nd extra stage if user chose the correct song*/
+			if( pSongSel == pSongCourse )
+				GAMESTATE->m_bAllow2ndExtraStage = true;
+			else
+				GAMESTATE->m_bAllow2ndExtraStage = false;
+		}
+	}
 	
 	if( m_Menu.IsClosing() )	return;		// ignore
 

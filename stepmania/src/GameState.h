@@ -116,6 +116,7 @@ public:
 
 
 	bool HasEarnedExtraStage();
+	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"
 
 
 	// Filled in by ScreenNameEntry and used by ScreenRanking to flash the recent high scores

@@ -294,6 +294,9 @@ void Course::GetPlayerOptions( int iStage, PlayerOptions* pPO_out ) const
 void Course::GetSongOptions( SongOptions* pSO_out ) const
 {
 	*pSO_out = SongOptions();
+	//hack: The lifebar modifiers were not showing up (in the extra stages) - had to add it here.
+	if( entries.size() > 0 )
+		pSO_out->FromString( entries[0].modifiers ); 
 	pSO_out->m_LifeType = (m_iLives==-1) ? SongOptions::LIFE_BAR : SongOptions::LIFE_BATTERY;
 	if( m_iLives != -1 )
 		pSO_out->m_iBatteryLives = m_iLives;

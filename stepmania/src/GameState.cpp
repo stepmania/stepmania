@@ -69,6 +69,7 @@ void GameState::Reset()
 	m_bEditing = false;
 	m_bDemonstration = false;
 	m_iCurrentStageIndex = 0;
+	m_bAllow2ndExtraStage = true;
 
 	m_pCurSong = NULL;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -220,6 +221,9 @@ bool GameState::HasEarnedExtraStage()
 			 * if the chosen stage was the EX we would have chosen (the hardest
 			 * song or extra1.crs).  Also, that song should be highlighted in the
 			 * music wheel. */
+			if( PREFSMAN->m_bPickExtraStage && GAMESTATE->IsExtraStage() && !GAMESTATE->m_bAllow2ndExtraStage )
+				continue;
+
 			if( m_CurStageStats.GetGrade((PlayerNumber)p) >= GRADE_AA )
 				return true;
 		}
