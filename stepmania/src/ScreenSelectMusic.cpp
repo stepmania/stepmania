@@ -671,8 +671,10 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 			return;
 	}
 
-	/* Loading the rest can cause small skips, so don't do it until the wheel settles. */
-	if( !m_MusicWheel.IsSettled() )
+	/* Loading the rest can cause small skips, so don't do it until the wheel settles. 
+	 * Do load if we're transitioning out, though, so we don't miss starting the music
+	 * for the options screen if a song is selected quickly. */
+	if( !m_MusicWheel.IsSettled() && !m_Out.IsTransitioning() )
 		return;
 
 	if( g_bBannerWaiting )
@@ -1186,6 +1188,13 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			 * annoying). */
 			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 		}
+
+		/* If we're currently waiting on song assets, abort all except the music and
+		 * start the music, so if we make a choice quickly before background requests
+		 * come through, the music will still start. */
+		g_bCDTitleWaiting = g_bBannerWaiting = false;
+		m_BackgroundLoader.Abort();
+		CheckBackgroundRequests();
 
 		StartTransitioning( SM_BeginFadingOut );
 	}
