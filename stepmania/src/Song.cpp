@@ -346,13 +346,6 @@ bool Song::LoadWithoutCache( CString sDir )
 		return false;
 	}
 
-	/* If this song directory is within the DWI path, prepend the DWI path
-	 * to m_sMusicFile and m_sCDTitleFile. */
-	if(sDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath) {
-		m_sMusicFile = PREFSMAN->m_DWIPath+"\\"+m_sMusicFile;
-		m_sCDTitleFile = PREFSMAN->m_DWIPath+"\\"+m_sCDTitleFile;
-	}
-
 	AddAutoGenNotes();
 
 	TidyUpData();
@@ -983,14 +976,27 @@ int Song::GetNumTimesPlayed() const
 	return iTotalNumTimesPlayed;
 }
 
-/* The only files we load that have paths inside these variables
- * are DWIs loaded from a DWI tree.  This used to look for a leading
- * ".", but we're prepending the DWI path explicitely now (so they
- * can be loaded from an actual installation), so look for any
- * backslashes instead. */
+/* Music paths and CDTitle paths for DWIs loaded fro ma DWI tree are
+ * relative to the top of the tree.  
+ *
+ * Files not loaded from a DWI tree may still have a path; if they
+ * do, they're relative to the top SM directory (the cwd), so leave
+ * them alone.
+ *
+ * (Actually, I'm not sure if any files ever have a relative path--
+ * one not beginning with .\--so only prepend the song path if it's
+ * relative.)
+ *
+ * We can't do this stuff at load time, since these paths may
+ * contain colons, and we can't store colons in our cache.
+ */
+ 
 CString Song::GetMusicPath() const
 {
-	return m_sMusicFile.Find('\\')!=-1 ? m_sMusicFile : m_sSongDir+m_sMusicFile;
+	if(m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
+		return PREFSMAN->m_DWIPath+"\\"+m_sMusicFile;
+
+	return m_sMusicFile.Left(2) == ".\\"? m_sMusicFile : m_sSongDir+m_sMusicFile;
 }
 
 CString Song::GetBannerPath() const
@@ -1004,7 +1010,10 @@ CString Song::GetBackgroundPath() const
 }
 CString Song::GetCDTitlePath() const
 {
-	return m_sCDTitleFile.Find('\\')!=-1 ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile;
+	if(m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath)
+		return PREFSMAN->m_DWIPath+"\\"+m_sCDTitleFile;
+
+	return m_sMusicFile.Left(2) == ".\\" ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile;
 }
 CString Song::GetMovieBackgroundPath() const
 {
