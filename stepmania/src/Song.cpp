@@ -297,17 +297,25 @@ struct SongID
 			dc = p->GetDifficulty();
 		}
 	}
-	Steps *GetSteps( const Song *p ) const
+	Steps *GetSteps( const Song *p, bool bAllowNotesLoss ) const
 	{
 		if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
 			return NULL;
 		Steps *ret = p->GetStepsByDifficulty( st, dc, true );
-		RAGE_ASSERT_M( ret, ssprintf("%i, %i", st, dc) );	// we had something selected before reloading, so it better still be there after!
+		if( !bAllowNotesLoss )
+		{
+			RAGE_ASSERT_M( ret, ssprintf("%i, %i", st, dc) );	// we had something selected before reloading, so it better still be there after!
+		}
 		return ret;
 	}
 };
 
-void Song::RevertFromDisk()
+/* If bAllowNotesLoss is true, any global notes pointers which no longer exist
+ * (or exist but couldn't be matched) will be set to NULL.  This is used when
+ * reverting out of the editor.  If false, this is unexpected and will assert.
+ * This is used when reverting out of gameplay, in which case we may have StageStats,
+ * etc. which may cause hard-to-trace crashes down the line if we set them to NULL. */
+void Song::RevertFromDisk( bool bAllowNotesLoss )
 {
 	// Ugly:  When we re-load the song, the Steps* will change.
 	// Fix GAMESTATE->m_CurNotes, g_CurStageStats, g_vPlayedStageStats[] after reloading.
@@ -346,16 +354,16 @@ void Song::RevertFromDisk()
 		{
 			CHECKPOINT;
 			if( GAMESTATE->m_pCurSong == this )
-				GAMESTATE->m_pCurNotes[p] = OldCurNotes[p].GetSteps( this );
+				GAMESTATE->m_pCurNotes[p] = OldCurNotes[p].GetSteps( this, bAllowNotesLoss );
 			CHECKPOINT;
 			if( g_CurStageStats.pSong == this )
-				g_CurStageStats.pSteps[p] = OldCurStageStats[p].GetSteps( this );
+				g_CurStageStats.pSteps[p] = OldCurStageStats[p].GetSteps( this, bAllowNotesLoss );
 			CHECKPOINT;
 			for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 			{
 			CHECKPOINT_M(ssprintf("%i", i));
 				if( g_vPlayedStageStats[i].pSong == this )
-					g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].GetSteps( this );
+					g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].GetSteps( this, bAllowNotesLoss );
 			}
 		}
 	}
