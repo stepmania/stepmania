@@ -78,6 +78,7 @@ BitmapText::BitmapText()
 	m_bRainbow = false;
 
 	m_iWrapWidthPixels = -1;
+	m_fMaxWidth = 0;
 }
 
 BitmapText::~BitmapText()
@@ -303,11 +304,28 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 	}
 
 	BuildChars();
+	UpdateBaseZoom();
 }
 
 void BitmapText::SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext )
 {
+	m_fMaxWidth = MaxWidth;
 	this->SetText(text, alttext);
+}
+
+void BitmapText::SetMaxWidth( float MaxWidth )
+{
+	m_fMaxWidth = MaxWidth;
+	UpdateBaseZoom();
+}
+
+void BitmapText::UpdateBaseZoom()
+{
+	if( m_fMaxWidth == 0 )
+	{
+		this->SetBaseZoomX( 1 );
+		return;
+	}
 
 	const float Width = GetUnzoomedWidth();
 
@@ -315,10 +333,9 @@ void BitmapText::SetTextMaxWidth( float MaxWidth, const CString &text, const CSt
 	if( !Width )
 		return;
 
-	/* Never decrease the zoom.  Important: make sure you reset zoom before
-	 * changing text with this function. */
-	const float Zoom = min( GetZoom(), MaxWidth/Width );
-	this->SetZoomX( Zoom );
+	/* Never decrease the zoom. */
+	const float Zoom = min( 1, m_fMaxWidth/Width );
+	this->SetBaseZoomX( Zoom );
 }
 
 bool BitmapText::StringWillUseAlternate(CString sText, CString sAlternateText) const
@@ -446,6 +463,7 @@ void BitmapText::HandleCommand( const CStringArray &asTokens )
 	// Commands that go in the tweening queue:
 	// Commands that take effect immediately (ignoring the tweening queue):
 	if( sName=="wrapwidthpixels" )		SetWrapWidthPixels( iParam(1) );
+	else if( sName=="maxwidth" )		SetMaxWidth( fParam(1) );
 	else
 	{
 		Actor::HandleCommand( asTokens );

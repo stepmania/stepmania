@@ -27,7 +27,8 @@ public:
 	bool LoadFromNumbers( CString sTexturePath )	{ return LoadFromTextureAndChars(sTexturePath,"0123456789%. :x"); };
 	bool LoadFromTextureAndChars( CString sTexturePath, CString sChars );
 	void SetText( CString sText, CString sAlternateText = "", int iWrapWidthPixels = -1 );
-	void SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext = "" );
+	void SetMaxWidth( float MaxWidth );
+	void SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext = "" ); // deprecated
 	void SetWrapWidthPixels( int iWrapWidthPixels );
 
 	void CropToWidth( int iWidthInSourcePixels );
@@ -56,6 +57,7 @@ protected:
 	vector<wstring>	m_wTextLines;
 	vector<int>		m_iLineWidths;			// in source pixels
 	int				m_iWrapWidthPixels;	// -1 = no wrap
+	float			m_fMaxWidth;
 
 	bool m_bRainbow;
 
@@ -64,6 +66,7 @@ protected:
 	
 	void BuildChars();
 	void DrawChars();
+	void UpdateBaseZoom();
 };
 
 
