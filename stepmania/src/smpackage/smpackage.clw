@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=EditInsallations
+LastClass=CSmpackageExportDlg
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "smpackage.h"
@@ -13,10 +13,10 @@ Class2=CSmpackageDlg
 
 ResourceCount=5
 Resource1=IDR_MAINFRAME
-Resource2=IDD_DIALOG_NAME
+Resource2=IDD_EXPORTER
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_EXPORTER
+Resource3=IDD_DIALOG_NAME
 Class5=EnterName
 Resource4=IDD_INSTALL
 Class6=EditInsallations
@@ -62,19 +62,22 @@ HeaderFile=SMPackageInstallDlg.h
 ImplementationFile=SMPackageInstallDlg.cpp
 BaseClass=CDialog
 Filter=D
-LastObject=IDC_COMBO_DIR
+LastObject=CSMPackageInstallDlg
 VirtualFilter=dWC
 
 [DLG:IDD_EXPORTER]
 Type=1
 Class=CSmpackageExportDlg
-ControlCount=6
+ControlCount=9
 Control1=IDOK,button,1342242817
 Control2=IDC_BUTTON_PLAY,button,1342242816
 Control3=IDC_BUTTON_EXPORT_AS_ONE,button,1342242816
 Control4=IDC_STATIC,static,1342177294
 Control5=IDC_BUTTON_EXPORT_AS_INDIVIDUAL,button,1342242816
 Control6=IDC_TREE,SysTreeView32,1350631687
+Control7=IDC_COMBO_DIR,combobox,1344339971
+Control8=IDC_BUTTON_EDIT,button,1342242816
+Control9=IDC_STATIC,static,1342308352
 
 [CLS:CSmpackageExportDlg]
 Type=0
@@ -82,7 +85,7 @@ HeaderFile=SmpackageExportDlg.h
 ImplementationFile=SmpackageExportDlg.cpp
 BaseClass=CDialog
 Filter=D
-LastObject=CSmpackageExportDlg
+LastObject=IDC_COMBO_DIR
 VirtualFilter=dWC
 
 [DLG:IDD_DIALOG_NAME]

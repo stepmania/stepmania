@@ -119,12 +119,6 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	pEdit3->SetWindowText( sMessage3 );
 
 
-
-	TCHAR szCurrentDirectory[MAX_PATH];
-	GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
-	AddStepManiaInstallDir( szCurrentDirectory );
-
-
 	RefreshInstallationList();
 
 	

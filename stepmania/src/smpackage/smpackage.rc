@@ -105,13 +105,17 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,255,215,69,14
     PUSHBUTTON      "Play Stepmania",IDC_BUTTON_PLAY,5,215,70,15
-    PUSHBUTTON      "Export As One",IDC_BUTTON_EXPORT_AS_ONE,255,75,69,15
+    PUSHBUTTON      "Export As One",IDC_BUTTON_EXPORT_AS_ONE,255,104,69,15
     CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     PUSHBUTTON      "Export As Individual",IDC_BUTTON_EXPORT_AS_INDIVIDUAL,
-                    255,108,69,15
+                    255,137,69,15
     CONTROL         "Tree2",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
                     TVS_HASLINES | TVS_LINESATROOT | TVS_CHECKBOXES | 
-                    WS_BORDER | WS_TABSTOP,7,41,239,167
+                    WS_BORDER | WS_TABSTOP,7,61,239,151
+    COMBOBOX        IDC_COMBO_DIR,74,40,170,105,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,253,39,71,14
+    LTEXT           "Select Installation:",IDC_STATIC,7,42,66,11
 END
 
 IDD_DIALOG_NAME DIALOG DISCARDABLE  0, 0, 261, 58

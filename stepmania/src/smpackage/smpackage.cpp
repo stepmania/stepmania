@@ -6,6 +6,7 @@
 #include "smpackageExportDlg.h"
 #include "smpackageInstallDlg.h"
 #include "RageUtil.h"
+#include "smpackageUtil.h"
 
 
 #ifdef _DEBUG
@@ -54,7 +55,6 @@ BOOL CSmpackageApp::InitInstance()
 #endif
 
 
-	
 	// Make sure the current directory is the root program directory
 
 	// change dir to path of the execuctable
@@ -67,10 +67,12 @@ BOOL CSmpackageApp::InitInstance()
 
 	SetCurrentDirectory(szFullAppPath);
 
-	if( !DoesFileExist("Songs") )
+	if( DoesFileExist("Songs") )	// this is a SM or DWI program directory
 	{
-		AfxMessageBox( "Your Songs folder could not be located.  Be sure 'smpackage.exe' is in your Stepmania installation folder.", MB_ICONSTOP );
-		exit( 1 );
+		// make sure it's in the list of install directories
+		TCHAR szCurrentDirectory[MAX_PATH];
+		GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
+		AddStepManiaInstallDir( szCurrentDirectory );
 	}
 	
 

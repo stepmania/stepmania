@@ -22,6 +22,7 @@ public:
 // Dialog Data
 	//{{AFX_DATA(CSmpackageExportDlg)
 	enum { IDD = IDD_EXPORTER };
+	CComboBox	m_comboDir;
 	CButton	m_buttonExportAsIndividual;
 	CButton	m_buttonExportAsOne;
 	CTreeCtrl	m_tree;
@@ -37,7 +38,8 @@ public:
 
 // Implementation
 protected:
-
+	void RefreshInstallationList();
+	void RefreshTree();
 	void GetTreeItems( CArray<HTREEITEM,HTREEITEM>& aItemsOut );
 	void GetCheckedTreeItems( CArray<HTREEITEM,HTREEITEM>& aCheckedItemsOut );
 	void GetCheckedPaths( CStringArray& aCheckedItemsOut );
@@ -48,6 +50,8 @@ protected:
 	afx_msg void OnButtonExportAsOne();
 	afx_msg void OnButtonExportAsIndividual();
 	afx_msg void OnButtonPlay();
+	afx_msg void OnButtonEdit();
+	afx_msg void OnSelchangeComboDir();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

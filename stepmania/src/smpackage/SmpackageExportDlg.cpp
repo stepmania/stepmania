@@ -7,6 +7,8 @@
 #include "RageUtil.h"
 #include "ZipArchive\ZipArchive.h"	
 #include "EnterName.h"	
+#include "smpackageUtil.h"	
+#include "EditInsallations.h"	
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,6 +33,7 @@ void CSmpackageExportDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CSmpackageExportDlg)
+	DDX_Control(pDX, IDC_COMBO_DIR, m_comboDir);
 	DDX_Control(pDX, IDC_BUTTON_EXPORT_AS_INDIVIDUAL, m_buttonExportAsIndividual);
 	DDX_Control(pDX, IDC_BUTTON_EXPORT_AS_ONE, m_buttonExportAsOne);
 	DDX_Control(pDX, IDC_TREE, m_tree);
@@ -43,6 +46,8 @@ BEGIN_MESSAGE_MAP(CSmpackageExportDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_EXPORT_AS_ONE, OnButtonExportAsOne)
 	ON_BN_CLICKED(IDC_BUTTON_EXPORT_AS_INDIVIDUAL, OnButtonExportAsIndividual)
 	ON_BN_CLICKED(IDC_BUTTON_PLAY, OnButtonPlay)
+	ON_BN_CLICKED(IDC_BUTTON_EDIT, OnButtonEdit)
+	ON_CBN_SELCHANGE(IDC_COMBO_DIR, OnSelchangeComboDir)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -56,110 +61,9 @@ BOOL CSmpackageExportDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	//
 
-	// Add announcers
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "Announcers" );
-		GetDirListing( "Announcers\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-			m_tree.InsertItem( as1[i], item1 );
-	}
-
-	// Add themes
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "Themes" );
-		GetDirListing( "Themes\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-			m_tree.InsertItem( as1[i], item1 );
-	}
-
-	// Add BGAnimations
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "BGAnimations" );
-		GetDirListing( "BGAnimations\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-			m_tree.InsertItem( as1[i], item1 );
-	}
-
-	// Add RandomMovies
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "RandomMovies" );
-		GetDirListing( "RandomMovies\\*.avi", as1, false, false );
-		GetDirListing( "RandomMovies\\*.mpg", as1, false, false );
-		GetDirListing( "RandomMovies\\*.mpeg", as1, false, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-			m_tree.InsertItem( as1[i], item1 );
-	}
-
-	// Add visualizations
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "Visualizations" );
-		GetDirListing( "Visualizations\\*.avi", as1, false, false );
-		GetDirListing( "Visualizations\\*.mpg", as1, false, false );
-		GetDirListing( "Visualizations\\*.mpeg", as1, false, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-			m_tree.InsertItem( as1[i], item1 );
-	}
-
-	// Add courses
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "Courses" );
-		GetDirListing( "Courses\\*.crs", as1, false, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-		{
-			as1[i] = as1[i].Left(as1[i].GetLength()-4);	// strip off ".crs"
-			m_tree.InsertItem( as1[i], item1 );
-		}
-	}
-
-
-	//
-	// Add NoteSkins
-	//
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "NoteSkins" );
-		GetDirListing( "NoteSkins\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-		{
-			CStringArray as2;
-			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
-			GetDirListing( "NoteSkins\\" + as1[i] + "\\*.*", as2, true, false );
-			for( int j=0; j<as2.GetSize(); j++ )
-				m_tree.InsertItem( as2[j], item2 );
-		}
-	}
-
-	//
-	// Add Songs
-	//
-	{
-		CStringArray as1;
-		HTREEITEM item1 = m_tree.InsertItem( "Songs" );
-		GetDirListing( "Songs\\*.*", as1, true, false );
-		for( int i=0; i<as1.GetSize(); i++ )
-		{
-			CStringArray as2;
-			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
-			GetDirListing( "Songs\\" + as1[i] + "\\*.*", as2, true, false );
-			for( int j=0; j<as2.GetSize(); j++ )
-				m_tree.InsertItem( as2[j], item2 );
-		}
-	}
-
-
-	// Strip out any "CVS" items
-	CArray<HTREEITEM,HTREEITEM> aItems;
-	GetTreeItems( aItems );
-	for( int i=0; i<aItems.GetSize(); i++ )
-		if( m_tree.GetItemText(aItems[i]).CompareNoCase("CVS")==0 )
-			m_tree.DeleteItem( aItems[i] );
-
+	RefreshInstallationList();
+	
+	RefreshTree();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -445,3 +349,149 @@ void CSmpackageExportDlg::GetCheckedPaths( CStringArray& aPathsOut )
 	}
 }
 
+
+void CSmpackageExportDlg::OnButtonEdit() 
+{
+	// TODO: Add your control notification handler code here
+	EditInsallations dlg;
+	int nResponse = dlg.DoModal();
+	if( nResponse == IDOK )
+	{
+		WriteStepManiaInstallDirs( dlg.m_asReturnedInstallDirs );
+		RefreshInstallationList();
+		RefreshTree();
+	}
+}
+
+void CSmpackageExportDlg::RefreshInstallationList() 
+{
+	m_comboDir.ResetContent();
+
+	CStringArray asInstallDirs;
+	GetStepManiaInstallDirs( asInstallDirs );
+	for( int i=0; i<asInstallDirs.GetSize(); i++ )
+	{
+		m_comboDir.AddString( asInstallDirs[i] );
+	}
+	m_comboDir.SetCurSel( 0 );	// guaranteed to be at least one item
+}
+
+void CSmpackageExportDlg::OnSelchangeComboDir() 
+{
+	// TODO: Add your control notification handler code here
+	RefreshTree();
+}
+
+void CSmpackageExportDlg::RefreshTree()
+{
+	m_tree.DeleteAllItems();
+
+	CString sDir;
+	m_comboDir.GetWindowText( sDir );
+
+	SetCurrentDirectory( sDir );
+
+	// Add announcers
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "Announcers" );
+		GetDirListing( "Announcers\\*.*", as1, true, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+			m_tree.InsertItem( as1[i], item1 );
+	}
+
+	// Add themes
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "Themes" );
+		GetDirListing( "Themes\\*.*", as1, true, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+			m_tree.InsertItem( as1[i], item1 );
+	}
+
+	// Add BGAnimations
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "BGAnimations" );
+		GetDirListing( "BGAnimations\\*.*", as1, true, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+			m_tree.InsertItem( as1[i], item1 );
+	}
+
+	// Add RandomMovies
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "RandomMovies" );
+		GetDirListing( "RandomMovies\\*.avi", as1, false, false );
+		GetDirListing( "RandomMovies\\*.mpg", as1, false, false );
+		GetDirListing( "RandomMovies\\*.mpeg", as1, false, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+			m_tree.InsertItem( as1[i], item1 );
+	}
+
+	// Add visualizations
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "Visualizations" );
+		GetDirListing( "Visualizations\\*.avi", as1, false, false );
+		GetDirListing( "Visualizations\\*.mpg", as1, false, false );
+		GetDirListing( "Visualizations\\*.mpeg", as1, false, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+			m_tree.InsertItem( as1[i], item1 );
+	}
+
+	// Add courses
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "Courses" );
+		GetDirListing( "Courses\\*.crs", as1, false, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+		{
+			as1[i] = as1[i].Left(as1[i].GetLength()-4);	// strip off ".crs"
+			m_tree.InsertItem( as1[i], item1 );
+		}
+	}
+
+
+	//
+	// Add NoteSkins
+	//
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "NoteSkins" );
+		GetDirListing( "NoteSkins\\*.*", as1, true, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+		{
+			CStringArray as2;
+			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
+			GetDirListing( "NoteSkins\\" + as1[i] + "\\*.*", as2, true, false );
+			for( int j=0; j<as2.GetSize(); j++ )
+				m_tree.InsertItem( as2[j], item2 );
+		}
+	}
+
+	//
+	// Add Songs
+	//
+	{
+		CStringArray as1;
+		HTREEITEM item1 = m_tree.InsertItem( "Songs" );
+		GetDirListing( "Songs\\*.*", as1, true, false );
+		for( int i=0; i<as1.GetSize(); i++ )
+		{
+			CStringArray as2;
+			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
+			GetDirListing( "Songs\\" + as1[i] + "\\*.*", as2, true, false );
+			for( int j=0; j<as2.GetSize(); j++ )
+				m_tree.InsertItem( as2[j], item2 );
+		}
+	}
+
+
+	// Strip out any "CVS" items
+	CArray<HTREEITEM,HTREEITEM> aItems;
+	GetTreeItems( aItems );
+	for( int i=0; i<aItems.GetSize(); i++ )
+		if( m_tree.GetItemText(aItems[i]).CompareNoCase("CVS")==0 )
+			m_tree.DeleteItem( aItems[i] );
+}
