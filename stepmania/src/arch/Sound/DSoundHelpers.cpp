@@ -475,9 +475,10 @@ void DSoundBuf::Stop()
 	LastPosition = 0;
 
 	/* When stopped and rewound, the play and write cursors should both be 0. */
-	DWORD play, write;
-	buf->GetCurrentPosition( &play, &write );
-	RAGE_ASSERT_M( play == 0 && write == 0, ssprintf("%i, %i", play, write) );
+	/* This isn't true on some broken cards. */
+//	DWORD play, write;
+//	buf->GetCurrentPosition( &play, &write );
+//	RAGE_ASSERT_M( play == 0 && write == 0, ssprintf("%i, %i", play, write) );
 
 	playing = false;
 }
