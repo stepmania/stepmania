@@ -587,17 +587,23 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	{
 		// compute the score for this hit
 		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
-
 		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
 
-		/* XXX: Double-check that we're handling m_fMusicRate correctly. */
 		/* We actually stepped on the note this long ago: */
-		const float fAgo = tm.Ago();
+		const float fTimeSinceStep = tm.Ago();
+
+		/* GAMESTATE->m_fMusicSeconds is the music time as of GAMESTATE->m_LastBeatUpdate. Figure
+		 * out what the music time is as of now. */
+		const float fCurrentMusicSeconds = GAMESTATE->m_fMusicSeconds + (GAMESTATE->m_LastBeatUpdate.Ago()/GAMESTATE->m_SongOptions.m_fMusicRate);
+
 		/* ... which means it happened at this point in the music: */
-		const float fMusicSeconds = GAMESTATE->m_fMusicSeconds - (fAgo / GAMESTATE->m_SongOptions.m_fMusicRate);
+		const float fMusicSeconds = fCurrentMusicSeconds - fTimeSinceStep / GAMESTATE->m_SongOptions.m_fMusicRate;
 
 		// The offset from the actual step in seconds:
 		const float fNoteOffset = (fStepSeconds - fMusicSeconds) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
+//		LOG->Trace("step was %.3f ago, music is off by %f: %f vs %f, step was %f off", 
+//			fTimeSinceStep, GAMESTATE->m_LastBeatUpdate.Ago()/GAMESTATE->m_SongOptions.m_fMusicRate,
+//			fStepSeconds, fMusicSeconds, fNoteOffset );
 
 		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 		float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
