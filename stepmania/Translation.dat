@@ -23,11 +23,13 @@
 # changes.
 
 [Songs]
-TitleFrom: Candy
+# "Candy", "Candy star", or "Candy #".
+TitleFrom: Candy(( star)?|#)
 ArtistFrom: Luv.*
 TitleTo: CANDY☆
 *
-TitleFrom: Candy
+# "Candy", "Candy heart", or "Candy $".
+TitleFrom: Candy(( heart)?|\$)
 ArtistFrom: .*Riyu.*
 TitleTo: CANDY♡
 *
@@ -53,12 +55,6 @@ ArtistTo: Ω
 *
 TitleFrom: Bre=kdown
 TitleTo: BRE∀K DOWN!
-*
-TitleFrom: Candy #
-TitleTo: Candy☆
-*
-TitleFrom: Candy \$
-TitleTo: Candy♡
 *
 TitleFrom: } JAPAN
 TitleTo: 祭 JAPAN
