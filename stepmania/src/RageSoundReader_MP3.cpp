@@ -387,7 +387,7 @@ int RageSoundReader_MP3::do_mad_frame_decode( bool headers_only )
 	{
 		int ret;
 
-		/* Always actually decode the first packet, so we cleanly pass Xing tags. */
+		/* Always actually decode the first packet, so we cleanly parse Xing tags. */
 		if( headers_only && !mad->first_frame )
 			ret=mad_header_decode( &mad->Frame.header,&mad->Stream );
 		else
