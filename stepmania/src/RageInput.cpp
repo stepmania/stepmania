@@ -948,3 +948,4 @@ int RageInput::pump_t::GetPadEvent()
 
     return buf;
 }
+

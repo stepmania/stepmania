@@ -18,6 +18,7 @@
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "ThemeManager.h"
 
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
@@ -133,7 +134,7 @@ void ScreenManager::Draw()
 
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
-		m_textStats.SetText( ssprintf("%d FPS\n%d TPF\n%d DPF", DISPLAY->GetFPS(),DISPLAY->GetTPF(),DISPLAY->GetDPF()) );
+		m_textStats.SetText( "??? FPS" );
 		m_textStats.Draw();
 	}
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -182,7 +183,6 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenStage.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
-#include "ScreenNetworkGame.h"
 
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
@@ -221,7 +221,6 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenStage") )			return new ScreenStage;
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		return new ScreenTitleMenu;
 //	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	return new ScreenEz2SelectMusic;
-	else if( 0==stricmp(sClassName, "ScreenNetworkGame") )		return new ScreenNetworkGame;
 	else
 		throw RageException( "Invalid Screen class name '%s'", sClassName.GetString() );
 }

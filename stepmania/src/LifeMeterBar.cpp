@@ -15,6 +15,9 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "GameState.h"
+#include "RageDisplay.h"
+#include <math.h>
+#include "ThemeManager.h"
 
 
 //
@@ -412,7 +415,7 @@ void LifeMeterBar::DrawPrimitives()
 	m_pStream->m_fPercent = m_fTrailingLifePercentage;
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
-	float fPercentRed = (m_fTrailingLifePercentage<g_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
+	float fPercentRed = (m_fTrailingLifePercentage<g_fDangerThreshold) ? sinf( TIMER->GetTimeSinceStart()*PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuse( RageColor(fPercentRed*0.8f,0,0,1) );
 
 	ActorFrame::DrawPrimitives();

@@ -16,6 +16,7 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 
 const float SCORE_TWEEN_TIME = 0.2f;

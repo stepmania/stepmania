@@ -14,6 +14,8 @@
 #include "RageLog.h"
 #include "SongManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
+#include "GameManager.h"
 
 //
 // Defines specific to SongSelector

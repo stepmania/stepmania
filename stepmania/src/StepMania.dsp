@@ -36,14 +36,14 @@ RSC=rc.exe
 # PROP BASE Output_Dir "Release"
 # PROP BASE Intermediate_Dir "Release"
 # PROP BASE Target_Dir ""
-# PROP Use_MFC 1
+# PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "../"
 # PROP Intermediate_Dir "../Release6"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MT /W3 /GX /Zi /O2 /Ob2 /I "SDL-1.2.5\include" /I "SDL_image-1.2" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "SDL-1.2.5\include" /I "SDL_image-1.2" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -53,7 +53,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"../StepMania-StackTrace.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../release6/StepMania.pdb" /map /debug /machine:I386
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
@@ -71,7 +71,7 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP BASE Output_Dir "Debug"
 # PROP BASE Intermediate_Dir "Debug"
 # PROP BASE Target_Dir ""
-# PROP Use_MFC 1
+# PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "../"
 # PROP Intermediate_Dir "../Debug6"
@@ -88,7 +88,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 $(intdir)\verstub.obj /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /out:"../StepMania-debug.exe"
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /out:"../StepMania-debug.exe"
 # SUBTRACT LINK32 /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
@@ -192,10 +192,6 @@ SOURCE=.\RageMath.cpp
 # Begin Source File
 
 SOURCE=.\RageMath.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageMovieTexture.cpp
 # End Source File
 # Begin Source File
 
@@ -513,10 +509,6 @@ SOURCE=.\MsdFile.h
 # Begin Group "System"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\dxutil.cpp
-# End Source File
 # Begin Source File
 
 SOURCE=.\resource.h
@@ -1253,14 +1245,6 @@ SOURCE=.\ScreenMusicScroll.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenNetworkGame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenNetworkGame.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenOptions.cpp
 # End Source File
 # Begin Source File
@@ -1477,10 +1461,6 @@ SOURCE=.\ThemeManager.h
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\Crash.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Crash.h
 # End Source File
 # Begin Source File
@@ -1489,15 +1469,7 @@ SOURCE=.\CrashList.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Disasm.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Disasm.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Tls.cpp
 # End Source File
 # Begin Source File
 
@@ -1515,10 +1487,6 @@ SOURCE=.\error.bmp
 # Begin Source File
 
 SOURCE=.\error2.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\loading.bmp
 # End Source File
 # End Target
 # End Project

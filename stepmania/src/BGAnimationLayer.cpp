@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "IniFile.h"
 #include "RageMath.h"
+#include <math.h>
 
 
 inline float GetOffScreenLeft(  Actor* pActor ) { return SCREEN_LEFT  - pActor->GetZoomedWidth()/2; }
@@ -192,7 +193,7 @@ found_effect:
 			{
 				m_Sprites[i].Load( sPath );
 				m_Sprites[i].SetZoom( randomf(0.2f,2) );
-				m_Sprites[i].SetRotation( randomf(0,D3DX_PI*2) );
+				m_Sprites[i].SetRotation( randomf(0,PI*2) );
 			}
 		}
 		break;
@@ -232,8 +233,8 @@ found_effect:
 	case EFFECT_TILE_PULSE:
 		{
 			m_Sprites[0].Load( sPath );
-			int iNumTilesWide = int(ceil(SCREEN_WIDTH /m_Sprites[0].GetUnzoomedWidth()));
-			int iNumTilesHigh = int(ceil(SCREEN_HEIGHT/m_Sprites[0].GetUnzoomedHeight()));
+			int iNumTilesWide = 1+int(SCREEN_WIDTH /m_Sprites[0].GetUnzoomedWidth());
+			int iNumTilesHigh = 1+int(SCREEN_HEIGHT/m_Sprites[0].GetUnzoomedHeight());
 			if( m_Effect == EFFECT_TILE_SCROLL_LEFT ||
 				m_Effect == EFFECT_TILE_SCROLL_RIGHT ) {
 				iNumTilesWide++;
@@ -304,8 +305,8 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 		{
 			RageColor color = RageColor(
 				cosf( fSongBeat+i ) * 0.5f + 0.5f,
-				cosf( fSongBeat+i + D3DX_PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
-				cosf( fSongBeat+i + D3DX_PI * 4.0f / 3.0f) * 0.5f + 0.5f,
+				cosf( fSongBeat+i + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
+				cosf( fSongBeat+i + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
 				1.0f
 				);
 			m_Sprites[i].SetDiffuse( color );
@@ -467,19 +468,19 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 	case EFFECT_TILE_FLIP_X:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetRotationX( m_Sprites[i].GetRotationX() + fDeltaTime * D3DX_PI );
+			m_Sprites[i].SetRotationX( m_Sprites[i].GetRotationX() + fDeltaTime * PI );
 		}
 		break;
 	case EFFECT_TILE_FLIP_Y:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetRotationY( m_Sprites[i].GetRotationY() + fDeltaTime * D3DX_PI );
+			m_Sprites[i].SetRotationY( m_Sprites[i].GetRotationY() + fDeltaTime * PI );
 		}
 		break;
 	case EFFECT_TILE_PULSE:
 		for( i=0; i<m_iNumSprites; i++ )
 		{
-			m_Sprites[i].SetZoom( sinf( fSongBeat*D3DX_PI/2 ) );
+			m_Sprites[i].SetZoom( sinf( fSongBeat*PI/2 ) );
 		}
 		break;
 	default:

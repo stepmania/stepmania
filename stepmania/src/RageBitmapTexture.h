@@ -22,39 +22,15 @@
 class RageBitmapTexture : public RageTexture
 {
 public:
-	RageBitmapTexture( 
-		RageDisplay* pScreen, 
-		const CString &sFilePath, 
-		int dwMaxSize = 2048, 
-		int dwTextureColorDepth = 16, 
-		int iMipMaps = 4,
-		int iAlphaBits = 4,
-		bool bDither = false, 
-		bool bStretch = false 
-		);
+	RageBitmapTexture( const CString &sFilePath );
 	virtual ~RageBitmapTexture();
 
-	virtual void Reload( 
-		int dwMaxSize, 
-		int dwTextureColorDepth,
-		int iMipMaps = 4,
-		int iAlphaBits = 4,
-		bool bDither = false,
-		bool bStretch = false
-		);
-	virtual LPDIRECT3DTEXTURE8 GetD3DTexture();
-
 protected:
+	virtual void Load( const CString &sFilePath );
+	virtual void Reload();
 
-	virtual void Create( 
-		int dwMaxSize, 
-		int dwTextureColorDepth, 
-		int iMipMaps,
-		int iAlphaBits,
-		bool bDither,
-		bool bStretch
-		);
+	virtual unsigned int GetGLTextureID();
 
-
-	LPDIRECT3DTEXTURE8  m_pd3dTexture;
+	unsigned int	m_uGLTextureID;
+	CString			m_sFilePath;
 };

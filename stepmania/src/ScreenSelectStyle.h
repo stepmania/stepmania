@@ -1,3 +1,5 @@
+#ifndef SCREEN_SELECT_STYLE_H
+#define SCREEN_SELECT_STYLE_H
 /*
 -----------------------------------------------------------------------------
  Class: ScreenSelectStyle
@@ -9,14 +11,13 @@
 -----------------------------------------------------------------------------
 */
 
-#ifndef SCREEN_SELECT_STYLE_H
-#define SCREEN_SELECT_STYLE_H
 
 #include "Screen.h"
 #include "Sprite.h"
 #include "TransitionFade.h"
 #include "RandomSample.h"
 #include "MenuElements.h"
+#include "Style.h"
 
 
 class ScreenSelectStyle : public Screen

@@ -17,6 +17,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "InputMapper.h"
+#include "ThemeManager.h"
 
 
 enum {

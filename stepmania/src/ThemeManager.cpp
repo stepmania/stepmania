@@ -168,7 +168,7 @@ try_element_again:
 	if( asPossibleElementFilePaths.empty() )
 	{
 #ifdef _DEBUG
-		switch( AfxMessageBox( ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString()), MB_ABORTRETRYIGNORE ) )
+		switch( MessageBox(NULL,"ThemeManager",ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString()), MB_ABORTRETRYIGNORE ) )
 		{
 		case IDRETRY:
 			goto try_element_again;
@@ -213,7 +213,7 @@ try_element_again:
 		if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
 		{
 #ifdef _DEBUG
-			if( IDRETRY == AfxMessageBox( ssprintf("The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString()), MB_RETRYCANCEL ) )
+			if( IDRETRY == MessageBox(NULL,"ThemeManager",ssprintf("The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString()), MB_RETRYCANCEL ) )
 				goto try_element_again;
 #endif
 			throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString() ); 
@@ -259,7 +259,7 @@ try_metric_again:
 	}
 
 #ifdef _DEBUG
-	if( IDRETRY == AfxMessageBox( ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()), MB_RETRYCANCEL ) )
+	if( IDRETRY == MessageBox(NULL,"ThemeManager",ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()), MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif
 

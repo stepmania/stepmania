@@ -1,23 +1,24 @@
 #pragma once
 /*
 -----------------------------------------------------------------------------
- Class: Quad
+ Class: ModeChoice
 
- Desc: A rectangle shaped actor with color.
+ Desc: .
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "Sprite.h"
+#include "Game.h"
+#include "Style.h"
 
-
-class Quad : public Sprite
+struct ModeChoice		// used in SelectMode
 {
-public:
-	Quad()
-	{
-		m_bDrawIfTextureNull = true; 
-	}	
+	Game		game;
+	PlayMode	pm;
+	Style		style;
+	Difficulty	dc;
+	char		name[64];
+	int			numSidesJoinedToPlay;
 };

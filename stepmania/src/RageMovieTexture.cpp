@@ -10,6 +10,7 @@
 -----------------------------------------------------------------------------
 */
 
+
 //-----------------------------------------------------------------------------
 // In-line Links
 //-----------------------------------------------------------------------------
@@ -281,16 +282,7 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 //-----------------------------------------------------------------------------
 // RageMovieTexture constructor
 //-----------------------------------------------------------------------------
-RageMovieTexture::RageMovieTexture( 
-	RageDisplay* pScreen, 
-	const CString &sFilePath, 
-	int dwMaxSize, 
-	int dwTextureColorDepth,
-	int iMipMaps,
-	int iAlphaBits,
-	bool bDither,
-	bool bStretch ) :
-  RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch )
+RageMovieTexture::RageMovieTexture( const CString &sFilePath ) : RageTexture( sFilePath )
 {
 	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
@@ -577,4 +569,6 @@ bool RageMovieTexture::IsPlaying() const
 {
 	return m_bPlaying;
 }
+
+
 

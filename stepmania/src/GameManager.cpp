@@ -15,12 +15,9 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "GameInput.h"	// for GameButton constants
-#ifndef DIRECTINPUT_VERSION
-#define DIRECTINPUT_VERSION  0x0800
-#endif
-#include <dinput.h> 	// for DIK_* key codes
 #include "IniFile.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
@@ -1193,11 +1190,11 @@ void GameManager::GetGameplayStylesForGame( Game game, CArray<Style,Style>& aSty
 	}
 }
 
-void GameManager::GetModesChoicesForGame( Game game, CArray<ModeChoice,ModeChoice>& aChoicesAddTo )
+void GameManager::GetModesChoicesForGame( Game game, CArray<ModeChoice*,ModeChoice*>& apChoicesAddTo )
 {
 	for( int s=0; s<NUM_MODE_CHOICES; s++ )
 		if( g_ModeChoices[s].game == game)
-			aChoicesAddTo.push_back( g_ModeChoices[s] );
+			apChoicesAddTo.push_back( &g_ModeChoices[s] );
 }
 
 void GameManager::GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo )

@@ -16,6 +16,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 
 #define BANNER_WIDTH		THEME->GetMetricF("TransitionOniFade","BannerWidth")

@@ -23,6 +23,7 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageMusic.h"
+#include "ThemeManager.h"
 
 
 #define NEXT_SCREEN			THEME->GetMetric("ScreenStage","NextScreen")

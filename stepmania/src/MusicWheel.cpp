@@ -20,6 +20,8 @@
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
+#include <math.h>
+#include "ThemeManager.h"
 
 
 // WheelItem stuff

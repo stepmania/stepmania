@@ -16,6 +16,9 @@
 #include "GameState.h"
 #include "RageException.h"
 #include "RageDisplay.h"
+#include "RageUtil.h"
+#include "AnnouncerManager.h"
+#include "ThemeManager.h"
 
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
@@ -28,9 +31,11 @@ PrefsManager::PrefsManager()
 #else
 	m_bWindowed = false;
 #endif
-	m_iDisplayResolution = 640;
-	m_iTextureResolution = 1024;
-	m_iRefreshRate = RageDisplay::REFRESH_DEFAULT;
+	m_iDisplayWidth = 640;
+	m_iDisplayHeight = 480;
+	m_iDisplayColorDepth = 16;
+	m_iTextureColorDepth = 16;
+	m_iRefreshRateMode = REFRESH_DEFAULT;
 	m_bIgnoreJoyAxes = true;
 	m_bOnlyDedicatedMenuButtons = false;
 #ifdef _DEBUG
@@ -80,9 +85,11 @@ PrefsManager::~PrefsManager()
 		return;		// could not read config file, load nothing
 
 	ini.GetValueB( "Options", "Windowed",					m_bWindowed );
-	ini.GetValueI( "Options", "DisplayResolution",			m_iDisplayResolution );
-	ini.GetValueI( "Options", "TextureResolution",			m_iTextureResolution );
-	ini.GetValueI( "Options", "RefreshRate",				m_iRefreshRate );
+	ini.GetValueI( "Options", "DisplayWidth",				m_iDisplayWidth );
+	ini.GetValueI( "Options", "DisplayHeight",				m_iDisplayHeight );
+	ini.GetValueI( "Options", "DisplayColorDepth",			m_iDisplayColorDepth );
+	ini.GetValueI( "Options", "TextureColorDepth",			m_iTextureColorDepth );
+	ini.GetValueI( "Options", "RefreshRate",				(int&)m_iRefreshRateMode );
 	ini.GetValueB( "Options", "IgnoreJoyAxes",				m_bIgnoreJoyAxes );
 	ini.GetValueB( "Options", "UseDedicatedMenuButtons",	m_bOnlyDedicatedMenuButtons );
 	ini.GetValueB( "Options", "ShowStats",					m_bShowStats );
@@ -129,9 +136,11 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetPath( "StepMania.ini" );
 
 	ini.SetValueB( "Options", "Windowed",					m_bWindowed );
-	ini.SetValueI( "Options", "DisplayResolution",			m_iDisplayResolution );
-	ini.SetValueI( "Options", "TextureResolution",			m_iTextureResolution );
-	ini.SetValueI( "Options", "RefreshRate",				m_iRefreshRate );
+	ini.SetValueI( "Options", "DisplayWidth",				m_iDisplayWidth );
+	ini.SetValueI( "Options", "DisplayHeight",				m_iDisplayHeight );
+	ini.SetValueI( "Options", "DisplayColorDepth",			m_iDisplayColorDepth );
+	ini.SetValueI( "Options", "TextureColorDepth",			m_iTextureColorDepth );
+	ini.SetValueI( "Options", "RefreshRate",				m_iRefreshRateMode );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",				m_bIgnoreJoyAxes );
 	ini.SetValueB( "Options", "UseDedicatedMenuButtons",	m_bOnlyDedicatedMenuButtons );
 	ini.SetValueB( "Options", "ShowStats",					m_bShowStats );
@@ -204,18 +213,3 @@ void PrefsManager::SaveGamePrefsToDisk()
 	ini.WriteFile();
 }
 
-
-int PrefsManager::GetDisplayHeight()
-{
-	switch( m_iDisplayResolution )
-	{
-	case 1280:	return 1024;	break;
-	case 1024:	return 768;	break;
-	case 800:	return 600;	break;
-	case 640:	return 480;	break;
-	case 512:	return 384;	break;
-	case 400:	return 300;	break;
-	case 320:	return 240;	break;
-	default:	throw RageException( "Invalid DisplayWidth '%d'", m_iDisplayResolution );
-	}
-}

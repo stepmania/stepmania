@@ -17,6 +17,7 @@
 #include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
+#include "ThemeManager.h"
 
 const float QUESTION_X	=	CENTER_X;
 const float QUESTION_Y	=	CENTER_Y - 60;

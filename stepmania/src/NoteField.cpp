@@ -21,6 +21,8 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageLog.h"
+#include <math.h>
+#include "ThemeManager.h"
 
 
 const float HOLD_NOTE_BITS_PER_BEAT	= 6;

@@ -15,6 +15,7 @@
 #include "ScreenManager.h"
 #include "ScreenGameplay.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 
 void Combo::Reset()

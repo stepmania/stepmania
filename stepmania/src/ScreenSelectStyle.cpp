@@ -21,6 +21,8 @@
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
+#include "GameConstantsAndTypes.h"
+#include "ThemeManager.h"
 
 
 #define ICONS_START_X		THEME->GetMetricF("ScreenSelectStyle","IconsStartX")

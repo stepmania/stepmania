@@ -14,7 +14,7 @@
 #include "RageUtil.h"
 #include <fstream>
 
-#include "crash.h"
+//#include "crash.h"
 
 #include "dxerr8.h"
 #pragma comment(lib, "DxErr8.lib")
@@ -73,7 +73,7 @@ void RageLog::Trace( const char *fmt, ...)
 
 	fprintf( m_fileLog, "%s\n", sBuff.GetString() ); 
 	printf( "%s\n", sBuff.GetString() ); 
-	CrashLog(sBuff);
+//	CrashLog(sBuff);
 
 #ifdef DEBUG
 	this->Flush();	// implicit flush

@@ -27,7 +27,6 @@ private:
 
 	void GoToNextState();
 	void GoToPrevState();
-	int CurrentRefresh() const;
 };
 
 #endif

@@ -20,6 +20,10 @@
 #include "RageException.h"
 #include "RageTimer.h"
 
+#include "AnnouncerManager.h"
+#include "ThemeManager.h"
+#include "GameManager.h"
+
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
 

@@ -14,6 +14,7 @@
 #include "Sprite.h"
 #include "PrefsManager.h"
 #include "Grade.h"
+#include "GameConstantsAndTypes.h"
 
 
 

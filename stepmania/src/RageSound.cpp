@@ -34,19 +34,14 @@ void RageSound::PlayOnceStreamedFromDir( CString sDir ) { }
 
 
 
-RageSound::RageSound( HWND hWnd )
+RageSound::RageSound()
 {
 	LOG->Trace( "RageSound::RageSound()" );
-
-	// save the HWND
-	if( !hWnd )
-		throw RageException( "RageSound called with NULL hWnd." );
-	m_hWndApp = hWnd;
 
 	if( BASS_GetVersion() != MAKELONG(1,6) )
 		throw RageException( "BASS version 1.6 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
 
-	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL|BASS_DEVICE_LATENCY, m_hWndApp ) )
+	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL|BASS_DEVICE_LATENCY, NULL ) )
 	{
 		throw RageException( 
 			"There was an error while initializing your sound card.\n\n"

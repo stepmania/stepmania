@@ -15,6 +15,8 @@
 #include "ScreenManager.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "ThemeManager.h"
+#include "AnnouncerManager.h"
 
 
 enum {

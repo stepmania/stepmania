@@ -21,6 +21,7 @@
 #include "RageLog.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 
 #define TOP_EDGE_X			THEME->GetMetricF("MenuElements","TopEdgeX")

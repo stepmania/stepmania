@@ -16,7 +16,8 @@
 #include "MusicWheel.h"
 #include "MusicStatusDisplay.h"
 #include "RageTimer.h"
-
+#include <math.h>
+#include "ThemeManager.h"
 
 
 MusicStatusDisplay::MusicStatusDisplay()

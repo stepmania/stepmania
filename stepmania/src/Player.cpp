@@ -24,6 +24,8 @@
 #include "ScoreKeeperMAX2.h"
 #include "RageLog.h"
 #include "RageMath.h"
+#include "RageDisplay.h"
+#include "ThemeManager.h"
 #include "Combo.h"
 
 #define JUDGE_PERFECT_ZOOM_X		THEME->GetMetricF("Player","JudgePerfectZoomX")
@@ -298,26 +300,28 @@ void Player::DrawPrimitives()
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
 		// save old view and projection
-		DISPLAY->GetViewTransform( &matOldView );
-		DISPLAY->GetProjectionTransform( &matOldProj );
 
-		// construct view and project matrix
-		RageMatrix matNewView;
-		RageVector3 Eye, At, Up( 0.0f, -1.0f, 0.0f );
-		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll ) {
-			Eye = RageVector3( CENTER_X, GetY()-300.0f, 400.0f );
-			At = RageVector3( CENTER_X, GetY()+100.0f, 0.0f );
-		} else {
-			Eye = RageVector3( CENTER_X, GetY()+800.0f, 400.0f );
-			At = RageVector3( CENTER_X, GetY()+400.0f, 0.0f );
-		}
-		RageMatrixLookAtLH( &matNewView, &Eye, &At, &Up );
-
-		DISPLAY->SetViewTransform( &matNewView );
-
-		RageMatrix matNewProj;
-		RageMatrixPerspectiveFovLH( &matNewProj, D3DX_PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
-		DISPLAY->SetProjectionTransform( &matNewProj );
+// TODO:  Re-add this code		
+//		DISPLAY->GetViewTransform( &matOldView );
+//		DISPLAY->GetProjectionTransform( &matOldProj );
+//
+//		// construct view and project matrix
+//		RageMatrix matNewView;
+//		RageVector3 Eye, At, Up( 0.0f, -1.0f, 0.0f );
+//		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bReverseScroll ) {
+//			Eye = RageVector3( CENTER_X, GetY()-300.0f, 400.0f );
+//			At = RageVector3( CENTER_X, GetY()+100.0f, 0.0f );
+//		} else {
+//			Eye = RageVector3( CENTER_X, GetY()+800.0f, 400.0f );
+//			At = RageVector3( CENTER_X, GetY()+400.0f, 0.0f );
+//		}
+//		RageMatrixLookAtLH( &matNewView, &Eye, &At, &Up );
+//
+//		DISPLAY->SetViewTransform( &matNewView );
+//
+//		RageMatrix matNewProj;
+//		RageMatrixPerspectiveFovLH( &matNewProj, PI/4.0f, SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.0f, 1000.0f );
+//		DISPLAY->SetProjectionTransform( &matNewProj );
 	}
 
 	m_GrayArrowRow.Draw();
@@ -326,9 +330,10 @@ void Player::DrawPrimitives()
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bEffects[PlayerOptions::EFFECT_SPACE] )
 	{
-		// restire old view and projection
-		DISPLAY->SetViewTransform( &matOldView );
-		DISPLAY->SetProjectionTransform( &matOldProj );
+// TODO:  Re-add this code		
+//		// restire old view and projection
+//		DISPLAY->SetViewTransform( &matOldView );
+//		DISPLAY->SetProjectionTransform( &matOldProj );
 	}
 
 	m_frameJudgement.Draw();

@@ -16,7 +16,10 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "RageDisplay.h"
 #include "PrefsManager.h"
+#include "ThemeManager.h"
+#include "GameConstantsAndTypes.h"
 
 
 #define RAINBOW_COLOR_1		THEME->GetMetricC("BitmapText","RainbowColor1")
@@ -188,11 +191,13 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-	// offset so that pixels are aligned to texels
-	if( PREFSMAN->m_iDisplayResolution == 320 )
-		DISPLAY->TranslateLocal( -1, -1, 0 );
-	else
-		DISPLAY->TranslateLocal( -0.5f, -0.5f, 0 );
+	// Offset so that pixels are aligned to texels
+	// Offset by -0.5, -0.5 if 640x480
+	// Offset by -1.0, -1.0 if 320x240
+	DISPLAY->TranslateLocal( 
+		-0.5f*SCREEN_WIDTH/(float)PREFSMAN->m_iDisplayWidth, 
+		-0.5f*SCREEN_HEIGHT/(float)PREFSMAN->m_iDisplayHeight, 
+		0 );
 
 	if( m_iNumLines == 0 )
 		return;
@@ -251,9 +256,9 @@ void BitmapText::DrawPrimitives()
 			// set vertex positions
 			//
 			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft,										iY-iHeight/2.0f, 0 );	// top left
-			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY-iHeight/2.0f, 0 );	// top right
 			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft,										iY+iHeight/2.0f, 0 );	// bottom left
 			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY+iHeight/2.0f, 0 );	// bottom right
+			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY-iHeight/2.0f, 0 );	// top right
 
 			iX += iCharWidth;
 
@@ -275,9 +280,9 @@ void BitmapText::DrawPrimitives()
 			const float fExtraTexCoordsRight = iDrawExtraPixelsRight / (float)pTexture->GetSourceWidth();
 
 			v[iNumV++].t = RageVector2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.top );		// top left
-			v[iNumV++].t = RageVector2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.top );		// top right
 			v[iNumV++].t = RageVector2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.bottom );	// bottom left
 			v[iNumV++].t = RageVector2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.bottom );	// bottom right
+			v[iNumV++].t = RageVector2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.top );		// top right
 		}
 
 		iY += iLineSpacing;
@@ -285,10 +290,7 @@ void BitmapText::DrawPrimitives()
 
 
 	DISPLAY->SetTexture( pTexture );
-
-	DISPLAY->SetColorTextureMultDiffuse();
-	DISPLAY->SetAlphaTextureMultDiffuse();
-
+	DISPLAY->SetTextureModeModulate();
 	if( m_bBlendAdd )
 		DISPLAY->SetBlendModeAdd();
 	else
@@ -310,8 +312,7 @@ void BitmapText::DrawPrimitives()
 			int i;
 			for( i=0; i<iNumV; i++ )
 				v[i].c = dwColor;
-			for( i=0; i<iNumV; i+=4 )
-				DISPLAY->AddQuad( &v[i] );
+			DISPLAY->DrawQuads( v, iNumV );
 
 			DISPLAY->PopMatrix();
 		}
@@ -336,14 +337,13 @@ void BitmapText::DrawPrimitives()
 			for( int i=0; i<iNumV; i+=4 )
 			{
 				v[i+0].c = m_temp.diffuse[0];	// top left
-				v[i+1].c = m_temp.diffuse[1];	// top right
-				v[i+2].c = m_temp.diffuse[2];	// bottom left
-				v[i+3].c = m_temp.diffuse[3];	// bottom right
+				v[i+1].c = m_temp.diffuse[2];	// bottom left
+				v[i+2].c = m_temp.diffuse[3];	// bottom right
+				v[i+3].c = m_temp.diffuse[1];	// top right
 			}
 		}
 
-		for( int i=0; i<iNumV; i+=4 )
-			DISPLAY->AddQuad( &v[i] );
+		DISPLAY->DrawQuads( v, iNumV );
 	}
 
 	//////////////////////
@@ -351,13 +351,12 @@ void BitmapText::DrawPrimitives()
 	//////////////////////
 	if( m_temp.glow.a != 0 )
 	{
-		DISPLAY->SetColorDiffuse();
+		DISPLAY->SetTextureModeGlow();
 
 		int i;
 		for( i=0; i<iNumV; i++ )
 			v[i].c = m_temp.glow;
-		for( i=0; i<iNumV; i+=4 )
-			DISPLAY->AddQuad( &v[i] );
+		DISPLAY->DrawQuads( v, iNumV );
 	}
 
 }

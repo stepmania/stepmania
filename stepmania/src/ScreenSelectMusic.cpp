@@ -26,6 +26,9 @@
 #include "InputMapper.h"
 #include "GameState.h"
 #include "CodeDetector.h"
+#include <math.h>
+#include "GameConstantsAndTypes.h"
+#include "ThemeManager.h"
 
 
 #define BANNER_FRAME_X			THEME->GetMetricF("ScreenSelectMusic","BannerFrameX")
@@ -384,10 +387,10 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 			this->PlayMusicSample();
 	}
 
-	float fNewRotation = m_sprCDTitle.GetRotationY()+D3DX_PI*fDeltaTime/2;
-	fNewRotation = fmodf( fNewRotation, D3DX_PI*2 );
+	float fNewRotation = m_sprCDTitle.GetRotationY()+PI*fDeltaTime/2;
+	fNewRotation = fmodf( fNewRotation, PI*2 );
 	m_sprCDTitle.SetRotationY( fNewRotation );
-	if( fNewRotation > D3DX_PI/2  &&  fNewRotation <= D3DX_PI*3.0f/2 )
+	if( fNewRotation > PI/2  &&  fNewRotation <= PI*3.0f/2 )
 		m_sprCDTitle.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
 	else
 		m_sprCDTitle.SetDiffuse( RageColor(1,1,1,1) );

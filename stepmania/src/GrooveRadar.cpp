@@ -16,8 +16,8 @@
 #include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 #include "GameConstantsAndTypes.h"
-
-
+#include "ThemeManager.h"
+#include "Notes.h"
 
 
 #define LABEL_OFFSET_X( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
@@ -140,8 +140,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f*1.1f;
 
 	DISPLAY->SetTexture( NULL );
-	DISPLAY->SetColorTextureMultDiffuse();
-	DISPLAY->SetAlphaTextureMultDiffuse();
+	DISPLAY->SetTextureModeModulate();
 	RageVertex v[12];	// needed to draw 5 fan primitives and 10 strip primitives
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -172,7 +171,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			v[1+i].c = v[0].c;
 		}
 
-		DISPLAY->AddFan( v, 5 );
+		DISPLAY->DrawFan( v, 7 );
 
 
 		//
@@ -197,7 +196,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			v[i*2+1].c = v[i*2+0].c;
 		}
 
-		DISPLAY->AddStrip( v, 10 );
+		DISPLAY->DrawStrip( v, 12 );
 	}
 }
 

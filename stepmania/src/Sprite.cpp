@@ -19,11 +19,14 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "PrefsManager.h"
+#include "RageDisplay.h"
+#include "GameConstantsAndTypes.h"
 
 
 Sprite::Sprite()
 {
 	m_pTexture = NULL;
+	m_bDrawIfTextureNull = false;
 	m_iNumStates = 0;
 	m_iCurState = 0;
 	m_bIsAnimating = TRUE;
@@ -144,7 +147,7 @@ bool Sprite::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps,
 
 	m_sTexturePath = sTexturePath;
 
-	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
+	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	assert( m_pTexture != NULL );
 
 	// the size of the sprite is the size of the image before it was scaled
@@ -187,10 +190,10 @@ void Sprite::Update( float fDeltaTime )
 
 void Sprite::DrawPrimitives()
 {
-	if( m_pTexture == NULL )
+	if( m_pTexture == NULL  &&  !m_bDrawIfTextureNull )
 		return;
 
-	if( m_pTexture->IsAMovie()  &&  m_pTexture->IsPlaying() )
+	if( m_pTexture  &&  m_pTexture->IsAMovie()  &&  m_pTexture->IsPlaying() )
 		::Sleep( PREFSMAN->m_iMovieDecodeMS );	// let the movie decode a frame
 
 
@@ -198,8 +201,8 @@ void Sprite::DrawPrimitives()
 	// Offset by -0.5, -0.5 if 640x480
 	// Offset by -1.0, -1.0 if 320x240
 	DISPLAY->TranslateLocal( 
-		-0.5f*SCREEN_WIDTH/(float)PREFSMAN->m_iDisplayResolution, 
-		-0.5f*SCREEN_WIDTH/(float)PREFSMAN->GetDisplayHeight(), 
+		-0.5f*SCREEN_WIDTH/(float)PREFSMAN->m_iDisplayWidth, 
+		-0.5f*SCREEN_HEIGHT/(float)PREFSMAN->m_iDisplayHeight, 
 		0 );
 	
 	// use m_temp_* variables to draw the object
@@ -223,44 +226,42 @@ void Sprite::DrawPrimitives()
 
 
 	static RageVertex v[4];
-
-	v[0].p = RageVector3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
-	v[1].p = RageVector3( quadVerticies.left,	quadVerticies.top,		0 );	// top left
+	v[0].p = RageVector3( quadVerticies.left,	quadVerticies.top,		0 );	// top left
+	v[1].p = RageVector3( quadVerticies.left,	quadVerticies.bottom,	0 );	// bottom left
 	v[2].p = RageVector3( quadVerticies.right,	quadVerticies.bottom,	0 );	// bottom right
 	v[3].p = RageVector3( quadVerticies.right,	quadVerticies.top,		0 );	// top right
 
 
-	if( m_bUsingCustomTexCoords ) 
+	if( m_pTexture )
 	{
-		v[0].t = RageVector2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
-		v[1].t = RageVector2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
-		v[2].t = RageVector2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
-		v[3].t = RageVector2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
+		if( m_bUsingCustomTexCoords ) 
+		{
+			v[0].t = RageVector2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
+			v[1].t = RageVector2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
+			v[2].t = RageVector2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
+			v[3].t = RageVector2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
 
-		DISPLAY->EnableTextureWrapping();
-	} 
-	else 
-	{
-		UINT uFrameNo = m_iStateToFrame[m_iCurState];
-		RectF *pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
+			DISPLAY->EnableTextureWrapping();
+		} 
+		else 
+		{
+			UINT uFrameNo = m_iStateToFrame[m_iCurState];
+			const RectF *pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
 
-		v[0].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
-		v[1].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
-		v[2].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
-		v[3].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
+			v[0].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
+			v[1].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->bottom );	// bottom left
+			v[2].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->bottom );	// bottom right
+			v[3].t = RageVector2( pTexCoordRect->right,	pTexCoordRect->top );		// top right
 
-		// if the texture has more than one frame, we're going to get border mess from the 
-		// neighboring frame, so don't bother turning wrapping off.
-		if( m_pTexture->GetNumFrames() == 1 )	
-			DISPLAY->DisableTextureWrapping();
+			// if the texture has more than one frame, we're going to get border mess from the 
+			// neighboring frame, so don't bother turning wrapping off.
+			if( m_pTexture->GetNumFrames() == 1 )	
+				DISPLAY->DisableTextureWrapping();
+		}
 	}
 
-
 	DISPLAY->SetTexture( m_pTexture );
-
-	DISPLAY->SetColorTextureMultDiffuse();
-	DISPLAY->SetAlphaTextureMultDiffuse();
-
+	DISPLAY->SetTextureModeModulate();
 	if( m_bBlendAdd )
 		DISPLAY->SetBlendModeAdd();
 	else
@@ -279,7 +280,7 @@ void Sprite::DrawPrimitives()
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 			v[0].c = v[1].c = v[2].c = v[3].c = RageColor(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
-			DISPLAY->AddQuad( v );
+			DISPLAY->DrawQuad( v );
 			DISPLAY->PopMatrix();
 		}
 
@@ -290,7 +291,7 @@ void Sprite::DrawPrimitives()
 		v[1].c = m_temp.diffuse[0];	// top left
 		v[2].c = m_temp.diffuse[3];	// bottom right
 		v[3].c = m_temp.diffuse[1];	// top right
-		DISPLAY->AddQuad( v );
+		DISPLAY->DrawQuad( v );
 	}
 
 	//////////////////////
@@ -298,9 +299,9 @@ void Sprite::DrawPrimitives()
 	//////////////////////
 	if( m_temp.glow.a != 0 )
 	{
-		DISPLAY->SetColorDiffuse();
+		DISPLAY->SetTextureModeGlow();
 		v[0].c = v[1].c = v[2].c = v[3].c = m_temp.glow;
-		DISPLAY->AddQuad( v );
+		DISPLAY->DrawQuad( v );
 	}
 }
 

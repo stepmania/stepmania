@@ -15,6 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "ThemeManager.h"
 
 
 

@@ -1,3 +1,5 @@
+#ifndef SONG_SELECTOR_H
+#define SONG_SELECTOR_H
 /*
 -----------------------------------------------------------------------------
  Class: SongSelector
@@ -9,15 +11,14 @@
 -----------------------------------------------------------------------------
 */
 
-#ifndef SONG_SELECTOR_H
-#define SONG_SELECTOR_H
-
 #include "stdafx.h"
 #include "ActorFrame.h"
 
 #include "MenuElements.h"
 #include "Banner.h"
 #include "TextBanner.h"
+#include "GameConstantsAndTypes.h"
+#include "Style.h"
 
 class SongSelector: public ActorFrame {
 public:

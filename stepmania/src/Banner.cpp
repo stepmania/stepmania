@@ -15,6 +15,7 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "RageBitmapTexture.h"
+#include "ThemeManager.h"
 
 Banner::Banner()
 {
@@ -39,7 +40,7 @@ void Banner::Update( float fDeltaTime )
         m_fPercentScrolling += fDeltaTime/2;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
 
-		RectF *pTextureRect = m_pTexture->GetTextureCoordRect(0);
+		const RectF *pTextureRect = m_pTexture->GetTextureCoordRect(0);
 
 		float fTexCoords[8] = 
 		{

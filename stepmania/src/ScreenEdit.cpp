@@ -21,6 +21,9 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "InputMapper.h"
+#include "RageLog.h"
+#include <math.h>
+#include "ThemeManager.h"
 
 #include <utility>
 

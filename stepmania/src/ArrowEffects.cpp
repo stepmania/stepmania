@@ -18,6 +18,7 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "NoteDisplay.h"
+#include <math.h>
 
 
 float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )

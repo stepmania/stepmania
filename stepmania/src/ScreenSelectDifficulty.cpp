@@ -19,6 +19,7 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageMusic.h"
+#include "ThemeManager.h"
 
 
 const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to complete

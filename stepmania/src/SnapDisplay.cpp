@@ -17,6 +17,7 @@
 #include "ArrowEffects.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 
 SnapDisplay::SnapDisplay()

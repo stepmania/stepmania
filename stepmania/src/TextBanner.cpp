@@ -14,6 +14,7 @@
 #include "RageUtil.h"
 #include "Song.h"
 #include "PrefsManager.h"
+#include "ThemeManager.h"
 
 
 const float TEXT_BANNER_WIDTH	= 180;

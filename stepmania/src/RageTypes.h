@@ -79,16 +79,6 @@ public:
     float x, y, z;
 };
 
-
-#define RAGECOLOR_ARGB(a,r,g,b) \
-    ((DWORD)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
-
-#define RAGECOLOR_RGBA(r,g,b,a) RAGECOLOR_ARGB(a,r,g,b)
-
-#define RAGECOLOR_COLORVALUE(r,g,b,a) \
-    RAGECOLOR_RGBA((DWORD)((r)*255.f),(DWORD)((g)*255.f),(DWORD)((b)*255.f),(DWORD)((a)*255.f))
-
-
 struct RageVector4
 {
 public:
@@ -97,7 +87,6 @@ public:
 	RageVector4( float x1, float y1, float z1, float w1 )		{ x=x1; y=y1; z=z1; w=w1; }
 
     // casting
-	operator unsigned long () const								{ return RAGECOLOR_COLORVALUE(min(1.f,max(0.f,r)),min(1.f,max(0.f,g)),min(1.f,max(0.f,b)),min(1.f,max(0.f,a)));	}
 	operator float* ()											{ return &x; };
     operator const float* () const								{ return &x; };
 
@@ -118,19 +107,58 @@ public:
     bool operator == ( const RageVector4& other ) const		{ return x==other.x && y==other.y && z==other.z && w==other.w; }
     bool operator != ( const RageVector4& other ) const		{ return x!=other.x || y!=other.y || z!=other.z || w!=other.w; }
 
-	union {
-        struct
-        {
-			float x, y, z, w;
-		};
-        struct
-        {
-			float r, g, b, a;
-		};
-	};
+	float x, y, z, w;
 };
 
-typedef RageVector4 RageColor;
+
+#define RAGECOLOR_ARGB(a,r,g,b) \
+    ((DWORD)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
+
+#define RAGECOLOR_RGBA(r,g,b,a) RAGECOLOR_ARGB(a,r,g,b)
+
+#define RAGECOLOR_COLORVALUE(r,g,b,a) \
+    RAGECOLOR_RGBA((DWORD)((r)*255.f),(DWORD)((g)*255.f),(DWORD)((b)*255.f),(DWORD)((a)*255.f))
+
+
+struct RageColor
+{
+public:
+    RageColor() {}
+    RageColor( const float * f )							{ r=f[0]; g=f[1]; b=f[2]; a=f[3]; }
+	RageColor( float r1, float g1, float b1, float a1 )		{ r=r1; g=g1; b=b1; a=a1; }
+	RageColor( unsigned long c )
+	{
+		a = ((c>>24)&0xff) / 255.f;
+		r = ((c>>16)&0xff) / 255.f;
+		g = ((c>>8)&0xff)  / 255.f;
+		b = (c&0xff)       / 255.f; 
+	}
+
+    // casting
+	operator unsigned long () const							{ return RAGECOLOR_COLORVALUE(min(1.f,max(0.f,r)),min(1.f,max(0.f,g)),min(1.f,max(0.f,b)),min(1.f,max(0.f,a)));	}
+	operator float* ()										{ return &r; };
+    operator const float* () const							{ return &r; };
+
+    // assignment operators
+	RageColor& operator += ( const RageColor& other )		{ r+=other.r; g+=other.g; b+=other.b; a+=other.a; }
+    RageColor& operator -= ( const RageColor& other )		{ r-=other.r; g-=other.g; b-=other.b; a-=other.a; }
+    RageColor& operator *= ( float f )						{ r*=f; g*=f; b*=f; a*=f; }
+    RageColor& operator /= ( float f )						{ r/=f; g/=f; b/=f; a/=f; }
+
+    // binarg operators
+    RageColor operator + ( const RageColor& other ) const	{ return RageColor( r+other.r, g+other.g, b+other.b, a+other.a ); }
+    RageColor operator - ( const RageColor& other ) const	{ return RageColor( r-other.r, g-other.g, b-other.b, a-other.a ); }
+    RageColor operator * ( float f ) const					{ return RageColor( r*f, g*f, b*f, a*f ); }
+    RageColor operator / ( float f ) const					{ return RageColor( r/f, g/f, b/f, a/f ); }
+
+	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }
+
+    bool operator == ( const RageColor& other ) const		{ return r==other.r && g==other.g && b==other.b && a==other.a; }
+    bool operator != ( const RageColor& other ) const		{ return r!=other.r || g!=other.g || b!=other.b || a!=other.a; }
+
+	float r, g, b, a;
+};
+
 
 
 template <class T>
@@ -155,9 +183,10 @@ typedef Rect<float> RectF;
 // A structure for our custom vertex type.  Note that these data structes have the same layout that D3D expects.
 struct RageVertex
 {
-    RageVector3 p;	// position
-    DWORD		c;	// diffuse color
-	RageVector2 t;	// texture coordinates
+	// This is the format expected by OpenGL.  D3D expects the reverse!
+	RageVector2		t;	// texture coordinates
+    unsigned long	c;	// diffuse color
+    RageVector3		p;	// position
 };
 
 #define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE|D3DFVF_TEX1)	// D3D FVF flags which describe our vertex structure
@@ -188,6 +217,7 @@ public:
     operator float* ()								{ return m[0]; }
     operator const float* () const					{ return m[0]; }
 
+	RageMatrix GetTranspose() const { return RageMatrix(m00,m10,m20,m30,m01,m11,m21,m31,m02,m12,m22,m32,m03,m13,m23,m33); }
 
 //	---These are not used.  Maybe I'll implement them later...---
 //  // assignment operators

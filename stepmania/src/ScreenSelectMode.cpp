@@ -22,6 +22,7 @@ Chris Danford
 #include "RageException.h"
 #include "RageTimer.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 /* Constants */
 
@@ -200,11 +201,11 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToNextScreen:
 		// Put the mode choice into effect
 		int iSelection = m_ScrollingList.GetSelection();
-		const ModeChoice& choice = m_aPossibleModeChoices[ iSelection ];
-		GAMESTATE->m_CurStyle = choice.style;
-		GAMESTATE->m_PlayMode = choice.pm;
+		const ModeChoice* pChoice = m_apPossibleModeChoices[ iSelection ];
+		GAMESTATE->m_CurStyle = pChoice->style;
+		GAMESTATE->m_PlayMode = pChoice->pm;
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			GAMESTATE->m_PreferredDifficulty[p] = choice.dc;
+			GAMESTATE->m_PreferredDifficulty[p] = pChoice->dc;
 
 		switch( GAMESTATE->m_PlayMode )
 		{
@@ -224,24 +225,24 @@ void ScreenSelectMode::RefreshModeChoices()
 {
 	int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
 
-	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_aPossibleModeChoices );
-	ASSERT( !m_aPossibleModeChoices.empty() );
+	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_apPossibleModeChoices );
+	ASSERT( !m_apPossibleModeChoices.empty() );
 
 	int i;
 
 	// remove ModeChoices that won't work with the current number of players
-	for( i=m_aPossibleModeChoices.size()-1; i>=0; i-- )
-		if( m_aPossibleModeChoices[i].numSidesJoinedToPlay != iNumSidesJoined )
-			m_aPossibleModeChoices.erase( m_aPossibleModeChoices.begin()+i, 
-										  m_aPossibleModeChoices.begin()+i+1 );
+	for( i=m_apPossibleModeChoices.size()-1; i>=0; i-- )
+		if( m_apPossibleModeChoices[i]->numSidesJoinedToPlay != iNumSidesJoined )
+			m_apPossibleModeChoices.erase( m_apPossibleModeChoices.begin()+i, 
+										  m_apPossibleModeChoices.begin()+i+1 );
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 
 	CStringArray asGraphicPaths;
-	for( unsigned j=0; j<m_aPossibleModeChoices.size(); j++ )
+	for( unsigned j=0; j<m_apPossibleModeChoices.size(); j++ )
 	{
-		const ModeChoice& choice = m_aPossibleModeChoices[j];
-		asGraphicPaths.push_back( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName.GetString(), choice.name) ) );
+		const ModeChoice* pChoice = m_apPossibleModeChoices[j];
+		asGraphicPaths.push_back( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName.GetString(), pChoice->name) ) );
 	}
 
 	m_ScrollingList.Load( asGraphicPaths );
@@ -251,9 +252,9 @@ void ScreenSelectMode::RefreshModeChoices()
 	{
 		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 
-		for( unsigned i=0; i<m_aPossibleModeChoices.size(); i++ )
+		for( unsigned i=0; i<m_apPossibleModeChoices.size(); i++ )
 		{
-			CString sChoiceName = m_aPossibleModeChoices[i].name;
+			CString sChoiceName = m_apPossibleModeChoices[i]->name;
 			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName.GetString(), sChoiceName.GetString())) );	
 		}
 	}

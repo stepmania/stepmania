@@ -14,6 +14,8 @@
 #include <math.h>
 #include "RageDisplay.h"
 #include "PrefsManager.h"
+#include "RageUtil.h"
+#include "GameConstantsAndTypes.h"
 
 
 Actor::Actor()
@@ -255,6 +257,16 @@ void Actor::Update( float fDeltaTime )
 void Actor::BeginTweening( float time, TweenType tt )
 {
 	ASSERT( time >= 0 );
+
+	// HACK to keep from out of bounds access..
+	if( m_iNumTweenStates == MAX_TWEEN_STATES )
+	{
+		for( int i=0; i<m_iNumTweenStates-1; i++ )
+		{
+			m_TweenStates[i] = m_TweenStates[i+1];
+			m_TweenInfo[i] = m_TweenInfo[i+1];
+		}
+	}
 
 	// add a new TweenState to the tail, and initialize it
 	m_iNumTweenStates++;

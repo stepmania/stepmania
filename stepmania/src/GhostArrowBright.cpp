@@ -13,6 +13,7 @@
 
 #include "GhostArrowBright.h"
 #include "PrefsManager.h"
+#include "ThemeManager.h"
 
 
 #define SHOW_SECONDS		THEME->GetMetricF("GhostArrowBright","ShowSeconds")

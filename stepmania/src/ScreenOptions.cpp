@@ -19,6 +19,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 
 #define ICONS_X( p )		THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))

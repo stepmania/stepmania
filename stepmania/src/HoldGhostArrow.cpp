@@ -15,6 +15,7 @@
 #include "PrefsManager.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include <math.h>
 
 
 const float  HOLD_GHOST_ARROW_TWEEN_TIME = 0.5f;

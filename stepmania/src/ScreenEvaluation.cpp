@@ -22,6 +22,7 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "GrooveRadar.h"
+#include "ThemeManager.h"
 
 
 #define BANNER_X				THEME->GetMetricF("ScreenEvaluation","BannerX")

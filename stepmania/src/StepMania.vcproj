@@ -16,7 +16,7 @@
 			OutputDirectory=".\.."
 			IntermediateDirectory=".\../Debug"
 			ConfigurationType="1"
-			UseOfMFC="1"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2"
 			WholeProgramOptimization="FALSE">
@@ -86,7 +86,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			OutputDirectory="./.."
 			IntermediateDirectory="./../Release"
 			ConfigurationType="1"
-			UseOfMFC="1"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2"
 			WholeProgramOptimization="TRUE">
@@ -272,12 +272,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenMusicScroll.h">
 			</File>
 			<File
-				RelativePath="ScreenNetworkGame.cpp">
-			</File>
-			<File
-				RelativePath="ScreenNetworkGame.h">
-			</File>
-			<File
 				RelativePath="ScreenOptions.cpp">
 			</File>
 			<File
@@ -427,6 +421,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="MenuInput.h">
+			</File>
+			<File
+				RelativePath="ModeChoice.h">
 			</File>
 			<File
 				RelativePath="NoteData.cpp">
@@ -1005,9 +1002,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageMath.h">
 			</File>
 			<File
-				RelativePath=".\RageMovieTexture.cpp">
-			</File>
-			<File
 				RelativePath=".\RageMovieTexture.h">
 			</File>
 			<File
@@ -1192,22 +1186,13 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="Disasm"
 			Filter="">
 			<File
-				RelativePath="Crash.cpp">
-			</File>
-			<File
 				RelativePath="Crash.h">
 			</File>
 			<File
 				RelativePath="CrashList.h">
 			</File>
 			<File
-				RelativePath="Disasm.cpp">
-			</File>
-			<File
 				RelativePath="Disasm.h">
-			</File>
-			<File
-				RelativePath="Tls.cpp">
 			</File>
 			<File
 				RelativePath="Tls.h">

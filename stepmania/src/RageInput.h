@@ -159,3 +159,4 @@ namespace USB {
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
+

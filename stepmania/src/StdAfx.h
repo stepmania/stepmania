@@ -33,7 +33,7 @@
 #undef max
 #define NOMINMAX /* make sure Windows doesn't try to define this */
 
-#include <afxwin.h>         // MFC core and standard components
+
 
 /* Make sure everyone has min and max: */
 #include <algorithm>

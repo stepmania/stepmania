@@ -18,6 +18,10 @@
 #include "PrefsManager.h"
 #include "Course.h"
 #include "SongManager.h"
+#include <math.h>
+#include "RageDisplay.h"
+#include "ThemeManager.h"
+#include "Notes.h"
 
 
 const float TEXT_BANNER_X	= 0;

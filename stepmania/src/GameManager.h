@@ -14,18 +14,8 @@
 #include "StyleDef.h"
 #include "Style.h"
 #include "Game.h"
+#include "ModeChoice.h"
 class IniFile;
-
-
-struct ModeChoice		// used in SelectMode
-{
-	Game		game;
-	PlayMode	pm;
-	Style		style;
-	Difficulty	dc;
-	char		name[64];
-	int			numSidesJoinedToPlay;
-};
 
 
 class GameManager
@@ -38,7 +28,7 @@ public:
 	const StyleDef*	GetStyleDefForStyle( Style s );
 
 	void		GetGameplayStylesForGame( Game game, CArray<Style,Style>& aStylesAddTo, bool editor=false );
-	void		GetModesChoicesForGame( Game game, CArray<ModeChoice,ModeChoice>& aChoicesAddTo );
+	void		GetModesChoicesForGame( Game game, CArray<ModeChoice*,ModeChoice*>& apChoicesAddTo );
 	void		GetNotesTypesForGame( Game game, CArray<NotesType,NotesType>& aNotesTypeAddTo );	// only look at edit-specific styles
 
 //	void GetGameNames( CStringArray &AddTo );

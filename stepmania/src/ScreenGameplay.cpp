@@ -27,6 +27,7 @@
 #include "ScreenPrompt.h"
 #include "GrooveRadar.h"
 #include "NotesLoaderSM.h"
+#include "ThemeManager.h"
 
 //
 // Defines

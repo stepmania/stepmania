@@ -20,6 +20,7 @@
 #include "StepMania.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "ThemeManager.h"
 
 
 enum {

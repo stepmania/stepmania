@@ -17,6 +17,8 @@ Andrew Livy
 #include "Quad.h"
 #include "MenuElements.h"
 #include "ScrollingList.h"
+#include "GameConstantsAndTypes.h"
+#include "ModeChoice.h"
 
 
 /* Class Definition */
@@ -53,7 +55,7 @@ protected:
 	Sprite  m_ChoiceListFrame;
 	Sprite  m_ChoiceListHighlight;
 
-	CArray<ModeChoice,ModeChoice> m_aPossibleModeChoices;
+	CArray<ModeChoice*,ModeChoice*> m_apPossibleModeChoices;
 
 	ScrollingList m_ScrollingList;
 	void RefreshModeChoices();

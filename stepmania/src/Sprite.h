@@ -68,6 +68,7 @@ protected:
 
 	CString	m_sSpritePath;
 	RageTexture* m_pTexture;
+	bool	m_bDrawIfTextureNull;
 	CString	m_sTexturePath;
 
 	int		m_iStateToFrame[MAX_SPRITE_STATES];	// array of indicies into m_rectBitmapFrames

@@ -13,6 +13,8 @@
 #include "ScrollBar.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
+#include <math.h>
+#include "ThemeManager.h"
 
 
 ScrollBar::ScrollBar()

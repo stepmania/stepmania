@@ -15,8 +15,8 @@
 #include "Font.h"
 
 
-const int MAX_TEXT_LINES	=	40;
-const int MAX_TEXT_CHARS	=	MAX_NUM_QUADS;
+const int MAX_TEXT_LINES	= 40;
+const int MAX_TEXT_CHARS	= 2000;
 
 class BitmapText : public Actor
 {

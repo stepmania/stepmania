@@ -20,6 +20,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "RageMusic.h"
+#include "ThemeManager.h"
 
 
 #define HELP_TEXT			THEME->GetMetric("ScreenMapControllers","HelpText")

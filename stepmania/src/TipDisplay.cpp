@@ -14,6 +14,7 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
+#include "ThemeManager.h"
 
 
 const float TIP_SHOW_TIME	=	3.5f;

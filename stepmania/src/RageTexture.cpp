@@ -18,34 +18,21 @@
 #include <string.h>
 #include <assert.h>
 
+
 //-----------------------------------------------------------------------------
 // RageTexture constructor
 //-----------------------------------------------------------------------------
-RageTexture::RageTexture(
-	RageDisplay* pScreen, 
-	const CString &sFilePath, 
-	int dwMaxSize, 
-	int dwTextureColorDepth,
-	int iMipMaps,
-	int iAlphaBits,
-	bool bDither,
-	bool bStretch )
+RageTexture::RageTexture( const CString &sFilePath )
 {
 //	LOG->Trace( "RageTexture::RageTexture()" );
 
-	// save a pointer to the D3D device
-	m_pd3dDevice = pScreen->m_pd3dDevice;
-	assert( m_pd3dDevice != NULL );
-
-	// save the file path
 	m_sFilePath = sFilePath;
-//	m_pd3dTexture = NULL;
 	m_iRefCount = 1;
 
 	m_iSourceWidth = m_iSourceHeight = 0;
 	m_iTextureWidth = m_iTextureHeight = 0;
 	m_iImageWidth = m_iImageHeight = 0;
-	m_iFramesWide = m_iFramesHigh = 1;
+	m_iFramesWide = m_iFramesHigh = 0;
 }
 
 RageTexture::~RageTexture()
@@ -110,3 +97,9 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 	}
 
 }
+
+const RectF *RageTexture::GetTextureCoordRect( int frameNo ) const
+{
+	return &m_TextureCoordRects[frameNo];
+}
+

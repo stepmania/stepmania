@@ -26,13 +26,9 @@ RageTextureManager*		TEXTUREMAN		= NULL;
 //-----------------------------------------------------------------------------
 // constructor/destructor
 //-----------------------------------------------------------------------------
-RageTextureManager::RageTextureManager( RageDisplay* pScreen )
+RageTextureManager::RageTextureManager( int iTextureColorDepth, int iSecondsBeforeUnload )
 {
-	assert( pScreen != NULL );
-	m_pScreen = pScreen;
-	m_iMaxTextureSize = 2048;	// infinite size
-	m_iTextureColorDepth = 16;
-	m_iSecondsBeforeUnload = 60*30;		// 30 mins
+	SetPrefs( iTextureColorDepth, iSecondsBeforeUnload );
 }
 
 RageTextureManager::~RageTextureManager()
@@ -51,7 +47,7 @@ RageTextureManager::~RageTextureManager()
 //-----------------------------------------------------------------------------
 // Load/Unload textures from disk
 //-----------------------------------------------------------------------------
-RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
+RageTexture* RageTextureManager::LoadTexture( CString sTexturePath )
 {
 	sTexturePath.MakeLower();
 
@@ -70,8 +66,6 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		pTexture = p->second;
 
 		pTexture->m_iRefCount++;
-		if( bForceReload )
-			pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 
 //		LOG->Trace( "RageTextureManager: '%s' now has %d references.", sTexturePath.GetString(), pTexture->m_iRefCount );
 	}
@@ -80,10 +74,10 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 		CString sDrive, sDir, sFName, sExt;
 		splitpath( false, sTexturePath, sDrive, sDir, sFName, sExt );
 
-		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
-			pTexture = new RageMovieTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
-		else
-			pTexture = new RageBitmapTexture( m_pScreen, sTexturePath, m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
+//		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
+//			pTexture = new RageMovieTexture( sTexturePath );
+//		else
+			pTexture = new RageBitmapTexture( sTexturePath );
 
 		LOG->Trace( "RageTextureManager: Finished loading '%s'.", sTexturePath.GetString() );
 
@@ -185,19 +179,14 @@ void RageTextureManager::ReloadAll()
 	{
 		RageTexture* pTexture = i->second;
 
-		// this is not entirely correct.  Hints are lost! XXX
-		pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, 0 );
+		pTexture->Reload();			// this is not entirely correct.  Hints are lost! XXX
 	}
 }
 
-void RageTextureManager::SetPrefs( int iMaxSize, int iTextureColorDepth, int iSecondsBeforeUnload )
+void RageTextureManager::SetPrefs( int iTextureColorDepth, int iSecondsBeforeUnload )
 {
 	m_iSecondsBeforeUnload = iSecondsBeforeUnload;
-	if( iMaxSize == m_iMaxTextureSize  &&  iTextureColorDepth == m_iTextureColorDepth )
-		return;
-	m_iMaxTextureSize = iMaxSize; 
 	m_iTextureColorDepth = iTextureColorDepth;
-	ASSERT( m_iMaxTextureSize >= 64 );
-	ASSERT( m_iTextureColorDepth >= 16 );
+	ASSERT( m_iTextureColorDepth==16 || m_iTextureColorDepth==32 );
 	ReloadAll(); 
 }

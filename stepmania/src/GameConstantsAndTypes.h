@@ -27,6 +27,9 @@
 #define	CENTER_X		(SCREEN_LEFT + (SCREEN_RIGHT - SCREEN_LEFT)/2.0f)
 #define	CENTER_Y		(SCREEN_TOP + (SCREEN_BOTTOM - SCREEN_TOP)/2.0f)
 
+#define	SCREEN_NEAR		(-1000)
+#define	SCREEN_FAR		(1000)
+
 /////////////////////////
 // Note definitions
 /////////////////////////

@@ -21,6 +21,8 @@
 #include "RageException.h"
 #include "ArrowEffects.h"
 #include "RageLog.h"
+#include <math.h>
+#include "RageDisplay.h"
 
 
 bool g_bDrawHoldHeadForTapsOnSameRow, g_bDrawTapOnTopOfHoldHead, g_bDrawTapOnTopOfHoldTail;	// cache
@@ -221,14 +223,14 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	const int	fYStep = 8;		// draw a segment every 8 pixels	// this requires that the texture dimensions be a multiple of 8
 
-	DISPLAY->SetBlendModeNormal();
-	if( bDrawGlowOnly )
-		DISPLAY->SetColorDiffuse();
-	else
-		DISPLAY->SetColorTextureMultDiffuse();
-	DISPLAY->SetAlphaTextureMultDiffuse();
-	DISPLAY->EnableTextureWrapping();
-	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
+//	DISPLAY->SetBlendModeNormal();
+//	if( bDrawGlowOnly )
+//		DISPLAY->SetColorDiffuse();
+//	else
+//		DISPLAY->SetColorTextureMultDiffuse();
+//	DISPLAY->SetAlphaTextureMultDiffuse();
+//	DISPLAY->EnableTextureWrapping();
+//	DISPLAY->SetTexture( m_sprHoldParts.GetTexture() );
 
 	//
 	// Draw the tail
@@ -269,11 +271,13 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
 			continue;
 
-		DISPLAY->AddQuad( 
-			RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
-			RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
-			RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
-			RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+		static RageVertex v[4];
+		v[0].p = RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0);	v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+		v[1].p = RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0);	v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v[2].p = RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+		v[3].p = RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordRight, fTexCoordBottom);
+
+		DISPLAY->DrawQuad( v );
 	}
 
 	//
@@ -310,11 +314,11 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
 			continue;
 
-		DISPLAY->AddQuad( 
-			RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordLeft,  fTexCoordTop),    //colorGlowTop,			// top-left
-			RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordRight, fTexCoordTop),    //colorGlowTop,			// top-right
-			RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordLeft,  fTexCoordBottom), //colorGlowBottom,		// bottom-left
-			RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+		static RageVertex v[4];
+		v[0].p = RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0);	v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[2].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		v[1].p = RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0);	v[1].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v[2].p = RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0);	v[2].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+		v[3].p = RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0);	v[3].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
 	}	
 
 	if( g_bDrawTapOnTopOfHoldHead )
@@ -357,14 +361,12 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			if( !bDrawGlowOnly && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
 				continue;
 
-			DISPLAY->AddQuad( 
-				RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordLeft,  fTexCoordTop),   // colorGlowTop,			// top-left
-				RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0), bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop,    RageVector2(fTexCoordRight, fTexCoordTop),   // colorGlowTop,			// top-right
-				RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordLeft,  fTexCoordBottom),// colorGlowBottom,		// bottom-left
-				RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0), bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom, RageVector2(fTexCoordRight, fTexCoordBottom) );//, colorGlowBottom );	// bottom-right
+		static RageVertex v[4];
+		v[0].p = RageVector3(fXTopLeft-0.5f,    fYTop-0.5f,   0);	v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[2].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		v[0].p = RageVector3(fXTopRight-0.5f,   fYTop-0.5f,   0);	v[0].c = bDrawGlowOnly ? colorGlowTop    : colorDiffuseTop;		v[2].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v[0].p = RageVector3(fXBottomLeft-0.5f, fYBottom-0.5f,0);	v[0].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
+		v[0].p = RageVector3(fXBottomRight-0.5f,fYBottom-0.5f,0);	v[0].c = bDrawGlowOnly ? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
 		}
-
-		DISPLAY->FlushQueue();
 	}
 	else
 	{

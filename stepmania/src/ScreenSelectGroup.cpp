@@ -21,6 +21,8 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageMusic.h"
+#include "ThemeManager.h"
+#include <map>
 
 
 #define FRAME_X				THEME->GetMetricF("ScreenSelectGroup","FrameX")
@@ -78,20 +80,19 @@ ScreenSelectGroup::ScreenSelectGroup()
 		aAllSongs.erase( aAllSongs.begin()+j, aAllSongs.begin()+j+1 );
 	}
 
-	CStringArray asGroupNames;
-	for( i=0; i<aAllSongs.size(); i++ ) {
-		asGroupNames.push_back( aAllSongs[i]->m_sGroupName );
+	// Add all group names to a map.
+	std::map<CString, CString> mapGroupNames;
+	for( i=0; i<aAllSongs.size(); i++ )
+	{
+		const CString& sGroupName = aAllSongs[i]->m_sGroupName;
+		mapGroupNames[ sGroupName ] = "";	// group name maps to nothing
 	}
 
-	/* Remove duplicate groups. */
-	SortCStringArray(asGroupNames, true);
-	for( i=asGroupNames.size()-1; i > 0; --i ) {
-		if( asGroupNames[i] == asGroupNames[i-1] )
-			asGroupNames.erase( asGroupNames.begin()+i,
-								   asGroupNames.begin()+i+1 );
-	}
-
-	asGroupNames.insert(asGroupNames.begin(), "ALL MUSIC" );
+	// copy group names into a vector
+	std::vector<CString> asGroupNames;
+	for( std::map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++i )
+		asGroupNames.push_back( iter->first );
+	asGroupNames.push_back( "ALL MUSIC" );	// "ALL MUSIC" is a special group
 
 	// Add songs to the MusicList.
 	for( unsigned g=0; g < asGroupNames.size(); g++ ) /* for each group */

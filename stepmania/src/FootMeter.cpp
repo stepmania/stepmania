@@ -14,6 +14,8 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
+#include "ThemeManager.h"
+#include "Notes.h"
 
 
 const int NUM_FEET_IN_METER					=	10;

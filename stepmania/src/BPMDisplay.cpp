@@ -14,6 +14,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 
 #define NORMAL_COLOR_TOP		THEME->GetMetricC("BPMDisplay","NormalColorTop")

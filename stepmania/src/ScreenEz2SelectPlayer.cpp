@@ -20,6 +20,7 @@ Andrew Livy
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
+#include "ThemeManager.h"
 
 /* Constants */
 

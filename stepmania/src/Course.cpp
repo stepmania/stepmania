@@ -21,6 +21,7 @@
 #include "MsdFile.h"
 #include "PlayerOptions.h"
 #include "SongOptions.h"
+#include "RageUtil.h"
 
 
 void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )

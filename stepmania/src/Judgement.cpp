@@ -15,6 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
 
 const float JUDGEMENT_DISPLAY_TIME	=	0.8f;
 

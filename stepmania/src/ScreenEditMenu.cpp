@@ -20,6 +20,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "RageMusic.h"
+#include "ThemeManager.h"
 
 
 //

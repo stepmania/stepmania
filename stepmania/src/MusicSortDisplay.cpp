@@ -15,6 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "MusicSortDisplay.h"
+#include "ThemeManager.h"
 
 
 MusicSortDisplay::MusicSortDisplay()

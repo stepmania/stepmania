@@ -18,222 +18,46 @@
 #include "RageException.h"
 #include "RageTexture.h"
 #include "RageMath.h"
+#include "SDL.h"
+#include "SDL_opengl.h"
+#include "RageTypes.h"
+#include "GameConstantsAndTypes.h"
 
 
 RageDisplay*		DISPLAY	= NULL;
 
 
-RageDisplay::RageDisplay( HWND hWnd )
+////////////
+// Globals
+////////////
+const int MAX_NUM_VERTICIES = 1000;
+SDL_Surface			*g_screen = NULL;		// this class is a singleton, so there can be only one
+vector<RageMatrix>	g_matModelStack;	// model matrix stack
+RageMatrix			g_matView;			// view matrix
+RageMatrix&			GetTopModelMatrix() { return g_matModelStack.back(); }
+int					g_flags = 0;		/* SDL video flags */
+GLenum				g_vertMode = GL_TRIANGLES;
+RageVertex			g_vertQueue[MAX_NUM_VERTICIES];
+int					g_iNumVerts;
+float				g_fLastCheckTime;
+int					g_iFramesRenderedSinceLastCheck;
+int					g_iVertsRenderedSinceLastCheck;
+int					g_iDrawsSinceLastCheck;
+int					g_iFPS, g_iTPF, g_iDPF;
+
+
+RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync )
 {
-	LOG->Trace( "RageDisplay::RageDisplay()" );
+//	LOG->Trace( "RageDisplay::RageDisplay()" );
 
-	// Save the window handle
-	m_hWnd = hWnd;
-	m_pd3d = NULL;
-	m_pd3dDevice = NULL;
-	m_pVB = NULL;
-
-	m_fLastCheckTime = TIMER->GetTimeSinceStart();
-	m_iFramesRenderedSinceLastCheck = 0;
-	m_iTrianglesRenderedSinceLastCheck = 0;
-	m_iDrawsSinceLastCheck = 0;
-	m_iFPS = 0;
-	m_iTPF = 0;
-	m_iDPF = 0;
-
-	m_iNumVerts = 0;
-
-	try
-	{
-		// Construct a Direct3D object
-		m_pd3d = Direct3DCreate8( D3D_SDK_VERSION );
-	}
-	catch (...) 
-	{
-		// Edwin Evans: Catch any exception. It won't be caught by main exception handler.
-		throw RageException( "Unknown exception in Direct3DCreate8." );
-	}
-
-    if( NULL == m_pd3d )
-		throw RageException( "Direct3DCreate8 failed." );
-
-	HRESULT  hr;
-	if( FAILED( hr = m_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &m_DeviceCaps) ) )
-	{
-		throw RageException( 
-			"There was an error while initializing your video card.\n\n"
-			"Your system is reporting that Direct3D8 hardware acceleration\n"
-			"is not available.  In most cases, you can download an updated\n"
-			"driver from your card's manufacturer."
-		);
-	}
-
-	LOG->Trace( 
-		"Video card info:\n"
-		" - max texture width is %d\n"
-		" - max texture height is %d\n"
-		" - max texture blend stages is %d\n"
-		" - max simultaneous textures is %d\n",
-		m_DeviceCaps.MaxTextureWidth,
-		m_DeviceCaps.MaxTextureHeight,
-		m_DeviceCaps.MaxTextureBlendStages,
-		m_DeviceCaps.MaxSimultaneousTextures
-		);
-
-
-
-	// Enumerate possible display modes
-	LOG->Trace( "This display adaptor supports the following modes:" );
-	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
-	{
-		D3DDISPLAYMODE mode;
-		if( SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
-		{
-			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
-		}
-	}
-
-	// Save the original desktop format.
-	m_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &m_DesktopMode );
-
-	D3DADAPTER_IDENTIFIER8	identifier;
-	if( FAILED( hr = m_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier ) ) )
-		LOG->Trace( hr, "GetAdapterIdentifier failed" );
-	else
-		LOG->Trace( "Driver: %s.  Description: %s.", 
-			identifier.Driver, identifier.Description );
-}
-
-unsigned RageDisplay::MaxRefresh(unsigned uWidth, unsigned uHeight, D3DFORMAT fmt) const
-{
-	UINT mx = D3DPRESENT_RATE_DEFAULT;
-	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
-	{
-		D3DDISPLAYMODE mode;
-		if( !SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
-			continue;
-
-		if(mode.Width != uWidth) continue;
-		if(mode.Height != uHeight) continue;
-		if(mode.Format != fmt) continue;
-
-		if(mx == D3DPRESENT_RATE_DEFAULT || mode.RefreshRate > mx)
-			mx = mode.RefreshRate;
-	}
-	return mx;
-}
-
-/* Get the maximum refresh rate available in the given size, for any format
- * that fits bpp. */
-void RageDisplay::GetHzAtResolution(unsigned width, unsigned height, unsigned bpp, CArray<int,int> &add) const
-{
-	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
-	{
-		D3DDISPLAYMODE mode;
-		if( !SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
-			continue;
-
-		if(mode.Width != width) continue;
-		if(mode.Height != height) continue;
-		if(GetBPP(mode.Format) != bpp) continue;
-
-		add.push_back(mode.RefreshRate);
-	}
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
+	
+	SetVideoMode( windowed, width, height, bpp, rate, vsync );
 }
 
 RageDisplay::~RageDisplay()
 {
-	ReleaseVertexBuffer();
-	// Release our D3D Device
-	SAFE_RELEASE( m_pd3dDevice );
-    m_pd3d->Release();
-}
-
-
-HRESULT RageDisplay::SetMode()
-{
-	HRESULT hr;
-	if( m_pd3dDevice == NULL )
-	{
-		// device is not yet created.  We need to create it
-		if( FAILED( hr = m_pd3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
-											m_hWnd,
-											D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
-											&m_d3dpp, &m_pd3dDevice) ) )
-		{
-			return hr;
-		}
-		LOG->Trace( 
-			"Video card info:\n"
-			" - available texture mem is %u\n",
-			m_pd3dDevice->GetAvailableTextureMem()
-		);
-		if( m_pVB == NULL )
-			CreateVertexBuffer();
-	}
-	else
-	{
-		// device is already created.  Just reset it.
-		if( FAILED( hr = m_pd3dDevice->Reset( &m_d3dpp ) ) )
-			return hr;
-	}
-
-	LOG->Trace( "Mode change was successful." );
-	return S_OK;
-}
-
-D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
-{
-	HRESULT hr;
-
-	// If windowed, then dwBPP is ignored.  Use whatever works.
-    CArray<D3DFORMAT,D3DFORMAT> arrayBackBufferFormats;		// throw all possibilities in here
-	
-	/* When windowed, add all formats; otherwise add only formats that match dwBPP. */
-	if( iBPP == 16 || bWindowed )
-	{
-		arrayBackBufferFormats.push_back( D3DFMT_R5G6B5 );
-		arrayBackBufferFormats.push_back( D3DFMT_X1R5G5B5 );
-		arrayBackBufferFormats.push_back( D3DFMT_A1R5G5B5 );
-	}
-	if( iBPP == 32 || bWindowed )
-	{
-		arrayBackBufferFormats.push_back( D3DFMT_R8G8B8 );
-		arrayBackBufferFormats.push_back( D3DFMT_X8R8G8B8 );
-		arrayBackBufferFormats.push_back( D3DFMT_A8R8G8B8 );
-	}
-	if( !bWindowed && iBPP != 16 && iBPP != 32 )
-		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
-
-	// Test each back buffer format until we find something that works.
-	for( unsigned i=0; i < arrayBackBufferFormats.size(); i++ )
-	{
-		D3DFORMAT fmtBackBuffer = arrayBackBufferFormats[i];
-
-		D3DFORMAT fmtDisplay;
-		if( bWindowed )
-			fmtDisplay = m_DesktopMode.Format;
-		else	// Fullscreen
-			fmtDisplay = arrayBackBufferFormats[i];
-
-		LOG->Trace( "Testing format: display %d, back buffer %d, windowed %d...",
-					fmtDisplay, fmtBackBuffer, bWindowed );
-
-		hr = m_pd3d->CheckDeviceType( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
-			fmtDisplay, fmtBackBuffer, bWindowed );
-
-		if( FAILED(hr) ) {
-			LOG->Trace( hr, "That won't work.  ");
-			continue;
-		}
-
-		// done searching
-		LOG->Trace( "This will work." );
-		return fmtBackBuffer;
-	}
-
-	// we didn't find an appropriate format
-	return D3DFMT_UNKNOWN;
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 
@@ -241,397 +65,213 @@ D3DFORMAT RageDisplay::FindBackBufferType(bool bWindowed, int iBPP)
 // Name: SwitchDisplayMode()
 // Desc:
 //-----------------------------------------------------------------------------
-bool RageDisplay::SwitchDisplayMode( 
-	bool bWindowed, int iWidth, int iHeight, int iBPP, int iFullScreenHz, bool bVsync )
+void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync )
 {
-	LOG->Trace( "RageDisplay::SwitchDisplayModes( %d, %d, %d, %d, %d, %d )", bWindowed, iWidth, iHeight, iBPP, iFullScreenHz, bVsync );
-
-	if( !bWindowed )
-		SetCursor( NULL );
+//	LOG->Trace( "RageDisplay::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
 
 
-	HRESULT hr;
+//	if( windowed )
+//		flags |= SDL_FULLSCREEN;
+	g_flags |= SDL_DOUBLEBUF;
+	g_flags |= SDL_RESIZABLE;
+	g_flags |= SDL_OPENGL;
 
-    // Find a pixel format for the back buffer.
-	D3DFORMAT fmtBackBuffer=FindBackBufferType( bWindowed, iBPP );
-	if( fmtBackBuffer == D3DFMT_UNKNOWN )
+	SDL_ShowCursor( ~g_flags & SDL_FULLSCREEN );
+
+	SDL_InitSubSystem(SDL_INIT_VIDEO);
+
+	switch( bpp )
 	{
-		// we didn't find an appropriate format
-		LOG->Trace( "failed to find an appropriate format for %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
-		return false;
+	case 15:
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+		break;
+	case 16:
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+		break;
+	case 24:
+	case 32:
+	default:
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	}
 
-    // Set up presentation parameters for the display
-    ZeroMemory( &m_d3dpp, sizeof(m_d3dpp) );
-    
-	m_d3dpp.BackBufferWidth			=	iWidth;
-    m_d3dpp.BackBufferHeight		=	iHeight;
-    m_d3dpp.BackBufferFormat		=	fmtBackBuffer;
-    m_d3dpp.BackBufferCount			=	1;
-    m_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
-	m_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
-	m_d3dpp.hDeviceWindow			=	m_hWnd;
-    m_d3dpp.Windowed				=	bWindowed;
-    m_d3dpp.EnableAutoDepthStencil	=	TRUE;
-    m_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
-    m_d3dpp.Flags					=	0;
-	m_d3dpp.FullScreen_RefreshRateInHz = bWindowed? D3DPRESENT_RATE_DEFAULT :
-									iFullScreenHz == REFRESH_MAX? MaxRefresh(iWidth, iHeight, fmtBackBuffer):
-									iFullScreenHz == REFRESH_DEFAULT? D3DPRESENT_RATE_DEFAULT:
-										iFullScreenHz;
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, bpp);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, TRUE);
 
-	/* Windowed must always use D3DPRESENT_INTERVAL_DEFAULT. */
-	m_d3dpp.FullScreen_PresentationInterval = 
-		bWindowed || bVsync? D3DPRESENT_INTERVAL_DEFAULT:
-		D3DPRESENT_INTERVAL_IMMEDIATE;
+	g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
+	if(!g_screen)
+		throw RageException("Failed to open screen!");
 
-	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
-		m_d3dpp.BackBufferWidth, m_d3dpp.BackBufferHeight, m_d3dpp.BackBufferFormat,
-		m_d3dpp.BackBufferCount,
-		m_d3dpp.MultiSampleType, m_d3dpp.SwapEffect, m_d3dpp.hDeviceWindow,
-		m_d3dpp.Windowed, m_d3dpp.EnableAutoDepthStencil, m_d3dpp.AutoDepthStencilFormat,
-		m_d3dpp.Flags, m_d3dpp.FullScreen_RefreshRateInHz,
-		m_d3dpp.FullScreen_PresentationInterval
-	);
+	/*
+	 * Set up OpenGL for 2D rendering.
+	 */
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
 
+	glViewport(0, 0, g_screen->w, g_screen->h);
 
-	if( FAILED( hr=SetMode() ) )
-	{
-		LOG->Trace( hr, "failed to set device: %d, %u, %u, %u.", bWindowed, iWidth, iHeight, iBPP );
-		return false;
-	}
+	/*
+	 * Set state variables
+	 */
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-	// Clear the back buffer and present it so we don't show the gibberish that was
-	// in video memory from the last app.
-	BeginFrame();
-	EndFrame();
-	ShowFrame();
+//	glBegin( GL_TRIANGLES );
+//	glColor4f( 1,1,1,1 );
+//	glVertex3f( 0, 0, 0 ); 
+//	glVertex3f( 320, 0, 0 ); 
+//	glVertex3f( 320, 240, 0 );
+//	glEnd();
 
-	return true;
+//	SDL_GL_SwapBuffers();
 }
 
-
-//-----------------------------------------------------------------------------
-// Name: Reset()
-// Desc:
-//-----------------------------------------------------------------------------
-HRESULT RageDisplay::Reset()
+int RageDisplay::GetMaxTextureSize() const
 {
-	return m_pd3dDevice->Reset( &m_d3dpp );
+	GLint size;
+	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
+	return size;
 }
 
-
-//-----------------------------------------------------------------------------
-// Name: BeginFrame()
-// Desc:
-//-----------------------------------------------------------------------------
-HRESULT RageDisplay::BeginFrame()
+void RageDisplay::Clear()
 {
-	//////////////////////////////////////////////////////////////
-	// Do some fancy testing to make sure the D3D deivce is ready.
-	// This is mainly used when the the app is reactivated
-	// after the user has Alt-tabed out of full screen mode.
-	//////////////////////////////////////////////////////////////
-
-	// Test cooperative level
-    HRESULT hr;
-
-    // Test the cooperative level to see if it's okay to render
-    if( FAILED( hr = m_pd3dDevice->TestCooperativeLevel() ) )
-    {
-        // If the device was lost, do not render until we get it back
-        if( D3DERR_DEVICELOST == hr )
-            return hr;			// not ready to render
-
-        // Check if the device needs to be resized.
-        if( D3DERR_DEVICENOTRESET == hr )
-	        return hr;
-
-		return hr;
-    }
-
-
-	m_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
-						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
-	
-	
-	if ( FAILED( hr  = m_pd3dDevice->BeginScene() ) )
-		return E_FAIL;
-
-	// disable culling so backward polys can be drawn
-	m_pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
-	m_pd3dDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
-
-	// Enable Alpha Blending and Testing
-	m_pd3dDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	//m_pd3dDevice->SetRenderState( D3DRS_ALPHATESTENABLE,  TRUE );
-	//m_pd3dDevice->SetRenderState( D3DRS_ALPHAREF,         0x08 );
-	//m_pd3dDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL );
-            
-	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
-
-	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
-//	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
-//	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
-
-
-    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
-    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
-
-
-	// Don't tile texture coords.  This creates ugly wrapping artifacts on textures that have to be rescaled.
-	DisableTextureWrapping();
-    
-	// m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_BORDER   );
-    // m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_BORDER   );
-    // m_pd3dDevice->SetTextureStageState( 0, D3DTSS_BORDERCOLOR, D3DCOLOR_ARGB(0,0,0,0) );
-
-
-	m_pd3dDevice->SetVertexShader( D3DFVF_RAGEVERTEX );
-	m_pd3dDevice->SetStreamSource( 0, m_pVB, sizeof(RageVertex) );
-
-
-
-	return S_OK;
+	glClearColor( 0,0,0,1 );
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
-
-HRESULT RageDisplay::EndFrame()
+void RageDisplay::Flip()
 {
 	FlushQueue();
-
-
-	m_pd3dDevice->EndScene();
-
-
-	// update stats
-	m_iFramesRenderedSinceLastCheck++;
-
-	float fTimeNow = TIMER->GetTimeSinceStart();
-	if( fTimeNow - m_fLastCheckTime > 1.0f )	// update stats every 1 sec.
-	{
-		m_iFPS = m_iFramesRenderedSinceLastCheck;
-		m_iFramesRenderedSinceLastCheck = 0;
-		m_iTPF = m_iTrianglesRenderedSinceLastCheck / m_iFPS;
-		m_iTrianglesRenderedSinceLastCheck = 0;
-		m_iDPF = m_iDrawsSinceLastCheck / m_iFPS;
-		m_iDrawsSinceLastCheck = 0;
-		m_fLastCheckTime = fTimeNow;
-
-		//LOG->Trace( "FPS: %d, TPF: %d, DPF: %d", m_iFPS, m_iTPF, m_iDPF );
-	}
-
-
-	return S_OK;
+	SDL_GL_SwapBuffers();
 }
 
-HRESULT RageDisplay::ShowFrame()
+
+void RageDisplay::GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const 
 {
-	if( m_pd3dDevice )
-		m_pd3dDevice->Present( 0, 0, 0, 0 );
 
-	return S_OK;
 }
 
-
-HRESULT RageDisplay::Invalidate()
+bool RageDisplay::IsWindowed() const 
 {
-	return S_OK;
+	return true; // FIXME
 }
-
-
-HRESULT RageDisplay::Restore()
+void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, lower-left, lower-right
 {
-	return S_OK;
+	DrawQuads( v, 4 );
 }
-
-unsigned RageDisplay::GetBPP(D3DFORMAT fmt) const
-{ 
-	switch( fmt )
-	{
-	case D3DFMT_R5G6B5:
-	case D3DFMT_X1R5G5B5:
-	case D3DFMT_A1R5G5B5:
-		return 16;
-	case D3DFMT_R8G8B8:
-	case D3DFMT_X8R8G8B8:
-	case D3DFMT_A8R8G8B8:
-		return 32;
-	default:
-		ASSERT( false );	// unexpected format
-		return 0;
-	}
-}
-
-
-void RageDisplay::CreateVertexBuffer()
+void RageDisplay::DrawQuads( const RageVertex v[], int iNumVerts )
 {
-	HRESULT hr;
-	if( FAILED( hr = m_pd3dDevice->CreateVertexBuffer( 
-									MAX_NUM_VERTICIES * sizeof(RageVertex),
-									D3DUSAGE_WRITEONLY, D3DFVF_RAGEVERTEX,
-									D3DPOOL_MANAGED, &m_pVB ) ) )
-		throw RageException( hr, "Vertex Buffer Could Not Be Created" );
-}
-
-
-void RageDisplay::ReleaseVertexBuffer()
-{
-	SAFE_RELEASE( m_pVB );
-}
-
-/*
-void RageDisplay::AddTriangle( const RageVertex& v[3] )
-{
-	COPY( &m_vertQueue[m_iNumVerts], v );		// do a big mem copy
-	for( int i=0; i<3; i++ )
-		RageVec3TransformCoord( &m_vertQueue[m_iNumVerts+i].p, v[i].p, &GetTopMatrix() ); 
-	m_iNumVerts+=3; 
-}
-*/
-
-void RageDisplay::AddQuad( const RageVertex v[4] )	// upper-left, upper-right, lower-left, lower-right
-{
-	AddQuad( 
-		v[0].p, v[0].c, v[0].t,
-		v[1].p, v[1].c, v[1].t, 
-		v[2].p, v[2].c, v[2].t, 
-		v[3].p, v[3].c, v[3].t ); 
-}
-void RageDisplay::AddFan( const RageVertex v[], int iNumPrimitives )
-{
-	// HACK: This function does not take winding order into account.  It will goof if you turn on culling.
-	for( int i=0; i<iNumPrimitives; i++ )
-	{
-		AddTriangle( 
-			v[0+0].p, v[0+0].c, v[0+0].t,
-			v[i+1].p, v[i+1].c, v[i+1].t,
-			v[i+2].p, v[i+2].c, v[i+2].t
-			);
-	}
-}
-void RageDisplay::AddStrip( const RageVertex v[], int iNumPrimitives )
-{
-	// HACK: This function does not take winding order into account.  It will goof if you turn on culling.
-	for( int i=0; i<iNumPrimitives; i++ )
-	{
-		AddTriangle( 
-			v[i+0].p, v[i+0].c, v[i+0].t,
-			v[i+1].p, v[i+1].c, v[i+1].t,
-			v[i+2].p, v[i+2].c, v[i+2].t
-			);
-	}
-}
-void RageDisplay::AddTriangle(
-	const RageVector3& p0, const D3DCOLOR& c0, const RageVector2& t0,
-	const RageVector3& p1, const D3DCOLOR& c1, const RageVector2& t1,
-	const RageVector3& p2, const D3DCOLOR& c2, const RageVector2& t2 )
-{
-	ASSERT( m_iNumVerts < MAX_NUM_VERTICIES-3 );
-
-	// transform the verticies as we copy
-	RageVec3TransformCoord( &m_vertQueue[m_iNumVerts].p, &p0, &GetTopMatrix() ); 
-	m_vertQueue[m_iNumVerts].c = c0;
-	m_vertQueue[m_iNumVerts].t = t0;
-	m_iNumVerts++; 
-	RageVec3TransformCoord( &m_vertQueue[m_iNumVerts].p, &p1, &GetTopMatrix() ); 
-	m_vertQueue[m_iNumVerts].c = c1;
-	m_vertQueue[m_iNumVerts].t = t1;
-	m_iNumVerts++; 
-	RageVec3TransformCoord( &m_vertQueue[m_iNumVerts].p, &p2, &GetTopMatrix() ); 
-	m_vertQueue[m_iNumVerts].c = c2;
-	m_vertQueue[m_iNumVerts].t = t2;
-	m_iNumVerts++; 
-
-	if( m_iNumVerts > MAX_NUM_VERTICIES-4 )
+	if( g_vertMode != GL_QUADS )
 		FlushQueue();
 
-	m_iTrianglesRenderedSinceLastCheck++;
+	ASSERT( (iNumVerts%4) == 0 );
+	g_vertMode = GL_QUADS;
+	AddVerts( v, iNumVerts );
 }
-
-void RageDisplay::AddQuad(
-	const RageVector3 &p0, const D3DCOLOR& c0, const RageVector2& t0,	// upper-left
-	const RageVector3 &p1, const D3DCOLOR& c1, const RageVector2& t1, 	// upper-right
-	const RageVector3 &p2, const D3DCOLOR& c2, const RageVector2& t2, 	// lower-left
-	const RageVector3 &p3, const D3DCOLOR& c3, const RageVector2& t3 )	// lower-right
+void RageDisplay::DrawFan( const RageVertex v[], int iNumVerts )
 {
-	// trangles must be in clockwise order in case we ever turn on clipping
-	AddTriangle( 
-		p0, c0, t0,		// upper-left
-		p2, c2, t2,		// lower-left
-		p3, c3, t3 );	// lower-right
-	AddTriangle(  
-		p0, c0, t0,		// upper-left
-		p3, c3, t3,		// lower-right
-		p1, c1, t1 );	// upper-right
+	if( g_vertMode != GL_TRIANGLE_FAN )
+		FlushQueue();
+
+	ASSERT( iNumVerts >= 3 );
+	g_vertMode = GL_TRIANGLE_FAN;
+	AddVerts( v, iNumVerts );
+	FlushQueue();
+}
+void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
+{
+	if( g_vertMode != GL_TRIANGLE_STRIP )
+		FlushQueue();
+
+	ASSERT( iNumVerts >= 3 );
+	g_vertMode = GL_TRIANGLE_STRIP;
+	AddVerts( v, iNumVerts );
+	FlushQueue();
+}
+void RageDisplay::AddVerts( const RageVertex v[], int iNumVerts )
+{
+	// Try not to overflow the queue
+	if( g_iNumVerts > MAX_NUM_VERTICIES-30 )	
+		FlushQueue();
+
+	for( int i=0; i<iNumVerts; i++ )
+	{
+		// transform the verticies as we copy
+		RageVec3TransformCoord( &g_vertQueue[g_iNumVerts].p, &v[i].p, &GetTopModelMatrix() ); 
+		g_vertQueue[g_iNumVerts].c = v[i].c;
+		g_vertQueue[g_iNumVerts].t = v[i].t;
+		g_iNumVerts++; 
+	}
 }
 
 void RageDisplay::FlushQueue()
 {
-	if( m_iNumVerts == 0 )
+	if( g_iNumVerts == 0 )
 		return;
-	ASSERT( (m_iNumVerts % 3) == 0 );
 
-	m_pd3dDevice->DrawPrimitiveUP( D3DPT_TRIANGLELIST, m_iNumVerts/3, m_vertQueue, sizeof(RageVertex) );
-	m_iNumVerts = 0;
+	glInterleavedArrays( GL_T2F_C4UB_V3F, sizeof(RageVertex), g_vertQueue );
+	glDrawArrays( g_vertMode, 0, g_iNumVerts );
 
-/*
-	RageVertex* v;
-	m_pVB->Lock( 0, 0, (BYTE**)&v, 0 );
-	memcpy( v, m_vertQueue, sizeof(RageVertex)*m_iNumVerts );
-	m_pd3dDevice->DrawPrimitive( D3DPT_TRIANGLELIST, 0, m_iNumVerts/3 );
-	m_pVB->Unlock();
-	m_iNumVerts = 0;
-*/
+	g_iVertsRenderedSinceLastCheck += g_iNumVerts;
+	g_iNumVerts = 0;
 
-	m_iDrawsSinceLastCheck++;
+	g_iDrawsSinceLastCheck++;
 }
 
 void RageDisplay::SetViewTransform( const RageMatrix* pMatrix )
 {
 	FlushQueue();
-	m_pd3dDevice->SetTransform( D3DTS_VIEW, (D3DMATRIX*)pMatrix );
+	// OpenGL doesn't have a separate view matrix.  We need to save it and muliply in later
+	g_matView = *pMatrix;
 }
 void RageDisplay::SetProjectionTransform( const RageMatrix* pMatrix )
 {
 	FlushQueue();
-	m_pd3dDevice->SetTransform( D3DTS_PROJECTION, (D3DMATRIX*)pMatrix );
+	glMatrixMode( GL_MODELVIEW );
+	glLoadMatrixf( (float*)pMatrix );
 }
 void RageDisplay::GetViewTransform( RageMatrix* pMatrixOut )
 {
-	m_pd3dDevice->GetTransform( D3DTS_VIEW, (D3DMATRIX*)pMatrixOut );
+	*pMatrixOut = g_matView;
 }
 void RageDisplay::GetProjectionTransform( RageMatrix* pMatrixOut )
 {
-	m_pd3dDevice->GetTransform( D3DTS_PROJECTION, (D3DMATRIX*)pMatrixOut );
+	glGetFloatv( GL_PROJECTION_MATRIX, (float*)pMatrixOut );
 }
-
 
 void RageDisplay::ResetMatrixStack() 
 { 
 	RageMatrix ident;
 	RageMatrixIdentity( &ident );
-	m_MatrixStack.clear();
-	m_MatrixStack.push_back(ident);
+	g_matModelStack.clear();
+	g_matModelStack.push_back(ident);
 }
 
 void RageDisplay::PushMatrix() 
 { 
-	m_MatrixStack.push_back( GetTopMatrix() );	
-	ASSERT(m_MatrixStack.size()<20);		// check for infinite loop
+	g_matModelStack.push_back( GetTopModelMatrix() );	
+	ASSERT(g_matModelStack.size()<20);		// check for infinite loop
 }
 
 void RageDisplay::PopMatrix() 
 { 
-	m_MatrixStack.erase( m_MatrixStack.end()-1, m_MatrixStack.end() ); 
+	g_matModelStack.erase( g_matModelStack.end()-1, g_matModelStack.end() ); 
+	ASSERT(g_matModelStack.size()>=1);	// popped a matrix we didn't push
 }
 
 void RageDisplay::Translate( float x, float y, float z )
 {
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
-	RageMatrix& matTop = GetTopMatrix();
+	RageMatrix& matTop = GetTopModelMatrix();
 	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
@@ -639,7 +279,7 @@ void RageDisplay::TranslateLocal( float x, float y, float z )
 {
 	RageMatrix matTemp;
 	RageMatrixTranslation( &matTemp, x, y, z );
-	RageMatrix& matTop = GetTopMatrix();
+	RageMatrix& matTop = GetTopModelMatrix();
 	RageMatrixMultiply( &matTop, &matTop, &matTemp );
 }
 
@@ -647,7 +287,7 @@ void RageDisplay::Scale( float x, float y, float z )
 {
 	RageMatrix matTemp;
 	RageMatrixScaling( &matTemp, x, y, z );
-	RageMatrix& matTop = GetTopMatrix();
+	RageMatrix& matTop = GetTopModelMatrix();
 	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
@@ -655,7 +295,7 @@ void RageDisplay::RotateX( float r )
 {
 	RageMatrix matTemp;
 	RageMatrixRotationX( &matTemp, r );
-	RageMatrix& matTop = GetTopMatrix();
+	RageMatrix& matTop = GetTopModelMatrix();
 	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
@@ -663,7 +303,7 @@ void RageDisplay::RotateY( float r )
 {
 	RageMatrix matTemp;
 	RageMatrixRotationY( &matTemp, r );
-	RageMatrix& matTop = GetTopMatrix();
+	RageMatrix& matTop = GetTopModelMatrix();
 	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
 
@@ -671,146 +311,105 @@ void RageDisplay::RotateZ( float r )
 {
 	RageMatrix matTemp;
 	RageMatrixRotationZ( &matTemp, r );
-	RageMatrix& matTop = GetTopMatrix();
+	RageMatrix& matTop = GetTopModelMatrix();
 	RageMatrixMultiply( &matTop, &matTemp, &matTop );
 }
-
-/*
-void RageDisplay::RotateYawPitchRoll( const float x, const float y, const float z )
-{
-	RageMatrix matTemp;
-	RageMatrixRotationYawPitchRoll( &matTemp, x, y, z );
-	RageMatrix& matTop = GetTopMatrix();
-	RageMatrixMultiply( &matTop, &matTemp, &matTop );
-}
-*/
 
 void RageDisplay::SetTexture( RageTexture* pTexture )
 {
-	LPDIRECT3DBASETEXTURE8 pNewD3DTexture = pTexture ? pTexture->GetD3DTexture() : NULL;
+	static int iLastTexID = 0;
+	int iNewTexID = pTexture ? pTexture->GetGLTextureID() : 0;
 
-	LPDIRECT3DBASETEXTURE8 pOldD3DTexture;
-	m_pd3dDevice->GetTexture( 0, &pOldD3DTexture );
-
-	if( pOldD3DTexture != pNewD3DTexture )
+	if( iLastTexID != iNewTexID )
 		FlushQueue();
 
-	if(pOldD3DTexture)
-		pOldD3DTexture->Release();
-	
-	m_pd3dDevice->SetTexture( 0, pNewD3DTexture );
+	glBindTexture( GL_TEXTURE_2D, iNewTexID );
 }
-void RageDisplay::SetColorTextureMultDiffuse()
+void RageDisplay::SetTextureModeModulate()
 {
-	DWORD dw0, dw1, dw2;
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG1, &dw0 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG2, &dw1 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLOROP,   &dw2 );
+	int a;
+	glGetTexEnviv( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, &a );
 
-	if( dw0!=D3DTA_TEXTURE || dw1!=D3DTA_DIFFUSE || dw2!=D3DTOP_MODULATE )
+	if( a == GL_MODULATE )
 		FlushQueue();
 
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
-void RageDisplay::SetColorDiffuse()
-{
-	DWORD dw0, dw1, dw2;
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG1, &dw0 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLORARG2, &dw1 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_COLOROP,   &dw2 );
 
-	if( dw0!=D3DTA_TEXTURE || dw1!=D3DTA_DIFFUSE || dw2!=D3DTOP_SELECTARG2 )
+void RageDisplay::SetTextureModeGlow()
+{
+	int a, b;
+	glGetIntegerv( GL_BLEND_SRC, &a );
+	glGetIntegerv( GL_BLEND_DST, &b );
+
+	if( a!=GL_SRC_ALPHA || b!=GL_ONE )
 		FlushQueue();
 
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-}
-void RageDisplay::SetAlphaTextureMultDiffuse()
-{
-	DWORD dw0, dw1, dw2;
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ALPHAARG1, &dw0 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ALPHAARG2, &dw1 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ALPHAOP,   &dw2 );
-
-	if( dw0!=D3DTA_TEXTURE || dw1!=D3DTA_DIFFUSE || dw2!=D3DTOP_MODULATE )
-		FlushQueue();
-
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
-	m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE );
 }
 void RageDisplay::SetBlendModeNormal()
 {
-	DWORD dw0, dw1;
-	m_pd3dDevice->GetRenderState( D3DRS_SRCBLEND, &dw0 );
-	m_pd3dDevice->GetRenderState( D3DRS_DESTBLEND, &dw1 );
+	int a, b;
+	glGetIntegerv( GL_BLEND_SRC, &a );
+	glGetIntegerv( GL_BLEND_DST, &b );
 
-	if( dw0!=D3DBLEND_SRCALPHA || dw1!=D3DBLEND_INVSRCALPHA )
+	if( a!=GL_SRC_ALPHA || b!=GL_ONE_MINUS_SRC_ALPHA )
 		FlushQueue();
 
-	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
-	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 }
 void RageDisplay::SetBlendModeAdd()
 {
-	DWORD dw0, dw1;
-	m_pd3dDevice->GetRenderState( D3DRS_SRCBLEND, &dw0 );
-	m_pd3dDevice->GetRenderState( D3DRS_DESTBLEND, &dw1 );
+	int a, b;
+	glGetIntegerv( GL_BLEND_SRC, &a );
+	glGetIntegerv( GL_BLEND_DST, &b );
 
-	if( dw0!=D3DBLEND_ONE || dw1!=D3DBLEND_ONE )
+	if( a!=GL_ONE || b!=GL_ONE )
 		FlushQueue();
 
-	m_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ONE );
-	m_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
+	glBlendFunc( GL_ONE, GL_ONE );
 }
 void RageDisplay::EnableZBuffer()
 {
-	DWORD dw0, dw1;
-	m_pd3dDevice->GetRenderState( D3DRS_ZENABLE, &dw0 );
-	m_pd3dDevice->GetRenderState( D3DRS_ZWRITEENABLE, &dw1 );
+	bool a;
+	glGetBooleanv( GL_DEPTH_TEST, (unsigned char*)&a );
 
-	if( dw0!=TRUE || dw1!=TRUE )
+	if( !a )
 		FlushQueue();
 
-	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      TRUE );
-	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
+	glEnable( GL_DEPTH_TEST );
 }
 void RageDisplay::DisableZBuffer()
 {
-	DWORD dw0, dw1;
-	m_pd3dDevice->GetRenderState( D3DRS_ZENABLE, &dw0 );
-	m_pd3dDevice->GetRenderState( D3DRS_ZWRITEENABLE, &dw1 );
+	bool a;
+	glGetBooleanv( GL_DEPTH_TEST, (unsigned char*)&a );
 
-	if( dw0!=FALSE || dw1!=FALSE )
+	if( a )
 		FlushQueue();
 
-	m_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      FALSE );
-	m_pd3dDevice->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
+	glDisable( GL_DEPTH_TEST );
 }
 void RageDisplay::EnableTextureWrapping()
 {
-	DWORD dw0, dw1;
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSU, &dw0 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSV, &dw1 );
+	int a, b;
+	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, &a );
+	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &b );
 
-	if( dw0!=D3DTADDRESS_WRAP || dw1!=D3DTADDRESS_WRAP )
+	if( a!=GL_REPEAT || b!=GL_REPEAT )
 		FlushQueue();
 
-    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP );
-    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
 }
 void RageDisplay::DisableTextureWrapping()
 {
-	DWORD dw0, dw1;
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSU, &dw0 );
-	m_pd3dDevice->GetTextureStageState( 0, D3DTSS_ADDRESSV, &dw1 );
+	int a, b;
+	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, &a );
+	glGetTexParameteriv( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, &b );
 
-	if( dw0!=D3DTADDRESS_CLAMP  || dw1!=D3DTADDRESS_CLAMP  )
+	if( a!=GL_CLAMP || b!=GL_CLAMP )
 		FlushQueue();
 
-    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP  );
-    m_pd3dDevice->SetTextureStageState( 0, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP  );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
 }

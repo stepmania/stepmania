@@ -16,6 +16,7 @@
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
+#include "ThemeManager.h"
 
 const float TIMER_SECONDS = 99;
 

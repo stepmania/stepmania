@@ -22,10 +22,10 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "InputMapper.h"
+#include "ThemeManager.h"
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
-	"NETWORK GAME",
 	"SWITCH GAME",
 	"CONFIG KEY/JOY",
 	"INPUT OPTIONS",
@@ -203,9 +203,6 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_GAME_START:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 			break;
-		case CHOICE_NETWORK_GAME:
-			SCREENMAN->SetNewScreen( "ScreenNetworkGame" );
-			break;
 		case CHOICE_SELECT_GAME:
 			SCREENMAN->SetNewScreen( "ScreenSelectGame" );
 			break;
@@ -354,7 +351,6 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 	switch( m_TitleMenuChoice )
 	{
 	case CHOICE_GAME_START:
-	case CHOICE_NETWORK_GAME:
 	case CHOICE_SELECT_GAME:
 	case CHOICE_MAP_INSTRUMENTS:
 	case CHOICE_INPUT_OPTIONS:

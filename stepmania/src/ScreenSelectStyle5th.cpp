@@ -21,6 +21,8 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "ThemeManager.h"
+#include "AnnouncerManager.h"
 
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectStyle5th","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectStyle5th","TimerSeconds")

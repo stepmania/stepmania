@@ -16,15 +16,12 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "Quad.h"
+#include "ThemeManager.h"
 #include "RageNetwork.h"
 
 
 ScreenSandbox::ScreenSandbox()
 {	
-	m_text.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_text.SetXY( CENTER_X, CENTER_Y );
-	this->AddChild( &m_text );
-
 //	m_Menu.Load( 	
 //		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_BACKGROUND), 
 //		THEME->GetPathTo(GRAPHIC_SELECT_STYLE_TOP_EDGE),
@@ -34,7 +31,10 @@ ScreenSandbox::ScreenSandbox()
 //	this->AddChild( &m_Menu );
 //	m_Menu.TweenOnScreenFromBlack( SM_None );
 
-	//this->AddChild( &m_spr );
+	m_sprite.Load( THEME->GetPathTo("Graphics","title menu logo dance") );
+	m_sprite.SetXY( CENTER_X, CENTER_Y );
+	m_sprite.SetEffectGlowing();
+	this->AddChild( &m_sprite );
 }
 
 
@@ -44,10 +44,6 @@ void ScreenSandbox::Update( float fDeltaTime )
 
 	CArray<Packet,Packet> aPackets;
 	NETWORK->Recv( aPackets );
-	for( unsigned int i=0; i<aPackets.size(); i++ )
-	{
-		m_text.SetText( "Message received." );	
-	}
 }
 
 void ScreenSandbox::DrawPrimitives()
@@ -66,7 +62,8 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 		switch( DeviceI.button )
 		{
 		case DIK_LEFT:
-			m_text.SetText( "Message sent." );
+			break;
+		case DIK_RIGHT:
 			break;
 		case DIK_T:
 			break;

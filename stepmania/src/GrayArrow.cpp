@@ -14,6 +14,8 @@
 #include "GrayArrow.h"
 #include "PrefsManager.h"
 #include "GameState.h"
+#include <math.h>
+#include "ThemeManager.h"
 
 
 #define STEP_SECONDS		THEME->GetMetricF("GrayArrow","StepSeconds")

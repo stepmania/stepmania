@@ -20,6 +20,7 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageMusic.h"
+#include "ThemeManager.h"
 
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);

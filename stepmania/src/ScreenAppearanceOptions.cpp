@@ -23,7 +23,7 @@
 #include "AnnouncerManager.h"
 #include "GameManager.h"
 #include "GameState.h"
-
+#include "ThemeManager.h"
 
 
 enum {

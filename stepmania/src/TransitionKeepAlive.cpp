@@ -16,6 +16,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageMusic.h"
+#include "ThemeManager.h"
 
 
 #define STOP_MUSIC_ON_NEXT		THEME->GetMetricB("TransitionKeepAlive","StopMusicOnNext")

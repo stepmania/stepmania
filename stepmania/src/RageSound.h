@@ -20,7 +20,7 @@
 class RageSound
 {
 public:
-	RageSound( HWND hWnd );
+	RageSound();
 	~RageSound();
 
 	float GetPlayLatency() { return m_info.latency / 1000.0f; };	// latency between when Play() is called and sound starts coming out
@@ -29,7 +29,6 @@ public:
 	void PlayOnceStreamedFromDir( CString sDir );
 
 private:
-	HWND		m_hWndApp;	// this is set on GRAPHICS_Create()
 	BASS_INFO	m_info;
 };
 

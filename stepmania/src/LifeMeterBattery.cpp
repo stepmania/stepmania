@@ -13,6 +13,8 @@
 #include "LifeMeterBattery.h"
 #include "PrefsManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
+#include "Notes.h"
 
 
 const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };

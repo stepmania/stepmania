@@ -10,13 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
-
-
-#include "AnnouncerManager.h"
-#include "ThemeManager.h"
-#include "GameManager.h"
-
 
 class PrefsManager
 {
@@ -28,9 +21,11 @@ public:
 
 	// GameOptions (ARE saved between sessions)
 	bool			m_bWindowed;
-	int				m_iDisplayResolution;
-	int				m_iTextureResolution;
-	int				m_iRefreshRate;		// 0 means 'default'
+	int				m_iDisplayWidth;
+	int				m_iDisplayHeight;
+	int				m_iDisplayColorDepth;
+	int				m_iTextureColorDepth;
+	int				m_iRefreshRateMode;
 	bool			m_bShowStats;
 	BackgroundMode	m_BackgroundMode;
 	float			m_fBGBrightness;
@@ -59,8 +54,6 @@ public:
 	
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;
-
-	int GetDisplayHeight();
 
 	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
 	void SaveGlobalPrefsToDisk();

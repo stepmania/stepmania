@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: RageTexture
 
- Desc: Abstract class for a texture and holds metadata.
+ Desc: Abstract class for a texture and metadata.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -11,24 +11,10 @@
 */
 
 
+#include "RageTypes.h"
 
 
-#include "RageDisplay.h"
-#include <d3dx8.h>
-//#include <d3d8types.h>
-	
-
-
-struct FRECT
-{	
-public:
-	FRECT() {};
-	FRECT(float l, float t, float r, float b) {
-		left = l; top = t; right = r; bottom = b;
-	};
-
-	float    left, top, right, bottom;
-};
+const int MAX_TEXTURE_FRAMES = 256;
 
 
 //-----------------------------------------------------------------------------
@@ -37,35 +23,19 @@ public:
 class RageTexture
 {
 public:
-	RageTexture( 
-		RageDisplay* pScreen, 
-		const CString &sFilePath, 
-		int dwMaxSize = 2048, 
-		int dwTextureColorDepth = 16, 
-		int iMipMaps = 4,
-		int iAlphaBits = 4,
-		bool bDither = false,
-		bool bStretch = false 
-		);
+	RageTexture( const CString &sFilePath );
 	virtual ~RageTexture() = 0;
 
-	virtual void Reload( 
-		int dwMaxSize = 2048, 
-		int dwTextureColorDepth = 16, 
-		int iMipMaps = 4,
-		int iAlphaBits = 4,
-		bool bDither = false, 
-		bool bStretch = false 
-		) = 0;
+	virtual void Reload() = 0;
 
-	virtual LPDIRECT3DTEXTURE8 GetD3DTexture() = 0;
+	// movie texture/animated texture stuff
 	virtual void Play() {}
 	virtual void Stop() {}
 	virtual void Pause() {}
 	virtual void SetPosition( float fSeconds ) {}
 	virtual bool IsAMovie() const { return false; }
 	virtual bool IsPlaying() const { return false; }
-	void SetLooping(bool looping=true) { }
+	void SetLooping(bool looping) { }
 
 	int GetSourceWidth() const	{return m_iSourceWidth;}
 	int GetSourceHeight() const {return m_iSourceHeight;}
@@ -84,30 +54,27 @@ public:
 	int GetImageFrameWidth() const		{return GetImageWidth()		/	GetFramesWide();}
 	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
 	
-	RectF *GetTextureCoordRect( int uFrameNo ) {return &m_TextureCoordRects[uFrameNo];}
-	int   GetNumFrames() const {return m_TextureCoordRects.size();}
+	const RectF *GetTextureCoordRect( int frameNo ) const;
+	int   GetNumFrames() const {return m_iFramesWide*m_iFramesHigh;}
 	CString GetFilePath() const {return m_sFilePath;}
 
-	int					m_iRefCount;
-	int					m_iTimeOfLastUnload;
+	int		m_iRefCount;
+	int		m_iTimeOfLastUnload;
+
+	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
 
 protected:
+
 	virtual void CreateFrameRects();
 	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
 
-	CString				m_sFilePath;
-	LPDIRECT3DDEVICE8   m_pd3dDevice;
+	CString	m_sFilePath;
 
-	int				m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
-	int				m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory
-	int				m_iImageWidth,		m_iImageHeight;		// dimensions of the image in the texture
-	int				m_iFramesWide,		m_iFramesHigh;		// The number of frames of animation in each row and column of this texture
-
-	
-	// RECTs that hold the bounds of each frame in the bitmap.
-	// e.g., if the texture has 4 frames of animation, the SrcRect for each frame would
-	// be in m_FrameRects[0..4].
-	CArray<RectF, RectF&>	m_TextureCoordRects;	
+	int		m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
+	int		m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory
+	int		m_iImageWidth,		m_iImageHeight;		// dimensions of the image in the texture
+	int		m_iFramesWide,		m_iFramesHigh;		// The number of frames of animation in each row and column of this texture
+	CArray<RectF,RectF>	m_TextureCoordRects;	// size = m_iFramesWide * m_iFramesHigh
 };
 
 
