@@ -9,6 +9,13 @@ Todo List:
   ** Adding support for "BEGINNER HELP".. The thing that has a character showing where to step during the song, only on beginner mode. IE: Replaces the BG with this dynamic image sequence, showing what arrow to hit as it comes up on screen. You can see this in the BG of a DDRExtreme song if you pick "beginner" difficulty.
 
 
+Done as of 03/08/03:
+    NEW FEATURE** Almost done with support for .lrc files to display lyrics :)
+
+
+
+
+
 Done as of 02/27/03:
     FEATURE FIX** Enhanced ScreenSelectDifficultyEX, for more arcade accuracy
     NEW PICTURE** Created a new image for Battle mode
