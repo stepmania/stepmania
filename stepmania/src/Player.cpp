@@ -367,38 +367,37 @@ void Player::Update( float fDeltaTime )
 
 		float fLife = m_NoteData.GetHoldNoteLife(hn);
 
+		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+		// TODO: Make the CPU miss sometimes.
+		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
+			bIsHoldingButton = true;
+
+		if( bSteppedOnTapNote && bIsHoldingButton )
+		{
+			/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
+			 * Do this even if we're a little beyond the end of the hold note, to make sure
+			 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+			HoldNoteResult *hnr = NULL;
+
+			if( m_pNoteField )
+			{
+				hnr = m_pNoteField->CreateHoldNoteResult( hn );
+				hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
+			}
+
+			hnr = m_NoteData.CreateHoldNoteResult( hn );
+			hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
+		}
+
 		// If the song beat is in the range of this hold:
 		if( hn.RowIsInRange(iSongRow) )
 		{
-			bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
-			
-			// TODO: Make the CPU miss sometimes.
-			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
-				bIsHoldingButton = true;
-
 			// set hold flag so NoteField can do intelligent drawing
 			if( m_pNoteField )
 			{
 				m_pNoteField->m_HeldHoldNotes[hn] = bIsHoldingButton && bSteppedOnTapNote;
 				m_pNoteField->m_ActiveHoldNotes[hn] = bSteppedOnTapNote;
 			}
-
-			if( bSteppedOnTapNote )
-			{
-				/* This hold note is not judged and we stepped on its head.  Update
-				 * iLastHeldRow. */
-				HoldNoteResult *hnr = NULL;
-				
-				if( m_pNoteField )
-				{
-					hnr = m_pNoteField->CreateHoldNoteResult( hn );
-					hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
-				}
-
-				hnr = m_NoteData.CreateHoldNoteResult( hn );
-				hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
-			}
-
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
 			{
