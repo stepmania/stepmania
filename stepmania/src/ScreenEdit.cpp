@@ -657,6 +657,8 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	default:	ASSERT(0);
 	}
 
+	/* Make sure the displayed time is up-to-date after possibly changing something,
+	 * so it doesn't feel lagged. */
 	UpdateTextInfo();
 }
 
@@ -1184,10 +1186,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			
 		break;
 	}
-
-	/* Make sure the displayed time is up-to-date after possibly changing something,
-	 * so it doesn't feel lagged. */
-	UpdateTextInfo();
 }
 
 void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
