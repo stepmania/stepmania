@@ -73,7 +73,7 @@ public:
 		return m_iFilePos;
 	}
 
-	int GetFileSize()
+	int GetFileSize() const
 	{
 		LockMut(m_pFile->m_Mutex);
 		return m_pFile->m_sBuf.size();

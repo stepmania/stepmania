@@ -31,34 +31,35 @@ protected:
 	FilenameDB *FDB;
 };
 
-class RageFileObj
+class RageFileObj: public RageBasicFile
 {
 public:
+	RageFileObj();
 	virtual ~RageFileObj() { }
 
-	virtual CString GetError() const { return m_sError; }
+	CString GetError() const { return m_sError; }
+	void ClearError() { SetError(""); }
 	
-	/* Seek to the given absolute offset.  Return to the position actually
-	 * seeked to; if the position given was beyond the end of the file, the
-	 * return value will be the size of the file. */
+	bool AtEOF() const { return m_bEOF; }
+
 	int Seek( int iOffset );
+	int Seek( int offset, int whence );
+	int Tell() const { return m_iFilePos; }
 
-	/* Read at most iSize bytes into pBuf.  Return the number of bytes read,
-	 * 0 on end of stream, or -1 on error.  Note that reading less than iSize
-	 * does not necessarily mean that the end of the stream has been reached;
-	 * keep reading until 0 is returned. */
 	int Read( void *pBuffer, size_t iBytes );
+	int Read( CString &buffer, int bytes = -1 );
+	int Read( void *buffer, size_t bytes, int nmemb );
 
-	/* Write iSize bytes of data from pBuf.  Return 0 on success, -1 on error. */
 	int Write( const void *pBuffer, size_t iBytes );
+	int Write( const CString &sString ) { return Write( sString.data(), sString.size() ); }
+	int Write( const void *buffer, size_t bytes, int nmemb );
 
-	/* Due to buffering, writing may not happen by the end of a Write() call, so not
-	 * all errors may be returned by it.  Data will be flushed when the stream (or its
-	 * underlying object) is destroyed, but errors can no longer be returned.  Call
-	 * Flush() to flush pending data, in order to check for errors. */
 	int Flush();
 
-	virtual int GetFileSize() = 0;
+	int GetLine( CString &out );
+	int PutLine( const CString &str );
+
+	virtual int GetFileSize() const = 0;
 	virtual CString GetDisplayPath() const { return ""; }
 	virtual RageFileObj *Copy() const { FAIL_M( "Copying unimplemented" ); }
 
@@ -68,8 +69,20 @@ protected:
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes ) = 0;
 	virtual int FlushInternal() { return 0; }
 
-	virtual void SetError( const CString &sError ) { m_sError = sError; }
+	void SetError( const CString &sError ) { m_sError = sError; }
 	CString m_sError;
+
+private:
+	int FillBuf();
+	void ResetBuf();
+
+	bool m_bEOF;
+	int m_iFilePos;
+
+	enum { BSIZE = 1024 };
+	char m_Buffer[BSIZE];
+	char *m_pBuf;
+	int  m_iBufAvail;
 };
 
 /* This is used to register the driver, so RageFileManager can see it. */

@@ -49,7 +49,7 @@ public:
 	virtual int SeekInternal( int offset );
 	virtual RageFileObj *Copy() const;
 	virtual CString GetDisplayPath() const { return path; }
-	virtual int GetFileSize();
+	virtual int GetFileSize() const;
 };
 
 
@@ -365,7 +365,7 @@ int RageFileObjDirect::SeekInternal( int offset )
 	return lseek( fd, offset, SEEK_SET );
 }
 
-int RageFileObjDirect::GetFileSize()
+int RageFileObjDirect::GetFileSize() const
 {
 	const int OldPos = lseek( fd, 0, SEEK_CUR );
 	ASSERT_M( OldPos != -1, strerror(errno) );
