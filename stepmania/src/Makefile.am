@@ -184,7 +184,7 @@ Window += arch/LowLevelWindow/LowLevelWindow_SDL.cpp \
 
 ArchUtils = archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h
 if USE_CRASH_HANDLER
-ArchUtils += archutils/Unix/CrashHandler.cc archutils/Unix/CrashHandlerChild.cc \
+ArchUtils += archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandlerChild.cpp \
 	     archutils/Unix/CrashHandler.h archutils/Unix/CrashHandlerInternal.h
 endif
 
