@@ -651,8 +651,9 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 
 	if( !bResult )
 	{
-		if( p != PLAYER_INVALID )
-			this->SendScreenMessage( SM_MenuTimer, 1 );	// re-throw a timer message
+	/* why do this? breaks tabs and roulette -glenn */
+//		if( p != PLAYER_INVALID )
+//			this->SendScreenMessage( SM_MenuTimer, 1 );	// re-throw a timer message
 	}
 	else	// if !bResult
 	{
