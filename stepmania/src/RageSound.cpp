@@ -37,9 +37,8 @@ const int channels = 2;
 const int framesize = 2 * channels; /* 16-bit */
 #define samplerate() Sample->GetSampleRate()
 
-/* The most data to buffer when streaming.  This should generally be at least as large
- * as the largest hardware buffer. */
-const int internal_buffer_size = 1024*16;
+/* The most data to buffer when streaming. */
+const int internal_buffer_size = 1024*1;
 
 /* The amount of data to read at once. */
 const unsigned read_block_size = 1024;
