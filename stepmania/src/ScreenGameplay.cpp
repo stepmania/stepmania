@@ -1382,7 +1382,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	else if( type==IET_FIRST_PRESS && 
 		!PREFSMAN->m_bAutoPlay && 
 		MenuI.IsValid() &&
-		GAMESTATE->IsPlayerEnabled( MenuI.player ) )
+		GAMESTATE->IsPlayerEnabled( MenuI.player ) &&
+		GAMESTATE->IsBattleMode() )
 	{
 		int iItemSlot;
 		switch( MenuI.button )
