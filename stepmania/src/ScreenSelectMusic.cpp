@@ -596,76 +596,71 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	/* why do this? breaks tabs and roulette -glenn */
 //		if( pn != PLAYER_INVALID )
 //			this->SendScreenMessage( SM_MenuTimer, 1 );	// re-throw a timer message
+		return;
 	}
-	else	// if !bResult
+
+	// a song was selected
+	switch( m_MusicWheel.GetSelectedType() )
 	{
-		// a song was selected
-		switch( m_MusicWheel.GetSelectedType() )
+	case TYPE_SONG: {
+		if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
 		{
-		case TYPE_SONG:
-			{
-				if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
-				{
-					/* TODO: gray these out. 
-					 *
-					 * XXX: also, make sure they're not selected by roulette */
-					SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
-					return;
-				}
-
-				bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
-				bool bIsHard = false;
-				for( int p=0; p<NUM_PLAYERS; p++ )
-				{
-					if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-						continue;	// skip
-					if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->m_iMeter >= 9 )
-						bIsHard = true;
-				}
-
-				if( bIsNew )
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment new") );
-				else if( bIsHard )
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
-				else
-					SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment general") );
-
-
-				TweenOffScreen();
-
-				m_bMadeChoice = true;
-
-				m_soundSelect.Play();
-
-				if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
-				{
-					// show "hold START for options"
-					m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
-					m_textHoldForOptions.BeginTweening( 0.25f );	// fade in
-					m_textHoldForOptions.SetTweenZoomY( 1 );
-					m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
-					m_textHoldForOptions.BeginTweening( 2.0f );	// sleep
-					m_textHoldForOptions.BeginTweening( 0.25f );	// fade out
-					m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
-					m_textHoldForOptions.SetTweenZoomY( 0 );
-				}
-
-				m_Menu.TweenOffScreenToBlack( SM_None, false );
-
-				m_Menu.StopTimer();
-
-				this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
-			}
-			break;
-		case TYPE_SECTION:
-			
-			break;
-		case TYPE_ROULETTE:
-
-			break;
+			/* TODO: gray these out. 
+				*
+				* XXX: also, make sure they're not selected by roulette */
+			SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
+			return;
 		}
-	}
 
+		bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
+		bool bIsHard = false;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;	// skip
+			if( GAMESTATE->m_pCurNotes[p]  &&  GAMESTATE->m_pCurNotes[p]->m_iMeter >= 9 )
+				bIsHard = true;
+		}
+
+		if( bIsNew )
+			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment new") );
+		else if( bIsHard )
+			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
+		else
+			SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select music comment general") );
+
+
+		TweenOffScreen();
+
+		m_bMadeChoice = true;
+
+		m_soundSelect.Play();
+
+		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
+		{
+			// show "hold START for options"
+			m_textHoldForOptions.SetDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_textHoldForOptions.BeginTweening( 0.25f );	// fade in
+			m_textHoldForOptions.SetTweenZoomY( 1 );
+			m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_textHoldForOptions.BeginTweening( 2.0f );	// sleep
+			m_textHoldForOptions.BeginTweening( 0.25f );	// fade out
+			m_textHoldForOptions.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+			m_textHoldForOptions.SetTweenZoomY( 0 );
+		}
+
+		m_Menu.TweenOffScreenToBlack( SM_None, false );
+
+		m_Menu.StopTimer();
+
+		this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
+		break;
+	}
+	case TYPE_SECTION:
+		break;
+	case TYPE_ROULETTE:
+		break;
+	}
 }
 
 
