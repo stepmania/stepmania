@@ -6,8 +6,6 @@ AM_CFLAGS =
 
 if DARWIN
 AM_LDFLAGS += -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
-else
-AM_CXXFLAGS += -DLINUX -DDATADIR=\"$(datadir)\"
 endif
 
 AM_CXXFLAGS += -O2
