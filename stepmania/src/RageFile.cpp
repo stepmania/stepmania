@@ -1,11 +1,12 @@
 /*
  * This provides an interface to open files in RageFileManager's namespace
- * This is just a simple RageBasicFile wrapper on top of another RageBasicFile;
- * when a file is open, is acts like the underlying RageBasicFile, except that
+ * This is just a simple RageFileBasic wrapper on top of another RageFileBasic;
+ * when a file is open, is acts like the underlying RageFileBasic, except that
  * a few extra sanity checks are made to check file modes.  
  */
 
 #include "global.h"
+#include "RageFileBasic.h"
 #include "RageFile.h"
 #include "RageUtil.h"
 #include "RageFileDriver.h"
@@ -16,7 +17,7 @@ RageFile::RageFile()
 }
 	
 RageFile::RageFile( const RageFile &cpy ):
-	RageBasicFile( cpy )
+	RageFileBasic( cpy )
 {
 	/* This will copy the file driver, including its internal file pointer. */
 	m_File = FILEMAN->CopyFileObj( cpy.m_File );
@@ -24,7 +25,7 @@ RageFile::RageFile( const RageFile &cpy ):
 	m_Mode = cpy.m_Mode;
 }
 
-RageBasicFile *RageFile::Copy() const
+RageFileBasic *RageFile::Copy() const
 {
 	return new RageFile( *this );
 }
@@ -190,7 +191,7 @@ int RageFile::Seek( int offset, int whence )
 	return m_File->Seek( offset, whence );
 }
 
-void FileReading::ReadBytes( RageBasicFile &f, void *buf, int size, CString &sError )
+void FileReading::ReadBytes( RageFileBasic &f, void *buf, int size, CString &sError )
 {
 	if( sError.size() != 0 )
 		return;
@@ -202,7 +203,7 @@ void FileReading::ReadBytes( RageBasicFile &f, void *buf, int size, CString &sEr
 		sError = "Unexpected end of file";
 }
 
-uint8_t FileReading::read_8( RageBasicFile &f, CString &sError )
+uint8_t FileReading::read_8( RageFileBasic &f, CString &sError )
 {
 	uint8_t val;
 	ReadBytes( f, &val, sizeof(uint8_t), sError );
@@ -212,7 +213,7 @@ uint8_t FileReading::read_8( RageBasicFile &f, CString &sError )
 		return 0;
 }
 
-uint16_t FileReading::read_u16_le( RageBasicFile &f, CString &sError )
+uint16_t FileReading::read_u16_le( RageFileBasic &f, CString &sError )
 {
 	uint16_t val;
 	ReadBytes( f, &val, sizeof(uint16_t), sError );
@@ -222,7 +223,7 @@ uint16_t FileReading::read_u16_le( RageBasicFile &f, CString &sError )
 		return 0;
 }
 
-int16_t FileReading::read_16_le( RageBasicFile &f, CString &sError )
+int16_t FileReading::read_16_le( RageFileBasic &f, CString &sError )
 {
 	int16_t val;
 	ReadBytes( f, &val, sizeof(int16_t), sError );
@@ -232,7 +233,7 @@ int16_t FileReading::read_16_le( RageBasicFile &f, CString &sError )
 		return 0;
 }
 
-uint32_t FileReading::read_u32_le( RageBasicFile &f, CString &sError )
+uint32_t FileReading::read_u32_le( RageFileBasic &f, CString &sError )
 {
 	uint32_t val;
 	ReadBytes( f, &val, sizeof(uint32_t), sError );
@@ -242,7 +243,7 @@ uint32_t FileReading::read_u32_le( RageBasicFile &f, CString &sError )
 		return 0;
 }
 
-int32_t FileReading::read_32_le( RageBasicFile &f, CString &sError )
+int32_t FileReading::read_32_le( RageFileBasic &f, CString &sError )
 {
 	int32_t val;
 	ReadBytes( f, &val, sizeof(int32_t), sError );

@@ -44,12 +44,12 @@ public:
 	void FlushDirCache( CString sPath );
 
 	/* Used only by RageFile: */
-	RageBasicFile *Open( CString sPath, int mode, int &err );
-	void Close( RageBasicFile *obj );
-	RageBasicFile *CopyFileObj( const RageBasicFile *cpy );
+	RageFileBasic *Open( CString sPath, int mode, int &err );
+	void Close( RageFileBasic *obj );
+	RageFileBasic *CopyFileObj( const RageFileBasic *cpy );
 
 private:
-	RageBasicFile *OpenForWriting( CString sPath, int mode, int &err );
+	RageFileBasic *OpenForWriting( CString sPath, int mode, int &err );
 };
 
 extern RageFileManager *FILEMAN;

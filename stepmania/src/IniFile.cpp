@@ -20,7 +20,7 @@ bool IniFile::ReadFile( const CString &sPath )
 	return ReadFile( f );
 }
 
-bool IniFile::ReadFile( RageBasicFile &f )
+bool IniFile::ReadFile( RageFileBasic &f )
 {
 	CString keyname;
 	while( 1 )
@@ -74,7 +74,7 @@ bool IniFile::WriteFile( const CString &sPath )
 	return IniFile::WriteFile( f );
 }
 
-bool IniFile::WriteFile( RageBasicFile &f )
+bool IniFile::WriteFile( RageFileBasic &f )
 {
 	for( keymap::const_iterator k = keys.begin(); k != keys.end(); ++k )
 	{

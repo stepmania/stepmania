@@ -85,7 +85,7 @@ public:
 	int WriteInternal( const void *pBuffer, size_t iBytes ) { SetError( "Not implemented" ); return -1; }
 	int SeekInternal( int iOffset );
 	int GetFileSize() const { return info.uncompr_size; }
-	RageBasicFile *Copy() const
+	RageFileBasic *Copy() const
 	{
 		RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjZipDeflated" );
 
@@ -108,7 +108,7 @@ public:
 	int SeekInternal( int iOffset );
 	int GetFileSize() const { return m_iFileSize; }
 
-	RageBasicFile *Copy() const
+	RageFileBasic *Copy() const
 	{
 		RageFileObjZipStored *pRet = new RageFileObjZipStored( zip, m_iOffset, m_iFileSize );
 		pRet->m_iFilePos = m_iFilePos;
@@ -383,7 +383,7 @@ RageFileDriverZip::~RageFileDriverZip()
 		delete Files[i];
 }
 
-RageBasicFile *RageFileDriverZip::Open( const CString &path, int mode, int &err )
+RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err )
 {
 	if( mode == RageFile::WRITE )
 	{

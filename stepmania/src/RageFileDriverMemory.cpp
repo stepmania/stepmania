@@ -64,7 +64,7 @@ int RageFileObjMem::ReadInternal( void *buffer, size_t bytes )
 int RageFileObjMem::WriteInternal( const void *buffer, size_t bytes )
 {
 	m_pFile->m_Mutex.Lock();
-	m_pFile->m_sBuf.append( (const char *) buffer, bytes );
+	m_pFile->m_sBuf.replace( m_iFilePos, bytes, (const char *) buffer, bytes );
 	m_pFile->m_Mutex.Unlock();
 
 	m_iFilePos += bytes;
@@ -91,7 +91,7 @@ RageFileObjMem::RageFileObjMem( const RageFileObjMem &cpy ):
 	RageFileObjMemFile::AddReference( m_pFile );
 }
 
-RageBasicFile *RageFileObjMem::Copy() const
+RageFileBasic *RageFileObjMem::Copy() const
 {
 	RageFileObjMem *pRet = new RageFileObjMem( *this );
 	return pRet;
@@ -117,7 +117,7 @@ RageFileDriverMem::~RageFileDriverMem()
 	}
 }
 
-RageBasicFile *RageFileDriverMem::Open( const CString &sPath, int mode, int &err )
+RageFileBasic *RageFileDriverMem::Open( const CString &sPath, int mode, int &err )
 {
 	LockMut(m_Mutex);
 

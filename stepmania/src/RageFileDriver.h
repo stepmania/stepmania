@@ -15,7 +15,7 @@ class RageFileDriver
 public:
 	RageFileDriver( FilenameDB *db ) { FDB = db; }
 	virtual ~RageFileDriver();
-	virtual RageBasicFile *Open( const CString &path, int mode, int &err ) = 0;
+	virtual RageFileBasic *Open( const CString &path, int mode, int &err ) = 0;
 	virtual void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	virtual RageFileManager::FileType GetFileType( const CString &sPath );
 	virtual int GetFileSizeInBytes( const CString &sFilePath );
@@ -29,60 +29,6 @@ public:
 	enum { ERROR_WRITING_NOT_SUPPORTED = -1 };
 protected:
 	FilenameDB *FDB;
-};
-
-class RageFileObj: public RageBasicFile
-{
-public:
-	RageFileObj();
-	virtual ~RageFileObj() { }
-
-	CString GetError() const { return m_sError; }
-	void ClearError() { SetError(""); }
-	
-	bool AtEOF() const { return m_bEOF; }
-
-	int Seek( int iOffset );
-	int Seek( int offset, int whence );
-	int Tell() const { return m_iFilePos; }
-
-	int Read( void *pBuffer, size_t iBytes );
-	int Read( CString &buffer, int bytes = -1 );
-	int Read( void *buffer, size_t bytes, int nmemb );
-
-	int Write( const void *pBuffer, size_t iBytes );
-	int Write( const CString &sString ) { return Write( sString.data(), sString.size() ); }
-	int Write( const void *buffer, size_t bytes, int nmemb );
-
-	int Flush();
-
-	int GetLine( CString &out );
-	int PutLine( const CString &str );
-
-	virtual int GetFileSize() const = 0;
-	virtual CString GetDisplayPath() const { return ""; }
-	virtual RageBasicFile *Copy() const { FAIL_M( "Copying unimplemented" ); }
-
-protected:
-	virtual int SeekInternal( int iOffset ) { FAIL_M( "Seeking unimplemented" ); }
-	virtual int ReadInternal( void *pBuffer, size_t iBytes ) = 0;
-	virtual int WriteInternal( const void *pBuffer, size_t iBytes ) = 0;
-	virtual int FlushInternal() { return 0; }
-
-	void SetError( const CString &sError ) { m_sError = sError; }
-	CString m_sError;
-
-private:
-	int FillBuf();
-	void ResetBuf();
-
-	bool m_bEOF;
-	int m_iFilePos;
-
-	enum { BSIZE = 1024 };
-	char m_Buffer[BSIZE];
-	char *m_pBuf;
-	int  m_iBufAvail;
 };
 
 /* This is used to register the driver, so RageFileManager can see it. */

@@ -8,7 +8,7 @@ class RageFileDriverDirect: public RageFileDriver
 public:
 	RageFileDriverDirect( CString root );
 
-	RageBasicFile *Open( const CString &path, int mode, int &err );
+	RageFileBasic *Open( const CString &path, int mode, int &err );
 	bool Remove( const CString &sPath );
 	bool Ready();
 

@@ -18,7 +18,7 @@ public:
 	int WriteInternal( const void *buffer, size_t bytes );
 	int SeekInternal( int offset );
 	int GetFileSize() const;
-	RageBasicFile *Copy() const;
+	RageFileBasic *Copy() const;
 
 	/* Retrieve the contents of this file. */
 	const CString &GetString() const;
@@ -34,7 +34,7 @@ public:
 	RageFileDriverMem();
 	~RageFileDriverMem();
 
-	RageBasicFile *Open( const CString &sPath, int mode, int &err );
+	RageFileBasic *Open( const CString &sPath, int mode, int &err );
 	void FlushDirCache( const CString &sPath ) { }
 
 	bool Remove( const CString &sPath );
