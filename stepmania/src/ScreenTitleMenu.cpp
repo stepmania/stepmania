@@ -233,6 +233,15 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 				return;
 			}
 		}
+		if( m_Choice == CHOICE_EDIT_COURSES )
+		{
+			if( SONGMAN->GetNumCourses() == 0 )
+			{
+				m_soundInvalid.Play();
+				SCREENMAN->SystemMessage( "No courses are installed" );
+				return;
+			}
+		}
 		if( m_Choice == CHOICE_EXIT )
 		{
 			LOG->Trace("CHOICE_EXIT: shutting down");
@@ -313,6 +322,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		#endif
 		case CHOICE_EDIT:
 			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
+			break;
+		case CHOICE_EDIT_COURSES:
+			SCREENMAN->SetNewScreen( "ScreenEditCoursesMenu" );
 			break;
 		case CHOICE_EXIT:
 		default:

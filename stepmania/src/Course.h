@@ -19,30 +19,52 @@ struct SongOptions;
 class Song;
 class Steps;
 
+enum CourseEntryType
+{
+	COURSE_ENTRY_FIXED, 
+	COURSE_ENTRY_RANDOM, 
+	COURSE_ENTRY_RANDOM_WITHIN_GROUP, 
+	COURSE_ENTRY_BEST, 
+	COURSE_ENTRY_WORST,
+	NUM_COURSE_ENTRY_TYPES	// leave this at the end
+};
+
+inline CString CourseEntryTypeToString( CourseEntryType cet )
+{
+	switch( cet )
+	{
+	case COURSE_ENTRY_FIXED:				return "fixed";
+	case COURSE_ENTRY_RANDOM:				return "random";
+	case COURSE_ENTRY_RANDOM_WITHIN_GROUP:	return "random_within_group";
+	case COURSE_ENTRY_BEST:					return "best";
+	case COURSE_ENTRY_WORST:				return "worst";
+	default:					ASSERT(0);	return "";
+	}
+}
+
+struct CourseEntry {
+	CourseEntryType type;
+	bool mystery;			// show "??????"
+	Song* pSong;			// used in type=fixed
+	CString group_name;		// used in type=random_within_group
+	Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
+	int low_meter;			// = -1 if no meter range specified
+	int high_meter;			// = -1 if no meter range specified
+	int players_index;		// ignored if type isn't 'best' or 'worst'
+	CString modifiers;		// set player and song options using these
+
+	CourseEntry()
+	{
+		difficulty = DIFFICULTY_INVALID;
+		low_meter = -1;
+		high_meter = -1;
+		players_index = -1;
+		mystery = false;
+	}
+};
+
 class Course
 {
-	struct Entry {
-		enum Type { fixed, random, random_within_group, best, worst } type;
-		bool mystery;			// show "??????"
-		Song* pSong;			// used in type=fixed
-		CString group_name;		// used in type=random_within_group
-		Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
-		int low_meter;			// = -1 if no meter range specified
-		int high_meter;			// = -1 if no meter range specified
-		int players_index;		// ignored if type isn't 'best' or 'worst'
-		CString modifiers;		// set player and song options using these
-
-		Entry()
-		{
-			difficulty = DIFFICULTY_INVALID;
-			low_meter = -1;
-			high_meter = -1;
-			players_index = -1;
-			mystery = false;
-		}
-	};
-	vector<Entry> m_entries;
-
 public:
 	Course();
 
@@ -61,6 +83,8 @@ public:
 	bool		m_bDifficult; // only make something difficult once
 	int			m_iLives;	// -1 means use bar life meter
 	int			m_iMeter;	// -1 autogens
+
+	vector<CourseEntry> m_entries;
 
 	struct Info
 	{

@@ -114,15 +114,6 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 }
 
 
-// helpers for MenuStart() below
-void DeleteCurNotes()
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pNotesToDelete = GAMESTATE->m_pCurNotes[PLAYER_1];
-	pSong->RemoveNotes( pNotesToDelete );
-	pSong->Save();
-}
-
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	if( m_Menu.IsTransitioning() )
@@ -162,7 +153,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EditMenu::ACTION_DELETE:
 		ASSERT( pNotes );
-		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurNotes );
+		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\n\nContinue with delete?", true, false, NULL );
 		m_Selector.RefreshNotes();
 		return;
 	case EditMenu::ACTION_COPY:

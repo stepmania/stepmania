@@ -297,6 +297,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenSelectMode.h"
 #include "ScreenBackgroundOptions.h"
 #include "ScreenSelectMaster.h"
+#include "ScreenEditCoursesMenu.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -364,6 +365,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenRaveOptions );
 	IF_RETURN( ScreenBackgroundOptions );
 	IF_RETURN( ScreenSelectMaster );
+	IF_RETURN( ScreenEditCoursesMenu );
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
 }

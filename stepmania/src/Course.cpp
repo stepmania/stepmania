@@ -179,30 +179,30 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
-			Entry new_entry;
+			CourseEntry new_entry;
 
 			// infer entry::Type from the first param
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
-				new_entry.type = Entry::best;
+				new_entry.type = COURSE_ENTRY_BEST;
 				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
 				CLAMP( new_entry.players_index, 0, 500 );
 			}
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				new_entry.type = Entry::worst;
+				new_entry.type = COURSE_ENTRY_WORST;
 				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
 				CLAMP( new_entry.players_index, 0, 500 );
 			}
 			else if( sParams[1] == "*" )
 			{
 				new_entry.mystery = true;
-				new_entry.type = Entry::random;
+				new_entry.type = COURSE_ENTRY_RANDOM;
 			}
 			else if( sParams[1].Right(1) == "*" )
 			{
 				new_entry.mystery = true;
-				new_entry.type = Entry::random_within_group;
+				new_entry.type = COURSE_ENTRY_RANDOM_WITHIN_GROUP;
 				CString sSong = sParams[1];
 				sSong.Replace( "\\", "/" );
 				CStringArray bits;
@@ -225,7 +225,7 @@ void Course::LoadFromCRSFile( CString sPath )
 			}
 			else
 			{
-				new_entry.type = Entry::fixed;
+				new_entry.type = COURSE_ENTRY_FIXED;
 
 				CString sSong = sParams[1];
 				new_entry.pSong = SONGMAN->FindSong( sSong );
@@ -308,23 +308,23 @@ void Course::Save()
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
 	{
-		const Entry& entry = m_entries[i];
+		const CourseEntry& entry = m_entries[i];
 
 		switch( entry.type )
 		{
-		case Entry::fixed:
+		case COURSE_ENTRY_FIXED:
 			fprintf( fp, "#SONG:%s", entry.pSong->GetSongDir().c_str() );
 			break;
-		case Entry::random:
+		case COURSE_ENTRY_RANDOM:
 			fprintf( fp, "#SONG:*" );
 			break;
-		case Entry::random_within_group:
+		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
 			fprintf( fp, "#SONG:%s/*", entry.group_name.c_str() );
 			break;
-		case Entry::best:
+		case COURSE_ENTRY_BEST:
 			fprintf( fp, "#SONG:BEST%d", entry.players_index+1 );
 			break;
-		case Entry::worst:
+		case COURSE_ENTRY_WORST:
 			fprintf( fp, "#SONG:WORST%d", entry.players_index+1 );
 			break;
 		default:
@@ -340,7 +340,7 @@ void Course::Save()
 			fprintf( fp, "%d..%d", entry.low_meter, entry.high_meter );
 		fprintf( fp, ":%s", entry.modifiers.c_str() );
 
-		bool default_mystery = !(entry.type == Entry::random || entry.type == Entry::random_within_group);
+		bool default_mystery = !(entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
 		if( default_mystery != entry.mystery )
 		{
 			if( entry.modifiers != "" )
@@ -369,8 +369,8 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	// We want multiple songs, so we can try to prevent repeats during
 	// gameplay. (We might still get a repeat at the repeat boundary,
 	// but that'd be rare.) -glenn
-	Entry e;
-	e.type = Entry::random_within_group;
+	CourseEntry e;
+	e.type = COURSE_ENTRY_RANDOM_WITHIN_GROUP;
 	e.group_name = sGroupName;
 	e.difficulty = DIFFICULTY_MEDIUM;
 	e.mystery = true;
@@ -429,7 +429,7 @@ bool Course::HasDifficult( StepsType nt ) const
 
 		if( Normal[i].Mystery )
 		{
-			const Entry &e = m_entries[ Normal[i].CourseIndex ];
+			const CourseEntry &e = m_entries[ Normal[i].CourseIndex ];
 			
 			/* Difficulties under CHALLENGE change by getting harder. */
 			if( e.difficulty < DIFFICULTY_CHALLENGE )
@@ -476,7 +476,7 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
 
 void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficult ) const
 {
-	vector<Entry> entries = m_entries;
+	vector<CourseEntry> entries = m_entries;
 
 	/* Different seed for each course, but the same for the whole round: */
 	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sName) );
@@ -501,7 +501,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
-		const Entry &e = entries[i];
+		const CourseEntry &e = entries[i];
 
 		Song* pSong = NULL;	// fill this in
 		Steps* pNotes = NULL;	// fill this in
@@ -513,7 +513,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 
 		switch( e.type )
 		{
-		case Entry::fixed:
+		case COURSE_ENTRY_FIXED:
 			pSong = e.pSong;
 			if( pSong )
 			{
@@ -523,8 +523,8 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 					pNotes = pSong->GetStepsByDifficulty( nt, e.difficulty, PREFSMAN->m_bAutogenMissingTypes );
 			}
 			break;
-		case Entry::random:
-		case Entry::random_within_group:
+		case COURSE_ENTRY_RANDOM:
+		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
 			{
 				// find a song with the notes we want
 				for( unsigned j=0; j<AllSongsShuffled.size(); j++ )
@@ -535,7 +535,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 					ASSERT( pSong );
 					CurSong = (CurSong+1) % AllSongsShuffled.size();
 
-					if(e.type == Entry::random_within_group &&
+					if(e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP &&
 					   pSong->m_sGroupName.CompareNoCase(e.group_name))
 					   continue; /* wrong group */
 
@@ -552,8 +552,8 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 				}
 			}
 			break;
-		case Entry::best:
-		case Entry::worst:
+		case COURSE_ENTRY_BEST:
+		case COURSE_ENTRY_WORST:
 			{
 				if( !bMostPlayedSet )
 				{
@@ -566,10 +566,10 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 
 				switch( e.type )
 				{
-				case Entry::best:
+				case COURSE_ENTRY_BEST:
 					pSong = vSongsByMostPlayed[e.players_index];
 					break;
-				case Entry::worst:
+				case COURSE_ENTRY_WORST:
 					pSong = vSongsByMostPlayed[vSongsByMostPlayed.size()-1-e.players_index];
 					break;
 				default:
@@ -612,7 +612,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 		cinfo.pSong = pSong;
 		cinfo.pNotes = pNotes;
 		cinfo.Modifiers = e.modifiers;
-		cinfo.Random = ( e.type == Entry::random || e.type == Entry::random_within_group );
+		cinfo.Random = ( e.type == COURSE_ENTRY_RANDOM || e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP );
 		cinfo.Mystery = e.mystery;
 		cinfo.CourseIndex = i;
 		cinfo.Difficult = IsDifficult(Difficult);
@@ -937,7 +937,7 @@ void Course::UpdateCourseStats()
 	// courses with random/players best-worst songs should go at the end
 	for(i = 0; i < m_entries.size(); i++)
 	{
-		if ( m_entries[i].type == Entry::fixed )
+		if ( m_entries[i].type == COURSE_ENTRY_FIXED )
 			continue;
 
 		SortOrder_AvgDifficulty = 9999999; // large number
