@@ -16,6 +16,7 @@
 #include "RageTextureManager.h"
 #include "SongManager.h"
 #include "Course.h"
+#include "FontCharAliases.h"
 
 #include "arch/Dialog/Dialog.h"
 
@@ -79,6 +80,9 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 			layer.GetAttrValue("AltText", alttext );
 			text.Replace( "::", "\n" );
 			alttext.Replace( "::", "\n" );
+
+			FontCharAliases::ReplaceMarkers( text );
+			FontCharAliases::ReplaceMarkers( alttext );
 
 			BitmapText* pBitmapText = new BitmapText;
 
