@@ -70,7 +70,7 @@ bool RageSound_DSound_Software::GetData()
 	}
 	memset(buf, 0, bufsize*sizeof(Uint16));
 
-	SoundMixBuffer mix;
+	static SoundMixBuffer mix;
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{

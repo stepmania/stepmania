@@ -79,7 +79,7 @@ bool RageSound_WaveOut::GetData()
 		buf = new Sint16[bufsize];
 	memset(buf, 0, bufsize*sizeof(Uint16));
 	memset(buffers[b].lpData, 0, bufsize*sizeof(Uint16));
-	SoundMixBuffer mix;
+	static SoundMixBuffer mix;
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
