@@ -751,6 +751,9 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 
 static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 {
+	// convertTo4s before calling this
+	ASSERT( inout.GetNumHoldNotes() == 0 );
+	
 	/* We already did the normal shuffling code above, which did a good job
 	 * of shuffling HoldNotes without creating impossible patterns.
 	 * Now, go in and shuffle the TapNotes per-row.
@@ -761,16 +764,16 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 	{
 		for( int t1=0; t1<inout.GetNumTracks(); t1++ )
 		{
-			const TapNote &tn1 = inout.GetTapNote(t1, r);
+			const TapNote tn1 = inout.GetTapNote(t1, r);
 			if( tn1.type == TapNote::hold )
 				continue;
 
 			// a tap that is not part of a hold
 			// probe for a spot to swap with
-			while( 1 )
+			for( int i=0; i<4; i++ )
 			{
 				const int t2 = rand() % inout.GetNumTracks();
-				const TapNote &tn2 = inout.GetTapNote(t2, r);
+				const TapNote tn2 = inout.GetTapNote(t2, r);
 				if( tn2.type == TapNote::hold )	// a tap that is not part of a hold
 					continue;
 
@@ -800,19 +803,17 @@ void NoteDataUtil::Turn( NoteData &inout, StepsType st, TrackMapping tt, float f
 	iEndIndex = min( iEndIndex, inout.GetLastRow() );
 
 	NoteData tempNoteData;
-	tempNoteData.To4s( inout );
-	NoteData tempNoteDataOut;	// write into here as we tranform
-	tempNoteDataOut.Config( inout );
-
-	// transform notes
-	for( int t=0; t<inout.GetNumTracks(); t++ )
-		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( tempNoteData, r, iStartIndex, iEndIndex ) 			
-			tempNoteDataOut.SetTapNote( t, r, tempNoteData.GetTapNote(iTakeFromTrack[t], r) );
+	tempNoteData.LoadTransformed( inout, inout.GetNumTracks(), iTakeFromTrack );
 
 	if( tt == super_shuffle )
-		SuperShuffleTaps( tempNoteDataOut, iStartIndex, iEndIndex ); /* expects 4s */
+	{
+		NoteData tempNoteData2;	// write into here as we tranform
+		tempNoteData2.To4s( tempNoteData );
+		SuperShuffleTaps( tempNoteData2, iStartIndex, iEndIndex ); /* expects 4s */
+		tempNoteData.From4s( tempNoteData2 );
+	}
 
-	inout.From4s( tempNoteDataOut );
+	inout.CopyAll( tempNoteData );
 }
 
 void NoteDataUtil::Backwards( NoteData &inout )
