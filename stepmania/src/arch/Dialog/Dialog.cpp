@@ -3,6 +3,7 @@
 #include "DialogDriver.h"
 #include "PrefsManager.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 
 /* Hmm.  I don't want this to depend on other arch drivers--we should be able to test
  * this without linking to them.  We probably don't actually have to do that just by
@@ -21,7 +22,8 @@ static bool g_bWindowed = false;
 
 void Dialog::Init()
 {
-	ASSERT( g_pImpl == NULL );
+	if( g_pImpl != NULL )
+		return;
 
 	CString drivers = "win32,cocoa,null";
 	CStringArray DriversToTry;
@@ -69,6 +71,15 @@ static bool MessageIsIgnored( CString ID )
 
 void Dialog::IgnoreMessage( CString ID )
 {
+	/* We can't ignore messages before PREFSMAN is around. */
+	if( PREFSMAN == NULL )
+	{
+		if( ID != "" && LOG )
+			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", ID.c_str() );
+			
+		return;
+	}
+
 	if( ID == "" )
 		return;
 
@@ -84,6 +95,8 @@ void Dialog::IgnoreMessage( CString ID )
 
 void Dialog::Error( CString sMessage, CString ID )
 {
+	Dialog::Init();
+
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return;
 
@@ -97,6 +110,8 @@ void Dialog::SetWindowed( bool bWindowed )
 
 void Dialog::OK( CString sMessage, CString ID )
 {
+	Dialog::Init();
+
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return;
 
@@ -109,6 +124,8 @@ void Dialog::OK( CString sMessage, CString ID )
 
 Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 {
+	Dialog::Init();
+
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return Dialog::AbortRetryIgnore( sMessage, ID );
 
@@ -121,6 +138,8 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
 
 Dialog::Result Dialog::RetryCancel( CString sMessage, CString ID )
 {
+	Dialog::Init();
+
 	if( ID != "" && MessageIsIgnored( ID ) )
 		return Dialog::RetryCancel( sMessage, ID );
 
