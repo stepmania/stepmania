@@ -108,7 +108,6 @@ struct PARSEINFO
 
 	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = 0; }
 };
-extern PARSEINFO piDefault;
 
 // display optional environment
 struct DISP_OPT
@@ -130,7 +129,6 @@ struct DISP_OPT
 		tab_base = 0;
 	}
 };
-extern DISP_OPT optDefault;
 
 // XAttr : Attribute Implementation
 struct XAttr
@@ -144,7 +142,7 @@ struct XAttr
 	void GetValue(unsigned &out) const;
 	void GetValue(DateTime &out) const;
 	
-	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault ) const;
+	bool GetXML( RageFileBasic &f, DISP_OPT *opt ) const;
 };
 
 // XMLNode structure
@@ -169,14 +167,14 @@ struct XNode
 	XAttrs	m_attrs;		// attributes
 
 	// Load/Save XML
-	char*	Load( const char* pszXml, PARSEINFO *pi = &piDefault );
-	char*	LoadAttributes( const char* pszAttrs, PARSEINFO *pi = &piDefault );
-	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault ) const;
+	char*	Load( const char* pszXml, PARSEINFO *pi );
+	char*	LoadAttributes( const char* pszAttrs, PARSEINFO *pi );
+	bool GetXML( RageFileBasic &f, DISP_OPT *opt ) const;
 
-	bool LoadFromFile( const CString &sFile, PARSEINFO *pi = &piDefault );
-	bool LoadFromFile( RageFileBasic &f, PARSEINFO *pi = &piDefault );
-	bool SaveToFile( const CString &sFile, DISP_OPT *opt = &optDefault ) const;
-	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt = &optDefault ) const;
+	bool LoadFromFile( const CString &sFile, PARSEINFO *pi );
+	bool LoadFromFile( RageFileBasic &f, PARSEINFO *pi );
+	bool SaveToFile( const CString &sFile, DISP_OPT *opt ) const;
+	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const;
 
 	// in own attribute list
 	const XAttr *GetAttr( const char* attrname ) const; 

@@ -306,7 +306,9 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 	if( sExt=="xml" )
 	{
 		XNode xml;
-		xml.LoadFromFile( ID.filename );
+		PARSEINFO pi;
+		if( !xml.LoadFromFile( ID.filename, &pi ) )
+			RageException::Throw( pi.error_string );
 		CString sDir = Dirname( ID.filename );
 		return LoadFromActorFile( sDir, &xml );
 	}
@@ -357,7 +359,9 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 		if( DoesFileExist(sXml) )
 		{
 			XNode xml;
-			xml.LoadFromFile( sXml );
+			PARSEINFO pi;
+			if( !xml.LoadFromFile( sXml, &pi ) )
+				RageException::Throw( pi.error_string );
 			return LoadFromActorFile( sDir, &xml );
 		}
 		else

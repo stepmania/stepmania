@@ -661,9 +661,10 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 
 	LOG->Trace( "Loading %s", fn.c_str() );
 	XNode xml;
-	if( !xml.LoadFromFile( fn ) )
+	PARSEINFO pi;
+	if( !xml.LoadFromFile( fn, &pi ) )
 	{
-		LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
+		LOG->Warn( "Error parsing file '%s': %s", fn.c_str(), pi.error_string.c_str() );
 		return failed_tampered;
 	}
 	LOG->Trace( "Done." );
@@ -741,7 +742,7 @@ bool Profile::SaveStatsXmlToDir( CString sDir, bool bSignData ) const
 	// Save stats.xml
 	CString fn = sDir + STATS_XML;
 
-	DISP_OPT opts = optDefault;
+	DISP_OPT opts;
 	opts.stylesheet = STATS_XSL;
 	opts.write_tabs = false;
 	bool bSaved = xml->SaveToFile(fn, &opts);
@@ -1683,7 +1684,7 @@ public:
 	LunaProfile() { LUA->Register( Register ); }
 
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
-	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = FArg(1); return 0; }
+	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); return 0; }
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
 	static int SetGoalType( T* p, lua_State *L )			{ p->m_GoalType = (GoalType)IArg(1); return 0; }
 	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }

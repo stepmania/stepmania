@@ -11,10 +11,10 @@
 
 
 static const char chXMLTagOpen		= '<';
-static const char chXMLTagClose	= '>';
-static const char chXMLTagQuestion	= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
-static const char chXMLTagPre	= '/';
-static const char chXMLEscape = '\\';	// for value field escape
+static const char chXMLTagClose		= '>';
+static const char chXMLTagQuestion		= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
+static const char chXMLTagPre		= '/';
+static const char chXMLEscape		= '\\';	// for value field escape
 
 
 static const XENTITY x_EntityTable[] = {
@@ -25,8 +25,6 @@ static const XENTITY x_EntityTable[] = {
 		{ '>', ("&gt;"), 4 } 
 	};
 
-PARSEINFO piDefault;
-DISP_OPT optDefault;
 XENTITYS entityDefault((XENTITY*)x_EntityTable, sizeof(x_EntityTable)/sizeof(x_EntityTable[0]) );
 
 // skip spaces
@@ -305,7 +303,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 		xml++;
 		if( *xml == chXMLTagClose )
 		{
-			// wel-formed tag
+			// well-formed tag
 			++xml;
 
 			// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
@@ -477,7 +475,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ ) const
+bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 {
 	return f.Write(m_sName + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(m_sValue):m_sValue) + "' ") != -1;
 }
@@ -491,7 +489,7 @@ bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ ) const
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt /*= &optDefault*/ ) const
+bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 {
 	// tab
 	if( opt && opt->newline )
@@ -1029,7 +1027,7 @@ bool XNode::LoadFromFile( RageFileBasic &f, PARSEINFO *pi )
 		return false;
 	}
 	this->Load( s, pi );
-	return true;
+	return !pi->error_occur;
 }
 
 bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const
