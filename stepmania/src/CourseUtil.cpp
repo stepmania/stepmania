@@ -183,7 +183,7 @@ void CourseID::FromCourse( const Course *p )
 		if( p->m_bIsAutogen )
 		{
 			sPath = "";
-			sFullTitle = p->GetFullDisplayTitle();
+			sFullTitle = p->GetFullTranslitTitle();
 		}
 		else
 		{
