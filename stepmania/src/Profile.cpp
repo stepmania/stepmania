@@ -195,6 +195,64 @@ int Profile::GetTotalNumSongsPassed() const
 	return iTotal;
 }
 
+int Profile::GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) const
+{
+	int iCount = 0;
+
+	FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), pSong )
+	{
+		if( (*pSong)->m_SelectionDisplay == Song::SHOW_NEVER )
+			continue;	// skip
+
+		FOREACH_CONST( Steps*, (*pSong)->GetAllSteps(), pSteps )
+		{
+			if( (*pSteps)->m_StepsType != st )
+				continue;	// skip
+
+			if( (*pSteps)->GetDifficulty() != d )
+				continue;	// skip
+
+			const HighScoreList &hsl = GetStepsHighScoreList( *pSong, *pSteps );
+			if( hsl.vHighScores.empty() )
+				continue;	// skip
+
+			if( hsl.vHighScores[0].grade == g )
+				iCount++;
+		}
+	}
+
+	return iCount;
+}
+
+int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade g ) const
+{
+	int iCount = 0;
+
+	// add course high scores
+	vector<Course*> vCourses;
+	SONGMAN->GetAllCourses( vCourses, false );
+	FOREACH_CONST( Course*, vCourses, pCourse )
+	{
+		// Don't count any course that has any entries that change over time.
+		if( !(*pCourse)->AllSongsAreFixed() )
+			continue;
+
+		vector<Trail*> vTrails;
+		Trail* pTrail = (*pCourse)->GetTrail( st, d );
+		if( pTrail == NULL )
+			continue;
+
+		const HighScoreList &hsl = GetCourseHighScoreList( *pCourse, pTrail );
+		if( hsl.vHighScores.empty() )
+			continue;	// skip
+
+		if( hsl.vHighScores[0].grade == g )
+			iCount++;
+	}
+
+	return iCount;
+}
+
 float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 {
 	int iTotalSteps = 0;
@@ -290,6 +348,19 @@ float Profile::GetSongsPercentComplete( StepsType st, Difficulty dc ) const
 	return GetSongsActual(st,dc) / GetSongsPossible(st,dc);
 }
 
+float Profile::GetSongsPercentCompleteAllDifficulties( StepsType st ) const
+{
+	float fActual = 0;
+	float fPossible = 0;
+	FOREACH_Difficulty( d )
+	{
+		fActual += GetSongsActual(st,d);
+		fPossible += GetSongsPossible(st,d);
+	}
+	return fActual / fPossible;
+}
+
+
 float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 {
 	int iTotalTrails = 0;
@@ -369,6 +440,18 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 float Profile::GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const
 {
 	return GetCoursesActual(st,cd) / GetCoursesPossible(st,cd);
+}
+
+float Profile::GetCoursesPercentCompleteAllDifficulties( StepsType st ) const
+{
+	float fActual = 0;
+	float fPossible = 0;
+	FOREACH_CourseDifficulty( d )
+	{
+		fActual += GetCoursesActual(st,d);
+		fPossible += GetCoursesPossible(st,d);
+	}
+	return fActual / fPossible;
 }
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
@@ -1699,7 +1782,10 @@ public:
 	static int GetSaved( T* p, lua_State *L )				{ p->m_SavedLuaData.PushSelf(L); return 1; }
 	static int GetTotalNumSongsPlayed( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int IsCodeUnlocked( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCodeUnlocked(IArg(1)) ); return 1; }
-	
+	static int GetTotalStepsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalStepsWithTopGrade((StepsType)IArg(1),(Difficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
+	static int GetTotalTrailsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalTrailsWithTopGrade((StepsType)IArg(1),(CourseDifficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
+	static int GetSongsPercentCompleteAllDifficulties( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetSongsPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
+	static int GetCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1715,6 +1801,10 @@ public:
 		ADD_METHOD( GetSaved )
 		ADD_METHOD( GetTotalNumSongsPlayed )
 		ADD_METHOD( IsCodeUnlocked )
+		ADD_METHOD( GetTotalStepsWithTopGrade )
+		ADD_METHOD( GetTotalTrailsWithTopGrade )
+		ADD_METHOD( GetSongsPercentCompleteAllDifficulties )
+		ADD_METHOD( GetCoursesPercentCompleteAllDifficulties )
 		Luna<T>::Register( L );
 	}
 };

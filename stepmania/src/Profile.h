@@ -67,12 +67,16 @@ public:
 	CString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	float GetCaloriesBurnedToday() const;
 	int GetTotalNumSongsPassed() const;
+	int GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) const;
+	int GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade g ) const;
 	float GetSongsPossible( StepsType st, Difficulty dc ) const;
 	float GetCoursesPossible( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsActual( StepsType st, Difficulty dc ) const;
 	float GetCoursesActual( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsPercentComplete( StepsType st, Difficulty dc ) const;
 	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const;
+	float GetSongsPercentCompleteAllDifficulties( StepsType st ) const;
+	float GetCoursesPercentCompleteAllDifficulties( StepsType st ) const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	int GetSongNumTimesPlayed( const SongID& songID ) const;
