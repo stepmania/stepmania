@@ -22,6 +22,7 @@ public:
 
 	void Trace( const char *fmt, ...);
 	void Warn( const char *fmt, ...);
+	void Info( const char *fmt, ...);
 	void Flush();
 
 	void ShowConsole();

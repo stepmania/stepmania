@@ -79,6 +79,18 @@ void RageLog::Trace( const char *fmt, ...)
 #endif
 }
 
+/* Use this for more important information; it'll always be included
+ * in crash dumps. */
+void RageLog::Info( const char *fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+    CString sBuff = vssprintf( fmt, va );
+    va_end(va);
+	Trace("%s", sBuff);
+	StaticLog(sBuff);
+}
+
 void RageLog::Warn( const char *fmt, ...)
 {
     va_list	va;

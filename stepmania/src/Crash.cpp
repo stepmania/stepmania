@@ -66,6 +66,7 @@ static VDDebugInfoContext g_debugInfo;
 
 BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 static void ReportCrashLog(HWND hwnd, HANDLE hFile);
+static void ReportStaticLog(HWND hwnd, HANDLE hFile);
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -1357,6 +1358,9 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	ReportCrashCallStack(NULL, hFile, pExc, g_pcdw->vdc.pExtraData);
 	Report(NULL, hFile, "");
 
+	ReportStaticLog(NULL, hFile);
+	Report(NULL, hFile, "");
+
 	ReportCrashLog(NULL, hFile);
 	Report(NULL, hFile, "");
 
@@ -1519,8 +1523,12 @@ static int backlog_start=0, backlog_cnt=0;
 
 void CrashLog(const char *str)
 {
-	strncpy(backlog[backlog_start], str, sizeof(backlog[backlog_start]));
-	backlog[backlog_start] [ sizeof(backlog[backlog_start])-1 ] = 0;
+	int len = strlen(str);
+	if(len > sizeof(backlog[backlog_start])-1)
+		len = sizeof(backlog[backlog_start])-1;
+
+	strncpy(backlog[backlog_start], str, len);
+	backlog[backlog_start] [ len ] = 0;
 
 	backlog_start++;
 	if(backlog_start > backlog_cnt)
@@ -1537,5 +1545,37 @@ static void ReportCrashLog(HWND hwnd, HANDLE hFile)
 		Report(hwnd, hFile, "%s", backlog[i]);
 	for(i = 0; i < backlog_start && i < backlog_cnt; ++i)
 		Report(hwnd, hFile, "%s", backlog[i]);
+}
+
+/* Same idea, except this is for data that we *always* want to print
+ * in the crash log, even if it was printed when we started. */
+static const int STATICLOG_LINES = 100;
+static char staticlog[BACKLOG_LINES][1024];
+static int staticlog_cnt=0;
+void StaticLog(const char *str)
+{
+	if(staticlog_cnt == STATICLOG_LINES)
+	{
+		/* Use this sparingly! */
+		strcpy(staticlog[STATICLOG_LINES-1], "Staticlog limit reached");
+		return;
+	}
+
+	int len = strlen(str);
+	if(len > sizeof(staticlog[staticlog_cnt])-1)
+		len = sizeof(staticlog[staticlog_cnt])-1;
+
+	strncpy(staticlog[staticlog_cnt], str, len);
+	staticlog[staticlog_cnt] [ len ] = 0;
+
+	staticlog_cnt++;
+}
+
+static void ReportStaticLog(HWND hwnd, HANDLE hFile)
+{
+	Report(NULL, hFile, "Static log:");
+
+	for(int i = 0; i < staticlog_cnt; ++i)
+		Report(hwnd, hFile, "%s", staticlog[i]);
 }
 
