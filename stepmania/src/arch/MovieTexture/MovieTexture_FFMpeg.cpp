@@ -767,7 +767,7 @@ void MovieTexture_FFMpeg::SetPosition( float fSeconds )
 		return;
 	}
 
-	LOG->Trace( "Seek to %f (from %f)", fSeconds );
+	LOG->Trace( "Seek to %f", fSeconds );
 	m_bWantRewind = true;
 }
 
