@@ -979,14 +979,14 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				m_MusicWheel.StartRandom();
 			MenuStart(PLAYER_INVALID);
 		}
-		break;
+		return;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		/* We may have stray SM_SongChanged messages from the music wheel.  We can't
 		 * handle them anymore, since the title menu (and attract screens) reset
 		 * the game state, so just discard them. */
 		ClearMessageQueue();
-		break;
+		return;
 	case SM_BeginFadingOut:
 		/* XXX: yuck.  Later on, maybe this can be done in one BGA with lua ... */
 		if( m_bGoToOptions )
@@ -1005,7 +1005,7 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			SOUND->StopMusic();
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
-		break;
+		return;
 	case SM_SongChanged:
 		AfterMusicChange();
 		break;

@@ -292,14 +292,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 	case SM_AllowOptionsMenuRepeat:
 		m_bAllowOptionsMenuRepeat = true;
 		break;
-	case SM_MenuTimer:
-		MenuStart(PLAYER_1);
-		break;
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		break;
 	case SM_GoToNextScreen:
-
 		// find out if the Next button is being held down on any of the pads
 		bool bIsHoldingNext;
 		bIsHoldingNext = false;
@@ -316,7 +309,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 		else
 			SCREENMAN->SetNewScreen( "ScreenStage" );
 
-		break;
+		return;
 	case SM_SongChanged:
 		AfterCourseChange();
 		break;
