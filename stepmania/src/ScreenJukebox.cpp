@@ -19,7 +19,7 @@
 #include "SDL_utils.h"
 #include "ScreenManager.h"
 #include "RageSounds.h"
-
+#include "Steps.h"
 
 
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
@@ -59,6 +59,9 @@ bool ScreenJukebox::SetSong()
 		}
 
 		if( pNotes == NULL )
+			continue;	// skip
+
+		if( !PREFSMAN->m_bAutogenMissingTypes && pNotes->IsAutogen())
 			continue;	// skip
 
 		// Found something we can use!
