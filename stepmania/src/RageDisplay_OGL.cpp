@@ -1775,7 +1775,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	{
 		ostringstream s;
 		
-		s << bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D";
+		s << (bGenerateMipMaps? "gluBuild2DMipmaps":"glTexImage2D");
 		s << "(format " << GLToString(glTexFormat) <<
 				", " << img->w << "x" <<  img->h <<
 				", format " << GLToString(glImageFormat) <<
