@@ -256,7 +256,7 @@ PrefsManager::PrefsManager()
 
 	m_bAllowUnacceleratedRenderer = false;
 	m_bThreadedInput = true;
-	m_bThreadedMovieDecode = false;
+	m_bThreadedMovieDecode = true;
 	m_bScreenTestMode = false;
 	m_sMachineName = "NoName";
 	m_sIgnoredMessageWindows = "";
