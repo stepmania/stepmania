@@ -281,7 +281,7 @@ bool RageFileManager::Remove( CString sPath )
 			continue;
 
 		bool ret = g_Drivers[i].driver->Remove( p );
-		if( !ret )
+		if( ret )
 			Deleted = true;
 	}
 
@@ -295,9 +295,13 @@ void RageFileManager::CreateDir( CString sDir )
 	f.Open( sTempFile, RageFile::WRITE );
 	f.Close();
 
-	FILEMAN->Remove( sTempFile );
+	// YUCK: The dir cache doesn't have this new file we just created,
+	// so the delete will fail unless we flush.
+	FILEMAN->FlushDirCache( sDir );
 
+	FILEMAN->Remove( sTempFile );
 }
+
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );
