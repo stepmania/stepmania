@@ -20,6 +20,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "InputFilter.h"
 
 
 //
@@ -476,7 +477,7 @@ void ScreenEdit::DrawPrimitives()
 	m_textHelp.Draw();
 	m_textInfo.Draw();
 	m_Fade.Draw();
-	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
+	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
 	{
 		m_rectShortcutsBack.Draw();
 		m_textShortcuts.Draw();
@@ -708,7 +709,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				const DeviceInput di(DEVICE_KEYBOARD, DIK_1+col);
 
-				if( !INPUTMAN->IsBeingPressed(di) )
+				if( !INPUTFILTER->IsBeingPressed(di) )
 					continue;
 
 				// create a new hold note
@@ -719,8 +720,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_NoteFieldEdit.AddHoldNote( newHN );
 			}
 
-			if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
-				INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
 			{
 				/* Shift is being held. 
 				 *
@@ -1099,8 +1100,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case IET_FAST_REPEAT:	fDelta *= 40;	break;
 			}
 
-			if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
-				INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
 			{
 				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
 				m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);

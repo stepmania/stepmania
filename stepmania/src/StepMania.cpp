@@ -824,9 +824,9 @@ void Update()
 	//if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
 	// 	fDeltaTime = 0.050f;
 	
-	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
+	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
 		fDeltaTime *= 4;
-	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
+	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
 		fDeltaTime /= 4;
 
 

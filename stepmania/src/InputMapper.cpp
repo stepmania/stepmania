@@ -15,6 +15,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "RageLog.h"
+#include "InputFilter.h"
 
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
@@ -266,7 +267,7 @@ bool InputMapper::IsButtonDown( GameInput GameI )
 
 		if( GameToDevice( GameI, i, DeviceI ) )
 		{
-			if( INPUTMAN->IsBeingPressed( DeviceI ) )
+			if( INPUTFILTER->IsBeingPressed( DeviceI ) )
 				return true;
 		}
 	}
