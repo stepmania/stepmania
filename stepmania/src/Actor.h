@@ -18,8 +18,7 @@ public:
 	virtual ~Actor() {}
 	virtual void Reset();
 
-	static void SetBGMTime( float fTime ) { g_fCurrentBGMTime = fTime; }
-	static float GetBGMTime() { return g_fCurrentBGMTime; }
+	static void SetBGMTime( float fTime, float fBeat ) { g_fCurrentBGMTime = fTime; g_fCurrentBGMBeat = fBeat; }
 
 	enum TweenType { 
 		TWEEN_LINEAR, 
@@ -56,7 +55,7 @@ public:
 		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
 	};
 
-	enum EffectClock { CLOCK_TIMER, CLOCK_BGM, NUM_CLOCKS };
+	enum EffectClock { CLOCK_TIMER, CLOCK_BGM_TIME, CLOCK_BGM_BEAT, NUM_CLOCKS };
 
 	void Draw();						// calls, NeedsDraw, BeginDraw, DrawPrimitives, EndDraw
 	virtual bool EarlyAbortDraw() { return false; }	// return true to early abort drawing of this Actor
@@ -395,8 +394,8 @@ protected:
 
 	//
 	// global state
-	///
-	static float g_fCurrentBGMTime;
+	//
+	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
 };
 
 #endif

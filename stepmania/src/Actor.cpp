@@ -8,7 +8,7 @@
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 
-float Actor::g_fCurrentBGMTime = 0;
+float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
 /* This is Reset instead of Init since many derived classes have Init() functions
  * that shouldn't change the position of the actor. */
@@ -326,7 +326,11 @@ void Actor::Update( float fDeltaTime )
 			m_fSecsIntoEffect = fmodfp( m_fSecsIntoEffect, m_fEffectPeriodSeconds + m_fEffectDelay );
 			break;
 
-		case CLOCK_BGM:
+		case CLOCK_BGM_BEAT:
+			m_fSecsIntoEffect = g_fCurrentBGMBeat;
+			break;
+
+		case CLOCK_BGM_TIME:
 			m_fSecsIntoEffect = g_fCurrentBGMTime;
 			break;
 		}
@@ -458,7 +462,9 @@ void Actor::SetEffectClock( CString s )
 {
 	s.MakeLower();
 	if     (s=="timer")		SetEffectClock( CLOCK_TIMER );
-	else if(s=="bgm")		SetEffectClock( CLOCK_BGM );
+	else if(s=="beat")		SetEffectClock( CLOCK_BGM_BEAT );
+	else if(s=="music")		SetEffectClock( CLOCK_BGM_TIME );
+	else if(s=="bgm")		SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
 	else	ASSERT(0);
 }
 

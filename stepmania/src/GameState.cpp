@@ -496,7 +496,7 @@ void GameState::ResetMusicStatistics()
 	m_fCurBPS = 10;
 	m_bFreeze = false;
 	m_bPastHereWeGo = false;
-	Actor::SetBGMTime( 0 );
+	Actor::SetBGMTime( 0, 0 );
 }
 
 void GameState::ResetStageStatistics()
@@ -552,7 +552,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 
 	m_fMusicSeconds = fPositionSeconds;
 
-	Actor::SetBGMTime( m_fSongBeat );
+	Actor::SetBGMTime( fPositionSeconds, m_fSongBeat );
 	
 //	LOG->Trace( "m_fMusicSeconds = %f, m_fSongBeat = %f, m_fCurBPS = %f, m_bFreeze = %f", m_fMusicSeconds, m_fSongBeat, m_fCurBPS, m_bFreeze );
 }
