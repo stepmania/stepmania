@@ -11,7 +11,7 @@ public:
 	virtual ~MemoryCardDriver_Windows();
 	virtual bool StorageDevicesChanged();
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
-	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice );
+	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint );
 	virtual void Flush( UsbStorageDevice* pDevice );
 protected:
 	DWORD m_dwLastLogicalDrives;

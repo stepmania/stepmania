@@ -9,7 +9,7 @@ public:
 	MemoryCardDriver_Null() {};
 	virtual bool StorageDevicesChanged() { return false; };
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut ) {};
-	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice ) { return false; };
+	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint ) { return false; };
 	virtual void Flush( UsbStorageDevice* pDevice ) {};
 };
 

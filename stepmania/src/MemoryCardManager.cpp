@@ -126,6 +126,7 @@ MemoryCardState MemoryCardManager::GetCardState( PlayerNumber pn )
 		return MEMORY_CARD_STATE_READY;
 }
 
+/*
 CString MemoryCardManager::GetOsMountDir( PlayerNumber pn )
 {
 	if( m_Device[pn].IsBlank() )
@@ -139,6 +140,7 @@ CString MemoryCardManager::GetOsMountDir( PlayerNumber pn )
 		return sDir;
 	}
 }
+*/
 
 void MemoryCardManager::LockCards( bool bLock )
 {
@@ -230,8 +232,12 @@ match:
 			m_bTooLate[p] = m_bCardsLocked;
 			m_bWriteError[p] = false;
 			if( !m_bCardsLocked )
-				if( !m_pDriver->MountAndTestWrite(&m_Device[p]) )
+			{
+				if( !m_pDriver->MountAndTestWrite(&m_Device[p], MEM_CARD_MOUNT_POINT[p]) )
+				{
 					m_bWriteError[p] = true;
+				}
+			}
 
 			// play sound
 			if( m_bWriteError[p] )

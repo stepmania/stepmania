@@ -231,7 +231,7 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 	}
 }
 
-bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
+bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint )
 {
 	if( pDevice->sOsMountDir.empty() )
 		return false;
@@ -254,6 +254,12 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
 		return false;
 	fclose( fp );
 	remove( sFile );
+
+
+	// XXX: Remounting a different OS directory to the same mount point 
+	// seems to be broken.  Investigate this later...
+	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
+	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
 
 	return true;
 }

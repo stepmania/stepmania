@@ -34,21 +34,9 @@
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
 
-
 #define NEW_MEM_CARD_NAME		""
-
-
 #define USER_PROFILES_DIR		"Data/LocalProfiles/"
 #define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
-
-
-
-static const char *MEM_CARD_DIR[NUM_PLAYERS] =
-{
-	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
-	"@mc1/",
-	"@mc2/",
-};
 
 
 ProfileManager::ProfileManager()
@@ -144,19 +132,11 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 {
 	UnloadProfile( pn );
 #ifndef _XBOX
-	// moust slot
+	// mount slot
 	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
 	{
-		// XXX: Remounting a different OS directory to the same mount point 
-		// seems to be broken.  Investigate this later...
-		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
-		LOG->Trace( "mount %s %s", MEMCARDMAN->GetOsMountDir(pn).c_str(), MEM_CARD_DIR[pn] );
-		CString sDir = MEM_CARD_DIR[pn];
+		CString sDir = MEM_CARD_MOUNT_POINT[pn];
 
-//		CString sDir = MEMCARDMAN->GetOsMountDir(pn);
-
-		DEBUG_ASSERT( MEMCARDMAN->GetOsMountDir(pn) );	// should be called only if we've already mounted
-		
 		// tack on a subdirectory so that we don't write everything to the root
 		sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
 		sDir += '/'; 
@@ -179,7 +159,9 @@ bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
 {
 //	CString sDir = MEM_CARD_DIR[pn];
 
-	CString sDir = MEMCARDMAN->GetOsMountDir(pn);
+	ASSERT( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY );
+
+	CString sDir = MEM_CARD_MOUNT_POINT[pn];
 	
 	DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
 

@@ -3,6 +3,8 @@
 #include "RageUtil.h"
 #include <io.h>
 #include <fcntl.h>
+#include "RageFileManager.h"
+#include "RageLog.h"
 
 MemoryCardDriver_Windows::MemoryCardDriver_Windows()
 {
@@ -49,7 +51,7 @@ void MemoryCardDriver_Windows::GetStorageDevices( vector<UsbStorageDevice>& vDev
 	}
 }
 
-bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice )
+bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint )
 {
 	if( pDevice->sOsMountDir.empty() )
 		return false;
@@ -80,6 +82,11 @@ bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice )
 		return false;
 	fclose( fp );
 	remove( sFile );
+
+	// XXX: Remounting a different OS directory to the same mount point 
+	// seems to be broken.  Investigate this later...
+	FILEMAN->Mount( "dir", pDevice->sOsMountDir, sMountPoint.c_str() );
+	LOG->Trace( "FILEMAN->Mount %s %s", pDevice->sOsMountDir.c_str(), sMountPoint.c_str() );
 
 	return true;
 }

@@ -15,6 +15,15 @@
 #include "RageSound.h"
 #include "arch/MemoryCard/MemoryCardDriver.h"
 
+
+const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
+{
+	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
+	"@mc1/",
+	"@mc2/",
+};
+
+
 class MemoryCardManager
 {
 public:
@@ -25,7 +34,7 @@ public:
 
 	MemoryCardState GetCardState( PlayerNumber pn );
 	
-	CString GetOsMountDir( PlayerNumber pn );	// only valid when state = ready
+//	CString GetOsMountDir( PlayerNumber pn );	// only valid when state = ready
 
 	void LockCards( bool bLock );	// prevent removing or changing of memory cards
 	
