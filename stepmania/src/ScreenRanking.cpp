@@ -225,10 +225,11 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 	{
 		// for all_courses:
-		for( int d=0; d<NUM_COURSE_DIFFICULTIES; d++ )
+		FOREACH_CourseDifficulty(d)
 		{
-			m_sprCourseDifficulty[d].SetName( ssprintf("CourseDifficulty%d",d) );
-			m_sprCourseDifficulty[d].Load( THEME->GetPathToG(ssprintf("ScreenRanking course difficulty 1x%d",NUM_COURSE_DIFFICULTIES)) );
+			CString cd = CourseDifficultyToString(d);
+			m_sprCourseDifficulty[d].SetName( ssprintf("CourseDifficulty%s",cd.c_str()) );
+			m_sprCourseDifficulty[d].Load( THEME->GetPathToG(ssprintf("ScreenRanking course difficulty %s",cd.c_str())) );
 			m_sprCourseDifficulty[d].SetHidden( true );
 			this->AddChild( &m_sprCourseDifficulty[d] );
 		}
@@ -626,8 +627,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 			if( bShowCourseDifficulty )
 			{
 				m_sprCourseDifficulty[d].Reset();
-				m_sprCourseDifficulty[d].StopAnimating();
-				m_sprCourseDifficulty[d].SetState( d );
 				m_sprCourseDifficulty[d].SetXY( COURSE_DIFFICULTY_X(d), COURSE_DIFFICULTY_Y );
 				ON_COMMAND( m_sprCourseDifficulty[d] );
 			}
