@@ -218,7 +218,9 @@ void MusicWheel::Load()
 		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iNumArcadeStages
 		&& !PREFSMAN->m_bEventMode
 		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
-			GAMESTATE->m_pCurSong = NULL;
+	{
+		GAMESTATE->m_pCurSong = NULL;
+	}
 
 	// Select the the previously selected song (if any)
 	if( !SelectSongOrCourse() )
@@ -674,11 +676,13 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			CString sThisSection = "";
 			if( so == SORT_ALL_COURSES )
-			switch( pCourse->GetPlayMode() )
 			{
-			case PLAY_MODE_ONI:		sThisSection = "Oni";		break;
-			case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
-			case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
+				switch( pCourse->GetPlayMode() )
+				{
+				case PLAY_MODE_ONI:		sThisSection = "Oni";		break;
+				case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
+				case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
+				}
 			}
 
 			// check that this course has at least one song playable in the current style
