@@ -151,7 +151,7 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	if( PREFSMAN->m_DWIPath != "" )
 		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "/Songs", ld );
 
-	LOG->Trace( "Found %d songs in %f seconds.", m_pSongs.size(), tm.GetDeltaTime() );
+	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
 
 void SongManager::SanityCheckGroupDir( CString sDir ) const
