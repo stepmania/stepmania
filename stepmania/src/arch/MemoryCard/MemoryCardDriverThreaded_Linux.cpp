@@ -340,6 +340,18 @@ void GetNewStorageDevices( vector<UsbStorageDeviceEx>& vDevicesOut )
 			}
 		}
 	}
+
+	/* Remove any devices that we couldn't find a mountpoint for. */
+	for( unsigned i=0; i<vDevicesOut.size(); i++ )
+	{
+		UsbStorageDevice& usbd = vDevicesOut[i];
+		if( usbd.sOsMountDir.empty() )
+		{
+			vDevicesOut.erase( vDevicesOut.begin()+i );
+			--i;
+		}
+	}
+
 }
 
 void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString sMountPoint )
