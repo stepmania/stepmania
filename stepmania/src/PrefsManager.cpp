@@ -669,7 +669,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	{
 		Grade grade = (Grade)g;
 		CString s = GradeToString( grade );
-		ini.SetValue( "Options", "GradePercentTier"+s,			m_fGradePercent[g] );
+		ini.SetValue( "Options", "GradePercent"+s,			m_fGradePercent[g] );
 	}
 	ini.SetValue( "Options", "GradeTier02IsAllPerfects",		m_bGradeTier02IsAllPerfects );
 
