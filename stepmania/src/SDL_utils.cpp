@@ -497,7 +497,7 @@ void mySDL_WM_SetIcon( CString sIconFile )
 		return;
 	}
 
-	SDL_Surface *srf = RageSurface::LoadFile(sIconFile);
+	SDL_Surface *srf = RageSurfaceUtils::LoadFile(sIconFile);
 	if( srf == NULL )
 		return;
 

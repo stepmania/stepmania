@@ -9,13 +9,13 @@
 #include "SDL_utils.h"
 #include <set>
 
-static RageSurface::OpenResult RageSurface_Load_BMP( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
+static RageSurfaceUtils::OpenResult RageSurface_Load_BMP( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 	if( !f.Open(sPath) )
 	{
 		error = f.GetError();
-		return RageSurface::OPEN_FATAL_ERROR;
+		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 	}
 
 	SDL_RWops rw;
@@ -26,18 +26,18 @@ static RageSurface::OpenResult RageSurface_Load_BMP( const CString &sPath, SDL_S
 	if( ret == NULL )
 	{
 		error = SDL_GetError();
-		return RageSurface::OPEN_UNKNOWN_FILE_FORMAT;
+		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT;
 	}
 
 	mySDL_FixupPalettedAlpha( ret );
-	return RageSurface::OPEN_OK;
+	return RageSurfaceUtils::OPEN_OK;
 }
 
 
 static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error, CString format, bool &bKeepTrying )
 {
 	SDL_Surface *ret = NULL;
-	RageSurface::OpenResult result;
+	RageSurfaceUtils::OpenResult result;
 	if( !format.CompareNoCase("png") )
 		result = RageSurface_Load_PNG( sPath, ret, bHeaderOnly, error );
 	else if( !format.CompareNoCase("gif") )
@@ -53,7 +53,7 @@ static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error
 		return NULL;
 	}
 
-	if( result == RageSurface::OPEN_OK )
+	if( result == RageSurfaceUtils::OPEN_OK )
 	{
 		ASSERT( ret );
 		return ret;
@@ -78,15 +78,15 @@ static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error
 	 * error", "permission denied"), in which case all other readers will probably fail,
 	 * too.  The returned error is used, and no other formats will be tried.
 	 */
-	bKeepTrying = (result != RageSurface::OPEN_FATAL_ERROR);
+	bKeepTrying = (result != RageSurfaceUtils::OPEN_FATAL_ERROR);
 	switch( result )
 	{
-	case RageSurface::OPEN_UNKNOWN_FILE_FORMAT:
+	case RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT:
 		bKeepTrying = true;
 		error = "Unknown file format";
 		break;
 
-	case RageSurface::OPEN_FATAL_ERROR:
+	case RageSurfaceUtils::OPEN_FATAL_ERROR:
 		/* The file matched, but failed to load.  We know it's this type of data;
 		 * don't bother trying the other file types. */
 		bKeepTrying = false;
@@ -96,7 +96,7 @@ static SDL_Surface *TryOpenFile( CString sPath, bool bHeaderOnly, CString &error
 	return NULL;
 }
 
-SDL_Surface *RageSurface::LoadFile( const CString &sPath, bool bHeaderOnly )
+SDL_Surface *RageSurfaceUtils::LoadFile( const CString &sPath, bool bHeaderOnly )
 {
 	{
 		RageFile TestOpen;

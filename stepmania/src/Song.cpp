@@ -697,7 +697,7 @@ void Song::TidyUpData()
 
 		CString sPath = m_sSongDir + arrayImages[i];
 		/* We only care about the dimensions. */
-		SDL_Surface *img = RageSurface::LoadFile( sPath, true );
+		SDL_Surface *img = RageSurfaceUtils::LoadFile( sPath, true );
 		if( !img )
 		{
 			LOG->Trace("Couldn't load '%s': %s", sPath.c_str(), SDL_GetError());

@@ -2,7 +2,7 @@
 #define RAGE_SURFACE_LOAD_H
 
 struct SDL_Surface;
-namespace RageSurface
+namespace RageSurfaceUtils
 {
 	enum OpenResult
 	{

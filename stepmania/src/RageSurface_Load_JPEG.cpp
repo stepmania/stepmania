@@ -195,13 +195,13 @@ static SDL_Surface *RageSurface_Load_JPEG( RageFile *f, const char *fn, char err
 }
 
 
-RageSurface::OpenResult RageSurface_Load_JPEG( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
+RageSurfaceUtils::OpenResult RageSurface_Load_JPEG( const CString &sPath, SDL_Surface *&ret, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 	if( !f.Open( sPath ) )
 	{
 		error = f.GetError();
-		return RageSurface::OPEN_FATAL_ERROR;
+		return RageSurfaceUtils::OPEN_FATAL_ERROR;
 	}
 
 	char errorbuf[1024];
@@ -209,10 +209,10 @@ RageSurface::OpenResult RageSurface_Load_JPEG( const CString &sPath, SDL_Surface
 	if( ret == NULL )
 	{
 		error = errorbuf;
-		return RageSurface::OPEN_UNKNOWN_FILE_FORMAT; // XXX
+		return RageSurfaceUtils::OPEN_UNKNOWN_FILE_FORMAT; // XXX
 	}
 
-	return RageSurface::OPEN_OK;
+	return RageSurfaceUtils::OPEN_OK;
 }
 
 /*
