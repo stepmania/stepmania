@@ -39,7 +39,7 @@ void RageSound_DSound_Software::MixerThread()
 	while(!SOUNDMAN && !shutdown) Sleep(10);
 
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
-		LOG->Warn("Failed to set sound thread priority: %i", GetLastError()); /* XXX */
+		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
 
 	while(!shutdown) {
 		Sleep(10);
