@@ -14,7 +14,8 @@
 #include "IniFile.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include <fstream>
+#include <string.h>
+#include <errno.h>
 using namespace std;
 
 //constructor, can specify pathname here instead of using SetPath later
@@ -40,18 +41,21 @@ void IniFile::SetPath(CString newpath)
 bool IniFile::ReadFile()
 {
 LOG->Trace("INI: Reading '%s'",path.c_str() );
-	ifstream file(path);
+	FILE *f = fopen(path, "r");
 
-	if (!file.is_open())
+	if (f == NULL)
 	{
-LOG->Trace("INI: FAILED");
-		error = "Unable to open ini file.";
+		LOG->Trace("INI: FAILED: %s", strerror(errno));
+		error = ssprintf("Unable to open ini file: %s", strerror(errno));
 		return 0;
 	}
 
-	CString line, keyname;
-	while (getline(file, line))
+	CString keyname;
+	char buf[10240];
+	while (fgets(buf, sizeof(buf), f))
 	{
+		buf[sizeof(buf)-1]=0;
+		CString line(buf);
 LOG->Trace("Read line '%s'", line.c_str());
 		if(line.size() >= 3 &&
 			line[0] == '\xef' &&
@@ -71,28 +75,24 @@ LOG->Trace("Stripped: '%s'", line.c_str());
 
 		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
 			continue; /* comment */
-LOG->Trace("Not a comment");
 
 		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
 		{
 			keyname = line.substr(1, line.size()-2);
-LOG->Trace("Key name '%s'", keyname.c_str());
 		}
 		else //if a value
 		{
 			int iEqualIndex = line.Find("=");
-LOG->Trace("Val, %i", iEqualIndex );
 			if( iEqualIndex != -1 )
 			{
 				CString valuename = line.Left(iEqualIndex);
 				CString value = line.Right(line.GetLength()-valuename.GetLength()-1);
-LOG->Trace("'%s' '%s' (key '%s')", valuename.c_str(), value.c_str(), keyname.c_str() );
 				SetValue(keyname,valuename,value);
 			}
 		}
 	}
 	LOG->Trace("INI: done");
-	
+	fclose(f);	
 	return 1;
 }
 
