@@ -19,7 +19,7 @@
 
 #include "ArchHooks/ArchHooks_Unix.h"
 
-#include "Lights/LightsDriver_Win32Parallel.h"
+#include "Lights/LightsDriver_LinuxSerial.h"
 
 #endif
 /*
