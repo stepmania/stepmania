@@ -927,6 +927,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					Name="InputHandler"
 					Filter="">
 					<File
+						RelativePath="arch\InputHandler\InputHandler.cpp">
+					</File>
+					<File
 						RelativePath="arch\InputHandler\InputHandler.h">
 					</File>
 					<File
