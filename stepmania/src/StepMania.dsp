@@ -65,7 +65,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\itg\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                            	cl                                                            /Zl                                                            /nologo                                                            /c                                                            verstub.cpp                                                            /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                             	cl                                                             /Zl                                                             /nologo                                                             /c                                                             verstub.cpp                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -122,7 +122,7 @@ PreLink_Cmds=disasm\verinc                                                      
 # PROP Target_Dir ""
 CPP=cl.exe
 # ADD BASE CPP /nologo /MD /W3 /GX /Zi /O2 /Ob2 /I "." /I "SDL-1.2.5\include" /I "SDL_image-1.2" /I "plib-1.6.0" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
-# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "." /I "SDL-1.2.6\include" /I "SDL_image-1.2" /I "SDL_net-1.2.5\include" /I "vorbis" /I "libjpeg" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
+# ADD CPP /nologo /MD /W3 /GX /O2 /Ob2 /I "." /I "SDL-1.2.6\include" /I "SDL_image-1.2" /I "SDL_net-1.2.5\include" /I "vorbis" /I "libjpeg" /I "crypto51" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /FR /YX /FD /c
 MTL=midl.exe
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -142,7 +142,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                             	cl                      /Zl                      /nologo                      /c                      verstub.cpp                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                              	cl                       /Zl                       /nologo                       /c                       verstub.cpp                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
