@@ -92,6 +92,11 @@ void SaveCatalogXml()
 		{
 			Course* pCourse = vpCourses[i];
 
+			// skip non-fixed courses.  We don't have any stable data for them other than 
+			// the title.
+			if( !pCourse->IsFixed() )
+				continue;
+
 			CourseID courseID;
 			courseID.FromCourse( pCourse );
 

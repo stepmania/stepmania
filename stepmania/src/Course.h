@@ -161,6 +161,8 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
+	void CalculateRadarValues();
+
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 

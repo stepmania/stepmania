@@ -19,7 +19,7 @@
 #include "ThemeManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
-
+#include "UnlockManager.h"
 #include <limits.h>
 
 /* Amount to increase meter ranges to make them difficult: */
@@ -74,8 +74,10 @@ void Course::LoadFromCRSFile( CString sPath )
 		sPath = sCacheFile.c_str();
 	}
 	else
+	{
 		LOG->Trace( "Course::LoadFromCRSFile(\"%s\")", sPath.c_str() );
-	
+	}
+
 	MsdFile msd;
 	if( !msd.ReadFile(sPath) )
 		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
@@ -298,18 +300,7 @@ void Course::LoadFromCRSFile( CString sPath )
 	 * don't have to do it at runtime. */
 	if( !bUseCache )
 	{
-		FOREACH_StepsType( st )
-		{
-			FOREACH_CourseDifficulty( cd )
-			{
-				Trail *pTrail = GetTrail( st, cd );
-				if( pTrail == NULL )
-					continue;
-
-				RadarValues rv = pTrail->GetRadarValues();
-				m_RadarCache[CacheEntry(st, cd)] = rv;
-			}
-		}
+		CalculateRadarValues();
 
 		/* If we have any cache data, write the cache file. */
 		if( m_RadarCache.size() )
@@ -871,9 +862,17 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 					ASSERT( pSong );
 					CurSong = (CurSong+1) % AllSongsShuffled.size();
 
-					if(e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP &&
-					   pSong->m_sGroupName.CompareNoCase(e.group_name))
-					   continue; /* wrong group */
+					// Ignore locked songs when choosing randomly
+					if( UNLOCKMAN->SongIsLocked(pSong) )
+						continue;
+
+					// Ignore boring tutorial songs
+					if( pSong->IsTutorial() )
+						continue;
+
+					if( e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP &&
+						pSong->m_sGroupName.CompareNoCase(e.group_name))
+						continue; /* wrong group */
 
 					if( e.difficulty == DIFFICULTY_INVALID )
 						pSteps = pSong->GetStepsByMeter( st, low_meter, high_meter );
@@ -1254,6 +1253,29 @@ bool Course::ShowInDemonstrationAndRanking() const
 	return true;
 }
 
+void Course::CalculateRadarValues()
+{
+	FOREACH_StepsType( st )
+	{
+		FOREACH_CourseDifficulty( cd )
+		{
+			// For courses that aren't fixed, the radar values are meaningless.
+			// Makes non-fixed courses have unknown radar values.
+			if( IsFixed() )
+			{
+				Trail *pTrail = GetTrail( st, cd );
+				if( pTrail == NULL )
+					continue;
+				RadarValues rv = pTrail->GetRadarValues();
+				m_RadarCache[CacheEntry(st, cd)] = rv;
+			}
+			else
+			{
+				m_RadarCache[CacheEntry(st, cd)] = RadarValues();
+			}
+		}
+	}
+}
 
 // lua start
 #include "LuaBinding.h"
