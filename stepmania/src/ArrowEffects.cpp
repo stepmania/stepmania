@@ -48,7 +48,7 @@ float ArrowGetXPos( const PlayerOptions& po, const Style &style, int iColNum, fl
 float ArrowGetRotation( const PlayerOptions& po, const Style &style, int iColNum, float fYOffset ) 
 {
 	float fRotation = style.m_ColumnToRotation[iColNum];
-	
+
 	switch( po.m_EffectType )
 	{
 	case PlayerOptions::EFFECT_DIZZY:
