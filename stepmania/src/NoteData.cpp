@@ -103,11 +103,14 @@ void NoteData::Config( const NoteData &From )
 	m_iNumTracks = From.m_iNumTracks;
 }
 
-void NoteData::CopyAll( NoteData* pFrom )
+void NoteData::CopyAll( const NoteData* pFrom )
 {
 	Config(*pFrom);
 	ClearAll();
-	CopyRange( pFrom, 0, pFrom->GetLastRow() );
+
+	for( int c=0; c<m_iNumTracks; c++ )
+		m_TapNotes[c] = pFrom->m_TapNotes[c];
+	m_HoldNotes = pFrom->m_HoldNotes;
 }
 
 void NoteData::AddHoldNote( HoldNote add )
