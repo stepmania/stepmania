@@ -605,46 +605,55 @@ void PlayerMinus::DrawHoldJudgments()
 	}
 }
 
-/* It's OK for this function to search a little more than was requested. */
-int PlayerMinus::GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsDistance, int iDirection  ) const
+int PlayerMinus::GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const
 {
-	// look for the closest matching step
-	const int iIndexStartLookingAt = BeatToNoteRow( fBeat );
-
-	/* Number of elements to examine on either end of iIndexStartLookingAt.  Make
-	 * sure we always round up. */
-	const int iNumElementsToExamine = BeatToNoteRow( fMaxBeatsDistance + 1 );
-
-	// Start at iIndexStartLookingAt and search outward.
-	for( int delta=0; delta < iNumElementsToExamine; delta++ )
+	/* Be sure to check iStartRow itself, too. */
+	int iRow = iStartRow;
+	while( abs(iStartRow-iRow) <= iMaxRowsAhead )
 	{
-		int iCurrentIndex = iIndexStartLookingAt + (iDirection * delta);
+		/* Is iRow the row we want? */
+		do 
+		{
+			if( m_NoteData.GetTapNote(col, iRow).type == TapNote::empty )
+				break;
+			if( !bAllowGraded && m_NoteData.GetTapNoteScore(col, iRow) != TNS_NONE )
+				break;
+			return iRow;
+		}
+		while(0);
 
-		if( iCurrentIndex < 0) continue;
-		if( m_NoteData.GetTapNote(col, iCurrentIndex).type == TapNote::empty) continue; /* no note here */
-		if( m_NoteData.GetTapNoteScore(col, iCurrentIndex) != TNS_NONE ) continue;	/* this note has a score already */
-
-		return iCurrentIndex;
+		if( bForward && !m_NoteData.GetNextTapNoteRowForTrack( col, iRow ) )
+			return -1;
+		if( !bForward && !m_NoteData.GetPrevTapNoteRowForTrack( col, iRow ) )
+			return -1;
 	}
-
 	return -1;
 }
 
-int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind ) const
+/* Find the closest note to fBeat. */
+int PlayerMinus::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const
 {
-	int Fwd = GetClosestNoteDirectional(col, fBeat, fMaxBeatsAhead, 1);
-	int Back = GetClosestNoteDirectional(col, fBeat, fMaxBeatsBehind, -1);
+	// look for the closest matching step
+	const int iRow = BeatToNoteRow( fBeat );
 
-	if(Fwd == -1 && Back == -1) return -1;
-	if(Fwd == -1) return Back;
-	if(Back == -1) return Fwd;
+	// Start at iIndexStartLookingAt and search outward.
+	int iNextIndex = GetClosestNoteDirectional( col, iRow, BeatToNoteRow(fMaxBeatsAhead), bAllowGraded, true );
+	int iPrevIndex = GetClosestNoteDirectional( col, iRow, BeatToNoteRow(fMaxBeatsBehind), bAllowGraded, false );
+
+	if( iNextIndex == -1 && iPrevIndex == -1 )
+		return -1;
+	if( iNextIndex == -1 )
+		return iPrevIndex;
+	if( iPrevIndex == -1 )
+		return iNextIndex;
 
 	/* Figure out which row is closer. */
-	const float DistToFwd = fabsf(fBeat-NoteRowToBeat(Fwd));
-	const float DistToBack = fabsf(fBeat-NoteRowToBeat(Back));
+	const float DistToFwd = fabsf( fBeat-NoteRowToBeat(iNextIndex) );
+	const float DistToBack = fabsf( fBeat-NoteRowToBeat(iPrevIndex) );
 	
-	if( DistToFwd > DistToBack ) return Back;
-	return Fwd;
+	if( DistToFwd > DistToBack )
+		return iPrevIndex;
+	return iNextIndex;
 }
 
 
@@ -666,7 +675,8 @@ void PlayerMinus::Step( int col, RageTimer tm )
 	//
 	int iIndexOverlappingNote = GetClosestNote( col, fSongBeat, 
 						   StepSearchDistanceForwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
-						   StepSearchDistanceBackwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
+						   StepSearchDistanceBackwards * GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
+						   false );
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 

@@ -71,8 +71,8 @@ protected:
 	void DrawTapJudgments();
 	void DrawHoldJudgments();
 
-	int GetClosestNoteDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection ) const;
-	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind ) const;
+	int GetClosestNoteDirectional( int col, int iStartRow, int iMaxRowsAhead, bool bAllowGraded, bool bForward ) const;
+	int GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind, bool bAllowGraded ) const;
 
 	PlayerNumber	m_PlayerNumber;
 	float			m_fNoteFieldHeight;
