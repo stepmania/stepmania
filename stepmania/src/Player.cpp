@@ -62,7 +62,6 @@ PlayerMinus::PlayerMinus()
 	BRIGHT_GHOST_COMBO_THRESHOLD.Refresh();
 
 	m_PlayerNumber = PLAYER_INVALID;
-	m_bShowJudgment = true;
 
 	m_pLifeMeter = NULL;
 	m_pCombinedLifeMeter = NULL;
@@ -407,7 +406,7 @@ void PlayerMinus::DrawPrimitives()
 	if( fTilt != 0 )
 		DISPLAY->ExitPerspective();
 
-	if (m_bShowJudgment)
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
 	{
 		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bProTiming )
 			m_ProTimingDisplay.Draw();

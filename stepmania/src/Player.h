@@ -51,7 +51,6 @@ public:
 	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
 	void FadeToFail();
-	void DontShowJudgement() { m_bShowJudgment = false; }	// Used in ScreenHowToPlay
 	
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
@@ -88,7 +87,6 @@ protected:
 	Inventory*		m_pInventory;
 
 	CString			m_sLastSeenNoteSkin;
-	bool			m_bShowJudgment;
 	int				m_iRowLastCrossed;
 
 	RageSound		m_soundMineExplosion;

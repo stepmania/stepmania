@@ -38,7 +38,7 @@ enum {
 	PO_SCROLL,
 	PO_NOTE_SKIN,
 	PO_HOLD_NOTES,
-	PO_DARK,
+	PO_HIDE,
 	PO_PERSPECTIVE,
 	PO_STEP,
 	PO_CHARACTER,
@@ -61,7 +61,7 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Scroll",			false, "STANDARD","REVERSE","SPLIT","ALTERNATE" ),	
 	OptionRow( "Note\nSkin",		false, "" ),	
 	OptionRow( "Holds",				false, "OFF","ON" ),	
-	OptionRow( "Dark",				false, "OFF","DARK","BLIND"),	
+	OptionRow( "Hide",				false, "OFF","DARK","BLIND"),	
 	OptionRow( "Perspec\n-tive",	false, "" ),
 	OptionRow( "Step",				false, "" ),
 	OptionRow( "Character",			false, "" ),
@@ -236,7 +236,7 @@ void ScreenPlayerOptions::ImportOptions()
 
 
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
-		m_iSelectedOption[p][PO_DARK]		= po.m_fBlind ? 2 : (po.m_fDark ? 1 : 0);
+		m_iSelectedOption[p][PO_HIDE]		= po.m_fBlind ? 2 : (po.m_fDark ? 1 : 0);
 
 
 		if( GAMESTATE->m_bEditing )
@@ -368,8 +368,8 @@ void ScreenPlayerOptions::ExportOptions()
 
 
 		po.m_bHoldNotes			= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
-		po.m_fDark				= (m_iSelectedOption[p][PO_DARK] == 1) ? 1.f : 0.f;
-		po.m_fBlind				= (m_iSelectedOption[p][PO_DARK] == 2) ? 1.f : 0.f;
+		po.m_fDark				= (m_iSelectedOption[p][PO_HIDE] == 1) ? 1.f : 0.f;
+		po.m_fBlind				= (m_iSelectedOption[p][PO_HIDE] == 2) ? 1.f : 0.f;
 		
 		switch(m_iSelectedOption[p][PO_PERSPECTIVE])
 		{
