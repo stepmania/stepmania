@@ -96,6 +96,9 @@ void Background::LoadFromAniDir( CString sAniDir )
 {
 	Unload();
 
+	if( PREFSMAN->m_fBGBrightness == 0 )
+		return;
+
 	BGAnimation* pTempBGA;
 	pTempBGA = new BGAnimation;
 	pTempBGA->LoadFromAniDir( sAniDir );
@@ -228,6 +231,9 @@ BGAnimation* Background::CreateRandomBGA() const
 void Background::LoadFromSong( Song* pSong )
 {
 	Unload();
+
+	if( PREFSMAN->m_fBGBrightness == 0 )
+		return;
 
 	TEXTUREMAN->DisableOddDimensionWarning();
 
@@ -440,6 +446,9 @@ void Background::Update( float fDeltaTime )
 
 void Background::DrawPrimitives()
 {
+	if( PREFSMAN->m_fBGBrightness == 0 )
+		return;
+
 	ActorFrame::DrawPrimitives();
 	
 	if( IsDangerVisible() )
