@@ -38,6 +38,8 @@ public:
 
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) { };
 
+	virtual float GetLife() const;
+
 	void Refresh();
 
 private:

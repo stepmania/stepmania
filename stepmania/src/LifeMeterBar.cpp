@@ -432,8 +432,6 @@ void LifeMeterBar::Update( float fDeltaTime )
 {
 	LifeMeter::Update( fDeltaTime );
 
-	GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, m_fLifePercentage, GAMESTATE->m_fSongBeat / GAMESTATE->m_pCurSong->m_fLastBeat );
-
 
 	// HACK:  Tweaking these values is very difficulty.  Update the
 	// "physics" many times so that the spring motion appears faster

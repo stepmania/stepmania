@@ -155,6 +155,14 @@ bool LifeMeterBattery::IsFailing()
 	return GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber];
 }
 
+float LifeMeterBattery::GetLife() const
+{
+	if( !GAMESTATE->m_SongOptions.m_iBatteryLives )
+		return 1;
+
+	return float(m_iLivesLeft) / GAMESTATE->m_SongOptions.m_iBatteryLives;
+}
+
 void LifeMeterBattery::Refresh()
 {
 	if( m_iLivesLeft <= 4 )
