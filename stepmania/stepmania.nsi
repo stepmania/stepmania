@@ -193,6 +193,7 @@ CreateDirectory "$INSTDIR\Data"
 SetOutPath "$INSTDIR\Data"
 File "Data\Translation.dat"
 File "Data\AI.ini"
+File "Data\Unlocks.dat"
 File "Data\VideoCardDefaults.ini"
 
 SetOutPath "$INSTDIR"
