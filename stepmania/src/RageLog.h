@@ -25,8 +25,8 @@ public:
 
 	void ShowLogOutput( bool show );
 
-	void MapLog(const CString &key, const char *fmt, ...) PRINTF(3,4);
-	void UnmapLog(const CString &key);
+	void MapLog( const CString &key, const char *fmt, ... ) PRINTF(3,4);
+	void UnmapLog( const CString &key );
 
 	static const char *GetAdditionalLog();
 	static const char *GetInfo();
@@ -42,10 +42,10 @@ private:
 	bool m_bFlush;
 	bool m_bTimestamping;
 	bool m_bShowLogOutput;
-	void Write( int, CString );
+	void Write( int, const CString &str );
 	void UpdateMappedLog();
-	void AddToInfo( CString buf );
-	void AddToRecentLogs( CString buf );
+	void AddToInfo( const CString &buf );
+	void AddToRecentLogs( const CString &buf );
 };
 
 extern RageLog*	LOG;	// global and accessable from anywhere in our program

@@ -219,7 +219,7 @@ void RageLog::Warn( const char *fmt, ...)
 	Write( WRITE_TO_INFO | WRITE_LOUD, sBuff );
 }
 
-void RageLog::Write( int where, CString line )
+void RageLog::Write( int where, const CString &line )
 {
 	vector<CString> lines;
 	split( line, "\n", lines, false );
@@ -286,7 +286,7 @@ void RageLog::Flush()
 
 static char staticlog[1024*32]="";
 static CString staticlog_buf;
-void RageLog::AddToInfo( CString str )
+void RageLog::AddToInfo( const CString &str )
 {
 	int old_len = staticlog_buf.size();
 	staticlog_buf += str + NEWLINE;
@@ -314,7 +314,7 @@ const char *RageLog::GetInfo()
 static const int BACKLOG_LINES = 10;
 static char backlog[BACKLOG_LINES][1024];
 static int backlog_start=0, backlog_cnt=0;
-void RageLog::AddToRecentLogs( CString str )
+void RageLog::AddToRecentLogs( const CString &str )
 {
 	unsigned len = str.size();
 	if(len > sizeof(backlog[backlog_start])-1)
