@@ -27,9 +27,6 @@ class NoteData
 {
 	/* Keep this aligned, so that they all have the same size. */
 	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
-	int TapRowDivisor;
-	void SetDivisor(int div);
-
 	vector<HoldNote>	m_HoldNotes;
 
 	/* Pad m_TapNotes so it includes the row "rows". */
@@ -50,12 +47,9 @@ public:
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
 	inline TapNote GetTapNote(unsigned track, unsigned row) const
 	{
-		if((row % TapRowDivisor) != 0) return TapNote(TAP_EMPTY);
-		row /= TapRowDivisor;
 		if(row < 0 || row >= m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
 		return m_TapNotes[track][row];
 	}
-	int GetTapNoteIncrement() const { return TapRowDivisor; }
 	void MoveTapNoteTrack(int dest, int src);
 	void SetTapNote(int track, int row, TapNote t);
 

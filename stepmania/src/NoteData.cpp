@@ -31,7 +31,6 @@ NoteData::NoteData()
 void NoteData::Init()
 {
 	m_iNumTracks = 0;
-	TapRowDivisor = 1;
 }
 
 NoteData::~NoteData()
@@ -87,7 +86,6 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 void NoteData::Config( const NoteData &From )
 {
 	m_iNumTracks = From.m_iNumTracks;
-	TapRowDivisor = From.TapRowDivisor;
 }
 
 void NoteData::CopyAll( NoteData* pFrom )
@@ -214,7 +212,7 @@ float NoteData::GetLastBeat() const
 	
 	int i;
 
-	for( i = TapRowDivisor * int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
+	for( i = int(m_TapNotes[0].size()); i>=0; i-- )		// iterate back to front
 	{
 		if( !IsRowEmpty(i) )
 		{
@@ -532,45 +530,8 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 {
 	if(row < 0) return;
 
-	/* Decompress if needed. */
-	if((row % TapRowDivisor) != 0)
-		SetDivisor(1);
-
 	PadTapNotes(row);
-	row /= TapRowDivisor;
 	m_TapNotes[track][row]=t;
-}
-
-void NoteData::SetDivisor(int div)
-{
-	if(div == TapRowDivisor)
-		return;
-
-	int src_step = div,
-		dst_step = TapRowDivisor;
-
-	/* I think this should work to go from one divisor to another, but
-	 * I havn't tested it and don't see a need. */
-	ASSERT(src_step == 1 || dst_step == 1);
-
-	for(int t=0; t < m_iNumTracks; t++)
-	{
-		vector<TapNote> TapNotes = m_TapNotes[t];
-		/* Try to make sure the memory is actually released. */
-		int dst_size = m_TapNotes[0].size() * dst_step / src_step;
-		m_TapNotes[t].clear();
-		m_TapNotes[t] = vector<TapNote>(dst_size, TAP_EMPTY);
-
-		unsigned src_row = 0, dst_row = 0;
-		while(src_row < TapNotes.size() && dst_row < m_TapNotes[t].size())
-		{
-			m_TapNotes[t][dst_row] = TapNotes[src_row];
-			dst_row += dst_step;
-			src_row += src_step;
-		}
-	}
-
-	TapRowDivisor = div;
 }
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
