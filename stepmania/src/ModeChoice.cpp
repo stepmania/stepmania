@@ -227,16 +227,19 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
 	 * and vice versa. */
-	const PlayMode &rPlayMode = (m_pm != PLAY_MODE_INVALID) ? m_pm : GAMESTATE->m_PlayMode;
-	if( rPlayMode == PLAY_MODE_RAVE || rPlayMode == PLAY_MODE_BATTLE )
+	if( m_pm != PLAY_MODE_INVALID || m_style != STYLE_INVALID )
 	{
-		// Can't play rave if there isn't enough room for two players.
-		// This is correct for dance (ie, no rave for solo and doubles),
-		// and should be okay for pump .. not sure about other game types.
-		const Style &rStyle = m_style != STYLE_INVALID? m_style: GAMESTATE->m_CurStyle;
-		if( rStyle != STYLE_INVALID &&
-			GAMEMAN->GetStyleDefForStyle(rStyle)->m_iColsPerPlayer >= 6 )
-			return false;
+		const PlayMode pm = (m_pm != PLAY_MODE_INVALID) ? m_pm : GAMESTATE->m_PlayMode;
+		if( pm == PLAY_MODE_RAVE || pm == PLAY_MODE_BATTLE )
+		{
+			// Can't play rave if there isn't enough room for two players.
+			// This is correct for dance (ie, no rave for solo and doubles),
+			// and should be okay for pump .. not sure about other game types.
+			const Style &style = m_style != STYLE_INVALID? m_style: GAMESTATE->m_CurStyle;
+			if( style != STYLE_INVALID &&
+				GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 )
+				return false;
+		}
 	}
 
 	if( !m_sScreen.CompareNoCase("ScreenEditCoursesMenu") )
