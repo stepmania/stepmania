@@ -731,7 +731,13 @@ static void HandleSDLEvents()
 				if(g_bHasFocus)
 					BoostAppPri();
 				else
+				{
 					RestoreAppPri();
+
+					/* If we lose focus, we may lose input events, especially key
+					 * releases. */
+					INPUTFILTER->Reset();
+				}
 			}
 		}
 	}
