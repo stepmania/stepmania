@@ -186,6 +186,10 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 			delete NewSample;
 			return true;
 		}
+
+		/* Preload failed.  It read some data, so we need to rewind the
+		 * reader. */
+		NewSample->SetPosition_Fast(0);
 		delete Preload;
 	}
 	stream.Sample = NewSample;
