@@ -431,10 +431,10 @@ RageSound_Generic_Software::~RageSound_Generic_Software()
 		m_DecodeThread.Wait();
 		LOG->Trace("Decode thread shut down.");
 		LOG->Flush();
-	}
 
-	LOG->Info( "Mixing %f ahead in %i Mix() calls",
-		float(g_TotalAhead) / max( g_TotalAheadCount, 1 ), g_TotalAheadCount );
+		LOG->Info( "Mixing %f ahead in %i Mix() calls",
+			float(g_TotalAhead) / max( g_TotalAheadCount, 1 ), g_TotalAheadCount );
+	}
 }
 
 /*
