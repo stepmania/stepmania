@@ -222,6 +222,10 @@ CreateDirectory "$INSTDIR\Visualizations"
 SetOutPath "$INSTDIR\Visualizations"
 File "Visualizations\instructions.txt"
 
+CreateDirectory "$INSTDIR\Docs"
+SetOutPath "$INSTDIR\Docs"
+File "Docs\ChangeLog.txt"
+
 CreateDirectory "$INSTDIR\Data"
 SetOutPath "$INSTDIR\Data"
 File "Data\Translation.dat"
@@ -370,6 +374,9 @@ RMDir "$INSTDIR\Themes"
 
 Delete "$INSTDIR\Visualizations\instructions.txt"
 RMDir "$INSTDIR\Visualizations"
+
+Delete "$INSTDIR\Docs\ChangeLog.txt"
+RMDir "$INSTDIR\Docs"
 
 ; Don't delete high scores.
 Delete "$INSTDIR\Data\Translation.dat"
