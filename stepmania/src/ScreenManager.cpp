@@ -272,7 +272,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	DISPLAY->ResetStats();
 
 	/* This is a convenient time to clean up our song cache. */
-	SONGMAN->CleanCourses();
+	SONGMAN->CleanData();
 
 	return ret;
 }

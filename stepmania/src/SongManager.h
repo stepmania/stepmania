@@ -49,7 +49,7 @@ public:
 
 	void InitCoursesFromDisk();
 	void FreeCourses();
-	void CleanCourses();
+	void CleanData();
 
 
 

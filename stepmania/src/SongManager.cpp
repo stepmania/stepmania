@@ -450,7 +450,7 @@ void SongManager::FreeCourses()
 
 /* Called periodically to wipe out cached NoteData.  This is called when we change
  * screens. */
-void SongManager::CleanCourses()
+void SongManager::CleanData()
 {
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{
