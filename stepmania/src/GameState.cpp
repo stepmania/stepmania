@@ -44,13 +44,13 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 #define NAMES_BLACKLIST_FILE "Data/NamesBlacklist.dat"
 
 GameState::GameState() :
-	m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
+    m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
+    m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
+    m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
 	m_pCurSteps(			MESSAGE_CURRENT_STEPS_P1_CHANGED ),
 	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
-	m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
-	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED ),
-	m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
-	m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED )
+    m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
+	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED )
 {
 	m_pCurStyle = NULL;
 
