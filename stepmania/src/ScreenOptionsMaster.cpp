@@ -543,6 +543,10 @@ void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const Op
 			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 				vbSelectedOut.erase( vbSelectedOut.begin() );
 
+			/* All selections default to false. */
+			for( unsigned i = 0; i < vbSelectedOut.size(); ++i )
+				vbSelectedOut[i] = false;
+
 			/* Create the vbSelectedOut table. */
 			LUA->CreateTableFromArray( vbSelectedOut );
 			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
