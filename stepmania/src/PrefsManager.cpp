@@ -324,6 +324,14 @@ void PrefsManager::Init()
 	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
 	m_iProductID = 1;
 
+#if defined(XBOX)
+	m_bEnableVirtualMemory = true;
+	m_iPageFileSize = 384;
+	m_iPageSize = 16;
+	m_iPageThreshold = 8;
+	m_bLogVirtualMemory = false;
+#endif
+
 	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->LoadDefault();
 }
 
@@ -581,6 +589,14 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	FixSlashesInPlace(m_sAdditionalSongFolders);
 	FixSlashesInPlace(m_sAdditionalFolders);
 
+#if defined(XBOX)
+	ini.GetValue( "Options", "EnableVirtualMemory",				m_bEnableVirtualMemory );
+	ini.GetValue( "Options", "PageFileSize",					m_iPageFileSize );
+	ini.GetValue( "Options", "PageSize",						m_iPageSize );
+	ini.GetValue( "Options", "PageThreshold",					m_iPageThreshold );
+	ini.GetValue( "Debug", "LogVirtualMemory",					m_bLogVirtualMemory );
+#endif
+
 	ini.GetValue( "Debug", "LogToDisk",							m_bLogToDisk );
 	ini.GetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
 	ini.GetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
@@ -834,6 +850,13 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AdditionalSongFolders", 			m_sAdditionalSongFolders);
 	ini.SetValue( "Options", "AdditionalFolders", 				m_sAdditionalFolders);
 
+#if defined(XBOX)
+	ini.SetValue( "Options", "EnableVirtualMemory",				m_bEnableVirtualMemory );
+	ini.SetValue( "Options", "PageFileSize",					m_iPageFileSize );
+	ini.SetValue( "Options", "PageSize",						m_iPageSize );
+	ini.SetValue( "Options", "PageThreshold",					m_iPageThreshold );
+#endif
+
 	ini.SetValue( "Debug", "LogToDisk",							m_bLogToDisk );
 	ini.SetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
 	ini.SetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
@@ -841,6 +864,9 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "LogSkips",							m_bLogSkips );
 	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 	ini.SetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
+#if defined(XBOX)
+	ini.SetValue( "Debug", "LogVirtualMemory",					m_bLogVirtualMemory );
+#endif
 
 #if defined (WITHOUT_NETWORKING)
 #else

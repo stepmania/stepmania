@@ -278,6 +278,15 @@ public:
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;
 
+#if defined(XBOX)
+	// Virtual memory preferences
+	bool			m_bEnableVirtualMemory;
+	int				m_iPageFileSize; // page file size in megabytes
+	int				m_iPageSize; // page size in kilobytes
+	int				m_iPageThreshold; // threshold in kilobytes where virtual memory will be used
+	bool			m_bLogVirtualMemory; // (under debug) log the virtual memory allocation, etc.
+#endif
+
 	void ReadGlobalPrefsFromDisk();
 	void SaveGlobalPrefsToDisk() const;
 
