@@ -13,8 +13,7 @@
 #include "AttackDisplay.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-
-#define TEXT_ON_COMMAND( p )	THEME->GetMetric("AttackDisplay",ssprintf("TextP%dOnCommand",p+1))
+#include "ActorUtil.h"
 
 
 AttackDisplay::AttackDisplay()
@@ -23,10 +22,17 @@ AttackDisplay::AttackDisplay()
 		GAMESTATE->m_PlayMode != PLAY_MODE_RAVE )
 		return;
 
+	m_textAttack.SetName( ssprintf("TextP%d",m_PlayerNumber+1) );
 	m_textAttack.LoadFromFont( THEME->GetPathToF("AttackDisplay") );
 	m_textAttack.SetDiffuseAlpha( 0 );	// invisible
 	this->AddChild( &m_textAttack );
 }
+
+void AttackDisplay::Init( PlayerNumber pn )
+{
+	m_PlayerNumber = pn;
+}
+
 
 void AttackDisplay::Update( float fDelta )
 {
@@ -52,13 +58,14 @@ void AttackDisplay::Update( float fDelta )
 		if( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].IsBlank() )
 			continue;
 
-		CString sText = GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier;
-
-		m_textAttack.SetDiffuseAlpha( 1 );
-		m_textAttack.SetText( sText );
-		m_textAttack.Command( TEXT_ON_COMMAND(m_PlayerNumber) );
-
+		SetAttack( GAMESTATE->m_ActiveAttacks[m_PlayerNumber][s].sModifier );
 		break;
 	}
 }
 
+void AttackDisplay::SetAttack( const CString &sText )
+{
+	m_textAttack.SetDiffuseAlpha( 1 );
+	m_textAttack.SetText( sText );
+	UtilOnCommand( m_textAttack, "AttackDisplay" );
+}

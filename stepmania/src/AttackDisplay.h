@@ -23,7 +23,8 @@ class AttackDisplay : public ActorFrame
 public:
 	AttackDisplay();
 
-	void Init( PlayerNumber pn ) { m_PlayerNumber = pn; }
+	void Init( PlayerNumber pn );
+	void SetAttack( const CString &mod );
 
 	virtual void Update( float fDelta );
 
