@@ -904,12 +904,8 @@ int RageSoundReader_MP3::SetPosition_Fast( int ms )
 	return SetPosition_estimate( ms );
 }
 
-/* XXX: This should be const, but there doesn't appear to be a way to copy MAD's
- * internal structures, so we can scan length without moving the stream around. */
 int RageSoundReader_MP3::GetLengthInternal( bool fast )
 {
-	int ret;
-
 	if( mad->has_xing && mad->length != -1 )
 		return mad->length; /* should be accurate */
 
@@ -947,10 +943,19 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 	}
 
 	/* Count milliseconds. */
-	ret = mad_timer_count( mad->Timer, MAD_UNITS_MILLISECONDS );
+	return mad_timer_count( mad->Timer, MAD_UNITS_MILLISECONDS );
+}
 
-	MADLIB_rewind();
-	return ret;
+int RageSoundReader_MP3::GetLengthConst( bool fast ) const
+{
+	RageSoundReader_MP3 *cpy = new RageSoundReader_MP3;
+	SoundReader_FileReader::OpenResult  ret = cpy->Open( filename );
+	ASSERT( ret == OPEN_OK );
+
+	int length = cpy->GetLengthInternal( fast );
+
+	delete cpy;
+	return length;
 }
 
 SoundReader *RageSoundReader_MP3::Copy() const

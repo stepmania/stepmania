@@ -29,12 +29,13 @@ public:
 	int seek_stream_to_byte( int byte );
 	int handle_first_frame();
 	int GetLengthInternal( bool fast );
+	int GetLengthConst( bool fast ) const;
 
 public:
 	OpenResult Open(CString filename);
 	void Close();
-	int GetLength() const { return ((RageSoundReader_MP3*)this)->GetLengthInternal(false); }
-	int GetLength_Fast() const { return ((RageSoundReader_MP3*)this)->GetLengthInternal(true); }
+	int GetLength() const { return GetLengthConst(false); }
+	int GetLength_Fast() const { return GetLengthConst(true); }
 	int SetPosition_Accurate(int ms);
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
