@@ -408,3 +408,83 @@ bool StageStats::FullCombo( PlayerNumber pn ) const
 	return ComboStartsAtBeginning && ComboEndsAtEnd;
 }
 
+static Grade GetBestGrade()
+{
+	Grade g = NUM_GRADES;
+	for( unsigned pn=0; pn<NUM_PLAYERS; ++pn )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(pn) )
+			continue;
+		g = min( g, g_CurStageStats.GetGrade( (PlayerNumber)pn ) );
+	}
+	return g;
+}
+
+static Grade GetWorstGrade()
+{
+	Grade g = GRADE_TIER_1;
+	for( unsigned pn=0; pn<NUM_PLAYERS; ++pn )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(pn) )
+			continue;
+		g = max( g, g_CurStageStats.GetGrade( (PlayerNumber)pn ) );
+	}
+	return g;
+}
+
+#include "LuaFunctions.h"
+LuaFunction_NoArgs( GetBestGrade,			GetBestGrade() );
+LuaFunction_NoArgs( GetWorstGrade,			GetWorstGrade() );
+LuaFunction_NoArgs( OnePassed,				g_CurStageStats.OnePassed() );
+LuaFunction_PlayerNumber( FullCombo,		g_CurStageStats.FullCombo(pn) )
+LuaFunction_PlayerNumber( MaxCombo,			g_CurStageStats.GetMaxCombo(pn).cnt )
+LuaFunction_PlayerNumber( GetGrade,			g_CurStageStats.GetGrade(pn) )
+LuaFunction_Str( Grade,						StringToGrade(str) );
+
+/* PrevGrade(0) returns the last grade; PrevGrade(1) returns the one before that,
+ * and so on.  If you go back beyond the first song played, return GRADE_NO_DATA. */
+Grade GetPrevGrade( int n, PlayerNumber pn )
+{
+	int stage = int(g_vPlayedStageStats.size()) - n - 1;
+	if( stage < 0 || stage >= (int) g_vPlayedStageStats.size() )
+		return GRADE_NO_DATA;
+	return g_vPlayedStageStats[stage].GetGrade( pn );
+}
+
+bool OneGotGrade( int n, Grade g )
+{
+	for( unsigned pn=0; pn<NUM_PLAYERS; pn++ )
+		if( GAMESTATE->IsHumanPlayer((PlayerNumber)pn) )
+			if( GetPrevGrade( n, (PlayerNumber)pn ) == g )
+				return true;
+
+	return false;
+}
+
+
+LuaFunction_IntInt( OneGotGrade, OneGotGrade( a1, (Grade) a2 ) );
+
+Grade GetFinalGrade( PlayerNumber pn )
+{
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return GRADE_NO_DATA;
+	vector<Song*> vSongs;
+	StageStats stats;
+	GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
+	return stats.GetGrade( pn );
+}
+LuaFunction_PlayerNumber( GetFinalGrade, GetFinalGrade( pn ) );
+
+Grade GetBestFinalGrade()
+{
+	Grade top_grade = GRADE_FAILED;
+	vector<Song*> vSongs;
+	StageStats stats;
+	GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( GAMESTATE->IsHumanPlayer(p) )
+			top_grade = min( top_grade, stats.GetGrade((PlayerNumber)p) );
+	return top_grade;
+}
+LuaFunction_NoArgs( GetBestFinalGrade, GetBestFinalGrade() );
+

@@ -1392,3 +1392,41 @@ bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 	return true;
 }
 
+bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
+{
+	PlayerOptions po = GAMESTATE->m_PlayerOptions[pn];
+	SongOptions so = GAMESTATE->m_SongOptions;
+	po.FromString( sModifier );
+	so.FromString( sModifier );
+
+	return po == GAMESTATE->m_PlayerOptions[pn] && so == GAMESTATE->m_SongOptions;
+}
+
+#include "LuaFunctions.h"
+LuaFunction_PlayerNumber( IsHumanPlayer,	GAMESTATE->IsHumanPlayer(pn) )
+LuaFunction_NoArgs( IsCourseMode,			GAMESTATE->IsCourseMode() )
+LuaFunction_NoArgs( IsDemonstration,		GAMESTATE->m_bDemonstrationOrJukebox )
+LuaFunction_NoArgs( StageIndex,				GAMESTATE->GetStageIndex() )
+LuaFunction_NoArgs( NumStagesLeft,			GAMESTATE->GetNumStagesLeft() )
+LuaFunction_NoArgs( IsFinalStage,			GAMESTATE->IsFinalStage() )
+LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
+LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
+LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
+LuaFunction_NoArgs( CurStyle,				GAMESTATE->m_CurStyle )
+
+/* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
+ * can't easily do if we return pointers. */
+LuaFunction_NoArgs( CurSong,				GAMESTATE->m_pCurSong )
+LuaFunction_PlayerNumber( CurSteps,			GAMESTATE->m_pCurNotes[pn] )
+
+int LuaFunc_UsingModifier( lua_State *L )
+{
+	REQ_ARGS( "UsingModifier", 2 );
+	REQ_ARG_NUMBER_RANGE( "UsingModifier", 1, 1, NUM_PLAYERS );
+	REQ_ARG( "UsingModifier", 2, string );
+
+	const PlayerNumber pn = (PlayerNumber) (int(lua_tonumber( L, 1 ))-1);
+	const CString modifier = lua_tostring( L, 2 );
+	LUA_RETURN( PlayerIsUsingModifier( pn, modifier ) );
+}
+LuaFunction( UsingModifier );
