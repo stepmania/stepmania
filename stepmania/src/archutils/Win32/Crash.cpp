@@ -31,6 +31,7 @@
 #include "CrashList.h"
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog only */
+#include "RageThreads.h" /* for GetCheckpointLogs */
 
 #include "GotoURL.h"
 
@@ -521,6 +522,9 @@ static void ReportReason(HWND hwnd, HWND hwndReason, HANDLE hFile, const EXCEPTI
 
 static void ReportThreadStacks(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
+	const char *buf = GetCheckpointLogs("\r\n");
+	Report( hwnd, hFile, "%s", buf );
+/*	
 	EnterCriticalSection(&g_csPerThreadState);
 
 	try {
@@ -540,6 +544,7 @@ static void ReportThreadStacks(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS
 	}
 
 	LeaveCriticalSection(&g_csPerThreadState);
+*/
 }
 
 static const char *GetNameFromHeap(const char *heap, int idx) {
@@ -1210,7 +1215,8 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 
 ///////////////////////////////////////////////////////////////////////////
 
-static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc, const void *pDebugSrc) {
+static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc, const void *pDebugSrc)
+{
 	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
 	HANDLE hprMe = GetCurrentProcess();
 	char *lpAddr = (char *)pContext->Esp;
