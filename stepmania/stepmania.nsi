@@ -21,6 +21,8 @@
 !system "utils\upx jpeg.dll" ignore
 !system "utils\upx SDL.dll" ignore
 !system "utils\upx SDL_image.dll" ignore
+!system "utils\upx avcodec.dll" ignore
+!system "utils\upx avformat.dll" ignore
 
 Name "${PRODUCT_NAME_VER}"
 OutFile "${PRODUCT_NAME_VER}.exe"
@@ -198,6 +200,8 @@ File "msvcp70.dll"
 File "jpeg.dll"
 File "SDL.dll"
 File "SDL_image.dll"
+File "avcodec.dll"
+File "avformat.dll"
 ; File "SDL_net.dll"
 
 File "COPYING.txt"
@@ -324,6 +328,8 @@ Delete "$INSTDIR\msvcp70.dll"
 Delete "$INSTDIR\jpeg.dll"
 Delete "$INSTDIR\SDL.dll"
 Delete "$INSTDIR\SDL_image.dll"
+Delete "$INSTDIR\avcodec.dll"
+Delete "$INSTDIR\avformat.dll"
 Delete "$INSTDIR\COPYING.txt"
 Delete "$INSTDIR\README-FIRST.html"
 Delete "$INSTDIR\NEWS"
