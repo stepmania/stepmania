@@ -56,7 +56,8 @@ static int OggRageFile_seek_func( void *datasource, ogg_int64_t offset, int when
 
 static int OggRageFile_close_func( void *datasource )
 {
-	delete datasource;
+	RageFile *f = (RageFile *) datasource;
+	delete f;
 	return 0;
 }
 
