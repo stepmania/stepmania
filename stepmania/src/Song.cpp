@@ -10,6 +10,19 @@
 -----------------------------------------------------------------------------
 */
 
+/* Couples notes:
+ * Couples is just two sets of notes, paired as a game type, with a fallback
+ * to the normal mode.  This lets us import Pump _2 songs without having to
+ * duplicate the _1 side for couples.  This way, we get to handle couples
+ * the same way in every game.  (Which is nice, because not many people
+ * use couples.)
+ *
+ * This does mean it's impossible to tell (in the current UI) whether a
+ * given song has couples or not; they all show up the same, even if both
+ * sides are using the fallback.  (Except that couples songs tend to have
+ * slightly varying radar values, unless the pattern is just flipped.)
+ * -glenn
+ */
 #include "Notes.h"
 #include "RageUtil.h"
 #include <math.h>	// for fmod
