@@ -82,7 +82,7 @@ typedef struct
 /* msMesh */
 typedef struct msMesh
 {
-    byte        nFlags;
+//    byte        nFlags;
     char        szName[MS_MAX_NAME];
     char        nMaterialIndex;
     

@@ -98,7 +98,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 }
 
                 strcpy( mesh.szName, szName );
-                mesh.nFlags = nFlags;
+//                mesh.nFlags = nFlags;
                 mesh.nMaterialIndex = nIndex;
 
                 //
@@ -715,6 +715,7 @@ void Model::DrawPrimitives()
 	for (int i = 0; i < (int)m_pModel->Meshes.size(); i++)
 	{
 		msMesh *pMesh = &m_pModel->Meshes[i];
+		RageVertexVector& TempVertices = m_vTempVerticesByBone[i];
 
 		// apply material
 		if( pMesh->nMaterialIndex != -1 )
@@ -744,59 +745,33 @@ void Model::DrawPrimitives()
 			DISPLAY->SetTexture( NULL );
 		}
 
-		glBegin( GL_TRIANGLES );
-
-		for (int j = 0; j < (int)pMesh->Triangles.size(); j++)
+		// process vertices
+		for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
-			RageVertex verts[3];
+			RageVertex& tempVert = TempVertices[j];
+			msVertex& originalVert = pMesh->Vertices[j];
 
-			msTriangle *pTriangle = &pMesh->Triangles[j];
-			word nIndices[3];//, nNormalIndices[3];
-			memcpy( nIndices, pTriangle->nVertexIndices, sizeof(nIndices) );
-//			memcpy( nNormalIndices, pTriangle->nNormalIndices, sizeof(nNormalIndices) );
-			for (int k = 0; k < 3; k++)
+			tempVert.c = RageColor(1,1,1,1);
+
+			memcpy( &tempVert.t, originalVert.uv, sizeof(originalVert.uv) );
+			
+			memcpy( &tempVert.n, originalVert.Normal, sizeof(originalVert.Normal) );
+
+			if( originalVert.nBoneIndex == -1 )
 			{
-				RageVertex& v = verts[k];
-
-				msVertex *pVertex = &pMesh->Vertices[ nIndices[k] ];
-
-				v.c = RageColor(1,1,1,1);
-				float white[4] = {1,1,0,1};
-				glColor4fv( white );
-
-				v.t.x = pVertex->uv[0];
-				v.t.y = pVertex->uv[1];
-				glTexCoord2f( pVertex->uv[0], pVertex->uv[1] );
-
-				v.n.x = pVertex->Normal[0];
-				v.n.y = pVertex->Normal[1];
-				v.n.z = pVertex->Normal[2];
-				glNormal3fv( pVertex->Normal );
-
-				if (pVertex->nBoneIndex == -1)
-				{
-					v.p.x = pVertex->Vertex[0];
-					v.p.y = pVertex->Vertex[1];
-					v.p.z = pVertex->Vertex[2];
-					glVertex3fv( &v.p.x );
-				}
-				else
-				{
-					msVec3 Vertex;
-					VectorRotate (pVertex->Vertex, m_pBones[pVertex->nBoneIndex].mFinal, Vertex);
-					Vertex[0] += m_pBones[pVertex->nBoneIndex].mFinal[0][3];
-					Vertex[1] += m_pBones[pVertex->nBoneIndex].mFinal[1][3];
-					Vertex[2] += m_pBones[pVertex->nBoneIndex].mFinal[2][3];
-					v.p.x = Vertex[0];
-					v.p.y = Vertex[1];
-					v.p.z = Vertex[2];
-					glVertex3fv( Vertex );
-				}
-
+				memcpy( &tempVert.p, originalVert.Vertex, sizeof(originalVert.Vertex) );
 			}
-//			DISPLAY->DrawTriangles( verts, 3 );
+			else
+			{
+				int bone = originalVert.nBoneIndex;
+				VectorRotate (originalVert.Vertex, m_pBones[originalVert.nBoneIndex].mFinal, tempVert.p);
+				tempVert.p[0] += m_pBones[bone].mFinal[0][3];
+				tempVert.p[1] += m_pBones[bone].mFinal[1][3];
+				tempVert.p[2] += m_pBones[bone].mFinal[2][3];
+			}
 		}
-		glEnd();
+
+		DISPLAY->DrawIndexedTriangles( TempVertices.begin(), (Uint16*)pMesh->Triangles.begin(), pMesh->Triangles.size()*3 );
 	}
 
 	DISPLAY->SetLightOff( 0 );

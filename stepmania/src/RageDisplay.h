@@ -16,6 +16,7 @@ class RageTexture;
 struct RageMatrix;
 struct RageVertex;
 
+#include "SDL_types.h"
 #include "RageTypes.h"
 
 const int REFRESH_DEFAULT = 0;
@@ -90,6 +91,7 @@ public:
 	void DrawFan( const RageVertex v[], int iNumVerts );
 	void DrawStrip( const RageVertex v[], int iNumVerts );
 	void DrawTriangles( const RageVertex v[], int iNumVerts );
+	void DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices );
 	void DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth );
 	void DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, float LineWidth );
 	void DrawLoop_Polys( const RageVertex v[], int iNumVerts, float LineWidth );

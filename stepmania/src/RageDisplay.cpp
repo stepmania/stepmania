@@ -472,10 +472,24 @@ void RageDisplay::DrawStrip( const RageVertex v[], int iNumVerts )
 
 void RageDisplay::DrawTriangles( const RageVertex v[], int iNumVerts )
 {
+	if( iNumVerts == 0 )
+		return;
 	ASSERT( iNumVerts >= 3 );
+	ASSERT( (iNumVerts%3) == 0 );
 	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
 	glDrawArrays( GL_TRIANGLES, 0, iNumVerts );
 	g_iVertsRenderedSinceLastCheck += iNumVerts;
+}
+
+void RageDisplay::DrawIndexedTriangles( const RageVertex v[], const Uint16 pIndices[], int iNumIndices )
+{
+	if( iNumIndices == 0 )
+		return;
+	ASSERT( iNumIndices >= 3 );
+	ASSERT( (iNumIndices%3) == 0 );
+	glInterleavedArrays( RageVertexFormat, sizeof(RageVertex), v );
+	glDrawElements( GL_TRIANGLES, iNumIndices, GL_UNSIGNED_SHORT, pIndices );
+	g_iVertsRenderedSinceLastCheck += iNumIndices;
 }
 
 /* Draw a line as a quad.  GL_LINES with antialiasing off can draw line
