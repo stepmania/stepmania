@@ -54,6 +54,7 @@ public:
 
 	void SetDescription(CString desc);
 	void SetDifficulty(Difficulty d);
+	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
 	void SetMeter(int meter);
 	void SetRadarValue(int r, float val);
 	bool IsAutogen() const;	// Was created by autogen?

@@ -29,11 +29,6 @@
 
 Steps::Steps()
 {
-	/* FIXME: should we init this to STEPS_TYPE_INVALID? 
-	 * I have a feeling that it's the right thing to do but that
-	 * it'd trip obscure asserts all over the place, so I'll wait
-	 * until after b6 to do this. -glenn */
-	/* Yep, it should be STEPS_TYPE_INVALID. -Chris */
 	m_StepsType = STEPS_TYPE_INVALID;
 	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
 	m_Difficulty = DIFFICULTY_INVALID;
