@@ -17,6 +17,7 @@
 #include "RageSound.h"
 #include "ThemeManager.h"
 #include "ScreenManager.h"
+#include "RageSoundManager.h"
 
 Screen::Screen( CString sName )
 {

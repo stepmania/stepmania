@@ -18,6 +18,7 @@
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
 #include "Font.h"
+#include "RageSoundManager.h"
 
 const float TIMER_SECONDS = 99;
 
