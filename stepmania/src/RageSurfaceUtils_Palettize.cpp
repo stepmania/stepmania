@@ -1,7 +1,7 @@
 /* from http://www.libpng.org/pub/png/apps/pngquant.html */
 
 #include "global.h"
-#include "RageSurfaceUtilsPalettize.h"
+#include "RageSurfaceUtils_Palettize.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageUtil.h"
