@@ -296,10 +296,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 		else
 		{
 			m_iSelectedStyle = 1;
-			//m_soundInvalid.PlayRandom();
-			//return;
 		}
-		// GAMEMAN->m_sMasterPlayerNumber = p;
 		m_soundSelect.PlayRandom();
 		ez2_lasttimercheck[1] = TIMER->GetTimeSinceStart(); // start the timer for going to next state
 	}
@@ -307,8 +304,6 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 	{
 		m_iSelectedStyle = 2;
 		m_soundSelect.PlayRandom();
-		//m_soundInvalid.PlayRandom();
-		//return;
 	}
 
 	TweenOffScreen();

@@ -317,24 +317,68 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_MenuTimer:
 	
-		// DOESNT SUPPORT PLAYER 2 YET!
-		if (m_iSelectedStyle == 0) // easy
+		if (m_iSelectedPlayer == 2) // both players
 		{
-			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
-			PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
+			// m_soundInvalid.PlayRandom();
+			// return;
+			
+			if (m_iSelectedStyle == 0) // easy
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_EASY;
+			}
+			else if (m_iSelectedStyle == 1) // hard
+			{
+			//	m_soundInvalid.PlayRandom();
+			//	return;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_MEDIUM;
+			}
+			else if (m_iSelectedStyle == 2) // real
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL_VERSUS;	
+				//m_soundInvalid.PlayRandom();
+				//return;
+			}
+
 		}
-		else if (m_iSelectedStyle == 1) // hard
+		else
 		{
-			GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
-			PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
-		}
-		else if (m_iSelectedStyle == 2) // real
-		{
-			GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
-		}
-		else // club
-		{
-			GAMEMAN->m_CurStyle = STYLE_EZ2_DOUBLE;
+			if (m_iSelectedStyle == 0) // easy
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+				if (m_iSelectedPlayer == 0)
+				{
+					PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
+				}
+				else
+				{
+					PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_EASY;
+				}
+			}
+			else if (m_iSelectedStyle == 1) // hard
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+				if (m_iSelectedPlayer == 0)
+				{
+					PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
+				}
+				else
+				{
+					PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_MEDIUM;
+				}
+			}
+			else if (m_iSelectedStyle == 2) // real
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL;	
+			}
+			else // club
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_DOUBLE;
+				GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
+			}
 		}
 
 		m_soundSelect.PlayRandom();
@@ -667,11 +711,11 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 	
 	if ((m_iSelectedPlayer == 0 && p == PLAYER_2) || (m_iSelectedPlayer == 1 && p == PLAYER_1))
 	{
-		if (p == PLAYER_2) // CURRENTLY PLAYER 2 IS BROKEN
-		{
-			m_soundInvalid.PlayRandom();
-			return;
-		}
+		//if (p == PLAYER_2) // CURRENTLY PLAYER 2 IS BROKEN
+		//{
+		//	m_soundInvalid.PlayRandom();
+		//	return;
+		//}
 		m_soundSelect.PlayRandom();
 		TweenPlyOffScreen();
 		m_iSelectedPlayer = 2; // set to BOTH players now.
@@ -689,8 +733,30 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 	{
 		if (m_iSelectedPlayer == 2) // both players
 		{
-			m_soundInvalid.PlayRandom();
-			return;
+			// m_soundInvalid.PlayRandom();
+			// return;
+			
+			if (m_iSelectedStyle == 0 || m_iSelectedStyle == 3) // easy
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_EASY;
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_EASY;
+			}
+			else if (m_iSelectedStyle == 1) // hard
+			{
+			//	m_soundInvalid.PlayRandom();
+			//	return;
+				GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_1] = CLASS_MEDIUM;
+				PREFSMAN->m_PreferredDifficultyClass[PLAYER_2] = CLASS_MEDIUM;
+			}
+			else if (m_iSelectedStyle == 2) // real
+			{
+				GAMEMAN->m_CurStyle = STYLE_EZ2_REAL_VERSUS;	
+				//m_soundInvalid.PlayRandom();
+				//return;
+			}
+
 		}
 		else
 		{
@@ -715,6 +781,7 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 			else // club
 			{
 				GAMEMAN->m_CurStyle = STYLE_EZ2_DOUBLE;
+				GAMEMAN->m_sMasterPlayerNumber = PLAYER_1;
 				//m_soundInvalid.PlayRandom();
 				//return;
 			}
@@ -778,52 +845,50 @@ void ScreenEz2SelectStyle::AnimateGraphics()
 		}
 	}
 
-	if (m_iSelectedPlayer != 2)
+	if (m_iSelectedStyle == 0) // EASY background
 	{
-		if (m_iSelectedStyle == 0) // EASY background
-		{
-			m_sprBackground[3].SetHeight(SCREEN_HEIGHT * 1.7f);
-			m_sprBackground[3].SetWidth(SCREEN_WIDTH * 1.7f);
-			m_sprBackground[3].SetEffectSpinning(1.0f);
-		}
-		else if (m_iSelectedStyle == 3) // CLUB background
-		{
-			m_sprBackground[3].SetHeight(0);
-			m_sprBackground[3].SetWidth(0);
-			m_sprBackground[3].SetEffectNone();
-			m_sprBackground[2].SetHeight(SCREEN_HEIGHT * 3.3f);
-			m_sprBackground[2].SetWidth(SCREEN_WIDTH * 3.3f);
-			m_sprBackground[2].SetEffectSpinning(0.5f);
-			m_sprBackground[2].SetXY( CENTER_X, -250 );
-		}
-		else if (m_iSelectedStyle == 2) // REAL background
-		{
-			m_sprBackground[3].SetHeight(0);
-			m_sprBackground[3].SetWidth(0);
-			m_sprBackground[3].SetEffectNone();
-			m_sprBackground[2].SetHeight(0);
-			m_sprBackground[2].SetWidth(0);
-			m_sprBackground[2].SetEffectNone();
-			m_sprBackground[1].SetHeight(SCREEN_HEIGHT * 1.7f);
-			m_sprBackground[1].SetWidth(SCREEN_WIDTH * 1.7f);
-			m_sprBackground[1].SetEffectSpinning(2.1f);
-		}
-		else if (m_iSelectedStyle == 1) // HARD background
-		{
-			m_sprBackground[3].SetHeight(0);
-			m_sprBackground[3].SetWidth(0);
-			m_sprBackground[3].SetEffectNone();
-			m_sprBackground[2].SetHeight(0);
-			m_sprBackground[2].SetWidth(0);
-			m_sprBackground[2].SetEffectNone();
-			m_sprBackground[1].SetHeight(0);
-			m_sprBackground[1].SetWidth(0);
-			m_sprBackground[1].SetEffectNone();
-			m_sprBackground[0].SetHeight(SCREEN_HEIGHT * 1.7f);
-			m_sprBackground[0].SetWidth(SCREEN_WIDTH * 1.7f);
-			m_sprBackground[0].SetEffectSpinning(1.0f);
-		}
+		m_sprBackground[3].SetHeight(SCREEN_HEIGHT * 1.7f);
+		m_sprBackground[3].SetWidth(SCREEN_WIDTH * 1.7f);
+		m_sprBackground[3].SetEffectSpinning(1.0f);
 	}
+	else if (m_iSelectedStyle == 3) // CLUB background
+	{
+		m_sprBackground[3].SetHeight(0);
+		m_sprBackground[3].SetWidth(0);
+		m_sprBackground[3].SetEffectNone();
+		m_sprBackground[2].SetHeight(SCREEN_HEIGHT * 3.3f);
+		m_sprBackground[2].SetWidth(SCREEN_WIDTH * 3.3f);
+		m_sprBackground[2].SetEffectSpinning(0.5f);
+		m_sprBackground[2].SetXY( CENTER_X, -250 );
+	}
+	else if (m_iSelectedStyle == 2) // REAL background
+	{
+		m_sprBackground[3].SetHeight(0);
+		m_sprBackground[3].SetWidth(0);
+		m_sprBackground[3].SetEffectNone();
+		m_sprBackground[2].SetHeight(0);
+		m_sprBackground[2].SetWidth(0);
+		m_sprBackground[2].SetEffectNone();
+		m_sprBackground[1].SetHeight(SCREEN_HEIGHT * 1.7f);
+		m_sprBackground[1].SetWidth(SCREEN_WIDTH * 1.7f);
+		m_sprBackground[1].SetEffectSpinning(2.1f);
+	}
+	else if (m_iSelectedStyle == 1) // HARD background
+	{
+		m_sprBackground[3].SetHeight(0);
+		m_sprBackground[3].SetWidth(0);
+		m_sprBackground[3].SetEffectNone();
+		m_sprBackground[2].SetHeight(0);
+		m_sprBackground[2].SetWidth(0);
+		m_sprBackground[2].SetEffectNone();
+		m_sprBackground[1].SetHeight(0);
+		m_sprBackground[1].SetWidth(0);
+		m_sprBackground[1].SetEffectNone();
+		m_sprBackground[0].SetHeight(SCREEN_HEIGHT * 1.7f);
+		m_sprBackground[0].SetWidth(SCREEN_WIDTH * 1.7f);
+		m_sprBackground[0].SetEffectSpinning(1.0f);
+	}
+
 }
 
 /************************************

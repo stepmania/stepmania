@@ -47,13 +47,17 @@ float ArrowGetXPos( const PlayerOptions& po, int iColNum, float fYOffset, float 
 	if ( GAMEMAN->m_CurGame == GAME_EZ2 )
 	{
 		fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.3f;
-		if ( GAMEMAN->m_CurStyle == STYLE_EZ2_REAL ) // real gets MEGA squashed
+		if ( GAMEMAN->m_CurStyle == STYLE_EZ2_REAL || GAMEMAN->m_CurStyle == STYLE_EZ2_REAL_VERSUS ) // real gets MEGA squashed
 		{
-			fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.5f;
+			fPixelOffsetFromCenter = fColOffsetFromCenter * ARROW_SIZE / 1.6f;
 		}
-		else if ( GAMEMAN->m_CurStyle == STYLE_EZ2_DOUBLE )
+		else if ( GAMEMAN->m_CurStyle == STYLE_EZ2_DOUBLE && GAMEMAN->m_sMasterPlayerNumber == PLAYER_1)
 		{
 			fPixelOffsetFromCenter = (fColOffsetFromCenter + 2.9f) * ARROW_SIZE / 1.3f;
+		}
+		else if ( GAMEMAN->m_CurStyle == STYLE_EZ2_DOUBLE && GAMEMAN->m_sMasterPlayerNumber == PLAYER_2)
+		{
+			fPixelOffsetFromCenter = (fColOffsetFromCenter - 3.1f) * ARROW_SIZE / 1.3f;
 		}
 	}
 	

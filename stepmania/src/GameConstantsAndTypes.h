@@ -222,8 +222,8 @@ inline NotesType StringToNotesType( CString sNotesType )
 	else if( sNotesType == "ez2-single" )	return NOTES_TYPE_EZ2_SINGLE;
 	else if( sNotesType == "ez2-double" )	return NOTES_TYPE_EZ2_DOUBLE;
 	else if( sNotesType == "ez2-real" )		return NOTES_TYPE_EZ2_REAL;
-	else if( sNotesType == "ez2-real-versus" )		return NOTES_TYPE_EZ2_REAL_VERSUS;
-	else if( sNotesType == "ez2-single-versus" )		return NOTES_TYPE_EZ2_SINGLE_VERSUS;
+// 	else if( sNotesType == "ez2-real-versus" )		return NOTES_TYPE_EZ2_REAL_VERSUS;
+//	else if( sNotesType == "ez2-single-versus" )		return NOTES_TYPE_EZ2_SINGLE_VERSUS;
 	else	ASSERT(0);	return NOTES_TYPE_DANCE_SINGLE;	// invalid NotesType
 }
 
@@ -240,8 +240,8 @@ inline CString NotesTypeToString( NotesType nt )
 	case NOTES_TYPE_EZ2_SINGLE:		return "ez2-single";
 	case NOTES_TYPE_EZ2_DOUBLE:		return "ez2-double";
 	case NOTES_TYPE_EZ2_REAL:		return "ez2-real";
-	case NOTES_TYPE_EZ2_REAL_VERSUS:		return "ez2-real-versus";
-	case NOTES_TYPE_EZ2_SINGLE_VERSUS:		return "ez2-single-versus";
+	// case NOTES_TYPE_EZ2_REAL_VERSUS:		return "ez2-real-versus";
+	// case NOTES_TYPE_EZ2_SINGLE_VERSUS:		return "ez2-single-versus";
 	default:	ASSERT(0);		return "";	// invalid NotesType
 	}
 }
