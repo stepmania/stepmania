@@ -17,10 +17,15 @@ const int MAX_TEXTURE_UNITS = 2;
 class RageCompiledGeometry
 {
 public:
-	virtual ~RageCompiledGeometry() { }
-
-	void Set( const vector<msMesh> &vMeshes )
+	virtual ~RageCompiledGeometry()
 	{
+		m_bNeedsNormals = false;
+	}
+
+	void Set( const vector<msMesh> &vMeshes, bool bNeedsNormals )
+	{
+		m_bNeedsNormals = bNeedsNormals;
+
 		size_t totalVerts = 0;
 		size_t totalTriangles = 0;
 
@@ -50,7 +55,7 @@ public:
 	virtual void Allocate( const vector<msMesh> &vMeshes ) = 0;	// allocate space
 	virtual void Change( const vector<msMesh> &vMeshes ) = 0;	// new data must be the same size as was passed to Set()
 	virtual void Draw( int iMeshIndex ) const = 0;
-
+	
 protected:
 	size_t GetTotalVertices()  { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iVertexStart + m_vMeshInfo.back().iVertexCount; }
 	size_t GetTotalTriangles() { if( m_vMeshInfo.empty() ) return 0; return m_vMeshInfo.back().iTriangleStart + m_vMeshInfo.back().iTriangleCount; }
@@ -63,6 +68,7 @@ protected:
 		int iTriangleCount;
 	};
 	vector<MeshInfo>	m_vMeshInfo;
+	bool m_bNeedsNormals;
 };
 
 class RageDisplay

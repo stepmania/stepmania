@@ -26,7 +26,7 @@ ModelManager::~ModelManager()
 	}
 }
 
-RageModelGeometry* ModelManager::LoadMilkshapeAscii( CString sFile )
+RageModelGeometry* ModelManager::LoadMilkshapeAscii( const CString& sFile, bool bNeedNormals )
 {
 	std::map<CString, RageModelGeometry*>::iterator p = m_mapFileToModel.find(sFile);
 	if(p != m_mapFileToModel.end())
@@ -38,7 +38,7 @@ RageModelGeometry* ModelManager::LoadMilkshapeAscii( CString sFile )
 	}
 
 	RageModelGeometry* pModel = new RageModelGeometry;
-	pModel->LoadMilkshapeAscii( sFile );
+	pModel->LoadMilkshapeAscii( sFile, bNeedNormals );
 
 	m_mapFileToModel[sFile] = pModel;
 	return pModel;
@@ -75,11 +75,12 @@ void ModelManager::UnloadModel( RageModelGeometry *m )
 	ASSERT(0);	// we tried to delete a texture that wasn't loaded.
 }
 
-bool ModelManager::SetPrefs( ModelManagerPrefs prefs )
+bool ModelManager::SetPrefs( const ModelManagerPrefs& prefs )
 {
 	m_Prefs = prefs;
 	return false;
 }
+
 
 /*
  * (c) 2003-2004 Chris Danford

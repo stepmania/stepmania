@@ -94,10 +94,12 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 {
 	Clear();
 
-	ASSERT( m_pGeometry == NULL );
-	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath );
-
+	// TRICKY: Load materials before geometry so we can figure out whether the materials require normals.
+	
 	LoadMaterialsFromMilkshapeAscii( sMaterialsPath );
+
+	ASSERT( m_pGeometry == NULL );
+	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sMeshesPath, this->MaterialsNeedNormals() );
 
 	if( LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath ) )
 		PlayAnimation( DEFAULT_ANIMATION_NAME );
@@ -110,7 +112,7 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 	{
 		m_vTempMeshes = m_pGeometry->m_Meshes;
 		m_pTempGeometry = DISPLAY->CreateCompiledGeometry();
-		m_pTempGeometry->Set( m_vTempMeshes );
+		m_pTempGeometry->Set( m_vTempMeshes, this->MaterialsNeedNormals() );
 	}
 }
 
@@ -760,6 +762,16 @@ void Model::HandleCommand( const Command &command )
 	}
 
 	EndHandleArgs;
+}
+
+bool Model::MaterialsNeedNormals() const
+{
+	FOREACH_CONST( msMaterial, m_Materials, m )
+	{
+		if( m->NeedsNormals() )
+			return true;
+	}
+	return false;
 }
 
 /*

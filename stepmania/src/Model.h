@@ -43,6 +43,8 @@ public:
 	void		SetDefaultAnimation( CString sAnimation, float fPlayRate = 1 );
 	bool		m_bRevertToDefaultAnimation;
 
+	bool	MaterialsNeedNormals() const;
+
 	virtual void HandleCommand( const Command &command );
 
 private:

@@ -17,8 +17,7 @@ public:
 	RageModelGeometry ();
 	virtual ~RageModelGeometry ();
 
-public:
-	void LoadMilkshapeAscii( CString sMilkshapeAsciiFile );
+	void LoadMilkshapeAscii( const CString& sMilkshapeAsciiFile, bool bNeedsNormals );
 	void OptimizeBones();
 	bool HasAnyPerVertexBones() const;
 

@@ -57,6 +57,8 @@ public:
 	float		m_fTexVelocityY;
 	BlendMode	m_BlendMode;
 
+	bool NeedsNormals() const { return m_bSphereMapped; }
+
 private:
 
 	int m_iCurState;
@@ -83,6 +85,8 @@ struct msMaterial
 
 	AnimatedTexture diffuse;
 	AnimatedTexture alpha;
+
+	bool NeedsNormals() const { return diffuse.NeedsNormals() || alpha.NeedsNormals() ; }
 };
 
 struct msPositionKey

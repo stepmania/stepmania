@@ -32,12 +32,12 @@ public:
 	ModelManager();
 	~ModelManager();
 
-	RageModelGeometry* LoadMilkshapeAscii( CString sFile );
+	RageModelGeometry* LoadMilkshapeAscii( const CString& sFile, bool bNeedNormals );
 	void UnloadModel( RageModelGeometry *m );
 //	void ReloadAll();
 
-	bool SetPrefs( ModelManagerPrefs prefs );
-	ModelManagerPrefs GetPrefs() { return m_Prefs; }
+	bool SetPrefs( const ModelManagerPrefs& prefs );		// returns true if needs display to be reset
+	const ModelManagerPrefs& GetPrefs() { return m_Prefs; }
 
 protected:
 

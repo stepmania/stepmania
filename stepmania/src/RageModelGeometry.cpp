@@ -68,8 +68,9 @@ bool RageModelGeometry::HasAnyPerVertexBones() const
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() );
 
-void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
+void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNormals )
 {
+	CString sPath = _sPath;
 	FixSlashesInPlace(sPath);
 	const CString sDir = Dirname( sPath );
 
@@ -264,7 +265,7 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 	OptimizeBones();
 
 	// send the finalized vertices to the graphics card
-	m_pCompiledGeometry->Set( m_Meshes );
+	m_pCompiledGeometry->Set( m_Meshes, bNeedsNormals );
 
 	f.Close();
 }
