@@ -748,7 +748,7 @@ void ScreenEvaluation::Init()
 			PerDifficultyAward pda = GAMESTATE->m_vLastPerDifficultyAwards[p].front();
 			CString sAward = PerDifficultyAwardToString( pda );
 
-			m_PerDifficultyAward[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation award %s",sAward.c_str(),p+1)) );
+			m_PerDifficultyAward[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation award %s",sAward.c_str())) );
 			m_PerDifficultyAward[p]->SetName( ssprintf("PerDifficultyAwardP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_PerDifficultyAward[p] );
 			this->AddChild( m_PerDifficultyAward[p] );
