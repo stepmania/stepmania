@@ -21,6 +21,7 @@
 #include "RageTimer.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
+#include "Screen.h"
 
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program

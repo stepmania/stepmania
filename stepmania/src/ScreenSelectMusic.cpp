@@ -29,6 +29,7 @@
 #include <math.h>
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
+#include "Notes.h"
 
 
 #define BANNER_FRAME_X			THEME->GetMetricF("ScreenSelectMusic","BannerFrameX")

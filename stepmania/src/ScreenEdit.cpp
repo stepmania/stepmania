@@ -27,7 +27,7 @@
 #include "SDL_keysym.h"		// for SDLKeys
 #include "ScreenMiniMenu.h"
 #include "NoteSkinManager.h"
-
+#include "Notes.h"
 #include <utility>
 
 
@@ -104,6 +104,8 @@ MiniMenuDefinition g_KeyboardShortcuts =
 		{ "Home/End: jump to first/last beat",				false, 1, 0, {""} },
 		{ "Ctrl + Up/Down: Change zoom",					false, 1, 0, {""} },
 		{ "Shift + Up/Down: Drag area marker",				false, 1, 0, {""} },
+		{ "P: Play selection",								false, 1, 0, {""} },
+		{ "Ctrl + P: Play whole song",						false, 1, 0, {""} },
 		{ "F7/F8: Decrease/increase BPM at cur beat",		false, 1, 0, {""} },
 		{ "F9/F10: Decrease/increase stop at cur beat",		false, 1, 0, {""} },
 		{ "F11/F12: Decrease/increase music offset",		false, 1, 0, {""} },
@@ -894,6 +896,16 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_pSong->m_fMusicSampleStartSeconds += fDelta;
 				m_pSong->m_fMusicSampleStartSeconds = max(m_pSong->m_fMusicSampleStartSeconds,0);
 			}
+		}
+		break;
+	case SDLK_p:
+		{
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
+				HandleMainMenuChoice( play_whole_song, NULL );
+			else
+				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
+					HandleAreaMenuChoice( play, NULL );
 		}
 		break;
 	}

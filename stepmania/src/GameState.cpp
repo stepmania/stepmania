@@ -21,6 +21,7 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 #include "SongManager.h"
+#include "Notes.h"
 #include "NoteSkinManager.h"
 
 

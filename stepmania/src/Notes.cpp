@@ -140,43 +140,6 @@ void Notes::TidyUpData()
 	}
 }
 
-
-//////////////////////////////////////////////
-//
-//////////////////////////////////////////////
-
-bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes2)
-{
-	float fScore1 = 0;
-	float fScore2 = 0;
-	
-	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
-	{
-		fScore1 += pNotes1->GetRadarValues()[r];
-		fScore2 += pNotes2->GetRadarValues()[r];
-	}
-
-	return fScore1 < fScore2;
-}
-
-bool CompareNotesPointersByMeter(const Notes *pNotes1, const Notes* pNotes2)
-{
-	return pNotes1->GetMeter() < pNotes2->GetMeter();
-}
-
-bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2)
-{
-	return pNotes1->GetDifficulty() < pNotes2->GetDifficulty();
-}
-
-void SortNotesArrayByDifficulty( vector<Notes*> &arraySteps )
-{
-	/* Sort in reverse order of priority. */
-	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByRadarValues );
-	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByMeter );
-	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
-}
-
 void Notes::Decompress() const
 {
 	if(notes) return;
@@ -244,12 +207,6 @@ void Notes::AutogenFrom( Notes *parent_, NotesType ntTo )
 {
 	parent = parent_;
 	m_NotesType = ntTo;
-}
-
-void Notes::BakeAutoGen()
-{
-	Decompress();
-	parent = NULL;
 }
 
 void Notes::CopyFrom( Notes* pSource, NotesType ntTo )	// pSource does not have to be of the same NotesType!
@@ -332,4 +289,41 @@ void Notes::AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewReco
 		m_MemCardScores[MEMORY_CARD_MACHINE].fScore = fScore;
 		m_MemCardScores[MEMORY_CARD_MACHINE].grade = grade;
 	}
+}
+
+
+//
+// Sorting stuff
+//
+
+bool CompareNotesPointersByRadarValues(const Notes* pNotes1, const Notes* pNotes2)
+{
+	float fScore1 = 0;
+	float fScore2 = 0;
+	
+	for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )
+	{
+		fScore1 += pNotes1->GetRadarValues()[r];
+		fScore2 += pNotes2->GetRadarValues()[r];
+	}
+
+	return fScore1 < fScore2;
+}
+
+bool CompareNotesPointersByMeter(const Notes *pNotes1, const Notes* pNotes2)
+{
+	return pNotes1->GetMeter() < pNotes2->GetMeter();
+}
+
+bool CompareNotesPointersByDifficulty(const Notes *pNotes1, const Notes *pNotes2)
+{
+	return pNotes1->GetDifficulty() < pNotes2->GetDifficulty();
+}
+
+void SortNotesArrayByDifficulty( vector<Notes*> &arraySteps )
+{
+	/* Sort in reverse order of priority. */
+	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByRadarValues );
+	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByMeter );
+	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
 }

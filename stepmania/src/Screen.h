@@ -11,7 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageInputDevice.h"
 #include "ActorFrame.h"
 #include "ScreenMessage.h"
 #include "InputFilter.h"

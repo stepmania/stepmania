@@ -21,7 +21,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Notes.h"
 #include "StyleInput.h"
 #include "GameInput.h"
 #include "Game.h"

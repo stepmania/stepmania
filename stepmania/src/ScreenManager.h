@@ -13,14 +13,16 @@
 
 
 #include "RageInputDevice.h"
-#include "song.h"
-#include "Notes.h"
-#include "Screen.h"
 #include "BitmapText.h"
 #include "Quad.h"
-
-
+#include "ScreenMessage.h"
+#include "InputFilter.h"
+#include "GameInput.h"
+#include "MenuInput.h"
+#include "StyleInput.h"
+class Screen;
 struct MiniMenuDefinition;
+
 
 class ScreenManager
 {

@@ -1,3 +1,5 @@
+#ifndef _GrayArrow_H_
+#define _GrayArrow_H_
 /*
 -----------------------------------------------------------------------------
  Class: GrayArrow
@@ -11,12 +13,7 @@
 */
 
 
-#ifndef _GrayArrow_H_
-#define _GrayArrow_H_
-
-
 #include "Sprite.h"
-#include "Notes.h"
 
 class GrayArrow : public Sprite
 {

@@ -13,7 +13,6 @@
 */
 
 #include "PrefsManager.h"	// for GameplayStatistics
-#include "Notes.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 

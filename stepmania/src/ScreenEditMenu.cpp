@@ -21,6 +21,7 @@
 #include "GameState.h"
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
+#include "Notes.h"
 
 
 //
@@ -93,7 +94,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_RefreshSelector:
-		m_Selector.Refresh();
+		m_Selector.RefreshNotes();
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
@@ -174,8 +175,8 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EditMenu::ACTION_DELETE:
 		ASSERT( pNotes );
-		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\nContinue with delete?", true, false, DeleteCurNotes );
-		m_Selector.Refresh();
+		SCREENMAN->Prompt( SM_RefreshSelector, "These notes will be lost permanently.\n\nContinue with delete?", true, false, DeleteCurNotes );
+		m_Selector.RefreshNotes();
 		return;
 	case EditMenu::ACTION_COPY:
 		ASSERT( !pNotes );
@@ -190,7 +191,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		
 			SCREENMAN->SystemMessage( "Notes created from copy." );
 			m_soundCreate.PlayRandom();
-			m_Selector.Refresh();
+			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
 		return;
@@ -202,13 +203,13 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			// Song allocates all of the other Notes.
 			Notes* pNewNotes = new Notes;
 			pNewNotes->AutogenFrom( pSourceNotes, nt );
-			pNewNotes->BakeAutoGen();
-			pNewNotes->SetDifficulty( dc );
+			pNewNotes->DeAutogen();
+			pNewNotes->SetDifficulty( dc );	// override difficulty with the user's choice
 			pSong->AddNotes( pNewNotes );
 		
 			SCREENMAN->SystemMessage( "Notes created from AutoGen." );
 			m_soundCreate.PlayRandom();
-			m_Selector.Refresh();
+			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
 		return;
@@ -225,7 +226,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		
 			SCREENMAN->SystemMessage( "Blank Notes created." );
 			m_soundCreate.PlayRandom();
-			m_Selector.Refresh();
+			m_Selector.RefreshNotes();
 			pSong->Save();
 		}
 		return;

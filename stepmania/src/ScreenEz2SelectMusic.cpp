@@ -11,13 +11,9 @@
 -----------------------------------------------------------------------------
 */
 
-#include "global.h"
-
 #include "ScreenEz2SelectMusic.h"
-
 #include "RageDisplay.h"
 #include <math.h>
-
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "ScreenManager.h"
@@ -29,6 +25,8 @@
 #include "StyleDef.h"
 #include "InputMapper.h"
 #include "CodeDetector.h"
+#include "Notes.h"
+
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")

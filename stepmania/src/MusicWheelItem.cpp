@@ -24,6 +24,7 @@
 #include "GameState.h"
 #include <math.h>
 #include "ThemeManager.h"
+#include "Notes.h"
 
 
 // WheelItem stuff

@@ -131,10 +131,9 @@ EditMenu::~EditMenu()
 
 }
 
-void EditMenu::Refresh()
+void EditMenu::RefreshNotes()
 {
-	ChangeToRow( (Row)0 );
-	OnRowValueChanged( (Row)0 );
+	OnRowValueChanged( ROW_SONG );
 }
 
 void EditMenu::DrawPrimitives()

@@ -85,7 +85,7 @@ public:
 		return s[a];
 	}
 
-	void Refresh();
+	void RefreshNotes();
 
 
 	CString		GetSelectedGroup()				{ return m_sGroups[m_iSelection[ROW_GROUP]]; }
