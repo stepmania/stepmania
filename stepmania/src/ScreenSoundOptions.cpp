@@ -29,7 +29,7 @@ enum {
 	NUM_SOUND_OPTIONS_LINES
 };
 OptionRowData g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
-	{ "Master\nVolume",		10, {"0","1","2","3","4","5","6","7","8","9"} },
+	{ "Master\nVolume",		6, {"MUTE","20%","40%","60%","80%","100%"} },
 };
 
 ScreenSoundOptions::ScreenSoundOptions() :
@@ -62,24 +62,15 @@ void ScreenSoundOptions::Input( const DeviceInput& DeviceI, const InputEventType
 
 void ScreenSoundOptions::ImportOptions()
 {
-	m_iSelectedOption[0][SO_MASTER_VOLUME] = PREFSMAN->m_fSoundVolume;
+	float fVolPercent = PREFSMAN->m_fSoundVolume;
+	m_iSelectedOption[0][SO_MASTER_VOLUME] = (int)(fVolPercent*5);
 }
 
 void ScreenSoundOptions::ExportOptions()
 {
-	switch( m_iSelectedOption[0][SO_MASTER_VOLUME] )
-	{
-		case 0:SOUNDMAN->SetPrefs(0.10000f);PREFSMAN->m_fSoundVolume = 0.10000f;break;
-		case 1:SOUNDMAN->SetPrefs(0.20000f);PREFSMAN->m_fSoundVolume = 0.20000f;break;
-		case 2:SOUNDMAN->SetPrefs(0.30000f);PREFSMAN->m_fSoundVolume = 0.30000f;break;
-		case 3:SOUNDMAN->SetPrefs(0.40000f);PREFSMAN->m_fSoundVolume = 0.40000f;break;
-		case 4:SOUNDMAN->SetPrefs(0.50000f);PREFSMAN->m_fSoundVolume = 0.50000f;break;
-		case 5:SOUNDMAN->SetPrefs(0.60000f);PREFSMAN->m_fSoundVolume = 0.60000f;break;
-		case 6:SOUNDMAN->SetPrefs(0.70000f);PREFSMAN->m_fSoundVolume = 0.70000f;break;
-		case 7:SOUNDMAN->SetPrefs(0.80000f);PREFSMAN->m_fSoundVolume = 0.80000f;break;
-		case 8:SOUNDMAN->SetPrefs(0.90000f);PREFSMAN->m_fSoundVolume = 0.90000f;break;
-		case 9:SOUNDMAN->SetPrefs(1.00000f);PREFSMAN->m_fSoundVolume = 1.00000f;break;
-	}
+	float fVolPercent = m_iSelectedOption[0][SO_MASTER_VOLUME] / 5.f;
+	SOUNDMAN->SetPrefs(fVolPercent);
+	PREFSMAN->m_fSoundVolume = fVolPercent;
 }
 
 void ScreenSoundOptions::GoToPrevState()

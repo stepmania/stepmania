@@ -430,6 +430,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSongOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenSoundOptions.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSoundOptions.h">
+			</File>
+			<File
 				RelativePath="ScreenStage.cpp">
 			</File>
 			<File

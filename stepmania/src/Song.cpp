@@ -41,7 +41,9 @@
 #include "SDL_image.h"
 
 
-const int FILE_CACHE_VERSION = 109;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 111;	// increment this when Song or Notes changes to invalidate cache
+
+const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
 
 static int CompareBPMSegments(const BPMSegment &seg1, const BPMSegment &seg2)
@@ -83,7 +85,7 @@ Song::Song()
 	m_bChangedSinceSave = false;
 	m_fBeat0OffsetInSeconds = 0;
 	m_fMusicSampleStartSeconds = 0;
-	m_fMusicSampleLengthSeconds = 12.0f;	// start fading out at m_fMusicSampleLengthSeconds-1 seconds
+	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_iMusicBytes = 0;
 	m_fMusicLengthSeconds = 0;
 	m_fFirstBeat = -1;
@@ -447,13 +449,21 @@ void Song::TidyUpData()
 	// We're going to try and do something intelligent here...
 	// The MusicSampleStart always seems to be about 100-120 beats into 
 	// the song regardless of BPM.  Let's take a shot-in-the dark guess.
-	if( m_fMusicSampleStartSeconds == 0 )
+	if( m_fMusicSampleStartSeconds == 0  ||  m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
+	{
 		m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( 100 );
+		if( m_fMusicSampleStartSeconds+m_fMusicSampleLengthSeconds > this->m_fMusicLengthSeconds )
+		{
+			int iBeat = (int)(m_fLastBeat/2);
+			iBeat = iBeat - iBeat%10;
+			m_fMusicSampleStartSeconds = this->GetElapsedTimeFromBeat( (float)iBeat );	// fix for BAG and other slow songs
+		}
+	}
 
 	/* Some DWIs have lengths in ms when they meant seconds, eg. #SAMPLELENGTH:10;.
 	 * If the sample length is way too short, change it. */
-	if( m_fMusicSampleLengthSeconds < 3 )
-		m_fMusicSampleLengthSeconds = 10;
+	if( m_fMusicSampleLengthSeconds < 3 || m_fMusicSampleLengthSeconds > 30 )
+		m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 
 	//
 	// Here's the problem:  We have a directory full of images.  We want to determine which 

@@ -126,7 +126,9 @@ void DSoundBuf::SetVolume(float vol)
 {
 	ASSERT(vol >= 0);
 	ASSERT(vol <= 1);
-
+	
+	if( vol == 0 )
+		vol = 0.001f;		// fix log10f(0) == -INF
 	float vl2 = log10f(vol) / log10f(2); /* vol log 2 */
 
 	/* Volume is a multiplier; SetVolume wants attenuation in thousands of a
