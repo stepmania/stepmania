@@ -69,7 +69,8 @@ private:
         int m_step;		//SID (StepID, 0-6 for Miss to Marv, 7,8 for boo and ok)
         int m_score;	//Player's Score
         int m_combo;	//Player's Current Combo
-		int m_life;		//Player's Life
+		int m_life;		//Player's Life (AND GRADE) 
+			//m_life = [16-bit int life] <- LSB [16-bit int grade] <-MSB
     };
 
 	struct netName			//Data structure used for 16-character strings.

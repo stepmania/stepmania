@@ -208,7 +208,11 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	SendNetPack.m_combo=combo;
 	SendNetPack.m_score=score;			//Load packet with appropriate info
 	SendNetPack.m_step=step-1;
-	SendNetPack.m_life=m_playerLife[playerID];
+	
+	int CurGrade = g_CurStageStats.GetGrade((PlayerNumber)playerID);
+
+	//Should be cleaned up
+ 	SendNetPack.m_life=m_playerLife[playerID] + CurGrade*65536;
 
     //Send packet to server
 	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
@@ -226,17 +230,7 @@ void NetworkSyncManager::ReportSongOver()
 	SendNetPack.m_playerID = 21; // Song over Packet player ID
 
 
-	SendNetPack.m_step=0;
-
-	FOREACH_EnabledPlayer( pn2 )
-	{
-		if (pn2==PLAYER_1)
-			SendNetPack.m_step+=g_CurStageStats.GetGrade(pn2);
-		if (pn2==PLAYER_2)
-			SendNetPack.m_step+=g_CurStageStats.GetGrade(pn2)*256;
-	}
-
-	
+	SendNetPack.m_step=0;	
 	SendNetPack.m_score=0;
 	SendNetPack.m_combo=0;
 	SendNetPack.m_life=0;
