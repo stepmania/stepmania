@@ -828,7 +828,7 @@ void ScreenGameplay::LoadCourseSongNumber( int SongNumber )
 	if( !GAMESTATE->IsCourseMode() )
 		return;
 
-	const CString path = THEME->GetPathG( m_sName, ssprintf(" course song %i",SongNumber), true );
+	const CString path = THEME->GetPathG( m_sName, ssprintf("course song %i",SongNumber), true );
 	if( path != "" )
 		m_sprCourseSongNumber.Load( path );
 	else
