@@ -144,10 +144,10 @@ public:
 
 
 	enum HorizAlign { align_left, align_center, align_right };
-	void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; };
+	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
 
 	enum VertAlign { align_top, align_middle, align_bottom };
-	void SetVertAlign( VertAlign va ) { m_VertAlign = va; };
+	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
 
 
 
