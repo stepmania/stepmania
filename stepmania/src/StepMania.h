@@ -6,7 +6,7 @@ class Game;
 #ifdef _XBOX
 void __cdecl main();
 #else
-int SMmain(int argc, char* argv[]);
+int main( int argc, char* argv[] );
 #endif
 void ApplyGraphicOptions();
 void HandleException( CString error );
