@@ -76,6 +76,12 @@ static void MoveData( int &sel, bool &opt, bool ToSel )
 	else		opt = !!sel;
 }
 
+template<class T>
+static void MoveData( int &sel, Preference<T> &opt, bool ToSel )
+{
+	MoveData( sel, opt.Value(), ToSel );
+}
+
 #define MOVE( name, opt ) \
 	static void name( int &sel, bool ToSel, const ConfOption *pConfOption ) \
 	{ \
@@ -233,7 +239,7 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 
 /* Appearance options */
 MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
-MOVE( Caution,				(bool&) PREFSMAN->m_bShowCaution );
+MOVE( Caution,				PREFSMAN->m_bShowCaution );
 MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
 MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 MOVE( WheelSections,		PREFSMAN->m_MusicWheelUsesSections );
@@ -311,7 +317,7 @@ static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 	const int mapping[] = { 1,2,3,4,5,6,7 };
 	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
 }
-MOVE( EventMode,			(bool&) PREFSMAN->m_bEventMode );
+MOVE( EventMode,			PREFSMAN->m_bEventMode );
 
 /* Machine options */
 MOVE( ScoringType,			PREFSMAN->m_iScoringType );
