@@ -20,6 +20,7 @@
 
 
 const int NUM_FEET_IN_METER					=	10;
+const int MAX_FEET_IN_METER					=	14;
 const int GLOW_IF_METER_GREATER_THAN		=	9;
 
 
@@ -57,7 +58,7 @@ void DifficultyMeter::SetMeter( int iMeter )
 	int f;
 	for( f=0; f<NUM_FEET_IN_METER; f++ )
 		sNewText += (f<iMeter) ? "1" : "0";
-	for( f=NUM_FEET_IN_METER; f<=13; f++ )
+	for( f=NUM_FEET_IN_METER; f<MAX_FEET_IN_METER; f++ )
 		if( f<iMeter )
 			sNewText += "1";
 
