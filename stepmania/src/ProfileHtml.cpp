@@ -218,7 +218,7 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			int iGradeCount[NUM_GRADES];
 			ZERO( iGradeCount );
 
-			for( int i=0; i<vpAllSteps.size(); i++ )
+			for( unsigned i=0; i<vpAllSteps.size(); i++ )
 			{
 				Steps* pSteps = vpAllSteps[i];
 				const HighScoreList &hsl = pProfile->GetStepsHighScoreList(pSteps);
@@ -660,7 +660,7 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 		GetDirListing( sProfileDir+"Screenshots/*.jpg", asFiles );
 
 		BEGIN_TABLE(2);
-		for( int i=0; i<asFiles.size(); i++ )
+		for( unsigned i=0; i<asFiles.size(); i++ )
 		{
 			CString sFile = "Screenshots/"+asFiles[i];
 
