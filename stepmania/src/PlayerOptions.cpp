@@ -586,11 +586,14 @@ CString PlayerOptions::ThemeMod( CString sOneMod )
 		sOneMod.erase( sOneMod.begin(), sOneMod.begin()+sizeof(PERCENT_100) );
 	}
 
-	// Capitalize all tokens
+	// Change all token to first letter capitalized, rest lowercase
 	CStringArray asTokens;
 	split( sOneMod, " ", asTokens );
-	for( unsigned i=0; i<asTokens.size(); i++ )
-		asTokens[i] = Capitalize( asTokens[i] );
+	FOREACH( CString, asTokens, s )
+	{
+		s->MakeLower();
+		*s = Capitalize( *s );
+	}
 
 	/* Theme the mod name (the last string).  Allow this to not exist, since
 	 * characters might use modifiers that don't exist in the theme. */
