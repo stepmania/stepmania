@@ -361,7 +361,7 @@ uint16_t NetworkSyncManager::Read2(NetPacket &Packet)
 		return 0;
 
 	unsigned short int Temp;
-	memcpy((void *)&Temp,(void *)*(&Packet.Data + Packet.Position),2);
+	memcpy( &Temp, *(&Packet.Data + Packet.Position),2 );
 	Packet.Position+=2;
 	return ntohs(Temp);
 }
@@ -372,7 +372,7 @@ uint32_t NetworkSyncManager::Read4(NetPacket &Packet)
 		return 0;
 
 	unsigned int Temp;
-	memcpy((void *)&Temp,(void *)(&Packet.Data + Packet.Position),4);
+	memcpy( &Temp, (&Packet.Data + Packet.Position),4 );
 	Packet.Position+=2;
 	return ntohl(Temp);
 }
@@ -393,7 +393,7 @@ void NetworkSyncManager::Write1(NetPacket &Packet, uint8_t Data)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE)
 		return;
-	memcpy((void*)(&Packet.Data[Packet.Position]),(void *)&Data,1);	
+	memcpy( &Packet.Data[Packet.Position], &Data,1 );
 	Packet.Position++;
 }
 
@@ -402,7 +402,7 @@ void NetworkSyncManager::Write2(NetPacket &Packet, uint16_t Data)
 	if (Packet.Position>=NETMAXBUFFERSIZE-1)
 		return;
 	Data = htons(Data);
-	memcpy((void*)(&Packet.Data[Packet.Position]),(void *)&Data,2);	
+	memcpy( &Packet.Data[Packet.Position], &Data,2 );
 	Packet.Position+=2;
 }
 
@@ -412,7 +412,7 @@ void NetworkSyncManager::Write4(NetPacket &Packet, uint32_t Data)
 		return ;
 
 	Data = htonl(Data);
-	memcpy((void*)(&Packet.Data[Packet.Position]),(void *)&Data,4);	
+	memcpy( (&Packet.Data[Packet.Position]), &Data,4 );
 	Packet.Position+=4;
 }
 
