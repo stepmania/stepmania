@@ -24,6 +24,12 @@ const float LABEL_X		=	200;
 const float ANSWER_X	=	440;
 const float SPACING_Y	=	26;
 
+const float ZOOM_SELECTED = 0.7f;
+const float ZOOM_NOT_SELECTED = 0.5f;
+
+const RageColor COLOR_ENABLED = RageColor(1,1,1,1);
+const RageColor COLOR_DISABLED = RageColor(0.5f,0.5f,0.5f,1);
+
 const ScreenMessage SM_GoToOK		= (ScreenMessage)(SM_User+1);
 const ScreenMessage SM_GoToCancel	= (ScreenMessage)(SM_User+2);
 
@@ -56,7 +62,10 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 	this->AddChild( &m_textTitle );
 
 	bool bMarkedFirstEnabledLine = false;
-	
+	m_iCurLine = 0;
+
+	float fLongestLabelPlusAnswer = 0;
+
 	for( int i=0; i<m_Def.iNumLines; i++ )
 	{
 		MiniMenuDefinition::MiniMenuLine& line = m_Def.lines[i];
@@ -66,19 +75,24 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 
 		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textLabel[i].SetText( line.szLabel );
-		m_textLabel[i].SetXY( LABEL_X, fY );
-		m_textLabel[i].SetZoom( 0.5f );
+		m_textLabel[i].SetY( fY );
+		m_textLabel[i].SetZoom( ZOOM_NOT_SELECTED );
 		m_textLabel[i].SetHorizAlign( Actor::align_left );
-		m_textLabel[i].SetDiffuse( line.bEnabled ? RageColor(1,1,1,1) : RageColor(0.5f,0.5f,0.5f,1) );
+		m_textLabel[i].SetDiffuse( line.bEnabled ? COLOR_ENABLED : COLOR_DISABLED );
 		this->AddChild( &m_textLabel[i] );
 
 		m_textAnswer[i].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
- 		m_textAnswer[i].SetText( line.szOptionsText[0] );
-		m_textAnswer[i].SetXY( ANSWER_X, fY );
-		m_textAnswer[i].SetZoom( 0.5f );
+ 		m_textAnswer[i].SetText( line.szOptionsText[line.iDefaultOption] );
+		m_textAnswer[i].SetY( fY );
+		m_textAnswer[i].SetZoom( ZOOM_NOT_SELECTED );
 		m_textAnswer[i].SetHorizAlign( Actor::align_right );
-		m_textAnswer[i].SetDiffuse( line.bEnabled ? RageColor(1,1,1,1) : RageColor(0.5f,0.5f,0.5f,1) );
+		m_textAnswer[i].SetDiffuse( line.bEnabled ? COLOR_ENABLED : COLOR_DISABLED );
 		this->AddChild( &m_textAnswer[i] );
+
+		fLongestLabelPlusAnswer = max( 
+			fLongestLabelPlusAnswer, 
+			m_textLabel[i].GetWidestLineWidthInSourcePixels() * ZOOM_SELECTED +
+			m_textAnswer[i].GetWidestLineWidthInSourcePixels() * ZOOM_SELECTED );
 
 		if( !bMarkedFirstEnabledLine && line.bEnabled )
 		{
@@ -88,6 +102,23 @@ ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendO
 		}
 
 		m_iCurAnswers[i] = line.iDefaultOption;
+	}
+
+	// adjust text spacing based on widest line
+	float fLabelX = LABEL_X;
+	float fAnswerX = ANSWER_X;
+	float fDefaultWidth = ANSWER_X - LABEL_X;
+	if( fLongestLabelPlusAnswer+20 > fDefaultWidth )
+	{
+		float fIncreaseBy = fLongestLabelPlusAnswer - fDefaultWidth + 20;
+		fLabelX -= fIncreaseBy/2;
+		fAnswerX += fIncreaseBy/2;
+	}
+
+	for( int i=0; i<m_Def.iNumLines; i++ )
+	{
+		m_textLabel[i].SetX( fLabelX );
+		m_textAnswer[i].SetX( fAnswerX );
 	}
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
@@ -194,17 +225,17 @@ void ScreenMiniMenu::BeforeLineChanged()
 {
 	m_textLabel[m_iCurLine].SetEffectNone();
 	m_textAnswer[m_iCurLine].SetEffectNone();
-	m_textLabel[m_iCurLine].SetZoom( 0.5f );
-	m_textAnswer[m_iCurLine].SetZoom( 0.5f );
+	m_textLabel[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
+	m_textAnswer[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","mini menu row") );
 }
 
 void ScreenMiniMenu::AfterLineChanged()
 {
 	m_textLabel[m_iCurLine].SetEffectGlowShift( 1.0f, RageColor(0,0.5f,0,1), RageColor(0,1,0,1) );
 	m_textAnswer[m_iCurLine].SetEffectGlowShift( 1.0f, RageColor(0,0.5f,0,1), RageColor(0,1,0,1) );
-	m_textLabel[m_iCurLine].SetZoom( 0.7f );
-	m_textAnswer[m_iCurLine].SetZoom( 0.7f );
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","mini menu row") );
+	m_textLabel[m_iCurLine].SetZoom( ZOOM_SELECTED );
+	m_textAnswer[m_iCurLine].SetZoom( ZOOM_SELECTED );
 }
 
 void ScreenMiniMenu::AfterAnswerChanged()

@@ -108,7 +108,6 @@ public:
 		edit_notes_statistics,
 		play_whole_song,
 		save,
-		editor_options,
 		player_options,
 		song_options,
 		edit_song_info,
@@ -151,14 +150,6 @@ public:
 		NUM_EDIT_NOTES_STATISTICS_CHOICES
 	};
 	void HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, int* iAnswers );
-
-	enum EditOptionsChoice {
-		zoom,
-		max_notes_per_row,
-		after_note_add,
-		NUM_EDIT_OPTIONS_CHOICES
-	};
-	void HandleEditOptionsChoice( EditOptionsChoice c, int* iAnswers );
 
 	enum EditSongInfoChoice {
 		main_title,

@@ -340,6 +340,12 @@ void ScreenManager::SetNewScreen( CString sClassName )
 	else GAMESTATE->m_bIsOnSystemMenu = false;
 }
 
+void ScreenManager::AddNewScreenToTop( CString sClassName )
+{	
+	Screen* pNewScreen = MakeNewScreen(sClassName);
+	m_ScreenStack.push_back( pNewScreen );
+}
+
 void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
 	// add the new state onto the back of the array
@@ -388,13 +394,6 @@ void ScreenManager::SystemMessage( CString sMessage )
 
 	LOG->Trace( "WARNING:  Didn't find an empty system messages slot." );
 }
-
-/*
-void ScreenManager::OverrideCreditsMessage( PlayerNumber pn, CString sNewString )
-{
-	m_textCreditInfo[p].SetText( sNewString );
-}
-*/
 
 void ScreenManager::RefreshCreditsMessages()
 {

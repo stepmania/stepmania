@@ -25,7 +25,7 @@ struct MiniMenuDefinition
 	int iNumLines;
 	struct MiniMenuLine
 	{
-		char szLabel[40];
+		char szLabel[256];
 		bool bEnabled;
 		int iNumOptions;
 		int iDefaultOption;

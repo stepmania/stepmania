@@ -107,14 +107,20 @@ void ScreenSongOptions::ExportOptions()
 
 void ScreenSongOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
+	SOUNDMAN->StopMusic();
+	if( GAMESTATE->m_bEditing )
+		SCREENMAN->PopTopScreen( SM_None );
+	else
+		SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
 }
 
 void ScreenSongOptions::GoToNextState()
 {
 	SOUNDMAN->StopMusic();
-
-	SCREENMAN->SetNewScreen( "ScreenStage" );
+	if( GAMESTATE->m_bEditing )
+		SCREENMAN->PopTopScreen();
+	else
+		SCREENMAN->SetNewScreen( "ScreenStage" );
 }
 
 

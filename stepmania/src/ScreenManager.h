@@ -38,10 +38,11 @@ public:
 	void PrepNewScreen( CString sClassName );
 	void LoadPreppedScreen();
 	void SetNewScreen( CString sClassName );
+	void AddNewScreenToTop( CString sClassName );
 	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
 	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
 	void MiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
-	void PopTopScreen( ScreenMessage SM );
+	void PopTopScreen( ScreenMessage SM = SM_RegainingFocus );
 	void SystemMessage( CString sMessage );
 
 	void SendMessageToTopScreen( ScreenMessage SM, float fDelay );

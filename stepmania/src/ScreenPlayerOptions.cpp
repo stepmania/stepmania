@@ -179,7 +179,9 @@ void ScreenPlayerOptions::ExportOptions()
 
 void ScreenPlayerOptions::GoToPrevState()
 {
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP  ||
+	if( GAMESTATE->m_bEditing )
+		SCREENMAN->PopTopScreen();
+	else if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP  ||
 		GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||
 		GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS)
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
@@ -189,7 +191,9 @@ void ScreenPlayerOptions::GoToPrevState()
 
 void ScreenPlayerOptions::GoToNextState()
 {
-	if( PREFSMAN->m_bShowSongOptions == true )
+	if( GAMESTATE->m_bEditing )
+		SCREENMAN->PopTopScreen();
+	else if( PREFSMAN->m_bShowSongOptions == true )
 		SCREENMAN->SetNewScreen( "ScreenSongOptions" );
 	else
 		SCREENMAN->SetNewScreen( "ScreenStage" );

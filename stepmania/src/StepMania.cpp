@@ -406,6 +406,8 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 	case MENU_BUTTON_COIN:
 		/* Handle a coin insertion. */
+		if( GAMESTATE->m_bEditing )
+			break;
 		if( type == IET_FIRST_PRESS ) return true;
 
 		switch( PREFSMAN->m_CoinMode )

@@ -86,16 +86,30 @@ const ScreenMessage SM_BackFromEditSongInfo			= (ScreenMessage)(SM_User+5);
 const CString HELP_TEXT = 
 	"Up/Down:\n     change beat\n"
 	"Left/Right:\n     change snap\n"
-	"PgUp/PgDn:\n     jump measure\n"
-	"Home/End:\n     jump to first/\n     last beat\n"
 	"Number keys:\n     add/remove\n     tap note\n"
 	"Create hold note:\n     Hold a number\n     while moving\n     Up or Down\n"
-	"F7/F8:\n     Dec/inc BPM\n     at cur beat\n"
-	"F9/F10:\n     Dec/inc stop\n     at cur beat\n"
-	"F11/F12:\n     Dec/inc music\n     offset\n"
-	"[ and ]:\n     Dec/inc sample\n     music start\n"
-	"{ and }:\n     Dec/inc sample\n     music length\n";
+	"Space bar:\n     Set area\n     marker\n"
+	"Enter:\n     Area Menu\n"
+	"Escape:\n     Main Menu\n"
+	"F1:\n     Show\n     keyboard\n     shortcuts\n";
 
+
+MiniMenuDefinition g_KeyboardShortcuts =
+{
+	"Keyboard Shortcuts",
+	9,
+	{
+		{ "PgUp/PgDn: jump measure",						false, 1, 0, {""} },
+		{ "Home/End: jump to first/last beat",				false, 1, 0, {""} },
+		{ "Ctrl + Up/Down: Change zoom",					false, 1, 0, {""} },
+		{ "Shift + Up/Down: Drag area marker",				false, 1, 0, {""} },
+		{ "F7/F8: Decrease/increase BPM at cur beat",		false, 1, 0, {""} },
+		{ "F9/F10: Decrease/increase stop at cur beat",		false, 1, 0, {""} },
+		{ "F11/F12: Decrease/increase music offset",		false, 1, 0, {""} },
+		{ "[ and ]: Decrease/increase sample music start",	false, 1, 0, {""} },
+		{ "{ and }: Decrease/increase sample music length",	false, 1, 0, {""} },
+	}
+};
 
 MiniMenuDefinition g_MainMenu =
 {
@@ -105,7 +119,6 @@ MiniMenuDefinition g_MainMenu =
 		{ "Edit Notes Statistics",	true, 1, 0, {""} },
 		{ "Play Whole Song",		true, 1, 0, {""} },
 		{ "Save",					true, 1, 0, {""} },
-		{ "Editor Options",			true, 1, 0, {""} },
 		{ "Player Options",			true, 1, 0, {""} },
 		{ "Song Options",			true, 1, 0, {""} },
 		{ "Edit Song Info",			true, 1, 0, {""} },
@@ -154,17 +167,6 @@ MiniMenuDefinition g_EditNotesStatistics =
 	}
 };
 
-
-MiniMenuDefinition g_EditOptions =
-{
-	"Edit Options",
-	ScreenEdit::NUM_EDIT_OPTIONS_CHOICES,
-	{
-		{ "Zoom",				true, 3, 0, {"1X","2X","4X"} },
-		{ "Max Notes Per Row",	true, 4, 0, {"NO LIMIT","2","3","4"} },
-		{ "After Note Add",		true, 2, 0, {"STAY","NEXT LINE"} },
-	}
-};
 
 MiniMenuDefinition g_EditSongInfo =
 {
@@ -490,12 +492,11 @@ void ScreenEdit::Update( float fDeltaTime )
 	CString sText;
 	sText += ssprintf( "Current Beat:\n     %.2f\n",		GAMESTATE->m_fSongBeat );
 	sText += ssprintf( "Snap to:\n     %s\n",				sNoteType.GetString() );
-	sText += ssprintf( "Selection begin:\n     %.2f\n",		m_NoteFieldEdit.m_fBeginMarker );
-	sText += ssprintf( "Selection end:\n     %.2f\n",		m_NoteFieldEdit.m_fEndMarker );
+	sText += ssprintf( "Selection begin:\n     %s\n",		m_NoteFieldEdit.m_fBeginMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fBeginMarker).GetString() );
+	sText += ssprintf( "Selection end:\n     %s\n",			m_NoteFieldEdit.m_fEndMarker==-1 ? "not set" : ssprintf("%.2f",m_NoteFieldEdit.m_fEndMarker).GetString() );
 	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).GetString() );
 	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().GetString() : "no description" );
 	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.GetString() );
-	sText += ssprintf( "Sub title:\n     %s\n",				m_pSong->m_sSubTitle.GetString() );
 	sText += ssprintf( "Tap Notes:\n     %d\n",				iNumTapNotes );
 	sText += ssprintf( "Hold Notes:\n     %d\n",			iNumHoldNotes );
 	sText += ssprintf( "Beat 0 Offset:\n     %.2f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
@@ -553,71 +554,6 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	default:	ASSERT(0);
 	}
 }
-
-// Begin helper functions for InputEdit
-
-void AddBGChange( CString sBGName )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	unsigned i;
-	for( i=0; i<pSong->m_BackgroundChanges.size(); i++ )
-	{
-		if( pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-			break;
-	}
-
-	if( i != pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
-		pSong->m_BackgroundChanges.erase( pSong->m_BackgroundChanges.begin()+i,
-										  pSong->m_BackgroundChanges.begin()+i+1);
-
-	// create a new BGChange
-	if( sBGName != "" )
-		pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
-}
-
-void ChangeDescription( CString sNew )
-{
-	Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
-	pNotes->SetDescription(sNew);
-}
-
-void ChangeMainTitle( CString sNew )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_sMainTitle = sNew;
-}
-
-void ChangeSubTitle( CString sNew )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_sSubTitle = sNew;
-}
-
-void ChangeArtist( CString sNew )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_sArtist = sNew;
-}
-
-void ChangeMainTitleTranslit( CString sNew )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_sMainTitleTranslit = sNew;
-}
-
-void ChangeSubTitleTranslit( CString sNew )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_sSubTitleTranslit = sNew;
-}
-
-void ChangeArtistTranslit( CString sNew )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	pSong->m_sArtistTranslit = sNew;
-}
-
-// End helper functions for InputEdit
 
 void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
@@ -799,11 +735,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		GAMESTATE->m_fSongBeat = m_NoteFieldEdit.GetLastBeat();
 		m_soundChangeLine.Play();
 		break;
-	case SDLK_RIGHT:
+	case SDLK_LEFT:
 		m_SnapDisplay.PrevSnapMode();
 		OnSnapModeChange();
 		break;
-	case SDLK_LEFT:
+	case SDLK_RIGHT:
 		m_SnapDisplay.NextSnapMode();
 		OnSnapModeChange();
 		break;
@@ -855,9 +791,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.lines[clear].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[quantize].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[transform].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[play].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[record].bEnabled = bAreaSelected;
-			g_AreaMenu.lines[insert_and_shift].bEnabled = !bAreaSelected;
-			g_AreaMenu.lines[delete_and_shift].bEnabled = !bAreaSelected;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
@@ -865,38 +800,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SCREENMAN->MiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
 
-	case SDLK_d:
-		{
-			Difficulty dc = Difficulty( (m_pNotes->GetDifficulty()+1)%NUM_DIFFICULTIES );
-			m_pNotes->SetDifficulty(dc);
-		}
-		break;
-
-	case SDLK_e:
-		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->GetDescription(), ChangeDescription, NULL );
-		break;
-
-	case SDLK_b:
-		{
-			CString sOldBackground;
-			unsigned i;
-			for( i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
-			{
-				if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-					break;
-			}
-			if( i != m_pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
-				sOldBackground = m_pSong->m_BackgroundChanges[i].m_sBGName;
-
-			SCREENMAN->TextEntry( SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL );
-		}
-		break;
-
-	case SDLK_i:
-		if( GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK )
-			GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_NONE;
-		else
-			GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
+	case SDLK_F1:
+		SCREENMAN->MiniMenu( &g_KeyboardShortcuts, SM_None );
 		break;
 
 	case SDLK_F7:
@@ -1156,11 +1061,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromEditNotesStatistics:
 		HandleEditNotesStatisticsChoice( (EditNotesStatisticsChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
 		break;
-	case SM_BackFromEditOptions:
-		HandleEditOptionsChoice( (EditOptionsChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
-		break;
 	case SM_BackFromEditSongInfo:
 		HandleEditSongInfoChoice( (EditSongInfoChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
+		break;
+	case SM_RegainingFocus:
+		// coming back from PlayerOptions or SongOptions
+		m_fDestinationScrollSpeed = GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
+		m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 		break;
 	}
 }
@@ -1176,6 +1083,78 @@ void ScreenEdit::OnSnapModeChange()
 	GAMESTATE->m_fSongBeat -= NoteRowToBeat( iStepIndexHangover );
 }
 
+
+
+// Helper function for below
+
+// Begin helper functions for InputEdit
+
+void AddBGChange( CString sBGName )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	unsigned i;
+	for( i=0; i<pSong->m_BackgroundChanges.size(); i++ )
+	{
+		if( pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+			break;
+	}
+
+	if( i != pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
+		pSong->m_BackgroundChanges.erase( pSong->m_BackgroundChanges.begin()+i,
+										  pSong->m_BackgroundChanges.begin()+i+1);
+
+	// create a new BGChange
+	if( sBGName != "" )
+		pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
+}
+
+void ChangeDescription( CString sNew )
+{
+	Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+	pNotes->SetDescription(sNew);
+}
+
+void ChangeMainTitle( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sMainTitle = sNew;
+}
+
+void ChangeSubTitle( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sSubTitle = sNew;
+}
+
+void ChangeArtist( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sArtist = sNew;
+}
+
+void ChangeMainTitleTranslit( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sMainTitleTranslit = sNew;
+}
+
+void ChangeSubTitleTranslit( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sSubTitleTranslit = sNew;
+}
+
+void ChangeArtistTranslit( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sArtistTranslit = sNew;
+}
+
+// End helper functions
+
+
+
+
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 {
 	switch( c )
@@ -1186,7 +1165,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
 				g_EditNotesStatistics.lines[difficulty].iDefaultOption = pNotes->GetDifficulty();
-				g_EditNotesStatistics.lines[meter].iDefaultOption = pNotes->GetMeter()+1;
+				g_EditNotesStatistics.lines[meter].iDefaultOption = pNotes->GetMeter()-1;
 				strcpy( g_EditNotesStatistics.lines[description].szOptionsText[0], pNotes->GetDescription() );
 				strcpy( g_EditNotesStatistics.lines[tap_notes].szOptionsText[0], ssprintf("%d", m_NoteFieldEdit.GetNumTapNotes()) );
 				strcpy( g_EditNotesStatistics.lines[hold_notes].szOptionsText[0], ssprintf("%d", m_NoteFieldEdit.GetNumHoldNotes()) );
@@ -1199,6 +1178,11 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			}
 			break;
 		case play_whole_song:
+			{
+				m_NoteFieldEdit.m_fBeginMarker = 0;
+				m_NoteFieldEdit.m_fEndMarker = m_NoteFieldEdit.GetLastBeat();
+				HandleAreaMenuChoice( play, NULL );
+			}
 			break;
 		case save:
 			{
@@ -1213,21 +1197,43 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit save") );
 			}
 			break;
-		case editor_options:
-			SCREENMAN->MiniMenu( &g_EditOptions, SM_BackFromEditOptions );
-			break;
 		case player_options:
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
 			break;
 		case song_options:
+			SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
 			break;
 		case edit_song_info:
-			SCREENMAN->MiniMenu( &g_EditSongInfo, SM_BackFromEditSongInfo );
+			{
+				Song* pSong = GAMESTATE->m_pCurSong;
+				strcpy( g_EditSongInfo.lines[main_title].szOptionsText[0], pSong->m_sMainTitle );
+				strcpy( g_EditSongInfo.lines[sub_title].szOptionsText[0], pSong->m_sSubTitle );
+				strcpy( g_EditSongInfo.lines[artist].szOptionsText[0], pSong->m_sArtist );
+				strcpy( g_EditSongInfo.lines[main_title_transliteration].szOptionsText[0], pSong->m_sMainTitleTranslit );
+				strcpy( g_EditSongInfo.lines[sub_title_transliteration].szOptionsText[0], pSong->m_sSubTitleTranslit );
+				strcpy( g_EditSongInfo.lines[artist_transliteration].szOptionsText[0], pSong->m_sArtistTranslit );
+
+				SCREENMAN->MiniMenu( &g_EditSongInfo, SM_BackFromEditSongInfo );
+			}
 			break;
 		case edit_bpm:
 			break;
 		case edit_stop:
 			break;
 		case edit_bg_change:
+			{
+				CString sOldBackground;
+				unsigned i;
+				for( i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
+				{
+					if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+						break;
+				}
+				if( i != m_pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
+					sOldBackground = m_pSong->m_BackgroundChanges[i].m_sBGName;
+
+				SCREENMAN->TextEntry( SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL );
+			}
 			break;
 		case play_preview_music:
 			SOUNDMAN->PlayMusic("");
@@ -1386,64 +1392,43 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 void ScreenEdit::HandleEditNotesStatisticsChoice( EditNotesStatisticsChoice c, int* iAnswers )
 {
+	Notes* pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
+	Difficulty dc = (Difficulty)iAnswers[difficulty];
+	pNotes->SetDifficulty( dc );
+	int iMeter = iAnswers[meter]+1;
+	pNotes->SetMeter( iMeter );
+
 	switch( c )
 	{
-	case difficulty:
-		break;
-	case meter:
-		break;
 	case description:
+		SCREENMAN->TextEntry( SM_None, "Edit notes description.\nPress Enter to confirm,\nEscape to cancel.", m_pNotes->GetDescription(), ChangeDescription, NULL );
 		break;
-	case tap_notes:
-		break;
-	case hold_notes:
-		break;
-	case stream:
-		break;
-	case voltage:
-		break;
-	case air:
-		break;
-	case freeze:
-		break;
-	case chaos:
-		break;
-	default:
-		ASSERT(0);
-	};
-
-}
-
-void ScreenEdit::HandleEditOptionsChoice( EditOptionsChoice c, int* iAnswers )
-{
-	switch( c )
-	{
-	case zoom:
-		break;
-	case max_notes_per_row:
-		break;
-	case after_note_add:
-		break;
-	default:
-		ASSERT(0);
-	};
+	}
 }
 
 void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers )
 {
+	Song* pSong = GAMESTATE->m_pCurSong;
+
 	switch( c )
 	{
 	case main_title:
+		SCREENMAN->TextEntry( SM_None, "Edit main title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitle, ChangeMainTitle, NULL );
 		break;
 	case sub_title:
+		SCREENMAN->TextEntry( SM_None, "Edit sub title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitle, ChangeSubTitle, NULL );
 		break;
 	case artist:
+		SCREENMAN->TextEntry( SM_None, "Edit artist.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtist, ChangeArtist, NULL );
 		break;
 	case main_title_transliteration:
+		SCREENMAN->TextEntry( SM_None, "Edit main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL );
 		break;
 	case sub_title_transliteration:
+		SCREENMAN->TextEntry( SM_None, "Edit sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL );
 		break;
 	case artist_transliteration:
+		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL );
 		break;
 	default:
 		ASSERT(0);
