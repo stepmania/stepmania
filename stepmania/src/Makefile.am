@@ -287,24 +287,16 @@ all_test_SOURCES = \
 		$(ArchUtils) \
 		$(PCRE) \
 		$(RageFile) \
-		arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
+		$(ArchHooks) \
 		tests/test_misc.cpp tests/test_misc.h \
 		IniFile.cpp IniFile.h \
 		PrefsManager.cpp PrefsManager.h \
-		RageDisplay.cpp RageDisplay.h \
 		RageException.cpp \
 		RageLog.cpp \
-		RageMath.cpp RageMath.h \
-		RageSurface_Load.cpp RageSurface_Load.h RageSurface_Load_PNG.cpp RageSurface_Load_PNG.h \
-		RageSurface_Load_JPEG.cpp RageSurface_Load_JPEG.h \
-		RageSurface_Load_GIF.cpp RageSurface_Load_GIF.h \
 		RageThreads.cpp \
 		RageTimer.cpp RageTimer.h \
 		RageUtil.cpp \
 		RageUtil_FileDB.cpp RageUtil_FileDB.h \
-		SDL_SaveJPEG.cpp SDL_SaveJPEG.h \
-		SDL_rotozoom.cpp SDL_rotozoom.h \
-		SDL_utils.cpp SDL_utils.h \
 		global.cpp global.h
 
 TESTS += test_audio_readers
