@@ -308,11 +308,21 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 
 			FAIL_M( werr_ssprintf(GetLastError(), "SignalObjectAndWait") );
 
+		//Strange.  Only (and always) occours on 9x.
+		//If you look at the error from it, it responds
+		//and says that the function is only available in
+		//win32 mode.  
+		//This function is not fully supported in 9x.  
+		//Program execution will continue properly if you
+		//break.
+		case 1:
+			break;
+
 		case WAIT_TIMEOUT:
 			return false;
 
 		default:
-			FAIL_M( "unknown" );
+			FAIL_M( ssprintf("Unexpected code from SignalObjectAndWait: %d",ret ));
 		}
 	}
 
