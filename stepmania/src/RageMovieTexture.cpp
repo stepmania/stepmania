@@ -56,23 +56,6 @@ private:
 	bool				frame_is_new;	// true if frame hasn't let been requested
 
 public:
-	void Update( float fDeltaTime ) 
-	{
-		secsIntoPlay += fDeltaTime;
-		while( secsIntoPlay > streamSecs )
-		{
-			secsIntoPlay -= streamSecs;
-		}
-		
-		int this_frame = secsIntoPlay/streamSecs*numFrames;
-
-		if( last_frame != this_frame )
-		{
-			frame_is_new = true;
-			GetFrame( this_frame );
-			last_frame = this_frame;
-		}
-	}
 	int GetVideoWidth() { return videoWidth; }
 	int GetVideoHeight() { return videoHeight; }
 	int GetFrameWidth() { return frameWidth; }
@@ -91,11 +74,8 @@ public:
 		AVIFileInit();												// Opens The AVIFile Library
 
 		// Opens The AVI Stream
-		if (AVIStreamOpenFromFile(&pavi, sFile, streamtypeVIDEO, 0, OF_READ, NULL) !=0)
-		{
-			// An Error Occurred Opening The Stream
-			MessageBox (HWND_DESKTOP, "Failed To Open The AVI Stream", "Error", MB_OK | MB_ICONEXCLAMATION);
-		}
+		if (AVIStreamOpenFromFile(&pavi, sFile, streamtypeVIDEO, 0, OF_READ, NULL) !=0 )
+			throw RageException( "Failed To Open The AVI Stream" );
 
 		AVIStreamInfo(pavi, &psi, sizeof(psi));						// Reads Information About The Stream Into psi
 		videoWidth=psi.rcFrame.right-psi.rcFrame.left;					// Width Is Right Side Of Frame Minus Left
@@ -121,10 +101,7 @@ public:
 
 		pgf=AVIStreamGetFrameOpen(pavi, NULL);						// Create The PGETFRAME	Using Our Request Mode
 		if (pgf==NULL)
-		{
-			// An Error Occurred Opening The Frame
-			MessageBox (HWND_DESKTOP, "Failed To Open The AVI Frame", "Error", MB_OK | MB_ICONEXCLAMATION);
-		}
+			throw RageException( "Failed To Open The AVI Frame" );
 	}
 
 	~AviRenderer(void)							// Properly Closes The Avi File
@@ -134,6 +111,24 @@ public:
 		AVIStreamGetFrameClose(pgf);			// Deallocates The GetFrame Resources
 		AVIStreamRelease(pavi);					// Release The Stream
 		AVIFileExit();							// Release The File
+	}
+
+	void Update( float fDeltaTime ) 
+	{
+		secsIntoPlay += fDeltaTime;
+		while( secsIntoPlay > streamSecs )
+		{
+			secsIntoPlay -= streamSecs;
+		}
+		
+		int this_frame = secsIntoPlay/streamSecs*numFrames;
+
+		if( last_frame != this_frame )
+		{
+			frame_is_new = true;
+			GetFrame( this_frame );
+			last_frame = this_frame;
+		}
 	}
 
 	void flipIt(void* buffer)						// Flips The Red And Blue Bytes (256x256)
@@ -181,7 +176,7 @@ public:
 		// 1:1 copy into the new surface
 		DrawDibDraw (hdd, hdc, 0, 0, videoWidth, videoHeight, lpbi, pdata, 0, 0, videoWidth, videoHeight, 0);
 
-//		flipIt(data);							// Swap The Red And Blue Bytes (GL Compatability)
+		flipIt(data);							// Swap The Red And Blue Bytes (GL Compatability)
 	}
 };
 
@@ -310,16 +305,23 @@ void RageMovieTexture::Create()
 
 unsigned int RageMovieTexture::GetGLTextureID()
 {
-	unsigned char* data = pAviRenderer->GetData();
+	if( pAviRenderer->IsNewFrameReady() )
+	{
+		unsigned char* data = pAviRenderer->GetData();
 
-	// Update The Texture
-	glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, m_iTextureWidth);
-	glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, m_iTextureWidth, m_iTextureHeight, GL_RGB, GL_UNSIGNED_BYTE, data);
+		// Update The Texture
+		glBindTexture( GL_TEXTURE_2D, m_uGLTextureID );
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, m_iTextureWidth);
+		glTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, m_iTextureWidth, m_iTextureHeight, GL_RGB, GL_UNSIGNED_BYTE, data);
+	}
 
 	return m_uGLTextureID; 
 }
 
+void RageMovieTexture::Update( float fDeltaTime )
+{
+	pAviRenderer->Update( fDeltaTime );	
+}
 
 void RageMovieTexture::Play()
 {

@@ -43,6 +43,15 @@ RageTextureManager::~RageTextureManager()
 	}
 }
 
+void RageTextureManager::Update( float fDeltaTime )
+{
+	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); ++i)
+	{
+		RageTexture* pTexture = i->second;
+		pTexture->Update( fDeltaTime );
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Load/Unload textures from disk

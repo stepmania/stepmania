@@ -22,6 +22,7 @@ class RageTextureManager
 {
 public:
 	RageTextureManager( int iTextureColorDepth, int iSecsBeforeUnload );
+	virtual void Update( float fDeltaTime );
 	~RageTextureManager();
 
 	RageTexture* LoadTexture( CString sTexturePath, RageTexturePrefs prefs );

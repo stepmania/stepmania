@@ -37,7 +37,7 @@ ScreenSandbox::ScreenSandbox()
 	m_quad.SetDiffuse( RageColor(1,1,1,1) );
 	this->AddChild( &m_quad );
 
-	m_sprite.Load( "C:\\stepmania\\stepmania\\RandomMovies\\face2.avi" );
+	m_sprite.Load( "C:\\stepmania\\stepmania\\RandomMovies\\cm301[1].avi" );
 	m_sprite.SetXY( CENTER_X, CENTER_Y );
 	this->AddChild( &m_sprite );
 

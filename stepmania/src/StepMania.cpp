@@ -491,6 +491,7 @@ void GameLoop()
 			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_GRAVE) ) )
 				fDeltaTime /= 4;
 
+		TEXTUREMAN->Update( fDeltaTime );
 		MUSIC->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		NETWORK->Update( fDeltaTime );

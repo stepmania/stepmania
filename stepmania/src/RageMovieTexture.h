@@ -22,6 +22,7 @@ class RageMovieTexture : public RageTexture
 public:
 	RageMovieTexture( CString sFilePath, RageTexturePrefs prefs );
 	virtual ~RageMovieTexture();
+	virtual void Update( float fDeltaTime );
 	virtual void Invalidate() { m_uGLTextureID = 0; }
 	virtual void Reload( RageTexturePrefs prefs );
 

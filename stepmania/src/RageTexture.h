@@ -46,6 +46,7 @@ class RageTexture
 public:
 	RageTexture( CString sFilePath, RageTexturePrefs prefs );
 	virtual ~RageTexture() = 0;
+	virtual void Update( float fDeltaTime ) {}
 	virtual void Reload( RageTexturePrefs prefs ) = 0;
 	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
 	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
