@@ -24,8 +24,13 @@ public:
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
 	void ResetState();
 
-	/* Run a complete script in the global environment, which returns no value. */
+	/* Run a script with the given name.  Return values are left on the Lua stack.
+	 * Returns false on error, with sError set*/
 	bool RunScript( const CString &sScript, const CString &sName, CString &sError, int iReturnValues = 0 );
+
+	/* Convenience: run a script with one return value, displaying an error on failure.
+	 * The return value is left on the Lua stack. */
+	bool RunScript( const CString &sExpression, const CString &sName = "" );
 
 	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );
@@ -60,8 +65,6 @@ public:
 	/* Read the table at the top of the stack back into a vector. */
 	static void ReadArrayFromTable( vector<bool> &aOut, lua_State *L = NULL );
 
-	/* Run an expression.  The result is left on the Lua stack. */
-	bool RunExpression( const CString &sExpression );
 	lua_State *L;
 };
 

@@ -113,13 +113,17 @@ void LuaReference::ReRegister()
 
 void LuaExpression::SetFromExpression( const CString &sExpression )
 {
-	m_sExpression = sExpression;
+	m_sExpression = "return " + sExpression;
 	Register();
 }
 
 void LuaExpression::Register()
 {
-	LUA->RunExpression( m_sExpression );
+	if( !LUA->RunScript( m_sExpression ) )
+	{
+		this->SetFromNil();
+		return;
+	}
 
 	/* Store the result. */
 	this->SetFromStack();
