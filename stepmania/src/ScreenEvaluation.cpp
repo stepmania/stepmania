@@ -479,10 +479,17 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 				this->AddChild( &m_sprPossibleBar[p][r] );
 
 				m_sprActualBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar actual p%d",p+1)) );
-				m_sprActualBar[p][r].SetWidth( m_sprActualBar[p][r].GetUnzoomedWidth() * stageStats.fRadarActual[p][r] );
+				// should be out of the possible bar, not actual (whatever value that is at)
+				m_sprActualBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarActual[p][r] );
+				
+				float value = (float)100 * m_sprActualBar[p][r].GetUnzoomedWidth() / m_sprPossibleBar[p][r].GetUnzoomedWidth();
+				LOG->Trace("Radar bar %d of 5 - %f percent", r,  value);
+				
 				m_sprActualBar[p][r].SetName( ssprintf("BarActual%dP%d",r+1,p+1) );
 				UtilSetXYAndOnCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
-				if( stageStats.fRadarActual[p][r] == stageStats.fRadarPossible[p][r] )
+				
+				// .99999 is fairly close to 1.00, so we use that 
+				if( stageStats.fRadarActual[p][r] > 0.99999f )
 					m_sprActualBar[p][r].Command( BAR_ACTUAL_MAX_COMMAND );
 				this->AddChild( &m_sprActualBar[p][r] );
 			}

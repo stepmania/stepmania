@@ -60,6 +60,8 @@ public:
 	float GetActualAirRadarValue( float fSongSeconds ) const;
 	float GetActualFreezeRadarValue( float fSongSeconds ) const;
 	float GetActualChaosRadarValue( float fSongSeconds ) const;
+
+	int GetMaxCombo() const; // used for groove radar calculations
 };
 
 #endif

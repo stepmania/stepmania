@@ -28,6 +28,35 @@ void NoteDataWithScoring::Init()
 	m_fHoldNoteLife.clear();
 }
 
+int NoteDataWithScoring::GetMaxCombo() const
+{
+	int iNumSuccessfulTapNotes = 0;
+	int fEndBeat = GetMaxBeat()+1;
+
+	unsigned iStartIndex = BeatToNoteRow( (float)0 );
+	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
+
+	int combo = 0;
+	int maxcombo = 0;
+
+	for( unsigned i=iStartIndex; i<min(float(iEndIndex), float(m_TapNoteScores[0].size())); i++ )
+	{
+		for( int t=0; t<GetNumTracks(); t++ )
+		{
+			if( this->GetTapNote(t, i) != TAP_EMPTY )
+				if (GetTapNoteScore(t, i) >= TNS_GREAT)
+					combo++;
+				else
+				{
+					if (combo > maxcombo) maxcombo = combo;
+					combo = 0;
+				}
+		}
+	}
+	
+	return max(combo, maxcombo);
+}
+
 int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
 { 
 	int iNumSuccessfulTapNotes = 0;
@@ -164,7 +193,7 @@ float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, float fSongSec
 
 float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds ) const
 {
-	// density of steps
+/*	// density of steps
 	int iNumSuccessfulNotes = 
 		GetNumTapNotesWithScore(TNS_MARVELOUS) + 
 		GetNumTapNotesWithScore(TNS_PERFECT) + 
@@ -173,11 +202,24 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds ) const
 	float fNotesPerSecond = iNumSuccessfulNotes/fSongSeconds;
 	float fReturn = fNotesPerSecond / 7;
 	return min( fReturn, 1.0f );
+	*/
+
+	int MaxCombo = GetMaxCombo();
+	float TotalSteps = GetNumTapNotes();
+
+	return min( (float)MaxCombo/TotalSteps, 1.0f);
 }
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds ) const
 {
-	float fAvgBPS = GetLastBeat() / fSongSeconds;
+	// voltage is essentialy perfects divided by # of steps
+	float totalnotes = GetNumTapNotes();
+	float perfects = GetNumTapNotesWithScore(TNS_PERFECT) + GetNumTapNotesWithScore(TNS_MARVELOUS);
+
+	float result = perfects/totalnotes;
+	return result;
+
+/*	float fAvgBPS = GetLastBeat() / fSongSeconds;
 
 	// peak density of steps
 	float fMaxDensitySoFar = 0;
@@ -198,6 +240,7 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds ) cons
 
 	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
 	return min( fReturn, 1.0f );
+	*/
 }
 
 float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds ) const
@@ -207,13 +250,17 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds ) const
 		GetNumDoublesWithScore(TNS_MARVELOUS) + 
 		GetNumDoublesWithScore(TNS_PERFECT) + 
 		GetNumDoublesWithScore(TNS_GREAT)/2;
-	float fReturn = iNumDoubles / fSongSeconds;
+//	float fReturn = iNumDoubles / fSongSeconds;
+	int iTotalDoubles = GetNumDoubles();
+
+	if (iTotalDoubles == 0) return 1.0f;  // no jumps in song
+	float fReturn = (float)iNumDoubles / iTotalDoubles;
 	return min( fReturn, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds ) const
 {
-	// count number of triplets
+/*	// count number of triplets
 	int iNumChaosNotesCompleted = 0;
 	for( unsigned r=0; r<m_TapNoteScores[0].size(); r++ )
 	{
@@ -223,12 +270,39 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds ) const
 
 	float fReturn = iNumChaosNotesCompleted / fSongSeconds * 0.5f;
 	return min( fReturn, 1.0f );
+	*/
+
+	float marvelous = GetNumTapNotesWithScore(TNS_MARVELOUS);
+	float perfect = GetNumTapNotesWithScore(TNS_PERFECT);
+	float great = GetNumTapNotesWithScore(TNS_GREAT);
+	float good = GetNumTapNotesWithScore(TNS_GOOD);
+	float boo = GetNumTapNotesWithScore(TNS_BOO);
+	float miss = GetNumTapNotesWithScore(TNS_MISS);
+
+	float ok = GetNumHoldNotesWithScore(HNS_OK);
+	float holdnotes = GetNumHoldNotes();
+
+	float DPEarned =  2 * (marvelous + perfect)
+					+     (great)
+					- 4 * (boo)
+					- 8 * (miss)
+					+ 6 * (ok);
+
+	float TotalDP =	2 * (marvelous + perfect + great
+						+ good + boo + miss)
+						+ 6 * holdnotes;
+
+	float fResult = DPEarned/TotalDP;
+
+	return min( fResult, 1.0f);
 }
 
 float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds ) const
 {
 	// number of hold steps
-	float fReturn = GetNumHoldNotesWithScore(HNS_OK) / fSongSeconds;
+	float totalsteps = (float)GetNumHoldNotes();
+	if (totalsteps == 0) return 1.0f;
+	float fReturn = GetNumHoldNotesWithScore(HNS_OK) / totalsteps;
 	return min( fReturn, 1.0f );
 }
 
