@@ -76,6 +76,7 @@ WheelBase::~WheelBase()
 
 void WheelBase::Load( CString sType ) 
 {
+	m_isEmpty = true;
 	LOG->Trace( "MusicWheel::Load('%s')", sType.c_str() );
 
 	SWITCH_SECONDS				.Load(sType,"SwitchSeconds");
@@ -111,7 +112,8 @@ void WheelBase::Load( CString sType )
 	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
 		SAFE_DELETE( *i );
 	m_WheelBaseItems.clear();
-	for( int i=0; i<NUM_WHEEL_ITEMS; i++ ) {
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
+	{
 		m_WheelBaseItems.push_back( new WheelItemBase );
 	}
 
@@ -252,7 +254,8 @@ void WheelBase::UpdateScrollbar()
 	int total_num_items = m_WheelBaseItemsData.size();
 	float item_at=m_iSelection - m_fPositionOffsetFromSelection;
 
-	if(NUM_WHEEL_ITEMS >= total_num_items) {
+	if(NUM_WHEEL_ITEMS >= total_num_items)
+	{
 		m_ScrollBar.SetPercentage( 0, 1 );
 	} else {
 		float size = float(NUM_WHEEL_ITEMS) / total_num_items;
@@ -412,26 +415,30 @@ bool WheelBase::Select()	// return true if this selection ends the screen
 
 	m_Moving = 0;
 
-	switch( m_WheelBaseItemsData[m_iSelection]->m_Type )
+	if (!m_isEmpty)
 	{
-	case TYPE_GENERIC:
-		m_LastSelection = m_WheelBaseItemsData[m_iSelection];
-		return false;
-	case TYPE_GROUP:
+		switch( m_WheelBaseItemsData[m_iSelection]->m_Type )
 		{
-			CString sThisItemSectionName = m_WheelBaseItemsData[m_iSelection]->m_sText;
-			if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
-				m_sExpandedSectionName = "";		// collapse it
-			else				// already collapsed
-				m_sExpandedSectionName = sThisItemSectionName;	// expand it
+		case TYPE_GENERIC:
+			m_LastSelection = m_WheelBaseItemsData[m_iSelection];
+			return false;
+		case TYPE_GROUP:
+			{
+				CString sThisItemSectionName = m_WheelBaseItemsData[m_iSelection]->m_sText;
+				if( m_sExpandedSectionName == sThisItemSectionName )	// already expanded
+					m_sExpandedSectionName = "";		// collapse it
+				else				// already collapsed
+					m_sExpandedSectionName = sThisItemSectionName;	// expand it
 
-			m_soundExpand.Play();
+				m_soundExpand.Play();
+			}
+			return false;
+		default:
+			ASSERT(0);
+			return false;
 		}
-		return false;
-	default:
-		ASSERT(0);
-		return false;
 	}
+	return false;
 }
 
 int WheelBase::IsMoving() const
@@ -582,14 +589,23 @@ void WheelBase::Move(int n)
 		ChangeMusic(m_Moving);
 }
 
-void WheelBase::AddItem(WheelItemBaseData* itemdata) {
+void WheelBase::AddItem(WheelItemBaseData* itemdata)
+{
 	int visible, index;
 	m_WheelBaseItemsData.push_back(itemdata);
 	visible = FirstVisibleIndex();
 	index = m_WheelBaseItemsData.size();
 
+	if (m_isEmpty)
+	{
+		m_isEmpty = false;
+		//Remove the - Empty - field when we add an object from an empty state.
+		RemoveItem(0);
+	}
+
 	//If the item was shown in the wheel, rebuild the wheel
-	if ((0 <= (index - visible)) && ((index - visible) < NUM_WHEEL_ITEMS)) {
+	if ((0 <= (index - visible)) && ((index - visible) < NUM_WHEEL_ITEMS))
+	{
 			RebuildWheelItems();
 			SCREENMAN->SystemMessageNoAnimate("redraw");
 	}
@@ -611,7 +627,8 @@ void WheelBase::ChangeMusic(int dist)
 		m_soundChangeMusic.Play();
 }
 
-void WheelBase::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas ) {
+void WheelBase::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas )
+{
 	if( arrayWheelItemDatas.empty() )
 	{
 		arrayWheelItemDatas.push_back( new WheelItemBaseData(TYPE_GENERIC, "- EMPTY -", RageColor(1,0,0,1)) );
@@ -684,26 +701,41 @@ void WheelBase::RebuildWheelItems( int dist )
 
 WheelItemBaseData* WheelBase::LastSelected( )
 {
-	return m_LastSelection;
+	if (m_isEmpty)
+		return NULL;
+	else
+		return m_LastSelection;
 }
 
-void WheelBase::RemoveItem( int index ) {
-	if (index < m_WheelBaseItemsData.size()) {
-		vector<WheelItemBaseData *>::iterator i = m_WheelBaseItemsData.begin();
-		i += index;
+void WheelBase::RemoveItem( int index )
+{
+	if (!m_isEmpty)
+	{
+		if (index < m_WheelBaseItemsData.size())
+		{
+			vector<WheelItemBaseData *>::iterator i = m_WheelBaseItemsData.begin();
+			i += index;
 
-		//If this item's data happened to be last selected, make it NULL.
-		if (m_LastSelection == *i)
-			m_LastSelection = NULL;
+			//If this item's data happened to be last selected, make it NULL.
+			if (m_LastSelection == *i)
+				m_LastSelection = NULL;
 
-		SAFE_DELETE( *i );
-		m_WheelBaseItemsData.erase(i);
+			SAFE_DELETE( *i );
+			m_WheelBaseItemsData.erase(i);
 
-		RebuildWheelItems();
+			if (m_WheelBaseItemsData.size() < 1)
+			{
+				m_isEmpty = true;
+				BuildWheelItemsData(m_WheelBaseItemsData);
+			}
+
+			RebuildWheelItems();
+		}
 	}
 }
 
-int WheelBase::FirstVisibleIndex() {
+int WheelBase::FirstVisibleIndex()
+{
 		// rewind to first index that will be displayed;
 		int iFirstVisibleIndex = m_iSelection;
 		if( m_iSelection > int(m_WheelBaseItemsData.size()-1) )

@@ -16,7 +16,7 @@
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 
-extern const AutoScreenMessage SM_SongChanged;		// TODO: Replace this with a Message and MESSAGEMAN
+AutoScreenMessage( SM_SongChanged );		// TODO: Replace this with a Message and MESSAGEMAN
 
 //struct CompareSongPointerArrayBySectionName;
 
@@ -67,6 +67,7 @@ protected:
 	vector<WheelItemBase *> m_WheelBaseItems;
 	WheelItemBaseData* m_LastSelection;
 	
+	bool				m_isEmpty;
 	int					m_iSelection;		// index into m_CurWheelItemBaseData
 	CString				m_sExpandedSectionName;
 
