@@ -6,6 +6,10 @@
 #include "RageSoundReader_WAV.h"
 #endif
 
+#ifndef NO_MP3_SUPPORT
+#include "RageSoundReader_MP3.h"
+#endif
+
 #if defined(OGG_ONLY)
 #include "RageSoundReader_Vorbisfile.h"
 #define RageSoundReader_LowLevel RageSoundReader_Vorbisfile
@@ -19,15 +23,21 @@ SoundReader *SoundReader::OpenFile( CString filename, CString error )
 {
     SoundReader_FileReader *NewSample = NULL;
 
-	/* First try based on extension.  If that fails, try all other decoders.
+	/* XXX: First try based on extension.  If that fails, try all other decoders.
 	 * Optimally, we should have separate error returns indicating "this isn't
 	 * an XXX file" vs. "this is an XXX file, but we don't support something in
-	 * it", for better error string returns.
-	 */
+	 * it", for better error string returns. */
 #ifndef NO_WAV_SUPPORT
 	if( !GetExtension(filename).CompareNoCase("wav") )
 		NewSample = new RageSoundReader_WAV;
 #endif
+#ifndef NO_MP3_SUPPORT
+	if( !GetExtension(filename).CompareNoCase("mp3") )
+		NewSample = new RageSoundReader_MP3;
+#endif
+
+	if( !GetExtension(filename).CompareNoCase("mp3") )
+		NewSample = new SoundReader_SDL_Sound;
 
 	if( NewSample == NULL )
 		NewSample = new RageSoundReader_LowLevel;
