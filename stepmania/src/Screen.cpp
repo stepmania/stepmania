@@ -273,12 +273,8 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenTestSound.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
-#include "ScreenWarning.h"
 #include "ScreenRanking.h"
 #include "ScreenMemoryCard.h"
-#include "ScreenCompany.h"
-#include "ScreenIntroMovie.h"
-#include "ScreenAlbums.h"
 #include "ScreenLogo.h"
 #include "ScreenUnlock.h"
 #include "ScreenDemonstration.h"
@@ -303,6 +299,16 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 
 Screen* Screen::Create( CString sClassName )
 {
+	/* These are just compatibility aliases. */
+	if( !sClassName.CompareNoCase("ScreenCompany") )
+		sClassName = "ScreenAttract@ScreenCompany";
+	if( !sClassName.CompareNoCase("ScreenIntroMovie") )
+		sClassName = "ScreenAttract@ScreenIntroMovie";
+	if( !sClassName.CompareNoCase("ScreenAlbums") )
+		sClassName = "ScreenAttract@ScreenAlbums";
+	if( !sClassName.CompareNoCase("ScreenWarning") )
+		sClassName = "ScreenAttract@ScreenWarning";
+
 	/* "ScreenCompany@ScreenOtherCompany" loads ScreenCompany with the
 	 * asset "ScreenOtherCompany", so (if it supports it) it'll use
 	 * metric, graphic, etc. names starting with "ScreenOtherCompany". */
@@ -360,11 +366,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenTestSound );
 	IF_RETURN( ScreenTitleMenu );
 	IF_RETURN( ScreenEz2SelectMusic );
-	IF_RETURN( ScreenWarning );
 	IF_RETURN( ScreenRanking );
-	IF_RETURN( ScreenCompany );
-	IF_RETURN( ScreenIntroMovie );
-	IF_RETURN( ScreenAlbums );
 	IF_RETURN( ScreenLogo );
 	IF_RETURN( ScreenUnlock );
 	IF_RETURN( ScreenDemonstration );
