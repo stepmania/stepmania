@@ -843,6 +843,7 @@ static void blit_generic( SDL_Surface *src_surf, const SDL_Surface *dst_surf, in
 
 }
 
+/* Blit src onto dst. */
 void mySDL_BlitSurface( 
 	SDL_Surface *src, SDL_Surface *dst, int width, int height, bool ckey)
 {
@@ -886,6 +887,49 @@ void mySDL_BlitSurface(
 	else
 		/* We don't do RGBA->PAL. */
 		ASSERT(0);
+
+	/*
+	 * The destination surface may be larger than the source.  For example, we may be
+	 * blitting a 200x200 image onto a 256x256 surface for OpenGL.  Normally, that extra
+	 * space isn't actually used; we'll only render the image space.  However, bilinear
+	 * filtering will cause the lines of pixels at 201x... and ...x201 to be visible. We
+	 * need to make sure those pixels make sense.
+	 *
+	 * Previously, we just cleared the image to transparent or the color key.  This
+	 * has two problems.  First, we may not have space for a color key (an image with
+	 * 256 non-transparent palette colors).  Second, that's not completely correct;
+	 * it'll force the outside border of the image to filter to transparent.  If the image
+	 * is being tiled with another image, that may leave seams.
+	 *
+	 * (In some cases, filtering to transparent is preferable, particularly when displaying
+	 * a sprite in perspective.  If you want that, add blank space to the image explicitly.)
+	 *
+	 * Copy the last column (200x... -> 201x...), then the last row (...x200 -> ...x201).
+	 */
+
+	if( width < dst->w )
+	{
+		/* Duplicate the last column. */
+		int offset = dst->format->BytesPerPixel * (width-1);
+		Uint8 *p = (Uint8 *) dst->pixels + offset;
+
+		for( int y = 0; y < height; ++y )
+		{
+			Uint32 pixel = decodepixel( p, dst->format->BytesPerPixel );
+			encodepixel( p+dst->format->BytesPerPixel, dst->format->BytesPerPixel, pixel );
+
+			p += dst->pitch;
+		}
+	}
+
+
+	if( height < dst->h )
+	{
+		/* Duplicate the last row. */
+		char *srcp = (char *) dst->pixels;
+		srcp += dst->pitch * height;
+		memcpy( srcp + dst->pitch, srcp, dst->pitch );
+	}
 }
 
 /* This converts an image to a special 8-bit paletted format.  The palette is set up
