@@ -133,8 +133,8 @@ void FontPage::SetTextureCoords(const vector<int> &widths)
 		 * rect, instead of shifting it, so we don't render more than we need to. */
 		g.hshift = 0;
 		{
-			int iPixelsToChopOff = m_pTexture->GetSourceFrameWidth() - widths[i];
-			if((iPixelsToChopOff % 2) == 1)
+			int iSourcePixelsToChopOff = m_pTexture->GetSourceFrameWidth() - widths[i];
+			if((iSourcePixelsToChopOff % 2) == 1)
 			{
 				/* We don't want to chop off an odd number of pixels, since that'll
 				 * put our texture coordinates between texels and make things blurrier. 
@@ -142,10 +142,11 @@ void FontPage::SetTextureCoords(const vector<int> &widths)
 				 * we render; it doesn't advance the cursor further.  So, glyphs
 				 * that have an odd width should err to being a pixel offcenter left,
 				 * not right. */
-				iPixelsToChopOff--;
+				iSourcePixelsToChopOff--;
 				g.width++;
 			}
-			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetSourceWidth();
+
+			const float fTexCoordsToChopOff = iSourcePixelsToChopOff * m_pTexture->GetSourceToTexCoordsRatio();
 
 			g.rect.left  += fTexCoordsToChopOff/2;
 			g.rect.right -= fTexCoordsToChopOff/2;
@@ -180,8 +181,8 @@ void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 		float ExtraRight = min( float(DrawExtraPixelsRight), (iFrameWidth-iCharWidth)/2.0f );
 
 		/* Move left and expand right. */
-		glyphs[i].rect.left -= ExtraLeft / m_pTexture->GetSourceWidth();
-		glyphs[i].rect.right += ExtraRight / m_pTexture->GetSourceWidth();
+		glyphs[i].rect.left -= ExtraLeft * m_pTexture->GetSourceToTexCoordsRatio();
+		glyphs[i].rect.right += ExtraRight * m_pTexture->GetSourceToTexCoordsRatio();
 		glyphs[i].hshift -= ExtraLeft;
 		glyphs[i].width += ExtraLeft + ExtraRight;
 	}
