@@ -118,10 +118,8 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 		m_Artist.SetText( "" );
 	}
 
-	SET_XY( m_Artist );
-	SET_XY( m_SongTitle );
-	ON_COMMAND( m_Artist );
-	ON_COMMAND( m_SongTitle );
+	SET_XY_AND_ON_COMMAND( m_Artist );
+	SET_XY_AND_ON_COMMAND( m_SongTitle );
 
 	if ( PREFSMAN->m_bShowBanners )
 		if( GAMESTATE->m_pCurSong != NULL)
