@@ -45,12 +45,13 @@ SDL_sound-1.0.0/.libs/libSDL_sound.a:
 RageHelpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_utils.cpp SDL_utils.h
 
 Rage = $(RageHelpers) \
-RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplayInternal.h \
+RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h RageDisplayInternal.h \
 RageException.cpp RageException.h RageInput.cpp RageInputDevice.cpp RageInputDevice.h \
 RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageSound.cpp RageSound.h \
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.h RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h \
 RageTexture.cpp RageTexture.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h  \
-RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
+RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
+RageSoundReader_Preload.cpp RageSoundReader_Preload.h \
 RageSoundResampler.cpp RageSoundResampler.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h
 
 DataStructures = \
@@ -105,7 +106,7 @@ TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingC
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
-ScreenAttract.cpp ScreenAttract.h ScreenCaution.cpp ScreenCaution.h ScreenCompany.h \
+ScreenAttract.cpp ScreenAttract.h ScreenAutoGraphicDetail.cpp ScreenAutoGraphicDetail.h ScreenCaution.cpp ScreenCaution.h ScreenCompany.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenEdit.cpp ScreenEdit.h ScreenEditMenu.cpp \
 ScreenEditMenu.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h \
 ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp \
@@ -133,7 +134,7 @@ ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h ScreenUnlock.cpp ScreenUnl
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
-NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h SongManager.cpp SongManager.h \
+ModeSwitcher.cpp ModeSwitcher.h NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h SongManager.cpp SongManager.h \
 ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h StepmaniaTemplates.cpp
 
 Sound_OSS = \
