@@ -20,6 +20,7 @@
 #include "RageUtil.h"
 #include "NoteSkinManager.h"
 #include "SDL_keysym.h"		// for SDLKeys
+#include "ThemeManager.h"
 
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
@@ -2317,6 +2318,11 @@ CString GameManager::NotesTypeToString( StepsType nt )
 	}
 
 	return NotesTypes[nt].name;
+}
+
+CString GameManager::NotesTypeToThemedString( StepsType nt )
+{
+	return THEME->GetMetric( "StepsType", NotesTypeToString(nt) );
 }
 
 Game GameManager::StringToGameType( CString sGameType )

@@ -47,10 +47,15 @@ public:
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
 	void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 
+	// This must be calculated using only cached radar values so that we can 
+	// do it quickly.
+	static int	GetPossibleDancePoints( const float* fRadars );
+	static int	GetPossibleDancePoints( const float* fOriginalRadars, const float* fPostRadars );
+
 private:
-	int TapNoteScoreToDancePoints( TapNoteScore tns );
-	int HoldNoteScoreToDancePoints( HoldNoteScore hns );
-	int	GetPossibleDancePoints( const NoteData &preNoteData, const NoteData &postNoteData );
+	static int TapNoteScoreToDancePoints( TapNoteScore tns );
+	static int HoldNoteScoreToDancePoints( HoldNoteScore hns );
+
 };
 
 #endif

@@ -70,6 +70,7 @@ public:
 	CString GetDisplayTotalCaloriesBurned() const;
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
+	int GetTotalHighScoreDancePointsForStepsType( StepsType st ) const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	

@@ -23,6 +23,8 @@
 #include "GameState.h"
 #include "MemoryCardManager.h"
 #include "RageLog.h"
+#include "StyleDef.h"
+#include "GameManager.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenEnding","ScrollDelay")
@@ -30,28 +32,32 @@
 #define TEXT_ZOOM			THEME->GetMetricF("ScreenEnding","TextZoom")
 
 
-CString STATS_LINE_TITLE[NUM_ENDING_STATS_LINES] = {
-	"Total Calories",
-	"Total Songs Played",
-	"Current Combo",
-};
+
+CString GetStatsLineTitle( PlayerNumber pn, int iLine )
+{
+	static const CString s[NUM_ENDING_STATS_LINES] = {
+		"Total %s Points",
+		"Total Calories",
+		"Total Songs Played",
+		"Current Combo",
+	};
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	return ssprintf( s[iLine], GAMEMAN->NotesTypeToThemedString(st).c_str() );
+}
 
 CString GetStatsLineValue( PlayerNumber pn, int iLine )
 {
 	Profile* pProfile = PROFILEMAN->GetProfile( pn );
 	ASSERT( pProfile );
 
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	switch( iLine )
 	{
-	case 0:
-		return pProfile->GetDisplayTotalCaloriesBurned();
-	case 1:
-		return ssprintf( "%d", pProfile->GetTotalNumSongsPlayed() );	// fixme
-	case 2:
-		return ssprintf( "%d", pProfile->m_iCurrentCombo );
-	default:
-		ASSERT(0);
-		return "";
+	case 0:		return Commify( pProfile->GetTotalHighScoreDancePointsForStepsType(st) );	
+	case 1:		return pProfile->GetDisplayTotalCaloriesBurned();
+	case 2:		return Commify( pProfile->GetTotalNumSongsPlayed() );
+	case 3:		return Commify( pProfile->m_iCurrentCombo );
+	default:	ASSERT(0);	return "";
 	}
 }
 
@@ -85,7 +91,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		for( int i=0; i<NUM_ENDING_STATS_LINES; i++ )
 		{
 			m_textStatsTitle[p][i].LoadFromFont( THEME->GetPathToF("ScreenEnding stats title") );
-			m_textStatsTitle[p][i].SetText( STATS_LINE_TITLE[i] );
+			m_textStatsTitle[p][i].SetText( GetStatsLineTitle((PlayerNumber)p, i) );
 			m_textStatsTitle[p][i].SetName( ssprintf("StatsTitleP%dLine%d",p+1,i+1) );
 			SET_XY_AND_ON_COMMAND( m_textStatsTitle[p][i] );
 			this->AddChild( &m_textStatsTitle[p][i] );

@@ -24,7 +24,7 @@ public:
 
 private:
 	BitmapText m_textPlayerName[NUM_PLAYERS];
-#define NUM_ENDING_STATS_LINES 3	// Total calories burned, total songs played, current combo
+#define NUM_ENDING_STATS_LINES 4
 	BitmapText m_textStatsTitle[NUM_PLAYERS][NUM_ENDING_STATS_LINES];
 	BitmapText m_textStatsValue[NUM_PLAYERS][NUM_ENDING_STATS_LINES];
 

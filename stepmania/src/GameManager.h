@@ -37,6 +37,7 @@ public:
 	static int NotesTypeToNumTracks( StepsType nt );
 	static StepsType StringToNotesType( CString sNotesType );
 	static CString NotesTypeToString( StepsType nt );
+	static CString NotesTypeToThemedString( StepsType nt );
 	static Game StringToGameType( CString sGameType );
 	Style GameAndStringToStyle( Game game, CString sStyle );
 

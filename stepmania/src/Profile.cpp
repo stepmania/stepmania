@@ -29,6 +29,7 @@
 #include "ProfileHtml.h"
 #include "ProfileManager.h"
 #include "RageFileManager.h"
+#include "ScoreKeeperMAX2.h"
 
 //
 // Old file versions for backward compatibility
@@ -172,6 +173,27 @@ int Profile::GetTotalNumSongsPassed() const
 	return iTotal;
 }
 
+int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
+{
+	int iTotal = 0;
+	for( std::map<const Steps*,HighScoresForASteps>::const_iterator iter = m_StepsHighScores.begin();
+		iter != m_StepsHighScores.end();
+		iter++ )
+	{
+		const Steps* pSteps = iter->first;
+		ASSERT( pSteps );
+		const HighScoresForASteps& h = iter->second;
+		if( pSteps->m_StepsType == st )
+		{
+			const float* fRadars = pSteps->GetRadarValues();
+			int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+			iTotal += (int)truncf( h.hs.GetTopScore().fPercentDP * iPossibleDP );
+		}
+	}
+
+	return iTotal;
+}
+
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
 {
 	Profile profile;
@@ -197,6 +219,7 @@ int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 //
 void Profile::AddStepsHighScore( const Steps* pSteps, HighScore hs, int &iIndexOut )
 {
+	ASSERT(pSteps);
 	std::map<const Steps*,HighScoresForASteps>::iterator iter = m_StepsHighScores.find( pSteps );
 	if( iter == m_StepsHighScores.end() )
 		m_StepsHighScores[pSteps].hs.AddHighScore( hs, iIndexOut );	// operator[] inserts into map
@@ -206,12 +229,14 @@ void Profile::AddStepsHighScore( const Steps* pSteps, HighScore hs, int &iIndexO
 
 const HighScoreList& Profile::GetStepsHighScoreList( const Steps* pSteps ) const
 {
+	ASSERT(pSteps);
 	/* We're const, but insert a blank entry anyway if the requested pointer doesn't exist. */
 	return ((Profile *) this)->m_StepsHighScores[pSteps].hs;
 }
 
 HighScoreList& Profile::GetStepsHighScoreList( const Steps* pSteps )
 {
+	ASSERT(pSteps);
 	std::map<const Steps*,HighScoresForASteps>::iterator iter = m_StepsHighScores.find( pSteps );
 	if( iter == m_StepsHighScores.end() )
 		return m_StepsHighScores[pSteps].hs;	// operator[] inserts into map
@@ -221,6 +246,7 @@ HighScoreList& Profile::GetStepsHighScoreList( const Steps* pSteps )
 
 int Profile::GetStepsNumTimesPlayed( const Steps* pSteps ) const
 {
+	ASSERT(pSteps);
 	std::map<const Steps*,HighScoresForASteps>::const_iterator iter = m_StepsHighScores.find( pSteps );
 	if( iter == m_StepsHighScores.end() )
 		return 0;

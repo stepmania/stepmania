@@ -37,6 +37,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 	int iTotalPossibleDancePoints = 0;
 	for( unsigned i=0; i<apNotes.size(); i++ )
 	{
+		Song* pSong = apSongs[i];
 		Steps* pSteps = apNotes[i];
 		NoteData notedata;
 		pSteps->GetNoteData( &notedata );
@@ -65,12 +66,16 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 			po.FromString( mod.sModifier );
 
 			float fStartBeat, fEndBeat;
-			mod.GetAttackBeats( apSongs[i], m_PlayerNumber, fStartBeat, fEndBeat );
+			mod.GetAttackBeats( pSong, m_PlayerNumber, fStartBeat, fEndBeat );
 
 			NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, po, GAMESTATE->GetCurrentStyleDef()->m_StepsType, fStartBeat, fEndBeat );
 		}
+
+		float fRadarValuesPostModifiers[NUM_RADAR_CATEGORIES];
+		FOREACH_RadarCategory( rc )
+			fRadarValuesPostModifiers[rc] += NoteDataUtil::GetRadarValue( playerNoteDataPostModifiers, rc, pSong->m_fMusicLengthSeconds );
 		 
-		iTotalPossibleDancePoints += this->GetPossibleDancePoints( playerNoteData, playerNoteDataPostModifiers );
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( pSteps->GetRadarValues(), fRadarValuesPostModifiers );
 	}
 	g_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 
@@ -413,19 +418,26 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 }
 
 
-int ScoreKeeperMAX2::GetPossibleDancePoints( const NoteData &preNoteData, const NoteData &postNoteData )
+int ScoreKeeperMAX2::GetPossibleDancePoints( const float* fRadars )
 {
 	/* Note that, if Marvelous timing is disabled or not active (not course mode),
 	 * PERFECT will be used instead. */
 
+	int NumTaps = fRadars[RADAR_NUM_TAPS_AND_HOLDS];
+	int NumHolds = fRadars[RADAR_NUM_HOLDS]; 
+	return NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
+	   NumHolds*HoldNoteScoreToDancePoints(HNS_OK);
+}
+
+int ScoreKeeperMAX2::GetPossibleDancePoints( const float* fOriginalRadars, const float* fPostRadars )
+{
 	/*
 	 * The logic here is that if you use a modifier that adds notes, you should have to
 	 * hit the new notes to get a high grade.  However, if you use one that removes notes,
 	 * they should simply be counted as misses. */
-	int NumTaps = max( preNoteData.GetNumRowsWithTapOrHoldHead(), postNoteData.GetNumRowsWithTapOrHoldHead() );
-	int NumHolds = max( preNoteData.GetNumHoldNotes(), postNoteData.GetNumHoldNotes() );
-	return NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
-	   NumHolds*HoldNoteScoreToDancePoints(HNS_OK);
+	return max( 
+		GetPossibleDancePoints(fOriginalRadars),
+		GetPossibleDancePoints(fPostRadars) );
 }
 
 

@@ -485,7 +485,7 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 
 	const Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
 
-	if( PROFILEMAN->IsUsingProfile(slot) )
+	if( pSteps && PROFILEMAN->IsUsingProfile(slot) )
 		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(pSteps).GetTopScore();
 	else
 		return HighScore();
