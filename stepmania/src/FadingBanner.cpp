@@ -19,6 +19,7 @@
 #include "Course.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
+#include "SongManager.h"
 
 /* XXX: metric */
 static const float FadeTime = 0.25;
@@ -132,7 +133,7 @@ void FadingBanner::LoadAllMusic()
 	BeforeChange();
 	m_Banner[GetBackIndex()].LoadAllMusic();
 }
-#include "SongManager.h"
+
 void FadingBanner::LoadFromGroup( CString sGroupName )
 {
 	const CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
