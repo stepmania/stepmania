@@ -20,9 +20,9 @@ NoteFieldPlus::NoteFieldPlus()
 {
 }
 
-void NoteFieldPlus::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, int iYReverseOffset )
+void NoteFieldPlus::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffset )
 {
-	NoteField::Load( pNoteData, pn, iFirstPixelToDraw, iLastPixelToDraw, iYReverseOffset );
+	NoteField::Load( pNoteData, pn, iFirstPixelToDraw, iLastPixelToDraw, fYReverseOffset );
 	
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;
@@ -83,7 +83,7 @@ void NoteFieldPlus::Update( float fDelta )
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
-		float fY = ArrowGetYPos( m_PlayerNumber, c, 0, (float) m_iYReverseOffsetPixels );
+		float fY = ArrowGetYPos( m_PlayerNumber, c, 0, m_fYReverseOffsetPixels );
 		float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
 
 		m_GrayArrow[c].Update( fDelta );

@@ -33,7 +33,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
-	virtual void Load( NoteData* pNoteData, PlayerNumber pn, int iStartDrawingPixel, int iEndDrawingPixel, int iYReverseOffsetPixels );
+	virtual void Load( NoteData* pNoteData, PlayerNumber pn, int iStartDrawingPixel, int iEndDrawingPixel, float fYReverseOffsetPixels );
 	void RemoveTapNoteRow( int iIndex );
 
 	vector<bool> m_bIsHoldingHoldNote;	// hack:  Need this to know when to "light up" the center of hold notes
@@ -58,8 +58,7 @@ protected:
 	PlayerNumber	m_PlayerNumber;
 	int				m_iStartDrawingPixel;	// this should be a negative number
 	int				m_iEndDrawingPixel;	// this should be a positive number
-	int				m_iYPosNormal;
-	int				m_iYReverseOffsetPixels;
+	float			m_fYReverseOffsetPixels;
 
 	// color arrows
 	NoteDisplay		m_NoteDisplay[MAX_NOTE_TRACKS];

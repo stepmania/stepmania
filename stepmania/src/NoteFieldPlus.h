@@ -22,7 +22,7 @@ class NoteFieldPlus : public NoteField
 public:
 	NoteFieldPlus();
 
-	virtual void Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, int iYReverseOffset );
+	virtual void Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffset );
 
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();

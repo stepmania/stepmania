@@ -138,7 +138,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 
 	m_NoteField.SetY( GRAY_ARROWS_Y_STANDARD );
-	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, int(GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD) );
+	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD );
 	m_ArrowBackdrop.SetPlayer( pn );
 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].GetReversePercentForColumn(0) == 1;
@@ -330,11 +330,11 @@ void Player::Update( float fDeltaTime )
 		// Start beat needs to be far enough ahead to be off screen so that
 		// addition arrows don't suddenly pop on.
 		float fStartBeat = GAMESTATE->m_fSongBeat + BEATS_PER_MEASURE*2;
-		fStartBeat = ((int)fStartBeat)+1;
+		fStartBeat = truncf(fStartBeat)+1;
 		float fStartSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( fStartBeat );
 		float fEndSeconds = fStartSeconds+10;
 		float fEndBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fEndSeconds );
-		fEndBeat = ((int)fEndBeat)+1;
+		fEndBeat = truncf(fEndBeat)+1;
 
 		LOG->Trace( "Applying transform from %f to %f", fStartBeat, fEndBeat );
 

@@ -49,12 +49,12 @@ NoteField::NoteField()
 }
 
 
-void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, int iYReverseOffsetPixels )
+void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iFirstPixelToDraw, int iLastPixelToDraw, float fYReverseOffsetPixels )
 {
 	m_PlayerNumber = pn;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
-	m_iYReverseOffsetPixels = iYReverseOffsetPixels;
+	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 
 	m_fPercentFadeToFail = -1;
 
@@ -107,7 +107,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	NoteType nt = BeatToNoteType( fBeat );
 
 	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_iYReverseOffsetPixels );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	float fAlpha;
 	int iState;
@@ -156,7 +156,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 void NoteField::DrawMarkerBar( const float fBeat )
 {
 	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_iYReverseOffsetPixels );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
 
 
 	m_rectMarkerBar.StretchTo( RectF(-GetWidth()/2, fYPos-ARROW_SIZE/2, GetWidth()/2, fYPos+ARROW_SIZE/2) );
@@ -166,9 +166,9 @@ void NoteField::DrawMarkerBar( const float fBeat )
 void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat )
 {
 	float fYStartOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fStartBeat );
-	float fYStartPos	= ArrowGetYPos(	m_PlayerNumber, 0, fYStartOffset, m_iYReverseOffsetPixels );
+	float fYStartPos	= ArrowGetYPos(	m_PlayerNumber, 0, fYStartOffset, m_fYReverseOffsetPixels );
 	float fYEndOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fEndBeat );
-	float fYEndPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYEndOffset, m_iYReverseOffsetPixels );
+	float fYEndPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYEndOffset, m_fYReverseOffsetPixels );
 
 	// Something in OpenGL crashes if this is values are too large.  Strange.  -Chris
 	fYStartPos = max( fYStartPos, -1000 );	
@@ -184,7 +184,7 @@ void NoteField::DrawAreaHighlight( const float fStartBeat, const float fEndBeat 
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
 	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_iYReverseOffsetPixels );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
@@ -197,7 +197,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
 	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, 0, fBeat );
- 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_iYReverseOffsetPixels );
+ 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
@@ -210,7 +210,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 {
 	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, 0, fBeat );
-	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_iYReverseOffsetPixels );
+	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
@@ -396,7 +396,7 @@ void NoteField::DrawPrimitives()
 			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
 				bIsInSelectionRange = m_fBeginMarker<=hn.fStartBeat && hn.fStartBeat<=m_fEndMarker && m_fBeginMarker<=hn.fEndBeat && hn.fEndBeat<=m_fEndMarker;
 
-			m_NoteDisplay[c].DrawHold( hn, bIsHoldingNote, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_iYReverseOffsetPixels );
+			m_NoteDisplay[c].DrawHold( hn, bIsHoldingNote, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 		}
 		
 
@@ -444,7 +444,7 @@ void NoteField::DrawPrimitives()
 			bool bIsAddition = (tn == TAP_ADDITION);
 			bool bIsMine = (tn == TAP_MINE);
 
-			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_iYReverseOffsetPixels );
+			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 		}
 
 		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
