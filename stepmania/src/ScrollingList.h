@@ -45,6 +45,8 @@ protected:
 	int						m_iBouncingState;
 	int						m_iBounceDir;
 	int						m_iBounceWait;
+	float					m_iBounceSize;
+	
 
 	int						m_iBannerPrefs;
 	int						m_iSpriteType;
@@ -53,7 +55,7 @@ protected:
 	int						m_iSpacing;
 	int						m_iNumVisible;
 	float					m_fNextTween;
-
+	Sprite				m_sprBannerMask;
 	CroppedSprite	m_RippleCSprite;
 	Sprite m_RippleSprite;
 

@@ -3,9 +3,15 @@ X denotes task complete or no longer required to do.
 - denotes task to do, but also being worked upon by other dev.
 H denotes task on hold.
 
+
+TODO As of: 13:41 03/06/02
+
+* Finish Pump Theme
+* Make Pump Premier 3 Theme
+
 TODO As of: 17:11 03/04/22
-* Pass Exams
-* Finish the BGA editor
+X Pass Exams
+H Finish the BGA editor
 
 
 TODO As of: 16:57 03/02/08
@@ -17,10 +23,10 @@ X Systems Programming 2 Assignment
 * Ez2-Style Scoreboard
 - Pump Battle Mode
 H Pump Random Speed
-H Pump Random Vanish
+X Pump Random Vanish
 
 TODO As of: 01:30:PM 13/11/02
-* Work on 3DDX Support
+H Work on 3DDX Support
 X Software Engineering Assignment
 X Operating Systems Assignment
 X Object Oriented Design Assignment
@@ -34,10 +40,6 @@ H Update Menu Graphics for Ez2
 * Finish The PUMP Graphics
 - Work on Beatmania Support
 
-TODO As of: 11:42:PM 05/09/02
-
-X Fix the Bug on ScreenStage that reports the current stage number for final stage as being 00 in Ez2 
-
 TODO As of: 01:29:AM 04/09/02
 
 X Fix Ez2dancer SelectPlayer Theme Metrics
@@ -48,8 +50,8 @@ H Create Ez2dancer style End Scroll, possibly new class, possibly just metric ch
 - Add Scoreboard System (longterm project)
 H Create some kind of metrics so that Ez2dancer may have extra stage the way it should
 X Fix Ez2dancer type stage screens
-H Create Ez2dancer type "extra stage" stage screen.
-H Modify Gameplay Screen Metrics so that Ez2dancer style screen is more arcade-accurate
+- Create Ez2dancer type "extra stage" stage screen.
+X Modify Gameplay Screen Metrics so that Ez2dancer style screen is more arcade-accurate
 H Modify DEMO Play Screen so that Ez2dancer shows each style (double, real, e.t.c.) in the way it should.
 H Create Ez2dancer HowToPlay screens.
 X Modify Pump Style Select So it is more arcade accurate.
@@ -63,6 +65,10 @@ X Modify Pump Style Select So it is more arcade accurate.
 -----------------------------------------------------------------------------
 Completed Modules Of Work
 
+
+TODO As of: 11:42:PM 05/09/02
+
+X Fix the Bug on ScreenStage that reports the current stage number for final stage as being 00 in Ez2 
 
 TODO As of: 07:47:PM 12/09/02
 

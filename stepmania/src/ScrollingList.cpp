@@ -31,9 +31,12 @@ enum BANNER_PREFS_TYPES
 
 #define BANNER_WIDTH			THEME->GetMetricF("ScreenSelectMusic","BannerWidth")
 #define BANNER_HEIGHT			THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
-#define EZ2_BANNER_WIDTH 92
-#define EZ2_BANNER_HEIGHT 92
+#define EZ2_BANNER_WIDTH THEME->GetMetricF("ScreenSelectMusic","BannerWidth")
+#define EZ2_BANNER_HEIGHT THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
 #define EZ2_BANNER_ZOOM 2.0
+
+#define ZOOM_OFFSET THEME->GetMetricF("ScreenEz2SelectMusic","BannerZoomOffset")
+#define FADE_OFFSET THEME->GetMetricF("ScreenEz2SelectMusic","BannerFadeOffset")
 
 #define SPRITE_TYPE_SPRITE 0
 #define SPRITE_TYPE_CROPPEDSPRITE 1
@@ -53,6 +56,7 @@ Initializes Variables for the ScrollingList
 ScrollingList::ScrollingList()
 {
 	m_iBouncingState = 0;
+	m_iBounceSize = 0;
 	m_fNextTween = 0;
 	m_iBannerPrefs = BANNERPREFS_EZ2;
 	m_iSpriteType = SPRITE_TYPE_SPRITE;
@@ -62,8 +66,14 @@ ScrollingList::ScrollingList()
 	m_iNumVisible = DEFAULT_VISIBLE_ELEMENTS;
 	m_iBounceDir=0;
 	m_iBounceWait=0;
+	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
+	m_sprBannerMask.Load( THEME->GetPathToG("ScreenSelectMusic banner mask") );
 	m_RippleCSprite.SetXY(0,0);
 	m_RippleSprite.SetXY(0,0);
+	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
+	m_sprBannerMask.SetUseZBuffer( true );	// do draw to the zbuffer
+	m_sprBannerMask.SetWidth(EZ2_BANNER_WIDTH);
+	m_sprBannerMask.SetHeight(EZ2_BANNER_HEIGHT);
 }
 
 void ScrollingList::UseSpriteType(int NewSpriteType)
@@ -335,28 +345,22 @@ void ScrollingList::Update( float fDeltaTime )
 			if(m_fNextTween <= 0) // we're ready to update stuff
 			{
 				m_fNextTween = 0.1f; // reset the tween count
-				if(m_apCSprites[m_iSelection]->GetZoom() >= 1.2f && m_iBounceDir == 1) // if we're over biggest boundary
+								
+				if(m_iBounceSize <= 0 && m_iBounceDir == 0 ) // going smaller
 				{
-					m_iBounceDir = 2; // next phase will be a wait
-					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() - 0.25f); // make it smaller
-					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() - 0.30f); // make the ripple smaller
+					m_iBounceDir = 2;
 				}
-				else if(m_apCSprites[m_iSelection]->GetZoom() <= 1.0f && m_iBounceDir == 0) // if we're over smallest boundary
+				else if(m_iBounceDir == 1 && m_iBounceSize >= 0.2f) // getting big
 				{
-					m_iBounceDir = 1; // next phase will be making graphic bigger
-					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() + 0.25f); // make it bigger
-					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() + 0.30f); // make ripple bigger
-					m_RippleCSprite.SetDiffuse( RageColor(1,1,1,0.5f)); // make ripple appear semi transparent
+					m_iBounceDir = 0;
 				}
-				else if(m_iBounceDir == 0 && m_apCSprites[m_iSelection]->GetZoom() != 1.0f) // travelling smaller
+				else if(m_iBounceDir == 0)
 				{
-					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() - 0.25f); // make smaller
-					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() - 0.30f); // make smaller
+					m_iBounceSize-=0.2f;
 				}
-				else if(m_iBounceDir == 1 && m_apCSprites[m_iSelection]->GetZoom() != 1.2f) // travelling bigger
+				else if(m_iBounceDir == 1)
 				{
-					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() + 0.25f); // make bigger
-					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() + 0.30f ); // make bigger
+					m_iBounceSize+=0.2f;
 				}
 				else if(m_iBounceDir == 2) // we're waiting before doing bounce processes again
 				{
@@ -366,10 +370,10 @@ void ScrollingList::Update( float fDeltaTime )
 						m_iBounceWait--; // otherwise decrease by 1
 					
 					if(m_iBounceWait == 2) // if we're one moment after start of wait
-						m_RippleCSprite.SetDiffuse( RageColor(1,1,1,0.0f)); // hide the ripple
+						m_RippleSprite.SetDiffuse( RageColor(1,1,1,0.0f)); // hide the ripple
 
 					if(m_iBounceWait == 0) // if we just turned to 0 
-						m_iBounceDir = 0; // go to the 'make smaller' stage. as we SHOULD already be pretty small, we should start increasing in size a couple phases on.
+						m_iBounceDir = 1;
 				}
 			}
 			else
@@ -416,11 +420,11 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 		{
 			if(pNewCSprite->GetUnzoomedWidth() == pNewCSprite->GetUnzoomedHeight()) // rotated graphics need cropping
 			{
-				pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2 );
+				pNewCSprite->SetCroppedSize( EZ2_BANNER_WIDTH, EZ2_BANNER_HEIGHT );
 			}
 			else // flat, unrotated graphics need widths changing
 			{
-				pNewCSprite->SetWH(EZ2_BANNER_WIDTH*2, EZ2_BANNER_HEIGHT*2);
+				pNewCSprite->SetWH(EZ2_BANNER_WIDTH, EZ2_BANNER_HEIGHT);
 			}
 		}
 			
@@ -485,17 +489,61 @@ void ScrollingList::DrawPrimitives()
 
 			m_apCSprites[iIndexToDraw1]->SetX( (-i+m_fSelectionLag) * m_iSpacing );
 			m_apCSprites[iIndexToDraw2]->SetX( (+i+m_fSelectionLag) * m_iSpacing );
-
+			m_apCSprites[iIndexToDraw1]->SetZ( (m_iNumVisible)/2 - i);
+			m_apCSprites[iIndexToDraw2]->SetZ( (m_iNumVisible)/2 - i);
 			if( i==0 )	// so we don't draw 0 twice
 			{
-				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_SELECTED );
+				if(!m_iBouncingState)
+					m_apCSprites[iIndexToDraw1]->SetZoom( 1.0 - (ZOOM_OFFSET * i) );
+				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_SELECTED + RageColor(0,0,0,(1.0 - (FADE_OFFSET * i))) );
+				m_apCSprites[iIndexToDraw1]->SetUseZBuffer( true );	// do have to pass the z test
+				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
+				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
+				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
+				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw1]->Draw();
+				if(m_iBouncingState)	// bouncing
+				{
+					if(m_iBounceDir == 1)
+					{
+						m_apCSprites[iIndexToDraw1]->SetZoom(m_apCSprites[iIndexToDraw1]->GetZoom() + 0.05 );
+						m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom() );
+						m_sprBannerMask.Draw();
+						m_apCSprites[iIndexToDraw1]->Draw();
+						m_apCSprites[iIndexToDraw1]->SetZoom(m_apCSprites[iIndexToDraw1]->GetZoom() - 0.05 );
+						m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom() );
+					}
+					m_apCSprites[iIndexToDraw1]->SetZoom(m_apCSprites[iIndexToDraw1]->GetZoom() + m_iBounceSize );
+					RageColor currentcolor = m_apCSprites[iIndexToDraw1]->GetDiffuse();
+					m_apCSprites[iIndexToDraw1]->SetZ( m_apCSprites[iIndexToDraw1]->GetZ() + 1);
+					m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
+					m_sprBannerMask.SetZoom( m_sprBannerMask.GetZoom() + m_iBounceSize );
+					m_apCSprites[iIndexToDraw1]->SetDiffuse( RageColor( 1, 1, 1, 0.4f ) );
+					m_sprBannerMask.Draw();
+					m_apCSprites[iIndexToDraw1]->Draw(); // again for the bounce effect
+					m_apCSprites[iIndexToDraw1]->SetZoom(m_apCSprites[iIndexToDraw1]->GetZoom() - m_iBounceSize );
+					m_sprBannerMask.SetZoom( m_sprBannerMask.GetZoom() - m_iBounceSize );
+					m_apCSprites[iIndexToDraw1]->SetDiffuse( currentcolor );
+					m_apCSprites[iIndexToDraw1]->SetZ( m_apCSprites[iIndexToDraw1]->GetZ() - 1);
+				}
 			}
 			else
 			{
-				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_NOT_SELECTED );
-				m_apCSprites[iIndexToDraw2]->SetDiffuse( COLOR_NOT_SELECTED );
+				m_apCSprites[iIndexToDraw1]->SetZoom( 1.0 - (ZOOM_OFFSET * i) );
+				m_apCSprites[iIndexToDraw2]->SetZoom( 1.0 - (ZOOM_OFFSET * i) );
+				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_NOT_SELECTED + RageColor(0,0,0,(- (FADE_OFFSET * i))) );
+				m_apCSprites[iIndexToDraw2]->SetDiffuse( COLOR_NOT_SELECTED + RageColor(0,0,0,(- (FADE_OFFSET * i))) );
+				m_apCSprites[iIndexToDraw1]->SetUseZBuffer( true );	// do have to pass the z test
+				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
+				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
+				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
+				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw1]->Draw();
+				m_apCSprites[iIndexToDraw2]->SetUseZBuffer( true );	// do have to pass the z test
+				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw2]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
+				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw2]->GetZ()+0.05f );
+				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw2]->GetZoom());
+				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw2]->Draw();
 			}
 		}
@@ -504,14 +552,6 @@ void ScrollingList::DrawPrimitives()
 	{
 		if(m_iBouncingState)
 		{
-			m_RippleSprite.Draw();
-		}
-	}
-	else
-	{
-		if(m_iBouncingState)
-		{
-			m_RippleCSprite.Draw();
 			m_RippleSprite.Draw();
 		}
 	}

@@ -34,7 +34,7 @@ bool CroppedSprite::Load( RageTextureID ID )
 void CroppedSprite::SetWH(float fWidth, float fHeight)
 {
 	Sprite::SetWidth(fWidth);
-	Sprite::SetHeight(fWidth);
+	Sprite::SetHeight(fHeight);
 }
 
 void CroppedSprite::SetCroppedSize( float fWidth, float fHeight )

@@ -21,7 +21,7 @@
 #include "song.h"
 #include "ActorUtil.h"
 
-#define BANNERSPACING 200
+#define BANNERSPACING THEME->GetMetricI("ScreenEz2SelectMusic","BannerSpacing")
 #define MAXSONGSINBUFFER 5
 #define BANNERTYPE 1
 
