@@ -20,20 +20,36 @@
 #include "SongManager.h"
 #include "NoteFieldPositioning.h"
 #include "GameManager.h"
+#include "NotesLoaderSM.h"
 
-#define SONG_BPM							THEME->GetMetricF("ScreenHowToPlay","SongBPM")
 #define SECONDS_TO_SHOW						THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
-#define NUM_PERFECTS						THEME->GetMetricI("ScreenHowToPlay","NumPerfects")
-#define NUM_MISSES							THEME->GetMetricI("ScreenHowToPlay","NumMisses")
+//
+#define USELIFEBAR							THEME->GetMetricB("ScreenHowToPlay","UseLifeMeterBar")
 #define LIFEBARONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","LifeMeterBarOnCommand")
+//
 #define USECHARACTER						THEME->GetMetricB("ScreenHowToPlay","UseCharacter")
 #define CHARACTERONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","CharacterOnCommand")
+//
 #define USEPAD								THEME->GetMetricB("ScreenHowToPlay","UsePad")
 #define PADONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PadOnCommand")
+//
+#define USEPLAYER							THEME->GetMetricB("ScreenHowToPlay","UseNotefield")
 #define PLAYERX								THEME->GetMetricF("ScreenHowToPlay","PlayerX")
+#define NUM_PERFECTS						THEME->GetMetricI("ScreenHowToPlay","NumPerfects")
+#define NUM_MISSES							THEME->GetMetricI("ScreenHowToPlay","NumMisses")
+//#define SONG_BPM							THEME->GetMetricF("ScreenHowToPlay","SongBPM")
+#define STEPFILE							THEME->GetMetric ("ScreenHowToPlay","Stepfile")
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
+	m_bUsingLifeBar = USELIFEBAR;
+	m_bUsingPlayer = USEPLAYER;
+	m_bUsingPad = (USEPAD && DoesFileExist("Characters" SLASH "DancePad-DDR.txt"));
+	m_bUsingCharacter = (USECHARACTER && GAMESTATE->m_pCharacters.size());
+
+	m_iPerfects = 0;
+	m_iNumPerfects = NUM_PERFECTS;
+
 	m_In.Load( THEME->GetPathToB("ScreenHowToPlay in") );
 	m_In.StartTransitioning();
 
@@ -41,6 +57,44 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenHowToPlay overlay") );
 	this->AddChild( &m_Overlay );
+
+	if( m_bUsingPad )
+	{
+		m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
+		m_mDancePad.SetRotationX( 35 );
+		m_mDancePad.Command( PADONCOMMAND );
+	}
+	
+	// Display random character
+	if( m_bUsingCharacter )
+	{
+		Character* rndchar = GAMESTATE->GetRandomCharacter();
+
+		m_mCharacter.LoadMilkshapeAscii( rndchar->GetModelPath() );
+//		m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", rndchar->GetHowToPlayAnimationPath() );
+		m_mCharacter.LoadMilkshapeAsciiBones( "Step-LEFT","Characters" SLASH "BeginnerHelper_step-left.bones.txt" );
+		m_mCharacter.LoadMilkshapeAsciiBones( "Step-DOWN","Characters" SLASH "BeginnerHelper_step-down.bones.txt" );
+		m_mCharacter.LoadMilkshapeAsciiBones( "Step-UP","Characters" SLASH "BeginnerHelper_step-up.bones.txt" );
+		m_mCharacter.LoadMilkshapeAsciiBones( "Step-RIGHT","Characters" SLASH "BeginnerHelper_step-right.bones.txt" );
+		m_mCharacter.LoadMilkshapeAsciiBones( "Step-JUMPLR","Characters" SLASH "BeginnerHelper_step-jumplr.bones.txt" );
+		m_mCharacter.LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
+		m_mCharacter.SetDefaultAnimation( "rest" );
+		m_mCharacter.PlayAnimation( "rest" );
+		m_mCharacter.m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
+		
+		m_mCharacter.SetRotationX( 40 );
+		m_mCharacter.Command( CHARACTERONCOMMAND );
+	}
+	
+	LifeMeterBar *pBarUsed = NULL;
+	// silly to use the lifebar without a player, since the player updates the lifebar
+	if( m_bUsingLifeBar )
+	{
+		m_LifeMeterBar.Load( PLAYER_1 );
+		m_LifeMeterBar.Command( LIFEBARONCOMMAND );
+		m_LifeMeterBar.FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
+		pBarUsed = &m_LifeMeterBar;
+	}
 
 	switch(GAMESTATE->m_CurGame) // which style should we use to demonstrate?
 	{
@@ -54,91 +108,19 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		default: ASSERT(0); // we should cover all gametypes....
 	}
 
-	StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-	int iNumOfTracks = GAMEMAN->NotesTypeToNumTracks( nt );
-
-	ASSERT(iNumOfTracks > 0); // crazy to have less than 1 track....
-
-	m_LifeMeterBar.Load( PLAYER_1 );
-	m_LifeMeterBar.Command( LIFEBARONCOMMAND );
-	m_LifeMeterBar.FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
-
-	m_bUsingPad = (USEPAD && DoesFileExist("Characters" SLASH "DancePad-DDR.txt"));
-
-	if( m_bUsingPad )
-	{
-		m_mDancePad.LoadMilkshapeAscii("Characters" SLASH "DancePad-DDR.txt");
-		m_mDancePad.SetRotationX( 35 );
-		m_mDancePad.Command( PADONCOMMAND );
-	}
-
-	// Display random character
-	m_bUsingCharacter = (USECHARACTER && GAMESTATE->m_pCharacters.size());
-	if( m_bUsingCharacter )
-	{
-		Character* rndchar = GAMESTATE->GetRandomCharacter();
-
-		m_mCharacter.LoadMilkshapeAscii( rndchar->GetModelPath() );
-		m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", rndchar->GetHowToPlayAnimationPath() );
-		
-		m_mCharacter.SetRotationX( 40 );
-		m_mCharacter.Command( CHARACTERONCOMMAND );
-	}
-
-	NoteData* pND = new NoteData;
-	pND->SetNumTracks( iNumOfTracks );
-	/* Old notes.. Until our HowToPlay animation changes, Steps changed.
-	pND->SetTapNote( 0, ROWS_PER_BEAT*12, TAP_TAP );
-	pND->SetTapNote( 1, ROWS_PER_BEAT*16, TAP_TAP );
-	pND->SetTapNote( 2, ROWS_PER_BEAT*20, TAP_TAP );
-	pND->SetTapNote( 0, ROWS_PER_BEAT*24, TAP_TAP );
-	pND->SetTapNote( 3, ROWS_PER_BEAT*24, TAP_TAP );
-	pND->SetTapNote( 0, ROWS_PER_BEAT*28, TAP_TAP );
-	pND->AddHoldNote( HoldNote(2, 32, 35) );
-	pND->AddHoldNote( HoldNote(0, 36, 39) );
-	pND->AddHoldNote( HoldNote(3, 36, 39) );
-	pND->AddHoldNote( HoldNote(2, 40, 43) );
-	pND->SetTapNote( 0, ROWS_PER_BEAT*44,    TAP_TAP );
-	pND->SetTapNote( 1, (int)(ROWS_PER_BEAT*44.5f), TAP_TAP );
-	pND->SetTapNote( 2, ROWS_PER_BEAT*45,    TAP_TAP );
-	pND->SetTapNote( 3, (int)(ROWS_PER_BEAT*45.5f), TAP_TAP );
-	pND->SetTapNote( 0, ROWS_PER_BEAT*46,    TAP_TAP );
-	pND->SetTapNote( 2, ROWS_PER_BEAT*46,    TAP_TAP );
-	*/
-
-	pND->SetTapNote( 1, ROWS_PER_BEAT*16, TAP_TAP );
-	pND->SetTapNote( 2, ROWS_PER_BEAT*18, TAP_TAP );
-	pND->SetTapNote( 0, ROWS_PER_BEAT*20, TAP_TAP );
-	pND->SetTapNote( 0, ROWS_PER_BEAT*22, TAP_TAP );
-	pND->SetTapNote( 3, ROWS_PER_BEAT*22, TAP_TAP );
-	//Misses
-	pND->SetTapNote( 0, (int)(ROWS_PER_BEAT*24.0f), TAP_TAP );
-	pND->SetTapNote( 1, (int)(ROWS_PER_BEAT*24.1f), TAP_TAP );
-	pND->SetTapNote( 3, (int)(ROWS_PER_BEAT*24.2f), TAP_TAP );
-	pND->SetTapNote( 1, (int)(ROWS_PER_BEAT*24.3f), TAP_TAP );
-	pND->SetTapNote( 2, (int)(ROWS_PER_BEAT*24.4f), TAP_TAP );
-	pND->SetTapNote( 0, (int)(ROWS_PER_BEAT*24.5f), TAP_TAP );
-
 	m_pSong = new Song;
-	float fSongBPM = SONG_BPM;	// need this on a separate line, otherwise VC6 release build screws up and returns 0
-	m_pSong->AddBPMSegment( BPMSegment(0.0,fSongBPM) );
-	/* Same as above
-	m_pSong->AddStopSegment( StopSegment(12,2) );
-	m_pSong->AddStopSegment( StopSegment(16,2) );
-	m_pSong->AddStopSegment( StopSegment(20,2) );
-	m_pSong->AddStopSegment( StopSegment(24,2) );
-	m_pSong->AddStopSegment( StopSegment(28,2) );
-	*/
-	m_pSong->AddStopSegment( StopSegment(16,2) );
-	m_pSong->AddStopSegment( StopSegment(18,2) );
-	m_pSong->AddStopSegment( StopSegment(20,2) );
-	m_pSong->AddStopSegment( StopSegment(22,2) );
+	SMLoader smfile;
+	smfile.LoadFromSMFile( THEME->GetCurThemeDir() + STEPFILE, *m_pSong, false );
+	ASSERT( m_pSong->m_apNotes.size() == 1 );
 
 	GAMESTATE->m_pCurSong = m_pSong;
 	GAMESTATE->m_bPastHereWeGo = true;
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
 
-	m_Player.Load( PLAYER_1, pND, &m_LifeMeterBar, NULL, NULL, NULL, NULL, NULL );
+	NoteData *pND = new NoteData;
+	m_pSong->m_apNotes[0]->GetNoteData(pND);
+	m_Player.Load( PLAYER_1, pND, pBarUsed, NULL, NULL, NULL, NULL, NULL );
+	delete pND;
 	m_Player.SetX( PLAYERX );
 
 	// Don't show judgement
@@ -146,8 +128,8 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	GAMESTATE->m_bDemonstrationOrJukebox = true;
 	this->AddChild( &m_Player );
-	this->AddChild( &m_LifeMeterBar );
-	delete pND;
+	if( m_bUsingLifeBar )
+		this->AddChild( &m_LifeMeterBar );
 
 	m_fFakeSecondsIntoSong = 0;
 	this->ClearMessageQueue();
@@ -163,72 +145,79 @@ ScreenHowToPlay::~ScreenHowToPlay()
 	delete m_pSong;
 }
 
+void ScreenHowToPlay::Step( float fDelta )
+{
+#define ST_LEFT		0x08
+#define ST_DOWN		0x04
+#define ST_UP		0x02
+#define ST_RIGHT	0x01
+#define ST_JUMPLR	(ST_LEFT | ST_RIGHT)
+#define ST_JUMPUD	(ST_UP | ST_DOWN)
+
+	float rate = 1; //GAMESTATE->m_fCurBPS;
+
+	int iStep = 0;
+	int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat + 0.6f );
+	int iNumTracks = m_Player.GetNumTracks();
+	// if we want to miss from here on out, don't process steps.
+	if((m_iPerfects < m_iNumPerfects) && (m_Player.IsThereATapAtRow( iNoteRow )))
+	{
+		for( int k=0; k<iNumTracks; k++ )
+			if( m_Player.GetTapNote(k, iNoteRow ) == TAP_TAP )
+				iStep += 1 << (iNumTracks - (k + 1));
+
+		switch( iStep )
+		{
+		case ST_LEFT:	m_mCharacter.PlayAnimation( "Step-LEFT", 1.8f ); break;
+		case ST_RIGHT:	m_mCharacter.PlayAnimation( "Step-RIGHT", 1.8f ); break;
+		case ST_UP:		m_mCharacter.PlayAnimation( "Step-UP", 1.8f ); break;
+		case ST_DOWN:	m_mCharacter.PlayAnimation( "Step-DOWN", 1.8f ); break;
+		case ST_JUMPLR: m_mCharacter.PlayAnimation( "Step-JUMPLR", 1.8f ); break;
+		case ST_JUMPUD:
+			// Until I can get an UP+DOWN jump animation, this will have to do.
+			m_mCharacter.PlayAnimation( "Step-JUMPLR", 1.8f );
+			
+			m_mCharacter.StopTweening();
+			m_mCharacter.BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
+			m_mCharacter.SetRotationY( 90 );
+			m_mCharacter.BeginTweening( (1/(GAMESTATE->m_fCurBPS * 2) ) ); //sleep between jump-frames
+			m_mCharacter.BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
+			m_mCharacter.SetRotationY( 0 );
+			break;
+		}
+	}
+
+	// if we want to freeze, freeze.
+	if( GAMESTATE->m_bFreeze )
+		rate = 0;
+
+	m_mCharacter.Update( fDelta * rate );
+}
+
 void ScreenHowToPlay::Update( float fDelta )
 {
 	if(GAMESTATE->m_pCurSong != NULL)
 	{
-		float rate = 1;
-
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
 		m_fFakeSecondsIntoSong += fDelta;
 
+		static int iLastNoteRowCounted = 0;
+		int iCurNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );
+
+		if(( iCurNoteRow != iLastNoteRowCounted ) &&(m_Player.IsThereATapAtRow( iCurNoteRow )))
+		{
+			m_iPerfects++;
+			iLastNoteRowCounted = iCurNoteRow;
+		}
+
 		// we want misses from beat 22.8 on out, so change to a HUMAN controller.
 		// since we aren't taking input from the user, the steps are always missed.
-		if(GAMESTATE->m_fSongBeat > 22.8f)
+		if(m_iPerfects > m_iNumPerfects)
 			GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 
 		if ( m_bUsingCharacter )
 		{
-			if( GAMESTATE->m_bFreeze )
-			{
-				switch(int(GAMESTATE->m_fSongBeat))
-				{
-				case 16: m_mCharacter.SetFrame(30); break;
-				case 18: m_mCharacter.SetFrame(85); break;
-				case 20: m_mCharacter.SetFrame(150); break;
-				case 22: m_mCharacter.SetFrame(270); break;
-				};
-				rate = 0;
-			}
-			else
-			{
-				/* HowToPlay animations.. This will be retimed soon to be a reasonable speed.
-				   This was just a quick'n'dirty way of showing this screen correctly. */
-				// Until we get a better HowToPlay animation done, it has to be this way..
-				if( (GAMESTATE->m_fSongBeat >= 15.0f && GAMESTATE->m_fSongBeat <= 15.2f) )
-				{
-					m_mCharacter.SetFrame(1);
-				}
-				if( (GAMESTATE->m_fSongBeat >= 17.0f && GAMESTATE->m_fSongBeat <= 17.2f) )
-				{ 
-					m_mCharacter.SetFrame(55);
-				}
-				if( (GAMESTATE->m_fSongBeat >= 19.0f && GAMESTATE->m_fSongBeat <= 19.2f) )
-				{ 
-					m_mCharacter.SetFrame(120);
-				}
-				if( (GAMESTATE->m_fSongBeat >= 21.0f && GAMESTATE->m_fSongBeat <= 21.2f) )
-				{ 
-					m_mCharacter.SetFrame(240);
-				}
-				// ----------------------------------------------------------------------- */
-
-				if( (GAMESTATE->m_fSongBeat >= 0.0f && GAMESTATE->m_fSongBeat <= 15.0f) ||
-					(GAMESTATE->m_fSongBeat >= 16.8f && GAMESTATE->m_fSongBeat <= 17.0f) ||
-					(GAMESTATE->m_fSongBeat >= 18.8f && GAMESTATE->m_fSongBeat <= 19.0f) ||
-					(GAMESTATE->m_fSongBeat >= 20.8f && GAMESTATE->m_fSongBeat <= 21.0f) ||
-					(GAMESTATE->m_fSongBeat >= 22.8f) )
-				{
-					if( (m_mCharacter.GetCurFrame() >=243) || (m_mCharacter.GetCurFrame() <=184) )
-						m_mCharacter.SetFrame(184);
-					//Loop for HowToPlay static movement is 184~243
-				} else
-					// if we update at normal speed during a step animation, it is too slow and
-					// doesn't finish in time.
-					rate = 1.8f;
-			}
-
-			m_mCharacter.Update( fDelta * rate );
+			Step( fDelta );
 		}
 	}
 
