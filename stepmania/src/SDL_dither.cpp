@@ -97,8 +97,10 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 				colors[c] = DitherPixel(col, row, colors[c], conv[c]);
 			}
 
-			/* Convert the alpha channel, which we didn't dither. */
-			colors[3] >>= src_cbits[3] - dst_cbits[3];
+			if( src_cbits[3] == 0 )					/* src doesn't have alpha */
+				colors[3] = (1<<dst_cbits[3]) - 1;	/* Give dst full alpha */
+			else									/* src does have alpha */
+				colors[3] >>= src_cbits[3] - dst_cbits[3];	/* Convert the alpha channel, which we didn't dither. */
 
 			/* Raw value -> int -> pixel */
 			mySDL_SetRawRGBAV(dstp, dst, colors);
