@@ -40,7 +40,7 @@
 #include "SDL_image.h"
 
 
-const int FILE_CACHE_VERSION = 117;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 118;	// increment this when Song or Notes changes to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
@@ -604,6 +604,10 @@ void Song::TidyUpData()
 	unsigned i;
 	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
+		// ignore DWI "-char" graphics
+		if( arrayImages[i].Find("-char.") != -1 )
+			continue;	// skip
+		
 		// Skip any image that we've already classified
 
 		if( HasBanner()  &&  stricmp(m_sBannerFile, arrayImages[i])==0 )
