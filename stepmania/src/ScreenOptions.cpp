@@ -134,7 +134,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetZoom( EXPLANATION_ZOOM );
-	m_textExplanation.SetShadowLength( 2 );
+	m_textExplanation.SetShadowLength( 0 );
 	m_framePage.AddChild( &m_textExplanation );
 
 
@@ -252,7 +252,7 @@ void ScreenOptions::InitOptionsText()
 	option.LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 	option.SetText( "EXIT" );
 	option.SetZoom( ITEMS_ZOOM );
-	option.SetShadowLength( 2 );
+	option.SetShadowLength( 0 );
 	float fY = ITEMS_START_Y + fLineGap*i;
 	option.SetXY( CENTER_X, fY );
 }
