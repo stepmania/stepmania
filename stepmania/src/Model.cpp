@@ -18,6 +18,7 @@
 #include "IniFile.h"
 #include "RageFile.h"
 #include "RageLog.h"
+#include "ActorUtil.h"
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -908,4 +909,40 @@ int Model::GetNumStates()
 	for( int i=0; i<(int)m_Materials.size(); i++ )
 		iMaxStates = max( iMaxStates, m_Materials[i].aniTexture.GetNumStates() );
 	return iMaxStates;
+}
+
+void Model::HandleCommand( const CStringArray &asTokens )
+{
+	HandleParams;
+
+	/* XXX: It would be very useful to be able to tween animations, eg:
+	 *
+	 * play,Dance,1;sleep,2;linear,.5;play,Collapse,1
+	 *
+	 * to play "Dance" for two seconds, then tween to playing "Collapse" over half
+	 * a second, with the tween percentage weighting the animations.
+	 *
+	 * Also, being able to queue animations cleanly without knowing the exact duration
+	 * of the animation, eg:
+	 *
+	 * play,Dance,1;finishanim;play,Collapse,1
+	 *
+	 * to play "Dance", and then play "Collapse" when "Dance" finishes.  (In this case,
+	 * Dance would presumably end on the same keyframe that Collapse begins on, since
+	 * it isn't queuing a tween.)
+	 *
+	 * We need more architecture for this, so we can put custom items in the Actor
+	 * tween queue.
+	 */
+
+	const CString& sName = asTokens[0];
+	if( sName=="play" )
+		PlayAnimation( sParam(1),fParam(2) );
+	else
+	{
+		Actor::HandleCommand( asTokens );
+		return;
+	}
+
+	CheckHandledParams;
 }
