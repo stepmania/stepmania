@@ -14,11 +14,9 @@
 #include "song.h"
 #include "Notes.h"
 #include "RageUtil.h"
-#include <math.h>	// for fmod
 #include "RageLog.h"
 #include "IniFile.h"
 #include "NoteData.h"
-#include "MsdFile.h"
 #include "RageSound.h"
 #include "RageException.h"
 #include "SongCacheIndex.h"
