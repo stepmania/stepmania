@@ -567,9 +567,10 @@ void SongManager::FreeCourses()
 
 /* Called periodically to wipe out cached NoteData.  This is called when we change
  * screens. */
-void SongManager::CompressSongs()
+void SongManager::Cleanup()
 {
-	for( unsigned i=0; i<m_pSongs.size(); i++ )
+	unsigned i;
+	for( i=0; i<m_pSongs.size(); i++ )
 	{
 		Song* pSong = m_pSongs[i];
 		for( unsigned n=0; n<pSong->m_apNotes.size(); n++ )
@@ -578,6 +579,10 @@ void SongManager::CompressSongs()
 			pNotes->Compress();
 		}
 	}
+
+	/* Erase cached course info. */
+	for( i=0; i < m_pCourses.size(); i++ )
+		m_pCourses[i]->ClearCache();
 }
 
 void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )

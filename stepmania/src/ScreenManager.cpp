@@ -477,6 +477,10 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	 * screens turn this off in their ctor if they handle timers themselves (gameplay, edit). */
 	SOUND->HandleSongTimer( true );
 
+	/* Cleanup song data.  This can free up a fair bit of memory, so do it before
+	 * creating the new screen, to lower peak memory usage slightly. */
+	SONGMAN->Cleanup();
+
 	Screen *ret = Screen::Create( sClassName );
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
@@ -484,9 +488,6 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	 * display will be accurate, which makes skips in the initial tween-ins more
 	 * apparent. */
 	DISPLAY->ResetStats();
-
-	/* This is a convenient time to clean up our song cache. */
-	SONGMAN->CompressSongs();
 
 	return ret;
 }

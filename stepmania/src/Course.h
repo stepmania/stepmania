@@ -14,6 +14,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Attack.h"
+#include <map>
 
 struct PlayerOptions;
 struct SongOptions;
@@ -196,8 +197,16 @@ public:
 
 	void UpdateCourseStats();
 
+	/* Call per-screen, and if song or notes pointers change: */
+	void ClearCache();
+
 private:
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, int Difficult = -1 ) const;
+
+	typedef pair<StepsType,bool> InfoParams;
+	typedef vector<Course::Info> InfoData;
+	typedef map<InfoParams, InfoData> InfoCache;
+	mutable InfoCache m_InfoCache;
 };
 
 

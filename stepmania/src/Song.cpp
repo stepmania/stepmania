@@ -19,6 +19,7 @@
 #include "NoteData.h"
 #include "RageSound.h"
 #include "RageException.h"
+#include "SongManager.h"
 #include "SongCacheIndex.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
@@ -100,6 +101,10 @@ void Song::Reset()
 
 	Song empty;
 	*this = empty;
+
+	/* Courses cache Notes* pointers.  On the off chance that this isn't the last
+	 * thing this screen does, clear that cache. */
+	SONGMAN->Cleanup();
 }
 
 

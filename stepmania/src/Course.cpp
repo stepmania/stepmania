@@ -548,29 +548,42 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
 	return ret;
 }
 
+/* This is called by many simple functions, like Course::GetTotalSeconds, and may
+ * be called on all songs to sort.  It can take time to execute, so we cache the
+ * results. */
 void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficult ) const
 {
-	vector<CourseEntry> entries = m_entries;
+	const InfoParams params( nt, IsDifficult(Difficult) );
+	InfoCache::const_iterator it = m_InfoCache.find( params );
+	if( it != m_InfoCache.end() )
+	{
+		ci = it->second;
+		return;
+	}
 
 	/* Different seed for each course, but the same for the whole round: */
 	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sName) );
 
+	vector<CourseEntry> tmp_entries;
 	if( m_bRandomize )
 	{
 		/* Always randomize the same way per round.  Otherwise, the displayed course
 		 * will change every time it's viewed, and the displayed order will have no
 		 * bearing on what you'll actually play. */
-		random_shuffle( entries.begin(), entries.end(), rnd );
+		tmp_entries = m_entries;
+		random_shuffle( tmp_entries.begin(), tmp_entries.end(), rnd );
 	}
+
+	const vector<CourseEntry> &entries = m_bRandomize? tmp_entries:m_entries;
 
 	/* This can take some time, so don't fill it out unless we need it. */
 	bool bMostPlayedSet = false;
 	vector<Song*> vSongsByMostPlayed;
 	
-	vector<Song*> AllSongsShuffled = SONGMAN->GetAllSongs();
-	random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end(), rnd );
-	int CurSong = 0; /* Current offset into AllSongsShuffled */
+	bool bShuffledSet = false;
+	vector<Song*> AllSongsShuffled;
 
+	int CurSong = 0; /* Current offset into AllSongsShuffled */
 	ci.clear(); 
 
 	for( unsigned i=0; i<entries.size(); i++ )
@@ -602,6 +615,13 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 		case COURSE_ENTRY_RANDOM:
 		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
 			{
+				if( !bShuffledSet )
+				{
+					AllSongsShuffled = SONGMAN->GetAllSongs();
+					random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end(), rnd );
+					bShuffledSet = true;
+				}
+
 				// find a song with the notes we want
 				for( unsigned j=0; j<AllSongsShuffled.size(); j++ )
 				{
@@ -695,6 +715,14 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, int Difficul
 		cinfo.Difficult = IsDifficult(Difficult);
 		ci.push_back( cinfo ); 
 	}
+
+	/* Cache results. */
+	m_InfoCache[params] = ci;
+}
+
+void Course::ClearCache()
+{
+	m_InfoCache.clear();
 }
 
 RageColor Course::GetColor() const
