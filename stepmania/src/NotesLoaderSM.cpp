@@ -147,7 +147,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		const CString sValueName = sParams[0];
+		const CString &sValueName = sParams[0];
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TITLE") )
@@ -214,7 +214,16 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 			out.m_fLastBeat = (float)atof( sParams[1] );
 		}
-
+		else if( 0==stricmp(sValueName,"SONGFILENAME") )
+		{
+			if(!FromCache)
+			{
+				LOG->Trace("Ignored #SONGFILENAME (cache only)");
+				continue;
+			}
+			out.m_sSongFileName = sParams[1];
+		}
+		
 		else if( 0==stricmp(sValueName,"SAMPLESTART") )
 			out.m_fMusicSampleStartSeconds = TimeToSeconds( sParams[1] );
 
