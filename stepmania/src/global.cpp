@@ -18,7 +18,7 @@ void NORETURN sm_crash( const char *reason )
 	if( IsDebuggerPresent() )
 	{
 		DebugBreak();
-		return;
+		while(1); /* don't return */
 	}
 #endif
 
