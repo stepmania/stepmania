@@ -142,25 +142,6 @@ static int power_of_two(int input)
  * Stretch forces the loaded image to fill the texture completely.
  */
 
-/* Implementation: 
- * Load the input image first.  Adjust texture hints and determine the desired
- * texture format.  Set up the texture.  Adjust members based on what texture
- * type we really got.
- *
- * If stretching, resize the loaded image to the destination size.  This can be done
- * in the loaded image format.
- *
- * If dithering: Convert the loaded image to RGBA8888, to make the dither simpler.
- * (Most loaded images are in that format anyway.)  Dither into the destination
- * surface.
- *
- * If not dithering: convert the loaded image to the destination surface.
- *
- * Last, copy the destination surface into the destination texture.
- *
- * This could be a bit more efficient, to eliminate an extra conversion or two when
- * stretching or dithering (or both), but most images do neither ...
- */
 void RageBitmapTexture::Create( 
 	int dwMaxSize,
 	int dwTextureColorDepth,
