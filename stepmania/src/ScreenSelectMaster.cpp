@@ -31,6 +31,13 @@
 #define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
 #define PRE_SWITCH_PAGE_SECONDS					THEME->GetMetricF(m_sName,"PreSwitchPageSeconds")
 #define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
+#define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
+
+/* OptionOrderLeft=0:1,1:2,2:3,3:4 */
+const char *ScreenSelectMaster::dirs[NUM_DIRS] =
+{
+	"Up", "Down", "Left", "Right", "Auto"
+};
 
 const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
@@ -131,6 +138,41 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
+	for( int dir = 0; dir < NUM_DIRS; ++dir )
+	{
+		const CString dirname = dirs[dir];
+		const CString order = OPTION_ORDER( dirname );
+		vector<CString> parts;
+		split( order, ",", parts, true );
+
+		if( parts.size() == 0 )
+			continue;
+		for( unsigned c = 0; c < m_aModeChoices.size(); ++c )
+			m_Next[dir][c] = -1;
+
+		for( unsigned part = 0; part < parts.size(); ++part )
+		{
+			unsigned from, to;
+			if( sscanf( parts[part], "%u:%u", &from, &to ) != 2 )
+			{
+				LOG->Warn( "%s::OptionOrder%s parse error", m_sName.c_str(), dirname.c_str() );
+				continue;
+			}
+
+			--from;
+			--to;
+
+			if( from < 0 || from >= m_aModeChoices.size() ||
+				to < 0 || to >= m_aModeChoices.size() )
+			{
+				LOG->Warn( "%s::OptionOrder%s out of range", m_sName.c_str(), dirname.c_str() );
+				continue;
+			}
+
+			m_Next[dir][from] = to;
+		}
+	}
+
 	this->UpdateSelectableChoices();
 
 	m_fLockInputSecs = TweenOnScreen();
@@ -212,21 +254,22 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 			continue;
 
 		if( !m_aModeChoices[m_iChoice[p]].IsPlayable() )
-			Move( (PlayerNumber) p, -1 );
-		if( !m_aModeChoices[m_iChoice[p]].IsPlayable() ) // if still
-			Move( (PlayerNumber)p, +1 );
+			Move( (PlayerNumber) p, DIR_AUTO );
 		ASSERT( m_aModeChoices[m_iChoice[p]].IsPlayable() );
 	}
 }
 
-bool ScreenSelectMaster::Move( PlayerNumber pn, int dir )
+bool ScreenSelectMaster::Move( PlayerNumber pn, Dirs dir )
 {
+	const int start = m_iChoice[pn];
 	int iSwitchToIndex = m_iChoice[pn];
 	do
 	{
-		iSwitchToIndex += dir;
-		if( iSwitchToIndex < 0 || iSwitchToIndex >= (int) m_aModeChoices.size() )
-			return false; // none found
+		iSwitchToIndex = m_Next[dir][iSwitchToIndex];
+		if( iSwitchToIndex == -1 )
+			return false; // can't go that way
+		if( iSwitchToIndex == start )
+			return false; // went full circle and none found
 	}
 	while( !m_aModeChoices[iSwitchToIndex].IsPlayable() );
 
@@ -235,22 +278,33 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, int dir )
 
 void ScreenSelectMaster::MenuLeft( PlayerNumber pn )
 {
-	if( m_fLockInputSecs > 0 )
+	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( m_bChosen[pn] )
-		return;
-
-	if( Move(pn, -1) )
+	if( Move(pn, DIR_LEFT) )
 		m_soundChange.Play();
 }
 
 void ScreenSelectMaster::MenuRight( PlayerNumber pn )
 {
-	if( m_fLockInputSecs > 0 )
+	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( m_bChosen[pn] )
+	if( Move(pn, DIR_RIGHT) )
+		m_soundChange.Play();
+}
+
+void ScreenSelectMaster::MenuUp( PlayerNumber pn )
+{
+	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( Move(pn, +1) )
+	if( Move(pn, DIR_UP) )
+		m_soundChange.Play();
+}
+
+void ScreenSelectMaster::MenuDown( PlayerNumber pn )
+{
+	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
+		return;
+	if( Move(pn, DIR_DOWN) )
 		m_soundChange.Play();
 }
 

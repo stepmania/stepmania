@@ -28,10 +28,9 @@ public:
 
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );
-	virtual void MenuUp( PlayerNumber pn ) {};
-	virtual void MenuDown( PlayerNumber pn ) {};
+	virtual void MenuUp( PlayerNumber pn );
+	virtual void MenuDown( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
-//	virtual void MenuBack( PlayerNumber pn );
 	float TweenOffScreen();	// return time in seconds to execute the command
 	float TweenOnScreen();	// return time in seconds to execute the command
 
@@ -42,10 +41,22 @@ protected:
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
 
+	enum Dirs
+	{
+		DIR_UP,
+		DIR_DOWN,
+		DIR_LEFT,
+		DIR_RIGHT,
+		DIR_AUTO, // when players join and the selection becomes invalid
+		NUM_DIRS
+	};
+	static const char *dirs[NUM_DIRS];
+	int m_Next[NUM_DIRS][MAX_CHOICES];
+
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
 
-	bool Move( PlayerNumber pn, int dir );
+	bool Move( PlayerNumber pn, Dirs dir );
 	bool ChangePage( int iNewChoice );
 	bool ChangeSelection( PlayerNumber pn, int iNewChoice );
 	float DoMenuStart( PlayerNumber pn );
