@@ -106,6 +106,7 @@ PrefsManager::PrefsManager()
 	
 	// set to 0 so people aren't shocked at first
 	m_iProgressiveLifebar = 0;
+	m_iProgressiveNonstopLifebar = 0;
 
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -222,6 +223,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 	ini.GetValueI( "Options", "CourseSortOrder",			(int&)m_iCourseSortOrder );
 	ini.GetValueI( "Options", "ProgressiveLifebar",			(int&)m_iProgressiveLifebar );
+	ini.GetValueI( "Options", "ProgressiveNonstopLifebar",  (int&)m_iProgressiveNonstopLifebar );
 
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 
@@ -335,6 +337,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 	ini.SetValueI( "Options", "CourseSortOrder",			m_iCourseSortOrder );
 	ini.SetValueI( "Options", "ProgressiveLifebar",			m_iProgressiveLifebar );
+	ini.SetValueI( "Options", "ProgressiveNonstopLifebar",	m_iProgressiveNonstopLifebar );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

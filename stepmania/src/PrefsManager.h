@@ -84,6 +84,7 @@ public:
 	bool			m_bDebugMode;
 	bool			m_bTenFooterInRed;
 	int				m_iProgressiveLifebar;
+	int				m_iProgressiveNonstopLifebar;
 
 	// course ranking
 	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;

@@ -247,6 +247,10 @@ LifeMeterBar::LifeMeterBar()
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
 
+	// set up lifebar
+	m_fBaseLifeDifficulty = PREFSMAN->m_fLifeDifficultyScale;
+	m_fLifeDifficulty = m_fBaseLifeDifficulty;
+
 	m_quadBlackBackground.SetDiffuse( RageColor(0,0,0,1) );
 	m_quadBlackBackground.SetZoomX( (float)g_iMeterWidth );
 	m_quadBlackBackground.SetZoomY( (float)g_iMeterHeight );
@@ -344,9 +348,9 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	}
 
 	if( fDeltaLife > 0 )
-		fDeltaLife *= PREFSMAN->m_fLifeDifficultyScale;
+		fDeltaLife *= m_fLifeDifficulty;
 	else
-		fDeltaLife /= PREFSMAN->m_fLifeDifficultyScale;
+		fDeltaLife /= m_fLifeDifficulty;
 
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
@@ -462,6 +466,43 @@ void LifeMeterBar::DrawPrimitives()
 
 	ActorFrame::DrawPrimitives();
 }
+
+void LifeMeterBar::UpdateNonstopLifebar(const int cleared, const int total, int ProgressiveLifebarDifficulty)
+{
+//	if (cleared > total) cleared = total; // clear/total <= 1
+//	if (total == 0) total = 1;  // no division by 0
+
+	m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty * cleared / total;
+
+	if (m_fLifeDifficulty >= 0.4) return;
+
+	// the lifebar is pretty harsh at 0.4 already (you lose
+	// about 20% of your lifebar); at 0.2 it would be 40%, which
+	// is too harsh at one difficulty level higher.  Override.
+	if (m_fLifeDifficulty >= 0.2)
+	{
+		m_fLifeDifficulty = 0.3f;
+		return;
+	}
+	if (m_fLifeDifficulty >= 0)
+	{
+		m_fLifeDifficulty = 0.25f;
+		return;
+	}
+	if (m_fLifeDifficulty >= -0.2)
+	{
+		m_fLifeDifficulty = 0.2f;
+		return;
+	}
+	if (m_fLifeDifficulty >= -0.4)
+	{
+		m_fLifeDifficulty = 0.16f;
+		return;
+	}
+	m_fLifeDifficulty = 0.1f;
+
+}
+
 
 /*
 

@@ -710,6 +710,11 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && GAMESTATE->m_CurStageStats.bFailed[p] )	// already failed
 			ShowOniGameOver((PlayerNumber)p);
 
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
+		{
+			LOG->Trace("Song %d of %d", GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurCourse->GetEstimatedNumStages() );
+			m_pLifeMeter[p]->UpdateNonstopLifebar(GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurCourse->GetEstimatedNumStages(), PREFSMAN->m_iProgressiveNonstopLifebar);
+		}
 
 		m_DifficultyIcon[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
 

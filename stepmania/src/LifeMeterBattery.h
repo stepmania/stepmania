@@ -36,6 +36,8 @@ public:
 	virtual bool IsFailing();
 	virtual bool FailedEarlier();
 
+	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) { };
+
 	void Refresh();
 
 private:

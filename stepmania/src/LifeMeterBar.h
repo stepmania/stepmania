@@ -37,6 +37,8 @@ public:
 	virtual bool IsFailing();
 	virtual bool FailedEarlier();
 
+	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
+
 private:
 	void ResetBarVelocity();
 
@@ -49,6 +51,9 @@ private:
 
 	float		m_fHotAlpha;
 	bool		m_bFailedEarlier;		// set this to true when life dips below 0
+
+	float		m_fBaseLifeDifficulty;
+	float		m_fLifeDifficulty;		// essentially same as pref
 
 	int			m_iProgressiveLifebar;	// cached from prefs
 	int			m_iMissCombo;			// current number of progressive boo/miss
