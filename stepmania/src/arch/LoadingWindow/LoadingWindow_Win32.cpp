@@ -21,7 +21,7 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 LoadingWindow_Win32::~LoadingWindow_Win32()
 {
 	if(hwnd)
-		EndDialog(hwnd, 0);
+		DestroyWindow( hwnd );
 }
 
 void LoadingWindow_Win32::Paint()
