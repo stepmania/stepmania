@@ -486,7 +486,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 	if( !bg.empty() )
 	{
 		/* BGChanges have been sorted.  On the odd chance that a BGChange exists
-		* with a very high beat, search the whole list. */
+		 * with a very high beat, search the whole list. */
 		bool bHasNoSongBgTag = false;
 
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
@@ -498,18 +498,28 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 			}
 		}
 
-		/*
-		 * If we're loading cache, -nosongbg- should always be in there.  We must
-		 * not call IsAFile(song.GetBackgroundPath()) when loading cache.
-		 *
-		 * If BGChanges already exist after the last beat, don't add the background
-		 * in the middle.
-		 */
-		if( !cache &&
-		    bg.back().m_fStartBeat-0.0001f < song.m_fLastBeat &&
-			!bHasNoSongBgTag &&
-			IsAFile( song.GetBackgroundPath() ) )
+		/* If there's no -nosongbg- tag, add the song BG. */
+		if( !bHasNoSongBgTag ) do
+		{
+			/* If we're loading cache, -nosongbg- should always be in there.  We must
+			 * not call IsAFile(song.GetBackgroundPath()) when loading cache. */
+			if( cache )
+				break;
+
+			/* If BGChanges already exist after the last beat, don't add the background
+			 * in the middle. */
+			if( !bg.empty() && bg.back().m_fStartBeat-0.0001f >= song.m_fLastBeat )
+				break;
+
+			/* If the last BGA is already the song BGA, don't add a duplicate. */
+			if( !bg.empty() && !bg.back().m_sBGName.CompareNoCase(song.m_sBackgroundFile) )
+				break;
+
+			if( !IsAFile( song.GetBackgroundPath() ) )
+				break;
+
 			bg.push_back( BackgroundChange(song.m_fLastBeat,song.m_sBackgroundFile) );
+		} while(0);
 	}
 }
 
