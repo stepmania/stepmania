@@ -71,6 +71,11 @@ Background::Background()
 		if( GAMESTATE->IsPlayerEnabled(p) )
 		{
 			bOneOrMoreChars = true;
+
+			// if playing dance magic mode vs. the CPU, skip next condition
+			if (GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
+				continue;
+
 			//Disable dancing characters if BH will be showing.
 			if( (PREFSMAN->m_bShowBeginnerHelper) || (GAMESTATE->m_pCurNotes[p]->GetDifficulty() == DIFFICULTY_BEGINNER ) )
 				bShowingBeginnerHelper = true;

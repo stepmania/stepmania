@@ -80,7 +80,16 @@ void ScoreKeeperRave::Update( float fDelta )
 void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 {
 	CString* asAttacks = GAMESTATE->m_pCurCharacters[m_PlayerNumber]->m_sAttacks[al];	// [NUM_ATTACKS_PER_LEVEL]
-	CString sAttackToGive = asAttacks[ rand()%NUM_ATTACKS_PER_LEVEL ];
+	CString sAttackToGive;
+
+	if (GAMESTATE->m_pCurCharacters[m_PlayerNumber] != NULL)		
+		sAttackToGive = asAttacks[ rand()%NUM_ATTACKS_PER_LEVEL ];
+	else
+	{
+		CString DefaultAttacks[8] = { "1.5x", "2.0x", "0.5x", "reverse", "sudden", "boost", "brake", "wave" };
+		sAttackToGive = DefaultAttacks[ rand()%8 ];
+	}
+
   	PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 
 	GameState::Attack a;
