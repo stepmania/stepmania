@@ -10,6 +10,12 @@ class StatsManager
 public:
 	StatsManager();
 
+	void Reset()
+	{
+		m_vPlayedStageStats.clear();
+		CalcAccumStageStats();
+	}
+
 	StageStats	m_CurStageStats;				// current stage (not necessarily passed if Extra Stage)
 	vector<StageStats>	m_vPlayedStageStats;
 

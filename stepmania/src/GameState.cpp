@@ -190,7 +190,7 @@ void GameState::Reset()
 	 * SongManager::UpdateBest could be called).  Erase the cache. */
 	SONGMAN->RegenerateNonFixedCourses();
 
-	STATSMAN->m_vPlayedStageStats.clear();
+	STATSMAN->Reset();
 
 	m_SongOptions.Init();
 	
