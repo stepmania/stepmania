@@ -275,6 +275,36 @@
 //AA2
 //AA3
 //AA4
+		AA0A3DE6060513A00044E6B1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenSetTime.cpp;
+			path = /Users/steve/programming/stepmania/src/ScreenSetTime.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA0A3DE7060513A00044E6B1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenSetTime.h;
+			path = /Users/steve/programming/stepmania/src/ScreenSetTime.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA0A3DE8060513A00044E6B1 = {
+			fileRef = AA0A3DE6060513A00044E6B1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA0A3DE9060513A00044E6B1 = {
+			fileRef = AA0A3DE7060513A00044E6B1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA0E393304DA8EE700D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1289,6 +1319,9 @@
 				AAED6F2D0601C528002D2DEE,
 				AAED6F2F0601C528002D2DEE,
 				AAD64AA60604079E00EF8CDE,
+				AA0A3DE9060513A00044E6B1,
+				AAE7804C060814AC0034E65F,
+				AAE7808806081A000034E65F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3219,6 +3252,9 @@
 				AAED6F2C0601C528002D2DEE,
 				AAED6F2E0601C528002D2DEE,
 				AAD64AA50604079E00EF8CDE,
+				AA0A3DE8060513A00044E6B1,
+				AAE7804B060814AC0034E65F,
+				AAE7808706081A000034E65F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6436,6 +6472,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
+				AA0A3DE6060513A00044E6B1,
+				AA0A3DE7060513A00044E6B1,
 				AAD64AA30604079E00EF8CDE,
 				AAD64AA40604079E00EF8CDE,
 				AA6E000A047711F3005F316C,
@@ -7789,6 +7827,8 @@
 		};
 		AA6E00FE047711FF005F316C = {
 			children = (
+				AAE78049060814AC0034E65F,
+				AAE7804A060814AC0034E65F,
 				AABD0B3405DF3F22004F7929,
 				AABD0B3505DF3F22004F7929,
 				AABD0B3605DF3F22004F7929,
@@ -8977,6 +9017,8 @@
 		};
 		AA6EFDC804770AF1005F316C = {
 			children = (
+				AAE7808506081A000034E65F,
+				AAE7808606081A000034E65F,
 				AABBD80605D8E9FC00B44FC2,
 				AABBD80705D8E9FC00B44FC2,
 				AA50201D05D6D7B200ACEFD0,
@@ -14816,6 +14858,62 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		AAE78049060814AC0034E65F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = NetworkSyncManager.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAE7804A060814AC0034E65F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = NetworkSyncManager.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAE7804B060814AC0034E65F = {
+			fileRef = AAE78049060814AC0034E65F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAE7804C060814AC0034E65F = {
+			fileRef = AAE7804A060814AC0034E65F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAE7808506081A000034E65F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = ezsockets.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAE7808606081A000034E65F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = ezsockets.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAE7808706081A000034E65F = {
+			fileRef = AAE7808506081A000034E65F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAE7808806081A000034E65F = {
+			fileRef = AAE7808606081A000034E65F;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAEA08F705E232F000D38622 = {
 			fileRef = AABD0B2905DF12FA004F7929;
