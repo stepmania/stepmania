@@ -1968,10 +1968,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSurfaceUtils.h">
 			</File>
 			<File
-				RelativePath="RageSurfaceUtilsPalettize.cpp">
+				RelativePath="RageSurfaceUtils_Palettize.cpp">
 			</File>
 			<File
-				RelativePath="RageSurfaceUtilsPalettize.h">
+				RelativePath="RageSurfaceUtils_Palettize.h">
 			</File>
 			<File
 				RelativePath="RageSurface_Load.cpp">
