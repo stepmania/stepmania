@@ -33,6 +33,7 @@
 #include "UnlockSystem.h"
 #include "CatalogXml.h"
 #include "XmlFile.h"
+#include "Foreach.h"
 
 //
 // Old file versions for backward compatibility
@@ -338,11 +339,27 @@ int Profile::GetActualCourseDancePointsForStepsType( StepsType st ) const
 			if( !pCourse->AllSongsAreFixed() )
 				continue;
 
-			const HighScoresForACourse& h = i->second;
-			FOREACH_ShownCourseDifficulty( cd )
+			const HighScoresForACourse &hsfac = i->second;
+
+			for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsfac.m_TrailHighScores.begin();
+				j != hsfac.m_TrailHighScores.end();
+				++j )
 			{
-				const HighScoreList& hs = h.hs[st][cd];
-				const RadarValues& fRadars = pCourse->GetTrail(st,cd)->GetRadarValues();
+				const TrailID &id = j->first;
+				Trail* pTrail = id.ToTrail( pCourse, true );
+				
+				// If the Steps isn't loaded on the current machine, then we can't 
+				// get radar values to compute dance points.
+				if( pTrail == NULL )
+					continue;
+
+				if( pTrail->m_StepsType != st )
+					continue;
+
+				const HighScoresForATrail& h = j->second;
+				const HighScoreList& hs = h.hs;
+
+				const RadarValues& fRadars = pTrail->GetRadarValues();
 				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
 			}
@@ -463,33 +480,28 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES
 //
 // Course high scores
 //
-void Profile::AddCourseHighScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs, int &iIndexOut )
+void Profile::AddCourseHighScore( const Course* pCourse, const Trail* pTrail, HighScore hs, int &iIndexOut )
+{
+	GetCourseHighScoreList(pCourse,pTrail).AddHighScore( hs, iIndexOut );
+}
+
+const HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail ) const
+{
+	return ((Profile *)this)->GetCourseHighScoreList( pCourse, pTrail );
+}
+
+HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, const Trail* pTrail )
 {
 	CourseID courseID;
 	courseID.FromCourse( pCourse );
 
-	std::map<CourseID,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( courseID );
-	if( iter == m_CourseHighScores.end() )
-		m_CourseHighScores[courseID].hs[st][cd].AddHighScore( hs, iIndexOut );	// operator[] inserts into map
-	else
-		iter->second.hs[st][cd].AddHighScore( hs, iIndexOut );
-}
+	TrailID trailID;
+	trailID.FromTrail( pTrail );
 
-const HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd ) const
-{
-	return ((Profile *)this)->GetCourseHighScoreList( pCourse, st, cd );
-}
+	HighScoresForACourse &hsCourse = m_CourseHighScores[courseID];	// operator[] inserts into map
+	HighScoresForATrail &hsTrail = hsCourse.m_TrailHighScores[trailID];	// operator[] inserts into map
 
-HighScoreList& Profile::GetCourseHighScoreList( const Course* pCourse, StepsType st, CourseDifficulty cd )
-{
-	CourseID courseID;
-	courseID.FromCourse( pCourse );
-
-	std::map<CourseID,HighScoresForACourse>::iterator iter = m_CourseHighScores.find( courseID );
-	if( iter == m_CourseHighScores.end() )
-		return m_CourseHighScores[courseID].hs[st][cd];	// operator[] inserts into map
-	else
-		return iter->second.hs[st][cd];
+	return hsTrail.hs;
 }
 
 int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
@@ -502,24 +514,25 @@ int Profile::GetCourseNumTimesPlayed( const Course* pCourse ) const
 
 int Profile::GetCourseNumTimesPlayed( const CourseID &courseID ) const
 {
-	std::map<CourseID,HighScoresForACourse>::const_iterator iter = m_CourseHighScores.find( courseID );
-	if( iter == m_CourseHighScores.end() )
-	{
+	const HighScoresForACourse *hsCourse = GetHighScoresForACourse( courseID );
+	if( hsCourse == NULL )
 		return 0;
-	}
-	else
+
+	int iTotalNumTimesPlayed = 0;
+	for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsCourse->m_TrailHighScores.begin();
+		j != hsCourse->m_TrailHighScores.end();
+		j++ )
 	{
-		int iTotalNumTimesPlayed = 0;
-		for( unsigned st = 0; st < NUM_STEPS_TYPES; ++st )
-			FOREACH_CourseDifficulty( cd )
-				iTotalNumTimesPlayed += iter->second.hs[st][cd].iNumTimesPlayed;
-		return iTotalNumTimesPlayed;
+		const HighScoresForATrail &hsTrail = j->second;
+
+		iTotalNumTimesPlayed += hsTrail.hs.iNumTimesPlayed;
 	}
+	return iTotalNumTimesPlayed;
 }
 
-void Profile::IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd )
+void Profile::IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail )
 {
-	GetCourseHighScoreList(pCourse,st,cd).iNumTimesPlayed++;
+	GetCourseHighScoreList(pCourse,pTrail).iNumTimesPlayed++;
 }
 
 //
@@ -576,17 +589,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 
 	InitAll();
 
-	// Only try to load old score formats if we're allowing unsigned data.
-	if( !PREFSMAN->m_bSignProfileData )
-	{
-		LoadProfileDataFromDirSM390a12( sDir );
-		LoadSongScoresFromDirSM390a12( sDir );
-		LoadCourseScoresFromDirSM390a12( sDir );
-		LoadCategoryScoresFromDirSM390a12( sDir );
-	}
-
 	LoadEditableDataFromDir( sDir );
-
 	
 	// Read stats.xml
 	FOR_ONCE
@@ -690,17 +693,6 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		}
 	}
 
-
-	// Delete old files after saving new ones so we don't try to load old
-	// files the next time and make duplicate records. 
-	if( !PREFSMAN->m_bSignProfileData )	// we tried to read the older formats
-	{
-		DeleteProfileDataFromDirSM390a12( sDir );
-		DeleteSongScoresFromDirSM390a12( sDir );
-		DeleteCourseScoresFromDirSM390a12( sDir );
-		DeleteCategoryScoresFromDirSM390a12( sDir );
-	}
-
 	const bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile()); // XXX
 	if( (bThisIsMachineProfile && PREFSMAN->m_bWriteMachineStatsHtml) ||
 		(!bThisIsMachineProfile && PREFSMAN->m_bWriteProfileStatsHtml) )
@@ -719,43 +711,6 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 	FILEMAN->Remove( sEditsTempFile );
 
 	return true;
-}
-
-
-void Profile::LoadProfileDataFromDirSM390a12( CString sDir )
-{
-	CString fn = sDir + SM_390A12_PROFILE_INI;
-	InitEditableData();
-	InitGeneralData();
-
-	//
-	// read ini
-	//
-	IniFile ini;
-	if( !ini.ReadFile( fn ) )
-		return;
-
-	ini.GetValue( "Profile", "DisplayName",						m_sDisplayName );
-	ini.GetValue( "Profile", "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
-	ini.GetValue( "Profile", "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
-	ini.GetValue( "Profile", "DefaultModifiers",				m_sDefaultModifiers );
-	ini.GetValue( "Profile", "TotalPlays",						m_iTotalPlays );
-	ini.GetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
-	ini.GetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
-	ini.GetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
-	ini.GetValue( "Profile", "WeightPounds",					m_iWeightPounds );
-	ini.GetValue( "Profile", "CaloriesBurned",					m_fTotalCaloriesBurned );
-	ini.GetValue( "Profile", "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
-
-	unsigned i;
-	for( i=0; i<NUM_PLAY_MODES; i++ )
-		ini.GetValue( "Profile", "NumSongsPlayedByPlayMode"+Capitalize(PlayModeToString((PlayMode)i)), m_iNumSongsPlayedByPlayMode[i] );
-	for( i=0; i<NUM_STYLES; i++ )
-		ini.GetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetGameDefForGame(GAMEMAN->GetStyleDefForStyle((Style)i)->m_Game)->m_szName)+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
-	for( i=0; i<NUM_DIFFICULTIES; i++ )
-		ini.GetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(DifficultyToString((Difficulty)i)), m_iNumSongsPlayedByDifficulty[i] );
-	for( i=0; i<MAX_METER+1; i++ )
-		ini.GetValue( "Profile", "NumSongsPlayedByMeter"+ssprintf("%d",i), m_iNumSongsPlayedByMeter[i] );
 }
 
 void Profile::SaveEditableDataToDir( CString sDir ) const
@@ -1066,8 +1021,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 		if( pProfile->GetSongNumTimesPlayed(songID) == 0 )
 			continue;
 
-
-		LPXNode pSongNode = pNode->AppendChild( songID.CreateNode() );
+		XNode* pSongNode = pNode->AppendChild( songID.CreateNode() );
 
 		for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
 			j != hsSong.m_StepsHighScores.end();
@@ -1082,7 +1036,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 			if( hsl.iNumTimesPlayed == 0 )
 				continue;
 
-			LPXNode pStepsNode = pSongNode->AppendChild( stepsID.CreateNode() );
+			XNode* pStepsNode = pSongNode->AppendChild( stepsID.CreateNode() );
 
 			pStepsNode->AppendChild( hsl.CreateNode() );
 		}
@@ -1093,11 +1047,11 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 void Profile::LoadSongScoresFromNode( const XNode* pNode )
 {
+	CHECKPOINT;
+
 	ASSERT( pNode->name == "SongScores" );
 
-	for( XNodes::const_iterator song = pNode->childs.begin(); 
-		song != pNode->childs.end(); 
-		song++ )
+	FOREACH_CONST( XNode*, pNode->childs, song )
 	{
 		if( (*song)->name != "Song" )
 			continue;
@@ -1107,9 +1061,7 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 		if( !songID.IsValid() )
 			WARN_AND_CONTINUE;
 
-		for( XNodes::iterator steps = (*song)->childs.begin(); 
-			steps != (*song)->childs.end(); 
-			steps++ )
+		FOREACH_CONST( XNode*, (*song)->childs, steps )
 		{
 			if( (*steps)->name != "Steps" )
 				continue;
@@ -1125,309 +1077,6 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 			
 			HighScoreList &hsl = m_SongHighScores[songID].m_StepsHighScores[stepsID].hs;
 			hsl.LoadFromNode( pHighScoreListNode );
-		}
-	}
-}
-
-static Grade ConvertA12Grade( Grade g )
-{
-	/*
-	 * Map
-	 *   GRADE_NO_DATA=0, GRADE_E, GRADE_D, GRADE_C, GRADE_B, GRADE_A,
-	 *   GRADE_AA,GRADE_AAA,GRADE_AAAA, NUM_GRADES 
-	 *
-	 * to GRADE_TIER_1 (AAAA) ... GRADE_TIER_7 (D), GRADE_FAILED (E), GRADE_NO_DATA.
-	 */
-	switch( g )
-	{
-	case 0: return GRADE_NO_DATA;
-	case 1: return GRADE_FAILED; /* E */
-	case 2: return GRADE_TIER_7; /* D */
-	case 3: return GRADE_TIER_6; /* C */
-	case 4: return GRADE_TIER_5; /* B */
-	case 5: return GRADE_TIER_4; /* A */
-	case 6: return GRADE_TIER_3; /* AA */
-	case 7: return GRADE_TIER_2; /* AAA */
-	case 8: return GRADE_TIER_1; /* AAAA */
-	default: return GRADE_NO_DATA;
-	}
-}
-
-void Profile::LoadSongScoresFromDirSM390a12( CString sDir )
-{
-	Profile* pProfile = this;
-	ASSERT( pProfile );
-
-	CString fn = sDir + SM_390A12_SONG_SCORES_DAT;
-	if( !IsAFile(fn) )
-		return;
-
-	RageFile f;
-	if( !f.Open(fn, RageFile::READ) )
-	{
-		LOG->Warn( "Couldn't open file \"%s\": %s", fn.c_str(), f.GetError().c_str() );
-		return;
-	}
-
-	int version;
-	if( !FileRead(f, version) )
-		WARN_AND_RETURN;
-	if( version != SM_390A12_SONG_SCORES_VERSION )
-		WARN_AND_RETURN;
-
-	int iNumSongs;
-	if( !FileRead(f, iNumSongs) )
-		WARN_AND_RETURN;
-
-	for( int s=0; s<iNumSongs; s++ )
-	{
-		CString sSongDir;
-		if( !FileRead(f, sSongDir) )
-			WARN_AND_RETURN;
-
-		Song* pSong = SONGMAN->GetSongFromDir( sSongDir );
-
-		int iNumNotes;
-		if( !FileRead(f, iNumNotes) )
-			WARN_AND_RETURN;
-
-		for( int n=0; n<iNumNotes; n++ )
-		{
-			StepsType st;
-			if( !FileRead(f, (int&)st) )
-				WARN_AND_RETURN;
-
-			Difficulty dc;
-			if( !FileRead(f, (int&)dc) )
-				WARN_AND_RETURN;
-		
-			CString sDescription;
-			if( !FileRead(f, sDescription) )
-				WARN_AND_RETURN;
-
-			// Even if pSong or pSteps is null, we still have to skip over that data.
-
-			Steps* pSteps = NULL;
-			if( pSong )
-			{
-				if( dc==DIFFICULTY_INVALID )
-					pSteps = pSong->GetStepsByDescription( st, sDescription );
-				else
-					pSteps = pSong->GetStepsByDifficulty( st, dc );
-			}
-			
-			int iNumTimesPlayed;
-			if( !FileRead(f, iNumTimesPlayed) )
-				WARN_AND_RETURN;
-
-			HighScoreList &hsl = pProfile->GetStepsHighScoreList(pSong,pSteps);
-			
-			if( pSteps )
-				hsl.iNumTimesPlayed = iNumTimesPlayed;
-
-			int iNumHighScores;
-			if( !FileRead(f, iNumHighScores) )
-				WARN_AND_RETURN;
-
-			if( pSteps )
-				hsl.vHighScores.resize( iNumHighScores );
-
-			int l;
-			for( l=0; l<iNumHighScores; l++ )
-			{
-				CString sName;
-				if( !FileRead(f, sName) )
-					WARN_AND_RETURN;
-
-				Grade grade;
-				if( !FileRead(f, (int&)grade) )
-					WARN_AND_RETURN;
-				grade = ConvertA12Grade( grade );
-
-				int iScore;
-				if( !FileRead(f, iScore) )
-					WARN_AND_RETURN;
-
-				float fPercentDP;
-				if( !FileRead(f, fPercentDP) )
-					WARN_AND_RETURN;
-
-				if( grade == NUM_GRADES || grade == GRADE_NO_DATA )
-					continue;	// ignore this high score
-				if( pSteps == NULL )
-					continue;	// ignore this high score
-				
-				hsl.vHighScores[l].sName = sName;
-				hsl.vHighScores[l].grade = grade;
-				hsl.vHighScores[l].iScore = iScore;
-				hsl.vHighScores[l].fPercentDP = fPercentDP;
-			}
-
-			// ignore all high scores that are 0
-			for( l=0; l<iNumHighScores; l++ )
-			{
-				if( pSteps && hsl.vHighScores[l].iScore <= 0 )
-				{
-					hsl.vHighScores.resize(l);
-					break;
-				}
-			}
-		}
-	}
-}
-
-
-void Profile::LoadCategoryScoresFromDirSM390a12( CString sDir )
-{
-	CHECKPOINT;
-
-	Profile* pProfile = this;
-	ASSERT( pProfile );
-
-	CString fn = sDir + SM_390A12_CATEGORY_SCORES_DAT;
-	if( !IsAFile(fn) )
-		return;
-
-	RageFile f;
-	if( !f.Open(fn, RageFile::READ) )
-	{
-		LOG->Warn( "Couldn't open file \"%s\": %s", fn.c_str(), f.GetError().c_str() );
-		return;
-	}
-	
-	int version;
-	if( !FileRead(f, version) )
-		WARN_AND_RETURN;
-	if( version != SM_390A12_CATEGORY_RANKING_VERSION )
-		WARN_AND_RETURN;
-
-	/* NUM_STEPS_TYPES changed after A12.  Only read up to the last unchanged type. We
-	 * can probably drop all of this compatibility code before the final release, anyway ... */
-	for( int st=0; st<=STEPS_TYPE_DS3DDX_SINGLE; st++ )
-	{
-		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
-		{
-			int iNumHighScores;
-			if( !FileRead(f, iNumHighScores) )
-				WARN_AND_RETURN;
-
-			HighScoreList &hsl = pProfile->GetCategoryHighScoreList( (StepsType)st, (RankingCategory)rc );
-			hsl.vHighScores.resize( iNumHighScores );
-
-			for( int l=0; l<iNumHighScores; l++ )
-			{
-				CString sName;
-				if( !FileRead(f, sName) )
-					WARN_AND_RETURN;
-			
-				int iScore;
-				if( !FileRead(f, iScore) )
-					WARN_AND_RETURN;
-				
-				float fPercentDP;
-				if( !FileRead(f, fPercentDP) )
-					WARN_AND_RETURN;
-				
-				hsl.vHighScores[l].sName = sName;
-				hsl.vHighScores[l].iScore = iScore;
-				hsl.vHighScores[l].fPercentDP = fPercentDP;
-			}
-		}
-	}
-}
-
-void Profile::LoadCourseScoresFromDirSM390a12( CString sDir )
-{
-	CHECKPOINT;
-
-	Profile* pProfile = this;
-	ASSERT( pProfile );
-
-	CString fn = sDir + SM_390A12_COURSE_SCORES_DAT;
-	if( !IsAFile(fn) )
-		return;
-
-	RageFile f;
-	if( !f.Open(fn, RageFile::READ) )
-	{
-		LOG->Warn( "Couldn't open file \"%s\": %s", fn.c_str(), f.GetError().c_str() );
-		return;
-	}
-	
-	int version;
-	if( !FileRead(f, version) )
-		WARN_AND_RETURN;
-	if( version != SM_390A12_COURSE_SCORES_VERSION )
-		WARN_AND_RETURN;
-
-	int iNumCourses;
-	if( !FileRead(f, iNumCourses) )
-		WARN_AND_RETURN;
-
-	for( int c=0; c<iNumCourses; c++ )
-	{
-		CString sPath;
-		if( !FileRead(f, sPath) )
-			WARN_AND_RETURN;
-
-		Course* pCourse = SONGMAN->GetCourseFromPath( sPath );
-		if( pCourse == NULL )
-			pCourse = SONGMAN->GetCourseFromName( sPath );
-		
-		// even if we don't find the Course*, we still have to read past the input
-	
-		int NumStepsTypesPlayed = 0;
-		if( !FileRead(f, NumStepsTypesPlayed) )
-			WARN_AND_RETURN;
-
-		while( NumStepsTypesPlayed-- )
-		{
-			int st;
-			if( !FileRead(f, st) )
-				WARN_AND_RETURN;
-
-			int iNumTimesPlayed;
-			if( !FileRead(f, iNumTimesPlayed) )
-				WARN_AND_RETURN;
-
-			HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, (StepsType)st, COURSE_DIFFICULTY_REGULAR );
-
-			if( pCourse )
-				hsl.iNumTimesPlayed = iNumTimesPlayed;
-
-			int iNumHighScores;
-			if( !FileRead(f, iNumHighScores) )
-				WARN_AND_RETURN;
-
-			if( pCourse )
-				hsl.vHighScores.resize(iNumHighScores);
-
-			for( int l=0; l<iNumHighScores; l++ )
-			{
-				CString sName;
-				if( !FileRead(f, sName) )
-					WARN_AND_RETURN;
-
-				int iScore;
-				if( !FileRead(f, iScore) )
-					WARN_AND_RETURN;
-
-				float fPercentDP;
-				if( !FileRead(f, fPercentDP) )
-					WARN_AND_RETURN;
-
-				float fSurviveSeconds;
-				if( !FileRead(f, fSurviveSeconds) )
-					WARN_AND_RETURN;
-
-				if( pCourse && st < NUM_STEPS_TYPES )
-				{
-					hsl.vHighScores[l].sName = sName;
-					hsl.vHighScores[l].iScore = iScore;
-					hsl.vHighScores[l].fPercentDP = fPercentDP;
-					hsl.vHighScores[l].fSurviveSeconds = fSurviveSeconds;
-				}
-			}
 		}
 	}
 }
@@ -1448,39 +1097,31 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 		i != m_CourseHighScores.end();
 		i++ )
 	{
-		const CourseID &id = i->first;
+		const CourseID &courseID = i->first;
 		const HighScoresForACourse &hsCourse = i->second;
 
 		// skip courses that have never been played
-		if( pProfile->GetCourseNumTimesPlayed(id) == 0 )
+		if( pProfile->GetCourseNumTimesPlayed(courseID) == 0 )
 			continue;
 
-		XNode* pCourseNode = pNode->AppendChild( id.CreateNode() );
+		XNode* pCourseNode = pNode->AppendChild( courseID.CreateNode() );
 
-		for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; ((int&)st)++ )
+		for( std::map<TrailID,HighScoresForATrail>::const_iterator j = hsCourse.m_TrailHighScores.begin();
+			j != hsCourse.m_TrailHighScores.end();
+			j++ )
 		{
-			// TRICKY:  Only append this node if one we have at least one child.
-			// There's no point to saving a bunch of empty StepsType nodes.
-			LPXNode pStepsTypeNode = new XNode;
-			pStepsTypeNode->name = "StepsType";
-			pStepsTypeNode->AppendAttr( "Type", GameManager::NotesTypeToString(st) );
-			
-			FOREACH_CourseDifficulty( cd )
-			{
-				const HighScoreList &hsl = hsCourse.hs[st][cd];
+			const TrailID &trailID = j->first;
+			const HighScoresForATrail &hsTrail = j->second;
 
-				// skip course/steps types that have never been played
-				if( hsl.iNumTimesPlayed == 0 )
-					continue;
+			const HighScoreList &hsl = hsTrail.hs;
 
-				LPXNode pCourseDifficultyNode = pStepsTypeNode->AppendChild( "CourseDifficulty" );
-				pCourseDifficultyNode->AppendAttr( "Type", CourseDifficultyToString(cd) );
-			
-				pCourseDifficultyNode->AppendChild( hsl.CreateNode() );
-			}
+			// skip steps that have never been played
+			if( hsl.iNumTimesPlayed == 0 )
+				continue;
 
-			if( !pStepsTypeNode->childs.empty() )
-				pCourseNode->AppendChild( pStepsTypeNode );
+			XNode* pTrailNode = pCourseNode->AppendChild( trailID.CreateNode() );
+
+			pTrailNode->AppendChild( hsl.CreateNode() );
 		}
 	}
 
@@ -1493,51 +1134,32 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 
 	ASSERT( pNode->name == "CourseScores" );
 
-	for( XNodes::const_iterator course = pNode->childs.begin(); 
-		course != pNode->childs.end(); 
-		course++ )
+	FOREACH_CONST( XNode*, pNode->childs, course )
 	{
 		if( (*course)->name != "Course" )
 			continue;
 
-		CourseID id;
-		id.LoadFromNode( *course );
-		if( !id.IsValid() )
+		CourseID courseID;
+		courseID.LoadFromNode( *course );
+		if( !courseID.IsValid() )
 			WARN_AND_CONTINUE;
 
-		for( XNodes::iterator stepsType = (*course)->childs.begin(); 
-			stepsType != (*course)->childs.end(); 
-			stepsType++ )
+		FOREACH_CONST( XNode*, (*course)->childs, trail )
 		{
-			if( (*stepsType)->name != "StepsType" )
+			if( (*trail)->name != "Trail" )
 				continue;
 			
-			CString str;
-			if( !(*stepsType)->GetAttrValue( "Type", str ) )
-				WARN_AND_CONTINUE;
-			StepsType st = GameManager::StringToNotesType( str );
-			if( st == STEPS_TYPE_INVALID )
+			TrailID trailID;
+			trailID.LoadFromNode( *trail );
+			if( !trailID.IsValid() )
 				WARN_AND_CONTINUE;
 
-			for( XNodes::iterator courseDifficulty = (*stepsType)->childs.begin(); 
-				courseDifficulty != (*stepsType)->childs.end(); 
-				courseDifficulty++ )
-			{
-
-				const LPXAttr TypeAttr = (*courseDifficulty)->GetAttr( "Type" );
-				if( TypeAttr == NULL )
-					WARN_AND_CONTINUE;
-				CourseDifficulty cd = StringToCourseDifficulty( TypeAttr->value );
-				if( cd == COURSE_DIFFICULTY_INVALID )
-					WARN_AND_CONTINUE;
-
-				XNode *pHighScoreListNode = (*courseDifficulty)->GetChild("HighScoreList");
-				if( pHighScoreListNode == NULL )
-					WARN_AND_CONTINUE;
-				
-				HighScoreList &hsl = m_CourseHighScores[id].hs[st][cd];
-				hsl.LoadFromNode( pHighScoreListNode );
-			}
+			XNode *pHighScoreListNode = (*trail)->GetChild("HighScoreList");
+			if( pHighScoreListNode == NULL )
+				WARN_AND_CONTINUE;
+			
+			HighScoreList &hsl = m_CourseHighScores[courseID].m_TrailHighScores[trailID].hs;
+			hsl.LoadFromNode( pHighScoreListNode );
 		}
 	}
 }
@@ -1620,30 +1242,6 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
 	}
-}
-
-void Profile::DeleteProfileDataFromDirSM390a12( CString sDir ) const
-{
-	CString fn = sDir + SM_390A12_PROFILE_INI;
-	FILEMAN->Remove( fn );
-}
-
-void Profile::DeleteSongScoresFromDirSM390a12( CString sDir ) const
-{
-	CString fn = sDir + SM_390A12_SONG_SCORES_DAT;
-	FILEMAN->Remove( fn );
-}
-
-void Profile::DeleteCourseScoresFromDirSM390a12( CString sDir ) const
-{
-	CString fn = sDir + SM_390A12_COURSE_SCORES_DAT;
-	FILEMAN->Remove( fn );
-}
-
-void Profile::DeleteCategoryScoresFromDirSM390a12( CString sDir ) const
-{
-	CString fn = sDir + SM_390A12_CATEGORY_SCORES_DAT;
-	FILEMAN->Remove( fn );
 }
 
 void Profile::SaveStatsWebPageToDir( CString sDir ) const
@@ -2084,10 +1682,11 @@ XNode* Profile::SaveRecentCourseScoresCreateNode() const
 	return pNode;
 }
 
-void Profile::AddCourseRecentScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs )
+void Profile::AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs )
 {
 	HighScoreForACourse h;
 	h.courseID.FromCourse( pCourse );
+	h.trailID.FromTrail( pTrail );
 	h.hs = hs;
 	m_vRecentCourseScores.push_back( h );
 }
@@ -2097,6 +1696,15 @@ const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID&
 	std::map<SongID,HighScoresForASong>::const_iterator it;
 	it = m_SongHighScores.find( songID );
 	if( it == m_SongHighScores.end() )
+		return NULL;
+	return &it->second;
+}
+
+const Profile::HighScoresForACourse *Profile::GetHighScoresForACourse( const CourseID& courseID ) const
+{
+	std::map<CourseID,HighScoresForACourse>::const_iterator it;
+	it = m_CourseHighScores.find( courseID );
+	if( it == m_CourseHighScores.end() )
 		return NULL;
 	return &it->second;
 }
