@@ -111,47 +111,43 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 
 	for(unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i)
 	{
-		try {
-			Driver = DriversToTry[i];
-			LOG->Trace("Initializing driver: %s", DriversToTry[i].c_str());
+		Driver = DriversToTry[i];
+		LOG->Trace("Initializing driver: %s", DriversToTry[i].c_str());
 
 #ifdef _WINDOWS
-			if(!DriversToTry[i].CompareNoCase("DirectSound"))		ret = new RageSound_DSound;
-			if(!DriversToTry[i].CompareNoCase("DirectSound-sw"))	ret = new RageSound_DSound_Software;
-			if(!DriversToTry[i].CompareNoCase("WaveOut"))			ret = new RageSound_WaveOut;
+		if(!DriversToTry[i].CompareNoCase("DirectSound"))		ret = new RageSound_DSound;
+		if(!DriversToTry[i].CompareNoCase("DirectSound-sw"))	ret = new RageSound_DSound_Software;
+		if(!DriversToTry[i].CompareNoCase("WaveOut"))			ret = new RageSound_WaveOut;
 #endif
 #ifdef _XBOX
-			if(!DriversToTry[i].CompareNoCase("DirectSound"))		ret = new RageSound_DSound;
+		if(!DriversToTry[i].CompareNoCase("DirectSound"))		ret = new RageSound_DSound;
 #endif
 #ifdef HAVE_ALSA
-			if(!DriversToTry[i].CompareNoCase("ALSA"))				ret = new RageSound_ALSA9;
-			if(!DriversToTry[i].CompareNoCase("ALSA-sw"))			ret = new RageSound_ALSA9_Software;
+		if(!DriversToTry[i].CompareNoCase("ALSA"))				ret = new RageSound_ALSA9;
+		if(!DriversToTry[i].CompareNoCase("ALSA-sw"))			ret = new RageSound_ALSA9_Software;
 #endif		
 #ifdef HAVE_OSS
-			if(!DriversToTry[i].CompareNoCase("OSS"))				ret = new RageSound_OSS;
+		if(!DriversToTry[i].CompareNoCase("OSS"))				ret = new RageSound_OSS;
 #endif
 #ifdef RAGE_SOUND_CA
-			if(!DriversToTry[i].CompareNoCase("CoreAudio"))			ret = new RageSound_CA;
+		if(!DriversToTry[i].CompareNoCase("CoreAudio"))			ret = new RageSound_CA;
 #endif
 #ifdef RAGE_SOUND_QT1
-			if(!DriversToTry[i].CompareNoCase("QT1"))				ret = new RageSound_QT1;
+		if(!DriversToTry[i].CompareNoCase("QT1"))				ret = new RageSound_QT1;
 #endif
-			if(!DriversToTry[i].CompareNoCase("Null"))				ret = new RageSound_Null;
+		if(!DriversToTry[i].CompareNoCase("Null"))				ret = new RageSound_Null;
 
-			if( ret == NULL )
-			{
-				LOG->Warn( "Unknown sound driver name: %s", DriversToTry[i].c_str() );
-				continue;
-			}
+		if( ret == NULL )
+		{
+			LOG->Warn( "Unknown sound driver name: %s", DriversToTry[i].c_str() );
+			continue;
+		}
 
-			CString sError = ret->Init();
-			if( sError != "" )
-			{
-				LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
-				SAFE_DELETE( ret );
-			}
-		} catch(const RageException &e) {
-			LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), e.what());
+		CString sError = ret->Init();
+		if( sError != "" )
+		{
+			LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
+			SAFE_DELETE( ret );
 		}
 	}
 	

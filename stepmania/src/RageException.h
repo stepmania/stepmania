@@ -5,25 +5,9 @@
 #ifndef RAGEEXCEPTION_H
 #define RAGEEXCEPTION_H
 
-#include <exception>
-#include <cstdarg>
-
-class RageException : public exception
+namespace RageException
 {
-public:
-	RageException( const CString &str );
-
-	virtual const char *what() const throw();
-	virtual ~RageException() throw() { }
-
-	/* The only difference between these is that Throw triggers debug behavior
-	 * and Nonfatal doesn't.  Nonfatal is used when the exception happens
-	 * normally and will be caught, such as when a driver fails to initialize. */
-	static void NORETURN Throw(const char *fmt, ...);
-	static void NORETURN ThrowNonfatal(const char *fmt, ...);
-
-protected:
-	CString m_sError;
+	void NORETURN Throw(const char *fmt, ...);
 };
 
 #endif

@@ -4,19 +4,11 @@
 #include "RageLog.h"
 #include "StepMania.h"
 
+#include <cstdarg>
+
 #if defined(_WINDOWS) && defined(DEBUG)
 #include <windows.h>
 #endif
-
-RageException::RageException( const CString &str ):
-	m_sError(str)
-{
-}
-
-const char* RageException::what() const throw ()
-{
-	return m_sError;
-}
 
 /* This is no longer actually implemented by throwing an exception, but it acts
  * the same way to code in practice. */
@@ -52,15 +44,6 @@ void RageException::Throw(const char *fmt, ...)
 	HandleException( error );
 }
 
-void RageException::ThrowNonfatal(const char *fmt, ...)
-{
-	va_list	va;
-	va_start(va, fmt);
-	CString error = vssprintf( fmt, va );
-	va_end(va);
-
-	throw RageException( error );
-}
 /*
  * Copyright (c) 2001-2004 Chris Danford
  * All rights reserved.
