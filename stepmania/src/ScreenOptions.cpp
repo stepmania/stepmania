@@ -232,7 +232,11 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 
 	// poke once at all the explanation metrics so that we catch missing ones early
 	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
+	{
 		GetExplanationText( r );
+		GetExplanationTitle( r );
+	}
+
 
 	CHECKPOINT;
 
@@ -281,12 +285,19 @@ ScreenOptions::~ScreenOptions()
 CString ScreenOptions::GetExplanationText( int row ) const
 {
 	CString sLineName = m_OptionRow[row].name;
-	if( sLineName=="" )
-		sLineName = m_OptionRow[row].choices[0];
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
-	return THEME->GetMetric( m_sName,sLineName );
+	return THEME->GetMetric( "OptionExplanations", sLineName+"Help" );
+}
+
+CString ScreenOptions::GetExplanationTitle( int row ) const
+{
+	CString sLineName = m_OptionRow[row].name;
+	sLineName.Replace("\n-","");
+	sLineName.Replace("\n","");
+	sLineName.Replace(" ","");
+	return THEME->GetMetric( "OptionExplanations", sLineName+"Title" );
 }
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
@@ -330,14 +341,12 @@ void ScreenOptions::InitOptionsText()
 {
 	for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 	{
-		const OptionRow &optline = m_OptionRow[i];
-
 		const float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
 
 		BitmapText &title = m_textTitles[i];
 
 		title.LoadFromFont( THEME->GetPathToF("ScreenOptions title") );
-		CString sText = optline.title;
+		CString sText = GetExplanationTitle( i );
 
 		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );

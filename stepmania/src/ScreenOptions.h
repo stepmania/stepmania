@@ -27,7 +27,6 @@ const unsigned MAX_OPTION_LINES = 40;
 struct OptionRow
 {
 	CString name;
-	CString title;
 	bool bOneChoiceForAllPlayers;
 	vector<CString> choices;
 
@@ -36,7 +35,6 @@ struct OptionRow
 	OptionRow( const char *n, int b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		name = n;
-		title = n;
 		bOneChoiceForAllPlayers = !!b;
 #define PUSH( c )	if(c) choices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
@@ -68,6 +66,7 @@ protected:
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut );
 	CString GetExplanationText( int row ) const;
+	CString GetExplanationTitle( int row ) const;
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow );
 	void PositionUnderlines();
 	void PositionIcons();

@@ -231,7 +231,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );
 
 		OptionRowHandler hand;
-		bool TitleSetExplicitly = false;
 		for( unsigned part = 0; part < asParts.size(); ++part)
 		{
 			CStringArray asBits;
@@ -240,12 +239,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			const CString name = asBits[0];
 			const CString param = asBits.size() > 1? asBits[1]: "";
 
-			if( !name.CompareNoCase("title") )
-			{
-				TitleSetExplicitly = true;
-				row.title = param;
-			}
-			else if( !name.CompareNoCase("list") )
+			if( !name.CompareNoCase("list") )
 			{
 				SetList( row, hand, param, row.name );
 			}
@@ -265,9 +259,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			}
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
-
-			if( !TitleSetExplicitly )
-				row.title = row.name;
 		}
 		OptionRowHandlers.push_back( hand );
 	}
@@ -610,6 +601,10 @@ void ScreenOptionsMaster::RefreshIcons()
 			case ROW_CONFIG:
 				break;
 			}
+
+			/* XXX: hack to not display text in the song options menu */
+			if( row.bOneChoiceForAllPlayers )
+				sIcon = "";
 
 			icon.Load( (PlayerNumber)p, sIcon, false );
 		}
