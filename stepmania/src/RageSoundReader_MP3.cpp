@@ -492,7 +492,7 @@ int RageSoundReader_MP3::FindOffsetFix()
 	MADLIB_rewind();
 
 	/* Search for the frame we just saved. */
-	mad_timer_t Actual;
+	mad_timer_t Actual = mad_timer_zero;
 	bool found = false;
 	for( int i = 0; i < 10; ++i )
 	{
