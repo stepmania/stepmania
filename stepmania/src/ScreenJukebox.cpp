@@ -156,66 +156,17 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 	//LOG->Trace( "ScreenJukebox::Input()" );
 
 
-	//
-	// This should be the same as ScreenAttract::Input()
-	//
-
-	if(type != IET_FIRST_PRESS) return; // don't care
-
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
-	{
-		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
-
-		CString sMessage = "Coin Mode: ";
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
-		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
-		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
-		}
-		SCREENMAN->RefreshCreditsMessages();
-		SCREENMAN->SystemMessage( sMessage );
-		return;
-	}
-
 	if( MenuI.IsValid() )
 	{
 		switch( MenuI.button )
 		{
+		case MENU_BUTTON_START:
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
-			if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() )
-				m_Out.StartTransitioning( SM_GoToNextScreen );
-			break;
-		case MENU_BUTTON_COIN:
-			Screen::MenuCoin( MenuI.player );	// increment coins, play sound
-			m_soundMusic.Stop();
-			SDL_Delay( 800 );	// do a little pause, like the arcade does
-			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-			break;
-		case MENU_BUTTON_START:
-		case MENU_BUTTON_BACK:
-
-			switch( PREFSMAN->m_CoinMode )
-			{
-			case PrefsManager::COIN_PAY:
-				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-					break;	// don't fall through
-				// fall through
-			case PrefsManager::COIN_FREE:
-			case PrefsManager::COIN_HOME:
-				m_soundMusic.Stop();
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-				SDL_Delay( 800 );	// do a little pause, like the arcade does
-				SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-				break;
-			default:
-				ASSERT(0);
-			}
+			SCREENMAN->SendMessageToTopScreen( SM_NotesEnded, 0 );
 			break;
 		}
 	}
-
 }
 
 void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )

@@ -11,7 +11,7 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "TransitionFade.h"
+#include "TransitionBGAnimation.h"
 #include "RageSoundManager.h"
 #include "MenuElements.h"
 
@@ -37,12 +37,13 @@ public:
 
 private:
 
-	BGAnimation	m_Background;
-	BitmapText			m_textLines[MAX_TOTAL_LINES];
-	unsigned 			m_iNumLines;
-	float				m_fTimeLeftInScreen;
+	BGAnimation		m_Background;
+	BitmapText		m_textLines[MAX_TOTAL_LINES];
+	unsigned 		m_iNumLines;
+	float			m_fTimeLeftInScreen;
 
-	TransitionFade	m_Fade;
+	TransitionBGAnimation	m_In;
+	TransitionBGAnimation	m_Out;
 };
 
 

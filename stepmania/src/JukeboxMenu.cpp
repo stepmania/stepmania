@@ -34,7 +34,7 @@ JukeboxMenu::JukeboxMenu()
 
 	for( i=0; i<2; i++ )
 	{
-		m_sprArrows[i].Load( THEME->GetPathTo("Graphics",ssprintf("jukebox menu %s",(i==0?"left":"right"))) );
+		m_sprArrows[i].Load( THEME->GetPathTo("Graphics",ssprintf("JukeboxMenu %s",(i==0?"left":"right"))) );
 		m_sprArrows[i].SetX( ARROWS_X(i) );
 		this->AddChild( &m_sprArrows[i] );
 	}
@@ -59,8 +59,8 @@ JukeboxMenu::JukeboxMenu()
 		this->AddChild( &m_textValue[i] );
 	}
 
-	m_soundChangeRow.Load( THEME->GetPathTo("sounds","jukebox menu row") );
-	m_soundChangeValue.Load( THEME->GetPathTo("sounds","jukebox menu value") );
+	m_soundChangeRow.Load( THEME->GetPathTo("sounds","JukeboxMenu row") );
+	m_soundChangeValue.Load( THEME->GetPathTo("sounds","JukeboxMenu value") );
 
 
 	// fill in data structures

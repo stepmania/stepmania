@@ -42,7 +42,7 @@ ScreenJukeboxMenu::ScreenJukeboxMenu()
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
 
-	m_Menu.Load( "ScreenJukeboxMenu" );
+	m_Menu.Load( "ScreenJukeboxMenu", false );	// disable timer
 	this->AddChild( &m_Menu );
 
 

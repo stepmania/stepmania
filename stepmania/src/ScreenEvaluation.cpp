@@ -831,7 +831,6 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 				/* Tween the screen out, but leave the MenuElements where they are.
 					* Play the "swoosh" sound manually (would normally be played by the ME
 					* tween out). */
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu swoosh") );
 				TweenOffScreen();
 				SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
 			}

@@ -44,7 +44,7 @@ ScreenEditMenu::ScreenEditMenu()
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
 
-	m_Menu.Load( "ScreenEditMenu", false );
+	m_Menu.Load( "ScreenEditMenu", false );	// disable timer
 	this->AddChild( &m_Menu );
 
 
