@@ -96,6 +96,7 @@ protected:
 	
 	// common stuff
 	CString m_sCommand;
+	float m_fUpdateRate;	// get by GainingFocus
 
 	// stretch stuff
 	float m_fStretchTexCoordVelocityX;

@@ -54,6 +54,9 @@ void BGAnimationLayer::Unload()
 void BGAnimationLayer::Init()
 {
 	Unload();
+
+	m_fUpdateRate = 1;
+
 //	m_bCycleColor = false;
 //	m_bCycleAlpha = false;
 //	m_Effect = EFFECT_STRETCH_STILL;
@@ -593,6 +596,8 @@ float BGAnimationLayer::GetMaxTweenTimeLeft() const
 
 void BGAnimationLayer::Update( float fDeltaTime )
 {
+	fDeltaTime *= m_fUpdateRate;
+
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 	
 	unsigned i;
@@ -869,6 +874,7 @@ void BGAnimationLayer::SetDiffuse( RageColor c )
 
 void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
+	m_fUpdateRate = m_fRate;
 	m_Sprites.back()->GetTexture()->SetPlaybackRate(fRate);
 	if( bRewindMovie )
 		m_Sprites[0]->GetTexture()->SetPosition( 0 );

@@ -323,6 +323,9 @@ void Background::LoadFromSong( Song* pSong )
 	// sort segments
 	SortBackgroundChangesArray( m_aBGChanges );
 
+	// scale all rates by the current music rate
+	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
+		m_aBGChanges[i].m_fRate *= GAMESTATE->m_SongOptions.m_fMusicRate;
 
 
     for( map<CString,BGAnimation*>::iterator iter = m_BGAnimations.begin();

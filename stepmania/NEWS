@@ -44,6 +44,10 @@ NEW FEATURE:  Courses can be organized into group folders.  See
 	README-FIRST.html for details.
 NEW FEATURE:  Switch current theme from TitleMenu with L,L,L,R,R,R,L,R.
 NEW FEATURE:  Switch current announcer from TitleMenu with L,L,R,R,L,R,L,R.
+NEW FEATURE:  New parameters for background changes: rate, fade old, loop, 
+	rewind.
+CHANGE:  Background playback speed scaled by song rate, so movies stay in 
+	sync (although syncing isn't very accurate at some song rates).
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 
