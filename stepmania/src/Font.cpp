@@ -24,8 +24,6 @@
 #include "GameManager.h"
 #include "FontCharmaps.h"
 #include "FontCharAliases.h"
-#include "SDL_video.h"
-#include "SDL_image.h"
 
 /* Last private-use Unicode character: */
 const wchar_t Font::DEFAULT_GLYPH = 0xF8FF;
@@ -33,7 +31,6 @@ const wchar_t Font::DEFAULT_GLYPH = 0xF8FF;
 FontPage::FontPage()
 {
 	m_pTexture = NULL;
-	m_pSurface = NULL;
 }
 
 void FontPage::Load( FontPageSettings cfg )
@@ -45,10 +42,7 @@ void FontPage::Load( FontPageSettings cfg )
 	ID.bStretch = true;
 
 	m_pTexture = TEXTUREMAN->LoadTexture( ID );
-	ASSERT( m_pTexture );
-
-	m_pSurface = IMG_Load( ID.filename );
-	ASSERT( m_pSurface );
+	ASSERT( m_pTexture != NULL );
 
 	// load character widths
 	vector<int> FrameWidths;
@@ -116,64 +110,49 @@ void FontPage::Load( FontPageSettings cfg )
 
 void FontPage::SetTextureCoords(const vector<int> &widths)
 {
-	for(int y = 0; y < m_pTexture->GetFramesHigh(); ++y)
+	for(int i = 0; i < m_pTexture->GetNumFrames(); ++i)
 	{
-		for(int x = 0; x < m_pTexture->GetFramesWide(); ++x)
+		glyph g;
+
+		g.fp = this;
+
+		/* Make a copy of each texture rect, reducing each to the actual dimensions
+		 * of the character (most characters don't take a full block). */
+		g.rect = *m_pTexture->GetTextureCoordRect(i);;
+
+		/* Set the width and height to the width and line spacing, respectively. */
+		g.width = float(widths[i]);
+		g.height = float(m_pTexture->GetSourceFrameHeight());
+
+		/* By default, advance one pixel more than the width.  (This could be
+		 * an option.) */
+		g.hadvance = int(g.width + 1);
+
+		/* Do the same thing with X.  Do this by changing the actual rendered
+		 * rect, instead of shifting it, so we don't render more than we need to. */
+		g.hshift = 0;
 		{
-			int i = y*m_pTexture->GetFramesHigh() + x;
-
-			glyph g;
-
-			g.fp = this;
-
-			/* Make a copy of each texture rect, reducing each to the actual dimensions
-			 * of the character (most characters don't take a full block). */
-			g.rect = *m_pTexture->GetTextureCoordRect(i);
-
-			g.blitSrc = RectI(
-				m_pTexture->GetSourceFrameWidth()*x,
-				m_pTexture->GetSourceFrameHeight()*y,
-				m_pTexture->GetSourceFrameWidth()*(x+1),
-				m_pTexture->GetSourceFrameHeight()*(y+1) );
-
-			/* Set the width and height to the width and line spacing, respectively. */
-			g.width = float(widths[i]);
-			g.height = float(m_pTexture->GetSourceFrameHeight());
-
-			/* By default, advance one pixel more than the width.  (This could be
-			 * an option.) */
-			g.hadvance = int(g.width + 1);
-
-			/* Do the same thing with X.  Do this by changing the actual rendered
-			 * rect, instead of shifting it, so we don't render more than we need to. */
-			g.hshift = 0;
+			int iPixelsToChopOff = m_pTexture->GetSourceFrameWidth() - widths[i];
+			if((iPixelsToChopOff % 2) == 1)
 			{
-				int iPixelsToChopOff = m_pTexture->GetSourceFrameWidth() - widths[i];
-				if((iPixelsToChopOff % 2) == 1)
-				{
-					/* We don't want to chop off an odd number of pixels, since that'll
-					 * put our texture coordinates between texels and make things blurrier. 
-					 * Note that, since we set hadvance above, this merely expands what
-					 * we render; it doesn't advance the cursor further.  So, glyphs
-					 * that have an odd width should err to being a pixel offcenter left,
-					 * not right. */
-					iPixelsToChopOff--;
-					g.width++;
-				}
-				g.blitSrc.left += iPixelsToChopOff/2;
-				g.blitSrc.right -= iPixelsToChopOff/2;
-				
-				float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetSourceWidth();
-
-				g.rect.left  += fTexCoordsToChopOff/2;
-				g.rect.right -= fTexCoordsToChopOff/2;
+				/* We don't want to chop off an odd number of pixels, since that'll
+				 * put our texture coordinates between texels and make things blurrier. 
+				 * Note that, since we set hadvance above, this merely expands what
+				 * we render; it doesn't advance the cursor further.  So, glyphs
+				 * that have an odd width should err to being a pixel offcenter left,
+				 * not right. */
+				iPixelsToChopOff--;
+				g.width++;
 			}
+			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetSourceWidth();
 
-			g.Texture = m_pTexture;
-			g.Surface = m_pSurface;
-
-			glyphs.push_back(g);
+			g.rect.left  += fTexCoordsToChopOff/2;
+			g.rect.right -= fTexCoordsToChopOff/2;
 		}
+
+		g.Texture = m_pTexture;
+
+		glyphs.push_back(g);
 	}
 }
 
@@ -200,8 +179,6 @@ void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 		float ExtraRight = min( float(DrawExtraPixelsRight), (iFrameWidth-iCharWidth)/2.0f );
 
 		/* Move left and expand right. */
-		glyphs[i].blitSrc.left -= ExtraLeft;
-		glyphs[i].blitSrc.right += ExtraRight;
 		glyphs[i].rect.left -= ExtraLeft / m_pTexture->GetSourceWidth();
 		glyphs[i].rect.right += ExtraRight / m_pTexture->GetSourceWidth();
 		glyphs[i].hshift -= ExtraLeft;
@@ -211,10 +188,8 @@ void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 
 FontPage::~FontPage()
 {
-	if( m_pTexture )
+	if( m_pTexture != NULL )
 		TEXTUREMAN->UnloadTexture( m_pTexture );
-	if( m_pSurface )
-		SDL_FreeSurface( m_pSurface );
 }
 
 int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
