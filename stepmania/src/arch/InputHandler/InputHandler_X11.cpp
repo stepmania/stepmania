@@ -8,8 +8,6 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-XKeyboardState prev_state;
-
 static RageKeySym XSymToKeySym( int key )
 {
 #define KEY_INV KEY_INVALID
@@ -113,19 +111,18 @@ static RageKeySym XSymToKeySym( int key )
 
 InputHandler_X11::InputHandler_X11()
 {
-	XKeyboardControl new_state;
-	new_state.auto_repeat_mode = AutoRepeatModeOff;
+	XKeyboardControl state;
+	state.auto_repeat_mode = AutoRepeatModeOff;
+	XChangeKeyboardControl(X11Helper::Dpy,KBAutoRepeatMode,&state);
 	X11Helper::Go();
 	X11Helper::OpenMask(KeyPressMask); X11Helper::OpenMask(KeyReleaseMask);
-	XGetKeyboardControl(X11Helper::Dpy,&prev_state);
-	XChangeKeyboardControl(X11Helper::Dpy,KBAutoRepeatMode,&new_state);
 }
 
 InputHandler_X11::~InputHandler_X11()
 {
-	XKeyboardControl end_state;
-	end_state.auto_repeat_mode = prev_state.global_auto_repeat;
-	XChangeKeyboardControl(X11Helper::Dpy,KBAutoRepeatMode,&end_state);
+	XKeyboardControl state;
+	state.auto_repeat_mode = AutoRepeatModeDefault;
+	XChangeKeyboardControl(X11Helper::Dpy,KBAutoRepeatMode,&state);
 	X11Helper::CloseMask(KeyPressMask); X11Helper::CloseMask(KeyReleaseMask);
 	X11Helper::Stop();
 }
