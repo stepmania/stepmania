@@ -298,6 +298,11 @@ void PaneDisplay::SetContent( PaneContents c )
 		str = ssprintf( "%.0f", val );
 	}
 
+	/* If this is a high score name that was set during this game, use the player's name. */
+	for( int p=0; p < NUM_PLAYERS; ++p )
+		if( str == RANKING_TO_FILL_IN_MARKER[p] )
+			str = PROFILEMAN->GetPlayerName( (PlayerNumber)p );
+
 	m_textContents[c].SetText( str );
 
 	const unsigned num = NUM_ITEM_COLORS( g_Contents[c].name );
