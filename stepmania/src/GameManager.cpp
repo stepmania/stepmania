@@ -132,7 +132,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"LrRightHand",
 			"UpRightHand",
 			"UpRight",
-			"Back"
+			"Start"
 		},
 		{	// m_iMenuButtons[NUM_MENU_BUTTONS];	// map from MenuButton to m_szButtonNames
 			DANCE_BUTTON_LEFT,		// MENU_BUTTON_LEFT
