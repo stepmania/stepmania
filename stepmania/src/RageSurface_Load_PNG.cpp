@@ -52,7 +52,7 @@ static void PNG_Warning( png_struct *png, const char *warning )
 
 /* Since libpng forces us to use longjmp (gross!), this function shouldn't create any C++
  * objects, and needs to watch out for memleaks. */
-static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char errorbuf[1024] )
+static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char errorbuf[1024], bool bHeaderOnly )
 {
 	error_info error;
 	error.err = errorbuf;
@@ -76,7 +76,7 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	SDL_Surface *volatile img = NULL;
 	if( setjmp(png_jmpbuf(png)) )
 	{
-		png_destroy_read_struct( &png, &info_ptr, png_infopp_NULL );
+		png_destroy_read_struct( &png, &info_ptr, NULL );
 		if( img )
 			SDL_FreeSurface( img );
 		return NULL;
@@ -89,6 +89,22 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	png_uint_32 width, height;
 	int bit_depth, color_type;
 	png_get_IHDR( png, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL );
+
+	/* If bHeaderOnly is true, don't allocate the pixel storage space or decompress
+	 * the image.  Just return an empty surface with only the width and height set. */
+	if( bHeaderOnly )
+	{
+		img = SDL_CreateRGBSurfaceFrom( SDL_SWSURFACE, width, height, 32, 0, 0, 0, 0, NULL );
+		png_destroy_read_struct( &png, &info_ptr, NULL );
+		if( !img )
+		{
+			strcpy( errorbuf, SDL_GetError() );
+			return NULL;
+		}
+
+		return img;
+	}
+
 
 	png_set_strip_16(png); /* 16bit->8bit */
 	png_set_packing( png ); /* 1,2,4 bit->8 bit */
@@ -206,13 +222,13 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		png_read_row( png, pixels + img->pitch*y, NULL );
 
 	png_read_end( png, info_ptr );
-	png_destroy_read_struct( &png, &info_ptr, png_infopp_NULL );
+	png_destroy_read_struct( &png, &info_ptr, NULL );
 
 	return img;
 }
 
 
-SDL_Surface *RageSurface_Load_PNG( const CString &sPath, CString &error )
+SDL_Surface *RageSurface_Load_PNG( const CString &sPath, bool bHeaderOnly, CString &error )
 {
 	RageFile f;
 	if( !f.Open( sPath ) )
@@ -222,7 +238,7 @@ SDL_Surface *RageSurface_Load_PNG( const CString &sPath, CString &error )
 	}
 
 	char errorbuf[1024];
-	SDL_Surface *ret = RageSurface_Load_PNG( &f, sPath, errorbuf );
+	SDL_Surface *ret = RageSurface_Load_PNG( &f, sPath, errorbuf, bHeaderOnly );
 	if( ret == NULL )
 	{
 		error = errorbuf;

@@ -6,14 +6,14 @@
 #include "RageUtil.h"
 #include "RageFile.h"
 
-SDL_Surface *RageSurface::LoadFile( const CString &sPath )
+SDL_Surface *RageSurface::LoadFile( const CString &sPath, bool bHeaderOnly )
 {
 	const CString ext = GetExtension( sPath );
 
 	CString error;
 	SDL_Surface *ret = NULL;
 	if( !ext.CompareNoCase("png") )
-		ret = RageSurface_Load_PNG( sPath, error );
+		ret = RageSurface_Load_PNG( sPath, bHeaderOnly, error );
 	else if( !ext.CompareNoCase("gif") )
 		ret = RageSurface_Load_GIF( sPath, error );
 	else if( !ext.CompareNoCase("jpg") )

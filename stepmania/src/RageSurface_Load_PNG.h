@@ -3,7 +3,7 @@
 
 #include "SDL_utils.h"
 
-SDL_Surface *RageSurface_Load_PNG( const CString &sPath, CString &error );
+SDL_Surface *RageSurface_Load_PNG( const CString &sPath, bool bHeaderOnly, CString &error );
 
 #endif
 

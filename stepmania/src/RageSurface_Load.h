@@ -4,7 +4,9 @@
 struct SDL_Surface;
 namespace RageSurface
 {
-	SDL_Surface *LoadFile( const CString &sPath );
+	/* If bHeaderOnly is true, the loader is only required to return a surface
+	 * with the width and height set (but may return a complete surface). */
+	SDL_Surface *LoadFile( const CString &sPath, bool bHeaderOnly=false );
 }
 
 #endif
