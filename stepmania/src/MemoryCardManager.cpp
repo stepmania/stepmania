@@ -61,7 +61,7 @@ void MemoryCardManager::Update( float fDelta )
 			if( iter == vOld.end() )	// card wasn't present last update
 			{
 				LOG->Trace( "Connected bus %d port %d device %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
-				vDisconnects.push_back( *newd );
+				vConnects.push_back( *newd );
 			}
 		}
 		
