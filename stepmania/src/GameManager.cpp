@@ -133,7 +133,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_UP,				// DANCE_BUTTON_MENUUP
 				SDLK_DOWN,				// DANCE_BUTTON_MENUDOWN
 				SDLK_F1,				// DANCE_BUTTON_COIN
-				SDLK_LCTRL,				// DANCE_BUTTON_OPERATOR
+				SDLK_SCROLLOCK			// DANCE_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
 				SDLK_KP4,				// DANCE_BUTTON_LEFT,
@@ -149,7 +149,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// DANCE_BUTTON_MENUUP
 				-1, //no default key	// DANCE_BUTTON_MENUDOWN
 				SDLK_F2,				// DANCE_BUTTON_COIN
-				SDLK_RCTRL				// DANCE_BUTTON_OPERATOR
+				-1						// DANCE_BUTTON_OPERATOR
 			},
 		}
 	},
@@ -222,7 +222,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_UP,				// PUMP_BUTTON_MENUUP
 				SDLK_DOWN,				// PUMP_BUTTON_MENUDOWN
 				SDLK_F1,				// PUMP_BUTTON_COIN
-				SDLK_LCTRL				// PUMP_BUTTON_OPERATOR
+				SDLK_SCROLLOCK			// PUMP_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
 				SDLK_KP7,				// PUMP_BUTTON_UPLEFT,
@@ -237,7 +237,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// PUMP_BUTTON_MENUUP
 				-1, //no default key	// PUMP_BUTTON_MENUDOWN
 				SDLK_F2,				// PUMP_BUTTON_COIN
-				SDLK_RCTRL,				// PUMP_BUTTON_OPERATOR
+				-1						// PUMP_BUTTON_OPERATOR
 			},
 		}
 	},
@@ -316,7 +316,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_UP,				// EZ2_BUTTON_MENUUP
 				SDLK_DOWN,				// EZ2_BUTTON_MENUDOWN
 				SDLK_F1,				// EZ2_BUTTON_COIN
-				SDLK_LCTRL,				// EZ2_BUTTON_OPERATOR
+				SDLK_SCROLLOCK			// EZ2_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
 				-1,						// EZ2_BUTTON_FOOTUPLEFT,
@@ -333,7 +333,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1, //no default key	// EZ2_BUTTON_MENUUP
 				-1, //no default key	// EZ2_BUTTON_MENUDOWN
 				SDLK_F2,				// EZ2_BUTTON_COIN
-				SDLK_RCTRL,				// EZ2_BUTTON_OPERATOR
+				-1						// EZ2_BUTTON_OPERATOR
 			},
 		},
 	},
@@ -406,7 +406,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_UP,						// PARA_BUTTON_MENUUP
 				SDLK_DOWN,						// PARA_BUTTON_MENUDOWN
 				SDLK_F1,						// PARA_BUTTON_COIN
-				SDLK_LCTRL,						// PARA_BUTTON_OPERATOR
+				SDLK_SCROLLOCK					// PARA_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
 				-1,						// PARA_BUTTON_LEFT,
@@ -421,7 +421,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1,						// PARA_BUTTON_MENUUP
 				-1,	
 				-1,						// PARA_BUTTON_COIN
-				SDLK_RCTRL,				// PARA_BUTTON_OPERATOR
+				-1						// PARA_BUTTON_OPERATOR
 			},
 		}
 	},
@@ -503,7 +503,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_UP,						// DS3DDX_BUTTON_MENUUP
 				SDLK_DOWN,						// DS3DDX_BUTTON_MENUDOWN
 				SDLK_F1,						// DS3DDX_BUTTON_COIN
-				SDLK_LCTRL,						// DS3DDX_BUTTON_OPERATOR
+				SDLK_SCROLLOCK					// DS3DDX_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
 				-1,						// DS3DDX_BUTTON_HANDLEFT,
@@ -521,7 +521,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1,						// DS3DDX_BUTTON_MENUUP
 				-1,						// DS3DDX_BUTTON_MENUDOWN
 				-1,						// DS3DDX_BUTTON_COIN
-				SDLK_RCTRL,				// DS3DDX_BUTTON_OPERATOR
+				-1						// DS3DDX_BUTTON_OPERATOR
 			},
 		}
 	},
@@ -607,7 +607,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				SDLK_UP,				// BM_BUTTON_MENUUP
 				SDLK_DOWN,				// BM_BUTTON_MENUDOWN
 				SDLK_F1,				// BM_BUTTON_COIN
-				SDLK_LCTRL,				// BM_BUTTON_OPERATOR
+				SDLK_SCROLLOCK			// BM_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
 				-1,					// BM_BUTTON_KEY1,
@@ -626,7 +626,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 				-1,					// BM_BUTTON_MENUUP
 				-1,					// BM_BUTTON_MENUDOWN
 				-1,					// BM_BUTTON_COIN
-				SDLK_RCTRL,			// BM_BUTTON_OPERATOR
+				-1					// BM_BUTTON_OPERATOR
 			},
 		}
 	},
