@@ -418,7 +418,7 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 				return false;
 			}
 
-			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PLAYER )
+			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PROFILE )
 			{
 				LOG->Warn( "The song '%s' already has the maximum number of edits allowed for ProfileSlotP%d.", sSongFullTitle.c_str(), slot+1 );
 				return false;

@@ -23,8 +23,8 @@ class LyricsLoader;
 class Profile;
 class StepsID;
 
-#define MAX_EDITS_PER_SONG_PER_PLAYER	5
-#define MAX_EDITS_PER_SONG				5*2
+#define MAX_EDITS_PER_SONG_PER_PROFILE	5
+#define MAX_EDITS_PER_SONG				5*NUM_PROFILE_SLOTS
 
 extern const int FILE_CACHE_VERSION;
 
