@@ -40,6 +40,7 @@ namespace NoteDataUtil
 	float GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds );
 
 	void RemoveHoldNotes( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void RemoveHands( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
 	void Turn( NoteData &in, StepsType st, TurnType tt, float fStartBeat = 0, float fEndBeat = -1 );

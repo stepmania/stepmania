@@ -156,6 +156,7 @@ CString PlayerOptions::GetString() const
 	if( m_bTransforms[TRANSFORM_PLANTED] )	sReturn += "Planted, ";
 	if( m_bTransforms[TRANSFORM_STOMP] )	sReturn += "Stomp, ";
 	if( m_bTransforms[TRANSFORM_TWISTER] )	sReturn += "Twister, ";
+	if( m_bTransforms[TRANSFORM_NOHANDS] )	sReturn += "NoHands, ";
 
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
 	if( m_bProTiming )		sReturn += "ProTiming, ";
@@ -281,6 +282,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "planted" )	m_bTransforms[TRANSFORM_PLANTED] = on;
 		else if( sBit == "stomp" )		m_bTransforms[TRANSFORM_STOMP] = on;
 		else if( sBit == "twister" )	m_bTransforms[TRANSFORM_TWISTER] = on;
+		else if( sBit == "nohands" )	m_bTransforms[TRANSFORM_NOHANDS] = on;
 		else if( sBit == "reverse" )	SET_FLOAT( fScrolls[SCROLL_REVERSE] )
 		else if( sBit == "split" )		SET_FLOAT( fScrolls[SCROLL_SPLIT] )
 		else if( sBit == "alternate" )	SET_FLOAT( fScrolls[SCROLL_ALTERNATE] )

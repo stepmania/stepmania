@@ -369,6 +369,48 @@ void NoteDataUtil::RemoveHoldNotes(NoteData &in, float fStartBeat, float fEndBea
 }
 
 
+void NoteDataUtil::RemoveHands(NoteData &in, float fStartBeat, float fEndBeat)
+{
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	// turn all the HoldNotes into TapNotes
+	for( int r=iStartIndex; r<=iEndIndex; r++ )	// iterate backwards so we can delete
+	{
+		if( in.IsRowEmpty(r) )
+			continue;	// skip
+
+		vector<int> viTracksHeld;
+		in.GetTracksHeldAtRow( r, viTracksHeld );
+
+		// remove the first tap note or the first hold note that starts on this row
+		int iTotalTracksPressed = in.GetNumTracksWithTap(r) + viTracksHeld.size();
+		int iTracksToRemove = max( 0, iTotalTracksPressed - 2 );
+		for( int t=0; iTracksToRemove>0 && t<in.GetNumTracks(); t++ )
+		{
+			if( in.GetTapNote(t,r) == TAP_TAP )
+			{
+				in.SetTapNote( t, r, TAP_EMPTY );
+				iTracksToRemove--;
+			}
+			else if( in.GetTapNote(t,r) == TAP_HOLD_HEAD )
+			{
+				unsigned i;
+				for( i=0; i<in.GetNumHoldNotes(); i++ )
+				{
+					const HoldNote& hn = in.GetHoldNote(i);
+					if( hn.iStartRow == r )
+						break;
+				}
+				ASSERT( i<in.GetNumHoldNotes() );	// if we hit this, there was a hold head with no hold
+				in.RemoveHoldNote( i );
+				iTracksToRemove--;
+			}
+		}
+	}
+}
+
+
 void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 {
 	int iRowStart = BeatToNoteRow(fStartBeat);
@@ -1272,6 +1314,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands(nd, fStartBeat, fEndBeat);
 }
 
 void NoteDataUtil::AddTapAttacks( NoteData &nd, Song* pSong )
