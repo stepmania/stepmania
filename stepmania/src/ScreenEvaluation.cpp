@@ -273,9 +273,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 					if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 						continue;	// skip
 
-					GAMESTATE->m_pUnlockingSys->UnlockAddDP( stageStats.iActualDancePoints[p] );
-					GAMESTATE->m_pUnlockingSys->UnlockAddAP( stageStats.iSongsPassed[p] );
-					GAMESTATE->m_pUnlockingSys->UnlockAddSP( stageStats.iSongsPassed[p] );
+					GAMESTATE->m_pUnlockingSys->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+					GAMESTATE->m_pUnlockingSys->UnlockAddAP( (float) stageStats.iSongsPassed[p] );
+					GAMESTATE->m_pUnlockingSys->UnlockAddSP( (float) stageStats.iSongsPassed[p] );
 				}
 			}
 			// cannot just use score since it may be nonstop mode
