@@ -371,9 +371,9 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			unsigned i;
 
 			for ( i = 0; i < m_vSongs.size(); ++i)
-				if ( ( m_vSongs[i]->GetTranslitArtist() == NSMAN->m_sArtist ) &&
-					 ( m_vSongs[i]->GetTranslitMainTitle() == NSMAN->m_sMainTitle ) &&
-					 ( m_vSongs[i]->GetTranslitSubTitle() == NSMAN->m_sSubTitle ) )
+				if ( ( !m_vSongs[i]->GetTranslitArtist().CompareNoCase( NSMAN->m_sArtist ) == ) &&
+					 ( !m_vSongs[i]->GetTranslitMainTitle().CompareNoCase( NSMAN->m_sMainTitle ) ) &&
+					 ( !m_vSongs[i]->GetTranslitSubTitle().CompareNoCase( NSMAN->m_sSubTitle ) ) )
 					 break;
 			
 			bool haveSong = i != m_vSongs.size();
