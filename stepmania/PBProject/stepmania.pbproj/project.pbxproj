@@ -165,6 +165,7 @@
 		};
 		29B97315FDCFA39411CA2CEA = {
 			children = (
+				AA3A705E06AA144C006F755E,
 				AA70E3640663112800DAE1FD,
 				AA70E3650663112800DAE1FD,
 				AA70E3660663112800DAE1FD,
@@ -2356,6 +2357,8 @@
 				AAC9F335069E22CF00D53E2C,
 				AA3D790206A275E90064B980,
 				AA3D793406A279530064B980,
+				AA3A705F06AA144C006F755E,
+				AA3A706306AA1645006F755E,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4277,6 +4280,7 @@
 				AAC9F334069E22CF00D53E2C,
 				AA3D790106A275E90064B980,
 				AA3D793306A279530064B980,
+				AA3A706206AA1645006F755E,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5910,6 +5914,50 @@
 		};
 		AA35CBC8067C5BFE00BEBC56 = {
 			fileRef = AA35CBC6067C5BFE00BEBC56;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3A705E06AA144C006F755E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = CommonMetrics.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA3A705F06AA144C006F755E = {
+			fileRef = AA3A705E06AA144C006F755E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3A706006AA1645006F755E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = StyleUtil.cpp;
+			path = src/StyleUtil.cpp;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA3A706106AA1645006F755E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = StyleUtil.h;
+			path = src/StyleUtil.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA3A706206AA1645006F755E = {
+			fileRef = AA3A706006AA1645006F755E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3A706306AA1645006F755E = {
+			fileRef = AA3A706106AA1645006F755E;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10028,6 +10076,8 @@
 		};
 		AA6EFDC804770AF1005F316C = {
 			children = (
+				AA3A706006AA1645006F755E,
+				AA3A706106AA1645006F755E,
 				AA3D793106A279530064B980,
 				AA3D793206A279530064B980,
 				AA3D78FF06A275E90064B980,
