@@ -1242,8 +1242,12 @@ void ScreenSelectMusic::AfterTrailChange( PlayerNumber pn )
 	//	m_AutoGenIcon[pn].SetEffectNone();
 	//	m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
 	//}
+
+	/* Update the trail list, but don't actually start the tween; only do that when
+	 * the actual course changes (AfterMusicChange). */
 	m_CourseContentsFrame.SetFromGameState();
-	m_CourseContentsFrame.TweenInAfterChangedCourse();
+	// m_CourseContentsFrame.TweenInAfterChangedCourse();
+
 	m_DifficultyMeter[pn].SetFromGameState( pn );
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.SetFromGameState();
@@ -1253,24 +1257,47 @@ void ScreenSelectMusic::AfterTrailChange( PlayerNumber pn )
 		m_PaneDisplay[pn].SetFromGameState();
 }
 
-void ScreenSelectMusic::SwitchToPreferredSongDifficulty()
+void ScreenSelectMusic::SwitchToPreferredDifficulty()
 {
-	FOREACH_HumanPlayer( p )
+	if( !GAMESTATE->m_pCurCourse )
 	{
-		/* Find the closest match to the user's preferred difficulty. */
-		int CurDifference = -1;
-		for( unsigned i=0; i<m_vpSteps.size(); i++ )
+		FOREACH_HumanPlayer( pn )
 		{
-			int Diff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[p]);
-
-			if( CurDifference == -1 || Diff < CurDifference )
+			/* Find the closest match to the user's preferred difficulty. */
+			int CurDifference = -1;
+			for( unsigned i=0; i<m_vpSteps.size(); i++ )
 			{
-				m_iSelection[p] = i;
-				CurDifference = Diff;
-			}
-		}
+				int Diff = abs(m_vpSteps[i]->GetDifficulty() - GAMESTATE->m_PreferredDifficulty[pn]);
 
-		m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_vpSteps.size()) ) ;
+				if( CurDifference == -1 || Diff < CurDifference )
+				{
+					m_iSelection[pn] = i;
+					CurDifference = Diff;
+				}
+			}
+
+			CLAMP( m_iSelection[pn],0,m_vpSteps.size()-1 );
+		}
+	}
+	else
+	{
+		FOREACH_HumanPlayer( pn )
+		{
+			/* Find the closest match to the user's preferred difficulty. */
+			int CurDifference = -1;
+			for( unsigned i=0; i<m_vpTrails.size(); i++ )
+			{
+				int Diff = abs(m_vpTrails[i]->m_CourseDifficulty - GAMESTATE->m_PreferredCourseDifficulty[pn]);
+
+				if( CurDifference == -1 || Diff < CurDifference )
+				{
+					m_iSelection[pn] = i;
+					CurDifference = Diff;
+				}
+			}
+
+			CLAMP( m_iSelection[pn],0,m_vpTrails.size()-1 );
+		}
 	}
 }
 
@@ -1429,7 +1456,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
-			SwitchToPreferredSongDifficulty();
+			SwitchToPreferredDifficulty();
 
 			/* Short delay before actually showing these, so they don't show
 			 * up when scrolling fast.  It'll still show up in "slow" scrolling,
@@ -1506,6 +1533,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 		Trail *pTrail = pCourse->GetTrail( st, COURSE_DIFFICULTY_REGULAR );
+		ASSERT( pTrail );
 
 		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
@@ -1524,6 +1552,8 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_BPMDisplay.SetBPM( pCourse );
 
 		m_DifficultyDisplay.UnsetDifficulties();
+
+		SwitchToPreferredDifficulty();
 
 		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 		{
@@ -1586,6 +1616,13 @@ void ScreenSelectMusic::AfterMusicChange()
 			AfterTrailChange( p );
 		else
 			AfterStepsChange( p );
+	}
+
+	switch( m_MusicWheel.GetSelectedType() )
+	{
+	case TYPE_COURSE:
+		m_CourseContentsFrame.TweenInAfterChangedCourse();
+		break;
 	}
 
 	/* Make sure we never start the sample when moving fast. */

@@ -62,7 +62,7 @@ protected:
 
 	void AfterStepsChange( PlayerNumber pn );
 	void AfterTrailChange( PlayerNumber pn );
-	void SwitchToPreferredSongDifficulty();
+	void SwitchToPreferredDifficulty();
 	void AfterMusicChange();
 	void SortOrderChanged();
 
