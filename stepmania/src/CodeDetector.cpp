@@ -50,7 +50,7 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"NextAnnouncer"
 };
 
-const int MAX_CODE_LENGTH = 10;
+const unsigned MAX_CODE_LENGTH = 10;
 
 struct CodeCacheItem {
 	int iNumButtons;

@@ -259,7 +259,7 @@ static char backlog[BACKLOG_LINES][1024];
 static int backlog_start=0, backlog_cnt=0;
 void RageLog::AddToRecentLogs( CString str )
 {
-	int len = str.size();
+	unsigned len = str.size();
 	if(len > sizeof(backlog[backlog_start])-1)
 		len = sizeof(backlog[backlog_start])-1;
 

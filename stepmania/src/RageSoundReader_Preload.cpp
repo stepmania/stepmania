@@ -6,7 +6,7 @@ const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
-const int max_prebuf_size = 1024*256;
+const unsigned max_prebuf_size = 1024*256;
 
 int SoundReader_Preload::total_samples() const
 {
@@ -24,7 +24,7 @@ bool SoundReader_Preload::Open(SoundReader *source)
 	{
 		float secs = len / 1000.f;
 
-		int pcmsize = int(secs * samplerate * samplesize); /* seconds -> bytes */
+		unsigned pcmsize = unsigned(secs * samplerate * samplesize); /* seconds -> bytes */
 		if(pcmsize > max_prebuf_size)
 			return false; /* Don't bother trying to preload it. */
 
