@@ -1196,9 +1196,7 @@ int main(int argc, char* argv[])
 	}
 	catch( const exception &e )
 	{
-		/* This can be things like calling std::string::reserve(-1), or out of memory.
-		 * This can also happen if we throw a RageException during a ctor, in which case
-		 * we want a crash dump. */
+		/* This can be things like calling std::string::reserve(-1), or out of memory. */
 		FAIL_M( e.what() );
 	}
 #endif
