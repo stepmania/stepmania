@@ -527,7 +527,7 @@ void ScreenOptions::PositionItems()
 
 	if( second_end >= NumRows )
 	{
-		first_start = NumRows - total;
+		first_start = max(0, NumRows - total);
 		first_end = NumRows;
 		second_start = 9999;
 		second_end = 9999;
