@@ -555,6 +555,7 @@ void MusicWheel::NextSort()
 	{
 	case STATE_IDLE:
 	case STATE_SWITCHING_MUSIC:
+	case STATE_FLYING_ON_AFTER_NEXT_SORT:
 		break;	// fall through
 	default:
 		return;	// don't continue

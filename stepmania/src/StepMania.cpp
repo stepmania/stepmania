@@ -298,30 +298,50 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 //-----------------------------------------------------------------------------
 HRESULT CreateObjects( HWND hWnd )
 {
+	////////////////////////////////
+	// Draw a splash bitmap so the user isn't looking at a black screen
+	////////////////////////////////
+	HBITMAP hSplashBitmap = (HBITMAP)LoadImage( 
+		GetModuleHandle( NULL ),
+		TEXT("SPLASH"), 
+		IMAGE_BITMAP,
+		0, 0, LR_CREATEDIBSECTION );
+    BITMAP bmp;
+    RECT rc;
+    GetClientRect( hWnd, &rc );
 
+    // Display the splash bitmap in the window
+    HDC hDCWindow = GetDC( hWnd );
+    HDC hDCImage  = CreateCompatibleDC( NULL );
+    SelectObject( hDCImage, hSplashBitmap );
+    GetObject( hSplashBitmap, sizeof(bmp), &bmp );
+    StretchBlt( hDCWindow, 0, 0, rc.right, rc.bottom,
+                hDCImage, 0, 0,
+                bmp.bmWidth, bmp.bmHeight, SRCCOPY );
+    DeleteDC( hDCImage );
+    ReleaseDC( hWnd, hDCWindow );
+	
+	// Delete the bitmap
+	DeleteObject( hSplashBitmap );
+
+
+
+	/////////////////////////////////
+	// Create game objects
+	/////////////////////////////////
 	srand( (unsigned)time(NULL) );	// seed number generator
-
 	RageLogStart();
-
-	SCREEN	= new RageScreen( hWnd, true, SCREEN_WIDTH, SCREEN_HEIGHT, 16 );
-	TM		= new RageTextureManager( SCREEN );
-	THEME	= new ThemeManager;
-	WM		= new WindowManager;
-
-	// throw something up on the screen while the game resources are loading
-	WM->SetNewWindow( new WindowLoading );
-	Render();
-	ShowFrame();
-
-	// this stuff takes a long time...
+	
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageSoundStream;
 	INPUT	= new RageInput( hWnd );
 	GAMEINFO= new GameInfo;
+	SCREEN	= new RageScreen( hWnd );
 
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
 
+	// switch the screen resolution according to user's prefs
 	GameOptions &go = GAMEINFO->m_GameOptions;
 	SwitchDisplayMode( 
 		go.m_bWindowed, 
@@ -330,7 +350,12 @@ HRESULT CreateObjects( HWND hWnd )
 		go.m_iDisplayColor
 	);
 
+	TM		= new RageTextureManager( SCREEN );
+	THEME	= new ThemeManager;
+	WM		= new WindowManager;
 
+
+	//WM->SetNewWindow( new WindowLoading );
 	//WM->SetNewWindow( new WindowSandbox );
 	//WM->SetNewWindow( new WindowMenuResults );
 	//WM->SetNewWindow( new WindowPlayerOptions );
@@ -538,17 +563,53 @@ BOOL SwitchDisplayMode( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwB
 {
 	InvalidateObjects();
 
-	BOOL bResult = SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP );
-	
+	// If the requested resolution doesn't work, keep switching until we find one that does.
+
+	if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+	{
+		// We failed.  Try full screen with same params.
+		bWindowed = false;
+		if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+		{
+			// Failed again.  Try 16 BPP
+			dwBPP = 16;
+			if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+			{
+				// Failed again.  Try 640x480
+				dwWidth = 640;
+				dwHeight = 480;
+				if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+				{
+					// Failed again.  Try 640x480
+					dwWidth = 320;
+					dwHeight = 240;
+					if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
+					{
+						RageError( "Tried every possible display mode, and couldn't change to any of them." );
+						return false;
+					}
+				}
+			}
+		}
+	}
+
+
 	RestoreObjects();
 
 	if( GAMEINFO )
 	{
 	    GAMEINFO->m_GameOptions.m_bWindowed = bWindowed;
+	    GAMEINFO->m_GameOptions.m_iDisplayColor = dwBPP;
+	    GAMEINFO->m_GameOptions.m_iResolution = dwWidth;
 		GAMEINFO->SaveConfigToDisk();
 	}
 
-	return bResult;
+	if( WM )
+	{
+		WM->SetSystemMessage( ssprintf("%s - %ux%u - %u bits", bWindowed ? "Windowed" : "FullScreen", dwWidth, dwHeight, dwBPP) );
+	}
+
+	return true;
 }
 
 

@@ -743,5 +743,9 @@ SOURCE=.\TipDisplay.cpp
 SOURCE=.\TipDisplay.h
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\splash.bmp
+# End Source File
 # End Target
 # End Project

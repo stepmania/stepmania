@@ -69,10 +69,8 @@ LPRageTexture RageTextureManager::LoadTexture( CString sTexturePath )
 //		RageLog( ssprintf("Found that '%s' is already loaded.  Using the loaded copy.", sTexturePath) );
 		pTexture->m_iRefCount++;
 	}
-	else
+	else	// the texture is not already loaded
 	{
-		RageLog( ssprintf("RageTextureManager: allocating space for '%s'.", sTexturePath) );
-		
 		CString sDrive, sDir, sFName, sExt;
 		splitpath( FALSE, sTexturePath, sDrive, sDir, sFName, sExt );
 
@@ -80,6 +78,9 @@ LPRageTexture RageTextureManager::LoadTexture( CString sTexturePath )
 			pTexture = (LPRageTexture) new RageMovieTexture( m_pScreen, sTexturePath );
 		else
 			pTexture = (LPRageTexture) new RageBitmapTexture( m_pScreen, sTexturePath );
+
+
+		RageLog( "RageTextureManager: allocating space for '%s' (%ux%u).", sTexturePath, pTexture->GetTextureWidth(), pTexture->GetTextureHeight() );
 
 		m_mapPathToTexture.SetAt( sTexturePath, pTexture );
 	}

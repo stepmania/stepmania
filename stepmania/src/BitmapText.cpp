@@ -105,7 +105,7 @@ bool BitmapText::Load( CString sFontFilePath )
 		split( sWidthsValue, ",", arrayCharWidths );
 
 		if( arrayCharWidths.GetSize() != Sprite::GetNumStates() )
-			RageError( ssprintf("The number of widths specified in '%s' do not match the number of frames in the texture.", m_sFontFilePath) );
+			RageError( ssprintf("The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%u).", m_sFontFilePath, arrayCharWidths.GetSize(), Sprite::GetNumStates()) );
 
 		for( int i=0; i<arrayCharWidths.GetSize(); i++ )
 		{
@@ -130,7 +130,7 @@ bool BitmapText::Load( CString sFontFilePath )
 			FRECT* pFrect = m_pTexture->GetTextureCoordRect( i );
 
 			float fPixelsToChopOff = m_fFrameNoToWidth[i] - GetUnzoomedWidth();
-			float fTexCoordsToChopOff = fPixelsToChopOff / m_pTexture->GetTextureWidth();
+			float fTexCoordsToChopOff = fPixelsToChopOff / m_pTexture->GetSourceWidth();
 
 			pFrect->left  -= fTexCoordsToChopOff/2;
 			pFrect->right += fTexCoordsToChopOff/2;
@@ -245,9 +245,9 @@ void BitmapText::RenderPrimitives()
 	float fY;
 	switch( m_VertAlign )
 	{
-	case align_top:		fY = 0;											break;
-	case align_middle:	fY = (m_sTextLines.GetSize()-1) * fHeight / 2;	break;
-	case align_bottom:	fY = (m_sTextLines.GetSize()-1) * fHeight;		break;
+	case align_top:		fY = -(m_sTextLines.GetSize()) * fHeight / 2;	break;										break;
+	case align_middle:	fY = 0;											break;
+	case align_bottom:	fY = (m_sTextLines.GetSize()) * fHeight / 2;	break;
 	default:		ASSERT( true );
 	}
 
@@ -293,15 +293,15 @@ void BitmapText::RenderPrimitives()
 
 			// set vertex positions
 
-			v[iVNum++].p = D3DXVECTOR3( fX,	 fHeight/2,	0 );	// bottom left
-			v[iVNum++].p = D3DXVECTOR3( fX,	-fHeight/2,	0 );	// top left
+			v[iVNum++].p = D3DXVECTOR3( fX,	fY+fHeight/2,	0 );	// bottom left
+			v[iVNum++].p = D3DXVECTOR3( fX,	fY-fHeight/2,	0 );	// top left
 			
 			fX += fCharWidth;
 
 			float fExtraPixels = fPercentExtra * GetUnzoomedWidth();
 
-			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	 fHeight/2,	0 );	// bottom right
-			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	-fHeight/2,	0 );	// top right
+			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY+fHeight/2,	0 );	// bottom right
+			v[iVNum++].p = D3DXVECTOR3( fX+fExtraPixels,	fY-fHeight/2,	0 );	// top right
 
 
 			// set texture coordinates

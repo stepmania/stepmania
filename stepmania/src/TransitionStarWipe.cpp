@@ -85,7 +85,7 @@ void TransitionStarWipe::RenderPrimitives()
 		int x_rect_leading_edge = x + ( bIsAnEvenRow ? - m_iStarWidth/2 : m_iStarWidth/2 );
 		int x_rect_trailing_edge = ( bIsAnEvenRow ? 0 : SCREEN_WIDTH );
 		int y_top = y - m_iStarHeight/2;
-		int y_bot = y + m_iStarHeight/2;
+		int y_bot = y + m_iStarHeight/2+1;
 		m_rect.StretchTo( CRect(x_rect_leading_edge, y_top, x_rect_trailing_edge,  y_bot) );
 		m_rect.SetDiffuseColor( D3DCOLOR_ARGB(255,0,0,0) );
 		m_rect.Draw();

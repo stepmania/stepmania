@@ -67,6 +67,10 @@ void RageBitmapTexture::Create()
 	{
 		fmtTexture = D3DFMT_A4R4G4B4;
 	}
+	else if( GAMEINFO->m_GameOptions.m_iDisplayColor == 16 )
+	{
+		fmtTexture = D3DFMT_A4R4G4B4;		
+	}
 	else
 	{
 		switch(	GAMEINFO->m_GameOptions.m_iTextureColor )

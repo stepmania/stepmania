@@ -11,8 +11,6 @@
 
 
 #include "Util.h"
-#include "IniFile.h"
-#include "BmsFile.h"
 #include "Steps.h"
 #include "RageUtil.h"
 
@@ -228,8 +226,8 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 
 
 	// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
-	// file, so this method assumes that the song info is identical for every BMS file in
-	// the directory.
+	// file.  So, we read the song data from only the first BMS file and assume that the info 
+	// is identical for every BMS file in the directory.
 	CString sBMSFilePath = m_sSongDir + arrayBMSFileNames[0];
 
 	// load the Steps from the rest of the BMS files
@@ -241,53 +239,93 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 	}
 
 
-
-	BmsFile bms( sBMSFilePath );
-	bms.ReadFile();
-
-	CMapStringToString &mapValues = bms.mapValues;
-
-	POSITION pos = mapValues.GetStartPosition();
-	while( pos != NULL )
+	CStdioFile file;	
+	if( !file.Open( sBMSFilePath, CFile::modeRead|CFile::shareDenyNone ) )
 	{
-		CString value_name;
-		CString data_string;
-		CStringArray data_array;
-		mapValues.GetNextAssoc( pos, value_name, data_string );
-		split(data_string, ":", data_array);
+		RageError( ssprintf("Failed to open %s.", sBMSFilePath) );
+		return false;
+	}
+
+	CString line;
+	while( file.ReadString(line) )	// foreach line
+	{
+		CString value_name;		// fill these in
+		CString value_data;	
+
+		// BMS value names can be separated by a space or a colon.
+		int iIndexOfFirstColon = line.Find( ":" );
+		int iIndexOfFirstSpace = line.Find( " " );
+
+		if( iIndexOfFirstColon == -1 )
+			iIndexOfFirstColon = 10000;
+		if( iIndexOfFirstSpace == -1 )
+			iIndexOfFirstSpace = 10000;
+		
+		int iIndexOfSeparator = min( iIndexOfFirstSpace, iIndexOfFirstColon );
+
+		if( iIndexOfSeparator != 10000 )
+		{
+			value_name = line.Mid( 0, iIndexOfSeparator );
+			value_data = line;	// the rest
+			value_data.Delete(0,iIndexOfSeparator+1);
+		}
+		else	// no separator
+		{
+			value_name = line;
+		}
+
+
+		value_name.MakeLower();
+
 
 		// handle the data
-		if( value_name == "#GENRE" )
-			m_sCreator = data_array[0];
-		else if( value_name == "#TITLE" ) {
-			m_sTitle = data_array[0];
-			// strip steps type out of description leaving only song title (looks like 'Music <BASIC>')
-			int iPosBracket = m_sTitle.Find( " <" );
-			if( iPosBracket != -1 )
-				m_sTitle = m_sTitle.Left( iPosBracket );
+		if( -1 != value_name.Find("#genre") )
+		{
+			m_sCreator = value_data;
 		}
-		else if( value_name == "#ARTIST" )
-			m_sArtist = data_array[0];
-		else if( value_name == "#BPM" ) {
+		else if( -1 != value_name.Find("#title") ) 
+		{
+			m_sTitle = value_data;
+			// strip steps type out of description leaving only song title (looks like 'B4U <BASIC>')
+			m_sTitle.Replace( "(ANOTHER)", "" );
+			m_sTitle.Replace( "(BASIC)", "" );
+			m_sTitle.Replace( "(MANIAC)", "" );
+			m_sTitle.Replace( "<ANOTHER>", "" );
+			m_sTitle.Replace( "<BASIC>", "" );
+			m_sTitle.Replace( "<MANIAC>", "" );
+
+		}
+		else if( -1 != value_name.Find("#artist") ) 
+		{
+			m_sArtist = value_data;
+		}
+		else if( -1 != value_name.Find("#bpm") ) 
+		{
 			BPMSegment new_seg;
 			new_seg.m_fStartBeat = 0;
-			new_seg.m_fBPM = (float)atof( data_array[0] );
+			new_seg.m_fBPM = (float)atof( value_data );
 
 			// add, then sort
 			m_BPMSegments.Add( new_seg );
 			SortBPMSegmentsArray( m_BPMSegments );
 			RageLog( "Inserting new BPM change at beat %f, BPM %f", new_seg.m_fStartBeat, new_seg.m_fBPM );
 		}
-		else if( value_name == "#BackBMP"  ||  value_name == "#backBMP")
-			m_sBackgroundPath = m_sSongDir + data_array[0];
-		else if( value_name == "#WAV99" )
-			m_sMusicPath = m_sSongDir + data_array[0];
-		else if( value_name.GetLength() == 6 )	// this is probably step or offset data.  Looks like "#00705"
+		else if( -1 != value_name.Find("#backbmp") ) 
+		{
+			m_sBackgroundPath = m_sSongDir + value_data;
+		}
+		else if( -1 != value_name.Find("#wav") ) 
+		{
+			m_sMusicPath = m_sSongDir + value_data;
+		}
+		else if( value_name.Left(1) == "#"  
+			 && IsAnInt( value_name.Mid(1,3) )
+			 && IsAnInt( value_name.Mid(4,2) ) )	// this is step or offset data.  Looks like "#00705"
 		{
 			int iMeasureNo	= atoi( value_name.Mid(1,3) );
 			int iTrackNum	= atoi( value_name.Mid(4,2) );
 
-			CString sNoteData = data_array[0];
+			CString sNoteData = value_data;
 			CArray<int, int> arrayNotes;
 
 			for( int i=0; i<sNoteData.GetLength(); i+=2 )
@@ -389,7 +427,7 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 
 	
 	CStdioFile file;	
-	if( !file.Open( GetSongFilePath(), CFile::modeRead ) )
+	if( !file.Open( GetSongFilePath(), CFile::modeRead|CFile::shareDenyNone ) )
 		RageError( ssprintf("Error opening DWI file '%s'.", GetSongFilePath()) );
 
 
@@ -608,30 +646,11 @@ void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arra
 	for( int i=0; i<arraySteps.GetSize(); i++ )	// for each of the Song's Steps
 	{
 		Steps* pCurrentSteps = &arraySteps[i];
-		Steps::StepsMode sm = pCurrentSteps->m_StepsMode;
-
-		switch( gm )	// different logic for different game modes
+		
+		if( gm == pCurrentSteps->m_GameMode			// if the current GameModes matches the Steps's GameMode
+		 || (gm == MODE_VERSUS && pCurrentSteps->m_GameMode == MODE_SINGLE) )
 		{
-		case MODE_SINGLE:
-			if( sm == Steps::SMsingle4 )
-				arrayAddTo.Add( pCurrentSteps );
-			break;
-		case MODE_SOLO:
-			if( sm == Steps::SMsingle6 )
-				arrayAddTo.Add( pCurrentSteps );
-			break;
-		case MODE_VERSUS:
-			if( sm == Steps::SMsingle4 )
-				arrayAddTo.Add( pCurrentSteps );
-			break;
-		case MODE_COUPLE:
-			if( sm == Steps::SMcouple  ||  sm == Steps::SMbattle )
-				arrayAddTo.Add( pCurrentSteps );
-			break;
-		case MODE_DOUBLE:
-			if( sm == Steps::SMdouble4 )
-				arrayAddTo.Add( pCurrentSteps );
-			break;
+			arrayAddTo.Add( pCurrentSteps );
 		}
 	}
 

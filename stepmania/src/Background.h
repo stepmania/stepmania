@@ -38,6 +38,8 @@ public:
 	virtual void TurnDangerOn()		{ m_bShowDanger = true; };
 	virtual void TurnDangerOff()	{ m_bShowDanger = false; };
 
+	virtual bool IsDangerOn()		{ return m_bShowDanger; };
+
 protected:
 	Sprite m_sprVisualizationOverlay;
 	Sprite m_sprSongBackground;
