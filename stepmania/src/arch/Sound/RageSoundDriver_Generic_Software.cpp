@@ -53,7 +53,6 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 
 	static SoundMixBuffer mix;
 
-	CHECKPOINT;
 	for( unsigned i = 0; i < ARRAYSIZE(sounds); ++i )
 	{
 		/* s.snd can not safely be accessed from here. */
