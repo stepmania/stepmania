@@ -1,20 +1,22 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: Background.h
+ Class: Background
 
- Desc: Background behind arrows while dancing
+ Desc: Background behind notes while playing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Ben Nordstrom
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _Background_H_
-#define _Background_H_
 
 
 #include "Sprite.h"
 #include "ActorFrame.h"
 #include "Song.h"
+#include "BackgroundAnimation.h"
+
 
 
 class Background : public ActorFrame
@@ -27,8 +29,11 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
+	void SetSongBeat( const float fSongBeat ) { m_fSongBeat = fSongBeat; };
+
 	virtual void SetDiffuseColor( D3DXCOLOR c )
 	{
+		m_sprSongBackground.SetDiffuseColor( c );
 		m_sprVisualizationOverlay.SetDiffuseColor( c );
 		m_sprSongBackground.SetDiffuseColor( c );
 		m_sprDanger.SetDiffuseColor( c );
@@ -41,6 +46,11 @@ public:
 	virtual bool IsDangerOn()		{ return m_bShowDanger; };
 
 protected:
+	bool DangerVisible();
+
+	CArray<BackgroundAnimation*,BackgroundAnimation*> m_BackgroundAnimations;
+	BackgroundAnimation* m_pCurBackgroundAnimation;
+
 	Sprite m_sprVisualizationOverlay;
 	Sprite m_sprSongBackground;
 	
@@ -48,9 +58,7 @@ protected:
 	Sprite m_sprDangerBackground;
 
 	bool m_bShowDanger;
+
+	float m_fSongBeat;
 };
 
-
-
-
-#endif
