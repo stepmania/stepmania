@@ -63,6 +63,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	{
 		GAMESTATE->m_sPreferredGroup = "ALL MUSIC";
 		m_Menu.ImmedOffScreenToMenu();
+		m_bChosen = true;
 		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
 		return;
 	}
