@@ -415,21 +415,10 @@ void Player::Step( int col )
 			m_fOffset[m_iOffsetSample++] = fNoteOffset;
 			if (m_iOffsetSample >= SAMPLE_COUNT) 
 			{
-				float stddev = 0.0f, mean = 0.0f;
-				int i;
-				
-				//calculate mean
-				for( i=0; i<SAMPLE_COUNT; i++ )
-					mean += m_fOffset[i];
-				mean /= SAMPLE_COUNT;
+				float mean = calc_mean(m_fOffset, m_fOffset+SAMPLE_COUNT);
+				float stddev = calc_stddev(m_fOffset, m_fOffset+SAMPLE_COUNT);
 
-				//calculate stddev
-				for( i=0; i<SAMPLE_COUNT; i++ )
-					stddev += (m_fOffset[i] - mean) * (m_fOffset[i] - mean);
-				stddev /= SAMPLE_COUNT + 1; //yes, N+1. Really.
-				stddev = sqrtf(stddev);
-
-				if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .025 error
+				if (stddev < .03 && stddev < fabsf(mean)) { //If they stepped with less than .03 error
 					GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += mean;
 					LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
 				} else
