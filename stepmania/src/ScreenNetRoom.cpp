@@ -254,9 +254,17 @@ void ScreenNetRoom::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetRoom::UpdateRoomsList()
 {
-	float cx = THEME->GetMetricF(m_sName, "RoomsX");
-	float cy = THEME->GetMetricF(m_sName, "RoomsY");
-	//It doesn't like this stuff inline
+	float cx;
+	float cy;
+
+	if (m_RoomList.size() > 0) {
+		cx = m_RoomList[0].GetX();
+		cy = m_RoomList[0].GetY();
+	} else {
+		cx = THEME->GetMetricF(m_sName, "RoomsX");
+		cy = THEME->GetMetricF(m_sName, "RoomsY");
+	}
+
 	for (unsigned int i = 0; i < m_RoomList.size(); ++i)
 		this->RemoveChild(&m_RoomList[i]);
 
