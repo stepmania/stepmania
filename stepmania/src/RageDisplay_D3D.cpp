@@ -931,9 +931,6 @@ void RageDisplay_D3D::UpdateTexture(
 	rect.bottom = height - yoffset;
 
 	D3DLOCKED_RECT lr;
-
-	
-	
 	pTex->LockRect( 0, &lr, &rect, 0 );
 	
 	// copy each row
@@ -945,14 +942,6 @@ void RageDisplay_D3D::UpdateTexture(
 		memcpy( dst, src, (rect.right-rect.left)*bytes_per_pixel );
 	}
 	pTex->UnlockRect( 0 );
-
-//	SDL_SaveBMP( (SDL_Surface*)img, "testing-SDL.bmp" );
-
-//	D3DXSaveTextureToFile(
-//		"testing-D3D.bmp",
-//		D3DXIFF_BMP,
-//		pTex,
-//		NULL );
 }
 
 void RageDisplay_D3D::SetAlphaTest( bool b )
