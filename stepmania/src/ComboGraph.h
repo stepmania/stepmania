@@ -3,10 +3,10 @@
 
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
-#include "StageStats.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
+struct StageStats;
 class ComboGraph: public ActorFrame
 {
 public:

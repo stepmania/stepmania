@@ -2,6 +2,7 @@
 #include "ComboGraph.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
+#include "StageStats.h"
 
 const int MinComboSizeToShow = 5;
 

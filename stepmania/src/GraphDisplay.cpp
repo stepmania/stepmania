@@ -4,6 +4,7 @@
 #include "RageTextureManager.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
+#include "StageStats.h"
 
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
 

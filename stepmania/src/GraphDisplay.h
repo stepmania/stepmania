@@ -3,7 +3,6 @@
 
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
-#include "StageStats.h"
 #include "RageTexture.h"
 
 class GraphDisplay: public ActorFrame
