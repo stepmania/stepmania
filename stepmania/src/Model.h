@@ -79,7 +79,6 @@ private:
 	CString		m_sDefaultAnimation;
 	float		m_fDefaultAnimationRate;
 	float		m_fCurAnimationRate;
-	CString		m_sMostRecentAnimation;
 };
 
 

@@ -600,7 +600,6 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 			}
 
 			PlayAnimation( sAniName );
-			m_sMostRecentAnimation = sAniName;
 		}
 	}
 
@@ -689,9 +688,6 @@ void Model::SetDefaultAnimation( CString sAnimation, float fPlayRate )
 {
 	m_sDefaultAnimation = sAnimation;
 	m_fDefaultAnimationRate = fPlayRate;
-	m_sMostRecentAnimation = "";	// Clear this out so if we set a different default
-									// while the current default is playing, it will
-									// change to the new one when the current ends.
 }
 
 void Model::PlayAnimation( CString sAniName, float fPlayRate )
@@ -704,7 +700,6 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 
 	m_fCurrFrame = 0;
 	m_fCurAnimationRate = fPlayRate;
-	m_sMostRecentAnimation = sAniName;
 
 	if ( m_pCurAnimation == pNewAnimation )
 		return;
@@ -779,11 +774,9 @@ Model::AdvanceFrame (float dt)
 	m_fCurrFrame += FRAMES_PER_SECOND * dt * m_fCurAnimationRate;
 	if (m_fCurrFrame >= (float)m_pCurAnimation->nTotalFrames)
 	{
-		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") && (m_sDefaultAnimation != m_sMostRecentAnimation) )
+		if( (m_bRevertToDefaultAnimation) && (m_sDefaultAnimation != "") )
 		{
 			this->PlayAnimation( m_sDefaultAnimation, m_fDefaultAnimationRate );
-			m_fCurrFrame = 0.0f;
-			return;
 		}
 		else
 		{
