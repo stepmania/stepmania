@@ -247,11 +247,12 @@ try_element_again:
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
+		const CString wildcard = (category == BGAnimations? "":"*");
+
 		/* First, look for redirs. */
-		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + ".redir",
+		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + wildcard + ".redir",
 						asElementPaths, false, true );
 
-		const CString wildcard = (category == BGAnimations? "":"*");
 		CStringArray asPaths;
 		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + wildcard,
 						asPaths, bDirsOnly, true );
