@@ -143,7 +143,7 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 			continue;
 		}
 
-		unsigned pos = line.find_first_of(':');
+		size_t pos = line.find_first_of(':');
 		if(pos != string::npos)
 		{
 			/* x: y */

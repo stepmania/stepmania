@@ -516,7 +516,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		if( value_name == "#title" )
 		{
 			// strip Steps type out of description leaving only song title - looks like 'B4U <BASIC>'
-			unsigned iIndex = value_data.find_last_of('<');
+			size_t iIndex = value_data.find_last_of('<');
 			if( iIndex == value_data.npos )
 				iIndex = value_data.find_last_of('(');
 			if( iIndex != value_data.npos )

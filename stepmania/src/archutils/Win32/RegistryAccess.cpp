@@ -7,7 +7,7 @@
  * the HKEY_LOCAL_MACHINE constant in key. */
 static bool GetRegKeyType( const CString &in, CString &out, HKEY &key )
 {
-	unsigned backslash = in.find( '\\' );
+	size_t backslash = in.find( '\\' );
 	if( backslash == in.npos )
 	{
 		LOG->Warn( "Invalid registry key: \"%s\" ", in.c_str() );

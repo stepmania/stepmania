@@ -484,14 +484,14 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			 * to pick up images used here as song images (eg. banners). */
 			CString param = sParams[1];
 			/* "{foo} ... {foo2}" */
-			unsigned pos = 0;
+			size_t pos = 0;
 			while( pos < CString::npos )
 			{
 
-				unsigned startpos = param.find('{', pos);
+				size_t startpos = param.find('{', pos);
 				if( startpos == CString::npos )
 					break;
-				unsigned endpos = param.find('}', startpos);
+				size_t endpos = param.find('}', startpos);
 				if( endpos == CString::npos )
 					break;
 

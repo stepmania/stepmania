@@ -319,7 +319,7 @@ void ReplaceText( CString &Text, const map<CString,CString> &m )
 		size_t start = 0;
 		while(1)
 		{
-			unsigned pos = txt.find(it->first, start);
+			size_t pos = txt.find(it->first, start);
 			if(pos == txt.npos)
 				break;
 

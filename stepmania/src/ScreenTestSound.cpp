@@ -60,7 +60,7 @@ void ScreenTestSound::UpdateText(int n)
 {
 
 	CString fn = s[n].s.GetLoadedFilePath();
-	unsigned x = fn.find_last_of("/\\");
+	size_t x = fn.find_last_of("/\\");
 	if(x != fn.npos) fn.erase(0, x+1);
 
 	vector<RageSound *> snds;
