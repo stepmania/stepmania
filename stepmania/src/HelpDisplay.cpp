@@ -54,12 +54,14 @@ void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &ar
 
 void HelpDisplay::Update( float fDeltaTime )
 {
+	float fHibernate = m_fHibernateSecondsLeft;
+
 	BitmapText::Update( fDeltaTime );
 
 	if( m_arrayTips.empty() )
 		return;
 
-	m_fSecsUntilSwitch -= fDeltaTime;
+	m_fSecsUntilSwitch -= max( fDeltaTime - fHibernate, 0 );
 	if( m_fSecsUntilSwitch > 0 )
 		return;
 
