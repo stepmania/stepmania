@@ -62,17 +62,17 @@ ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW	("MusicWheel","NumWheelItems");
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
 
-static const SortOrder SORT_ORDERS[] =
+static const SortOrder g_SongSortOrders[] =
 {
 	SORT_GROUP, 
 	SORT_TITLE, 
 	SORT_BPM, 
 	SORT_MOST_PLAYED, 
 	SORT_ARTIST,
+	SORT_GENRE,
 };
-// use ARRAYSIZE(SortOrder)
-// Why? -Chris
-
+vector<SortOrder> SONG_SORT_ORDERS( g_SongSortOrders, g_SongSortOrders + ARRAYSIZE(g_SongSortOrders) );
+	
 MusicWheel::MusicWheel() 
 {
 }
@@ -497,6 +497,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case SORT_MOST_PLAYED:
 	case SORT_GRADE:
 	case SORT_ARTIST:
+	case SORT_GENRE:
 	case SORT_EASY_METER:
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
@@ -539,6 +540,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			break;
 		case SORT_ARTIST:
 			SongUtil::SortSongPointerArrayByArtist( arraySongs );
+			break;
+		case SORT_GENRE:
+			SongUtil::SortSongPointerArrayByGenre( arraySongs );
 			break;
 		case SORT_EASY_METER:
 			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
@@ -1201,15 +1205,15 @@ bool MusicWheel::NextSort()		// return true if change successful
 
 	// find the index of the current sort
 	int cur = 0;
-	while( cur < int(ARRAYSIZE(SORT_ORDERS)) && SORT_ORDERS[cur] != m_SortOrder )
+	while( cur < int(SONG_SORT_ORDERS.size()) && SONG_SORT_ORDERS[cur] != m_SortOrder )
 		++cur;
 
 	// move to the next sort with wrapping
 	++cur;
-	wrap( cur, ARRAYSIZE(SORT_ORDERS) );
+	wrap( cur, SONG_SORT_ORDERS.size() );
 
 	// apply new sort
-	SortOrder soNew = SORT_ORDERS[cur];
+	SortOrder soNew = SONG_SORT_ORDERS[cur];
 	return ChangeSort( soNew );
 }
 

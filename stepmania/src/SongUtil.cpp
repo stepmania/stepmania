@@ -151,6 +151,16 @@ void SongUtil::SortSongPointerArrayByDisplayArtist( vector<Song*> &arraySongPoin
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }
 
+static int CompareSongPointersByGenre(const Song *pSong1, const Song *pSong2)
+{
+	return pSong1->m_sGenre < pSong2->m_sGenre;
+}
+
+void SongUtil::SortSongPointerArrayByGenre( vector<Song*> &arraySongPointers )
+{
+	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGenre );
+}
+
 static int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 {
 	return pSong1->m_sGroupName < pSong2->m_sGroupName;
@@ -207,7 +217,8 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	{
 	case SORT_PREFERRED:
 		return "";
-	case SORT_GROUP:	
+	case SORT_GROUP:
+		// guaranteed not empty	
 		return pSong->m_sGroupName;
 	case SORT_TITLE:
 	case SORT_ARTIST:	
@@ -230,6 +241,10 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			else
 				return s.Left(1);
 		}
+	case SORT_GENRE:
+		if( !pSong->m_sGenre.empty() )
+			return pSong->m_sGenre;
+		return "N/A";
 	case SORT_BPM:
 		{
 			const int iBPMGroupSize = 20;

@@ -18,6 +18,7 @@ namespace SongUtil
 	void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByDisplayArtist( vector<Song*> &arraySongPointers );
+	void SortSongPointerArrayByGenre( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
 	void SortSongPointerArrayByNumPlays( vector<Song*> &arraySongPointers, ProfileSlot slot, bool bDescending );

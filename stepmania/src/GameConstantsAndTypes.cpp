@@ -106,6 +106,7 @@ static const CString SortOrderNames[NUM_SORT_ORDERS] = {
 	"Popularity",
 	"TopGrade",
 	"Artist",
+	"Genre",
 	"EasyMeter",
 	"MediumMeter",
 	"HardMeter",
