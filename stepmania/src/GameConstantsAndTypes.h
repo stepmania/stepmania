@@ -412,8 +412,6 @@ enum TapNoteScore {
 
 inline int TapNoteScoreToDancePoints( TapNoteScore tns )
 {
-	// What "Aaron in Japan" says:
-	/*
 	switch( tns )
 	{
 	case TNS_PERFECT:	return +2;
@@ -421,19 +419,7 @@ inline int TapNoteScoreToDancePoints( TapNoteScore tns )
 	case TNS_GOOD:		return +0;
 	case TNS_BOO:		return -4;
 	case TNS_MISS:		return -8;
-	case TNS_NONE:		return -8;
-	default:			ASSERT(0);
-	}
-	*/
-	// What seems more realistic to me:
-	switch( tns )
-	{
-	case TNS_PERFECT:	return +2;
-	case TNS_GREAT:		return +1;
-	case TNS_GOOD:		return +0;
-	case TNS_BOO:		return 0;
-	case TNS_MISS:		return -2;
-	case TNS_NONE:		return -4;
+	case TNS_NONE:		return 0;
 	default:	ASSERT(0);	return 0;
 	}
 }
