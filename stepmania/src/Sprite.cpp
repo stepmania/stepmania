@@ -582,7 +582,10 @@ void Sprite::SetState( int iNewState )
 	// This assert will likely trigger if the "missing" theme element graphic 
 	// is loaded in place of a multi-frame sprite.  We want to know about these
 	// problems in debug builds, but they're not fatal.
-	DEBUG_ASSERT( iNewState >= 0  &&  iNewState < (int)m_States.size() );
+#ifdef DEBUG
+	RAGE_ASSERT_M( iNewState >= 0  &&  iNewState < (int)m_States.size(),
+		ssprintf("iNewState=%d, numStates=%u", iNewState, m_States.size()) );
+#endif
 
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
