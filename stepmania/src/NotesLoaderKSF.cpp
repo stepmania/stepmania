@@ -166,11 +166,11 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
-		LoadFromKSFFile( out.m_sSongDir + arrayKSFFileNames[i], *pNewNotes );
+		LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes );
 		out.m_apNotes.push_back( pNewNotes );
 	}
 
-	CString sPath = out.m_sSongDir + arrayKSFFileNames[0];
+	CString sPath = out.GetSongDir() + arrayKSFFileNames[0];
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
@@ -251,9 +251,9 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 
 	// search for music with song in the file name
 	CStringArray arrayPossibleMusic;
-	GetDirListing( out.m_sSongDir + CString("song.mp3"), arrayPossibleMusic );
-	GetDirListing( out.m_sSongDir + CString("song.ogg"), arrayPossibleMusic );
-	GetDirListing( out.m_sSongDir + CString("song.wav"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + CString("song.mp3"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + CString("song.ogg"), arrayPossibleMusic );
+	GetDirListing( out.GetSongDir() + CString("song.wav"), arrayPossibleMusic );
 
 	if( !arrayPossibleMusic.empty() )		// we found a match
 		out.m_sMusicFile = arrayPossibleMusic[0];

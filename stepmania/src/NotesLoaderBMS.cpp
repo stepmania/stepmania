@@ -264,7 +264,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	{
 		Notes* pNewNotes = new Notes;
 
-		LoadFromBMSFile( out.m_sSongDir + arrayBMSFileNames[i],
+		LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i],
 			*pNewNotes );
 		if(pNewNotes->m_NotesType != NOTES_TYPE_INVALID)
 			out.m_apNotes.push_back( pNewNotes );
@@ -272,7 +272,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			delete pNewNotes;
 	}
 
-	CString sPath = out.m_sSongDir + arrayBMSFileNames[0];
+	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
 	ifstream file(sPath);
 	if( file.bad() )

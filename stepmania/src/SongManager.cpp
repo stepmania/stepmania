@@ -292,7 +292,7 @@ void SongManager::ReadStatisticsFromDisk()
 			Song* pSong = NULL;
 			for( i=0; i<m_pSongs.size(); i++ )
 			{
-				if( m_pSongs[i]->m_sSongDir == szSongDir )	// match!
+				if( m_pSongs[i]->GetSongDir() == szSongDir )	// match!
 				{
 					pSong = m_pSongs[i];
 					break;
@@ -355,7 +355,7 @@ void SongManager::SaveStatisticsToDisk()
 
 			// Each value has the format "SongName::NotesName=TimesPlayed::TopGrade::TopScore::MaxCombo".
 
-			CString sName = ssprintf( "%s::%s::%s", pSong->m_sSongDir.GetString(), GameManager::NotesTypeToString(pNotes->m_NotesType).GetString(), pNotes->m_sDescription.GetString() );
+			CString sName = ssprintf( "%s::%s::%s", pSong->GetSongDir().GetString(), GameManager::NotesTypeToString(pNotes->m_NotesType).GetString(), pNotes->m_sDescription.GetString() );
 			CString sValue = ssprintf( 
 				"%d::%s::%d::%d",
 				pNotes->m_iNumTimesPlayed,
@@ -596,7 +596,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	so_out.m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
 
 	// should we do something fancy here, like turn on different effects?
-	int iSongHash = GetHashForString( pSongOut->m_sSongDir );
+	int iSongHash = GetHashForString( pSongOut->GetSongDir() );
 	switch( ((UINT)iSongHash) % 6 )
 	{
 	case 0:	po_out.m_bEffects[PlayerOptions::EFFECT_DIZZY] = true;	break;

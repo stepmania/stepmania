@@ -79,7 +79,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			    continue;
 			}
 
-			/* m_sSongDir contains a path to the song, possibly a full path, eg:
+			/* GetSongDir() contains a path to the song, possibly a full path, eg:
 			 * Songs\Group\SongName                   or 
 			 * My Other Song Folder\Group\SongName    or
 			 * c:\Corny J-pop\Group\SongName
@@ -111,7 +111,7 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 			for( unsigned i = 0; pSong == NULL && i < apSongs.size(); i++ )
 			{
 				CStringArray splitted;
-				split( apSongs[i]->m_sSongDir, "\\", splitted, true );
+				split( apSongs[i]->GetSongDir(), "\\", splitted, true );
 				bool matches = true;
 				
 				int split_no = splitted.size()-1;
