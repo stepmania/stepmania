@@ -814,7 +814,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 	int iCurRow = m_iCurrentRow[pn];
 	OptionRow &row = m_OptionRow[iCurRow];
 
-	const int iNumOptions = row.choices.size();
+	const int iNumOptions = (iCurRow == m_iNumOptionRows)? 1: row.choices.size();
 	if( PREFSMAN->m_bArcadeOptionsNavigation )
 	{
 		/* If START is being pressed, and arcade nav is on, then we're holding left/right
@@ -823,7 +823,7 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 			INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
 			return;
 
-		if( iCurRow == m_iNumOptionRows || iNumOptions <= 1 )	// 1 or 0
+		if( iNumOptions <= 1 )	// 1 or 0
 		{
 			Move( pn, iDelta, Repeat );
 			return;
