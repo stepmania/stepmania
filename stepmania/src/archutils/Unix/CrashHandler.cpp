@@ -314,6 +314,10 @@ static void RunCrashHandler( const CrashData *crash )
 			safe_print( fileno(stderr), "Fatal exception (", ExceptionName( crash->kind ), ")", NULL );
 			break;
 #endif
+		case CrashData::FORCE_CRASH_THIS_THREAD:
+			safe_print( fileno(stderr), "Crash handler failed an assertion: \"", crash->reason, "\"", NULL );
+			break;
+
 		default:
 			safe_print( fileno(stderr), "Unexpected RunCrashHandler call (", itoa(crash->type), ")", NULL );
 			break;
