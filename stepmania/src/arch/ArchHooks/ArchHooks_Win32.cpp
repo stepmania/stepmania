@@ -22,7 +22,7 @@ ArchHooks_Win32::ArchHooks_Win32()
 	 * "drive not ready", etc. dialogs to pop up. */
 	SetErrorMode( SetErrorMode(0) | SEM_FAILCRITICALERRORS );
 
-	/* Windows boost priority on keyboard input, among other things.  Disable that for
+	/* Windows boosts priority on keyboard input, among other things.  Disable that for
 	 * the main thread. */
 	SetThreadPriorityBoost( GetCurrentThread(), TRUE );
 }
