@@ -104,6 +104,8 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		for( int i=0; i<m_iActivePlayers; ++i )
 		{
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
+			if ( NSMAN->m_EvalPlayerData[i].grade < GRADE_TIER_3 )	//Yes, hardcoded (I'd like to leave it that way)
+				m_textUsers[i].TurnRainbowOn();
 			ON_COMMAND( m_textUsers[i] );
 		}
 		return;	//no need to let ScreenEvaluation get ahold of this.
@@ -135,7 +137,8 @@ void ScreenNetEvaluation::UpdateStats()
 	for (int j=0; j<NETNUMTAPSCORES; ++j)
 	{
 		int iNumDigits = (j==max_combo) ? MAX_COMBO_NUM_DIGITS : 4;
-		m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
+		if (m_textJudgeNumbers[j][m_pActivePlayer].m_pFont != NULL)
+			m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
 	}
 
 	m_textPlayerOptions[m_pActivePlayer].SetText( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].playerOptions );
