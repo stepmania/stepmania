@@ -54,6 +54,7 @@ int					g_glVersion;
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
 int RageDisplay::GetDPF() const { return g_iDPF; }
+DEVMODE SMGfx;
 
 static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
@@ -170,8 +171,20 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 #ifdef SDL_HAS_REFRESH_RATE
 	if(rate == REFRESH_DEFAULT)
 		SDL_SM_SetRefreshRate(0);
-	else
-		SDL_SM_SetRefreshRate(rate);
+	/*else
+	// Change Windows Refresh Rate:
+	// This is a modification of a code snippet I found
+	// It changes the windows desktop refresh rate if
+	// it's on a windows platform.
+	// -=Lance Gilbert=-
+	#if defined(WIN32)
+	::ZeroMemory(&SMGfx, sizeof(SMGfx));
+	SMGfx.dmDisplayFrequency = rate;
+	SMGfx.dmFields = DM_DISPLAYFREQUENCY;
+	SMGfx.dmSize = sizeof(SMGfx);
+	ChangeDisplaySettings(&SMGfx, 0);
+	#endif*/
+
 #endif
 
 	bool need_reload = false;
