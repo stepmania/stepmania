@@ -18,14 +18,6 @@
 #include "StepsUtil.h"
 #include "RageUtil.h"
 
-#define CHATINPUT_WIDTH				THEME->GetMetricF(m_sName,"ChatInputBoxWidth")
-#define CHATINPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatInputBoxHeight")
-#define CHATINPUT_COLOR				THEME->GetMetricC(m_sName,"ChatInputBoxColor")
-#define CHATOUTPUT_WIDTH			THEME->GetMetricF(m_sName,"ChatOutputBoxWidth")
-#define CHATOUTPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatOutputBoxHeight")
-#define CHATOUTPUT_COLOR			THEME->GetMetricC(m_sName,"ChatOutputBoxColor")
-#define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
-
 #define GROUPSBG_WIDTH				THEME->GetMetricF(m_sName,"GroupsBGWidth")
 #define GROUPSBG_HEIGHT				THEME->GetMetricF(m_sName,"GroupsBGHeight")
 #define GROUPSBG_COLOR				THEME->GetMetricC(m_sName,"GroupsBGColor")
@@ -42,14 +34,6 @@
 #define EXINFOBG_HEIGHT				THEME->GetMetricF(m_sName,"ExInfoBGHeight")
 #define EXINFOBG_COLOR				THEME->GetMetricC(m_sName,"ExInfoBGColor")
 
-#define USERSBG_WIDTH				THEME->GetMetricF(m_sName,"UsersBGWidth")
-#define USERSBG_HEIGHT				THEME->GetMetricF(m_sName,"UsersBGHeight")
-#define USERSBG_COLOR				THEME->GetMetricC(m_sName,"UsersBGColor")
-#define USERSALT_Y					THEME->GetMetricF(m_sName,"UsersAY")
-#define USERSDELT_X					THEME->GetMetricF(m_sName,"UsersDX")
-#define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
-#define USERS_X						THEME->GetMetricF(m_sName,"UsersX")
-
 #define	NUM_GROUPS_SHOW				THEME->GetMetricI(m_sName,"NumGroupsShow");
 #define	NUM_SONGS_SHOW				THEME->GetMetricI(m_sName,"NumSongsShow");
 
@@ -62,65 +46,18 @@
 #define GROUP_WIDTH					THEME->GetMetricF(m_sName,"SongsGroupWidth")
 
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
-const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 const ScreenMessage SM_BackFromOpts	= ScreenMessage(SM_User+6);
-const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
 const CString AllGroups			= "[ALL MUSIC]";
 
-ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithMenuElements( sName )
+ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSelectBase( sName )
 {
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
 	GAMESTATE->FinishStage();
 
-	//ChatBox
-	m_rectChatInputBox.SetDiffuse( CHATINPUT_COLOR ); 
-	m_rectChatInputBox.SetName( "ChatInputBox" );
-	m_rectChatInputBox.SetWidth( CHATINPUT_WIDTH );
-	m_rectChatInputBox.SetHeight( CHATINPUT_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectChatInputBox );
-	this->AddChild( &m_rectChatInputBox );
-
-	m_rectChatOutputBox.SetDiffuse( CHATOUTPUT_COLOR );
-	m_rectChatOutputBox.SetName( "ChatOutputBox" );
-	m_rectChatOutputBox.SetWidth( CHATOUTPUT_WIDTH );
-	m_rectChatOutputBox.SetHeight( CHATOUTPUT_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectChatOutputBox );
-	this->AddChild( &m_rectChatOutputBox );
-
-	m_textChatInput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-	m_textChatInput.SetHorizAlign( align_left );
-	m_textChatInput.SetVertAlign( align_top );
-	m_textChatInput.SetShadowLength( 0 );
-	m_textChatInput.SetName( "ChatInput" );
-	m_textChatInput.SetWrapWidthPixels( (int)(CHATINPUT_WIDTH * 2) );
-	SET_XY_AND_ON_COMMAND( m_textChatInput );
-	this->AddChild( &m_textChatInput );
-
-	m_textOutHidden.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-	m_textOutHidden.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
-
-	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-	m_textChatOutput.SetHorizAlign( align_left );
-	m_textChatOutput.SetVertAlign( align_bottom );
-	m_textChatOutput.SetShadowLength( 0 );
-	m_textChatOutput.SetName( "ChatOutput" );
-	SET_XY_AND_ON_COMMAND( m_textChatOutput );
-	this->AddChild( &m_textChatOutput );
-
-	//Display updated chat (maybe this should be a function)?
-	m_textOutHidden.SetText( NSMAN->m_sChatText );
-	vector <wstring> wLines;
-	m_textOutHidden.GetLines( wLines );
-	m_actualText = "";
-	for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
-		m_actualText += WStringToCString( wLines[i] )+'\n';
-	m_textChatOutput.SetText( m_actualText );
-
 	//Groups
-
 	m_rectGroupsBackground.SetDiffuse( GROUPSBG_COLOR );
 	m_rectGroupsBackground.SetName( "GroupsBG" );
 	m_rectGroupsBackground.SetWidth( GROUPSBG_WIDTH );
@@ -191,19 +128,6 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	m_rectDiff.SetHeight( DIFFBG_HEIGHT );
 	SET_XY_AND_ON_COMMAND( m_rectDiff );
 	this->AddChild( &m_rectDiff );
-
-	//Users' Background
-	
-	m_rectUsersBG.SetDiffuse( USERSBG_COLOR );
-	m_rectUsersBG.SetName( "UsersBG" );
-	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
-	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectUsersBG );
-	this->AddChild( &m_rectUsersBG );
-
-	//Display users list
-	UpdateUsers();
-
 
 	FOREACH_EnabledPlayer (p)
 	{
@@ -276,10 +200,6 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) && (type != IET_FAST_REPEAT ) )
 		return;
 
-	bool bHoldingShift = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
-
 	bool bHoldingCtrl = 
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
@@ -289,53 +209,11 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	{
 	case KEY_ENTER:
 	case KEY_KP_ENTER:
-		if (!bHoldingCtrl)
-		{
-			if ( m_sTextInput != "" )
-				NSMAN->SendChat( m_sTextInput );
-			m_sTextInput="";
-			UpdateTextInput();
-			return;
-		}
-		break;
 	case KEY_BACK:
-		if(!m_sTextInput.empty())
-			m_sTextInput = m_sTextInput.erase( m_sTextInput.size()-1 );
-		UpdateTextInput();
 		break;
 	default:
 		char c;
 		c = DeviceI.ToChar();
-
-		if( bHoldingShift && !bHoldingCtrl )
-		{
-			c = (char)toupper(c);
-
-			switch( c )
-			{
-			case '`':	c='~';	break;
-			case '1':	c='!';	break;
-			case '2':	c='@';	break;
-			case '3':	c='#';	break;
-			case '4':	c='$';	break;
-			case '5':	c='%';	break;
-			case '6':	c='^';	break;
-			case '7':	c='&';	break;
-			case '8':	c='*';	break;
-			case '9':	c='(';	break;
-			case '0':	c=')';	break;
-			case '-':	c='_';	break;
-			case '=':	c='+';	break;
-			case '[':	c='{';	break;
-			case ']':	c='}';	break;
-			case '\'':	c='"';	break;
-			case '\\':	c='|';	break;
-			case ';':	c=':';	break;
-			case ',':	c='<';	break;
-			case '.':	c='>';	break;
-			case '/':	c='?';	break;
-			}
-		}
 
 		//Search list for given letter (to aide in searching)
 		if( bHoldingCtrl )
@@ -349,22 +227,15 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 					break;
 				}
 		}
-
-		if( (c >= ' ') && (!bHoldingCtrl) )
-		{
-			m_sTextInput += c;
-			UpdateTextInput();
-		}
 		break;
-
-
 	}
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
+
+	ScreenNetSelectBase::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
-	Screen::HandleScreenMessage( SM );
+	ScreenNetSelectBase::HandleScreenMessage( SM );
 
 	switch( SM )
 	{
@@ -378,17 +249,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_NoSongs:
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NoSongsScreen") );
 		break;
-	case SM_AddToChat:
-		{
-			m_textOutHidden.SetText( NSMAN->m_sChatText );
-			vector <wstring> wLines;
-			m_textOutHidden.GetLines( wLines );
-			m_actualText = "";
-			for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES, 0 ) ; i < wLines.size() ; ++i)
-				m_actualText += WStringToCString( wLines[i] )+'\n';
-			m_textChatOutput.SetText( m_actualText );
-			break;
-		}
 	case SM_ChangeSong:
 		{
 			//First check to see if this song is already selected.
@@ -463,10 +323,6 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_bEditing = false;
 		NSMAN->ReportPlayerOptions();
 		break;
-	case SM_UsersUpdate:
-		UpdateUsers();
-		break;
-
 	}
 
 }
@@ -588,7 +444,7 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode - 1) % (int)SelectModes);
 	if ( (int) m_SelectMode < 0) 
 		m_SelectMode = (NetScreenSelectModes) (SelectModes - 1);
-	m_rectSelection.FinishTweening( );
+	m_rectSelection.StopTweening( );
 	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
@@ -596,7 +452,7 @@ void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type 
 {
 	m_soundChangeSel.Play();
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode + 1) % (int)SelectModes);
-	m_rectSelection.FinishTweening( );
+	m_rectSelection.StopTweening( );
 	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
@@ -626,10 +482,7 @@ void ScreenNetSelectMusic::MenuBack( PlayerNumber pn )
 
 void ScreenNetSelectMusic::TweenOffScreen()
 {
-	OFF_COMMAND( m_rectChatInputBox );
-	OFF_COMMAND( m_rectChatOutputBox );
-	OFF_COMMAND( m_textChatInput );
-	OFF_COMMAND( m_textChatOutput );
+	ScreenNetSelectBase::TweenOffScreen();
 
 	OFF_COMMAND( m_rectSelection );
 	OFF_COMMAND( m_textGroups );
@@ -647,34 +500,12 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_sprSelOptions );
 
-	for( unsigned i=0; i<m_textUsers.size(); i++ )
-		OFF_COMMAND( m_textUsers[i] );
-
-	OFF_COMMAND( m_rectUsersBG );
-
-
 	FOREACH_EnabledPlayer (pn)
 	{
 		OFF_COMMAND( m_DifficultyMeters[pn] );
 		OFF_COMMAND( m_DifficultyIcon[pn] );
 	}
 	NSMAN->ReportNSSOnOff(0);
-}
-
-
-void ScreenNetSelectMusic::Update( float fDeltaTime )
-{
-	Screen::Update( fDeltaTime );
-}
-
-void ScreenNetSelectMusic::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
-void ScreenNetSelectMusic::UpdateTextInput()
-{
-	m_textChatInput.SetText( m_sTextInput );  
 }
 
 void ScreenNetSelectMusic::StartSelectedSong()
@@ -813,47 +644,6 @@ void ScreenNetSelectMusic::UpdateSongsList()
 		SONGMAN->GetSongs( m_vSongs );	//this gets it alphabetically
 	else
 		SONGMAN->GetSongs( m_vSongs, m_vGroups[j] );
-}
-
-void ScreenNetSelectMusic::UpdateUsers()
-{
-	float tX = USERS_X - USERSDELT_X;
-	float tY = USERS_Y;
-
-	for( unsigned i=0; i< m_textUsers.size(); i++)
-		this->RemoveChild( &m_textUsers[i] );
-
-	unsigned oldUsers = m_textUsers.size();
-
-	m_textUsers.clear();
-
-	m_textUsers.resize( NSMAN->m_ActivePlayer.size() );
-
-	for( unsigned i=0; i < NSMAN->m_ActivePlayer.size(); i++)
-	{
-		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-		m_textUsers[i].SetHorizAlign( align_center );
-		m_textUsers[i].SetVertAlign( align_top );
-		m_textUsers[i].SetShadowLength( 0 );
-		m_textUsers[i].SetName( "Users" );
-		
-		tX += USERSDELT_X;
-
-		if ( (i % 2) == 1)
-			tY = USERSALT_Y + USERS_Y;
-		else
-			tY = USERS_Y;
-		m_textUsers[i].SetXY( tX, tY );
-
-		if ( i > oldUsers )
-			ON_COMMAND( m_textUsers[i] );
-	
-		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
-		m_textUsers[i].SetDiffuseColor ( THEME->GetMetricC( m_sName,
-			ssprintf("Users%dColor", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
-
-		this->AddChild( &m_textUsers[i] );
-	}
 }
 
 #endif
