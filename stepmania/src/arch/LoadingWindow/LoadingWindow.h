@@ -2,7 +2,8 @@
 #define LOADING_WINDOW_H
 
 /* Driver abstract class for opening and displaying the loading banner. */
-class LoadingWindow {
+class LoadingWindow
+{
 public:
 	virtual ~LoadingWindow() { }
 
