@@ -214,9 +214,6 @@ void BitmapText::SetText( CString sText, bool DoSubst )
 {
 	ASSERT( m_pFont );
 
-	if(DoSubst)
-		FontCharAliases::ReplaceMarkers(sText);
-
 	if(m_szText == sText)
 		return;
 

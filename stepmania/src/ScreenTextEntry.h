@@ -35,6 +35,8 @@ protected:
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
+	void UpdateText();
+
 	TransitionFade	m_Fade;
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;

@@ -65,10 +65,17 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 
 	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textAnswer.SetXY( ANSWER_X, ANSWER_Y );
-	m_textAnswer.SetText( LStringToCString(m_sAnswer) );
+	UpdateText();
 	this->AddChild( &m_textAnswer );
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
+}
+
+void ScreenTextEntry::UpdateText()
+{
+	CString txt = LStringToCString(m_sAnswer);
+	FontCharAliases::ReplaceMarkers(txt);
+	m_textAnswer.SetText( txt );
 }
 
 void ScreenTextEntry::Update( float fDeltaTime )
@@ -101,7 +108,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case SDLK_BACKSPACE:
 		if(!m_sAnswer.empty())
 			m_sAnswer = m_sAnswer.erase( m_sAnswer.size()-1 );
-		m_textAnswer.SetText( LStringToCString(m_sAnswer) );
+		UpdateText();
 		break;
 	default:
 		char c;
@@ -146,7 +153,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		if( c != '\0' )
 		{
 			m_sAnswer += c;
-			m_textAnswer.SetText( LStringToCString(m_sAnswer) );
+			UpdateText();
 		}
 		break;
 	}

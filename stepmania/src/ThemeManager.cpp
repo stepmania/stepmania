@@ -20,6 +20,7 @@
 #include "IniFile.h"
 #include "RageTimer.h"
 #include "Font.h"
+#include "FontCharAliases.h"
 
 using namespace std;
 
@@ -369,6 +370,11 @@ try_metric_again:
 	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
 	{
 		sValue.Replace("::","\n");	// "::" means newline since you can't use line breaks in an ini file.
+
+		/* XXX: add a parameter to turn this off if there are some metrics where
+		 * we don't want markers */
+		FontCharAliases::ReplaceMarkers(sValue);
+
 		return sValue;
 	}
 
