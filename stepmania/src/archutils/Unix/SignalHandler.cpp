@@ -30,8 +30,9 @@ SaveSignals::SaveSignals()
 	/* Store the old signal handlers. */
 	for(int i = 0; signals[i] != -1; ++i)
 	{
-        old_handlers.push_back();
-		sigaction(signals[i], NULL, &old_handlers.back());
+		struct sigaction sa;
+		sigaction(signals[i], NULL, &sa);
+        old_handlers.push_back(sa);
 	}
 }
 
