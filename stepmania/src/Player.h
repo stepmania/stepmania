@@ -46,7 +46,7 @@ public:
 	void Load( const NoteData& noteData );
 	void CrossedRow( int iNoteRow );
 	void CrossedMineRow( int iNoteRow );
-	void Step( int col, const RageTimer &tm );
+	void Step( int col, const RageTimer &tm, bool bHeld = false );
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
@@ -58,7 +58,7 @@ public:
 	NoteData m_NoteData;
 
 protected:
-	void HandleStep( int col, const RageTimer &tm );
+	void HandleStep( int col, const RageTimer &tm, bool bHeld );
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowCompletelyJudged( int iStepIndex );
 	void HandleTapRowScore( unsigned row );

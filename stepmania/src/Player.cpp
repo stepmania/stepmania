@@ -700,7 +700,7 @@ int Player::GetClosestNote( int col, int iNoteRow, int iMaxRowsAhead, int iMaxRo
 }
 
 
-void Player::Step( int col, const RageTimer &tm )
+void Player::Step( int col, const RageTimer &tm, bool bHeld )
 {
 	bool bOniDead = 
 		GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
@@ -709,12 +709,12 @@ void Player::Step( int col, const RageTimer &tm )
 	if( bOniDead )
 		return;	// do nothing
 
-	HandleStep( col, tm );
+	HandleStep( col, tm, bHeld );
 
 	MESSAGEMAN->Broadcast( m_sMessageToSendOnStep );	
 }
 
-void Player::HandleStep( int col, const RageTimer &tm )
+void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 {
 
 	//LOG->Trace( "Player::HandlePlayerStep()" );
@@ -722,9 +722,10 @@ void Player::HandleStep( int col, const RageTimer &tm )
 	ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
 	//
-	// Count calories for this step.
+	// Count calories for this step, unless we're being called because a button is
+	// held over a mine.
 	//
-	if( m_pPlayerStageStats && m_pPlayerState )
+	if( m_pPlayerStageStats && m_pPlayerState && !bHeld )
 	{
 		// TODO: remove use of PlayerNumber
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -1198,7 +1199,7 @@ void Player::CrossedMineRow( int iNoteRow )
 			{
 				bool bIsDown = INPUTMAPPER->IsButtonDown( GameI );
 				if( bIsDown )
-					Step( t, now );
+					Step( t, now, true );
 			}
 		}
 	}
