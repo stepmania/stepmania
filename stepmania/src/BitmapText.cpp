@@ -191,7 +191,7 @@ void BitmapText::BuildChars()
 void BitmapText::DrawChars()
 {
 	// bail if cropped all the way 
-    if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
+	if( m_pTempState->crop.left + m_pTempState->crop.right >= 1  || 
 		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
 		return; 
 
@@ -206,7 +206,7 @@ void BitmapText::DrawChars()
 		m_pTempState->fade.left > 0 ||
 		m_pTempState->fade.right > 0 )
 	{
-		/* Handle fading by tweaking the alpha values of the verteces. */
+		/* Handle fading by tweaking the alpha values of the vertices. */
 
 		/* Actual size of the fade on each side: */
 		const RectF &FadeDist = m_pTempState->fade;
