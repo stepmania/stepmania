@@ -139,7 +139,7 @@ bool EzSockets::connect(const std::string& host,unsigned short port) {
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
     addr.sin_family      = AF_INET;
-    addr.sin_addr.s_addr = (unsigned long) *((LPIN_ADDR*)phe->h_addr_list);
+	addr.sin_addr        = *((LPIN_ADDR)* phe->h_addr_list); 
     addr.sin_port        = htons(port);
   #else
     addr.sin_family = AF_INET;
@@ -147,7 +147,7 @@ bool EzSockets::connect(const std::string& host,unsigned short port) {
 	inet_pton(AF_INET,host.c_str(),&addr.sin_addr);
   #endif
 
-  if(::connect(sock,(struct sockaddr*)&addr,sizeof(addr))<=0)
+  if(::connect(sock,(struct sockaddr*)&addr,sizeof(addr))!=0)
     return false;
 
   state = skCONNECTED;
@@ -378,7 +378,7 @@ int EzSockets::pWriteData(const char* data,int dataSize) {
   return send(sock,data,dataSize,0);
 }
 
-/*
+/* 
  * (c) 2003-2004 Josh Allen, Charles Lohr, and Adam Lowman
  * All rights reserved.
  * 
