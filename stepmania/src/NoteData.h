@@ -32,16 +32,19 @@ class NoteData
 
 	vector<HoldNote>	m_HoldNotes;
 
+	/* Pad m_TapNotes so it includes the row "rows". */
+	void PadTapNotes(int rows);
+
+public:
 	/* Set up to hold the data in From; same number of tracks, same
 	 * divisor.  Doesn't allocate or copy anything. */
 	void Config( const NoteData &From );
 
-public:
+	int m_iNumTracks;
+
 	NoteData();
 	~NoteData();
 	void Init();
-
-	int			m_iNumTracks;
 
 	void Compress();
 	void Decompress();
@@ -57,8 +60,6 @@ public:
 	}
 	int GetTapNoteIncrement() const { return TapRowDivisor; }
 	void MoveTapNoteTrack(int dest, int src);
-	/* Pad m_TapNotes so it includes the row "rows". */
-	void PadTapNotes(int rows);
 	void SetTapNote(int track, int row, TapNote t);
 
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
@@ -99,13 +100,6 @@ public:
 	void LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
 	void LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks );	// used by autogen
 
-	void RemoveHoldNotes();
-	void Turn( PlayerOptions::TurnType tt );
-	void MakeLittle();
-
-	void SnapToNearestNoteType( NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
-	void SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
-
 	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
 	void Convert2sAnd3sToHoldNotes();
 	void ConvertHoldNotesTo2sAnd3s();
@@ -132,6 +126,13 @@ namespace NoteDataUtil
 
 	// radar values - return between 0.0 and 1.2
 	float GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds );
+
+	void RemoveHoldNotes(NoteData &in);
+	void Turn( NoteData &in, PlayerOptions::TurnType tt );
+	void MakeLittle(NoteData &in);
+
+	void SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
+	inline void SnapToNearestNoteType( NoteData &in, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( in, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
 };
 
 #endif

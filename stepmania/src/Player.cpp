@@ -146,12 +146,12 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 		m_pScore->Init( pn );
 
 	if( !GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes )
-		this->RemoveHoldNotes();
+		NoteDataUtil::RemoveHoldNotes(*this);
 
-	this->Turn( GAMESTATE->m_PlayerOptions[pn].m_TurnType );
+	NoteDataUtil::Turn( *this, GAMESTATE->m_PlayerOptions[pn].m_TurnType );
 
 	if( GAMESTATE->m_PlayerOptions[pn].m_bLittle )
-		this->MakeLittle();
+		NoteDataUtil::MakeLittle(*this);
 
 	int iPixelsToDrawBefore = 96;
 	int iPixelsToDrawAfter = 384;

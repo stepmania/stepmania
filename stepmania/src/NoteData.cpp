@@ -296,210 +296,6 @@ int NoteData::GetPossibleDancePoints()
 		   GetNumHoldNotes()*HoldNoteScoreToDancePoints(HNS_OK);
 }
 
-void NoteData::RemoveHoldNotes()
-{
-	// turn all the HoldNotes into TapNotes
-	for( int i=0; i<GetNumHoldNotes(); i++ )
-	{
-		const HoldNote &hn = GetHoldNote(i);
-		
-		int iIndex = BeatToNoteRow(hn.m_fStartBeat);
-		int iCol = hn.m_iTrack;
-
-		SetTapNote(iCol, iIndex, TAP_TAP);
-	}
-
-	// Remove all HoldNotes
-	m_HoldNotes.clear();
-}
-
-
-void NoteData::Turn( PlayerOptions::TurnType tt )
-{
-	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
-
-	int t;
-
-	switch( tt )
-	{
-	case PlayerOptions::TURN_NONE:
-		return;		// nothing to do
-	case PlayerOptions::TURN_MIRROR:
-		for( t=0; t<m_iNumTracks; t++ )
-			iTakeFromTrack[t] = m_iNumTracks-t-1;
-		break;
-	case PlayerOptions::TURN_LEFT:
-	case PlayerOptions::TURN_RIGHT:		// HACK: TurnRight does the same thing as TurnLeft.  I'll fix this later...
-		// Chris: Handling each NotesType case is a terrible way to do this, but oh well...
-		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
-		{
-		case NOTES_TYPE_DANCE_SINGLE:
-		case NOTES_TYPE_DANCE_DOUBLE:
-		case NOTES_TYPE_DANCE_COUPLE:
-			iTakeFromTrack[0] = 2;
-			iTakeFromTrack[1] = 0;
-			iTakeFromTrack[2] = 3;
-			iTakeFromTrack[3] = 1;
-			iTakeFromTrack[4] = 6;
-			iTakeFromTrack[5] = 4;
-			iTakeFromTrack[6] = 7;
-			iTakeFromTrack[7] = 5;
-			break;
-		case NOTES_TYPE_DANCE_SOLO:
-			iTakeFromTrack[0] = 5;
-			iTakeFromTrack[1] = 4;
-			iTakeFromTrack[2] = 0;
-			iTakeFromTrack[3] = 3;
-			iTakeFromTrack[4] = 1;
-			iTakeFromTrack[5] = 2;
-			break;
-		case NOTES_TYPE_PUMP_SINGLE:
-		case NOTES_TYPE_PUMP_COUPLE:
-			iTakeFromTrack[0] = 3;
-			iTakeFromTrack[1] = 4;
-			iTakeFromTrack[2] = 2;
-			iTakeFromTrack[3] = 0;
-			iTakeFromTrack[4] = 1;
-			iTakeFromTrack[5] = 8;
-			iTakeFromTrack[6] = 9;
-			iTakeFromTrack[7] = 7;
-			iTakeFromTrack[8] = 5;
-			iTakeFromTrack[9] = 6;
-			break;
-		case NOTES_TYPE_PUMP_DOUBLE:
-			iTakeFromTrack[0] = 8;
-			iTakeFromTrack[1] = 9;
-			iTakeFromTrack[2] = 7;
-			iTakeFromTrack[3] = 5;
-			iTakeFromTrack[4] = 6;
-			iTakeFromTrack[5] = 3;
-			iTakeFromTrack[6] = 4;
-			iTakeFromTrack[7] = 2;
-			iTakeFromTrack[8] = 0;
-			iTakeFromTrack[9] = 1;
-			break;
-		case NOTES_TYPE_EZ2_SINGLE:
-		case NOTES_TYPE_EZ2_DOUBLE:
-		case NOTES_TYPE_EZ2_REAL:
-			// identity transform.  What should we do here?
-			iTakeFromTrack[0] = 0;
-			iTakeFromTrack[1] = 1;
-			iTakeFromTrack[2] = 2;
-			iTakeFromTrack[3] = 3;
-			iTakeFromTrack[4] = 4;
-			iTakeFromTrack[5] = 5;
-			iTakeFromTrack[6] = 6;
-			iTakeFromTrack[7] = 7;
-			iTakeFromTrack[8] = 8;
-			iTakeFromTrack[9] = 9;
-			iTakeFromTrack[10]= 10;
-			iTakeFromTrack[11]= 11;
-			break;
-		}
-		break;
-	case PlayerOptions::TURN_SHUFFLE:
-	case PlayerOptions::TURN_SUPER_SHUFFLE:		// use this code to shuffle the HoldNotes
-		{
-			CArray<int,int> aiTracksLeftToMap;
-			for( t=0; t<m_iNumTracks; t++ )
-				aiTracksLeftToMap.push_back( t );
-			
-			for( t=0; t<m_iNumTracks; t++ )
-			{
-				int iRandTrackIndex = rand()%aiTracksLeftToMap.size();
-				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
-				aiTracksLeftToMap.erase( aiTracksLeftToMap.begin()+iRandTrackIndex,
-										 aiTracksLeftToMap.begin()+iRandTrackIndex+1 );
-				iTakeFromTrack[t] = iRandTrack;
-			}
-		}
-		break;
-		// handle this below
-		break;
-	default:
-		ASSERT(0);
-	}
-
-	NoteData tempNoteData;	// write into here as we tranform
-	tempNoteData.Config(*this);
-
-	this->ConvertHoldNotesTo2sAnd3s();
-
-	// transform notes
-	for( t=0; t<m_iNumTracks; t++ )
-		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
-			tempNoteData.SetTapNote(t, r, GetTapNote(iTakeFromTrack[t], r));
-
-	this->CopyAll( &tempNoteData );		// copy note data from newData back into this
-	this->Convert2sAnd3sToHoldNotes();
-
-
-
-
-
-	if( tt == PlayerOptions::TURN_SUPER_SHUFFLE )
-	{
-		// We already did the normal shuffling code above, which did a good job
-		// of shuffling HoldNotes without creating impossible patterns.
-		// Now, go in and shuffle the TapNotes some more.
-
-		// clear tempNoteData because we're going to use it as a scratch buffer again
-		tempNoteData.Init();
-		tempNoteData.Config(*this);
-
-		// copy all HoldNotes before copying taps
-		for( int i=0; i<this->GetNumHoldNotes(); i++ )
-			tempNoteData.AddHoldNote( this->GetHoldNote(i) );
-
-		this->ConvertHoldNotesTo4s();
-
-		for( int r=0; r<=this->GetLastRow(); r++ )	// foreach row
-		{
-			if( this->IsRowEmpty(r) )
-				continue;	// no need to super shuffle this row
-
-			// shuffle this row
-			CArray<int,int> aiTracksThatCouldHaveTapNotes;
-			for( t=0; t<m_iNumTracks; t++ )
-				if( GetTapNote(t, r) != TAP_HOLD )	// any point that isn't part of a hold
-					aiTracksThatCouldHaveTapNotes.push_back( t );
-
-			for( t=0; t<m_iNumTracks; t++ )
-			{
-				if( GetTapNote(t, r) != TAP_HOLD  &&  GetTapNote(t, r) != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
-				{
-					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.size();
-					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
-					aiTracksThatCouldHaveTapNotes.erase( aiTracksThatCouldHaveTapNotes.begin()+iRandIndex,
-													     aiTracksThatCouldHaveTapNotes.begin()+iRandIndex+1 );
-	
-					tempNoteData.SetTapNote(iTo, r, GetTapNote(t, r));
-				}
-			}
-		}
-
-		this->CopyAll( &tempNoteData );		// copy note data from newData back into this
-	}
-}
-
-void NoteData::MakeLittle()
-{
-	// filter out all non-quarter notes
-	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
-	{
-		if( i%ROWS_PER_BEAT != 0 )
-		{
-			// filter out all non-quarter notes
-			for( int c=0; c<m_iNumTracks; c++ ) 
-			{
-				SetTapNote(c, i, TAP_EMPTY);
-			}
-		}
-	}
-
-	// leave HoldNotes unchanged (what should be do with them?)
-}
-
 /* ConvertHoldNotesTo2sAnd3s also clears m_iHoldNotes;
  * shouldn't this do likewise and set all 2/3's to 0? 
  * -glenn
@@ -606,62 +402,6 @@ void NoteData::ConvertHoldNotesTo4s()
 	}
 	m_HoldNotes.clear();
 }
-
-void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat )
-{
-	// nt2 is optional and should be -1 if it is not used
-
-	float fSnapInterval1, fSnapInterval2;
-	switch( nt1 )
-	{
-		case NOTE_TYPE_4TH:		fSnapInterval1 = 1/1.0f;	break;
-		case NOTE_TYPE_8TH:		fSnapInterval1 = 1/2.0f;	break;
-		case NOTE_TYPE_12TH:	fSnapInterval1 = 1/3.0f;	break;
-		case NOTE_TYPE_16TH:	fSnapInterval1 = 1/4.0f;	break;
-		default:	ASSERT( false );						return;
-	}
-
-	switch( nt2 )
-	{
-		case NOTE_TYPE_4TH:		fSnapInterval2 = 1/1.0f;	break;
-		case NOTE_TYPE_8TH:		fSnapInterval2 = 1/2.0f;	break;
-		case NOTE_TYPE_12TH:	fSnapInterval2 = 1/3.0f;	break;
-		case NOTE_TYPE_16TH:	fSnapInterval2 = 1/4.0f;	break;
-		case -1:				fSnapInterval2 = 10000;		break;	// nothing will ever snap to this.  That's what we want!
-		default:	ASSERT( false );						return;
-	}
-
-	int iNoteIndexBegin = BeatToNoteRow( fBeginBeat );
-	int iNoteIndexEnd = BeatToNoteRow( fEndBeat );
-
-	//ConvertHoldNotesTo2sAnd3s();
-
-	// iterate over all TapNotes in the interval and snap them
-	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
-	{
-		int iOldIndex = i;
-		float fOldBeat = NoteRowToBeat( iOldIndex );
-		float fNewBeat1 = froundf( fOldBeat, fSnapInterval1 );
-		float fNewBeat2 = froundf( fOldBeat, fSnapInterval2 );
-
-		bool bNewBeat1IsCloser = fabsf(fNewBeat1-fOldBeat) < fabsf(fNewBeat2-fOldBeat);
-		float fNewBeat = bNewBeat1IsCloser ? fNewBeat1 : fNewBeat2;
-		int iNewIndex = BeatToNoteRow( fNewBeat );
-
-		for( int c=0; c<m_iNumTracks; c++ )
-		{
-			TapNote note = GetTapNote(c, iOldIndex);
-			SetTapNote(c, iOldIndex, TAP_EMPTY);
-			// HoldNotes override TapNotes
-			if(GetTapNote(c, iNewIndex) == TAP_TAP)
-				note = TAP_HOLD_HEAD;
-			SetTapNote(c, iNewIndex, note );
-		}
-	}
-
-	//Convert2sAnd3sToHoldNotes();
-}
-
 
 // -1 for iOriginalTracksToTakeFrom means no track
 void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
@@ -782,9 +522,12 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 {
 	if(row < 0) return;
 
-	Decompress();
+	/* Decompress if needed. */
+	if((row % TapRowDivisor) != 0)
+		Decompress();
 
 	PadTapNotes(row);
+	row /= TapRowDivisor;
 	m_TapNotes[track][row]=t;
 }
 
@@ -1091,4 +834,267 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 
 	float fReturn = iNumChaosNotes / fSongSeconds * 0.5f;
 	return min( fReturn, 1.0f );
+}
+
+void NoteDataUtil::RemoveHoldNotes(NoteData &in)
+{
+	vector<int> tracks, rows;
+
+	// turn all the HoldNotes into TapNotes
+	for( int i=0; i<in.GetNumHoldNotes(); i++ )
+	{
+		const HoldNote &hn = in.GetHoldNote(i);
+		
+		tracks.push_back(hn.m_iTrack);
+		rows.push_back(BeatToNoteRow(hn.m_fStartBeat));
+	}
+
+	// Remove all HoldNotes
+	while(in.GetNumHoldNotes())
+		in.RemoveHoldNote(in.GetNumHoldNotes()-1);
+
+	for(unsigned j = 0; j < tracks.size(); ++j)
+		in.SetTapNote(tracks[j], rows[j], TAP_TAP);
+}
+
+
+void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
+{
+	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
+
+	int t;
+
+	switch( tt )
+	{
+	case PlayerOptions::TURN_NONE:
+		return;		// nothing to do
+	case PlayerOptions::TURN_MIRROR:
+		for( t=0; t<in.m_iNumTracks; t++ )
+			iTakeFromTrack[t] = in.m_iNumTracks-t-1;
+		break;
+	case PlayerOptions::TURN_LEFT:
+	case PlayerOptions::TURN_RIGHT:		// HACK: TurnRight does the same thing as TurnLeft.  I'll fix this later...
+		// Chris: Handling each NotesType case is a terrible way to do this, but oh well...
+		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+		{
+		case NOTES_TYPE_DANCE_SINGLE:
+		case NOTES_TYPE_DANCE_DOUBLE:
+		case NOTES_TYPE_DANCE_COUPLE:
+			iTakeFromTrack[0] = 2;
+			iTakeFromTrack[1] = 0;
+			iTakeFromTrack[2] = 3;
+			iTakeFromTrack[3] = 1;
+			iTakeFromTrack[4] = 6;
+			iTakeFromTrack[5] = 4;
+			iTakeFromTrack[6] = 7;
+			iTakeFromTrack[7] = 5;
+			break;
+		case NOTES_TYPE_DANCE_SOLO:
+			iTakeFromTrack[0] = 5;
+			iTakeFromTrack[1] = 4;
+			iTakeFromTrack[2] = 0;
+			iTakeFromTrack[3] = 3;
+			iTakeFromTrack[4] = 1;
+			iTakeFromTrack[5] = 2;
+			break;
+		case NOTES_TYPE_PUMP_SINGLE:
+		case NOTES_TYPE_PUMP_COUPLE:
+			iTakeFromTrack[0] = 3;
+			iTakeFromTrack[1] = 4;
+			iTakeFromTrack[2] = 2;
+			iTakeFromTrack[3] = 0;
+			iTakeFromTrack[4] = 1;
+			iTakeFromTrack[5] = 8;
+			iTakeFromTrack[6] = 9;
+			iTakeFromTrack[7] = 7;
+			iTakeFromTrack[8] = 5;
+			iTakeFromTrack[9] = 6;
+			break;
+		case NOTES_TYPE_PUMP_DOUBLE:
+			iTakeFromTrack[0] = 8;
+			iTakeFromTrack[1] = 9;
+			iTakeFromTrack[2] = 7;
+			iTakeFromTrack[3] = 5;
+			iTakeFromTrack[4] = 6;
+			iTakeFromTrack[5] = 3;
+			iTakeFromTrack[6] = 4;
+			iTakeFromTrack[7] = 2;
+			iTakeFromTrack[8] = 0;
+			iTakeFromTrack[9] = 1;
+			break;
+		case NOTES_TYPE_EZ2_SINGLE:
+		case NOTES_TYPE_EZ2_DOUBLE:
+		case NOTES_TYPE_EZ2_REAL:
+			// identity transform.  What should we do here?
+			iTakeFromTrack[0] = 0;
+			iTakeFromTrack[1] = 1;
+			iTakeFromTrack[2] = 2;
+			iTakeFromTrack[3] = 3;
+			iTakeFromTrack[4] = 4;
+			iTakeFromTrack[5] = 5;
+			iTakeFromTrack[6] = 6;
+			iTakeFromTrack[7] = 7;
+			iTakeFromTrack[8] = 8;
+			iTakeFromTrack[9] = 9;
+			iTakeFromTrack[10]= 10;
+			iTakeFromTrack[11]= 11;
+			break;
+		}
+		break;
+	case PlayerOptions::TURN_SHUFFLE:
+	case PlayerOptions::TURN_SUPER_SHUFFLE:		// use this code to shuffle the HoldNotes
+		{
+			CArray<int,int> aiTracksLeftToMap;
+			for( t=0; t<in.m_iNumTracks; t++ )
+				aiTracksLeftToMap.push_back( t );
+			
+			for( t=0; t<in.m_iNumTracks; t++ )
+			{
+				int iRandTrackIndex = rand()%aiTracksLeftToMap.size();
+				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
+				aiTracksLeftToMap.erase( aiTracksLeftToMap.begin()+iRandTrackIndex,
+										 aiTracksLeftToMap.begin()+iRandTrackIndex+1 );
+				iTakeFromTrack[t] = iRandTrack;
+			}
+		}
+		break;
+		// handle this below
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	NoteData tempNoteData;	// write into here as we tranform
+	tempNoteData.Config(in);
+
+	in.ConvertHoldNotesTo2sAnd3s();
+
+	// transform notes
+	for( t=0; t<in.m_iNumTracks; t++ )
+		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
+			tempNoteData.SetTapNote(t, r, in.GetTapNote(iTakeFromTrack[t], r));
+
+	in.CopyAll( &tempNoteData );		// copy note data from newData back into this
+	in.Convert2sAnd3sToHoldNotes();
+
+
+
+
+
+	if( tt == PlayerOptions::TURN_SUPER_SHUFFLE )
+	{
+		// We already did the normal shuffling code above, which did a good job
+		// of shuffling HoldNotes without creating impossible patterns.
+		// Now, go in and shuffle the TapNotes some more.
+
+		// clear tempNoteData because we're going to use it as a scratch buffer again
+		tempNoteData.Init();
+		tempNoteData.Config(in);
+
+		// copy all HoldNotes before copying taps
+		for( int i=0; i<in.GetNumHoldNotes(); i++ )
+			tempNoteData.AddHoldNote( in.GetHoldNote(i) );
+
+		in.ConvertHoldNotesTo4s();
+
+		for( int r=0; r<=in.GetLastRow(); r++ )	// foreach row
+		{
+			if( in.IsRowEmpty(r) )
+				continue;	// no need to super shuffle this row
+
+			// shuffle this row
+			CArray<int,int> aiTracksThatCouldHaveTapNotes;
+			for( t=0; t<in.m_iNumTracks; t++ )
+				if( in.GetTapNote(t, r) != TAP_HOLD )	// any point that isn't part of a hold
+					aiTracksThatCouldHaveTapNotes.push_back( t );
+
+			for( t=0; t<in.m_iNumTracks; t++ )
+			{
+				if( in.GetTapNote(t, r) != TAP_HOLD  &&  in.GetTapNote(t, r) != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
+				{
+					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.size();
+					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
+					aiTracksThatCouldHaveTapNotes.erase( aiTracksThatCouldHaveTapNotes.begin()+iRandIndex,
+													     aiTracksThatCouldHaveTapNotes.begin()+iRandIndex+1 );
+	
+					tempNoteData.SetTapNote(iTo, r, in.GetTapNote(t, r));
+				}
+			}
+		}
+
+		in.CopyAll( &tempNoteData );		// copy note data from newData back into this
+	}
+}
+
+void NoteDataUtil::MakeLittle(NoteData &in)
+{
+	// filter out all non-quarter notes
+	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
+	{
+		if( i%ROWS_PER_BEAT != 0 )
+		{
+			// filter out all non-quarter notes
+			for( int c=0; c<in.m_iNumTracks; c++ ) 
+			{
+				in.SetTapNote(c, i, TAP_EMPTY);
+			}
+		}
+	}
+
+	// leave HoldNotes unchanged (what should be do with them?)
+}
+
+void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat )
+{
+	// nt2 is optional and should be -1 if it is not used
+
+	float fSnapInterval1, fSnapInterval2;
+	switch( nt1 )
+	{
+		case NOTE_TYPE_4TH:		fSnapInterval1 = 1/1.0f;	break;
+		case NOTE_TYPE_8TH:		fSnapInterval1 = 1/2.0f;	break;
+		case NOTE_TYPE_12TH:	fSnapInterval1 = 1/3.0f;	break;
+		case NOTE_TYPE_16TH:	fSnapInterval1 = 1/4.0f;	break;
+		default:	ASSERT( false );						return;
+	}
+
+	switch( nt2 )
+	{
+		case NOTE_TYPE_4TH:		fSnapInterval2 = 1/1.0f;	break;
+		case NOTE_TYPE_8TH:		fSnapInterval2 = 1/2.0f;	break;
+		case NOTE_TYPE_12TH:	fSnapInterval2 = 1/3.0f;	break;
+		case NOTE_TYPE_16TH:	fSnapInterval2 = 1/4.0f;	break;
+		case -1:				fSnapInterval2 = 10000;		break;	// nothing will ever snap to this.  That's what we want!
+		default:	ASSERT( false );						return;
+	}
+
+	int iNoteIndexBegin = BeatToNoteRow( fBeginBeat );
+	int iNoteIndexEnd = BeatToNoteRow( fEndBeat );
+
+	//ConvertHoldNotesTo2sAnd3s();
+
+	// iterate over all TapNotes in the interval and snap them
+	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
+	{
+		int iOldIndex = i;
+		float fOldBeat = NoteRowToBeat( iOldIndex );
+		float fNewBeat1 = froundf( fOldBeat, fSnapInterval1 );
+		float fNewBeat2 = froundf( fOldBeat, fSnapInterval2 );
+
+		bool bNewBeat1IsCloser = fabsf(fNewBeat1-fOldBeat) < fabsf(fNewBeat2-fOldBeat);
+		float fNewBeat = bNewBeat1IsCloser ? fNewBeat1 : fNewBeat2;
+		int iNewIndex = BeatToNoteRow( fNewBeat );
+
+		for( int c=0; c<in.m_iNumTracks; c++ )
+		{
+			TapNote note = in.GetTapNote(c, iOldIndex);
+			in.SetTapNote(c, iOldIndex, TAP_EMPTY);
+			// HoldNotes override TapNotes
+			if(in.GetTapNote(c, iNewIndex) == TAP_TAP)
+				note = TAP_HOLD_HEAD;
+			in.SetTapNote(c, iNewIndex, note );
+		}
+	}
+
+	//Convert2sAnd3sToHoldNotes();
 }

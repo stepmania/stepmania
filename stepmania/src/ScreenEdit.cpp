@@ -901,7 +901,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					default:	ASSERT( false );		return;
 				}
 
-				m_NoteFieldEdit.SnapToNearestNoteType( noteType1, noteType2, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+				NoteDataUtil::SnapToNearestNoteType( m_NoteFieldEdit, noteType1, noteType2, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
 			}
 		}
 		break;
