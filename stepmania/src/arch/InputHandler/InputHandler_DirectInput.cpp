@@ -77,6 +77,19 @@ InputHandler_DInput::InputHandler_DInput()
 	
 	shutdown = false;
 	g_NumJoysticks = 0;
+
+	/* If we have any polled devices, we need to check it constantly.  In WinNT,
+	 * we have the scheduling resolution to do this.  In Win9x, we don't, so always
+	 * handle those devices uring Update(). */
+	{
+		OSVERSIONINFO ovi;
+		ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+		GetVersionEx(&ovi);
+		PolledDevicesInMainThread = (ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS);
+		if( PolledDevicesInMainThread )
+			LOG->Info( "Polled devices are not threaded");
+	}
+
 	AppInstance inst;	
 	HRESULT hr = DirectInputCreate(/* SDL_Instance */inst.Get(), DIRECTINPUT_VERSION, &dinput, NULL);
 	if ( hr != DI_OK )
@@ -223,7 +236,7 @@ HRESULT GetDeviceState(LPDIRECTINPUTDEVICE2 dev, int size, void *ptr)
 
 /* This doesn't take a timestamp; instead, we let InputHandler::ButtonPressed figure
  * it out.  Be sure to call InputHandler::Update() between each poll. */
-void InputHandler_DInput::UpdatePolled(DIDevice &device)
+void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 {
 	if( device.type == device.KEYBOARD )
 	{
@@ -263,7 +276,7 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device)
 		{
 		case in.BUTTON:
 		{
-			DeviceInput di(dev, JOY_1 + in.num);
+			DeviceInput di(dev, JOY_1 + in.num, tm);
 			ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
 			break;
 		}
@@ -272,31 +285,31 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device)
 		{
 			switch(in.ofs)
 			{
-			case DIJOFS_X:  ButtonPressed(DeviceInput(dev, JOY_LEFT), state.lX < -50);
-							ButtonPressed(DeviceInput(dev, JOY_RIGHT), state.lX > 50);
+			case DIJOFS_X:  ButtonPressed(DeviceInput(dev, JOY_LEFT, tm), state.lX < -50);
+							ButtonPressed(DeviceInput(dev, JOY_RIGHT, tm), state.lX > 50);
 							break;
-			case DIJOFS_Y:  ButtonPressed(DeviceInput(dev, JOY_UP), state.lY < -50);
-							ButtonPressed(DeviceInput(dev, JOY_DOWN), state.lY > 50);
+			case DIJOFS_Y:  ButtonPressed(DeviceInput(dev, JOY_UP, tm), state.lY < -50);
+							ButtonPressed(DeviceInput(dev, JOY_DOWN, tm), state.lY > 50);
 							break;
-			case DIJOFS_Z:  ButtonPressed(DeviceInput(dev, JOY_Z_UP), state.lZ < -50);
-							ButtonPressed(DeviceInput(dev, JOY_Z_DOWN), state.lZ > 50);
+			case DIJOFS_Z:  ButtonPressed(DeviceInput(dev, JOY_Z_UP, tm), state.lZ < -50);
+							ButtonPressed(DeviceInput(dev, JOY_Z_DOWN, tm), state.lZ > 50);
 							break;
-			case DIJOFS_RX: ButtonPressed(DeviceInput(dev, JOY_ROT_LEFT), state.lRx < -50);
-							ButtonPressed(DeviceInput(dev, JOY_ROT_RIGHT), state.lRx > 50);
+			case DIJOFS_RX: ButtonPressed(DeviceInput(dev, JOY_ROT_LEFT, tm), state.lRx < -50);
+							ButtonPressed(DeviceInput(dev, JOY_ROT_RIGHT, tm), state.lRx > 50);
 							break;
-			case DIJOFS_RY: ButtonPressed(DeviceInput(dev, JOY_ROT_UP), state.lRy < -50);
-							ButtonPressed(DeviceInput(dev, JOY_ROT_DOWN), state.lRy > 50);
+			case DIJOFS_RY: ButtonPressed(DeviceInput(dev, JOY_ROT_UP, tm), state.lRy < -50);
+							ButtonPressed(DeviceInput(dev, JOY_ROT_DOWN, tm), state.lRy > 50);
 							break;
-			case DIJOFS_RZ: ButtonPressed(DeviceInput(dev, JOY_ROT_Z_UP), state.lRz < -50);
-							ButtonPressed(DeviceInput(dev, JOY_ROT_Z_DOWN), state.lRz > 50);
+			case DIJOFS_RZ: ButtonPressed(DeviceInput(dev, JOY_ROT_Z_UP, tm), state.lRz < -50);
+							ButtonPressed(DeviceInput(dev, JOY_ROT_Z_DOWN, tm), state.lRz > 50);
 							break;
 			case DIJOFS_SLIDER(0):
-							ButtonPressed(DeviceInput(dev, JOY_AUX_1), state.rglSlider[0] < -50);
-							ButtonPressed(DeviceInput(dev, JOY_AUX_2), state.rglSlider[0] > 50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_1, tm), state.rglSlider[0] < -50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_2, tm), state.rglSlider[0] > 50);
 							break;
 			case DIJOFS_SLIDER(1):
-							ButtonPressed(DeviceInput(dev, JOY_AUX_3), state.rglSlider[1] < -50);
-							ButtonPressed(DeviceInput(dev, JOY_AUX_4), state.rglSlider[1] > 50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_3, tm), state.rglSlider[1] < -50);
+							ButtonPressed(DeviceInput(dev, JOY_AUX_4, tm), state.rglSlider[1] > 50);
 							break;
 			default: LOG->MapLog("unknown input", 
 							"Controller '%s' is returning an unknown joystick offset, %i",
@@ -312,10 +325,10 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device)
 			ASSERT( in.num == 0 ); // XXX
 
 			const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
-			ButtonPressed(DeviceInput(dev, JOY_HAT_UP), !!(pos & SDL_HAT_UP));
-			ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN), !!(pos & SDL_HAT_DOWN));
-			ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT), !!(pos & SDL_HAT_LEFT));
-			ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT), !!(pos & SDL_HAT_RIGHT));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & SDL_HAT_UP));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & SDL_HAT_DOWN));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & SDL_HAT_LEFT));
+			ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & SDL_HAT_RIGHT));
 
 			break;
 		}
@@ -417,22 +430,29 @@ void InputHandler_DInput::PollAndAcquireDevices()
 
 void InputHandler_DInput::Update(float fDeltaTime)
 {
+	RageTimer zero;
+	zero.SetZero();
+
 	if( InputThreadPtr == NULL )
 	{
+		/* We don't have an input thread, so handle buffered devices. */
 		PollAndAcquireDevices();
-
-		RageTimer zero;
-		zero.SetZero();
 		for( unsigned i = 0; i < Devices.size(); ++i )
-		{
 			if( Devices[i].buffered )
 				UpdateBuffered( Devices[i], zero );
-			else
-				UpdatePolled( Devices[i] );
-		}
-
-		InputHandler::UpdateTimer();
 	}
+
+	if( InputThreadPtr == NULL || PolledDevicesInMainThread )
+	{
+		/* We don't have an input thread, or polled devices are not being handled
+		 * in the thread, so handle polled devices. */
+		PollAndAcquireDevices();
+		for( unsigned i = 0; i < Devices.size(); ++i )
+			if( !Devices[i].buffered )
+				UpdatePolled( Devices[i], zero );
+	}
+
+	InputHandler::UpdateTimer();
 }
 
 
@@ -464,12 +484,13 @@ void InputHandler_DInput::InputThread()
 	}
 
 	/* If we have any polled devices, we need a fast loop. */
-	int Delay = UnbufferedDevices.size()? 2:50;
+	int Delay = (UnbufferedDevices.size() && !PolledDevicesInMainThread)? 2:50;
 	LOG->Info( "DirectInput thread is running at %ims", Delay );
 
 	RageTimer LoopPerformanceTimer;
 	int Counts[6];
 	memset(Counts, 0, sizeof(Counts));
+	RageTimer ThreadTimer;
 	while(!shutdown)
 	{
 		VDCHECKPOINT;
@@ -494,18 +515,19 @@ void InputHandler_DInput::InputThread()
 		}
 		VDCHECKPOINT;
 
-		if( UnbufferedDevices.size() )
+		/* Check polled devices, unless we're not handling them in the thread. */
+		if( UnbufferedDevices.size() && !PolledDevicesInMainThread )
 		{
 			PollAndAcquireDevices();
 			for( i = 0; i < UnbufferedDevices.size(); ++i )
-				UpdatePolled( *UnbufferedDevices[i] );
+				UpdatePolled( *UnbufferedDevices[i], ThreadTimer.Half() );
 		}
 
-		InputHandler::UpdateTimer();
+		ThreadTimer.Touch();
 
 		/* If we have no buffered devices, we didn't delay at WaitForMultipleObjectsEx. */
 		if( BufferedDevices.size() == 0 )
-			SDL_Delay( 2 );
+			SDL_Delay( Delay );
 		VDCHECKPOINT;
 
 		float time = LoopPerformanceTimer.GetDeltaTime();

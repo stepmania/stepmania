@@ -9,8 +9,9 @@ class InputHandler_DInput: public InputHandler
 {
 	SDL_Thread *InputThreadPtr;
 	bool shutdown;
+	bool PolledDevicesInMainThread;
 
-	void UpdatePolled(DIDevice &device);
+	void UpdatePolled(DIDevice &device, const RageTimer &tm);
 	void UpdateBuffered(DIDevice &device, const RageTimer &tm);
 	void PollAndAcquireDevices();
 
