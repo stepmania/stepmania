@@ -176,14 +176,19 @@ retry:
 					if( asPaths.empty() )
 					{
 						CString sError = ssprintf( "The actor file '%s' references a file '%s' which doesn't exist.", sIniPath.c_str(), sFile.c_str() );
-						switch( Dialog::RetryCancel( sError, sError ) )
+						switch( Dialog::AbortRetryIgnore( sError, "BROKEN_ACTOR_REFERENCE" ) )
 						{
-						case Dialog::cancel:
+						case Dialog::abort:
 							RageException::Throw( sError ); 
 							break;
 						case Dialog::retry:
 							FlushDirCache();
 							goto retry;
+						case Dialog::ignore:
+							asPaths.push_back( sNewPath );
+							if( GetExtension(asPaths[0]) == "" )
+								asPaths[0] = SetExtension( asPaths[0], "png" );
+							break;
 						default:
 							ASSERT(0);
 						}
@@ -191,14 +196,17 @@ retry:
 					else if( asPaths.size() > 1 )
 					{
 						CString sError = ssprintf( "The actor file '%s' references a file '%s' which has multiple matches.", sIniPath.c_str(), sFile.c_str() );
-						switch( Dialog::RetryCancel( sError, sError ) )
+						switch( Dialog::AbortRetryIgnore( sError, "DUPLICATE_ACTOR_REFERENCE" ) )
 						{
-						case Dialog::cancel:
+						case Dialog::abort:
 							RageException::Throw( sError ); 
 							break;
 						case Dialog::retry:
 							FlushDirCache();
 							goto retry;
+						case Dialog::ignore:
+							asPaths.erase( asPaths.begin()+1, asPaths.end() );
+							break;
 						default:
 							ASSERT(0);
 						}
