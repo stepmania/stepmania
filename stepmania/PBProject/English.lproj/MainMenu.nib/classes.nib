@@ -2,10 +2,15 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {pushedButton = id; }; 
+            ACTIONS = {pushedButton = id; pushedQuestionButton = id; }; 
             CLASS = InstallerWindowController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {button = NSButton; textView = NSTextView; }; 
+            OUTLETS = {
+                button = NSButton; 
+                questionField = NSTextField; 
+                questionPanel = NSPanel; 
+                textView = NSTextView; 
+            }; 
             SUPERCLASS = NSWindowController; 
         }
     ); 
