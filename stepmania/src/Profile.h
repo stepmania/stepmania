@@ -86,7 +86,7 @@ public:
 	//
 	CString m_sDisplayName;
 	CString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
-	int m_iWeightPounds;	// 0 == invalid
+	int m_iWeightPounds;	// 0 == not set
 
 	//
 	// General data
@@ -103,6 +103,7 @@ public:
 	int m_iTotalGameplaySeconds;
 	int m_iCurrentCombo;
 	float m_fTotalCaloriesBurned;
+	int m_iGoalCalories;
 	int m_iTotalDancePoints;
 	int m_iNumExtraStagesPassed;
 	int m_iNumExtraStagesFailed;

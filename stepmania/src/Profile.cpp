@@ -77,6 +77,7 @@ void Profile::InitGeneralData()
 	m_iTotalGameplaySeconds = 0;
 	m_iCurrentCombo = 0;
 	m_fTotalCaloriesBurned = 0;
+	m_iGoalCalories = 0;
 	m_iTotalDancePoints = 0;
 	m_iNumExtraStagesPassed = 0;
 	m_iNumExtraStagesFailed = 0;
@@ -787,6 +788,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pGeneralDataNode->AppendChild( "CurrentCombo",					m_iCurrentCombo );
 	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
+	pGeneralDataNode->AppendChild( "GoalCalories",					m_iGoalCalories );
 	pGeneralDataNode->AppendChild( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
 	pGeneralDataNode->AppendChild( "LastPlayedDate",				m_LastPlayedDate );
 	pGeneralDataNode->AppendChild( "TotalDancePoints",				m_iTotalDancePoints );
@@ -863,16 +865,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	}
 
 	{
-		XNode* pNumStagesPassedByGrade = pGeneralDataNode->AppendChild("NumStagesPassedByGrade");
-		FOREACH_Grade( g )
-		{
-			if( !m_iNumStagesPassedByGrade[g] )
-				continue;
-			pNumStagesPassedByGrade->AppendChild( GradeToString(g), m_iNumStagesPassedByGrade[g] );
-		}
-	}
-
-	{
 		XNode* pNumStagesPassedByPlayMode = pGeneralDataNode->AppendChild("NumStagesPassedByPlayMode");
 		FOREACH_PlayMode( pm )
 		{
@@ -880,6 +872,16 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 			if( !m_iNumStagesPassedByPlayMode[pm] )
 				continue;
 			pNumStagesPassedByPlayMode->AppendChild( PlayModeToString(pm), m_iNumStagesPassedByPlayMode[pm] );
+		}
+	}
+
+	{
+		XNode* pNumStagesPassedByGrade = pGeneralDataNode->AppendChild("NumStagesPassedByGrade");
+		FOREACH_Grade( g )
+		{
+			if( !m_iNumStagesPassedByGrade[g] )
+				continue;
+			pNumStagesPassedByGrade->AppendChild( GradeToString(g), m_iNumStagesPassedByGrade[g] );
 		}
 	}
 
@@ -936,6 +938,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pNode->GetChildValue( "CurrentCombo",					m_iCurrentCombo );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
+	pNode->GetChildValue( "GoalCalories",					m_iGoalCalories );
 	pNode->GetChildValue( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
 	pNode->GetChildValue( "LastPlayedDate",					m_LastPlayedDate );
 	pNode->GetChildValue( "TotalDancePoints",				m_iTotalDancePoints );
