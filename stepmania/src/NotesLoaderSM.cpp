@@ -158,7 +158,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				new_seg.m_fStartBeat = fFreezeBeat;
 				new_seg.m_fStopSeconds = fFreezeSeconds;
 
-				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
+//				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fStopSeconds );
 
 				out.AddStopSegment( new_seg );
 			}
