@@ -192,7 +192,7 @@ void LifeMeterBattery::Refresh()
 	}
 	else
 	{
-		m_textNumLives.SetText( ssprintf("x%d", m_iLivesLeft) );
+		m_textNumLives.SetText( ssprintf("x%d", m_iLivesLeft-1) );
 		m_sprBattery.SetState( 3 );
 	}
 }
