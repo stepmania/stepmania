@@ -181,6 +181,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 	SOUND->PlayMusic( THEME->GetPathToS( ssprintf("%s music", m_sName.c_str()) ) );
 
+	m_ForceSMOptionsNavigation = false;
+
 	CStringArray Flags;
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
 	InputMode im = INPUTMODE_INDIVIDUAL;
@@ -204,6 +206,8 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 				GAMESTATE->m_bSideIsJoined[pn] = true;
 			GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
 		}
+		if( Flags[i] == "smnavigation" )
+			m_ForceSMOptionsNavigation = true;
 	}
 
 	if( NumRows == -1 )
@@ -485,6 +489,17 @@ void ScreenOptionsMaster::ExportOptions()
 		PREFSMAN->SaveGlobalPrefsToDisk();
 		PREFSMAN->SaveGamePrefsToDisk();
 	}
+}
+
+void ScreenOptionsMaster::MenuStart( PlayerNumber pn )
+{
+	if( m_ForceSMOptionsNavigation )
+	{
+		StartGoToNextState();
+		return;
+	}
+
+	ScreenOptions::MenuStart( pn );
 }
 
 void ScreenOptionsMaster::GoToNextState()
