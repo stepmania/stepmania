@@ -79,6 +79,7 @@ bool Model::LoadFromModelFile( CString sPath )
 bool Model::LoadMilkshapeAscii( CString sPath )
 {
 	CString sDir, sThrowAway;
+	FixSlashesInPlace(sPath);
 	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
 
 	FILE *file = fopen (sPath, "rt");
@@ -444,6 +445,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 {
 	CString sDir, sThrowAway;
+	FixSlashesInPlace(sPath);
 	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
 
 	FILE *file = fopen (sPath, "rt");
