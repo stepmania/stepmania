@@ -24,11 +24,13 @@ class LanPlayer {
 		int feet;
 		int projgrade;
 		int combo;
-		int step;
+		int currstep;
+		int steps[8];
 		int maxCombo;
 		int Grade;
 		int offset;
 		int PlayerID;
+		char diff;
 		LanPlayer();
 	private:
 };
@@ -51,7 +53,6 @@ class GameClient {
 		void SetClientVersion(int ver, CString b);
 		void StartRequest(PacketFunctions &Packet);
 		int GetData(PacketFunctions &Packet);
-		void GameOver(PacketFunctions &Packet);
 		GameClient();
 		LanPlayer Player[2];
 		void CheckConnection();
@@ -89,6 +90,7 @@ class StepManiaLanServer {
 		GameInfo LastSongInfo;
 		bool StatsNameChange;
 		bool SecondSameSelect;
+		int numPlayers;
 
 		void Hello(PacketFunctions&Packet, int clientNum);
 		void UpdateClients();
@@ -113,6 +115,7 @@ class StepManiaLanServer {
 		void ClearHasSong();
 		void AssignPlayerIDs();
 		void SendUserList();
+		void GameOver(PacketFunctions &Packet, int clientNum);
 };
 
 #endif

@@ -9,7 +9,7 @@ LanPlayer::LanPlayer() {
 	feet = 0;
 	projgrade = 0;
 	combo = 0;
-	step = 0;
+	currstep = 0;
 	maxCombo = 0;
 	Grade = 0;
 	offset = 0;
@@ -110,7 +110,7 @@ void StepManiaLanServer::ParseData(PacketFunctions &Packet, int clientNum) {
 		break;
 	case 4:
 		/* GameOver */ 
-		Client[clientNum].GameOver(Packet);
+		GameOver(Packet, clientNum);
 		break;
 	case 5:
 		/* StatsUpdate */
@@ -170,13 +170,17 @@ void GameClient::SetClientVersion(int ver, CString b) {
 void GameClient::StartRequest(PacketFunctions &Packet) {
 	int firstbyte = Packet.Read1();
 	int secondbyte = Packet.Read1();
+	int thirdbyte = Packet.Read1();
 	Player[0].feet = firstbyte/16;
 	Player[1].feet = firstbyte%16;
 
 	if ((Player[0].feet > 0)&&(Player[1].feet > 0))
 		twoPlayers = true;
 
-	startPosition = secondbyte/16;
+	Player[0].diff = secondbyte/16;
+	Player[1].diff = secondbyte%16;
+
+	startPosition = thirdbyte/16;
 	gameInfo.title = Packet.ReadNT();
 	gameInfo.subtitle = Packet.ReadNT();
 	gameInfo.artist = Packet.ReadNT();
@@ -214,9 +218,43 @@ void StepManiaLanServer::CheckReady() {
 }
 
 
-void GameClient::GameOver(PacketFunctions &Packet) {
-	Ready = false;
-	InGame= false;
+void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
+	bool allOver = true;
+
+	Client[clientNum].Ready = false;
+	Client[clientNum].InGame = false;
+	for (int x = 0; (x < NUMBERCLIENTS)&&(allOver != false); x++) {
+		if (Client[x].Used == true) {
+			if ((Client[x].InGame == true)) {
+				allOver = false;
+			}
+		}
+	}
+
+	//Wait untill everyone is done before sending
+	if (allOver) {
+		numPlayers = SortStats(playersPtr);
+		Reply.ClearPacket();
+		Reply.Write1(numPlayers);
+		for (int x = 0; x < numPlayers; x++) {
+			Reply.Write4(playersPtr[x]->score);
+		}
+		for (int x = 0; x < numPlayers; x++) {
+			Reply.Write1(playersPtr[x]->projgrade);
+		}
+		for (int x = 0; x < numPlayers; x++) {
+			Reply.Write1(playersPtr[x]->diff);
+		}
+		for (int x = 0; x < numPlayers; x++) {
+			for (int y = 0; y < 6; y++) {
+				Reply.Write2(playersPtr[x]->steps[y]);
+			}
+		}
+		for (int x = 0; x < numPlayers; x++) {
+			Reply.Write1(playersPtr[x]->maxCombo);
+		}
+		SendNetPacket(clientNum, (char*)Reply.Data, Reply.Position);
+	}
 }
 
 void StepManiaLanServer::AssignPlayerIDs() {
@@ -272,7 +310,7 @@ int StepManiaLanServer::SortStats(LanPlayer *playersPtr[]) {
 
 void StepManiaLanServer::SendStatsToClients() {
 //	PacketFunctions StatsPacket;
-	int x, numPlayers;
+	int x;
 
 	numPlayers = SortStats(playersPtr); //Return number of players
 
@@ -360,7 +398,7 @@ void GameClient::UpdateStats(PacketFunctions &Packet) {
 	char firstbyte = Packet.Read1();
 	char secondbyte = Packet.Read1();
 	int pID = int(firstbyte/16); /* MSN */
-	Player[pID].step = int(firstbyte%16); /* LSN */
+	Player[pID].currstep = int(firstbyte%16); /* LSN */
 	Player[pID].projgrade = int(secondbyte/16);
 	Player[pID].score = Packet.Read4();
 	Player[pID].combo = Packet.Read2();
@@ -369,6 +407,7 @@ void GameClient::UpdateStats(PacketFunctions &Packet) {
 
 	Player[pID].health = Packet.Read2();
 	Player[pID].offset = Packet.Read2();
+	Player[pID].steps[Player[pID].currstep]++;
 }
 
 void StepManiaLanServer::NewClientCheck() {
