@@ -69,9 +69,6 @@ public:
 	virtual void MenuStart( PlayerNumber pn )	{}
 	virtual void MenuBack(	PlayerNumber pn )	{}
 	virtual void MenuCoin(	PlayerNumber pn );
-
-private:
-	bool m_FirstUpdate;
 };
 
 #endif
