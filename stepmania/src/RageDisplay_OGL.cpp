@@ -628,7 +628,6 @@ void RageDisplay_OGL::DrawTriangles( const RageVertex v[], int iNumVerts )
 {
 	if( iNumVerts == 0 )
 		return;
-	ASSERT( iNumVerts >= 3 );
 	ASSERT( (iNumVerts%3) == 0 );
 	glMatrixMode( GL_PROJECTION );
 	glLoadMatrixf( (const float*)GetProjection() );
