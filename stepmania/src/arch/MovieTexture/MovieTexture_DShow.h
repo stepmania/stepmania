@@ -37,6 +37,7 @@ typedef char TCHAR, *PTCHAR;
 #include "RageTexture.h"
 #include "RageThreads.h"
 
+#include "SDL_mutex.h"
 
 //-----------------------------------------------------------------------------
 // RageMovieTexture Class Declarations
