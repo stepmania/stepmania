@@ -221,7 +221,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 			m_Next[dir][c] = c + add;
 			/* Always wrap around DIR_AUTO. */
-			if( dir == DIR_AUTO || WRAP_CURSOR )
+			if( dir == DIR_AUTO || (bool)WRAP_CURSOR )
 				wrap( m_Next[dir][c], m_aGameCommands.size() );
 			else
 				m_Next[dir][c] = clamp( m_Next[dir][c], 0, (int)m_aGameCommands.size()-1 );
@@ -616,7 +616,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	float fSecs = 0;
 	bool bAllDone = true;
-	if( SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
+	if( (bool)SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
 	{
 		/* Only one player has to pick.  Choose this for all the other players, too. */
 		FOREACH_HumanPlayer( p )
