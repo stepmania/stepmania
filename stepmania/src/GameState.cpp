@@ -179,6 +179,7 @@ void CheckStageStats( const StageStats &ss, int p )
 {
 	if( ss.pSong )
 		CHECKPOINT_M( ss.pSong->GetFullTranslitTitle() );
+	ASSERT( ss.pSteps[p] );
 	RAGE_ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("playmode %i", ss.playMode) );
 	RAGE_ASSERT_M( ss.style < NUM_STYLES, ssprintf("style %i", ss.style) );
 	RAGE_ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", ss.pSteps[p]->GetDifficulty()) );
@@ -196,7 +197,6 @@ void GameState::PlayersFinalized()
 void GameState::EndGame()
 {
 	// Update profile stats
-
 	time_t now = time(NULL);
 	int iPlaySeconds = now - m_timeGameStarted;
 	if( iPlaySeconds < 0 )
