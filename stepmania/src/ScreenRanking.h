@@ -68,7 +68,7 @@ protected:
 	BitmapText m_textScores[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
 	BitmapText m_textTime[NUM_RANKING_LINES];	// for course
-	Sprite m_sprDifficulty[NUM_DIFFICULTIES];	// for all_steps
+	AutoActor  m_sprDifficulty[NUM_DIFFICULTIES];	// for all_steps
 	struct StepsScoreRowItem : public ActorFrame	// for all_steps
 	{
 		Song *m_pSong;
@@ -78,7 +78,7 @@ protected:
 	};
 	vector<StepsScoreRowItem*> m_vpStepsScoreRowItem;	// for all_steps
 	ListDisplay m_ListScoreRowItems;
-	Sprite m_sprCourseDifficulty[NUM_DIFFICULTIES];	// for all_courses
+	AutoActor m_sprCourseDifficulty[NUM_DIFFICULTIES];	// for all_courses
 	struct CourseScoreRowItem : public ActorFrame	// for all_steps
 	{
 		Course *m_pCourse;

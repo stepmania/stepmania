@@ -165,22 +165,24 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 	// init Actors for all_steps
 	{
-		for( int d=0; d<NUM_DIFFICULTIES; d++ )
+		FOREACH_Difficulty( d )
 		{
 			bool bShowThis = find(m_vDiffsToShow.begin(), m_vDiffsToShow.end(), d) != m_vDiffsToShow.end();
 			if( !bShowThis )
 				continue;	// skip
 
-			m_sprDifficulty[d].SetName( ssprintf("Difficulty%d",d) );
-			m_sprDifficulty[d].Load( THEME->GetPathToG(ssprintf("ScreenRanking difficulty 1x%d",NUM_DIFFICULTIES)) );
-			m_sprDifficulty[d].SetHidden( true );
-			this->AddChild( &m_sprDifficulty[d] );
+			m_sprDifficulty[d].Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(d)) );
+			m_sprDifficulty[d]->SetName( ssprintf("Difficulty%d",d) );
+			m_sprDifficulty[d]->SetHidden( true );
+			this->AddChild( m_sprDifficulty[d] );
 		}
 		const unsigned num_songs = SONGMAN->GetAllSongs().size();
 		for( unsigned s=0; s<num_songs; s++ )
 		{
 			Song *pSong = SONGMAN->GetAllSongs()[s];
 			if( UNLOCKMAN->SongIsLocked(pSong) )
+				continue;
+			if( pSong->IsTutorial() )
 				continue;
 
 			StepsScoreRowItem* pStepsScoreRowItem = new StepsScoreRowItem;
@@ -217,10 +219,10 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		FOREACH_ShownCourseDifficulty(d)
 		{
 			CString cd = CourseDifficultyToString(d);
-			m_sprCourseDifficulty[d].SetName( ssprintf("CourseDifficulty%s",cd.c_str()) );
-			m_sprCourseDifficulty[d].Load( THEME->GetPathToG(ssprintf("ScreenRanking course difficulty %s",cd.c_str())) );
-			m_sprCourseDifficulty[d].SetHidden( true );
-			this->AddChild( &m_sprCourseDifficulty[d] );
+			m_sprCourseDifficulty[d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+cd) );
+			m_sprCourseDifficulty[d]->SetName( ssprintf("CourseDifficulty%s",cd.c_str()) );
+			m_sprCourseDifficulty[d]->SetHidden( true );
+			this->AddChild( m_sprCourseDifficulty[d] );
 		}
 
 		vector<Course*> courses;
@@ -567,13 +569,11 @@ float ScreenRanking::SetPage( PageToShow pts )
 	{
 		for( vector<Difficulty>::iterator dc_iter=m_vDiffsToShow.begin(); dc_iter!=m_vDiffsToShow.end(); dc_iter++ )
 		{
-			m_sprDifficulty[*dc_iter].SetHidden( !bShowDifficulty );
+			m_sprDifficulty[*dc_iter]->SetHidden( !bShowDifficulty );
 			if( bShowDifficulty )
 			{
-				m_sprDifficulty[*dc_iter].Reset();
-				m_sprDifficulty[*dc_iter].StopAnimating();
-				m_sprDifficulty[*dc_iter].SetState( *dc_iter );
-				m_sprDifficulty[*dc_iter].SetXY( DIFFICULTY_X(*dc_iter), DIFFICULTY_Y );
+				m_sprDifficulty[*dc_iter]->Reset();
+				m_sprDifficulty[*dc_iter]->SetXY( DIFFICULTY_X(*dc_iter), DIFFICULTY_Y );
 				ON_COMMAND( m_sprDifficulty[*dc_iter] );
 			}
 		}
@@ -617,11 +617,11 @@ float ScreenRanking::SetPage( PageToShow pts )
 	{
 		FOREACH_ShownCourseDifficulty(d)
 		{
-			m_sprCourseDifficulty[d].SetHidden( !bShowCourseDifficulty );
+			m_sprCourseDifficulty[d]->SetHidden( !bShowCourseDifficulty );
 			if( bShowCourseDifficulty )
 			{
-				m_sprCourseDifficulty[d].Reset();
-				m_sprCourseDifficulty[d].SetXY( COURSE_DIFFICULTY_X(d), COURSE_DIFFICULTY_Y );
+				m_sprCourseDifficulty[d]->Reset();
+				m_sprCourseDifficulty[d]->SetXY( COURSE_DIFFICULTY_X(d), COURSE_DIFFICULTY_Y );
 				ON_COMMAND( m_sprCourseDifficulty[d] );
 			}
 		}
@@ -872,12 +872,12 @@ void ScreenRanking::TweenPageOffScreen()
 	}
 	for( vector<Difficulty>::iterator dc_iter=m_vDiffsToShow.begin(); dc_iter!=m_vDiffsToShow.end(); dc_iter++ )
 	{
-		if( !m_sprDifficulty[*dc_iter].GetHidden() )
+		if( !m_sprDifficulty[*dc_iter]->GetHidden() )
 			OFF_COMMAND( m_sprDifficulty[*dc_iter] );
 	}
 	FOREACH_ShownCourseDifficulty(d)
 	{
-		if( !m_sprCourseDifficulty[d].GetHidden() )
+		if( !m_sprCourseDifficulty[d]->GetHidden() )
 			OFF_COMMAND( m_sprCourseDifficulty[d] );
 	}
 
