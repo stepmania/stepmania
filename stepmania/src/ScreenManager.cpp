@@ -142,16 +142,18 @@ void ScreenManager::Update( float fDeltaTime )
 	 */
 	ASSERT( !m_ScreenStack.empty() || m_sDelayedScreen != "" );	// Why play the game if there is nothing showing?
 
-	m_pSharedBGA->Update( fDeltaTime );
+	Screen* pScreen = m_ScreenStack.empty() ? NULL : GetTopScreen();
 
-	if( !m_ScreenStack.empty() )
-	{
-		Screen* pScreen = GetTopScreen();
-		if( pScreen->IsFirstUpdate() )
-			pScreen->Update( 0 );
-		else
-			pScreen->Update( fDeltaTime );
-	}
+	/* Loading a new screen can take seconds and cause a big jump on the new 
+	 * Screen's first update.  Clamp the first update delta so that the 
+	 * animations don't jump. */
+	if( pScreen && pScreen->IsFirstUpdate() )
+		fDeltaTime = 0;
+
+	if( pScreen )
+		pScreen->Update( fDeltaTime );
+
+	m_pSharedBGA->Update( fDeltaTime );
 
 	m_SystemLayer->Update( fDeltaTime );
 	
