@@ -19,7 +19,8 @@ const int MAX_TEXTURE_FRAMES = 256;
 
 /* A unique texture is identified by a RageTextureID.  (Loading the
  * same file with two different dither settings is considered two
- * different textures, for example.) */
+ * different textures, for example.)  See RageTexture.cpp for explanations
+ * of these. */
 struct RageTextureID
 {
 	CString filename;
