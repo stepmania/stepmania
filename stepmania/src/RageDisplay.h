@@ -210,7 +210,12 @@ public:
 
 	void DrawCircle( const RageSpriteVertex &v, float radius );
 
-	enum GraphicsFileFormat{ bmp, jpg };
+	enum GraphicsFileFormat
+	{
+		SAVE_LOSSLESS, // bmp
+		SAVE_LOSSY_LOW_QUAL, // jpg
+		SAVE_LOSSY_HIGH_QUAL // jpg
+	};
 	bool SaveScreenshot( CString sPath, GraphicsFileFormat format );
 
 	virtual CString GetTextureDiagnostics( unsigned id ) const { return ""; }

@@ -1131,9 +1131,19 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 	//
 	// Save the screenshot
 	//
+	/* If writing lossy to a memcard, use SAVE_LOSSY_LOW_QUAL, so we don't eat up
+	 * lots of space with screenshots. */
+	RageDisplay::GraphicsFileFormat fmt;
+	if( bSaveCompressed && MEMCARDMAN->PathIsMemCard(sDir) )
+		fmt = RageDisplay::SAVE_LOSSY_LOW_QUAL;
+	else if( bSaveCompressed )
+		fmt = RageDisplay::SAVE_LOSSY_HIGH_QUAL;
+	else
+		fmt = RageDisplay::SAVE_LOSSLESS;
+
 	CString sFileName = ssprintf( "screen%05d.%s",iIndex,bSaveCompressed ? "jpg" : "bmp" );
 	CString sPath = sDir+sFileName;
-	bool bResult = DISPLAY->SaveScreenshot( sPath, bSaveCompressed ? RageDisplay::jpg : RageDisplay::bmp );
+	bool bResult = DISPLAY->SaveScreenshot( sPath, fmt );
 	if( !bResult )
 	{
 		SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
