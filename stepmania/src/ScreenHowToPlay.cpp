@@ -73,7 +73,6 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 		m_pmCharacter = new Model;
 		m_pmCharacter->LoadMilkshapeAscii( rndchar->GetModelPath() );
-//		m_pmCharacter->LoadMilkshapeAsciiBones("howtoplay", rndchar->GetHowToPlayAnimationPath() );
 		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT","Characters" SLASH "BeginnerHelper_step-left.bones.txt" );
 		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN","Characters" SLASH "BeginnerHelper_step-down.bones.txt" );
 		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP","Characters" SLASH "BeginnerHelper_step-up.bones.txt" );
@@ -109,8 +108,8 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		default: ASSERT(0); // we should cover all gametypes....
 	}
 
-	SMLoader smfile;
-	smfile.LoadFromSMFile( THEME->GetCurThemeDir() + STEPFILE, m_Song, false );
+	SMLoader smfile;		
+	smfile.LoadFromSMFile( THEME->GetPathToSM(STEPFILE), m_Song, false );
 	ASSERT( m_Song.m_apNotes.size() == 1 );
 	m_Song.m_apNotes[0]->GetNoteData(&m_NoteData);
 
