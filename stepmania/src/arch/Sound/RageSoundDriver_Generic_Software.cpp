@@ -114,12 +114,12 @@ void RageSound_Generic_Software::Mix( int16_t *buf, int frames, int64_t frameno,
 			p[0]->p += frames_to_read*channels;
 			p[0]->frames_in_buffer -= frames_to_read;
 			p[0]->position += frames_to_read;
-			CString foo = ssprintf("incr fr rd %i += %i",
-				(int) s.frames_read, (int) frames_to_read );
+//			int OldFramesRead = (int) s.frames_read;
+
 			s.frames_read += frames_to_read;
 
-//			LOG->Trace( "%s = %i (%i left) (state %i) (%p)",
-//				foo.c_str(), (int) s.frames_read, (int) s.frames_buffered(), s.state, s.snd );
+//			LOG->Trace( "incr fr rd %i += %i = %i (%i left) (state %i) (%p)",
+//				OldFramesRead, (int) frames_to_read, (int) s.frames_read, (int) s.frames_buffered(), s.state, s.snd );
 			ASSERT( s.frames_read <= s.frames_written );
 
 			got_frames += frames_to_read;
@@ -212,13 +212,12 @@ bool RageSound_Generic_Software::GetDataForSound( sound &s )
 
 	s.buffer.advance_write_pointer( 1 );
 
-	CString foo = ssprintf("incr fr wr %i += %i",
-		(int) s.frames_written, (int) b->frames_in_buffer );
+//	int OldFramesWritten = (int) s.frames_written;
 
 	s.frames_written += b->frames_in_buffer;
 
-//	LOG->Trace( "%s = %i (%i left) (state %i) (%p)",
-//		foo.c_str(), (int) s.frames_written, (int) s.frames_buffered(), s.state, s.snd );
+//	LOG->Trace( "incr fr wr %i += %i = %i (%i left) (state %i) (%p)",
+//		OldFramesWritten, (int) b->frames_in_buffer, (int) s.frames_written, (int) s.frames_buffered(), s.state, s.snd );
 
 	return !eof;
 }
