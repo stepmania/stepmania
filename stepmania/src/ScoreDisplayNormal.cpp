@@ -70,8 +70,7 @@ void ScoreDisplayNormal::Update( float fDeltaTime )
 			m_fScoreVelocity = 0;
 		}
 
-		CString sFormat = ssprintf( "%%%d.0f", NUM_SCORE_DIGITS );
-		SetText( ssprintf(sFormat, m_fTrailingScore) );
+		SetText( ssprintf("%*f", NUM_SCORE_DIGITS, m_fTrailingScore) );
 	}
 }
 

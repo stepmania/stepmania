@@ -51,7 +51,7 @@ void NoteData::Init()
 	for(int t = 0; t < MAX_NOTE_TRACKS; ++t) {
 		if(!m_TapNotes[t])
 			m_TapNotes[t] = new TapNote[MAX_TAP_NOTE_ROWS];
-		memset( m_TapNotes[t], '0', sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
+		memset( m_TapNotes[t], TAP_EMPTY, sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
 	}
 	m_iNumTracks = 0;
 	m_iNumHoldNotes = 0;
@@ -167,7 +167,7 @@ void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 	for( int c=0; c<m_iNumTracks; c++ )
 	{
 		for( int i=iNoteIndexBegin; i <= iNoteIndexEnd && i < MAX_TAP_NOTE_ROWS; i++ )
-			m_TapNotes[c][i] = '0';
+			m_TapNotes[c][i] = TAP_EMPTY;
 	}
 	this->Convert4sToHoldNotes();
 }
@@ -237,7 +237,7 @@ void NoteData::AddHoldNote( HoldNote add )
 
 	// delete TapNotes under this HoldNote
 	for( i=iAddStartIndex+1; i<=iAddEndIndex; i++ )
-		m_TapNotes[add.m_iTrack][i] = '0';
+		m_TapNotes[add.m_iTrack][i] = TAP_EMPTY;
 
 	// add a tap note at the start of this hold
 	m_TapNotes[add.m_iTrack][iAddStartIndex] = '2';		// '2' means a Hold begin marker.  Don't draw this, but do grade it.
@@ -255,7 +255,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
 
 	// delete a tap note at the start of this hold
-	m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '0';
+	m_TapNotes[hn.m_iTrack][iHoldStartIndex] = TAP_EMPTY;
 
 	// remove from list
 	for( int j=iHoldIndex; j<m_iNumHoldNotes-1; j++ )
@@ -267,7 +267,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 bool NoteData::IsThereANoteAtRow( int iRow ) const
 {
 	for( int t=0; t<m_iNumTracks; t++ )
-		if( m_TapNotes[t][iRow] != '0' )
+		if( m_TapNotes[t][iRow] != TAP_EMPTY )
 			return true;
 
 // There is a tap note at the beginning of every HoldNote start
@@ -350,7 +350,7 @@ int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )
 	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
-			if( m_TapNotes[t][i] != '0' )
+			if( m_TapNotes[t][i] != TAP_EMPTY )
 				iNumNotes++;
 	}
 	
@@ -369,7 +369,7 @@ int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat )
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( m_TapNotes[t][i] != '0' )
+			if( m_TapNotes[t][i] != TAP_EMPTY )
 				iNumNotesThisIndex++;
 		}
 		if( iNumNotesThisIndex >= 2 )
@@ -419,7 +419,7 @@ void NoteData::CropToLeftSide()
 	for( int c=iFirstRightSideColumn; c<=iLastRightSideColumn; c++ )
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
-			m_TapNotes[c][i] = '0';
+			m_TapNotes[c][i] = TAP_EMPTY;
 	}
 
 	for( int i=m_iNumHoldNotes-1; i>=0; i-- ) // foreach HoldNote
@@ -446,7 +446,7 @@ void NoteData::CropToRightSide()
 	for( c=0; c<iFirstRightSideColumn; c++ )
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
-			m_TapNotes[c][i] = '0';
+			m_TapNotes[c][i] = TAP_EMPTY;
 	}
 
 	// copy the right side into the left
@@ -455,7 +455,7 @@ void NoteData::CropToRightSide()
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) // foreach TapNote
 		{
 			m_TapNotes[c-4][i] = m_TapNotes[c][i];
-			m_TapNotes[c][i] = '0';
+			m_TapNotes[c][i] = TAP_EMPTY;
 		}
 	}
 
@@ -633,7 +633,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 
 			for( t=0; t<m_iNumTracks; t++ )
 			{
-				if( m_TapNotes[t][r] != '4'  &&  m_TapNotes[t][r] != '0' )	// there is a tap note here (and not a HoldNote)
+				if( m_TapNotes[t][r] != '4'  &&  m_TapNotes[t][r] != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
 				{
 					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.GetSize();
 					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
@@ -658,7 +658,7 @@ void NoteData::MakeLittle()
 			// filter out all non-quarter notes
 			for( int c=0; c<m_iNumTracks; c++ ) 
 			{
-				m_TapNotes[c][i] = '0';
+				m_TapNotes[c][i] = TAP_EMPTY;
 			}
 		}
 	}
@@ -670,7 +670,7 @@ void NoteData::MakeLittle()
  * shouldn't this do likewise and set all 2/3's to 0? 
  * -glenn
  *
- * Other code assumes != '0' means there's a tap note, so I changed
+ * Other code assumes != TAP_EMPTY means there's a tap note, so I changed
  * this to do this. -glenn
  *
 
@@ -689,15 +689,15 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 		{
 			if( m_TapNotes[col][i] != '2' )	// this is a HoldNote begin marker
 				continue;
-			m_TapNotes[col][i] = '0';
+			m_TapNotes[col][i] = TAP_EMPTY;
 
 			for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
 			{
 				// end hold on the next note we see
-				if( m_TapNotes[col][j] == '0' )
+				if( m_TapNotes[col][j] == TAP_EMPTY )
 					continue;
 
-				m_TapNotes[col][j] = '0';
+				m_TapNotes[col][j] = TAP_EMPTY;
 
 				HoldNote hn = { col, NoteRowToBeat(i), NoteRowToBeat(j) };
 				AddHoldNote( hn );
@@ -745,10 +745,10 @@ void NoteData::Convert4sToHoldNotes()
 			HoldNote hn = { col, NoteRowToBeat(i), 0 };
 			// search for end of HoldNote
 			do {
-				SetTapNote(col, i, '0');
+				SetTapNote(col, i, TAP_EMPTY);
 				i++;
 			} while( GetTapNote(col, i) == '4');
-			SetTapNote(col, i, '0');
+			SetTapNote(col, i, TAP_EMPTY);
 
 			hn.m_fEndBeat = NoteRowToBeat(i);
 			AddHoldNote( hn );
@@ -815,7 +815,7 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 		for( int c=0; c<m_iNumTracks; c++ )
 		{
 			TapNote note = m_TapNotes[c][iOldIndex];
-			m_TapNotes[c][iOldIndex] = '0';
+			m_TapNotes[c][iOldIndex] = TAP_EMPTY;
 			m_TapNotes[c][iNewIndex] = max( m_TapNotes[c][iNewIndex], note );	// this causes HoldNotes to override TapNotes
 		}
 	}
@@ -928,7 +928,7 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-			if( pOriginal->m_TapNotes[iOldTrack][r] != '0' )
+			if( pOriginal->m_TapNotes[iOldTrack][r] != TAP_EMPTY )
 				this->m_TapNotes[iNewTrack][r] = pOriginal->m_TapNotes[iOldTrack][r];
 		}
 

@@ -277,7 +277,7 @@ void NoteField::DrawPrimitives()
 void NoteField::RemoveTapNoteRow( int iIndex )
 {
 	for( int c=0; c<m_iNumTracks; c++ )
-		m_TapNotes[c][iIndex] = '0';
+		SetTapNote(c, iIndex, TAP_EMPTY);
 }
 
 void NoteField::FadeToFail()
