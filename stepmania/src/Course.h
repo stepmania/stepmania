@@ -116,6 +116,7 @@ public:
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	void GetCourseInfo( StepsType nt, vector<Info> &ci, CourseDifficulty cd = COURSE_DIFFICULTY_REGULAR ) const;
 	bool HasMods() const;
+	bool AllSongsAreFixed() const;
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
 	bool HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const;

@@ -228,6 +228,11 @@ int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
 		{
 			const Course* pCourse = iter->first;
 			ASSERT( pCourse );
+			
+			// Don't count any course that has any entries that change over time.
+			if( !pCourse->AllSongsAreFixed() )
+				continue;
+
 			const HighScoresForACourse& h = iter->second;
 			FOREACH_CourseDifficulty( cd )
 			{
