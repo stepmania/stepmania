@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: BitmapText.h
-//
-// Desc: A font class that draws from a bitmap.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: BitmapText.h
+
+ Desc: A font class that draws characters from a bitmap.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _BITMAPTEXT_H_
 #define _BITMAPTEXT_H_

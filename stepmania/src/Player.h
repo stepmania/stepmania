@@ -1,96 +1,110 @@
-//-----------------------------------------------------------------------------
-// File: Player.h
-//
-// Desc: Object that accepts pad input, knocks down ColorArrows that were stepped on, 
-//       and keeps score for the player.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Player.cpp
+
+ Desc: Object that accepts pad input, knocks down ColorArrows that were stepped on, 
+		and keeps score for the player.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
-
-#include "GameOptions.h"
-#include "GrayArrows.h"
+#include "GameInfo.h"	// for ScoreSummary
 #include "Steps.h"
-#include "ColorArrows.h"
-#include "Judgement.h"
-#include "Combo.h"
-#include "Score.h"
-#include "LifeMeter.h"
-
-
-enum StepScore { no_score, perfect, great, good, boo, miss };
+#include "Sprite.h"
+#include "BitmapText.h"
 
 
 class Player
 {
 public:
-	Player()
-	{
-		m_fSongBeat = 0.0;
+	Player();
 
-		for( int i=0; i<2; i++ ) {
-			for( int j=0; j<4; j++ ) {
-				m_fStepCountDown[i][j] = 0.0;
-			}
-		}
+	void SetSteps( const Steps& newSteps );
+	void SetX( int iX );
+	void Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference );
+	void Draw( float fSongBeat );
 
-		m_pGA = NULL;
-		m_pCA = NULL;	
-		m_pJudgement = NULL;
-		m_pCombo = NULL;
-		m_pScore = NULL;
-		m_pLifeMeter = NULL;
 
-		m_iCurCombo = 0;
-		m_iMaxCombo = 0;
-		m_fScore = 0.0f;
-		m_fLife = 0.50f;
-	};
-	~Player() {};
-
-	void Set( GrayArrows *pGA,	ColorArrows *pCA,
-			  Judgement *pJ,	Combo *pC,
-			  Score *pS,		LifeMeter *pL,
-			  Steps steps,		FLOAT fMaxBeatDifference );
-
-	void SetSongBeat( const FLOAT &fSongBeat ) { m_fSongBeat = fSongBeat; };
-	void Update( const FLOAT &fDeltaTime );
-
-	void StepOn( Step player_step );
-	void HandleStep();
-	int UpdateMissedStepsOlderThan( FLOAT iMissIfOlderThanThisBeat );
-
-	FLOAT GetLife() { return m_fLife; };
 	ScoreSummary GetScoreSummary();
+	int	UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat );
+	void HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeatDiff );
+
+protected:
+	void CheckForCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff );
+	void OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff, int iStepIndex );
+
+	int			m_iCurCombo;
+	int			m_iMaxCombo;
+
+	enum StepScore{ none, perfect, great, good, boo, miss };
+	enum StepTiming{ no_timing, early, late };
+	// index is quarter beat number (e.g. beat 30 is index 30*4)
+	Step		m_OriginalStep[MAX_STEP_ELEMENTS];
+	Step		m_LeftToStepOn[MAX_STEP_ELEMENTS];
+	StepScore	m_StepScore[MAX_STEP_ELEMENTS];
+	//StepTiming	m_StepTiming[MAX_STEP_ELEMENTS];
+
+	int m_iArrowsCenterX;
+
+	// color arrows
+	void SetColorArrowsX( int iX );
+	void UpdateColorArrows( const float& fDeltaTime );
+	int	 GetColorArrowYPos( int iStepIndex, float fSongBeat );
+	void DrawColorArrows( float fSongBeat );
+	Sprite		m_sprColorArrow[4];
+	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
+
+	// gray arrows
+	void SetGrayArrowsX( int iX );
+	void UpdateGrayArrows( const float& fDeltaTime );
+	void DrawGrayArrows();
+	void GrayArrowStep( int index );
+	void GrayArrowGhostStep( int index );
+	Sprite		m_sprGrayArrow[4];
+	Sprite		m_sprGrayArrowGhost[4];
+
+	// judgement
+	void SetJudgementX( int iX );
+	void UpdateJudgement( const float& fDeltaTime );
+	void DrawJudgement();
+	void SetJudgement( StepScore score );
+	float		m_fJudgementDisplayCountdown;
+	Sprite		m_sprJudgement;
+
+	// combo
+	void SetComboX( int iX );
+	void UpdateCombo( const float& fDeltaTime );
+	void DrawCombo();
+	void SetCombo( int iNum );
+	BOOL		m_bComboVisible;
+	Sprite		m_sprCombo;
+	BitmapText	m_textComboNum;
+
+	// life meter
+	void SetLifeMeterX( int iX );
+	void UpdateLifeMeter( const float& fDeltaTime );
+	void DrawLifeMeter( float fSongBeat );
+	void ChangeLife( StepScore score );
+public:
+	float GetLifePercentage() { return m_fLifePercentage; };
 private:
+	float		m_fLifePercentage;
+	Sprite		m_sprLifeMeterFrame;
+	Sprite		m_sprLifeMeterPills;
 
-	FLOAT		m_fSongBeat;
-	FLOAT		m_fMaxBeatDifference;
+	// score
+	void SetScoreX( int iX );
+	void UpdateScore( const float& fDeltaTime );
+	void DrawScore();
+	void ChangeScore( StepScore score );
+	float		m_fScore;
+	Sprite		m_sprScoreFrame;
+	BitmapText	m_textScoreNum;
 
-	// step cache (so player doesn't have to hit buttons 
-	// on exact same update in order to hit two arrow notes)
-	FLOAT		m_fStepCountDown[2][4];
-
-	GrayArrows		*m_pGA;
-	ColorArrows		*m_pCA;
-
-	Judgement		*m_pJudgement;
-	Combo			*m_pCombo;
-	Score			*m_pScore;
-	LifeMeter		*m_pLifeMeter;
-
-	Steps			m_Steps;
-	CArray<StepScore, StepScore&>	m_StepScore;
-
-	int		m_iCurCombo;
-	int		m_iMaxCombo;
-
-	FLOAT	m_fLife;
-	FLOAT	m_fScore;
-	
 };
 
 

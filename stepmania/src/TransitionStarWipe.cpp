@@ -1,12 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: TransitionStarWipe.cpp
-//
-// Desc: "Window blinds"-type transition.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: TransitionStarWipe.cpp
 
+ Desc: Shooting start across the screen leave a black trail.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #include "RageUtil.h"
 

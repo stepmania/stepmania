@@ -1,11 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: TransitionRectWipe.cpp
-//
-// Desc: "Window blinds"-type transition.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: TransitionStarWipe.cpp
 
+ Desc: Black bands (horizontal window blinds) gradually close.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _TransitionRectWipe_H_
 #define _TransitionRectWipe_H_

@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: Transition.cpp
-//
-// Desc: Abstract base class for all transitions
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Transition.cpp
+
+ Desc: Abstract base class for all transitions.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 #ifndef _Transition_H_

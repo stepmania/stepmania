@@ -1,18 +1,19 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: Player.cpp
-//
-// Desc: Object that accepts pad input, knocks down ColorArrows that were stepped on, 
-//       and keeps score for the player.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Player.cpp
 
+ Desc: Object that accepts pad input, knocks down ColorArrows that were stepped on, 
+		and keeps score for the player.
 
-#include "Util.h"
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
+
+#include "ScreenDimensions.h"
 #include "Math.h" // for fabs()
-
 #include "Player.h"
+#include "RageUtil.h"
 
 
 
@@ -23,220 +24,302 @@
 #define SCORE_ADD_GOOD		200
 #define SCORE_ADD_BOO		100
 
-#define SCORE_MULT_PERFECT	1.007f
-#define SCORE_MULT_GREAT	1.004f
-#define SCORE_MULT_GOOD		1.002f
-#define SCORE_MULT_BOO		1.001f
-
 #define LIFE_PERFECT	 0.015f
 #define LIFE_GREAT		 0.008f
 #define LIFE_GOOD		 0.000f
 #define LIFE_BOO		-0.015f
 #define LIFE_MISS		-0.060f
 
+#define SPRITE_COLOR_ARROW_LEFT		"Sprites\\Color Arrow Left.sprite"
+#define SPRITE_COLOR_ARROW_DOWN		"Sprites\\Color Arrow Down.sprite"
+#define SPRITE_COLOR_ARROW_UP		"Sprites\\Color Arrow Up.sprite"
+#define SPRITE_COLOR_ARROW_RIGHT	"Sprites\\Color Arrow Right.sprite"
 
-void Player::Set( GrayArrows *pGA,		ColorArrows *pCA,
-				  Judgement *pJ,		Combo *pC,
-				  Score *pS,			LifeMeter *pL,
-				  Steps steps,			FLOAT fMaxBeatDifference )
+
+const int ARROW_X_OFFSET[4] = {
+	(int)(64*-1.5),
+	(int)(64*-0.5),
+	(int)(64* 0.5),
+	(int)(64* 1.5)
+};
+
+#define GRAY_ARROW_Y						((int)(64* 1.5))
+#define GRAY_ARROW_POP_UP_TIME				0.30f
+#define ARROW_HEIGHT						70
+#define NUM_FRAMES_IN_COLOR_ARROW_SPRITE	12
+
+const CString SPRITE_COLOR_ARROW[4] = {
+	"Sprites\\Color Arrow Left.sprite",
+	"Sprites\\Color Arrow Down.sprite",
+	"Sprites\\Color Arrow Up.sprite",
+	"Sprites\\Color Arrow Right.sprite"
+};
+const CString SPRITE_GRAY_ARROW[4] = {
+	"Sprites\\Gray Arrow Left.sprite",
+	"Sprites\\Gray Arrow Down.sprite",
+	"Sprites\\Gray Arrow Up.sprite",
+	"Sprites\\Gray Arrow Right.sprite"
+};
+
+
+#define JUDGEMENT_DISPLAY_TIME	1.0f
+#define JUDGEMENT_SPRITE		"Sprites\\Judgement.sprite"
+#define JUDGEMENT_Y				CENTER_Y
+
+#define FONT_COMBO				"Fonts\\Font - Arial Bold numbers 30px.font"
+
+#define COMBO_TWEEN_TIME		0.5f
+#define COMBO_SPRITE			"Sprites\\Combo.sprite"
+#define COMBO_Y					(CENTER_Y+60)
+
+
+#define LIEFMETER_NUM_PILLS		17
+#define LIFEMETER_FRAME_SPRITE	"Sprites\\Life Meter Frame.sprite"
+#define LIFEMETER_PILLS_SPRITE	"Sprites\\Life Meter Pills.sprite"
+#define LIFEMETER_Y				30
+#define LIFEMETER_PILLS_Y		(LIFEMETER_Y+2)
+const float PILL_OFFSET_Y[LIEFMETER_NUM_PILLS] = {
+	0.3f, 0.7f, 1.0f, 0.7f, 0.3f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+};
+
+#define FONT_SCORE		"Fonts\\Font - Arial Bold numbers 30px.font"
+#define SCORE_FRAME_TEXTURE	"Textures\\Score Frame 1x1.png"
+#define SCORE_Y				(480-40)
+
+
+Player::Player()
 {
-	RageLog( "Player::Set()" );
+	m_iCurCombo = 0;
+	m_iMaxCombo = 0;
+	m_fLifePercentage = 0.50f;
+	m_fScore = 0.0f;
 
-	m_pGA			= pGA;
-	m_pCA			= pCA;
-	m_pJudgement	= pJ;
-	m_pCombo		= pC;
-	m_pScore		= pS;
-	m_pLifeMeter	= pL;
-	if( m_pLifeMeter )	m_pLifeMeter->SetLife( m_fLife );
+	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) {
+		m_OriginalStep[i] = 0;
+		m_LeftToStepOn[i] = 0;
+		m_StepScore[i] = none;
+	}
 
-	m_Steps = steps;
+	// gray arrows
+	for( i=0; i<4; i++ ) 
+	{
+		m_sprGrayArrow[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW[i] );
+		m_sprGrayArrowGhost[i].LoadFromSpriteFile( SPRITE_GRAY_ARROW[i] );
+		m_sprGrayArrowGhost[i].StopAnimating();
+		m_sprGrayArrowGhost[i].SetState( 1 );
+		m_sprGrayArrowGhost[i].SetColor( D3DXCOLOR(1,1,1,0) );		
+	}
 
-	m_StepScore.SetSize( MAX_STEP_ELEMENTS );
-	for( int i=0; i<m_StepScore.GetSize(); i++ )
-		m_StepScore[i] = no_score;
+	// color arrows
+	for( i=0; i<4; i++ )
+	{
+		m_sprColorArrow[i].LoadFromSpriteFile( SPRITE_COLOR_ARROW[i] );
+		m_sprColorArrow[i].StopAnimating();
+	}
+	for( i=0; i<MAX_STEP_ELEMENTS; i++ )
+		m_iColorArrowFrameOffset[i] = 0;
 
-	m_fMaxBeatDifference = fMaxBeatDifference;
+	// judgement
+	m_fJudgementDisplayCountdown = 0;
+	m_sprJudgement.LoadFromSpriteFile( JUDGEMENT_SPRITE );
+
+	// combo
+	m_bComboVisible = FALSE;
+	m_sprCombo.LoadFromSpriteFile( COMBO_SPRITE );
+	m_textComboNum.LoadFromFontFile( FONT_COMBO );
+	m_textComboNum.SetText( "" );
+
+	// life meter
+	m_sprLifeMeterFrame.LoadFromSpriteFile( LIFEMETER_FRAME_SPRITE );
+	m_sprLifeMeterPills.LoadFromSpriteFile( LIFEMETER_PILLS_SPRITE );
+
+	// score
+	m_sprScoreFrame.LoadFromTexture( SCORE_FRAME_TEXTURE );
+	m_textScoreNum.LoadFromFontFile( FONT_SCORE );
+	m_textScoreNum.SetText( "         " );
+
+
+	SetX( CENTER_X );
 }
 
 
-void Player::Update( const FLOAT &fDeltaTime )
+void Player::SetX( int iX )
+{
+	m_iArrowsCenterX = iX;
+
+	SetGrayArrowsX(iX); 
+	SetColorArrowsX(iX);	
+	SetJudgementX(iX);	
+	SetComboX(iX);	
+	SetScoreX(iX);	
+	SetLifeMeterX(iX);	
+}
+
+
+void Player::SetSteps( const Steps& newSteps )
+{ 
+	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) {
+		m_OriginalStep[i] = newSteps.m_steps[i];
+		m_LeftToStepOn[i] = newSteps.m_steps[i];
+		m_iColorArrowFrameOffset[i] = (int)( i/(FLOAT)ELEMENTS_PER_BEAT*NUM_FRAMES_IN_COLOR_ARROW_SPRITE );
+	}
+}
+
+void Player::Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference )
 {
 	//RageLog( "Player::Update(%f)", fDeltaTime );
 
-	for( int i=0; i<2; i++ ) {
-		for( int j=0; j<4; j++ ) {
-			if( m_fStepCountDown[i][j] > 0.0 )
-				m_fStepCountDown[i][j] -= fDeltaTime;
-		}
-	}
-
-	
-	int iNumMisses = UpdateMissedStepsOlderThan( m_fSongBeat-m_fMaxBeatDifference );
+	int iNumMisses = UpdateStepsMissedOlderThan( fSongBeat-fMaxBeatDifference );
 	if( iNumMisses > 0 )
 	{
-		m_pJudgement->Miss();
+		SetJudgement( miss );
 		m_iCurCombo = 0;
-		m_pCombo->SetCombo( 0 );
-		m_fLife += LIFE_MISS * iNumMisses;
-		if( m_fLife < 0.0f )
-			m_fLife = 0.0f;
-		m_pLifeMeter->SetLife( m_fLife );
+		SetCombo( 0 );
+		for( int i=0; i<iNumMisses; i++ )
+			ChangeLife( miss );
 	}
-	
+
+
+	UpdateGrayArrows( fDeltaTime ); 
+	UpdateColorArrows( fDeltaTime );
+	UpdateJudgement( fDeltaTime );
+	UpdateCombo( fDeltaTime );
+	UpdateScore( fDeltaTime );
+	UpdateLifeMeter( fDeltaTime );
 }
 
-void Player::StepOn( Step player_step )
+void Player::Draw( float fSongBeat )
 {
-//	DebugLog( CString("Player::Step() ") + padStepL.ToString() + CString(" ") + padStepR.ToString() );
-
-	// Fill the "step buffer" so that the player doesn't have to hit 2 buttons
-	// at the exact same time in order to hit a two direction step
-	if( player_step & STEP_P1_LEFT )	m_fStepCountDown[0][0] = STEP_DOWN_TIME;
-	if( player_step & STEP_P1_DOWN )	m_fStepCountDown[0][1] = STEP_DOWN_TIME;
-	if( player_step & STEP_P1_UP )		m_fStepCountDown[0][2] = STEP_DOWN_TIME;
-	if( player_step & STEP_P1_RIGHT )	m_fStepCountDown[0][3] = STEP_DOWN_TIME;
-
-	// make the gray foot steps on the screen follow the input
-	m_pGA->StepOn( player_step );
-
-	HandleStep();
+	DrawGrayArrows(); 
+	DrawColorArrows( fSongBeat );
+	DrawJudgement();
+	DrawCombo();
+	DrawScore();
+	DrawLifeMeter( fSongBeat );	
 }
 
 
-
-void Player::HandleStep()
+void Player::HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeatDiff )
 {
-	//RageLog( "Player::HandleStep()" );
+	RageLog( "Player::HandlePlayerStep()" );
 
-	// This is being called just after a step, so we know at 
-	// least one direction is being depressed.
+	// update gray arrows
+	if( player_step & STEP_P1_LEFT )	GrayArrowStep( 0 );
+	if( player_step & STEP_P1_DOWN )	GrayArrowStep( 1 );
+	if( player_step & STEP_P1_UP )		GrayArrowStep( 2 );
+	if( player_step & STEP_P1_RIGHT )	GrayArrowStep( 3 );
 
-	// Build pad steps to check against
-	Step player_step = 0x0000;
-	if( m_fStepCountDown[0][0] > 0.0f )	player_step |= STEP_P1_LEFT;
-	if( m_fStepCountDown[0][1] > 0.0f )	player_step |= STEP_P1_DOWN;
-	if( m_fStepCountDown[0][2] > 0.0f )	player_step |= STEP_P1_UP;
-	if( m_fStepCountDown[0][3] > 0.0f )	player_step |= STEP_P1_RIGHT;
+	CheckForCompleteStep( fSongBeat, player_step, fMaxBeatDiff );
+}
+
+
+void Player::CheckForCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff )
+{
+	RageLog( "Player::CheckForCompleteStep()" );
+
+	// look for the closest matching step
+	int iIndexStartLookingAt = BeatToStepIndex( fSongBeat );
+	int iNumElementsToExamine = BeatToStepIndex( fMaxBeatDiff );	// number of elements to examine on either end of iIndexStartLookingAt
 	
-	// find the closest step that our PadSteps cover
-	//RageLog( "I ask: What step %s, %s, is near %f (within %f )", 
-	//				  padStepL.ToString(), 
-	//				  padStepR.ToString(), 
-	//				  m_fSongBeat,
-	//				  MAX_BEAT_DIFFERENCE );
+	RageLog( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
-	int iIndexOfClosest = 
-		m_Steps.GetIndexOfClosestStep( m_fSongBeat,
-									   m_fMaxBeatDifference,
-									   player_step );
+	// Start at iIndexStartLookingAt and search outward.  The first one that overlaps the player's step is the closest match.
+	for( int delta=0; delta <= iNumElementsToExamine; delta++ )
+	{
+		int iCurrentIndexEarlier = iIndexStartLookingAt - delta;
+		int iCurrentIndexLater   = iIndexStartLookingAt + delta;
 
-	if( iIndexOfClosest == -1 )	// if no steps in our specified range are covered
-		return;
-	
-	
+		// silly check to make sure we don't go out of bounds
+		iCurrentIndexEarlier	= clamp( iCurrentIndexEarlier, 0, MAX_STEP_ELEMENTS-1 );
+		iCurrentIndexLater		= clamp( iCurrentIndexLater,   0, MAX_STEP_ELEMENTS-1 );
 
-	FLOAT fStepBeat = StepIndexToBeat( iIndexOfClosest ); // this is the beat of the note we stepped on
+		////////////////////////////
+		// check the step to the left of iIndexStartLookingAt
+		////////////////////////////
+		RageLog( "Checking steps[%d]", iCurrentIndexEarlier );
+		if( m_LeftToStepOn[iCurrentIndexEarlier] & player_step )	// these steps overlap
+		{
+			m_LeftToStepOn[iCurrentIndexEarlier] &= ~player_step;	// subtract player_step
+			if( m_LeftToStepOn[iCurrentIndexEarlier] == 0 )	{		// did this complete the step?
+				OnCompleteStep( fSongBeat, player_step, fMaxBeatDiff, iCurrentIndexEarlier );
+				return;
+			}
+		}
 
-	//RageLog( "GetClosestMatch returned: iIndexOfClosest = %d (%s, %s, fStepBeat: %f)", 
-	//				  iIndexOfClosest, 
-	//				  m_Steps.StepsLeft [iIndexOfClosest].ToString(), 
-	//				  m_Steps.StepsRight[iIndexOfClosest].ToString(), 
-	//				  fStepBeat );
+		////////////////////////////
+		// check the step to the right of iIndexStartLookingAt
+		////////////////////////////
+		RageLog( "Checking steps[%d]", iCurrentIndexLater );
+		if( m_LeftToStepOn[iCurrentIndexLater] & player_step )		// these steps overlap
+		{
+			m_LeftToStepOn[iCurrentIndexLater] &= ~player_step;		// subtract player_step
+			if( m_LeftToStepOn[iCurrentIndexLater] == 0 ) {			// did this complete the step?
+				OnCompleteStep( fSongBeat, player_step, fMaxBeatDiff, iCurrentIndexLater );
+				return;
+			}
+		}
+	}
+}
 
+void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff, int iIndexThatWasSteppedOn )
+{
+	float fStepBeat = StepIndexToBeat( iIndexThatWasSteppedOn );
 
-	FLOAT fBeatsUntilStep = fStepBeat - m_fSongBeat;
-	FLOAT fPercentFromPerfect = (FLOAT)fabs( fBeatsUntilStep / m_fMaxBeatDifference );
+	// show the gray arrow ghost
+	if( player_step & STEP_P1_LEFT )	GrayArrowGhostStep( 0 );
+	if( player_step & STEP_P1_DOWN )	GrayArrowGhostStep( 1 );
+	if( player_step & STEP_P1_UP )		GrayArrowGhostStep( 2 );
+	if( player_step & STEP_P1_RIGHT )	GrayArrowGhostStep( 3 );
+
+	float fBeatsUntilStep = fStepBeat - fSongBeat;
+	float fPercentFromPerfect = (float)fabs( fBeatsUntilStep / fMaxBeatDiff );
 
 	RageLog( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
 			 fBeatsUntilStep, fPercentFromPerfect );
 
-	// step on the note so that it can't be stepped on any more
-	m_Steps.StatusArray[iIndexOfClosest] = stepped_on;
-
 	// compute what the score should be for the note we stepped on
-	StepScore &score = m_StepScore[iIndexOfClosest];
+	StepScore &score = m_StepScore[iIndexThatWasSteppedOn];
 
-	if(		 fPercentFromPerfect < 0.20f )
-		score = perfect;
-	else if( fPercentFromPerfect < 0.45f )
-		score = great;
-	else if( fPercentFromPerfect < 0.75f )
-		score = good;
-	else
-		score = boo;
+	if(		 fPercentFromPerfect < 0.20f )	score = perfect;
+	else if( fPercentFromPerfect < 0.45f )	score = great;
+	else if( fPercentFromPerfect < 0.75f )	score = good;
+	else									score = boo;
 
-	// update the judgement display
-	switch( score )
-	{
-	case perfect:	m_pJudgement->Perfect();	break;
-	case great:		m_pJudgement->Great();		break;
-	case good:		m_pJudgement->Good();		break;
-	case boo:		m_pJudgement->Boo();		break;
-	}
+	// update the judgement, score, and life
+	SetJudgement( score );
+	ChangeScore( score );
+	ChangeLife( score );
 
 	// update the combo display
 	switch( score )
 	{
 	case perfect:
 	case great:
-		m_iCurCombo++;
-		m_pCombo->SetCombo( m_iCurCombo );
+		SetCombo( m_iCurCombo+1 );	// combo continuing
 		break;
 	case good:
 	case boo:	
-		// combo stopped
-		if( m_iCurCombo > m_iMaxCombo )
-			m_iMaxCombo = m_iCurCombo;
-		m_iCurCombo = 0;
-		m_pCombo->SetCombo( m_iCurCombo );
+		SetCombo( 0 );		// combo stopped
 		break;
 	}
-
-	// remove the arrows from the ColorArrow columns if the score is high enough
-	if( score == perfect  ||  score == great )
-	{
-		m_pCA->StepOn( BeatToStepIndex(fStepBeat) );
-	}
-
-	// update running score
-	switch( score )
-	{
-	case perfect:	m_fScore += SCORE_ADD_PERFECT;	m_fScore *= SCORE_MULT_PERFECT;	break;
-	case great:		m_fScore += SCORE_ADD_GREAT;	m_fScore *= SCORE_MULT_GREAT;	break;
-	case good:		m_fScore += SCORE_ADD_GOOD;		m_fScore *= SCORE_MULT_GOOD;	break;
-	case boo:		m_fScore += SCORE_ADD_BOO;		m_fScore *= SCORE_MULT_BOO;		break;
-	case miss:																		break;
-	}
-
-	// update life meter
-	switch( score )
-	{
-	case perfect:	m_fLife += LIFE_PERFECT;	break;
-	case great:		m_fLife += LIFE_GREAT;		break;
-	case good:		m_fLife += LIFE_GOOD;		break;
-	case boo:		m_fLife += LIFE_BOO;		break;
-	}
-	if( m_fLife < 0.0f )		m_fLife = 0.0f;
-	else if( m_fLife > 1.0f )	m_fLife = 1.0f;
-
-
-	m_pScore->SetScore( m_fScore );
-	m_pLifeMeter->SetLife( m_fLife );
 }
 
-int Player::UpdateMissedStepsOlderThan( FLOAT iMissIfOlderThanThisBeat )
-{
-	//RageLog( "Steps::UpdateMissedStepsOlderThan(%f)", iMissIfOlderThanThisBeat );
 
-	int iMissIfOlderThanThisIndex = BeatToStepIndex( iMissIfOlderThanThisBeat );
+int Player::UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat )
+{
+	//RageLog( "Steps::UpdateStepsMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+
+	int iMissIfOlderThanThisIndex = BeatToStepIndex( fMissIfOlderThanThisBeat );
 
 	int iNumMissesFound = 0;
+	// Since this is being called frame, let's not check the whole array every time.
+	// Instead, only check 10 elements back.  Even 10 is overkill.
+	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
-	for( int i=0; i<iMissIfOlderThanThisIndex; i++ )
+	for( int i=iStartCheckingAt; i<iMissIfOlderThanThisIndex; i++ )
 	{
 //		RageLog( "Step %d: status == %d, score == %d", i, StatusArray[i], Score[i] );
-		if( m_Steps.StatusArray[i] == not_stepped_on  &&  m_StepScore[i] == no_score )
+		if( m_LeftToStepOn[i] != 0 )
 		{
 			m_StepScore[i] = miss;
 			iNumMissesFound++;
@@ -251,7 +334,7 @@ ScoreSummary Player::GetScoreSummary()
 {
 	ScoreSummary scoreSummary;
 
-	for( int i=0; i<m_StepScore.GetSize(); i++ ) 
+	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) 
 	{
 		switch( m_StepScore[i] )
 		{
@@ -260,11 +343,325 @@ ScoreSummary Player::GetScoreSummary()
 		case good:		scoreSummary.good++;		break;
 		case boo:		scoreSummary.boo++;			break;
 		case miss:		scoreSummary.miss++;		break;
-		case no_score:								break;
+		case none:									break;
 		}
 	}
 	scoreSummary.max_combo = m_iMaxCombo;
 	scoreSummary.score = m_fScore;
 	
 	return scoreSummary;
+}
+
+
+
+void Player::UpdateGrayArrows( const float &fDeltaTime )
+{
+	for( int i=0; i<4; i++ )
+		m_sprGrayArrow[i].Update( fDeltaTime );
+
+	for( i=0; i<4; i++ )
+		m_sprGrayArrowGhost[i].Update( fDeltaTime );
+}
+
+void Player::DrawGrayArrows()
+{
+	for( int i=0; i<4; i++ )
+		m_sprGrayArrow[i].Draw();
+}
+
+void Player::SetGrayArrowsX( int iNewX )
+{
+	for( int i=0; i<4; i++ )
+		m_sprGrayArrow[i].SetXY(  iNewX + ARROW_X_OFFSET[i], GRAY_ARROW_Y );
+}
+
+void Player::SetColorArrowsX( int iNewX )
+{
+
+}
+
+void Player::GrayArrowStep( int index )
+{
+	m_sprGrayArrow[index].SetZoom( 0.50 );
+	m_sprGrayArrow[index].TweenTo( GRAY_ARROW_POP_UP_TIME,
+									m_sprGrayArrow[index].GetX(),
+									m_sprGrayArrow[index].GetY(),
+									1.0f );
+}
+
+void Player::GrayArrowGhostStep( int index )
+{
+	m_sprGrayArrowGhost[index].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[index], GRAY_ARROW_Y );
+	m_sprGrayArrowGhost[index].SetZoom( 1 );
+	m_sprGrayArrowGhost[index].SetColor( D3DXCOLOR(1,1,0.5f,1) );
+	m_sprGrayArrowGhost[index].SetTweening( 0.3f );
+	m_sprGrayArrowGhost[index].SetTweenZoom( 1.5 );
+	m_sprGrayArrowGhost[index].SetTweenColor( D3DXCOLOR(1,1,0.5f,0) );		
+}
+
+void Player::UpdateColorArrows( const float &fDeltaTime )
+{
+
+}
+
+void Player::DrawColorArrows( float fSongBeat )
+{
+	//RageLog( "ColorArrows::Draw(%f)", fSongBeat );
+
+	int iBaseFrameNo = (int)(fSongBeat*2.5) % 12;	// 2.5 is a "fudge number" :-)  This should be based on BPM
+
+	int iIndexFirstArrowToDraw = BeatToStepIndex( fSongBeat - 2.0f );	// 2 beats earlier
+	if( iIndexFirstArrowToDraw < 0 ) iIndexFirstArrowToDraw = 0;
+	int iIndexLastArrowToDraw  = BeatToStepIndex( fSongBeat + 7.0f );	// 7 beats later
+
+	//RageLog( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
+
+	for( int i=iIndexFirstArrowToDraw; i<=iIndexLastArrowToDraw; i++ )
+	{				
+		if( m_LeftToStepOn[i] != 0 )	// if there is a step here and it hasn't been stepped 
+		{		
+			int iYPos = GetColorArrowYPos( i, fSongBeat );
+
+			// calculate which frame to display
+			int iFrameNo = iBaseFrameNo + m_iColorArrowFrameOffset[i];
+			iFrameNo = iFrameNo % NUM_FRAMES_IN_COLOR_ARROW_SPRITE;
+				
+			//RageLog( "iYPos: %d, iFrameNo: %d, m_OriginalStep[i]: %d", iYPos, iFrameNo, m_OriginalStep[i] );
+
+
+			if( m_OriginalStep[i] & STEP_P1_LEFT )
+			{
+				//RageLog( "Draw a left arrow at %d, %d", m_iArrowsCenterX + ARROW_X_OFFSET[0], iYPos );
+				m_sprColorArrow[0].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[0], iYPos );
+				m_sprColorArrow[0].SetState( iFrameNo );
+				m_sprColorArrow[0].Draw();
+			}
+			if( m_OriginalStep[i] & STEP_P1_DOWN )
+			{
+				m_sprColorArrow[1].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[1], iYPos );
+				m_sprColorArrow[1].SetState( iFrameNo );
+				m_sprColorArrow[1].Draw();
+			}
+			if( m_OriginalStep[i] & STEP_P1_UP )
+			{
+				m_sprColorArrow[2].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[2], iYPos );
+				m_sprColorArrow[2].SetState( iFrameNo );
+				m_sprColorArrow[2].Draw();
+			}
+			if( m_OriginalStep[i] & STEP_P1_RIGHT )
+			{
+				m_sprColorArrow[3].SetXY( m_iArrowsCenterX + ARROW_X_OFFSET[3], iYPos );
+				m_sprColorArrow[3].SetState( iFrameNo );
+				m_sprColorArrow[3].Draw();
+			}
+		}	// end if there is a step
+	}	// end foreach arrow to draw
+
+	for( i=0; i<4; i++ )
+	{
+		m_sprGrayArrowGhost[i].Draw();
+	}
+}
+
+
+
+
+
+int Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
+{
+	float fBeatsUntilStep = StepIndexToBeat( iStepIndex ) - fSongBeat;
+	return (int)(fBeatsUntilStep * ARROW_HEIGHT) + GRAY_ARROW_Y;
+}
+
+
+
+
+
+
+void Player::SetJudgementX( int iNewX )
+{
+	m_sprJudgement.SetXY(  iNewX,  CENTER_Y );
+}
+
+void Player::UpdateJudgement( const float &fDeltaTime )
+{
+	if( m_fJudgementDisplayCountdown > 0.0 )
+		m_fJudgementDisplayCountdown -= fDeltaTime;
+	m_sprJudgement.Update( fDeltaTime );
+}
+
+void Player::DrawJudgement()
+{
+	if( m_fJudgementDisplayCountdown > 0.0 )
+		m_sprJudgement.Draw();
+}
+
+void Player::SetJudgement( StepScore score )
+{
+	RageLog( "Judgement::SetJudgement()" );
+
+	switch( score )
+	{
+	case perfect:	m_sprJudgement.SetState( 0 );	break;
+	case great:		m_sprJudgement.SetState( 1 );	break;
+	case good:		m_sprJudgement.SetState( 2 );	break;
+	case boo:		m_sprJudgement.SetState( 3 );	break;
+	case miss:		m_sprJudgement.SetState( 4 );	break;
+	}
+
+	m_fJudgementDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
+
+	m_sprJudgement.SetZoom( 1.5f );
+	m_sprJudgement.TweenTo( JUDGEMENT_DISPLAY_TIME/2.0,
+							m_sprJudgement.GetX(), 
+							m_sprJudgement.GetY()  );
+}
+
+void Player::SetComboX( int iNewX )
+{
+	m_sprCombo.SetXY( iNewX+40, COMBO_Y );
+	m_textComboNum.SetXY(  iNewX-50, COMBO_Y );
+}
+
+void Player::UpdateCombo( const float &fDeltaTime )
+{
+	m_sprCombo.Update( fDeltaTime );
+	m_textComboNum.Update( fDeltaTime );
+}
+
+void Player::DrawCombo()
+{
+	if( m_bComboVisible )
+	{
+		m_textComboNum.Draw();
+		m_sprCombo.Draw();
+	}
+}
+
+
+void Player::SetCombo( int iNewCombo )
+{
+	// new max combo
+	if( iNewCombo > m_iMaxCombo )
+		m_iMaxCombo = iNewCombo;
+
+	m_iCurCombo = iNewCombo;
+
+	if( iNewCombo <= 4 )
+	{
+		m_bComboVisible = FALSE;
+	}
+	else
+	{
+		m_bComboVisible = TRUE;
+
+		m_textComboNum.SetText( ssprintf("%d", iNewCombo) );
+		m_textComboNum.SetZoom( 1.0f + iNewCombo/200.0f ); 
+		m_textComboNum.TweenTo( COMBO_TWEEN_TIME, m_textComboNum.GetX(), m_textComboNum.GetY() );
+	}
+
+}
+
+
+
+void Player::SetLifeMeterX( int iNewX )
+{
+	m_sprLifeMeterFrame.SetXY( iNewX, LIFEMETER_Y );
+	m_sprLifeMeterPills.SetXY( iNewX, LIFEMETER_PILLS_Y );
+}
+
+void Player::UpdateLifeMeter( const float &fDeltaTime )
+{
+	m_sprLifeMeterFrame.Update( fDeltaTime );
+	m_sprLifeMeterPills.Update( fDeltaTime );
+}
+
+void Player::DrawLifeMeter( float fSongBeat )
+{
+	float fBeatPercentage = fSongBeat - (int)fSongBeat;
+	int iOffsetStart = roundf( LIEFMETER_NUM_PILLS*fBeatPercentage );
+
+	m_sprLifeMeterFrame.Draw();
+
+	float iX = m_sprLifeMeterFrame.GetLeftEdge() + 27;
+	int iNumPills = (int)(m_sprLifeMeterPills.GetNumStates() * m_fLifePercentage);
+	int iPillWidth = m_sprLifeMeterPills.GetZoomedWidth();
+
+	for( int i=0; i<iNumPills; i++ )
+	{
+		m_sprLifeMeterPills.SetState( i );
+		m_sprLifeMeterPills.SetX( iX );
+
+		int iOffsetNum = (iOffsetStart - i + LIEFMETER_NUM_PILLS) % LIEFMETER_NUM_PILLS;
+		int iOffset = roundf( PILL_OFFSET_Y[iOffsetNum] * m_fLifePercentage * 8.0f );
+		m_sprLifeMeterPills.SetY( LIFEMETER_PILLS_Y - iOffset );
+
+		m_sprLifeMeterPills.Draw();
+
+		iX += iPillWidth;
+	}
+}
+
+void Player::ChangeLife( StepScore score )
+{
+	switch( score )
+	{
+	case perfect:	m_fLifePercentage += LIFE_PERFECT;	break;
+	case great:		m_fLifePercentage += LIFE_GREAT;	break;
+	case good:		m_fLifePercentage += LIFE_GOOD;		break;
+	case boo:		m_fLifePercentage += LIFE_BOO;		break;
+	}
+
+	m_fLifePercentage = clamp( m_fLifePercentage, 0, 1 );
+	
+	if( m_fLifePercentage == 1 )
+		m_sprLifeMeterFrame.SetEffectCamelion( 5, D3DXCOLOR(0.2f,0.2f,0.2f,1), D3DXCOLOR(1,1,1,1) );
+	else if( m_fLifePercentage < 0.25f )
+		m_sprLifeMeterFrame.SetEffectCamelion( 5, D3DXCOLOR(1,0.8f,0.8f,1), D3DXCOLOR(1,0.2f,0.2f,1) );
+	else
+		m_sprLifeMeterFrame.SetEffectNone();
+
+}
+
+
+
+
+
+
+void Player::SetScoreX( int iNewX )
+{
+	m_sprScoreFrame.SetXY( iNewX, SCORE_Y );
+	m_textScoreNum.SetXY(  iNewX, SCORE_Y );
+}
+
+void Player::UpdateScore( const float &fDeltaTime )
+{
+	m_sprScoreFrame.Update( fDeltaTime );
+	m_textScoreNum.Update( fDeltaTime );
+}
+
+void Player::DrawScore()
+{
+	m_textScoreNum.Draw();
+	m_sprScoreFrame.Draw();
+}
+
+
+void Player::ChangeScore( StepScore score )
+{
+	int iScoreToAdd;
+	switch( score )
+	{
+	case perfect:	iScoreToAdd = SCORE_ADD_PERFECT;	break;
+	case great:		iScoreToAdd = SCORE_ADD_GREAT;		break;
+	case good:		iScoreToAdd = SCORE_ADD_GOOD;		break;
+	case boo:		iScoreToAdd = SCORE_ADD_BOO;		break;
+	case miss:											break;
+	}
+	m_fScore += iScoreToAdd * (1 + m_iCurCombo/200.0f);
+
+	// multiply the combo bonus
+	//m_fScore *= SCORE_MULT_BOO;
+	
+	m_textScoreNum.SetText( ssprintf( "%9.0f", m_fScore ) );
 }

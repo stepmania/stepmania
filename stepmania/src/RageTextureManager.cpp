@@ -1,11 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: RageTextureManager.cpp
-//
-// Desc: Loads and releases textures
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageTextureManager.cpp
+
+ Desc: Interface for loading and releasing textures.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 //-----------------------------------------------------------------------------

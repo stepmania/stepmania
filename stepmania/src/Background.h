@@ -1,10 +1,13 @@
-//-----------------------------------------------------------------------------
-// File: Background.h
-//
-// Desc: Cropped version of the song background displayed in Song Select.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Background.h
+
+ Desc: A graphic displayed in the background during Dancing.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
+
 
 #ifndef _Background_H_
 #define _Background_H_

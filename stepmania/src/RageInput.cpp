@@ -1,11 +1,14 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: RageInput.cpp
-//
-// Desc: DirectInput wrapper class
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageInput.h
+
+ Desc: Wrapper for DirectInput.  Generates InputEvents.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
+
 
 //-----------------------------------------------------------------------------
 // In-line Links

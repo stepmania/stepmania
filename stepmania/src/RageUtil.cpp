@@ -1,11 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: RageUtil.cpp
-//
-// Desc: 
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageUtil.cpp
+
+ Desc: Helper and error-controlling function used throughout the program.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #include "RageUtil.h"
 

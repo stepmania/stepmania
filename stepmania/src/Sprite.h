@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: Sprite.h
-//
-// Desc: A bitmap Actor that animates and moves around.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Sprite.h
+
+ Desc: A bitmap Actor that animates and moves around.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _SPRITE_H_
 #define _SPRITE_H_

@@ -1,10 +1,13 @@
-//-----------------------------------------------------------------------------
-// File: IniFile.h
-//
-// Desc: wrapper for reading and writing an .ini file.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: IniFile.h
+
+ Desc: Wrapper for reading and writing an .ini file.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
+
 
 #ifndef _INIFILE_H_
 #define _INIFILE_H_

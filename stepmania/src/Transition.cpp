@@ -1,12 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: Transition.cpp
-//
-// Desc: Abstract base class for all transitions
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Transition.cpp
 
+ Desc: Abstract base class for all transitions.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #include "RageUtil.h"
 

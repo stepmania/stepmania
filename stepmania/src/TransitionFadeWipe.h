@@ -1,11 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: TransitionFadeWipe.cpp
-//
-// Desc: "Window blinds"-type transition.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: TransitionFadeWipe.cpp
 
+ Desc: Fades out or in.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _TransitionFadeWipe_H_
 #define _TransitionFadeWipe_H_

@@ -13,32 +13,6 @@
 #include "Sprite.h"
 
 
-class Judgement
-{
-public:
-	Judgement();
-	~Judgement();
-
-	void SetX( int iNewX );
-
-	void Update( const FLOAT &fDeltaTime );
-	void Draw();
-
-	void Perfect();
-	void Great();
-	void Good();
-	void Boo();
-	void Miss();
-
-private:
-	void TweenFromBigToSmall();
-
-
-	FLOAT m_fDisplayTimeLeft;
-
-	Sprite m_sprJudgement;
-};
-
 
 
 

@@ -1,11 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: TransitionFade.cpp
-//
-// Desc: "Window blinds"-type transition.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: TransitionFade.cpp
+
+ Desc: Fades out or in.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 #include "RageUtil.h"

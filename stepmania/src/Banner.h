@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: Banner.h
-//
-// Desc: The song's banner displayed in Song Select.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Banner.h
+
+ Desc: The song's banner displayed in SelectSong.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _Banner_H_
 #define _Banner_H_

@@ -1,30 +1,25 @@
-//-----------------------------------------------------------------------------
-// File: Song.h
-//
-// Desc: Holds metadata for a song and the song's step data.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Song.h
+
+ Desc: Holds metadata for a song and the song's step data.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _SONG_H_
 #define _SONG_H_
 
 
-#include <afxtempl.h>
 #include "Steps.h"
-
-
-#define BEATS_IN_MEASURE	4
 
 
 class Song
 {
 public:
-	Song() :
-	  m_fBPM(0.0),
-	  m_fBeatOffset(0.0)
-	{
-	};
+	Song();
+
 	Song( Song &from )
 	{
 		Copy( from );
@@ -65,8 +60,8 @@ public:
 	};
 
 private:
-	BOOL LoadFromBMSFile( CString sPath );
-	BOOL LoadFromMSDFile( CString sPath );
+	bool LoadSongInfoFromBMSFile( CString sPath );
+	bool LoadSongInfoFromMSDFile( CString sPath );
 
 	void FillEmptyValuesWithDefaults();
 
@@ -82,9 +77,9 @@ public:
 	CString GetTitle()			{return m_sTitle; };
 	CString GetArtist()			{return m_sArtist; };
 	CString GetCreator()		{return m_sCreator; };
-	FLOAT GetBeatOffset()		{return m_fBeatOffset; };
-	FLOAT GetBPM()				{return m_fBPM; };
-	FLOAT GetBeatsPerSecond()	{return m_fBPM / 60.0f; };
+	float GetBeatOffset()		{return m_fBeatOffset; };
+	float GetBPM()				{return m_fBPM; };
+	float GetBeatsPerSecond()	{return m_fBPM / 60.0f; };
 
 public:
 
@@ -96,8 +91,8 @@ private:
 	CString	m_sTitle;
 	CString	m_sArtist;
 	CString	m_sCreator;
-	FLOAT	m_fBPM;
-	FLOAT	m_fBeatOffset;
+	float	m_fBPM;
+	float	m_fBeatOffset;
 
 	CString	m_sMusic;
 	CString	m_sSample;

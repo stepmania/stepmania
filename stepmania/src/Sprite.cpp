@@ -1,11 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: Sprite.cpp
-//
-// Desc: A bitmap actor that animates and moves around.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Sprite.cpp
+
+ Desc: A bitmap actor that animates and moves around.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 #include "Sprite.h"

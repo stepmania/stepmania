@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: IniFile.cpp
-//
-// Desc: wrapper for reading and writing an .ini file.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: IniFile.h
+
+ Desc: Wrapper for reading and writing an .ini file.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #include "stdafx.h"
 #include "IniFile.h"

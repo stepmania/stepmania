@@ -1,12 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: RageSound.cpp
-//
-// Desc: Sound effects library (currently a wrapper around Bass Sound Library).
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageSound.cpp
 
+ Desc: Sound effects library (currently a wrapper around Bass Sound Library).
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 #include "RageSound.h"

@@ -1,11 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: RageBitmapTexture.cpp
-//
-// Desc: 
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageBitmapTexture.h
+
+ Desc: Holder for a static texture with metadata.  Can load just about any image format.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 //-----------------------------------------------------------------------------

@@ -1,11 +1,13 @@
 #include "stdafx.h"	// testing updates
-//-----------------------------------------------------------------------------
-// File: Actor.cpp
-//
-// Desc: Base class for all objects that appear on the screen.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Actor.h
+
+ Desc: Base class for all objects that appear on the screen.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #include "Actor.h"
 #include <math.h>

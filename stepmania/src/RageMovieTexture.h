@@ -1,10 +1,13 @@
-//-----------------------------------------------------------------------------
-// File: RageMovieTexture.h
-//
-// Desc: Based on the DShowTextures example in the DX8 SDK.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageMovieTexture.h
+
+ Desc: Based on the DShowTextures example in the DX8 SDK.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
+
 
 #ifndef _RAGEMOVIETEXTURE_H_
 #define _RAGEMOVIETEXTURE_H_

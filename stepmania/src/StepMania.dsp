@@ -308,22 +308,6 @@ SOURCE=.\button.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ColorArrows.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorArrows.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Combo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Combo.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\FootBar.cpp
 # End Source File
 # Begin Source File
@@ -332,35 +316,11 @@ SOURCE=.\FootBar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameOptions.cpp
+SOURCE=.\GameInfo.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\GameOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrows.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrows.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Judgement.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Judgement.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeter.h
+SOURCE=.\GameInfo.h
 # End Source File
 # Begin Source File
 
@@ -381,14 +341,6 @@ SOURCE=.\PreviewGraphic.cpp
 # Begin Source File
 
 SOURCE=.\previewgraphic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Score.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Score.h
 # End Source File
 # Begin Source File
 
@@ -453,6 +405,10 @@ SOURCE=.\dxutil.cpp
 # Begin Source File
 
 SOURCE=.\resource.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenDimensions.h
 # End Source File
 # Begin Source File
 

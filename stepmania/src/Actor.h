@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: Actor.h
-//
-// Desc: Base class for all objects that appear on the screen.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Actor.h
+
+ Desc: Base class for all objects that appear on the screen.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 #ifndef _ACTOR_H_

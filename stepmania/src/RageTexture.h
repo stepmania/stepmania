@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: RageTexture.h
-//
-// Desc: 
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageTexture.h
+
+ Desc: Abstract class for a texture with metadata.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 class RageTexture;
 typedef RageTexture* LPRageTexture;

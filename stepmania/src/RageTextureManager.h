@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: RageTextureManager.h
-//
-// Desc: Loads and releases textures
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageTextureManager.h
+
+ Desc: Interface for loading and releasing textures.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 class RageTextureManager;
 typedef RageTextureManager* LPRageTextureManager;

@@ -1,11 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: StepMania.cpp
-//
-// Desc: 
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: StepMania.cpp
+
+ Desc: 
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 //-----------------------------------------------------------------------------
 // Includes
@@ -18,7 +20,7 @@
 #include "RageMusic.h"
 #include "RageInput.h"
 
-#include "GameOptions.h"
+#include "GameInfo.h"
 #include "WindowManager.h"
 
 #include "WindowIntroCovers.h"
@@ -42,9 +44,7 @@ const CString g_sAppClassName	= "StepMania Class";
 HWND		g_hWndMain;				// Main Window Handle
 HINSTANCE	g_hInstance;			// The Handle to Window Instance
 
-const DWORD g_dwScreenWidth  = 640;	// The window width
-const DWORD g_dwScreenHeight = 480;	// The window height
-
+#include "ScreenDimensions.h"
 
 const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
 
@@ -101,7 +101,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 
 	// Set the window's initial width
     RECT rcWnd;
-    SetRect( &rcWnd, 0, 0, g_dwScreenWidth, g_dwScreenHeight );
+    SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
     AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
 
 
@@ -198,7 +198,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 				// don't allow the window to be resized smaller than the screen resolution
 				RECT rcWnd;
-				SetRect( &rcWnd, 0, 0, g_dwScreenWidth, g_dwScreenHeight );
+				SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
 				DWORD dwWindowStyle = GetWindowLong( g_hWndMain, GWL_STYLE );
 				AdjustWindowRect( &rcWnd, dwWindowStyle, FALSE );
 
@@ -289,7 +289,7 @@ HRESULT CreateObjects( HWND hWnd )
 	MUSIC	= new RageMusic;
 	INPUT	= new RageInput( hWnd );
 	
-	GAMEOPTIONS	= new GameOptions;
+	GAMEINFO	= new GameInfo;
 	WM			= new WindowManager;
 
 	RageLogStart();
@@ -297,6 +297,7 @@ HRESULT CreateObjects( HWND hWnd )
 	WM->SetNewWindow( new WindowIntroCovers );
 
 	srand( (unsigned)time(NULL) );
+
     // Start the accurate timer
     DXUtil_Timer( TIMER_START );
 
@@ -313,7 +314,7 @@ void DestroyObjects()
     DXUtil_Timer( TIMER_STOP );
 
 	SAFE_DELETE( WM );
-	SAFE_DELETE( GAMEOPTIONS );
+	SAFE_DELETE( GAMEINFO );
 
 	SAFE_DELETE( INPUT );
 	SAFE_DELETE( MUSIC );
@@ -339,7 +340,7 @@ HRESULT RestoreObjects()
 		SetRect( &rcWnd, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) );
 	else	// if( !g_bFullscreen )
 	{
-		SetRect( &rcWnd, 0, 0, g_dwScreenWidth, g_dwScreenHeight );
+		SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
   		AdjustWindowRect( &rcWnd, g_dwWindowStyle, FALSE );
 	}
 
@@ -404,7 +405,7 @@ void Update()
 	while( pos != NULL )
 	{
 		ri = listRawInput.GetNext( pos );
-		pi = GAMEOPTIONS->RawToPad( ri );
+		pi = GAMEINFO->RawToPad( ri );
 
 		WM->Input( ri, pi );
 	}
@@ -471,7 +472,7 @@ void SetFullscreen( BOOL bFullscreen )
 	InvalidateObjects();
 	g_bFullscreen = bFullscreen;
 	SCREEN->SwitchDisplayModes( g_bFullscreen, 
-								   g_dwScreenWidth, 
-								   g_dwScreenHeight );
+								   SCREEN_WIDTH, 
+								   SCREEN_HEIGHT );
 	RestoreObjects();
 }

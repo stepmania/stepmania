@@ -1,7 +1,12 @@
-// stdafx.h : include file for standard system include files,
-//  or project specific include files that are used frequently, but
-//      are changed infrequently
-//
+/*
+-----------------------------------------------------------------------------
+ File: stdafx.h
+
+ Desc: Include file for standard system include files.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #if !defined(AFX_STDAFX_H__9FF379EB_FAE2_11D1_BFC5_D41F722B624A__INCLUDED_)
 #define AFX_STDAFX_H__9FF379EB_FAE2_11D1_BFC5_D41F722B624A__INCLUDED_

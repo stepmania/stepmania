@@ -1,10 +1,13 @@
-//-----------------------------------------------------------------------------
-// File: RageBitmapTexture.h
-//
-// Desc: 
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageBitmapTexture.h
+
+ Desc: Holder for a static texture with metadata.  Can load just about any image format.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
+
 
 class RageBitmapTexture;
 typedef RageBitmapTexture* LPRageBitmapTexture;

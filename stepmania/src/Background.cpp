@@ -1,12 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: Background.cpp
-//
-// Desc: Cropped version of the song background displayed in Song Select.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Background.h
 
+ Desc: A graphic displayed in the background during Dancing.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #include "Background.h"
 #include "RageUtil.h"

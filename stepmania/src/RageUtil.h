@@ -1,10 +1,12 @@
-//-----------------------------------------------------------------------------
-// File: RageUtil.h
-//
-// Desc: 
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageUtil.h
+
+ Desc: Helper and error-controlling function used throughout the program.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 #ifndef _RAGEUTIL_H_
 #define _RAGEUTIL_H_
@@ -22,6 +24,16 @@
 //-----------------------------------------------------------------------------
 #define RECTWIDTH(rect)   ((rect).right  - (rect).left)
 #define RECTHEIGHT(rect)  ((rect).bottom - (rect).top)
+
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
+#define clamp(val,low,high)		( min( (val), max((low),(high)) ) )
 
 
 //-----------------------------------------------------------------------------

@@ -1,10 +1,13 @@
-//-----------------------------------------------------------------------------
-// File: RageSound.h
-//
-// Desc: Sound effects library (currently a wrapper around Bass Sound Library).
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: RageSound.h
+
+ Desc: Sound effects library (currently a wrapper around Bass Sound Library).
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
+
 
 #ifndef _RAGESOUND_H_
 #define _RAGESOUND_H_

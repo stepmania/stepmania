@@ -1,11 +1,13 @@
 #include "stdafx.h"
-//-----------------------------------------------------------------------------
-// File: Song.cpp
-//
-// Desc: Holds metadata for a song and the song's step data.
-//
-// Copyright (c) 2001 Chris Danford.  All rights reserved.
-//-----------------------------------------------------------------------------
+/*
+-----------------------------------------------------------------------------
+ File: Song.h
+
+ Desc: Holds metadata for a song and the song's step data.
+
+ Copyright (c) 2001 Chris Danford.  All rights reserved.
+-----------------------------------------------------------------------------
+*/
 
 
 #include "Util.h"
@@ -21,6 +23,11 @@
 //////////////////////////////
 // Song
 //////////////////////////////
+Song::Song()
+{
+	m_fBPM = 0;
+	m_fBeatOffset = 0;
+}
 
 bool Song::LoadFromSongDir( CString sDir )
 {
@@ -57,8 +64,15 @@ bool Song::LoadFromSongDir( CString sDir )
 
 	if( iNumBMSFiles > 0 )
 	{
-		for( int i=0; i<iNumBMSFiles; i++ )
-			LoadFromBMSFile( sDir + arrayBMSFileNames.GetAt(i) );
+		// Load the Song info from the first BMS file.  Silly BMS duplicates the song info in every
+		// file, so this method assumes that the song info is identical for every BMS file in
+		// the directory.
+		LoadSongInfoFromBMSFile( sDir + arrayBMSFileNames.GetAt(0) );
+		for( int i=0; i<iNumBMSFiles; i++ ) {
+			arraySteps.SetSize( arraySteps.GetSize()+1 );
+			Steps &new_steps = arraySteps[ arraySteps.GetSize()-1 ];
+			new_steps.LoadStepsFromBMSFile( sDir + arrayBMSFileNames.GetAt(i) );
+		}
 	}
 	else if( iNumMSDFiles == 1 )
 	{
@@ -76,55 +90,46 @@ bool Song::LoadFromSongDir( CString sDir )
 
 }
 
-BOOL Song::LoadFromBMSFile( CString sPath )
+bool Song::LoadSongInfoFromBMSFile( CString sPath )
 {
 	RageLog( "Song::LoadFromBMSFile(%s)", sPath );
 
 	BmsFile bms( sPath );
 	bms.ReadFile();
 
-	Steps new_steps;	// just assume one steps per file for now
-
 	CMapStringToString &mapValues = bms.mapValues;
 
 	POSITION pos = mapValues.GetStartPosition();
 	while( pos != NULL )
 	{
-		CString valuename;
+		CString value_name;
 		CString data_string;
 		CStringArray data_array;
-		mapValues.GetNextAssoc( pos, valuename, data_string );
+		mapValues.GetNextAssoc( pos, value_name, data_string );
 		split(data_string, ":", data_array);
 
 		// handle the data
-		if( valuename == "#PLAYER" )
-			;
-
-		else if( valuename == "#GENRE" )
+		if( value_name == "#GENRE" )
 			m_sCreator = data_array[0];
-
-		else if( valuename == "#TITLE" )
+		else if( value_name == "#TITLE" ) {
 			m_sTitle = data_array[0];
-
-		else if( valuename == "#ARTIST" )
+			// strip steps type out of description leaving only song title (looks like 'Music <BASIC>')
+			int iPosBracket = m_sTitle.Find( " <" );
+			if( iPosBracket != -1 )
+				m_sTitle = m_sTitle.Left( iPosBracket );
+		}
+		else if( value_name == "#ARTIST" )
 			m_sArtist = data_array[0];
-
-		else if( valuename == "#BPM" )
+		else if( value_name == "#BPM" )
 			m_fBPM = (FLOAT)atof( data_array[0] );
-
-		else if( valuename == "#PLAYLEVEL" )
-			new_steps.iDifficulty = atoi( data_array[0] );
-
-		else if( valuename == "#BackBMP"  ||  valuename == "#backBMP")
+		else if( value_name == "#BackBMP"  ||  value_name == "#backBMP")
 			m_sBackground = data_array[0];
-
-		else if( valuename == "#WAV99" )
+		else if( value_name == "#WAV99" )
 			m_sMusic = data_array[0];
-
-		else if( valuename.GetLength() == 6 )	// this is probably step or offset data.  Looks like "#00705"
+		else if( value_name.GetLength() == 6 )	// this is probably step or offset data.  Looks like "#00705"
 		{
-			int iMeasureNo	= atoi( valuename.Mid(1,3) );
-			int iNoteNum	= atoi( valuename.Mid(4,2) );
+			int iMeasureNo	= atoi( value_name.Mid(1,3) );
+			int iNoteNum	= atoi( value_name.Mid(4,2) );
 			CString sNoteData = data_array[0];
 			CArray<BOOL, BOOL&> arrayNotes;
 
@@ -146,99 +151,19 @@ BOOL Song::LoadFromBMSFile( CString sPath )
 
 					// index is in quarter beats starting at beat 0
 					int iStepIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
-									 * BEATS_IN_MEASURE * ELEMENTS_PER_BEAT );
-// BMS encoding:
-// 4&8panel: Player1  Player2
-//    Left		11		21
-//    Down		13		23
-//    Up		15		25
-//    Right		16		26
-//	6panel:	 Player1  Player2
-//    Left		11		21
-//    Left+Up	12		22
-//    Down		13		23
-//    Up		14		24
-//    Up+Right	15		25
-//    Right		16		26
-//
-//	Notice that 15 and 25 have two different meanings!  What were they thinking???
-//	While reading in, use the 6 panel mapping.  After reading in, detect if only 4 notes
-//	are filled in.  If so, shift the Up+Right column back to the Up column
-//
-// Our internal encoding:
-// 0x0001 left		player 1
-// 0x0002 left+up	player 1
-// 0x0004 down		player 1
-// 0x0008 up		player 1
-// 0x0010 up+right	player 1
-// 0x0020 right		player 1
-// 0x0040 left		player 2
-// 0x0080 left+up	player 2
-// 0x0100 down		player 2
-// 0x0200 up		player 2
-// 0x0400 up+right	player 2
-// 0x0800 right		player 2
-CMap<int, int, Step, Step>  mapBMSNumberToOurStepBit;
-mapBMSNumberToOurStepBit[11] = 0x0001;
-mapBMSNumberToOurStepBit[12] = 0x0002;
-mapBMSNumberToOurStepBit[13] = 0x0004;
-mapBMSNumberToOurStepBit[14] = 0x0008;
-mapBMSNumberToOurStepBit[15] = 0x0010;
-mapBMSNumberToOurStepBit[16] = 0x0020;
-mapBMSNumberToOurStepBit[21] = 0x0040;
-mapBMSNumberToOurStepBit[22] = 0x0080;
-mapBMSNumberToOurStepBit[23] = 0x0100;
-mapBMSNumberToOurStepBit[24] = 0x0200;
-mapBMSNumberToOurStepBit[25] = 0x0400;
-mapBMSNumberToOurStepBit[26] = 0x0800;
+									 * BEATS_PER_MEASURE * ELEMENTS_PER_BEAT );
 
-					new_steps.StepArray[iStepIndex] |= mapBMSNumberToOurStepBit[iNoteNum];
-					new_steps.StatusArray[iStepIndex] = not_stepped_on;
-
+					switch( iNoteNum )
+					{
+					case 01:	// offset
+						m_fBeatOffset = StepIndexToBeat(iStepIndex);
+						//RageLog( "Found offset to be index %d, beat %f", iStepIndex, StepIndexToBeat(iStepIndex) );
+						break;
+					}
 				}
 			}
 		}
 	}
-
-	int iNumSteps = 0;
-	for( int i=0; i<new_steps.StatusArray.GetSize(); i++ ) {
-		if( new_steps.StatusArray[i] == not_stepped_on ) {
-			iNumSteps++;
-		}
-	}
-
-	RageLog( "%d of %d steps elements are filled", iNumSteps, new_steps.StatusArray.GetSize() );
-	// we're done reading in all of the BMS values
-
-
-	if(		 m_sTitle.Find("<BASIC>")			>0 )	new_steps.sDescription = "BASIC";
-	else if( m_sTitle.Find("<ANOTHER>")			>0 )	new_steps.sDescription = "ANOTHER";
-	else if( m_sTitle.Find("<TRICK>")			>0 )	new_steps.sDescription = "TRICK";
-	else if( m_sTitle.Find("<MANIAC>")			>0 )	new_steps.sDescription = "MANIAC";
-	else if( m_sTitle.Find("<SSR>")				>0 )	new_steps.sDescription = "SSR";
-	else if( m_sTitle.Find("<6PANELS BASIC>")	>0 )	new_steps.sDescription = "BASIC";
-	else if( m_sTitle.Find("<6PANELS ANOTHER>")	>0 )	new_steps.sDescription = "ANOTHER";
-	else if( m_sTitle.Find("<6PANELS TRICK>")	>0 )	new_steps.sDescription = "TRICK";
-	else if( m_sTitle.Find("<6PANELS MANIAC>")	>0 )	new_steps.sDescription = "MANIAC";
-	else if( m_sTitle.Find("<6PANELS SSR>")		>0 )	new_steps.sDescription = "SSR";
-	else if( m_sTitle.Find("<BASIC DOUBLE>")	>0 )	new_steps.sDescription = "BASIC DOUBLE";
-	else if( m_sTitle.Find("<ANOTHER DOUBLE>")	>0 )	new_steps.sDescription = "ANOTHER DOUBLE";
-	else if( m_sTitle.Find("<TRICK DOUBLE>")	>0 )	new_steps.sDescription = "TRICK DOUBLE";
-	else if( m_sTitle.Find("<MANIAC DOUBLE>")	>0 )	new_steps.sDescription = "MANIAC DOUBLE";
-	else if( m_sTitle.Find("<SSR DOUBLE>")		>0 )	new_steps.sDescription = "SSR DOUBLE";
-	else if( m_sTitle.Find("<COUPLE>")			>0 )	new_steps.sDescription = "COUPLE";
-	else if( m_sTitle.Find("<BATTLE>")			>0 )	new_steps.sDescription = "BATTLE";
-	else												new_steps.sDescription = "UNKNOWN";
-
-	if(		 new_steps.sDescription.Find("COUPLE") >0 )	new_steps.type = st_couple;
-	else if( new_steps.sDescription.Find("BATTLE") >0 )	new_steps.type = st_couple;
-	else if( new_steps.sDescription.Find("DOUBLE") >0 )	new_steps.type = st_double;
-	else												new_steps.type = st_single;
-
-	arraySteps.Add( new_steps );
-	
-	// strip steps type out of description
-	m_sTitle.Replace( " <" + new_steps.sDescription + ">", "" );
 
 	FillEmptyValuesWithDefaults();
 
@@ -246,7 +171,7 @@ mapBMSNumberToOurStepBit[26] = 0x0800;
 }
 
 
-BOOL Song::LoadFromMSDFile( CString sPath )
+bool Song::LoadSongInfoFromMSDFile( CString sPath )
 {
 	RageLog( "Song::LoadFromMSDFile(%s)", sPath );
 
@@ -361,11 +286,11 @@ void Song::FillEmptyValuesWithDefaults()
 	if( m_sTitle == "" )	m_sTitle = "Untitled song";
 	if( m_sArtist == "" )	m_sArtist = "Unknown artist";
 	if( m_sCreator == "" )	m_sCreator = "";
-	if( m_fBPM == 0.0 )
+	if( m_fBPM == 0 )
 		RageError( ssprintf("No #BPM specified in '%s.'", GetSongFilePath()) );
 
 	if( m_fBeatOffset == 0.0 )	
-		RageLog( "Warning: #OFFSET or #GAP in '%s' is either 0.0, or was missing.", GetSongFilePath() );
+		RageLog( "WARNING: #OFFSET or #GAP in '%s' is either 0.0, or was missing.", GetSongFilePath() );
 
 	if( m_sMusic == "" )
 	{
