@@ -22,7 +22,6 @@
 #include <math.h>
 
 
-RageTimer	g_timerExpand;
 float		g_fExpandSeconds = 0;
 
 float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
@@ -67,10 +66,12 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*sinf( fYOffset/38.0f );
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] > 0 )
 	{
+		/* Timers can't be global, since they'll be initialized before SDL. */
+		static RageTimer timerExpand;
 		if( !GAMESTATE->m_bFreeze )
-			g_fExpandSeconds += g_timerExpand.GetDeltaTime();
+			g_fExpandSeconds += timerExpand.GetDeltaTime();
 		else
-			g_timerExpand.GetDeltaTime();	// throw away
+			timerExpand.GetDeltaTime();	// throw away
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_EXPAND] * (fYOffset * SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f ) - fYOffset); 
 	}
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
