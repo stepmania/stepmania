@@ -57,6 +57,7 @@ public:
 	bool PutString(const CString& string) { return fputs(string, mFP) >= 0; }
 	int Read(void *buffer, size_t bytes);
 	int Write(const void *buffer, size_t bytes);
+    int PutLine( const CString &str );
 
 	/* Line-based I/O: */
     CString GetLine();

@@ -125,6 +125,19 @@ void RageFile::GetLine( CString &out )
 	}
 }
 
+#if defined(_WIN32)
+#define NEWLINE "\r\n"
+#else
+#define NEWLINE "\n"
+#endif
+
+int RageFile::PutLine( const CString &str )
+{
+	if( Write(str.data(), str.size()) == -1 )
+		return -1;
+	return Write( NEWLINE, strlen(NEWLINE) );
+}
+
 int RageFile::Read( void *buffer, size_t bytes )
 {
 	if( !IsOpen() )
