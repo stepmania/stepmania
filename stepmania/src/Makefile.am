@@ -147,6 +147,7 @@ ArchUtils +=    archutils/Unix/AssertionHandler.cpp \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
 		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
 		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
+		archutils/Unix/RunningUnderValgrind.cpp archutils/Unix/RunningUnderValgrind.h \
 		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h
 
 if USE_CRASH_HANDLER
