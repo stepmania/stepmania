@@ -87,6 +87,13 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 		CString sImportDir;
 		if( ini.GetValue(sLayer, "Import", sImportDir) )
 		{
+			CString expr;
+			if( ini.GetValue(sLayer,"Condition",expr) )
+			{
+				if( !Lua::RunExpression( expr ) )
+					continue;
+			}
+
 			// import a whole BGAnimation
 			sImportDir = sAniDir + sImportDir;
 			CollapsePath( sImportDir );
