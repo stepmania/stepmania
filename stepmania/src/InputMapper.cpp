@@ -70,13 +70,13 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 struct AutoJoyMapping
 {
 	Game game;
-	const char *sDeviceDescription;
+	const char *szDeviceDescription;	// reported by InputHandler
+	const char *szControllerName;	// the product name of the controller
 	bool bIgnoreAxes;
-	int numMappings;
 	struct {
+		int iSlotIndex;	// -1 == end marker
 		int deviceButton;
 		GameButton gb;
-		int iSlot;
 		/* If this is true, this is an auxilliary mapping assigned to the second
 		 * player.  If two of the same device are found, and the device has secondary
 		 * entries, the later entries take precedence.  This way, if a Pump pad is
@@ -86,91 +86,119 @@ struct AutoJoyMapping
 		 *
 		 * This isn't well-tested; I only have one Pump pad. */
 		bool SecondController;
-	} mapping[32];
+	} map[32];
 };
 const AutoJoyMapping g_AutoJoyMappings[] = 
 {
 	{
 		GAME_DANCE,
 		"GIC USB Joystick",
+		"Boom USB convertor (black/gray)",
 		false,
-		4,
 		{
-			{ JOY_16, DANCE_BUTTON_LEFT,	1 },
-			{ JOY_14, DANCE_BUTTON_RIGHT,	1 },
-			{ JOY_13, DANCE_BUTTON_UP,		1 },
-			{ JOY_15, DANCE_BUTTON_DOWN,	1 },
+			{ 0, JOY_16, DANCE_BUTTON_LEFT },
+			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
+			{ 0, JOY_13, DANCE_BUTTON_UP },
+			{ 0, JOY_15, DANCE_BUTTON_DOWN },
+			{-1, NULL,		NULL },
 		}
 	},
 	{
 		GAME_DANCE,
-		"4 axis 16 button joystick",	// likely a PC Magic Box
+		"4 axis 16 button joystick",
+		"PC Magic Box",
 		false,
-		4,
 		{
-			{ JOY_16, DANCE_BUTTON_LEFT,	1 },
-			{ JOY_14, DANCE_BUTTON_RIGHT,	1 },
-			{ JOY_13, DANCE_BUTTON_UP,		1 },
-			{ JOY_15, DANCE_BUTTON_DOWN,	1 },
+			{ 0, JOY_16, DANCE_BUTTON_LEFT },
+			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
+			{ 0, JOY_13, DANCE_BUTTON_UP },
+			{ 0, JOY_15, DANCE_BUTTON_DOWN },
+			{-1, NULL,		NULL },
 		}
 	},
 	{
 		GAME_DANCE,
 		"GamePad Pro USB ",	// yes, there is a space at the end
+		"GamePad Pro USB",
 		false,
-		12,
 		{
-			{ JOY_LEFT,		DANCE_BUTTON_LEFT,		1 },
-			{ JOY_RIGHT,	DANCE_BUTTON_RIGHT,		1 },
-			{ JOY_UP,		DANCE_BUTTON_UP,		1 },
-			{ JOY_DOWN,		DANCE_BUTTON_DOWN,		1 },
-			{ JOY_1,		DANCE_BUTTON_LEFT,		2 },
-			{ JOY_3,		DANCE_BUTTON_RIGHT,		2 },
-			{ JOY_4,		DANCE_BUTTON_UP,		2 },
-			{ JOY_2,		DANCE_BUTTON_DOWN,		2 },
-			{ JOY_5,		DANCE_BUTTON_UPLEFT,	1 },
-			{ JOY_6,		DANCE_BUTTON_UPRIGHT,	1 },
-			{ JOY_9,		DANCE_BUTTON_BACK,		1 },
-			{ JOY_10,		DANCE_BUTTON_START,		1 },
+			{ 0, JOY_LEFT,	DANCE_BUTTON_LEFT },
+			{ 0, JOY_RIGHT,	DANCE_BUTTON_RIGHT },
+			{ 0, JOY_UP,	DANCE_BUTTON_UP },
+			{ 0, JOY_DOWN,	DANCE_BUTTON_DOWN },
+			{ 1, JOY_1,		DANCE_BUTTON_LEFT },
+			{ 1, JOY_3,		DANCE_BUTTON_RIGHT },
+			{ 1, JOY_4,		DANCE_BUTTON_UP },
+			{ 1, JOY_2,		DANCE_BUTTON_DOWN },
+			{ 0, JOY_5,		DANCE_BUTTON_UPLEFT },
+			{ 0, JOY_6,		DANCE_BUTTON_UPRIGHT },
+			{ 0, JOY_9,		DANCE_BUTTON_BACK },
+			{ 0, JOY_10,	DANCE_BUTTON_START },
+			{-1, NULL,		NULL },
+		}
+	},
+	{
+		GAME_DANCE,
+		"4 axis 12 button joystick with hat switch",
+		"Super Joy Box 5",
+		false,
+		{
+			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
+			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
+			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP },
+			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN },
+			{ 1, JOY_4,			DANCE_BUTTON_LEFT },
+			{ 1, JOY_2,			DANCE_BUTTON_RIGHT },
+			{ 1, JOY_1,			DANCE_BUTTON_UP },
+			{ 1, JOY_3,			DANCE_BUTTON_DOWN },
+			{ 0, JOY_5,			DANCE_BUTTON_UPLEFT },
+			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT },
+			{ 1, JOY_7,			DANCE_BUTTON_UPLEFT },
+			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT },
+			{ 0, JOY_10,		DANCE_BUTTON_BACK },
+			{ 0, JOY_9,			DANCE_BUTTON_START },
+			{-1, NULL,			NULL },
 		}
 	},
 	{
 		GAME_DANCE,
 		"XBOX Gamepad Plugin V0.01",
+		"X-Box gamepad",
 		false,
-		12,
 		{
-			{ JOY_HAT_LEFT,		DANCE_BUTTON_LEFT,		1 },
-			{ JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT,		1 },
-			{ JOY_HAT_UP,		DANCE_BUTTON_UP,		1 },
-			{ JOY_HAT_DOWN,		DANCE_BUTTON_DOWN,		1 },
-			{ JOY_1,			DANCE_BUTTON_DOWN,		2 }, // A
-			{ JOY_2,			DANCE_BUTTON_RIGHT,		2 }, // B
-			{ JOY_3,			DANCE_BUTTON_LEFT,		2 }, // X
-			{ JOY_4,			DANCE_BUTTON_UP,		2 }, // Y
-			{ JOY_7,			DANCE_BUTTON_UPLEFT,	1 }, // L shoulder
-			{ JOY_8,			DANCE_BUTTON_UPRIGHT,	1 }, // R shoulder
-			{ JOY_9,			DANCE_BUTTON_START,		1 },
-			{ JOY_10,			DANCE_BUTTON_BACK,		1 },
+			{ 0, JOY_HAT_LEFT,	DANCE_BUTTON_LEFT },
+			{ 0, JOY_HAT_RIGHT,	DANCE_BUTTON_RIGHT },
+			{ 0, JOY_HAT_UP,	DANCE_BUTTON_UP },
+			{ 0, JOY_HAT_DOWN,	DANCE_BUTTON_DOWN },
+			{ 1, JOY_1,			DANCE_BUTTON_DOWN },	// A
+			{ 1, JOY_2,			DANCE_BUTTON_RIGHT },	// B
+			{ 1, JOY_3,			DANCE_BUTTON_LEFT },	// X
+			{ 1, JOY_4,			DANCE_BUTTON_UP },		// Y
+			{ 0, JOY_7,			DANCE_BUTTON_UPLEFT },	// L shoulder
+			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT },	// R shoulder
+			{ 0, JOY_9,			DANCE_BUTTON_START },
+			{ 0, JOY_10,		DANCE_BUTTON_BACK },
+			{-1, NULL,			NULL },
 		}
 	},
 	{
 		GAME_PUMP,
 		"Pump USB",
+		"Pump USB pad",
 		false,
-		11,
 		{
-			{ PUMP_UL,		PUMP_BUTTON_UPLEFT,		1 },
-			{ PUMP_UR,		PUMP_BUTTON_UPRIGHT,	1 },
-			{ PUMP_MID,		PUMP_BUTTON_CENTER,		1 },
-			{ PUMP_DL,		PUMP_BUTTON_DOWNLEFT,	1 },
-			{ PUMP_DR,		PUMP_BUTTON_DOWNRIGHT,	1 },
-			{ PUMP_ESCAPE,	PUMP_BUTTON_BACK,		1 },
-			{ PUMP_2P_UL,	PUMP_BUTTON_UPLEFT,		1,	true },
-			{ PUMP_2P_UR,	PUMP_BUTTON_UPRIGHT,	1,	true },
-			{ PUMP_2P_MID,	PUMP_BUTTON_CENTER,		1,	true },
-			{ PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	1,	true },
-			{ PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	1,	true },
+			{ 0, PUMP_UL,		PUMP_BUTTON_UPLEFT },
+			{ 0, PUMP_UR,		PUMP_BUTTON_UPRIGHT },
+			{ 0, PUMP_MID,		PUMP_BUTTON_CENTER },
+			{ 0, PUMP_DL,		PUMP_BUTTON_DOWNLEFT },
+			{ 0, PUMP_DR,		PUMP_BUTTON_DOWNRIGHT },
+			{ 0, PUMP_ESCAPE,	PUMP_BUTTON_BACK },
+			{ 0, PUMP_2P_UL,	PUMP_BUTTON_UPLEFT,		true },
+			{ 0, PUMP_2P_UR,	PUMP_BUTTON_UPRIGHT,	true },
+			{ 0, PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
+			{ 0, PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
+			{ 0, PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
+			{-1, NULL,			NULL },
 		}
 	},
 };
@@ -182,6 +210,9 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	vector<CString> vDescriptions;
 	PREFSMAN->m_bIgnoreJoyAxes = false;
 	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
+
+	int iNumJoysticksMapped = 0;
+
 	for( unsigned i=0; i<vDevices.size(); i++ )
 	{
 		InputDevice device = vDevices[i];
@@ -190,37 +221,31 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 
-			if( sDescription == mapping.sDeviceDescription )
+			if( sDescription == mapping.szDeviceDescription )
 			{
+				//
+				// We have a mapping for this joystick
+				//
+				GameController gc = (GameController)iNumJoysticksMapped;
+				if( gc >= GAME_CONTROLLER_INVALID )
+					break;	// stop mapping.  We already mapped one device for each game controller.
+
+				LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
+					iNumJoysticksMapped+1, mapping.szDeviceDescription, mapping.szControllerName );
+
 				PREFSMAN->m_bIgnoreJoyAxes |= mapping.bIgnoreAxes;
 
-				GameController gc = GAME_CONTROLLER_INVALID;
-				switch( device )
+				for( int k=0; mapping.map[k].iSlotIndex != -1; k++ )
 				{
-				case DEVICE_JOY1:
-				case DEVICE_JOY3:
-				case DEVICE_PUMP1:
-					gc = GAME_CONTROLLER_1;	
-					break;
-				case DEVICE_JOY2:
-				case DEVICE_JOY4:
-				case DEVICE_PUMP2:
-					gc = GAME_CONTROLLER_2;	
-					break;
-				}
-				if( gc == GAME_CONTROLLER_INVALID )
-					continue;
-
-				for( int k=0; k<mapping.numMappings; k++ )
-				{
-					if( mapping.mapping[k].SecondController && gc == GAME_CONTROLLER_1 )
+					if( mapping.map[k].SecondController )
 						gc = GAME_CONTROLLER_2;
 
-					DeviceInput di( device, mapping.mapping[k].deviceButton );
-					GameInput gi( gc, mapping.mapping[k].gb );
-					SetInputMap( di, gi, mapping.mapping[k].iSlot );
+					DeviceInput di( device, mapping.map[k].deviceButton );
+					GameInput gi( gc, mapping.map[k].gb );
+					SetInputMap( di, gi, mapping.map[k].iSlotIndex );
 				}
-				break;
+
+				iNumJoysticksMapped++;
 			}
 		}
 	}
