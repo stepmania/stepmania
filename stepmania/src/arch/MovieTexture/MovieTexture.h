@@ -14,7 +14,6 @@ public:
 
 	virtual void Play() = 0;
 	virtual void Pause() = 0;
-	virtual void Stop() = 0;
 	virtual void SetPosition( float fSeconds ) = 0;
 	virtual void SetPlaybackRate( float fRate ) = 0;
 	virtual bool IsPlaying() const = 0;
