@@ -233,3 +233,19 @@ void RageLog::UnmapLog(const CString &key)
 {
 	LogMaps.erase(key);
 }
+
+Checkpoint_::Checkpoint_(CString key_, int n, CString fmt, ...)
+{
+	key = ssprintf("%s:%i", key_.c_str(), n);
+
+    va_list	va;
+    va_start(va, fmt);
+	LOG->MapLog( key, vssprintf(fmt, va) );
+    va_end(va);
+}
+
+Checkpoint_::~Checkpoint_()
+{
+	LOG->UnmapLog( key );
+}
+
