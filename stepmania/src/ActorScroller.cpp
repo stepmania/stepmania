@@ -60,11 +60,22 @@ void ActorScroller::Update( float fDeltaTime )
 
 void ActorScroller::DrawPrimitives()
 {
-	if( m_bLoaded )
+	// Optimization:  If we weren't loaded, then fall back to the ActorFrame logic
+	if( !m_bLoaded )
 	{
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
+		ActorFrame::DrawPrimitives();
+	}
+	else
+	{
+		int iFirstItemToDraw = (int)roundf( m_fCurrentItem - m_iNumItemsToDraw/2.f );
+		for( int i=iFirstItemToDraw; i<iFirstItemToDraw+m_iNumItemsToDraw; i++ )
 		{
+			if( i<0 || i>=m_SubActors.size() )
+				continue;	// skip
+
 			float fItemOffset = i - m_fCurrentItem;
+
+			DISPLAY->PushMatrix();
 
 			if( m_vRotationDegrees[0] )
 				DISPLAY->RotateX( m_vRotationDegrees[0]*fItemOffset );
@@ -84,10 +95,8 @@ void ActorScroller::DrawPrimitives()
 				);
 
 			m_SubActors[i]->Draw();
+			
+			DISPLAY->PopMatrix();
 		}
-	}
-	else
-	{
-		ActorFrame::DrawPrimitives();
 	}
 }
