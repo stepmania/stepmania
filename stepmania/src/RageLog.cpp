@@ -242,7 +242,7 @@ void RageLog::Write( int where, const CString &line )
 
 	CString LineHeader;
 	if( m_bTimestamping )
-		LineHeader += SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) + ": ";
+		LineHeader += SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
 	if( where & WRITE_LOUD )
 		LineHeader += "WARNING: ";
 
@@ -384,7 +384,7 @@ void RageLog::MapLog(const CString &key, const char *fmt, ...)
 {
 	CString s;
 	if( m_bTimestamping )
-		s += SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) + ": ";
+		s += SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
 
 	va_list	va;
     va_start(va, fmt);

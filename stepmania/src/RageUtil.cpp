@@ -126,6 +126,15 @@ CString SecondsToMMSSMsMs( float fSecs )
 	return sReturn;
 }
 
+CString SecondsToMMSSMsMsMs( float fSecs )
+{
+	const int iMinsDisplay = (int)fSecs/60;
+	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	const float fLeftoverDisplay = (fSecs - iMinsDisplay*60 - iSecsDisplay) * 1000;
+	CString sReturn = ssprintf( "%02d:%02d.%03.0f", iMinsDisplay, iSecsDisplay, min(999.0f,fLeftoverDisplay) );
+	return sReturn;
+}
+
 CString PrettyPercent( float fNumerator, float fDenominator)
 {
 	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
