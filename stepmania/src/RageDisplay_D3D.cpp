@@ -394,9 +394,16 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	
 	g_pd3dDevice->BeginScene();
 
-	return true;	
+	/* Palettes were lost by Reset(), so mark them unloaded. */
+	g_TexResourceToPaletteIndex.clear();
+
+	return false;
+	// return true;	
+
 	// Always reload textures.  None of our textures 
 	// are managed and all texture palettes are lost on Reset().
+	/* Err, all of our textures are managed.  With the palette loading, we don't
+	 * appear to have to reload textures anymore. */
 }
 
 void RageDisplay::ResolutionChanged()
