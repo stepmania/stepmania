@@ -27,6 +27,8 @@ public:
 	LifeMeterStream()
 	{
 		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
+		// Here for my reference's sake, no reason to uncomment this
+		// bool bPassmark = GAMESTATE->m_CurrentPlayerOptions[m_playerNumber].m_fPassmark > 0;
 
 		m_quadMask.SetDiffuse( RageColor(0,0,0,1) );
 		m_quadMask.SetZ( 1 );
@@ -46,6 +48,11 @@ public:
 		ID.filename = THEME->GetPathToG(sGraphicPath);
 		m_sprStreamHot.Load( ID );
 		m_sprStreamHot.SetUseZBuffer( true );
+		
+		sGraphicPath = ssprintf("LifeMeterBar %spassing", bExtra?"extra ":"");
+		ID.filename = THEME->GetPathToG(sGraphicPath);
+		m_sprStreamPassing.Load( ID );
+		m_sprStreamPassing.SetUseZBuffer( true );
 
 		sGraphicPath = ssprintf("LifeMeterBar %sframe", bExtra?"extra ":"");
 		ID.filename = THEME->GetPathToG(sGraphicPath);
@@ -54,11 +61,13 @@ public:
 
 	Sprite		m_sprStreamNormal;
 	Sprite		m_sprStreamHot;
+	Sprite		m_sprStreamPassing;
 	Sprite		m_sprFrame;
 	Quad		m_quadMask;
 
 	PlayerNumber m_PlayerNumber;
 	float m_fPercent;
+	float m_fPassingAlpha;
 	float m_fHotAlpha;
 
 	void GetChamberIndexAndOverslow( float fPercent, int& iChamberOut, float& fChamberOverflowPercentOut )
@@ -145,6 +154,7 @@ public:
 
 
 		m_sprStreamNormal.StretchTo( rect );
+		m_sprStreamPassing.StretchTo( rect );
 		m_sprStreamHot.StretchTo( rect );
 
 
@@ -158,11 +168,14 @@ public:
 			1);
 
 		m_sprStreamNormal.SetCustomTextureRect( frectCustomTexRect );
+		m_sprStreamPassing.SetCustomTextureRect( frectCustomTexRect );
 		m_sprStreamHot.SetCustomTextureRect( frectCustomTexRect );
 
+		m_sprStreamPassing.SetDiffuse( RageColor(1,1,1,m_fPassingAlpha) );
 		m_sprStreamHot.SetDiffuse( RageColor(1,1,1,m_fHotAlpha) );
 
 		m_sprStreamNormal.Draw();
+		m_sprStreamPassing.Draw();
 		m_sprStreamHot.Draw();
 	}
 
@@ -219,6 +232,7 @@ LifeMeterBar::LifeMeterBar()
 
 	m_fTrailingLifePercentage = 0;
 	m_fLifeVelocity = 0;
+	m_fPassingAlpha = 0;
 	m_fHotAlpha = 0;
 	m_bFailedEarlier = false;
 
@@ -446,6 +460,18 @@ void LifeMeterBar::AfterLifeChanged()
 
 }
 
+bool LifeMeterBar::IsPastPassmark() const
+{
+    if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fPassmark > 0 )
+    {
+	return m_fLifePercentage >= GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fPassmark;
+    }
+    else
+    {
+	return false;
+    }
+}
+
 bool LifeMeterBar::IsHot() const
 { 
 	return m_fLifePercentage >= 1; 
@@ -485,6 +511,9 @@ void LifeMeterBar::Update( float fDeltaTime )
 
 		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
 	}
+	
+	m_fPassingAlpha += IsPastPassmark() ? +fDeltaTime*2 : -fDeltaTime*2;
+	CLAMP( m_fPassingAlpha, 0, 1 );
 
 	m_fHotAlpha  += IsHot() ? + fDeltaTime*2 : -fDeltaTime*2;
 	CLAMP( m_fHotAlpha, 0, 1 );
@@ -497,6 +526,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 void LifeMeterBar::DrawPrimitives()
 {
 	m_pStream->m_fPercent = m_fTrailingLifePercentage;
+	m_pStream->m_fPassingAlpha = m_fPassingAlpha;
 	m_pStream->m_fHotAlpha = m_fHotAlpha;
 
 	float fPercentRed = (m_fTrailingLifePercentage<DANGER_THRESHOLD) ? sinf( RageTimer::GetTimeSinceStart()*PI*4 )/2+0.5f : 0;

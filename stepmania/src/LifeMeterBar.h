@@ -25,6 +25,8 @@ public:
 	virtual void AfterLifeChanged();
 	virtual void OnDancePointsChange() {};	// this life meter doesn't care
 	virtual bool IsInDanger() const;
+	// XXX: Is this the best name for this function?
+	virtual bool IsPastPassmark() const;
 	virtual bool IsHot() const;
 	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }
@@ -43,6 +45,7 @@ private:
 	float		m_fTrailingLifePercentage;	// this approaches m_fLifePercentage
 	float		m_fLifeVelocity;
 
+	float		m_fPassingAlpha;
 	float		m_fHotAlpha;
 	bool		m_bFailedEarlier;		// set this to true when life dips below 0
 
