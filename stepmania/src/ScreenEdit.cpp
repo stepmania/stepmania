@@ -358,33 +358,40 @@ ScreenEdit::~ScreenEdit()
 }
 
 // play assist ticks
-bool ScreenEdit::PlayTicks() const
+void ScreenEdit::PlayTicks()
 {
-	// Sound cards have a latency between when a sample is Play()ed and when the sound
-	// will start coming out the speaker.  Compensate for this by boosting
-	// fPositionSeconds ahead
-
-	if( !GAMESTATE->m_SongOptions.m_bAssistTick )
-		return false;
-
+	if( !GAMESTATE->m_SongOptions.m_bAssistTick || m_EditMode != MODE_PLAYING )
+		return;
+			
+	/* Sound cards have a latency between when a sample is Play()ed and when the sound
+	 * will start coming out the speaker.  Compensate for this by boosting fPositionSeconds
+	 * ahead.  This is just to make sure that we request the sound early enough for it to
+	 * come out on time; the actual precise timing is handled by SetStartTime. */
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+	fPositionSeconds += SOUND->GetPlayLatency() + (float)TICK_EARLY_SECONDS + 0.250f;
+	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
-	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-	fPositionSeconds += (SOUND->GetPlayLatency()+(float)TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
-	float fSongBeat=GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
-
-	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-	iRowNow = max( 0, iRowNow );
+	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );
 	static int iRowLastCrossed = 0;
 
-	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
+	int iTickRow = -1;
+	for( int r=iRowLastCrossed+1; r<=iSongRow; r++ )  // for each index we crossed since the last update
+		if( m_Player.IsThereATapOrHoldHeadAtRow( r ) )
+			iTickRow = r;
 
-	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
-		bAnyoneHasANote |= m_Player.IsThereATapOrHoldHeadAtRow( r );
+	iRowLastCrossed = iSongRow;
 
-	iRowLastCrossed = iRowNow;
+	if( iTickRow != -1 )
+	{
+		const float fTickBeat = NoteRowToBeat( iTickRow );
+		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( fTickBeat );
+		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
+		fSecondsUntil /= m_soundMusic.GetPlaybackRate(); /* 2x music rate means the time until the tick is halved */
 
-	return bAnyoneHasANote;
+		RageTimer when = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
+		m_soundAssistTick.SetStartTime( when );
+		m_soundAssistTick.Play();
+	}
 }
 
 void ScreenEdit::PlayPreviewMusic()
@@ -492,8 +499,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	m_NoteFieldEdit.Update( fDeltaTime );
 
-	if(m_EditMode == MODE_PLAYING && PlayTicks())
-		m_soundAssistTick.Play();
+	PlayTicks();
 
 	static float fUpdateCounter = 0;
 	fUpdateCounter -= fDeltaTime;
@@ -1198,6 +1204,7 @@ void ScreenEdit::TransitionToEdit()
 {
 	m_EditMode = MODE_EDITING;
 	m_soundMusic.StopPlaying();
+	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 	m_rectRecordBack.StopTweening();
 	m_rectRecordBack.BeginTweening( 0.5f );
 	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );

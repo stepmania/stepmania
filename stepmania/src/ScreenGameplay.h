@@ -79,7 +79,7 @@ protected:
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 
-	bool IsTimeToPlayTicks() const;
+	void PlayTicks();
 	void UpdateLyrics( float fDeltaTime );
 	void UpdateCheckFail();
 	void SongFinished();

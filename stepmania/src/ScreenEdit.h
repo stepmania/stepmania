@@ -39,7 +39,7 @@ public:
 protected:
 	void TransitionFromRecordToEdit();
 	void TransitionToEdit();
-	bool PlayTicks() const;
+	void PlayTicks();
 	void PlayPreviewMusic();
 	void UpdateTextInfo();
 

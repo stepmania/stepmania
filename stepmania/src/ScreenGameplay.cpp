@@ -60,8 +60,8 @@
 #define SHOW_SCORE_IN_RAVE						THEME->GetMetricB("ScreenGameplay","ShowScoreInRave")
 #define SONG_POSITION_METER_WIDTH				THEME->GetMetricF("ScreenGameplay","SongPositionMeterWidth")
 
-CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
-CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+static CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
+static CachedThemeMetricF TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 /* Global, so it's accessible from ShowSavePrompt: */
 static float g_fOldOffset;  // used on offset screen to calculate difference
@@ -105,7 +105,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	SOUND->HandleSongTimer( false );
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
-	G_TICK_EARLY_SECONDS.Refresh();
+	TICK_EARLY_SECONDS.Refresh();
 
 	//need to initialize these before checking for demonstration mode
 	//otherwise destructor will try to delete possibly invalid pointers
@@ -753,6 +753,7 @@ ScreenGameplay::~ScreenGameplay()
 	SAFE_DELETE( m_pCombinedLifeMeter );
 
 	m_soundMusic.StopPlaying();
+	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 }
 
 bool ScreenGameplay::IsLastSong()
@@ -1016,36 +1017,40 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 }
 
 // play assist ticks
-bool ScreenGameplay::IsTimeToPlayTicks() const
+void ScreenGameplay::PlayTicks()
 {
-	// Sound cards have a latency between when a sample is Play()ed and when the sound
-	// will start coming out the speaker.  Compensate for this by boosting
-	// fPositionSeconds ahead
-	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds += (SOUND->GetPlayLatency()+(float)G_TICK_EARLY_SECONDS) * m_soundMusic.GetPlaybackRate();
-	float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+	if( !GAMESTATE->m_SongOptions.m_bAssistTick )
+		return;
 
-	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-	iRowNow = max( 0, iRowNow );
+	/* Sound cards have a latency between when a sample is Play()ed and when the sound
+	 * will start coming out the speaker.  Compensate for this by boosting fPositionSeconds
+	 * ahead.  This is just to make sure that we request the sound early enough for it to
+	 * come out on time; the actual precise timing is handled by SetStartTime. */
+	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+	fPositionSeconds += SOUND->GetPlayLatency() + (float)TICK_EARLY_SECONDS + 0.250f;
+	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+
+	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );
 	static int iRowLastCrossed = 0;
 
-	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
+	int iTickRow = -1;
+	for( int r=iRowLastCrossed+1; r<=iSongRow; r++ )  // for each index we crossed since the last update
+		if( m_Player[GAMESTATE->m_MasterPlayerNumber].IsThereATapOrHoldHeadAtRow( r ) )
+			iTickRow = r;
 
-	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+	iRowLastCrossed = iSongRow;
+
+	if( iTickRow != -1 )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;		// skip
+		const float fTickBeat = NoteRowToBeat( iTickRow );
+		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( fTickBeat );
+		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
+		fSecondsUntil /= m_soundMusic.GetPlaybackRate(); /* 2x music rate means the time until the tick is halved */
 
-			bAnyoneHasANote |= m_Player[p].IsThereATapOrHoldHeadAtRow( r );
-			break;	// this will only play the tick for the first player that is joined
-		}
+		RageTimer when = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
+		m_soundAssistTick.SetStartTime( when );
+		m_soundAssistTick.Play();
 	}
-
-	iRowLastCrossed = iRowNow;
-
-	return bAnyoneHasANote;
 }
 
 
@@ -1302,20 +1307,41 @@ void ScreenGameplay::Update( float fDeltaTime )
 	}
 
 	//
-	// update assist ticks
+	// play assist ticks
 	//
-	bool bPlayTicks = IsTimeToPlayTicks();
-	if( bPlayTicks )
-	{
-		if( GAMESTATE->m_SongOptions.m_bAssistTick )
-			m_soundAssistTick.Play();
-	}
+	PlayTicks();
 
 	//
 	// update lights
 	//
+	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indices we crossed
+	{
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+		fPositionSeconds += (SOUND->GetPlayLatency()) * m_soundMusic.GetPlaybackRate();
+		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+
+		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+		iRowNow = max( 0, iRowNow );
+		static int iRowLastCrossed = 0;
+
+
+		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+					continue;		// skip
+
+				bAnyoneHasANote |= m_Player[p].IsThereATapOrHoldHeadAtRow( r );
+				break;	// this will only play the tick for the first player that is joined
+			}
+		}
+
+		iRowLastCrossed = iRowNow;
+	}
+
 	static float s_fSecsLeftOnUpperLights = 0;
-	if( bPlayTicks )
+	if( bAnyoneHasANote )
 	{
 		float fSecsPerBeat = 1.f/GAMESTATE->m_fCurBPS;
 		float fSecsToLight = fSecsPerBeat*.2f;
@@ -1478,6 +1504,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 * We're doing #3.  I'm not sure which is best.
 			 */
 			m_soundMusic.StopPlaying();
+			m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 			this->ClearMessageQueue();
 			m_Back.StartTransitioning( SM_SaveChangedBeforeGoingBack );
@@ -2115,6 +2142,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
 		m_soundMusic.StopPlaying();
+		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
 
