@@ -52,9 +52,9 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 void FootMeter::SetNumFeet( int iNumFeet )
 {
 	CString sNewText;
-	for( int f=0; f<=8; f++ )
+	for( int f=0; f<=9; f++ )
 		sNewText += (f<iNumFeet) ? "1" : "0";
-	for( f=9; f<=12; f++ )
+	for( f=10; f<=12; f++ )
 		if( f<iNumFeet )
 			sNewText += "1";
 
