@@ -217,21 +217,22 @@ void ScreenEvaluation::Init()
 	// Calculate grades
 	//
 	Grade grade[NUM_PLAYERS];
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsPlayerEnabled(p) )
-			grade[p] = stageStats.GetGrade( (PlayerNumber)p );
-		else
-			grade[p] = GRADE_FAILED;
-
-		if( PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH )
+		FOREACH_PlayerNumber( p )
 		{
-			const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
-			if( grade[p] < (int) ARRAYSIZE(ScoreBonuses) )
+			if( GAMESTATE->IsPlayerEnabled(p) )
+				grade[p] = stageStats.GetGrade( p );
+			else
+				grade[p] = GRADE_FAILED;
+
+			if( PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH )
 			{
-				g_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
-				stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+				const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
+				if( grade[p] < (int) ARRAYSIZE(ScoreBonuses) )
+				{
+					g_CurStageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+					stageStats.iBonus[p] += ScoreBonuses[(int)grade[p] ];
+				}
 			}
 		}
 	}
@@ -405,11 +406,8 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_GRAPH_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;	// skip
-
 			m_sprGraphFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation graph frame p%d",p+1)) );
 			m_sprGraphFrame[p].SetName( ssprintf("GraphFrameP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprGraphFrame[p] );
@@ -425,11 +423,8 @@ void ScreenEvaluation::Init()
 
 	if( SHOW_COMBO_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;	// skip
-
 			m_Combo[p].SetName( m_sName, ssprintf("ComboP%i",p+1) );
 			m_Combo[p].Load( ssprintf("ScreenEvaluationStage combo p%i", p+1), stageStats, (PlayerNumber)p );
 			SET_XY_AND_ON_COMMAND( m_Combo[p] );
@@ -447,11 +442,8 @@ void ScreenEvaluation::Init()
 		for( int g=GRADE_TIER_1; g<NUM_GRADES; g++ )
 			THEME->GetPathToG( "ScreenEvaluation grade "+ GradeToString((Grade)g) );
 
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_sprGradeFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation grade frame p%d",p+1)) );
 			m_sprGradeFrame[p].SetName( ssprintf("GradeFrameP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprGradeFrame[p] );
@@ -477,11 +469,8 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_POINTS_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_sprPercentFrame[p].SetName( ssprintf("PercentFrameP%d",p+1) );
 			m_sprPercentFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation percent frame p%d",p+1)) );
 			SET_XY_AND_ON_COMMAND( m_sprPercentFrame[p] );
@@ -503,11 +492,8 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_BONUS_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_sprBonusFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bonus frame p%d",p+1)) );
 			m_sprBonusFrame[p].SetName( ssprintf("BonusFrameP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprBonusFrame[p] );
@@ -544,11 +530,8 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_SURVIVED_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_sprSurvivedFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation survived frame p%d",p+1)) );
 			m_sprSurvivedFrame[p].SetName( ssprintf("SurvivedFrameP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprSurvivedFrame[p] );
@@ -570,11 +553,8 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_WIN_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_sprWinFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation win frame p%d",p+1)) );
 			m_sprWinFrame[p].SetName( ssprintf("WinFrameP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprWinFrame[p] );
@@ -608,11 +588,8 @@ void ScreenEvaluation::Init()
 			SET_XY_AND_ON_COMMAND( m_sprJudgeLabels[l] );
 			this->AddChild( &m_sprJudgeLabels[l] );
 
-			for( p=0; p<NUM_PLAYERS; p++ )
+			FOREACH_EnabledPlayer( p )
 			{
-				if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-					continue;	// skip
-
 				m_textJudgeNumbers[l][p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation judge") );
 				m_textJudgeNumbers[l][p].SetShadowLength( 0 );
 				m_textJudgeNumbers[l][p].SetDiffuse( PlayerToColor(p) );
@@ -645,7 +622,7 @@ void ScreenEvaluation::Init()
 	FOREACH_EnabledPlayer( pn )
 	{
 		if( pcaToShow[pn] != PEAK_COMBO_AWARD_INVALID )
-			m_textJudgeNumbers[max_combo][p].Command( PEAK_COMBO_AWARD_COMMAND );
+			m_textJudgeNumbers[max_combo][pn].Command( PEAK_COMBO_AWARD_COMMAND );
 	}
 
 	for( l=0; l<NUM_STATS_LINES; l++ ) 
@@ -659,11 +636,8 @@ void ScreenEvaluation::Init()
 		SET_XY_AND_ON_COMMAND( m_sprStatsLabel[l] );
 		this->AddChild( m_sprStatsLabel[l] );
 
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_textStatsText[l][p].LoadFromFont( THEME->GetPathToF("ScreenEvaluation stats") );
 			m_textStatsText[l][p].SetDiffuse( PlayerToColor(p) );
 			m_textStatsText[l][p].SetName( ssprintf("%sTextP%d",STATS_STRING[l],p+1) );
@@ -692,11 +666,8 @@ void ScreenEvaluation::Init()
 		SET_XY_AND_ON_COMMAND( m_sprScoreLabel );
 		this->AddChild( &m_sprScoreLabel );
 
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_textScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation score") );
 			m_textScore[p].SetShadowLength( 0 );
 			m_textScore[p].SetDiffuse( PlayerToColor(p) );
@@ -714,11 +685,8 @@ void ScreenEvaluation::Init()
 		SET_XY_AND_ON_COMMAND( m_sprTotalScoreLabel );
 		this->AddChild( &m_sprTotalScoreLabel );
 
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			int iTotalScore=0;
 			for( unsigned i=0; i<g_vPlayedStageStats.size(); i++ )
 				iTotalScore += g_vPlayedStageStats[i].iScore[p];
@@ -746,11 +714,8 @@ void ScreenEvaluation::Init()
 		SET_XY_AND_ON_COMMAND( m_sprTimeLabel );
 		this->AddChild( &m_sprTimeLabel );
 
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			m_textTime[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation time") );
 			m_textTime[p].SetShadowLength( 0 );
 			m_textTime[p].SetDiffuse( PlayerToColor(p) );
@@ -765,7 +730,7 @@ void ScreenEvaluation::Init()
 	//
 	// init extra area
 	//
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( iMachineHighScoreIndex[p] != -1 )
 		{
@@ -796,13 +761,17 @@ void ScreenEvaluation::Init()
 	}
 
 	bool bOneHasNewTopRecord = false;
-	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
-			bOneHasNewTopRecord = true;
+	{
+		FOREACH_PlayerNumber( p )
+			if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
+				bOneHasNewTopRecord = true;
+	}
 
 	Grade best_grade = GRADE_NO_DATA;
-	for( p=0; p<NUM_PLAYERS; p++ )
-		best_grade = min( best_grade, grade[p] ); 
+	{
+		FOREACH_PlayerNumber( p )
+			best_grade = min( best_grade, grade[p] ); 
+	}
 	
 	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
 	{
@@ -877,13 +846,15 @@ void ScreenEvaluation::CommitScores(
 	PerDifficultyAward pdaToShowOut[NUM_PLAYERS],
 	PeakComboAward pcaToShowOut[NUM_PLAYERS] )
 {
-	FOREACH_PlayerNumber( pn )
 	{
-		iPersonalHighScoreIndexOut[pn] = -1;
-		iMachineHighScoreIndexOut[pn] = -1;
-		rcOut[pn] = RANKING_INVALID;
-		pdaToShowOut[pn] = PER_DIFFICULTY_AWARD_INVALID;
-		pcaToShowOut[pn] = PEAK_COMBO_AWARD_INVALID;
+		FOREACH_PlayerNumber( pn )
+		{
+			iPersonalHighScoreIndexOut[pn] = -1;
+			iMachineHighScoreIndexOut[pn] = -1;
+			rcOut[pn] = RANKING_INVALID;
+			pdaToShowOut[pn] = PER_DIFFICULTY_AWARD_INVALID;
+			pcaToShowOut[pn] = PEAK_COMBO_AWARD_INVALID;
+		}
 	}
 
 	switch( GAMESTATE->m_PlayMode )
@@ -912,7 +883,7 @@ void ScreenEvaluation::CommitScores(
 		FOREACH_HumanPlayer( p )
 		{
 			// don't save scores if the player is disqualified
-			if( GAMESTATE->IsDisqualified((PlayerNumber)p) )
+			if( GAMESTATE->IsDisqualified(p) )
 				continue;
 
 			Song* pSong = GAMESTATE->m_pCurSong;
@@ -927,7 +898,7 @@ void ScreenEvaluation::CommitScores(
 			int iNumMines			= (int) stageStats.fRadarPossible[p][RADAR_NUM_MINES];
 			int iNumHands			= (int) stageStats.fRadarPossible[p][RADAR_NUM_HANDS];
 
-			PROFILEMAN->AddStepTotals( (PlayerNumber)p, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
+			PROFILEMAN->AddStepTotals( p, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands );
 
 
 			// whether or not to save scores when the stage was failed
@@ -935,9 +906,10 @@ void ScreenEvaluation::CommitScores(
 			// below in the switch
 
 			HighScore &hs = m_HighScore[p];
-			hs.grade = stageStats.GetGrade( (PlayerNumber)p );
+			hs.sName = RANKING_TO_FILL_IN_MARKER[p];
+			hs.grade = stageStats.GetGrade( p );
 			hs.iScore = stageStats.iScore[p];
-			hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+			hs.fPercentDP = stageStats.GetPercentDancePoints( p );
 			hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
 			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
 			hs.time = time(NULL);
@@ -956,7 +928,7 @@ void ScreenEvaluation::CommitScores(
 
 					ASSERT( pSteps );
 
-					PROFILEMAN->AddStepsScore( pSong, pSteps, (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 				}
 				break;
 
@@ -969,10 +941,10 @@ void ScreenEvaluation::CommitScores(
 					float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
 					rcOut[p] = AverageMeterToRankingCategory( fAverageMeter );
 
-					PROFILEMAN->AddCategoryScore( nt, rcOut[p], (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddCategoryScore( nt, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 					
 					// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
-					PROFILEMAN->IncrementCategoryPlayCount( nt, rcOut[p], (PlayerNumber)p );
+					PROFILEMAN->IncrementCategoryPlayCount( nt, rcOut[p], p );
 				}
 				break;
 
@@ -987,7 +959,7 @@ void ScreenEvaluation::CommitScores(
 					if( stageStats.bFailed[p] && pCourse->IsNonstop() )
 						continue;
 
-					PROFILEMAN->AddCourseScore( pCourse, nt, cd, (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+					PROFILEMAN->AddCourseScore( pCourse, nt, cd, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 				}
 				break;
 			default:
@@ -998,44 +970,51 @@ void ScreenEvaluation::CommitScores(
 
 	LOG->Trace( "done saving stats and high scores" );
 
-	// If both players get a machine high score, a player whose score is added later 
-	// may bump the players who were added earlier.  Adjust for this.
+	// If both players get a machine high score in the same HighScoreList,
+	// then one player's score may have bumped the other player.  Look in 
+	// the HighScoreList and re-get the high score index.
 	{
 		FOREACH_HumanPlayer( p )
 		{
 			if( iMachineHighScoreIndexOut[p] == -1 )	// no record
 				continue;	// skip
-			/* If we aren't saving scores on fail, it'll be handled above; m_bFailed is only
-			 * meaningful in stage and course eval. */
-			// if( m_bFailed ) // both players failed
-			//	continue; // skip
 
-			for( int p2=0; p2<p; p2++ )
+			HighScore &hs = m_HighScore[p];
+			Profile* pProfile = PROFILEMAN->GetMachineProfile();
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
+			const HighScoreList *pHSL = NULL;
+			switch( m_Type )
 			{
-				if( !GAMESTATE->IsHumanPlayer(p2) )
-					continue;	// skip
-				if( iMachineHighScoreIndexOut[p2] == -1 )	// no record
-					continue;	// skip
-				bool bPlayedSameSteps;
-				switch( m_Type )
+			case stage:
 				{
-				case stage:
-					bPlayedSameSteps = GAMESTATE->m_pCurNotes[p]==GAMESTATE->m_pCurNotes[p2];
-					break;
-				case summary:
-					bPlayedSameSteps = rcOut[p] == rcOut[p2];
-					break;
-				case course:
-					bPlayedSameSteps = true;
-					break;
+					Song* pSong = GAMESTATE->m_pCurSong;
+					Steps* pSteps = GAMESTATE->m_pCurNotes[p];
+					pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 				}
-				if( iMachineHighScoreIndexOut[p] >= iMachineHighScoreIndexOut[p2] )
+				break;
+			case summary:
 				{
-					iMachineHighScoreIndexOut[p2]++;
-					if( iMachineHighScoreIndexOut[p2] >= NUM_RANKING_LINES )
-						iMachineHighScoreIndexOut[p2] = -1;
+					pHSL = &pProfile->GetCategoryHighScoreList( nt, rcOut[p] );
 				}
+				break;
+			case course:
+				{
+					Course* pCourse = GAMESTATE->m_pCurCourse;
+					CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[p];
+					ASSERT( pCourse );
+					pHSL = &pProfile->GetCourseHighScoreList( pCourse, nt, cd );
+				}
+				break;
+			default:
+				ASSERT(0);
 			}
+			
+			vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
+			if( iter == pHSL->vHighScores.end() )
+				iMachineHighScoreIndexOut[p] = -1;
+			else
+				iMachineHighScoreIndexOut[p] = iter - pHSL->vHighScores.begin();
 		}
 	}
 
@@ -1046,10 +1025,10 @@ void ScreenEvaluation::CommitScores(
 		FOREACH_HumanPlayer( p )
 		{
 			// must be using a profile to receive awards
-			if( !PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
+			if( !PROFILEMAN->IsUsingProfile(p) )
 				continue;
 
-			Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+			Profile* pProfile = PROFILEMAN->GetProfile(p);
 
 			deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
 
@@ -1060,25 +1039,25 @@ void ScreenEvaluation::CommitScores(
 			{
 			case stage:
 				// don't give per-difficutly awards if using easy mods
-				if( !GAMESTATE->IsDisqualified((PlayerNumber)p) )
+				if( !GAMESTATE->IsDisqualified(p) )
 				{
-					if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_GREAT ) )
+					if( stageStats.FullComboOfScore( p, TNS_GREAT ) )
 						vPdas.push_back( AWARD_FULL_COMBO_GREATS );
-					if( stageStats.SingleDigitsOfScore( (PlayerNumber)p, TNS_GREAT ) )
+					if( stageStats.SingleDigitsOfScore( p, TNS_GREAT ) )
 						vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
-					if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_PERFECT ) )
+					if( stageStats.FullComboOfScore( p, TNS_PERFECT ) )
 						vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
-					if( stageStats.SingleDigitsOfScore( (PlayerNumber)p, TNS_PERFECT ) )
+					if( stageStats.SingleDigitsOfScore( p, TNS_PERFECT ) )
 						vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
-					if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_MARVELOUS ) )
+					if( stageStats.FullComboOfScore( p, TNS_MARVELOUS ) )
 						vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
 					
-					if( stageStats.OneOfScore( (PlayerNumber)p, TNS_GREAT ) )
+					if( stageStats.OneOfScore( p, TNS_GREAT ) )
 						vPdas.push_back( AWARD_ONE_GREAT );
-					if( stageStats.OneOfScore( (PlayerNumber)p, TNS_PERFECT ) )
+					if( stageStats.OneOfScore( p, TNS_PERFECT ) )
 						vPdas.push_back( AWARD_ONE_PERFECT );
 
-					float fPercentGreats = stageStats.GetPercentageOfTaps((PlayerNumber)p, TNS_GREAT);
+					float fPercentGreats = stageStats.GetPercentageOfTaps(p, TNS_GREAT);
 					if( fPercentGreats >= 0.8f )
 						vPdas.push_back( AWARD_GREATS_80_PERCENT );
 					if( fPercentGreats >= 0.9f )
@@ -1094,8 +1073,8 @@ void ScreenEvaluation::CommitScores(
 			LOG->Trace( "done with per difficulty awards" );
 
 			// DO give peak combo awards if using easy mods
-			int iComboAtStartOfStage = stageStats.GetComboAtStartOfStage( (PlayerNumber)p );
-			int iPeakCombo = stageStats.GetMaxCombo((PlayerNumber)p).cnt;
+			int iComboAtStartOfStage = stageStats.GetComboAtStartOfStage( p );
+			int iPeakCombo = stageStats.GetMaxCombo(p).cnt;
 
 			FOREACH_PeakComboAward( pca )
 			{
@@ -1214,11 +1193,8 @@ void ScreenEvaluation::TweenOffScreen()
 	// points area
 	if( SHOW_POINTS_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p ) 
 		{
-			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-				continue;	// skip
-
 			OFF_COMMAND( m_sprPercentFrame[p] );
 			m_Percent[p].Command( THEME->GetMetric(m_sName,ssprintf("PercentP%dOffCommand",p+1)) );
 			m_Percent[p].TweenOffScreen();
@@ -1228,10 +1204,8 @@ void ScreenEvaluation::TweenOffScreen()
 	// bonus area
 	if( SHOW_BONUS_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p ) 
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
 			OFF_COMMAND( m_sprBonusFrame[p] );
 			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
@@ -1244,10 +1218,8 @@ void ScreenEvaluation::TweenOffScreen()
 	// survived area
 	if( SHOW_SURVIVED_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p ) 
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
 			OFF_COMMAND( m_sprSurvivedFrame[p] );
 			OFF_COMMAND( m_textSurvivedNumber[p] );
 		}
@@ -1256,10 +1228,8 @@ void ScreenEvaluation::TweenOffScreen()
 	// win area
 	if( SHOW_WIN_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_EnabledPlayer( p ) 
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
 			OFF_COMMAND( m_sprWinFrame[p] );
 			OFF_COMMAND( m_sprWin[p] );
 		}
@@ -1274,12 +1244,8 @@ void ScreenEvaluation::TweenOffScreen()
 
 		OFF_COMMAND( m_sprJudgeLabels[l] );
 
-		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
+		FOREACH_EnabledPlayer( p ) 
 			OFF_COMMAND( m_textJudgeNumbers[l][p] );
-		}
 	}
 
 	// stats area
@@ -1290,59 +1256,43 @@ void ScreenEvaluation::TweenOffScreen()
 
 		OFF_COMMAND( m_sprStatsLabel[l] );
 
-		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
+		FOREACH_EnabledPlayer( p ) 
 			OFF_COMMAND( m_textStatsText[l][p] );
-		}
 	}
 
 	// score area
 	if( SHOW_SCORE_AREA )
 	{
 		OFF_COMMAND( m_sprScoreLabel );
-		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
+		FOREACH_EnabledPlayer( p ) 
 			OFF_COMMAND( m_textScore[p] );
-		}
 	}
 
 	// total score area
 	if( SHOW_TOTAL_SCORE_AREA )
 	{
 		OFF_COMMAND( m_sprTotalScoreLabel );
-		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
+		FOREACH_EnabledPlayer( p ) 
 			OFF_COMMAND( m_textTotalScore[p] );
-		}
 	}
 
 	// time area
 	if( SHOW_TIME_AREA )
 	{
 		OFF_COMMAND( m_sprTimeLabel );
-		for( p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
+		FOREACH_EnabledPlayer( p ) 
 			OFF_COMMAND( m_textTime[p] );
-		}
 	}
 
 	// extra area
-	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		OFF_COMMAND( m_sprMachineRecord[p] );
-		OFF_COMMAND( m_sprPersonalRecord[p] );
-		if( m_PerDifficultyAward[p].IsLoaded() )
-			OFF_COMMAND( m_PerDifficultyAward[p] );
+		FOREACH_EnabledPlayer( p ) 
+		{
+			OFF_COMMAND( m_sprMachineRecord[p] );
+			OFF_COMMAND( m_sprPersonalRecord[p] );
+			if( m_PerDifficultyAward[p].IsLoaded() )
+				OFF_COMMAND( m_PerDifficultyAward[p] );
+		}
 	}
 	OFF_COMMAND( m_sprTryExtraStage );
 }

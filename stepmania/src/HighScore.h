@@ -36,12 +36,28 @@ struct HighScore
 		iScore = 0;
 		fPercentDP = 0;
 		fSurviveSeconds = 0;
+		sModifiers = "";
 		time = 0;
 		sPlayerGuid = "";
 		sMachineGuid = "";
 	}
 
 	bool operator>=( const HighScore& other ) const;
+	bool operator==( const HighScore& other ) const 
+	{
+#define COMPARE(x)	if( x!=other.x )	return false;
+		COMPARE( sName );
+		COMPARE( grade );
+		COMPARE( iScore );
+		COMPARE( fPercentDP );
+		COMPARE( fSurviveSeconds );
+		COMPARE( sModifiers );
+		COMPARE( time );
+		COMPARE( sPlayerGuid );
+		COMPARE( sMachineGuid );
+#undef COMPARE
+		return true;
+	}
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
