@@ -119,6 +119,7 @@ typedef struct msMaterial
     char        szAlphaTexture[MS_MAX_PATH];	// not used in SM.  Use alpha in diffuse texture instead
     int         nName;	// not used in SM.  What is this for anyway?
 	AnimatedTexture aniTexture;
+	bool		bSphereMapped;	// true of "sphere" appears in the material name
 } msMaterial;
 
 /* msPositionKey */

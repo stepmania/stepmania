@@ -988,6 +988,11 @@ void RageDisplay_D3D::SetMaterial(
 	g_pd3dDevice->SetMaterial( &mat );
 }
 
+// need this?
+//  device->SetRenderState(D3DRENDERSTATE_DIFFUSEMATERIALSOURCE,D3DMCS_MATERIAL);
+//  device->SetRenderState(D3DRENDERSTATE_AMBIENTMATERIALSOURCE,D3DMCS_MATERIAL);
+
+
 void RageDisplay_D3D::SetLighting( bool b )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_LIGHTING, b );
@@ -1170,3 +1175,25 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 	return m;
 }
 
+void RageDisplay_D3D::SetSphereEnironmentMapping( bool b )
+{
+	// http://www.gamasutra.com/features/20000811/wyatt_03.htm
+
+	if( b )
+	{
+		RageMatrix tex = RageMatrix
+		(
+			0.40f,  0.0f,  0.0f, 0.0f,
+			0.0f,  -0.40f, 0.0f, 0.0f,
+			0.0f,   0.0f,  0.0f, 0.0f,
+			0.50,  -0.50,  0.0f, 1.0f
+		);
+		g_pd3dDevice->SetTransform(D3DTS_TEXTURE0, (D3DMATRIX*)&tex);
+	}
+
+    // Tell D3D to use transformed reflection vectors as texture co-ordinate 0
+    // and then transform this coordinate by the specified texture matrix, also
+    // tell D3D that only the first two coordinates of the output are valid.
+    g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, b ? D3DTTFF_COUNT2 : D3DTTFF_DISABLE );    
+    g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, b ? D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR : D3DTSS_TCI_PASSTHRU );    
+}

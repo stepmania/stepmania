@@ -54,6 +54,8 @@ public:
 		RageColor specular, 
 		RageVector3 dir );
 
+	void SetSphereEnironmentMapping( bool b );
+
 	void DrawQuads( const RageSpriteVertex v[], int iNumVerts );
 	void DrawFan( const RageSpriteVertex v[], int iNumVerts );
 	void DrawStrip( const RageSpriteVertex v[], int iNumVerts );

@@ -284,6 +284,8 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 }
                 strcpy( Material.szName, szName );
 
+				Material.bSphereMapped = ((CString)Material.szName).Find("sphere") != -1;
+
                 // ambient
 			    if( f.GetLine( szLine ) <= 0 )
                 {
@@ -663,6 +665,7 @@ void Model::DrawPrimitives()
 					mat.Specular,
 					mat.fShininess );
 				DISPLAY->SetTexture( mat.aniTexture.GetCurrentTexture() );
+				DISPLAY->SetSphereEnironmentMapping( mat.bSphereMapped );
 			}
 			else
 			{
@@ -678,9 +681,11 @@ void Model::DrawPrimitives()
 					specular,
 					shininess );
 				DISPLAY->SetTexture( NULL );
+				DISPLAY->SetSphereEnironmentMapping( false );
 			}
 
 			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+			DISPLAY->SetSphereEnironmentMapping( false );
 		}
 	}
 
