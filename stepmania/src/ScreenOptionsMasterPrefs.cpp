@@ -38,14 +38,14 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cn
 	if( ToSel )
 	{
 		/* opt -> sel.  Find the closest entry in mapping. */
-		T best_dist = (T) 0;
+		T best_dist = T();
 		bool have_best = false;
 
 		for( unsigned i = 0; i < cnt; ++i )
 		{
 			const T val = mapping[i];
-			T dist = opt > val? (T)(opt-val): (T)(val-opt);
-			if( have_best && dist > best_dist )
+			T dist = opt < val? (T)(val-opt):(T)(opt-val);
+			if( have_best && best_dist < dist )
 				continue;
 
 			have_best = true;
@@ -349,12 +349,44 @@ MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
 MOVE( CelShadeModels,			PREFSMAN->m_bCelShadeModels );
 MOVE( SmoothLines,			PREFSMAN->m_bSmoothLines );
 
+struct res_t
+{
+	int w, h;
+	res_t(): w(0), h(0) { }
+	res_t( int w_, int h_ ): w(w_), h(h_) { }
+	res_t operator-( const res_t &rhs ) const
+	{
+		return res_t( w-rhs.w, h-rhs.h );
+	}
+
+	bool operator<( const res_t &rhs ) const
+	{
+		if( w != rhs.w )
+			return w < rhs.w;
+		return h < rhs.h;
+	}
+};
+
 static void DisplayResolution( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const int mapping[] = { 320,400,512,640,800,1024,1280 };
-	MoveMap( sel, PREFSMAN->m_iDisplayWidth, ToSel, mapping, ARRAYSIZE(mapping) );
+	const res_t mapping[] =
+	{
+		res_t(320, 240),
+		res_t(400, 300),
+		res_t(512, 384),
+		res_t(640, 480),
+		res_t(800, 600),
+		res_t(1024, 768),
+		res_t(1280, 960),
+		res_t(1280, 1024)
+	};
+	res_t sel_res( PREFSMAN->m_iDisplayWidth, PREFSMAN->m_iDisplayHeight );
+	MoveMap( sel, sel_res, ToSel, mapping, ARRAYSIZE(mapping) );
 	if( !ToSel )
-		PREFSMAN->m_iDisplayHeight = PREFSMAN->m_iDisplayWidth * 3 / 4;
+	{
+		PREFSMAN->m_iDisplayWidth = sel_res.w;
+		PREFSMAN->m_iDisplayHeight = sel_res.h;
+	}
 }
 
 static void DisplayColor( int &sel, bool ToSel, const CStringArray &choices )
@@ -469,7 +501,7 @@ static const ConfOption g_ConfOptions[] =
 
 	/* Graphic options */
 	ConfOption( "Display\nMode",		DisplayMode,		"FULLSCREEN", "WINDOWED" ),
-	ConfOption( "Display\nResolution",	DisplayResolution,	"320","400","512","640","800","1024","1280" ),
+	ConfOption( "Display\nResolution",	DisplayResolution,	"320","400","512","640","800","1024","1280x960","1280x1024" ),
 	ConfOption( "Display\nColor",		DisplayColor,		"16BIT","32BIT" ),
 	ConfOption( "Texture\nResolution",	TextureResolution,	"256","512","1024","2048" ),
 	ConfOption( "Texture\nColor",		TextureColor,		"16BIT","32BIT" ),
