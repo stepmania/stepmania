@@ -12,8 +12,10 @@
 #define SPACING_X			THEME->GetMetricF("GroupList","SpacingX")
 #define SPACING_Y			THEME->GetMetricF("GroupList","SpacingY")
 #define SCROLL_TWEEN_COMMAND THEME->GetMetric ("GroupList","ScrollTweenCommand")
-#define GAIN_FOCUS_COMMAND	THEME->GetMetric ("GroupList","GainFocusCommand")
-#define LOSE_FOCUS_COMMAND	THEME->GetMetric ("GroupList","LoseFocusCommand")
+#define GAIN_FOCUS_ITEM_COMMAND		THEME->GetMetric ("GroupList","GainFocusItemCommand")
+#define LOSE_FOCUS_ITEM_COMMAND		THEME->GetMetric ("GroupList","LoseFocusItemCommand")
+#define GAIN_FOCUS_GROUP_COMMAND	THEME->GetMetric ("GroupList","GainFocusGroupCommand")
+#define LOSE_FOCUS_GROUP_COMMAND	THEME->GetMetric ("GroupList","LoseFocusGroupCommand")
 #define HIDE_ITEM_COMMAND	THEME->GetMetric ("GroupList","HideItemCommand")
 #define SHOW_ITEM_COMMAND	THEME->GetMetric ("GroupList","ShowItemCommand")
 
@@ -30,6 +32,7 @@ GroupList::~GroupList()
 	{
 		delete m_sprButtons[i];
 		delete m_textLabels[i];
+		delete m_ButtonFrames[i];
 	}
 }
 
@@ -50,17 +53,20 @@ void GroupList::Load( const CStringArray& asGroupNames )
 	{
 		Sprite *button = new Sprite;
 		BitmapText *label = new BitmapText;
+		ActorFrame *frame = new ActorFrame;
 
 		m_sprButtons.push_back( button );
 		m_textLabels.push_back( label );
+		m_ButtonFrames.push_back( frame );
 
 		button->Load( THEME->GetPathToG("GroupList bar") );
 		label->LoadFromFont( THEME->GetPathToF("GroupList label") );
 		label->SetShadowLength( 2 );
 		label->SetText( SONGMAN->ShortenGroupName( asGroupNames[i] ) );
 		
-		m_Frame.AddChild( button );
-		m_Frame.AddChild( label );
+		frame->AddChild( button );
+		frame->AddChild( label );
+		m_Frame.AddChild( frame );
 
 		button->SetXY( START_X + i*SPACING_X, START_Y + i*SPACING_Y );
 		label->SetXY( START_X + i*SPACING_X, START_Y + i*SPACING_Y );
@@ -98,8 +104,9 @@ void GroupList::ResetTextSize( int i )
 
 void GroupList::BeforeChange()
 {
-	m_sprButtons[m_iSelection]->Command( LOSE_FOCUS_COMMAND );
-	m_textLabels[m_iSelection]->Command( LOSE_FOCUS_COMMAND );
+	m_sprButtons[m_iSelection]->Command( LOSE_FOCUS_ITEM_COMMAND );
+	m_textLabels[m_iSelection]->Command( LOSE_FOCUS_ITEM_COMMAND );
+	m_ButtonFrames[m_iSelection]->Command( LOSE_FOCUS_GROUP_COMMAND );
 }
 
 
@@ -129,8 +136,9 @@ void GroupList::AfterChange()
 		m_bHidden[i] = IsHidden;
 	}
 
-	m_sprButtons[m_iSelection]->Command( GAIN_FOCUS_COMMAND );
-	m_textLabels[m_iSelection]->Command( GAIN_FOCUS_COMMAND );
+	m_sprButtons[m_iSelection]->Command( GAIN_FOCUS_ITEM_COMMAND );
+	m_textLabels[m_iSelection]->Command( GAIN_FOCUS_ITEM_COMMAND );
+	m_ButtonFrames[m_iSelection]->Command( GAIN_FOCUS_GROUP_COMMAND );
 }
 
 void GroupList::Up()
@@ -174,15 +182,6 @@ void GroupList::SetSelection( unsigned sel )
 
 	AfterChange();
 }
-
-/* either tweened off screen (to come on screen),
-   tweened off screen (invisible),
-   onscreen (unselected),
-   or onscreen (selected)
-
-   coming on/ofscreen is internal
-	always invis<->unselected<->selected
-   */
 
 
 void GroupList::TweenOnScreen()
