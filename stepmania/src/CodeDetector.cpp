@@ -32,6 +32,7 @@ enum Code {
 	CODE_SUPER_SHUFFLE,
 	CODE_LITTLE,
 	CODE_NEXT_SCROLL_SPEED,
+	CODE_PREVIOUS_SCROLL_SPEED,
 	CODE_BOOST,
 	CODE_NEXT_EFFECT,
 	CODE_NEXT_APPEARANCE,
@@ -58,6 +59,7 @@ const CString g_sCodeNames[NUM_CODES] = {
 	"SuperShuffle",
 	"Little",
 	"NextScrollSpeed",
+	"PreviousScrollSpeed",
 	"Boost",
 	"NextEffect",
 	"NextAppearance",
@@ -151,6 +153,7 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 
 #define  TOGGLE(v,a,b)	if(v!=a) v=a; else v=b;
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
+#define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
 
 bool CodeDetector::DetectAndAdjustOptions( GameController controller )
 {
@@ -172,6 +175,7 @@ bool CodeDetector::DetectAndAdjustOptions( GameController controller )
 			case CODE_SUPER_SHUFFLE:	TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_TurnType, PlayerOptions::TURN_SUPER_SHUFFLE,	PlayerOptions::TURN_NONE );	break;
 			case CODE_LITTLE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bLittle, true, false );				break;
 			case CODE_NEXT_SCROLL_SPEED:INCREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed );	break;
+			case CODE_PREVIOUS_SCROLL_SPEED:DECREMENT_SCROLL_SPEED( GAMESTATE->m_PlayerOptions[pn].m_fArrowScrollSpeed );	break;
 			case CODE_BOOST:			GAMESTATE->m_PlayerOptions[pn].m_bBoost	^= true;									break;
 			case CODE_NEXT_EFFECT:		GAMESTATE->m_PlayerOptions[pn].NextEffect();									break;
 			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].m_AppearanceType = PlayerOptions::AppearanceType((GAMESTATE->m_PlayerOptions[pn].m_AppearanceType+1)	%PlayerOptions::NUM_APPEARANCE_TYPES );	break;

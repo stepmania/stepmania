@@ -42,6 +42,10 @@
 #define GUIDE_Y					THEME->GetMetricF("ScreenSelectMode","GuideY")
 #define SPEEDICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dX",p+1))
 #define SPEEDICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("SpeedIconP%dY",p+1))
+#define MIRRORICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MirrorIconP%dX",p+1))
+#define MIRRORICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MirrorIconP%dY",p+1))
+#define SHUFFLEICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("ShuffleIconP%dX",p+1))
+#define SHUFFLEICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("ShuffleIconP%dY",p+1))
 #define PREVIEWMUSICMODE		THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
 
 const float TWEEN_TIME		= 0.5f;
@@ -110,6 +114,16 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 			m_SpeedIcon[p].SetXY( SPEEDICON_X(p), SPEEDICON_Y(p) );
 			m_SpeedIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_SpeedIcon[p] );
+
+			m_MirrorIcon[p].Load( THEME->GetPathTo("Graphics","select music mirroricon"));
+			m_MirrorIcon[p].SetXY( MIRRORICON_X(p), MIRRORICON_Y(p) );
+			m_MirrorIcon[p].SetDiffuse( RageColor(0,0,0,0) );
+			this->AddChild(&m_MirrorIcon[p] );
+
+			m_ShuffleIcon[p].Load( THEME->GetPathTo("Graphics","select music shuffleicon"));
+			m_ShuffleIcon[p].SetXY( SHUFFLEICON_X(p), SHUFFLEICON_Y(p) );
+			m_ShuffleIcon[p].SetDiffuse( RageColor(0,0,0,0) );
+			this->AddChild(&m_ShuffleIcon[p] );
 
 			UpdateOptions((PlayerNumber) p,0);
 
@@ -209,18 +223,35 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 
 	if(asOptions.size() > 0) // check it's not empty!
 	{
-		if(asOptions[0] != "1.0X" && asOptions[0] != "" && asOptions[0] != NULL)
+		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+	    m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+
+		for(int i=0; i<asOptions.size(); i++)
 		{
-			m_SpeedIcon[pn].SetDiffuse( RageColor(1,1,1,1) );	
-		}
-		else
-		{
-			m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+			if(asOptions[0] == "2X" || asOptions[0] == "1.5X" || asOptions[0] == "3X" || asOptions[0] == "4X" || asOptions[0] == "5X" || asOptions[0] == "8X" || asOptions[0] == "0.5X" || asOptions[0] == "0.75X")
+			{
+				m_SpeedIcon[pn].SetDiffuse( RageColor(1,1,1,1) );	
+			}
+			else
+			{
+				m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+			}
+
+			if(asOptions[i] == "Mirror")
+			{
+				m_MirrorIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
+			}
+			else if(asOptions[i] == "Shuffle" || asOptions[i] == "SuperShuffle" )
+			{
+				m_ShuffleIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
+			}
 		}
 	}
 	else
 	{
 		m_SpeedIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+		m_MirrorIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
+		m_ShuffleIcon[pn].SetDiffuse( RageColor(0,0,0,0) );	
 	}
 	if(nosound !=0)
 		m_soundOptionsChange.Play();
