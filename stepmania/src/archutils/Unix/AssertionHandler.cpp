@@ -1,6 +1,8 @@
 #include "global.h"
 #include "RageUtil.h"
 #include "StepMania.h"
+#include "archutils/Unix/EmergencyShutdown.h"
+#include <unistd.h>
 #include <assert.h>
 
 /* We can define this symbol to catch failed assert() calls.  This is only used
@@ -19,8 +21,9 @@ extern "C" void __assert_fail( const char *assertion, const char *file, unsigned
 	 * through C code sometimes explodes. */
 	HandleException( error );
 
-	/* XXX: do EmergencyShutdown */
-	exit(0);
+	DoEmergencyShutdown();
+
+	_exit(0);
 #endif
 }
 
@@ -35,8 +38,9 @@ extern "C" void __assert_perror_fail( int errnum, const char *file, unsigned int
 #else
 	HandleException( error );
 
-	/* XXX: do EmergencyShutdown */
-	exit(0);
+	DoEmergencyShutdown();
+
+	_exit(0);
 #endif
 }
 
