@@ -174,12 +174,15 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
 	switch (m_SelectMode) {
 	case SelectRooms:
-		NSMAN->m_SMOnlinePacket.ClearPacket();
-		NSMAN->m_SMOnlinePacket.Write1( 1 );
-		NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-		NSMAN->m_SMOnlinePacket.WriteNT( m_RoomList[m_iRoomPlace].GetText() );
-		NSMAN->SendSMOnline( );
-		ScreenNetSelectBase::MenuStart( pn );
+		if ((m_iRoomPlace < m_RoomList.size())&&(m_iRoomPlace >= 0)) 
+		{
+			NSMAN->m_SMOnlinePacket.ClearPacket();
+			NSMAN->m_SMOnlinePacket.Write1( 1 );
+			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
+			NSMAN->m_SMOnlinePacket.WriteNT( m_RoomList[m_iRoomPlace].GetText() );
+			NSMAN->SendSMOnline( );
+			ScreenNetSelectBase::MenuStart( pn );
+		}
 		break;
 	case SelectMakeRoom:
 		VIRTUALKB.Reset(VKMODE_PROFILE); // allow all characters
@@ -275,8 +278,10 @@ void ScreenNetRoom::UpdateRoomsList()
 			break;
 		}
 		this->AddChild( &m_RoomList[i] );
-		if (cy > ROOMLOWERBOUND)
+		if (cy > ROOMLOWERBOUND) {
+			m_RoomList[i].StopTweening();
 			COMMAND(m_RoomList[i], "RoomsOff");
+		}
 		cx+=ROOMSPACEX;
 		cy+=ROOMSPACEY;
 	}
@@ -293,6 +298,7 @@ void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc )
 
 void ScreenNetRoom::ShiftRoomsUp() {
 	for (unsigned int x = 0; x < m_RoomList.size(); ++x) {
+		m_RoomList[x].StopTweening();
 		if ((m_RoomList[x].GetY()-ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()-ROOMSPACEY < ROOMLOWERBOUND)) {
 			COMMAND(m_RoomList[x], "ShiftUp");
 			COMMAND(m_RoomList[x], "RoomsOn");
@@ -307,6 +313,7 @@ void ScreenNetRoom::ShiftRoomsDown()
 {
 	for( unsigned x = 0; x < m_RoomList.size(); ++x )
 	{
+		m_RoomList[x].StopTweening();
 		if ((m_RoomList[x].GetY()+ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()+ROOMSPACEY < ROOMLOWERBOUND)) {
 			COMMAND(m_RoomList[x], "ShiftDown");
 			COMMAND(m_RoomList[x], "RoomsOn");
