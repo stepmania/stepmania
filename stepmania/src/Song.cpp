@@ -661,7 +661,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		ttab.push_back(TitleTrans("^Matsuri Japan$", "", "", "&matsuri; Japan", "", "") );
 		ttab.push_back(TitleTrans("^Kakumei$", "", "", "&kakumei1;&kakumei2;", "", "") );
 		ttab.push_back(TitleTrans("^Sweet Sweet (Love )?Magic$", "", "", "Sweet Sweet &whiteheart; Magic", "", "") );
-		ttab.push_back(TitleTrans("^Breakdown$", "", "", "Bre&flipped-a;kdown", "", "") );
+		ttab.push_back(TitleTrans("^Break ?Down!?$", "", "", "BRE&flipped-a;K DOWN!", "", "") );
 		/* サナ・モレッテ・ネ・エンテ 
 		 * People can't decide how they want to spell this, so cope with
 		 * both l or r, and one or two l/r and t. */
