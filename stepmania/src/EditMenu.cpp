@@ -343,6 +343,10 @@ void EditMenu::OnRowValueChanged( Row row )
 				GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
 				StepsUtil::SortStepsByDescription( v );
 				m_vpSourceSteps.insert( m_vpSourceSteps.end(), v.begin(), v.end() );
+				
+				// if we don't have any edits, pad with NULL so that we have one slot for every difficulty
+				if( v.empty() )
+					m_vpSteps.push_back( NULL );
 			}
 			else
 			{
