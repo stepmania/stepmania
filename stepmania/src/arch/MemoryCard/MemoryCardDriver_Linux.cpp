@@ -123,9 +123,9 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 			{
 				if( iClass == 8 )	// storage class
 				{
-					LOG->Trace( "index: %u, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
-						vDevicesOut.size(), usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
 					vDevicesOut.push_back( usbd );
+					LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d",
+						usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub );
 				}
 				continue;	// stop processing this line
 			}
@@ -133,12 +133,10 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 	}
 
 	{
-		// Read all usb-storage descriptors and map from our array to usb-storage device index.
-		int iConnectedDeviceIndex = 0;
-		for( int iUsbStorageIndex = 0; true; iUsbStorageIndex++ )
+		// Find the usb-storage device index for all storage class devices.
+		for( unsigned i=0; true; i++ )
 		{
-			UsbStorageDevice& usbd = vDevicesOut[iConnectedDeviceIndex];
-			// Output looks like:
+			// Read the usb-storage descriptor.  It looks like:
 
 			//    Host scsi0: usb-storage
 			//        Vendor: KINGSTON     
@@ -149,38 +147,34 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 			//          GUID: 04e801000001125198948886
 			//      Attached: Yes
 	
-			CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", iUsbStorageIndex, iUsbStorageIndex );
+			CString fn = ssprintf( "/proc/scsi/usb-storage-%d/%d", i, i );
 			ifstream f;
 			f.open(fn);
 			if( !f.is_open() )
 				break;
 
-			char szTemp[1024];
-
 			CString sLine;
 			while( getline(f, sLine) )
 			{
-				//      Attached: Yes
-				int iRet = sscanf( sLine.c_str(), "     Attached: %s", szTemp );
+				// Serial Number: 1125198948886
+				char szSerial[1024];
+				int iRet = sscanf( sLine.c_str(), "Serial Number: %[^\n]", szSerial );
 				if( iRet == 1 )	// we found our line
 				{
-					if( strcmp(szTemp,"Yes")==0 )
+					// Search for the device corresponding to this serial number.
+					for( unsigned j=0; j<vDevicesOut.size(); j++ )
 					{
-						LOG->Trace( "iConnectedDeviceIndex: %d, iUsbStorageIndex: %d", 
-							iConnectedDeviceIndex, iUsbStorageIndex );
-						usbd.iUsbStorageIndex = iUsbStorageIndex;
-						iConnectedDeviceIndex++;
-					}
-					else if( strcmp(szTemp,"No")==0 )
-					{
-						LOG->Trace( "iUsbStorageIndex: %d is not attached", iUsbStorageIndex );
-					}
-					else
-					{
-						LOG->Warn( "Invalid value for Attached: '%s'", szTemp );
-					}
+						UsbStorageDevice& usbd = vDevicesOut[j];
 
-					break;	// we're done handling this device
+						if( usbd.sSerial == szSerial )
+						{
+							usbd.iUsbStorageIndex = i;
+							LOG->Trace( "iUsbStorageIndex: %d, iBus: %d, iDeviceOnBus: %d, iPortOnHub: %d, sSerial: %s",
+								usbd.iUsbStorageIndex, usbd.iBus, usbd.iDeviceOnBus, usbd.iPortOnHub. usbd.sSerial.c_str() );
+							break;	// done looking for the corresponding device.
+						}
+					}
+					break;	// we already found the line we care about
 				}
 			}
 		}
