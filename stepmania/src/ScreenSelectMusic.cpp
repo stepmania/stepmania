@@ -73,6 +73,14 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
+	if( PREFSMAN->m_bScreenTestMode )
+	{
+		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
+		GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(), "versus" );
+		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+	}
+
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
 	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
 	GAMESTATE->FinishStage();
