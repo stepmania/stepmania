@@ -56,6 +56,12 @@ fi
 SM_X_WITH_OPENGL
 
 AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
+# XXX: 1.2.6 has been out for a while (as well as 1.2.7).  I'm disabling the
+# fallback copy of SDL for now, to see if we can get rid of it.
+if test "$enable_sdl" = "no"; then
+	exit 1
+fi
+
 AM_CONDITIONAL(NHAVE_SDL, test "$enable_sdl" = "no" )
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
