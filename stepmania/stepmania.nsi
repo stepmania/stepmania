@@ -246,7 +246,6 @@ File "Program\avformat.dll"
 File "Program\resample.dll"
 File "Program\dbghelp.dll"
 File "Program\zlib1.dll"
-File "Program\lua.dll"
 
 SetOverwrite off
 SetOutPath "$INSTDIR\Data\MachineProfile"
