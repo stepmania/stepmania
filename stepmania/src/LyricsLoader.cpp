@@ -23,7 +23,7 @@ bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
 {
 	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.c_str() );
 	
-	RageFile input(sPath, "r");
+	RageFile input( sPath );
 	
 	if (!input.IsOpen())
 	{
