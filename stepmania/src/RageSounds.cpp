@@ -228,7 +228,7 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 		MsdFile msd;
 		bool bResult = msd.ReadFile( real_timing_file );
 		if( !bResult )
-			LOG->Warn( "Couldn't load %s", real_timing_file.c_str(), msd.GetError().c_str() );
+			LOG->Warn( "Couldn't load %s, \"%s\"", real_timing_file.c_str(), msd.GetError().c_str() );
 		else
 		{
 			SMLoader::LoadTimingFromSMFile( msd, g_MusicToPlay.timing );

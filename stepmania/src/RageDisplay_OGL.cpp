@@ -188,7 +188,7 @@ static CString GLToString( GLenum e )
 	if( g_Strings.find(e) != g_Strings.end() )
 		return g_Strings[e];
 
-	return ssprintf( "%i", e );
+	return ssprintf( "%i", int(e) );
 }
 
 /* GL_PIXFMT_INFO is used for both texture formats and surface formats.  For example,
@@ -497,7 +497,7 @@ static void CheckPalettedTextures( bool LowColor )
 		glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
 		if( bits > size || size > 8 )
 		{
-			error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, size);
+			error = ssprintf("Expected %i-bit palette, got a %i-bit one instead", bits, int(size));
 			goto fail;
 		}
 
@@ -506,7 +506,7 @@ static void CheckPalettedTextures( bool LowColor )
 		GL_CHECK_ERROR( "glGetColorTableParameterivEXT(GL_COLOR_TABLE_WIDTH)" );
 		if( RealWidth != 1 << bits )
 		{
-			error = ssprintf("GL_COLOR_TABLE_WIDTH returned %i instead of %i", RealWidth, 1 << bits );
+			error = ssprintf("GL_COLOR_TABLE_WIDTH returned %i instead of %i", int(RealWidth), 1 << bits );
 			goto fail;
 		}
 		

@@ -307,7 +307,7 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	m_textContents[c].SetText( str );
 
-	const unsigned num = NUM_ITEM_COLORS( g_Contents[c].name );
+	const int num = NUM_ITEM_COLORS( g_Contents[c].name );
 	for( p = 0; p < num; ++p )
 	{
 		const CString metric = ITEM_COLOR(g_Contents[c].name, p);
