@@ -260,7 +260,7 @@ void PlayerMinus::Load(
 	{
 		 CString sKeysoundFilePath = sSongDir + pSong->m_vsKeysoundFile[i];
 		 RageSound& sound = m_vKeysounds[i];
-		 sound.Load( sKeysoundFilePath );
+		 sound.Load( sKeysoundFilePath, true );
 		 sound.SetParams( p );
 	}
 }
