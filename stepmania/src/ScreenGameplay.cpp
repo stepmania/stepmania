@@ -861,6 +861,10 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 		GAMESTATE->m_SongOptions.FromString( a.sModifier );
 	}
 
+	// UGLY: Force updating the BeatToNoteSkin mapping and cache NoteSkins now, or else 
+	// we'll do it on the first update and skip.
+	m_Player[p].ApplyWaitingTransforms();
+
 	/* Now that course options are applied, load any needed note skins and unload old ones. */
 	m_Player[p].CacheAllUsedNoteSkins( true );
 

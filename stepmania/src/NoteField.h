@@ -41,6 +41,7 @@ public:
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void DidHoldNote( int iCol );
 
+	void RefreshBeatToNoteSkin();
 
 protected:
 	void DrawBeatBar( const float fBeat );
@@ -50,8 +51,6 @@ protected:
 	void DrawFreezeText( const float fBeat, const float fBPM );
 	void DrawBGChangeText( const float fBeat, const CString sNewBGName );
 	float GetWidth();
-
-	void RefreshBeatToNoteSkin();
 
 	const NoteData *m_pNoteData;
 

@@ -526,6 +526,9 @@ void Player::ApplyWaitingTransforms()
 		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 	}
 	m_pPlayerState->m_ModsToApply.clear();
+
+	// Cache used NoteSkins now, not on the next update.
+	m_pNoteField->RefreshBeatToNoteSkin();
 }
 
 void Player::DrawPrimitives()
