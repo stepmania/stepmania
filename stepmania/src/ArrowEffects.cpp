@@ -23,7 +23,7 @@ static float GetNoteFieldHeight( PlayerNumber pn )
 /* For visibility testing: if iAbsolute is -1, then all random modifiers must return
  * the minimal possible offset; if +1, they must return the maximum possible offset.
  * When actually rendering, iAbsolute is 0. */
-float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, int iAbsolute )
+float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, bool bAbsolute )
 {
 	float fYOffset = 0;
 
@@ -86,17 +86,14 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat, int iAbsolute
 		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
 
 	float fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
-	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 1.0f )
+	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed > 1.0f && !bAbsolute )
 	{
 		int seed = GAMESTATE->m_iRoundSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
-		float fRandom;
-		switch( iAbsolute )
-		{
-		case 0: fRandom = RandomFloat( seed ); break;
-		case -1: fRandom = 1.0f; break; /* highest scroll speed = lowest visibility */
-		case +1: fRandom = 0.0f; break;
-		default: FAIL_M( ssprintf("%i",iAbsolute) );
-		};
+
+		/* Temporary hack: the first call to RandomFloat isn't "random"; it takes an extra
+		 * call to get the RNG rolling. */
+		RandomFloat( seed );
+		float fRandom = RandomFloat( seed );
 
 		fScrollSpeed *=
 				SCALE( fRandom,

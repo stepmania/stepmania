@@ -354,7 +354,7 @@ float FindFirstDisplayedBeat( PlayerNumber pn, int iFirstPixelToDraw )
 
 	while( fFirstBeatToDraw < GAMESTATE->m_fSongBeat )
 	{
-		float fYOffset = ArrowGetYOffset( pn, 0, fFirstBeatToDraw, -1 );
+		float fYOffset = ArrowGetYOffset( pn, 0, fFirstBeatToDraw, true );
 		if( fYOffset < iFirstPixelToDraw )	// off screen
 			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
 		else	// on screen
@@ -378,7 +378,7 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 
 	for( int i=0; i<NUM_ITERATIONS; i++ )
 	{
-		float fYOffset = ArrowGetYOffset( pn, 0, fLastBeatToDraw, +1 );
+		float fYOffset = ArrowGetYOffset( pn, 0, fLastBeatToDraw, true );
 
 		if( fYOffset > iLastPixelToDraw )	// off screen
 			fLastBeatToDraw -= fSearchDistance;
@@ -543,8 +543,8 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			float fYStartOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iStartRow) );
-			float fYEndOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iEndRow) );
+			float fYStartOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iStartRow), true );
+			float fYEndOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(hn.iEndRow), true );
 			if( !( iFirstPixelToDraw <= fYEndOffset && fYEndOffset <= iLastPixelToDraw  ||
 				iFirstPixelToDraw <= fYStartOffset  && fYStartOffset <= iLastPixelToDraw  ||
 				fYStartOffset < iFirstPixelToDraw   && fYEndOffset > iLastPixelToDraw ) )
@@ -588,7 +588,7 @@ void NoteField::DrawPrimitives()
 			// TRICKY: If boomerang is on, then all notes in the range 
 			// [iFirstIndexToDraw,iLastIndexToDraw] aren't necessarily visible.
 			// Test every note to make sure it's on screen before drawing
-			float fYOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(i) );
+			float fYOffset = ArrowGetYOffset( m_PlayerNumber, 0, NoteRowToBeat(i), true );
 			if( fYOffset > iLastPixelToDraw )	// off screen
 				continue;	// skip
 			if( fYOffset < iFirstPixelToDraw )	// off screen
