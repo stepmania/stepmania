@@ -273,6 +273,10 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 	/* If we're fullscreen, the fullscreen d3d window will obscure
 	 * the crash dialog.  Do this before we suspend threads, or it'll
 	 * deadlock if the thread controlling this window has been stopped. */
+	/* XXX problem: If the sound thread crashes at the same time the main
+	 * thread tells it to shut down, the main thread will be blocking waiting
+	 * for the sound thread to finish; we'll come here and deadlock waiting for
+	 * it to hide.  Hmmmmm. */
 	ShowWindow( g_hWndMain, SW_HIDE );
 
 	/////////////////////////
@@ -1334,14 +1338,16 @@ static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	OSVERSIONINFO ovi;
 	ovi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
 
+	/* XXX: rewrite this mess */
 	if (GetVersionEx(&ovi)) {
 		Report(NULL, hFile, "Windows %d.%d (Win%s build %d) [%s]",
 			ovi.dwMajorVersion,
 			ovi.dwMinorVersion,
-			ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS
-			? (ovi.dwMinorVersion>0 ? "98" : "95")
-				: ovi.dwPlatformId == VER_PLATFORM_WIN32_NT
-					? (ovi.dwMajorVersion >= 5 ? "2000" : "NT")
+			ovi.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS?
+				(ovi.dwMinorVersion>0? "98" : "95"):
+			ovi.dwPlatformId == VER_PLATFORM_WIN32_NT?
+				(ovi.dwMajorVersion >= 5? 
+				    (ovi.dwMinorVersion>0? "XP":"2000"): "NT")
 					: "?",
 			ovi.dwBuildNumber & 0xffff,
 			ovi.szCSDVersion);
