@@ -72,8 +72,6 @@ protected:
 	bool PlayMovie();
 	void CheckMovieStatus();
 
-	CString m_FilePath;
-
 	virtual unsigned int GetGLTextureID();
 	unsigned int m_uGLTextureID;
 
