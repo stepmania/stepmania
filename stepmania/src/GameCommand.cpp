@@ -51,7 +51,8 @@ void GameCommand::Init()
 
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
-	m_bDownloadMachineStats = false;
+	m_bTransferStatsFromMachine = false;
+	m_bTransferStatsToMachine = false;
 	m_bInsertCredit = false;
 	m_bResetToFactoryDefaults = false;
 	m_bStopMusic = false;
@@ -268,9 +269,13 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		{
 			m_bClearMachineStats = true;
 		}
-		else if( sName == "downloadmachinestats" )
+		else if( sName == "transferstatsfrommachine" )
 		{
-			m_bDownloadMachineStats = true;
+			m_bTransferStatsFromMachine = true;
+		}
+		else if( sName == "transferstatstomachine" )
+		{
+			m_bTransferStatsToMachine = true;
 		}
 		else if( sName == "insertcredit" )
 		{
@@ -589,30 +594,75 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		PROFILEMAN->SaveMachineProfile();
 		SCREENMAN->SystemMessage( "Machine stats cleared." );
 	}
-	if( m_bDownloadMachineStats )
+	if( m_bTransferStatsFromMachine )
 	{
 		MEMCARDMAN->TryMountAllCards();
 
+		bool bTriedToSave = false;
 		FOREACH_PlayerNumber( pn )
 		{
 			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 				continue;	// skip
 
+			bTriedToSave = true;
+
 			CString sDir = MEM_CARD_MOUNT_POINT[pn];
 			sDir += "MachineProfile/";
 
-			
 			bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
 			if( bSaved )
 				SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
 			else
-				SCREENMAN->SystemMessage( ssprintf("Error saving stats to P%d card.",pn+1) );
-			return;
+				SCREENMAN->SystemMessage( ssprintf("Error saving machine stats to P%d card.",pn+1) );
+			break;
 		}
 
-		MEMCARDMAN->FlushAndReset();
+		if( !bTriedToSave )
+			SCREENMAN->SystemMessage( "Stats not saved - No memory cards ready." );
 
-		SCREENMAN->SystemMessage( "Stats not saved - No memory cards ready." );
+		MEMCARDMAN->FlushAndReset();
+	}
+	if( m_bTransferStatsToMachine )
+	{
+		MEMCARDMAN->TryMountAllCards();
+
+		bool bTriedToLoad = false;
+		FOREACH_PlayerNumber( pn )
+		{
+			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+				continue;	// skip
+
+			bTriedToLoad = true;
+
+			CString sDir = MEM_CARD_MOUNT_POINT[pn];
+			sDir += "MachineProfile/";
+
+			Profile backup = *PROFILEMAN->GetMachineProfile();
+
+			Profile::LoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
+			switch( lr )
+			{
+			case Profile::success:
+				SCREENMAN->SystemMessage( ssprintf("Machine stats loaded from P%d card.",pn+1) );
+				break;
+			case Profile::failed_no_profile:
+				SCREENMAN->SystemMessage( ssprintf("There is no profile on P%d card.",pn+1) );
+				*PROFILEMAN->GetMachineProfile() = backup;
+				break;
+			case Profile::failed_tampered:
+				SCREENMAN->SystemMessage( ssprintf("The profile on P%d card contains tampered data.",pn+1) );
+				*PROFILEMAN->GetMachineProfile() = backup;
+				break;
+			default:
+				ASSERT(0);
+			}
+			break;
+		}
+
+		if( !bTriedToLoad )
+			SCREENMAN->SystemMessage( "Stats not loaded - No memory cards ready." );
+
+		MEMCARDMAN->FlushAndReset();
 	}
 	if( m_bInsertCredit )
 	{
