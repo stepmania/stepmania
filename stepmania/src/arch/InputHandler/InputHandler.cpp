@@ -10,11 +10,7 @@ void InputHandler::UpdateTimer()
 void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 {
 	if( di.ts.IsZero() )
-	{
-		const RageTimer now;
-		const float ProbableDelay = -(now - m_LastUpdate) / 2;
-		di.ts = now + ProbableDelay;
-	}
+		di.ts = m_LastUpdate.Half();
 
 	INPUTFILTER->ButtonPressed( di, Down );
 }
