@@ -13,8 +13,8 @@
 //
 // Important!!!!  Do not use these macros during gameplay.  They return very slowly.  Cache them in a member.
 //
-static CachedThemeMetricI METER_WIDTH		("LifeMeterBar","MeterWidth");
-static CachedThemeMetricI METER_HEIGHT		("LifeMeterBar","MeterHeight");
+static CachedThemeMetricF METER_WIDTH		("LifeMeterBar","MeterWidth");
+static CachedThemeMetricF METER_HEIGHT		("LifeMeterBar","MeterHeight");
 static CachedThemeMetricF DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
 static CachedThemeMetricI NUM_CHAMBERS		("LifeMeterBar","NumChambers");
 static CachedThemeMetricI NUM_STRIPS		("LifeMeterBar","NumStrips");
@@ -142,10 +142,10 @@ public:
 
 
 		// set size of streams
-		rect.left	= int(-METER_WIDTH/2 + METER_WIDTH*max(0,fCorrectedLeftEdgePercent));
-		rect.top	= int(-METER_HEIGHT/2);
-		rect.right	= int(-METER_WIDTH/2 + METER_WIDTH*min(1,fCorrectedRightEdgePercent));
-		rect.bottom	= int(+METER_HEIGHT/2);
+		rect.left	= -METER_WIDTH/2 + METER_WIDTH*max(0,fCorrectedLeftEdgePercent);
+		rect.top	= -METER_HEIGHT/2;
+		rect.right	= -METER_WIDTH/2 + METER_WIDTH*min(1,fCorrectedRightEdgePercent);
+		rect.bottom	= +METER_HEIGHT/2;
 
 		ASSERT( rect.left <= METER_WIDTH/2  &&  rect.right <= METER_WIDTH/2 );  
 
@@ -188,10 +188,10 @@ public:
 		float fChamberRightPercent = GetChamberRightPercent( iChamber );
 
 		// draw mask for vertical chambers
-		rect.left	= int(-METER_WIDTH/2 + fChamberLeftPercent*METER_WIDTH-1);
-		rect.top	= int(-METER_HEIGHT/2);
-		rect.right	= int(-METER_WIDTH/2 + fChamberRightPercent*METER_WIDTH+1);
-		rect.bottom	= int(-METER_HEIGHT/2 + fHeightPercent*METER_HEIGHT);
+		rect.left	= -METER_WIDTH/2 + fChamberLeftPercent*METER_WIDTH-1;
+		rect.top	= -METER_HEIGHT/2;
+		rect.right	= -METER_WIDTH/2 + fChamberRightPercent*METER_WIDTH+1;
+		rect.bottom	= -METER_HEIGHT/2 + fHeightPercent*METER_HEIGHT;
 
 		rect.left  = MIN( rect.left,  + METER_WIDTH/2 );
 		rect.right = MIN( rect.right, + METER_WIDTH/2 );
@@ -200,7 +200,7 @@ public:
 		m_quadMask.Draw();
 
 		// draw mask for horizontal chambers
-		rect.left	= (int)(-METER_WIDTH/2 + fRightPercent*METER_WIDTH); 
+		rect.left	= -METER_WIDTH/2 + fRightPercent*METER_WIDTH; 
 		rect.top	= -METER_HEIGHT/2;
 		rect.right	= +METER_WIDTH/2;
 		rect.bottom	= +METER_HEIGHT/2;
