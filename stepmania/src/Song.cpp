@@ -33,7 +33,7 @@
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
 
-const int FILE_CACHE_VERSION = 99;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 100;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -779,14 +779,11 @@ void Song::AddAutoGenNotes()
 {
 	// This is way too slow.  Only autogen dance->pump and pump->dance
 	CArray<NotesType,NotesType> aMissingNotesTypes;
-	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )
-		aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SINGLE );
-	if( !SongHasNotesType(NOTES_TYPE_DANCE_DOUBLE) )
-		aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SOLO );
-	if( !SongHasNotesType(NOTES_TYPE_DANCE_SOLO) )
-		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_SINGLE );
-	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )
-		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_DOUBLE );
+	if( !SongHasNotesType(NOTES_TYPE_DANCE_SINGLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SINGLE );
+	if( !SongHasNotesType(NOTES_TYPE_DANCE_DOUBLE) )	aMissingNotesTypes.Add( NOTES_TYPE_DANCE_DOUBLE );
+	if( !SongHasNotesType(NOTES_TYPE_DANCE_SOLO) )		aMissingNotesTypes.Add( NOTES_TYPE_DANCE_SOLO );
+	if( !SongHasNotesType(NOTES_TYPE_PUMP_SINGLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_SINGLE );
+	if( !SongHasNotesType(NOTES_TYPE_PUMP_DOUBLE) )		aMissingNotesTypes.Add( NOTES_TYPE_PUMP_DOUBLE );
 
 //	for( NotesType ntMissing=(NotesType)0; ntMissing<NUM_NOTES_TYPES; ntMissing=(NotesType)(ntMissing+1) )
 //	{

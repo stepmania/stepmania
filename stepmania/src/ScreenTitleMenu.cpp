@@ -116,7 +116,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	
 	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-	m_textVersion.SetText( "v3.0 beta 6" );
+	m_textVersion.SetText( "v3.0 beta 6 rc3" );
 	m_textVersion.SetDiffuse( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( VERSION_X, VERSION_Y );
 	m_textVersion.SetZoom( 0.5f );

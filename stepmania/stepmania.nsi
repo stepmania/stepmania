@@ -1,15 +1,14 @@
 ; NSIS Install Script
 ; created by 
 ;     BBF 
-;     chrisdanford
 ; I use the following command to create the installer:
 ; D:\Program Files\NSIS>makensis.exe /v3 /cd "m:\Dev Projects\CVS\stepmania\stepmania.nsi"
 ;
 ; NOTE: this .NSI script is designed for NSIS v1.8+
 
 Name "StepMania"
-OutFile "stepmania300beta6rc2.exe"
-!define PRODUCT_NAME "StepMania 3.0 beta 6 release candidate 2"
+OutFile "stepmania300beta6rc3.exe"
+!define PRODUCT_NAME "StepMania 3.0 beta 6 rc3"
 
 
 ; Some default compiler settings (uncomment and change at will):
@@ -117,6 +116,7 @@ CreateDirectory "$INSTDIR\Music"
 SetOutPath "$INSTDIR\Music"
 File "Music\instructions.txt"
 
+RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
 CreateDirectory "$INSTDIR\NoteSkins\dance\MAX"
 SetOutPath "$INSTDIR\NoteSkins"
 File "NoteSkins\instructions.txt"
@@ -131,6 +131,7 @@ CreateDirectory "$INSTDIR\Songs"
 SetOutPath "$INSTDIR\Songs"
 File "Songs\instructions.txt"
 
+RMDir /r "$INSTDIR\Themes\default"
 CreateDirectory "$INSTDIR\Themes"
 SetOutPath "$INSTDIR\Themes"
 File "Themes\instructions.txt"
