@@ -47,7 +47,7 @@ class GameInfo {
 
 class GameClient {
 	public:
-		bool Ready;
+		bool GotStartRequest;
 		EzSockets clientSocket;
 		bool Used;
 		void UpdateStats(PacketFunctions &Packet);
@@ -62,11 +62,14 @@ class GameClient {
 		bool InGame;
 		int twoPlayers;
 		bool hasSong;
+		bool inNetMusicSelect;
+		int startPosition;
+		bool isStarting;
+
 	private:
 		string build;
 		GameInfo gameInfo;
 		int version;
-		int startPosition;
 };
 
 class StepManiaLanServer {
@@ -106,7 +109,7 @@ class StepManiaLanServer {
 		void SendStatsToClients();
 		void StatsProjgradeColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers);
 		void StatsNameColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers);
-		void SendNetPacket(int client, char *data, int size);
+		void SendNetPacket(int client, PacketFunctions &Packet);
 		int SortStats(LanPlayer *playersPtr[]);
 		void RelayChat(PacketFunctions &Packet, int clientNum);
 		void SelectSong(PacketFunctions &Packet, int clientNum);
@@ -117,6 +120,7 @@ class StepManiaLanServer {
 		void AssignPlayerIDs();
 		void SendUserList();
 		void GameOver(PacketFunctions &Packet, int clientNum);
+		void ScreenNetMusicSelectStatus(PacketFunctions &Packet, int clientNum);
 };
 
 #endif
