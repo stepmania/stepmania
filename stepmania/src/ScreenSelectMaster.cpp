@@ -36,6 +36,13 @@ const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
+	/* ScreenSelect::ScreenSelect will have set m_bPlayersCanJoin if the style is being
+	 * set.  We should either have a style or be setting the style, or GameState::IsHumanPlayer
+	 * will always return true.  Nothing does this right now, and it's an easy mistake,
+	 * so don't allow it. */
+	if( GAMESTATE->m_CurStyle == STYLE_INVALID && !GAMESTATE->m_bPlayersCanJoin )
+		RageException::Throw("Screen %s doesn't set the style and the style isn't already set", m_sName.c_str() );
+
 	int p, i;
 
 	for( p=0; p<NUM_PLAYERS; p++ )
