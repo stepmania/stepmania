@@ -42,7 +42,7 @@ void RageSound_ALSA9_Software::MixerThread()
 		while( !shutdown && GetData() )
 			;
 
-		pcm->WaitUntilFramesCanBeFilled( 2 );
+		pcm->WaitUntilFramesCanBeFilled( 100 );
 	}
 }
 
