@@ -932,6 +932,9 @@ void BGAnimationLayer::Update( float fDeltaTime )
 		{
 			PlayCommand( "On" );
 			m_fSecondsUntilNextCommand += m_fRepeatCommandEverySeconds;
+
+			/* In case we delayed a long time, don't queue two repeats at once. */
+			wrap( m_fSecondsUntilNextCommand, m_fRepeatCommandEverySeconds );
 		}
 	}
 }
