@@ -513,10 +513,9 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 		return;
 	} */
 
+	m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty;
 	if (total > 1)
-		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty * cleared / (total - 1);
-	else
-		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty;
+		m_fLifeDifficulty *= cleared / (total - 1);
 
 	if (m_fLifeDifficulty >= 0.4) return;
 
