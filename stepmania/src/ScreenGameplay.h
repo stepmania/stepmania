@@ -76,10 +76,10 @@ protected:
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 
-	bool OneIsHot();
-	bool AllAreInDanger();
-	bool AllAreFailing();
-	bool AllFailedEarlier();
+	bool OneIsHot() const;
+	bool AllAreInDanger() const;
+	bool AllAreFailing() const;
+	bool AllFailedEarlier() const;
 	bool IsTimeToPlayTicks() const;
 	void UpdateLyrics( float fDeltaTime );
 	void UpdateCheckFail();

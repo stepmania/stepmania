@@ -34,6 +34,7 @@ void PlayerOptions::Init()
 	m_fBlind = 0;				m_SpeedfBlind = 1.0f;
 	m_fPerspectiveTilt = 0;		m_SpeedfPerspectiveTilt = 1.0f;
 	m_fSkew = 0;				m_SpeedfSkew = 1.0f;
+	m_fPassmark = 0;			m_SpeedfPassmark = 1.0f;
 	m_Turn = TURN_NONE;
 	m_Transform = TRANSFORM_NONE;
 	m_bHoldNotes = true;
@@ -62,6 +63,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APP( fBlind );
 	APP( fPerspectiveTilt );
 	APP( fSkew );
+	APP( fPassmark );
 }
 
 static CString AddPart( float level, CString name )
@@ -69,7 +71,7 @@ static CString AddPart( float level, CString name )
 	if( level == 0 )
 		return "";
 
-	const CString LevelStr = (level == 1)? "": ssprintf( "%i%% ", int(level*100) );
+	const CString LevelStr = (level == 1)? "": ssprintf( "%i%% ", (int) roundf(level*100) );
 
 	return LevelStr + name + ", ";
 }
@@ -130,6 +132,8 @@ CString PlayerOptions::GetString() const
 
 	sReturn += AddPart( m_fBlind,	"Blind");
 
+	sReturn += AddPart( m_fPassmark, "Passmark");
+
 	switch( m_Turn )
 	{
 	case TURN_NONE:										break;
@@ -187,6 +191,7 @@ void PlayerOptions::FromString( CString sOptions )
 	CStringArray asBits;
 	split( sOptions, ",", asBits, true );
 
+	LOG->Trace("parse %s", sOptions.c_str());
 	for( unsigned i=0; i<asBits.size(); i++ )
 	{
 		CString& sBit = asBits[i];
@@ -238,6 +243,7 @@ void PlayerOptions::FromString( CString sOptions )
 			}
 			else if( asParts[j][0]=='*' )
 				sscanf( asParts[j], "*%f", &speed );
+	LOG->Trace("'%s' %f %f", asParts[j].c_str(), level, speed);
 		}
 		sBit = asParts[asParts.size()-1];
 
@@ -282,6 +288,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "nofreeze" )	m_bHoldNotes = !on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
+		else if( sBit == "passmark" )	SET_FLOAT( fPassmark )
 		else if( sBit == "timingassist")m_bTimingAssist = on;
 		else if( sBit == "protiming")	m_bProTiming = on;
 		else if( sBit == "overhead" )	{ m_fSkew = 0; m_fPerspectiveTilt = 0;				m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }

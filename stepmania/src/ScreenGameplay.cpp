@@ -911,7 +911,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	return fFirstSecond - fStartSecond;
 }
 
-bool ScreenGameplay::OneIsHot()
+bool ScreenGameplay::OneIsHot() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
@@ -921,7 +921,7 @@ bool ScreenGameplay::OneIsHot()
 	return false;
 }
 
-bool ScreenGameplay::AllAreInDanger()
+bool ScreenGameplay::AllAreInDanger() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
@@ -931,37 +931,18 @@ bool ScreenGameplay::AllAreInDanger()
 	return true;
 }
 
-bool ScreenGameplay::AllAreFailing()
+bool ScreenGameplay::AllAreFailing() const
 {
-
-	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_PASSMARK )
-	{
-		bool bFoundAPasser = true; // assume nobody passed until proven otherwise
-
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
-				if( (m_pLifeMeter[p]->GetLife()) > 0.7f ) // 70 % is the pass mark
-				{
-					bFoundAPasser = false;
-				}
-		}
-		return bFoundAPasser;
-	}
-	else
-	{
-
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsFailing()) || 
 				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
 				return false;
 	
-	}
 	return true;
 }
 
-bool ScreenGameplay::AllFailedEarlier()
+bool ScreenGameplay::AllFailedEarlier() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailedEarlier[p] )
@@ -1101,7 +1082,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// show it if everyone is already failing: it's already too late and it's
 		// annoying for it to show for the entire duration of a song.
 		//
-		if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF || GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_PASSMARK )
+		if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF )
 		{
 			if( AllAreInDanger() && !AllAreFailing() )
 				m_Background.TurnDangerOn();
@@ -1624,23 +1605,40 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if( !GAMESTATE->IsPlayerEnabled(p) )
 					continue;
 
+				/* If either player's passmark is enabled, check it. */
+				if( GAMESTATE->m_PlayerOptions[p].m_fPassmark > 0 &&
+					m_pLifeMeter[p] &&
+					m_pLifeMeter[p]->GetLife() < GAMESTATE->m_PlayerOptions[p].m_fPassmark )
+				{
+					LOG->Trace("Player %i failed: life %f is under %f",
+						p+1, m_pLifeMeter[p]->GetLife(), GAMESTATE->m_PlayerOptions[p].m_fPassmark );
+					GAMESTATE->m_CurStageStats.bFailed[p] = true;
+				}
+
 				if( !GAMESTATE->m_CurStageStats.bFailed[p] )
 					GAMESTATE->m_CurStageStats.iSongsPassed[p]++;
 			}
 
-
-			if( (GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG || GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_PASSMARK ) &&  AllAreFailing() )
+			/* Mark failure.  This was possibly already done by UpdateCheckFail, but
+			 * not always, if m_bTwoPlayerRecovery is set. */
+			if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF )
 			{
-				if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
-					return;		// ignore
-				m_DancingState = STATE_OUTRO;
-
-				GAMESTATE->RemoveAllActiveAttacks();
-
-				this->PostScreenMessage( SM_BeginFailed, 0 );
+				if( (m_pLifeMeter[p] && !m_pLifeMeter[p]->IsFailing()) || 
+					(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)p)) )
+					GAMESTATE->m_CurStageStats.bFailed[p] = true;
 			}
-			else if( !IsLastSong() )
+
+			/* If all players have *really* failed (bFailed, not the life meter or
+			 * bFailedEarlier): */
+			bool bAllReallyFailed = true;
+			for( p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+					if( !GAMESTATE->m_CurStageStats.bFailed[p] )
+						bAllReallyFailed = false;
+
+			if( !bAllReallyFailed && !IsLastSong() )
 			{
+				/* Next song. */
 				for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
 				{
@@ -1663,50 +1661,56 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				GAMESTATE->m_pCurSong = pCurSong;
 
 				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
+				return;
 			}
-			else	// IsLastSong
+
+			/* End round. */
+			if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
+				return;		// ignore
+			m_DancingState = STATE_OUTRO;
+
+			GAMESTATE->RemoveAllActiveAttacks();
+
+			if( bAllReallyFailed )
 			{
-				if( m_DancingState == STATE_OUTRO )	// ScreenGameplay already ended
-					return;		// ignore
-				m_DancingState = STATE_OUTRO;
+				this->PostScreenMessage( SM_BeginFailed, 0 );
+				return;
+			}
 
-				GAMESTATE->RemoveAllActiveAttacks();
-
-				// do they deserve an extra stage?
-				if( GAMESTATE->HasEarnedExtraStage() )
+			// do they deserve an extra stage?
+			if( GAMESTATE->HasEarnedExtraStage() )
+			{
+				TweenOffScreen();
+				m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
+			}
+			else
+			{
+				TweenOffScreen();
+				
+				switch( GAMESTATE->m_PlayMode )
 				{
-					TweenOffScreen();
-					m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
-					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
-				}
-				else
-				{
-					TweenOffScreen();
-					
-					switch( GAMESTATE->m_PlayMode )
+				case PLAY_MODE_BATTLE:
+				case PLAY_MODE_RAVE:
 					{
-					case PLAY_MODE_BATTLE:
-					case PLAY_MODE_RAVE:
+						PlayerNumber winner = GAMESTATE->GetBestPlayer();
+						switch( winner )
 						{
-							PlayerNumber winner = GAMESTATE->GetBestPlayer();
-							switch( winner )
-							{
-							case PLAYER_INVALID:
-								m_Draw.StartTransitioning( SM_GoToStateAfterCleared );
-								break;
-							default:
-								m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
-								break;
-							}
+						case PLAYER_INVALID:
+							m_Draw.StartTransitioning( SM_GoToStateAfterCleared );
+							break;
+						default:
+							m_Win[winner].StartTransitioning( SM_GoToStateAfterCleared );
+							break;
 						}
-						break;
-					default:
-						m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
-						break;
 					}
-					
-					SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
+					break;
+				default:
+					m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
+					break;
 				}
+				
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
 			}
 		}
 		break;
