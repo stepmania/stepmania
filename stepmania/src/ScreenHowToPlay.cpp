@@ -110,20 +110,24 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	{
 		Character* rndchar = GAMESTATE->GetRandomCharacter();
 
-		m_pmCharacter = new Model;
-		m_pmCharacter->LoadMilkshapeAscii( rndchar->GetModelPath() );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
-		m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
-		m_pmCharacter->SetDefaultAnimation( "rest" );
-		m_pmCharacter->PlayAnimation( "rest" );
-		m_pmCharacter->m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
-		
-		m_pmCharacter->SetRotationX( 40 );
-		m_pmCharacter->Command( CHARACTERONCOMMAND );
+		CString sModelPath = rndchar->GetModelPath();
+		if( sModelPath != "" )
+		{
+			m_pmCharacter = new Model;
+			m_pmCharacter->LoadMilkshapeAscii( rndchar->GetModelPath() );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-LEFT", GetAnimPath( ANIM_LEFT ) );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-DOWN", GetAnimPath( ANIM_DOWN ) );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
+			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
+			m_pmCharacter->SetDefaultAnimation( "rest" );
+			m_pmCharacter->PlayAnimation( "rest" );
+			m_pmCharacter->m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
+			
+			m_pmCharacter->SetRotationX( 40 );
+			m_pmCharacter->Command( CHARACTERONCOMMAND );
+		}
 	}
 	
 	// silly to use the lifebar without a player, since the player updates the lifebar
