@@ -9,8 +9,8 @@
 #include "sha.h"
 #include "algparam.h"
 
-//This isn't in the repository and doesn't seem to be used
-//#include "oaep.cpp"
+
+#include "oaep.cpp"
 
 NAMESPACE_BEGIN(CryptoPP)
 
