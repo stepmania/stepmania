@@ -282,7 +282,10 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
-	m_Player.SetXY( PLAYER_X, PLAYER_Y );
+	m_Player.SetX( PLAYER_X );
+	/* Why was this here?  Nothing ever sets Player Y values; this was causing
+	 * the display in play mode to be offset half a screen down. */
+//	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_In.Load( THEME->GetPathToB("ScreenEdit in") );
 	m_In.StartTransitioning();
