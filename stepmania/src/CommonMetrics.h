@@ -49,7 +49,6 @@ extern ThemeMetric<CString>		FIRST_RUN_INITIAL_SCREEN;
 extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
 extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
 extern ThemeMetric1D<RageColor> PLAYER_COLOR;
-extern ThemeMetric<float>		JOIN_PAUSE_SECONDS;
 extern ThemeMetric<CString>		WINDOW_TITLE;
 extern ThemeMetric<bool>		HOME_EDIT_MODE;
 extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;

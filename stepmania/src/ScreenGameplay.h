@@ -3,7 +3,7 @@
 #ifndef SCREEN_GAMEPLAY_H
 #define SCREEN_GAMEPLAY_H
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "Transition.h"
 #include "BitmapText.h"
@@ -30,7 +30,7 @@ class Inventory;
 AutoScreenMessage( SM_NotesEnded )
 
 class LyricsLoader;
-class ScreenGameplay : public Screen
+class ScreenGameplay : public ScreenWithMenuElements
 {
 public:
 	ScreenGameplay( CString sName );
@@ -139,8 +139,6 @@ protected:
 	Transition	m_Toasty;	// easter egg
 	Transition	m_Win[NUM_PLAYERS];
 	Transition	m_Draw;
-	Transition	m_In;
-	Transition	m_Cancel;
 	AutoActor	m_Overlay;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage

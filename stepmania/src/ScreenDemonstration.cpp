@@ -79,7 +79,7 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		return;
 	}
 
-	ScreenGameplay::HandleScreenMessage( SM );
+	ScreenJukebox::HandleScreenMessage( SM );
 }
 
 /*

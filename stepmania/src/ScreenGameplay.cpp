@@ -86,7 +86,7 @@ AutoScreenMessage( SM_StopHereWeGo )
 static Preference<float> g_fNetStartOffset( Options, "NetworkStartOffset",	-3.0 );
 
 REGISTER_SCREEN_CLASS( ScreenGameplay );
-ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
+ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 {
 	PLAYER_TYPE.Load( sName, "PlayerType" );
 	GIVE_UP_TEXT.Load( sName, "GiveUpText" );
@@ -99,7 +99,7 @@ ScreenGameplay::ScreenGameplay( CString sName ) : Screen(sName)
 
 void ScreenGameplay::Init()
 {
-	Screen::Init();
+	ScreenWithMenuElements::Init();
 
 	/* Pause MEMCARDMAN.  If a memory card is remove, we don't want to interrupt the
 	 * player by making a noise until the game finishes. */
@@ -619,14 +619,6 @@ void ScreenGameplay::Init()
 		SET_XY( m_textDebug );
 		m_textDebug.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );	// just under transitions, over the foreground
 		this->AddChild( &m_textDebug );
-
-		m_In.Load( THEME->GetPathB(m_sName,"in") );
-		m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
-		this->AddChild( &m_In );
-
-		m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
-		m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS ); // on top of everything else
-		this->AddChild( &m_Cancel );
 
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it

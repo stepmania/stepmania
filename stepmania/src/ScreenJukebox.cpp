@@ -23,7 +23,6 @@
 #define SHOW_COURSE_MODIFIERS		THEME->GetMetricB("ScreenJukebox","ShowCourseModifiers")
 static ThemeMetricDifficultiesToShow DIFFICULTIES_TO_SHOW_HERE("ScreenDemonstration","DifficultiesToShow");
 
-
 REGISTER_SCREEN_CLASS( ScreenJukebox );
 bool ScreenJukebox::SetSong( bool bDemonstration )
 {
@@ -126,11 +125,8 @@ void ScreenJukebox::Init()
 	{
 		/* Note that you also need to make sure you benchmark with the
 		 * same notes.  I use a copy of MaxU with only heavy notes included. */
-		FOREACH_PlayerNumber( p )
+		FOREACH_EnabledPlayer( p )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
-
 			/* Lots and lots of arrows.  This might even bias to arrows a little
 			 * too much. */
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = PlayerOptions();
@@ -142,11 +138,8 @@ void ScreenJukebox::Init()
 		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 	}
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledPlayer( p )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
 		/* Reset the combo, in case ComboContinuesBetweenSongs is enabled. */
 		Profile* pProfile = PROFILEMAN->GetProfile(p);
 		if( pProfile )
@@ -176,13 +169,6 @@ void ScreenJukebox::Init()
 		return;
 	}
 
-	m_In.Load( THEME->GetPathB("ScreenDemonstration","in") );
-	this->AddChild( &m_In );
-	m_In.StartTransitioning();
-
-	m_Out.Load( THEME->GetPathB("ScreenDemonstration","out") );
-	this->AddChild( &m_Out );
-
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
 
 	GAMESTATE->m_bPastHereWeGo = true;
@@ -208,7 +194,7 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		}
 	}
 
-	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_Out.IsTransitioning(), m_sName );
+	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, this );
 }
 
 void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
@@ -226,6 +212,10 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 			m_pSoundMusic->Stop();
 		SCREENMAN->SetNewScreen( "ScreenJukebox" );
 		return;
+	}
+	else if( SM == SM_GoToStartScreen )
+	{
+		ScreenAttract::GoToStartScreen( m_sName );
 	}
 
 	ScreenGameplay::HandleScreenMessage( SM );

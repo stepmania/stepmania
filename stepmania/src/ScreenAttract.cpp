@@ -16,9 +16,8 @@
 #include "CommonMetrics.h"
 #include "BGAnimation.h"
 
-#define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
+#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
-
 
 REGISTER_SCREEN_CLASS( ScreenAttract );
 ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWithMenuElements( sName )
@@ -49,10 +48,10 @@ void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type
 {
 //	LOG->Trace( "ScreenAttract::Input()" );
 
-	AttractInput( DeviceI, type, GameI, MenuI, StyleI, m_In.IsTransitioning() || m_Out.IsTransitioning(), m_sName );
+	AttractInput( DeviceI, type, GameI, MenuI, StyleI, this );
 }
 
-void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning, CString sScreenName )
+void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, ScreenWithMenuElements *pScreen )
 {
 	if(type != IET_FIRST_PRESS) 
 		return; // don't care
@@ -75,14 +74,19 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				// fall through
 			case COIN_HOME:
 			case COIN_FREE:
+				if( pScreen->IsTransitioning() )
+					return;
+
+				LOG->Trace("ScreenAttract::AttractInput: begin fading to START_SCREEN" );
+
 				SOUND->StopMusic();
+				SCREENMAN->SendMessageToTopScreen( SM_StopMusic );
+
 				/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )
 					SCREENMAN->PlayCoinSound();
-				SCREENMAN->SendMessageToTopScreen( SM_StopMusic );
-				usleep( (int)(JOIN_PAUSE_SECONDS*1000*1000) );	// do a little pause, like the arcade does
-				LOG->Trace("ScreenAttract::AttractInput: go to START_SCREEN" );
-				SCREENMAN->SetNewScreen( START_SCREEN(sScreenName) );
+				
+				pScreen->Cancel( SM_GoToStartScreen );
 				break;
 			default:
 				ASSERT(0);
@@ -91,7 +95,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 		}
 	}
 
-	if( bTransitioning )
+	if( pScreen->IsTransitioning() )
 		return;
 
 	if( MenuI.IsValid() )
@@ -126,14 +130,18 @@ void ScreenAttract::Update( float fDelta )
 
 void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_MenuTimer ||
+		SM == SM_BeginFadingOut )
 	{
-	case SM_MenuTimer:
-	case SM_BeginFadingOut:
 		if( !IsTransitioning() )
 			StartTransitioning( SM_GoToNextScreen );
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToStartScreen )
+	{
+		GoToStartScreen( m_sName );
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		/* Look at the def of the screen we're going to; if it has a music theme element
 		 * and it's the same as the one we're playing now, don't stop.  However, if we're
 		 * going to interrupt it when we fade in, stop the old music before we fade out. */
@@ -145,8 +153,12 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 			SOUND->PlayMusic( "" );	// stop the music
 
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
 	}
+}
+
+void ScreenAttract::GoToStartScreen( CString sScreenName )
+{
+	SCREENMAN->SetNewScreen( START_SCREEN(sScreenName) );
 }
 
 /*

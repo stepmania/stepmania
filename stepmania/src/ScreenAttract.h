@@ -5,6 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 
+AutoScreenMessage( SM_GoToStartScreen )
 
 class ScreenAttract : public ScreenWithMenuElements
 {
@@ -13,8 +14,10 @@ public:
 	virtual void Init();
 	virtual ~ScreenAttract();
 
+	static void AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, ScreenWithMenuElements *pScreen );
+	static void GoToStartScreen( CString sScreenName );
+	
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	static void AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, bool bTransitioning, CString sScreenName );
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
