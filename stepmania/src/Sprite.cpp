@@ -590,7 +590,7 @@ void Sprite::SetState( int iNewState )
 		CString sError;
 		if( m_pTexture )
 			sError = ssprintf("The Sprite '%s' tried to set state index %d, but it has only %u states", 
-				m_pTexture->GetID().filename.c_str(), iNewState, m_States.size());
+				m_pTexture->GetID().filename.c_str(), iNewState, unsigned(m_States.size()));
 		else
 			sError = ssprintf("A Sprite tried to set state index %d but no texture is loaded.", 
 				iNewState );
