@@ -84,19 +84,24 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		m_textLabel[i].SetDiffuse( line.enabled ? COLOR_ENABLED : COLOR_DISABLED );
 		this->AddChild( &m_textLabel[i] );
 
-		CString sText = line.choices.empty() ? "" : line.choices[line.defaultChoice];
 		m_textAnswer[i].LoadFromFont( THEME->GetPathToF("Common normal") );
- 		m_textAnswer[i].SetText( sText );
 		m_textAnswer[i].SetY( fY );
 		m_textAnswer[i].SetZoom( ZOOM_NOT_SELECTED );
 		m_textAnswer[i].SetHorizAlign( Actor::align_right );
 		m_textAnswer[i].SetDiffuse( line.enabled ? COLOR_ENABLED : COLOR_DISABLED );
 		this->AddChild( &m_textAnswer[i] );
 
-		fLongestLabelPlusAnswer = max( 
-			fLongestLabelPlusAnswer, 
-			m_textLabel[i].GetUnzoomedWidth() * ZOOM_SELECTED +
-			m_textAnswer[i].GetUnzoomedWidth() * ZOOM_SELECTED );
+		for( unsigned j = 0; j < line.choices.size(); ++j )
+		{
+	 		m_textAnswer[i].SetText( line.choices[j] );
+			fLongestLabelPlusAnswer = max( 
+				fLongestLabelPlusAnswer, 
+				m_textLabel[i].GetUnzoomedWidth() * ZOOM_SELECTED +
+				m_textAnswer[i].GetUnzoomedWidth() * ZOOM_SELECTED );
+		}
+
+		CString sText = line.choices.empty() ? "" : line.choices[line.defaultChoice];
+ 		m_textAnswer[i].SetText( sText );
 
 		if( !bMarkedFirstEnabledLine && line.enabled )
 		{
