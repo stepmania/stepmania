@@ -180,7 +180,7 @@ void RageSoundManager::FlushPosMapQueue()
 		/* If we can't find the ID, the sound was probably deleted before we got here. */
 		if( pSound == NULL )
 		{
-			LOG->Trace("ignored unknown (stale?) commit ID %i", p.ID);
+			// LOG->Trace("ignored unknown (stale?) commit ID %i", p.ID);
 			continue;
 		}
 
