@@ -65,7 +65,7 @@ CString NotesWriterDWI::NotesToDWIString( char cNoteCol1, char cNoteCol2, char c
 	if( cHold != '0' )
 		return ssprintf( "%c!%c", cShow, cHold );
 	else
-		return cShow;
+		return ssprintf( "%c", cShow );
 }
 
 CString NotesWriterDWI::NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4 )

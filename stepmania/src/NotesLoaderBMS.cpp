@@ -8,6 +8,7 @@
 #include "RageLog.h"
 #include "GameManager.h"
 #include "RageException.h"
+#include <fstream>
 
 // BMS encoding:     tap-hold
 // 4&8panel:   Player1     Player2
@@ -67,12 +68,12 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	NoteData* pNoteData = new NoteData;
 	pNoteData->m_iNumTracks = MAX_NOTE_TRACKS;
 
-	CStdioFile file;	
-	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
+	ifstream file(sPath);
+	if( file.bad() )
 		throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 	CString line;
-	while( file.ReadString(line) )	// foreach line
+	while( getline(file, line) )	// foreach line
 	{
 		CString value_name;		// fill these in
 		CString value_data;	
@@ -276,12 +277,12 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	CString sPath = out.m_sSongDir + arrayBMSFileNames[0];
 
-	CStdioFile file;	
-	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
+	ifstream file(sPath);
+	if( file.bad() )
 		throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 	CString line;
-	while( file.ReadString(line) )	// foreach line
+	while( getline(file, line) )	// foreach line
 	{
 		CString value_name;		// fill these in
 		CString value_data;	
@@ -413,12 +414,12 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					CStdioFile file;	
-					if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
+					ifstream file(sPath);
+					if( file.bad() )
 						throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 					CString line;
-					while( file.ReadString(line) )	// foreach line
+					while( getline(file, line) )	// foreach line
 					{
 						CString value_name;		// fill these in
 						CString value_data;	
@@ -463,7 +464,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
 					}
 
-					file.Close();
 					break;
 				}
 				case 9:	{ // stop
@@ -475,12 +475,12 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					CStdioFile file;	
-					if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
+					ifstream file(sPath);
+					if( file.bad() )
 						throw RageException( "Failed to open %s for reading.", sPath.GetString() );
 
 					CString line;
-					while( file.ReadString(line) )	// foreach line
+					while( getline(file, line) )	// foreach line
 					{
 						CString value_name;		// fill these in
 						CString value_data;	
@@ -540,7 +540,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 						LOG->Trace( "Inserting new Freeze at beat %f, secs %f", newSeg.m_fStartBeat, newSeg.m_fStopSeconds );
 					}
 
-					file.Close();
 					break;
 				}
 				}
@@ -552,7 +551,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		LOG->Trace( "There is a BPM change at beat %f, BPM %f, index %d", 
 					out.m_BPMSegments[i].m_fStartBeat, out.m_BPMSegments[i].m_fBPM, i );
 
-	file.Close();
 	return true;
 }
 

@@ -12,11 +12,8 @@
 */
 
 #include "IniFile.h"
-
-
-/////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-/////////////////////////////////////////////////////////////////////
+#include <fstream>
+using namespace std;
 
 //constructor, can specify pathname here instead of using SetPath later
 IniFile::IniFile(CString inipath)
@@ -30,33 +27,28 @@ IniFile::~IniFile()
 
 }
 
-/////////////////////////////////////////////////////////////////////
-// Public Functions
-/////////////////////////////////////////////////////////////////////
-
-//sets path of ini file to read and write from
+// sets path of ini file to read and write from
 void IniFile::SetPath(CString newpath)
 {
 	path = newpath;
 }
 
-//reads ini file specified using IniFile::SetPath()
-//returns true if successful, false otherwise
+// reads ini file specified using IniFile::SetPath()
+// returns true if successful, false otherwise
 bool IniFile::ReadFile()
 {
-	CStdioFile file;
-	CFileStatus status;
-	if (!file.GetStatus(path,status))
-		return 0;
-	if (!file.Open(path, CFile::modeRead))
+	ifstream file(path);
+
+	if (file.bad())
 	{
 		error = "Unable to open ini file.";
 		return 0;
 	}
+
 	CString keyname, valuename, value;
 	CString temp;
 	CString line;
-	while (file.ReadString(line))
+	while (getline(file, line))
 	{
 		if (line == "")
 			continue;
@@ -78,11 +70,10 @@ bool IniFile::ReadFile()
 			}
 		}
 	}
-	file.Close();
 	return 1;
 }
 
-//writes data stored in class to ini file
+// writes data stored in class to ini file
 void IniFile::WriteFile()
 {
 	FILE* fp = fopen( path, "w" );
@@ -101,19 +92,19 @@ void IniFile::WriteFile()
 	fclose( fp );
 }
 
-//deletes all stored ini data
+// deletes all stored ini data
 void IniFile::Reset()
 {
 	keys.clear();
 }
 
-//returns number of keys currently in the ini
+// returns number of keys currently in the ini
 int IniFile::GetNumKeys() const
 {
 	return keys.size();
 }
 
-//returns number of values stored for specified key, or -1 if key not found
+// returns number of values stored for specified key, or -1 if key not found
 int IniFile::GetNumValues(const CString &keyname) const
 {
 	keymap::const_iterator k = keys.find(keyname);
@@ -123,8 +114,8 @@ int IniFile::GetNumValues(const CString &keyname) const
 	return k->second.size();
 }
 
-//gets value of [keyname] valuename = 
-//overloaded to return CString, int, and double
+// gets value of [keyname] valuename = 
+// overloaded to return CString, int, and double
 bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString& value)
 {
 	keymap::const_iterator k = keys.find(keyname);
@@ -146,8 +137,8 @@ bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString
 	return true;
 }
 
-//gets value of [keyname] valuename = 
-//overloaded to return CString, int, and double
+// gets value of [keyname] valuename = 
+// overloaded to return CString, int, and double
 bool IniFile::GetValueI(const CString &keyname, const CString &valuename, int& value)
 {
 	CString sValue;
@@ -158,8 +149,8 @@ bool IniFile::GetValueI(const CString &keyname, const CString &valuename, int& v
 	return true;
 }
 
-//gets value of [keyname] valuename = 
-//overloaded to return CString, int, and double
+// gets value of [keyname] valuename = 
+// overloaded to return CString, int, and double
 bool IniFile::GetValueF(const CString &keyname, const CString &valuename, float& value)
 {
 	CString sValue;
@@ -170,8 +161,8 @@ bool IniFile::GetValueF(const CString &keyname, const CString &valuename, float&
 	return true;
 }
 
-//gets value of [keyname] valuename = 
-//overloaded to return CString, int, and double
+// gets value of [keyname] valuename = 
+// overloaded to return CString, int, and double
 bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& value)
 {
 	CString sValue;
@@ -182,10 +173,10 @@ bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& 
 	return true;
 }
 
-//sets value of [keyname] valuename =.
-//specify the optional paramter as false (0) if you do not want it to create
-//the key if it doesn't exist. Returns true if data entered, false otherwise
-//overloaded to accept CString, int, and double
+// sets value of [keyname] valuename =.
+// specify the optional paramter as false (0) if you do not want it to create
+// the key if it doesn't exist. Returns true if data entered, false otherwise
+// overloaded to accept CString, int, and double
 bool IniFile::SetValue(const CString &keyname, const CString &valuename, const CString &value, bool create)
 {
 	if (!create && keys.find(keyname) == keys.end()) //if key doesn't exist
@@ -199,10 +190,10 @@ bool IniFile::SetValue(const CString &keyname, const CString &valuename, const C
 	return true;
 }
 
-//sets value of [keyname] valuename =.
-//specify the optional paramter as false (0) if you do not want it to create
-//the key if it doesn't exist. Returns true if data entered, false otherwise
-//overloaded to accept CString, int, and double
+// sets value of [keyname] valuename =.
+// specify the optional paramter as false (0) if you do not want it to create
+// the key if it doesn't exist. Returns true if data entered, false otherwise
+// overloaded to accept CString, int, and double
 bool IniFile::SetValueI(const CString &keyname, const CString &valuename, int value, bool create)
 {
 	CString temp;
@@ -210,10 +201,10 @@ bool IniFile::SetValueI(const CString &keyname, const CString &valuename, int va
 	return SetValue(keyname, valuename, temp, create);
 }
 
-//sets value of [keyname] valuename =.
-//specify the optional paramter as false (0) if you do not want it to create
-//the key if it doesn't exist. Returns true if data entered, false otherwise
-//overloaded to accept CString, int, and double
+// sets value of [keyname] valuename =.
+// specify the optional paramter as false (0) if you do not want it to create
+// the key if it doesn't exist. Returns true if data entered, false otherwise
+// overloaded to accept CString, int, and double
 bool IniFile::SetValueF(const CString &keyname, const CString &valuename, float value, bool create)
 {
 	CString temp;
@@ -221,10 +212,10 @@ bool IniFile::SetValueF(const CString &keyname, const CString &valuename, float 
 	return SetValue(keyname, valuename, temp, create);
 }
 
-//sets value of [keyname] valuename =.
-//specify the optional paramter as false (0) if you do not want it to create
-//the key if it doesn't exist. Returns true if data entered, false otherwise
-//overloaded to accept CString, int, and double
+// sets value of [keyname] valuename =.
+// specify the optional paramter as false (0) if you do not want it to create
+// the key if it doesn't exist. Returns true if data entered, false otherwise
+// overloaded to accept CString, int, and double
 bool IniFile::SetValueB(const CString &keyname, const CString &valuename, bool value, bool create)
 {
 	CString temp;
@@ -232,8 +223,8 @@ bool IniFile::SetValueB(const CString &keyname, const CString &valuename, bool v
 	return SetValue(keyname, valuename, temp, create);
 }
 
-//deletes specified value
-//returns true if value existed and deleted, false otherwise
+// deletes specified value
+// returns true if value existed and deleted, false otherwise
 bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 {
 	keymap::iterator k = keys.find(keyname);
@@ -248,8 +239,8 @@ bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 	return true;
 }
 
-//deletes specified key and all values contained within
-//returns true if key existed and deleted, false otherwise
+// deletes specified key and all values contained within
+// returns true if key existed and deleted, false otherwise
 bool IniFile::DeleteKey(const CString &keyname)
 {
 	keymap::iterator k = keys.find(keyname);

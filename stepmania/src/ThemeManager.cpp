@@ -20,6 +20,8 @@
 #include "IniFile.h"
 #include "RageTimer.h"
 
+#include <fstream>
+using namespace std;
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
@@ -127,10 +129,9 @@ try_element_again:
 	GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.redir", asPossibleElementFilePaths, false, true );
 	if( !asPossibleElementFilePaths.empty() )
 	{
-		CStdioFile file;
-		file.Open( asPossibleElementFilePaths[0], CFile::modeRead );
+		ifstream file(asPossibleElementFilePaths[0]);
 		CString sLine;
-		file.ReadString( sLine );
+		getline(file, sLine);
 	}
 
 
@@ -196,13 +197,14 @@ try_element_again:
 		CString sDir, sFName, sExt;
 		splitrelpath( sRedirFilePath, sDir, sFName, sExt );
 
-		CStdioFile file;
-		file.Open( sRedirFilePath, CFile::modeRead );
 		CString sNewFileName;
-		file.ReadString( sNewFileName );
+		{
+			ifstream file(sRedirFilePath);
+			getline(file, sNewFileName );
 //			CString sNewFilePath = sDir+"\\"+sNewFileName; // This is what it used to be, FONT redirs were getting extra slashes
 		// at the start of their file names, so I took out this extra slash - Andy.
-		file.Close();
+		}
+
 		CString sNewFilePath = sDir+sNewFileName;
 		if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
 		{
