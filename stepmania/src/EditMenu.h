@@ -69,9 +69,9 @@ public:
 		{
 			"Edit Existing",
 			"Delete Existing",
-			"Create from Source by Copy",
-			"Create from Souce by AutoGen",
-			"Create with Blank"
+			"Create new from Source by Copy",
+			"Create new from Source by AutoGen",
+			"Create new empty"
 		};
 		return s[a];
 	}
@@ -87,8 +87,8 @@ public:
 	Steps*		GetSelectedSourceSteps() const		{ ASSERT(m_iSelection[ROW_SOURCE_STEPS] < (int)m_vpSourceSteps.size());	return m_vpSourceSteps[m_iSelection[ROW_SOURCE_STEPS]]; }
 	Action		GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION] < (int)m_Actions.size());				return m_Actions[m_iSelection[ROW_ACTION]]; }
 
-	Difficulty GetSelectedDifficulty()				{ int iDifficulty = m_iSelection[ROW_STEPS];		CLAMP(iDifficulty,0,NUM_DIFFICULTIES-1); return (Difficulty)iDifficulty; }
-	Difficulty GetSelectedSourceDifficulty()		{ int iDifficulty = m_iSelection[ROW_SOURCE_STEPS]; CLAMP(iDifficulty,0,NUM_DIFFICULTIES-1); return (Difficulty)iDifficulty; }
+	Difficulty	GetSelectedDifficulty();
+	Difficulty	GetSelectedSourceDifficulty();
 
 private:
 	Sprite	m_sprArrows[2];
@@ -103,12 +103,16 @@ private:
 	DifficultyMeter	m_Meter;
 	DifficultyMeter	m_SourceMeter;
 
-	CStringArray		m_sGroups;
-	vector<Song*>		m_pSongs;
-	vector<StepsType>	m_StepsTypes;
-	vector<Steps*>		m_vpSteps;
-	vector<Steps*>		m_vpSourceSteps;
-	vector<Action>		m_Actions;
+
+	vector<Difficulty>			m_vDifficulties;
+	vector<Difficulty>			m_vSourceDifficulties;
+
+	CStringArray				m_sGroups;
+	vector<Song*>				m_pSongs;
+	vector<StepsType>			m_StepsTypes;
+	vector<Steps*>				m_vpSteps;
+	vector<Steps*>				m_vpSourceSteps;
+	vector<Action>				m_Actions;
 
 	void OnRowValueChanged( Row row );
 	void ChangeToRow( Row newRow );

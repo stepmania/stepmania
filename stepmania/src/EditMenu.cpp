@@ -8,7 +8,9 @@
 #include "Steps.h"
 #include "song.h"
 #include "StepsUtil.h"
+#include "Foreach.h"
 
+#define ONLY_ALLOW_EDITS		THEME->GetMetricF("EditMenu","OnlyAllowEdits")
 #define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
 #define SONG_BANNER_X			THEME->GetMetricF("EditMenu","SongBannerX")
 #define SONG_BANNER_Y			THEME->GetMetricF("EditMenu","SongBannerY")
@@ -95,7 +97,29 @@ EditMenu::EditMenu()
 	// fill in data structures
 	SONGMAN->GetGroupNames( m_sGroups );
 	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, m_StepsTypes );
+	if( ONLY_ALLOW_EDITS )
+	{
+		m_vDifficulties.push_back( DIFFICULTY_EDIT );
+	}
+	else
+	{
+		FOREACH_Difficulty( dc )
+			m_vDifficulties.push_back( dc );
+	}
+	FOREACH_Difficulty( dc )
+		m_vSourceDifficulties.push_back( dc );
+
 	
+	RefreshAll();
+}
+
+EditMenu::~EditMenu()
+{
+
+}
+
+void EditMenu::RefreshAll()
+{
 	ChangeToRow( (Row)0 );
 	OnRowValueChanged( (Row)0 );
 
@@ -124,24 +148,17 @@ EditMenu::EditMenu()
 				}
 			}
 
-			vector<Steps*>::const_iterator iter = find( m_vpSteps.begin(), m_vpSteps.end(), GAMESTATE->m_pCurSteps[PLAYER_1] );
-			if( iter != m_vpSteps.end() )
+			for( int i=0; i<m_vpSteps.size(); i++ )
 			{
-				m_iSelection[ROW_STEPS] = iter - m_vpSteps.begin();
-				OnRowValueChanged( ROW_STEPS );
+				const Steps *pSteps = m_vpSteps[i];
+				if( pSteps == GAMESTATE->m_pCurSteps[PLAYER_1] )
+				{
+					m_iSelection[ROW_STEPS] = i;
+					OnRowValueChanged( ROW_STEPS );
+				}
 			}
 		}
 	}
-}
-
-EditMenu::~EditMenu()
-{
-
-}
-
-void EditMenu::RefreshAll()
-{
-	OnRowValueChanged( ROW_SONG );
 }
 
 void EditMenu::DrawPrimitives()
@@ -262,28 +279,45 @@ void EditMenu::OnRowValueChanged( Row row )
 		// fall through
 	case ROW_STEPS_TYPE:
 		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedStepsType()) );
-		CLAMP( m_iSelection[ROW_STEPS], 0, NUM_DIFFICULTIES-1 );	// jump back to the slot for DIFFICULTY_EDIT
+		CLAMP( m_iSelection[ROW_STEPS], 0, m_vDifficulties.size()-1 );	// jump back to the slot for DIFFICULTY_EDIT
 		m_vpSteps.clear();
-		GetSelectedSong()->GetSteps( m_vpSteps, GetSelectedStepsType() );
-		StepsUtil::SortStepsByDescription( m_vpSteps );
-		StepsUtil::SortStepsByTypeAndDifficulty( m_vpSteps );
-		FOREACH_Difficulty( dc )
+		FOREACH( Difficulty, m_vDifficulties, dc )
 		{
-			Steps *pSteps = dc < m_vpSteps.size() ? m_vpSteps[dc] : NULL;
-			if( pSteps == NULL || pSteps->GetDifficulty() != dc )
-				m_vpSteps.insert( m_vpSteps.begin()+dc, NULL );
+			if( *dc == DIFFICULTY_EDIT )
+			{
+				vector<Steps*> v;
+				GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
+				StepsUtil::SortStepsByDescription( v );
+				m_vpSteps.insert( m_vpSteps.end(), v.begin(), v.end() );
+				m_vpSteps.push_back( NULL );	// "New Edit"
+			}
+			else
+			{
+				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), *dc );
+				m_vpSteps.push_back( pSteps );
+			}
 		}
-		if( GetSelectedSong()->HasEdits(GetSelectedStepsType()) )
-			m_vpSteps.push_back( NULL );	// for "New Edit"
 		// fall through
 	case ROW_STEPS:
 		{
 			CString s;
 			Steps *pSteps = GetSelectedSteps();
 			if( pSteps  &&  GetSelectedDifficulty() == DIFFICULTY_EDIT )
-				s = pSteps->GetDescription() + " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
+			{
+				if( pSteps->GetDescription().empty() )
+					 s += "-no name-";
+				else
+					s += pSteps->GetDescription();
+				s += " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
+			}
 			else
+			{
 				s = DifficultyToThemedString(GetSelectedDifficulty());
+
+				// UGLY.  "Edit" -> "New Edit"
+				if( ONLY_ALLOW_EDITS )
+					s = "New " + s;
+			}
 			m_textValue[ROW_STEPS].SetText( s );
 		}
 		if( GetSelectedSteps() )
@@ -296,18 +330,24 @@ void EditMenu::OnRowValueChanged( Row row )
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedSourceStepsType()) );
 
-		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, NUM_DIFFICULTIES-1 );	// jump back to the slot for DIFFICULTY_EDIT
+		CLAMP( m_iSelection[ROW_SOURCE_STEPS], 0, m_vSourceDifficulties.size()-1 );	// jump back to the slot for DIFFICULTY_EDIT
+		
 		m_vpSourceSteps.clear();
-		GetSelectedSong()->GetSteps( m_vpSourceSteps, GetSelectedSourceStepsType() );
-		StepsUtil::SortStepsByDescription( m_vpSourceSteps );
-		StepsUtil::SortStepsByTypeAndDifficulty( m_vpSourceSteps );
-		FOREACH_Difficulty( dc )
+		FOREACH( Difficulty, m_vSourceDifficulties, dc )
 		{
-			Steps *pSteps = dc < m_vpSourceSteps.size() ? m_vpSourceSteps[dc] : NULL;
-			if( pSteps == NULL || pSteps->GetDifficulty() != dc )
-				m_vpSourceSteps.insert( m_vpSourceSteps.begin()+dc, NULL );
+			if( *dc == DIFFICULTY_EDIT )
+			{
+				vector<Steps*> v;
+				GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
+				StepsUtil::SortStepsByDescription( v );
+				m_vpSourceSteps.insert( m_vpSourceSteps.end(), v.begin(), v.end() );
+			}
+			else
+			{
+				Steps *pSteps = GetSelectedSong()->GetStepsByDifficulty( GetSelectedStepsType(), *dc );
+				m_vpSourceSteps.push_back( pSteps );
+			}
 		}
-
 		// fall through
 	case ROW_SOURCE_STEPS:
 		m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
@@ -353,6 +393,19 @@ void EditMenu::OnRowValueChanged( Row row )
 	}
 }
 
+Difficulty EditMenu::GetSelectedDifficulty()
+{
+	int i = m_iSelection[ROW_STEPS];
+	CLAMP( i, 0, m_vDifficulties.size()-1 );
+	return m_vDifficulties[i];
+}
+
+Difficulty EditMenu::GetSelectedSourceDifficulty()
+{
+	int i = m_iSelection[ROW_SOURCE_STEPS];
+	CLAMP( i, 0, m_vSourceDifficulties.size()-1 );
+	return m_vSourceDifficulties[i];
+}
 
 /*
  * (c) 2001-2004 Chris Danford
