@@ -115,17 +115,19 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut )
 			vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
 	}
 }
-
+#include "RageLog.h"
 const HighScore& HighScoreList::GetTopScore() const
 {
 	if( vHighScores.empty() )
 	{
+		LOG->Trace("empty");
 		static HighScore hs;
 		hs = HighScore();
 		return hs;
 	}
 	else
 	{
+		LOG->Trace("not empty");
 		return vHighScores[0];
 	}
 }

@@ -330,9 +330,11 @@ HighScoreList& Profile::GetStepsHighScoreList( const Song* pSong, const Steps* p
 	
 	StepsID stepsID;
 	stepsID.FromSteps( pSteps );
-	
+	CHECKPOINT;
 	HighScoresForASong &hsSong = m_SongHighScores[songID];	// operator[] inserts into map
+	CHECKPOINT;
 	HighScoresForASteps &hsSteps = hsSong.m_StepsHighScores[stepsID];	// operator[] inserts into map
+	CHECKPOINT;
 
 	return hsSteps.hs;
 }
