@@ -329,7 +329,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			if( iIndex != -1 )
 			{
 				value_data = value_data.Left( iIndex );
-				out.GetMainAndSubTitlesFromFullTitle( value_data, out.m_sMainTitle, out.m_sSubTitle );
+				GetMainAndSubTitlesFromFullTitle( value_data, out.m_sMainTitle, out.m_sSubTitle );
 			}
 			else
 				out.m_sMainTitle = value_data;

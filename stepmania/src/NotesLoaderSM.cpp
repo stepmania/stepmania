@@ -69,7 +69,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TITLE") )
-			out.GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
+			GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
 		else if( 0==stricmp(sValueName,"SUBTITLE") )
 			out.m_sSubTitle = sParams[1];

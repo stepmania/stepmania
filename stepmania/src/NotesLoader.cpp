@@ -9,3 +9,21 @@ bool NotesLoader::Loadable( CString sPath )
 	GetApplicableFiles( sPath, list );
 	return list.GetSize() != 0;
 }
+
+void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
+{
+	const CString sLeftSeps[]  = { " -", " ~", " (", " [" };
+	int iNumSeps = sizeof(sLeftSeps)/sizeof(CString);
+	for( int i=0; i<iNumSeps; i++ )
+	{
+		int iBeginIndex = sFullTitle.Find( sLeftSeps[i] );
+		if( iBeginIndex == -1 )
+			continue;
+		sMainTitleOut = sFullTitle.Left( iBeginIndex );
+		sSubTitleOut = sFullTitle.Mid( iBeginIndex+1, sFullTitle.GetLength()-iBeginIndex+1 );
+		return;
+	}
+	sMainTitleOut = sFullTitle; 
+	sSubTitleOut = ""; 
+};	
+

@@ -93,8 +93,6 @@ public:
 	CString	m_sCredit;
 
 	CString GetFullTitle() const { return m_sMainTitle + (m_sSubTitle.GetLength()? (" " + m_sSubTitle):""); }
-	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
-
 
 	CString	m_sMusicFile;
 	DWORD	m_iMusicBytes;

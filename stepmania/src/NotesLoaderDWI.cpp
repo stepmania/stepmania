@@ -263,7 +263,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_sMusicFile = sParams[1];
 
 		else if( 0==stricmp(sValueName,"TITLE") )
-			out.GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
+			GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
 		else if( 0==stricmp(sValueName,"ARTIST") )
 			out.m_sArtist = sParams[1];
