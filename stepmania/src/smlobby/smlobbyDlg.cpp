@@ -12,11 +12,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
-#pragma comment(lib, "wsock32.lib")
-
-
 #include "ConnectDlg.h"
-#include "DirectoryDialog.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -270,9 +266,8 @@ bool CSmlobbyDlg::OnIrc_NICK(const CIrcMessage* pmsg)
 bool CSmlobbyDlg::OnIrc_PRIVMSG(const CIrcMessage* pmsg)
 {
 	//See if were being sent a DCC command
-	//STIL UNDER DEVELOPMENT!
-	//if (OnIrc_DCC_RECV(pmsg)) 
-	//	return true;
+	if (OnIrc_DCC_RECV(pmsg)) 
+		return true;
 	
 	UpdateChatMessages( pmsg );
 
@@ -301,24 +296,15 @@ bool CSmlobbyDlg::OnIrc_DCC_RECV(const CIrcMessage *pmsg)
 		return false;
 
 	//Open a dialog box so user can decide where to save file
-	CDirectoryDialog  DirDlg(FALSE, NULL, NULL, OFN_SHOWHELP | OFN_HIDEREADONLY |
-							OFN_OVERWRITEPROMPT | OFN_ENABLETEMPLATE, NULL,
-							NULL);
-	DirDlg.m_ofn.hInstance = AfxGetInstanceHandle();
-	DirDlg.m_ofn.lpTemplateName = MAKEINTRESOURCE(IDD_DIRECTORY);
-	
-	if ( IDOK != DirDlg.DoModal())
-		return false;
+	CString pathname = SelectFolder();
 
 	//We now have enough info to fire off a thread which downloads the file
 	CIrcDCCServer DCCServer;
 	CString filename(szFilename);
 	CString partner(pmsg->prefix.sNick.c_str());
 
-	//DCCServer.Start(filename, DirDlg.GetPathName(), partner, 
-	//				ulPartnerIP, uiPartnerPort, ulFileSize, FILE_XFER_RATE);  
-	DCCServer.Start(filename, "C:", partner, 
-					ulPartnerIP, uiPartnerPort, ulFileSize, FILE_XFER_RATE);  
+	DCCServer.Start(filename, pathname, partner, ulPartnerIP, uiPartnerPort, 
+					ulFileSize, FILE_XFER_RATE);  
 
 	return true;
 }
@@ -625,4 +611,42 @@ bool CSmlobbyDlg::IsUniqueGameName(const CString GameName)
 	}
 
 	return true;
+}
+
+CString CSmlobbyDlg::SelectFolder()
+{
+	char szTitle[]                 = "Select a Folder";
+	char szDisplayName[MAX_PATH] = "";
+	char szPath[MAX_PATH] = "";
+	BROWSEINFO bi;
+
+	szPath[0] = '\0';
+
+	bi.hwndOwner      = m_hWnd;               // Handle of the owner window
+	bi.pidlRoot       = NULL;                 // Desktop folder is used
+	bi.lpszTitle      = szTitle;              // Title of the dialog box
+	bi.pszDisplayName = szDisplayName;        // Buffer for selected folder name
+	bi.ulFlags        = BIF_RETURNONLYFSDIRS; // Only returns file system directories
+	bi.lpfn           = NULL;
+	bi.lParam         = 0;
+	
+	LPITEMIDLIST pItemIDList = SHBrowseForFolder(&bi);
+
+	if (pItemIDList) {
+		if (SHGetPathFromIDList(pItemIDList, szPath)) {
+			SetWindowText(szPath);
+		}
+
+		// Avoid memory leaks by deleting the PIDL using the shell's task allocator
+		IMalloc* pMalloc;
+		if (SHGetMalloc(&pMalloc) != NOERROR) {
+			TRACE("Failed to get pointer to shells task allocator");
+			return CString(szPath);
+		}
+		pMalloc->Free(pItemIDList);
+		if (pMalloc)
+			pMalloc->Release();
+	}
+
+	return CString(szPath);
 }

@@ -138,35 +138,6 @@ BEGIN
     LTEXT           "",IDC_XFERSTATUS,43,117,77,36
 END
 
-IDD_DIRECTORY DIALOG DISCARDABLE  109, 35, 165, 134
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Open"
-FONT 8, "Helv"
-BEGIN
-    LTEXT           "File &Name:",1090,168,0,76,10
-    EDITTEXT        1152,168,10,90,12,ES_AUTOHSCROLL | ES_OEMCONVERT
-    LISTBOX         1120,168,26,90,68,LBS_SORT | LBS_OWNERDRAWFIXED | 
-                    LBS_HASSTRINGS | LBS_DISABLENOSCROLL | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "&Directories:",-1,7,6,92,9
-    LTEXT           "",1088,7,18,92,9,SS_NOPREFIX
-    LISTBOX         1121,7,32,92,68,LBS_SORT | LBS_OWNERDRAWFIXED | 
-                    LBS_HASSTRINGS | LBS_DISABLENOSCROLL | WS_VSCROLL | 
-                    WS_TABSTOP
-    LTEXT           "List Files of &Type:",1089,168,98,90,9
-    COMBOBOX        1136,168,108,90,36,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | 
-                    WS_BORDER | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Dri&ves:",1091,7,104,92,9
-    COMBOBOX        1137,7,114,92,68,CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | 
-                    CBS_AUTOHSCROLL | CBS_SORT | CBS_HASSTRINGS | WS_BORDER | 
-                    WS_VSCROLL | WS_TABSTOP
-    DEFPUSHBUTTON   "OK",IDOK,105,6,50,14,WS_GROUP
-    PUSHBUTTON      "Cancel",IDCANCEL,105,24,50,14,WS_GROUP
-    PUSHBUTTON      "&Help",1038,105,46,50,14,WS_GROUP
-    CONTROL         "&Read Only",1040,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
-                    WS_TABSTOP,105,68,50,12
-END
-
 
 #ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////

@@ -76,8 +76,8 @@ protected:
 	virtual void OnIrcDisconnected();
 
 	void UpdateChatMessages( const CIrcMessage* p );
-	
 	bool IsUniqueGameName(const CString GameName);
+	CString SelectFolder();
 };
 
 //{{AFX_INSERT_LOCATION}}

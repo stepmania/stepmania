@@ -37,7 +37,6 @@
 #define IDC_XFERSTATUS                  1022
 #define IDC_TOFROM                      1023
 #define IDC_SENTRECVD                   1024
-#define IDD_DIRECTORY                   1536
 
 // Next default values for new objects
 // 

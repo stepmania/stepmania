@@ -520,6 +520,9 @@ bool CIrcDCCServer::Start(
 
 	//Create a file transfer dialog
 	m_pSendFileDialog = new CSendFileDialog(AfxGetMainWnd());
+	if ( !m_pSendFileDialog->Create(IDD_FILEXFER, AfxGetMainWnd()) )
+		return false;
+
 	m_pSendFileDialog->m_BytesSent = "0 bytes";
 	m_pSendFileDialog->m_ProgressFile.SetRange(0, 100);
 	m_pSendFileDialog->m_ProgressFile.SetPos(0);
@@ -586,7 +589,7 @@ void CIrcDCCServer::DoThreadRecv()
 	m_pSendFileDialog->m_XferStatus = "Recieving File...";
 
 	//Create a file to write incoming data to
-	CString filename = m_directory+"\\"+m_fileName;
+	CString filename = m_directory+m_fileName;
 	FILE* fp = fopen(filename, "wb");
 	if ( !fp ) return;
 
