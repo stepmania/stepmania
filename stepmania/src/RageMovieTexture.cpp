@@ -248,15 +248,15 @@ bool RageMovieTexture::PlayMovie()
 //-----------------------------------------------------------------------------
 void RageMovieTexture::CheckMovieStatus()
 {
-    long lEventCode;
-    long lParam1;
-    long lParam2;
+	if(!m_bLoop) return;
 
     // Check for completion events
 	CComPtr<IMediaEvent>    pME;
     m_pGB.QueryInterface(&pME);
+
+	long lEventCode, lParam1, lParam2;
     pME->GetEvent( &lEventCode, &lParam1, &lParam2, 0 );
-    if( EC_COMPLETE == lEventCode  && m_bLoop )
+    if( EC_COMPLETE == lEventCode )
 		SetPosition(0);
 }
 
@@ -267,19 +267,16 @@ void RageMovieTexture::Play()
 
 void RageMovieTexture::Pause()
 {
-	LOG->Trace("RageMovieTexture::Pause()");
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
 	HRESULT hr;
 	if( FAILED( hr = pMC->Pause() ) )
         throw RageException( hr_ssprintf(hr, "Could not pause the DirectShow graph.") );
-
 }
 
 void RageMovieTexture::Stop()
 {
-	LOG->Trace("RageMovieTexture::Stop()");
 	CComPtr<IMediaControl> pMC;
     m_pGB.QueryInterface(&pMC);
 
@@ -292,7 +289,6 @@ void RageMovieTexture::Stop()
 
 void RageMovieTexture::SetPosition( float fSeconds )
 {
-	LOG->Trace("RageMovieTexture::Stop()");
 	CComPtr<IMediaPosition> pMP;
     m_pGB.QueryInterface(&pMP);
     pMP->put_CurrentPosition(0);
