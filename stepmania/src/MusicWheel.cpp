@@ -1035,8 +1035,7 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 	case STATE_SELECTING_MUSIC:
 	case STATE_ROULETTE_SPINNING:
 	case STATE_ROULETTE_SLOWING_DOWN:
-		break;	// fall through 
-		// XXX fall through or not? -glenn
+		break;
 	default:
 		LOG->Trace( "NextMusic() ignored" );
 		return;	// don't continue
