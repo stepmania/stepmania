@@ -509,10 +509,10 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 	int width = wind->GetVideoModeParams().width;
 	int height = wind->GetVideoModeParams().height;
 
-	SDL_Surface *image = SDL_CreateRGBSurface(
+	SDL_Surface *image = SDL_CreateRGBSurfaceSane(
 		SDL_SWSURFACE, width, height,
         24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
-	SDL_Surface *temp = SDL_CreateRGBSurface(
+	SDL_Surface *temp = SDL_CreateRGBSurfaceSane(
 		SDL_SWSURFACE, width, height,
 		24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
 
