@@ -211,9 +211,6 @@ void BitmapText::DrawChars()
 	unsigned uStartGlyph = SCALE( m_temp.crop.left, 0.f, 1.f, 0, uNumGlyphs );
 	unsigned uEndGlyph = SCALE( m_temp.crop.right, 0.f, 1.f, uNumGlyphs, 0 );
 
-	if( m_temp.crop.right > 0 )
-		int skjdks = 0;
-
 	for(unsigned start = uStartGlyph; start < uEndGlyph; )
 	{
 		unsigned end = start;
