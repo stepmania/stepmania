@@ -279,6 +279,16 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice, CStri
 	return true;
 }
 
+void MemoryCardDriver_Linux::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )
+{
+	if( !pDevice->sOsMountDir.empty() )
+		return;
+
+	CString sCommand = "umount " + pDevice->sOsMountDir;
+	LOG->Trace( "executing '%s'", sCommand.c_str() );
+	system( sCommand );
+}
+
 void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 {
 	if( !pDevice->sOsMountDir.empty() )
