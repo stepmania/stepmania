@@ -16,7 +16,6 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
-#include "ArrowEffects.h"
 #include "GameManager.h"
 #include "InputMapper.h"
 #include "SongManager.h"

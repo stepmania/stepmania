@@ -19,7 +19,6 @@
 #include "StyleDef.h"
 #include "BitmapText.h"
 #include "Quad.h"
-#include "ArrowEffects.h"
 #include "NoteDataWithScoring.h"
 #include "NoteDisplay.h"
 #include "ArrowBackdrop.h"

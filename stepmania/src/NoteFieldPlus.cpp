@@ -14,6 +14,7 @@
 #include "GameState.h"
 #include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
+#include "ArrowEffects.h"
 
 
 NoteFieldPlus::NoteFieldPlus()
