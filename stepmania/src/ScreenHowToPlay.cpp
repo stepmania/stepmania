@@ -18,15 +18,10 @@ static const ThemeMetric<float>			SECONDS_TO_SHOW		("ScreenHowToPlay","SecondsTo
 static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>			NUM_PERFECTS		("ScreenHowToPlay","NumPerfects");
 static const ThemeMetric<int>			NUM_MISSES			("ScreenHowToPlay","NumMisses");
-//
 static const ThemeMetric<bool>			USELIFEBAR			("ScreenHowToPlay","UseLifeMeterBar");
-//
 static const ThemeMetric<bool>			USECHARACTER		("ScreenHowToPlay","UseCharacter");
-//
 static const ThemeMetric<bool>			USEPAD				("ScreenHowToPlay","UsePad");
-//
 static const ThemeMetric<bool>			USEPLAYER			("ScreenHowToPlay","UseNotefield");
-static const ThemeMetric<float>			PLAYERX				("ScreenHowToPlay","PlayerX");
 
 enum Animation
 {
@@ -155,8 +150,9 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 
 		m_pPlayer = new Player;
 		m_pPlayer->Load( PLAYER_1, m_NoteData, m_pLifeMeterBar, NULL, NULL, NULL, NULL, NULL, NULL );
-		m_pPlayer->SetX( PLAYERX );
+		m_pPlayer->SetName( "Player" );
 		this->AddChild( m_pPlayer );
+		SET_XY_AND_ON_COMMAND( m_pPlayer );
 
 		// Don't show judgement
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
