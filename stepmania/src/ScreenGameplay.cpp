@@ -1082,7 +1082,8 @@ void ScreenGameplay::PlayAnnouncer( CString type, float fSeconds )
 	/* Don't play before the first beat, or after we're finished. */
 	if( m_DancingState != STATE_DANCING )
 		return;
-	if( GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat )
+	if( GAMESTATE->m_pCurSong == NULL  ||	// this will be true on ScreenDemonstration sometimes
+		GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat )
 		return;
 
 
