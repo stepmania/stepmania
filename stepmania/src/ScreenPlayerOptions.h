@@ -27,6 +27,7 @@ private:
 
 	bool            m_bAcceptedChoices;
 	bool            m_bGoToOptions;
+	bool            m_bAskOptionsMessage;
 	Sprite          m_sprOptionsMessage;
 };
 
