@@ -95,11 +95,11 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	 * system we can compare them: */
 	glGetFloatv(GL_LINE_WIDTH_RANGE, m_oglspecs->line_range);
 	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &m_oglspecs->line_granularity);
-	LOG->Info("Line width range: %f-%f +%f", m_oglspecs->line_range[0], m_oglspecs->line_range[1], m_oglspecs->line_granularity);
+	LOG->Info("Line width range: %.3f-%.3f +%.3f", m_oglspecs->line_range[0], m_oglspecs->line_range[1], m_oglspecs->line_granularity);
 
 	glGetFloatv(GL_POINT_SIZE_RANGE, m_oglspecs->point_range);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &m_oglspecs->point_granularity);
-	LOG->Info("Point size range: %f-%f +%f", m_oglspecs->point_range[0], m_oglspecs->point_range[1], m_oglspecs->point_granularity);
+	LOG->Info("Point size range: %.3f-%.3f +%.3f", m_oglspecs->point_range[0], m_oglspecs->point_range[1], m_oglspecs->point_granularity);
 
 	/* sizeof("string constant") is the size of the pointer (~4), not the length of the string. */
 	m_oglspecs->bAALinesCauseProblems = strncmp((const char*)glGetString(GL_RENDERER),"3Dfx/Voodoo3 (tm)/2 TMUs/16 MB SDRAM/ICD (Nov  2 2000)",strlen("3Dfx/Voodoo3"))==0;
