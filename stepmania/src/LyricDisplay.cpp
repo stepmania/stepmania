@@ -55,6 +55,11 @@ void LyricDisplay::Update( float fDeltaTime )
 		const float TweenBufferTime = g_TweenInTime + g_TweenOutTime;
 
 		fShowLength = min(fShowLength, Distance - TweenBufferTime);
+
+		/* If it's negative, two lyrics are so close together that there's no time
+		 * to tween properly.  Lyrics should never be this brief, anyway, so just
+		 * skip it. */
+		fShowLength = max(fShowLength, 0);
 	}
 
 	m_textLyrics.SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
