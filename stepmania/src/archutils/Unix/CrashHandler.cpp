@@ -334,7 +334,7 @@ OSStatus CrashExceptionHandler( ExceptionInformation *e )
 {
 	CrashData crash;
 	crash.type = CrashData::OSX_EXCEPTION;
-	crash.kind = theException->theKind;
+	crash.kind = e->theKind;
 
 	GetExceptionBacktraceContext( &crash.ctx, e );
 	RunCrashHandler( &crash );
