@@ -128,6 +128,7 @@ public:
 	/* optimization: for the default of start to end, use the second (faster) */
 	int GetNumHoldNotes( const float fStartBeat, const float fEndBeat = -1 ) const;
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
+	int RowNeedsHands( int row ) const;
 
 	// Transformations
 	void LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track

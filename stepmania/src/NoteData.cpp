@@ -478,6 +478,35 @@ int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) co
 	return iNumNotes;
 }
 
+int NoteData::RowNeedsHands( const int row ) const
+{
+	int iNumNotesThisIndex = 0;
+	for( int t=0; t<m_iNumTracks; t++ )
+	{
+		TapNote tn = GetTapNoteX(t, row);
+		if( tn == TAP_MINE || tn == TAP_EMPTY ) // mines don't count
+			continue;
+		++iNumNotesThisIndex;
+	}
+
+	/* We must have at least one non-hold-body at this row to count it. */
+	if( !iNumNotesThisIndex )
+		return false;
+
+	if( iNumNotesThisIndex < 3 )
+	{
+		/* We have at least one, but not enough.  Count holds. */
+		for( int j=0; j<GetNumHoldNotes(); j++ )
+		{
+			const HoldNote &hn = GetHoldNote(j);
+			if( hn.iStartRow+1 <= row && row <= hn.iEndRow )
+				++iNumNotesThisIndex;
+		}
+	}
+
+	return iNumNotesThisIndex >= 3;
+}
+
 int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 {
 	/* Count the number of times you have to use your hands.  This includes
@@ -498,31 +527,10 @@ int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
-		int iNumNotesThisIndex = 0;
-		for( int t=0; t<m_iNumTracks; t++ )
-		{
-			TapNote tn = GetTapNoteX(t, i);
-			if( tn != TAP_MINE && tn != TAP_EMPTY ) // mines don't count
-				++iNumNotesThisIndex;
-		}
-
-		/* We must have at least one non-hold-body at this row to count it. */
-		if( !iNumNotesThisIndex )
+		if( !RowNeedsHands(i) )
 			continue;
 
-		if( iNumNotesThisIndex < 3 )
-		{
-			/* We have at least one, but not enough.  Count holds. */
-			for( int j=0; j<GetNumHoldNotes(); j++ )
-			{
-				const HoldNote &hn = GetHoldNote(j);
-				if( hn.iStartRow+1 <= j && j <= hn.iEndRow )
-					++iNumNotesThisIndex;
-			}
-		}
-
-		if( iNumNotesThisIndex >= 3 )
-			iNum++;
+		iNum++;
 	}
 
 	return iNum;

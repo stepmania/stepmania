@@ -132,11 +132,51 @@ int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) 
 	return iNumSuccessfulMinesNotes;
 }
 
-/* See NoteData::GetNumHands for the maximum calculation.  We need to line up to that.
- * A "hands" */
-int NoteDataWithScoring::GetSuccessfulHands( const float fStartBeat, const float fEndBeat ) const
+/* See NoteData::GetNumHands(). */
+int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) const
 {
-	return 0;
+	if( fEndBeat == -1 )
+		fEndBeat = GetMaxBeat();
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	/* Clamp to known-good ranges. */
+	iStartIndex = max( iStartIndex, 0 );
+	iEndIndex = min( iEndIndex, GetMaxRow()-1 );
+
+	int iNum = 0;
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
+	{
+		if( !RowNeedsHands(i) )
+			continue;
+
+		bool Missed = false;
+		for( int t=0; t<GetNumTracks(); t++ )
+		{
+			TapNote tn = GetTapNoteX(t, i);
+			if( tn == TAP_MINE || tn == TAP_EMPTY ) // mines don't count
+				continue;
+			if( GetTapNoteScore(t, i) <= TNS_BOO )
+				Missed = true;
+		}
+
+		if( Missed )
+			continue;
+
+		/* Check hold scores. */
+		for( int j=0; j<GetNumHoldNotes(); j++ )
+		{
+			const HoldNote &hn = GetHoldNote(j);
+			if( hn.iStartRow+1 <= i && i <= hn.iEndRow && GetHoldNoteScore(hn) != HNS_OK )
+				Missed = true;
+		}
+
+		if( !Missed )
+			iNum++;
+	}
+
+	return iNum;
 }
 
 /* Return the minimum tap score of a row.  If the row isn't complete (not all
