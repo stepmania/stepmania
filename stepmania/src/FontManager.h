@@ -16,8 +16,6 @@
 
 #include <map>
 class Font;
-class IniFile;
-struct FontPageSettings;
 
 //-----------------------------------------------------------------------------
 // FontManager Class Declarations
@@ -30,7 +28,9 @@ public:
 
 	Font* LoadFont( const CString &sFontOrTextureFilePath, CString sChars = "" );
 	void UnloadFont( Font *fp );
+	void ReloadFonts();
 
+	/* Return true if FileName is a part of the font "FontName". */
 	static bool MatchesFont(CString FontName, CString FileName);
 
 	static longchar MakeGameGlyph(longchar c, Game g);
@@ -45,11 +45,6 @@ public:
 protected:
 	// map from file name to a texture holder
 	map<CString, Font*> m_mapPathToFont;
-	static Font *LoadFontInt(const CString &sFontOrTextureFilePath, CString sChars);
-	static CString GetPageNameFromFileName(const CString &fn);
-	static void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &TexturePath, const CString &PageName, CString sChars);
-	static void GetFontPaths(const CString &sFontOrTextureFilePath, 
-							   CStringArray &TexturePaths, CString &IniPath);
 	static void InitCharAliases();
 };
 

@@ -95,7 +95,6 @@ class Font
 public:
 	int m_iRefCount;
 	CString path;
-	map<longchar,glyph*> m_iCharToGlyph;
 
 	Font();
 	~Font();
@@ -111,32 +110,44 @@ public:
 	void AddPage(FontPage *fp);
 
 	/* Steal all of a font's pages. */
-	void MergeFont(Font *f);
+	void MergeFont(Font &f);
 
+	void Load(const CString &sFontOrTextureFilePath, CString sChars);
 	void Unload();
+	void Reload();
 
 	/* Load font-wide settings. */
 	void CapsOnly();
 
-//	int GetBaseline() const { return def->baseline; }
 	int GetHeight() const { return def->height; }
 	bool IsKanjiFont() const { return def->kanji; }
 	int GetCenter() const { return def->GetCenter(); }
-	int GetVshift() const { return def->vshift; }
 	int GetLineSpacing() const { return def->LineSpacing; }
 
 	void SetDefaultGlyph(FontPage *fp);
 
 	static const longchar DEFAULT_GLYPH;
 
-private:
-	/* List of pages and fonts that we're responsible for freeing. */
-	vector<FontPage *> pages;
-	vector<Font *> merged_fonts;
+	static bool MatchesFont(CString FontName, CString FileName);
 
-	/* This is the primary fontpage of this font; font-wide baseline, ascender,
-	 * etc. is pulled from it. */
+private:
+	/* List of pages and fonts that we use (and are responsible for freeing). */
+	vector<FontPage *> pages;
+
+	/* This is the primary fontpage of this font; font-wide height, center,
+	 * etc. is pulled from it.  (This is one of pages[].) */
 	FontPage *def;
+
+	/* Map from characters to glyphs.  (Each glyph* is part of one of pages[].) */
+	map<longchar,glyph*> m_iCharToGlyph;
+
+	/* We keep this around only for reloading. */
+	CString Chars;
+
+	void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &TexturePath, const CString &PageName, CString sChars);
+	static void GetFontPaths(const CString &sFontOrTextureFilePath, 
+							   CStringArray &TexturePaths, CString &IniPath);
+	CString GetPageNameFromFileName(const CString &fn);
 };
 
 #endif

@@ -20,6 +20,8 @@
 #include "RageException.h"
 #include "FontManager.h"
 #include "GameState.h"
+#include "ThemeManager.h"
+#include "GameManager.h"
 
 const longchar Font::DEFAULT_GLYPH = 0xFFFFFF;
 
@@ -242,18 +244,18 @@ void Font::Unload()
 		delete pages[i];
 	pages.clear();
 	
-	/* Free any fonts that we merged into us.  These aren't managed by
-	 * FontManager (we own them), so just delete them. */
-	for(i = 0; i < merged_fonts.size(); ++i)
-		delete merged_fonts[i];
-	merged_fonts.clear();
-
 	m_iCharToGlyph.clear();
 	def = NULL;
-	path.clear();
 
 	/* Don't clear the refcount.  We've unloaded, but that doesn't mean things
 	 * aren't still pointing to us. */
+}
+
+void Font::Reload()
+{
+	Unload();
+	ASSERT(!path.empty());
+	Load(path, Chars);
 }
 
 
@@ -268,16 +270,17 @@ void Font::AddPage(FontPage *fp)
 	}
 }
 
-void Font::MergeFont(Font *f)
+void Font::MergeFont(Font &f)
 {
-	for(map<longchar,glyph*>::iterator it = f->m_iCharToGlyph.begin();
-		it != f->m_iCharToGlyph.end(); ++it)
+	for(map<longchar,glyph*>::iterator it = f.m_iCharToGlyph.begin();
+		it != f.m_iCharToGlyph.end(); ++it)
 	{
 		m_iCharToGlyph[it->first] = it->second;
 	}
 
-	/* We now have ownership of f.  Mark it to be freed. */
-	merged_fonts.push_back(f);
+	pages.insert(pages.end(), f.pages.begin(), f.pages.end());
+
+	f.pages.clear();
 }
 
 const glyph &Font::GetGlyph( longchar c ) const
@@ -329,3 +332,347 @@ void Font::SetDefaultGlyph(FontPage *fp)
 }
 
 
+/* "Normal.png", "Normal [foo].png", "Normal 16x16.png", and "Normal [foo] 16x16.png"
+ * are all part of the FontName "Normal".  "Normal2 16x16.png" is not.
+ *
+ * So, FileName must start with FontName, followed by either " [", " DIGIT" or
+ * a period.
+ *
+ * This is to make sure we don't pull in textures from similarly-named fonts.
+ */ 
+bool Font::MatchesFont(CString FontName, CString FileName)
+{
+	FontName.MakeLower();
+	FileName.MakeLower();
+
+	if(FileName.substr(0, FontName.size()) != FontName)
+		return false;
+	FileName = FileName.substr(FontName.size());
+
+	return regex("^( \\[|\\.| [0-9]+x[0-9]+)", FileName);
+}
+
+void Font::GetFontPaths(const CString &sFontOrTextureFilePath, 
+							   CStringArray &TexturePaths, CString &IniPath)
+{
+	CString sDrive, sDir, sFName, sExt;
+	splitpath( false, sFontOrTextureFilePath, sDrive, sDir, sFName, sExt );
+
+	ASSERT(sExt.CompareNoCase("ini")); /* don't give us an INI! */
+	ASSERT(sExt.CompareNoCase("redir")); /* don't give us a redir! */
+
+	if(!sExt.empty())
+	{
+		TexturePaths.push_back(sFontOrTextureFilePath);
+		return;
+	}
+
+	/* If we have no extension, we need to search. */
+	GetDirListing( sFontOrTextureFilePath + "*.png", TexturePaths, false, true );
+
+	CStringArray IniPaths;
+	GetDirListing( sFontOrTextureFilePath + "*.ini", IniPaths, false, true );
+
+	/* Filter out texture files that aren't actually for this font. */
+	unsigned i = 0;
+	while(i < TexturePaths.size())
+	{
+		if(!MatchesFont(sFontOrTextureFilePath, TexturePaths[i]))
+			TexturePaths.erase(TexturePaths.begin()+i);
+		else
+			i++;
+	}
+
+	for(i = 0; i < IniPaths.size(); ++i)
+		if(MatchesFont(sFontOrTextureFilePath, IniPaths[i])) break;
+	if(i < IniPaths.size()) IniPath = IniPaths[i];
+
+	ASSERT(!TexturePaths.empty()); /* ThemeManager should have checked this */
+}
+
+CString Font::GetPageNameFromFileName(const CString &fn)
+{
+	unsigned begin = fn.find_first_of('[');
+	if(begin == fn.npos) return "main";
+	unsigned end = fn.find_first_of(']', begin);
+	if(end == fn.npos) return "main";
+	begin++; end--;
+	if(end == begin) return "main";
+	return fn.substr(begin, end-begin+1);
+}
+
+void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &TexturePath, const CString &PageName, CString sChars)
+{
+	cfg.TexturePath = TexturePath;
+
+	/* If we have any characters to map, add them. */
+	for( unsigned n=0; n<sChars.size(); n++ )
+	{
+		char c = sChars[n];
+		cfg.CharToGlyphNo[c] = n;
+	}
+	int NumFrames = RageTexture::GetFrameCountFromFileName(TexturePath);
+	if(NumFrames == 128 || NumFrames == 256)
+	{
+		/* If it's 128 or 256 frames, default to ASCII or ISO-8859-1,
+		 * respectively.  If it's anything else, we don't know what it
+		 * is, so don't make any default mappings (the INI needs to do
+		 * it itself). */
+		/*
+		if(NumFrames == 128)
+			cfg.MapRange("ASCII", 0, 127, 0);
+		else if(NumFrames == 256)
+			cfg.MapRange("ISO-8859-1", 0, 255, 0);
+		*/
+		for( longchar i=0; i<NumFrames; i++ )
+			cfg.CharToGlyphNo[i] = i;
+	}
+	
+	ini.RenameKey("Char Widths", "main");
+
+	LOG->Trace("Loading font page '%s' settings from page name '%s'",
+		TexturePath.GetString(), PageName.GetString());
+	
+	ini.GetValueI( PageName, "DrawExtraPixelsLeft", cfg.DrawExtraPixelsLeft );
+	ini.GetValueI( PageName, "DrawExtraPixelsRight", cfg.DrawExtraPixelsRight );
+	ini.GetValueI( PageName, "AddToAllWidths", cfg.AddToAllWidths );
+	ini.GetValueF( PageName, "ScaleAllWidthsBy", cfg.ScaleAllWidthsBy );
+	ini.GetValueI( PageName, "LineSpacing", cfg.LineSpacing );
+	ini.GetValueI( PageName, "Top", cfg.Top );
+	ini.GetValueI( PageName, "Baseline", cfg.Baseline );
+	ini.GetValueB( PageName, "Kanji", cfg.Kanji );
+
+	/* Iterate over all keys. */
+	const IniFile::key *k = ini.GetKey(PageName);
+	if(k == NULL)
+		return;
+
+	for(IniFile::key::const_iterator key = k->begin(); key != k->end(); ++key)
+	{
+		CString val = key->first;
+		CString data = key->second;
+
+		val.MakeUpper();
+
+		/* If val is an integer, it's a width, eg. "10=27". */
+		if(IsAnInt(val))
+		{
+			cfg.GlyphWidths[atoi(val)] = atoi(data);
+			continue;
+		}
+
+		/* "map XXXX=frame" maps a char to a frame. */
+		if(val.substr(0, 4) == "MAP ")
+		{
+			/* map CODEPOINT=frame. CODEPOINT can be
+			 * 1. U+hexval
+			 * 2. an alias ("kakumei1")
+			 * 3. a game type followed by a game alias, eg "pump menuleft"
+			 *
+			 * map 1=2 is the same as
+			 * range unicode #1-1=2
+			 */
+			CString codepoint = val.substr(4); /* "XXXX" */
+		
+			longchar c;
+			Game game = GAME_INVALID;
+
+			if(codepoint.find_first_of(' ') != codepoint.npos)
+			{
+				/* There's a space; the first word should be a game type. Split it. */
+				unsigned pos = codepoint.find_first_of(' ');
+				CString gamename = codepoint.substr(0, pos);
+				codepoint = codepoint.substr(pos+1);
+
+				game = GameManager::StringToGameType(gamename);
+
+				if(game == GAME_INVALID)
+					RageException::Throw( "Font definition '%s' uses unknown game type '%s'",
+						ini.GetPath().GetString(), gamename.GetString() );
+			}
+
+			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
+				sscanf(codepoint.substr(2).c_str(), "%x", &c);
+			else if(FontManager::CharAliases.find(codepoint) != FontManager::CharAliases.end())
+				c = FontManager::CharAliases[codepoint];
+			else
+				RageException::Throw( "Font definition '%s' has an invalid value '%s'.",
+					ini.GetPath().GetString(), val.GetString() );
+
+			if(game != GAME_INVALID) c = FontManager::MakeGameGlyph(c, game);
+
+			cfg.CharToGlyphNo[c] = atoi(data);
+			continue;
+		}
+#if 0
+		/* not implemented yet */
+		if(val.substr(0, 6) == "RANGE ")
+		{
+			/* range RANGE=first_frame
+			 *
+			 * RANGE is:
+			 * CODESET               or
+			 * CODESET #start-end
+			 * eg
+			 * range ISO-8859-1=0   (default for 256-frame fonts)
+			 * range ASCII=0        (default for 128-frame fonts)
+			 *
+			 * (Start and end are in hex.)
+			 *
+			 * Map two high-bit portions of ISO-8859- to one font:
+			 * range ISO-8859-2 #80-FF=0
+			 * range ISO-8859-3 #80-FF=128
+			 *
+			 * Map hiragana to 0-84:
+			 * range Unicode #3041-3094=0
+			 */
+			CString range = val.substr(6);
+			unsigned first = 0, last = 0xFFFF; /* all */
+			unsigned space = range.find_first_of(' ');
+			if(space != val.npos)
+			{
+
+			}
+
+
+
+			continue;
+		}
+#endif
+	}
+}
+
+static CStringArray LoadStack;
+
+/* A font set is a set of files, eg:
+ *
+ * Normal 16x16.png
+ * Normal [other] 16x16.png
+ * Normal [more] 8x8.png
+ * Normal 16x16.ini           (the 16x16 here is optional)
+ *
+ * Only one texture is required; the INI is optional.  [1] This is
+ * designed to be backwards-compatible.
+ *
+ * sFontOrTextureFilePath can be a partial path, eg.
+ * "Themes/default/Fonts/Normal"
+ * or a complete path to a texture file (in which case no other
+ * files will be searched for).
+ *
+ * The entire font can be redirected; that's handled in ThemeManager.
+ * Individual font files can not be redirected.
+ *
+ * TODO: 
+ * [main]
+ * import=FontName,FontName2 (load other fonts)
+ *
+ * [1] If a file has no INI and sChars is not set, it will receive a default
+ * mapping of ASCII or ISO-8859-1 if the font has exactly 128 or 256 frames.
+ * However, if it doesn't, we don't know what it is and the font will receive
+ * no default mapping.  A font isn't useful with no characters mapped.
+ */
+void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
+{
+	/* Check for recursion (recursive imports). */
+	{
+		for(unsigned i = 0; i < LoadStack.size(); ++i)
+		{
+			if(LoadStack[i] == sFontOrTextureFilePath)
+			{
+				CString str = join("\n", LoadStack);
+				str += "\n" + sFontOrTextureFilePath;
+				RageException::Throw("Font import recursion detected\n%s", str.GetString());
+			}
+		}
+		LoadStack.push_back(sFontOrTextureFilePath);
+	}
+
+	/* The font is not already loaded.  Figure out what we have. */
+//	LOG->Trace( "FontManager::LoadFont(%s).", sFontFilePath.GetString() );
+
+	path = sFontOrTextureFilePath;
+	Chars = sChars;
+
+	/* Get the filenames associated with this font. */
+	CStringArray TexturePaths;
+	CString IniPath;
+	GetFontPaths(sFontOrTextureFilePath, TexturePaths, IniPath);
+	
+	bool CapitalsOnly = false;
+
+	/* If we have an INI, load it. */
+	IniFile ini;
+	if( !IniPath.empty() )
+	{
+		ini.SetPath( IniPath );
+		ini.ReadFile();
+		ini.RenameKey("Char Widths", "main");
+		ini.GetValueB( "main", "CapitalsOnly", CapitalsOnly );
+	}
+
+	{
+		/* If this is a top-level font (not a subfont), load the default font first. */
+		CStringArray ImportList;
+		if(LoadStack.size() == 1)
+			ImportList.push_back("default font");
+
+		/* Check to see if we need to import any other fonts.  Do this
+		 * before loading this font, so any characters in this font
+		 * override imported characters. */
+		CString imports;
+		ini.GetValue( "main", "import", imports );
+		split(imports, ",", ImportList, true);
+		for(unsigned i = 0; i < ImportList.size(); ++i)
+		{
+			CString path = THEME->GetPathTo("Fonts", ImportList[i]);
+			Font subfont;
+			subfont.Load(path, "");
+			MergeFont(subfont);
+		}
+	}
+
+	/* Load each font page. */
+	for(unsigned i = 0; i < TexturePaths.size(); ++i)
+	{
+		FontPage *fp = new FontPage;
+
+		/* Grab the page name, eg "foo" from "Normal [foo].png". */
+		CString pagename = GetPageNameFromFileName(TexturePaths[i]);
+
+		/* Load settings for this page from the INI. */
+		FontPageSettings cfg;
+		LoadFontPageSettings(cfg, ini, TexturePaths[i], pagename, sChars);
+
+		/* Go. */
+		fp->Load(cfg);
+
+		/* Expect at least as many frames as we have premapped characters. */
+		/* Make sure that we don't map characters to frames we don't actually
+		 * have.  This can happen if the font is too small for an sChars. */
+		for(map<longchar,int>::const_iterator it = fp->m_iCharToGlyphNo.begin();
+			it != fp->m_iCharToGlyphNo.end(); ++it)
+		{
+			if(it->second < fp->m_pTexture->GetNumFrames()) continue; /* OK */
+			RageException::Throw( "The font '%s' maps %s to frame %i, but the font only has %i frames.",
+				TexturePaths[i].GetString(), WcharDisplayText(wchar_t(it->first)).GetString(), it->second, fp->m_pTexture->GetNumFrames() );
+		}
+
+		LOG->Trace("Adding page %s (%s) to %s; %i glyphs",
+			TexturePaths[i].GetString(), pagename.GetString(),
+			sFontOrTextureFilePath.GetString(), fp->m_iCharToGlyphNo.size());
+		AddPage(fp);
+
+		/* If this is the first font loaded, or it's called "main", this page's
+		 * properties become the font's properties. */
+		if(i == 0 || pagename == "main")
+			SetDefaultGlyph(fp);
+	}
+
+	if(CapitalsOnly)
+		CapsOnly();
+
+	if(m_iCharToGlyph.empty())
+		LOG->Warn("Font %s has no characters", sFontOrTextureFilePath.GetString());
+
+	LoadStack.pop_back();
+}

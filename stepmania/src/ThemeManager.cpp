@@ -19,7 +19,7 @@
 #include "GameDef.h"
 #include "IniFile.h"
 #include "RageTimer.h"
-#include "FontManager.h"
+#include "Font.h"
 
 using namespace std;
 
@@ -151,7 +151,7 @@ try_element_again:
 	/* Weed out false matches.  (For example, this gets rid of "normal2" when
 	 * we're really looking for "normal".) */
 	for(i = 0; i < int(asPossibleElementFilePaths.size()); ) {
-		if(!FontManager::MatchesFont(path + "Fonts\\"+ sFileName, asPossibleElementFilePaths[i]))
+		if(!Font::MatchesFont(path + "Fonts\\"+ sFileName, asPossibleElementFilePaths[i]))
 			asPossibleElementFilePaths.erase(asPossibleElementFilePaths.begin()+i);
 		else i++;
 	}
@@ -166,7 +166,7 @@ try_element_again:
 	}
 
 	for(i = 0; i < int(asPossibleElementFilePaths.size()); ) {
-		if(!FontManager::MatchesFont(path + "Fonts\\"+ sFileName, asPossibleElementFilePaths[i]))
+		if(!Font::MatchesFont(path + "Fonts\\"+ sFileName, asPossibleElementFilePaths[i]))
 			asPossibleElementFilePaths.erase(asPossibleElementFilePaths.begin()+i);
 		else i++;
 	}
@@ -250,7 +250,7 @@ try_element_again:
 	};
 	static const char *sound_masks[] = { ".set", ".mp3", ".ogg", ".wav", ".redir", NULL };
 	static const char *font_masks[] = { "*.png", ".redir", NULL };
-	static const char *numbers_masks[] = { " 5x3.png", ".redir", NULL };
+	static const char *numbers_masks[] = { "*.png", ".redir", NULL };
 	static const char *bganimations_masks[] = { ".", ".redir", NULL };
 	static const char *blank_mask[] = { "", NULL };
 	const char **asset_masks = NULL;
