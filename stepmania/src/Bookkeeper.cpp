@@ -111,11 +111,17 @@ void Bookkeeper::UpdateLastSeenTime()
 
 	CLAMP( tOld.tm_year, tNew.tm_year-1, tNew.tm_year );
 
+	int cnt = 0;
 	while( 
 		tOld.tm_year != tNew.tm_year ||
 		tOld.tm_yday != tNew.tm_yday ||
 		tOld.tm_hour != tNew.tm_hour )
 	{
+		/* Paranoia: break out in case our loop doesn't end for some reason. */
+		++cnt;
+		if( cnt > 1000 )
+			break;
+
 		tOld.tm_hour++;
 		if( tOld.tm_hour == HOURS_IN_DAY )
 		{
