@@ -7,6 +7,10 @@
 
 #if defined(LINUX)
 
+#if !defined(__KERNEL__)
+#define __KERNEL__
+#endif
+
 #include <asm/byteorder.h>
 
 inline uint32_t ArchSwap32( uint32_t n )
