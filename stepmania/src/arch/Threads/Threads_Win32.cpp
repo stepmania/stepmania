@@ -3,6 +3,23 @@
 #include "RageUtil.h"
 #include "RageThreads.h"
 
+const int MAX_THREADS=128;
+
+static MutexImpl_Win32 g_ThreadIdMutex(NULL);
+static int g_ThreadIds[MAX_THREADS];
+static HANDLE g_ThreadHandles[MAX_THREADS];
+
+HANDLE Win32ThreadIdToHandle( uint64_t iID )
+{
+	for( int i = 0; i < MAX_THREADS; ++i )
+	{
+		if( g_ThreadIds[i] == iID )
+			return g_ThreadHandles[i];
+	}
+
+	return NULL;
+}
+
 void ThreadImpl_Win32::Halt( bool Kill )
 {
 #ifndef _XBOX
@@ -42,7 +59,36 @@ static DWORD WINAPI StartThread( LPVOID pData )
 {
 	ThreadImpl_Win32 *pThis = (ThreadImpl_Win32 *) pData;
 
-	return (DWORD)pThis->m_pFunc( pThis->m_pData );
+	DWORD ret = (DWORD) pThis->m_pFunc( pThis->m_pData );
+
+	for( int i = 0; i < MAX_THREADS; ++i )
+	{
+		if( g_ThreadIds[i] == RageThread::GetCurrentThreadID() )
+		{
+			g_ThreadHandles[i] = NULL;
+			g_ThreadIds[i] = 0;
+			break;
+		}
+	}
+
+	return ret;
+}
+
+static int GetOpenSlot( int iID )
+{
+	g_ThreadIdMutex.Lock();
+
+	/* Find an open slot in g_ThreadIds. */
+	int slot = 0;
+	while( slot < MAX_THREADS && g_ThreadIds[slot] != 0 )
+		++slot;
+	ASSERT( slot < MAX_THREADS );
+
+	g_ThreadIds[slot] = iID;
+
+	g_ThreadIdMutex.Unlock();
+
+	return slot;
 }
 
 ThreadImpl *MakeThisThread()
@@ -63,6 +109,18 @@ ThreadImpl *MakeThisThread()
 
 	thread->ThreadId = GetCurrentThreadId();
 
+	int slot = GetOpenSlot( GetCurrentThreadId() );
+	ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc, 
+		&g_ThreadHandles[slot], 0, false, DUPLICATE_SAME_ACCESS );
+
+	if( !ret )
+	{
+//		LOG->Warn( werr_ssprintf( GetLastError(), "DuplicateHandle(%p, %p) failed",
+//			CurProc, GetCurrentThread() ) );
+
+		g_ThreadHandles[slot] = NULL;
+	}
+
 	return thread;
 }
 
@@ -77,6 +135,11 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	*piThreadID = (uint64_t) thread->ThreadId;
 
 	ASSERT_M( thread->ThreadHandle, ssprintf("%s", werr_ssprintf(GetLastError(), "CreateThread")) );
+
+	int slot = GetOpenSlot( thread->ThreadId );
+	g_ThreadHandles[slot] = thread->ThreadHandle;
+
+	/* XXX: pause the thread until we assign the above */
 
 	return thread;
 }

@@ -24,6 +24,8 @@ public:
 	int Wait();
 };
 
+HANDLE Win32ThreadIdToHandle( uint64_t iID );
+
 class MutexImpl_Win32: public MutexImpl
 {
 public:
