@@ -28,11 +28,15 @@ RageTimer::RageTimer()
 
 void RageTimer::Init()
 {
+/*
+ This is needed for the "timer" system, not the "ticks" system; it often starts
+ a thread, so let's not do it--we don't need it.
 	static bool SDL_Initialized = false;
 	if(!SDL_Initialized) {
 		SDL_InitSubSystem(SDL_INIT_TIMER);
 		SDL_Initialized = true;
 	}
+*/
 }
 
 float RageTimer::GetDeltaTime()
