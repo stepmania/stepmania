@@ -69,10 +69,10 @@ LightsDriver_LinuxSerial::LightsDriver_LinuxSerial()
     cfsetospeed(&my_termios, B2400);
     tcsetattr(fd, TCSANOW, &my_termios);
     LOG->Info("Lights info:");
-    LOG->Info("  new cflag=%08lx", my_termios.c_cflag);
-    LOG->Info("  new oflag=%08lx", my_termios.c_oflag);
-    LOG->Info("  new iflag=%08lx", my_termios.c_iflag);
-    LOG->Info("  new lflag=%08lx", my_termios.c_lflag);
+    LOG->Info("  new cflag=%08x", (int) my_termios.c_cflag);
+    LOG->Info("  new oflag=%08x", (int) my_termios.c_oflag);
+    LOG->Info("  new iflag=%08x", (int) my_termios.c_iflag);
+    LOG->Info("  new lflag=%08x", (int) my_termios.c_lflag);
 }
 
 LightsDriver_LinuxSerial::~LightsDriver_LinuxSerial()
