@@ -57,6 +57,8 @@ ScreenManager::ScreenManager()
 
 	m_MessageSendOnPop = SM_None;
 
+	m_bZeroNextUpdate = false;
+
 	/* By the time this is constructed, THEME has already been set up and set to
 	 * the current theme.  Call ThemeChanged(), to handle the starting theme
 	 * and set up m_SystemLayer. */
@@ -104,6 +106,8 @@ void ScreenManager::EmptyDeleteQueue()
 	if(!m_vScreensToDelete.size())
 		return;
 
+	m_bZeroNextUpdate = true;
+
 	for( unsigned i=0; i<m_vScreensToDelete.size(); i++ )
 		SAFE_DELETE( m_vScreensToDelete[i] );
 
@@ -146,16 +150,21 @@ void ScreenManager::Update( float fDeltaTime )
 	/* Loading a new screen can take seconds and cause a big jump on the new 
 	 * Screen's first update.  Clamp the first update delta so that the 
 	 * animations don't jump. */
-	if( pScreen && pScreen->IsFirstUpdate() )
+	if( pScreen && m_bZeroNextUpdate )
+	{
+		LOG->Trace( "Zeroing this update.  Was %f", fDeltaTime );
 		fDeltaTime = 0;
+		m_bZeroNextUpdate = false;
+	}
 
 	if( pScreen )
 		pScreen->Update( fDeltaTime );
 
 	m_pSharedBGA->Update( fDeltaTime );
 
-	m_SystemLayer->Update( fDeltaTime );
+	m_SystemLayer->Update( fDeltaTime );	
 	
+
 	EmptyDeleteQueue();
 
 	if(m_sDelayedScreen.size() != 0)
@@ -218,6 +227,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 
 Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 {
+	m_bZeroNextUpdate = true;
+
 	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
 	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). 
 	 * XXX: screens should turn this on in SM_LoseFocus if they handle timers themselves, too */
@@ -251,6 +262,8 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 
 void ScreenManager::PrepareScreen( const CString &sScreenName )
 {
+	m_bZeroNextUpdate = true;
+
 	// Delete previously prepared versions of the screen.
 	FOREACH( Screen*, m_vPreparedScreens, s )
 	{
@@ -266,6 +279,8 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 
 void ScreenManager::DeletePreparedScreens()
 {
+	m_bZeroNextUpdate = true;
+
 	FOREACH( Screen*, m_vPreparedScreens, s )
 		SAFE_DELETE( *s );
 	m_vPreparedScreens.clear();
@@ -314,6 +329,8 @@ void ScreenManager::SetNewScreen( const CString &sScreenName )
 
 void ScreenManager::LoadDelayedScreen()
 {
+	m_bZeroNextUpdate = true;
+
 retry:
 	CString sScreenName = m_sDelayedScreen;
 	m_sDelayedScreen = "";
@@ -407,7 +424,9 @@ retry:
 }
 
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName, ScreenMessage messageSendOnPop )
-{	
+{
+	m_bZeroNextUpdate = true;
+
 	/* Send this before making the new screen, since it might set things that will be re-set
 	 * in the new screen's ctor. */
 	if( m_ScreenStack.size() )

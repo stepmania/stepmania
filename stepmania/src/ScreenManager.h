@@ -71,6 +71,10 @@ private:
 	ScreenMessage		m_MessageSendOnPop;
 	vector<Screen*>		m_vPreparedScreens;
 	vector<Screen*>		m_vScreensToDelete;
+	
+	// Set this to true anywhere we create of delete objects.  These 
+	// operations take a long time, and will cause a skip on the next update.
+	bool				m_bZeroNextUpdate;
 
 	Screen* MakeNewScreen( const CString &sName );
 	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
