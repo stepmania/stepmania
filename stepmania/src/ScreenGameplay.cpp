@@ -35,6 +35,9 @@
 #define BPM_X					THEME->GetMetricF("ScreenGameplay","BPMX")
 #define BPM_Y					THEME->GetMetricF("ScreenGameplay","BPMY")
 #define BPM_ZOOM				THEME->GetMetricF("ScreenGameplay","BPMZoom")
+#define STAGENAME_X					THEME->GetMetricF("ScreenGameplay","StagenameX")
+#define STAGENAME_Y					THEME->GetMetricF("ScreenGameplay","StagenameY")
+#define STAGENAME_ZOOM				THEME->GetMetricF("ScreenGameplay","StagenameZoom")
 #define LIFE_FRAME_X					THEME->GetMetricF("ScreenGameplay","LifeFrameX")
 #define LIFE_FRAME_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("LifeFrame%sY",e?"Extra":""))
 #define SCORE_FRAME_X					THEME->GetMetricF("ScreenGameplay","ScoreFrameX")
@@ -272,6 +275,13 @@ ScreenGameplay::ScreenGameplay()
 	m_sprScoreFrame.SetXY( SCORE_FRAME_X, SCORE_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprScoreFrame );
 
+	m_StageName.LoadFromFont( THEME->GetPathTo("Fonts","musicwheel text banner") );
+	m_StageName.TurnShadowOff();
+	m_StageName.SetXY( STAGENAME_X, STAGENAME_Y );
+	m_StageName.SetZoom( STAGENAME_ZOOM );
+	m_StageName.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
+	this->AddChild( &m_StageName );
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
@@ -384,7 +394,6 @@ ScreenGameplay::ScreenGameplay()
 
 	m_Fade.SetOpened();
 	this->AddChild( &m_Fade );
-
 
 	m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","survive time") );
 	m_textSurviveTime.TurnShadowOff();

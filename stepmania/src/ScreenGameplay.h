@@ -111,7 +111,7 @@ private:
 	MotionBlurSprite	m_sprTryExtraStage;
 
 	BitmapText			m_textSurviveTime;	// only shown in extra stage
-
+	BitmapText			m_StageName;
 
 	Player				m_Player[NUM_PLAYERS];
 
