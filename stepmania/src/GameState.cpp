@@ -47,18 +47,21 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 
 GameState::GameState()
 {
+	m_pPosition = NULL;
+	m_pUnlockingSys = new UnlockSystem;
+
 	m_CurGame = GAME_DANCE;
 	m_iCoins = 0;
-	/* Don't reset yet; let the first screen do it, so we can
-	 * use PREFSMAN. */
-//	Reset();
-	m_pPosition = NULL;
+	m_timeGameStarted = 0;
 	m_bIsOnSystemMenu = false;
 
-	m_pUnlockingSys = new UnlockSystem;
 	ReloadCharacters();
 
 	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
+
+	/* Don't reset yet; let the first screen do it, so we can
+	 * use PREFSMAN and THEME. */
+//	Reset();
 }
 
 GameState::~GameState()
@@ -141,8 +144,8 @@ void GameState::Reset()
 			m_pCurCharacters[p] = GetRandomCharacter();
 		else
 			m_pCurCharacters[p] = GetDefaultCharacter();
+		ASSERT( m_pCurCharacters[p] );
 	}
-	ASSERT( m_pCurCharacters[p] );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
