@@ -15,7 +15,6 @@ extern ThemeMetric1D<RageColor> PLAYER_COLOR;
 extern ThemeMetric<float>		JOIN_PAUSE_SECONDS;
 extern ThemeMetric<CString>		WINDOW_TITLE;
 extern ThemeMetric<bool>		HOME_EDIT_MODE;
-extern ThemeMetric<int>			MAX_STEPS_LOADED_FROM_PROFILE;
 extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 extern ThemeMetric<float>		TICK_EARLY_SECONDS;
 

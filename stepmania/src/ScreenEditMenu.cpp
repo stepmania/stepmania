@@ -294,9 +294,6 @@ void ScreenEditMenu::RefreshExplanationText()
 void ScreenEditMenu::RefreshNumStepsLoadedFromProfile()
 {
 	CString s = ssprintf( "edits used: %d", SONGMAN->GetNumStepsLoadedFromProfile() );
-	int iMaxStepsLoadedFromProfile = MAX_STEPS_LOADED_FROM_PROFILE;
-	if( iMaxStepsLoadedFromProfile != -1 )
-		s += ssprintf( " / %d", iMaxStepsLoadedFromProfile );
 	m_textNumStepsLoadedFromProfile.SetText( s );
 }
 
