@@ -47,7 +47,7 @@ namespace RageSurfaceUtils
 	void BlitTransform( const RageSurface *src, RageSurface *dst, 
 					const float fCoords[8] /* TL, BR, BL, TR */ );
 
-	void Blit( const RageSurface *src, RageSurface *dst, int width, int height );
+	void Blit( const RageSurface *src, RageSurface *dst, int width = -1, int height = -1 );
 
 	bool SaveSurface( const RageSurface *img, CString file );
 	RageSurface *LoadSurface( CString file );
