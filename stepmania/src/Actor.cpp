@@ -128,6 +128,9 @@ void Actor::ScaleTo( LPRECT pRect, StretchType st )
 	float rect_width = RECTWIDTH(*pRect);
 	float rect_height = RECTHEIGHT(*pRect);
 
+	if( rect_width < 0 )	SetRotationY( D3DX_PI );
+	if( rect_height < 0 )	SetRotationX( D3DX_PI );
+
 	// center of the rectangle
 	float rect_cx = pRect->left + rect_width/2;
 	float rect_cy = pRect->top  + rect_height/2;
@@ -135,9 +138,6 @@ void Actor::ScaleTo( LPRECT pRect, StretchType st )
 	// zoom factor needed to scale the Actor to fill the rectangle
 	float fNewZoomX = (float)fabs(rect_width  / m_size.x);
 	float fNewZoomY = (float)fabs(rect_height / m_size.y);
-
-	if( rect_width < 0 )	SetRotationY( D3DX_PI );
-	if( rect_height < 0 )	SetRotationX( D3DX_PI );
 
 	float fNewZoom;
 	switch( st )
@@ -160,6 +160,9 @@ void Actor::StretchTo( LPRECT pRect )
 	// width and height of rectangle
 	int rect_width = RECTWIDTH(*pRect);
 	int rect_height = RECTHEIGHT(*pRect);
+
+	if( rect_width < 0 )	SetRotationY( D3DX_PI );
+	if( rect_height < 0 )	SetRotationX( D3DX_PI );
 
 	// center of the rectangle
 	int rect_cx = pRect->left + rect_width/2;

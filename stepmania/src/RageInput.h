@@ -20,56 +20,58 @@
 #include "RageUtil.h"
 
 
+const int NUM_KEYBOARD_BUTTONS = 256;
 const int NUM_JOYSTICKS = 4;
 
+enum InputDevice {
+	DEVICE_KEYBOARD = 0,
+	DEVICE_JOYSTICK1,
+	DEVICE_JOYSTICK2,
+	DEVICE_JOYSTICK3,
+	DEVICE_JOYSTICK4,
+	NUM_INPUT_DEVICES,	// leave this at the end
+	DEVICE_NONE			// means this is NULL
+};
+
 // button byte codes for directional pad
-#define JOY_LEFT	101
-#define JOY_RIGHT	102
-#define JOY_UP		103
-#define JOY_DOWN	104
+enum JoystickButton {
+	JOY_LEFT = 0,
+	JOY_RIGHT,
+	JOY_UP,
+	JOY_DOWN,
+	JOY_1,
+	JOY_2,
+	JOY_3,
+	JOY_4,
+	JOY_5,
+	JOY_6,
+	JOY_7,
+	JOY_8,
+	JOY_9,
+	JOY_10,
+	JOY_11,
+	JOY_12,
+	NUM_JOYSTICK_BUTTONS	// leave this at the end
+};
 
 
 
-#define DEVICE_NONE		0
-#define DEVICE_KEYBOARD	1
-#define DEVICE_JOYSTICK	2
-
-
-class DeviceInput
+struct DeviceInput
 {
 public:
-	DeviceInput() { device = device_no = button = just_pressed = 0; };
-	DeviceInput( BYTE device, 
-				  BYTE device_no,
-				  BYTE button,
-				  BYTE just_pressed )
-	{ 
-		this->device = device; 
-		this->device_no = device_no;
-		this->button = button;
-		this->just_pressed = just_pressed;
-	};
+	InputDevice device;
+	int button;
 
-	CString GetEncoding() const { return ssprintf("%u-%u-%u", device, device_no, button); };
-	void FillFromEncoding( CString sEncoding )
-	{ 
-		CStringArray a;
-		split( sEncoding, "-", a);
-		ASSERT( a.GetSize() == 3 );
-		this->device    = atoi( a[0] );
-		this->device_no = atoi( a[1] );
-		this->button    = atoi( a[2] );
-	};
+	DeviceInput() { device=DEVICE_NONE; };
+	DeviceInput( InputDevice d, int b ) { device=d; button=b; };
 
-	BOOL LookupChar( TCHAR &char_out ) const;
-	CString GetDescription() const;
+	CString GetDescription();
+	
+	CString toString();
+	bool fromString( CString s );
 
 	bool IsBlank() const { return device == DEVICE_NONE; };
-
-	BYTE device;
-	BYTE device_no;
-	BYTE button;
-	BYTE just_pressed;
+	void MakeBlank() { device = DEVICE_NONE; };
 };
 
 

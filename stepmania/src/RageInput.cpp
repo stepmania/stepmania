@@ -26,111 +26,50 @@
 #include "RageUtil.h"
 
 
-LPRageInput				INPUT	= NULL;
+LPRageInput				INPUT	= NULL;		// globally accessable input device
 
 
-BOOL DeviceInput::LookupChar( TCHAR &char_out ) const
-{
-	switch( button )
-	{
-	case DIK_1:			char_out = '1';	break;
-	case DIK_2:			char_out = '2';	break;
-	case DIK_3:			char_out = '3';	break;
-	case DIK_4:			char_out = '4';	break;
-	case DIK_5:			char_out = '5';	break;
-	case DIK_6:			char_out = '6';	break;
-	case DIK_7:			char_out = '7';	break;
-	case DIK_8:			char_out = '8';	break;
-	case DIK_9:			char_out = '9';	break;
-	case DIK_0:			char_out = '0';	break;
-	case DIK_MINUS:		char_out = '-';	break;
-	case DIK_EQUALS:	char_out = '=';	break;
-	case DIK_Q:			char_out = 'Q';	break;
-	case DIK_W:			char_out = 'W';	break;
-	case DIK_E:			char_out = 'E';	break;
-	case DIK_R:			char_out = 'R';	break;
-	case DIK_T:			char_out = 'T';	break;
-	case DIK_Y:			char_out = 'Y';	break;
-	case DIK_U:			char_out = 'U';	break;
-	case DIK_I:			char_out = 'I';	break;
-	case DIK_O:			char_out = 'O';	break;
-	case DIK_P:			char_out = 'P';	break;
-	case DIK_LBRACKET:	char_out = '[';	break;
-	case DIK_RBRACKET:	char_out = ']';	break;
-	case DIK_A:			char_out = 'A';	break;
-	case DIK_S:			char_out = 'S';	break;
-	case DIK_D:			char_out = 'D';	break;
-	case DIK_F:			char_out = 'F';	break;
-	case DIK_G:			char_out = 'G';	break;
-	case DIK_H:			char_out = 'H';	break;
-	case DIK_J:			char_out = 'J';	break;
-	case DIK_K:			char_out = 'K';	break;
-	case DIK_L:			char_out = 'L';	break;
-	case DIK_SEMICOLON:	char_out = ';';	break;
-	case DIK_APOSTROPHE:char_out = '\'';break;
-	case DIK_GRAVE:		char_out = '`';	break;
-	case DIK_BACKSLASH:	char_out = '\\';break;
-	case DIK_Z:			char_out = 'Z';	break;
-	case DIK_X:			char_out = 'X';	break;
-	case DIK_C:			char_out = 'C';	break;
-	case DIK_V:			char_out = 'V';	break;
-	case DIK_B:			char_out = 'B';	break;
-	case DIK_N:			char_out = 'N';	break;
-	case DIK_M:			char_out = 'M';	break;
-	case DIK_COMMA:		char_out = ',';	break;
-	case DIK_PERIOD:	char_out = '.';	break;
-	case DIK_SLASH:		char_out = '/';	break;
-	case DIK_MULTIPLY:	char_out = '*';	break;
-	case DIK_SPACE:		char_out = ' ';	break;
-	case DIK_NUMPAD7:	char_out = '7';	break;
-	case DIK_NUMPAD8:	char_out = '8';	break;
-	case DIK_NUMPAD9:	char_out = '9';	break;
-	case DIK_SUBTRACT:	char_out = '-';	break;
-	case DIK_NUMPAD4:	char_out = '4';	break;
-	case DIK_NUMPAD5:	char_out = '5';	break;
-	case DIK_NUMPAD6:	char_out = '6';	break;
-	case DIK_ADD:		char_out = '+';	break;
-	case DIK_NUMPAD1:	char_out = '1';	break;
-	case DIK_NUMPAD2:	char_out = '2';	break;
-	case DIK_NUMPAD3:	char_out = '3';	break;
-	case DIK_NUMPAD0:	char_out = '0';	break;
-	case DIK_DECIMAL:	char_out = '.';	break;
 
-	default:			return FALSE;	// This key doesn't correspond to a character.
-	}
-
-	return TRUE;
-}
-
-
-CString DeviceInput::GetDescription() const
+CString DeviceInput::GetDescription() 
 {
 	CString sReturn;
 
 	switch( device )
 	{
-	case DEVICE_NONE:
-		sReturn = "None";
+	case DEVICE_NONE:	// blank
+		ASSERT( false );	// called GetDescription on a blank DeviceInput!
 		break;
-	case DEVICE_JOYSTICK:	// joystick
-		sReturn.Format( "Joystick%d ", device_no );
+
+	case DEVICE_JOYSTICK1:	// joystick
+	case DEVICE_JOYSTICK2:
+	case DEVICE_JOYSTICK3:
+	case DEVICE_JOYSTICK4:
+		sReturn = ssprintf("Joystick %d: ", device - DEVICE_JOYSTICK1 + 1 );
+
 		switch( button )
 		{
 		case JOY_LEFT:		sReturn += "Left";		break;
 		case JOY_RIGHT:		sReturn += "Right";		break;
 		case JOY_UP:		sReturn += "Up";		break;
 		case JOY_DOWN:		sReturn += "Down";		break;
-		default:
-			{
-				CString sButtonString;
-				sButtonString.Format( "Button %d", button );
-				sReturn += sButtonString;
-			}
-			break;
+		case JOY_1:		sReturn += "1";		break;
+		case JOY_2:		sReturn += "2";		break;
+		case JOY_3:		sReturn += "3";		break;
+		case JOY_4:		sReturn += "4";		break;
+		case JOY_5:		sReturn += "5";		break;
+		case JOY_6:		sReturn += "6";		break;
+		case JOY_7:		sReturn += "7";		break;
+		case JOY_8:		sReturn += "8";		break;
+		case JOY_9:		sReturn += "9";		break;
+		case JOY_10:	sReturn += "10";	break;
+		case JOY_11:	sReturn += "11";	break;
+		case JOY_12:	sReturn += "12";	break;
 		}
+		
 		break;
-	case DEVICE_KEYBOARD:
-		sReturn = "Keyboard ";
+
+	case DEVICE_KEYBOARD:		// keyboard
+		sReturn = "Keyboard: ";
 
 		switch( button )
 		{
@@ -238,12 +177,31 @@ CString DeviceInput::GetDescription() const
 		}
 		break;
 	default:
-		sReturn = "Invalid Device";
-		break;
+		ASSERT( false );	// what device is this?
 	}
 
 	return sReturn;
 }
+
+CString DeviceInput::toString() 
+{
+	return ssprintf("%d-%d", device, button );
+}
+
+bool DeviceInput::fromString( CString s )
+{ 
+	CStringArray a;
+	split( s, "-", a);
+
+	if( a.GetSize() != 2 ) {
+		device = DEVICE_NONE;
+		return false;
+	}
+
+	device = (InputDevice)atoi( a[0] );
+	button = atoi( a[1] );
+	return true;
+};
 
 
 
@@ -536,7 +494,7 @@ HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 	{
 		// check if key is depressed this update and was not depressed last update
 		if( IS_PRESSED( m_keys[k] )  &&  !IS_PRESSED( m_oldKeys[k] ) ) 
-			listDeviceInputs.Add( DeviceInput( DEVICE_KEYBOARD, 1, k, FALSE ) );
+			listDeviceInputs.Add( DeviceInput(DEVICE_KEYBOARD, k) );
 	}
 
 
@@ -618,25 +576,25 @@ HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 				// check if key is depressed this update and was not depressed last update
 				if(  IS_LEFT( m_joyState[i].lX )  &&
 					!IS_LEFT( m_oldJoyState[i].lX )  )
-					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_LEFT, FALSE ) );
+					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_LEFT) );
 
 				if(  IS_RIGHT( m_joyState[i].lX )  &&  
 					!IS_RIGHT( m_oldJoyState[i].lX )  )
-					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_RIGHT, FALSE ) );
+					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_RIGHT) );
 				
 				if(  IS_UP( m_joyState[i].lY ) &&  
 					!IS_UP( m_oldJoyState[i].lY )  )
-					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_UP, FALSE ) );
+					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_UP) );
 				
 				if(	 IS_DOWN(  m_joyState[i].lY ) &&  
 					!IS_DOWN(  m_oldJoyState[i].lY )  )
-					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_DOWN, FALSE ) );
+					listDeviceInputs.Add( DeviceInput(InputDevice(DEVICE_JOYSTICK1+i), JOY_DOWN) );
 
 
 				for( BYTE b=0; b<10; b++ )
 				{
 					if( IS_PRESSED(m_joyState[i].rgbButtons[b]) && !IS_PRESSED(m_oldJoyState[i].rgbButtons[b]) )
-						listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, b+1, FALSE ) );
+						listDeviceInputs.Add( DeviceInput( InputDevice(DEVICE_JOYSTICK1+i), JOY_1+b ) );
 				}
 			}
 		}
