@@ -58,10 +58,11 @@ protected:
 	//Chatting
 	BitmapText		m_textChatInput;
 	BitmapText		m_textChatOutput;
+	BitmapText		m_textOutHidden;
 	Quad			m_rectChatInputBox;
 	Quad			m_rectChatOutputBox;
 	CString			m_sTextInput;
-	vector <CString>	m_vChatText;
+	CString			m_sChatText;
 
 	//Selection
 	Quad			m_rectSelection;

@@ -3,21 +3,18 @@
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "Style.h"
-#include "InputMapper.h"
-#include "CodeDetector.h"
 #include "Steps.h"
 #include "RageTimer.h"
 #include "ActorUtil.h"
 #include "Actor.h"
-#include "RageTextureManager.h"
 #include "AnnouncerManager.h"
 #include "MenuTimer.h"
 #include "NetworkSyncManager.h"
 #include "StepsUtil.h"
+#include "RageUtil.h"
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxWidth")
 #define CHATINPUT_HEIGHT			THEME->GetMetricF("ScreenNetSelectMusic","ChatInputBoxHeight")
@@ -89,12 +86,15 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
+
+	m_textOutHidden.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textOutHidden.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
+
 	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textChatOutput.SetHorizAlign( align_left );
-	m_textChatOutput.SetVertAlign( align_top );
+	m_textChatOutput.SetVertAlign( align_bottom );
 	m_textChatOutput.SetShadowLength( 0 );
 	m_textChatOutput.SetName( "ChatOutput" );
-	m_textChatOutput.SetMaxWidth( (int)(CHATOUTPUT_WIDTH * 2) );
 	SET_XY_AND_ON_COMMAND( m_textChatOutput );
 	this->AddChild( &m_textChatOutput );
 
@@ -325,20 +325,21 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_AddToChat:
 		{
-			CString OutText = "";
-			m_vChatText.push_back ( NSMAN->m_WaitingChat );
+			//This SHOULD be done with cropping, but I cant seem to get
+			//text to crop properly.
+			m_sChatText += NSMAN->m_WaitingChat + " \n ";	//Forced newline
 			NSMAN->m_WaitingChat = "";
-
-			for ( unsigned i= max( m_vChatText.size() - SHOW_CHAT_LINES, unsigned(0) );
-				  i<m_vChatText.size() ; ++i )
-			{
-				OutText+=m_vChatText[i]+'\n';
-			}
-			m_textChatOutput.SetText( OutText );
+			m_textOutHidden.SetText( m_sChatText );
+			vector <wstring> wLines;
+			m_textOutHidden.GetLines( wLines );
+			CString actualText = "";
+			for (int i = max( int(wLines.size() - SHOW_CHAT_LINES), 0 ) ; i < wLines.size() ; i++)
+				actualText += WStringToCString(wLines[i])+'\n';
+			m_textChatOutput.SetText( actualText );
 			break;
 		}
 	case SM_ChangeSong:
-
+		
 		break;
 	}
 
