@@ -111,7 +111,7 @@ inline uint32_t Swap24BE( uint32_t n ) { return n; }
 inline uint32_t Swap16BE( uint16_t n ) { return n; }
 inline uint32_t Swap32LE( uint32_t n ) { return Swap32( n ); }
 inline uint32_t Swap24LE( uint32_t n ) { return Swap24( n ); }
-inline uint16_t Swap16BE( uint16_t n ) { return Swap16( n ); }
+inline uint16_t Swap16LE( uint16_t n ) { return Swap16( n ); }
 #endif
 
 // Fast random number generators
