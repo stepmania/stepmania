@@ -15,7 +15,7 @@
 #include <wincrypt.h>
 #endif
 
-#if defined(UNIX)
+#if defined(CRYPTOPP_UNIX_AVAILABLE)
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -28,7 +28,7 @@ OS_RNG_Err::OS_RNG_Err(const std::string &operation)
 	: Exception(OTHER_ERROR, "OS_Rng: " + operation + " operation failed with error " + 
 #ifdef CRYPTOPP_WIN32_AVAILABLE
 		"0x" + IntToString(GetLastError(), 16)
-#elif defined(UNIX)
+#elif defined(CRYPTOPP_UNIX_AVAILABLE)
 		IntToString(errno)
 #else
 		"(unknown)"
@@ -61,7 +61,7 @@ MicrosoftCryptoProvider::~MicrosoftCryptoProvider()
 
 NonblockingRng::NonblockingRng()
 {
-#if defined(UNIX)
+#if defined(CRYPTOPP_UNIX_AVAILABLE)
 	m_fd = open("/dev/urandom",O_RDONLY);
 	if (m_fd == -1)
 		throw OS_RNG_Err("open /dev/urandom");
@@ -70,7 +70,7 @@ NonblockingRng::NonblockingRng()
 
 NonblockingRng::~NonblockingRng()
 {
-#if defined(UNIX)
+#if defined(CRYPTOPP_UNIX_AVAILABLE)
 	close(m_fd);
 #endif
 }
@@ -90,7 +90,7 @@ void NonblockingRng::GenerateBlock(byte *output, unsigned int size)
 #	endif
 	if (!CryptGenRandom(m_Provider.GetProviderHandle(), size, output))
 		throw OS_RNG_Err("CryptGenRandom");
-#elif defined(UNIX)
+#elif defined(CRYPTOPP_UNIX_AVAILABLE)
 	if (read(m_fd, output, size) != int(size))
 		throw OS_RNG_Err("read /dev/urandom");
 #else

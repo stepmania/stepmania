@@ -50,7 +50,7 @@ protected:
 #	ifndef WORKAROUND_MS_BUG_Q258000
 		MicrosoftCryptoProvider m_Provider;
 #	endif
-#elif defined(UNIX)
+#elif defined(CRYPTOPP_UNIX_AVAILABLE)
 	int m_fd;
 #endif
 };
