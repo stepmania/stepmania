@@ -158,8 +158,8 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 			sBannerPath = sDir+arrayGroupBanners[0];
 	}
 
-	if( sBannerPath != "" )
-		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), sBannerPath.c_str() );
+	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), 
+		sBannerPath != ""? sBannerPath.c_str():"(none)" );
 	m_sGroupNames.push_back( sGroupDirName );
 	m_sGroupBannerPaths.push_back(sBannerPath);
 }
@@ -333,7 +333,7 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 		if( m_sGroupNames[i] == sGroupName )
 			break;
 	}
-	ASSERT( i != m_sGroupNames.size() );	// this is not a valid group
+	RAGE_ASSERT_M( i != m_sGroupNames.size(), sGroupName );	// this is not a valid group
 
 	return g_vGroupColors[i%g_vGroupColors.size()];
 }
