@@ -1632,6 +1632,36 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
+		AA21D59C0712ADE4008B825F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenDimensions.cpp;
+			path = ../src/ScreenDimensions.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA21D59D0712ADE4008B825F = {
+			fileRef = AA21D59C0712ADE4008B825F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA21D5A10712AE16008B825F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ThemeMetric.h;
+			path = ../src/ThemeMetric.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA21D5A20712AE16008B825F = {
+			fileRef = AA21D5A10712AE16008B825F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA22CBA306DE909C0083BA97 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1909,7 +1939,7 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(BUILD_DIR)/StepMania.app/Contents/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks\"";
-				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
@@ -2358,6 +2388,7 @@
 				AA8A3EC906EDDAE4002F25AB,
 				AA8A405206EEFF72002F25AB,
 				AA54709206F559DF008EB9B2,
+				AA21D5A20712AE16008B825F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4268,6 +4299,7 @@
 				AA64218806EC606F00C21584,
 				AA8A3E6406EDCD11002F25AB,
 				AA8A405106EEFF72002F25AB,
+				AA21D59D0712ADE4008B825F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7275,6 +7307,7 @@
 				AA6E001A047711F3005F316C,
 				AA6E001B047711F3005F316C,
 				AA6E001C047711F3005F316C,
+				AA21D59C0712ADE4008B825F,
 				AA6EFE6104770CF7005F316C,
 				AAD64AA30604079E00EF8CDE,
 				AAD64AA40604079E00EF8CDE,
@@ -9772,6 +9805,7 @@
 				AA6EFE0D04770C79005F316C,
 				AA3A706006AA1645006F755E,
 				AA3A706106AA1645006F755E,
+				AA21D5A10712AE16008B825F,
 				AA729C420599B50D00779F33,
 				AA729C430599B50D00779F33,
 				AA6EFE0E04770C79005F316C,
