@@ -1115,9 +1115,8 @@ void ScreenGameplay::LoadNextSong()
 			}
 		}
 
-		// Convert to 4s so that we can check if we're inside a hold with just 
-		// GetTapNote().
-		m_CabinetLightsNoteData.ConvertHoldNotesTo4s();
+		// Convert to 2sAnd3s so that we can check if we're inside a hold with IsHoldNoteAtBeat.
+		m_CabinetLightsNoteData.ConvertHoldNotesTo2sAnd3s();
 	}
 }
 
@@ -1580,6 +1579,9 @@ void ScreenGameplay::UpdateLights()
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
 				bBlinkCabinetLight[cl] |= bBlink;
 			}
+
+			if( m_CabinetLightsNoteData.IsHoldNoteAtBeat( cl, iRowNow ) )
+				bBlinkCabinetLight[cl] |= true;
 		}
 
 		FOREACH_EnabledPlayer( pn )
@@ -1827,9 +1829,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 					fOffsetDelta *= 10;
 				BPMSegment& seg = GAMESTATE->m_pCurSong->GetBPMSegmentAtBeat( GAMESTATE->m_fSongBeat );
 
-				seg.m_fBPM += fOffsetDelta;
+				seg.m_iBPS += BeatToNoteRow(fOffsetDelta);
 
-				m_textDebug.SetText( ssprintf("Cur BPM = %.2f", seg.m_fBPM) );
+				m_textDebug.SetText( ssprintf("Cur BPM = %.2f", seg.GetBPM()) );
 				m_textDebug.StopTweening();
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 				m_textDebug.BeginTweening( 3 );		// sleep
