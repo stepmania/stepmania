@@ -144,6 +144,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Garett Sakamoto"},
 	{0,"SailorBob"},
 	{0,"AngelTK (Kenny Lai)"},
+	{0,"curewater"},
 	{0,"Illusionz - Issaquah, WA"},
 	{0,"Quarters - Kirkland, WA"},
 	{0,"Pier Amusements - Bournemouth, UK"},
