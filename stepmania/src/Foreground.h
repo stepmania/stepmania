@@ -26,6 +26,8 @@ protected:
 	};
 
 	vector<LoadedBGA>	m_BGAnimations;
+	float m_fLastMusicSeconds;
+	const Song *m_pSong;
 };
 
 #endif

@@ -15,10 +15,14 @@ void Foreground::Unload()
 	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
 		delete m_BGAnimations[i].m_bga;
 	m_BGAnimations.clear();
+	m_SubActors.clear();
+	m_fLastMusicSeconds = -9999;
+	m_pSong = NULL;
 }
 
 void Foreground::LoadFromSong( const Song *pSong )
 {
+	m_pSong = pSong;
 	for( unsigned i=0; i<pSong->m_ForegroundChanges.size(); i++ )
 	{
 		const BackgroundChange &change = pSong->m_ForegroundChanges[i];
@@ -51,14 +55,35 @@ void Foreground::Update( float fDeltaTime )
 	if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
 		return; /* hasn't been updated yet */
 
+	/* Calls to Update() should *not* be scaled by music rate. Undo it. */
+	const float fRate = GAMESTATE->m_SongOptions.m_fMusicRate;
+
 	for( unsigned i=0; i < m_BGAnimations.size(); ++i )
 	{
 		LoadedBGA &bga = m_BGAnimations[i];
 
 		const bool Shown = bga.m_fStartBeat <= GAMESTATE->m_fSongBeat && GAMESTATE->m_fSongBeat <= bga.m_fStopBeat;
-		bga.m_bga->SetHidden( !Shown );
-		if( Shown )
-			bga.m_bga->Update( fDeltaTime );
+		if( !Shown )
+		{
+			bga.m_bga->SetHidden( true );
+			continue;
+		}
+
+		float fDeltaTime;
+		if( bga.m_bga->GetHidden() )
+		{
+			bga.m_bga->SetHidden( false );
+
+			const float fStartSecond = m_pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );
+			fDeltaTime = GAMESTATE->m_fMusicSeconds - fStartSecond;
+		}
+		else
+		{
+			fDeltaTime = GAMESTATE->m_fMusicSeconds - m_fLastMusicSeconds;
+		}
+		bga.m_bga->Update( fDeltaTime / fRate );
 	}
+
+	m_fLastMusicSeconds = GAMESTATE->m_fMusicSeconds;
 }
 
