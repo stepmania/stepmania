@@ -578,9 +578,25 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 RageColor SongManager::GetSongColor( const Song* pSong )
 {
 	ASSERT( pSong );
+
+	/* XXX:
+	 * Previously, this matched all notes, which set a song to "extra" if it
+	 * had any 10-foot steps at all, even edits or doubles.
+	 *
+	 * For now, only look at notes for the current note type.  This means that
+	 * if a song has 10-foot steps on Doubles, it'll only show up red in Doubles.
+	 * That's not too bad, I think.  This will also change it in the song scroll,
+	 * which is a little odd but harmless. 
+	 *
+	 * XXX: Once we support edits, ignore them, too. */
+	const NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Notes* pNotes = pSong->m_apNotes[i];
+
+		if(pNotes->m_NotesType != nt)
+			continue;
+
 		if( pNotes->GetMeter() >= 10 )
 			return EXTRA_COLOR;
 	}
