@@ -1038,7 +1038,6 @@
 				AA29CCFA0558741A00961A51,
 				AA29CCFB0558741A00961A51,
 				AA29CCFC0558741A00961A51,
-				AA29CCFD0558741A00961A51,
 				AA29CCFE0558741A00961A51,
 				AA29CCFF0558741A00961A51,
 				AA29CD000558741A00961A51,
@@ -1102,6 +1101,7 @@
 				AA29CD3A0558741A00961A51,
 				AA29CD3B0558741A00961A51,
 				AA9EC2F3055F5126007E5098,
+				AA9D236D0561B6CF00FC7F14,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2384,12 +2384,6 @@
 			settings = {
 			};
 		};
-		AA29CCFD0558741A00961A51 = {
-			fileRef = AAE443EA04B0F9F600D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CCFE0558741A00961A51 = {
 			fileRef = AAE443EC04B0F9F600D02EE9;
 			isa = PBXBuildFile;
@@ -2982,7 +2976,6 @@
 				AA29CDFC0558741A00961A51,
 				AA29CDFD0558741A00961A51,
 				AA29CDFE0558741A00961A51,
-				AA29CDFF0558741A00961A51,
 				AA29CE000558741A00961A51,
 				AA29CE010558741A00961A51,
 				AA29CE020558741A00961A51,
@@ -4177,12 +4170,6 @@
 		};
 		AA29CDFE0558741A00961A51 = {
 			fileRef = AA1DC47404A4861700D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CDFF0558741A00961A51 = {
-			fileRef = AAE443E904B0F9F600D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10180,16 +10167,15 @@
 			children = (
 				AA6EFEFD04770F63005F316C,
 				AA6EFEFE04770F63005F316C,
-				AA6EFF0104770F63005F316C,
-				AA6EFF0204770F63005F316C,
-				AA6EFF0304770F63005F316C,
-				AA6EFF0404770F63005F316C,
 				AA6EFEFF04770F63005F316C,
 				AA6EFF0004770F63005F316C,
 				AAC28BB904F758E500D02EE9,
 				AAC28BBA04F758E500D02EE9,
-				AAE443E904B0F9F600D02EE9,
-				AAE443EA04B0F9F600D02EE9,
+				AA6EFF0104770F63005F316C,
+				AA6EFF0204770F63005F316C,
+				AA6EFF0304770F63005F316C,
+				AA6EFF0404770F63005F316C,
+				AA9D236C0561B6CE00FC7F14,
 				AAE443EB04B0F9F600D02EE9,
 				AAE443EC04B0F9F600D02EE9,
 				AA6EFF0504770F63005F316C,
@@ -11363,6 +11349,21 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
+		AA9D236C0561B6CE00FC7F14 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = CombinedLifeMeter.h;
+			path = /Users/steve/stepmania/src/CombinedLifeMeter.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA9D236D0561B6CF00FC7F14 = {
+			fileRef = AA9D236C0561B6CE00FC7F14;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA9EC2F0055F5126007E5098 = {
 			expectedFileType = sourcecode.cpp.cpp;
 			fileEncoding = 30;
@@ -12358,30 +12359,6 @@
 			path = ../src/Bookkeeper.h;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		AAE443E904B0F9F600D02EE9 = {
-			expectedFileType = sourcecode.cpp.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = CombinedLifeMeterEnemy.cpp;
-			path = ../src/CombinedLifeMeterEnemy.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AAE443EA04B0F9F600D02EE9 = {
-			expectedFileType = sourcecode.c.h;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = CombinedLifeMeterEnemy.h;
-			path = ../src/CombinedLifeMeterEnemy.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
 		};
 		AAE443EB04B0F9F600D02EE9 = {
 			expectedFileType = sourcecode.cpp.cpp;
