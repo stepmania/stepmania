@@ -1,4 +1,4 @@
-/* NotesWriterDWI - writes a Song to a .DWI file. */
+/* NotesWriterDWI - Writes a Song to a .DWI file. */
 
 #ifndef NOTES_WRITER_DWI_H
 #define NOTES_WRITER_DWI_H

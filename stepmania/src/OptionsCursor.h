@@ -1,4 +1,4 @@
-/* OptionsCursor - cursor for ScreenOptions. */
+/* OptionsCursor - A cursor for ScreenOptions. */
 
 #ifndef OPTIONS_CURSOR_H
 #define OPTIONS_CURSOR_H

@@ -1,5 +1,7 @@
-#ifndef NoteSkinMANAGER_H
-#define NoteSkinMANAGER_H
+/* NoteSkinManager - Loads note skins. */
+
+#ifndef NOTE_SKIN_MANAGER_H
+#define NOTE_SKIN_MANAGER_H
 
 #include "Command.h"
 #include "RageTypes.h"

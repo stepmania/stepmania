@@ -1,3 +1,5 @@
+/* NotesLoader - Base class for step file loaders. */
+
 #ifndef NOTES_LOADER_H
 #define NOTES_LOADER_H
 

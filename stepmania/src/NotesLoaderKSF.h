@@ -1,4 +1,4 @@
-/* KSFLoader - reads a Song from a .KSF file. */
+/* KSFLoader - Reads a Song from a set of .KSF files. */
 
 #ifndef NOTES_LOADER_KSF_H
 #define NOTES_LOADER_KSF_H

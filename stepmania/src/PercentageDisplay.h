@@ -1,3 +1,5 @@
+/* PercentageDisplay - An Actor that displays a percentage. */
+
 #ifndef PERCENTAGE_DISPLAY_H
 #define PERCENTAGE_DISPLAY_H
 

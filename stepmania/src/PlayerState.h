@@ -1,4 +1,4 @@
-/* PlayerNumber */
+/* PlayerState - Holds per-player game state. */
 
 #ifndef PlayerState_H
 #define PlayerState_H

@@ -1,4 +1,4 @@
-/* NoteField - renders a NoteData */
+/* NoteField - An Actor that renders a NoteData. */
 
 #ifndef NOTE_FIELD_H
 #define NOTE_FIELD_H

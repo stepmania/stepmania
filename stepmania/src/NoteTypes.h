@@ -1,3 +1,5 @@
+/* NoteTypes - Types for holding tap notes and scores. */
+
 #ifndef NOTE_TYPES_H
 #define NOTE_TYPES_H
 

@@ -1,3 +1,5 @@
+/* PaneDisplay - An Actor that displays song information. */
+
 #ifndef PANE_DISPLAY_H
 #define PANE_DISPLAY_H
 

@@ -1,4 +1,4 @@
-/* ProfileManager -  Interface to profiles that exist on the machine or a memory card. */
+/* ProfileManager - Interface to machine and memory card profiles. */
 
 #ifndef ProfileManager_H
 #define ProfileManager_H
