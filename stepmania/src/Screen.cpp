@@ -250,7 +250,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenGameOver.h"
 #include "ScreenGameplay.h"
 #include "ScreenHowToPlay.h"
-#include "ScreenMachineOptions.h"
 #include "ScreenMapControllers.h"
 #include "ScreenMusicScroll.h"
 #include "ScreenPlayerOptions.h"
@@ -350,7 +349,6 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenGameOver );
 	IF_RETURN( ScreenGameplay );
 	IF_RETURN( ScreenHowToPlay );
-	IF_RETURN( ScreenMachineOptions );
 	IF_RETURN( ScreenMapControllers );
 	IF_RETURN( ScreenMusicScroll );
 	IF_RETURN( ScreenPlayerOptions );
