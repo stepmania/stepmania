@@ -11,22 +11,20 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Actor.h"
+#include "ActorFrame.h"
 #include "Sprite.h"
 #include "Quad.h"
 
 
-class MeterDisplay : public Actor
+class MeterDisplay : public ActorFrame
 {
 public:
 	MeterDisplay();
-	void Load( CString sSteamPath, float fStreamWidth );
-	virtual void Update( float fDelta );
-	virtual void DrawPrimitives();
+	void Load( CString sStreamPath, float fStreamWidth );
 
 	void SetPercent( float fPercent );
 
-
+private:
 	float	m_fStreamWidth;
 	float	m_fPercent;
 	Sprite  m_sprStream;

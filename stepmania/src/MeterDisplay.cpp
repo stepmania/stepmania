@@ -14,29 +14,17 @@
 
 MeterDisplay::MeterDisplay()
 {
-
+	this->AddChild( &m_sprStream );
 }
 
-void MeterDisplay::Load( CString sSteamPath, float fStreamWidth )
+void MeterDisplay::Load( CString sStreamPath, float fStreamWidth )
 {
 	m_fStreamWidth = fStreamWidth;
 
-	m_sprStream.Load( sSteamPath );
+	m_sprStream.Load( sStreamPath );
 	m_sprStream.SetZoomX( fStreamWidth / m_sprStream.GetUnzoomedWidth() );
 
 	SetPercent( 0.5f );
-}
-
-void MeterDisplay::Update( float fDelta )
-{
-	m_sprStream.Update( fDelta );
-
-	Actor::Update( fDelta );
-}
-
-void MeterDisplay::DrawPrimitives()
-{
-	m_sprStream.Draw();
 }
 
 void MeterDisplay::SetPercent( float fPercent )
