@@ -46,6 +46,40 @@ case $compile in
 	;;
 esac
 
+# Define UNIX for all Unix-like systems.  Don't define it for cross-compiling to
+# non-Unix-like systems.  (-DUNIX selects the archutils and ArchHooks to use; if
+# your platform doesn't use the Unix ones, you probably don't want to define UNIX.)
+case $host in
+*-linux-*)
+	AC_DEFINE(LINUX, 1, [Linux])
+	AC_DEFINE(UNIX, 1, [Unix])
+	linux=yes
+	unix=yes
+	;;
+
+*)
+	AC_DEFINE(UNIX, 1, [Unix])
+	unix=yes
+	;;
+esac
+AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
+AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
+
+# Define macros for individual CPU types, for a few bits of inline assembly.
+# This is for major, compatible CPU classes--"CPU_X86" includes P2, P3, P4,
+# AMD, etc.  If you need CPU-specific assembly, check at runtime--don't create
+# separate binaries for each CPU if the binaries themselves are otherwise
+# compatible.
+case $host in
+i?86-*)
+	AC_DEFINE(CPU_X86, 1, [x86])
+	;;
+powerpc-*)
+	AC_DEFINE(CPU_PPC, 1, [PPC])
+	;;
+esac
+
+
 AC_C_BIGENDIAN( 
 	AC_DEFINE(ENDIAN_BIG, 1, [Big endian]),
 	AC_DEFINE(ENDIAN_LITTLE, 1, [Little endian]),
@@ -208,39 +242,6 @@ AC_CHECK_DECL(truncf, , AC_DEFINE([NEED_TRUNCF],1,[Need truncf]), [#include <mat
 # AC_CHECK_FUNCS([sqrtf sinf tanf cosf acosf roundf truncf])
 
 AC_CHECK_DECLS([SIGPWR],,,[#include <signal.h>])
-
-# Define UNIX for all Unix-like systems.  Don't define it for cross-compiling to
-# non-Unix-like systems.  (-DUNIX selects the archutils and ArchHooks to use; if
-# your platform doesn't use the Unix ones, you probably don't want to define UNIX.)
-case $host in
-*-linux-*)
-	AC_DEFINE(LINUX, 1, [Linux])
-	AC_DEFINE(UNIX, 1, [Unix])
-	linux=yes
-	unix=yes
-	;;
-
-*)
-	AC_DEFINE(UNIX, 1, [Unix])
-	unix=yes
-	;;
-esac
-AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
-AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
-
-# Define macros for individual CPU types, for a few bits of inline assembly.
-# This is for major, compatible CPU classes--"CPU_X86" includes P2, P3, P4,
-# AMD, etc.  If you need CPU-specific assembly, check at runtime--don't create
-# separate binaries for each CPU if the binaries themselves are otherwise
-# compatible.
-case $host in
-i?86-*)
-	AC_DEFINE(CPU_X86, 1, [x86])
-	;;
-powerpc-*)
-	AC_DEFINE(CPU_PPC, 1, [PPC])
-	;;
-esac
 
 AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
