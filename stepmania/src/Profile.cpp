@@ -215,8 +215,6 @@ int Profile::GetPossibleSongDancePointsForStepsType( StepsType st ) const
 			
 			if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
 				continue;	// skip
-			if( UNLOCKMAN->SongIsLocked(pSong) )
-				continue;
 
 			vector<Steps*> vSteps = pSong->GetAllSteps();
 			for( unsigned j=0; j<vSteps.size(); j++ )
@@ -227,36 +225,6 @@ int Profile::GetPossibleSongDancePointsForStepsType( StepsType st ) const
 					continue;	// skip
 
 				const RadarValues& fRadars = pSteps->GetRadarValues();
-				iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-			}
-		}
-	}
-
-	return iTotal;
-}
-
-int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
-{
-	int iTotal = 0;
-
-	// add course high scores
-	{
-		vector<Course*> vCourses;
-		SONGMAN->GetAllCourses( vCourses, false );
-		for( unsigned i=0; i<vCourses.size(); i++ )
-		{
-			const Course* pCourse = vCourses[i];
-			
-			// Don't count any course that has any entries that change over time.
-			if( !pCourse->AllSongsAreFixed() )
-				continue;
-
-			FOREACH_CourseDifficulty( cd )
-			{
-				if( !pCourse->HasCourseDifficulty(st,cd) )
-					continue;
-
-				const RadarValues& fRadars = pCourse->GetRadarValues(st,cd);
 				iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 			}
 		}
@@ -309,6 +277,36 @@ int Profile::GetActualSongDancePointsForStepsType( StepsType st ) const
 				const RadarValues& fRadars = pSteps->GetRadarValues();
 				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
+			}
+		}
+	}
+
+	return iTotal;
+}
+
+int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
+{
+	int iTotal = 0;
+
+	// add course high scores
+	{
+		vector<Course*> vCourses;
+		SONGMAN->GetAllCourses( vCourses, false );
+		for( unsigned i=0; i<vCourses.size(); i++ )
+		{
+			const Course* pCourse = vCourses[i];
+			
+			// Don't count any course that has any entries that change over time.
+			if( !pCourse->AllSongsAreFixed() )
+				continue;
+
+			FOREACH_CourseDifficulty( cd )
+			{
+				if( !pCourse->HasCourseDifficulty(st,cd) )
+					continue;
+
+				const RadarValues& fRadars = pCourse->GetRadarValues(st,cd);
+				iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 			}
 		}
 	}
