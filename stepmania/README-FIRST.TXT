@@ -37,12 +37,14 @@ Table of Contents
 13. The .SM File Format
 14. Background Animations
 15. The .CRS File Format
-16. Improving Image Quality with Texture Hints
-17. Creating a StepMania announcer pack
-18. Creating a StepMania theme pack
-19. Building StepMania from CVS Source
-20. Version History
-21. Thanks
+16. Extra Stages
+17. Creating an Announcer
+18. Creating a Note Skin
+19. Creating a Theme
+20. How StepMania Loads Textures
+21. Building StepMania from CVS Source
+22. Version History
+23. Thanks
 
 ************************************************************
 1. About StepMania
@@ -51,6 +53,7 @@ Table of Contents
 StepMania game system is capable of playing many game types.  Currently, it 
 supports games Dance Dance Revolution and Pump It Up, with future support for EZ 
 2 Dancer, BeatMania, Guitar Freaks, DrumMania, Para Para Paradise and more.
+
 
 ************************************************************
 2. Minimum Requirements
@@ -65,6 +68,7 @@ supports games Dance Dance Revolution and Pump It Up, with future support for EZ
 * DirectX 8.1 compatible sound card with drivers
 * DivX 5 video codec (for movie visualizations)
 
+
 ************************************************************
 3. DirectX
 ************************************************************
@@ -72,6 +76,7 @@ supports games Dance Dance Revolution and Pump It Up, with future support for EZ
 DirectX 8.1 is required before installing StepMania. If DirectX 8.1 is not 
 installed on your computer, the StepMania installer will display a warning 
 and abort the installation.
+
 
 ************************************************************
 4. Installation
@@ -82,17 +87,20 @@ on your hard drive, then double-click the file icon to begin the installation.
 The installer automatically remove an older version of the program if one is 
 present. The default installation directory is 'C:\Program Files\StepMania'.
 
+
 ************************************************************
 5. Controls
 ************************************************************
 
 Use the "Config Key/Joy" option from the Title Menu to configure your 
-keyboad or dance pad.
+keyboad, dance pad, or other game controller.
+
+The following is a list of special keys.
 
 Any time:
   * F4 = toggle fullscreen
   * F5 = toggle detail
-  * Tab = increase game speed 4x
+  * Tab = increase game speed 4x (useful for moving through menus quickly)
   * LShift = decrease game speed to 1/4x
 
 In menus:
@@ -106,6 +114,7 @@ In gameplay:
   * F11 = decrease BPM of current segment
   * F12 = increase BPM of current segment
   * Hold Escape = abort playing
+
 
 ************************************************************
 6. How StepMania Loads Songs
@@ -124,7 +133,7 @@ For example, the song B4U may consist of the following files:
    Songs/Dance Dance Revolution 4th Mix/B4U/b4u.png
    Songs/Dance Dance Revolution 4th Mix/B4U/b4u-movie.avi
 
-StepMania supports the SM, DWI, and BMS song file formats.
+StepMania supports the SM, DWI, BMS, and KSF song file formats.
 
 If a song file does not specify a valid banner file, StepMania first looks 
 for a graphic in the song folder that contains the letters "banner".  If that
@@ -148,6 +157,7 @@ If a song file does not specify a valid movie background file, StepMania will
 look for a movie in the song folder that contains the letters "movie".  If 
 that search fails, StepMania will use the first movie in the song folder.
 
+
 ************************************************************
 7. Connecting Dance Pads
 ************************************************************
@@ -168,7 +178,7 @@ be hit simultaneously.
 There is just one brand of PlayStation->USB adaptor that functions perfectly 
 with StepMania.  These adaptors are available for purchase at the StepMania 
 web site (www.stepmania.com) and through some importers (www.liksang.com).  
-The adaptor is made by “Boom”, and it small and black with a detachable USB 
+The adaptor is made by "Boom", and it small and black with a detachable USB 
 cable.  These adaptors cost about $15 and allow you to attach one dance pad 
 per adaptor.  The primary advantage of these adaptors is that they do not 
 require special drivers and require no configuring.
@@ -186,6 +196,7 @@ For Windows 98 and Windows Me users, the recommended driver is "DirectPad Pro
 NTPad XP 1.x.  Both of these drivers can be downloaded from Aldos web site: 
 http://www.aldostools.com/dpad.html
 
+
 ************************************************************
 8. Compatibility Issues
 ************************************************************
@@ -197,9 +208,9 @@ issues that are thought to be video card driver bugs:
 
 * S3 Savage family cards (e.g. Diamond Stealth)
 Symptom: The right edge of some graphics appears "cut off".
-Explanation: Drivers do not properly handle textures > 512x512, resulting in 
-cropped textures. Please use the Low texture detail option to force texture to 
-be 512x512 or smaller.
+Explanation: Drivers do not properly handle textures >= 512x512, resulting in 
+cropped textures. Turn the texture detail option to 256 to force textures to 
+a smaller size.
 
 * SiS cards 
 Symptom: Garbled fonts.
@@ -208,8 +219,9 @@ solution is to upgrade drivers.
 
 * Any card older than two years
 Symptom: Various graphical glitches.
-Explanation: These problems are most often video card driver bugs.  Please 
-upgrade to the latest drivers, which will hopefully fix the errors.
+Explanation: These problems are most often caused by buggy video card drivers
+bugs.  Please upgrade to the latest drivers, which will hopefully fix the 
+errors.
 
 
 ************************************************************
@@ -255,8 +267,8 @@ I'd rather not going to say.  Sorry.  It's gotten me in trouble before.
 
 * Why won't you tell me?  I promise I won't tell anyone else.
 
-The reason I won't tell is because I don't know yet and I don't want to make 
-anyone angry if it takes longer than I expect (it usually does).
+The reason I won't tell is because: a) I don't know yet, and b) I don't want 
+to make  anyone angry if it takes longer than I expect (it usually does).
 
 
 ************************************************************
@@ -280,6 +292,7 @@ for you.  Simply launch the Package Manager
 (Start Menu->Programs->StepMania->Package Manager), click the song you want to 
 create a package for, click the Export button, and a .smzip package will be 
 placed on your desktop.
+
 
 ************************************************************
 11. Questions, Bugs, Suggestions, and Help
@@ -307,6 +320,7 @@ If you would like to help with development of StepMania, please send an email
 to the StepMania developers list (stepmania-devs@sourceforge.net) or to Chris 
 (chris@videogamers.com).
 
+
 ************************************************************
 12. The StepMania editor
 ************************************************************
@@ -316,6 +330,7 @@ note patterns.  Current, it support saving only in the .SM format.  If you save
 a song that was originally in DWI or BMS format, the old DWI and BMS files will 
 be renamed to have ".old" appended to avoid conflicts when the song is next 
 loaded.  All of the commands are listed along the left side of the screen.
+
 
 ************************************************************
 13. The .SM file format
@@ -539,8 +554,173 @@ Header section...
 
 
 ************************************************************
-16. Improving Image Quality with Texture Hints
+16. Extra Stages
 ************************************************************
+
+You can manually specify extra stage 1 and 2 by creating a .CRS files in the 
+group folder called extra1.crs and extra2.crs.  These courses must contain 
+exactly one valid song.  Don't forget to specify modifiers - see the CRS File 
+Format section in the readme for more information.  If a CRS file is not found
+or is invalid, the program will choose approprite Song/Notes/Options.
+
+************************************************************
+17. Creating an Announcer
+************************************************************
+
+Announcers folders must reside in the "Announcers" folder inside the 
+StepMania program directory (e.g. "Announcers\DDRMAX\").  An announcer folder 
+contains several more folders - one for each announcer "trigger".  You can 
+place as many .WAV, .MP3, or .OGG sounds as you want in a trigger folder.
+When StepMania wants to play a sound for that trigger, it will play a 
+random sound file from your trigger folder.
+
+Sound files in a trigger folder can have any name you want.  It's recommended
+that you name the sound files according to what is being said (e.g. 
+"everybodys waiting for you.mp3").  If there are 0 sound files in a trigger 
+folder, or the trigger folder is missing, then no sound will be played for 
+that trigger.
+
+************************************************************
+18. Creating a Note Skin
+************************************************************
+
+Note skins allow you to customize the way notes appear.  Note skins must 
+reside in the folder "Skins\(Game Name)\(Note Skin Name)".  Note skins are 
+specific to a particular game (dance, pump, etc).  In the note skin folder,
+you must implement the folling files for each note:
+
+<NoteName> Receptor (NxN).<png|gif|jpg|bmp>
+<NoteName> Note color part (NxN).<png|gif|jpg|bmp>
+<NoteName> Note gray part (NxN).<png|gif|jpg|bmp>
+<NoteName> Hold Explosion (NxN).<png|gif|jpg|bmp>
+<NoteName> Tap Explosion Bright (NxN).<png|gif|jpg|bmp>
+<NoteName> Tap Explosion Dim (NxN).<png|gif|jpg|bmp>
+<NoteName> Hold.colors
+<NoteName> Tap.colors
+
+"<NoteName>" must be the name of the note (e.g. "left", "upright", "snare").
+Look at the example note skins included with StepMania for a complete list
+for each game.
+
+"NxN" is an optional string that specifies the dimensions of the graphic.  
+For example, if there are 6 frames, 3 wide 2 high, in your color part 
+animation, then you might use the file name "Up Note color part 3x2.png".
+
+For more information on about graphics loading, see the section "How 
+StepMania Loads Textures".
+
+************************************************************
+19. Creating a Theme
+************************************************************
+
+Themes must reside in the Themes folder in the StepMania program directory.
+Inside each theme folder, there are up to three directories: "graphics",
+"sounds", and "fonts".
+
+Graphics may be .sprites or any file format described in the section "How 
+StepMania Loads Textures".  Sounds can be in .mp3, .ogg, or .wav.  Fonts
+must use the .font file format.
+
+When StepMania looks to load a font element (graphic, sound, font), it 
+first looks in the current theme folder for the element.  If that element
+cannot be found, it will fall back to using the element in the theme named
+"default".  "default" is sort of a base theme and should not be modified.
+
+This system allows user-made themes to override as little or as many theme
+elements as they want.  For example, you could create a theme that does
+nothing more than override the title menu logo.  Such a theme would contain 
+only one folder ("Graphics") and one file ("Graphics\title menu logo.png").
+
+
+> What's in a .font file?
+
+Example:
+
+[Font]
+Texture=Score Numbers 7x2.png
+Widths=5,8,10,17,15,18,15,6,9,9,8,14,5,9
+Characters=01234 :56789~.
+CapitalsOnly=0
+DrawExtraPercent=0.1
+
+Texure: File name of texture file.  Must be in same directory as .font file.
+  Font graphics can be generated by the program Bitmap Font Buider
+  (http://www.lmnopc.com/bitmapfontbuilder/).
+Width:  The width in pixels of the character in each frame of the texture.
+  Characters are specified in a left-to-right, top-to-bottom ordering.
+Characters:  The characters corresponding to each frame in the texture.
+  Characters are specified in a left-to-right, top-to-bottom ordering.
+CapitalsOnly:  0=false, 1=true.  Use "1" if this font implements only 
+  capital letters.
+DrawExtraPercent:  A number between 0.0 and 1.0 specifying the maximum 
+  amount in percentage of the frame width that a character can hang over
+  its width.  Many italic fonts hang a actually a little bit wider than 
+  base of the characer because of skewing.  For these types of font, the
+  DrawExtraPercent should be > 0.  This value takes some playing around with.
+
+************************************************************
+20. How StepMania Loads Textures
+************************************************************
+
+> What are textures?
+
+"Texture" is simply another name for graphics file.  The name "texture"
+is more common when taking about 3D graphics.  This document uses "texture"
+and "graphic" interchangably.
+
+> What types of graphics can StepMania read:
+
+StepMania can use any of the following graphics formats as textures:
+png, gif, jpg, bmp, avi, mpg, mpeg.  StepMania looks for textures on disk
+only by looking at file name minus the extension.  For example, when 
+StepMania wants to load the graphic "title menu logo", it will first look
+for "title menu logo.png", then "title menu logo.gif", ... then "title 
+menu logo.mpeg".
+
+
+> How to you specify multiple frames in an animation?
+
+Simply add the string "(NxN)".  Immediately before the "." that separates
+the main file name and the extension.  For example, suppose there is a file
+called "title menu logo.png" that you would like to turn into an animation.
+Now, you create an graphic file with 9 frames of animation - 3 frames wide
+and 3 frames high.  Name this file, "title menu logo 3x3.png", and stepmania
+will play the graphic as an animation with frames in the order left-to-right,
+top-to-bottom, with 0.20 seconds separating each frame.
+
+> What are .sprite files?
+
+.sprite files are a way to have even more precise control over how your 
+graphics animate.  Each sprite has multiple "states".  For each state, you
+may specify: 1) What frame of the graphic to show, and 2) how long to show
+this state before moving to the next state.
+
+Let's look at an example .sprite file:
+
+[Sprite]
+Texture=dancer p1 8x4.png
+Frame0000=0
+Delay0000=0.05
+Frame0001=1
+Delay0001=0.05
+Frame0002=2
+
+Texture is the name of the texure file to use.  This must reside in the same
+directory as the .sprite file.  If your texture has multiple frames, be sure
+to specify the dimensions in the file name using the convention described 
+above.
+
+FrameNNNN is the index of the frame number to use for the first state of the
+animation.  Frame may range between 0 and (total number of frames - 1).  
+Frame indicies move left-to-right, top-to-bottom over the frames in an image.
+
+DelayNNNN is the time in seconds to show the state.
+
+
+> My graphics show ugly banding or look washed out.  What can I do?
+
+You can use texture hints to have more precise control over how your graphics
+are storred on the graphics card.
 
 All are textures loaded by StepMania are 16-bits.  The default the texture 
 format is 4444 (4 bits for R,G,B, 4 bits for alpha), which can cause some 
@@ -561,20 +741,23 @@ end of a file name in parenthesis. For example:
 caution (dither, no alpha).png
 Arrows Left 1x4 (1 alpha).png
 
+> Why do the graphics look so blurry?
+
+Some 3D graphics cards (the Voodoo3 in particular) cannot handles textures > 
+256x256.  If a texture is larger than the card's maximum texture size, the 
+image will scaled down internally.  Since the card is using a low-resolution 
+version internally, the output, when scalled back to the original image size,
+will be blurry.
+
+Whenever possible:
+* Keep your images to dimensions smaller or equal to 256x256.
+* Make your images have an even number for each dimension (e.g. 286x120 is 
+will appear less blurr than 285x119).  The reason behind this has to do with
+how 3D accelerators represent screen coordinates with floating point numbers,
+not integers.
+
 ************************************************************
-17. Creating a StepMania announcer pack
-************************************************************
-
-
-
-************************************************************
-18. Creating a StepMania theme pack
-************************************************************
-
-
-
-************************************************************
-19. Building StepMania from CVS source
+21. Building StepMania from CVS source
 ************************************************************
 
 CVS is the repository that manages the StepMania source code.  Our CVS server is 
@@ -599,15 +782,19 @@ headers.
 * Step 3: Install WinCVS
 
 A CVS client is required to "checkout" the course from the CVS server.  Download 
-version 1.2 of WinCVS here - http://www.cvsgui.org.
+version 1.2 of WinCVS here - http://www.cvsgui.org 
+(or http://sourceforge.net/project/showfiles.php?group_id=10072)
+
 IMPORTANT: Now, open and close WinCVS once.  This will cause WinCVS to create 
 registry entries, which is required for the next step...
 
 * Step 4: Use SourceForge Setup to install SSH and configure WinCVS
 
 A small utility called SourceForge Setup will greatly simplify the steps needed 
-to configure SSH and WinCVS.  Download SourceForge Setup here - link here.  Use 
-the following settings when prompted by SF Setup:
+to configure SSH and WinCVS.  Download SourceForge Setup from 
+http://sfsetup.sourceforge.net/.  Use the following settings when prompted by SF 
+Setup:
+
 - Unpack SSH directory: c:\ssh
 - SSH install direcotory: c:\ssh
 - Your home directory: c:\ssh
@@ -615,6 +802,7 @@ the following settings when prompted by SF Setup:
 - Name of the project: stepmania
 - The directory where you will be keeping checked out project sources: 
 c:\stepmania
+
 IMPORTANT: If you are using Windows 2000 or Windows XP SourceForge Setup will 
 not correctly write changes to the c:\autoexec.bat file.  Verify that the 
 following lines are present after you run SF Setup:
@@ -626,11 +814,43 @@ SET HOME=c:\ssh
 IMPORTANT: You must restart after running SF Setup so that the new environment 
 variables take effect.
 
+* Step 5: Enable SSH access to the cvs machine
+
+Before you can use your account, you must type the following (substituting your 
+username and projectname as appropriate) before attempting to use CVS from a new 
+user account:
+
+ssh -l username cvs.projectname.sf.net
+
+Enter your password, and you'll get a message about how you're not supposed to 
+be there and the connection will drop. What they don't tell you is that this 
+creates your home directory and is required for things to start working.
+
 * DONE! Enjoy staying on the bleeding edge of StepMania releases! 
 
 ************************************************************
-20. Version History
+22. Version History
 ************************************************************
+
+------------------------CVS after 3.00 beta 6----------------
+CHANGE:  A game that doesn't have any note skins installed is now invisible on 
+	the Select Game screen.  This can be used to selectively disable a game.
+CHANGE:  Graphics and sounds now more compressed more for a smaller download.
+CHANGE:  The "Difficulty Banner" (displayed while dancing) is now a graphic
+	that can be overwritten by themes.
+CHANGE:  An invalid character in a DWI file is now a warning, not a Fatal Error.
+BUG FIX:  Fixed "blinky arrows".
+CHANGE:  Note Skin format has changed.  Now supports MAX-style holds.
+OPTIMIZATION:  Improved font alignment.  Scaled fonts now appear less blurry.
+BUG FIX:  Random Movies no longer upside down.
+NEW FEATURE:  Extra stage top and bottom bars now reversed
+NEW FEATURE:  Most graphical elements can be positioned per theme using 
+    metrics.ini in the theme folder.  See the theme section of the readme for 
+	more info.
+BUG FIX:  Autoplay no longer misses the first step if it lies on beat 0.
+NEW FEATURE:  Support for holds notes in KSF.
+CHANGE:  KSF title discovery will use song foler name if KSF file contains foreign
+	characters.
 
 ------------------------CVS after 3.00 beta 5----------------
 OPTIMIZATION:  Much faster song loading.
@@ -707,6 +927,10 @@ BUG FIX:  Browsing past a song that don't have notes for some Difficulties will 
 BUG FIX:  TurnMirror, TurnLeft, and TurnShuffle now work.  TurnRight does the same 
 	thing is as TurnLeft temporarily.
 NEW FEATURE:  Demonstration plays after sitting idle at title screen.
+CHANGE:  Note Skins can now control both the tap tween colors and hold tween colors
+	with the files "(ButtonName) Tap.colors" and "(ButtonName) Tap.colors".
+CHANGE:  Tap colors now interpolated for smoother color animation.
+CHANGE:  Tweaked Drunk for a more interesting effect.
 
 ------------------------Version 3.00 beta 4------------------
 BUG FIX:  Fixed crash entering Config Joy/Key (duh!)
@@ -1046,12 +1270,13 @@ Bug fix: Good and Boo arrows not being drawn.
 -------------------------Version 0.50-------------------------
 
 ************************************************************
-21. Thanks
+23. Thanks
 ************************************************************
 
 Thanks to:
 	Dj Slash & Tony Thai for the caution graphic
 	Kyle "KeeL" Ward for his awesome menu music (www.ampcast.com/keel)
+	Gotetsu for being a utility player
 
 ************************************************************
 End of document

@@ -113,7 +113,7 @@ const float OPT_YP[NUM_EZ2P_GRAPHICS] = {
 }; // tells us the default Y position
 
 
-#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("Screens","SkipSelectDifficulty")
+#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("General","SkipSelectDifficulty")
 
 
 float ez2p_lasttimercheck[2];

@@ -45,30 +45,28 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"EXIT",
 };
 
-#define CHOICES_X			THEME->GetMetricF("TitleMenu","ChoicesX")
-#define CHOICES_START_Y		THEME->GetMetricF("TitleMenu","ChoicesStartY")
-#define CHOICES_SPACING_Y	THEME->GetMetricF("TitleMenu","ChoicesSpacingY")
-#define HELP_X				THEME->GetMetricF("TitleMenu","HelpX")
-#define HELP_Y				THEME->GetMetricF("TitleMenu","HelpY")
-#define LOGO_X				THEME->GetMetricF("TitleMenu","LogoX")
-#define LOGO_Y				THEME->GetMetricF("TitleMenu","LogoY")
-#define VERSION_X			THEME->GetMetricF("TitleMenu","VersionX")
-#define VERSION_Y			THEME->GetMetricF("TitleMenu","VersionY")
-#define SONGS_X				THEME->GetMetricF("TitleMenu","SongsX")
-#define SONGS_Y				THEME->GetMetricF("TitleMenu","SongsY")
-#define COLOR_NOT_SELECTED	THEME->GetMetricC("TitleMenu","ColorNotSelected")
-#define COLOR_SELECTED		THEME->GetMetricC("TitleMenu","ColorSelected")
+#define CHOICES_X						THEME->GetMetricF("TitleMenu","ChoicesX")
+#define CHOICES_START_Y					THEME->GetMetricF("TitleMenu","ChoicesStartY")
+#define CHOICES_SPACING_Y				THEME->GetMetricF("TitleMenu","ChoicesSpacingY")
+#define HELP_X							THEME->GetMetricF("TitleMenu","HelpX")
+#define HELP_Y							THEME->GetMetricF("TitleMenu","HelpY")
+#define LOGO_X							THEME->GetMetricF("TitleMenu","LogoX")
+#define LOGO_Y							THEME->GetMetricF("TitleMenu","LogoY")
+#define VERSION_X						THEME->GetMetricF("TitleMenu","VersionX")
+#define VERSION_Y						THEME->GetMetricF("TitleMenu","VersionY")
+#define SONGS_X							THEME->GetMetricF("TitleMenu","SongsX")
+#define SONGS_Y							THEME->GetMetricF("TitleMenu","SongsY")
+#define COLOR_NOT_SELECTED				THEME->GetMetricC("TitleMenu","ColorNotSelected")
+#define COLOR_SELECTED					THEME->GetMetricC("TitleMenu","ColorSelected")
+#define SECONDS_BEFORE_DEMONSTRATION	THEME->GetMetricF("TitleMenu","SecondsBeforeDemonstration")
+#define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("TitleMenu","SecondsBetweenAttract")
 
-#define USE_CAUTION_OR_SELECT_PLAYER		THEME->GetMetricB("Screens","UseCautionOrSelectPlayer")
-
+#define USE_CAUTION_OR_SELECT_PLAYER	THEME->GetMetricB("General","UseCautionOrSelectPlayer")
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
 const ScreenMessage SM_FadeToDemonstration	=	ScreenMessage(SM_User+13);
 const ScreenMessage SM_GoToDemonstration	=	ScreenMessage(SM_User+14);
-
-
-const float SECONDS_BEFORE_DEMONSTRATION = 30;
 
 
 ScreenTitleMenu::ScreenTitleMenu()
@@ -77,11 +75,26 @@ ScreenTitleMenu::ScreenTitleMenu()
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
 
-	// reset game info
+	//
+	// I think it's better to do all the initialization here rather than have it scattered
+	// about in all the global singleton classes
+	//
 	GAMESTATE->Reset();
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 	GAMESTATE->m_bPlayersCanJoin = true;
+	if( !GAMEMAN->DoesNoteSkinExist( GAMEMAN->GetCurNoteSkin() ) )
+	{
+		CStringArray asNoteSkinNames;
+		GAMEMAN->GetNoteSkinNames( asNoteSkinNames );
+		GAMEMAN->SwitchNoteSkin( asNoteSkinNames[0] );
+	}
+	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
+	{
+		CStringArray asThemeNames;
+		THEME->GetThemeNamesForCurGame( asThemeNames );
+		THEME->SwitchTheme( asThemeNames[0] );
+	}
 
 
 	m_sprBG.Load( THEME->GetPathTo("Graphics","title menu background") );
@@ -155,8 +168,8 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	MUSIC->Stop();
 
-	for( i=12; i<SECONDS_BEFORE_DEMONSTRATION; i+=10 )
-		this->SendScreenMessage( SM_PlayAttract, (float)i );
+	for( float f=SECONDS_BETWEEN_ATTRACT; f<SECONDS_BEFORE_DEMONSTRATION; f+=SECONDS_BETWEEN_ATTRACT )
+		this->SendScreenMessage( SM_PlayAttract, f );
 	this->SendScreenMessage( SM_FadeToDemonstration, SECONDS_BEFORE_DEMONSTRATION );
 }
 

@@ -374,7 +374,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 	{	// StyleDef
 		GAME_DANCE,							// m_Game
 		"dance-couple",						// m_szName
-		NOTES_TYPE_DANCE_SINGLE,			// m_NotesType
+		NOTES_TYPE_DANCE_COUPLE,			// m_NotesType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
 		{ 160, 480 },						// m_iCenterX
 		4,									// m_iColsPerPlayer

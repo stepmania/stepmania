@@ -648,6 +648,11 @@ bool Notes::LoadFromKSFFile( const CString &sPath )
 			CStringArray asRows;
 			sParams[1].TrimLeft();
 			split( sParams[1], "\n", asRows, true );
+
+			int iHoldStartRow[13];
+			for( int t=0; t<13; t++ )
+				iHoldStartRow[t] = -1;
+
 			for( int r=0; r<asRows.GetSize(); r++ )
 			{
 				CString& sRowString = asRows[r];
@@ -658,10 +663,25 @@ bool Notes::LoadFromKSFFile( const CString &sPath )
 				int row = BeatToNoteRow(fBeatThisRow);
 				for( int t=0; t<13; t++ )
 				{
-					char c = sRowString[t];
-					if( c != '0' )
-						int kdsjf = 0;
-					notedata.m_TapNotes[t][row] = sRowString[t];
+					if( sRowString[t] == '4' )
+					{
+						if( iHoldStartRow[t] == -1 )
+							iHoldStartRow[t] = r;
+						else
+							;	// ignore middle of hold
+					}
+					else	// sRowString[t] != '4'
+					{
+						if( iHoldStartRow[t] != -1 )	// this ends the hold
+						{
+							HoldNote hn = { t, iHoldStartRow[t]/(float)iTickCount, (r-1)/(float)iTickCount };
+							notedata.AddHoldNote( hn );
+							iHoldStartRow[t] = -1;
+						}
+					}
+
+					if( sRowString[t] != '4' )
+						notedata.m_TapNotes[t][row] = sRowString[t];
 				}
 			}
 

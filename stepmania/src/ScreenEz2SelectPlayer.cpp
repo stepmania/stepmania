@@ -32,7 +32,7 @@ Andrew Livy
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
 
-#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("Screens","UseNormalOrEZ2SelectStyle")
+#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("General","UseNormalOrEZ2SelectStyle")
 
 const float TWEEN_TIME		= 0.35f;
 const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.3f,0.3f,0.3f,1);

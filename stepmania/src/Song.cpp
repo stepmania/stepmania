@@ -22,7 +22,7 @@
 #include "RageException.h"
 
 
-const int FILE_CACHE_VERSION = 54;	// increment this to force a cache reload (useful when the SM file format changes)
+const int FILE_CACHE_VERSION = 61;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
@@ -948,6 +948,8 @@ bool Song::LoadFromKSFDir( CString sDir )
 	// load the Notes from the rest of the KSF files
 	for( int i=0; i<arrayKSFFileNames.GetSize(); i++ ) 
 	{
+		if( arrayKSFFileNames[i].Find("_2") != -1 )
+			continue;	// any "right-side" files should be loaded by Notes
 		Notes* pNewNotes = new Notes;
 		pNewNotes->LoadFromKSFFile( m_sSongDir + arrayKSFFileNames[i] );
 		m_apNotes.Add( pNewNotes );
@@ -981,6 +983,30 @@ bool Song::LoadFromKSFDir( CString sDir )
 			else
 			{
 				m_sMainTitle = asBits[0];
+			}
+
+			for( int j=0; j<m_sMainTitle.GetLength(); j++ )
+			{
+				char c = m_sMainTitle[j];
+				if( c < 0 )	// this title has a foreign char
+				{
+					CStringArray asBits;
+					split( sDir, "\\", asBits, true);
+					CString sSongFolderName = asBits[ asBits.GetSize()-1 ];
+					asBits.RemoveAll();
+
+					split( sSongFolderName, " - ", asBits, false );
+					if( asBits.GetSize() == 2 )
+					{
+						m_sArtist = asBits[0];
+						m_sMainTitle = asBits[1];
+					}
+					else
+					{
+						m_sMainTitle = asBits[0];
+					}
+					break;
+				}
 			}
 		}
 

@@ -136,6 +136,9 @@ private:
 	RandomSample	m_announcer1000Combo;
 	RandomSample	m_announcerComboStopped;
 
+	
+
+	int				m_iRowLastCrossed;
 	RandomSample	m_soundAssistTick;
 
 	RageSoundStream		m_soundMusic;

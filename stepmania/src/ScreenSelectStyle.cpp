@@ -39,7 +39,7 @@
 #define PREVIEW_X			THEME->GetMetricF("SelectStyle","PreviewX")
 #define PREVIEW_Y			THEME->GetMetricF("SelectStyle","PreviewY")
 
-#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("Screens","SkipSelectDifficulty")
+#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("General","SkipSelectDifficulty")
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);

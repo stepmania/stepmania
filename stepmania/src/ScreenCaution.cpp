@@ -21,7 +21,7 @@
 #include "GameState.h"
 
 
-#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("Screens","UseNormalOrEZ2SelectStyle")
+#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("General","UseNormalOrEZ2SelectStyle")
 
 
 const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);

@@ -1259,9 +1259,5 @@ SOURCE=.\error.bmp
 
 SOURCE=.\loading.bmp
 # End Source File
-# Begin Source File
-
-SOURCE=.\splash.bmp
-# End Source File
 # End Target
 # End Project

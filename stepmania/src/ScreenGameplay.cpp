@@ -559,6 +559,8 @@ ScreenGameplay::ScreenGameplay()
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo(ANNOUNCER_GAMEPLAY_COMBO_STOPPED) );
 	}
 
+	m_iRowLastCrossed = -1;
+
 	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 
 
@@ -854,21 +856,19 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// Send crossed row messages to Player
 	//
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-	CLAMP( iRowNow, 0, MAX_TAP_NOTE_ROWS-1 );
-	static int iRowLastCrossed = 0;
-	CLAMP( iRowLastCrossed, 0, MAX_TAP_NOTE_ROWS-1 );
-
-	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+	if( iRowNow >= 0  &&  iRowNow < MAX_TAP_NOTE_ROWS )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		for( int r=m_iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
-			if( GAMESTATE->IsPlayerEnabled(p) )
-				m_Player[p].CrossedRow( r );
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					m_Player[p].CrossedRow( r );
+			}
 		}
+
+		m_iRowLastCrossed = iRowNow;
 	}
-
-	iRowLastCrossed = iRowNow;
-
 
 
 	// 
