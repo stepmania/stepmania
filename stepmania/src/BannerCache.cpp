@@ -181,9 +181,9 @@ struct BannerTexture: public RageTexture
 		/* Find a supported texture format.  If it happens to match the stored
 		 * file, we won't have to do any conversion here, and that'll happen often
 		 * with paletted images. */
-		PixelFormat pf = img->format->BitsPerPixel == 8? FMT_PAL: FMT_RGB5A1;
+		RageDisplay::PixelFormat pf = img->format->BitsPerPixel == 8? RageDisplay::FMT_PAL: RageDisplay::FMT_RGB5A1;
 		if( !DISPLAY->SupportsTextureFormat(pf) )
-			pf = FMT_RGBA4;
+			pf = RageDisplay::FMT_RGBA4;
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
 		ASSERT(img);

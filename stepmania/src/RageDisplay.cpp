@@ -37,7 +37,7 @@ static int			g_iFramesRenderedSinceLastCheck,
 
 RageDisplay*		DISPLAY	= NULL;
 
-CString PixelFormatToString( PixelFormat pixfmt )
+CString RageDisplay::PixelFormatToString( PixelFormat pixfmt )
 {
 	const CString s[NUM_PIX_FORMATS] = {
 		"FMT_RGBA8",
@@ -586,7 +586,7 @@ SDL_Surface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
 	return surf;
 }
 
-PixelFormat RageDisplay::FindPixelFormat( 
+RageDisplay::PixelFormat RageDisplay::FindPixelFormat( 
 	int bpp, int Rmask, int Gmask, int Bmask, int Amask )
 {
 	PixelFormatDesc tmp = { bpp, Rmask, Gmask, Bmask, Amask };

@@ -105,7 +105,7 @@ static void FixLilEndian()
 #endif
 }
 
-static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool HighColor )
+static int FindCompatibleAVFormat( RageDisplay::PixelFormat &pixfmt, bool HighColor )
 {
 	for( int i = 0; AVPixelFormats[i].bpp; ++i )
 	{
@@ -119,7 +119,7 @@ static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool HighColor )
 				fmt.masks[2],
 				fmt.masks[3] );
 
-		if( pixfmt == NUM_PIX_FORMATS )
+		if( pixfmt == RageDisplay::NUM_PIX_FORMATS )
 			continue;
 
 		return i;
@@ -346,6 +346,7 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
 	LOG->Trace("Bitrate: %i", decoder->m_stream->codec.bit_rate );
 	LOG->Trace("Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(decoder->m_stream->codec.pix_fmt) );
+	LOG->Trace("Texture pixel format: %i", m_AVTexfmt );
 
 	CreateFrameRects();
 
@@ -474,11 +475,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
-	/* TODO: We could get a big speed bonus by doing the above if the
-	 * hardware renderer can handle YUV textures.  I think D3D can do
-	 * this, as well as OpenGL on the Mac, but we don't have any infrastructure
-	 * for this right now. */
-    PixelFormat pixfmt;
+    RageDisplay::PixelFormat pixfmt;
 	bool PreferHighColor = (TEXTUREMAN->GetMovieColorDepth() == 32);
 	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, PreferHighColor );
 
@@ -499,22 +496,22 @@ void MovieTexture_FFMpeg::CreateTexture()
 		default:
 			ASSERT(0);
 		case 16:
-			if( DISPLAY->SupportsTextureFormat(FMT_RGB5) )
-				pixfmt = FMT_RGB5;
+			if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
+				pixfmt = RageDisplay::FMT_RGB5;
 			else
-				pixfmt = FMT_RGBA4; // everything supports RGBA4
+				pixfmt = RageDisplay::FMT_RGBA4; // everything supports RGBA4
 
 			break;
 
 		case 32:
-			if( DISPLAY->SupportsTextureFormat(FMT_RGB8) )
-				pixfmt = FMT_RGB8;
-			else if( DISPLAY->SupportsTextureFormat(FMT_RGBA8) )
-				pixfmt = FMT_RGBA8;
-			else if( DISPLAY->SupportsTextureFormat(FMT_RGB5) )
-				pixfmt = FMT_RGB5;
+			if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB8) )
+				pixfmt = RageDisplay::FMT_RGB8;
+			else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGBA8) )
+				pixfmt = RageDisplay::FMT_RGBA8;
+			else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
+				pixfmt = RageDisplay::FMT_RGB5;
 			else
-				pixfmt = FMT_RGBA4; // everything supports RGBA4
+				pixfmt = RageDisplay::FMT_RGBA4; // everything supports RGBA4
 			break;
 		}
 	}

@@ -194,13 +194,13 @@ apply_color_key:
 	}
 
 	// Format of the image that we will pass to OpenGL and that we want OpenGL to use
-	PixelFormat pixfmt;
+	RageDisplay::PixelFormat pixfmt;
 
 	/* Figure out which texture format to use. */
 	// if the source is palleted, load palleted no matter what the prefs
-	if(img->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(FMT_PAL))
+	if(img->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL))
 	{
-		pixfmt = FMT_PAL;
+		pixfmt = RageDisplay::FMT_PAL;
 	}
 	else
 	{
@@ -226,16 +226,16 @@ apply_color_key:
 				switch( src_alpha_bits ) {
 				case 0:
 				case 1:
-					pixfmt = FMT_RGB5A1;
+					pixfmt = RageDisplay::FMT_RGB5A1;
 					break;
 				default:	
-					pixfmt = FMT_RGBA4;
+					pixfmt = RageDisplay::FMT_RGBA4;
 					break;
 				}
 			}
 			break;
 		case 32:
-			pixfmt = FMT_RGBA8;
+			pixfmt = RageDisplay::FMT_RGBA8;
 			break;
 		default:
 			RageException::Throw( "Invalid color depth: %d bits", actualID.iColorDepth );
@@ -244,10 +244,10 @@ apply_color_key:
 		/* It's either not a paletted image, or we can't handle paletted textures.
 		 * Convert to the desired RGBA format, dithering if appropriate. */
 		if( actualID.bDither && 
-			(pixfmt==FMT_RGBA4 || pixfmt==FMT_RGB5A1) )	/* Don't dither if format is 32bpp; there's no point. */
+			(pixfmt==RageDisplay::FMT_RGBA4 || pixfmt==RageDisplay::FMT_RGB5A1) )	/* Don't dither if format is 32bpp; there's no point. */
 		{
 			/* Dither down to the destination format. */
-			const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+			const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h,
 				pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 
@@ -266,15 +266,15 @@ apply_color_key:
 	 * Every card supports either RGBA8 or RGBA4. */
 	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
 	{
-		pixfmt = FMT_RGBA8;
+		pixfmt = RageDisplay::FMT_RGBA8;
 		if( !DISPLAY->SupportsTextureFormat(pixfmt) )
-			pixfmt = FMT_RGBA4;
+			pixfmt = RageDisplay::FMT_RGBA4;
 	}
 
 
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */
-	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+	const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
 	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight,
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 	
@@ -331,7 +331,7 @@ apply_color_key:
 
 
 	CString props;
-	props += PixelFormatToString( pixfmt ) + " ";
+	props += RageDisplay::PixelFormatToString( pixfmt ) + " ";
 	if(actualID.iAlphaBits == 0) props += "opaque ";
 	if(actualID.iAlphaBits == 1) props += "matte ";
 	if(actualID.bStretch) props += "stretch ";

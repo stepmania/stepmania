@@ -107,7 +107,7 @@ const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 LowLevelWindow *wind;
 
 
-static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
+static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMATS] = {
 	{
 		/* R8G8B8A8 */
 		32,
@@ -202,7 +202,7 @@ struct GLPixFmtInfo_t {
 	GLenum internalfmt; /* target format */
 	GLenum format; /* target format */
 	GLenum type; /* data format */
-} GL_PIXFMT_INFO[NUM_PIX_FORMATS] = {
+} GL_PIXFMT_INFO[RageDisplay::NUM_PIX_FORMATS] = {
 	{
 		/* R8G8B8A8 */
 		GL_RGBA8,
@@ -255,9 +255,9 @@ static void FixLilEndian()
 		return;
 	Initialized = true;
 
-	for( int i = 0; i < NUM_PIX_FORMATS; ++i )
+	for( int i = 0; i < RageDisplay::NUM_PIX_FORMATS; ++i )
 	{
-		PixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
+		RageDisplay::PixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
 
 		/* OpenGL and SDL handle byte formats differently; we need
 		 * to flip non-paletted masks to make them line up. */
@@ -377,9 +377,9 @@ static void CheckPalettedTextures()
 		return;
 
 	/* Check to see if paletted textures really work. */
-	GLenum glTexFormat = GL_PIXFMT_INFO[FMT_PAL].internalfmt;
-	GLenum glImageFormat = GL_PIXFMT_INFO[FMT_PAL].format;
-	GLenum glImageType = GL_PIXFMT_INFO[FMT_PAL].type;
+	GLenum glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
+	GLenum glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
+	GLenum glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
 
 	FlushGLErrors();
 	glTexImage2D(GL_PROXY_TEXTURE_2D,
@@ -1028,7 +1028,7 @@ void RageDisplay_OGL::SetBackfaceCull( bool b )
         glDisable( GL_CULL_FACE );
 }
 
-const PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
+const RageDisplay::PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
 {
 	ASSERT( pf < NUM_PIX_FORMATS );
 	return &PIXEL_FORMAT_DESC[pf];
@@ -1053,7 +1053,7 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 }
 
 
-PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg, int width, int height )
+RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( SDL_Surface* &img, bool &FreeImg, int width, int height )
 {
 	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	

@@ -131,7 +131,7 @@ static void SetPalette( unsigned TexResource )
 #define D3DFVF_RageModelVertex (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1)
 
 
-static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
+static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMATS] = {
 	{
 		/* A8B8G8R8 */
 		32,
@@ -189,7 +189,7 @@ static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	}
 };
 
-static D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] = 
+static D3DFORMAT D3DFORMATS[RageDisplay::NUM_PIX_FORMATS] = 
 {
 	D3DFMT_A8R8G8B8,
 	D3DFMT_A4R4G4B4,
@@ -205,7 +205,7 @@ static D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] =
 	D3DFMT_UNKNOWN /* no ABGR */
 };
 
-const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
+const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 {
 	ASSERT( pf < NUM_PIX_FORMATS );
 	return &PIXEL_FORMAT_DESC[pf];

@@ -35,30 +35,30 @@ MovieTexture_Null::MovieTexture_Null(RageTextureID ID) : RageMovieTexture(ID) {
 
     CreateFrameRects();
 
-    PixelFormat pixfmt;
+    RageDisplay::PixelFormat pixfmt;
 
     switch( TEXTUREMAN->GetMovieColorDepth() ){
         default:
             ASSERT(0);
         case 16:
-            if( DISPLAY->SupportsTextureFormat(FMT_RGB5) )
-                pixfmt = FMT_RGB5;
+            if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
+                pixfmt = RageDisplay::FMT_RGB5;
             else
-                pixfmt = FMT_RGBA4;	// everything supports RGBA4
+                pixfmt = RageDisplay::FMT_RGBA4;	// everything supports RGBA4
             break;
         case 32:
-            if( DISPLAY->SupportsTextureFormat(FMT_RGB8) )
-                pixfmt = FMT_RGB8;
-            else if( DISPLAY->SupportsTextureFormat(FMT_RGBA8) )
-                pixfmt = FMT_RGBA8;
-            else if( DISPLAY->SupportsTextureFormat(FMT_RGB5) )
-                pixfmt = FMT_RGB5;
+            if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB8) )
+                pixfmt = RageDisplay::FMT_RGB8;
+            else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGBA8) )
+                pixfmt = RageDisplay::FMT_RGBA8;
+            else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
+                pixfmt = RageDisplay::FMT_RGB5;
             else
-                pixfmt = FMT_RGBA4;	// everything supports RGBA4
+                pixfmt = RageDisplay::FMT_RGBA4;	// everything supports RGBA4
             break;
     }
 
-    const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+    const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
     SDL_Surface *img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, size, size, pfd->bpp, pfd->masks[0],
                                                 pfd->masks[1], pfd->masks[2], pfd->masks[3]);
     texHandle = DISPLAY->CreateTexture(pixfmt, img);
