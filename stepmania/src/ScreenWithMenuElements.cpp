@@ -50,7 +50,7 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	{
 		FOREACH_PlayerNumber( p )
 		{
-			m_MemoryCardDisplay[p].Load( (PlayerNumber)p );
+			m_MemoryCardDisplay[p].Load( p );
 			m_MemoryCardDisplay[p].SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_MemoryCardDisplay[p] );
 			this->AddChild( &m_MemoryCardDisplay[p] );

@@ -447,7 +447,7 @@ void GameState::Update( float fDelta )
 		}
 
 		if( bRebuildPlayerOptions )
-			RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+			RebuildPlayerOptionsFromActiveAttacks( p );
 
 		if( m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut > 0 )
 			m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = max( 0, m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut - fDelta );
@@ -1119,7 +1119,7 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 void GameState::ResetNoteSkins()
 {
 	FOREACH_PlayerNumber( pn )
-		ResetNoteSkinsForPlayer( (PlayerNumber) pn );
+		ResetNoteSkinsForPlayer(  pn );
 
 	++m_BeatToNoteSkinRev;
 }
@@ -1279,7 +1279,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 void GameState::RemoveAllActiveAttacks()	// called on end of song
 {
 	FOREACH_PlayerNumber( p )
-		RemoveActiveAttacksForPlayer( (PlayerNumber)p );
+		RemoveActiveAttacksForPlayer( p );
 }
 
 int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn ) const

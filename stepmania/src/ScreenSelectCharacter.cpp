@@ -147,8 +147,8 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
-			AfterRowChange( (PlayerNumber)p );
-			AfterValueChange( (PlayerNumber)p );
+			AfterRowChange( p );
+			AfterValueChange( p );
 		}
 
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )

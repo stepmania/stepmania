@@ -11,16 +11,14 @@ DualScrollBar::DualScrollBar()
 
 void DualScrollBar::Load()
 {
-	int pn;
-
-	for( pn=0; pn < NUM_PLAYERS; ++pn )
+	FOREACH_PlayerNumber( pn )
 	{
 		m_sprScrollThumbUnderHalf[pn].SetName( ssprintf("ThumbP%i", pn+1) );
 		m_sprScrollThumbUnderHalf[pn].Load( THEME->GetPathToG( ssprintf("%s thumb p%i", m_sName.c_str(), pn+1) ) );
 		this->AddChild( &m_sprScrollThumbUnderHalf[pn] );
 	}
 
-	for( pn=0; pn < NUM_PLAYERS; ++pn )
+	FOREACH_PlayerNumber( pn )
 	{
 		m_sprScrollThumbOverHalf[pn].SetName( ssprintf("ThumbP%i", pn+1) );
 		m_sprScrollThumbOverHalf[pn].Load( THEME->GetPathToG( ssprintf("%s thumb p%i", m_sName.c_str(), pn+1) ) );
@@ -33,8 +31,8 @@ void DualScrollBar::Load()
 	m_sprScrollThumbOverHalf[0].SetCropRight( .5f );
 	m_sprScrollThumbOverHalf[1].SetCropLeft( .5f );
 
-	for( pn=0; pn < NUM_PLAYERS; ++pn )
-		SetPercentage( (PlayerNumber) pn, 0 );
+	FOREACH_PlayerNumber( pn )
+		SetPercentage( pn, 0 );
 
 	FinishTweening();
 }

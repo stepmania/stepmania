@@ -134,7 +134,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	// Find out if players deserve to enter their name
 	FOREACH_PlayerNumber( p )
 	{
-		GAMESTATE->GetRankingFeats( (PlayerNumber)p, aFeats[p] );
+		GAMESTATE->GetRankingFeats( p, aFeats[p] );
 		m_bStillEnteringName[p] = aFeats[p].size()>0;
 	}
 
@@ -162,7 +162,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	FOREACH_PlayerNumber( p )
 	{
 		// load last used ranking name if any
-		Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+		Profile* pProfile = PROFILEMAN->GetProfile(p);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 			 m_sSelectedName[p] = pProfile->m_sLastUsedHighScoreName;
 
@@ -377,7 +377,7 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 		if( !m_Out.IsTransitioning() )
 		{
 			FOREACH_PlayerNumber( p )
-				this->MenuStart( (PlayerNumber)p );
+				this->MenuStart( p );
 		}
 		break;
 	case SM_GoToNextScreen:

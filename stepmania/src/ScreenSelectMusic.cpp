@@ -239,7 +239,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_AutoGenIcon[p] );
 
 		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
-		m_OptionIconRow[p].Load( (PlayerNumber)p );
+		m_OptionIconRow[p].Load( p );
 		m_OptionIconRow[p].Refresh();
 		SET_XY( m_OptionIconRow[p] );
 		this->AddChild( &m_OptionIconRow[p] );

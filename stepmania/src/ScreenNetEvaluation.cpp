@@ -181,7 +181,7 @@ void ScreenNetEvaluation::UpdateStats()
 	if( m_iCurrentPlayer >= (int) NSMAN->m_EvalPlayerData.size() )
 		return;
 
-	m_Grades[m_pActivePlayer].SetGrade( (PlayerNumber)m_pActivePlayer, (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
+	m_Grades[m_pActivePlayer].SetGrade( m_pActivePlayer, (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
 	m_Grades[m_pActivePlayer].Spin();
 	m_Grades[m_pActivePlayer].SettleImmediately();
 

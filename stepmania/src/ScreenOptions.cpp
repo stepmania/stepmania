@@ -227,7 +227,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	// init highlights
 	FOREACH_HumanPlayer( p )
 	{
-		m_Highlight[p].Load( (PlayerNumber)p, false );
+		m_Highlight[p].Load( p, false );
 		m_framePage.AddChild( &m_Highlight[p] );
 	}
 
@@ -238,7 +238,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		{	
 			Row &row = *m_Rows[l];
 
-			LoadOptionIcon( (PlayerNumber)p, l, "" );
+			LoadOptionIcon( p, l, "" );
 			m_framePage.AddChild( &row.m_OptionIcons[p] );
 		}
 	}
@@ -278,7 +278,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 			{
 				OptionsCursor *ul = new OptionsCursor;
 				row.m_Underline[p].push_back( ul );
-				ul->Load( (PlayerNumber)p, true );
+				ul->Load( p, true );
 				ul->SetX( fX );
 				ul->SetWidth( truncf(fItemWidth) );
 			}
@@ -387,7 +387,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		{
 			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
-			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName((PlayerNumber)p) );
+			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
 			SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
 			m_framePage.AddChild( &m_textPlayerName[p] );
 		}
@@ -399,7 +399,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
 		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
 		FOREACH_PlayerNumber( p )
-			m_ScrollBar.EnablePlayer( (PlayerNumber)p, GAMESTATE->IsHumanPlayer(p) );
+			m_ScrollBar.EnablePlayer( p, GAMESTATE->IsHumanPlayer(p) );
 		m_ScrollBar.Load();
 		SET_XY( m_ScrollBar );
 		m_framePage.AddChild( &m_ScrollBar );
@@ -452,7 +452,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	UpdateEnabledDisabled();
 	{
 		FOREACH_PlayerNumber( p )
-			OnChange( (PlayerNumber)p );
+			OnChange( p );
 	}
 
 	CHECKPOINT;
@@ -679,7 +679,7 @@ void ScreenOptions::PositionIcons()
 			int iChoiceWithFocus = row.m_iChoiceInRowWithFocus[p];
 
 			int iWidth, iX, iY;			// We only use iY
-			GetWidthXY( (PlayerNumber)p, i, iChoiceWithFocus, iWidth, iX, iY );
+			GetWidthXY( p, i, iChoiceWithFocus, iWidth, iX, iY );
 			icon.SetX( ICONS_X(p) );
 
 			if( icon.GetDestY() != row.m_fY )
@@ -719,7 +719,7 @@ void ScreenOptions::PositionCursors()
 		const int iChoiceWithFocus = Row.m_iChoiceInRowWithFocus[pn];
 
 		int iWidth, iX, iY;
-		GetWidthXY( (PlayerNumber)pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
+		GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 		highlight.SetBarWidth( iWidth );
 		highlight.SetXY( (float)iX, (float)iY );
 	}
@@ -1058,7 +1058,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
-			TweenCursor( (PlayerNumber) p );
+			TweenCursor(  p );
 
 		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == Row::ROW_EXIT;
 		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
@@ -1318,7 +1318,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 				if( optrow.type == OptionRowData::SELECT_MULTIPLE )
 					;	// do nothing.  User must press Start to toggle the selection.
 				else
-					row.SetOneSelection( (PlayerNumber)p, iNewChoiceWithFocus );			
+					row.SetOneSelection( p, iNewChoiceWithFocus );			
 			}
 		}
 	}
@@ -1397,7 +1397,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 			}
 		}
 
-		OnChange( (PlayerNumber)p );
+		OnChange( p );
 		changed = true;
 	}
 	if( changed )

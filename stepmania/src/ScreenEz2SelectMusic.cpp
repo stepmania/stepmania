@@ -121,7 +121,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 		this->AddChild(&m_debugtext);
 		#endif
 
-		for(int p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 		//	m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
 		//	m_FootMeter[p].SetShadowLength( 2 );
@@ -152,7 +152,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 			m_VanishIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_VanishIcon[p] );
 
-			UpdateOptions((PlayerNumber) p,0);
+			UpdateOptions( p,0);
 
 			m_iSelection[p] = 0;
 		}
@@ -669,9 +669,9 @@ void ScreenEz2SelectMusic::MusicChanged()
 		m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes[pn].size()) ) ;
 	}
 
-	for( pn=0; pn<NUM_PLAYERS; pn++ )
+	FOREACH_PlayerNumber( pn )
 	{
-		AfterNotesChange( (PlayerNumber)pn );
+		AfterNotesChange( pn );
 	}
 }
 

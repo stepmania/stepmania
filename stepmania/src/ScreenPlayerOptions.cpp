@@ -121,7 +121,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
 	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
-		SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions cancel all") );
+		SOUND->PlayOnce( THEME->GetPathS(m_sName,"cancel all") );
 		
 		// apply the game default mods, but not the Profile saved mods
 		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();

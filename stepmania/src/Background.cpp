@@ -573,10 +573,10 @@ void Background::Update( float fDeltaTime )
 
 	FOREACH_PlayerNumber( p )
 	{
-		if( IsDangerPlayerVisible((PlayerNumber)p) )
+		if( IsDangerPlayerVisible(p) )
 			m_DangerPlayer[p].Update( fDeltaTime );
 			
-		if( IsDeadPlayerVisible((PlayerNumber)p) )
+		if( IsDeadPlayerVisible(p) )
 			m_DeadPlayer[p].Update( fDeltaTime );
 	}
 
@@ -628,9 +628,9 @@ void Background::DrawPrimitives()
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( IsDangerPlayerVisible((PlayerNumber)p) )
+			if( IsDangerPlayerVisible(p) )
 				m_DangerPlayer[p].Draw();
-			if( IsDeadPlayerVisible((PlayerNumber)p) )
+			if( IsDeadPlayerVisible(p) )
 				m_DeadPlayer[p].Draw();
 		}
 	}

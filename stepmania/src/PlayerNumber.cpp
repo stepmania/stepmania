@@ -15,11 +15,6 @@ RageColor PlayerToColor( PlayerNumber pn )
 	}
 };
 
-RageColor PlayerToColor( int p ) 
-{ 
-	return PlayerToColor( (PlayerNumber)p ); 
-}
-
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
 {
 	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )

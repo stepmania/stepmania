@@ -132,7 +132,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		//
 		// use a fan to draw the volume
 		//
-		RageColor color = PlayerToColor( (PlayerNumber)p );
+		RageColor color = PlayerToColor( p );
 		color.a = 0.5f;
 		v[0].p = RageVector3( 0, 0, 0 );
 		v[0].c = color;
@@ -165,7 +165,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fY = -sinf(fRotation) * fDistFromCenter;
 
 			v[i].p = RageVector3( fX, fY, 0 );
-			v[i].c = PlayerToColor( (PlayerNumber)p );
+			v[i].c = PlayerToColor( p );
 		}
 
 		// TODO: Add this back in.  -Chris

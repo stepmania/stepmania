@@ -424,7 +424,7 @@ void ScreenEvaluation::Init()
 					m_textPlayerOptions[p].SetText( sPO );
 					this->AddChild( &m_textPlayerOptions[p] );
 
-					if( GAMESTATE->IsDisqualified((PlayerNumber)p) )
+					if( GAMESTATE->IsDisqualified(p) )
 					{
 						m_sprDisqualified[p].Load( THEME->GetPathToG("ScreenEvaluation disqualified") );
 						m_sprDisqualified[p]->SetName( ssprintf("DisqualifiedP%d",p+1) );
@@ -486,7 +486,7 @@ void ScreenEvaluation::Init()
 			this->AddChild( m_sprGradeFrame[p] );
 
 			m_Grades[p].Load( THEME->GetPathToG("ScreenEvaluation grades") );
-			m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
+			m_Grades[p].SetGrade( p, grade[p] );
 			m_Grades[p].SetName( ssprintf("GradeP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_Grades[p] );
 			if( SPIN_GRADES )
