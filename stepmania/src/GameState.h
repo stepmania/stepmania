@@ -147,8 +147,6 @@ public:
 	bool		m_bPastHereWeGo;
 	static const float MUSIC_SECONDS_INVALID;
 
-	float		m_fOldOffset;  // used on offset screen to calculate difference
-
 	void ResetMusicStatistics();	// Call this when it's time to play a new song.  Clears the values above.
 	void UpdateSongPosition(float fPositionSeconds);
 

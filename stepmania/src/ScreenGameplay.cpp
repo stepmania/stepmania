@@ -57,6 +57,8 @@
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
+/* Global, so it's accessible from ShowSavePrompt: */
+static float g_fOldOffset;  // used on offset screen to calculate difference
 
 const ScreenMessage	SM_PlayReady			= ScreenMessage(SM_User+0);
 const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
@@ -224,7 +226,10 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	/* */
 
 	// init old offset in case offset changes in song
-	GAMESTATE->m_fOldOffset = GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds;
+	if( GAMESTATE->IsCourseMode() )
+		g_fOldOffset = -1000;
+	else
+		g_fOldOffset = GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds;
 
 
 
@@ -1481,18 +1486,17 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	case PLAY_MODE_HUMAN_BATTLE:
 	case PLAY_MODE_CPU_BATTLE:
 	case PLAY_MODE_RAVE:
-		{
-		float m_fOffsetChange = GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - GAMESTATE->m_fOldOffset;
 		sMessage = ssprintf( 
-			"Change to offset: %f\n\n"
 			"You have changed the offset or BPM of\n"
-			"%s.\n"
+			"%s\n"
+			"from %.3f to %.3f (a change of %.3f).\n"
 			"Would you like to save these changes back\n"
 			"to the song file?\n"
 			"Choosing NO will discard your changes.",
-			m_fOffsetChange,
-			GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str() );
-		}
+			GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str(),
+			g_fOldOffset, 
+			GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds,
+			GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - g_fOldOffset );
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
