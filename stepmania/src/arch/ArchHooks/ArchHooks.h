@@ -42,6 +42,10 @@ public:
 	 * This is a static function, implemented in whichever ArchHooks source is used,
 	 * so it can be used at any time (such as in global constructors), before HOOKS
 	 * is initialized.
+	 *
+	 * RageTimer layers on top of this, and attempts to correct wrapping, as the
+	 * underlying timers may be 32-bit, but implementations should try to avoid
+	 * wrapping if possible.
 	 */
 	static int64_t GetMicrosecondsSinceStart( bool bAccurate );
 };
