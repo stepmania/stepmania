@@ -583,9 +583,6 @@ int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 
 	mad_frame_mute(&mad->Frame);
 	mad_synth_mute(&mad->Synth);
-	/* This is the only way I know of to reset a stream.  (If we don't
-	 * do this, then seeking to a position and decoding might not do the
-	 * exact same thing every time, which will throw resync() off.) */
 	mad_stream_finish(&mad->Stream);
 	mad_stream_init(&mad->Stream);
 
@@ -602,6 +599,7 @@ int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 }
 
 
+#if 0
 /* Call this after seeking the stream.  We'll back up a bit and reread
  * frames until we're back where we started, so the next read is aligned
  * to a frame and synced.  This must never leave the position ahead of where
@@ -645,7 +643,7 @@ int RageSoundReader_MP3::resync()
 
 	return 1;
 }
-
+#endif
 
 RageSoundReader_MP3::RageSoundReader_MP3()
 {
@@ -871,12 +869,18 @@ int RageSoundReader_MP3::SetPosition_toc( int ms, bool Xing )
 
 		if( bytepos != -1 )
 		{
-			seek_stream_to_byte( bytepos );
+			/* Seek backwards up to 4k. */
+			const int seekpos = max( 0, bytepos - 1024*4 );
+			seek_stream_to_byte( seekpos );
+
+			do
+			{
+				if( do_mad_frame_decode() <= 0 ) /* XXX eof */
+					return -1; /* it set the error */
+			} while( get_this_frame_byte(mad) < bytepos );
+			synth_output();
 
 			mad_timer_set( &mad->Timer, 0, percent * mad->length, 100 );
-
-			/* We've jumped across the file, so the decoder is currently desynced. */
-			resync();
 		}
 	}
 
@@ -898,12 +902,13 @@ int RageSoundReader_MP3::SetPosition_hard( int ms )
 	if(mad_timer_compare(mad->Timer, desired) > 0)
 		MADLIB_rewind();
 
+	/* We always come in here with data synthed.  Be careful not to synth the
+	 * same frame twice. */
+	bool synthed=true;
+
 	/* Decode frames until the current frame contains the desired offset. */
 	while(1)
 	{
-		if( do_mad_frame_decode() == -1 )
-			return -1; /* it set the error */
-
 		/* If desired < next_frame_timer, this frame contains the position.  Since we've
 		 * already decoded the frame, synth it, too. */
 		mad_timer_t next_frame_timer = mad->Timer;
@@ -911,7 +916,8 @@ int RageSoundReader_MP3::SetPosition_hard( int ms )
 		
 		if( mad_timer_compare(desired, next_frame_timer) < 0 )
 		{
-			synth_output();
+			if( !synthed )
+				synth_output();
 
 			/* We just synthed data starting at mad->Timer, containing the desired offset.
 			 * Skip (desired - mad->Timer) worth of frames in the output to line up. */
@@ -932,8 +938,15 @@ int RageSoundReader_MP3::SetPosition_hard( int ms )
 		mad_timer_t next_next_frame_timer = next_frame_timer;
 		mad_timer_add( &next_next_frame_timer, mad->framelength );
 
-		if( mad_timer_compare(desired, next_next_frame_timer) < 0 )
+		if( mad_timer_compare(desired, next_next_frame_timer) < 0 && !synthed )
+		{
 			synth_output();
+			synthed = true;
+		}
+
+		if( do_mad_frame_decode() == -1 )
+			return -1; /* it set the error */
+		synthed = false;
 	}
 }
 
