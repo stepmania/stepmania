@@ -68,7 +68,7 @@ protected:
 private:
 	MusicWheel		m_MusicWheel;
 
-	Quad			m_rectDiff;
+	Sprite			m_sprDiff;
 
 	//Difficulty Icon(s)
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];

@@ -30,6 +30,9 @@ const ScreenMessage SM_RefreshWheelLocation = ScreenMessage(SM_User+20);
 
 const CString AllGroups			= "[ALL MUSIC]";
 
+#define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
+#define DIFFBG_HEIGHT				THEME->GetMetricF(m_sName,"DiffBGHeight")
+
 REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
 ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSelectBase( sName )
 {
@@ -37,9 +40,12 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	GAMESTATE->FinishStage();
 
 	//Diff Icon background
-	m_rectDiff.SetName( "DiffBG" );
-	SET_QUAD_INIT( m_rectDiff );
-	this->AddChild( &m_rectDiff );
+	m_sprDiff.Load( THEME->GetPathG( m_sName, "DiffBG" ) );
+	m_sprDiff.SetName( "DiffBG" );
+	m_sprDiff.SetWidth( DIFFBG_WIDTH );
+	m_sprDiff.SetHeight( DIFFBG_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_sprDiff );
+	this->AddChild( &m_sprDiff);
 
 	FOREACH_EnabledPlayer (p)
 	{
@@ -389,7 +395,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_BPMDisplay );
 
-	OFF_COMMAND( m_rectDiff );
+	OFF_COMMAND( m_sprDiff );
 
 	FOREACH_EnabledPlayer (pn)
 	{

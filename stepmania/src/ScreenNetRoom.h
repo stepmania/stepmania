@@ -43,7 +43,7 @@ private:
 	RageSound m_soundChangeSel;
 	
 	BitmapText m_textTitle;
-	Quad m_rectTitleBG;
+	Sprite m_sprTitleBG;
 
 	Sprite m_sprRoomsBG;
 	BitmapText m_textRooms;

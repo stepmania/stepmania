@@ -11,6 +11,7 @@
 #include "VirtualKeyboard.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
+#define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")
 #define ROOMSBG_WIDTH				THEME->GetMetricF(m_sName,"RoomsBGWidth")
 #define ROOMSBG_HEIGHT				THEME->GetMetricF(m_sName,"RoomsBGHeight")
 #define SELECTION_WIDTH				THEME->GetMetricF(m_sName,"SelectionWidth")
@@ -31,9 +32,12 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 	m_iRoomPlace = 0;
 	m_SelectMode = SelectRooms;
 
-	m_rectTitleBG.SetName( "TitleBG" );
-	SET_QUAD_INIT( m_rectTitleBG );
-	this->AddChild( &m_rectTitleBG);
+	m_sprTitleBG.Load( THEME->GetPathG( m_sName, "TitleBG" ) );
+	m_sprTitleBG.SetName( "TitleBG" );
+	m_sprTitleBG.SetWidth( TITLEBG_WIDTH );
+	m_sprTitleBG.SetHeight( TITLEBG_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_sprTitleBG );
+	this->AddChild( &m_sprTitleBG);
 
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
 	m_textTitle.SetShadowLength( 0 );
@@ -145,7 +149,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 void ScreenNetRoom::TweenOffScreen()
 {
 	OFF_COMMAND( m_textTitle );
-	OFF_COMMAND( m_rectTitleBG );
+	OFF_COMMAND( m_sprTitleBG );
 	OFF_COMMAND( m_sprRoomsBG );
 	OFF_COMMAND( m_textRooms );
 	OFF_COMMAND( m_sprSelection );
