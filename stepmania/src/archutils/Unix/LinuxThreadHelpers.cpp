@@ -30,14 +30,35 @@ static bool g_bUsingNPTL = false;
 
 static _syscall0(pid_t,gettid)
 
-static bool UsingNPTL()
+#ifndef _CS_GNU_LIBPTHREAD_VERSION
+#define _CS_GNU_LIBPTHREAD_VERSION 3
+#endif
+
+
+CString ThreadsVersion()
 {
-	return ThreadsVersion().Left(4) == "NPTL";
+	char buf[1024] = "(error)";
+	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
+	if( ret == -1 )
+		return "(unknown)";
+
+	return buf;
 }
 
+/* Crash-conditions-safe: */
+static bool UsingNPTL()
+{
+	char buf[1024] = "";
+	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
+	if( ret == -1 )
+		return false;
+
+	return !strncmp( buf, "NPTL", 4 );
+}
+/* Crash-conditions-safe: */
 void InitializePidThreadHelpers()
 {
-	bool bInitialized = false;
+	static bool bInitialized = false;
 	if( bInitialized )
 		return;
 	bInitialized = true;
@@ -94,20 +115,6 @@ static int PtraceDetach( int ThreadID )
 	return ptrace( PTRACE_DETACH, ThreadID, NULL, NULL );
 }
 
-
-#ifndef _CS_GNU_LIBPTHREAD_VERSION
-#define _CS_GNU_LIBPTHREAD_VERSION 3
-#endif
-
-CString ThreadsVersion()
-{
-	char buf[1024] = "(error)";
-	int ret = confstr( _CS_GNU_LIBPTHREAD_VERSION, buf, sizeof(buf) );
-	if( ret == -1 )
-		return "(unknown)";
-
-	return buf;
-}
 
 /* Get this thread's ID (this may be a TID or a PID). */
 int GetCurrentThreadId()
