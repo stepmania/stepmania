@@ -399,13 +399,13 @@ void ForceCrashHandler( const char *reason )
 }
 
 #if defined(LINUX)
-void ForceCrashHandlerDeadlock( CString reason, const BacktraceContext *ctx )
+void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *ctx )
 {
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
 
 	crash.type = CrashData::FORCE_CRASH_DEADLOCK;
-	strncpy( crash.reason, reason, sizeof(crash.reason) );
+	strncpy( crash.reason, reason, min(sizeof(crash.reason) - 1, reason.length()) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
 	GetBacktrace( crash.BacktracePointers, BACKTRACE_MAX_SIZE, NULL );
@@ -414,19 +414,29 @@ void ForceCrashHandlerDeadlock( CString reason, const BacktraceContext *ctx )
 	RunCrashHandler( &crash );
 }
 
-/* iCrashHandle comes from ThreadImpl_Pthreads::GetCrashHandle. */
-void ForceCrashHandlerDeadlock( CString reason, uint64_t iCrashHandle )
+/* iCrashHandle comes from ThreadImpl_Pthreads::GetThreadId. */
+void ForceCrashHandlerDeadlock( const CString& reason, uint64_t iCrashHandle )
 {
 	BacktraceContext ctx;
 	if( !GetThreadBacktraceContext( iCrashHandle, &ctx ) )
 	{
 		reason += "; GetThreadBacktraceContext failed";
 		ForceCrashHandler( reason );
-	} else {
-		ForceCrashHandlerDeadlock( reason, &ctx );
 	}
+	else
+		ForceCrashHandlerDeadlock( reason, &ctx );
 
 	_exit(1);
+}
+#else
+void ForceCrashHandlerDeadlock( const CString& reason, const BacktraceContext *ctx )
+{
+	ForceCrashHandler( reason );
+}
+
+void ForceCrashHandlerDeadlock( const CString& reason, uint64_t iCrashHandle )
+{
+	ForceCrashHandler( reason );
 }
 #endif
 
