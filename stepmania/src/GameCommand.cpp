@@ -553,7 +553,7 @@ void GameCommand::ApplyToAllPlayers() const
 {
 	vector<PlayerNumber> vpns;
 
-	FOREACH_HumanPlayer( pn )
+	FOREACH_PlayerNumber( pn )
 		vpns.push_back( pn );
 
 	Apply( vpns );
