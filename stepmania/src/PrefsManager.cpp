@@ -35,7 +35,7 @@ PrefsManager::PrefsManager()
 	m_iDisplayWidth = 640;
 	m_iDisplayHeight = 480;
 	m_iDisplayColorDepth = 16;
-	m_iTextureColorDepth = 16;
+	m_iTextureColorDepth = 32;
 	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bIgnoreJoyAxes = true;
 	m_bOnlyDedicatedMenuButtons = false;
