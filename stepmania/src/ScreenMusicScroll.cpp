@@ -52,17 +52,16 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 	SONGMAN->GetSongs( arraySongs );
 	SortSongPointerArrayByTitle( arraySongs );
 	
-	m_iNumLines = 0;
-
-	for( i=0; i<min(arraySongs.size(), MAX_MUSIC_LINES); i++ )
+	for( i=0; i < arraySongs.size(); i++ )
 	{
+		BitmapText *bt = new BitmapText;
+		m_textLines.push_back(bt);
+		
 		Song* pSong = arraySongs[i];
-		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathToF("ScreenMusicScroll titles") );
-		m_textLines[m_iNumLines].SetText( pSong->GetFullDisplayTitle(), pSong->GetFullTranslitTitle() );
-		m_textLines[m_iNumLines].SetDiffuse( SONGMAN->GetSongColor(pSong) );
-		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
-
-		m_iNumLines++;
+		bt->LoadFromFont( THEME->GetPathToF("ScreenMusicScroll titles") );
+		bt->SetText( pSong->GetFullDisplayTitle(), pSong->GetFullTranslitTitle() );
+		bt->SetDiffuse( SONGMAN->GetSongColor(pSong) );
+		bt->SetZoom( TEXT_ZOOM );
 	}
 
 //	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
@@ -74,12 +73,12 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 //		m_iNumLines++;
 //	}
 
-	for( i=0; i<m_iNumLines; i++ )
+	for( i=0; i<m_textLines.size(); i++ )
 	{
-		m_textLines[i].SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
-		m_textLines[i].BeginTweening( SCROLL_DELAY * i );
-		m_textLines[i].BeginTweening( 2.0f*SCROLL_SPEED );
-		m_textLines[i].SetXY( CENTER_X, SCREEN_TOP - 40 );	
+		m_textLines[i]->SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
+		m_textLines[i]->BeginTweening( SCROLL_DELAY * i );
+		m_textLines[i]->BeginTweening( 2.0f*SCROLL_SPEED );
+		m_textLines[i]->SetXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
 	this->PostScreenMessage( SM_BeginFadingOut, 0.2f * i + 3.0f );
@@ -99,8 +98,8 @@ ScreenMusicScroll::ScreenMusicScroll() : Screen("ScreenMusicScroll")
 
 void ScreenMusicScroll::Update( float fDeltaTime )
 {
-	for( unsigned i=0; i<m_iNumLines; i++ )
-		m_textLines[i].Update( fDeltaTime );
+	for( unsigned i=0; i<m_textLines.size(); i++ )
+		m_textLines[i]->Update( fDeltaTime );
 
 	m_In.Update( fDeltaTime );
 	m_Out.Update( fDeltaTime );
@@ -113,11 +112,11 @@ void ScreenMusicScroll::DrawPrimitives()
 {
 	Screen::DrawPrimitives();
 
-	for( unsigned i=0; i<m_iNumLines; i++ )
+	for( unsigned i=0; i<m_textLines.size(); i++ )
 	{
-		if( m_textLines[i].GetY() > SCREEN_TOP-20  &&
-			m_textLines[i].GetY() < SCREEN_BOTTOM+20 )
-			m_textLines[i].Draw();
+		if( m_textLines[i]->GetY() > SCREEN_TOP-20  &&
+			m_textLines[i]->GetY() < SCREEN_BOTTOM+20 )
+			m_textLines[i]->Draw();
 	}
 
 	m_In.Draw();	// render it again so it shows over the text

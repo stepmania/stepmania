@@ -16,9 +16,9 @@
 #include "MenuElements.h"
 
 
-const unsigned MAX_MUSIC_LINES = 1200;
+//const unsigned MAX_MUSIC_LINES = 1200;
 //const unsigned MAX_CREDIT_LINES = 100;
-const unsigned MAX_TOTAL_LINES = MAX_MUSIC_LINES;// + MAX_CREDIT_LINES;
+//const unsigned MAX_TOTAL_LINES = MAX_MUSIC_LINES;// + MAX_CREDIT_LINES;
 
 
 class ScreenMusicScroll : public Screen
@@ -38,8 +38,7 @@ public:
 private:
 
 	BGAnimation		m_Background;
-	BitmapText		m_textLines[MAX_TOTAL_LINES];
-	unsigned 		m_iNumLines;
+	vector<BitmapText *> m_textLines;
 	float			m_fTimeLeftInScreen;
 
 	Transition	m_In;
