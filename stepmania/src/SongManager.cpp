@@ -321,6 +321,16 @@ void SongManager::PreloadSongImages()
 		TEXTUREMAN->CacheTexture( ID );
 	}
 
+	vector<Course*> courses;
+	SONGMAN->GetAllCourses( courses, false );
+	for( i = 0; i < courses.size(); ++i )
+	{
+		if( !courses[i]->HasBanner() )
+			continue;
+
+		const RageTextureID ID = Banner::BannerTex( courses[i]->m_sBannerPath );
+		TEXTUREMAN->CacheTexture( ID );
+	}
 }
 
 void SongManager::FreeSongs()
