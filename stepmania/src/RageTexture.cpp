@@ -16,13 +16,33 @@
 
 void RageTextureID::Init()
 {
+	/* Maximum size of the texture, per dimension. */
 	iMaxSize = 2048;
+
+	/* Number of mipmaps. (unimplemented) */
 	iMipMaps = 4;
+
+	/* Maximum number of bits for alpha.  In 16-bit modes, lowering
+	 * this gives more bits for color values. (0, 1 or 4) */
 	iAlphaBits = 4;
+
+	/* If true and color precision is being lost, dither. (slow) */
 	bDither = false;
+	/* If true, resize the image to fill the internal texture. (slow) */
 	bStretch = false;
-	iColorDepth = -1; /* default */
+
+	/* Preferred color depth of the image.  (This is overridden for
+	 * paletted images and transparencies.) */
+   	iColorDepth = -1; /* default */
+
+	/* If true, enable HOT PINK color keying. (deprecated but needed for
+	 * banners) */
 	bHotPinkColorKey = false;
+
+	/* This indicates that the image is a transparency.  This allows for
+	 * high-resolution, memory-compact transparent layers.  The diffuse
+	 * color will be used with no texture color.  (0, 4, 8) */
+	iTransparencyOnly = 0;
 }
 
 bool RageTextureID::operator<(const RageTextureID &rhs) const

@@ -27,6 +27,7 @@ struct RageTextureID
 	int iMipMaps;
 	int iAlphaBits;
 	int iColorDepth;
+	int iTransparencyOnly;
 	bool bDither;
 	bool bStretch;
 	bool bHotPinkColorKey; /* #FF00FF */

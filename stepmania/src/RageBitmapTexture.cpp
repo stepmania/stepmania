@@ -152,11 +152,19 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 	CString HintString = GetFilePath();
 	HintString.MakeLower();
 
-	if( HintString.Find("no alpha") != -1 )		m_ActualID.iAlphaBits = 0;
-	else if( HintString.Find("1 alpha") != -1 )	m_ActualID.iAlphaBits = 1;
-	else if( HintString.Find("1alpha") != -1 )	m_ActualID.iAlphaBits = 1;
-	else if( HintString.Find("0alpha") != -1 )	m_ActualID.iAlphaBits = 0;
-	if( HintString.Find("dither") != -1 )		m_ActualID.bDither = true;
+	if( HintString.Find("4alphaonly") != -1 )		m_ActualID.iTransparencyOnly = 4;
+	else if( HintString.Find("8alphaonly") != -1 )	m_ActualID.iTransparencyOnly = 8;
+	else if( HintString.Find("no alpha") != -1 )	m_ActualID.iAlphaBits = 0;
+	else if( HintString.Find("0alpha") != -1 )		m_ActualID.iAlphaBits = 0;
+	else if( HintString.Find("1 alpha") != -1 )		m_ActualID.iAlphaBits = 1;
+	else if( HintString.Find("1alpha") != -1 )		m_ActualID.iAlphaBits = 1;
+	if( HintString.Find("dither") != -1 )			m_ActualID.bDither = true;
+
+	if( m_ActualID.iTransparencyOnly )
+	{
+		/* Treat the image as 32-bit, so we don't lose any alpha precision. */
+		m_ActualID.iColorDepth = 32;
+	}
 
 	/* Load the image into an SDL surface. */
 	SDL_Surface *img = IMG_Load(GetFilePath());
@@ -382,6 +390,9 @@ retry:
 	}
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
+
+	GLenum internalfmt = PixFmtMasks[pixfmt].internalfmt;
+
 	if(DISPLAY->GetSpecs().bPackedPixelsCauseProblems &&
 	   IsPackedPixelFormat(pixfmt))
 	{
@@ -395,15 +406,21 @@ retry:
 		    PixFmtMasks[FMT_RGBA8].masks[0], PixFmtMasks[FMT_RGBA8].masks[1],
 		    PixFmtMasks[FMT_RGBA8].masks[2], PixFmtMasks[FMT_RGBA8].masks[3]);
 
-	    /* Make sure we use the same internalformat that we dithered the image to. */
-	    glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, 
-			    m_iTextureWidth, m_iTextureHeight, 0,
-			    PixFmtMasks[FMT_RGBA8].format, PixFmtMasks[FMT_RGBA8].type, img->pixels);
-	} else {
-	    glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, 
-			    m_iTextureWidth, m_iTextureHeight, 0,
-			    PixFmtMasks[pixfmt].format, PixFmtMasks[pixfmt].type, img->pixels);
+		pixfmt = FMT_RGBA8;
+		/* (don't change internalfmt) */
 	}
+
+	/* Override the internalformat with an alpha format if it was requested. */
+	if(m_ActualID.iTransparencyOnly == 4)
+		internalfmt = GL_ALPHA4;
+	else if(m_ActualID.iTransparencyOnly == 8)
+		internalfmt = GL_ALPHA8;
+	else ASSERT(m_ActualID.iTransparencyOnly == 0);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, internalfmt, 
+			m_iTextureWidth, m_iTextureHeight, 0,
+			PixFmtMasks[pixfmt].format, PixFmtMasks[pixfmt].type, img->pixels);
+
 	/* If we're paletted, and didn't get the 8-bit palette we asked for ...*/
 	if(img->format->BitsPerPixel == 8)
 	{
