@@ -13,7 +13,6 @@
 #define ITEMS_SPACING_Y							THEME->GetMetricF(m_sName,"ItemsSpacingY")
 #define DESCRIPTION_MAX_WIDTH					THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
 #define NUM_SHOWN_ITEMS							THEME->GetMetricI(m_sName,"NumShownItems")
-#define TWEEN_ON_COMMAND						THEME->GetMetric (m_sName,"TweenOnCommand")
 #define MOVE_COMMAND							THEME->GetMetric (m_sName,"MoveCommand")
 
 DifficultyList::DifficultyList()
@@ -87,10 +86,10 @@ void DifficultyList::Load()
 	}
 
 	UpdatePositions();
-	PositionItems( false );
+	PositionItems();
 }
 
-void DifficultyList::GetCurrentRows( int iCurrentRow[NUM_PLAYERS] )
+void DifficultyList::GetCurrentRows( int iCurrentRow[NUM_PLAYERS] ) const
 {
 	for( int pn = 0;pn < NUM_PLAYERS; ++pn )
 	{
@@ -199,7 +198,7 @@ void DifficultyList::UpdatePositions()
 }
 
 
-void DifficultyList::PositionItems( bool TweenOn )
+void DifficultyList::PositionItems()
 {
 	for( int i = 0; i < MAX_METERS; ++i )
 	{
@@ -209,27 +208,34 @@ void DifficultyList::PositionItems( bool TweenOn )
 		m_Number[i].SetHidden( bUnused );
 	}
 
-	for( int m = 0; m < (int)m_Rows.size(); ++m )
+	int m;
+	for( m = 0; m < (int)m_Rows.size(); ++m )
 	{
-		const bool bHidden = m_Rows[m]->m_bHidden;
-		const float fY = m_Rows[m]->m_fY;
-
 		Row &row = *m_Rows[m];
+		bool bHidden = row.m_bHidden;
+		if( !m_bShown )
+			bHidden = true;
 
-		const float DiffuseAlpha = row.m_bHidden? 0.0f:1.0f;
+		const float DiffuseAlpha = bHidden? 0.0f:1.0f;
 		if( m_Number[m].GetDestY() != row.m_fY ||
 			m_Number[m].DestTweenState().diffuse[0][3] != DiffuseAlpha )
 		{
-			const CString cmd = TweenOn? TWEEN_ON_COMMAND:MOVE_COMMAND;
-			m_Descriptions[m].Command( cmd );
-			m_Meters[m].Command( cmd );
-			m_Meters[m].RunCommandOnChildren( cmd );
-			m_Number[m].Command( cmd );
+			m_Descriptions[m].Command( MOVE_COMMAND );
+			m_Meters[m].Command( MOVE_COMMAND );
+			m_Meters[m].RunCommandOnChildren( MOVE_COMMAND );
+			m_Number[m].Command( MOVE_COMMAND );
 		}
 
-		m_Descriptions[m].SetY( fY );
-		m_Meters[m].SetY( fY );
-		m_Number[m].SetY( fY );
+		m_Descriptions[m].SetY( row.m_fY );
+		m_Meters[m].SetY( row.m_fY );
+		m_Number[m].SetY( row.m_fY );
+	}
+
+	for( m=0; m < MAX_METERS; ++m )
+	{
+		bool bHidden = true;
+		if( m_bShown && m < (int)m_Rows.size() )
+			bHidden = m_Rows[m]->m_bHidden;
 
 		const CString cmd = ssprintf( "diffusealpha,%f", bHidden? 0.0f:1.0f );
 		m_Descriptions[m].Command( cmd );
@@ -261,10 +267,6 @@ DifficultyList::Row::Row()
 
 void DifficultyList::SetFromGameState()
 {
-	/* If Hide() was called, doing this would un-hide. */
-	if( !m_bShown )
-		return;
-
 	Song *song = GAMESTATE->m_pCurSong;
 
 	const bool bSongChanged = (song != m_CurSong);
@@ -322,7 +324,7 @@ void DifficultyList::SetFromGameState()
 	}
 
 	UpdatePositions();
-	PositionItems( false );
+	PositionItems();
 
 	if( bSongChanged )
 	{
@@ -335,21 +337,31 @@ void DifficultyList::SetFromGameState()
 	}
 }
 
+void DifficultyList::HideRows()
+{
+	for( unsigned m = 0; m < m_Rows.size(); ++m )
+	{
+		m_Descriptions[m].Command( "finishtweening;diffusealpha,0" );
+		m_Meters[m].RunCommandOnChildren( "finishtweening;diffusealpha,0" );
+		m_Number[m].Command( "finishtweening;diffusealpha,0" );
+	}
+}
+
 void DifficultyList::TweenOnScreen()
 {
+	this->SetHibernate( 0.5f );
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		m_Descriptions[m].Command( "finishtweening;y,0" );
-		m_Meters[m].Command( "finishtweening;y,0" );
-		m_Number[m].Command( "finishtweening;y,0" );
-
-		m_Descriptions[m].Command( "diffusealpha,0" );
-		m_Meters[m].RunCommandOnChildren( "diffusealpha,0" );
-		m_Number[m].Command( "diffusealpha,0" );
+		m_Descriptions[m].Command( "finishtweening" );
+		m_Meters[m].RunCommandOnChildren( "finishtweening" );
+		m_Number[m].Command( "finishtweening" );
 	}
 
-	PositionItems( true );
+//	PositionItems();
+	HideRows();
+	
+	PositionItems();
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 	{
@@ -368,12 +380,10 @@ void DifficultyList::Show()
 {
 	m_bShown = true;
 
-	for( int m = 0; m < MAX_METERS; ++m )
-	{
-		COMMAND( m_Descriptions[m], "Show" );
-		COMMAND( m_Meters[m], "Show" );
-		COMMAND( m_Number[m], "Show" );
-	}
+	SetFromGameState();
+
+	HideRows();
+	PositionItems();
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 	{
@@ -386,13 +396,7 @@ void DifficultyList::Show()
 void DifficultyList::Hide()
 {
 	m_bShown = false;
-
-	for( int m = 0; m < MAX_METERS; ++m )
-	{
-		COMMAND( m_Descriptions[m], "Hide" );
-		COMMAND( m_Meters[m], "Hide" );
-		COMMAND( m_Number[m], "Hide" );
-	}
+	PositionItems();
 
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
 	{

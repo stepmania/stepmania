@@ -372,8 +372,8 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 			ON_COMMAND( m_DifficultyList );
 			m_DifficultyList.TweenOnScreen();
 		}
-		else
-			m_DifficultyList.Show();
+//		else // do this after SM_SortOrderChanged
+//			m_DifficultyList.Show();
 	}
 
 	int p;
@@ -993,12 +993,12 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_SongChanged:
 		AfterMusicChange();
 		break;
-	case SM_SortOrderChanged:
-		SortOrderChanged();
-		break;
-	case SM_SortOrderChanging:
+	case SM_SortOrderChanging: /* happens immediately */
 //				m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 		TweenScoreOnAndOffAfterChangeSort();
+		break;
+	case SM_SortOrderChanged: /* happens after the wheel is off and the new song is selected */
+		SortOrderChanged();
 		break;
 	}
 }
@@ -1482,6 +1482,22 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 void ScreenSelectMusic::SortOrderChanged()
 {
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
+
+	switch( GAMESTATE->m_SongSortOrder )
+	{
+	case SORT_ALL_COURSES:
+	case SORT_NONSTOP_COURSES:
+	case SORT_ONI_COURSES:
+	case SORT_ENDLESS_COURSES:
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
+		// do nothing
+		break;
+	default:
+		if( SHOW_DIFFICULTY_LIST )
+			m_DifficultyList.Show();
+		break;
+	}
 
 	// tween music sort on screen
 //	m_MusicSortDisplay.FadeOn( 0, "fade", TWEEN_TIME );

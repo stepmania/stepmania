@@ -27,8 +27,9 @@ public:
 
 private:
 	void UpdatePositions();
-	void PositionItems( bool TweenOn );
-	void GetCurrentRows( int iCurrentRow[NUM_PLAYERS] );
+	void PositionItems();
+	void GetCurrentRows( int iCurrentRow[NUM_PLAYERS] ) const;
+	void HideRows();
 
 	DifficultyMeter *m_Meters;
 	AutoActor		m_Cursors[NUM_PLAYERS];
