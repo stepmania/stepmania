@@ -470,27 +470,34 @@ GameDef g_GameDefs[NUM_GAMES] =
 		2,					// m_iNumControllers
 		NUM_BM_BUTTONS,	// m_iButtonsPerController
 		{	// m_szButtonNames
-			"LeftWhiteKey",
-			"LeftBlackKey",
-			"CenterWhiteKey",
-			"RightBlackKey",
-			"RightWhiteKey",
+			"Key1",
+			"Key2",
+			"Key3",
+			"Key4",
+			"Key5",
+			"Key6",
+			"Key7",
 			"Scratch",
+			"Scratch (down)",
 			"Start",
-			"Back",
+			"Select",
 			"MenuLeft",
 			"MenuRight",
 			"MenuUp",
 			"MenuDown",
 		},
 		{	// m_szSecondaryFunction
-			"(MenuUp)",
 			"(MenuLeft)",
-			"(Start)",
-			"(MenuRight)",
-			"(MenuDown)",
 			"",
-			"(dedicated)",
+			"(MenuRight)",
+			"",
+			"",
+			"",
+			"",
+			"(MenuUp)",
+			"(MenuDown)",
+			"(Start)",
+			"(Back)",
 			"(dedicated)",
 			"(dedicated)",
 			"(dedicated)",
@@ -498,45 +505,51 @@ GameDef g_GameDefs[NUM_GAMES] =
 			"(dedicated)",
 		},
 		{	// m_DedicatedMenuButton
-			BM_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
+			BM_BUTTON_MENULEFT,		// MENU_BUTTON_LEFT
 			BM_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
 			BM_BUTTON_MENUUP,		// MENU_BUTTON_UP
-			BM_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
+			BM_BUTTON_MENUDOWN,		// MENU_BUTTON_DOWN
 			BM_BUTTON_START,		// MENU_BUTTON_START
-			BM_BUTTON_BACK,		// MENU_BUTTON_BACK
+			BM_BUTTON_SELECT,		// MENU_BUTTON_BACK
 		},
 		{	// m_SecondaryMenuButton
-			BM_BUTTON_LEFTBLACK,		// MENU_BUTTON_LEFT
-			BM_BUTTON_RIGHTBLACK,	// MENU_BUTTON_RIGHT
-			BM_BUTTON_LEFTWHITE,	// MENU_BUTTON_UP
-			BM_BUTTON_RIGHTWHITE,	// MENU_BUTTON_DOWN
-			BM_BUTTON_CENTERWHITE,		// MENU_BUTTON_START
-			BM_BUTTON_BACK,		// MENU_BUTTON_BACK
+			BM_BUTTON_KEY1,			// MENU_BUTTON_LEFT
+			BM_BUTTON_KEY3,			// MENU_BUTTON_RIGHT
+			BM_BUTTON_SCRATCHUP,	// MENU_BUTTON_UP
+			BM_BUTTON_SCRATCHDOWN,	// MENU_BUTTON_DOWN
+			BM_BUTTON_START,		// MENU_BUTTON_START
+			BM_BUTTON_SELECT,		// MENU_BUTTON_BACK
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
-				SDLK_z,					// BM_BUTTON_LEFTWHITE,
-				SDLK_s,					// BM_BUTTON_LEFTBLACK,
-				SDLK_x,					// BM_BUTTON_CENTERWHITE,
-				SDLK_d,					// BM_BUTTON_RIGHTBLACK,
-				SDLK_c,  				// BM_BUTTON_RIGHTWHITE,
-				SDLK_b,					// BM_BUTTON_SCRATCH,
+				SDLK_m,					// BM_BUTTON_KEY1,
+				SDLK_k,					// BM_BUTTON_KEY2,
+				SDLK_COMMA,				// BM_BUTTON_KEY3,
+				SDLK_l,					// BM_BUTTON_KEY4,
+				SDLK_PERIOD,			// BM_BUTTON_KEY5,
+				SDLK_SEMICOLON,			// BM_BUTTON_KEY6,
+				SDLK_SLASH,				// BM_BUTTON_KEY7,
+				SDLK_LSHIFT,			// BM_BUTTON_SCRATCHUP,
+				-1,						// BM_BUTTON_SCRATCHDOWN,
 				SDLK_RETURN,			// BM_BUTTON_START,
-				SDLK_ESCAPE,			// BM_BUTTON_BACK,
+				-1,						// BM_BUTTON_SELECT,
 				SDLK_LEFT,				// BM_BUTTON_MENULEFT
 				SDLK_RIGHT,				// BM_BUTTON_MENURIGHT
 				SDLK_UP,				// BM_BUTTON_MENUUP
 				SDLK_DOWN,				// BM_BUTTON_MENUDOWN
 			},
 			{	// PLAYER_2
-				-1,					// BM_BUTTON_LEFTWHITE,
-				-1,					// BM_BUTTON_LEFTBLACK,
-				-1,					// BM_BUTTON_CENTERWHITE,
-				-1,					// BM_BUTTON_RIGHTBLACK,
-				-1,  				// BM_BUTTON_RIGHTWHITE,
-				-1,					// BM_BUTTON_SCRATCH,
+				-1,					// BM_BUTTON_KEY1,
+				-1,					// BM_BUTTON_KEY2,
+				-1,					// BM_BUTTON_KEY3,
+				-1,					// BM_BUTTON_KEY4,
+				-1,  				// BM_BUTTON_KEY5,
+				-1,  				// BM_BUTTON_KEY6,
+				-1,  				// BM_BUTTON_KEY7,
+				-1,					// BM_BUTTON_SCRATCHUP,
+				-1,					// BM_BUTTON_SCRATCHDOWN,
 				-1,					// BM_BUTTON_START,
-				-1,					// BM_BUTTON_BACK,
+				-1,					// BM_BUTTON_SELECT,
 				-1,					// BM_BUTTON_MENULEFT
 				-1,					// BM_BUTTON_MENURIGHT
 				-1,					// BM_BUTTON_MENUUP
@@ -1156,20 +1169,20 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		6,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	GAME_CONTROLLER_1,	BM_BUTTON_LEFTWHITE,	-BM_COL_SPACING*2.5f },
-				{ TRACK_2,	GAME_CONTROLLER_1,	BM_BUTTON_LEFTBLACK,		-BM_COL_SPACING*1.5f },
-				{ TRACK_3,	GAME_CONTROLLER_1,	BM_BUTTON_CENTERWHITE,		-BM_COL_SPACING*0.5f },
-				{ TRACK_4,	GAME_CONTROLLER_1,	BM_BUTTON_RIGHTBLACK,	+BM_COL_SPACING*0.5f },
-				{ TRACK_5,	GAME_CONTROLLER_1,	BM_BUTTON_RIGHTWHITE,	+BM_COL_SPACING*1.5f },
-				{ TRACK_6,	GAME_CONTROLLER_1,	BM_BUTTON_SCRATCH,	+BM_COL_SPACING*3.0f },
+				{ TRACK_1,	GAME_CONTROLLER_1,	BM_BUTTON_KEY1,		-BM_COL_SPACING*2.5f },
+				{ TRACK_2,	GAME_CONTROLLER_1,	BM_BUTTON_KEY2,		-BM_COL_SPACING*1.5f },
+				{ TRACK_3,	GAME_CONTROLLER_1,	BM_BUTTON_KEY3,		-BM_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_1,	BM_BUTTON_KEY4,		+BM_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_1,	BM_BUTTON_KEY5,		+BM_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_1,	BM_BUTTON_SCRATCHUP,+BM_COL_SPACING*3.0f },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	GAME_CONTROLLER_2,	BM_BUTTON_LEFTWHITE,	-BM_COL_SPACING*2.5f },
-				{ TRACK_2,	GAME_CONTROLLER_2,	BM_BUTTON_LEFTBLACK,		-BM_COL_SPACING*1.5f },
-				{ TRACK_3,	GAME_CONTROLLER_2,	BM_BUTTON_CENTERWHITE,		-BM_COL_SPACING*0.5f },
-				{ TRACK_4,	GAME_CONTROLLER_2,	BM_BUTTON_RIGHTBLACK,	+BM_COL_SPACING*0.5f },
-				{ TRACK_5,	GAME_CONTROLLER_2,	BM_BUTTON_RIGHTWHITE,	+BM_COL_SPACING*1.5f },
-				{ TRACK_6,	GAME_CONTROLLER_2,	BM_BUTTON_SCRATCH,	+BM_COL_SPACING*3.0f },
+				{ TRACK_1,	GAME_CONTROLLER_2,	BM_BUTTON_KEY1,		-BM_COL_SPACING*2.5f },
+				{ TRACK_2,	GAME_CONTROLLER_2,	BM_BUTTON_KEY2,		-BM_COL_SPACING*1.5f },
+				{ TRACK_3,	GAME_CONTROLLER_2,	BM_BUTTON_KEY3,		-BM_COL_SPACING*0.5f },
+				{ TRACK_4,	GAME_CONTROLLER_2,	BM_BUTTON_KEY4,		+BM_COL_SPACING*0.5f },
+				{ TRACK_5,	GAME_CONTROLLER_2,	BM_BUTTON_KEY5,		+BM_COL_SPACING*1.5f },
+				{ TRACK_6,	GAME_CONTROLLER_2,	BM_BUTTON_SCRATCHUP,+BM_COL_SPACING*3.0f },
 			},
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
@@ -1602,10 +1615,10 @@ CString GameManager::GetPathTo( const int col, CString sElementName )	// looks i
 	GetDirListing( ssprintf("%s%s %s*.gif",    sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
 	GetDirListing( ssprintf("%s%s %s*",        sDir.GetString(), sButtonName.GetString(), sElementName.GetString()), arrayPossibleFileNames, false, true );
 
-	if( !arrayPossibleFileNames.empty() )
-		return arrayPossibleFileNames[0];
+	if( arrayPossibleFileNames.empty() )
+		RageException::Throw( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName.GetString(), sElementName.GetString(), sDir.GetString() );
 
-	RageException::Throw( "The NoteSkin element '%s %s' is missing from '%s'.", sButtonName.GetString(), sElementName.GetString(), sDir.GetString() );
+	return DerefRedir(arrayPossibleFileNames[0]);
 }
 
 void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
