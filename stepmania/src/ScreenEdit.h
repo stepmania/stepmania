@@ -14,8 +14,6 @@
 #include "Transition.h"
 #include "BitmapText.h"
 #include "Player.h"
-#include "RandomSample.h"
-#include "RageSoundManager.h"
 #include "RageSound.h"
 #include "BGAnimation.h"
 #include "SnapDisplay.h"
