@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks_Win32.h"
 #include "RageUtil.h"
+#include "RageDisplay.h"	// for IsWindowed()
 #include "PrefsManager.h"
 
 #include "resource.h"
@@ -74,6 +75,10 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 void ArchHooks_Win32::MessageBoxOK( CString sMessage, CString ID )
 {
+	// don't show MessageBox if windowed
+	if( !DISPLAY->IsWindowed() )
+		return;
+
 	g_AllowHush = ID != "";
 	if( g_AllowHush && MessageIsIgnored( ID ) )
 		return;
@@ -158,7 +163,10 @@ void ArchHooks_Win32::MessageBoxError( CString error )
 
 ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString sMessage, CString ID )
 {
-	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE ) )
+	// don't show MessageBox if windowed
+		return ArchHooks::MessageBoxAbortRetryIgnore( sMessage, ID );
+
+	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE|MB_DEFBUTTON2 ) )
 	{
 	case IDABORT:	return abort;
 	case IDRETRY:	return retry;
@@ -169,6 +177,10 @@ ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxAbortRetryIgnore( CString
 
 ArchHooks::MessageBoxResult ArchHooks_Win32::MessageBoxRetryCancel( CString sMessage, CString ID )
 {
+	// don't show MessageBox if windowed
+	if( !DISPLAY->IsWindowed() )
+		return ArchHooks::MessageBoxRetryCancel( sMessage, ID );
+
 	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:	return retry;
