@@ -559,6 +559,30 @@ bool BMSLoader::GetTagFromMap( const NameToData_t &mapNameToData, const CString 
 	return true;
 }
 
+/* Finds the longest common match for the given tag in all files.  If the given tag
+ * was found in at least one file, returns true; otherwise returns false. */
+bool BMSLoader::GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const CString &sName, CString &sCommonTag )
+{
+	bool bFoundOne = false;
+	for( unsigned i=0; i < aBMSData.size(); i++ )
+	{
+		CString sTag;
+		if( !GetTagFromMap( aBMSData[i], sName, sTag ) )
+			continue;
+
+		LOG->Trace("foo: '%s'", sTag.c_str());
+		if( !bFoundOne )
+		{
+			bFoundOne = true;
+			sCommonTag = sTag;
+		}
+		else
+			sCommonTag = FindLargestInitialSubstring( sCommonTag, sTag );
+	}
+
+	return bFoundOne;
+}
+
 enum
 {
 	BMS_TRACK_TIME_SIG = 2,
@@ -839,47 +863,16 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		ReadBMSFile( out.GetSongDir() + arrayBMSFileNames[i], aBMSData.back() );
 	}
 
-	// Compare titles. find the "real" title, which is then used to find the substring
-	// specific to the sequence. This doesn't work for all songs, but
-	// is one hell of a lot more accurate than what we do otherwise, and anyway, this
-	// covers 90% of examples I've seen.
-	// The advantage of this is it doesn't butcher titles like "HYPER EUROBEAT (2DX style)"
-	// and "I Was The One (80's EUROBEAT STYLE)"
-	CString commonSubstring = "";
+	CString commonSubstring;
+	GetCommonTagFromMapList( aBMSData, "#title", commonSubstring );
 
-	// Give it a (probably wrong) initial setting, so that it's longer than what the
-	// real substring is.
-	// Let's be absolutely sure we get a value!
-	for( unsigned i=0; i < aBMSData.size(); i++ )
+	if( commonSubstring == "" )
 	{
-		if( GetTagFromMap( aBMSData[i], "#title", commonSubstring ) )
-		{
-			// This whole loop usually only runs once,
-			// but the less we assume, the better.
-			break;
-		}
+		// All bets are off; the titles don't match at all.
+		// At this rate we're lucky if we even get the title right.
+		LOG->Warn("BMS files in %s have inconsistent titles", sDir.c_str() );
 	}
 
-	if( aBMSData.size() >= 2 )
-	{
-		for( unsigned i=0; i < aBMSData.size(); i++ )
-		{
-			CString sTitle;
-			if( !GetTagFromMap( aBMSData[i], "#title", sTitle ) )
-				continue;
-
-			commonSubstring = FindLargestInitialSubstring( commonSubstring, sTitle );
-			if( commonSubstring == "" )
-			{
-				// All bets are off; the titles don't match at all.
-				// At this rate we're lucky if we even get the title right.
-				LOG->Warn("BMS files in %s have inconsistent titles", sDir.c_str() );
-				break;
-			}
-		}
-	}
-	// Yay, we have our substring. (something like "LION SUKI")
-	
 	/* Create a Steps for each. */
 	vector<Steps*> apSteps;
 	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )

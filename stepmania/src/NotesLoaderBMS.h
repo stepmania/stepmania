@@ -15,7 +15,8 @@ class BMSLoader: public NotesLoader
 	bool ReadBMSFile( const CString &sPath, BMSLoader::NameToData_t &mapNameToData );
 	bool LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
 	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out );
-	bool GetTagFromMap( const BMSLoader::NameToData_t &mapNameToData, const CString &sName, CString &sOut );
+	static bool GetTagFromMap( const BMSLoader::NameToData_t &mapNameToData, const CString &sName, CString &sOut );
+	static bool GetCommonTagFromMapList( const vector<NameToData_t> &aBMSData, const CString &sName, CString &out );
 	void SearchForDifficulty( CString sTag, Steps *pOut );
 
 	typedef map<int, float> MeasureToTimeSig_t;
