@@ -23,8 +23,15 @@
 #include "RageLog.h"
 
 
+#define USE_HOLD_HEAD_FOR_TAP			THEME->GetMetricB("NoteDisplay","UseHoldHeadForTap")
+
+bool g_bUseHoldHeadForTap;	// cache
+
+
 NoteDisplay::NoteDisplay()
 {
+	g_bUseHoldHeadForTap = USE_HOLD_HEAD_FOR_TAP;	// update cache
+
 	// the owner of the NoteDisplay must call load on the gray and color parts
 
 //	m_sprHoldParts.Load( THEME->GetPathTo(GRAPHIC_COLOR_ARROW_GRAY_PART) );	
@@ -325,7 +332,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		DrawHold( hn, bActive, fLife, fPercentFadeToFail, true );
 }
 
-void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHoldColor, const float fPercentFadeToFail )
+void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const float fPercentFadeToFail )
 {
 	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos			= ArrowGetYPos(		m_PlayerNumber, fYOffset );
@@ -344,7 +351,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHol
 	colorLeadingEdge.a	*= fAlpha;
 	colorTrailingEdge.a *= fAlpha;
 
-	if( bUseHoldColor )
+	if( bOnSameRowAsHoldStart  &&  g_bUseHoldHeadForTap )
 	{
 		//
 		// draw hold head

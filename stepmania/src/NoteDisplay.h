@@ -23,7 +23,7 @@ public:
 
 	void Load( int iColNum, PlayerNumber pn );
 
-	void DrawTap( const int iCol, const float fBeat, const bool bUseHoldColor, const float fPercentFadeToFail );
+	void DrawTap( const int iCol, const float fBeat, const bool bOnSameRowAsHoldStart, const float fPercentFadeToFail );
 	void DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly = false );
 
 protected:
