@@ -6,6 +6,7 @@
 
 #include <stack>
 #include <math.h>	// ceil()
+#define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
 
 LowLevelWindow_X11::LowLevelWindow_X11()
@@ -21,7 +22,10 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 
 void *LowLevelWindow_X11::GetProcAddress(CString s)
 {
-	return (void*) glXGetProcAddress( (const GLubyte*) s.c_str() );
+	// XXX: We should check whether glXGetProcAddress or
+	// glXGetProcAddressARB is available, and go by that, instead of
+	// assuming like this.
+	return (void*) glXGetProcAddressARB( (const GLubyte*) s.c_str() );
 }
 
 CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &bNewDeviceOut)
