@@ -93,6 +93,8 @@ void OptionRow::LoadMetrics( const CString &sType )
 	COLOR_NOT_SELECTED				.Load(m_sType,"ColorNotSelected");
 	COLOR_DISABLED					.Load(m_sType,"ColorDisabled");
 	CAPITALIZE_ALL_OPTION_NAMES		.Load(m_sType,"CapitalizeAllOptionNames");
+	SHOW_UNDERLINES					.Load(m_sType,"ShowUnderlines");
+	TWEEN_SECONDS					.Load(m_sType,"TweenSeconds");
 }
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -364,8 +366,12 @@ void OptionRow::LoadExit()
 	m_textTitle.SetHidden( true );
 }
 
-void OptionRow::PositionUnderlines( bool bShowUnderlines, float fTweenSeconds )
+void OptionRow::PositionUnderlines()
 {
+	/*
+	SHOW_UNDERLINES
+	TWEEN_SECONDS
+	*/
 	if( m_RowType == ROW_EXIT )
 		return;
 
@@ -373,13 +379,15 @@ void OptionRow::PositionUnderlines( bool bShowUnderlines, float fTweenSeconds )
 	{
 		vector<OptionsCursor*> &vpUnderlines = m_Underline[p];
 
+		PlayerNumber pnTakeSelectedFrom = m_RowDef.bOneChoiceForAllPlayers ? PLAYER_1 : p;
+
 		const int iNumUnderlines = (m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? 1 : vpUnderlines.size();
 		
 		for( int i=0; i<iNumUnderlines; i++ )
 		{
 			OptionsCursor& ul = *vpUnderlines[i];
 
-			int iChoiceWithFocus = (m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? m_iChoiceInRowWithFocus[p] : i;
+			int iChoiceWithFocus = (m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? m_iChoiceInRowWithFocus[pnTakeSelectedFrom] : i;
 
 			/* Don't tween X movement and color changes. */
 			int iWidth, iX, iY;
@@ -387,17 +395,17 @@ void OptionRow::PositionUnderlines( bool bShowUnderlines, float fTweenSeconds )
 			ul.SetGlobalX( (float)iX );
 			ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
 
-			ASSERT( m_vbSelected[p].size() == m_RowDef.choices.size() );
+			ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_RowDef.choices.size() );
 
-			bool bSelected = m_vbSelected[p][ iChoiceWithFocus ];
+			bool bSelected = m_vbSelected[pnTakeSelectedFrom][ iChoiceWithFocus ];
 			bool bHidden = !bSelected || m_bHidden;
-			if( !bShowUnderlines )
+			if( !SHOW_UNDERLINES )
 				bHidden = true;
 
 			if( ul.GetDestY() != m_fY )
 			{
 				ul.StopTweening();
-				ul.BeginTweening( fTweenSeconds );
+				ul.BeginTweening( TWEEN_SECONDS );
 			}
 
 			ul.SetHidden( bHidden );
@@ -407,10 +415,11 @@ void OptionRow::PositionUnderlines( bool bShowUnderlines, float fTweenSeconds )
 	}
 }
 
-void OptionRow::PositionIcons( float fTweenSeconds )
+void OptionRow::PositionIcons()
 {
 	/*
 	ICONS_X
+	TWEEN_SECONDS
 	*/
 	if( m_RowType == OptionRow::ROW_EXIT )
 		return;
@@ -428,7 +437,7 @@ void OptionRow::PositionIcons( float fTweenSeconds )
 		if( icon.GetDestY() != m_fY )
 		{
 			icon.StopTweening();
-			icon.BeginTweening( fTweenSeconds );
+			icon.BeginTweening( TWEEN_SECONDS );
 		}
 
 		icon.SetY( (float)iY );
@@ -648,21 +657,27 @@ void OptionRow::SetExitText( CString sExitText )
 
 void OptionRow::Reload()
 {
-	if( m_pHand == NULL )
-		return;
-
-	ExportOptions();
-
-	OptionRowDefinition def;
-	m_pHand->Reload( def );
-
 	switch( GetRowType() )
 	{
 	case OptionRow::ROW_NORMAL:
 		{
-			ASSERT( m_RowDef.layoutType == LAYOUT_SHOW_ONE_IN_ROW );
+			if( m_pHand == NULL )
+				return;
+
+			ExportOptions();
+
+			OptionRowDefinition def;
+			m_pHand->Reload( def );
+			ASSERT( !m_RowDef.choices.empty() );
+
 			m_RowDef = def;
+			FOREACH_PlayerNumber( p )
+				m_vbSelected[p].resize( m_RowDef.choices.size(), false );
+
 			UpdateText();
+			PositionUnderlines();
+
+			ImportOptions();
 		}
 		break;
 	case OptionRow::ROW_EXIT:
@@ -671,8 +686,6 @@ void OptionRow::Reload()
 	default:
 		ASSERT(0);
 	}
-
-	ImportOptions();
 }
 
 void OptionRow::HandleMessage( const CString& sMessage )
@@ -704,8 +717,14 @@ void OptionRow::ImportOptions()
 	if( m_pHand == NULL )
 		return;
 
+	// clear selections
+	FOREACH_PlayerNumber( p )
+		FOREACH( bool, m_vbSelected[p], b )
+			*b = false;
+
 	if( m_RowDef.bOneChoiceForAllPlayers )
 	{
+		ASSERT( m_vbSelected[0].size() == m_RowDef.choices.size() );
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
 		m_pHand->ImportOption( m_RowDef, PLAYER_1, m_vbSelected[0] );
 		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
@@ -715,6 +734,7 @@ void OptionRow::ImportOptions()
 	{
 		FOREACH_HumanPlayer( p )
 		{
+			ASSERT( m_vbSelected[p].size() == m_RowDef.choices.size() );
 			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 			m_pHand->ImportOption( m_RowDef, p, m_vbSelected[p] );
 			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
@@ -732,6 +752,7 @@ int OptionRow::ExportOptions()
 
 	if( m_RowDef.bOneChoiceForAllPlayers )
 	{
+		ASSERT( m_vbSelected[0].size() == m_RowDef.choices.size() );
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
 		iChangeMask |= m_pHand->ExportOption( m_RowDef, PLAYER_1, m_vbSelected[0] );
 		INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[0] );
@@ -740,6 +761,7 @@ int OptionRow::ExportOptions()
 	{
 		FOREACH_HumanPlayer( p )
 		{
+			ASSERT( m_vbSelected[p].size() == m_RowDef.choices.size() );
 			ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 			iChangeMask |= m_pHand->ExportOption( m_RowDef, p, m_vbSelected[p] );
 			INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );

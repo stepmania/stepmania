@@ -377,7 +377,7 @@ void ScreenOptions::PositionUnderlines()
 	for( unsigned r=0; r<m_Rows.size(); r++ )	// foreach options line
 	{
 		OptionRow &row = *m_Rows[r];
-		row.PositionUnderlines( m_bShowUnderlines, TWEEN_SECONDS );
+		row.PositionUnderlines();
 	}
 }
 
@@ -386,7 +386,7 @@ void ScreenOptions::PositionIcons()
 	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 	{
 		OptionRow &row = *m_Rows[i];
-		row.PositionIcons( TWEEN_SECONDS );
+		row.PositionIcons();
 			continue;
 	}
 }

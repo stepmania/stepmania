@@ -97,8 +97,8 @@ public:
 		);
 	void DetachHandler();
 
-	void PositionUnderlines( bool bShowUnderlines, float fTweenSeconds );
-	void PositionIcons( float fTweenSeconds );
+	void PositionUnderlines();
+	void PositionIcons();
 	void UpdateText();
 	void UpdateEnabledDisabled( 
 		bool bThisRowHasFocus[NUM_PLAYERS], 
@@ -144,7 +144,7 @@ public:
 	virtual void HandleMessage( const CString& sMessage );
 
 protected:
-	CString 					m_sType;
+	CString 				m_sType;
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;
 	OptionRowHandler*		m_pHand;
@@ -174,6 +174,8 @@ protected:
 	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
 	ThemeMetric<RageColor>			COLOR_DISABLED;
 	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
+	ThemeMetric<bool>				SHOW_UNDERLINES;
+	ThemeMetric<bool>				TWEEN_SECONDS;
 };
 
 #endif
