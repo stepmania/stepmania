@@ -150,11 +150,14 @@ void StepsID::FromSteps( const Steps *p )
  * to have access to Song::m_LoadedFromProfile. */
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 {
-	if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID || sDescription.empty() )
+	if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
 		return NULL;
 
 	vector<Steps*> vNotes;
-	p->GetSteps( vNotes, st, dc, -1, -1, sDescription, true );
+	if( dc == DIFFICULTY_EDIT )
+		p->GetSteps( vNotes, st, dc, -1, -1, sDescription, true );
+	else
+		p->GetSteps( vNotes, st, dc, -1, -1, "", true );
 	if( !vNotes.empty() )
 		return vNotes[0];
 	if( bAllowNull )
