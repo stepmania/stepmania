@@ -96,12 +96,21 @@ void RageSoundResampler::eof()
 {
 	ASSERT(!at_eof);
 
-	/* Write some silence to flush out the real data. */
-	const int size = channels*16;
-	Sint16 *data = new Sint16[size];
-	memset(data, 0, size * sizeof(Sint16));
-	write(data, size * sizeof(Sint16));
-	delete [] data;
+	/* Write some silence to flush out the real data.  If we don't have any sound,
+	 * don't do this, so seeking past end of file doesn't write silence. */
+	bool bNeedsFlush = false;
+	for( int c = 0; c < channels; ++c )
+		if( prev[c] != 0 ) 
+			bNeedsFlush = true;
+
+	if( bNeedsFlush )
+	{
+		const int size = channels*16;
+		Sint16 *data = new Sint16[size];
+		memset(data, 0, size * sizeof(Sint16));
+		write(data, size * sizeof(Sint16));
+		delete [] data;
+	}
 
 	at_eof = true;
 }
