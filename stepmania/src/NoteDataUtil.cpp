@@ -227,33 +227,30 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 	}
 }
 
-namespace
+void NoteDataUtil::InsertHoldTails( NoteData &inout )
 {
-	void InsertHoldTails( NoteData &inout )
+	for( int t=0; t < inout.GetNumTracks(); t++ )
 	{
-		for( int t=0; t < inout.GetNumTracks(); t++ )
+		NoteData::iterator begin = inout.begin(t), end = inout.end(t);
+
+		for( ; begin != end; ++begin )
 		{
-			NoteData::iterator begin = inout.begin(t), end = inout.end(t);
+			int iRow = begin->first;
+			const TapNote &tn = begin->second;
+			if( tn.type != TapNote::hold_head )
+				continue;
 
-			for( ; begin != end; ++begin )
-			{
-				int iRow = begin->first;
-				const TapNote &tn = begin->second;
-				if( tn.type != TapNote::hold_head )
-					continue;
+			TapNote tail = tn;
+			tail.type = TapNote::hold_tail;
 
-				TapNote tail = tn;
-				tail.type = TapNote::hold_tail;
+			/* If iDuration is 0, we'd end up overwriting the head with the tail
+				* (and invalidating our iterator).  Empty hold notes aren't valid. */
+			ASSERT( tn.iDuration != 0 );
 
-				/* If iDuration is 0, we'd end up overwriting the head with the tail
-				 * (and invalidating our iterator).  Empty hold notes aren't valid. */
-				ASSERT( tn.iDuration != 0 );
-
-				inout.SetTapNote( t, iRow + tn.iDuration, tail );
-			}
+			inout.SetTapNote( t, iRow + tn.iDuration, tail );
 		}
 	}
-};
+}
 
 void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out )
 {
