@@ -585,6 +585,20 @@ bool Sprite::IsDiagonalBanner( int iWidth, int iHeight )
 	return iWidth >= 100 && abs(iWidth - iHeight) < 2;
 }
 
+void Sprite::StretchTexCoords( float fX, float fY )
+{
+	float fTexCoords[8];
+	GetActiveTextureCoords( fTexCoords );
+
+	for( int j=0; j<8; j+=2 )
+	{
+		fTexCoords[j  ] += fX;
+		fTexCoords[j+1] += fY;
+	}
+
+	SetCustomTextureCoords( fTexCoords );
+}
+
 void Sprite::HandleCommand( const CStringArray &asTokens )
 {
 	HandleParams;
@@ -596,6 +610,7 @@ void Sprite::HandleCommand( const CStringArray &asTokens )
 	if( sName=="customtexturerect" )	SetCustomTextureRect( RectF(fParam(1),fParam(2),fParam(3),fParam(4)) );
 	else if( sName=="texcoordvelocity" )	SetTexCoordVelocity( fParam(1),fParam(2) );
 	else if( sName=="scaletoclipped" )	ScaleToClipped( fParam(1),fParam(2) );
+	else if( sName=="stretchtexcoords" )	StretchTexCoords( fParam(1),fParam(2) );
 
 	/* Texture commands; these could be moved to RageTexture* (even though that's
 	 * not an Actor) if these are needed for other things that use textures.

@@ -48,6 +48,7 @@ public:
 	const RectF *GetCurrentTextureCoordRect() const;
 	void StopUsingCustomCoords();
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
+	void StretchTexCoords( float fX, float fY );
 
 
 	void SetTexCoordVelocity(float fVelX, float fVelY) { m_fTexCoordVelocityX = fVelX; m_fTexCoordVelocityY = fVelY; }	
