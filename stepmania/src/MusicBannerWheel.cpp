@@ -197,9 +197,9 @@ void MusicBannerWheel::PlayMusicSample()
 	Song* pSong = GetSelectedSong();
 	if( pSong  &&  pSong->HasMusic() )
 	{
-		MUSIC->Stop();
-		MUSIC->Load( pSong->GetMusicPath() );
-		MUSIC->Play( true, pSong->m_fMusicSampleStartSeconds, pSong->m_fMusicSampleLengthSeconds );
+		SOUNDMAN->PlayMusic(pSong->GetMusicPath(), true,
+			pSong->m_fMusicSampleStartSeconds,
+			pSong->m_fMusicSampleLengthSeconds);
 	}
 }
 

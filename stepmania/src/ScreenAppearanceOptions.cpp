@@ -73,7 +73,7 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 	m_Menu.SetTimer( 99 );
 	m_Menu.StopTimer();
 
-	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","appearance options music") );
+	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","appearance options music") );
 }
 
 void ScreenAppearanceOptions::ImportOptions()

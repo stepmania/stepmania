@@ -710,11 +710,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 		m_arrayNotes[pn].clear();
 
-	int banners_when_fast = 0;
-
 	/* If we're rouletting, and we're moving fast, don't touch the banner. */
 	bool no_banner_change = false;
-	LOG->Trace("moving %i, roulette %i", m_MusicWheel.IsMoving(), m_MusicWheel.IsRouletting());
 	if(m_MusicWheel.IsMoving()) 
 	{
 		/* We're moving fast.  Don't change banners if we're rouletting, or if
@@ -805,9 +802,9 @@ void ScreenSelectMusic::PlayMusicSample()
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	if( pSong  &&  pSong->HasMusic() )
 	{
-		MUSIC->Stop();
-		MUSIC->Load( pSong->GetMusicPath() );
-		MUSIC->Play( true, pSong->m_fMusicSampleStartSeconds, pSong->m_fMusicSampleLengthSeconds );
+		SOUNDMAN->PlayMusic(pSong->GetMusicPath(), true,
+			pSong->m_fMusicSampleStartSeconds,
+			pSong->m_fMusicSampleLengthSeconds);
 	}
 //	else
 //		MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select music music") );
