@@ -576,7 +576,6 @@ void Player::CrossedRow( int iNoteRow )
 }
 
 
-
 void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 {
 	ASSERT( iNumTapsInRow >= 1 );
@@ -620,46 +619,28 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 //Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system. 
 //
 //Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible score for any song is the number of feet difficulty X 10,000,000. 
-
-	float& fScore = GAMESTATE->m_fScore[m_PlayerNumber];
-	ASSERT( fScore >= 0 );
-
-
+//3dfsux:
+//I redid this code so it will store the score as a long, then correct the score for each song based on that value.
+//		lScore == p * n
+//		m_fScoreMultiplier = (B/S)
+// keeping these seperate for as long as possible improves accuracy.
+	long &lScore = GAMESTATE->m_lScore[m_PlayerNumber];
 	int p;	// score multiplier 
+	
 	switch( score )
 	{
 	case TNS_PERFECT:	p = 10;		break;
 	case TNS_GREAT:		p = 5;		break;
 	default:			p = 0;		break;
 	}
-	
+
 	for( int i=0; i<iNumTapsInRow; i++ )
-	{
-
-		int N = m_iNumTapNotes;
-		int n = m_iTapNotesHit+1;
-		int B = m_iMeter * 1000000;
-		float S = (1+N)*N/2.0f;
-
-	//	printf( "m_iNumTapNotes %d, m_iTapNotesHit %d\n", m_iNumTapNotes, m_iTapNotesHit );
-
-		float one_step_score = p * (B/S) * n;
-
-		fScore += one_step_score;
-
-		m_iTapNotesHit++;
-	}
-
-	ASSERT( m_iTapNotesHit <= m_iNumTapNotes );
-
-	// HACK:  Correct for rounding errors that cause a 100% perfect score to be slightly off
-	if( m_iTapNotesHit == m_iNumTapNotes  &&  
-		fabsf( fScore - froundf(fScore,1000000) ) < 50.0f )	// close to a multiple of 1,000,000
-		fScore = froundf(fScore,1000000);
-
-	if( m_pScore )
-		m_pScore->SetScore( fScore );
+		lScore += p * ++m_iTapNotesHit;
+	ASSERT(lScore > 0);
+	if (m_pScore)
+		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber] = lScore * GAMESTATE->m_fScoreMultiplier);
 }
+
 
 void Player::HandleNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore )
 {
