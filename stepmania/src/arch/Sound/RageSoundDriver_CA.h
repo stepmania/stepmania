@@ -4,7 +4,7 @@
  *  RageSoundDriver_CA.h
  *  stepmania
  *
- *  Sound stream pool code based on RageSoundDriver_ALSA9.h/.cpp by Glen Maynard.
+ *  Sound stream pool code based on RageSoundDriver_ALSA9.h/.cpp by Glenn Maynard.
  *
  * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
  *	Steve Checkoway
