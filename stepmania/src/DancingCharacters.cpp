@@ -47,6 +47,14 @@ const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
 DancingCharacters::DancingCharacters()
 {
 	m_bDrawDangerLight = false;
+	memset( m_bHasIdleAnim, 0, sizeof(m_bHasIdleAnim) );
+	memset( m_bHasMissAnim, 0, sizeof(m_bHasMissAnim) );
+	memset( m_bHasGoodAnim, 0, sizeof(m_bHasGoodAnim) );
+	memset( m_bHasGreatAnim, 0, sizeof(m_bHasGreatAnim) );
+	memset( m_bHasFeverAnim, 0, sizeof(m_bHasFeverAnim) );
+	memset( m_bHasWinFeverAnim, 0, sizeof(m_bHasWinFeverAnim) );
+	memset( m_bHasWinAnim, 0, sizeof(m_bHasWinAnim) );
+	memset( m_bHasFailAnim, 0, sizeof(m_bHasFailAnim) );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
