@@ -1314,6 +1314,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageInput.h">
 			</File>
 			<File
+				RelativePath="RageInputDevice.cpp">
+			</File>
+			<File
+				RelativePath="RageInputDevice.h">
+			</File>
+			<File
 				RelativePath="RageLog.cpp">
 			</File>
 			<File

@@ -195,7 +195,15 @@ SOURCE=.\RageInput.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageInput.h
+SOURCE=.\RageInput.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageInputDevice.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageInputDevice.h
 # End Source File
 # Begin Source File
 
