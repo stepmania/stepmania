@@ -111,7 +111,8 @@ MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/Movi
 endif
 
 Lights = arch/Lights/LightsDriver.h \
-		 arch/Lights/LightsDriver_LinuxSerial.cpp arch/Lights/LightsDriver_LinuxSerial.h
+		 arch/Lights/LightsDriver_LinuxSerial.cpp arch/Lights/LightsDriver_LinuxSerial.h \
+		 arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
 LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h \
 		 arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
