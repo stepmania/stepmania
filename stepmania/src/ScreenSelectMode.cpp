@@ -1,6 +1,6 @@
 #include "global.h"
 /****************************************
-ScreenSelectModeOld,cpp
+ScreenSelectMode.cpp
 Desc: See Header
 Copyright (C):
 Andrew Livy

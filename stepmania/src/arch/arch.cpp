@@ -31,6 +31,7 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 
 #if defined(WIN32)
 	Add.push_back(new InputHandler_Win32_Pump);
+//	Add.push_back(new InputHandler_Win32_Para);
 #endif
 }
 

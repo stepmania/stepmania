@@ -15,7 +15,9 @@ Andrew Livy
 #include "ScrollingList.h"
 #include "GameConstantsAndTypes.h"
 #include "ModeChoice.h"
-
+#include "BitmapText.h"
+// #include "TransitionFade.h"
+#include "RandomSample.h"
 
 /* Class Definition */
 

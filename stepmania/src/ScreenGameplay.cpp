@@ -44,6 +44,7 @@
 //
 #define PREV_SCREEN( play_mode )		THEME->GetMetric ("ScreenGameplay","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )		THEME->GetMetric ("ScreenGameplay","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+
 CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 

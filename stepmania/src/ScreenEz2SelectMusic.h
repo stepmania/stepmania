@@ -20,7 +20,7 @@
 #include "MenuElements.h"
 #include "DifficultyMeter.h"
 #include "DifficultyRating.h"
-
+#include "RageTimer.h"
 
 class ScreenEz2SelectMusic : public Screen
 {
@@ -50,6 +50,7 @@ protected:
 
 	void TweenOffScreen();
 
+
 	Sprite  m_ChoiceListFrame;
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;
@@ -65,6 +66,7 @@ protected:
 	RageSound			m_soundMusicChange;
 	RageSound			m_soundMusicCycle;
 
+	float m_fRemainingWaitTime;
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;
 	DifficultyRating	m_DifficultyRating;
@@ -73,6 +75,7 @@ protected:
 	int					m_iSelection[NUM_PLAYERS];
 	bool m_bGoToOptions;
 	bool m_bMadeChoice;
+	bool m_bTransitioning;
 
 	int i_ErrorDetected;
 

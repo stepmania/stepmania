@@ -57,6 +57,8 @@ const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
 ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 {
+	m_bTransitioning = false;
+	m_fRemainingWaitTime = 0.0f;
 	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
 
@@ -341,6 +343,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	}
 
 	m_bMadeChoice = true;
+	m_fRemainingWaitTime = RageTimer::GetTimeSinceStart();
 
 	TweenOffScreen();
 
@@ -353,8 +356,6 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 	m_sprOptionsMessage.SetZoomY( 0 );
-
-	m_Menu.StartTransitioning( SM_GoToNextScreen );
 }
 
 
@@ -365,6 +366,12 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 		SCREENMAN->Prompt( SM_NoSongs, "ERROR:\n \nThere are no songs available for play!" );
 		i_ErrorDetected=1;
 		this->PostScreenMessage( SM_NoSongs, 5.5f ); // timeout incase the user decides to do nothing :D
+	}
+
+	if(m_bMadeChoice && RageTimer::GetTimeSinceStart() > m_fRemainingWaitTime + 2 && !m_bTransitioning)
+	{
+		m_bTransitioning = true;
+		m_Menu.StartTransitioning( SM_GoToNextScreen );
 	}
 
 	Screen::Update( fDeltaTime );
