@@ -23,9 +23,6 @@ public:
 	 * that'll get freed eventually and crash.  This is only used for realtime
 	 * adjustment of fonts in ScreenTestFonts at the moment. */
 	void ReloadFonts();
-
-	static longchar MakeGameGlyph(wchar_t c, const Game* g);
-	static bool ExtractGameGlyph(longchar ch, wchar_t &c, const Game*& g);
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program

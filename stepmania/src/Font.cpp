@@ -270,16 +270,10 @@ void Font::MergeFont(Font &f)
 
 const glyph &Font::GetGlyph( wchar_t c ) const
 {
-	ASSERT(c >= 0 && c <= 0xFFFFFF);
+	/* Try the regular character. */
+	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
-	/* See if there's a game-specific version of this character. */
-	int gc = FontManager::MakeGameGlyph(c, GAMESTATE->m_pCurGame);
-	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(gc);
-
-	/* If there isn't, try the regular character. */
-	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(c);
-
-	/* If *that's* missing, use the default glyph. */
+	/* If that's missing, use the default glyph. */
 	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(DEFAULT_GLYPH);
 
 	if(it == m_iCharToGlyph.end()) 
@@ -543,13 +537,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 					continue;
 				}
 
-				if(pGame != NULL)
-				{
-					longchar lc = FontManager::MakeGameGlyph(c, pGame);
-					cfg.CharToGlyphNo[lc] = atoi(data);
-				} else {
-					cfg.CharToGlyphNo[c] = atoi(data);
-				}
+				cfg.CharToGlyphNo[c] = atoi(data);
 
 				continue;
 			}
