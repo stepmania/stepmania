@@ -574,6 +574,18 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 	}
 }
 
+static bool ImageIsLoadable( const CString &sPath )
+{
+	SDL_Surface *img = IMG_Load( sPath );
+	if( !img )
+	{
+		LOG->Warn( "Error loading song image \"%s\": %s", sPath.c_str(), SDL_GetError() );
+		return false;
+	}
+
+	SDL_FreeSurface( img );
+	return true;
+}
 
 /* Songs in BlacklistImages will never be autodetected as song images. */
 void Song::TidyUpData()
@@ -760,7 +772,15 @@ void Song::TidyUpData()
 			m_sLyricsFile = arrayLyricFiles[0];
 	}
 
-
+	/* For any images we have now, make sure they're loadable, so we don't throw with
+	 * "can't load image" later.  Do this before the image search below, to avoid redundant
+	 * image decodes.  XXX: Images in BGA scripts? */
+	if( HasBanner() && !ImageIsLoadable( GetBannerPath() ) )
+		m_sBannerFile = "";
+	if( HasBackground() && !ImageIsLoadable( GetBackgroundPath() ) )
+		m_sBackgroundFile = "";
+	if( HasCDTitle() && !ImageIsLoadable( GetCDTitlePath() ) )
+		m_sCDTitleFile = "";
 
 	//
 	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
@@ -771,6 +791,9 @@ void Song::TidyUpData()
 	unsigned i;
 	for( i=0; i<arrayImages.size(); i++ )	// foreach image
 	{
+		if( m_sBannerFile != "" && m_sCDTitleFile != "" && m_sBackgroundFile != "" )
+			break; /* done */
+
 		// ignore DWI "-char" graphics
 		if( BlacklistedImages.find( arrayImages[i].c_str() ) != BlacklistedImages.end() )
 			continue;	// skip
