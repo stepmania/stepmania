@@ -107,7 +107,6 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 		{
 			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
 			float fPercent = 0;
-			float fPossible = 0;
 			if( GAMESTATE->IsCourseMode() )
 			{
 				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);

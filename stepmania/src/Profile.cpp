@@ -223,7 +223,7 @@ float Profile::GetSongsPossible( StepsType st, Difficulty dc ) const
 		}
 	}
 
-	return iTotalSteps;
+	return (float) iTotalSteps;
 }
 
 float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
@@ -303,7 +303,7 @@ float Profile::GetCoursesPossible( StepsType st, CourseDifficulty cd ) const
 		iTotalTrails++;
 	}
 	
-	return iTotalTrails;
+	return (float) iTotalTrails;
 }
 	
 float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
