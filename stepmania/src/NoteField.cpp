@@ -334,6 +334,7 @@ NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
 	/* The first entry should always be lower than any Beat we might receive. */
 	// This assert is firing with Beat = -7408. -Chris
 	// Again with -4976.
+	// Again with Beat = -7254 and GAMESTATE->m_fMusicSeconds = -3043.61
  	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
 	--it;
 	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.end(), ssprintf("%f",Beat) );
