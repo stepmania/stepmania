@@ -1,4 +1,5 @@
 #include "global.h"
+#include "RageLog.h"
 #include "ArchHooks_Unix.h"
 #include "archutils/Unix/SignalHandler.h"
 
@@ -26,6 +27,14 @@ ArchHooks_Unix::ArchHooks_Unix()
 	/* Set up EmergencyShutdown, to try to shut down the window if we crash.
 	 * This might blow up, so be sure to do it after the crash handler. */
 	SignalHandler::OnClose( EmergencyShutdown );
+}
+
+void ArchHooks_Unix::DumpDebugInfo()
+{
+#if defined(CRASH_HANDLER)
+	LOG->Info( "Crash backtrace component: %s", BACKTRACE_METHOD_TEXT );
+	LOG->Info( "Crash lookup component: %s", BACKTRACE_LOOKUP_METHOD_TEXT );
+#endif
 }
 
 /*

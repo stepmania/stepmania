@@ -6,6 +6,7 @@ class ArchHooks_Unix: public ArchHooks
 {
 public:
     ArchHooks_Unix();
+    void DumpDebugInfo();
 };
 
 #undef ARCH_HOOKS
