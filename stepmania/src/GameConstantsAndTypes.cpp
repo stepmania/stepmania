@@ -99,6 +99,7 @@ static const CString TapNoteScoreNames[NUM_TAP_NOTE_SCORES] = {
 };
 XToString( TapNoteScore );
 StringToX( TapNoteScore );
+XToThemedString( TapNoteScore );
 
 
 static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
@@ -108,6 +109,7 @@ static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
 };
 XToString( HoldNoteScore );
 StringToX( HoldNoteScore );
+XToThemedString( HoldNoteScore );
 
 
 static const CString MemoryCardStateNames[NUM_MEMORY_CARD_STATES] = {

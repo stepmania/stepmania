@@ -89,7 +89,7 @@ void Profile::InitGeneralData()
 	m_iNumToasties = 0;
 	m_UnlockedSongs.clear();
 	m_sLastPlayedMachineGuid = "";
-	m_LastPlayedDate = DateTime::GetNowDate();
+	m_LastPlayedDate.Init();
 	m_iTotalTapsAndHolds = 0;
 	m_iTotalJumps = 0;
 	m_iTotalHolds = 0;

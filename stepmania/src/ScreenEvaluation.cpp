@@ -929,7 +929,7 @@ void ScreenEvaluation::CommitScores(
 			hs.fPercentDP = stageStats.GetPercentDancePoints( p );
 			hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
 			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
-			hs.time = time(NULL);
+			hs.dateTime = DateTime::GetNowDateTime();
 			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : "";
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 			hs.iProductID = PREFSMAN->m_iProductID;

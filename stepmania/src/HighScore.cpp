@@ -44,7 +44,7 @@ XNode* HighScore::CreateNode() const
 	pNode->AppendChild( "PercentDP",		fPercentDP );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
-	pNode->AppendChild( "Time",				(int)time );
+	pNode->AppendChild( "DateTime",			dateTime );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 	pNode->AppendChild( "ProductID",		iProductID );
@@ -54,8 +54,7 @@ XNode* HighScore::CreateNode() const
 	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
 	FOREACH_HoldNoteScore( hns )
 		pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
-	XNode* pRadarCategories = pNode->AppendChild( "RadarActuals" );
-	pRadarCategories->AppendChild( radarValues.CreateNode() );
+	pNode->AppendChild( radarValues.CreateNode() );
 
 	return pNode;
 }
@@ -77,7 +76,7 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	pNode->GetChildValue( "PercentDP",		fPercentDP );
 	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
 	pNode->GetChildValue( "Modifiers",		sModifiers );
-	pNode->GetChildValue( "Time",			(int&)time );
+	pNode->GetChildValue( "DateTime",		dateTime );
 	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
 	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
 	pNode->GetChildValue( "ProductID",		iProductID );

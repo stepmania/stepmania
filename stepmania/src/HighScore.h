@@ -6,6 +6,7 @@
 #include "Grade.h"
 #include "GameConstantsAndTypes.h"
 #include "RadarValues.h"
+#include "DateTime.h"
 
 struct XNode;
 
@@ -17,7 +18,7 @@ struct HighScore
 	float fPercentDP;
 	float fSurviveSeconds;
 	CString	sModifiers;
-	time_t time;		// return value of time() when screenshot was taken
+	DateTime dateTime;		// return value of time() when screenshot was taken
 	CString sPlayerGuid;	// who made this high score
 	CString sMachineGuid;	// where this high score was made
 	int	iProductID;
@@ -34,7 +35,7 @@ struct HighScore
 		fPercentDP = 0;
 		fSurviveSeconds = 0;
 		sModifiers = "";
-		time = 0;
+		dateTime.Init();
 		sPlayerGuid = "";
 		sMachineGuid = "";
 		iProductID = 0;
@@ -53,7 +54,7 @@ struct HighScore
 		COMPARE( fPercentDP );
 		COMPARE( fSurviveSeconds );
 		COMPARE( sModifiers );
-		COMPARE( time );
+		COMPARE( dateTime );
 		COMPARE( sPlayerGuid );
 		COMPARE( sMachineGuid );
 		COMPARE( iProductID );

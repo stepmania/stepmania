@@ -5,6 +5,7 @@
 
 #include "RageTypes.h"
 #include "RageTimer.h"
+#include <set>
 
 class IniFile;
 
@@ -27,6 +28,7 @@ public:
 	void NextTheme();
 	void ReloadMetrics();
 	void ReloadMetricsIfNecessary();
+	void GetModifierNames( set<CString>& AddTo );
 
 	/* I renamed these for two reasons.  The overload conflicts with the ones below:
 	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also

@@ -43,6 +43,20 @@ struct DateTime : public tm
 		// they're equal
 		return true;
 	}
+	bool operator==( const DateTime& other ) const 
+	{
+#define COMPARE(x)	if( x!=other.x )	return false;
+		COMPARE( tm_year );
+		COMPARE( tm_mon );
+		COMPARE( tm_mday );
+		COMPARE( tm_hour );
+		COMPARE( tm_min );
+		COMPARE( tm_sec );
+#undef COMPARE
+		return true;
+	}
+	bool operator!=( const DateTime& other ) const { return !operator==(other); }
+
 	static DateTime GetNowDateTime();
 	static DateTime GetNowDate();	// GetNowDateTime() with time chopped off
 	

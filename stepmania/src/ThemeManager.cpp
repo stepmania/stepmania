@@ -642,6 +642,21 @@ CString ThemeManager::GetPathToN( CString sFileName, bool bOptional ) { CString 
 CString ThemeManager::GetPathToS( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathS(sClassName,sElement,bOptional); }
 CString ThemeManager::GetPathToO( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathO(sClassName,sElement,bOptional); }
 
+void ThemeManager::GetModifierNames( set<CString>& AddTo )
+{
+	const IniFile::key *cur = m_pIniCurMetrics->GetKey( "OptionNames" );
+	const IniFile::key *base = m_pIniBaseMetrics->GetKey( "OptionNames" );
+
+	for( IniFile::key::const_iterator iter = cur->begin(); iter != cur->end(); iter++ )
+	{
+		AddTo.insert( iter->first );
+	}
+	for( IniFile::key::const_iterator iter = base->begin(); iter != base->end(); iter++ )
+	{
+		AddTo.insert( iter->first );
+	}
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

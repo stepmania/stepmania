@@ -23,6 +23,7 @@
 #define INTERNET_RANKING_HOME_URL		THEME->GetMetric ("CatalogXml","InternetRankingHomeUrl")
 #define INTERNET_RANKING_UPLOAD_URL		THEME->GetMetric ("CatalogXml","InternetRankingUploadUrl")
 #define INTERNET_RANKING_VIEW_GUID_URL	THEME->GetMetric ("CatalogXml","InternetRankingViewGuidUrl")
+#define STATS_TITLE						THEME->GetMetric ("CatalogXml","StatsTitle")
 #define STATS_HEADER					THEME->GetMetric ("CatalogXml","StatsHeader")
 #define STATS_FOOTER_TEXT				THEME->GetMetric ("CatalogXml","StatsFooterText")
 #define STATS_FOOTER_LINK				THEME->GetMetric ("CatalogXml","StatsFooterLink")
@@ -183,11 +184,46 @@ void SaveCatalogXml()
 				pNode2->AppendAttr( "DisplayAs", GradeToThemedString(g) );
 			}
 		}
+
+		{
+			FOREACH_TapNoteScore( tns )
+			{
+				XNode* pNode2 = pNode->AppendChild( "TapNoteScore", TapNoteScoreToString(tns) );
+				pNode2->AppendAttr( "DisplayAs", TapNoteScoreToThemedString(tns) );
+			}
+		}
+
+		{
+			FOREACH_HoldNoteScore( hns )
+			{
+				XNode* pNode2 = pNode->AppendChild( "HoldNoteScore", HoldNoteScoreToString(hns) );
+				pNode2->AppendAttr( "DisplayAs", HoldNoteScoreToThemedString(hns) );
+			}
+		}
+
+		{
+			FOREACH_RadarCategory( rc )
+			{
+				XNode* pNode2 = pNode->AppendChild( "RadarValue", RadarCategoryToString(rc) );
+				pNode2->AppendAttr( "DisplayAs", RadarCategoryToThemedString(rc) );
+			}
+		}
+
+		{
+			set<CString> modifiers;
+			THEME->GetModifierNames( modifiers );
+			for( set<CString>::const_iterator iter = modifiers.begin(); iter != modifiers.end(); iter++ )
+			{
+				XNode* pNode2 = pNode->AppendChild( "Modifier", *iter );
+				pNode2->AppendAttr( "DisplayAs", PlayerOptions::ThemeMod(*iter) );
+			}
+		}
 	}
 
 	xml.AppendChild( "InternetRankingHomeUrl", INTERNET_RANKING_HOME_URL );
 	xml.AppendChild( "InternetRankingUploadUrl", INTERNET_RANKING_UPLOAD_URL );
 	xml.AppendChild( "InternetRankingViewGuidUrl", INTERNET_RANKING_VIEW_GUID_URL );
+	xml.AppendChild( "StatsTitle", STATS_TITLE );
 	xml.AppendChild( "StatsHeader", STATS_HEADER );
 	xml.AppendChild( "StatsFooterText", STATS_FOOTER_TEXT );
 	xml.AppendChild( "StatsFooterLink", STATS_FOOTER_LINK );
