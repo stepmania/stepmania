@@ -20,6 +20,8 @@ private:
 	bool Recover( int r );
 	bool SetHWParams();
 
+	static void ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...);
+		
 public:
 	static void GetSoundCardDebugInfo();
 		

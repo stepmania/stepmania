@@ -68,7 +68,6 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		return;
 	done = true;
 
-
 	int card = -1;
 	while( snd_card_next( &card ) >= 0 && card >= 0 )
 	{
@@ -123,10 +122,17 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		LOG->Info( "No ALSA sound cards were found.");
 }
 
+void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, int err, const char *fmt, ...)
+{
+/* NOP */
+}
+
 Alsa9Buf::Alsa9Buf( hw hardware, int channels_, int samplerate_ )
 {
 	GetSoundCardDebugInfo();
 		
+	snd_lib_error_set_handler( ErrorHandler );
+	
 	channels = channels_;
 	samplerate = samplerate_;
 	samplebits = 16;
