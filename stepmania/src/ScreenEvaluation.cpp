@@ -224,7 +224,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 				// If unlocking is enabled, save the dance points
 				if( PREFSMAN->m_bUseUnlockSystem )
-					UNLOCKSYS->UnlockAddDP( stageStats.iActualDancePoints[p] );
+					UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
 			}
 			break;
 		case course:
