@@ -419,7 +419,7 @@ struct VideoCardDefaults
 {
 	{
 		"Voodoo *5",
-		"d3d,opengl",	// recevied 3 reports of open opengl crashing. -Chris
+		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
 		640,480,
 		32,32,32,
 		2048,
