@@ -338,14 +338,10 @@ Arrows (all types) should be mipmapped; they look really bad in Space.
 
 Make autogen go through combinations of arrows.
 
-
-when converting up (to a dest
-with more tracks), and through source arrows when converting down.
-
 That is, right now we just walk through consecutive arrows.  DDR
 to Pump results in DL, DR, C and UR being used or UL, C, UR, DR.
-Instead, walk through all combinations of 4 (eg. 4C5); 11110, 11101,
-11011, 10111, 01111, so more patterns are possible.
+Instead, walk through all combinations of 4; 11110, 11101, 11011,
+10111, 01111, so more patterns are possible.
 
 Fix the hold note strangeness first, though.
 
