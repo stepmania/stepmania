@@ -74,39 +74,11 @@ public:
 				fScore = 0;
 			}
 
-			bool operator>( const HighScore& other )
-			{
-				return fScore > other.fScore;
-				/* Make sure we treat AAAA as higher than AAA, even though the score
-				 * is the same. 
-				 *
-				 * XXX: Isn't it possible to beat the grade but not beat the score, since
-				 * grading and scores are on completely different systems?  Should we be
-				 * checking for these completely separately? */
-				//	if( vsScore > this->fScore )
-				//		return true;
-				//	if( vsScore < this->fScore )
-				//		return false;
-				//	return vsGrade > this->grade;
-			}
-
+			bool operator>( const HighScore& other ) const;
 		};
 		vector<HighScore> vHighScores;
 
-		void AddHighScore( MemCardData::HighScore hs, int &iIndexOut )
-		{
-			for( int i=0; i<(int)vHighScores.size() && i<NUM_RANKING_LINES; i++ )
-			{
-				if( hs > vHighScores[i] )
-				{
-					vHighScores.insert( vHighScores.begin()+i, hs );
-					iIndexOut = i;
-					break;
-				}
-			}
-			if( vHighScores.size() > NUM_RANKING_LINES )
-				vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
-		}
+		void AddHighScore( MemCardData::HighScore hs, int &iIndexOut );
 
 		HighScore GetTopScore()
 		{

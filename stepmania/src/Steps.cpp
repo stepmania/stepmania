@@ -320,3 +320,39 @@ void SortNotesArrayByDifficulty( vector<Steps*> &arraySteps )
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByMeter );
 	stable_sort( arraySteps.begin(), arraySteps.end(), CompareNotesPointersByDifficulty );
 }
+
+
+
+bool Steps::MemCardData::HighScore::operator>( const Steps::MemCardData::HighScore& other ) const
+{
+	return fScore > other.fScore;
+	/* Make sure we treat AAAA as higher than AAA, even though the score
+		* is the same. 
+		*
+		* XXX: Isn't it possible to beat the grade but not beat the score, since
+		* grading and scores are on completely different systems?  Should we be
+		* checking for these completely separately? */
+	//	if( vsScore > this->fScore )
+	//		return true;
+	//	if( vsScore < this->fScore )
+	//		return false;
+	//	return vsGrade > this->grade;
+}
+
+void Steps::MemCardData::AddHighScore( Steps::MemCardData::HighScore hs, int &iIndexOut )
+{
+	int i;
+	for( i=0; i<(int)vHighScores.size(); i++ )
+	{
+		if( hs > vHighScores[i] )
+			break;
+	}
+
+	if( i < NUM_RANKING_LINES )
+	{
+		vHighScores.insert( vHighScores.begin()+i, hs );
+		iIndexOut = i;
+		if( vHighScores.size() > NUM_RANKING_LINES )
+			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
+	}
+}
