@@ -96,7 +96,7 @@ void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 	bool AllIdentical = true;
 	for( i = 0; i < BPMS.size(); ++i )
 	{
-		if( i > 0 && m_BPMS[i] != m_BPMS[i-1] )
+		if( i > 0 && BPMS[i] != BPMS[i-1] )
 			AllIdentical = false;
 
 		m_BPMS.push_back(BPMS[i]);
@@ -104,7 +104,7 @@ void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 			m_BPMS.push_back(BPMS[i]); /* hold */
 	}
 
-	m_iCurrentBPM = min(1u, sizeof(m_BPMS)); /* start on the first hold */
+	m_iCurrentBPM = min(1u, m_BPMS.size()); /* start on the first hold */
 	m_fBPMFrom = BPMS[0];
 	m_fBPMTo = BPMS[0];
 	m_fPercentInState = 1;
@@ -177,6 +177,7 @@ void BPMDisplay::SetBPM( const Song* pSong )
 
 void BPMDisplay::SetBPM( const Course* pCourse )
 {
+	ASSERT( pCourse );
 	vector<Song*> vSongs;
 	vector<Notes*> vNotes;
 	vector<CString> vsModifiers;
