@@ -60,7 +60,7 @@ void Profile::InitEditableData()
 {
 	m_sDisplayName = "";	
 	m_sLastUsedHighScoreName = "";
-	m_fWeightPounds = 0;
+	m_iWeightPounds = 0;
 }
 
 void Profile::InitGeneralData()
@@ -136,7 +136,7 @@ CString Profile::GetDisplayName() const
 
 CString Profile::GetDisplayTotalCaloriesBurned() const
 {
-	if( m_fWeightPounds == 0 )	// weight not entered
+	if( m_iWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
 		return Commify((int)m_fTotalCaloriesBurned) + " Cal";
@@ -464,7 +464,7 @@ void Profile::LoadProfileDataFromDirSM390a12( CString sDir )
 	ini.GetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	ini.GetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	ini.GetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
-	ini.GetValue( "Profile", "WeightPounds",					m_fWeightPounds );
+	ini.GetValue( "Profile", "WeightPounds",					m_iWeightPounds );
 	ini.GetValue( "Profile", "CaloriesBurned",					m_fTotalCaloriesBurned );
 	ini.GetValue( "Profile", "LastPlayedMachineName",			m_sLastPlayedMachineName );
 
@@ -487,7 +487,7 @@ void Profile::SaveEditableDataToDir( CString sDir ) const
 
 	ini.SetValue( "Editable", "DisplayName",			m_sDisplayName );
 	ini.SetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
-	ini.SetValue( "Editable", "WeightPounds",			m_fWeightPounds );
+	ini.SetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
 	ini.WriteFile();
 }
@@ -615,7 +615,7 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 
 	ini.GetValue("Editable","DisplayName",				m_sDisplayName);
 	ini.GetValue("Editable","LastUsedHighScoreName",	m_sLastUsedHighScoreName);
-	ini.GetValue("Editable","WeightPounds",				m_fWeightPounds);
+	ini.GetValue("Editable","WeightPounds",				m_iWeightPounds);
 
 	// This is data that the user can change, so we have to validate it.
 	wstring wstr = CStringToWstring(m_sDisplayName);
@@ -623,8 +623,8 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 		wstr = wstr.substr(0, 12);
 	m_sDisplayName = WStringToCString(wstr);
 	// TODO: strip invalid chars?
-	if( m_fWeightPounds != 0 )
-		CLAMP( m_fWeightPounds, 50, 500 );
+	if( m_iWeightPounds != 0 )
+		CLAMP( m_iWeightPounds, 50, 500 );
 }
 
 void Profile::LoadGeneralDataFromNode( const XNode* pNode )
@@ -732,14 +732,14 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 	m_iTotalMines += iTotalMines;
 	m_iTotalHands += iTotalHands;
 
-	if( m_fWeightPounds != 0 )
+	if( m_iWeightPounds != 0 )
 	{
 		float fCals = 
-			SCALE( m_fWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iTotalTapsAndHolds +
-			SCALE( m_fWeightPounds, 100.f, 200.f, 0.111f, 0.193f ) * iTotalJumps +
-			SCALE( m_fWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iTotalHolds +
-			SCALE( m_fWeightPounds, 100.f, 200.f, 0.000f, 0.000f ) * iTotalMines +
-			SCALE( m_fWeightPounds, 100.f, 200.f, 0.222f, 0.386f ) * iTotalHands;
+			SCALE( m_iWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iTotalTapsAndHolds +
+			SCALE( m_iWeightPounds, 100.f, 200.f, 0.111f, 0.193f ) * iTotalJumps +
+			SCALE( m_iWeightPounds, 100.f, 200.f, 0.029f, 0.052f ) * iTotalHolds +
+			SCALE( m_iWeightPounds, 100.f, 200.f, 0.000f, 0.000f ) * iTotalMines +
+			SCALE( m_iWeightPounds, 100.f, 200.f, 0.222f, 0.386f ) * iTotalHands;
 		m_fTotalCaloriesBurned += fCals;
 
 		tm cur_tm = GetLocalTime();
@@ -1359,9 +1359,7 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 {
 	ASSERT( PROFILEMAN );
 
-	// UGLY...
-	bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile());
-	// Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+	bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile());	// UGLY
 
 	SaveStatsWebPage( 
 		sDir,

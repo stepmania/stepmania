@@ -80,7 +80,7 @@ public:
 	//
 	CString m_sDisplayName;
 	CString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
-	float m_fWeightPounds;
+	int m_iWeightPounds;
 
 	//
 	// General data
