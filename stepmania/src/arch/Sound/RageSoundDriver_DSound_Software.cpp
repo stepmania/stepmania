@@ -18,160 +18,41 @@ static int max_writeahead;
 /* We'll fill the buffer in chunks this big. */
 static const int num_chunks = 8;
 static int chunksize() { return max_writeahead / num_chunks; }
-int RageSound_DSound_Software::MixerThread_start(void *p)
-{
-	((RageSound_DSound_Software *) p)->MixerThread();
-	return 0;
-}
 
 void RageSound_DSound_Software::MixerThread()
 {
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
-	while(!SOUNDMAN && !shutdown) Sleep(10);
+	while( !SOUNDMAN && !shutdown_mixer_thread )
+		SDL_Delay( 10 );
 
-	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL))
-		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
+	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL) )
+		if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
+			LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
 
-	/* Fill a buffer before we start playing, so we don't play whatever junk is
-	 * in the buffer. */
-	while(GetData())
-		;
+	while( !shutdown_mixer_thread )
+	{
+		char *locked_buf;
+		unsigned len;
+		const int64_t play_pos = pcm->GetOutputPosition();
 
-	/* Start playing. */
-	pcm->Play();
+		if( !pcm->get_output_buf(&locked_buf, &len, chunksize()) )
+		{
+			Sleep( chunksize()*1000 / samplerate );
+			continue;
+		}
 
-	while(!shutdown) {
-		Sleep( chunksize()*1000 / samplerate );
-		while(GetData())
-			;
+		/* Silence the buffer. */
+		memset( locked_buf, 0, len );
+
+		this->Mix( (int16_t *) locked_buf, len/bytes_per_frame, play_pos, pcm->GetPosition() );
+
+		pcm->release_output_buf(locked_buf, len);
 	}
 
 	/* I'm not sure why, but if we don't stop the stream now, then the thread will take
 	 * 90ms (our buffer size) longer to close. */
 	pcm->Stop();
-}
-
-bool RageSound_DSound_Software::GetData()
-{
-	LockMut(SOUNDMAN->lock);
-
-	char *locked_buf;
-	unsigned len;
-	const int64_t play_pos = pcm->GetOutputPosition();
-    int64_t cur_play_pos = -1;
-
-	if( !pcm->get_output_buf(&locked_buf, &len, chunksize()) )
-		return false;
-	/* Silence the buffer. */
-	memset(locked_buf, 0, len);
-
-	static Sint16 *buf = NULL;
-	int bufsize = max_writeahead * channels;
-	if(!buf)
-	{
-		buf = new Sint16[bufsize];
-	}
-	memset(buf, 0, bufsize*sizeof(Uint16));
-
-	static SoundMixBuffer mix;
-
-	for(unsigned i = 0; i < sounds.size(); ++i)
-	{
-		if(sounds[i]->stopping)
-			continue;
-
-        int bytes_read = 0;
-        int bytes_left = len;
-
-		if( !sounds[i]->start_time.IsZero() )
-		{
-			/* If the sound is supposed to start at a time past this buffer, insert silence. */
-			if( cur_play_pos == -1 )
-				cur_play_pos = pcm->GetPosition();
-			const int64_t iFramesUntilThisBuffer = play_pos - cur_play_pos;
-			const float fSecondsBeforeStart = -sounds[i]->start_time.Ago();
-			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * samplerate);
-			const int64_t iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
-			const int iSilentBytesInThisBuffer = clamp( int(iSilentFramesInThisBuffer * bytes_per_frame), 0, bytes_left );
-
-			memset( buf+bytes_read, 0, iSilentBytesInThisBuffer );
-			bytes_read += iSilentBytesInThisBuffer;
-			bytes_left -= iSilentBytesInThisBuffer;
-
-			if( !iSilentBytesInThisBuffer )
-				sounds[i]->start_time.SetZero();
-		}
-
-		/* Call the callback. */
-		int got = sounds[i]->snd->GetPCM( (char *) buf+bytes_read, bytes_left, play_pos+bytes_read/bytes_per_frame );
-        bytes_read += got;
-        bytes_left -= got;
-
-		mix.write( (Sint16 *) buf, bytes_read / sizeof(Sint16), sounds[i]->snd->GetVolume() );
-
-		if( bytes_left > 0 )
-		{
-			/* This sound is finishing. */
-			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = pcm->GetOutputPosition();
-		}
-	}
-
-	mix.read((Sint16 *) locked_buf);
-
-	pcm->release_output_buf(locked_buf, len);
-
-	return true;
-}
-
-
-void RageSound_DSound_Software::StartMixing( RageSoundBase *snd )
-{
-	sound *s = new sound;
-	s->snd = snd;
-	s->start_time = snd->GetStartTime();
-
-	LockMut(SOUNDMAN->lock);
-	sounds.push_back(s);
-}
-
-void RageSound_DSound_Software::Update(float delta)
-{
-	ASSERT(SOUNDMAN);
-	LockMut(SOUNDMAN->lock);
-
-	/* StopPlaying might erase sounds out from under us, so make a copy
-	 * of the sound list. */
-	vector<sound *> snds = sounds;
-	for(unsigned i = 0; i < snds.size(); ++i)
-	{
-		if(!snds[i]->stopping)  continue;
-
-		if(GetPosition(snds[i]->snd) < snds[i]->flush_pos)
-			continue; /* stopping but still flushing */
-
-		/* This sound is done. */
-		snds[i]->snd->StopPlaying();
-	}
-}
-
-void RageSound_DSound_Software::StopMixing( RageSoundBase *snd )
-{
-	LockMut(SOUNDMAN->lock);
-
-	/* Find the sound. */
-	unsigned i;
-	for(i = 0; i < sounds.size(); ++i)
-		if(sounds[i]->snd == snd) break;
-	if(i == sounds.size())
-	{
-		LOG->Trace("not stopping a sound because it's not playing");
-		return;
-	}
-
-	delete sounds[i];
-	sounds.erase(sounds.begin()+i, sounds.begin()+i+1);
 }
 
 int64_t RageSound_DSound_Software::GetPosition( const RageSoundBase *snd ) const
@@ -180,23 +61,41 @@ int64_t RageSound_DSound_Software::GetPosition( const RageSoundBase *snd ) const
 	return pcm->GetPosition();
 }
 
+int RageSound_DSound_Software::MixerThread_start(void *p)
+{
+	((RageSound_DSound_Software *) p)->MixerThread();
+	return 0;
+}
+
 RageSound_DSound_Software::RageSound_DSound_Software()
 {
-	shutdown = false;
+	shutdown_mixer_thread = false;
+	pcm = NULL;
 
 	/* If we're emulated, we're better off with the WaveOut driver; DS
 	 * emulation tends to be desynced. */
-	if(ds.IsEmulated())
-		RageException::ThrowNonfatal("Driver unusable (emulated device)");
+	if( ds.IsEmulated() )
+		RageException::ThrowNonfatal( "Driver unusable (emulated device)" );
 
 	max_writeahead = safe_writeahead;
 	if( PREFSMAN->m_iSoundWriteAhead )
 		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
 
 	/* Create a DirectSound stream, but don't force it into hardware. */
-	pcm = new DSoundBuf(ds, 
-		DSoundBuf::HW_DONT_CARE, 
-		channels, samplerate, 16, max_writeahead);
+	pcm = new DSoundBuf( ds, DSoundBuf::HW_DONT_CARE, channels, samplerate, 16, max_writeahead );
+
+	/* Fill a buffer before we start playing, so we don't play whatever junk is
+	 * in the buffer. */
+	char *locked_buf;
+	unsigned len;
+	while( pcm->get_output_buf(&locked_buf, &len, chunksize()) )
+	{
+		memset( locked_buf, 0, len );
+		pcm->release_output_buf(locked_buf, len);
+	}
+
+	/* Start playing. */
+	pcm->Play();
 
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
@@ -205,7 +104,7 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 RageSound_DSound_Software::~RageSound_DSound_Software()
 {
 	/* Signal the mixing thread to quit. */
-	shutdown = true;
+	shutdown_mixer_thread = true;
 	LOG->Trace("Shutting down mixer thread ...");
 	LOG->Flush();
 	MixingThread.Wait();
@@ -213,6 +112,12 @@ RageSound_DSound_Software::~RageSound_DSound_Software()
 	LOG->Flush();
 
 	delete pcm;
+}
+
+void RageSound_DSound_Software::SetupDecodingThread()
+{
+	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
+		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set decoding thread priority") );
 }
 
 float RageSound_DSound_Software::GetPlayLatency() const

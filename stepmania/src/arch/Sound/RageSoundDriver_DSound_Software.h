@@ -1,50 +1,31 @@
-#ifndef RAGE_SOUND_DSOUND_SOFTWARE
-#define RAGE_SOUND_DSOUND_SOFTWARE
+#ifndef RAGE_SOUND_GENERIC_TEST
+#define RAGE_SOUND_GENERIC_TEST
 
-#include "RageSoundDriver.h"
 #include "DSoundHelpers.h"
 #include "RageThreads.h"
-#include "RageTimer.h"
+#include "RageSoundDriver_Generic_Software.h"
 
-struct IDirectSound;
-struct IDirectSoundBuffer;
-
-class RageSound_DSound_Software: public RageSoundDriver
+class RageSound_DSound_Software: public RageSound_Generic_Software
 {
-	struct sound {
-	    RageSoundBase *snd;
-		RageTimer start_time;
-		bool stopping;
-		int64_t flush_pos; /* when stopping only */
-
-	    sound() { snd = NULL; stopping=false; }
-	};
-
-	/* List of currently playing sounds: */
-	vector<sound *> sounds;
-
-	bool shutdown;
-
 	DSound ds;
 	DSoundBuf *pcm;
 
-	bool GetData();
-	void Update(float delta);
+	bool shutdown_mixer_thread;
 
 	static int MixerThread_start(void *p);
 	void MixerThread();
 	RageThread MixingThread;
 
-	/* virtuals: */
-	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
-	void StopMixing( RageSoundBase *snd );		/* used by RageSound */
+protected:
+	void SetupDecodingThread();
+
+public:
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
 	int GetSampleRate( int rate ) const;
-
-public:
+	
 	RageSound_DSound_Software();
-	~RageSound_DSound_Software();
+	virtual ~RageSound_DSound_Software();
 };
 
 #endif
