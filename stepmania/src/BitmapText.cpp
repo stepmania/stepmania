@@ -314,8 +314,7 @@ void BitmapText::DrawPrimitives()
 
 			RageColor dim(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
 
-			int i;
-			for( i=0; i<iNumV; i++ )
+			for( int i=0; i<iNumV; i++ )
 				v[i].c = dim;
 			DISPLAY->DrawQuads( v, iNumV );
 
