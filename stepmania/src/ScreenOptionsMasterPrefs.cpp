@@ -246,19 +246,8 @@ MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
 
 static void WheelSpeed( int &sel, bool ToSel, const CStringArray &choices )
 {
-	if( ToSel )
-	{
-		sel =
-			(PREFSMAN->m_iMusicWheelSwitchSpeed <= 5)? 0:
-			(PREFSMAN->m_iMusicWheelSwitchSpeed <= 10)? 1:
-			(PREFSMAN->m_iMusicWheelSwitchSpeed <= 15)? 2:3;
-	}
-	else
-	{
-		int mapping[] = { 5, 10, 15, 25 };
-		ASSERT( sel >= 0 && sel < 4 );
-		PREFSMAN->m_iMusicWheelSwitchSpeed = mapping[sel];
-	}
+	const int mapping[] = { 5, 10, 15, 25 };
+	MoveMap( sel, PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Gameplay options */
