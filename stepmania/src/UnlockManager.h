@@ -28,8 +28,10 @@ struct UnlockEntry
 {
 	UnlockEntry();
 
-	CString m_sSongName;
-	
+	enum Type { TYPE_SONG, TYPE_COURSE, TYPE_MODIFIER };
+	Type m_Type;
+	CString m_sName;
+
 	/* A cached pointer to the song or course this entry refers to.  Only one of
 	 * these will be non-NULL. */
 	Song	*m_pSong;
@@ -37,8 +39,6 @@ struct UnlockEntry
 
 	float	m_fRequired[NUM_UNLOCK_TYPES];
 	int		m_iCode;
-
-	bool	IsCourse() const { return m_pCourse != NULL; }
 
 	bool	IsLocked() const;
 };
@@ -60,6 +60,7 @@ public:
 	bool SongIsLocked( const Song *song ) const;
 	bool SongIsRouletteOnly( const Song *song ) const;
 	bool CourseIsLocked( const Course *course ) const;
+	bool ModifierIsLocked( const CString &sOneMod ) const;
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
@@ -81,7 +82,7 @@ public:
 	void UnlockSong( const Song *song );
 
 	// All locked songs are stored here
-	vector<UnlockEntry>	m_SongEntries;
+	vector<UnlockEntry>	m_UnlockEntries;
 
 	// If global song or course points change, call to update
 	void UpdateSongs();
@@ -95,6 +96,7 @@ private:
 	
 	const UnlockEntry *FindSong( const Song *pSong ) const;
 	const UnlockEntry *FindCourse( const Course *pCourse ) const;
+	const UnlockEntry *FindModifier( const CString &sOneMod ) const;
 
 	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };

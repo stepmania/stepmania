@@ -88,30 +88,48 @@ bool UnlockManager::SongIsRouletteOnly( const Song *song ) const
 	return p->IsLocked();
 }
 
+bool UnlockManager::ModifierIsLocked( const CString &sOneMod ) const
+{
+	if( !PREFSMAN->m_bUseUnlockSystem )
+		return false;
+
+	const UnlockEntry *p = FindModifier( sOneMod );
+	if( p == NULL )
+		return false;
+
+	return p->IsLocked();
+}
+
+
 const UnlockEntry *UnlockManager::FindLockEntry( CString songname ) const
 {
-	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
-		if( !songname.CompareNoCase(m_SongEntries[i].m_sSongName) )
-			return &m_SongEntries[i];
-
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
+		if( !songname.CompareNoCase(e->m_sName) )
+			return &(*e);
 	return NULL;
 }
 
 const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 {
-	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
-		if( m_SongEntries[i].m_pSong == pSong )
-			return &m_SongEntries[i];
-
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
+		if( e->m_pSong == pSong )
+			return &(*e);
 	return NULL;
 }
 
 const UnlockEntry *UnlockManager::FindCourse( const Course *pCourse ) const
 {
-	for(unsigned i = 0; i < m_SongEntries.size(); i++)
-		if (m_SongEntries[i].m_pCourse== pCourse )
-			return &m_SongEntries[i];
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
+		if( e->m_pCourse == pCourse )
+			return &(*e);
+	return NULL;
+}
 
+const UnlockEntry *UnlockManager::FindModifier( const CString &sOneMod ) const
+{
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
+		if( e->m_sName.CompareNoCase(sOneMod) == 0 )
+			return &(*e);
 	return NULL;
 }
 
@@ -244,17 +262,34 @@ void UnlockManager::Load()
 		for( unsigned j = 0; j < vCommands.v.size(); ++j )
 		{
 			const Command &cmd = vCommands.v[j];
-			if( cmd.GetName() == "song" )
-				current.m_sSongName = (CString) cmd.GetArg(1);
-			else if( cmd.GetName() == "code" )
+			CString sName = cmd.GetName();
+
+			if( sName == "song" )
+			{
+				current.m_Type = UnlockEntry::TYPE_SONG;
+				current.m_sName = (CString) cmd.GetArg(1);
+			}
+			if( sName == "course" )
+			{
+				current.m_Type = UnlockEntry::TYPE_COURSE;
+				current.m_sName = (CString) cmd.GetArg(1);
+			}
+			if( sName == "modifier" )
+			{
+				current.m_Type = UnlockEntry::TYPE_MODIFIER;
+				current.m_sName = (CString) cmd.GetArg(1);
+			}
+			else if( sName == "code" )
 			{
 				// Hack: Lua only has a floating point type, and codes may be big enough
 				// that converting them from string to float to int introduces rounding
 				// error.  Convert directly to int.
 				current.m_iCode = atoi( (CString) cmd.GetArg(1) );
 			}
-			else if( cmd.GetName() == "roulette" )
+			else if( sName == "roulette" )
+			{
 				bRoulette = true;
+			}
 			else
 			{
 				const UnlockType ut = StringToUnlockType( cmd.GetName() );
@@ -266,23 +301,23 @@ void UnlockManager::Load()
 		if( bRoulette )
 			m_RouletteCodes.insert( current.m_iCode );
 
-		m_SongEntries.push_back( current );
+		m_UnlockEntries.push_back( current );
 	}
 
 	UpdateSongs();
 
-	for( unsigned i=0; i < m_SongEntries.size(); i++ )
+	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 	{
-		CString str = ssprintf( "Unlock: %s; ", m_SongEntries[i].m_sSongName.c_str() );
+		CString str = ssprintf( "Unlock: %s; ", e->m_sName.c_str() );
 		FOREACH_UnlockType(j)
-			if( m_SongEntries[i].m_fRequired[j] )
-				str += ssprintf( "%s = %f; ", UnlockTypeToString(j).c_str(), m_SongEntries[i].m_fRequired[j] );
+			if( e->m_fRequired[j] )
+				str += ssprintf( "%s = %f; ", UnlockTypeToString(j).c_str(), e->m_fRequired[j] );
 
-		str += ssprintf( "code = %i ", m_SongEntries[i].m_iCode );
-		str += m_SongEntries[i].IsLocked()? "locked":"unlocked";
-		if( m_SongEntries[i].m_pSong )
+		str += ssprintf( "code = %i ", e->m_iCode );
+		str += e->IsLocked()? "locked":"unlocked";
+		if( e->m_pSong )
 			str += ( " (found song)" );
-		if( m_SongEntries[i].m_pCourse )
+		if( e->m_pCourse )
 			str += ( " (found course)" );
 		LOG->Trace( "%s", str.c_str() );
 	}
@@ -296,34 +331,38 @@ float UnlockManager::PointsUntilNextUnlock( UnlockType t ) const
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
 	float fSmallestPoints = 400000000;   // or an arbitrarily large value
-	for( unsigned a=0; a<m_SongEntries.size(); a++ )
-		if( m_SongEntries[a].m_fRequired[t] > fScores[t] )
-			fSmallestPoints = min( fSmallestPoints, m_SongEntries[a].m_fRequired[t] );
+	for( unsigned a=0; a<m_UnlockEntries.size(); a++ )
+		if( m_UnlockEntries[a].m_fRequired[t] > fScores[t] )
+			fSmallestPoints = min( fSmallestPoints, m_UnlockEntries[a].m_fRequired[t] );
 	
 	if( fSmallestPoints == 400000000 )
 		return 0;  // no match found
 	return fSmallestPoints - fScores[t];
 }
 
-/* Update the song pointer.  Only call this when it's likely to have changed,
+/* Update the cached pointers.  Only call this when it's likely to have changed,
  * such as on load, or when a song title changes in the editor. */
 void UnlockManager::UpdateSongs()
 {
-	FOREACH( UnlockEntry, m_SongEntries, e )
+	FOREACH( UnlockEntry, m_UnlockEntries, e )
 	{
-		e->m_pSong = NULL;
-		e->m_pCourse = NULL;
-		if( e->m_sSongName != "" )
-			e->m_pSong = SONGMAN->FindSong( e->m_sSongName );
-		if( e->m_pSong == NULL )
-			e->m_pCourse = SONGMAN->FindCourse( e->m_sSongName );
-
-		// display warning on invalid song entry
-		if( e->m_pSong == NULL && e->m_pCourse == NULL )
+		switch( e->m_Type )
 		{
-			LOG->Warn( "Unlock: Cannot find a matching entry for \"%s\"", e->m_sSongName.c_str() );
-			m_SongEntries.erase( m_SongEntries.begin() + i );
-			--i;
+		case UnlockEntry::TYPE_SONG:
+			e->m_pSong = SONGMAN->FindSong( e->m_sName );
+			if( e->m_pSong == NULL )
+				LOG->Warn( "Unlock: Cannot find song matching \"%s\"", e->m_sName.c_str() );
+			break;
+		case UnlockEntry::TYPE_COURSE:
+			e->m_pCourse = SONGMAN->FindCourse( e->m_sName );
+			if( e->m_pCourse == NULL )
+				LOG->Warn( "Unlock: Cannot find course matching \"%s\"", e->m_sName.c_str() );
+			break;
+		case UnlockEntry::TYPE_MODIFIER:
+			// nothing to cache
+			break;
+		default:
+			ASSERT(0);
 		}
 	}
 }
@@ -341,9 +380,9 @@ void UnlockManager::UnlockCode( int num )
 
 void UnlockManager::PreferUnlockCode( int iCode )
 {
-	for( unsigned i = 0; i < m_SongEntries.size(); ++i )
+	for( unsigned i = 0; i < m_UnlockEntries.size(); ++i )
 	{
-		UnlockEntry &pEntry = m_SongEntries[i];
+		UnlockEntry &pEntry = m_UnlockEntries[i];
 		if( pEntry.m_iCode != iCode )
 			continue;
 
@@ -356,7 +395,7 @@ void UnlockManager::PreferUnlockCode( int iCode )
 
 int UnlockManager::GetNumUnlocks() const
 {
-	return m_SongEntries.size();
+	return m_UnlockEntries.size();
 }
 
 #include "LuaBinding.h"

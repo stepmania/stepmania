@@ -29,7 +29,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 
-	unsigned NumUnlocks = UNLOCKMAN->m_SongEntries.size();
+	unsigned NumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
 	if (!PREFSMAN->m_bUseUnlockSystem || NumUnlocks == 0)
 	{
@@ -42,7 +42,7 @@ void ScreenUnlock::Init()
 {
 	ScreenAttract::Init();
 
-	unsigned NumUnlocks = UNLOCKMAN->m_SongEntries.size();
+	unsigned NumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathF("Common","normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
@@ -51,7 +51,7 @@ void ScreenUnlock::Init()
 	for( unsigned i=1; i <= NumUnlocks; i++ )
 	{
 		// get pertaining UnlockEntry
-		CString SongTitle = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
+		CString SongTitle = UNLOCKMAN->m_UnlockEntries[i-1].m_sName;
 		LOG->Trace("UnlockScreen: Searching for %s", SongTitle.c_str());
 		
 		const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry( SongTitle );
@@ -101,7 +101,7 @@ void ScreenUnlock::Init()
 
 		for(unsigned i = 1; i <= NumUnlocks; i++)
 		{
-			CString DisplayedSong = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
+			CString DisplayedSong = UNLOCKMAN->m_UnlockEntries[i-1].m_sName;
 			
 			DisplayedSong.MakeUpper();
 			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
@@ -232,7 +232,7 @@ void ScreenUnlock::Init()
 
 			unsigned NextIcon = LastUnlocks[LastUnlocks.size() - i];
 
-			CString DisplayedSong = UNLOCKMAN->m_SongEntries[NextIcon-1].m_sSongName;
+			CString DisplayedSong = UNLOCKMAN->m_UnlockEntries[NextIcon-1].m_sName;
 
 			DisplayedSong.MakeUpper();
 			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
