@@ -141,6 +141,11 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SET_XY( m_sprBannerFrame );
 	this->AddChild( m_sprBannerFrame );
 
+	m_sprExplanation.Load( THEME->GetPathG(m_sName,"explanation") );
+	m_sprExplanation->SetName( "Explanation" );
+	SET_XY( m_sprExplanation );
+	this->AddChild( m_sprExplanation );
+
 	m_BPMDisplay.SetName( "BPMDisplay" );
 	m_BPMDisplay.Load();
 	SET_XY( m_BPMDisplay );
@@ -505,6 +510,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_sprBannerMask );
 	ON_COMMAND( m_Banner );
 	ON_COMMAND( m_sprBannerFrame );
+	ON_COMMAND( m_sprExplanation );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_DifficultyDisplay );
 	ON_COMMAND( m_sprStage );
@@ -557,6 +563,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprBannerMask );
 	OFF_COMMAND( m_Banner );
 	OFF_COMMAND( m_sprBannerFrame );
+	OFF_COMMAND( m_sprExplanation );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_DifficultyDisplay );
 	OFF_COMMAND( m_sprStage );
