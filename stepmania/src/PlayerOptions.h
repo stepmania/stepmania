@@ -63,7 +63,9 @@ struct PlayerOptions
 		NUM_TRANSFORMS
 	};
 	
+//	bool		m_bUseScrollBPM;
 	float		m_fScrollSpeed;
+//	float		m_fScrollBPM;
 	float		m_fAccels[NUM_ACCELS];
 	float		m_fEffects[NUM_EFFECTS];
 	float		m_fAppearances[NUM_APPEARANCES];
@@ -74,6 +76,7 @@ struct PlayerOptions
 	bool		m_bHoldNotes;
 	bool		m_bTimingAssist;
 	float		m_fPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
+	bool		m_bTimeSpacing;	// instead of Beat spacing
 
 	/* The current positioning mode, or empty to use the normal positions. */
 	CString		m_sPositioning;

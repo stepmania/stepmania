@@ -117,6 +117,9 @@ inline float froundf( const float f, const float fRoundInterval )
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
 }
 
+// Move val toward other_val by to_move.
+void fapproach( float& val, float other_val, float to_move );
+
 /* Return a positive x mod y. */
 float fmodfp(float x, float y);
 

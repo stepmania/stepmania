@@ -193,6 +193,7 @@ public:
 				break;
 		return m_BPMSegments[i].m_fBPM;
 	};
+	float GetDominantBPM();
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat )
 	{
 		unsigned i;

@@ -17,7 +17,9 @@
 
 void PlayerOptions::Init()
 {
+//	m_bUseScrollBPM = false;
 	m_fScrollSpeed = 1.0f;
+//	m_fScrollBPM = 200;
 	ZERO( m_fAccels );
 	ZERO( m_fEffects );
 	ZERO( m_fAppearances );
@@ -28,55 +30,52 @@ void PlayerOptions::Init()
 	m_bHoldNotes = true;
 	m_bTimingAssist = false;
 	m_fPerspectiveTilt = 0;
+	m_bTimeSpacing = false;
 	m_sPositioning = "";
-}
-
-void FLOAT_APPROACH( float& val, float other_val, float deltaPercent )
-{
-	if( val == other_val )
-		return;
-	float fDelta = other_val - val;
-	float fSign = fDelta / fabsf( fDelta );
-	float fToMove = fSign*deltaPercent;
-	if( fabsf(fToMove) > fabsf(fDelta) )
-		fToMove = fDelta;	// snap
-	val += fToMove;
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 {
 	int i;
 
-	FLOAT_APPROACH( m_fScrollSpeed, other.m_fScrollSpeed, fDeltaSeconds*max(m_fScrollSpeed,other.m_fScrollSpeed) );	// make big jumps in scroll speed move faster
+	fapproach( m_fScrollSpeed, other.m_fScrollSpeed, fDeltaSeconds*(0.2f+fabsf(m_fScrollSpeed-other.m_fScrollSpeed)) );	// make big jumps in scroll speed move faster
 	for( i=0; i<NUM_ACCELS; i++ )
-		FLOAT_APPROACH( m_fAccels[i], other.m_fAccels[i], fDeltaSeconds );
+		fapproach( m_fAccels[i], other.m_fAccels[i], fDeltaSeconds );
 	for( i=0; i<NUM_EFFECTS; i++ )
-		FLOAT_APPROACH( m_fEffects[i], other.m_fEffects[i], fDeltaSeconds );
+		fapproach( m_fEffects[i], other.m_fEffects[i], fDeltaSeconds );
 	for( i=0; i<NUM_APPEARANCES; i++ )
-		FLOAT_APPROACH( m_fAppearances[i], other.m_fAppearances[i], fDeltaSeconds );
-	FLOAT_APPROACH( m_fReverseScroll, other.m_fReverseScroll, fDeltaSeconds );
-	FLOAT_APPROACH( m_fDark, other.m_fDark, fDeltaSeconds );
-	FLOAT_APPROACH( m_fPerspectiveTilt, other.m_fPerspectiveTilt, fDeltaSeconds );
+		fapproach( m_fAppearances[i], other.m_fAppearances[i], fDeltaSeconds );
+	fapproach( m_fReverseScroll, other.m_fReverseScroll, fDeltaSeconds );
+	fapproach( m_fDark, other.m_fDark, fDeltaSeconds );
+	fapproach( m_fPerspectiveTilt, other.m_fPerspectiveTilt, fDeltaSeconds );
 }
 
 CString PlayerOptions::GetString()
 {
 	CString sReturn;
 
-	if( m_fScrollSpeed != 1 )
-	{
-		/* -> 1.00 */
-		CString s = ssprintf( "%2.2f", m_fScrollSpeed );
-		if( s[s.GetLength()-1] == '0' ) {
-			/* -> 1.0 */
-			s.erase(s.GetLength()-1);	// delete last char
+//	if( !m_bUseScrollBPM )
+//	{
+		if( m_fScrollSpeed != 1 )
+		{
+			/* -> 1.00 */
+			CString s = ssprintf( "%2.2f", m_fScrollSpeed );
 			if( s[s.GetLength()-1] == '0' ) {
-				/* -> 1 */
-				s.erase(s.GetLength()-2);	// delete last 2 chars
+				/* -> 1.0 */
+				s.erase(s.GetLength()-1);	// delete last char
+				if( s[s.GetLength()-1] == '0' ) {
+					/* -> 1 */
+					s.erase(s.GetLength()-2);	// delete last 2 chars
+				}
 			}
+			sReturn += s + "X, ";
 		}
-		sReturn += s + "X, ";
-	}
+//	}
+//	else
+//	{
+//		CString s = ssprintf( "%.0f", m_fScrollBPM );
+//		sReturn += s + "V, ";
+//	}
 
 	if( m_fAccels[ACCEL_BOOST]==1 )		sReturn += "Boost, ";
 	if( m_fAccels[ACCEL_BRAKE]==1 )		sReturn += "Brake, ";
@@ -98,6 +97,8 @@ CString PlayerOptions::GetString()
 	if( m_fReverseScroll == 1 )		sReturn += "Reverse, ";
 
 	if( m_fDark == 1)				sReturn += "Dark, ";
+
+	if( m_bTimeSpacing )			sReturn += "TimeSpacing, ";
 
 	switch( m_Turn )
 	{
@@ -150,15 +151,18 @@ void PlayerOptions::FromString( CString sOptions )
 		TrimLeft(sBit);
 		TrimRight(sBit);
 		
-		if(	     sBit == "0.25x" )		m_fScrollSpeed = 0.25f;
-		else if( sBit == "0.5x" )		m_fScrollSpeed = 0.5f;
-		else if( sBit == "0.75x" )		m_fScrollSpeed = 0.75f;
-		else if( sBit == "1.5x" )		m_fScrollSpeed = 1.5f;
-		else if( sBit == "2.0x" )		m_fScrollSpeed = 2.0f;
-		else if( sBit == "3.0x" )		m_fScrollSpeed = 3.0f;
-		else if( sBit == "4.0x" )		m_fScrollSpeed = 4.0f;
-		else if( sBit == "5.0x" )		m_fScrollSpeed = 5.0f;
-		else if( sBit == "8.0x" )		m_fScrollSpeed = 8.0f;
+		if(	     sBit == "0.25x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 0.25f;	}
+		else if( sBit == "0.5x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 0.50f;	}
+		else if( sBit == "1.5x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 1.00f;	}
+		else if( sBit == "2.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 2.00f;	}
+		else if( sBit == "3.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 3.00f;	}
+		else if( sBit == "4.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 4.00f;	}
+		else if( sBit == "5.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 5.00f;	}
+		else if( sBit == "8.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 8.00f;	}
+		else if( sBit == "12.0x" )		{ /*m_bUseScrollBPM=false;*/	m_fScrollSpeed = 12.00f;	}
+//		else if( sBit == "200v" )		{ m_bUseScrollBPM=true;		m_fScrollBPM = 200;	}
+//		else if( sBit == "300v" )		{ m_bUseScrollBPM=true;		m_fScrollBPM = 300;	}
+//		else if( sBit == "450v" )		{ m_bUseScrollBPM=true;		m_fScrollBPM = 450;	}
 		else if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = 1;
 		else if( sBit == "brake" )		m_fAccels[ACCEL_BRAKE] = 1;
 		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = 1;

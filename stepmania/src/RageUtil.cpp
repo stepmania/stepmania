@@ -29,6 +29,19 @@
 
 unsigned long randseed = time(NULL);
 
+void fapproach( float& val, float other_val, float to_move )
+{
+	ASSERT( to_move >= 0 );
+	if( val == other_val )
+		return;
+	float fDelta = other_val - val;
+	float fSign = fDelta / fabsf( fDelta );
+	float fToMove = fSign*to_move;
+	if( fabsf(fToMove) > fabsf(fDelta) )
+		fToMove = fDelta;	// snap
+	val += fToMove;
+}
+
 /* Return a positive x mod y. */
 float fmodfp(float x, float y)
 {

@@ -1513,7 +1513,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			if( PREFSMAN->m_iCoinMode==COIN_EVENT )
 				HandleScreenMessage( SM_GoToScreenAfterBack );
 			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-				SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );
+				SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
 			else
 				SCREENMAN->SetNewScreen( "ScreenGameOver" );
 			break;

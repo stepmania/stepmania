@@ -17,7 +17,7 @@
 #include "StyleDef.h"
 
 const int	ARROW_SIZE	= 64;
-const float ARROW_GAP	= ARROW_SIZE;// + 2;
+const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 
 
 //	fYOffset is a vertical position in pixels relative to the center.

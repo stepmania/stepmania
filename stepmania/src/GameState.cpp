@@ -114,6 +114,33 @@ void GameState::Update( float fDelta )
 
 		if( m_bActiveAttackEndedThisUpdate[p] )
 			RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
+
+/*		if( m_PlayerOptions[p].m_bUseScrollBPM  &&  m_pCurSong )
+		{
+			float fTargetBPM = m_PlayerOptions[p].m_fScrollBPM;
+			float fConstBPS = fTargetBPM/60.f;
+
+			// Optimization opportunity: take fewer samples where the weight is less
+			
+			const int iNumBPSSamples = 100;
+			const float fSampleStep = 0.08f;	// sample over the next 8 beats
+			float fSumBPS = 0;
+			int iSumWeight = 0;
+			for( int i=0; i<iNumBPSSamples; i++ )
+			{
+				int iWeight = iNumBPSSamples - i;
+				float fBeatsAheadToSample = i*fSampleStep;
+				float fBPS = m_pCurSong->GetBPMAtBeat( m_fSongBeat+fBeatsAheadToSample )/60.f;
+				// Don't allow super low bps values, or else the scroll speed goes crazy at a stop
+				CLAMP( fBPS, 60.f/60.f, 10000 );
+				fSumBPS += fBPS * iWeight;
+				iSumWeight += iWeight;
+			}
+			float fAvgBPS = fSumBPS / iSumWeight;
+			
+			m_PlayerOptions[p].m_fScrollSpeed = fConstBPS / fAvgBPS;
+		}
+*/
 	}
 }
 

@@ -28,7 +28,7 @@ float		g_fExpandSeconds = 0;
 float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 {
 	float fYOffset;
-	if( GAMESTATE->m_PlayerOptions->m_bTimeSpacing )
+	if( !GAMESTATE->m_PlayerOptions->m_bTimeSpacing )
 	{
 		float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fBeatsUntilStep = fNoteBeat - fSongBeat;
