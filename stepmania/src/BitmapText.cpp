@@ -171,17 +171,10 @@ void BitmapText::BuildChars()
 			const glyph &g = m_pFont->GetGlyph(szLine[j]);
 
 			/* set vertex positions */
-			float vshift = float(g.fp->vshift);
-
-			/* If either the font or the glyph is kanji, align the character
-			 * centers.  (Otherwise, leave it aligned at the baseline.) */
-			if(m_pFont->IsKanjiFont() || g.fp->kanji)
-				vshift += g.fp->GetCenter() - m_pFont->GetCenter();
-
-			v[0].p = RageVector3( iX+g.hshift,			iY+vshift,		  0 );	// top left
-			v[1].p = RageVector3( iX+g.hshift,			iY+vshift+g.height, 0 );// bottom left
-			v[2].p = RageVector3( iX+g.hshift+g.width,	iY+vshift+g.height, 0 );// bottom right
-			v[3].p = RageVector3( iX+g.hshift+g.width,	iY+vshift,		  0 );	// top right
+			v[0].p = RageVector3( iX+g.hshift,			iY+g.fp->vshift,		  0 );	// top left
+			v[1].p = RageVector3( iX+g.hshift,			iY+g.fp->vshift+g.height, 0 );	// bottom left
+			v[2].p = RageVector3( iX+g.hshift+g.width,	iY+g.fp->vshift+g.height, 0 );	// bottom right
+			v[3].p = RageVector3( iX+g.hshift+g.width,	iY+g.fp->vshift,		  0 );	// top right
 
 			/* Advance the cursor. */
 			iX += g.hadvance;

@@ -39,8 +39,6 @@ void FontPage::Load( const FontPageSettings &cfg )
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 
-	kanji = cfg.Kanji;
-
 	// load character widths
 	vector<int> FrameWidths;
 	int i;
@@ -99,7 +97,7 @@ void FontPage::Load( const FontPageSettings &cfg )
 	}
 
 	/* Shift the character up so the top will be rendered at the baseline. */
-	vshift = -baseline;
+	vshift = (float) -baseline;
 
 	SetTextureCoords(FrameWidths);
 	SetExtraPixels(cfg.DrawExtraPixelsLeft, cfg.DrawExtraPixelsRight);
@@ -440,7 +438,6 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	ini.GetValueI( PageName, "LineSpacing", cfg.LineSpacing );
 	ini.GetValueI( PageName, "Top", cfg.Top );
 	ini.GetValueI( PageName, "Baseline", cfg.Baseline );
-	ini.GetValueB( PageName, "Kanji", cfg.Kanji );
 
 	/* Iterate over all keys. */
 	const IniFile::key *k = ini.GetKey(PageName);

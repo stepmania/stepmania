@@ -45,7 +45,6 @@ struct FontPageSettings
 		Top,
 		Baseline;
 	float ScaleAllWidthsBy;
-	bool Kanji;
 	
 	map<longchar,int> CharToGlyphNo;
 	/* If a value is missing, the width of the texture frame is used. */
@@ -57,8 +56,7 @@ struct FontPageSettings
 		LineSpacing(-1),
 		ScaleAllWidthsBy(1),
 		Top(-1),
-		Baseline(-1),
-		Kanji(false)
+		Baseline(-1)
 	{ }
 };
 
@@ -81,8 +79,8 @@ public:
 
 	/* Page-global properties. */
 	int height;
-	bool kanji;
-	int LineSpacing, vshift;
+	int LineSpacing;
+	float vshift;
 	int GetCenter() const { return height/2; }
 
 private:
@@ -120,7 +118,6 @@ public:
 	void CapsOnly();
 
 	int GetHeight() const { return def->height; }
-	bool IsKanjiFont() const { return def->kanji; }
 	int GetCenter() const { return def->GetCenter(); }
 	int GetLineSpacing() const { return def->LineSpacing; }
 
