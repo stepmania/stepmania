@@ -66,6 +66,8 @@ protected:
 
 	vector<ModeChoice> m_ModeChoices[NUM_PAGES];
 
+	vector<int> m_iaChoicesToIgnore;
+
 	Page m_CurrentPage;
 	int m_iChoiceOnPage[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];

@@ -34,6 +34,7 @@
 #define OK_CHOOSE_COMMAND					THEME->GetMetric (m_sName,"OKChooseCommand")
 #define DISABLED_COLOR						THEME->GetMetricC(m_sName,"DisabledColor")
 
+#define IGNORED_ELEMENT_COMMAND				THEME->GetMetric (m_sName,"IgnoredElementOnCommand")
 
 ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
 {
@@ -195,6 +196,16 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 	if( m_bChosen[pn] )
 		return;
 
+	unsigned c; // GCC is bitching again.
+	for( c=0; c<m_iaChoicesToIgnore.size(); c++ )
+	{
+		if(m_iChoiceOnPage[pn]-1 == m_iaChoicesToIgnore[c])
+		{
+			return; // disallow to change to ignored details
+		}
+	}	
+
+
 	int iSwitchToIndex = -1;
 	for( int i=m_iChoiceOnPage[pn]-1; i>=0; i-- )
 	{
@@ -211,7 +222,6 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 			ChangePage( (Page)(m_CurrentPage-1) );
 		return;
 	}
-
 	ChangeWithinPage( pn, iSwitchToIndex, false );
 }
 
@@ -222,6 +232,16 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 //		return;
 	if( m_bChosen[pn] )
 		return;
+
+	unsigned c; // GCC is bitching again.
+	for( c=0; c<m_iaChoicesToIgnore.size(); c++ )
+	{
+		if(m_iChoiceOnPage[pn]+1 == m_iaChoicesToIgnore[c])
+		{
+			return; // disallow to change to ignored details
+		}
+	}	
+	
 
 	int iSwitchToIndex = -1;
 	for( int i=m_iChoiceOnPage[pn]+1; i<(int) m_ModeChoices[m_CurrentPage].size(); i++ )
@@ -355,6 +375,72 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	{
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("ScreenSelectDifficulty comment %s",mc.m_sName.c_str())) );
 		m_soundSelect.Play();
+	}
+
+	// courses should be selected for both players at all times
+	if( mc.m_pm == PLAY_MODE_ONI || mc.m_pm == PLAY_MODE_NONSTOP || mc.m_pm == PLAY_MODE_ENDLESS)
+	{
+		float fCursorX = GetCursorX( (PlayerNumber)pn );
+		float fCursorY = GetCursorY( (PlayerNumber)pn );
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if(p != pn)
+			{
+				m_iChoiceOnPage[p] = m_iChoiceOnPage[pn]; // have all players agree to the option
+		
+				// move all cursors to the oni/nonstop selection so it graphically looks as if all players selected the same option.
+				m_sprCursor[p].StopTweening();
+				m_sprCursor[p].SetX( fCursorX );
+				m_sprCursor[p].SetY( fCursorY );
+
+				m_sprShadow[p].StopTweening();
+				m_sprShadow[p].SetX( fCursorX + SHADOW_LENGTH_X );
+				m_sprShadow[p].SetY( fCursorY + SHADOW_LENGTH_Y );			
+				MenuStart( (PlayerNumber)p ); // agree everyone
+			}	
+		}
+	}
+	else // someone must have chosen arcade style play so oni/nonstop/endless must be disabled
+	{
+		for( p=0; p<NUM_PLAYERS; p++ )
+		{
+			if(p != pn && !m_bChosen[p]) // if theyve not chosen
+			{
+				PlayMode iPlaymode = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[p]].m_pm;
+				// if they're currently highlighting an option that is a nonstop
+				if( iPlaymode == PLAY_MODE_ONI || iPlaymode == PLAY_MODE_NONSTOP || iPlaymode == PLAY_MODE_ENDLESS)
+				{
+					m_iChoiceOnPage[p] = 0;
+
+
+					// move the cursor
+					float fCursorX = GetCursorX( (PlayerNumber)p );
+					float fCursorY = GetCursorY( (PlayerNumber)p );
+
+					m_sprCursor[p].StopTweening();
+					m_sprCursor[p].SetX( fCursorX );
+					m_sprCursor[p].SetY( fCursorY );
+
+					m_sprShadow[p].StopTweening();
+					m_sprShadow[p].SetX( fCursorX + SHADOW_LENGTH_X );
+					m_sprShadow[p].SetY( fCursorY + SHADOW_LENGTH_Y );			
+				}
+			}
+		}
+		unsigned c; // GCC is bitching again.
+		for( c=0; c<m_ModeChoices[PAGE_1].size(); c++ )
+		{
+			ModeChoice mc = m_ModeChoices[PAGE_1][c];
+			if(mc.m_pm == PLAY_MODE_ONI || mc.m_pm == PLAY_MODE_NONSTOP || mc.m_pm == PLAY_MODE_ENDLESS)
+			{
+				m_iaChoicesToIgnore.push_back(c);
+				m_sprPicture[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
+				m_sprInfo[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
+
+			//	IGNORED_ELEMENT_COMMAND
+			}
+		//	m_ModeChoices[PAGE_1].push_back( m_aModeChoices[c] );
+		}
 	}
 
 	if( m_CurrentPage == PAGE_2 )
