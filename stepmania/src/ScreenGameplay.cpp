@@ -71,7 +71,6 @@ const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 
 
 // received while STATE_DANCING
-const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
 const ScreenMessage	SM_LoadNextSong			= ScreenMessage(SM_User+11);
 
 // received while STATE_OUTRO

@@ -27,6 +27,8 @@ class Inventory;
 #include "AutoKeysounds.h"
 #include "ThemeMetric.h"
 
+const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
+
 class LyricsLoader;
 class ScreenGameplay : public Screen
 {
