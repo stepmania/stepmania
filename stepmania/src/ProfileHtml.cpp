@@ -947,7 +947,7 @@ bool PrintRecentScores( RageFile &f, const Profile *pProfile, CString sTitle, ve
 	return true;
 }
 
-bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
+bool PrintCatalogForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 {
 	if( pSong->NeverDisplayed() || UNLOCKMAN->SongIsLocked(pSong) )
 		return false;	// skip
@@ -1019,14 +1019,14 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 	return true;
 }
 
-bool PrintInventoryForGroup( RageFile &f, const Profile *pProfile, CString sGroup )
+bool PrintCatalogForGroup( RageFile &f, const Profile *pProfile, CString sGroup )
 {
-	return PrintSongsInGroup( f, pProfile, sGroup, PrintInventoryForSong );
+	return PrintSongsInGroup( f, pProfile, sGroup, PrintCatalogForSong );
 }
 
-void PrintInventoryList( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
+void PrintCatalogList( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
-	PrintGroups( f, pProfile, sTitle, PrintInventoryForGroup );
+	PrintGroups( f, pProfile, sTitle, PrintCatalogForGroup );
 }
 
 void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses)
@@ -1280,19 +1280,17 @@ void SaveStatsWebPage(
 	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
 	vector<Steps*> vpAllSteps;
 	map<Steps*,Song*> mapStepsToSong;
+	for( unsigned i=0; i<vpSongs.size(); i++ )
 	{
-		for( unsigned i=0; i<vpSongs.size(); i++ )
+		Song* pSong = vpSongs[i];
+		vector<Steps*> vpSteps = pSong->GetAllSteps();
+		for( unsigned j=0; j<vpSteps.size(); j++ )
 		{
-			Song* pSong = vpSongs[i];
-			vector<Steps*> vpSteps = pSong->GetAllSteps();
-			for( unsigned j=0; j<vpSteps.size(); j++ )
-			{
-				Steps* pSteps = vpSteps[j];
-				if( pSteps->IsAutogen() )
-					continue;	// skip
-				vpAllSteps.push_back( pSteps );
-				mapStepsToSong[pSteps] = pSong;
-			}
+			Steps* pSteps = vpSteps[j];
+			if( pSteps->IsAutogen() )
+				continue;	// skip
+			vpAllSteps.push_back( pSteps );
+			mapStepsToSong[pSteps] = pSong;
 		}
 	}
 	vector<Course*> vpCourses;
@@ -1302,28 +1300,26 @@ void SaveStatsWebPage(
 	// Calculate which StepTypes to show
 	//
 	vector<StepsType> vStepsTypesToShow;
+	for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
 	{
-		for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
+		// don't show if there are no Steps of this StepsType 
+		bool bOneSongHasStepsForThisStepsType = false;
+		for( unsigned i=0; i<vpSongs.size(); i++ )
 		{
-			// don't show if there are no Steps of this StepsType 
-			bool bOneSongHasStepsForThisStepsType = false;
-			for( unsigned i=0; i<vpSongs.size(); i++ )
+			Song* pSong = vpSongs[i];
+			vector<Steps*> vpSteps;
+			pSong->GetSteps( vpSteps, st, DIFFICULTY_INVALID, -1, -1, "", false );
+			if( !vpSteps.empty() )
 			{
-				Song* pSong = vpSongs[i];
-				vector<Steps*> vpSteps;
-				pSong->GetSteps( vpSteps, st, DIFFICULTY_INVALID, -1, -1, "", false );
-				if( !vpSteps.empty() )
-				{
-					bOneSongHasStepsForThisStepsType = true;
-					break;
-				}
+				bOneSongHasStepsForThisStepsType = true;
+				break;
 			}
-			if( !bOneSongHasStepsForThisStepsType )
-				continue;
-			if( !SHOW_STEPS_TYPE(st) )
-				continue;
-			vStepsTypesToShow.push_back( st );
 		}
+		if( !bOneSongHasStepsForThisStepsType )
+			continue;
+		if( !SHOW_STEPS_TYPE(st) )
+			continue;
+		vStepsTypesToShow.push_back( st );
 	}
 
 	//
@@ -1420,7 +1416,7 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		PrintCaloriesBurned(	f, pProfile,	"Calories Burned",		sDir );
 		PrintPercentComplete(	f, pProfile,	"Percent Complete",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintRecentScores(		f, pProfile,	"Most Scores",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintInventoryList(		f, pProfile,	"Song Information",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintCatalogList(		f, pProfile,	"Song Information",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintBookkeeping(		f, pProfile,	"Bookkeeping",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );	
 		break;
 	default:

@@ -48,7 +48,8 @@ ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h Sc
 ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h ScreenWithMenuElements.cpp ScreenWithMenuElements.h
 
 DataStructures = \
-Attack.cpp Attack.h BannerCache.cpp BannerCache.h Character.cpp Character.h CharacterHead.cpp CharacterHead.h \
+Attack.cpp Attack.h BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
+Character.cpp Character.h CharacterHead.cpp CharacterHead.h \
 CodeDetector.cpp CodeDetector.h EnumHelper.cpp EnumHelper.h Course.cpp Course.h CourseUtil.cpp CourseUtil.h \
 Font.cpp Font.h FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h Game.h GameConstantsAndTypes.cpp GameConstantsAndTypes.h GameDef.cpp GameDef.h \
