@@ -1911,7 +1911,7 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(BUILD_DIR)/StepMania.app/Contents/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks\" Frameworks \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks\"";
-				GCC_ALTIVEC_EXTENSIONS = YES;
+				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
