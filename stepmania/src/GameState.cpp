@@ -276,9 +276,10 @@ void GameState::PlayersFinalized()
 			m_pCurSong = pProfile->m_pLastSong;
 	}
 
-	FOREACH_CpuPlayer( pn )
+	FOREACH_PlayerNumber( pn )
 	{
-		ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
+		if( !IsHumanPlayer(pn) )
+			ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
 	}
 }
 

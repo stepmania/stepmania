@@ -54,11 +54,11 @@ PlayerNumber GetNextEnabledPlayer( PlayerNumber pn )
 	return PLAYER_INVALID;
 }
 
-PlayerNumber GetNextCpuPlayer( PlayerNumber pn )
+PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn )
 {
 	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
 	{
-		if( GAMESTATE->IsCpuPlayer(p) )
+		if( !GAMESTATE->IsHumanPlayer(p) )
 			return p;
 	}
 	return PLAYER_INVALID;
