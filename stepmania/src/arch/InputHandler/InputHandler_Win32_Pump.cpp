@@ -12,14 +12,19 @@ InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
 
 	dev = new USBDevice[NUM_PUMPS];
-	
+
+	bool FoundOnePad = false;
 	for(int i = 0; i < NUM_PUMPS; ++i)
 	{
 		if(dev[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i))
+		{
+			FoundOnePad = true;
 			LOG->Info("Found Pump pad %i", i);
+		}
 	}
 
-	if( PREFSMAN->m_bThreadedInput )
+	/* Don't start a thread if we have no pads. */
+	if( FoundOnePad && PREFSMAN->m_bThreadedInput )
 		InputThreadPtr = SDL_CreateThread(InputThread_Start, this);
 	else
 		InputThreadPtr = NULL;
