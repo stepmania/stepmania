@@ -263,6 +263,41 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 	}
 }
 
+void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks )
+{
+	// reset all notes
+	out.Init();
+
+	NoteData Original;
+	Original.To4s( in );
+
+	out.Config(in);
+	out.SetNumTracks( iNewNumTracks );
+
+	for( int r=0; r < Original.GetMaxRow(); ++r )
+	{
+		if( Original.IsRowEmpty( r ) )
+			continue;
+
+		/* Enable every track in the output.  If there are any hold notes in the source
+		 * on this row, output hold notes; otherwise tap notes.  This is to 1: prevent
+		 * converting everything to hold notes, and 2: so if it's written to an SM, we
+		 * don't write huge streams of tap notes. */
+		bool bHoldNoteOnThisRow = false;
+		for( int t=0; t<Original.GetNumTracks(); t++ )
+			if( Original.GetTapNote( t, r ) == TAP_HOLD )
+				bHoldNoteOnThisRow = true;
+
+		for( int t=0; t<out.GetNumTracks(); t++ )
+		{
+			TapNote tn = bHoldNoteOnThisRow? TAP_HOLD:TAP_TAP;
+			out.SetTapNote( t, r, tn );
+		}
+	}
+
+	out.Convert4sToHoldNotes();
+}
+
 float NoteDataUtil::GetRadarValue( const NoteData &in, RadarCategory rv, float fSongSeconds )
 {
 	switch( rv )

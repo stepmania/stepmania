@@ -189,9 +189,14 @@ void Steps::Decompress() const
 
 		int iNewTracks = GameManager::NotesTypeToNumTracks(m_StepsType);
 
-		notes->LoadTransformedSlidingWindow( &pdata, iNewTracks );
+		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
+		{
+			NoteDataUtil::LoadTransformedLights( pdata, *notes, iNewTracks );
+		} else {
+			notes->LoadTransformedSlidingWindow( &pdata, iNewTracks );
 
-		NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
+			NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
+		}
 	}
 	else if(!notes_comp)
 	{

@@ -150,20 +150,8 @@ void LightsManager::Update( float fDeltaTime )
 		break;
 	case LIGHTSMODE_DEMONSTRATION:
 	case LIGHTSMODE_GAMEPLAY:
-		{
-			
-			if (PREFSMAN->m_bLightsOrOutput)
-			{
-				bool bOn=false;
-				FOREACH_CabinetLight( cl )
-					bOn = (m_fSecsLeftInCabinetLightBlink[cl] > 0) || bOn;
-				FOREACH_CabinetLight( cl )
-					m_LightsState.m_bCabinetLights[cl] = bOn;
-			}
-			else
-				FOREACH_CabinetLight( cl )
-					m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInCabinetLightBlink[cl] > 0 ;
-		}
+		FOREACH_CabinetLight( cl )
+			m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInCabinetLightBlink[cl] > 0;
 		break;
 	case LIGHTSMODE_STAGE:
 	case LIGHTSMODE_ALL_CLEARED:

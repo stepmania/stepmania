@@ -28,8 +28,6 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 
 const float DEFAULT_SOUND_VOLUME = 1.00f;
 const CString DEFAULT_LIGHTS_DRIVER = "Null";
-const CString DEFAULT_LIGHTS_STEPS_TYPE = "lights-cabinet";
-const CString DEFAULT_LIGHTS_STEPS_DIFFICULTY = "standard";
 
 bool g_bAutoRestart = false;
 
@@ -266,10 +264,7 @@ void PrefsManager::Init()
 #endif
 
 	m_sLightsDriver = DEFAULT_LIGHTS_DRIVER;
-	m_sLightsStepsType = DEFAULT_LIGHTS_STEPS_TYPE;
-	m_sLightsStepsDifficulty = DEFAULT_LIGHTS_STEPS_DIFFICULTY;
-	m_bLightsOrOutput = false;
-
+	m_sLightsStepsDifficulty = "medium";
 	m_bBlinkGameplayButtonLightsOnNote = false;
 	m_bAllowUnacceleratedRenderer = false;
 	m_bThreadedInput = true;
@@ -448,9 +443,6 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
 	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
 	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
-	ini.GetValue( "Options", "LightsStepsType",					m_sLightsStepsType );
-	ini.GetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
-	ini.GetValue( "Options", "LightsOrOutput",					m_bLightsOrOutput);
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
 	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
@@ -462,6 +454,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
 	ini.GetValue( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
 	ini.GetValue( "Options", "ShowSongOptions",					(int&)m_ShowSongOptions );
+	ini.GetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
 	ini.GetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
 	ini.GetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.GetValue( "Options", "ThreadedInput",					m_bThreadedInput );
@@ -688,6 +681,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
 	ini.SetValue( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
 	ini.SetValue( "Options", "ShowSongOptions",					m_ShowSongOptions );
+	ini.SetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
 	ini.SetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
 	ini.SetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.SetValue( "Options", "ThreadedInput",					m_bThreadedInput );
@@ -771,14 +765,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValue( "Options", "SoundVolume",					m_fSoundVolume );
-	if(m_bLightsOrOutput != false)
-		ini.SetValue( "Options", "LightsOrOutput",				m_bLightsOrOutput );
 	if(m_sLightsDriver != DEFAULT_LIGHTS_DRIVER)
 		ini.SetValue( "Options", "LightsDriver",				m_sLightsDriver );
-	if(m_sLightsStepsType != DEFAULT_LIGHTS_STEPS_TYPE)
-		ini.SetValue( "Options", "LightsStepsType",				m_sLightsStepsType );
-	if(m_sLightsStepsDifficulty != DEFAULT_LIGHTS_STEPS_DIFFICULTY)
-		ini.SetValue( "Options", "LightsStepsDifficulty",		m_sLightsStepsDifficulty );
 	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
 		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
 
