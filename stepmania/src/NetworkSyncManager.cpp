@@ -31,7 +31,7 @@ bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 #include "PrefsManager.h"
 #include "ProductInfo.h"
 #include "ScreenMessage.h"
-#include "arch\LoadingWindow\LoadingWindow.h"
+#include "arch/LoadingWindow/LoadingWindow.h"
 
 const ScreenMessage SM_NET_UpdateScoreboard	= ScreenMessage(SM_User+12);
 const ScreenMessage SM_NET_SelectSong		= ScreenMessage(SM_User+2);
