@@ -1164,37 +1164,22 @@ void ScreenGameplay::UpdateCheckFail()
 	if( AllAreInDanger() )	m_Background.TurnDangerOn();
 	else					m_Background.TurnDangerOff();
 
-	int pn;
-	switch( GAMESTATE->m_SongOptions.m_LifeType )
+	// check for individual fail
+	for ( int pn=0; pn<NUM_PLAYERS; pn++ )
 	{
-	case SongOptions::LIFE_BAR:
-		// check for individual fail
-		for ( pn=0; pn<NUM_PLAYERS; pn++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(pn) )
-				continue;
-			if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
-				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
-				continue; /* isn't failing */
-			if( GAMESTATE->m_CurStageStats.bFailed[pn] )
-				continue; /* already failed */
+		if( !GAMESTATE->IsPlayerEnabled(pn) )
+			continue;
+		if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
+			(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
+			continue; /* isn't failing */
+		if( GAMESTATE->m_CurStageStats.bFailed[pn] )
+			continue; /* failed and is already dead */
+		
+		LOG->Trace("Player %d failed", (int)pn);
+		GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
 
-			LOG->Trace("Player %d failed", (int)pn);
-			GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
-		}
-		break;
-	case SongOptions::LIFE_BATTERY:
-		// check for individual fail
-		for( pn=0; pn<NUM_PLAYERS; pn++ ) 
+		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(pn) )
-				continue;
-			if( (m_pLifeMeter[pn] && !m_pLifeMeter[pn]->IsFailing()) || 
-				(m_pCombinedLifeMeter && !m_pCombinedLifeMeter->IsFailing((PlayerNumber)pn)) )
-				continue; /* isn't failing */
-			if( GAMESTATE->m_CurStageStats.bFailed[pn] )
-				continue; /* failed and is already dead */
-			
 			if( !AllFailedEarlier() )	// if not the last one to fail
 			{
 				// kill them!
@@ -1203,9 +1188,7 @@ void ScreenGameplay::UpdateCheckFail()
 				m_Player[pn].Init();		// remove all notes and scoring
 				m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
 			}
-			GAMESTATE->m_CurStageStats.bFailed[pn] = true;
 		}
-		break;
 	}
 }
 
