@@ -38,7 +38,6 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 
 	enum DataType_t { FORMAT_PCM=0, FORMAT_ADPCM=1 } DataType;
 
-	/* Amount of input data, in bytes: */
 	int SampleRate;
 	int Channels;
 	int BytesPerSample;
