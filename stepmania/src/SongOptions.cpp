@@ -45,7 +45,7 @@ CString SongOptions::GetString()
 	{
 		CString s = ssprintf( "%2.2f", m_fMusicRate );
 		if( s[s.GetLength()-1] == '0' )
-			s.Delete(s.GetLength()-1);
+			s.erase(s.GetLength()-1);
 		sReturn += s + "xMusic, ";
 	}
 
@@ -56,7 +56,7 @@ CString SongOptions::GetString()
 	}
 
 	if( sReturn.GetLength() > 2 )
-		sReturn.Delete( sReturn.GetLength()-2, 2 );	// delete the trailing ", "
+		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
 	return sReturn;
 }
 

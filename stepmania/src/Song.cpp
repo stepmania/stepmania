@@ -801,7 +801,7 @@ int CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 
 	/* The titles are the same.  Ensure we get a consistent ordering
 	 * by comparing the unique SongFilePaths. */
-	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath());
+	return pSong1->GetSongFilePath().CompareNoCase(pSong2->GetSongFilePath()) < 0;
 }
 
 void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers )

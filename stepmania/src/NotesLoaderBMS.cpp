@@ -90,9 +90,9 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 
 		if( iIndexOfSeparator != 10000 )
 		{
-			value_name = line.Mid( 0, iIndexOfSeparator );
+			value_name = line.substr( 0, iIndexOfSeparator );
 			value_data = line;	// the rest
-			value_data.Delete(0,iIndexOfSeparator+1);
+			value_data.erase(0,iIndexOfSeparator+1);
 		}
 		else	// no separator
 		{
@@ -132,7 +132,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 				iPosCloseBracket = value_data.Find( ")" );
 
 			if( iPosOpenBracket != -1  &&  iPosCloseBracket != -1 )
-				value_data = value_data.Mid( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
+				value_data = value_data.substr( iPosOpenBracket+1, iPosCloseBracket-iPosOpenBracket-1 );
 			LOG->Trace( "Notes description found to be '%s'", value_data.GetString() );
 
 			out.SetDescription(value_data);
@@ -145,19 +145,19 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 		{
 			out.SetMeter(atoi(value_data));
 		}
-		else if( value_name.Left(1) == "#"  
-			 && IsAnInt( value_name.Mid(1,3) )
-			 && IsAnInt( value_name.Mid(4,2) ) )	// this is step or offset data.  Looks like "#00705"
+		else if( value_name.size() >= 6 && value_name[0] == '#'
+			 && IsAnInt( value_name.substr(1,3) )
+			 && IsAnInt( value_name.substr(4,2) ) )	// this is step or offset data.  Looks like "#00705"
 		{
-			int iMeasureNo	= atoi( value_name.Mid(1,3) );
-			int iTrackNum	= atoi( value_name.Mid(4,2) );
+			int iMeasureNo	= atoi( value_name.substr(1,3).c_str() );
+			int iTrackNum	= atoi( value_name.substr(4,2).c_str() );
 
 			CString &sNoteData = value_data;
 			CArray<bool, bool&> arrayNotes;
 
-			for( int i=0; i<sNoteData.GetLength(); i+=2 )
+			for( int i=0; i+1<sNoteData.GetLength(); i+=2 )
 			{
-				bool bThisIsANote = sNoteData.Mid(i,2) != "00";
+				bool bThisIsANote = sNoteData.substr(i,2) != "00";
 				arrayNotes.push_back( bThisIsANote );
 			}
 
@@ -297,9 +297,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 		if( iIndexOfSeparator != 10000 )
 		{
-			value_name = line.Mid( 0, iIndexOfSeparator );
+			value_name = line.substr( 0, iIndexOfSeparator );
 			value_data = line;	// the rest
-			value_data.Delete(0,iIndexOfSeparator+1);
+			value_data.erase(0,iIndexOfSeparator+1);
 		}
 		else	// no separator
 		{
@@ -314,10 +314,10 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		if( value_name == "#title" ) 
 		{
 			// strip Notes type out of description leaving only song title - looks like 'B4U <BASIC>'
-			int iIndex = value_data.ReverseFind('<');
-			if( iIndex == -1 )
-				iIndex = value_data.ReverseFind('(');
-			if( iIndex != -1 )
+			unsigned iIndex = value_data.find_last_of('<');
+			if( iIndex == value_data.npos )
+				iIndex = value_data.find_last_of('(');
+			if( iIndex != value_data.npos )
 			{
 				value_data = value_data.Left( iIndex );
 				GetMainAndSubTitlesFromFullTitle( value_data, out.m_sMainTitle, out.m_sSubTitle );
@@ -344,19 +344,19 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		{
 			out.m_sMusicFile = value_data;
 		}
-		else if( value_name.Left(1) == "#"  
-			 && IsAnInt( value_name.Mid(1,3) )
-			 && IsAnInt( value_name.Mid(4,2) ) )	// this is step or offset data.  Looks like "#00705"
+		else if( value_name.size() >= 6 && value_name[0] == '#'
+			 && IsAnInt( value_name.substr(1,3) )
+			 && IsAnInt( value_name.substr(4,2) ) )	// this is step or offset data.  Looks like "#00705"
 		{
-			int iMeasureNo	= atoi( value_name.Mid(1,3) );
-			int iBMSTrackNo	= atoi( value_name.Mid(4,2) );
+			int iMeasureNo	= atoi( value_name.substr(1,3).c_str() );
+			int iBMSTrackNo	= atoi( value_name.substr(4,2).c_str() );
 
 			CString sNoteData = value_data;
 			CArray<int, int> arrayNotes;
 
-			for( int i=0; i<sNoteData.GetLength(); i+=2 )
+			for( int i=0; i+1<sNoteData.GetLength(); i+=2 )
 			{
-				CString sNote = sNoteData.Mid(i,2);
+				CString sNote = sNoteData.substr(i,2);
 				int iNote;
 				sscanf( sNote, "%x", &iNote );	// data is in hexadecimal
 				arrayNotes.push_back( iNote );
@@ -434,9 +434,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 						if( iIndexOfSeparator != 10000 )
 						{
-							value_name = line.Mid( 0, iIndexOfSeparator );
+							value_name = line.substr( 0, iIndexOfSeparator );
 							value_data = line;	// the rest
-							value_data.Delete(0,iIndexOfSeparator+1);
+							value_data.erase(0,iIndexOfSeparator+1);
 						}
 						else	// no separator
 						{
@@ -495,9 +495,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 						if( iIndexOfSeparator != 10000 )
 						{
-							value_name = line.Mid( 0, iIndexOfSeparator );
+							value_name = line.substr( 0, iIndexOfSeparator );
 							value_data = line;	// the rest
-							value_data.Delete(0,iIndexOfSeparator+1);
+							value_data.erase(0,iIndexOfSeparator+1);
 						}
 						else	// no separator
 						{

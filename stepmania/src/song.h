@@ -102,12 +102,12 @@ public:
 
 	CString GetFullTitle() const { return m_sMainTitle + (m_sSubTitle.GetLength()? (" " + m_sSubTitle):""); }
 	CString GetSortTitle() const { return
-										(m_sMainTitleTranslit.IsEmpty()?
+										(m_sMainTitleTranslit.empty()?
 											m_sMainTitle:
 											m_sMainTitleTranslit)
 										+
-											(m_sSubTitleTranslit.IsEmpty()?
-												(m_sSubTitle.IsEmpty()?
+											(m_sSubTitleTranslit.empty()?
+												(m_sSubTitle.empty()?
 													"":
 													" " + m_sSubTitle):
 												" " + m_sSubTitleTranslit);

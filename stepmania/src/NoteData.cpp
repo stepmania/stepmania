@@ -571,9 +571,9 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 		int iIndexCommentStart = sSMNoteData.Find("//");
 		int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
 		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
-			sSMNoteData.Delete( iIndexCommentStart, 2 );
+			sSMNoteData.erase( iIndexCommentStart, 2 );
 		else
-			sSMNoteData.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
 	}
 
 	CStringArray asMeasures;

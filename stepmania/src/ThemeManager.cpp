@@ -53,7 +53,7 @@ void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
 	// strip out the folder called "CVS"
 	for( CStringArray::iterator i=AddTo.begin(); i != AddTo.end(); ++i )
 	{
-		if( !stricmp(*i,"cvs") ) {
+		if( !i->CompareNoCase("cvs") ) {
 			AddTo.erase(i, i+1);
 			break;
 		}
@@ -84,7 +84,7 @@ bool ThemeManager::DoesThemeExist( CString sThemeName )
 	GetAllThemeNames( asThemeNames );
 	for( unsigned i=0; i<asThemeNames.size(); i++ )
 	{
-		if( 0==stricmp(sThemeName, asThemeNames[i]) )
+		if( !sThemeName.CompareNoCase(asThemeNames[i]) )
 			return true;
 	}
 	return false;

@@ -60,10 +60,10 @@ CString PlayerOptions::GetString()
 		CString s = ssprintf( "%2.2f", m_fArrowScrollSpeed );
 		if( s[s.GetLength()-1] == '0' ) {
 			/* -> 1.0 */
-			s.Delete(s.GetLength()-1, 1);	// delete last char
+			s.erase(s.GetLength()-1);	// delete last char
 			if( s[s.GetLength()-1] == '0' ) {
 				/* -> 1 */
-				s.Delete(s.GetLength()-2, 2);	// delete last 2 chars
+				s.erase(s.GetLength()-2);	// delete last 2 chars
 			}
 		}
 		sReturn += s + "X, ";
@@ -122,7 +122,7 @@ CString PlayerOptions::GetString()
 		sReturn += "Dark, ";
 
 	if( sReturn.GetLength() > 2 )
-		sReturn.Delete( sReturn.GetLength()-2, 2 );	// delete the trailing ", "
+		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
 	return sReturn;
 }
 

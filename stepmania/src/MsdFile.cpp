@@ -57,7 +57,7 @@ void MsdFile::AddParam( char *buf, int len )
 	int paramno = m_iNumParams[valueno];
 	ASSERT( paramno < MAX_PARAMS_PER_VALUE );
 	m_iNumParams[valueno]++;
-	m_sParams[valueno][paramno].assign(buf, len);
+	m_sParams[valueno][paramno] = CString(buf, len);
 }
 
 void MsdFile::AddValue() /* (no extra charge) */

@@ -922,7 +922,6 @@ void MusicWheel::Update( float fDeltaTime )
 			else
 			{
 				m_WheelState = STATE_SELECTING_MUSIC;
-
 			}
 			break;
 		case STATE_TWEENING_OFF_SCREEN:
