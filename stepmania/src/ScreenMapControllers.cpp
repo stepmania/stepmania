@@ -159,10 +159,12 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			  DeviceI.button == JOY_RIGHT || 
 			  DeviceI.button == JOY_UP || 
 			  DeviceI.button == JOY_DOWN ||
-			  DeviceI.button == JOY_Z_UP ||
-			  DeviceI.button == JOY_Z_DOWN ||
-			  DeviceI.button == JOY_Z_ROT_UP ||
-			  DeviceI.button == JOY_Z_ROT_DOWN ) )
+			  DeviceI.button == JOY_ROT_UP ||
+			  DeviceI.button == JOY_ROT_DOWN ||
+			  DeviceI.button == JOY_ROT_LEFT ||
+			  DeviceI.button == JOY_ROT_RIGHT ||
+			  DeviceI.button == JOY_ROT_Z_UP ||
+			  DeviceI.button == JOY_ROT_Z_DOWN ) )
 		{
 			//m_textError.SetText( "Game option is set to ignore the Joystick D-Pad." );
 			//m_fErrorDisplayCountdown = 5;	// show the error message

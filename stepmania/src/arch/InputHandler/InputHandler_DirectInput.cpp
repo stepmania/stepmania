@@ -516,8 +516,14 @@ void UpdatePolled(DIDevice &device)
 			case DIJOFS_Z: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_Z_UP), state.lZ < -50);
 							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_Z_DOWN), state.lZ > 50);
 							break;
-			case DIJOFS_RZ: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_Z_ROT_UP), state.lRz < -50);
-							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_Z_ROT_DOWN), state.lRz > 50);
+			case DIJOFS_RX: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_LEFT), state.lRx < -50);
+							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_RIGHT), state.lRx > 50);
+							break;
+			case DIJOFS_RY: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_UP), state.lRy < -50);
+							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_DOWN), state.lRy > 50);
+							break;
+			case DIJOFS_RZ: INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_Z_UP), state.lRz < -50);
+							INPUTFILTER->ButtonPressed(DeviceInput(dev, JOY_ROT_Z_DOWN), state.lRz > 50);
 							break;
 			}
 		}
@@ -595,7 +601,9 @@ void UpdateBuffered(DIDevice &device)
 				case DIJOFS_X:  up = JOY_LEFT; down = JOY_RIGHT; break;
 				case DIJOFS_Y:  up = JOY_UP; down = JOY_DOWN; break;
 				case DIJOFS_Z: up = JOY_Z_UP; down = JOY_Z_DOWN; break;
-				case DIJOFS_RZ: up = JOY_Z_ROT_UP; down = JOY_Z_ROT_DOWN; break;
+				case DIJOFS_RX: up = JOY_ROT_UP; down = JOY_ROT_DOWN; break;
+				case DIJOFS_RY: up = JOY_ROT_LEFT; down = JOY_ROT_RIGHT; break;
+				case DIJOFS_RZ: up = JOY_ROT_Z_UP; down = JOY_ROT_Z_DOWN; break;
 				default: ASSERT(0);
 				}
 
