@@ -15,7 +15,6 @@
 
 #include "RageDisplay.h"
 #include <d3dx8.h>
-#include <assert.h>
 //#include <d3d8types.h>
 	
 
