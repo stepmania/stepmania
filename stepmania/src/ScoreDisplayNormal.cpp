@@ -59,10 +59,7 @@ void ScoreDisplayNormal::SetScore( int iNewScore )
 
 	if( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay == PlayerOptions::SCORING_SUBTRACT )
 	{
-		if( iNewScore == 0 && g_CurStageStats.m_player[pn].iCurMaxScore == 0 )
-			m_iScore = g_CurStageStats.m_player[pn].iMaxScore;
-		else 
-			m_iScore = g_CurStageStats.m_player[pn].iMaxScore - ( g_CurStageStats.m_player[pn].iCurMaxScore - iNewScore );
+		m_iScore = g_CurStageStats.m_player[pn].iMaxScore - ( g_CurStageStats.m_player[pn].iCurMaxScore - iNewScore );
 	}
 	else if( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay == PlayerOptions::SCORING_AVERAGE )
 	{
