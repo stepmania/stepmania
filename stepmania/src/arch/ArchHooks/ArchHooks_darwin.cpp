@@ -11,10 +11,8 @@
 #include "PrefsManager.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
-#include "RageThreads.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
-#include "archutils/Unix/SignalHandler.h"
 #include <Carbon/Carbon.h>
 
 /* You would think that these would be defined somewhere. */
