@@ -35,13 +35,13 @@
 //104
 		1058C7A0FEA54F0111CA2CBB = {
 			children = (
+				AAA8E0020696984300FCE1F9,
 				AA230ECF06043EFD002672F3,
 				AA230EAE06043704002672F3,
 				AA230EAF06043704002672F3,
 				AABD0B2905DF12FA004F7929,
 				AAA0F7CE047AC7BF005F316C,
 				1058C7A1FEA54F0111CA2CBB,
-				AA5D1C9404FE259500BE5E4F,
 				AAF33F2A04FF213100F93C24,
 				AAA0F7D0047AC7EA005F316C,
 				AA8DD84904A2E51400D02EE9,
@@ -279,7 +279,19 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				LIBRARY_STYLE = Bundle;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
@@ -1922,6 +1934,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
 				HEADER_SEARCH_PATHS = "/usr/include ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\" ../src/archutils/Darwin/PublicUtility \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers\" ";
 				INFOPLIST_FILE = "Info-StepMania.plist";
@@ -2171,7 +2184,6 @@
 				AA29CD0A0558741A00961A51,
 				AA29CD0B0558741A00961A51,
 				AA29CD0C0558741A00961A51,
-				AA29CD0D0558741A00961A51,
 				AA29CD0E0558741A00961A51,
 				AA29CD0F0558741A00961A51,
 				AA29CD100558741A00961A51,
@@ -2348,6 +2360,8 @@
 				AA915880067D2C2C00078E36,
 				AA9091A2067ED43000C1FCFF,
 				AA9091A6067ED46400C1FCFF,
+				AAC9F331069E22BB00D53E2C,
+				AAC9F335069E22CF00D53E2C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3648,12 +3662,6 @@
 			settings = {
 			};
 		};
-		AA29CD0D0558741A00961A51 = {
-			fileRef = AADB4E7C04D4FE5D00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CD0E0558741A00961A51 = {
 			fileRef = AADB4E8F04D5263200D02EE9;
 			isa = PBXBuildFile;
@@ -4127,7 +4135,6 @@
 				AA29CE0E0558741A00961A51,
 				AA29CE0F0558741A00961A51,
 				AA29CE100558741A00961A51,
-				AA29CE110558741A00961A51,
 				AA29CE120558741A00961A51,
 				AA29CE130558741A00961A51,
 				AA29CE140558741A00961A51,
@@ -4274,6 +4281,9 @@
 				AA9091A1067ED43000C1FCFF,
 				AA9091A5067ED46400C1FCFF,
 				AA139C4706923EBE00C1F6ED,
+				AAC9F2FF069E1FAB00D53E2C,
+				AAC9F330069E22BB00D53E2C,
+				AAC9F334069E22CF00D53E2C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4582,7 +4592,6 @@
 			fileRef = AA6EFE0E04770C79005F316C;
 			isa = PBXBuildFile;
 			settings = {
-				COMPILER_FLAGS = "-O0";
 			};
 		};
 		AA29CD760558741A00961A51 = {
@@ -5456,12 +5465,6 @@
 			settings = {
 			};
 		};
-		AA29CE110558741A00961A51 = {
-			fileRef = AADB4E7B04D4FE5D00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CE120558741A00961A51 = {
 			fileRef = AA6EFDC004770AEA005F316C;
 			isa = PBXBuildFile;
@@ -5710,7 +5713,6 @@
 				AA29CE3E0558741A00961A51,
 				AA29CE3F0558741A00961A51,
 				AA29CE400558741A00961A51,
-				AA29CE410558741A00961A51,
 				AA29CE420558741A00961A51,
 				AA67C0A60558B19B00EF34A6,
 				AA4B425C05733D71005FB5DB,
@@ -5728,6 +5730,7 @@
 				AABD0B2A05DF12FA004F7929,
 				AA230EB006043704002672F3,
 				AA230EB106043704002672F3,
+				AAA8E0030696984300FCE1F9,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5758,12 +5761,6 @@
 		};
 		AA29CE400558741A00961A51 = {
 			fileRef = AA8DD84904A2E51400D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CE410558741A00961A51 = {
-			fileRef = AA5D1C9404FE259500BE5E4F;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6640,7 +6637,6 @@
 				AAD3D64005B681EF00014FAC,
 				AAD3D64705B682A800014FAC,
 				AAD3D69505B6858400014FAC,
-				AAD3D69F05B685EC00014FAC,
 				AAD3D6A005B685F200014FAC,
 				AAD3D6A105B685F700014FAC,
 			);
@@ -7001,15 +6997,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		AA5D1C9404FE259500BE5E4F = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
-			lastKnownFileType = wrapper.framework;
-			name = CoreAudio.framework;
-			path = /System/Library/Frameworks/CoreAudio.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
 		};
 		AA60E0BB067992D7008ADC41 = {
 			children = (
@@ -8820,6 +8807,8 @@
 		};
 		AA6E00FE047711FF005F316C = {
 			children = (
+				AAC9F32E069E22BB00D53E2C,
+				AAC9F32F069E22BB00D53E2C,
 				AAE78049060814AC0034E65F,
 				AAE7804A060814AC0034E65F,
 				AABD0B3405DF3F22004F7929,
@@ -9931,8 +9920,6 @@
 				AA1C65A7050FD21F0073A143,
 				AA6EFD8704770A7C005F316C,
 				AA6EFD8804770A7C005F316C,
-				AADB4E7B04D4FE5D00D02EE9,
-				AADB4E7C04D4FE5D00D02EE9,
 				AA6EFD8904770A7C005F316C,
 				AA6EFD8A04770A7C005F316C,
 				AA9EC2F0055F5126007E5098,
@@ -13581,6 +13568,20 @@
 			settings = {
 			};
 		};
+		AAA8E0020696984300FCE1F9 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = CoreAudio.framework;
+			path = /System/Library/Frameworks/CoreAudio.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AAA8E0030696984300FCE1F9 = {
+			fileRef = AAA8E0020696984300FCE1F9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AAA983CA04B9060A00D02EE9 = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -14676,6 +14677,8 @@
 		};
 		AABE78720591287100E8BF50 = {
 			children = (
+				AAC9F332069E22CF00D53E2C,
+				AAC9F333069E22CF00D53E2C,
 				AABE78730591287100E8BF50,
 				AABE78760591287100E8BF50,
 			);
@@ -14980,6 +14983,7 @@
 		};
 		AAC6DCED0567663800B5D56F = {
 			children = (
+				AAC9F2FE069E1FAB00D53E2C,
 				AAC6DCEE0567663800B5D56F,
 				AAC6DCEF0567663800B5D56F,
 				AAC6DCF00567663800B5D56F,
@@ -15108,6 +15112,78 @@
 		};
 		AAC6DDE90569C80900B5D56F = {
 			fileRef = AAC6DDE70569C80900B5D56F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC9F2FE069E1FAB00D53E2C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = LightsDriver.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC9F2FF069E1FAB00D53E2C = {
+			fileRef = AAC9F2FE069E1FAB00D53E2C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC9F32E069E22BB00D53E2C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = GameSoundManager.cpp;
+			path = src/GameSoundManager.cpp;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAC9F32F069E22BB00D53E2C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = GameSoundManager.h;
+			path = src/GameSoundManager.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAC9F330069E22BB00D53E2C = {
+			fileRef = AAC9F32E069E22BB00D53E2C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC9F331069E22BB00D53E2C = {
+			fileRef = AAC9F32F069E22BB00D53E2C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC9F332069E22CF00D53E2C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = MemoryCardDriver.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC9F333069E22CF00D53E2C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = MemoryCardDriver.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAC9F334069E22CF00D53E2C = {
+			fileRef = AAC9F332069E22CF00D53E2C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAC9F335069E22CF00D53E2C = {
+			fileRef = AAC9F333069E22CF00D53E2C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -15518,12 +15594,6 @@
 		};
 		AAD3D69D05B685A100014FAC = {
 			fileRef = AAADA51E04E77F4400D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAD3D69F05B685EC00014FAC = {
-			fileRef = AA5D1C9404FE259500BE5E4F;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -16117,28 +16187,6 @@
 			isa = PBXFileReference;
 			name = RageSoundReader_FileReader.h;
 			path = ../src/RageSoundReader_FileReader.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AADB4E7B04D4FE5D00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = RageSounds.cpp;
-			path = ../src/RageSounds.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AADB4E7C04D4FE5D00D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = RageSounds.h;
-			path = ../src/RageSounds.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
