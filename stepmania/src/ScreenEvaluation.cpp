@@ -212,9 +212,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			{
 				m_textJudgeNumbers[l][p].SetZoomX(0); // Hide These Ones
 			}
-			else if (l == 5) // sneakily use this one for the max combo.
+			else if (l == 5 && GAMEMAN->m_CurGame == GAME_EZ2 ) // sneakily use this one for the max combo.
 			{
-				if (p == PLAYER_1)
+				if (p == PLAYER_ )
 				{
 					m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p]-40, JUDGE_EZ2_COOL_Y + 180);
 				}
