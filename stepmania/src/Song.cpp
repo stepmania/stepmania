@@ -443,11 +443,28 @@ bool Song::LoadFromSongDir( CString sDir )
 
 void Song::RevertFromDisk()
 {
+	unsigned CurNoteIndex[NUM_PLAYERS];
+	memset(CurNoteIndex, 0, sizeof(CurNoteIndex));
+	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		for( unsigned n = 0; n < m_apNotes.size(); ++n )
+			if( m_apNotes[n] == GAMESTATE->m_pCurNotes[pn] )
+				CurNoteIndex[pn] = n;
+
 	const CString dir = GetSongDir();
 
 	/* Erase all existing data. */
 	Reset();
 	LoadFromSongDir( dir );
+
+	if( GAMESTATE->m_pCurSong == this )
+	{
+		/* m_pCurNotes points at notes that we just reloaded; fix it. */
+		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		{
+			int ind = min(CurNoteIndex[pn], m_apNotes.size()-1);
+			GAMESTATE->m_pCurNotes[pn] = m_apNotes[ind];
+		}
+	}
 }
 
 
@@ -1059,7 +1076,7 @@ bool Song::IsNew() const
 bool Song::IsEasy( NotesType nt ) const
 {
 	Notes* pBeginnerNotes = GetNotes( nt, DIFFICULTY_BEGINNER );
-//	Notes* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
+	Notes* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
 	Notes* pHardNotes = GetNotes( nt, DIFFICULTY_HARD );
 
 	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
@@ -1076,15 +1093,19 @@ bool Song::IsEasy( NotesType nt ) const
 	 * for the easy icon, and other beginners (playing on light) can go by the
 	 * sort like they have been.  Don't make IsEasy some kind of mixture of
 	 * beginner and easy, since that's too confusing and makes it useless to
-	 * beginners. */
-	return pBeginnerNotes != NULL;
+	 * beginners. 
+	 *
+	 * Hmm.  I guess it does make sense to show as easy if it has 1-foot light
+	 * steps, too: if the user selected Beginner, then 1-foot light is probably
+	 * fine, and if the song has no beginner steps that's what he'll get. */
+//	return pBeginnerNotes != NULL;
 
-/*	if( pBeginnerNotes && pBeginnerNotes->GetMeter()==1 )
+	if( pBeginnerNotes )
 		return true;
 	else if( pEasyNotes && pEasyNotes->GetMeter()==1 )
 		return true;
 	else
-		return false; */
+		return false;
 }
 
 bool Song::HasEdits( NotesType nt ) const
