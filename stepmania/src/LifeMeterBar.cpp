@@ -486,7 +486,7 @@ void LifeMeterBar::DrawPrimitives()
 
 	ActorFrame::DrawPrimitives();
 }
-
+#include "RageLog.h"
 void LifeMeterBar::UpdateNonstopLifebar(const int cleared, 
 		const int total, int ProgressiveLifebarDifficulty)
 {
@@ -513,9 +513,10 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 		return;
 	} */
 
-	m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty;
 	if (total > 1)
-		m_fLifeDifficulty = m_fLifeDifficulty * cleared / (total - 1);
+		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(ProgressiveLifebarDifficulty * cleared / (total - 1));
+	else
+		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty;
 
 	if (m_fLifeDifficulty >= 0.4) return;
 
@@ -548,23 +549,49 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
 	if (m_fLifeDifficulty >= 0.2) // judge 8
+	{
 		m_fLifeDifficulty = 0.3f;
-	else if (m_fLifeDifficulty >= 0)   // judge 9
+		return;
+	}
+	if (m_fLifeDifficulty >= 0)   // judge 9
+	{
 		m_fLifeDifficulty = 0.25f;
-	else if (m_fLifeDifficulty >= -0.2) // judge 10
+		return;
+	}
+	if (m_fLifeDifficulty >= -0.2) // judge 10
+	{
 		m_fLifeDifficulty = 0.2f;
-	else if (m_fLifeDifficulty >= -0.4) // judge 11
+		return;
+	}
+	if (m_fLifeDifficulty >= -0.4) // judge 11
+	{
 		m_fLifeDifficulty = 0.16f;
-	else if (m_fLifeDifficulty >= -0.6) // judge 12
+		return;
+	}
+	if (m_fLifeDifficulty >= -0.6) // judge 12
+	{
 		m_fLifeDifficulty = 0.14f;
-	else if (m_fLifeDifficulty >= -0.8) // judge 13
+		return;
+	}
+	if (m_fLifeDifficulty >= -0.8) // judge 13
+	{
 		m_fLifeDifficulty = 0.12f;
-	else if (m_fLifeDifficulty >= -1.0) // judge 14
+		return;
+	}
+	if (m_fLifeDifficulty >= -1.0) // judge 14
+	{
 		m_fLifeDifficulty = 0.10f;
-	else if (m_fLifeDifficulty >= -1.2) // judge 15
+		return;
+	}
+	if (m_fLifeDifficulty >= -1.2) // judge 15
+	{
 		m_fLifeDifficulty = 0.08f;
-	else								// judge 16 or higher
-		m_fLifeDifficulty = 0.04f;
+		return;
+	}
+
+	// judge 16 or higher
+	m_fLifeDifficulty = 0.04f;
+	return;
 }
 
 
