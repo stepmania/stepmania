@@ -13,6 +13,7 @@
  */
 
 #include "RageSound.h"
+#include "RageThreads.h"
 #include "RageSoundDriver.h"
 
 #define ALSA_PCM_NEW_HW_PARAMS_API
@@ -45,7 +46,7 @@ public:
 
 	static int MixerThread_start(void *p);
 	void MixerThread();
-	SDL_Thread *MixerThreadPtr;
+	RageThread MixingThread;
 
 	unsigned int GetData();
 	void Recover(int r);

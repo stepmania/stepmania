@@ -4,6 +4,7 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageSound.h"
+#include "RageSoundManager.h"
 #include "RageUtil.h"
 
 #include "SDL_utils.h"
@@ -326,8 +327,8 @@ RageSound_ALSA9::RageSound_ALSA9()
 	LOG->Trace("%s", errstring);
 	snd_output_flush(errout);
 
-
-	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
+	MixingThread.SetName( "RageSound_ALSA9" );
+	MixingThread.Create( MixerThread_start, this );
 }
 
 RageSound_ALSA9::~RageSound_ALSA9()
@@ -335,7 +336,7 @@ RageSound_ALSA9::~RageSound_ALSA9()
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
 	LOG->Trace("Shutting down mixer thread ...");
-	SDL_WaitThread(MixerThreadPtr, NULL);
+	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");
  
 	snd_pcm_close(pcm);
