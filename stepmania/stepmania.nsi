@@ -366,7 +366,7 @@ Delete "$INSTDIR\Data\AI.ini"
 Delete "$INSTDIR\Data\stepmania.ini"
 Delete "$INSTDIR\Data\Keymaps.ini"
 Delete "$INSTDIR\Data\GamePrefs.ini"
-Delete "$INSTDIR\Data\splash.bmp"
+Delete "$INSTDIR\Data\splash.png"
 RMDir "$INSTDIR\Data"
 
 Delete "$INSTDIR\Program\stepmania.exe"
