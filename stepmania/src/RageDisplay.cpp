@@ -274,6 +274,18 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	return need_reload;
 }
 
+void RageDisplay::ResolutionChanged(int width, int height)
+{
+	g_CurrentWidth = width;
+	g_CurrentHeight = height;
+
+	SetViewport(0,0);
+
+	/* Clear any junk that's in the framebuffer. */
+	Clear();
+	Flip();
+}
+
 void RageDisplay::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.

@@ -410,9 +410,7 @@ static void GameLoop()
 			case SDL_QUIT:
 				return; /* exit the main loop */
 			case SDL_VIDEORESIZE:
-				PREFSMAN->m_iDisplayWidth = event.resize.w;
-				PREFSMAN->m_iDisplayHeight = event.resize.h;
-				ApplyGraphicOptions();
+				DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);
 				break;
 			}
 		}

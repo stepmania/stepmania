@@ -30,6 +30,9 @@ public:
 
 	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 
+	/* Call this when the resolution has been changed externally: */
+	void ResolutionChanged(int width, int height);
+
 	void Clear();
 	void Flip();
 	bool IsWindowed() const;
