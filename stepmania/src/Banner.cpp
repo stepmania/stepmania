@@ -61,8 +61,8 @@ void Banner::Update( float fDeltaTime )
 
 		float fTexCoords[8] = 
 		{
-			0+m_fPercentScrolling, pTextureRect->bottom,	// bottom left
 			0+m_fPercentScrolling, pTextureRect->top,		// top left
+			0+m_fPercentScrolling, pTextureRect->bottom,	// bottom left
 			1+m_fPercentScrolling, pTextureRect->bottom,	// bottom right
 			1+m_fPercentScrolling, pTextureRect->top,		// top right
 		};
