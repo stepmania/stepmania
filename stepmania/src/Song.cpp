@@ -1387,14 +1387,17 @@ void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers )
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByBPM );
 }
 
+struct GradeCnt { int n[NUM_GRADES]; };
+static map<Song *, GradeCnt> NumNotesWithGrade;
 
 bool CompareSongPointersByGrade(const Song *pSong1, const Song *pSong2)
 {
-	for( int i=NUM_GRADES; i>GRADE_NO_DATA; i-- )
+	const GradeCnt &cnt1=NumNotesWithGrade[(Song *) pSong1];
+	const GradeCnt &cnt2=NumNotesWithGrade[(Song *) pSong2];
+	for( int i=NUM_GRADES-1; i>GRADE_NO_DATA; i-- )
 	{
-		Grade g = (Grade)i;
-		int iCount1 = pSong1->GetNumNotesWithGrade( g );
-		int iCount2 = pSong2->GetNumNotesWithGrade( g );
+		const int iCount1 = cnt1.n[i];
+		const int iCount2 = cnt2.n[i];
 
 		if( iCount1 > iCount2 )
 			return true;
@@ -1407,6 +1410,16 @@ bool CompareSongPointersByGrade(const Song *pSong1, const Song *pSong2)
 
 void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 {
+	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
+	{
+		GradeCnt cnt;
+		memset( cnt.n, 0, sizeof(cnt.n) );
+
+		Song *pSong = arraySongPointers[i];
+		for( int g=NUM_GRADES-1; g>GRADE_NO_DATA; g-- )
+			cnt.n[g] = pSong->GetNumNotesWithGrade( (Grade)g );
+		NumNotesWithGrade[pSong] = cnt;
+	}
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGrade );
 }
 
