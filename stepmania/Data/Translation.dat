@@ -64,10 +64,10 @@ TitleTo: CANDY☆
 TitleFrom: Flash in the Night
 TitleTo: FLA♮H IN THE NIGHT
 *
-TitleFrom: Freckles([ -]Sobakasu)?
+TitleFrom: Freckles( ?-? ?Sobakasu)?
 TitleTo: そばかす
 *
-TitleFrom: Sobakasu([ -]Freckles)?
+TitleFrom: Sobakasu( ?-? ?Freckles)?
 TitleTo: そばかす
 *
 TitleFrom: Yozora no Muko
@@ -130,15 +130,6 @@ TitleTo: BRE∀K DOWN!
 # both l or r, and one or two l/r and t.
 TitleFrom: Sana Mo((ll?)|(rr?))et(t?)e Ne Ente
 TitleTo: サナ・モレッテ・ネ・エンテ
-*
-TitleFrom: Freckles
-TitleTo: そばかす
-*
-TitleFrom: Sobakasu
-TitleTo: そばかす
-*
-TitleFrom: Sobakasu.*Freckles
-TitleTo: そばかす
 *
 TitleFrom: Hypnotic Crisis
 TitleTo: HYPNØTIC CRISIS
