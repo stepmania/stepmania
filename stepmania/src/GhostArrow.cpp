@@ -39,5 +39,6 @@ void GhostArrow::Update( float fDeltaTime )
 
 void GhostArrow::Step( TapNoteScore score )
 {
+	this->StopTweening();
 	this->Command( m_sScoreCommand[score] );
 }
