@@ -50,17 +50,17 @@ void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
 		/* The song matches.  Replace whichever strings aren't empty. */
 		if(!ttab[i]->TitleTo.empty())
 		{
-			if(ttab[i]->translit) ttitle = title;
+			if(ttab[i]->translit && title != ttab[i]->TitleTo) ttitle = title;
 			title = ttab[i]->TitleTo;
 			FontCharAliases::ReplaceMarkers( title );
 		}
 		if(!ttab[i]->SubTo.empty())
 		{
-			if(ttab[i]->translit) tsubtitle = subtitle;
+			if(ttab[i]->translit && subtitle != ttab[i]->SubTo) tsubtitle = subtitle;
 			subtitle = ttab[i]->SubTo;
 			FontCharAliases::ReplaceMarkers( subtitle );
 		}
-		if(!ttab[i]->ArtistTo.empty())
+		if(!ttab[i]->ArtistTo.empty() && artist != ttab[i]->ArtistTo)
 		{
 			if(ttab[i]->translit) tartist = artist;
 			artist = ttab[i]->ArtistTo;
