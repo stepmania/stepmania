@@ -143,6 +143,11 @@ bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse
 	return CompareCoursePointersByName( pCourse1, pCourse2 );
 }
 
+void CourseUtil::SortCoursePointerArrayByTitle( vector<Course*> &apCourses )
+{
+	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
+}
+
 void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
 {
 	RageTimer foo;

@@ -1141,9 +1141,11 @@ void SongManager::UpdateBest()
 			--j;
 		}
 
+		SongUtil::SortSongPointerArrayByTitle( m_pBestSongs[i] );
 		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
 
 		m_pBestCourses[i] = m_pCourses;
+		CourseUtil::SortCoursePointerArrayByTitle( m_pBestCourses[i] );
 		CourseUtil::SortCoursePointerArrayByNumPlays( m_pBestCourses[i], (ProfileSlot) i, true );
 	}
 }
