@@ -15,8 +15,8 @@
 #define ITEMS_SPACING_Y				THEME->GetMetricF(m_sName,"ItemsSpacingY")
 #define DESCRIPTION_MAX_WIDTH		THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
 #define NUM_SHOWN_ITEMS				THEME->GetMetricI(m_sName,"NumShownItems")
-#define MOVE_COMMAND				THEME->GetMetric (m_sName,"MoveCommand")
 #define CAPITALIZE_DIFFICULTY_NAMES	THEME->GetMetric( m_sName,"CapitalizeDifficultyNames" )
+CachedThemeMetricF  MOVE_COMMAND("","MoveCommand");
 
 #define MAX_METERS NUM_DIFFICULTIES + MAX_EDITS_PER_SONG
 
@@ -31,6 +31,8 @@ DifficultyList::~DifficultyList()
 
 void DifficultyList::Load()
 {
+	MOVE_COMMAND.Refresh(m_sName);
+
 	m_Lines.resize( MAX_METERS );
 	m_CurSong = NULL;
 
