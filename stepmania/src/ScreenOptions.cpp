@@ -546,6 +546,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 				Course *pCourse = GAMESTATE->m_pCurCourse;
 				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 				Trail* pTrail = pCourse->GetTrail(st,COURSE_DIFFICULTY_REGULAR);
+				ASSERT( pTrail );
 				pTrail->GetDisplayBpms( bpms );
 			}
 
