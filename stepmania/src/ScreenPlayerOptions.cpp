@@ -11,16 +11,10 @@
 */
 
 #include "ScreenPlayerOptions.h"
-#include "RageTextureManager.h"
 #include "RageUtil.h"
-#include "RageMusic.h"
 #include "ScreenManager.h"
-#include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
-#include "GameManager.h"
 #include "GameState.h"
-#include "RageSound.h"
 
 
 enum {

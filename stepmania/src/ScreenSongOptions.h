@@ -7,20 +7,10 @@
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
-#ifndef _ScreenSongOptions_H_
-#define _ScreenSongOptions_H_
+#ifndef SCREEN_SONG_OPTIONS_H
+#define SCREEN_SONG_OPTIONS_H
 
-
-
-#include "Screen.h"
 #include "ScreenOptions.h"
-#include "Sprite.h"
-#include "BitmapText.h"
-#include "RandomSample.h"
-#include "TransitionFade.h"
-#include "Quad.h"
-
-
 
 class ScreenSongOptions : public ScreenOptions
 {
@@ -34,9 +24,5 @@ private:
 	void GoToNextState();
 	void GoToPrevState();
 };
-
-
-
-
 
 #endif

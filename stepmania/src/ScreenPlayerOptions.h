@@ -7,18 +7,11 @@
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 -----------------------------------------------------------------------------
 */
-#ifndef _WINDOWPLAYEROPTIONS_H_
-#define _WINDOWPLAYEROPTIONS_H_
+#ifndef SCREEN_PLAYER_OPTIONS_H
+#define SCREEN_PLAYER_OPTIONS_H
 
 
-#include "Screen.h"
 #include "ScreenOptions.h"
-#include "Sprite.h"
-#include "BitmapText.h"
-#include "RandomSample.h"
-#include "TransitionFade.h"
-#include "Quad.h"
-
 
 
 class ScreenPlayerOptions : public ScreenOptions
