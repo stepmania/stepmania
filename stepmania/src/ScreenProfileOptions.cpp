@@ -212,17 +212,17 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	if( m_iSelectedOption[0][m_iCurrentRow[0]]==0 )
+	if( m_iSelectedOption[0][GetCurrentRow()]==0 )
 		return "";
 	else
-		return vsProfiles[m_iSelectedOption[0][m_iCurrentRow[0]]-1];
+		return vsProfiles[m_iSelectedOption[0][GetCurrentRow()]-1];
 }
 
 CString ScreenProfileOptions::GetSelectedProfileName()
 {
-	if( m_iSelectedOption[0][m_iCurrentRow[0]]==0 )
+	if( m_iSelectedOption[0][GetCurrentRow()]==0 )
 		return "";
 	else
-		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_iSelectedOption[0][m_iCurrentRow[0]] ];
+		return g_ProfileOptionsLines[PO_PLAYER1].choices[ m_iSelectedOption[0][GetCurrentRow()] ];
 }
 
