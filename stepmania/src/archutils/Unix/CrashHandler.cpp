@@ -257,12 +257,31 @@ static void RunCrashHandler( const CrashData *crash )
 		/* We've received a second signal.  This may mean that another thread
 		 * crashed before we stopped it, or it may mean that the crash handler
 		 * crashed. */
+		switch( crash->type )
+		{
+#if !defined(DARWIN)
+		case CrashData::SIGNAL:
+			safe_print( fileno(stderr), "Fatal signal (", SignalName(crash->signal), ")", NULL );
+			break;
+#endif
+
+#if defined(DARWIN)
+		case CrashData::OSX_EXCEPTION:
+			safe_print( fileno(stderr), "Fatal exception (", ExceptionName( crash->kind ), ")", NULL );
+			break;
+#endif
+		default:
+			safe_print( fileno(stderr), "Unexpected RunCrashHandler call (", itoa(crash->type), ")", NULL );
+			break;
+		}
+
 		if( received == getpid() )
-			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(crash->signal), ") received while still in the crash handler\n", NULL);
+			safe_print( fileno(stderr), " while still in the crash handler\n", NULL);
 		else if( childpid == getpid() )
-			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(crash->signal), ") received while in the crash handler child\n", NULL);
+			safe_print( fileno(stderr), " while in the crash handler child\n", NULL);
 		else
-			safe_print( fileno(stderr), "Extra fatal signal (", SignalName(crash->signal), ") received\n", NULL);
+			safe_print( fileno(stderr), " (to unknown PID)\n", NULL);
+
 		_exit(1);
 	}
 	received = getpid();
