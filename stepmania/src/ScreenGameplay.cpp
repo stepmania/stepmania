@@ -756,7 +756,7 @@ ScreenGameplay::~ScreenGameplay()
 
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
-	currentNetPlayer.ReportSongOver();
+	NSMAN->ReportSongOver();
 }
 
 bool ScreenGameplay::IsLastSong()
@@ -1029,7 +1029,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
 
-	currentNetPlayer.StartRequest(); //Network Code.
+	NSMAN->StartRequest(); //Network Code.
 
 	m_soundMusic->Play( &p );
 

@@ -405,11 +405,9 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	}
 
 	
-	currentNetPlayer.ReportScore (
-		m_PlayerNumber, 
-		scoreOfLastTap, 
-		g_CurStageStats.iScore[m_PlayerNumber],
-		g_CurStageStats.iCurCombo[m_PlayerNumber]);
+	NSMAN->ReportScore(m_PlayerNumber, scoreOfLastTap,
+                       g_CurStageStats.iScore[m_PlayerNumber],
+                       g_CurStageStats.iCurCombo[m_PlayerNumber]);
 }
 
 
@@ -423,11 +421,9 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	if( holdScore == HNS_OK )
 		AddScore( TNS_MARVELOUS );
 
-	currentNetPlayer.ReportScore (
-		m_PlayerNumber, 
-		holdScore+7, 
-		g_CurStageStats.iScore[m_PlayerNumber],
-		g_CurStageStats.iCurCombo[m_PlayerNumber]);
+	NSMAN->ReportScore(m_PlayerNumber, holdScore+7, 
+                       g_CurStageStats.iScore[m_PlayerNumber],
+                       g_CurStageStats.iCurCombo[m_PlayerNumber]);
 
 
 }
