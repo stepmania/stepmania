@@ -742,7 +742,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	 * on these commands. */
 	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
 		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" || sName=="play" ||
-		 sName=="pause" || sName=="rate" )
+		 sName=="pause" || sName=="rate" || sName=="propagate" )
 		return;
 	else
 	{

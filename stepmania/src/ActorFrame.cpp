@@ -3,6 +3,11 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageUtil.h"
 
+ActorFrame::ActorFrame()
+{
+	m_bPropagateCommands = false;
+}
+
 void ActorFrame::AddChild( Actor* pActor )
 {
 #if _DEBUG
@@ -66,6 +71,12 @@ void ActorFrame::RunCommandOnChildren( const CString &cmd )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->Command( cmd );
+}
+
+void ActorFrame::RunCommandOnChildren( const ParsedCommand &cmd )
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->HandleCommand( cmd );
 }
 
 void ActorFrame::Update( float fDeltaTime )
@@ -146,9 +157,29 @@ void ActorFrame::DeleteAllChildren()
 
 void ActorFrame::HandleCommand( const ParsedCommand &command )
 {
-	Actor::HandleCommand( command );
+	HandleParams;
 
-	// don't propograte most commands to children
+	const CString& sName = sParam(0);
+	do
+	{
+		if( sName=="propagate" )
+		{
+			m_bPropagateCommands = bParam(1);
+			RunCommandOnChildren( command );
+		}
+		else
+		{
+			Actor::HandleCommand( command );
+			break;
+		}
+		CheckHandledParams;
+	} while(0);
+
+	/* By default, don't propograte most commands to children; it makes no sense
+	 * to run "x,50" recursively.  If m_bPropagateCommands is set, propagate all
+	 * commands. */
+	if( m_bPropagateCommands && sName!="propagate" )
+		RunCommandOnChildren( command );
 }
 
 void ActorFrame::GainFocus( float fRate, bool bRewindMovie, bool bLoop )

@@ -8,6 +8,7 @@
 class ActorFrame : public Actor
 {
 public:
+	ActorFrame();
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
 	virtual void MoveToTail( Actor* pActor );
@@ -19,6 +20,7 @@ public:
 	void DeleteAllChildren();
 
 	virtual void RunCommandOnChildren( const CString &cmd ); /* but not on self */
+	virtual void RunCommandOnChildren( const ParsedCommand &cmd ); /* but not on self */
 	virtual void HandleCommand( const ParsedCommand &command );	// derivable
 
 	virtual void Update( float fDeltaTime );
@@ -41,6 +43,7 @@ public:
 
 protected:
 	vector<Actor*>	m_SubActors;
+	bool m_bPropagateCommands;
 };
 
 #endif
