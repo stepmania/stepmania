@@ -1168,7 +1168,8 @@ void ScreenGameplay::PlayTicks()
 		iRowLastCrossed = -1;
 
 	int iTickRow = -1;
-	for( int r=iRowLastCrossed+1; r<=iSongRow; r++ )  // for each index we crossed since the last update
+	// for each index we crossed since the last update:
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_Player[GAMESTATE->m_MasterPlayerNumber].m_NoteData, r, iRowLastCrossed+1, iSongRow )
 		if( m_Player[GAMESTATE->m_MasterPlayerNumber].m_NoteData.IsThereATapOrHoldHeadAtRow( r ) )
 			iTickRow = r;
 
