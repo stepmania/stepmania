@@ -39,8 +39,10 @@
  */
 #include "MsdFile.h"
 #include "RageLog.h"
-#include "io.h"
 #include "fcntl.h"
+#if defined(WIN32)
+#include "io.h"
+#endif
 #include "RageUtil.h"
 
 void MsdFile::AddParam( char *buf, int len )
@@ -140,7 +142,7 @@ bool MsdFile::ReadFile( CString sNewPath )
    int fd;
 
    /* Open a file */
-   if( (fd = open(sNewPath, _O_RDONLY, 0)) == -1 )
+   if( (fd = open(sNewPath, O_RDONLY, 0)) == -1 )
 	   return false;
 
 	int iBufferSize = GetFileSizeInBytes(sNewPath) + 1000; // +1000 because sometimes the bytes read is > filelength.  Why?
