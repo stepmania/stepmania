@@ -276,8 +276,6 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 
 void ThemeManager::UpdateLuaGlobals()
 {
-	LUA->Init();
-
 	/* Important: explicitly refresh cached metrics that we use. */
 	THEME_SCREEN_WIDTH.Read();
 	THEME_SCREEN_HEIGHT.Read();
