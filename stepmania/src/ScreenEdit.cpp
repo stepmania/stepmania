@@ -320,7 +320,7 @@ bool ScreenEdit::PlayTicks() const
 	// will start coming out the speaker.  Compensate for this by boosting
 	// fPositionSeconds ahead
 
-	if( GAMESTATE->m_SongOptions.m_AssistType != SongOptions::ASSIST_TICK )
+	if( !GAMESTATE->m_SongOptions.m_bAssistTick )
 		return false;
 
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;

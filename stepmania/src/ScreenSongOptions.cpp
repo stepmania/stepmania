@@ -36,7 +36,7 @@ OptionRow g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
 	OptionRow( "Bar\nDrain",	"NORMAL","NO RECOVER","SUDDEN DEATH" ),	
 	OptionRow( "Bat\nLives",	"1","2","3","4","5","6","7","8","9","10" ),	
 	OptionRow( "Fail",			"ARCADE","END OF SONG","OFF" ),	
-	OptionRow( "Assist",		"OFF","TICK" ),	
+	OptionRow( "Assist\nTick",	"OFF", "ON" ),
 	OptionRow( "Rate",			"x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5" ),	
 	OptionRow( "Auto\nAdjust",	"OFF", "ON" ),	
 };
@@ -60,7 +60,7 @@ void ScreenSongOptions::ImportOptions()
 	m_iSelectedOption[0][SO_LIFE] = so.m_LifeType;
 	m_iSelectedOption[0][SO_BAT_LIVES] = so.m_iBatteryLives-1;
 	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
-	m_iSelectedOption[0][SO_ASSIST] = so.m_AssistType;
+	m_iSelectedOption[0][SO_ASSIST] = so.m_bAssistTick;
 	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
 
 	if(		 so.m_fMusicRate == 0.7f )		m_iSelectedOption[0][SO_RATE] = 0;
@@ -83,8 +83,8 @@ void ScreenSongOptions::ExportOptions()
 	so.m_DrainType = (SongOptions::DrainType)m_iSelectedOption[0][SO_DRAIN];
 	so.m_iBatteryLives = m_iSelectedOption[0][SO_BAT_LIVES]+1;
 	so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
-	so.m_AssistType = (SongOptions::AssistType)m_iSelectedOption[0][SO_ASSIST];
-	so.m_bAutoSync = m_iSelectedOption[0][SO_AUTOSYNC] != 0;
+	so.m_bAssistTick = !!m_iSelectedOption[0][SO_ASSIST];
+	so.m_bAutoSync = !!m_iSelectedOption[0][SO_AUTOSYNC];
 
 	switch( m_iSelectedOption[0][SO_RATE] )
 	{

@@ -900,7 +900,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_iRowLastCrossed = iRowNow;
 	}
 
-	if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
+	if( GAMESTATE->m_SongOptions.m_bAssistTick )
 		if( IsTimeToPlayTicks() )
 			m_soundAssistTick.Play();
 }
@@ -978,12 +978,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			UpdateAutoPlayText();
 			break;
 		case SDLK_F7:
-			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
-				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
-			else
-				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_NONE;
+			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
 			
-			m_textDebug.SetText( ssprintf("Assist Tick is %s", GAMESTATE->m_SongOptions.m_AssistType==SongOptions::ASSIST_TICK?"ON":"OFF") );
+			m_textDebug.SetText( ssprintf("Assist Tick is %s", GAMESTATE->m_SongOptions.m_bAssistTick?"ON":"OFF") );
 			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			m_textDebug.StopTweening();
 			m_textDebug.BeginTweening( 3 );		// sleep

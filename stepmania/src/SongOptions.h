@@ -22,10 +22,8 @@ struct SongOptions
 	int m_iBatteryLives;
 	enum FailType { FAIL_ARCADE=0, FAIL_END_OF_SONG, FAIL_OFF };
 	FailType m_FailType;
-	enum AssistType { ASSIST_NONE=0, ASSIST_TICK };
-	AssistType m_AssistType;
 	float m_fMusicRate;
-	bool m_bAutoSync;
+	bool m_bAssistTick, m_bAutoSync;
 
 	SongOptions() { Init(); };
 	void Init() 
@@ -34,7 +32,7 @@ struct SongOptions
 		m_DrainType = DRAIN_NORMAL;
 		m_iBatteryLives = 4;
 		m_FailType = FAIL_ARCADE;
-		m_AssistType = ASSIST_NONE;
+		m_bAssistTick = false;
 		m_fMusicRate = 1.0f;
 		m_bAutoSync = false;
 	};
