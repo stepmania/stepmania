@@ -1016,8 +1016,8 @@ int main(int argc, char* argv[])
 	catch( const exception &e )
 	{
 		/* This can be things like calling std::string::reserve(-1), or out of memory.
-		 * This can happen even as we're shutting things down above, and we make no
-		 * attempt to gracefully shut down if it happens--get a crash dump. */
+		 * This can also happen if we throw a RageException during a ctor, in which case
+		 * we want a crash dump. */
 		CHECKPOINT_M( e.what() );
 		*(char*)0=0; /* crash */
 	}
