@@ -36,7 +36,7 @@ void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 
 #define CROSSED( val ) (fOld < val && fNew >= val)
 #define CROSSED_ATTACK_LEVEL( level ) CROSSED(1.f/NUM_ATTACK_LEVELS*(level+1))
-void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
+void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, bool failed)
 {
 	AttackLevel oldAL = (AttackLevel)(int)GAMESTATE->m_fSuperMeter[m_PlayerNumber];
 

@@ -665,10 +665,10 @@ void Player::HandleTapRowScore( unsigned row )
 		return;
 
 	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
+		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pLifeMeter->FailedEarlier() );
 
 	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
+		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pLifeMeter->FailedEarlier() );
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);

@@ -163,7 +163,7 @@ static int GetScore(int p, int B, int S, int n)
 
 }
 
-void ScoreKeeperMAX2::AddScore( TapNoteScore score )
+void ScoreKeeperMAX2::AddScore( TapNoteScore score, bool failed)
 {
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -197,14 +197,22 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	int iScoreMultiplier = (m_iMaxPossiblePoints / (10*sum));
 	ASSERT( iScoreMultiplier >= 0 );
 
-	m_iScore += GetScore(p, B, sum, m_iTapNotesHit);
+	if (failed)
+		switch( score )
+		{
+			case TNS_MARVELOUS:	m_iScore += 10;		break;
+			case TNS_PERFECT:	m_iScore += MarvelousEnabled? 9:10; break;
+			case TNS_GREAT:		m_iScore += 5;		break;
+		}
+	else
+		m_iScore += GetScore(p, B, sum, m_iTapNotesHit);
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
 	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
-		m_iScore += m_iPointBonus;
+		if (!failed) m_iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
 			m_iScore += 100000000 - m_iMaxScoreSoFar;
@@ -222,7 +230,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber] = m_iScore;
 }
 
-void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
+void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, bool failed )
 {
 	ASSERT( iNumTapsInRow >= 1 );
 
@@ -267,7 +275,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
   Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible 
   score for any song is the number of feet difficulty X 10,000,000. 
 */
-	AddScore( scoreOfLastTap );		// only score once per row
+	AddScore( scoreOfLastTap, failed );		// only score once per row
 
 
 	//
@@ -292,6 +300,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 		if( m_iCurToastyCombo==250 && !GAMESTATE->m_bDemonstrationOrJukebox )
 			SCREENMAN->PostMessageToTopScreen( SM_PlayToasty, 0 );
+			PREFSMAN->m_fTotalToastysSeen += 1;
 		break;
 	default:
 		m_iCurToastyCombo = 0;
@@ -390,7 +399,7 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
 
 	if( holdScore == HNS_OK )
-		AddScore( TNS_MARVELOUS );
+		AddScore( TNS_MARVELOUS , false);
 }
 
 
