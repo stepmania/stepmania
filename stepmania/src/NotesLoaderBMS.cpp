@@ -357,7 +357,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[7] = BMS_P2_KEY3;
 		iTransformNewToOld[8] = BMS_P2_KEY4;
 		break;
-	/* MD 10/26/03 - uncomment this section when we get around to BM support outside 5-key
+	// MD 10/26/03 - uncomment this section when we get around to BM support outside 5-key
+	//    10/29/03 - helps if I actually do what I suggest.
 	case STEPS_TYPE_BM_DOUBLE:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
@@ -398,7 +399,6 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[13] = BMS_P2_KEY6;
 		iTransformNewToOld[14] = BMS_P2_KEY7;
 		iTransformNewToOld[15] = BMS_P2_TURN;
-	*/
 	default:
 		ASSERT(0);
 	}
