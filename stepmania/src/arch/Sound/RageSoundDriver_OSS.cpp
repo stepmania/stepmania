@@ -76,6 +76,7 @@ bool RageSound_OSS::GetData()
 
 	/* Create a 32-bit buffer to mix sounds. */
 	static SoundMixBuffer mix;
+	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
@@ -156,20 +157,13 @@ int RageSound_OSS::GetPosition(const RageSound *snd) const
 {
 	LockMutex L(SOUNDMAN->lock);
 
+	ASSERT( fd != -1 );
+	
 	int delay;
 	if(ioctl(fd, SNDCTL_DSP_GETODELAY, &delay) == -1)
 		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_GETODELAY): %s", strerror(errno));
 
 	return last_cursor_pos - (delay / samplesize);
-
-/*	MMTIME tm;
-	tm.wType = TIME_SAMPLES;
-	MMRESULT ret = waveOutGetPosition(wo, &tm, sizeof(tm));
-  	if(ret != MMSYSERR_NOERROR)
-		RageException::Throw(wo_ssprintf(ret, "waveOutGetPosition failed"));
-
-	return tm.u.sample;
-	*/
 }
 
 
