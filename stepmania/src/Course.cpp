@@ -868,61 +868,6 @@ bool Course::GetTotalSeconds( float& fSecondsOut ) const
 	return true;
 }
 
-
-//
-// Sorting stuff
-//
-static bool CompareCoursePointersByName(const Course* pCourse1, const Course* pCourse2)
-{
-	// HACK:  strcmp and other string comparators appear to eat whitespace.
-	// For example, the string "Players Best 13-16" is sorted between 
-	// "Players Best  1-4" and "Players Best  5-8".  Replace the string "  "
-	// with " 0" for comparison only.
-
-	// XXX: That doesn't happen to me, and it shouldn't (strcmp is strictly
-	// a byte sort, though CompareNoCase doesn't use strcmp).  Are you sure
-	// you didn't have only one space before? -glenn
-	CString sName1 = pCourse1->m_sName;
-	CString sName2 = pCourse2->m_sName;
-	sName1.Replace( "  " , " 0" );
-	sName2.Replace( "  " , " 0" );
-	return sName1.CompareNoCase( sName2 ) == -1;
-}
-
-static bool CompareCoursePointersByAutogen(const Course* pCourse1, const Course* pCourse2)
-{
-	int b1 = pCourse1->m_bIsAutogen;
-	int b2 = pCourse2->m_bIsAutogen;
-	if( b1 < b2 )
-		return true;
-	else if( b1 > b2 )
-		return false;
-	else
-		return CompareCoursePointersByName(pCourse1,pCourse2);
-}
-
-static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
-{
-	int iNum1 = pCourse1->GetEstimatedNumStages();
-	int iNum2 = pCourse2->GetEstimatedNumStages();
-	if( iNum1 < iNum2 )
-		return true;
-	else if( iNum1 > iNum2 )
-		return false;
-	else // iNum1 == iNum2
-		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
-}
-
-static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const Course* pCourse2)
-{
-	int iNum1 = pCourse1->SortOrder_TotalDifficulty;
-	int iNum2 = pCourse2->SortOrder_TotalDifficulty;
-
-	if( iNum1 == iNum2 )
-		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
-	return iNum1 < iNum2;
-}
-
 bool Course::CourseHasBestOrWorst() const
 {
 	for(unsigned i = 0; i < m_entries.size(); i++)
@@ -936,69 +881,6 @@ bool Course::CourseHasBestOrWorst() const
 	}
 
 	return false;
-}
-
-static bool MovePlayersBestToEnd( const Course* pCourse1, const Course* pCourse2 )
-{
-	bool C1HasBest = pCourse1->CourseHasBestOrWorst();
-	bool C2HasBest = pCourse2->CourseHasBestOrWorst();
-	if( !C1HasBest && !C2HasBest )
-		return false;
-	if( C1HasBest && !C2HasBest )
-		return false;
-	if( !C1HasBest && C2HasBest )
-		return true;
-
-	return pCourse1->m_sName < pCourse2->m_sName;
-}
-
-static bool CompareRandom( const Course* pCourse1, const Course* pCourse2 )
-{
-	return ( pCourse1->IsFixed() && !pCourse2->IsFixed() );
-}
-
-static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
-{
-	int iNum1 = pCourse1->SortOrder_Ranking;
-	int iNum2 = pCourse2->SortOrder_Ranking;
-
-	if( iNum1 == iNum2 )
-		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
-	return iNum1 < iNum2;
-}
-
-void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
-{
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByDifficulty );
-}
-
-void SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
-{
-	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats();
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByRanking );
-}
-
-void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
-{
-	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats();
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTotalDifficulty );
-}
-
-static bool CompareCoursePointersByType(const Course* pCourse1, const Course* pCourse2)
-{
-	return pCourse1->GetPlayMode() < pCourse2->GetPlayMode();
-}
-
-void MoveRandomToEnd( vector<Course*> &apCourses )
-{
-	stable_sort( apCourses.begin(), apCourses.end(), CompareRandom );
-}
-
-void SortCoursePointerArrayByType( vector<Course*> &apCourses )
-{
-	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByType );
 }
 
 bool Course::HasBanner() const
@@ -1083,56 +965,5 @@ RadarValues Course::GetRadarValues( StepsType st, CourseDifficulty cd ) const
 	}
 
 	return rv;
-}
-
-
-//
-// Sorting stuff
-//
-static map<const Course*, float> course_sort_val;
-
-bool CompareCoursePointersBySortValueAscending(const Course *pSong1, const Course *pSong2)
-{
-	return course_sort_val[pSong1] < course_sort_val[pSong2];
-}
-
-bool CompareCoursePointersBySortValueDescending(const Course *pSong1, const Course *pSong2)
-{
-	return course_sort_val[pSong1] > course_sort_val[pSong2];
-}
-
-bool CompareCoursePointersByTitle( const Course *pCourse1, const Course *pCourse2 )
-{
-	return pCourse1->m_sName < pCourse2->m_sName;
-}
-
-void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
-{
-	RageTimer foo;
-	course_sort_val.clear();
-	for(unsigned i = 0; i < apCourses.size(); ++i)
-		course_sort_val[apCourses[i]] = apCourses[i]->GetMeter();
-	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
-	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersBySortValueAscending );
-
-	stable_sort( apCourses.begin(), apCourses.end(), MovePlayersBestToEnd );
-}
- 
-
-void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, ProfileSlot slot, bool bDescending )
-{
-	Profile* pProfile = PROFILEMAN->GetProfile(slot);
-	if( pProfile == NULL )
-		return;	// nothing to do since we don't have data
-	SortCoursePointerArrayByNumPlays( arrayCoursePointers, pProfile, bDescending );
-}
-
-void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, const Profile* pProfile, bool bDescending )
-{
-	ASSERT( pProfile );
-	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
-		course_sort_val[arrayCoursePointers[i]] = (float) pProfile->GetCourseNumTimesPlayed(arrayCoursePointers[i]);
-	stable_sort( arrayCoursePointers.begin(), arrayCoursePointers.end(), bDescending ? CompareCoursePointersBySortValueDescending : CompareCoursePointersBySortValueAscending );
-	course_sort_val.clear();
 }
 

@@ -163,15 +163,4 @@ private:
 	mutable InfoCache m_InfoCache;
 };
 
-
-void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses );
-void SortCoursePointerArrayByType( vector<Course*> &apCourses );
-void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
-void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
-void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
-void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, ProfileSlot slot, bool bDescending );
-void SortCoursePointerArrayByNumPlays( vector<Course*> &arrayCoursePointers, const Profile* pProfile, bool bDescending );
-
-void MoveRandomToEnd( vector<Course*> &apCourses );
-
 #endif

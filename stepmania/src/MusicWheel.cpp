@@ -33,6 +33,7 @@
 #include "ModeChoice.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"
+#include "CourseUtil.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -626,25 +627,25 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		}
 
 		if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_SONGS)
-			SortCoursePointerArrayByDifficulty( apCourses );
+			CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
 		else
 		{
 			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_METER)
-				SortCoursePointerArrayByAvgDifficulty( apCourses );
+				CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
 
 			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_METER_SUM)
-				SortCoursePointerArrayByTotalDifficulty( apCourses );
+				CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
 
 			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_RANK)
-				SortCoursePointerArrayByRanking( apCourses );
+				CourseUtil::SortCoursePointerArrayByRanking( apCourses );
 
 			// since we can't agree, make it an option
 			if (PREFSMAN->m_bMoveRandomToEnd)
-				MoveRandomToEnd( apCourses );
+				CourseUtil::MoveRandomToEnd( apCourses );
 		}
 
 		if( so == SORT_ALL_COURSES )
-			SortCoursePointerArrayByType( apCourses );
+			CourseUtil::SortCoursePointerArrayByType( apCourses );
 
 		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
 

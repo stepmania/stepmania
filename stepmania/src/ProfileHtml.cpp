@@ -27,6 +27,7 @@
 #include "RageUtil.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
+#include "CourseUtil.h"
 
 
 const CString STATS_HTML	= "Stats.html";
@@ -464,7 +465,7 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		{
 			unsigned uNumToShow = min( vpCourses.size(), (unsigned)100 );
 
-			SortCoursePointerArrayByNumPlays( vpCourses, pProfile, true );
+			CourseUtil::SortCoursePointerArrayByNumPlays( vpCourses, pProfile, true );
 			PRINT_OPEN(f, "Most Popular Courses" );
 			{
 				BEGIN_TABLE(2);

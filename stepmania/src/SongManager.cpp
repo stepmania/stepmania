@@ -35,6 +35,7 @@
 #include "NotesLoaderSM.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
+#include "CourseUtil.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -909,7 +910,7 @@ void SongManager::UpdateBest()
 		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], (ProfileSlot) i, true );
 
 		m_pBestCourses[i] = m_pCourses;
-		SortCoursePointerArrayByNumPlays( m_pBestCourses[i], (ProfileSlot) i, true );
+		CourseUtil::SortCoursePointerArrayByNumPlays( m_pBestCourses[i], (ProfileSlot) i, true );
 	}
 }
 
