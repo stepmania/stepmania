@@ -39,6 +39,7 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 			if( pChildActor )
 				AddChild( pChildActor );
 		}
+		SortByDrawOrder();
 	}
 }
 
