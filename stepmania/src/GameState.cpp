@@ -340,10 +340,15 @@ void GameState::Update( float fDelta )
 		for( unsigned s=0; s<m_ActiveAttacks[p].size(); s++ )
 		{
 			Attack &attack = m_ActiveAttacks[p][s];
+			
+			// -1 is the "starts now" sentinel value.  You must add the attack
+			// by calling GameState::LaunchAttack, or else the -1 won't be 
+			// converted into the current music time.  
+			ASSERT( attack.fStartSecond != -1 );
+
 			const bool bCurrentlyEnabled =
-				attack.fStartSecond == -1 ||
-				(attack.fStartSecond < this->m_fMusicSeconds &&
-				 m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining);
+				attack.fStartSecond < this->m_fMusicSeconds &&
+				m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining;
 
 			if( m_ActiveAttacks[p][s].bOn == bCurrentlyEnabled )
 				continue; /* OK */

@@ -787,16 +787,15 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	GAMESTATE->m_ModsToApply[p].clear();
 	for( unsigned i=0; i<m_asModifiersQueue[p][iSongIndex].size(); ++i )
 	{
-		GAMESTATE->LaunchAttack( (PlayerNumber)p, m_asModifiersQueue[p][iSongIndex][i] );
-		GAMESTATE->m_SongOptions.FromString( m_asModifiersQueue[p][iSongIndex][i].sModifier );
+		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
+		Attack a = m_asModifiersQueue[p][iSongIndex][i];
+		if( a.fStartSecond == 0 )
+			a.fStartSecond = -1;	// now
+		
+		GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+		GAMESTATE->m_SongOptions.FromString( a.sModifier );
 	}
 
-	/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
-	for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[p].size(); s++ )
-	{
-		if( GAMESTATE->m_ActiveAttacks[p][s].fStartSecond == 0 )
-			GAMESTATE->m_ActiveAttacks[p][s].fStartSecond = -1;
-	}
 	/* Update attack bOn flags. */
 	GAMESTATE->Update(0);
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
