@@ -6,6 +6,7 @@
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
+#include "archutils/Unix/EmergencyShutdown.h"
 #include <unistd.h>
 #include "RageUtil.h"
 #include <sys/time.h>
@@ -54,11 +55,7 @@ static void EmergencyShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	if( !IsFatalSignal(signal) )
 		return;
 
-	/* If we don't actually use SDL for video, this should be a no-op.  Only
-	 * do this if the main thread crashes; trying to shut down from
-	 * another thread causes crashes (eg. GL may be using TLS). */
-	if( !strcmp(RageThread::GetCurThreadName(), "Main thread") && SDL_WasInit(SDL_INIT_VIDEO) )
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	DoEmergencyShutdown();
 
 #if defined(CRASH_HANDLER)
 	/* If we ran the crash handler, then die. */
