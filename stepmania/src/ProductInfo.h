@@ -1,5 +1,5 @@
 // Currently, used only by the title screen.
-// Don't forget to also change ProductInfo.nsinc!
+// Don't forget to also change ProductInfo.inc!
 
 #define PRODUCT_NAME "StepMania"
 #define PRODUCT_VER "3.9 random build"
