@@ -87,9 +87,11 @@ void Steps::SetSMNoteData( const CString &notes_comp_ )
 	m_uHash = GetHashForString( notes_comp );
 }
 
+/* XXX: this function should pull data from cache, like Decompress(); but maybe
+ * we can just get rid of this ... */
 void Steps::GetSMNoteData( CString &notes_comp_out ) const
 {
-	if( !notes_comp.empty() )
+	if( notes_comp.empty() )
 	{
 		if( !notes ) 
 		{
@@ -177,7 +179,7 @@ void Steps::Decompress() const
 		return;
 	}
 
-	if( !m_sFilename.empty() && notes_comp == NULL )
+	if( !m_sFilename.empty() && notes_comp.empty() )
 	{
 		/* We have data on disk and not in memory.  Load it. */
 		Song s;
@@ -202,7 +204,7 @@ void Steps::Decompress() const
 		pSteps->GetSMNoteData( notes_comp );
 	}
 
-	if( notes_comp == NULL )
+	if( notes_comp.empty() )
 	{
 		/* there is no data, do nothing */
 	}
