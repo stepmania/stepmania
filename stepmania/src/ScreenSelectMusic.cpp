@@ -76,9 +76,15 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	// pop'n music has this under the songwheel...
 	FOREACH_PlayerNumber( p )
 	{
-		Character* pChar = GAMESTATE->m_pCurCharacters[p];
 		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
-		m_sprCharacterIcon[p].Load( pChar->GetSongSelectIconPath() );
+
+		Character* pChar = GAMESTATE->m_pCurCharacters[p];
+		CString sPath = pChar->GetSongSelectIconPath();
+
+		if( sPath.empty() )
+			continue;
+
+		m_sprCharacterIcon[p].Load( sPath );
 		SET_XY( m_sprCharacterIcon[p] );
 		this->AddChild( &m_sprCharacterIcon[p] );
 	}
