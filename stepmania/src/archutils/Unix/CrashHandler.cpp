@@ -37,6 +37,49 @@ static void safe_print(int fd, ...)
 	va_end(ap);
 }
 
+static const char *itoa(unsigned n)
+{
+	static char ret[32];
+	char *p = ret;
+	for( int div = 1000000000; div > 0; div /= 10 )
+	{
+		*p++ = (n / div) + '0';
+		n %= div;
+	}
+	*p = 0;
+	p = ret;
+	while( p[0] == '0' && p[1] )
+		++p;
+	return p;
+}
+
+#if defined(LINUX)
+static void GetExecutableName( char *buf, int bufsize )
+{
+	/* readlink(/proc/pid/exe).  This is more reliable than argv[0]. */
+	char proc_fn[1024] = "/proc/";
+	strcat( proc_fn, itoa( getpid() ) );
+	strcat( proc_fn, "/exe" );
+
+	int got = readlink( proc_fn, buf, bufsize-1 );
+	if( got == -1 )
+	{
+		safe_print( fileno(stderr), "Crash handler readlink ", proc_fn, " failed: ", strerror(errno), "\n", NULL );
+
+		strncpy( buf, g_pCrashHandlerArgv0, bufsize );
+		buf[bufsize-1] = 0;
+	}
+
+
+	buf[got] = 0;
+}
+#else
+static void GetExecutableName( char *buf, int bufsize )
+{
+	strncpy( buf, g_pCrashHandlerArgv0, bufsize );
+	buf[bufsize-1] = 0;
+}
+#endif
 
 static void NORETURN spawn_child_process( int from_parent )
 {
@@ -51,10 +94,12 @@ static void NORETURN spawn_child_process( int from_parent )
 		close(from_parent);
 	}
 
-	execl( g_pCrashHandlerArgv0, g_pCrashHandlerArgv0, CHILD_MAGIC_PARAMETER, NULL);
+	char path[1024];
+	GetExecutableName( path, sizeof(path) );
+	execlp( path, path, CHILD_MAGIC_PARAMETER, NULL );
 
 	/* If we got here, the exec failed. */
-	safe_print(fileno(stderr), "Crash handler execl(", g_pCrashHandlerArgv0, ") failed: ", strerror(errno), "\n", NULL);
+	safe_print(fileno(stderr), "Crash handler execl(", path, ") failed: ", strerror(errno), "\n", NULL);
 	_exit(1);
 }
 
@@ -150,22 +195,6 @@ static void parent_process( int to_child, const CrashData *crash )
  * signal trampolines.  The result is that it doesn't properly show the
  * function that actually caused the signal--which is the most important
  * one!  So, we have to do it all ourself. */
-static const char *itoa(unsigned n)
-{
-	static char ret[32];
-	char *p = ret;
-	for( int div = 1000000000; div > 0; div /= 10 )
-	{
-		*p++ = (n / div) + '0';
-		n %= div;
-	}
-	*p = 0;
-	p = ret;
-	while( p[0] == '0' && p[1] )
-		++p;
-	return p;
-}
-
 #if defined(DARWIN)
 const char *ExceptionName( int signo )
 {
