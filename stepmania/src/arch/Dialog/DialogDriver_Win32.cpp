@@ -24,10 +24,10 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 	{
 	case WM_INITDIALOG:
 		{
-			g_Hush = false;
-			CString sMessage = g_sMessage;
+			// Disable parent, like a modal MessageBox does.
+			EnableWindow( GetParent(hWnd), FALSE );
 
-			sMessage.Replace( "\n", "\r\n" );
+			g_Hush = false;
 			HWND hush = GetDlgItem( hWnd, IDC_HUSH );
 	        int style = GetWindowLong(hush, GWL_STYLE);
 
@@ -37,13 +37,16 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 				style &= ~WS_VISIBLE;
 	        SetWindowLong( hush, GWL_STYLE, style );
 
-			SendDlgItemMessage( 
-				hWnd, 
-				IDC_MESSAGE, 
-				WM_SETTEXT, 
-				0, 
-				(LPARAM)(LPCTSTR)sMessage
-				);
+			// Set static text.
+			CString sMessage = g_sMessage;
+			sMessage.Replace( "\n", "\r\n" );
+			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
+		}
+		break;
+	case WM_DESTROY:
+		{
+			// Re-enable parent
+			EnableWindow( GetParent(hWnd), TRUE );
 		}
 		break;
 	case WM_COMMAND:
@@ -61,7 +64,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 
 
-
+extern HWND g_hWndMain;
 
 void DialogDriver_Win32::OK( CString sMessage, CString ID )
 {
@@ -72,7 +75,7 @@ void DialogDriver_Win32::OK( CString sMessage, CString ID )
 	g_AllowHush = ID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
-	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_OK), NULL, OKWndProc);
+	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_OK), g_hWndMain, OKWndProc);
 	if( g_AllowHush && g_Hush )
 		Dialog::IgnoreMessage( ID );
 }
@@ -85,17 +88,10 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	{
 	case WM_INITDIALOG:
 		{
+			// Set static text
 			CString sMessage = g_sErrorString;
-
 			sMessage.Replace( "\n", "\r\n" );
-			
-			SendDlgItemMessage( 
-				hWnd, 
-				IDC_EDIT_ERROR, 
-				WM_SETTEXT, 
-				0, 
-				(LPARAM)(LPCTSTR)sMessage
-				);
+			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
 		}
 		break;
 	case WM_COMMAND:
@@ -155,7 +151,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3|MB_TASKMODAL ) )
+	switch( MessageBox(g_hWndMain, sMessage, PRODUCT_NAME, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
@@ -170,7 +166,7 @@ Dialog::Result DialogDriver_Win32::RetryCancel( CString sMessage, CString ID )
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(NULL, sMessage, PRODUCT_NAME, MB_RETRYCANCEL|MB_TASKMODAL ) )
+	switch( MessageBox(g_hWndMain, sMessage, PRODUCT_NAME, MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);
