@@ -63,6 +63,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SHOW_GRAPH( m_sName, "ShowGraph" ),
 	SHOW_PANES( m_sName, "ShowPanes" ),
 	SHOW_DIFFICULTY_LIST( m_sName, "ShowDifficultyList" ),
+	SHOW_COURSE_CONTENTS( m_sName, "ShowCourseContents" ),
 	DO_ROULETTE_ON_MENU_TIMER( m_sName, "DoRouletteOnMenuTimer" ),
 	ALIGN_MUSIC_BEATS( m_sName, "AlignMusicBeat" ),
 	CODES( m_sName, "Codes" ),
@@ -222,10 +223,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_textTotalTime );
 	this->AddChild( &m_textTotalTime );
 
-	m_CourseContentsFrame.SetName( "CourseContents" );
-	SET_XY( m_CourseContentsFrame );
-	this->AddChild( &m_CourseContentsFrame );
-
 	m_Artist.SetName( "ArtistDisplay" );
 	m_Artist.Load();
 	SET_XY( m_Artist );
@@ -242,6 +239,13 @@ void ScreenSelectMusic::Init()
 		m_DifficultyList.Load();
 		SET_XY_AND_ON_COMMAND( m_DifficultyList );
 		this->AddChild( &m_DifficultyList );
+	}
+
+	if( SHOW_COURSE_CONTENTS )
+	{
+		m_CourseContents.SetName( "CourseContents" );
+		SET_XY( m_CourseContents );
+		this->AddChild( &m_CourseContents );
 	}
 
 	FOREACH_HumanPlayer( p )
@@ -447,27 +451,29 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 
 void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
 {
-	m_CourseContentsFrame.SetZoomY( 1 );
-	if( Initial )
+	if( SHOW_COURSE_CONTENTS )
 	{
-		COMMAND( m_CourseContentsFrame, "On" );
-	}
-	else
-	{
-		m_CourseContentsFrame.SetFromGameState();
-		COMMAND( m_CourseContentsFrame, "Show" );
+		m_CourseContents.SetZoomY( 1 );
+		if( Initial )
+		{
+			COMMAND( m_CourseContents, "On" );
+		}
+		else
+		{
+			m_CourseContents.SetFromGameState();
+			COMMAND( m_CourseContents, "Show" );
+		}
 	}
 }
 
 void ScreenSelectMusic::TweenCoursePartsOffScreen( bool Final )
 {
-	if( Final )
+	if( SHOW_COURSE_CONTENTS )
 	{
-		OFF_COMMAND( m_CourseContentsFrame );
-	}
-	else
-	{
-		COMMAND( m_CourseContentsFrame, "Hide" );
+		if( Final )
+			OFF_COMMAND( m_CourseContents );
+		else
+			COMMAND( m_CourseContents, "Hide" );
 	}
 }
 
@@ -489,7 +495,8 @@ void ScreenSelectMusic::SkipSongPartTweens()
 
 void ScreenSelectMusic::SkipCoursePartTweens()
 {
-	m_CourseContentsFrame.FinishTweening();
+	if( SHOW_COURSE_CONTENTS )
+		m_CourseContents.FinishTweening();
 }
 
 void ScreenSelectMusic::TweenOnScreen()
@@ -762,7 +769,8 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		if( type != IET_FIRST_PRESS ) return;
 		PREFSMAN->m_bShowNativeLanguage ^= 1;
 		m_MusicWheel.RebuildAllMusicWheelItems();
-		m_CourseContentsFrame.SetFromGameState();
+		if( SHOW_COURSE_CONTENTS )
+			m_CourseContents.SetFromGameState();
 		return;
 	}
 
@@ -1339,8 +1347,11 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 
 		/* Update the trail list, but don't actually start the tween; only do that when
 		* the actual course changes (AfterMusicChange). */
-		m_CourseContentsFrame.SetFromGameState();
-		// m_CourseContentsFrame.TweenInAfterChangedCourse();
+		if( SHOW_COURSE_CONTENTS )
+		{
+			m_CourseContents.SetFromGameState();
+			// m_CourseContents.TweenInAfterChangedCourse();
+		}
 
 		m_DifficultyMeter[pn].SetFromGameState( pn );
 		m_GrooveRadar.SetEmpty( pn );
@@ -1783,7 +1794,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_COURSE:
-		m_CourseContentsFrame.TweenInAfterChangedCourse();
+		if( SHOW_COURSE_CONTENTS )
+			m_CourseContents.TweenInAfterChangedCourse();
 		break;
 	}
 }

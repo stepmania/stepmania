@@ -81,6 +81,7 @@ protected:
 	ThemeMetric<bool> SHOW_GRAPH;
 	ThemeMetric<bool> SHOW_PANES;
 	ThemeMetric<bool> SHOW_DIFFICULTY_LIST;
+	ThemeMetric<bool> SHOW_COURSE_CONTENTS;
 	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
 	ThemeMetric<CString> CODES;
@@ -124,7 +125,7 @@ protected:
 	AutoActor			m_sprCourseHasMods;
 	DifficultyDisplay   m_DifficultyDisplay;
 	DifficultyList		m_DifficultyList;
-	CourseContentsList	m_CourseContentsFrame;
+	CourseContentsList	m_CourseContents;
 	HelpDisplay			m_Artist;
 	BitmapText			m_MachineRank;
 	PaneDisplay			m_PaneDisplay[NUM_PLAYERS];
