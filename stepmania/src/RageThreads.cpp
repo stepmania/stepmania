@@ -86,13 +86,6 @@ LockMutex::~LockMutex()
 {
 	if(locked)
 		mutex.Unlock();
-
-	if(file)
-	{
-		float dur = RageTimer::GetTimeSinceStart() - locked_at;
-		if(dur > 0.015)
-			LOG->Trace(ssprintf("Lock at %s:%i took %f", file, line, dur));
-	}
 }
 
 void LockMutex::Unlock()
@@ -101,6 +94,13 @@ void LockMutex::Unlock()
 	locked = false;
 
 	mutex.Unlock();
+
+	if(file && locked_at != -1)
+	{
+		float dur = RageTimer::GetTimeSinceStart() - locked_at;
+		if(dur > 0.015)
+			LOG->Trace(ssprintf("Lock at %s:%i took %f", file, line, dur));
+	}
 }
 
 

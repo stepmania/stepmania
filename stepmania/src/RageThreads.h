@@ -34,9 +34,9 @@ class LockMutex
 
 public:
 	LockMutex(RageMutex &mut, const char *file, int line);
-	LockMutex(RageMutex &mut): mutex(mut), file(NULL), line(-1), locked_at(0) { mutex.Lock(); }
+	LockMutex(RageMutex &mut): mutex(mut), file(NULL), line(-1), locked_at(-1), locked(true) { mutex.Lock(); }
 	~LockMutex();
-	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(cpy.file), line(cpy.line), locked_at(cpy.locked_at) { mutex.Lock(); }
+	LockMutex(LockMutex &cpy): mutex(cpy.mutex), file(NULL), line(-1), locked_at(cpy.locked_at), locked(true) { mutex.Lock(); }
 
 	/* Unlock the mutex (before this would normally go out of scope).  This can
 	 * only be called once. */
