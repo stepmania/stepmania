@@ -352,14 +352,14 @@ void Model::DrawPrimitives()
 				{
 					// render the diffuse texture
 					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
-					DISPLAY->SetSphereEnivronmentMapping( mat.diffuse.m_bSphereMapped );
+					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					DrawMesh( i );
 				
 					// render the additive texture
 					if( mat.alpha.GetCurrentTexture() )
 					{
 						DISPLAY->SetTexture( 0, mat.alpha.GetCurrentTexture() );
-						DISPLAY->SetSphereEnivronmentMapping( mat.alpha.m_bSphereMapped );
+						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						// UGLY:  This overrides the Actor's BlendMode
 						DISPLAY->SetBlendMode( BLEND_ADD );
 						DISPLAY->SetTextureFiltering( true );
@@ -370,13 +370,13 @@ void Model::DrawPrimitives()
 				{
 					// render the diffuse texture with texture unit 1
 					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
-					DISPLAY->SetSphereEnivronmentMapping( mat.diffuse.m_bSphereMapped );
+					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
 						DISPLAY->SetTexture( 1, mat.alpha.GetCurrentTexture() );
-						DISPLAY->SetSphereEnivronmentMapping( mat.alpha.m_bSphereMapped );
+						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureModeAdd();
 						DISPLAY->SetTextureFiltering( true );
 					}
@@ -386,7 +386,7 @@ void Model::DrawPrimitives()
 
 					// Turn off Environment mapping on tex unit 0.  Is there a better way to reset?
 					DISPLAY->SetTexture( 0, NULL );
-					DISPLAY->SetSphereEnivronmentMapping( 0 );
+					DISPLAY->SetSphereEnvironmentMapping( 0 );
 				}
 			}
 			else
@@ -398,11 +398,11 @@ void Model::DrawPrimitives()
 				static const float shininess = 1;
 				DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
 				DISPLAY->ClearAllTextures();
-				DISPLAY->SetSphereEnivronmentMapping( false );
+				DISPLAY->SetSphereEnvironmentMapping( false );
 				DrawMesh( i );
 			}
 
-			DISPLAY->SetSphereEnivronmentMapping( false );
+			DISPLAY->SetSphereEnvironmentMapping( false );
 			DISPLAY->SetBlendMode( BLEND_NORMAL );
 			DISPLAY->TexturePopMatrix();
 		}

@@ -1329,7 +1329,7 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 	return m;
 }
 
-void RageDisplay_D3D::SetSphereEnivronmentMapping( bool b )
+void RageDisplay_D3D::SetSphereEnvironmentMapping( bool b )
 {
 	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;

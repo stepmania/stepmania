@@ -226,7 +226,7 @@ public:
 		const RageColor &specular, 
 		const RageVector3 &dir ) = 0;
 
-	virtual void SetSphereEnivronmentMapping( bool b ) = 0;
+	virtual void SetSphereEnvironmentMapping( bool b ) = 0;
 
 	virtual RageCompiledGeometry* CreateCompiledGeometry() = 0;
 	virtual void DeleteCompiledGeometry( RageCompiledGeometry* p ) = 0;

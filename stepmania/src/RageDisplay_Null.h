@@ -59,7 +59,7 @@ public:
 		const RageColor &specular, 
 		const RageVector3 &dir ) { }
 
-	void SetSphereEnivronmentMapping( bool b ) { }
+	void SetSphereEnvironmentMapping( bool b ) { }
 	
 	RageCompiledGeometry* CreateCompiledGeometry();
 	void DeleteCompiledGeometry( RageCompiledGeometry* p );
