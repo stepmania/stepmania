@@ -20,6 +20,13 @@ static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const int KEY_LENGTH = 1024;
 #define MAX_SIGNATURE_SIZE_BYTES 1024	// 1 KB
 
+#ifndef OS_RNG_AVAILABLE
+/* To ease porting, if there is no AutoSeededRandomPool, use an insecure, unseeded pool. */
+#include "crypto51/randpool.h"
+#include "crypto51/rng.h"
+#define AutoSeededRandomPool RandomPool
+#endif
+
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
 CryptManager::CryptManager()
