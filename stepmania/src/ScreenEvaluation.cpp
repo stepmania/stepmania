@@ -365,9 +365,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_sprGradeFrame[p].Load( THEME->GetPathToG("ScreenEvaluation grade frame 1x2") );
-			m_sprGradeFrame[p].StopAnimating();
-			m_sprGradeFrame[p].SetState( p );
+			m_sprGradeFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation grade frame p%d",p+1)) );
 			m_sprGradeFrame[p].SetName( ssprintf("GradeFrameP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprGradeFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprGradeFrame[p] );
@@ -389,9 +387,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	{
 		for( p=0; p<NUM_PLAYERS; p++ ) 
 		{
-			m_sprPercentFrame[p].Load( THEME->GetPathToG("ScreenEvaluation percent frame 1x2") );
-			m_sprPercentFrame[p].StopAnimating();
-			m_sprPercentFrame[p].SetState( p );
+			m_sprPercentFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation percent frame p%d",p+1)) );
 			m_sprPercentFrame[p].SetName( ssprintf("PercentFrameP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprPercentFrame[p] );
@@ -440,26 +436,20 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_sprBonusFrame[p].Load( THEME->GetPathToG("ScreenEvaluation bonus frame 2x1") );
-			m_sprBonusFrame[p].StopAnimating();
-			m_sprBonusFrame[p].SetState( p );
+			m_sprBonusFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bonus frame p%d",p+1)) );
 			m_sprBonusFrame[p].SetName( ssprintf("BonusFrameP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprBonusFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprBonusFrame[p] );
 
 			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
 			{
-				m_sprPossibleBar[p][r].Load( THEME->GetPathToG("ScreenEvaluation bars possible 1x2") );
-				m_sprPossibleBar[p][r].StopAnimating();
-				m_sprPossibleBar[p][r].SetState( p );
+				m_sprPossibleBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bars possible p%d",p+1)) );
 				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarPossible[p][r] );
 				m_sprPossibleBar[p][r].SetName( ssprintf("BarPossible%dP%d",r+1,p+1) );
 				UtilSetXYAndOnCommand( m_sprPossibleBar[p][r], "ScreenEvaluation" );
 				this->AddChild( &m_sprPossibleBar[p][r] );
 
-				m_sprActualBar[p][r].Load( THEME->GetPathToG("ScreenEvaluation bars actual 1x2") );
-				m_sprActualBar[p][r].StopAnimating();
-				m_sprActualBar[p][r].SetState( p );
+				m_sprActualBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bars actual p%d",p+1)) );
 				m_sprActualBar[p][r].SetWidth( m_sprActualBar[p][r].GetUnzoomedWidth() * stageStats.fRadarActual[p][r] );
 				m_sprActualBar[p][r].SetName( ssprintf("BarActual%dP%d",r+1,p+1) );
 				UtilSetXYAndOnCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
@@ -480,9 +470,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_sprSurvivedFrame[p].Load( THEME->GetPathToG("ScreenEvaluation survived frame 2x1") );
-			m_sprSurvivedFrame[p].StopAnimating();
-			m_sprSurvivedFrame[p].SetState( p );
+			m_sprSurvivedFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation survived frame p%d",p+1)) );
 			m_sprSurvivedFrame[p].SetName( ssprintf("SurvivedFrameP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprSurvivedFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprSurvivedFrame[p] );
@@ -506,16 +494,14 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 				continue;	// skip
 
-			m_sprWinFrame[p].Load( THEME->GetPathToG("ScreenEvaluation win frame 2x1") );
-			m_sprWinFrame[p].StopAnimating();
-			m_sprWinFrame[p].SetState( p );
+			m_sprWinFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation win frame p%d",p+1)) );
 			m_sprWinFrame[p].SetName( ssprintf("WinFrameP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprWinFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprWinFrame[p] );
 
-			m_sprWin[p].Load( THEME->GetPathToG("ScreenEvaluation win 2x3") );
+			m_sprWin[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation win p%d 1x3",p+1)) );
 			m_sprWin[p].StopAnimating();
-			int iFrame = GAMESTATE->GetStageResult( (PlayerNumber)p )*2 + p;
+			int iFrame = GAMESTATE->GetStageResult( (PlayerNumber)p );
 			m_sprWin[p].SetState( iFrame );
 			m_sprWin[p].SetName( ssprintf("WinP%d",p+1) );
 			UtilSetXYAndOnCommand( m_sprWin[p], "ScreenEvaluation" );
