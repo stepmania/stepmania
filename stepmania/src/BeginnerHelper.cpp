@@ -170,7 +170,7 @@ void BeginnerHelper::FlashOnce()
 	m_sFlash.SetDiffuseAlpha(1);
 	m_sFlash.SetEffectNone();
 	m_sFlash.StopTweening();
-	m_sFlash.BeginTweening( 1/GAMESTATE->m_fCurBPS * 0.5);
+	m_sFlash.BeginTweening( 1/GAMESTATE->m_fCurBPS * 0.5f );
 	m_sFlash.SetDiffuseAlpha(0);
 }
 
