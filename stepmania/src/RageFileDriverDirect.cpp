@@ -66,6 +66,24 @@ static HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
 	return FindFirstFile( sPath, fd );
 #endif
 }
+
+static int WinMoveFile( const CString sOldPath, const CString sNewPath )
+{
+	static bool Win9x = false;
+
+	if( !Win9x )
+	{
+		if( MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING ) )
+			return 1;
+
+		if( GetLastError() != ERROR_NOT_SUPPORTED )
+			return 0;
+
+		Win9x = true;
+	}
+
+	return MoveFile( sOldPath, sNewPath );
+}
 #endif
 
 static int DoRemove( const CString &sPath )
@@ -500,39 +518,22 @@ RageFileObjDirect::~RageFileObjDirect()
 		 * don't know if it has similar atomicity guarantees to rename).  In
 		 * 9x, we're screwed, so just delete any existing file (we aren't going
 		 * to be robust on 9x anyway). */
-		int err = MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING )? ERROR_SUCCESS:GetLastError();
-
-		if( err == ERROR_ACCESS_DENIED )
+		if( WinMoveFile(sOldPath, sNewPath) )
+			return;
+		if( GetLastError() == ERROR_ACCESS_DENIED )
 		{
 			/* Try turning off the read-only bit on the file we're overwriting. */
 			SetFileAttributes( sNewPath, FILE_ATTRIBUTE_NORMAL );
 
-			err = MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING )? ERROR_SUCCESS:GetLastError();
+			if( WinMoveFile( sOldPath, sNewPath ) )
+				return;
 		}
 
-		if( err == ERROR_NOT_SUPPORTED )
-		{
-			/* We're in 9x.  Delete the old file and rename. */
-			if( DoRemove(sOldPath) == -1 && errno != ENOENT )
-			{
-				LOG->Warn( "Error removing %s: %s", sOldPath.c_str(), strerror(errno) );
-				SetError( strerror(errno) );
-			}
-			else if( rename( sOldPath, sNewPath ) == -1 )
-			{
-				LOG->Warn( "Error renaming \"%s\" to \"%s\": %s", 
-					sOldPath.c_str(), sNewPath.c_str(), strerror(errno) );
-				SetError( strerror(errno) );
-			}
-		}
-		else if( err != ERROR_SUCCESS )
-		{
-			/* We failed. */
-			const CString error = werr_ssprintf( err, "Error renaming \"%s\" to \"%s\"", 
-				sOldPath.c_str(), sNewPath.c_str() );
-			LOG->Warn( "%s", error.c_str() );
-			SetError( error );
-		}
+		/* We failed. */
+		int err = GetLastError();
+		const CString error = werr_ssprintf( err, "Error renaming \"%s\" to \"%s\"", sOldPath.c_str(), sNewPath.c_str() );
+		LOG->Warn( "%s", error.c_str() );
+		SetError( error );
 #else
 		if( rename( sOldPath, sNewPath ) == -1 )
 		{
