@@ -93,7 +93,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					}
 					if (m_iRoomPlace<0)
 						m_iRoomPlace=0;
-					if (m_iRoomPlace>=m_Rooms.size())
+					if( m_iRoomPlace >= (int) m_Rooms.size() )
 						m_iRoomPlace=m_Rooms.size()-1;
 					UpdateRoomsList();
 				}
@@ -142,7 +142,7 @@ void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
 	m_iRoomPlace--;
 	if (m_iRoomPlace<0)
 		m_iRoomPlace=0;
-	if (m_iRoomPlace>=m_Rooms.size())
+	if( m_iRoomPlace >= (int) m_Rooms.size() )
 		m_iRoomPlace=m_Rooms.size()-1;
 	UpdateRoomsList();
 	ScreenNetSelectBase::MenuUp( pn );
@@ -153,7 +153,7 @@ void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 	m_iRoomPlace++;
 	if (m_iRoomPlace<0)
 		m_iRoomPlace=0;
-	if (m_iRoomPlace>=m_Rooms.size())
+	if( m_iRoomPlace >= (int) m_Rooms.size() )
 		m_iRoomPlace=m_Rooms.size()-1;
 	UpdateRoomsList();
 	ScreenNetSelectBase::MenuDown( pn );
@@ -167,7 +167,7 @@ void ScreenNetRoom::UpdateRoomsList()
 	int max = m_iRoomPlace+NUM_ROOMS_SHOW;
 	for (int i=min; i<max; i++ )
 	{
-		if ( ( i >= 0 ) && ( i < m_Rooms.size() ) )
+		if( i >= 0 && i < (int) m_Rooms.size() )
 			TempText += m_Rooms[i] + '\n';
 	}
 	m_textRooms.SetText( TempText );
