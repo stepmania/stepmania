@@ -422,7 +422,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	this->AddChild( &m_textSongTitle );
 
 
-	m_meterSongPosition.Load( THEME->GetPathToG("ScreenGameplay song position meter"), SONG_POSITION_METER_WIDTH );
+	m_meterSongPosition.Load( THEME->GetPathToG("ScreenGameplay song position meter"), SONG_POSITION_METER_WIDTH, THEME->GetPathToG("ScreenGameplay song position tip") );
 	m_meterSongPosition.SetName( "SongPositionMeter" );
 	SET_XY( m_meterSongPosition );
 	this->AddChild( &m_meterSongPosition );
