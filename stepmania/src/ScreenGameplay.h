@@ -81,6 +81,7 @@ protected:
 	bool AllFailedEarlier();
 	bool IsTimeToPlayTicks() const;
 	void UpdateLyrics( float fDeltaTime );
+	void UpdateCheckFail();
 
 	enum DancingState { 
 		STATE_INTRO = 0, // not allowed to press Back
