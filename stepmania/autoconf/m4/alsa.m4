@@ -8,7 +8,7 @@ dnl Test for libasound, and define ALSA_CFLAGS and ALSA_LIBS as appropriate.
 dnl enables arguments --with-alsa-prefix=
 dnl                   --with-alsa-enc-prefix=
 dnl
-AC_DEFUN(AM_PATH_ALSA,
+AC_DEFUN([AM_PATH_ALSA],
 [dnl Save the original CFLAGS, LDFLAGS, and LIBS
 alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"

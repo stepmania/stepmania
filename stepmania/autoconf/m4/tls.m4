@@ -2,7 +2,7 @@
 # the resulting program actually runs, not whether the resulting TLS variables
 # work properly; that check is done at runtime, since we can run binaries
 # compiled with __thread on systems without TLS.
-AC_DEFUN(SM_TLS,
+AC_DEFUN([SM_TLS],
 [
     AC_MSG_CHECKING(for TLS)
     AC_TRY_RUN( [ static __thread int val; int main() { return 0; } ], have_tls=yes,have_tls=no,have_tls=no )

@@ -1,4 +1,4 @@
-AC_DEFUN(SM_LUA, [
+AC_DEFUN([SM_LUA], [
 
 AC_CHECK_PROGS(LUA_CONFIG, [lua-config50 lua-config], "")
 if test "$LUA_CONFIG" != ""; then

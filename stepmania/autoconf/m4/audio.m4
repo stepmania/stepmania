@@ -1,4 +1,4 @@
-AC_DEFUN(SM_AUDIO, [
+AC_DEFUN([SM_AUDIO], [
 
 AC_ARG_WITH(vorbis, AC_HELP_STRING([--without-vorbis], [Disable Vorbis support]), with_vorbis=$enableval, with_vorbis=yes)
 

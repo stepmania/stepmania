@@ -1,5 +1,5 @@
 # See if we have a working backtrace_symbols.
-AC_DEFUN(SM_FUNC_BACKTRACE_SYMBOLS,
+AC_DEFUN([SM_FUNC_BACKTRACE_SYMBOLS],
 [
     AC_MSG_CHECKING(for working backtrace_symbols())
     AC_TRY_RUN(
@@ -15,7 +15,7 @@ AC_DEFUN(SM_FUNC_BACKTRACE_SYMBOLS,
     AC_MSG_RESULT($have_backtrace_symbols)
 ])
 
-AC_DEFUN(SM_FUNC_CXA_DEMANGLE,
+AC_DEFUN([SM_FUNC_CXA_DEMANGLE],
 [
     # Check for abi::__cxa_demangle (gcc 3.1+)
     AC_MSG_CHECKING(for working cxa_demangle)
@@ -45,7 +45,7 @@ AC_DEFUN(SM_FUNC_CXA_DEMANGLE,
 	
 # To support backtraces in the crash handler, we need two things: a call to
 # get backtrace pointers, and a way to convert them to symbols.
-AC_DEFUN(SM_CHECK_CRASH_HANDLER,
+AC_DEFUN([SM_CHECK_CRASH_HANDLER],
 [
     # See if we have a custom backtrace():
     case $host in
