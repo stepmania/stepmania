@@ -215,8 +215,8 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
 
 	// Try to write a file.
 	// TODO: Can we use RageFile for this?
-	CString sFile = usbd.sOsMountDir;
-	if( sFile[sFile.length()-1 != '/' )
+	CString sFile = pDevice->sOsMountDir;
+	if( sFile[sFile.length()-1] != '/' )
 		sFile += '/';
 	sFile += "temp";
 	int fd = open( sFile, O_WRONLY|O_CREAT|O_TRUNC );
