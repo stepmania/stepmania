@@ -1045,7 +1045,7 @@ void ScreenGameplay::PlayTicks()
 		const float fTickBeat = NoteRowToBeat( iTickRow );
 		const float fTickSecond = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat( fTickBeat );
 		float fSecondsUntil = fTickSecond - GAMESTATE->m_fMusicSeconds;
-		fSecondsUntil /= m_soundMusic.GetPlaybackRate(); /* 2x music rate means the time until the tick is halved */
+		fSecondsUntil /= GAMESTATE->m_SongOptions.m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 
 		RageTimer when = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
 		m_soundAssistTick.SetStartTime( when );
@@ -1321,7 +1321,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indices we crossed
 	{
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-		fPositionSeconds += (SOUND->GetPlayLatency()) * m_soundMusic.GetPlaybackRate();
+		fPositionSeconds += (SOUND->GetPlayLatency()) * GAMESTATE->m_SongOptions.m_fMusicRate;
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
