@@ -352,7 +352,7 @@ static void CheckSettings()
 	MEMORYSTATUS mem;
 	GlobalMemoryStatus(&mem);
 
-	const int Memory = mem.dwTotalPhys / 1048576;
+	const int Memory = mem.dwTotalPhys / (1024*1024);
 
 	if( PREFSMAN->m_iLastSeenMemory == Memory )
 		return;
