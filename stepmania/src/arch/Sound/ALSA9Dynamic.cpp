@@ -19,6 +19,18 @@ static void *Handle = NULL;
 static const CString lib = "libasound.so.2";
 CString LoadALSA()
 {
+	/* If /proc/asound/ doesn't exist, chances are we're on an OSS system.  We shouldn't
+	 * touch ALSA at all, since many OSS systems have old, broken versions of ALSA lying
+	 * around; we're likely to crash if we go near it.  Do this first, before loading
+	 * the ALSA library, since making any ALSA calls may load ALSA core modules.
+	 *
+	 * It's vaguely possible that a module autoloader would load the entire ALSA module set
+	 * on use, and this would prevent that from happening.  I don't know if anyone actually
+	 * does that, though: they're often configured to load snd (the core module) if ALSA
+	 * devices are accessed, but hardware drivers are typically loaded on boot. */
+	if( !IsADirectory("/proc/asound/") )
+		return "/proc/asound/ does not exist";
+
 	ASSERT( Handle == NULL );
 
 	Handle = dlopen( lib, RTLD_NOW );
