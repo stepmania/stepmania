@@ -37,7 +37,7 @@ void SMLoader::LoadFromSMTokens(
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
 			out.m_fRadarValues[r] = (float)atof(saValues[r]);
     
-	out.m_sSMNoteData = sNoteData;
+	out.SetSMNoteData(sNoteData);
 
 	out.TidyUpData();
 }
@@ -200,20 +200,13 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			if( iNumParams != 7 )
 			{
 				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have %d.", sPath.GetString(), iNumParams, 7 );
+				continue;
 			}
-			else
-			{
-				LoadFromSMTokens( 
-					sParams[1], 
-					sParams[2], 
-					sParams[3], 
-					sParams[4], 
-					sParams[5], 
-					sParams[6],
-					*pNewNotes);
-			}
-		}
 
+			LoadFromSMTokens( 
+				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6],
+				*pNewNotes);
+		}
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
 	}
