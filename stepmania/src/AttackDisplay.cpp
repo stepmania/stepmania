@@ -61,3 +61,4 @@ void AttackDisplay::Update( float fDelta )
 		break;
 	}
 }
+
