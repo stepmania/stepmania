@@ -14,6 +14,8 @@
 #include "RageMath.h"
 #include "RageTypes.h"
 #include "RageUtil.h"
+#include "RageDisplay.h"
+#include "RageLog.h"
 #include <math.h>
 
 void RageVec2Normalize( RageVector2* pOut, const RageVector2* pV )
@@ -134,4 +136,235 @@ void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 
 	pOut->m[0][1] = sinf(theta);
 	pOut->m[1][0] = -pOut->m[0][1];
+}
+
+/* This is similar in style to Actor::Command.  However, Actors don't store
+ * matrix stacks; they only store offsets and scales, and compound them into
+ * a single transformations at once.  This makes some things easy, but it's not
+ * convenient for generic 3d transforms.  For that, we have this, which has the
+ * small subset of the actor commands that applies to raw matrices, and we apply
+ * commands in the order given.  "scale,2;x,1;" is very different from
+ * "x,1;scale,2;". */
+static CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
+{
+	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
+	if( iIndex < int(sParams.size()) )
+		return sParams[iIndex];
+	else
+		return "";
+}
+
+void RageMatrixCommand( CString sCommandString, RageMatrix &mat )
+{
+	CStringArray asCommands;
+	split( sCommandString, ";", asCommands, true );
+	
+	for( unsigned c=0; c<asCommands.size(); c++ )
+	{
+		CStringArray asTokens;
+		split( asCommands[c], ",", asTokens, true );
+
+		int iMaxIndexAccessed = 0;
+
+#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
+#define fParam(i) ((float)atof(sParam(i)))
+#define iParam(i) (atoi(sParam(i)))
+#define bParam(i) (iParam(i)!=0)
+
+		CString& sName = asTokens[0];
+		sName.MakeLower();
+
+		RageMatrix b;
+		// Act on command
+		if( sName=="x" )					RageMatrixTranslation( &b, fParam(1),0,0 );
+		else if( sName=="y" )				RageMatrixTranslation( &b, 0,fParam(1),0 );
+		else if( sName=="z" )				RageMatrixTranslation( &b, 0,0,fParam(1) );
+		else if( sName=="zoomx" )			RageMatrixScaling(&b, fParam(1),1,1 );
+		else if( sName=="zoomy" )			RageMatrixScaling(&b, 1,fParam(1),1 );
+		else if( sName=="zoomz" )			RageMatrixScaling(&b, 1,1,fParam(1) );
+		else if( sName=="rotationx" )		RageMatrixRotationX( &b, fParam(1) );
+		else if( sName=="rotationy" )		RageMatrixRotationY( &b, fParam(1) );
+		else if( sName=="rotationz" )		RageMatrixRotationZ( &b, fParam(1) );
+		else
+		{
+			CString sError = ssprintf( "Unrecognized matrix command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );
+			LOG->Warn( sError );
+#if defined(WIN32) // XXX arch?
+			if( DISPLAY->IsWindowed() )
+				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
+#endif
+			continue;
+		}
+
+
+		if( iMaxIndexAccessed != (int)asTokens.size()-1 )
+		{
+			CString sError = ssprintf( "Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).GetString(), iMaxIndexAccessed+1, (int)asTokens.size() );
+			LOG->Warn( sError );
+#if defined(WIN32) // XXX arch?
+			if( DISPLAY->IsWindowed() )
+				MessageBox(NULL, sError, "MatrixCommand", MB_OK);
+#endif
+			continue;
+		}
+
+		RageMatrix a(mat);
+		RageMatrixMultiply(&mat, &a, &b);
+	}
+}
+
+
+void RageQuatMultiply( RageVector4* pOut, const RageVector4 &pA, const RageVector4 &pB )
+{
+	RageVector4 out;
+	out.x = pA.w * pB.x + pA.x * pB.w + pA.y * pB.z - pA.z * pB.y;
+	out.y = pA.w * pB.y + pA.y * pB.w + pA.z * pB.x - pA.x * pB.z;
+	out.z = pA.w * pB.z + pA.z * pB.w + pA.x * pB.y - pA.y * pB.x;
+	out.w = pA.w * pB.w - pA.x * pB.x - pA.y * pB.y - pA.z * pB.z;
+
+    float dist, square;
+
+	square = out.x * out.x + out.y * out.y + out.z * out.z + out.w * out.w;
+	
+	if (square > 0.0)
+		dist = 1.0f / sqrtf(square);
+	else dist = 1;
+
+    out.x *= dist;
+    out.y *= dist;
+    out.z *= dist;
+    out.w *= dist;
+
+	*pOut = out;
+}
+
+RageVector4 RageQuatFromH(float theta )
+{
+	theta *= PI/180.0f;
+	theta /= 2.0f;
+	theta *= -1;
+	const float c = cosf(theta);
+	const float s = sinf(theta);
+
+	return RageVector4(0, s, 0, c);
+}
+
+RageVector4 RageQuatFromP(float theta )
+{
+	theta *= PI/180.0f;
+	theta /= 2.0f;
+	theta *= -1;
+	const float c = cosf(theta);
+	const float s = sinf(theta);
+
+	return RageVector4(s, 0, 0, c);
+}
+
+RageVector4 RageQuatFromR(float theta )
+{
+	theta *= PI/180.0f;
+	theta /= 2.0f;
+	theta *= -1;
+	const float c = cosf(theta);
+	const float s = sinf(theta);
+
+	return RageVector4(0, 0, s, c);
+}
+
+
+/* From http://www.gamasutra.com/features/19980703/quaternions_01.htm .
+ *
+ * The math on this page treats HPR as if Z is up and we're looking down Y; that
+ * is, if you're in a room, the floor is on the XY plane and Z is height.
+ * However, we treat the floor as the XZ plane, and Y is height; in other
+ * words, as if the screen is the XY plane and negative Z goes into it.
+ * So, instead of HPR.xyz being heading, pitch, roll, it's pitch, roll, heading. */
+void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr )
+{
+	hpr *= PI;
+	hpr /= 180.0f;
+	hpr /= 2.0f;
+
+	/* Set cX to the cosine of the angle we want to rotate on the X axis,
+	 * and so on.  Here, hpr.z (roll) rotates on the Z axis, hpr.x (heading)
+	 * on Y, and hpr.y (pitch) on X. */
+	const float cZ = cosf(hpr.z);
+	const float cY = cosf(hpr.x);
+	const float cX = cosf(hpr.y);
+
+	const float sZ = sinf(hpr.z);
+	const float sY = sinf(hpr.x);
+	const float sX = sinf(hpr.y);
+
+	const float cYcZ = cY * cZ;
+	const float sYsZ = sY * sZ;
+
+	pOut->w = cX * cYcZ + sX * sYsZ;
+	pOut->x = sX * cYcZ - cX * sYsZ;
+	pOut->y = cX * sY * cZ + sX * cY * sZ;
+	pOut->z = cX * cY * sZ - sX * sY * cZ;
+}
+
+void RageMatrixFromQuat( RageMatrix* pOut, const RageVector4 q )
+{
+	float xx = q.x * (q.x + q.x);
+	float xy = q.x * (q.y + q.y);
+	float xz = q.x * (q.z + q.z);
+
+	float wx = q.w * (q.x + q.x);
+	float wy = q.w * (q.y + q.y);
+	float wz = q.w * (q.z + q.z);
+
+	float yy = q.y * (q.y + q.y);
+	float yz = q.y * (q.z + q.z);
+
+	float zz = q.z * (q.z + q.z);
+	*pOut = RageMatrix(
+		1.0f-(yy+zz), xy-wz,     xz+wy,     0,
+		xy+wz,        1-(xx+zz), yz-wx,     0,
+		xz-wy,        yz+wx,     1-(xx+yy), 0,
+		0, 0, 0, 1 );
+}
+
+void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4 &to, float t)
+{
+	float to1[4];
+
+	// calc cosine
+	float cosom = from.x * to.x + from.y * to.y + from.z * to.z + from.w * to.w;
+
+	// adjust signs (if necessary)
+	if ( cosom < 0 )
+	{
+		cosom = -cosom;
+		to1[0] = - to.x;
+		to1[1] = - to.y;
+		to1[2] = - to.z;
+		to1[3] = - to.w;
+	} else  {
+		to1[0] = to.x;
+		to1[1] = to.y;
+		to1[2] = to.z;
+		to1[3] = to.w;
+	}
+
+	// calculate coefficients
+	float scale0, scale1;
+	if ( 1.0f - cosom > 0 ) {
+		// standard case (slerp)
+		float omega = acosf(cosom);
+		float sinom = sinf(omega);
+		scale0 = sinf((1.0f - t) * omega) / sinom;
+		scale1 = sinf(t * omega) / sinom;
+	} else {        
+		// "from" and "to" quaternions are very close 
+		//  ... so we can do a linear interpolation
+		scale0 = 1.0f - t;
+		scale1 = t;
+	}
+	// calculate final values
+	pOut->x = scale0 * from.x + scale1 * to1[0];
+	pOut->y = scale0 * from.y + scale1 * to1[1];
+	pOut->z = scale0 * from.z + scale1 * to1[2];
+	pOut->w = scale0 * from.w + scale1 * to1[3];
 }

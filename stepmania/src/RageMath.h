@@ -28,5 +28,13 @@ void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z );
 void RageMatrixRotationX( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationY( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationZ( RageMatrix* pOut, float fTheta );
+void RageMatrixCommand( CString sCommandString, RageMatrix &mat );
+void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr );
+void RageMatrixFromQuat( RageMatrix* pOut, const RageVector4 q );
+void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4 &to, float t);
+RageVector4 RageQuatFromH(float theta);
+RageVector4 RageQuatFromP(float theta);
+RageVector4 RageQuatFromR(float theta);
+void RageQuatMultiply( RageVector4* pOut, const RageVector4 &pA, const RageVector4 &pB );
 
 #endif
