@@ -29,6 +29,7 @@ public:
 	virtual void Play();
 	virtual void Pause();
 	virtual void SetPosition( float fSeconds );
+	virtual void DecodeSeconds( float fSeconds );
 	virtual void SetPlaybackRate( float fRate ) { m_Rate=fRate; }
 	virtual bool IsPlaying() const { return m_State == PLAYING; }
 	void SetLooping(bool looping=true) { m_bLoop = looping; }
@@ -86,7 +87,6 @@ private:
 	void StartThread();
 	void StopThread();
 
-	void UpdateTimer();
 	bool DecodeFrame();
 	float CheckFrameTime();
 	void DiscardFrame();

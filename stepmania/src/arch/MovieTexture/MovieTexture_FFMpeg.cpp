@@ -703,16 +703,6 @@ void MovieTexture_FFMpeg::CreateTexture()
     m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_img, false );
 }
 
-void MovieTexture_FFMpeg::UpdateTimer()
-{
-	/* Always update the timer, so we don't skip ahead when coming out of pause. */
-	const float fDeltaTime = m_Timer.GetDeltaTime();
-
-	/* If we're playing, update the clock. */
-	if( m_State == PLAYING )
-		m_Clock += fDeltaTime * m_Rate;
-}
-
 /* Handle decoding for a frame.  Return true if a frame was decoded, false if not
  * (due to pause, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
 bool MovieTexture_FFMpeg::DecodeFrame()
@@ -844,8 +834,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 	while( m_State != DECODER_QUIT )
 	{
-		UpdateTimer();
-
 		if( m_State == PAUSE_DECODER )
 		{
 			/* We aren't feeding frames, so we aren't waiting; don't chew CPU. 
@@ -899,8 +887,6 @@ void MovieTexture_FFMpeg::Update(float fDeltaTime)
 {
 	if( !m_bThreaded )
 	{
-		UpdateTimer();
-
 		/* If we don't have a frame decoded, decode one. */
 		if( m_ImageWaiting == FRAME_NONE )
 			DecodeFrame();
@@ -1013,6 +999,21 @@ void MovieTexture_FFMpeg::SetPosition( float fSeconds )
 
 	LOG->Trace( "Seek to %f", fSeconds );
 	m_bWantRewind = true;
+}
+
+/* This is used to decode data. */
+void MovieTexture_FFMpeg::DecodeSeconds( float fSeconds )
+{
+	/* If we're paused, then ignore time passing. */
+	if( m_State != PLAYING )
+		return;
+
+	m_Clock += fSeconds * m_Rate;
+
+	/* If we're not threaded, we want to be sure to decode any new frames now,
+	 * and not on the next frame.  Update() may have already been called for this
+	 * frame; call it again to be sure. */
+	Update(0);
 }
 
 /*
