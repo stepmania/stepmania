@@ -779,7 +779,8 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 			{
 				// search for row of next TAP_TAP
 				int iTapsLeft = iSimultaneousHolds;
-				for( int r2=r+1; r2<=last_row; r2++ )
+			        int r2;
+				for( r2=r+1; r2<=last_row; r2++ )
 				{
 					if( in.IsThereATapAtRow(r2) )
 					{
