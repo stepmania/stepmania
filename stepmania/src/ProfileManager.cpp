@@ -898,8 +898,8 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	f.PutLine( "<div class='section1'>\n" );
 	f.PutLine( "<h3>Sections</h3>\n" );
 	PRINT_LINK( "My Statistics", "#My Statistics" );
-	PRINT_LINK( "Song/Steps List", "#Song/Steps List" );
 	PRINT_LINK( "Difficulty Table", "#Difficulty Table" );
+	PRINT_LINK( "Song/Steps List", "#Song/Steps List" );
 	f.PutLine( "</div>\n" );
 
 
@@ -968,14 +968,16 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			f.PutLine( "<tr>" );
 			
 			f.Write( ssprintf("<td><a href='#%u'>%s</a></td>", 
-				pSong,	// use song pointer value as the hash
+				pSong,	// use pointer value as the hash
 				pSong->GetTranslitMainTitle().c_str()) );
 
 			for( Difficulty dc=(Difficulty)0; dc<NUM_DIFFICULTIES; dc=(Difficulty)(dc+1) )
 			{
 				Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
 				if( pSteps )
-					f.PutLine( ssprintf("<td>%d</td>", pSteps->GetMeter()) );
+					f.PutLine( ssprintf("<td><p align='right'><a href='#%u'>%d</a></p></td>", 
+					pSteps,		// use pointer value as the hash
+					pSteps->GetMeter()) );
 				else
 					f.PutLine( "<td>&nbsp;</td>" );
 			}
@@ -1006,7 +1008,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
 		f.PutLine( "<div class='section1'>\n" );
 		f.PutLine( ssprintf("<h3><a name='%u'>%s</a></h3>\n",
-			pSong,	// use song pointer value as the hash
+			pSong,	// use pointer value as the hash
 			pSong->GetFullDisplayTitle().c_str()) );
 		PRINT_LINE_S( "Artist", pSong->GetDisplayArtist() );
 		PRINT_LINE_S( "GroupName", pSong->m_sGroupName );
@@ -1029,7 +1031,8 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			if( pSteps->IsAutogen() )
 				continue;	// skip autogen
 			f.PutLine( "<div class='section2'>\n" );
-			f.PutLine( ssprintf("<h4>%s - %s</h4>\n",
+			f.PutLine( ssprintf("<h4><a name='%u'>%s - %s</a></h4>\n",
+				pSteps,	// use pointer value as the hash
 				GAMEMAN->NotesTypeToString(pSteps->m_StepsType).c_str(),
 				DifficultyToString(pSteps->GetDifficulty()).c_str()) );
 			PRINT_LINE_I( "NumTimesPlayed", pSteps->m_MemCardDatas[mc].iNumTimesPlayed );
