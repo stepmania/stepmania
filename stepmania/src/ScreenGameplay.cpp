@@ -1278,7 +1278,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
     FOREACH_EnabledPlayer(p)
 	{
-		if( g_CurStageStats.bFailed[p] )
+		if(
+			(m_pLifeMeter[p] && m_pLifeMeter[p]->IsFailing()) || 
+			(m_pCombinedLifeMeter && m_pCombinedLifeMeter->IsFailing(p)) )
 		{
 			GAMESTATE->m_HealthState[p] = GameState::DEAD;
 		}
