@@ -7,6 +7,9 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "SongManager.h"
+#include "RageFileManager.h"
+
+#define MAX_EDIT_SIZE_BYTES  20*1024	// 20 KB
 
 void SMLoader::LoadFromSMTokens( 
 	CString sNotesType, 
@@ -376,6 +379,13 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 {
 	LOG->Trace( "Song::LoadEdit(%s)", sEditFilePath.c_str() );
 
+	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
+	if( iBytes > MAX_EDIT_SIZE_BYTES )
+	{
+		LOG->Warn( "The edit '%s' is unreasonably large.  It won't be loaded.", sEditFilePath.c_str() );
+		return false;
+	}
+
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sEditFilePath );
 	if( !bResult )
@@ -407,6 +417,12 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 				LOG->Warn( "The edit file '%s' required a song '%s' that isn't present.", sEditFilePath.c_str(), sSongFullTitle.c_str() );
 				return false;
 			}
+
+			if( pSong->GetNumStepsLoadedFromProfile(slot) >= MAX_EDITS_PER_SONG_PER_PLAYER )
+			{
+				LOG->Warn( "The song '%s' already has the maximum number of edits allowed for ProfileSlotP%d.", sSongFullTitle.c_str(), slot+1 );
+				return false;
+			}
 		}
 
 		else if( 0==stricmp(sValueName,"NOTES") )
@@ -433,6 +449,8 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 
 			pNewNotes->SetLoadedFromProfile( slot );
 			pNewNotes->SetDifficulty( DIFFICULTY_EDIT );
+
+			return true;	// Only allow one Steps per edit file!
 		}
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );

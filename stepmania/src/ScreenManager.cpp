@@ -714,7 +714,7 @@ void ScreenManager::SystemMessage( CString sMessage )
 
 void ScreenManager::SystemMessageNoAnimate( CString sMessage )
 {
-	LOG->Trace( "%s", sMessage.c_str() );
+//	LOG->Trace( "%s", sMessage.c_str() );	// don't log because the caller is likely calling us every frame
 	m_SystemLayer->SystemMessageNoAnimate( sMessage );
 }
 

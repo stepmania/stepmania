@@ -42,6 +42,7 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define SONGS_DIR				"Songs/"
 #define COURSES_DIR				"Courses/"
 
+#define MAX_EDITS_PER_PROFILE	200
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
@@ -966,7 +967,9 @@ void SongManager::LoadAllFromProfiles()
 			CStringArray asEditsFilesWithPath;
 			GetDirListing( sEditsDir+"*.sm", asEditsFilesWithPath, false, true );
 
-			for( unsigned i=0; i<asEditsFilesWithPath.size(); i++ )
+			unsigned size = min( asEditsFilesWithPath.size(), (unsigned)MAX_EDITS_PER_PROFILE );
+
+			for( unsigned i=0; i<size; i++ )
 			{
 				CString sEditFileWithPath = asEditsFilesWithPath[i];
 

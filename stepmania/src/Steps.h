@@ -37,6 +37,7 @@ public:
 	// Use a special value of difficulty
 	bool IsAnEdit() const { return m_Difficulty == DIFFICULTY_EDIT; }
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
+	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
 	CString GetDescription() const { return Real()->m_sDescription; }
 	Difficulty GetDifficulty() const { return Real()->m_Difficulty; }
 	ProfileSlot GetLoadedFromProfile() const { return m_LoadedFromProfile; }

@@ -1317,6 +1317,18 @@ void Song::FreeAllLoadedFromProfiles()
 	}
 }
 
+int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
+{
+	int iCount = 0;
+	for( unsigned s=0; s<m_apNotes.size(); s++ )
+	{
+		Steps* pSteps = m_apNotes[s];
+		if( pSteps->GetLoadedFromProfileSlot() == slot )
+			iCount++;
+	}
+	return iCount;
+}
+
 bool Song::HasSignificantBpmChangesOrStops() const
 {
 	// Don't consider BPM changes that only are only for maintaining sync as 

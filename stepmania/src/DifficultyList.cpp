@@ -243,11 +243,8 @@ void DifficultyList::PositionItems()
 	int iCurrentRow[NUM_PLAYERS];
 	GetCurrentRows( iCurrentRow );
 
-	for( int pn = 0;pn < NUM_PLAYERS; ++pn )
+	FOREACH_HumanPlayer( pn )
 	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
-
 		float fY = 0;
 		if( iCurrentRow[pn] < (int) m_Rows.size() )
 			fY = m_Rows[iCurrentRow[pn]]->m_fY;
@@ -360,10 +357,8 @@ void DifficultyList::TweenOnScreen()
 	
 	PositionItems();
 
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	FOREACH_HumanPlayer( pn )
 	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
 		COMMAND( m_Cursors[pn], "TweenOn" );
 	}
 }
@@ -382,10 +377,8 @@ void DifficultyList::Show()
 	HideRows();
 	PositionItems();
 
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	FOREACH_HumanPlayer( pn )
 	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
 		COMMAND( m_Cursors[pn], "Show" );
 	}
 }
@@ -395,10 +388,8 @@ void DifficultyList::Hide()
 	m_bShown = false;
 	PositionItems();
 
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+	FOREACH_HumanPlayer( pn )
 	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
 		COMMAND( m_Cursors[pn], "Hide" );
 	}
 }

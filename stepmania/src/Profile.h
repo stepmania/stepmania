@@ -48,8 +48,8 @@ const CString PUBLIC_KEY_FILE		= "public.key";
 const CString SCREENSHOTS_SUBDIR	= "Screenshots/";
 const CString EDITS_SUBDIR			= "Edits/";
 
-#define REASONABLE_EDITABLE_INI_SIZE_BYTES	2*1000		// 2KB
-#define REASONABLE_STATS_XML_SIZE_BYTES		5*1000*1000	// 5MB
+#define MAX_EDITABLE_INI_SIZE_BYTES		2*1024		// 2KB
+#define MAX_STATS_XML_SIZE_BYTES		2*1024*1024	// 2MB
 
 
 

@@ -489,7 +489,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		// Don't unreasonably large stats.xml files.
 		//
 		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-		if( iBytes > REASONABLE_STATS_XML_SIZE_BYTES )
+		if( iBytes > MAX_STATS_XML_SIZE_BYTES )
 		{
 			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
 			break;
@@ -591,11 +591,15 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 
 	SaveStatsWebPageToDir( sDir );
 
+	//
 	// create edits dir
+	//
 	CString sEditsTempFile = sDir + EDITS_SUBDIR + "temp";
 	RageFile f;
 	f.Open( sDir + EDITS_SUBDIR + "temp", RageFile::WRITE );
 	f.Close();
+
+	FILEMAN->FlushDirCache( sDir + EDITS_SUBDIR );
 
 	FILEMAN->Remove( sEditsTempFile );
 
@@ -767,7 +771,7 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 	// Don't load unreasonably large editable.xml files.
 	//
 	int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-	if( iBytes > REASONABLE_EDITABLE_INI_SIZE_BYTES )
+	if( iBytes > MAX_EDITABLE_INI_SIZE_BYTES )
 	{
 		LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
 		return;
