@@ -19,33 +19,7 @@
 #include "StyleDef.h"
 #include "RageUtil.h"
 
-enum Code {
-	CODE_EASIER1,
-	CODE_EASIER2,
-	CODE_HARDER1,
-	CODE_HARDER2,
-	CODE_NEXT_SORT1,
-	CODE_NEXT_SORT2,
-	CODE_MIRROR,
-	CODE_LEFT,
-	CODE_RIGHT,
-	CODE_SHUFFLE,
-	CODE_SUPER_SHUFFLE,
-	CODE_NEXT_TRANSFORM,
-	CODE_NEXT_SCROLL_SPEED,
-	CODE_PREVIOUS_SCROLL_SPEED,
-	CODE_NEXT_ACCEL,
-	CODE_NEXT_EFFECT,
-	CODE_NEXT_APPEARANCE,
-	CODE_NEXT_TURN,
-	CODE_REVERSE,
-	CODE_HOLDS,
-	CODE_DARK,
-	CODE_CANCEL_ALL,
-	NUM_CODES	// leave this at the end
-};
-
-const CString g_sCodeNames[NUM_CODES] = {
+const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"Easier1",
 	"Easier2",
 	"Harder1",
@@ -67,17 +41,21 @@ const CString g_sCodeNames[NUM_CODES] = {
 	"Reverse",
 	"HoldNotes",
 	"Dark",
-	"CancelAll"
+	"CancelAll",
+	"NextTheme",
+	"NextAnnouncer"
 };
+
+const int MAX_CODE_LENGTH = 10;
 
 struct CodeCacheItem {
 	int iNumButtons;
-	GameButton buttons[10];
+	GameButton buttons[MAX_CODE_LENGTH];
 };	
-CodeCacheItem g_CodeCacheItems[NUM_CODES];
+CodeCacheItem g_CodeCacheItems[CodeDetector::NUM_CODES];
 
 
-bool MatchesCacheItem( GameController controller, Code code )
+bool CodeDetector::EnteredCode( GameController controller, Code code )
 {
 	if( g_CodeCacheItems[code].iNumButtons > 0 )
 		if( INPUTQUEUE->MatchesPattern(controller, g_CodeCacheItems[code].buttons, g_CodeCacheItems[code].iNumButtons) )
@@ -102,7 +80,7 @@ void RefreshCacheItem( int iIndex )
 		return;
 	}
 
-	for( unsigned i=0; i<asButtonNames.size(); i++ )	// for each button in this code
+	for( unsigned i=0; i<asButtonNames.size() && i<MAX_CODE_LENGTH; i++ )	// for each button in this code
 	{
 		CString sButtonName = asButtonNames[i];
 
@@ -137,17 +115,17 @@ void CodeDetector::RefreshCacheItems()
 
 bool CodeDetector::EnteredEasierDifficulty( GameController controller )
 {
-	return MatchesCacheItem(controller,CODE_EASIER1) || MatchesCacheItem(controller,CODE_EASIER2);
+	return EnteredCode(controller,CODE_EASIER1) || EnteredCode(controller,CODE_EASIER2);
 }
 
 bool CodeDetector::EnteredHarderDifficulty( GameController controller )
 {
-	return MatchesCacheItem(controller,CODE_HARDER1) || MatchesCacheItem(controller,CODE_HARDER2);
+	return EnteredCode(controller,CODE_HARDER1) || EnteredCode(controller,CODE_HARDER2);
 }
 
 bool CodeDetector::EnteredNextSort( GameController controller )
 {
-	return MatchesCacheItem(controller,CODE_NEXT_SORT1) || MatchesCacheItem(controller,CODE_NEXT_SORT2);
+	return EnteredCode(controller,CODE_NEXT_SORT1) || EnteredCode(controller,CODE_NEXT_SORT2);
 }
 
 #define  TOGGLE(v,a,b)	if(v!=a) v=a; else v=b;
@@ -155,16 +133,16 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 #define  INCREMENT_SCROLL_SPEED(s)	(s==0.5f) ? s=0.75f : (s==0.75f) ? s=1.0f : (s==1.0f) ? s=1.5f : (s==1.5f) ? s=2.0f : (s==2.0f) ? s=3.0f : (s==3.0f) ? s=4.0f : (s==4.0f) ? s=5.0f : (s==5.0f) ? s=8.0f : s=0.5f;
 #define  DECREMENT_SCROLL_SPEED(s)	(s==0.75f) ? s=0.5f : (s==1.0f) ? s=0.75f : (s==1.5f) ? s=1.0f : (s==2.0f) ? s=1.5f : (s==3.0f) ? s=2.0f : (s==4.0f) ? s=3.0f : (s==5.0f) ? s=4.0f : (s==8.0f) ? s=4.0f : s=8.0f;
 
-bool CodeDetector::DetectAndAdjustOptions( GameController controller )
+bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 {
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 	PlayerNumber pn = pStyleDef->ControllerToPlayerNumber( controller );
 
-	for( int c=CODE_MIRROR; c<NUM_CODES; c++ )
+	for( int c=0; c<CodeDetector::NUM_CODES; c++ )
 	{
 		Code code = (Code)c;
 		
-		if( MatchesCacheItem(controller,code) )
+		if( EnteredCode(controller,code) )
 		{
 			switch( code )
 			{

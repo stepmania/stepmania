@@ -149,9 +149,9 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	// update joined
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		switch( PREFSMAN->m_CoinMode )
+		switch( PREFSMAN->m_iCoinMode )
 		{
-		case PrefsManager::COIN_HOME:
+		case COIN_HOME:
 			if( GAMESTATE->m_bSideIsJoined[p] )
 				m_textCreditInfo[p].SetText( "" );
 			else if( GAMESTATE->m_bPlayersCanJoin )		// would  (GAMESTATE->m_CurStyle!=STYLE_INVALID) do the same thing?
@@ -159,7 +159,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			else
 				m_textCreditInfo[p].SetText( "NOT PRESENT" );
 			break;
-		case PrefsManager::COIN_PAY:
+		case COIN_PAY:
 			{
 				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
 				CString txt = ssprintf("CREDIT(S) %d", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
@@ -168,8 +168,11 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 				m_textCreditInfo[p].SetText(txt);
 			}
 			break;
-		case PrefsManager::COIN_FREE:
+		case COIN_FREE:
 			m_textCreditInfo[p].SetText( "FREE PLAY" );
+			break;
+		case COIN_EVENT:
+			m_textCreditInfo[p].SetText( "EVENT MODE" );
 			break;
 		default:
 			ASSERT(0);

@@ -42,6 +42,8 @@ NEW FEATURE:  Set default player and song options in stepmania.ini using
 	DefaultModifiers.
 NEW FEATURE:  Courses can be organized into group folders.  See 
 	README-FIRST.html for details.
+NEW FEATURE:  Switch current theme from TitleMenu with L,L,L,R,R,R,L,R.
+NEW FEATURE:  Switch current announcer from TitleMenu with L,L,R,R,L,R,L,R.
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

@@ -154,3 +154,27 @@ bool AnnouncerManager::HasSoundsFor( CString sFolderName )
 {
 	return !DirectoryIsEmpty( GetPathTo(sFolderName) );
 }
+
+void AnnouncerManager::NextAnnouncer()
+{
+	CStringArray as;
+	GetAnnouncerNames( as );
+	if( as.size()==0 )
+		return;
+
+	if( m_sCurAnnouncerName == "" )
+		SwitchAnnouncer( as[0] );
+	else
+	{
+		for( unsigned i=0; i<as.size(); i++ )
+			if( as[i].CompareNoCase(m_sCurAnnouncerName)==0 )
+				break;
+		if( i==as.size()-1 )
+			SwitchAnnouncer( "" );
+		else
+		{
+			int iNewIndex = (i+1)%as.size();
+			SwitchAnnouncer( as[iNewIndex] );
+		}
+	}
+}

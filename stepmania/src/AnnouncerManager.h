@@ -24,6 +24,7 @@ public:
 	bool DoesAnnouncerExist( CString sAnnouncerName );
 	void SwitchAnnouncer( CString sNewAnnouncerName );
 	CString GetCurAnnouncerName() { return m_sCurAnnouncerName; };
+	void NextAnnouncer();
 
 	CString GetPathTo( CString sFolderName );
 	bool HasSoundsFor( CString sFolderName );

@@ -195,7 +195,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		HarderDifficulty( pn );
 		return;
 	}
-	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
+	if( CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
 	{
 		UpdateOptions(pn,1);
 	}

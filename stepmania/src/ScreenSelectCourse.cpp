@@ -246,7 +246,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 	if( m_bMadeChoice )
 		return;
 
-	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
+	if( CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
 	{
 		m_soundOptionsChange.Play();
 		UpdateOptionsDisplays();

@@ -1283,3 +1283,12 @@ CString Basename(CString dir)
 }
 
 
+CString Capitalize( CString s )	
+{
+	if( s.GetLength()==0 )
+		return "";
+	CString s1 = s.Left(1);
+	s1.MakeUpper();
+	CString s2 = s.Right( s.GetLength()-1 );
+	return s1+s2;
+}

@@ -215,4 +215,13 @@ const CString RANDOMMOVIES_DIR = "RandomMovies/";
 
 
 
+//
+// Coin stuff
+//
+
+enum CoinMode { COIN_HOME, COIN_PAY, COIN_FREE, COIN_EVENT, NUM_COIN_MODES };
+
+CString CoinModeToString( CoinMode cm );
+
+
 #endif

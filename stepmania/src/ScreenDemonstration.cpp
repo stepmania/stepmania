@@ -93,7 +93,7 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
 
-			if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
+			if( PREFSMAN->m_iCoinMode == COIN_PAY )
 				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 					break;	// don't fall through
 			m_soundMusic.Stop();

@@ -11,6 +11,7 @@
 */
 
 #include "ScreenTitleMenu.h"
+#include "ScreenAttract.h"
 #include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
@@ -25,8 +26,13 @@
 #include "ThemeManager.h"
 #include "SDL_utils.h"
 #include "RageSoundManager.h"
+#include "CodeDetector.h"
 
 
+#define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
+#define LOGO_HOME_ON_COMMAND		THEME->GetMetric("ScreenTitleMenu","LogoHomeOnCommand")
+#define VERSION_ON_COMMAND			THEME->GetMetric("ScreenTitleMenu","VersionOnCommand")
+#define SONGS_ON_COMMAND			THEME->GetMetric("ScreenTitleMenu","SongsOnCommand")
 #define HELP_X						THEME->GetMetricF("ScreenTitleMenu","HelpX")
 #define HELP_Y						THEME->GetMetricF("ScreenTitleMenu","HelpY")
 #define CHOICES_X					THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
@@ -39,53 +45,52 @@
 #define ZOOM_SELECTED				THEME->GetMetricF("ScreenTitleMenu","ZoomSelected")
 #define SECONDS_BETWEEN_COMMENTS	THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenComments")
 #define SECONDS_BEFORE_ATTRACT		THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeAttract")
-#define HELP_TEXT_HOME				THEME->GetMetric("ScreenTitleMenu","HelpTextHome")
-#define HELP_TEXT_PAY				THEME->GetMetric("ScreenTitleMenu","HelpTextPay")
-#define HELP_TEXT_FREE				THEME->GetMetric("ScreenTitleMenu","HelpTextFree")
+#define HELP_TEXT( coin_mode )		THEME->GetMetric("ScreenTitleMenu","HelpText"+Capitalize(CoinModeToString(coin_mode)))
 #define NEXT_SCREEN					THEME->GetMetric("ScreenTitleMenu","NextScreen")
 
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 
-ScreenTitleMenu::ScreenTitleMenu()
+ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
 
 	GAMESTATE->m_bPlayersCanJoin = true;
 
-	if( PREFSMAN->m_CoinMode!=PrefsManager::COIN_HOME  &&  PREFSMAN->m_bJointPremium )
+	CodeDetector::RefreshCacheItems();
+
+	if( PREFSMAN->m_iCoinMode!=COIN_HOME  &&  PREFSMAN->m_bJointPremium )
 	{		
 		m_JointPremium.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu joint premium") );
 		this->AddChild( &m_JointPremium );
 	}
 
-	switch( PREFSMAN->m_CoinMode )
-	{
-	case PrefsManager::COIN_HOME:
-		// do nothing
-		break;
-	case PrefsManager::COIN_PAY:
-		m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu pay") );
-		this->AddChild( &m_CoinMode );
-		break;
-	case PrefsManager::COIN_FREE:
-		m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu free") );
-		this->AddChild( &m_CoinMode );
-		break;
-	default:
-		ASSERT(0);
-	}
+
+	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu background") );
+	this->AddChild( &m_Background );
+
+	m_sprLogo.Load( THEME->GetPathToG(ssprintf("ScreenLogo %s",GAMESTATE->GetCurrentGameDef()->m_szName)) );
+	m_sprLogo.Command( PREFSMAN->m_iCoinMode==COIN_HOME ? LOGO_HOME_ON_COMMAND : LOGO_ON_COMMAND );
+	this->AddChild( &m_sprLogo );
+
+	m_textVersion.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textVersion.Command( VERSION_ON_COMMAND );
+	m_textVersion.SetText( "CVS" );
+	this->AddChild( &m_textVersion );
+
+
+	m_textSongs.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textSongs.Command( SONGS_ON_COMMAND );
+	m_textSongs.SetText( ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses()) );
+	this->AddChild( &m_textSongs );
+
+
+	CString sCoinMode = CoinModeToString((CoinMode)PREFSMAN->m_iCoinMode);
+	m_CoinMode.LoadFromAniDir( THEME->GetPathToB("ScreenTitleMenu "+sCoinMode) );
+	this->AddChild( &m_CoinMode );
 	
 	m_textHelp.LoadFromFont( THEME->GetPathToF("ScreenTitleMenu help") );
-	CString sHelpText;
-	switch( PREFSMAN->m_CoinMode )
-	{
-	case PrefsManager::COIN_HOME:	sHelpText = HELP_TEXT_HOME;	break;
-	case PrefsManager::COIN_PAY:	sHelpText = HELP_TEXT_PAY;	break;
-	case PrefsManager::COIN_FREE:	sHelpText = HELP_TEXT_FREE;	break;
-	default:			ASSERT(0);
-	}
-	m_textHelp.SetText( sHelpText );
+	m_textHelp.SetText( HELP_TEXT((CoinMode)PREFSMAN->m_iCoinMode) );
 	m_textHelp.SetXY( HELP_X, HELP_Y );
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetEffectDiffuseBlink();
@@ -93,9 +98,9 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textHelp.SetShadowLength( 2 );
 	this->AddChild( &m_textHelp );
 
-	switch( PREFSMAN->m_CoinMode )
+	switch( PREFSMAN->m_iCoinMode )
 	{
-	case PrefsManager::COIN_HOME:
+	case COIN_HOME:
 		int i;
 		for( i=0; i<NUM_CHOICES; i++ )
 		{
@@ -107,13 +112,21 @@ ScreenTitleMenu::ScreenTitleMenu()
 			this->AddChild( &m_textChoice[i] );
 		}	
 		break;
-	case PrefsManager::COIN_PAY:
-		break;
-	case PrefsManager::COIN_FREE:
+	case COIN_PAY:
+	case COIN_FREE:
+	case COIN_EVENT:
 		break;
 	default:
 		ASSERT(0);
 	}
+
+
+	m_In.Load( THEME->GetPathToB("ScreenTitleMenu in") );
+	m_In.StartTransitioning();
+	this->AddChild( &m_In );
+
+	m_Out.Load( THEME->GetPathToB("ScreenTitleMenu out") );
+	this->AddChild( &m_Out );
 
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("title menu game name") );
@@ -164,7 +177,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	switch( MenuI.button )
 	{
 	case MENU_BUTTON_UP:
-		if( PREFSMAN->m_CoinMode != PrefsManager::COIN_HOME )
+		if( PREFSMAN->m_iCoinMode != COIN_HOME )
 			break;
 		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 			break;
@@ -177,7 +190,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		GainFocus( m_Choice );
 		break;
 	case MENU_BUTTON_DOWN:
-		if( PREFSMAN->m_CoinMode != PrefsManager::COIN_HOME )
+		if( PREFSMAN->m_iCoinMode != COIN_HOME )
 			break;
 		if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 			break;
@@ -220,6 +233,21 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 				m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
 
+	// detect codes
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME) )
+	{
+		THEME->NextTheme();
+		SCREENMAN->SystemMessage( "Theme: "+THEME->GetCurThemeName() );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	}
+	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER) )
+	{
+		ANNOUNCER->NextAnnouncer();
+		CString sName = ANNOUNCER->GetCurAnnouncerName();
+		if( sName=="" ) sName = "(none)";
+		SCREENMAN->SystemMessage( "Announcer: "+sName );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	}
 //	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 

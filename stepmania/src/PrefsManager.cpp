@@ -21,6 +21,7 @@
 #include "GameDef.h"
 #include "AnnouncerManager.h"
 #include "ThemeManager.h"
+#include "GameConstantsAndTypes.h"
 #include "arch/arch.h" /* for default driver specs */
 
 
@@ -52,7 +53,6 @@ PrefsManager::PrefsManager()
 	m_bShowDanger = true;
 	m_fBGBrightness = 0.8f;
 	m_bMenuTimer = true;
-	m_bEventMode = false;
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
 	m_fJudgeWindowScale = 1.0f;
@@ -73,13 +73,12 @@ PrefsManager::PrefsManager()
 	m_bArcadeOptionsNavigation = false;
 	m_bSoloSingle = false;	// OFF!!!!
 	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
-	m_bCoinOpMode = false;
 	m_MusicWheelUsesSections = ALWAYS;
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bChangeBannersWhenFast = false;
 	m_bEasterEggs = true;
 	m_bMarvelousTiming = true;
-	m_CoinMode = COIN_HOME;
+	m_iCoinMode = COIN_HOME;
 	m_iCoinsPerCredit = 1;
 	m_bJointPremium = false;
 	m_iBoostAppPriority = -1;
@@ -143,7 +142,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ShowDanger",					m_bShowDanger );
 	ini.GetValueF( "Options", "BGBrightness",				m_fBGBrightness );
 	ini.GetValueB( "Options", "MenuTimer",					m_bMenuTimer );
-	ini.GetValueB( "Options", "EventMode",					m_bEventMode );
 	ini.GetValueI( "Options", "NumArcadeStages",			m_iNumArcadeStages );
 	ini.GetValueB( "Options", "AutoPlay",					m_bAutoPlay );
 	ini.GetValueF( "Options", "JudgeWindowScale",			m_fJudgeWindowScale );
@@ -166,7 +164,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
 	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
-	ini.GetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 	ini.GetValueI( "Options", "MusicWheelUsesSections",		(int&)m_MusicWheelUsesSections );
 	ini.GetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
@@ -175,7 +172,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
 	ini.GetValueB( "Options", "SoundPreloadAll",			m_bSoundPreloadAll );
-	ini.GetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
+	ini.GetValueI( "Options", "CoinMode",					m_iCoinMode );
 	ini.GetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.GetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
@@ -226,7 +223,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "BackgroundMode",				m_BackgroundMode);
 	ini.SetValueB( "Options", "ShowDanger",					m_bShowDanger );
 	ini.SetValueF( "Options", "BGBrightness",				m_fBGBrightness );
-	ini.SetValueB( "Options", "EventMode",					m_bEventMode );
 	ini.SetValueB( "Options", "MenuTimer",					m_bMenuTimer );
 	ini.SetValueI( "Options", "NumArcadeStages",			m_iNumArcadeStages );
 	ini.SetValueB( "Options", "AutoPlay",					m_bAutoPlay );
@@ -256,7 +252,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.SetValueB( "Options", "SoundPreloadAll",			m_bSoundPreloadAll );
-	ini.SetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
+	ini.SetValueI( "Options", "CoinMode",					m_iCoinMode );
 	ini.SetValueI( "Options", "CoinsPerCredit",				m_iCoinsPerCredit );
 	ini.SetValueB( "Options", "JointPremium",				m_bJointPremium );
 	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );

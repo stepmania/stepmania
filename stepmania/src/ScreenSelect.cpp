@@ -181,7 +181,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 				/* Joint premium on a DDR machine does allow two player modes with a single
 				 * credit.		-Chris */
 
-				if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
+				if( PREFSMAN->m_iCoinMode == COIN_PAY )
 				{
 					if( !PREFSMAN->m_bJointPremium )
 					{

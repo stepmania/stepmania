@@ -163,6 +163,9 @@ void Player::Update( float fDeltaTime )
 {
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
+	if( GAMESTATE->m_pCurSong==NULL )
+		return;
+
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 
 	//

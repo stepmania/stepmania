@@ -178,14 +178,15 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
 		case MENU_BUTTON_COIN:
-			switch( PREFSMAN->m_CoinMode )
+			switch( PREFSMAN->m_iCoinMode )
 			{
-			case PrefsManager::COIN_PAY:
+			case COIN_PAY:
 				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 					break;	// don't fall through
 				// fall through
-			case PrefsManager::COIN_FREE:
-			case PrefsManager::COIN_HOME:
+			case COIN_HOME:
+			case COIN_FREE:
+			case COIN_EVENT:
 				SOUNDMAN->StopMusic();
 				/* We already played the it was a coin was inserted.  Don't play it again. */
 				if( MenuI.button != MENU_BUTTON_COIN )

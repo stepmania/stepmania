@@ -27,12 +27,12 @@
 
 enum {
 	MO_MENU_TIMER,
+	MO_COIN_MODE,
 	MO_NUM_ARCADE_STAGES,
 	MO_JUDGE_DIFFICULTY,
 	MO_LIFE_DIFFICULTY,
 	MO_FAIL,
 	MO_SHOWSTATS,
-	MO_COIN_MODE,
 	MO_COINS_PER_CREDIT,
 	MO_JOINT_PREMIUM,
 	MO_SHOW_SONG_OPTIONS,
@@ -41,12 +41,12 @@ enum {
 
 OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Menu\nTimer",			"OFF","ON" ),
-	OptionRow( "Arcade\nStages",		"1","2","3","4","5","6","7","UNLIMITED" ),
+	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY","EVENT MODE" ),
+	OptionRow( "Songs Per\nPlay",		"1","2","3","4","5","6","7" ),
 	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8" ),
 	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
 	OptionRow( "Default\nFail Type",	"ARCADE","END OF SONG","OFF" ),	
 	OptionRow( "Show\nStats",			"OFF","ON" ),
-	OptionRow( "Coin\nMode",			"HOME","PAY","FREE PLAY" ),
 	OptionRow( "Coins Per\nCredit",		"1","2","3","4","5","6","7","8" ),
 	OptionRow( "Joint\nPremium",		"OFF","ON" ),
 	OptionRow( "Song\nOptions",			"HIDE","ALLOW" ),
@@ -69,8 +69,9 @@ ScreenMachineOptions::ScreenMachineOptions() :
 
 void ScreenMachineOptions::ImportOptions()
 {
+	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_iCoinMode;
 	m_iSelectedOption[0][MO_MENU_TIMER]				= PREFSMAN->m_bMenuTimer ? 1:0;
-	m_iSelectedOption[0][MO_NUM_ARCADE_STAGES]		= PREFSMAN->m_bEventMode ? 7 : PREFSMAN->m_iNumArcadeStages - 1;
+	m_iSelectedOption[0][MO_NUM_ARCADE_STAGES]		= PREFSMAN->m_iNumArcadeStages - 1;
 
 	/* .02 difficulty is beyond our timing right now; even autoplay
 	 * misses!  At least fix autoplay before enabling this, or we'll
@@ -103,7 +104,6 @@ void ScreenMachineOptions::ImportOptions()
 	so.FromString( PREFSMAN->m_sDefaultModifiers );
 	m_iSelectedOption[0][MO_FAIL]					= so.m_FailType;
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
-	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_CoinMode;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
 	m_iSelectedOption[0][MO_JOINT_PREMIUM]			= PREFSMAN->m_bJointPremium ? 1:0;
 	m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS]		= PREFSMAN->m_bShowSongOptions ? 1:0;
@@ -111,8 +111,8 @@ void ScreenMachineOptions::ImportOptions()
 
 void ScreenMachineOptions::ExportOptions()
 {
+	PREFSMAN->m_iCoinMode				= m_iSelectedOption[0][MO_COIN_MODE];
 	PREFSMAN->m_bMenuTimer				= m_iSelectedOption[0][MO_MENU_TIMER] == 1;
-	PREFSMAN->m_bEventMode				= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
 	PREFSMAN->m_iNumArcadeStages		= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] + 1;
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
@@ -160,7 +160,6 @@ void ScreenMachineOptions::ExportOptions()
 		as.push_back( so.GetString() );
 	PREFSMAN->m_sDefaultModifiers		= join(", ",as);
 	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
-	(int&)PREFSMAN->m_CoinMode			= m_iSelectedOption[0][MO_COIN_MODE];
 	PREFSMAN->m_iCoinsPerCredit			= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;
 	PREFSMAN->m_bJointPremium			= m_iSelectedOption[0][MO_JOINT_PREMIUM] == 1;
 	PREFSMAN->m_bShowSongOptions		= (bool&)m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS];

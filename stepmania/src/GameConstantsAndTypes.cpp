@@ -83,3 +83,14 @@ RankingCategory AverageMeterToRankingCategory( float fAverageMeter )
 
 }
 
+CString CoinModeToString( CoinMode cm )
+{
+	switch( cm )
+	{
+		case COIN_HOME:		return "home";
+		case COIN_PAY:		return "pay";
+		case COIN_FREE:		return "free";
+		case COIN_EVENT:	return "event";
+		default:	ASSERT(0);	return "";
+	}
+}

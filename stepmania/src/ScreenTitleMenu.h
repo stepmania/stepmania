@@ -9,7 +9,8 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ScreenLogo.h"
+#include "Screen.h"
+#include "Transition.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RageSound.h"
@@ -18,7 +19,7 @@
 #include "RandomSample.h"
 
 
-class ScreenTitleMenu : public ScreenLogo
+class ScreenTitleMenu : public Screen
 {
 public:
 	ScreenTitleMenu();
@@ -32,8 +33,6 @@ public:
 	{
 		CHOICE_GAME_START = 0,
 		CHOICE_SELECT_GAME,
-		/* At request, moved this into the options/operator menu -- Miryokuteki */
-		//CHOICE_MAP_KEY_JOY,
 		CHOICE_OPTIONS,
 		CHOICE_EDIT,
 		CHOICE_JUKEBOX,
@@ -48,9 +47,7 @@ public:
 	{
 		const CString s[NUM_CHOICES] = {
 			"GAME START",
-			"SWITCH GAME",
-			/* At request, moved this into the options/operator menu -- Miryokuteki */
-			//"CONFIG KEY/JOY",
+			"SELECT GAME",
 			"OPTIONS",
 			"EDIT/SYNC SONGS",
 			"JUKEBOX",
@@ -69,6 +66,10 @@ private:
 
 	Choice			m_Choice;
 
+	BGAnimation		m_Background;
+	Sprite			m_sprLogo;
+	BitmapText		m_textVersion;
+	BitmapText		m_textSongs;
 	BitmapText		m_textHelp;
 	BitmapText		m_textChoice[NUM_CHOICES];
 
@@ -81,6 +82,9 @@ private:
 
 	BGAnimation		m_CoinMode;
 	BGAnimation		m_JointPremium;
+
+	Transition		m_In;
+	Transition		m_Out;
 };
 
 

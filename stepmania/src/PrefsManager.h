@@ -11,7 +11,6 @@
 	Chris Gomez
 -----------------------------------------------------------------------------
 */
-#include "SongOptions.h"
 
 class PrefsManager
 {
@@ -41,7 +40,6 @@ public:
 	bool			m_bMenuTimer;
 	bool			m_bShowDanger;
 	int				m_iNumArcadeStages;
-	bool			m_bEventMode;
 	float			m_fJudgeWindowScale;
 	float			m_fLifeDifficultyScale;
 	float			m_fJudgeWindowMarvelousSeconds;
@@ -55,13 +53,12 @@ public:
 	bool			m_bInstructions, m_bShowDontDie, m_bShowSelectGroup;
 	bool			m_bShowTranslations;
 	bool			m_bArcadeOptionsNavigation;
-	bool			m_bCoinOpMode;
 	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bChangeBannersWhenFast;
 	bool			m_bEasterEggs;
 	bool			m_bMarvelousTiming;
-	enum { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES } m_CoinMode;
+	int				m_iCoinMode;
 	int				m_iCoinsPerCredit;
 	bool			m_bJointPremium;
 	bool			m_bPickExtraStage;

@@ -24,10 +24,11 @@ public:
 	ThemeManager();
 	~ThemeManager();
 
-	void GetThemeNamesForCurGame( CStringArray& AddTo );
+	void GetThemeNames( CStringArray& AddTo );
 	bool DoesThemeExist( CString sThemeName );
 	void SwitchTheme( CString sThemeName );
 	CString GetCurThemeName() { return m_sCurThemeName; };
+	void NextTheme();
 
 	CString GetPathTo( ElementCategory category, CString sFileName, bool bOptional=false );
 	CString GetPathToB( CString sFileName ) { return GetPathTo(BGAnimations,sFileName); };
@@ -45,7 +46,6 @@ public:
 	RageColor	GetMetricC( CString sClassName, CString sValueName );
 
 protected:
-	void GetAllThemeNames( CStringArray& AddTo );
 	CString GetPathTo( CString sThemeName, ElementCategory category, CString sFileName );
 	static CString GetThemeDirFromName( const CString &sThemeName );
 	CString GetElementDir( CString sThemeName );

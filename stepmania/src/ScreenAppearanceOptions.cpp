@@ -97,7 +97,7 @@ void ScreenAppearanceOptions::ImportOptions()
 	// fill in theme names
 	//
 	CStringArray arrayThemeNames;
-	THEME->GetThemeNamesForCurGame( arrayThemeNames );
+	THEME->GetThemeNames( arrayThemeNames );
 
 	m_OptionRow[AO_THEME].choices.clear();
 	

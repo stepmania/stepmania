@@ -1541,7 +1541,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_ARCADE:
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
-			if( PREFSMAN->m_bEventMode )
+			if( PREFSMAN->m_iCoinMode==COIN_EVENT )
 				HandleScreenMessage( SM_GoToScreenAfterBack );
 			else if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );

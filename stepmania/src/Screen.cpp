@@ -136,18 +136,14 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 		return false;
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
 	{
-		(int&)PREFSMAN->m_CoinMode = (PREFSMAN->m_CoinMode+1) % PrefsManager::NUM_COIN_MODES;
+		(int&)PREFSMAN->m_iCoinMode = (PREFSMAN->m_iCoinMode+1) % NUM_COIN_MODES;
 		/* ResetGame();
 				This causes problems on ScreenIntroMovie, which results in the
 				movie being restarted and/or becoming out-of-synch -- Miryokuteki */
 
-		CString sMessage = "Coin Mode: ";
-		switch( PREFSMAN->m_CoinMode )
-		{
-		case PrefsManager::COIN_HOME:	sMessage += "HOME";	break;
-		case PrefsManager::COIN_PAY:	sMessage += "PAY";	break;
-		case PrefsManager::COIN_FREE:	sMessage += "FREE";	break;
-		}
+		CString sMessage = CoinModeToString( (CoinMode)PREFSMAN->m_iCoinMode );
+		sMessage.MakeUpper();
+		sMessage = "Coin Mode: " + sMessage;
 		SCREENMAN->RefreshCreditsMessages();
 		SCREENMAN->SystemMessage( sMessage );
 		return true;
@@ -168,7 +164,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 
 		/* subtract coins */
 		int iCoinsToCharge = 0;
-		if( PREFSMAN->m_CoinMode == PrefsManager::COIN_PAY )
+		if( PREFSMAN->m_iCoinMode == COIN_PAY )
 			iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 		
 		if( PREFSMAN->m_bJointPremium )

@@ -22,18 +22,9 @@
 #include "PrefsManager.h"
 
 
-#define HELP_TEXT					THEME->GetMetric("ScreenInstructions","HelpText")
-#define TIMER_SECONDS				THEME->GetMetricI("ScreenInstructions","TimerSeconds")
-CString Capitalize( CString s )	
-{
-	if( s.GetLength()==0 )
-		return "";
-	CString s1 = s.Left(1);
-	s1.MakeUpper();
-	CString s2 = s.Right( s.GetLength()-1 );
-	return s1+s2;
-}
-#define NEXT_SCREEN( pm )		THEME->GetMetric("ScreenInstructions","NextScreen"+Capitalize(PlayModeToString(pm)) )
+#define HELP_TEXT			THEME->GetMetric("ScreenInstructions","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("ScreenInstructions","TimerSeconds")
+#define NEXT_SCREEN( pm )	THEME->GetMetric("ScreenInstructions","NextScreen"+Capitalize(PlayModeToString(pm)) )
 
 
 ScreenInstructions::ScreenInstructions() : Screen("ScreenInstructions")

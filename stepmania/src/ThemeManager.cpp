@@ -49,7 +49,7 @@ ThemeManager::ThemeManager()
 	m_uHashForCurThemeMetrics = m_uHashForBaseThemeMetrics = 0;
 	
 	CStringArray arrayThemeNames;
-	GetAllThemeNames( arrayThemeNames );
+	GetThemeNames( arrayThemeNames );
 }
 
 ThemeManager::~ThemeManager()
@@ -57,7 +57,7 @@ ThemeManager::~ThemeManager()
 	delete m_pIniMetrics;
 }
 
-void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
+void ThemeManager::GetThemeNames( CStringArray& AddTo )
 {
 	GetDirListing( THEMES_DIR+"/*", AddTo, true );
 	
@@ -71,28 +71,10 @@ void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
 	}
 }
 
-void ThemeManager::GetThemeNamesForCurGame( CStringArray& AddTo )
-{
-	GetAllThemeNames( AddTo );
-
-	/*
-	// strip out announcers that don't have the current game name in them
-	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
-	sGameName.MakeLower();
-	for( unsigned i=AddTo.size()-1; i>=0; i-- )
-	{
-		CString sLowercaseVer = AddTo[i];
-		sLowercaseVer.MakeLower();
-		if( sLowercaseVer.Find(sGameName)==-1 )
-			AddTo.RemoveAt(i);
-	}
-	*/
-}
-
 bool ThemeManager::DoesThemeExist( CString sThemeName )
 {
 	CStringArray asThemeNames;	
-	GetAllThemeNames( asThemeNames );
+	GetThemeNames( asThemeNames );
 	for( unsigned i=0; i<asThemeNames.size(); i++ )
 	{
 		if( !sThemeName.CompareNoCase(asThemeNames[i]) )
@@ -380,4 +362,15 @@ RageColor ThemeManager::GetMetricC( CString sClassName, CString sValueName )
 	}
 
 	return RageColor(r,g,b,a);
+}
+
+void ThemeManager::NextTheme()
+{
+	CStringArray as;
+	GetThemeNames( as );
+	for( unsigned i=0; i<as.size(); i++ )
+		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
+			break;
+	int iNewIndex = (i+1)%as.size();
+	SwitchTheme( as[iNewIndex] );
 }

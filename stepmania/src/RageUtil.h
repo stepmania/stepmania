@@ -248,6 +248,8 @@ CString WcharDisplayText(wchar_t c);
 
 CString Basename(CString dir);
 
+CString Capitalize( CString s );
+
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif

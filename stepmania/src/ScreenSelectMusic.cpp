@@ -418,7 +418,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			}
 		return;
 	}
-	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustOptions(GameI.controller) )
+	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
 	{
 		m_soundOptionsChange.Play();
 		UpdateOptionsDisplays();
@@ -496,7 +496,7 @@ void ScreenSelectMusic::AdjustOptions()
 	/* If beginner's steps were chosen, and this is the first stage,
 	 * turn off failure completely--always give a second try. */
 	if(dc == DIFFICULTY_BEGINNER &&
-		!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
+		PREFSMAN->m_iCoinMode!=COIN_EVENT && /* stage index is meaningless in event mode */
 		GAMESTATE->m_iCurrentStageIndex == 0)
 		ft = SongOptions::FAIL_OFF;
 //  Redundant.   -Chris
