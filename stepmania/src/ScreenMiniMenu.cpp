@@ -22,7 +22,7 @@
 
 const float LABEL_X		=	200;
 const float ANSWER_X	=	440;
-const float SPACING_Y	=	24;
+const float SPACING_Y	=	26;
 
 const float ZOOM_SELECTED = 0.7f;
 const float ZOOM_NOT_SELECTED = 0.5f;
@@ -52,8 +52,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenMiniMenu background") );
 	this->AddChild( &m_Background );
 
-	
-	float fHeightOfAll = (m_Def.rows.size()-1)*SPACING_Y;
+	float fHeightOfAll = min( SCREEN_HEIGHT-80, (m_Def.rows.size()-1)*SPACING_Y );
 
 	m_textTitle.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textTitle.SetText( m_Def.title );
