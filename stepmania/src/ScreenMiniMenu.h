@@ -17,7 +17,7 @@
 #include "RandomSample.h"
 
 
-#define MAX_MENU_ROWS  20
+#define MAX_MENU_ROWS  40
 
 
 struct MenuRow
