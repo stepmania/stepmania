@@ -158,7 +158,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
-	if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START )
+	if( GAMESTATE->IsHumanPlayer(pn) && MenuI.IsValid() && MenuI.button == MENU_BUTTON_START )
 	{
 		int row = m_iCurrentRow[pn];
 		UpdateDisqualified( row, pn );
