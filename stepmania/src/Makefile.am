@@ -189,16 +189,15 @@ stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arc
 # "fix" would be to statically link SDL_image, but that would mean
 # dealing with its build and libjpeg, png, etc--not worth it.
 
-libSDL = 
-
 if NHAVE_SDL
-libSDL += $(srcdir)/SDL-1.2.6/src/.libs/libSDL.a
+USE_SDL_LIBS = $(srcdir)/SDL-1.2.6/src/.libs/libSDL.a
+else
+USE_SDL_LIBS = $(SDL_LIBS)
 endif
 
 stepmania_LDADD = \
 		  $(GL_LIBS) \
-		  $(libSDL) \
-		  $(SDL_LIBS) -lSDL_image \
+		  $(USE_SDL_LIBS) -lSDL_image \
 		  $(AUDIO_LIBS) \
 		  $(srcdir)/libresample/libresample.a
 
