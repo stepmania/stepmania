@@ -27,6 +27,7 @@ SnapDisplay::SnapDisplay()
 	{
 		m_sprIndicators[i].Load( THEME->GetPathTo("Graphics","edit snap indicator") );
 		ASSERT( m_sprIndicators[i].GetNumStates() == NUM_NOTE_TYPES );
+		m_sprIndicators[i].StopAnimating();
 		this->AddChild( &m_sprIndicators[i] );
 	}
 
@@ -39,8 +40,6 @@ void SnapDisplay::Load( PlayerNumber pn )
 {
 	m_iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
 
-	m_sprIndicators[0].StopTweening();
-	m_sprIndicators[1].StopTweening();
 	m_sprIndicators[0].SetX( -ARROW_SIZE * (m_iNumCols/2 + 0.5f) );
 	m_sprIndicators[1].SetX(  ARROW_SIZE * (m_iNumCols/2 + 0.5f) );
 }
