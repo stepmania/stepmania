@@ -101,7 +101,7 @@ void RageSound_DSound::Update(float delta)
 
 		/* The sound has stopped and flushed all of its buffers. */
 		if(str[i]->snd != NULL)
-			str[i]->snd->StopPlaying();
+			str[i]->snd->SoundIsFinishedPlaying();
 		str[i]->snd = NULL;
 
 		str[i]->pcm->Stop();
@@ -309,17 +309,12 @@ void RageSound_DSound::StopMixing( RageSoundBase *snd )
 		return;
 	}
 
-	/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
-	 * buffers have been flushed. */
-	stream_pool[i]->state = stream_pool[i]->STOPPING;
-
-	/* Flush two buffers worth of data. */
-	stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetOutputPosition();
-
-	/* This function is called externally (by RageSound) to stop immediately.
-	 * We need to prevent SoundStopped from being called; it should only be
-	 * called when we stop implicitely at the end of a sound.  Set snd to NULL. */
-	stream_pool[i]->snd = NULL;
+	/* We need to make sure the sound stream is actually stopped before we return;
+	 * don't wait for the buffered frames to finish.  This is because exiting a
+	 * thread before stopping its sounds causes glitches or worse.  Other drivers
+	 * don't need to guarantee this; this is just a peculiarity of DirectSound. */
+	stream_pool[i]->pcm->Stop();
+	stream_pool[i]->state = stream_pool[i]->INACTIVE;
 }
 
 int64_t RageSound_DSound::GetPosition( const RageSoundBase *snd ) const
