@@ -345,7 +345,8 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 					continue;	// skip
 				if( !SHOW_STYLE(style) )
 					continue;
-				TABLE_LINE2( pStyleDef->m_szName, pProfile->m_iNumSongsPlayedByStyle[style] );
+				CString s = GAMEMAN->StyleToThemedString(style);
+				TABLE_LINE2( s, pProfile->m_iNumSongsPlayedByStyle[style] );
 			}
 			END_TABLE;
 		}
@@ -651,9 +652,9 @@ void PrintHighScoreListTable( RageFile &f, const HighScoreList& hsl )
 		if( SHOW_HIGH_SCORE_GRADE )
 			asTokens.push_back( GradeToThemedString(hs.grade) );
 		if( SHOW_HIGH_SCORE_SCORE )
-			asTokens.push_back( ssprintf("%i, %.2f%%", hs.iScore) );
+			asTokens.push_back( ssprintf("%i", hs.iScore) );
 		if( SHOW_HIGH_SCORE_PERCENT )
-			asTokens.push_back( ssprintf("%.2f%%", hs.fPercentDP*100) );
+			asTokens.push_back( ssprintf("%05.2f%%", hs.fPercentDP*100) );
 		
 		TABLE_LINE2( sName, join(", ",asTokens) );
 	}
@@ -750,72 +751,148 @@ void PrintCourseHighScores( RageFile &f, const Profile *pProfile, CString sTitle
 	PrintCourses( f, pProfile, sTitle, PrintHighScoresForCourse );
 }
 
-bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsType st )
+bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, StepsType st )
 {
 	unsigned i;
 	const vector<Song*> &vpSongs = SONGMAN->GetAllSongs();
+	vector<Course*> vpCourses;
+	SONGMAN->GetAllCourses( vpCourses, true );
 
- 	PRINT_OPEN(f, GAMEMAN->NotesTypeToThemedString(st).c_str() );
+ 	PRINT_OPEN(f, GAMEMAN->NotesTypeToThemedString(st) );
 	{
-		TranslatedWrite(f, "<table class='difficulty'>\n" );
-
-		// table header row
-		TranslatedWrite(f, "<tr><td>&nbsp;</td>" );
-		FOREACH_Difficulty( dc )
+		BEGIN_TABLE(1);
+		TABLE_LINE2( "Percent Complete", ssprintf("%06.3f%%",pProfile->GetPercentCompleteForStepsType(st)*100) );
+		TABLE_LINE2( "Actual Song Points", pProfile->GetActualSongDancePointsForStepsType(st) );
+		TABLE_LINE2( "Actual Course Points", pProfile->GetActualCourseDancePointsForStepsType(st) );
+		TABLE_LINE2( "Possible Song Points", pProfile->GetPossibleSongDancePointsForStepsType(st) );
+		TABLE_LINE2( "Possible Course Points", pProfile->GetPossibleCourseDancePointsForStepsType(st) );
+		// FIXME
+		END_TABLE;
+	
+		PRINT_OPEN(f, "Songs" );
 		{
-			if( dc == DIFFICULTY_EDIT )
-				continue;	// skip
-			TranslatedWrite(f, ssprintf("<td>%s</td>", Capitalize(DifficultyToThemedString(dc)).c_str()) );
-		}
-		TranslatedWrite(f, "</tr>\n" );
+			TranslatedWrite(f, "<table class='difficulty'>\n" );
 
-		// table body rows
-		for( i=0; i<vpSongs.size(); i++ )
-		{
-			Song* pSong = vpSongs[i];
-
-			TranslatedWrite(f, "<tr>" );
-			
-			TranslatedWrite(f, "<td>" );
-			TranslatedWrite(f, ssprintf("<p class='songtitle'>%s</p>", pSong->GetDisplayMainTitle().c_str()) );
-			TranslatedWrite(f, ssprintf("<p class='songsubtitle'>%s</p>", pSong->GetDisplaySubTitle().c_str()) );
-			TranslatedWrite(f, "</td>" );
-
+			// table header row
+			TranslatedWrite(f, "<tr><td>&nbsp;</td>" );
 			FOREACH_Difficulty( dc )
 			{
 				if( dc == DIFFICULTY_EDIT )
 					continue;	// skip
+				if( !SHOW_DIFFICULTY(dc) )
+					continue;
+				TranslatedWrite(f, ssprintf("<td>%s</td>", DifficultyToThemedString(dc).c_str()) );
+			}
+			TranslatedWrite(f, "</tr>\n" );
 
-				Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
-				if( pSteps && !pSteps->IsAutogen() )
+			// table body rows
+			for( i=0; i<vpSongs.size(); i++ )
+			{
+				Song* pSong = vpSongs[i];
+
+				if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+					continue;	// skip
+
+				TranslatedWrite(f, "<tr>" );
+				
+				TranslatedWrite(f, "<td>" );
+				TranslatedWrite(f, ssprintf("<p class='songtitle'>%s</p>", pSong->GetDisplayMainTitle().c_str()) );
+				TranslatedWrite(f, ssprintf("<p class='songsubtitle'>%s</p>", pSong->GetDisplaySubTitle().c_str()) );
+				TranslatedWrite(f, "</td>" );
+
+				FOREACH_Difficulty( dc )
 				{
-					TranslatedWrite(f,"<td>");
-					TranslatedWrite(f, ssprintf("<font class='meter'>%d</font>",pSteps->GetMeter()) );
-					HighScore hs = pProfile->GetStepsHighScoreList( pSong,pSteps ).GetTopScore();
-					Grade grade = hs.grade;
-					if( grade != GRADE_NO_DATA )
-						TranslatedWrite(f, ssprintf("<font class='grade'>%s</font>",GradeToThemedString(grade).c_str()) );
-					TranslatedWrite(f,"</td>");
+					if( dc == DIFFICULTY_EDIT )
+						continue;	// skip
+					if( !SHOW_DIFFICULTY(dc) )
+						continue;
+					Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
+					if( pSteps && !pSteps->IsAutogen() )
+					{
+						TranslatedWrite(f,"<td>");
+						TranslatedWrite(f, ssprintf("(%d)",pSteps->GetMeter()) );
+						HighScore hs = pProfile->GetStepsHighScoreList( pSong,pSteps ).GetTopScore();
+						Grade grade = hs.grade;
+						if( grade != GRADE_NO_DATA )
+						{
+							TranslatedWrite(f, ssprintf("&nbsp;%s %05.2f%%",GradeToThemedString(grade).c_str(), hs.fPercentDP*100) );
+						}
+						TranslatedWrite(f,"</td>");
+					}
+					else
+					{
+						TranslatedWrite(f, "<td>&nbsp;</td>" );
+					}
 				}
-				else
-				{
-					TranslatedWrite(f, "<td>&nbsp;</td>" );
-				}
+
+				TranslatedWrite(f, "</tr>\n" );
 			}
 
-			TranslatedWrite(f, "</tr>\n" );
+			TranslatedWrite(f, "</table>\n" );
 		}
+		PRINT_CLOSE(f);
+	
+		PRINT_OPEN(f, "Courses" );
+		{
+			TranslatedWrite(f, "<table class='difficulty'>\n" );
 
-		TranslatedWrite(f, "</table>\n" );
+			// table header row
+			TranslatedWrite(f, "<tr><td>&nbsp;</td>" );
+			FOREACH_CourseDifficulty( cd )
+			{
+				TranslatedWrite(f, ssprintf("<td>%s</td>", CourseDifficultyToThemedString(cd).c_str()) );
+			}
+			TranslatedWrite(f, "</tr>\n" );
+
+			// table body rows
+			for( i=0; i<vpCourses.size(); i++ )
+			{
+				Course* pCourse = vpCourses[i];
+				
+				if( !pCourse->AllSongsAreFixed() )
+					continue;
+
+				TranslatedWrite(f, "<tr>" );
+				
+				TranslatedWrite(f, "<td>" );
+				TranslatedWrite(f, ssprintf("<p class='songtitle'>%s</p>", pCourse->m_sName.c_str()) );
+				TranslatedWrite(f, "</td>" );
+
+				FOREACH_CourseDifficulty( cd )
+				{
+					if( pCourse->HasCourseDifficulty(st,cd) )
+					{
+						TranslatedWrite(f,"<td>");
+						TranslatedWrite(f, ssprintf("(%d)",pCourse->GetMeter(cd)) );
+						HighScore hs = pProfile->GetCourseHighScoreList(pCourse, st, cd).GetTopScore();
+						Grade grade = hs.grade;
+						if( grade != GRADE_NO_DATA )
+						{
+							TranslatedWrite(f, ssprintf("&nbsp;%s %05.2f%%",GradeToThemedString(grade).c_str(), hs.fPercentDP*100) );
+						}
+						TranslatedWrite(f,"</td>");
+					}
+					else
+					{
+						TranslatedWrite(f, "<td>&nbsp;</td>" );
+					}
+				}
+
+				TranslatedWrite(f, "</tr>\n" );
+			}
+
+			TranslatedWrite(f, "</table>\n" );
+		}
+		PRINT_CLOSE(f);
 	}
 	PRINT_CLOSE(f);
 
 	return true;
 }
 
-void PrintGradeTable( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
+void PrintPercentComplete( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
-	PrintStepsTypes( f, pProfile, sTitle, vStepsTypesToShow, PrintGradeTableForStepsType );
+	PrintStepsTypes( f, pProfile, sTitle, vStepsTypesToShow, PrintPercentCompleteForStepsType );
 }
 
 bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
@@ -833,7 +910,7 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 		sThemedRadarCategory[rc] = RadarCategoryToThemedString(rc);
 	}
 
-	PRINT_OPEN(f, pSong->GetFullDisplayTitle().c_str() );
+	PRINT_OPEN(f, pSong->GetFullDisplayTitle() );
 	{
 		BEGIN_TABLE(2);
 		TABLE_LINE2( "Artist", pSong->GetDisplayArtist() );
@@ -877,7 +954,7 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 
 					const CString &sCat = sThemedRadarCategory[cat];
 					float fVal = pSteps->GetRadarValues()[cat];
-					CString sVal = ssprintf( "%.2f", fVal );
+					CString sVal = ssprintf( "%05.2f", fVal );
 					TABLE_LINE2( sCat, sVal );
 				}
 				END_TABLE;
@@ -1278,7 +1355,7 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		PrintCourseHighScores(	f, pProfile,	"My Course High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintScreenshots(		f, pProfile,	"My Screenshots",			sDir );
 		PrintCaloriesBurned(	f, pProfile,	"My Calories Burned",		sDir );
-		PrintGradeTable(		f, pProfile,	"My Grade Table",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPercentComplete(	f, pProfile,	"My Percent Complete",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintPopularity(		f, pProfile,	"Last Machine Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintSongHighScores(	f, pProfile,	"Last Machine Song High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintCourseHighScores(	f, pProfile,	"Last Machine Course High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
@@ -1290,7 +1367,7 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		PrintCourseHighScores(	f, pProfile,	"Course High Scores",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintScreenshots(		f, pProfile,	"Screenshots",				sDir );
 		PrintCaloriesBurned(	f, pProfile,	"Calories Burned",			sDir );
-		PrintGradeTable(		f, pProfile,	"Grade Table",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPercentComplete(	f, pProfile,	"Percent Complete",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintInventoryList(		f, pProfile,	"Song Information",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintBookkeeping(		f, pProfile,	"Bookkeeping",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );	
 		break;

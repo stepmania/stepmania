@@ -25,7 +25,7 @@ public:
 	~GameManager();
 
 	GameDef*	GetGameDefForGame( Game g );
-	const StyleDef*	GetStyleDefForStyle( Style s );
+	static const StyleDef*	GetStyleDefForStyle( Style s );
 
 	void	GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
 	void	GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo );
@@ -40,6 +40,7 @@ public:
 	static CString NotesTypeToThemedString( StepsType nt );
 	static Game StringToGameType( CString sGameType );
 	Style GameAndStringToStyle( Game game, CString sStyle );
+	static CString StyleToThemedString( Style s );
 
 protected:
 };

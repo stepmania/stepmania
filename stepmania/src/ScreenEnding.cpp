@@ -54,11 +54,7 @@ CString GetStatsLineValue( PlayerNumber pn, int iLine )
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	switch( iLine )
 	{
-	case PERCENT_COMPLETE:
-		{
-			double fPercent = 100.0 * pProfile->GetTotalHighScoreDancePointsForStepsType(st) / (double)pProfile->GetTotalPossibleDancePointsForStepsType(st);
-			return ssprintf( "%02.3f%%", fPercent );	
-		}
+	case PERCENT_COMPLETE:		return ssprintf( "%06.3f%%", pProfile->GetPercentCompleteForStepsType(st)*100 );	
 	case TOTAL_CALORIES:		return pProfile->GetDisplayTotalCaloriesBurned();
 	case TOTAL_SONGS_PLAYED:	return Commify( pProfile->GetTotalNumSongsPlayed() );
 	case CURRENT_COMBO:			return Commify( pProfile->m_iCurrentCombo );

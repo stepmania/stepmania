@@ -2466,6 +2466,16 @@ CString GameManager::NotesTypeToThemedString( StepsType nt )
 		return s;
 }
 
+CString GameManager::StyleToThemedString( Style style )
+{
+	CString s = GetStyleDefForStyle(style)->m_szName;
+	s = Capitalize( s );
+	if( THEME->HasMetric( "Style", s ) )
+		return THEME->GetMetric( "Style", s );
+	else
+		return s;
+}
+
 Game GameManager::StringToGameType( CString sGameType )
 {
 	for( int i=0; i<NUM_GAMES; i++ )

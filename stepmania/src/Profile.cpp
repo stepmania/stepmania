@@ -30,6 +30,7 @@
 #include "RageFileManager.h"
 #include "ScoreKeeperMAX2.h"
 #include "crypto/CryptRand.h"
+#include "UnlockSystem.h"
 
 //
 // Old file versions for backward compatibility
@@ -201,7 +202,7 @@ int Profile::GetTotalNumSongsPassed() const
 	return iTotal;
 }
 
-int Profile::GetTotalPossibleDancePointsForStepsType( StepsType st ) const
+int Profile::GetPossibleSongDancePointsForStepsType( StepsType st ) const
 {
 	int iTotal = 0;
 
@@ -214,6 +215,8 @@ int Profile::GetTotalPossibleDancePointsForStepsType( StepsType st ) const
 			
 			if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
 				continue;	// skip
+			if( UNLOCKMAN->SongIsLocked(pSong) )
+				continue;
 
 			vector<Steps*> vSteps = pSong->GetAllSteps();
 			for( unsigned j=0; j<vSteps.size(); j++ )
@@ -228,6 +231,13 @@ int Profile::GetTotalPossibleDancePointsForStepsType( StepsType st ) const
 			}
 		}
 	}
+
+	return iTotal;
+}
+
+int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
+{
+	int iTotal = 0;
 
 	// add course high scores
 	{
@@ -255,7 +265,7 @@ int Profile::GetTotalPossibleDancePointsForStepsType( StepsType st ) const
 	return iTotal;
 }
 
-int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
+int Profile::GetActualSongDancePointsForStepsType( StepsType st ) const
 {
 	int iTotal = 0;
 	
@@ -303,6 +313,13 @@ int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
 		}
 	}
 
+	return iTotal;
+}
+
+int Profile::GetActualCourseDancePointsForStepsType( StepsType st ) const
+{
+	int iTotal = 0;
+	
 	// add course high scores
 	{
 		for( std::map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
@@ -333,6 +350,18 @@ int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
 	}
 
 	return iTotal;
+}
+
+float Profile::GetPercentCompleteForStepsType( StepsType st ) const
+{
+	float fPossible = 
+		GetPossibleSongDancePointsForStepsType( st ) +
+		GetPossibleCourseDancePointsForStepsType( st );
+	float fActual = 
+		GetActualSongDancePointsForStepsType( st ) +
+		GetActualCourseDancePointsForStepsType( st );
+
+	return fActual / fPossible;
 }
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
