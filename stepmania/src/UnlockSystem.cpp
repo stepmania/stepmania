@@ -55,24 +55,24 @@ void UnlockSystem::UnlockSong( const Song *song )
 	UnlockCode( p->m_iCode );
 }
 
-bool UnlockSystem::CourseIsLocked( const Course *course )
+bool UnlockSystem::CourseIsLocked( const Course *course ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
 
-	UnlockEntry *p = FindCourse( course );
+	const UnlockEntry *p = FindCourse( course );
 	if( p == NULL )
 		return false;
 
 	return p->IsLocked();
 }
 
-bool UnlockSystem::SongIsLocked( const Song *song )
+bool UnlockSystem::SongIsLocked( const Song *song ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
 
-	UnlockEntry *p = FindSong( song );
+	const UnlockEntry *p = FindSong( song );
 	if( p == NULL )
 		return false;
 
@@ -80,7 +80,7 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 }
 
 /* Return true if the song is available in roulette (overriding #SELECTABLE). */
-bool UnlockSystem::SongIsRoulette( const Song *song )
+bool UnlockSystem::SongIsRoulette( const Song *song ) const
 {
 	if( !PREFSMAN->m_bUseUnlockSystem )
 		return false;
@@ -96,7 +96,7 @@ bool UnlockSystem::SongIsRoulette( const Song *song )
 	return true;
 }
 
-UnlockEntry *UnlockSystem::FindLockEntry( CString songname )
+const UnlockEntry *UnlockSystem::FindLockEntry( CString songname ) const
 {
 	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
 		if( !songname.CompareNoCase(m_SongEntries[i].m_sSongName) )
@@ -105,7 +105,7 @@ UnlockEntry *UnlockSystem::FindLockEntry( CString songname )
 	return NULL;
 }
 
-UnlockEntry *UnlockSystem::FindSong( const Song *pSong )
+const UnlockEntry *UnlockSystem::FindSong( const Song *pSong ) const
 {
 	for( unsigned i = 0; i < m_SongEntries.size(); i++ )
 		if( m_SongEntries[i].m_pSong == pSong )
@@ -114,7 +114,7 @@ UnlockEntry *UnlockSystem::FindSong( const Song *pSong )
 	return NULL;
 }
 
-UnlockEntry *UnlockSystem::FindCourse( const Course *pCourse )
+const UnlockEntry *UnlockSystem::FindCourse( const Course *pCourse ) const
 {
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].m_pCourse== pCourse )

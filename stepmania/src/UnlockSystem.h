@@ -65,33 +65,34 @@ public:
 	float SongPointsUntilNextUnlock() const { return PointsUntilNextUnlock(UNLOCK_SONG_POINTS); }
 
 	// Used on select screens:
-	bool SongIsLocked( const Song *song );
-	bool SongIsRoulette( const Song *song );
-	bool CourseIsLocked( const Course *course );
+	bool SongIsLocked( const Song *song ) const;
+	bool SongIsRoulette( const Song *song ) const;
+	bool CourseIsLocked( const Course *course ) const;
 
 	// Gets number of unlocks for title screen
 	int GetNumUnlocks() const;
 
-	void UpdateSongs();
+	const UnlockEntry *FindLockEntry( CString lockname ) const;
+
+	void GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const;
 
 	void UnlockCode( int num );
 
 	// unlocks the song's code
 	void UnlockSong( const Song *song );
 
-	UnlockEntry *FindLockEntry( CString lockname );
-
 	// All locked songs are stored here
 	vector<UnlockEntry>	m_SongEntries;
 
-	void GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const;
+	// If global song or course points change, call to update
+	void UpdateSongs();
 
 private:
 	// read unlocks
 	bool Load();
 	
-	UnlockEntry *FindSong( const Song *pSong );
-	UnlockEntry *FindCourse( const Course *pCourse );
+	const UnlockEntry *FindSong( const Song *pSong ) const;
+	const UnlockEntry *FindCourse( const Course *pCourse ) const;
 
 	set<int> m_RouletteCodes; // "codes" which are available in roulette and which unlock if rouletted
 };

@@ -119,7 +119,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 					DisplayedSong = UNLOCKMAN->m_SongEntries[i-1].m_sSongName;
 			
 			DisplayedSong.MakeUpper();
-			UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
+			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
 			if ( pSong == NULL )  // no such song
 				continue;
 
@@ -247,7 +247,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 			}
 
 			DisplayedSong.MakeUpper();
-			UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
+			const UnlockEntry *pSong = UNLOCKMAN->FindLockEntry(DisplayedSong);
 
 			if (pSong->m_pSong == NULL)
 				continue;
