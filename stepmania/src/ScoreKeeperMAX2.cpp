@@ -96,7 +96,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 	{
 		int iMeter = pNotes->GetMeter();
 		CLAMP( iMeter, 1, 10 );
-		iMaxPossiblePoints = iMeter * 100000;
+		iMaxPossiblePoints = iMeter * 1000000;
 	}
 
 	m_fScoreMultiplier = (float)iMaxPossiblePoints / sum;
