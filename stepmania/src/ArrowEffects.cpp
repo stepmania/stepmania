@@ -185,7 +185,12 @@ float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOf
 {
 	float f = ArrowGetYPosWithoutReverse(pn,iCol,fYOffset);
 	f *= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
-	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels );
+
+	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
+	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
+	float fZoom = 1 - fMiniPercent*0.5f;
+
+	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels/fZoom );
 
 	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
@@ -201,11 +206,22 @@ const float fFadeDist = 100;
 // used by ArrowGetAlpha and ArrowGetGlow below
 static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYPos, float fYReverseOffsetPixels )
 {
+	/* Ack.  What we're really doing here is unapplying reverse--what we really want is the Y position
+	 * *with* EFFECT_TIPSY, but without reverse; this is tricky since EFFECT_TIPSY is applied after
+	 * reverse.  This would be more straightforward if we were passed fYPosWORev; we could just apply
+	 * EFFECT_TIPSY.  That would make the interface more complicated, however. */
+	const float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
+	const float fZoom = 1 - fMiniPercent*0.5f;
 	if( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol) > 0.5f )
 	{
-		fYPos -= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels );
+		fYPos -= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels/fZoom );
 		fYPos /= SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 1.f, -1.f );
+
 	}
+
+	/* Another mini hack: if EFFECT_MINI is on, then our fYPos range is eg. 0..640, when we really
+	 * want 0..320: */
+	fYPos *= fZoom;
 
 	const float fDistFromCenterLine = fYPos - fCenterLine;
 
