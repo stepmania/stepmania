@@ -22,7 +22,7 @@ PrefsManager::PrefsManager()
 {
 	m_bWindowed = false;
 	m_bHighDetail = true;
-	m_bHighTextureDetail = true;
+	m_bHighTextureDetail = false;
 	m_bIgnoreJoyAxes = false;
 	m_bShowFPS = false;
 	m_visMode = VIS_MODE_ANIMATION;
@@ -30,7 +30,7 @@ PrefsManager::PrefsManager()
 	m_bEventMode = false;
 	m_iNumArcadeStages = 3;
 	m_bAutoPlay = false;
-	m_fJudgeWindow = 0.10f;
+	m_fJudgeWindow = 0.12f;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficultyClass[p] = CLASS_EASY;
@@ -78,7 +78,7 @@ void PrefsManager::SavePrefsToDisk()
 
 	ini.SetValueB( "Options", "Windowed",			m_bWindowed );
 	ini.SetValueB( "Options", "HighDetail",			m_bHighDetail );
-	ini.GetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
+	ini.SetValueB( "Options", "HighTextureDetail",	m_bHighTextureDetail );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",		m_bIgnoreJoyAxes );
 	ini.SetValueB( "Options", "ShowFPS",			m_bShowFPS );
 	ini.SetValueI( "Options", "VisMode",			m_visMode );

@@ -37,7 +37,6 @@ const float LINE_GAP_Y	=		36;
 const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
 const ScreenMessage SM_GoToPrevState		= ScreenMessage(SM_User-5);
 const ScreenMessage SM_GoToNextState		= ScreenMessage(SM_User-6);
-const ScreenMessage SM_JustPressedNext		= ScreenMessage(SM_User-7);
 
 
 ScreenOptions::ScreenOptions( CString sBackgroundPath, CString sTopEdgePath )
@@ -276,6 +275,9 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_MenuTimer:
+		this->MenuStart(PLAYER_1);
+		break;
 	case SM_GoToPrevState:
 		this->ExportOptions();
 		this->GoToPrevState();

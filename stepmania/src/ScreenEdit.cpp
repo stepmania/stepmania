@@ -42,9 +42,11 @@ const float INFO_X	= SCREEN_RIGHT - 10 ;
 const float INFO_Y	= SCREEN_BOTTOM - 10;		// bottom aligned
 
 const float MENU_WIDTH		=	110;
-const float EDIT_CENTER_X	=	CENTER_X + 100;
-
+const float EDIT_X			=	CENTER_X + 100;
 const float EDIT_GRAY_Y		=	CENTER_Y - 2.0f * (float)ARROW_SIZE;
+
+const float PLAYER_X		=	EDIT_X;
+const float PLAYER_Y		=	SCREEN_TOP;
 
 const CString HELP_TEXT = 
 	"Esc: exit\n"
@@ -67,12 +69,13 @@ const CString HELP_TEXT =
 	"D: Toggle difficulty\n"
 	"Ins: Insert blank beat\n"
 	"Del: Delete current beat and shift\n"
-	"F1,F2/F3,F4: Decrease/increase BPM at cur beat\n"
-	"F5,F6/F7,F8: Dec/inc freeze secs at cur beat\n"
-	"F9,F10/F11,F12: Decrease/increase music offset\n"
-	"NumPad / * - + : Dec/inc music preview start\n"
-	"NumPad 0/period: Dec/inc music length\n"
-	"M: Play music preview\n";
+	"       Hold F keys for faster change:\n"
+	"F7/F8: Decrease/increase BPM at cur beat\n"
+	"F9/F10: Dec/inc freeze secs at cur beat\n"
+	"F11/F12: Decrease/increase music offset\n"
+	"F1/F2 : Dec/inc sample music start\n"
+	"NumPad -/+: Dec/inc sample music length\n"
+	"M: Play sample music\n";
 
 
 
@@ -85,6 +88,14 @@ ScreenEdit::ScreenEdit()
 	LOG->WriteLine( "ScreenEdit::ScreenEdit()" );
 
 	m_pSong = SONGMAN->GetCurrentSong();
+	m_pSong->LoadNoteData();
+
+	m_pNotes = SONGMAN->m_pCurNotes[PLAYER_1];
+	if( m_pNotes == NULL )
+	{
+		m_pNotes = new Notes;
+		m_pSong->m_arrayNotes.Add( m_pNotes );
+	}
 
 	m_Mode = MODE_EDIT;
 
@@ -95,42 +106,37 @@ ScreenEdit::ScreenEdit()
 	m_PlayerOptions.m_ColorType = PlayerOptions::COLOR_NOTE;
 //	m_PlayerOptions.m_bShowMeasureBars = true;
 
-	m_DifficultyClass = CLASS_EASY;
-
 	m_sprBackground.Load( THEME->GetPathTo( GRAPHIC_EDIT_BACKGROUND ) );
 	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 
 
-	m_GranularityIndicator.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
+	m_GranularityIndicator.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_GranularityIndicator.Load();
 	m_GranularityIndicator.SetZoom( 0.5f );
 
-	m_GrayArrowRowEdit.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
+	m_GrayArrowRowEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_GrayArrowRowEdit.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions );
 	m_GrayArrowRowEdit.SetZoom( 0.5f );
 
-	NoteData noteData;
-	noteData.m_iNumTracks = GAMEMAN->GetCurrentStyleDef()->m_iColsPerPlayer;
-	if( SONGMAN->m_pCurNotes[PLAYER_1] != NULL )
-		noteData = *SONGMAN->GetCurrentNotes(PLAYER_1)->GetNoteData();
-
-	m_NoteFieldEdit.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
+	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteFieldEdit.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
+	m_NoteFieldEdit.Load( m_pNotes->GetNoteData(), PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 10, 12, NoteField::MODE_EDITING );
 
 	m_rectRecordBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
 	m_rectRecordBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
 
-	m_GrayArrowRowRecord.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
+	m_GrayArrowRowRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_GrayArrowRowRecord.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions );
 	m_GrayArrowRowRecord.SetZoom( 1.0f );
 
-	m_NoteFieldRecord.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
+	m_NoteFieldRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( &noteData, PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
+	m_NoteFieldRecord.Load( m_pNotes->GetNoteData(), PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_PlayerOptions, 2, 5, NoteField::MODE_EDITING );
 
-	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), &noteData, PlayerOptions(), NULL, NULL, 1 );
-	m_Player.SetXY( EDIT_CENTER_X, EDIT_GRAY_Y );
+	m_Clipboard.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
+
+	m_Player.Load( PLAYER_1, GAMEMAN->GetCurrentStyleDef(), m_pNotes->GetNoteData(), PlayerOptions(), NULL, NULL, 1 );
+	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_Fade.SetClosed();
 
@@ -283,13 +289,15 @@ void ScreenEdit::Update( float fDeltaTime )
 		"Difficulty = %s\n"
 		"Description = %s\n"
 		"Num notes tap: %d, hold: %d\n"
+		"MusicOffsetSeconds: %.2f\n"
 		"Preview start: %.2f, length = %.2f\n",
 		sNoteType,
 		m_fBeat,
 		m_NoteFieldEdit.m_fBeginMarker,	m_NoteFieldEdit.m_fEndMarker,
-		DifficultyClassToString( m_DifficultyClass ),
+		DifficultyClassToString( m_pNotes->m_DifficultyClass ),
 		SONGMAN->GetCurrentNotes(PLAYER_1) ? SONGMAN->GetCurrentNotes(PLAYER_1)->m_sDescription : "no description",
 		iNumTapNotes, iNumHoldNotes,
+		m_pSong->m_fOffsetInSeconds,
 		m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds
 		) );
 }
@@ -391,6 +399,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 			break;
 		case DIK_ESCAPE:
+			m_pSong->LoadFromSMFile( m_pSong->GetCacheFilePath(), true );
 			SCREENMAN->SetNewScreen( new ScreenEditMenu );
 			break;
 		case DIK_S:
@@ -582,6 +591,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		case DIK_DELETE:
 			{
 				NoteData temp;
+				temp.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
 				int iTakeFromRow;
 				int iPasteAtRow;
 				switch( DeviceI.button )
@@ -629,8 +639,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			break;
 		case DIK_V:
 			{
-				int iSrcFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				int iSrcLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
+				int iSrcFirstRow = 0;
+				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
 				int iDestFirstRow = BeatToNoteRow( m_fBeat );
 
 				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
@@ -639,25 +649,25 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 		case DIK_D:
 			{
-				m_DifficultyClass = DifficultyClass( (m_DifficultyClass+1)%NUM_DIFFICULTY_CLASSES );
+				DifficultyClass &dc = m_pNotes->m_DifficultyClass;
+				dc = DifficultyClass( (dc+1)%NUM_DIFFICULTY_CLASSES );
 			}
 			break;
 
-		case DIK_F1:
-		case DIK_F2:
-		case DIK_F3:
-		case DIK_F4:
+		case DIK_F7:
+		case DIK_F8:
 			{
 				float fBPM = m_pSong->GetBPMAtBeat( m_fBeat );
-				float fNewBPM;
+				float fDeltaBPM;
 				switch( DeviceI.button )
 				{
-				case DIK_F1:	fNewBPM = fBPM - 0.1f;		break;
-				case DIK_F2:	fNewBPM = fBPM + 0.1f;		break;
-				case DIK_F3:	fNewBPM = fBPM - 0.01f;		break;
-				case DIK_F4:	fNewBPM = fBPM + 0.01f;		break;
+				case DIK_F7:	fDeltaBPM = - 0.025f;		break;
+				case DIK_F8:	fDeltaBPM = + 0.025f;		break;
 				default:	ASSERT(0);
 				}
+				if( type == IET_FAST_REPEAT )
+					fDeltaBPM *= 40;
+				float fNewBPM = fBPM + fDeltaBPM;
 
 				for( int i=0; i<m_pSong->m_BPMSegments.GetSize(); i++ )
 					if( m_pSong->m_BPMSegments[i].m_fStartBeat == m_fBeat )
@@ -670,27 +680,25 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 				else	// BPMSegment being modified is m_BPMSegments[i]
 				{
-					if( i > 0  &&  m_pSong->m_BPMSegments[i-1].m_fBPM == fNewBPM )
+					if( i > 0  &&  fabsf(m_pSong->m_BPMSegments[i-1].m_fBPM - fNewBPM) < 0.025f )
 						m_pSong->m_BPMSegments.RemoveAt( i );
 					else
 						m_pSong->m_BPMSegments[i].m_fBPM = fNewBPM;
 				}
 			}
 			break;
-		case DIK_F5:
-		case DIK_F6:
-		case DIK_F7:
-		case DIK_F8:
+		case DIK_F9:
+		case DIK_F10:
 			{
 				float fFreezeDelta;
 				switch( DeviceI.button )
 				{
-				case DIK_F5:	fFreezeDelta = -0.1f;		break;
-				case DIK_F6:	fFreezeDelta = +0.1f;		break;
-				case DIK_F7:	fFreezeDelta = -0.01f;		break;
-				case DIK_F8:	fFreezeDelta = +0.01f;		break;
+				case DIK_F9:	fFreezeDelta = -0.025f;		break;
+				case DIK_F10:	fFreezeDelta = +0.025f;		break;
 				default:	ASSERT(0);
 				}
+				if( type == IET_FAST_REPEAT )
+					fFreezeDelta *= 40;
 
 				for( int i=0; i<m_pSong->m_FreezeSegments.GetSize(); i++ )
 				{
@@ -707,27 +715,64 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				else	// FreezeSegment being modified is m_FreezeSegments[i]
 				{
 					m_pSong->m_FreezeSegments[i].m_fFreezeSeconds += fFreezeDelta;
-					if( m_pSong->m_FreezeSegments[i].m_fFreezeSeconds < 0 )
+					if( m_pSong->m_FreezeSegments[i].m_fFreezeSeconds <= 0 )
 						m_pSong->m_FreezeSegments.RemoveAt( i );
 				}
 			}
 			break;
-		case DIK_F9:	m_pSong->m_fOffsetInSeconds -= 0.1f;		break;
-		case DIK_F10:	m_pSong->m_fOffsetInSeconds += 0.1f;		break;
-		case DIK_F11:	m_pSong->m_fOffsetInSeconds -= 0.01f;		break;
-		case DIK_F12:	m_pSong->m_fOffsetInSeconds += 0.01f;		break;
+		case DIK_F11:
+		case DIK_F12:
+			{
+				float fOffsetDelta;
+				switch( DeviceI.button )
+				{
+				case DIK_F11:	fOffsetDelta = -0.025f;		break;
+				case DIK_F12:	fOffsetDelta = +0.025f;		break;
+				default:	ASSERT(0);
+				}
+				if( type == IET_FAST_REPEAT )
+					fOffsetDelta *= 40;
+
+				m_pSong->m_fOffsetInSeconds += fOffsetDelta;
+			}
+			break;
 		case DIK_M:
 			MUSIC->Load( m_pSong->GetMusicPath() );
 			MUSIC->Play( false, m_pSong->m_fMusicSampleStartSeconds, m_pSong->m_fMusicSampleLengthSeconds );
 			break;
-		case DIK_DIVIDE:		m_pSong->m_fMusicSampleStartSeconds -= 0.1f;	break;
-		case DIK_MULTIPLY:		m_pSong->m_fMusicSampleStartSeconds += 0.1f;	break;
-		case DIK_SUBTRACT:		m_pSong->m_fMusicSampleStartSeconds -= 0.01f;	break;
-		case DIK_ADD:			m_pSong->m_fMusicSampleStartSeconds += 0.01f;	break;
-		case DIK_NUMPAD0:		m_pSong->m_fMusicSampleLengthSeconds -= 0.1f;	break;
-		case DIK_NUMPADPERIOD:	m_pSong->m_fMusicSampleLengthSeconds += 0.1f;	break;
+		case DIK_F1:
+		case DIK_F2:
+			{
+				float fOffsetDelta;
+				switch( DeviceI.button )
+				{
+				case DIK_F1:	fOffsetDelta = -0.025f;		break;
+				case DIK_F2:	fOffsetDelta = +0.025f;		break;
+				default:	ASSERT(0);
+				}
+				if( type == IET_FAST_REPEAT )
+					fOffsetDelta *= 40;
 
-	}
+				m_pSong->m_fMusicSampleStartSeconds += fOffsetDelta;
+			}
+			break;
+		case DIK_SUBTRACT:
+		case DIK_ADD:
+			{
+				float fDelta;
+				switch( DeviceI.button )
+				{
+				case DIK_SUBTRACT:	fDelta = -0.025f;		break;
+				case DIK_ADD:		fDelta = +0.025f;		break;
+				default:	ASSERT(0);
+				}
+				if( type == IET_FAST_REPEAT )
+					fDelta *= 40;
+
+				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
+			}
+			break;
+		}
 	}
 }
 

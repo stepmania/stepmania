@@ -76,63 +76,6 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		ASSERT(0);
 	}
 
-/*
-	//////////////////////////
-	// Fill in some fake information for debugging
-	//////////////////////////
-	m_ResultMode = RM_ARCADE_SUMMARY;
-	GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
-	SONGMAN->SetCurrentSong( SONGMAN->m_pSongs[0] );
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		SONGMAN->SetCurrentNotes((PlayerNumber)p, SONGMAN->GetCurrentSong()->m_arrayNotes[0]);
-		{
-		SONGMAN->m_aGameplayStatistics[p].Add( GameplayStatistics() );
-		GameplayStatistics &GS = SONGMAN->m_aGameplayStatistics[p][SONGMAN->m_aGameplayStatistics[p].GetSize()-1];
-		GS.pSong = SONGMAN->m_pSongs[0];
-		GS.dc = CLASS_EASY;
-		GS.meter = 5;
-		GS.iPossibleDancePoints = 300;
-		GS.iActualDancePoints = 255;
-		GS.failed = false;
-
-		GS.perfect = GS.great = GS.good = GS.boo = GS.miss = GS.ok = GS.ng = GS.max_combo = 100; 
-		GS.score = 100;
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			GS.fRadarPossible[r] = GS.fRadarActual[r] = 0;
-		}
-		{
-		SONGMAN->m_aGameplayStatistics[p].Add( GameplayStatistics() );
-		GameplayStatistics &GS = SONGMAN->m_aGameplayStatistics[p][SONGMAN->m_aGameplayStatistics[p].GetSize()-1];
-		GS.pSong = SONGMAN->m_pSongs[0];
-		GS.dc = CLASS_EASY;
-		GS.meter = 5;
-		GS.iPossibleDancePoints = 300;
-		GS.iActualDancePoints = 255;
-		GS.failed = false;
-
-		GS.perfect = GS.great = GS.good = GS.boo = GS.miss = GS.ok = GS.ng = GS.max_combo = 100; 
-		GS.score = 100;
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			GS.fRadarPossible[r] = GS.fRadarActual[r] = 0;
-		}
-		{
-		SONGMAN->m_aGameplayStatistics[p].Add( GameplayStatistics() );
-		GameplayStatistics &GS = SONGMAN->m_aGameplayStatistics[p][SONGMAN->m_aGameplayStatistics[p].GetSize()-1];
-		GS.pSong = SONGMAN->m_pSongs[0];
-		GS.dc = CLASS_EASY;
-		GS.meter = 5;
-		GS.iPossibleDancePoints = 300;
-		GS.iActualDancePoints = 255;
-		GS.failed = false;
-
-		GS.perfect = GS.great = GS.good = GS.boo = GS.miss = GS.ok = GS.ng = GS.max_combo = 100; 
-		GS.score = 100;
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-			GS.fRadarPossible[r] = GS.fRadarActual[r] = 0;
-		}
-	}
-*/
 
 
 	///////////////////////////
@@ -308,15 +251,20 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 					GS[p].miss		+= GSstage.miss;
 					GS[p].ok		+= GSstage.ok;
 					GS[p].ng		+= GSstage.ng;
-					GS[p].max_combo += GSstage.max_combo;
+					GS[p].max_combo = max( GS[p].max_combo, GSstage.max_combo );
 					GS[p].score		+= GSstage.score;
 					for( int i=0; i<NUM_RADAR_VALUES; i++ )
 					{
 						GS[p].fRadarPossible[i] += GSstage.fRadarPossible[i];
 						GS[p].fRadarActual[i] += GSstage.fRadarActual[i];
 					}
-					
 				}
+				for( int i=0; i<NUM_RADAR_VALUES; i++ )
+				{
+					GS[p].fRadarPossible[i] /= iSongsToShow;
+					GS[p].fRadarActual[i] /= iSongsToShow;
+				}
+
 			}
 			break;
 		}

@@ -76,6 +76,7 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 {
 	//LOG->WriteLine( "Player::Load()", );
 	this->CopyAll( pNoteData );
+	NoteDataWithScoring::Init();
 
 	m_PlayerNumber = player_no;
 	m_PlayerOptions = po;
@@ -197,7 +198,8 @@ void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference
 
 	m_frameJudgeAndCombo.Update( fDeltaTime );
 
-	m_pLifeMeter->SetBeat( fSongBeat );
+	if( m_pLifeMeter )
+		m_pLifeMeter->SetBeat( fSongBeat );
 
 	m_GrayArrowRow.Update( fDeltaTime, fSongBeat );
 	m_NoteField.Update( fDeltaTime, fSongBeat );
@@ -318,7 +320,7 @@ void Player::HandlePlayerStep( float fSongBeat, int col, float fMaxBeatDiff )
 
 		if(		 fPercentFromPerfect < 0.30f )	score = TNS_PERFECT;
 		else if( fPercentFromPerfect < 0.55f )	score = TNS_GREAT;
-		else if( fPercentFromPerfect < 0.75f )	score = TNS_GOOD;
+		else if( fPercentFromPerfect < 0.78f )	score = TNS_GOOD;
 		else									score = TNS_BOO;
 
 
@@ -350,7 +352,8 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 
 	// update the judgement, score, and life
 	m_Judgement.SetJudgement( score );
-	m_pLifeMeter->ChangeLife( score );
+	if( m_pLifeMeter )
+		m_pLifeMeter->ChangeLife( score );
 
 
 	// remove this row from the NoteField
@@ -363,7 +366,8 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 		{
 			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>100 );	// show the ghost arrow for this column
 			
-			m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );	// update score - called once per note in this row
+			if( m_pScore )
+				m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );	// update score - called once per note in this row
 
 			// update combo - called once per note in this row
 			switch( score )
@@ -419,7 +423,8 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 				bFoundAMissInThisRow = true;
 			}
 			if( bFoundAMissInThisRow )
-				m_pLifeMeter->ChangeLife( TNS_MISS );
+				if( m_pLifeMeter )
+					m_pLifeMeter->ChangeLife( TNS_MISS );
 		}
 	}
 
@@ -493,13 +498,13 @@ GameplayStatistics Player::GetGameplayStatistics()
 	GSreturn.max_combo = m_Combo.GetMaxCombo();
 	GSreturn.score = m_pScore ? m_pScore->GetScore() : 0;
 
-	GSreturn.failed = this->m_pLifeMeter->HasFailed();
+	GSreturn.failed = m_pLifeMeter ? m_pLifeMeter->HasFailed() : false;
 
 
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
 	{
-		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
-		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCatrgory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
+		GSreturn.fRadarPossible[r] = this->GetRadarValue( (RadarCategory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
+		GSreturn.fRadarActual[r] = this->GetActualRadarValue( (RadarCategory)r, SONGMAN->GetCurrentSong()->m_fMusicLengthSeconds );
 
 		GSreturn.fRadarPossible[r] = clamp( GSreturn.fRadarPossible[r], 0, 1 );
 		GSreturn.fRadarActual[r] = clamp( GSreturn.fRadarActual[r], 0, 1 );

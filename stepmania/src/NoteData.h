@@ -80,7 +80,7 @@ public:
 	int GetPossibleDancePoints();
 
 	// radar values - return between 0.0 and 1.2
-	float GetRadarValue( RadarCatrgory rv, float fSongSeconds )
+	float GetRadarValue( RadarCategory rv, float fSongSeconds )
 	{
 		switch( rv )
 		{

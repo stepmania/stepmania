@@ -116,9 +116,9 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 {
 	LOG->WriteLine( "Notes::LoadFromBMSFile( '%s' )", sPath );
 
-	this->GetNoteData();	// make sure NoteData is loaded
-
-
+	// make sure NoteData is loaded
+	ASSERT( m_pNoteData == NULL );
+	m_pNoteData = new NoteData;
 
 
 	int tempNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
@@ -618,7 +618,7 @@ void Notes::LoadFromSMTokens(
 	const CString &sDifficultyClass,
 	const CString &sMeter,
 	const CString &sRadarValues,
-	const CString &sNoteDataOut,
+	const CString &sNoteData,
 	const bool bLoadNoteData
 )
 {
@@ -644,12 +644,23 @@ void Notes::LoadFromSMTokens(
 	//
 	// Load NoteData
 	//
-	NoteData *pND = GetNoteData();
+	if( !bLoadNoteData )
+	{
+		SAFE_DELETE( m_pNoteData );
+		return;	// don't continue
+	}
+	// else bLoadNoteData...
 
-	pND->m_iNumTracks = NotesTypeToNumTracks( m_NotesType );
+	if( m_pNoteData != NULL )	// already loaded
+		return;
+	// else not already loaded...
+
+	m_pNoteData = new NoteData();
+
+	m_pNoteData->m_iNumTracks = NotesTypeToNumTracks( m_NotesType );
 
 	CStringArray asNoteData;
-	split( sNoteDataOut, ",", asNoteData, true );
+	split( sNoteData, ",", asNoteData, true );
 	for( int i=0; i<asNoteData.GetSize(); i+=2 )
 	{
 		int iNumRowsInMeasure = atoi( asNoteData[i] );
@@ -659,7 +670,7 @@ void Notes::LoadFromSMTokens(
 		sMeasureString.TrimRight();
 
 		CStringArray arrayNoteLines;
-		split( sMeasureString, "\n", arrayNoteLines );
+		split( sMeasureString, "\n", arrayNoteLines, true );	// ignore empty is important here
 
 		if( arrayNoteLines.GetSize() != iNumRowsInMeasure )
 			throw RageException( "Actual number of note rows (%d) doesn't match what tag says (%d).", arrayNoteLines.GetSize(), iNumRowsInMeasure );
@@ -667,25 +678,24 @@ void Notes::LoadFromSMTokens(
 		for( int l=0; l<iNumRowsInMeasure; l++ )
 		{
 			const float fPercentIntoMeasure = l/(float)arrayNoteLines.GetSize();
-			const float fBeat = (i + fPercentIntoMeasure) * BEATS_PER_MEASURE;
+			const float fBeat = (i/2 + fPercentIntoMeasure) * BEATS_PER_MEASURE;
 			const int iIndex = BeatToNoteRow( fBeat );
 
 			CString sNoteLine = arrayNoteLines[l];
 			sNoteLine.TrimRight();
 
-			if( pND->m_iNumTracks != sNoteLine.GetLength() )
-				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", pND->m_iNumTracks, sNoteLine.GetLength() );
+			if( m_pNoteData->m_iNumTracks != sNoteLine.GetLength() )
+				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_pNoteData->m_iNumTracks, sNoteLine.GetLength() );
 
 			for( int c=0; c<sNoteLine.GetLength(); c++ )
-				pND->m_TapNotes[c][iIndex] = sNoteLine[c];
+				m_pNoteData->m_TapNotes[c][iIndex] = sNoteLine[c];
 		}
 	}
-
-
 }
 
 void Notes::WriteSMNotesTag( FILE* fp )
 {
+	fprintf( fp, "\n//---------------%s - %s----------------\n", NotesTypeToString(m_NotesType), m_sDescription );
 	fprintf( fp, "#NOTES:\n" );
 	fprintf( fp, "     %s:\n", NotesTypeToString(m_NotesType) );
 	fprintf( fp, "     %s:\n", m_sDescription );
@@ -702,11 +712,11 @@ void Notes::WriteSMNotesTag( FILE* fp )
 	//
 	// fill in sNoteDataOut 
 	//
-	NoteData* pND = GetNoteData();
+	ASSERT( m_pNoteData != NULL );
 
-	pND->ConvertHoldNotesTo2sAnd3s();
+	m_pNoteData->ConvertHoldNotesTo2sAnd3s();
 
-	float fLastBeat = pND->GetLastBeat();
+	float fLastBeat = m_pNoteData->GetLastBeat();
 	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
 
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
@@ -728,7 +738,7 @@ void Notes::WriteSMNotesTag( FILE* fp )
 				if( i % iNoteIndexSpacing == 0 )
 					continue;	// skip
 				
-				if( !pND->IsRowEmpty(i) )
+				if( !m_pNoteData->IsRowEmpty(i) )
 				{
 					bFoundSmallerNote = true;
 					break;
@@ -749,19 +759,19 @@ void Notes::WriteSMNotesTag( FILE* fp )
 		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i+=iNoteIndexSpacing )
 		{
 			CString sLineString;
-			for( int c=0; c<pND->m_iNumTracks; c++ )
-				sLineString += pND->m_TapNotes[c][i];
+			for( int c=0; c<m_pNoteData->m_iNumTracks; c++ )
+				sLineString += m_pNoteData->m_TapNotes[c][i];
 			fprintf( fp, "%s", sLineString );
-			if( i == iMeasureLastIndex )
-				fprintf( fp, ",\n" );
-			else
+			if( i <= iMeasureLastIndex-iNoteIndexSpacing )
 				fprintf( fp, "\n" );
 		}
+		if( m != iLastMeasure )
+			fprintf( fp, ",\n" );
 	}
 
 	fprintf( fp, ";\n" );
 
-	pND->Convert2sAnd3sToHoldNotes();
+	m_pNoteData->Convert2sAnd3sToHoldNotes();
 }
 
 
@@ -807,11 +817,7 @@ bool Notes::IsNoteDataLoaded()
 
 NoteData* Notes::GetNoteData()
 {
-	if( m_pNoteData != NULL )
-		return m_pNoteData;
-
-	m_pNoteData = new NoteData;
-		
+	ASSERT( m_pNoteData != NULL );
 	return m_pNoteData;
 }
 

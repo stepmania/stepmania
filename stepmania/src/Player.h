@@ -51,8 +51,8 @@ public:
 
 	GameplayStatistics GetGameplayStatistics();
 
-	void	SetOverrideAlpha( float fAlpha )	{ m_NoteField.m_fOverrideAlpha = fAlpha; };
-	float	GetOverrideAlpha()					{ return m_NoteField.m_fOverrideAlpha; };
+	void	SetOverrideAdd( float fAdd )	{ m_NoteField.m_fOverrideAdd = fAdd; };
+	float	GetOverrideAdd()				{ return m_NoteField.m_fOverrideAdd; };
 
 protected:
 	void OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int iStepIndex );

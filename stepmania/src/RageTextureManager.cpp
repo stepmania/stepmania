@@ -73,7 +73,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, bool bForceR
 	{
 		pTexture->m_iRefCount++;
 		if( bForceReload )
-			pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither );
+			pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, iMipMaps, iAlphaBits, bDither, bStretch );
 
 		LOG->WriteLine( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
 	}

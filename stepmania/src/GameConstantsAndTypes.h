@@ -113,7 +113,7 @@ inline D3DXCOLOR GetNoteColorFromIndex( int iStepIndex )
 	return D3DXCOLOR(0.5f,0.5f,0.5f,1);
 };
 
-enum RadarCatrgory	// starting from 12-o'clock rotating clockwise
+enum RadarCategory	// starting from 12-o'clock rotating clockwise
 {
 	RADAR_STREAM = 0,
 	RADAR_VOLTAGE,

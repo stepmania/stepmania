@@ -24,10 +24,9 @@
 
 
 OptionLineData g_SongOptionsLines[] = {
-	{ "Fail", 3, {"ARCADE","END OF SONGMAN","OFF"} },	
+	{ "Fail", 3, {"ARCADE","END OF SONG","OFF"} },	
 	{ "Assist", 2, {"OFF","TICK"} },	
 	{ "Rate", 7, {"70%","80%","90%","100%","110%","120%","130%"} },	
-	{ "Pitch", 7, {"-1.5","-1","-0.5","+0","+0.5","+1","+1.5"} },	
 	{ "Bars", 2, {"OFF","ON"} },	
 };
 const int NUM_SONG_OPTIONS_LINES = sizeof(g_SongOptionsLines)/sizeof(OptionLineData);
@@ -36,7 +35,6 @@ enum {
 	SO_FAIL = 0,
 	SO_ASSIST,
 	SO_RATE,
-	SO_PITCH,
 	SO_BARS
 };
 
@@ -71,15 +69,6 @@ void ScreenSongOptions::ImportOptions()
 	else if( so.m_fMusicRate == 1.20f )		m_iSelectedOption[0][SO_RATE] = 5;
 	else if( so.m_fMusicRate == 1.30f )		m_iSelectedOption[0][SO_RATE] = 6;
 	else									m_iSelectedOption[0][SO_RATE] = 3;
-
-	if(		 so.m_fMusicRate == -1.5f )		m_iSelectedOption[0][SO_PITCH] = 0;
-	else if( so.m_fMusicRate == -1.0f )		m_iSelectedOption[0][SO_PITCH] = 1;
-	else if( so.m_fMusicRate == -0.5f )		m_iSelectedOption[0][SO_PITCH] = 2;
-	else if( so.m_fMusicRate ==  0.0f )		m_iSelectedOption[0][SO_PITCH] = 3;
-	else if( so.m_fMusicRate ==  0.5f )		m_iSelectedOption[0][SO_PITCH] = 4;
-	else if( so.m_fMusicRate ==  1.0f )		m_iSelectedOption[0][SO_PITCH] = 5;
-	else if( so.m_fMusicRate ==  1.5f )		m_iSelectedOption[0][SO_PITCH] = 6;
-	else									m_iSelectedOption[0][SO_PITCH] = 3;
 }
 
 void ScreenSongOptions::ExportOptions()

@@ -45,6 +45,7 @@ protected:
 	EditMode m_Mode;
 
 	Song*			m_pSong;
+	Notes*			m_pNotes;
 
 	PlayerOptions	m_PlayerOptions;
 
@@ -61,7 +62,6 @@ protected:
 	float				m_fTrailingBeat;	// this approaches m_fBeat
 	float				m_fBeat;
 
-	DifficultyClass		m_DifficultyClass;
 	NoteData			m_Clipboard;
 
 	RageSoundSample		m_soundChangeLine;

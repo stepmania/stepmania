@@ -292,6 +292,7 @@ void ScreenGameplay::LoadNextSong()
 
 	m_pCurSong = m_apSongQueue[m_apSongQueue.GetSize()-1];
 	m_apSongQueue.RemoveAt(m_apSongQueue.GetSize()-1);
+	m_pCurSong->LoadNoteData();
 
 	Notes* pNotes[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -476,7 +477,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// fPositionSeconds ahead
 	if( PREFSMAN->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
 	{
-		fPositionSeconds += (SOUND->GetPlayLatency()+0.06f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.06 seconds to make them play a tiny bit earlier
+		fPositionSeconds += (SOUND->GetPlayLatency()+0.04f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.04 seconds to make them play a tiny bit earlier
 		m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
@@ -512,15 +513,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( !GAMEMAN->IsPlayerEnabled((PlayerNumber)p) )
 				continue;
 			
-			float fOverrideAlpha = m_Player[p].GetOverrideAlpha();
-			if( fOverrideAlpha == -1 )
+			float fOverrideAdd = m_Player[p].GetOverrideAdd();
+			if( fOverrideAdd == -1 )
 			{
-				m_Player[p].SetOverrideAlpha( 0 );
+				m_Player[p].SetOverrideAdd( 0 );
 			}
 			else
 			{
-				float fNewAlpha = min( 1, fOverrideAlpha + fDeltaTime );
-                m_Player[p].SetOverrideAlpha( fNewAlpha );
+				float fNewAdd = min( 1, fOverrideAdd + fDeltaTime );
+                m_Player[p].SetOverrideAdd( fNewAdd );
 			}
 
 		}

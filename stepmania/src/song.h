@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  Class: Song
 
- Desc: Holds data about a song that is common to several Notes.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -47,18 +47,18 @@ public:
 
 	void TidyUpData();	// call after loading to clean up invalid data
 
-	void SaveToSMFile( CString sPath = "" );	// no path means save in Song dir
-
-	CString GetCacheFilePath();
+	void SaveToSMFile( CString sPath = "" );	// no path means save to SongFilePath
 	void SaveToCacheFile();
 
-public:
+	CString GetSongFilePath();
+	CString GetCacheFilePath();
 
-	CString m_sSongFile;
+	void LoadNoteData();
+
+public:
 	CString m_sSongDir;
 	CString m_sGroupName;
 
-	CString GetSongFilePath()	{return m_sSongDir+m_sSongFile; };
 
 	bool	m_bChangedSinceSave;
 
@@ -115,7 +115,7 @@ public:
 	float GetBPMAtBeat( float fBeat )
 	{
 		for( int i=0; i<m_BPMSegments.GetSize()-1; i++ )
-			if( m_BPMSegments[i+1].m_fStartBeat <= fBeat )
+			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BPMSegments[i].m_fBPM;
 	};

@@ -29,7 +29,7 @@ struct NoteDataWithScoring : public NoteData
 	int GetNumSuccessfulHoldNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 
 
-	float GetActualRadarValue( RadarCatrgory rv, float fSongSeconds )
+	float GetActualRadarValue( RadarCategory rv, float fSongSeconds )
 	{
 		switch( rv )
 		{

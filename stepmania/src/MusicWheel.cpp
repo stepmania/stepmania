@@ -116,7 +116,7 @@ WheelItemDisplay::WheelItemDisplay()
 	{
 		m_GradeDisplay[p].Load( THEME->GetPathTo(GRAPHIC_SELECT_MUSIC_SMALL_GRADES) );
 		m_GradeDisplay[p].SetZoom( 1.0f );
-		m_GradeDisplay[p].SetXY( 90.0f + p*30.0f, 0 );
+		m_GradeDisplay[p].SetXY( 86.0f + p*26.0f, 0 );
 	}
 
 	m_textCourse.Load( THEME->GetPathTo(FONT_TEXT_BANNER) );
@@ -318,6 +318,7 @@ MusicWheel::MusicWheel()
 
 		m_HighScore[p].SetXY( SCORE_X, SCORE_Y[p]*0.97f );
 		m_HighScore[p].SetZoom( 0.6f );
+		m_HighScore[p].SetDiffuseColor( PlayerToColor(p) );
 		m_frameOverlay.AddActor( &m_HighScore[p] );
 	}
 	

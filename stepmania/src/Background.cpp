@@ -44,14 +44,18 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	// Load background animations
 	//
 	CStringArray asBGAnimNames;
-	GetDirListing( BG_ANIMS_DIR+"*.*", asBGAnimNames, true );
-	SortCStringArray( asBGAnimNames );
+
+	// We're going to try to classify songs as trance, pop, or techno based on some data about the song
+	if( pSong->m_BPMSegments.GetSize() + pSong->m_FreezeSegments.GetSize() >= 3 )
+		GetDirListing( BG_ANIMS_DIR+"techno*.*", asBGAnimNames, true );
+	else if( pSong->m_BPMSegments[0].m_fBPM > 160 )
+		GetDirListing( BG_ANIMS_DIR+"trance*.*", asBGAnimNames, true );
+	else
+		GetDirListing( BG_ANIMS_DIR+"pop*.*", asBGAnimNames, true );
+	
+	// pick 4 random animations from this array 
 	for( int i=0; i<asBGAnimNames.GetSize(); i++ )
-	{
-		if( stricmp(asBGAnimNames[i], "CVS") == 0 )	// if this directory is named CVS, skip it
-			continue;	// skip
-		m_BackgroundAnimations.Add( new BackgroundAnimation(BG_ANIMS_DIR+asBGAnimNames[i], pSong) );
-	}
+		m_BackgroundAnimations.Add( new BackgroundAnimation(BG_ANIMS_DIR + asBGAnimNames[i], pSong) );
 
 
 	//

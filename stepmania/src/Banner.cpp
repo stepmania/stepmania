@@ -60,7 +60,7 @@ bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 
 bool Banner::LoadFromGroup( CString sGroupName )
 {
-	m_bScrolling = true;
+	m_bScrolling = false;
 
 	CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 

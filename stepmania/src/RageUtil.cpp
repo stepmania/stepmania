@@ -340,7 +340,9 @@ DWORD GetFileSizeInBytes( const CString &sFilePath )
 	  NULL         // handle to file with attributes to 
 	);
 
-	return GetFileSize( hFile, NULL );
+	DWORD dwSize = GetFileSize( hFile, NULL );
+	CloseHandle( hFile );
+	return dwSize;
 }
 
 bool DoesFileExist( const CString &sPath )

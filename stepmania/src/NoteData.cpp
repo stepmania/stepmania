@@ -3,7 +3,7 @@
 -----------------------------------------------------------------------------
  File: NoteData.cpp
 
- Desc: A pattern of ColorNotes that past Y==0.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -72,7 +72,7 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 	ASSERT( pFrom->m_iNumTracks == m_iNumTracks );
 
 	if( iToIndexBegin == -1 )
-		iToIndexBegin = iFromIndexBegin;
+		iToIndexBegin = 0;
 
 	pFrom->ConvertHoldNotesTo2sAnd3s();
 
@@ -449,8 +449,8 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		break;
 	}
 
-	NoteData* pNewData = new NoteData;	// write into here as we tranform
-	pNewData->m_iNumTracks = m_iNumTracks;
+	NoteData tempNoteData;	// write into here as we tranform
+	tempNoteData.m_iNumTracks = m_iNumTracks;
 
 	// transform m_TapNotes 
 	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
@@ -460,7 +460,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			int iOldCol = oldColToNewCol[j][0];
 			int iNewCol = oldColToNewCol[j][1];
 			
-			pNewData->m_TapNotes[iNewCol][i] = m_TapNotes[iOldCol][i];
+			tempNoteData.m_TapNotes[iNewCol][i] = m_TapNotes[iOldCol][i];
 		}
 	}
 
@@ -477,7 +477,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			if( hn.m_iTrack == iOldCol )
 			{
 				HoldNote newHN = { iNewCol, hn.m_iStartIndex, hn.m_iEndIndex };
-				pNewData->AddHoldNote( newHN );
+				tempNoteData.AddHoldNote( newHN );
 			}
 		}
 	}
@@ -485,7 +485,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	//
 	// copy note data from newData back into this
 	//
-	(*this) = *pNewData;
+	(*this) = tempNoteData;
 }
 
 void NoteData::MakeLittle()

@@ -94,7 +94,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	m_textVersion.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textVersion.SetHorizAlign( Actor::align_right );
-	m_textVersion.SetText( "v3.0 compatibility test" );
+	m_textVersion.SetText( "v3.0 beta 1" );
 	m_textVersion.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( SCREEN_RIGHT-16, SCREEN_BOTTOM-20 );
 	m_textVersion.SetZoom( 0.5f );

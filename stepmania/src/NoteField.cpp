@@ -37,7 +37,7 @@ NoteField::NoteField()
 
 	m_fBeginMarker = m_fEndMarker = -1;
 
-	m_fOverrideAlpha = -1;
+	m_fOverrideAdd = -1;
 }
 
 
@@ -83,9 +83,7 @@ void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, c
 	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
 	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
 	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	float fAlpha			= ArrowGetAlpha(	m_PlayerOptions, fYPos );
-	if( m_fOverrideAlpha != -1 )
-		fAlpha = m_fOverrideAlpha;
+	const float fAlpha		= ArrowGetAlpha(	m_PlayerOptions, fYPos );
 
 	D3DXCOLOR colorLeading, colorTrailing;	// of the color part.  Alpha here be overwritten with fAlpha!
 	if( color.a == -1 )	// indicated "NULL"
@@ -93,7 +91,9 @@ void NoteField::CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, c
 	else
 		colorLeading = colorTrailing = color;
 
-	const float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
+	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
+	if( m_fOverrideAdd != -1 )
+		fAddAlpha = m_fOverrideAdd;
 	int iGrayPartFrameNo = m_ColorNote[iCol].GetGrayPartFrameNoFromIndexAndBeat( roundf(fIndex), m_fSongBeat );
 
 
@@ -109,9 +109,7 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
 	const float fRotation	= ArrowGetRotation(	m_PlayerOptions, iCol, fYOffset );
 	const float fXPos		= ArrowGetXPos(		m_PlayerOptions, iCol, fYOffset, m_fSongBeat );
-	float fAlpha			= ArrowGetAlpha(	m_PlayerOptions, fYPos );
-	if( m_fOverrideAlpha != -1 )
-		fAlpha = m_fOverrideAlpha;
+	const float fAlpha			= ArrowGetAlpha(	m_PlayerOptions, fYPos );
 
 	int iGrayPartFrameNo;
 	if( bActive  &&  m_Mode == MODE_DANCING )
@@ -125,7 +123,9 @@ void NoteField::CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActi
 	colorLeading.a = 1;
 	D3DXCOLOR colorTrailing = colorLeading;
 
-	const float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
+	float fAddAlpha = m_ColorNote[iCol].GetAddAlphaFromDiffuseAlpha( fAlpha );
+	if( m_fOverrideAdd != -1 )
+		fAddAlpha = m_fOverrideAdd;
 
 	ColorNoteInstance instance = { fXPos, fYPos, fRotation, fAlpha, colorLeading, colorTrailing, fAddAlpha, iGrayPartFrameNo };
 	cni = instance;
@@ -169,7 +169,7 @@ void NoteField::DrawBPMText( const int iIndex, const float fBPM )
 	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(1,0,0,1) );
 	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
-	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 50, fYPos );
+	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 60, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
@@ -178,10 +178,10 @@ void NoteField::DrawFreezeText( const int iIndex, const float fSecs )
 	const float fYOffset	= ArrowGetYOffset(	m_PlayerOptions, (float)iIndex, m_fSongBeat );
 	const float fYPos		= ArrowGetYPos(		m_PlayerOptions, fYOffset );
 
-	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0,0,0.6f,1) );
+	m_textMeasureNumber.SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetAddColor( D3DXCOLOR(1,1,1,cosf(TIMER->GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
-	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 20, fYPos );
+	m_textMeasureNumber.SetXY( -m_rectMeasureBar.GetZoomedWidth()/2 - 10, fYPos );
 	m_textMeasureNumber.Draw();
 }
 

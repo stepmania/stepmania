@@ -224,6 +224,7 @@ void SongManager::LoadDWISongDir( CString DWIHome )
 
 void SongManager::FreeSongArray()
 {
+	// Memory is being corrupt somewhere, and this is causing a crash.  Bad news.  I'll fix it later.  Let the OS free it for now.
 	for( int i=0; i<m_pSongs.GetSize(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.RemoveAll();

@@ -70,7 +70,7 @@ const CString g_sAppClassName	= "StepMania Class";
 HWND		g_hWndMain;		// Main Window Handle
 HINSTANCE	g_hInstance;	// The Handle to Window Instance
 HANDLE		g_hMutex;		// Used to check if an instance of our app is already
-const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
+const DWORD g_dwWindowStyle = WS_VISIBLE|WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU|WS_THICKFRAME;
 
 
 BOOL	g_bIsActive		= FALSE;	// Whether the focus is on our app
@@ -387,7 +387,6 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 			{
 				// Don't allow the window to be resized smaller than the screen resolution.
 				// This should snap to multiples of the Window size two!
-
 				RECT rcWnd;
 				SetRect( &rcWnd, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT );
 				DWORD dwWindowStyle = GetWindowLong( g_hWndMain, GWL_STYLE );
