@@ -576,8 +576,21 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 			else
 				lookup[c][0] = 0;
 		} else {
+			/*
+			 * Calculate a color conversion table.  There are a few ways we can do
+			 * this (each list is the resulting table for 4->2 bit):
+			 *
+			 * SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
+			 * { 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3 }
+			 * SCALE( i, 0, max_src_val, 0, max_dst_val );
+			 * { 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3 }
+			 * lrintf( ((float) i / max_src_val) * max_dst_val )
+			 * { 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 }
+			 *
+			 * We use the first, since it gives the most even distribution.
+			 */
 			for( uint32_t i = 0; i <= max_src_val; ++i )
-				lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val, 0, max_dst_val );
+				lookup[c][i] = (uint8_t) SCALE( i, 0, max_src_val+1, 0, max_dst_val+1 );
 		}
 	}
 
