@@ -296,7 +296,6 @@ void ScreenGameplay::Init()
 
 
 
-	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	m_Background.SetZ( 2 );	// behind everything else
 	this->AddChild( &m_Background );
 
@@ -1007,10 +1006,6 @@ void ScreenGameplay::LoadNextSong()
 		/* BeginnerHelper disabled/failed to load. */
 		m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
 	}
-
-	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
-	m_Background.BeginTweening( 2 );
-	m_Background.SetDiffuse( RageColor(1,1,1,1) );
 
 	m_Foreground.LoadFromSong( GAMESTATE->m_pCurSong );
 
@@ -2172,10 +2167,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
-
-		// make the background invisible so we don't waste power drawing it
-		m_Background.BeginTweening( 1 );
-		m_Background.SetDiffuse( RageColor(1,1,1,0) );
 
 		// show the survive time if extra stage
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
