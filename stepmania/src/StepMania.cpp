@@ -1421,6 +1421,14 @@ static void HandleInputEvents(float fDeltaTime)
 		if( HandleGlobalInputs(DeviceI, type, GameI, MenuI, StyleI ) )
 			continue;	// skip
 		
+		// check back in event mode
+		if( PREFSMAN->m_bEventMode &&
+			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_BACK_IN_EVENT_MODE) )
+		{
+			MenuI.player = PLAYER_1;
+			MenuI.button = MENU_BUTTON_BACK;
+		}
+
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}
 }
