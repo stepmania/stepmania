@@ -88,7 +88,8 @@ MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp 
 MusicSortDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
 OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h ScrollBar.cpp ScrollBar.h ScrollingList.cpp \
 ScrollingList.h SnapDisplay.cpp SnapDisplay.h TextBanner.cpp TextBanner.h \
-HelpDisplay.cpp HelpDisplay.h WheelNotifyIcon.cpp WheelNotifyIcon.h GrooveGraph.cpp GrooveGraph.h
+HelpDisplay.cpp HelpDisplay.h WheelNotifyIcon.cpp WheelNotifyIcon.h GrooveGraph.cpp GrooveGraph.h EnemyFace.cpp \
+EnemyFace.h EnemyHealth.cpp EnemyHealth.h MeterDisplay.cpp MeterDisplay.h
 
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp \
