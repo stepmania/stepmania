@@ -354,7 +354,10 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
 //	else
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
-	SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
+	if( so == SORT_MOST_PLAYED )
+		SONGMAN->GetBestSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );
+	else
+		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
 
 	// copy only songs that have at least one Steps for the current GameMode
 	for( unsigned i=0; i<apAllSongs.size(); i++ )
@@ -483,27 +486,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			SortSongPointerArrayByBPM( arraySongs );
 			break;
 		case SORT_MOST_PLAYED:
-			{
-			arraySongs.clear();
-
-			const vector<Song*> arrayAllSongs = SONGMAN->GetBestSongs();
-
-			const unsigned SongsToShow = MOST_PLAYED_SONGS_TO_SHOW;
-			for ( i=0; arraySongs.size() < SongsToShow && i < arrayAllSongs.size(); i++ )
-			{
-				// weed out songs that require more songs than are available
-				Song *pSong = arrayAllSongs[i];
-				if( SONGMAN->GetNumStagesForSong(pSong) > GAMESTATE->GetNumStagesLeft() )
-					continue;
-				if( UNLOCKMAN->SongIsLocked(pSong) )
-					continue;
-
-				arraySongs.push_back( pSong );
-			}
-
+			if( (int) arraySongs.size() > MOST_PLAYED_SONGS_TO_SHOW )
+				arraySongs.erase( arraySongs.begin()+MOST_PLAYED_SONGS_TO_SHOW, arraySongs.end() );
 			bUseSections = false;
 			break;
-			}
 		case SORT_GRADE:
 			SortSongPointerArrayByGrade( arraySongs );
 			break;
