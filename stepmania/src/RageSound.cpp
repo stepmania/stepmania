@@ -49,7 +49,6 @@ RageSoundParams::RageSoundParams():
 	m_StartSecond = 0;
 	m_LengthSeconds = -1;
 	m_FadeLength = 0;
-	m_FadedOutAt = -1;
 	m_Volume = -1.0f; // use SOUNDMAN->GetMixVolume()
 	m_Balance = 0; // center
 	speed_input_samples = speed_output_samples = 1;
@@ -558,14 +557,9 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 		 * m_LengthFrames is -1, we don't know the length we're playing.
 		 * (m_LengthFrames is the length to play, not the length of the
 		 * source.)  If we don't know the length, don't fade. */
-		if( m_Param.m_FadeLength != 0 && (m_Param.m_LengthSeconds != -1 || m_Param.m_FadedOutAt != -1) )
+		if( m_Param.m_FadeLength != 0 && m_Param.m_LengthSeconds != -1 )
 		{
-			float fFinishFadingOutAt;
-			if( m_Param.m_FadedOutAt != -1 )
-				fFinishFadingOutAt = m_Param.m_FadedOutAt;
-			else
-				fFinishFadingOutAt = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-
+			const float fFinishFadingOutAt = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
 			const float fStartFadingOutAt = fFinishFadingOutAt - m_Param.m_FadeLength;
 			const float fStartSecond = float(decode_position) / samplerate();
 			const float fEndSecond = float(decode_position+got_frames) / samplerate();
