@@ -327,10 +327,6 @@ MusicWheel::MusicWheel()
 
 	m_iSwitchesLeftInSpinDown = 0;
 
-	// build all of the wheel item datas
-	for( int so=0; so<NUM_SORT_ORDERS; so++ )
-		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
-
 	if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
@@ -361,6 +357,11 @@ MusicWheel::MusicWheel()
 		GAMESTATE->m_SongOptions = so;
 	}
 
+	/* Build all of the wheel item data.  Do tihs after selecting
+	 * the extra stage, so it knows to always display it. */
+	for( int so=0; so<NUM_SORT_ORDERS; so++ )
+		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
+
 	// If there is no currently selected song, select one.
 	if( GAMESTATE->m_pCurSong == NULL )
 	{
@@ -368,6 +369,10 @@ MusicWheel::MusicWheel()
 		SONGMAN->GetGroupNames( asGroupNames );
 		if( asGroupNames.GetSize() > 0 )
 		{
+			/* XXX: Do groups get added if they're empty?
+			 * This will select songs we can't use; we want the first song
+			 * that's actually visible.  Should we select out wheel data? 
+			 * -glenn */
 			CArray<Song*, Song*> arraySongs;
 			SONGMAN->GetSongsInGroup( asGroupNames[0], arraySongs );
 			if( arraySongs.GetSize() > 0 ) // still nothing selected
@@ -431,15 +436,21 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			///////////////////////////////////
 			CArray<Song*, Song*> arraySongs;
 			
-			// copy only song that have at least one Notes for the current GameMode
+			// copy only songs that have at least one Notes for the current GameMode
 			for( i=0; i<SONGMAN->m_pSongs.GetSize(); i++ )
 			{
 				Song* pSong = SONGMAN->m_pSongs[i];
 
-				if( !bRoulette && !pSong->NormallyDisplayed() )
-					continue;
-				if( bRoulette && !pSong->RouletteDisplayed() )
-					continue;
+				/* If we're on an extra stage, and this song is selected, ignore
+				 * #SELECTABLE. */
+				if( pSong != GAMESTATE->m_pCurSong || 
+					(!GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2()) ) {
+					/* Hide songs that asked to be hidden via #SELECTABLE. */
+					if( !bRoulette && !pSong->NormallyDisplayed() )
+						continue;
+					if( bRoulette && !pSong->RouletteDisplayed() )
+						continue;
+				}
 
 				CArray<Notes*, Notes*> arraySteps;
 				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, arraySteps );
@@ -1030,7 +1041,8 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 	case STATE_SELECTING_MUSIC:
 	case STATE_ROULETTE_SPINNING:
 	case STATE_ROULETTE_SLOWING_DOWN:
-		break;	// fall through
+		break;	// fall through 
+		// XXX fall through or not? -glenn
 	default:
 		LOG->Trace( "NextMusic() ignored" );
 		return;	// don't continue
