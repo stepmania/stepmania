@@ -53,6 +53,9 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] = { "Marvelous", "Perfect", "Great", "
 #define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,ssprintf("Show%s",JUDGE_STRING[l]))
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
+#define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
+#define SHOW_COMBO_AREA						THEME->GetMetricB(m_sName,"ShowComboArea")
+#define GRAPH_START_HEIGHT					THEME->GetMetricF(m_sName,"GraphStartHeight")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 
 
@@ -113,6 +116,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	default:
 		ASSERT(0);
 	}
+	stageStats.Finish();
+
 	LOG->Trace( "total error: %i, %i", stageStats.iTotalError[0], stageStats.iTotalError[1] );
 
 /*
@@ -392,6 +397,40 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			break;
 		default:
 			ASSERT(0);
+		}
+	}
+
+	//
+	// init graph area
+	//
+	if( SHOW_GRAPH_AREA )
+	{
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;	// skip
+
+			m_Graph[p].SetName( ssprintf("GraphP%i",p+1) );
+			m_Graph[p].Load( THEME->GetPathToG(ssprintf("%s graph p%i",m_sName.c_str(), p+1)), GRAPH_START_HEIGHT );
+			m_Graph[p].LoadFromStageStats( stageStats, (PlayerNumber)p );
+			SET_XY_AND_ON_COMMAND( m_Graph[p] );
+
+			this->AddChild( &m_Graph[p] );
+		}
+	}
+
+	if( SHOW_COMBO_AREA )
+	{
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;	// skip
+
+			m_Combo[p].SetName( ssprintf("ComboP%i",p+1) );
+			m_Combo[p].Load( ssprintf("ScreenEvaluationStage combo p%i", p+1), stageStats, (PlayerNumber)p );
+			SET_XY_AND_ON_COMMAND( m_Combo[p] );
+
+			this->AddChild( &m_Combo[p] );
 		}
 	}
 
@@ -766,6 +805,28 @@ void ScreenEvaluation::TweenOffScreen()
 			continue;
 		UtilOffCommand( m_sprGradeFrame[p], "ScreenEvaluation" );
 		UtilOffCommand( m_Grades[p], "ScreenEvaluation" );
+	}
+
+	if( SHOW_GRAPH_AREA )
+	{
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;	// skip
+
+			OFF_COMMAND( m_Graph[p] );
+		}
+	}
+
+	if( SHOW_COMBO_AREA )
+	{
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;	// skip
+
+			OFF_COMMAND( m_Combo[p] );
+		}
 	}
 
 	// points area

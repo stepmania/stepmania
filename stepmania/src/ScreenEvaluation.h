@@ -23,6 +23,8 @@
 #include "Banner.h"
 #include "DifficultyIcon.h"
 #include "PercentageDisplay.h"
+#include "GraphDisplay.h"
+#include "ComboGraph.h"
 
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
@@ -67,6 +69,12 @@ protected:
 	// grade area
 	Sprite				m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];
+
+	// graph area
+	GraphDisplay		m_Graph[NUM_PLAYERS];
+
+	// combo area
+	ComboGraph			m_Combo[NUM_PLAYERS];
 
 	// points area
 	bool				m_bNewSongsUnlocked;
