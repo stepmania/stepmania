@@ -1048,33 +1048,8 @@ void MusicWheel::SetOpenGroup(CString group, SongSortOrder so)
 		//
 		// cache banners
 		//
-		CString banner;
-		switch( from[i].m_Type )
-		{
-		case TYPE_SONG:
-			{
-				Song* pSong = from[i].m_pSong;
-				if( pSong->HasBanner() )
-					banner = pSong->GetBannerPath();
-			}
-			break;
-		case TYPE_COURSE:
-			{
-				Course* pCourse = from[i].m_pCourse;
-				if( pCourse->HasBanner() )
-					banner = pCourse->m_sBannerPath;
-			}
-			break;
-		case TYPE_SECTION:
-			{
-				banner = SONGMAN->GetGroupBannerPath( from[i].m_sSectionName );
-			}
-			break;
-		default:
-			break;
-		}
-		if(banner != "")
-			TEXTUREMAN->CacheTexture( Banner::BannerTex(banner) );
+		if(from[i].HasBanner())
+			TEXTUREMAN->CacheTexture( Banner::BannerTex(from[i].GetBanner()) );
 	}
 
 	m_iSelection = 0;
