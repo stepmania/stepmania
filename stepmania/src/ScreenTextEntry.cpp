@@ -198,7 +198,13 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 		else if ( DeviceI.ToChar() >= ' ' ) 
 		{
-			AppendToAnswer( ssprintf( "%c", DeviceI.ToChar() ) );
+			bool bIsHoldingShift = 
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
+			if ( bIsHoldingShift )
+				AppendToAnswer( ssprintf( "%c", DeviceI.ToChar() - 32 ) );
+			else
+				AppendToAnswer( ssprintf( "%c", DeviceI.ToChar() ) );
 
 			//If the user wishes to select text in traditional way, start should finish text entry
 			m_iFocusY = KEYBOARD_ROW_SPECIAL;
