@@ -70,8 +70,12 @@ void ScoreDisplayNormal::Update( float fDeltaTime )
 
 	if( m_iTrailingScore != m_iScore )
 	{
+		// adjust for when player fails
+		int increment = int(m_iScoreVelocity * fDeltaTime);
+		if (m_iScoreVelocity != 0 && increment == 0) increment = 1;
+
 		int iDeltaBefore = m_iScore - m_iTrailingScore;
-		m_iTrailingScore += int(m_iScoreVelocity * fDeltaTime);
+		m_iTrailingScore += increment;
 		int iDeltaAfter = m_iScore - m_iTrailingScore;
 
 		if( (iDeltaBefore < 0 && iDeltaAfter > 0) ||
