@@ -171,7 +171,8 @@ void MusicWheel::Load()
 			pSteps,
 			po,
 			so );
-		GAMESTATE->m_pCurSong = GAMESTATE->m_pPreferredSong = pSong;
+		GAMESTATE->m_pCurSong.Set( pSong );
+		GAMESTATE->m_pPreferredSong = pSong;
 		FOREACH_HumanPlayer( p )
 		{
 			GAMESTATE->m_pCurSteps[p] = pSteps;
@@ -235,7 +236,7 @@ void MusicWheel::Load()
 		&& !GAMESTATE->GetEventMode()
 		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
 	{
-		GAMESTATE->m_pCurSong = NULL;
+		GAMESTATE->m_pCurSong.Set( NULL );
 	}
 
 	// Select the the previously selected song (if any)

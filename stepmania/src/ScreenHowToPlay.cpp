@@ -154,7 +154,7 @@ void ScreenHowToPlay::Init()
 		pSteps->GetNoteData( tempNoteData );
 		pStyle->GetTransformedNoteDataForStyle( PLAYER_1, tempNoteData, m_NoteData );
 
-		GAMESTATE->m_pCurSong = &m_Song;
+		GAMESTATE->m_pCurSong.Set( &m_Song );
 		GAMESTATE->m_bPastHereWeGo = true;
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_AUTOPLAY;
 

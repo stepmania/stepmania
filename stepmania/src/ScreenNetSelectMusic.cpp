@@ -271,7 +271,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_SongChanged:
-		GAMESTATE->m_pCurSong = m_MusicWheel.GetSelectedSong();
+		GAMESTATE->m_pCurSong.Set( m_MusicWheel.GetSelectedSong() );
 		MusicChanged();
 		break;
 	case SM_SMOnlinePack:
@@ -389,7 +389,7 @@ void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
 	if ( pSong == NULL )
 		return;
 
-	GAMESTATE->m_pCurSong = pSong;
+	GAMESTATE->m_pCurSong.Set( pSong );
 
 	if ( NSMAN->useSMserver )
 	{
@@ -439,7 +439,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 void ScreenNetSelectMusic::StartSelectedSong()
 {
 	Song * pSong = m_MusicWheel.GetSelectedSong();
-	GAMESTATE->m_pCurSong = pSong;
+	GAMESTATE->m_pCurSong.Set( pSong );
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
 	FOREACH_EnabledPlayer (pn)
 	{

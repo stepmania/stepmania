@@ -3,8 +3,15 @@
 #include "Foreach.h"
 #include "Actor.h"
 #include "RageUtil.h"
+#include "EnumHelper.h"
 
 MessageManager*	MESSAGEMAN = NULL;	// global and accessable from anywhere in our program
+
+
+static const CString MessageNames[NUM_MESSAGES] = {
+	"CurrentSongChanged",
+};
+XToString( Message );
 
 
 MessageManager::MessageManager()

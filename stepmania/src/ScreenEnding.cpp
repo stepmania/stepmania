@@ -148,7 +148,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-		GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
+		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
 		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];
 		GAMESTATE->m_pCurSteps[PLAYER_2] = GAMESTATE->m_pCurSong->GetAllSteps()[0];

@@ -1384,7 +1384,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	}
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	GAMESTATE->m_pCurSong = pSong;
+	GAMESTATE->m_pCurSong.Set( pSong );
 	if( pSong )
 		GAMESTATE->m_pPreferredSong = pSong;
 

@@ -604,7 +604,7 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 void ScreenEz2SelectMusic::MusicChanged()
 {
 	Song* pSong = m_MusicBannerWheel.GetSelectedSong();
-	GAMESTATE->m_pCurSong = pSong;
+	GAMESTATE->m_pCurSong.Set( pSong );
 
 	m_CurrentGroup.SetText( SONGMAN->ShortenGroupName( pSong->m_sGroupName ) , "");
 	m_CurrentGroup.SetDiffuse( SONGMAN->GetGroupColor(pSong->m_sGroupName) );

@@ -903,7 +903,7 @@ void ScreenGameplay::LoadNextSong()
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
-	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
+	GAMESTATE->m_pCurSong.Set( m_apSongsQueue[iPlaySongIndex] );
 	STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
 
 	// No need to do this here.  We do it in SongFinished().
@@ -2162,10 +2162,10 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 				int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
 				iPlaySongIndex %= m_apSongsQueue.size();
-				GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
+				GAMESTATE->m_pCurSong.Set( m_apSongsQueue[iPlaySongIndex] );
 
 				m_NextSongOut.Load( THEME->GetPathB(m_sName,"next song out") );
-				GAMESTATE->m_pCurSong = pCurSong;
+				GAMESTATE->m_pCurSong.Set( pCurSong );
 
 				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
 				LoadCourseSongNumber( GetMaxSongsPlayed()+1 );

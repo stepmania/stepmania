@@ -12,6 +12,25 @@ public:
 	virtual void HandleMessage( const CString& sMessage ) = 0;
 };
 
+enum Message
+{
+	MESSAGE_CURRENT_SONG_CHANGED,
+	NUM_MESSAGES
+};
+const CString& MessageToString( Message m );
+
+template<class T, Message M>
+class BroadcastOnChangePtr
+{
+private:
+	T *val;
+public:
+	const T* Get() { return val; }
+	void Set( T* t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(M) ); }
+	operator T* () const { return val; }
+	T* operator->() const { return val; }
+};
+
 class MessageManager
 {
 public:

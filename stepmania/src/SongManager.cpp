@@ -917,7 +917,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd,
 		{
 			/* This normally shouldn't happen, but it's helpful to permit it for testing. */
 			LOG->Warn( "GetExtraStageInfo() called in GROUP_ALL_MUSIC, but GAMESTATE->m_pCurSong == NULL" );
-			GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
+			GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		}
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 	}

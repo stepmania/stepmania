@@ -348,7 +348,7 @@ void ScreenGameplayMultiplayer::LoadNextSong()
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_vpSongsQueue.size();
-	GAMESTATE->m_pCurSong = m_vpSongsQueue[iPlaySongIndex];
+	GAMESTATE->m_pCurSong.Set( m_vpSongsQueue[iPlaySongIndex] );
 	STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
 
 	// No need to do this here.  We do it in SongFinished().

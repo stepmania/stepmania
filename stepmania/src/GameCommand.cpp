@@ -111,7 +111,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 			return false;
 	}
 
-	if( m_pSong && GAMESTATE->m_pCurSong != m_pSong )
+	if( m_pSong && GAMESTATE->m_pCurSong.Get() != m_pSong )
 		return false;
 	if( m_pSteps && GAMESTATE->m_pCurSteps[pn] != m_pSteps )
 		return false;
@@ -636,7 +636,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 		SCREENMAN->SetNewScreen( m_sScreen );
 	if( m_pSong )
 	{
-		GAMESTATE->m_pCurSong = m_pSong;
+		GAMESTATE->m_pCurSong.Set( m_pSong );
 		GAMESTATE->m_pPreferredSong = m_pSong;
 	}
 	if( m_pSteps )

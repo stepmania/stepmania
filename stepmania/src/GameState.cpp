@@ -151,7 +151,7 @@ void GameState::Reset()
 	m_iGameSeed = rand();
 	m_iRoundSeed = rand();
 
-	m_pCurSong = NULL;
+	m_pCurSong.Set( NULL );
 	m_pPreferredSong = NULL;
 	FOREACH_PlayerNumber( p )
 		m_pCurSteps[p] = NULL;
@@ -1826,9 +1826,8 @@ public:
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentSong( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->m_pCurSong = NULL; }
-		else { Song *pS = Luna<Song>::check(L,1); p->m_pCurSong = pS; }
-		MESSAGEMAN->Broadcast( "CurrentSongChanged" );
+		if( lua_isnil(L,1) ) { p->m_pCurSong.Set( NULL ); }
+		else { Song *pS = Luna<Song>::check(L,1); p->m_pCurSong.Set( pS ); }
 		return 0;
 	}
 	static int GetCurrentSteps( T* p, lua_State *L )

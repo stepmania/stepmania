@@ -108,7 +108,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-		GAMESTATE->m_pCurSong = SONGMAN->GetRandomSong();
+		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		STATSMAN->m_CurStageStats.vpSongs.push_back( GAMESTATE->m_pCurSong );
 		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
 		GAMESTATE->m_pCurSteps[PLAYER_1] = GAMESTATE->m_pCurSong->GetAllSteps()[0];

@@ -99,7 +99,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 			continue;	// skip
 
 		// Found something we can use!
-		GAMESTATE->m_pCurSong = pSong;
+		GAMESTATE->m_pCurSong.Set( pSong );
 		FOREACH_PlayerNumber( p )
 			GAMESTATE->m_pCurSteps[p] = pSteps;
 		

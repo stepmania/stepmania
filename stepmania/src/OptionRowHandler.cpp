@@ -946,7 +946,7 @@ void OptionRowHandlerList::FillSongsInCurrentSongGroup( OptionRowDefinition &def
 	SONGMAN->GetSongs( vpSongs, GAMESTATE->m_sPreferredSongGroup );
 
 	if( GAMESTATE->m_pCurSong == NULL )
-		GAMESTATE->m_pCurSong = vpSongs[0];
+		GAMESTATE->m_pCurSong.Set( vpSongs[0] );
 
 	defOut.name = "SongsInCurrentSongGroup";
 	defOut.bOneChoiceForAllPlayers = true;

@@ -9,6 +9,7 @@
 #include "Attack.h"
 #include "RageTimer.h"
 #include "Difficulty.h"
+#include "MessageManager.h"
 
 #include <map>
 #include <deque>
@@ -25,6 +26,7 @@ class TimingData;
 struct StageStats;
 struct PlayerState;
 struct lua_State;
+
 
 class GameState
 {
@@ -127,7 +129,7 @@ public:
 	//
 
 	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Song.
-	Song*		m_pCurSong;
+	BroadcastOnChangePtr<Song,MESSAGE_CURRENT_SONG_CHANGED>	m_pCurSong;
 	// The last Song that the user manually changed to.
 	Song*		m_pPreferredSong;
 	Steps*		m_pCurSteps[NUM_PLAYERS];
