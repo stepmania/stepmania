@@ -137,26 +137,7 @@ void Steps::TidyUpData()
 	}
 
 	if( GetMeter() < 1) // meter is invalid
-	{
-		// Why not just use PredictMeter()
 		SetMeter( int(PredictMeter()) );
-		/*
-		// guess meter from difficulty class
-		switch( GetDifficulty() )
-		{
-		case DIFFICULTY_BEGINNER:	SetMeter(1);	break;
-		case DIFFICULTY_EASY:		SetMeter(3);	break;
-		case DIFFICULTY_MEDIUM:		SetMeter(5);	break;
-		case DIFFICULTY_HARD:		SetMeter(8);	break;
-		case DIFFICULTY_CHALLENGE:	SetMeter(8);	break;
-		case DIFFICULTY_INVALID:	SetMeter(5);	break;
-		default:	ASSERT(0);
-		}*/
-	}
-
-	// Don't put garbage in the desciption.
-//	if( m_sDescription.empty() )
-//		m_sDescription = Capitalize( DifficultyToString(m_Difficulty) );
 }
 
 void Steps::Decompress() const
