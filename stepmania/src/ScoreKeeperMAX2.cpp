@@ -437,7 +437,7 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 
 	/* This is used for Oni percentage displays.  Grading values are currently in
 	 * StageStats::GetGrade. */
-	const float TapScoreValues[NUM_TAP_NOTE_SCORES] = { 0, 0, 0, 0, +1, +2, +3 };
+	const int TapScoreValues[NUM_TAP_NOTE_SCORES] = { 0, 0, 0, 0, +1, +2, +3 };
 	return TapScoreValues[tns];
 }
 
