@@ -278,33 +278,35 @@ bool Song::LoadFromSongDir( CString sDir )
 		return true;	// do load this song
 }
 
-// Should this be called StepsID? -Chris
-struct SongID
+
+class StepsID
 {
 	StepsType st;
-	Difficulty dc;
-	SongID() { SetFrom(NULL); }
+	CString id;
+
+public:
+	StepsID() { SetFrom(NULL); }
 	void SetFrom( const Steps *p )
 	{
 		if( p == NULL )
 		{
 			st = STEPS_TYPE_INVALID;
-			dc = DIFFICULTY_INVALID;
+			id = "";
 		}
 		else
 		{
 			st = p->m_StepsType;
-			dc = p->GetDifficulty();
+			id = p->GetID();
 		}
 	}
-	Steps *GetSteps( const Song *p, bool bAllowNotesLoss ) const
+	Steps *GetSteps( const Song *p, bool bAllowNull ) const
 	{
-		if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
+		if( st == STEPS_TYPE_INVALID || id == "" )
 			return NULL;
-		Steps *ret = p->GetStepsByDifficulty( st, dc, true );
-		if( !bAllowNotesLoss )
+		Steps *ret = p->GetStepsByID( st, id, true );
+		if( !bAllowNull )
 		{
-			RAGE_ASSERT_M( ret, ssprintf("%i, %i", st, dc) );	// we had something selected before reloading, so it better still be there after!
+			RAGE_ASSERT_M( ret, ssprintf("%i, \"%s\"", st, id.c_str()) );	// we had something selected before reloading, so it better still be there after!
 		}
 		return ret;
 	}
@@ -321,16 +323,16 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 	// Fix GAMESTATE->m_CurNotes, g_CurStageStats, g_vPlayedStageStats[] after reloading.
 	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
 	 * so we can check to make sure we didn't lose any steps which are referenced ... */
-	SongID OldCurNotes[NUM_PLAYERS];
-	SongID OldCurStageStats[NUM_PLAYERS];
-	vector<SongID> OldPlayedStageStats[NUM_PLAYERS];
+	StepsID OldCurNotes[NUM_PLAYERS];
+	StepsID OldCurStageStats[NUM_PLAYERS];
+	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
 	for( int p = 0; p < NUM_PLAYERS; ++p )
 	{
 		OldCurNotes[p].SetFrom( GAMESTATE->m_pCurNotes[p] );
 		OldCurStageStats[p].SetFrom( g_CurStageStats.pSteps[p] );
 		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
-			OldPlayedStageStats[p].push_back( SongID() );
+			OldPlayedStageStats[p].push_back( StepsID() );
 			OldPlayedStageStats[p][i].SetFrom( g_vPlayedStageStats[i].pSteps[p] );
 		}
 	}
@@ -918,6 +920,31 @@ Steps* Song::GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh ) cons
 {
 	vector<Steps*> vNotes;
 	GetSteps( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", true, 1 );
+	if( vNotes.size() == 0 )
+		return NULL;
+	else 
+		return vNotes[0];
+}
+
+/* sID is a difficulty name (for non-edits) or a description (for edits).  This allows
+ * specifying a specific notes by a single string.
+ *
+ * XXX: Don't allow duplicate edit descriptions, and don't allow edit descriptions
+ * to be difficulty names (eg. "Hard").  If we do that, this will be completely unambiguous.
+ *
+ * XXX: Unless two memcards are inserted and there's overlap in the names.  In that
+ * case, maybe both edits should be renamed to "Pn: foo"; as long as we don't write
+ * them back out (which we don't do except in the editor), it won't be permanent. 
+ * We could do this during the actual Steps::GetID() call, instead, but then it'd have
+ * to have access to Song::m_LoadedFromProfile. */
+Steps* Song::GetStepsByID( StepsType nt, CString sID, bool bIncludeAutoGen ) const
+{
+	vector<Steps*> vNotes;
+	Difficulty dc = StringToDifficulty(sID);
+	if( dc != DIFFICULTY_INVALID && DIFFICULTY_EDIT )
+		GetSteps( vNotes, nt, dc, -1, -1, "", bIncludeAutoGen );
+	else
+		GetSteps( vNotes, nt, DIFFICULTY_EDIT, -1, -1, sID, bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 
