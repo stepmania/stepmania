@@ -254,6 +254,13 @@ void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 	system( sCommand );
 }
 
+void MemoryCardDriver_Linux::ResetUsbStorage()
+{
+	system( "rmmod usb-storage" );
+	system( "modprobe usb-storage" );
+}
+
+
 /*
  * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
  *	Chris Danford

@@ -235,4 +235,6 @@ void MemoryCardManager::FlushAllDisks()
 			continue;	// skip
 		m_pDriver->Flush(&m_Device[p]);
 	}
+
+	m_pDriver->ResetUsbDeviceNumbers();
 }
