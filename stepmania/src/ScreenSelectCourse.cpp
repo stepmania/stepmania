@@ -412,7 +412,7 @@ void ScreenSelectCourse::AfterCourseChange()
 			if( pCourse->GetTotalSeconds(fTotalSeconds) )
 				m_textTime.SetText( SecondsToTime(fTotalSeconds) );
 			else
-				m_textTime.SetText( "??:??:??" );
+				m_textTime.SetText( "xx:xx:xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
 
 			m_Banner.LoadFromCourse( pCourse );
 

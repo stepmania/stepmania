@@ -659,16 +659,44 @@ int SongManager::GetNumStagesForSong( const Song* pSong )
 
 void SongManager::InitCoursesFromDisk()
 {
+	unsigned i;
+
 	//
-	// Load courses from CRS files
+	// Load courses from in Courses dir
 	//
 	CStringArray saCourseFiles;
 	GetDirListing( "Courses/*.crs", saCourseFiles, false, true );
-	for( unsigned i=0; i<saCourseFiles.size(); i++ )
+	for( i=0; i<saCourseFiles.size(); i++ )
 	{
 		Course* pCourse = new Course;
 		pCourse->LoadFromCRSFile( saCourseFiles[i] );
 		m_pCourses.push_back( pCourse );
+	}
+
+
+	// Find all group directories in Courses dir
+	CStringArray arrayGroupDirs;
+	GetDirListing( "Courses/*", arrayGroupDirs, true );
+	SortCStringArray( arrayGroupDirs );
+	
+	for( i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Courses/
+	{
+		CString sGroupDirName = arrayGroupDirs[i];
+
+		if( 0 == stricmp( sGroupDirName, "cvs" ) )	// the directory called "CVS"
+			continue;		// ignore it
+
+		// Find all CRS files in this group directory
+		CStringArray arrayCoursePaths;
+		GetDirListing( "Courses/"+sGroupDirName + "/*.crs", arrayCoursePaths, false, true );
+		SortCStringArray( arrayCoursePaths );
+
+		for( unsigned j=0; j<arrayCoursePaths.size(); j++ )
+		{
+			Course* pCourse = new Course;
+			pCourse->LoadFromCRSFile( arrayCoursePaths[j] );
+			m_pCourses.push_back( pCourse );
+		}
 	}
 }
 	
