@@ -88,7 +88,7 @@ PlayerMinus::~PlayerMinus()
 {
 }
 
-void PlayerMinus::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField )
+void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField )
 {
 	GAMESTATE->ResetNoteSkins();
 
@@ -1003,7 +1003,7 @@ void PlayerMinus::FadeToFail()
 	m_pNoteField->FadeToFail();
 }
 
-void Player::Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper )
+void Player::Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper )
 {
 	PlayerMinus::Load( player_no, pNoteData, pLM, pCombinedLM, pScore, pInventory, pPrimaryScoreKeeper, pSecondaryScoreKeeper, &m_NoteField );
 }
