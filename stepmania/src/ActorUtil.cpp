@@ -16,6 +16,7 @@
 #include "FontCharAliases.h"
 #include "LuaManager.h"
 #include "MessageManager.h"
+#include "Foreach.h"
 
 #include "arch/Dialog/Dialog.h"
 
@@ -341,31 +342,59 @@ void ActorUtil::SetXY( Actor& actor, const CString &sType )
 	actor.SetXY( THEME->GetMetricF(sType,actor.GetID()+"X"), THEME->GetMetricF(sType,actor.GetID()+"Y") );
 }
 
-void ActorUtil::RunCommand( Actor& actor, const CString &sType, const CString &sCommandName )
+void ActorUtil::LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName )
 {
-	actor.PlayCommand( sCommandName );
+	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,actor.GetID()+sCommandName+"Command") );
+}
 
+void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName )
+{
 	// HACK:  It's very often that we command things to TweenOffScreen 
 	// that we aren't drawing.  We know that an Actor is not being
 	// used if its name is blank.  So, do nothing on Actors with a blank name.
 	// (Do "playcommand" anyway; BGAs often have no name.)
-	if( sCommandName=="Off" )
+	if( sCommandName=="Off" && actor.GetID().empty() )
+		return;
+
+	ASSERT_M( 
+		!actor.GetID().empty(), 
+		ssprintf("!actor.GetID().empty() ('%s', '%s')", sType.c_str(), sCommandName.c_str()) 
+		);
+
+	if( !actor.HasCommand(sCommandName ) )	// this actor hasn't loaded commands yet
+		LoadAllCommands( actor, sType );
+
+	// If we didn't load the command in LoadAllCommands, load the requested command 
+	// explicitly.  The metric is missing, and ThemeManager will prompt.
+	if( !actor.HasCommand(sCommandName) )
 	{
-		if( actor.GetID().empty() )
-			return;
-	}
-	else
-	{
-		ASSERT_M( !actor.GetID().empty(), ssprintf("!actor.GetID().empty() ('%s', '%s')",
-												   sType.c_str(), sCommandName.c_str()) );
+		// If this metric exists and we didn't load it in LoadAllCommands, then 
+		// LoadAllCommands has a bug.
+		DEBUG_ASSERT( !THEME->HasMetric(sType,actor.GetID()+sCommandName+"Command") );
+		
+		LoadCommand( actor, sType, sCommandName );
 	}
 
-	actor.RunCommands( THEME->GetMetricA(sType,actor.GetID()+sCommandName+"Command") );
+	actor.PlayCommand( sCommandName );
 }
 
-void ActorUtil::LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName )
+void ActorUtil::LoadAllCommands( Actor& actor, const CString &sType )
 {
-	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,actor.GetID()+sCommandName+"Command") );
+	set<CString> vsValueNames;
+	THEME->GetMetricsThatBeginWith( sType, actor.GetID(), vsValueNames );
+
+	FOREACHS_CONST( CString, vsValueNames, v )
+	{
+		const CString &sv = *v;
+		if( sv.Right(7) == "Command" )
+		{
+			// Ugh.  Where did StdString::Mid go?
+			CString sCommandName = sv;
+			sCommandName = sCommandName.Left( sCommandName.size()-7 );	// strip off "Command"
+			sCommandName = sCommandName.Right( sCommandName.size()-actor.GetID().size() );	// strip off actor ID
+			LoadCommand( actor, sType, sCommandName );
+		}
+	}
 }
 
 /*

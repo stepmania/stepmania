@@ -31,15 +31,15 @@ namespace ActorUtil
 	Actor* Create( const CString& sClassName, const CString& sDir, const XNode* pNode );
 
 
-
 	void SetXY( Actor& actor, const CString &sType );
 	inline void SetXY( Actor* pActor, const CString &sType ) { SetXY( *pActor, sType ); }
 
-	void RunCommand( Actor& actor, const CString &sType, const CString &sCommandName );
 	void LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName );
+	void LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName );
+	void LoadAllCommands( Actor& actor, const CString &sType );
 
-	inline void OnCommand( Actor& actor, const CString &sType ) { RunCommand( actor, sType, "On" ); }
-	inline void OffCommand( Actor& actor, const CString &sType ) { RunCommand( actor, sType, "Off" ); }
+	inline void OnCommand( Actor& actor, const CString &sType ) { LoadAndPlayCommand( actor, sType, "On" ); }
+	inline void OffCommand( Actor& actor, const CString &sType ) { LoadAndPlayCommand( actor, sType, "Off" ); }
 	inline void SetXYAndOnCommand( Actor& actor, const CString &sType )
 	{
 		SetXY( actor, sType );
@@ -47,7 +47,7 @@ namespace ActorUtil
 	}
 
 	/* convenience */
-	inline void RunCommand( Actor* pActor, const CString &sType, const CString &sCommandName ) { if(pActor) RunCommand( *pActor, sType, sCommandName ); }
+	inline void LoadAndPlayCommand( Actor* pActor, const CString &sType, const CString &sCommandName ) { if(pActor) LoadAndPlayCommand( *pActor, sType, sCommandName ); }
 	inline void OnCommand( Actor* pActor, const CString &sType ) { if(pActor) OnCommand( *pActor, sType ); }
 	inline void OffCommand( Actor* pActor, const CString &sType ) { if(pActor) OffCommand( *pActor, sType ); }
 	inline void SetXYAndOnCommand( Actor* pActor, const CString &sType ) { if(pActor) SetXYAndOnCommand( *pActor, sType ); }
@@ -63,7 +63,7 @@ namespace ActorUtil
 #define ON_COMMAND( actor )		ActorUtil::OnCommand( actor, m_sName )
 #define OFF_COMMAND( actor )	ActorUtil::OffCommand( actor, m_sName )
 #define SET_XY_AND_ON_COMMAND( actor )		ActorUtil::SetXYAndOnCommand( actor, m_sName )
-#define COMMAND( actor, command_name )		ActorUtil::RunCommand( actor, m_sName, command_name )
+#define COMMAND( actor, command_name )		ActorUtil::LoadAndPlayCommand( actor, m_sName, command_name )
 
 
 #endif

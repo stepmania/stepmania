@@ -821,6 +821,44 @@ void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueNa
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
+void ThemeManager::GetMetricsThatBeginWith( const CString &_sClassName, const CString &sValueName, set<CString> &vsValueNamesOut )
+{
+	CString sClassName = _sClassName;
+	while( !sClassName.empty() )
+	{
+		// Iterate over themes in the chain.
+		for( deque<Theme>::const_iterator i = g_vThemes.begin();
+			i != g_vThemes.end();
+			++i )
+		{
+			const XNode *cur = i->iniMetrics->GetChild( sClassName );
+			if( cur == NULL )
+				continue;
+
+			// Iterate over all metrics that match.
+			XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName );
+			if( j == cur->m_attrs.end() )
+				continue;
+			for( ; true; j++ )
+			{
+				const CString &sv = j->first;
+				if( sv.Left(sValueName.size()) == sValueName )
+					vsValueNamesOut.insert( sv );
+				else
+					break;
+			}
+		}
+
+		// put the fallback (if any) in sClassName
+		CString sFallback;
+		if( GetMetricRaw( sClassName, "Fallback", sFallback ) )
+			sClassName = sFallback;
+		else
+			sClassName = "";
+	}
+}
+
+
 // lua start
 #include "LuaBinding.h"
 

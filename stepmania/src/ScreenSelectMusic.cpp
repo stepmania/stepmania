@@ -317,6 +317,7 @@ void ScreenSelectMusic::Init()
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetHidden( true );
 	SET_XY( m_sprOptionsMessage );
+	ActorUtil::LoadAllCommands( m_sprOptionsMessage, m_sName );
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
 	FOREACH_PlayerNumber( p )
