@@ -9,12 +9,11 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"
-#include "MenuElements.h"
 #include "RageInputDevice.h"
 
 enum SetTimeSelection
@@ -28,7 +27,7 @@ enum SetTimeSelection
 	NUM_SET_TIME_SELECTIONS 
 };
 
-class ScreenSetTime : public Screen
+class ScreenSetTime : public ScreenWithMenuElements
 {
 public:
 	ScreenSetTime( CString sName );
@@ -53,7 +52,5 @@ private:
 	BitmapText	m_textTitle[NUM_SET_TIME_SELECTIONS];
 	BitmapText	m_textValue[NUM_SET_TIME_SELECTIONS];
 	BitmapText	m_textDayOfWeek;
-
-	MenuElements m_Menu;
 };
 

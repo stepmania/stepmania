@@ -1,14 +1,13 @@
-#ifndef MENUELEMENTS_H
-#define MENUELEMENTS_H
+#ifndef ScreenWithMenuElements_H
+#define ScreenWithMenuElements_H
 /*
 -----------------------------------------------------------------------------
- File: MenuElements.h
+ Class: ScreenWithMenuElements
 
- Desc: Displays common components of menu screens:
-	Background, Top Bar, Bottom Bar, help message, credits or PlayerOptions, style icon,
-	Menu Timer
+ Desc: Load one of several screens.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -22,28 +21,21 @@
 
 class MenuTimer;
 class HelpDisplay;
-class MenuElements : public ActorFrame
+
+class ScreenWithMenuElements : public Screen
 {
 public:
-	MenuElements();
-	virtual ~MenuElements();
-
-	virtual void DrawPrimitives();
-
-	void Load( CString sClassName );
-
-	void DrawTopLayer();
-	void DrawBottomLayer();
+	ScreenWithMenuElements( CString sName );
+	virtual ~ScreenWithMenuElements();
 
 	void StartTransitioning( ScreenMessage smSendWhenDone );
 	void Back( ScreenMessage smSendWhenDone );
-	void Update( float fDeltaTime );
 	bool IsTransitioning();
 	bool m_bTimerEnabled;
 
 	void StopTimer();
 
-public:	// let owner tinker with these objects
+protected:
 	BGAnimation			m_Background;
 
 	AutoActor			m_autoHeader;
@@ -56,8 +48,6 @@ public:	// let owner tinker with these objects
 	Transition	m_In;
 	Transition	m_Out;
 	Transition	m_Back;
-
-	RageSound m_soundBack;
 };
 
 #endif

@@ -26,7 +26,7 @@
 #define NEXT_SCREEN		THEME->GetMetric("ScreenInstructions","NextScreen")
 
 
-ScreenInstructions::ScreenInstructions( CString sName ) : Screen( sName )
+ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 
@@ -53,9 +53,6 @@ ScreenInstructions::ScreenInstructions( CString sName ) : Screen( sName )
 			return;
 		}
 	}
-
-	m_Menu.Load("ScreenInstructions");
-	this->AddChild( &m_Menu );
 
 	CString sHowToPlayPath;
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_INVALID )
@@ -89,14 +86,12 @@ void ScreenInstructions::Update( float fDeltaTime )
 
 void ScreenInstructions::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	// default input handler
@@ -121,12 +116,12 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenInstructions::MenuBack( PlayerNumber pn )
 {
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 void ScreenInstructions::MenuStart( PlayerNumber pn )
 {
-	m_Menu.StartTransitioning( SM_GoToNextScreen );
+	StartTransitioning( SM_GoToNextScreen );
 
 	m_sprHowToPlay.StopTweening();
 	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );

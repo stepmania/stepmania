@@ -32,8 +32,8 @@ ScreenSongOptions::ScreenSongOptions( CString sClassName ) :
 	 * fade in. */
 	if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)
 	{
-		m_Menu.m_In.Load( THEME->GetPathToB("ScreenSongOptions option in") );
-		m_Menu.m_In.StartTransitioning();
+		m_In.Load( THEME->GetPathToB("ScreenSongOptions option in") );
+		m_In.StartTransitioning();
 	}
 }
 

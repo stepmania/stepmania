@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "GameConstantsAndTypes.h"
@@ -17,7 +17,6 @@
 #include "Banner.h"
 #include "FadingBanner.h"
 #include "BPMDisplay.h"
-#include "MenuElements.h"
 #include "GrooveRadar.h"
 #include "GrooveGraph.h"
 #include "DifficultyIcon.h"
@@ -31,7 +30,7 @@
 #include "Character.h"
 #include "BGAnimation.h"
 
-class ScreenSelectMusic : public Screen
+class ScreenSelectMusic : public ScreenWithMenuElements
 {
 public:
 	ScreenSelectMusic( CString sName );
@@ -72,8 +71,6 @@ protected:
 
 	vector<Steps*> m_arrayNotes;
 	int					m_iSelection[NUM_PLAYERS];
-
-	MenuElements		m_Menu;
 
 	Sprite				m_sprCharacterIcon[NUM_PLAYERS];
 	Sprite				m_sprBannerMask;

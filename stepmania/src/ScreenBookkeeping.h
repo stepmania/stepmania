@@ -9,17 +9,16 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"
-#include "MenuElements.h"
 #include "RageInputDevice.h"
 
 const int NUM_BOOKKEEPING_COLS = 4;
 
-class ScreenBookkeeping : public Screen
+class ScreenBookkeeping : public ScreenWithMenuElements
 {
 public:
 	ScreenBookkeeping( CString sName );
@@ -42,7 +41,5 @@ private:
 	View m_View;
 	BitmapText	m_textTitle;
 	BitmapText	m_textCols[NUM_BOOKKEEPING_COLS];
-
-	MenuElements m_Menu;
 };
 

@@ -9,18 +9,17 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "RandomSample.h"
 #include "GameConstantsAndTypes.h"
-#include "MenuElements.h"
 #include "OptionIcon.h"
 #include "Banner.h"
 
 
 #define MAX_CHAR_ICONS_TO_SHOW 11
 
-class ScreenSelectCharacter : public Screen
+class ScreenSelectCharacter : public ScreenWithMenuElements
 {
 public:
 	ScreenSelectCharacter( CString sName );
@@ -57,8 +56,6 @@ private:
 		FINISHED_CHOOSING
 	} m_SelectionRow[NUM_PLAYERS];
 	PlayerNumber GetAffectedPlayerNumber( PlayerNumber pn );	// returns the number of the player that pn is selecting for
-
-	MenuElements	m_Menu;
 
 	Sprite			m_sprTitle[NUM_PLAYERS];
 

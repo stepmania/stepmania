@@ -7,13 +7,11 @@ Frieza
 
 /* Includes */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "RageSound.h"
-#include "MenuElements.h"
 
-
-class ScreenEz2SelectPlayer : public Screen
+class ScreenEz2SelectPlayer : public ScreenWithMenuElements
 {
 public:
 	ScreenEz2SelectPlayer( CString sName );
@@ -34,8 +32,6 @@ private:
 	
 	Sprite	m_sprJoinMessage[NUM_PLAYERS];
 	Sprite	m_sprJoinFrame[NUM_PLAYERS];
-
-	MenuElements m_Menu;
 
 	RageSound	m_soundSelect;	
 	BGAnimation	m_Background;	

@@ -25,7 +25,7 @@
 #include "LightsManager.h"
 
 
-ScreenTestLights::ScreenTestLights( CString sClassName ) : Screen( sClassName )
+ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenTestLights::ScreenTestLights()" );
 	
@@ -36,9 +36,6 @@ ScreenTestLights::ScreenTestLights( CString sClassName ) : Screen( sClassName )
 	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
 	m_textInputs.SetZoom( 0.8f );
 	this->AddChild( &m_textInputs );
-
-	m_Menu.Load( "ScreenTestLights" );
-	this->AddChild( &m_Menu );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenTestLights music") );
 
@@ -76,9 +73,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 
 void ScreenTestLights::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenTestLights::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -107,9 +102,9 @@ void ScreenTestLights::MenuStart( PlayerNumber pn )
 
 void ScreenTestLights::MenuBack( PlayerNumber pn )
 {
-	if(!m_Menu.IsTransitioning())
+	if(!IsTransitioning())
 	{
 		SCREENMAN->PlayStartSound();
-		m_Menu.StartTransitioning( SM_GoToPrevScreen );		
+		StartTransitioning( SM_GoToPrevScreen );		
 	}
 }

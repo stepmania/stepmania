@@ -39,7 +39,7 @@
 #define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
 #define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
 
-ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
+ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
 
@@ -73,9 +73,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 			m_vpBGAnimations.push_back( pBGA );
 		}
 	}
-
-	m_Menu.Load( sClassName );
-	this->AddChild( &m_Menu );
 
 	//
 	// Load codes
@@ -140,9 +137,7 @@ void ScreenSelect::DrawPrimitives()
 		int iSelection = this->GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
 		m_vpBGAnimations[iSelection]->Draw();
 	}
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -155,7 +150,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 		return;	// don't let the screen handle the MENU_START press
 	}
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	for( unsigned i = 0; i < m_aCodes.size(); ++i )
@@ -213,8 +208,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	/* It's our turn to tween out. */
 	case SM_AllDoneChoosing:		
 		FinalizeChoices();
-		if( !m_Menu.IsTransitioning() )
-			m_Menu.StartTransitioning( SM_GoToNextScreen );
+		if( !IsTransitioning() )
+			StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_MenuTimer:
 		{
@@ -250,5 +245,5 @@ void ScreenSelect::MenuBack( PlayerNumber pn )
 {
 	SOUND->StopMusic();
 
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }

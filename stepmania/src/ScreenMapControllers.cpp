@@ -43,7 +43,7 @@ const float BUTTON_COLUMN_X[NUM_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
 };
 
 
-ScreenMapControllers::ScreenMapControllers( CString sClassName ) : Screen( sClassName )
+ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenMapControllers::ScreenMapControllers()" );
 	
@@ -97,9 +97,6 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : Screen( sClas
 
 	m_iWaitingForPress = 0;
 
-	m_Menu.Load( "ScreenMapControllers" );
-	this->AddChild( &m_Menu );
-
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenMapControllers music") );
 
 	Refresh();
@@ -139,9 +136,7 @@ void ScreenMapControllers::Update( float fDeltaTime )
 
 void ScreenMapControllers::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 static bool IsAxis( const DeviceInput& DeviceI )
@@ -266,10 +261,10 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_iCurButton++;
 			break;
 		case SDLK_ESCAPE: /* Quit the screen. */
-			if(!m_Menu.IsTransitioning())
+			if(!IsTransitioning())
 			{
 				SOUND->PlayOnce( THEME->GetPathToS("Common start") );
-				m_Menu.StartTransitioning( SM_GoToNextScreen );		
+				StartTransitioning( SM_GoToNextScreen );		
 				for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ )
 					m_Line[b].Command( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 			}

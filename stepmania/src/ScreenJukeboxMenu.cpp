@@ -33,7 +33,7 @@
 #define HELP_TEXT					THEME->GetMetric("ScreenJukeboxMenu","HelpText")
 
 
-ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : Screen( sClassName )
+ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenJukeboxMenu::ScreenJukeboxMenu()" );
 
@@ -45,9 +45,6 @@ ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : Screen( sClassName 
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
-
-	m_Menu.Load( "ScreenJukeboxMenu" );
-	this->AddChild( &m_Menu );
 
 
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -69,16 +66,14 @@ ScreenJukeboxMenu::~ScreenJukeboxMenu()
 
 void ScreenJukeboxMenu::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenJukeboxMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->Trace( "ScreenJukeboxMenu::Input()" );
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
@@ -119,7 +114,7 @@ void ScreenJukeboxMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 
 void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 {
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Style style		= m_Selector.GetSelectedStyle();
@@ -145,12 +140,12 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 
 	SOUND->StopMusic();
 	SOUND->PlayOnce( THEME->GetPathToS("Common start") );
-	m_Menu.StartTransitioning( SM_GoToNextScreen );
+	StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenJukeboxMenu::MenuBack( PlayerNumber pn )
 {	
-	m_Menu.StartTransitioning( SM_GoToPrevScreen );
+	StartTransitioning( SM_GoToPrevScreen );
 
 	SOUND->StopMusic();
 }

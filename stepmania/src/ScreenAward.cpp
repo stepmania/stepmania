@@ -28,7 +28,7 @@
 #define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
 
 
-ScreenAward::ScreenAward( CString sName ) : Screen( sName )
+ScreenAward::ScreenAward( CString sName ) : ScreenWithMenuElements( sName )
 {
 	bool bEitherPlayerHasAward = false;
 	ZERO( m_bSavedScreenshot );
@@ -85,26 +85,19 @@ ScreenAward::ScreenAward( CString sName ) : Screen( sName )
 		return;
 	}
 
-	m_Menu.Load( m_sName );
-	this->AddChild( &m_Menu );
-
 	SOUND->PlayMusic( THEME->GetPathToS( m_sName + " music") );
 }
 
 void ScreenAward::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
-
 	Screen::DrawPrimitives();
-
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenAward::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 //	LOG->Trace( "ScreenAward::Input()" );
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 
@@ -183,5 +176,5 @@ void ScreenAward::MenuStart( PlayerNumber pn )
 		OFF_COMMAND( m_textDescription[p] );
 	}
 
-	m_Menu.StartTransitioning( SM_GoToNextScreen );
+	StartTransitioning( SM_GoToNextScreen );
 }

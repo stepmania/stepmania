@@ -46,7 +46,7 @@ ScreenEz2SelectPlayer (Constructor)
 Desc: Sets up the screen display
 ************************************/
 
-ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : Screen( sName )
+ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuElements( sName )
 {
 	// Unjoin the players, then let them join back in on this screen
 //	GAMESTATE->m_bPlayersCanJoin = true;
@@ -55,9 +55,6 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : Screen( sName )
 		GAMESTATE->m_bSideIsJoined[p] = false;
 
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
-
-	m_Menu.Load( "ScreenEz2SelectPlayer" );
-	this->AddChild( &m_Menu );
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenEz2SelectPlayer background") );
 	this->AddChild( &m_Background ); // animated background =)
@@ -128,9 +125,7 @@ Desc: Draws the screen =P
 
 void ScreenEz2SelectPlayer::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 /************************************
@@ -141,7 +136,7 @@ void ScreenEz2SelectPlayer::Input( const DeviceInput& DeviceI, const InputEventT
 {
 	LOG->Trace( "ScreenEz2SelectPlayer::Input()" );
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -165,7 +160,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		TweenOffScreen();
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_GoToPrevScreen:
 		SOUND->StopMusic();
@@ -188,7 +183,7 @@ void ScreenEz2SelectPlayer::MenuBack( PlayerNumber pn )
 {
 	SOUND->StopMusic();
 
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 
@@ -233,14 +228,14 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	if( bBothSidesJoined )
 	{
 		TweenOffScreen();
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 	}
 	else
 	{
 		// give the other player a little time to join
-		m_Menu.m_MenuTimer->SetSeconds( 1 );
-		m_Menu.m_MenuTimer->Start();
-		m_Menu.m_MenuTimer->EnableStealth( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
+		m_MenuTimer->SetSeconds( 1 );
+		m_MenuTimer->Start();
+		m_MenuTimer->EnableStealth( SILENT_WAIT ); // do we wanna make the timer 'quiet' ?
 	}
 }
 

@@ -11,16 +11,14 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "MenuElements.h"
 #include "MusicBannerWheel.h"
-#include "MenuElements.h"
 #include "DifficultyRating.h"
 #include "ModeSwitcher.h"
 
-class ScreenEz2SelectMusic : public Screen
+class ScreenEz2SelectMusic : public ScreenWithMenuElements
 {
 public:
 	ScreenEz2SelectMusic( CString sName );
@@ -76,7 +74,6 @@ protected:
 
 	float m_fRemainingWaitTime;
 	MusicBannerWheel			m_MusicBannerWheel;
-	MenuElements		m_Menu;
 	DifficultyRating	m_DifficultyRating;
 	vector<Steps*>		m_arrayNotes[NUM_PLAYERS];
 

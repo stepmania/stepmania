@@ -34,10 +34,10 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	/* If we're going to "press start for more options" or skipping options
 	 * entirely, we need a different fade out. XXX: this is a hack */
 	if( PREFSMAN->m_ShowSongOptions == PrefsManager::NO || GAMESTATE->m_bEditing )
-		m_Menu.m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions direct out") ); /* direct to stage */
+		m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions direct out") ); /* direct to stage */
 	else if( m_bAskOptionsMessage )
 	{
-		m_Menu.m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions option out") ); /* optional song options */
+		m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions option out") ); /* optional song options */
 
 		m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenPlayerOptions options") );
 		m_sprOptionsMessage.StopAnimating();
@@ -106,7 +106,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 {
 	if( m_bAskOptionsMessage &&
 		type == IET_FIRST_PRESS  &&
-		!m_Menu.m_In.IsTransitioning()  &&
+		!m_In.IsTransitioning()  &&
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START )
 	{
@@ -152,7 +152,7 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 			{
 				m_bAcceptedChoices = true;
 
-				float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+				float fShowSeconds = m_Out.GetLengthSeconds();
 
 				// show "hold START for options"
 				m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );

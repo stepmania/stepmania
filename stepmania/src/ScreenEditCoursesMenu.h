@@ -9,13 +9,11 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "EditCoursesMenu.h"
 #include "BitmapText.h"
-#include "MenuElements.h"
 
-
-class ScreenEditCoursesMenu : public Screen
+class ScreenEditCoursesMenu : public ScreenWithMenuElements
 {
 public:
 	ScreenEditCoursesMenu( CString sName );
@@ -37,8 +35,6 @@ private:
 	EditCoursesMenu		m_Selector;
 
 	BitmapText		m_textExplanation;
-
-	MenuElements	m_Menu;
 };
 
 

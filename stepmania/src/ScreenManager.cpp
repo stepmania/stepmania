@@ -367,6 +367,7 @@ ScreenManager::ScreenManager()
 	m_soundCoin.Load( THEME->GetPathS("Common","coin") );
 	m_soundInvalid.Load( THEME->GetPathS("Common","invalid") );
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
+	m_soundBack.Load( THEME->GetPathS("Common","back") );
 }
 
 
@@ -772,4 +773,11 @@ void ScreenManager::PlayScreenshotSound()
 	RageSoundParams p;
 	p.m_Volume = PREFSMAN->m_fSoundVolume;
 	m_soundScreenshot.Play( &p );
+}
+
+void ScreenManager::PlayBackSound()
+{
+	RageSoundParams p;
+	p.m_Volume = PREFSMAN->m_fSoundVolume;
+	m_soundBack.Play( &p );
 }

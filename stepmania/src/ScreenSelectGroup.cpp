@@ -35,7 +35,7 @@
 #define NEXT_SCREEN						THEME->GetMetric ("ScreenSelectGroup","NextScreen")
 
 
-ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName )
+ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {	
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 
@@ -45,11 +45,6 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : Screen( sClassName 
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
-
-
-
-	m_Menu.Load( "ScreenSelectGroup" );
-	this->AddChild( &m_Menu );
 
 
 	unsigned i;
@@ -165,7 +160,7 @@ void ScreenSelectGroup::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->Trace( "ScreenSelectGroup::Input()" );
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -173,9 +168,7 @@ void ScreenSelectGroup::Input( const DeviceInput& DeviceI, const InputEventType 
 
 void ScreenSelectGroup::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
@@ -183,7 +176,7 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
@@ -254,7 +247,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 		return;
 
 	m_soundSelect.PlayRandom();
-	m_Menu.m_MenuTimer->Stop();
+	m_MenuTimer->Stop();
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong = NULL;
@@ -272,7 +265,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 
 void ScreenSelectGroup::MenuBack( PlayerNumber pn )
 {
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectGroup::TweenOffScreen()

@@ -93,7 +93,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
  * buttons.  (It's also used when in five-key mode.)
  */
 
-ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
+ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 
@@ -105,9 +105,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : Screen(sClassName)
 	m_SoundStart.Load( THEME->GetPathToS("Common start") );
 	m_SoundToggleOn.Load( THEME->GetPathToS("ScreenOptions toggle on") );
 	m_SoundToggleOff.Load( THEME->GetPathToS("ScreenOptions toggle off") );
-
-	m_Menu.Load( sClassName );
-	this->AddChild( &m_Menu );
 
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );
@@ -500,6 +497,8 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	}
 
 	m_sprMore->FinishTweening();
+
+	this->SortByZ();
 }
 
 ScreenOptions::~ScreenOptions()
@@ -911,16 +910,14 @@ void ScreenOptions::Update( float fDeltaTime )
 
 void ScreenOptions::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
-	if( m_Menu.m_Back.IsTransitioning() || m_Menu.m_Out.IsTransitioning() )
+	if( m_Back.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
 	if( type == IET_RELEASE )
@@ -956,9 +953,9 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		this->GoToNextState();
 		break;
 	case SM_BeginFadingOut:
-		if(m_Menu.IsTransitioning())
+		if(IsTransitioning())
 			return; /* already transitioning */
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 
 		m_SoundStart.Play();
 
@@ -1161,7 +1158,7 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 {
 	Screen::MenuBack( pn );
 
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 void ScreenOptions::StartGoToNextState()

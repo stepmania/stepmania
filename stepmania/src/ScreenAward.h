@@ -9,13 +9,12 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
-#include "MenuElements.h"
+#include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "ActorUtil.h"
 
 
-class ScreenAward : public Screen
+class ScreenAward : public ScreenWithMenuElements
 {
 public:
 	ScreenAward( CString sName );
@@ -32,8 +31,6 @@ private:
 	AutoActor	m_Received[NUM_PLAYERS];
 	AutoActor	m_Trophy[NUM_PLAYERS];
 	BitmapText	m_textDescription[NUM_PLAYERS];
-
-	MenuElements	m_Menu;
 };
 
 

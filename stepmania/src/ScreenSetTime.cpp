@@ -51,7 +51,7 @@ static float GetTitleY( SetTimeSelection s ) { return g_Y[s]; }
 static float GetValueX( SetTimeSelection s ) { return g_X[s] + 80; }
 static float GetValueY( SetTimeSelection s ) { return g_Y[s]; }
 
-ScreenSetTime::ScreenSetTime( CString sClassName ) : Screen( sClassName )
+ScreenSetTime::ScreenSetTime( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenSetTime::ScreenSetTime()" );
 	
@@ -77,9 +77,6 @@ ScreenSetTime::ScreenSetTime( CString sClassName ) : Screen( sClassName )
 	m_Selection = (SetTimeSelection)0;
 	ChangeSelection( 0 );
 
-	m_Menu.Load( m_sName );
-	this->AddChild( &m_Menu );
-
 	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
@@ -98,9 +95,7 @@ void ScreenSetTime::Update( float fDelta )
 
 void ScreenSetTime::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenSetTime::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -108,7 +103,7 @@ void ScreenSetTime::Input( const DeviceInput& DeviceI, const InputEventType type
 	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
 		return;	// ignore
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
@@ -192,7 +187,7 @@ void ScreenSetTime::MenuStart( PlayerNumber pn )
 	else if( m_Selection == NUM_SET_TIME_SELECTIONS -1 )	// last row
 	{
 		SOUND->PlayOnce( THEME->GetPathS("Common","start") );
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 	}
 	else
 		ChangeSelection( +1 );
@@ -200,6 +195,6 @@ void ScreenSetTime::MenuStart( PlayerNumber pn )
 
 void ScreenSetTime::MenuBack( PlayerNumber pn )
 {
-	m_Menu.StartTransitioning( SM_GoToPrevScreen );
+	StartTransitioning( SM_GoToPrevScreen );
 }
 	

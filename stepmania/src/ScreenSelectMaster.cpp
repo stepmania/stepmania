@@ -321,7 +321,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			fSecs += EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
 			fSecs = max( fSecs, 0 );
 			SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
-			m_Menu.StopTimer();
+			StopTimer();
 		}
 		break;
 	}

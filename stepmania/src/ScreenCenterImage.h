@@ -9,16 +9,15 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"
-#include "MenuElements.h"
 #include "RageInputDevice.h"
 
 
-class ScreenCenterImage : public Screen
+class ScreenCenterImage : public ScreenWithMenuElements
 {
 public:
 	ScreenCenterImage( CString sName );
@@ -31,8 +30,5 @@ public:
 private:
 
 	BitmapText	m_textInstructions;
-
-	MenuElements m_Menu;
-
 };
 

@@ -191,6 +191,8 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	this->PostScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 
+	this->SortByZ();
+
 //	this->MoveToTail( &m_AttractOut );	// put it in the back so it covers up the stuff we just added
 }
 
@@ -237,7 +239,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( !MenuI.IsValid() )
 		return;
 
-	if( m_Menu.m_In.IsTransitioning() || m_Menu.m_Back.IsTransitioning() ) /* not m_Menu.m_Out */
+	if( m_In.IsTransitioning() || m_Back.IsTransitioning() ) /* not m_Out */
 		return;
 
 	switch( MenuI.button )
@@ -249,9 +251,9 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		MoveCursor( false );
 		break;
 	case MENU_BUTTON_BACK:
-		if( m_Menu.m_Out.IsTransitioning() )
+		if( m_Out.IsTransitioning() )
 			break;
-		m_Menu.Back( SM_GoToAttractLoop );
+		Back( SM_GoToAttractLoop );
 		break;
 	case MENU_BUTTON_START:
 		/* return if the choice is invalid */
@@ -268,8 +270,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		if( !Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
 			return;
 
-		if( !m_Menu.m_Out.IsTransitioning() )
-			m_Menu.StartTransitioning( SM_GoToNextScreen );
+		if( !m_Out.IsTransitioning() )
+			StartTransitioning( SM_GoToNextScreen );
 	}
 
 	// detect codes
@@ -315,7 +317,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 void ScreenTitleMenu::Update( float fDelta )
 {
 	// time out on this screen and go to the attract sequence
-	if( !m_Menu.IsTransitioning() && TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_ATTRACT)
+	if( !IsTransitioning() && TimeToDemonstration.PeekDeltaTime() >= SECONDS_BEFORE_ATTRACT)
 	{
 		// don't time out on this screen is coin mode is pay.  
 		// If we're here, then there's a credit in the machine.

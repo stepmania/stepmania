@@ -25,7 +25,7 @@
 #include "Bookkeeper.h"
 
 
-ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : Screen( sClassName )
+ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenBookkeeping::ScreenBookkeeping()" );
 	
@@ -48,9 +48,6 @@ ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : Screen( sClassName 
 		this->AddChild( &m_textCols[i] );
 	}
 
-	m_Menu.Load( "ScreenBookkeeping" );
-	this->AddChild( &m_Menu );
-
 	ChangeView( (View)0 );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenBookkeeping music") );
@@ -63,9 +60,7 @@ ScreenBookkeeping::~ScreenBookkeeping()
 
 void ScreenBookkeeping::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenBookkeeping::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -103,19 +98,19 @@ void ScreenBookkeeping::MenuRight( PlayerNumber pn )
 
 void ScreenBookkeeping::MenuStart( PlayerNumber pn )
 {
-	if( !m_Menu.IsTransitioning() )
+	if( !IsTransitioning() )
 	{
 		SCREENMAN->PlayStartSound();
-		m_Menu.StartTransitioning( SM_GoToNextScreen );		
+		StartTransitioning( SM_GoToNextScreen );		
 	}
 }
 
 void ScreenBookkeeping::MenuBack( PlayerNumber pn )
 {
-	if(!m_Menu.IsTransitioning())
+	if(!IsTransitioning())
 	{
 		SCREENMAN->PlayStartSound();
-		m_Menu.StartTransitioning( SM_GoToPrevScreen );		
+		StartTransitioning( SM_GoToPrevScreen );		
 	}
 }
 	

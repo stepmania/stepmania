@@ -13,7 +13,6 @@ Frieza
 #include "Screen.h"
 #include "Sprite.h"
 #include "Quad.h"
-#include "MenuElements.h"
 #include "ScrollingList.h"
 #include "GameConstantsAndTypes.h"
 #include "ModeChoice.h"

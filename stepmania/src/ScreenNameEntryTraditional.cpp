@@ -133,7 +133,7 @@ float HighScoreWheel::Scroll()
 	return GetTweenTimeLeft();
 }
 
-ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : Screen( sClassName )
+ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenNameEntryTraditional::ScreenNameEntryTraditional()" );
 
@@ -191,9 +191,6 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		m_NumFeats[p] = g_vPlayedStageStats.size();
 		m_CurFeat[p] = 0;
 	}
-
-	m_Menu.Load( m_sName );
-	this->AddChild( &m_Menu );
 
 	//
 	// init keyboards
@@ -482,16 +479,14 @@ void ScreenNameEntryTraditional::DrawPrimitives()
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->LoadMenuPerspective( FOV, CENTER_X, CENTER_Y );
 
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 	
 	DISPLAY->CameraPopMatrix();
 }
 
 void ScreenNameEntryTraditional::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
@@ -537,7 +532,7 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		if( !m_Menu.m_Out.IsTransitioning() )
+		if( !m_Out.IsTransitioning() )
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				Finish( (PlayerNumber)p );
@@ -598,7 +593,7 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	OFF_COMMAND( m_sprCursor[pn] );
 
 	if( !AnyStillEntering() )
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
@@ -614,7 +609,7 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 {
 	if( !AnyStillEntering() )
 	{
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 		return;
 	}
 
@@ -673,7 +668,7 @@ void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c )
 
 void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	if( !m_bStillEnteringName[pn] || m_Menu.IsTransitioning()  )
+	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
 	if( type == IET_RELEASE )
 		return;		// ignore
@@ -686,7 +681,7 @@ void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType
 
 void ScreenNameEntryTraditional::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	if( !m_bStillEnteringName[pn] || m_Menu.IsTransitioning()  )
+	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
 	if( type == IET_RELEASE )
 		return;		// ignore

@@ -9,14 +9,12 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "JukeboxMenu.h"
 #include "BitmapText.h"
-#include "MenuElements.h"
 #include "RageSound.h"
 
-
-class ScreenJukeboxMenu : public Screen
+class ScreenJukeboxMenu : public ScreenWithMenuElements
 {
 public:
 	ScreenJukeboxMenu( CString sName );
@@ -38,8 +36,6 @@ private:
 	JukeboxMenu		m_Selector;
 
 	BitmapText		m_textExplanation;
-
-	MenuElements	m_Menu;
 
 	RageSound		m_soundInvalid;
 };

@@ -34,7 +34,7 @@
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
-ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : Screen( sName )
+ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenEditCoursesMenu::ScreenEditCoursesMenu()" );
 
@@ -48,10 +48,7 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : Screen( sName )
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
 
-	m_Menu.Load( "ScreenEditCoursesMenu" );
-	this->AddChild( &m_Menu );
-
-
+	
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
@@ -69,9 +66,7 @@ ScreenEditCoursesMenu::~ScreenEditCoursesMenu()
 
 void ScreenEditCoursesMenu::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenEditCoursesMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -116,7 +111,7 @@ void ScreenEditCoursesMenu::MenuRight( PlayerNumber pn, const InputEventType typ
 
 void ScreenEditCoursesMenu::MenuStart( PlayerNumber pn )
 {
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	m_Selector.Start();
@@ -124,7 +119,7 @@ void ScreenEditCoursesMenu::MenuStart( PlayerNumber pn )
 
 void ScreenEditCoursesMenu::MenuBack( PlayerNumber pn )
 {	
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 
 	SOUND->StopMusic();
 }

@@ -56,7 +56,7 @@ static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
 
-ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassName )
+ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
 
@@ -71,9 +71,6 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassNam
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenuRepeat = false;
 	
-	m_Menu.Load( "ScreenSelectCourse" );
-	this->AddChild( &m_Menu );
-
 	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectCourse explanation") );
 	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
 	this->AddChild( &m_sprExplanation );
@@ -159,9 +156,7 @@ ScreenSelectCourse::~ScreenSelectCourse()
 
 void ScreenSelectCourse::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 	m_sprOptionsMessage.Draw();
 }
 
@@ -257,7 +252,7 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 		return;
 	}
 	
-	if( m_Menu.IsTransitioning() )	return;		// ignore
+	if( IsTransitioning() )	return;		// ignore
 
 	if( m_bMadeChoice )
 		return;
@@ -347,7 +342,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 
 		m_bMadeChoice = true;
 
-		float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+		float fShowSeconds = m_Out.GetLengthSeconds();
 
 		// show "hold START for options"
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
@@ -366,7 +361,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 
 
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		GAMESTATE->m_pCurCourse = pCourse;
@@ -387,7 +382,7 @@ void ScreenSelectCourse::MenuBack( PlayerNumber pn )
 {
 	SOUND->StopMusic();
 
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 

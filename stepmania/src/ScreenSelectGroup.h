@@ -9,16 +9,15 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "RandomSample.h"
-#include "MenuElements.h"
 #include "FadingBanner.h"
 #include "MusicList.h"
 #include "GroupList.h"
 
 
-class ScreenSelectGroup : public Screen
+class ScreenSelectGroup : public ScreenWithMenuElements
 {
 public:
 	ScreenSelectGroup( CString sName );
@@ -41,8 +40,6 @@ public:
 	void TweenOnScreen();
 
 private:
-
-	MenuElements	m_Menu;
 
 	Sprite			m_sprExplanation;
 	Sprite			m_sprFrame;

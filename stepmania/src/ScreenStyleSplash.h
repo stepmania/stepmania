@@ -13,12 +13,11 @@
 */
 
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "BGAnimation.h"
-#include "MenuElements.h"
 
 
-class ScreenStyleSplash : public Screen
+class ScreenStyleSplash : public ScreenWithMenuElements
 {
 public:
 	ScreenStyleSplash( CString sName );
@@ -31,7 +30,6 @@ protected:
 	void MenuStart( PlayerNumber pn );
 	void MenuBack(	PlayerNumber pn );
 
-	MenuElements m_Menu;
 	BGAnimation m_Background;
 };
 

@@ -12,12 +12,11 @@
 */
 
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
 #include "Quad.h"
-#include "MenuElements.h"
 #include "OptionsCursor.h"
 #include "OptionIcon.h"
 #include "DualScrollBar.h"
@@ -50,7 +49,7 @@ enum InputMode
 };
 
 
-class ScreenOptions : public Screen
+class ScreenOptions : public ScreenWithMenuElements
 {
 public:
 	ScreenOptions( CString sClassName );
@@ -96,8 +95,6 @@ protected:
 
 	/* Returns -1 if on a row with no OptionRowData (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
-
-	MenuElements	m_Menu;
 
 protected:	// derived classes need access to these
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );

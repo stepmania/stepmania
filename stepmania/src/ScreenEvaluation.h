@@ -13,11 +13,10 @@
 */
 
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "GradeDisplay.h"
-#include "MenuElements.h"
 #include "Banner.h"
 #include "ScoreDisplayNormal.h"
 #include "Banner.h"
@@ -29,6 +28,7 @@
 #include "ActorUtil.h"
 #include "ConditionalBGA.h"
 #include "HighScore.h"
+#include "RageSound.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
@@ -41,7 +41,7 @@ struct EvalSoundSequence
 	RageSound sSound;
 };
 
-class ScreenEvaluation : public Screen
+class ScreenEvaluation : public ScreenWithMenuElements
 {
 public:
 	enum Type	{ stage, summary, course };
@@ -75,8 +75,6 @@ protected:
 
 	BGAnimation m_bgOverlay;
 	ConditionalBGA m_bgCondBga;
-
-	MenuElements		m_Menu;
 
 	// banner area
 	Banner				m_LargeBanner;

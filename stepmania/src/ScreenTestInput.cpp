@@ -25,7 +25,7 @@
 
 
 
-ScreenTestInput::ScreenTestInput( CString sClassName ) : Screen( sClassName )
+ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenTestInput::ScreenTestInput()" );
 	
@@ -36,9 +36,6 @@ ScreenTestInput::ScreenTestInput( CString sClassName ) : Screen( sClassName )
 	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
 	m_textInputs.SetZoom( 0.8f );
 	this->AddChild( &m_textInputs );
-
-	m_Menu.Load( "ScreenTestInput" );
-	this->AddChild( &m_Menu );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenTestInput music") );
 }
@@ -95,9 +92,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 
 void ScreenTestInput::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenTestInput::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -126,9 +121,9 @@ void ScreenTestInput::MenuStart( PlayerNumber pn )
 
 void ScreenTestInput::MenuBack( PlayerNumber pn )
 {
-	if(!m_Menu.IsTransitioning())
+	if(!IsTransitioning())
 	{
 		SCREENMAN->PlayStartSound();
-		m_Menu.StartTransitioning( SM_GoToPrevScreen );		
+		StartTransitioning( SM_GoToPrevScreen );		
 	}
 }

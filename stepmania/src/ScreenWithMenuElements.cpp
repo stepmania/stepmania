@@ -1,47 +1,37 @@
 #include "global.h"
 /*
 -----------------------------------------------------------------------------
- File: MenuElements.h
+ Class: ScreenWithMenuElements
 
- Desc: Base class for menu Screens.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "MenuElements.h"
-#include "RageUtil.h"
-#include "ScreenManager.h"
-#include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
-#include "RageLog.h"
-#include "GameManager.h"
-#include "GameState.h"
-#include "ThemeManager.h"
+#include "ScreenWithMenuElements.h"
 #include "MenuTimer.h"
 #include "HelpDisplay.h"
-
+#include "RageLog.h"
+#include "ThemeManager.h"
+#include "GameState.h"
+#include "StyleDef.h"
+#include "PrefsManager.h"
+#include "ScreenManager.h"
 
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
 
-
-MenuElements::MenuElements()
+ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
 {
+	LOG->Trace( "ScreenWithMenuElements::ScreenWithMenuElements()" );
+	
 	m_MenuTimer = new MenuTimer;
 	m_textHelp = new HelpDisplay;
-}
 
-MenuElements::~MenuElements()
-{
-	delete m_MenuTimer;
-	delete m_textHelp;
-}
 
-void MenuElements::Load( CString sClassName )
-{
 	LOG->Trace( "MenuElements::MenuElements()" );
 
 	ASSERT( this->m_SubActors.empty() );	// don't call Load twice!
@@ -53,8 +43,8 @@ void MenuElements::Load( CString sClassName )
 
 	m_autoHeader.Load( THEME->GetPathToG(m_sName+" header") );
 	m_autoHeader->SetName("Header");
-	UtilSetXY( m_autoHeader, "MenuElements" );
-	UtilOnCommand( m_autoHeader, "MenuElements" );
+	UtilSetXY( m_autoHeader, m_sName );
+	UtilOnCommand( m_autoHeader, m_sName );
 	this->AddChild( m_autoHeader );
 
 	if( STYLE_ICON && GAMESTATE->m_CurStyle != STYLE_INVALID )
@@ -63,8 +53,8 @@ void MenuElements::Load( CString sClassName )
 		m_sprStyleIcon.SetName( "StyleIcon" );
 		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
 		m_sprStyleIcon.StopAnimating();
-		UtilSetXY( m_sprStyleIcon, "MenuElements" );
-		UtilOnCommand( m_sprStyleIcon, "MenuElements" );
+		UtilSetXY( m_sprStyleIcon, m_sName );
+		UtilOnCommand( m_sprStyleIcon, m_sName );
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
@@ -74,8 +64,8 @@ void MenuElements::Load( CString sClassName )
 		{
 			m_MemoryCardDisplay[p].Load( (PlayerNumber)p );
 			m_MemoryCardDisplay[p].SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
-			UtilSetXY( m_MemoryCardDisplay[p], "MenuElements" );
-			UtilOnCommand( m_MemoryCardDisplay[p], "MenuElements" );
+			UtilSetXY( m_MemoryCardDisplay[p], m_sName );
+			UtilOnCommand( m_MemoryCardDisplay[p], m_sName );
 			this->AddChild( &m_MemoryCardDisplay[p] );
 		}
 	}
@@ -84,8 +74,8 @@ void MenuElements::Load( CString sClassName )
 	if( m_bTimerEnabled )
 	{
 		m_MenuTimer->SetName( "Timer" );
-		UtilSetXY( m_MenuTimer, "MenuElements" );
-		UtilOnCommand( m_MenuTimer, "MenuElements" );
+		UtilSetXY( m_MenuTimer, m_sName );
+		UtilOnCommand( m_MenuTimer, m_sName );
 		if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
 			m_MenuTimer->SetSeconds( TIMER_SECONDS );
 		else
@@ -95,14 +85,14 @@ void MenuElements::Load( CString sClassName )
 
 	m_autoFooter.Load( THEME->GetPathToG(m_sName+" footer") );
 	m_autoFooter->SetName("Footer");
-	UtilSetXY( m_autoFooter, "MenuElements" );
-	UtilOnCommand( m_autoFooter, "MenuElements" );
+	UtilSetXY( m_autoFooter, m_sName );
+	UtilOnCommand( m_autoFooter, m_sName );
 	this->AddChild( m_autoFooter );
 
 	m_textHelp->SetName( "HelpDisplay", "Help" );
 	m_textHelp->Load();
-	UtilSetXY( m_textHelp, "MenuElements" );
-	UtilOnCommand( m_textHelp, "MenuElements" );
+	UtilSetXY( m_textHelp, m_sName );
+	UtilOnCommand( m_textHelp, m_sName );
 	CStringArray asHelpTips;
 	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
 	m_textHelp->SetTips( asHelpTips );
@@ -110,40 +100,41 @@ void MenuElements::Load( CString sClassName )
 
 
 	m_In.Load( THEME->GetPathToB(m_sName+" in") );
+	m_In.SetZ( -1000 );	// always on top
 	this->AddChild( &m_In );
 
 	m_Out.Load( THEME->GetPathToB(m_sName+" out") );
+	m_Out.SetZ( -1000 );	// always on top
 	this->AddChild( &m_Out );
 
 	m_Back.Load( THEME->GetPathToB("Common back") );
+	m_Back.SetZ( -1000 );	// always on top
 	this->AddChild( &m_Back );
-
-
-	m_soundBack.Load( THEME->GetPathToS("Common back") );
 
 	m_In.StartTransitioning();
 }
 
-void MenuElements::Update( float fDeltaTime )
+ScreenWithMenuElements::~ScreenWithMenuElements()
 {
-	ActorFrame::Update(fDeltaTime);
+	SAFE_DELETE( m_MenuTimer );
+	SAFE_DELETE( m_textHelp );
 }
 
-void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
+void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 {
 	if( m_bTimerEnabled )
 	{
 		m_MenuTimer->SetSeconds( 0 );
 		m_MenuTimer->Stop();
-		UtilOffCommand( m_MenuTimer, "MenuElements" );
+		UtilOffCommand( m_MenuTimer, m_sName );
 	}
 
-	UtilOffCommand( m_autoHeader, "MenuElements" );
-	UtilOffCommand( m_sprStyleIcon, "MenuElements" );
+	UtilOffCommand( m_autoHeader, m_sName );
+	UtilOffCommand( m_sprStyleIcon, m_sName );
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		UtilOffCommand( m_MemoryCardDisplay[p], "MenuElements" );
-	UtilOffCommand( m_autoFooter, "MenuElements" );
-	UtilOffCommand( m_textHelp, "MenuElements" );
+		UtilOffCommand( m_MemoryCardDisplay[p], m_sName );
+	UtilOffCommand( m_autoFooter, m_sName );
+	UtilOffCommand( m_textHelp, m_sName );
 
 	m_Background.PlayCommand("Off");
 
@@ -162,56 +153,22 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 //	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
 }
 
-void MenuElements::Back( ScreenMessage smSendWhenDone )
+void ScreenWithMenuElements::Back( ScreenMessage smSendWhenDone )
 {
 	if( m_Back.IsTransitioning() )
 		return;	// ignore
 
 	m_MenuTimer->Stop();
 	m_Back.StartTransitioning( smSendWhenDone );
-	m_soundBack.Play();
+	SCREENMAN->PlayBackSound();
 }
 
-void MenuElements::DrawPrimitives()
-{
-	// do nothing.  Call DrawBottomLayer() and DrawTopLayer() instead.
-}
-
-void MenuElements::DrawTopLayer()
-{
-	ASSERT( !this->m_SubActors.empty() );	// Load first
-	BeginDraw();
-
-	m_autoHeader->Draw();
-	m_sprStyleIcon.Draw();
-	m_autoFooter->Draw();
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_MemoryCardDisplay[p].Draw();
-	if( m_bTimerEnabled )
-		m_MenuTimer->Draw();
-	m_textHelp->Draw();
-	m_In.Draw();
-	m_Out.Draw();
-	m_Back.Draw();
-
-	EndDraw();
-}
-
-void MenuElements::DrawBottomLayer()
-{
-	BeginDraw();
-
-	m_Background.Draw();
-
-	EndDraw();
-}
-
-bool MenuElements::IsTransitioning()
+bool ScreenWithMenuElements::IsTransitioning()
 {
 	return m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning();
 }
 
-void MenuElements::StopTimer()
+void ScreenWithMenuElements::StopTimer()
 {
 	m_MenuTimer->Stop();
 }

@@ -23,9 +23,7 @@
 #include "RageDisplay.h"
 
 
-
-
-ScreenCenterImage::ScreenCenterImage( CString sClassName ) : Screen( sClassName )
+ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenCenterImage::ScreenCenterImage()" );
 	
@@ -35,9 +33,6 @@ ScreenCenterImage::ScreenCenterImage( CString sClassName ) : Screen( sClassName 
 	m_textInstructions.SetDiffuse( RageColor(0,1,0,0) );
 	m_textInstructions.SetZoom( 0.8f );
 	this->AddChild( &m_textInstructions );
-
-	m_Menu.Load( "ScreenCenterImage" );
-	this->AddChild( &m_Menu );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenCenterImage music") );
 }
@@ -53,14 +48,12 @@ ScreenCenterImage::~ScreenCenterImage()
 
 void ScreenCenterImage::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	if( type == IET_RELEASE )
@@ -131,17 +124,17 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	switch( DeviceI.button )
 	{
 	case SDLK_ESCAPE:
-		if(!m_Menu.IsTransitioning())
+		if(!IsTransitioning())
 		{
 			SOUND->PlayOnce( THEME->GetPathToS("Common back") );
-			m_Menu.StartTransitioning( SM_GoToPrevScreen );		
+			StartTransitioning( SM_GoToPrevScreen );		
 		}
 	case SDLK_RETURN:
 	case SDLK_KP_ENTER:
-		if(!m_Menu.IsTransitioning())
+		if(!IsTransitioning())
 		{
 			SOUND->PlayOnce( THEME->GetPathToS("Common start") );
-			m_Menu.StartTransitioning( SM_GoToNextScreen );		
+			StartTransitioning( SM_GoToNextScreen );		
 		}
 	}
 }

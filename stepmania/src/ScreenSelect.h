@@ -11,8 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
-#include "MenuElements.h"
+#include "ScreenWithMenuElements.h"
 #include "BGAnimation.h"
 #include "ModeChoice.h"
 #include "CodeDetector.h"
@@ -22,7 +21,7 @@ const ScreenMessage SM_AllDoneChoosing = (ScreenMessage)(SM_User+123);	// unique
 
 #define MAX_CHOICES 30
 
-class ScreenSelect : public Screen
+class ScreenSelect : public ScreenWithMenuElements
 {
 public:
 	ScreenSelect( CString sClassName );
@@ -41,7 +40,6 @@ protected:
 	virtual void UpdateSelectableChoices() = 0;		// derived screens must handle this
 	void FinalizeChoices();
 	
-	MenuElements m_Menu;
 	vector<BGAnimation*> m_vpBGAnimations;
 	vector<ModeChoice>	m_aModeChoices;		// derived classes should look here for what choices are available
 

@@ -35,7 +35,7 @@
 
 const ScreenMessage SM_RefreshSelector	=	(ScreenMessage)(SM_User+1);
 
-ScreenEditMenu::ScreenEditMenu( CString sName ) : Screen( sName )
+ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
 
@@ -44,9 +44,6 @@ ScreenEditMenu::ScreenEditMenu( CString sName ) : Screen( sName )
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
-
-	m_Menu.Load( "ScreenEditMenu" );
-	this->AddChild( &m_Menu );
 
 
 	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
@@ -66,9 +63,7 @@ ScreenEditMenu::~ScreenEditMenu()
 
 void ScreenEditMenu::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenEditMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -127,7 +122,7 @@ void DeleteCurNotes( void* pThrowAway )
 
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Song* pSong					= m_Selector.GetSelectedSong();
@@ -159,8 +154,8 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		// Prepare prepare for ScreenEdit
 		ASSERT( pNotes );
 		SOUND->StopMusic();
-		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		SCREENMAN->PlayStartSound();
+		StartTransitioning( SM_GoToNextScreen );
 		break;
 	case EditMenu::ACTION_DELETE:
 		ASSERT( pNotes );
@@ -226,7 +221,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 void ScreenEditMenu::MenuBack( PlayerNumber pn )
 {	
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 
 	SOUND->StopMusic();
 }

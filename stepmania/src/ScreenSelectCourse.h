@@ -9,18 +9,17 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RageSound.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "CourseContentsList.h"
-#include "MenuElements.h"
 #include "FadingBanner.h"
 
 
-class ScreenSelectCourse : public Screen
+class ScreenSelectCourse : public ScreenWithMenuElements
 {
 public:
 	ScreenSelectCourse( CString sName );
@@ -41,8 +40,6 @@ public:
 protected:
 	void AfterCourseChange();
 	void UpdateOptionsDisplays();
-
-	MenuElements		m_Menu;
 
 	Sprite				m_sprExplanation;
 	Sprite				m_sprBannerFrame;

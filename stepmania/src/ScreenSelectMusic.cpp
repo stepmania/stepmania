@@ -76,7 +76,7 @@ static void FlipSpriteHorizontally(Sprite &s)
 	s.SetCustomTextureCoords(Coords);
 }
 
-ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName )
+ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
@@ -100,9 +100,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_MusicWheel.Load();
 
 	int p;
-
-	m_Menu.Load( "ScreenSelectMusic" );
-	this->AddChild( &m_Menu );
 
 	// pop'n music has this under the songwheel...
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -357,9 +354,7 @@ void ScreenSelectMusic::DrawPrimitives()
 	DISPLAY->CameraPushMatrix();
 	DISPLAY->LoadMenuPerspective( FOV, FOV_CENTER_X, FOV_CENTER_Y );
 
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 	m_sprOptionsMessage.Draw();
 	m_bgOptionsOut.Draw();
 	m_bgNoOptionsOut.Draw();
@@ -714,7 +709,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START  &&
 		type != IET_RELEASE  &&
-		m_Menu.IsTransitioning() &&
+		IsTransitioning() &&
 		!GAMESTATE->IsExtraStage()  &&
 		!GAMESTATE->IsExtraStage2() )
 	{
@@ -731,7 +726,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		return;
 	}
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;		// ignore
 
 	if( m_bMadeChoice )		return;		// ignore
@@ -963,16 +958,16 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		if( m_MusicWheel.IsRouletting() )
 		{
 			MenuStart(PLAYER_INVALID);
-			m_Menu.m_MenuTimer->SetSeconds( 15 );
-			m_Menu.m_MenuTimer->Start();
+			m_MenuTimer->SetSeconds( 15 );
+			m_MenuTimer->Start();
 		}
 		else if( DO_ROULETTE_ON_MENU_TIMER )
 		{
 			if( m_MusicWheel.GetSelectedType() != TYPE_SONG )
 			{
 				m_MusicWheel.StartRoulette();
-				m_Menu.m_MenuTimer->SetSeconds( 15 );
-				m_Menu.m_MenuTimer->Start();
+				m_MenuTimer->SetSeconds( 15 );
+				m_MenuTimer->Start();
 			}
 			else
 			{
@@ -1113,7 +1108,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 		if( !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 		{
-//			float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+//			float fShowSeconds = m_Out.GetLengthSeconds();
 
 			// show "hold START for options"
 			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );	// visible
@@ -1127,7 +1122,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			this->PostScreenMessage( SM_AllowOptionsMenuRepeat, 0.5f );
 		}
 
-		m_Menu.StartTransitioning( SM_BeginFadingOut );
+		StartTransitioning( SM_BeginFadingOut );
 	}
 
 	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage )
@@ -1153,7 +1148,7 @@ void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 {
 	SOUND->StopMusic();
 
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
@@ -1251,7 +1246,7 @@ int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
 void ScreenSelectMusic::AfterMusicChange()
 {
 	if( !m_MusicWheel.IsRouletting() )
-		m_Menu.m_MenuTimer->Stall();
+		m_MenuTimer->Stall();
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	if( pSong )

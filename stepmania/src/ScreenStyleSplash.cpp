@@ -28,7 +28,7 @@ const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 
-ScreenStyleSplash::ScreenStyleSplash( CString sName ) : Screen( sName )
+ScreenStyleSplash::ScreenStyleSplash( CString sName ) : ScreenWithMenuElements( sName )
 {
 	SOUND->StopMusic();
 
@@ -50,16 +50,13 @@ ScreenStyleSplash::ScreenStyleSplash( CString sName ) : Screen( sName )
 	m_Background.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenStyleSplash-%s-%s-%d",sGameName.c_str(),sStyleName.c_str(),iDifficulty) ) );
 	this->AddChild( &m_Background );
 	
-	m_Menu.Load( "ScreenStyleSplash" );
-	this->AddChild( &m_Menu );
-
 	this->PostScreenMessage( SM_StartClosing, 2 );
 }
 
 
 void ScreenStyleSplash::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
@@ -71,8 +68,8 @@ void ScreenStyleSplash::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_StartClosing:
-		if( !m_Menu.IsTransitioning() )
-			m_Menu.StartTransitioning( SM_GoToNextScreen );
+		if( !IsTransitioning() )
+			StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_DoneOpening:
 	
@@ -88,22 +85,20 @@ void ScreenStyleSplash::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenStyleSplash::MenuStart( PlayerNumber pn )
 {
-	m_Menu.StartTransitioning( SM_GoToNextScreen );
+	StartTransitioning( SM_GoToNextScreen );
 }
 
 void ScreenStyleSplash::MenuBack( PlayerNumber pn )
 {
-	if(m_Menu.IsTransitioning())
+	if(IsTransitioning())
 		return;
 	this->ClearMessageQueue();
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 	SOUND->PlayOnce( THEME->GetPathToS("menu back") );
 }
 
 void ScreenStyleSplash::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 

@@ -9,11 +9,10 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
 #include "BGAnimation.h"
-#include "MenuElements.h"
 #include "GradeDisplay.h"
 #include "Banner.h"
 #include "HighScore.h"
@@ -43,7 +42,7 @@ public:
 	int m_iIndexToFocus;
 };
 
-class ScreenNameEntryTraditional : public Screen
+class ScreenNameEntryTraditional : public ScreenWithMenuElements
 {
 public:
 	ScreenNameEntryTraditional( CString sName );
@@ -70,7 +69,6 @@ private:
 	int				m_CurFeat[NUM_PLAYERS];
 
 	BGAnimation		m_Background;
-	MenuElements	m_Menu;
 
 	ActorFrame		m_Keyboard[NUM_PLAYERS];
 	Sprite			m_sprCursor[NUM_PLAYERS];

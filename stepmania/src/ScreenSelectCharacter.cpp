@@ -59,7 +59,7 @@ const PlayerNumber	CPU_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 
 
-ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : Screen( sClassName )
+ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {	
 	LOG->Trace( "ScreenSelectCharacter::ScreenSelectCharacter()" );	
 
@@ -89,13 +89,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : Screen( sCl
 	}
 
 	
-	
-	m_Menu.Load( "ScreenSelectCharacter" );
-	this->AddChild( &m_Menu );
-
-
 	int p;
-
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -190,7 +184,7 @@ void ScreenSelectCharacter::Input( const DeviceInput& DeviceI, const InputEventT
 {
 	LOG->Trace( "ScreenSelectCharacter::Input()" );
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
@@ -198,9 +192,7 @@ void ScreenSelectCharacter::Input( const DeviceInput& DeviceI, const InputEventT
 
 void ScreenSelectCharacter::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
@@ -208,7 +200,7 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 		break;
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
@@ -381,7 +373,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 			GAMESTATE->m_pCurCharacters[p] = pChar;
 		}
 
-		m_Menu.StopTimer();
+		StopTimer();
 		TweenOffScreen();
 		this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
 	}
@@ -389,7 +381,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 
 void ScreenSelectCharacter::MenuBack( PlayerNumber pn )
 {
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 void ScreenSelectCharacter::TweenOffScreen()

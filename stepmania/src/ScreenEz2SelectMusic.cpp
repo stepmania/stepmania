@@ -73,7 +73,7 @@ const float TWEEN_TIME		= 0.5f;
 
 const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
-ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : Screen( sName )
+ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElements( sName )
 {
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
 	GAMESTATE->FinishStage();
@@ -100,8 +100,6 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : Screen( sName )
 	}
 
 
-	m_Menu.Load("ScreenEz2SelectMusic");
-	this->AddChild( &m_Menu );
 
 	m_soundButtonPress.Load( THEME->GetPathToS("ScreenEz2SelectMusic buttonpress"));
 	m_soundMusicChange.Load( THEME->GetPathToS("ScreenEz2SelectMusic change"));
@@ -248,7 +246,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if( type == IET_RELEASE )	return;		// don't care
 
-	if( m_Menu.IsTransitioning() )	return;		// ignore
+	if( IsTransitioning() )	return;		// ignore
 
 	if( !GameI.IsValid() )		return;		// don't care
 
@@ -408,7 +406,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.m_MenuTimer->Stall();
+	m_MenuTimer->Stall();
 	m_MusicBannerWheel.BannersRight();
 	for(int i=i_SkipAheadOffset; i>0; i--)
 		m_MusicBannerWheel.BannersRight();
@@ -419,7 +417,7 @@ void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 {
 	SOUND->StopMusic();
 
-	m_Menu.Back( SM_GoToPrevScreen );
+	Back( SM_GoToPrevScreen );
 }
 
 
@@ -446,7 +444,7 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 
 void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	m_Menu.m_MenuTimer->Stall();
+	m_MenuTimer->Stall();
 	m_MusicBannerWheel.BannersLeft();
 	for(int i=i_SkipAheadOffset; i>0; i--)
 		m_MusicBannerWheel.BannersLeft();
@@ -511,7 +509,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 	if(m_bMadeChoice && RageTimer::GetTimeSinceStart() > m_fRemainingWaitTime + 2 && !m_bTransitioning)
 	{
 		m_bTransitioning = true;
-		m_Menu.StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_GoToNextScreen );
 	}
 
 	Screen::Update( fDeltaTime );
@@ -519,9 +517,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 
 void ScreenEz2SelectMusic::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
 	Screen::DrawPrimitives();
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )

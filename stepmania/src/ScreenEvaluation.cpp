@@ -93,7 +93,7 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
 
-ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
+ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
   LOG->Trace( "ScreenEvaluation::ScreenEvaluation" );
 	Init(); // work around horrible gcc bug 3187
@@ -251,10 +251,6 @@ void ScreenEvaluation::Init()
 		GAMESTATE->HasEarnedExtraStage()  && 
 		m_Type==stage;
  
-
-
-	m_Menu.Load( m_sName );
-	this->AddChild( &m_Menu );
 
 	//
 	// load pass/fail sound
@@ -1417,20 +1413,16 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 void ScreenEvaluation::DrawPrimitives()
 {
-	m_Menu.DrawBottomLayer();
-
 	m_bgCondBga.DrawPrimitives();
 
 	Screen::DrawPrimitives();
-
-	m_Menu.DrawTopLayer();
 }
 
 void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 //	LOG->Trace( "ScreenEvaluation::Input()" );
 
-	if( m_Menu.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	if( GameI.IsValid() )
@@ -1570,6 +1562,6 @@ void ScreenEvaluation::EndScreen()
 			break;
 		}
 	}
-	m_Menu.StartTransitioning( SM_GoToNextScreen );
+	StartTransitioning( SM_GoToNextScreen );
 }
 

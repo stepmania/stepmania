@@ -9,16 +9,15 @@
 -----------------------------------------------------------------------------
 */
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"
-#include "MenuElements.h"
 #include "RageInputDevice.h"
 
 
-class ScreenMapControllers : public Screen
+class ScreenMapControllers : public ScreenWithMenuElements
 {
 public:
 	ScreenMapControllers( CString sName );
@@ -53,8 +52,5 @@ private:
 	BitmapText	m_textMappedTo[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS][NUM_GAME_TO_DEVICE_SLOTS];
 
 	ActorFrame	m_Line[MAX_GAME_BUTTONS];
-
-	MenuElements m_Menu;
-
 };
 

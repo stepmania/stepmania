@@ -12,13 +12,11 @@
 */
 
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "RandomSample.h"
-#include "MenuElements.h"
 
-
-class ScreenInstructions : public Screen
+class ScreenInstructions : public ScreenWithMenuElements
 {
 public:
 	ScreenInstructions( CString sName );
@@ -34,7 +32,6 @@ public:
 
 protected:
 	Sprite			m_sprHowToPlay;
-	MenuElements	m_Menu;
 };
 
 
