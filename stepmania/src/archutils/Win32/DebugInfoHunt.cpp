@@ -3,7 +3,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "VideoDriverInfo.h"
-#include "arch/ArchHooks/ArchHooks.h"
 
 
 void LogVideoDriverInfo( VideoDriverInfo info )
@@ -128,101 +127,6 @@ static void GetSoundDriverDebugInfo()
 	}
 }
 
-#include <vfw.h>
-#pragma comment(lib, "vfw32.lib")
-
-static CString FourCCToString(int fcc)
-{
-	char c[4];
-	c[0] = char((fcc >> 0) & 0xFF);
-	c[1] = char((fcc >> 8) & 0xFF);
-	c[2] = char((fcc >> 16) & 0xFF);
-	c[3] = char((fcc >> 24) & 0xFF);
-
-	CString s;
-	for( int i = 0; i < 4; ++i )
-		s += clamp( c[i], '\x20', '\x7e' );
-
-	return s;
-}
-
-static void CheckCodecVersion( CString codec, CString desc )
-{
-	if( !codec.CompareNoCase("DIVX") )
-	{
-		/* "DivX 5.0.5 Codec" */
-		Regex GetDivXVersion;
-
-		int major, minor, rev;
-		if( sscanf( desc, "DivX %i.%i.%i", &major, &minor, &rev ) != 3 &&
-			sscanf( desc, "DivX Pro %i.%i.%i", &major, &minor, &rev ) != 3 )
-		{
-			LOG->Warn( "Couldn't parse DivX version \"%s\"", desc.c_str() );
-			return;
-		}
-
-		/* 5.0.0 through 5.0.4 are old and cause crashes. Warn. */
-		if( major == 5 && minor == 0 && rev < 5 )
-		{
-			HOOKS->MessageBoxOK(
-				ssprintf("The version of DivX installed, %i.%i.%i, is out of date and may\n"
-				"cause instability.  Please upgrade to DivX 5.0.5 or newer, available at:\n"
-				"\n"
-				"http://www.divx.com/", major, minor, rev),
-				desc );
-			return;
-		}
-	}
-}
-
-
-static void GetVideoCodecDebugInfo()
-{
-	ICINFO info = { sizeof(ICINFO) };
-	int i;
-	LOG->Info("Video codecs:");
-	CHECKPOINT;
-	for(i=0; ICInfo(ICTYPE_VIDEO, i, &info); ++i)
-	{
-		CHECKPOINT;
-		if( FourCCToString(info.fccHandler) == "ASV1" )
-		{
-			/* Broken. */
-			LOG->Info("%i: %s: skipped", i, FourCCToString(info.fccHandler).c_str());
-			continue;
-		}
-
-		LOG->Trace( "Scanning codec %s", FourCCToString(info.fccHandler).c_str() );
-		CHECKPOINT;
-		HIC hic;
-		hic = ICOpen(info.fccType, info.fccHandler, ICMODE_DECOMPRESS);
-		if(!hic)
-		{
-			LOG->Info("Couldn't open video codec %s",
-				FourCCToString(info.fccHandler).c_str());
-			continue;
-		}
-
-		CHECKPOINT;
-		if (ICGetInfo(hic, &info, sizeof(ICINFO)))
-		{
-			CheckCodecVersion( FourCCToString(info.fccHandler), WStringToCString(info.szDescription) );
-			CHECKPOINT;
-
-			LOG->Info("    %s: %ls (%ls)",
-				FourCCToString(info.fccHandler).c_str(), info.szName, info.szDescription);
-		}
-		else
-			LOG->Info("ICGetInfo(%s) failed",
-				FourCCToString(info.fccHandler).c_str());
-
-		CHECKPOINT;
-		ICClose(hic);
-	}
-
-	if(!i)
-		LOG->Info("    None found");
-}
 
 void SearchForDebugInfo()
 {
@@ -230,7 +134,6 @@ void SearchForDebugInfo()
 	GetMemoryDebugInfo();
 	GetDisplayDriverDebugInfo();
 	GetSoundDriverDebugInfo();
-	GetVideoCodecDebugInfo();
 }
 
 /*
