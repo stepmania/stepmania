@@ -303,7 +303,7 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 	it comes to the coding of SMOnline, so we don't have to
 	use the lower level commands when dealing with SMOnline.
  Size:
-    2		SMOnline command
+    1		SMOnline command
  <VARIABLE>	SMOnline data
 
 
@@ -329,7 +329,23 @@ Client SMOnline packets:
     NT		Username
     NT		Password
 
-001:  Room Update
+001: User asks to enter room
+ Size:
+    1		Enter/Exit?
+		0: User wishes to exit room
+		1: User wishes to enter room 
+    NT		Room Name (Used when entering rooms)
+
+
+Server SMOnline packets:
+000:  Login Responce
+    1		Approval Status
+		0: Approved
+		1: Approval Failed
+    NT		MOTD (if passed)
+	    or	Reason for failure (if failed)
+
+001:  Room Update (Changing rooms)
  Size:
     1		Type of update
 		0: Change Room Title
@@ -348,18 +364,3 @@ Client SMOnline packets:
 	...
     NT		RoomN Title
     NT		RoomN Description		
-
-Server SMOnline packets:
-000:  Login Responce
-    1		Approval Status
-		0: Approved
-		1: Approval Failed
-    NT		MOTD (if passed)
-	    or	Reason for failure (if failed)
-
-001: User asks to enter room
- Size:
-    1		Enter/Exit?
-		0: User wishes to exit room
-		1: User wishes to enter room 
-    NT		Room Name (Used when entering rooms)
