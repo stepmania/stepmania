@@ -1416,18 +1416,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="GhostArrowRow.h">
 			</File>
 			<File
-				RelativePath=".\ReceptorArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\ReceptorArrow.h">
-			</File>
-			<File
-				RelativePath="ReceptorArrowRow.cpp">
-			</File>
-			<File
-				RelativePath="ReceptorArrowRow.h">
-			</File>
-			<File
 				RelativePath=".\HoldGhostArrow.cpp">
 			</File>
 			<File
@@ -1495,6 +1483,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ProTimingDisplay.h">
+			</File>
+			<File
+				RelativePath=".\ReceptorArrow.cpp">
+			</File>
+			<File
+				RelativePath=".\ReceptorArrow.h">
+			</File>
+			<File
+				RelativePath="ReceptorArrowRow.cpp">
+			</File>
+			<File
+				RelativePath="ReceptorArrowRow.h">
 			</File>
 			<File
 				RelativePath="ScoreDisplay.cpp">
