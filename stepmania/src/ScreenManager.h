@@ -19,6 +19,8 @@
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "StyleInput.h"
+#include "BitmapText.h"
+
 class Screen;
 struct Menu;
 class ScreenSystemLayer;

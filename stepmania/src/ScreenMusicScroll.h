@@ -13,7 +13,7 @@
 #include "Sprite.h"
 #include "Transition.h"
 #include "MenuElements.h"
-
+#include "BitmapText.h"
 
 //const unsigned MAX_MUSIC_LINES = 1200;
 //const unsigned MAX_CREDIT_LINES = 100;
