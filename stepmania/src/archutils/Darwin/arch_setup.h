@@ -1,3 +1,5 @@
+#include <libkern/OSByteOrder.h>
+
 #define DARWIN 1
 #define NEED_POWF
 #define NEED_SQRTF
@@ -15,6 +17,10 @@
 #ifndef __MACOSX__
 # define __MACOSX__
 #endif
+#define ArchSwap32(n) OSSwapInt32((n))
+#define ArchSwap24(n) (OSSwapInt32((n)) >> 8)
+#define ArchSwap16(n) OSSwapInt16((n))
+#define HAVE_BYTE_SWAPS
 extern "C" long long llabs(long long i);
 
 /*
