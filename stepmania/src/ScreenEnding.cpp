@@ -104,7 +104,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		}
 
 		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
-		m_sprRemoveMemoryCard[p].Load( THEME->GetPathToG("ScreenEnding remove card") );
+		m_sprRemoveMemoryCard[p].Load( THEME->GetPathToG(ssprintf("ScreenEnding remove card P%d",p+1)) );
 		SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}
