@@ -1,5 +1,5 @@
 #include "global.h"
-#include "MovieTexture_AVCodec.h"
+#include "MovieTexture_FFMpeg.h"
 
 #include "RageLog.h"
 #include "RageTextureManager.h"
@@ -8,6 +8,11 @@
 #include "SDL_endian.h"
 
 /* TODO: implement m_bLoop */
+
+#if defined(_WIN32)
+	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
+	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
+#endif
 
 struct AVPixelFormat_t
 {
@@ -113,7 +118,7 @@ static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 	return NULL;
 }
 
-MovieTexture_AVCodec::MovieTexture_AVCodec( RageTextureID ID ):
+MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	RageMovieTexture( ID )
 {
 	FixLilEndian();
@@ -160,7 +165,7 @@ static CString averr_ssprintf( int err, const char *fmt, ... )
 
 
 
-void MovieTexture_AVCodec::Create()
+void MovieTexture_FFMpeg::Create()
 {
 	m_Timer = 0;
 
@@ -237,7 +242,7 @@ void MovieTexture_AVCodec::Create()
     Play();
 }
 
-void MovieTexture_AVCodec::Destroy()
+void MovieTexture_FFMpeg::Destroy()
 {
 	StopThread();
 
@@ -256,7 +261,7 @@ void MovieTexture_AVCodec::Destroy()
 }
 
 
-void MovieTexture_AVCodec::CreateTexture()
+void MovieTexture_FFMpeg::CreateTexture()
 {
     if( m_uTexHandle )
         return;
@@ -332,7 +337,7 @@ void MovieTexture_AVCodec::CreateTexture()
 
 
 
-void MovieTexture_AVCodec::DecoderThread()
+void MovieTexture_FFMpeg::DecoderThread()
 {
 	bool GetNextTimestamp = true;
 	float CurrentTimestamp = 0, LastGoodTimestamp = 0, Last_IP_Timestamp=0;
@@ -521,7 +526,7 @@ void MovieTexture_AVCodec::DecoderThread()
 	CHECKPOINT;
 }
 
-MovieTexture_AVCodec::~MovieTexture_AVCodec()
+MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
 {
 	Destroy();
 
@@ -529,7 +534,7 @@ MovieTexture_AVCodec::~MovieTexture_AVCodec()
 	SDL_DestroySemaphore( m_OneFrameDecoded );
 }
 
-void MovieTexture_AVCodec::Update(float fDeltaTime)
+void MovieTexture_FFMpeg::Update(float fDeltaTime)
 {
 	CHECKPOINT;
 
@@ -537,7 +542,7 @@ void MovieTexture_AVCodec::Update(float fDeltaTime)
 		CheckFrame();
 }
 
-void MovieTexture_AVCodec::CheckFrame()
+void MovieTexture_FFMpeg::CheckFrame()
 {
 	if( !m_ImageWaiting )
 		return;
@@ -557,19 +562,19 @@ void MovieTexture_AVCodec::CheckFrame()
 	SDL_SemPost(m_BufferFinished);
 }
 
-void MovieTexture_AVCodec::Reload()
+void MovieTexture_FFMpeg::Reload()
 {
 }
 
-void MovieTexture_AVCodec::StartThread()
+void MovieTexture_FFMpeg::StartThread()
 {
 	ASSERT( m_State == DECODER_QUIT );
 	m_State = PAUSE_DECODER;
-	m_DecoderThread.SetName( ssprintf("MovieTexture_AVCodec(%s)", GetID().filename.c_str()) );
+	m_DecoderThread.SetName( ssprintf("MovieTexture_FFMpeg(%s)", GetID().filename.c_str()) );
 	m_DecoderThread.Create( DecoderThread_start, this );
 }
 
-void MovieTexture_AVCodec::StopThread()
+void MovieTexture_FFMpeg::StopThread()
 {
 	LOG->Trace("Shutting down decoder thread ...");
 
@@ -591,17 +596,17 @@ void MovieTexture_AVCodec::StopThread()
 	LOG->Trace("Decoder thread shut down.");
 }
 
-void MovieTexture_AVCodec::Play()
+void MovieTexture_FFMpeg::Play()
 {
     m_State = PLAYING;
 }
 
-void MovieTexture_AVCodec::Pause()
+void MovieTexture_FFMpeg::Pause()
 {
     m_State = PAUSE_DECODER;
 }
 
-void MovieTexture_AVCodec::SetPosition( float fSeconds )
+void MovieTexture_FFMpeg::SetPosition( float fSeconds )
 {
     ASSERT( m_State != DECODER_QUIT );
 
@@ -613,7 +618,7 @@ void MovieTexture_AVCodec::SetPosition( float fSeconds )
 
 	if( fSeconds != 0 )
 	{
-		LOG->Warn( "MovieTexture_AVCodec::SetPosition(%f): non-0 seeking unsupported; ignored", fSeconds );
+		LOG->Warn( "MovieTexture_FFMpeg::SetPosition(%f): non-0 seeking unsupported; ignored", fSeconds );
 		return;
 	}
 

@@ -47,12 +47,12 @@ AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
 AC_SEARCH_LIBS(avcodec_init, [avcodec], have_libavcodec=yes,  have_libavcodec=no)
 AC_SEARCH_LIBS(guess_format, [avformat], have_libavformat=yes,  have_libavformat=no)
 
-have_avcodec=no
+have_ffmpeg=no
 if test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
-	have_avcodec=yes
-	AC_DEFINE(HAVE_AVCODEC, 1, [AVCODEC support available])
+	have_ffmpeg=yes
+	AC_DEFINE(HAVE_FFMPEG, 1, [FMPEG support available])
 fi
-AM_CONDITIONAL(HAVE_AVCODEC, test "$have_avcodec" == "yes" )
+AM_CONDITIONAL(HAVE_FFMPEG, test "$have_ffmpeg" == "yes" )
 
 #if test "x$have_mad" = "xno"; then
 #  echo

@@ -101,8 +101,8 @@ InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler
 MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture.h \
 	       arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
 
-if HAVE_AVCODEC
-MovieTexture += arch/MovieTexture/MovieTexture_AVCodec.cpp arch/MovieTexture/MovieTexture_AVCodec.h  
+if HAVE_FFMPEG
+MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
 endif
 
 LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h \

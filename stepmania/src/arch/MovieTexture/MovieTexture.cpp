@@ -8,13 +8,13 @@
  * --steve */
 #if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
-#define DEFAULT_MOVIE_DRIVER_LIST "AVCodec,DShow,Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
 #else
-#define DEFAULT_MOVIE_DRIVER_LIST "AVCodec,Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 #endif
 
-#ifdef HAVE_AVCODEC
-#include "MovieTexture_AVCodec.h"
+#ifdef HAVE_FFMPEG
+#include "MovieTexture_FFMpeg.h"
 #endif
 
 #include "RageFile.h"
@@ -88,7 +88,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 			if (!Driver.CompareNoCase("DShow")) ret = new MovieTexture_DShow(ID);
 #endif
 #ifdef HAVE_AVCODEC
-			if (!Driver.CompareNoCase("AVCodec")) ret = new MovieTexture_AVCodec(ID);
+			if (!Driver.CompareNoCase("FFMpeg")) ret = new MovieTexture_FFMpeg(ID);
 #endif
 			if (!Driver.CompareNoCase("Null")) ret = new MovieTexture_Null(ID);
 			if (!ret)

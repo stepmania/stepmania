@@ -1,5 +1,5 @@
-#ifndef RAGEMOVIETEXTURE_AVCODEC_H
-#define RAGEMOVIETEXTURE_AVCODEC_H
+#ifndef RAGEMovieTexture_FFMPEG_H
+#define RAGEMovieTexture_FFMPEG_H
 
 #include "MovieTexture.h"
 
@@ -12,15 +12,19 @@
 
 namespace avcodec
 {
+#if defined(_WIN32)
+#include "ffmpeg/include/ffmpeg/avformat.h"
+#else
 #include <ffmpeg/avformat.h>
+#endif
 };
 
 
-class MovieTexture_AVCodec : public RageMovieTexture
+class MovieTexture_FFMpeg: public RageMovieTexture
 {
 public:
-	MovieTexture_AVCodec( RageTextureID ID );
-	virtual ~MovieTexture_AVCodec();
+	MovieTexture_FFMpeg( RageTextureID ID );
+	virtual ~MovieTexture_FFMpeg();
 	/* only called by RageTextureManager::InvalidateTextures */
 	void Invalidate() { m_uTexHandle = 0; }
 	void Update(float fDeltaTime);
@@ -98,7 +102,7 @@ private:
 
 	SDL_sem *m_BufferFinished, *m_OneFrameDecoded;
 
-	static int DecoderThread_start(void *p) { ((MovieTexture_AVCodec *)(p))->DecoderThread(); return 0; }
+	static int DecoderThread_start(void *p) { ((MovieTexture_FFMpeg *)(p))->DecoderThread(); return 0; }
 	void DecoderThread();
 	RageThread m_DecoderThread;
 
