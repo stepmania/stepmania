@@ -28,6 +28,7 @@
 #endif
 
 #include "Screen.h"
+#include "ScreenDimensions.h"
 #include "CodeDetector.h"
 #include "CommonMetrics.h"
 #include "Game.h"
@@ -127,6 +128,40 @@ static void StoreActualGraphicOptions( bool initial )
 		SCREENMAN->SystemMessage( log );
 
 	Dialog::SetWindowed( DISPLAY->GetVideoModeParams().windowed );
+}
+
+RageDisplay *CreateDisplay();
+
+static void StartDisplay()
+{
+	if( DISPLAY != NULL )
+		return; // already started
+
+	DISPLAY = CreateDisplay();
+
+	DISPLAY->ChangeCentering(
+		PREFSMAN->m_iCenterImageTranslateX, 
+		PREFSMAN->m_iCenterImageTranslateY,
+		PREFSMAN->m_fCenterImageAddWidth,
+		PREFSMAN->m_fCenterImageAddHeight );
+
+	TEXTUREMAN	= new RageTextureManager();
+	TEXTUREMAN->SetPrefs( 
+		RageTextureManagerPrefs( 
+			PREFSMAN->m_iTextureColorDepth, 
+			PREFSMAN->m_iMovieColorDepth,
+			PREFSMAN->m_bDelayedTextureDelete, 
+			PREFSMAN->m_iMaxTextureResolution,
+			PREFSMAN->m_bForceMipMaps
+			)
+		);
+
+	MODELMAN	= new ModelManager;
+	MODELMAN->SetPrefs( 
+		ModelManagerPrefs(
+			PREFSMAN->m_bDelayedModelDelete 
+			)
+		);
 }
 
 void ApplyGraphicOptions()
@@ -1095,31 +1130,7 @@ int main(int argc, char* argv[])
 
 	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
     
-	DISPLAY = CreateDisplay();
-
-	DISPLAY->ChangeCentering(
-		PREFSMAN->m_iCenterImageTranslateX, 
-		PREFSMAN->m_iCenterImageTranslateY,
-		PREFSMAN->m_fCenterImageAddWidth,
-		PREFSMAN->m_fCenterImageAddHeight );
-
-	TEXTUREMAN	= new RageTextureManager();
-	TEXTUREMAN->SetPrefs( 
-		RageTextureManagerPrefs( 
-			PREFSMAN->m_iTextureColorDepth, 
-			PREFSMAN->m_iMovieColorDepth,
-			PREFSMAN->m_bDelayedTextureDelete, 
-			PREFSMAN->m_iMaxTextureResolution,
-			PREFSMAN->m_bForceMipMaps
-			)
-		);
-
-	MODELMAN	= new ModelManager;
-	MODELMAN->SetPrefs( 
-		ModelManagerPrefs(
-			PREFSMAN->m_bDelayedModelDelete 
-			)
-		);
+	StartDisplay();
 
 	StoreActualGraphicOptions( true );
 
