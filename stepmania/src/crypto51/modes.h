@@ -211,14 +211,6 @@ struct CFB_Mode : public CipherModeDocumentation
 	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, ConcretePolicyHolder<Empty, CFB_DecryptionTemplate<AbstractPolicyHolder<CFB_CipherAbstractPolicy, CFB_ModePolicy> > > > Decryption;
 };
 
-//! CBC mode
-template <class CIPHER>
-struct CBC_Mode : public CipherModeDocumentation
-{
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Encryption, CBC_Encryption> Encryption;
-	typedef CipherModeFinalTemplate_CipherHolder<CPP_TYPENAME CIPHER::Decryption, CBC_Decryption> Decryption;
-};
-
 NAMESPACE_END
 
 #endif

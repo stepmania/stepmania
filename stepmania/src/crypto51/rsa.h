@@ -122,21 +122,12 @@ struct RSASS : public TF_SS<STANDARD, H, RSA>
 };
 
 // The two RSA encryption schemes defined in PKCS #1 v2.0
-typedef RSAES<PKCS1v15>::Decryptor RSAES_PKCS1v15_Decryptor;
-typedef RSAES<PKCS1v15>::Encryptor RSAES_PKCS1v15_Encryptor;
-
 typedef RSAES<OAEP<SHA> >::Decryptor RSAES_OAEP_SHA_Decryptor;
 typedef RSAES<OAEP<SHA> >::Encryptor RSAES_OAEP_SHA_Encryptor;
 
 // The three RSA signature schemes defined in PKCS #1 v2.0
 typedef RSASS<PKCS1v15, SHA>::Signer RSASSA_PKCS1v15_SHA_Signer;
 typedef RSASS<PKCS1v15, SHA>::Verifier RSASSA_PKCS1v15_SHA_Verifier;
-
-typedef RSASS<PKCS1v15, MD2>::Signer RSASSA_PKCS1v15_MD2_Signer;
-typedef RSASS<PKCS1v15, MD2>::Verifier RSASSA_PKCS1v15_MD2_Verifier;
-
-typedef RSASS<PKCS1v15, MD5>::Signer RSASSA_PKCS1v15_MD5_Signer;
-typedef RSASS<PKCS1v15, MD5>::Verifier RSASSA_PKCS1v15_MD5_Verifier;
 
 NAMESPACE_END
 

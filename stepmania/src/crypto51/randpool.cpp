@@ -61,8 +61,7 @@ unsigned int RandomPool::Put2(const byte *inString, unsigned int length, int mes
 
 unsigned int RandomPool::TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel, bool blocking)
 {
-	if (!blocking)
-		throw NotImplemented("RandomPool: nonblocking transfer is not implemented by this object");
+	ASSERT( blocking );
 
 	unsigned int t;
 	unsigned long size = transferBytes;

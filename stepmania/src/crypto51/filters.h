@@ -233,33 +233,6 @@ protected:
 	ByteQueue m_inQueue;
 };
 
-//! Filter Wrapper for StreamTransformation
-class StreamTransformationFilter : public FilterWithBufferedInput, private FilterPutSpaceHelper
-{
-public:
-	enum BlockPaddingScheme {NO_PADDING, ZEROS_PADDING, PKCS_PADDING, ONE_AND_ZEROS_PADDING, DEFAULT_PADDING};
-	/*! DEFAULT_PADDING means PKCS_PADDING if c.MandatoryBlockSize() > 1 && c.MinLastBlockSize() == 0 (e.g. ECB or CBC mode),
-		otherwise NO_PADDING (OFB, CFB, CTR, CBC-CTS modes) */
-	StreamTransformationFilter(StreamTransformation &c, BufferedTransformation *attachment = NULL, BlockPaddingScheme padding = DEFAULT_PADDING);
-
-	void FirstPut(const byte *inString);
-	void NextPutMultiple(const byte *inString, unsigned int length);
-	void NextPutModifiable(byte *inString, unsigned int length);
-	void LastPut(const byte *inString, unsigned int length);
-//	byte * CreatePutSpace(unsigned int &size);
-
-protected:
-	static unsigned int LastBlockSize(StreamTransformation &c, BlockPaddingScheme padding);
-
-	StreamTransformation &m_cipher;
-	BlockPaddingScheme m_padding;
-	unsigned int m_optimalBufferSize;
-};
-
-#ifdef CRYPTOPP_MAINTAIN_BACKWARDS_COMPATIBILITY
-typedef StreamTransformationFilter StreamCipherFilter;
-#endif
-
 //! Filter Wrapper for HashTransformation
 class HashFilter : public Bufferless<Filter>, private FilterPutSpaceHelper
 {
@@ -277,40 +250,6 @@ private:
 	bool m_putMessage;
 	byte *m_space;
 };
-
-//! Filter Wrapper for HashTransformation
-class HashVerificationFilter : public FilterWithBufferedInput
-{
-public:
-	class HashVerificationFailed : public Exception
-	{
-	public:
-		HashVerificationFailed()
-			: Exception(DATA_INTEGRITY_CHECK_FAILED, "HashVerifier: message hash not valid") {}
-	};
-
-	enum Flags {HASH_AT_BEGIN=1, PUT_MESSAGE=2, PUT_HASH=4, PUT_RESULT=8, THROW_EXCEPTION=16, DEFAULT_FLAGS = HASH_AT_BEGIN | PUT_RESULT};
-	HashVerificationFilter(HashTransformation &hm, BufferedTransformation *attachment = NULL, word32 flags = DEFAULT_FLAGS);
-
-	bool GetLastResult() const {return m_verified;}
-
-protected:
-	void InitializeDerivedAndReturnNewSizes(const NameValuePairs &parameters, unsigned int &firstSize, unsigned int &blockSize, unsigned int &lastSize);
-	void FirstPut(const byte *inString);
-	void NextPutMultiple(const byte *inString, unsigned int length);
-	void LastPut(const byte *inString, unsigned int length);
-
-private:
-	static inline unsigned int FirstSize(word32 flags, HashTransformation &hm) {return flags & HASH_AT_BEGIN ? hm.DigestSize() : 0;}
-	static inline unsigned int LastSize(word32 flags, HashTransformation &hm) {return flags & HASH_AT_BEGIN ? 0 : hm.DigestSize();}
-
-	HashTransformation &m_hashModule;
-	word32 m_flags;
-	SecByteBlock m_expectedHash;
-	bool m_verified;
-};
-
-typedef HashVerificationFilter HashVerifier;	// for backwards compatibility
 
 //! Filter Wrapper for PK_Signer
 class SignerFilter : public Unflushable<Filter>
@@ -432,50 +371,6 @@ public:
 private:
 	BufferedTransformation &m_owner;
 	bool m_passSignal;
-};
-
-//! Base class for Filter classes that are proxies for a chain of other filters.
-class ProxyFilter : public FilterWithBufferedInput
-{
-public:
-	ProxyFilter(BufferedTransformation *filter, unsigned int firstSize, unsigned int lastSize, BufferedTransformation *attachment);
-
-	bool IsolatedFlush(bool hardFlush, bool blocking);
-
-	void SetFilter(Filter *filter);
-	void NextPutMultiple(const byte *s, unsigned int len);
-
-protected:
-	member_ptr<BufferedTransformation> m_filter;
-};
-
-//! simple proxy filter that doesn't modify the underlying filter's input or output
-class SimpleProxyFilter : public ProxyFilter
-{
-public:
-	SimpleProxyFilter(BufferedTransformation *filter, BufferedTransformation *attachment)
-		: ProxyFilter(filter, 0, 0, attachment) {}
-
-	void FirstPut(const byte *) {}
-	void LastPut(const byte *, unsigned int) {m_filter->MessageEnd();}
-};
-
-//! proxy for the filter created by PK_Encryptor::CreateEncryptionFilter
-/*! This class is here just to provide symmetry with VerifierFilter. */
-class PK_EncryptorFilter : public SimpleProxyFilter
-{
-public:
-	PK_EncryptorFilter(RandomNumberGenerator &rng, const PK_Encryptor &encryptor, BufferedTransformation *attachment = NULL)
-		: SimpleProxyFilter(encryptor.CreateEncryptionFilter(rng), attachment) {}
-};
-
-//! proxy for the filter created by PK_Decryptor::CreateDecryptionFilter
-/*! This class is here just to provide symmetry with SignerFilter. */
-class PK_DecryptorFilter : public SimpleProxyFilter
-{
-public:
-	PK_DecryptorFilter(RandomNumberGenerator &rng, const PK_Decryptor &decryptor, BufferedTransformation *attachment = NULL)
-		: SimpleProxyFilter(decryptor.CreateDecryptionFilter(rng), attachment) {}
 };
 
 //! Append input to a string object

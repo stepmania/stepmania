@@ -84,13 +84,12 @@ void InvertibleRSAFunction::GenerateRandom(RandomNumberGenerator &rng, const Nam
 	int modulusSize = 2048;
 	alg.GetIntValue("ModulusSize", modulusSize) || alg.GetIntValue("KeySize", modulusSize);
 
-	if (modulusSize < 16)
-		throw InvalidArgument("InvertibleRSAFunction: specified modulus size is too small");
+	ASSERT( modulusSize >= 16 );
 
 	m_e = alg.GetValueWithDefault("PublicExponent", Integer(17));
 
-	if (m_e < 3 || m_e.IsEven())
-		throw InvalidArgument("InvertibleRSAFunction: invalid public exponent");
+	ASSERT( m_e >= 3 );
+	ASSERT( !m_e.IsEven() );
 
 	RSAPrimeSelector selector(m_e);
 	const NameValuePairs &primeParam = MakeParametersForTwoPrimesOfEqualSize(modulusSize)
@@ -188,8 +187,7 @@ Integer InvertibleRSAFunction::CalculateInverse(RandomNumberGenerator &rng, cons
 	// but in ModRoot, u=p inverse mod q, so we reverse the order of p and q
 	Integer y = ModularRoot(re, m_dq, m_dp, m_q, m_p, m_u);
 	y = modn.Divide(y, r);				// unblind
-	if (modn.Exponentiate(y, m_e) != x)		// check
-		throw Exception(Exception::OTHER_ERROR, "InvertibleRSAFunction: computational error during private key operation");
+	ASSERT( modn.Exponentiate(y, m_e) == x );		// check
 	return y;
 }
 

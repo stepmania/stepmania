@@ -57,13 +57,6 @@ struct PKCS1v15 : public SignatureStandard, public EncryptionStandard
 // PKCS_DecoratedHashModule can be instantiated with the following
 // classes as specified in PKCS#1 v2.0 and P1363a
 class SHA;
-class MD2;
-class MD5;
-class RIPEMD160;
-class Tiger;
-class SHA256;
-class SHA384;
-class SHA512;
 
 NAMESPACE_END
 
