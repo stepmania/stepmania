@@ -7,7 +7,6 @@
 #include "RageDisplay.h"
 #include "RageTypes.h"
 #include "arch/Dialog/Dialog.h"
-#include "PrefsManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 
@@ -90,10 +89,6 @@ void RageBitmapTexture::Create()
 		else if( traits & RageSurfaceUtils::TRAIT_BOOL_TRANSPARENCY )
 			actualID.iAlphaBits = 1;
 	}
-
-	// let texture hints override the global setting
-	if( PREFSMAN->m_bForceMipMaps )
-		actualID.bMipMaps = true;
 
 	// look in the file name for a format hints
 	CString HintString = GetID().filename + actualID.AdditionalTextureHints;

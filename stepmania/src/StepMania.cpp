@@ -150,7 +150,8 @@ void ApplyGraphicOptions()
 			PREFSMAN->m_iTextureColorDepth, 
 			PREFSMAN->m_iMovieColorDepth,
 			PREFSMAN->m_bDelayedTextureDelete, 
-			PREFSMAN->m_iMaxTextureResolution 
+			PREFSMAN->m_iMaxTextureResolution,
+			PREFSMAN->m_bForceMipMaps
 			)
 		);
 
@@ -1074,7 +1075,8 @@ int main(int argc, char* argv[])
 			PREFSMAN->m_iTextureColorDepth, 
 			PREFSMAN->m_iMovieColorDepth,
 			PREFSMAN->m_bDelayedTextureDelete, 
-			PREFSMAN->m_iMaxTextureResolution 
+			PREFSMAN->m_iMaxTextureResolution,
+			PREFSMAN->m_bForceMipMaps
 			)
 		);
 

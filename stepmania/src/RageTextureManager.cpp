@@ -75,6 +75,8 @@ void RageTextureManager::AdjustTextureID(RageTextureID &ID) const
 	if( ID.iColorDepth == -1 )
 		ID.iColorDepth = m_Prefs.m_iTextureColorDepth;
 	ID.iMaxSize = min( ID.iMaxSize, m_Prefs.m_iMaxTextureResolution );
+	if( m_Prefs.m_bMipMaps )
+		ID.bMipMaps = true;
 }
 
 /* If you've set up a texture yourself, register it here so it can be referenced
