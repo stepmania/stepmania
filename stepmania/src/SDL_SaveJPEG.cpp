@@ -125,7 +125,7 @@ bool IMG_SaveJPG_RW( RageSurface *surface, RageFile &f, bool bHighQual )
 	if( bHighQual )
 		jpeg::jpeg_set_quality( &cinfo, 150, TRUE );
 	else
-		jpeg::jpeg_set_quality( &cinfo, 40, TRUE );
+		jpeg::jpeg_set_quality( &cinfo, 70, TRUE );
 
 	jpeg_RageFile_dest( &cinfo, f );
 
