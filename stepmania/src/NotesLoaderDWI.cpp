@@ -6,6 +6,7 @@
 #include "RageException.h"
 #include "MsdFile.h"
 #include "RageUtil.h"
+#include "RageUtil_CharConversions.h"
 #include "NoteData.h"
 
 #include <map>
@@ -302,10 +303,21 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			out.m_sMusicFile = sParams[1];
 
 		else if( 0==stricmp(sValueName,"TITLE") )
+		{
 			GetMainAndSubTitlesFromFullTitle( sParams[1], out.m_sMainTitle, out.m_sSubTitle );
 
+			/* As far as I know, there's no spec on the encoding of this text. (I didn't
+			 * look very hard, though.)  I've seen at least one file in ISO-8859-1. */
+			ConvertString( out.m_sMainTitle, "utf-8,english" );
+			ConvertString( out.m_sSubTitle, "utf-8,english" );
+		}
+
 		else if( 0==stricmp(sValueName,"ARTIST") )
+		{
 			out.m_sArtist = sParams[1];
+			LOG->Trace("conv '%s'", out.m_sArtist.c_str());
+			ConvertString( out.m_sArtist, "utf-8,english" );
+		}
 
 		else if( 0==stricmp(sValueName,"CDTITLE") )
 			out.m_sCDTitleFile = sParams[1];
