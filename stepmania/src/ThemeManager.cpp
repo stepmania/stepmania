@@ -618,6 +618,11 @@ float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 	// HACK: Many metrics have "//" comments that Lua fails to parse.
 	// Replace them with Lua-style comments.
 	str.Replace( "//", "--" );
+
+	// Remove leading +, eg. "+50"; Lua doesn't handle that.
+	if( str.size() >= 1 && str[0] == '+' )
+		str.erase( 0, 1 );
+
 	return Lua::RunExpressionF( str );
 }
 
