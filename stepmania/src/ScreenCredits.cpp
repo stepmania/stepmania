@@ -116,6 +116,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"TheChip"},
 	{0,"WarriorBob (David H)"},
 	{0,"Mike Waltson"},
+	{0,"Kevin Slaughter (Miryokuteki)"},
 	{0,""},
 	{0,""},
 	{0,""},

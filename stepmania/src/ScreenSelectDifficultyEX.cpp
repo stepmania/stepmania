@@ -60,6 +60,15 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_sprDifficultyIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty icons 1x7") );
+		
+		m_sprDifficultyIcon[p].SetX( 200 );
+		m_sprDifficultyIcon[p].SetY( 200 );
+		m_sprDifficultyIcon[p].SetZoom( 10 );
+		
+		m_sprDifficultyIcon[p].SetState( 5 );	// 0=BEG, 1=LGT, 2=STD, 3=HVY, 4=NS/ONI
+		//this->AddChild( &m_sprDifficultyIcon[p] );
+
 		CLAMP( m_iChoice[p], 0, (int)m_ModeChoices.size()-1 );
 		m_bChosen[p] = false;
 

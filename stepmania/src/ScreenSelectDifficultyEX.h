@@ -18,6 +18,7 @@
 #include "RandomSample.h"
 #include "ScreenSelect.h"
 #include "Sprite.h"
+#include "DifficultyIcon.h"
 
 class ScreenSelectDifficultyEX : public ScreenSelect
 {
@@ -53,6 +54,7 @@ protected:
 //	Sprite	m_sprExplanation;		Will implement properly soon -- Miryokuteki
 	Sprite	m_sprInfo[NUM_PLAYERS];
 //	Sprite	m_sprMore;				Will implement properly soon -- Miryokuteki
+	DifficultyIcon	m_sprDifficultyIcon[NUM_PLAYERS];
 	Sprite	m_sprOK[NUM_PLAYERS];
 	Sprite	m_sprPicture[NUM_PLAYERS];
 
