@@ -465,6 +465,8 @@ int ThreadedFileWorker::GetFileSize( RageFileBasic *&pFile )
 		return -1;
 	}
 
+	m_pRequestFile = NULL;
+
 	return m_iResultRequest;
 }
 
@@ -499,7 +501,10 @@ int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, CStr
 
 	int iGot = m_iResultRequest;
 	memcpy( pBuf, m_pResultBuffer, iGot );
+
+	m_pRequestFile = NULL;
 	delete [] m_pResultBuffer;
+	m_pResultBuffer = NULL;
 
 	return iGot;
 }
@@ -535,7 +540,10 @@ int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSiz
 	}
 
 	int iGot = m_iResultRequest;
-	delete [] m_pResultBuffer;
+
+	m_pRequestFile = NULL;
+	delete [] m_pRequestBuffer;
+	m_pRequestBuffer = NULL;
 
 	return iGot;
 }
