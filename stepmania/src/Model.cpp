@@ -11,7 +11,6 @@
 #include "ActorUtil.h"
 #include <cerrno>
 #include "ModelManager.h"
-#include "SDL_opengl.h"
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -425,12 +424,12 @@ bool Model::EarlyAbortDraw()
 void Model::DrawCelShaded()
 {
 	this->SetGlow(RageColor(0,0,0,1));
-	glPolygonMode (GL_BACK, GL_LINE);
-	glLineWidth(4.0f);
+	DISPLAY->SetPolygonMode( POLYGON_LINE );
+	DISPLAY->SetLineWidth( 4 );
 	this->Draw();
 	DISPLAY->ClearZBuffer();
 	this->SetGlow(RageColor(1,1,1,0));
-	glPolygonMode(GL_BACK, GL_FILL);
+	DISPLAY->SetPolygonMode( POLYGON_FILL );
 	this->Draw();
 }
 

@@ -65,6 +65,10 @@ public:
 	RageCompiledGeometry* CreateCompiledGeometry();
 	void DeleteCompiledGeometry( RageCompiledGeometry* p );
 
+	// hacks for cell-shaded models
+	virtual void SetPolygonMode( PolygonMode pm );
+	virtual void SetLineWidth( int iWidth );
+
 	CString GetTextureDiagnostics( unsigned id ) const;
 
 protected:

@@ -232,6 +232,10 @@ public:
 
 	void DrawQuad( const RageSpriteVertex v[] ) { DrawQuads(v,4); } /* alias. upper-left, upper-right, lower-left, lower-right */
 
+	// hacks for cell-shaded models
+	virtual void SetPolygonMode( PolygonMode pm ) {}
+	virtual void SetLineWidth( int iWidth ) {}
+
 	enum GraphicsFileFormat
 	{
 		SAVE_LOSSLESS, // bmp

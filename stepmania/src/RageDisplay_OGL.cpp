@@ -1814,6 +1814,23 @@ void RageDisplay_OGL::UpdateTexture(
 		delete img;
 }
 
+void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
+{
+	GLenum m;
+	switch( pm )
+	{
+	case POLYGON_FILL:	m = GL_FILL; break;
+	case POLYGON_LINE:	m = GL_LINE; break;
+	default:	ASSERT(0);	return;
+	}
+	glPolygonMode( GL_FRONT_AND_BACK, m );
+}
+
+void RageDisplay_OGL::SetLineWidth( int iWidth )
+{
+	glLineWidth( iWidth );
+}
+
 CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
 {
 	return "";
