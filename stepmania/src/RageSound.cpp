@@ -709,6 +709,15 @@ bool RageSound::SetPositionSamples( int samples )
 	if(!playing)
 		L.Unlock();
 
+	/* If we're seeking to sample 10, and the playback rate is 0.5, we really
+	 * want to seek to sample 20; it'll be multiplied back out in GetPosition.
+	 * (The reason for this is to keep "position" in 44100 samples/second, so
+	 * sound drivers don't have to know about the playback rate.)  Think of
+	 * it this way: if we seek to sample 10 in the input file, and we're playing
+	 * it half speed, we would have actually played 20 samples, not 10, and
+	 * it's the number of real speaker samples that "position" represents. */
+	samples = int(samples / GetPlaybackRate());
+
 	/* If we're already there, don't do anything. */
 	if(position == samples)
 		return true;
