@@ -77,7 +77,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 					CString sName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[gi.button];
 					CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[gi.button];
 					
-					sTemp += "  (" + sName + ")  " + sSecondary;
+					sTemp += ssprintf("  (Controller %d %s)  %s", gi.controller+1, sName.c_str(), sSecondary.c_str() );
 				}
 				else
 				{
