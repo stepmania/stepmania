@@ -597,11 +597,18 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
 
-		if( !arrayPossibleMusic.empty() )		// we found a match
-			m_sMusicFile = arrayPossibleMusic[0];
-//		Don't throw on missing music.  -Chris
-//		else
-//			RageException::Throw( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.c_str() );
+		if( !arrayPossibleMusic.empty() )
+		{
+			int idx = 0;
+			/* If the first song is "intro", and we have more than one available,
+			 * don't use it--it's probably a KSF intro music file, which we don't support. */
+			if( arrayPossibleMusic.size() > 1 &&
+				!arrayPossibleMusic[0].Left(5).CompareNoCase("intro") )
+				++idx;
+
+			// we found a match
+			m_sMusicFile = arrayPossibleMusic[idx];
+		}
 	}
 
 	/* This must be done before radar calculation. */
