@@ -129,7 +129,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 
 	unsigned i;
 
-	FILE* fp = fopen( sPath, "w" );	
+	FILE* fp = fopen( sPath, "wt" );	
 	if( fp == NULL )
 	{
 		LOG->Warn( "Error opening song file '%s' for writing: %s", sPath.c_str(), strerror(errno) );
