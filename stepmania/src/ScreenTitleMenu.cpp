@@ -227,7 +227,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			case CHOICE_SELECT_GAME:
 			case CHOICE_MAP_KEY_JOY:
 			case CHOICE_OPTIONS:
-			#ifdef _DEBUG
+			#ifdef DEBUG
 			case CHOICE_SANDBOX:
 			#endif
 				m_soundSelect.PlayRandom();
@@ -319,7 +319,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_JUKEBOX:
 			SCREENMAN->SetNewScreen( "ScreenJukeboxMenu" );
 			break;
-		#ifdef _DEBUG
+		#ifdef DEBUG
 		case CHOICE_SANDBOX:
 			SCREENMAN->SetNewScreen( "ScreenTest" );
 			break;

@@ -36,7 +36,7 @@ public:
 		CHOICE_OPTIONS,
 		CHOICE_EDIT,
 		CHOICE_JUKEBOX,
-		#ifdef _DEBUG
+		#ifdef DEBUG
 		CHOICE_SANDBOX,
 		#endif
 		CHOICE_EXIT,
@@ -52,7 +52,7 @@ public:
 			"OPTIONS",
 			"EDIT/SYNC SONGS",
 			"JUKEBOX",
-			#ifdef _DEBUG
+			#ifdef DEBUG
 			"SANDBOX",
 			#endif
 			"EXIT"
