@@ -60,10 +60,12 @@ public:
 	/* When deleting a sound from any thread except the one calling Update(), this
 	 * must be used to prevent race conditions. */
 	void DeleteSound( RageSound *p );
+	void DeleteSoundWhenFinished( RageSound *pSound );
 
 	void PlayOnce( CString sPath );
 
-	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params );
+	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params = NULL );
+	RageSound *PlayCopyOfSound( RageSound &snd, const RageSoundParams *params = NULL );
 
 	static void AttenuateBuf( int16_t *buf, int samples, float vol );
 

@@ -200,30 +200,37 @@ int RageSoundManager::GetDriverSampleRate( int rate ) const
 	return driver->GetSampleRate( rate );
 }
 
+/* The return value of PlaySound and PlayCopyOfSound is only valid in the main
+ * thread, until the next call to Update().  After that, it may be deleted. */
 RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *params )
 {
-	RageSound *sound_to_play;
-	if(!snd.IsPlaying())
-		sound_to_play = &snd;
-	else
-	{
-		sound_to_play = new RageSound(snd);
-
-		/* We're responsible for freeing it. */
-		g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
-		owned_sounds.insert(sound_to_play);
-		g_SoundManMutex.Unlock(); /* finished with owned_sounds */
-	}
+	if( snd.IsPlaying() )
+		return PlayCopyOfSound( snd, params );
 
 	if( params )
-		sound_to_play->SetParams( *params );
+		snd.SetParams( *params );
 
 	// Move to the start position.
-	sound_to_play->SetPositionSeconds( sound_to_play->GetParams().m_StartSecond );
+	snd.SetPositionSeconds( snd.GetParams().m_StartSecond );
 
-	sound_to_play->StartPlaying();
+	snd.StartPlaying();
+	return &snd;
+}
 
-	return sound_to_play;
+RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundParams *params )
+{
+	RageSound *pSound = new RageSound(snd);
+	DeleteSoundWhenFinished( pSound );
+
+	if( params )
+		pSound->SetParams( *params );
+
+	// Move to the start position.
+	pSound->SetPositionSeconds( pSound->GetParams().m_StartSecond );
+
+	pSound->StartPlaying();
+
+	return pSound;
 }
 
 void RageSoundManager::DeleteSound( RageSound *p )
@@ -231,10 +238,14 @@ void RageSoundManager::DeleteSound( RageSound *p )
 	/* Stop playing the sound. */
 	p->StopPlaying();
 
-	/* Add it to owned_sounds.  It'll be deleted the next time we come around
-	 * to Update(). */
+	/* We might be in a thread, so don't delete it here. */
+	DeleteSoundWhenFinished( p );
+}
+
+void RageSoundManager::DeleteSoundWhenFinished( RageSound *pSound )
+{
 	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
-	owned_sounds.insert( p );
+	owned_sounds.insert( pSound );
 	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
 }
 
@@ -251,9 +262,7 @@ void RageSoundManager::PlayOnce( CString sPath )
 	/* We're responsible for freeing it.  Add it to owned_sounds *after* we start
 	 * playing, so RageSoundManager::Update doesn't free it before we actually start
 	 * it. */
-	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
-	owned_sounds.insert(snd);
-	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
+	DeleteSoundWhenFinished( snd );
 }
 
 void RageSoundManager::SetPrefs(float MixVol)
