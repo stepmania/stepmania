@@ -3,7 +3,6 @@
 
 #include <set>
 #include <map>
-#include "SDL_utils.h"
 #include "RageUtil_CircularBuffer.h"
 
 class RageSound;

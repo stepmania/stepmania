@@ -5,7 +5,6 @@
 #ifndef RAGE_SOUND_READER_MP3_H
 #define RAGE_SOUND_READER_MP3_H
 
-#include "SDL_utils.h"
 #include "RageSoundReader_FileReader.h"
 #include "RageFile.h"
 
