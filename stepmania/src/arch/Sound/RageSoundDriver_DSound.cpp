@@ -15,8 +15,6 @@
 #include "archutils/win32/tls.h"
 #include "SDL.h"
 
-RageSoundManager *SOUNDMAN = NULL;
-
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
 const int samplerate = 44100;
