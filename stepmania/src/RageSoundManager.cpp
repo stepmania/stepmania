@@ -243,24 +243,6 @@ RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *p
 	return sound_to_play;
 }
 
-/* Stop playing all playing sounds derived from the same parent as snd. */
-void RageSoundManager::StopPlayingAllCopiesOfSound(RageSound &snd)
-{
-	g_DeletionMutex.Lock();
-
-	vector<RageSound *> snds;
-	GetCopies( snd, snds );
-
-	vector<RageSound *>::iterator it;
-	for( it = snds.begin(); it != snds.end(); ++it )
-	{
-		if( (*it)->IsPlaying() )
-			(*it)->StopPlaying();
-	}
-
-	g_DeletionMutex.Unlock();
-}
-
 /* XXX: If this is ever called from a thread, it should take a bLockSounds parameter,
  * like GetCopies. */
 set<RageSound *> RageSoundManager::GetPlayingSounds() const

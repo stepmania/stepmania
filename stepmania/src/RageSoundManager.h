@@ -61,7 +61,6 @@ public:
 	void PlayOnce( CString sPath );
 
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params );
-	void StopPlayingAllCopiesOfSound(RageSound &snd);
 
 	void GetCopies( RageSound &snd, vector<RageSound *> &snds, bool bLockSounds=false );
 
