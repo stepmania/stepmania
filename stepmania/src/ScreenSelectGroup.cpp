@@ -24,6 +24,8 @@
 #include "ThemeManager.h"
 #include <map>
 #include "ActorUtil.h"
+#include "GameState.h"
+#include "UnlockSystem.h"
 
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
@@ -64,8 +66,19 @@ ScreenSelectGroup::ScreenSelectGroup() : Screen("ScreenSelectGroup")
 	// Filter out Songs that can't be played by the current Style
 	for( j=aAllSongs.size()-1; j>=0; j-- )		// foreach Song, back to front
 	{
+		bool DisplaySong = aAllSongs[j]->NormallyDisplayed();
+		
+		// check if song is locked
+		if (PREFSMAN->m_bUseUnlockSystem)
+		{
+			SongEntry* m_UnlockSong = GAMESTATE->m_pUnlockingSys->FindSong( aAllSongs[j] );
+
+			if (m_UnlockSong)
+				DisplaySong = (m_UnlockSong->SelectableWheel());
+		}
+		
 		if( aAllSongs[j]->SongCompleteForStyle(GAMESTATE->GetCurrentStyleDef()) && 
-			aAllSongs[j]->NormallyDisplayed() )
+			DisplaySong )
 			continue;
 
 		aAllSongs.erase( aAllSongs.begin()+j, aAllSongs.begin()+j+1 );

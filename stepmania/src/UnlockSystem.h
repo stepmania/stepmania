@@ -107,6 +107,8 @@ public:
 
 	SongEntry *FindLockEntry( CString lockname );
 
+	// so class can access FindSong
+	friend class ScreenSelectGroup;
 private:
 	SongEntry *FindSong( const Song *pSong );
 	SongEntry *FindCourse( const Course *pCourse );
