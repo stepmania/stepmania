@@ -184,7 +184,6 @@ void WheelItemDisplay::RefreshGrades()
 			continue;
 		}
 
-		/* XXX: Don't really want separate grades for each player in couples. */
 		if( m_pSong )	// this is a song display
 		{
 			const DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[p];
