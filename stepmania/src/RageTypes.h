@@ -23,10 +23,10 @@ public:
     operator const float* () const								{ return &x; };
 
     // assignment operators
-	RageVector2& operator += ( const RageVector2& other )		{ x+=other.x; y+=other.y; }
-    RageVector2& operator -= ( const RageVector2& other )		{ x-=other.x; y-=other.y; }
-    RageVector2& operator *= ( float f )						{ x*=f; y*=f; }
-    RageVector2& operator /= ( float f )						{ x/=f; y/=f; }
+	RageVector2& operator += ( const RageVector2& other )		{ x+=other.x; y+=other.y; return *this; }
+    RageVector2& operator -= ( const RageVector2& other )		{ x-=other.x; y-=other.y; return *this; }
+    RageVector2& operator *= ( float f )						{ x*=f; y*=f; return *this; }
+    RageVector2& operator /= ( float f )						{ x/=f; y/=f; return *this; }
 
     // binary operators
     RageVector2 operator + ( const RageVector2& other ) const	{ return RageVector2( x+other.x, y+other.y ); }
@@ -88,10 +88,10 @@ public:
     operator const float* () const								{ return &x; };
 
     // assignment operators
-	RageVector4& operator += ( const RageVector4& other )		{ x+=other.x; y+=other.y; z+=other.z; w+=other.w; }
-    RageVector4& operator -= ( const RageVector4& other )		{ x-=other.x; y-=other.y; z-=other.z; w-=other.w; }
-    RageVector4& operator *= ( float f )						{ x*=f; y*=f; z*=f; w*=f; }
-    RageVector4& operator /= ( float f )						{ x/=f; y/=f; z/=f; w/=f; }
+	RageVector4& operator += ( const RageVector4& other )		{ x+=other.x; y+=other.y; z+=other.z; w+=other.w; return *this; }
+    RageVector4& operator -= ( const RageVector4& other )		{ x-=other.x; y-=other.y; z-=other.z; w-=other.w; return *this; }
+    RageVector4& operator *= ( float f )						{ x*=f; y*=f; z*=f; w*=f; return *this; }
+    RageVector4& operator /= ( float f )						{ x/=f; y/=f; z/=f; w/=f; return *this; }
 
     // binary operators
     RageVector4 operator + ( const RageVector4& other ) const	{ return RageVector4( x+other.x, y+other.y, z+other.z, w+other.w ); }
@@ -120,10 +120,10 @@ public:
     operator const float* () const							{ return &r; };
 
     // assignment operators
-	RageColor& operator += ( const RageColor& other )		{ r+=other.r; g+=other.g; b+=other.b; a+=other.a; }
-    RageColor& operator -= ( const RageColor& other )		{ r-=other.r; g-=other.g; b-=other.b; a-=other.a; }
-    RageColor& operator *= ( float f )						{ r*=f; g*=f; b*=f; a*=f; }
-    RageColor& operator /= ( float f )						{ r/=f; g/=f; b/=f; a/=f; }
+	RageColor& operator += ( const RageColor& other )		{ r+=other.r; g+=other.g; b+=other.b; a+=other.a; return *this; }
+    RageColor& operator -= ( const RageColor& other )		{ r-=other.r; g-=other.g; b-=other.b; a-=other.a; return *this; }
+    RageColor& operator *= ( float f )						{ r*=f; g*=f; b*=f; a*=f; return *this; }
+    RageColor& operator /= ( float f )						{ r/=f; g/=f; b/=f; a/=f; return *this; }
 
     // binary operators
     RageColor operator + ( const RageColor& other ) const	{ return RageColor( r+other.r, g+other.g, b+other.b, a+other.a ); }
