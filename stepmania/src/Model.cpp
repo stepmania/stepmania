@@ -179,7 +179,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 					THROW
                 if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
 					THROW
-                strcpy( Material.szName, szName );
+                Material.sName = szName;
 
                 // ambient
 			    if( f.GetLine( sLine ) <= 0 )
@@ -235,11 +235,11 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 					THROW
                 strcpy (szName, "");
                 sscanf (sLine, "\"%[^\"]\"", szName);
-                strcpy( Material.szDiffuseTexture, szName );
+                CString sDiffuseTexture = szName;
 
-				if( strcmp(Material.szDiffuseTexture, "")!=0 )
+				if( sDiffuseTexture != "" )
 				{
-					CString sTexturePath = sDir + Material.szDiffuseTexture;
+					CString sTexturePath = sDir + sDiffuseTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( IsAFile(sTexturePath) )
@@ -256,11 +256,11 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 					THROW
                 strcpy (szName, "");
                 sscanf (sLine, "\"%[^\"]\"", szName);
-                strcpy( Material.szAlphaTexture, szName );
+				CString sAlphaTexture = szName;
 
-				if( strcmp(Material.szAlphaTexture, "")!=0 )
+				if( sAlphaTexture != "" )
 				{
-					CString sTexturePath = sDir + Material.szAlphaTexture;
+					CString sTexturePath = sDir + sAlphaTexture;
 					FixSlashesInPlace( sTexturePath );
 					CollapsePath( sTexturePath );
 					if( IsAFile(sTexturePath) )

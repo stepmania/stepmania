@@ -4,7 +4,6 @@
 #define MODEL_TYPES_H
 
 #define MS_MAX_NAME             32
-#define MS_MAX_PATH             256
 
 #ifndef byte
 typedef unsigned char byte;
@@ -109,15 +108,13 @@ private:
 typedef struct msMaterial
 {
     int         nFlags;
-    char        szName[MS_MAX_NAME];
+    CString     sName;
     RageColor   Ambient;
     RageColor   Diffuse;
     RageColor   Specular;
     RageColor   Emissive;
     float       fShininess;
     float       fTransparency;
-    char        szDiffuseTexture[MS_MAX_PATH];
-    char        szAlphaTexture[MS_MAX_PATH];	// not used in SM.  Use alpha in diffuse texture instead
     int         nName;	// not used in SM.  What is this for anyway?
 
 	AnimatedTexture diffuse;
