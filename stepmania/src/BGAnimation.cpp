@@ -69,7 +69,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		ini.GetValueF( "BGAnimation", "LengthSeconds", m_fLengthSeconds );
 		
 		unsigned i;
-		for( i=0; MAX_LAYERS; i++ )
+		for( i=0; i<MAX_LAYERS; i++ )
 		{
 			CString sLayer = ssprintf("Layer%d",i+1);
 			const IniFile::key* pKey = ini.GetKey( sLayer );
