@@ -51,7 +51,9 @@ class UnlockSystem
 {
 public:
 	UnlockSystem();
-	float NumPointsUntilNextUnlock();
+	float DancePointsUntilNextUnlock();
+	float ArcadePointsUntilNextUnlock();
+	float SongPointsUntilNextUnlock();
 	bool SongIsLocked( const Song *song );
 	bool SongIsRoulette( const Song *song );
 	bool LoadFromDATFile( CString sPath );

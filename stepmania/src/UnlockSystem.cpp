@@ -245,20 +245,37 @@ bool SongEntry::SelectableRoulette()
 	return false;
 }
 
-float UnlockSystem::NumPointsUntilNextUnlock()
+float UnlockSystem::DancePointsUntilNextUnlock()
 {
 	float fSmallestPoints = 400000000;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_SongEntries.size(); a++ )
-	{
-		// old line:	if( m_SongEntries[a].m_fDancePointsRequired >= fSmallestPoints )
-		// new: it makes sure the number of points to the song is positive, AND it is less than
-		//      the currently smallest one. (cure)
 		if( m_SongEntries[a].m_fDancePointsRequired > PREFSMAN->m_fDancePointsAccumulated)
 			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fDancePointsRequired);
-	}
 	
 	if (fSmallestPoints == 400000000) return 0;  // no match found
 	return fSmallestPoints - PREFSMAN->m_fDancePointsAccumulated;
+}
+
+float UnlockSystem::ArcadePointsUntilNextUnlock()
+{
+	float fSmallestPoints = 400000000;   // or an arbitrarily large value
+	for( unsigned a=0; a<m_SongEntries.size(); a++ )
+		if( m_SongEntries[a].m_fArcadePointsRequired > PREFSMAN->m_fArcadePointsAccumulated)
+			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fArcadePointsRequired);
+	
+	if (fSmallestPoints == 400000000) return 0;  // no match found
+	return fSmallestPoints - PREFSMAN->m_fArcadePointsAccumulated;
+}
+
+float UnlockSystem::SongPointsUntilNextUnlock()
+{
+	float fSmallestPoints = 400000000;   // or an arbitrarily large value
+	for( unsigned a=0; a<m_SongEntries.size(); a++ )
+		if( m_SongEntries[a].m_fSongPointsRequired > PREFSMAN->m_fSongPointsAccumulated)
+			fSmallestPoints = min(fSmallestPoints, m_SongEntries[a].m_fSongPointsRequired);
+	
+	if (fSmallestPoints == 400000000) return 0;  // no match found
+	return fSmallestPoints - PREFSMAN->m_fSongPointsAccumulated;
 }
 
 Song *SongEntry::GetSong() const

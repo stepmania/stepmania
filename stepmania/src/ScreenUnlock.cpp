@@ -24,7 +24,11 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
-	CString sDP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->NumPointsUntilNextUnlock() );
+	CString sDP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->DancePointsUntilNextUnlock() );
+	CString sAP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->ArcadePointsUntilNextUnlock() );
+	CString sSP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->SongPointsUntilNextUnlock() );
+
+	CString PointDisplay = THEME->GetMetric("ScreenUnlock", "TypeOfPointsToDisplay");
 
 	for(int i=1; i <= THEME->GetMetricI("ScreenUnlock", "NumUnlocks"); i++)
 	{
@@ -47,9 +51,18 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	if( sDP.Left(1) == "-" ) 
 		sDP = "*";
 
-	PointsUntilNextUnlock.SetName( "DancePointsDisplay" );
-	PointsUntilNextUnlock.SetText( sDP );
-	PointsUntilNextUnlock.SetZoom( THEME->GetMetricF("ScreenUnlock","DancePointsZoom") );
+	PointsUntilNextUnlock.SetName( "PointsDisplay" );
+	
+	if (PointDisplay == "DP" || PointDisplay == "Dance")
+		PointsUntilNextUnlock.SetText( sDP );
+
+	if (PointDisplay == "AP" || PointDisplay == "Arcade")
+		PointsUntilNextUnlock.SetText( sAP );
+
+	if (PointDisplay == "SP" || PointDisplay == "Song")
+		PointsUntilNextUnlock.SetText( sSP );
+
+	PointsUntilNextUnlock.SetZoom( THEME->GetMetricF("ScreenUnlock","PointsZoom") );
 	SET_XY( PointsUntilNextUnlock );
 	this->AddChild( &PointsUntilNextUnlock );
 }
