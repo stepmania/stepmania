@@ -1,10 +1,29 @@
 #include "global.h"
 #include "CryptManager.h"
 #include "RageUtil.h"
-#include "CryptHelpers.h"
 #include "RageLog.h"
 
+
+static const CString SIGNATURE_APPEND = ".sig.rsa";
+static const CString PRIVATE_KEY_PATH = "private.key.rsa";
+static const CString PUBLIC_KEY_PATH = "public.key.rsa";
+static const int KEY_LENGTH = 1024;
+
+CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
+
+#if 1
+CryptManager::CryptManager() { }
+CryptManager::~CryptManager() { }
+void CryptManager::GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed ) { }
+void CryptManager::SignFile( CString sPath ) { }
+bool CryptManager::VerifyFile( CString sPath ) { return true; }
+CString CryptManager::GetFileSignature( CString sPath ) { return ""; }
+bool CryptManager::VerifyFile( CString sPath, CString sSignature ) { return true; }
+void CryptManager::DigestFile(const char *filename) { }
+#else
+
 // crypt headers
+#include "CryptHelpers.h"
 #include "crypto51/sha.h"
 #include "crypto51/hex.h"
 #include "crypto51/channels.h"
@@ -16,13 +35,6 @@
 using namespace CryptoPP;
 using namespace std;
 
-static const CString SIGNATURE_POSPEND = ".sig.rsa";
-static const CString PRIVATE_KEY_PATH = "private.key.rsa";
-static const CString PUBLIC_KEY_PATH = "public.key.rsa";
-static const int KEY_LENGTH = 1024;
-
-CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
-
 CryptManager::CryptManager()
 {
 	//
@@ -30,12 +42,12 @@ CryptManager::CryptManager()
 	//
 	/* This is crashing in crypto51/integer.cpp CryptoPP::RecursiveInverseModPower2
 	 * in Linux. -glenn */
-/*	if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
+	if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
 	{
 		LOG->Warn( "Keys missing.  Generating new keys" );
 		GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH, "aoksdjaksd" );
 		FlushDirCache();
-	} */
+	}
 }
 
 CryptManager::~CryptManager()
@@ -62,7 +74,7 @@ void CryptManager::SignFile( CString sPath )
 {
 	CString sPrivFilename = PRIVATE_KEY_PATH;
 	CString sMessageFilename = sPath;;
-	CString sSignatureFilename = sPath + SIGNATURE_POSPEND;
+	CString sSignatureFilename = sPath + SIGNATURE_APPEND;
 
 	if( !IsAFile(sPrivFilename) )
 		return;
@@ -83,7 +95,7 @@ bool CryptManager::VerifyFile( CString sPath )
 {
 	CString sPubFilename = PUBLIC_KEY_PATH;
 	CString sMessageFilename = sPath;;
-	CString sSignatureFilename = sPath + SIGNATURE_POSPEND;
+	CString sSignatureFilename = sPath + SIGNATURE_APPEND;
 
 	if( !IsAFile(sPubFilename) )
 		return false;
@@ -94,6 +106,7 @@ bool CryptManager::VerifyFile( CString sPath )
 	// CAREFUL: These classes can throw all kinds of exceptions.  Should this
 	// be wrapped in a try catch?
 
+	/* XXX: This is opening sPubFilename for RageFile::WRITE instead of READ. */
 	RageFileSource pubFile(sPubFilename, true, new HexDecoder);
 	RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
@@ -173,6 +186,7 @@ void CryptManager::DigestFile(const char *filename)
 //	cout << "\nMD5: ";
 //	md5Filter.TransferTo(encoder);
 }
+#endif
 
 CString CryptManager::GetPublicKeyFileName()
 {
