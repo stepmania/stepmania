@@ -82,7 +82,7 @@ void DWILoader::DWIcharToNoteCol( char c, GameController i, int &col1Out, int &c
  * 1/192nds.  So, we have to do a check to figure out what it really
  * means.  If it contains 0s, it's most likely 192nds; otherwise,
  * it's most likely a jump.  Search for a 0 before the next >: */
-bool DWILoader::Is192( CString &sStepData, int pos )
+bool DWILoader::Is192( const CString &sStepData, int pos )
 {
 	while( pos < (int) sStepData.size() )
 	{
@@ -107,13 +107,6 @@ bool DWILoader::LoadFromDWITokens(
 	CHECKPOINT_M( "DWILoader::LoadFromDWITokens()" );
 
 	out.m_StepsType = STEPS_TYPE_INVALID;
-
-	sStepData1.Replace( "\n", "" );
-	sStepData1.Replace( "\r", "" );
-	sStepData1.Replace( " ", "" );
-	sStepData2.Replace( "\n", "" );
-	sStepData2.Replace( "\r", "" );
-	sStepData2.Replace( " ", "" );
 
 	if(		 sMode == "SINGLE" )	out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
 	else if( sMode == "DOUBLE" )	out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
@@ -186,6 +179,8 @@ bool DWILoader::LoadFromDWITokens(
 			ASSERT( false );
 		}
 
+		sStepData.Replace("\n", "");
+		sStepData.Replace("\r", "");
 		sStepData.Replace("\t", "");
 		sStepData.Replace(" ", "");
 
