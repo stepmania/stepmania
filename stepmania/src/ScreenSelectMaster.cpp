@@ -21,6 +21,7 @@
 #include "ModeChoice.h"
 #include "ActorUtil.h"
 #include "RageLog.h"
+#include <set>
 
 #define NUM_ICON_PARTS							THEME->GetMetricI(m_sName,"NumIconParts")
 #define NUM_PREVIEW_PARTS						THEME->GetMetricI(m_sName,"NumPreviewParts")
@@ -218,7 +219,11 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			}
 
 			m_Next[dir][c] = c + add;
-			wrap( m_Next[dir][c], m_aModeChoices.size() );
+			/* By default, only wrap around for DIR_AUTO. */
+			if( dir == DIR_AUTO )
+				wrap( m_Next[dir][c], m_aModeChoices.size() );
+			else
+				m_Next[dir][c] = clamp( m_Next[dir][c], 0, (int)m_aModeChoices.size()-1 );
 		}
 
 		const CString dirname = dirs[dir];
@@ -346,15 +351,16 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 
 bool ScreenSelectMaster::Move( PlayerNumber pn, Dirs dir )
 {
-	const int start = m_iChoice[pn];
 	int iSwitchToIndex = m_iChoice[pn];
+	set<int> seen;
 	do
 	{
 		iSwitchToIndex = m_Next[dir][iSwitchToIndex];
 		if( iSwitchToIndex == -1 )
 			return false; // can't go that way
-		if( iSwitchToIndex == start )
+		if( seen.find(iSwitchToIndex) != seen.end() )
 			return false; // went full circle and none found
+		seen.insert( iSwitchToIndex );
 	}
 	while( !m_aModeChoices[iSwitchToIndex].IsPlayable() );
 
@@ -464,6 +470,9 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 {
+	if( iNewChoice == m_iChoice[pn] )
+		return false; // already there
+
 	if( GetPage(m_iChoice[pn]) != GetPage(iNewChoice) )
 		return ChangePage( iNewChoice );
 
