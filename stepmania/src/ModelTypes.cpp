@@ -32,11 +32,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
 
-	CString sDir, sFName, sExt;
-	splitrelpath( sTexOrIniPath, sDir, sFName, sExt );
-
-	bool bIsIni = sTexOrIniPath.Right(3).CompareNoCase("ini")== 0;
-	if( bIsIni )
+	if( GetExtension(sTexOrIniPath).CompareNoCase("ini")==0 )
 	{
 		IniFile ini;
 		ini.SetPath( sTexOrIniPath );
@@ -56,7 +52,7 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 				ini.GetValue( "AnimatedTexture", sDelayKey, fDelay ) ) 
 			{
 				RageTextureID ID;
-				ID.filename = sDir+sFileName;
+				ID.filename = Dirname(sTexOrIniPath) + sFileName;
 				ID.bStretch = true;
 				ID.bHotPinkColorKey = true;
 				AnimatedTextureState state = { 
