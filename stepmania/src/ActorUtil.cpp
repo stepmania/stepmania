@@ -27,6 +27,7 @@
 #include "GameState.h"
 #include "RageTextureManager.h"
 #include "SongManager.h"
+#include "Course.h"
 
 
 Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
@@ -102,6 +103,21 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 
 				if( pSong && pSong->HasBanner() )
 					sFile = pSong->GetBannerPath();
+				else
+					sFile = THEME->GetPathToG("Common fallback banner");
+
+				TEXTUREMAN->DisableOddDimensionWarning();
+				pActor = MakeActor( sFile );
+				TEXTUREMAN->EnableOddDimensionWarning();
+			}
+			else if( sFile.CompareNoCase("coursebanner")==0 )
+			{
+				Course *pCourse = GAMESTATE->m_pCurCourse;
+				if( pCourse == NULL )
+					pCourse = SONGMAN->GetRandomCourse();
+
+				if( pCourse && pCourse->HasBanner() )
+					sFile = pCourse->m_sBannerPath;
 				else
 					sFile = THEME->GetPathToG("Common fallback banner");
 
