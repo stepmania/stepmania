@@ -18,6 +18,7 @@
 #include "RageUtil.h"
 #include "GameInput.h"	// for GameController
 #include "InputMapper.h"
+#include "GameDef.h"
 
 
 static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
@@ -239,11 +240,13 @@ void LightsManager::Update( float fDeltaTime )
 		{
 			int iSec = (int)RageTimer::GetTimeSinceStart();
 
+			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGameDef()->GetNumGameplayButtons();
+
 			FOREACH_GameController( gc )
 			{
 				FOREACH_GameButton( gb )
 				{
-					bool bOn = (iSec%MAX_GAME_BUTTONS)==gb;
+					bool bOn = gb==(iSec%iNumGameButtonsToShow);
 					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
 				}
 			}
