@@ -116,6 +116,15 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 		iHoldNoteScores[pn][HNS_NG] == 0 )
 		return GRADE_AAAA;
 
+	if( fPercentDancePoints > .9999 &&
+		iTapNoteScores[pn][TNS_PERFECT] > 0 &&
+		iTapNoteScores[pn][TNS_GREAT] == 0 &&
+		iTapNoteScores[pn][TNS_GOOD] == 0 &&
+		iTapNoteScores[pn][TNS_BOO] == 0 &&
+		iTapNoteScores[pn][TNS_MISS] == 0 &&
+		iHoldNoteScores[pn][HNS_NG] == 0 )
+		return GRADE_AAA;
+
 	/* Based on the percentage of your total "Dance Points" to the maximum
 	 * possible number, the following rank is assigned: 
 	 *
@@ -128,8 +137,7 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 	 * Fail - E
 	 */
 
-	if     ( fPercentDancePoints == 1.00 )		return GRADE_AAA;
-	else if( fPercentDancePoints >= 0.93 )		return GRADE_AA;
+		 if( fPercentDancePoints >= 0.93 )		return GRADE_AA;
 	else if( fPercentDancePoints >= 0.80 )		return GRADE_A;
 	else if( fPercentDancePoints >= 0.65 )		return GRADE_B;
 	else if( fPercentDancePoints >= 0.45 )		return GRADE_C;
