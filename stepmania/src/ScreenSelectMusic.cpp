@@ -338,7 +338,10 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	float fNewRotation = m_sprCDTitle.GetRotationY()+90*fDeltaTime;
 	fNewRotation = fmodf( fNewRotation, 360 );
 	m_sprCDTitle.SetRotationY( fNewRotation );
-	if( fNewRotation > 90  &&  fNewRotation <= 270 )
+	/* Hack: +11 fixes the switch time in the default theme.  This will break if
+	 * the sprite is moved.  To do this right, we should probably have two sprites,
+	 * one lit and one unlit, with backface culling on. */
+	if( fNewRotation > 90+11  &&  fNewRotation <= 270+11 )
 		m_sprCDTitle.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
 	else
 		m_sprCDTitle.SetDiffuse( RageColor(1,1,1,1) );
