@@ -313,7 +313,12 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 			}
 		}
 
-		RAGE_ASSERT_M( ret != -1, ssprintf("%s line %i (\"%s\"): couldn't find default", m_sName.c_str(), rowno, row.name.c_str()) );
+		if( ret == -1 )
+		{
+			LOG->Warn( "%s line %i (\"%s\"): couldn't find default", m_sName.c_str(), rowno, row.name.c_str() );
+			ret = 0;
+		}
+
 		return ret;
 	}
 	case ROW_STEP:
