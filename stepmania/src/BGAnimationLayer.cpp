@@ -29,6 +29,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageTextureManager.h"
 #include "RageFile.h"
+#include "LuaHelpers.h"
 
 
 const float PARTICLE_SPEED = 300;
@@ -455,6 +456,15 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			} else
 				LOG->Warn("BGA \"%s\" %s has an invalid Player field",
 					sAniDir.c_str(), sLayer.c_str() );
+		}
+	}
+
+	{
+		CString expr;
+		if( ini.GetValue( sLayer, "Cond", expr ) )
+		{
+			if( !Lua::RunExpression( expr ) )
+				return;
 		}
 	}
 

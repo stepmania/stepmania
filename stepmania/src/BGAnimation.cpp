@@ -21,6 +21,7 @@
 #include "ThemeManager.h"
 #include "RageFile.h"
 #include "ActorUtil.h"
+#include "LuaHelpers.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 const int MAX_LAYERS = 1000;
@@ -65,6 +66,15 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 
 	IniFile ini(sPathToIni);
 	ini.ReadFile();
+
+	{
+		CString expr;
+		if( ini.GetValue( "BGAnimation", "Cond", expr ) )
+		{
+			if( !Lua::RunExpression( expr ) )
+				return;
+		}
+	}
 
 	int i;
 	for( i=0; i<MAX_LAYERS; i++ )
