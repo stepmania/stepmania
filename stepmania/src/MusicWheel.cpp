@@ -308,33 +308,35 @@ bool MusicWheel::SelectCourse( Course *p )
 	return true;
 }
 
+static bool DescribesCurrentModeForAllPlayersAndSort( const GameCommand &gc, SortOrder so )
+{
+	const SortOrder OldSortOrder = GAMESTATE->m_SortOrder;
+	GAMESTATE->m_SortOrder = so;
+	bool bRet = gc.DescribesCurrentModeForAllPlayers();
+	GAMESTATE->m_SortOrder = OldSortOrder;
+	return bRet;
+}
+
 bool MusicWheel::SelectSort( SortOrder so )
 {
 	if(so == SORT_INVALID)
 		return false;
 
+	const vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
+
 	unsigned i;
-	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( i=0; i<from.size(); i++ )
-	{
-		if( from[i].m_Action.m_SortOrder != so )
-			continue;
-		if( !from[i].m_Action.DescribesCurrentModeForAllPlayers() )
-			continue;
-
-		// make its group the currently expanded group
-		SetOpenGroup(from[i].m_sSectionName);
-		break;
-	}
-
-	if(i == from.size())
+		if( DescribesCurrentModeForAllPlayersAndSort( from[i].m_Action, so) )
+			break;
+	if( i == from.size() )
 		return false;
+
+	// make its group the currently expanded group
+	SetOpenGroup( from[i].m_sSectionName );
 
 	for( i=0; i<m_CurWheelItemData.size(); i++ )
 	{
-		if( m_CurWheelItemData[i]->m_Action.m_SortOrder != so )
-			continue;
-		if( !m_CurWheelItemData[i]->m_Action.DescribesCurrentModeForAllPlayers() )
+		if( !DescribesCurrentModeForAllPlayersAndSort( m_CurWheelItemData[i]->m_Action, so) )
 			continue;
 		m_iSelection = i;		// select it
 		break;
