@@ -100,6 +100,9 @@ void GameState::Reset()
 	SAFE_DELETE( m_pPosition );
 	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_bAttackBeganThisUpdate[p] = false;
+
 	ResetMusicStatistics();
 	ResetStageStatistics();
 	SONGMAN->UpdateBest();
