@@ -1,9 +1,8 @@
 /*  
-
-  SDL_rotozoom.c - rotozoomer for 32bit or 8bit surfaces
-
-  LGPL (c) A. Schiffler, Glenn Maynard
-*/
+ * SDL_rotozoom.c - rotozoomer for 32bit or 8bit surfaces
+ *
+ * LGPL (c) A. Schiffler, Glenn Maynard
+ */
 
 #include "SDL_rotozoom.h"
 
@@ -131,10 +130,6 @@ void zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst)
 
 #define VALUE_LIMIT	0.001
 
-
-/* Local rotozoom-size function with trig result return */
-
-
 /* 
  
  zoomSurface()
@@ -153,7 +148,6 @@ void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dst
      */
     if (zoomx < VALUE_LIMIT) zoomx = VALUE_LIMIT;
     if (zoomy < VALUE_LIMIT) zoomy = VALUE_LIMIT;
-
 
     /* Calculate target size */
     *dstwidth = (int) ((double) width * zoomx);
