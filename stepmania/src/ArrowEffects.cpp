@@ -231,6 +231,8 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 
 const float fCenterLine = 160;	// from fYOffset == 0
 const float fFadeDist = 100;
+// Number of pixels visible when both sudden and hidden are on:
+const float fFadeDeadZone = 10;
 
 static float GetCenterLine( PlayerNumber pn )
 {
@@ -261,6 +263,17 @@ static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYOffset, 
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_HIDDEN] * SCALE( fDistFromCenterLine, 0, fFadeDist, -1, 0 );
 	if( fAppearances[PlayerOptions::APPEARANCE_SUDDEN] > 0 )
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_SUDDEN] * SCALE( fDistFromCenterLine, 0, -fFadeDist, -1, 0 );
+	const float HiddenSudden =
+		fAppearances[PlayerOptions::APPEARANCE_HIDDEN] *
+		fAppearances[PlayerOptions::APPEARANCE_SUDDEN];
+	if( HiddenSudden > 0 )
+	{
+		/* Fading arrows in and out in such a small space looks bad.  Simply add
+		 * 2, to counteract -1 for hidden and -1 for sudden. */
+		if( fabsf(fDistFromCenterLine) < fFadeDeadZone )
+			fVisibleAdjust += 2 * HiddenSudden;
+	}
+
 	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] > 0 )
 		fVisibleAdjust += fAppearances[PlayerOptions::APPEARANCE_STEALTH] * -1;
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] > 0 )
