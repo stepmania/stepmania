@@ -97,7 +97,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	a.sModifier = sAttackToGive;
 
 	// remove current attack (if any)
-	GAMESTATE->RemoveActiveAttacksForPlayer( pnToAttack, al );
+	GAMESTATE->RemoveActiveAttacksForPlayer( pnToAttack );
 
 	// apply new attack
 	GAMESTATE->LaunchAttack( pnToAttack, a );
