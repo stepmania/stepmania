@@ -42,7 +42,7 @@ public:
 	~OptionRow();
 
 	OptionRowDefinition		m_RowDef;
-	enum { ROW_NORMAL, ROW_EXIT } Type;
+	enum { ROW_NORMAL, ROW_EXIT } m_Type;
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 	Sprite					m_sprBullet;

@@ -157,7 +157,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 		m_Rows.push_back( new OptionRow() );
 		OptionRow &row = *m_Rows.back();
 		row.m_RowDef = defs[r];
-		row.Type = OptionRow::ROW_NORMAL;
+		row.m_Type = OptionRow::ROW_NORMAL;
 		
 		if( !defs[r].choices.size() )
 			RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
@@ -398,7 +398,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNum
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	m_Rows.push_back( new OptionRow() );
 	OptionRow &row = *m_Rows.back();
-	row.Type = OptionRow::ROW_EXIT;
+	row.m_Type = OptionRow::ROW_EXIT;
 
 	BitmapText *bt = new BitmapText;
 	row.m_textItems.push_back( bt );
@@ -519,7 +519,7 @@ ScreenOptions::~ScreenOptions()
 
 CString ScreenOptions::GetExplanationText( int iRow ) const
 {
-	if( m_Rows[iRow]->Type == OptionRow::ROW_EXIT )
+	if( m_Rows[iRow]->m_Type == OptionRow::ROW_EXIT )
 		return "";
 
 	CString sLineName = m_Rows[iRow]->m_RowDef.name;
@@ -531,7 +531,7 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 
 CString ScreenOptions::GetExplanationTitle( int iRow ) const
 {
-	if( m_Rows[iRow]->Type == OptionRow::ROW_EXIT )
+	if( m_Rows[iRow]->m_Type == OptionRow::ROW_EXIT )
 		return "";
 	
 	CString sLineName = m_Rows[iRow]->m_RowDef.name;
@@ -576,7 +576,7 @@ BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iCh
 {
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 	OptionRow &row = *m_Rows[iRow];
-	if( row.Type == OptionRow::ROW_EXIT )
+	if( row.m_Type == OptionRow::ROW_EXIT )
 		return *row.m_textItems[0];
 
 	bool bOneChoice = row.m_RowDef.bOneChoiceForAllPlayers;
@@ -618,7 +618,7 @@ void ScreenOptions::InitOptionsText()
 	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 	{
 		OptionRow &row = *m_Rows[i];
-		if( row.Type == OptionRow::ROW_EXIT )
+		if( row.m_Type == OptionRow::ROW_EXIT )
 			continue;
 
 		unsigned pos = i;
@@ -655,7 +655,7 @@ void ScreenOptions::PositionUnderlines()
 	for( unsigned r=0; r<m_Rows.size(); r++ )	// foreach options line
 	{
 		OptionRow &row = *m_Rows[r];
-		if( row.Type == OptionRow::ROW_EXIT )
+		if( row.m_Type == OptionRow::ROW_EXIT )
 			continue;
 
 		FOREACH_HumanPlayer( p )
@@ -705,7 +705,7 @@ void ScreenOptions::PositionIcons()
 		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 		{
 			OptionRow &row = *m_Rows[i];
-			if( row.Type == OptionRow::ROW_EXIT )
+			if( row.m_Type == OptionRow::ROW_EXIT )
 				continue;
 
 			OptionIcon &icon = row.m_OptionIcons[p];
@@ -780,7 +780,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
 		COMMAND( m_sprLineHighlight[pn], "Change" );
-		if( m_Rows[iRow]->Type == OptionRow::ROW_EXIT )
+		if( m_Rows[iRow]->m_Type == OptionRow::ROW_EXIT )
 			COMMAND( m_sprLineHighlight[pn], "ChangeToExit" );
 		m_sprLineHighlight[pn].SetY( (float)iY );
 	}
@@ -851,7 +851,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 			row.m_textItems[j]->SetY( row.m_fY );
 		}
 
-		if( row.Type == OptionRow::ROW_EXIT )
+		if( row.m_Type == OptionRow::ROW_EXIT )
 		{
 			bool bExitRowIsSelectedByBoth = true;
 			FOREACH_PlayerNumber( p )
@@ -962,7 +962,7 @@ void ScreenOptions::PositionItems()
 	vector<OptionRow*> Rows( m_Rows );
 	OptionRow *ExitRow = NULL;
 
-	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->Type == OptionRow::ROW_EXIT )
+	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->m_Type == OptionRow::ROW_EXIT )
 	{
 		ExitRow = &*Rows.back();
 
@@ -1079,7 +1079,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 
 
 	/* If the last row is EXIT, and is hidden, then show MORE. */
-	const bool ShowMore = m_Rows.back()->Type == OptionRow::ROW_EXIT && m_Rows.back()->m_bHidden;
+	const bool ShowMore = m_Rows.back()->m_Type == OptionRow::ROW_EXIT && m_Rows.back()->m_bHidden;
 	if( m_bMoreShown != ShowMore )
 	{
 		m_bMoreShown = ShowMore;
@@ -1092,7 +1092,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		if( GAMESTATE->IsHumanPlayer(p) )
 			TweenCursor(  p );
 
-		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == OptionRow::ROW_EXIT;
+		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->m_Type == OptionRow::ROW_EXIT;
 		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
 		{
 			if( m_bWasOnExit[p] != ExitSelected )
@@ -1146,7 +1146,7 @@ void ScreenOptions::StartGoToNextScreen()
 bool ScreenOptions::AllAreOnExit() const
 {
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != OptionRow::ROW_EXIT )
+		if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->m_Type != OptionRow::ROW_EXIT )
 			return false;
 	return true;
 }
@@ -1190,7 +1190,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 
 
 	// If on exit, check it all players are on "Exit"
-	if( row.Type == OptionRow::ROW_EXIT )
+	if( row.m_Type == OptionRow::ROW_EXIT )
 	{
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
 		if( AllAreOnExit()  &&  selectType == IET_FIRST_PRESS && !IsTransitioning() )
@@ -1283,7 +1283,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	OptionRow &row = *m_Rows[iCurRow];
 	OptionRowDefinition &optrow = m_Rows[iCurRow]->m_RowDef;
 
-	const int iNumOptions = (row.Type == OptionRow::ROW_EXIT)? 1: optrow.choices.size();
+	const int iNumOptions = (row.m_Type == OptionRow::ROW_EXIT)? 1: optrow.choices.size();
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
@@ -1298,7 +1298,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	if( Repeat )
 		return;
 
-	if( row.Type == OptionRow::ROW_EXIT	)	// EXIT is selected
+	if( row.m_Type == OptionRow::ROW_EXIT	)	// EXIT is selected
 		return;		// don't allow a move
 
 	bool bOneChanged = false;
@@ -1444,7 +1444,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 {
 	const int l = m_iCurrentRow[pn];
-	if( m_Rows[l]->Type != OptionRow::ROW_NORMAL )
+	if( m_Rows[l]->m_Type != OptionRow::ROW_NORMAL )
 		return -1;
 	return l;
 }

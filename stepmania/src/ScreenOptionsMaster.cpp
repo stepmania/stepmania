@@ -878,7 +878,7 @@ void ScreenOptionsMaster::RefreshIcons()
 	{
         for( unsigned i=0; i<m_Rows.size(); ++i )     // foreach options line
 		{
-			if( m_Rows[i]->Type == OptionRow::ROW_EXIT )
+			if( m_Rows[i]->m_Type == OptionRow::ROW_EXIT )
 				continue;	// skip
 
 			OptionRow &row = *m_Rows[i];
