@@ -142,11 +142,15 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 		{
 			if(axes[j] != 0)
 			{
+				// Reverse y axis (negative values are down, not up)
+				if(j == 1 || j == 3)
+					axes[j] = -axes[j];
+
 				JoystickButton neg = (JoystickButton)(JOY_LEFT + (2 * j));
 				JoystickButton pos = (JoystickButton)(JOY_RIGHT + (2 * j));
 				float l = SCALE( axes[j], 0.0f, 32768.0f, 0.0f, 1.0f );
-				ButtonPressed(DeviceInput(inputDevice, neg,max(-l,0),RageZeroTimer), axes[j] < -16000);
-				ButtonPressed(DeviceInput(inputDevice, pos,max(+l,0),RageZeroTimer), axes[j] > +16000);
+				ButtonPressed(DeviceInput(inputDevice, neg,max(-l,0),RageZeroTimer), axes[j] > -16000);
+				ButtonPressed(DeviceInput(inputDevice, pos,max(+l,0),RageZeroTimer), axes[j] < +16000);
 				continue;
 			}
 		}
