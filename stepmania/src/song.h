@@ -14,7 +14,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-#include "Steps.h"	// TODO: remove this dependency!
+class Steps;
 class StyleDef;
 class NotesLoader;
 class LyricsLoader;
@@ -254,7 +254,6 @@ public:
 	bool IsNew() const;
 	bool IsEasy( StepsType nt ) const;
 	bool HasEdits( StepsType nt ) const;
-	Steps::MemCardData::HighScore GetHighScoreForDifficulty( const StyleDef *st, MemoryCard card, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;
 	int	GetNumNotesWithGrade( Grade g ) const;

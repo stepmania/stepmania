@@ -1230,15 +1230,15 @@ void Song::RemoveAutoGenNotes()
 }
 
 
-Steps::MemCardData::HighScore Song::GetHighScoreForDifficulty( const StyleDef *st, MemoryCard card, Difficulty dc ) const
+Steps::MemCardData::HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, MemoryCard card, Difficulty dc )
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
-	this->GetSteps( aNotes, st->m_StepsType );
+	s->GetSteps( aNotes, st->m_StepsType );
 	SortNotesArrayByDifficulty( aNotes );
 
 
-	Steps* pSteps = GetStepsByDifficulty( st->m_StepsType, dc );
+	Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
 	if( pSteps )
 		return pSteps->GetTopScore(card);
 	else

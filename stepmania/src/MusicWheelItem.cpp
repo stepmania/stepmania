@@ -185,6 +185,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 		ASSERT( 0 );	// invalid type
 	}
 }
+Steps::MemCardData::HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, MemoryCard card, Difficulty dc );
 
 void MusicWheelItem::RefreshGrades()
 {
@@ -205,9 +206,9 @@ void MusicWheelItem::RefreshGrades()
 			dc = GAMESTATE->m_PreferredDifficulty[p];
 		Grade grade;
 		if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
-			grade = data->m_pSong->GetHighScoreForDifficulty( GAMESTATE->GetCurrentStyleDef(), (MemoryCard)p, dc ).grade;
+			grade = GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyleDef(), (MemoryCard)p, dc ).grade;
 		else
-			grade = data->m_pSong->GetHighScoreForDifficulty( GAMESTATE->GetCurrentStyleDef(), MEMORY_CARD_MACHINE, dc ).grade;
+			grade = GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyleDef(), MEMORY_CARD_MACHINE, dc ).grade;
 
 		m_GradeDisplay[p].SetGrade( (PlayerNumber)p, grade );
 	}
