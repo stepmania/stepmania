@@ -383,18 +383,24 @@ doesn't really know the max refresh rate, but it always thinks it
 does, so on some systems the max refresh rate will just desync the
 monitor.
 
-One thing we might be able to do is figure out the best *known*
-refresh rate.  Look in the registry (or something) and find
-the highest refresh rate set for any resolution >= to the one
-we're setting, in a <= bit depth. (If we can do 72Hz in 1024x768,
-we should be able to do it in 640x480, too, as long as it's not a
-higher bit depth.)
+We can find out the active refresh rate:
+
+	DEVMODE dm;
+	memset(&dm, 0, sizeof(dm));
+	dm.dmSize = sizeof(dm);
+
+	EnumDisplaySettings(NULL, ENUM_REGISTRY_SETTINGS, &dm);
+	LOG->Info("%ix%i, %i %i %i", ydm.dmPelsWidth, dm.dmPelsHeight,
+		dm.dmBitsPerPel, dm.dmDisplayFlags, dm.dmDisplayFrequency);
+
+If the resolution and bit depth we're setting is <= the current,
+we should be able to use the same refresh rate, too.  Many people
+probably don't play games in higher resolutions than they normally
+run their desktop at, so this is often going to be true.
 
 If this gives anything above 60 at all, it's a big win for sensible
-defaults.
+defaults.  70 is infinitely better than 60.
 
-I don't want to change the default refresh right now (until things
-settle down a bit more--don't want to introduce new problems), but
-I might try to code the autodetection bit and perhaps make it an
-option ...
+I don't want to change the default refresh right now, until things
+settle down a bit more--don't want to introduce new problems.
 
