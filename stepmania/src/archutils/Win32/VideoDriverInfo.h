@@ -10,7 +10,7 @@ struct VideoDriverInfo
 	CString sDeviceID;
 };
 
-CString GetPrimaryVideoName9xAnd2k();
+CString GetPrimaryVideoName();
 bool GetVideoDriverInfo(int cardno, VideoDriverInfo &info);
 CString GetPrimaryVideoDriverName();
 

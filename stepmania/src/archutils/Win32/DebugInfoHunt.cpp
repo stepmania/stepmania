@@ -29,7 +29,7 @@ static void GetMemoryDebugInfo()
 
 static void GetDisplayDriverDebugInfo()
 {
-	CString sPrimaryDeviceName = GetPrimaryVideoName9xAnd2k();
+	CString sPrimaryDeviceName = GetPrimaryVideoName();
 	
 	if( sPrimaryDeviceName == "" )
 		LOG->Info( "Primary display driver could not be determined." );
