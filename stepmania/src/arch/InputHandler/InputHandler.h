@@ -8,11 +8,9 @@
  *
  * Note that, if the underlying device is capable of it, you're free to
  * start a blocking thread; just store inputs in your class and send them
- * off in a batch on the next Update.  Later on, this method will let us
- * get much more accurate timestamps, especially if we have access to realtime
- * threading: we can get events more quickly and timestamp them, instead of
- * having a rough timing granularity due to the framerate.  We can't do this
- * with SDL, though.
+ * off in a batch on the next Update.  This gets much more accurate timestamps;
+ * we get events more quickly and timestamp them, instead of having a rough timing
+ * granularity due to the framerate.
  *
  * Send input events for a specific type of device.  Only one driver
  * for a given set of InputDevice types should be loaded for a given
