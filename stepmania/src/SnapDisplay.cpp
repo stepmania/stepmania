@@ -60,7 +60,7 @@ bool SnapDisplay::PrevSnapMode()
 
 bool SnapDisplay::NextSnapMode()
 {
-	if( m_NoteType == NOTE_TYPE_16TH )	// this is the smallest snap we should allow
+	if( m_NoteType == NOTE_TYPE_32ND )	// this is the smallest snap we should allow
 		return false;
 	m_NoteType = NoteType(m_NoteType+1);
 
