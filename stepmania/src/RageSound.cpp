@@ -113,7 +113,6 @@ RageSound::RageSound(const RageSound &cpy)
 	original = cpy.original;
 	full_buf = cpy.full_buf;
 	big = cpy.big;
-	m_sFilePath = cpy.m_sFilePath;
 	m_StartSample = cpy.m_StartSample;
 	m_LengthSamples = cpy.m_LengthSamples;
 	Loop = cpy.Loop;
@@ -130,6 +129,10 @@ RageSound::RageSound(const RageSound &cpy)
 		stream.buf.reserve(internal_buffer_size);
 		Load(cpy.GetLoadedFilePath(), false);
 	}
+
+	/* Load() won't work on a copy if m_sFilePath is already set, so
+	 * copy this down here. */
+	m_sFilePath = cpy.m_sFilePath;
 
 	/* Register ourselves, so we receive Update()s. */
 	SOUNDMAN->all_sounds.insert(this);
@@ -154,7 +157,7 @@ void RageSound::Load(CString sSoundFilePath, bool cache)
 	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.GetString() );
 
 	/* Don't load over copies. */
-//	ASSERT(original == this);
+	ASSERT(original == this || m_sFilePath == "");
 
 	Unload();
 
