@@ -1559,7 +1559,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 
 			this->PostScreenMessage( SM_NotesEnded, 0 );
-		} else {
+		}
+		else
+		{
 			BackOutFromGameplay();
 			return;
 		}
