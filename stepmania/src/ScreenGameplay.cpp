@@ -868,7 +868,7 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	m_Player[p].ApplyWaitingTransforms();
 
 	/* Now that course options are applied, load any needed note skins and unload old ones. */
-	m_Player[p].CacheAllUsedNoteSkins( true );
+	m_Player[p].CacheAllUsedNoteSkins();
 
 	/* Update attack bOn flags. */
 	GAMESTATE->Update(0);

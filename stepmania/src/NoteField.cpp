@@ -68,38 +68,14 @@ void NoteField::CacheNoteSkin( CString skin )
 	m_NoteDisplays[ skin ] = nd;
 }
 
-void NoteField::CacheAllUsedNoteSkins( bool bDeleteUnused )
+void NoteField::CacheAllUsedNoteSkins()
 {
-	/* Cache note skins. */
+	/* Cache all note skins that we might need for the whole song, course or battle
+	 * play, so we don't have to load them later (such as between course songs). */
 	vector<CString> skins;
 	GAMESTATE->GetAllUsedNoteSkins( skins );
 	for( unsigned i=0; i < skins.size(); ++i )
 		CacheNoteSkin( skins[i] );
-
-	if( bDeleteUnused )
-	{
-		set<CString> setToDelete;
-		for( map<CString, NoteDisplayCols *>::iterator it = m_NoteDisplays.begin();
-			it != m_NoteDisplays.end(); ++it )
-		{
-			setToDelete.insert( it->first );
-		}
-
-		for( unsigned i=0; i < skins.size(); ++i )
-		{
-			CString sSkin = skins[i];
-			sSkin.ToLower();
-			setToDelete.erase( sSkin );
-		}
-
-		/* Free note skins that are no longer used. */
-		for( set<CString>::iterator it = setToDelete.begin(); it != setToDelete.end(); ++it )
-		{
-			NoteDisplayCols *pNoteDisplay = m_NoteDisplays[*it];
-			delete pNoteDisplay;
-			m_NoteDisplays.erase( *it );
-		}
-	}
 }
 
 void NoteField::Load( 
@@ -120,9 +96,7 @@ void NoteField::Load(
 
 	ASSERT( m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
-	/* If we're in gameplay, we havn't applied course modifiers yet, so we don't know what
-	 * note skins we'll need. Don't delete unused skins yet. */
-	CacheAllUsedNoteSkins( false );
+	CacheAllUsedNoteSkins();
 	RefreshBeatToNoteSkin();
 }
 
@@ -152,6 +126,8 @@ void NoteField::RefreshBeatToNoteSkin()
 		map<CString, NoteDisplayCols *>::iterator display = m_NoteDisplays.find( Skin );
 		if( display == m_NoteDisplays.end() )
 		{
+			/* Skins should always be loaded by CacheAllUsedNoteSkins. */
+			LOG->Warn( "NoteField::RefreshBeatToNoteSkin: need note skin \"%s\" which should have been loaded alraedy", Skin.c_str() );
 			this->CacheNoteSkin( Skin );
 			display = m_NoteDisplays.find( Skin );
 		}
