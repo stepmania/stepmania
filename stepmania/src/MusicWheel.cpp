@@ -22,6 +22,7 @@
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
+#include "RageMath.h"
 #include <math.h>
 #include "ThemeManager.h"
 #include "song.h"

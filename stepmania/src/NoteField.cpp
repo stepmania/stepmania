@@ -21,6 +21,7 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageLog.h"
+#include "RageMath.h"
 #include <math.h>
 #include "ThemeManager.h"
 #include "NoteFieldPositioning.h"

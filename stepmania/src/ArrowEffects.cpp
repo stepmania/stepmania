@@ -20,7 +20,7 @@
 #include "NoteDisplay.h"
 #include "song.h"
 #include <math.h>
-
+#include "RageMath.h"
 
 float		g_fExpandSeconds = 0;
 

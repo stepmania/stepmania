@@ -18,7 +18,7 @@
 #include "ThemeManager.h"
 #include "Notes.h"
 #include "RageDisplay.h"
-
+#include "RageMath.h"
 #include <math.h>
 
 

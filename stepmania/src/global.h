@@ -14,7 +14,7 @@
 #define STDAFX_H
 
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+//#include <config.h>
 #endif
 
 #if _MSC_VER >= 1000
