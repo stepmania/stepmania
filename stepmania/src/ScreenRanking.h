@@ -12,10 +12,10 @@
 #include "ScreenAttract.h"
 #include "GameConstantsAndTypes.h"	// for NUM_RANKING_LINES
 #include "Style.h"
-
+#include "Sprite.h"
+#include "BitmapText.h"
 
 class Course;
-
 
 class ScreenRanking : public ScreenAttract
 {

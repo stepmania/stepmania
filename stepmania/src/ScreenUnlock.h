@@ -10,14 +10,14 @@
 -----------------------------------------------------------------------------
 */
 #include "ScreenAttract.h"
-#include "GameConstantsAndTypes.h"	// for NUM_RANKING_LINES
 #include "Style.h"
 #include "ActorUtil.h"
+#include "Sprite.h"
+#include "BitmapText.h"
 
 #define NUM_UNLOCKS 30
 
 class Course;
-
 
 class ScreenUnlock : public ScreenAttract
 {
