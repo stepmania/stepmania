@@ -1505,7 +1505,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		COMMAND( m_sprBalloon, "Hide" );
 		
 		m_sprCourseHasMods->StopTweening();
-		OFF_COMMAND( m_sprCourseHasMods );
+		COMMAND( m_sprCourseHasMods, "Hide" );
 		
 		break;
 	case TYPE_COURSE:
