@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "VideoDriverInfo.h"
 #include "../../archutils/Win32/GotoURL.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 #include "RageThreads.h"
 
@@ -146,6 +147,35 @@ static CString FourCCToString(int fcc)
 	return s;
 }
 
+static void CheckCodecVersion( CString codec, CString desc )
+{
+	if( !codec.CompareNoCase("DIVX") )
+	{
+		/* "DivX 5.0.5 Codec" */
+		Regex GetDivXVersion;
+
+		int major, minor, rev;
+		if( sscanf( desc, "DivX %i.%i.%i", &major, &minor, &rev ) != 3 )
+		{
+			LOG->Warn( "Couldn't parse DivX version \"%s\"", desc.c_str() );
+			return;
+		}
+
+		/* 5.0.0 through 5.0.4 are old and cause crashes. Warn. */
+		if( major == 5 && minor == 0 && rev < 5 )
+		{
+			HOOKS->MessageBoxOK(
+				ssprintf("The version of DivX installed, %i.%i.%i, is out of date and may\n"
+				"cause instability.  Please upgrade to DivX 5.0.5 or newer, available at:\n"
+				"\n"
+				"http://www.divx.com/", major, minor, rev),
+				desc );
+			return;
+		}
+	}
+}
+
+
 static void GetVideoCodecDebugInfo()
 {
 	ICINFO info = { sizeof(ICINFO) };
@@ -175,8 +205,13 @@ static void GetVideoCodecDebugInfo()
 
 		CHECKPOINT;
 		if (ICGetInfo(hic, &info, sizeof(ICINFO)))
+		{
+			CheckCodecVersion( FourCCToString(info.fccHandler), WStringToCString(info.szDescription) );
+			CHECKPOINT;
+
 			LOG->Info("    %s: %ls (%ls)",
 				FourCCToString(info.fccHandler).c_str(), info.szName, info.szDescription);
+		}
 		else
 			LOG->Info("ICGetInfo(%s) failed",
 				FourCCToString(info.fccHandler).c_str());
