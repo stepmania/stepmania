@@ -5,7 +5,7 @@ class RageDisplay_OGL: public RageDisplay
 {
 public:
 	RageDisplay_OGL( VideoModeParams params );
-	~RageDisplay_OGL();
+	virtual ~RageDisplay_OGL();
 	void Update(float fDeltaTime);
 
 	bool IsSoftwareRenderer();
