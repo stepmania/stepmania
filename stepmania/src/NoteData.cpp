@@ -1014,9 +1014,8 @@ void NoteData::PadTapNotes(int rows)
 {
 	int needed = rows - m_TapNotes[0].size() + 1;
 	if(needed < 0) return;
-	vector<TapNote> pad(needed, TAP_EMPTY);
 	for(int track = 0; track < m_iNumTracks; ++track)
-		m_TapNotes[track].insert(m_TapNotes[track].end(), pad.begin(), pad.end());
+		m_TapNotes[track].insert(m_TapNotes[track].end(), needed, TAP_EMPTY);
 }
 
 void NoteData::MoveTapNoteTrack(int dest, int src)
