@@ -486,7 +486,7 @@ void LifeMeterBar::DrawPrimitives()
 
 	ActorFrame::DrawPrimitives();
 }
-#include "RageLog.h"
+
 void LifeMeterBar::UpdateNonstopLifebar(const int cleared, 
 		const int total, int ProgressiveLifebarDifficulty)
 {
@@ -548,49 +548,23 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	// about 20% of your lifebar); at 0.2 it would be 40%, which
 	// is too harsh at one difficulty level higher.  Override.
 	if (m_fLifeDifficulty >= 0.2) // judge 8
-	{
 		m_fLifeDifficulty = 0.3f;
-		return;
-	}
-	if (m_fLifeDifficulty >= 0)   // judge 9
-	{
+	else if (m_fLifeDifficulty >= 0)   // judge 9
 		m_fLifeDifficulty = 0.25f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.2) // judge 10
-	{
+	else if (m_fLifeDifficulty >= -0.2) // judge 10
 		m_fLifeDifficulty = 0.2f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.4) // judge 11
-	{
+	else if (m_fLifeDifficulty >= -0.4) // judge 11
 		m_fLifeDifficulty = 0.16f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.6) // judge 12
-	{
+	else if (m_fLifeDifficulty >= -0.6) // judge 12
 		m_fLifeDifficulty = 0.14f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -0.8) // judge 13
-	{
+	else if (m_fLifeDifficulty >= -0.8) // judge 13
 		m_fLifeDifficulty = 0.12f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -1.0) // judge 14
-	{
+	else if (m_fLifeDifficulty >= -1.0) // judge 14
 		m_fLifeDifficulty = 0.10f;
-		return;
-	}
-	if (m_fLifeDifficulty >= -1.2) // judge 15
-	{
+	else if (m_fLifeDifficulty >= -1.2) // judge 15
 		m_fLifeDifficulty = 0.08f;
-		return;
-	}
-
-	// judge 16 or higher
-	m_fLifeDifficulty = 0.04f;
-	return;
+	else								// judge 16 or higher
+		m_fLifeDifficulty = 0.04f;
 }
 
 
