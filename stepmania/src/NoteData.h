@@ -22,7 +22,6 @@
 // '3' = hold note end  ('1' can also end a HoldNote) ('3' without a matching '2' is ignored
 // ... for future expansion
 
-
 class NoteData
 {
 public:
@@ -125,3 +124,4 @@ public:
 	void ConvertHoldNotesTo4s();
 };
 
+static const TapNote TAP_EMPTY = '0';
