@@ -77,25 +77,6 @@ private:
 	RageSound *GetSoundByID( int ID );
 };
 
-/* This inputs and outputs 16-bit 44khz stereo input. */
-class SoundMixBuffer
-{
-	int32_t *mixbuf;
-	unsigned bufsize; /* actual allocated samples */
-	unsigned used; /* used samples */
-	int vol; /* vol * 256 */
-
-public:
-	void write( const int16_t *buf, unsigned size, float volume = -1, int offset = 0 );
-	void read(int16_t *buf);
-	void read( float *buf );
-	unsigned size() const { return used; }
-	void SetVolume(float f);
-
-	SoundMixBuffer();
-	~SoundMixBuffer();
-};
-
 extern RageSoundManager *SOUNDMAN;
 
 #endif

@@ -364,69 +364,6 @@ void RageSoundManager::AttenuateBuf( int16_t *buf, int samples, float vol )
 	}
 }
 
-	
-SoundMixBuffer::SoundMixBuffer()
-{
-	bufsize = used = 0;
-	mixbuf = NULL;
-	SetVolume( SOUNDMAN->GetMixVolume() );
-}
-
-SoundMixBuffer::~SoundMixBuffer()
-{
-	free(mixbuf);
-}
-
-void SoundMixBuffer::SetVolume( float f )
-{
-	vol = int(256*f);
-}
-
-void SoundMixBuffer::write( const int16_t *buf, unsigned size, float volume, int offset )
-{
-	int factor = vol;
-	if( volume != -1 )
-		factor = int( 256*volume );
-
-	const unsigned realsize = size+offset;
-	if( bufsize < realsize )
-	{
-		mixbuf = (int32_t *) realloc( mixbuf, sizeof(int32_t) * realsize );
-		bufsize = realsize;
-	}
-
-	if( used < realsize )
-	{
-		memset( mixbuf + used, 0, (realsize - used) * sizeof(int32_t) );
-		used = realsize;
-	}
-
-	/* Scale volume and add. */
-	for(unsigned pos = 0; pos < size; ++pos)
-		mixbuf[pos+offset] += buf[pos] * factor;
-}
-
-void SoundMixBuffer::read(int16_t *buf)
-{
-	for( unsigned pos = 0; pos < used; ++pos )
-	{
-		int32_t out = (mixbuf[pos]) / 256;
-		buf[pos] = (int16_t) clamp( out, -32768, 32767 );
-	}
-	used = 0;
-}
-
-void SoundMixBuffer::read( float *buf )
-{
-	const int Minimum = -32768 * 256;
-	const int Maximum = 32767 * 256;
-
-	for( unsigned pos = 0; pos < used; ++pos )
-		buf[pos] = SCALE( (float)mixbuf[pos], Minimum, Maximum, -1.0f, 1.0f );
-
-	used = 0;
-}
-
 /*
  * Copyright (c) 2002-2004 Glenn Maynard
  * All rights reserved.
