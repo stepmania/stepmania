@@ -16,6 +16,7 @@
 #include "song.h"
 #include "Game.h"
 #include "Style.h"
+#include "Foreach.h"
 
 void ModeChoice::Init()
 {
@@ -96,7 +97,7 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 	return true;
 }
 
-void ModeChoice::Load( int iIndex, CString sChoice )
+void ModeChoice::Load( int iIndex, const ActorCommands& acs )
 {
 	m_iIndex = iIndex;
 
@@ -104,21 +105,22 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 
 	CString sSteps;
 
-	CStringArray asCommands;
-	split( sChoice, ";", asCommands );
-	for( unsigned i=0; i<asCommands.size(); i++ )
+	FOREACH_CONST( ActorCommand, acs.v, command )
 	{
-		CString sCommand = asCommands[i];
-
-		CStringArray asBits;
-		split( sCommand, ",", asBits );
+		if( command->vTokens.empty() )
+			continue;
 		
-		CString sName = asBits[0];
-		asBits.erase(asBits.begin(), asBits.begin()+1);
-		CString sValue = join( ",", asBits );
-
-		sName.MakeLower();
-		// sValue.MakeLower();
+		const CString &sName = command->vTokens[0];	// name is already made lowercase by ActorCommand
+		
+		CString sValue;
+		for( vector<ActorCommandToken>::const_iterator iter = command->vTokens.begin()+1; 
+			iter != command->vTokens.end(); 
+			iter++ )
+		{
+			sValue += *iter;
+			if( iter != command->vTokens.end()-1 )
+				sValue += ",";
+		}
 
 		if( sName == "game" )
 		{
@@ -207,7 +209,8 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		
 		else if( sName == "setenv" )
 		{
-			m_SetEnv[ asBits[0] ] = sValue;
+			if( command->vTokens.size() == 3 )
+				m_SetEnv[ command->vTokens[1] ] = command->vTokens[2];
 		}
 		
 		else if( sName == "songgroup" )

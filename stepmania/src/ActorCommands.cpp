@@ -54,16 +54,16 @@ CString ActorCommand::GetOriginalCommandString() const
 
 void ParseActorCommands( const CString &sCommands, ActorCommands &vCommandsOut )
 {
-	vCommandsOut.clear();
+	vCommandsOut.v.clear();
 	CStringArray vsCommands;
 	split( sCommands, ";", vsCommands, true );	// do ignore empty
 	
-	vCommandsOut.resize( vsCommands.size() );
+	vCommandsOut.v.resize( vsCommands.size() );
 	
 	for( unsigned i=0; i<vsCommands.size(); i++ )
 	{
 		const CString &sCommand = vsCommands[i];
-		ActorCommand &pc = vCommandsOut[i];
+		ActorCommand &pc = vCommandsOut.v[i];
 		pc.Set( sCommand );
 	}
 }

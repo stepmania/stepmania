@@ -765,6 +765,11 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 	}
 }
 
+void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, ActorCommands &valueOut )
+{
+	valueOut = GetMetricA( sClassName, sValueName ); 
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

@@ -14,13 +14,14 @@ class Trail;
 class Character;
 class Style;
 class Game;
+struct ActorCommands;
 
 struct ModeChoice		// used in SelectMode
 {
 	ModeChoice() { Init(); }
 	void Init();
 
-	void Load( int iIndex, CString str );
+	void Load( int iIndex, const ActorCommands& acs );
 	void ApplyToAllPlayers() const;
 	void Apply( PlayerNumber pn ) const;
 	bool DescribesCurrentMode( PlayerNumber pn ) const;

@@ -58,7 +58,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 		return;
 	}
 
-	hand.Default.Load( -1, ENTRY_DEFAULT(ListName) );
+	hand.Default.Load( -1, ParseActorCommands(ENTRY_DEFAULT(ListName)) );
 
 	/* Parse the basic configuration metric. */
 	CStringArray asParts;
@@ -79,7 +79,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 	for( int col = 0; col < NumCols; ++col )
 	{
 		ModeChoice mc;
-		mc.Load( 0, ENTRY_MODE(ListName, col) );
+		mc.Load( 0, ParseActorCommands(ENTRY_MODE(ListName, col)) );
 		if( mc.m_sName == "" )
 			RageException::Throw( "List \"%s\", col %i has no name", ListName.c_str(), col );
 
@@ -250,13 +250,13 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		ActorCommands vCommands;
 		ParseActorCommands( sRowCommands, vCommands );
 		
-		if( vCommands.size() < 1 )
+		if( vCommands.v.size() < 1 )
 			RageException::Throw( "Parse error in %s::Line%i", m_sName.c_str(), i+1 );
 
 		OptionRowHandler hand;
-		for( unsigned part = 0; part < vCommands.size(); ++part)
+		for( unsigned part = 0; part < vCommands.v.size(); ++part)
 		{
-			ActorCommand& command = vCommands[part];
+			ActorCommand& command = vCommands.v[part];
 
 			BeginHandleParams;
 

@@ -44,7 +44,7 @@ void ScreenBranch::HandleScreenMessage( const ScreenMessage SM )
 			LOG->Trace( "Branching to '%s'", sNextScreen.c_str() );
 
 			ModeChoice mc;
-			mc.Load( 0, sNextScreen );
+			mc.Load( 0, ParseActorCommands(sNextScreen) );
 			if( mc.m_sScreen == "" )
 				RageException::Throw("Metric %s::%s must set \"screen\"",
 					m_sName.c_str(), ("NextScreen"+m_sChoice).c_str() );

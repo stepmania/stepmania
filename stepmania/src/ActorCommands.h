@@ -32,7 +32,10 @@ struct ActorCommand
 	CString GetOriginalCommandString() const;	// for when reporting an error in number of params
 };
 
-typedef vector<ActorCommand> ActorCommands;
+struct ActorCommands
+{
+	vector<ActorCommand> v;
+};
 
 // Take a command list string and return pointers to each of the tokens in the 
 // string.  sCommand list is a list of commands separated by ';'.

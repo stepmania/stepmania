@@ -619,7 +619,7 @@ void Actor::AddRotationR( float rot )
 
 void Actor::Command( const ActorCommands &vCommands )
 {
-	FOREACH_CONST( ActorCommand, vCommands, c )
+	FOREACH_CONST( ActorCommand, vCommands.v, c )
 		this->HandleCommand( *c );
 }
 

@@ -201,7 +201,7 @@ bool RunExpression( const CString &str )
 		{
 			CString err;
 			Lua::PopStack( L, err );
-			CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
+			CString sError = ssprintf( "Lua runtime error parsing \"%s\": %s", str.c_str(), err.c_str() );
 			Dialog::OK( sError, "LUA_ERROR" );
 			return false;
 		}
@@ -216,7 +216,7 @@ bool RunExpression( const CString &str )
 		{
 			CString err;
 			Lua::PopStack( L, err );
-			CString sError = ssprintf( "Runtime error running \"%s\": %s", str.c_str(), err.c_str() );
+			CString sError = ssprintf( "Lua runtime error evaluating \"%s\": %s", str.c_str(), err.c_str() );
 			Dialog::OK( sError, "LUA_ERROR" );
 			return false;
 		}

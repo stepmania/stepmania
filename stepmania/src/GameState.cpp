@@ -86,7 +86,7 @@ void GameState::ApplyCmdline()
 	for( int i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
 	{
 		ModeChoice m;
-		m.Load( 0, sMode );
+		m.Load( 0, ParseActorCommands(sMode) );
 		CString why;
 		if( !m.IsPlayable(&why) )
 			RageException::Throw( "Can't apply mode \"%s\": %s", sMode.c_str(), why.c_str() );
