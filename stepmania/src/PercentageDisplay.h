@@ -5,6 +5,7 @@
 #include "PlayerNumber.h"
 #include "BitmapText.h"
 #include "StageStats.h"
+#include "ThemeMetric.h"
 
 class PercentageDisplay: public ActorFrame
 {
@@ -12,9 +13,15 @@ public:
 	PercentageDisplay();
 	void Load( PlayerNumber pn, PlayerStageStats *pSource, bool bAutoRefresh );
 	void Update( float fDeltaTime );
+	void SetName( const CString &sName, const CString &sID = "" );
 	void TweenOffScreen();
 
 private:
+	ThemeMetric<int> DANCE_POINT_DIGITS;
+	ThemeMetric<int> PERCENT_DECIMAL_PLACES;
+	ThemeMetric<int> PERCENT_TOTAL_SIZE;
+	ThemeMetric<bool> PERCENT_USE_REMAINDER;
+
 	void Refresh();
 	PlayerNumber m_PlayerNumber;
 	PlayerStageStats *m_pSource;

@@ -8,14 +8,20 @@
 #include "RageLog.h"
 #include "StageStats.h"
 
-#define DANCE_POINT_DIGITS			THEME->GetMetricI(m_sName,"DancePointsDigits")
-#define PERCENT_DECIMAL_PLACES		THEME->GetMetricI(m_sName,"PercentDecimalPlaces")
-#define PERCENT_TOTAL_SIZE			THEME->GetMetricI(m_sName,"PercentTotalSize")
-#define PERCENT_USE_REMAINDER		THEME->GetMetricB(m_sName,"PercentUseRemainder")
 
 PercentageDisplay::PercentageDisplay()
 {
 	m_pSource = NULL;
+}
+
+void PercentageDisplay::SetName( const CString &sName, const CString &sID )
+{
+	ActorFrame::SetName( sName, sID );
+
+	DANCE_POINT_DIGITS.Load( m_sName, "DancePointsDigits" );
+	PERCENT_DECIMAL_PLACES.Load( m_sName, "PercentDecimalPlaces" );
+	PERCENT_TOTAL_SIZE.Load( m_sName, "PercentTotalSize" );
+	PERCENT_USE_REMAINDER.Load( m_sName, "PercentUseRemainder" );
 }
 
 void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, bool bAutoRefresh )
@@ -73,7 +79,7 @@ void PercentageDisplay::Refresh()
 	CString sNumToDisplay;
 	if( PREFSMAN->m_bDancePointsForOni )
 	{
-		sNumToDisplay = ssprintf( "%*d", DANCE_POINT_DIGITS, max( 0, iActualDancePoints ) );
+		sNumToDisplay = ssprintf( "%*d", (int) DANCE_POINT_DIGITS, max( 0, iActualDancePoints ) );
 	}
 	else
 	{
@@ -96,7 +102,7 @@ void PercentageDisplay::Refresh()
 			float fTruncInterval = powf(0.1f, (float) PERCENT_TOTAL_SIZE);
 			fPercentDancePoints = ftruncf( fPercentDancePoints, fTruncInterval );
 			
-			sNumToDisplay = ssprintf( "%*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, fPercentDancePoints*100 );
+			sNumToDisplay = ssprintf( "%*.*f%%", (int) PERCENT_TOTAL_SIZE, (int) PERCENT_DECIMAL_PLACES, fPercentDancePoints*100 );
 			
 			// HACK: Use the last frame in the numbers texture as '-'
 			sNumToDisplay.Replace('-','x');
