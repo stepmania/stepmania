@@ -17,6 +17,8 @@ public:
 	virtual bool EarlyAbortDraw();
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
+	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
+
 	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 
 	/* Adjust texture properties for song backgrounds. */
@@ -79,9 +81,9 @@ protected:
 	vector<State> m_States;
 	int		m_iCurState;
 	float	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
-	float	m_fLastTime;
 
 	bool m_bUsingCustomTexCoords;
+	bool m_bSkipNextUpdate;
 	float m_CustomTexCoords[8];     // (x,y) * 4: top left, bottom left, bottom right, top right
 
 	// Remembered clipped dimensions are applied on Load().

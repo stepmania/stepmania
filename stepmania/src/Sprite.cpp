@@ -18,8 +18,9 @@ Sprite::Sprite()
 	m_pTexture = NULL;
 	m_bDrawIfTextureNull = false;
 	m_iCurState = 0;
-	m_fSecsIntoState = m_fLastTime = 0.0f;
+	m_fSecsIntoState = 0.0f;
 	m_bUsingCustomTexCoords = false;
+	m_bSkipNextUpdate = false;
 	
 	m_fRememberedClipWidth = -1;
 	m_fRememberedClipHeight = -1;
@@ -257,6 +258,19 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 	return true;
 }
 
+void Sprite::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
+{
+	/*
+	 * When we lose focus, we don't receive updates.  When we regain focus,
+	 * we'll receive an update, and if we're in CLOCK_BGM_TIME or CLOCK_BGM_BEAT,
+	 * m_fSecsIntoEffect will be much higher than it was at our last update.
+	 * We don't want to send that big jump on to the texture (don't animate
+	 * when we don't have focus).  This is particularly important for movies.
+	 *
+	 * However, we havn't received that time yet; we won't until the next Update().
+	 */
+	m_bSkipNextUpdate = true;
+}
 
 void Sprite::UpdateAnimationState()
 {
@@ -277,31 +291,16 @@ void Sprite::Update( float fDelta )
 {
 	Actor::Update( fDelta );	// do tweening
 
-	if( !m_bIsAnimating )
-	    return;
+	if( !m_bIsAnimating || m_bSkipNextUpdate )
+	{
+		m_bSkipNextUpdate = false;
+		return;
+	}
 
 	if( !m_pTexture )	// no texture, nothing to animate
 	    return;
 
-	float fTimePassed = 0;
-	switch( m_EffectClock )
-	{
-	case CLOCK_TIMER:
-		fTimePassed = fDelta;
-		break;
-
-	case CLOCK_BGM_BEAT:
-		fTimePassed = g_fCurrentBGMBeat - m_fLastTime;
-		m_fLastTime = g_fCurrentBGMBeat;
-		break;
-
-	case CLOCK_BGM_TIME:
-		fTimePassed = g_fCurrentBGMTime - m_fLastTime;
-		m_fLastTime = g_fCurrentBGMTime;
-		break;
-	default: FAIL_M( ssprintf("%i",m_EffectClock) );
-	}
-
+	float fTimePassed = GetEffectDeltaTime();
 	m_fSecsIntoState += fTimePassed;
 	UpdateAnimationState();
 
@@ -649,7 +648,7 @@ void Sprite::SetState( int iNewState )
 
 	CLAMP(iNewState, 0, (int)m_States.size()-1);
 	m_iCurState = iNewState;
-	m_fSecsIntoState = m_fLastTime = 0.0f;
+	m_fSecsIntoState = 0.0f;
 }
 
 float Sprite::GetAnimationLengthSeconds() const
