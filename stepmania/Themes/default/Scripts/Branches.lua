@@ -2,6 +2,7 @@ function SongSelectionScreen()
 	if PlayModeName() == "Nonstop" then return "ScreenSelectCourseNonstop" end
 	if PlayModeName() == "Oni" then return "ScreenSelectCourseOni" end
 	if PlayModeName() == "Endless" then return "ScreenSelectCourseEndless" end
+	if IsNetConnected() then ReportStyle() end
 	if IsNetSMOnline() then return LoginScreen() end
 	if IsNetConnected() then return "ScreenNetSelectMusic" end
 	return "ScreenSelectMusic"
