@@ -14,8 +14,6 @@
 #include "GhostArrow.h"
 #include "NoteSkinManager.h"
 #include "GameState.h"
-#include "NoteSkinManager.h"
-
 
 GhostArrow::GhostArrow()
 {
@@ -52,11 +50,6 @@ void GhostArrow::Init( PlayerNumber pn )
 		CString sCommand = Capitalize(sJudge)+"Command";
 		m_sScoreCommand[i] = NOTESKIN->GetMetric(GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin,m_sName,sCommand);
 	}
-}
-
-void GhostArrow::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
 }
 
 void GhostArrow::Step( TapNoteScore score )
