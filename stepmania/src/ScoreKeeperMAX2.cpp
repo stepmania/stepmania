@@ -423,8 +423,8 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const float* fRadars )
 	/* Note that, if Marvelous timing is disabled or not active (not course mode),
 	 * PERFECT will be used instead. */
 
-	int NumTaps = fRadars[RADAR_NUM_TAPS_AND_HOLDS];
-	int NumHolds = fRadars[RADAR_NUM_HOLDS]; 
+	int NumTaps = int(fRadars[RADAR_NUM_TAPS_AND_HOLDS]);
+	int NumHolds = int(fRadars[RADAR_NUM_HOLDS]); 
 	return NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
 	   NumHolds*HoldNoteScoreToDancePoints(HNS_OK);
 }

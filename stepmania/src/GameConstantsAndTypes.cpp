@@ -230,7 +230,7 @@ CString MemoryCardStateToString( MemoryCardState mcs )
 #define XToString(X)	\
 	CString X##ToString( X x ) \
 	{	\
-		ASSERT(x < ARRAYSIZE(X##Names));	\
+		ASSERT(unsigned(x) < ARRAYSIZE(X##Names));	\
 		return X##Names[x];	\
 	}
 
