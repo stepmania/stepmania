@@ -608,8 +608,11 @@ void ScreenGameplay::Init()
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 
+		// FIXME: Find a better way to handle this than changing the name
+		CString sName = m_DifficultyMeter[p].GetName();
 		m_DifficultyMeter[p].SetName( m_sName + ssprintf(" DifficultyMeterP%d",p+1) );
 		m_DifficultyMeter[p].Load();
+		m_DifficultyMeter[p].SetName( sName );
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyMeter[p] );
 	}
@@ -903,6 +906,8 @@ void ScreenGameplay::LoadNextSong()
 			}
 
 			m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
+
+			m_DifficultyMeter[p].SetName( m_sName + ssprintf(" DifficultyMeterP%d",p+1) );
 			m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
 
 			/* The actual note data for scoring is the base class of Player.  This includes
