@@ -27,18 +27,24 @@ inline void UtilSetXY( Actor& actor, CString sClassName )
 	ASSERT( !actor.GetName().empty() );
 	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetName()+"X"), THEME->GetMetricF(sClassName,actor.GetName()+"Y") );
 }
+inline void UtilSetXY( Actor* pActor, CString sClassName ) { UtilSetXY( *pActor, sClassName ); }
+
 
 inline float UtilOnCommand( Actor& actor, CString sClassName )
 {
 	ASSERT( !actor.GetName().empty() );
 	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OnCommand") );
 }
+inline float UtilOnCommand( Actor* pActor, CString sClassName ) { UtilOnCommand( *pActor, sClassName ); }
+
 
 inline float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 {
 	ASSERT( !actor.GetName().empty() );
 	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
 }
+inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { UtilCommand( *pActor, sClassName, sCommandName ); }
+
 
 inline float UtilOffCommand( Actor& actor, CString sClassName )
 {
@@ -49,14 +55,42 @@ inline float UtilOffCommand( Actor& actor, CString sClassName )
 		return 0;
 	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+"OffCommand") );
 }
+inline float UtilOffCommand( Actor* pActor, CString sClassName ) { return UtilOffCommand( *pActor, sClassName ); }
+
 
 inline float UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
 {
 	UtilSetXY( actor, sClassName );
 	return UtilOnCommand( actor, sClassName );
 }
+inline float UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { return UtilSetXYAndOnCommand( *pActor, sClassName ); }
+
 
 // Return a Sprite, BitmapText, or Model depending on the file type
 Actor* MakeActor( CString sPath );
+
+
+// creates the appropriate Actor derivitive on load and
+// automatically deletes Actor on deconstruction.
+class AutoActor
+{
+public:
+	AutoActor() { m_pActor = NULL; }
+	~AutoActor() { Unload(); }
+	operator Actor* () { return m_pActor; }
+	Actor *operator->() { return m_pActor; }
+	void Unload() { if(m_pActor) { delete m_pActor; m_pActor=NULL; } }
+	void Load( CString sPath )
+	{
+		Unload();
+		m_pActor = MakeActor( sPath );
+	}
+
+protected:
+	Actor* m_pActor;
+};
+
+
+
 
 #endif
