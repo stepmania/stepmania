@@ -176,7 +176,7 @@ PrefsManager::PrefsManager()
 	m_bEndlessBreakEnabled = true;
 	m_iEndlessNumStagesUntilBreak = 5;
 	m_iEndlessBreakLength = 5;
-	m_bDisableScreenSaver = true; // may be causing flickering in X
+	m_bDisableScreenSaver = false; // causes flickering in X; why?
 
 	// set to 0 so people aren't shocked at first
 	m_iProgressiveLifebar = 0;
