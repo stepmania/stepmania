@@ -1,6 +1,5 @@
 #include "global.h"
 #include "CryptMD5.h"
-#include "SDL_utils.h"
 
 /*
  * MD5 implementation for PuTTY. Written directly from the spec by
@@ -16,7 +15,7 @@
 #define H(x,y,z) ( (x) ^ (y) ^ (z) )
 #define I(x,y,z) ( (y) ^ ( (x) | ~(z) ) )
 
-#define rol(x,y) ( ((x) << (y)) | (((Uint32)x) >> (32-y)) )
+#define rol(x,y) ( ((x) << (y)) | (((uint32_t)x) >> (32-y)) )
 
 #define subround(f,w,x,y,z,k,s,ti) \
        w = x + rol(w + f(x,y,z) + block[k] + ti, s)
@@ -29,9 +28,9 @@ static void MD5_Core_Init(MD5_Core_State * s)
 	s->h[3] = 0x10325476;
 }
 
-static void MD5_Block(MD5_Core_State * s, Uint32 * block)
+static void MD5_Block(MD5_Core_State * s, uint32_t * block)
 {
-	Uint32 a, b, c, d;
+	uint32_t a, b, c, d;
 
 	a = s->h[0];
 	b = s->h[1];
@@ -127,8 +126,8 @@ void MD5Init(struct MD5Context *s)
 void MD5Update(struct MD5Context *s, unsigned char const *p, unsigned len)
 {
 	unsigned char *q = (unsigned char *) p;
-	Uint32 wordblock[16];
-	Uint32 lenw = len;
+	uint32_t wordblock[16];
+	uint32_t lenw = len;
 	int i;
 
 	/*
@@ -154,10 +153,10 @@ void MD5Update(struct MD5Context *s, unsigned char const *p, unsigned len)
 			/* Now process the block. Gather bytes little-endian into words */
 			for (i = 0; i < 16; i++) {
 				wordblock[i] =
-					(((Uint32) s->block[i * 4 + 3]) << 24) |
-					(((Uint32) s->block[i * 4 + 2]) << 16) |
-					(((Uint32) s->block[i * 4 + 1]) << 8) |
-					(((Uint32) s->block[i * 4 + 0]) << 0);
+					(((uint32_t) s->block[i * 4 + 3]) << 24) |
+					(((uint32_t) s->block[i * 4 + 2]) << 16) |
+					(((uint32_t) s->block[i * 4 + 1]) << 8) |
+					(((uint32_t) s->block[i * 4 + 0]) << 0);
 			}
 			MD5_Block(&s->core, wordblock);
 			s->blkused = 0;
@@ -172,7 +171,7 @@ void MD5Final(unsigned char output[16], struct MD5Context *s)
 	int i;
 	unsigned pad;
 	unsigned char c[64];
-	Uint32 lenhi, lenlo;
+	uint32_t lenhi, lenlo;
 
 	if (s->blkused >= 56)
 		pad = 56 + 64 - s->blkused;

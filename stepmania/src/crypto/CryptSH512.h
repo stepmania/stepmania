@@ -1,8 +1,6 @@
 #ifndef SSH_SHA512_H
 #define SSH_SHA512_H
 
-#include "SDL_utils.h"
-
 typedef struct
 {
 	unsigned long hi, lo;
@@ -13,7 +11,7 @@ typedef struct
 	uint64 h[8];
 	unsigned char block[128];
 	int blkused;
-	Uint32 len[4];
+	uint32_t len[4];
 } SHA512_State;
 
 void SHA512_Init(SHA512_State * s);

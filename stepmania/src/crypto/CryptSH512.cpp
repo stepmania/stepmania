@@ -183,7 +183,7 @@ void SHA512_Bytes(SHA512_State *s, const void *p, int len)
 {
 	unsigned char *q = (unsigned char *)p;
 	uint64 wordblock[16];
-	Uint32 lenw = len;
+	uint32_t lenw = len;
 	int i;
 
 	/*
@@ -210,15 +210,15 @@ void SHA512_Bytes(SHA512_State *s, const void *p, int len)
 			len -= BLKSIZE - s->blkused;
 			/* Now process the block. Gather bytes big-endian into words */
 			for (i = 0; i < 16; i++) {
-				Uint32 h, l;
-				h = ( ((Uint32)s->block[i*8+0]) << 24 ) |
-					( ((Uint32)s->block[i*8+1]) << 16 ) |
-					( ((Uint32)s->block[i*8+2]) <<  8 ) |
-					( ((Uint32)s->block[i*8+3]) <<  0 );
-				l = ( ((Uint32)s->block[i*8+4]) << 24 ) |
-					( ((Uint32)s->block[i*8+5]) << 16 ) |
-					( ((Uint32)s->block[i*8+6]) <<  8 ) |
-					( ((Uint32)s->block[i*8+7]) <<  0 );
+				uint32_t h, l;
+				h = ( ((uint32_t)s->block[i*8+0]) << 24 ) |
+					( ((uint32_t)s->block[i*8+1]) << 16 ) |
+					( ((uint32_t)s->block[i*8+2]) <<  8 ) |
+					( ((uint32_t)s->block[i*8+3]) <<  0 );
+				l = ( ((uint32_t)s->block[i*8+4]) << 24 ) |
+					( ((uint32_t)s->block[i*8+5]) << 16 ) |
+					( ((uint32_t)s->block[i*8+6]) <<  8 ) |
+					( ((uint32_t)s->block[i*8+7]) <<  0 );
 				BUILD(wordblock[i], h, l);
 			}
 			SHA512_Block(s, wordblock);
@@ -234,7 +234,7 @@ void SHA512_Final(SHA512_State *s, unsigned char *digest)
 	int i;
 	int pad;
 	unsigned char c[BLKSIZE];
-	Uint32 len[4];
+	uint32_t len[4];
 
 	if (s->blkused >= BLKSIZE-16)
 		pad = (BLKSIZE-16) + BLKSIZE - s->blkused;
@@ -242,8 +242,8 @@ void SHA512_Final(SHA512_State *s, unsigned char *digest)
 		pad = (BLKSIZE-16) - s->blkused;
 
 	for (i = 4; i-- ;) {
-		Uint32 lenhi = s->len[i];
-		Uint32 lenlo = i > 0 ? s->len[i-1] : 0;
+		uint32_t lenhi = s->len[i];
+		uint32_t lenlo = i > 0 ? s->len[i-1] : 0;
 		len[i] = (lenhi << 3) | (lenlo >> (32-3));
 	}
 
@@ -261,7 +261,7 @@ void SHA512_Final(SHA512_State *s, unsigned char *digest)
 	SHA512_Bytes(s, &c, 16);
 
 	for (i = 0; i < 8; i++) {
-		Uint32 h, l;
+		uint32_t h, l;
 		EXTRACT(h, l, s->h[i]);
 		digest[i*8+0] = char((h >> 24) & 0xFF);
 		digest[i*8+1] = char((h >> 16) & 0xFF);

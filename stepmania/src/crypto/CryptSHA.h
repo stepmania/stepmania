@@ -1,13 +1,11 @@
 #ifndef SSHSHA_H
 #define SSHSHA_H
 
-#include "SDL_utils.h"
-
 typedef struct {
-	Uint32 h[5];
+	uint32_t h[5];
 	unsigned char block[64];
 	int blkused;
-	Uint32 lenhi, lenlo;
+	uint32_t lenhi, lenlo;
 } SHA_State;
 
 void SHA_Init(SHA_State * s);

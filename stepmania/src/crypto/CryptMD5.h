@@ -1,17 +1,15 @@
 #ifndef SSHMD5_H
 #define SSHMD5_H
 
-#include "SDL_utils.h"
-
 typedef struct {
-	Uint32 h[4];
+	uint32_t h[4];
 } MD5_Core_State;
 
 struct MD5Context {
 	MD5_Core_State core;
 	unsigned char block[64];
 	int blkused;
-	Uint32 lenhi, lenlo;
+	uint32_t lenhi, lenlo;
 };
 
 void MD5Init(struct MD5Context *context);

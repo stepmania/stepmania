@@ -12,9 +12,9 @@
  * Core SHA algorithm: processes 16-word blocks into a message digest.
  */
 
-#define rol(x,y) ( ((x) << (y)) | (((Uint32)x) >> (32-y)) )
+#define rol(x,y) ( ((x) << (y)) | (((uint32_t)x) >> (32-y)) )
 
-static void SHA_Core_Init(Uint32 h[5])
+static void SHA_Core_Init(uint32_t h[5])
 {
 	h[0] = 0x67452301;
 	h[1] = 0xefcdab89;
@@ -102,8 +102,8 @@ void SHA_Init(SHA_State * s)
 void SHA_Bytes(SHA_State * s, const void *p, int len)
 {
 	unsigned char *q = (unsigned char *) p;
-	Uint32 wordblock[16];
-	Uint32 lenw = len;
+	uint32_t wordblock[16];
+	uint32_t lenw = len;
 	int i;
 
 	/*
@@ -129,10 +129,10 @@ void SHA_Bytes(SHA_State * s, const void *p, int len)
 			/* Now process the block. Gather bytes big-endian into words */
 			for (i = 0; i < 16; i++) {
 				wordblock[i] =
-					(((Uint32) s->block[i * 4 + 0]) << 24) |
-					(((Uint32) s->block[i * 4 + 1]) << 16) |
-					(((Uint32) s->block[i * 4 + 2]) << 8) |
-					(((Uint32) s->block[i * 4 + 3]) << 0);
+					(((uint32_t) s->block[i * 4 + 0]) << 24) |
+					(((uint32_t) s->block[i * 4 + 1]) << 16) |
+					(((uint32_t) s->block[i * 4 + 2]) << 8) |
+					(((uint32_t) s->block[i * 4 + 3]) << 0);
 			}
 			SHATransform(s->h, wordblock);
 			s->blkused = 0;
@@ -147,7 +147,7 @@ void SHA_Final(SHA_State * s, unsigned char *output)
 	int i;
 	int pad;
 	unsigned char c[64];
-	Uint32 lenhi, lenlo;
+	uint32_t lenhi, lenlo;
 
 	if (s->blkused >= 56)
 		pad = 56 + 64 - s->blkused;
