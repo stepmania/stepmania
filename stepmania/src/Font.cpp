@@ -408,7 +408,7 @@ void Font::GetFontPaths(const CString &sFontOrTextureFilePath,
 	CString FontName = GetFontName(sFName);
 
 	CStringArray Files;
-	GetDirListing( sDir+"/"+FontName + "*", Files, false, false );
+	GetDirListing( sDir+FontName + "*", Files, false, false );
 
 	for(unsigned i = 0; i < Files.size(); ++i)
 	{
@@ -423,11 +423,11 @@ void Font::GetFontPaths(const CString &sFontOrTextureFilePath,
 			if(!IniPath.empty())
 				RageException::Throw("More than one INI found\n%s\n%s", IniPath.GetString(), Files[i].GetString());
 			
-			IniPath = sDir+"/"+Files[i];
+			IniPath = sDir+Files[i];
 			continue;
 		}
 
-		TexturePaths.push_back(sDir+"/"+Files[i]);
+		TexturePaths.push_back(sDir+Files[i]);
 	}
 }
 
