@@ -79,19 +79,13 @@ void Screen::Update( float fDeltaTime )
 		 * not quite finishing their tweens.
 		 *
 		 * Let's delay all messages that have a non-zero time an extra frame. 
-		 *
-		 * XXX: For some reason, I had to make this delay messages for *two* frames to
-		 * make this effect go away.  (SMMAX2 menu header tweens.)  I'm not sure why.
 		 */
 		if(m_QueuedMessages[i].fDelayRemaining > 0.0001f)
 		{
 			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
 			m_QueuedMessages[i].fDelayRemaining = max(m_QueuedMessages[i].fDelayRemaining, 0.0001f);
 		} else {
-			/* Two 0.00008 delays add up to at least one 0.0001 delay, but don't count
-			 * Update(0)s.  This is hacky, until I figure out why the second frame
-			 * delay is needed ... */
-			m_QueuedMessages[i].fDelayRemaining -= max(fDeltaTime, 0.00008f);
+			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
 		}
 	}
 
