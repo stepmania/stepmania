@@ -139,7 +139,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	if( GAMESTATE->IsCourseMode() )
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
-		pCourse->GetStageInfo( m_apSongsQueue, m_apNotesQueue[0], m_asModifiersQueue[0], GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
+		pCourse->GetStageInfo( m_apSongsQueue, m_apNotesQueue[0], m_asModifiersQueue[0], GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 		for( int p=1; p<NUM_PLAYERS; p++ )
 		{
 			m_apNotesQueue[p] = m_apNotesQueue[0];

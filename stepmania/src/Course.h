@@ -66,8 +66,7 @@ public:
 		vector<Song*>& vSongsOut, 
 		vector<Notes*>& vNotesOut, 
 		vector<CString>& vsModifiersOut, 
-		NotesType nt, 
-		bool bDifficult ) const;	// like EX's Standard/Difficult option for courses
+		NotesType nt ) const;	// like EX's Standard/Difficult option for courses
 	bool GetFirstStageInfo(
 		Song*& pSongOut, 
 		Notes*& pNotesOut, 

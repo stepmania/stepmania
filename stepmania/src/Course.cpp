@@ -357,7 +357,7 @@ bool Course::IsPlayableIn( NotesType nt ) const
 	vector<Song*> vSongs;
 	vector<Notes*> vNotes;
 	vector<CString> vsModifiers;
-	GetStageInfo( vSongs, vNotes, vsModifiers, nt, false);
+	GetStageInfo( vSongs, vNotes, vsModifiers, nt);
 	
 	return vNotes.size() > 0;
 }
@@ -367,12 +367,8 @@ void Course::GetStageInfo(
 	vector<Song*>& vSongsOut, 
 	vector<Notes*>& vNotesOut, 
 	vector<CString>& vsModifiersOut, 
-	NotesType nt, 
-	bool bDifficult ) const
+	NotesType nt ) const
 {
-	if( bDifficult )
-		ASSERT( HasDifficult() );
-
 	vector<Entry> entries = m_entries;
 
 	if( m_bRandomize )
@@ -521,8 +517,7 @@ bool Course::GetFirstStageInfo(
 		vSongs, 
 		vNotes, 
 		vsModifiers, 
-		nt, 
-		false );
+		nt );
 	if( vSongs.empty() )
 		return false;
 	
@@ -592,8 +587,7 @@ bool Course::GetTotalSeconds( float& fSecondsOut ) const
 		vSongsOut, 
 		vNotesOut, 
 		vsModifiersOut, 
-		NOTES_TYPE_DANCE_SINGLE, 	// doesn't matter
-		false );	// doesn't matter
+		NOTES_TYPE_DANCE_SINGLE );	// doesn't matter
 
 	fSecondsOut = 0;
 	for( unsigned i=0; i<vSongsOut.size(); i++ )

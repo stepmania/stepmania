@@ -54,7 +54,7 @@ void CourseContentsList::SetFromCourse( Course* pCourse )
 	vector<Song*> vSongs;
 	vector<Notes*> vNotes;
 	vector<CString> vsModifiers;
-	pCourse->GetStageInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
+	pCourse->GetStageInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
 	for( int i=0; i<min((int)vSongs.size(), MAX_TOTAL_CONTENTS); i++ )
 	{
