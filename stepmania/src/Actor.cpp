@@ -359,7 +359,10 @@ void Actor::UpdateTweening( float fDeltaTime )
 			// Execute the command in this tween (if any).
 			if( TS.sCommandName.size() )
 			{
-				this->PlayCommand( TS.sCommandName );
+				if( TS.sCommandName.Left(1) == "!" )
+					MESSAGEMAN->Broadcast( TS.sCommandName.substr(1) );
+				else
+					this->PlayCommand( TS.sCommandName );
 			}
 		}
 
@@ -1026,6 +1029,15 @@ void Actor::QueueCommand( const CString& sCommandName )
 {
 	BeginTweening( 0, TWEEN_LINEAR );
 	DestTweenState().sCommandName = sCommandName;
+}
+
+void Actor::QueueMessage( const CString& sMessageName )
+{
+	// Hack: use "!" as a marker to broadcast a command, instead of playing a
+	// command, so we don't have to add yet another element to every tween
+	// state for this rarely-used command.
+	BeginTweening( 0, TWEEN_LINEAR );
+	DestTweenState().sCommandName = "!" + sMessageName;
 }
 
 void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )

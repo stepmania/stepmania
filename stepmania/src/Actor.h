@@ -196,6 +196,7 @@ public:
 	void StopTweening();
 	void Sleep( float time );
 	void QueueCommand( const CString& sCommandName );
+	void QueueMessage( const CString& sMessageName );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
@@ -529,6 +530,7 @@ public:
 	static int draworder( T* p, lua_State *L )			{ p->SetDrawOrder(IArg(1)); return 0; }
 	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1)); return 0; }
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
+	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
 
 	static void Register(lua_State *L) {
   		ADD_METHOD( sleep )
@@ -620,6 +622,7 @@ public:
 		ADD_METHOD( draworder )
 		ADD_METHOD( playcommand )
 		ADD_METHOD( queuecommand )
+		ADD_METHOD( queuemessage )
 		Luna<T>::Register( L );
 	}
 };

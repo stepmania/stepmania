@@ -41,6 +41,7 @@ ActorCommands::ActorCommands( const CString &sCommands )
 				sName == "cullmode" ||
 				sName == "playcommand" ||
 				sName == "queuecommand" ||
+				sName == "queuemessage" ||
 				sName == "settext";
 
 			for( unsigned i=1; i<cmd.m_vsArgs.size(); i++ )
