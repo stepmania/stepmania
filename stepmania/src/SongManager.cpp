@@ -14,6 +14,7 @@
 #include "IniFile.h"
 #include "RageLog.h"
 #include "NotesLoaderDWI.h"
+#include "BannerCache.h"
 
 #include "GameState.h"
 #include "PrefsManager.h"
@@ -199,6 +200,9 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 
 		/* Add this group to the group array. */
 		AddGroup(sDir, sGroupDirName);
+
+		/* Cache and load the group banner. */
+		BANNERCACHE->CacheBanner( GetGroupBannerPath(sGroupDirName) );
 	}
 	
 	if( ld ) {

@@ -85,7 +85,7 @@ void FadingBanner::BeforeChange()
 }
 
 /* If this returns false, the banner couldn't be loaded. */
-bool FadingBanner::LoadFromCachedBanner( const CString &path )
+void FadingBanner::LoadFromCachedBanner( const CString &path )
 {
 	/* No matter what we load, ensure we don't fade to a stale path. */
 	m_sPendingBanner = "";
@@ -95,25 +95,12 @@ bool FadingBanner::LoadFromCachedBanner( const CString &path )
 		/* The actual file is already cached.  Use it. */
 		BeforeChange();
 		m_Banner[GetBackIndex()].Load( Banner::BannerTex(path) );
-		return true;
+		return;
 	}
 
 	/* It's not loaded.  Try to load the low quality version. */
 	RageTextureID ID = BANNERCACHE->LoadCachedBanner( path );
 	if( !TEXTUREMAN->IsTextureRegistered(ID) )
-		return false;
-
-	BeforeChange();
-	m_Banner[GetBackIndex()].Load( ID );
-	m_sPendingBanner = path;
-	m_PendingTimer.GetDeltaTime(); /* reset */
-
-	return true;
-}
-
-void FadingBanner::LoadFromSong( Song* pSong )
-{
-	if( !LoadFromCachedBanner(pSong->GetBannerPath()) )
 	{
 		/* Oops.  We couldn't load a banner quickly.  We can load the actual
 		 * banner, but that's slow, so we don't want to do that when we're moving
@@ -121,12 +108,30 @@ void FadingBanner::LoadFromSong( Song* pSong )
 		 * that's there (or load a "moving fast" banner).  Once we settle down,
 		 * we'll get called again and load the real banner. */
 
-		if( !m_bMovingFast )
-		{
-			BeforeChange();
-			m_Banner[GetBackIndex()].LoadFromSong( pSong );
-		}
+		if( m_bMovingFast )
+			return;
+
+		BeforeChange();
+// FIXME 			m_Banner[GetBackIndex()].LoadFromSong( pSong );
+		if( DoesFileExist(path) )
+			m_Banner[GetBackIndex()].Load( path );
+		else
+			m_Banner[GetBackIndex()].LoadFallback();
+
+		return;
 	}
+
+	BeforeChange();
+	m_Banner[GetBackIndex()].Load( ID );
+	m_sPendingBanner = path;
+	m_PendingTimer.GetDeltaTime(); /* reset */
+
+	return;
+}
+
+void FadingBanner::LoadFromSong( Song* pSong )
+{
+	LoadFromCachedBanner( pSong->GetBannerPath() );
 }
 
 void FadingBanner::LoadAllMusic()
@@ -134,15 +139,18 @@ void FadingBanner::LoadAllMusic()
 	BeforeChange();
 	m_Banner[GetBackIndex()].LoadAllMusic();
 }
-
+#include "SongManager.h"
 void FadingBanner::LoadFromGroup( CString sGroupName )
 {
-	BeforeChange();
-	m_Banner[GetBackIndex()].LoadFromGroup( sGroupName );
+	const CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
+	LoadFromCachedBanner( sGroupBannerPath );
+//	BeforeChange();
+//	m_Banner[GetBackIndex()].LoadFromGroup( sGroupName );
 }
 
 void FadingBanner::LoadFromCourse( Course* pCourse )
 {
+//	LoadFromCachedBanner( pCourse->GetBannerPath() );
 	BeforeChange();
 	m_Banner[GetBackIndex()].LoadFromCourse( pCourse );
 }

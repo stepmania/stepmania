@@ -65,7 +65,9 @@ void BannerCache::LoadBanner( CString BannerPath )
 				/* The file doesn't exist.  It's possible that the banner cache file is
 				 * missing, so try to create it.  Don't do this first, for efficiency. */
 				LOG->Trace( "Cached banner load of '%s' ('%s') failed, trying to cache ...", BannerPath.c_str(), CachePath.c_str() );
-				CacheBanner( BannerPath );
+				/* Skip the up-to-date check; it failed to load, so it can't be up
+				 * to date. */
+				CacheBannerInternal( BannerPath );
 				continue;
 			}
 			else
@@ -279,22 +281,35 @@ void BannerCache::UncacheBanner( CString BannerPath )
 }
 #endif
 
+
 /* We write the cache even if we won't use it, so we don't have to recache everything
  * if the memory or settings change. */
 void BannerCache::CacheBanner( CString BannerPath )
 {
+	if( !DoesFileExist(BannerPath) )
+		return;
+
 	const CString CachePath = GetBannerCachePath(BannerPath);
 
-	/* Check the full file hash.  If it's the same, don't recache. */
-	const unsigned FullHash = GetHashForFile( BannerPath );
+	/* Check the full file hash.  If it's the loaded and identical, don't recache. */
 	if( DoesFileExist(CachePath) )
 	{
 		unsigned CurFullHash;
+		const unsigned FullHash = GetHashForFile( BannerPath );
 		if( BannerData.GetValueU( BannerPath, "FullHash", CurFullHash ) &&
 			CurFullHash == FullHash )
+		{
+			/* It's identical.  Just load it. */
+			LoadBanner( BannerPath );
 			return;
+		}
 	}
 
+	CacheBannerInternal( BannerPath );
+}
+
+void BannerCache::CacheBannerInternal( CString BannerPath )
+{
 	SDL_Surface *img = IMG_Load( BannerPath );
 	if(img == NULL)
 		RageException::Throw( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );
@@ -386,6 +401,7 @@ void BannerCache::CacheBanner( CString BannerPath )
 		img = dst;
 	}
 
+	const CString CachePath = GetBannerCachePath(BannerPath);
 	mySDL_SaveSurface( img, CachePath );
 
 	if( PREFSMAN->m_bBannerCache )
@@ -408,7 +424,7 @@ void BannerCache::CacheBanner( CString BannerPath )
 	BannerData.SetValue ( BannerPath, "Path", CachePath );
 	BannerData.SetValueI( BannerPath, "Width", src_width );
 	BannerData.SetValueI( BannerPath, "Height", src_height );
-	BannerData.SetValueU( BannerPath, "FullHash", FullHash );
+	BannerData.SetValueU( BannerPath, "FullHash", GetHashForFile( BannerPath ) );
 	/* Remember this, so we can hint CroppedSprite. */
 	BannerData.SetValueB( BannerPath, "Rotated", WasRotatedBanner );
 	BannerData.WriteFile();

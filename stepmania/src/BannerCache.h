@@ -13,6 +13,7 @@ class BannerCache
 
 	static CString GetBannerCachePath( CString BannerPath );
 	void UnloadAllBanners();
+	void CacheBannerInternal( CString BannerPath );
 
 public:
 	BannerCache();

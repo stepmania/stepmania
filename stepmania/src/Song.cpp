@@ -374,7 +374,7 @@ bool Song::LoadFromSongDir( CString sDir )
 			return false;
 	}
 
-	/* Load the cached banner, if it's not loaded already. */
+	/* Load the cached banners, if it's not loaded already. */
 	if( HasBanner() )
 		BANNERCACHE->LoadBanner( GetBannerPath() );
 
