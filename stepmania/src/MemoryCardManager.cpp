@@ -94,13 +94,13 @@ void MemoryCardManager::Update( float fDelta )
 				
 				if( find(vDisconnects.begin(),vDisconnects.end(),m_Device[p]) != vDisconnects.end() )	// assigned card was disconnected
 				{
+					m_pDriver->Unmount(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
+
 					m_Device[p].MakeBlank();
 					m_soundDisconnect.Play();
 
 					if( PROFILEMAN->ProfileWasLoadedFromMemoryCard((PlayerNumber)p) )
 						PROFILEMAN->UnloadProfile( (PlayerNumber)p );
-
-					m_pDriver->Unmount(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
 				}
 			}
 		}
