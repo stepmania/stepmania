@@ -354,7 +354,6 @@ void ScreenManager::Update( float fDeltaTime )
 
 	if(m_DelayedScreen.size() != 0)
 	{
-		LOG->Trace("loading");
 		/* We have a screen to display.  Delete the current screens and load it. */
 		m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
 		m_ScreenStack.clear();
