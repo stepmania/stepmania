@@ -79,15 +79,15 @@ InputHandler_DInput::InputHandler_DInput()
 	if ( hr != DI_OK )
 		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: DirectInputCreate") );
 
-	LOG->Trace( "InputHandler_DInput::IDirectInput_EnumDevices(DIDEVTYPE_KEYBOARD)" );
-	hr = IDirectInput_EnumDevices(dinput, DIDEVTYPE_KEYBOARD, EnumDevices, NULL, DIEDFL_ATTACHEDONLY );
+	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_KEYBOARD)" );
+	hr = dinput->EnumDevices( DIDEVTYPE_KEYBOARD, EnumDevices, NULL, DIEDFL_ATTACHEDONLY );
 	if ( hr != DI_OK )
-		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput_EnumDevices") );
+		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
-	LOG->Trace( "InputHandler_DInput::IDirectInput_EnumDevices(DIDEVTYPE_JOYSTICK)" );
-	hr = IDirectInput_EnumDevices(dinput, DIDEVTYPE_JOYSTICK, EnumDevices, NULL, DIEDFL_ATTACHEDONLY );
+	LOG->Trace( "InputHandler_DInput: IDirectInput::EnumDevices(DIDEVTYPE_JOYSTICK)" );
+	hr = dinput->EnumDevices( DIDEVTYPE_JOYSTICK, EnumDevices, NULL, DIEDFL_ATTACHEDONLY );
 	if ( hr != DI_OK )
-		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput_EnumDevices") );
+		RageException::Throw( hr_ssprintf(hr, "InputHandler_DInput: IDirectInput::EnumDevices") );
 
 	unsigned i;
 	for( i = 0; i < Devices.size(); ++i )
