@@ -347,7 +347,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 
 		/* We're already underrunning, which means the play cursor has passed valid
 		 * data.  Let's move the cursor forward. */
-		if( buffer_bytes_filled < writeahead &&
+		if( buffer_bytes_filled < buffersize &&
 		   (!contained(first_byte_filled, write_cursor, cursorstart) ||
 		    !contained(first_byte_filled, write_cursor, cursorend)) )
 		{
@@ -365,9 +365,6 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 
 			buffer_bytes_filled = no_write_zone_size;
 			write_cursor = cursorend;
-
-			/* Don't register another buffer underrun until the play cursor
-			 * passes the new write cursor. */
 		}
 	}
 
