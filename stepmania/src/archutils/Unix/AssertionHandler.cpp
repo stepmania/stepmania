@@ -44,6 +44,29 @@ extern "C" void __assert_perror_fail( int errnum, const char *file, unsigned int
 #endif
 }
 
+/* Catch unhandled C++ exceptions.  Note that this works in g++ even with -fno-exceptions, in
+ * which case it'll be called if any exceptions are thrown at all. */
+#include <cxxabi.h>
+void UnexpectedExceptionHandler()
+{
+	type_info *pException = abi::__cxa_current_exception_type();
+	char const *pName = pException->name();
+	int iStatus = -1;
+	char *pDem = abi::__cxa_demangle( pName, 0, 0, &iStatus );
+
+	const CString error = ssprintf("Unhandled exception: %s", iStatus? pName:pDem);
+#if defined(CRASH_HANDLER)
+	sm_crash( error );
+#else
+	HandleException( error );
+#endif
+}
+
+void InstallExceptionHandler()
+{
+	set_terminate( UnexpectedExceptionHandler );
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.

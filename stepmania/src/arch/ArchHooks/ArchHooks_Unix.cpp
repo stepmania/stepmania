@@ -7,6 +7,7 @@
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #include "archutils/Unix/EmergencyShutdown.h"
+#include "archutils/Unix/AssertionHandler.h"
 #include <unistd.h>
 #include "RageUtil.h"
 #include <sys/time.h>
@@ -110,6 +111,8 @@ ArchHooks_Unix::ArchHooks_Unix()
 	 * This might blow up, so be sure to do it after the crash handler. */
 	SignalHandler::OnClose( EmergencyShutdown );
 
+	InstallExceptionHandler();
+	
 #if defined(HAVE_TLS)
 	TestTLS();
 #endif
