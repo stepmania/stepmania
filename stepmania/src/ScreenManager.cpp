@@ -36,9 +36,6 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 
 #define STATS_X							THEME->GetMetricF("ScreenSystemLayer","StatsX")
 #define STATS_Y							THEME->GetMetricF("ScreenSystemLayer","StatsY")
-#define CREDITS_COLOR					THEME->GetMetricC("ScreenSystemLayer","CreditsColor")
-#define CREDITS_SHADOW_LENGTH			THEME->GetMetricF("ScreenSystemLayer","CreditsShadowLength")
-#define CREDITS_ZOOM					THEME->GetMetricF("ScreenSystemLayer","CreditsZoom")
 #define PLAYER_INFO_PRESS_START			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoPressStart")
 #define PLAYER_INFO_INSERT_CARD			THEME->GetMetric ("ScreenSystemLayer","PlayerInfoInsertCard")
 #define PLAYER_INFO_NO_CARD				THEME->GetMetric ("ScreenSystemLayer","PlayerInfoNoCard")
@@ -167,10 +164,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 {
 	m_textCredits.LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
 	m_textCredits.SetName( "Credits" );
-	SET_XY( &m_textCredits );
-	m_textCredits.SetZoom( CREDITS_ZOOM );
-	m_textCredits.SetDiffuse( CREDITS_COLOR );
-	m_textCredits.SetShadowLength( CREDITS_SHADOW_LENGTH );
+	SET_XY_AND_ON_COMMAND( &m_textCredits );
 
 	CString sCredits;
 	switch( PREFSMAN->m_iCoinMode )
@@ -200,10 +194,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	{
 		m_textPlayerInfo[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
 		m_textPlayerInfo[p].SetName( ssprintf("PlayerInfoP%d",p+1 ) );
-		SET_XY( &m_textPlayerInfo[p] );
-		m_textPlayerInfo[p].SetZoom( CREDITS_ZOOM );
-		m_textPlayerInfo[p].SetDiffuse( CREDITS_COLOR );
-		m_textPlayerInfo[p].SetShadowLength( CREDITS_SHADOW_LENGTH );
+		SET_XY_AND_ON_COMMAND( &m_textPlayerInfo[p] );
 
 		CString sPlayerInfo;
 		if( GAMESTATE->m_bSideIsJoined[p] )
