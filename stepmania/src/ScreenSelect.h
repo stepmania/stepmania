@@ -43,7 +43,6 @@ protected:
 
 	MenuElements m_Menu;
 	BGAnimation m_BGAnimations[MAX_CHOICES];
-
 	vector<ModeChoice>	m_aModeChoices;		// derived classes should look here for what choices are available
 };
 

@@ -10,6 +10,15 @@
 -----------------------------------------------------------------------------
 */
 
+/*
+TODO:
+1. FIX TIMER
+2. MAKE 2PLAYER SUPPORT WORK CORRECTLY
+3. FIX THE MODE SWITCHER FOR EXTRAMIX FOR 2 PLAYER
+3a. MAKE IT METRICABLE
+*/
+
+
 #include "MusicBannerWheel.h"
 #include "RageUtil.h"
 #include "GameState.h"

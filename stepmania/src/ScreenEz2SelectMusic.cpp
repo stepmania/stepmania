@@ -93,11 +93,6 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListFrame );
 
-	m_Guide.Load( THEME->GetPathToG("ScreenEz2SelectMusic guide"));
-	m_Guide.SetXY( GUIDE_X, GUIDE_Y );
-	this->AddChild( &m_Guide );
-
-
 	m_MusicBannerWheel.SetX(SCROLLING_LIST_X);
 	m_MusicBannerWheel.SetY(SCROLLING_LIST_Y);
 
@@ -151,6 +146,10 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 
 			m_iSelection[p] = 0;
 		}
+
+		m_Guide.Load( THEME->GetPathToG("ScreenEz2SelectMusic guide"));
+		m_Guide.SetXY( GUIDE_X, GUIDE_Y );
+		this->AddChild( &m_Guide );
 
 		m_InfoFrame.Load( THEME->GetPathToG("ScreenEz2SelectMusic infoframe") );
 		m_InfoFrame.SetXY( INFOFRAME_X, INFOFRAME_Y );
