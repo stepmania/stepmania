@@ -137,8 +137,9 @@ protected:
 	AutoActor			m_FullCombo[NUM_PLAYERS];
 	bool m_bFailed;
 
-	// sound effects for other gametypes
+	RageSound	m_soundStart;	// sound played if the player passes or fails
 
+	// sound effects for other gametypes
 	RageSound	m_sndPassFail;	// sound played if the player passes or fails
 	bool m_bPassFailTriggered; // has the pass / fail sound been played yet?
 	RageTimer m_timerSoundSequences; // timer used for triggering sounds.

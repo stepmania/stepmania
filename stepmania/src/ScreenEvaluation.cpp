@@ -267,6 +267,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	m_Menu.Load( m_sName );
 	this->AddChild( &m_Menu );
 
+	//
+	// load pass/fail sound
+	//
 	if(m_Type==stage)
 	{
 		int snd=0;
@@ -293,6 +296,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		m_sndPassFail.Load(THEME->GetPathToS("ScreenEvaluationStage Passed",false));
 	//	m_sndPassFail.Play();
 	}
+
+	
+	//
+	// load other sounds
+	//
+	m_soundStart.Load( THEME->GetPathToS("ScreenEvaluation start") );
+
 	//
 	// init banner area
 	//
@@ -1309,6 +1319,8 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		m_Grades[p].SettleImmediately();
 
 	GAMESTATE->m_iRoundSeed = rand();
+
+	m_soundStart.Play();
 
 	if( PREFSMAN->m_bEventMode )
 	{
