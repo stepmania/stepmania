@@ -10,10 +10,6 @@
 #include "CommonMetrics.h"
 
 
-const float SCORE_TWEEN_TIME = 0.2f;
-const int NUM_SCORE_DIGITS	=	9;
-
-
 ScoreDisplayNormal::ScoreDisplayNormal()
 {
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );

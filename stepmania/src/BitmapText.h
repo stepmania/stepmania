@@ -6,6 +6,9 @@
 #include "Actor.h"
 class RageTexture;
 
+class Font;
+
+
 template<class T>
 class LunaBitmapText : public LunaActor<T>
 {
@@ -23,8 +26,6 @@ public:
 	}
 };
 
-
-class Font;
 
 class BitmapText : public Actor
 {

@@ -6,8 +6,6 @@
 #include <set>
 #include <map>
 class Actor;
-struct XNode;
-
 
 
 class MessageManager
