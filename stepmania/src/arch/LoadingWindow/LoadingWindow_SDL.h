@@ -4,12 +4,8 @@
 #include "LoadingWindow.h"
 #include "SDL.h"
 
-#ifdef _XBOX
-#define XFONT_TRUETYPE 
-#include <xfont.h>
-#endif
-
-class LoadingWindow_SDL: public LoadingWindow {
+class LoadingWindow_SDL: public LoadingWindow
+{
 	SDL_Surface *loading_screen;
 
 public:
@@ -17,14 +13,6 @@ public:
 	~LoadingWindow_SDL();
 
 	void Paint();
-
-#ifdef _XBOX
-
-	void SetText(CString str);
-
-	CString m_cstrText ;
-	XFONT*      m_pConsoleTTF;    // Pointer to the Arial TrueTypeFont
-#endif 
 };
 
 #define HAVE_LOADING_WINDOW_SDL
