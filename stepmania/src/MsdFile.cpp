@@ -139,7 +139,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 	int fd;
 
 	/* Open a file. */
-	if( (fd = open(sNewPath, O_RDONLY, 0)) == -1 )
+	if( (fd = open(sNewPath, O_RDONLY|O_BINARY, 0)) == -1 )
 	{
 		error = strerror(errno);
 		return false;
@@ -153,7 +153,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 	int iBytesRead = read( fd, szFileString, iBufferSize );
 	close( fd );
 
-	ASSERT( iBufferSize > iBytesRead );
+	ASSERT( iBufferSize >= iBytesRead );
 
 	ReadBuf(szFileString, iBytesRead);
 
