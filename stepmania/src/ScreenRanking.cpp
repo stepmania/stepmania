@@ -20,25 +20,14 @@
 #include "PrefsManager.h"
 #include "NoteData.h"
 #include "NoteDataUtil.h"
+#include "ActorUtil.h"
 
 static int g_iLastSongShown = 0;
 
 
-#define CATEGORY_X					THEME->GetMetricF("ScreenRanking","CategoryX")
-#define CATEGORY_Y					THEME->GetMetricF("ScreenRanking","CategoryY")
 #define CATEGORY_WIDTH				THEME->GetMetricF("ScreenRanking","CategoryWidth")
-#define CATEGORY_ON_COMMAND			THEME->GetMetric ("ScreenRanking","CategoryOnCommand")
-#define CATEGORY_OFF_COMMAND		THEME->GetMetric ("ScreenRanking","CategoryOffCommand")
-#define BANNER_X					THEME->GetMetricF("ScreenRanking","BannerX")
-#define BANNER_Y					THEME->GetMetricF("ScreenRanking","BannerY")
 #define BANNER_WIDTH				THEME->GetMetricF("ScreenRanking","BannerWidth")
 #define BANNER_HEIGHT				THEME->GetMetricF("ScreenRanking","BannerHeight")
-#define BANNER_ON_COMMAND			THEME->GetMetric ("ScreenRanking","BannerOnCommand")
-#define BANNER_OFF_COMMAND			THEME->GetMetric ("ScreenRanking","BannerOffCommand")
-#define TYPE_X						THEME->GetMetricF("ScreenRanking","TypeX")
-#define TYPE_Y						THEME->GetMetricF("ScreenRanking","TypeY")
-#define TYPE_ON_COMMAND				THEME->GetMetric ("ScreenRanking","TypeOnCommand")
-#define TYPE_OFF_COMMAND			THEME->GetMetric ("ScreenRanking","TypeOffCommand")
 #define LINE_SPACING_X				THEME->GetMetricF("ScreenRanking","LineSpacingX")
 #define LINE_SPACING_Y				THEME->GetMetricF("ScreenRanking","LineSpacingY")
 #define BULLETS_START_X				THEME->GetMetricF("ScreenRanking","BulletsStartX")
@@ -91,14 +80,18 @@ const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 {
+	m_sprCategory.SetName( "Category" );
 	this->AddChild( &m_sprCategory );
 
+	m_banner.SetName( "Banner" );
 	this->AddChild( &m_banner );
 
+	m_textCategory.SetName( "Category" );
 	m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking title") );
 	m_textCategory.EnableShadow( false );
 	this->AddChild( &m_textCategory );
 
+	m_sprType.SetName( "Type" );
 	this->AddChild( &m_sprType );
 
 
@@ -320,17 +313,13 @@ void ScreenRanking::SetPage( PageToShow pts )
 
 	// Reset
 	m_sprCategory.Reset();
-	m_sprCategory.SetXY( CATEGORY_X, CATEGORY_Y );
-	m_sprCategory.Command( CATEGORY_ON_COMMAND );
+	SET_XY_AND_ON_COMMAND( m_sprCategory );
 	m_banner.Reset();
-	m_banner.SetXY( BANNER_X, BANNER_Y );
-	m_banner.Command( BANNER_ON_COMMAND );
+	SET_XY_AND_ON_COMMAND( m_banner );
 	m_textCategory.Reset();
-	m_textCategory.SetXY( CATEGORY_X, CATEGORY_Y );
-	m_textCategory.Command( CATEGORY_ON_COMMAND );
+	SET_XY_AND_ON_COMMAND( m_textCategory );
 	m_sprType.Reset();
-	m_sprType.SetXY( TYPE_X, TYPE_Y );
-	m_sprType.Command( TYPE_ON_COMMAND );
+	SET_XY_AND_ON_COMMAND( m_sprType );
 	
 	for( l=0; l<NUM_RANKING_LINES; l++ )
 	{
@@ -582,10 +571,10 @@ void ScreenRanking::TweenPageOffScreen()
 {
 	int l, d;
 
-	m_sprCategory.Command( CATEGORY_OFF_COMMAND );
-	m_banner.Command( BANNER_OFF_COMMAND );
-	m_sprType.Command( TYPE_OFF_COMMAND );
-	m_textCategory.Command( CATEGORY_OFF_COMMAND );
+	OFF_COMMAND( m_sprCategory );
+	OFF_COMMAND( m_banner );
+	OFF_COMMAND( m_sprType );
+	OFF_COMMAND( m_textCategory );
 
 	for( l=0; l<NUM_RANKING_LINES; l++ )
 	{
