@@ -28,6 +28,10 @@
 #define PID_BASED_THREADS
 #endif
 
+#if defined(WIN32)
+#include "archutils/Win32/crash.h"
+#endif
+
 #define MAX_THREADS 128
 
 static const unsigned int UnknownThreadID = 0xFFFFFFFF;
@@ -480,9 +484,12 @@ RageMutexImpl::~RageMutexImpl()
 }
 
 
-void CrashDeadlocked()
+static ThreadSlot *FindThread( DWORD id )
 {
-	sm_crash();
+	for( int i = 0; i < MAX_THREADS; ++i )
+		if( g_ThreadSlots[i].threadid == id )
+			return &g_ThreadSlots[i];
+	return NULL;
 }
 
 void RageMutexImpl::Lock()
@@ -521,11 +528,8 @@ void RageMutexImpl::Lock()
 		}
 	}
 
-	/* XXX: We want a stack trace of *all* threads if this happened, so we can
-	 * tell who we're deadlocked with.  We can't use CHECKPOINT, since that uses
-	 * locks.  Crash in a function, so we can see it on the stack (so we know
-	 * we didn't crash somewhere else above.)   */
-	CrashDeadlocked();
+	ThreadSlot *slot = FindThread( LockedBy );
+	Crash_BacktraceThread( slot? slot->ThreadHandle:NULL );
 }
 
 void RageMutexImpl::Unlock()
