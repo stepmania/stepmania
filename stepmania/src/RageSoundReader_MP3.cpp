@@ -461,7 +461,8 @@ int RageSoundReader_MP3::FindOffsetFix()
 	mad->first_frame = true;
 
 	/* Read a couple frames, to make sure we're synced. */
-	for( i = 0; i < 5; ++i )
+	bool Silent = true;
+	for( i = 0; Silent || i < 5; ++i )
 	{
 		int ret = do_mad_frame_decode();
 		if( ret == 0 )
@@ -473,6 +474,20 @@ int RageSoundReader_MP3::FindOffsetFix()
 			return false; /* it set the error */
 
 		synth_output();
+
+		/* If this frame is silent, it's not an appropriate sample.  Find
+		 * a frame with actual sound in it. */
+		Silent = true;
+		for( unsigned j = 0; Silent && j < mad->outleft; ++j )
+			if( mad->outbuf[j] )
+				Silent=false;
+	}
+
+	if( Silent )
+	{
+		/* The sound didn't have any non-silent frames. */
+		MADLIB_rewind();
+		return true;
 	}
 
 	/* Clear the TOC cache.  We might have cached bogus values. */
@@ -524,7 +539,6 @@ int RageSoundReader_MP3::FindOffsetFix()
 	}
 	else
 		this->OffsetFix = 0;
-
 
 	delete [] cpy;
 	MADLIB_rewind();
