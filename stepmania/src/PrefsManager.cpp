@@ -849,7 +849,8 @@ Premium	PrefsManager::GetPremium()
 
 
 #include "LuaFunctions.h"
-LuaFunction_NoArgs( EventMode, PREFSMAN->m_bEventMode )
+LuaFunction_NoArgs( EventMode,		PREFSMAN->m_bEventMode )
+LuaFunction_NoArgs( ShowCaution,	PREFSMAN->m_bShowCaution )
 
 
 /*
