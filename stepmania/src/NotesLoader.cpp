@@ -7,7 +7,7 @@ bool NotesLoader::Loadable( CString sPath )
 {
 	CStringArray list;
 	GetApplicableFiles( sPath, list );
-	return list.GetSize() != 0;
+	return !list.empty();
 }
 
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )

@@ -72,7 +72,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 			m_colorTapTweens.Add( color );
 	} while( bSuccess );
 
-	if( m_colorTapTweens.GetSize() == 0 )
+	if( m_colorTapTweens.empty() )
 		m_colorTapTweens.Add( RageColor(1,1,1,1) );
 
 	fclose( fp );
@@ -176,17 +176,17 @@ void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, RageColor &colorLeadi
 		return;
 	}
 
-	float fLeadingColorIndex  = fPercentThroughColorsLeading * m_colorTapTweens.GetSize();
-	float fTrailingColorIndex = fPercentThroughColorsTrailing* m_colorTapTweens.GetSize();
+	float fLeadingColorIndex  = fPercentThroughColorsLeading * m_colorTapTweens.size();
+	float fTrailingColorIndex = fPercentThroughColorsTrailing* m_colorTapTweens.size();
 
 	float fLeadingColorWeightOf2 = fLeadingColorIndex - int(fLeadingColorIndex);
 	int iLeadingColor1 = int(fLeadingColorIndex);
-	int iLeadingColor2 = (iLeadingColor1 + 1) % m_colorTapTweens.GetSize();
+	int iLeadingColor2 = (iLeadingColor1 + 1) % m_colorTapTweens.size();
 	colorLeadingOut = m_colorTapTweens[iLeadingColor1] * (1-fLeadingColorWeightOf2) + m_colorTapTweens[iLeadingColor2] * fLeadingColorWeightOf2;
 
 	float fTrailingColorWeightOf2 = fTrailingColorIndex - int(fTrailingColorIndex);
 	int iTrailingColor1 = int(fTrailingColorIndex);
-	int iTrailingColor2 = (iTrailingColor1 + 1) % m_colorTapTweens.GetSize();
+	int iTrailingColor2 = (iTrailingColor1 + 1) % m_colorTapTweens.size();
 	colorTrailingOut = m_colorTapTweens[iTrailingColor1] * (1-fTrailingColorWeightOf2) + m_colorTapTweens[iTrailingColor2] * fTrailingColorWeightOf2;
 }
 

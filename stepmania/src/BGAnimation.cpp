@@ -30,7 +30,7 @@ BGAnimation::~BGAnimation()
 
 void BGAnimation::Unload()
 {
-    for( int i=0; i<m_Layers.GetSize(); i++ )
+    for( unsigned i=0; i<m_Layers.size(); i++ )
 		delete m_Layers[i];
 	m_Layers.clear();
 }
@@ -64,7 +64,7 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 
 	SortCStringArray( asImagePaths );
 
-	for( int i=0; i<asImagePaths.GetSize(); i++ )
+	for( unsigned i=0; i<asImagePaths.size(); i++ )
 	{
 		const CString sPath = asImagePaths[i];
 		CString sDir, sFName, sExt;
@@ -109,19 +109,19 @@ void BGAnimation::LoadFromVisualization( CString sVisPath, CString sSongBGPath )
 
 void BGAnimation::Update( float fDeltaTime )
 {
-	for( int i=0; i<m_Layers.GetSize(); i++ )
+	for( unsigned i=0; i<m_Layers.size(); i++ )
 		m_Layers[i]->Update( fDeltaTime );
 }
 
 void BGAnimation::DrawPrimitives()
 {
-	for( int i=0; i<m_Layers.GetSize(); i++ )
+	for( unsigned i=0; i<m_Layers.size(); i++ )
 		m_Layers[i]->Draw();
 }
 	
 void BGAnimation::GainingFocus()
 {
-	for( int i=0; i<m_Layers.GetSize(); i++ )
+	for( unsigned i=0; i<m_Layers.size(); i++ )
 		m_Layers[i]->GainingFocus();
 
 	SetDiffuse( RageColor(1,1,1,1) );
@@ -129,12 +129,12 @@ void BGAnimation::GainingFocus()
 
 void BGAnimation::LosingFocus()
 {
-	for( int i=0; i<m_Layers.GetSize(); i++ )
+	for( unsigned i=0; i<m_Layers.size(); i++ )
 		m_Layers[i]->LosingFocus();
 }
 
 void BGAnimation::SetDiffuse( const RageColor &c )
 {
-	for( int i=0; i<m_Layers.GetSize(); i++ ) 
+	for( unsigned i=0; i<m_Layers.size(); i++ ) 
 		m_Layers[i]->SetDiffuse(c);
  }

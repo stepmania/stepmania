@@ -45,7 +45,7 @@ ScrollingList::~ScrollingList()
 
 void ScrollingList::Unload()
 {
-	for( int i=0; i<m_apSprites.GetSize(); i++ )
+	for( unsigned i=0; i<m_apSprites.size(); i++ )
 		delete m_apSprites[i];
 	m_apSprites.clear();
 }
@@ -57,7 +57,7 @@ in the scrolling list
 void ScrollingList::Load( const CStringArray& asGraphicPaths )
 {
 	Unload();
-	for( int i=0; i<asGraphicPaths.GetSize(); i++ )
+	for( unsigned i=0; i<asGraphicPaths.size(); i++ )
 	{
 		Sprite* pNewSprite = new Sprite;
 		pNewSprite->Load( asGraphicPaths[i] );
@@ -73,9 +73,9 @@ Make the entire list shuffle left
 **************************************/
 void ScrollingList::Left()
 {
-	ASSERT( m_apSprites.GetSize() > 0 );	// nothing loaded!
+	ASSERT( !m_apSprites.empty() );	// nothing loaded!
 
-	m_iSelection = (m_iSelection + m_apSprites.GetSize() - 1) % m_apSprites.GetSize();	// decrement with wrapping
+	m_iSelection = (m_iSelection + m_apSprites.size() - 1) % m_apSprites.size();	// decrement with wrapping
 	m_fSelectionLag -= 1;
 }
 
@@ -86,9 +86,9 @@ Make the entire list shuffle right
 **************************************/
 void ScrollingList::Right()
 {
-	ASSERT( m_apSprites.GetSize() > 0 );	// nothing loaded!
+	ASSERT( !m_apSprites.empty() );	// nothing loaded!
 
-	m_iSelection = (m_iSelection + 1) % m_apSprites.GetSize();	// increment with wrapping
+	m_iSelection = (m_iSelection + 1) % m_apSprites.size();	// increment with wrapping
 	m_fSelectionLag += 1;
 }
 
@@ -133,7 +133,7 @@ void ScrollingList::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	if( m_apSprites.GetSize() == 0 )
+	if( m_apSprites.empty() )
 		return;
 
 	// update m_fLaggingSelection
@@ -149,7 +149,7 @@ void ScrollingList::Update( float fDeltaTime )
 			m_fSelectionLag = 0;		// snap
 	}
 
-	for( int i=0; i<m_apSprites.GetSize(); i++ )
+	for( unsigned i=0; i<m_apSprites.size(); i++ )
 		m_apSprites[i]->Update( fDeltaTime );
 }
 
@@ -160,7 +160,7 @@ Draws the elements onto the screen
 *********************************/
 void ScrollingList::DrawPrimitives()
 {
-	ASSERT( m_apSprites.GetSize() > 0 );
+	ASSERT( !m_apSprites.empty() );
 
 	for( int i=(m_iNumVisible)/2; i>= 0; i-- )	// draw outside to inside
 	{
@@ -168,8 +168,8 @@ void ScrollingList::DrawPrimitives()
 		int iIndexToDraw2 = m_iSelection + i;
 		
 		// wrap IndexToDraw*
-		iIndexToDraw1 = (iIndexToDraw1 + m_apSprites.GetSize()*300) % m_apSprites.GetSize();	// make sure this is positive
-		iIndexToDraw2 = iIndexToDraw2 % m_apSprites.GetSize();
+		iIndexToDraw1 = (iIndexToDraw1 + m_apSprites.size()*300) % m_apSprites.size();	// make sure this is positive
+		iIndexToDraw2 = iIndexToDraw2 % m_apSprites.size();
 
 		ASSERT( iIndexToDraw1 >= 0 );
 

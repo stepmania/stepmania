@@ -37,22 +37,22 @@ void MusicList::AddGroup()
 void MusicList::AddSongsToGroup(const CArray<Song*,Song*> &Songs)
 {
 	// Generate what text will show in the contents for each group
-	int group = m_ContentsText.GetSize()-1;
+	unsigned group = m_ContentsText.size()-1;
 
-	m_ContentsText[group].m_iNumSongsInGroup = Songs.GetSize();
+	m_ContentsText[group].m_iNumSongsInGroup = Songs.size();
 
 	for( int c=0; c<TITLES_COLUMNS; c++ )	// foreach col
 	{
 		CString sText;
 		for( int r=0; r<TITLES_ROWS; r++ )	// foreach row
 		{
-			int iIndex = c*TITLES_ROWS + r;
-			if( iIndex >= Songs.GetSize() )
+			unsigned iIndex = c*TITLES_ROWS + r;
+			if( iIndex >= Songs.size() )
 				continue;
 
-			if( c == TITLES_COLUMNS-1 && r == TITLES_ROWS-1 && Songs.GetSize() != TITLES_COLUMNS*TITLES_ROWS )
+			if( c == TITLES_COLUMNS-1 && r == TITLES_ROWS-1 && Songs.size() != unsigned(TITLES_COLUMNS*TITLES_ROWS) )
 			{
-				sText += ssprintf( "%d more.....", Songs.GetSize() - TITLES_COLUMNS * TITLES_ROWS + 1 );
+				sText += ssprintf( "%d more.....", Songs.size() - TITLES_COLUMNS * TITLES_ROWS + 1 );
 				continue;
 			}
 
@@ -65,7 +65,7 @@ void MusicList::AddSongsToGroup(const CArray<Song*,Song*> &Songs)
 			}
 			sText += sTitle + "\n";
 		}
-		m_ContentsText[m_ContentsText.GetSize()-1].ContentsText[c] = sText;
+		m_ContentsText[m_ContentsText.size()-1].ContentsText[c] = sText;
 	}
 
 }

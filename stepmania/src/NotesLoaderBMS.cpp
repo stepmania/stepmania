@@ -161,10 +161,10 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 				arrayNotes.Add( bThisIsANote );
 			}
 
-			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
+			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
 			//LOG->Trace( "%s:%s: iMeasureNo = %d, iNoteNum = %d, iNumNotesInThisMeasure = %d", 
 			//	valuename.GetString(), sNoteData.GetString(), iMeasureNo, iNoteNum, iNumNotesInThisMeasure );
-			for( int j=0; j<iNumNotesInThisMeasure; j++ )
+			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] )
 				{
@@ -258,11 +258,11 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	CStringArray arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
-	if( arrayBMSFileNames.GetSize() == 0 )
+	if( arrayBMSFileNames.empty() )
 		throw RageException( "Couldn't find any BMS files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the BMS files
-	for( int i=0; i<arrayBMSFileNames.GetSize(); i++ ) 
+	for( unsigned i=0; i<arrayBMSFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
 
@@ -364,10 +364,10 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 				arrayNotes.Add( iNote );
 			}
 
-			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
+			const unsigned iNumNotesInThisMeasure = arrayNotes.size();
 			//LOG->Trace( "%s:%s: iMeasureNo = %d, iBMSTrackNo = %d, iNumNotesInThisMeasure = %d", 
 			//	valuename.GetString(), sNoteData.GetString(), iMeasureNo, iBMSTrackNo, iNumNotesInThisMeasure );
-			for( int j=0; j<iNumNotesInThisMeasure; j++ )
+			for( unsigned j=0; j<iNumNotesInThisMeasure; j++ )
 			{
 				if( arrayNotes[j] == 0 )
 					continue;
@@ -511,7 +511,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 						{
 							// find the BPM at the time of this freeze
 							float fBPM = -1;
-							for( int i=0; i<out.m_BPMSegments.GetSize()-1; i++ )
+							for( unsigned i=0; i<out.m_BPMSegments.size()-1; i++ )
 							{
 								if( out.m_BPMSegments[i].m_fStartBeat <= fFreezeStartBeat && 
 									out.m_BPMSegments[i+1].m_fStartBeat > fFreezeStartBeat )
@@ -522,7 +522,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 							}
 							// the BPM segment of this beat is the last BPM segment
 							if( fBPM == -1 )
-								fBPM = out.m_BPMSegments[out.m_BPMSegments.GetSize()-1].m_fBPM;
+								fBPM = out.m_BPMSegments[out.m_BPMSegments.size()-1].m_fBPM;
 
 							fFreezeSecs = (float)atof(value_data)/(fBPM*0.81f);	// I have no idea what units these are in, so I experimented until finding this factor.
 							break;
@@ -548,7 +548,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		}
 	}
 
-	for( i=0; i<out.m_BPMSegments.GetSize(); i++ )
+	for( i=0; i<out.m_BPMSegments.size(); i++ )
 		LOG->Trace( "There is a BPM change at beat %f, BPM %f, index %d", 
 					out.m_BPMSegments[i].m_fStartBeat, out.m_BPMSegments[i].m_fBPM, i );
 

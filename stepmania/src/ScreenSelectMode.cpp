@@ -225,21 +225,21 @@ void ScreenSelectMode::RefreshModeChoices()
 	int iNumSidesJoined = GAMESTATE->GetNumSidesJoined();
 
 	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_aPossibleModeChoices );
-	ASSERT( m_aPossibleModeChoices.GetSize() > 0 );
+	ASSERT( !m_aPossibleModeChoices.empty() );
 
 	int i;
 
 	// remove ModeChoices that won't work with the current number of players
-	for( i=m_aPossibleModeChoices.GetSize()-1; i>=0; i-- )
+	for( i=m_aPossibleModeChoices.size()-1; i>=0; i-- )
 		if( m_aPossibleModeChoices[i].numSidesJoinedToPlay != iNumSidesJoined )
 			m_aPossibleModeChoices.RemoveAt( i );
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 
 	CStringArray asGraphicPaths;
-	for( i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
+	for( unsigned j=0; j<m_aPossibleModeChoices.size(); j++ )
 	{
-		const ModeChoice& choice = m_aPossibleModeChoices[i];
+		const ModeChoice& choice = m_aPossibleModeChoices[j];
 		asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName.GetString(), choice.name) ) );
 	}
 
@@ -250,7 +250,7 @@ void ScreenSelectMode::RefreshModeChoices()
 	{
 		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 
-		for( int i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
+		for( unsigned i=0; i<m_aPossibleModeChoices.size(); i++ )
 		{
 			CString sChoiceName = m_aPossibleModeChoices[i].name;
 			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName.GetString(), sChoiceName.GetString())) );	

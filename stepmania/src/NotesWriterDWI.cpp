@@ -228,35 +228,35 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", out.m_fMusicSampleLengthSeconds );
 
-	if( out.m_StopSegments.GetSize() )
+	if( !out.m_StopSegments.empty() )
 	{
 		fprintf( fp, "#FREEZE:" );
 
-		for( int i=0; i<out.m_StopSegments.GetSize(); i++ )
+		for( unsigned i=0; i<out.m_StopSegments.size(); i++ )
 		{
 			const StopSegment &fs = out.m_StopSegments[i];
 			fprintf( fp, "%.3f=%.3f", BeatToNoteRow( fs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT,
 				roundf(fs.m_fStopSeconds*1000) );
-			if( i != out.m_StopSegments.GetSize()-1 )
+			if( i != out.m_StopSegments.size()-1 )
 				fprintf( fp, "," );
 		}
 		fprintf( fp, ";\n" );
 	}
 
-	if( out.m_BPMSegments.GetSize() > 1)
+	if( out.m_BPMSegments.size() > 1)
 	{
 		fprintf( fp, "#CHANGEBPM:" );
-		for( int i=1; i<out.m_BPMSegments.GetSize(); i++ )
+		for( unsigned i=1; i<out.m_BPMSegments.size(); i++ )
 		{
 			const BPMSegment &bs = out.m_BPMSegments[i];
 			fprintf( fp, "%.3f=%.3f", BeatToNoteRow( bs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT, bs.m_fBPM );
-			if( i != out.m_BPMSegments.GetSize()-1 )
+			if( i != out.m_BPMSegments.size()-1 )
 				fprintf( fp, "," );
 		}
 		fprintf( fp, ";\n" );
 	}
 
-	for( int i=0; i<out.m_apNotes.GetSize(); i++ ) 
+	for( unsigned i=0; i<out.m_apNotes.size(); i++ ) 
 	{
 		if( -1 != out.m_apNotes[i]->m_sDescription.Find("autogen") )
 			continue;	// don't save autogen notes

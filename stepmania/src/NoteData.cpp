@@ -74,7 +74,7 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 
 	CStringArray asMeasures;
 	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
-	for( int m=0; m<asMeasures.GetSize(); m++ )	// foreach measure
+	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
 	{
 		CString &sMeasureString = asMeasures[m];
 		sMeasureString.TrimLeft();
@@ -83,19 +83,19 @@ void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
 		CStringArray asMeasureLines;
 		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
 
-		//ASSERT( asMeasureLines.GetSize() == 4  ||
-		//	    asMeasureLines.GetSize() == 8  ||
-		//	    asMeasureLines.GetSize() == 12  ||
-		//	    asMeasureLines.GetSize() == 16 );
+		//ASSERT( asMeasureLines.size() == 4  ||
+		//	    asMeasureLines.size() == 8  ||
+		//	    asMeasureLines.size() == 12  ||
+		//	    asMeasureLines.size() == 16 );
 
 
-		for( int l=0; l<asMeasureLines.GetSize(); l++ )
+		for( unsigned l=0; l<asMeasureLines.size(); l++ )
 		{
 			CString &sMeasureLine = asMeasureLines[l];
 			sMeasureLine.TrimLeft();
 			sMeasureLine.TrimRight();
 
-			const float fPercentIntoMeasure = l/(float)asMeasureLines.GetSize();
+			const float fPercentIntoMeasure = l/(float)asMeasureLines.size();
 			const float fBeat = (m + fPercentIntoMeasure) * BEATS_PER_MEASURE;
 			const int iIndex = BeatToNoteRow( fBeat );
 
@@ -571,7 +571,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			
 			for( t=0; t<m_iNumTracks; t++ )
 			{
-				int iRandTrackIndex = rand()%aiTracksLeftToMap.GetSize();
+				int iRandTrackIndex = rand()%aiTracksLeftToMap.size();
 				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
 				aiTracksLeftToMap.RemoveAt( iRandTrackIndex );
 				iTakeFromTrack[t] = iRandTrack;
@@ -632,7 +632,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			{
 				if( GetTapNote(t, r) != TAP_HOLD  &&  GetTapNote(t, r) != TAP_EMPTY )	// there is a tap note here (and not a HoldNote)
 				{
-					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.GetSize();
+					int iRandIndex = rand() % aiTracksThatCouldHaveTapNotes.size();
 					int iTo = aiTracksThatCouldHaveTapNotes[ iRandIndex ];
 					aiTracksThatCouldHaveTapNotes.RemoveAt( iRandIndex );
 	
