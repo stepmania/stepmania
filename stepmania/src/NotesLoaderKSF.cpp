@@ -102,7 +102,12 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		if( sRowString == "2222222222222" )
 			break;
 
-		ASSERT( sRowString.GetLength() == 13 );		// why 13 notes per row.  Beats me!
+		if(sRowString.size() != 13)
+		{
+			LOG->Warn("File %s had a RowString with an improper length (\"%s\"); corrupt notes ignored",
+				sPath.GetString(), sRowString.GetString());
+			return false;
+		}
 
 		// the length of a note in a row depends on TICKCOUNT
 		float fBeatThisRow = r/(float)iTickCount;
@@ -158,6 +163,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	CStringArray arrayKSFFileNames;
 	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
 
+	/* We shouldn't have been called to begin with if there were no KSFs. */
 	if( arrayKSFFileNames.empty() )
 		RageException::Throw( "Couldn't find any KSF files in '%s'", sDir.GetString() );
 
@@ -166,12 +172,19 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
-		LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes );
+		if(LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes ))
+		{
+			delete pNewNotes;
+			continue;
+		}
+
 		out.m_apNotes.push_back( pNewNotes );
 	}
 
 	CString sPath = out.GetSongDir() + arrayKSFFileNames[0];
 
+	/* XXX: We might have some corrupt KSF's; it'd be better to read global
+	 * stuff from the first successful one above. */
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
