@@ -21,9 +21,9 @@ CroppedSprite::CroppedSprite()
 	m_fCropWidth = m_fCropHeight = 100;
 }
 
-bool CroppedSprite::Load( CString sFilePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
+bool CroppedSprite::Load( CString sFilePath, RageTexturePrefs prefs )
 {
-	Sprite::Load( sFilePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
+	Sprite::Load( sFilePath, prefs );
 	CropToSize( m_fCropWidth, m_fCropHeight );
 	
 	return true;

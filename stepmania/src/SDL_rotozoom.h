@@ -22,9 +22,7 @@
 
 */
 
-SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy);
+SDL_Surface *zoomSurface(SDL_Surface * src, int dstwidth, int dstheight);
 
-/* Returns the size of the target surface for a zoomSurface() call */
-void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dstwidth, int *dstheight);
 
 #endif

@@ -141,34 +141,14 @@ void zoomSurfaceRGBA(SDL_Surface * src, SDL_Surface * dst)
 
 */
 
-void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dstwidth, int *dstheight)
-{
-    /*
-     * Sanity check zoom factors 
-     */
-    if (zoomx < VALUE_LIMIT) zoomx = VALUE_LIMIT;
-    if (zoomy < VALUE_LIMIT) zoomy = VALUE_LIMIT;
 
-    /* Calculate target size */
-    *dstwidth = (int) ((double) width * zoomx);
-    *dstheight = (int) ((double) height * zoomy);
-    if (*dstwidth < 1) *dstwidth = 1;
-    if (*dstheight < 1) *dstheight = 1;
-}
-
-SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy)
+SDL_Surface *zoomSurface(SDL_Surface * src, int dstwidth, int dstheight)
 {
     SDL_Surface *rz_dst;
-    int dstwidth, dstheight;
 
-    /*
-     * Sanity check 
-     */
+    /* Sanity check */
     if (src == NULL)
-	return (NULL);
-
-    /* Get size if target */
-    zoomSurfaceSize(src->w, src->h, zoomx, zoomy, &dstwidth, &dstheight);
+		return (NULL);
 
     /* Alloc space to completely contain the zoomed surface */
     /* Target surface is 32bit with source RGBA/ABGR ordering */

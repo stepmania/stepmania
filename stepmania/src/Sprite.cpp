@@ -43,13 +43,6 @@ Sprite::~Sprite()
 }
 
 
-bool Sprite::LoadFromTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
-{
-	LOG->Trace( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath.GetString()) );
-
-	//Init();
-	return LoadTexture( sTexturePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
-}
 
 // Sprite file has the format:
 //
@@ -59,7 +52,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath, bool bForceReload, int iMipM
 // Delay0000=1.0
 // Frame0001=3
 // Delay0000=2.0
-bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
+bool Sprite::LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs )
 {
 	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath.GetString()) );
 
@@ -93,15 +86,12 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, bool bForceReload, int iMi
 		throw RageException( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.GetString(), sTexturePath.GetString() );
 
 
-
 	// Load the texture
-	if( !LoadTexture( sTexturePath ) )
-		return FALSE;
-
+	LoadFromTexture( sTexturePath, prefs );
 
 	// Read in frames and delays from the sprite file, 
 	// overwriting the states that LoadFromTexture created.
-	for( UINT i=0; i<MAX_SPRITE_STATES; i++ )
+	for( int i=0; i<MAX_SPRITE_STATES; i++ )
 	{
 		CString sFrameKey = ssprintf( "Frame%04d", i );
 		CString sDelayKey = ssprintf( "Delay%04d", i );
@@ -141,7 +131,7 @@ void Sprite::UnloadTexture()
 	m_sTexturePath = "";
 }
 
-bool Sprite::LoadTexture( CString sTexturePath, bool bForceReload, int iMipMaps, int iAlphaBits, bool bDither, bool bStretch )
+bool Sprite::LoadFromTexture( CString sTexturePath, RageTexturePrefs prefs )
 {
 	UnloadTexture();
 

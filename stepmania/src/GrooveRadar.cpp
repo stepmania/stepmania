@@ -10,21 +10,23 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageUtil.h"
-
 #include "GrooveRadar.h"
+#include "RageUtil.h"
 #include "PrefsManager.h"
 #include "RageBitmapTexture.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "Notes.h"
+#include "RageDisplay.h"
+
+#include <math.h>
 
 
 #define LABEL_OFFSET_X( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define LABEL_OFFSET_Y( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
 
 
-float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5.0f * iValueIndex; }
+float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
 const float RADAR_EDGE_WIDTH	= 3;
 
@@ -203,7 +205,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()
 {
 	SetZoom( 0.5f );
-	SetRotation( D3DX_PI*4 );
+	SetRotation( PI*4 );
 	BeginTweening( 0.6f );
 	SetTweenZoom( 1 );
 	SetTweenRotationZ( 0 );
@@ -212,6 +214,6 @@ void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()
 void GrooveRadar::GrooveRadarValueMap::TweenOffScreen()
 {
 	BeginTweening( 0.6f );
-	SetTweenRotationZ( D3DX_PI*4 );
+	SetTweenRotationZ( PI*4 );
 	SetTweenZoom( 0 );
 }

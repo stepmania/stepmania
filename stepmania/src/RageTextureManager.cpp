@@ -77,7 +77,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath )
 //		if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
 //			pTexture = new RageMovieTexture( sTexturePath );
 //		else
-			pTexture = new RageBitmapTexture( sTexturePath );
+			pTexture = new RageBitmapTexture( sTexturePath, RageTexturePrefs() );
 
 		LOG->Trace( "RageTextureManager: Finished loading '%s'.", sTexturePath.GetString() );
 
@@ -179,7 +179,7 @@ void RageTextureManager::ReloadAll()
 	{
 		RageTexture* pTexture = i->second;
 
-		pTexture->Reload();			// this is not entirely correct.  Hints are lost! XXX
+		pTexture->Reload( RageTexturePrefs() );			// this is not entirely correct.  Hints are lost! XXX
 	}
 }
 

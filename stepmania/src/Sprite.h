@@ -27,13 +27,14 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
-	virtual bool Load( CString sFilePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false )
+	virtual bool Load( CString sFilePath ) { return Load( sFilePath, RageTexturePrefs() ); }
+	virtual bool Load( CString sFilePath, RageTexturePrefs prefs )
 	{
 		ASSERT( sFilePath != "" );
 		if( sFilePath.Right(7) == ".sprite" )
-			return LoadFromSpriteFile( sFilePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
+			return LoadFromSpriteFile( sFilePath, prefs );
 		else 
-			return LoadFromTexture( sFilePath, bForceReload, iMipMaps, iAlphaBits, bDither, bStretch );
+			return LoadFromTexture( sFilePath, prefs );
 	};
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };
@@ -58,12 +59,8 @@ public:
 	void StopUsingCustomCoords();
 
 protected:
-
-	virtual bool LoadFromTexture( CString sTexturePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
-	virtual bool LoadFromSpriteFile( CString sSpritePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
-	
-	virtual bool LoadTexture( CString sTexture, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
-
+	virtual bool LoadFromTexture( CString sTexturePath, RageTexturePrefs prefs );
+	virtual bool LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs );
 
 
 	CString	m_sSpritePath;

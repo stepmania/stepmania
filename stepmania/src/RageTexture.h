@@ -17,16 +17,39 @@
 const int MAX_TEXTURE_FRAMES = 256;
 
 
+struct RageTexturePrefs
+{
+	bool bForceReload;
+	int iMaxSize;
+	int iTextureColorDepth;
+	int iMipMaps;
+	int iAlphaBits;
+	bool bDither;
+	bool bStretch;
+
+	RageTexturePrefs()
+	{
+		bForceReload = false;
+		iMaxSize = 2048;
+		iTextureColorDepth = 16;
+		iMipMaps = 4;
+		iAlphaBits = 4;
+		bDither = false;
+		bStretch = false;
+	}
+};
+
 //-----------------------------------------------------------------------------
 // RageTexture Class Declarations
 //-----------------------------------------------------------------------------
 class RageTexture
 {
 public:
-	RageTexture( const CString &sFilePath );
+	RageTexture( CString sFilePath, RageTexturePrefs prefs );
 	virtual ~RageTexture() = 0;
-
-	virtual void Reload() = 0;
+	virtual void Reload( RageTexturePrefs prefs ) = 0;
+	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
+	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
 
 	// movie texture/animated texture stuff
 	virtual void Play() {}
@@ -61,9 +84,6 @@ public:
 	int		m_iRefCount;
 	int		m_iTimeOfLastUnload;
 
-	/* only called by RageTextureManager::InvalidateTextures */
-	virtual void Invalidate() { }
-	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
 
 protected:
 
@@ -71,6 +91,7 @@ protected:
 	virtual void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh ) const;
 
 	CString	m_sFilePath;
+	RageTexturePrefs m_prefs;
 
 	int		m_iSourceWidth,		m_iSourceHeight;	// dimensions of the original image loaded from disk
 	int		m_iTextureWidth,	m_iTextureHeight;	// dimensions of the texture in memory

@@ -22,11 +22,12 @@
 //-----------------------------------------------------------------------------
 // RageTexture constructor
 //-----------------------------------------------------------------------------
-RageTexture::RageTexture( const CString &sFilePath )
+RageTexture::RageTexture( CString sFilePath, RageTexturePrefs prefs )
 {
 //	LOG->Trace( "RageTexture::RageTexture()" );
 
 	m_sFilePath = sFilePath;
+	m_prefs = prefs;
 	m_iRefCount = 1;
 
 	m_iSourceWidth = m_iSourceHeight = 0;

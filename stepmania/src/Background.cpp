@@ -174,7 +174,11 @@ void Background::LoadFromSong( Song* pSong )
 	// loader would have no way of knowing that the image, seeming to use the
 	// alpha layer, actually doesn't since it's the back-most image.  Hmm.)
 	Sprite sprDummy;
-	sprDummy.Load( sSongBackgroundPath, true, 4, 0, true, false );
+	RageTexturePrefs prefs;
+	prefs.bForceReload = true;
+	prefs.iMipMaps = 1;
+	prefs.bDither = true;
+	sprDummy.Load( sSongBackgroundPath, prefs );
 	
 	{
 		BGAnimation *pTempBGA = new BGAnimation;

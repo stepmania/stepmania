@@ -20,7 +20,8 @@ class Banner : public CroppedSprite
 public:
 	Banner();
 
-	virtual bool Load( CString sFilePath, bool bForceReload = false, int iMipMaps = 0, int iAlphaBits = 0, bool bDither = false, bool bStretch = false );
+	virtual bool Load( CString sFilePath, RageTexturePrefs prefs );
+	virtual bool Load( CString sFilePath ) { return Load( sFilePath, RageTexturePrefs() ); }
 
 	virtual void Update( float fDeltaTime );
 

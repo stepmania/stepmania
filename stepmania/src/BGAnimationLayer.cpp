@@ -156,24 +156,28 @@ found_effect:
 	case EFFECT_STRETCH_WATER:
 	case EFFECT_STRETCH_BUBBLE:
 	case EFFECT_STRETCH_TWIST:
-		m_iNumSprites = 1;
-		m_Sprites[0].Load( sPath, false, 4, 4, false, true );
-		m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-		m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
-
-		switch( m_Effect )
 		{
-		case EFFECT_STRETCH_SCROLL_LEFT:	m_vTexCoordVelocity = RageVector2(+0.5f,0);	break;
-		case EFFECT_STRETCH_SCROLL_RIGHT:	m_vTexCoordVelocity = RageVector2(-0.5f,0);	break;
-		case EFFECT_STRETCH_SCROLL_UP:		m_vTexCoordVelocity = RageVector2(0,+0.5f);	break;
-		case EFFECT_STRETCH_SCROLL_DOWN:	m_vTexCoordVelocity = RageVector2(0,-0.5f);	break;
-		case EFFECT_STRETCH_WATER:
-		case EFFECT_STRETCH_BUBBLE:
-		case EFFECT_STRETCH_TWIST:
-			m_vTexCoordVelocity = RageVector2(-0.0f,0);	
-			break;
-		default:
-			ASSERT(0);
+			m_iNumSprites = 1;
+			RageTexturePrefs prefs;
+			prefs.bStretch = true;
+			m_Sprites[0].Load( sPath, prefs );
+			m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+			m_Sprites[0].SetCustomTextureRect( RectF(0,0,1,1) );
+
+			switch( m_Effect )
+			{
+			case EFFECT_STRETCH_SCROLL_LEFT:	m_vTexCoordVelocity = RageVector2(+0.5f,0);	break;
+			case EFFECT_STRETCH_SCROLL_RIGHT:	m_vTexCoordVelocity = RageVector2(-0.5f,0);	break;
+			case EFFECT_STRETCH_SCROLL_UP:		m_vTexCoordVelocity = RageVector2(0,+0.5f);	break;
+			case EFFECT_STRETCH_SCROLL_DOWN:	m_vTexCoordVelocity = RageVector2(0,-0.5f);	break;
+			case EFFECT_STRETCH_WATER:
+			case EFFECT_STRETCH_BUBBLE:
+			case EFFECT_STRETCH_TWIST:
+				m_vTexCoordVelocity = RageVector2(-0.0f,0);	
+				break;
+			default:
+				ASSERT(0);
+			}
 		}
 		break;
 	case EFFECT_STRETCH_SPIN:
