@@ -4,7 +4,6 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <unistd.h>
-#include <cstring>
 #include <cerrno>
 #include <limits.h>
 #include <fcntl.h>
@@ -101,10 +100,15 @@ static void NORETURN spawn_child_process( int from_parent )
 
 	char path[1024];
 	GetExecutableName( path, sizeof(path) );
-	execlp( path, path, CHILD_MAGIC_PARAMETER, NULL );
 
-	/* If we got here, the exec failed. */
-	safe_print(fileno(stderr), "Crash handler execl(", path, ") failed: ", strerror(errno), "\n", NULL);
+	/* Use execve; it's the lowest-level of the exec calls.  The others may allocate. */
+	char *argv[3] = { path, CHILD_MAGIC_PARAMETER, NULL };
+	char *envp[1] = { NULL };
+	execve( path, argv, envp );
+
+	/* If we got here, the exec failed.  We can't call strerror. */
+	// safe_print(fileno(stderr), "Crash handler execl(", path, ") failed: ", strerror(errno), "\n", NULL);
+	safe_print(fileno(stderr), "Crash handler execl(", path, ") failed: ", itoa( errno ), "\n", NULL);
 	_exit(1);
 }
 
@@ -267,9 +271,9 @@ static void RunCrashHandler( const CrashData *crash )
 	}
 	       
 	static int received = 0;
-	static pid_t childpid = 0;
+	static int active = 0;
 
-	if( received )
+	if( active )
 	{
 		/* We've received a second signal.  This may mean that another thread
 		 * crashed before we stopped it, or it may mean that the crash handler
@@ -289,15 +293,14 @@ static void RunCrashHandler( const CrashData *crash )
 			break;
 		}
 
-		if( received == getpid() )
+		if( active == 1 )
 			safe_print( fileno(stderr), " while still in the crash handler\n", NULL);
-		else if( childpid == getpid() )
+		else if( active == 2 )
 			safe_print( fileno(stderr), " while in the crash handler child\n", NULL);
-		else
-			safe_print( fileno(stderr), " (to unknown PID)\n", NULL);
 
 		_exit(1);
 	}
+	active = 1;
 	received = getpid();
 
 	/* Stop other threads.  XXX: This prints a spurious ptrace error if any threads
@@ -313,7 +316,7 @@ static void RunCrashHandler( const CrashData *crash )
 		exit(1);
 	}
 
-	childpid = fork();
+	pid_t childpid = fork();
 	if( childpid == -1 )
 	{
 		safe_print(fileno(stderr), "Crash handler fork() failed: ", strerror(errno), "\n", NULL);
@@ -322,6 +325,7 @@ static void RunCrashHandler( const CrashData *crash )
 
 	if( childpid == 0 )
 	{
+		active = 2;
 		close(fds[1]);
 		spawn_child_process(fds[0]);
 	}
