@@ -10,12 +10,27 @@
 /* If a sound is smaller than this, we'll load it entirely into memory. */
 const unsigned max_prebuf_size = 1024*256;
 
-int SoundReader_Preload::total_samples() const
+bool RageSoundReader_Preload::PreloadSound( SoundReader *&pSound )
+{
+	RageSoundReader_Preload *pPreload = new RageSoundReader_Preload;
+	if( !pPreload->Open(pSound) )
+	{
+		/* Preload failed.  It read some data, so we need to rewind the reader. */
+		pSound->SetPosition_Fast( 0 );
+		delete pPreload;
+		return false;
+	}
+
+	pSound = pPreload;
+	return true;
+}
+
+int RageSoundReader_Preload::total_samples() const
 {
 	return buf.get().size() / samplesize;
 }
 
-bool SoundReader_Preload::Open(SoundReader *source)
+bool RageSoundReader_Preload::Open(SoundReader *source)
 {
 	ASSERT(source);
 	samplerate = source->GetSampleRate();
@@ -58,17 +73,17 @@ bool SoundReader_Preload::Open(SoundReader *source)
 	return true;
 }
 
-int SoundReader_Preload::GetLength() const
+int RageSoundReader_Preload::GetLength() const
 {
 	return int(float(total_samples()) * 1000.f / samplerate);
 }
 
-int SoundReader_Preload::GetLength_Fast() const
+int RageSoundReader_Preload::GetLength_Fast() const
 {
 	return GetLength();
 }
 
-int SoundReader_Preload::SetPosition_Accurate(int ms)  
+int RageSoundReader_Preload::SetPosition_Accurate(int ms)  
 {
 	const int sample = int((ms / 1000.0f) * samplerate);
 	position = sample * samplesize;
@@ -82,12 +97,12 @@ int SoundReader_Preload::SetPosition_Accurate(int ms)
 	return position;
 }
 
-int SoundReader_Preload::SetPosition_Fast(int ms)
+int RageSoundReader_Preload::SetPosition_Fast(int ms)
 {
 	return SetPosition_Accurate(ms); 
 }
 
-int SoundReader_Preload::Read(char *buffer, unsigned len)
+int RageSoundReader_Preload::Read(char *buffer, unsigned len)
 {
 	const unsigned bytes_avail = buf.get().size() - position;
 
@@ -98,9 +113,9 @@ int SoundReader_Preload::Read(char *buffer, unsigned len)
 	return len;
 }
 
-SoundReader *SoundReader_Preload::Copy() const
+SoundReader *RageSoundReader_Preload::Copy() const
 {
-	return new SoundReader_Preload(*this);
+	return new RageSoundReader_Preload(*this);
 }
 
 rc_string::rc_string()

@@ -172,50 +172,48 @@ bool RageSound::Load( CString sSoundFilePath, int precache )
 	if(precache == 2)
 		precache = false;
 
-	/* Don't load over copies. */
-	ASSERT(original == this || m_sFilePath == "");
-
-	Unload();
-
-	m_sFilePath = sSoundFilePath;
-	decode_position = stopped_position = 0;
-
 	CString error;
-	Sample = SoundReader_FileReader::OpenFile( m_sFilePath, error );
-	if( Sample == NULL )
+	SoundReader *pSound = SoundReader_FileReader::OpenFile( sSoundFilePath, error );
+	if( pSound == NULL )
 	{
 		LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",
-			m_sFilePath.c_str(), error.c_str() );
+			sSoundFilePath.c_str(), error.c_str() );
 
-		Sample = new RageSoundReader_Silence;
-	}
-
-	const int NeededRate = SOUNDMAN->GetDriverSampleRate( Sample->GetSampleRate() );
-	if( NeededRate != Sample->GetSampleRate() )
-	{
-		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler( (RageSoundReader_Resample::ResampleQuality) PREFSMAN->m_iSoundResampleQuality );
-		Resample->Open(Sample);
-		Resample->SetSampleRate( NeededRate );
-		Sample = Resample;
+		pSound = new RageSoundReader_Silence;
 	}
 
 	/* Try to precache. */
-	if(precache)
-	{
-		SoundReader_Preload *Preload = new SoundReader_Preload;
-		if(Preload->Open(Sample)) {
-			Sample = Preload;
-		} else {
-			/* Preload failed.  It read some data, so we need to rewind the
-			 * reader. */
-			Sample->SetPosition_Fast(0);
-			delete Preload;
-		}
-	}
+	if( precache )
+		RageSoundReader_Preload::PreloadSound( pSound );
+
+	LoadSoundReader( pSound );
+
+	m_sFilePath = sSoundFilePath;
 
 	m_Mutex.SetName( ssprintf("RageSound (%s)", Basename(sSoundFilePath).c_str() ) );
 
 	return true;
+}
+
+void RageSound::LoadSoundReader( SoundReader *pSound )
+{
+	/* Don't load over copies. */
+	ASSERT( original == this || m_sFilePath == "" );
+
+	Unload();
+
+	decode_position = stopped_position = 0;
+
+	const int NeededRate = SOUNDMAN->GetDriverSampleRate( pSound->GetSampleRate() );
+	if( NeededRate != pSound->GetSampleRate() )
+	{
+		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler( (RageSoundReader_Resample::ResampleQuality) PREFSMAN->m_iSoundResampleQuality );
+		Resample->Open( pSound );
+		Resample->SetSampleRate( NeededRate );
+		pSound = Resample;
+	}
+
+	Sample = pSound;
 }
 
 /* Return the number of bytes available in the input buffer. */

@@ -92,6 +92,10 @@ public:
 	 * they can be ignored most of the time, so we continue to work if a file
 	 * is broken or missing.) */
 	bool Load(CString fn, int precache = 2);
+
+	/* Load a SoundReader that you've set up yourself.  Sample rate conversion will
+	 * be set up only if needed.  Doesn't fail. */
+	void LoadSoundReader( SoundReader *pSound );
 	void Unload();
 
 	void StartPlaying();

@@ -1,5 +1,5 @@
 /*
- * SoundReader_Preload - Preload sounds from another reader
+ * RageSoundReader_Preload - Preload sounds from another reader
  */
 
 #ifndef RAGE_SOUND_READER_PRELOAD
@@ -22,7 +22,7 @@ public:
 	const string &get() const;
 };
 
-class SoundReader_Preload: public SoundReader
+class RageSoundReader_Preload: public SoundReader
 {
 	rc_string buf;
 
@@ -49,7 +49,10 @@ public:
 	bool IsStreamingFromDisk() const { return false; }
 
 	SoundReader *Copy() const;
-	~SoundReader_Preload() { }
+	~RageSoundReader_Preload() { }
+
+	/* Attempt to preload a sound.  pSound must be rewound. */
+	static bool PreloadSound( SoundReader *&pSound );
 };
 
 #endif
