@@ -20,8 +20,10 @@ class BMSLoader: public NotesLoader
 
 	typedef map<int, float> MeasureToTimeSig_t;
 	void ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out );
-	static float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure );
-	static int GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo );
+	float GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure );
+	int GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo );
+	void SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOut );
+	MeasureToTimeSig_t m_TimeSigAdjustments;
 
 	CString m_sDir;
 	map<CString,int> m_mapWavIdToKeysoundIndex;

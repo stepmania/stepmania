@@ -192,9 +192,20 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 float BMSLoader::GetBeatsPerMeasure( const MeasureToTimeSig_t &sigs, int iMeasure )
 {
 	map<int, float>::const_iterator time_sig = sigs.find( iMeasure );
+
+	float fRet = 4.0f;
 	if( time_sig != sigs.end() )
-		return 4.0f * time_sig->second;
-	return 4.0f;
+	{
+		fRet *= time_sig->second;
+	}
+
+	time_sig = m_TimeSigAdjustments.find( iMeasure );
+	if( time_sig != m_TimeSigAdjustments.end() )
+	{
+		fRet *= time_sig->second;
+	}
+
+	return fRet;
 }
 
 int BMSLoader::GetMeasureStartRow( const MeasureToTimeSig_t &sigs, int iMeasureNo )
@@ -312,7 +323,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 			{
 				float fPercentThroughMeasure = (float)j/(float)uNumNotesInThisMeasure;
 
-				int row = iRowNo + (int) ( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
+				int row = iRowNo + lrintf( fPercentThroughMeasure * fBeatsPerMeasure * ROWS_PER_BEAT );
 
 				// some BMS files seem to have funky alignment, causing us to write gigantic cache files.
 				// Try to correct for this by quantizing.
@@ -719,6 +730,9 @@ void BMSLoader::ReadGlobalTags( const NameToData_t &mapNameToData, Song &out )
 		}
 		}
 	}
+
+	/* Now that we're done reading BPMs, factor out weird time signatures. */
+	SetTimeSigAdjustments( mapMeasureToTimeSig, &out );
 }
 
 void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSig_t &out )
@@ -736,6 +750,77 @@ void BMSLoader::ReadTimeSigs( const NameToData_t &mapNameToData, MeasureToTimeSi
 		int iBMSTrackNo	= atoi( sName.substr(4,2).c_str() );
 		if( iBMSTrackNo == BMS_TRACK_TIME_SIG )
 			out[iMeasureNo] = (float) atof(sData);
+	}
+}
+
+/*
+ * Time signatures are often abused to tweak sync.  Real time signatures should
+ * cause us to adjust the row offsets so one beat remains one beat.  Fake time signatures,
+ * like 1.001 or 0.999, should be removed and converted to BPM changes.  This is much
+ * more accurate, and prevents the whole song from being shifted off of the beat, causing
+ * BeatToNoteType to be wrong.
+ *
+ * Evaluate each time signature, and guess which time signatures should be converted
+ * to BPM changes.  This isn't perfect, but errors aren't fatal.
+ */
+void BMSLoader::SetTimeSigAdjustments( const MeasureToTimeSig_t &sigs, Song *pOut )
+{
+	return;
+	m_TimeSigAdjustments.clear();
+
+	MeasureToTimeSig_t::const_iterator it;
+	for( it = sigs.begin(); it != sigs.end(); ++it )
+	{
+		int iMeasure = it->first;
+		float fFactor = it->second;
+
+#if 1
+		static const float ValidFactors[] =
+		{
+			0.25f,  /* 1/4 */
+			0.5f,   /* 2/4 */
+			0.75f,  /* 3/4 */
+			0.875f, /* 7/8 */
+			1.0f,
+			1.5f,   /* 6/4 */
+			1.75f   /* 7/4 */
+		};
+
+		bool bValidTimeSignature = false;
+		for( unsigned i = 0; i < ARRAYSIZE(ValidFactors); ++i )
+			if( fabsf(fFactor-ValidFactors[i]) < 0.001 )
+				bValidTimeSignature = true;
+
+		if( bValidTimeSignature )
+			continue;
+#else
+		/* Alternate approach that I tried first: see if the ratio is sane.  However,
+		 * some songs have values like "1.4", which comes out to 7/4 and is not a valid
+		 * time signature. */
+		/* Convert the factor to a ratio, and reduce it. */
+		int iNum = lrintf( fFactor * 1000 ), iDen = 1000;
+		int iDiv = gcd( iNum, iDen );
+		iNum /= iDiv;
+		iDen /= iDiv;
+
+		/* Real time signatures usually come down to 1/2, 3/4, 7/8, etc.  Bogus
+		 * signatures that are only there to adjust sync usually look like 99/100. */
+		if( iNum <= 8 && iDen <= 8 )
+			continue;
+#endif
+
+		/* This time signature is bogus.  Convert it to a BPM adjustment for this
+		 * measure. */
+		LOG->Trace("Converted time signature %f in measure %i to a BPM segment.", fFactor, iMeasure );
+
+		/* Note that this GetMeasureStartRow will automatically include any adjustments
+		 * that we've made previously in this loop; as long as we make the timing
+		 * adjustment and the BPM adjustment together, everything remains consistent.
+		 * Adjust m_TimeSigAdjustments first, or fAdjustmentEndBeat will be wrong. */
+		m_TimeSigAdjustments[iMeasure] = 1.0f / fFactor;
+		float fAdjustmentStartBeat = NoteRowToBeat( GetMeasureStartRow( sigs, iMeasure ) );
+		float fAdjustmentEndBeat = NoteRowToBeat( GetMeasureStartRow( sigs, iMeasure+1 ) );
+		pOut->m_Timing.MultiplyBPMInBeatRange( fAdjustmentStartBeat, fAdjustmentEndBeat, 1.0f / fFactor );
 	}
 }
 
