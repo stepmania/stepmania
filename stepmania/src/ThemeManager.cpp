@@ -347,8 +347,14 @@ try_element_again:
 
 	CString sCategory = ELEMENT_CATEGORY_STRING[category];
 
+	/* We can't fall back on _missing in Other: the file types are unknown. */
 	CString sMessage = "The theme element '" + sCategory + "/" + sFileName +"' is missing.";
-	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement") )
+	ArchHooks::MessageBoxResult res;
+	if( category != Other )
+		res = HOOKS->MessageBoxAbortRetryIgnore(sMessage, "MissingThemeElement");
+	else
+		res = HOOKS->MessageBoxRetryCancel(sMessage, "MissingThemeElement");
+	switch( res )
 	{
 	case ArchHooks::retry:
 		FlushDirCache();
@@ -368,7 +374,9 @@ try_element_again:
 
 		Cache[sFileName] = GetPathTo( category, "_missing" );
 		return Cache[sFileName];
+	/* XXX: "abort" and "cancel" are synonyms; merge */
 	case ArchHooks::abort:
+	case ArchHooks::cancel:
 		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 			sCategory.c_str(),
 			sFileName.c_str(), 
