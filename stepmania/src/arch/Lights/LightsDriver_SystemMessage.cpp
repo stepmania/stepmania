@@ -2,7 +2,7 @@
 #include "LightsDriver_SystemMessage.h"
 #include "ScreenManager.h"
 #include "GameState.h"
-#include "GameDef.h"
+#include "Game.h"
 
 
 LightsDriver_SystemMessage::LightsDriver_SystemMessage()
