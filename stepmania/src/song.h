@@ -94,7 +94,7 @@ public:
 
 	CString m_sGroupName;
 
-
+	ProfileSlot	m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile
 	bool	m_bChangedSinceSave;
 	bool	m_bIsSymLink;
 
@@ -188,7 +188,7 @@ public:
 	Steps* GetStepsByDescription( StepsType nt, CString sDescription, bool bIncludeAutoGen = true ) const;
 	Steps* GetClosestNotes( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	void GetEdits( vector<Steps*>& arrayAddTo, StepsType nt, bool bIncludeAutoGen = true ) const;
-	int GetNumTimesPlayed( MemoryCard card ) const;
+	int GetNumTimesPlayed( ProfileSlot slot ) const;
 	bool IsNew() const;
 	bool IsEasy( StepsType nt ) const;
 	bool HasEdits( StepsType nt ) const;
@@ -198,6 +198,9 @@ public:
 
 	void AddNotes( Steps* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
 	void RemoveNotes( const Steps* pNotes );
+
+	void FreeAllLoadedFromProfiles();
+	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 };
 
 CString MakeSortString( CString s );
@@ -208,7 +211,7 @@ void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );
-void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, MemoryCard card );
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, ProfileSlot slot );
 void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc );
 CString GetSectionNameFromSongAndSort( const Song* pSong, SongSortOrder so );
 void SortSongPointerArrayBySectionName( vector<Song*> &arraySongPointers, SongSortOrder so );

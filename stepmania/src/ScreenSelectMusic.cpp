@@ -241,7 +241,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-		m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty icons 1x5") );
+		m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic difficulty icons 1x%d",NUM_DIFFICULTIES)) );
 		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 
@@ -1151,8 +1151,8 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		}
 		else
 		{
-			if( !pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.empty() )
-				iScore = pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].iScore;
+			if( !pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.empty() )
+				iScore = pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].iScore;
 		}
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 	}
@@ -1316,7 +1316,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			TEXTUREMAN->EnableOddDimensionWarning();
 			FlipSpriteHorizontally(m_sprCDTitleBack);
 
-			const vector<Song*> best = SONGMAN->GetBestSongs( MEMORY_CARD_MACHINE );
+			const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
 			const int index = FindIndex( best.begin(), best.end(), pSong );
 			if( index != -1 )
 				m_MachineRank.SetText( ssprintf("%i", index+1) );
@@ -1416,7 +1416,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 		}
 
-		const vector<Course*> best = SONGMAN->GetBestCourses( MEMORY_CARD_MACHINE );
+		const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
 		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
 		if( index != -1 )
 			m_MachineRank.SetText( ssprintf("%i", index+1) );

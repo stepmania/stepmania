@@ -36,6 +36,9 @@ public:
 	void FreeSongs();
 	void Cleanup();
 
+	void LoadAllFromProfiles();	// song, edits
+	void FreeAllLoadedFromProfiles();
+
 	void LoadGroupSymLinks( CString sDir, CString sGroupFolder );
 
 	void InitCoursesFromDisk( LoadingWindow *ld );
@@ -61,8 +64,8 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	const vector<Song*> &GetBestSongs( MemoryCard card=MEMORY_CARD_MACHINE ) const { return m_pBestSongs[MEMORY_CARD_MACHINE]; }
-	const vector<Course*> &GetBestCourses( MemoryCard card=MEMORY_CARD_MACHINE ) const { return m_pBestCourses[MEMORY_CARD_MACHINE]; }
+	const vector<Song*> &GetBestSongs( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestSongs[PROFILE_SLOT_MACHINE]; }
+	const vector<Course*> &GetBestCourses( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestCourses[PROFILE_SLOT_MACHINE]; }
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,"",iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
@@ -103,12 +106,12 @@ protected:
 	Song *FindSong( CString sGroup, CString sSong );
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
-	vector<Song*>		m_pBestSongs[NUM_MEMORY_CARDS];
+	vector<Song*>		m_pBestSongs[NUM_PROFILE_SLOTS];
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
 	CStringArray		m_sGroupNames;
 	CStringArray		m_sGroupBannerPaths; // each song group may have a banner associated with it
 	vector<Course*>		m_pCourses;
-	vector<Course*>		m_pBestCourses[NUM_MEMORY_CARDS];
+	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 };
 

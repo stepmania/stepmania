@@ -416,7 +416,7 @@ void ScreenSelectCourse::AfterCourseChange()
 			{
 				const StepsType &st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
-				int mc = MEMORY_CARD_MACHINE;
+				int mc = PROFILE_SLOT_MACHINE;
 				if( PROFILEMAN->IsUsingProfile( (PlayerNumber)p ) )
 					mc = p;
 

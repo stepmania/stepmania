@@ -66,6 +66,7 @@ enum Difficulty
 	DIFFICULTY_MEDIUM,		// corresponds to Trick, Another, Standard, Normal
 	DIFFICULTY_HARD,		// corresponds to Maniac, SSR, Heavy, Crazy
 	DIFFICULTY_CHALLENGE,	// corresponds to 5th SMANIAC, MAX2 Challenge, EX Challenge
+	DIFFICULTY_EDIT,
 	NUM_DIFFICULTIES,
 	DIFFICULTY_INVALID
 };
@@ -200,14 +201,15 @@ enum HoldNoteScore
 
 
 //
-// MemCard stuff
+// Profile and MemCard stuff
 //
-enum MemoryCard
+enum ProfileSlot
 {
-	MEMORY_CARD_PLAYER_1,
-	MEMORY_CARD_PLAYER_2,
-	MEMORY_CARD_MACHINE,
-	NUM_MEMORY_CARDS
+	PROFILE_SLOT_PLAYER_1,
+	PROFILE_SLOT_PLAYER_2,
+	PROFILE_SLOT_MACHINE,
+	NUM_PROFILE_SLOTS,
+	PROFILE_SLOT_INVALID
 };
 
 enum MemoryCardState

@@ -1036,10 +1036,10 @@ void Course::AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore
 		m_MemCardDatas[st][pn].AddHighScore( hs, iPersonalIndexOut );
 	else
 		iPersonalIndexOut = -1;
-	m_MemCardDatas[st][MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
+	m_MemCardDatas[st][PROFILE_SLOT_MACHINE].AddHighScore( hs, iMachineIndexOut );
 }
 
-int Course::GetNumTimesPlayed( MemoryCard card ) const
+int Course::GetNumTimesPlayed( ProfileSlot card ) const
 {
 	int iTotalNumTimesPlayed = 0;
 	for( unsigned i = 0; i < NUM_STEPS_TYPES; ++i )
@@ -1077,7 +1077,7 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses )
 }
  
 
-void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, MemoryCard card )
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, ProfileSlot card )
 {
 	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
 		course_sort_val[arrayCoursePointers[i]] = (float) arrayCoursePointers[i]->GetNumTimesPlayed( card );

@@ -176,21 +176,21 @@ public:
 				return vHighScores[0];
 		}
 
-	} m_MemCardDatas[NUM_STEPS_TYPES][NUM_MEMORY_CARDS];
+	} m_MemCardDatas[NUM_STEPS_TYPES][NUM_PROFILE_SLOTS];
 	
 	void AddHighScore( StepsType st, PlayerNumber pn, MemCardData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 
-	MemCardData::HighScore GetTopScore( StepsType st, MemoryCard card )
+	MemCardData::HighScore GetTopScore( StepsType st, ProfileSlot slot )
 	{
-		return m_MemCardDatas[st][card].GetTopScore();
+		return m_MemCardDatas[st][slot].GetTopScore();
 	}
 
-	int GetNumTimesPlayed( StepsType st, MemoryCard card ) const
+	int GetNumTimesPlayed( StepsType st, ProfileSlot slot ) const
 	{
-		return m_MemCardDatas[st][card].iNumTimesPlayed;
+		return m_MemCardDatas[st][slot].iNumTimesPlayed;
 	}
 
-	int GetNumTimesPlayed( MemoryCard card ) const;
+	int GetNumTimesPlayed( ProfileSlot slot ) const;
 
 	// sorting values
 	int		SortOrder_TotalDifficulty;
@@ -217,7 +217,7 @@ void SortCoursePointerArrayByType( vector<Course*> &apCourses );
 void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
-void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, MemoryCard card );
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, ProfileSlot slot );
 
 void MoveRandomToEnd( vector<Course*> &apCourses );
 

@@ -39,6 +39,7 @@ public:
 	~GameState();
 	void Reset();
 	void BeginGame();	// called when first player joins
+	void PlayersFinalized();	// called after a style is chosen, which means the number of players is finalized
 	void EndGame();	// called on ScreenGameOver, ScreenMusicScroll, ScreenCredits
 
 	void Update( float fDelta );

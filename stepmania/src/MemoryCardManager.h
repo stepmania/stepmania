@@ -25,7 +25,7 @@ public:
 
 	MemoryCardState GetCardState( PlayerNumber pn );
 	
-	CString GetOsMountDir( PlayerNumber pn );	// only valid when ready
+	CString GetOsMountDir( PlayerNumber pn );	// only valid when state = ready
 
 	void LockCards( bool bLock );	// prevent removing or changing of memory cards
 	

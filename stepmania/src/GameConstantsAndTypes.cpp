@@ -41,6 +41,7 @@ CString DifficultyToString( Difficulty dc )
 	case DIFFICULTY_MEDIUM:		return "medium";
 	case DIFFICULTY_HARD:		return "hard";
 	case DIFFICULTY_CHALLENGE:	return "challenge";
+	case DIFFICULTY_EDIT:		return "edit";
 	default:	ASSERT(0);		return "";	// invalid Difficulty
 	}
 }
@@ -67,6 +68,7 @@ Difficulty StringToDifficulty( CString sDC )
 	else if( sDC == "challenge" )	return DIFFICULTY_CHALLENGE;
 	else if( sDC == "expert" )		return DIFFICULTY_CHALLENGE;
 	else if( sDC == "oni" )			return DIFFICULTY_CHALLENGE;
+	else if( sDC == "edit" )		return DIFFICULTY_EDIT;
 	else							return DIFFICULTY_INVALID;
 }
 

@@ -6,6 +6,7 @@
 #include "MsdFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "SongManager.h"
 
 void SMLoader::LoadFromSMTokens( 
 	CString sNotesType, 
@@ -378,3 +379,69 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 	return LoadFromSMFile( sPath + aFileNames[0], out );
 }
 
+bool SMLoader::LoadEdit( CString sEditFilePath )
+{
+	LOG->Trace( "Song::LoadEdit(%s)", sEditFilePath.c_str() );
+
+	MsdFile msd;
+	bool bResult = msd.ReadFile( sEditFilePath );
+	if( !bResult )
+		RageException::Throw( "Error opening file '%s'.", sEditFilePath.c_str() );
+
+	Song* pSong = NULL;
+
+	for( unsigned i=0; i<msd.GetNumValues(); i++ )
+	{
+		int iNumParams = msd.GetNumParams(i);
+		const MsdFile::value_t &sParams = msd.GetValue(i);
+		const CString sValueName = sParams[0];
+
+		// handle the data
+		if( 0==stricmp(sValueName,"SONG") )
+		{
+			if( pSong )
+			{
+				LOG->Warn( "The edit file '%s' has more than one #SONG tag.", sEditFilePath.c_str() );
+				return false;
+			}
+
+			CString& sSongFullTitle = sParams[1];
+			sSongFullTitle.Replace( '\\', '/' );
+
+			pSong = SONGMAN->FindSong( sSongFullTitle );
+			if( pSong == NULL )
+			{
+				LOG->Warn( "The edit file '%s' required a song '%s' that isn't present.", sEditFilePath.c_str(), sSongFullTitle.c_str() );
+				return false;
+			}
+		}
+
+		else if( 0==stricmp(sValueName,"NOTES") )
+		{
+			if( pSong == NULL )
+			{
+				LOG->Warn( "The edit file '%s' has doesn't have a #SONG tag preceeding the first #NOTES tag.", sEditFilePath.c_str() );
+				return false;
+			}
+
+			Steps* pNewNotes = new Steps;
+			ASSERT( pNewNotes );
+			pSong->m_apNotes.push_back( pNewNotes );
+
+			if( iNumParams < 7 )
+			{
+				LOG->Trace( "The song file '%s' is has %d fields in a #NOTES tag, but should have at least %d.", sEditFilePath.c_str(), iNumParams, 7 );
+				continue;
+			}
+
+			LoadFromSMTokens( 
+				sParams[1], sParams[2], sParams[3], sParams[4], sParams[5], sParams[6], (iNumParams>=8)?sParams[7]:"",
+				*pNewNotes);
+		}
+		else
+			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
+	}
+
+	return true;
+	
+}

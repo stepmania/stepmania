@@ -340,7 +340,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	//
 	if( m_style != STYLE_INVALID )
 	{
-		MEMCARDMAN->LockCards( true );
+		GAMESTATE->PlayersFinalized();
 	}
 	
 }

@@ -36,7 +36,7 @@ Steps::Steps()
 	 * until after b6 to do this. -glenn */
 	/* Yep, it should be STEPS_TYPE_INVALID. -Chris */
 	m_StepsType = STEPS_TYPE_INVALID;
-	m_bIsAnEdit = false;
+	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
@@ -127,7 +127,7 @@ float Steps::PredictMeter() const
 	
 	const float DifficultyCoeffs[NUM_DIFFICULTIES] =
 	{
-		-0.877f, -0.877f, 0, 0.722f, 0.722f
+		-0.877f, -0.877f, 0, 0.722f, 0.722f, 0
 	};
 	pMeter += DifficultyCoeffs[this->GetDifficulty()];
 	
@@ -233,7 +233,6 @@ void Steps::DeAutogen()
 
 	Decompress();	// fills in notes with sliding window transform
 
-	m_bIsAnEdit		= Real()->m_bIsAnEdit;
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;
 	m_iMeter		= Real()->m_iMeter;
@@ -287,12 +286,6 @@ bool Steps::IsAutogen() const
 	return parent != NULL;
 }
 
-void Steps::SetIsAnEdit(bool b)
-{
-	DeAutogen();
-	m_bIsAnEdit = b;
-}
-
 void Steps::SetDescription(CString desc)
 {
 	DeAutogen();
@@ -334,7 +327,7 @@ bool CompareStepsPointersBySortValueDescending(const Steps *pSteps1, const Steps
 	return steps_sort_val[pSteps1] > steps_sort_val[pSteps2];
 }
 
-void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, MemoryCard card )
+void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, ProfileSlot card )
 {
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
 		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", vStepsPointers[i]->GetNumTimesPlayed(card));
@@ -434,6 +427,6 @@ void Steps::AddHighScore( PlayerNumber pn, MemCardData::HighScore hs, int &iPers
 		m_MemCardDatas[pn].AddHighScore( hs, iPersonalIndexOut );
 	else
 		iPersonalIndexOut = -1;
-	m_MemCardDatas[MEMORY_CARD_MACHINE].AddHighScore( hs, iMachineIndexOut );
+	m_MemCardDatas[PROFILE_SLOT_MACHINE].AddHighScore( hs, iMachineIndexOut );
 }
 

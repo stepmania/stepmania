@@ -161,11 +161,6 @@ void GameState::Reset()
 		m_iCpuSkill[p] = 5;
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		PROFILEMAN->SaveProfile( (PlayerNumber)p );
-		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
-	}
 	MEMCARDMAN->LockCards( false );
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_ATTRACT );
@@ -190,6 +185,12 @@ void CheckStageStats( const StageStats &ss, int p )
 	/* Meter values can exceed MAX_METER; MAX_METER is just the highest meter value we
 	 * display/track. */
 //	RAGE_ASSERT_M( ss.iMeter[p] < MAX_METER+1, ssprintf("%i", ss.iMeter[p]) );
+}
+
+void GameState::PlayersFinalized()
+{
+	MEMCARDMAN->LockCards( true );
+	SONGMAN->LoadAllFromProfiles();
 }
 
 void GameState::EndGame()
@@ -265,6 +266,14 @@ void GameState::EndGame()
 
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveMachineScoresToDisk();
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		PROFILEMAN->SaveProfile( (PlayerNumber)p );
+		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
+	}
+
+	SONGMAN->FreeAllLoadedFromProfiles();
 }
 
 void GameState::Update( float fDelta )
@@ -1122,7 +1131,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 				Steps* pSteps = vSongAndSteps[i].pSteps;
 
 				// Find Machine Records
-				vector<Steps::MemCardData::HighScore> &vMachineHighScores = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores;
+				vector<Steps::MemCardData::HighScore> &vMachineHighScores = pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores;
 				for( j=0; j<vMachineHighScores.size(); j++ )
 				{
 					if( vMachineHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
@@ -1176,7 +1185,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			// Find Machine Records
 			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 			{
-				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][nt][i].vHighScores;
+				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][nt][i].vHighScores;
 				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
 					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
@@ -1228,7 +1237,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 
 			// Find Machine Records
 			{
-				vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][MEMORY_CARD_MACHINE].vHighScores;
+				vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][PROFILE_SLOT_MACHINE].vHighScores;
 				for( unsigned i=0; i<vHighScores.size(); i++ )
 				{
 					if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )

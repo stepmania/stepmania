@@ -72,6 +72,7 @@ void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChange
 //////////////////////////////
 Song::Song()
 {
+	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
 	m_bChangedSinceSave = false;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
@@ -1114,7 +1115,7 @@ void Song::RemoveAutoGenNotes()
 }
 
 
-Steps::MemCardData::HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, MemoryCard card, Difficulty dc )
+Steps::MemCardData::HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot card, Difficulty dc )
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
@@ -1132,7 +1133,7 @@ Steps::MemCardData::HighScore GetHighScoreForDifficulty( const Song *s, const St
 
 bool Song::IsNew() const
 {
-	return GetNumTimesPlayed(MEMORY_CARD_MACHINE) == 0;
+	return GetNumTimesPlayed(PROFILE_SLOT_MACHINE) == 0;
 }
 
 bool Song::IsEasy( StepsType nt ) const
@@ -1386,7 +1387,7 @@ bool CompareSongPointersBySortValueDescending(const Song *pSong1, const Song *pS
 	return song_sort_val[pSong1] > song_sort_val[pSong2];
 }
 
-void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, MemoryCard card )
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, ProfileSlot card )
 {
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
 		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", arraySongPointers[i]->GetNumTimesPlayed(card));
@@ -1552,7 +1553,7 @@ bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(G
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const 	{return !m_BackgroundChanges.empty(); }
 
-int Song::GetNumTimesPlayed( MemoryCard card ) const
+int Song::GetNumTimesPlayed( ProfileSlot card ) const
 {
 	int iTotalNumTimesPlayed = 0;
 	for( unsigned i=0; i<m_apNotes.size(); i++ )
@@ -1672,7 +1673,7 @@ int	Song::GetNumNotesWithGrade( Grade g ) const
 	{
 		Steps* pSteps = vNotes[j];
 		
-		if( pSteps->GetTopScore(MEMORY_CARD_MACHINE).grade == g )
+		if( pSteps->GetTopScore(PROFILE_SLOT_MACHINE).grade == g )
 			iCount++;
 	}
 	return iCount;
@@ -1699,3 +1700,12 @@ bool Song::Matches(CString sGroup, CString sSong) const
 	return false;
 }
 
+void Song::FreeAllLoadedFromProfiles()
+{
+	for( unsigned s=0; s<m_apNotes.size(); s++ )
+	{
+		Steps* pSteps = m_apNotes[s];
+		if( pSteps->WasLoadedFromProfile() )
+			this->RemoveNotes( pSteps );
+	}
+}

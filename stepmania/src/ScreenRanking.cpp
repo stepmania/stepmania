@@ -673,10 +673,10 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				ProfileManager::CategoryData::HighScore hs;
 				bool bRecentHighScore = false;
-				if( l < (int)PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][pts.nt][pts.category].vHighScores.size() )
+				if( l < (int)PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][pts.nt][pts.category].vHighScores.size() )
 				{
-					hs = PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][pts.nt][pts.category].vHighScores[l];
-					CString *psName = &PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][pts.nt][pts.category].vHighScores[l].sName;
+					hs = PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][pts.nt][pts.category].vHighScores[l];
+					CString *psName = &PROFILEMAN->m_CategoryDatas[PROFILE_SLOT_MACHINE][pts.nt][pts.category].vHighScores[l].sName;
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
@@ -714,10 +714,10 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				Course::MemCardData::HighScore hs;
 				bool bRecentHighScore = false;
-				if( l < (int)pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.size() )
+				if( l < (int)pts.pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores.size() )
 				{
-					hs = pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[l];
-					CString *psName = &pts.pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[l].sName;
+					hs = pts.pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[l];
+					CString *psName = &pts.pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[l].sName;
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
@@ -780,10 +780,10 @@ float ScreenRanking::SetPage( PageToShow pts )
 					{
 						Steps::MemCardData::HighScore hs;
 						bool bRecentHighScore = false;
-						if( !pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.empty() )
+						if( !pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.empty() )
 						{
-							hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0];
-							const CString *psName = &pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].sName;
+							hs = pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0];
+							const CString *psName = &pSteps->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].sName;
 							bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 						}
 						else
@@ -818,10 +818,10 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 					Course::MemCardData::HighScore hs;
 					bool bRecentHighScore = false;
-					if( !pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores.empty() )
+					if( !pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores.empty() )
 					{
-						hs = pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[0];
-						const CString *psName = &pCourse->m_MemCardDatas[pts.nt][MEMORY_CARD_MACHINE].vHighScores[0].sName;
+						hs = pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[0];
+						const CString *psName = &pCourse->m_MemCardDatas[pts.nt][PROFILE_SLOT_MACHINE].vHighScores[0].sName;
 						bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 					}
 					else

@@ -141,9 +141,9 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 		return false;
 	}
 
-	ReadCategoryScoresFromDir( m_sProfileDir[pn], (MemoryCard)pn );
-	ReadSongScoresFromDir( m_sProfileDir[pn], (MemoryCard)pn );
-	ReadCourseScoresFromDir( m_sProfileDir[pn], (MemoryCard)pn );
+	ReadCategoryScoresFromDir( m_sProfileDir[pn], (ProfileSlot)pn );
+	ReadSongScoresFromDir( m_sProfileDir[pn], (ProfileSlot)pn );
+	ReadCourseScoresFromDir( m_sProfileDir[pn], (ProfileSlot)pn );
 
 	// apply saved default modifiers if any
 	if( m_Profile[pn].m_bUsingProfileDefaultModifiers )
@@ -245,10 +245,10 @@ bool ProfileManager::SaveProfile( PlayerNumber pn )
 
 	m_Profile[pn].SaveToIni( m_sProfileDir[pn]+PROFILE_FILE );
 
-	SaveCategoryScoresToDir( m_sProfileDir[pn], (MemoryCard)pn );
-	SaveSongScoresToDir( m_sProfileDir[pn], (MemoryCard)pn );
-	SaveCourseScoresToDir( m_sProfileDir[pn], (MemoryCard)pn );
-	SaveStatsWebPageToDir( m_sProfileDir[pn], (MemoryCard)pn );
+	SaveCategoryScoresToDir( m_sProfileDir[pn], (ProfileSlot)pn );
+	SaveSongScoresToDir( m_sProfileDir[pn], (ProfileSlot)pn );
+	SaveCourseScoresToDir( m_sProfileDir[pn], (ProfileSlot)pn );
+	SaveStatsWebPageToDir( m_sProfileDir[pn], (ProfileSlot)pn );
 	
 	return true;
 }
@@ -414,10 +414,10 @@ void ProfileManager::SaveMachineScoresToDisk()
 {
 	m_MachineProfile.SaveToIni( MACHINE_PROFILE_DIR PROFILE_FILE );
 
-	SaveCategoryScoresToDir( MACHINE_PROFILE_DIR, MEMORY_CARD_MACHINE );
-	SaveSongScoresToDir( MACHINE_PROFILE_DIR, MEMORY_CARD_MACHINE );
-	SaveCourseScoresToDir( MACHINE_PROFILE_DIR, MEMORY_CARD_MACHINE );
-	SaveStatsWebPageToDir( MACHINE_PROFILE_DIR, MEMORY_CARD_MACHINE );
+	SaveCategoryScoresToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
+	SaveSongScoresToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
+	SaveCourseScoresToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
+	SaveStatsWebPageToDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 }
 
 void ProfileManager::CategoryData::AddHighScore( HighScore hs, int &iIndexOut )
@@ -440,7 +440,7 @@ void ProfileManager::CategoryData::AddHighScore( HighScore hs, int &iIndexOut )
 
 #define WARN_AND_RETURN { LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
 
-void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
+void ProfileManager::ReadSongScoresFromDir( CString sDir, ProfileSlot slot )
 {
 	CString fn = sDir + SONG_SCORES_FILE;
 
@@ -503,14 +503,14 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 				WARN_AND_RETURN;
 
 			if( pNotes )
-				pNotes->m_MemCardDatas[mc].iNumTimesPlayed = iNumTimesPlayed;
+				pNotes->m_MemCardDatas[slot].iNumTimesPlayed = iNumTimesPlayed;
 
 			int iNumHighScores;
 			if( !FileRead(f, iNumHighScores) )
 				WARN_AND_RETURN;
 
 			if( pNotes )
-				pNotes->m_MemCardDatas[mc].vHighScores.resize( iNumHighScores );
+				pNotes->m_MemCardDatas[slot].vHighScores.resize( iNumHighScores );
 
 			int l;
 			for( l=0; l<iNumHighScores; l++ )
@@ -535,18 +535,18 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 				if( pNotes == NULL )
 					continue;	// ignore this high score
 				
-				pNotes->m_MemCardDatas[mc].vHighScores[l].sName = sName;
-				pNotes->m_MemCardDatas[mc].vHighScores[l].grade = grade;
-				pNotes->m_MemCardDatas[mc].vHighScores[l].iScore = iScore;
-				pNotes->m_MemCardDatas[mc].vHighScores[l].fPercentDP = fPercentDP;
+				pNotes->m_MemCardDatas[slot].vHighScores[l].sName = sName;
+				pNotes->m_MemCardDatas[slot].vHighScores[l].grade = grade;
+				pNotes->m_MemCardDatas[slot].vHighScores[l].iScore = iScore;
+				pNotes->m_MemCardDatas[slot].vHighScores[l].fPercentDP = fPercentDP;
 			}
 
 			// ignore all high scores that are 0
 			for( l=0; l<iNumHighScores; l++ )
 			{
-				if( pNotes && pNotes->m_MemCardDatas[mc].vHighScores[l].iScore <= 0 )
+				if( pNotes && pNotes->m_MemCardDatas[slot].vHighScores[l].iScore <= 0 )
 				{
-					pNotes->m_MemCardDatas[mc].vHighScores.resize(l);
+					pNotes->m_MemCardDatas[slot].vHighScores.resize(l);
 					break;
 				}
 			}
@@ -555,7 +555,7 @@ void ProfileManager::ReadSongScoresFromDir( CString sDir, MemoryCard mc )
 }
 
 
-void ProfileManager::ReadCategoryScoresFromDir( CString sDir, MemoryCard mc )
+void ProfileManager::ReadCategoryScoresFromDir( CString sDir, ProfileSlot slot )
 {
 	CString fn = sDir + CATEGORY_SCORES_FILE;
 
@@ -580,7 +580,7 @@ void ProfileManager::ReadCategoryScoresFromDir( CString sDir, MemoryCard mc )
 			if( !FileRead(f, iNumHighScores) )
 				WARN_AND_RETURN;
 
-			m_CategoryDatas[mc][st][rc].vHighScores.resize( iNumHighScores );
+			m_CategoryDatas[slot][st][rc].vHighScores.resize( iNumHighScores );
 
 			for( int l=0; l<iNumHighScores; l++ )
 			{
@@ -596,15 +596,15 @@ void ProfileManager::ReadCategoryScoresFromDir( CString sDir, MemoryCard mc )
 				if( !FileRead(f, fPercentDP) )
 					WARN_AND_RETURN;
 				
-				m_CategoryDatas[mc][st][rc].vHighScores[l].sName = sName;
-				m_CategoryDatas[mc][st][rc].vHighScores[l].iScore = iScore;
-				m_CategoryDatas[mc][st][rc].vHighScores[l].fPercentDP = fPercentDP;
+				m_CategoryDatas[slot][st][rc].vHighScores[l].sName = sName;
+				m_CategoryDatas[slot][st][rc].vHighScores[l].iScore = iScore;
+				m_CategoryDatas[slot][st][rc].vHighScores[l].fPercentDP = fPercentDP;
 			}
 		}
 	}
 }
 
-void ProfileManager::ReadCourseScoresFromDir( CString sDir, MemoryCard mc )
+void ProfileManager::ReadCourseScoresFromDir( CString sDir, ProfileSlot slot )
 {
 	CString fn = sDir + COURSE_SCORES_FILE;
 
@@ -652,14 +652,14 @@ void ProfileManager::ReadCourseScoresFromDir( CString sDir, MemoryCard mc )
 				WARN_AND_RETURN;
 
 			if( pCourse )
-				pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed = iNumTimesPlayed;
+				pCourse->m_MemCardDatas[st][slot].iNumTimesPlayed = iNumTimesPlayed;
 
 			int iNumHighScores;
 			if( !FileRead(f, iNumHighScores) )
 				WARN_AND_RETURN;
 
 			if( pCourse )
-				pCourse->m_MemCardDatas[st][mc].vHighScores.resize(iNumHighScores);
+				pCourse->m_MemCardDatas[st][slot].vHighScores.resize(iNumHighScores);
 
 			for( int l=0; l<iNumHighScores; l++ )
 			{
@@ -681,10 +681,10 @@ void ProfileManager::ReadCourseScoresFromDir( CString sDir, MemoryCard mc )
 
 				if( pCourse && st < NUM_STEPS_TYPES )
 				{
-					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = sName;
-					pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore = iScore;
-					pCourse->m_MemCardDatas[st][mc].vHighScores[l].fPercentDP = fPercentDP;
-					pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime = fSurviveTime;
+					pCourse->m_MemCardDatas[st][slot].vHighScores[l].sName = sName;
+					pCourse->m_MemCardDatas[st][slot].vHighScores[l].iScore = iScore;
+					pCourse->m_MemCardDatas[st][slot].vHighScores[l].fPercentDP = fPercentDP;
+					pCourse->m_MemCardDatas[st][slot].vHighScores[l].fSurviveTime = fSurviveTime;
 				}
 			}
 		}
@@ -697,9 +697,9 @@ void ProfileManager::InitMachineScoresFromDisk()
 	ReadSM300NoteScores();
 
 	// category ranking
-	ReadCategoryScoresFromDir( MACHINE_PROFILE_DIR, MEMORY_CARD_MACHINE );
-	ReadSongScoresFromDir( MACHINE_PROFILE_DIR, MEMORY_CARD_MACHINE );
-	ReadCourseScoresFromDir( MACHINE_PROFILE_DIR, MEMORY_CARD_MACHINE );
+	ReadCategoryScoresFromDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
+	ReadSongScoresFromDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
+	ReadCourseScoresFromDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
 
 	if( !m_MachineProfile.LoadFromIni(MACHINE_PROFILE_DIR PROFILE_FILE) )
 	{
@@ -758,26 +758,26 @@ void ProfileManager::ReadSM300NoteScores()
 			char szGradeLetters[10];	// longest possible string is "AAA"
 			int iMaxCombo;	// throw away
 
-			pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.resize(1);
+			pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores.resize(1);
 
 			iRetVal = sscanf( 
 				value, 
 				"%d::%[^:]::%d::%d", 
-				&pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].iNumTimesPlayed,
+				&pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].iNumTimesPlayed,
 				szGradeLetters,
-				&pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].iScore,
+				&pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].iScore,
 				&iMaxCombo
 			);
 			if( iRetVal != 4 )
 				continue;
 
-			pNotes->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[0].grade = StringToGrade( szGradeLetters );
+			pNotes->m_MemCardDatas[PROFILE_SLOT_MACHINE].vHighScores[0].grade = StringToGrade( szGradeLetters );
 		}
 	}
 }
 
 
-void ProfileManager::SaveCategoryScoresToDir( CString sDir, MemoryCard mc )
+void ProfileManager::SaveCategoryScoresToDir( CString sDir, ProfileSlot slot )
 {
 	CString fn = sDir + CATEGORY_SCORES_FILE;
 
@@ -796,23 +796,23 @@ void ProfileManager::SaveCategoryScoresToDir( CString sDir, MemoryCard mc )
 	{
 		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
 		{
-			FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores.size() );
+			FileWrite( f, m_CategoryDatas[slot][st][rc].vHighScores.size() );
 
-			for( unsigned l=0; l<m_CategoryDatas[mc][st][rc].vHighScores.size(); l++ )
+			for( unsigned l=0; l<m_CategoryDatas[slot][st][rc].vHighScores.size(); l++ )
 			{
 				// tricky:  wipe out "name to fill in" markers
-				if( IsRankingToFillIn(m_CategoryDatas[mc][st][rc].vHighScores[l].sName) )
-					m_CategoryDatas[mc][st][rc].vHighScores[l].sName = "";
+				if( IsRankingToFillIn(m_CategoryDatas[slot][st][rc].vHighScores[l].sName) )
+					m_CategoryDatas[slot][st][rc].vHighScores[l].sName = "";
 
-				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].sName );
-				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].iScore );
-				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].fPercentDP );
+				FileWrite( f, m_CategoryDatas[slot][st][rc].vHighScores[l].sName );
+				FileWrite( f, m_CategoryDatas[slot][st][rc].vHighScores[l].iScore );
+				FileWrite( f, m_CategoryDatas[slot][st][rc].vHighScores[l].fPercentDP );
 			}
 		}
 	}
 }
 
-void ProfileManager::SaveCourseScoresToDir( CString sDir, MemoryCard mc )
+void ProfileManager::SaveCourseScoresToDir( CString sDir, ProfileSlot slot )
 {
 	CString fn = sDir + COURSE_SCORES_FILE;
 
@@ -845,36 +845,36 @@ void ProfileManager::SaveCourseScoresToDir( CString sDir, MemoryCard mc )
 		int NumStepsPlayed = 0;
 		int st;
 		for( st=0; st<NUM_STEPS_TYPES; st++ )
-			if( pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed )
+			if( pCourse->m_MemCardDatas[st][slot].iNumTimesPlayed )
 				++NumStepsPlayed;
 		FileWrite( f, NumStepsPlayed );
 
 		for( st=0; st<NUM_STEPS_TYPES; st++ )
 		{
-			if( !pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed )
+			if( !pCourse->m_MemCardDatas[st][slot].iNumTimesPlayed )
 				continue;
 			--NumStepsPlayed;
 
 			FileWrite( f, st );
-			FileWrite( f, pCourse->m_MemCardDatas[st][mc].iNumTimesPlayed );
-			FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores.size() );
-			for( unsigned l=0; l<pCourse->m_MemCardDatas[st][mc].vHighScores.size(); l++ )
+			FileWrite( f, pCourse->m_MemCardDatas[st][slot].iNumTimesPlayed );
+			FileWrite( f, pCourse->m_MemCardDatas[st][slot].vHighScores.size() );
+			for( unsigned l=0; l<pCourse->m_MemCardDatas[st][slot].vHighScores.size(); l++ )
 			{
 				// tricky:  wipe out "name to fill in" markers
-				if( IsRankingToFillIn(pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName) )
-					pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName = "";
+				if( IsRankingToFillIn(pCourse->m_MemCardDatas[st][slot].vHighScores[l].sName) )
+					pCourse->m_MemCardDatas[st][slot].vHighScores[l].sName = "";
 
-				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].sName );
-				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].iScore );
-				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fPercentDP );
-				FileWrite( f, pCourse->m_MemCardDatas[st][mc].vHighScores[l].fSurviveTime );
+				FileWrite( f, pCourse->m_MemCardDatas[st][slot].vHighScores[l].sName );
+				FileWrite( f, pCourse->m_MemCardDatas[st][slot].vHighScores[l].iScore );
+				FileWrite( f, pCourse->m_MemCardDatas[st][slot].vHighScores[l].fPercentDP );
+				FileWrite( f, pCourse->m_MemCardDatas[st][slot].vHighScores[l].fSurviveTime );
 			}
 		}
 		ASSERT( !NumStepsPlayed );
 	}
 }
 
-void ProfileManager::SaveSongScoresToDir( CString sDir, MemoryCard mc )
+void ProfileManager::SaveSongScoresToDir( CString sDir, ProfileSlot slot )
 {
 	CString fn = sDir + SONG_SCORES_FILE;
 
@@ -905,7 +905,7 @@ void ProfileManager::SaveSongScoresToDir( CString sDir, MemoryCard mc )
 		for( unsigned i=0; i<pSong->m_apNotes.size(); ++i )
 		{
 			Steps* pNotes = pSong->m_apNotes[i];
-			if( pNotes->m_MemCardDatas[mc].iNumTimesPlayed == 0  &&  pNotes->m_MemCardDatas[mc].vHighScores.empty() )
+			if( pNotes->m_MemCardDatas[slot].iNumTimesPlayed == 0  &&  pNotes->m_MemCardDatas[slot].vHighScores.empty() )
 				continue;
 			vNotes.push_back( pNotes );
 		}
@@ -924,20 +924,20 @@ void ProfileManager::SaveSongScoresToDir( CString sDir, MemoryCard mc )
 			FileWrite( f, pNotes->m_StepsType );
 			FileWrite( f, pNotes->GetDifficulty() );
 			FileWrite( f, pNotes->GetDescription() );
-			FileWrite( f, pNotes->m_MemCardDatas[mc].iNumTimesPlayed );
+			FileWrite( f, pNotes->m_MemCardDatas[slot].iNumTimesPlayed );
 
-			FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores.size() );
+			FileWrite( f, pNotes->m_MemCardDatas[slot].vHighScores.size() );
 
-			for( int l=0; l<(int)pNotes->m_MemCardDatas[mc].vHighScores.size(); l++ )
+			for( int l=0; l<(int)pNotes->m_MemCardDatas[slot].vHighScores.size(); l++ )
 			{
 				// tricky:  wipe out "name to fill in" markers
-				if( IsRankingToFillIn(pNotes->m_MemCardDatas[mc].vHighScores[l].sName) )
-					pNotes->m_MemCardDatas[mc].vHighScores[l].sName = "";
+				if( IsRankingToFillIn(pNotes->m_MemCardDatas[slot].vHighScores[l].sName) )
+					pNotes->m_MemCardDatas[slot].vHighScores[l].sName = "";
 
-				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].sName );
-				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].grade );
-				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].iScore );
-				FileWrite( f, pNotes->m_MemCardDatas[mc].vHighScores[l].fPercentDP );
+				FileWrite( f, pNotes->m_MemCardDatas[slot].vHighScores[l].sName );
+				FileWrite( f, pNotes->m_MemCardDatas[slot].vHighScores[l].grade );
+				FileWrite( f, pNotes->m_MemCardDatas[slot].vHighScores[l].iScore );
+				FileWrite( f, pNotes->m_MemCardDatas[slot].vHighScores[l].fPercentDP );
 			}
 		}
 	}
@@ -949,7 +949,7 @@ void ProfileManager::SaveSongScoresToDir( CString sDir, MemoryCard mc )
 	return str;
 } */
 
-void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
+void ProfileManager::SaveStatsWebPageToDir( CString sDir, ProfileSlot slot )
 {
 	CString fn = sDir + STATS_HTML_FILE;
 
@@ -958,10 +958,10 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	// Get Profile
 	//
 	Profile* pProfile;
-	if( mc == MEMORY_CARD_MACHINE )
+	if( slot == PROFILE_SLOT_MACHINE )
 		pProfile = GetMachineProfile();
 	else
-		pProfile = GetProfile( (PlayerNumber)mc );
+		pProfile = GetProfile( (PlayerNumber)slot );
 	ASSERT(pProfile);
 
 	//
@@ -1150,12 +1150,12 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		{
 			unsigned uNumToShow = min( vpSongs.size(), (unsigned)100 );
 
-			SortSongPointerArrayByMostPlayed( vpSongs, mc );
+			SortSongPointerArrayByMostPlayed( vpSongs, slot );
 			PRINT_DIV_START( "Songs by Popularity" );
 			for( unsigned i=0; i<uNumToShow; i++ )
 			{
 				Song* pSong = vpSongs[i];
-				PRINT_LINE_RANK_LINK( i+1, pSong->GetFullDisplayTitle(), ssprintf("#%u",(unsigned)pSong).c_str(), pSong->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, pSong->GetFullDisplayTitle(), ssprintf("#%u",(unsigned)pSong).c_str(), pSong->GetNumTimesPlayed(slot) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1164,7 +1164,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		{
 			unsigned uNumToShow = min( vpAllSteps.size(), (unsigned)100 );
 
-			SortStepsPointerArrayByMostPlayed( vpAllSteps, mc );
+			SortStepsPointerArrayByMostPlayed( vpAllSteps, slot );
 			PRINT_DIV_START( "Steps by Popularity" );
 			for( unsigned i=0; i<uNumToShow; i++ )
 			{
@@ -1176,7 +1176,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
 				s += " ";
 				s += DifficultyToString(pSteps->GetDifficulty());
-				PRINT_LINE_RANK_LINK( i+1, s, ssprintf("#%u",(unsigned)pSteps).c_str(), pSteps->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, s, ssprintf("#%u",(unsigned)pSteps).c_str(), pSteps->GetNumTimesPlayed(slot) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1185,12 +1185,12 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		{
 			unsigned uNumToShow = min( vpCourses.size(), (unsigned)100 );
 
-			SortCoursePointerArrayByMostPlayed( vpCourses, mc );
+			SortCoursePointerArrayByMostPlayed( vpCourses, slot );
 			PRINT_DIV_START( "Courses by Popularity" );
 			for( unsigned i=0; i<uNumToShow; i++ )
 			{
 				Course* pCourse = vpCourses[i];
-				PRINT_LINE_RANK_LINK( i+1, pCourse->m_sName, ssprintf("#%u",(unsigned)pCourse).c_str(), pCourse->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, pCourse->m_sName, ssprintf("#%u",(unsigned)pCourse).c_str(), pCourse->GetNumTimesPlayed(slot) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1240,13 +1240,13 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 					if( pSteps )
 					{
 						CString sHighScore;
-						if( !pSteps->m_MemCardDatas[mc].vHighScores.empty() )
+						if( !pSteps->m_MemCardDatas[slot].vHighScores.empty() )
 						{
-							sHighScore += pSteps->m_MemCardDatas[mc].vHighScores[0].sName;
+							sHighScore += pSteps->m_MemCardDatas[slot].vHighScores[0].sName;
 							sHighScore += "<br>";
-							sHighScore += GradeToString( pSteps->m_MemCardDatas[mc].vHighScores[0].grade );
+							sHighScore += GradeToString( pSteps->m_MemCardDatas[slot].vHighScores[0].grade );
 							sHighScore += "<br>";
-							sHighScore += ssprintf("%d",pSteps->m_MemCardDatas[mc].vHighScores[0].iScore);
+							sHighScore += ssprintf("%d",pSteps->m_MemCardDatas[slot].vHighScores[0].iScore);
 						}
 						f.PutLine( ssprintf("<td><p align='right'><a href='#%u'>%s</a></p></td>", 
 							(unsigned)pSteps,		// use pointer value as the hash
@@ -1352,7 +1352,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
 			CString sBPM = (fMinBPM==fMaxBPM) ? ssprintf("%.1f",fMinBPM) : ssprintf("%.1f - %.1f",fMinBPM,fMaxBPM);
 			PRINT_LINE_S( "BPM", sBPM );
-			PRINT_LINE_I( "NumTimesPlayed", pSong->GetNumTimesPlayed(mc) );
+			PRINT_LINE_I( "NumTimesPlayed", pSong->GetNumTimesPlayed(slot) );
 			PRINT_LINE_S( "Credit", pSong->m_sCredit );
 			PRINT_LINE_S( "MusicLength", SecondsToTime(pSong->m_fMusicLengthSeconds) );
 			PRINT_LINE_B( "Lyrics", !pSong->m_sLyricsFile.empty() );
@@ -1371,9 +1371,9 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 					" - " +
 					DifficultyToString(pSteps->GetDifficulty());
 				PRINT_DIV2_START_ANCHOR( /*Steps primary key*/pSteps, s.c_str() );	// use pointer value as the hash
-				PRINT_LINE_I( "NumTimesPlayed", pSteps->m_MemCardDatas[mc].iNumTimesPlayed );
+				PRINT_LINE_I( "NumTimesPlayed", pSteps->m_MemCardDatas[slot].iNumTimesPlayed );
 				
-				vector<Steps::MemCardData::HighScore>& vHighScores = pSteps->m_MemCardDatas[mc].vHighScores;
+				vector<Steps::MemCardData::HighScore>& vHighScores = pSteps->m_MemCardDatas[slot].vHighScores;
 				for( unsigned i=0; i<vHighScores.size(); i++ )
 				{
 					Steps::MemCardData::HighScore &hs = vHighScores[i];
@@ -1478,3 +1478,18 @@ bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn )
 {
 	return GetProfile(pn) && m_bWasLoadedFromMemoryCard[pn];
 }
+
+CString ProfileManager::GetProfileDir( ProfileSlot slot )
+{
+	switch( slot )
+	{
+	case PROFILE_SLOT_PLAYER_1:
+	case PROFILE_SLOT_PLAYER_2:
+		return m_sProfileDir[slot];
+	case PROFILE_SLOT_MACHINE:
+		return MACHINE_PROFILE_DIR;
+	default:
+		ASSERT(0);
+	}
+}
+

@@ -14,7 +14,7 @@ DifficultyDisplay::DifficultyDisplay()
 	int diff;
 	for( diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
 	{
-		m_difficulty[diff].Load( THEME->GetPathToG("DifficultyDisplay bar 5x1") );
+		m_difficulty[diff].Load( THEME->GetPathToG(ssprintf("DifficultyDisplay bar %dx1",NUM_DIFFICULTIES)) );
 		m_difficulty[diff].SetState(diff);
 		m_difficulty[diff].StopAnimating();
 		this->AddChild( &m_difficulty[diff] );

@@ -174,7 +174,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		/* Increment the play count. */
 		if( !m_bDemonstration )
 		{
-			for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
+			for( int mc = 0; mc < NUM_PROFILE_SLOTS; ++mc )
 				++GAMESTATE->m_pCurCourse->m_MemCardDatas[st][mc].iNumTimesPlayed;
 		}
 
@@ -592,7 +592,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
-		m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenGameplay difficulty icons 2x5") );
+		m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenGameplay difficulty icons 2x%d",NUM_DIFFICULTIES)) );
 		
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
@@ -873,7 +873,7 @@ void ScreenGameplay::LoadNextSong()
 		 * even if the people playing it aren't good at it.) */
 		if( !m_bDemonstration )
 		{
-			for( int mc = 0; mc < NUM_MEMORY_CARDS; ++mc )
+			for( int mc = 0; mc < NUM_PROFILE_SLOTS; ++mc )
 				++GAMESTATE->m_pCurNotes[p]->m_MemCardDatas[mc].iNumTimesPlayed;
 		}
 

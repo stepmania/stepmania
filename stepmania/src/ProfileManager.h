@@ -88,6 +88,7 @@ public:
 
 	bool IsUsingProfile( PlayerNumber pn ) { return !m_sProfileDir[pn].empty(); }
 	Profile* GetProfile( PlayerNumber pn );
+	CString GetProfileDir( ProfileSlot slot );
 
 	Profile* GetMachineProfile() { return &m_MachineProfile; }
 
@@ -121,24 +122,24 @@ public:
 
 		void AddHighScore( HighScore hs, int &iIndexOut );
 
-	} m_CategoryDatas[NUM_MEMORY_CARDS][NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
+	} m_CategoryDatas[NUM_PROFILE_SLOTS][NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
 
 	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 		m_CategoryDatas[pn][nt][rc].AddHighScore( hs, iPersonalIndexOut );
-		m_CategoryDatas[MEMORY_CARD_MACHINE][nt][rc].AddHighScore( hs, iMachineIndexOut );
+		m_CategoryDatas[PROFILE_SLOT_MACHINE][nt][rc].AddHighScore( hs, iMachineIndexOut );
 	}
 
 	void ReadSM300NoteScores();
-	void ReadSongScoresFromDir( CString sDir, MemoryCard mc );
-	void ReadCourseScoresFromDir( CString sDir, MemoryCard mc );
-	void ReadCategoryScoresFromDir( CString sDir, MemoryCard mc );
+	void ReadSongScoresFromDir( CString sDir, ProfileSlot slot );
+	void ReadCourseScoresFromDir( CString sDir, ProfileSlot slot );
+	void ReadCategoryScoresFromDir( CString sDir, ProfileSlot slot );
 
-	void SaveSongScoresToDir( CString sDir, MemoryCard mc );
-	void SaveCourseScoresToDir( CString sDir, MemoryCard mc );
-	void SaveCategoryScoresToDir( CString sDir, MemoryCard mc );
-	void SaveStatsWebPageToDir( CString sDir, MemoryCard mc );
+	void SaveSongScoresToDir( CString sDir, ProfileSlot slot );
+	void SaveCourseScoresToDir( CString sDir, ProfileSlot slot );
+	void SaveCategoryScoresToDir( CString sDir, ProfileSlot slot );
+	void SaveStatsWebPageToDir( CString sDir, ProfileSlot slot );
 
 private:
 	bool LoadDefaultProfileFromMachine( PlayerNumber pn );

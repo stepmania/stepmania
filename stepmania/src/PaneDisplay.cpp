@@ -68,13 +68,13 @@ static const PaneModes PaneMode[NUM_PANES] =
 //	PANEMODE_COURSE
 };
 
-static MemoryCard PlayerMemCard( PlayerNumber pn )
+static ProfileSlot PlayerMemCard( PlayerNumber pn )
 {
 	switch( pn )
 	{
-	case PLAYER_1: return MEMORY_CARD_PLAYER_1;
-	default: ASSERT(0);
-	case PLAYER_2: return MEMORY_CARD_PLAYER_2;
+	case PLAYER_1: return PROFILE_SLOT_PLAYER_1;
+	case PLAYER_2: return PROFILE_SLOT_PLAYER_2;
+	default: ASSERT(0);	return PROFILE_SLOT_MACHINE;
 	};
 }
 
@@ -198,12 +198,12 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	case SONG_MACHINE_HIGH_NAME: /* set val for color */
 	case SONG_MACHINE_HIGH_SCORE:
-		val = 100.0f * GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( MEMORY_CARD_MACHINE ).fPercentDP;
+		val = 100.0f * GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( PROFILE_SLOT_MACHINE ).fPercentDP;
 		break;
 
 	case SONG_MACHINE_RANK:
 		{
-		const vector<Song*> best = SONGMAN->GetBestSongs( MEMORY_CARD_MACHINE );
+		const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
 		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurSong );
 		val += 1;
 		break;
@@ -219,16 +219,16 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	case COURSE_MACHINE_HIGH_NAME: /* set val for color */
 	case COURSE_MACHINE_HIGH_SCORE:
-		val = 100.0f * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, MEMORY_CARD_MACHINE ).fPercentDP;
+		val = 100.0f * GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, PROFILE_SLOT_MACHINE ).fPercentDP;
 		break;
 
 	case COURSE_MACHINE_NUM_PLAYS:
-		val = (float) GAMESTATE->m_pCurCourse->GetNumTimesPlayed( MEMORY_CARD_MACHINE );
+		val = (float) GAMESTATE->m_pCurCourse->GetNumTimesPlayed( PROFILE_SLOT_MACHINE );
 		break;
 
 	case COURSE_MACHINE_RANK:
 		{
-		const vector<Course*> best = SONGMAN->GetBestCourses( MEMORY_CARD_MACHINE );
+		const vector<Course*> best = SONGMAN->GetBestCourses( PROFILE_SLOT_MACHINE );
 		val = (float) FindIndex( best.begin(), best.end(), GAMESTATE->m_pCurCourse );
 		val += 1;
 		}
@@ -265,10 +265,10 @@ void PaneDisplay::SetContent( PaneContents c )
 	switch( c )
 	{
 	case SONG_MACHINE_HIGH_NAME:
-		str = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( MEMORY_CARD_MACHINE ).sName;
+		str = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( PROFILE_SLOT_MACHINE ).sName;
 		break;
 	case COURSE_MACHINE_HIGH_NAME:
-		str = GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, MEMORY_CARD_MACHINE ).sName;
+		str = GAMESTATE->m_pCurCourse->GetTopScore( GAMESTATE->GetCurrentStyleDef()->m_StepsType, PROFILE_SLOT_MACHINE ).sName;
 		break;
 
 	case SONG_MACHINE_HIGH_SCORE:

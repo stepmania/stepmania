@@ -31,6 +31,8 @@
 #include "RageTextureManager.h"
 #include "Banner.h"
 #include "ProfileManager.h"
+#include "MemoryCardManager.h"
+#include "NotesLoaderSM.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -45,6 +47,7 @@ CachedThemeMetricC EASY_COLOR			("SongManager","EasyColor");
 CachedThemeMetricC MEDIUM_COLOR			("SongManager","MediumColor");
 CachedThemeMetricC HARD_COLOR			("SongManager","HardColor");
 CachedThemeMetricC CHALLENGE_COLOR		("SongManager","ChallengeColor");
+CachedThemeMetricC EDIT_COLOR			("SongManager","EditColor");
 CachedThemeMetricC EXTRA_COLOR			("SongManager","ExtraColor");
 CachedThemeMetricI EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
 
@@ -66,6 +69,7 @@ static void UpdateMetrics()
 	MEDIUM_COLOR.Refresh();
 	HARD_COLOR.Refresh();
 	CHALLENGE_COLOR.Refresh();
+	EDIT_COLOR.Refresh();
 	EXTRA_COLOR.Refresh();
 	EXTRA_COLOR_METER.Refresh();
 }
@@ -397,7 +401,8 @@ RageColor SongManager::GetDifficultyColor( Difficulty dc ) const
 	case DIFFICULTY_MEDIUM:		return MEDIUM_COLOR;
 	case DIFFICULTY_HARD:		return HARD_COLOR;
 	case DIFFICULTY_CHALLENGE:	return CHALLENGE_COLOR;
-	default:	ASSERT(0);		return CHALLENGE_COLOR;
+	case DIFFICULTY_EDIT:		return EDIT_COLOR;
+	default:	ASSERT(0);		return EDIT_COLOR;
 	}
 }
 
@@ -777,6 +782,8 @@ Song* SongManager::GetSongFromDir( CString sDir )
 	if( sDir.Right(1) != "/" )
 		sDir += "/";
 
+	sDir.Replace( '\\', '/' );
+
 	for( unsigned int i=0; i<m_pSongs.size(); i++ )
 		if( sDir.CompareNoCase(m_pSongs[i]->GetSongDir()) == 0 )
 			return m_pSongs[i];
@@ -822,7 +829,7 @@ Course* SongManager::GetCourseFromName( CString sName )
 
 Song *SongManager::FindSong( CString sPath )
 {
-	sPath.Replace( "\\", "/" );
+	sPath.Replace( '\\', '/' );
 	CStringArray bits;
 	split( sPath, "/", bits );
 
@@ -860,13 +867,13 @@ Course *SongManager::FindCourse( CString sName )
 void SongManager::UpdateBestAndShuffled()
 {
 	// update players best
-	for( int i = 0; i < NUM_MEMORY_CARDS; ++i )
+	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
 	{
 		m_pBestSongs[i] = m_pSongs;
-		SortSongPointerArrayByMostPlayed( m_pBestSongs[i], (MemoryCard) i );
+		SortSongPointerArrayByMostPlayed( m_pBestSongs[i], (ProfileSlot) i );
 
 		m_pBestCourses[i] = m_pCourses;
-		SortCoursePointerArrayByMostPlayed( m_pBestCourses[i], (MemoryCard) i );
+		SortCoursePointerArrayByMostPlayed( m_pBestCourses[i], (ProfileSlot) i );
 	}
 
 	// update shuffled
@@ -896,6 +903,46 @@ void SongManager::UpdateRankingCourses()
 		for(unsigned j = 0; j < RankingCourses.size(); j++)
 			if (!RankingCourses[j].CompareNoCase(m_pCourses[i]->m_sPath))
 				m_pCourses[i]->SortOrder_Ranking = 1;
+	}
+}
+
+void SongManager::LoadAllFromProfiles()
+{
+	for( int s=0; s<NUM_PROFILE_SLOTS; s++ )
+	{
+		CString sProfileDir = PROFILEMAN->GetProfileDir( (ProfileSlot)s );
+		if( sProfileDir.empty() )
+			continue;	// skip
+		//
+		// Load all edits.  Edits are dangling .sm files in the Edits folder
+		//
+		{
+			CString sEditsDir = sProfileDir+"Edits/";
+			CStringArray asEditsFilesWithPath;
+			GetDirListing( sEditsDir+"*.sm", asEditsFilesWithPath, false, true );
+
+			for( unsigned i=0; i<asEditsFilesWithPath.size(); i++ )
+			{
+				CString sEditFileWithPath = asEditsFilesWithPath[i];
+
+				SMLoader::LoadEdit( sEditFileWithPath );
+			}
+		}
+
+		//
+		// Load all songs
+		//
+		{
+		}
+	}
+}
+
+void SongManager::FreeAllLoadedFromProfiles()
+{
+	for( unsigned s=0; s<m_pSongs.size(); s++ )
+	{
+		Song* pSong = m_pSongs[s];
+		pSong->FreeAllLoadedFromProfiles();
 	}
 }
 
