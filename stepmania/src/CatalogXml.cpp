@@ -76,6 +76,8 @@ void SaveCatalogXml( CString sDir )
 				Trail *pTrail = pCourse->GetTrail( st, cd );
 				if( pTrail == NULL )
 					continue;
+				if( !pTrail->m_vEntries.size() )
+					continue;
 				
 				TrailID trailID;
 				trailID.FromTrail( pTrail );
