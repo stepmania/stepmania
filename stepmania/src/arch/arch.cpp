@@ -89,9 +89,7 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 		if(!DriversToTry[i].CompareNoCase("SDL"))			Add.push_back(new InputHandler_SDL);
 #endif
 
-#if !defined(XBOX)
 		if(!DriversToTry[i].CompareNoCase("MonkeyKeyboard"))Add.push_back(new InputHandler_MonkeyKeyboard);
-#endif
 	}
 }
 
