@@ -28,15 +28,11 @@
 #include "arch/ArchHooks/ArchHooks.h"
 
 
-#define CHOICES					THEME->GetMetric (m_sName,"Choices")
+#define NUM_CHOICES				THEME->GetMetricI(m_sName,"NumChoices")
+#define CHOICE( choice )		THEME->GetMetric (m_sName,ssprintf("Choice%d",choice+1))
 #define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 #define NEXT_SCREEN( choice )	THEME->GetMetric (m_sName,ssprintf("NextScreen%d",choice+1))
-
-// Temporary hack: specify announcer in selection
-#define SPECIFY_ANNOUNCER		THEME->HasMetric(m_sName,"Announcer1")
-#define ANNOUNCER( choice )		THEME->GetMetric (m_sName,ssprintf("Announcer%d",choice+1))
-
 
 ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 {
@@ -48,19 +44,13 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 	// Set this true later if we discover a choice that chooses the Style
 
 
-	CStringArray asChoices;
-	split( CHOICES, ",", asChoices );
-
-	for( unsigned c=0; c<asChoices.size(); c++ )
+	for( unsigned c=0; c<NUM_CHOICES; c++ )
 	{
+		CString sChoice = CHOICE(c);
+
 		ModeChoice mc;
-
-		if( SPECIFY_ANNOUNCER )
-			mc.sAnnouncer = ANNOUNCER( c );
-
-		if( mc.FromString(asChoices[c]) )
-			m_aModeChoices.push_back( mc );
-		
+		mc.FromString(sChoice);
+		m_aModeChoices.push_back( mc );
 		
 		CString sBGAnimationDir = THEME->GetPathTo(BGAnimations, ssprintf("%s %s",m_sName.c_str(),mc.name), true);	// true="optional"
 		if( sBGAnimationDir == "" )

@@ -50,52 +50,67 @@ bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
 
 	bool bChoiceIsInvalid = false;
 
-	CStringArray asBits;
-	split( sChoice, "-", asBits );
-	for( unsigned b=0; b<asBits.size(); b++ )
+	CStringArray asCommands;
+	split( sChoice, ";", asCommands );
+	for( unsigned i=0; i<asCommands.size(); i++ )
 	{
-		CString sBit = asBits[b];
+		CString sCommand = asCommands[i];
 
-		Game game = GAMEMAN->StringToGameType( sBit );
-		if( game != GAME_INVALID )
+		CStringArray asBits;
+		split( sCommand, ",", asBits );
+		
+		CString sName = asBits[0];
+		CString sValue = (asBits.size()>1) ? asBits[1] : "";
+
+		sName.MakeLower();
+		sValue.MakeLower();
+
+		if( sName == "game" )
 		{
-			this->game = game;
-			continue;
+			Game game = GAMEMAN->StringToGameType( sValue );
+			if( game != GAME_INVALID )
+				this->game = game;
+			else
+				bChoiceIsInvalid |= true;
 		}
 
-		Style style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sBit );
-		if( style != STYLE_INVALID )
+
+		if( sName == "style" )
 		{
-			this->style = style;
-			// There is a choices that allows players to choose a style.  Allow joining.
-			GAMESTATE->m_bPlayersCanJoin = true;
-			continue;
+			Style style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sValue );
+			if( style != STYLE_INVALID )
+			{
+				this->style = style;
+				// There is a choices that allows players to choose a style.  Allow joining.
+				GAMESTATE->m_bPlayersCanJoin = true;
+			}
+			else
+				bChoiceIsInvalid |= true;
 		}
 
-		PlayMode pm = StringToPlayMode( sBit );
-		if( pm != PLAY_MODE_INVALID )
+		if( sName == "playmode" )
 		{
-			this->pm = pm;
-			continue;
+			PlayMode pm = StringToPlayMode( sValue );
+			if( pm != PLAY_MODE_INVALID )
+				this->pm = pm;
+			else
+				bChoiceIsInvalid |= true;
 		}
 
-		Difficulty dc = StringToDifficulty( sBit );
-		if( dc != DIFFICULTY_INVALID )
+		if( sName == "difficulty" )
 		{
-			this->dc = dc;
-			continue;
+			Difficulty dc = StringToDifficulty( sValue );
+			if( dc != DIFFICULTY_INVALID )
+				this->dc = dc;
+			else
+				bChoiceIsInvalid |= true;
 		}
 
-		// Never show this error to the user.  It occurs all the time in 
-		// non-dance gametypes.
-//		if( !bIgnoreUnknown )
-//		{
-//			CString sError = ssprintf( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
-//			LOG->Warn( sError );
-//			if( DISPLAY->IsWindowed() )
-//				HOOKS->MessageBoxOK( sError );
-//		}
-		bChoiceIsInvalid |= true;
+		if( sName == "announcer" )
+		{
+			sAnnouncer = sValue;
+		}
+
 	}
 
 	if( this->style != STYLE_INVALID )

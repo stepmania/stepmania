@@ -53,13 +53,13 @@ ScreenSelectDifficulty::ScreenSelectDifficulty() : ScreenSelect( "ScreenSelectDi
 			m_ModeChoices[PAGE_2].push_back( m_aModeChoices[c] );
 	}
 
+	c = 0;
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-
-		for( unsigned choice=0; choice<m_ModeChoices[page].size(); choice++ )
+		for( unsigned choice=0; choice<m_ModeChoices[page].size(); choice++, c++ )
 		{
-			CString sInfoFile = ssprintf( "ScreenSelectDifficulty info %s", m_ModeChoices[page][choice].name );
-			CString sPictureFile = ssprintf( "ScreenSelectDifficulty picture %s", m_ModeChoices[page][choice].name );
+			CString sInfoFile = ssprintf( "ScreenSelectDifficulty info%d", c+1 );
+			CString sPictureFile = ssprintf( "ScreenSelectDifficulty picture%d", c+1 );
 
 			m_sprPicture[page][choice].SetName( ssprintf("PicturePage%dChoice%d",page+1,choice+1) );
 			m_sprPicture[page][choice].Load( THEME->GetPathToG(sPictureFile) );
