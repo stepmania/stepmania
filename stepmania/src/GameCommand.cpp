@@ -17,6 +17,7 @@
 #include "Game.h"
 #include "Style.h"
 #include "Foreach.h"
+#include "Command.h"
 
 void GameCommand::Init()
 {
@@ -97,7 +98,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	return true;
 }
 
-void GameCommand::Load( int iIndex, const ActorCommands& acs )
+void GameCommand::Load( int iIndex, const Commands& cmds )
 {
 	m_iIndex = iIndex;
 
@@ -105,22 +106,13 @@ void GameCommand::Load( int iIndex, const ActorCommands& acs )
 
 	CString sSteps;
 
-	FOREACH_CONST( ActorCommand, acs.v, command )
+	FOREACH_CONST( Command, cmds.v, command )
 	{
-		if( command->vTokens.empty() )
+		CString sName = command->GetName();
+		if( sName.empty() )
 			continue;
 		
-		const CString &sName = command->vTokens[0];	// name is already made lowercase by ActorCommand
-		
-		CString sValue;
-		for( vector<ActorCommandToken>::const_iterator iter = command->vTokens.begin()+1; 
-			iter != command->vTokens.end(); 
-			iter++ )
-		{
-			sValue += iter->s;
-			if( iter != command->vTokens.end()-1 )
-				sValue += ",";
-		}
+		CString sValue = join( ",", command->m_vsArgs.begin()+1, command->m_vsArgs.end() );
 
 		if( sName == "game" )
 		{
@@ -209,8 +201,8 @@ void GameCommand::Load( int iIndex, const ActorCommands& acs )
 		
 		else if( sName == "setenv" )
 		{
-			if( command->vTokens.size() == 3 )
-				m_SetEnv[ command->vTokens[1] ] = command->vTokens[2].s;
+			if( command->m_vsArgs.size() == 3 )
+				m_SetEnv[ command->m_vsArgs[1] ] = command->m_vsArgs[2];
 		}
 		
 		else if( sName == "songgroup" )
