@@ -17,11 +17,13 @@ public:
 
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
+	static int settext( T* p, lua_State *L )			{ p->SetText( SArg(1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( wrapwidthpixels )
 		ADD_METHOD( maxwidth )
+		ADD_METHOD( settext )
 		LunaActor<T>::Register( L );
 	}
 };
