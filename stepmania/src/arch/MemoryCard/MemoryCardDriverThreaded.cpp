@@ -79,9 +79,18 @@ void MemoryCardDriverThreaded::MountThreadMain()
 
 	while( !m_bShutdownNextUpdate )
 	{      
+		if( !this->MountThreadWaitForUpdate() )
+			continue;
+
 		LockMut( m_mutexPause );	// wait until we're unpaused
 		this->MountThreadDoOneUpdate();
 	}
+}
+
+bool MemoryCardDriverThreaded::MountThreadWaitForUpdate()
+{
+	usleep( 100000 );
+	return true;
 }
 
 bool MemoryCardDriverThreaded::StorageDevicesChanged()

@@ -187,32 +187,29 @@ bool UsbStorageDevicesChanged()
   return bChanged;
 }
 
-void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
+/* Return true if MountThreadDoOneUpdate should be called. */
+bool MemoryCardDriverThreaded_Linux::MountThreadWaitForUpdate()
 {
-	bool bNeedToDoAnyMounts = false;
+	/* Check if any devices need a write test. */
 	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
 	{
 		UsbStorageDevice &d = m_vDevicesLastSeen[i];
 		if( d.bNeedsWriteTest )
-		{
-			bNeedToDoAnyMounts = true;
-			break;
-		}
+			return true;
 	}
-	
-	if( bNeedToDoAnyMounts )
-	{
-		// fall through
-	}
-	else
-	{
-	  if( !UsbStorageDevicesChanged() )
-	    {
-	      usleep(1000*300);  // 300 ms
-	      return;
-	    }
-	}
-	
+
+	/* Nothing needs a write test.  If no devices have changed, either,
+	 * delay. */
+	if( UsbStorageDevicesChanged() )
+		return true;
+
+	/* Nothing to do.  Delay, so we don't busy loop. */
+	usleep(1000*300);  // 300 ms
+	return false;
+}
+
+void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
+{
 	// TRICKY: We're waiting for a change in the USB device list, but 
 	// the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
 	// on the USB device list because the usb-storage descriptors are separate files per 
