@@ -354,34 +354,6 @@ unsigned int GetHashForString ( const CString &s )
 	return crc;
 }
 
-unsigned int GetHashForFile( const CString &sPath )
-{
-	unsigned int hash = 0;
-
-	hash += GetHashForString( sPath );
-	hash += GetFileSizeInBytes( sPath ); 
-	hash += GetFileModTime( sPath );
-
-	return hash;
-}
-
-unsigned int GetHashForDirectory( const CString &sDir )
-{
-	unsigned int hash = 0;
-
-	hash += GetHashForFile( sDir );
-
-	CStringArray arrayFiles;
-	GetDirListing( sDir+"*", arrayFiles, false );
-	for( unsigned i=0; i<arrayFiles.size(); i++ )
-	{
-		const CString sFilePath = sDir + arrayFiles[i];
-		hash += GetHashForFile( sFilePath );
-	}
-
-	return hash; 
-}
-
 /* Return true if "dir" is empty or does not exist. */
 bool DirectoryIsEmpty( const CString &dir )
 {

@@ -15,7 +15,7 @@ public:
 	virtual void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	virtual RageFileManager::FileType GetFileType( const CString &sPath );
 	virtual int GetFileSizeInBytes( const CString &sFilePath );
-	virtual int GetFileModTime( const CString &sPath );
+	virtual int GetFileHash( const CString &sPath );
 	virtual int GetPathValue( const CString &path );
 	virtual bool Ready() { return true; } /* see RageFileManager::MountpointIsReady */
 	virtual void FlushDirCache( const CString &sPath );

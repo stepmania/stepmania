@@ -115,9 +115,9 @@ int RageFileDriver::GetFileSizeInBytes( const CString &sPath )
 	return FDB->GetFileSize( sPath );
 }
 
-int RageFileDriver::GetFileModTime( const CString &sPath )
+int RageFileDriver::GetFileHash( const CString &sPath )
 {
-	return FDB->GetFileModTime( sPath );
+	return FDB->GetFileHash( sPath );
 }
 
 void RageFileDriver::FlushDirCache( const CString &sPath )

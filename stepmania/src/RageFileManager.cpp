@@ -18,7 +18,7 @@ public:
 	RageFileDriverMountpoints(): RageFileDriver( new FilenameDB ) { }
 	RageFileObj *Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err )
 	{
-		err = EINVAL;
+		err = (mode == RageFile::WRITE)? EINVAL:ENOENT;
 		return NULL;
 	}
 	void FlushDirCache( const CString &sPath ) { }
@@ -257,14 +257,14 @@ int RageFileManager::GetFileSizeInBytes( const CString &sPath )
 	return -1;
 }
 
-int RageFileManager::GetFileModTime( const CString &sPath )
+int RageFileManager::GetFileHash( const CString &sPath )
 {
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		const CString p = g_Drivers[i].GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
-		int ret = g_Drivers[i].driver->GetFileModTime( p );
+		int ret = g_Drivers[i].driver->GetFileHash( p );
 		if( ret != -1 )
 			return ret;
 	}
@@ -288,7 +288,6 @@ RageFileObj *RageFileManager::Open( const CString &sPath, RageFile::OpenMode mod
 	if( mode == RageFile::WRITE )
 		return OpenForWriting( sPath, mode, p, err );
 
-	/* XXX: WRITE logic */
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		const CString path = g_Drivers[i].GetPath( sPath );
@@ -393,11 +392,6 @@ unsigned GetFileSizeInBytes( const CString &sPath )
 	return FILEMAN->GetFileSizeInBytes( sPath );
 }
 
-int GetFileModTime( const CString &sPath )
-{
-	return FILEMAN->GetFileModTime( sPath );
-}
-
 void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
@@ -408,3 +402,25 @@ void FlushDirCache()
 	FILEMAN->FlushDirCache( "" );
 }
 
+
+unsigned int GetHashForFile( const CString &sPath )
+{
+	return GetHashForString( sPath ) + FILEMAN->GetFileHash( sPath );
+}
+
+unsigned int GetHashForDirectory( const CString &sDir )
+{
+	unsigned int hash = 0;
+
+	hash += GetHashForFile( sDir );
+
+	CStringArray arrayFiles;
+	GetDirListing( sDir+"*", arrayFiles, false );
+	for( unsigned i=0; i<arrayFiles.size(); i++ )
+	{
+		const CString sFilePath = sDir + arrayFiles[i];
+		hash += GetHashForFile( sFilePath );
+	}
+
+	return hash; 
+}

@@ -20,7 +20,7 @@ public:
 	bool DoesFileExist( const CString &sPath );
 
 	int GetFileSizeInBytes( const CString &sPath );
-	int GetFileModTime( const CString &sPath );
+	int GetFileHash( const CString &sPath );
 
 	void Mount( CString Type, CString RealPath, CString MountPoint );
 	bool IsMounted( CString MountPoint );

@@ -23,15 +23,15 @@ struct File
 	int size;
 	/* Modification time of the file.  The contents of this is undefined, except that
 	 * when the file has been modified, this value will change. */
-	int mtime;
+	int hash;
 
 	/* Private data, for RageFileDrivers. */
 	void *priv;
-	File() { dir=false; size=-1; mtime=-1; priv=NULL;}
+	File() { dir=false; size=-1; hash=-1; priv=NULL;}
 	File( const CString &fn )
 	{
 		SetName( fn );
-		dir=false; size=-1; mtime=-1; priv=NULL;
+		dir=false; size=-1; hash=-1; priv=NULL;
 	}
 	
 	bool operator== (const File &rhs) const { return lname==rhs.lname; }
@@ -58,7 +58,7 @@ struct FileSet
 
 	FileType GetFileType( const CString &path ) const;
 	int GetFileSize(const CString &path) const;
-	int GetFileModTime(const CString &path) const;
+	int GetFileHash(const CString &path) const;
 };
 
 class FilenameDB
@@ -85,7 +85,7 @@ public:
 		ExpireSeconds( -1 ) { }
 	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
 
-	void AddFile( const CString &sPath, int size, int mtime, void *priv=NULL );
+	void AddFile( const CString &sPath, int size, int hash, void *priv=NULL );
 	File *GetFile( const CString &path );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
@@ -98,7 +98,7 @@ public:
 
 	FileType GetFileType( const CString &path );
 	int GetFileSize(const CString &path);
-	int GetFileModTime( const CString &sFilePath );
+	int GetFileHash( const CString &sFilePath );
 	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 
 	void FlushDirCache();

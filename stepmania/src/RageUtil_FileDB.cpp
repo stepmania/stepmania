@@ -69,12 +69,12 @@ int FileSet::GetFileSize(const CString &path) const
 	return i->size;
 }
 
-int FileSet::GetFileModTime(const CString &path) const
+int FileSet::GetFileHash(const CString &path) const
 {
 	set<File>::const_iterator i = files.find( File(path) );
 	if(i == files.end())
 		return -1;
-	return i->mtime;
+	return i->hash + i->size;
 }
 
 /* Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz". */
@@ -117,12 +117,12 @@ int FilenameDB::GetFileSize( const CString &sPath )
 	return fs.GetFileSize(Name);
 }
 
-int FilenameDB::GetFileModTime( const CString &sPath )
+int FilenameDB::GetFileHash( const CString &sPath )
 {
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
 	FileSet &fs = GetFileSet( Dir );
-	return fs.GetFileModTime(Name);
+	return fs.GetFileHash(Name);
 }
 
 /* XXX: this won't work right for URIs, eg \\foo\bar */
@@ -243,7 +243,7 @@ void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
 
 /* Add the file or directory "sPath".  sPath is a directory if it ends with
  * a slash. */
-void FilenameDB::AddFile( const CString &sPath, int size, int mtime, void *priv )
+void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 {
 	vector<CString> parts;
 	split( sPath, "/", parts, false );
@@ -272,7 +272,7 @@ void FilenameDB::AddFile( const CString &sPath, int size, int mtime, void *priv 
 			if( !IsDir )
 			{
 				f.size = size;
-				f.mtime = mtime;
+				f.hash = hash;
 				f.priv = priv;
 			}
 			fs.files.insert( f );
@@ -347,22 +347,3 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 
 bool ResolvePath(CString &path) { return true; } // XXX
 
-
-#if 0
-bool DoesFileExist( const CString &sPath ) { return FDB.GetFileType( sPath ) != TTYPE_NONE; }
-bool IsAFile( const CString &sPath ) { return FDB.GetFileType( sPath ) == TTYPE_FILE; }
-bool IsADirectory( const CString &sPath ) { return FDB.GetFileType( sPath ) == TTYPE_DIR; }
-int GetFileModTime( const CString &sPath ) { return FDB.GetFileModTime(sPath); }
-unsigned GetFileSizeInBytes( const CString &sPath )
-{
-	int ret = FDB.GetFileSize(sPath);
-//	LOG->Trace("file '%s' size %i", sPath.c_str(), ret);
-	if( ret == -1 )
-		return 0;
-	return ret;
-}
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
-{
-	FDB.GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
-}
-#endif

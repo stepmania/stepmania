@@ -69,7 +69,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		f.SetName( fd.cFileName );
 		f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 		f.size = fd.nFileSizeLow;
-		f.mtime = fd.ftLastWriteTime.dwLowDateTime;
+		f.hash = fd.ftLastWriteTime.dwLowDateTime;
 
 		fs.files.insert(f);
 	} while( FindNextFile( hFind, &fd ) );
@@ -112,7 +112,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		} else {
 			f.dir = (st.st_mode & S_IFDIR);
 			f.size = st.st_size;
-			f.mtime = st.st_mtime;
+			f.hash = st.st_mtime;
 		}
 
 		fs.files.insert(f);

@@ -282,7 +282,6 @@ bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );
 bool ResolvePath(CString &path);
 unsigned GetFileSizeInBytes( const CString &sFilePath );
-int GetFileModTime( const CString &sPath );
 void FlushDirCache();
 
 // helper file functions used by Bookkeeper and ProfileManager
