@@ -43,6 +43,8 @@ public:
 	
 	void InvalidateTextures();
 
+	void RageTextureManager::DiagnosticOutput() const;
+
 protected:
 	void DeleteTexture( RageTexture *t );
 	enum GCType { cached_textures, delayed_delete };

@@ -223,3 +223,21 @@ bool RageTextureManager::SetPrefs( int iTextureColorDepth, bool bDelayedDelete, 
 	ASSERT( m_iTextureColorDepth==16 || m_iTextureColorDepth==32 );
 	return need_reload;
 }
+
+void RageTextureManager::DiagnosticOutput() const
+{
+	unsigned cnt = distance(m_mapPathToTexture.begin(), m_mapPathToTexture.end());
+	LOG->Trace("%u textures loaded:", cnt);
+	for( std::map<RageTextureID, RageTexture*>::const_iterator i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); ++i )
+	{
+		const RageTextureID &ID = i->first;
+		const RageTexture *tex = i->second;
+
+		/* This could output much more, but I only need resolution now and I don't
+		 * want it to be more than one line. */
+		LOG->Trace(" %3ix%3i (%2i) %s",
+			tex->GetTextureHeight(), tex->GetTextureWidth(),
+			tex->m_iRefCount, Basename(ID.filename).c_str() );		
+	}
+}

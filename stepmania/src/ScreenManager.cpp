@@ -299,6 +299,7 @@ void ScreenManager::EmptyDeleteQueue()
 	/* Now that we've actually deleted a screen, it makes sense to clear out
 	 * cached textures. */
 	TEXTUREMAN->DeleteCachedTextures();
+	TEXTUREMAN->DiagnosticOutput();
 }
 
 /* XXX: Big hack:
