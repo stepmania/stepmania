@@ -310,7 +310,9 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 
 
 
-	// LifeFrame goes below LifeMeter
+	//
+	// Add LifeFrame
+	//
 	CString sLifeFrameName;
 	if( bExtra )
 		sLifeFrameName = "ScreenGameplay extra life frame";
@@ -324,7 +326,23 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	this->AddChild( &m_sprLifeFrame );
 
 	//
-	// combined life meter
+	// Add score frame
+	//
+	CString sScoreFrameName;
+	if( bExtra )
+		sScoreFrameName = "ScreenGameplay extra score frame";
+	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		sScoreFrameName = "ScreenGameplay oni score frame";
+	else 
+		sScoreFrameName = "ScreenGameplay score frame";
+	m_sprScoreFrame.Load( THEME->GetPathToG(sScoreFrameName) );
+	m_sprScoreFrame.SetName( ssprintf("ScoreFrame%s",bExtra?"Extra":"") );
+	SET_XY( m_sprScoreFrame );
+	this->AddChild( &m_sprScoreFrame );
+
+
+	//
+	// Add combined life meter
 	//
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -338,7 +356,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	}
 
 	//
-	// individual life meter
+	// Add individual life meter
 	//
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -346,7 +364,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
-	case PLAY_MODE_BATTLE:
 		for( p=0; p<NUM_PLAYERS; p++ )
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
@@ -370,10 +387,16 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 			this->AddChild( m_pLifeMeter[p] );		
 		}
 		break;
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		break;
 	}
 
 
 
+	//
+	// Add stage / SongNumber
+	//
 	m_sprStage.SetName( ssprintf("Stage%s",bExtra?"Extra":"") );
 	SET_XY( m_sprStage );
 
@@ -410,20 +433,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	}
 
 
-	//
-	// Add all Actors in score frame
-	//
-	CString sScoreFrameName;
-	if( bExtra )
-		sScoreFrameName = "ScreenGameplay extra score frame";
-	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sScoreFrameName = "ScreenGameplay oni score frame";
-	else 
-		sScoreFrameName = "ScreenGameplay score frame";
-	m_sprScoreFrame.Load( THEME->GetPathToG(sScoreFrameName) );
-	m_sprScoreFrame.SetName( ssprintf("ScoreFrame%s",bExtra?"Extra":"") );
-	SET_XY( m_sprScoreFrame );
-	this->AddChild( &m_sprScoreFrame );
 
 	m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenGameplay song title") );
 	m_textSongTitle.EnableShadow( false );
@@ -446,6 +455,7 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		{
 		case PLAY_MODE_ARCADE:
 		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_BATTLE:
 			if( PREFSMAN->m_bPercentageScoring )
 				m_pScoreDisplay[p] = new ScoreDisplayPercentage;
 			else
@@ -455,7 +465,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayOni;
 			break;
-		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			m_pScoreDisplay[p] = new ScoreDisplayRave;
 			break;
