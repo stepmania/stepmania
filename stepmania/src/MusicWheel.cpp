@@ -177,7 +177,7 @@ void MusicWheel::Load()
 		{
 			GAMESTATE->m_pCurSteps[p].Set( pSteps );
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions = po;
-			GAMESTATE->m_PreferredDifficulty[p] = pSteps->GetDifficulty();
+			GAMESTATE->m_PreferredDifficulty[p].Set( pSteps->GetDifficulty() );
 		}
 		GAMESTATE->m_SongOptions = so;
 	}
@@ -992,7 +992,7 @@ void MusicWheel::Update( float fDeltaTime )
 				{
 					FOREACH_PlayerNumber( p )
 						if( GAMESTATE->IsPlayerEnabled(p) )
-							GAMESTATE->m_PreferredDifficulty[p] = dc;
+							GAMESTATE->m_PreferredDifficulty[p].Set( dc );
 				}
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );

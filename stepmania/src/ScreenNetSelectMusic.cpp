@@ -371,7 +371,7 @@ void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type 
 
 	}
 	UpdateDifficulties( pn );
-	GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
+	GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
 }
 
 void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
@@ -443,7 +443,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType; //STEPS_TYPE_DANCE_SINGLE;
 	FOREACH_EnabledPlayer (pn)
 	{
-		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
+		GAMESTATE->m_PreferredDifficulty[pn].Set( m_DC[pn] );
 		Steps * pSteps = pSong->GetStepsByDifficulty(st,m_DC[pn]);
 		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 	}

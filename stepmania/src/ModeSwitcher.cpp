@@ -277,10 +277,10 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 			{
 				switch(GAMESTATE->m_PreferredDifficulty[pn])
 				{
-					case DIFFICULTY_BEGINNER: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_EASY; break;
-					case DIFFICULTY_EASY: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_MEDIUM; break;
-					case DIFFICULTY_MEDIUM: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_HARD; break;
-					case DIFFICULTY_HARD: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_CHALLENGE; break;
+					case DIFFICULTY_BEGINNER: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_EASY ); break;
+					case DIFFICULTY_EASY: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_MEDIUM ); break;
+					case DIFFICULTY_MEDIUM: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_HARD ); break;
+					case DIFFICULTY_HARD: GAMESTATE->m_PreferredDifficulty[pn].Set( DIFFICULTY_CHALLENGE ); break;
 				}
 				m_Stylename.SetText(GetStyleName());
 				m_Nextmode.SetText(GetNextStyleName());
@@ -290,9 +290,9 @@ void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 			else
 			{
 				if(GAMESTATE->IsPlayerEnabled(PLAYER_1))
-					GAMESTATE->m_PreferredDifficulty[PLAYER_1] = DIFFICULTY_CHALLENGE;
+					GAMESTATE->m_PreferredDifficulty[PLAYER_1].Set( DIFFICULTY_CHALLENGE );
 				if(GAMESTATE->IsPlayerEnabled(PLAYER_2))
-					GAMESTATE->m_PreferredDifficulty[PLAYER_2] = DIFFICULTY_CHALLENGE;
+					GAMESTATE->m_PreferredDifficulty[PLAYER_2].Set( DIFFICULTY_CHALLENGE );
 			}
 		}
 

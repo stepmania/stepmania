@@ -42,11 +42,13 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 #define NAMES_BLACKLIST_FILE "Data/NamesBlacklist.dat"
 
 GameState::GameState() :
-	m_pCurSong(			MESSAGE_CURRENT_SONG_CHANGED ),
-	m_pCurSteps(		MESSAGE_CURRENT_STEPS_P1_CHANGED ),
-	m_stEdit(			MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
-	m_pEditSourceSteps(	MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
-	m_stEditSource(		MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED )
+	m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
+	m_pCurSteps(			MESSAGE_CURRENT_STEPS_P1_CHANGED ),
+	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
+	m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
+	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED ),
+	m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
+	m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED )
 {
 	m_pCurStyle = NULL;
 
@@ -138,8 +140,8 @@ void GameState::Reset()
 	m_bChangedFailType = false;
 	FOREACH_PlayerNumber( p )
 	{
-		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-		m_PreferredCourseDifficulty[p] = DIFFICULTY_MEDIUM;
+		m_PreferredDifficulty[p].Set( DIFFICULTY_INVALID );
+		m_PreferredCourseDifficulty[p].Set( DIFFICULTY_MEDIUM );
 	}
 	m_PreferredSortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
@@ -302,9 +304,9 @@ void GameState::PlayersFinalized()
 		if( m_PreferredSortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
 			m_PreferredSortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_LastDifficulty != DIFFICULTY_INVALID )
-			m_PreferredDifficulty[pn] = pProfile->m_LastDifficulty;
+			m_PreferredDifficulty[pn].Set( pProfile->m_LastDifficulty );
 		if( pProfile->m_LastCourseDifficulty != DIFFICULTY_INVALID )
-			m_PreferredCourseDifficulty[pn] = pProfile->m_LastCourseDifficulty;
+			m_PreferredCourseDifficulty[pn].Set( pProfile->m_LastCourseDifficulty );
 		if( m_pPreferredSong == NULL )
 			m_pPreferredSong = pProfile->m_lastSong.ToSong();
 		if( m_pPreferredCourse == NULL )
@@ -1647,10 +1649,11 @@ bool GameState::DifficultiesLocked()
 
 bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 {
-	this->m_PreferredDifficulty[pn] = dc;
+	m_PreferredDifficulty[pn].Set( dc );
 	if( DifficultiesLocked() )
 		FOREACH_PlayerNumber( p )
-			m_PreferredDifficulty[p] = m_PreferredDifficulty[pn];
+			if( p != pn )
+				m_PreferredDifficulty[p].Set( m_PreferredDifficulty[pn] );
 
 	return true;
 }
@@ -1729,11 +1732,12 @@ void GameState::GetCourseDifficultiesToShow( set<CourseDifficulty> &ret )
 
 bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, CourseDifficulty cd )
 {
-	m_PreferredCourseDifficulty[pn] = cd;
+	m_PreferredCourseDifficulty[pn].Set( cd );
 
 	if( PREFSMAN->m_bLockCourseDifficulties )
 		FOREACH_PlayerNumber( p )
-			m_PreferredCourseDifficulty[p] = m_PreferredCourseDifficulty[pn];
+			if( p != pn )
+				m_PreferredCourseDifficulty[p].Set( m_PreferredCourseDifficulty[pn] );
 
 	return true;
 }
@@ -1876,6 +1880,7 @@ public:
 		else		 { lua_pushnil(L); }
 		return 1;
 	}
+	static int GetPreferredDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1894,6 +1899,7 @@ public:
 		ADD_METHOD( SetEnv )
 		ADD_METHOD( GetEnv )
 		ADD_METHOD( GetEditSourceSteps )
+		ADD_METHOD( GetPreferredDifficulty )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

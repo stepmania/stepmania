@@ -55,7 +55,7 @@ public:
 	int					m_iCoins;			// not "credits"
 	PlayerNumber		m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool				m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
-	CourseDifficulty	m_PreferredCourseDifficulty[NUM_PLAYERS]; // used in nonstop
+	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
 	bool DifficultiesLocked();
 	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
 	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );
@@ -101,7 +101,7 @@ public:
 	CString			m_sLoadingMessage;	// used in loading screen
 	CString			m_sPreferredSongGroup;	// GROUP_ALL_MUSIC denotes no preferred group
 	bool			m_bChangedFailType;	// true if FailType was changed in the song options screen
-	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
+	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>	m_PreferredDifficulty;
 	SortOrder		m_PreferredSortOrder;			// used by MusicWheel
 	bool			m_bEditing;			// NoteField does special stuff when this is true
 	bool			m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true

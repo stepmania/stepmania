@@ -22,6 +22,10 @@ enum Message
 	MESSAGE_EDIT_STEPS_TYPE_CHANGED,
 	MESSAGE_EDIT_SOURCE_STEPS_CHANGED,
 	MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED,
+	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED,
+	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P2_CHANGED,
+	MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED,
+	MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P2_CHANGED,
 	NUM_MESSAGES,
 	MESSAGE_INVALID
 };
@@ -39,6 +43,23 @@ public:
 	const T Get() const { return val; }
 	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T () const { return val; }
+};
+
+template<class T, int N>
+class BroadcastOnChange1D
+{
+private:
+	Message mSendWhenChanged;
+	typedef BroadcastOnChange<T> MyType;
+	vector<MyType> val;
+public:
+	BroadcastOnChange1D( Message m )
+	{
+		for( unsigned i=0; i<N; i++ )
+			val.push_back( BroadcastOnChange<T>((Message)(m+i)) );
+	}
+	const BroadcastOnChange<T>& operator[]( unsigned i ) const { return val[i]; }
+	BroadcastOnChange<T>& operator[]( unsigned i ) { return val[i]; }
 };
 
 template<class T>

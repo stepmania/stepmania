@@ -31,7 +31,7 @@ void ScreenInstructions::Init()
 	{
 		Difficulty easiestDifficulty = (Difficulty)(NUM_DIFFICULTIES-1);
 		FOREACH_HumanPlayer(p)
-			easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p] );
+			easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p].Get() );
 
 		if( easiestDifficulty > DIFFICULTY_EASY )
 		{
