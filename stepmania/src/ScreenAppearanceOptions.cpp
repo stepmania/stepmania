@@ -78,9 +78,9 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arrayAnnouncerNames;
 	ANNOUNCER->GetAnnouncerNames( arrayAnnouncerNames );
 
-	m_OptionRowData[AO_ANNOUNCER].iNumOptions	=	arrayAnnouncerNames.GetSize() + 1; 
-	
-	for( int i=0; i<arrayAnnouncerNames.GetSize(); i++ )
+	m_OptionRowData[AO_ANNOUNCER].iNumOptions	=	arrayAnnouncerNames.size() + 1; 
+	unsigned i;
+	for( i=0; i<arrayAnnouncerNames.size(); i++ )
 		strcpy( m_OptionRowData[AO_ANNOUNCER].szOptionsText[i+1], arrayAnnouncerNames[i] ); 
 
 
@@ -104,9 +104,9 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arrayThemeNames;
 	THEME->GetThemeNamesForCurGame( arrayThemeNames );
 
-	m_OptionRowData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize(); 
+	m_OptionRowData[AO_THEME].iNumOptions	=	arrayThemeNames.size(); 
 	
-	for( i=0; i<arrayThemeNames.GetSize(); i++ )
+	for( i=0; i<arrayThemeNames.size(); i++ )
 		strcpy( m_OptionRowData[AO_THEME].szOptionsText[i], arrayThemeNames[i] ); 
 
 
@@ -130,9 +130,9 @@ void ScreenAppearanceOptions::ImportOptions()
 	CStringArray arraySkinNames;
 	GAMEMAN->GetNoteSkinNames( arraySkinNames );
 
-	m_OptionRowData[AO_SKIN].iNumOptions	=	arraySkinNames.GetSize(); 
+	m_OptionRowData[AO_SKIN].iNumOptions	=	arraySkinNames.size(); 
 	
-	for( i=0; i<arraySkinNames.GetSize(); i++ )
+	for( i=0; i<arraySkinNames.size(); i++ )
 		strcpy( m_OptionRowData[AO_SKIN].szOptionsText[i], arraySkinNames[i] ); 
 
 	// highlight currently selected skin

@@ -41,7 +41,7 @@ void Screen::Update( float fDeltaTime )
 	// update the times of queued ScreenMessages and send if timer has expired
 	// The order you remove messages in must be very careful!  Sending a message can 
 	// potentially clear all m_QueuedMessages, and set a new state!
-	for( int i=0; i<m_QueuedMessages.GetSize(); i++ )
+	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
 	{
 		/* Er, wait.  Shouldn't we subtract first?  This will make messages
 		 * get delayed an extra frame. -glenn */

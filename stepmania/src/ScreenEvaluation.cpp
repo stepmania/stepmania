@@ -217,11 +217,11 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			// crop down to 3
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( GAMESTATE->m_apSongsPlayed.GetSize() > STAGES_TO_SHOW_IN_SUMMARY )
-					GAMESTATE->m_apSongsPlayed.RemoveAt( 0, GAMESTATE->m_apSongsPlayed.GetSize() - STAGES_TO_SHOW_IN_SUMMARY );
+				if( GAMESTATE->m_apSongsPlayed.size() > STAGES_TO_SHOW_IN_SUMMARY )
+					GAMESTATE->m_apSongsPlayed.RemoveAt( 0, GAMESTATE->m_apSongsPlayed.size() - STAGES_TO_SHOW_IN_SUMMARY );
 			}
 
-			const int iSongsToShow = GAMESTATE->m_apSongsPlayed.GetSize();
+			const unsigned iSongsToShow = GAMESTATE->m_apSongsPlayed.size();
 			ASSERT( iSongsToShow > 0 );
 
 			for( int i=0; i<iSongsToShow; i++ )
@@ -685,7 +685,7 @@ void ScreenEvaluation::TweenOnScreen()
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		int i;
+		unsigned i;
 
 		CArray<Actor*,Actor*> apActorsInBonusOrStageInfo;
 		apActorsInBonusOrStageInfo.Add( &m_sprBonusFrame[p] );
@@ -697,7 +697,7 @@ void ScreenEvaluation::TweenOnScreen()
 		apActorsInBonusOrStageInfo.Add( &m_sprCourseFrame[p] );
 		apActorsInBonusOrStageInfo.Add( &m_textTime[p] );
 		apActorsInBonusOrStageInfo.Add( &m_textSongsSurvived[p] );
-		for( i=0; i<apActorsInBonusOrStageInfo.GetSize(); i++ )
+		for( i=0; i<apActorsInBonusOrStageInfo.size(); i++ )
 		{
 			fOriginalX = apActorsInBonusOrStageInfo[i]->GetX();
 			apActorsInBonusOrStageInfo[i]->SetX( fOriginalX + SCREEN_WIDTH/2*(p==PLAYER_1 ? 1 : -1) );
@@ -714,7 +714,7 @@ void ScreenEvaluation::TweenOnScreen()
 		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentLarge[p] );
 		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentSmall[p] );
 		apActorsInGradeOrPercentFrame.Add( &m_sprNewRecord[p] );
-		for( i=0; i<apActorsInGradeOrPercentFrame.GetSize(); i++ )
+		for( i=0; i<apActorsInGradeOrPercentFrame.size(); i++ )
 		{
 			float fOriginalZoomY = apActorsInGradeOrPercentFrame[i]->GetZoomY();
 			apActorsInGradeOrPercentFrame[i]->SetZoomY( 0 );

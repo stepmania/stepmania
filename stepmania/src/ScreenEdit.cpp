@@ -617,14 +617,14 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 void AddBGChange( CString sBGName )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
-
-	for( int i=0; i<pSong->m_BackgroundChanges.GetSize(); i++ )
+	unsigned i;
+	for( i=0; i<pSong->m_BackgroundChanges.size(); i++ )
 	{
 		if( pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 			break;
 	}
 
-	if( i != pSong->m_BackgroundChanges.GetSize() )	// there is already a BGChange here
+	if( i != pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
 		pSong->m_BackgroundChanges.RemoveAt( i );
 
 	// create a new BGChange
@@ -1043,12 +1043,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_B:
 		{
 			CString sOldBackground;
-			for( int i=0; i<m_pSong->m_BackgroundChanges.GetSize(); i++ )
+			unsigned i;
+			for( i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
 			{
 				if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 					break;
 			}
-			if( i != m_pSong->m_BackgroundChanges.GetSize() )	// there is already a BGChange here
+			if( i != m_pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
 				sOldBackground = m_pSong->m_BackgroundChanges[i].m_sBGName;
 
 			SCREENMAN->TextEntry( SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL );
@@ -1080,11 +1081,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 			float fNewBPM = fBPM + fDeltaBPM;
 
-			for( int i=0; i<m_pSong->m_BPMSegments.GetSize(); i++ )
+			unsigned i;
+			for( i=0; i<m_pSong->m_BPMSegments.size(); i++ )
 				if( m_pSong->m_BPMSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 					break;
 
-			if( i == m_pSong->m_BPMSegments.GetSize() )	// there is no BPMSegment at the current beat
+			if( i == m_pSong->m_BPMSegments.size() )	// there is no BPMSegment at the current beat
 			{
 				// create a new BPMSegment
 				m_pSong->AddBPMSegment( BPMSegment(GAMESTATE->m_fSongBeat, fNewBPM) );
@@ -1114,13 +1116,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case IET_FAST_REPEAT:	fStopDelta *= 40;	break;
 			}
 
-			for( int i=0; i<m_pSong->m_StopSegments.GetSize(); i++ )
+			unsigned i;
+			for( i=0; i<m_pSong->m_StopSegments.size(); i++ )
 			{
 				if( m_pSong->m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 					break;
 			}
 
-			if( i == m_pSong->m_StopSegments.GetSize() )	// there is no BPMSegment at the current beat
+			if( i == m_pSong->m_StopSegments.size() )	// there is no BPMSegment at the current beat
 			{
 				// create a new StopSegment
 				if( fStopDelta > 0 )

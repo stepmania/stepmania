@@ -62,7 +62,7 @@ ScreenManager::~ScreenManager()
 	EmptyDeleteQueue();
 
 	// delete current states
-	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
+	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		SAFE_DELETE( m_ScreenStack[i] );
 	SAFE_DELETE( m_ScreenBuffered );
 }
@@ -70,7 +70,7 @@ ScreenManager::~ScreenManager()
 void ScreenManager::EmptyDeleteQueue()
 {
 	// delete all ScreensToDelete
-	for( int i=0; i<m_ScreensToDelete.GetSize(); i++ )
+	for( unsigned i=0; i<m_ScreensToDelete.size(); i++ )
 		SAFE_DELETE( m_ScreensToDelete[i] );
 
 	m_ScreensToDelete.clear();
@@ -86,7 +86,7 @@ void ScreenManager::Update( float fDeltaTime )
 	EmptyDeleteQueue();
 
 	// Update all windows in the stack
-	for( int i=0; i<m_ScreenStack.GetSize(); i++ ) {
+	for( unsigned i=0; i<m_ScreenStack.size(); i++ ) {
 		/* Screens take some time to load.  If we don't do this, then screens
 		 * receive an initial update that includes all of the time they spent
 		 * loading, which will chop off their tweens.  
@@ -112,20 +112,20 @@ void ScreenManager::Update( float fDeltaTime )
 void ScreenManager::Restore()
 {
 	// Draw all CurrentScreens (back to front)
-	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
+	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		m_ScreenStack[i]->Restore();
 }
 
 void ScreenManager::Invalidate()
 {
-	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
+	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		m_ScreenStack[i]->Invalidate();
 }
 
 void ScreenManager::Draw()
 {
 	// Draw all CurrentScreens (back to front)
-	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
+	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		m_ScreenStack[i]->Draw();
 	
 	if( m_textSystemMessage.GetDiffuse().a != 0 )
@@ -148,8 +148,8 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
 	// pass input only to topmost state
-	if( m_ScreenStack.GetSize() > 0 )
-		m_ScreenStack[m_ScreenStack.GetSize()-1]->Input( DeviceI, type, GameI, MenuI, StyleI );
+	if( !m_ScreenStack.empty() )
+		m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 
@@ -287,18 +287,18 @@ void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion,
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )
 {
-	Screen* pScreenToPop = m_ScreenStack[m_ScreenStack.GetSize()-1];	// top menu
+	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
 	//pScreenToPop->HandleScreenMessage( SM_LosingInputFocus );
-	m_ScreenStack.RemoveAt(m_ScreenStack.GetSize()-1);
+	m_ScreenStack.RemoveAt(m_ScreenStack.size()-1);
 	m_ScreensToDelete.Add( pScreenToPop );
 	
-	Screen* pNewTopScreen = m_ScreenStack[m_ScreenStack.GetSize()-1];
+	Screen* pNewTopScreen = m_ScreenStack[m_ScreenStack.size()-1];
 	pNewTopScreen->HandleScreenMessage( SM );
 }
 
 void ScreenManager::SendMessageToTopScreen( ScreenMessage SM, float fDelay )
 {
-	Screen* pTopScreen = m_ScreenStack[m_ScreenStack.GetSize()-1];
+	Screen* pTopScreen = m_ScreenStack.back();
 	pTopScreen->SendScreenMessage( SM, fDelay );
 }
 

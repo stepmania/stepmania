@@ -140,7 +140,7 @@ ScreenGameplay::ScreenGameplay()
 				CStringArray asModifiers;
 				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
-				for( int i=0; i<apNotes.GetSize(); i++ )
+				for( unsigned i=0; i<apNotes.size(); i++ )
 				{
 					apNotes[i]->GetNoteData( &notedata );
 					int iPossibleDancePoints = notedata.GetPossibleDancePoints();
@@ -497,7 +497,7 @@ bool ScreenGameplay::IsLastSong()
 			CStringArray asModifiers;
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
-			return GAMESTATE->m_iSongsIntoCourse >= apSongs.GetSize();	// there are no more songs left
+			return unsigned(GAMESTATE->m_iSongsIntoCourse) >= apSongs.size();	// there are no more songs left
 		}
 		break;
 	default:
@@ -528,7 +528,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
 			int iPlaySongIndex = GAMESTATE->m_iSongsIntoCourse;
-			iPlaySongIndex %= apSongs.GetSize();
+			iPlaySongIndex %= apSongs.size();
 
 			GAMESTATE->m_pCurSong = apSongs[iPlaySongIndex];
 			for( p=0; p<NUM_PLAYERS; p++ )
@@ -1445,7 +1445,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenGameplay::TweenOnScreen()
 {
-	int i, p;
+	unsigned i, p;
 
 	CArray<Actor*,Actor*> apActorsInLifeFrame;
 	apActorsInLifeFrame.Add(	&m_sprLifeFrame );
@@ -1454,7 +1454,7 @@ void ScreenGameplay::TweenOnScreen()
 	apActorsInLifeFrame.Add(	&m_textStageNumber );
 	for( p=0; p<NUM_PLAYERS; p++ )
 		apActorsInLifeFrame.Add(	&m_textCourseSongNumber[p] );
-	for( i=0; i<apActorsInLifeFrame.GetSize(); i++ )
+	for( i=0; i<apActorsInLifeFrame.size(); i++ )
 	{
 		float fOriginalY = apActorsInLifeFrame[i]->GetY();
 		apActorsInLifeFrame[i]->SetY( fOriginalY-100 );
@@ -1475,7 +1475,7 @@ void ScreenGameplay::TweenOnScreen()
 		apActorsInScoreFrame.Add( &m_textPlayerOptions[p] );
 	}
 	apActorsInScoreFrame.Add( &m_textSongOptions );
-	for( i=0; i<apActorsInScoreFrame.GetSize(); i++ )
+	for( i=0; i<apActorsInScoreFrame.size(); i++ )
 	{
 		float fOriginalY = apActorsInScoreFrame[i]->GetY();
 		apActorsInScoreFrame[i]->SetY( fOriginalY+100 );

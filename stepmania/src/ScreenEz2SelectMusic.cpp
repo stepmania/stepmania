@@ -264,7 +264,7 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
 		apActorsInScore.Add( &m_HighScore[p] );
 	}
-	for( i=0; i<apActorsInScore.GetSize(); i++ )
+	for( i=0; i<apActorsInScore.size(); i++ )
 	{
 		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
 		apActorsInScore[i]->SetTweenX( SCORE_CONNECTED_TO_MUSIC_WHEEL ? apActorsInScore[i]->GetX()+400 : apActorsInScore[i]->GetX()-400 );
@@ -284,7 +284,7 @@ void ScreenEz2SelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
 		apActorsInScore.Add( &m_HighScore[p] );
 	}
-	for( int i=0; i<apActorsInScore.GetSize(); i++ )
+	for( unsigned i=0; i<apActorsInScore.size(); i++ )
 	{
 		apActorsInScore[i]->StopTweening();
 
@@ -376,7 +376,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 
 	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
-	if( m_arrayNotes.GetSize() == 0 )
+	if( m_arrayNotes.empty() )
 		return;
 	if( m_iSelection[pn] == 0 )
 		return;
@@ -396,9 +396,9 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 
 	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
-	if( m_arrayNotes.GetSize() == 0 )
+	if( m_arrayNotes.empty() )
 		return;
-	if( m_iSelection[pn] == m_arrayNotes.GetSize()-1 )
+	if( m_iSelection[pn] == m_arrayNotes.size()-1 )
 		return;
 
 	m_iSelection[pn]++;
@@ -599,9 +599,9 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 	if( !GAMESTATE->IsPlayerEnabled(pn) )
 		return;
 	
-	m_iSelection[pn] = clamp( m_iSelection[pn], 0, m_arrayNotes.GetSize()-1 );	// bounds clamping
+	m_iSelection[pn] = clamp( m_iSelection[pn], 0, m_arrayNotes.size()-1 );	// bounds clamping
 
-	Notes* pNotes = m_arrayNotes.GetSize()>0 ? m_arrayNotes[m_iSelection[pn]] : NULL;
+	Notes* pNotes = m_arrayNotes.empty()? NULL:m_arrayNotes[m_iSelection[pn]];
 
 	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
@@ -670,11 +670,11 @@ void ScreenEz2SelectMusic::AfterMusicChange()
 			{
 				if( !GAMESTATE->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
-				for( int i=0; i<m_arrayNotes.GetSize(); i++ )
+				for( int i=0; i<m_arrayNotes.size(); i++ )
 					if( m_arrayNotes[i]->m_DifficultyClass == GAMESTATE->m_PreferredDifficultyClass[p] )
 						m_iSelection[p] = i;
 
-				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize() ) ;
+				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.size() ) ;
 			}
 		}
 		break;

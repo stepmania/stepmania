@@ -114,11 +114,11 @@ void ScreenGraphicOptions::UpdateRefreshRates()
 	opt.iNumOptions = 2;
 	int OldSettingNo = RageDisplay::REFRESH_DEFAULT;
 
-	int i;
+	unsigned i;
 	for(i = 2; i < MAX_OPTIONS_PER_LINE; ++i)
 		opt.szOptionsText[i][0] = 0;
 
-	for(i = 0; i < hz.GetSize(); ++i)
+	for(i = 0; i < hz.size(); ++i)
 	{
 		if(hz[i] < 60) continue;
 		sprintf(opt.szOptionsText[opt.iNumOptions], "%i", hz[i]);
