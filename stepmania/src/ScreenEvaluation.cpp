@@ -419,7 +419,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	if( SHOW_GRADE_AREA )
 	{
-		// ugly: Touch all possible grade files to make sure their all present
+		// ugly: Touch all possible grade files to make sure they're all present
 		for( int g=GRADE_TIER_1; g<NUM_GRADES; g++ )
 			THEME->GetPathToG( "ScreenEvaluation grade "+ GradeToString((Grade)g) );
 
@@ -994,13 +994,16 @@ void ScreenEvaluation::TweenOffScreen()
 	}
 
 	// grade area
-	for( p=0; p<NUM_PLAYERS; p++ ) 
+	if( SHOW_GRADE_AREA )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-		OFF_COMMAND( m_sprGradeFrame[p] );
-		OFF_COMMAND( m_Grades[p] );
-		OFF_COMMAND( m_sprGrade[p] );
+		for( p=0; p<NUM_PLAYERS; p++ ) 
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			OFF_COMMAND( m_sprGradeFrame[p] );
+			OFF_COMMAND( m_Grades[p] );
+			OFF_COMMAND( m_sprGrade[p] );
+		}
 	}
 
 	if( SHOW_GRAPH_AREA )
