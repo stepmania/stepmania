@@ -1145,7 +1145,6 @@
 				AA29CC9B0558741A00961A51,
 				AA29CC9C0558741A00961A51,
 				AA29CC9D0558741A00961A51,
-				AA29CC9E0558741A00961A51,
 				AA29CC9F0558741A00961A51,
 				AA29CCA00558741A00961A51,
 				AA29CCA10558741A00961A51,
@@ -2064,12 +2063,6 @@
 		};
 		AA29CC9D0558741A00961A51 = {
 			fileRef = AA6EFF3204770F63005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CC9E0558741A00961A51 = {
-			fileRef = AA6EFF3404770F63005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3114,7 +3107,6 @@
 				AA29CDAD0558741A00961A51,
 				AA29CDAE0558741A00961A51,
 				AA29CDAF0558741A00961A51,
-				AA29CDB00558741A00961A51,
 				AA29CDB10558741A00961A51,
 				AA29CDB20558741A00961A51,
 				AA29CDB30558741A00961A51,
@@ -3959,12 +3951,6 @@
 		};
 		AA29CDAF0558741A00961A51 = {
 			fileRef = AA6EFF3104770F63005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CDB00558741A00961A51 = {
-			fileRef = AA6EFF3304770F63005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -11173,8 +11159,6 @@
 				AA6EFF3204770F63005F316C,
 				AAE443F304B0FEB700D02EE9,
 				AAE443F404B0FEB700D02EE9,
-				AA6EFF3304770F63005F316C,
-				AA6EFF3404770F63005F316C,
 			);
 			isa = PBXGroup;
 			name = ActorsInGameplay;
@@ -11729,30 +11713,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = ScoreKeeperMAX2.h;
 			path = ../src/ScoreKeeperMAX2.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA6EFF3304770F63005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = TimingAssist.cpp;
-			path = ../src/TimingAssist.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA6EFF3404770F63005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = TimingAssist.h;
-			path = ../src/TimingAssist.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
