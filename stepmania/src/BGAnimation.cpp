@@ -106,8 +106,6 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 
 void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 {
-	Unload();
-
 	if( _sAniDir.empty() )
 		 return;
 
@@ -115,9 +113,21 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
+	CString sPathToIni = sAniDir + "BGAnimation.ini";
+
+	LoadFromIni( sAniDir, sPathToIni, bGeneric );
+}
+
+void BGAnimation::LoadFromIni( const CString &_sDir, const CString &sPathToIni, bool bGeneric )
+{
+	Unload();
+
+	CString sAniDir = _sDir;
+	if( sAniDir.Right(1) != "/" )
+		sAniDir += "/";
+
 	ASSERT_M( IsADirectory(sAniDir), sAniDir + " isn't a directory" );
 
-	CString sPathToIni = sAniDir + "BGAnimation.ini";
 
 	if( DoesFileExist(sPathToIni) )
 	{
