@@ -60,6 +60,15 @@ SoundReader_FileReader *SoundReader_FileReader::TryOpenFile( CString filename, C
 
 SoundReader *SoundReader_FileReader::OpenFile( CString filename, CString &error )
 {
+	{
+		RageFile TestOpen;
+		if( !TestOpen.Open( filename ) )
+		{
+			error = TestOpen.GetError();
+			return NULL;
+		}
+	}
+
 	set<CString> FileTypes;
 	FileTypes.insert("ogg");
 	FileTypes.insert("mp3");
