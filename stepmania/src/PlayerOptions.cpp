@@ -164,6 +164,21 @@ void PlayerOptions::FromString( CString sOptions )
 		TrimLeft(sBit);
 		TrimRight(sBit);
 
+		int i1;
+
+		Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
+		vector<CString> matches;
+		if( mult.Compare(sBit, matches) )
+		{
+			m_bTimeSpacing = false;
+			int ret = sscanf( matches[0], "%f", &m_fScrollSpeed );
+			ASSERT( ret == 1 );
+		}
+		/* This has two problems: it misparses .75 (anything where the fractional
+		 * part is >= 10), and sscanf doesn't actually care about input after the
+		 * last placeholder: "5" will match, the "x" won't be required. */
+/*
+
 		int i1, i2;
 		if(	sscanf( sBit, "%d.%dx", &i1, &i2 ) == 2 )
 		{
@@ -180,10 +195,11 @@ void PlayerOptions::FromString( CString sOptions )
 			m_bTimeSpacing = false;
 			m_fScrollSpeed = i1 / 10.f;
 		}
+*/
 		else if( sscanf( sBit, "C%d", &i1 ) == 1 )
 		{
 			m_bTimeSpacing = true;
-			m_fScrollBPM = i1;
+			m_fScrollBPM = (float) i1;
 		}
 		else if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = 1;
 		else if( sBit == "brake" || sBit == "land" )		m_fAccels[ACCEL_BRAKE] = 1;
