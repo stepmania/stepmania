@@ -202,7 +202,7 @@ CString Background::CreateRandomBGA()
 	switch( PREFSMAN->m_iBackgroundMode )
 	{
 	default:
-		FAIL_M( ssprintf("Invalid BackgroundMode: %i", PREFSMAN->m_iBackgroundMode) );
+		FAIL_M( ssprintf("Invalid BackgroundMode: %d", PREFSMAN->m_iBackgroundMode.GetValue()) );
 		break;
 
 	case PrefsManager::BGMODE_ANIMATIONS:
