@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RAGE_TIMER_H
+#define RAGE_TIMER_H
+
 /*
 -----------------------------------------------------------------------------
  File: RageTimer.h
@@ -27,3 +29,5 @@ private:
 
 
 extern RageTimer*		TIMER;	// global and accessable from anywhere in our program
+
+#endif
