@@ -79,6 +79,8 @@ void ScreenEditCoursesMenu::Input( const DeviceInput& DeviceI, const InputEventT
 
 void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
 {
+	m_Selector.HandleScreenMessage( SM );
+
 	switch( SM )
 	{
 	case SM_GoToPrevScreen:

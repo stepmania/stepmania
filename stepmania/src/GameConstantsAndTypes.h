@@ -34,6 +34,8 @@
 //
 // Note definitions
 //
+const int MAX_METER = 12;
+
 enum RadarCategory	// starting from 12-o'clock rotating clockwise
 {
 	RADAR_STREAM = 0,

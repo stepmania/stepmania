@@ -19,6 +19,7 @@
 #include "DifficultyMeter.h"
 #include "RageSound.h"
 #include "Course.h"
+#include "ScreenMessage.h"
 
 
 class EditCoursesMenu: public ActorFrame 
@@ -38,6 +39,7 @@ public:
 	void Left();
 	void Right();
 	void Start();
+	void HandleScreenMessage( const ScreenMessage SM );
 
 	enum Row 
 	{ 
@@ -110,6 +112,7 @@ private:
 	RageSound	m_soundChangeValue;
 	RageSound	m_soundStart;
 	RageSound	m_soundInvalid;
+	RageSound	m_soundSave;
 };
 
 #endif

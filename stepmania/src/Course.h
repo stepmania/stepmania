@@ -57,6 +57,7 @@ public:
 
 	CourseEntry()
 	{
+		type = (CourseEntryType)0;
 		difficulty = DIFFICULTY_INVALID;
 		low_meter = -1;
 		high_meter = -1;

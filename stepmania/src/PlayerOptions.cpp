@@ -176,28 +176,7 @@ void PlayerOptions::FromString( CString sOptions )
 			int ret = sscanf( matches[0], "%f", &m_fScrollSpeed );
 			ASSERT( ret == 1 );
 		}
-		/* This has two problems: it misparses .75 (anything where the fractional
-		 * part is >= 10), and sscanf doesn't actually care about input after the
-		 * last placeholder: "5" will match, the "x" won't be required. */
-/*
 
-		int i1, i2;
-		if(	sscanf( sBit, "%d.%dx", &i1, &i2 ) == 2 )
-		{
-			m_bTimeSpacing = false;
-			m_fScrollSpeed = i1 + (i2 / 10.f);
-		}
-		else if( sscanf( sBit, "%dx", &i1 ) == 1 )
-		{
-			m_bTimeSpacing = false;
-			m_fScrollSpeed = i1;
-		}
-		else if( sscanf( sBit, ".%dx", &i1 ) == 1 )
-		{
-			m_bTimeSpacing = false;
-			m_fScrollSpeed = i1 / 10.f;
-		}
-*/
 		else if( sscanf( sBit, "C%d", &i1 ) == 1 )
 		{
 			m_bTimeSpacing = true;

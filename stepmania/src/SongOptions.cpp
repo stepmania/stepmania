@@ -72,19 +72,18 @@ void SongOptions::FromString( CString sOptions )
 		TrimLeft(sBit);
 		TrimRight(sBit);
 		
+		Regex mult("^([0-9]+(\\.[0-9]+)?)xmusic$");
+		vector<CString> matches;
+		if( mult.Compare(sBit, matches) )
+		{
+			int ret = sscanf( matches[0], "%f", &m_fMusicRate );
+			ASSERT( ret == 1 );
+		}
+
 		if(	     sBit == "norecover" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "death" )			m_DrainType = DRAIN_SUDDEN_DEATH;
-		else if( sBit == "0.7xmusic" )		m_fMusicRate = 0.7f;
-		else if( sBit == "0.8xmusic" )		m_fMusicRate = 0.8f;
-		else if( sBit == "0.9xmusic" )		m_fMusicRate = 0.9f;
-		else if( sBit == "1.0xmusic" )		m_fMusicRate = 1.0f;
-		else if( sBit == "1.1xmusic" )		m_fMusicRate = 1.1f;
-		else if( sBit == "1.2xmusic" )		m_fMusicRate = 1.2f;
-		else if( sBit == "1.3xmusic" )		m_fMusicRate = 1.3f;
-		else if( sBit == "1.4xmusic" )		m_fMusicRate = 1.4f;
-		else if( sBit == "1.5xmusic" )		m_fMusicRate = 1.5f;
 		else if( sBit == "failendofsong" )	m_FailType = FAIL_END_OF_SONG;
 		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
 	}

@@ -45,6 +45,13 @@
 const ScreenMessage SM_BackFromCourseOptionsMenu		= (ScreenMessage)(SM_User+1);
 const ScreenMessage SM_BackFromCourseEntryOptionsMenu	= (ScreenMessage)(SM_User+2);
 							  
+enum CourseEntryMenuRow
+{
+	repeat,
+	randomize,
+	lives,
+};
+
 Menu g_CourseOptionsMenu
 (
 	"Course Options",
@@ -53,17 +60,18 @@ Menu g_CourseOptionsMenu
 	MenuRow( "Lives",		true, 4, "Use Bar Life","1","2","3","4","5","6","7","8","9","10" )
 );
 
-enum CourseEntryOptionsMenuRow
+enum CourseOptionsMenuRow
 {
 	song,
 	group,
 	difficulty,
 	low_meter,
 	high_meter,
-	best_worst_value
+	best_worst_value,
+	NUM_COURSE_OPTIONS_MENU_ROWS
 };
 
-Menu g_CourseEntryOptionsMenu
+Menu g_CourseEntryMenu
 (
 	"Course Entry Options",
 	MenuRow( "Song",			true, 0 ),
@@ -126,6 +134,7 @@ EditCoursesMenu::EditCoursesMenu()
 	m_soundChangeValue.Load( THEME->GetPathToS("EditCoursesMenu value") );
 	m_soundStart.Load( THEME->GetPathToS("Common start") );
 	m_soundInvalid.Load( THEME->GetPathToS("Common invalid") );
+	m_soundSave.Load( THEME->GetPathToS("EditCoursesMenu save") );
 
 
 	// fill in data structures
@@ -235,48 +244,175 @@ void EditCoursesMenu::Start()
 {
 	switch( m_SelectedRow )
 	{
-	case ROW_COURSE_OPTIONS:	
+	case ROW_COURSE_OPTIONS:
+		g_CourseOptionsMenu.rows[repeat].defaultChoice = GetSelectedCourse()->m_bRepeat ? 1 : 0;
+		g_CourseOptionsMenu.rows[randomize].defaultChoice = GetSelectedCourse()->m_bRandomize ? 1 : 0;
+		g_CourseOptionsMenu.rows[lives].defaultChoice = GetSelectedCourse()->m_iLives;
+		if( g_CourseOptionsMenu.rows[lives].defaultChoice == -1 )
+			g_CourseOptionsMenu.rows[lives].defaultChoice = 0;
 		SCREENMAN->MiniMenu( &g_CourseOptionsMenu, SM_BackFromCourseOptionsMenu );
 		break;
-	case ROW_ACTION:	
-		m_soundStart.Play();
+	case ROW_ACTION:
+		switch( GetSelectedAction() )
+		{
+		case save:
+			m_soundSave.Play();
+			GetSelectedCourse()->Save();
+			SCREENMAN->SystemMessage( "Course saved." );
+			break;
+		case add_entry:
+			m_soundStart.Play();
+			GetSelectedCourse()->m_entries.push_back( CourseEntry() );
+			m_iSelection[ROW_ENTRY] = GetSelectedCourse()->m_entries.size()-1; 
+			OnRowValueChanged( ROW_ENTRY );
+			break;
+		case delete_selected_entry:
+			if( GetSelectedCourse()->m_entries.size() == 1 )
+			{
+				m_soundInvalid.Play();
+				SCREENMAN->SystemMessage( "Cannot delete the last entry from a course" );
+				break;
+			}
+
+			m_soundStart.Play();
+			GetSelectedCourse()->m_entries.erase( GetSelectedCourse()->m_entries.begin()+m_iSelection[ROW_ENTRY] );
+			CLAMP( m_iSelection[ROW_ENTRY], 0, GetSelectedCourse()->m_entries.size()-1 );
+			OnRowValueChanged( ROW_ENTRY );
+			break;
+		default:
+			ASSERT(0);
+		}
+
+		OnRowValueChanged( ROW_ENTRY );		
 		break;
 	case ROW_ENTRY_OPTIONS:	
 		{
+			unsigned i;
+
+			//
+			// populate songs list
+			//
+			g_CourseEntryMenu.rows[song].choices.clear();
+			g_CourseEntryMenu.rows[song].defaultChoice = 0;
+
+			vector<Song*> vSongs = SONGMAN->GetAllSongs();
+			for( i=0; i<vSongs.size(); i++ )
+			{
+				g_CourseEntryMenu.rows[song].choices.push_back( vSongs[i]->m_sGroupName + " - " + vSongs[i]->GetTranslitMainTitle() );
+				if( GetSelectedEntry()->pSong == vSongs[i] )
+					g_CourseEntryMenu.rows[song].defaultChoice = i;
+			}
+
+			//
+			// populate group list
+			//
+			g_CourseEntryMenu.rows[group].choices.clear();
+			g_CourseEntryMenu.rows[group].defaultChoice = 0;
+
+			CStringArray vGroups;
+			SONGMAN->GetGroupNames( vGroups );
+			for( i=0; i<vGroups.size(); i++ )
+			{
+				g_CourseEntryMenu.rows[group].choices.push_back( vGroups[i] );
+				if( GetSelectedEntry()->group_name == vGroups[i] )
+					g_CourseEntryMenu.rows[group].defaultChoice = i;
+			}
+
+			//
+			// populate difficulty list
+			//
+			g_CourseEntryMenu.rows[difficulty].choices.clear();
+			g_CourseEntryMenu.rows[difficulty].defaultChoice = NUM_DIFFICULTIES;
+
+			for( i=0; i<=NUM_DIFFICULTIES; i++ )
+			{
+				CString sDifficulty = (i==NUM_DIFFICULTIES) ? "Don't care" : DifficultyToString((Difficulty)i);
+				g_CourseEntryMenu.rows[difficulty].choices.push_back( sDifficulty );
+				if( GetSelectedEntry()->difficulty == i )
+					g_CourseEntryMenu.rows[difficulty].defaultChoice = i;
+			}
+
+			//
+			// populate difficulty list
+			//
+			g_CourseEntryMenu.rows[low_meter].choices.clear();
+			g_CourseEntryMenu.rows[low_meter].defaultChoice = 0;
+			g_CourseEntryMenu.rows[high_meter].choices.clear();
+			g_CourseEntryMenu.rows[high_meter].defaultChoice = 0;
+
+			for( i=0; i<=MAX_METER; i++ )
+			{
+				CString sMeter = (i==0) ? "Don't care" : ssprintf("%d", i);
+				g_CourseEntryMenu.rows[low_meter].choices.push_back( sMeter );
+				g_CourseEntryMenu.rows[high_meter].choices.push_back( sMeter );
+				if( GetSelectedEntry()->low_meter == i )
+					g_CourseEntryMenu.rows[low_meter].defaultChoice = i;
+				if( GetSelectedEntry()->high_meter == i )
+					g_CourseEntryMenu.rows[high_meter].defaultChoice = i;
+			}
+
+			//
+			// populate best/worst list
+			//
+			g_CourseEntryMenu.rows[best_worst_value].choices.clear();
+			g_CourseEntryMenu.rows[best_worst_value].defaultChoice = 7;
+
+			for( i=1; i<40; i++ )
+			{
+				CString sNum = ssprintf("%d", i);
+				g_CourseEntryMenu.rows[high_meter].choices.push_back( sNum );
+				if( GetSelectedEntry()->players_index == i-1 )
+					g_CourseEntryMenu.rows[best_worst_value].defaultChoice = i;
+			}
+
+
 			// update enabled/disabled lines
-			for( unsigned i=0; i<g_CourseEntryOptionsMenu.rows.size(); i++ )
-				g_CourseEntryOptionsMenu.rows[i].enabled = false;
+			for( i=0; i<g_CourseEntryMenu.rows.size(); i++ )
+				g_CourseEntryMenu.rows[i].enabled = false;
+
 			switch( GetSelectedEntry()->type )
 			{
 				case COURSE_ENTRY_FIXED:
-					g_CourseEntryOptionsMenu.rows[song].enabled = true;
+					g_CourseEntryMenu.rows[song].enabled = true;
 					break;
 				case COURSE_ENTRY_RANDOM:
-					g_CourseEntryOptionsMenu.rows[low_meter].enabled = true;
-					g_CourseEntryOptionsMenu.rows[high_meter].enabled = true;
+					g_CourseEntryMenu.rows[difficulty].enabled = true;
+					g_CourseEntryMenu.rows[low_meter].enabled = true;
+					g_CourseEntryMenu.rows[high_meter].enabled = true;
 					break;
 				case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
-					g_CourseEntryOptionsMenu.rows[group].enabled = true;
-					g_CourseEntryOptionsMenu.rows[low_meter].enabled = true;
-					g_CourseEntryOptionsMenu.rows[high_meter].enabled = true;
+					g_CourseEntryMenu.rows[group].enabled = true;
+					g_CourseEntryMenu.rows[difficulty].enabled = true;
+					g_CourseEntryMenu.rows[low_meter].enabled = true;
+					g_CourseEntryMenu.rows[high_meter].enabled = true;
 					break;
 				case COURSE_ENTRY_BEST:
-					g_CourseEntryOptionsMenu.rows[best_worst_value].enabled = true;
+					g_CourseEntryMenu.rows[best_worst_value].enabled = true;
 					break;
 				case COURSE_ENTRY_WORST:
-					g_CourseEntryOptionsMenu.rows[best_worst_value].enabled = true;
+					g_CourseEntryMenu.rows[best_worst_value].enabled = true;
 					break;
 				default:
 					ASSERT(0);
 					break;
 			}
-			SCREENMAN->MiniMenu( &g_CourseEntryOptionsMenu, SM_BackFromCourseEntryOptionsMenu );
+			SCREENMAN->MiniMenu( &g_CourseEntryMenu, SM_BackFromCourseEntryOptionsMenu );
 		}
 		break;
 	case ROW_ENTRY_PLAYER_OPTIONS:
+		m_soundStart.Play();
+			
+		GAMESTATE->m_PlayerOptions[PLAYER_1] = PlayerOptions();
+		GAMESTATE->m_PlayerOptions[PLAYER_1].FromString( GetSelectedEntry()->modifiers );
+
 		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
 		break;
 	case ROW_ENTRY_SONG_OPTIONS:	
+		m_soundStart.Play();
+
+		GAMESTATE->m_SongOptions = SongOptions();
+		GAMESTATE->m_SongOptions.FromString( GetSelectedEntry()->modifiers );
+
 		SCREENMAN->AddNewScreenToTop( "ScreenSongOptions" );
 		break;
 	default:
@@ -285,6 +421,49 @@ void EditCoursesMenu::Start()
 	}
 }
 
+
+void EditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
+{
+	switch( SM )
+	{
+	case SM_BackFromCourseOptionsMenu:
+		GetSelectedCourse()->m_bRepeat = !!ScreenMiniMenu::s_iLastAnswers[repeat];
+		GetSelectedCourse()->m_bRandomize = !!ScreenMiniMenu::s_iLastAnswers[randomize];
+		GetSelectedCourse()->m_iLives = ScreenMiniMenu::s_iLastAnswers[lives];
+		if( GetSelectedCourse()->m_iLives == 0 )
+			GetSelectedCourse()->m_iLives = -1;
+		
+		OnRowValueChanged( ROW_COURSE_OPTIONS );
+		break;
+	case SM_BackFromCourseEntryOptionsMenu:
+		{
+			vector<Song*> vSongs = SONGMAN->GetAllSongs();
+			CStringArray vGroups;
+			SONGMAN->GetGroupNames( vGroups );
+
+			GetSelectedEntry()->pSong = vSongs[ ScreenMiniMenu::s_iLastAnswers[song] ];
+			GetSelectedEntry()->group_name = vGroups[ ScreenMiniMenu::s_iLastAnswers[group] ];
+			GetSelectedEntry()->difficulty = (Difficulty)ScreenMiniMenu::s_iLastAnswers[difficulty];
+			if( GetSelectedEntry()->difficulty == NUM_DIFFICULTIES )
+				GetSelectedEntry()->difficulty = DIFFICULTY_INVALID;
+			GetSelectedEntry()->low_meter = ScreenMiniMenu::s_iLastAnswers[low_meter];
+			if( GetSelectedEntry()->low_meter == 0 )
+				GetSelectedEntry()->low_meter = -1;
+			GetSelectedEntry()->high_meter = ScreenMiniMenu::s_iLastAnswers[high_meter];
+			if( GetSelectedEntry()->high_meter == 0 )
+				GetSelectedEntry()->high_meter = -1;
+			GetSelectedEntry()->players_index = ScreenMiniMenu::s_iLastAnswers[best_worst_value];
+			
+			OnRowValueChanged( ROW_ENTRY_OPTIONS );
+		}
+		break;
+	case SM_RegainingFocus:
+		// coming back from PlayerOptions or SongOptions
+		GetSelectedEntry()->modifiers = GAMESTATE->m_PlayerOptions[PLAYER_1].GetString() + "," + GAMESTATE->m_SongOptions.GetString();
+		OnRowValueChanged( ROW_ENTRY_PLAYER_OPTIONS );
+		break;
+	}
+}
 
 void EditCoursesMenu::ChangeToRow( Row newRow )
 {
@@ -319,9 +498,11 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	case ROW_COURSE_OPTIONS:
 		m_textValue[ROW_COURSE_OPTIONS].SetText( 
 			ssprintf(
-				"(START)  %s, %s, %d lives",
+				"(START)  %s, %s, ",
 				pCourse->m_bRepeat ? "repeat" : "no repeat",
-				pCourse->m_bRandomize ? "randomize" : "no randomize",
+				pCourse->m_bRandomize ? "randomize" : "no randomize" ) + 
+			ssprintf(
+				(pCourse->m_iLives==-1) ? "use bar life" : "%d lives",
 				pCourse->m_iLives ) );
 		// fall through
 	case ROW_ACTION:
@@ -329,59 +510,74 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		// fall through
 	case ROW_ENTRY:
 		m_textValue[ROW_ENTRY].SetText( ssprintf("%d of %d",m_iSelection[ROW_ENTRY]+1, (int)GetSelectedCourse()->m_entries.size()) );
+		m_iSelection[ROW_ENTRY_TYPE] = pEntry->type;
 		// fall through
 	case ROW_ENTRY_TYPE:
 		m_textValue[ROW_ENTRY_TYPE].SetText( pEntry ? CourseEntryTypeToString(pEntry->type) : "(none)" );
 		// fall through
 	case ROW_ENTRY_OPTIONS:
 		{
-			CString s = "(START) ";
-			if( pEntry )
+			CStringArray as;
+			bool bShow[NUM_COURSE_OPTIONS_MENU_ROWS];
+			ZERO( bShow );
+
+			switch( pEntry->type )
 			{
-				switch( pEntry->type )
-				{
-					case COURSE_ENTRY_FIXED:
-						s += pEntry->pSong ? "(missing song)" : pEntry->pSong->GetFullTranslitTitle();
-						break;
-					case COURSE_ENTRY_RANDOM:
-						s += "any group";
-						break;
-					case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
-						s += "group: " + pEntry->group_name;
-						break;
-					case COURSE_ENTRY_BEST:
-						s += ssprintf( "rank %d", pEntry->players_index+1 );
-						break;
-					case COURSE_ENTRY_WORST:
-						s += ssprintf( "rank %d", pEntry->players_index+1 );
-						break;
-					default:
-						ASSERT(0);
-						break;
-				}
-			}
-			else
-			{
-				s = "n/a";
+				case COURSE_ENTRY_FIXED:
+					bShow[song] = true;
+					break;
+				case COURSE_ENTRY_RANDOM:
+					bShow[difficulty] = true;
+					bShow[low_meter] = true;
+					bShow[high_meter] = true;
+					break;
+				case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
+					bShow[group] = true;
+					bShow[difficulty] = true;
+					bShow[low_meter] = true;
+					bShow[high_meter] = true;
+					break;
+				case COURSE_ENTRY_BEST:
+					bShow[best_worst_value] = true;
+					break;
+				case COURSE_ENTRY_WORST:
+					bShow[best_worst_value] = true;
+					break;
+				default:
+					ASSERT(0);
+					break;
 			}
 
-			m_textValue[ROW_ENTRY_OPTIONS].SetText( s );
+			if( bShow[song] )
+				as.push_back( pEntry->pSong ? "(missing song)" : pEntry->pSong->GetFullTranslitTitle() );
+			if( bShow[group] )
+				as.push_back( "group: " + (pEntry->group_name.empty() ? "(none)" : pEntry->group_name) );
+			if( bShow[difficulty] )
+				if( pEntry->difficulty != DIFFICULTY_INVALID )
+					as.push_back( DifficultyToString(pEntry->difficulty) );
+			if( bShow[low_meter] )
+				if( pEntry->low_meter > 0 )
+					as.push_back( ssprintf("low meter %d", pEntry->low_meter) );
+			if( bShow[high_meter] )
+				if( pEntry->high_meter > 0 )
+					as.push_back( ssprintf("high meter %d", pEntry->high_meter) );
+			if( bShow[best_worst_value] )
+				if( pEntry->players_index != -1 )
+					as.push_back( ssprintf("rank %d", pEntry->players_index+1) );
+
+			m_textValue[ROW_ENTRY_OPTIONS].SetText( "(START) " + join(", ",as) );
 		}
 		// fall through
 	case ROW_ENTRY_PLAYER_OPTIONS:
 		{
 			CString s = "(START) ";
-			if( pEntry )
-			{
-				if( pEntry->modifiers.empty() )
-					s += "(none)";
-				else
-					s += pEntry->modifiers;
-			}
+		
+			PlayerOptions po;
+			po.FromString( pEntry->modifiers );
+			if( po.GetString().empty() )
+				s += "(none)";
 			else
-			{
-				s = "n/a";
-			}
+				s += po.GetString();
 		
 			m_textValue[ROW_ENTRY_PLAYER_OPTIONS].SetText( s );
 		}
@@ -389,18 +585,14 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	case ROW_ENTRY_SONG_OPTIONS:
 		{
 			CString s = "(START) ";
-			if( pEntry )
-			{
-				if( pEntry->modifiers.empty() )
-					s += "(none)";
-				else
-					s += pEntry->modifiers;
-			}
+
+			SongOptions so;
+			so.FromString( pEntry->modifiers );
+			if( so.GetString().empty() )
+				s += "(none)";
 			else
-			{
-				s = "n/a";
-			}
-		
+				s += so.GetString();
+
 			m_textValue[ROW_ENTRY_SONG_OPTIONS].SetText( s );
 		}
 		break;

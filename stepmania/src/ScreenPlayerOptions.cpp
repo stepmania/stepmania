@@ -346,7 +346,11 @@ void ScreenPlayerOptions::ExportOptions()
 		//
 		// apply difficulty selection
 		//
-		if( GAMESTATE->m_pCurCourse )   // playing a course
+		if( GAMESTATE->m_bEditing )
+		{
+			// do nothing
+		}
+		else if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
 			if( m_iSelectedOption[p][PO_STEP] == 1 )
 			{
@@ -387,14 +391,19 @@ void ScreenPlayerOptions::GoToPrevState()
 
 void ScreenPlayerOptions::GoToNextState()
 {
-	GAMESTATE->AdjustFailType();
-
 	if( GAMESTATE->m_bEditing )
+	{
 		SCREENMAN->PopTopScreen();
-	else if( m_bGoToOptions )
-		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+	}
 	else
-		SCREENMAN->SetNewScreen( ScreenSongOptions::GetNextScreen() );
+	{
+		GAMESTATE->AdjustFailType();
+
+		if( m_bGoToOptions )
+			SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
+		else
+			SCREENMAN->SetNewScreen( ScreenSongOptions::GetNextScreen() );
+	}
 }
 
 
