@@ -197,9 +197,6 @@ void RageLog::SetShowLogOutput( bool show )
 
 void RageLog::Trace( const char *fmt, ...)
 {
-	if( !m_bLogToDisk )
-		return;
-
     va_list	va;
     va_start(va, fmt);
     CString sBuff = vssprintf( fmt, va );
@@ -212,9 +209,6 @@ void RageLog::Trace( const char *fmt, ...)
  * in crash dumps. */
 void RageLog::Info( const char *fmt, ...)
 {
-	if( !m_bLogToDisk )
-		return;
-
     va_list	va;
     va_start(va, fmt);
     CString sBuff = vssprintf( fmt, va );
@@ -225,9 +219,6 @@ void RageLog::Info( const char *fmt, ...)
 
 void RageLog::Warn( const char *fmt, ...)
 {
-	if( !m_bLogToDisk )
-		return;
-
     va_list	va;
     va_start(va, fmt);
     CString sBuff = vssprintf( fmt, va );
@@ -242,7 +233,7 @@ void RageLog::Write( int where, const CString &line )
 
 	vector<CString> lines;
 	split( line, "\n", lines, false );
-	if( g_fileLog->IsOpen() && (where & WRITE_LOUD) )
+	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
 		g_fileLog->PutLine( "/////////////////////////////////////////" );
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
@@ -260,21 +251,21 @@ void RageLog::Write( int where, const CString &line )
 		if( LineHeader.size() )
 			str.insert( 0, LineHeader );
 
-		if( where&WRITE_TO_INFO && g_fileInfo->IsOpen() )
+		if( m_bLogToDisk && where&WRITE_TO_INFO && g_fileInfo->IsOpen() )
 			g_fileInfo->PutLine( str );
 
 		if( where & WRITE_TO_INFO )
 			AddToInfo( str );
 		AddToRecentLogs( str );
 		
-		if( g_fileLog->IsOpen() )
+		if( m_bLogToDisk && g_fileLog->IsOpen() )
 			g_fileLog->PutLine( str );
 
 		if( m_bShowLogOutput || where != 0 )
 			printf("%s\n", str.c_str() );
 	}
 
-	if( g_fileLog->IsOpen() && (where & WRITE_LOUD) )
+	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
 		g_fileLog->PutLine( "/////////////////////////////////////////" );
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
