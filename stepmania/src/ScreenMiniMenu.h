@@ -53,11 +53,11 @@ struct Menu
 
 	Menu() {}
 
-	Menu( CString t, MenuRow r0, MenuRow r1=MenuRow(), MenuRow r2=MenuRow(), MenuRow r3=MenuRow(), MenuRow r4=MenuRow(), MenuRow r5=MenuRow(), MenuRow r6=MenuRow(), MenuRow r7=MenuRow(), MenuRow r8=MenuRow(), MenuRow r9=MenuRow(), MenuRow r10=MenuRow(), MenuRow r11=MenuRow(), MenuRow r12=MenuRow(), MenuRow r13=MenuRow(), MenuRow r14=MenuRow(), MenuRow r15=MenuRow(), MenuRow r16=MenuRow(), MenuRow r17=MenuRow(), MenuRow r18=MenuRow(), MenuRow r19=MenuRow() )
+	Menu( CString t, MenuRow r0, MenuRow r1=MenuRow(), MenuRow r2=MenuRow(), MenuRow r3=MenuRow(), MenuRow r4=MenuRow(), MenuRow r5=MenuRow(), MenuRow r6=MenuRow(), MenuRow r7=MenuRow(), MenuRow r8=MenuRow(), MenuRow r9=MenuRow(), MenuRow r10=MenuRow(), MenuRow r11=MenuRow(), MenuRow r12=MenuRow(), MenuRow r13=MenuRow(), MenuRow r14=MenuRow(), MenuRow r15=MenuRow(), MenuRow r16=MenuRow(), MenuRow r17=MenuRow(), MenuRow r18=MenuRow(), MenuRow r19=MenuRow(), MenuRow r20=MenuRow(), MenuRow r21=MenuRow() )
 	{
 		title = t;
 #define PUSH( r )	if(r.name!="" || !r.choices.empty()) rows.push_back(r);
-		PUSH(r0);PUSH(r1);PUSH(r2);PUSH(r3);PUSH(r4);PUSH(r5);PUSH(r6);PUSH(r7);PUSH(r8);PUSH(r9);PUSH(r10);PUSH(r11);PUSH(r12);PUSH(r13);PUSH(r14);PUSH(r15);PUSH(r16);PUSH(r17);PUSH(r18);PUSH(r19);
+		PUSH(r0);PUSH(r1);PUSH(r2);PUSH(r3);PUSH(r4);PUSH(r5);PUSH(r6);PUSH(r7);PUSH(r8);PUSH(r9);PUSH(r10);PUSH(r11);PUSH(r12);PUSH(r13);PUSH(r14);PUSH(r15);PUSH(r16);PUSH(r17);PUSH(r18);PUSH(r19);PUSH(r20);PUSH(r21);
 #undef PUSH
 	}
 };

@@ -124,7 +124,9 @@ Menu g_KeyboardShortcuts
 	MenuRow( "M: Play sample music",							false ),
 	MenuRow( "B: Add/Edit Background Change",					false ),
 	MenuRow( "Insert: Insert beat and shift down",				false ),
-	MenuRow( "Delete: Delete beat and shift up",				false )
+	MenuRow( "Delete: Delete beat and shift up",				false ),
+	MenuRow( "Shift + number: Lay mine",						false ),
+	MenuRow( "Alt + number: Add to/remove from right half",		false )
 );
 
 Menu g_MainMenu
@@ -599,7 +601,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( type != IET_FIRST_PRESS )
 				break;	// We only care about first presses
 
-			const int iCol = DeviceI.button == SDLK_0? 9: DeviceI.button - SDLK_1;
+			int iCol = DeviceI.button - SDLK_1;
+
+
+			// Alt + number = input to right half
+			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) ||
+				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)))
+				iCol += m_NoteFieldEdit.GetNumTracks()/2;
+
 
 			const float fSongBeat = GAMESTATE->m_fSongBeat;
 			const int iSongIndex = BeatToNoteRow( fSongBeat );
@@ -624,11 +633,23 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			if( !bRemovedAHoldNote )
 			{
+				// Hold Shift to lay mine
+				bool bLayMine = 
+					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
+					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT));
+
 				// We didn't remove a HoldNote, so the user wants to add or delete a TapNote
 				if( m_NoteFieldEdit.GetTapNote(iCol, iSongIndex) == TAP_EMPTY )
-					m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_TAP );
+				{
+					if( bLayMine )
+						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_MINE );
+					else
+						m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_TAP );
+				}
 				else
+				{
 					m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_EMPTY );
+				}
 			}
 		}
 		break;
@@ -692,15 +713,26 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			const float fEndBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
 
 			// check to see if they're holding a button
-			for( int col=0; col<m_NoteFieldEdit.GetNumTracks() && col<=10; col++ )
+			for( int n=0; n<=9; n++ )	// for each number key
 			{
-				const DeviceInput di(DEVICE_KEYBOARD, SDLK_1+col);
+				int iCol = n;
+
+				// Ctrl + number = input to right half
+				if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) ||
+					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)))
+					iCol += m_NoteFieldEdit.GetNumTracks()/2;
+
+				if( iCol >= m_NoteFieldEdit.GetNumTracks() )
+					continue;	// skip
+
+				const DeviceInput di(DEVICE_KEYBOARD, SDLK_1+n);
+
 
 				if( !INPUTFILTER->IsBeingPressed(di) )
 					continue;
 
 				// create a new hold note
-				HoldNote newHN( col, min(fStartBeat, fEndBeat), max(fStartBeat, fEndBeat) );
+				HoldNote newHN( iCol, min(fStartBeat, fEndBeat), max(fStartBeat, fEndBeat) );
 
 				newHN.fStartBeat = max(newHN.fStartBeat, 0);
 				newHN.fEndBeat = max(newHN.fEndBeat, 0);
