@@ -82,18 +82,26 @@ RageDisplay::RageDisplay( HWND hWnd )
 
 
 	// Enumerate possible display modes
+	/*
 	LOG->Trace( "This display adaptor supports the following modes:" );
 	for( UINT u=0; u<m_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
 	{
 		D3DDISPLAYMODE mode;
 		if( SUCCEEDED( m_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
 		{
-			//LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
+			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
 		}
-	}
+	} */
 
 	// Save the original desktop format.
 	m_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &m_DesktopMode );
+
+	D3DADAPTER_IDENTIFIER8	identifier;
+	if( FAILED( hr = m_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier ) ) )
+		LOG->Trace( hr, "GetAdapterIdentifier failed" );
+	else
+		LOG->Trace( "Driver: %s.  Description: %s.", 
+			identifier.Driver, identifier.Description );
 }
 
 int RageDisplay::MaxRefresh(int iWidth, int iHeight, D3DFORMAT fmt) const
@@ -244,18 +252,11 @@ bool RageDisplay::SwitchDisplayMode(
 	m_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
-		m_d3dpp.BackBufferWidth,
-		m_d3dpp.BackBufferHeight,
-		m_d3dpp.BackBufferFormat,
+		m_d3dpp.BackBufferWidth, m_d3dpp.BackBufferHeight, m_d3dpp.BackBufferFormat,
 		m_d3dpp.BackBufferCount,
-		m_d3dpp.MultiSampleType,
-		m_d3dpp.SwapEffect,
-		m_d3dpp.hDeviceWindow,
-		m_d3dpp.Windowed,
-		m_d3dpp.EnableAutoDepthStencil,
-		m_d3dpp.AutoDepthStencilFormat,
-		m_d3dpp.Flags,
-		m_d3dpp.FullScreen_RefreshRateInHz,
+		m_d3dpp.MultiSampleType, m_d3dpp.SwapEffect, m_d3dpp.hDeviceWindow,
+		m_d3dpp.Windowed, m_d3dpp.EnableAutoDepthStencil, m_d3dpp.AutoDepthStencilFormat,
+		m_d3dpp.Flags, m_d3dpp.FullScreen_RefreshRateInHz,
 		m_d3dpp.FullScreen_PresentationInterval
 	);
 
@@ -263,18 +264,6 @@ bool RageDisplay::SwitchDisplayMode(
 
 	if( m_pd3dDevice == NULL )
 	{
-		D3DADAPTER_IDENTIFIER8	identifier;
-		if( FAILED( hr = m_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier ) ) )
-		{
-			LOG->Trace( hr, "GetAdapterIdentifier failed" );
-			return false;
-		}
-
-		LOG->Trace( "Driver: %s.  Description: %s.", 
-			identifier.Driver, 
-			identifier.Description 
-			);
-
 		// device is not yet created.  We need to create it
 		if( FAILED( hr = m_pd3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, 
 											m_hWnd,
