@@ -92,7 +92,7 @@ void GroupList::Load( const CStringArray& asGroupNames )
 void GroupList::ResetTextSize( int i )
 {
 	BitmapText *label = m_textLabels[i];
-	const float fTextWidth = (float)label->GetWidestLineWidthInSourcePixels();
+	const float fTextWidth = (float)label->GetUnzoomedWidth();
 	const float fButtonWidth = m_sprButtons[i]->GetZoomedWidth();
 
 	float fZoom = fButtonWidth/fTextWidth;

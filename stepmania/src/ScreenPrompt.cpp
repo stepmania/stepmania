@@ -73,7 +73,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 	}
 
 	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
-	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
+	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetUnzoomedWidth()+10.0f );
 	m_rectAnswerBox.SetZoomY( 30 );
 
 	m_textAnswer[m_bAnswer].SetEffectGlowShift();
@@ -153,7 +153,7 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 	m_rectAnswerBox.StopTweening();
 	m_rectAnswerBox.BeginTweening( 0.2f );
 	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
-	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetWidestLineWidthInSourcePixels()+10.0f );
+	m_rectAnswerBox.SetZoomX( m_textAnswer[m_bAnswer].GetUnzoomedWidth()+10.0f );
 
 	SOUND->PlayOnce( THEME->GetPathToS("ScreenPrompt change") );
 }

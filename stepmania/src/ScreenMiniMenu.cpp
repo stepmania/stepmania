@@ -91,8 +91,8 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 		fLongestLabelPlusAnswer = max( 
 			fLongestLabelPlusAnswer, 
-			m_textLabel[i].GetWidestLineWidthInSourcePixels() * ZOOM_SELECTED +
-			m_textAnswer[i].GetWidestLineWidthInSourcePixels() * ZOOM_SELECTED );
+			m_textLabel[i].GetUnzoomedWidth() * ZOOM_SELECTED +
+			m_textAnswer[i].GetUnzoomedWidth() * ZOOM_SELECTED );
 
 		if( !bMarkedFirstEnabledLine && line.enabled )
 		{
