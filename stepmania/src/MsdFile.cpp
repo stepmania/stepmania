@@ -39,9 +39,9 @@
  */
 #include "MsdFile.h"
 #include "RageLog.h"
-#include "fcntl.h"
+#include <fcntl.h>
 #if defined(WIN32)
-#include "io.h"
+#include <io.h>
 #endif
 #include "RageUtil.h"
 
