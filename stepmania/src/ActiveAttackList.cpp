@@ -52,7 +52,7 @@ void ActiveAttackList::Update( float fDelta )
 			CString sMods = attack.sModifier;
 			CStringArray asMods;
 			split( sMods, ", ", asMods );
-			for( int j=0; j<asMods.size(); j++ )
+			for( unsigned j=0; j<asMods.size(); j++ )
 			{
 				CString& sMod = asMods[j];
 
@@ -75,7 +75,7 @@ void ActiveAttackList::Update( float fDelta )
 				CStringArray asTokens;
 				split( sMod, " ", asTokens );
 				sMod.erase( sMod.begin(), sMod.end() );
-				for( int i=0; i<asTokens.size(); i++ )
+				for( unsigned i=0; i<asTokens.size(); i++ )
 					sMod += Capitalize( asTokens[i] ) + " ";
 				
 				if( s.empty() )

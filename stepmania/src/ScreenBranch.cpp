@@ -30,7 +30,7 @@ ScreenBranch::ScreenBranch( CString sClassName ) : Screen( sClassName )
 	for( unsigned i=0; i<as.size(); i++ )
 	{
 		CString sChoice = Capitalize( as[i] );
-		CString sCondition = CONDITION(sChoice);
+			CString sCondition = CONDITION(sChoice);
 
 		if( Lua::RunExpression(sCondition) )
 		{
