@@ -696,11 +696,10 @@ void Actor::HandleCommand( const Command &command )
 	else if( sName=="diffusecolor" )	SetDiffuseColor( cArg(1) );
 	else if( sName=="glow" )			SetGlow( cArg(1) );
 	else if( sName=="glowmode" ) {
-		if(!sArg(1).CompareNoCase("whiten"))
+		if( !sArg(1).CompareNoCase("whiten") )
 			SetGlowMode( GLOW_WHITEN );
-		else if(!sArg(1).CompareNoCase("brighten"))
-			SetGlowMode( GLOW_BRIGHTEN );
-		else ASSERT(0);
+		else
+			FAIL_M( ssprintf("Unknown GlowMode \"%s\"", sArg(1).c_str()) );
 	}
 	else if( sName=="rotationx" )		SetRotationX( fArg(1) );
 	else if( sName=="rotationy" )		SetRotationY( fArg(1) );
