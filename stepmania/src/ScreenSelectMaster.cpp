@@ -594,7 +594,22 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
-	m_soundStart.Play();
+	
+	if( mc.m_sSoundPath.empty() )
+		m_soundStart.Play();
+
+	if( mc.m_sScreen.empty() )
+	{
+		mc.ApplyToAllPlayers();
+		return;
+	}
+
+	// If the player isn't already joined, join them.
+	MenuInput MenuI;
+	MenuI.player = pn;
+	MenuI.button = MENU_BUTTON_START;
+	Screen::JoinInput( MenuI );
+
 
 	float fSecs = 0;
 	bool bAllDone = true;

@@ -160,15 +160,19 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 	m_timerIdleComment.GetDeltaTime();
 	m_timerIdleTimeout.GetDeltaTime();
 
+
+	// HACK: Don't process JoinInput on the TitleMenu.  Otherwise, if the user presses start
+	// on a choice that doesn't move to a new screen, the player will be joined and the
+	// user will still be on the title menu.
+	bool bAllowJoinInput = !ALLOW_DISABLED_PLAYER_INPUT;
+
 	if( MenuI.button == MENU_BUTTON_COIN ||
-		Screen::JoinInput(DeviceI, type, GameI, MenuI, StyleI) )
+		(bAllowJoinInput && Screen::JoinInput(MenuI)) )
 	{
 		if( type == IET_FIRST_PRESS )
 			this->UpdateSelectableChoices();
 	
-		if( ALLOW_DISABLED_PLAYER_INPUT )
-			;
-		else
+		if( !ALLOW_DISABLED_PLAYER_INPUT )
 			return;	// don't let the screen handle the MENU_START press
 	}
 
@@ -190,35 +194,31 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
-void ScreenSelect::FinalizeChoices()
-{
-	/* At this point, we're tweening out; we can't change the selection.
-	 * We don't want to allow players to join if the style will be set,
-	 * since that can change the available selection and is likely to
-	 * invalidate the choice we've already made.  Hack: apply the style.
-	 * (Applying the style may have other side-effects, so it'll be re-applied
-	 * in SM_GoToNextScreen.) */
-	FOREACH_HumanPlayer( p )
-	{
-		const int sel = GetSelectionIndex( p );
-		if( m_aGameCommands[sel].m_pStyle )
-			GAMESTATE->m_pCurStyle = m_aGameCommands[sel].m_pStyle;
-	}
-	SCREENMAN->RefreshCreditsMessages();
-}
-
 void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	/* Screen is starting to tween out. */
-	case SM_BeginFadingOut:
-		FinalizeChoices();
+		/* Screen is starting to tween out. */
+		case SM_BeginFadingOut:
+		{
+			/* At this point, we're tweening out; we can't change the selection.
+			 * We don't want to allow players to join if the style will be set,
+			 * since that can change the available selection and is likely to
+			 * invalidate the choice we've already made.  Hack: apply the style.
+			 * (Applying the style may have other side-effects, so it'll be re-applied
+			 * in SM_GoToNextScreen.) */
+			FOREACH_HumanPlayer( p )
+			{
+				const int sel = GetSelectionIndex( p );
+				if( m_aGameCommands[sel].m_pStyle )
+					GAMESTATE->m_pCurStyle = m_aGameCommands[sel].m_pStyle;
+			}
+			SCREENMAN->RefreshCreditsMessages();
+		}
 		break;
 
 	/* It's our turn to tween out. */
 	case SM_AllDoneChoosing:		
-		FinalizeChoices();
 		if( !IsTransitioning() )
 			StartTransitioning( SM_GoToNextScreen );
 		break;

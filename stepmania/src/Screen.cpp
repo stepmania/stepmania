@@ -180,7 +180,7 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 	return false;
 }
 
-bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+bool Screen::JoinInput( const MenuInput &MenuI )
 {
 	if( !GAMESTATE->PlayersCanJoin() )
 		return false;
@@ -206,7 +206,12 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 		else
 			GAMESTATE->m_iCoins -= iCoinsToCharge;
 
-		SCREENMAN->PlayStartSound();
+		// HACK: Only play start sound for the 2nd player who joins.  The 
+		// start sound for the 1st player will be played by ScreenTitleMenu 
+		// when the player makes a selection on the screen.
+		if( GAMESTATE->GetNumSidesJoined() > 0 )
+			SCREENMAN->PlayStartSound();
+
 		GAMESTATE->JoinPlayer( MenuI.player );
 
 		// don't load memory card profiles here.  It's slow and can cause a big skip.
