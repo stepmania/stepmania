@@ -103,6 +103,8 @@
 		19C28FACFE9D520D11CA2CBB = {
 			children = (
 				17587328FF379C6511CA2CBB,
+				AA507E55050BA28F00F96139,
+				AA1C6544050D1FD00073A143,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -129,6 +131,8 @@
 			projectDirPath = "";
 			targets = (
 				29B97326FDCFA39411CA2CEA,
+				AA507E54050BA28F00F96139,
+				AA1C6543050D1FD00073A143,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
@@ -145,6 +149,7 @@
 				AA6EFDC804770AF1005F316C,
 				AA6EFDBB04770A83005F316C,
 				29B97315FDCFA39411CA2CEA,
+				AA507E4F050BA1A000F96139,
 				29B97317FDCFA39411CA2CEA,
 				AA14ED150509F94C00E3FAD7,
 				29B97323FDCFA39411CA2CEA,
@@ -170,6 +175,7 @@
 		};
 		29B97317FDCFA39411CA2CEA = {
 			children = (
+				AA1C654F050D21AB0073A143,
 				AAB895E504A9057100D02EE9,
 				089C165CFE840E0CC02AAC07,
 				AA505F40050A87E400F96139,
@@ -260,8 +266,6 @@
 	<string>Step</string>
 	<key>CFBundleVersion</key>
 	<string>3.9 alpha 4b</string>
-	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -538,6 +542,8 @@
 				AAC28BBC04F758E500D02EE9,
 				AA7D404804FC3C270020E02B,
 				AA14ED120509F40000E3FAD7,
+				AA1C6555050D23200073A143,
+				AA1C6559050D234B0073A143,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -797,6 +803,8 @@
 				AAC28BBB04F758E500D02EE9,
 				AA7D404904FC3C270020E02B,
 				AA14ED110509F40000E3FAD7,
+				AA1C6554050D23200073A143,
+				AA1C6558050D234B0073A143,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -974,6 +982,330 @@
 		};
 		AA14ED1B0509FA1F00E3FAD7 = {
 			fileRef = AA14ED1A0509FA1F00E3FAD7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C653A050C00CF0073A143 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = Processor.h;
+			path = Installer/Processor.h;
+			refType = 4;
+		};
+		AA1C653B050C00CF0073A143 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = Processor.cpp;
+			path = Installer/Processor.cpp;
+			refType = 4;
+		};
+		AA1C653C050C00CF0073A143 = {
+			fileRef = AA1C653A050C00CF0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C653D050C00CF0073A143 = {
+			fileRef = AA1C653B050C00CF0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C653E050D1FD00073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+				AA1C655A050D23A30073A143,
+				AA1C6561050D2ABC0073A143,
+				AA1C6567050D2D0D0073A143,
+				AA1C6569050D2D710073A143,
+				AA1C656B050D2D740073A143,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C653F050D1FD00073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+				AA1C6549050D20D30073A143,
+				AA1C654A050D20E20073A143,
+				AA1C6551050D21AB0073A143,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C6540050D1FD00073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+				AA1C654C050D212D0073A143,
+				AA1C6562050D2ABC0073A143,
+				AA1C6568050D2D0D0073A143,
+				AA1C656A050D2D720073A143,
+				AA1C656C050D2D740073A143,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C6541050D1FD00073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+				AA1C6546050D20A70073A143,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C6542050D1FD00073A143 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA1C6543050D1FD00073A143 = {
+			buildPhases = (
+				AA1C653E050D1FD00073A143,
+				AA1C653F050D1FD00073A143,
+				AA1C6540050D1FD00073A143,
+				AA1C6541050D1FD00073A143,
+				AA1C6542050D1FD00073A143,
+			);
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "../src Installer";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Installer;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = app;
+			};
+			dependencies = (
+			);
+			isa = PBXApplicationTarget;
+			name = Installer;
+			productInstallPath = "$(USER_APPS_DIR)";
+			productName = Installer;
+			productReference = AA1C6544050D1FD00073A143;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>installer</string>
+	<key>CFBundleGetInfoString</key>
+	<string>SM Installer</string>
+	<key>CFBundleIconFile</key>
+	<string>smicon.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>SM_installer</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Installer</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSignature</key>
+	<string>StCh</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+		};
+		AA1C6544050D1FD00073A143 = {
+			isa = PBXApplicationReference;
+			path = Installer.app;
+			refType = 3;
+		};
+		AA1C6546050D20A70073A143 = {
+			fileRef = 1058C7A1FEA54F0111CA2CBB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6549050D20D30073A143 = {
+			fileRef = AAB895E504A9057100D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C654A050D20E20073A143 = {
+			fileRef = 089C165CFE840E0CC02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C654B050D212D0073A143 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = main.c;
+			path = Installer/main.c;
+			refType = 4;
+		};
+		AA1C654C050D212D0073A143 = {
+			fileRef = AA1C654B050D212D0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C654F050D21AB0073A143 = {
+			children = (
+				AA1C6550050D21AB0073A143,
+			);
+			isa = PBXVariantGroup;
+			name = MainMenu.nib;
+			path = "";
+			refType = 4;
+		};
+		AA1C6550050D21AB0073A143 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/MainMenu.nib;
+			refType = 4;
+		};
+		AA1C6551050D21AB0073A143 = {
+			fileRef = AA1C654F050D21AB0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6552050D23200073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenProfileOptions.cpp;
+			path = /Users/steve/stepmania/src/ScreenProfileOptions.cpp;
+			refType = 0;
+		};
+		AA1C6553050D23200073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenProfileOptions.h;
+			path = /Users/steve/stepmania/src/ScreenProfileOptions.h;
+			refType = 0;
+		};
+		AA1C6554050D23200073A143 = {
+			fileRef = AA1C6552050D23200073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6555050D23200073A143 = {
+			fileRef = AA1C6553050D23200073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6556050D234B0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ProfileManager.cpp;
+			path = /Users/steve/stepmania/src/ProfileManager.cpp;
+			refType = 0;
+		};
+		AA1C6557050D234B0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ProfileManager.h;
+			path = /Users/steve/stepmania/src/ProfileManager.h;
+			refType = 0;
+		};
+		AA1C6558050D234B0073A143 = {
+			fileRef = AA1C6556050D234B0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6559050D234B0073A143 = {
+			fileRef = AA1C6557050D234B0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C655A050D23A30073A143 = {
+			fileRef = AA6EFE6204770CF7005F316C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C655F050D2ABC0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = InstallerWindowController.h;
+			refType = 4;
+		};
+		AA1C6560050D2ABC0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = InstallerWindowController.m;
+			refType = 4;
+		};
+		AA1C6561050D2ABC0073A143 = {
+			fileRef = AA1C655F050D2ABC0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6562050D2ABC0073A143 = {
+			fileRef = AA1C6560050D2ABC0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6565050D2D0D0073A143 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = Helper.h;
+			path = Installer/Helper.h;
+			refType = 4;
+		};
+		AA1C6566050D2D0D0073A143 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = Helper.mm;
+			path = Installer/Helper.mm;
+			refType = 4;
+		};
+		AA1C6567050D2D0D0073A143 = {
+			fileRef = AA1C6565050D2D0D0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6568050D2D0D0073A143 = {
+			fileRef = AA1C6566050D2D0D0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6569050D2D710073A143 = {
+			fileRef = AA507E64050BA55B00F96139;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C656A050D2D720073A143 = {
+			fileRef = AA507E65050BA55B00F96139;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C656B050D2D740073A143 = {
+			fileRef = AA1C653A050C00CF0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C656C050D2D740073A143 = {
+			fileRef = AA1C653B050C00CF0073A143;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1317,6 +1649,132 @@
 			settings = {
 			};
 		};
+		AA507E4F050BA1A000F96139 = {
+			children = (
+				AA507E68050BC69000F96139,
+				AA1C6565050D2D0D0073A143,
+				AA1C6566050D2D0D0073A143,
+				AA507E65050BA55B00F96139,
+				AA507E64050BA55B00F96139,
+				AA1C655F050D2ABC0073A143,
+				AA1C6560050D2ABC0073A143,
+				AA1C653B050C00CF0073A143,
+				AA1C653A050C00CF0073A143,
+				AA1C654B050D212D0073A143,
+			);
+			isa = PBXGroup;
+			name = Installer;
+			refType = 4;
+		};
+		AA507E50050BA28F00F96139 = {
+			buildActionMask = 2147483647;
+			files = (
+				AA507E63050BA42800F96139,
+				AA507E66050BA55B00F96139,
+				AA1C653C050C00CF0073A143,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA507E51050BA28F00F96139 = {
+			buildActionMask = 2147483647;
+			files = (
+				AA507E67050BA55B00F96139,
+				AA507E69050BC69000F96139,
+				AA1C653D050C00CF0073A143,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA507E52050BA28F00F96139 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA507E53050BA28F00F96139 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA507E54050BA28F00F96139 = {
+			buildPhases = (
+				AA507E50050BA28F00F96139,
+				AA507E51050BA28F00F96139,
+				AA507E52050BA28F00F96139,
+				AA507E53050BA28F00F96139,
+			);
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "../src Installer";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = BuildInstaller;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = BuildInstaller;
+			productInstallPath = /usr/local/bin;
+			productName = BuildInstaller;
+			productReference = AA507E55050BA28F00F96139;
+		};
+		AA507E55050BA28F00F96139 = {
+			isa = PBXExecutableFileReference;
+			path = BuildInstaller;
+			refType = 3;
+		};
+		AA507E63050BA42800F96139 = {
+			fileRef = AA6EFE6204770CF7005F316C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA507E64050BA55B00F96139 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = InstallerFile.h;
+			path = Installer/InstallerFile.h;
+			refType = 4;
+		};
+		AA507E65050BA55B00F96139 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = InstallerFile.cpp;
+			path = Installer/InstallerFile.cpp;
+			refType = 4;
+		};
+		AA507E66050BA55B00F96139 = {
+			fileRef = AA507E64050BA55B00F96139;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA507E67050BA55B00F96139 = {
+			fileRef = AA507E65050BA55B00F96139;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA507E68050BC69000F96139 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = BuildInstaller.cpp;
+			path = Installer/BuildInstaller.cpp;
+			refType = 4;
+		};
+		AA507E69050BC69000F96139 = {
+			fileRef = AA507E68050BC69000F96139;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA52E9BD04DBBCF400D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1432,6 +1890,8 @@
 				AA6E001C047711F3005F316C,
 				AA6E001D047711F3005F316C,
 				AA6E001E047711F3005F316C,
+				AAADA51604E75DD300D02EE9,
+				AAADA51704E75DD300D02EE9,
 				AA6E001F047711F3005F316C,
 				AA6E0020047711F3005F316C,
 				AA6E0021047711F3005F316C,
@@ -1480,6 +1940,8 @@
 				AA6E004E047711F3005F316C,
 				AA6E004F047711F3005F316C,
 				AA6E0050047711F3005F316C,
+				AA1C6552050D23200073A143,
+				AA1C6553050D23200073A143,
 				AA6E0051047711F3005F316C,
 				AA6E0052047711F3005F316C,
 				AA6E0053047711F3005F316C,
@@ -1533,8 +1995,6 @@
 				AA6E0081047711F3005F316C,
 				AA6E0082047711F3005F316C,
 				AA6E0083047711F3005F316C,
-				AAADA51604E75DD300D02EE9,
-				AAADA51704E75DD300D02EE9,
 			);
 			isa = PBXGroup;
 			name = Screens;
@@ -3512,6 +3972,8 @@
 				AA6E010C0477128A005F316C,
 				AA6E010D0477128A005F316C,
 				AA6E010E0477128A005F316C,
+				AA1C6556050D234B0073A143,
+				AA1C6557050D234B0073A143,
 				AA6E003F047711F3005F316C,
 				AA6E0040047711F3005F316C,
 				AA6E010F0477128A005F316C,
