@@ -420,6 +420,8 @@ try {
 	m_ImageWaiting = false;
 	m_Rate = 1;
 	m_bWantRewind = false;
+	m_Clock = 0;
+	m_FrameSkipMode = false;
 
 	m_BufferFinished = SDL_CreateSemaphore(0);
 
@@ -711,14 +713,118 @@ void MovieTexture_FFMpeg::CreateTexture()
     m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_img, false );
 }
 
+/* Handle decoding for a frame.  Return true if a frame was decoded and is waiting
+ * to be handled. */
+bool MovieTexture_FFMpeg::RunDecode()
+{
+	if( m_State == PAUSE_DECODER )
+	{
+		/* The video isn't running; skip time. */
+		m_Timer.GetDeltaTime();
+		return false;
+	}
 
+	if( m_State != PLAYING )
+		return false;
+	CHECKPOINT;
+
+	/* We're playing.  Update the clock. */
+	m_Clock += m_Timer.GetDeltaTime() * m_Rate;
+	
+	/* Read a frame. */
+	int ret = decoder->GetFrame();
+	if( ret == -1 )
+		return false;
+
+	if( m_bWantRewind && decoder->GetTimestamp() == 0 )
+		m_bWantRewind = false; /* ignore */
+
+	if( ret == 0 )
+	{
+		/* EOF. */
+		if( !m_bLoop )
+			return false;
+
+		LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
+		m_bWantRewind = true;
+	}
+
+	if( m_bWantRewind )
+	{
+		m_bWantRewind = false;
+
+		/* Restart. */
+		DestroyDecoder();
+		CreateDecoder();
+
+		decoder->Init();
+		m_Clock = 0;
+		return false;
+	}
+
+	/* We got a frame. */
+	const float Offset = decoder->GetTimestamp() - m_Clock;
+
+	/* If we're ahead, we're decoding too fast; delay. */
+	if( Offset > 0 )
+	{
+		SDL_Delay( int(1000*Offset) );
+		if( m_FrameSkipMode )
+		{
+			/* We're caught up; stop skipping frames. */
+			LOG->Trace( "stopped skipping frames" );
+			m_FrameSkipMode = false;
+		}
+	} else {
+		/* We're behind by -Offset seconds.  
+		 *
+		 * If we're just slightly behind, don't worry about it; we'll simply
+		 * not sleep, so we'll move as fast as we can to catch up.
+		 *
+		 * If we're far behind, we're short on CPU and we need to do something
+		 * about it.  We have at least two options:
+		 *
+		 * 1: We can skip texture updates.  This is a big bottleneck on many
+		 * systems.
+		 *
+		 * 2: If that's not enough, we can play with hurry_up.
+		 *
+		 * If we hit a threshold, start skipping frames via #1.  If we do that,
+		 * don't stop once we hit the threshold; keep doing it until we're fully
+		 * caught up.
+		 *
+		 * I'm not sure when we should do #2.  Also, we should try to notice if
+		 * we simply don't have enough CPU for the video; it's better to just
+		 * stay in frame skip mode than to enter and exit it constantly, but we
+		 * don't want to do that due to a single timing glitch.
+		 *
+		 * XXX: is there a setting for hurry_up we can use when we're going to ignore
+		 * a frame to make it take less time?
+		 */
+		const float FrameSkipThreshold = 0.5f;
+
+		if( -Offset >= FrameSkipThreshold && !m_FrameSkipMode )
+		{
+			LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
+				GetID().filename.c_str(), m_Clock, decoder->GetTimestamp());
+			m_FrameSkipMode = true;
+		}
+	}
+
+	if( m_FrameSkipMode && decoder->m_stream->codec.frame_number % 2 )
+		return false; /* skip */
+	
+	/* Convert it. */
+	ConvertFrame();
+
+	/* Signal the main thread to update the image on the next Update. */
+	m_ImageWaiting=true;
+
+	return true;
+}
 
 void MovieTexture_FFMpeg::DecoderThread()
 {
-	RageTimer Timer;
-	float Clock = 0;
-	bool FrameSkipMode = false;
-
 #if defined(_WINDOWS)
 	/* Movie decoding is bursty.  We burst decode a frame, then we sleep, then we burst
 	 * to YUV->RGB convert, then we wait for the frame to move, and we repeat.  */
@@ -736,110 +842,20 @@ void MovieTexture_FFMpeg::DecoderThread()
 
 	while( m_State != DECODER_QUIT )
 	{
+		bool bGotFrame = RunDecode();
+
 		if( m_State == PAUSE_DECODER )
 		{
+			/* We aren't feeding frames, so we aren't waiting; don't chew CPU. */
 			SDL_Delay( 10 );
-			
-			/* The video isn't running; skip time. */
-			Timer.GetDeltaTime();
 			continue;
 		}
 
-		CHECKPOINT;
-
-		/* We're playing.  Update the clock. */
-		Clock += Timer.GetDeltaTime() * m_Rate;
-		
-		/* Read a frame. */
-		int ret = decoder->GetFrame();
-		if( ret == -1 )
-			return;
-
-		if( m_bWantRewind && decoder->GetTimestamp() == 0 )
-			m_bWantRewind = false; /* ignore */
-
-		if( ret == 0 )
-		{
-			/* EOF. */
-			if( !m_bLoop )
-				return;
-
-			LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
-			m_bWantRewind = true;
-		}
-
-		if( m_bWantRewind )
-		{
-			m_bWantRewind = false;
-
-			/* Restart. */
-			DestroyDecoder();
-			CreateDecoder();
-
-			decoder->Init();
-			Clock = 0;
+		if( !bGotFrame )
 			continue;
-		}
-
-		/* We got a frame. */
-		const float Offset = decoder->GetTimestamp() - Clock;
-	
-		/* If we're ahead, we're decoding too fast; delay. */
-		if( Offset > 0 )
-		{
-			SDL_Delay( int(1000*Offset) );
-			if( FrameSkipMode )
-			{
-				/* We're caught up; stop skipping frames. */
-				LOG->Trace( "stopped skipping frames" );
-				FrameSkipMode = false;
-			}
-		} else {
-			/* We're behind by -Offset seconds.  
-			 *
-			 * If we're just slightly behind, don't worry about it; we'll simply
-			 * not sleep, so we'll move as fast as we can to catch up.
-			 *
-			 * If we're far behind, we're short on CPU and we need to do something
-			 * about it.  We have at least two options:
-			 *
-			 * 1: We can skip texture updates.  This is a big bottleneck on many
-			 * systems.
-			 *
-			 * 2: If that's not enough, we can play with hurry_up.
-			 *
-			 * If we hit a threshold, start skipping frames via #1.  If we do that,
-			 * don't stop once we hit the threshold; keep doing it until we're fully
-			 * caught up.
-			 *
-			 * I'm not sure when we should do #2.  Also, we should try to notice if
-			 * we simply don't have enough CPU for the video; it's better to just
-			 * stay in frame skip mode than to enter and exit it constantly, but we
-			 * don't want to do that due to a single timing glitch.
-			 *
-			 * XXX: is there a setting for hurry_up we can use when we're going to ignore
-			 * a frame to make it take less time?
-			 */
-			const float FrameSkipThreshold = 0.5f;
-
-			if( -Offset >= FrameSkipThreshold && !FrameSkipMode )
-			{
-				LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
-					GetID().filename.c_str(), Clock, decoder->GetTimestamp());
-				FrameSkipMode = true;
-			}
-		}
-
-		if( FrameSkipMode && decoder->m_stream->codec.frame_number % 2 )
-			continue; /* skip */
-		
-		/* Convert it. */
-		ConvertFrame();
-
-		/* Signal the main thread to update the image on the next Update. */
-		m_ImageWaiting=true;
 
 		/* SDL_SemWait does not properly retry sem_wait in Linux on EINTR. */
+		int ret;
 		do
 		{
 			CHECKPOINT;

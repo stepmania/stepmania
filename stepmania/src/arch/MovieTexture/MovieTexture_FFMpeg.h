@@ -6,6 +6,7 @@
 #include "RageDisplay.h"
 #include "RageTexture.h"
 #include "RageThreads.h"
+#include "RageTimer.h"
 
 #include "SDL_mutex.h"
 
@@ -64,6 +65,10 @@ private:
 
 	SDL_sem *m_BufferFinished;
 
+	RageTimer m_Timer;
+	float m_Clock;
+	bool m_FrameSkipMode;
+
 	static int DecoderThread_start(void *p) { ((MovieTexture_FFMpeg *)(p))->DecoderThread(); return 0; }
 	void DecoderThread();
 	RageThread m_DecoderThread;
@@ -77,6 +82,7 @@ private:
 	void DestroyTexture();
 	void StartThread();
 	void StopThread();
+	bool RunDecode();
 };
 
 /*
