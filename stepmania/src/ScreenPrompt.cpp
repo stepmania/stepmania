@@ -15,7 +15,6 @@
 #include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 
@@ -26,14 +25,14 @@ const float PROMPT_X	=	CENTER_X;
 const float PROMPT_Y	=	CENTER_Y + 120;
 
 
-ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, PromptType pt, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
+ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
 	m_SMSendWhenDone = SM_SendWhenDone;
+	m_bYesNoPrompt = bYesNoPrompt;
+	m_bAnswer = bDefaultAnswer;
 	m_pOnYes = OnYes;
 	m_pOnNo = OnNo;
 
-	m_PromptType = pt;
-	m_bAnswer = bDefaultAnswer;
 
 	m_Fade.SetTransitionTime( 0.5f );
 	m_Fade.SetDiffuseColor( D3DXCOLOR(0,0,0,0.7f) );
@@ -58,18 +57,17 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, Prompt
 
 	
 
-	switch( m_PromptType )
+	if( m_bYesNoPrompt )
 	{
-	case PROMPT_OK:
 		m_textAnswer[0].SetText( "OK" );
 		m_textAnswer[0].SetX( PROMPT_X );
-		break;
-	case PROMPT_YES_NO:
+	}
+	else
+	{
 		m_textAnswer[0].SetText( "NO" );
 		m_textAnswer[1].SetText( "YES" );
 		m_textAnswer[0].SetX( PROMPT_X+50 );
 		m_textAnswer[1].SetX( PROMPT_X-50 );
-		break;
 	}
 
 	m_rectAnswerBox.SetXY( m_textAnswer[m_bAnswer].GetX(), m_textAnswer[m_bAnswer].GetY() );
@@ -117,7 +115,7 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenPrompt::MenuLeft( const PlayerNumber p )
 {
-	if( m_PromptType == PROMPT_OK )
+	if( !m_bYesNoPrompt )
 		return;
 
 	MenuRight( p );
@@ -125,7 +123,7 @@ void ScreenPrompt::MenuLeft( const PlayerNumber p )
 
 void ScreenPrompt::MenuRight( const PlayerNumber p )
 {
-	if( m_PromptType == PROMPT_OK )
+	if( !m_bYesNoPrompt )
 		return;
 
 	m_textAnswer[m_bAnswer].SetEffectNone();

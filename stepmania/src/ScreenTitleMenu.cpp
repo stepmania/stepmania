@@ -12,27 +12,16 @@
 
 #include "ScreenTitleMenu.h"
 #include "ScreenManager.h"
-#include "ScreenCaution.h"
-#include "ScreenMapInstruments.h"
-#include "ScreenGraphicOptions.h"
-#include "ScreenGameOptions.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "StepMania.h"
 #include "PrefsManager.h"
-#include "ScreenEditMenu.h"
-#include "ScreenSelectStyle.h"
-#include "ScreenSelectGame.h"
-#include "ScreenAppearanceOptions.h"
 #include "RageLog.h"
 #include "SongManager.h"
 #include "AnnouncerManager.h"
-#include "ScreenEz2SelectPlayer.h"
 #include "GameState.h"
 #include "GameManager.h"
-#include "ScreenGameplay.h"
-#include "ScreenSelectStyle5th.h"
-#include "ScreenEz2SelectStyle.h"
+#include "InputMapper.h"
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"GAME START",
@@ -45,37 +34,23 @@ const CString CHOICE_TEXT[ScreenTitleMenu::NUM_TITLE_MENU_CHOICES] = {
 	"EXIT",
 };
 
-#define CHOICES_X						THEME->GetMetricF("TitleMenu","ChoicesX")
-#define CHOICES_START_Y					THEME->GetMetricF("TitleMenu","ChoicesStartY")
-#define CHOICES_SPACING_Y				THEME->GetMetricF("TitleMenu","ChoicesSpacingY")
-#define HELP_X							THEME->GetMetricF("TitleMenu","HelpX")
-#define HELP_Y							THEME->GetMetricF("TitleMenu","HelpY")
-#define LOGO_X							THEME->GetMetricF("TitleMenu","LogoX")
-#define LOGO_Y							THEME->GetMetricF("TitleMenu","LogoY")
-#define VERSION_X						THEME->GetMetricF("TitleMenu","VersionX")
-#define VERSION_Y						THEME->GetMetricF("TitleMenu","VersionY")
-#define SONGS_X							THEME->GetMetricF("TitleMenu","SongsX")
-#define SONGS_Y							THEME->GetMetricF("TitleMenu","SongsY")
-#define COLOR_NOT_SELECTED				THEME->GetMetricC("TitleMenu","ColorNotSelected")
-#define COLOR_SELECTED					THEME->GetMetricC("TitleMenu","ColorSelected")
-#define SECONDS_BEFORE_DEMONSTRATION	THEME->GetMetricF("TitleMenu","SecondsBeforeDemonstration")
-#define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("TitleMenu","SecondsBetweenAttract")
-#define HELP_TEXT						THEME->GetMetric("TitleMenu","HelpText")
-
-#define CAUTION_TYPE					THEME->GetMetricI("General","CautionType")
-enum CautionType	// for use with the metric above
-{
-	CAUTION_TYPE_SKIP = 0,
-	CAUTION_TYPE_DDR,
-	CAUTION_TYPE_EZ2_SELECT_PLAYER,
-};
-#define SELECT_STYLE_TYPE		THEME->GetMetricI("General","SelectStyleType")
-enum SelectStyleType // for use with the metric above
-{
-	SELECT_STYLE_TYPE_MAX = 0,
-	SELECT_STYLE_TYPE_5TH,
-	SELECT_STYLE_TYPE_EZ2,
-};
+#define CHOICES_X						THEME->GetMetricF("ScreenTitleMenu","ChoicesX")
+#define CHOICES_START_Y					THEME->GetMetricF("ScreenTitleMenu","ChoicesStartY")
+#define CHOICES_SPACING_Y				THEME->GetMetricF("ScreenTitleMenu","ChoicesSpacingY")
+#define HELP_X							THEME->GetMetricF("ScreenTitleMenu","HelpX")
+#define HELP_Y							THEME->GetMetricF("ScreenTitleMenu","HelpY")
+#define LOGO_X							THEME->GetMetricF("ScreenTitleMenu","LogoX")
+#define LOGO_Y							THEME->GetMetricF("ScreenTitleMenu","LogoY")
+#define VERSION_X						THEME->GetMetricF("ScreenTitleMenu","VersionX")
+#define VERSION_Y						THEME->GetMetricF("ScreenTitleMenu","VersionY")
+#define SONGS_X							THEME->GetMetricF("ScreenTitleMenu","SongsX")
+#define SONGS_Y							THEME->GetMetricF("ScreenTitleMenu","SongsY")
+#define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenTitleMenu","ColorNotSelected")
+#define COLOR_SELECTED					THEME->GetMetricC("ScreenTitleMenu","ColorSelected")
+#define SECONDS_BEFORE_DEMONSTRATION	THEME->GetMetricF("ScreenTitleMenu","SecondsBeforeDemonstration")
+#define SECONDS_BETWEEN_ATTRACT			THEME->GetMetricF("ScreenTitleMenu","SecondsBetweenAttract")
+#define HELP_TEXT						THEME->GetMetric("ScreenTitleMenu","HelpText")
+#define NEXT_SCREEN						THEME->GetMetric("ScreenTitleMenu","NextScreen")
 
 const ScreenMessage SM_PlayAttract			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
@@ -224,51 +199,25 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		switch( m_TitleMenuChoice )
 		{
 		case CHOICE_GAME_START:
-			switch( CAUTION_TYPE )
-			{
-			case CAUTION_TYPE_SKIP:
-				switch( SELECT_STYLE_TYPE )
-				{
-				case SELECT_STYLE_TYPE_MAX:
-					SCREENMAN->SetNewScreen( new ScreenSelectStyle );
-					break;
-				case SELECT_STYLE_TYPE_5TH:
-					SCREENMAN->SetNewScreen( new ScreenSelectStyle5th );
-					break;
-				case SELECT_STYLE_TYPE_EZ2:
-					SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
-					break;
-				default:
-					ASSERT(0);
-				}
-				break;
-			case CAUTION_TYPE_DDR:
-				SCREENMAN->SetNewScreen( new ScreenCaution );
-				break;
-			case CAUTION_TYPE_EZ2_SELECT_PLAYER:
-				SCREENMAN->SetNewScreen( new ScreenEz2SelectPlayer );
-				break;
-			default:
-				ASSERT(0);
-			}
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 			break;
 		case CHOICE_SELECT_GAME:
-			SCREENMAN->SetNewScreen( new ScreenSelectGame );
+			SCREENMAN->SetNewScreen( "ScreenSelectGame" );
 			break;
 		case CHOICE_MAP_INSTRUMENTS:
-			SCREENMAN->SetNewScreen( new ScreenMapInstruments );
+			SCREENMAN->SetNewScreen( "ScreenMapInstruments" );
 			break;
 		case CHOICE_GAME_OPTIONS:
-			SCREENMAN->SetNewScreen( new ScreenGameOptions );
+			SCREENMAN->SetNewScreen( "ScreenGameOptions" );
 			break;
 		case CHOICE_GRAPHIC_OPTIONS:
-			SCREENMAN->SetNewScreen( new ScreenGraphicOptions );
+			SCREENMAN->SetNewScreen( "ScreenGraphicOptions" );
 			break;
 		case CHOICE_APPEARANCE_OPTIONS:
-			SCREENMAN->SetNewScreen( new ScreenAppearanceOptions );
+			SCREENMAN->SetNewScreen( "ScreenAppearanceOptions" );
 			break;
 		case CHOICE_EDIT:
-			SCREENMAN->SetNewScreen( new ScreenEditMenu );
+			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 			break;
 		case CHOICE_EXIT:
 		default:
@@ -327,7 +276,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToDemonstration:
 		{
 			ASSERT( GAMESTATE->m_pCurSong );
-			SCREENMAN->SetNewScreen( new ScreenGameplay );
+			SCREENMAN->SetNewScreen( "ScreenGameplay" );
 		}
 		break;
 	}

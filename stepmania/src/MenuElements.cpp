@@ -15,7 +15,6 @@
 #include "RageUtil.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"
-#include "ScreenGameplay.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"

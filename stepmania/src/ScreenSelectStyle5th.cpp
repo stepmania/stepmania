@@ -15,12 +15,8 @@
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
-#include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ScreenSelectDifficulty.h"
-#include "ScreenSandbox.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameState.h"
@@ -177,15 +173,9 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_soundChange.Load( THEME->GetPathTo("Graphics","select style change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
-
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
-
-	if( !MUSIC->IsPlaying() )
-	{
-		MUSIC->Load( THEME->GetPathTo("Sounds","select style music") );
-        MUSIC->Play( true );
-	}
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
 
 	m_soundChange.PlayRandom();
 	TweenOnScreen();
@@ -227,10 +217,10 @@ void ScreenSelectStyle5th::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
+		SCREENMAN->SetNewScreen( "ScreenSelectDifficulty" );
 		break;
 	case SM_TweenExplanation2:
 		m_textExplanation2.BeginTweening( 0.7f );

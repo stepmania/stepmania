@@ -542,7 +542,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fBottomDistFromTailTop	= fYBottom - fYTailTop;
 		const float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fFrameHeight, 0.5f, 1.0f );
 		const float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fFrameHeight, 0.5f, 1.0f );
-		ASSERT( fBottomDistFromTailTop <= fFrameHeight );
+		ASSERT( fBottomDistFromTailTop-0.0001 <= fFrameHeight );
 		const float fTexCoordLeft	= bActive ? 0.25f : 0.00f;
 		const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
 		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop );

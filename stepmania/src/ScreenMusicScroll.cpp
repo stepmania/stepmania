@@ -14,9 +14,6 @@
 #include "ScreenMusicScroll.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "PrefsManager.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenTitleMenu.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
@@ -227,7 +224,7 @@ void ScreenMusicScroll::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToNextState );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	}
 }

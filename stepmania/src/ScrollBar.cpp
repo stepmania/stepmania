@@ -17,27 +17,25 @@
 
 ScrollBar::ScrollBar()
 {
-	m_sprBackground.Load( THEME->GetPathTo("Graphics","select music scrollbar 2x2") );
+	m_sprBackground.Load( THEME->GetPathTo("Graphics","select music scrollbar parts 1x3") );
 	m_sprBackground.StopAnimating();
 	m_sprBackground.SetState( 1 );
 	this->AddSubActor( &m_sprBackground );
 
-	m_sprScrollThumbPart1.Load( THEME->GetPathTo("Graphics","select music scrollbar 2x2") );
+	m_sprScrollThumbPart1.Load( THEME->GetPathTo("Graphics","select music scrollbar thumb") );
 	m_sprScrollThumbPart1.StopAnimating();
-	m_sprScrollThumbPart1.SetState( 3 );
 	this->AddSubActor( &m_sprScrollThumbPart1 );
 
-	m_sprScrollThumbPart2.Load( THEME->GetPathTo("Graphics","select music scrollbar 2x2") );
+	m_sprScrollThumbPart2.Load( THEME->GetPathTo("Graphics","select music scrollbar thumb") );
 	m_sprScrollThumbPart2.StopAnimating();
-	m_sprScrollThumbPart2.SetState( 3 );
 	this->AddSubActor( &m_sprScrollThumbPart2 );
 
-	m_sprTopButton.Load( THEME->GetPathTo("Graphics","select music scrollbar 2x2") );
+	m_sprTopButton.Load( THEME->GetPathTo("Graphics","select music scrollbar parts 1x3") );
 	m_sprTopButton.StopAnimating();
 	m_sprTopButton.SetState( 0 );
 	this->AddSubActor( &m_sprTopButton );
 
-	m_sprBottomButton.Load( THEME->GetPathTo("Graphics","select music scrollbar 2x2") );
+	m_sprBottomButton.Load( THEME->GetPathTo("Graphics","select music scrollbar parts 1x3") );
 	m_sprBottomButton.StopAnimating();
 	m_sprBottomButton.SetState( 2 );
 	this->AddSubActor( &m_sprBottomButton );

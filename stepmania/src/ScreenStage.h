@@ -49,7 +49,6 @@ private:
 
 	TransitionFade	m_Fade;
 
-	Screen*			m_pNextScreen;
 protected:
 	Song* m_pSong;
 

@@ -11,7 +11,6 @@
 */
 
 #include "ScreenEvaluation.h"
-#include "ScreenSelectMusic.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
 #include "GameManager.h"
@@ -21,69 +20,68 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
-#include "ScreenMusicScroll.h"
 #include "GameState.h"
-#include "ScreenSelectCourse.h"
+#include "GrooveRadar.h"
 
 
-#define BANNER_X				THEME->GetMetricF("Evaluation","BannerX")
-#define BANNER_Y				THEME->GetMetricF("Evaluation","BannerY")
-#define STAGE_X					THEME->GetMetricF("Evaluation","StageX")
-#define STAGE_Y					THEME->GetMetricF("Evaluation","StageY")
-#define GRADE_P1_X				THEME->GetMetricF("Evaluation","GradeP1X")
-#define GRADE_P2_X				THEME->GetMetricF("Evaluation","GradeP2X")
-#define GRADE_Y					THEME->GetMetricF("Evaluation","GradeY")
-#define PERCENT_BASE_P1_X		THEME->GetMetricF("Evaluation","PercentBaseP1X")
-#define PERCENT_BASE_P2_X		THEME->GetMetricF("Evaluation","PercentBaseP2X")
-#define PERCENT_BASE_Y			THEME->GetMetricF("Evaluation","PercentBaseY")
-#define JUDGE_LABELS_X			THEME->GetMetricF("Evaluation","JudgeLabelsX")
-#define PERFECT_P1_X			THEME->GetMetricF("Evaluation","PerfectP1X")
-#define PERFECT_P2_X			THEME->GetMetricF("Evaluation","PerfectP2X")
-#define PERFECT_Y				THEME->GetMetricF("Evaluation","PerfectY")
-#define GREAT_P1_X				THEME->GetMetricF("Evaluation","GreatP1X")
-#define GREAT_P2_X				THEME->GetMetricF("Evaluation","GreatP2X")
-#define GREAT_Y					THEME->GetMetricF("Evaluation","GreatY")
-#define GOOD_P1_X				THEME->GetMetricF("Evaluation","GoodP1X")
-#define GOOD_P2_X				THEME->GetMetricF("Evaluation","GoodP2X")
-#define GOOD_Y					THEME->GetMetricF("Evaluation","GoodY")
-#define BOO_P1_X				THEME->GetMetricF("Evaluation","BooP1X")
-#define BOO_P2_X				THEME->GetMetricF("Evaluation","BooP2X")
-#define BOO_Y					THEME->GetMetricF("Evaluation","BooY")
-#define MISS_P1_X				THEME->GetMetricF("Evaluation","MissP1X")
-#define MISS_P2_X				THEME->GetMetricF("Evaluation","MissP2X")
-#define MISS_Y					THEME->GetMetricF("Evaluation","MissY")
-#define OK_P1_X					THEME->GetMetricF("Evaluation","OKP1X")
-#define OK_P2_X					THEME->GetMetricF("Evaluation","OKP2X")
-#define OK_Y					THEME->GetMetricF("Evaluation","OKY")
-#define MAX_COMBO_P1_X			THEME->GetMetricF("Evaluation","MaxComboP1X")
-#define MAX_COMBO_P2_X			THEME->GetMetricF("Evaluation","MaxComboP2X")
-#define MAX_COMBO_Y				THEME->GetMetricF("Evaluation","MaxComboY")
-#define SCORE_LABELS_X			THEME->GetMetricF("Evaluation","ScoreLabelsX")
-#define SCORE_NUMBERS_P1_X		THEME->GetMetricF("Evaluation","ScoreNumbersP1X")
-#define SCORE_NUMBERS_P2_X		THEME->GetMetricF("Evaluation","ScoreNumbersP2X")
-#define SCORE_Y					THEME->GetMetricF("Evaluation","ScoreY")
-#define BONUS_P1_X				THEME->GetMetricF("Evaluation","BonusP1X")
-#define BONUS_P2_X				THEME->GetMetricF("Evaluation","BonusP2X")
-#define BONUS_Y					THEME->GetMetricF("Evaluation","BonusY")
-#define BAR_P1_BASE_X			THEME->GetMetricF("Evaluation","BarP1BaseX")
-#define BAR_P2_BASE_X			THEME->GetMetricF("Evaluation","BarP2BaseX")
-#define BAR_P1_ROTATION			THEME->GetMetricF("Evaluation","BarP1Rotation")
-#define BAR_P2_ROTATION			THEME->GetMetricF("Evaluation","BarP2Rotation")
-#define BAR_START_Y				THEME->GetMetricF("Evaluation","BarStartY")
-#define BAR_SPACING_Y			THEME->GetMetricF("Evaluation","BarSpacingY")
-#define BAR_WIDTH				THEME->GetMetricF("Evaluation","BarWidth")
-#define BAR_HEIGHT				THEME->GetMetricF("Evaluation","BarHeight")
-#define SONGS_SURVIVED_P1_X		THEME->GetMetricF("Evaluation","SongsSurvivedP1X")
-#define SONGS_SURVIVED_P2_X		THEME->GetMetricF("Evaluation","SongsSurvivedP2X")
-#define SONGS_SURVIVED_Y		THEME->GetMetricF("Evaluation","SongsSurvivedY")
-#define NEW_RECORD_P1_X			THEME->GetMetricF("Evaluation","NewRecordP1X")
-#define NEW_RECORD_P2_X			THEME->GetMetricF("Evaluation","NewRecordP2X")
-#define NEW_RECORD_Y			THEME->GetMetricF("Evaluation","NewRecordY")
-#define TRY_EXTRA_STAGE_X		THEME->GetMetricF("Evaluation","TryExtraStageX")
-#define TRY_EXTRA_STAGE_Y		THEME->GetMetricF("Evaluation","TryExtraStageY")
-#define HELP_TEXT				THEME->GetMetric("Evaluation","HelpText")
-#define TIMER_SECONDS			THEME->GetMetricI("Evaluation","TimerSeconds")
-#define SPIN_GRADES				THEME->GetMetricB("Evaluation","SpinGrades")
+#define BANNER_X				THEME->GetMetricF("ScreenEvaluation","BannerX")
+#define BANNER_Y				THEME->GetMetricF("ScreenEvaluation","BannerY")
+#define STAGE_X					THEME->GetMetricF("ScreenEvaluation","StageX")
+#define STAGE_Y					THEME->GetMetricF("ScreenEvaluation","StageY")
+#define GRADE_P1_X				THEME->GetMetricF("ScreenEvaluation","GradeP1X")
+#define GRADE_P2_X				THEME->GetMetricF("ScreenEvaluation","GradeP2X")
+#define GRADE_Y					THEME->GetMetricF("ScreenEvaluation","GradeY")
+#define PERCENT_BASE_P1_X		THEME->GetMetricF("ScreenEvaluation","PercentBaseP1X")
+#define PERCENT_BASE_P2_X		THEME->GetMetricF("ScreenEvaluation","PercentBaseP2X")
+#define PERCENT_BASE_Y			THEME->GetMetricF("ScreenEvaluation","PercentBaseY")
+#define JUDGE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","JudgeLabelsX")
+#define PERFECT_P1_X			THEME->GetMetricF("ScreenEvaluation","PerfectP1X")
+#define PERFECT_P2_X			THEME->GetMetricF("ScreenEvaluation","PerfectP2X")
+#define PERFECT_Y				THEME->GetMetricF("ScreenEvaluation","PerfectY")
+#define GREAT_P1_X				THEME->GetMetricF("ScreenEvaluation","GreatP1X")
+#define GREAT_P2_X				THEME->GetMetricF("ScreenEvaluation","GreatP2X")
+#define GREAT_Y					THEME->GetMetricF("ScreenEvaluation","GreatY")
+#define GOOD_P1_X				THEME->GetMetricF("ScreenEvaluation","GoodP1X")
+#define GOOD_P2_X				THEME->GetMetricF("ScreenEvaluation","GoodP2X")
+#define GOOD_Y					THEME->GetMetricF("ScreenEvaluation","GoodY")
+#define BOO_P1_X				THEME->GetMetricF("ScreenEvaluation","BooP1X")
+#define BOO_P2_X				THEME->GetMetricF("ScreenEvaluation","BooP2X")
+#define BOO_Y					THEME->GetMetricF("ScreenEvaluation","BooY")
+#define MISS_P1_X				THEME->GetMetricF("ScreenEvaluation","MissP1X")
+#define MISS_P2_X				THEME->GetMetricF("ScreenEvaluation","MissP2X")
+#define MISS_Y					THEME->GetMetricF("ScreenEvaluation","MissY")
+#define OK_P1_X					THEME->GetMetricF("ScreenEvaluation","OKP1X")
+#define OK_P2_X					THEME->GetMetricF("ScreenEvaluation","OKP2X")
+#define OK_Y					THEME->GetMetricF("ScreenEvaluation","OKY")
+#define MAX_COMBO_P1_X			THEME->GetMetricF("ScreenEvaluation","MaxComboP1X")
+#define MAX_COMBO_P2_X			THEME->GetMetricF("ScreenEvaluation","MaxComboP2X")
+#define MAX_COMBO_Y				THEME->GetMetricF("ScreenEvaluation","MaxComboY")
+#define SCORE_LABELS_X			THEME->GetMetricF("ScreenEvaluation","ScoreLabelsX")
+#define SCORE_NUMBERS_P1_X		THEME->GetMetricF("ScreenEvaluation","ScoreNumbersP1X")
+#define SCORE_NUMBERS_P2_X		THEME->GetMetricF("ScreenEvaluation","ScoreNumbersP2X")
+#define SCORE_Y					THEME->GetMetricF("ScreenEvaluation","ScoreY")
+#define BONUS_P1_X				THEME->GetMetricF("ScreenEvaluation","BonusP1X")
+#define BONUS_P2_X				THEME->GetMetricF("ScreenEvaluation","BonusP2X")
+#define BONUS_Y					THEME->GetMetricF("ScreenEvaluation","BonusY")
+#define BAR_P1_BASE_X			THEME->GetMetricF("ScreenEvaluation","BarP1BaseX")
+#define BAR_P2_BASE_X			THEME->GetMetricF("ScreenEvaluation","BarP2BaseX")
+#define BAR_P1_ROTATION			THEME->GetMetricF("ScreenEvaluation","BarP1Rotation")
+#define BAR_P2_ROTATION			THEME->GetMetricF("ScreenEvaluation","BarP2Rotation")
+#define BAR_START_Y				THEME->GetMetricF("ScreenEvaluation","BarStartY")
+#define BAR_SPACING_Y			THEME->GetMetricF("ScreenEvaluation","BarSpacingY")
+#define BAR_WIDTH				THEME->GetMetricF("ScreenEvaluation","BarWidth")
+#define BAR_HEIGHT				THEME->GetMetricF("ScreenEvaluation","BarHeight")
+#define SONGS_SURVIVED_P1_X		THEME->GetMetricF("ScreenEvaluation","SongsSurvivedP1X")
+#define SONGS_SURVIVED_P2_X		THEME->GetMetricF("ScreenEvaluation","SongsSurvivedP2X")
+#define SONGS_SURVIVED_Y		THEME->GetMetricF("ScreenEvaluation","SongsSurvivedY")
+#define NEW_RECORD_P1_X			THEME->GetMetricF("ScreenEvaluation","NewRecordP1X")
+#define NEW_RECORD_P2_X			THEME->GetMetricF("ScreenEvaluation","NewRecordP2X")
+#define NEW_RECORD_Y			THEME->GetMetricF("ScreenEvaluation","NewRecordY")
+#define TRY_EXTRA_STAGE_X		THEME->GetMetricF("ScreenEvaluation","TryExtraStageX")
+#define TRY_EXTRA_STAGE_Y		THEME->GetMetricF("ScreenEvaluation","TryExtraStageY")
+#define HELP_TEXT				THEME->GetMetric("ScreenEvaluation","HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI("ScreenEvaluation","TimerSeconds")
+#define SPIN_GRADES				THEME->GetMetricB("ScreenEvaluation","SpinGrades")
 
 float GRADE_X( int p ) {
 	switch( p ) {
@@ -873,16 +871,16 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart( PLAYER_INVALID );
 		break;
 	case SM_GoToSelectMusic:
-		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
 		break;
 	case SM_GoToSelectCourse:
-		SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 		break;
 	case SM_GoToMusicScroll:
-		SCREENMAN->SetNewScreen( new ScreenMusicScroll );
+		SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
 		break;
 	case SM_GoToFinalEvaluation:
-		SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
+		SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
 		break;
 	}
 }

@@ -17,41 +17,36 @@
 #include "SongManager.h"
 #include "GameManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ScreenGameplay.h"
-#include "ScreenPrompt.h"
-#include "ScreenPlayerOptions.h"
 #include "RageLog.h"
 #include "InputMapper.h"
 #include "InputQueue.h"
-#include "ScreenStage.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageMusic.h"
 
 
-#define BANNER_FRAME_X		THEME->GetMetricF("SelectCourse","BannerFrameX")
-#define BANNER_FRAME_Y		THEME->GetMetricF("SelectCourse","BannerFrameY")
-#define BANNER_X			THEME->GetMetricF("SelectCourse","BannerX")
-#define BANNER_Y			THEME->GetMetricF("SelectCourse","BannerY")
-#define BANNER_WIDTH		THEME->GetMetricF("SelectCourse","BannerWidth")
-#define BANNER_HEIGHT		THEME->GetMetricF("SelectCourse","BannerHeight")
-#define STAGES_X			THEME->GetMetricF("SelectCourse","StagesX")
-#define STAGES_Y			THEME->GetMetricF("SelectCourse","StagesY")
-#define TIME_X				THEME->GetMetricF("SelectCourse","TimeX")
-#define TIME_Y				THEME->GetMetricF("SelectCourse","TimeY")
-#define CONTENTS_X			THEME->GetMetricF("SelectCourse","ContentsX")
-#define CONTENTS_Y			THEME->GetMetricF("SelectCourse","ContentsY")
-#define WHEEL_X				THEME->GetMetricF("SelectCourse","WheelX")
-#define WHEEL_Y				THEME->GetMetricF("SelectCourse","WheelY")
-#define SCORE_P1_X			THEME->GetMetricF("SelectCourse","ScoreP1X")
-#define SCORE_P1_Y			THEME->GetMetricF("SelectCourse","ScoreP1Y")
-#define SCORE_P2_X			THEME->GetMetricF("SelectCourse","ScoreP2X")
-#define SCORE_P2_Y			THEME->GetMetricF("SelectCourse","ScoreP2Y")
-#define HELP_TEXT			THEME->GetMetric("SelectCourse","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("SelectCourse","TimerSeconds")
+#define BANNER_FRAME_X		THEME->GetMetricF("ScreenSelectCourse","BannerFrameX")
+#define BANNER_FRAME_Y		THEME->GetMetricF("ScreenSelectCourse","BannerFrameY")
+#define BANNER_X			THEME->GetMetricF("ScreenSelectCourse","BannerX")
+#define BANNER_Y			THEME->GetMetricF("ScreenSelectCourse","BannerY")
+#define BANNER_WIDTH		THEME->GetMetricF("ScreenSelectCourse","BannerWidth")
+#define BANNER_HEIGHT		THEME->GetMetricF("ScreenSelectCourse","BannerHeight")
+#define STAGES_X			THEME->GetMetricF("ScreenSelectCourse","StagesX")
+#define STAGES_Y			THEME->GetMetricF("ScreenSelectCourse","StagesY")
+#define TIME_X				THEME->GetMetricF("ScreenSelectCourse","TimeX")
+#define TIME_Y				THEME->GetMetricF("ScreenSelectCourse","TimeY")
+#define CONTENTS_X			THEME->GetMetricF("ScreenSelectCourse","ContentsX")
+#define CONTENTS_Y			THEME->GetMetricF("ScreenSelectCourse","ContentsY")
+#define WHEEL_X				THEME->GetMetricF("ScreenSelectCourse","WheelX")
+#define WHEEL_Y				THEME->GetMetricF("ScreenSelectCourse","WheelY")
+#define SCORE_P1_X			THEME->GetMetricF("ScreenSelectCourse","ScoreP1X")
+#define SCORE_P1_Y			THEME->GetMetricF("ScreenSelectCourse","ScoreP1Y")
+#define SCORE_P2_X			THEME->GetMetricF("ScreenSelectCourse","ScoreP2X")
+#define SCORE_P2_Y			THEME->GetMetricF("ScreenSelectCourse","ScoreP2Y")
+#define HELP_TEXT			THEME->GetMetric("ScreenSelectCourse","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectCourse","TimerSeconds")
 
 float BEST_TIME_X( int p ) {
 	switch( p ) {
@@ -79,11 +74,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 {
 	LOG->Trace( "ScreenSelectCourse::ScreenSelectCourse()" );
  
-	if( !MUSIC->IsPlaying()  ||  MUSIC->GetLoadedFilePath() != THEME->GetPathTo("Sounds","select course music") )
-	{
-		MUSIC->Load( THEME->GetPathTo("Sounds","select course music") );
-		MUSIC->Play( true );
-	}
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select course music") );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -260,7 +251,7 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart(PLAYER_1);
 		break;
 	case SM_GoToPrevState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
 
@@ -276,13 +267,10 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		if( bIsHoldingNext || m_bGoToOptions )
-		{
-			SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
-		}
+			SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
 		else
-		{
-			SCREENMAN->SetNewScreen( new ScreenStage );
-		}
+			SCREENMAN->SetNewScreen( "ScreenStage" );
+
 		break;
 	}
 }

@@ -712,6 +712,14 @@ SOURCE=.\ScrollingList.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SmallGradeDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SmallGradeDisplay.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\SnapDisplay.cpp
 # End Source File
 # Begin Source File
@@ -1037,6 +1045,14 @@ SOURCE=.\ScreenGraphicOptions.cpp
 # Begin Source File
 
 SOURCE=.\ScreenGraphicOptions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenHowToPlay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenHowToPlay.h
 # End Source File
 # Begin Source File
 

@@ -99,12 +99,12 @@ void ScreenSelectGame::ExportOptions()
 
 void ScreenSelectGame::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 }
 
 void ScreenSelectGame::GoToNextState()
 {
-	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 }
 
 

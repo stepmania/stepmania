@@ -14,16 +14,12 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenEvaluation.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
-#include "ScreenEditMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "ScreenTextEntry.h"
 
 
 //
@@ -573,7 +569,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 	case DIK_Q:
-		SCREENMAN->SetNewScreen( new ScreenEditMenu );
+		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	case DIK_S:
 	case DIK_W:
@@ -897,7 +893,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( i != m_pSong->m_BackgroundChanges.GetSize() )	// there is already a BGChange here
 				sOldBackground = m_pSong->m_BackgroundChanges[i].m_sBGName;
 
-			SCREENMAN->AddScreenToTop( new ScreenTextEntry(SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL) );
+			SCREENMAN->TextEntry( SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL );
 		}
 		break;
 
@@ -1186,10 +1182,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToPrevState:
-		SCREENMAN->SetNewScreen( new ScreenEditMenu );
+		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenEditMenu );
+		SCREENMAN->SetNewScreen( "ScreenEditMenu" );
 		break;
 	}
 

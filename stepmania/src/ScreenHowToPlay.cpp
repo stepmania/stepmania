@@ -11,16 +11,19 @@
 */
 
 #include "ScreenHowToPlay.h"
-#include <assert.h>
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenSelectCourse.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
+
+
+#define HELP_TEXT				THEME->GetMetric("ScreenHowToPlay","HelpText")
+#define TIMER_SECONDS			THEME->GetMetricI("ScreenHowToPlay","TimerSeconds")
+#define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenHowToPlay","NextScreenArcade")
+#define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenHowToPlay","NextScreenOni")
 
 
 const ScreenMessage SM_GoToNextState	=	ScreenMessage(SM_User + 1);
@@ -33,9 +36,9 @@ ScreenHowToPlay::ScreenHowToPlay()
 	m_Menu.Load(
 		THEME->GetPathTo("Graphics","How To Play Background"), 
 		THEME->GetPathTo("Graphics","How To Play Top Edge"), 
-		ssprintf("%s %s to change line   %s %s to select between options      then press START", CString(char(3)), CString(char(4)), CString(char(1)), CString(char(2)) ),
-		false, true, 20
+		HELP_TEXT, false, true, TIMER_SECONDS
 		);
+	m_Menu.TweenOnScreenFromMenu( SM_None );
 	this->AddSubActor( &m_Menu );
 
 	CString sHowToPlayPath;
@@ -57,14 +60,14 @@ ScreenHowToPlay::ScreenHowToPlay()
 	this->AddSubActor( &m_sprHowToPlay );
 
 	m_sprHowToPlay.SetX( SCREEN_LEFT-SCREEN_WIDTH );
-	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_BIAS_BEGIN );
-	m_sprHowToPlay.SetTweenX( 0 );
+	m_sprHowToPlay.BeginTweeningQueued( 0.4f );		// sleep
+	m_sprHowToPlay.BeginTweeningQueued( 0.6f, Actor::TWEEN_BIAS_BEGIN );
+	m_sprHowToPlay.SetTweenX( CENTER_X );
 }
 
 ScreenHowToPlay::~ScreenHowToPlay()
 {
 	LOG->Trace( "ScreenHowToPlay::~ScreenHowToPlay()" );
-
 }
 
 void ScreenHowToPlay::Update( float fDeltaTime )
@@ -101,11 +104,11 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-			SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_ARCADE );
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );
 			break;
 		default:
 			ASSERT(0);
@@ -123,5 +126,5 @@ void ScreenHowToPlay::MenuStart( const PlayerNumber p )
 	m_Menu.TweenOffScreenToMenu( SM_GoToNextState );
 
 	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_BIAS_END );
-	m_sprHowToPlay.SetTweenX( SCREEN_RIGHT );
+	m_sprHowToPlay.SetTweenX( SCREEN_RIGHT+m_sprHowToPlay.GetUnzoomedWidth()/2 );
 }

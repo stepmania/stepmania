@@ -12,30 +12,19 @@
 
 
 #include "ScreenCaution.h"
-#include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
-#include "ScreenSelectStyle.h"
-#include "ScreenEZ2SelectStyle.h"
-#include "ScreenSelectStyle5th.h"
-#include "RageTextureManager.h"
 #include "PrefsManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 
 
-#define SELECT_STYLE_TYPE		THEME->GetMetricI("General","SelectStyleType")
-enum SelectStyleType // for use with the metric above
-{
-	SELECT_STYLE_TYPE_MAX = 0,
-	SELECT_STYLE_TYPE_5TH,
-	SELECT_STYLE_TYPE_EZ2,
-};
+#define NEXT_SCREEN				THEME->GetMetric("ScreenCaution","NextScreen")
 
 
 const ScreenMessage SM_GoToPrevState	= ScreenMessage(SM_User-6);
 const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
-const ScreenMessage SM_GoToSelectMusic	= ScreenMessage(SM_User-9);
+const ScreenMessage SM_GoToNextScreen	= ScreenMessage(SM_User-9);
 
 
 ScreenCaution::ScreenCaution()
@@ -71,30 +60,16 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_StartClosing:
 		if( !m_Wipe.IsClosing() )
-			m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
+			m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_DoneOpening:
 		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_CAUTION) );
 		break;
 	case SM_GoToPrevState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
-	case SM_GoToSelectMusic:
-		switch( SELECT_STYLE_TYPE )
-		{
-		case SELECT_STYLE_TYPE_MAX:
-			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
-			break;
-		case SELECT_STYLE_TYPE_5TH:
-			SCREENMAN->SetNewScreen( new ScreenSelectStyle5th );
-			break;
-		case SELECT_STYLE_TYPE_EZ2:
-			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
-			break;
-		default:
-			ASSERT(0);
-			break;
-		}
+	case SM_GoToNextScreen:
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }
@@ -110,7 +85,7 @@ void ScreenCaution::MenuStart( const PlayerNumber p )
 	}
 
 	if( !m_Wipe.IsOpening()  &&  !m_Wipe.IsClosing() )
-		m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
+		m_Wipe.CloseWipingRight( SM_GoToNextScreen );
 }
 
 void ScreenCaution::MenuBack( const PlayerNumber p )

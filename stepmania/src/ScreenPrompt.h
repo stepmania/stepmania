@@ -17,15 +17,11 @@
 #include "RandomSample.h"
 
 
-enum PromptType{ PROMPT_OK, PROMPT_YES_NO };
-
-
-
 class ScreenPrompt : public Screen
 {
 public:
 	ScreenPrompt();
-	ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, PromptType pt, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
+	ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt=false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -43,7 +39,7 @@ protected:
 	BitmapText		m_textQuestion;
 	Quad			m_rectAnswerBox;
 	BitmapText		m_textAnswer[2];	// "YES" or "NO"
-	PromptType		m_PromptType;
+	bool			m_bYesNoPrompt;		// false = OK prompt, true = YES/NO prompt
 	bool			m_bAnswer;		// true = "YES", false = "NO";
 	ScreenMessage	m_SMSendWhenDone;
 	void(*m_pOnYes)();

@@ -54,8 +54,8 @@ private:
 	Sprite	m_sprExplanation[NUM_PAGES];
 	Sprite	m_sprMoreArrows[NUM_PAGES];
 
-	Sprite	m_sprArrow[NUM_PLAYERS];
-	Sprite	m_sprArrowShadow[NUM_PLAYERS];
+	Sprite	m_sprCursor[NUM_PLAYERS];
+	Sprite	m_sprCursorShadow[NUM_PLAYERS];
 	Sprite	m_sprOK[NUM_PLAYERS];
 
 	RageSoundSample m_soundChange;

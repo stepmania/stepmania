@@ -13,21 +13,21 @@
 #include "ScreenStage.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "BitmapText.h"
 #include "TransitionFadeWipe.h"
 #include "TransitionFade.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenGameplay.h"
 #include "SongManager.h"
 #include "Sprite.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
+#include "RageMusic.h"
 
-#define STAGE_TYPE		THEME->GetMetricI("General","StageType")
-enum StageType // for use with the metric above
+
+#define NEXT_SCREEN			THEME->GetMetric("ScreenStage","NextScreen")
+#define STAGE_TYPE			THEME->GetMetricI("ScreenStage","StageType")
+enum StageType		// for use with the metric above
 {
 	STAGE_TYPE_MAX = 0,
 	STAGE_TYPE_PUMP,
@@ -52,9 +52,6 @@ enum StageMode
 ScreenStage::ScreenStage()
 {
 	MUSIC->Stop();
-
-	m_pNextScreen = NULL;
-
 
 	for( int i=0; i<4; i++ )
 	{
@@ -463,7 +460,7 @@ ScreenStage::ScreenStage()
 	m_Fade.SetOpened();
 
 	this->SendScreenMessage( SM_DoneFadingIn, 1.0f );
-	this->SendScreenMessage( SM_StartFadingOut, 1.2f );
+	this->SendScreenMessage( SM_StartFadingOut, 4.0f );
 }
 
 void ScreenStage::Update( float fDeltaTime )
@@ -481,7 +478,7 @@ void ScreenStage::DrawPrimitives()
 {
 	DISPLAY->EnableZBuffer();
 
-	if ( STAGE_TYPE == STAGE_TYPE_MAX) // only DANCE uses the quadmask
+	if ( STAGE_TYPE == STAGE_TYPE_MAX) // only DANCE uses the Z mask
 		m_quadMask.Draw();
 	m_frameStage.Draw();
 
@@ -501,10 +498,9 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToNextState );
 		break;
 	case SM_DoneFadingIn:
-		m_pNextScreen = new ScreenGameplay;
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( m_pNextScreen );
+		SCREENMAN->SetNewScreen( "ScreenGameplay" );
 		break;
 	}
 }

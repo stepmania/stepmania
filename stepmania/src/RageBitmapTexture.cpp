@@ -110,6 +110,17 @@ void RageBitmapTexture::Create(
 	if( -1 != m_sFilePath.Find("dither") )
 		bDither = true; 
 
+	
+	/////////////////////
+	// Figure out whether the texture can fit into texture memory unscaled
+	/////////////////////
+	D3DXIMAGE_INFO ddii;
+	if( FAILED( hr = D3DXGetImageInfoFromFile(m_sFilePath,&ddii) ) )
+	{
+        throw RageException( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
+	}
+
+
 	///////////////////////
 	// Figure out which texture format to use
 	///////////////////////
@@ -117,11 +128,18 @@ void RageBitmapTexture::Create(
 	switch( dwTextureColorDepth )
 	{
 	case 16:
-		switch( iAlphaBits )
+//		switch( iAlphaBits )
+//		{
+//		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
+//		case 1:		fmtTexture = D3DFMT_A1R5G5B5;	break;
+//		default:	fmtTexture = D3DFMT_A4R4G4B4;	break;
+//		}
+
+		// Ignore dwTextureColorDepth, and infer based on image format
+		switch( ddii.Format )
 		{
-		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
-		case 1:		fmtTexture = D3DFMT_A1R5G5B5;	break;
-		default:	fmtTexture = D3DFMT_A4R4G4B4;	break;
+		case D3DFMT_P8:		fmtTexture = D3DFMT_A1R5G5B5;	break;
+		default:			fmtTexture = D3DFMT_A4R4G4B4;	break;
 		}
 		break;
 	case 32:
@@ -131,25 +149,14 @@ void RageBitmapTexture::Create(
 		throw RageException( "Invalid color depth: %d bits", dwTextureColorDepth );
 	}
 
-	
-	/////////////////////
-	// Figure out whether the texture can fit into texture memory unscaled
-	/////////////////////
-	D3DXIMAGE_INFO ddii;
-	if( FAILED( hr = D3DXGetImageInfoFromFile( 
-		m_sFilePath,
-		&ddii ) ) )
-	{
-        throw RageException( hr, "D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath );
-	}
 
 	// find out what the min texture size is
 	dwMaxSize = min( dwMaxSize, DISPLAY->GetDeviceCaps().MaxTextureWidth );
 
 	bStretch |= ddii.Width > dwMaxSize || ddii.Height > dwMaxSize;
 	
-	// HACK:  On a Voodoo3 and Win98, D3DXCreateTextureFromFileEx sometimes fails for no good reason.
-	// So, we'll try the call 2x in a row in case the first one fails
+	// HACK:  On a Voodoo3 and Win98, D3DXCreateTextureFromFileEx fail randomly on rare occasions.
+	// So, we'll try the call 2x in a row in case the first one fails.
 	for( int i=0; i<2; i++ )
 	{
 		if( FAILED( hr = D3DXCreateTextureFromFileEx( 

@@ -22,16 +22,16 @@
 #include "GameState.h"
 
 // WheelItem stuff
-#define ICON_X			THEME->GetMetricF("WheelItem","IconX")
-#define SONG_NAME_X		THEME->GetMetricF("WheelItem","SongNameX")
-#define SECTION_NAME_X	THEME->GetMetricF("WheelItem","SectionNameX")
-#define SECTION_ZOOM	THEME->GetMetricF("WheelItem","SectionZoom")
-#define ROULETTE_X		THEME->GetMetricF("WheelItem","RouletteX")
-#define ROULETTE_ZOOM	THEME->GetMetricF("WheelItem","RouletteZoom")
-#define COURSE_X		THEME->GetMetricF("WheelItem","CourseX")
-#define COURSE_ZOOM		THEME->GetMetricF("WheelItem","CourseZoom")
-#define GRADE_P1_X		THEME->GetMetricF("WheelItem","GradeP1X")
-#define GRADE_P2_X		THEME->GetMetricF("WheelItem","GradeP2Y")
+#define ICON_X			THEME->GetMetricF("WheelItemDisplay","IconX")
+#define SONG_NAME_X		THEME->GetMetricF("WheelItemDisplay","SongNameX")
+#define SECTION_NAME_X	THEME->GetMetricF("WheelItemDisplay","SectionNameX")
+#define SECTION_ZOOM	THEME->GetMetricF("WheelItemDisplay","SectionZoom")
+#define ROULETTE_X		THEME->GetMetricF("WheelItemDisplay","RouletteX")
+#define ROULETTE_ZOOM	THEME->GetMetricF("WheelItemDisplay","RouletteZoom")
+#define COURSE_X		THEME->GetMetricF("WheelItemDisplay","CourseX")
+#define COURSE_ZOOM		THEME->GetMetricF("WheelItemDisplay","CourseZoom")
+#define GRADE_P1_X		THEME->GetMetricF("WheelItemDisplay","GradeP1X")
+#define GRADE_P2_X		THEME->GetMetricF("WheelItemDisplay","GradeP2Y")
 
 
 // MusicWheel stuff

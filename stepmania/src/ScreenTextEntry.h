@@ -22,7 +22,6 @@
 class ScreenTextEntry : public Screen
 {
 public:
-	ScreenTextEntry();
 	ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
 
 	virtual void Update( float fDeltaTime );

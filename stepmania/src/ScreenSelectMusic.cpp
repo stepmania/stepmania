@@ -17,63 +17,58 @@
 #include "SongManager.h"
 #include "GameManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ScreenGameplay.h"
-#include "ScreenPrompt.h"
-#include "ScreenPlayerOptions.h"
 #include "RageLog.h"
 #include "InputMapper.h"
 #include "InputQueue.h"
-#include "ScreenStage.h"
 #include "AnnouncerManager.h"
 #include "InputMapper.h"
 #include "GameState.h"
 
 
-#define BANNER_FRAME_X		THEME->GetMetricF("SelectMusic","BannerFrameX")
-#define BANNER_FRAME_Y		THEME->GetMetricF("SelectMusic","BannerFrameY")
-#define BANNER_X			THEME->GetMetricF("SelectMusic","BannerX")
-#define BANNER_Y			THEME->GetMetricF("SelectMusic","BannerY")
-#define BANNER_WIDTH		THEME->GetMetricF("SelectMusic","BannerWidth")
-#define BANNER_HEIGHT		THEME->GetMetricF("SelectMusic","BannerHeight")
-#define BPM_X				THEME->GetMetricF("SelectMusic","BPMX")
-#define BPM_Y				THEME->GetMetricF("SelectMusic","BPMY")
-#define STAGE_X				THEME->GetMetricF("SelectMusic","StageX")
-#define STAGE_Y				THEME->GetMetricF("SelectMusic","StageY")
-#define CD_TITLE_X			THEME->GetMetricF("SelectMusic","CDTitleX")
-#define CD_TITLE_Y			THEME->GetMetricF("SelectMusic","CDTitleY")
-#define DIFFICULTY_X		THEME->GetMetricF("SelectMusic","DifficultyX")
-#define DIFFICULTY_Y		THEME->GetMetricF("SelectMusic","DifficultyY")
-#define ICON_P1_X			THEME->GetMetricF("SelectMusic","IconP1X")
-#define ICON_P1_Y			THEME->GetMetricF("SelectMusic","IconP1Y")
-#define ICON_P2_X			THEME->GetMetricF("SelectMusic","IconP2X")
-#define ICON_P2_Y			THEME->GetMetricF("SelectMusic","IconP2Y")
-#define RADAR_X				THEME->GetMetricF("SelectMusic","RadarX")
-#define RADAR_Y				THEME->GetMetricF("SelectMusic","RadarY")
-#define SORT_ICON_X			THEME->GetMetricF("SelectMusic","SortIconX")
-#define SORT_ICON_Y			THEME->GetMetricF("SelectMusic","SortIconY")
-#define SCORE_P1_X			THEME->GetMetricF("SelectMusic","ScoreP1X")
-#define SCORE_P1_Y			THEME->GetMetricF("SelectMusic","ScoreP1Y")
-#define SCORE_P2_X			THEME->GetMetricF("SelectMusic","ScoreP2X")
-#define SCORE_P2_Y			THEME->GetMetricF("SelectMusic","ScoreP2Y")
-#define METER_FRAME_X		THEME->GetMetricF("SelectMusic","MeterFrameX")
-#define METER_FRAME_Y		THEME->GetMetricF("SelectMusic","MeterFrameY")
-#define METER_P1_X			THEME->GetMetricF("SelectMusic","MeterP1X")
-#define METER_P1_Y			THEME->GetMetricF("SelectMusic","MeterP1Y")
-#define METER_P2_X			THEME->GetMetricF("SelectMusic","MeterP2X")
-#define METER_P2_Y			THEME->GetMetricF("SelectMusic","MeterP2Y")
-#define WHEEL_X				THEME->GetMetricF("SelectMusic","WheelX")
-#define WHEEL_Y				THEME->GetMetricF("SelectMusic","WheelY")
-#define PLAYER_OPTIONS_P1_X	THEME->GetMetricF("SelectMusic","PlayerOptionsP1X")
-#define PLAYER_OPTIONS_P1_Y	THEME->GetMetricF("SelectMusic","PlayerOptionsP1Y")
-#define PLAYER_OPTIONS_P2_X	THEME->GetMetricF("SelectMusic","PlayerOptionsP2X")
-#define PLAYER_OPTIONS_P2_Y	THEME->GetMetricF("SelectMusic","PlayerOptionsP2Y")
-#define SONG_OPTIONS_X		THEME->GetMetricF("SelectMusic","SongOptionsX")
-#define SONG_OPTIONS_Y		THEME->GetMetricF("SelectMusic","SongOptionsY")
-#define HELP_TEXT			THEME->GetMetric("SelectMusic","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("SelectMusic","TimerSeconds")
+#define BANNER_FRAME_X		THEME->GetMetricF("ScreenSelectMusic","BannerFrameX")
+#define BANNER_FRAME_Y		THEME->GetMetricF("ScreenSelectMusic","BannerFrameY")
+#define BANNER_X			THEME->GetMetricF("ScreenSelectMusic","BannerX")
+#define BANNER_Y			THEME->GetMetricF("ScreenSelectMusic","BannerY")
+#define BANNER_WIDTH		THEME->GetMetricF("ScreenSelectMusic","BannerWidth")
+#define BANNER_HEIGHT		THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
+#define BPM_X				THEME->GetMetricF("ScreenSelectMusic","BPMX")
+#define BPM_Y				THEME->GetMetricF("ScreenSelectMusic","BPMY")
+#define STAGE_X				THEME->GetMetricF("ScreenSelectMusic","StageX")
+#define STAGE_Y				THEME->GetMetricF("ScreenSelectMusic","StageY")
+#define CD_TITLE_X			THEME->GetMetricF("ScreenSelectMusic","CDTitleX")
+#define CD_TITLE_Y			THEME->GetMetricF("ScreenSelectMusic","CDTitleY")
+#define DIFFICULTY_X		THEME->GetMetricF("ScreenSelectMusic","DifficultyX")
+#define DIFFICULTY_Y		THEME->GetMetricF("ScreenSelectMusic","DifficultyY")
+#define ICON_P1_X			THEME->GetMetricF("ScreenSelectMusic","IconP1X")
+#define ICON_P1_Y			THEME->GetMetricF("ScreenSelectMusic","IconP1Y")
+#define ICON_P2_X			THEME->GetMetricF("ScreenSelectMusic","IconP2X")
+#define ICON_P2_Y			THEME->GetMetricF("ScreenSelectMusic","IconP2Y")
+#define RADAR_X				THEME->GetMetricF("ScreenSelectMusic","RadarX")
+#define RADAR_Y				THEME->GetMetricF("ScreenSelectMusic","RadarY")
+#define SORT_ICON_X			THEME->GetMetricF("ScreenSelectMusic","SortIconX")
+#define SORT_ICON_Y			THEME->GetMetricF("ScreenSelectMusic","SortIconY")
+#define SCORE_P1_X			THEME->GetMetricF("ScreenSelectMusic","ScoreP1X")
+#define SCORE_P1_Y			THEME->GetMetricF("ScreenSelectMusic","ScoreP1Y")
+#define SCORE_P2_X			THEME->GetMetricF("ScreenSelectMusic","ScoreP2X")
+#define SCORE_P2_Y			THEME->GetMetricF("ScreenSelectMusic","ScoreP2Y")
+#define METER_FRAME_X		THEME->GetMetricF("ScreenSelectMusic","MeterFrameX")
+#define METER_FRAME_Y		THEME->GetMetricF("ScreenSelectMusic","MeterFrameY")
+#define METER_P1_X			THEME->GetMetricF("ScreenSelectMusic","MeterP1X")
+#define METER_P1_Y			THEME->GetMetricF("ScreenSelectMusic","MeterP1Y")
+#define METER_P2_X			THEME->GetMetricF("ScreenSelectMusic","MeterP2X")
+#define METER_P2_Y			THEME->GetMetricF("ScreenSelectMusic","MeterP2Y")
+#define WHEEL_X				THEME->GetMetricF("ScreenSelectMusic","WheelX")
+#define WHEEL_Y				THEME->GetMetricF("ScreenSelectMusic","WheelY")
+#define PLAYER_OPTIONS_P1_X	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP1X")
+#define PLAYER_OPTIONS_P1_Y	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP1Y")
+#define PLAYER_OPTIONS_P2_X	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP2X")
+#define PLAYER_OPTIONS_P2_Y	THEME->GetMetricF("ScreenSelectMusic","PlayerOptionsP2Y")
+#define SONG_OPTIONS_X		THEME->GetMetricF("ScreenSelectMusic","SongOptionsX")
+#define SONG_OPTIONS_Y		THEME->GetMetricF("ScreenSelectMusic","SongOptionsY")
+#define HELP_TEXT			THEME->GetMetric("ScreenSelectMusic","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -574,17 +569,17 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	case SM_GoToPrevState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
 		if( m_bGoToOptions )
 		{
-			SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
+			SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
 		}
 		else
 		{
 			MUSIC->Stop();
-			SCREENMAN->SetNewScreen( new ScreenStage );
+			SCREENMAN->SetNewScreen( "ScreenStage" );
 		}
 		break;
 	case SM_PlaySongSample:
@@ -664,7 +659,7 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 			{
 				if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
 				{
-					SCREENMAN->AddScreenToTop( new ScreenPrompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played.", PROMPT_OK) );
+					SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
 					return;
 				}
 
@@ -828,19 +823,11 @@ void ScreenSelectMusic::PlayMusicSample()
 {
 	//LOG->Trace( "ScreenSelectSong::PlaySONGample()" );
 
-	MUSIC->Stop();
-
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	if( pSong == NULL )
-		return;
-
-	CString sSongToPlay = pSong->GetMusicPath();
- 
-	if( pSong->HasMusic() )
-	{
-		MUSIC->Load( sSongToPlay );
-		MUSIC->Play( true, pSong->m_fMusicSampleStartSeconds, pSong->m_fMusicSampleLengthSeconds );
-	}
+	if( pSong )
+		MUSIC->LoadAndPlayIfNotAlready( pSong->GetMusicPath() );
+	else
+		MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select music music") );
 }
 
 void ScreenSelectMusic::UpdateOptionsDisplays()

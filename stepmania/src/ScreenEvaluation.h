@@ -25,10 +25,11 @@
 const int NUM_JUDGE_LINES =	7;	// perfect, great, good, boo, miss, ok, max_combo
 const int STAGES_TO_SHOW_IN_SUMMARY = 3;	// only show the latest three stages in a summary
 
+
 class ScreenEvaluation : public Screen
 {
 public:
-	ScreenEvaluation( bool bSummary );
+	ScreenEvaluation( bool bFinalEval = false );
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -79,5 +80,10 @@ protected:
 	BitmapText			m_textTryExtraStage;
 };
 
+class ScreenFinalEvaluation : public ScreenEvaluation
+{
+public:
+	ScreenFinalEvaluation() : ScreenEvaluation(true) {};
+};
 
 

@@ -16,17 +16,18 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "RageException.h"
 
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
 
-#define STATS_X				THEME->GetMetricF("Other","StatsX")
-#define STATS_Y				THEME->GetMetricF("Other","StatsY")
-#define CREDITS_P1_X		THEME->GetMetricF("Other","CreditsP1X")
-#define CREDITS_P1_Y		THEME->GetMetricF("Other","CreditsP1Y")
-#define CREDITS_P2_X		THEME->GetMetricF("Other","CreditsP2X")
-#define CREDITS_P2_Y		THEME->GetMetricF("Other","CreditsP2Y")
+#define STATS_X				THEME->GetMetricF("ScreenManager","StatsX")
+#define STATS_Y				THEME->GetMetricF("ScreenManager","StatsY")
+#define CREDITS_P1_X		THEME->GetMetricF("ScreenManager","CreditsP1X")
+#define CREDITS_P1_Y		THEME->GetMetricF("ScreenManager","CreditsP1Y")
+#define CREDITS_P2_X		THEME->GetMetricF("ScreenManager","CreditsP2X")
+#define CREDITS_P2_Y		THEME->GetMetricF("ScreenManager","CreditsP2Y")
 
 float CREDITS_X( int p ) {
 	switch( p ) {
@@ -152,9 +153,77 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 		m_ScreenStack[m_ScreenStack.GetSize()-1]->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
-void ScreenManager::SetNewScreen( Screen *pNewScreen )
+
+// Screen classes
+#include "ScreenAppearanceOptions.h"
+#include "ScreenCaution.h"
+#include "ScreenEdit.h"
+#include "ScreenEditMenu.h"
+#include "ScreenEvaluation.h"
+#include "ScreenEz2SelectPlayer.h"
+#include "ScreenEz2SelectStyle.h"
+#include "ScreenGameOptions.h"
+#include "ScreenGameOver.h"
+#include "ScreenGameplay.h"
+#include "ScreenGraphicOptions.h"
+#include "ScreenHowToPlay.h"
+#include "ScreenMapInstruments.h"
+#include "ScreenMusicScroll.h"
+#include "ScreenPlayerOptions.h"
+#include "ScreenSandbox.h"
+#include "ScreenSelectCourse.h"
+#include "ScreenSelectDifficulty.h"
+#include "ScreenSelectGame.h"
+#include "ScreenSelectGroup.h"
+#include "ScreenSelectMusic.h"
+#include "ScreenSelectStyle5th.h"
+#include "ScreenSelectStyle.h"
+#include "ScreenSongOptions.h"
+#include "ScreenStage.h"
+#include "ScreenTitleMenu.h"
+
+#include "ScreenPrompt.h"
+#include "ScreenTextEntry.h"
+
+void ScreenManager::SetNewScreen( CString sClassName )
 {
-	// move CurrentScreen to ScreenToDelete
+	// It makes sense that ScreenManager should allocate memory for a new screen since it 
+	// deletes it later on.  This also convention will reduce includes because screens won't 
+	// have to include each other's headers of other screens.
+
+	Screen* pNewScreen;
+
+	if(		 0==stricmp(sClassName, "ScreenAppearanceOptions") )pNewScreen = new ScreenAppearanceOptions;
+	else if( 0==stricmp(sClassName, "ScreenCaution") )			pNewScreen = new ScreenCaution;
+	else if( 0==stricmp(sClassName, "ScreenEdit") )				pNewScreen = new ScreenEdit;
+	else if( 0==stricmp(sClassName, "ScreenEditMenu") )			pNewScreen = new ScreenEditMenu;
+	else if( 0==stricmp(sClassName, "ScreenEvaluation") )		pNewScreen = new ScreenEvaluation;
+	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	pNewScreen = new ScreenFinalEvaluation;
+	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	pNewScreen = new ScreenEz2SelectPlayer;
+	else if( 0==stricmp(sClassName, "ScreenEz2SelectStyle") )	pNewScreen = new ScreenEz2SelectStyle;
+	else if( 0==stricmp(sClassName, "ScreenGameOptions") )		pNewScreen = new ScreenGameOptions;
+	else if( 0==stricmp(sClassName, "ScreenGameOver") )			pNewScreen = new ScreenGameOver;
+	else if( 0==stricmp(sClassName, "ScreenGameplay") )			pNewScreen = new ScreenGameplay;
+	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	pNewScreen = new ScreenGraphicOptions;
+	else if( 0==stricmp(sClassName, "ScreenHowToPlay") )		pNewScreen = new ScreenHowToPlay;
+	else if( 0==stricmp(sClassName, "ScreenMapInstruments") )	pNewScreen = new ScreenMapInstruments;
+	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		pNewScreen = new ScreenMusicScroll;
+	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	pNewScreen = new ScreenPlayerOptions;
+	else if( 0==stricmp(sClassName, "ScreenSandbox") )			pNewScreen = new ScreenSandbox;
+	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		pNewScreen = new ScreenSelectCourse;
+	else if( 0==stricmp(sClassName, "ScreenSelectDifficulty") )	pNewScreen = new ScreenSelectDifficulty;
+	else if( 0==stricmp(sClassName, "ScreenSelectGame") )		pNewScreen = new ScreenSelectGame;
+	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )		pNewScreen = new ScreenSelectGroup;
+	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )		pNewScreen = new ScreenSelectMusic;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle5th") )	pNewScreen = new ScreenSelectStyle5th;
+	else if( 0==stricmp(sClassName, "ScreenSelectStyle") )		pNewScreen = new ScreenSelectStyle;
+	else if( 0==stricmp(sClassName, "ScreenSongOptions") )		pNewScreen = new ScreenSongOptions;
+	else if( 0==stricmp(sClassName, "ScreenStage") )			pNewScreen = new ScreenStage;
+	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		pNewScreen = new ScreenTitleMenu;
+	else
+		throw RageException( "Invalid Screen class name '%s'", sClassName );
+
+	// move current screen to ScreenToDelete
 	RefreshCreditsMessages();
 	m_ScreensToDelete.Copy( m_ScreenStack );
 
@@ -162,13 +231,16 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 	m_ScreenStack.Add( pNewScreen );
 }
 
-void ScreenManager::AddScreenToTop( Screen *pNewScreen )
+void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
-	// our responsibility to tell the old state that it's losing focus
-//	m_ScreenStack[m_ScreenStack.GetSize()-1]->HandleScreenMessage( SM_LosingInputFocus );
-
 	// add the new state onto the back of the array
-	m_ScreenStack.Add( pNewScreen );
+	m_ScreenStack.Add( new ScreenPrompt(SM_SendWhenDone, sText, bYesNo, bDefaultAnswer, OnYes, OnNo) );
+}
+
+void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCanel)() )
+{	
+	// add the new state onto the back of the array
+	m_ScreenStack.Add( new ScreenTextEntry(SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
 }
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )

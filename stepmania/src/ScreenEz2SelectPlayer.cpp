@@ -12,17 +12,11 @@ Andrew Livy
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
-#include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ScreenSelectDifficulty.h"
-#include "ScreenSandbox.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
-#include "ScreenSelectStyle.h"
-#include "ScreenEz2SelectStyle.h"
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
@@ -33,7 +27,9 @@ const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_PlayersChosen		=	ScreenMessage(SM_User + 3);
 
-#define USE_NORMAL_OR_EZ2_SELECT_STYLE		THEME->GetMetricB("General","UseNormalOrEZ2SelectStyle")
+
+#define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectPlayer","NextScreen")
+
 
 const float TWEEN_TIME		= 0.35f;
 const D3DXCOLOR OPT_NOT_SELECTED = D3DXCOLOR(0.3f,0.3f,0.3f,1);
@@ -100,11 +96,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
 
-	if( !MUSIC->IsPlaying() )
-	{
-		MUSIC->Load( THEME->GetPathTo("Sounds","select player music") );
-        MUSIC->Play( true );
-	}
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select player music") );
 
 //	GAMESTATE->m_bPlayersCanJoin = true;
 //	GAMESTATE->m_bIsJoined[PLAYER_1] = false;
@@ -135,10 +127,10 @@ void ScreenEz2SelectPlayer::Update( float fDeltaTime )
 
 	fDeltaTime /= .01f;
 
-	ez2_bounce = fmod((ez2_bounce+fDeltaTime), 20);
+	ez2_bounce = fmodf((ez2_bounce+fDeltaTime), 20);
 
 	/* 0..10..19 -> 10..0..9 */
-	int offset = abs(10-ez2_bounce);
+	int offset = roundf( fabsf(10-ez2_bounce) );
 	m_sprOpt[2].SetXY( OPT_X[2], OPT_Y[2] - offset);
 	m_sprOpt[3].SetXY( OPT_X[3], OPT_Y[3] - offset);
 }
@@ -218,13 +210,10 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_GoToPrevState:
 		MUSIC->Stop();
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
-		if( USE_NORMAL_OR_EZ2_SELECT_STYLE )
-			SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
-		else
-			SCREENMAN->SetNewScreen( new ScreenSelectStyle );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }

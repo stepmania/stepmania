@@ -11,7 +11,11 @@
 */
 
 #include "GameConstantsAndTypes.h"
+#include "ThemeManager.h"
 
+
+#define COLOR_P1		THEME->GetMetricC("Common","ColorP1")
+#define COLOR_P2		THEME->GetMetricC("Common","ColorP2")
 
 
 D3DXCOLOR DifficultyClassToColor( DifficultyClass dc )
@@ -51,9 +55,9 @@ D3DXCOLOR PlayerToColor( const PlayerNumber p )
 {
 	switch( p )
 	{
-		case PLAYER_1:	return D3DXCOLOR(0.4f,1.0f,0.8f,1);	// sea green
-		case PLAYER_2:	return D3DXCOLOR(1.0f,0.5f,0.2f,1);	// orange
-		default:	ASSERT( false ); return D3DXCOLOR(1,1,1,1);
+		case PLAYER_1:	return COLOR_P1;
+		case PLAYER_2:	return COLOR_P2;
+		default: ASSERT(0); return D3DXCOLOR(0.5f,0.5f,0.5f,1);
 	}
 };
 

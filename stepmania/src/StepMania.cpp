@@ -56,10 +56,6 @@
 #include "Notes.h"
 
 
-#include "ScreenSandbox.h"
-#include "ScreenTitleMenu.h"
-
-
 #include "dxerr8.h"
 //#include <Afxdisp.h>
 
@@ -691,17 +687,8 @@ HRESULT CreateObjects( HWND hWnd )
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
 
-	//SCREENMAN->SetNewScreen( new ScreenAttractLogo );
-	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
-	//SCREENMAN->SetNewScreen( new ScreenSandbox );
-	//SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
-	//SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
-	//SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
-	//SCREENMAN->SetNewScreen( new ScreenGameplay );
-	//SCREENMAN->SetNewScreen( new ScreenMusicScroll );
-	//SCREENMAN->SetNewScreen( new ScreenSelectMusic );
-	//SCREENMAN->SetNewScreen( new ScreenSelectGroup );
-
+	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+//	SCREENMAN->SetNewScreen( "ScreenSandbox" );
 
 	return S_OK;
 }

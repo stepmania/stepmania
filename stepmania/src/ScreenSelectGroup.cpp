@@ -14,31 +14,31 @@
 #include "ScreenSelectGroup.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenTitleMenu.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
+#include "RageMusic.h"
 
 
-#define FRAME_X				THEME->GetMetricF("SelectGroup","FrameX")
-#define FRAME_Y				THEME->GetMetricF("SelectGroup","FrameY")
-#define BANNER_X			THEME->GetMetricF("SelectGroup","BannerX")
-#define BANNER_Y			THEME->GetMetricF("SelectGroup","BannerY")
-#define BANNER_WIDTH		THEME->GetMetricF("SelectGroup","BannerWidth")
-#define BANNER_HEIGHT		THEME->GetMetricF("SelectGroup","BannerHeight")
-#define NUMBER_X			THEME->GetMetricF("SelectGroup","NumberX")
-#define NUMBER_Y			THEME->GetMetricF("SelectGroup","NumberY")
-#define EXPLANATION_X		THEME->GetMetricF("SelectGroup","ExplanationX")
-#define EXPLANATION_Y		THEME->GetMetricF("SelectGroup","ExplanationY")
-#define CONTENTS_X			THEME->GetMetricF("SelectGroup","ContentsX")
-#define CONTENTS_Y			THEME->GetMetricF("SelectGroup","ContentsY")
-
-#define HELP_TEXT			THEME->GetMetric("SelectGroup","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("SelectGroup","TimerSeconds")
+#define FRAME_X				THEME->GetMetricF("ScreenSelectGroup","FrameX")
+#define FRAME_Y				THEME->GetMetricF("ScreenSelectGroup","FrameY")
+#define BANNER_X			THEME->GetMetricF("ScreenSelectGroup","BannerX")
+#define BANNER_Y			THEME->GetMetricF("ScreenSelectGroup","BannerY")
+#define BANNER_WIDTH		THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
+#define BANNER_HEIGHT		THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
+#define NUMBER_X			THEME->GetMetricF("ScreenSelectGroup","NumberX")
+#define NUMBER_Y			THEME->GetMetricF("ScreenSelectGroup","NumberY")
+#define EXPLANATION_X		THEME->GetMetricF("ScreenSelectGroup","ExplanationX")
+#define EXPLANATION_Y		THEME->GetMetricF("ScreenSelectGroup","ExplanationY")
+#define CONTENTS_X			THEME->GetMetricF("ScreenSelectGroup","ContentsX")
+#define CONTENTS_Y			THEME->GetMetricF("ScreenSelectGroup","ContentsY")
+#define HELP_TEXT			THEME->GetMetric("ScreenSelectGroup","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectGroup","TimerSeconds")
+#define NEXT_SCREEN_ARCADE	THEME->GetMetric("ScreenSelectGroup","NextScreenArcade")
+#define NEXT_SCREEN_ONI		THEME->GetMetric("ScreenSelectGroup","NextScreenOni")
 
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
@@ -163,12 +163,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_GROUP_INTRO) );
 
-
-	if( !MUSIC->IsPlaying()  ||  MUSIC->GetLoadedFilePath() != THEME->GetPathTo("Sounds","select group music") )
-	{
-		MUSIC->Load( THEME->GetPathTo("Sounds","select group music") );
-		MUSIC->Play( true );
-	}
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select group music") );
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 	TweenOnScreen();
@@ -209,10 +204,21 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart(PLAYER_1);
 		break;
 	case SM_GoToPrevState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_ARCADE );
+			break;
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );
+			break;
+		default:
+			ASSERT(0);
+		}
 		break;
 	case SM_StartFadingOut:
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextState );

@@ -13,21 +13,18 @@
 #include "ScreenEditMenu.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
-#include "ScreenTitleMenu.h"
-#include "ScreenEdit.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
-#include "ScreenPrompt.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "RageMusic.h"
 
 
 //
 // Defines specific to ScreenEditMenu
 //
-
 const float EXPLANATION_X		=	CENTER_X;
 const float EXPLANATION_Y		=	SCREEN_BOTTOM - 70;
 const CString EXPLANATION_TEXT	= 
@@ -55,8 +52,8 @@ ScreenEditMenu::ScreenEditMenu()
 	m_Fade.SetOpened();
 	this->AddSubActor( &m_Fade);
 
-	MUSIC->Load( THEME->GetPathTo("Sounds","edit menu music") );
-	MUSIC->Play( true );
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","edit menu music") );
+
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 }
 
@@ -79,7 +76,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_GoToPrevState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
 		// set the current style based on the notes type
@@ -97,7 +94,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->m_CurStyle = style;
 		GAMESTATE->m_CurGame = GAMEMAN->GetStyleDefForStyle(style)->m_Game;
 
-		SCREENMAN->SetNewScreen( new ScreenEdit );
+		SCREENMAN->SetNewScreen( "ScreenEdit" );
 		break;
 	}
 }

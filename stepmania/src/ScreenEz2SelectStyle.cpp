@@ -1,3 +1,4 @@
+#include "stdafx.h"
 /****************************************
 ScreenEzSelectPlayer,cpp
 Desc: See Header
@@ -10,31 +11,29 @@ a polish :)
 
 /* Includes */
 
-#include "stdafx.h"
 #include "ScreenEz2SelectStyle.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
-#include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ScreenSelectDifficulty.h"
-#include "ScreenSandbox.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Background.h"
-#include "ScreenSelectGroup.h"
 #include "GameState.h"
 #include "RageException.h"
 #include "RageTimer.h"
 
 /* Constants */
 
+#define NEXT_SCREEN				THEME->GetMetric("ScreenEz2SelectStyle","NextScreen")
+
+
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
+
 
 enum DStyles {
 	DS_EASY,
@@ -44,8 +43,6 @@ enum DStyles {
 };
 
 const float TWEEN_TIME		= 0.35f;
-
-#define SKIP_SELECT_DIFFICULTY		THEME->GetMetricB("General","SkipSelectDifficulty")
 
 
 float ez2p_lasttimercheck[2];
@@ -164,18 +161,14 @@ void ScreenEz2SelectStyle::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		m_soundSelect.PlayRandom();
 		GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-		SCREENMAN->SetNewScreen( new ScreenSelectGroup );
-
+		this->SendScreenMessage( SM_GoToNextState, 0 );
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
-		if( SKIP_SELECT_DIFFICULTY )
-			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
-		else
-			SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }

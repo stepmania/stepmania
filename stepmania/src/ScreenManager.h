@@ -32,20 +32,19 @@ public:
 	void Draw();
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
-	void SetNewScreen( Screen *pNewScreen );
-	void AddScreenToTop( Screen *pNewScreen );
-	void PopTopScreen( ScreenMessage SM_SendToNewTopScreen );
-
+	void SetNewScreen( CString sClassName );
+	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
+	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
+	void PopTopScreen( ScreenMessage SM );
 	void SystemMessage( CString sMessage );
 
 	void SendMessageToTopScreen( ScreenMessage SM, float fDelay );
 
-//	void OverrideCreditsMessage( PlayerNumber p, CString sNewString );
 	void RefreshCreditsMessages();
 
 private:
-	CArray<Screen*, Screen*&> m_ScreenStack;
-	CArray<Screen*, Screen*&> m_ScreensToDelete;
+	CArray<Screen*, Screen*> m_ScreenStack;
+	CArray<Screen*, Screen*> m_ScreensToDelete;
 
 	BitmapText m_textStats;
 	BitmapText m_textSystemMessage;

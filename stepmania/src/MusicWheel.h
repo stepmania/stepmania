@@ -17,7 +17,7 @@
 #include "Quad.h"
 #include "TextBanner.h"
 #include "RandomSample.h"
-#include "GradeDisplay.h"
+#include "SmallGradeDisplay.h"
 #include "RageSoundStream.h"
 #include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
@@ -81,7 +81,7 @@ public:
 	Sprite				m_sprSongBar;
 	MusicStatusDisplay	m_MusicStatusDisplay;
 	TextBanner			m_TextBanner;
-	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
+	SmallGradeDisplay	m_GradeDisplay[NUM_PLAYERS];
 
 	// for TYPE_COURSE
 	BitmapText			m_textCourse;

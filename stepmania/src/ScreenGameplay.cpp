@@ -13,85 +13,80 @@
 #include "ScreenGameplay.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
-
-#include "ScreenSelectMusic.h"
-#include "ScreenSelectCourse.h"
-#include "ScreenEvaluation.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "GameManager.h"
 #include "SongManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
-#include "ScreenGameOver.h"
 #include "LifeMeterBar.h"
 #include "LifeMeterBattery.h"
 #include "GameState.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreDisplayOni.h"
 #include "ScreenPrompt.h"
-#include "ScreenTitleMenu.h"
+#include "GrooveRadar.h"
 
 //
 // Defines
 //
 
-#define TOP_FRAME_X						THEME->GetMetricF("Gameplay","TopFrameX")
-#define TOP_FRAME_Y						THEME->GetMetricF("Gameplay","TopFrameY")
-#define TOP_FRAME_EXTRA_Y				THEME->GetMetricF("Gameplay","TopFrameExtraY")
-#define BOTTOM_FRAME_X					THEME->GetMetricF("Gameplay","BottomFrameX")
-#define BOTTOM_FRAME_Y					THEME->GetMetricF("Gameplay","BottomFrameY")
-#define BOTTOM_FRAME_EXTRA_Y			THEME->GetMetricF("Gameplay","BottomFrameExtraY")
-#define MIDDLE_FRAME_X					THEME->GetMetricF("Gameplay","MiddleFrameX")
-#define MIDDLE_FRAME_Y					THEME->GetMetricF("Gameplay","MiddleFrameY")
-#define LIFE_P1_X						THEME->GetMetricF("Gameplay","LifeP1X")
-#define LIFE_P1_Y						THEME->GetMetricF("Gameplay","LifeP1Y")
-#define LIFE_P1_EXTRA_Y					THEME->GetMetricF("Gameplay","LifeP1ExtraY")
-#define LIFE_P2_X						THEME->GetMetricF("Gameplay","LifeP2X")
-#define LIFE_P2_Y						THEME->GetMetricF("Gameplay","LifeP2Y")
-#define LIFE_P2_EXTRA_Y					THEME->GetMetricF("Gameplay","LifeP2ExtraY")
-#define STAGE_X							THEME->GetMetricF("Gameplay","StageX")
-#define STAGE_Y							THEME->GetMetricF("Gameplay","StageY")
-#define STAGE_EXTRA_Y					THEME->GetMetricF("Gameplay","StageExtraY")
-#define SONG_NUMBER_P1_X				THEME->GetMetricF("Gameplay","SongNumberP1X")
-#define SONG_NUMBER_P1_Y				THEME->GetMetricF("Gameplay","SongNumberP1Y")
-#define SONG_NUMBER_P1_EXTRA_Y			THEME->GetMetricF("Gameplay","SongNumberP1ExtraY")
-#define SONG_NUMBER_P2_X				THEME->GetMetricF("Gameplay","SongNumberP2X")
-#define SONG_NUMBER_P2_Y				THEME->GetMetricF("Gameplay","SongNumberP2Y")
-#define SONG_NUMBER_P2_EXTRA_Y			THEME->GetMetricF("Gameplay","SongNumberP2ExtraY")
-#define SCORE_P1_X						THEME->GetMetricF("Gameplay","ScoreP1X")
-#define SCORE_P1_Y						THEME->GetMetricF("Gameplay","ScoreP1Y")
-#define SCORE_P1_EXTRA_Y				THEME->GetMetricF("Gameplay","ScoreP1ExtraY")
-#define SCORE_P2_X						THEME->GetMetricF("Gameplay","ScoreP2X")
-#define SCORE_P2_Y						THEME->GetMetricF("Gameplay","ScoreP2Y")
-#define SCORE_P2_EXTRA_Y				THEME->GetMetricF("Gameplay","ScoreP2ExtraY")
-#define PLAYER_OPTIONS_P1_X				THEME->GetMetricF("Gameplay","PlayerOptionsP1X")
-#define PLAYER_OPTIONS_P1_Y				THEME->GetMetricF("Gameplay","PlayerOptionsP1Y")
-#define PLAYER_OPTIONS_P1_EXTRA_Y		THEME->GetMetricF("Gameplay","PlayerOptionsP1ExtraY")
-#define PLAYER_OPTIONS_P2_X				THEME->GetMetricF("Gameplay","PlayerOptionsP2X")
-#define PLAYER_OPTIONS_P2_Y				THEME->GetMetricF("Gameplay","PlayerOptionsP2Y")
-#define PLAYER_OPTIONS_P2_EXTRA_Y		THEME->GetMetricF("Gameplay","PlayerOptionsP2ExtraY")
-#define SONG_OPTIONS_X					THEME->GetMetricF("Gameplay","SongOptionsX")
-#define SONG_OPTIONS_Y					THEME->GetMetricF("Gameplay","SongOptionsY")
-#define SONG_OPTIONS_EXTRA_Y			THEME->GetMetricF("Gameplay","SongOptionsExtraY")
-#define DIFFICULTY_P1_X					THEME->GetMetricF("Gameplay","DifficultyP1X")
-#define DIFFICULTY_P1_Y					THEME->GetMetricF("Gameplay","DifficultyP1Y")
-#define DIFFICULTY_P1_REVERSE_Y			THEME->GetMetricF("Gameplay","DifficultyP1ReverseY")
-#define DIFFICULTY_P1_EXTRA_Y			THEME->GetMetricF("Gameplay","DifficultyP1ExtraY")
-#define DIFFICULTY_P1_EXTRA_REVERSE_Y	THEME->GetMetricF("Gameplay","DifficultyP1ExtraReverseY")
-#define DIFFICULTY_P2_X					THEME->GetMetricF("Gameplay","DifficultyP2X")
-#define DIFFICULTY_P2_Y					THEME->GetMetricF("Gameplay","DifficultyP2Y")
-#define DIFFICULTY_P2_REVERSE_Y			THEME->GetMetricF("Gameplay","DifficultyP2ReverseY")
-#define DIFFICULTY_P2_EXTRA_Y			THEME->GetMetricF("Gameplay","DifficultyP2ExtraY")
-#define DIFFICULTY_P2_EXTRA_REVERSE_Y	THEME->GetMetricF("Gameplay","DifficultyP2ExtraReverseY")
-#define DEBUG_X							THEME->GetMetricF("Gameplay","DebugX")
-#define DEBUG_Y							THEME->GetMetricF("Gameplay","DebugY")
-#define AUTOPLAY_X						THEME->GetMetricF("Gameplay","AutoPlayX")
-#define AUTOPLAY_Y						THEME->GetMetricF("Gameplay","AutoPlayY")
-#define SURVIVE_TIME_X					THEME->GetMetricF("Gameplay","SurviveTimeX")
-#define SURVIVE_TIME_Y					THEME->GetMetricF("Gameplay","SurviveTimeY")
-#define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("Gameplay","SecondsBetweenComments")
-#define DEMONSTRATION_SECONDS			THEME->GetMetricF("Gameplay","DemonstrationSeconds")
+#define TOP_FRAME_X						THEME->GetMetricF("ScreenGameplay","TopFrameX")
+#define TOP_FRAME_Y						THEME->GetMetricF("ScreenGameplay","TopFrameY")
+#define TOP_FRAME_EXTRA_Y				THEME->GetMetricF("ScreenGameplay","TopFrameExtraY")
+#define BOTTOM_FRAME_X					THEME->GetMetricF("ScreenGameplay","BottomFrameX")
+#define BOTTOM_FRAME_Y					THEME->GetMetricF("ScreenGameplay","BottomFrameY")
+#define BOTTOM_FRAME_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","BottomFrameExtraY")
+#define MIDDLE_FRAME_X					THEME->GetMetricF("ScreenGameplay","MiddleFrameX")
+#define MIDDLE_FRAME_Y					THEME->GetMetricF("ScreenGameplay","MiddleFrameY")
+#define LIFE_P1_X						THEME->GetMetricF("ScreenGameplay","LifeP1X")
+#define LIFE_P1_Y						THEME->GetMetricF("ScreenGameplay","LifeP1Y")
+#define LIFE_P1_EXTRA_Y					THEME->GetMetricF("ScreenGameplay","LifeP1ExtraY")
+#define LIFE_P2_X						THEME->GetMetricF("ScreenGameplay","LifeP2X")
+#define LIFE_P2_Y						THEME->GetMetricF("ScreenGameplay","LifeP2Y")
+#define LIFE_P2_EXTRA_Y					THEME->GetMetricF("ScreenGameplay","LifeP2ExtraY")
+#define STAGE_X							THEME->GetMetricF("ScreenGameplay","StageX")
+#define STAGE_Y							THEME->GetMetricF("ScreenGameplay","StageY")
+#define STAGE_EXTRA_Y					THEME->GetMetricF("ScreenGameplay","StageExtraY")
+#define SONG_NUMBER_P1_X				THEME->GetMetricF("ScreenGameplay","SongNumberP1X")
+#define SONG_NUMBER_P1_Y				THEME->GetMetricF("ScreenGameplay","SongNumberP1Y")
+#define SONG_NUMBER_P1_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","SongNumberP1ExtraY")
+#define SONG_NUMBER_P2_X				THEME->GetMetricF("ScreenGameplay","SongNumberP2X")
+#define SONG_NUMBER_P2_Y				THEME->GetMetricF("ScreenGameplay","SongNumberP2Y")
+#define SONG_NUMBER_P2_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","SongNumberP2ExtraY")
+#define SCORE_P1_X						THEME->GetMetricF("ScreenGameplay","ScoreP1X")
+#define SCORE_P1_Y						THEME->GetMetricF("ScreenGameplay","ScoreP1Y")
+#define SCORE_P1_EXTRA_Y				THEME->GetMetricF("ScreenGameplay","ScoreP1ExtraY")
+#define SCORE_P2_X						THEME->GetMetricF("ScreenGameplay","ScoreP2X")
+#define SCORE_P2_Y						THEME->GetMetricF("ScreenGameplay","ScoreP2Y")
+#define SCORE_P2_EXTRA_Y				THEME->GetMetricF("ScreenGameplay","ScoreP2ExtraY")
+#define PLAYER_OPTIONS_P1_X				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP1X")
+#define PLAYER_OPTIONS_P1_Y				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP1Y")
+#define PLAYER_OPTIONS_P1_EXTRA_Y		THEME->GetMetricF("ScreenGameplay","PlayerOptionsP1ExtraY")
+#define PLAYER_OPTIONS_P2_X				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP2X")
+#define PLAYER_OPTIONS_P2_Y				THEME->GetMetricF("ScreenGameplay","PlayerOptionsP2Y")
+#define PLAYER_OPTIONS_P2_EXTRA_Y		THEME->GetMetricF("ScreenGameplay","PlayerOptionsP2ExtraY")
+#define SONG_OPTIONS_X					THEME->GetMetricF("ScreenGameplay","SongOptionsX")
+#define SONG_OPTIONS_Y					THEME->GetMetricF("ScreenGameplay","SongOptionsY")
+#define SONG_OPTIONS_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","SongOptionsExtraY")
+#define DIFFICULTY_P1_X					THEME->GetMetricF("ScreenGameplay","DifficultyP1X")
+#define DIFFICULTY_P1_Y					THEME->GetMetricF("ScreenGameplay","DifficultyP1Y")
+#define DIFFICULTY_P1_REVERSE_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP1ReverseY")
+#define DIFFICULTY_P1_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP1ExtraY")
+#define DIFFICULTY_P1_EXTRA_REVERSE_Y	THEME->GetMetricF("ScreenGameplay","DifficultyP1ExtraReverseY")
+#define DIFFICULTY_P2_X					THEME->GetMetricF("ScreenGameplay","DifficultyP2X")
+#define DIFFICULTY_P2_Y					THEME->GetMetricF("ScreenGameplay","DifficultyP2Y")
+#define DIFFICULTY_P2_REVERSE_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP2ReverseY")
+#define DIFFICULTY_P2_EXTRA_Y			THEME->GetMetricF("ScreenGameplay","DifficultyP2ExtraY")
+#define DIFFICULTY_P2_EXTRA_REVERSE_Y	THEME->GetMetricF("ScreenGameplay","DifficultyP2ExtraReverseY")
+#define DEBUG_X							THEME->GetMetricF("ScreenGameplay","DebugX")
+#define DEBUG_Y							THEME->GetMetricF("ScreenGameplay","DebugY")
+#define AUTOPLAY_X						THEME->GetMetricF("ScreenGameplay","AutoPlayX")
+#define AUTOPLAY_Y						THEME->GetMetricF("ScreenGameplay","AutoPlayY")
+#define SURVIVE_TIME_X					THEME->GetMetricF("ScreenGameplay","SurviveTimeX")
+#define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
+#define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("ScreenGameplay","SecondsBetweenComments")
+#define DEMONSTRATION_SECONDS			THEME->GetMetricF("ScreenGameplay","DemonstrationSeconds")
 
 float LIFE_X( int p ) {
 	switch( p ) {
@@ -1145,15 +1140,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 		ASSERT(0);
 	}
 
-	SCREENMAN->AddScreenToTop( new ScreenPrompt(
-		SM_SendWhenDone,
-		sMessage,
-		PROMPT_YES_NO,
-		true,
-		SaveChanges,
-		DontSaveChanges
-		)
-	);
+	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, true, true, SaveChanges, DontSaveChanges );
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
@@ -1263,6 +1250,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_PlayToastySound, 0.3f );
 
 		// set off screen
+		m_sprToasty.StopTweening();
 		m_sprToasty.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 		m_sprToasty.SetX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
 		m_sprToasty.SetY( SCREEN_BOTTOM-m_sprToasty.GetUnzoomedHeight()/2 );
@@ -1383,11 +1371,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:	
-			SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+			SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 			break;
 		default:	ASSERT(0);
 		}
@@ -1399,7 +1387,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToStateAfterCleared );
 			break;
 		}
-		SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
+		SCREENMAN->SetNewScreen( "ScreenEvaluation" );
 		break;
 
 
@@ -1472,16 +1460,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		}
 		if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
-			SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
+			SCREENMAN->SetNewScreen( "ScreenEvaluation" );
 		else if( PREFSMAN->m_bEventMode )
 			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
 		else if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
-			SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
+			SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
 		else
-			SCREENMAN->SetNewScreen( new ScreenGameOver );
+			SCREENMAN->SetNewScreen( "ScreenGameOver" );
 		break;
 	case SM_GoToTitleMenu:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	}
 }

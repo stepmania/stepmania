@@ -13,8 +13,6 @@
 #include "ScreenSandbox.h"
 #include "ScreenManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
-#include "ScreenSelectMusic.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "Quad.h"
@@ -60,7 +58,7 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 		case MENU_BUTTON_RIGHT:
 			break;
 		case MENU_BUTTON_BACK:
-			//SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+			//SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 			return;
 		}
 	}

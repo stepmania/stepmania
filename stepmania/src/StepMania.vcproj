@@ -192,12 +192,6 @@
 				RelativePath="ScreenEz2SelectStyle.h">
 			</File>
 			<File
-				RelativePath="ScreenEz2Stage.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEz2Stage.h">
-			</File>
-			<File
 				RelativePath="ScreenGameOptions.cpp">
 			</File>
 			<File
@@ -693,6 +687,18 @@
 			</File>
 			<File
 				RelativePath="ScrollBar.h">
+			</File>
+			<File
+				RelativePath="ScrollingList.cpp">
+			</File>
+			<File
+				RelativePath="ScrollingList.h">
+			</File>
+			<File
+				RelativePath="SmallGradeDisplay.cpp">
+			</File>
+			<File
+				RelativePath="SmallGradeDisplay.h">
 			</File>
 			<File
 				RelativePath="SnapDisplay.cpp">

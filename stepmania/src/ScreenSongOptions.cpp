@@ -11,18 +11,12 @@
 */
 
 #include "ScreenSongOptions.h"
-#include <assert.h>
-#include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"
-#include "ScreenSelectMusic.h"
-#include "ScreenGameplay.h"
 #include "GameConstantsAndTypes.h"
-#include "ScreenPlayerOptions.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "ScreenStage.h"
 
 
 enum {
@@ -108,14 +102,14 @@ void ScreenSongOptions::ExportOptions()
 
 void ScreenSongOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
+	SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
 }
 
 void ScreenSongOptions::GoToNextState()
 {
 	MUSIC->Stop();
 
-	SCREENMAN->SetNewScreen( new ScreenStage );
+	SCREENMAN->SetNewScreen( "ScreenStage" );
 }
 
 

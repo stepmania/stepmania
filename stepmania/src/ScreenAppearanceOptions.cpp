@@ -11,14 +11,11 @@
 */
 
 #include "ScreenAppearanceOptions.h"
-#include <assert.h>
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
-#include "ScreenOptions.h"
-#include "ScreenTitleMenu.h"
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 #include "PrefsManager.h"
@@ -166,7 +163,7 @@ void ScreenAppearanceOptions::GoToPrevState()
 void ScreenAppearanceOptions::GoToNextState()
 {
 	PREFSMAN->SaveGamePrefsToDisk();
-	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 }
 
 

@@ -1,4 +1,6 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+CHANGE:  Texture Hints have been removed in favor of smarter, automatic
+	texture format chooser.
 CHANGE:  New Nullsoft NSIS installer.
 CHANGE:  NG no longer breaks combo.
 NEW FEATURE:  Hidden easter egg.  You have to be "perfect" to find it.

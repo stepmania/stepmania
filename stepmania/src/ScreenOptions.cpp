@@ -11,13 +11,10 @@
 */
 
 #include "ScreenOptions.h"
-#include <assert.h>
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"
-#include "PrefsManager.h"
-#include "ScreenGameplay.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"

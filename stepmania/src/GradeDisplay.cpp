@@ -24,7 +24,7 @@ const float GRADES_TO_SCROLL = NUM_GRADE_FRAMES*4;
 
 GradeDisplay::GradeDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","evaluation grades") );
+	Load( THEME->GetPathTo("Graphics","evaluation grades 1x7") );
 	StopAnimating();
 
 	m_fTimeLeftInScroll = 0;
@@ -85,13 +85,8 @@ void GradeDisplay::SetGrade( PlayerNumber p, Grade g )
 	case GRADE_C:		SetState( 4*iNumCols+p );	break;
 	case GRADE_D:		SetState( 5*iNumCols+p );	break;
 	case GRADE_E:		SetState( 6*iNumCols+p );	break;
-	case GRADE_NO_DATA:	
-		if( this->GetNumStates()%8 == 0 )
-			SetState( 7*iNumCols+p );
-		else
-			SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	// don't show anything
-		break;
-	default:			ASSERT( false );
+	case GRADE_NO_DATA:	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );	break;
+	default:			ASSERT(0);
 	}
 };
 

@@ -17,7 +17,6 @@
 #include "Sprite.h"
 #include "AnnouncerManager.h"
 #include "ScreenManager.h"
-#include "ScreenTitleMenu.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 
@@ -70,7 +69,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 		this->SendScreenMessage( SM_GoToNextState, 0.8f );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	}
 }

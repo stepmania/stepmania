@@ -489,7 +489,6 @@ try_element_again:
 			CString sNewFilePath = sDir+"\\"+sNewFileName;
 			if( sNewFileName == ""  ||  !DoesFileExist(sNewFilePath) )
 			{
-				ASSERT(0);
 				throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath, sNewFilePath ); 
 			}
 			else

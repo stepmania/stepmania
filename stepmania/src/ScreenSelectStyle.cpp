@@ -15,38 +15,28 @@
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "RageMusic.h"
-#include "ScreenTitleMenu.h"
-#include "ScreenCaution.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ScreenSelectGroup.h"
-#include "ScreenSelectDifficulty.h"
-#include "ScreenSandbox.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 
 
-#define ICONS_START_X		THEME->GetMetricF("SelectStyle","IconsStartX")
-#define ICONS_SPACING_X		THEME->GetMetricF("SelectStyle","IconsSpacingX")
-#define ICONS_START_Y		THEME->GetMetricF("SelectStyle","IconsStartY")
-#define ICONS_SPACING_Y		THEME->GetMetricF("SelectStyle","IconsSpacingY")
-#define EXPLANATION_X		THEME->GetMetricF("SelectStyle","ExplanationX")
-#define EXPLANATION_Y		THEME->GetMetricF("SelectStyle","ExplanationY")
-#define INFO_X				THEME->GetMetricF("SelectStyle","InfoX")
-#define INFO_Y				THEME->GetMetricF("SelectStyle","InfoY")
-#define PREVIEW_X			THEME->GetMetricF("SelectStyle","PreviewX")
-#define PREVIEW_Y			THEME->GetMetricF("SelectStyle","PreviewY")
-#define HELP_TEXT			THEME->GetMetric("SelectStyle","HelpText")
-#define TIMER_SECONDS		THEME->GetMetricI("SelectStyle","TimerSeconds")
+#define ICONS_START_X		THEME->GetMetricF("ScreenSelectStyle","IconsStartX")
+#define ICONS_SPACING_X		THEME->GetMetricF("ScreenSelectStyle","IconsSpacingX")
+#define ICONS_START_Y		THEME->GetMetricF("ScreenSelectStyle","IconsStartY")
+#define ICONS_SPACING_Y		THEME->GetMetricF("ScreenSelectStyle","IconsSpacingY")
+#define EXPLANATION_X		THEME->GetMetricF("ScreenSelectStyle","ExplanationX")
+#define EXPLANATION_Y		THEME->GetMetricF("ScreenSelectStyle","ExplanationY")
+#define INFO_X				THEME->GetMetricF("ScreenSelectStyle","InfoX")
+#define INFO_Y				THEME->GetMetricF("ScreenSelectStyle","InfoY")
+#define PREVIEW_X			THEME->GetMetricF("ScreenSelectStyle","PreviewX")
+#define PREVIEW_Y			THEME->GetMetricF("ScreenSelectStyle","PreviewY")
+#define HELP_TEXT			THEME->GetMetric("ScreenSelectStyle","HelpText")
+#define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectStyle","TimerSeconds")
+#define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle","NextScreen")
 
-#define SELECT_DIFFICULTY_TYPE		THEME->GetMetricI("General","SelectDifficultyType")
-enum SelectDifficultyType // for use with the metric above
-{
-	SELECT_DIFFICULTY_TYPE_SKIP = 0,
-	SELECT_DIFFICULTY_TYPE_MAX,
-};
 
 const ScreenMessage SM_GoToPrevState		=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_GoToNextState		=	ScreenMessage(SM_User + 2);
@@ -108,12 +98,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_SELECT_STYLE_INTRO) );
 
-
-	if( !MUSIC->IsPlaying()  ||  MUSIC->GetLoadedFilePath() != THEME->GetPathTo("Sounds","select style music") )
-	{
-		MUSIC->Load( THEME->GetPathTo("Sounds","select style music") );
-		MUSIC->Play( true );
-	}
+	MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select style music") );
 
 	AfterChange();
 	TweenOnScreen();
@@ -154,20 +139,10 @@ void ScreenSelectStyle::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToPrevState:
 		MUSIC->Stop();
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextState:
-		switch( SELECT_DIFFICULTY_TYPE )
-		{
-		case SELECT_DIFFICULTY_TYPE_SKIP:
-			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
-			break;
-		case SELECT_DIFFICULTY_TYPE_MAX:
-			SCREENMAN->SetNewScreen( new ScreenSelectDifficulty );
-			break;
-		default:
-			ASSERT(0);
-		}
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }

@@ -1,30 +1,26 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenPlayerOptions.h
+ Class: ScreenPlayerOptions
 
  Desc: Select a song.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
 #include "ScreenPlayerOptions.h"
-#include <assert.h>
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageMusic.h"
 #include "ScreenManager.h"
-#include "ScreenGameplay.h"
-#include "ScreenSongOptions.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
-#include "ScreenSelectMusic.h"
 #include "RageLog.h"
 #include "GameManager.h"
 #include "GameState.h"
 #include "RageSound.h"
-#include "ScreenSelectCourse.h"
 
 
 enum {
@@ -134,14 +130,14 @@ void ScreenPlayerOptions::GoToPrevState()
 {
 	if(GAMESTATE->m_PlayMode == PLAY_MODE_ONI ||
 		GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS)
-		SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 	else
-		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
+		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
 }
 
 void ScreenPlayerOptions::GoToNextState()
 {
-	SCREENMAN->SetNewScreen( new ScreenSongOptions );
+	SCREENMAN->SetNewScreen( "ScreenSongOptions" );
 }
 
 
