@@ -148,10 +148,10 @@ public:
 
 
 		// set size of streams
-		rect.left	= -g_iMeterWidth/2 + g_iMeterWidth*fCorrectedLeftEdgePercent;
-		rect.top	= -g_iMeterHeight/2;
-		rect.right	= -g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent);
-		rect.bottom	= +g_iMeterHeight/2;
+		rect.left	= LONG(-g_iMeterWidth/2 + g_iMeterWidth*fCorrectedLeftEdgePercent);
+		rect.top	= LONG(-g_iMeterHeight/2);
+		rect.right	= LONG(-g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent));
+		rect.bottom	= LONG(+g_iMeterHeight/2);
 
 		ASSERT( rect.left <= g_iMeterWidth/2  &&  rect.right <= g_iMeterWidth/2 );  
 
@@ -164,7 +164,7 @@ public:
 
 
 		// set custom texture coords
-		float fPrecentOffset = fRightEdgePercent;
+//		float fPrecentOffset = fRightEdgePercent;
 
 		FRECT frectCustomTexCoords(
 			fPercentCroppedFromLeft,
@@ -194,10 +194,10 @@ public:
 		float fChamberRightPercent = GetChamberRightPercent( iChamber );
 
 		// draw mask for vertical chambers
-		rect.left	= -g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth-1; 
-		rect.top	= -g_iMeterHeight/2;
-		rect.right	= -g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth+1;
-		rect.bottom	= -g_iMeterHeight/2 + fHeightPercent*g_iMeterHeight;
+		rect.left	= LONG(-g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth-1);
+		rect.top	= LONG(-g_iMeterHeight/2);
+		rect.right	= LONG(-g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth+1);
+		rect.bottom	= LONG(-g_iMeterHeight/2 + fHeightPercent*g_iMeterHeight);
 
 		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
 		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
@@ -206,10 +206,10 @@ public:
 		m_quadMask.Draw();
 
 		// draw mask for horizontal chambers
-		rect.left	= -g_iMeterWidth/2 + fRightPercent*g_iMeterWidth; 
-		rect.top	= -g_iMeterHeight/2;
-		rect.right	= +g_iMeterWidth/2;
-		rect.bottom	= +g_iMeterHeight/2;
+		rect.left	= LONG(-g_iMeterWidth/2 + fRightPercent*g_iMeterWidth);
+		rect.top	= LONG(-g_iMeterHeight/2);
+		rect.right	= LONG(+g_iMeterWidth/2);
+		rect.bottom	= LONG(+g_iMeterHeight/2);
 
 		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
 		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
@@ -358,7 +358,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 	{
 
 		const float fDelta = m_fLifePercentage - m_fTrailingLifePercentage;
-		const float fSign = (fDelta>0) ? 1 : -1;
+//		const float fSign = (fDelta>0) ? 1.0f : -1.0f;
 
 //		const float fLinearForce = fSign * 0.2f;
 //		m_fLifeVelocity += fSpringForce * fDeltaTime;
