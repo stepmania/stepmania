@@ -3,10 +3,11 @@
 
 #include "song.h"
 
+class RageFile;
 class NotesWriterSM
 {
-	void WriteGlobalTags(FILE *fp, const Song &out);
-	void WriteSMNotesTag( const Steps &in, FILE* fp, bool bSavingCache );
+	void WriteGlobalTags( RageFile &f, const Song &out );
+	void WriteSMNotesTag( const Steps &in, RageFile &f, bool bSavingCache );
 
 public:
 	bool Write( CString sPath, const Song &out, bool bSavingCache );
