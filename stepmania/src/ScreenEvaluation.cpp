@@ -212,7 +212,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 			RankingCategory cat[NUM_PLAYERS];
 			int iRankingIndex[NUM_PLAYERS];
-			float	fTotalDP;
+			float	fTotalDP = 0;
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;

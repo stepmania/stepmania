@@ -29,8 +29,8 @@ Chris Danford
 
 #define ELEM_SPACING	THEME->GetMetricI("ScreenSelectMode","ElementSpacing")
 #define INCLUDE_DOUBLE_IN_JP	THEME->GetMetricI("ScreenSelectMode","IncludeDoubleInJointPremium")
-#define SCROLLING_LIST_X	THEME->GetMetricI("ScreenSelectMode","ScrollingListX")
-#define SCROLLING_LIST_Y	THEME->GetMetricI("ScreenSelectMode","ScrollingListY")
+#define SCROLLING_LIST_X	THEME->GetMetricF("ScreenSelectMode","ScrollingListX")
+#define SCROLLING_LIST_Y	THEME->GetMetricF("ScreenSelectMode","ScrollingListY")
 #define GUIDE_X		THEME->GetMetricF("ScreenSelectMode", "GuideX")
 #define GUIDE_Y		THEME->GetMetricF("ScreenSelectMode", "GuideY")
 #define USECONFIRM THEME->GetMetricI("ScreenSelectMode","UseConfirm")

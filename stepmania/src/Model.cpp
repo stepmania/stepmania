@@ -128,7 +128,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
                 strcpy( mesh.szName, szName );
 //                mesh.nFlags = nFlags;
-                mesh.nMaterialIndex = nIndex;
+                mesh.nMaterialIndex = (byte)nIndex;
 
                 //
                 // vertices
@@ -173,7 +173,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 //                  vertex.nFlags = nFlags;
                     memcpy( vertex.Vertex, Vertex, sizeof(vertex.Vertex) );
                     memcpy( vertex.uv, uv, sizeof(vertex.uv) );
-                    vertex.nBoneIndex = nIndex;
+                    vertex.nBoneIndex = (byte)nIndex;
 					AddPointToBounds (Vertex, m_vMins, m_vMaxs);
                 }
 
@@ -547,7 +547,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
     // Setup temp vertices
 	m_vTempVerticesByBone.resize( m_pModel->Meshes.size() );
-	for (i = 0; i < m_pModel->Meshes.size(); i++)
+	for (i = 0; i < (int)m_pModel->Meshes.size(); i++)
     {
 		msMesh& Mesh = m_pModel->Meshes[i];
 		m_vTempVerticesByBone[i].resize( Mesh.Vertices.size() );
@@ -703,13 +703,13 @@ bool Model::LoadMilkshapeAsciiBones( CString sPath )
 
 	// ignore "Frames:" in file
 	m_pModel->nTotalFrames = 0;
-    for (int i = 0; i < m_pModel->Bones.size(); i++)
+    for (int i = 0; i < (int)m_pModel->Bones.size(); i++)
     {
 		msBone& Bone = m_pModel->Bones[i];
-		for( int j=0; j<Bone.PositionKeys.size(); j++ )
+		for( int j=0; j<(int)Bone.PositionKeys.size(); j++ )
 		{
-			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, Bone.PositionKeys[j].fTime );
-			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, Bone.RotationKeys[j].fTime );
+			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, (int)Bone.PositionKeys[j].fTime+1 );
+			m_pModel->nTotalFrames = max( m_pModel->nTotalFrames, (int)Bone.RotationKeys[j].fTime+1 );
 		}
 	}
 
@@ -850,7 +850,7 @@ Model::SetupBones ()
 		}
 	}
 
-	for (i = 0; i < m_pModel->Meshes.size(); i++)
+	for (i = 0; i < (int)m_pModel->Meshes.size(); i++)
 	{
 		msMesh *pMesh = &m_pModel->Meshes[i];
 		for (j = 0; j < (int)pMesh->Vertices.size(); j++)
@@ -997,14 +997,14 @@ void Model::Update( float fDelta )
 	Actor::Update( fDelta );
 	AdvanceFrame( fDelta );
 	if( m_pModel )
-		for( int i=0; i<m_pModel->Materials.size(); i++ )
+		for( int i=0; i<(int)m_pModel->Materials.size(); i++ )
 			m_pModel->Materials[i].aniTexture.Update( fDelta );
 }
 
 void Model::SetState( int iNewState )
 {
 	if( m_pModel )
-		for( int i=0; i<m_pModel->Materials.size(); i++ )
+		for( int i=0; i<(int)m_pModel->Materials.size(); i++ )
 			m_pModel->Materials[i].aniTexture.SetState( iNewState );
 }
 
@@ -1012,7 +1012,7 @@ int Model::GetNumStates()
 {
 	int iMaxStates = 0;
 	if( m_pModel )
-		for( int i=0; i<m_pModel->Materials.size(); i++ )
+		for( int i=0; i<(int)m_pModel->Materials.size(); i++ )
 			iMaxStates = max( iMaxStates, m_pModel->Materials[i].aniTexture.GetNumStates() );
 	return iMaxStates;
 }

@@ -581,10 +581,10 @@ void Player::CrossedRow( int iNoteRow )
 
 void Player::RandomiseNotes( int iNoteRow )
 {
-	int NewNoteRow = iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed; // change the row to look ahead from based upon their speed mod
+	int NewNoteRow = (int)(iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed); // change the row to look ahead from based upon their speed mod
 	// check to see if they're at the crossed row
-	int EmptyNoteCol = -1;
-	int WaitingForEmptyColumn = -1;
+//	int EmptyNoteCol = -1;
+//	int WaitingForEmptyColumn = -1;
 
 	bool b_updatenotedata = false;
 	int iNumOfTracks = GetNumTracks();

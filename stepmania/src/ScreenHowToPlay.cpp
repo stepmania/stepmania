@@ -18,7 +18,7 @@
 #include "SongManager.h"
 #include "NoteFieldPositioning.h"
 
-#define BPMSPEED				THEME->GetMetricI("ScreenHowToPlay","ScrollBPM")
+#define BPMSPEED				THEME->GetMetricF("ScreenHowToPlay","ScrollBPM")
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
@@ -63,7 +63,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	pND->SetTapNote( 2, ROWS_PER_BEAT*46,    TAP_TAP );
 
 	m_pSong = new Song;
-	m_pSong->AddBPMSegment( BPMSegment(0,BPMSPEED) );
+	m_pSong->AddBPMSegment( BPMSegment(0.0,BPMSPEED) );
 	m_pSong->AddStopSegment( StopSegment(12,2) );
 	m_pSong->AddStopSegment( StopSegment(16,2) );
 	m_pSong->AddStopSegment( StopSegment(20,2) );

@@ -519,6 +519,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenTitleMenu.h">
 			</File>
 			<File
+				RelativePath="ScreenUnlock.cpp">
+			</File>
+			<File
 				RelativePath="ScreenUnlock.h">
 			</File>
 			<File
@@ -1618,6 +1621,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Model.h">
 			</File>
 			<File
+				RelativePath="ModelTypes.cpp">
+			</File>
+			<File
+				RelativePath="ModelTypes.h">
+			</File>
+			<File
 				RelativePath="Quad.h">
 			</File>
 			<File
@@ -1707,6 +1716,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\ThemeManager.h">
+			</File>
+			<File
+				RelativePath="UnlockSystem.cpp">
+			</File>
+			<File
+				RelativePath="UnlockSystem.h">
 			</File>
 		</Filter>
 		<File
