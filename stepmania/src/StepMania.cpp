@@ -355,6 +355,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 				"\n",
 				g_sErrorString
 				);
+		}
 
 		// throw up a pretty error dialog
 		DialogBox(
@@ -363,9 +364,6 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 			NULL,
 			ErrorWndProc
 			);
-
-		}
-
 	}
 #endif
 
