@@ -303,9 +303,12 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos, bool rollover )
 	if( pos < 0 )
 		return;
 
-	fFirstPos[pn] = min( pos, fFirstPos[pn] );
-	fLastPos[pn] = max( pos, fLastPos[pn] );
-	
+	if( !rollover )
+	{
+		fFirstPos[pn] = min( pos, fFirstPos[pn] );
+		fLastPos[pn] = max( pos, fLastPos[pn] );
+	}
+
 	int cnt = iCurCombo[pn];
 	if( !cnt )
 		return; /* no combo */
