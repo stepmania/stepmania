@@ -23,7 +23,7 @@ public:
 	virtual ~RageBitmapTexture();
 	/* only called by RageTextureManager::InvalidateTextures */
 	virtual void Invalidate() { m_uGLTextureID = 0; }
-	virtual void Reload( RageTextureID name );
+	virtual void Reload();
 
 private:
 	void Create();	// called by constructor and Reload

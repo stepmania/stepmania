@@ -51,7 +51,7 @@ public:
 	RageTexture( RageTextureID file );
 	virtual ~RageTexture() = 0;
 	virtual void Update( float fDeltaTime ) {}
-	virtual void Reload( RageTextureID ID ) { m_ID = m_ActualID = ID; }
+	virtual void Reload() { SetActualID(); }
 	virtual void Invalidate() { }	/* only called by RageTextureManager::InvalidateTextures */
 	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
 
@@ -99,7 +99,9 @@ public:
 
 private:
 	/* The file we were asked to load.  (This is never changed.) */
-	RageTextureID m_ID;
+	const RageTextureID m_ID;
+
+	void SetActualID();
 
 protected:
 	/* We might change settings when loading (due to hints, hardware

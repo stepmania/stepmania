@@ -79,7 +79,7 @@ RageMovieTexture::~RageMovieTexture()
 		glDeleteTextures(1, &m_uGLTextureID);
 }
 
-void RageMovieTexture::Reload( RageTextureID ID )
+void RageMovieTexture::Reload()
 {
 	// do nothing
 }
@@ -116,6 +116,9 @@ void RageMovieTexture::Update(float fDeltaTime)
 		min(m_iSourceHeight, m_iTextureHeight),
 		GL_BGR, GL_UNSIGNED_BYTE, buffer);
 
+	/* Must unset PixelStore when we're done! */
+	glPixelStorei(GL_UNPACK_SWAP_BYTES, 0);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 }
 

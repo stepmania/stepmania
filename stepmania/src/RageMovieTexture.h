@@ -47,7 +47,7 @@ public:
 	virtual ~RageMovieTexture();
 	void Update(float fDeltaTime);
 
-	virtual void Reload( RageTextureID ID );
+	virtual void Reload();
 
 	virtual void Play();
 	virtual void Pause();

@@ -88,8 +88,6 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	}
 
 	// the texture is not already loaded.  Load it.
-	ID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
-	ID.iMaxSize = TEXTUREMAN->GetMaxTextureResolution();
 
 	CString sDir, sFName, sExt;
 	splitpath( ID.filename, sDir, sFName, sExt );
@@ -200,24 +198,7 @@ void RageTextureManager::ReloadAll()
 	for( std::map<RageTextureID, RageTexture*>::iterator i = m_mapPathToTexture.begin();
 		i != m_mapPathToTexture.end(); ++i)
 	{
-		RageTexture* pTexture = i->second;
-
-		/* A note on how this really works:
-		 *
-		 * The ID identifies a texture, and all of the parameters needed
-		 * to produce it.  When we load a texture, iColorDepth is pulled
-		 * from GetTextureColorDepth().  Now we're reloading it, probably
-		 * due to a change in display settings, so we need to update that
-		 * to the current setting and reload it.  This will also change
-		 * the data in our map (which is OK; it's not part of the ordering)
-		 * to reflect this. */
-
-		/* Update the settings that are based on preferences. */
-		RageTextureID ID = i->first;
-		ID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
-		ID.iMaxSize = TEXTUREMAN->GetMaxTextureResolution();
-
-		pTexture->Reload( ID );
+		i->second->Reload();
 	}
 }
 

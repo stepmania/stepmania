@@ -117,9 +117,9 @@ RageBitmapTexture::~RageBitmapTexture()
 		glDeleteTextures(1, &m_uGLTextureID);
 }
 
-void RageBitmapTexture::Reload( RageTextureID ID )
+void RageBitmapTexture::Reload()
 {
-	RageTexture::Reload(ID);
+	RageTexture::Reload();
 	DISPLAY->SetTexture(0);
 
 	if(m_uGLTextureID) 
