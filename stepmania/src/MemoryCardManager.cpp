@@ -43,6 +43,8 @@ void MemoryCardManager::Update( float fDelta )
 		vector<UsbStorageDevice> vConnects;	// fill these in below
 		vector<UsbStorageDevice> vDisconnects;	// fill these in below
 		
+		FOREACH( UsbStorageDevice, m_vStorageDevices, d )
+			FixSlashesInPlace( d->sOsMountDir );
 		
 		// check for disconnects
 		FOREACH( UsbStorageDevice, vOld, old )
