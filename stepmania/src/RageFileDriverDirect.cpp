@@ -67,6 +67,17 @@ static HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
 #endif
 }
 
+static bool WinCallNotSupported( int err  )
+{
+	switch( err )
+	{
+	case ERROR_NOT_SUPPORTED:
+	case ERROR_CALL_NOT_IMPLEMENTED:
+		return true;
+	}
+	return false;
+}
+
 static int WinMoveFile( const CString sOldPath, const CString sNewPath )
 {
 	static bool Win9x = false;
@@ -76,7 +87,7 @@ static int WinMoveFile( const CString sOldPath, const CString sNewPath )
 		if( MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING ) )
 			return 1;
 
-		if( GetLastError() != ERROR_NOT_SUPPORTED )
+		if( !WinCallNotSupported(GetLastError()) )
 			return 0;
 
 		Win9x = true;
