@@ -12,6 +12,7 @@ public:
 	AppInstance();
 	~AppInstance();
 	HINSTANCE Get() const { return h; }
+	operator HINSTANCE () const { return h; }
 };
 
 #endif
