@@ -360,7 +360,6 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 	if( !ToSel )
 		PREFSMAN->m_bEventMode = (sel == 7);
 }
-MOVE( EventMode,			PREFSMAN->m_bEventMode );
 
 /* Machine options */
 MOVE( ScoringType,			(int &) PREFSMAN->m_iScoringType );
@@ -577,7 +576,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "CoinModeNoHome",			CoinModeNoHome,		"PAY","FREE PLAY" ) );
 	ADD( ConfOption( "Songs Per\nPlay",			SongsPerPlay,		"1","2","3","4","5","6","7" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","6","7","EVENT" ) );
-	ADD( ConfOption( "Event\nMode",				EventMode,			"OFF","ON" ) );
+	ADD( ConfOption( "EventMode",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "Scoring\nType",			ScoringType,		"MAX2","5TH" ) );
 	ADD( ConfOption( "Judge\nDifficulty",		JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
 	ADD( ConfOption( "Life\nDifficulty",		LifeDifficulty,		"1","2","3","4","5","6","7" ) );
