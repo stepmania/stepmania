@@ -273,6 +273,9 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 
 	ctr = uint8_t( g_CurStageStats.GetGrade((PlayerNumber)playerID)*16 );
 
+	if ( g_CurStageStats.bFailedEarlier[(PlayerNumber)playerID] )
+		ctr = uint8_t( 112 );	//Code for failed (failed constant seems not to work)
+
 	m_packet.Write1(ctr);
 
 	m_packet.Write4(score);
