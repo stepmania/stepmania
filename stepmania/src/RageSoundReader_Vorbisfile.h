@@ -1,11 +1,11 @@
 #ifndef RAGE_SOUND_READER_SDL_SOUND
 #define RAGE_SOUND_READER_SDL_SOUND
 
-#include "RageSoundReader.h"
+#include "RageSoundReader_FileReader.h"
 
 typedef struct OggVorbis_File OggVorbis_File;
 
-class RageSoundReader_Vorbisfile: public SoundReader {
+class RageSoundReader_Vorbisfile: public SoundReader_FileReader {
 	OggVorbis_File *vf;
 	char buffer[4096*4];
 	unsigned avail;

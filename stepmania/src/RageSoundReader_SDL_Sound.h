@@ -1,10 +1,10 @@
 #ifndef RAGE_SOUND_READER_SDL_SOUND
 #define RAGE_SOUND_READER_SDL_SOUND
 
-#include "RageSoundReader.h"
+#include "RageSoundReader_FileReader.h"
 #include "SDL_sound-1.0.0/SDL_sound.h"
 
-class SoundReader_SDL_Sound: public SoundReader {
+class SoundReader_SDL_Sound: public SoundReader_FileReader {
 	Sound_Sample *Sample;
 	const char *inbuf;
 	unsigned avail;
