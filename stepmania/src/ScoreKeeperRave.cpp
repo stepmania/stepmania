@@ -65,7 +65,7 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	}
 }
 
-void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
+void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore, bool failed )
 {
 
 }

@@ -392,14 +392,14 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 }
 
 
-void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
+void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore, bool failed)
 {
 	// update dance points totals
 	GAMESTATE->m_CurStageStats.iHoldNoteScores[m_PlayerNumber][holdScore] ++;
 	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
 
 	if( holdScore == HNS_OK )
-		AddScore( TNS_MARVELOUS , false);
+		AddScore( TNS_MARVELOUS , failed);
 }
 
 

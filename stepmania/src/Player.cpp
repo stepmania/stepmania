@@ -698,9 +698,9 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 		return;
 
 	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleHoldScore(holdScore, tapScore);
+		m_pPrimaryScoreKeeper->HandleHoldScore(holdScore, tapScore, m_pLifeMeter->FailedEarlier());
 	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore);
+		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore, m_pLifeMeter->FailedEarlier());
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
