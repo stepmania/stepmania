@@ -72,6 +72,17 @@ if test "x$have_SDL_image" = "xno"; then
   exit 0;
 fi
 
+have_libjpeg=yes
+AC_SEARCH_LIBS(jpeg_read_scanlines, [jpeg], ,  have_libjpeg=no)
+AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
+if test "x$have_SDL_image" = "xno"; then
+  echo
+  echo "*** libjpeg is required to build StepMania; please"
+  echo "*** make sure that libjpeg is installed to continue"
+  echo "*** the installation process."
+  exit 0;
+fi
+
 SM_ZLIB
 SM_AUDIO
 
