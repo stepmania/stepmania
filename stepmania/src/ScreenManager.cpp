@@ -498,7 +498,10 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	 * creating the new screen, to lower peak memory usage slightly. */
 	SONGMAN->Cleanup();
 
+	RageTimer t;
+	LOG->Trace( "Loading screen %s", sClassName.c_str() );
 	Screen *ret = Screen::Create( sClassName );
+	LOG->Trace( "Loaded %s in %f", sClassName.c_str(), t.GetDeltaTime());
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
 	 * from displaying an unnaturally low FPS value, and the next FPS value we
@@ -577,16 +580,12 @@ retry:
 	/* If we prepped a screen but didn't use it, nuke it. */
 	SAFE_DELETE( m_ScreenBuffered );
 
-	RageTimer t;
-
 	Screen* pOldTopScreen = m_ScreenStack.empty() ? NULL : m_ScreenStack.back();
 
 	// It makes sense that ScreenManager should allocate memory for a new screen since it 
 	// deletes it later on.  This also convention will reduce includes because screens won't 
 	// have to include each other's headers of other screens.
-	LOG->Trace( "Loading screen %s", sClassName.c_str() );
 	Screen* pNewScreen = MakeNewScreen(sClassName);
-	LOG->Trace( "Loaded %s in %f", sClassName.c_str(), t.GetDeltaTime());
 
 	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
 	{
