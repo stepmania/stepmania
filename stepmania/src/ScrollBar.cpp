@@ -57,6 +57,7 @@ void ScrollBar::SetBarHeight( int iHeight )
 
 void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 {
+	CHECKPOINT;
 	const int k_iBarContentHeight = m_iBarHeight - int( m_sprTopButton.GetUnzoomedHeight()/2 + m_sprBottomButton.GetUnzoomedHeight()/2 );
 
 	// make sure the percent numbers are between 0 and 1
@@ -101,4 +102,5 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 	{
 		m_sprScrollThumbPart2.SetZoomY( 0 );
 	}
+	CHECKPOINT;
 }
