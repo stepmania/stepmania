@@ -125,6 +125,8 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
+	/* XXX: We shouldn't do this, because we shouldn't send newlines of any kind to Info();
+	 * it results in oddly delimited output ... */
 	this->Info( "%s", GetAdditionalLog() );
 
 	Flush();
