@@ -60,6 +60,7 @@ protected:
 	};
 	void LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& data_out );
 	map<CString,NoteSkinData> m_mapNameToData;
+	Game m_CurGame;
 };
 
 

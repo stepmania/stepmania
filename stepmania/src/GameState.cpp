@@ -78,6 +78,8 @@ void GameState::Reset()
 	m_bAllow2ndExtraStage = true;
 	m_bDifficultCourses = false;
 
+	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
+
 	m_iGameSeed = rand();
 	m_iRoundSeed = rand();
 

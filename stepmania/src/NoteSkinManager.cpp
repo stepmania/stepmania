@@ -33,6 +33,7 @@ const CString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common" SLASH "default
 
 NoteSkinManager::NoteSkinManager()
 {
+	m_CurGame = GAME_INVALID;
 }
 
 NoteSkinManager::~NoteSkinManager()
@@ -41,6 +42,10 @@ NoteSkinManager::~NoteSkinManager()
 
 void NoteSkinManager::RefreshNoteSkinData( Game game )
 {
+	/* Reload even if we don't need to, so exiting out of the menus refreshes the note
+	 * skin list (so you don't have to restart to see new noteskins). */
+	m_CurGame = GAMESTATE->m_CurGame;
+
 	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
 
 	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + SLASH;
@@ -97,7 +102,17 @@ void NoteSkinManager::LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& dat
 
 void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 {
-	GetNoteSkinNames( GAMESTATE->m_CurGame, AddTo );
+	/* If the skin data for the current game isn't already load it, load it now. */
+	if( m_CurGame != GAMESTATE->m_CurGame )
+		RefreshNoteSkinData( GAMESTATE->m_CurGame );
+
+	/* Don't call GetNoteSkinNames below, since we don't want to call RefreshNoteSkinData; it's
+	 * slow. */
+	for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin(); 
+		iter != m_mapNameToData.end(); ++iter )
+	{
+		AddTo.push_back( iter->second.sName );
+	}
 }
 
 void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
@@ -105,8 +120,7 @@ void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo )
 	RefreshNoteSkinData( game );
 
 	for( map<CString,NoteSkinData>::const_iterator iter = m_mapNameToData.begin(); 
-		iter != m_mapNameToData.end();
-		++iter )
+		iter != m_mapNameToData.end(); ++iter )
 	{
 		AddTo.push_back( iter->second.sName );
 	}
