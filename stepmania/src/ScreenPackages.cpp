@@ -611,7 +611,7 @@ void ScreenPackages::HTTPUpdate()
 			return;
 		}
 		m_iResponseCode = atoi(m_sBUFFER.substr(i+1,j-i).c_str());
-		m_sResponseName = m_sBUFFER.substr( j+1, k-j).c_str();
+		m_sResponseName = m_sBUFFER.substr( j+1, k-j );
 
 		i = m_sBUFFER.find("Content-Length:");
 		j = m_sBUFFER.find("\n", i+1 );
