@@ -812,6 +812,7 @@ struct blit_traits_depallete { enum { convert = PAL_TO_RGBA }; };
 template<class ckey,class blit_traits>
 static void blit( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height );
 
+template<>
 static void blit<blit_traits_false,blit_traits_identity>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
@@ -850,6 +851,7 @@ static void blit<blit_traits_false,blit_traits_identity>( SDL_Surface *src_surf,
 
 /* Rescaling blit with no ckey.  This is what gets used to update moveis in
  * D3D, so optimization is very important. */
+template<>
 static void blit<blit_traits_false,blit_traits_rescale>( SDL_Surface *src_surf, const SDL_Surface *dst_surf, int width, int height )
 {
 	const char *src = (const char *) src_surf->pixels;
