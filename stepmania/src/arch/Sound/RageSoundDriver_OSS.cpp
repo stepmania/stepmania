@@ -4,6 +4,7 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageSound.h"
+#include "RageSoundManager.h"
 #include "RageUtil.h"
 
 #include "SDL.h"
