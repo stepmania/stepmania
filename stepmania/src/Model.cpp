@@ -388,8 +388,10 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 					if( IsAFile(sTexturePath) )
 						Material.aniTexture.Load( sTexturePath );
 					else
-						LOG->Warn( "\"%s\" references a texture \"%s\" that does not exist",
-							sPath.c_str(), sTexturePath.c_str() );
+					{
+						CString sError = ssprintf( "'%s' references a texture '%s' that does not exist", sPath.c_str(), sTexturePath.c_str() );
+						RageException::Throw( sError );
+					}
 				}
 
                 // alpha texture
