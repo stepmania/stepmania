@@ -170,6 +170,8 @@
 				AA082E9E0653C7E6001A3A80,
 				AA70E3640663112800DAE1FD,
 				AA8B6C7804AFD82B00D02EE9,
+				AA1145D5075DFAA30050A3D1,
+				AA1145D6075DFAA30050A3D1,
 			);
 			isa = PBXGroup;
 			name = "Other Source";
@@ -1257,6 +1259,94 @@
 		};
 		AA0FA06C05AD38D300DA0695 = {
 			fileRef = AA0FA06B05AD38D300DA0695;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1145D5075DFAA30050A3D1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = VirtualKeyboard.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA1145D6075DFAA30050A3D1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = VirtualKeyboard.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA1145D7075DFAA30050A3D1 = {
+			fileRef = AA1145D5075DFAA30050A3D1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1145D8075DFAA30050A3D1 = {
+			fileRef = AA1145D6075DFAA30050A3D1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1145D9075DFADF0050A3D1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenPackages.cpp;
+			path = ../src/ScreenPackages.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA1145DA075DFADF0050A3D1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenPackages.h;
+			path = ../src/ScreenPackages.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA1145DB075DFADF0050A3D1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenSystemLayer.cpp;
+			path = ../src/ScreenSystemLayer.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA1145DC075DFADF0050A3D1 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenSystemLayer.h;
+			path = ../src/ScreenSystemLayer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA1145DD075DFADF0050A3D1 = {
+			fileRef = AA1145D9075DFADF0050A3D1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1145DE075DFADF0050A3D1 = {
+			fileRef = AA1145DA075DFADF0050A3D1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1145DF075DFADF0050A3D1 = {
+			fileRef = AA1145DB075DFADF0050A3D1;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1145E0075DFADF0050A3D1 = {
+			fileRef = AA1145DC075DFADF0050A3D1;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2405,6 +2495,9 @@
 				AA7ADC2A072CAB7F00C50A7F,
 				AAF793F6074FE69E00D74516,
 				AAF793F8074FE69E00D74516,
+				AA1145D8075DFAA30050A3D1,
+				AA1145DE075DFADF0050A3D1,
+				AA1145E0075DFADF0050A3D1,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4323,6 +4416,9 @@
 				AA7ADC29072CAB7F00C50A7F,
 				AAF793F5074FE69E00D74516,
 				AAF793F7074FE69E00D74516,
+				AA1145D7075DFAA30050A3D1,
+				AA1145DD075DFADF0050A3D1,
+				AA1145DF075DFADF0050A3D1,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7395,6 +7491,8 @@
 				AA53D28505277DAF00D02EE9,
 				AA53D28605277DAF00D02EE9,
 				AA53D28705277DAF00D02EE9,
+				AA1145D9075DFADF0050A3D1,
+				AA1145DA075DFADF0050A3D1,
 				AA6E004F047711F3005F316C,
 				AA6E0050047711F3005F316C,
 				AA1C6552050D23200073A143,
@@ -7433,6 +7531,8 @@
 				AA6E0074047711F3005F316C,
 				AA6E0075047711F3005F316C,
 				AA6E0076047711F3005F316C,
+				AA1145DB075DFADF0050A3D1,
+				AA1145DC075DFADF0050A3D1,
 				AA6E0077047711F3005F316C,
 				AA6E0078047711F3005F316C,
 				AA6E0079047711F3005F316C,
