@@ -1300,8 +1300,10 @@ void ScreenGameplay::UpdateCheckFail()
 		if( GAMESTATE->m_CurStageStats.bFailed[pn] )
 			continue; /* failed and is already dead */
 		
-		/* If recovery is enabled, only set fail if both are failing. */
-		if( PREFSMAN->m_bTwoPlayerRecovery && !AllAreFailing() )
+		/* If recovery is enabled, only set fail if both are failing.
+		 * There's no way to recover mid-song in battery mode. */
+		if( GAMESTATE->m_SongOptions.m_LifeType != SongOptions::LIFE_BATTERY &&
+			PREFSMAN->m_bTwoPlayerRecovery && !AllAreFailing() )
 			continue;
 
 		LOG->Trace("Player %d failed", (int)pn);
