@@ -162,9 +162,12 @@ void RageSound::Fail(CString reason)
 	error = reason;
 }
 
-bool RageSound::Load(CString sSoundFilePath, bool cache)
+bool RageSound::Load(CString sSoundFilePath, int precache)
 {
 	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.GetString() );
+
+	if(precache == 2)
+		precache = false;
 
 	/* Don't load over copies. */
 	ASSERT(original == this || m_sFilePath == "");
@@ -185,7 +188,7 @@ bool RageSound::Load(CString sSoundFilePath, bool cache)
 
 	/* Try to decode into full_buf. */
 	big = false;
-	if(!cache)
+	if(!precache)
 		big = true; /* Don't. */
 
 	/* Check the length, and see if we think it'll fit in the buffer. */
