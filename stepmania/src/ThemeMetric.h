@@ -25,6 +25,7 @@ public:
 		m_sGroup( sGroup ),
 		m_sName( sName )
 	{
+		m_currentValue = T();
 		ThemeManager::Subscribe( this );
 	}
 
