@@ -6,7 +6,6 @@
 #ifdef OS_RNG_AVAILABLE
 
 #include "randpool.h"
-#include "rng.h"
 
 //added
 #include "cryptlib.h"

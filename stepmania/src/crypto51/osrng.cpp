@@ -7,8 +7,6 @@
 
 #ifdef OS_RNG_AVAILABLE
 
-#include "rng.h"
-
 #ifdef CRYPTOPP_WIN32_AVAILABLE
 #ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0400
