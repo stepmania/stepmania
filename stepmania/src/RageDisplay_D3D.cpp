@@ -202,95 +202,83 @@ const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFor
 
 
 
-RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
+RageDisplay_D3D::RageDisplay_D3D()
+{
+
+}
+
+#define D3D_NOT_INSTALLED \
+	"DirectX 8.1 or greater is not installed.  You can download it from:\n" \
+	"http://www.microsoft.com/downloads/details.aspx?FamilyID=a19bed22-0b25-4e5d-a584-6389d8a3dad0&displaylang=en"
+
+CString RageDisplay_D3D::Init( VideoModeParams p )
 {
 	GraphicsWindow::Initialize();
 
-	try
-	{
-		LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
-		LOG->MapLog("renderer", "Current renderer: Direct3D");
+	LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
+	LOG->MapLog("renderer", "Current renderer: Direct3D");
 
-		typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
-		Direct3DCreate8_t pDirect3DCreate8;
+	typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
+	Direct3DCreate8_t pDirect3DCreate8;
 #if defined(XBOX)
-		pDirect3DCreate8 = Direct3DCreate8;
+	pDirect3DCreate8 = Direct3DCreate8;
 #else
-		g_D3D8_Module = LoadLibrary("D3D8.dll");
-		if(!g_D3D8_Module)
-			throw RageException_D3DNotInstalled();
+	g_D3D8_Module = LoadLibrary("D3D8.dll");
+	if(!g_D3D8_Module)
+		return D3D_NOT_INSTALLED;
 
-		pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
-		if(!pDirect3DCreate8)
-		{
-			LOG->Trace( "Direct3DCreate8 not found" );
-			throw RageException_D3DNotInstalled();
-		}
-#endif
-
-		g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
-		if(!g_pd3d)
-		{
-			LOG->Trace( "Direct3DCreate8 failed" );
-			throw RageException_D3DNotInstalled();
-		}
-
-		if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
-			throw RageException_D3DNoAcceleration();
-
-		D3DADAPTER_IDENTIFIER8	identifier;
-		g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
-
-		LOG->Trace( 
-			"Driver: %s\n"
-			"Description: %s\n"
-			"Max texture size: %d\n"
-			"Alpha in palette: %s\n",
-			identifier.Driver, 
-			identifier.Description,
-			g_DeviceCaps.MaxTextureWidth,
-			(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) ? "yes" : "no" );
-
-		LOG->Trace( "This display adaptor supports the following modes:" );
-		D3DDISPLAYMODE mode;
-		for( UINT u=0; u<g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
-			if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
-				LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
-
-		g_PaletteIndex.clear();
-		for( int i = 0; i < 256; ++i )
-			g_PaletteIndex.push_back(i);
-
-		// Save the original desktop format.
-		g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
-
-		/* Up until now, all we've done is set up g_pd3d and do some queries.  Now,
-		 * actually initialize the window.  Do this after as many error conditions
-		 * as possible, because if we have to shut it down again we'll flash a window
-		 * briefly. */
-		bool bIgnore = false;
-		CString sError = SetVideoMode( p, bIgnore );
-		if( sError != "" )
-			RageException::ThrowNonfatal( sError );
-	} catch(...) {
-		// Clean up; ~RageDisplay will not be called.
-		if( g_pd3d )
-		{
-			g_pd3d->Release();
-			g_pd3d = NULL;
-		}
-
-#if !defined(XBOX)
-		if( g_D3D8_Module )
-		{
-			FreeLibrary( g_D3D8_Module );
-			g_D3D8_Module = NULL;
-		}
-#endif
-		GraphicsWindow::Shutdown();
-
-		throw;
+	pDirect3DCreate8 = (Direct3DCreate8_t) GetProcAddress(g_D3D8_Module, "Direct3DCreate8");
+	if(!pDirect3DCreate8)
+	{
+		LOG->Trace( "Direct3DCreate8 not found" );
+		return D3D_NOT_INSTALLED;
 	}
+#endif
+
+	g_pd3d = pDirect3DCreate8( D3D_SDK_VERSION );
+	if(!g_pd3d)
+	{
+		LOG->Trace( "Direct3DCreate8 failed" );
+		return D3D_NOT_INSTALLED;
+	}
+
+	if( FAILED( g_pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &g_DeviceCaps) ) )
+		return
+			"Your system is reporting that Direct3D hardware acceleration is not available.  "
+			"Please obtain an updated driver from your video card manufacturer.\n\n";
+
+	D3DADAPTER_IDENTIFIER8	identifier;
+	g_pd3d->GetAdapterIdentifier( D3DADAPTER_DEFAULT, 0, &identifier );
+
+	LOG->Trace( 
+		"Driver: %s\n"
+		"Description: %s\n"
+		"Max texture size: %d\n"
+		"Alpha in palette: %s\n",
+		identifier.Driver, 
+		identifier.Description,
+		g_DeviceCaps.MaxTextureWidth,
+		(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) ? "yes" : "no" );
+
+	LOG->Trace( "This display adaptor supports the following modes:" );
+	D3DDISPLAYMODE mode;
+	for( UINT u=0; u<g_pd3d->GetAdapterModeCount(D3DADAPTER_DEFAULT); u++ )
+		if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
+			LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
+
+	g_PaletteIndex.clear();
+	for( int i = 0; i < 256; ++i )
+		g_PaletteIndex.push_back(i);
+
+	// Save the original desktop format.
+	g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
+
+	/* Up until now, all we've done is set up g_pd3d and do some queries.  Now,
+	 * actually initialize the window.  Do this after as many error conditions
+	 * as possible, because if we have to shut it down again we'll flash a window
+	 * briefly. */
+	bool bIgnore = false;
+	return SetVideoMode( p, bIgnore );
 }
 
 void RageDisplay_D3D::Update(float fDeltaTime)
@@ -302,8 +290,19 @@ RageDisplay_D3D::~RageDisplay_D3D()
 {
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
 
-	g_pd3dDevice->Release();
-    g_pd3d->Release();
+	if( g_pd3dDevice )
+		g_pd3dDevice->Release();
+
+	if( g_pd3d )
+	    g_pd3d->Release();
+
+#if !defined(XBOX)
+	if( g_D3D8_Module )
+	{
+		FreeLibrary( g_D3D8_Module );
+		g_D3D8_Module = NULL;
+	}
+#endif
 
 	GraphicsWindow::Shutdown();
 }

@@ -717,12 +717,12 @@ RageDisplay *CreateDisplay()
 		else if( sRenderer.CompareNoCase("d3d")==0 )
 		{
 #if defined(SUPPORT_D3D)
-			error += "Initializing Direct3D...\n";
-			try {
-				return new RageDisplay_D3D( params );
-			} catch( const exception &e ) {
-				error += CString(e.what()) + "\n";
-			};
+			RageDisplay_D3D *pRet = new RageDisplay_D3D;
+			CString sError = pRet->Init( params );
+			if( sError == "" )
+				return pRet;
+			error += "Initializing Direct3D...\n" + sError;
+			delete pRet;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
