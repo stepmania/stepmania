@@ -632,6 +632,11 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 
 void MemoryCardManager::FlushAndReset()
 {
+	/*
+	 * Disabled for now.  Currently, this is a no-op in Linux.  It's a little
+	 * tricky: we set the timeout period in Mount, and finish in Unmount, and
+	 * this is called outside that; currently, flushing is done by Unmount.
+	 * I think that's OK and this will probably go away, but I'm not sure yet.
 	FOREACH_PlayerNumber( p )
 	{
 		UsbStorageDevice &d = m_Device[p];
@@ -643,6 +648,7 @@ void MemoryCardManager::FlushAndReset()
 	}
 	
 	g_pWorker->Reset();	// forces cards to be re-detected
+	*/
 }
 
 bool MemoryCardManager::PathIsMemCard( CString sDir ) const
