@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RAGEEXCEPTION_H
+#define RAGEEXCEPTION_H
 /*
 -----------------------------------------------------------------------------
  Class: RageError
@@ -24,3 +25,13 @@ protected:
 	CString m_sError;
 };
 
+#include "crash.h"
+
+/* Assertion that sets an optional message and brings up the crash handler, so
+ * we get a backtrace.  This should probably be used instead of throwing an
+ * exception in most cases we expect never to happen (but not in cases that
+ * we do expect, such as d3d init failure.) */
+#define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { VDCHECKPOINT_M(MESSAGE); *(char*)0=0; } }
+#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion failure")
+
+#endif
