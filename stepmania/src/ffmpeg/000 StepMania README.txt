@@ -8,15 +8,7 @@ upstream if my copy is checked out of the original repository.  Check it
 out yourself if you want to recompile it.
 
 Compile with MingW.
-Configured with ./configure --enable-shared --enable-mingw32, with the
-ffmpeg.patch.
-upx packed, to reduce CVS sizes.
-
-Changes:
-Implement shared compiling for MingW. (sent upstream)
-Fix localtime_r. (sent upstream)
-Don't include windows.h, to make the DLLs smaller. (sent upstream)
-Use -g1, not -g, to make the DLLs smaller.  (not yet upstreamed)
+Configured with ./configure --enable-shared --enable-mingw32 --enable-small --disable-debug
 
 TODO: Don't compile encoders, audio decoders and unneeded video decoders.
 
