@@ -150,7 +150,6 @@ CString DeviceInput::GetDescription()
 		case DIK_EQUALS:	sReturn += "Equals";	break;
 		case DIK_BACK:		sReturn += "Backsp";	break;
 		case DIK_TAB:		sReturn += "Tab";		break;
-// why?		case DIK_BACK:		sReturn += "Backspace";	break;
 		case DIK_Q:			sReturn += "Q";			break;
 		case DIK_W:			sReturn += "W";			break;
 		case DIK_E:			sReturn += "E";			break;
@@ -235,6 +234,7 @@ CString DeviceInput::GetDescription()
 		case DIK_RWIN:		sReturn += "RightWin";	break;
 		case DIK_APPS:		sReturn += "AppMenu";	break;
 		case DIK_NUMPADENTER:	sReturn += "PadEnter";	break;
+		case DIK_DIVIDE:	sReturn += "PadSlash";	break;
 
 		default:			sReturn += "Unknown Key"; break;
 		}
@@ -572,7 +572,6 @@ HRESULT RageInput::UpdateKeyboard()
 
 		return E_FAIL;
 	}
-
 
 	return S_OK;
 }
