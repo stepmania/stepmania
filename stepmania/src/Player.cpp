@@ -821,13 +821,7 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	if( NoCheating && GAMESTATE->m_PlayerController[m_PlayerNumber] == PC_AUTOPLAY )
 		return;
 
-	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
-
-	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
-
-
+	/* Update miss combo, and handle "combo stopped" messages. */
 	int &iCurCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
 	switch( scoreOfLastTap )
 	{
@@ -849,6 +843,40 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 		iCurCombo = 0;
 		break;
 	}
+
+	/* The score keeper updates the hit combo.  Remember the old combo for handling announcers. */
+	const int iOldCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
+
+	if(m_pPrimaryScoreKeeper)
+		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
+
+	if(m_pSecondaryScoreKeeper)
+		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
+
+#define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
+	if ( CROSSED(100) )	
+		SCREENMAN->PostMessageToTopScreen( SM_100Combo, 0 );
+	else if( CROSSED(200) )	
+		SCREENMAN->PostMessageToTopScreen( SM_200Combo, 0 );
+	else if( CROSSED(300) )	
+		SCREENMAN->PostMessageToTopScreen( SM_300Combo, 0 );
+	else if( CROSSED(400) )	
+		SCREENMAN->PostMessageToTopScreen( SM_400Combo, 0 );
+	else if( CROSSED(500) )	
+		SCREENMAN->PostMessageToTopScreen( SM_500Combo, 0 );
+	else if( CROSSED(600) )	
+		SCREENMAN->PostMessageToTopScreen( SM_600Combo, 0 );
+	else if( CROSSED(700) )	
+		SCREENMAN->PostMessageToTopScreen( SM_700Combo, 0 );
+	else if( CROSSED(800) )	
+		SCREENMAN->PostMessageToTopScreen( SM_800Combo, 0 );
+	else if( CROSSED(900) )	
+		SCREENMAN->PostMessageToTopScreen( SM_900Combo, 0 );
+	else if( CROSSED(1000))	
+		SCREENMAN->PostMessageToTopScreen( SM_1000Combo, 0 );
+	else if( (iOldCombo / 100) < (iCurCombo / 100) && iCurCombo > 1000 )
+		SCREENMAN->PostMessageToTopScreen( SM_ComboContinuing, 0 );
+#undef CROSSED
 
 	// new max combo
 	GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
