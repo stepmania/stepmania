@@ -182,6 +182,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenBookkeeping.h">
 			</File>
 			<File
+				RelativePath="ScreenBranch.cpp">
+			</File>
+			<File
+				RelativePath="ScreenBranch.h">
+			</File>
+			<File
 				RelativePath="ScreenCaution.cpp">
 			</File>
 			<File
@@ -381,6 +387,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenReloadSongs.h">
+			</File>
+			<File
+				RelativePath="ScreenRemoveMemoryCard.cpp">
+			</File>
+			<File
+				RelativePath="ScreenRemoveMemoryCard.h">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.cpp">

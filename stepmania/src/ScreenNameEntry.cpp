@@ -48,6 +48,7 @@
 #define FAKE_BEATS_PER_SEC			THEME->GetMetricF("ScreenNameEntry","FakeBeatsPerSec")
 #define TIMER_SECONDS				THEME->GetMetricI("ScreenNameEntry","TimerSeconds")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
+#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 
 
 // cache for frequently used metrics
@@ -395,25 +396,15 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 		{
 			GAMESTATE->RestoreSelectedOptions();
 
-			/* Hack: go back to the select course screen in event mode. */
-			if( PREFSMAN->m_bEventMode && GAMESTATE->IsCourseMode() )
-			{
-				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
-				break;
-			}
+			// There shouldn't be NameEntry in event mode.  -Chris
+//			/* Hack: go back to the select course screen in event mode. */
+//			if( PREFSMAN->m_bEventMode && GAMESTATE->IsCourseMode() )
+//			{
+//				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
+//				break;
+//			}
 
-			Grade max_grade = GRADE_E;
-			vector<Song*> vSongs;
-			StageStats stats;
-			GAMESTATE->GetFinalEvalStatsAndSongs( stats, vSongs );
-
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					max_grade = max( max_grade, stats.GetGrade((PlayerNumber)p) );
-			if( max_grade >= GRADE_AA )
-				SCREENMAN->SetNewScreen( "ScreenCredits" );
-			else
-				SCREENMAN->SetNewScreen( "ScreenMusicScroll" );
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 		break;
 	}

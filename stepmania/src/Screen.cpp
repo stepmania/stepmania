@@ -287,6 +287,8 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenCenterImage.h"
 #include "ScreenTestInput.h"
 #include "ScreenBookkeeping.h"
+#include "ScreenRemoveMemoryCard.h"
+#include "ScreenBranch.h"
 
 Screen* Screen::Create( CString sClassName )
 {
@@ -390,6 +392,8 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenCenterImage );
 	IF_RETURN( ScreenTestInput );
 	IF_RETURN( ScreenBookkeeping );
+	IF_RETURN( ScreenRemoveMemoryCard );
+	IF_RETURN( ScreenBranch );
 
 	RageException::Throw( "Invalid Screen class name '%s'", sClassName.c_str() );
 }
