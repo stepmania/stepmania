@@ -2,8 +2,8 @@
 #define RAGE_SOUND_DSOUND
 
 #include "RageSoundDriver.h"
-#include "SDL_Thread.h"
 #include "DSoundHelpers.h"
+#include "RageThreads.h"
 
 struct IDirectSound;
 struct IDirectSoundBuffer;
@@ -41,7 +41,7 @@ class RageSound_DSound: public RageSoundDriver
 	bool shutdown; /* tells the MixerThread to shut down */
 	static int MixerThread_start(void *p);
 	void MixerThread();
-	SDL_Thread *MixerThreadPtr;
+	RageThread MixingThread;
 
 	/* virtuals: */
 	void StartMixing(RageSound *snd);	/* used by RageSound */

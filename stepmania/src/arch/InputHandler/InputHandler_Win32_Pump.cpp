@@ -26,18 +26,19 @@ InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 
 	/* Don't start a thread if we have no pads. */
 	if( FoundOnePad && PREFSMAN->m_bThreadedInput )
-		InputThreadPtr = SDL_CreateThread(InputThread_Start, this);
-	else
-		InputThreadPtr = NULL;
+	{
+		InputThread.SetName("Pump thread");
+		InputThread.Create( InputThread_Start, this );
+	}
 }
 
 InputHandler_Win32_Pump::~InputHandler_Win32_Pump()
 {
-	if( InputThreadPtr )
+	if( InputThread.IsCreated() )
 	{
 		shutdown = true;
 		LOG->Trace("Shutting down Pump thread ...");
-		SDL_WaitThread(InputThreadPtr, NULL);
+		InputThread.Wait();
 		LOG->Trace("Pump thread shut down.");
 	}
 
@@ -59,7 +60,7 @@ void InputHandler_Win32_Pump::HandleInput( int devno, int event )
 		DeviceInput dev(id, butno);
 		
 		/* If we're in a thread, our timestamp is accurate. */
-		if( InputThreadPtr )
+		if( InputThread.IsCreated() )
 			dev.ts.Touch();
 
 		ButtonPressed(dev, !(event & bits[butno]));
@@ -80,15 +81,12 @@ void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDe
 
 int InputHandler_Win32_Pump::InputThread_Start( void *p )
 {
-	((InputHandler_Win32_Pump *) p)->InputThread();
+	((InputHandler_Win32_Pump *) p)->InputThreadMain();
 	return 0;
 }
 
-void InputHandler_Win32_Pump::InputThread()
+void InputHandler_Win32_Pump::InputThreadMain()
 {
-	InitThreadData("Pump thread");
-	VDCHECKPOINT;
-
 	vector<WindowsFileIO *> sources;
 	int i;
 	for(i = 0; i < NUM_PUMPS; ++i)
@@ -99,23 +97,23 @@ void InputHandler_Win32_Pump::InputThread()
 
 	while(!shutdown)
 	{
-		VDCHECKPOINT;
+		CHECKPOINT;
 		int actual = 0, val = 0;
 		int ret = WindowsFileIO::read_several(sources, &val, actual, 0.100f);
 
-		VDCHECKPOINT;
+		CHECKPOINT;
 		if(ret <= 0) 
 			continue; /* no event */
 
 		HandleInput( actual, val );
 		InputHandler::UpdateTimer();
 	}
-	VDCHECKPOINT;
+	CHECKPOINT;
 }
 
 void InputHandler_Win32_Pump::Update(float fDeltaTime)
 {
-	if( InputThreadPtr == NULL )
+	if( !InputThread.IsCreated() )
 	{
 		for(int i = 0; i < NUM_PUMPS; ++i)
 		{

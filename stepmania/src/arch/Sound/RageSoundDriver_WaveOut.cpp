@@ -44,9 +44,6 @@ int RageSound_WaveOut::MixerThread_start(void *p)
 
 void RageSound_WaveOut::MixerThread()
 {
-	InitThreadData("Mixer thread");
-	VDCHECKPOINT;
-
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) Sleep(10);
@@ -204,7 +201,8 @@ RageSound_WaveOut::RageSound_WaveOut()
 		buffers[b].dwFlags |= WHDR_DONE;
 	}
 
-	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
+	MixingThread.SetName("Mixer thread");
+	MixingThread.Create( MixerThread_start, this );
 }
 
 RageSound_WaveOut::~RageSound_WaveOut()
@@ -212,7 +210,7 @@ RageSound_WaveOut::~RageSound_WaveOut()
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
 	LOG->Trace("Shutting down mixer thread ...");
-	SDL_WaitThread(MixerThreadPtr, NULL);
+	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");
 
 	CloseHandle(sound_event);

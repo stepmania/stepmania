@@ -40,11 +40,6 @@ int RageSound_DSound::MixerThread_start(void *p)
 
 void RageSound_DSound::MixerThread()
 {
-#ifdef _WINDOWS
-	InitThreadData("Mixer thread");
-#endif
-	VDCHECKPOINT;
-
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) Sleep(10);
@@ -53,14 +48,14 @@ void RageSound_DSound::MixerThread()
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set sound thread priority"));
 
 	while(!shutdown) {
-		VDCHECKPOINT;
+		CHECKPOINT;
 
 		/* Sleep for the size of one chunk. */
 		const int chunksize_frames = buffersize_frames / num_chunks;
 		float sleep_secs = (float(chunksize_frames) / samplerate);
 		Sleep(int(1000 * sleep_secs));
 
-		VDCHECKPOINT;
+		CHECKPOINT;
 		LockMutex L(SOUNDMAN->lock);
  		for(unsigned i = 0; i < stream_pool.size(); ++i)
 		{
@@ -104,7 +99,7 @@ void RageSound_DSound::Update(float delta)
  * it in the opposite buffer. */
 bool RageSound_DSound::stream::GetData(bool init)
 {
-	VDCHECKPOINT;
+	CHECKPOINT;
 
 	char *locked_buf;
 	unsigned len;
@@ -196,7 +191,8 @@ RageSound_DSound::RageSound_DSound()
 	/* Set channel volumes. */
 	VolumeChanged();
 
-	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
+	MixingThread.SetName("Mixer thread");
+	MixingThread.Create( MixerThread_start, this );
 }
 
 RageSound_DSound::~RageSound_DSound()
@@ -205,7 +201,7 @@ RageSound_DSound::~RageSound_DSound()
 	shutdown = true;
 	LOG->Trace("Shutting down mixer thread ...");
 	LOG->Flush();
-	SDL_WaitThread(MixerThreadPtr, NULL);
+	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");
 	LOG->Flush();
 

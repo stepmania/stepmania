@@ -2,8 +2,8 @@
 #define RAGE_SOUND_DSOUND_SOFTWARE
 
 #include "RageSoundDriver.h"
-#include "SDL_Thread.h"
 #include "DSoundHelpers.h"
+#include "RageThreads.h"
 
 struct IDirectSound;
 struct IDirectSoundBuffer;
@@ -33,7 +33,7 @@ class RageSound_DSound_Software: public RageSoundDriver
 
 	static int MixerThread_start(void *p);
 	void MixerThread();
-	SDL_Thread *MixerThreadPtr;
+	RageThread MixingThread;
 
 	/* virtuals: */
 	void StartMixing(RageSound *snd);	/* used by RageSound */

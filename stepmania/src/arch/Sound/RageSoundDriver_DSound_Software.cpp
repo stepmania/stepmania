@@ -32,9 +32,6 @@ int RageSound_DSound_Software::MixerThread_start(void *p)
 
 void RageSound_DSound_Software::MixerThread()
 {
-	InitThreadData("Mixer thread");
-	VDCHECKPOINT;
-
 	/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) Sleep(10);
@@ -178,16 +175,18 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 	str_ds = new DSoundBuf(ds, 
 		DSoundBuf::HW_DONT_CARE, 
 		channels, samplerate, 16, buffersize);
-	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
+
+	MixingThread.SetName("Mixer thread");
+	MixingThread.Create( MixerThread_start, this );
 }
 
 RageSound_DSound_Software::~RageSound_DSound_Software()
 {
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
-	LOG->Trace("Shutting down mixer thread %p ...", MixerThreadPtr);
+	LOG->Trace("Shutting down mixer thread ...");
 	LOG->Flush();
-	SDL_WaitThread(MixerThreadPtr, NULL);
+	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");
 	LOG->Flush();
 

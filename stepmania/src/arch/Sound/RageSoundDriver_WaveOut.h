@@ -2,7 +2,7 @@
 #define RAGE_SOUND_WAVEOUT
 
 #include "RageSoundDriver.h"
-#include "SDL_Thread.h"
+#include "RageThreads.h"
 #include "Mmsystem.h"
 
 class RageSound_WaveOut: public RageSoundDriver
@@ -28,7 +28,7 @@ class RageSound_WaveOut: public RageSoundDriver
 
 	static int MixerThread_start(void *p);
 	void MixerThread();
-	SDL_Thread *MixerThreadPtr;
+	RageThread MixingThread;
 
 	bool GetData();
 	void Update(float delta);

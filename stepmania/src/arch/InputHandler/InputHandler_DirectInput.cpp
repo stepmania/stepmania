@@ -116,28 +116,27 @@ InputHandler_DInput::InputHandler_DInput()
 			Devices[i].buffered? "buffered": "unbuffered" );
 	}
 
-	InputThreadPtr = NULL;
 	StartThread();
 }
 
 void InputHandler_DInput::StartThread()
 {
-	ASSERT( InputThreadPtr == NULL );
+	ASSERT( !InputThread.IsCreated() );
 	if( PREFSMAN->m_bThreadedInput )
-		InputThreadPtr = SDL_CreateThread(InputThread_Start, this);
-	else
-		InputThreadPtr = NULL;
+	{
+		InputThread.SetName( "DirectInput thread" );
+		InputThread.Create( InputThread_Start, this );
+	}
 }
 
 void InputHandler_DInput::ShutdownThread()
 {
-	if( InputThreadPtr == NULL )
+	if( !InputThread.IsCreated() )
 		return;
 
 	shutdown = true;
 	LOG->Trace("Shutting down DirectInput thread ...");
-	SDL_WaitThread(InputThreadPtr, NULL);
-	InputThreadPtr = NULL;
+	InputThread.Wait();
 	LOG->Trace("DirectInput thread shut down.");
 	shutdown = false;
 }
@@ -427,7 +426,7 @@ void InputHandler_DInput::Update(float fDeltaTime)
 	{
 		if( !Devices[i].buffered )
 			UpdatePolled( Devices[i], zero );
-		else if( InputThreadPtr == NULL )
+		else if( !InputThread.IsCreated() )
 		{
 			/* If we have an input thread, it'll handle buffered devices. */
 			UpdateBuffered( Devices[i], zero );
@@ -438,10 +437,8 @@ void InputHandler_DInput::Update(float fDeltaTime)
 }
 
 
-void InputHandler_DInput::InputThread()
+void InputHandler_DInput::InputThreadMain()
 {
-	InitThreadData("DirectInput thread");
-	VDCHECKPOINT;
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set DirectInput thread priority"));
 
@@ -467,7 +464,7 @@ void InputHandler_DInput::InputThread()
 
 	while(!shutdown)
 	{
-		VDCHECKPOINT;
+		CHECKPOINT;
 		if( BufferedDevices.size() )
 		{
 			/* Update buffered devices. */
@@ -487,14 +484,14 @@ void InputHandler_DInput::InputThread()
 					UpdateBuffered( *BufferedDevices[i], now );
 			}
 		}
-		VDCHECKPOINT;
+		CHECKPOINT;
 
 		/* If we have no buffered devices, we didn't delay at WaitForMultipleObjectsEx. */
 		if( BufferedDevices.size() == 0 )
 			SDL_Delay( 50 );
-		VDCHECKPOINT;
+		CHECKPOINT;
 	}
-	VDCHECKPOINT;
+	CHECKPOINT;
 
 	for( i = 0; i < Devices.size(); ++i )
 	{

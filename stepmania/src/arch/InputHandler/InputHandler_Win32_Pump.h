@@ -2,17 +2,17 @@
 #define INPUT_HANDLER_WIN32_PUMP_H 1
 
 #include "InputHandler.h"
-#include "SDL_Thread.h"
+#include "RageThreads.h"
 
 class USBDevice;
 class InputHandler_Win32_Pump: public InputHandler
 {
 	USBDevice *dev;
-	SDL_Thread *InputThreadPtr;
+	RageThread InputThread;
 	bool shutdown;
 
 	static int InputThread_Start( void *p );
-	void InputThread();
+	void InputThreadMain();
 	void HandleInput( int devno, int event );
 
 
