@@ -2,6 +2,7 @@
 #include "RageLog.h"
 #include "ArchHooks_Unix.h"
 #include "archutils/Unix/SignalHandler.h"
+#include "archutils/Unix/GetSysInfo.h"
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
@@ -31,6 +32,11 @@ ArchHooks_Unix::ArchHooks_Unix()
 
 void ArchHooks_Unix::DumpDebugInfo()
 {
+	CString sys;
+	int vers;
+	GetKernel( sys, vers );
+	LOG->Info( "OS: %s ver %06x", sys.c_str(), vers );
+
 #if defined(CRASH_HANDLER)
 	LOG->Info( "Crash backtrace component: %s", BACKTRACE_METHOD_TEXT );
 	LOG->Info( "Crash lookup component: %s", BACKTRACE_LOOKUP_METHOD_TEXT );
