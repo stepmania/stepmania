@@ -7,16 +7,14 @@ AC_ARG_WITH(integer-vorbis, AC_HELP_STRING([--with-integer-vorbis], [Integer vor
 
 have_vorbis=no
 if test "$with_vorbis" = "yes" -a "$with_int_vorbis" = "no"; then
-	oldlibs="$LIBS"
 	AC_CHECK_LIB(ogg, ogg_stream_init, have_libogg=yes, have_libogg=no)
-	AC_CHECK_LIB(vorbis, vorbis_comment_add, have_libvorbis=yes, have_libvorbis=no, -logg)
-	AC_CHECK_LIB(vorbisfile, ov_open, have_libvorbisfile=yes, have_libvorbisfile=no, -logg -lvorbis)
+	AC_CHECK_LIB(vorbis, vorbis_comment_add, have_libvorbis=yes, have_libvorbis=no, [-logg])
+	AC_CHECK_LIB(vorbisfile, ov_open, have_libvorbisfile=yes, have_libvorbisfile=no, [-lvorbis -logg])
 	if test "$have_libvorbis" = "yes" -a "$have_libogg" = "yes" -a "$have_libvorbisfile" = "yes"; then
 		have_vorbis=yes
-		AUDIO_LIBS="$AUDIO_LIBS -lvorbis -logg -lvorbisfile"
+		AUDIO_LIBS="$AUDIO_LIBS -lvorbisfile -lvorbis -logg"
 	else
 		echo Not all vorbis libraries found.
-		LIBS="$oldlibs"
 	fi
 fi
 
