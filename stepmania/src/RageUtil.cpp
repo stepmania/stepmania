@@ -321,7 +321,7 @@ CString GetExtension( CString sPath )
 	if( pos == sPath.npos )
 		return "";
 
-	unsigned slash = sPath.find( '/', slash );
+	unsigned slash = sPath.find( '/', pos );
 	if( slash != sPath.npos )
 		return ""; /* rare: path/dir.ext/fn */
 
