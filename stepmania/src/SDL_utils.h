@@ -76,10 +76,6 @@ void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst,
 void mySDL_BlitSurface( 
 	SDL_Surface *src, SDL_Surface *dst, int width, int height, bool ckey);
 
-/* Use the "unused1" field in surfaces to mark surfaces that store alpha values
- * in the palette.  (SDL proper does not support this.) */
-enum { ALPHA_PALETTE = 0x1 };
-
 SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits );
 
 void mySDL_FixupPalettedAlpha( SDL_Surface *img );
