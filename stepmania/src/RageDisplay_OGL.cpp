@@ -924,23 +924,19 @@ public:
 			const vector<RageModelVertex> &Vertices = mesh.Vertices;
 			const vector<msTriangle> &Triangles = mesh.Triangles;
 
+			for( unsigned j=0; j<Vertices.size(); j++ )
 			{
-				for( unsigned j=0; j<Vertices.size(); j++ )
-				{
-					m_vPosition[meshInfo.iVertexStart+j] = Vertices[j].p;
-					m_vTexture[meshInfo.iVertexStart+j] = Vertices[j].t;
-					m_vNormal[meshInfo.iVertexStart+j] = Vertices[j].n;
-				}
+				m_vPosition[meshInfo.iVertexStart+j] = Vertices[j].p;
+				m_vTexture[meshInfo.iVertexStart+j] = Vertices[j].t;
+				m_vNormal[meshInfo.iVertexStart+j] = Vertices[j].n;
 			}
 
-			{
-				for( unsigned j=0; j<Triangles.size(); j++ )
-					for( unsigned k=0; k<3; k++ )
-					{
-						int iVertexIndexInVBO = meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
-						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) iVertexIndexInVBO;
-					}
-			}
+			for( unsigned j=0; j<Triangles.size(); j++ )
+				for( unsigned k=0; k<3; k++ )
+				{
+					int iVertexIndexInVBO = meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
+					m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) iVertexIndexInVBO;
+				}
 		}
 	}
 	void Draw( int iMeshIndex ) const

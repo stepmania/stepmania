@@ -766,16 +766,12 @@ public:
 			const vector<RageModelVertex> &Vertices = mesh.Vertices;
 			const vector<msTriangle> &Triangles = mesh.Triangles;
 
-			{
-				for( unsigned j=0; j<Vertices.size(); j++ )
-					m_vVertex[meshInfo.iVertexStart+j] = Vertices[j];
-			}
+			for( unsigned j=0; j<Vertices.size(); j++ )
+				m_vVertex[meshInfo.iVertexStart+j] = Vertices[j];
 
-			{
-				for( unsigned j=0; j<Triangles.size(); j++ )
-					for( unsigned k=0; k<3; k++ )
-						m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
-			}
+			for( unsigned j=0; j<Triangles.size(); j++ )
+				for( unsigned k=0; k<3; k++ )
+					m_vTriangles[meshInfo.iTriangleStart+j].nVertexIndices[k] = (uint16_t) meshInfo.iVertexStart + Triangles[j].nVertexIndices[k];
 		}
 	}
 	void Draw( int iMeshIndex ) const
