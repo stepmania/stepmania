@@ -57,11 +57,16 @@ void Banner::Update( float fDeltaTime )
         m_fPercentScrolling += fDeltaTime/2;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
 
-		RectF texCoords = *m_pTexture->GetTextureCoordRect(0);
-		texCoords.left += m_fPercentScrolling;
-		texCoords.right += m_fPercentScrolling;
-
-		Sprite::SetCustomTextureCoords( texCoords );
+		const RectF *pTextureRect = m_pTexture->GetTextureCoordRect(0);
+ 
+		float fTexCoords[8] = 
+		{
+			0+m_fPercentScrolling, pTextureRect->top,		// top left
+			0+m_fPercentScrolling, pTextureRect->bottom,	// bottom left
+			1+m_fPercentScrolling, pTextureRect->bottom,	// bottom right
+			1+m_fPercentScrolling, pTextureRect->top,		// top right
+		};
+		Sprite::SetCustomTextureCoords( fTexCoords );
 	}
 }
 

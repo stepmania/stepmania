@@ -422,7 +422,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		// draw manually in small segments
 		RageVertex *v = &queue[0];
 		RageTexture* pTexture = pBottomCap->GetTexture();
-		const RectF *pRect = pBottomCap->GetCurrentTextureCoords();
+		const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		DISPLAY->SetBackfaceCull( false );
@@ -489,7 +489,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		// draw manually in small segments
 		RageVertex *v = &queue[0];
 		RageTexture* pTexture = pSprBody->GetTexture();
-		const RectF *pRect = pSprBody->GetCurrentTextureCoords();
+		const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		DISPLAY->SetBackfaceCull( false );
@@ -569,7 +569,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		// draw manually in small segments
 		RageVertex *v = &queue[0];
 		RageTexture* pTexture = pSprTopCap->GetTexture();
-		const RectF *pRect = pSprTopCap->GetCurrentTextureCoords();
+		const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
 		DISPLAY->SetTexture( pTexture );
 		DISPLAY->SetBlendMode( BLEND_NORMAL );
 		DISPLAY->SetBackfaceCull( false );

@@ -53,9 +53,13 @@ static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
  * on Y by flipping texture coordinates. */
 static void FlipSpriteHorizontally(Sprite &s)
 {
-	RectF texCoords = *s.GetCurrentTextureCoords();
-	swap( texCoords.left, texCoords.right );
-	s.SetCustomTextureCoords( texCoords );
+	float Coords[8];
+	s.GetCurrentTextureCoords(Coords);
+	swap(Coords[0], Coords[6]); /* top left X <-> top right X */
+	swap(Coords[1], Coords[7]); /* top left Y <-> top right Y */
+	swap(Coords[2], Coords[4]); /* bottom left X <-> bottom left X */
+	swap(Coords[3], Coords[5]); /* bottom left Y <-> bottom left Y */
+	s.SetCustomTextureCoords(Coords);
 }
 
 ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")

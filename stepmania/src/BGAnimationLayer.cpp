@@ -212,7 +212,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			ID.bStretch = true;
 			m_Sprites.back()->LoadBG( ID );
 			m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-			m_Sprites.back()->SetCustomTextureCoords( RectF(0,0,1,1) );
+			m_Sprites.back()->SetCustomTextureRect( RectF(0,0,1,1) );
 
 			switch( effect )
 			{
@@ -546,7 +546,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			ID.bStretch = true;
 			m_Sprites.back()->LoadBG( ID );
 			m_Sprites.back()->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-			m_Sprites.back()->SetCustomTextureCoords( RectF(0,0,1,1) );
+			m_Sprites.back()->SetCustomTextureRect( RectF(0,0,1,1) );
 		}
 		break;
 	case TYPE_PARTICLES:
@@ -638,13 +638,16 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	case TYPE_STRETCH:
 		for( i=0; i<m_Sprites.size(); i++ )
 		{
-			RectF texCoords = *m_Sprites[i]->GetActiveTextureCoords();
-			texCoords.left  += fDeltaTime*m_fStretchTexCoordVelocityX;
-			texCoords.right += fDeltaTime*m_fStretchTexCoordVelocityX;
-			texCoords.top   += fDeltaTime*m_fStretchTexCoordVelocityY;
-			texCoords.bottom+= fDeltaTime*m_fStretchTexCoordVelocityY;
+			float fTexCoords[8];
+			m_Sprites[i]->GetActiveTexCoords( fTexCoords );
 
-			m_Sprites[i]->SetCustomTextureCoords( texCoords );
+			for( int j=0; j<8; j+=2 )
+			{
+				fTexCoords[j  ] += fDeltaTime*m_fStretchTexCoordVelocityX;
+				fTexCoords[j+1] += fDeltaTime*m_fStretchTexCoordVelocityY;
+			}
+ 
+			m_Sprites[i]->SetCustomTextureCoords( fTexCoords );
 		}
 		break;
 /*	case EFFECT_PARTICLES_SPIRAL_OUT:

@@ -176,14 +176,14 @@ public:
 		// set custom texture coords
 //		float fPrecentOffset = fRightEdgePercent;
 
-		RectF frectCustomTexCoords(
+		RectF frectCustomTexRect(
 			fPercentCroppedFromLeft,
 			0,
 			1-fPercentCroppedFromRight,
 			1);
 
-		m_sprStreamNormal.SetCustomTextureCoords( frectCustomTexCoords );
-		m_sprStreamHot.SetCustomTextureCoords( frectCustomTexCoords );
+		m_sprStreamNormal.SetCustomTextureRect( frectCustomTexRect );
+		m_sprStreamHot.SetCustomTextureRect( frectCustomTexRect );
 
 		m_sprStreamHot.SetDiffuse( RageColor(1,1,1,m_fHotAlpha) );
 
