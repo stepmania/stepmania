@@ -63,8 +63,9 @@
 				CommandLine="mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="verinc
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
+				CommandLine="disasm\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -87,7 +88,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/EHa"
+				AdditionalOptions="/EHa "
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
@@ -133,11 +134,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
+				CommandLine="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="verinc
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
+				CommandLine="disasm\verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
+"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
