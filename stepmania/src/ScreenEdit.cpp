@@ -235,7 +235,6 @@ ScreenEdit::ScreenEdit()
 	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
 	
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 1;
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_ColorType = PlayerOptions::COLOR_NOTE;
 
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathTo("BGAnimations","edit") );
 

@@ -166,8 +166,6 @@ CString NoteSkinManager::GetPathTo( PlayerNumber pn, int col, CString sFileName 
 	CString sButtonName = ColToButtonName(col);
 
 	CString sCurNoteSkinName = m_sCurNoteSkinName[pn];
-	if( GAMESTATE->m_bEditing )
-		sCurNoteSkinName = "note";
 
 	CString ret = GetPathTo( sCurNoteSkinName, sButtonName, sFileName );
 	if( !ret.empty() )	// we found something

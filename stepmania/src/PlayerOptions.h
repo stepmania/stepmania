@@ -62,13 +62,6 @@ struct PlayerOptions
 	} m_Transform;
 	void NextTransform();
 	bool m_bReverseScroll;
-	enum ColorType {
-		COLOR_VIVID=0,
-		COLOR_NOTE,
-		COLOR_FLAT,
-		NUM_COLOR_TYPES
-	} m_ColorType;
-	void NextColor();
 	bool m_bHoldNotes;
 	bool m_bDark;
 

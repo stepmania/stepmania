@@ -23,7 +23,6 @@ void PlayerOptions::Init()
 	m_TurnType = TURN_NONE;
 	m_Transform = TRANSFORM_NONE;
 	m_bReverseScroll = false;
-	m_ColorType = COLOR_VIVID;
 	m_bHoldNotes = true;
 	m_bDark = false;
 }
@@ -98,14 +97,6 @@ CString PlayerOptions::GetString()
 	if( m_bReverseScroll )
 		sReturn += "Reverse, ";
 
-	switch( m_ColorType )
-	{
-	case COLOR_VIVID:							break;
-	case COLOR_NOTE:	sReturn += "Note, ";	break;
-	case COLOR_FLAT:	sReturn += "Flat, ";	break;
-	default:	ASSERT(0);	// invalid COLOR
-	};
-
 	if( !m_bHoldNotes )
 		sReturn += "NoHolds, ";
 
@@ -162,8 +153,6 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "little" )		m_Transform = TRANSFORM_LITTLE;
 		else if( sBit == "big" )		m_Transform = TRANSFORM_BIG;
 		else if( sBit == "reverse" )	m_bReverseScroll = true;
-		else if( sBit == "note" )		m_ColorType = COLOR_NOTE;
-		else if( sBit == "flat" )		m_ColorType = COLOR_FLAT;
 		else if( sBit == "noholds" )	m_bHoldNotes = false;
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
 		else if( sBit == "dark" )		m_bDark = true;
@@ -196,11 +185,6 @@ void PlayerOptions::NextEffect()
 
 	// if we get here, no effects are on
 	m_bEffects[0] = true;
-}
-
-void PlayerOptions::NextColor()
-{
-	m_ColorType = (ColorType) ((m_ColorType+1)%NUM_COLOR_TYPES);
 }
 
 void PlayerOptions::NextAppearance()

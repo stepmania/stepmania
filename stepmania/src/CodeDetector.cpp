@@ -39,7 +39,6 @@ enum Code {
 	CODE_NEXT_APPEARANCE,
 	CODE_NEXT_TURN,
 	CODE_REVERSE,
-	CODE_NEXT_COLOR,
 	CODE_HOLDS,
 	CODE_DARK,
 	CODE_CANCEL_ALL,
@@ -66,7 +65,6 @@ const CString g_sCodeNames[NUM_CODES] = {
 	"NextAppearance",
 	"NextTurn",
 	"Reverse",
-	"NextColor",
 	"HoldNotes",
 	"Dark",
 	"CancelAll"
@@ -182,7 +180,6 @@ bool CodeDetector::DetectAndAdjustOptions( GameController controller )
 			case CODE_NEXT_APPEARANCE:	GAMESTATE->m_PlayerOptions[pn].NextAppearance();;				break;
 			case CODE_NEXT_TURN:		GAMESTATE->m_PlayerOptions[pn].NextTurn();						break;
 			case CODE_REVERSE:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bReverseScroll, true, false );			break;
-			case CODE_NEXT_COLOR:		GAMESTATE->m_PlayerOptions[pn].NextColor();		break;
 			case CODE_HOLDS:			TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes, true, false );				break;
 			case CODE_DARK:				TOGGLE( GAMESTATE->m_PlayerOptions[pn].m_bDark, true, false );					break;
 			case CODE_CANCEL_ALL:		GAMESTATE->m_PlayerOptions[pn] = PlayerOptions();								break;

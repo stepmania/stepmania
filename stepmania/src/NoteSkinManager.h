@@ -31,6 +31,7 @@ public:
 	CString GetCurNoteSkinName( PlayerNumber pn ) const { return m_sCurNoteSkinName[pn]; };
 
 	CString GetPathTo( PlayerNumber pn, int col, CString sFileName );
+	CString GetPathTo( CString sSkinName, CString sButtonName, CString sFileName );
 
 	CString		GetMetric( PlayerNumber pn, CString sButtonName, CString sValueName );
 	int			GetMetricI( PlayerNumber pn, CString sButtonName, CString sValueName );
@@ -41,7 +42,6 @@ public:
 	static CString NoteSkinManager::ColToButtonName(int col);
 
 protected:
-	CString GetPathTo( CString sSkinName, CString sButtonName, CString sFileName );
 	CString GetNoteSkinDir( CString sSkinName );
 
 	CString m_sCurNoteSkinName[NUM_PLAYERS];	
