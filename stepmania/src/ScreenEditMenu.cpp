@@ -96,6 +96,16 @@ void DeleteCurSteps( void* pThrowAway )
 }
 
 
+static CString GetCopyDescription( const Steps *pSourceSteps )
+{
+	CString s;
+	if( pSourceSteps->GetDifficulty() == DIFFICULTY_EDIT )
+		s = pSourceSteps->GetDescription();
+	else
+		s = DifficultyToThemedString( pSourceSteps->GetDifficulty() );
+	return "From " + s;
+}
+
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
@@ -147,6 +157,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			Steps* pNewSteps = new Steps;
 			pNewSteps->CopyFrom( pSourceSteps, st );
 			pNewSteps->SetDifficulty( dc );
+			pNewSteps->SetDescription( GetCopyDescription(pSourceSteps) );
 			pSong->AddSteps( pNewSteps );
 		
 			SCREENMAN->SystemMessage( "Steps created from copy." );
@@ -165,8 +176,9 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pNewSteps->AutogenFrom( pSourceSteps, st );
 			pNewSteps->DeAutogen();
 			pNewSteps->SetDifficulty( dc );	// override difficulty with the user's choice
+			pNewSteps->SetDescription( GetCopyDescription(pSourceSteps) );
 			pSong->AddSteps( pNewSteps );
-		
+				
 			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
 			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
 			m_Selector.RefreshSteps();
@@ -182,6 +194,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			pNewSteps->CreateBlank( st );
 			pNewSteps->SetDifficulty( dc );
 			pNewSteps->SetMeter( 1 );
+			pNewSteps->SetDescription( "Blank" );
 			pSong->AddSteps( pNewSteps );
 		
 			SCREENMAN->SystemMessage( "Blank Steps created." );

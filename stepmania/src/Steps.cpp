@@ -267,7 +267,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have 
 	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) ); 
 	this->SetNoteData( noteData );
-	this->SetDescription( "From " + pSource->GetDescription() );
+	this->SetDescription( pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
 	this->SetMeter( pSource->GetMeter() );
 	this->SetRadarValues( pSource->GetRadarValues() );
