@@ -201,7 +201,7 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Notes &out )
 
 	switch( out.GetDifficulty() )
 	{
-	case DIFFICULTY_BEGINNER:
+	case DIFFICULTY_BEGINNER:	fprintf( fp, "BEGINNER:" ); break;
 	case DIFFICULTY_EASY:		fprintf( fp, "BASIC:" );	break;
 	case DIFFICULTY_MEDIUM:		fprintf( fp, "ANOTHER:" );	break;
 	case DIFFICULTY_HARD:		fprintf( fp, "MANIAC:" );	break;
