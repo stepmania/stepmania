@@ -2,6 +2,7 @@
 #define NOTES_LOADER_H
 
 #include "song.h"
+#include <set>
 
 typedef int DanceNote;
 enum {
@@ -24,7 +25,10 @@ class NotesLoader {
 protected:
 	virtual void GetApplicableFiles( CString sPath, CStringArray &out )=0;
 
+	set<CString> BlacklistedImages;
+
 public:
+	const set<CString> &GetBlacklistedImages() const { return BlacklistedImages; }
 	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 	virtual bool LoadFromDir( CString sPath, Song &out ) = 0;
 	bool Loadable( CString sPath );
