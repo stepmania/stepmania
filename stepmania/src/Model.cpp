@@ -20,6 +20,7 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 #include <errno.h>
+#include "ModelManager.h"
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -28,10 +29,12 @@ Model::Model ()
 {
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
+	m_pGeometry = NULL;
 	m_pCurAnimation = NULL;
 	m_bRevertToDefaultAnimation = false;
 	m_fDefaultAnimationRate = 1;
 	m_fCurAnimationRate = 1;
+	m_iRefCount = 1;
 }
 
 Model::~Model ()
@@ -41,8 +44,12 @@ Model::~Model ()
 
 void Model::Clear ()
 {
+	if( m_pGeometry )
+	{
+		MODELMAN->UnloadModel( m_pGeometry );
+		m_pGeometry = NULL;
+	}
 	m_vpBones.clear();
-	m_Meshes.clear();
 	m_Materials.clear();
 	m_mapNameToAnimation.clear();
 	m_pCurAnimation = NULL;
@@ -63,10 +70,10 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 	CString sLine;
 	int iLineNum = 0;
-    char szName[MS_MAX_NAME];
-    int nFlags, nIndex, i, j;
+    int i;
 
-	RageVec3ClearBounds( m_vMins, m_vMaxs );
+	ASSERT( m_pGeometry == NULL );
+	m_pGeometry = MODELMAN->LoadMilkshapeAscii( sPath );
 
     while( f.GetLine( sLine ) > 0 )
     {
@@ -87,136 +94,6 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 			// m_pModel->nFrame = nFrame;
         }
 
-        int nNumMeshes = 0;
-        if (sscanf (sLine, "Meshes: %d", &nNumMeshes) == 1)
-        {
-            m_Meshes.resize( nNumMeshes );
-
-            for (i = 0; i < nNumMeshes; i++)
-            {
-				msMesh& mesh = m_Meshes[i];
-
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
-
-                // mesh: name, flags, material index
-                if (sscanf (sLine, "\"%[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3)
-					THROW
-
-                strcpy( mesh.szName, szName );
-//                mesh.nFlags = nFlags;
-                mesh.nMaterialIndex = (byte)nIndex;
-
-                //
-                // vertices
-                //
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
-
-                int nNumVertices = 0;
-                if (sscanf (sLine, "%d", &nNumVertices) != 1)
-					THROW
-
-				mesh.Vertices.resize( nNumVertices );
-
-                for (j = 0; j < nNumVertices; j++)
-                {
-				    if( f.GetLine( sLine ) <= 0 )
-						THROW
-
-                    RageVector3 Vertex;
-                    RageVector2 uv;
-                    if (sscanf (sLine, "%d %f %f %f %f %f %d",
-                        &nFlags,
-                        &Vertex[0], &Vertex[1], &Vertex[2],
-                        &uv[0], &uv[1],
-                        &nIndex
-                        ) != 7)
-                    {
-						THROW
-                    }
-
-					RageModelVertex& vertex = mesh.Vertices[j];
-//                  vertex.nFlags = nFlags;
-                    memcpy( vertex.p, Vertex, sizeof(vertex.p) );
-                    memcpy( vertex.t, uv, sizeof(vertex.t) );
-                    vertex.boneIndex = (byte)nIndex;
-					RageVec3AddToBounds( RageVector3(Vertex), m_vMins, m_vMaxs );
-                }
-
-
-
-                //
-                // normals
-                //
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
-
-                int nNumNormals = 0;
-                if (sscanf (sLine, "%d", &nNumNormals) != 1)
-					THROW
-                
-				vector<RageVector3> Normals;
-				Normals.resize( nNumNormals );
-                for (j = 0; j < nNumNormals; j++)
-                {
-				    if( f.GetLine( sLine ) <= 0 )
-						THROW
-
-                    RageVector3 Normal;
-                    if (sscanf (sLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3)
-						THROW
-
-					RageVec3Normalize( (RageVector3*)&Normal, (RageVector3*)&Normal );
-                    Normals[j] = Normal;
-                }
-
-
-
-                //
-                // triangles
-                //
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
-
-                int nNumTriangles = 0;
-                if (sscanf (sLine, "%d", &nNumTriangles) != 1)
-					THROW
-
-				mesh.Triangles.resize( nNumTriangles );
-
-                for (j = 0; j < nNumTriangles; j++)
-                {
-				    if( f.GetLine( sLine ) <= 0 )
-						THROW
-
-                    word nIndices[3];
-                    word nNormalIndices[3];
-                    if (sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
-                        &nFlags,
-                        &nIndices[0], &nIndices[1], &nIndices[2],
-                        &nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],
-                        &nIndex
-                        ) != 8)
-                    {
-						THROW
-                    }
-
-					// deflate the normals into vertices
-					for( int k=0; k<3; k++ )
-					{
-						RageModelVertex& vertex = mesh.Vertices[ nIndices[k] ];
-						RageVector3& normal = Normals[ nNormalIndices[k] ];
-						vertex.n = normal;
-					}
-
-					msTriangle& Triangle = mesh.Triangles[j];
-//                  Triangle.nFlags = nFlags;
-                    memcpy( &Triangle.nVertexIndices, nIndices, sizeof(Triangle.nVertexIndices) );
-//                  Triangle.nSmoothingGroup = nIndex;
-                }
-            }
-        }
 
         //
         // materials
@@ -343,10 +220,10 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 	bUseTempVertices = m_mapNameToAnimation[DEFAULT_ANIMATION_NAME].Bones.size() > 0;	// if there are no bones, then there's no reason to use temp vertices
 	if( bUseTempVertices )
 	{
-		m_vTempVerticesByMesh.resize( m_Meshes.size() );
-		for (i = 0; i < (int)m_Meshes.size(); i++)
+		m_vTempVerticesByMesh.resize( m_pGeometry->m_Meshes.size() );
+		for (i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
-			msMesh& Mesh = m_Meshes[i];
+			msMesh& Mesh = m_pGeometry->m_Meshes[i];
 			m_vTempVerticesByMesh[i].resize( Mesh.Vertices.size() );
 		}
 	}
@@ -496,8 +373,11 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
 void Model::DrawPrimitives()
 {
-	if(m_Meshes.empty())
+	if( m_pGeometry == NULL || 
+		m_pGeometry->m_Meshes.empty() )
+	{
 		return;	// bail early
+	}
 
 	/* Don't if we're fully transparent */
 	if( m_pTempState->diffuse[0].a < 0.001f && m_pTempState->glow.a < 0.001f )
@@ -512,9 +392,9 @@ void Model::DrawPrimitives()
 	//
 	if( bUseTempVertices )
 	{
-		for (int i = 0; i < (int)m_Meshes.size(); i++)
+		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
-			msMesh *pMesh = &m_Meshes[i];
+			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
 			for (int j = 0; j < (int)pMesh->Vertices.size(); j++)
 			{
@@ -545,9 +425,9 @@ void Model::DrawPrimitives()
 	{
 		DISPLAY->SetTextureModeModulate();
 
-		for (int i = 0; i < (int)m_Meshes.size(); i++)
+		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
-			msMesh *pMesh = &m_Meshes[i];
+			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 			RageModelVertexVector& TempVertices = bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
@@ -615,9 +495,9 @@ void Model::DrawPrimitives()
 	{
 		DISPLAY->SetTextureModeGlow();
 
-		for (int i = 0; i < (int)m_Meshes.size(); i++)
+		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
-			msMesh *pMesh = &m_Meshes[i];
+			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
 
 			// apply material
@@ -719,9 +599,9 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		}
 	}
 
-	for (i = 0; i < (int)m_Meshes.size(); i++)
+	for (i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 	{
-		msMesh *pMesh = &m_Meshes[i];
+		msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 		for (j = 0; j < (int)pMesh->Vertices.size(); j++)
 		{
 			RageModelVertex *pVertex = &pMesh->Vertices[j];
@@ -752,8 +632,12 @@ void Model::SetFrame( float fNewFrame )
 void
 Model::AdvanceFrame (float dt)
 {
-	if( m_Meshes.empty() || !m_pCurAnimation )
+	if( m_pGeometry == NULL || 
+		m_pGeometry->m_Meshes.empty() || 
+		!m_pCurAnimation )
+	{
 		return;	// bail early
+	}
 
 	m_fCurrFrame += FRAMES_PER_SECOND * dt * m_fCurAnimationRate;
 	if (m_fCurrFrame >= (float)m_pCurAnimation->nTotalFrames)

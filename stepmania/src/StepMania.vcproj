@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				OutputFile="../Program/StepMania-debug.exe"
+				OutputFile="../../itg/Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
@@ -122,7 +122,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				OutputFile=".\../Program/StepMania.exe"
+				OutputFile=".\../../itg/Program/StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
@@ -1349,16 +1349,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScrollingList.h">
 			</File>
 			<File
-				RelativePath="SongCreditDisplay.cpp">
-			</File>
-			<File
-				RelativePath="SongCreditDisplay.h">
-			</File>
-			<File
 				RelativePath="SnapDisplay.cpp">
 			</File>
 			<File
 				RelativePath="SnapDisplay.h">
+			</File>
+			<File
+				RelativePath="SongCreditDisplay.cpp">
+			</File>
+			<File
+				RelativePath="SongCreditDisplay.h">
 			</File>
 			<File
 				RelativePath=".\TextBanner.cpp">
@@ -1666,6 +1666,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageMath.h">
 			</File>
 			<File
+				RelativePath="RageModelGeometry.cpp">
+			</File>
+			<File
+				RelativePath="RageModelGeometry.h">
+			</File>
+			<File
 				RelativePath="RageSound.cpp">
 			</File>
 			<File
@@ -1889,6 +1895,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Model.h">
+			</File>
+			<File
+				RelativePath="ModelManager.cpp">
+			</File>
+			<File
+				RelativePath="ModelManager.h">
 			</File>
 			<File
 				RelativePath="ModelTypes.cpp">

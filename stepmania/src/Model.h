@@ -16,6 +16,7 @@
 #include "ModelTypes.h"
 #include <vector>
 #include <map>
+#include "RageModelGeometry.h"
 
 struct msModel;
 
@@ -53,13 +54,15 @@ public:
 
 	virtual void HandleCommand( const ParsedCommand &command );
 
+	int m_iRefCount;
+
 private:
-    vector<msMesh>				m_Meshes;
+    RageModelGeometry	*m_pGeometry;
+
     vector<msMaterial>			m_Materials;
 	map<CString,msAnimation>	m_mapNameToAnimation;
 	msAnimation*				m_pCurAnimation;
 
-	RageVector3			m_vMins, m_vMaxs;
 	vector<myBone_t>	m_vpBones;
 
 	// true if any vertex has a bone weight.
@@ -74,6 +77,7 @@ private:
 	CString		m_sDefaultAnimation;
 	float		m_fDefaultAnimationRate;
 	float		m_fCurAnimationRate;
+
 };
 
 

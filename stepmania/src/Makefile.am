@@ -185,7 +185,7 @@ RageFileDriverZip.cpp RageFileDriverZip.h
 Rage = $(Helpers) $(PCRE)\
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
 RageException.cpp RageException.h RageInput.cpp RageInput.h \
-RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageSound.cpp RageSound.h \
+RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageModelGeometry.cpp RageModelGeometry.h RageSound.cpp RageSound.h \
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
 RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
@@ -198,7 +198,7 @@ $(RageFile)
 
 Actors = \
 Actor.cpp Actor.h ActorCollision.h ActorCommands.cpp ActorCommands.h ActorFrame.cpp ActorFrame.h ActorScroller.cpp ActorScroller.h \
-ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Milkshape.h Model.cpp Model.h ModelTypes.cpp ModelTypes.h \
+ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Milkshape.h Model.cpp Model.h ModelManager.cpp ModelManager.h ModelTypes.cpp ModelTypes.h \
 Quad.h Sprite.cpp Sprite.h 
 
 GlobalSingletons = \
