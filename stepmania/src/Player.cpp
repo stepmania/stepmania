@@ -425,9 +425,9 @@ void Player::Step( int col, RageTimer tm )
 		const float fMusicSeconds = GAMESTATE->m_fMusicSeconds - (fAgo / GAMESTATE->m_SongOptions.m_fMusicRate);
 
 		// The offset from the actual step in seconds:
-		const float fNoteOffset = fStepSeconds - fMusicSeconds;
+		const float fNoteOffset = (fStepSeconds - fMusicSeconds) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
 
-		const float fSecondsFromPerfect = fabsf( fNoteOffset ) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
+		const float fSecondsFromPerfect = fabsf( fNoteOffset );
 
 		// calculate TapNoteScore
 		TapNoteScore score;
