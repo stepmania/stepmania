@@ -29,8 +29,6 @@ Model::Model ()
 	m_bUseZBuffer = true;
 	m_pCurAnimation = NULL;
 	m_bRevertToDefaultAnimation = false;
-	m_fCurrAnimPlayRate = 1.0f;
-	m_fDefaultAnimPlayRate = 1.0f;
 }
 
 Model::~Model ()
@@ -686,7 +684,6 @@ void Model::DrawPrimitives()
 
 void Model::SetDefaultAnimation( CString sAnimation )
 {
-	m_fDefaultAnimPlayRate = PlayRate;
 	m_sDefaultAnimation = sAnimation;
 }
 
