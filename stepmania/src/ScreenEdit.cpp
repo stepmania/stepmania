@@ -1250,7 +1250,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 
 				// m_pSong->GetSongDir() has trailing slash
 				g_BGChange.rows[add_song_bganimation].choices.clear();
-				GetDirListing( m_pSong->GetSongDir()+"*.*", g_BGChange.rows[add_song_bganimation].choices, true );
+				GetDirListing( m_pSong->GetSongDir()+"*", g_BGChange.rows[add_song_bganimation].choices, true );
 
 				g_BGChange.rows[add_song_movie].choices.clear();
 				GetDirListing( m_pSong->GetSongDir()+"*.avi", g_BGChange.rows[add_song_movie].choices, false );
@@ -1269,7 +1269,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				GetDirListing( RANDOMMOVIES_DIR+"*.mpeg", g_BGChange.rows[add_global_random_movie].choices, false );
 
 				g_BGChange.rows[add_global_bganimation].choices.clear();
-				GetDirListing( BG_ANIMS_DIR+"*.*", g_BGChange.rows[add_global_bganimation].choices, true );
+				GetDirListing( BG_ANIMS_DIR+"*", g_BGChange.rows[add_global_bganimation].choices, true );
 
 				g_BGChange.rows[add_global_visualization].choices.clear();
 				GetDirListing( VISUALIZATIONS_DIR+"*.avi", g_BGChange.rows[add_global_visualization].choices, false );

@@ -747,7 +747,9 @@ void ScreenSelectMusic::AfterMusicChange()
 			no_banner_change = true;
 	}
 
+	m_sprMarathonBalloon.StopTweening();
 	OFF_COMMAND( m_sprMarathonBalloon );
+	m_sprLongBalloon.StopTweening();
 	OFF_COMMAND( m_sprLongBalloon );
 
 	switch( m_MusicWheel.GetSelectedType() )
