@@ -124,8 +124,12 @@ void NoteField::RefreshBeatToNoteSkin()
 		const CString &Skin = it->second;
 
 		map<CString, NoteDisplayCols *>::iterator display = m_NoteDisplays.find( Skin );
+		if( display == m_NoteDisplays.end() )
+		{
+			this->CacheNoteSkin( Skin );
+			display = m_NoteDisplays.find( Skin );
+		}
 
-		/* If this happens, we tried to use a note skin that wasn't pre-cached. */
 		RAGE_ASSERT_M( display != m_NoteDisplays.end(), ssprintf("Couldn't find %s", Skin.c_str()) );
 
 		NoteDisplayCols *cols = display->second;
