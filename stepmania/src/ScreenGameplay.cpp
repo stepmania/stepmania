@@ -1769,8 +1769,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		 *
 		 * However, if this is also a style button, don't do this. (pump center = start) */
 		bool bHoldingGiveUp = false;
-		bHoldingGiveUp |= (MenuI.button == MENU_BUTTON_START && !StyleI.IsValid() && START_GIVES_UP.GetValue());
-		bHoldingGiveUp |= (MenuI.button == MENU_BUTTON_BACK && !StyleI.IsValid() && BACK_GIVES_UP.GetValue());
+		bHoldingGiveUp |= ( START_GIVES_UP && MenuI.button == MENU_BUTTON_START && !StyleI.IsValid() );
+		bHoldingGiveUp |= ( BACK_GIVES_UP && MenuI.button == MENU_BUTTON_BACK && !StyleI.IsValid() );
 		
 		if( bHoldingGiveUp )
 		{
@@ -1792,7 +1792,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 		/* Only handle MENU_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
 		 * disabled. */
-		if( MenuI.button == MENU_BUTTON_BACK && !BACK_GIVES_UP.GetValue() )
+		if( MenuI.button == MENU_BUTTON_BACK && !BACK_GIVES_UP )
 		{
 			if( ((!PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS) ||
 				(DeviceI.device==DEVICE_KEYBOARD && (type==IET_SLOW_REPEAT||type==IET_FAST_REPEAT)) ||

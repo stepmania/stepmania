@@ -63,7 +63,7 @@ void DeleteCurSteps( void* pThrowAway )
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSong->RemoveSteps( pStepsToDelete );
-	if( !HOME_EDIT_MODE.GetValue() )
+	if( !HOME_EDIT_MODE )
 	{
 		pSong->Save();
 		SCREENMAN->ZeroNextUpdate();

@@ -77,6 +77,12 @@ public:
 	{
 		return m_currentValue;
 	}
+
+	//Hacks for VC6 for all boolean operators.
+	bool operator ! () const { return !m_currentValue; }
+	bool operator && ( const T& input ) const { return m_currentValue && input; }
+	bool operator || ( const T& input ) const { return m_currentValue || input; }
+	bool operator == ( const T& input ) const { return m_currentValue == input; }
 };
 
 typedef CString (*MetricName1D)(size_t N);

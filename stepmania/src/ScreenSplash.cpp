@@ -67,7 +67,7 @@ void ScreenSplash::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
 		return;
-	if( !ALLOW_START_TO_SKIP.GetValue() )
+	if( !ALLOW_START_TO_SKIP )
 		return;
 	this->ClearMessageQueue( SM_PrepScreen );
 	HandleScreenMessage( SM_PrepScreen );

@@ -27,7 +27,7 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWith
 		GAMESTATE->Reset();
 
 	// increment times through attract count
-	if( m_sName == INITIAL_SCREEN.GetValue() )
+	if( INITIAL_SCREEN == m_sName )
 		GAMESTATE->m_iNumTimesThroughAttract++;
 }
 

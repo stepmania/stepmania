@@ -150,7 +150,7 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning() )
 		return;
 
-	if( !ALLOW_BACK.GetValue() )
+	if( !ALLOW_BACK )
 		return;
 	
 	this->ClearMessageQueue();
