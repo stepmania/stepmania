@@ -78,16 +78,25 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		break;
 	case blinking:
 		for(i=0; i<4; i++)
+		{
+			float fOriginalAlpha = m_temp.diffuse[i].a;
 			m_temp.diffuse[i] = m_bTweeningTowardEndColor ? m_effect_colorDiffuse1 : m_effect_colorDiffuse2;
+			m_temp.diffuse[i].a *= fOriginalAlpha;
+		}
 		break;
 	case camelion:
 		for(i=0; i<4; i++)
+		{
+			float fOriginalAlpha = m_temp.diffuse[i].a;
 			m_temp.diffuse[i] = m_effect_colorDiffuse1*m_fPercentBetweenColors + m_effect_colorDiffuse2*(1.0f-m_fPercentBetweenColors);
+			m_temp.diffuse[i].a *= fOriginalAlpha;
+		}
 		break;
 	case glowing:
 		float fCurvedPercent;
 		fCurvedPercent = sinf( m_fPercentBetweenColors * PI );
 		m_temp.glow = m_effect_colorGlow1*fCurvedPercent + m_effect_colorGlow2*(1.0f-fCurvedPercent);
+		m_temp.glow.a *= m_temp.diffuse[0].a;	// don't glow if the Actor is transparent!
 		break;
 	case wagging:
 		m_temp.rotation.z = m_fWagRadians * sinf( 
