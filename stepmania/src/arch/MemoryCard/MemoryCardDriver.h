@@ -44,6 +44,7 @@ public:
 	virtual bool StorageDevicesChanged() = 0;
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut ) = 0;
 	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;	// return false if mount or write fails
+	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;
 	virtual void Flush( UsbStorageDevice* pDevice ) {}
 	virtual void ResetUsbStorage() {};
 };

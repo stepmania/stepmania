@@ -101,6 +101,11 @@ bool MemoryCardDriver_Windows::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 	return true;
 }
 
+void MemoryCardDriver_Windows::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )
+{
+	
+}
+
 void MemoryCardDriver_Windows::Flush( UsbStorageDevice* pDevice )
 {
 	// Do we need anything here?  I don't lose data if ejecting 

@@ -10,7 +10,7 @@ public:
 	virtual bool StorageDevicesChanged() { return false; };
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut ) {};
 	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint ) { return false; };
-	virtual void Flush( UsbStorageDevice* pDevice ) {};
+	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint ) {};
 };
 
 #endif

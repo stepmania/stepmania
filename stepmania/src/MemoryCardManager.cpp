@@ -99,6 +99,8 @@ void MemoryCardManager::Update( float fDelta )
 
 					if( PROFILEMAN->ProfileWasLoadedFromMemoryCard((PlayerNumber)p) )
 						PROFILEMAN->UnloadProfile( (PlayerNumber)p );
+
+					m_pDriver->Unmount(&m_Device[p], MEM_CARD_MOUNT_POINT[p]);
 				}
 			}
 		}
