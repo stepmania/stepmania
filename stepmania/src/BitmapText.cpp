@@ -264,6 +264,8 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 		// (if only one word fits on the line, it may be larger than iWrapWidthPixels ).
 		//
 		// TODO: Investigate whether this works in all languages
+		/* It doesn't.  I can add Japanese wrapping, at least.  We could handle hyphens
+		 * and soft hyphens and pretty easily, too. -glenn */
 		// TODO: Move this wrapping logic into Font
 		CStringArray asWords;
 		split( sText, " ", asWords );
@@ -271,9 +273,11 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 		CString sCurLine;
 		int iCurLineWidth = 0;
 
-		for( int i=0; i<asWords.size(); i++ )
+		/* Note that GetLineWidthInSourcePixels does not include horizontal overdraw
+		 * right now (eg. italic fonts), so it's possible to go slightly over. */
+		for( unsigned i=0; i<asWords.size(); i++ )
 		{
-			CString sWord = asWords[i];
+			const CString &sWord = asWords[i];
 			int iWidthWord = m_pFont->GetLineWidthInSourcePixels( CStringToWstring(sWord) );
 
 			if( sCurLine.empty() )
@@ -453,6 +457,7 @@ void BitmapText::HandleCommand( const CStringArray &asTokens )
 
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 {
+	ASSERT( m_pFont ); // always load a font first
 	if( m_iWrapWidthPixels == iWrapWidthPixels )
 		return;
 	SetText( m_sText, "", iWrapWidthPixels );
