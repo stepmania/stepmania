@@ -13,7 +13,7 @@ class RageSoundBase
 public:
 	virtual ~RageSoundBase() { }
 	virtual void StopPlaying() = 0;
-	virtual int GetPCM( char *buffer, int size, int sampleno ) = 0;
+	virtual int GetPCM( char *buffer, int size, int64_t sampleno ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual CString GetLoadedFilePath() const = 0;
@@ -93,19 +93,19 @@ private:
 	/* Sound blocks we've sent out recently through GetPCM.  We keep track
 	 * of each block for the last four calls of GetPCM. */
 	struct pos_map_t {
-		/* Sample number from the POV of the sound driver: */
-		int sampleno;
+		/* Frame number from the POV of the sound driver: */
+		int64_t frameno;
 
 		/* Actual sound position within the sample: */
-		int position;
+		int64_t position;
 
-		/* The number of samples in this block: */
-		int samples;
+		/* The number of frames in this block: */
+		int64_t frames;
 
-		pos_map_t(int samp, int pos, int cnt) { sampleno=samp, position=pos; samples=cnt; }
+		pos_map_t( int64_t frame, int pos, int cnt ) { frameno=frame, position=pos; frames=cnt; }
 	};
 	deque<pos_map_t> pos_map;
-	static int SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bool *approximate );
+	static int64_t SearchPosMap( const deque<pos_map_t> &pos_map, int64_t cur_frames, bool *approximate );
 	static void CleanPosMap( deque<pos_map_t> &pos_map );
 	
 	CString m_sFilePath;
@@ -124,7 +124,7 @@ private:
 	 * (we're not playing); and we can't seek back to the current playing position
 	 * when we stop (too slow), but we want to be able to report the position we
 	 * were at when we stopped without jumping to the last position we buffered. */
-	int stopped_position;
+	int64_t stopped_position;
 	bool    playing;
 
 	/* Number of samples input and output when changing speed.  Currently,
@@ -138,7 +138,7 @@ private:
 
 	CString error;
 
-	int GetPositionSecondsInternal( bool *approximate=NULL ) const;
+	int64_t GetPositionSecondsInternal( bool *approximate=NULL ) const;
 	bool SetPositionSamples( int samples = -1 );
 	int GetData(char *buffer, int size);
 	void Fail(CString reason);
@@ -156,7 +156,7 @@ public:
 	 * If less than size is returned, it signals the stream to stop; once it's
 	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
 	 * can still be called (the sound is still playing). */
-	int GetPCM(char *buffer, int size, int sampleno);
+	int GetPCM( char *buffer, int size, int64_t frameno );
 	void Update(float delta);
 };
 

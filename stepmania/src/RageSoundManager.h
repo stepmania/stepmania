@@ -36,7 +36,7 @@ public:
 	void Update(float delta);
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );	/* used by RageSound */
-	int GetPosition( const RageSoundBase *snd ) const;	/* used by RageSound */
+	int64_t GetPosition( const RageSoundBase *snd ) const;	/* used by RageSound */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;
 	const set<RageSound *> &GetPlayingSounds() const { return playing_sounds; }

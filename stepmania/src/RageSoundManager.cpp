@@ -63,7 +63,7 @@ void RageSoundManager::StopMixing( RageSoundBase *snd )
 	}
 }
 
-int RageSoundManager::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSoundManager::GetPosition( const RageSoundBase *snd ) const
 {
 	return driver->GetPosition(snd);
 }

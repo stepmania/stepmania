@@ -226,7 +226,7 @@ void RageSound::SetLengthSeconds(float secs)
 void RageSound::Update(float delta)
 {
 	if(playing && delta)
-		FillBuf(int(delta * samplerate() * samplesize));
+		FillBuf(int(delta * GetSampleRate() * samplesize));
 }
 
 /* Return the number of bytes available in the input buffer. */
@@ -386,7 +386,7 @@ int RageSound::GetData(char *buffer, int size)
 
 /* Called by the mixer: return a block of sound data. 
  * Be careful; this is called in a separate thread. */
-int RageSound::GetPCM(char *buffer, int size, int sampleno)
+int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 {
 	int NumRewindsThisCall = 0;
 
@@ -468,11 +468,11 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			got = size;
 		}
 
-		/* This block goes from position to position+got_samples. */
-		int got_samples = got / samplesize;  /* bytes -> samples */
+		/* This block goes from position to position+got_frames. */
+		int got_frames = got / samplesize;  /* bytes -> frames */
 
 		/* Save this sampleno/position map. */
-		pos_map.push_back(pos_map_t(sampleno, position, got_samples));
+		pos_map.push_back( pos_map_t(frameno, position, got_frames) );
 
 		/* We want to fade when there's FADE_TIME seconds left, but if
 		 * m_LengthSamples is -1, we don't know the length we're playing.
@@ -482,7 +482,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			Sint16 *p = (Sint16 *) buffer;
 			int this_position = position;
 
-			for(int samp = 0; samp < got_samples; ++samp)
+			for(int samp = 0; samp < got_frames; ++samp)
 			{
 				float fSecsUntilSilent = float(m_StartSample + m_LengthSamples - this_position) / samplerate();
 				float fVolPercent = fSecsUntilSilent / fade_length;
@@ -497,10 +497,10 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 		}
 
 		bytes_stored += got;
-		position += got_samples;
+		position += got_frames;
 		size -= got;
 		buffer += got;
-		sampleno += got_samples;
+		frameno += got_frames;
 	}
 
 	return bytes_stored;
@@ -572,36 +572,38 @@ float RageSound::GetLengthSeconds()
 	return len / 1000.f; /* ms -> secs */
 }
 
-int RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bool *approximate )
+int64_t RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int64_t cur_frame, bool *approximate )
 {
 	/* sampleno is probably in pos_map.  Search to figure out what position
-	 * this sampleno maps to. */
-	int closest_position = 0, closest_position_dist = INT_MAX;
+	 * this frameno maps to. */
+	int64_t closest_position = 0, closest_position_dist = INT_MAX;
+	int closest_block = 0; /* print only */
 	for( unsigned i = 0; i < pos_map.size(); ++i )
 	{
-		if( cur_sample >= pos_map[i].sampleno &&
-			cur_sample < pos_map[i].sampleno+pos_map[i].samples )
+		if( cur_frame >= pos_map[i].frameno &&
+			cur_frame < pos_map[i].frameno+pos_map[i].frames )
 		{
-			/* cur_sample lies in this block; it's an exact match.  Figure
+			/* cur_frame lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
-			int diff = pos_map[i].position - pos_map[i].sampleno;
-			return cur_sample + diff;
+			int64_t diff = pos_map[i].position - pos_map[i].frameno;
+			return cur_frame + diff;
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		int dist = abs( pos_map[i].sampleno - cur_sample );
+		int64_t dist = llabs( pos_map[i].frameno - cur_frame );
 		if( dist < closest_position_dist )
 		{
 			closest_position_dist = dist;
+			closest_block = i;
 			closest_position = pos_map[i].position - dist;
 		}
 
 		/* See if the current position is close to the end of this block. */
-		dist = abs( pos_map[i].sampleno + pos_map[i].samples - cur_sample );
+		dist = llabs( pos_map[i].frameno + pos_map[i].frames - cur_frame );
 		if( dist < closest_position_dist )
 		{
 			closest_position_dist = dist;
-			closest_position = pos_map[i].position + pos_map[i].samples + dist;
+			closest_position = pos_map[i].position + pos_map[i].frames + dist;
 		}
 	}
 
@@ -614,7 +616,9 @@ int RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bo
 	 *    SoundStopped has been called.
 	 * 3. Underflow; we'll be given a larger sample number than we know about.
 	 */
-	LOG->Trace( "Approximate sound time: sample %i, dist %i, closest %i", cur_sample, closest_position_dist, closest_position );
+	/* XXX: %lli normally, %I64i in Windows */
+	LOG->Trace( "Approximate sound time: driver sample %lli, pos_map sample %lli (dist %lli), closest position is %i",
+		cur_frame, pos_map[closest_block].frameno, closest_position_dist, closest_position );
 
 	if( approximate )
 		*approximate = true;
@@ -624,21 +628,21 @@ int RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bo
 void RageSound::CleanPosMap( deque<pos_map_t> &pos_map )
 {
 	/* Determine the number of frames of data we have. */
-	int total_frames = 0;
+	int64_t total_frames = 0;
 	for( unsigned i = 0; i < pos_map.size(); ++i )
-		total_frames += pos_map[i].samples;
+		total_frames += pos_map[i].frames;
 
 	/* Remove the oldest entry so long we'll stil have enough data.  Don't delete every
 	 * sample, so we'll always have some data to extrapolate from. */
-	while( pos_map.size() > 1 && total_frames - pos_map.front().samples > pos_map_backlog_samples )
+	while( pos_map.size() > 1 && total_frames - pos_map.front().frames > pos_map_backlog_samples )
 	{
-		total_frames -= pos_map.front().samples;
+		total_frames -= pos_map.front().frames;
 		pos_map.pop_front();
 	}
 }
 
 /* Get the position in frames (ignoring GetOffsetFix). */
-int RageSound::GetPositionSecondsInternal( bool *approximate ) const
+int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 {
 	LockMut(SOUNDMAN->lock);
 
@@ -664,7 +668,7 @@ int RageSound::GetPositionSecondsInternal( bool *approximate ) const
 	}
 
 	/* Get our current hardware position. */
-	int cur_sample = SOUNDMAN->GetPosition(this);
+	int64_t cur_sample = SOUNDMAN->GetPosition(this);
 
 	return SearchPosMap( pos_map, cur_sample, approximate );
 }
