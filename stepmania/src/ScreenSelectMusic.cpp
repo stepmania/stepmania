@@ -844,11 +844,15 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_SONG:
 		{
 			// Don't stop music if it's already playing the right file.
-//			SOUNDMAN->StopMusic();
-			m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
-			m_sSampleMusicToPlay = pSong->GetMusicPath();
-			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
-			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
+			if( SOUNDMAN->GetMusicPath() != pSong->GetMusicPath() )
+			{
+				SOUNDMAN->StopMusic();
+
+				m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
+				m_sSampleMusicToPlay = pSong->GetMusicPath();
+				m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
+				m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
+			}
 
 			for( int pn = 0; pn < NUM_PLAYERS; ++pn) 
 			{
