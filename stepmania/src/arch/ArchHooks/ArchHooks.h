@@ -40,6 +40,8 @@ public:
 	virtual MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID = "" ) { return ignore; } 
 
 	virtual ~ArchHooks() { }
+	/* This is called once each time through the game loop */
+	virtual void Update(float delta) { }
 };
 
 #endif

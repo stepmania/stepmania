@@ -811,6 +811,8 @@ static void GameLoop()
 		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );
 
+		HOOKS->Update( fDeltaTime );
+
 		/*
 		 * Render
 		 */
