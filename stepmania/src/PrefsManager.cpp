@@ -847,6 +847,10 @@ Premium	PrefsManager::GetPremium()
 }
 
 
+#include "LuaFunctions.h"
+LuaFunction_NoArgs( EventMode, PREFSMAN->m_bEventMode )
+
+
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.
