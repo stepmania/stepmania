@@ -834,7 +834,13 @@ void RageDisplay_D3D::SetLightDirectional(
 	D3DLIGHT8 light;
 	ZERO( light );
 	light.Type = D3DLIGHT_DIRECTIONAL;
-	memcpy( &light.Direction, &dir, sizeof(dir) );
+
+	/* Without this, characters are lit from behind, so the directional light can
+	 * barely be seen.  I'm not sure that this is generally correct, since I don't
+	 * know how the coordinate systems are different, but it works for
+	 * DancingCharacters::DrawPrimitives.  XXX: figure out exactly why this is needed */
+	float position[] = { -dir.x, -dir.y, -dir.z };
+	memcpy( &light.Direction, position, sizeof(position) );
 	memcpy( &light.Diffuse, diffuse, sizeof(diffuse) );
 	memcpy( &light.Ambient, ambient, sizeof(ambient) );
 	memcpy( &light.Specular, specular, sizeof(specular) );
