@@ -37,16 +37,16 @@ class Inventory;
 #define	SAMPLE_COUNT	16
 
 
-class Player : public NoteDataWithScoring, public ActorFrame
+class PlayerMinus : public NoteDataWithScoring, public ActorFrame
 {
 public:
-	Player();
+	PlayerMinus();
+	~PlayerMinus();
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	~Player();
 
-	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
+	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField );
 	void CrossedRow( int iNoteRow );
 	void Step( int col, RageTimer tm );
 	void RandomiseNotes( int iNoteRow );
@@ -71,7 +71,7 @@ protected:
 	int				m_iOffsetSample;		//
 
 	ArrowBackdrop	m_ArrowBackdrop;
-	NoteFieldPlus	m_NoteField;
+	NoteFieldPlus*	m_pNoteField;
 
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 
@@ -92,6 +92,16 @@ protected:
 	int				m_iRowLastCrossed;
 
 	RageSound		m_soundMineExplosion;
+};
+
+class Player : public PlayerMinus
+{
+public:
+	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
+
+protected:
+	NoteFieldPlus	m_NoteField;
+
 };
 
 #endif
