@@ -5,6 +5,8 @@
 
 struct AudioTimeStamp;
 struct AudioBufferList;
+struct OpaqueAudioConverter;
+typedef struct OpaqueAudioConverter *AudioConverterRef;
 typedef unsigned long UInt32;
 typedef UInt32 AudioDeviceID;
 typedef UInt32 AudioDevicePropertyID;
@@ -15,20 +17,11 @@ class RageSoundBase;
 
 class RageSound_CA : public RageSound_Generic_Software
 {
-public:
-	enum format
-	{
-		EXACT,
-		CANONICAL,
-		OTHER
-	};
-
 private:
     int64_t mDecodePos;
     float mLatency;
     CAAudioHardwareDevice *mOutputDevice;
-	int64_t mNow;
-	format mFormat;
+	AudioConverterRef mConverter;
 	
 	static OSStatus GetData(AudioDeviceID inDevice,
 							const AudioTimeStamp *inNow,
@@ -45,7 +38,6 @@ private:
                                      void *inData);
                               
 public:
-    void FillConverter( void *data, UInt32 frames );
     RageSound_CA();
     ~RageSound_CA();
     float GetPlayLatency() const { return mLatency; }

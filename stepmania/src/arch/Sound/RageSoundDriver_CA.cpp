@@ -1,10 +1,10 @@
 #include "global.h"
 #include "RageUtil.h"
 #include "RageSoundDriver_CA.h"
-#include "CAHelpers.h"
 #include "RageLog.h"
 #include "RageTimer.h"
 
+#include <AudioToolbox/AudioConverter.h>
 #include "CAAudioHardwareSystem.h"
 #include "CAAudioHardwareDevice.h"
 #include "CAAudioHardwareStream.h"
@@ -15,7 +15,16 @@
 #include <mach/mach_init.h>
 #include <mach/mach_error.h>
 
-static AudioConverter *gConverter = NULL;
+static const UInt32 kFramesPerPacket = 1;
+static const UInt32 kChannelsPerFrame = 2;
+static const UInt32 kBitsPerChannel = 16;
+static const UInt32 kBytesPerPacket = kChannelsPerFrame * kBitsPerChannel / 8;
+static const UInt32 kBytesPerFrame = kBytesPerPacket;
+static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian |
+kAudioFormatFlagIsSignedInteger;
+
+typedef CAStreamBasicDescription Desc;
+
 
 /* temporary hack: */
 static float g_fLastIOProcTime = 0;
@@ -40,79 +49,8 @@ static CString FormatToString( int fmt )
 	return ssprintf( "%c%c%c%c", c[0], c[1], c[2], c[3] );
 }
 
-static Desc FindClosestFormat(const vector<Desc>& formats,
-							  RageSound_CA::format& type)
-{
-	vector<Desc> v;
-
-	vector<Desc>::const_iterator i;
-	for (i = formats.begin(); i != formats.end(); ++i)
-	{
-		const Desc& format = *i;
-
-		if( !format.IsPCM() )
-			continue;
-
-		if( format.mSampleRate != 0. && format.mSampleRate != 44100.0 )
-			continue;
-
-		if (format.SampleWordSize() == 2 &&
-            (format.mFormatFlags & kFormatFlags) == kFormatFlags)
-		{ // exact match
-			type = RageSound_CA::EXACT;
-			return format;
-		}
-		v.push_back(format);
-	}
-
-	const Desc CanonicalFormat(44100.0, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
-							   kAudioFormatFlagsNativeFloatPacked);
-
-	for (i = v.begin(); i != v.end(); ++i)
-	{
-		const Desc& format = *i;
-
-		if (format == CanonicalFormat)
-		{
-			type = RageSound_CA::CANONICAL;
-			return format;
-		}
-	}
-	if (v.empty())
-		RageException::ThrowNonfatal("Couldn't find a close format.");
-	type = RageSound_CA::OTHER;
-	return v[0]; // something is better than nothing.
-}
-
-static void GetIOProcFormats( CAAudioHardwareStream stream,
-							  vector<Desc> &procFormats )
-{
-	UInt32 numFormats = stream.GetNumberAvailableIOProcFormats();
-
-	for( UInt32 i=0; i<numFormats; ++i )
-	{
-		Desc desc;
-
-		stream.GetAvailableIOProcFormatByIndex( i, desc );
-		procFormats.push_back( desc );
-	}
-}
-
-static void GetPhysicalFormats( CAAudioHardwareStream stream,
-								vector<Desc> &physicalFormats )
-{
-	UInt32 numFormats = stream.GetNumberAvailablePhysicalFormats();
-	for( UInt32 i=0; i<numFormats; ++i )
-	{
-		Desc desc;
-
-		stream.GetAvailablePhysicalFormatByIndex( i, desc );
-		physicalFormats.push_back( desc );
-	}
-}
-
 RageSound_CA::RageSound_CA()
-{
+{	
 	try
 	{
 		AudioDeviceID dID;
@@ -150,44 +88,20 @@ RageSound_CA::RageSound_CA()
 		LOG->Warn("Could not install the overload listener.");
 	}
 
-	vector<Desc> physicalFormats;
-	GetPhysicalFormats( sID, physicalFormats );
-	unsigned i;
-	LOG->Info("Available physical formats:");
-	for (i = 0; i < physicalFormats.size(); ++i)
+	const Desc CanonicalFormat(44100.0, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
+							   kAudioFormatFlagsNativeFloatPacked);
+	const Desc SMFormat(44100.0, kAudioFormatLinearPCM, kBytesPerPacket,
+                        kFramesPerPacket, kBytesPerFrame, kChannelsPerFrame,
+                        kBitsPerChannel, kFormatFlags);
+	
+	stream.SetCurrentIOProcFormat(CanonicalFormat);
+	
+	if (AudioConverterNew(&SMFormat, &CanonicalFormat, &mConverter))
 	{
-		const Desc& f = physicalFormats[i];
-        
-		LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
-				  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
-				  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
-				  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
-				  f.mChannelsPerFrame, f.mBitsPerChannel);
+		delete mOutputDevice;
+		RageException::ThrowNonfatal("Couldn't create the audio converter");
 	}
-	const Desc& physicalFormat = FindClosestFormat( physicalFormats, mFormat );
-	stream.SetCurrentPhysicalFormat( physicalFormat );
-
-	vector<Desc> procFormats;
-	GetIOProcFormats( sID, procFormats );
-	LOG->Info("Available I/O procedure formats:");
-	for (i = 0; i < procFormats.size(); ++i)
-	{
-		const Desc& f = procFormats[i];
-        
-		LOG->Info("Format %u:  Rate: %i  ID: %s  Flags 0x%lx  bpp %lu  fpp %lu"
-				  " bpf %lu  channels %lu  bits %lu", i, int(f.mSampleRate),
-				  FormatToString(f.mFormatID).c_str(), f.mFormatFlags,
-				  f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
-				  f.mChannelsPerFrame, f.mBitsPerChannel);
-	}
-
-	const Desc& procFormat = FindClosestFormat( procFormats, mFormat );
-	stream.SetCurrentIOProcFormat( procFormat );
-
-	LOG->Info("Proc format is %s.",
-			  mFormat == EXACT ? "exact" : (mFormat == CANONICAL ?
-											"canonical" : "other"));
-
+	
 	try
 	{
 		UInt32 bufferSize = mOutputDevice->GetIOBufferSize();
@@ -218,13 +132,11 @@ RageSound_CA::RageSound_CA()
 	catch (const CAException& e)
 	{
 		delete mOutputDevice;
+		AudioConverterDispose(mConverter);
 		RageException::ThrowNonfatal("Couldn't get Latency.");
 	}
 
 	StartDecodeThread();
-
-	if (mFormat == OTHER)
-		gConverter = new AudioConverter( this, procFormat );
     
 	try
 	{
@@ -233,8 +145,8 @@ RageSound_CA::RageSound_CA()
 	}
 	catch(const CAException& e)
 	{
-		delete gConverter;
 		delete mOutputDevice;
+		AudioConverterDispose(mConverter);
 		RageException::Throw("Couldn't start the IOProc.");
 	}
 }
@@ -243,7 +155,7 @@ RageSound_CA::~RageSound_CA()
 {
 	mOutputDevice->StopIOProc(GetData);
 	delete mOutputDevice;
-	delete gConverter;
+	AudioConverterDispose(mConverter);
 }
 
 int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
@@ -252,17 +164,6 @@ int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
     
 	mOutputDevice->GetCurrentTime(time);
 	return int64_t(time.mSampleTime);
-}
-
-void RageSound_CA::FillConverter( void *data, UInt32 frames )
-{
-	RageTimer tm;
-	
-	Mix( (int16_t *)data, frames, mDecodePos, mNow );
-
-	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
-	++g_fLastMixTimePos;
-	wrap( g_fLastMixTimePos, NUM_MIX_TIMES );
 }
 
 OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
@@ -276,50 +177,21 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
 	RageTimer tm;
 	RageSound_CA *This = (RageSound_CA *)inClientData;
 	AudioBuffer& buf = outOutputData->mBuffers[0];
-	UInt32 dataPackets = buf.mDataByteSize;
+	UInt32 dataPackets = buf.mDataByteSize >> 3; // 8 byes per packet
 	int64_t decodePos = int64_t(inOutputTime->mSampleTime);
 	int64_t now = int64_t(inNow->mSampleTime);
 	
-	if (This->mFormat == OTHER)
-	{
-		dataPackets /= gConverter->GetOutputFormat().mBytesPerPacket;
-		This->mDecodePos = decodePos;
-		This->mNow = now;
-		gConverter->FillComplexBuffer(dataPackets, *outOutputData, NULL);
-	}
-	else
-	{
-		RageTimer mixTM;
+	RageTimer tm2;
+	int16_t buffer[dataPackets * (kBytesPerPacket >> 1)];
 		
-		if (This->mFormat == EXACT)
-		{
-			dataPackets /= kBytesPerPacket;
-			This->Mix((int16_t *)buf.mData, dataPackets, decodePos, now);
-		}
-		else // This->mFormat == CANONICAL
-		{
-			dataPackets /= 8; // 8 bytes per packet (1 frame per packet)
-			
-			int16_t buffer[dataPackets * kBytesPerPacket];
-			int16_t *ip = buffer;
-			float *fp = (float *)buf.mData;
-			
-			This->Mix(buffer, dataPackets, decodePos, now);
-			
-			// Convert from signed 16 bit int to signed 32 bit float
-			for (unsigned i = 0; i < buf.mDataByteSize; i += 4)
-			{
-				int16_t val = *(ip++);
-				
-				*(fp++) = val / (val < 0 ? 32768.0f : 32767.0f);
-			}
-		}
+	This->Mix(buffer, dataPackets, decodePos, now);
+	g_fLastMixTimes[g_fLastMixTimePos] = tm2.GetDeltaTime();
+	++g_fLastMixTimePos;
+	wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
 		
-		g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
-		++g_fLastMixTimePos;
-		wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
-	}
-	
+	AudioConverterConvertBuffer(This->mConverter, dataPackets * kBytesPerPacket,
+								buffer, &buf.mDataByteSize, buf.mData);
+		
 	g_fLastIOProcTime = tm.GetDeltaTime();
 	++g_iNumIOProcCalls;
 	
