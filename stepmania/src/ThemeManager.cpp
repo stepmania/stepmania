@@ -685,9 +685,15 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueName )
 {
 	CString sValue = GetMetricRaw( sClassName,sValueName );
-	if( sValue == "0" )
+
+	/* Watch out: "0" and "1" are not false and true in Lua (all string values are
+	 * true).  Make sure that we catch all values that are supposed to be simple
+	 * booleans. */
+	TrimLeft( sValue );
+	TrimRight( sValue );
+	if( sValue.Left(1) == "0" )
 		return false; /* optimization */
-	if( sValue == "1" )
+	if( sValue.Left(1) == "1" )
 		return true; /* optimization */
 
 	Lua::PrepareExpression( sValue );
