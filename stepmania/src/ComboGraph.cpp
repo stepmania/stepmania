@@ -9,7 +9,7 @@
 
 const int MinComboSizeToShow = 5;
 
-void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
+void ComboGraph::Load( const CString& sScreen, const CString& sElement, const StageStats &s, PlayerNumber pn )
 {
 	ASSERT( m_SubActors.size() == 0 );
 
@@ -30,7 +30,7 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		LOG->Trace("combo %i is %f+%f", i, combo.fStartSecond, combo.fSizeSeconds);
 		Sprite *sprite = new Sprite;
 		sprite->SetName( "ComboBar" );
-		sprite->Load( THEME->GetPathG( Path, IsMax? "max":"normal" ) );
+		sprite->Load( THEME->GetPathG( sScreen, sElement + (IsMax? " max":" normal") ) );
 
 		const float start = SCALE( combo.fStartSecond, s.m_player[pn].fFirstSecond, s.m_player[pn].fLastSecond, 0.0f, 1.0f );
 		const float size = SCALE( combo.fSizeSeconds, 0, s.m_player[pn].fLastSecond-s.m_player[pn].fFirstSecond, 0.0f, 1.0f );
@@ -63,7 +63,7 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 
 		BitmapText *text = new BitmapText;
 		text->SetName( "ComboMaxNumber" );
-		text->LoadFromFont( THEME->GetPathToF(Path) );
+		text->LoadFromFont( THEME->GetPathF(sScreen,sElement) );
 
 		const float start = SCALE( combo.fStartSecond, s.m_player[pn].fFirstSecond, s.m_player[pn].fLastSecond, 0.0f, 1.0f );
 		const float size = SCALE( combo.fSizeSeconds, 0, s.m_player[pn].fLastSecond-s.m_player[pn].fFirstSecond, 0.0f, 1.0f );

@@ -451,7 +451,7 @@ void ScreenEvaluation::Init()
 		FOREACH_EnabledPlayer( p )
 		{
 			m_Combo[p].SetName( m_sName, ssprintf("ComboP%i",p+1) );
-			m_Combo[p].Load( ssprintf(m_sName+" combo p%i", p+1), stageStats, p );
+			m_Combo[p].Load( m_sName, ssprintf("combo p%i",p+1), stageStats, p );
 			SET_XY_AND_ON_COMMAND( m_Combo[p] );
 
 			this->AddChild( &m_Combo[p] );

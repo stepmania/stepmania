@@ -9,7 +9,7 @@ class ComboGraph: public ActorFrame
 {
 public:
 	~ComboGraph() { Unload(); }
-	void Load( CString Path, const StageStats &s, PlayerNumber pn );
+	void Load( const CString& sScreen, const CString& sElement, const StageStats &s, PlayerNumber pn );
 	void Unload();
 	void TweenOffScreen();
 
