@@ -188,7 +188,7 @@ void ScreenEvaluation::Init()
 	 * include the last game. */
 	GAMESTATE->CommitStageStats();
 
-	Screen::Init();
+	ScreenWithMenuElements::Init();
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
