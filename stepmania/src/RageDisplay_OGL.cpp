@@ -64,7 +64,9 @@ namespace GLExt {
 
 #include <math.h>
 
+#ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
+#endif
 
 //
 // Globals
@@ -381,7 +383,7 @@ fail:
 
 void SetupExtensions()
 {
-	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
+	const float fGLVersion = (float) atof( (const char *) glGetString(GL_VERSION) );
 	g_glVersion = int(roundf(fGLVersion * 10));
 	GetGLExtensions(g_glExts);
 
