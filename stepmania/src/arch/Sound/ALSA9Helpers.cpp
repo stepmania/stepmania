@@ -7,9 +7,9 @@
 
 /* int err; must be defined before using this macro */
 #define ALSA_CHECK(x) \
-       if ( err < 0 ) { LOG->Info("ALSA9: %s: %s", x, dsnd_strerror(err)); return false; }
+       if ( err < 0 ) { LOG->Info("ALSA: %s: %s", x, dsnd_strerror(err)); return false; }
 #define ALSA_ASSERT(x) \
-        if (err < 0) { LOG->Warn("ALSA9: %s: %s", x, dsnd_strerror(err)); }
+        if (err < 0) { LOG->Warn("ALSA: %s: %s", x, dsnd_strerror(err)); }
 
 /* If the given sample rate can be used, return it.  Otherwise, return the
  * samplerate to use instead. */
