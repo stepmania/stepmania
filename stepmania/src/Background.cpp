@@ -283,7 +283,7 @@ CString Background::CreateRandomBGA()
 	}
 	case PrefsManager::BGMODE_MOVIEVIS:		ret = MakeVisualization( file ); break;
 	case PrefsManager::BGMODE_RANDOMMOVIES: ret = MakeMovie( file ); break;
-	default: FAIL_M( ssprintf("%i", PREFSMAN->m_iBackgroundMode) );
+	default: FAIL_M( ssprintf("%i", (int) PREFSMAN->m_iBackgroundMode) );
 	}
 
 	m_BGAnimations[file] = ret;
