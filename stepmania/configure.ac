@@ -55,10 +55,8 @@ fi
 
 SM_X_WITH_OPENGL
 
-AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
-# XXX: 1.2.6 has been out for a while (as well as 1.2.7).  I'm disabling the
-# fallback copy of SDL for now, to see if we can get rid of it.
-if test "$enable_sdl" = "no"; then
+AM_PATH_SDL(1.2.6,have_sdl=yes,have_sdl=no)
+if test "$have_sdl" = "no"; then
   echo
   echo "*** SDL 1.2.6 or greater is required to build StepMania; please"
   echo "*** make sure that it is installed to continue the build process."
