@@ -1106,6 +1106,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\VideoDriverInfo.h">
 				</File>
 				<File
+					RelativePath="archutils\Win32\arch_setup.cpp">
+				</File>
+				<File
 					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
