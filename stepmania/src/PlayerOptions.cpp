@@ -201,7 +201,7 @@ void PlayerOptions::FromString( CString sOptions )
 			continue;
 		}
 
-		else if( sscanf( sBit, "C%d", &i1 ) == 1 )
+		else if( sscanf( sBit, "c%d", &i1 ) == 1 )
 		{
 			m_bTimeSpacing = true;
 			m_fScrollBPM = (float) i1;
@@ -440,4 +440,35 @@ float PlayerOptions::GetReversePercentForColumn( int iCol )
 	if( f > 1 )
 		f -= 1;
 	return f;
+}
+
+bool ComparePlayerOptions( const PlayerOptions &po1, const PlayerOptions &po2 )
+{
+#define COMPARE(x) { if( po1.x != po2.x ) return false; }
+	COMPARE(m_bTimeSpacing);
+	COMPARE(m_fScrollSpeed);
+	COMPARE(m_fScrollBPM);
+	COMPARE(m_fDark);
+	COMPARE(m_fBlind);
+	COMPARE(m_Turn);
+	COMPARE(m_Transform);
+	COMPARE(m_bHoldNotes);
+	COMPARE(m_bTimingAssist);
+	COMPARE(m_bProTiming);
+	COMPARE(m_fPerspectiveTilt);
+	COMPARE(m_fSkew);
+	COMPARE(m_sPositioning);
+	COMPARE(m_sNoteSkin);
+	int i;
+	for( i = 0; i < PlayerOptions::NUM_ACCELS; ++i )
+		COMPARE(m_fAccels[i]);
+	for( i = 0; i < PlayerOptions::NUM_EFFECTS; ++i )
+		COMPARE(m_fEffects[i]);
+	for( i = 0; i < PlayerOptions::NUM_APPEARANCES; ++i )
+		COMPARE(m_fAppearances[i]);
+	for( i = 0; i < PlayerOptions::NUM_SCROLLS; ++i )
+		COMPARE(m_fScrolls[i]);
+#undef COMPARE
+
+	return true;
 }

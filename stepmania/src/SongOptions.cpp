@@ -114,3 +114,19 @@ void SongOptions::FromString( CString sOptions )
 		else if( sBit == "savescore" )		m_bSaveScore = on;
 	}
 }
+
+bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 )
+{
+#define COMPARE(x) { if( so1.x != so2.x ) return false; }
+	COMPARE( m_LifeType );
+	COMPARE( m_DrainType );
+	COMPARE( m_iBatteryLives );
+	COMPARE( m_FailType );
+	COMPARE( m_fMusicRate );
+	COMPARE( m_bAssistTick );
+	COMPARE( m_bAutoSync );
+	COMPARE( m_bSaveScore );
+#undef COMPARE
+
+	return true;
+}
