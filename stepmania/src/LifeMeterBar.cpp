@@ -131,7 +131,7 @@ public:
 
 	void DrawStrip( float fRightEdgePercent )
 	{
-		RectI rect;
+		RectF rect;
 
 		const float fChamberWidthInPercent = 1.0f/NUM_CHAMBERS;
 		const float fStripWidthInPercent = 1.0f/NUM_STRIPS;
@@ -177,7 +177,7 @@ public:
 
 	void DrawMask( float fPercent )
 	{
-		RectI rect;
+		RectF rect;
 
 		int iChamber;
 		float fChamberOverflowPercent;

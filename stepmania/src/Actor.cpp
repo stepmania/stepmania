@@ -409,11 +409,11 @@ void Actor::HurryTweening( float factor )
 	}
 }
 
-void Actor::ScaleTo( const RectI &rect, StretchType st )
+void Actor::ScaleTo( const RectF &rect, StretchType st )
 {
 	// width and height of rectangle
-	float rect_width = (float) rect.GetWidth();
-	float rect_height = (float) rect.GetHeight();
+	float rect_width = rect.GetWidth();
+	float rect_height = rect.GetHeight();
 
 	if( rect_width < 0 )	SetRotationY( 180 );
 	if( rect_height < 0 )	SetRotationX( 180 );
@@ -465,12 +465,6 @@ void Actor::SetEffectClock( CString s )
 	if     (s=="timer")		SetEffectClock( CLOCK_TIMER );
 	else if(s=="bgm")		SetEffectClock( CLOCK_BGM );
 	else	ASSERT(0);
-}
-
-void Actor::StretchTo( const RectI &r )
-{
-	RectF r2( (float)r.left, (float)r.top, (float)r.right, (float)r.bottom );
-	StretchTo( r2 );
 }
 
 void Actor::StretchTo( const RectF &r )
@@ -714,8 +708,8 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="effectdelay" )		SetEffectDelay( fParam(1) );
 	else if( sName=="effectclock" )		SetEffectClock( sParam(1) );
 	else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
-	else if( sName=="scaletocover" )	{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToCover(R); }
-	else if( sName=="scaletofit" )		{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToFitInside(R); }
+	else if( sName=="scaletocover" )	{ RectF R(fParam(1), fParam(2), fParam(3), fParam(4));  ScaleToCover(R); }
+	else if( sName=="scaletofit" )		{ RectF R(fParam(1), fParam(2), fParam(3), fParam(4));  ScaleToFitInside(R); }
 	// Commands that take effect immediately (ignoring the tweening queue):
 	else if( sName=="animate" )			EnableAnimation( bParam(1) );
 	else if( sName=="setstate" )		SetState( iParam(1) );

@@ -781,10 +781,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		Sprite::StopUsingCustomCoords();
 
 		// first find the correct zoom
-		Sprite::ScaleToCover( RectI(0, 0,
-									(int)fWidth,
-									(int)fHeight )
-							 );
+		Sprite::ScaleToCover( RectF(0,0,fWidth,fHeight) );
 		// find which dimension is larger
 		bool bXDimNeedsToBeCropped = GetZoomedWidth() > fWidth+0.01;
 		
