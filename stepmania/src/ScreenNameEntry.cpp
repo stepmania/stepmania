@@ -330,7 +330,7 @@ void ScreenNameEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 	if( m_Fade.IsClosing() )
 		return;
 
-	if( StyleI.IsValid() )
+	if( StyleI.IsValid() && m_bStillEnteringName[StyleI.player])
 	{
 		int StringIndex = m_ColToStringIndex[StyleI.player][StyleI.col];
 		if(StringIndex != -1)
