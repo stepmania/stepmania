@@ -616,7 +616,7 @@ void MusicWheel::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	unsigned i;
-	for( i=0; i<int(NUM_WHEEL_ITEMS); i++ )
+	for( i=0; i<unsigned(NUM_WHEEL_ITEMS); i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 
