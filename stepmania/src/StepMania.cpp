@@ -395,7 +395,7 @@ struct VideoCardDefaults
 		false	// broken, causes black screen
 	},
 	{
-		"Radeon 7|ArcadeVGA",	// Radeon 7xxx
+		"Radeon 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx
 		"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
 		640,480,
 		16,16,16,
@@ -403,7 +403,7 @@ struct VideoCardDefaults
 		true	// accelerated
 	},
 	{
-		"GeForce|Radeon",
+		"GeForce|Radeon|Wonder 9",
 		"opengl,d3d",
 		640,480,
 		32,32,32,	// 32 bit textures are faster to load
@@ -509,12 +509,10 @@ struct VideoCardDefaults
 
 static CString GetVideoDriverName()
 {
-#ifdef _XBOX
-	return "D3D" ;
-#endif
-
 #if defined(_WINDOWS)
 	return GetPrimaryVideoDriverName();
+#elif defined(_XBOX)
+	return "Xbox";
 #else
     return "OpenGL";
 #endif
