@@ -325,7 +325,7 @@ void Player::Update( float fDeltaTime )
 
 
 	// process transforms that are waiting to be applied
-	for( unsigned i=0; i<GAMESTATE->m_TransformsToApply[m_PlayerNumber].size(); i++ )
+	for( unsigned j=0; j<GAMESTATE->m_TransformsToApply[m_PlayerNumber].size(); j++ )
 	{
 		// Start beat needs to be far enough ahead to be off screen so that
 		// addition arrows don't suddenly pop on.
@@ -338,7 +338,7 @@ void Player::Update( float fDeltaTime )
 
 		LOG->Trace( "Applying transform from %f to %f", fStartBeat, fEndBeat );
 
-		switch( GAMESTATE->m_TransformsToApply[m_PlayerNumber][i] )
+		switch( GAMESTATE->m_TransformsToApply[m_PlayerNumber][j] )
 		{
 		case PlayerOptions::TRANSFORM_LITTLE:
 			NoteDataUtil::Little( *this, fStartBeat, fEndBeat );
