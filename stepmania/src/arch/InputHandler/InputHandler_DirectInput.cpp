@@ -95,7 +95,7 @@ InputHandler_DInput::InputHandler_DInput()
 	unsigned i;
 	for( i = 0; i < Devices.size(); ++i )
 	{
-		if( OpenDevice( Devices[i] ) )
+		if( Devices[i].Open() )
 			continue;
 
 		Devices.erase( Devices.begin() + i );
@@ -115,30 +115,35 @@ InputHandler_DInput::InputHandler_DInput()
 			Devices[i].buffered? "buffered": "unbuffered" );
 	}
 
+	StartThread();
+}
+
+void InputHandler_DInput::StartThread()
+{
+	ASSERT( InputThreadPtr == NULL );
 	if( PREFSMAN->m_bThreadedInput )
 		InputThreadPtr = SDL_CreateThread(InputThread_Start, this);
 	else
 		InputThreadPtr = NULL;
+
 }
 
-
-/* device.JoystickInst and device.dev must be filled in.  Opens the device and
- * fills in the remaining parameters. */
-bool InputHandler_DInput::OpenDevice(DIDevice &device)
+void InputHandler_DInput::ShutdownThread()
 {
-	return device.Open();
-}
+	if( InputThreadPtr == NULL )
+		return;
 
+	shutdown = true;
+	LOG->Trace("Shutting down DirectInput thread ...");
+	SDL_WaitThread(InputThreadPtr, NULL);
+	InputThreadPtr = NULL;
+	LOG->Trace("DirectInput thread shut down.");
+	shutdown = false;
+}
 
 InputHandler_DInput::~InputHandler_DInput()
 {
-	if( InputThreadPtr )
-	{
-		shutdown = true;
-		LOG->Trace("Shutting down DirectInput thread ...");
-		SDL_WaitThread(InputThreadPtr, NULL);
-		LOG->Trace("DirectInput thread shut down.");
-	}
+	ShutdownThread();
 
 	for( unsigned i = 0; i < Devices.size(); ++i )
 		Devices[i].Close();
@@ -151,6 +156,8 @@ InputHandler_DInput::~InputHandler_DInput()
 void InputHandler_DInput::WindowReset()
 {
 	/* We need to reopen keyboards. */
+	ShutdownThread();
+
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( Devices[i].type != Devices[i].KEYBOARD )
@@ -166,6 +173,8 @@ void InputHandler_DInput::WindowReset()
 		/* Reopening it should succeed. */
 		ASSERT( ret );
 	}
+
+	StartThread();
 }
 
 static int TranslatePOV(DWORD value)
