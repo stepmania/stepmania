@@ -19,7 +19,8 @@ public:
 	// movie texture/animated texture stuff
 	virtual void Play() {}
 	virtual void Pause() {}
-	virtual void SetPosition( float fSeconds ) {}
+	virtual void SetPosition( float fSeconds ) {} // seek
+	virtual void DecodeSeconds( float fSeconds ) {} // decode
 	virtual void SetPlaybackRate( float fRate ) {}
 	virtual bool IsAMovie() const { return false; }
 	virtual bool IsPlaying() const { return false; }
