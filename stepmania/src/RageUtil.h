@@ -178,6 +178,7 @@ inline CString GetExtension( CString sPath )
 {
 	CString Dir, FName, Ext;
 	splitrelpath( sPath, Dir, FName, Ext );
+	Ext.MakeLower();
 	return Ext;
 };
 

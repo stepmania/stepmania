@@ -49,16 +49,6 @@
 
 RageTextureManager*		TEXTUREMAN		= NULL;
 
-static CString GetExtension(const CString &fn)
-{
-	CString sDir, sFName, sExt;
-	splitpath( fn, sDir, sFName, sExt );
-	sExt.MakeLower();
-
-	return sExt;
-}
-
-
 RageTextureManager::RageTextureManager()
 {
 	m_iNoWarnAboutOddDimensions = 0;
