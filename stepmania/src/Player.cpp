@@ -176,7 +176,7 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
 
-	m_soundMineExplosion.Load( THEME->GetPathToS("Player explosion") );
+	m_soundMine.Load( THEME->GetPathToS(ssprintf("Player mine p%d",pn+1)) );
 }
 
 void PlayerMinus::Update( float fDeltaTime )
@@ -562,7 +562,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				// stepped too close to mine?
 				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
 				{
-					m_soundMineExplosion.Play();
+					m_soundMine.Play();
 					score = TNS_MISS;
 					m_pNoteField->TapMine( col, score );
 
@@ -635,7 +635,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			// Unless the computer made a very good step, they were fooled by the mine
 			if( tn == TAP_MINE  &&  score <= TNS_GREAT )
 			{
-				m_soundMineExplosion.Play();
+				m_soundMine.Play();
 				score = TNS_MISS;
 				m_pNoteField->TapMine( col, score );
 				if( m_pLifeMeter )

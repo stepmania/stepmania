@@ -92,7 +92,7 @@ protected:
 
 	int				m_iRowLastCrossed;
 
-	RageSound		m_soundMineExplosion;
+	RageSound		m_soundMine;
 };
 
 class Player : public PlayerMinus
