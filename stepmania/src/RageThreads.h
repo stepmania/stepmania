@@ -25,6 +25,7 @@ public:
 
 	static const char *GetCurThreadName();
 	static const char *GetThreadNameByID( uint64_t iID );
+	static bool EnumThreadIDs( int n, uint64_t &iID );
 	int Wait();
 	bool IsCreated() const { return m_pSlot != NULL; }
 };

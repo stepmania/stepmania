@@ -269,6 +269,22 @@ const char *RageThread::GetThreadNameByID( uint64_t iID )
 	return slot->GetThreadName();
 }
 
+bool RageThread::EnumThreadIDs( int n, uint64_t &iID )
+{
+	if( n >= MAX_THREADS )
+		return false;
+
+	LockMut(g_ThreadSlotsLock);
+	const ThreadSlot *slot = &g_ThreadSlots[n];
+
+	if( slot->used )
+		iID = slot->id;
+	else
+		iID = GetInvalidThreadId();
+
+	return true;
+}
+
 int RageThread::Wait()
 {
 	ASSERT( m_pSlot != NULL );
@@ -558,7 +574,7 @@ void RageMutex::Lock()
 #if defined(CRASH_HANDLER) && !defined(DARWIN)
 		/* Don't leave g_ThreadSlotsLock when we call ForceCrashHandlerDeadlock. */
 		g_ThreadSlotsLock.Lock();
-		uint64_t CrashHandle = OtherSlot && OtherSlot->pImpl? OtherSlot->pImpl->GetCrashHandle():0;
+		uint64_t CrashHandle = OtherSlot? OtherSlot->id:0;
 		g_ThreadSlotsLock.Unlock();
 
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
