@@ -140,7 +140,8 @@ void RefreshCacheItem( int iIndex )
 
 	if( asButtonNames.size() < 2 )
 	{
-		LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sCodeName.c_str() );
+		if( sCodeName != "" )
+			LOG->Trace( "The code '%s' is less than 2 buttons, so it will be ignored.", sCodeName.c_str() );
 		item.iNumButtons = 0;
 		return;
 	}
