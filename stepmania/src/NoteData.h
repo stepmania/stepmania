@@ -24,6 +24,9 @@
 
 class NoteData
 {
+	/* Keep this aligned, so that they all have the same size. */
+	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
+
 public:
 	NoteData();
 	~NoteData();
@@ -33,8 +36,6 @@ public:
 
 	int			m_iNumTracks;
 
-	/* Keep this aligned, so that they all have the same size. */
-	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
 	HoldNote	m_HoldNotes[MAX_HOLD_NOTES];
 	int			m_iNumHoldNotes;
 
@@ -69,6 +70,9 @@ public:
 	// used in edit/record
 	void AddHoldNote( HoldNote newNote );	// add note hold note merging overlapping HoldNotes and destroying TapNotes underneath
 	void RemoveHoldNote( int index );
+	HoldNote &GetHoldNote( int index ) { return m_HoldNotes[index]; }
+	const HoldNote &GetHoldNote( int index ) const { return m_HoldNotes[index]; }
+	const int GetNumHoldNotes() const { return m_iNumHoldNotes; }
 
 	// statistics
 	bool IsThereANoteAtRow( int iRow ) const;
