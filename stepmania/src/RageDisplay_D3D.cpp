@@ -792,11 +792,11 @@ void RageDisplay_D3D::DrawQuadsInternal( const RageSpriteVertex v[], int iNumVer
 	int iNumIndices = iNumTriangles*3;
 
 	// make a temporary index buffer
-	static vector<Uint16> vIndices;
+	static vector<uint16_t> vIndices;
 	unsigned uOldSize = vIndices.size();
 	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
 	vIndices.resize( uNewSize );
-	for( Uint16 i=(Uint16)uOldSize/6; i<(Uint16)iNumQuads; i++ )
+	for( uint16_t i=(uint16_t)uOldSize/6; i<(uint16_t)iNumQuads; i++ )
 	{
 		vIndices[i*6+0] = i*4+0;
 		vIndices[i*6+1] = i*4+1;
@@ -828,11 +828,11 @@ void RageDisplay_D3D::DrawQuadStripInternal( const RageSpriteVertex v[], int iNu
 	int iNumIndices = iNumTriangles*3;
 
 	// make a temporary index buffer
-	static vector<Uint16> vIndices;
+	static vector<uint16_t> vIndices;
 	unsigned uOldSize = vIndices.size();
 	unsigned uNewSize = max(uOldSize,(unsigned)iNumIndices);
 	vIndices.resize( uNewSize );
-	for( Uint16 i=(Uint16)uOldSize/6; i<(Uint16)iNumQuads; i++ )
+	for( uint16_t i=(uint16_t)uOldSize/6; i<(uint16_t)iNumQuads; i++ )
 	{
 		vIndices[i*6+0] = i*2+0;
 		vIndices[i*6+1] = i*2+1;
@@ -1253,8 +1253,8 @@ void RageDisplay_D3D::UpdateTexture(
 	ASSERT( Texture );
 	SDL_Rect area;
 	area.x = area.y = 0;
-	area.w = (Uint16) width;
-	area.h = (Uint16) height;
+	area.w = (uint16_t) width;
+	area.h = (uint16_t) height;
 	SDL_SetAlpha( img, 0, SDL_ALPHA_OPAQUE );
 //	SDL_SetColorKey( img, 0, 0 );
 //	SDL_BlitSurface( img, &area, Texture, &area );

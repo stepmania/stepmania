@@ -247,9 +247,9 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 	ASSERT( vi->channels == 1 || vi->channels == 2 );
 	if( vi->channels == 1 )
 	{
-		Sint16 *indata = (Sint16 *)tmpbuf;
-		Sint16 *outdata = (Sint16 *)buffer;
-		int size = ret / sizeof(Sint16);
+		int16_t *indata = (int16_t *)tmpbuf;
+		int16_t *outdata = (int16_t *)buffer;
+		int size = ret / sizeof(int16_t);
 		for( unsigned pos = 0; pos < unsigned(size); ++pos )
 			outdata[pos*2] = outdata[pos*2+1] = indata[pos];
 		ret *= 2;

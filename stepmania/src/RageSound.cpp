@@ -227,17 +227,17 @@ void RageSound::RateChange(char *buf, int &cnt,
 
 	for(int c = 0; c < channels; ++c)
 	{
-		const Sint16 *in = (const Sint16 *) inbuf_tmp;
-		Sint16 *out = (Sint16 *) buf;
+		const int16_t *in = (const int16_t *) inbuf_tmp;
+		int16_t *out = (int16_t *) buf;
 		in += c;
 		out += c;
-		for(unsigned n = 0; n < cnt/(channels * sizeof(Sint16)); n += speed_input_samples)
+		for(unsigned n = 0; n < cnt/(channels * sizeof(int16_t)); n += speed_input_samples)
 		{
 
 			/* Input 4 samples, output 5; 25% slowdown with no
 			 * rounding error. */
 
-			Sint16 samps[20];	// max 2x rate
+			int16_t samps[20];	// max 2x rate
 			ASSERT(size_t(speed_input_samples) <= sizeof(samps)/sizeof(*samps));
 			int s;
 			for(s = 0; s < speed_input_samples; ++s) {
@@ -254,7 +254,7 @@ void RageSound::RateChange(char *buf, int &cnt,
 				if(s+1 < speed_output_samples)
 					val += int(samps[p+1] * frac);
 
-				*out = Sint16(val);
+				*out = int16_t(val);
 				pos += incr;
 				out += channels;
 			}
@@ -288,7 +288,7 @@ int RageSound::FillBuf( int frames )
 
 			/* Read in blocks that are a multiple of a sample, the number of
 			 * channels and the number of input samples. */
-			int block_size = sizeof(Sint16) * channels * m_Param.speed_input_samples;
+			int block_size = sizeof(int16_t) * channels * m_Param.speed_input_samples;
 			read_size = (read_size / block_size) * block_size;
 			ASSERT(read_size < sizeof(inbuf));
 		}
@@ -354,7 +354,7 @@ int RageSound::GetData( char *buffer, int frames )
 }
 
 /* Adjust the balance of buffer; fBalance is -1...+1. */
-void AdjustBalance( Sint16 *buffer, int frames, float fBalance )
+void AdjustBalance( int16_t *buffer, int frames, float fBalance )
 {
 	if( fBalance == 0 )
 		return; /* no change */
@@ -379,15 +379,15 @@ void AdjustBalance( Sint16 *buffer, int frames, float fBalance )
 	RAGE_ASSERT_M( channels == 2, ssprintf("%i", channels) );
 	for( int samp = 0; samp < frames; ++samp )
 	{
-		Sint16 l = Sint16(buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1]);
-		Sint16 r = Sint16(buffer[0]*fRightFactors[0] + buffer[1]*fRightFactors[1]);
+		int16_t l = int16_t(buffer[0]*fLeftFactors[0] + buffer[1]*fLeftFactors[1]);
+		int16_t r = int16_t(buffer[0]*fRightFactors[0] + buffer[1]*fRightFactors[1]);
 		buffer[0] = l;
 		buffer[1] = r;
 		buffer += 2;
 	}
 }
 
-void FadeSound( Sint16 *buffer, int frames, float fStartVolume, float fEndVolume  )
+void FadeSound( int16_t *buffer, int frames, float fStartVolume, float fEndVolume  )
 {
 	for( int samp = 0; samp < frames; ++samp )
 	{
@@ -503,10 +503,10 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 			const float fLastSecond = m_Param.m_StartSecond+m_Param.m_LengthSeconds;
 			const float fStartVolume = fLastSecond - float(decode_position) / samplerate();
 			const float fEndVolume = fLastSecond - float(decode_position+got_frames) / samplerate();
-			FadeSound( (Sint16 *) buffer, got_frames, fStartVolume, fEndVolume );
+			FadeSound( buffer, got_frames, fStartVolume, fEndVolume );
 		}
 
-		AdjustBalance( (Sint16 *) buffer, got_frames, m_Param.m_Balance );
+		AdjustBalance( buffer, got_frames, m_Param.m_Balance );
 
 		sound_frame = decode_position;
 

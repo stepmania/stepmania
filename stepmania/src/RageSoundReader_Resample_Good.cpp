@@ -123,8 +123,8 @@ bool RageSoundReader_Resample_Good::FillBuf()
 	if( !samples_free )
 		return true;
 
-	Sint16 tmpbuf[BUFSIZE*2];
-	int cnt = source->Read((char *) tmpbuf, samples_free * sizeof(Sint16) * 2);
+	int16_t tmpbuf[BUFSIZE*2];
+	int cnt = source->Read((char *) tmpbuf, samples_free * sizeof(int16_t) * 2);
 
 	if( cnt == -1 )
 	{
@@ -132,10 +132,10 @@ bool RageSoundReader_Resample_Good::FillBuf()
 		return false;
 	}
 
-	if( (unsigned) cnt < samples_free * sizeof(Sint16) * 2 )
+	if( (unsigned) cnt < samples_free * sizeof(int16_t) * 2 )
 		eof = true;
 
-	cnt /= sizeof(Sint16);
+	cnt /= sizeof(int16_t);
 	cnt /= 2;
 
 	for( int c = 0; c < 2; ++c )
@@ -149,7 +149,7 @@ bool RageSoundReader_Resample_Good::FillBuf()
 
 int RageSoundReader_Resample_Good::Read(char *bufp, unsigned len)
 {
-	Sint16 *buf = (Sint16 *) bufp;
+	int16_t *buf = (int16_t *) bufp;
 	len /= 2;
 	const float factor = GetFactor();
 
@@ -176,7 +176,7 @@ int RageSoundReader_Resample_Good::Read(char *bufp, unsigned len)
 
 				for( int s = 0; s < samples_output; ++s )
 				{
-					buf[s*2+c] = Sint16(clamp(outbuf[s], -32768, 32767));
+					buf[s*2+c] = int16_t(clamp(outbuf[s], -32768, 32767));
 				}
 			}
 		}
@@ -195,7 +195,7 @@ int RageSoundReader_Resample_Good::Read(char *bufp, unsigned len)
 
 		len -= samples_output*2;
 		buf += samples_output*2;
-		bytes_read += samples_output*2*sizeof(Sint16);
+		bytes_read += samples_output*2*sizeof(int16_t);
 	}
 }
 
