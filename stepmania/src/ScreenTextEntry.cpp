@@ -95,6 +95,12 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 	default:
 		char c;
 		c = DeviceI.ToChar();
+		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_LSHIFT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, DIK_RSHIFT)))
+		{
+			c = toupper(c);
+		}
+
 		if( c != '\0' )
 			m_sAnswer += c;
 		m_textAnswer.SetText( m_sAnswer );
