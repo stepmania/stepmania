@@ -50,12 +50,12 @@ RageNetworkClient::RageNetworkClient()
 	// SDL_Init(0);	// this may have already been init'd somewhere else
 
 	if( SDLNet_Init() < 0 )
-		throw RageException("SDLNet_Init: %s\n", SDLNet_GetError());
+		RageException::Throw("SDLNet_Init: %s\n", SDLNet_GetError());
 	
 	// allocate socket sets
 	m_priSockSet = SDLNet_AllocSocketSet(1);
 	if(!m_priSockSet)
-		throw RageException("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
+		RageException::Throw("SDLNet_AllocSocketSet: %s\n", SDLNet_GetError());
 }
 
 RageNetworkClient::~RageNetworkClient()
@@ -108,6 +108,7 @@ void RageNetworkClient::Update( float fDeltaTime )
 	int numready = SDLNet_CheckSockets(m_priSockSet, 0);
 	if(numready==-1) 
 	{
+		// XXX sorry, this was really noisy ... - glenn
 //		LOG->Warn("SDLNet_CheckSockets: %s\n", SDLNet_GetError());
 	}
 	else if( numready )

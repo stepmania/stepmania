@@ -230,7 +230,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		ret = new ScreenTitleMenu;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	ret = new ScreenEz2SelectMusic;
 	else
-		throw RageException( "Invalid Screen class name '%s'", sClassName.GetString() );
+		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 
 	/* That probably took a little while.  Let's reset stats.  This prevents us
 	 * from displaying an unnaturally low FPS value, and the next FPS value we

@@ -17,7 +17,7 @@ RageSoundManager::RageSoundManager(CString drivers)
 {
 	driver = MakeRageSoundDriver(drivers);
 	if(!driver)
-		throw RageException("Couldn't find a sound driver that works");
+		RageException::Throw("Couldn't find a sound driver that works");
 }
 
 RageSoundManager::~RageSoundManager()

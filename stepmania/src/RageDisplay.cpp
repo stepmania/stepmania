@@ -235,7 +235,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	if(!g_screen || need_reload) {
 		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
 		if(!g_screen)
-			throw RageException("SDL_SetVideoMode failed: %s", SDL_GetError());
+			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 
 		SDL_WM_SetCaption("StepMania", "StepMania");
 	}

@@ -617,7 +617,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 			const int iIndex = BeatToNoteRow( fBeat );
 
 //			if( m_iNumTracks != sMeasureLine.GetLength() )
-//				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
+//				RageException::Throw( "Actual number of note columns (%d) is different from the NotesType (%d).", m_iNumTracks, sMeasureLine.GetLength() );
 
 			for( int c=0; c<min(sMeasureLine.GetLength(),out.m_iNumTracks); c++ )
 			{

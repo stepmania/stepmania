@@ -153,7 +153,7 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 	
 	std::map<CString, RageTexture*>::iterator p = m_mapPathToTexture.find(sTexturePath);
 	if(p == m_mapPathToTexture.end())
-		throw RageException( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath.GetString() );
+		RageException::Throw( "Tried to Unload texture '%s' that wasn't loaded.", sTexturePath.GetString() );
 	
 	RageTexture* pTexture = p->second;
 	pTexture->m_iRefCount--;

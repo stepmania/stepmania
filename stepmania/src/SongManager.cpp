@@ -78,7 +78,7 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 	GetDirListing( sDir + "\\*.ogg", arrayFiles );
 	GetDirListing( sDir + "\\*.wav", arrayFiles );
 	if( !arrayFiles.empty() )
-		throw RageException( 
+		RageException::Throw( 
 			"The folder '%s' contains music files.\n\n"
 			"This means that you have a music outside of a song folder.\n"
 			"All song folders must reside in a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.\n"

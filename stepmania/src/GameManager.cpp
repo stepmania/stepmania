@@ -1296,11 +1296,6 @@ RageColor GameManager::GetMetricC( CString sClassName, CString sValueName )
 	return RageColor(r,g,b,a);
 }
 
-__declspec(noreturn) void blah()
-{
-
-}
-
 CString GameManager::GetPathTo( const int col, CString sElementName )	// looks in GAMESTATE for the current Style
 {
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();

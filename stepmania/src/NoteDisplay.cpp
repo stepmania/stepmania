@@ -46,14 +46,14 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	CString sTapPartsPath = GAMEMAN->GetPathTo(iColNum, "tap parts");
 	m_sprTapParts.Load( sTapPartsPath );
 	if( m_sprTapParts.GetNumStates() % 2 != 0 )
-		throw RageException( "Tap Parts '%s' must have an even number of frames.", sTapPartsPath.GetString() );
+		RageException::Throw( "Tap Parts '%s' must have an even number of frames.", sTapPartsPath.GetString() );
 	m_sprTapParts.StopAnimating();
 	m_sprTapParts.TurnShadowOff();
 
 	CString sHoldPartsPath = GAMEMAN->GetPathTo(iColNum, "hold parts");
 	m_sprHoldParts.Load( sHoldPartsPath );
 	if( m_sprHoldParts.GetTexture()->GetFramesWide() != 4  ||  m_sprHoldParts.GetTexture()->GetFramesHigh() != 2 )
-		throw RageException( "Hold Parts '%s' must have 4x2 frames.", sHoldPartsPath.GetString() );
+		RageException::Throw( "Hold Parts '%s' must have 4x2 frames.", sHoldPartsPath.GetString() );
 	m_sprHoldParts.StopAnimating();
 	m_sprHoldParts.TurnShadowOff();
 
@@ -62,7 +62,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	const CString sColorsFilePath = GAMEMAN->GetPathTo( iColNum, "Tap.colors" );
 	FILE* fp = fopen( sColorsFilePath, "r" );
 	if( fp == NULL )
-		throw RageException( "Couldn't open .colors file '%s'", sColorsFilePath.GetString() );
+		RageException::Throw( "Couldn't open .colors file '%s'", sColorsFilePath.GetString() );
 
 	bool bSuccess;
 	do

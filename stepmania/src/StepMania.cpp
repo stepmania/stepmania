@@ -176,7 +176,7 @@ int main(int argc, char* argv[])
 
 	/* Initialize the SDL library. */
     if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
-        throw RageException( "Couldn't initialize SDL: %s\n", SDL_GetError() );
+        RageException::Throw( "Couldn't initialize SDL: %s\n", SDL_GetError() );
 
 	SetIcon();
 
@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
 	SDL_SysWMinfo info;
 	SDL_VERSION(&info.version);
 	if ( SDL_GetWMInfo(&info) < 0 ) 
-		throw RageException( "SDL_GetWMInfo failed" );
+		RageException::Throw( "SDL_GetWMInfo failed" );
 
 #ifdef WIN32
 	g_hWndMain = info.window;
@@ -247,7 +247,7 @@ int main(int argc, char* argv[])
 		// immediately try to connect to server
 		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromDir( g_sSongPath );
 		if( GAMESTATE->m_pCurSong == NULL )
-			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath.GetString() );
+			RageException::Throw( "The song '%s' is required to play this network game.", g_sSongPath.GetString() );
 		CLIENT->Connect( (const char*)g_sServerIP, SM_PORT );
 		SCREENMAN->SetNewScreen( "ScreenNetworkWaiting" );
 	}

@@ -15,7 +15,7 @@ CTextureRenderer::CTextureRenderer()
                                    NAME("Texture Renderer"), NULL, &CBV_ret)
 {
     if( FAILED(CBV_ret) )
-        throw RageException( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
+        RageException::Throw( hr_ssprintf(CBV_ret, "Could not create texture renderer object!") );
 
     // Store and ARageef the texture for our use.
 	m_pTexture = NULL;

@@ -125,7 +125,7 @@ void HandleDivXError()
 	/* Actually, we might need XviD; we might want to look
 	 * at the file and try to figure out if it's something
 	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
-	throw RageException( 
+	RageException::Throw( 
 		"Could not locate the DivX video codec.\n"
 		"DivX is required to movie textures and must\n"
 		"be installed before running the application.\n\n"
@@ -138,11 +138,11 @@ void RageMovieTexture::Create()
     HRESULT hr;
     
     if( FAILED( hr=CoInitialize(NULL) ) )
-        throw RageException( hr_ssprintf(hr, "Could not CoInitialize") );
+        RageException::Throw( hr_ssprintf(hr, "Could not CoInitialize") );
 
     // Create the filter graph
     if( FAILED( hr=m_pGB.CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC) ) )
-        throw RageException( hr_ssprintf(hr, "Could not create CLSID_FilterGraph!") );
+        RageException::Throw( hr_ssprintf(hr, "Could not create CLSID_FilterGraph!") );
     
     // Create the Texture Renderer object
     CTextureRenderer *pCTR = new CTextureRenderer;
@@ -151,7 +151,7 @@ void RageMovieTexture::Create()
 	 * graph.  When m_pGB is released, it will free pFTR. */
     CComPtr<IBaseFilter> pFTR = pCTR;
     if( FAILED( hr = m_pGB->AddFilter(pFTR, L"TEXTURERENDERER" ) ) )
-        throw RageException( hr_ssprintf(hr, "Could not add renderer filter to graph!") );
+        RageException::Throw( hr_ssprintf(hr, "Could not add renderer filter to graph!") );
 
     // Add the source filter
     CComPtr<IBaseFilter>    pFSrc;          // Source Filter
@@ -162,23 +162,23 @@ void RageMovieTexture::Create()
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )
 	{
 		HandleDivXError();
-        throw RageException( hr_ssprintf(hr, "Could not create source filter to graph!") );
+        RageException::Throw( hr_ssprintf(hr, "Could not create source filter to graph!") );
 	}
     
     // Find the source's output and the renderer's input
     CComPtr<IPin>           pFTRPinIn;      // Texture Renderer Input Pin
     if( FAILED( hr = pFTR->FindPin( L"In", &pFTRPinIn ) ) )
-        throw RageException( hr_ssprintf(hr, "Could not find input pin!") );
+        RageException::Throw( hr_ssprintf(hr, "Could not find input pin!") );
 
     CComPtr<IPin>           pFSrcPinOut;    // Source Filter Output Pin   
     if( FAILED( hr = pFSrc->FindPin( L"Output", &pFSrcPinOut ) ) )
-        throw RageException( hr_ssprintf(hr, "Could not find output pin!") );
+        RageException::Throw( hr_ssprintf(hr, "Could not find output pin!") );
     
     // Connect these two filters
     if( FAILED( hr = m_pGB->Connect( pFSrcPinOut, pFTRPinIn ) ) )
 	{
  		HandleDivXError();
-		throw RageException( hr_ssprintf(hr, "Could not connect pins!") );
+		RageException::Throw( hr_ssprintf(hr, "Could not connect pins!") );
 	}
 
 	// Pass us to our TextureRenderer.
@@ -195,7 +195,7 @@ void RageMovieTexture::Create()
 
 	// Start the graph running
     if( !PlayMovie() )
-        throw RageException( "Could not run the DirectShow graph." );
+        RageException::Throw( "Could not run the DirectShow graph." );
 }
 
 void RageMovieTexture::NewData(char *data)
@@ -238,7 +238,7 @@ bool RageMovieTexture::PlayMovie()
     // Start the graph running;
 	HRESULT hr;
     if( FAILED( hr = pMC->Run() ) )
-        throw RageException( hr_ssprintf(hr, "Could not run the DirectShow graph.") );
+        RageException::Throw( hr_ssprintf(hr, "Could not run the DirectShow graph.") );
 
 	m_bPlaying = true;
 
@@ -275,7 +275,7 @@ void RageMovieTexture::Pause()
 
 	HRESULT hr;
 	if( FAILED( hr = pMC->Pause() ) )
-        throw RageException( hr_ssprintf(hr, "Could not pause the DirectShow graph.") );
+        RageException::Throw( hr_ssprintf(hr, "Could not pause the DirectShow graph.") );
 }
 
 void RageMovieTexture::Stop()
@@ -285,7 +285,7 @@ void RageMovieTexture::Stop()
 
 	HRESULT hr;
 	if( FAILED( hr = pMC->Stop() ) )
-        throw RageException( hr_ssprintf(hr, "Could not stop the DirectShow graph.") );
+        RageException::Throw( hr_ssprintf(hr, "Could not stop the DirectShow graph.") );
 
 	m_bPlaying = false;
 }

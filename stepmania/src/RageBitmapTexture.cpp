@@ -130,7 +130,7 @@ void RageBitmapTexture::Create()
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
 	if(img == NULL)
-		throw RageException( "Couldn't load %s: %s", m_sFilePath, SDL_GetError() );
+		RageException::Throw( "Couldn't load %s: %s", m_sFilePath, SDL_GetError() );
 
 	/* Figure out which texture format to use. */
 	GLenum fmtTexture;
@@ -167,7 +167,7 @@ void RageBitmapTexture::Create()
 	else if( TEXTUREMAN->GetTextureColorDepth() == 32 )
 		fmtTexture = GL_RGBA8;
 	else
-		throw RageException( "Invalid color depth: %d bits", TEXTUREMAN->GetTextureColorDepth() );
+		RageException::Throw( "Invalid color depth: %d bits", TEXTUREMAN->GetTextureColorDepth() );
 
 	/* Cap the max texture size to the hardware max. */
 	m_prefs.iMaxSize = min( m_prefs.iMaxSize, DISPLAY->GetMaxTextureSize() );

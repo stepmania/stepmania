@@ -176,7 +176,7 @@ try_element_again:
 			break;
 		case IDABORT:
 #endif
-			throw RageException( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+			RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 				sAssetCategory.GetString(),
 				sFileName.GetString(), 
 				GetThemeDirFromName(m_sCurThemeName).GetString(), 
@@ -217,7 +217,7 @@ try_element_again:
 			if( IDRETRY == MessageBox(NULL,"ThemeManager",ssprintf("The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString()), MB_RETRYCANCEL ) )
 				goto try_element_again;
 #endif
-			throw RageException( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString() ); 
+			RageException::Throw( "The redirect '%s' points to the file '%s', which does not exist.  Verify that this redirect is correct.", sRedirFilePath.GetString(), sNewFilePath.GetString() ); 
 		}
 		else
 			return sNewFilePath;
@@ -264,7 +264,7 @@ try_metric_again:
 		goto try_metric_again;
 #endif
 
-	throw RageException( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
+	RageException::Throw( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
 		sClassName.GetString(),
 		sValueName.GetString(),
 		sCurMetricPath.GetString(), 
