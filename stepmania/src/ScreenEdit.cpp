@@ -73,7 +73,7 @@ const ScreenMessage SM_BackFromStopChange			= (ScreenMessage)(SM_User+16);
 const ScreenMessage SM_DoSaveAndExit				= (ScreenMessage)(SM_User+17);
 const ScreenMessage SM_DoExit						= (ScreenMessage)(SM_User+18);
 
-const CString HELP_TEXT = 
+const CString INPUT_TIPS_TEXT = 
 #if !defined(XBOX)
 	"Up/Down:\n     change beat\n"
 	"Left/Right:\n     change snap\n"
@@ -563,21 +563,15 @@ void ScreenEdit::Init()
 
 	this->AddChild( &m_Foreground );
 
-	m_textHelp.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
-	m_textHelp.SetHorizAlign( Actor::align_left );
-	m_textHelp.SetVertAlign( Actor::align_top );
-	m_textHelp.SetZoom( 0.5f );
-	m_textHelp.SetText( HELP_TEXT );
-	m_textHelp.SetShadowLength( 0 );
-	this->AddChild( &m_textHelp );
+	m_textInputTips.LoadFromFont( THEME->GetPathF("ScreenEdit","InputTips") );
+	m_textInputTips.SetName( "InputTips" );
+	m_textInputTips.SetText( INPUT_TIPS_TEXT );
+	SET_XY_AND_ON_COMMAND( m_textInputTips );
+	this->AddChild( &m_textInputTips );
 
-	m_textInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textInfo.SetXY( INFO_TEXT_X, INFO_TEXT_Y );
-	m_textInfo.SetHorizAlign( Actor::align_left );
-	m_textInfo.SetVertAlign( Actor::align_top );
-	m_textInfo.SetZoom( 0.5f );
-	m_textInfo.SetShadowLength( 0 );
+	m_textInfo.LoadFromFont( THEME->GetPathF("ScreenEdit","Info") );
+	m_textInfo.SetName( "Info" );
+	SET_XY_AND_ON_COMMAND( m_textInfo );
 	this->AddChild( &m_textInfo );
 
 
@@ -1423,7 +1417,7 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 	// Show/hide depending on em
 	//
 	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == MODE_EDITING );
-	m_textHelp.SetHidden( em != MODE_EDITING );
+	m_textInputTips.SetHidden( em != MODE_EDITING );
 	m_textInfo.SetHidden( em != MODE_EDITING );
 	m_SnapDisplay.SetHidden( em != MODE_EDITING );
 	m_NoteFieldEdit.SetHidden( em != MODE_EDITING );

@@ -159,7 +159,7 @@ protected:
 	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;
 
-	BitmapText		m_textHelp;
+	BitmapText		m_textInputTips;
 	BitmapText		m_textInfo;		// status information that changes
 
 	// keep track of where we are and what we're doing
