@@ -11,7 +11,7 @@ public:
 	RageFileDriverZip( CString path );
 	virtual ~RageFileDriverZip();
 
-	RageFileObj *Open( const CString &path, int mode, int &err );
+	RageBasicFile *Open( const CString &path, int mode, int &err );
 	void FlushDirCache( const CString &sPath );
 
 private:

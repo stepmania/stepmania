@@ -383,7 +383,7 @@ RageFileDriverZip::~RageFileDriverZip()
 		delete Files[i];
 }
 
-RageFileObj *RageFileDriverZip::Open( const CString &path, int mode, int &err )
+RageBasicFile *RageFileDriverZip::Open( const CString &path, int mode, int &err )
 {
 	if( mode == RageFile::WRITE )
 	{

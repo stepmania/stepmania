@@ -117,7 +117,7 @@ RageFileDriverMem::~RageFileDriverMem()
 	}
 }
 
-RageFileObj *RageFileDriverMem::Open( const CString &sPath, int mode, int &err )
+RageBasicFile *RageFileDriverMem::Open( const CString &sPath, int mode, int &err )
 {
 	LockMut(m_Mutex);
 

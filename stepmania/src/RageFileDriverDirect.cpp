@@ -106,7 +106,7 @@ RageFileObj *MakeFileObjDirect( CString sPath, int mode, int &err )
 	return new RageFileObjDirect( sPath, fd, mode );
 }
 
-RageFileObj *RageFileDriverDirect::Open( const CString &path, int mode, int &err )
+RageBasicFile *RageFileDriverDirect::Open( const CString &path, int mode, int &err )
 {
 	CString sPath = path;
 
