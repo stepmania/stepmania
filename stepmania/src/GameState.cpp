@@ -34,6 +34,7 @@
 #include "fstream"
 #include "Bookkeeper.h"
 
+#define DEFAULT_MODIFIERS THEME->GetMetric( "Common","DefaultModifiers" )
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
@@ -113,7 +114,7 @@ void GameState::Reset()
 	
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		ApplyModifiers( (PlayerNumber)p, THEME->GetMetric( "Common","DefaultModifiers" ) );
+		ApplyModifiers( (PlayerNumber)p, DEFAULT_MODIFIERS );
 		ApplyModifiers( (PlayerNumber)p, PREFSMAN->m_sDefaultModifiers );
 	}
 
