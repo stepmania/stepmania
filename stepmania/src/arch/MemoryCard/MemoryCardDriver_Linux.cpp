@@ -219,10 +219,10 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice )
 	if( sFile[sFile.length()-1] != '/' )
 		sFile += '/';
 	sFile += "temp";
-	int fd = open( sFile, O_WRONLY|O_CREAT|O_TRUNC );
-	if( fd == -1 )
+	FILE* fp = fopen( sFile, "w" );
+	if( fp == NULL )
 		return false;
-	close( fd );
+	fclose( fp );
 	remove( sFile );
 
 	return true;
