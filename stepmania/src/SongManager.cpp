@@ -380,14 +380,17 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 *
 	 * XXX: Ack.  This means this function can only be called when we have a style
 	 * set up, which is too restrictive.  How to handle this?
-	 *
-	 * XXX: Once we support edits, ignore them, too. */
+	 */
 //	const StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Steps* pNotes = pSong->m_apNotes[i];
-		if( pNotes->GetDifficulty() == DIFFICULTY_CHALLENGE )
+		switch( pNotes->GetDifficulty() )
+		{
+		case DIFFICULTY_CHALLENGE:
+		case DIFFICULTY_EDIT:
 			continue;
+		}
 
 //		if(pNotes->m_StepsType != nt)
 //			continue;
