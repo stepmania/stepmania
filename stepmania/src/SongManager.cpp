@@ -452,11 +452,15 @@ void SongManager::SaveMachineScoresToDisk()
 				ASSERT(pSong);
 
 				vector<Notes*> vNotes = pSong->m_apNotes;
+/* This prevents the play count from being saved for songs that havn't
+ * been passed.  Though, it seems we only increment this when it's
+ * passed, anyway ...
 				for( int n=(int)vNotes.size()-1; n>=0; n-- )
 				{
 					if( vNotes[n]->m_MemCardScores[c].grade <= GRADE_E )
 						vNotes.erase( vNotes.begin()+n );
 				}
+*/
 				if( vNotes.size() == 0 )
 					continue;	// skip	
 
