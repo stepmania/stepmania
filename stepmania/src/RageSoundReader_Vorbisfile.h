@@ -18,6 +18,7 @@ class RageSoundReader_Vorbisfile: public SoundReader_FileReader {
 	bool FillBuf();
 	CString filename;
 	int read_offset;
+	unsigned channels;
 
 public:
 	OpenResult Open(CString filename);
@@ -27,6 +28,7 @@ public:
 	int SetPosition_Fast(int ms) { return SetPosition(ms, false); }
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const;
+	unsigned GetNumChannels() const { return channels; }
 	RageSoundReader_Vorbisfile();
 	~RageSoundReader_Vorbisfile();
 	SoundReader *Copy() const;

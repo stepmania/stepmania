@@ -281,7 +281,7 @@ void RageSound::RateChange(char *buf, int &cnt,
 
 /* Fill the buffer by about "bytes" worth of data.  (We might go a little
  * over, and we won't overflow our buffer.)  Return the number of bytes
- * actually read; 0 = EOF. */
+ * actually read; 0 = EOF.  Convert mono input to stereo. */
 int RageSound::FillBuf( int frames )
 {
 	ASSERT(Sample);
@@ -295,7 +295,6 @@ int RageSound::FillBuf( int frames )
 
 		char inbuf[10240];
 		unsigned read_size = read_block_size;
-		int cnt = 0;
 
 		if( m_Param.speed_input_samples != m_Param.speed_output_samples )
 		{
@@ -309,11 +308,35 @@ int RageSound::FillBuf( int frames )
 			ASSERT(read_size < sizeof(inbuf));
 		}
 
+		/* channels == 2; we want stereo.  If the input data is mono, read half as many
+		 * samples. */
+		if( Sample->GetNumChannels() == 1 )
+			read_size /= 2;
+
 		ASSERT(read_size < sizeof(inbuf));
 
-		cnt = Sample->Read(inbuf, read_size);
+		int cnt = Sample->Read(inbuf, read_size);
 		if(cnt == 0)
 			return got_something; /* EOF */
+
+		if( Sample->GetNumChannels() == 1 )
+		{
+			/* Dupe mono to stereo in-place; do it in reverse, to handle overlap. */
+			int num_samples = cnt / sizeof(int16_t);
+			float *input = (float *) inbuf;
+			float *output = input;
+			input += num_samples;
+			output += num_samples*2;
+			while( num_samples-- )
+			{
+				input -= 1;
+				output -= 2;
+				output[0] = input[0];
+				output[1] = input[0];
+			}
+
+			cnt *= 2;
+		}
 
 		if(cnt == -1)
 		{

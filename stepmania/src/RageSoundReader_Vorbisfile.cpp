@@ -54,8 +54,6 @@ static long OggRageFile_tell_func( void *datasource )
 	return f->Tell();
 }
 
-const int channels = 2;
-
 const int read_block_size = 1024;
 
 
@@ -131,6 +129,10 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 	eof = false;
 	read_offset = (int) ov_pcm_tell(vf);
 
+	vorbis_info *vi = ov_info( vf, -1 );
+	ASSERT_M( vi->channels == 1 || vi->channels == 2, ssprintf("%i", vi->channels) );
+	channels = vi->channels;
+
     return OPEN_OK;
 }
 
@@ -183,9 +185,12 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 
 	vorbis_info *vi = ov_info( vf, -1 );
 	ASSERT( vi != NULL );
-	const int bytes_per_frame = 2*vi->channels;
 
-	char tmpbuf[4096];
+	if( (unsigned) vi->channels != channels )
+		RageException::Throw( "File \"%s\" changes channel count from %i to %i; not supported", channels, vi->channels );
+
+	const int bytes_per_frame = sizeof(int16_t)*vi->channels;
+
 	int ret = 0;
 
 	{
@@ -207,9 +212,9 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 			/* In bytes: */
 			int silence = (curofs - read_offset) * bytes_per_frame;
 			CHECKPOINT_M( ssprintf("p %i,%i: %i frames of silence needed", curofs, read_offset, silence) );
-			silence = min( silence, (int) sizeof(tmpbuf) );
+			silence = min( silence, (int) sizeof(buffer) );
 
-			memset( tmpbuf, 0, silence );
+			memset( buffer, 0, silence );
 			ret = silence;
 		}
 	}
@@ -218,9 +223,9 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 	{
 		int bstream;
 #if defined(INTEGER_VORBIS)
-		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), &bstream );
+		ret = ov_read( vf, buffer, sizeof(buffer), &bstream );
 #else // float vorbis decoder
-		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
+		ret = ov_read( vf, buffer, sizeof(buffer), (BYTE_ORDER == BIG_ENDIAN)?1:0, 2, 1, &bstream );
 #endif
 
 		if( ret == OV_HOLE )
@@ -242,17 +247,6 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 
 	/* If we have a different number of channels, we need to convert. */
 	ASSERT( vi->channels == 1 || vi->channels == 2 );
-	if( vi->channels == 1 )
-	{
-		int16_t *indata = (int16_t *)tmpbuf;
-		int16_t *outdata = (int16_t *)buffer;
-		int size = ret / sizeof(int16_t);
-		for( unsigned pos = 0; pos < unsigned(size); ++pos )
-			outdata[pos*2] = outdata[pos*2+1] = indata[pos];
-		ret *= 2;
-	}
-	else
-		memcpy( buffer, tmpbuf, ret );
 
 	avail = ret;
 	return true;
