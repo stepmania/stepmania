@@ -482,19 +482,18 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
 		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
-#if !defined(XBOX)
+
 	if( g_hWndMain == NULL )
 		GraphicsWindow::CreateGraphicsWindow( p );
-#else
+
+#if defined(XBOX)
 	p.windowed = false;
 #endif
 
 	/* Set up and display the window before setting up D3D.  If we don't do this,
 	 * then setting up a fullscreen window (when we're not coming from windowed)
 	 * causes all other windows on the system to be resized to the new resolution. */
-#if !defined(XBOX)
 	GraphicsWindow::ConfigureGraphicsWindow( p );
-#endif
 
 	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 
