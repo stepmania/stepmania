@@ -204,7 +204,7 @@ static int GetScore(int p, int B, int S, int n)
 	return p * (B / S) * n;
 #elif 1
 	/* This doesn't round down B/S. */
-	return int(Uint64(p) * n * B / S);
+	return int(int64_t(p) * n * B / S);
 #else
 	/* This also doesn't round down B/S. Use this if you don't have 64-bit ints. */
 	return int(p * n * (float(B) / S));
