@@ -121,7 +121,7 @@ static bool SimpleWaitForSingleObject( HANDLE h, DWORD ms )
 bool MutexImpl_Win32::Lock()
 {
 	int len = 15000;
-	int tries = 2;
+	int tries = 5;
 
 	while( tries-- )
 	{
@@ -129,7 +129,7 @@ bool MutexImpl_Win32::Lock()
 		if( SimpleWaitForSingleObject( mutex, len ) )
 			return true;
 
-		/* Timed out; probably deadlocked.  Try again one more time, with a smaller
+		/* Timed out; probably deadlocked.  Try a couple more times, with a smaller
 		 * timeout, just in case we're debugging and happened to stop while waiting
 		 * on the mutex. */
 		len = 1000;
@@ -188,14 +188,8 @@ void SemaImpl_Win32::Post()
 
 bool SemaImpl_Win32::Wait()
 {
-	// In debug builds, some screens may take longer than 15 seconds to load.
-	// Wait 60 seconds in debug, 15 in optimized.
-#ifdef DEBUG
-	int len = 60000; 
-#else
 	int len = 15000; 
-#endif
-	int tries = 2;
+	int tries = 5;
 
 	while( tries-- )
 	{
@@ -207,7 +201,7 @@ bool SemaImpl_Win32::Wait()
 			return true;
 		}
 
-		/* Timed out; probably deadlocked.  Try again one more time, with a smaller
+		/* Timed out; probably deadlocked.  Try again a few more times, with a smaller
 		 * timeout, just in case we're debugging and happened to stop while waiting
 		 * on the mutex. */
 		len = 1000;
