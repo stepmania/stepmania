@@ -685,7 +685,7 @@ bool GameState::HasEarnedExtraStage()
 			if( PREFSMAN->m_bPickExtraStage && GAMESTATE->IsExtraStage() && !GAMESTATE->m_bAllow2ndExtraStage )
 				continue;
 
-			if( g_CurStageStats.GetGrade((PlayerNumber)p) >= GRADE_TIER_2 )
+			if( g_CurStageStats.GetGrade((PlayerNumber)p) <= GRADE_TIER_2 )
 				return true;
 		}
 	}
