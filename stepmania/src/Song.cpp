@@ -407,12 +407,13 @@ void Song::TidyUpData()
 
 	/* Generate these before we autogen notes, so the new notes can inherit
 	 * their source's values. */
-	ReCalulateRadarValuesAndLastBeat();
+	ReCalculateRadarValuesAndLastBeat();
 
 	TrimRight(m_sMainTitle);
 	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
 	TrimRight(m_sSubTitle);
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
+	TranslateTitles();
 
 	/* XXX don't throw due to broken songs */
 	if( m_BPMSegments.empty() )
@@ -578,39 +579,8 @@ struct TitleTrans
 	}
 };
 
-void Song::ReCalulateRadarValuesAndLastBeat()
+void Song::TranslateTitles()
 {
-	//
-	// calculate radar values and first/last beat
-	//
-	unsigned int i;
-	for( i=0; i<m_apNotes.size(); i++ )
-	{
-		Notes* pNotes = m_apNotes[i];
-		NoteData tempNoteData;
-		pNotes->GetNoteData( &tempNoteData );
-
-		for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		{
-			/* If it's autogen, radar vals come from the parent. */
-			if(pNotes->IsAutogen())
-				continue;
-
-			pNotes->SetRadarValue(r, NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds ));
-		}
-
-		float fFirstBeat = tempNoteData.GetFirstBeat();
-		float fLastBeat = tempNoteData.GetLastBeat();
-		if( m_fFirstBeat == -1 )
-			m_fFirstBeat = fFirstBeat;
-		else
-			m_fFirstBeat = min( m_fFirstBeat, fFirstBeat );
-		if( m_fLastBeat == -1 )
-			m_fLastBeat = fLastBeat;
-		else
-			m_fLastBeat = max( m_fLastBeat, fLastBeat );
-	}
-
 	/* XXX make theme metrics for these or something.  Candy makes it
 	 * a little annoying ...*/
 
@@ -691,7 +661,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		/* 桜 */
 		ttab.push_back(TitleTrans("^Sakura$", "", "", "&sakura;", "", "") );
 
-		/* XXX: "door of magic" (tobira no mahou) -> 魔法の扉 */
+		/* 魔法の扉 */
         ttab.push_back(TitleTrans("^Door of Magic$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") ); 
         ttab.push_back(TitleTrans("^mahou no tobira$", "", "", "&mahou1;&mahou2;&hno;&tobira;", "", "") ); 
 
@@ -719,7 +689,7 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 //		ttab.push_back(TitleTrans(".*Legend.*", "", "ZZ", "", "", "&zz;") );
 	}
 
-	for(i = 0; i < ttab.size(); ++i)
+	for(unsigned i = 0; i < ttab.size(); ++i)
 	{
 		if(!ttab[i].Matches(m_sMainTitle, m_sSubTitle, m_sArtist))
 			continue;
@@ -743,6 +713,39 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 			m_sArtist = ttab[i].ArtistTo;
 			FontCharAliases::ReplaceMarkers( m_sArtist );
 		}
+	}
+}
+
+void Song::ReCalculateRadarValuesAndLastBeat()
+{
+	//
+	// calculate radar values and first/last beat
+	//
+	for( unsigned i=0; i<m_apNotes.size(); i++ )
+	{
+		Notes* pNotes = m_apNotes[i];
+		NoteData tempNoteData;
+		pNotes->GetNoteData( &tempNoteData );
+
+		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		{
+			/* If it's autogen, radar vals come from the parent. */
+			if(pNotes->IsAutogen())
+				continue;
+
+			pNotes->SetRadarValue(r, NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds ));
+		}
+
+		float fFirstBeat = tempNoteData.GetFirstBeat();
+		float fLastBeat = tempNoteData.GetLastBeat();
+		if( m_fFirstBeat == -1 )
+			m_fFirstBeat = fFirstBeat;
+		else
+			m_fFirstBeat = min( m_fFirstBeat, fFirstBeat );
+		if( m_fLastBeat == -1 )
+			m_fLastBeat = fLastBeat;
+		else
+			m_fLastBeat = max( m_fLastBeat, fLastBeat );
 	}
 }
 
@@ -813,7 +816,8 @@ void Song::Save()
 		MoveFile( sOldPath, sNewPath );
 	}
 
-	ReCalulateRadarValuesAndLastBeat();
+	ReCalculateRadarValuesAndLastBeat();
+	TranslateTitles();
 
 	SaveToSMFile( GetSongFilePath(), false );
 	SaveToDWIFile();

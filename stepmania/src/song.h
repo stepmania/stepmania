@@ -65,7 +65,8 @@ public:
 	bool LoadFromSongDir( CString sDir );
 
 	void TidyUpData();	// call after loading to clean up invalid data
-	void ReCalulateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
+	void ReCalculateRadarValuesAndLastBeat();	// called by TidyUpData, and after saving
+	void TranslateTitles();	// called by TidyUpData
 
 	void SaveToSMFile( CString sPath, bool bSavingCache );
 	void Save();	// saves SM and DWI
