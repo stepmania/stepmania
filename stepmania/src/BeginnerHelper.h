@@ -33,7 +33,6 @@ public:
 	void AddPlayer( int pn, NoteData *pNotes );
 	void SetFlash(CString sFilename, float fX, float fY);
 	void ShowStepCircle( int pn, int CSTEP );
-	void Step( int pn, int CSTEP );
 	void TurnFlashOff();
 	void TurnFlashOn();
 
@@ -41,6 +40,8 @@ public:
 	virtual void DrawPrimitives();
 
 protected:
+	void Step( int pn, int CSTEP );
+
 	NoteData m_NoteData[NUM_PLAYERS];
 	Model m_mDancer[NUM_PLAYERS];
 	Model m_mDancePad;

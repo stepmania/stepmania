@@ -216,31 +216,28 @@ void BeginnerHelper::DrawPrimitives()
 void BeginnerHelper::Step( int pn, int CSTEP )
 {
 	LOG->Trace( "BeginnerHelper::Step()" );
-	// First make sure this player is on beginner mode and enabled... The difficulty check may be redundant, tho.
-	if( (GAMESTATE->IsHumanPlayer(pn)) && (GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
+
+	ShowStepCircle( pn, CSTEP);
+	m_mDancer[pn].StopTweening();
+	m_mDancer[pn].SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
+	switch( CSTEP )
 	{
-		ShowStepCircle( pn, CSTEP);
+	case ST_LEFT:	m_mDancer[pn].PlayAnimation( "Step-LEFT", 1.5f ); break;
+	case ST_RIGHT:	m_mDancer[pn].PlayAnimation( "Step-RIGHT", 1.5f ); break;
+	case ST_UP:		m_mDancer[pn].PlayAnimation( "Step-UP", 1.5f ); break;
+	case ST_DOWN:	m_mDancer[pn].PlayAnimation( "Step-DOWN", 1.5f ); break;
+	case ST_JUMPLR: m_mDancer[pn].PlayAnimation( "Step-JUMPLR", 1.5f ); break;
+	case ST_JUMPUD:
+		// Until I can get an UP+DOWN jump animation, this will have to do.
+		m_mDancer[pn].PlayAnimation( "Step-JUMPLR", 1.5f );
+		
 		m_mDancer[pn].StopTweening();
-		m_mDancer[pn].SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
-		switch( CSTEP )
-		{
-		case ST_LEFT:	m_mDancer[pn].PlayAnimation( "Step-LEFT", 1.5f ); break;
-		case ST_RIGHT:	m_mDancer[pn].PlayAnimation( "Step-RIGHT", 1.5f ); break;
-		case ST_UP:		m_mDancer[pn].PlayAnimation( "Step-UP", 1.5f ); break;
-		case ST_DOWN:	m_mDancer[pn].PlayAnimation( "Step-DOWN", 1.5f ); break;
-		case ST_JUMPLR: m_mDancer[pn].PlayAnimation( "Step-JUMPLR", 1.5f ); break;
-		case ST_JUMPUD:
-			// Until I can get an UP+DOWN jump animation, this will have to do.
-			m_mDancer[pn].PlayAnimation( "Step-JUMPLR", 1.5f );
-			
-			m_mDancer[pn].StopTweening();
-			m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
-			m_mDancer[pn].SetRotationY( 90 );
-			m_mDancer[pn].BeginTweening( (1/(GAMESTATE->m_fCurBPS * 2) ) ); //sleep between jump-frames
-			m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
-			m_mDancer[pn].SetRotationY( 0 );
-			break;
-		}
+		m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
+		m_mDancer[pn].SetRotationY( 90 );
+		m_mDancer[pn].BeginTweening( (1/(GAMESTATE->m_fCurBPS * 2) ) ); //sleep between jump-frames
+		m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
+		m_mDancer[pn].SetRotationY( 0 );
+		break;
 	}
 }
 
