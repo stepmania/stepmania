@@ -724,6 +724,14 @@ SOURCE=.\SongInfoFrame.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\SongSelector.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongSelector.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\StageBox.cpp
 # End Source File
 # Begin Source File
