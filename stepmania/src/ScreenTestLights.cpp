@@ -60,8 +60,8 @@ void ScreenTestLights::Update( float fDeltaTime )
 	int iSec = (int)RageTimer::GetTimeSinceStart();
 
 	CabinetLight cl = (CabinetLight)(iSec%NUM_CABINET_LIGHTS);
-	int iNumGameButtons = GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController;
-	GameButton gb = (GameButton)(iSec%iNumGameButtons);
+	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGameDef()->GetNumGameplayButtons();
+	GameButton gb = (GameButton)(iSec%iNumGameButtonsToShow);
 	CString sCabLight = CabinetLightToString(cl);
 	CString sGameButton = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[gb];
 

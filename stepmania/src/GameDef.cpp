@@ -20,6 +20,13 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
+int	GameDef::GetNumGameplayButtons()
+{
+	int iIndexOfStart = ButtonNameToIndex( "Start" );
+	ASSERT( iIndexOfStart != GAME_BUTTON_INVALID );
+	return iIndexOfStart;
+}
+
 GameButton GameDef::ButtonNameToIndex( const CString &sButtonName ) const
 {
 	for( int i=0; i<m_iButtonsPerController; i++ ) 

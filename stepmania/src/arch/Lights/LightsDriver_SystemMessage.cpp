@@ -12,6 +12,8 @@
 
 #include "LightsDriver_SystemMessage.h"
 #include "ScreenManager.h"
+#include "GameState.h"
+#include "GameDef.h"
 
 
 LightsDriver_SystemMessage::LightsDriver_SystemMessage()
@@ -32,11 +34,13 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 		s += ls->m_bCabinetLights[cl] ? '1' : '0';
 	}
 	s += "\n";
+
+	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGameDef()->GetNumGameplayButtons();
 	
 	FOREACH_GameController( gc )
 	{
 		s += ssprintf("Controller%d: ",gc+1);
-		FOREACH_GameButton( gb )
+		for( int gb=0; gb<iNumGameButtonsToShow; gb++ )
 		{
 			s += ls->m_bGameButtonLights[gc][gb] ? '1' : '0';
 		}
