@@ -291,16 +291,17 @@ bool Song::LoadFromSongDir( CString sDir )
 {
 	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.GetString() );
 
+	sDir.Replace("\\", "/");
 	// make sure there is a trailing '\\' at the end of sDir
-	if( sDir.Right(1) != "\\" )
-		sDir += "\\";
+	if( sDir.Right(1) != "/" )
+		sDir += "/";
 
 	// save song dir
 	m_sSongDir = sDir;
 
 	// save group name
 	CStringArray sDirectoryParts;
-	split( m_sSongDir, "\\", sDirectoryParts, false );
+	split( m_sSongDir, "/", sDirectoryParts, false );
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
 
 	//
