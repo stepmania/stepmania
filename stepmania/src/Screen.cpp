@@ -43,6 +43,8 @@ void Screen::Update( float fDeltaTime )
 	// potentially clear all m_QueuedMessages, and set a new state!
 	for( int i=0; i<m_QueuedMessages.GetSize(); i++ )
 	{
+		/* Er, wait.  Shouldn't we subtract first?  This will make messages
+		 * get delayed an extra frame. -glenn */
 		if( m_QueuedMessages[i].fDelayRemaining <= 0.0f )		// send this sucker!
 		{
 			this->HandleScreenMessage( m_QueuedMessages[i].SM );
