@@ -1412,20 +1412,18 @@ void ScreenGameplay::Update( float fDeltaTime )
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
-	//Will not compile
-	//This causes compile error for me
-	//Someone edited it to read:  FOREACH_EnabledPlayer( pn )
-	//I edited it back.
-	//IT looks like it would cause problems as it was
-	//but by updating the life, it does not effect it.
-	//For non-enabled players, the life will not get sent.
-	//FOREACH_EnabledPlayer( pn )
-	//If you do not like my fix, please message me.
-	for (pn = 0;pn<NUM_PLAYERS;pn++);
+
+	//FIXED!!!! 
+	//I figured it out!
+	//The problem was the pn is already taken. 
+	//Sorry, I wasn't too smart about the way I handled it.
+	FOREACH_EnabledPlayer( pn2 )
 	{
-		if( m_pLifeMeter[pn] )
-			NSMAN->m_playerLife[pn] = int(m_pLifeMeter[pn]->GetLife()*10000);
+		if( m_pLifeMeter[pn2] )
+			NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
 	}
+
+
 }
 
 /* Set g_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send
