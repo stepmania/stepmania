@@ -25,8 +25,6 @@ public:
 	Screen( CString sName );	// enforce that all screens have m_sName filled in
 	virtual ~Screen();
 
-	virtual void AddChild( Actor* pActor );
-
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	static bool ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if CoinMode changed
