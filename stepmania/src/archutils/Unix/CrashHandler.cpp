@@ -107,6 +107,12 @@ static void parent_process( int to_child, void **BacktracePointers, int SignalRe
     parent_write(to_child, &size, sizeof(size));
     parent_write(to_child, p, size);
 	
+    /* 7. Write the crashed thread's name. */
+    p = RageThread::GetCurThreadName();
+    size = strlen(p)+1;
+    parent_write(to_child, &size, sizeof(size));
+    parent_write(to_child, p, size);
+	
 	close(to_child);
 }
 
@@ -401,20 +407,30 @@ void CrashSignalHandler( int signal )
 		return;
 #endif
 
-	static bool received = false;
+	static int received = 0;
+	static pid_t childpid = 0;
 
 	if( received )
 	{
 		/* We've received a second signal.  This may mean that another thread
 		 * crashed before we stopped it, or it may mean that the crash handler
 		 * crashed. */
-		const char *str = "Oops! Fatal signal received while still in the crash handler\n";
-		write( fileno(stdout), str, strlen(str) );
+		const char *str;
+		fprintf(stderr, "got %i, in %i, %i %i\n", signal, getpid(), received, childpid);
+		if( received == getpid() )
+			str = "Oops! Fatal signal received while still in the crash handler\n";
+		else if( childpid == getpid() )
+			str = "Oops! Fatal signal received while in the crash handler child\n";
+		else
+			str = "Extra fatal signal received\n"; // probably another thread crashing
+		write( fileno(stderr), str, strlen(str) );
 		_exit(1);
 	}
-	received = true;
+	received = getpid();
 
-	RageThread::HaltAllThreads();
+	/* We want to stop other threads when crashing.  However, sending SIGSTOPs is messy and
+	 * tends to do more harm than good.  Let's just try to get the crashdump written quickly. */
+	// RageThread::HaltAllThreads();
 	
 	/* Do this early, so functions called below don't end up on the backtrace. */
 	void *BacktracePointers[BACKTRACE_MAX_SIZE];
@@ -422,8 +438,6 @@ void CrashSignalHandler( int signal )
 	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
-	//const char *my_fn = g_argv[0];
-
 	int fds[2];
 	if(pipe(fds) != 0)
 	{
@@ -431,14 +445,14 @@ void CrashSignalHandler( int signal )
 		exit(1);
 	}
 
-	pid_t pid = fork();
-	if(pid == -1)
+	childpid = fork();
+	if( childpid == -1 )
 	{
 		safe_print(fileno(stderr), "Crash handler fork() failed: ", strerror(errno), "\n", NULL);
 		exit(1);
 	}
 
-	if(pid == 0)
+	if( childpid == 0 )
 	{
 		close(fds[1]);
 		spawn_child_process(fds[0]);
@@ -447,10 +461,10 @@ void CrashSignalHandler( int signal )
 	{
 		close(fds[0]);
 		parent_process( fds[1], BacktracePointers, signal );
-		waitpid(pid, NULL, 0);
-		/* Now that we're done, actually kill all threads.  kill(0) should kill ourself
-		 * and all other threads. */
-		kill( 0, SIGKILL );
+		int status = 0;
+		waitpid( childpid, &status, 0 );
+		if( WIFSIGNALED(status) )
+			safe_print( fileno(stderr), "Crash handler child exited with signal ", itoa(WTERMSIG(status)), "\n", NULL);
 	}
 }
 

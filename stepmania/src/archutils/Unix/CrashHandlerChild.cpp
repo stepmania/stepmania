@@ -377,6 +377,15 @@ static void child_process()
     ret = read(3, temp, size);
     CStringArray Checkpoints;
     split(temp, "$$", Checkpoints);
+    delete [] temp;
+
+    /* 7. Read the crashed thread's name. */
+    ret = read(3, &size, sizeof(size));
+    temp = new char [size];
+    ret = read(3, temp, size);
+    const CString CrashedThread(temp);
+    printf("got '%s'\n", CrashedThread.c_str());
+    delete[] temp;
 
     /* Wait for the child to either finish cleaning up or die.  XXX:
         * This should time out, in case something deadlocks. */
@@ -448,7 +457,8 @@ static void child_process()
     }
 #endif
     
-    fprintf( CrashDump, "Crash reason: %s\n\n", Signal.c_str() );
+    fprintf( CrashDump, "Crash reason: %s\n", Signal.c_str() );
+    fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 
     fprintf(CrashDump, "Checkpoints:\n");
     for (unsigned i=0; i<Checkpoints.size(); ++i)
