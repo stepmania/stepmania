@@ -233,9 +233,10 @@ float NoteData::GetLastBeat() const
 int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat ) const
 {
 	int iNumNotes = 0;
+
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
-
+	
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -436,6 +437,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 	pOriginal->Convert4sToHoldNotes();
 	Convert4sToHoldNotes();
 }
+#include "RageLog.h"
 
 void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks )
 {
@@ -455,33 +457,14 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 	int iLastRow = pOriginal->GetLastRow();
 	for( int r=0; r<=iLastRow; )
 	{
-#if 0
-		const int tocopy = ROWS_PER_MEASURE*4;
-
-		// copy notes in this measure
-		for( int t=0; t<pOriginal->m_iNumTracks; t++ )
-		{
-			/* Copy a measure worth of rows.  This is an optimization; it's
-			 * faster to copy row-wise than track-wise.  XXX: This was broken
-			 * when I profiled it; it might not be much faster, so re-profile this. */
-			for(int i = 0; i < tocopy && r+i <= iLastRow; ++i) {
-				int iOldTrack = t;
-				int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-				this->SetTapNote(iNewTrack, r+i, pOriginal->GetTapNote(iOldTrack, r+i));
-			}
-		}
-
-		r += tocopy;
-#else
 		// copy notes in this measure
 		for( int t=0; t<pOriginal->m_iNumTracks; t++ )
 		{
 			int iOldTrack = t;
 			int iNewTrack = (iOldTrack + iCurTrackOffset) % iNewNumTracks;
-            this->SetTapNote(iNewTrack, r, pOriginal->GetTapNote(iOldTrack, r));
+			this->SetTapNote(iNewTrack, r, pOriginal->GetTapNote(iOldTrack, r));
 		}
 		r++;
-#endif
 
 		if( r % (ROWS_PER_MEASURE*4) == 0 )	// adjust sliding window every 4 measures
 		{
