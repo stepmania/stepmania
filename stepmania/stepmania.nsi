@@ -28,7 +28,7 @@
 !system "utils\upx SDL_image.dll" ignore
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030526.exe"
+OutFile "StepMania-CVS-20030611b.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -193,6 +193,7 @@ CreateDirectory "$INSTDIR\Data"
 SetOutPath "$INSTDIR\Data"
 File "Data\Translation.dat"
 File "Data\AI.ini"
+File "Data\VideoCardDefaults.ini"
 
 SetOutPath "$INSTDIR"
 File "msvcr70.dll"
@@ -309,6 +310,7 @@ RMDir "$INSTDIR\Visualizations"
 ; Don't delete high scores.
 Delete "$INSTDIR\Data\Translation.dat"
 Delete "$INSTDIR\Data\AI.ini"
+Delete "$INSTDIR\Data\VideoCardDefaults.ini"
 Delete "$INSTDIR\Data\stepmania.ini"
 Delete "$INSTDIR\Data\Keymaps.ini"
 Delete "$INSTDIR\Data\GamePrefs.ini"
