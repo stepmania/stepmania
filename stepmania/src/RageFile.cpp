@@ -32,8 +32,9 @@ CString FixSlashes( CString sPath )
 
 void CollapsePath( CString &sPath )
 {
+	/* Don't ignore empty: we do want to keep trailing slashes. */
 	CStringArray as;
-	split( sPath, "/", as, true );
+	split( sPath, "/", as, false );
 
 	for( unsigned i=0; i<as.size(); i++ )
 	{
@@ -42,6 +43,12 @@ void CollapsePath( CString &sPath )
 			as.erase( as.begin()+i-1 );
 			as.erase( as.begin()+i-1 );
 			i -= 2;
+		}
+		else if( as[i] == "" && i+1 < as.size() )
+		{
+			/* Remove empty parts that aren't at the end; "foo//bar/" -> "foo/bar/". */
+			as.erase( as.begin()+i );
+			i -= 1;
 		}
 		else if( as[i] == "." )
 		{

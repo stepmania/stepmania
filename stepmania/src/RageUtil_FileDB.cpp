@@ -77,27 +77,28 @@ int FileSet::GetFileHash(const CString &path) const
 	return i->hash + i->size;
 }
 
-/* Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz". */
+/*
+ * Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz".
+ * "foo" -> "", "foo"
+ */
 static void SplitPath( CString Path, CString &Dir, CString &Name )
 {
-	/* Strip off any trailing slashes. */
-	if( Path.size() > 0 && Path.Right(1) == "/" )
+	CollapsePath( Path );
+	if( Path.Right(1) == "/" )
 		Path.erase( Path.size()-1 );
 
-	static Regex split("(.*/)([^/]+)");
-
-	CStringArray match;
-	if(split.Compare(Path, match)) {
-		/* At least one slash. */
-		Dir = match[0];
-		Name = match[1];
-	} else {
-		/* No slash. */
-		Dir = "./";
+	unsigned sep = Path.find_last_of( '/' );
+	if( sep == CString::npos )
+	{
+		Dir = "";
 		Name = Path;
 	}
+	else
+	{
+		Dir = Path.substr( 0, sep+1 );
+		Name = Path.substr( sep+1 );
+	}
 }
-
 
 
 FileType FilenameDB::GetFileType( const CString &sPath )
@@ -210,6 +211,9 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 	/* Normalize the path. */
 	dir.Replace("\\", "/"); /* foo\bar -> foo/bar */
 	dir.Replace("//", "/"); /* foo//bar -> foo/bar */
+
+	if( dir == "" )
+		dir = ".";
 
 	CString lower = dir;
 	lower.MakeLower();
