@@ -410,7 +410,8 @@ void ThemeManager::ReloadMetricsIfNecessary()
 void ThemeManager::ReloadMetrics()
 {
 	SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
-	SCREENMAN->SystemMessage( "Reloaded metrics" );
+	if( SCREENMAN )
+		SCREENMAN->SystemMessage( "Reloaded metrics" );
 
 	//
 	// clear theme path cache
