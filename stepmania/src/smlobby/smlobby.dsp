@@ -195,5 +195,25 @@ SOURCE=.\smlobby.rc
 SOURCE=.\res\smlobby.rc2
 # End Source File
 # End Group
+# Begin Group "SDL"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE="..\SDL-1.2.5\include\begin_code.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\SDL-1.2.5\include\close_code.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\SDL-1.2.5\include\SDL.h"
+# End Source File
+# Begin Source File
+
+SOURCE="..\SDL_net-1.2.4\include\SDL_net.h"
+# End Source File
+# End Group
 # End Target
 # End Project
