@@ -248,8 +248,8 @@ void RageLog::Flush()
 
 #if defined(_WIN32)
 #define NEWLINE "\r\n"
-#elif defined(DARWIN)
-#define NEWLINE "\r"
+//#elif defined(DARWIN)
+//#define NEWLINE "\r"
 #else
 #define NEWLINE "\n"
 #endif
