@@ -1,10 +1,12 @@
 bin_PROGRAMS = stepmania
-AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0
 if DARWIN
 AM_LDFLAGS = -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
+CXXFLAGS_EXTRA =
 else
-AM_CXXFLAGS = $(AM_CXXFLAGS) -DLINUX
+CXXFLAGS_EXTRA = -DLINUX
 endif
+
+AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0 $(CXXFLAGS_EXTRA)
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
@@ -31,7 +33,7 @@ SDL_sound-1.0.0/.libs/libSDL_sound.a:
 		--disable-modplug \
 		--enable-static --disable-shared
 	make -C SDL_sound-1.0.0
-	
+
 #--enable-debug
 
 RageHelpers = SDL_dither.cpp SDL_dither.h SDL_rotozoom.cpp SDL_rotozoom.h SDL_utils.cpp SDL_utils.h
@@ -134,10 +136,10 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.cpp \
 	arch/Sound/RageSoundDriver_Null.h
 
-if DARWIN
-Sound = $(Sound_Null)
+if ALSA
+Sound = $(Sound_Null) $(Sound_ALSA9)
 else
-Sound = $(Sound_null) $(Sound_ALSA9)
+Sound = $(Sound_null)
 endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \

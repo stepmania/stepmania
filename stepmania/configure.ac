@@ -22,6 +22,15 @@ AC_PROG_CXX
 
 AM_PATH_SDL
 
+AM_PATH_ALSA(0.9.0, alsa=true ,alsa=0 )
+AC_DEFINE_UNQUOTED([ALSA], $alsa)
+AH_VERBATIM([ALSA],
+[#if ALSA
+#define HAVE_ALSA
+#endif
+])
+AM_CONDITIONAL(ALSA, test x$alsa = xtrue )
+
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
 AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf])
 AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
