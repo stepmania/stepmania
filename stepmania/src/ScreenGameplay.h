@@ -127,6 +127,8 @@ protected:
 	ActiveAttackList	m_ActiveAttackList[NUM_PLAYERS];
 	BitmapText			m_Scoreboard[NUM_NSSB_CATEGORIES];	// for NSMAN, so we can have a scoreboard
 
+	bool				m_ShowScoreboard;
+
 	BitmapText			m_textDebug;
 
 	RageTimer			m_GiveUpTimer;

@@ -430,7 +430,7 @@ void ScreenGameplay::Init()
 		FOREACH_PlayerNumber(p)
 			if (!GAMESTATE->IsPlayerEnabled(p))
 				i=p;
-
+		m_ShowScoreboard=false;
 		if (i!=-1)
 		{
 			FOREACH_NSScoreBoardColumn (i2)
@@ -442,6 +442,7 @@ void ScreenGameplay::Init()
 				this->AddChild( &m_Scoreboard[i2] );
 				m_Scoreboard[i2].SetText(NSMAN->m_Scoreboard[i2]);
 				m_Scoreboard[i2].SetVertAlign(align_top);
+				m_ShowScoreboard=true;
 			}
 		}
 	}
@@ -1577,9 +1578,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( m_pLifeMeter[pn2] )
 				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
 		}
-		FOREACH_NSScoreBoardColumn (cn)
-			if (NSMAN->ChangedScoreboard(cn))
-				m_Scoreboard[cn].SetText(NSMAN->m_Scoreboard[cn]);
+		if (m_ShowScoreboard)
+			FOREACH_NSScoreBoardColumn (cn)
+				if (NSMAN->ChangedScoreboard(cn))
+					m_Scoreboard[cn].SetText(NSMAN->m_Scoreboard[cn]);
 	}
 }
 
@@ -2364,8 +2366,9 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
 
-	FOREACH_NSScoreBoardColumn( sc )
-		ON_COMMAND( m_Scoreboard[sc] );
+	if (m_ShowScoreboard)
+		FOREACH_NSScoreBoardColumn( sc )
+			ON_COMMAND( m_Scoreboard[sc] );
 
 	m_Overlay.PlayCommand("On");
 }
@@ -2406,8 +2409,9 @@ void ScreenGameplay::TweenOffScreen()
 	}
 	m_Overlay.PlayCommand("Off");
 
-	FOREACH_NSScoreBoardColumn( sc )
-		OFF_COMMAND( m_Scoreboard[sc] );
+	if (m_ShowScoreboard)
+		FOREACH_NSScoreBoardColumn( sc )
+			OFF_COMMAND( m_Scoreboard[sc] );
 
 	m_textDebug.StopTweening();
 	m_textDebug.BeginTweening( 1/8.f );
