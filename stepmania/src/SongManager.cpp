@@ -128,6 +128,7 @@ void SongManager::SaveMachineScoresToDisk()
 
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
+	RageTimer tm;
 	LoadStepManiaSongDir( SONGS_DIR, ld );
 
 	for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
@@ -136,7 +137,7 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	if( PREFSMAN->m_DWIPath != "" )
 		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "/Songs", ld );
 
-	LOG->Trace( "Found %d Songs.", m_pSongs.size() );
+	LOG->Trace( "Found %d songs in %f seconds.", m_pSongs.size(), tm.GetDeltaTime() );
 }
 
 void SongManager::SanityCheckGroupDir( CString sDir ) const
