@@ -41,6 +41,9 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 		m_ReceptorArrow[c].SetX( fX );
 		m_ReceptorArrow[c].SetY( fY );
 		m_ReceptorArrow[c].SetZ( fZ );
+
+		const float fZoom = ArrowGetZoom( m_PlayerNumber );
+		m_ReceptorArrow[c].SetZoom( fZoom );
 	}
 }
 

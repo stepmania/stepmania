@@ -51,6 +51,8 @@ float ArrowGetGlow( PlayerNumber pn, int iCol, float fYPos, float fPercentFadeTo
 //	Depends on fYOffset.
 float ArrowGetBrightness( PlayerNumber pn, float fNoteBeat );
 
+// This is the zoom of the individual tracks, not of the whole Player.
+float ArrowGetZoom( PlayerNumber pn );
 
 #endif
 

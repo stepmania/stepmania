@@ -461,6 +461,8 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 	static RageSpriteVertex queue[size];
 	Sprite* pSprTopCap = GetHoldTopCapSprite( hn.GetStartBeat(), bIsBeingHeld );
 
+	pSprTopCap->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
+
 	// draw manually in small segments
 	RageSpriteVertex *v = &queue[0];
 	RageTexture* pTexture = pSprTopCap->GetTexture();
@@ -526,6 +528,8 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	static RageSpriteVertex queue[size];
 
 	Sprite* pSprBody = GetHoldBodySprite( hn.GetStartBeat(), bIsBeingHeld );
+
+	pSprBody->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
 
 	// draw manually in small segments
 	RageSpriteVertex *v = &queue[0];
@@ -596,6 +600,8 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	static RageSpriteVertex queue[size];
 
 	Sprite* pBottomCap = GetHoldBottomCapSprite( hn.GetStartBeat(), bIsBeingHeld );
+
+	pBottomCap->SetZoom( ArrowGetZoom( m_PlayerNumber ) );
 
 	// draw manually in small segments
 	RageSpriteVertex *v = &queue[0];
@@ -823,6 +829,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 	const float fAlpha			= ArrowGetAlpha(	m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
 	const float fColorScale		= ArrowGetBrightness( m_PlayerNumber, fBeat ) * SCALE(fLife,0,1,0.2f,1);
+	const float fZoom			= ArrowGetZoom( m_PlayerNumber );
 	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
 	RageColor glow = RageColor(1,1,1,fGlow);
 
@@ -831,6 +838,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 	pActor->SetZ( fZPos );
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
+	pActor->SetZoom( fZoom );
 
 	if( bUseLighting )
 	{

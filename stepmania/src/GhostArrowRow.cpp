@@ -69,6 +69,11 @@ void GhostArrowRow::Update( float fDeltaTime )
 		m_GhostDim[c].SetZ( fZ );
 		m_GhostBright[c].SetZ( fZ );
 		m_HoldGhost[c].SetZ( fZ );
+
+		const float fZoom = ArrowGetZoom( m_PlayerNumber );
+		m_GhostDim[c].SetZoom( fZoom );
+		m_GhostBright[c].SetZoom( fZoom );
+		m_HoldGhost[c].SetZoom( fZoom );
 	}
 }
 

@@ -417,6 +417,15 @@ bool ArrowsNeedZBuffer( PlayerNumber pn )
 	return false;
 }
 
+float ArrowGetZoom( PlayerNumber pn )
+{
+	/* Hack: make STYLE_TECHNO_VERSUS8 fit. */
+	if( GAMESTATE->m_CurGame == GAME_TECHNO &&
+		GAMESTATE->m_CurStyle == STYLE_TECHNO_VERSUS8 )
+		return 0.8f;
+	return 1.0f;
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
