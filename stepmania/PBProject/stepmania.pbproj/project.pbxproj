@@ -1653,6 +1653,36 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
+		AA22CBA306DE909C0083BA97 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenNetSelectMusic.cpp;
+			path = src/ScreenNetSelectMusic.cpp;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA22CBA406DE909C0083BA97 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenNetSelectMusic.h;
+			path = src/ScreenNetSelectMusic.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA22CBA506DE909C0083BA97 = {
+			fileRef = AA22CBA306DE909C0083BA97;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA22CBA606DE909C0083BA97 = {
+			fileRef = AA22CBA406DE909C0083BA97;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA230EAE06043704002672F3 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -2100,7 +2130,6 @@
 				AA29CCC60558741A00961A51,
 				AA29CCC70558741A00961A51,
 				AA29CCC90558741A00961A51,
-				AA29CCCA0558741A00961A51,
 				AA29CCCB0558741A00961A51,
 				AA29CCCC0558741A00961A51,
 				AA29CCCD0558741A00961A51,
@@ -2341,6 +2370,7 @@
 				AA3A705F06AA144C006F755E,
 				AA3A706306AA1645006F755E,
 				AA9A78AC06B5C72200B03E97,
+				AA22CBA606DE909C0083BA97,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3257,12 +3287,6 @@
 			settings = {
 			};
 		};
-		AA29CCCA0558741A00961A51 = {
-			fileRef = AA6E0062047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA29CCCB0558741A00961A51 = {
 			fileRef = AA6E0066047711F3005F316C;
 			isa = PBXBuildFile;
@@ -4047,7 +4071,6 @@
 				AA29CDD40558741A00961A51,
 				AA29CDD50558741A00961A51,
 				AA29CDD70558741A00961A51,
-				AA29CDD80558741A00961A51,
 				AA29CDD90558741A00961A51,
 				AA29CDDA0558741A00961A51,
 				AA29CDDB0558741A00961A51,
@@ -4251,6 +4274,7 @@
 				AA3D793306A279530064B980,
 				AA3A706206AA1645006F755E,
 				AA9A78AB06B5C72200B03E97,
+				AA22CBA506DE909C0083BA97,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5097,12 +5121,6 @@
 		};
 		AA29CDD70558741A00961A51 = {
 			fileRef = AA6E005F047711F3005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CDD80558741A00961A51 = {
-			fileRef = AA6E0061047711F3005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7615,6 +7633,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
+				AA22CBA306DE909C0083BA97,
+				AA22CBA406DE909C0083BA97,
 				AA35CBC5067C5BFE00BEBC56,
 				AA35CBC6067C5BFE00BEBC56,
 				AA42F5E6067068D30013509E,
@@ -7717,8 +7737,6 @@
 				AA6E005C047711F3005F316C,
 				AA6E005F047711F3005F316C,
 				AA6E0060047711F3005F316C,
-				AA6E0061047711F3005F316C,
-				AA6E0062047711F3005F316C,
 				AA6E0065047711F3005F316C,
 				AA6E0066047711F3005F316C,
 				AA1DC47404A4861700D02EE9,
@@ -8483,30 +8501,6 @@
 			isa = PBXFileReference;
 			name = ScreenSelectDifficulty.h;
 			path = ../src/ScreenSelectDifficulty.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0061047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSelectDifficultyEX.cpp;
-			path = ../src/ScreenSelectDifficultyEX.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6E0062047711F3005F316C = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ScreenSelectDifficultyEX.h;
-			path = ../src/ScreenSelectDifficultyEX.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
