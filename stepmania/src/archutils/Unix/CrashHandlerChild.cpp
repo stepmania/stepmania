@@ -378,8 +378,9 @@ static void child_process()
         case SIGFPE: Signal = "Floating point exception"; break;
         X(SIGHUP)
         case SIGILL: Signal = "Illegal instruction"; break;
-        X(SIGINT) X(SIGIOT)
+        X(SIGINT)
         case SIGPIPE: Signal = "Broken pipe"; break;
+        case SIGABRT: Signal = "Aborted"; break;
         X(SIGQUIT)
         case SIGSEGV: Signal = "Segmentation fault"; break;
         X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
