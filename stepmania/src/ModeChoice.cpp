@@ -17,7 +17,6 @@ void ModeChoice::Init()
 	dc = DIFFICULTY_INVALID;
 	sAnnouncer = "";
 	strcpy( name, "" );
-	numSidesJoinedToPlay = 1;
 }
 
 bool ModeChoice::DescribesCurrentMode() const
@@ -111,23 +110,6 @@ bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
 			sAnnouncer = sValue;
 		}
 
-	}
-
-	if( this->style != STYLE_INVALID )
-	{
-		const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(this->style);
-		switch( pStyleDef->m_StyleType )
-		{
-		case StyleDef::ONE_PLAYER_ONE_CREDIT:
-			this->numSidesJoinedToPlay = 1;
-			break;
-		case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-		case StyleDef::ONE_PLAYER_TWO_CREDITS:
-			this->numSidesJoinedToPlay = 2;
-			break;
-		default:
-			ASSERT(0);
-		}
 	}
 
 	return !bChoiceIsInvalid;

@@ -33,7 +33,6 @@ struct ModeChoice		// used in SelectMode
 	CString		sAnnouncer;
 
 	char		name[64];
-	int			numSidesJoinedToPlay;
 };
 
 #endif
