@@ -12,13 +12,25 @@
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxguid.lib")
 
+BOOL CALLBACK DSound::EnumCallback(LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext)
+{
+	LOG->Info("DirectSound Driver: %s (%s)", lpcstrDescription, lpcstrModule);
+	if(lpGuid)
+		LOG->Info("    ID: {%8.8x-%4.4x-%4.4x-%6.6x}", lpGuid->Data1, lpGuid->Data2, lpGuid->Data3, lpGuid->Data4);
+
+	return TRUE;
+}
+
+
 DSound::DSound()
 {
 	HRESULT hr;
 
 	if(FAILED(hr=DirectSoundCreate8(NULL, &ds8, NULL)))
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "DirectSoundCreate8"));
-
+	
+	DirectSoundEnumerate(EnumCallback, 0);
+	
 	/* Try to set primary mixing privileges */
 	hr = ds8->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
 }

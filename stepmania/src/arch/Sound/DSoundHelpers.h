@@ -9,6 +9,7 @@ struct IDirectSoundBuffer8;
 class DSound
 {
 	IDirectSound8 *ds8;
+	static BOOL CALLBACK EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR  lpcstrModule, LPVOID lpContext);
 
 public:
 	IDirectSound8 *GetDS8() const { return ds8; }
