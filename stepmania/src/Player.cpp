@@ -213,7 +213,7 @@ void Player::Update( float fDeltaTime )
 	//
 	// Check for TapNote misses
 	//
-	UpdateTapNotesMissedOlderThan( GAMESTATE->m_fSongBeat - GetMaxBeatDifference() );
+	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
 
 	//
 	// update HoldNotes logic
@@ -260,7 +260,7 @@ void Player::Update( float fDeltaTime )
 			}
 			else
 			{
-				if( fSongBeat-hn.m_fStartBeat > GetMaxBeatDifference() )
+				if( fSongBeat-hn.m_fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
 				{
 					// Decrease life
 					fLife -= fDeltaTime/HOLD_ARROW_NG_TIME;
@@ -553,24 +553,27 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	m_frameCombo.SetTweenZoom( 1 );
 }
 
-/* XXX: This should check a number of seconds back, not a number of beats.
- * Currently, if a tap lies on a freeze, we won't show a MISS until the freeze
- * ends.  However, looking up the time value of each row (via GetElapsedTimeFromBeat)
- * may be expensive ... */
 
-int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
+int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
+	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
+	const float fMissIfOlderThanThisBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime(fEarliestTime);
 
 	int iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
 
-	int iNumMissesFound = 0;
 	// Since this is being called every frame, let's not check the whole array every time.
 	// Instead, only check 10 elements back.  Even 10 is overkill.
 	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
-	for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
+
+	/* If we're on a freeze, and the freeze has been running for fMissIfOlderThanSeconds,
+	 * then iMissIfOlderThanThisIndex will be the freeze itself, in which case we do
+	 * want to update the row of the freeze itself; otherwise we won't show misses
+	 * for tap notes on freezes until the freeze finishes. */
+	int iNumMissesFound = 0;
+	for( int r=iStartCheckingAt; r<=iMissIfOlderThanThisIndex; r++ )
 	{
 		int iNumMissesThisRow = 0;
 		for( int t=0; t<GetNumTracks(); t++ )
@@ -660,9 +663,9 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 	}
 }
 
-float Player::GetMaxBeatDifference()
+float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate * PREFSMAN->m_fJudgeWindowBooSeconds * PREFSMAN->m_fJudgeWindowScale;
+	return GAMESTATE->m_SongOptions.m_fMusicRate * PREFSMAN->m_fJudgeWindowBooSeconds * PREFSMAN->m_fJudgeWindowScale;
 }
 
 void Player::FadeToFail()

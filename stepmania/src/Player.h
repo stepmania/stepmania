@@ -61,7 +61,7 @@ protected:
 	int GetClosestBeatDirectional( int col, float fBeat, float fMaxBeatsAhead, int iDirection );
 	int GetClosestBeat( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind );
 
-	static float GetMaxBeatDifference();
+	static float GetMaxStepDistanceSeconds();
 
 	PlayerNumber	m_PlayerNumber;
 
