@@ -57,13 +57,13 @@ void InputHandler_Win32_Pump::HandleInput( int devno, int event )
 
 	for (int butno = 0 ; butno < NUM_PUMP_PAD_BUTTONS ; butno++)
 	{
-		DeviceInput dev(id, butno);
+		DeviceInput di(id, butno);
 		
 		/* If we're in a thread, our timestamp is accurate. */
 		if( InputThread.IsCreated() )
-			dev.ts.Touch();
+			di.ts.Touch();
 
-		ButtonPressed(dev, !(event & bits[butno]));
+		ButtonPressed(di, !(event & bits[butno]));
 	}
 }
 
