@@ -134,7 +134,6 @@ public:
 	CString	m_sCredit;
 
 	CString	m_sMusicFile;
-	unsigned m_iMusicBytes;
 	float	m_fBeat0OffsetInSeconds;
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;

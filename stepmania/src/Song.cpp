@@ -94,7 +94,6 @@ Song::Song()
 	m_fBeat0OffsetInSeconds = 0;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
-	m_iMusicBytes = 0;
 	m_fMusicLengthSeconds = 0;
 	m_fFirstBeat = -1;
 	m_fLastBeat = -1;
