@@ -581,7 +581,6 @@ retry:
 		SAFE_DELETE( pNewScreen );
 		goto retry;
 	}
-	SetNewScreen( pNewScreen );
 
 	/* If this is a system menu, don't let the operator key touch it! 
 		However, if you add an options screen, please include it here -- Miryokuteki */
@@ -598,6 +597,8 @@ retry:
 		GAMESTATE->m_bIsOnSystemMenu = true;
 	else 
 		GAMESTATE->m_bIsOnSystemMenu = false;
+
+	SetNewScreen( pNewScreen );
 }
 
 void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage messageSendOnPop )
