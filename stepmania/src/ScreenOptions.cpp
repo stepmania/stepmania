@@ -1310,10 +1310,17 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	if( optrow.bOneChoiceForAllPlayers )
 	{
+		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
+
+		if( m_InputMode == INPUTMODE_TOGETHER )
+		{
+			// lock focus together
+			FOREACH_HumanPlayer( pn )
+				row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
+		}
+
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
-
 			if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 			{
 				;	// do nothing

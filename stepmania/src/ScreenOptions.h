@@ -146,7 +146,8 @@ protected:
 		}
 		void SetOneSharedSelection( int iChoice )
 		{
-			SetOneSelection( (PlayerNumber)0, iChoice );
+			FOREACH_HumanPlayer( pn )
+				SetOneSelection( pn, iChoice );
 		}
 	};
 	vector<Row*>		m_Rows;
