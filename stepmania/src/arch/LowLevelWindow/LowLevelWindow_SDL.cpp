@@ -105,10 +105,10 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		mySDL_EventState((Uint8) i, EventEnabled[i]);
 	mySDL_PushEvents(events);
 
-	/* Set SDL window title and icon -before- creating the window */
+	/* Set SDL window title, icon and cursor -before- creating the window */
 	SDL_WM_SetCaption( p.sWindowTitle, "");
 	mySDL_WM_SetIcon( p.sIconFile );
-
+	SDL_ShowCursor( false );		// Cursor off by default
 
 	int flags = SDL_RESIZABLE | SDL_OPENGL;
 	if( !p.windowed )
