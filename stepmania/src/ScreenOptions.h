@@ -122,6 +122,8 @@ protected:
 		bool m_bRowIsLong;	// goes off edge of screen
 		bool m_bHidden; // currently off screen
 
+		int m_iChoiceWithFocus[NUM_PLAYERS];	// this choice has input focus
+
 		// Only one will true at a time if m_RowDef.bMultiSelect
 		vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size().
 		int GetOneSelection( PlayerNumber pn )
@@ -129,6 +131,7 @@ protected:
 			for( int i=0; i<m_vbSelected[pn].size(); i++ )
 				if( m_vbSelected[pn][i] )
 					return i;
+			ASSERT(0);	// shouldn't call this if not expecting one to be selected
 			return -1;
 		}
 		int GetOneSharedSelection()

@@ -585,18 +585,19 @@ void ScreenOptionsMaster::RefreshIcons()
 			if( m_Rows[i]->Type == Row::ROW_EXIT )
 				continue;	// skip
 
-			const OptionRowData &row = m_Rows[i]->m_RowDef;
+			Row &row = *m_Rows[i];
+			const OptionRowData &data = row.m_RowDef;
 
-			int iSelection = m_Rows[i]->GetOneSelection((PlayerNumber)p);
-			if( iSelection >= (int)row.choices.size() )
+			int iSelection = row.GetOneSelection((PlayerNumber)p);
+			if( iSelection >= (int)data.choices.size() )
 			{
 				/* Invalid selection.  Send debug output, to aid debugging. */
 				CString error = ssprintf("Option row with name '%s' selects item %i, but there are only %i items:\n",
-					row.name.c_str(),
-					iSelection, (int) row.choices.size() );
+					data.name.c_str(),
+					iSelection, (int) data.choices.size() );
 
-				for( unsigned j = 0; j < row.choices.size(); ++j )
-					error += ssprintf("    %s\n", row.choices[j].c_str());
+				for( unsigned j = 0; j < data.choices.size(); ++j )
+					error += ssprintf("    %s\n", data.choices[j].c_str());
 
 				RageException::Throw( "%s", error.c_str() );
 			}
@@ -611,14 +612,14 @@ void ScreenOptionsMaster::RefreshIcons()
 				break;
 			case ROW_STEP:
 			case ROW_CHARACTER:
-				sIcon = row.choices[iSelection];
+				sIcon = data.choices[iSelection];
 				break;
 			case ROW_CONFIG:
 				break;
 			}
 
 			/* XXX: hack to not display text in the song options menu */
-			if( row.bOneChoiceForAllPlayers )
+			if( data.bOneChoiceForAllPlayers )
 				sIcon = "";
 
 			LoadOptionIcon( (PlayerNumber)p, i, sIcon );

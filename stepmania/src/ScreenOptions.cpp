@@ -134,6 +134,10 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 				vbSelected.resize( Row.m_RowDef.choices.size() );
 				for( int j=0; j<vbSelected.size(); j++ )
 					vbSelected[j] = false;
+
+				// set select the first item if not a multiselect row
+				if( !Row.m_RowDef.bMultiSelect )
+					vbSelected[0] = true;
 			}
 		}
 	}
@@ -146,9 +150,30 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		{
 			Row &Row = *m_Rows[r];
 
-			if( m_Rows[r]->m_RowDef.bOneChoiceForAllPlayers )
+			// If this isn't a multiSelectRow, exactly one choice should be selected.
+			if( !Row.m_RowDef.bMultiSelect )
+			{
+				if( Row.m_RowDef.bOneChoiceForAllPlayers )
+				{
+					ASSERT( find( Row.m_vbSelected[0].begin(), Row.m_vbSelected[0].end(), true ) != Row.m_vbSelected[0].end() );
+				}
+				else
+				{
+					for( int p=0; p<NUM_PLAYERS; p++ )
+						ASSERT( find( Row.m_vbSelected[p].begin(), Row.m_vbSelected[p].end(), true ) != Row.m_vbSelected[p].end() );
+				}
+			}
+
+
+			if( Row.m_RowDef.bOneChoiceForAllPlayers )
 				for( int p=1; p<NUM_PLAYERS; p++ )
 					Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
+
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( Row.m_RowDef.bMultiSelect )
+					Row.m_iChoiceWithFocus[p] = 0;	// focus on the first row, which is "go down"
+				else
+					Row.m_iChoiceWithFocus[p] = Row.GetOneSelection( (PlayerNumber)p);	// focus on the only selected choice
 		}
 	}
 
@@ -266,10 +291,10 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					BitmapText *bt = new BitmapText;
 					textItems.push_back( bt );
 
-					const int iChoiceInRow = row.GetOneSelection( (PlayerNumber)p );
+					const int iChoiceWithFocus = row.m_iChoiceWithFocus[p];
 
 					bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-					bt->SetText( optline.choices[iChoiceInRow] );
+					bt->SetText( optline.choices[iChoiceWithFocus] );
 					bt->SetZoom( ITEMS_ZOOM );
 					bt->EnableShadow( false );
 
@@ -553,6 +578,10 @@ void ScreenOptions::InitOptionsText()
 
 void ScreenOptions::PositionUnderlines()
 {
+	// OPTIMIZATION OPPORTUNITY: There's no reason to the underlines for 
+	// all rows when something changes.  Just recalulate for the row that 
+	// changed.
+
 	// Set the position of the underscores showing the current choice for each option line.
 	for( unsigned r=0; r<m_Rows.size(); r++ )	// foreach options line
 	{
@@ -573,19 +602,19 @@ void ScreenOptions::PositionUnderlines()
 			{
 				OptionsCursor& ul = *vpUnderlines[i];
 	
-				int iChoiceInRow = row.m_bRowIsLong ? row.GetOneSelection( (PlayerNumber)p ) : i;
+				int iChoiceWithFocus = row.m_bRowIsLong ? row.m_iChoiceWithFocus[p] : i;
 
 				/* Don't tween X movement and color changes. */
 				int iWidth, iX, iY;
-				GetWidthXY( (PlayerNumber)p, r, iChoiceInRow, iWidth, iX, iY );
+				GetWidthXY( (PlayerNumber)p, r, iChoiceWithFocus, iWidth, iX, iY );
 				ul.SetGlobalX( (float)iX );
 				ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
 
-				// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
-				// It looks silly.
-				bool bOnlyOneChoice = row.m_RowDef.choices.size() == 1;
-				bool bSelected = iChoiceInRow == row.GetOneSelection( (PlayerNumber)p );
-				bool bHidden = bOnlyOneChoice || !bSelected || row.m_bHidden;
+				// Don't show underlines on the ScreenOptionsMenu.  We know we're on this
+				// screen if the row title is empty.
+				bool bEmptyTitle = GetExplanationTitle(r).empty();
+				bool bSelected = row.m_vbSelected[p][ iChoiceWithFocus ];
+				bool bHidden = bEmptyTitle || !bSelected || row.m_bHidden;
 
 				if( ul.GetDestY() != row.m_fY )
 				{
@@ -617,10 +646,10 @@ void ScreenOptions::PositionIcons()
 
 			OptionIcon &icon = row.m_OptionIcons[p];
 
-			int iChoiceInRow = row.GetOneSelection( (PlayerNumber)p );
+			int iChoiceWithFocus = row.m_iChoiceWithFocus[p];
 
 			int iWidth, iX, iY;			// We only use iY
-			GetWidthXY( (PlayerNumber)p, i, iChoiceInRow, iWidth, iX, iY );
+			GetWidthXY( (PlayerNumber)p, i, iChoiceWithFocus, iWidth, iX, iY );
 			icon.SetX( ICONS_X(p) );
 
 			if( icon.GetDestY() != row.m_fY )
@@ -656,10 +685,10 @@ void ScreenOptions::PositionCursors()
 
 		OptionsCursor &highlight = m_Highlight[p];
 
-		int iChoiceInRow = Row.GetOneSelection( (PlayerNumber)p );
+		int iChoiceWithFocus = Row.m_iChoiceWithFocus[p];
 
 		int iWidth, iX, iY;
-		GetWidthXY( (PlayerNumber)p, row, iChoiceInRow, iWidth, iX, iY );
+		GetWidthXY( (PlayerNumber)p, row, iChoiceWithFocus, iWidth, iX, iY );
 		highlight.SetBarWidth( iWidth );
 		highlight.SetXY( (float)iX, (float)iY );
 	}
@@ -675,10 +704,10 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	int row = m_iCurrentRow[pn];		
 	Row &Row = *m_Rows[row];
 
-	int iChoiceInRow = Row.GetOneSelection( pn );
+	int iChoiceWithFocus = Row.m_iChoiceWithFocus[pn];
 
 	int iWidth, iX, iY;
-	GetWidthXY( pn, iCurRow, iChoiceInRow, iWidth, iX, iY );
+	GetWidthXY( pn, iCurRow, iChoiceWithFocus, iWidth, iX, iY );
 
 	highlight.StopTweening();
 	highlight.BeginTweening( 0.2f );
@@ -697,20 +726,19 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 void ScreenOptions::UpdateText( PlayerNumber pn, int iRow )
 {
 	Row &row = *m_Rows[iRow];
+	const OptionRowData &data = row.m_RowDef;
 
 	if( !row.m_bRowIsLong )
 		return;
 
-	int iChoiceInRow = row.GetOneSelection( pn );
+	int iChoiceWithFocus = row.m_iChoiceWithFocus[pn];
 
-	const OptionRowData &optrow = m_Rows[iRow]->m_RowDef;
-
-	unsigned item_no = optrow.bOneChoiceForAllPlayers ? 0 : pn;
+	unsigned item_no = data.bOneChoiceForAllPlayers ? 0 : pn;
 
 	/* If player_no is 2 and there is no player 1: */
-	item_no = min( item_no, m_Rows[iRow]->m_textItems.size()-1 );
+	item_no = min( item_no, row.m_textItems.size()-1 );
 
-	m_Rows[iRow]->m_textItems[item_no]->SetText( m_Rows[iRow]->m_RowDef.choices[iChoiceInRow] );
+	row.m_textItems[item_no]->SetText( data.choices[iChoiceWithFocus] );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -1072,25 +1100,38 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		return;
 	if( type == IET_RELEASE )
 		return;
-
-	switch( m_OptionsNavigation )
+	
+	Row &row = *m_Rows[m_iCurrentRow[pn]];
+	OptionRowData &data = row.m_RowDef;
+	
+	// Toggle selection if this is a multiselect row.
+	// Is this the right thing to do for five key navigation?
+	if( data.bMultiSelect )
 	{
-	case NAV_THREE_KEY:
-	{
-		bool bAllOnExit = true;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
-				bAllOnExit = false;
-
-		if( m_Rows[m_iCurrentRow[pn]]->Type != Row::ROW_EXIT )	// not on exit
-			MenuDown( pn, type );	// can't go down any more
-		else if( bAllOnExit && type == IET_FIRST_PRESS )
-			StartGoToNextState();
+		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+		row.m_vbSelected[pn][iChoiceInRow] ^= true;
 	}
-	case NAV_THREE_KEY_MENU:
-	case NAV_FIVE_KEY:
-		if( type == IET_FIRST_PRESS )	// m_SMOptionsNavigation
-			StartGoToNextState();
+	else
+	{
+		switch( m_OptionsNavigation )
+		{
+		case NAV_THREE_KEY:
+		{
+			bool bAllOnExit = true;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
+					bAllOnExit = false;
+
+			if( m_Rows[m_iCurrentRow[pn]]->Type != Row::ROW_EXIT )	// not on exit
+				MenuDown( pn, type );	// can't go down any more
+			else if( bAllOnExit && type == IET_FIRST_PRESS )
+				StartGoToNextState();
+		}
+		case NAV_THREE_KEY_MENU:
+		case NAV_FIVE_KEY:
+			if( type == IET_FIRST_PRESS )	// m_SMOptionsNavigation
+				StartGoToNextState();
+		}
 	}
 }
 
@@ -1125,36 +1166,44 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 		return;		// don't allow a move
 
 	bool bOneChanged = false;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+
+
+	int iCurrentChoiceWithFocus = row.m_iChoiceWithFocus[pn];
+	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
+	wrap( iNewChoiceWithFocus, iNumOptions );
+	
+	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
+		bOneChanged = true;
+
+	if( optrow.bOneChoiceForAllPlayers )
 	{
-		if( p != pn )
-			continue;	// skip
-
-		Row &row = *m_Rows[iCurRow];
-
-		int iCurrentSel = row.GetOneSelection( (PlayerNumber)p );
-		int iNewSel = row.GetOneSelection( (PlayerNumber)p ) + iDelta;
-		wrap( iNewSel, iNumOptions );
-		
-		if( iCurrentSel != iNewSel )
-			bOneChanged = true;
-
-		if( optrow.bOneChoiceForAllPlayers )
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			for( int p2=0; p2<NUM_PLAYERS; p2++ )
-			{
-				row.SetOneSelection( (PlayerNumber)p2, iNewSel );
-				UpdateText( (PlayerNumber)p2, iCurRow );
-			}
-		}
-		else
-		{
-			row.SetOneSelection( (PlayerNumber)p, iNewSel );
+			row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
+
+			if( optrow.bMultiSelect )
+				;	// do nothing.  User must press Start to toggle the selection.
+			else
+				row.SetOneSelection( (PlayerNumber)p, iNewChoiceWithFocus );
+			
 			UpdateText( (PlayerNumber)p, iCurRow );
 		}
-		OnChange( (PlayerNumber)p );
 	}
-	if( bOneChanged )
+	else
+	{
+		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
+
+		if( optrow.bMultiSelect )
+			;	// do nothing.  User must press Start to toggle the selection.
+		else
+			row.SetOneSelection( pn, iNewChoiceWithFocus );
+		
+		UpdateText( pn, iCurRow );
+	}
+
+	OnChange( pn );
+
+	if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
 		m_SoundChangeCol.Play();
 }
 
