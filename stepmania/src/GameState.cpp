@@ -23,6 +23,7 @@
 #include "Notes.h"
 #include "NoteSkinManager.h"
 #include "ModeChoice.h"
+#include "NoteFieldPositioning.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -41,6 +42,8 @@ GameState::GameState()
 
 GameState::~GameState()
 {
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		delete m_Position[p];
 }
 
 void GameState::Reset()
@@ -84,12 +87,19 @@ void GameState::Reset()
 	m_SongOptions.Init();
 	for( p=0; p<NUM_PLAYERS; p++ )
 		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+		m_Position[p] = new NoteFieldPositioning;
 }
 
 void GameState::Update( float fDelta )
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+		if(m_Position[p]) m_Position[p]->Update(fDelta);
 }
 
 

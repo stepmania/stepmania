@@ -25,6 +25,7 @@ class Course;
 class GameDef;
 class StyleDef;
 struct ModeChoice;
+class NoteFieldPositioning;
 
 
 class GameState
@@ -150,6 +151,11 @@ public:
 	RankingCategory		m_RankingCategory[NUM_PLAYERS];	// meaningless if a course was played
 	Course*				m_pRankingCourse;		// meaningless unless Course was played
 	int					m_iRankingIndex[NUM_PLAYERS];		// -1 if no new high score
+
+	//
+	// Arrow positioning
+	//
+	NoteFieldPositioning *m_Position[NUM_PLAYERS];
 };
 
 
