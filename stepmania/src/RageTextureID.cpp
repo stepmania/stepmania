@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageTextureID.h"
+#include "RageTextureManager.h"
 
 void RageTextureID::Init()
 {
@@ -12,6 +13,7 @@ void RageTextureID::Init()
    	iColorDepth = -1; /* default */
 	bHotPinkColorKey = false;
 	AdditionalTextureHints = "";
+	Policy = TEXTUREMAN->GetDefaultTexturePolicy();
 }
 
 bool RageTextureID::operator<(const RageTextureID &rhs) const
@@ -27,6 +29,7 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 	COMP(bStretch);
 	COMP(bHotPinkColorKey);
 	COMP(AdditionalTextureHints);
+	// COMP(Policy); // don't do this
 #undef COMP
 	return false;
 }
@@ -45,5 +48,6 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 		EQUAL(bStretch) &&
 		EQUAL(bHotPinkColorKey) &&
 		EQUAL(AdditionalTextureHints);
+		// EQUAL(Policy); // don't do this
 }
 

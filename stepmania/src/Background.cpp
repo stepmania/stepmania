@@ -320,8 +320,8 @@ void Background::LoadFromSong( const Song* pSong )
 
 	/* Song backgrounds (even just background stills) can get very big; never keep them
 	 * in memory. */
-	RageTexture::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
-	TEXTUREMAN->SetDefaultTexturePolicy( RageTexture::TEX_VOLATILE );
+	RageTextureID::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
+	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
 
 	TEXTUREMAN->DisableOddDimensionWarning();
 

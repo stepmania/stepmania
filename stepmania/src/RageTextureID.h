@@ -49,6 +49,12 @@ struct RageTextureID
 	bool operator< (const RageTextureID &rhs) const;
 	bool operator== (const RageTextureID &rhs) const;
 
+	/* Used by RageTextureManager.  Order is important; see RageTextureManager.cpp.
+	 * Note that this property is not considered for ordering/equality.  Loading
+	 * a texture with a different loading policy will reuse the same texture with
+	 * a different policy. */
+	enum TexPolicy { TEX_CACHED, TEX_VOLATILE, TEX_DEFAULT } Policy;
+
 	void Init();
 
 	RageTextureID() { Init(); }

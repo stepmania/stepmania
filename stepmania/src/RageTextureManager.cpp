@@ -52,7 +52,7 @@ RageTextureManager*		TEXTUREMAN		= NULL;
 RageTextureManager::RageTextureManager()
 {
 	m_iNoWarnAboutOddDimensions = 0;
-	m_TexturePolicy = RageTexture::TEX_DEFAULT;
+	m_TexturePolicy = RageTextureID::TEX_DEFAULT;
 	m_bDelayedDelete = false;
 	m_iMovieColorDepth = 16;
 	m_iTextureColorDepth = 16;
@@ -156,14 +156,14 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 void RageTextureManager::CacheTexture( RageTextureID ID )
 {
 	RageTexture* pTexture = LoadTextureInternal( ID );
-	pTexture->m_Policy = min( pTexture->m_Policy, RageTexture::TEX_CACHED );
+	pTexture->GetPolicy() = min( pTexture->GetPolicy(), RageTextureID::TEX_CACHED );
 	UnloadTexture( pTexture );
 }
 
 void RageTextureManager::VolatileTexture( RageTextureID ID )
 {
 	RageTexture* pTexture = LoadTextureInternal( ID );
-	pTexture->m_Policy = min( pTexture->m_Policy, RageTexture::TEX_VOLATILE );
+	pTexture->GetPolicy() = min( pTexture->GetPolicy(), RageTextureID::TEX_VOLATILE );
 	UnloadTexture( pTexture );
 }
 
@@ -187,11 +187,11 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 		bDeleteThis = true;
 
 	/* Delete normal textures immediately unless m_bDelayedDelete is is on. */
-	if( t->m_Policy == RageTexture::TEX_DEFAULT && !m_bDelayedDelete )
+	if( t->GetPolicy() == RageTextureID::TEX_DEFAULT && !m_bDelayedDelete )
 		bDeleteThis = true;
 
 	/* Delete volatile textures after they've been used at least once. */
-	if( t->m_Policy == RageTexture::TEX_VOLATILE && t->m_bWasUsed )
+	if( t->GetPolicy() == RageTextureID::TEX_VOLATILE && t->m_bWasUsed )
 		bDeleteThis = true;
 	
 	if( bDeleteThis )
@@ -237,20 +237,20 @@ void RageTextureManager::GarbageCollect( GCType type )
 		bool bDeleteThis = false;
 		if( type==screen_changed )
 		{
-			switch( t->m_Policy )
+			switch( t->GetPolicy() )
 			{
-			case RageTexture::TEX_DEFAULT: 
+			case RageTextureID::TEX_DEFAULT: 
 				/* If m_bDelayedDelete, wait until delayed_delete.  If !m_bDelayedDelete,
 				 * it should have been deleted when it reached no references, but we
 				 * might have just changed the preference. */
 				if( !m_bDelayedDelete )
 					bDeleteThis = true;
 				break;
-			case RageTexture::TEX_CACHED:
+			case RageTextureID::TEX_CACHED:
 				if( !m_bDelayedDelete )
 					bDeleteThis = true;
 				break;
-			case RageTexture::TEX_VOLATILE:
+			case RageTextureID::TEX_VOLATILE:
 				bDeleteThis = true;
 				break;
 			default: ASSERT(0);

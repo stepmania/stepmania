@@ -64,7 +64,8 @@ public:
 	int   GetNumFrames() const { return m_iFramesWide*m_iFramesHigh; }
 
 	/* Used by RageTextureManager.  Order is important; see RageTextureManager.cpp. */
-	enum TexPolicy { TEX_CACHED, TEX_VOLATILE, TEX_DEFAULT } m_Policy;
+	const RageTextureID::TexPolicy &GetPolicy() const { return m_ID.Policy; }
+	RageTextureID::TexPolicy &GetPolicy() { return m_ID.Policy; }
 	int		m_iRefCount;
 	bool	m_bWasUsed;
 
