@@ -395,7 +395,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 			m_SubActors[i]->SetBlendMode( BLEND_ADD );
 }
 
-void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const XNode& layer )
+void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer )
 {
 	CString sAniDir = sAniDir_;
 
