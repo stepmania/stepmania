@@ -10,8 +10,6 @@
  * one.  I'll optimize it if it becomes an issue.
  */
 
-const int channels = 2;
-
 RageSoundResampler::RageSoundResampler()
 {
 	reset();
@@ -24,6 +22,7 @@ void RageSoundResampler::reset()
 	memset(t, 0, sizeof(t));
 	outbuf.clear();
 	ipos = 0;
+	Channels = 2;
 }
 
 
@@ -35,7 +34,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 	const int16_t *data = (const int16_t *) data_;
 
 	const unsigned samples = bytes / sizeof(int16_t);
-	const unsigned frames = samples / channels;
+	const unsigned frames = samples / Channels;
 
 	if(InputRate == OutputRate)
 	{
@@ -55,7 +54,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 			int ipos_begin = (int) roundf(ipos / div);
 			int ipos_end = (int) roundf((ipos+1) / div);
 
-			for(int c = 0; c < channels; ++c)
+			for(int c = 0; c < Channels; ++c)
 			{
 				const float f = 0.5f;
 				prev[c] = int16_t(prev[c] * (f) + data[c] * (1-f));
@@ -64,14 +63,14 @@ void RageSoundResampler::write(const void *data_, int bytes)
 			}
 			ipos++;
 		}
-		data += channels;
+		data += Channels;
 	}
 #else
 	/* Lerp. */
 	const float div = float(InputRate) / OutputRate;
 	for(unsigned f = 0; f < frames; ++f)
 	{
-		for(int c = 0; c < channels; ++c)
+		for(int c = 0; c < Channels; ++c)
 		{
 			while(t[c] < 1.0f)
 			{
@@ -85,7 +84,7 @@ void RageSoundResampler::write(const void *data_, int bytes)
 		}
 
 		ipos++;
-		data += channels;
+		data += Channels;
 	}
 #endif
 }
@@ -98,13 +97,13 @@ void RageSoundResampler::eof()
 	/* Write some silence to flush out the real data.  If we don't have any sound,
 	 * don't do this, so seeking past end of file doesn't write silence. */
 	bool bNeedsFlush = false;
-	for( int c = 0; c < channels; ++c )
+	for( int c = 0; c < Channels; ++c )
 		if( prev[c] != 0 ) 
 			bNeedsFlush = true;
 
 	if( bNeedsFlush )
 	{
-		const int size = channels*16;
+		const int size = Channels*16;
 		int16_t *data = new int16_t[size];
 		memset(data, 0, size * sizeof(int16_t));
 		write(data, size * sizeof(int16_t));

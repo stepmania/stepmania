@@ -32,6 +32,7 @@ public:
 	void SetSampleRate(int hz);
 
 	int GetSampleRate() const { return samplerate; }
+	unsigned GetNumChannels() const { return source->GetNumChannels(); }
 };
 
 #endif

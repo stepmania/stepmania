@@ -13,9 +13,14 @@ class RageSoundReader_Resample_Good: public RageSoundReader_Resample
 	bool HighQuality;
 	int samplerate;
 
-	void *resamp[2];
-	void *empty_resamp[2];
-	float inbuf[2][BUFSIZE];
+	void *empty_resamp;
+	struct resample_channel
+	{
+		resample_channel(): resamp(NULL) { }
+		void *resamp;
+		float inbuf[BUFSIZE];
+	};
+	vector<resample_channel> resamplers; /* one per channel */
 	int BufSamples;
 	bool eof;
 
@@ -41,6 +46,7 @@ public:
 	void SetHighQuality( bool hq ) { HighQuality = hq; }
 
 	int GetSampleRate() const { return samplerate; }
+	unsigned GetNumChannels() const { return source->GetNumChannels(); }
 };
 
 #endif

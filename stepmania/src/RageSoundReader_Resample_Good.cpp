@@ -20,10 +20,12 @@
 
 #include "RageTimer.h"
 
+#define channels source->GetNumChannels()
+
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good()
 {
-	resamp[0] = resamp[1] = NULL;
 	source = NULL;
+	empty_resamp = NULL;
 	samplerate = -1;
 	BufSamples = 0;
 	eof = false;
@@ -37,12 +39,13 @@ void RageSoundReader_Resample_Good::Reset()
 	eof = false;
 
 	/* Flush the resampler. */
-	for( int i = 0; i < 2; ++i )
+	for( unsigned i = 0; i < resamplers.size(); ++i )
 	{
-		if( resamp[i] )
-			resample_close( resamp[i] );
+		resample_channel &r = resamplers[i];
+		if( r.resamp )
+			resample_close( r.resamp );
 
-		resamp[i] = resample_dup( empty_resamp[i] );
+		r.resamp = resample_dup( empty_resamp );
 	}
 }
 
@@ -50,13 +53,16 @@ void RageSoundReader_Resample_Good::Reset()
 /* Call this if the sample factor changes. */
 void RageSoundReader_Resample_Good::ReopenResampler()
 {
-	for( int i = 0; i < 2; ++i )
-	{
-		if( resamp[i] )
-			resample_close( resamp[i] );
+	if( empty_resamp )
+		resample_close( empty_resamp );
+	empty_resamp = resample_open( HighQuality, GetFactor()-0.1f, GetFactor()+0.1f );
 
-		resamp[i] = resample_open( HighQuality, GetFactor()-0.1f, GetFactor()+0.1f );
-		empty_resamp[i] = resample_dup( resamp[i] );
+	for( unsigned i = 0; i < resamplers.size(); ++i )
+	{
+		resample_channel &r = resamplers[i];
+		if( r.resamp )
+			resample_close( r.resamp );
+		r.resamp = resample_dup( empty_resamp );
 	}
 }
 
@@ -66,18 +72,22 @@ void RageSoundReader_Resample_Good::Open(SoundReader *source_)
 	ASSERT(source);
 
 	samplerate = source->GetSampleRate();
+
+	for( unsigned i = 0; i < source->GetNumChannels(); ++i )
+		resamplers.push_back( resample_channel() );
 }
 
 
 RageSoundReader_Resample_Good::~RageSoundReader_Resample_Good()
 {
-	for( int i = 0; i < 2; ++i )
+	for( unsigned i = 0; i < resamplers.size(); ++i )
 	{
-		if( resamp[i] )
-			resample_close( resamp[i] );
-		if( empty_resamp[i] )
-			resample_close( empty_resamp[i] );
+		if( resamplers[i].resamp )
+			resample_close( resamplers[i].resamp );
 	}
+
+	if( empty_resamp )
+		resample_close( empty_resamp );
 
 	delete source;
 }
@@ -123,8 +133,9 @@ bool RageSoundReader_Resample_Good::FillBuf()
 	if( !samples_free )
 		return true;
 
-	int16_t tmpbuf[BUFSIZE*2];
-	int cnt = source->Read((char *) tmpbuf, samples_free * sizeof(int16_t) * 2);
+	const int bytes_per_frame = sizeof(int16_t)*channels;
+	int16_t *tmpbuf = (int16_t *) alloca( BUFSIZE*bytes_per_frame );
+	int cnt = source->Read( (char *) tmpbuf, samples_free * bytes_per_frame );
 
 	if( cnt == -1 )
 	{
@@ -132,16 +143,16 @@ bool RageSoundReader_Resample_Good::FillBuf()
 		return false;
 	}
 
-	if( (unsigned) cnt < samples_free * sizeof(int16_t) * 2 )
+	if( cnt < samples_free * bytes_per_frame )
 		eof = true;
 
-	cnt /= sizeof(int16_t);
-	cnt /= 2;
+	cnt /= bytes_per_frame;
 
-	for( int c = 0; c < 2; ++c )
+	for( unsigned i = 0; i < channels; ++i )
 	{
+		resample_channel &r = resamplers[i];
 		for( int s = 0; s < cnt; ++s )
-			inbuf[c][s+BufSamples] = tmpbuf[s*2+c];
+			r.inbuf[s+BufSamples] = tmpbuf[s*resamplers.size()+i];
 	}
 	BufSamples += cnt;
 	return true;
@@ -150,7 +161,7 @@ bool RageSoundReader_Resample_Good::FillBuf()
 int RageSoundReader_Resample_Good::Read(char *bufp, unsigned len)
 {
 	int16_t *buf = (int16_t *) bufp;
-	len /= 2;
+	len /= sizeof(int16_t); /* bytes -> samples */
 	const float factor = GetFactor();
 
 	int bytes_read = 0;
@@ -159,24 +170,25 @@ int RageSoundReader_Resample_Good::Read(char *bufp, unsigned len)
 		int samples_used = 0, samples_output = 0;
 		if( BufSamples )
 		{
-			for( int c = 0; c < 2; ++c )
+			for( unsigned i = 0; i < channels; ++i )
 			{
-				ASSERT( resamp[c] );
+				resample_channel &r = resamplers[i];
+				ASSERT( r.resamp );
 				float outbuf[BUFSIZE];
-				samples_output = resample_process(resamp[c],
+				samples_output = resample_process( r.resamp,
 						factor,
-						inbuf[c], BufSamples,
+						r.inbuf, BufSamples,
 						eof,
 						&samples_used,
-						outbuf, len/2);
+						outbuf, len/channels);
 				if( samples_output == -1 )
 					RageException::Throw( "Unexpected resample_process return value: -1" );
 
-				memmove( inbuf[c], &inbuf[c][samples_used], sizeof(float) * (BufSamples-samples_used) );
+				memmove( r.inbuf, &r.inbuf[samples_used], sizeof(float) * (BufSamples-samples_used) );
 
 				for( int s = 0; s < samples_output; ++s )
 				{
-					buf[s*2+c] = int16_t(clamp(outbuf[s], -32768, 32767));
+					buf[s*channels+i] = int16_t(clamp(outbuf[s], -32768, 32767));
 				}
 			}
 		}
@@ -193,9 +205,9 @@ int RageSoundReader_Resample_Good::Read(char *bufp, unsigned len)
 				return -1; /* source error */
 		}
 
-		len -= samples_output*2;
-		buf += samples_output*2;
-		bytes_read += samples_output*2*sizeof(int16_t);
+		len -= samples_output*channels;
+		buf += samples_output*channels;
+		bytes_read += samples_output*channels*sizeof(int16_t);
 	}
 }
 
@@ -204,16 +216,18 @@ SoundReader *RageSoundReader_Resample_Good::Copy() const
 	SoundReader *new_source = source->Copy();
 	RageSoundReader_Resample_Good *ret = new RageSoundReader_Resample_Good;
 
-	for( int c = 0; c < 2; ++c )
+	for( unsigned i = 0; i < channels; ++i )
 	{
-		ASSERT( resamp[c] );
-		ret->resamp[c] = resample_dup( resamp[c] );
-		ret->empty_resamp[c] = resample_dup( empty_resamp[c] );
+		const resample_channel &r = resamplers[i];
+		ASSERT( r.resamp );
+		ret->resamplers.push_back( resample_channel() );
+		ret->resamplers[i].resamp = resample_dup( r.resamp );
+		memcpy( ret->resamplers[i].inbuf, r.inbuf, sizeof(r.inbuf));
 	}
+	ret->empty_resamp = resample_dup( empty_resamp );
 	ret->source = new_source;
 	ret->HighQuality = HighQuality;
 	ret->samplerate = samplerate;
-	memcpy( ret->inbuf, inbuf, sizeof(inbuf));
 	ret->BufSamples = BufSamples;
 	ret->eof = eof;
 

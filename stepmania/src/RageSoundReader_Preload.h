@@ -22,7 +22,8 @@ public:
 	const string &get() const;
 };
 
-class SoundReader_Preload: public SoundReader {
+class SoundReader_Preload: public SoundReader
+{
 	rc_string buf;
 
 	/* Bytes: */
@@ -31,6 +32,7 @@ class SoundReader_Preload: public SoundReader {
 	int total_samples() const;
 
 	int samplerate;
+	unsigned channels;
 	float OffsetFix;
 
 public:
@@ -43,6 +45,7 @@ public:
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return samplerate; }
+	unsigned GetNumChannels() const { return channels; }
 
 	SoundReader *Copy() const;
 	~SoundReader_Preload() { }

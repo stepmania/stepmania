@@ -5,8 +5,7 @@
 #include "RageSoundReader_Preload.h"
 #include "PrefsManager.h"
 
-const int channels = 2;
-const int samplesize = 2 * channels; /* 16-bit */
+#define samplesize (2 * channels) /* 16-bit */
 
 /* If a sound is smaller than this, we'll load it entirely into memory. */
 const unsigned max_prebuf_size = 1024*256;
@@ -20,7 +19,8 @@ bool SoundReader_Preload::Open(SoundReader *source)
 {
 	ASSERT(source);
 	samplerate = source->GetSampleRate();
-
+	channels = source->GetNumChannels();
+	
 	/* Check the length, and see if we think it'll fit in the buffer. */
 	int len = source->GetLength_Fast();
 	if(len != -1)

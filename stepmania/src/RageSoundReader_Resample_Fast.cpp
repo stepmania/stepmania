@@ -14,6 +14,7 @@ void RageSoundReader_Resample_Fast::Open(SoundReader *source_)
 
 	samplerate = source->GetSampleRate();
 	resamp.SetInputSampleRate(samplerate);
+	resamp.SetChannels( source->GetNumChannels() );
 }
 
 

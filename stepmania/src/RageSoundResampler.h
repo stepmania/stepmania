@@ -1,12 +1,11 @@
 #ifndef RAGE_SOUND_RESAMPLER_H
 #define RAGE_SOUND_RESAMPLER_H
 
-enum { MAX_CHANNELS = 15 };
-
 class RageSoundResampler
 {
-	int InputRate, OutputRate;
+	int InputRate, OutputRate, Channels;
 
+	enum { MAX_CHANNELS = 15 };
 	int16_t prev[MAX_CHANNELS];
 
 	vector<int16_t> outbuf;
@@ -19,6 +18,7 @@ public:
 	RageSoundResampler();
 
 	/* Configuration: */
+	void SetChannels( int c ) { ASSERT( c < MAX_CHANNELS ); Channels = c; }
 	void SetInputSampleRate(int hz) { InputRate = hz; }
 	void SetOutputSampleRate(int hz) { OutputRate = hz; }
 
