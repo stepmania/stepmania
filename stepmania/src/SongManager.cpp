@@ -1239,6 +1239,7 @@ void SongManager::WriteStatsWebPage()
 	fprintf( fp, 
 		"<html>\n"
 		"<head>\n"
+		"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">\n"
 		"<title>%s</title>\n"
 		"</head>\n"
 		"<body>\n",
