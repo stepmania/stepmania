@@ -123,6 +123,9 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	int i;
 
+	// BUGFIX by ANDY: Stage will now reset back to 0 when game ends.
+	PREFSMAN->m_iCurrentStageIndex = 0;
+
 	m_sprBackground.Load( THEME->GetPathTo(GRAPHIC_MUSIC_SCROLL_BACKGROUND) );
 	m_sprBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	this->AddActor( &m_sprBackground );

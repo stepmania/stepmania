@@ -44,6 +44,8 @@ ScreenGameOver::ScreenGameOver()
 	m_sprGameOver.BeginTweeningQueued( 0.5f );		// fade to color
 	m_sprGameOver.SetTweenAddColor( D3DXCOLOR(1,1,1,0) );
 
+	// BUGFIX by ANDY: Stage will now reset back to 0 when game ends.
+	PREFSMAN->m_iCurrentStageIndex = 0;
 
 	this->SendScreenMessage( SM_PlayAnnouncer, 0.5 );
 	this->SendScreenMessage( SM_StartFadingOut, 5 );

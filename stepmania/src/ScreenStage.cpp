@@ -67,7 +67,6 @@ ScreenStage::ScreenStage()
 		case 5:	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_STAGE_5) );	break;
 		default:	;	break;	// play nothing
 		}
-		
 	}
 
 
