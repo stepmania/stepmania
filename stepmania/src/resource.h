@@ -9,6 +9,7 @@
 #define BITMAP_CRASH                    121
 #define IDD_DIALOG1                     126
 #define IDD_DIALOG2                     127
+#define IDC_CURSOR1                     128
 #define BITMAP_ERROR                    129
 #define IDD_DISASM_CRASH                199
 #define IDC_SHOCKWAVEFLASH1             1000
@@ -40,7 +41,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        128
+#define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         40009
 #define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101

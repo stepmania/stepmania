@@ -47,6 +47,8 @@ protected:
 	CString				m_sName;
 	Type				m_Type;
 
+	float m_fScreenCreateTime;
+	
 	MenuElements		m_Menu;
 
 	// banner area
@@ -84,6 +86,9 @@ protected:
 
 	// judgment area
 	Sprite				m_sprJudgeLabels[NUM_JUDGE_LINES];
+	RageSound			m_soundJudgeSound[NUM_JUDGE_LINES];
+	float				m_TimeToPlayJudgeSound[NUM_JUDGE_LINES];
+	
 	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];
 
 	// score area

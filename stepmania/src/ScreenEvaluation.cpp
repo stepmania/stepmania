@@ -25,6 +25,7 @@
 #include "ThemeManager.h"
 #include "RageSoundManager.h"
 #include "ActorUtil.h"
+#include "RageTimer.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -87,6 +88,8 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] = { "Marvelous", "Perfect", "Great", "
 #define TRY_EXTRA_STAGE_UtilOffCommand			THEME->GetMetric ("ScreenEvaluation",ssprintf("TryExtraStageUtilOffCommand"))
 */
 
+#define JUDGE_SOUND_TIME( name )	THEME->GetMetricF( m_sName, ssprintf("JudgeSoundTime%s", name) );
+#define SOUND_ON_FULL_ALPHA			THEME->GetMetricB( m_sName, "JudgeSoundIfJudgeGraphicsFullAlpha" )
 // metrics that are specific to classes derived from ScreenEvaluation
 #define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
 #define END_SCREEN							THEME->GetMetric (m_sName,"EndScreen")
@@ -130,7 +133,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 	m_sName = sClassName;
 	m_Type = type;
-	
 
 	int p;
 
@@ -521,6 +523,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	int l;
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
+		m_TimeToPlayJudgeSound[l] = -1;
 		if( l == 0  &&  !PREFSMAN->m_bMarvelousTiming )
 			continue;	// skip
 
@@ -532,6 +535,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			m_sprJudgeLabels[l].SetName( ssprintf("%sLabel",JUDGE_STRING[l]) );
 			UtilSetXYAndOnCommand( m_sprJudgeLabels[l], "ScreenEvaluation" );
 			this->AddChild( &m_sprJudgeLabels[l] );
+
+			m_soundJudgeSound[l].Load( THEME->GetPathToS( ssprintf("ScreenEvaluation JudgeSound %s", JUDGE_STRING[l]) ) );
+			m_TimeToPlayJudgeSound[l] = JUDGE_SOUND_TIME( JUDGE_STRING[l] );
 
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
@@ -680,6 +686,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 
 	SOUNDMAN->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );
+	m_fScreenCreateTime = RageTimer::GetTimeSinceStart();
 }
 
 
@@ -798,10 +805,29 @@ void ScreenEvaluation::TweenOffScreen()
 	UtilOffCommand( m_sprTryExtraStage, "ScreenEvaluation" );
 }
 
-
 void ScreenEvaluation::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+
+	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
+	{
+		if(SHOW_JUDGMENT(l))
+		{
+			if(m_TimeToPlayJudgeSound[l] != -1)
+			{
+				RageColor c;
+				c.a = 1;
+				if((m_fScreenCreateTime + m_TimeToPlayJudgeSound[l]) < RageTimer::GetTimeSinceStart())
+				{
+					if((SOUND_ON_FULL_ALPHA && (m_sprJudgeLabels[l].GetDiffuse().a ==  c.a || m_textJudgeNumbers[l][PLAYER_1].GetDiffuse().a == c.a || m_textJudgeNumbers[l][PLAYER_2].GetDiffuse().a == c.a) || !SOUND_ON_FULL_ALPHA) )
+					{
+						m_soundJudgeSound[l].Play();
+						m_TimeToPlayJudgeSound[l] = -1;
+					}
+				}
+			}
+		}
+	}
 }
 
 void ScreenEvaluation::DrawPrimitives()

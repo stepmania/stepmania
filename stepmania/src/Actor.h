@@ -13,7 +13,6 @@
 
 #include "RageTypes.h"
 
-
 class Actor
 {
 public:
@@ -270,14 +269,13 @@ protected:
 	TweenState	m_start;
 	vector<TweenState>	m_TweenStates;
 	vector<TweenInfo>	m_TweenInfo;
+
 	TweenState& LatestTween() { ASSERT(m_TweenStates.size()>0);	return m_TweenStates.back(); };
 
 	//
 	// Temporary variables that are filled just before drawing
 	//
 	TweenState m_temp;
-
-
 
 	bool	m_bFirstUpdate;
 

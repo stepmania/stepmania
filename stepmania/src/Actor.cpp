@@ -18,6 +18,7 @@
 #include "RageMath.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
+#include "ThemeManager.h"
 
 /* This is Reset instead of Init since many derived classes have Init() functions
  * that shouldn't change the position of the actor. */
@@ -280,6 +281,7 @@ void Actor::Update( float fDeltaTime )
 
 	if( m_bFirstUpdate )
 		m_bFirstUpdate = false;
+
 }
 
 void Actor::BeginTweening( float time, TweenType tt )
@@ -646,6 +648,8 @@ void Actor::Command( CString sCommandString )
 	CStringArray asCommands;
 	split( sCommandString, ";", asCommands, true );
 	
+	float fTimeElapsed=0;
+
 	for( unsigned c=0; c<asCommands.size(); c++ )
 	{
 		CStringArray asTokens;
@@ -667,7 +671,7 @@ void Actor::Command( CString sCommandString )
 
 		if( sName.size() == 0 )
 			continue;
-		
+	
 		// Commands that go in the tweening queue:
 		if     ( sName=="sleep" )			BeginTweening( fParam(1), TWEEN_LINEAR );
 		else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
