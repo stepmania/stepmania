@@ -88,7 +88,13 @@ endif
 if HAVE_ALSA
 Sound += arch/Sound/RageSoundDriver_ALSA9.cpp arch/Sound/RageSoundDriver_ALSA9.h \
 	 arch/Sound/RageSoundDriver_ALSA9_Software.cpp arch/Sound/RageSoundDriver_ALSA9_Software.h \
-	 arch/Sound/ALSA9Helpers.cpp arch/Sound/ALSA9Helpers.h
+	 arch/Sound/ALSA9Helpers.cpp arch/Sound/ALSA9Helpers.h \
+	 arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h \
+	 ALSA9Functions.h
+
+# Add this to CPPFLAGS, not stepmania_CPPFLAGS: that'll cause multiple copies of
+# several sources to be built. We link to this at runtime, so don't add ALSA_LDFLAGS.
+AM_CXXFLAGS += $(ALSA_CFLAGS)
 endif
 
 ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
