@@ -578,27 +578,10 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 
 	// if we are in dedicated menubutton input and arcade navigation
 	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
-
-	// Super Hack to use the feature in ScreenOptionsMenu (where no style is set)
-	bool bHoldingLeftOrRight = false;
-	bHoldingLeftOrRight |= MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
+	const bool bHoldingLeftOrRight = MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
 		PREFSMAN->m_bArcadeOptionsNavigation &&
-		GAMESTATE->m_CurStyle != STYLE_INVALID &&
 		(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) || 
 		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) );
-
-	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
-	{
-		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
-		
-		bHoldingLeftOrRight |= MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
-			PREFSMAN->m_bArcadeOptionsNavigation &&
-			GAMESTATE->m_CurStyle != STYLE_INVALID &&
-			(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) ||
-			INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) );
-
-		GAMESTATE->m_CurStyle = STYLE_INVALID;
-	}
 
 	if( bHoldingLeftOrRight )
 	{
