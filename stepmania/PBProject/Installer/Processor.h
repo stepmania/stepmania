@@ -24,9 +24,7 @@ private:
     typedef const CString (*getPathFunc)(const CString& ID);
     typedef void (*errorFunc)(const char *fmt, ...);
     typedef bool (*askFunc)(const CString& question);
-    typedef bool (*authFunc)(void);
     typedef void (*echoFunc)(const CString& message, bool loud);
-    typedef void (*privFunc)(bool privileged);
 
     stack<unsigned> mReturnStack;
     bool mDoGoto;
@@ -41,9 +39,7 @@ private:
     getPathFunc mGetPath;
     askFunc mAsk;
     errorFunc mError;
-    authFunc mAuth;
-    echoFunc mEcho;
-    privFunc mPriv;
+	echoFunc mEcho;
     bool mInstalling;
 
     const CString& ResolveVar(const CString& var);
@@ -54,9 +50,7 @@ public:
     ~Processor();
     void ProcessLine(const CString& line, unsigned& nextLine);
     void SetErrorFunc(errorFunc f) { mError = f; }
-    void SetAuthFunc(authFunc f) { mAuth = f; }
     void SetEchoFunc(echoFunc f) { mEcho = f; }
-    void SetPrivFunc(privFunc f) { mPriv = f; }
 };
 
 #endif

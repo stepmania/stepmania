@@ -24,7 +24,8 @@ using namespace std;
 #include "Processor.h"
 #include "Util.h"
 
-void HandleFile(const CString& file, const CString& dir, const CString& archivePath, bool overwrite)
+void HandleFile(const CString& file, const CString& dir,
+				const CString& archivePath, bool overwrite)
 {
     static bool archiveMade = false;
     char path[] = "/usr/bin/tar";
@@ -44,8 +45,6 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
     strcpy(arg4, dir);
     strcpy(arg5, file);
 
-    /*if (CallTool(path, arg1, arg2, arg3, arg4, arg5, NULL))
-        exit(-10);*/
     int r;
     if ((r = CallTool2(true, -1, -1, -1, path, arg1, arg2, arg3, arg4,
                        arg5, NULL)) != 0)

@@ -109,41 +109,121 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 #pragma mark FILE
     if (parts[0] == "FILE")
     {
-        if (parts.size() != 3)
-            goto error;
-        CString file, dir;
-        if (parts[1][0] == '/')
-        {
-            file = parts[1].substr(1);
-            dir = "/";
-        }
-        else
-        {
-            file = parts[1];
-            dir = mCWD;
-        }
+        if (parts.size() == 3)
+		{
+			CString file, dir;
+			if (parts[1][0] == '/')
+			{
+				file = parts[1].substr(1);
+				dir = "/";
+			}
+			else
+			{
+				file = parts[1];
+				dir = mCWD;
+			}
         
-        if (mInstalling)
-            (*mHandleFile)(file, dir, mPath, ResolveConditional(parts[2]));
-        else
-        {
-            CStringArray list, dirs;
-            if (IsADirectory((dir == "/" ? dir : dir + "/" ) + file))
-            {
-                int fd = open(".", O_RDONLY, 0);
+			if (mInstalling)
+				(*mHandleFile)(file, dir, mPath, ResolveConditional(parts[2]));
+			else
+			{				
+				if (IsADirectory((dir == "/" ? dir : dir + "/" ) + file))
+				{
+					CStringArray list, dirs;
+					int fd = open(".", O_RDONLY, 0);
 
-                chdir(dir);                
-                FileListingForDirectoryWithIgnore(file, list, dirs, mIgnore);
-                fchdir(fd);
-                close(fd);
-                if (list.size() == 0) //empty directory or ignored directory
-                    (*mHandleFile)(file, dir, mPath, true);
-                for (unsigned i=0; i<list.size(); ++i)
-                    (*mHandleFile)(list[i], dir, mPath, true);
-            }
-            else
-                (*mHandleFile)(file, dir, mPath, true);
-        }
+					chdir(dir);                
+					FileListingForDirectoryWithIgnore(file, list, dirs,
+														mIgnore);
+					fchdir(fd);
+					close(fd);
+					if (list.size() == 0) //empty dir or ignored dir
+						(*mHandleFile)(file, dir, mPath, true);
+					for (unsigned i=0; i<list.size(); ++i)
+						(*mHandleFile)(list[i], dir, mPath, true);
+				}
+				else
+					(*mHandleFile)(file, dir, mPath, true);
+			}
+		}
+		else if (parts.size() == 4)
+		{
+			CString iFile, iDir, fFile, fDir;
+			
+			if (parts[1][0] == '/')
+			{
+				iFile = parts[1].substr(1);
+				iDir = "/";
+			}
+			else
+			{
+				iFile = parts[1];
+				iDir = mCWD;
+			}
+			if (parts[2][0] == '/')
+			{
+				fFile = parts[2].substr(1);
+				fFile = "/";
+			}
+			else
+			{
+				fFile = parts[2];
+				fDir = mCWD;
+			}
+			if (mInstalling)
+				(*mHandleFile)(fFile, fDir, mPath,
+							   ResolveConditional(parts[3]));
+			else
+			{
+				// Now the fun part
+				char temp[] = "/tmp/tmpXXXXXX";
+				CString dir;
+				size_t pos = fFile.find_last_of('/');
+				char arg1[] = "-r";
+				char tool1[] = "/bin/cp";
+				char tool2[] = "/bin/rm";
+				
+				mkdtemp(temp);
+				dir.Format("%s/%s/%s", temp, fDir == mCWD ? "." : fDir.c_str(),
+						   pos == fFile.npos ? "" :
+						   fFile.substr(0, pos).c_str());
+				if (mkdir_p(dir))
+				{
+					fprintf(stderr, "Couldn't create directory: %s\n",
+							dir.c_str());
+					exit(-1);
+				}
+				if (CallTool(tool1, arg1, (iDir + "/" + iFile).c_str(),
+							 dir.c_str(), NULL))
+				{
+					fprintf(stderr, "Couldn't copy file(s).\n");
+					exit(-1);
+				}
+				
+				if (IsADirectory((iDir == "/" ? iDir : iDir + "/") + iFile))
+				{
+					CStringArray list, dirs;
+					int fd = open(".", O_RDONLY, 0);
+					
+					chdir(dir + "/" + fDir);
+					FileListingForDirectoryWithIgnore(fFile, list, dirs,
+													  mIgnore);
+					fchdir(fd);
+					close(fd);
+					if (list.size() == 0)
+						(*mHandleFile)(fFile, temp, mPath, true);
+					for (unsigned i=0; i<list.size(); ++i)
+						(*mHandleFile)(list[i], temp, mPath, true);
+				}
+				else
+					(*mHandleFile)(fFile, temp, mPath, true);
+				char arg[] = "-rf";
+				
+				CallTool(tool2, arg, temp, NULL);
+			}
+		}
+		else
+			goto error;
 
         return;
     }
@@ -313,30 +393,12 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
-#pragma mark AUTH
-    if (parts[0] == "AUTH")
-    {
-        if (parts.size() != 2)
-            goto error;
-        mConditionals[parts[1]] = (*mAuth)();
-        return;
-    }
-
 #pragma mark ECHO
     if (parts[0] == "ECHO")
     {
         if (parts.size() != 3)
             goto error;
         (mEcho)(parts[1], ResolveConditional(parts[2]));
-        return;
-    }
-
-#pragma mark PRIVILEGED
-    if (parts[0] == "PRIVILEGED")
-    {
-        if (parts.size() != 2)
-            goto error;
-        (mPriv)(ResolveConditional(parts[1]));
         return;
     }
 

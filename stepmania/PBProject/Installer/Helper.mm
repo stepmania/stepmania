@@ -6,8 +6,6 @@
 //  Copyright (c) 2003 Steve Checkoway. All rights reserved.
 //
 
-#import <Security/Authorization.h>
-#import <Security/AuthorizationTags.h>
 #import <sys/types.h>
 #import <sys/wait.h>
 #import <cstring>
@@ -22,14 +20,14 @@
 void Error(const char *fmt, ...);
 
 static id c;
-static AuthorizationRef auth;
-static BOOL privilegedInstall;
 
-void HandleFile(const CString& file, const CString& dir, const CString& archivePath, bool overwrite)
+void HandleFile(const CString& file, const CString& dir,
+				const CString& archivePath, bool overwrite)
 {
     NSString *filePath = [NSString stringWithCString:dir];
 
-    filePath = [filePath stringByAppendingFormat:@"%s%s", (dir == "/" ? "" : "/"), file.c_str()];
+    filePath = [filePath stringByAppendingFormat:@"%s%s",
+						 (dir == "/" ? "" : "/"), file.c_str()];
     if (!overwrite && DoesFileExist([filePath cString]))
         return;
     [c postMessage:filePath];
@@ -46,32 +44,11 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
     strcpy(d, dir);
     strcpy(f, file);
 
-    if (privilegedInstall)
-    {
-        AuthorizationFlags flags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed |
-                                   kAuthorizationFlagExtendRights;
-        AuthorizationItem item = {kAuthorizationRightExecute, 0, NULL, 0};
-        AuthorizationRights rights = {1, &item};
-        OSStatus status = AuthorizationCopyRights(auth, &rights, NULL, flags, NULL);
+	int fd_dev_null = open("/dev/null", O_RDWR, 0);
 
-        if (status != errAuthorizationSuccess)
-        {
-            [c postMessage:@"Couldn't authorize"];
-            return;
-        }
-        status = AuthorizationExecuteWithPrivileges(auth, path, kAuthorizationFlagDefaults, arguments+1, NULL);
-        if (status != errAuthorizationSuccess)
-            [c postMessage:@"failed"];
-        wait((int*)&status);
-    }
-    else
-    {
-        int fd_dev_null = open("/dev/null", O_RDWR, 0);
-
-        if (CallTool3(true, -1, fd_dev_null, fileno(stderr), path, arguments))
-            [c postMessage:@"failed"];
-        close(fd_dev_null);
-    }
+    if (CallTool3(true, -1, fd_dev_null, fileno(stderr), path, arguments))
+        [c postMessage:@"failed"];
+    close(fd_dev_null);
 }
 
 const CString GetPath(const CString& ID)
@@ -84,8 +61,8 @@ const CString GetPath(const CString& ID)
     [panel setAllowsMultipleSelection:NO];
     [panel setPrompt:@"Install"];
     // Only in 10.3 and above
-    if ([panel respondsToSelector:@selector(setCanCreatetDirectories:)])
-	[panel setCanCreateDirectories:YES];
+    if ([panel respondsToSelector:@selector(setCanCreateDirectories:)])
+		[panel setCanCreateDirectories:YES];
     [panel setTitle:@"Choose a location to install."];
     int result = [panel runModalForTypes:[NSArray array]]; // No extensions
 
@@ -122,16 +99,6 @@ bool AskFunc(const CString& question)
     return answer;
 }
 
-bool Auth(void)
-{
-    AuthorizationFlags flags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed |
-                               kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
-    AuthorizationItem item = {kAuthorizationRightExecute, 0, NULL, 0};
-    AuthorizationRights rights = {1, &item};
-    OSStatus status = AuthorizationCopyRights(auth, &rights, NULL, flags, NULL);
-    return status == errAuthorizationSuccess;
-}
-
 void Echo(const CString& message, bool loud)
 {
     if (!loud)
@@ -142,13 +109,7 @@ void Echo(const CString& message, bool loud)
 
     NSBeginCriticalAlertSheet(@"Warning", @"OK", nil, nil, [c window], c, nil, nil, NULL,
                               [NSString stringWithCString:message.c_str()]);
-}
-
-void Priv(bool privileged)
-{
-    privilegedInstall = privileged;
-}
-    
+}    
 
 @implementation Helper
 - (id)initWithPath:(NSString *)path
@@ -156,24 +117,11 @@ void Priv(bool privileged)
     [super init];
     mPath = [path retain];
 
-    OSStatus status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
-                                          kAuthorizationFlagDefaults, &auth);
-    if (status != errAuthorizationSuccess)
-    {
-        auth = NULL;
-        [self autorelease];
-        return nil;
-    }
-
-    privilegedInstall = NO;
-
     return self;
 }
 
 - (void)dealloc
 {
-    if (auth)
-        AuthorizationFree(auth, kAuthorizationFlagDestroyRights);
     [mPath autorelease];
     [super dealloc];
 }
@@ -194,9 +142,7 @@ void Priv(bool privileged)
             Processor p(archivePath, HandleFile, GetPath, AskFunc, YES);
 
             p.SetErrorFunc(Error);
-            p.SetAuthFunc(Auth);
             p.SetEchoFunc(Echo);
-            p.SetPrivFunc(Priv);
 
             [c postMessage:@"Reading from the config file."];
 
