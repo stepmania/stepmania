@@ -581,18 +581,18 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				if( (*style)->name != "Style" )
 					continue;
 
-				XAttr *TypeAttr = (*style)->GetAttr( "Game" );
-				if( TypeAttr == NULL )
+				CString sGame;
+				if( !(*style)->GetAttrValue( "Game", sGame ) )
 					WARN_AND_CONTINUE;
-				Game g = GAMEMAN->StringToGameType( TypeAttr->value );
+				Game g = GAMEMAN->StringToGameType( sGame );
 				if( g == GAME_INVALID )
 					WARN_AND_CONTINUE;
 
-				TypeAttr = (*style)->GetAttr( "Style" );
-				if( TypeAttr == NULL )
+				CString sStyle;
+				if( !(*style)->GetAttrValue( "Style", sStyle ) )
 					WARN_AND_CONTINUE;
 
-				Style s = GAMEMAN->GameAndStringToStyle( g, TypeAttr->value );
+				Style s = GAMEMAN->GameAndStringToStyle( g, sStyle );
 
 				(*style)->GetValue( m_iNumSongsPlayedByStyle[s] );
 			}
@@ -675,10 +675,9 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 		if( (*song)->name != "Song" )
 			continue;
 
-		const LPXAttr TypeAttr = (*song)->GetAttr( "Dir" );
-		if( TypeAttr == NULL )
+		CString sSongDir;
+		if( !(*song)->GetAttrValue( "Dir", sSongDir ) )
 			WARN_AND_CONTINUE;
-		const CString sSongDir = TypeAttr->value;
 
 		Song* pSong = SONGMAN->GetSongFromDir( sSongDir );
 		if( pSong == NULL )
@@ -1059,10 +1058,9 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 		if( (*course)->name != "Course" )
 			continue;
 
-		const LPXAttr TypeAttr = (*course)->GetAttr( "Name" );
-		if( TypeAttr == NULL )
+		CString sCourse;
+		if( !(*course)->GetAttrValue( "Name", sCourse ) )
 			WARN_AND_CONTINUE;
-		CString sCourse = TypeAttr->value;
 
 		Course* pCourse = SONGMAN->GetCourseFromPath( sCourse );
 		if( pCourse == NULL )
@@ -1077,10 +1075,10 @@ void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 			if( (*stepsType)->name != "StepsType" )
 				continue;
 			
-			const LPXAttr TypeAttr = (*stepsType)->GetAttr( "Type" );
-			if( TypeAttr == NULL )
+			CString str;
+			if( !(*stepsType)->GetAttrValue( "Type", str ) )
 				WARN_AND_CONTINUE;
-			StepsType st = GameManager::StringToNotesType( TypeAttr->value );
+			StepsType st = GameManager::StringToNotesType( str );
 			if( st == STEPS_TYPE_INVALID )
 				WARN_AND_CONTINUE;
 
@@ -1144,10 +1142,10 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 		if( (*stepsType)->name != "StepsType" )
 			continue;
 
-		LPXAttr TypeAttr = (*stepsType)->GetAttr( "Type" );
-		if( TypeAttr == NULL )
+		CString str;
+		if( !(*stepsType)->GetAttrValue( "Type", str ) )
 			WARN_AND_CONTINUE;
-		StepsType st = GameManager::StringToNotesType( TypeAttr->value );
+		StepsType st = GameManager::StringToNotesType( str );
 		if( st == STEPS_TYPE_INVALID )
 			WARN_AND_CONTINUE;
 
@@ -1158,10 +1156,9 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 			if( (*radarCategory)->name != "RankingCategory" )
 				continue;
 
-			const LPXAttr TypeAttr = (*radarCategory)->GetAttr( "Type" );
-			if( TypeAttr == NULL )
+			if( !(*radarCategory)->GetAttrValue( "Type", str ) )
 				WARN_AND_CONTINUE;
-			RankingCategory rc = StringToRankingCategory( TypeAttr->value );
+			RankingCategory rc = StringToRankingCategory( str );
 			if( rc == RANKING_INVALID )
 				WARN_AND_CONTINUE;
 
