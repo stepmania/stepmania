@@ -108,6 +108,10 @@ protected:	// derived classes need access to these
 
 private:
 
+	/* Map menu lines to m_OptionRow entries. */
+	const enum { ROW_EXIT = -1 };
+	vector<int>		m_Rows;
+
 	InputMode		m_InputMode;
 
 	ActorFrame		m_framePage;

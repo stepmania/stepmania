@@ -206,9 +206,9 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 
 		for( c=0; c<textItems.size(); c++ )
 			m_framePage.AddChild( textItems[c] );
-	}
 
-	InitOptionsText();
+		m_Rows.push_back( r );
+	}
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	{
@@ -223,7 +223,11 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		bt->SetXY( CENTER_X, fY );
 
 		m_framePage.AddChild( bt );
+
+		m_Rows.push_back( ROW_EXIT );
 	}
+
+	InitOptionsText();
 
 	// add explanation here so it appears on top
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -320,7 +324,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
-	for( int i=0; i<m_iNumOptionRows+1; i++ ) /* +1 = "exit" */
+	for( unsigned i=0; i<m_Rows.size(); i++ )
 		for( unsigned j = 0; j < m_textItems[i].size(); ++j)
 			delete m_textItems[i][j];
 }
@@ -361,7 +365,7 @@ CString ScreenOptions::GetExplanationTitle( int row ) const
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow )
 {
-	const bool bExitRow = iRow == m_iNumOptionRows;
+	const bool bExitRow = (m_Rows[iRow] == ROW_EXIT);
 	if( bExitRow )
 		return *m_textItems[iRow][0];
 
@@ -398,8 +402,11 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 
 void ScreenOptions::InitOptionsText()
 {
-	for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 	{
+		if( m_Rows[i] == ROW_EXIT )
+			continue;
+
 		const float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
 
 		BitmapText &title = m_textTitles[i];
@@ -432,8 +439,11 @@ void ScreenOptions::PositionUnderlines()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
-		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 		{
+			if( m_Rows[i] == ROW_EXIT )
+				continue;
+
 			OptionsCursor &underline = m_Underline[p][i];
 
 			/* Don't tween X movement and color changes. */
@@ -468,8 +478,11 @@ void ScreenOptions::PositionIcons()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
-		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
+		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 		{
+			if( m_Rows[i] == ROW_EXIT )
+				continue;
+
 			OptionIcon &icon = m_OptionIcons[p][i];
 
 			int iWidth, iX, iY;			// We only use iY
@@ -556,11 +569,37 @@ void ScreenOptions::UpdateEnabledDisabled()
 	RageColor colorNotSelected = COLOR_NOT_SELECTED;
 
 	// init text
-	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	for( unsigned i=0; i<m_Rows.size(); i++ )		// foreach line
 	{
+		if( m_Rows[i] == ROW_EXIT )
+		{
+			bool bExitRowIsSelectedByBoth = true;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != (int) i )
+					bExitRowIsSelectedByBoth = false;
+
+			RageColor color = bExitRowIsSelectedByBoth ? colorSelected : colorNotSelected;
+			m_textItems[i][0]->SetGlobalDiffuseColor( color );
+
+			if( m_textItems[i][0]->GetDestY() != m_fRowY[i] )
+			{
+				m_textItems[i][0]->StopTweening();
+				m_textItems[i][0]->BeginTweening( 0.3f );
+				m_textItems[i][0]->SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+				m_textItems[i][0]->SetY( m_fRowY[i] );
+			}
+
+			if( bExitRowIsSelectedByBoth )
+				m_textItems[i][0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
+			else
+				m_textItems[i][0]->SetEffectNone();
+
+			continue;
+		}
+
 		bool bThisRowIsSelected = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] == i )
+			if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] == (int) i )
 				bThisRowIsSelected = true;
 
 		/* Don't tween selection colors at all. */
@@ -593,27 +632,6 @@ void ScreenOptions::UpdateEnabledDisabled()
 			}
 		}
 	}
-
-	bool bExitRowIsSelectedByBoth = true;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer(p)  &&  m_iCurrentRow[p] != m_iNumOptionRows )
-			bExitRowIsSelectedByBoth = false;
-
-	RageColor color = bExitRowIsSelectedByBoth ? colorSelected : colorNotSelected;
-	m_textItems[m_iNumOptionRows][0]->SetGlobalDiffuseColor( color );
-
-	if( m_textItems[m_iNumOptionRows][0]->GetDestY() != m_fRowY[m_iNumOptionRows] )
-	{
-		m_textItems[m_iNumOptionRows][0]->StopTweening();
-		m_textItems[m_iNumOptionRows][0]->BeginTweening( 0.3f );
-		m_textItems[m_iNumOptionRows][0]->SetDiffuseAlpha( m_bRowIsHidden[m_iNumOptionRows]? 0.0f:1.0f );
-		m_textItems[m_iNumOptionRows][0]->SetY( m_fRowY[m_iNumOptionRows] );
-	}
-
-	if( bExitRowIsSelectedByBoth )
-		m_textItems[m_iNumOptionRows][0]->SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
-	else
-		m_textItems[m_iNumOptionRows][0]->SetEffectNone();
 }
 
 void ScreenOptions::Update( float fDeltaTime )
@@ -706,9 +724,6 @@ void ScreenOptions::PositionItems()
 	const int total = NUM_SHOWN_ITEMS;
 	const int halfsize = total / 2;
 
-	/* Total number of rows, including "EXIT". */
-	const int NumRows = m_iNumOptionRows + 1;
-
 	int first_start, first_end, second_start, second_end;
 
 	/* Choices for each player.  If only one player is active, it's the same for both. */
@@ -739,15 +754,15 @@ void ScreenOptions::PositionItems()
 		second_end = second_start + halfsize;
 	}
 
-	first_end = min( first_end, NumRows );
-	second_end = min( second_end, NumRows );
+	first_end = min( first_end, (int) m_Rows.size() );
+	second_end = min( second_end, (int) m_Rows.size() );
 
-	/* If less than total (and NumRows) are displayed, fill in the empty
+	/* If less than total (and m_Rows.size()) are displayed, fill in the empty
 	 * space intelligently. */
 	while(1)
 	{
 		const int sum = (first_end - first_start) + (second_end - second_start);
-		if( sum >= NumRows || sum >= total)
+		if( sum >= (int) m_Rows.size() || sum >= total)
 			break; /* nothing more to display, or no room */
 
 		/* First priority: expand the top of the second half until it meets
@@ -757,14 +772,14 @@ void ScreenOptions::PositionItems()
 		/* Otherwise, expand either end. */
 		else if( first_start > 0 )
 			first_start--;
-		else if( second_end < NumRows )
+		else if( second_end < (int) m_Rows.size() )
 			second_end++;
 		else
 			ASSERT(0); /* do we have room to grow or don't we? */
 	}
 
 	int pos = 0;
-	for( int i=0; i<NumRows; i++ )		// foreach line
+	for( int i=0; i<(int) m_Rows.size(); i++ )		// foreach line
 	{
 		float ItemPosition;
 		if( i < first_start )
@@ -802,7 +817,12 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	UpdateEnabledDisabled();
 
 	if( SHOW_SCROLL_BAR )
-		m_ScrollBar.SetPercentage( pn, m_iCurrentRow[pn] / float(m_iNumOptionRows) );
+	{
+		float fPercent = 0;
+		if( m_Rows.size() > 1 )
+			fPercent = m_iCurrentRow[pn] / float(m_Rows.size()-1);
+		m_ScrollBar.SetPercentage( pn, fPercent );
+	}
 
 	/* Update all players, since changing one player can move both cursors. */
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -944,10 +964,10 @@ void ScreenOptions::Move( PlayerNumber pn, int dir, bool Repeat )
 			continue;	// skip
 
 		int row = m_iCurrentRow[p] + dir;
-		if( Repeat && ( row == -1 || row == m_iNumOptionRows+1 ) )
+		if( Repeat && ( row == -1 || row == (int) m_Rows.size() ) )
 			continue; // don't wrap while repeating
 
-		wrap( row, m_iNumOptionRows+1 );
+		wrap( row, m_Rows.size() );
 		m_iCurrentRow[p] = row;
 
 		OnChange( (PlayerNumber)p );
