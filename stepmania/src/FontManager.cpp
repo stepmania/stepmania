@@ -476,17 +476,17 @@ void FontManager::InitCharAliases()
 	CharAliases["whitestar"]	= 0x2606; /* ☆ */
 
 	/* These are internal-use glyphs; they don't have real Unicode codepoints. */
-	CharAliases["up"]			= 0x100000;
-	CharAliases["down"]			= 0x100001;
-	CharAliases["left"]			= 0x100002;
-	CharAliases["right"]		= 0x100003;
-	CharAliases["menuup"]		= 0x100004;
-	CharAliases["menudown"]		= 0x100005;
-	CharAliases["menuleft"]		= 0x100006;
-	CharAliases["menuright"]	= 0x100007;
-	CharAliases["start"]		= 0x100008;
+	CharAliases["up"]			= 0xE000;
+	CharAliases["down"]			= 0xE001;
+	CharAliases["left"]			= 0xE002;
+	CharAliases["right"]		= 0xE003;
+	CharAliases["menuup"]		= 0xE004;
+	CharAliases["menudown"]		= 0xE005;
+	CharAliases["menuleft"]		= 0xE006;
+	CharAliases["menuright"]	= 0xE007;
+	CharAliases["start"]		= 0xE008;
 
-	CharAliases["invalid"]		= INVALID_CHAR; /* 0xFFFFFF */
+	CharAliases["invalid"]		= INVALID_CHAR; /* 0xFFFF */
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{

@@ -903,7 +903,7 @@ longchar utf8_get_char (const char *p)
   return result;
 }
 
-const longchar INVALID_CHAR = 0xFFFFFF;
+const longchar INVALID_CHAR = 0xFFFF;
 
 lstring CStringToLstring(const CString &str)
 {
