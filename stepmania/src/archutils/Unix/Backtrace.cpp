@@ -14,22 +14,6 @@
 #if defined(BACKTRACE_METHOD_X86_LINUX)
 #include "LinuxThreadHelpers.h"
 
-void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
-{
-	ctx->esp = (long) uc->uc_mcontext.gregs[REG_ESP];
-	ctx->eip = (long) uc->uc_mcontext.gregs[REG_EIP];
-	ctx->ebp = (long) uc->uc_mcontext.gregs[REG_EBP];
-	ctx->pid = GetCurrentThreadId();
-}
-
-static void GetCurrentBacktraceContext( BacktraceContext *ctx )
-{
-	register void *esp __asm__ ("esp");
-	ctx->esp = (long) esp;
-	ctx->eip = (long) GetThreadBacktraceContext;
-	ctx->ebp = (long) __builtin_frame_address(0);
-}
-
 static const char *itoa(unsigned n)
 {
 	static char ret[32];
@@ -202,7 +186,7 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	StackFrame *frame = (StackFrame *) ctx->ebp;
 
 	unsigned i=0;
-	if( i < size-1 ) // -1 for NULL
+	if( i < size-1 && ctx->eip ) // -1 for NULL
 		buf[i++] = (void *) ctx->eip;
 
 	while( i < size-1 ) // -1 for NULL
@@ -228,6 +212,14 @@ static void do_backtrace( const void **buf, size_t size, const BacktraceContext 
 	buf[i] = NULL;
 }
 
+void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
+{
+	ctx->esp = (long) uc->uc_mcontext.gregs[REG_ESP];
+	ctx->eip = (long) uc->uc_mcontext.gregs[REG_EIP];
+	ctx->ebp = (long) uc->uc_mcontext.gregs[REG_EBP];
+	ctx->pid = GetCurrentThreadId();
+}
+
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
 	InitializeBacktrace();
@@ -236,7 +228,11 @@ void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 	if( ctx == NULL )
 	{
 		ctx = &CurrentCtx;
-		GetCurrentBacktraceContext( &CurrentCtx );
+
+		register void *esp __asm__ ("esp");
+		CurrentCtx.esp = (long) esp;
+		CurrentCtx.eip = 0;
+		CurrentCtx.ebp = (long) __builtin_frame_address(0);
 	}
 
 
