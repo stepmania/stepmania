@@ -119,7 +119,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		switch (m_Rows[GetCurrentRow()]->GetOneSharedSelection())
 		{
 		case NO_START_SERVER:
-			if (NSMAN->isLanServer == false)
+			if (!NSMAN->isLanServer)
 				SCREENMAN->TextEntry( SM_ServerNameEnter, "Enter a server name...", "", NULL );
 			break;
 		case NO_STOP_SERVER:

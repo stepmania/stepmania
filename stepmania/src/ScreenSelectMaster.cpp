@@ -565,7 +565,7 @@ ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage() const
 
 float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 {
-	if( m_bChosen[pn] == true )
+	if( m_bChosen[pn] )
 		return 0;
 	m_bChosen[pn] = true;
 
@@ -590,7 +590,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 {
 	if( m_fLockInputSecs > 0 )
 		return;
-	if( m_bChosen[pn] == true )
+	if( m_bChosen[pn] )
 		return;
 
 	ModeChoice &mc = m_aModeChoices[m_iChoice[pn]];

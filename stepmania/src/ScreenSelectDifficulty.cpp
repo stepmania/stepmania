@@ -360,7 +360,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 {
 	if( m_fLockInputTime > 0 )
 		return;
-	if( m_bChosen[pn] == true )
+	if( m_bChosen[pn] )
 		return;
 	m_bChosen[pn] = true;
 
@@ -480,7 +480,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	// check to see if everyone has chosen
 	FOREACH_HumanPlayer( p )
 	{
-		if( m_bChosen[p] == false )
+		if( !m_bChosen[p] )
 			return;
 	}
 	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on

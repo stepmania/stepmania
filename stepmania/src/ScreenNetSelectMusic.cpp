@@ -177,7 +177,9 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	FOREACH_EnabledPlayer (p)
 	{
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-		m_DifficultyIcon[p].Load( THEME->GetPathG( "ScreenSelectMusic" ,ssprintf("difficulty icons 1x%d",NUM_DIFFICULTIES)) );
+		m_DifficultyIcon[p].Load( THEME->GetPathG( "ScreenSelectMusic",
+												   ssprintf("difficulty icons 1x%d",
+															NUM_DIFFICULTIES)) );
 		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
@@ -233,7 +235,9 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	return;
 }
 
-void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type,
+								  const GameInput& GameI, const MenuInput& MenuI,
+								  const StyleInput& StyleI )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
@@ -272,7 +276,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		char c;
 		c = DeviceI.ToChar();
 
-		if( bHoldingShift && (!bHoldingCtrl) )
+		if( bHoldingShift && !bHoldingCtrl )
 		{
 			c = (char)toupper(c);
 
@@ -307,8 +311,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		if( bHoldingCtrl )
 		{
 			c = (char)toupper(c);
-			int i;
-			for (i=0;i<(int)m_vSongs.size();i++)
+			for (int i=0; i<(int)m_vSongs.size(); ++i)
 				if ( (char) toupper(m_vSongs[i]->GetTranslitMainTitle().c_str()[0]) == (char) c )
 				{
 					m_iSongNum = i;
@@ -435,7 +438,7 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 				m_DC[pn] = NUM_DIFFICULTIES;
 			else
 			{
-				for ( i=0; i<(int)MultiSteps.size(); i++ )
+				for ( i=0; i<(int)MultiSteps.size(); ++i )
 					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 						break;
 
@@ -483,7 +486,7 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 				m_DC[pn] = NUM_DIFFICULTIES;
 			else
 			{
-				for ( i=0; i<(int)MultiSteps.size(); i++ )
+				for ( i=0; i<(int)MultiSteps.size(); ++i )
 					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 						break;
 
@@ -532,7 +535,8 @@ void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
 		NSMAN->m_sSubTitle = m_vSongs[j]->GetTranslitSubTitle();
 		NSMAN->m_iSelectMode = 2; //Command for user selecting song
 		NSMAN->SelectUserSong ();
-	} else
+	}
+	else
 		StartSelectedSong();
 }
 
@@ -622,7 +626,7 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 	if (m_iSongNum<m_iShowSongs)
 		m_iSongNum+=m_vSongs.size();
 	CString SongsDisplay="";
-	for (i=m_iSongNum-m_iShowSongs;i<=m_iSongNum+m_iShowSongs;i++)
+	for (i=m_iSongNum-m_iShowSongs; i<=m_iSongNum+m_iShowSongs; ++i)
 	{
 		j= i % m_vSongs.size();
 		SongsDisplay+=m_vSongs.at(j)->GetTranslitMainTitle();
@@ -649,7 +653,7 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
 		{
-			for ( i=0; i<(int)MultiSteps.size(); i++ )
+			for ( i=0; i<(int)MultiSteps.size(); ++i )
 				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 					break;
 
@@ -684,7 +688,7 @@ void ScreenNetSelectMusic::UpdateGroupsListPos()
 	if (m_iGroupNum<m_iShowGroups)
 		m_iGroupNum+=m_vGroups.size();
 	CString GroupsDisplay="";
-	for (i=m_iGroupNum-m_iShowGroups;i<=m_iGroupNum+m_iShowGroups;i++)
+	for (i=m_iGroupNum-m_iShowGroups; i<=m_iGroupNum+m_iShowGroups; ++i)
 	{
 		j=i%m_vGroups.size();
 		GroupsDisplay+=m_vGroups[j];

@@ -92,7 +92,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromSteps( PlayerNumber pn, Steps* pSt
 			m_fValuesNew[pn][c] = pSteps->GetRadarValues()[c];
 		}	
 
-		if( m_bValuesVisible[pn] == false )	// the values WERE invisible
+		if( !m_bValuesVisible[pn] )	// the values WERE invisible
 			m_PercentTowardNew[pn] = 1;
 		else
 			m_PercentTowardNew[pn] = 0;	

@@ -1,3 +1,4 @@
+#include "global.h"
 #include "ScreenNetEvaluation.h"
 #include "ThemeManager.h"
 #include "GameState.h"
@@ -50,7 +51,7 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 	m_iActivePlayers = NSMAN->m_ActivePlayers;
 	m_iCurrentPlayer = 0;
 
-	for( int i=0; i<m_iActivePlayers; i++ )
+	for( int i=0; i<m_iActivePlayers; ++i )
 	{
 		m_textUsers[i].LoadFromFont( THEME->GetPathF(m_sName,"names") );
 		m_textUsers[i].SetName( "User" );
@@ -100,7 +101,7 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GotEval:
 		m_bHasStats = true;
-		for( int i=0; i<m_iActivePlayers; i++ )
+		for( int i=0; i<m_iActivePlayers; ++i )
 		{
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
 			ON_COMMAND( m_textUsers[i] );
@@ -115,7 +116,7 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetEvaluation::TweenOffScreen( )
 {
-	for( int i=0; i<m_iActivePlayers; i++ )	
+	for( int i=0; i<m_iActivePlayers; ++i )	
 		OFF_COMMAND( m_textUsers[i] );
 	OFF_COMMAND( m_rectUsersBG );
 	ScreenEvaluation::TweenOffScreen();
@@ -131,7 +132,7 @@ void ScreenNetEvaluation::UpdateStats()
 
 	m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( m_pActivePlayer, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
 
-	for (int j=0;j<NETNUMTAPSCORES;j++)
+	for (int j=0; j<NETNUMTAPSCORES; ++j)
 	{
 		int iNumDigits = (j==max_combo) ? MAX_COMBO_NUM_DIGITS : 4;
 		m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );

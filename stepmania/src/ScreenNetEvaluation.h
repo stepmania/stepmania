@@ -1,5 +1,3 @@
-#include "global.h"
-#include "Screen.h"
 #include "ScreenEvaluation.h"
 #include "NetworkSyncManager.h"
 #include "Quad.h"
@@ -9,7 +7,7 @@
 class ScreenNetEvaluation: public ScreenEvaluation
 {
 public:
-	ScreenNetEvaluation (const CString & sClassName);
+	ScreenNetEvaluation (const CString& sClassName);
 protected:
 	virtual void MenuLeft( PlayerNumber pn, const InputEventType type );
 	virtual void MenuUp( PlayerNumber pn, const InputEventType type );

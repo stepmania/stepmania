@@ -244,13 +244,13 @@ void StepManiaLanServer::CheckReady()
 	int x;
 
 	//Only check clients that are starting (after ScreenNetMusicSelect before InGame).
-	for (x = 0; (x < NUMBERCLIENTS)&&(canStart == true); ++x)
-			if (Client[x].Used == true)
+	for (x = 0; (x < NUMBERCLIENTS)&& canStart; ++x)
+			if (Client[x].Used)
 				if (Client[x].isStarting)
-					if (Client[x].GotStartRequest == false)
+					if (!Client[x].GotStartRequest)
 						canStart = false;
 			
-	if (canStart == true)
+	if (canStart)
 	{
 		//(Test this) 
 		//For whatever reason we need to pause in a way
@@ -291,9 +291,9 @@ void StepManiaLanServer::GameOver(PacketFunctions& Packet, int clientNum)
 	Client[clientNum].InGame = false;
 	Client[clientNum].wasIngame = true;
 
-	for (x = 0; (x < NUMBERCLIENTS)&&(allOver == true); ++x)
-		if (Client[x].Used == true)
-			if ((Client[x].InGame == true))
+	for (x = 0; (x < NUMBERCLIENTS)&&allOver ; ++x)
+		if (Client[x].Used)
+			if (Client[x].InGame)
 				allOver = false;
 
 	//Wait untill everyone is done before sending
@@ -350,7 +350,7 @@ int StepManiaLanServer::SortStats(LanPlayer *playersPtr[])
 
 	//Populate with in game players only
 	for (int x = 0; x < NUMBERCLIENTS; ++x)
-		if (Client[x].Used == true)
+		if (Client[x].Used)
 			if (Client[x].InGame||Client[x].wasIngame)
 				for (int y = 0; y < 2; ++y)
 					if (Client[x].IsPlaying(y))
@@ -565,7 +565,7 @@ void StepManiaLanServer::SelectSong(PacketFunctions& Packet, int clientNum)
 					if (strcmp(CurrentSongInfo.artist, LastSongInfo.artist) == 0)
 						SecondSameSelect = true;
 
-			if (SecondSameSelect == false)
+			if (!SecondSameSelect)
 			{
 				LastSongInfo.title = CurrentSongInfo.title;
 				LastSongInfo.artist = CurrentSongInfo.artist;

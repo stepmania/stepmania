@@ -384,7 +384,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 	if( !row.bMultiSelect )
 	{
 		// The first row ("go down") should not be selected.
-		ASSERT( vbSelectedOut[0] == false );
+		ASSERT( !vbSelectedOut[0] );
 
 		// there should be exactly one option selected
 		int iNumSelected = 0;

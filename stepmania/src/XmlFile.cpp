@@ -209,7 +209,7 @@ char* XNode::LoadAttributes( const char* pszAttrs , PARSEINFO *pi /*= &piDefault
 		if( pEnd == NULL ) 
 		{
 			// error
-			if( pi->erorr_occur == false ) 
+			if( !pi->erorr_occur ) 
 			{
 				pi->erorr_occur = true;
 				pi->error_pointer = xml;
@@ -331,7 +331,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 		else
 		{
 			// error: <TAG ... / >
-			if( pi->erorr_occur == false ) 
+			if( !pi->erorr_occur ) 
 			{
 				pi->erorr_occur = true;
 				pi->error_pointer = xml;
@@ -354,7 +354,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			char* pEnd = tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
 			if( pEnd == NULL ) 
 			{
-				if( pi->erorr_occur == false ) 
+				if( !pi->erorr_occur ) 
 				{
 					pi->erorr_occur = true;
 					pi->error_pointer = xml;
@@ -383,7 +383,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			node->parent = this;
 			
 			xml = node->Load( xml,pi );
-			if( node->name.empty() == false )
+			if( !node->name.empty() )
 			{
 				childs.push_back( node );
 			}
@@ -408,7 +408,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 				char* pEnd = strpbrk( xml, " >" );
 				if( pEnd == NULL ) 
 				{
-					if( pi->erorr_occur == false ) 
+					if( !pi->erorr_occur ) 
 					{
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
@@ -430,7 +430,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 				{
 					xml = pEnd+1;
 					// not welformed open/close
-					if( pi->erorr_occur == false ) 
+					if( !pi->erorr_occur ) 
 					{
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
@@ -453,7 +453,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 					if( pEnd == NULL ) 
 					{
 						// error cos not exist CloseTag </TAG>
-						if( pi->erorr_occur == false )  
+						if( !pi->erorr_occur )  
 						{
 							pi->erorr_occur = true;
 							pi->error_pointer = xml;
@@ -522,7 +522,7 @@ bool XNode::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
 		return false;
 
 	// <TAG Attr1="Val1" 
-	if( attrs.empty() == false )
+	if( !attrs.empty() )
 		if( f.Write(" ") == -1 )
 			return false;
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
