@@ -222,7 +222,7 @@ void NoteData::AddHoldNote( HoldNote add )
 	// look for other hold notes that overlap and merge them
 	// XXX: this is done implicitly with 4s, but 4s uses this function.
 	// Rework this later.
-	for( i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
+	for( i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
 	{
 		HoldNote &other = GetHoldNote(i);
 		if( add.m_iTrack == other.m_iTrack  &&		// the tracks correspond
@@ -239,7 +239,7 @@ void NoteData::AddHoldNote( HoldNote add )
 			add.m_fEndBeat   = max(add.m_fEndBeat, other.m_fEndBeat);
 
 			// delete this HoldNote
-			for( int j=i; j<m_iNumHoldNotes-1; j++ )
+			for( int j=i; j<GetNumHoldNotes()-1; j++ )
 				m_HoldNotes[j] = m_HoldNotes[j+1];
 
 			m_iNumHoldNotes--;
@@ -272,7 +272,7 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	SetTapNote(hn.m_iTrack, iHoldStartIndex, TAP_EMPTY);
 
 	// remove from list
-	for( int j=iHoldIndex; j<m_iNumHoldNotes-1; j++ )
+	for( int j=iHoldIndex; j<GetNumHoldNotes()-1; j++ )
 		m_HoldNotes[j] = m_HoldNotes[j+1];
 
 	m_iNumHoldNotes--;
@@ -286,7 +286,7 @@ bool NoteData::IsThereANoteAtRow( int iRow ) const
 
 // There is a tap note at the beginning of every HoldNote start
 //
-//	for( int i=0; i<m_iNumHoldNotes; i++ )	// for each HoldNote
+//	for( int i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
 //		if( GetHoldNote(i).m_iStartIndex == NoteRowToBeatRow(iRow) )
 //			return true;
 
@@ -314,7 +314,7 @@ float NoteData::GetFirstBeat()
 		}
 	}
 
-	for( i=0; i<m_iNumHoldNotes; i++ )
+	for( i=0; i<GetNumHoldNotes(); i++ )
 		if( GetHoldNote(i).m_fStartBeat < fEarliestBeatFoundSoFar )
 			fEarliestBeatFoundSoFar = GetHoldNote(i).m_fStartBeat;
 
@@ -345,7 +345,7 @@ float NoteData::GetLastBeat()
 		}
 	}
 
-	for( i=0; i<m_iNumHoldNotes; i++ )
+	for( i=0; i<GetNumHoldNotes(); i++ )
 	{
 		if( GetHoldNote(i).m_fEndBeat > fOldestBeatFoundSoFar )
 			fOldestBeatFoundSoFar = GetHoldNote(i).m_fEndBeat;
@@ -397,7 +397,7 @@ int NoteData::GetNumHoldNotes( const float fStartBeat, const float fEndBeat )
 {
 	int iNumHolds = 0;
 
-	for( int i=0; i<m_iNumHoldNotes; i++ )
+	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		const HoldNote &hn = GetHoldNote(i);
 		if( fStartBeat <= hn.m_fStartBeat  &&  hn.m_fEndBeat <= fEndBeat )
@@ -436,13 +436,13 @@ void NoteData::CropToLeftSide()
 			SetTapNote(c, i, TAP_EMPTY);
 	}
 
-	for( int i=m_iNumHoldNotes-1; i>=0; i-- ) // foreach HoldNote
+	for( int i=GetNumHoldNotes()-1; i>=0; i-- ) // foreach HoldNote
 	{
 		if( c >= iFirstRightSideColumn )
 		{
 			// delete this HoldNote by shifting everything down
 			// XXX: err, why not just call RemoveHoldNote?
-			for( int j=i; j<m_iNumHoldNotes-1; j++ )
+			for( int j=i; j<GetNumHoldNotes()-1; j++ )
 				GetHoldNote(j) = GetHoldNote(j+1);
 			m_iNumHoldNotes--;
 		}
@@ -474,7 +474,7 @@ void NoteData::CropToRightSide()
 		}
 	}
 
-	for( int i=m_iNumHoldNotes-1; i>=0; i-- ) // foreach HoldNote
+	for( int i=GetNumHoldNotes()-1; i>=0; i-- ) // foreach HoldNote
 	{
 		HoldNote &hn = GetHoldNote(i);
 
@@ -493,7 +493,7 @@ void NoteData::CropToRightSide()
 void NoteData::RemoveHoldNotes()
 {
 	// turn all the HoldNotes into TapNotes
-	for( int i=0; i<m_iNumHoldNotes; i++ )
+	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
 		const HoldNote &hn = GetHoldNote(i);
 		
@@ -631,7 +631,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 		tempNoteData.m_iNumTracks = this->m_iNumTracks;
 
 		// copy all HoldNotes before copying taps
-		for( int i=0; i<this->m_iNumHoldNotes; i++ )
+		for( int i=0; i<this->GetNumHoldNotes(); i++ )
 			tempNoteData.AddHoldNote( this->GetHoldNote(i) );
 
 		this->ConvertHoldNotesTo4s();
@@ -729,7 +729,7 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 void NoteData::ConvertHoldNotesTo2sAnd3s()
 {
 	// copy HoldNotes into the new structure, but expand them into 2s and 3s
-	for( int i=0; i<m_iNumHoldNotes; i++ ) 
+	for( int i=0; i<GetNumHoldNotes(); i++ ) 
 	{
 		const HoldNote &hn = GetHoldNote(i);
 		int iHoldStartIndex = clamp(BeatToNoteRow(hn.m_fStartBeat), 0, MAX_TAP_NOTE_ROWS-1);
@@ -776,7 +776,7 @@ void NoteData::Convert4sToHoldNotes()
 void NoteData::ConvertHoldNotesTo4s()
 {
 	// copy HoldNotes into the new structure, but expand them into 4s
-	for( int i=0; i<m_iNumHoldNotes; i++ ) 
+	for( int i=0; i<GetNumHoldNotes(); i++ ) 
 	{
 		const HoldNote &hn = GetHoldNote(i);
 		int iHoldStartIndex = clamp(BeatToNoteRow(hn.m_fStartBeat), 0, MAX_TAP_NOTE_ROWS);
@@ -958,7 +958,7 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 			bool bHoldCrossesThisMeasure = false;
 #if 0
 			pOriginal->Convert4sToHoldNotes();
-			for( int i=0; i<pOriginal->m_iNumHoldNotes; i++ )
+			for( int i=0; i<pOriginal->GetNumHoldNotes(); i++ )
 			{
 				const HoldNote& hn = pOriginal->GEtHoldNote(i);
 				/* Bug here: NoteRowToBeat() may have floating point error,

@@ -219,7 +219,7 @@ void NoteField::DrawPrimitives()
 		/////////////////////////////////
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
 		/////////////////////////////////
-		for( int i=0; i<m_iNumHoldNotes; i++ )
+		for( int i=0; i < GetNumHoldNotes(); i++ )
 		{
 			const HoldNote &hn = GetHoldNote(i);
 			HoldNoteScore &hns = m_HoldNoteScores[i];

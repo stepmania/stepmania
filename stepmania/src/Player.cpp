@@ -460,7 +460,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 
 	// remove this row from the NoteField
 //	bool bHoldNoteOnThisBeat = false;
-//	for( int j=0; j<m_iNumHoldNotes; j++ )
+//	for( int j=0; j<GetNumHoldNotes(); j++ )
 //	{
 //		if( GetHoldNote(j).m_iStartIndex == iIndexThatWasSteppedOn )
 //		{
