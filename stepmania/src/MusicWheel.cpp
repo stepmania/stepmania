@@ -444,6 +444,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					continue;
 			}
 
+			if( !wid.m_Action.IsPlayable() )
+				continue;
+
 			arrayWheelItemDatas.push_back( wid );
 		}		
 		break;
