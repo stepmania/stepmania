@@ -100,8 +100,12 @@ RageSound_WaveOut::RageSound_WaveOut()
 
 	sound_event = CreateEvent(NULL, false, true, NULL);
 
-	WAVEFORMATEX fmt;
+	wo = NULL;
+}
 
+CString RageSound_WaveOut::Init()
+{
+	WAVEFORMATEX fmt;
 	fmt.wFormatTag = WAVE_FORMAT_PCM;
     fmt.nChannels = channels;
 	fmt.cbSize = 0;
@@ -110,20 +114,18 @@ RageSound_WaveOut::RageSound_WaveOut()
 	fmt.nBlockAlign = fmt.nChannels * fmt.wBitsPerSample / 8;
 	fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * fmt.nBlockAlign;
 
-	MMRESULT ret = waveOutOpen(&wo, WAVE_MAPPER, &fmt,
-		(DWORD_PTR) sound_event, NULL, CALLBACK_EVENT);
+	MMRESULT ret = waveOutOpen( &wo, WAVE_MAPPER, &fmt, (DWORD_PTR) sound_event, NULL, CALLBACK_EVENT );
+	if( ret != MMSYSERR_NOERROR )
+		return wo_ssprintf( ret, "waveOutOpen failed" );
 
-	if(ret != MMSYSERR_NOERROR)
-		RageException::ThrowNonfatal(wo_ssprintf(ret, "waveOutOpen failed"));
-
+	ZERO( buffers );
 	for(int b = 0; b < num_chunks; ++b)
 	{
-		memset(&buffers[b], 0, sizeof(buffers[b]));
 		buffers[b].dwBufferLength = chunksize;
 		buffers[b].lpData = new char[chunksize];
 		ret = waveOutPrepareHeader(wo, &buffers[b], sizeof(buffers[b]));
-		if(ret != MMSYSERR_NOERROR)
-			RageException::ThrowNonfatal(wo_ssprintf(ret, "waveOutPrepareHeader failed"));
+		if( ret != MMSYSERR_NOERROR )
+			return wo_ssprintf( ret, "waveOutPrepareHeader failed" );
 		buffers[b].dwFlags |= WHDR_DONE;
 	}
 
@@ -134,25 +136,34 @@ RageSound_WaveOut::RageSound_WaveOut()
 
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
+
+	return "";
 }
 
 RageSound_WaveOut::~RageSound_WaveOut()
 {
 	/* Signal the mixing thread to quit. */
-	shutdown = true;
-	SetEvent( sound_event );
-	LOG->Trace("Shutting down mixer thread ...");
-	MixingThread.Wait();
-	LOG->Trace("Mixer thread shut down.");
+	if( MixingThread.IsCreated() )
+	{
+		shutdown = true;
+		SetEvent( sound_event );
+		LOG->Trace("Shutting down mixer thread ...");
+		MixingThread.Wait();
+		LOG->Trace("Mixer thread shut down.");
+	}
+
+	if( wo != NULL )
+	{
+		for( int b = 0; b < num_chunks && buffers[b].lpData != NULL; ++b )
+		{
+			waveOutUnprepareHeader( wo, &buffers[b], sizeof(buffers[b]) );
+			delete [] buffers[b].lpData;
+		}
+
+		waveOutClose( wo );
+	}
 
 	CloseHandle(sound_event);
-	waveOutClose(wo);
-
-	for(int b = 0; b < num_chunks; ++b)
-	{
-		waveOutUnprepareHeader( wo, &buffers[b], sizeof(buffers[b]) );
-		delete [] buffers[b].lpData;
-	}
 }
 
 float RageSound_WaveOut::GetPlayLatency() const

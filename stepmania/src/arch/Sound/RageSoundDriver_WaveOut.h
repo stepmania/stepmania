@@ -30,6 +30,7 @@ public:
 
 	RageSound_WaveOut();
 	~RageSound_WaveOut();
+	CString Init();
 };
 
 #endif
