@@ -221,10 +221,15 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	GAMESTATE->m_bSideIsJoined[pn] = true;
 	SCREENMAN->RefreshCreditsMessages();
 	m_soundSelect.Play();
-	m_sprJoinMessage[pn].BeginTweening( 0.25f );
-	m_sprJoinMessage[pn].SetTweenZoomY( 0 );
-	m_sprJoinFrame[pn].BeginTweening( 0.25f );
-	m_sprJoinFrame[pn].SetTweenZoomY( 0 );
+	m_sprJoinMessage[pn].SetState( p+NUM_PLAYERS );
+
+	if( FOLD_ON_JOIN )
+	{
+		m_sprJoinMessage[pn].BeginTweening( 0.25f );
+		m_sprJoinMessage[pn].SetTweenZoomY( 0 );
+		m_sprJoinFrame[pn].BeginTweening( 0.25f );
+		m_sprJoinFrame[pn].SetTweenZoomY( 0 );
+	}
 
 	bool bBothSidesJoined = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
