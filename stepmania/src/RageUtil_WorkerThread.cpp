@@ -11,7 +11,7 @@ WorkerThread::WorkerThread( const CString &sName ):
 	m_fHeartbeat = -1;
 	m_bRequestFinished = false;
 
-	m_WorkerThread.SetName( "ThreadedFileWorker fileset worker \"" + sName + "\"" );
+	m_WorkerThread.SetName( "ThreadedFileWorker " + sName + " worker" );
 }
 
 WorkerThread::~WorkerThread()
@@ -117,9 +117,6 @@ void WorkerThread::WorkerMain()
 
 		m_WorkerEvent.Unlock();
 
-		if( iRequest == REQ_SHUTDOWN )
-			break;
-
 		/* If it's time to run a heartbeat, do so. */
 		if( bTimeToRunHeartbeat )
 		{
@@ -132,7 +129,8 @@ void WorkerThread::WorkerMain()
 		if( iRequest != REQ_NONE )
 		{
 			/* Handle the request. */
-			HandleRequest( iRequest );
+			if( iRequest != REQ_SHUTDOWN )
+				HandleRequest( iRequest );
 
 			/* Lock the mutex, to keep DoRequest where it is (if it's still running). */
 			/* The request is finished.  If it timed out, clear the timeout flag and
@@ -160,6 +158,9 @@ void WorkerThread::WorkerMain()
 				m_WorkerEvent.Unlock();
 			}
 		}
+
+		if( iRequest == REQ_SHUTDOWN )
+			break;
 	}
 }
 
