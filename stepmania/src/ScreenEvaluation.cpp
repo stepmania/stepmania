@@ -23,6 +23,7 @@
 #include "GameState.h"
 #include "GrooveRadar.h"
 #include "ThemeManager.h"
+#include "RageMusic.h"
 
 
 #define SONGSEL_SCREEN				THEME->GetMetric("ScreenEvaluation","SongSelectScreen")

@@ -13,7 +13,6 @@
 #include "Sprite.h"
 #include "TransitionFade.h"
 #include "RageSoundStream.h"
-#include "Screen.h"
 #include "MenuElements.h"
 
 
@@ -44,8 +43,6 @@ private:
 	float				m_fTimeLeftInScreen;
 
 	TransitionFade	m_Fade;
-
-	RageSoundStream	m_soundMusic;
 };
 
 

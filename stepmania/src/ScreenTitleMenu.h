@@ -14,7 +14,6 @@
 #include "BitmapText.h"
 #include "TransitionFade.h"
 #include "RandomSample.h"
-#include "RandomStream.h"
 #include "BGAnimation.h"
 
 
@@ -63,7 +62,7 @@ private:
 
 	TransitionFade		m_Fade;
 
-	RandomStream		m_soundAttract;
+	RandomSample		m_soundAttract;
 	RandomSample		m_soundChange;
 	RandomSample		m_soundSelect;
 	RandomSample		m_soundInvalid;

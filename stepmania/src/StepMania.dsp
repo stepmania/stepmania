@@ -502,14 +502,6 @@ SOURCE=.\RandomSample.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RandomStream.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RandomStream.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\Song.cpp
 # End Source File
 # Begin Source File

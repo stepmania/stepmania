@@ -515,12 +515,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RandomSample.h">
 			</File>
 			<File
-				RelativePath=".\RandomStream.cpp">
-			</File>
-			<File
-				RelativePath=".\RandomStream.h">
-			</File>
-			<File
 				RelativePath=".\Song.cpp">
 			</File>
 			<File
