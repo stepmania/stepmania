@@ -18,6 +18,7 @@ struct ConfOption
 	CString name;
 	typedef void (*MoveData_t)( int &sel, bool ToSel, const ConfOption *pConfOption );
 	MoveData_t MoveData;
+	int m_iEffects;
 
 	/* For dynamic options, update the options.  Since this changes the available
 	 * options, this may invalidate the offsets returned by Get() and Put(). */
@@ -37,6 +38,7 @@ struct ConfOption
 		name = n;
 		MoveData = m;
 		MakeOptionsListCB = NULL;
+		m_iEffects = 0;
 #define PUSH( c )	if(c) names.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
@@ -48,6 +50,7 @@ struct ConfOption
 		name = n;
 		MoveData = m;
 		MakeOptionsListCB = lst;
+		m_iEffects = 0;
 	}
 
 
