@@ -443,6 +443,9 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	IniFile ini(sPathToIni);
 	ini.ReadFile();
 	{
+		//
+		// Can we ditch this?  It's the same as "Condition=IsPlayerEnabled(p)". -Chris
+		//
 		int player;
 		if( ini.GetValue( sLayer, "Player", player ) )
 		{
@@ -458,7 +461,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	{
 		CString expr;
-		if( ini.GetValue( sLayer, "Cond", expr ) )
+		if( ini.GetValue(sLayer,"Cond",expr) || ini.GetValue(sLayer,"Condition",expr) )
 		{
 			if( !Lua::RunExpression( expr ) )
 				return;
