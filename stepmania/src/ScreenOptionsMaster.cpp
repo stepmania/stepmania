@@ -14,6 +14,7 @@
 #include "song.h"
 #include "SongManager.h"
 #include "Character.h"
+#include "PrefsManager.h"
 #include "ScreenOptionsMasterPrefs.h"
 
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
@@ -418,7 +419,8 @@ void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHan
 
 void ScreenOptionsMaster::ExportOptions()
 {
-	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
+	unsigned i;
+	for( i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
 		const OptionRow &row = m_OptionRowAlloc[i];
@@ -455,6 +457,19 @@ void ScreenOptionsMaster::ExportOptions()
 	// XXX: handle different destinations based on play mode?
 	if( m_NextScreen == "" )
 		m_NextScreen = NEXT_SCREEN;
+
+	/* If any ROW_CONFIG options were used, save preferences. */
+	bool ConfUsed = false;
+	for( i = 0; i < OptionRowHandlers.size(); ++i )
+		if( OptionRowHandlers[i].type == ROW_CONFIG )
+			ConfUsed = true;
+
+	if( ConfUsed )
+	{
+		LOG->Trace("ROW_CONFIG used; saving ...");
+		PREFSMAN->SaveGlobalPrefsToDisk();
+		PREFSMAN->SaveGamePrefsToDisk();
+	}
 }
 
 void ScreenOptionsMaster::GoToNextState()
