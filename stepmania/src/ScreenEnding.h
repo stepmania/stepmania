@@ -29,6 +29,7 @@ public:
 	~ScreenEnding();
 
 	void Update( float fDeltaTime );
+	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void HandleScreenMessage( const ScreenMessage SM );
 
 private:

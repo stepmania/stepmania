@@ -26,6 +26,7 @@
 #include "StyleDef.h"
 #include "GameManager.h"
 #include "SongUtil.h"
+#include "ScreenManager.h"
 
 
 #define SCROLL_DELAY		THEME->GetMetricF("ScreenEnding","ScrollDelay")
@@ -137,19 +138,34 @@ void ScreenEnding::Update( float fDeltaTime )
 {
 	ScreenAttract::Update( fDeltaTime );
 
-	if( !m_In.IsTransitioning() && !m_Out.IsTransitioning() )
+	if( m_In.IsTransitioning() && m_Out.IsTransitioning() )
+		return;
+
+	FOREACH_PlayerNumber( p )
 	{
-		FOREACH_PlayerNumber( p )
+		if( m_bWaitingForRemoveCard[p] )
 		{
-			if( m_bWaitingForRemoveCard[p] )
-			{
-				m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState((PlayerNumber)p)!=MEMORY_CARD_STATE_NO_CARD;
-				if( !m_bWaitingForRemoveCard[p] )
-					m_sprRemoveMemoryCard[p].SetHidden( true );
-			}
+			m_bWaitingForRemoveCard[p] = MEMCARDMAN->GetCardState((PlayerNumber)p)!=MEMORY_CARD_STATE_NO_CARD;
+			if( !m_bWaitingForRemoveCard[p] )
+				m_sprRemoveMemoryCard[p].SetHidden( true );
 		}
 	}
 }	
+
+void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+{
+	if( MenuI.IsValid() )
+	{
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_START:
+			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
+			break;
+		}
+	}
+
+	ScreenAttract::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
 
 void ScreenEnding::HandleScreenMessage( const ScreenMessage SM )
 {
