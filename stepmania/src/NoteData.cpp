@@ -599,36 +599,57 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 
 void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 {
-	// ??? Something is not right here - either we're not being called,
-	// or we're not working correctly at all. :-/
-
 	SetNumTracks( iNewNumTracks );
 
 	NoteData in;
 	in.To4s( *pOriginal );
 
-	const int iLastRow = in.GetMaxRow();
-	for ( int i = 0; i < in.GetNumTracks(); i++ )
+	/* Keep track of the last source track that put a tap into each destination track,
+	 * and the row of that tap.  Then, if two rows are trying to put taps into the
+	 * same row within the shift threshold, shift the newcomer source row. */
+	int LastSourceTrack[MAX_NOTE_TRACKS];
+	int LastSourceRow[MAX_NOTE_TRACKS];
+	int DestRow[MAX_NOTE_TRACKS];
+	
+	for( unsigned tr = 0; tr < MAX_NOTE_TRACKS; ++tr )
 	{
-		const int iTrackTo = i % iNewNumTracks;
-		const int iTrackFrom = i;
+		LastSourceTrack[tr] = -1;
+		LastSourceRow[tr] = -9999;
+		DestRow[tr] = tr;
+		wrap( DestRow[tr], iNewNumTracks );
+	}
 
-		for( int row = 0; row < iLastRow; ++row )
+	const int ShiftThreshold = BeatToNoteRow(1);
+
+	const int iLastRow = in.GetMaxRow();
+	for( int row = 0; row < iLastRow; ++row )
+	{
+		for ( int i = 0; i < in.GetNumTracks(); i++ )
 		{
+			const int iTrackFrom = i;
+			int &iTrackTo = DestRow[i];
+
 			const TapNote iStepFrom = in.m_TapNotes[iTrackFrom][row];
-
-			/* Hold notes always take precedence: don't split holds. */
-			if( GetTapNote(iTrackTo, row) == TAP_HOLD )
-				continue;
-
-			// Whoever rewrote the function:
-			// This transfers EMPTY steps over as well...
-			// ...so it's been fixed.  Should I define operator| for
-			// TapNote so that it combines tracks? :-P
-
 			if( iStepFrom == TAP_EMPTY )
 				continue;
 
+			if( LastSourceTrack[iTrackTo] != iTrackFrom &&
+				row - LastSourceRow[iTrackTo] < ShiftThreshold )
+			{
+				/* This destination track is in use by a different source track.  Use the
+				 * least-recently-used track. */
+				for( int DestTrack = 0; DestTrack < iNewNumTracks; ++DestTrack )
+					if( LastSourceRow[DestTrack] < LastSourceRow[iTrackTo] )
+						iTrackTo = DestTrack;
+			}
+
+			/* If it's still in use, then we just don't have an available track. */
+			if( LastSourceTrack[iTrackTo] != iTrackFrom &&
+				row - LastSourceRow[iTrackTo] < ShiftThreshold )
+				continue;
+
+			LastSourceTrack[iTrackTo] = iTrackFrom;
+			LastSourceRow[iTrackTo] = row;
 			SetTapNote( iTrackTo, row, iStepFrom );
 		}
 	}
@@ -643,7 +664,7 @@ void NoteData::LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNew
 
 	if( pOriginal->GetNumTracks() > iNewNumTracks )
 	{
-		/* Use a ifferent algorithm for reducing tracks. */
+		/* Use a different algorithm for reducing tracks. */
 		LoadOverlapped( pOriginal, iNewNumTracks );
 		return;
 	}
