@@ -53,7 +53,12 @@ public:
 	void RefreshCreditsMessages();
 	void ThemeChanged();
 
-	CString GetCurrentSystemMessage() const;
+	CString GetCurrentSystemMessage() const { return m_sSystemMessage; }
+
+	/* Overlay screens can grab input focus.  Only one screen may grab at a time;
+	 * if another screen has already taken focus, this returns false. */
+	bool GrabInputFocus( const Screen *pScreen );
+	void ReleaseInputFocus( const Screen *pScreen );
 
 	Screen *GetTopScreen();
 
@@ -66,6 +71,7 @@ public:
 private:
 	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
 	vector<Screen*>		m_OverlayScreens;
+	Screen				*m_pInputFocus; // NULL = top of m_ScreenStack
 
 	CString				m_sLastLoadedBackgroundPath;
 	CString				m_sDelayedScreen;
