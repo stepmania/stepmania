@@ -319,6 +319,14 @@ void ScreenEvaluation::Init()
 					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
 					m_textPlayerOptions[p].SetText( sPO );
 					this->AddChild( &m_textPlayerOptions[p] );
+
+					if( GAMESTATE->IsDisqualified((PlayerNumber)p) )
+					{
+						m_sprDisqualified[p].Load( THEME->GetPathToG("ScreenEvaluation disqualified") );
+						m_sprDisqualified[p]->SetName( ssprintf("DisqualifiedP%d",p+1) );
+						SET_XY_AND_ON_COMMAND( m_sprDisqualified[p] );
+						this->AddChild( m_sprDisqualified[p] );
+					}
 				}
 			}
 			break;
@@ -840,6 +848,10 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
+		// don't save scores if the player is disqualified
+		if( GAMESTATE->IsDisqualified((PlayerNumber)p) )
+			continue;
+
 		//
 		// Add step totals
 		//
@@ -877,68 +889,6 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 
 				if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
 					PROFILEMAN->AddStepsHighScore( GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
-
-				if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
-				{
-					// check for awards
-					Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
-
-					if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_GREAT ) )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_FULL_COMBO_GREATS );
-					if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_PERFECT ) )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_FULL_COMBO_PERFECTS );
-					if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_MARVELOUS ) )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_FULL_COMBO_MARVELOUSES );
-
-					if( stageStats.SingleDigitsOfScore( (PlayerNumber)p, TNS_GREAT ) )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_SINGLE_DIGIT_GREATS );
-					if( stageStats.SingleDigitsOfScore( (PlayerNumber)p, TNS_PERFECT ) )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_SINGLE_DIGIT_PERFECTS );
-
-					float fPercentGreats = stageStats.GetPercentageOfTaps((PlayerNumber)p, TNS_GREAT);
-					if( fPercentGreats >= 0.8f )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_GREATS_80_PERCENT );
-					if( fPercentGreats >= 0.9f )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_GREATS_90_PERCENT );
-					if( fPercentGreats >= 1.f )
-						GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_GREATS_100_PERCENT );
-
-					int iComboAtStartOfStage = stageStats.GetComboAtStartOfStage( (PlayerNumber)p );
-					int iPeakCombo = stageStats.GetMaxCombo((PlayerNumber)p).cnt;
-
-					FOREACH_PeakComboAward( pca )
-					{
-						int iLevel = 100/*0*/ * (pca+1);
-						bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
-						if( bCrossedLevel )
-						{
-							GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
-							m_textJudgeNumbers[max_combo][p].Command( PEAK_COMBO_AWARD_COMMAND );
-						}
-					}
-
-					{
-						for( int i=GAMESTATE->m_vLastPerDifficultyAwards[p].size()-1; i>=0; i-- )
-						{
-							PerDifficultyAward pda = GAMESTATE->m_vLastPerDifficultyAwards[p][i];
-							Steps* pSteps = stageStats.pSteps[p];
-							bool bAlreadyHad = pProfile->HasPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
-							pProfile->AddPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
-							if( bAlreadyHad )
-								GAMESTATE->m_vLastPerDifficultyAwards[p].erase( GAMESTATE->m_vLastPerDifficultyAwards[p].begin()+i );
-						}
-					}
-					{
-						for( int i=GAMESTATE->m_vLastPeakComboAwards[p].size()-1; i>=0; i-- )
-						{
-							PeakComboAward pca = GAMESTATE->m_vLastPeakComboAwards[p][i];
-							bool bAlreadyHad = pProfile->HasPeakComboAward( pca );
-							pProfile->AddPeakComboAward( pca );
-							if( bAlreadyHad )
-								GAMESTATE->m_vLastPeakComboAwards[p].erase( GAMESTATE->m_vLastPeakComboAwards[p].begin()+i );
-						}
-					}
-				}
 			}
 			break;
 
@@ -963,22 +913,22 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 			{
 				Course* pCourse = GAMESTATE->m_pCurCourse;
 				CourseDifficulty cd = GAMESTATE->m_CourseDifficulty[p];
-				if( pCourse )
-				{
-					// don't save scores for a failed Nonstop
-					// DO save scores for a failed Oni/Endless
-					if( stageStats.bFailed[p] && pCourse->IsNonstop() )
-						continue;
+				ASSERT( pCourse );
 
-					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
-						PROFILEMAN->AddCourseHighScore( pCourse, nt, cd, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
-				}
+				// don't save scores for a failed Nonstop
+				// DO save scores for a failed Oni/Endless
+				if( stageStats.bFailed[p] && pCourse->IsNonstop() )
+					continue;
+
+				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+					PROFILEMAN->AddCourseHighScore( pCourse, nt, cd, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 			}
 			break;
 		default:
 			ASSERT(0);
 		}
 	}
+
 
 	// If both players get a machine high score, a player whose score is added later 
 	// may bump the players who were added earlier.  Adjust for this.
@@ -1020,6 +970,91 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 			}
 		}
 	}
+
+
+	//
+	// hand out awards
+	//
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;
+
+		// must be using a profile to receive awards
+		if( !PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
+			continue;
+
+		Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+
+
+		// per-difficulty awards
+		switch( m_Type )
+		{
+		case stage:
+			// don't give per-difficutly awards if using easy mods
+			if( !GAMESTATE->IsDisqualified((PlayerNumber)p) )
+			{
+				if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_GREAT ) )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_FULL_COMBO_GREATS );
+				if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_PERFECT ) )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_FULL_COMBO_PERFECTS );
+				if( stageStats.FullComboOfScore( (PlayerNumber)p, TNS_MARVELOUS ) )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_FULL_COMBO_MARVELOUSES );
+
+				if( stageStats.SingleDigitsOfScore( (PlayerNumber)p, TNS_GREAT ) )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_SINGLE_DIGIT_GREATS );
+				if( stageStats.SingleDigitsOfScore( (PlayerNumber)p, TNS_PERFECT ) )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_SINGLE_DIGIT_PERFECTS );
+
+				float fPercentGreats = stageStats.GetPercentageOfTaps((PlayerNumber)p, TNS_GREAT);
+				if( fPercentGreats >= 0.8f )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_GREATS_80_PERCENT );
+				if( fPercentGreats >= 0.9f )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_GREATS_90_PERCENT );
+				if( fPercentGreats >= 1.f )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].push_back( AWARD_GREATS_100_PERCENT );
+			}
+		}
+
+		// DO give peak combo awards if using easy mods
+		int iComboAtStartOfStage = stageStats.GetComboAtStartOfStage( (PlayerNumber)p );
+		int iPeakCombo = stageStats.GetMaxCombo((PlayerNumber)p).cnt;
+
+		FOREACH_PeakComboAward( pca )
+		{
+			int iLevel = 100/*0*/ * (pca+1);
+			bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
+			if( bCrossedLevel )
+			{
+				GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
+				m_textJudgeNumbers[max_combo][p].Command( PEAK_COMBO_AWARD_COMMAND );
+			}
+		}
+
+		// erase awards from the Last list that have been received so that we 
+		// won't show them again.
+		{
+			for( int i=GAMESTATE->m_vLastPerDifficultyAwards[p].size()-1; i>=0; i-- )
+			{
+				PerDifficultyAward pda = GAMESTATE->m_vLastPerDifficultyAwards[p][i];
+				Steps* pSteps = stageStats.pSteps[p];
+				bool bAlreadyHad = pProfile->HasPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
+				pProfile->AddPerDifficultyAward( pSteps->m_StepsType, pSteps->GetDifficulty(), pda );
+				if( bAlreadyHad )
+					GAMESTATE->m_vLastPerDifficultyAwards[p].erase( GAMESTATE->m_vLastPerDifficultyAwards[p].begin()+i );
+			}
+		}
+		{
+			for( int i=GAMESTATE->m_vLastPeakComboAwards[p].size()-1; i>=0; i-- )
+			{
+				PeakComboAward pca = GAMESTATE->m_vLastPeakComboAwards[p][i];
+				bool bAlreadyHad = pProfile->HasPeakComboAward( pca );
+				pProfile->AddPeakComboAward( pca );
+				if( bAlreadyHad )
+					GAMESTATE->m_vLastPeakComboAwards[p].erase( GAMESTATE->m_vLastPeakComboAwards[p].begin()+i );
+			}
+		}
+	}
 }
 
 
@@ -1037,6 +1072,7 @@ void ScreenEvaluation::TweenOffScreen()
 			continue;
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_textPlayerOptions[p] );
+		OFF_COMMAND( m_sprDisqualified[p] );
 	}
 
 	// small banner area

@@ -37,10 +37,10 @@ inline void UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
 }
 
 /* convenience */
-inline void UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { UtilCommand( *pActor, sClassName, sCommandName ); }
-inline void UtilOnCommand( Actor* pActor, CString sClassName ) { UtilOnCommand( *pActor, sClassName ); }
-inline void UtilOffCommand( Actor* pActor, CString sClassName ) { UtilOffCommand( *pActor, sClassName ); }
-inline void UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { UtilSetXYAndOnCommand( *pActor, sClassName ); }
+inline void UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { if(pActor) UtilCommand( *pActor, sClassName, sCommandName ); }
+inline void UtilOnCommand( Actor* pActor, CString sClassName ) { if(pActor) UtilOnCommand( *pActor, sClassName ); }
+inline void UtilOffCommand( Actor* pActor, CString sClassName ) { if(pActor) UtilOffCommand( *pActor, sClassName ); }
+inline void UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { if(pActor) UtilSetXYAndOnCommand( *pActor, sClassName ); }
 
 // Return a Sprite, BitmapText, or Model depending on the file type
 Actor* LoadFromActorFile( CString sIniPath, CString sLayer = "Actor" );

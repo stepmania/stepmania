@@ -188,9 +188,7 @@ void ScreenPlayerOptions::UpdateDisqualified()
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			bool bIsHandicap = GAMESTATE->IsCourseMode() ?
-				GAMESTATE->m_PlayerOptions[p].IsHandicapForCourse( GAMESTATE->m_pCurCourse ) :
-				GAMESTATE->m_PlayerOptions[p].IsHandicapForSong( GAMESTATE->m_pCurSong );
+			bool bIsHandicap = GAMESTATE->IsDisqualified((PlayerNumber)p);
 			
 			m_sprDisqualify[p]->SetHidden( !bIsHandicap );
 

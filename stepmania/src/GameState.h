@@ -211,6 +211,8 @@ public:
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();
 
+	bool IsDisqualified( PlayerNumber pn );
+
 	void AdjustFailType();
 
 	// character stuff

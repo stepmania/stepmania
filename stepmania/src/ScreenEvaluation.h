@@ -78,6 +78,7 @@ protected:
 	Sprite				m_sprStage;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
+	AutoActor			m_sprDisqualified[NUM_PLAYERS];
 	Banner				m_SmallBanner[MAX_SONGS_TO_SHOW];
 	Sprite				m_sprSmallBannerFrame[MAX_SONGS_TO_SHOW];
 

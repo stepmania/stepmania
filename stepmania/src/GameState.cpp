@@ -829,6 +829,14 @@ void GameState::RestoreSelectedOptions()
 	m_SongOptions = m_StoredSongOptions;
 }
 
+bool GameState::IsDisqualified( PlayerNumber pn )
+{
+	if( GAMESTATE->IsCourseMode() )
+		return GAMESTATE->m_PlayerOptions[pn].IsHandicapForCourse( GAMESTATE->m_pCurCourse );
+	else
+		return GAMESTATE->m_PlayerOptions[pn].IsHandicapForSong( GAMESTATE->m_pCurSong );
+}
+
 void GameState::ResetNoteSkins()
 {
 	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
