@@ -716,8 +716,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	GAMESTATE->m_fCurBPS = fBPS;
 	GAMESTATE->m_bFreeze = bFreeze;
 	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
-	
-//	printf( "m_fSongBeat = %f\n", GAMESTATE->m_fSongBeat );
 
 	//LOG->Trace( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
 
@@ -1033,7 +1031,7 @@ void SaveChanges()
 		{
 			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
 			{
-				Song* pSong = GAMESTATE->m_pCurCourse->m_apSongs[i];
+				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
 				pSong->Save();
 			}
 		}
@@ -1057,7 +1055,7 @@ void DontSaveChanges()
 		{
 			for( int i=0; i<GAMESTATE->m_pCurCourse->m_iStages; i++ )
 			{
-				Song* pSong = GAMESTATE->m_pCurCourse->m_apSongs[i];
+				Song* pSong = GAMESTATE->m_pCurCourse->GetSong(i);
 				ld.LoadFromSMFile( GAMESTATE->m_pCurSong->GetCacheFilePath(), *pSong );
 			}
 		}

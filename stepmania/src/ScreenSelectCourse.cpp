@@ -332,7 +332,7 @@ void ScreenSelectCourse::AfterCourseChange()
 			m_textNumSongs.SetText( ssprintf("%d", pCourse->m_iStages) );
 			float fTotalSeconds = 0;
 			for( int i=0; i<pCourse->m_iStages; i++ )
-				fTotalSeconds += pCourse->m_apSongs[i]->m_fMusicLengthSeconds;
+				fTotalSeconds += pCourse->GetSong(i)->m_fMusicLengthSeconds;
 			m_textTime.SetText( SecondsToTime(fTotalSeconds) );
 
 			m_Banner.SetFromCourse( pCourse );

@@ -104,7 +104,7 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 
 	for( int i=0; i<min(pCourse->m_iStages, MAX_TOTAL_CONTENTS); i++ )
 	{
-		Song* pSong = pCourse->m_apSongs[i];
+		Song* pSong = pCourse->GetSong(i);
 		Notes* pNotes = pCourse->GetNotesForStage(i);
 
 		if( pNotes == NULL )
@@ -153,7 +153,6 @@ void CourseContentsFrame::DrawPrimitives()
 
 	m_quad.SetY( ((MAX_VISIBLE_CONTENTS-1)/2 + 1) * CONTENTS_BAR_HEIGHT );
 	m_quad.Draw();
-
 
 	int iItemToDraw = (int)m_fItemAtTopOfList;
 

@@ -522,12 +522,12 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	course.LoadFromCRSFile( sCoursePath, m_pSongs );
 	if( course.m_iStages <= 0 ) return false;
 
-	pSongOut = course.m_apSongs[0];
+	pSongOut = course.GetSong(0);
 	pNotesOut = course.GetNotesForStage( 0 );
 	if( pNotesOut == NULL ) return false;
 	
-	po_out.FromString( course.m_asModifiers[0] );
-	so_out.FromString( course.m_asModifiers[0] );
+	po_out.FromString( course.GetModifiers(0) );
+	so_out.FromString( course.GetModifiers(0) );
 
 	return true;
 }
