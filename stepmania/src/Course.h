@@ -166,7 +166,7 @@ void SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses );
 void SortCoursePointerArrayByRanking( vector<Course*> &apCourses );
 void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, ProfileSlot slot );
-void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, Profile* pProfile );
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, const Profile* pProfile );
 
 void MoveRandomToEnd( vector<Course*> &apCourses );
 

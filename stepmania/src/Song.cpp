@@ -1375,7 +1375,7 @@ void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, Profile
 	SortSongPointerArrayByMostPlayed( arraySongPointers, pProfile );
 }
 
-void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, Profile* pProfile )
+void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers, const Profile* pProfile )
 {
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)

@@ -335,7 +335,7 @@ void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, ProfileS
 	SortStepsPointerArrayByMostPlayed( vStepsPointers, pProfile );
 }
 
-void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, Profile* pProfile )
+void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, const Profile* pProfile )
 {
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)

@@ -91,6 +91,6 @@ void SortNotesArrayByDifficulty( vector<Steps*> &arrayNotess );
 bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2);
 void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers );
 void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, ProfileSlot slot );
-void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, Profile* pProfile );
+void SortStepsPointerArrayByMostPlayed( vector<Steps*> &vStepsPointers, const Profile* pProfile );
 
 #endif

@@ -1050,7 +1050,7 @@ void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, P
 	SortCoursePointerArrayByMostPlayed( arrayCoursePointers, pProfile );
 }
 
-void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, Profile* pProfile )
+void SortCoursePointerArrayByMostPlayed( vector<Course*> &arrayCoursePointers, const Profile* pProfile )
 {
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < arrayCoursePointers.size(); ++i)
