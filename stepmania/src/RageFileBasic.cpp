@@ -20,6 +20,11 @@ RageFileObj::~RageFileObj()
 
 int RageFileObj::Seek( int iOffset )
 {
+	/* If we're already at the requested position, short circuit and don't flush
+	 * our buffer. */
+	if( iOffset == m_iFilePos )
+		return m_iFilePos;
+
 	m_bEOF = false;
 
 	ResetBuf();
