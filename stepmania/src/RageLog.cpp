@@ -111,11 +111,11 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
-	CString str;
-	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
-		str += ssprintf("%s\n", i->second.c_str());
-	fprintf( m_fileInfo, "%s", str.c_str() );
-	fprintf( m_fileLog, "\nStatics:\n%s", str.c_str() );
+	const char* p;
+	int size;
+	GetAdditionalLog( p, size );
+	fprintf( m_fileInfo, "%s", p );
+	fprintf( m_fileLog, "\nStatics:\n%s", p );
 
 	Flush();
 	HideConsole();
@@ -220,13 +220,16 @@ void RageLog::UpdateMappedLog()
 	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
 		str += ssprintf("%s\n", i->second.c_str());
 
-	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size() );
+	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size()+1 );
 	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );
+	g_AdditionalLogStr[ sizeof(g_AdditionalLogStr)-1 ] = 0;
 
 	/* XXX: deprecated */
 	HOOKS->AdditionalLog(str);
 }
 
+/* Under normal conditions, p will always be null-terminated.  "size" is provided
+ * for crash handlers--under crash conditions, it may not be. */
 void RageLog::GetAdditionalLog( const char* &p, int &size )
 {
 	p = g_AdditionalLogStr;
@@ -239,6 +242,8 @@ void RageLog::MapLog(const CString &key, const char *fmt, ...)
     va_start(va, fmt);
 	LogMaps[key] = vssprintf( fmt, va );
     va_end(va);
+
+	UpdateMappedLog();
 }
 
 void RageLog::UnmapLog(const CString &key)
