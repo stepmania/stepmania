@@ -41,7 +41,10 @@ ProfileManager::~ProfileManager()
 void ProfileManager::Init()
 {
 	FOREACH_PlayerNumber( p )
+	{
 		m_bWasLoadedFromMemoryCard[p] = false;
+		m_bLastLoadWasTamperedOrCorrupt[p] = false;
+	}
 
 	LoadMachineProfile();
 }
@@ -79,8 +82,18 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 
 	m_sProfileDir[pn] = sProfileDir;
 	m_bWasLoadedFromMemoryCard[pn] = bIsMemCard;
+	bool bSuccess = m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 
-	m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	m_bLastLoadWasTamperedOrCorrupt[pn] = !bSuccess;
+
+	// Save a backup of the profile now that we've loaded it and know it's good.
+	// This should be reasonably fast because we're only saving Stats.xml and 
+	// signatures - not all of the files in the Profile.
+	if( bSuccess )
+	{
+		CString sBackupDir = m_sProfileDir[pn] + "LastGood/";
+		m_Profile[pn].SaveStatsXmlToDir( sBackupDir, PREFSMAN->m_bSignProfileData );
+	}
 
 	if( bIsMemCard )
 		MEMCARDMAN->UnPauseMountingThread();
@@ -206,6 +219,7 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 {
 	m_sProfileDir[pn] = "";
 	m_bWasLoadedFromMemoryCard[pn] = false;
+	m_bLastLoadWasTamperedOrCorrupt[pn] = false;
 	m_Profile[pn].InitAll();
 }
 
@@ -318,6 +332,11 @@ void ProfileManager::LoadMachineProfile()
 bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const
 {
 	return GetProfile(pn) && m_bWasLoadedFromMemoryCard[pn];
+}
+
+bool ProfileManager::LastLoadWasTamperedOrCorrupt( PlayerNumber pn ) const
+{
+	return GetProfile(pn) && m_bLastLoadWasTamperedOrCorrupt[pn];
 }
 
 CString ProfileManager::GetProfileDir( ProfileSlot slot ) const

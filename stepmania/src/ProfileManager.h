@@ -57,6 +57,7 @@ public:
 
 	CString GetPlayerName( PlayerNumber pn ) const;
 	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const;
+	bool LastLoadWasTamperedOrCorrupt( PlayerNumber pn ) const;
 
 
 	//
@@ -81,7 +82,6 @@ public:
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn );
 
 
-//	void ReadSM300NoteScores();
 
 private:
 	bool CreateMemoryCardProfile( PlayerNumber pn );
@@ -93,6 +93,7 @@ private:
 	CString m_sProfileDir[NUM_PLAYERS];
 
 	bool m_bWasLoadedFromMemoryCard[NUM_PLAYERS];
+	bool m_bLastLoadWasTamperedOrCorrupt[NUM_PLAYERS];	// true if Stats.xml was present, but failed to load (probably because of a signature failure)
 	
 	// actual loaded profile data
 	Profile	m_Profile[NUM_PLAYERS];	

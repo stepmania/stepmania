@@ -575,81 +575,81 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 
 	InitAll();
 
+	// Not critical if this fails
 	LoadEditableDataFromDir( sDir );
 	
-	// Read stats.xml
-	FOR_ONCE
+	// Check for the existance of stats.xml
+	CString fn = sDir + STATS_XML;
+	if( !IsAFile(fn) )
+		return true;	// This is a common case and not a load error, so return success.
+
+	//
+	// Don't unreasonably large stats.xml files.
+	//
+	if( !IsMachine() )	// only check stats coming from the player
 	{
-		CString fn = sDir + STATS_XML;
-		if( !IsAFile(fn) )
-			break;
-
-		//
-		// Don't unreasonably large stats.xml files.
-		//
-		if( !IsMachine() )	// only check stats coming from the player
+		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+		if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
 		{
-			int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-			if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
-			{
-				LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-				break;
-			}
+			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+			return false;	// error
 		}
+	}
 
-		if( bRequireSignature )
+	if( bRequireSignature )
+	{ 
+		CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
+		CString sDontShareFile = sDir + DONT_SHARE_SIG;
+
+		LOG->Trace( "Verifying don't share signature" );
+		// verify the stats.xml signature with the "don't share" file
+		if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
 		{
-
-			CString sStatsXmlSigFile = fn+SIGNATURE_APPEND;
-			CString sDontShareFile = sDir + DONT_SHARE_SIG;
-
-			LOG->Trace( "Verifying don't share signature" );
-			// verify the stats.xml signature with the "don't share" file
-			if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
-			{
-				LOG->Warn( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
-				break;
-			}
-			LOG->Trace( "Done." );
-
-			// verify stats.xml
-			LOG->Trace( "Verifying stats.xml signature" );
-			if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
-			{
-				LOG->Warn( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
-				break;
-			}
-			LOG->Trace( "Done." );
-		}
-
-		LOG->Trace( "Loading %s", fn.c_str() );
-		XNode xml;
-		if( !xml.LoadFromFile( fn ) )
-		{
-			LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
-			break;
+			LOG->Warn( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
+			return false;	// error
 		}
 		LOG->Trace( "Done." );
 
-		/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
-		 * warn about it. */
-		if( xml.name == "html" )
-			break;
-
-		if( xml.name != "Stats" )
-			WARN_AND_BREAK_M( xml.name );
-
-		LOAD_NODE( GeneralData );
-		LOAD_NODE( SongScores );
-		LOAD_NODE( CourseScores );
-		LOAD_NODE( CategoryScores );
-		LOAD_NODE( ScreenshotData );
-		LOAD_NODE( CalorieData );
-		LOAD_NODE( RecentSongScores );
-		LOAD_NODE( RecentCourseScores );
+		// verify stats.xml
+		LOG->Trace( "Verifying stats.xml signature" );
+		if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
+		{
+			LOG->Warn( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
+			return false;	// error
+		}
+		LOG->Trace( "Done." );
 	}
+
+	LOG->Trace( "Loading %s", fn.c_str() );
+	XNode xml;
+	if( !xml.LoadFromFile( fn ) )
+	{
+		LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
+		return false;	// error
+	}
+	LOG->Trace( "Done." );
+
+	/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
+	 * warn about it. */
+	if( xml.name == "html" )
+		return true;	// success
+
+	if( xml.name != "Stats" )
+	{
+		WARN_M( xml.name );
+		return false;	// error
+	}
+
+	LOAD_NODE( GeneralData );
+	LOAD_NODE( SongScores );
+	LOAD_NODE( CourseScores );
+	LOAD_NODE( CategoryScores );
+	LOAD_NODE( ScreenshotData );
+	LOAD_NODE( CalorieData );
+	LOAD_NODE( RecentSongScores );
+	LOAD_NODE( RecentCourseScores );
 		
-	return true;	// FIXME?  Investigate what happens if we always return true.
+	return true;	// success
 }
 
 bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
@@ -657,9 +657,22 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 	m_sLastPlayedMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 	m_LastPlayedDate = DateTime::GetNowDate();
 
-	// Save editable.xml
+	// Save editable.ini
 	SaveEditableDataToDir( sDir );
 
+	bool bSaved = SaveStatsXmlToDir( sDir, bSignData );
+	
+	SaveStatsWebPageToDir( sDir );
+
+	// Empty directories if none exist.
+	FILEMAN->CreateDir( sDir + EDITS_SUBDIR );
+	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
+
+	return bSaved;
+}
+
+bool Profile::SaveStatsXmlToDir( CString sDir, bool bSignData ) const
+{
 	// Save stats.xml
 	CString fn = sDir + STATS_XML;
 
@@ -696,12 +709,6 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		CString sDontShareFile = sDir + DONT_SHARE_SIG;
 		CryptManager::SignFileToFile(sStatsXmlSigFile, sDontShareFile);
 	}
-
-	SaveStatsWebPageToDir( sDir );
-
-	// Empty directories if none exist.
-	FILEMAN->CreateDir( sDir + EDITS_SUBDIR );
-	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
 	return bSaved;
 }

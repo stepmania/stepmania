@@ -260,7 +260,7 @@ public:
 	//
 	// Loading and saving
 	//
-	bool LoadAllFromDir( CString sDir, bool bRequireSignature );	// return false on error
+	bool LoadAllFromDir( CString sDir, bool bRequireSignature );	// return false on a tamper or corruption error
 	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
 	void LoadEditableDataFromDir( CString sDir );
@@ -274,6 +274,7 @@ public:
 	void LoadRecentCourseScoresFromNode( const XNode* pNode );
 
 	void SaveEditableDataToDir( CString sDir ) const;
+	bool SaveStatsXmlToDir( CString sDir, bool bSignData ) const;
 	XNode* SaveGeneralDataCreateNode() const;
 	XNode* SaveSongScoresCreateNode() const;
 	XNode* SaveCourseScoresCreateNode() const;

@@ -48,7 +48,7 @@
 				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
 					<tr>
 						<td>
-							This file contains all your game profile data. Please read the instructions below before modifying or moving any files on your memory card. Modifying files may result in irreversible loss of your data.
+							This section explains all the files saved to your memory card. Please read the instructions below before modifying any files on your memory card. Modifying files may result in irreversible loss of your data.
 						</td>
 					</tr>
 				</xsl:element>
@@ -74,9 +74,26 @@
 						</td>
 					</tr>
 					<tr>
+						<td><a href="LastGood/" target="_new">LastGood/</a></td>
+						<td>
+							This directory contains a backup of your last Stats.xml and signatures that were successfully loaded.
+							<xsl:call-template name="CollapsibleTextTable">
+								<xsl:with-param name="title">More Info</xsl:with-param>
+								<xsl:with-param name="text">
+									The stats on your memory card may fail to load because: 
+									<ul>
+										<li>The Stats.xml file or its digital signatures have become corrupt.</li>
+										<li>The Stats.xml file has been modified outside of the game. This will cause the digital signature check to fail.</li>
+									</ul>
+									If your saved statistics fail to load, your can restore from from the "last good" data. Copy all 3 files in the files <i>LastGood</i> directory into the main profile directory (one level up from <i>LastGood</i>).
+								</xsl:with-param>
+							</xsl:call-template>
+						</td>
+					</tr>
+					<tr>
 						<td><a href="Screenshots/" target="_new">Screenshots/</a></td>
 						<td>
-							All screenshots that you take are saved in this directory.
+							All in-game screenshots that you take are saved in this directory.
 							<xsl:call-template name="CollapsibleTextTable">
 								<xsl:with-param name="title">More Info</xsl:with-param>
 								<xsl:with-param name="text">
@@ -91,7 +108,7 @@
 					</tr>
 					<tr>
 						<td>Catalog.xml</td>
-						<td>Contains game data used by Stats.xml.</td>
+						<td>Contains game data used by Stats.xsl for displaying a report of your stats.</td>
 					</tr>
 					<tr>
 						<td>DontShare.sig</td>
