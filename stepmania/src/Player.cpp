@@ -822,25 +822,21 @@ void PlayerMinus::RandomiseNotes( int iNoteRow )
 {
 	const int NewNoteRow = (int)(iNoteRow + 50 / GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed); // change the row to look ahead from based upon their speed mod
 
-	bool bUpdateNoteData = false;
 	int iNumOfTracks = GetNumTracks();
-	for(int t=0; t<iNumOfTracks; t++)
+	for( int t=0; t+1 < iNumOfTracks; t++ )
 	{
-		if(t+1 < iNumOfTracks)
+		int iRandomTrackToSwapWith = RandomInt(0, iNumOfTracks-1);
+		const TapNote t1 = GetTapNote(t, NewNoteRow);
+		const TapNote t2 = GetTapNote(iRandomTrackToSwapWith, NewNoteRow);
+
+		if( (t1 == TAP_TAP || t1 == TAP_EMPTY) && (t2 == TAP_TAP || t2 == TAP_EMPTY) )
 		{
-			int iRandomTrackToSwapWith = RandomInt(0, iNumOfTracks-1);
-			TapNote t1 = GetTapNote(t, NewNoteRow);
-			TapNote t2 = GetTapNote(iRandomTrackToSwapWith, NewNoteRow);
-			if((t1 == TAP_TAP || t1 == TAP_EMPTY) && (t2 == TAP_TAP || t2 == TAP_EMPTY) && (!(t1 == TAP_EMPTY && t2 == TAP_EMPTY) && !(t1 == TAP_TAP && t2 == TAP_TAP)))
-			{
-				SetTapNote(t, NewNoteRow, t2);
-				SetTapNote(iRandomTrackToSwapWith, NewNoteRow, t1);
-				bUpdateNoteData = true;
-			}
+			SetTapNote(t, NewNoteRow, t2);
+			SetTapNote(iRandomTrackToSwapWith, NewNoteRow, t1);
 		}
 	}
-	if( bUpdateNoteData )
-		m_pNoteField->CopyAll( this );
+
+	m_pNoteField->CopyRange( this, NewNoteRow, NewNoteRow, NewNoteRow );
 }
 
 void PlayerMinus::HandleTapRowScore( unsigned row )
