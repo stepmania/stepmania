@@ -26,7 +26,8 @@
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
-	ScreenOptions( sClassName )
+	ScreenOptions( sClassName ),
+	PLAY_MUSIC( sClassName, "PlayMusic" )
 {
 	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
 }
@@ -111,13 +112,11 @@ void ScreenOptionsMaster::Update( float fDelta )
 	{
 		/*
 		 * Don't play sounds during the ctor, since derived classes havn't loaded yet.
-		 * If this file doesn't exist, leave the music alone (eg. ScreenPlayerOptions music sample
-		 * left over from ScreenSelectMusic).  If you really want to play no music, add a redir
-		 * to _silent.
+		 * Leave the music alone (eg. ScreenPlayerOptions music sample
+		 * left over from ScreenSelectMusic).
 		 */
-		CString MusicPath = THEME->GetPathS( m_sName, "music", true );
-		if( MusicPath != "" )
-			SOUND->PlayMusic( MusicPath );
+		if( PLAY_MUSIC )
+			SOUND->PlayMusic( THEME->GetPathS( m_sName, "music" ) );
 	}
 
 	ScreenOptions::Update( fDelta );

@@ -32,6 +32,8 @@ protected:
 	virtual void GoToPrevScreen();
 
 	virtual void RefreshIcons();
+
+	ThemeMetric<bool> PLAY_MUSIC;
 };
 
 #endif
