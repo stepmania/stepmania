@@ -65,7 +65,7 @@ CourseUtil.cpp CourseUtil.h DateTime.cpp DateTime.h Font.cpp Font.h FontCharAlia
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
 GameInput.cpp GameInput.h Grade.cpp Grade.h HighScore.cpp HighScore.h Inventory.cpp Inventory.h LuaFunctions.h \
-LuaHelpers.cpp LuaHelpers.h LyricsLoader.cpp LyricsLoader.h MenuInput.h \
+LyricsLoader.cpp LyricsLoader.h MenuInput.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \
 NoteFieldPositioning.cpp NoteFieldPositioning.h NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \
 NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h NotesLoaderKSF.cpp NotesLoaderKSF.h \
@@ -268,7 +268,8 @@ GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.cpp Bookkeeper.h CryptManager.cpp CryptManager.h \
 FontManager.cpp FontManager.h GameSoundManager.cpp GameSoundManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h \
-InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h LightsManager.cpp LightsManager.h \
+InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
+LuaManager.cpp LuaManager.h LightsManager.cpp LightsManager.h \
 MemoryCardManager.cpp MemoryCardManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
 NetworkSyncServer.cpp NetworkSyncServer.h NoteSkinManager.cpp NoteSkinManager.h \
 PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h ScreenManager.cpp \

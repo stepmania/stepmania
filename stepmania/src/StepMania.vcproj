@@ -708,13 +708,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Inventory.h">
 			</File>
 			<File
+				RelativePath="LuaBinding.h">
+			</File>
+			<File
 				RelativePath="LuaFunctions.h">
-			</File>
-			<File
-				RelativePath="LuaHelpers.cpp">
-			</File>
-			<File
-				RelativePath="LuaHelpers.h">
 			</File>
 			<File
 				RelativePath="LyricsLoader.cpp">
@@ -2330,6 +2327,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="LightsManager.h">
+			</File>
+			<File
+				RelativePath="LuaManager.cpp">
+			</File>
+			<File
+				RelativePath="LuaManager.h">
 			</File>
 			<File
 				RelativePath="MemoryCardManager.cpp">
