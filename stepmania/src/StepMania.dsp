@@ -658,6 +658,14 @@ SOURCE=.\archutils\Win32\AppInstance.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\archutils\Win32\GotoURL.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\GotoURL.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\resource.h
 # End Source File
 # Begin Source File
