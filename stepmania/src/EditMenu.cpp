@@ -35,9 +35,9 @@ XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 StringToX( EditMenuAction );
 
-static CString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",i+1); }
-static CString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",i+1); }
-static CString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",i+1); }
+static CString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
+static CString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",int(i+1)); }
+static CString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 
 static ThemeMetric1D<float> ARROWS_X					("EditMenu",ARROWS_X_NAME,NUM_ARROWS);
 static ThemeMetric<RageColor> ARROWS_ENABLED_COLOR		("EditMenu","ArrowsEnabledColor");

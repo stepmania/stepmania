@@ -552,14 +552,14 @@ float RageFastSin( float x )
 	iSampleIndex[1] = iSampleIndex[0]+1;
 
 	float fRemainder = fIndex - iSampleIndex[0];
-	for( int i=0; i<ARRAYSIZE(iSampleIndex); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(iSampleIndex); i++ )
         iSampleIndex[i] %= ARRAYSIZE(table) * 2;
 
 	DEBUG_ASSERT( i>=0 && i<ARRAYSIZE(table)*2 );
 	DEBUG_ASSERT( fRemainder>=0 && fRemainder<=1 );
 
 	float fValue[ARRAYSIZE(iSampleIndex)];
-	for( int i=0; i<ARRAYSIZE(iSampleIndex); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(iSampleIndex); i++ )
 	{
 		int &iSample = iSampleIndex[i];
 		float &fVal = fValue[i];
