@@ -32,7 +32,6 @@
 #include "Foreach.h"
 
 /* Amount to increase meter ranges to make them difficult: */
-const int COURSE_DIFFICULTY_METER_CHANGE[NUM_COURSE_DIFFICULTIES] = { -2, 0, 2 };
 const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_COURSE_DIFFICULTIES] = { -1, 0, 1 };
 
 /* Maximum lower value of ranges when difficult: */
@@ -750,20 +749,50 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		if( !pSong || !pSteps )
 			continue;	// this song entry isn't playable.  Skip.
 
-		/* If e.difficulty == DIFFICULTY_INVALID, then we already adjusted difficulty
-		 * based on meter. */
-		if( entry_difficulty != COURSE_DIFFICULTY_REGULAR  &&  e.difficulty != DIFFICULTY_INVALID )
+		if( entry_difficulty != COURSE_DIFFICULTY_REGULAR )
 		{
 			/* See if we can find a NoteData after adjusting the difficulty by COURSE_DIFFICULTY_CLASS_CHANGE.
 			 * If we can't, just use the one we already have. */
 			Difficulty original_dc = pSteps->GetDifficulty();
 			Difficulty dc = Difficulty( original_dc + COURSE_DIFFICULTY_CLASS_CHANGE[entry_difficulty] );
 			dc = clamp( dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
+			bool bChangedDifficulty = false;
 			if( dc != original_dc )
 			{
 				Steps* pNewNotes = pSong->GetStepsByDifficulty( st, dc );
 				if( pNewNotes )
+				{
 					pSteps = pNewNotes;
+					bChangedDifficulty = true;
+				}
+			}
+
+			/* Hack: We used to adjust low_meter/high_meter above while searching for
+			 * songs.  However, that results in a different song being chosen for
+			 * difficult courses, which is bad when LockCourseDifficulties is disabled;
+			 * each player can end up with a different song.  Instead, choose based
+			 * on the original range, bump the steps based on course difficulty, and
+			 * then retroactively tweak the low_meter/high_meter so course displays
+			 * line up. */
+			if( e.difficulty == DIFFICULTY_INVALID && bChangedDifficulty )
+			{
+				/* Minimum and maximum to add to make the meter range contain the actual
+				 * meter: */
+				int iMinDist = pSteps->GetMeter() - high_meter;
+				int iMaxDist = pSteps->GetMeter() - low_meter;
+
+				/* Clamp the possible adjustments to try to avoid going under 1 or over
+				 * MAX_BOTTOM_RANGE. */
+				iMinDist = min( max( iMinDist, -low_meter+1 ), iMaxDist );
+				iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE-high_meter ), iMinDist );
+
+				int iAdd;
+				if( iMaxDist == iMinDist )
+					iAdd = iMaxDist;
+				else
+					iAdd = rnd(iMaxDist-iMinDist) + iMinDist;
+				low_meter += iAdd;
+				high_meter += iAdd;
 			}
 		}
 
@@ -876,10 +905,6 @@ void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, Co
 {
 	iMeterLowOut = m_entries[stage].low_meter;
 	iMeterHighOut = m_entries[stage].high_meter;
-
-	iMeterHighOut += COURSE_DIFFICULTY_METER_CHANGE[ cd ];
-	iMeterLowOut += COURSE_DIFFICULTY_METER_CHANGE[ cd ];
-	iMeterLowOut = min( iMeterLowOut, MAX_BOTTOM_RANGE );
 }
 
 
