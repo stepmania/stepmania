@@ -462,6 +462,9 @@ ScreenGameplay::ScreenGameplay()
 	LoadNextSong( true );
 
 
+	/* Keep the music playing after it's finished; we'll stop it. */
+	// XXX m_soundMusic.SetAutoStop(false);
+
 	if( GAMESTATE->m_bDemonstration )
 	{
 		m_StarWipe.SetOpened();
