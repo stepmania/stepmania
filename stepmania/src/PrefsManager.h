@@ -293,6 +293,9 @@ public:
 	bool			m_bLogVirtualMemory; // (under debug) log the virtual memory allocation, etc.
 #endif
 
+	void ReadGlobalPrefsFromIni( const IniFile &ini );
+	void SaveGlobalPrefsToIni( IniFile &ini ) const;
+
 	void ReadGlobalPrefsFromDisk();
 	void SaveGlobalPrefsToDisk() const;
 

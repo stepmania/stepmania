@@ -374,6 +374,11 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	if( !ini.ReadFile(sIni) )
 		return;
 
+	ReadGlobalPrefsFromIni( ini );
+}
+
+void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
+{
 	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
 	ini.GetValue( "Options", "NumArcadeStages",					m_iNumArcadeStages );
@@ -575,7 +580,12 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 void PrefsManager::SaveGlobalPrefsToDisk() const
 {
 	IniFile ini;
+	SaveGlobalPrefsToIni( ini );
+	ini.WriteFile( STEPMANIA_INI_PATH );
+}
 
+void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
+{
 	ini.SetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.SetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
 	ini.SetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
@@ -815,8 +825,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->WriteTo( ini );
-
-	ini.WriteFile( STEPMANIA_INI_PATH );
 }
 
 
