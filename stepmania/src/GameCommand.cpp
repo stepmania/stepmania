@@ -117,7 +117,7 @@ void GameCommand::Load( int iIndex, const ActorCommands& acs )
 			iter != command->vTokens.end(); 
 			iter++ )
 		{
-			sValue += *iter;
+			sValue += iter->s;
 			if( iter != command->vTokens.end()-1 )
 				sValue += ",";
 		}
@@ -210,7 +210,7 @@ void GameCommand::Load( int iIndex, const ActorCommands& acs )
 		else if( sName == "setenv" )
 		{
 			if( command->vTokens.size() == 3 )
-				m_SetEnv[ command->vTokens[1] ] = command->vTokens[2];
+				m_SetEnv[ command->vTokens[1] ] = command->vTokens[2].s;
 		}
 		
 		else if( sName == "songgroup" )
