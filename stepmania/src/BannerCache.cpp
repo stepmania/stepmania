@@ -304,8 +304,11 @@ void BannerCache::CacheBanner( CString BannerPath )
 void BannerCache::CacheBannerInternal( CString BannerPath )
 {
 	SDL_Surface *img = SDL_LoadImage( BannerPath );
-	if(img == NULL)
-		RageException::Throw( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );
+	if( img == NULL )
+	{
+		LOG->Warn( "BannerCache::CacheBanner: Couldn't load %s: %s", BannerPath.c_str(), SDL_GetError() );
+		return;
+	}
 
 	bool WasRotatedBanner = false;
 
