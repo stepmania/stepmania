@@ -37,6 +37,7 @@
 #include "StepsUtil.h"
 #include "CourseUtil.h"
 #include "RageFileManager.h"
+#include "UnlockSystem.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -882,7 +883,6 @@ Course *SongManager::FindCourse( CString sName )
 
 	return NULL;
 }
-#include "UnlockSystem.h"
 
 void SongManager::UpdateBest()
 {
