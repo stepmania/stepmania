@@ -1291,25 +1291,32 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F2))
 	{
-		THEME->ReloadMetrics();
-		TEXTUREMAN->ReloadAll();
-		SCREENMAN->ReloadCreditsText();
-		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
-		CodeDetector::RefreshCacheItems();
-	
-		// HACK: Also save bookkeeping and profile info for debugging
-		// so we don't have to play through a whole song to get new output.
-		BOOKKEEPER->WriteToDisk();
-		PROFILEMAN->SaveMachineProfile();
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
-				PROFILEMAN->SaveProfile( (PlayerNumber)p );
-
-		/* If we're in screen test mode, reload the screen. */
-		if( PREFSMAN->m_bScreenTestMode )
-			ResetGame( true );
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) ) )
+		{
+			// HACK: Also save bookkeeping and profile info for debugging
+			// so we don't have to play through a whole song to get new output.
+			BOOKKEEPER->WriteToDisk();
+			PROFILEMAN->SaveMachineProfile();
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )
+					PROFILEMAN->SaveProfile( (PlayerNumber)p );
+			SCREENMAN->SystemMessage( "Stats saved" );
+		}
 		else
-			SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
+		{
+			THEME->ReloadMetrics();
+			TEXTUREMAN->ReloadAll();
+			SCREENMAN->ReloadCreditsText();
+			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
+			CodeDetector::RefreshCacheItems();
+		
+
+			/* If we're in screen test mode, reload the screen. */
+			if( PREFSMAN->m_bScreenTestMode )
+				ResetGame( true );
+			else
+				SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
+		}
 
 		return true;
 	}
