@@ -84,7 +84,6 @@ RageLog::RageLog()
 	m_bLogToDisk = false;
 	m_bInfoToDisk = false;
 	m_bFlush = false;
-	m_bTimestamping = false;
 	m_bShowLogOutput = false;
 
 	// delete old log files
@@ -160,11 +159,6 @@ void RageLog::SetFlushing( bool b )
 	m_bFlush = b;
 }
 
-void RageLog::SetTimestamping( bool b )
-{
-	m_bTimestamping = b;
-}
-
 /* Enable or disable display of output to stdout, or a console window in Windows. */
 void RageLog::SetShowLogOutput( bool show )
 {
@@ -228,31 +222,33 @@ void RageLog::Write( int where, const CString &line )
 	if( where & WRITE_LOUD )
 		printf( "/////////////////////////////////////////\n" );
 
-	CString LineHeader;
-	if( m_bTimestamping )
-		LineHeader += SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
+	CString sTimestamp = SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
+	CString sWarning;
 	if( where & WRITE_LOUD )
-		LineHeader += "WARNING: ";
+		sWarning = "WARNING: ";
 
 	for( unsigned i = 0; i < lines.size(); ++i )
 	{
 		CString &str = lines[i];
 
-		if( LineHeader.size() )
-			str.insert( 0, LineHeader );
+		if( sWarning.size() )
+			str.insert( 0, sWarning );
 
+		if( m_bShowLogOutput || where != 0 )
+			printf("%s\n", str.c_str() );
+		if( where & WRITE_TO_INFO )
+			AddToInfo( str );
 		if( m_bLogToDisk && where&WRITE_TO_INFO && g_fileInfo->IsOpen() )
 			g_fileInfo->PutLine( str );
 
-		if( where & WRITE_TO_INFO )
-			AddToInfo( str );
+		/* Add a timestamp to log.txt and RecentLogs, but not the rest of info.txt
+		 * and stdout. */
+		str.insert( 0, sTimestamp );
+
 		AddToRecentLogs( str );
 		
 		if( m_bLogToDisk && g_fileLog->IsOpen() )
 			g_fileLog->PutLine( str );
-
-		if( m_bShowLogOutput || where != 0 )
-			printf("%s\n", str.c_str() );
 	}
 
 	if( m_bLogToDisk && g_fileLog->IsOpen() && (where & WRITE_LOUD) )
@@ -371,8 +367,6 @@ const char *RageLog::GetAdditionalLog()
 void RageLog::MapLog(const CString &key, const char *fmt, ...)
 {
 	CString s;
-	if( m_bTimestamping )
-		s += SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()) + ": ";
 
 	va_list	va;
     va_start(va, fmt);

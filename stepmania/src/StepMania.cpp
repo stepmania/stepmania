@@ -864,7 +864,6 @@ static void ApplyLogPreferences()
 	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
 	LOG->SetInfoToDisk( true );
 	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
-	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 }
 
