@@ -799,6 +799,7 @@ void ScreenGameplay::LoadNextSong()
 		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
 
 	
+	m_soundMusic.SetAccurateSync();
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 	
 	/* Set up song-specific graphics. */
