@@ -40,13 +40,13 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
-#define BEGINNER_COLOR		THEME->GetMetricC("SongManager","BeginnerColor")
-#define EASY_COLOR			THEME->GetMetricC("SongManager","EasyColor")
-#define MEDIUM_COLOR		THEME->GetMetricC("SongManager","MediumColor")
-#define HARD_COLOR			THEME->GetMetricC("SongManager","HardColor")
-#define CHALLENGE_COLOR		THEME->GetMetricC("SongManager","ChallengeColor")
-#define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
-#define EXTRA_COLOR_METER	THEME->GetMetricI("SongManager","ExtraColorMeter")
+CachedThemeMetricC BEGINNER_COLOR		("SongManager","BeginnerColor");
+CachedThemeMetricC EASY_COLOR			("SongManager","EasyColor");
+CachedThemeMetricC MEDIUM_COLOR			("SongManager","MediumColor");
+CachedThemeMetricC HARD_COLOR			("SongManager","HardColor");
+CachedThemeMetricC CHALLENGE_COLOR		("SongManager","ChallengeColor");
+CachedThemeMetricC EXTRA_COLOR			("SongManager","ExtraColor");
+CachedThemeMetricI EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
 
 vector<RageColor> g_vGroupColors;
 RageTimer g_LastMetricUpdate; /* can't use RageTimer globally */
@@ -60,6 +60,14 @@ static void UpdateMetrics()
 	g_vGroupColors.clear();
 	for( int i=0; i<NUM_GROUP_COLORS; i++ )
 		g_vGroupColors.push_back( GROUP_COLOR(i) );
+
+	BEGINNER_COLOR.Refresh();
+	EASY_COLOR.Refresh();
+	MEDIUM_COLOR.Refresh();
+	HARD_COLOR.Refresh();
+	CHALLENGE_COLOR.Refresh();
+	EXTRA_COLOR.Refresh();
+	EXTRA_COLOR_METER.Refresh();
 }
 
 SongManager::SongManager( LoadingWindow *ld )
