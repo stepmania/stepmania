@@ -26,6 +26,7 @@
 #include "ThemeManager.h"
 #include "SDL_keysym.h"		// for SDLKeys
 #include "ScreenMiniMenu.h"
+#include "NoteSkinManager.h"
 
 #include <utility>
 
@@ -200,25 +201,6 @@ ScreenEdit::ScreenEdit()
 	m_pSong = GAMESTATE->m_pCurSong;
 
 	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
-	
-	/* Make EditMenu responsible for creating new Notes */
-	//if( m_pNotes == NULL )
-	//{
-	//	m_pNotes = new Notes;
-	//	m_pNotes->SetDifficulty(DIFFICULTY_MEDIUM);
-	//	m_pNotes->m_NotesType = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-	//	m_pNotes->SetDescription("Untitled");
-
-	//	// In ScreenEditMenu, the screen preceding this one,
-	//	// GAMEMAN->m_CurStyle is set to the target game style
-	//	// of the current edit. Naturally, this is where we'll
-	//	// want to extract the NotesType for a (NEW) sequence.
-
-	//	m_pSong->m_apNotes.push_back( m_pNotes );
-
-	//	GAMESTATE->m_pCurNotes[PLAYER_1] = m_pNotes;
-	//}
-
 
 
 	NoteData noteData;
@@ -232,9 +214,9 @@ ScreenEdit::ScreenEdit()
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
-	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
-	
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 1;
+	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
+	NOTESKIN->SwitchNoteSkin( PLAYER_1, "note" );	// change noteskin before loading all of the edit Actors
 
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathTo("BGAnimations","edit") );
 
@@ -263,6 +245,9 @@ ScreenEdit::ScreenEdit()
 	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -150, 350 );
 
 	m_Clipboard.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
+
+
+	NOTESKIN->SwitchNoteSkin( PLAYER_1, "default" );	// change noteskin back to default before loading player
 
 	m_Player.Load( PLAYER_1, &noteData, NULL, NULL );
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );

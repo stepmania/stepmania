@@ -110,7 +110,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 	{
 		m_rectMeasureBar.StretchTo( RectI(i,0,i+iSegWidth,0) );
 		m_rectMeasureBar.SetY( fYPos );
-		m_rectMeasureBar.SetZoomY( bIsMeasure ? 6.f : 2.f );
+		m_rectMeasureBar.SetZoomY( bIsMeasure ? 6.f : 3.f );
 		m_rectMeasureBar.SetDiffuse( RageColor(1,1,1,0.5f*fBrightness) );
 		m_rectMeasureBar.Draw();
 
@@ -297,6 +297,9 @@ void NoteField::DrawPrimitives()
 	// draw in big batches.
 	//
 
+	float fSelectedRangeGlow = SCALE( cosf(RageTimer::GetTimeSinceStart()*2), -1, 1, 0.1f, 0.3f );
+
+
 	for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
 	{
 		/////////////////////////////////
@@ -325,8 +328,11 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
+			bool bIsInSelectionRange = false;
+			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
+				bIsInSelectionRange = m_fBeginMarker<=hn.fStartBeat && hn.fStartBeat<=m_fEndMarker && m_fBeginMarker<=hn.fEndBeat && hn.fEndBeat<=m_fEndMarker;
 
-			m_NoteDisplay[c].DrawHold( hn, bIsHoldingNote, fLife, m_fPercentFadeToFail );
+			m_NoteDisplay[c].DrawHold( hn, bIsHoldingNote, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
 		}
 		
 
@@ -353,15 +359,13 @@ void NoteField::DrawPrimitives()
 			}
 
 			bool bIsInSelectionRange = false;
-			float fGlow = 0;
 			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
 			{
 				float fBeat = NoteRowToBeat(i);
 				bIsInSelectionRange = m_fBeginMarker<=fBeat && fBeat<=m_fEndMarker;
-				fGlow = SCALE( cosf(RageTimer::GetTimeSinceStart()*2), -1, 1, 0.1f, 0.3f );
 			}
 
-			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsInSelectionRange ? fGlow : m_fPercentFadeToFail );
+			m_NoteDisplay[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail );
 		}
 	}
 
