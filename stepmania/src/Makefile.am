@@ -141,12 +141,12 @@ Sound_Null = \
 if ALSA
 Sound = $(Sound_Null) $(Sound_ALSA9)
 else
-Sound = $(Sound_null)
+Sound = $(Sound_Null)
 endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
-		    arch/arch.cpp \
+            arch/arch.cpp \
 		    arch/InputHandler/InputHandler_SDL.cpp \
 		    arch/InputHandler/InputHandler_SDL.h \
 		    arch/LoadingWindow/LoadingWindow_SDL.cpp \
