@@ -888,23 +888,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 	ASSERT( img->w == power_of_two(img->w) );
 	ASSERT( img->h == power_of_two(img->h) );
 
-	/* TODO:  Add this back in later.  -Chris */
-//	if( IsPackedPixelFormat(pixfmt) && g_bPackedPixelsCauseProblems )
-//	{
-		/* HACK:
-		 * GLDirect crashes if we give it packed pixel format.  We need
-		 * to convert to a non-packed format (FMT_RGBA8).  However, we
-		 * can still get 16-bit textures by passing it the appropriate
-		 * internalformat; it'll simply truncate the extra bits.  This
-		 * means that it'll still use the dithering we gave it; we just
-		 * have to do a bit of redundant conversion work. */
-//		pixfmt = FMT_RGBA8;
-//		ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[pixfmt].bpp,
-//			PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
-//			PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
-//	}
-	
-
 //retry:
 
 	if(pixfmt == FMT_PAL)
