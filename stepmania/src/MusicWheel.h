@@ -118,8 +118,6 @@ protected:
 	float				m_fTimeLeftInState;
 	float				m_fPositionOffsetFromSelection;
 
-//	bool				m_bUseRandomExtra;
-
 	RageSound m_soundChangeMusic;
 	RageSound m_soundChangeSort;
 	RageSound m_soundExpand;

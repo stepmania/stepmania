@@ -912,22 +912,9 @@ void MusicWheel::Update( float fDeltaTime )
 			m_fTimeLeftInState = 0;
 			if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
 			{
-//				if ( m_bUseRandomExtra )
-//				{
-//					SOUNDMAN->StopMusic();
-//					m_soundExpand.Play();
-//					m_WheelState = STATE_ROULETTE_SPINNING;
-//					m_SortOrder = SORT_GROUP;
-//					m_MusicSortDisplay.SetDiffuse( RageColor(1,1,1,0) );
-//					m_MusicSortDisplay.SetEffectNone();
-//					BuildWheelItemDatas( m_WheelItemDatas[SORT_GROUP], SORT_GROUP, true );
-//				}
-//				else
-				{
-					m_WheelState = STATE_LOCKED;
-					m_soundStart.Play();
-					m_fLockedWheelVelocity = 0;
-				}
+				m_WheelState = STATE_LOCKED;
+				m_soundStart.Play();
+				m_fLockedWheelVelocity = 0;
 			}
 			else
 			{
