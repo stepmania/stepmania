@@ -85,6 +85,7 @@ void GameState::Reset()
 
 	ResetMusicStatistics();
 	ResetStageStatistics();
+	SONGMAN->UpdateBest();
 
 	m_vPassedStageStats.clear();
 
