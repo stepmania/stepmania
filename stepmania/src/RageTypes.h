@@ -11,6 +11,10 @@
 -----------------------------------------------------------------------------
 */
 
+/* nonstandard extension used : nameless struct/union
+ * It is, in fact, nonstandard.  G++ 3.x can handle it. 2.95.x can not. XXX */
+#pragma warning (push)
+#pragma warning (disable : 4201)
 
 struct RageVector2
 {
@@ -222,5 +226,6 @@ public:
     };
 };
 
+#pragma warning (pop)
 
 #endif
