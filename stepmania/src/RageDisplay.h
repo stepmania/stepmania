@@ -49,7 +49,7 @@ class RageDisplay
 public:
 	RageDisplay( HWND hWnd );
 	~RageDisplay();
-	enum { REFRESH_MAX=0, REFRESH_DEFAULT=1 };
+	enum { REFRESH_DEFAULT=0, REFRESH_MAX=1  };
 	bool SwitchDisplayMode( 
 		const bool bWindowed, const int iWidth, const int iHeight, const int iBPP, const int iFullScreenHz );
 

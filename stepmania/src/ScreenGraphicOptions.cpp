@@ -39,7 +39,7 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Display",		2,  {"FULLSCREEN", "WINDOWED"} },
 	{ "Display Res",	7,  {"320","400","512","640","800","1024","1280"} },
 	{ "Texture Res",	3,  {"256","512","1024"} },
-	{ "Refresh Rate",	11, {"MAX","DEFAULT","60","70","72","75","80","85","90","100","120"} },
+	{ "Refresh Rate",	11, {"DEFAULT","MAX","60","70","72","75","80","85","90","100","120"} },
 	{ "Show Stats",		2,  {"OFF","ON"} },
 	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
 	{ "BG Brightness",	11,  {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
@@ -112,12 +112,12 @@ void ScreenGraphicOptions::UpdateRefreshRates()
 			break;
 		}
 	}
-	/* If current refresh is no longer valid, set it to max. */
+	/* If current refresh is no longer valid, set it to default. */
 	int CurSel = m_iSelectedOption[0][GO_REFRESH_RATE];
 	if(m_OptionDim[GO_REFRESH_RATE][CurSel])
 		m_iSelectedOption[0][GO_REFRESH_RATE] = 
-		m_iSelectedOption[1][GO_REFRESH_RATE] = RageDisplay::REFRESH_MAX;
-//	PositionUnderlines();
+		m_iSelectedOption[1][GO_REFRESH_RATE] = RageDisplay::REFRESH_DEFAULT;
+	PositionUnderlines();
 }
 
 void ScreenGraphicOptions::OnChange()
@@ -152,8 +152,8 @@ void ScreenGraphicOptions::ImportOptions()
 	
 	switch( PREFSMAN->m_iRefreshRate )
 	{
-	case RageDisplay::REFRESH_MAX:		m_iSelectedOption[0][GO_REFRESH_RATE] = 0;	break;
-	case RageDisplay::REFRESH_DEFAULT:	m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
+	case RageDisplay::REFRESH_DEFAULT:	m_iSelectedOption[0][GO_REFRESH_RATE] = 0;	break;
+	case RageDisplay::REFRESH_MAX:		m_iSelectedOption[0][GO_REFRESH_RATE] = 1;	break;
 	case 60:	m_iSelectedOption[0][GO_REFRESH_RATE] = 2;	break;
 	case 70:	m_iSelectedOption[0][GO_REFRESH_RATE] = 3;	break;
 	case 72:	m_iSelectedOption[0][GO_REFRESH_RATE] = 4;	break;
@@ -194,8 +194,8 @@ void ScreenGraphicOptions::ExportOptions()
 		
 	switch( m_iSelectedOption[0][GO_REFRESH_RATE] )
 	{
-	case 0:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_MAX;	break;
-	case 1:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_DEFAULT;break;
+	case 0:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_DEFAULT;break;
+	case 1:	PREFSMAN->m_iRefreshRate = RageDisplay::REFRESH_MAX;	break;
 	case 2:	PREFSMAN->m_iRefreshRate = 60;	break;
 	case 3:	PREFSMAN->m_iRefreshRate = 70;	break;
 	case 4:	PREFSMAN->m_iRefreshRate = 72;	break;

@@ -15,6 +15,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "RageException.h"
+#include "RageDisplay.h"
 
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
@@ -29,7 +30,7 @@ PrefsManager::PrefsManager()
 #endif
 	m_iDisplayResolution = 640;
 	m_iTextureResolution = 1024;
-	m_iRefreshRate = 0;
+	m_iRefreshRate = RageDisplay::REFRESH_DEFAULT;
 	m_bIgnoreJoyAxes = false;
 	m_bOnlyDedicatedMenuButtons = false;
 #ifdef _DEBUG
