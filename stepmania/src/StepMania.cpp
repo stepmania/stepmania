@@ -165,6 +165,40 @@ static void SetIcon()
 	SDL_FreeSurface(srf);
 }
 
+static void BoostAppPri()
+{
+	if(PREFSMAN->m_iBoostAppPriority == 0)
+		return;
+
+	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
+#ifdef DEBUG
+	if(PREFSMAN->m_iBoostAppPriority == -1)
+		return;
+#endif
+
+#ifdef WIN32
+	/* We just want a slight boost, so we don't skip needlessly if something happens
+	 * in the background.  We don't really want to be high-priority--above normal should
+	 * be enough.  However, ABOVE_NORMAL_PRIORITY_CLASS is only supported in Win2000
+	 * and later. */
+	OSVERSIONINFO version;
+	version.dwOSVersionInfoSize=sizeof(version);
+	if(!GetVersionEx(&version))
+	{
+		LOG->Warn(werr_ssprintf(GetLastError(), "GetVersionEx failed"));
+		return;
+	}
+
+	DWORD pri = HIGH_PRIORITY_CLASS;
+	if(version.dwMajorVersion >= 5)
+		pri = ABOVE_NORMAL_PRIORITY_CLASS;
+
+	/* Be sure to boost the app, not the thread, to make sure the
+	 * sound thread stays higher priority than the main thread. */
+	SetPriorityClass(GetCurrentProcess(), pri);
+#endif
+}
+
 int main(int argc, char* argv[])
 {
 	ChangeToDirOfExecutable(argv[0]);
@@ -252,6 +286,10 @@ int main(int argc, char* argv[])
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
+
+	/* People may want to do something else while songs are loading, so do
+	 * this after loading songs. */
+	BoostAppPri();
 
 	Reset();
 
