@@ -7,6 +7,7 @@
 #define NETMAXBUFFERSIZE 1020
 #define NUMBERCLIENTS 16
 
+#if !defined(WITHOUT_NETWORKING)
 class LanPlayer
 {
 public:
@@ -64,6 +65,7 @@ private:
 	GameInfo gameInfo;
 	int version;
 };
+#endif
 
 class StepManiaLanServer
 {

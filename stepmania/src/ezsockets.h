@@ -9,6 +9,8 @@
 #ifndef EZSOCKETS_H
 #define EZSOCKETS_H
 
+#if !defined(WITHOUT_NETWORKING)
+
 #include <sstream>
 #include <string>
 #include <vector>
@@ -143,6 +145,7 @@ private:
 istream& operator>>(istream& is, EzSockets& obj);
 ostream& operator<<(ostream& os, EzSockets& obj);
 
+#endif
 
 #endif
 
