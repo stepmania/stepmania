@@ -20,11 +20,10 @@ bool LyricsLoader::LoadFromLRCFile(const CString& sPath, Song& out)
 {
 	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.c_str() );
 	
-	RageFile input( sPath );
-	
-	if (!input.IsOpen())
+	RageFile input;
+	if( !input.Open(sPath) )
 	{
-		LOG->Warn("Error opening file '%s' for reading.", sPath.c_str());
+		LOG->Warn("Error opening file '%s' for reading: %s", sPath.c_str(), input.GetError().c_str() );
 		return false;
 	}
 	

@@ -604,10 +604,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					 * rather than open the file again. However, I'm not changing the logic,
 					 * only the implementation. -- Steve
 					 */
-					RageFile file(sPath); //Why doesn't VC6 bitch here but it does with int??
-
-					if (!file.IsOpen())
-						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
+					RageFile file;
+					if( !file.Open(sPath) )
+						RageException::Throw( "Failed to open %s for reading: %s", sPath.c_str(), file.GetError().c_str() );
 					while (!file.AtEOF())
 					{
 						CString line;
@@ -663,10 +662,9 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					RageFile file(sPath); //Why doesn't VC6 bitch here but it does with int??
-
-					if (!file.IsOpen())
-                        RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
+					RageFile file;
+					if( !file.Open(sPath) )
+						RageException::Throw( "Failed to open %s for reading: %s", sPath.c_str(), file.GetError().c_str() );
 					while (!file.AtEOF())
 					{
 						CString line;

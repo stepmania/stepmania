@@ -1610,9 +1610,8 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 	// Filter swear words from name
 	//
 	name.MakeUpper();
-	RageFile file(NAMES_BLACKLIST_FILE);
-		
-	if (file.IsOpen())
+	RageFile file;
+	if( file.Open(NAMES_BLACKLIST_FILE) )
 	{
 		CString line;
 		

@@ -26,7 +26,6 @@ public:
 	};
 
     RageFile();
-    RageFile( const CString& path, int mode = READ );
     ~RageFile() { Close(); }
 	RageFile( const RageFile &cpy );
 

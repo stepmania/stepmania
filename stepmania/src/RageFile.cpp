@@ -11,15 +11,6 @@ RageFile::RageFile()
 	m_FilePos = 0;
 }
 	
-RageFile::RageFile( const CString& path, int mode )
-{
-    m_File = NULL;
-	m_BufAvail = 0;
-	m_EOF = false;
-	m_FilePos = 0;
-	Open(path, mode);
-}
-
 RageFile::RageFile( const RageFile &cpy )
 {
 	ResetBuf();

@@ -45,9 +45,8 @@ bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 		return false; \
 	}
 
-	RageFile file(fn);
-	
-	if( !file.IsOpen() )
+	RageFile file;
+	if( !file.Open(fn) )
 		HANDLE_ERROR("Could not open file.");
 	if( !file.Seek(0x70) )
 		HANDLE_ERROR("Could not seek.");
