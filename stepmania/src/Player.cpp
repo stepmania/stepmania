@@ -351,7 +351,7 @@ void Player::DrawPrimitives()
 		m_HoldJudgement[c].Draw();
 }
 
-int Player::GetClosestBeatDirectional( int col, float fBeat, float fMaxSecondsDistance, int iDirection  )
+int Player::GetClosestNoteDirectional( int col, float fBeat, float fMaxSecondsDistance, int iDirection  )
 {
 	// look for the closest matching step
 	const int iIndexStartLookingAt = BeatToNoteRow( fBeat );
@@ -374,10 +374,10 @@ int Player::GetClosestBeatDirectional( int col, float fBeat, float fMaxSecondsDi
 	return -1;
 }
 
-int Player::GetClosestBeat( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind )
+int Player::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fMaxBeatsBehind )
 {
-	int Fwd = GetClosestBeatDirectional(col, fBeat, fMaxBeatsAhead, 1);
-	int Back = GetClosestBeatDirectional(col, fBeat, fMaxBeatsBehind, -1);
+	int Fwd = GetClosestNoteDirectional(col, fBeat, fMaxBeatsAhead, 1);
+	int Back = GetClosestNoteDirectional(col, fBeat, fMaxBeatsBehind, -1);
 
 	if(Fwd == -1 && Back == -1) return -1;
 	if(Fwd == -1) return Back;
@@ -400,7 +400,7 @@ void Player::Step( int col )
 
 	ASSERT( col >= 0  &&  col <= GetNumTracks() );
 
-	int iIndexOverlappingNote = GetClosestBeat( col, GAMESTATE->m_fSongBeat, 
+	int iIndexOverlappingNote = GetClosestNote( col, GAMESTATE->m_fSongBeat, 
 						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate,
 						   GAMESTATE->m_fCurBPS * GAMESTATE->m_SongOptions.m_fMusicRate );
 	
@@ -412,12 +412,13 @@ void Player::Step( int col )
 	{
 		// compute the score for this hit
 		const float fStepBeat = NoteRowToBeat( (float)iIndexOverlappingNote );
-		// const float fBeatsUntilStep = fStepBeat - fSongBeat;
+
 		const float fStepSeconds = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat(fStepBeat);
+
 		// The offset from the actual step in seconds:
 		const float fNoteOffset = fStepSeconds - GAMESTATE->m_fMusicSeconds;
-		// const float fNoteOffset = fBeatsUntilStep / GAMESTATE->m_fCurBPS;
-		const float fSecondsFromPerfect = fabsf( fNoteOffset );
+
+		const float fSecondsFromPerfect = fabsf( fNoteOffset ) / GAMESTATE->m_SongOptions.m_fMusicRate;	// account for music rate
 
 
 		TapNoteScore score;

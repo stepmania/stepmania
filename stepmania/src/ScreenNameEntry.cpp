@@ -189,7 +189,7 @@ ScreenNameEntry::ScreenNameEntry()
 		m_textCategory[p].LoadFromFont( THEME->GetPathTo("Fonts","header2") );
 		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
-		CString sCategoryText = ssprintf("No. %d", GAMESTATE->m_iRankingIndex[p]+1);
+		CString sCategoryText = ssprintf("No. %d in\n", GAMESTATE->m_iRankingIndex[p]+1);
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
@@ -197,13 +197,13 @@ ScreenNameEntry::ScreenNameEntry()
 				StageStats SS;
 				vector<Song*> vSongs;
 				GAMESTATE->GetFinalEvalStatsAndSongs( SS, vSongs );
-				sCategoryText += ssprintf(" in Type %c (%d)", 'A'+GAMESTATE->m_RankingCategory[p], SS.iMeter );
+				sCategoryText += ssprintf("Type %c (%d)", 'A'+GAMESTATE->m_RankingCategory[p], SS.iMeter[p] );
 			}
 			break;
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			sCategoryText += ssprintf(" in \n%s", GAMESTATE->m_pCurCourse->m_sName.c_str());
+			sCategoryText += ssprintf("%s", GAMESTATE->m_pCurCourse->m_sName.c_str());
 			break;
 		default:
 			ASSERT(0);
