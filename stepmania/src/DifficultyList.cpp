@@ -98,8 +98,13 @@ void DifficultyList::GetCurrentRows( int iCurrentRow[NUM_PLAYERS] )
 			continue;
 
 		for( iCurrentRow[pn] = 0; iCurrentRow[pn] < (int) m_Rows.size(); ++iCurrentRow[pn] )
+		{
 			if( GAMESTATE->m_pCurNotes[pn] == m_Rows[iCurrentRow[pn]]->m_Steps )
 				break;
+			if( GAMESTATE->m_pCurNotes[pn] == NULL && 
+				m_Rows[iCurrentRow[pn]]->m_Steps->GetDifficulty() == GAMESTATE->m_PreferredDifficulty[pn] )
+				break;
+		}
 	}
 }
 
