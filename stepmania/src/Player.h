@@ -112,7 +112,7 @@ private:
 	void SetScoreX( int iX );
 	void UpdateScore( const float& fDeltaTime );
 	void DrawScore();
-	void ChangeScore( StepScore score );
+	void ChangeScore( StepScore stepscore, int iCurCombo );
 	float		m_fScore;
 	Sprite		m_sprScoreFrame;
 	BitmapText	m_textScoreNum;

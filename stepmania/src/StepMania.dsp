@@ -308,11 +308,11 @@ SOURCE=.\BlurredTitle.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\FootBar.cpp
+SOURCE=.\FootMeter.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\FootBar.h
+SOURCE=.\FootMeter.h
 # End Source File
 # Begin Source File
 

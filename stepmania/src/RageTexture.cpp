@@ -50,7 +50,7 @@ RageTexture::~RageTexture()
 }
 
 
-VOID RageTexture::CreateFrameRects()
+void RageTexture::CreateFrameRects()
 {
 	GetFrameDimensionsFromFileName( m_sFilePath, &m_uFramesWide, &m_uFramesHigh );
 
@@ -76,7 +76,7 @@ VOID RageTexture::CreateFrameRects()
 }
 
 #include "string.h"
-VOID RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesWide, UINT* puFramesHigh ) const
+void RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesWide, UINT* puFramesHigh ) const
 {
 	//////////////////////////////////////////////////
 	// Parse m_sFilePath for the frame dimensions

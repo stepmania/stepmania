@@ -17,18 +17,11 @@
 
 
 
-//const float STEP_DOWN_TIME	= 0.05f;
-
-const int SCORE_ADD_PERFECT	=	700;
-const int SCORE_ADD_GREAT	=	400;
-const int SCORE_ADD_GOOD	=	200;
-const int SCORE_ADD_BOO		=	100;
-
 const float LIFE_PERFECT	=	 0.015f;
 const float LIFE_GREAT		=	 0.008f;
 const float LIFE_GOOD		=	 0.000f;
 const float LIFE_BOO		=	-0.015f;
-const float LIFE_MISS		=	-0.060f;
+const float LIFE_MISS		=	-0.030f;
 
 const int ARROW_SIZE	=	 64;
 
@@ -50,7 +43,7 @@ const CString SPRITE_COLOR_ARROW = "Sprites\\Color Arrow.sprite";
 const CString SPRITE_GRAY_ARROW = "Sprites\\Gray Arrow.sprite";
 
 
-const float JUDGEMENT_DISPLAY_TIME	=	1.0f;
+const float JUDGEMENT_DISPLAY_TIME	=	0.6f;
 const CString JUDGEMENT_SPRITE		=	"Sprites\\Judgement.sprite";
 const float JUDGEMENT_Y				=	CENTER_Y;
 
@@ -80,7 +73,7 @@ Player::Player()
 	m_iCurCombo = 0;
 	m_iMaxCombo = 0;
 	m_fLifePercentage = 0.50f;
-	m_fScore = 0.0f;
+	m_fScore = 0;
 
 	// init step elements
 	for( int i=0; i<MAX_STEP_ELEMENTS; i++ )
@@ -210,7 +203,7 @@ Player::Player()
 
 	// score
 	m_sprScoreFrame.LoadFromTexture( SCORE_FRAME_TEXTURE );
-	m_textScoreNum.LoadFromFontName( "Arial Bold" );
+	m_textScoreNum.LoadFromFontName( "Arial Black with Outline" );
 	m_textScoreNum.SetText( "         " );
 
 
@@ -242,7 +235,7 @@ void Player::SetSteps( const Steps& newSteps )
 
 void Player::Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDifference )
 {
-	//RageLog( "Player::Update(%f)", fDeltaTime );
+	//RageLog( "Player::Update(%f, %f, %f)", fDeltaTime, fSongBeat, fMaxBeatDifference );
 
 	int iNumMisses = UpdateStepsMissedOlderThan( fSongBeat-fMaxBeatDifference );
 	if( iNumMisses > 0 )
@@ -349,20 +342,20 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 	//		 fBeatsUntilStep, fPercentFromPerfect );
 
 	// compute what the score should be for the note we stepped on
-	StepScore &score = m_StepScore[iIndexThatWasSteppedOn];
+	StepScore &stepscore = m_StepScore[iIndexThatWasSteppedOn];
 
-	if(		 fPercentFromPerfect < 0.20f )	score = perfect;
-	else if( fPercentFromPerfect < 0.45f )	score = great;
-	else if( fPercentFromPerfect < 0.75f )	score = good;
-	else									score = boo;
+	if(		 fPercentFromPerfect < 0.20f )	stepscore = perfect;
+	else if( fPercentFromPerfect < 0.45f )	stepscore = great;
+	else if( fPercentFromPerfect < 0.75f )	stepscore = good;
+	else									stepscore = boo;
 
 	// update the judgement, score, and life
-	SetJudgement( score );
-	ChangeScore( score );
-	ChangeLife( score );
+	SetJudgement( stepscore );
+	ChangeScore( stepscore, m_iCurCombo );
+	ChangeLife( stepscore );
 
 	// update the combo display
-	switch( score )
+	switch( stepscore )
 	{
 	case perfect:
 	case great:
@@ -387,13 +380,15 @@ int Player::UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat )
 	// Instead, only check 10 elements back.  Even 10 is overkill.
 	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
+	//RageLog( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 	for( int i=iStartCheckingAt; i<iMissIfOlderThanThisIndex; i++ )
 	{
-//		RageLog( "Step %d: status == %d, score == %d", i, StatusArray[i], Score[i] );
-		if( m_LeftToStepOn[i] != 0 )
+		//RageLog( "Checking for miss:  %d: lefttostepon == %d, score == %d", i, m_LeftToStepOn[i], m_StepScore[i] );
+		if( m_LeftToStepOn[i] != 0  &&  m_StepScore[i] != miss)
 		{
 			m_StepScore[i] = miss;
 			iNumMissesFound++;
+			ChangeLife( miss );
 		}
 	}
 
@@ -568,7 +563,7 @@ void Player::SetJudgement( StepScore score )
 	m_fJudgementDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
 	m_sprJudgement.SetZoom( 1.5f );
-	m_sprJudgement.TweenTo( JUDGEMENT_DISPLAY_TIME/2.0,
+	m_sprJudgement.TweenTo( JUDGEMENT_DISPLAY_TIME/3.0,
 							m_sprJudgement.GetX(), 
 							m_sprJudgement.GetY()  );
 }
@@ -666,6 +661,7 @@ void Player::ChangeLife( StepScore score )
 	case great:		m_fLifePercentage += LIFE_GREAT;	break;
 	case good:		m_fLifePercentage += LIFE_GOOD;		break;
 	case boo:		m_fLifePercentage += LIFE_BOO;		break;
+	case miss:		m_fLifePercentage += LIFE_MISS;		break;
 	}
 
 	m_fLifePercentage = clamp( m_fLifePercentage, 0, 1 );
@@ -703,21 +699,41 @@ void Player::DrawScore()
 }
 
 
-void Player::ChangeScore( StepScore score )
+void Player::ChangeScore( StepScore score, int iCurCombo )
 {
-	int iScoreToAdd;
+	// The scoring system for DDR versions 1 and 2 (including the Plus remixes) is as follows: 
+	// For every step: 
+	//
+	// Multiplier (M) = (# of steps in your current combo / 4) rounded down 
+	// "Good" step = M * 100 (and this ends your combo)
+	// "Great" step = M * M * 100 
+	// "Perfect" step = M * M * 300 
+	// 
+	// e.g. When you get a 259 combo, the 260th step will earn you:
+	// 
+	// M = (260 / 4) rounded down 
+	// = 65 
+	//  step = M x M X 100 
+	// = 65 x 65 x 100 
+	// = 422,500 
+	// Perfect step = Great step score x 3 
+	// = 422,500 x 3 
+	// = 1,267,500
+
+	float M = iCurCombo/4.0f;
+
+	int iScoreToAdd = 0;
 	switch( score )
 	{
-	case perfect:	iScoreToAdd = SCORE_ADD_PERFECT;	break;
-	case great:		iScoreToAdd = SCORE_ADD_GREAT;		break;
-	case good:		iScoreToAdd = SCORE_ADD_GOOD;		break;
-	case boo:		iScoreToAdd = SCORE_ADD_BOO;		break;
 	case miss:											break;
+	case boo:											break;
+	case good:		iScoreToAdd = M * 100     + 100;	break;
+	case great:		iScoreToAdd = M * M * 100 + 300;	break;
+	case perfect:	iScoreToAdd = M * M * 300 + 500;	break;
 	}
-	m_fScore += iScoreToAdd * (1 + m_iCurCombo/200.0f);
+	m_fScore += iScoreToAdd;
+	ASSERT( m_fScore > 0 );
 
-	// multiply the combo bonus
-	//m_fScore *= SCORE_MULT_BOO;
 	
 	m_textScoreNum.SetText( ssprintf( "%9.0f", m_fScore ) );
 }
