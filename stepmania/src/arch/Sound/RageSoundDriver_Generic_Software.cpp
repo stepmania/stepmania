@@ -11,7 +11,7 @@ static const int bytes_per_frame = channels*2; /* 16-bit */
 
 static const int frames_to_buffer = 4096;
 
-static const int num_chunks = 16;
+static const int num_chunks = 8;
 static int chunksize() { return frames_to_buffer / num_chunks; }
 
 RageSound_Generic_Software::sound::sound()
