@@ -27,7 +27,11 @@ SongCacheIndex::~SongCacheIndex()
 
 static void EmptyDir( CString dir )
 {
+#ifdef _XBOX
+	ASSERT(dir[dir.size()-1] == '\\');
+#else
 	ASSERT(dir[dir.size()-1] == '/');
+#endif
 
 	CStringArray asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );

@@ -29,6 +29,7 @@
 #include "SDL_video.h"	// for SDL_Surface
 #include "SDL_utils.h"
 #include "D3DX8Core.h"
+#include "PrefsManager.h"
 
 #include "arch/arch.h"
 
@@ -489,8 +490,21 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	g_d3dpp.Flags					=	0;
 	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 #else
-	g_d3dpp.Flags					=	(p.interlaced? D3DPRESENTFLAG_INTERLACED: D3DPRESENTFLAG_PROGRESSIVE ) | D3DPRESENTFLAG_10X11PIXELASPECTRATIO;
-	g_d3dpp.FullScreen_RefreshRateInHz = p.PAL ? 50 : 60;
+	if(XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I)
+	{
+		//get supported video flags
+		DWORD videoFlags = XGetVideoFlags();
+		
+		//set pal60 if available.
+		if(videoFlags & XC_VIDEO_FLAGS_PAL_60Hz)
+			g_d3dpp.FullScreen_RefreshRateInHz = 60 ;
+		else
+			g_d3dpp.FullScreen_RefreshRateInHz = 50 ;
+	}
+	else
+		g_d3dpp.FullScreen_RefreshRateInHz = 60 ;
+
+	g_d3dpp.Flags					=	0 ;
 #endif
 
 	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
@@ -501,6 +515,11 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		g_d3dpp.Flags, g_d3dpp.FullScreen_RefreshRateInHz,
 		g_d3dpp.FullScreen_PresentationInterval
 	);
+
+#ifdef _XBOX
+	if ( D3D__pDevice )
+		g_pd3dDevice = D3D__pDevice ;
+#endif
 
 	if( g_pd3dDevice == NULL )		// device is not yet created.  We need to create it
 	{
@@ -567,6 +586,16 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 
 void RageDisplay_D3D::ResolutionChanged()
 {
+#ifdef _XBOX
+	g_CurrentParams.width = PREFSMAN->m_fScreenWidth ;
+	g_CurrentParams.height = PREFSMAN->m_fScreenHeight ;
+	D3DVIEWPORT8 viewData2 = { 0,0,640,480, 0.f, 1.f };
+	g_pd3dDevice->SetViewport( &viewData2 );
+	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
+						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
+	D3DVIEWPORT8 viewData = { PREFSMAN->m_fScreenPosX, PREFSMAN->m_fScreenPosY, g_CurrentParams.width, g_CurrentParams.height, 0.f, 1.f };
+	g_pd3dDevice->SetViewport( &viewData );
+#endif
 	// no need to clear because D3D uses an overlay
 //	SetViewport(0,0);
 //

@@ -8,6 +8,16 @@
 #pragma comment(lib, "libresample/resample.lib")
 #endif
 
+#ifdef _XBOX
+
+#ifdef _DEBUG
+#pragma comment(lib, "libresample/xboxresample/debug/xboxresample.lib")
+#else
+#pragma comment(lib, "libresample/xboxresample/release/xboxresample.lib")
+#endif
+
+#endif
+
 #include "RageTimer.h"
 
 RageSoundReader_Resample_Good::RageSoundReader_Resample_Good()

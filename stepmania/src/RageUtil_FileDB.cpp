@@ -62,7 +62,14 @@ void FileSet::LoadFromDir(const CString &dir)
 
 #if defined(WIN32)
 	WIN32_FIND_DATA fd;
-	HANDLE hFind = FindFirstFile( dir+SLASH "*", &fd );
+	CString dirHolder = dir ;
+
+	if ( dirHolder.size() > 0  && dirHolder.Right(1) == SLASH )
+	{
+		dirHolder.erase( dirHolder.size() - 1 ) ;
+	}
+
+	HANDLE hFind = FindFirstFile( dirHolder+SLASH "*", &fd );
 
 	if( hFind == INVALID_HANDLE_VALUE )
 		return;
@@ -222,7 +229,12 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 	if( Path.size() > 0 && Path.Right(1) == SLASH )
 		Path.erase( Path.size()-1 );
 
+#ifdef _XBOX
+	static Regex split("(.*\\\\)([^\\\\]+)");
+#else
 	static Regex split("(.*/)([^/]+)");
+#endif
+
 	CStringArray match;
 	if(split.Compare(Path, match)) {
 		/* At least one slash. */
@@ -230,8 +242,13 @@ static void SplitPath( CString Path, CString &Dir, CString &Name )
 		Name = match[1];
 	} else {
 		/* No slash. */
+#ifdef _XBOX
+		Dir = "D:\\" ;
+		Name = "" ;
+#else
 		Dir = "." SLASH;
 		Name = Path;
+#endif
 	}
 }
 
@@ -288,6 +305,12 @@ bool FilenameDB::IsADirectory( const CString &sPath )
 	CString Dir, Name;
 	SplitPath(sPath, Dir, Name);
 	FileSet &fs = GetFileSet(Dir.c_str());
+
+#ifdef _XBOX
+	if ( ( Dir == "D:\\" ) && ( Name == "" ) )
+		return true ;
+#endif
+
 	return fs.IsADirectory(Name);
 }
 

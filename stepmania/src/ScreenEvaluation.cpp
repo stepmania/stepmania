@@ -372,7 +372,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 					if( !GAMESTATE->IsPlayerEnabled(p) )
 						continue;	// skip
 
+#ifdef _XBOX
+					//shorten filenames for FATX
+					m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenEvaluation diff icons 1x5") );
+#else
 					m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenEvaluation difficulty icons 1x5") );
+#endif
+
 					m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
 					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 					UtilSetXYAndOnCommand( m_DifficultyIcon[p], "ScreenEvaluation" );
@@ -620,7 +626,12 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			UtilSetXYAndOnCommand( m_sprJudgeLabels[l], "ScreenEvaluation" );
 			this->AddChild( &m_sprJudgeLabels[l] );
 
+#ifdef _XBOX
+			//shorten filenames for FATX
+	//		m_soundJudgeSound[l].Load( THEME->GetPathToS( ssprintf("ScreenEvaluation j %s", JUDGE_STRING[l]) ) );
+#else
 	//		m_soundJudgeSound[l].Load( THEME->GetPathToS( ssprintf("ScreenEvaluation JudgeSound %s", JUDGE_STRING[l]) ) );
+#endif
 	//		m_TimeToPlayJudgeSound[l] = JUDGE_SOUND_TIME( JUDGE_STRING[l] );
 
 			for( p=0; p<NUM_PLAYERS; p++ )

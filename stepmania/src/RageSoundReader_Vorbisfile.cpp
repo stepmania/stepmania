@@ -15,9 +15,15 @@
 #endif
 
 #if defined(_XBOX)
+#ifdef _DEBUG
+#pragma comment(lib, "vorbis/xbox/ogg_static_d.lib")
+#pragma comment(lib, "vorbis/xbox/vorbis_static_d.lib")
+#pragma comment(lib, "vorbis/xbox/vorbisfile_static_d.lib")
+#else
 #pragma comment(lib, "vorbis/xbox/ogg_static.lib")
 #pragma comment(lib, "vorbis/xbox/vorbis_static.lib")
 #pragma comment(lib, "vorbis/xbox/vorbisfile_static.lib")
+#endif
 #elif defined(_WINDOWS)
 #pragma comment(lib, "vorbis/win32/ogg_static.lib")
 #pragma comment(lib, "vorbis/win32/vorbis_static.lib")

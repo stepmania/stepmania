@@ -95,6 +95,18 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	G_TICK_EARLY_SECONDS.Refresh();
 
+	//need to initialize these before checking for demonstration mode
+	//otherwise destructor will try to delete possibly invalid pointers
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_pLifeMeter[p] = NULL;
+		m_pScoreDisplay[p] = NULL;
+		m_pPrimaryScoreKeeper[p] = NULL;
+		m_pSecondaryScoreKeeper[p] = NULL;
+		m_pInventory[p] = NULL ;
+	}
+	m_pCombinedLifeMeter = NULL;
 
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
@@ -105,14 +117,6 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	GAMESTATE->ResetStageStatistics();
 
 
-	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_pLifeMeter[p] = NULL;
-		m_pScoreDisplay[p] = NULL;
-		m_pPrimaryScoreKeeper[p] = NULL;
-		m_pSecondaryScoreKeeper[p] = NULL;
-	}
-	m_pCombinedLifeMeter = NULL;
 
 
 	// fill in difficulty of CPU players with that of the first human player

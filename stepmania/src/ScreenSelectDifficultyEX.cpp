@@ -115,9 +115,15 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX( CString sClassName ) : Scree
 		float fCursorX = GetCursorX( (PlayerNumber)p );
 		float fCursorY = GetCursorY( (PlayerNumber)p );
 		
+#ifdef _XBOX
+		//shorten filenames for FATX
+		CString sInfoFile = ssprintf( "ScrSelDiffX info %s", m_ModeChoices[0].m_sName.c_str() );
+		CString sPictureFile = ssprintf( "ScrSelDiffX picture %s", m_ModeChoices[0].m_sName.c_str() );
+#else
 		CString sInfoFile = ssprintf( "ScreenSelectDifficultyEX info %s", m_ModeChoices[0].m_sName.c_str() );
 		CString sPictureFile = ssprintf( "ScreenSelectDifficultyEX picture %s", m_ModeChoices[0].m_sName.c_str() );
-		
+#endif
+
 		m_sprPicture[p].Load( THEME->GetPathToG(sPictureFile) );
 		m_sprPicture[p].SetXY( PICTURE_X(p), PICTURE_Y(p) );
 		m_framePages.AddChild( &m_sprPicture[p] );

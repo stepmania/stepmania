@@ -117,7 +117,13 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassNam
 		this->AddChild( &m_HighScore[p] );
 	}	
 
+#ifdef _XBOX
+	//shorten filenames for FATX
+	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenSelectCourse opt message 1x2") );
+#else
 	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenSelectCourse options message 1x2") );
+#endif
+
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
 	m_sprOptionsMessage.SetZoomY( 0 );

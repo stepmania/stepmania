@@ -1023,7 +1023,10 @@ void ScreenSelectMusic::AfterMusicChange()
 			pSong->GetSteps( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 			SortNotesArrayByDifficulty( m_arrayNotes );
 
-			m_Banner.LoadFromSong( pSong );
+			if ( PREFSMAN->m_bShowBanners )
+				m_Banner.LoadFromSong( pSong );
+			else
+				m_Banner.LoadFallback() ;
 
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			{

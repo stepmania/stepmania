@@ -38,15 +38,54 @@ LoadingWindow_SDL::LoadingWindow_SDL()
     if( image == NULL )
         RageException::Throw("Couldn't load loading.bmp: %s",SDL_GetError());
 
+
     /* Initialize the window */
     loading_screen = SDL_SetVideoMode(image->w, image->h, 16, SDL_SWSURFACE|SDL_ANYFORMAT|SDL_NOFRAME);
     if( loading_screen == NULL )
         RageException::Throw( "Couldn't initialize loading window: %s", SDL_GetError() );
 
+#ifdef _XBOX
+		SDL_XBOX_SetScreenPosition( 70, 48 ) ;
+		SDL_XBOX_SetScreenStretch( -150, -300 ) ;
+
+
+    if( FAILED ( XFONT_OpenDefaultFont( &m_pConsoleTTF ) ) ) 
+	{
+		m_pConsoleTTF = 0 ;
+	}
+	else
+	{
+		m_pConsoleTTF->SetTextHeight( 24 );
+
+		// Change Font Style - XFONT_NORMAL, XFONT_BOLD, 
+		//                     XFONT_ITALICS, XFONT_BOLDITALICS
+		m_pConsoleTTF->SetTextStyle( XFONT_NORMAL );
+
+		// Anti-Alias the font -- 0 for no anti-alias, 2 for some, 4 for MAX!
+		m_pConsoleTTF->SetTextAntialiasLevel( 2 );
+		m_pConsoleTTF->SetTextColor( 0xFFFFFFFF ) ;
+		m_pConsoleTTF->SetBkColor( 0x00000000 ) ;
+		m_pConsoleTTF->SetBkMode(XFONT_OPAQUE) ;
+
+		SetText( CString("Loading Songs" ) ) ;
+	}
+
+#endif
+
     SDL_BlitSurface(image, NULL, loading_screen, NULL);
 
     SDL_FreeSurface(image);
+
+	SDL_UpdateRect(loading_screen, 0,0,0,0);
+	SDL_UpdateRect(loading_screen, 0,0,0,0);
 }
+
+#ifdef _XBOX
+void LoadingWindow_SDL::SetText(CString str)
+{
+	m_cstrText = str ;
+}
+#endif
 
 LoadingWindow_SDL::~LoadingWindow_SDL()
 {
@@ -55,7 +94,33 @@ LoadingWindow_SDL::~LoadingWindow_SDL()
 
 void LoadingWindow_SDL::Paint()
 {
+#ifdef _XBOX
+	LPDIRECT3DSURFACE8 m_primarySurface; 
+	int x,y ;
+	unsigned int val ;
+	if ( m_pConsoleTTF )
+	{
+		WCHAR msg[1000] ;
+		swprintf( msg, L"%S", m_cstrText.c_str() ) ;
+
+		if ( m_pConsoleTTF->GetTextExtent( msg, -1, &val ) != S_OK )
+		{
+			val = 100 ;
+		}
+
+		x = (640-val)/2 ;
+		y = 350 ;
+
+		D3D__pDevice->GetRenderTarget( &m_primarySurface ) ;
+		m_pConsoleTTF->TextOut( m_primarySurface, L"                                                                                                                                                              ", -1, (float)0, (float)y ) ;
+		m_pConsoleTTF->TextOut( m_primarySurface, msg, wcslen(msg), (float)x, (float)y ) ;
+		m_primarySurface->Release() ;
+		D3D__pDevice->Present(NULL, NULL, NULL, NULL) ;
+	}
+
+#else
 	SDL_UpdateRect(loading_screen, 0,0,0,0);
+#endif
 }
 
 /*

@@ -49,6 +49,7 @@ PrefsManager::PrefsManager()
 #else
 	m_bShowStats = false;
 #endif
+	m_bShowBanners = true ;
 	m_BackgroundMode = BGMODE_ANIMATIONS;
 	m_iNumBackgrounds = 8;
 	m_bShowDanger = true;
@@ -168,6 +169,10 @@ PrefsManager::PrefsManager()
 #ifdef _XBOX
 	m_bInterlaced = true;
 	m_bPAL = false;
+	m_fScreenPosX = 0 ;
+	m_fScreenPosY = 0 ;
+	m_fScreenWidth = 640 ;
+	m_fScreenHeight = 480 ;
 #else
 	m_bInterlaced = false;
 #endif
@@ -214,6 +219,10 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
 #ifdef _XBOX
 	ini.GetValue( "Options", "PAL",								m_bPAL );
+	ini.GetValue( "Options", "ScreenPosX",						m_fScreenPosX );
+	ini.GetValue( "Options", "ScreenPosY",						m_fScreenPosY );
+	ini.GetValue( "Options", "ScreenWidth",						m_fScreenWidth );
+	ini.GetValue( "Options", "ScreenHeight",					m_fScreenHeight );
 #endif
 	ini.GetValue( "Options", "DisplayWidth",					m_iDisplayWidth );
 	ini.GetValue( "Options", "DisplayHeight",					m_iDisplayHeight );
@@ -224,6 +233,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "RefreshRate",						m_iRefreshRate );
 	ini.GetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
 	ini.GetValue( "Options", "ShowStats",						m_bShowStats );
+	ini.GetValue( "Options", "ShowBanners",						m_bShowBanners );
 	ini.GetValue( "Options", "BackgroundMode",					(int&)m_BackgroundMode );
 	ini.GetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.GetValue( "Options", "ShowDanger",						m_bShowDanger );
@@ -373,6 +383,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "RefreshRate",						m_iRefreshRate );
 	ini.SetValue( "Options", "UseDedicatedMenuButtons",			m_bOnlyDedicatedMenuButtons );
 	ini.SetValue( "Options", "ShowStats",						m_bShowStats );
+	ini.SetValue( "Options", "ShowBanners",						m_bShowBanners );
 	ini.SetValue( "Options", "BackgroundMode",					m_BackgroundMode);
 	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.SetValue( "Options", "ShowDanger",						m_bShowDanger );
@@ -410,6 +421,10 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "Interlaced",						m_bInterlaced );
 #ifdef _XBOX
 	ini.SetValue( "Options", "PAL",								m_bPAL );
+	ini.SetValue( "Options", "ScreenPosX",						m_fScreenPosX );
+	ini.SetValue( "Options", "ScreenPosY",						m_fScreenPosY );
+	ini.SetValue( "Options", "ScreenWidth",						m_fScreenWidth );
+	ini.SetValue( "Options", "ScreenHeight",					m_fScreenHeight );
 #endif
 	ini.SetValue( "Options", "HowToPlay",						m_bInstructions );
 	ini.SetValue( "Options", "Caution",							m_bShowDontDie );

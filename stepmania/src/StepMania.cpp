@@ -56,7 +56,8 @@
 
 
 #if defined(_XBOX)
-	#ifdef DEBUG
+	#include "custom_launch_params.h"
+	#ifdef _DEBUG
 	#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmaind.lib")
 	#else
 	#pragma comment(lib, "SDL-1.2.6/lib/xboxSDLmain.lib")
@@ -83,6 +84,11 @@ CString DirOfExecutable;
 
 static void ChangeToDirOfExecutable(const char *argv0)
 {
+#ifdef _XBOX
+	DirOfExecutable = "D:\\" ;
+	return ;
+#endif
+
 	DirOfExecutable = argv0;
 	// strip off executable name
 	unsigned n = DirOfExecutable.find_last_of("/\\");
@@ -494,6 +500,10 @@ struct VideoCardDefaults
 
 static CString GetVideoDriverName()
 {
+#ifdef _XBOX
+	return "D3D" ;
+#endif
+
 #if defined(_WINDOWS)
 	return GetPrimaryVideoDriverName();
 #else
@@ -735,9 +745,21 @@ void SaveGamePrefsToDisk()
 
 #define UNLOCKS_PATH BASE_PATH "Data" SLASH "Unlocks.dat"
 
+#ifdef _XBOX
+char *xboxargv[] = { "d:\\default.xbe" } ;
+extern RageDisplay::VideoModeParams	g_CurrentParams;
+
+#endif
 
 int main(int argc, char* argv[])
 {
+
+#ifdef _XBOX
+	argc = 1 ;
+	argv = xboxargv ;
+	XGetCustomLaunchData() ;
+#endif
+
 	g_argc = argc;
 	g_argv = argv;
 
@@ -869,6 +891,12 @@ int main(int argc, char* argv[])
 	/* Initialize which courses are ranking courses here. */
 	SONGMAN->UpdateRankingCourses();
 
+#ifdef _XBOX
+	g_CurrentParams.width = 600 ;
+	g_CurrentParams.height= 400 ;
+	DISPLAY->ResolutionChanged() ;
+#endif
+
 	/* Run the main loop. */
 	GameLoop();
 
@@ -925,6 +953,10 @@ int main(int argc, char* argv[])
 	}
 
 	SAFE_DELETE( HOOKS );
+
+#ifdef _XBOX
+	XReturnToLaunchingXBE() ;
+#endif
 
 	return 0;
 }

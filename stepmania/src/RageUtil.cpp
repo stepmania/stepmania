@@ -299,10 +299,14 @@ CString GetExtension( CString sPath )
 
 CString GetCwd()
 {
+#ifdef _XBOX
+	return "D:\\" ;
+#else
 	char buf[PATH_MAX];
 	bool ret = getcwd(buf, PATH_MAX) != NULL;
 	ASSERT(ret);
 	return buf;
+#endif
 }
 
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */

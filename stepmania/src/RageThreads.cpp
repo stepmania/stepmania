@@ -293,8 +293,11 @@ void RageThread::HaltAllThreads( bool Kill )
 			continue;
 		if( ThisThreadID == (int) g_ThreadSlots[entry].threadid )
 			continue;
-//		SuspendThread( g_ThreadSlots[entry].ThreadHandle );
+#ifdef _XBOX
+		SuspendThread( g_ThreadSlots[entry].ThreadHandle );
+#else
 		TerminateThread( g_ThreadSlots[entry].ThreadHandle, 0 );
+#endif
 	}
 #endif
 }

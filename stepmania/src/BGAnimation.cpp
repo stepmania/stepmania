@@ -79,6 +79,9 @@ void AddLayersFromAniDir( CString sAniDir, vector<BGAnimationLayer*> &layersAddT
 		if( ini.GetValue(sLayer, "Import", sImportDir) )
 		{
 			// import a whole BGAnimation
+#ifdef _XBOX
+			sImportDir.Replace("/","\\");
+#endif
 			sImportDir = sAniDir + sImportDir;
 			CollapsePath( sImportDir );
 			AddLayersFromAniDir( sImportDir, layersAddTo, Generic );

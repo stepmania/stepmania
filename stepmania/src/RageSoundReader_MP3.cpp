@@ -12,8 +12,11 @@
 #ifdef _WIN32
 #include "mad-0.15.0b/mad.h"
 #ifdef _XBOX
-// not set up
-// #pragma comment(lib, "mad-0.15.0b/msvc++/Xbox_Release/libmad.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "mad-0.15.0b/xboxmad/debug/xboxmad.lib")
+#else
+#pragma comment(lib, "mad-0.15.0b/xboxmad/Release/xboxmad.lib")
+#endif
 #else
 #pragma comment(lib, "mad-0.15.0b/msvc++/Release/libmad.lib")
 #endif

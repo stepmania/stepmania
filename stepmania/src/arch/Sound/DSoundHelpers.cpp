@@ -168,7 +168,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	memset(&format, 0, sizeof(format));
 	format.dwSize = sizeof(format);
 #ifdef _XBOX
-	format.dwFlags = DSBCAPS_CTRLVOLUME;
+	format.dwFlags = 0;
 #else
 	format.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLVOLUME;
 #endif
@@ -188,7 +188,24 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	format.dwBufferBytes = buffersize;
 #ifndef _XBOX
 	format.dwReserved = 0;
+#else
+	DSMIXBINVOLUMEPAIR dsmbvp[8] = {
+		{DSMIXBIN_FRONT_LEFT, DSBVOLUME_MAX},   // left channel
+		{DSMIXBIN_FRONT_RIGHT, DSBVOLUME_MAX},  // right channel
+		{DSMIXBIN_FRONT_CENTER, DSBVOLUME_MAX}, // left channel
+		{DSMIXBIN_FRONT_CENTER, DSBVOLUME_MAX}, // right channel
+		{DSMIXBIN_BACK_LEFT, DSBVOLUME_MAX},    // left channel
+		{DSMIXBIN_BACK_RIGHT, DSBVOLUME_MAX},   // right channel
+		{DSMIXBIN_LOW_FREQUENCY, DSBVOLUME_MAX},    // left channel
+		{DSMIXBIN_LOW_FREQUENCY, DSBVOLUME_MAX}};   // right channel
+		
+	DSMIXBINS dsmb;
+	dsmb.dwMixBinCount = 8;
+	dsmb.lpMixBinVolumePairs = dsmbvp;
+
+	format.lpMixBins			= &dsmb;
 #endif
+
 	format.lpwfxFormat = &waveformat;
 
 	/* Query IID_IDirectSoundBuffer instead of IID_IDirectSoundBuffer8. -Chris */
@@ -355,7 +372,12 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int chunksize)
 //	LOG->Trace("gave %i at %i (%i, %i) %i filled", num_bytes_empty, write_cursor, cursor, write, buffer_bytes_filled);
 
 	/* Lock the audio buffer. */
+#ifdef _XBOX
+	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, NULL, 0);
+#else
 	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
+#endif
+
 #ifndef _XBOX
 	if ( result == DSERR_BUFFERLOST ) {
 		buf->Restore();

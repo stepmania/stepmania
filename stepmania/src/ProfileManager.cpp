@@ -204,6 +204,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 			
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
+#ifndef _XBOX
 	// mount card
 	if( !PREFSMAN->m_sMemoryCardMountCommand[pn].empty() )
 		system( PREFSMAN->m_sMemoryCardMountCommand[pn] );
@@ -218,6 +219,7 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 		if( LoadProfileFromMemoryCard(pn) )
 			return true;
 	}
+#endif
 
 	if( LoadDefaultProfileFromMachine(pn) )
 		return true;

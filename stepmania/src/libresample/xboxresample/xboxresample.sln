@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xboxresample", "xboxresample.vcproj", "{8F267B70-00CA-49D3-9E55-149B3ECE5396}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Profile
+		ConfigName.2 = Profile_FastCap
+		ConfigName.3 = Release
+		ConfigName.4 = Release_LTCG
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Debug.ActiveCfg = Debug|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Debug.Build.0 = Debug|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Profile.ActiveCfg = Profile|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Profile.Build.0 = Profile|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Profile_FastCap.ActiveCfg = Profile_FastCap|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Profile_FastCap.Build.0 = Profile_FastCap|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Release.ActiveCfg = Release|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Release.Build.0 = Release|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Release_LTCG.ActiveCfg = Release_LTCG|Xbox
+		{8F267B70-00CA-49D3-9E55-149B3ECE5396}.Release_LTCG.Build.0 = Release_LTCG|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

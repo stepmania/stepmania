@@ -29,6 +29,7 @@ public:
 	int				m_iMaxTextureResolution;
 	int				m_iRefreshRate;
 	bool			m_bShowStats;
+	bool			m_bShowBanners;
 	enum BackgroundModes { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES } m_BackgroundMode;
 	int				m_iNumBackgrounds;
 	float			m_fBGBrightness;
@@ -37,6 +38,10 @@ public:
 	bool			m_bInterlaced;
 #ifdef _XBOX
 	bool			m_bPAL;
+	float			m_fScreenPosX ;
+	float			m_fScreenPosY ;
+	float			m_fScreenWidth ;
+	float			m_fScreenHeight ;
 #endif
 	bool			m_bDelayedTextureDelete;
 	bool			m_bTexturePreload;

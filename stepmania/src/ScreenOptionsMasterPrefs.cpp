@@ -341,6 +341,7 @@ MOVE( ProgressiveNonstopLifebar,	PREFSMAN->m_iProgressiveNonstopLifebar );
 MOVE( DisplayMode,			PREFSMAN->m_bWindowed );
 MOVE( WaitForVsync,			PREFSMAN->m_bVsync );
 MOVE( ShowStats,			PREFSMAN->m_bShowStats );
+MOVE( ShowBanners,			PREFSMAN->m_bShowBanners );
 MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete );
 MOVE( AntiAliasing,			PREFSMAN->m_bAntiAliasing );
 
@@ -473,6 +474,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Refresh\nRate",		RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
 	ConfOption( "Wait For\nVsync",		WaitForVsync,		"NO", "YES" ),
 	ConfOption( "Show\nStats",			ShowStats,			"OFF","ON" ),
+	ConfOption( "Show\nBanners",		ShowBanners,		"OFF","ON" ),
 
 	/* Sound options */
 	ConfOption( "Preload\nSounds",		PreloadSounds,		"NO","YES" ),
