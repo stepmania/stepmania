@@ -14,6 +14,7 @@
 #include <mach/thread_act.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#include <sys/time.h>
 
 /* You would think that these would be defined somewhere. */
 enum
@@ -341,6 +342,20 @@ void ArchHooks_darwin::ExitTimeCriticalSection()
 	float fTimeCritLen = RageTimer::GetTimeSinceStart() - g_fStartedTimeCritAt;
 	if( fTimeCritLen > 0.1f )
 		LOG->Warn( "Time-critical section lasted for %f", fTimeCritLen );
+}
+
+static int64_t GetMicrosecondsSinceEpoch()
+{
+	struct timeval tv;
+	gettimeofday( &tv, NULL );
+
+	return int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
+}
+
+int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
+{
+	static int64_t iStartTime = GetMicrosecondsSinceEpoch();
+	return GetMicrosecondsSinceEpoch() - iStartTime;
 }
 
 /*
