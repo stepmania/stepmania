@@ -251,6 +251,7 @@ public:
 	CString				m_iSoundDevice;
 	float			m_fSoundVolume;
 	int				m_iSoundResampleQuality;
+	CString			m_sInputDrivers;
 	CString			m_sMovieDrivers;
 	CString			m_sLightsDriver;
 	CString			m_sLightsStepsDifficulty;

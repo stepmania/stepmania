@@ -1,32 +1,28 @@
-/* RageInput: Starts up InputHandlers, which generate InputEvents. */
+#ifndef INPUT_HANDLER_MONKEY_SCRIPT
+#define INPUT_HANDLER_MONKEY_SCRIPT 1
 
-#ifndef RAGEINPUT_H
-#define RAGEINPUT_H
-
+#include "InputHandler.h"
+#include "RageTimer.h"
 #include "RageInputDevice.h"
 
-class InputHandler;
-class RageInput
+class InputHandler_MonkeyKeyboard: public InputHandler
 {
-	vector<InputHandler *> Devices;
+	RageTimer m_timerPressButton;
+	DeviceInput m_diLast;	// Last input that we sent
 
 public:
-	RageInput( CString drivers );
-	~RageInput();
-
-	void Update( float fDeltaTime );
+	void Update(float fDeltaTime);
+	InputHandler_MonkeyKeyboard();
+	~InputHandler_MonkeyKeyboard();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
-	void WindowReset();
 };
-
-extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
 
 #endif
 
 /*
- * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -36,7 +32,7 @@ extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our prog
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -47,3 +43,4 @@ extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our prog
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

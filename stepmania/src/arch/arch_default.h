@@ -26,6 +26,7 @@
  * header. */
 #define SUPPORT_SDL_INPUT
 #include "InputHandler/InputHandler_SDL.h"
+#include "InputHandler/InputHandler_MonkeyKeyboard.h"
 
 /* Load default fallback drivers; some of these may be overridden by arch-specific
  * drivers.  These are all singleton drivers--we never use more than one. */

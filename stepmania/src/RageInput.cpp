@@ -7,12 +7,12 @@
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
-RageInput::RageInput()
+RageInput::RageInput( CString drivers )
 {
 	LOG->Trace( "RageInput::RageInput()" );
 
 	/* Init optional devices. */
-	MakeInputHandlers(Devices);
+	MakeInputHandlers(drivers,Devices);
 
 	/* If no input devices are loaded, the user won't be able to input anything.
 	 * That should never happen. */

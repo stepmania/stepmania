@@ -106,7 +106,8 @@ endif
 
 ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h
 
-InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler.h
+InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler.h \
+		arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHandler/InputHandler_MonkeyKeyboard.h
 
 MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture.h \
 		arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h

@@ -13,7 +13,7 @@ class MemoryCardDriver;
 LoadingWindow *MakeLoadingWindow();
 LowLevelWindow *MakeLowLevelWindow();
 
-void MakeInputHandlers(vector<InputHandler *> &Add);
+void MakeInputHandlers(CString drivers,vector<InputHandler *> &Add);
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
 /* These definitions are in here, instead of in arch_*.h, because they
@@ -32,6 +32,14 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers);
 	#define DEFAULT_SOUND_DRIVER_LIST "DirectSound"
 #else
 	#define DEFAULT_SOUND_DRIVER_LIST "Null"
+#endif
+
+#if defined(_WINDOWS)
+	#define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump"
+#elif defined(_XBOX)
+	#define DEFAULT_INPUT_DRIVER_LIST "Xbox"
+#else
+	#define DEFAULT_INPUT_DRIVER_LIST "SDL"
 #endif
 
 #define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"

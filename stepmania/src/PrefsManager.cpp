@@ -271,6 +271,8 @@ void PrefsManager::Init()
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 	m_iSoundResampleQuality = RageSoundReader_Resample::RESAMP_NORMAL;
 
+	m_sInputDrivers = DEFAULT_INPUT_DRIVER_LIST;
+
 	m_sMovieDrivers = DEFAULT_MOVIE_DRIVER_LIST;
 
 	// StepMania.cpp sets these on first run:
@@ -467,6 +469,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
 	ini.GetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
 	ini.GetValue( "Options", "SoundDevice",						m_iSoundDevice );
+	ini.GetValue( "Options", "InputDrivers",					m_sInputDrivers );
 	ini.GetValue( "Options", "MovieDrivers",					m_sMovieDrivers );
 	ini.GetValue( "Options", "EasterEggs",						m_bEasterEggs );
 	ini.GetValue( "Options", "MarvelousTiming",					(int&)m_iMarvelousTiming );
@@ -809,10 +812,12 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValue( "Options", "SoundVolume",					m_fSoundVolume );
-	if(m_sLightsDriver != DEFAULT_LIGHTS_DRIVER)
-		ini.SetValue( "Options", "LightsDriver",				m_sLightsDriver );
+	if(m_sInputDrivers != DEFAULT_INPUT_DRIVER_LIST)
+		ini.SetValue ( "Options", "InputDrivers",				m_sInputDrivers );
 	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
 		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
+	if(m_sLightsDriver != DEFAULT_LIGHTS_DRIVER)
+		ini.SetValue( "Options", "LightsDriver",				m_sLightsDriver );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", 			m_sAdditionalSongFolders);
 	ini.SetValue( "Options", "AdditionalFolders", 				m_sAdditionalFolders);

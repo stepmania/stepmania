@@ -65,19 +65,32 @@ LoadingWindow *MakeLoadingWindow()
 LowLevelWindow *MakeLowLevelWindow() { return new ARCH_LOW_LEVEL_WINDOW; }
 #endif
 
-void MakeInputHandlers(vector<InputHandler *> &Add)
+void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 {
+	CStringArray DriversToTry;
+	split(drivers, ",", DriversToTry, true);
+
+	ASSERT( DriversToTry.size() != 0 );
+
+	CString Driver;
+	RageSoundDriver *ret = NULL;
+
+	for(unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i)
+	{
 #if defined(_WINDOWS)
-	Add.push_back(new InputHandler_DInput);
-	Add.push_back(new InputHandler_Win32_Pump);
-//	Add.push_back(new InputHandler_Win32_Para);
+		if(!DriversToTry[i].CompareNoCase("DirectInput"))	Add.push_back(new InputHandler_DInput);
+		if(!DriversToTry[i].CompareNoCase("Pump"))			Add.push_back(new InputHandler_Win32_Pump);
+	//	if(!DriversToTry[i].CompareNoCase("Para"))			Add.push_back(new InputHandler_Win32_Para);
 #elif defined(_XBOX)
-	Add.push_back(new InputHandler_Xbox);
+		if(!DriversToTry[i].CompareNoCase("Xbox"))			Add.push_back(new InputHandler_Xbox);
 #endif
 
 #if defined(SUPPORT_SDL_INPUT)
-	Add.push_back(new InputHandler_SDL);
+		if(!DriversToTry[i].CompareNoCase("SDL"))			Add.push_back(new InputHandler_SDL);
 #endif
+
+		if(!DriversToTry[i].CompareNoCase("MonkeyKeyboard"))Add.push_back(new InputHandler_MonkeyKeyboard);
+	}
 }
 
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
@@ -97,27 +110,27 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			LOG->Trace("Initializing driver: %s", DriversToTry[i].c_str());
 
 #ifdef _WINDOWS
-			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
-			if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
-			if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
+			if(!DriversToTry[i].CompareNoCase("DirectSound"))		ret = new RageSound_DSound;
+			if(!DriversToTry[i].CompareNoCase("DirectSound-sw"))	ret = new RageSound_DSound_Software;
+			if(!DriversToTry[i].CompareNoCase("WaveOut"))			ret = new RageSound_WaveOut;
 #endif
 #ifdef _XBOX
-			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
+			if(!DriversToTry[i].CompareNoCase("DirectSound"))		ret = new RageSound_DSound;
 #endif
 #ifdef HAVE_ALSA
-			if(!DriversToTry[i].CompareNoCase("ALSA")) ret = new RageSound_ALSA9;
-			if(!DriversToTry[i].CompareNoCase("ALSA-sw")) ret = new RageSound_ALSA9_Software;
+			if(!DriversToTry[i].CompareNoCase("ALSA"))				ret = new RageSound_ALSA9;
+			if(!DriversToTry[i].CompareNoCase("ALSA-sw"))			ret = new RageSound_ALSA9_Software;
 #endif		
 #ifdef HAVE_OSS
-			if(!DriversToTry[i].CompareNoCase("OSS")) ret = new RageSound_OSS;
+			if(!DriversToTry[i].CompareNoCase("OSS"))				ret = new RageSound_OSS;
 #endif
 #ifdef RAGE_SOUND_CA
-			if(!DriversToTry[i].CompareNoCase("CoreAudio")) ret = new RageSound_CA;
+			if(!DriversToTry[i].CompareNoCase("CoreAudio"))			ret = new RageSound_CA;
 #endif
 #ifdef RAGE_SOUND_QT1
-			if(!DriversToTry[i].CompareNoCase("QT1")) ret = new RageSound_QT1;
+			if(!DriversToTry[i].CompareNoCase("QT1"))				ret = new RageSound_QT1;
 #endif
-			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
+			if(!DriversToTry[i].CompareNoCase("Null"))				ret = new RageSound_Null;
 			if( !ret )
 				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].c_str());
 		} catch(const RageException &e) {
