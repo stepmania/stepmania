@@ -8,6 +8,7 @@
 #include <set>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <errno.h>
 
 #if !defined(WIN32)
 #include <dirent.h>
@@ -93,7 +94,22 @@ void FileSet::LoadFromDir(const CString &dir)
 		
 		File f;
 		f.name=ent->d_name;
-    f.dir = ::IsADirectory(ent->d_name);
+		
+		if( ent->d_type == DT_UNKNOWN )
+		{
+			/* d_type isn't implemented; we need to stat. */
+			struct stat st;
+			if( stat(ent->d_name, &st) == -1 )
+			{
+				/* Huh? */
+				if(LOG)
+					LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
+						ent->d_name, dir.c_str(), strerror(errno));
+				f.dir = false;
+			} else 
+				f.dir = (st.st_mode & S_IFDIR);
+		} else
+			f.dir = ent->d_type == DT_DIR;
 
 		files.insert(f);
 	}
