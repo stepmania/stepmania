@@ -148,6 +148,11 @@ void ScreenEvaluation::Init()
 			g_CurStageStats.m_player[PLAYER_1].iCurCombo = rand()%11000;
 			g_CurStageStats.m_player[PLAYER_1].UpdateComboList( 110, false );
 		}
+		if( rand()%5 == 0 )
+		{
+			g_CurStageStats.m_player[PLAYER_1].bFailedEarlier = true;
+			g_CurStageStats.m_player[PLAYER_2].bFailedEarlier = true;
+		}
 		g_CurStageStats.m_player[PLAYER_2].iCurCombo = 0;
 		g_CurStageStats.m_player[PLAYER_2].UpdateComboList( 0, false );
 		g_CurStageStats.m_player[PLAYER_2].iCurCombo = 1;
@@ -472,10 +477,6 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_GRADE_AREA )
 	{
-		// Touch all possible grade files to make sure they're all present
-		for( int g=GRADE_TIER_1; g<NUM_GRADES; g++ )
-			THEME->GetPathToG( "ScreenEvaluation grade "+ GradeToString((Grade)g) );
-
 		FOREACH_EnabledPlayer( p )
 		{
 			m_sprGradeFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation grade frame p%d",p+1)) );
