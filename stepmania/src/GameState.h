@@ -175,6 +175,7 @@ public:
 	HealthState	m_HealthState[NUM_PLAYERS];
 	bool AllAreInDangerOrWorse() const;
 	bool AllAreDead() const;
+	bool AllHaveComboOf30OrMoreMisses() const;
 	bool OneIsHot() const;
 
 	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE

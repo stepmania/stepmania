@@ -1320,7 +1320,21 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 
 		/* If FAIL_IMMEDIATE and everyone is failing, start SM_BeginFailed. */
-		if( GAMESTATE->AllAreDead() && GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_IMMEDIATE )
+		bool bBeginFailed = false;
+		switch( GAMESTATE->m_SongOptions.m_FailType )
+		{
+		case SongOptions::FAIL_IMMEDIATE:
+			if( GAMESTATE->AllAreDead() )
+				bBeginFailed = true;
+			break;
+		case SongOptions::FAIL_COMBO_OF_30_MISSES:
+			if( GAMESTATE->AllHaveComboOf30OrMoreMisses() )
+				bBeginFailed = true;
+			break;
+		default:
+		}
+
+		if( bBeginFailed )
 		{
 			if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->GetCourseSongIndex()==0 )
 				;	// do nothing
@@ -1424,6 +1438,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		switch( GAMESTATE->m_SongOptions.m_FailType )
 		{
 		case SongOptions::FAIL_IMMEDIATE:
+		case SongOptions::FAIL_COMBO_OF_30_MISSES:
 		case SongOptions::FAIL_END_OF_SONG:
             FOREACH_EnabledPlayer(pn)
 				g_CurStageStats.bFailed[pn] = true;	// fail

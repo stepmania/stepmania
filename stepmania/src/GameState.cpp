@@ -1621,28 +1621,33 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 
 bool GameState::AllAreInDangerOrWorse() const
 {
-	FOREACH_PlayerNumber( p )
-		if( this->IsPlayerEnabled(p) )
-			if( m_HealthState[p] < DANGER )
-				return false;
+	FOREACH_EnabledPlayer( p )
+		if( m_HealthState[p] < DANGER )
+			return false;
 	return true;
 }
 
 bool GameState::AllAreDead() const
 {
-	FOREACH_PlayerNumber( p )
-		if( this->IsPlayerEnabled(p) )
-			if( m_HealthState[p] < DEAD )
-				return false;
+	FOREACH_EnabledPlayer( p )
+		if( m_HealthState[p] < DEAD )
+			return false;
+	return true;
+}
+
+bool GameState::AllHaveComboOf30OrMoreMisses() const
+{
+	FOREACH_EnabledPlayer( p )
+		if( g_CurStageStats.iCurMissCombo[p] < 30 )
+			return false;
 	return true;
 }
 
 bool GameState::OneIsHot() const
 {
-	FOREACH_PlayerNumber( p )
-		if( this->IsPlayerEnabled(PlayerNumber(p)) )
-			if( m_HealthState[p] == HOT )
-				return true;
+	FOREACH_EnabledPlayer( p )
+		if( m_HealthState[p] == HOT )
+			return true;
 	return false;
 }
 
