@@ -56,7 +56,8 @@ bool IniFile::ReadFile( RageFileBasic &f )
 			{
 				CString valuename = line.Left(iEqualIndex);
 				CString value = line.Right(line.GetLength()-valuename.GetLength()-1);
-				SetValue(keyname,valuename,value);
+				if( keyname.size() && valuename.size() )
+					SetValue(keyname,valuename,value);
 			}
 		}
 	}
