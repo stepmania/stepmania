@@ -508,8 +508,15 @@ void MusicWheel::PrevMusic()
 
 void MusicWheel::NextMusic()
 {
-	if( m_WheelState != STATE_IDLE )
-		return;
+	switch( m_WheelState )
+	{
+	case STATE_IDLE:
+	case STATE_SWITCHING_TO_NEXT_MUSIC:
+	case STATE_SWITCHING_TO_PREV_MUSIC:
+		break;	// fall through
+	default:
+		return;	// don't continue
+	}
 
 	MUSIC->Stop();
 
@@ -524,8 +531,15 @@ void MusicWheel::NextMusic()
 
 void MusicWheel::NextSort()
 {
-	if( m_WheelState != STATE_IDLE )
-		return;
+	switch( m_WheelState )
+	{
+	case STATE_IDLE:
+	case STATE_SWITCHING_TO_NEXT_MUSIC:
+	case STATE_SWITCHING_TO_PREV_MUSIC:
+		break;	// fall through
+	default:
+		return;	// don't continue
+	}
 
 	MUSIC->Stop();
 
