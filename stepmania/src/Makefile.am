@@ -16,7 +16,7 @@ AM_CFLAGS   += -O2
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
-# <roothorick> Why --disable-alsa --disable-oss? Because SDL and our own
+# <B.Anderson> Why --disable-alsa --disable-oss? Because SDL and our own
 #              sound system conflict, which might be safe on OSS (SDL simply
 #              gets rejected), but on ALSA, even when going through the OSS
 #              emu, this conflict causes StepMania to hang on soundcards
@@ -79,7 +79,7 @@ NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h NoteTypes.
 PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h StyleDef.cpp StyleDef.h StyleInput.h \
 TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h \
-LyricsLoader.cpp LyricsLoader.h NoteFieldPositioning.cpp NoteFieldPositioning.h RaveHelper.cpp RaveHelper.h \
+LyricsLoader.cpp LyricsLoader.h NoteFieldPositioning.cpp NoteFieldPositioning.h \
 PlayerAI.cpp PlayerAI.h Character.cpp Character.h ArrowBackdrop.cpp ArrowBackdrop.h
 
 
@@ -112,13 +112,13 @@ ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h BGAnimation.cpp BGAn
 BGAnimationLayer.h Combo.cpp Combo.h GhostArrow.cpp GhostArrow.h \
 GhostArrowBright.cpp GhostArrowBright.h GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
 GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
-Judgment.cpp Judgment.h LifeMeter.cpp LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp \
-LifeMeterBattery.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
+Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp \
+LifeMeterBattery.h CombinedLifeMeterTug.h CombinedLifeMeterTug.cpp \
+CombinedLifeMeterEnemy.h CombinedLifeMeterEnemy.cpp NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
-ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
+ScoreDisplayOni.h ScoreKeeperRave.h ScoreKeeperRave.cpp ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
 ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h LyricDisplay.cpp LyricDisplay.h \
-TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingCharacters.cpp DancingCharacters.h \
-EnemyFace.cpp EnemyFace.h EnemyHealth.cpp EnemyHealth.h 
+TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingCharacters.cpp DancingCharacters.h \ 
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
