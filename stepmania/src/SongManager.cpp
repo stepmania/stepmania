@@ -99,6 +99,8 @@ void SongManager::InitAll( LoadingWindow *ld )
 	InitSongsFromDisk( ld );
 	InitCoursesFromDisk( ld );
 	InitAutogenCourses();
+	if( ld )
+		ld->SetText( "Saving Catalog.xml ..." );
 	SaveCatalogXml( DATA_DIR );
 }
 
