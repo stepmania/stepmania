@@ -261,8 +261,8 @@ void Actor::UpdateTweening( float fDeltaTime )
 			m_current = TS;
 			
 			// delete the head tween
-			m_TweenStates.erase( m_TweenStates.begin() );
-			m_TweenInfo.erase( m_TweenInfo.begin() );
+			m_TweenStates.pop_front();
+			m_TweenInfo.pop_front();
 		}
 		else		// in the middle of tweening.  Recalcute the current position.
 		{
@@ -380,8 +380,6 @@ void Actor::StopTweening()
 {
 	m_TweenStates.clear();
 	m_TweenInfo.clear();
-	ASSERT( m_TweenStates.empty() );
-	ASSERT( m_TweenInfo.empty() );
 }
 
 void Actor::FinishTweening()

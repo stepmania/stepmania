@@ -13,6 +13,7 @@
 
 #include "RageTypes.h"
 #include "ActorCommands.h"	// for ParsedCommand
+#include <deque>
 
 class Actor
 {
@@ -319,8 +320,8 @@ protected:
 	RageVector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
-	vector<TweenState>	m_TweenStates;
-	vector<TweenInfo>	m_TweenInfo;
+	deque<TweenState>	m_TweenStates;	// use deque for contant time delete of the head
+	deque<TweenInfo>	m_TweenInfo;
 
 	TweenState& LatestTween() { ASSERT(m_TweenStates.size()>0);	return m_TweenStates.back(); };
 
