@@ -151,6 +151,7 @@ void StepManiaLanServer::Hello(PacketFunctions &Packet, int clientNum) {
 
 void GameClient::StyleUpdate(PacketFunctions &Packet) {
 	int playernumber = 0;
+	Player[0].name = Player[1].name = "";
 	twoPlayers = Packet.Read1()-1;
 	for (int x = 0; x < twoPlayers+1; x++) {
 		playernumber = Packet.Read1();
@@ -384,10 +385,10 @@ void StepManiaLanServer::RelayChat(PacketFunctions &Packet, int clientNum) {
 
 	message += Client[clientNum].Player[0].name;
 
-	if (Client[clientNum].twoPlayers) {
-			message += "/";
-			message += Client[clientNum].Player[1].name;
-	}
+	if (Client[clientNum].twoPlayers)
+			message += "&";
+
+	message += Client[clientNum].Player[1].name;
 
 	message += ": ";
 	message += Packet.ReadNT();
@@ -506,6 +507,7 @@ void GameClient::CheckConnection() {
 	if (clientSocket.IsError()) {
 		clientSocket.close();
 		Used = false;
+		Player[0].name = Player[1].name = "";
 	}
 }
 

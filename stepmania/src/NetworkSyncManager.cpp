@@ -401,9 +401,16 @@ void NetworkSyncManager::StartRequest(short position)
 	
 	while (dontExit)
 	{
+		//Keep the server going during the loop.
+		if (isLanServer)
+			LANserver->ServerUpdate();
+
 		m_packet.ClearPacket();
 		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
-			dontExit=false; // Also allow exit if there is a problem on the socket
+			if (isLanServer == false)
+				dontExit=false; // Also allow exit if there is a problem on the socket
+								// Only do if we are not the server, otherwise the sync
+								// gets hosed up due to non blocking mode.
 		if (m_packet.Read1() == (128+3))
 			dontExit=false;
 		//Only allow passing on Start request. 
