@@ -13,6 +13,7 @@
 
 #include "Sprite.h"
 #include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
 class Steps;
 
 
@@ -22,6 +23,8 @@ public:
 	bool Load( CString sFilePath );
 
 	void SetFromNotes( PlayerNumber pn, Steps* pNotes );
+	void SetFromDifficulty( PlayerNumber pn, Difficulty dc );
+	void SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd );
 };
 
 #endif

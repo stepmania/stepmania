@@ -11,6 +11,8 @@
 */
 
 /* Obsolete: use DifficultyClass. */
+/* DifficultyClass was the old name for enum Difficulty, right? -Chris */
+
 #include "DifficultyIcon.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
@@ -43,21 +45,27 @@ bool DifficultyIcon::Load( CString sPath )
 void DifficultyIcon::SetFromNotes( PlayerNumber pn, Steps* pNotes )
 {
 	if( pNotes == NULL )
-	{
-		SetDiffuse( RageColor(1,1,1,0) );
-		return;
-	}
+		SetHidden(true);
 	else
+		SetFromDifficulty( pn, pNotes->GetDifficulty() );
+}
+
+void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
+{
+	switch( GetNumStates() )
 	{
-		SetDiffuse( RageColor(1,1,1,1) );
+	case NUM_DIFFICULTIES:		SetState( dc );			break;
+	case NUM_DIFFICULTIES*2:	SetState( dc*2+pn );	break;
+	default:		ASSERT(0);
+	}	
+}
 
-		int iStateNo = pNotes->GetDifficulty();
-
-		switch( GetNumStates() )
-		{
-		case NUM_DIFFICULTIES:		SetState( iStateNo );		break;
-		case NUM_DIFFICULTIES*2:	SetState( iStateNo*2+pn );	break;
-		default:					SetState( 0 );				break;
-		}
+void DifficultyIcon::SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd  )
+{
+	switch( cd )
+	{
+	case COURSE_DIFFICULTY_REGULAR:		SetFromDifficulty(pn,DIFFICULTY_MEDIUM);	break;
+	case COURSE_DIFFICULTY_DIFFICULT:	SetFromDifficulty(pn,DIFFICULTY_HARD);		break;
+	default:		ASSERT(0);
 	}
 }

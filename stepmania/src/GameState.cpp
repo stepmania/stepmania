@@ -1105,7 +1105,7 @@ struct SongAndSteps
 	bool operator<( const SongAndSteps& other ) const { return pSong<=other.pSong && pSteps<=other.pSteps; }
 };
 
-void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut ) const
+void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOut ) const
 {
 	if( !IsHumanPlayer(pn) )
 		return;
@@ -1162,8 +1162,10 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
-						RankingFeats feat;
-						feat.Type = RankingFeats::SONG;
+						RankingFeat feat;
+						feat.Type = RankingFeat::SONG;
+						feat.pSong = pSong;
+						feat.pSteps = pSteps;
 						feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = &hs.sName;
 						feat.grade = hs.grade;
@@ -1188,8 +1190,10 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
-						RankingFeats feat;
-						feat.Type = RankingFeats::SONG;
+						RankingFeat feat;
+						feat.pSong = pSong;
+						feat.pSteps = pSteps;
+						feat.Type = RankingFeat::SONG;
 						feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = &hs.sName;
 						feat.grade = hs.grade;
@@ -1224,8 +1228,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
-					RankingFeats feat;
-					feat.Type = RankingFeats::CATEGORY;
+					RankingFeat feat;
+					feat.Type = RankingFeat::CATEGORY;
 					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
 					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
@@ -1248,8 +1252,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
-						RankingFeats feat;
-						feat.Type = RankingFeats::CATEGORY;
+						RankingFeat feat;
+						feat.Type = RankingFeat::CATEGORY;
 						feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
 						feat.pStringToFill = &hs.sName;
 						feat.grade = GRADE_NO_DATA;
@@ -1284,8 +1288,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
-					RankingFeats feat;
-					feat.Type = RankingFeats::COURSE;
+					RankingFeat feat;
+					feat.Type = RankingFeat::COURSE;
+					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->m_sName.c_str() );
 					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
@@ -1307,8 +1312,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
-					RankingFeats feat;
-					feat.Type = RankingFeats::COURSE;
+					RankingFeat feat;
+					feat.Type = RankingFeat::COURSE;
+					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("PR #%d in %s", i+1, pCourse->m_sName.c_str() );
 					feat.pStringToFill = &hs.sName;
 					feat.grade = GRADE_NO_DATA;
@@ -1351,7 +1357,7 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 		}
 	}
 
-	vector<RankingFeats> aFeats;
+	vector<RankingFeat> aFeats;
 	GetRankingFeats( pn, aFeats );
 
 	for( unsigned i=0; i<aFeats.size(); i++ )

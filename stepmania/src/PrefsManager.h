@@ -190,6 +190,7 @@ public:
 	bool			m_bAllowExtraStage;
 	bool			m_bLockWheelAfterRandom;
 	bool			m_bHideDefaultNoteSkin;
+	int				m_iMaxHighScoresPerList;
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.

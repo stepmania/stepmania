@@ -88,12 +88,13 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut )
 		if( hs >= vHighScores[i] )
 			break;
 	}
-	if( i < NUM_RANKING_LINES )
+	const int iMaxScores = PREFSMAN->m_iMaxHighScoresPerList;
+	if( i < iMaxScores )
 	{
 		vHighScores.insert( vHighScores.begin()+i, hs );
 		iIndexOut = i;
-		if( vHighScores.size() > unsigned(NUM_RANKING_LINES) )
-			vHighScores.erase( vHighScores.begin()+NUM_RANKING_LINES, vHighScores.end() );
+		if( vHighScores.size() > unsigned(iMaxScores) )
+			vHighScores.erase( vHighScores.begin()+iMaxScores, vHighScores.end() );
 	}
 }
 

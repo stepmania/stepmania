@@ -137,7 +137,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 	int p;
 
-	vector<GameState::RankingFeats> aFeats[NUM_PLAYERS];
+	vector<GameState::RankingFeat> aFeats[NUM_PLAYERS];
 
 	// Find out if players deserve to enter their name
 	for( p=0; p<NUM_PLAYERS; p++ )

@@ -16,6 +16,30 @@
 #include "MenuElements.h"
 #include "GradeDisplay.h"
 #include "Banner.h"
+#include "HighScore.h"
+#include "DifficultyIcon.h"
+
+
+class HighScoreWheelItem : public ActorFrame
+{
+public:
+	void Load( int iRankIndex, const HighScore& hs );
+	void ShowFocus();
+
+	BitmapText m_textRank;
+	BitmapText m_textName;
+	BitmapText m_textScore;
+};
+
+class HighScoreWheel : public ActorScroller
+{
+public:
+	void Load( const HighScoreList& hsl, int iIndexToFocus );
+	float Scroll();	// return seconds until done scrolling
+
+	vector<HighScoreWheelItem>	m_Items;
+	int m_iIndexToFocus;
+};
 
 class ScreenNameEntryTraditional : public Screen
 {
@@ -31,7 +55,6 @@ public:
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
 
-	enum { MAX_DISPLAYED_FEATS=16 };
 private:
 	bool AnyStillEntering() const;
 	void PositionCharsAndCursor( int pn );
@@ -52,11 +75,18 @@ private:
 	int				m_SelectedChar[NUM_PLAYERS];
 
 	/* Feat display: */
-	GradeDisplay	m_Grade[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
-	BitmapText		m_textCategory[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
-	BitmapText		m_textScore[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
-	Banner			m_sprBanner[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
-	Sprite			m_sprBannerFrame[NUM_PLAYERS];
+	struct FeatDisplay
+	{
+		HighScoreWheel	m_Wheel;
+		GradeDisplay	m_Grade;
+		DifficultyIcon	m_Difficulty;
+		BitmapText		m_textCategory;
+		BitmapText		m_textScore;
+		Banner			m_sprBanner;
+		Sprite			m_sprBannerFrame;
+	};
+
+	vector<FeatDisplay>		m_FeatDisplay[NUM_PLAYERS];
 	
 	Sprite			m_sprNameFrame[NUM_PLAYERS];
 

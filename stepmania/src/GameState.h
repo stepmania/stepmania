@@ -232,10 +232,12 @@ public:
 	//
 	// Ranking Stuff
 	//
-	struct RankingFeats 
+	struct RankingFeat
 	{
 		enum { SONG, COURSE, CATEGORY } Type;
-
+		Song* pSong;		// valid if Type == SONG
+		Steps* pSteps;		// valid if Type == SONG
+		Course* pCourse;	// valid if Type == COURSE
 		Grade grade;
 		int iScore;
 		float fPercentDP;
@@ -244,7 +246,7 @@ public:
 		CString *pStringToFill;
 	};
 
-	void GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut ) const;
+	void GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &vFeatsOut ) const;
 	void StoreRankingName( PlayerNumber pn, CString name );	// Called by name entry screens
 	vector<CString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
 

@@ -875,7 +875,7 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 
 				ASSERT( GAMESTATE->m_pCurNotes[p] );
 
-				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+				if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
 					PROFILEMAN->AddStepsHighScore( GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 
 				if( PROFILEMAN->IsUsingProfile((PlayerNumber)p) )

@@ -215,6 +215,7 @@ PrefsManager::PrefsManager()
 	m_bAllowExtraStage = true;
 	m_bLockWheelAfterRandom = true;
 	m_bHideDefaultNoteSkin = false;
+	m_iMaxHighScoresPerList = 10;
 	m_fPadStickSeconds = 0;
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
@@ -495,6 +496,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.GetValue( "Options", "LockWheelAfterRandom",			m_bLockWheelAfterRandom );
 	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
+	ini.GetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
@@ -709,6 +711,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
 	ini.SetValue( "Options", "LockWheelAfterRandom",			m_bLockWheelAfterRandom );
 	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
+	ini.SetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
