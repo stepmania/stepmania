@@ -31,7 +31,10 @@ ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the pro
 
 
 const CString BASE_THEME_NAME = "default";
+const CString LANGUAGES_SUBDIR = "Languages" SLASH;
+const CString BASE_LANGUAGE = "english";
 const CString THEMES_DIR  = BASE_PATH "Themes" SLASH;
+const CString METRICS_FILE = "metrics.ini";
 const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 {
 	"BGAnimations",
@@ -46,7 +49,12 @@ ThemeManager::ThemeManager()
 	m_pIniMetrics = new IniFile;
 
 	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
-	m_uHashForCurThemeMetrics = m_uHashForBaseThemeMetrics = 0;
+	m_uHashForCurThemeMetrics = 0;
+	m_uHashForBaseThemeMetrics = 0;
+	m_uHashForCurThemeCurLanguage = 0;
+	m_uHashForBaseThemeCurLanguage = 0;
+	m_uHashForCurThemeBaseLanguage = 0;
+	m_uHashForBaseThemeBaseLanguage = 0;
 	
 	CStringArray arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
@@ -83,25 +91,69 @@ bool ThemeManager::DoesThemeExist( CString sThemeName )
 	return false;
 }
 
-void ThemeManager::SwitchTheme( CString sThemeName )
+void ThemeManager::GetLanguages( CStringArray& AddTo )
+{
+	AddTo.clear();
+	CStringArray asTemp;
+
+	GetLanguagesForTheme( m_sCurThemeName, AddTo );
+	GetLanguagesForTheme( BASE_THEME_NAME, asTemp );
+	AddTo.insert( AddTo.begin(), asTemp.begin(), asTemp.end() );
+
+	// remove dupes
+	sort( AddTo.begin(), AddTo.end() );
+	CStringArray::iterator it = unique( AddTo.begin(), AddTo.end() );
+	AddTo.erase(it, AddTo.end());
+}
+
+bool ThemeManager::DoesLanguageExist( CString sLanguage )
+{
+	CStringArray asLanguages;
+	GetLanguages( asLanguages );
+
+	for( unsigned i=0; i<asLanguages.size(); i++ )
+		if( sLanguage.CompareNoCase(asLanguages[i])==0 )
+			return true;
+	return false;
+}
+
+void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage )
 {
 	if( !DoesThemeExist(sThemeName) )
 		m_sCurThemeName = BASE_THEME_NAME;
 	else
 		m_sCurThemeName = sThemeName;
 
+	if( !DoesLanguageExist(sLanguage) )
+		m_sCurLanguage = BASE_LANGUAGE;
+	else
+		m_sCurLanguage = sLanguage;
+
 	// update hashes for metrics files
-	m_uHashForCurThemeMetrics = GetHashForFile( GetMetricsPathFromName(m_sCurThemeName) );
-	m_uHashForBaseThemeMetrics = GetHashForFile( GetMetricsPathFromName(BASE_THEME_NAME) );
+	m_uHashForCurThemeMetrics = GetHashForFile( GetMetricsIniPath(m_sCurThemeName) );
+	m_uHashForBaseThemeMetrics = GetHashForFile( GetMetricsIniPath(BASE_THEME_NAME) );
+	m_uHashForBaseThemeBaseLanguage = GetHashForFile( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
+	m_uHashForCurThemeBaseLanguage = GetHashForFile( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
+	m_uHashForBaseThemeCurLanguage = GetHashForFile( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
+	m_uHashForCurThemeCurLanguage = GetHashForFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
 	m_pIniMetrics->Reset();
-	m_pIniMetrics->SetPath( GetMetricsPathFromName(BASE_THEME_NAME) );
+	m_pIniMetrics->SetPath( GetMetricsIniPath(BASE_THEME_NAME) );
 	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetMetricsPathFromName(m_sCurThemeName) );
+	m_pIniMetrics->SetPath( GetMetricsIniPath(m_sCurThemeName) );
+	m_pIniMetrics->ReadFile();
+	m_pIniMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
+	m_pIniMetrics->ReadFile();
+	m_pIniMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
+	m_pIniMetrics->ReadFile();
+	m_pIniMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
+	m_pIniMetrics->ReadFile();
+	m_pIniMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
 	m_pIniMetrics->ReadFile();
 
 	LOG->MapLog("theme", "Theme: %s", sThemeName.c_str());
+	LOG->MapLog("language", "Language: %s", sLanguage.c_str());
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
@@ -273,9 +325,9 @@ try_element_again:
 }
 
 
-CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
+CString ThemeManager::GetMetricsIniPath( CString sThemeName )
 {
-	return GetThemeDirFromName( sThemeName ) + "metrics.ini";
+	return GetThemeDirFromName( sThemeName ) + METRICS_FILE;
 }
 
 bool ThemeManager::HasMetric( CString sClassName, CString sValueName )
@@ -289,8 +341,8 @@ CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )
 #if defined(DEBUG) && defined(WIN32)
 try_metric_again:
 #endif
-	CString sCurMetricPath = GetMetricsPathFromName(m_sCurThemeName);
-	CString sDefaultMetricPath = GetMetricsPathFromName(BASE_THEME_NAME);
+	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
+	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
 
 	// Is our metric cache out of date?
 	if ( !m_uHashForBaseThemeMetrics || m_ReloadTimer.PeekDeltaTime() >= 1 )
@@ -305,7 +357,7 @@ try_metric_again:
 				LOG->Warn( "Metrics file is out of date.  Reloading..." );
 //				MessageBeep( MB_OK );
 			}
-			SwitchTheme(m_sCurThemeName);	// force a reload of the metrics cache
+			SwitchThemeAndLanguage(m_sCurThemeName, m_sCurLanguage);	// force a reload of the metrics cache
 		}
 	}
 
@@ -378,5 +430,28 @@ void ThemeManager::NextTheme()
 		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
 			break;
 	int iNewIndex = (i+1)%as.size();
-	SwitchTheme( as[iNewIndex] );
+	SwitchThemeAndLanguage( as[iNewIndex], m_sCurLanguage );
+}
+
+void ThemeManager::GetLanguagesForTheme( CString sThemeName, CStringArray& asLanguagesOut )
+{
+	CString sLanguageDir = GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR;
+	CStringArray as;
+	GetDirListing( sLanguageDir + "*.ini", as );
+	
+	// stip out metrics.ini
+	for( int i=as.size()-1; i>=0; i-- )
+	{
+		if( as[i].CompareNoCase(METRICS_FILE)==0 )
+			as.erase( as.begin()+i );
+		// strip ".ini"
+		as[i] = as[i].Left( as[i].size()-4 );
+	}
+
+	asLanguagesOut = as;
+}
+
+CString ThemeManager::GetLanguageIniPath( CString sThemeName, CString sLanguage )
+{
+	return GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR + sLanguage + ".ini";
 }

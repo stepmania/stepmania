@@ -28,7 +28,8 @@
 
 
 enum {
-	AO_ANNOUNCER = 0,
+	AO_LANGUAGE = 0,
+	AO_ANNOUNCER,
 	AO_THEME,
 	AO_SKIN,
 	AO_INSTRUCTIONS,
@@ -46,6 +47,7 @@ enum {
 
 
 OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
+	OptionRow( "Language"			 ),
 	OptionRow( "Announcer"			 ),
 	OptionRow( "Theme"				 ),
 	OptionRow( "Default\nNoteSkin"	 ),
@@ -79,6 +81,25 @@ ScreenAppearanceOptions::ScreenAppearanceOptions() :
 void ScreenAppearanceOptions::ImportOptions()
 {
 	unsigned i;
+
+	//
+	// fill in language names
+	//
+	CStringArray arrayLanguages;
+	THEME->GetLanguages( arrayLanguages );
+
+	m_OptionRow[AO_LANGUAGE].choices.clear();
+	for( i=0; i<arrayLanguages.size() && i<MAX_OPTIONS_PER_LINE; i++ )
+	{
+		m_OptionRow[AO_LANGUAGE].choices.push_back( arrayLanguages[i] ); 
+	}
+
+	// highlight currently selected announcer
+	m_iSelectedOption[0][AO_LANGUAGE] = 0;
+	for( i=1; i<m_OptionRow[AO_LANGUAGE].choices.size(); i++ )
+		if( 0==stricmp(m_OptionRow[AO_LANGUAGE].choices[i], THEME->GetCurLanguage()) )
+			m_iSelectedOption[0][AO_LANGUAGE] = i;
+
 
 	//
 	// fill in announcer names
@@ -170,7 +191,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	CString sNewTheme = m_OptionRow[AO_THEME].choices[iSelectedTheme];
 	if( THEME->GetCurThemeName() != sNewTheme )
 	{
-		THEME->SwitchTheme( sNewTheme );
+		THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage() );
 		ApplyGraphicOptions();	// reset graphics to apply new window title and icon
 
 		SONGMAN->UpdateRankingCourses(); // update ranking courses

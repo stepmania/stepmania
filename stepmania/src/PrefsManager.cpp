@@ -131,6 +131,7 @@ PrefsManager::PrefsManager()
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
 	m_bVsync = true;
+	m_sLanguage = "";	// ThemeManager will deal with this invalid language
 
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 #ifdef _XBOX
@@ -265,6 +266,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ForceLogFlush",				m_bForceLogFlush );
 	ini.GetValueB( "Options", "Logging",					m_bLogging );
 	ini.GetValueB( "Options", "ShowLogWindow",				m_bShowLogWindow );
+	ini.GetValue ( "Options", "Language",					m_sLanguage );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -377,6 +379,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "ProgressiveLifebar",			m_iProgressiveLifebar );
 	ini.SetValueI( "Options", "ProgressiveStageLifebar",	m_iProgressiveStageLifebar );
 	ini.SetValueI( "Options", "ProgressiveNonstopLifebar",	m_iProgressiveNonstopLifebar );
+	ini.SetValue ( "Options", "Language",					m_sLanguage );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
@@ -413,7 +416,7 @@ void PrefsManager::ReadGamePrefsFromDisk()
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
-	THEME->SwitchTheme( sTheme );
+	THEME->SwitchThemeAndLanguage( sTheme, m_sLanguage );
 
 	// XXX: ?
 //	if(NOTESKIN->DoesNoteSkinExist(sNoteSkin))

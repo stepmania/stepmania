@@ -92,6 +92,7 @@ public:
 	int				m_iProgressiveLifebar;
 	int				m_iProgressiveStageLifebar;
 	int				m_iProgressiveNonstopLifebar;
+	CString			m_sLanguage;
 
 	// course ranking
 	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;

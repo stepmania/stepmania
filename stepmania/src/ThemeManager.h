@@ -27,8 +27,11 @@ public:
 
 	void GetThemeNames( CStringArray& AddTo );
 	bool DoesThemeExist( CString sThemeName );
-	void SwitchTheme( CString sThemeName );
+	void GetLanguages( CStringArray& AddTo );
+	bool DoesLanguageExist( CString sLanguage );
+	void SwitchThemeAndLanguage( CString sThemeName, CString sLanguage );
 	CString GetCurThemeName() { return m_sCurThemeName; };
+	CString GetCurLanguage() { return m_sCurLanguage; };
 	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
 
@@ -51,13 +54,20 @@ protected:
 	CString GetPathTo( CString sThemeName, ElementCategory category, CString sFileName );
 	static CString GetThemeDirFromName( const CString &sThemeName );
 	CString GetElementDir( CString sThemeName );
-	static CString GetMetricsPathFromName( CString sThemeName );
+	static CString GetMetricsIniPath( CString sThemeName );
+	static void GetLanguagesForTheme( CString sThemeName, CStringArray& asLanguagesOut );
+	static CString GetLanguageIniPath( CString sThemeName, CString sLanguage );
 
 	CString m_sCurThemeName;
+	CString m_sCurLanguage;
 
-	IniFile* m_pIniMetrics;	// make this a pointer so we don't have to include IniFile in this header!
+	IniFile* m_pIniMetrics;	// make this a pointer so we don't have to include IniFile here
 	unsigned m_uHashForCurThemeMetrics;
 	unsigned m_uHashForBaseThemeMetrics;
+	unsigned m_uHashForCurThemeCurLanguage;
+	unsigned m_uHashForBaseThemeCurLanguage;
+	unsigned m_uHashForCurThemeBaseLanguage;
+	unsigned m_uHashForBaseThemeBaseLanguage;
 	RageTimer m_ReloadTimer;
 };
 

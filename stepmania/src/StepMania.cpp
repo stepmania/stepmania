@@ -183,9 +183,9 @@ void ResetGame()
 	{
 		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 		if( THEME->DoesThemeExist( sGameName ) )
-			THEME->SwitchTheme( sGameName );
+			THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage() );
 		else
-			THEME->SwitchTheme( "default" );
+			THEME->SwitchThemeAndLanguage( "default", THEME->GetCurLanguage() );
 		TEXTUREMAN->DoDelayedDelete();
 	}
 	PREFSMAN->SaveGamePrefsToDisk();
