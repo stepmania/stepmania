@@ -53,12 +53,28 @@ const int MAX_WHEEL_SOUND_SPEED = 15;
 
 static const SongSortOrder MaxSelectableSort = SORT_MOST_PLAYED;
 
-inline RageColor GetNextSectionColor() {
+static inline RageColor GetNextSectionColor()
+{
 	static int i=0;
 	i = i % NUM_SECTION_COLORS;
 	return SECTION_COLORS(i++);
 }
 
+
+static SongSortOrder NextSongSortOrder(SongSortOrder so)
+{
+	so = SongSortOrder( so+1 );
+	if(so > MaxSelectableSort)
+		so = SongSortOrder(0);
+
+	/* Disable SORT_PREFERRED for now, until it's implemented; right now it's not
+	 * very different than SORT_GROUP.  Once it's implemented, enable it only
+	 * when no group is selected. */
+	if(so == SORT_PREFERRED)
+		so = SORT_GROUP;
+
+	return so;
+}
 
 MusicWheel::MusicWheel() 
 { 
@@ -142,6 +158,12 @@ MusicWheel::MusicWheel()
 		}
 		GAMESTATE->m_SongOptions = so;
 	}
+
+	/* Disable SORT_PREFERRED for now, until it's implemented; right now it's not
+	 * very different than SORT_GROUP.  Once it's implemented, enable it only
+	 * when no group is selected. */
+	if(GAMESTATE->m_SongSortOrder == SORT_PREFERRED)
+		GAMESTATE->m_SongSortOrder = SORT_GROUP;
 
 	/* Build all of the wheel item data.  Do tihs after selecting
 	 * the extra stage, so it knows to always display it. */
@@ -249,10 +271,11 @@ bool MusicWheel::SelectCourse( const Course *p )
 void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CString sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
-	if( so==SORT_PREFERRED && GAMESTATE->m_sPreferredGroup!=GROUP_ALL_MUSIC)
-		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
-	else
-		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
+//	if( so==SORT_PREFERRED && GAMESTATE->m_sPreferredGroup!=GROUP_ALL_MUSIC)
+//		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
+//	else
+//		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
+	SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
 
 	// copy only songs that have at least one Notes for the current GameMode
 	for( unsigned i=0; i<apAllSongs.size(); i++ )
@@ -376,7 +399,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			case SORT_PREFERRED:	bUseSections = false;	break;
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_BPM:			bUseSections = false;	break;
-			case SORT_GROUP:		bUseSections = true;	break;
+			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;	break;
 			case SORT_TITLE:		bUseSections = true;	break;
 			case SORT_ROULETTE:		bUseSections = false;	break;
 			default:		ASSERT( 0 );
@@ -711,10 +734,8 @@ void MusicWheel::Update( float fDeltaTime )
 				Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
 				CString sPrevSelectedSection = m_CurWheelItemData[m_iSelection]->m_sSectionName;
 
-				// change the sort order
-				GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) );
-				if(GAMESTATE->m_SongSortOrder > MaxSelectableSort)
-					GAMESTATE->m_SongSortOrder = SongSortOrder(0);
+				/* Change the sort order. */
+				GAMESTATE->m_SongSortOrder = NextSongSortOrder(GAMESTATE->m_SongSortOrder);
 
 				SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
 				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder ));
