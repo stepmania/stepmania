@@ -125,13 +125,13 @@ void MovieTexture_DShow::Update(float fDeltaTime)
 	glFlush();
 }
 
-void HandleDivXError(HRESULT hr, CString s)
+void PrintCodecError(HRESULT hr, CString s)
 {
 	/* Actually, we might need XviD; we might want to look
 	 * at the file and try to figure out if it's something
 	 * common: DIV3, DIV4, DIV5, XVID, or maybe even MPEG2. */
 	CString err = hr_ssprintf(hr, "%s", s.GetString());
-	RageException::Throw( 
+	LOG->Warn( 
 		ssprintf(
 		"There was an error initializing a movie: %s.\n"
 		"Could not locate the DivX video codec.\n"
@@ -172,7 +172,8 @@ void MovieTexture_DShow::Create()
 	// if this fails, it's probably because the user doesn't have DivX installed
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )
 	{
-		HandleDivXError(hr, "Could not create source filter to graph!");
+		PrintCodecError(hr, "Could not create source filter to graph!");
+		return;	// survive and don't Run the graph.
 	}
     
     // Find the source's output and the renderer's input
@@ -187,7 +188,8 @@ void MovieTexture_DShow::Create()
     // Connect these two filters
     if( FAILED( hr = m_pGB->Connect( pFSrcPinOut, pFTRPinIn ) ) )
 	{
- 		HandleDivXError(hr, "Could not connect pins!");
+ 		PrintCodecError(hr, "Could not connect pins!");
+		return;	// survive and don't Run the graph.
 	}
 
 	// Pass us to our TextureRenderer.
