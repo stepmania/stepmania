@@ -267,6 +267,7 @@ public:
 	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
 	void LoadEditableDataFromDir( CString sDir );
+	LoadResult LoadStatsXmlFromNode( const XNode* pNode );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
 	void LoadCourseScoresFromNode( const XNode* pNode );

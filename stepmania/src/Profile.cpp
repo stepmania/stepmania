@@ -589,7 +589,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 #define WARN_AND_CONTINUE_M(m) { WARN_M(m); continue; }
 #define WARN_AND_BREAK_M(m) { WARN_M(m); break; }
 #define LOAD_NODE(X)	{ \
-	XNode* X = xml.GetChild(#X); \
+	const XNode* X = xml->GetChild(#X); \
 	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
@@ -655,14 +655,19 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 	}
 	LOG->Trace( "Done." );
 
+	return LoadStatsXmlFromNode( &xml );
+}
+
+Profile::LoadResult Profile::LoadStatsXmlFromNode( const XNode *xml )
+{
 	/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
 	 * warn about it. */
-	if( xml.m_sName == "html" )
+	if( xml->m_sName == "html" )
 		return failed_no_profile;
 
-	if( xml.m_sName != "Stats" )
+	if( xml->m_sName != "Stats" )
 	{
-		WARN_M( xml.m_sName );
+		WARN_M( xml->m_sName );
 		return failed_tampered;
 	}
 
