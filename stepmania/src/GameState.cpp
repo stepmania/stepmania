@@ -1157,8 +1157,10 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 				}
 		
 				// Find Personal Records
+				Profile *prof = PROFILEMAN->GetProfile(pn);
+				if( prof )
 				{
-					HighScoreList &hsl = PROFILEMAN->GetProfile(pn)->GetStepsHighScoreList(pSteps);
+					HighScoreList &hsl = prof->GetStepsHighScoreList(pSteps);
 					for( j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];
