@@ -137,6 +137,10 @@ void RageBitmapTexture::Create()
 
 	/* Load the image into an SDL surface. */
 	SDL_Surface *img = IMG_Load(m_sFilePath);
+	/* XXX: Wait, we don't want to throw for all images; in particular, we
+	 * want to tolerate corrupt/unknown background images. */
+	if(img == NULL)
+		throw RageException( "Couldn't load %s: %s", m_sFilePath, SDL_GetError() );
 
 	/* Figure out which texture format to use. */
 	GLenum fmtTexture;
