@@ -33,8 +33,9 @@ class RageSoundManager
 	CircBuf<queued_pos_map_t> pos_map_queue;
 
 public:
-	RageSoundManager(CString drivers);
+	RageSoundManager();
 	~RageSoundManager();
+	void Init( CString drivers );
 
 	float GetMixVolume() const { return MixVolume; }
 	void SetPrefs(float MixVol);

@@ -33,24 +33,17 @@ static RageMutex g_SoundManMutex("SoundMan");
 
 RageSoundManager *SOUNDMAN = NULL;
 
-RageSoundManager::RageSoundManager(CString drivers)
+RageSoundManager::RageSoundManager()
 {
-	/* needs to be done first */
-	SOUNDMAN = this;
-
-	try
-	{
-		MixVolume = 1.0f;
-
-		driver = MakeRageSoundDriver(drivers);
-		if(!driver)
-			RageException::Throw("Couldn't find a sound driver that works");
-	} catch(...) {
-		SOUNDMAN = NULL;
-		throw;
-	}
-
 	pos_map_queue.reserve( 1024 );
+	MixVolume = 1.0f;
+}
+
+void RageSoundManager::Init( CString drivers )
+{
+	driver = MakeRageSoundDriver(drivers);
+	if( driver == NULL )
+		RageException::Throw( "Couldn't find a sound driver that works" );
 }
 
 RageSoundManager::~RageSoundManager()
