@@ -100,6 +100,9 @@ float g_point_granularity;
 /* OpenGL version * 10: */
 int g_glVersion;
 
+/* GLU version * 10: */
+int g_gluVersion;
+
 /* Available extensions: */
 set<string> g_glExts;
 
@@ -361,6 +364,7 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	LOG->Info("OGL Version: %s", glGetString(GL_VERSION));
 	LOG->Info("OGL Extensions: %s", glGetString(GL_EXTENSIONS));
 	LOG->Info("OGL Max texture size: %i", GetMaxTextureSize() );
+	LOG->Info("GLU Version: %s", gluGetString(GLU_VERSION));
 
 	LogGLXDebugInformation();
 
@@ -556,6 +560,9 @@ void SetupExtensions()
 	const float fGLVersion = (float) atof( (const char *) glGetString(GL_VERSION) );
 	g_glVersion = int(roundf(fGLVersion * 10));
 	GetGLExtensions(g_glExts);
+
+	const float fGLUVersion = (float) atof( (const char *) gluGetString(GLU_VERSION) );
+	g_gluVersion = int(roundf(fGLUVersion * 10));
 
 	/* Find extension functions and reset broken flags */
 #if !defined(DARWIN)
@@ -1244,6 +1251,28 @@ unsigned RageDisplay_OGL::CreateTexture(
 {
 	ASSERT( pixfmt < NUM_PIX_FORMATS );
 
+
+	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
+	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
+	// http://pyopengl.sourceforge.net/documentation/manual/gluBuild2DMipmaps.3G.html
+	if( g_gluVersion < 13 )
+	{
+		switch( pixfmt )
+		{
+		// OpenGL 1.1 types
+		case FMT_RGBA8:
+		case FMT_RGB8:
+		case FMT_PAL:
+		case FMT_BGR8:
+			break;
+		// OpenGL 1.2 types
+		default:
+			bGenerateMipMaps = false;
+			break;
+		}
+	}
+
+
 	unsigned int uTexHandle;
 	glGenTextures(1, reinterpret_cast<GLuint*>(&uTexHandle));
 	ASSERT(uTexHandle);
@@ -1306,15 +1335,25 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 	FlushGLErrors();
 
-	// YUCK!  There's no way to tell gluBuild2DMipmaps how many mip-map levels
-	// to make.  It's all or nothing, so we have to call either glTexImage2D
-	// or gluBuild2DMipmaps
 	if( bGenerateMipMaps )
 	{
-		gluBuild2DMipmaps(
+		GLenum error = gluBuild2DMipmaps(
 			GL_TEXTURE_2D, glTexFormat, 
 			img->w, img->h,
 			glImageFormat, glImageType, img->pixels );
+
+		if( error != 0 )
+		{
+			ostringstream s;
+			s << "gluBuild2DMipmaps(format " << GLToString(glTexFormat) <<
+				 ", w " << img->w << ", h " <<  img->h <<
+				 ", format " << GLToString(glImageFormat) <<
+				 ", type " << GLToString(glImageType) <<
+				 "): " << gluErrorString(error);
+			LOG->Trace( s.str().c_str() );
+
+			ASSERT(0);
+		}
 	}
 	else
 	{
@@ -1322,22 +1361,23 @@ unsigned RageDisplay_OGL::CreateTexture(
 			GL_TEXTURE_2D, 0, glTexFormat, 
 			img->w, img->h, 0,
 			glImageFormat, glImageType, img->pixels);
+		
+		GLenum error = glGetError();
+		if( error != GL_NO_ERROR )
+		{
+			ostringstream s;
+			s << "glTexImage2D(format " << GLToString(glTexFormat) <<
+				 ", w " << img->w << ", h " <<  img->h <<
+				 ", format " << GLToString(glImageFormat) <<
+				 ", type " << GLToString(glImageType) <<
+				 "): " << GLToString(error);
+			LOG->Trace( s.str().c_str() );
+
+			ASSERT(0);
+		}
 	}
 
 
-	GLenum error = glGetError();
-	if( error != GL_NO_ERROR )
-	{
-		ostringstream s;
-		s << "glTexImage2D(format " << GLToString(glTexFormat) <<
-			 ", w " << img->w << ", h " <<  img->h <<
-			 ", format " << GLToString(glImageFormat) <<
-			 ", type " << GLToString(glImageType) <<
-			 "): " << GLToString(error);
-		LOG->Trace( s.str().c_str() );
-
-		ASSERT(0);
-	}
 
 	/* Sanity check: */
 	if( pixfmt == FMT_PAL )
