@@ -8,16 +8,17 @@
 #include "HoldJudgment.h"
 #include "Combo.h"
 #include "NoteDataWithScoring.h"
-#include "RageTimer.h"
 #include "RageSound.h"
 #include "AttackDisplay.h"
-#include "NoteField.h"
+#include "NoteData.h"
 
 class ScoreDisplay;
 class LifeMeter;
 class CombinedLifeMeter;
 class ScoreKeeper;
 class Inventory;
+class RageTimer;
+class NoteField;
 struct PlayerStageStats;
 
 #define	SAMPLE_COUNT	16
@@ -44,7 +45,7 @@ public:
 	void Load( const NoteData& noteData );
 	void CrossedRow( int iNoteRow );
 	void CrossedMineRow( int iNoteRow );
-	void Step( int col, RageTimer tm );
+	void Step( int col, const RageTimer &tm );
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	int GetDancingCharacterState() const { return m_iDCState; };
@@ -53,7 +54,7 @@ public:
 
 	static float GetMaxStepDistanceSeconds();
 
-	void CacheAllUsedNoteSkins( bool bDeleteUnused ) { m_pNoteField->CacheAllUsedNoteSkins(bDeleteUnused); }
+	void CacheAllUsedNoteSkins( bool bDeleteUnused );
 
 	NoteData m_NoteData;
 

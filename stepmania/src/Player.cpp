@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
+#include "RageTimer.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
@@ -18,6 +19,7 @@
 #include "LifeMeter.h"
 #include "CombinedLifeMeter.h"
 #include "PlayerAI.h"
+#include "NoteField.h"
 #include "NoteFieldPositioning.h"
 #include "NoteDataUtil.h"
 #include "ScreenGameplay.h" /* for SM_ComboStopped */
@@ -658,7 +660,7 @@ int Player::GetClosestNote( int col, float fBeat, float fMaxBeatsAhead, float fM
 }
 
 
-void Player::Step( int col, RageTimer tm )
+void Player::Step( int col, const RageTimer &tm )
 {
 	bool bOniDead = 
 		GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
@@ -1390,6 +1392,11 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 float Player::GetMaxStepDistanceSeconds()
 {
 	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW(Boo);
+}
+
+void Player::CacheAllUsedNoteSkins( bool bDeleteUnused )
+{
+	m_pNoteField->CacheAllUsedNoteSkins( bDeleteUnused );
 }
 
 void Player::FadeToFail()

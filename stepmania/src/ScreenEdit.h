@@ -13,7 +13,7 @@
 #include "Background.h"
 #include "Foreground.h"
 #include "Course.h"
-
+#include "NoteField.h"
 
 const int NUM_ACTION_MENU_ITEMS = 23;
 const int NUM_NAMING_MENU_ITEMS = 6;

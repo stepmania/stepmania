@@ -6,6 +6,7 @@
 #include "LifeMeterBar.h"
 #include "Character.h"
 #include "BGAnimation.h"
+#include "Model.h"
 
 
 class ScreenHowToPlay : public ScreenAttract
