@@ -45,10 +45,10 @@ void Combo::ContinueCombo()
 {
 	m_iCurCombo++;
 
-	// new max combo
-	if( m_iCurCombo > m_iMaxCombo )
-		m_iMaxCombo = m_iCurCombo;
+	/* If needed, make this a theme metric. */
+	const bool HighComboAlert_OnceOnly = true;
 
+	if(!HighComboAlert_OnceOnly || m_iCurCombo > m_iMaxCombo)
 	switch( m_iCurCombo )
 	{
 	case 100: 		SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );	break;
@@ -63,6 +63,8 @@ void Combo::ContinueCombo()
 	case 1000: 		SCREENMAN->SendMessageToTopScreen( SM_1000Combo, 0 );	break;
 	}
 
+	// new max combo
+	m_iMaxCombo = max(m_iMaxCombo, m_iCurCombo);
 
 	if( m_iCurCombo <= 4 )
 	{
