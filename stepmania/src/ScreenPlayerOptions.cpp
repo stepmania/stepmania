@@ -42,14 +42,7 @@ enum {
 	PO_PERSPECTIVE,
 	PO_STEP,
 	PO_CHARACTER,
-	SO_LIFE,
-	SO_DRAIN,
-	SO_BAT_LIVES,
-	SO_FAIL,
-	SO_ASSIST,
-	SO_RATE,
-	SO_AUTOSYNC,
-	SO_SAVE,
+
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
@@ -66,14 +59,6 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Perspec\n-tive",	false, "" ),
 	OptionRow( "Step",				false, "" ),
 	OptionRow( "Charac\n-ter",		false, "" ),
-	OptionRow( "Life\nType",	true, "BAR","BATTERY" ),	
-	OptionRow( "Bar\nDrain",	true, "NORMAL","NO RECOVER","SUDDEN DEATH" ),	
-	OptionRow( "Bat\nLives",	true, "1","2","3","4","5","6","7","8","9","10" ),	
-	OptionRow( "Fail",			true, "ARCADE","END OF SONG","OFF" ),	
-	OptionRow( "Assist\nTick",	true, "OFF", "ON" ),
-	OptionRow( "Rate",			true, "0.3x","0.4x","0.5x","0.6x","0.7x","0.8x","0.9x","1.0x","1.1x","1.2x","1.3x","1.4x","1.5x","1.6x","1.7x","1.8x","1.9x","2.0x" ),	
-	OptionRow( "Auto\nAdjust",	true, "OFF", "ON" ),
-	OptionRow( "Save\nScores",  true, "OFF", "ON" ),
 };
 
 static const PlayerOptions::Effect ChoosableEffects[] = 
@@ -100,20 +85,20 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 
 	/* If we're going to "press start for more options" or skipping options
 	 * entirely, we need a different fade out. XXX: this is a hack */
-//	if(PREFSMAN->m_ShowSongOptions == PrefsManager::NO)
+	if(PREFSMAN->m_ShowSongOptions == PrefsManager::NO)
 		m_Menu.m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions direct out") ); /* direct to stage */
-//	else if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)
-//		m_Menu.m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions option out") ); /* optional song options */
+	else if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)
+		m_Menu.m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions option out") ); /* optional song options */
 
-//	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenPlayerOptions options") );
-//	m_sprOptionsMessage.StopAnimating();
-//	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
-//	m_sprOptionsMessage.SetZoom( 1 );
-//	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenPlayerOptions options") );
+	m_sprOptionsMessage.StopAnimating();
+	m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
+	m_sprOptionsMessage.SetZoom( 1 );
+	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 	//this->AddChild( &m_sprOptionsMessage );       // we have to draw this manually over the top of transitions
 
 	m_bAcceptedChoices = false;
-//	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == PrefsManager::YES );
+	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == PrefsManager::YES );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 }
@@ -290,29 +275,6 @@ void ScreenPlayerOptions::ImportOptions()
 		/* Why do this?  We don't want to erase if we back out. */
 		// po.Init();
 	}
-
-
-	SongOptions &so = GAMESTATE->m_SongOptions;
-
-	m_iSelectedOption[0][SO_LIFE] = so.m_LifeType;
-	m_iSelectedOption[0][SO_DRAIN] = so.m_DrainType;
-	m_iSelectedOption[0][SO_BAT_LIVES] = so.m_iBatteryLives-1;
-
-	if ( m_iSelectedOption[0][SO_BAT_LIVES] < 0 )
-		m_iSelectedOption[0][SO_BAT_LIVES] = 3;  // default in case value is invalid
-
-	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
-	m_iSelectedOption[0][SO_ASSIST] = so.m_bAssistTick;
-	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
-	m_iSelectedOption[0][SO_SAVE] = so.m_bSaveScore;
-
-	m_iSelectedOption[0][SO_RATE] = 7;	// in case we don't match below
-	for( i=0; i<g_PlayerOptionsLines[SO_RATE].choices.size(); i++ )
-	{
-		float fThisRate = (float) atof(g_PlayerOptionsLines[SO_RATE].choices[i]);
-		if( fThisRate == so.m_fMusicRate )
-			m_iSelectedOption[0][SO_RATE] = i;
-	}
 }
 
 void ScreenPlayerOptions::ExportOptions()
@@ -427,25 +389,6 @@ void ScreenPlayerOptions::ExportOptions()
 			GAMESTATE->m_pCurCharacters[p] = GAMESTATE->m_pCharacters[choice];
 		}
 	}
-
-
-	SongOptions &so = GAMESTATE->m_SongOptions;
-
-	so.m_LifeType = (SongOptions::LifeType)m_iSelectedOption[0][SO_LIFE];
-	so.m_DrainType = (SongOptions::DrainType)m_iSelectedOption[0][SO_DRAIN];
-	so.m_iBatteryLives = m_iSelectedOption[0][SO_BAT_LIVES]+1;
-	if( so.m_FailType !=	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL] )
-	{
-		/* The user is changing the fail mode explicitly; stop messing with it. */
-		GAMESTATE->m_bChangedFailType = true;
-		so.m_FailType =	(SongOptions::FailType)m_iSelectedOption[0][SO_FAIL];
-	}
-	so.m_bAssistTick = !!m_iSelectedOption[0][SO_ASSIST];
-	so.m_bAutoSync = !!m_iSelectedOption[0][SO_AUTOSYNC];
-	so.m_bSaveScore = !!m_iSelectedOption[0][SO_SAVE];
-
-	int iSel = m_iSelectedOption[0][SO_RATE];
-	so.m_fMusicRate = (float) atof( g_PlayerOptionsLines[SO_RATE].choices[iSel] );
 }
 
 void ScreenPlayerOptions::GoToPrevState()
@@ -466,10 +409,10 @@ void ScreenPlayerOptions::GoToNextState()
 	{
 		GAMESTATE->AdjustFailType();
 
-//		if( m_bGoToOptions )
+		if( m_bGoToOptions )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
-//		else
-//			SCREENMAN->SetNewScreen( ScreenSongOptions::GetNextScreen() );
+		else
+			SCREENMAN->SetNewScreen( ScreenSongOptions::GetNextScreen() );
 	}
 }
 
@@ -477,19 +420,19 @@ void ScreenPlayerOptions::GoToNextState()
 void ScreenPlayerOptions::Update( float fDelta )
 {
 	ScreenOptions::Update( fDelta );
-//	m_sprOptionsMessage.Update( fDelta );
+	m_sprOptionsMessage.Update( fDelta );
 }
 
 void ScreenPlayerOptions::DrawPrimitives()
 {
 	ScreenOptions::DrawPrimitives();
-//	m_sprOptionsMessage.Draw();
+	m_sprOptionsMessage.Draw();
 }
 
 
 void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-/*	if( !GAMESTATE->m_bEditing &&
+	if( !GAMESTATE->m_bEditing &&
 		type == IET_FIRST_PRESS  &&
 		!m_Menu.m_In.IsTransitioning()  &&
 		MenuI.IsValid()  &&
@@ -503,33 +446,36 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 			SOUND->PlayOnce( THEME->GetPathToS("Common start") );
 		}
 	}
-*/
+
 	ScreenOptions::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 {
-//	if(PREFSMAN->m_ShowSongOptions == PrefsManager::ASK)
-//	switch( SM )
-//	{
-//	case SM_BeginFadingOut: // when the user accepts the page of options
-//	{
-//		m_bAcceptedChoices = true;
-//
-//		float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
-//
-//		// show "hold START for options"
-//		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-//		m_sprOptionsMessage.BeginTweening( 0.15f );     // fade in
-//		m_sprOptionsMessage.SetZoomY( 1 );
-//		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
-//		m_sprOptionsMessage.BeginTweening( fShowSeconds-0.3f ); // sleep
-//		m_sprOptionsMessage.BeginTweening( 0.15f );     // fade out
-//		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-//		m_sprOptionsMessage.SetZoomY( 0 );
-//	}
-//		break;
-//	}
+	if( PREFSMAN->m_ShowSongOptions == PrefsManager::ASK )
+	{
+		switch( SM )
+		{
+		case SM_BeginFadingOut: // when the user accepts the page of options
+			{
+				m_bAcceptedChoices = true;
+
+				float fShowSeconds = m_Menu.m_Out.GetLengthSeconds();
+
+				// show "hold START for options"
+				m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+				m_sprOptionsMessage.BeginTweening( 0.15f );     // fade in
+				m_sprOptionsMessage.SetZoomY( 1 );
+				m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );
+				m_sprOptionsMessage.BeginTweening( fShowSeconds-0.3f ); // sleep
+				m_sprOptionsMessage.BeginTweening( 0.15f );     // fade out
+				m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+				m_sprOptionsMessage.SetZoomY( 0 );
+			}
+			break;
+		}
+	}
+
 	ScreenOptions::HandleScreenMessage( SM );
 }
 

@@ -125,19 +125,20 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	int r;
 	for( r=0; r<m_iNumOptionRows; r++ )		// foreach line
 	{
+		vector<BitmapText *> & textItems = m_textItems[r];
+		const OptionRow &optline = m_OptionRow[r];
+
 		unsigned c;
 
 		m_framePage.AddChild( &m_sprBullets[r] );
 
 		m_framePage.AddChild( &m_textTitles[r] );		
 
-		const OptionRow &optline = m_OptionRow[r];
-
 		float fX = ITEMS_START_X;	// indent 70 pixels
 		for( c=0; c<optline.choices.size(); c++ )
 		{
 			BitmapText *bt = new BitmapText;
-			m_textItems[r].push_back( bt );
+			textItems.push_back( bt );
 
 			bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
 			bt->SetText( optline.choices[c] );
@@ -156,8 +157,8 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 			// It goes off the edge of the screen.  Re-init with the "long row" style.
 			m_bRowIsLong[r] = true;
 			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
-				delete m_textItems[r][j];
-			m_textItems[r].clear();
+				delete textItems[j];
+			textItems.clear();
 
 			for( unsigned p=0; p<NUM_PLAYERS; p++ )
 			{
@@ -165,12 +166,12 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 					continue;
 
 				BitmapText *bt = new BitmapText;
-				m_textItems[r].push_back( bt );
+				textItems.push_back( bt );
 
 				const int iChoiceInRow = m_iSelectedOption[p][r];
 
 				bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
-				bt->SetText( m_OptionRow[r].choices[iChoiceInRow] );
+				bt->SetText( optline.choices[iChoiceInRow] );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->EnableShadow( false );
 
@@ -186,8 +187,8 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 			}
 		}
 
-		for( c=0; c<m_textItems[r].size(); c++ )
-			m_framePage.AddChild( m_textItems[r][c] );
+		for( c=0; c<textItems.size(); c++ )
+			m_framePage.AddChild( textItems[c] );
 	}
 
 	InitOptionsText();
@@ -267,7 +268,6 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &
 							bLotsOfOptions? (bOneChoice? 0:pn):
 							m_iSelectedOption[pn][iRow];
 
-	ASSERT( iOptionInRow < m_textItems[iRow].size() );
 	BitmapText &text = *m_textItems[iRow][iOptionInRow];
 
 	iWidthOut = int(roundf( text.GetWidestLineWidthInSourcePixels() * text.GetZoomX() ));
@@ -314,6 +314,9 @@ void ScreenOptions::PositionUnderlines()
 	// Set the position of the underscores showing the current choice for each option line.
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 		{
 			OptionsCursor &underline = m_Underline[p][i];
@@ -347,6 +350,9 @@ void ScreenOptions::PositionIcons()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;
+
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 		{
 			OptionIcon &icon = m_OptionIcons[p][i];
@@ -414,6 +420,9 @@ void ScreenOptions::PositionCursors()
 	// Set the position of the underscores showing the current choice for each option line.
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;
+
 		int i=m_iCurrentRow[p];
 
 		OptionsCursor &highlight = m_Highlight[p];
