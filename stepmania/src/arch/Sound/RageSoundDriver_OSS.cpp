@@ -87,7 +87,7 @@ bool RageSound_OSS::GetData()
 
 		mix.write((Sint16 *) buf, got/2);
 
-		if(got < chunksize)
+		if((int) got < chunksize)
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
