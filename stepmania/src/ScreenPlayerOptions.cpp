@@ -40,7 +40,7 @@ OptionRowData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Effect",			7, {"OFF","DRUNK","DIZZY","SPACE","MINI","FLIP","TORNADO"} },	
 	{ "Appear\n-ance",	5, {"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK"} },	
 	{ "Turn",			6, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE"} },	
-	{ "Trans\n-form",	5, {"OFF","LITTLE","WIDE","BIG","QUICK"} },	
+	{ "Trans\n-form",	6, {"OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY"} },	
 	{ "Scroll",			2, {"STANDARD","REVERSE"} },	
 	{ "Note\nSkin",		0, {""} },	
 	{ "Holds",			2, {"OFF","ON"} },	
@@ -219,7 +219,8 @@ void ScreenPlayerOptions::DrawPrimitives()
 
 void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( !m_Menu.m_In.IsTransitioning()  &&
+	if( !GAMESTATE->m_bEditing  &&
+		!m_Menu.m_In.IsTransitioning()  &&
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START  &&
 		type != IET_RELEASE  &&
