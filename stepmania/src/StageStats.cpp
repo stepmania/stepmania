@@ -193,7 +193,7 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		default: FAIL_M( ssprintf("%i", hns) );									break;
 		}
 		Actual += iHoldNoteScores[pn][hns] * iHoldScoreValue;
-		Possible += iHoldNoteScores[pn][hns] * PREFSMAN->m_iPercentScoreWeightOK;
+		Possible += iHoldNoteScores[pn][hns] * PREFSMAN->m_iGradeWeightOK;
 	}
 
 	LOG->Trace( "GetGrade: Actual: %f, Possible: %f", Actual, Possible );
