@@ -180,8 +180,13 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	{
 		CString sCredits;
 
-		bool bShowCreditsMessage = 
-			GAMESTATE->m_bIsOnSystemMenu || !GAMESTATE->m_bSideIsJoined[p];
+		bool bShowCreditsMessage;
+		if( GAMESTATE->m_bIsOnSystemMenu )
+			bShowCreditsMessage = true;
+		else if( GAMESTATE->m_bPlayersFinalized )
+			bShowCreditsMessage = !GAMESTATE->IsPlayerEnabled( p );	
+		else 
+			bShowCreditsMessage = !GAMESTATE->m_bSideIsJoined[p];
 		
 		if( !bShowCreditsMessage )
 		{
