@@ -69,7 +69,7 @@ void UnlockSystem::SortSongEntriesArray()
 
 bool UnlockSystem::LoadFromDATFile( CString sPath )
 {
-	LOG->Trace( "\n\n\n\nUnlockSystem::LoadFromDATFile(%s)", sPath.c_str() );
+	LOG->Trace( "UnlockSystem::LoadFromDATFile(%s)", sPath.c_str() );
 	
 	ifstream input(sPath);
 	if(input.bad())
