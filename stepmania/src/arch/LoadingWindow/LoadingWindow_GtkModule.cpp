@@ -13,6 +13,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 	GtkWidget *vbox;
 	GtkWidget *loadimage;
 
+	gtk_disable_setlocale();
 	if( !gtk_init_check(argc,argv) )
 		return "Couldn't initialize gtk (cannot open display)";
 
