@@ -743,8 +743,17 @@ int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 	 * error, so let's clamp the result here instead.  Be sure to reset this on stop,
 	 * since the position may reset. */
 	if( cur_frame < max_driver_frame )
-		LOG->Trace( "Sound %s: driver returned a lesser position (%i < %i)",
-			this->GetLoadedFilePath().c_str(), (int) cur_frame, (int) max_driver_frame );
+	{
+		/* Clamp the output to one per second, so one underruns don't cascade due to
+		 * output spam. */
+		static RageTimer last(RageZeroTimer);
+		if( last.IsZero() || last.Ago() > 1.0f )
+		{
+			LOG->Trace( "Sound %s: driver returned a lesser position (%i < %i)",
+				this->GetLoadedFilePath().c_str(), (int) cur_frame, (int) max_driver_frame );
+			last.Touch();
+		}
+	}
 	max_driver_frame = cur_frame = max( cur_frame, max_driver_frame );
 
 	return pos_map.Search( cur_frame, approximate );
