@@ -80,10 +80,10 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 			seg.m_sLyric.Replace( "|","\n" ); // Pipe symbols denote a new line in LRC files
 			out.AddLyricSegment( seg );
 		}
-		
 	}
 
 	sort( out.m_LyricSegments.begin(), out.m_LyricSegments.end(), CompareLyricSegments );
+	LOG->Trace( "LyricsLoader::LoadFromLRCFile done" );
 
 	return true;
 }
