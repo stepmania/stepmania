@@ -52,7 +52,7 @@ ScreenBackgroundOptions::ScreenBackgroundOptions() :
 		false, true );
 	m_Menu.m_MenuTimer.Disable();
 
-	SOUNDS->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
+	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
 }
 
 void ScreenBackgroundOptions::ImportOptions()
