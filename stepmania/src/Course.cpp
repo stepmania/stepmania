@@ -86,10 +86,9 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		// handle the data
 		if( 0 == stricmp(sValueName, "COURSE") )
-		{
 			m_sName = sParams[1];
-			m_sNameTranslit = m_sName;
-		}
+		else if( 0 == stricmp(sValueName, "COURSETRANSLIT") )
+			m_sNameTranslit = sParams[1];
 		else if( 0 == stricmp(sValueName, "REPEAT") )
 		{
 			CString str = sParams[1];
@@ -290,6 +289,8 @@ void Course::Save()
 	}
 
 	f.PutLine( ssprintf("#COURSE:%s;", m_sName.c_str()) );
+	if( m_sNameTranslit != "" )
+		f.PutLine( ssprintf("#COURSETRANSLIT:%s;", m_sNameTranslit.c_str()) );
 	if( m_bRepeat )
 		f.PutLine( "#REPEAT:YES;" );
 	if( m_iLives != -1 )
