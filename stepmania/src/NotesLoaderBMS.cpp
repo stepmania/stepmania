@@ -9,6 +9,7 @@
 #include "StepsUtil.h"
 #include "song.h"
 #include "Steps.h"
+#include "RageUtil_CharConversions.h"
 
 /*	BMS encoding:     tap-hold
 	4&8panel:   Player1     Player2
@@ -840,6 +841,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	SlideDuplicateDifficulties( out );
 
+	ConvertString( out.m_sMainTitle, "japanese" );
+	ConvertString( out.m_sArtist, "japanese" );
 
 
 	return true;
