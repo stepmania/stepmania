@@ -18,7 +18,7 @@
 
 class RageSound_Null: public RageSoundDriver
 {
-public:
+private:
 	struct sound {
 		RageSound *snd;
         bool stopping;
@@ -30,21 +30,21 @@ public:
     vector<sound *> sounds;
 
 	bool shutdown;
+    SDL_Thread *MixerThreadPtr;
 
     static int MixerThread_start(void *p);
     void MixerThread();
-    SDL_Thread *MixerThreadPtr;
 
-    bool GetData();
-
+protected:
 	/* virtuals: */
-	void StartMixing(RageSound *snd);
-	void StopMixing(RageSound *snd);
-	int GetPosition(const RageSound *snd) const;
-	float GetPlayLatency() const;
+	virtual void StartMixing(RageSound *snd);
+	virtual void StopMixing(RageSound *snd);
+	virtual int GetPosition(const RageSound *snd) const;
+	virtual float GetPlayLatency() const;
+	virtual void Update(float delta);
+    virtual bool GetData();
 
-	void Update(float delta);
-
+public:
     RageSound_Null();
     ~RageSound_Null();
 };
