@@ -8,6 +8,14 @@
 #include "SDL_utils.h"
 #include "SDL_endian.h"
 
+namespace avcodec
+{
+#if defined(_WIN32)
+#include "ffmpeg/include/ffmpeg/avformat.h"
+#else
+#include <ffmpeg/avformat.h>
+#endif
+};
 
 #if defined(_WIN32)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")

@@ -16,15 +16,6 @@
 #include <inttypes.h>
 #endif
 
-namespace avcodec
-{
-#if defined(_WIN32)
-#include "ffmpeg/include/ffmpeg/avformat.h"
-#else
-#include <ffmpeg/avformat.h>
-#endif
-};
-
 class FFMpeg_Helper;
 
 class MovieTexture_FFMpeg: public RageMovieTexture
@@ -65,10 +56,6 @@ private:
 	 * PAUSE_DECODER: The decoder thread is idle.
 	 *
 	 * PLAYING: The decoder thread is running.
-	 *
-	 * PLAYING_ONE: The decoder thread will decode one frame, post the
-	 * m_FrameDecoded semaphore and change to the PAUSE_DECODER state.
-	 * This is only used by Create().
 	 */
 	enum State { DECODER_QUIT, PAUSE_DECODER, PLAYING } m_State;
 
