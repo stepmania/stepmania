@@ -723,7 +723,8 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="bouncebegin" )		BeginTweening( fParam(1), TWEEN_BOUNCE_BEGIN );
 	else if( sName=="bounceend" )		BeginTweening( fParam(1), TWEEN_BOUNCE_END );
 	else if( sName=="spring" )			BeginTweening( fParam(1), TWEEN_SPRING );
-	else if( sName=="stoptweening" )	{ StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }
+	else if( sName=="stoptweening" )	{ StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }	// Why BeginT again? -Chris
+	else if( sName=="finishtweening" )	FinishTweening();
 	else if( sName=="x" )				SetX( fParam(1) );
 	else if( sName=="y" )				SetY( fParam(1) );
 	else if( sName=="z" )				SetZ( fParam(1) );
