@@ -702,7 +702,7 @@ void Model::DrawPrimitives()
 	if (!m_pModel)
 		return;
 
-	DISPLAY->Scale( 0, -1, 0 );	// flip so positive Y is up
+	DISPLAY->Scale( 1, -1, 1 );	// flip so positive Y is up
 
 	DISPLAY->SetBlendModeNormal();
 	DISPLAY->EnableZBuffer();
