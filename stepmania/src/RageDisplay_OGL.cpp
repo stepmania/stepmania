@@ -279,12 +279,14 @@ static void CheckPalettedTextures()
 		goto fail;
 	}
 
-	GLint size = 0;
-	glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
-	if(size != 8)
-	{
-		error = ssprintf("Expected an 8-bit palette, got a %i-bit one instead", size);
-		goto fail;
+	{	// in brackets to hush VC6 error
+		GLint size = 0;
+		glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
+		if(size != 8)
+		{
+			error = ssprintf("Expected an 8-bit palette, got a %i-bit one instead", size);
+			goto fail;
+		}
 	}
 
 	return;
@@ -292,7 +294,7 @@ static void CheckPalettedTextures()
 fail:
 	GLExt::glColorTableEXT = NULL;
 	GLExt::glGetColorTableParameterivEXT = NULL;
-	LOG->Info("Paletted textures disabled: %s.", error);
+	LOG->Info("Paletted textures disabled: %s.", error.c_str());
 }
 
 void SetupExtensions()
