@@ -272,7 +272,27 @@ static void DoEraseEmergencyDump()
 }
 
 extern HWND g_hWndMain;
-long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
+long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
+{
+	/* We aren't supposed to receive these exceptions.  For example, if you do
+	 * a floating point divide by zero, you should receive a result of #INF.  Only
+	 * if the floating point exception for _EM_ZERODIVIDE is unmasked does this
+	 * exception occur, and we never unmask it.
+	 *
+	 * However, once in a while some driver or library turns evil and unmasks an
+	 * exception flag on us.  If this happens, re-mask it and continue execution. */
+	switch( pExc->ExceptionRecord->ExceptionCode )
+	{
+	case EXCEPTION_FLT_INVALID_OPERATION:
+	case EXCEPTION_FLT_DENORMAL_OPERAND:
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+	case EXCEPTION_FLT_OVERFLOW:
+	case EXCEPTION_FLT_UNDERFLOW:
+	case EXCEPTION_FLT_INEXACT_RESULT:
+		pExc->ContextRecord->FloatSave.ControlWord |= 0x3F;
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+
 	/* If we're fullscreen, the fullscreen d3d window will obscure
 	 * the crash dialog.  Do this before we suspend threads, or it'll
 	 * deadlock if the thread controlling this window has been stopped. */
