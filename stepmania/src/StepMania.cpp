@@ -380,10 +380,10 @@ int main(int argc, char* argv[])
 		// immediately try to connect to server
 		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromPath( g_sSongPath );
 		if( GAMESTATE->m_pCurSong == NULL )
-			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath );
+			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath.GetString() );
 		NETWORK->Init( false );
 		if( !NETWORK->Connect( (const char*)g_sServerIP, SM_PORT ) )
-			throw RageException( "Could not connect to server '%s'", g_sServerIP );
+			throw RageException( "Could not connect to server '%s'", g_sServerIP.GetString() );
 		SCREENMAN->SetNewScreen( "ScreenSandbox" );
 	}
 	else if( g_bBeServer )
@@ -391,10 +391,10 @@ int main(int argc, char* argv[])
 		// wait for clients to connect
 		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromPath( g_sSongPath );
 		if( GAMESTATE->m_pCurSong == NULL )
-			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath );
+			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath.GetString() );
 		NETWORK->Init( true );
 		if( !NETWORK->Listen( SM_PORT ) )
-			throw RageException( "Could not connect to server '%s'", g_sServerIP );
+			throw RageException( "Could not connect to server '%s'", g_sServerIP.GetString() );
 		SCREENMAN->SetNewScreen( "ScreenSandbox" );
 	}
 	else
