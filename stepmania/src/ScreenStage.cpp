@@ -97,14 +97,16 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_PrepScreen:
-		/* Start fading out in after MINIMUM_DELAY seconds.  Loading the screen
-		 * might take longer than that, in which case we'll fade out as early as
-		 * we can. */
-		this->PostScreenMessage( SM_BeginFadingOut, MINIMUM_DELAY );
-
+	{
+		RageTimer length;
 		SCREENMAN->PrepareScreen( NEXT_SCREEN );
-		break;
+		float fScreenLoadSeconds = length.GetDeltaTime();
 
+		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
+		 * no less than MINIMUM_DELAY seconds. */
+		this->PostScreenMessage( SM_BeginFadingOut, max( 0, MINIMUM_DELAY-fScreenLoadSeconds) );
+		break;
+	}
 	case SM_BeginFadingOut:
 		m_Out.StartTransitioning();
 		FOREACH_PlayerNumber( p )
