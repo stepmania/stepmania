@@ -54,7 +54,7 @@ protected:
 
 	struct NoteMetricCache_t *cache;
 
-#define NOTE_COLOR_IMAGES 9
+#define NOTE_COLOR_IMAGES 8
 
 	Actor*		m_pTapNote[NOTE_COLOR_IMAGES];
 	Actor*		m_pTapAddition;
