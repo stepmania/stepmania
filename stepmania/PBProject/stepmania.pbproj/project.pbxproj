@@ -1954,7 +1954,7 @@
 				LIBRARY_SEARCH_PATHS = /usr/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = "-finline-limit=400 -Wno-switch -Wno-missing-braces -fcoalesce-templates -fconstant-cfstrings -falign-loops=32";
+				OTHER_CPLUSPLUSFLAGS = "-finline-limit=300 -Wno-switch -Wno-missing-braces -fcoalesce-templates -fconstant-cfstrings -falign-loops=32";
 				OTHER_LDFLAGS = "-lz  -lstdc++";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -2362,7 +2362,6 @@
 				AA60E0C3067992D7008ADC41,
 				AA35CBC8067C5BFE00BEBC56,
 				AA91587E067D2C2C00078E36,
-				AA915880067D2C2C00078E36,
 				AA9091A2067ED43000C1FCFF,
 				AA9091A6067ED46400C1FCFF,
 				AAC9F331069E22BB00D53E2C,
@@ -2375,6 +2374,10 @@
 				AA22CBA606DE909C0083BA97,
 				AA75DA1806E0944700EF13B5,
 				AA75DA2106E0A1B500EF13B5,
+				AAB9C8B006EAF64400AD97CD,
+				AAB9C8B206EAF64400AD97CD,
+				AAB9C8B606EAF66C00AD97CD,
+				AA64218906EC606F00C21584,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4267,7 +4270,6 @@
 				AA60E0C2067992D7008ADC41,
 				AA35CBC7067C5BFE00BEBC56,
 				AA91587D067D2C2C00078E36,
-				AA91587F067D2C2C00078E36,
 				AA9091A1067ED43000C1FCFF,
 				AA9091A5067ED46400C1FCFF,
 				AA139C4706923EBE00C1F6ED,
@@ -4280,6 +4282,10 @@
 				AA9A78AB06B5C72200B03E97,
 				AA22CBA506DE909C0083BA97,
 				AA75DA2006E0A1B500EF13B5,
+				AAB9C8AF06EAF64400AD97CD,
+				AAB9C8B106EAF64400AD97CD,
+				AAB9C8B506EAF66C00AD97CD,
+				AA64218806EC606F00C21584,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7110,6 +7116,36 @@
 			settings = {
 			};
 		};
+		AA64218606EC606F00C21584 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageFileDriverMemory.cpp;
+			path = src/RageFileDriverMemory.cpp;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA64218706EC606F00C21584 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageFileDriverMemory.h;
+			path = src/RageFileDriverMemory.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA64218806EC606F00C21584 = {
+			fileRef = AA64218606EC606F00C21584;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA64218906EC606F00C21584 = {
+			fileRef = AA64218706EC606F00C21584;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA67BFA00558751600EF34A6 = {
 			buildPhases = (
 				AA67BFA10558751600EF34A6,
@@ -7637,6 +7673,8 @@
 		};
 		AA6E00090477103E005F316C = {
 			children = (
+				AAB9C8B306EAF66C00AD97CD,
+				AAB9C8B406EAF66C00AD97CD,
 				AA22CBA306DE909C0083BA97,
 				AA22CBA406DE909C0083BA97,
 				AA35CBC5067C5BFE00BEBC56,
@@ -9862,14 +9900,18 @@
 		};
 		AA6EFDBB04770A83005F316C = {
 			children = (
+				AA64218606EC606F00C21584,
+				AA64218706EC606F00C21584,
+				AAB9C8AB06EAF64400AD97CD,
+				AAB9C8AC06EAF64400AD97CD,
+				AAB9C8AD06EAF64400AD97CD,
+				AAB9C8AE06EAF64400AD97CD,
 				AA9091A3067ED46400C1FCFF,
 				AA9091A4067ED46400C1FCFF,
 				AA90919F067ED43000C1FCFF,
 				AA9091A0067ED43000C1FCFF,
 				AA915879067D2C2C00078E36,
 				AA91587A067D2C2C00078E36,
-				AA91587B067D2C2C00078E36,
-				AA91587C067D2C2C00078E36,
 				AABBF66C0659E78D00738526,
 				AABBF66D0659E78D00738526,
 				AABBF66E0659E78D00738526,
@@ -13302,24 +13344,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		AA91587B067D2C2C00078E36 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = RageSurfaceUtils.cpp;
-			path = ../src/RageSurfaceUtils.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA91587C067D2C2C00078E36 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = RageSurfaceUtils.h;
-			path = ../src/RageSurfaceUtils.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		AA91587D067D2C2C00078E36 = {
 			fileRef = AA915879067D2C2C00078E36;
 			isa = PBXBuildFile;
@@ -13328,18 +13352,6 @@
 		};
 		AA91587E067D2C2C00078E36 = {
 			fileRef = AA91587A067D2C2C00078E36;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA91587F067D2C2C00078E36 = {
-			fileRef = AA91587B067D2C2C00078E36;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA915880067D2C2C00078E36 = {
-			fileRef = AA91587C067D2C2C00078E36;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -14148,6 +14160,96 @@
 			path = smicon.icns;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		AAB9C8AB06EAF64400AD97CD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageSurfaceUtils_Palettize.cpp;
+			path = src/RageSurfaceUtils_Palettize.cpp;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAB9C8AC06EAF64400AD97CD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageSurfaceUtils_Palettize.h;
+			path = src/RageSurfaceUtils_Palettize.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAB9C8AD06EAF64400AD97CD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RageSurfaceUtils.cpp;
+			path = src/RageSurfaceUtils.cpp;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAB9C8AE06EAF64400AD97CD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RageSurfaceUtils.h;
+			path = src/RageSurfaceUtils.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAB9C8AF06EAF64400AD97CD = {
+			fileRef = AAB9C8AB06EAF64400AD97CD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB9C8B006EAF64400AD97CD = {
+			fileRef = AAB9C8AC06EAF64400AD97CD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB9C8B106EAF64400AD97CD = {
+			fileRef = AAB9C8AD06EAF64400AD97CD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB9C8B206EAF64400AD97CD = {
+			fileRef = AAB9C8AE06EAF64400AD97CD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB9C8B306EAF66C00AD97CD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = ScreenNetEvaluation.cpp;
+			path = src/ScreenNetEvaluation.cpp;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAB9C8B406EAF66C00AD97CD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScreenNetEvaluation.h;
+			path = src/ScreenNetEvaluation.h;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AAB9C8B506EAF66C00AD97CD = {
+			fileRef = AAB9C8B306EAF66C00AD97CD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAB9C8B606EAF66C00AD97CD = {
+			fileRef = AAB9C8B406EAF66C00AD97CD;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AABB00F40659EF8C00738526 = {
 			explicitFileType = sourcecode.cpp;
