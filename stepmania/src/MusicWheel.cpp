@@ -257,7 +257,7 @@ MusicWheel::MusicWheel()
 
 
 	if( GAMEINFO->m_pCurSong == NULL	// if there is no currently selected song
-		&&  GAMEINFO->m_pSongs[0] )		// and there is at least one song
+		&&  GAMEINFO->m_pSongs.GetSize() > 0 )		// and there is at least one song
 	{
 		GAMEINFO->m_pCurSong = GAMEINFO->m_pSongs[0];	// select the first song
 	}

@@ -216,6 +216,22 @@ SOURCE=.\WindowDancing.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WindowEdit.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowEdit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowEditMenu.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WindowEditMenu.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WindowGameOptions.cpp
 # End Source File
 # Begin Source File

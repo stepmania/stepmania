@@ -166,10 +166,18 @@ void CSMPackageInstallDlg::OnOK()
 	// Unzip the SMzip package into the Stepmania installation folder
 	for( int i=0; i<m_zip.GetCount(); i++ )
 	{
-		CZipFileHeader fh;
-		m_zip.GetFileInfo(fh, (WORD)i);
-		//AfxMessageBox( ssprintf( "Trying to extract '%s'", fh.GetFileName()) );
+		// Throw some text up so the user has something to look at during the long pause.
+		CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
+		pEdit1->SetWindowText( ssprintf("Installing '%s'.  Please wait...", m_sPackagePath) );
+		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
+		pEdit2->SetWindowText( "" );
+		CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
+		pEdit3->SetWindowText( "" );
+		SendMessage( WM_PAINT );
+		UpdateWindow();		// Force the silly thing to hadle WM_PAINT now!
 
+
+		// Extract the files
 		try
 		{	
 			m_zip.ExtractFile( (WORD)i, szCurrentDirectory, true );	// extract file to current directory
