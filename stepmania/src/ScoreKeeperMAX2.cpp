@@ -62,12 +62,32 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, const CStringA
 	GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 
 
-	m_iScore = 0;
+	m_iScoreRemainder = 0;
 	m_iCurToastyCombo = 0; 
 	m_iMaxScoreSoFar = 0;
 	m_iPointBonus = 0;
 	m_iNumTapsAndHolds = 0;
 	m_bIsLastSongInCourse = false;
+
+	memset( m_ComboBonusFactor, 0, sizeof(m_ComboBonusFactor) );
+	switch( PREFSMAN->m_iScoringType )
+	{
+	case PrefsManager::SCORING_MAX2:
+		m_iRoundTo = 1;
+		break;
+	case PrefsManager::SCORING_5TH:
+		m_iRoundTo = 5;
+		if (!GAMESTATE->IsCourseMode())
+		{
+			m_ComboBonusFactor[TNS_MARVELOUS] = 55;
+			m_ComboBonusFactor[TNS_PERFECT] = 55;
+			m_ComboBonusFactor[TNS_GREAT] = 33;
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
+
 }
 
 void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteData* pNoteData )
@@ -124,7 +144,17 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Steps* pNotes, NoteDat
 
 		// long ver and marathon ver songs have higher max possible scores
 		int iLengthMultiplier = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
-		m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
+		switch( PREFSMAN->m_iScoringType )
+		{
+		case PrefsManager::SCORING_MAX2:
+			m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
+			break;
+		case PrefsManager::SCORING_5TH:
+			m_iMaxPossiblePoints = (iMeter + 1) * 5000000 * iLengthMultiplier;
+			break;
+		default:
+			ASSERT(0);
+		}
 	}
 	ASSERT( m_iMaxPossiblePoints >= 0 );
 	m_iMaxScoreSoFar += m_iMaxPossiblePoints;
@@ -166,6 +196,7 @@ static int GetScore(int p, int B, int S, int n)
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
+	int &iScore = GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber];
 /*
   http://www.aaroninjapan.com/ddr2.html
 
@@ -202,13 +233,18 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	// the player has failed"?
 	if( GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )
 	{
-		m_iScore += p;
+		iScore += p;
 		// make score evenly divisible by 5
 		// only update this on the next step, to make it less *obvious*
-		if (p > 0) m_iScore -= (m_iScore % 5);
+		if (p > 0)
+			iScore -= (iScore % 5);
 	}
 	else
-		m_iScore += GetScore(p, B, sum, m_iTapNotesHit);
+	{
+		iScore += GetScore(p, B, sum, m_iTapNotesHit);
+		const int &iCurrentCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
+		GAMESTATE->m_CurStageStats.iBonus[m_PlayerNumber] += m_ComboBonusFactor[score] * iCurrentCombo;
+	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
 	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);
@@ -216,10 +252,10 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
 		if (!GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber])
-			m_iScore += m_iPointBonus;
+			iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
-			m_iScore += 100000000 - m_iMaxScoreSoFar;
+			iScore += 100000000 - m_iMaxScoreSoFar;
 
 			/* If we're in Endless mode, we'll come around here again, so reset
 			 * the bonus counter. */
@@ -227,11 +263,14 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 		}
 	}
 
-	ASSERT(m_iScore >= 0);
+	/* Undo rounding from the last tap, and re-round. */
+	iScore += m_iScoreRemainder;
+	m_iScoreRemainder = (iScore % m_iRoundTo);
+	iScore = iScore - m_iScoreRemainder;
+	
+	ASSERT( iScore >= 0 );
 
-	printf( "score: %i\n", m_iScore );
-
-	GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber] = m_iScore;
+	printf( "score: %i\n", iScore );
 }
 
 void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, int iNumAdditions )
@@ -261,7 +300,18 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
   only add 1 to your combo instead of 2. The combo counter thus becomes a "Marvelous/Perfect" counter. 
 */
 	/* True if a jump is one to combo, false if combo is purely based on tap count. */
-	const bool ComboIsPerRow = (GAMESTATE->m_PlayMode == PLAY_MODE_ONI);
+	bool ComboIsPerRow = true;
+	switch( PREFSMAN->m_iScoringType )
+	{
+	case PrefsManager::SCORING_MAX2:
+		ComboIsPerRow = (GAMESTATE->m_PlayMode == PLAY_MODE_ONI);
+		break;
+	case PrefsManager::SCORING_5TH:
+		ComboIsPerRow = true;
+		break;
+	default:
+		ASSERT(0);
+	}
 	const int ComboCountIfHit = ComboIsPerRow? 1: iNumTapsInRow;
 	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
 

@@ -18,7 +18,7 @@ class Steps;
 
 class ScoreKeeperMAX2: public ScoreKeeper
 {
-	int				m_iScore;
+	int				m_iScoreRemainder;
 	int				m_iMaxPossiblePoints;
 	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 
@@ -31,6 +31,11 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	const vector<Steps*>& apNotes;
 
 	void AddScore( TapNoteScore score );
+
+	/* Configuration: */
+	/* Score after each tap will be rounded to the nearest m_iRoundTo; 1 to do nothing. */
+	int				m_iRoundTo;
+	int				m_ComboBonusFactor[NUM_TAP_NOTE_SCORES];
 
 public:
 	ScoreKeeperMAX2( const vector<Steps*>& apNotes, const CStringArray &asModifiers, PlayerNumber pn);
