@@ -262,7 +262,7 @@ void NetworkSyncManager::StartRequest()
 	//Report Step difficulties 
 
 	Steps * tSteps;
-
+	SendNetPack.m_step = 0;
 	tSteps = g_CurStageStats.pSteps[PLAYER_1];
 	if (tSteps!=NULL)
 	{
