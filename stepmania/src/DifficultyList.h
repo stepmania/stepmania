@@ -34,7 +34,7 @@ private:
 
 	ThemeMetric<float> ITEMS_SPACING_Y;
 	ThemeMetric<float> DESCRIPTION_MAX_WIDTH;
-	ThemeMetric<float> NUM_SHOWN_ITEMS;
+	ThemeMetric<int> NUM_SHOWN_ITEMS;
 	ThemeMetric<bool> CAPITALIZE_DIFFICULTY_NAMES;
 	ThemeMetric<apActorCommands> MOVE_COMMAND;
 

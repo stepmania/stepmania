@@ -172,9 +172,10 @@ void ScreenNetRoom::Update( float fDeltaTime )
 
 void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
-	switch (m_SelectMode) {
+	switch( m_SelectMode )
+	{
 	case SelectRooms:
-		if ((m_iRoomPlace < m_RoomList.size())&&(m_iRoomPlace >= 0)) 
+		if( m_iRoomPlace < (int) m_RoomList.size() && m_iRoomPlace >= 0 )
 		{
 			NSMAN->m_SMOnlinePacket.ClearPacket();
 			NSMAN->m_SMOnlinePacket.Write1( 1 );
