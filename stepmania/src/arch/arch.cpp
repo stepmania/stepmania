@@ -158,7 +158,8 @@ LightsDriver *MakeLightsDriver(CString driver)
 	if(!driver.CompareNoCase("SystemMessage")) ret = new LightsDriver_SystemMessage;
 	if(!driver.CompareNoCase("Null") || !ret )
 	{
-		LOG->Warn("Unknown lights driver name: %s", driver.c_str());
+		if( driver.CompareNoCase("Null") )
+			LOG->Warn("Unknown lights driver name: %s", driver.c_str());
 		ret = new LightsDriver_Null;
 	}
 	
