@@ -835,25 +835,33 @@ CString StepManiaLanServer::ListPlayers()
 
 void StepManiaLanServer::Kick(CString &name)
 {
-	for (unsigned int x = 0; x < Client.size(); ++x)
-		for (int y = 0; y < 2; ++y)
+	bool kicked;
+	for (unsigned int x = 0; x < Client.size(); ++x) {
+		kicked = false;
+		for (int y = 0; (y < 2)&&(kicked == false); ++y)
 			if (name == Client[x]->Player[y].name)
 			{
 				ServerChat("Kicked " + name + ".");
 				Disconnect(x);
+				kicked = true;
 			}
+	}
 }
 
 void StepManiaLanServer::Ban(CString &name)
 {
-	for (unsigned int x = 0; x < Client.size(); ++x)
-		for (int y = 0; y < 2; ++y)
+	bool kicked;
+	for (unsigned int x = 0; x < Client.size(); ++x) {
+		kicked = false;
+		for (int y = 0; (y < 2)&&(kicked == false); ++y)
 			if (name == Client[x]->Player[y].name)
 			{
 				ServerChat("Banned " + name + ".");
 				bannedIPs.push_back(Client[x]->clientSocket.address);
 				Disconnect(x);
+				kicked = true;
 			}
+	}
 }
 
 bool StepManiaLanServer::IsBanned(CString &ip)
