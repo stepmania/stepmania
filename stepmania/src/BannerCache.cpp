@@ -188,7 +188,9 @@ struct BannerTexture: public RageTexture
 
 	void Destroy()
 	{
-		DISPLAY->DeleteTexture( m_uTexHandle );
+		if( m_uTexHandle )
+			DISPLAY->DeleteTexture( m_uTexHandle );
+		m_uTexHandle = 0;
 	}
 
 	void Reload()
