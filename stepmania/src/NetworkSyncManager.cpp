@@ -193,7 +193,7 @@ void NetworkSyncManager::StartRequest()
 
 	vector <char> tmp;	//Temporary vector used by receive function when waiting
 
-	LOG->Info("Requesting Start from Server.");
+	LOG->Trace("Requesting Start from Server.");
 
 	netHolder SendNetPack;
 
@@ -205,12 +205,12 @@ void NetworkSyncManager::StartRequest()
 
 	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 	
-	LOG->Info("Waiting for RECV");
+	LOG->Trace("Waiting for RECV");
 
 	//Block until go is recieved.
 	NetPlayerClient->receive(tmp);	
 
-	LOG->Info("Starting Game.");
+	LOG->Trace("Starting Game.");
 }
 
 //Global and accessable from anywhere
