@@ -745,7 +745,9 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 	/* XXX: Er, this doesn't work; Windows traps this key and takes a screenshot
 	 * into the clipboard.  I don't want to disable that, though; it's useful. */
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F11))
+	if( DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PAUSE) &&
+		( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+		  INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT))) )
 	{
 		// Save Screenshot.
 		CString sPath;
