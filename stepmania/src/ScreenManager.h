@@ -32,6 +32,7 @@ public:
 	void Draw();
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
+	void PrepNewScreen( CString sClassName );
 	void SetNewScreen( CString sClassName );
 	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)() = NULL, void(*OnNo)() = NULL );
 	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
@@ -45,6 +46,7 @@ public:
 private:
 	CArray<Screen*, Screen*> m_ScreenStack;
 	CArray<Screen*, Screen*> m_ScreensToDelete;
+	Screen *m_ScreenBuffered;
 
 	BitmapText m_textStats;
 	BitmapText m_textSystemMessage;
@@ -52,6 +54,7 @@ private:
 
 	Screen* MakeNewScreen( CString sClassName );
 	void EmptyDeleteQueue();
+	void SetNewScreen( Screen *pNewScreen );
 };
 
 

@@ -17,6 +17,7 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "RageException.h"
+#include "DXUtil.h"
 
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
@@ -48,6 +49,8 @@ float CREDITS_Y( int p ) {
 
 ScreenManager::ScreenManager()
 {
+	m_ScreenBuffered = NULL;
+
 	m_textStats.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textStats.SetXY( STATS_X, STATS_Y );
 	m_textStats.SetHorizAlign( Actor::align_right );
@@ -83,6 +86,7 @@ ScreenManager::~ScreenManager()
 	// delete current states
 	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
 		SAFE_DELETE( m_ScreenStack[i] );
+	SAFE_DELETE( m_ScreenBuffered );
 }
 
 void ScreenManager::EmptyDeleteQueue()
@@ -104,8 +108,25 @@ void ScreenManager::Update( float fDeltaTime )
 	EmptyDeleteQueue();
 
 	// Update all windows in the stack
-	for( int i=0; i<m_ScreenStack.GetSize(); i++ )
+	for( int i=0; i<m_ScreenStack.GetSize(); i++ ) {
+		/* Screens take some time to load.  If we don't do this, then screens
+		 * receive an initial update that includes all of the time they spent
+		 * loading, which will chop off their tweens.  
+		 *
+		 * We don't want to simply cap update times; for example, the stage
+		 * screen sets a 4 second timer, preps the gameplay screen, and then
+		 * displays the prepped screen after the timer runs out; this lets the
+		 * load time be masked (as long as the load takes less than 4 seconds).
+		 * If we cap that large update delta from the screen load, the update
+		 * to load the new screen will come after 4 seconds plus the load time.
+		 *
+		 * So, let's just drop the first update for every screen.
+		 */
+		if(m_ScreenStack[i]->FirstUpdate())
+			continue;
+
 		m_ScreenStack[i]->Update( fDeltaTime );
+	}
 
 }
 
@@ -218,23 +239,43 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 		throw RageException( "Invalid Screen class name '%s'", sClassName );
 }
 
-void ScreenManager::SetNewScreen( CString sClassName )
+void ScreenManager::PrepNewScreen( CString sClassName )
 {
-	/* Explicitely flush the directory cache each time we load a new screen.
-	 * Perhaps we should only do this in debug? */
-	FlushDirCache();
+	if(!sClassName.GetLength()) {
+		ASSERT( m_ScreenBuffered != NULL);
+		SetNewScreen( m_ScreenBuffered  );
+		m_ScreenBuffered = NULL;
+	} else {
+		ASSERT(m_ScreenBuffered == NULL);
+		m_ScreenBuffered = MakeNewScreen(sClassName);
+	}
+}
 
-	// It makes sense that ScreenManager should allocate memory for a new screen since it 
-	// deletes it later on.  This also convention will reduce includes because screens won't 
-	// have to include each other's headers of other screens.
-	Screen* pNewScreen = MakeNewScreen(sClassName);
-
+void ScreenManager::SetNewScreen( Screen *pNewScreen )
+{
 	// move current screen to ScreenToDelete
 	RefreshCreditsMessages();
 	m_ScreensToDelete.Copy( m_ScreenStack );
 
 	m_ScreenStack.RemoveAll();
 	m_ScreenStack.Add( pNewScreen );
+}
+
+void ScreenManager::SetNewScreen( CString sClassName )
+{
+	/* If we prepped a screen but didn't use it, nuke it. */
+	SAFE_DELETE( m_ScreenBuffered );
+	/* Explicitely flush the directory cache each time we load a new screen.
+	 * Perhaps we should only do this in debug? */
+	FlushDirCache();
+
+	float f = DXUtil_Timer(TIMER_GETAPPTIME);
+	// It makes sense that ScreenManager should allocate memory for a new screen since it 
+	// deletes it later on.  This also convention will reduce includes because screens won't 
+	// have to include each other's headers of other screens.
+	Screen* pNewScreen = MakeNewScreen(sClassName);
+LOG->Trace( "Loaded %s in %f", sClassName, DXUtil_Timer(TIMER_GETAPPTIME)-f);
+	SetNewScreen( pNewScreen );
 }
 
 void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
