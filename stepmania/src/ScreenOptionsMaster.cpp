@@ -692,9 +692,6 @@ int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const Opt
 			if( !lua_isfunction( LUA->L, -1 ) )
 				RageException::Throw( "\"%s\" \"SetSelections\" entry is not a function", row.name.c_str() );
 
-			/* Push self. */
-			hand.m_LuaTable.PushSelf( LUA->L );
-
 			/* Argument 1 (vbSelectedOut): */
 			lua_pushvalue( LUA->L, 1 );
 
