@@ -183,14 +183,15 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;	// skip
 		
-		switch (PREFSMAN->m_iScoringType)
+		switch( PREFSMAN->m_iScoringType )
 		{
-		case (PrefsManager::SCORING_MAX2):
+		case PrefsManager::SCORING_MAX2:
 			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( m_apNotesQueue[p], (PlayerNumber)p );
 			break;
-		case (PrefsManager::SCORING_5TH):
+		case PrefsManager::SCORING_5TH:
 			m_pPrimaryScoreKeeper[p] = new ScoreKeeper5th( m_apNotesQueue[p], (PlayerNumber)p );
 			break;
+		default: ASSERT(0);
 		}
 
 		switch( GAMESTATE->m_PlayMode )
