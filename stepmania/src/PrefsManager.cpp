@@ -48,6 +48,7 @@ PrefsManager::PrefsManager()
 	m_fLifeDifficultyScale = 1.0f;
 	m_iMovieDecodeMS = 2;
 	m_bUseBGIfNoBanner = false;
+	m_bDelayedEscape = true;
 
 	ReadGlobalPrefsFromDisk( true );
 }
@@ -83,6 +84,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
 	ini.GetValueI( "Options", "MovieDecodeMS",			m_iMovieDecodeMS );
 	ini.GetValueB( "Options", "UseBGIfNoBanner",		m_bUseBGIfNoBanner );
+	ini.GetValueB( "Options", "DelayedEscape",			m_bDelayedEscape );
 
 	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
@@ -121,6 +123,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "LifeDifficultyScale",	m_fLifeDifficultyScale );
 	ini.SetValueI( "Options", "MovieDecodeMS",			m_iMovieDecodeMS );
 	ini.SetValueB( "Options", "UseBGIfNoBanner",		m_bUseBGIfNoBanner );
+	ini.SetValueB( "Options", "DelayedEscape",			m_bDelayedEscape );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 

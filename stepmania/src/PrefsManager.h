@@ -31,21 +31,23 @@ public:
 	int		m_iDisplayResolution;
 	int		m_iTextureResolution;
 	int		m_iRefreshRate;		// 0 means 'default'
-	bool	m_bIgnoreJoyAxes;
-	bool	m_bOnlyDedicatedMenuButtons;
 	bool	m_bShowStats;
 	BackgroundMode	m_BackgroundMode;
-	bool	m_bShowDanger;
 	float	m_fBGBrightness;
-	bool	m_bMenuTimer;
-	bool	m_bEventMode;
-	int		m_iNumArcadeStages;
-	bool	m_bAutoPlay;
-	float	m_fJudgeWindow;
-	float	m_fLifeDifficultyScale;
 	int 	m_iMovieDecodeMS;
 	bool	m_bUseBGIfNoBanner;
 
+	bool	m_bIgnoreJoyAxes;	
+	bool	m_bOnlyDedicatedMenuButtons;
+	bool	m_bMenuTimer;
+	bool	m_bShowDanger;
+	int		m_iNumArcadeStages;
+	bool	m_bEventMode;
+	float	m_fJudgeWindow;
+	float	m_fLifeDifficultyScale;
+	bool	m_bAutoPlay;
+	bool	m_bDelayedEscape;
+	
 	CStringArray m_asAdditionalSongFolders;
 
 	int GetDisplayHeight();

@@ -46,12 +46,18 @@ void Screen::Update( float fDeltaTime )
 	}
 }
 
+void Screen::MenuBack(	const PlayerNumber p, const InputEventType type )
+{
+	if(!PREFSMAN->m_bDelayedEscape || type==IET_SLOW_REPEAT || type==IET_FAST_REPEAT)
+		MenuBack(p); 
+}
+
 void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	/* Don't send release messages with the default handler. */
 	if(type == IET_RELEASE) return; // don't care
 
-	// don't make user hold back button if they're pressing escape
+	/* Don't make the user hold the back button if they're pressing escape. */
 	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == DIK_ESCAPE )
 	{
 		this->MenuBack( MenuI.player );
