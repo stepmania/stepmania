@@ -30,6 +30,7 @@ public:
 
 protected:
 	static CString GetAnnouncerDirFromName( CString sAnnouncerName );
+	CString GetPathTo( CString AnnouncerPath, CString sFolderName );
 
 	CString m_sCurAnnouncerName;
 };
