@@ -162,7 +162,8 @@ static void SetIcon()
 	zoomSurface(srf, 32, 32);
 
 	SDL_SetAlpha( srf, SDL_SRCALPHA, SDL_ALPHA_OPAQUE );
-	SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
+	if(SDL_WasInit(SDL_INIT_VIDEO))
+		SDL_WM_SetIcon(srf, NULL /* derive from alpha */);
 	SDL_FreeSurface(srf);
 }
 
@@ -248,23 +249,20 @@ int main(int argc, char* argv[])
 #endif
 	SDL_Init(SDL_flags);
 
-	atexit(SDL_Quit);
-
 	CString  g_sErrorString = "";
 
 #ifndef DEBUG
 	try{
 #endif
 
-	/* Initialize the SDL library. */
-    if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
-        RageException::Throw( "Couldn't initialize SDL: %s", SDL_GetError() );
-
-	SetIcon();
 
 	LoadingWindow *loading_window = MakeLoadingWindow();
-	/* This might be using SDL, so reset the caption. */
+
+	/* We might be using SDL, so set generic window properties (icon and caption).
+	 * Be careful; we might not have an SDL window at all. */
 	SDL_WM_SetCaption("StepMania", "StepMania");
+	SetIcon();
+
 	loading_window->Paint();
 
 	// changed to use time.  GetTimeSinceStart is silly because it always return 0! -Chris
