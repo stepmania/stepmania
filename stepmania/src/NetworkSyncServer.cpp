@@ -113,14 +113,15 @@ GameClient::GameClient()
 
 void StepManiaLanServer::Disconnect(const unsigned int clientNum)
 {
-	vector<GameClient*>::iterator Iterator;
-	Iterator = Client.begin();
 	if (clientNum == (Client.size()-1))
 	{
-		delete Client[clientNum];
+		delete Client[Client.size()-1];
 		Client.pop_back();
 	}
 	else
+	{
+		vector<GameClient*>::iterator Iterator;
+		Iterator = Client.begin();
 		for (unsigned int x = 0; x < Client.size(); ++x)
 		{
 			if (x == clientNum)
@@ -128,8 +129,9 @@ void StepManiaLanServer::Disconnect(const unsigned int clientNum)
 				delete Client[x];
 				Client.erase(Iterator);
 			}
-			Iterator++;
+			++Iterator;
 		}
+	}
 }
 
 int GameClient::GetData(PacketFunctions& Packet)
@@ -383,8 +385,6 @@ void StepManiaLanServer::AssignPlayerIDs()
 }
 
 void StepManiaLanServer::PopulatePlayersPtr(vector<LanPlayer*> &playersPtr) {
-//	for (unsigned int x = 0; x < Client.size(); ++x)
-//		delete playersPtr[x];
 
 	playersPtr.clear();
 
@@ -393,11 +393,7 @@ void StepManiaLanServer::PopulatePlayersPtr(vector<LanPlayer*> &playersPtr) {
 		if (Client[x]->InGame||Client[x]->wasIngame)
 			for (int y = 0; y < 2; ++y)
 				if (Client[x]->IsPlaying(y))
-				{
-//					playersPtr.push_back(new LanPlayer);
-//					playersPtr[playersPtr.size()-1] = &Client[x]->Player[y];
 					playersPtr.push_back(&Client[x]->Player[y]);
-				}
 }
 
 int StepManiaLanServer::SortStats(vector<LanPlayer*> &playersPtr)
@@ -406,7 +402,6 @@ int StepManiaLanServer::SortStats(vector<LanPlayer*> &playersPtr)
 	bool isChanged;
 
 	PopulatePlayersPtr(playersPtr);
-
 
 	do
 	{
@@ -481,7 +476,6 @@ void StepManiaLanServer::SendNetPacket(const unsigned int client, PacketFunction
 
 void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, vector<LanPlayer*> &playresPtr)
 {
-	CString numname;
 	for (unsigned int x = 0; x < playersPtr.size(); ++x)
 		data.Write1( (uint8_t) playersPtr[x]->PlayerID );
 }
@@ -530,23 +524,20 @@ void GameClient::UpdateStats(PacketFunctions& Packet)
 void StepManiaLanServer::NewClientCheck()
 {
 	//Make a new client and accept a connection to it.
-	// no connection is accepted, delete the client.
+	//If no connection is accepted, delete the client.
 
-	Client.push_back(new GameClient);
+	GameClient *tmp = new GameClient;
 
-	if (server.accept(Client[Client.size()-1]->clientSocket) == 1)
-	{
-		AssignPlayerIDs();
-
-		if (IsBanned(Client[Client.size()-1]->clientSocket.address))
+	if (server.accept(tmp->clientSocket) == 1)
+		if (!IsBanned(tmp->clientSocket.address))
 		{
-			Disconnect(Client.size()-1);
+			Client.push_back(tmp);
+			AssignPlayerIDs();
 		}
-	}
+		else
+			delete tmp;
 	else
-	{
-		Disconnect(Client.size()-1);
-	}
+		delete tmp;
 }
 
 void StepManiaLanServer::SendValue(uint8_t value, const unsigned int clientNum)
@@ -561,7 +552,6 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 	{
 		CString command = message.substr(1, message.find(" ")-1);
 		if ((command.compare("list") == 0)||(command.compare("have") == 0))
-		{
 			if (command.compare("list") == 0)
 			{
 				Reply.ClearPacket();
@@ -580,9 +570,7 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 				Client[clientNum]->forceHas = true;
 				ServerChat(message);
 			}
-		}
 		else
-		{
 			if (clientNum == 0)
 			{
 				if (command.compare("force_start") == 0)
@@ -605,12 +593,9 @@ void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int
 				Reply.WriteNT("You do not have permission to use server commands.");
 				SendNetPacket(clientNum, Reply);
 			}
-		}
 	}
 	else
-	{
 		RelayChat(message, clientNum);
-	}
 }
 
 void StepManiaLanServer::RelayChat(CString &passedmessage, const unsigned int clientNum)
