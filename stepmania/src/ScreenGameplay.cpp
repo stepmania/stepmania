@@ -600,6 +600,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 	GAMESTATE->m_fCurBPS = fBPS;
 	GAMESTATE->m_bFreeze = bFreeze;
 
+	/* Before the music starts, we have no song position, so set it toto
+	 * -1; if we leave it alone we'll get 0, which will cause movies to start
+	 * playing before the music starts.
+	 *
+	 * We really should be setting the beat to negative numbers before the song
+	 * starts, leading up to 0, but we need a separate time source to do that.
+	 * XXX: do this once we have a new sound infrastructure. */
+	if(!m_soundMusic.IsPlaying())
+		GAMESTATE->m_fSongBeat = -1;
+
 //	LOG->Trace( "GAMESTATE->m_fMusicSeconds = %f", GAMESTATE->m_fMusicSeconds );
 	
 
