@@ -221,10 +221,12 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 				{
 					if (!m_MusicWheel.SelectSong( m_cSong ) )
 					{
-						m_MusicWheel.ChangeSort( SORT_GROUP );
-						m_MusicWheel.FinishTweening();
-						SCREENMAN->PostMessageToTopScreen( SM_SetWheelSong, 0.710f );
+						//m_MusicWheel.ChangeSort( SORT_GROUP );
+						//m_MusicWheel.FinishTweening();
+						//SCREENMAN->PostMessageToTopScreen( SM_SetWheelSong, 0.710f );
+						m_MusicWheel.SetOpenGroup( "", SORT_GROUP );
 					}
+					m_MusicWheel.SelectSong( m_cSong );
 					m_MusicWheel.Select();
 					m_MusicWheel.Move(-1);
 					m_MusicWheel.Move(1);
