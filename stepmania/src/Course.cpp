@@ -477,8 +477,7 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
 	for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
 	{
 		Song* pSong = vSongsByMostPlayed[j];
-		if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds  ||
-			pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds  || 
+		if( SONGMAN->GetNumStagesForSong(pSong) > 1 ||
 			!pSong->GetStepsByDifficulty(nt, DIFFICULTY_MEDIUM, PREFSMAN->m_bAutogenMissingTypes)  ||
 			!pSong->GetStepsByDifficulty(nt, DIFFICULTY_HARD, PREFSMAN->m_bAutogenMissingTypes) )
 			vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
