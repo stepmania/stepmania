@@ -4,6 +4,7 @@
 #define NetworkSyncManager_H
 
 #include "PlayerNumber.h"
+#include "Difficulty.h"
 
 class LoadingWindow;
 
@@ -16,6 +17,7 @@ struct EndOfGame_PlayerData
 {
 	int score;
 	int grade;
+	Difficulty difficulty;
 	int tapScores[NETNUMTAPSCORES];	//This will be a const soon enough
 };
 

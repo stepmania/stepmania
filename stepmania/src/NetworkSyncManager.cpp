@@ -347,6 +347,18 @@ void NetworkSyncManager::StartRequest(short position)
 		ctr = uint8_t(ctr+tSteps->GetMeter());
 
 	m_packet.Write1(ctr);
+
+	ctr=0;
+
+	tSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_1)))
+		ctr = uint8_t(ctr + (int) tSteps->GetDifficulty()*16);
+
+	tSteps = GAMESTATE->m_pCurSteps[PLAYER_2];
+	if ((tSteps!=NULL) && (GAMESTATE->IsPlayerEnabled(PLAYER_2)))
+		ctr = uint8_t(ctr + (int) tSteps->GetDifficulty());
+
+	m_packet.Write1(ctr);
 	
 	//Notify server if this is for sync or not.
 	ctr = char(position*16);
@@ -384,10 +396,10 @@ void NetworkSyncManager::StartRequest(short position)
 	{
 		m_EvalPlayerData[i].grade=0;
 		m_EvalPlayerData[i].score=0;
+		m_EvalPlayerData[i].difficulty=(Difficulty)0;
 		for (int j=0;j<NETNUMTAPSCORES;j++)
 			m_EvalPlayerData[i].tapScores[j] = 0;
 	}
-
 
 	//Block until go is recieved.
 	//Switch to blocking mode (this is the only
@@ -507,6 +519,8 @@ void NetworkSyncManager::ProcessInput()
 					m_EvalPlayerData[i].score = m_packet.Read4();
 				for (int i=0;i<PlayersInPack;i++)
 					m_EvalPlayerData[i].grade = m_packet.Read1();
+				for (int i=0;i<PlayersInPack;i++)
+					m_EvalPlayerData[i].difficulty = (Difficulty) m_packet.Read1();
 				for (int j=0;j<NETNUMTAPSCORES;j++)
 					for (int i=0;i<PlayersInPack;i++)
 						m_EvalPlayerData[i].tapScores[j] = m_packet.Read2();

@@ -98,6 +98,8 @@ void ScreenNetEvaluation::UpdateStats()
 
 	m_textScore[m_pActivePlayer].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score) );
 
+	m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( m_pActivePlayer, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
+
 	for (int j=0;j<NETNUMTAPSCORES;j++)
 		m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%d", NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
 }
