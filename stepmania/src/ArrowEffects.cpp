@@ -12,6 +12,7 @@
 #include "PlayerState.h"
 #include "GameState.h"
 #include "Style.h"
+#include <float.h>
 
 const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 
@@ -195,8 +196,8 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		CLAMP( iStartCol, 0, pStyle->m_iColsPerPlayer-1 );
 		CLAMP( iEndCol, 0, pStyle->m_iColsPerPlayer-1 );
 
-		float fMinX = +100000;
-		float fMaxX = -100000;
+		float fMinX = FLT_MAX;
+		float fMaxX = FLT_MIN;
 		
 		// TODO: Don't index by PlayerNumber.
 		PlayerNumber pn = pPlayerState->m_PlayerNumber;

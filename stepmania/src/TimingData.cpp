@@ -124,7 +124,7 @@ void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float f
 	{
 		const int iStartIndexThisSegment = m_BPMSegments[i].m_iStartIndex;
 		const bool bIsLastBPMSegment = i==m_BPMSegments.size()-1;
-		const int iStartIndexNextSegment = bIsLastBPMSegment ? 40000/*inf*/ : m_BPMSegments[i+1].m_iStartIndex;
+		const int iStartIndexNextSegment = bIsLastBPMSegment ? INT_MAX : m_BPMSegments[i+1].m_iStartIndex;
 
 		if( iStartIndexThisSegment <= iStartIndex && iStartIndexNextSegment <= iStartIndex )
 			continue;

@@ -10,6 +10,7 @@
 #include "ProfileManager.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
+#include <float.h>
 
 UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -330,12 +331,12 @@ float UnlockManager::PointsUntilNextUnlock( UnlockType t ) const
 	float fScores[NUM_UNLOCK_TYPES];
 	UNLOCKMAN->GetPoints( PROFILEMAN->GetMachineProfile(), fScores );
 
-	float fSmallestPoints = 400000000;   // or an arbitrarily large value
+	float fSmallestPoints = FLT_MAX;   // or an arbitrarily large value
 	for( unsigned a=0; a<m_UnlockEntries.size(); a++ )
 		if( m_UnlockEntries[a].m_fRequired[t] > fScores[t] )
 			fSmallestPoints = min( fSmallestPoints, m_UnlockEntries[a].m_fRequired[t] );
 	
-	if( fSmallestPoints == 400000000 )
+	if( fSmallestPoints == FLT_MAX )
 		return 0;  // no match found
 	return fSmallestPoints - fScores[t];
 }

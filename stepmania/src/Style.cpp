@@ -20,6 +20,7 @@
 #include "IniFile.h"
 #include "GameState.h"
 #include "NoteData.h"
+#include <float.h>
 
 
 void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const
@@ -95,8 +96,8 @@ bool Style::MatchesStepsType( StepsType type ) const
 
 void Style::GetMinAndMaxColX( PlayerNumber pn, float& fMixXOut, float& fMaxXOut ) const
 {
-	fMixXOut = +100000;
-	fMaxXOut = -100000;
+	fMixXOut = FLT_MAX;
+	fMaxXOut = FLT_MIN;
 	for( int i=0; i<m_iColsPerPlayer; i++ )
 	{
 		fMixXOut = min( fMixXOut, m_ColumnInfo[pn][i].fXOffset );

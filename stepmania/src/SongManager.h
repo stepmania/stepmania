@@ -63,12 +63,12 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	void GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/, ProfileSlot slot=PROFILE_SLOT_MACHINE ) const;
+	void GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=PROFILE_SLOT_MACHINE ) const;
 	const vector<Song*> &GetBestSongs( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestSongs[slot]; }
 	const vector<Course*> &GetBestCourses( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestCourses[slot]; }
-	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;
+	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL_MUSIC,iMaxStages); }
-	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL_MUSIC,100000 /*inf*/ ); }
+	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL_MUSIC,INT_MAX); }
 	Song *FindSong( CString sPath );
 	Course *FindCourse( CString sName );
 	int GetNumSongs() const;

@@ -1069,7 +1069,7 @@ void Song::AddAutoGenNotes()
 
 		// look for closest match
 		StepsType	stBestMatch = (StepsType)-1;
-		int			iBestTrackDifference = 10000;	// inf
+		int			iBestTrackDifference = INT_MAX;
 
 		FOREACH_StepsType( st )
 		{
