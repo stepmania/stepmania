@@ -13,13 +13,22 @@
 #include "InputFilter.h"
 #include "RageLog.h"
 #include "RageInput.h"
+#include "RageThreads.h"
 
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
+
+
 InputFilter::InputFilter()
 {
 	Reset();
+	queuemutex = new RageMutex;
+}
+
+InputFilter::~InputFilter()
+{
+	delete queuemutex;
 }
 
 void InputFilter::Reset()
@@ -38,7 +47,7 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 
 	InputEventType iet = Down? IET_FIRST_PRESS:IET_RELEASE;
 
-	LockMut(queuemutex);
+	LockMut(*queuemutex);
 	queue.push_back( InputEvent(di,iet) );
 }
 
@@ -55,7 +64,7 @@ void InputFilter::Update(float fDeltaTime)
 
 	/* Make sure that nothing gets inserted while we do this, to prevent
 	 * things like "key pressed, key release, key repeat". */
-	LockMut(queuemutex);
+	LockMut(*queuemutex);
 
 	for( int d=0; d<NUM_INPUT_DEVICES; d++ )	// foreach InputDevice
 	{
@@ -106,7 +115,7 @@ float InputFilter::GetSecsHeld( DeviceInput di )
 
 void InputFilter::GetInputEvents( InputEventArray &array )
 {
-	LockMut(queuemutex);
+	LockMut(*queuemutex);
 	array = queue;
 	queue.clear();
 }
