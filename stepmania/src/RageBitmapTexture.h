@@ -24,12 +24,14 @@ class RageBitmapTexture : public RageTexture
 public:
 	RageBitmapTexture( const CString &sFilePath );
 	virtual ~RageBitmapTexture();
+	/* only called by RageTextureManager::InvalidateTextures */
+	virtual void Invalidate() { m_uGLTextureID = 0; }
 
 protected:
 	virtual void Load( const CString &sFilePath );
 	virtual void Reload();
 
-	virtual unsigned int GetGLTextureID();
+	virtual unsigned int GetGLTextureID() { return m_uGLTextureID; }
 
 	unsigned int	m_uGLTextureID;
 	CString			m_sFilePath;

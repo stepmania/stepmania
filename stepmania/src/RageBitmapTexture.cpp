@@ -33,12 +33,14 @@ RageBitmapTexture::RageBitmapTexture( const CString &sFilePath ) : RageTexture( 
 {
 //	LOG->Trace( "RageBitmapTexture::RageBitmapTexture()" );
 
+	m_uGLTextureID = 0;
 	Load( sFilePath );
 }
 
 RageBitmapTexture::~RageBitmapTexture()
 {
-	glDeleteTextures(1, &m_uGLTextureID);
+	if(m_uGLTextureID)
+		glDeleteTextures(1, &m_uGLTextureID);
 }
 
 int power_of_two(int input)
@@ -82,10 +84,10 @@ void RageBitmapTexture::Load( const CString &sFilePath )
 	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, 32,
 		0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000 );
 
+	if(!m_uGLTextureID)
+		glGenTextures(1, &m_uGLTextureID);
 
-	glGenTextures(1, &m_uGLTextureID);
-	DISPLAY->FlushQueue();
-	glBindTexture(GL_TEXTURE_2D, m_uGLTextureID);
+	DISPLAY->SetTexture(this);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -93,21 +95,19 @@ void RageBitmapTexture::Load( const CString &sFilePath )
 			GL_UNSIGNED_BYTE, img->pixels);
 	glFlush();
 
-
 	SDL_FreeSurface(img);
-
 
 	CreateFrameRects();
 }
 
 void RageBitmapTexture::Reload()
 {
-	glDeleteTextures(1, &m_uGLTextureID);
+	DISPLAY->SetTexture(0);
+
+	if(m_uGLTextureID) {
+		glDeleteTextures(1, &m_uGLTextureID);
+		m_uGLTextureID = 0;
+	}
 
 	Load( m_sFilePath );
-}
-
-unsigned int RageBitmapTexture::GetGLTextureID()
-{
-	return m_uGLTextureID; 
 }
