@@ -508,6 +508,14 @@ SOURCE=.\TransitionFadeWipeWithLogo.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\TransitionInvisible.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionInvisible.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TransitionRectWipe.cpp
 # End Source File
 # Begin Source File

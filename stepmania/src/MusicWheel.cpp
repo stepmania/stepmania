@@ -251,18 +251,23 @@ MusicWheel::MusicWheel()
 	m_fPositionOffsetFromSelection = 0;
 
 
-	// find the previously selected song (if any), and select it
+	// build all of the wheel item datas
+	for( int so=0; so<NUM_SORT_ORDERS; so++ )
+		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
+
+
+	// find the previously selected song (if any)
 	for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 	{
 		if( GetCurWheelItemDatas()[i].m_pSong != NULL
 		 && GetCurWheelItemDatas()[i].m_pSong == GAMEINFO->m_pCurSong )
-			m_iSelection = i;
+		{
+			m_iSelection = i;		// select it
+			m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
+		}
 	}
 
-
-	for( int so=0; so<NUM_SORT_ORDERS; so++ )
-		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
-
+	// rebuild the WheelItems that appear on screen
 	RebuildWheelItemDisplays();
 
 }
@@ -279,8 +284,20 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	// Make an array of Song*, then sort them
 	///////////////////////////////////
 	CArray<Song*, Song*&> arraySongs;
-	arraySongs.Copy( GAMEINFO->m_pSongs );
 	
+	// copy only song that have at least one Steps for the current GameMode
+	for( int i=0; i<GAMEINFO->m_pSongs.GetSize(); i++ )
+	{
+		Song* pSong = GAMEINFO->m_pSongs[i];
+
+		CArray<Steps*, Steps*> arraySteps;
+		pSong->GetStepsThatMatchGameMode( GAMEINFO->m_GameMode, arraySteps );
+
+		if( arraySteps.GetSize() > 0 )
+			arraySongs.Add( pSong );
+	}
+
+
 	// sort the songs
 	switch( so )
 	{
@@ -765,4 +782,7 @@ void MusicWheel::TweenOffScreen()
 	m_sprSelectionBackground.SetTweenZoomY( 0 );
 	m_sprSelectionOverlay.BeginTweening( FADE_TIME );
 	m_sprSelectionOverlay.SetTweenZoomY( 0 );
+
+	m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_END );
+	m_MusicSortDisplay.SetTweenXY( SORT_ICON_OFF_SCREEN_X, SORT_ICON_OFF_SCREEN_Y );
 }

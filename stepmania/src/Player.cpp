@@ -254,7 +254,7 @@ void Player::SetX( float fX )
 }
 
 
-void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoadOnlyRightSide )
+void Player::SetSteps( Steps* pNewSteps, bool bLoadOnlyLeftSide, bool bLoadOnlyRightSide )
 { 
 	Step	tempSteps[MAX_STEP_ELEMENTS];
 	CArray<HoldStep, HoldStep>	tempHoldSteps;
@@ -262,7 +262,7 @@ void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoad
 	// copy the steps into our tempSteps where we will transform them
 	for( int i=0; i<MAX_STEP_ELEMENTS; i++ ) 
 	{
-		tempSteps[i] = newSteps.m_Steps[i];
+		tempSteps[i] = pNewSteps->m_Steps[i];
 	
 		if( bLoadOnlyLeftSide ) 
 		{
@@ -285,9 +285,9 @@ void Player::SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide, bool bLoad
 	if( m_PlayerOptions.m_bAllowFreezeArrows )
 	{
 		// copy the HoldSteps and transform them later
-		for( int i=0; i<newSteps.m_HoldSteps.GetSize(); i++ )
+		for( int i=0; i<pNewSteps->m_HoldSteps.GetSize(); i++ )
 		{
-			HoldStep &hs = newSteps.m_HoldSteps[i];
+			HoldStep &hs = pNewSteps->m_HoldSteps[i];
 
 			if( bLoadOnlyLeftSide ) 
 			{

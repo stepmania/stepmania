@@ -42,7 +42,7 @@ public:
 	virtual void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
 	virtual void RenderPrimitives();
 
-	void SetSteps( const Steps& newSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
+	void SetSteps( Steps* pNewSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
 	void SetX( float fX );
 	void CrossedIndex( int iIndex );
 
