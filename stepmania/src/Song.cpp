@@ -402,9 +402,13 @@ void Song::TidyUpData()
 		sound.Load( GetMusicPath(), false ); /* don't pre-cache */
 
 		m_fMusicLengthSeconds = sound.GetLengthSeconds();
-		/* XXX: if(m_fMusicLengthSeconds == -1), warn and throw out the song */
-		if(m_fMusicLengthSeconds == 0)
+
+		if(m_fMusicLengthSeconds == -1)
 		{
+			/* It failed; bad file or something.  It's already logged a warning,
+			 * so just set the file to 0 seconds. */
+			m_fMusicLengthSeconds = 0;
+		} else if(m_fMusicLengthSeconds == 0) {
 			LOG->Warn("File %s is empty?", GetMusicPath().GetString());
 		} else if(m_fMusicLengthSeconds == -1) {
 			LOG->Warn("File %s: error getting length", GetMusicPath().GetString());
@@ -414,6 +418,12 @@ void Song::TidyUpData()
 	{
 		m_fMusicLengthSeconds = 100;		// guess
 		LOG->Warn("This song has no music file; guessing at %f seconds", m_fMusicLengthSeconds);
+	}
+
+	if(m_fMusicLengthSeconds < 0)
+	{
+		LOG->Warn("File %i has negative length? (%i)", GetMusicPath().GetString(), m_fMusicLengthSeconds);
+		m_fMusicLengthSeconds = 0;
 	}
 
 	/* Generate these before we autogen notes, so the new notes can inherit
@@ -644,8 +654,8 @@ void Song::TranslateTitles()
 		/* ロマンスの神様 */
 		ttab.push_back(TitleTrans("^God of Romance$", "", "", "&kro;&kma;&kn;&ksu;&hno;&kami;&sama;", "", "") );
 
-		/* ダンシン・オール・アローン */
-		ttab.push_back(TitleTrans("^Dancing Pompokolin$", "", "", "&kda;&kn;&ksi;&kn;&kdot;&ko;&kdash;&kru;&kdot;&ka;&kro;&kdash;&kn;", "", "") );
+		/* おどるポンポコリン */
+		ttab.push_back(TitleTrans("^Dancing Pompokolin$", "", "", "&ho;&hdo;&hru;&kpo;&kn;&kpo;&kko;&kri;&kn;", "", "") );
 
 		/* 青い振動 */
 		ttab.push_back(TitleTrans("^Aoi Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
