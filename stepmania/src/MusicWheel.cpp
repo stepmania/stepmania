@@ -54,6 +54,16 @@ CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
 
+static const SongSortOrder SortOrder[] =
+{
+	SORT_GROUP, 
+	SORT_TITLE, 
+	SORT_BPM, 
+	SORT_MOST_PLAYED, 
+	SORT_ARTIST,
+	SORT_INVALID
+};
+
 
 MusicWheel::MusicWheel() 
 { 
@@ -140,11 +150,13 @@ MusicWheel::MusicWheel()
 		GAMESTATE->m_SongOptions = so;
 	}
 
-	/* Disable SORT_PREFERRED for now, until it's implemented; right now it's not
-	 * very different than SORT_GROUP.  Once it's implemented, enable it only
-	 * when no group is selected. */
-	if(GAMESTATE->m_SongSortOrder == SORT_PREFERRED)
-		GAMESTATE->m_SongSortOrder = SORT_GROUP;
+	if( GAMESTATE->m_SongSortOrder == SORT_INVALID )
+	{
+		if( GAMESTATE->IsCourseMode() )
+			GAMESTATE->m_SongSortOrder = SORT_PREFERRED;
+		else
+			GAMESTATE->m_SongSortOrder = SortOrder[0];
+	}
 
 	/* Build all of the wheel item data.  Do tihs after selecting
 	 * the extra stage, so it knows to always display it. */
@@ -517,8 +529,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case PLAY_MODE_ENDLESS:
 		{
 			// We only use SORT_PREFERRED when selecting a course
-			// Err, SORT_PREFERRED is skipped right now ...
-			if( so != SongSortOrder(SORT_GROUP /*SORT_PREFERRED*/) )
+			if( so != SongSortOrder(SORT_PREFERRED) )
 				break;
 			
 			vector<Course*> apCourses;
@@ -1021,16 +1032,6 @@ bool MusicWheel::ChangeSort( SongSortOrder new_so )	// return true if change suc
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
 }
-
-static const SongSortOrder SortOrder[] =
-{
-	SORT_GROUP, 
-	SORT_TITLE, 
-	SORT_BPM, 
-	SORT_MOST_PLAYED, 
-	SORT_ARTIST,
-	SORT_INVALID
-};
 
 bool MusicWheel::NextSort()		// return true if change successful
 {

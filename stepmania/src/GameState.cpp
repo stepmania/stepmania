@@ -62,7 +62,7 @@ void GameState::Reset()
 	m_bChangedFailMode = false;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
-	m_SongSortOrder = SORT_PREFERRED;
+	m_SongSortOrder = SORT_INVALID;
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
 	m_bDemonstrationOrJukebox = false;
