@@ -611,6 +611,14 @@ SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.cpp
 
 SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\RageSoundDriver_WaveOut.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\Sound\RageSoundDriver_WaveOut.h
+# End Source File
 # End Group
 # Begin Group "ErrorDialog"
 
