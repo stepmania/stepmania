@@ -28,6 +28,8 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 {
 	CString s;
 	
+	s += LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";
+
 	s += "Cabinet: ";
 	FOREACH_CabinetLight( cl )
 	{

@@ -36,12 +36,13 @@ enum LightsMode
 	LIGHTSMODE_JOINING,
 	LIGHTSMODE_MENU,
 	LIGHTSMODE_DEMONSTRATION,
-	LIGHTSMODE_GAMEPLAY_READY,
-	LIGHTSMODE_GAMEPLAY_GO,
+	LIGHTSMODE_GAMEPLAY,
 	LIGHTSMODE_STAGE,
 	LIGHTSMODE_ALL_CLEARED,
 	LIGHTSMODE_TEST,
+	NUM_LIGHTS_MODES
 };
+const CString& LightsModeToString( LightsMode lm );
 
 struct LightsState
 {
@@ -60,6 +61,7 @@ public:
 	void Update( float fDeltaTime );
 
 	void SetLightsMode( LightsMode lm );
+	LightsMode GetLightsMode();
 
 private:
 

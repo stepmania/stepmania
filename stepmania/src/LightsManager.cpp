@@ -32,6 +32,18 @@ static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
 };
 XToString( CabinetLight );
 
+static const CString LightsModeNames[NUM_LIGHTS_MODES] = {
+	"Attract",
+	"Joining",
+	"Menu",
+	"Demonstration",
+	"Gameplay",
+	"Stage",
+	"Cleared",
+	"Test",
+};
+XToString( LightsMode );
+
 
 LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -124,12 +136,11 @@ void LightsManager::Update( float fDeltaTime )
 		}
 		break;
 	case LIGHTSMODE_DEMONSTRATION:
-	case LIGHTSMODE_GAMEPLAY_READY:
-	case LIGHTSMODE_GAMEPLAY_GO:
+	case LIGHTSMODE_GAMEPLAY:
 		{
 			int i;
 
-			bool bMarqueeLightsOn = m_LightsMode == LIGHTSMODE_GAMEPLAY_READY;
+			bool bMarqueeLightsOn = GAMESTATE->m_bPastHereWeGo;
 
 			for( i=0; i<4; i++ )
 				m_LightsState.m_bCabinetLights[i] = bMarqueeLightsOn;
@@ -193,8 +204,7 @@ void LightsManager::Update( float fDeltaTime )
 			}
 		}
 		break;
-	case LIGHTSMODE_GAMEPLAY_READY:
-	case LIGHTSMODE_GAMEPLAY_GO:
+	case LIGHTSMODE_GAMEPLAY:
 		{
 			FOREACH_GameController( gc )
 			{
@@ -231,4 +241,9 @@ void LightsManager::Update( float fDeltaTime )
 void LightsManager::SetLightsMode( LightsMode lm )
 {
 	m_LightsMode = lm;
+}
+
+LightsMode LightsManager::GetLightsMode()
+{
+	return m_LightsMode;
 }

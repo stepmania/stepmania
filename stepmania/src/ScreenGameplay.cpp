@@ -101,7 +101,7 @@ void ScreenGameplay::Init()
 	if( m_bDemonstration )
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_DEMONSTRATION );
 	else
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY_READY );
+		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY );
 
 	m_soundMusic = NULL;
 
@@ -1392,10 +1392,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		if( s_fSecsLeftOnUpperLights < 0 )
 			s_fSecsLeftOnUpperLights = 0;
 	}
-	if( s_fSecsLeftOnUpperLights>0 )
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY_READY );
-	else
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY_GO );
 
 	//
 	// update song position meter
