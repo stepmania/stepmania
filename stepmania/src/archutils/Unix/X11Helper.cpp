@@ -10,7 +10,7 @@ vector<Callback_t>	pCBacks;	// Callbacks for the rendering
 					// thread
 list<long>		pMasks;		// Currently open masks
 Display			*pDpy;		// Running X connection
-Window			*pWin;		// Current window
+Window			*pWin	= NULL;	// Current window
 unsigned short int	pCt	= 0;	// Number of subsystems using
 					// the X connection
 
@@ -51,7 +51,14 @@ static bool pApplyMasks()
 bool X11Helper::OpenMask(long mask)
 {
 	pMasks.push_back(mask);
-	return pApplyMasks();
+	if(pWin != NULL)
+	{
+		return pApplyMasks();
+	}
+	else
+	{
+		return true;
+	}
 }
 
 bool X11Helper::CloseMask(long mask)
@@ -70,14 +77,21 @@ bool X11Helper::CloseMask(long mask)
 		if(i > pMasks.size()-1) { return false; }
 	}
 
-	return pApplyMasks();
+	if(pWin != NULL)
+	{
+		return pApplyMasks();
+	}
+	else
+	{
+		return true;
+	}
 }
 
 bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual int width=64, int height=64)
 {
 	int i;
 	
-	if(dpy == NULL) { return false; }
+	if(pDpy == NULL) { return false; }
 
 	XSetWindowAttributes winAttribs;
 
