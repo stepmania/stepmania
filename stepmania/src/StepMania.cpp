@@ -122,7 +122,7 @@ static void ChangeToDirOfExecutable(const char *argv0)
 
 	/* Change to the directory that crash dumps should be logged to. */
 #if defined(_WIN32)
-	chdir( DirOfExecutable );
+	chdir( DirOfExecutable + "/.." );
 #elif defined(LINUX)
 	const char *home = getenv("HOME");
 	if( home )
