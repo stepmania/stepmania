@@ -15,7 +15,7 @@
 RageFileManager *FILEMAN = NULL;
 
 /* Lock this before touching any of these globals (except FILEMAN itself). */
-static RageMutex *g_Mutex;
+static RageEvent *g_Mutex;
 
 CString InitialWorkingDirectory;
 CString DirOfExecutable;
@@ -33,11 +33,66 @@ struct LoadedDriver
 	RageFileDriver *driver;
 	CString Type, Root, MountPoint;
 
-	LoadedDriver() { driver = NULL; }
+	int m_iRefs;
+
+	LoadedDriver() { driver = NULL; m_iRefs = 0; }
 	CString GetPath( const CString &path );
 };
 
 static vector<LoadedDriver> g_Drivers;
+
+void ReferenceAllDrivers( vector<LoadedDriver> &aDriverList )
+{
+	g_Mutex->Lock();
+	aDriverList = g_Drivers;
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
+		++aDriverList[i].m_iRefs;
+	g_Mutex->Unlock();
+}
+
+void UnreferenceAllDrivers( vector<LoadedDriver> &aDriverList )
+{
+	g_Mutex->Lock();
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
+		--aDriverList[i].m_iRefs;
+	g_Mutex->Broadcast();
+	g_Mutex->Unlock();
+
+	/* Clear the temporary list, to make it clear that the drivers may no longer be accessed. */
+	aDriverList.clear();
+}
+
+/* Wait for the given driver to become unreferenced, and remove it from the list
+ * to get exclusive access to it.  Returns false if the driver is no longer available
+ * (somebody else got it first). */
+bool GrabDriver( RageFileDriver *pDriver )
+{
+	g_Mutex->Lock();
+
+	while(1)
+	{
+		unsigned i;
+		for( i = 0; i < g_Drivers.size(); ++i )
+			if( g_Drivers[i].driver == pDriver )
+				break;
+
+		if( i == g_Drivers.size() )
+		{
+			g_Mutex->Unlock();
+			return false;
+		}
+
+		if( g_Drivers[i].m_iRefs == 0 )
+		{
+			g_Drivers.erase( g_Drivers.begin()+i );
+			return true;
+		}
+
+		/* The driver is in use.  Wait for somebody to release a driver, and
+		 * try again. */
+		g_Mutex->Wait();
+	}
+}
 
 // Mountpoints as directories cause a problem.  If "Themes/default" is a mountpoint, and
 // doesn't exist anywhere else, then GetDirListing("Themes/*") must return "default".  The
@@ -126,7 +181,7 @@ RageFileManager::RageFileManager( CString argv0 )
 	CHECKPOINT_M( argv0 );
 	ChangeToDirOfExecutable( argv0 );
 	
-	g_Mutex = new RageMutex("RageFileManager");
+	g_Mutex = new RageEvent("RageFileManager");
 
 	g_Mountpoints = new RageFileDriverMountpoints;
 	LoadedDriver ld;
@@ -241,26 +296,29 @@ bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; 
 bool ieq( const CString &a, const CString &b ) { return a.CompareNoCase(b) == 0; }
 void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
-	LockMut( *g_Mutex );
-
 	NormalizePath( sPath );
-	
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
+
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		LoadedDriver &ld = g_Drivers[i];
+		LoadedDriver &ld = aDriverList[i];
 		const CString p = ld.GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
 
 		const unsigned OldStart = AddTo.size();
 		
-		g_Drivers[i].driver->GetDirListing( p, AddTo, bOnlyDirs, bReturnPathToo );
+		ld.driver->GetDirListing( p, AddTo, bOnlyDirs, bReturnPathToo );
 
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo )
 			for( unsigned j = OldStart; j < AddTo.size(); ++j )
 				AddTo[j] = ld.MountPoint + AddTo[j];
 	}
+
+	UnreferenceAllDrivers( aDriverList );
 
 	/* More than one driver might return the same file.  Remove duplicates (case-
 	 * insensitively). */
@@ -271,22 +329,25 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 
 bool RageFileManager::Remove( CString sPath )
 {
-	LockMut( *g_Mutex );
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
 
 	NormalizePath( sPath );
 	
 	/* Multiple drivers may have the same file. */
 	bool Deleted = false;
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		const CString p = g_Drivers[i].GetPath( sPath );
+		const CString p = aDriverList[i].GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
 
-		bool ret = g_Drivers[i].driver->Remove( p );
+		bool ret = aDriverList[i].driver->Remove( p );
 		if( ret )
 			Deleted = true;
 	}
+
+	UnreferenceAllDrivers( aDriverList );
 
 	return Deleted;
 }
@@ -307,8 +368,6 @@ void RageFileManager::CreateDir( CString sDir )
 
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
-	LockMut( *g_Mutex );
-
 	FixSlashesInPlace( Root );
 	FixSlashesInPlace( MountPoint );
 
@@ -342,23 +401,27 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	ld.Type = Type;
 	ld.Root = Root;
 	ld.MountPoint = MountPoint;
-	g_Drivers.push_back( ld );
 
+	g_Mutex->Lock();
+	g_Drivers.push_back( ld );
 	CHECKPOINT;
 	g_Mountpoints->LoadFromDrivers( g_Drivers );
 	CHECKPOINT;
+	g_Mutex->Unlock();
 }
 
 void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )
 {
-	LockMut( *g_Mutex );
-
 	FixSlashesInPlace( Root );
 	FixSlashesInPlace( MountPoint );
 
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
 
+	/* Find all drivers we want to delete.  Remove them from g_Drivers, and move them
+	 * into aDriverListToUnmount. */
+	vector<LoadedDriver> aDriverListToUnmount;
+	g_Mutex->Lock();
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		if( g_Drivers[i].Type.CompareNoCase( Type ) )
@@ -368,11 +431,30 @@ void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )
 		if( g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
 			continue;
 
-		delete g_Drivers[i].driver;
+		++g_Drivers[i].m_iRefs;
+		aDriverListToUnmount.push_back( g_Drivers[i] );
 		g_Drivers.erase( g_Drivers.begin()+i );
+		--i;
 	}
 
 	g_Mountpoints->LoadFromDrivers( g_Drivers );
+
+	g_Mutex->Unlock();
+
+	/* Now we have a list of drivers to remove. */
+	while( aDriverListToUnmount.size() )
+	{
+		/* If the driver has more than one reference, somebody other than us is
+		 * using it; wait for that operation to complete. Note that two Unmount()
+		 * calls that want to remove the same mountpoint will deadlock here. */
+		g_Mutex->Lock();
+		while( aDriverListToUnmount[0].m_iRefs > 1 )
+			g_Mutex->Wait();
+		g_Mutex->Unlock();
+
+		delete aDriverListToUnmount[0].driver;
+		aDriverListToUnmount.erase( aDriverListToUnmount.begin() );
+	}
 }
 
 bool RageFileManager::IsMounted( CString MountPoint )
@@ -390,21 +472,25 @@ bool RageFileManager::IsMounted( CString MountPoint )
  * inserted). */
 bool RageFileManager::MountpointIsReady( CString MountPoint )
 {
-	LockMut( *g_Mutex );
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
 
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		if( g_Drivers[i].MountPoint.CompareNoCase( MountPoint ) )
+		if( aDriverList[i].MountPoint.CompareNoCase( MountPoint ) )
 			continue;
 
-		return g_Drivers[i].driver->Ready();
+		return aDriverList[i].driver->Ready();
 	}
 
+	UnreferenceAllDrivers( aDriverList );
 	return false;
 }
 
 void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &Mounts )
 {
+	LockMut( *g_Mutex );
+
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
 		DriverLocation l;
@@ -417,9 +503,9 @@ void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &Mounts )
 
 void RageFileManager::FlushDirCache( CString sPath )
 {
-	LockMut( *g_Mutex );
-
 	NormalizePath( sPath );
+
+	LockMut( *g_Mutex );
 
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
@@ -439,19 +525,22 @@ void RageFileManager::FlushDirCache( CString sPath )
 
 RageFileManager::FileType RageFileManager::GetFileType( CString sPath )
 {
-	LockMut( *g_Mutex );
-
 	NormalizePath( sPath );
 
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
+
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		const CString p = g_Drivers[i].GetPath( sPath );
+		const CString p = aDriverList[i].GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
-		FileType ret = g_Drivers[i].driver->GetFileType( p );
+		FileType ret = aDriverList[i].driver->GetFileType( p );
 		if( ret != TYPE_NONE )
 			return ret;
 	}
+
+	UnreferenceAllDrivers( aDriverList );
 
 	return TYPE_NONE;
 }
@@ -459,41 +548,44 @@ RageFileManager::FileType RageFileManager::GetFileType( CString sPath )
 
 int RageFileManager::GetFileSizeInBytes( CString sPath )
 {
-	LockMut( *g_Mutex );
-
 	NormalizePath( sPath );
 
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
+
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		const CString p = g_Drivers[i].GetPath( sPath );
+		const CString p = aDriverList[i].GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
-		int ret = g_Drivers[i].driver->GetFileSizeInBytes( p );
+		int ret = aDriverList[i].driver->GetFileSizeInBytes( p );
 		if( ret != -1 )
 			return ret;
 	}
+	UnreferenceAllDrivers( aDriverList );
 
 	return -1;
 }
 
 int RageFileManager::GetFileHash( CString sPath )
 {
-	LockMut( *g_Mutex );
-
 	NormalizePath( sPath );
 
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
+
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		const CString p = g_Drivers[i].GetPath( sPath );
+		const CString p = aDriverList[i].GetPath( sPath );
 		if( p.size() == 0 )
 			continue;
-		int ret = g_Drivers[i].driver->GetFileHash( p );
+		int ret = aDriverList[i].driver->GetFileHash( p );
 		if( ret != -1 )
 			return ret;
 	}
+	UnreferenceAllDrivers( aDriverList );
 
 	return -1;
-
 }
 
 static bool SortBySecond( const pair<int,int> &a, const pair<int,int> &b )
@@ -548,8 +640,6 @@ static bool PathUsesSlowFlush( const CString &sPath )
 /* Used only by RageFile: */
 RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &err )
 {
-	LockMut( *g_Mutex );
-
 	err = ENOENT;
 
 	if( (mode & RageFile::WRITE) && PathUsesSlowFlush(sPath) )
@@ -562,9 +652,12 @@ RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &e
 
 	NormalizePath( sPath );
 
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
+
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		LoadedDriver &ld = g_Drivers[i];
+		LoadedDriver &ld = aDriverList[i];
 		const CString path = ld.GetPath( sPath );
 		if( path.size() == 0 )
 			continue;
@@ -573,6 +666,7 @@ RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &e
 		if( ret )
 		{
 			AddReference( ret, ld.driver );
+			UnreferenceAllDrivers( aDriverList );
 			return ret;
 		}
 
@@ -581,6 +675,7 @@ RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &e
 		if( error != ENOENT )
 			err = error;
 	}
+	UnreferenceAllDrivers( aDriverList );
 
 	return NULL;
 }
@@ -603,8 +698,6 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 
 RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile &p, int &err )
 {
-	LockMut( *g_Mutex );
-
 	/*
 	 * The value for a driver to open a file is the number of directories and/or files
 	 * that would have to be created in order to write it, or 0 if the file already exists.
@@ -626,10 +719,13 @@ RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile 
 	 */
 	NormalizePath( sPath );
 
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
+
 	vector< pair<int,int> > Values;
-	for( unsigned i = 0; i < g_Drivers.size(); ++i )
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
 	{
-		LoadedDriver &ld = g_Drivers[i];
+		LoadedDriver &ld = aDriverList[i];
 		const CString path = ld.GetPath( sPath );
 		if( path.size() == 0 )
 			continue;
@@ -647,7 +743,7 @@ RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile 
 	for( unsigned i = 0; i < Values.size(); ++i )
 	{
 		const int driver = Values[i].first;
-		LoadedDriver &ld = g_Drivers[driver];
+		LoadedDriver &ld = aDriverList[driver];
 		const CString path = ld.GetPath( sPath );
 		ASSERT( path.size() );
 
@@ -667,6 +763,8 @@ RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile 
 
 	if( !err )
 		err = EEXIST; /* no driver could write */
+
+	UnreferenceAllDrivers( aDriverList );
 
 	return NULL;
 }
