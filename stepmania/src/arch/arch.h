@@ -18,7 +18,7 @@ void MakeInputHandlers(vector<InputHandler *> &Add);
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
 /* Define the default list of sound drivers for each arch. */
-#if defined(LINUX)
+#if defined(LINUX) && !defined(DARWIN)
 #define DEFAULT_SOUND_DRIVER_LIST "ALSA9,Null"
 #elif defined(WIN32)
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"

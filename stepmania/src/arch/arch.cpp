@@ -13,7 +13,7 @@
 #include "arch_default.h"
 
 /* Override them with arch-specific drivers, as available. */
-#if defined(LINUX)
+#if defined(LINUX) && !(defined DARWIN)
 #include "arch_linux.h"
 #elif defined(WIN32)
 #include "arch_Win32.h"
@@ -55,7 +55,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
 			if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
 #endif
-#ifdef LINUX	/* should use some define akin to HAS_ALSA9 */
+#if defined(LINUX) && !defined(DARWIN)	/* should use some define akin to HAS_ALSA9 */
 			if(!DriversToTry[i].CompareNoCase("ALSA9")) ret = new RageSound_ALSA9;
 #endif		
 			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
