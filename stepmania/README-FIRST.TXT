@@ -1121,6 +1121,7 @@ creates your home directory and is required for things to start working.
 ************************************************************
 
 ------------------------CVS after 3.00 beta 6----------------
+BUG FIX:  Fix pump doubles offset.
 NEW FEATURE:  Support for #DIFFICULTY in KSF.
 CHANGE:  Allow starting without a keyboard or mouse.
 NEW FEATURE:  Support for "artist - title - difficulty" titles in KSF.
