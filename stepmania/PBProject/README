@@ -19,7 +19,8 @@ libavcodec/common.h libavformat/rtp.h libavformat/rtsp.h \
 libavformat/rtspcodes.h /usr/local/include/ffmpeg
 exit
 4. Cd to the PBProject directory enter: $ touch ver.cpp
-5. Build StepMania by running `xcodebuild' in the PBProject directory.
+5. Build StepMania by running `xcodebuild -target stepmania' in the PBProject 
+directory.
 
 Steve Checkoway
 steve@cs.washington.edu
