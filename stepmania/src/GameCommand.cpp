@@ -760,7 +760,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	{
 		// Choose a percent for all scores.  This is useful for testing unlocks
 		// where some elements are unlocked at a certain percent complete
-		float fPercentDP = randomf( 60, 120 );
+		float fPercentDP = randomf( 0.60, 1.20 );
 
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
 
