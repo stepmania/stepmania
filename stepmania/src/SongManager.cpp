@@ -251,11 +251,6 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		/* Cache and load the group banner. */
 		BANNERCACHE->CacheBanner( GetGroupBannerPath(sGroupDirName) );
 	}
-	
-	if( ld ) {
-		ld->Paint();
-		ld->SetText("Done loading songs.");
-	}
 }
 
 void SongManager::FreeSongs()
