@@ -37,6 +37,7 @@ public:
 	int 	m_iMovieDecodeMS;
 	bool	m_bUseBGIfNoBanner;
 	bool	m_bHiddenSongs;
+	bool	m_bVsync;
 
 	bool	m_bIgnoreJoyAxes;	
 	bool	m_bOnlyDedicatedMenuButtons;

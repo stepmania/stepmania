@@ -33,6 +33,7 @@ enum {
 	GO_BGBRIGHTNESS,
 	GO_MOVIEDECODEMS,
 	GO_BGIFNOBANNER,
+	GO_VSYNC,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
@@ -45,6 +46,7 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "BG Brightness",	11,  {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
 	{ "Movie Decode",	4,  {"1ms","2ms","3ms","4ms"} },
 	{ "BG For Banner",	2,  {"NO", "YES (slow)"} },
+	{ "Wait for Vsync",	2,  {"NO", "YES"} },
 };
 
 static const int HorizRes[] = {
@@ -171,6 +173,7 @@ void ScreenGraphicOptions::ImportOptions()
 	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= roundf( PREFSMAN->m_fBGBrightness*10 ); 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
 	m_iSelectedOption[0][GO_BGIFNOBANNER]			= PREFSMAN->m_bUseBGIfNoBanner ? 1:0;
+	m_iSelectedOption[0][GO_VSYNC]					= PREFSMAN->m_bVsync ? 1:0;
 }
 void ScreenGraphicOptions::ExportOptions()
 {
@@ -213,6 +216,7 @@ void ScreenGraphicOptions::ExportOptions()
 	PREFSMAN->m_fBGBrightness			= m_iSelectedOption[0][GO_BGBRIGHTNESS] / 10.0f;
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
 	PREFSMAN->m_bUseBGIfNoBanner		= m_iSelectedOption[0][GO_BGIFNOBANNER] == 1;
+	PREFSMAN->m_bVsync					= m_iSelectedOption[0][GO_VSYNC] == 1;
 }
 
 void ScreenGraphicOptions::GoToPrevState()

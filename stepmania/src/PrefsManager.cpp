@@ -53,6 +53,7 @@ PrefsManager::PrefsManager()
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
+	m_bVsync = true;
 
 	ReadGlobalPrefsFromDisk( true );
 }
@@ -90,6 +91,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "UseBGIfNoBanner",		m_bUseBGIfNoBanner );
 	ini.GetValueB( "Options", "DelayedEscape",			m_bDelayedEscape );
 	ini.GetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
+	ini.GetValueB( "Options", "Vsync",					m_bVsync );
 
 	m_asAdditionalSongFolders.RemoveAll();
 	CString sAdditionalSongFolders;
@@ -130,6 +132,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "UseBGIfNoBanner",		m_bUseBGIfNoBanner );
 	ini.SetValueB( "Options", "DelayedEscape",			m_bDelayedEscape );
 	ini.SetValueB( "Options", "HiddenSongs",			m_bHiddenSongs );
+	ini.SetValueB( "Options", "Vsync",					m_bVsync );
 
 	ini.SetValue( "Options", "AdditionalSongFolders", join(",", m_asAdditionalSongFolders) );
 
