@@ -13,10 +13,6 @@
 #include "RageException.h"
 #include "RageUtil.h"
 
-#include "dxerr8.h"
-#pragma comment(lib, "DxErr8.lib")
-
-
 RageException::RageException( const char *fmt, ...)
 {
     va_list	va;
