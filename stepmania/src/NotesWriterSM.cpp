@@ -5,6 +5,7 @@
 #include "GameManager.h"
 #include "RageLog.h"
 #include "RageFile.h"
+#include "RageFileManager.h"
 #include <cstring>
 #include <cerrno>
 
@@ -168,7 +169,7 @@ void NotesWriterSM::WriteSMNotesTag( const Steps &in, RageFile &f, bool bSavingC
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 {
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
-	FlushDirCache();
+	FILEMAN->FlushDirCache( Dirname(sPath) );
 
 	unsigned i;
 
