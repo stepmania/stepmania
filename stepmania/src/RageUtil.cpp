@@ -472,7 +472,12 @@ CString DerefRedir(const CString &path)
 	CString sDir, sFName, sExt;
 	splitrelpath( path, sDir, sFName, sExt );
 
-	if(sExt != "redir") return path;
+	if(sExt != "redir") 
+	{
+		CString path2 = path;
+		ResolvePath( path2 );
+		return path2;
+	}
 
 	CString sNewFileName;
 	{
@@ -486,7 +491,9 @@ CString DerefRedir(const CString &path)
 	if(sNewFileName == "")
 		return "";
 
-	return sDir+sNewFileName;
+	CString path2 = sDir+sNewFileName;
+	ResolvePath( path2 );
+	return path2;
 }
 
 CString GetRedirContents(const CString &path)
