@@ -44,7 +44,7 @@ OptionRowData g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	{ "How To\nPlay",	2, {"SKIP","SHOW"} },
 	{ "Caution",		2, {"SKIP","SHOW"} },
 	{ "Song\nGroup",	2, {"ALL MUSIC","CHOOSE"} },
-	{ "Wheel\nSections",3, {"NEVER","ALWAYS", "ABC_ONLY"} },
+	{ "Wheel\nSections",3, {"NEVER","ALWAYS", "ABC ONLY"} },
 };
 
 ScreenAppearanceOptions::ScreenAppearanceOptions() :
