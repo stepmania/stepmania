@@ -857,12 +857,12 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 	 * running through a menu quickly in three key mode with lots of right and
 	 * start taps, it's very easy to tap start before actually releasing the right
 	 * tap, causing the menu to move up when you wanted it to go down. */
-	const bool bHoldingLeftOrRight = MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
+	const bool bHoldingLeftAndRight = MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
 		m_OptionsNavigation == NAV_THREE_KEY &&
 		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) &&
 		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
 
-	if( type != IET_RELEASE && bHoldingLeftOrRight )
+	if( type != IET_RELEASE && bHoldingLeftAndRight )
 	{
 		// If moving up from a multiselect row, put focus back on the first 
 		// choice before moving up.
