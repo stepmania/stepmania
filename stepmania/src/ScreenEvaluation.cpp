@@ -273,17 +273,13 @@ void ScreenEvaluation::Init()
 	//
 	// load pass/fail sound
 	//
-//	if(m_Type==stage)
-//	{
-		int snd=0;
-		for(snd=0;snd<NUM_SEQUENCE_SOUNDS;snd++) // grab in any sound sequence the user may want to throw onto this screen
-		{
-			EvalSoundSequence temp;
-			temp.fTime = SOUNDSEQ_TIME(snd);
-			temp.sSound.Load( THEME->GetPathToS(SOUNDSEQ_NAME(snd)) );
-			m_SoundSequences.push_back(temp);
-		}
-//	}
+	for( int snd=0; snd < NUM_SEQUENCE_SOUNDS; ++snd ) // grab in any sound sequence the user may want to throw onto this screen
+	{
+		EvalSoundSequence temp;
+		temp.fTime = SOUNDSEQ_TIME(snd);
+		temp.sSound.Load( THEME->GetPathToS(SOUNDSEQ_NAME(snd)) );
+		m_SoundSequences.push_back(temp);
+	}
 	
 	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
 	if( m_bFailed )

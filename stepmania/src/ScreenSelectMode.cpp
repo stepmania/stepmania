@@ -67,7 +67,7 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 /*		if(USE_MODE_SPECIFIC_BGS == 1)
 		{	
 			BGAnimation templayer;
-			templayer.LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenSelectMode background %s", mc.name )) );
+			templayer.LoadFromAniDir( THEME->GetPathB("ScreenSelectMode", ssprintf("background %s", mc.name )) );
 		//	templayer.SetDiffuse(RageColor(0,0,0,0));
 			m_Backgrounds.push_back(&templayer);
 			this->AddChild( &m_Backgrounds[i] );
