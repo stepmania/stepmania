@@ -66,35 +66,6 @@ void Course::SetDefaultScore()
 		}
 }
 
-/*
- * GetSongDir() contains a path to the song, possibly a full path, eg:
- * Songs\Group\SongName                   or 
- * My Other Song Folder\Group\SongName    or
- * c:\Corny J-pop\Group\SongName
- *
- * Most course group names are "Group\SongName", so we want to
- * match against the last two elements. Let's also support
- * "SongName" alone, since the group is only important when it's
- * potentially ambiguous.
- *
- * Let's *not* support "Songs\Group\SongName" in course files.
- * That's probably a common error, but that would result in
- * course files floating around that only work for people who put
- * songs in "Songs"; we don't want that.
- */
-
-Song *Course::FindSong(CString sGroup, CString sSong) const
-{
-	Song *pSong = SONGMAN->FindSong( sGroup, sSong );
-	if( pSong )
-		return pSong;
-
-	LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
-			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? "/":"", sSong.c_str());
-
-	return NULL;	
-}
-
 PlayMode Course::GetPlayMode() const
 {
 	if( IsNonstop() )
@@ -244,27 +215,15 @@ void Course::LoadFromCRSFile( CString sPath )
 				new_entry.type = Entry::fixed;
 
 				CString sSong = sParams[1];
-				sSong.Replace( "\\", "/" );
-				CStringArray bits;
-				split( sSong, "/", bits );
-				if( bits.size() == 1 )
-					new_entry.pSong = FindSong( "", bits[0] );
-				else if( bits.size() == 2 )
-					new_entry.pSong = FindSong( bits[0], bits[1] );
-				else
-				{
-					LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that is invalid. "
-								"Song should be in the format '<group>/<song>'.",
-								m_sPath.c_str(), sSong.c_str());
-					continue;	// skip this #SONG
-				}
-				if( !new_entry.pSong )
+				new_entry.pSong = SONGMAN->FindSong( sSong );
+
+				if( new_entry.pSong == NULL )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
 				     * it obscures important warnings--and regular users never look there, anyway. */
-					//LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
-					//			"This entry will be ignored.",
-					//			m_sPath.c_str(), sSong.c_str());
+					LOG->Trace( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
+								"This entry will be ignored.",
+								m_sPath.c_str(), sSong.c_str());
 					continue;	// skip this #SONG
 				}
 			}

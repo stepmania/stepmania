@@ -67,7 +67,7 @@ public:
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,"",iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
-	Song *FindSong( CString sGroup, CString sSong );
+	Song *FindSong( CString sPath );
 	Course *FindCourse( CString sName );
 	int GetNumSongs() const;
 	int GetNumGroups() const;
@@ -120,6 +120,7 @@ protected:
 	void ReadCourseScoresFromFile( CString fn, int c );
 	void ReadCategoryRankingsFromFile( CString fn );
 	void ReadCourseRankingsFromFile( CString fn );
+	Song *FindSong( CString sGroup, CString sSong );
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs;

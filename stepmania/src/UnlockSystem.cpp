@@ -333,7 +333,7 @@ void UnlockSystem::UpdateSongs()
 	{
 		m_SongEntries[i].m_pSong = NULL;
 		m_SongEntries[i].m_pCourse = NULL;
-		m_SongEntries[i].m_pSong = SONGMAN->FindSong( "", m_SongEntries[i].m_sSongName );
+		m_SongEntries[i].m_pSong = SONGMAN->FindSong( m_SongEntries[i].m_sSongName );
 		if( m_SongEntries[i].m_pSong == NULL )
 			m_SongEntries[i].m_pCourse = SONGMAN->FindCourse( m_SongEntries[i].m_sSongName );
 	}

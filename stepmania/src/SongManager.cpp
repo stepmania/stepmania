@@ -1076,6 +1076,37 @@ void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS],
 	}
 }
 
+/*
+ * GetSongDir() contains a path to the song, possibly a full path, eg:
+ * Songs\Group\SongName                   or 
+ * My Other Song Folder\Group\SongName    or
+ * c:\Corny J-pop\Group\SongName
+ *
+ * Most course group names are "Group\SongName", so we want to
+ * match against the last two elements. Let's also support
+ * "SongName" alone, since the group is only important when it's
+ * potentially ambiguous.
+ *
+ * Let's *not* support "Songs\Group\SongName" in course files.
+ * That's probably a common error, but that would result in
+ * course files floating around that only work for people who put
+ * songs in "Songs"; we don't want that.
+ */
+
+Song *SongManager::FindSong( CString sPath )
+{
+	sPath.Replace( "\\", "/" );
+	CStringArray bits;
+	split( sPath, "/", bits );
+
+	if( bits.size() == 1 )
+		return FindSong( "", bits[0] );
+	else if( bits.size() == 2 )
+		return FindSong( bits[0], bits[1] );
+
+	return NULL;	
+}
+
 Song *SongManager::FindSong( CString sGroup, CString sSong )
 {
 	// foreach song

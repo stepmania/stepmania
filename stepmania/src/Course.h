@@ -122,7 +122,6 @@ public:
 
 
 private:
-	Song *FindSong(CString sGroup, CString sSong) const;
 	void SetDefaultScore();
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const;
 };
