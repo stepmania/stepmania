@@ -495,6 +495,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			 * 1. U+hexval
 			 * 2. an alias ("kakumei1")
 			 * 3. a game type followed by a game alias, eg "pump menuleft"
+			 * 4. a character in quotes ("X")
 			 *
 			 * map 1=2 is the same as
 			 * range unicode #1-1=2
@@ -523,6 +524,14 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			wchar_t c;
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
+			else if(codepoint.size() > 0 &&
+					utf8_get_char_len(codepoint.c_str()) == codepoint.size())
+			{
+				c = utf8_get_char(codepoint.c_str());
+				if(c == wchar_t(-1))
+					LOG->Warn("Font definition '%s' has an invalid value '%s'.",
+						ini.GetPath().GetString(), val.GetString() );
+			}
 			else if(!FontCharAliases::GetChar(codepoint, c))
 			{
 				LOG->Warn("Font definition '%s' has an invalid value '%s'.",
