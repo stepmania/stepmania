@@ -97,7 +97,7 @@ static void pam_addtoacolorhash( acolorhash_hash &acht, const uint8_t acolorP[4]
 static int pam_lookupacolor( const acolorhash_hash &acht, const uint8_t acolorP[4] );
 static void pam_freeacolorhist( acolorhist_item *achv );
 
-struct error_t
+struct pixerror_t
 {
 	int c[4];
 };
@@ -171,21 +171,21 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 	acolorhash_hash acht;
 
 	bool fs_direction = 0;
-	error_t *thiserr = NULL, *nexterr = NULL;
+	pixerror_t *thiserr = NULL, *nexterr = NULL;
 
 	if( bDither )
 	{
 		/* Initialize Floyd-Steinberg error vectors. */
-		thiserr = new error_t[pImg->w + 2];
-		nexterr = new error_t[pImg->w + 2];
+		thiserr = new pixerror_t[pImg->w + 2];
+		nexterr = new pixerror_t[pImg->w + 2];
 
-		memset( thiserr, 0, sizeof(error_t) * (pImg->w + 2) );
+		memset( thiserr, 0, sizeof(pixerror_t) * (pImg->w + 2) );
 	}
 
 	for( int row = 0; row < pImg->h; ++row )
 	{
 		if( bDither )
-			memset( nexterr, 0, sizeof(error_t) * (pImg->w + 2) );
+			memset( nexterr, 0, sizeof(pixerror_t) * (pImg->w + 2) );
 
 		int col, limitcol;
 		if( !fs_direction )
