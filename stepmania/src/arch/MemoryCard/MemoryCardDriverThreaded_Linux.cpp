@@ -101,7 +101,6 @@ static bool ReadFile( const CString &sPath, CString &sBuf )
 			break;
 	}
 	
-	LOG->Trace("got '%s'", sBuf.c_str());
 	close(fd);
 	return true;
 }
@@ -261,17 +260,12 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 			// read name
 			this->Mount( &d, TEMP_MOUNT_POINT );
 			FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
-#if 1
+
 			Profile profile;
 			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
 			profile.LoadEditableDataFromDir( sProfileDir );
 			d.sName = profile.GetDisplayName();
-#else
-			/* XXX read a file anyway */
-			CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/';
-			
-			d.sName = "foo";
-#endif
+
 			UnmountMountPoint( TEMP_MOUNT_POINT );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
@@ -377,25 +371,43 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			 * "2-1" is "bus-port".
 			 */
 			char szLink[256];
-			if( readlink( sPath + "device", szLink, sizeof(szLink) ) == -1 )
+			int iRet = readlink( sPath + "device", szLink, sizeof(szLink) );
+			if( iRet == -1 )
 			{
-				// XXX warn
+				LOG->Warn( "readlink(\"%s\"): %s", (sPath + "device").c_str(), strerror(errno) );
 			}
 			else
 			{
+				/*
+				 * The full path looks like
+				 *
+				 *   ../../devices/pci0000:00/0000:00:02.1/usb2/2-2/2-2.1/2-2.1:1.0
+				 *
+				 * Each path element refers to a new hop in the chain.
+				 *  "usb2" = second USB host
+				 *  2-            second USB host,
+				 *   -2           port 1 on the host,
+				 *     .1         port 1 on an attached hub
+				 *       .2       ... port 2 on the next hub ...
+				 * 
+				 * We want the bus number and the port of the last hop.  The level is
+				 * the number of hops.
+				 */
+				szLink[iRet] = 0;
 				vector<CString> asBits;
 				split( szLink, "/", asBits );
 
-//				const CString &sHostPort = asBits[asBits.size()-3];
-				if( asBits.size() > 3 && asBits[asBits.size()-3].Left(3) == "usb" )
+				if( strstr( szLink, "usb" ) != NULL )
 				{
 					CString sHostPort = asBits[asBits.size()-2];
+					sHostPort.Replace( "-", "." );
 					asBits.clear();
-					split( sHostPort, "-", asBits );
-					if( asBits.size() == 2 )
+					split( sHostPort, ".", asBits );
+					if( asBits.size() > 1 )
 					{
-						usbd.iBus = atoi(asBits[0]);
-						usbd.iPort = atoi(asBits[1]);
+						usbd.iBus = atoi( asBits[0] );
+						usbd.iPort = atoi( asBits[asBits.size()-1] );
+						usbd.iLevel = asBits.size() - 1;
 					}
 				}
 			}
