@@ -390,6 +390,7 @@ void SongManager::InitMachineScoresFromDisk()
 void SongManager::SaveMachineScoresToDisk()
 {
 	// category ranking
+	LOG->Trace("Writing category ranking");
 	{
 		FILE* fp = fopen( CATEGORY_RANKING_FILE, "w" );
 		if( fp )
@@ -398,13 +399,19 @@ void SongManager::SaveMachineScoresToDisk()
 			for( int i=0; i<NUM_NOTES_TYPES; i++ )
 				for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 					for( int k=0; k<NUM_RANKING_LINES; k++ )
+					{
+						LOG->Trace("Writing %i,%i,%i", i, j, k);
+						LOG->Trace("        %p", m_MachineScores[i][j][k].sName.c_str());
+
 						if( fp )
 							fprintf(fp, "%f %s\n", m_MachineScores[i][j][k].fScore, m_MachineScores[i][j][k].sName.c_str());
+					}
 			fclose(fp);
 		}
 	}
 
 	// course ranking
+	LOG->Trace("Writing course ranking");
 	{
 		FILE* fp = fopen( COURSE_RANKING_FILE, "w" );
 
@@ -414,17 +421,31 @@ void SongManager::SaveMachineScoresToDisk()
 			for( unsigned c=0; c<m_pCourses.size(); c++ )	// foreach course
 			{
 				Course* pCourse = m_pCourses[c];
+
+				LOG->Trace("Writing c = %i", c);
+				ASSERT(pCourse);
+				LOG->Trace(" ag %i", pCourse->m_bIsAutoGen );
 				if( pCourse->m_bIsAutoGen )
+				{
+					LOG->Trace(" %p", pCourse->m_sName.c_str() );
 					fprintf(fp, "%s\n", pCourse->m_sName.c_str());
+				}
 				else
+				{
+					LOG->Trace(" %p", pCourse->m_sPath.c_str() );
 					fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
+				}
 				
 				for( int i=0; i<NUM_NOTES_TYPES; i++ )
 					for( int j=0; j<NUM_RANKING_LINES; j++ )
+					{
+						LOG->Trace("  Writing %i %i", i, j);
+						LOG->Trace("  %p", pCourse->m_RankingScores[i][j].sName.c_str());
 						fprintf(fp, "%d %f %s\n", 
 							pCourse->m_RankingScores[i][j].iDancePoints, 
 							pCourse->m_RankingScores[i][j].fSurviveTime, 
 							pCourse->m_RankingScores[i][j].sName.c_str());
+					}
 			}
 
 			fclose(fp);
@@ -432,6 +453,7 @@ void SongManager::SaveMachineScoresToDisk()
 	}
 
 	// notes scores
+	LOG->Trace("Writing note scores");
 	for( int c=0; c<NUM_MEMORY_CARDS; c++ )
 	{
 		FILE* fp = fopen( NOTES_SCORES_FILE[c], "w" );
@@ -441,13 +463,24 @@ void SongManager::SaveMachineScoresToDisk()
 
 			for( unsigned s=0; s<m_pSongs.size(); s++ )	// foreach song
 			{
+
+				LOG->Trace("Writing s = %i", s);
 				Song* pSong = m_pSongs[s];
+				ASSERT(pSong);
 				vector<Notes*> vNotes = pSong->m_apNotes;
 				for( int n=(int)vNotes.size()-1; n>=0; n-- )
+				{
+					LOG->Trace("      n = %i", n);
 					if( vNotes[n]->m_MemCardScores[c].grade <= GRADE_E )
+					{
+						LOG->Trace("erase");
 						vNotes.erase( vNotes.begin()+n );
+					}
+				}
 				if( vNotes.size() == 0 )
 					continue;	// skip	
+				LOG->Trace("ok");
+				LOG->Trace("write %p %i", pSong->GetSongDir().c_str(), vNotes.size());
 
 				fprintf(fp, "%s\n%u\n", 
 					pSong->GetSongDir().c_str(),
@@ -455,11 +488,15 @@ void SongManager::SaveMachineScoresToDisk()
 
 				for( unsigned i=0; i<vNotes.size(); i++ )
 				{
+					LOG->Trace("  i = %i", i);
 					Notes* pNotes = vNotes[i];
+					ASSERT(pNotes);
+					LOG->Trace("  %p", pNotes->GetDescription().c_str());
 					fprintf(fp, "%d\n%d\n%s\n", 
 						pNotes->m_NotesType,
 						pNotes->GetDifficulty(),
 						pNotes->GetDescription().c_str() );
+					LOG->Trace("  ...");
 					fprintf(fp, "%d %d %f\n", 
 						pNotes->m_MemCardScores[c].iNumTimesPlayed,
 						pNotes->m_MemCardScores[c].grade,
@@ -472,6 +509,7 @@ void SongManager::SaveMachineScoresToDisk()
 	}
 
 	// course scores
+	LOG->Trace("Writing course scores");
 	{
 		for( int c=0; c<NUM_MEMORY_CARDS; c++ )
 		{
@@ -482,17 +520,28 @@ void SongManager::SaveMachineScoresToDisk()
 
 				for( unsigned c=0; c<m_pCourses.size(); c++ )	// foreach song
 				{
+					LOG->Trace("  c=%i", c);
 					Course* pCourse = m_pCourses[c];
+					ASSERT(pCourse);
+					LOG->Trace(" %i", pCourse->m_bIsAutoGen );
 					if( pCourse->m_bIsAutoGen )
+					{
+					LOG->Trace(" %p", pCourse->m_sName.c_str() );
 						fprintf(fp, "%s\n", pCourse->m_sName.c_str());
-					else
+					}
+					else {
+					LOG->Trace(" %p", pCourse->m_sPath.c_str() );
 						fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
+					}
 					
 					for( int i=0; i<NUM_NOTES_TYPES; i++ )
+					{
+					LOG->Trace(" %i", i );
 						fprintf(fp, "%d %d %f\n", 
 							pCourse->m_MemCardScores[c][i].iNumTimesPlayed, 
 							pCourse->m_MemCardScores[c][i].iDancePoints, 
 							pCourse->m_MemCardScores[c][i].fSurviveTime);
+					}
 				}
 
 				fclose(fp);
@@ -742,7 +791,9 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	CString sModifiers;
 	if( course.GetFirstStageInfo( pSongOut, pNotesOut, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
 	{
+		po_out.Init();
 		po_out.FromString( sModifiers );
+		so_out.Init();
 		so_out.FromString( sModifiers );
 		return true;
 	}
