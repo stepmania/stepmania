@@ -781,5 +781,6 @@ void PrefsManager::ResetToFactoryDefaults()
 	Init();
 	ReadStaticPrefsFromDisk();	
 	SaveGlobalPrefsToDisk();
+	m_bFirstRun = false;
 }
 
