@@ -183,8 +183,8 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 
 void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 {
-	if( m_fLockInputTime > 0 )
-		return;
+//	if( m_fLockInputTime > 0 )
+//		return;
 	if( m_bChosen[pn] )
 		return;
 	if( m_iChoiceOnPage[pn] == 0 )	// can't go left any more
@@ -199,8 +199,8 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 
 void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 {
-	if( m_fLockInputTime > 0 )
-		return;
+//	if( m_fLockInputTime > 0 )
+//		return;
 	if( m_bChosen[pn] )
 		return;
 	if( m_iChoiceOnPage[pn] == (int)m_ModeChoices[m_CurrentPage].size()-1 )	// can't go left any more
