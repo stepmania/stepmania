@@ -12,12 +12,12 @@
 #include "RageInputDevice.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"	// for NUM_CABINET_LIGHTS
-#include "GameDef.h"
+#include "Game.h"
 #include "Style.h"
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
 
-enum Game
+enum
 {
 	GAME_DANCE,		// Dance Dance Revolution
 	GAME_PUMP,		// Pump It Up
@@ -88,7 +88,7 @@ struct {
 //
 // Important:  Every game must define the buttons: "Start", "Back", "MenuLeft", "Operator" and "MenuRight"
 //
-GameDef g_GameDefs[NUM_GAMES] = 
+Game g_Games[NUM_GAMES] = 
 {
 	{	// GAME_DANCE
 		"dance",					// m_szName
@@ -1207,7 +1207,7 @@ GameDef g_GameDefs[NUM_GAMES] =
 Style g_Styles[] = 
 {
 	{	// STYLE_DANCE_SINGLE
-		&g_GameDefs[GAME_DANCE],					// m_Game
+		&g_Games[GAME_DANCE],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1238,7 +1238,7 @@ Style g_Styles[] =
 		true, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_DANCE_VERSUS
-		&g_GameDefs[GAME_DANCE],				// m_Game
+		&g_Games[GAME_DANCE],				// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -1269,7 +1269,7 @@ Style g_Styles[] =
 		true, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_DANCE_DOUBLE
-		&g_GameDefs[GAME_DANCE],				// m_Game
+		&g_Games[GAME_DANCE],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1308,7 +1308,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_DANCE_COUPLE
-		&g_GameDefs[GAME_DANCE],			// m_Game
+		&g_Games[GAME_DANCE],			// m_Game
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1339,7 +1339,7 @@ Style g_Styles[] =
 		true, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_DANCE_SOLO
-		&g_GameDefs[GAME_DANCE],			// m_Game
+		&g_Games[GAME_DANCE],			// m_Game
 		true,								// m_bUsedForGameplay
 		true,								// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1374,7 +1374,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_DANCE_EDIT_COUPLE
-		&g_GameDefs[GAME_DANCE],				// m_Game
+		&g_Games[GAME_DANCE],				// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1443,7 +1443,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},	*/
 	{	// STYLE_PUMP_SINGLE
-		&g_GameDefs[GAME_PUMP],					// m_Game
+		&g_Games[GAME_PUMP],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1476,7 +1476,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PUMP_VERSUS
-		&g_GameDefs[GAME_PUMP],					// m_Game
+		&g_Games[GAME_PUMP],					// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -1509,7 +1509,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PUMP_HALFDOUBLE
-		&g_GameDefs[GAME_PUMP],					// m_Game
+		&g_Games[GAME_PUMP],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1544,7 +1544,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PUMP_DOUBLE
-		&g_GameDefs[GAME_PUMP],					// m_Game
+		&g_Games[GAME_PUMP],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1587,7 +1587,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PUMP_COUPLE
-		&g_GameDefs[GAME_PUMP],					// m_Game
+		&g_Games[GAME_PUMP],					// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1620,7 +1620,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PUMP_EDIT_COUPLE
-		&g_GameDefs[GAME_PUMP],					// m_Game
+		&g_Games[GAME_PUMP],					// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1658,7 +1658,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_EZ2_SINGLE
-		&g_GameDefs[GAME_EZ2],					// m_Game
+		&g_Games[GAME_EZ2],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1691,7 +1691,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_EZ2_REAL
-		&g_GameDefs[GAME_EZ2],					// m_Game
+		&g_Games[GAME_EZ2],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1728,7 +1728,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_EZ2_SINGLE_VERSUS
-		&g_GameDefs[GAME_EZ2],					// m_Game
+		&g_Games[GAME_EZ2],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -1761,7 +1761,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_EZ2_REAL_VERSUS
-		&g_GameDefs[GAME_EZ2],					// m_Game
+		&g_Games[GAME_EZ2],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1798,7 +1798,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_EZ2_DOUBLE
-		&g_GameDefs[GAME_EZ2],					// m_Game
+		&g_Games[GAME_EZ2],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -1841,7 +1841,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PARA_SINGLE
-		&g_GameDefs[GAME_PARA],					// m_Game
+		&g_Games[GAME_PARA],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -1874,7 +1874,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PARA_VERSUS
-		&g_GameDefs[GAME_PARA],					// m_Game
+		&g_Games[GAME_PARA],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -1907,7 +1907,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_DS3DDX_SINGLE
-		&g_GameDefs[GAME_DS3DDX],				// m_Game
+		&g_Games[GAME_DS3DDX],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -1946,7 +1946,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_BM_SINGLE
-		&g_GameDefs[GAME_BM],					// m_Game
+		&g_Games[GAME_BM],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -1981,7 +1981,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_BM_DOUBLE
-		&g_GameDefs[GAME_BM],					// m_Game
+		&g_Games[GAME_BM],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2028,7 +2028,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_IIDX_SINGLE7
-		&g_GameDefs[GAME_IIDX],					// m_Game
+		&g_Games[GAME_IIDX],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2067,7 +2067,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_IIDX_DOUBLE7
-		&g_GameDefs[GAME_IIDX],					// m_Game
+		&g_Games[GAME_IIDX],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2122,7 +2122,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_IIDX_SINGLE5
-		&g_GameDefs[GAME_IIDX],					// m_Game
+		&g_Games[GAME_IIDX],					// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2161,7 +2161,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_IIDX_DOUBLE5
-		&g_GameDefs[GAME_IIDX],					// m_Game
+		&g_Games[GAME_IIDX],					// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2216,7 +2216,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_IIDX_EDIT_SINGLE5
-		&g_GameDefs[GAME_IIDX],					// m_Game
+		&g_Games[GAME_IIDX],					// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2255,7 +2255,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_IIDX_EDIT_DOUBLE5
-		&g_GameDefs[GAME_IIDX],					// m_Game
+		&g_Games[GAME_IIDX],					// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2310,7 +2310,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_MANIAX_SINGLE
-		&g_GameDefs[GAME_MANIAX],				// m_Game
+		&g_Games[GAME_MANIAX],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -2341,7 +2341,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_MANIAX_VERSUS
-		&g_GameDefs[GAME_MANIAX],				// m_Game
+		&g_Games[GAME_MANIAX],				// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2372,7 +2372,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_MANIAX_DOUBLE
-		&g_GameDefs[GAME_MANIAX],				// m_Game
+		&g_Games[GAME_MANIAX],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2411,7 +2411,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_SINGLE4
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2442,7 +2442,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_SINGLE5
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2475,7 +2475,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_SINGLE8
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2514,7 +2514,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_VERSUS4
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2545,7 +2545,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_VERSUS5
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2578,7 +2578,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_VERSUS8
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -2617,7 +2617,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_DOUBLE4
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2656,7 +2656,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_TECHNO_DOUBLE5
-		&g_GameDefs[GAME_TECHNO],				// m_Game
+		&g_Games[GAME_TECHNO],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2699,7 +2699,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PNM_FIVE
-		&g_GameDefs[GAME_PNM],					// m_Game
+		&g_Games[GAME_PNM],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2732,7 +2732,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_PNM_NINE
-		&g_GameDefs[GAME_PNM],					// m_Game
+		&g_Games[GAME_PNM],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
@@ -2773,7 +2773,7 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 	},
 	{	// STYLE_LIGHTS_CABINET
-		&g_GameDefs[GAME_LIGHTS],				// m_Game
+		&g_Games[GAME_LIGHTS],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
@@ -2824,12 +2824,12 @@ GameManager::~GameManager()
 {
 }
 
-void GameManager::GetStylesForGame( const GameDef *pGame, vector<const Style*>& aStylesAddTo, bool editor )
+void GameManager::GetStylesForGame( const Game *pGame, vector<const Style*>& aStylesAddTo, bool editor )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const Style* style = &g_Styles[s];
-		if( style->m_pGameDef != pGame)
+		if( style->m_pGame != pGame)
 			continue;
 		if( !editor && !style->m_bUsedForGameplay )	
 			continue;
@@ -2854,7 +2854,7 @@ const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 }
 
 
-void GameManager::GetStepsTypesForGame( const GameDef *pGame, vector<StepsType>& aStepsTypeAddTo )
+void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aStepsTypeAddTo )
 {
 	FOREACH_StepsType( st )
 	{
@@ -2862,7 +2862,7 @@ void GameManager::GetStepsTypesForGame( const GameDef *pGame, vector<StepsType>&
 		for( unsigned s=0; !found && s<NUM_STYLES; s++ )
 		{
 			const Style* style = &g_Styles[s];
-			if( style->m_pGameDef != pGame || style->m_StepsType != st )
+			if( style->m_pGame != pGame || style->m_StepsType != st )
 				continue;
 
 			found = true;
@@ -2872,12 +2872,12 @@ void GameManager::GetStepsTypesForGame( const GameDef *pGame, vector<StepsType>&
 	}
 }
 
-const Style* GameManager::GetDemonstrationStyleForGame( const GameDef *pGame )
+const Style* GameManager::GetDemonstrationStyleForGame( const Game *pGame )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const Style* style = &g_Styles[s];
-		if( style->m_pGameDef == pGame && style->m_bUsedForDemonstration )
+		if( style->m_pGame == pGame && style->m_bUsedForDemonstration )
 			return style;
 	}
 
@@ -2885,12 +2885,12 @@ const Style* GameManager::GetDemonstrationStyleForGame( const GameDef *pGame )
 	return NULL;
 }
 
-const Style* GameManager::GetHowToPlayStyleForGame( const GameDef *pGame )
+const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const Style* style = &g_Styles[s];
-		if( style->m_pGameDef == pGame && style->m_bUsedForHowToPlay )
+		if( style->m_pGame == pGame && style->m_bUsedForHowToPlay )
 			return style;
 	}
 
@@ -2898,11 +2898,11 @@ const Style* GameManager::GetHowToPlayStyleForGame( const GameDef *pGame )
 	return NULL;
 }
 
-void GameManager::GetEnabledGames( vector<const GameDef*>& aGamesOut )
+void GameManager::GetEnabledGames( vector<const Game*>& aGamesOut )
 {
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
-		const GameDef *pGame = &g_GameDefs[g];
+		const Game *pGame = &g_Games[g];
 		CStringArray asNoteSkins;
 		NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins );
 		if( !asNoteSkins.empty() )
@@ -2910,32 +2910,32 @@ void GameManager::GetEnabledGames( vector<const GameDef*>& aGamesOut )
 	}
 }
 
-const GameDef* GameManager::GetDefaultGame()
+const Game* GameManager::GetDefaultGame()
 {
-	return &g_GameDefs[0];
+	return &g_Games[0];
 }
 
-int GameManager::GetIndexFromGame( const GameDef* pGame )
+int GameManager::GetIndexFromGame( const Game* pGame )
 {
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
-		if( &g_GameDefs[g] == pGame )
+		if( &g_Games[g] == pGame )
 			return g;
 	}
 	ASSERT(0);
 	return 0;
 }
 
-const GameDef* GameManager::GetGameFromIndex( int index )
+const Game* GameManager::GetGameFromIndex( int index )
 {
 	ASSERT( index >= 0 );
 	ASSERT( index < NUM_GAMES );
-	return &g_GameDefs[index];
+	return &g_Games[index];
 }
 
-bool GameManager::IsGameEnabled( const GameDef *pGame )
+bool GameManager::IsGameEnabled( const Game *pGame )
 {
-	vector<const GameDef*> aGames;
+	vector<const Game*> aGames;
 	GetEnabledGames( aGames );
 	return find( aGames.begin(), aGames.end(), pGame ) != aGames.end();
 }
@@ -2992,22 +2992,22 @@ CString GameManager::StyleToThemedString( const Style* style )
 		return s;
 }
 
-const GameDef* GameManager::StringToGameType( CString sGameType )
+const Game* GameManager::StringToGameType( CString sGameType )
 {
 	for( int i=0; i<NUM_GAMES; i++ )
-		if( !sGameType.CompareNoCase(g_GameDefs[i].m_szName) )
-			return &g_GameDefs[i];
+		if( !sGameType.CompareNoCase(g_Games[i].m_szName) )
+			return &g_Games[i];
 
 	return NULL;
 }
 
 
-const Style* GameManager::GameAndStringToStyle( const GameDef *game, CString sStyle )
+const Style* GameManager::GameAndStringToStyle( const Game *game, CString sStyle )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const Style* style = &g_Styles[s];
-		if( style->m_pGameDef != game )
+		if( style->m_pGame != game )
 			continue;
 		if( sStyle.CompareNoCase(style->m_szName) == 0 )
 			return style;

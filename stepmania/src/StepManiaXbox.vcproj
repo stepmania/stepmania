@@ -761,6 +761,9 @@ cl                                                                              
 				RelativePath="FontCharmaps.h">
 			</File>
 			<File
+				RelativePath="Game.cpp">
+			</File>
+			<File
 				RelativePath="Game.h">
 			</File>
 			<File
@@ -768,12 +771,6 @@ cl                                                                              
 			</File>
 			<File
 				RelativePath="GameConstantsAndTypes.h">
-			</File>
-			<File
-				RelativePath="GameDef.cpp">
-			</File>
-			<File
-				RelativePath="GameDef.h">
 			</File>
 			<File
 				RelativePath="GameInput.cpp">

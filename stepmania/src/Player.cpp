@@ -24,7 +24,7 @@
 #include "ScreenManager.h"
 #include "StageStats.h"
 #include "ArrowEffects.h"
-#include "GameDef.h"
+#include "Game.h"
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -816,12 +816,12 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		
 
 		// Do game-specific score mapping.
-		const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-		if( score == TNS_MARVELOUS )	score = pGameDef->m_mapMarvelousTo;
-		if( score == TNS_PERFECT )		score = pGameDef->m_mapPerfectTo;
-		if( score == TNS_GREAT )		score = pGameDef->m_mapGreatTo;
-		if( score == TNS_GOOD )			score = pGameDef->m_mapGoodTo;
-		if( score == TNS_BOO )			score = pGameDef->m_mapBooTo;
+		const Game* pGame = GAMESTATE->GetCurrentGame();
+		if( score == TNS_MARVELOUS )	score = pGame->m_mapMarvelousTo;
+		if( score == TNS_PERFECT )		score = pGame->m_mapPerfectTo;
+		if( score == TNS_GREAT )		score = pGame->m_mapGreatTo;
+		if( score == TNS_GOOD )			score = pGame->m_mapGoodTo;
+		if( score == TNS_BOO )			score = pGame->m_mapBooTo;
 
 
 

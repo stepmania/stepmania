@@ -2,14 +2,14 @@
 #include "StyleUtil.h"
 #include "GameManager.h"
 #include "XmlFile.h"
-#include "GameDef.h"
+#include "Game.h"
 
 
 void StyleID::FromStyle( const Style *p )
 {
 	if( p )
 	{
-		sGame = p->m_pGameDef->m_szName;
+		sGame = p->m_pGame->m_szName;
 		sStyle = p->m_szName;
 	}
 	else
@@ -21,7 +21,7 @@ void StyleID::FromStyle( const Style *p )
 
 const Style *StyleID::ToStyle() const
 {
-	const GameDef* pGame = GameManager::StringToGameType( sGame );
+	const Game* pGame = GameManager::StringToGameType( sGame );
 	if( pGame == NULL )
 		return NULL;
 

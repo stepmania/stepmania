@@ -3,12 +3,12 @@
 #include "ActorUtil.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-#include "GameDef.h"
+#include "Game.h"
 
 ScreenLogo::ScreenLogo( CString sName ) : ScreenAttract( sName )
 {
 	m_sprLogo.SetName( "Logo" );
-	m_sprLogo.Load( THEME->GetPathG("ScreenLogo",GAMESTATE->GetCurrentGameDef()->m_szName) );
+	m_sprLogo.Load( THEME->GetPathG("ScreenLogo",GAMESTATE->GetCurrentGame()->m_szName) );
 	ON_COMMAND( m_sprLogo );
 	this->AddChild( &m_sprLogo );
 

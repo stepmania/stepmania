@@ -6,7 +6,7 @@
 #include "IniFile.h"
 #include <map>
 
-class GameDef;
+class Game;
 
 class NoteSkinManager
 {
@@ -14,10 +14,10 @@ public:
 	NoteSkinManager();
 	~NoteSkinManager();
 
-	void RefreshNoteSkinData( const GameDef* game );
-	void GetNoteSkinNames( const GameDef* game, CStringArray &AddTo );
-	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current const GameDef* in GAMESTATE
-	bool DoesNoteSkinExist( CString sSkinName );	// looks up current const GameDef* in GAMESTATE
+	void RefreshNoteSkinData( const Game* game );
+	void GetNoteSkinNames( const Game* game, CStringArray &AddTo );
+	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current const Game* in GAMESTATE
+	bool DoesNoteSkinExist( CString sSkinName );	// looks up current const Game* in GAMESTATE
 
 	CString GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sElement, bool bOptional=false );
 	CString GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional=false );
@@ -43,7 +43,7 @@ protected:
 	};
 	void LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& data_out );
 	map<CString,NoteSkinData> m_mapNameToData;
-	const GameDef* m_pCurGame;
+	const Game* m_pCurGame;
 };
 
 

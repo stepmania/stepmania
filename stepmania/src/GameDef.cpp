@@ -1,5 +1,5 @@
 #include "global.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "IniFile.h"
@@ -9,14 +9,14 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
-int	GameDef::GetNumGameplayButtons() const
+int	Game::GetNumGameplayButtons() const
 {
 	int iIndexOfStart = ButtonNameToIndex( "Start" );
 	ASSERT( iIndexOfStart != GAME_BUTTON_INVALID );
 	return iIndexOfStart;
 }
 
-GameButton GameDef::ButtonNameToIndex( const CString &sButtonName ) const
+GameButton Game::ButtonNameToIndex( const CString &sButtonName ) const
 {
 	for( int i=0; i<m_iButtonsPerController; i++ ) 
 		if( stricmp(m_szButtonNames[i], sButtonName) == 0 )
@@ -25,7 +25,7 @@ GameButton GameDef::ButtonNameToIndex( const CString &sButtonName ) const
 	return GAME_BUTTON_INVALID;
 }
 
-MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
+MenuInput Game::GameInputToMenuInput( GameInput GameI ) const
 {
 	PlayerNumber pn;
 
@@ -60,7 +60,7 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 	return MenuInput();	// invalid GameInput
 }
 
-void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
+void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 {
 	ASSERT( MenuI.IsValid() );
 

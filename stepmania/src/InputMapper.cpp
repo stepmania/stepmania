@@ -9,7 +9,7 @@
 #include "PrefsManager.h"
 #include "RageInput.h"
 #include "arch/arch.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "Style.h"
 
 
@@ -43,12 +43,12 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
 			ClearFromInputMap( GameInput((GameController)i,(GameButton)j), 2 );
 
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const Game* pGame = GAMESTATE->GetCurrentGame();
 	for( int c=0; c<MAX_GAME_CONTROLLERS; c++ )
 	{
-		for( int b=0; b<pGameDef->m_iButtonsPerController; b++ )
+		for( int b=0; b<pGame->m_iButtonsPerController; b++ )
 		{
-			int key = pGameDef->m_iDefaultKeyboardKey[c][b];
+			int key = pGame->m_iDefaultKeyboardKey[c][b];
 			if( key == NO_DEFAULT_KEY )
 				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
@@ -310,7 +310,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 	int iNumJoysticksMapped = 0;
 
-	const GameDef* pGameDef = GAMESTATE->m_pCurGame;
+	const Game* pGame = GAMESTATE->m_pCurGame;
 
 	for( unsigned i=0; i<vDevices.size(); i++ )
 	{
@@ -320,7 +320,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 		{
 			const AutoJoyMapping& mapping = g_AutoJoyMappings[j];
 
-			if( pGameDef != GAMEMAN->StringToGameType(mapping.szGame) )
+			if( pGame != GAMEMAN->StringToGameType(mapping.szGame) )
 				continue;	// games don't match
 
 			CString sDriverRegex = mapping.szDriverRegex;
@@ -373,7 +373,7 @@ void InputMapper::ReadMappingsFromDisk()
 	if( !ini.ReadFile( KEYMAPS_PATH ) )
 		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH, ini.GetError().c_str() );
 
-	const IniFile::key *Key = ini.GetKey( GAMESTATE->GetCurrentGameDef()->m_szName );
+	const IniFile::key *Key = ini.GetKey( GAMESTATE->GetCurrentGame()->m_szName );
 
 	if( Key  )
 	{
@@ -409,7 +409,7 @@ void InputMapper::SaveMappingsToDisk()
 	ini.ReadFile( KEYMAPS_PATH );
 	
 	// erase the key so that we overwrite everything for this game
-	ini.DeleteKey( GAMESTATE->GetCurrentGameDef()->m_szName );
+	ini.DeleteKey( GAMESTATE->GetCurrentGame()->m_szName );
 
 	// iterate over our input map and write all mappings to the ini file
 	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
@@ -423,7 +423,7 @@ void InputMapper::SaveMappingsToDisk()
 			sValueString = ssprintf( "%s,%s,%s", 
 				m_GItoDI[i][j][0].toString().c_str(), m_GItoDI[i][j][1].toString().c_str(), m_GItoDI[i][j][2].toString().c_str() );
 			
-			ini.SetValue( GAMESTATE->GetCurrentGameDef()->m_szName, sNameString, sValueString );
+			ini.SetValue( GAMESTATE->GetCurrentGame()->m_szName, sNameString, sValueString );
 		}
 	}
 
@@ -541,8 +541,8 @@ void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 
 void InputMapper::GameToMenu( GameInput GameI, MenuInput &MenuI )
 {
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	MenuI = pGameDef->GameInputToMenuInput( GameI );
+	const Game* pGame = GAMESTATE->GetCurrentGame();
+	MenuI = pGame->GameInputToMenuInput( GameI );
 }
 
 void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
@@ -554,8 +554,8 @@ void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
 
 void InputMapper::MenuToGame( MenuInput MenuI, GameInput GameIout[4] )
 {
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
-	pGameDef->MenuInputToGameInput( MenuI, GameIout );
+	const Game* pGame = GAMESTATE->GetCurrentGame();
+	pGame->MenuInputToGameInput( MenuI, GameIout );
 }
 
 

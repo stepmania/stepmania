@@ -9,7 +9,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "IniFile.h"
-#include "GameDef.h"
+#include "Game.h"
 
 /* Copies of the current mode.  Update this by calling Load. */
 NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
@@ -93,7 +93,7 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 			split(games[n], "-", bits);
 			ASSERT(bits.size() == 2);
 
-			const GameDef* pGame = GAMEMAN->StringToGameType( bits[0] );
+			const Game* pGame = GAMEMAN->StringToGameType( bits[0] );
 			ASSERT(pGame != NULL);
 
 			const Style *style = GAMEMAN->GameAndStringToStyle( pGame, bits[1] );

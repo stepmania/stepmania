@@ -29,7 +29,7 @@
 #include "Screen.h"
 #include "CodeDetector.h"
 #include "CommonMetrics.h"
-#include "GameDef.h"
+#include "Game.h"
 
 //
 // StepMania global classes
@@ -205,7 +205,7 @@ void ResetGame( bool ReturnToFirstScreen )
 	*/
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
-		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+		CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 		if( THEME->DoesThemeExist( sGameName ) )
 			THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage() );
 		else
@@ -690,7 +690,7 @@ static void RestoreAppPri()
 #define GAMEPREFS_INI_PATH "Data/GamePrefs.ini"
 #define STATIC_INI_PATH "Data/Static.ini"
 
-void ChangeCurrentGame( const GameDef* g )
+void ChangeCurrentGame( const Game* g )
 {
 	ASSERT( g );
 
@@ -715,7 +715,7 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 
 	if( GAMESTATE->m_pCurGame == NULL )
 		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
-	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 
 	IniFile ini;
 	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
@@ -752,14 +752,14 @@ void SaveGamePrefsToDisk()
 	if( !GAMESTATE )
 		return;
 
-	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
+	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 	IniFile ini;
 	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
 
 	ini.SetValue( sGameName, "Announcer",			ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",				THEME->GetCurThemeName() );
 	ini.SetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
-	ini.SetValue( "Options", "Game",				(CString)GAMESTATE->GetCurrentGameDef()->m_szName );
+	ini.SetValue( "Options", "Game",				(CString)GAMESTATE->GetCurrentGame()->m_szName );
 
 	ini.WriteFile( GAMEPREFS_INI_PATH );
 }

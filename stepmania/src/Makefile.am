@@ -56,7 +56,7 @@ Attack.cpp Attack.h BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
 Character.cpp Character.h CharacterHead.cpp CharacterHead.h \
 CodeDetector.cpp CodeDetector.h Difficulty.cpp Difficulty.h EnumHelper.cpp EnumHelper.h Course.cpp Course.h \
 CourseUtil.cpp CourseUtil.h DateTime.cpp DateTime.h Font.cpp Font.h FontCharAliases.cpp FontCharAliases.h \
-FontCharmaps.cpp FontCharmaps.h Game.h GameConstantsAndTypes.cpp GameConstantsAndTypes.h GameDef.cpp GameDef.h \
+FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
 GameInput.cpp GameInput.h Grade.cpp Grade.h HighScore.cpp HighScore.h Inventory.cpp Inventory.h LuaFunctions.h \
 LuaHelpers.cpp LuaHelpers.h LyricsLoader.cpp LyricsLoader.h MenuInput.h ModeChoice.cpp ModeChoice.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \

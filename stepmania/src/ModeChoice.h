@@ -13,7 +13,7 @@ class Course;
 class Trail;
 class Character;
 class Style;
-class GameDef;
+class Game;
 
 struct ModeChoice		// used in SelectMode
 {
@@ -32,7 +32,7 @@ struct ModeChoice		// used in SelectMode
 	bool		m_bInvalid;
 	CString		m_sInvalidReason;
 	int			m_iIndex;
-	const GameDef*	m_pGameDef;
+	const Game*	m_pGame;
 	const Style*	m_pStyle;
 	PlayMode	m_pm;
 	Difficulty	m_dc;

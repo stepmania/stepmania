@@ -6,7 +6,7 @@
 #include "RageUtil.h"
 #include "GameInput.h"	// for GameController
 #include "InputMapper.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "PrefsManager.h"
 
 
@@ -238,7 +238,7 @@ void LightsManager::Update( float fDeltaTime )
 		{
 			int iSec = (int)RageTimer::GetTimeSinceStart();
 
-			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGameDef()->GetNumGameplayButtons();
+			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
 
 			FOREACH_GameController( gc )
 			{

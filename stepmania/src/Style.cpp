@@ -16,7 +16,7 @@
 #include "Style.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "IniFile.h"
 #include "GameState.h"
 #include "NoteData.h"

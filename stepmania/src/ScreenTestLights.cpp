@@ -12,7 +12,7 @@
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "LightsManager.h"
-#include "GameDef.h"
+#include "Game.h"
 
 
 ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -47,10 +47,10 @@ void ScreenTestLights::Update( float fDeltaTime )
 	int iSec = (int)RageTimer::GetTimeSinceStart();
 
 	CabinetLight cl = (CabinetLight)(iSec%NUM_CABINET_LIGHTS);
-	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGameDef()->GetNumGameplayButtons();
+	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
 	GameButton gb = (GameButton)(iSec%iNumGameButtonsToShow);
 	CString sCabLight = CabinetLightToString(cl);
-	CString sGameButton = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[gb];
+	CString sGameButton = GAMESTATE->GetCurrentGame()->m_szButtonNames[gb];
 
 	CString s;
 	s += ssprintf("cabinet light %d: %s\n", cl, sCabLight.c_str());

@@ -9,7 +9,7 @@
 #include "song.h"
 #include "ActorUtil.h"
 #include "GameManager.h"
-#include "GameDef.h"
+#include "Game.h"
 
 #define PREVMODE_X		THEME->GetMetricF("ModeSwitcher","PrevModeX")
 #define PREVMODE_Y		THEME->GetMetricF("ModeSwitcher","PrevModeY")

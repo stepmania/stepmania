@@ -6,7 +6,7 @@
 #include "InputMapper.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "Style.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
@@ -95,7 +95,7 @@ bool CodeItem::Load( CString sButtonsNames )
 {
 	buttons.clear();
 
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const Game* pGame = GAMESTATE->GetCurrentGame();
 	CStringArray asButtonNames;
 
 	bool bHasAPlus = sButtonsNames.Find( '+' ) != -1;
@@ -129,7 +129,7 @@ bool CodeItem::Load( CString sButtonsNames )
 		const CString sButtonName = asButtonNames[i];
 
 		// Search for the corresponding GameButton
-		const GameButton gb = pGameDef->ButtonNameToIndex( sButtonName );
+		const GameButton gb = pGame->ButtonNameToIndex( sButtonName );
 		if( gb == GAME_BUTTON_INVALID )
 		{
 			LOG->Trace( "The code '%s' contains an unrecognized button '%s'.", sButtonsNames.c_str(), sButtonName.c_str() );

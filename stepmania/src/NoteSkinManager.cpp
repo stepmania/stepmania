@@ -3,7 +3,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "GameState.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "StyleInput.h"
 #include "Style.h"
 #include "RageUtil.h"
@@ -31,18 +31,18 @@ NoteSkinManager::~NoteSkinManager()
 {
 }
 
-void NoteSkinManager::RefreshNoteSkinData( const GameDef* game )
+void NoteSkinManager::RefreshNoteSkinData( const Game* game )
 {
 	/* Reload even if we don't need to, so exiting out of the menus refreshes the note
 	 * skin list (so you don't have to restart to see new noteskins). */
 	m_pCurGame = GAMESTATE->m_pCurGame;
 
-	const GameDef* pGameDef = game;
+	const Game* pGame = game;
 
 	// clear path cache
 	g_PathCache.clear();
 
-	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "/";
+	CString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
 	CStringArray asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
@@ -103,7 +103,7 @@ void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
 	}
 }
 
-void NoteSkinManager::GetNoteSkinNames( const GameDef* game, CStringArray &AddTo )
+void NoteSkinManager::GetNoteSkinNames( const Game* game, CStringArray &AddTo )
 {
 	RefreshNoteSkinData( game );
 
@@ -130,7 +130,7 @@ bool NoteSkinManager::DoesNoteSkinExist( CString sSkinName )
 
 CString NoteSkinManager::GetNoteSkinDir( CString sSkinName )
 {
-	CString sGame = GAMESTATE->GetCurrentGameDef()->m_szName;
+	CString sGame = GAMESTATE->GetCurrentGame()->m_szName;
 
 	return NOTESKINS_DIR + sGame + "/" + sSkinName + "/";
 }
@@ -186,11 +186,11 @@ RageColor NoteSkinManager::GetMetricC( CString sNoteSkinName, CString sButtonNam
 CString NoteSkinManager::ColToButtonName(int col)
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	const GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
+	const Game* pGame = GAMESTATE->GetCurrentGame();
 
 	StyleInput SI( PLAYER_1, col );
 	GameInput GI = pStyle->StyleInputToGameInput( SI );
-	return pGameDef->m_szButtonNames[GI.button];
+	return pGame->m_szButtonNames[GI.button];
 }
 
 CString NoteSkinManager::GetPathToFromPlayerAndCol( PlayerNumber pn, int col, CString sFileName, bool bOptional )

@@ -509,7 +509,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				 */
 				CString codepoint = val.substr(4); /* "CODEPOINT" */
 			
-				const GameDef* pGame = NULL;
+				const Game* pGame = NULL;
 
 				if(codepoint.find_first_of(' ') != codepoint.npos)
 				{

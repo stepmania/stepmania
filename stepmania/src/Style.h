@@ -13,12 +13,12 @@
 const int MAX_COLS_PER_PLAYER = MAX_NOTE_TRACKS;
 
 class NoteData;
-class GameDef;
+class Game;
 
 class Style
 {
 public:
-	const GameDef*	m_pGameDef;				// Which Game is this Style used with?
+	const Game*	m_pGame;				// Which Game is this Style used with?
 	bool		m_bUsedForGameplay;			// Can be used only for gameplay?
 	bool		m_bUsedForEdit;				// Can be used for editing?
 	bool		m_bUsedForDemonstration;	// Can be used for demonstration?

@@ -784,7 +784,7 @@ int GameState::GetNumSidesJoined() const
 	return iNumSidesJoined;
 }
 
-const GameDef* GameState::GetCurrentGameDef()
+const Game* GameState::GetCurrentGame()
 {
 	ASSERT( m_pCurGame != NULL );	// the game must be set before calling this
 	return m_pCurGame;

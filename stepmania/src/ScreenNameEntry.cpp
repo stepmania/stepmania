@@ -16,7 +16,7 @@
 #include "ProfileManager.h"
 #include "NoteFieldPositioning.h"
 #include "StageStats.h"
-#include "GameDef.h"
+#include "Game.h"
 
 
 //
@@ -199,7 +199,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 			/* Find out if this column is associated with the START menu button. */
 			StyleInput si((PlayerNumber)p, t);
 			GameInput gi=GAMESTATE->GetCurrentStyle()->StyleInputToGameInput(si);
-			MenuInput m=GAMESTATE->GetCurrentGameDef()->GameInputToMenuInput(gi);
+			MenuInput m=GAMESTATE->GetCurrentGame()->GameInputToMenuInput(gi);
 			if(m.button == MENU_BUTTON_START)
 				continue;
 			m_ColToStringIndex[p][t] = CurrentStringIndex++;

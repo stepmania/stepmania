@@ -12,7 +12,7 @@
 #include "GameState.h"
 #include "InputMapper.h"
 #include "StepMania.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "Foreach.h"
 
 static void GetDefaultModifiers( PlayerOptions &po, SongOptions &so )
@@ -84,9 +84,9 @@ static void MoveData( int &sel, bool &opt, bool ToSel )
 
 static void GameChoices( CStringArray &out )
 {
-	vector<const GameDef*> aGames;
+	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
-	FOREACH( const GameDef*, aGames, g )
+	FOREACH( const Game*, aGames, g )
 	{
 		CString sGameName = (*g)->m_szName;
 		sGameName.MakeUpper();
@@ -105,7 +105,7 @@ static void GameSel( int &sel, bool ToSel, const CStringArray &choices )
 			if( !stricmp(choices[i], sCurGameName) )
 				sel = i;
 	} else {
-		vector<const GameDef*> aGames;
+		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
 		ChangeCurrentGame( aGames[sel] );
 	}

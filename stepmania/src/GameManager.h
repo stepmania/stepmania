@@ -1,11 +1,11 @@
-/* GameManager - Manages GameDefs and Styles. */
+/* GameManager - Manages Games and Styles. */
 
 #ifndef GAMEMANAGER_H
 #define GAMEMANAGER_H
 
 class IniFile;
 class Style;
-class GameDef;
+class Game;
 
 #include "GameConstantsAndTypes.h"
 
@@ -15,25 +15,25 @@ public:
 	GameManager();
 	~GameManager();
 
-	void	GetStylesForGame( const GameDef* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
+	void	GetStylesForGame( const Game* pGame, vector<const Style*>& aStylesAddTo, bool editor=false );
 	void	GetAllStyles( vector<const Style*>& aStylesAddTo, bool editor=false );
-	void	GetStepsTypesForGame( const GameDef* pGame, vector<StepsType>& aStepsTypeAddTo );
+	void	GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo );
 	const Style*	GetEditorStyleForStepsType( StepsType st );
-	const Style*	GetDemonstrationStyleForGame( const GameDef* pGame );
-	const Style*	GetHowToPlayStyleForGame( const GameDef* pGame );
+	const Style*	GetDemonstrationStyleForGame( const Game* pGame );
+	const Style*	GetHowToPlayStyleForGame( const Game* pGame );
 
-	void GetEnabledGames( vector<const GameDef*>& aGamesOut );
-	const GameDef* GetDefaultGame();
-	bool IsGameEnabled( const GameDef* pGame );
-	int GetIndexFromGame( const GameDef* pGame );
-	const GameDef* GetGameFromIndex( int index );
+	void GetEnabledGames( vector<const Game*>& aGamesOut );
+	const Game* GetDefaultGame();
+	bool IsGameEnabled( const Game* pGame );
+	int GetIndexFromGame( const Game* pGame );
+	const Game* GetGameFromIndex( int index );
 
 	static int StepsTypeToNumTracks( StepsType st );
 	static StepsType StringToStepsType( CString sStepsType );
 	static CString StepsTypeToString( StepsType st );
 	static CString StepsTypeToThemedString( StepsType st );
-	static const GameDef* StringToGameType( CString sGameType );
-	const Style* GameAndStringToStyle( const GameDef* pGame, CString sStyle );
+	static const Game* StringToGameType( CString sGameType );
+	const Style* GameAndStringToStyle( const Game* pGame, CString sStyle );
 	static CString StyleToThemedString( const Style* s );
 };
 

@@ -11,7 +11,7 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
-#include "GameDef.h"
+#include "Game.h"
 
 
 ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -60,8 +60,8 @@ void ScreenTestInput::Update( float fDeltaTime )
 				GameInput gi;
 				if( INPUTMAPPER->DeviceToGame(di,gi) )
 				{
-					CString sName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[gi.button];
-					CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[gi.button];
+					CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[gi.button];
+					CString sSecondary = GAMESTATE->GetCurrentGame()->m_szSecondaryFunction[gi.button];
 					
 					sTemp += ssprintf("  (Controller %d %s)  %s", gi.controller+1, sName.c_str(), sSecondary.c_str() );
 				}

@@ -18,14 +18,12 @@ class Song;
 class Steps;
 class Course;
 class Trail;
-class GameDef;
+class Game;
 class Style;
 class NoteFieldPositioning;
 class Character;
 class TimingData;
 struct StageStats;
-class GameDef;
-class Style;
 
 class GameState
 {
@@ -46,7 +44,7 @@ public:
 	//
 	// Main state info
 	//
-	const GameDef*		m_pCurGame;
+	const Game*		m_pCurGame;
 	const Style*		m_pCurStyle;
 	bool				m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	bool				m_bPlayersFinalized;
@@ -72,7 +70,7 @@ public:
 	bool			EnoughCreditsToJoin() const;	// true if an unjoined player can join by pressint start
 	int				GetNumSidesJoined() const;
 
-	const GameDef*	GetCurrentGameDef();
+	const Game*	GetCurrentGame();
 	const Style*	GetCurrentStyle() const;
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );

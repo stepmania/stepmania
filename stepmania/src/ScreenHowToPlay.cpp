@@ -3,7 +3,7 @@
 #include "ScreenHowToPlay.h"
 #include "ThemeManager.h"
 #include "GameState.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "SongManager.h"

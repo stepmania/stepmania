@@ -11,7 +11,7 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
-#include "GameDef.h"
+#include "Game.h"
 
 
 #define EVEN_LINE_IN		THEME->GetMetric("ScreenMapControllers","EvenLineIn")
@@ -37,10 +37,10 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 {
 	LOG->Trace( "ScreenMapControllers::ScreenMapControllers()" );
 	
-	for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ )
+	for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
 	{
-		CString sName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[b];
-		CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[b];
+		CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
+		CString sSecondary = GAMESTATE->GetCurrentGame()->m_szSecondaryFunction[b];
 
 		m_textName[b].LoadFromFont( THEME->GetPathToF("Common title") );
 		m_textName[b].SetXY( CENTER_X, -6 );
@@ -246,7 +246,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_iCurButton--;
 			break;
 		case SDLK_DOWN: /* Move the selection down. */
-			if( m_iCurButton == GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController-1 )
+			if( m_iCurButton == GAMESTATE->GetCurrentGame()->m_iButtonsPerController-1 )
 				break;	// can't go down any more
 			m_iCurButton++;
 			break;
@@ -255,7 +255,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			{
 				SCREENMAN->PlayStartSound();
 				StartTransitioning( SM_GoToNextScreen );		
-				for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ )
+				for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
 					m_Line[b].Command( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 			}
 			break;
@@ -288,7 +288,7 @@ void ScreenMapControllers::Refresh()
 {
 	for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
 	{			
-		for( int b=0; b<GAMESTATE->GetCurrentGameDef()->m_iButtonsPerController; b++ ) 
+		for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ ) 
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{

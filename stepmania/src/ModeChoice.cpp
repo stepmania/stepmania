@@ -14,14 +14,14 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "MemoryCardManager.h"
 #include "song.h"
-#include "GameDef.h"
+#include "Game.h"
 
 void ModeChoice::Init()
 {
 	m_sName = "";
 	m_bInvalid = true;
 	m_iIndex = -1;
-	m_pGameDef = NULL;
+	m_pGame = NULL;
 	m_pStyle = NULL;
 	m_pm = PLAY_MODE_INVALID;
 	m_dc = DIFFICULTY_INVALID;
@@ -49,7 +49,7 @@ bool ModeChoice::DescribesCurrentModeForAllPlayers() const
 
 bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 {
-	if( m_pGameDef != NULL && m_pGameDef != GAMESTATE->m_pCurGame )
+	if( m_pGame != NULL && m_pGame != GAMESTATE->m_pCurGame )
 		return false;
 	if( m_pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != m_pm )
 		return false;
@@ -121,9 +121,9 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 
 		if( sName == "game" )
 		{
-			const GameDef* pGame = GAMEMAN->StringToGameType( sValue );
+			const Game* pGame = GAMEMAN->StringToGameType( sValue );
 			if( pGame != NULL )
-				m_pGameDef = pGame;
+				m_pGame = pGame;
 			else
 				m_bInvalid |= true;
 		}
@@ -404,8 +404,8 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 
-	if( m_pGameDef != NULL )
-		GAMESTATE->m_pCurGame = m_pGameDef;
+	if( m_pGame != NULL )
+		GAMESTATE->m_pCurGame = m_pGame;
 	if( m_pm != PLAY_MODE_INVALID )
 		GAMESTATE->m_PlayMode = m_pm;
 
@@ -485,7 +485,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 
 bool ModeChoice::IsZero() const
 {
-	if( m_pGameDef != NULL ||
+	if( m_pGame != NULL ||
 		m_pm != PLAY_MODE_INVALID ||
 		m_pStyle != NULL ||
 		m_dc != DIFFICULTY_INVALID ||

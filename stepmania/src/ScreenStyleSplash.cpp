@@ -8,7 +8,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "RageLog.h"
-#include "GameDef.h"
+#include "Game.h"
 #include "Style.h"
 
 #define NEXT_SCREEN				THEME->GetMetric("ScreenStyleSplash","NextScreen")
@@ -23,7 +23,7 @@ ScreenStyleSplash::ScreenStyleSplash( CString sName ) : ScreenWithMenuElements( 
 {
 	SOUND->StopMusic();
 
-	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;	
+	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;	
 	CString sStyleName = GAMESTATE->GetCurrentStyle()->m_szName;
 
 	LOG->Trace( ssprintf("ScreenStyleSplash: Displaying Splash for style: %s", sStyleName.c_str()));

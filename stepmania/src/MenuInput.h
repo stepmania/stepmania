@@ -1,4 +1,4 @@
-/* MenuInput - An input event specific to a menu navigation.  This is generated based on a GameDef. */
+/* MenuInput - An input event specific to a menu navigation.  This is generated based on a Game. */
 
 #ifndef MENUINPUT_H
 #define MENUINPUT_H

@@ -1,4 +1,4 @@
-/* GameDef - Holds information about a particular style of a game (e.g. "single", "double"). */
+/* Game - Holds information about a particular style of a game (e.g. "single", "double"). */
 
 #ifndef GAMEDEF_H
 #define GAMEDEF_H
@@ -35,7 +35,7 @@ class Style;
 
 #define NO_DEFAULT_KEY -1
 
-class GameDef
+class Game
 {
 public:
 	const char *m_szName;
