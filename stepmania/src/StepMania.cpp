@@ -450,7 +450,7 @@ int main(int argc, char* argv[])
 			"Please install the latest video driver from your graphics card vendor "
 			"to enable OpenGL hardware acceleration.\n\n"
 			"DO NOT FILE THIS ERROR AS A BUG!\n\n"
-			"(Advanced:  To allow use of the software renderer, set 'AllowUnacceleratedRenderer=1' "
+			"(Advanced:  To run without OpenGL hardware acceleration, set \"AllowUnacceleratedRenderer=1\""
 			"in StepMania.ini)" );
 
 	/* Load the unlocks into memory */
