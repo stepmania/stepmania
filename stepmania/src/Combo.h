@@ -22,7 +22,7 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
-	void UpdateScore( TapNoteScore score );
+	void UpdateScore( TapNoteScore score, int iNumNotesInThisRow );
 
 	int GetCurrentCombo() const { return m_iCurCombo; }
 	int GetMaxCombo() const { return m_iMaxCombo; }

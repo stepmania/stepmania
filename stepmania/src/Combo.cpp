@@ -45,7 +45,7 @@ Combo::Combo()
 }
 
 
-void Combo::UpdateScore( TapNoteScore score )
+void Combo::UpdateScore( TapNoteScore score, int iNumNotesInThisRow )
 {
 	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstration )	// cheaters never prosper
 	{
@@ -58,52 +58,53 @@ void Combo::UpdateScore( TapNoteScore score )
 	{
 	case TNS_PERFECT:
 	case TNS_GREAT:
-
-		// continue combo
-		m_iCurCombo++;
-
-		if( score == TNS_PERFECT )	m_iCurComboOfPerfects++;
-		else						m_iCurComboOfPerfects = 0;
-
-		if( m_iCurComboOfPerfects>=150  &&  (m_iCurComboOfPerfects%150)==0  &&  RandomFloat(0,1) > 0.5  &&  !GAMESTATE->m_bDemonstration )
-			SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
-
-
-		switch( m_iCurCombo )
 		{
-		case 100: 		SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );	break;
-		case 200: 		SCREENMAN->SendMessageToTopScreen( SM_200Combo, 0 );	break;
-		case 300: 		SCREENMAN->SendMessageToTopScreen( SM_300Combo, 0 );	break;
-		case 400: 		SCREENMAN->SendMessageToTopScreen( SM_400Combo, 0 );	break;
-		case 500: 		SCREENMAN->SendMessageToTopScreen( SM_500Combo, 0 );	break;
-		case 600: 		SCREENMAN->SendMessageToTopScreen( SM_600Combo, 0 );	break;
-		case 700: 		SCREENMAN->SendMessageToTopScreen( SM_700Combo, 0 );	break;
-		case 800: 		SCREENMAN->SendMessageToTopScreen( SM_800Combo, 0 );	break;
-		case 900: 		SCREENMAN->SendMessageToTopScreen( SM_900Combo, 0 );	break;
-		case 1000: 		SCREENMAN->SendMessageToTopScreen( SM_1000Combo, 0 );	break;
-		}
+			int iOldCombo = m_iCurCombo;
 
-		// new max combo
-		m_iMaxCombo = max(m_iMaxCombo, m_iCurCombo);
+			m_iCurCombo += iNumNotesInThisRow;			// continue combo
+
+			if( score == TNS_PERFECT )	m_iCurComboOfPerfects += iNumNotesInThisRow;
+			else						m_iCurComboOfPerfects = 0;
+
+			if( m_iCurComboOfPerfects>=150  &&  (m_iCurComboOfPerfects%150)==0  &&  RandomFloat(0,1) > 0.5  &&  !GAMESTATE->m_bDemonstration )
+				SCREENMAN->SendMessageToTopScreen( SM_BeginToasty, 0 );
 
 
-		if( m_iCurCombo <= 4 )
-		{
-			m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
-			m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
-		}
-		else
-		{
-			m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// visible
-			m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// visible
+	#define CROSSED( i ) (iOldCombo<i && i<=m_iCurCombo)
 
-			m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
-			float fNewZoom = min( 0.5f + m_iCurCombo/800.0f, 1.0f );
-			m_textComboNumber.SetZoom( fNewZoom ); 
-			
-			//this->SetZoom( 1.2f );
-			//this->BeginTweening( 0.3f );
-			//this->SetTweenZoom( 1 );
+			if     ( CROSSED(100) )	SCREENMAN->SendMessageToTopScreen( SM_100Combo, 0 );
+			else if( CROSSED(200) )	SCREENMAN->SendMessageToTopScreen( SM_200Combo, 0 );
+			else if( CROSSED(300) )	SCREENMAN->SendMessageToTopScreen( SM_300Combo, 0 );
+			else if( CROSSED(400) )	SCREENMAN->SendMessageToTopScreen( SM_400Combo, 0 );
+			else if( CROSSED(500) )	SCREENMAN->SendMessageToTopScreen( SM_500Combo, 0 );
+			else if( CROSSED(600) )	SCREENMAN->SendMessageToTopScreen( SM_600Combo, 0 );
+			else if( CROSSED(700) )	SCREENMAN->SendMessageToTopScreen( SM_700Combo, 0 );
+			else if( CROSSED(800) )	SCREENMAN->SendMessageToTopScreen( SM_800Combo, 0 );
+			else if( CROSSED(900) )	SCREENMAN->SendMessageToTopScreen( SM_900Combo, 0 );
+			else if( CROSSED(1000))	SCREENMAN->SendMessageToTopScreen( SM_1000Combo, 0 );
+
+			// new max combo
+			m_iMaxCombo = max(m_iMaxCombo, m_iCurCombo);
+
+
+			if( m_iCurCombo <= 4 )
+			{
+				m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
+				m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,0) );	// invisible
+			}
+			else
+			{
+				m_textComboNumber.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// visible
+				m_sprCombo.SetDiffuse( D3DXCOLOR(1,1,1,1) );	// visible
+
+				m_textComboNumber.SetText( ssprintf("%d", m_iCurCombo) );
+				float fNewZoom = min( 0.5f + m_iCurCombo/800.0f, 1.0f );
+				m_textComboNumber.SetZoom( fNewZoom ); 
+				
+				//this->SetZoom( 1.2f );
+				//this->BeginTweening( 0.3f );
+				//this->SetTweenZoom( 1 );
+			}
 		}
 		break;
 	case TNS_GOOD:

@@ -339,6 +339,7 @@ void ScreenSelectCourse::AfterCourseChange()
 		}
 		break;
 	case TYPE_SECTION:	// if we get here, there are no courses
+		m_Banner.SetFromGroup( "" );
 		break;
 	default:
 		ASSERT(0);

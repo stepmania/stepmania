@@ -3,6 +3,7 @@ CHANGE:  Name changed to "beta 7" to avoid confusion with the numerous beta 6
 	release candidates
 
 ------------------------CVS after 3.00 beta 6----------------
+CHANGE:  Missing a jump with the Oni life meter now subtracts only 1 life
 CHANGE:  Judge difficulty strictness increased slightly.
 CHANGE:  Initial sort order now sorts by meter of Easy notes, ala MAX.
 BUG FIX:  DWI music sample info now read correctly - again.

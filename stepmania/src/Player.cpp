@@ -458,8 +458,7 @@ void Player::Step( int col )
 
 void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 {
-	//LOG->Trace( "fBeatsUntilStep: %f, fPercentFromPerfect: %f", 
-	//		 fBeatsUntilStep, fPercentFromPerfect );
+	LOG->Trace( "Player::OnRowDestroyed" );
 	
 	// find the minimum score of the row
 	TapNoteScore score = TNS_PERFECT;
@@ -485,14 +484,18 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 
 	for( int c=0; c<m_iNumTracks; c++ )	// for each column
 	{
+		int iNumNotesInThisRow = 0;
+
 		if( m_TapNotes[c][iIndexThatWasSteppedOn] != '0' )	// if there is a note in this col
 		{
+			iNumNotesInThisRow++;
 			m_GhostArrowRow.TapNote( c, score, m_Combo.GetCurrentCombo()>g_iBrightGhostThreshold );	// show the ghost arrow for this column
-			
-			HandleNoteScore( score );	// update score - called once per note in this row
-
-			// update combo - called once per note in this row
-			m_Combo.UpdateScore( score );
+		}
+		
+		if( iNumNotesInThisRow > 0 )
+		{
+			HandleNoteScore( score, iNumNotesInThisRow );	// update score - called once per note in this row
+			m_Combo.UpdateScore( score, iNumNotesInThisRow );
 			GAMESTATE->m_iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
 		}
 	}
@@ -535,25 +538,28 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
-	for( int t=0; t<m_iNumTracks; t++ )
+	for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
 	{
-		for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
+		int iNumMissesThisRow = 0;
+		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			bool bFoundAMissInThisRow = false;
 			if( m_TapNotes[t][r] != '0'  &&  m_TapNoteScores[t][r] == TNS_NONE )
 			{
 				m_TapNoteScores[t][r] = TNS_MISS;
 				iNumMissesFound++;
-				bFoundAMissInThisRow = true;
-				HandleNoteScore( TNS_MISS );
+				iNumMissesThisRow++;
 			}
+		}
+		if( iNumMissesThisRow > 0 )
+		{
+			HandleNoteScore( TNS_MISS, iNumMissesThisRow );
+			m_Combo.UpdateScore( TNS_MISS, iNumMissesThisRow );
 		}
 	}
 
 	if( iNumMissesFound > 0 )
 	{
 		m_Judgement.SetJudgement( TNS_MISS );
-		m_Combo.UpdateScore( TNS_MISS );
 	}
 
 	return iNumMissesFound;
@@ -575,19 +581,21 @@ void Player::CrossedRow( int iNoteRow )
 
 
 
-void Player::HandleNoteScore( TapNoteScore score )
+void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 {
+	ASSERT( iNumTapsInRow >= 1 );
+
 	// don't accumulate points if AutoPlay is on.
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
 		return;
 
 	// update dance points for Oni lifemeter
-	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( score );
-	GAMESTATE->m_TapNoteScores[m_PlayerNumber][score]++;
+	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += iNumTapsInRow * TapNoteScoreToDancePoints( score );
+	GAMESTATE->m_TapNoteScores[m_PlayerNumber][score] += iNumTapsInRow;
 	if( m_pLifeMeter )
 		m_pLifeMeter->ChangeLife( score );
 	if( m_pLifeMeter )
-		m_pLifeMeter->OnDancePointsChange();
+		m_pLifeMeter->OnDancePointsChange();	// update oni life meter
 
 
 //A single step's points are calculated as follows: 
@@ -617,6 +625,10 @@ void Player::HandleNoteScore( TapNoteScore score )
 //
 //Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible score for any song is the number of feet difficulty X 10,000,000. 
 
+	float& fScore = GAMESTATE->m_fScore[m_PlayerNumber];
+	ASSERT( fScore >= 0 );
+
+
 	int p;	// score multiplier 
 	switch( score )
 	{
@@ -625,21 +637,23 @@ void Player::HandleNoteScore( TapNoteScore score )
 	default:			p = 0;		break;
 	}
 	
-	int N = m_iNumTapNotes;
-	int n = m_iTapNotesHit+1;
-	int B = m_iMeter * 1000000;
-	float S = (1+N)*N/2.0f;
+	for( int i=0; i<iNumTapsInRow; i++ )
+	{
 
-//	printf( "m_iNumTapNotes %d, m_iTapNotesHit %d\n", m_iNumTapNotes, m_iTapNotesHit );
+		int N = m_iNumTapNotes;
+		int n = m_iTapNotesHit+1;
+		int B = m_iMeter * 1000000;
+		float S = (1+N)*N/2.0f;
 
-	float one_step_score = p * (B/S) * n;
+	//	printf( "m_iNumTapNotes %d, m_iTapNotesHit %d\n", m_iNumTapNotes, m_iTapNotesHit );
 
-	float& fScore = GAMESTATE->m_fScore[m_PlayerNumber];
-	ASSERT( fScore >= 0 );
+		float one_step_score = p * (B/S) * n;
 
-	fScore += one_step_score;
+		fScore += one_step_score;
 
-	m_iTapNotesHit++;
+		m_iTapNotesHit++;
+	}
+
 	ASSERT( m_iTapNotesHit <= m_iNumTapNotes );
 
 	// HACK:  Correct for rounding errors that cause a 100% perfect score to be slightly off
@@ -657,16 +671,14 @@ void Player::HandleNoteScore( HoldNoteScore score )
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
 		return;
 
-	// update dance points for Oni lifemeter
+	// update dance points totals
 	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( score );
-	GAMESTATE->m_HoldNoteScores[m_PlayerNumber][score]++;
+	GAMESTATE->m_HoldNoteScores[m_PlayerNumber][score] ++;
 
 	if( m_pLifeMeter )
 		m_pLifeMeter->ChangeLife( score );
 	if( m_pLifeMeter )
-		m_pLifeMeter->OnDancePointsChange();	
-
-	// HoldNoteScores don't effect m_fScore
+		m_pLifeMeter->OnDancePointsChange();	// refresh Oni life meter
 }
 
 float Player::GetMaxBeatDifference()

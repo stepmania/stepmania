@@ -10,8 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-const int NUM_EFFECT_TYPES = 9;
-
 struct PlayerOptions
 {
 	float m_fArrowScrollSpeed;
