@@ -352,25 +352,12 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 		GAMESTATE->m_pCurCourse = pCourse;
 
-		//
-		// Do NOT apply the first song's modifiers before going to the options screen.
-		// The user should not be able to override modifiers specifically designated
-		// by the course.
-		//
-		//Song* pSong;
-		//Steps* pNotes;
-		//CString sModifiers;
-		//pCourse->GetFirstStageInfo( pSong, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-		//for( int p=0; p<NUM_PLAYERS; p++ )
-		//	GAMESTATE->m_PlayerOptions[p].FromString( sModifiers );
-		//GAMESTATE->m_SongOptions.FromString( sModifiers );
-
-
 		// Apply number of lives without turning on LIFE_BATTERY.
 		// Don't turn on LIFE_BATTERY because it will override
 		// the user's choice if they Back out of gameplay or are in 
 		// event mode.
-		GAMESTATE->m_SongOptions.m_iBatteryLives = GAMESTATE->m_pCurCourse->m_iLives;
+		if( pCourse->m_iLives != -1 )
+			GAMESTATE->m_SongOptions.m_iBatteryLives = GAMESTATE->m_pCurCourse->m_iLives;
 
 		break;
 	}
