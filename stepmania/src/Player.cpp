@@ -35,6 +35,7 @@
 #include "ScreenGameplay.h" /* for SM_ComboStopped */
 #include "ScreenManager.h"
 #include "StageStats.h"
+#include "ArrowEffects.h"
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -74,6 +75,7 @@ PlayerMinus::PlayerMinus()
 	HOLD_JUDGMENTS_UNDER_FIELD.Refresh();
 	
 	m_PlayerNumber = PLAYER_INVALID;
+	m_fNoteFieldHeight = 0;
 
 	m_pLifeMeter = NULL;
 	m_pCombinedLifeMeter = NULL;
@@ -191,8 +193,8 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 
 	float fNoteFieldMidde = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	m_pNoteField->SetY( fNoteFieldMidde );
-	float fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
-	m_pNoteField->Load( this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, fNoteFieldHeight );
+	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
+	m_pNoteField->Load( this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
 	m_ArrowBackdrop.SetPlayer( pn );
 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].GetReversePercentForColumn(0) == 1;
@@ -215,7 +217,6 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	int c;
 	for( c=0; c<pStyleDef->m_iColsPerPlayer; c++ )
 	{
-		m_HoldJudgment[c].SetX( (float)pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 		m_HoldJudgment[c].Command( g_NoteFieldMode[pn].m_HoldJudgmentCmd[c] );
 	}
 
@@ -246,12 +247,24 @@ void PlayerMinus::Update( float fDeltaTime )
 	//
 	// Update Y positions
 	//
+	{
+		for( int c=0; c<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; c++ )
+		{
+			float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(c);
+			float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
+			float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
+
+			const float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
+			const float fZ = ArrowGetZPos( m_PlayerNumber, c, 0 );
+
+			m_HoldJudgment[c].SetX( fX );
+			m_HoldJudgment[c].SetY( fHoldJudgeYPos );
+			m_HoldJudgment[c].SetZ( fZ );
+		}
+	}
+
 	float fPercentReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(0);
-	float fHoldJudgeYPos = SCALE( fPercentReverse, 0.f, 1.f, HOLD_JUDGMENT_Y_STANDARD, HOLD_JUDGMENT_Y_REVERSE );
 	float fGrayYPos = SCALE( fPercentReverse, 0.f, 1.f, GRAY_ARROWS_Y_STANDARD, GRAY_ARROWS_Y_REVERSE );
-	int c;
-	for( c=0; c<GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer; c++ )
-		m_HoldJudgment[c].SetY( fHoldJudgeYPos );
 	m_ArrowBackdrop.SetY( fGrayYPos );
 
 	// NoteField accounts for reverse on its own now.
@@ -535,7 +548,13 @@ void PlayerMinus::DrawHoldJudgments()
 		return;
 
 	for( int c=0; c<GetNumTracks(); c++ )
+	{
+		g_NoteFieldMode[m_PlayerNumber].BeginDrawTrack(c);
+
 		m_HoldJudgment[c].Draw();
+
+		g_NoteFieldMode[m_PlayerNumber].EndDrawTrack(c);
+	}
 }
 
 /* It's OK for this function to search a little more than was requested. */

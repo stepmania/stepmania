@@ -73,6 +73,7 @@ protected:
 	static float GetMaxStepDistanceSeconds();
 
 	PlayerNumber	m_PlayerNumber;
+	float			m_fNoteFieldHeight;
 
 	float			m_fOffset[SAMPLE_COUNT];//for AutoAdjust
 	int				m_iOffsetSample;		//
