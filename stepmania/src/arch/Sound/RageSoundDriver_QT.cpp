@@ -103,21 +103,16 @@ void RageSound_QT::GetData(SndChannel *chan, SndCommand *cmd_passed) {
   fill_me = cmd_passed->param2;
   UInt32 play_me = !fill_me;
 
-  TimeRecord tr;
-  ClockGetTime(P->clock, &tr);
-  static UInt32 last = 0;
-  static UInt32 curr;
-  UInt64 temp = tr.value.hi;
-  temp <<= 32;
-  temp |= tr.value.lo;
-  double d = static_cast<double>(temp)/tr.scale*freq;
-  curr = static_cast<UInt32>(d);
-  ASSERT(curr > last);
-  last = curr;
-
-  if (!P->last_pos)
-    P->last_pos = curr;
-  else
+  if (!P->last_pos){
+    TimeRecord tr;
+    ClockGetTime(P->clock, &tr);
+    UInt64 temp = tr.value.hi;
+    temp <<= 32;
+    temp |= tr.value.lo;
+    double d = static_cast<double>(temp)/tr.scale*freq;
+    temp = static_cast<UInt64>(d);
+    P->last_pos = static_cast<UInt32>(temp % 0x00000000FFFFFFFFLL);
+  } else
     P->last_pos += samples;
 
   /* Swap buffers */
@@ -196,10 +191,9 @@ int RageSound_QT::GetPosition(const RageSound *snd) const {
   UInt64 temp = tr.value.hi;
   temp <<= 32;
   temp |= tr.value.lo;
-  /*temp >>= lifetime;
-  return static_cast<UInt32>(temp & 0x00000000FFFFFFFFLL);*/
   double d = static_cast<double>(temp)/tr.scale*freq;
-  return static_cast<int>(d);
+  temp = static_cast<UInt64>(d);
+  return static_cast<UInt32>(temp % 0x00000000FFFFFFFFLL);
 }
 
 float RageSound_QT::GetPlayLatency() const {
