@@ -470,7 +470,7 @@ ScreenGameplay::ScreenGameplay()
 	{
 		m_StarWipe.SetOpened();
 		m_DancingState = STATE_DANCING;
-		m_soundMusic.Play();
+		m_soundMusic.StartPlaying();
 		this->SendScreenMessage( SM_BeginFadingToTitleMenu, DEMONSTRATION_SECONDS );
 	}
 	else
@@ -490,7 +490,7 @@ ScreenGameplay::~ScreenGameplay()
 		SAFE_DELETE( m_pScoreDisplay[p] );
 	}
 
-	m_soundMusic.Stop();
+	m_soundMusic.StopPlaying();
 }
 
 bool ScreenGameplay::IsLastSong()
@@ -610,7 +610,7 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	m_soundMusic.SetPositionSeconds( fStartSecond );
 	m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 	if( !bFirstLoad )
-		m_soundMusic.Play();
+		m_soundMusic.StartPlaying();
 }
 
 bool ScreenGameplay::OneIsHot()
@@ -874,7 +874,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		else if( (MenuI.button==MENU_BUTTON_START || MenuI.button==MENU_BUTTON_BACK)
 			&&  !m_Fade.IsClosing() )
 		{
-			m_soundMusic.Stop();
+			m_soundMusic.StopPlaying();
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","insert coin") );
 			::Sleep( 1000 );	// do a little pause, like the arcade does
 			this->SendScreenMessage( SM_GoToTitleMenu, 0 );
@@ -1000,7 +1000,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			 * -glenn
 			 */
 			/* but with the new sound code, Stop leaves the position alone -glenn (XXX remove this comment) */
-			m_soundMusic.Stop();
+			m_soundMusic.StopPlaying();
 
 			this->ClearMessageQueue();
 			m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
@@ -1119,7 +1119,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_sprHereWeGo.StartFocusing();
 			m_announcerHereWeGo.PlayRandom();
 			m_Background.FadeIn();
-			m_soundMusic.Play();
+			m_soundMusic.StartPlaying();
 		}
 		break;
 	case SM_User+6:
@@ -1409,7 +1409,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginFailed:
 		m_DancingState = STATE_OUTRO;
-		m_soundMusic.Stop();
+		m_soundMusic.StopPlaying();
 		m_StarWipe.SetTransitionTime( 1.5f );
 		m_StarWipe.CloseWipingRight( SM_None );
 		int p;
