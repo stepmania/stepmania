@@ -57,3 +57,4 @@ SongCreditDisplay::SongCreditDisplay()
 
 	this->SetText( s );
 }
+
