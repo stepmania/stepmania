@@ -25,23 +25,6 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
 	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", out.m_fMusicSampleLengthSeconds );
 	fprintf( fp, "#SELECTABLE:" );
-	switch( out.m_DisplayBPMType )
-	{
-	case Song::DISPLAY_ACTUAL:
-		// write nothing
-		break;
-	case Song::DISPLAY_SPECIFIED:
-		if( out.m_fDisplayBPMMin == out.m_fDisplayBPMMax )
-			fprintf( fp, "#DISPLAYBPM:%.3f", out.m_fDisplayBPMMin );
-		else
-			fprintf( fp, "#DISPLAYBPM:%.3f,%.3f", out.m_fDisplayBPMMin, out.m_fDisplayBPMMax );
-		break;
-	case Song::DISPLAY_RANDOM:
-		fprintf( fp, "#DISPLAYBPM:*" );
-		break;
-	}
-
-
 	switch(out.m_SelectionDisplay) {
 	default: ASSERT(0);  /* fallthrough */
 	case Song::SHOW_ALWAYS:
@@ -52,6 +35,23 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 		fprintf( fp, "ROULETTE" ); break;
 	}
 	fprintf( fp, ";\n" );
+
+	switch( out.m_DisplayBPMType )
+	{
+	case Song::DISPLAY_ACTUAL:
+		// write nothing
+		break;
+	case Song::DISPLAY_SPECIFIED:
+		if( out.m_fDisplayBPMMin == out.m_fDisplayBPMMax )
+			fprintf( fp, "#DISPLAYBPM:%.3f;", out.m_fDisplayBPMMin );
+		else
+			fprintf( fp, "#DISPLAYBPM:%.3f,%.3f;", out.m_fDisplayBPMMin, out.m_fDisplayBPMMax );
+		break;
+	case Song::DISPLAY_RANDOM:
+		fprintf( fp, "#DISPLAYBPM:*;" );
+		break;
+	}
+
 
 	fprintf( fp, "#BPMS:" );
 	unsigned i;
