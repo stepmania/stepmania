@@ -488,6 +488,8 @@ void ScreenSelectMusic::AdjustOptions()
 	 * reset it to the preference later. XXX */
 
 	// Note all these if()s are mutually exclusive.
+	/* No; the second if overrides the first, and the third overrides the first
+	 * two. */
 
 	/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
 	if(dc <= DIFFICULTY_EASY)
