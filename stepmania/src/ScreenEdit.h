@@ -159,6 +159,7 @@ public:
 		main_title,
 		sub_title,
 		artist,
+		credit,
 		main_title_transliteration,
 		sub_title_transliteration,
 		artist_transliteration,

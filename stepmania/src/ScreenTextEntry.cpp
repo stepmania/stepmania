@@ -63,7 +63,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_rectAnswerBox.SetZoomY( ANSWER_HEIGHT );
 	this->AddChild( &m_rectAnswerBox );
 
-	m_textAnswer.LoadFromFont( THEME->GetPathToF("header1") );
+	m_textAnswer.LoadFromFont( THEME->GetPathToF("Common title") );
 	m_textAnswer.SetXY( ANSWER_X, ANSWER_Y );
 	UpdateText();
 	this->AddChild( &m_textAnswer );

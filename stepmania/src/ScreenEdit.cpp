@@ -181,6 +181,7 @@ Menu g_EditSongInfo
 	MenuRow( "Main title",					true ),
 	MenuRow( "Sub title",					true ),
 	MenuRow( "Artist",						true ),
+	MenuRow( "Credit",						true ),
 	MenuRow( "Main title transliteration",	true ),
 	MenuRow( "Sub title transliteration",	true ),
 	MenuRow( "Artist transliteration",		true )
@@ -1176,6 +1177,12 @@ void ChangeArtist( CString sNew )
 	pSong->m_sArtist = sNew;
 }
 
+void ChangeCredit( CString sNew )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	pSong->m_sCredit = sNew;
+}
+
 void ChangeMainTitleTranslit( CString sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -1260,6 +1267,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				g_EditSongInfo.rows[main_title].choices.resize(1);					g_EditSongInfo.rows[main_title].choices[0] = pSong->m_sMainTitle;
 				g_EditSongInfo.rows[sub_title].choices.resize(1);					g_EditSongInfo.rows[sub_title].choices[0] = pSong->m_sSubTitle;
 				g_EditSongInfo.rows[artist].choices.resize(1);						g_EditSongInfo.rows[artist].choices[0] = pSong->m_sArtist;
+				g_EditSongInfo.rows[credit].choices.resize(1);						g_EditSongInfo.rows[credit].choices[0] = pSong->m_sCredit;
 				g_EditSongInfo.rows[main_title_transliteration].choices.resize(1);	g_EditSongInfo.rows[main_title_transliteration].choices[0] = pSong->m_sMainTitleTranslit;
 				g_EditSongInfo.rows[sub_title_transliteration].choices.resize(1);	g_EditSongInfo.rows[sub_title_transliteration].choices[0] = pSong->m_sSubTitleTranslit;
 				g_EditSongInfo.rows[artist_transliteration].choices.resize(1);		g_EditSongInfo.rows[artist_transliteration].choices[0] = pSong->m_sArtistTranslit;
@@ -1562,6 +1570,9 @@ void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers )
 		break;
 	case artist:
 		SCREENMAN->TextEntry( SM_None, "Edit artist.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtist, ChangeArtist, NULL );
+		break;
+	case credit:
+		SCREENMAN->TextEntry( SM_None, "Edit credit.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sCredit, ChangeCredit, NULL );
 		break;
 	case main_title_transliteration:
 		SCREENMAN->TextEntry( SM_None, "Edit main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL );
