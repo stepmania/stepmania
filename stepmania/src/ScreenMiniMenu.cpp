@@ -40,13 +40,13 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 	ASSERT( m_Def.rows.size() <= MAX_MENU_ROWS );
 
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenMiniMenu background") );
+	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenMiniMenu","background") );
 	m_Background.PlayCommand("On");
 	this->AddChild( &m_Background );
 
 	float fHeightOfAll = min( SCREEN_HEIGHT-80, (m_Def.rows.size()-1)*SPACING_Y );
 
-	m_textTitle.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textTitle.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textTitle.SetText( m_Def.title );
 	m_textTitle.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y - fHeightOfAll/2 - 30 );
 	m_textTitle.SetZoom( 0.8f );
@@ -68,7 +68,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		else
 			fY = SCREEN_CENTER_Y;
 
-		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textLabel[i].LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textLabel[i].SetText( line.name );
 		m_textLabel[i].SetY( fY );
 		m_textLabel[i].SetZoom( ZOOM_NOT_SELECTED );
@@ -76,7 +76,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		m_textLabel[i].SetDiffuse( line.enabled ? COLOR_ENABLED : COLOR_DISABLED );
 		this->AddChild( &m_textLabel[i] );
 
-		m_textAnswer[i].LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textAnswer[i].LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textAnswer[i].SetY( fY );
 		m_textAnswer[i].SetZoom( ZOOM_NOT_SELECTED );
 		m_textAnswer[i].SetHorizAlign( Actor::align_right );
@@ -124,11 +124,11 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		m_textAnswer[k].SetX( fAnswerX );
 	}
 
-	m_In.Load( THEME->GetPathToB("ScreenMiniMenu in") );
+	m_In.Load( THEME->GetPathB("ScreenMiniMenu","in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathToB("ScreenMiniMenu out") );
+	m_Out.Load( THEME->GetPathB("ScreenMiniMenu","out") );
 	this->AddChild( &m_Out );
 }
 
@@ -222,7 +222,7 @@ void ScreenMiniMenu::BeforeLineChanged()
 	m_textAnswer[m_iCurLine].SetEffectNone();
 	m_textLabel[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
 	m_textAnswer[m_iCurLine].SetZoom( ZOOM_NOT_SELECTED );
-	SOUND->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
+	SOUND->PlayOnce( THEME->GetPathS("ScreenMiniMenu","row") );
 }
 
 void ScreenMiniMenu::AfterLineChanged()
@@ -235,7 +235,7 @@ void ScreenMiniMenu::AfterLineChanged()
 
 void ScreenMiniMenu::AfterAnswerChanged()
 {
-	SOUND->PlayOnce( THEME->GetPathToS("ScreenMiniMenu row") );
+	SOUND->PlayOnce( THEME->GetPathS("ScreenMiniMenu","row") );
 	int iAnswerInRow = m_iCurAnswers[m_iCurLine];
 	CString sAnswerText = m_Def.rows[m_iCurLine].choices[iAnswerInRow];
 	m_textAnswer[m_iCurLine].SetText( sAnswerText );

@@ -140,10 +140,10 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	// Load the Background and flash.. Flash only shows if the BG does.
 	if(m_bShowBackground)
 	{
-		m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
+		m_sBackground.Load( THEME->GetPathG("BeginnerHelper","background") );
 		this->AddChild(&m_sBackground);
 		m_sBackground.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);
-		m_sFlash.Load(THEME->GetPathToG("BeginnerHelper flash"));
+		m_sFlash.Load(THEME->GetPathG("BeginnerHelper","flash"));
 		m_sFlash.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		m_sFlash.SetDiffuseAlpha(0);
 	}
@@ -152,7 +152,7 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	for(int lsc=0; lsc<NUM_PLAYERS; lsc++)
 		for(int lsce=0; lsce<4; lsce++)
 		{
-			m_sStepCircle[lsc][lsce].Load(THEME->GetPathToG("BeginnerHelper stepcircle"));
+			m_sStepCircle[lsc][lsce].Load(THEME->GetPathG("BeginnerHelper","stepcircle"));
 			m_sStepCircle[lsc][lsce].SetZoom(0);	// Hide until needed.
 			this->AddChild(&m_sStepCircle[lsc][lsce]);
 			

@@ -199,12 +199,12 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 			}
 
 			Sprite* pBackground = new Sprite;
-			pBackground->LoadBG( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background") );
+			pBackground->LoadBG( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background") );
 			pBackground->ScaleToClipped( BACKGROUNDS_WIDTH, BACKGROUNDS_HEIGHT );
 			m_ScrollerBackgrounds.AddChild( pBackground );
 
 			Sprite* pFrame = new Sprite;
-			pFrame->Load( THEME->GetPathToG("ScreenCredits background frame") );
+			pFrame->Load( THEME->GetPathG("ScreenCredits","background frame") );
 			m_ScrollerFrames.AddChild( pFrame );
 		}
 		const int iFirst = -2, iLast = NUM_BACKGROUNDS+2;
@@ -232,7 +232,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		for( unsigned i=0; i<ARRAYSIZE(CREDIT_LINES); i++ )
 		{
 			BitmapText* pText = new BitmapText;
-			pText->LoadFromFont( THEME->GetPathToF("ScreenCredits titles") );
+			pText->LoadFromFont( THEME->GetPathF("ScreenCredits","titles") );
 			pText->SetText( CREDIT_LINES[i].text );
 			switch( CREDIT_LINES[i].colorIndex )
 			{
@@ -251,7 +251,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		fTime = max( fTime, TEXTS_SCROLL_SECONDS_PER_ITEM*(iLast-iFirst) );
 	}
 
-	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenCredits overlay") );
+	m_Overlay.LoadFromAniDir( THEME->GetPathB("ScreenCredits","overlay") );
 	m_Overlay.PlayCommand( "On" );
 	this->AddChild( &m_Overlay );
 

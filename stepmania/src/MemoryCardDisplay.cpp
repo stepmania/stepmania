@@ -19,7 +19,7 @@ void MemoryCardDisplay::Load( PlayerNumber pn )
 	{
 		MemoryCardState mcs = (MemoryCardState)i;
 		CString sState = MemoryCardStateToString(mcs);
-		m_spr[i].Load( THEME->GetPathToG(ssprintf("MemoryCardDisplay %s p%d",sState.c_str(),pn+1)) );
+		m_spr[i].Load( THEME->GetPathG("MemoryCardDisplay",ssprintf("%s p%d",sState.c_str(),pn+1)) );
 		m_spr[i].SetHidden( true );
 		this->AddChild( &m_spr[i] );
 	}

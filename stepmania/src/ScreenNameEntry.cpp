@@ -207,7 +207,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 			float ColX = fPlayerX + pStyle->m_ColumnInfo[p][t].fXOffset;
 
-			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathToF("ScreenNameEntry letters") );
+			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
 			m_textSelectedChars[p][t].SetX( ColX );
 			m_textSelectedChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textSelectedChars[p][t].SetDiffuse( g_SelectedCharsColor );
@@ -216,14 +216,14 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 				m_textSelectedChars[p][t].SetText( m_sSelectedName[p].substr(t,1) );
 			this->AddChild( &m_textSelectedChars[p][t] );		// draw these manually
 			
-			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathToF("ScreenNameEntry letters") );
+			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
 			m_textScrollingChars[p][t].SetX( ColX );
 			m_textScrollingChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textScrollingChars[p][t].SetDiffuse( g_ScrollingCharsColor );
 			//this->AddChild( &m_textScrollingChars[p][t] );	// draw these manually
 		}
 
-		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntry category") );
+		m_textCategory[p].LoadFromFont( THEME->GetPathF("ScreenNameEntry","category") );
 		m_textCategory[p].SetX( fPlayerX );
 		m_textCategory[p].SetY( CATEGORY_Y );
 		m_textCategory[p].SetZoom( CATEGORY_ZOOM );
@@ -247,16 +247,16 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	m_Timer.SetXY( TIMER_X, TIMER_Y );
 	this->AddChild( &m_Timer );
 
-	m_In.Load( THEME->GetPathToB("ScreenNameEntry in") );
+	m_In.Load( THEME->GetPathB("ScreenNameEntry","in") );
 	m_In.StartTransitioning();
 //	this->AddChild( &m_In );	// draw and update this manually too
 
-	m_Out.Load( THEME->GetPathToB("ScreenNameEntry out") );
+	m_Out.Load( THEME->GetPathB("ScreenNameEntry","out") );
 //	this->AddChild( &m_Out );	// draw and update this manually too
 
-	m_soundStep.Load( THEME->GetPathToS("ScreenNameEntry step") );
+	m_soundStep.Load( THEME->GetPathS("ScreenNameEntry","step") );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenNameEntry music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenNameEntry","music") );
 
 	m_fFakeBeat = 0;
 }

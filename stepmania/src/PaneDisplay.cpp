@@ -76,7 +76,7 @@ void PaneDisplay::Load( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	m_sprPaneUnder.Load( THEME->GetPathToG( ssprintf("PaneDisplay under p%i", pn+1)) );
+	m_sprPaneUnder.Load( THEME->GetPathG("PaneDisplay",ssprintf("under p%i",pn+1)) );
 	m_sprPaneUnder->SetName( "Under" );
 	ON_COMMAND( m_sprPaneUnder );
 	this->AddChild( m_sprPaneUnder );
@@ -114,12 +114,12 @@ void PaneDisplay::Load( PlayerNumber pn )
 		if( g_Contents[p].type == NUM_PANES )
 			continue; /* skip, disabled */
 
-		m_textContents[p].LoadFromFont( THEME->GetPathToF( "PaneDisplay text" ) );
+		m_textContents[p].LoadFromFont( THEME->GetPathF("PaneDisplay","text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
 		SET_XY_AND_ON_COMMAND( m_textContents[p] );
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
-		m_Labels[p].Load( THEME->GetPathToG( ssprintf("PaneDisplay %s label", g_Contents[p].name)) );
+		m_Labels[p].Load( THEME->GetPathG("PaneDisplay",CString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
 		SET_XY_AND_ON_COMMAND( m_Labels[p] );
 		m_ContentsFrame.AddChild( m_Labels[p] );
@@ -128,7 +128,7 @@ void PaneDisplay::Load( PlayerNumber pn )
 	m_ContentsFrame.SetXY( SHIFT_X(m_PlayerNumber), SHIFT_Y(m_PlayerNumber) );
 	this->AddChild( &m_ContentsFrame );
 
-	m_sprPaneOver.Load( THEME->GetPathToG( ssprintf("PaneDisplay over p%i", pn+1)) );
+	m_sprPaneOver.Load( THEME->GetPathG("PaneDisplay",ssprintf("over p%i", pn+1)) );
 	m_sprPaneOver->SetName( "Over" );
 	ON_COMMAND( m_sprPaneOver );
 	this->AddChild( m_sprPaneOver );

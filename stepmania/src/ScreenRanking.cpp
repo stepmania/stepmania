@@ -101,19 +101,19 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		this->AddChild( &m_sprBannerFrame );
 
 		m_textCategory.SetName( "Category" );
-		m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenRanking category") );
+		m_textCategory.LoadFromFont( THEME->GetPathF("ScreenRanking","category") );
 		m_textCategory.SetShadowLength( 0 );
 		m_textCategory.SetHidden( true );
 		this->AddChild( &m_textCategory );
 
 		m_textCourseTitle.SetName( "CourseTitle" );
-		m_textCourseTitle.LoadFromFont( THEME->GetPathToF("ScreenRanking course title") );
+		m_textCourseTitle.LoadFromFont( THEME->GetPathF("ScreenRanking","course title") );
 		m_textCourseTitle.SetShadowLength( 0 );
 		m_textCourseTitle.SetHidden( true );
 		this->AddChild( &m_textCourseTitle );
 
 		m_textStepsType.SetName( "StepsType" );
-		m_textStepsType.LoadFromFont( THEME->GetPathToF("ScreenRanking steps type") );
+		m_textStepsType.LoadFromFont( THEME->GetPathF("ScreenRanking","steps type") );
 		m_textStepsType.SetShadowLength( 0 );
 		m_textStepsType.SetHidden( true );
 		this->AddChild( &m_textStepsType );
@@ -122,29 +122,29 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		for( int l=0; l<NUM_RANKING_LINES; l++ )
 		{
 			m_sprBullets[l].SetName( ssprintf("Bullet%d",l+1) );
-			m_sprBullets[l].Load( THEME->GetPathToG( ssprintf("ScreenRanking bullets 1x%d",NUM_RANKING_LINES) ) );
+			m_sprBullets[l].Load( THEME->GetPathG( "ScreenRanking", ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
 			m_sprBullets[l].SetState( l );
 			m_sprBullets[l].StopAnimating();
 			m_sprBullets[l].SetHidden( true );
 			this->AddChild( &m_sprBullets[l] );
 
 			m_textNames[l].SetName( ssprintf("Name%d",l+1) );
-			m_textNames[l].LoadFromFont( THEME->GetPathToF("ScreenRanking name") );
+			m_textNames[l].LoadFromFont( THEME->GetPathF("ScreenRanking","name") );
 			m_textNames[l].SetHidden( true );
 			this->AddChild( &m_textNames[l] );
 
 			m_textScores[l].SetName( ssprintf("Score%d",l+1) );
-			m_textScores[l].LoadFromFont( THEME->GetPathToF("ScreenRanking score") );
+			m_textScores[l].LoadFromFont( THEME->GetPathF("ScreenRanking","score") );
 			m_textScores[l].SetHidden( true );
 			this->AddChild( &m_textScores[l] );
 
 			m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
-			m_textPoints[l].LoadFromFont( THEME->GetPathToF("ScreenRanking points") );
+			m_textPoints[l].LoadFromFont( THEME->GetPathF("ScreenRanking","points") );
 			m_textPoints[l].SetHidden( true );
 			this->AddChild( &m_textPoints[l] );
 			
 			m_textTime[l].SetName( ssprintf("Time%d",l+1) );
-			m_textTime[l].LoadFromFont( THEME->GetPathToF("ScreenRanking time") );
+			m_textTime[l].LoadFromFont( THEME->GetPathF("ScreenRanking","time") );
 			m_textTime[l].SetHidden( true );
 			this->AddChild( &m_textTime[l] );
 
@@ -192,18 +192,18 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 			pStepsScoreRowItem->m_sprSongFrame.SetName( "SongFrame" );
 			pStepsScoreRowItem->m_sprSongFrame.SetHidden( true );
-			pStepsScoreRowItem->m_sprSongFrame.Load( THEME->GetPathToG("ScreenRanking song frame") );
+			pStepsScoreRowItem->m_sprSongFrame.Load( THEME->GetPathG("ScreenRanking","song frame") );
 			pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_sprSongFrame );
 
 			pStepsScoreRowItem->m_textSongTitle.SetName( "SongTitle" );
 			pStepsScoreRowItem->m_textSongTitle.SetHidden( true );
-			pStepsScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenRanking song title") );
+			pStepsScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathF("ScreenRanking","song title") );
 			pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_textSongTitle );
 
 			for( int d=0; d<NUM_DIFFICULTIES; d++ )
 			{
 				pStepsScoreRowItem->m_textStepsScore[d].SetName( "StepsScore" );
-				pStepsScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathToF("ScreenRanking steps score") );
+				pStepsScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathF("ScreenRanking","steps score") );
 				pStepsScoreRowItem->m_textStepsScore[d].SetHidden( true );
 				pStepsScoreRowItem->AddChild( &pStepsScoreRowItem->m_textStepsScore[d] );
 			}
@@ -240,18 +240,18 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 			pCourseScoreRowItem->m_sprSongFrame.SetName( "CourseListFrame" );
 			pCourseScoreRowItem->m_sprSongFrame.SetHidden( true );
-			pCourseScoreRowItem->m_sprSongFrame.Load( THEME->GetPathToG("ScreenRanking course frame") );
+			pCourseScoreRowItem->m_sprSongFrame.Load( THEME->GetPathG("ScreenRanking","course frame") );
 			pCourseScoreRowItem->AddChild( &pCourseScoreRowItem->m_sprSongFrame );
 
 			pCourseScoreRowItem->m_textSongTitle.SetName( "CourseListTitle" );
 			pCourseScoreRowItem->m_textSongTitle.SetHidden( true );
-			pCourseScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathToF("ScreenRanking course list title") );
+			pCourseScoreRowItem->m_textSongTitle.LoadFromFont( THEME->GetPathF("ScreenRanking","course list title") );
 			pCourseScoreRowItem->AddChild( &pCourseScoreRowItem->m_textSongTitle );
 
 			FOREACH_ShownCourseDifficulty(d)
 			{
 				pCourseScoreRowItem->m_textStepsScore[d].SetName( "CourseListScore" );
-				pCourseScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathToF("ScreenRanking course list score") );
+				pCourseScoreRowItem->m_textStepsScore[d].LoadFromFont( THEME->GetPathF("ScreenRanking","course list score") );
 				pCourseScoreRowItem->m_textStepsScore[d].SetHidden( true );
 				pCourseScoreRowItem->AddChild( &pCourseScoreRowItem->m_textStepsScore[d] );
 			}

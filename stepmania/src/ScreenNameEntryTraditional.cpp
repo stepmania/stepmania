@@ -201,7 +201,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			}
 
 			m_sprNameFrame[p].SetName( ssprintf("EntryFrameP%i",p+1) );
-			m_sprNameFrame[p].Load( THEME->GetPathToG( ssprintf("ScreenNameEntryTraditional name frame p%i",p+1) ) );
+			m_sprNameFrame[p].Load( THEME->GetPathG("ScreenNameEntryTraditional",ssprintf("name frame p%i",p+1)) );
 			SET_XY_AND_ON_COMMAND( m_sprNameFrame[p] );
 			this->AddChild( &m_sprNameFrame[p] );
 
@@ -210,7 +210,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			this->AddChild( &m_Keyboard[p] );
 
 			/* Add letters to m_Keyboard. */
-			const CString fontpath = THEME->GetPathToF("ScreenNameEntryTraditional letters");
+			const CString fontpath = THEME->GetPathF("ScreenNameEntryTraditional","letters");
 			const wstring Chars = CStringToWstring(KEYBOARD_LETTERS);
 			for( unsigned ch = 0; ch < Chars.size(); ++ch )
 			{
@@ -256,11 +256,11 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			}
 
 			m_sprCursor[p].SetName( ssprintf("CursorP%i",p+1) );
-			m_sprCursor[p].Load( THEME->GetPathToG( ssprintf("ScreenNameEntryTraditional cursor p%i",p+1) ) );
+			m_sprCursor[p].Load( THEME->GetPathG("ScreenNameEntryTraditional",ssprintf("cursor p%i",p+1)) );
 			m_Keyboard[p].AddChild( &m_sprCursor[p] );
 
 			m_textSelection[p].SetName( ssprintf("SelectionP%i",p+1) );
-			m_textSelection[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional entry") );
+			m_textSelection[p].LoadFromFont( THEME->GetPathF("ScreenNameEntryTraditional","entry") );
 			SET_XY_AND_ON_COMMAND( m_textSelection[p] );
 			this->AddChild( &m_textSelection[p] );
 
@@ -366,14 +366,14 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			if( grade != GRADE_NO_DATA )
 			{
 				display.m_Grade.SetName( ssprintf("GradeP%i",p+1) );
-				display.m_Grade.Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
+				display.m_Grade.Load( THEME->GetPathG("ScreenNameEntryTraditional","grades") );
 				display.m_Grade.SetGrade( p, grade );
 				SET_ON( display.m_Grade );
 				this->AddChild( &display.m_Grade );
 			}
 
 			display.m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
-			display.m_Difficulty.Load( THEME->GetPathToG("ScreenNameEntryTraditional difficulty icons") );
+			display.m_Difficulty.Load( THEME->GetPathG("ScreenNameEntryTraditional","difficulty icons") );
 			if( GAMESTATE->IsCourseMode() )
 				display.m_Difficulty.SetFromTrail( p, pTrail );
 			else
@@ -399,7 +399,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			/* We always show the banner frame (if any), because fading from a graphic to
 			 * itself is ugly. */
 			display.m_sprBannerFrame.SetName( ssprintf("BannerFrameP%i",p+1) );
-			display.m_sprBannerFrame.Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
+			display.m_sprBannerFrame.Load( THEME->GetPathG("ScreenNameEntryTraditional",ssprintf("banner frame p%i",p+1)) );
 			SET_XY_AND_ON_COMMAND( display.m_sprBannerFrame );
 			this->AddChild( &display.m_sprBannerFrame );
 		}
@@ -408,11 +408,11 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 	this->PostScreenMessage( SM_ChangeDisplayedFeat, FEAT_INTERVAL );
 
-	m_soundKey.Load( THEME->GetPathToS("ScreenNameEntryTraditional key") );
-	m_soundChange.Load( THEME->GetPathToS("ScreenNameEntryTraditional change",true) );
-	m_soundInvalid.Load( THEME->GetPathToS("ScreenNameEntryTraditional invalid",true) );
+	m_soundKey.Load( THEME->GetPathS("ScreenNameEntryTraditional","key") );
+	m_soundChange.Load( THEME->GetPathS("ScreenNameEntryTraditional","change",true) );
+	m_soundInvalid.Load( THEME->GetPathS("ScreenNameEntryTraditional","invalid",true) );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenNameEntryTraditional music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenNameEntryTraditional","music") );
 
 	this->SortByDrawOrder();
 }

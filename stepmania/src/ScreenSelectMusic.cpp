@@ -187,7 +187,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_GrooveGraph );
 
 	m_textSongOptions.SetName( "SongOptions" );
-	m_textSongOptions.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textSongOptions.LoadFromFont( THEME->GetPathF("Common","normal") );
 	SET_XY( m_textSongOptions );
 	this->AddChild( &m_textSongOptions );
 
@@ -309,9 +309,9 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_sprNonPresence[p] );
 	}
 
-	m_bgOptionsOut.Load( THEME->GetPathToB(m_sName+" options out") );
+	m_bgOptionsOut.Load( THEME->GetPathB(m_sName,"options out") );
 //	this->AddChild( &m_bgOptionsOut ); // drawn on top
-	m_bgNoOptionsOut.Load( THEME->GetPathToB(m_sName+" no options out") );
+	m_bgNoOptionsOut.Load( THEME->GetPathB(m_sName,"no options out") );
 //	this->AddChild( &m_bgNoOptionsOut ); // drawn on top
 
 	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );

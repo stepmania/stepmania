@@ -19,7 +19,7 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 			if( GAMESTATE->m_pCurCharacters[0] != NULL )
 				m_sprBreakPicture.LoadTABreakFromCharacter( GAMESTATE->m_pCurCharacters[0] );
 			else
-				m_sprBreakPicture.Load( THEME->GetPathToG("Common fallback takingabreak") );
+				m_sprBreakPicture.Load( THEME->GetPathG("Common","fallback takingabreak") );
 		else if( GAMESTATE->GetNumPlayersEnabled() > 1 ) // More than 1 player is present.
 		{
 			PlayerNumber pn;
@@ -36,7 +36,7 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 		}
 	}
 	else	// Characters not enabled.
-		m_sprBreakPicture.Load( THEME->GetPathToG("Common fallback takingabreak") );
+		m_sprBreakPicture.Load( THEME->GetPathG("Common","fallback takingabreak") );
 	m_sprBreakPicture.SetX( SCREEN_CENTER_X );
 	m_sprBreakPicture.SetY( SCREEN_CENTER_Y );
 		this->AddChild(&m_sprBreakPicture);
@@ -45,16 +45,16 @@ ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 	m_fCountdownSecs = (float)(PREFSMAN->m_iEndlessBreakLength*60);	// Stored in minutes.
 
 	//BitmapText stuff
-	m_textTimeRemaining.LoadFromFont( THEME->GetPathToF("Common Normal") );
+	m_textTimeRemaining.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textTimeRemaining.SetText( SecondsToMMSSMsMs(m_fCountdownSecs) );
 	m_textTimeRemaining.SetX( SCREEN_CENTER_X );
 	m_textTimeRemaining.SetY( SCREEN_CENTER_Y );
 
 	//Transition stuff
-	m_In.Load( THEME->GetPathToB("ScreenEndlessBreak In") );
+	m_In.Load( THEME->GetPathB("ScreenEndlessBreak","In") );
 		this->AddChild(&m_In);
 	m_In.StartTransitioning();
-	m_Out.Load( THEME->GetPathToB("ScreenEndlessBreak Out") );
+	m_Out.Load( THEME->GetPathB("ScreenEndlessBreak","Out") );
 		this->AddChild(&m_Out);
 	m_bExiting = false;
 }

@@ -48,7 +48,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprJoinFrame[p].Load( THEME->GetPathToG("ScreenEz2SelectPlayer join frame 1x2") );
+		m_sprJoinFrame[p].Load( THEME->GetPathG("ScreenEz2SelectPlayer","join frame 1x2") );
 		m_sprJoinFrame[p].StopAnimating();
 		m_sprJoinFrame[p].SetState( p );
 		m_sprJoinFrame[p].SetXY( JOIN_FRAME_X(p), JOIN_FRAME_Y(p) );
@@ -57,7 +57,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 		if( GAMESTATE->m_bSideIsJoined[p] )
 			m_sprJoinFrame[p].SetZoomY( 0 );
 
-		m_sprJoinMessage[p].Load( THEME->GetPathToG("ScreenEz2SelectPlayer join message 2x2") );
+		m_sprJoinMessage[p].Load( THEME->GetPathG("ScreenEz2SelectPlayer","join message 2x2") );
 		m_sprJoinMessage[p].StopAnimating();
 		m_sprJoinMessage[p].SetState( p );
 		m_sprJoinMessage[p].SetXY( JOIN_MESSAGE_X(p), JOIN_MESSAGE_Y(p) );
@@ -79,7 +79,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectPlayer music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectPlayer","music") );
 
 	TweenOnScreen();
 }

@@ -53,15 +53,15 @@ MusicWheelItem::MusicWheelItem()
 	m_TextBanner.SetXY( SONG_NAME_X, 0 );
 	m_All.AddChild( &m_TextBanner );
 
-	m_sprSongBar.Load( THEME->GetPathToG("MusicWheelItem song") );
+	m_sprSongBar.Load( THEME->GetPathG("MusicWheelItem","song") );
 	m_sprSongBar.SetXY( 0, 0 );
 	m_All.AddChild( &m_sprSongBar );
 
-	m_sprSectionBar.Load( THEME->GetPathToG("MusicWheelItem section") );
+	m_sprSectionBar.Load( THEME->GetPathG("MusicWheelItem","section") );
 	m_sprSectionBar.SetXY( 0, 0 );
 	m_All.AddChild( &m_sprSectionBar );
 
-	m_textSectionName.LoadFromFont( THEME->GetPathToF("MusicWheelItem section") );
+	m_textSectionName.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
 	m_textSectionName.SetShadowLength( 0 );
 	m_textSectionName.SetVertAlign( align_middle );
 	m_textSectionName.SetXY( SECTION_NAME_X, 0 );
@@ -69,7 +69,7 @@ MusicWheelItem::MusicWheelItem()
 	m_All.AddChild( &m_textSectionName );
 
 
-	m_textRoulette.LoadFromFont( THEME->GetPathToF("MusicWheelItem roulette") );
+	m_textRoulette.LoadFromFont( THEME->GetPathF("MusicWheelItem","roulette") );
 	m_textRoulette.SetShadowLength( 0 );
 	m_textRoulette.TurnRainbowOn();
 	m_textRoulette.SetZoom( ROULETTE_ZOOM );
@@ -78,19 +78,19 @@ MusicWheelItem::MusicWheelItem()
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathToG("MusicWheelItem grades") );
+		m_GradeDisplay[p].Load( THEME->GetPathG("MusicWheelItem","grades") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( GRADE_X(p), 0 );
 		m_All.AddChild( &m_GradeDisplay[p] );
 	}
 
 	m_textCourse.SetName( "CourseName" );
-	m_textCourse.LoadFromFont( THEME->GetPathToF("MusicWheelItem course") );
+	m_textCourse.LoadFromFont( THEME->GetPathF("MusicWheelItem","course") );
 	SET_XY_AND_ON_COMMAND( &m_textCourse );
 	m_All.AddChild( &m_textCourse );
 
 	m_textSort.SetName( "Sort" );
-	m_textSort.LoadFromFont( THEME->GetPathToF("MusicWheelItem sort") );
+	m_textSort.LoadFromFont( THEME->GetPathF("MusicWheelItem","sort") );
 	SET_XY_AND_ON_COMMAND( &m_textSort );
 	m_All.AddChild( &m_textSort );
 }

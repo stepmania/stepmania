@@ -98,7 +98,7 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			PREFSMAN->m_bTrilinearFiltering,
 			PREFSMAN->m_bAnisotropicFiltering,
 			WINDOW_TITLE,
-			THEME->GetPathToG("Common window icon"),
+			THEME->GetPathG("Common","window icon"),
 			PREFSMAN->m_bPAL,
 			PREFSMAN->m_fDisplayAspectRatio
 	);

@@ -39,23 +39,19 @@ public:
 		RageTextureID ID;
 		ID.bStretch = true;
 
-		sGraphicPath = ssprintf("LifeMeterBar %snormal", bExtra?"extra ":"");
-		ID.filename = THEME->GetPathToG(sGraphicPath);
+		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%snormal", bExtra?"extra ":""));
 		m_sprStreamNormal.Load( ID );
 		m_sprStreamNormal.SetUseZBuffer( true );
 
-		sGraphicPath = ssprintf("LifeMeterBar %shot", bExtra?"extra ":"");
-		ID.filename = THEME->GetPathToG(sGraphicPath);
+		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%shot", bExtra?"extra ":""));
 		m_sprStreamHot.Load( ID );
 		m_sprStreamHot.SetUseZBuffer( true );
 		
-		sGraphicPath = ssprintf("LifeMeterBar %spassing", bExtra?"extra ":"");
-		ID.filename = THEME->GetPathToG(sGraphicPath);
+		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%spassing", bExtra?"extra ":""));
 		m_sprStreamPassing.Load( ID );
 		m_sprStreamPassing.SetUseZBuffer( true );
 
-		sGraphicPath = ssprintf("LifeMeterBar %sframe", bExtra?"extra ":"");
-		ID.filename = THEME->GetPathToG(sGraphicPath);
+		ID.filename = THEME->GetPathG("LifeMeterBar",ssprintf("%sframe", bExtra?"extra ":""));
 		m_sprFrame.Load( ID );
 	}
 

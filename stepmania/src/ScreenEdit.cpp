@@ -560,15 +560,15 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
-	m_In.Load( THEME->GetPathToB("ScreenEdit in") );
+	m_In.Load( THEME->GetPathB("ScreenEdit","in") );
 	m_In.StartTransitioning();
 
-	m_Out.Load( THEME->GetPathToB("ScreenEdit out") );
+	m_Out.Load( THEME->GetPathB("ScreenEdit","out") );
 
 	m_sprOverlay.LoadAndSetName( m_sName, "Overlay" );
 	SET_XY_AND_ON_COMMAND( m_sprOverlay );
 
-	m_textHelp.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textHelp.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
 	m_textHelp.SetHorizAlign( Actor::align_left );
 	m_textHelp.SetVertAlign( Actor::align_top );
@@ -576,7 +576,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_textHelp.SetText( HELP_TEXT );
 	m_textHelp.SetShadowLength( 0 );
 
-	m_textInfo.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInfo.SetXY( INFO_TEXT_X, INFO_TEXT_Y );
 	m_textInfo.SetHorizAlign( Actor::align_left );
 	m_textInfo.SetVertAlign( Actor::align_top );
@@ -584,14 +584,14 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_textInfo.SetShadowLength( 0 );
 	//m_textInfo.SetText();	// set this below every frame
 
-	m_soundChangeLine.Load( THEME->GetPathToS("ScreenEdit line") );
-	m_soundChangeSnap.Load( THEME->GetPathToS("ScreenEdit snap") );
-	m_soundMarker.Load(		THEME->GetPathToS("ScreenEdit marker") );
+	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line") );
+	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap") );
+	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker") );
 
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
-	m_soundAssistTick.Load( THEME->GetPathToS("ScreenEdit assist tick") );
+	m_soundAssistTick.Load( THEME->GetPathS("ScreenEdit","assist tick") );
 
 	this->HandleScreenMessage( SM_DoUpdateTextInfo );
 }
@@ -1149,7 +1149,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetDescription().c_str() ) );
-			SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit switch") );
+			SOUND->PlayOnce( THEME->GetPathS("ScreenEdit","switch") );
 		}
 		break;
 	case EDIT_BUTTON_BPM_UP:
@@ -1767,7 +1767,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 					SCREENMAN->SystemMessage( "Saved as SM and DWI." );
 				else
 					SCREENMAN->SystemMessage( "Saved as SM." );
-				SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit save") );
+				SOUND->PlayOnce( THEME->GetPathS("ScreenEdit","save") );
 			}
 			break;
 		case reload:

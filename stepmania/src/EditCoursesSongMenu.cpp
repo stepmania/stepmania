@@ -31,21 +31,21 @@ EditCoursesSongMenu::EditCoursesSongMenu()
 
 	for( int i=0; i<2; i++ )
 	{
-		m_sprArrows[i].Load( THEME->GetPathToG(ssprintf("EditCoursesSongMenu %s",(i==0?"left":"right"))) );
+		m_sprArrows[i].Load( THEME->GetPathG("EditCoursesSongMenu",i==0?"left":"right") );
 		m_sprArrows[i].SetX( ARROWS_X(i) );
 		this->AddChild( &m_sprArrows[i] );
 	}
 
 	for( int i=0; i<NUM_ROWS; i++ )
 	{
-		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common title") );
+		m_textLabel[i].LoadFromFont( THEME->GetPathF("Common","title") );
 		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
 		m_textLabel[i].SetText( RowToString((Row)i) );
 		m_textLabel[i].SetZoom( 0.8f );
 		m_textLabel[i].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textLabel[i] );
 
-		m_textValue[i].LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textValue[i].LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textValue[i].SetXY( ROW_VALUE_X(i), ROW_Y(i) );
 		m_textValue[i].SetText( "blah" );
 		m_textValue[i].SetZoom( 0.6f );
@@ -53,8 +53,8 @@ EditCoursesSongMenu::EditCoursesSongMenu()
 	}
 
 
-	m_soundChangeRow.Load( THEME->GetPathToS("EditCoursesSongMenu row") );
-	m_soundChangeValue.Load( THEME->GetPathToS("EditCoursesSongMenu value") );
+	m_soundChangeRow.Load( THEME->GetPathS("EditCoursesSongMenu","row") );
+	m_soundChangeValue.Load( THEME->GetPathS("EditCoursesSongMenu","value") );
 
 	// fill in data structures
 	SONGMAN->GetGroupNames( m_aGroups );

@@ -126,7 +126,7 @@ void MusicWheel::Load()
 		GAMESTATE->m_CurStyle = GAMEMAN->STYLE_DANCE_SINGLE;
 	*/
 
-	m_sprHighlight.Load( THEME->GetPathToG("MusicWheel highlight") );
+	m_sprHighlight.Load( THEME->GetPathG("MusicWheel","highlight") );
 	m_sprHighlight->SetName( "Highlight" );
 	this->AddChild( m_sprHighlight );
 	ActorUtil::OnCommand( m_sprHighlight, "MusicWheel" );
@@ -136,10 +136,10 @@ void MusicWheel::Load()
 	this->AddChild( &m_ScrollBar );
 	
 	/* We play a lot of this one, so precache it. */
-	m_soundChangeMusic.Load(	THEME->GetPathToS("MusicWheel change"), true );
-	m_soundChangeSort.Load(		THEME->GetPathToS("MusicWheel sort") );
-	m_soundExpand.Load(			THEME->GetPathToS("MusicWheel expand") );
-	m_soundLocked.Load(			THEME->GetPathToS("MusicWheel locked"), true );
+	m_soundChangeMusic.Load(	THEME->GetPathS("MusicWheel","change"), true );
+	m_soundChangeSort.Load(		THEME->GetPathS("MusicWheel","sort") );
+	m_soundExpand.Load(			THEME->GetPathS("MusicWheel","expand") );
+	m_soundLocked.Load(			THEME->GetPathS("MusicWheel","locked"), true );
 
 	
 	m_iSelection = 0;

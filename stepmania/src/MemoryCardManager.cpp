@@ -246,10 +246,10 @@ MemoryCardManager::MemoryCardManager()
 	}
 	
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
-	m_soundReady.Load( THEME->GetPathToS("MemoryCardManager ready"), true );
-	m_soundError.Load( THEME->GetPathToS("MemoryCardManager error"), true );
-	m_soundTooLate.Load( THEME->GetPathToS("MemoryCardManager too late"), true );
-	m_soundDisconnect.Load( THEME->GetPathToS("MemoryCardManager disconnect"), true );
+	m_soundReady.Load( THEME->GetPathS("MemoryCardManager","ready"), true );
+	m_soundError.Load( THEME->GetPathS("MemoryCardManager","error"), true );
+	m_soundTooLate.Load( THEME->GetPathS("MemoryCardManager","too late"), true );
+	m_soundDisconnect.Load( THEME->GetPathS("MemoryCardManager","disconnect"), true );
 }
 
 MemoryCardManager::~MemoryCardManager()

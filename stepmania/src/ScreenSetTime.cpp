@@ -51,13 +51,13 @@ ScreenSetTime::ScreenSetTime( CString sClassName ) : ScreenWithMenuElements( sCl
 		BitmapText &title = m_textTitle[s];
 		BitmapText &value = m_textValue[s];
 
-		title.LoadFromFont( THEME->GetPathToF("Common title") );
+		title.LoadFromFont( THEME->GetPathF("Common","title") );
 		title.SetDiffuse( RageColor(1,1,1,1) );
 		title.SetText( SetTimeSelectionToString(s) );
 		title.SetXY( GetTitleX(s), GetTitleY(s) );
 		this->AddChild( &title );
 
-		value.LoadFromFont( THEME->GetPathToF("Common normal") );
+		value.LoadFromFont( THEME->GetPathF("Common","normal") );
 		value.SetDiffuse( RageColor(1,1,1,1) );
 		value.SetXY( GetValueX(s), GetValueY(s) );
 		this->AddChild( &value );

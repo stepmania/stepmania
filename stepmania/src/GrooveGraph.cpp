@@ -29,7 +29,7 @@ GrooveGraph::GrooveGraph()
 	for( int i=0; i<NUM_DIFFICULTIES; i++ )
 		g_DifficultyColorsCache[i] = DIFFICULTY_COLORS((Difficulty)i);
 
-	m_sprBase.Load( THEME->GetPathToG("GrooveGraph base") );
+	m_sprBase.Load( THEME->GetPathG("GrooveGraph","base") );
 	this->AddChild( &m_sprBase );
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )

@@ -33,15 +33,14 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 		//
 		// Load icon
 		//
-		CString sIconElementName = ssprintf("%s icon%d",m_sName.c_str(), i+1);
-		CString sIconPath = THEME->GetPathToG(sIconElementName);
+		CString sIconPath = THEME->GetPathG(m_sName,ssprintf("icon%d",i+1));
 
 		m_textIcon[i].SetName( ssprintf("Icon%d",i+1) );
 		m_sprIcon[i].SetName( ssprintf("Icon%d",i+1) );
 
 		if( sIconPath.empty() )	// element doesn't exist
 		{
-			m_textIcon[i].LoadFromFont( THEME->GetPathToF("Common normal") );
+			m_textIcon[i].LoadFromFont( THEME->GetPathF("Common","normal") );
 			m_textIcon[i].SetText( mc.m_sName );
 			m_textIcon[i].SetZoom(0.5f);
 			this->AddChild( &m_textIcon[i] );
@@ -56,11 +55,10 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 		//
 		// Load Picture
 		//
-		CString sPictureElementName = ssprintf("%s picture%d",m_sName.c_str(),i+1);
-		CString sPicturePath = THEME->GetPathToG(sPictureElementName);
+		CString sPicturePath = THEME->GetPathG(m_sName, ssprintf("picture%d",i+1));
 		if( sPicturePath != "" )
 		{
-			m_sprPicture[i].SetName( ssprintf("Picture") );
+			m_sprPicture[i].SetName( "Picture" );
 			m_sprPicture[i].Load( sPicturePath );
 			m_sprPicture[i].SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_sprPicture[i] );
@@ -70,11 +68,10 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 		//
 		// Load info
 		//
-		CString sInfoElementName = ssprintf("%s info%d",m_sName.c_str(),i+1);
-		CString sInfoPath = THEME->GetPathToG(sInfoElementName);
+		CString sInfoPath = THEME->GetPathG(m_sName,ssprintf("info%d",i+1));
 		if( sInfoPath != "" )
 		{
-			m_sprInfo[i].SetName( ssprintf("Info") );
+			m_sprInfo[i].SetName( "Info" );
 			m_sprInfo[i].Load( sInfoPath );
 			m_sprInfo[i].SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_sprInfo[i] );
@@ -83,11 +80,11 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 
 	m_sprWarning.SetName( "Warning" );
-	m_sprWarning.Load( THEME->GetPathToG(m_sName+" warning") );
+	m_sprWarning.Load( THEME->GetPathG(m_sName,"warning") );
 	this->AddChild( &m_sprWarning );
 		
 	m_sprExplanation.SetName( "Explanation" );
-	m_sprExplanation.Load( THEME->GetPathToG(m_sName + " explanation") );
+	m_sprExplanation.Load( THEME->GetPathG(m_sName,"explanation") );
 	this->AddChild( &m_sprExplanation );
 		
 
@@ -106,17 +103,17 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 	switch( PREFSMAN->GetPremium() )
 	{
 	case PREMIUM_DOUBLES:
-		m_sprPremium.Load( THEME->GetPathToG(m_sName + " doubles premium") );
+		m_sprPremium.Load( THEME->GetPathG(m_sName,"doubles premium") );
 		this->AddChild( &m_sprPremium );
 		break;
 	case PREMIUM_JOINT:
-		m_sprPremium.Load( THEME->GetPathToG(m_sName + " joint premium") );
+		m_sprPremium.Load( THEME->GetPathG(m_sName,"joint premium") );
 		this->AddChild( &m_sprPremium );
 		break;
 	}
 
 
-	m_soundChange.Load( THEME->GetPathToS(m_sName + " change"), true );
+	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
 
 
 	//

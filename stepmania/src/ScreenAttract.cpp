@@ -35,12 +35,12 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sN
 
 	// We have to do initialization in the first update because this->GetElementName() won't
 	// work until the object has been fully constructed.
-	m_In.Load( THEME->GetPathToB(m_sName+" in") );
+	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning();
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathToB(m_sName+" out") );
+	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
@@ -137,7 +137,7 @@ void ScreenAttract::Update( float fDelta )
 		}
 		
 		if( GAMESTATE->IsTimeToPlayAttractSounds() )
-			SOUND->PlayMusic( THEME->GetPathToS(m_sName + " music") );
+			SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 		else
 			SOUND->PlayMusic( "" );	// stop music
 	}

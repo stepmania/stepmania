@@ -15,7 +15,7 @@ LyricDisplay::LyricDisplay()
 {
 	for( int i=0; i<2; i++ )
 	{
-		m_textLyrics[i].LoadFromFont( THEME->GetPathToF("LyricDisplay text") );
+		m_textLyrics[i].LoadFromFont( THEME->GetPathF("LyricDisplay","text") );
 		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
 		this->AddChild(&m_textLyrics[i]);
 	}

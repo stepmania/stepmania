@@ -7,25 +7,25 @@
 
 ScrollBar::ScrollBar()
 {
-	m_sprBackground.Load( THEME->GetPathToG("ScrollBar parts 1x3") );
+	m_sprBackground.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
 	m_sprBackground.StopAnimating();
 	m_sprBackground.SetState( 1 );
 	this->AddChild( &m_sprBackground );
 
-	m_sprScrollThumbPart1.Load( THEME->GetPathToG("ScrollBar thumb") );
+	m_sprScrollThumbPart1.Load( THEME->GetPathG("ScrollBar","thumb") );
 	m_sprScrollThumbPart1.StopAnimating();
 	this->AddChild( &m_sprScrollThumbPart1 );
 
-	m_sprScrollThumbPart2.Load( THEME->GetPathToG("ScrollBar thumb") );
+	m_sprScrollThumbPart2.Load( THEME->GetPathG("ScrollBar","thumb") );
 	m_sprScrollThumbPart2.StopAnimating();
 	this->AddChild( &m_sprScrollThumbPart2 );
 
-	m_sprTopButton.Load( THEME->GetPathToG("ScrollBar parts 1x3") );
+	m_sprTopButton.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
 	m_sprTopButton.StopAnimating();
 	m_sprTopButton.SetState( 0 );
 	this->AddChild( &m_sprTopButton );
 
-	m_sprBottomButton.Load( THEME->GetPathToG("ScrollBar parts 1x3") );
+	m_sprBottomButton.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
 	m_sprBottomButton.StopAnimating();
 	m_sprBottomButton.SetState( 2 );
 	this->AddChild( &m_sprBottomButton );

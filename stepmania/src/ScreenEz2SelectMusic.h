@@ -81,10 +81,6 @@ protected:
 
 	int i_ErrorDetected;
 
-	#ifdef DEBUG
-		BitmapText	m_debugtext;
-	#endif
-
 	int iConfirmSelection;
 };
 

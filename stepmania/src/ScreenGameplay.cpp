@@ -309,15 +309,13 @@ void ScreenGameplay::Init()
 	m_SongFinished.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	this->AddChild( &m_SongFinished );
 
+
+	bool bBattery = GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY;
+
 	//
 	// Add LifeFrame
 	//
-	CString sLifeFrameName;
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sLifeFrameName = m_sName+" oni life frame";
-	else 
-		sLifeFrameName = m_sName+" life frame";
-	m_sprLifeFrame.Load( THEME->GetPathToG(sLifeFrameName) );
+	m_sprLifeFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni life frame":"life frame") );
 	m_sprLifeFrame.SetName( "LifeFrame" );
 	SET_XY( m_sprLifeFrame );
 	this->AddChild( &m_sprLifeFrame );
@@ -325,12 +323,7 @@ void ScreenGameplay::Init()
 	//
 	// Add score frame
 	//
-	CString sScoreFrameName;
-	if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
-		sScoreFrameName = m_sName+" oni score frame";
-	else 
-		sScoreFrameName = m_sName+" score frame";
-	m_sprScoreFrame.Load( THEME->GetPathToG(sScoreFrameName) );
+	m_sprScoreFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni score frame":"score frame") );
 	m_sprScoreFrame.SetName( "ScoreFrame" );
 	SET_XY( m_sprScoreFrame );
 	this->AddChild( &m_sprScoreFrame );

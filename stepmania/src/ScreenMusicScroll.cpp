@@ -34,7 +34,7 @@ ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sCla
 		m_textLines.push_back(bt);
 		
 		Song* pSong = arraySongs[i];
-		bt->LoadFromFont( THEME->GetPathToF("ScreenMusicScroll titles") );
+		bt->LoadFromFont( THEME->GetPathF("ScreenMusicScroll","titles") );
 		bt->SetText( pSong->GetFullDisplayTitle(), pSong->GetFullTranslitTitle() );
 		bt->SetDiffuse( SONGMAN->GetSongColor(pSong) );
 		bt->SetZoom( TEXT_ZOOM );

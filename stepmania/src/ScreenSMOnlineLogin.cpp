@@ -31,13 +31,15 @@ OptionRowData g_ProfileLine[1] = {
 	g_ProfileLine[0].choices.clear();
 	PROFILEMAN->GetLocalProfileNames( g_ProfileLine[0].choices );
 
-	if(!g_ProfileLine[0].choices.size()) {
+	if(!g_ProfileLine[0].choices.size()) 
+	{
       SCREENMAN->SystemMessage("You Must Define A Profile!");
       SCREENMAN->SetNewScreen("ScreenProfileOptions");
 	}
-    else {
+    else 
+	{
 	  InitMenu(INPUTMODE_SHARE_CURSOR, g_ProfileLine, 1);
-  	  SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music"));
+  	  SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music"));
 	  Row &row = *m_Rows.back();
 	  BitmapText *bt = row.m_textItems.back();
 	  bt->SetText("Login");		//Change "Exit" Text

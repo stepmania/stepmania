@@ -108,7 +108,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		if( pSong && pSong->HasBackground() )
 			sFile = pSong->GetBackgroundPath();
 		else
-			sFile = THEME->GetPathToG("Common fallback background");
+			sFile = THEME->GetPathG("Common","fallback background");
 
 		/* Always load song backgrounds with SongBGTexture.  It sets texture properties;
 		 * if we load a background without setting those properties, we'll end up
@@ -137,7 +137,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		if( pSong && pSong->HasBanner() )
 			sFile = pSong->GetBannerPath();
 		else
-			sFile = THEME->GetPathToG("Common fallback banner");
+			sFile = THEME->GetPathG("Common","fallback banner");
 
 		TEXTUREMAN->DisableOddDimensionWarning();
 
@@ -172,7 +172,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		if( pCourse && pCourse->HasBanner() )
 			sFile = pCourse->m_sBannerPath;
 		else
-			sFile = THEME->GetPathToG("Common fallback banner");
+			sFile = THEME->GetPathG("Common","fallback banner");
 
 		TEXTUREMAN->DisableOddDimensionWarning();
 		Sprite* pSprite = new Sprite;

@@ -33,14 +33,14 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuEl
 
 	
 	m_textExplanation.SetName( "Explanation" );
-	m_textExplanation.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textExplanation.LoadFromFont( THEME->GetPathF("Common","normal") );
 	SET_XY_AND_ON_COMMAND( m_textExplanation );
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	this->AddChild( &m_textExplanation );
 
 	this->SortByDrawOrder();
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenEditCoursesMenu music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenEditCoursesMenu","music") );
 }
 
 void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )

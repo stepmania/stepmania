@@ -19,7 +19,7 @@
 void CourseEntryDisplay::Load()
 {
 	m_sprFrame.SetName( "Bar" );
-	m_sprFrame.Load( THEME->GetPathToG("CourseEntryDisplay bar") );
+	m_sprFrame.Load( THEME->GetPathG("CourseEntryDisplay","bar") );
 	SET_XY_AND_ON_COMMAND( &m_sprFrame );
 	this->AddChild( &m_sprFrame );
 
@@ -27,7 +27,7 @@ void CourseEntryDisplay::Load()
 	this->m_size.y = (float) m_sprFrame.GetTexture()->GetSourceFrameHeight();
 
 	m_textNumber.SetName( "Number" );
-	m_textNumber.LoadFromFont( THEME->GetPathToF("CourseEntryDisplay number") );
+	m_textNumber.LoadFromFont( THEME->GetPathF("CourseEntryDisplay","number") );
 	SET_XY_AND_ON_COMMAND( &m_textNumber );
 	this->AddChild( &m_textNumber );
 
@@ -43,18 +43,18 @@ void CourseEntryDisplay::Load()
 			continue;	// skip
 
 		m_textFoot[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("FootP%i", pn+1):CString("Foot") );
-		m_textFoot[pn].LoadFromTextureAndChars( THEME->GetPathToG("CourseEntryDisplay difficulty 2x1"),"10" );
+		m_textFoot[pn].LoadFromTextureAndChars( THEME->GetPathG("CourseEntryDisplay","difficulty 2x1"),"10" );
 		SET_XY_AND_ON_COMMAND( &m_textFoot[pn] );
 		this->AddChild( &m_textFoot[pn] );
 
 		m_textDifficultyNumber[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("DifficultyP%i", pn+1):CString("Difficulty") );
-		m_textDifficultyNumber[pn].LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textDifficultyNumber[pn].LoadFromFont( THEME->GetPathF("Common","normal") );
 		SET_XY_AND_ON_COMMAND( &m_textDifficultyNumber[pn] );
 		this->AddChild( &m_textDifficultyNumber[pn] );
 	}
 
 	m_textModifiers.SetName( "Modifiers" );
-	m_textModifiers.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textModifiers.LoadFromFont( THEME->GetPathF("Common","normal") );
 	SET_XY_AND_ON_COMMAND( &m_textModifiers );
 	this->AddChild( &m_textModifiers );
 }

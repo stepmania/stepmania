@@ -51,11 +51,11 @@ void Background::Init()
 		return;
 	m_bInitted = true;
 
-	m_DangerAll.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay danger all") );
+	m_DangerAll.LoadFromAniDir( THEME->GetPathB("ScreenGameplay","danger all") );
 	FOREACH_PlayerNumber( p )
-		m_DangerPlayer[p].LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenGameplay danger p%d",p+1)) );
+		m_DangerPlayer[p].LoadFromAniDir( THEME->GetPathB("ScreenGameplay",ssprintf("danger p%d",p+1)) );
 	FOREACH_PlayerNumber( p )
-		m_DeadPlayer[p].LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenGameplay dead p%d",p+1)) );
+		m_DeadPlayer[p].LoadFromAniDir( THEME->GetPathB("ScreenGameplay",ssprintf("dead p%d",p+1)) );
 
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
@@ -121,7 +121,8 @@ Actor *MakeVisualization( const CString &sVisPath )
 	pFrame->DeleteChildrenWhenDone();
 
 	const Song* pSong = GAMESTATE->m_pCurSong;
-	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
+	CString sSongBGPath = 
+		(pSong && pSong->HasBackground()) ? pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background");
 
 	Sprite* pSprite = new Sprite;
 	pSprite->LoadBG( sSongBGPath );
@@ -402,7 +403,8 @@ void Background::LoadFromSong( const Song* pSong )
 			bStaticBackgroundUsed = true;
 	if( bStaticBackgroundUsed )
 	{
-		CString sSongBGPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
+		CString sSongBGPath = 
+			pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background");
 		Sprite* pSprite = new Sprite;
 		pSprite->LoadBG( sSongBGPath );
 		pSprite->StretchTo( FullScreenRectF );

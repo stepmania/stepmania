@@ -16,17 +16,17 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 {
 	FOREACH_PlayerNumber( p )
 	{
-		CString sStreamPath = THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1));
-		CString sTipPath = THEME->GetPathToG(ssprintf("CombinedLifeMeterTug tip p%d",p+1));
+		CString sStreamPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("stream p%d",p+1));
+		CString sTipPath = THEME->GetPathG("CombinedLifeMeterTug",ssprintf("tip p%d",p+1));
 		m_Stream[p].Load( sStreamPath, METER_WIDTH, sTipPath );
 		this->AddChild( &m_Stream[p] );
 	}
 	m_Stream[PLAYER_2].SetZoomX( -1 );
 
-	m_sprSeparator.Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug separator")) );
+	m_sprSeparator.Load( THEME->GetPathG("CombinedLifeMeterTug","separator") );
 	this->AddChild( &m_sprSeparator );
 
-	m_sprFrame.Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug frame")) );
+	m_sprFrame.Load( THEME->GetPathG("CombinedLifeMeterTug","frame") );
 	this->AddChild( &m_sprFrame );
 	
 	

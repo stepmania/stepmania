@@ -29,12 +29,14 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	/* If we're going to "press start for more options" or skipping options
 	 * entirely, we need a different fade out. XXX: this is a hack */
 	if( PREFSMAN->m_ShowSongOptions == PrefsManager::NO || GAMESTATE->m_bEditing )
-		m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions direct out") ); /* direct to stage */
+	{
+		m_Out.Load( THEME->GetPathB("ScreenPlayerOptions","direct out") ); /* direct to stage */
+	}
 	else if( m_bAskOptionsMessage )
 	{
-		m_Out.Load( THEME->GetPathToB("ScreenPlayerOptions option out") ); /* optional song options */
+		m_Out.Load( THEME->GetPathB("ScreenPlayerOptions","option out") ); /* optional song options */
 
-		m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenPlayerOptions options") );
+		m_sprOptionsMessage.Load( THEME->GetPathG("ScreenPlayerOptions","options") );
 		m_sprOptionsMessage.StopAnimating();
 		m_sprOptionsMessage.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		m_sprOptionsMessage.SetZoom( 1 );

@@ -87,8 +87,8 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	}
 
 	//Load SFX next
-	m_soundChangeOpt.Load( THEME->GetPathToS( m_sName + " change opt" ) );
-	m_soundChangeSel.Load( THEME->GetPathToS( m_sName + " change sel" ) );
+	m_soundChangeOpt.Load( THEME->GetPathS(m_sName,"change opt") );
+	m_soundChangeSel.Load( THEME->GetPathS(m_sName,"change sel") );
 
 	NSMAN->ReportNSSOnOff(1);
 	NSMAN->ReportPlayerOptions();

@@ -17,7 +17,7 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 {
 	LOG->Trace( "ScoreDisplayBattle::ScoreDisplayBattle()" );
 
-	m_sprFrame.Load( THEME->GetPathToG("ScoreDisplayBattle frame") );
+	m_sprFrame.Load( THEME->GetPathG("ScoreDisplayBattle","frame") );
 	this->AddChild( &m_sprFrame );
 
 	for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
@@ -58,7 +58,7 @@ void ScoreDisplayBattle::Update( float fDelta )
 			else
 			{
 				// TODO:  Cache all of the icon graphics so we don't load them dynamically from disk.
-				m_ItemIcon[s].Load( THEME->GetPathToG("ScoreDisplayBattle icon "+sNewModifier) );
+				m_ItemIcon[s].Load( THEME->GetPathG("ScoreDisplayBattle","icon "+sNewModifier) );
 				m_ItemIcon[s].StopTweening();
 				ActorCommands acmds( ParseCommands(
 					"diffuse,1,1,1,1;zoom,1;"

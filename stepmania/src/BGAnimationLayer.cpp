@@ -85,7 +85,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 		if( pSong && pSong->HasBackground() )
 			sSongBGPath = pSong->GetBackgroundPath();
 		else
-			sSongBGPath = THEME->GetPathToG("Common fallback background");
+			sSongBGPath = THEME->GetPathG("Common","fallback background");
 
 		Sprite* pSprite = new Sprite;
 		pSprite->LoadBG( sSongBGPath );

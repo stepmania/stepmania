@@ -17,14 +17,14 @@ ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElement
 	LOG->Trace( "ScreenTestLights::ScreenTestLights()" );
 	
 
-	m_textInputs.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInputs.SetText( "" );
 	m_textInputs.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
 	m_textInputs.SetZoom( 0.8f );
 	this->AddChild( &m_textInputs );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenTestLights music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenTestLights","music") );
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST );
 }

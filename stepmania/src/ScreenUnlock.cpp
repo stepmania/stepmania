@@ -42,7 +42,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		return;
 	}
 
-	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
+	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathF("Common","normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
 	apActorCommands IconCommand = ICON_COMMAND;
@@ -66,7 +66,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		Sprite* entry = new Sprite;
 
 		// new unlock graphic
-		entry->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", i)) );
+		entry->Load( THEME->GetPathG("ScreenUnlock",ssprintf("%d icon", i)) );
 
 		// set graphic location
 		entry->SetName( ssprintf("Unlock%d",i) );
@@ -114,7 +114,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 			BitmapText* text = new BitmapText;
 
-			text->LoadFromFont( THEME->GetPathToF("ScreenUnlock text") );
+			text->LoadFromFont( THEME->GetPathF("ScreenUnlock","text") );
 			text->SetHorizAlign( Actor::align_left );
 			text->SetZoom(ScrollingTextZoom);
 
@@ -181,7 +181,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 				Sprite* IconCount = new Sprite;
 
 				// new unlock graphic
-				IconCount->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", i)) );
+				IconCount->Load( THEME->GetPathG("ScreenUnlock",ssprintf("%d icon", i)) );
 
 				// set graphic location
 				IconCount->SetXY( UNLOCK_TEXT_SCROLL_ICON_X, ScrollingTextStartY);
@@ -251,7 +251,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 			BitmapText* NewText = new BitmapText;
 
-			NewText->LoadFromFont( THEME->GetPathToF("ScreenUnlock text") );
+			NewText->LoadFromFont( THEME->GetPathF("ScreenUnlock","text") );
 			NewText->SetHorizAlign( Actor::align_left );
 
 			CString title = pSong->m_pSong->GetDisplayMainTitle();
@@ -274,7 +274,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 			// new unlock graphic
 			Sprite* NewIcon = new Sprite;
-			NewIcon->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", NextIcon)) );
+			NewIcon->Load( THEME->GetPathG("ScreenUnlock",ssprintf("%d icon", NextIcon)) );
 			NewIcon->SetXY( UNLOCK_TEXT_SCROLL_ICON_X, ScrollingTextStartY);
 			NewIcon->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 			NewIcon->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);

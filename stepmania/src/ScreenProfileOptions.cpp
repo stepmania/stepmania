@@ -72,7 +72,7 @@ ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions
 		g_ProfileOptionsLines, 
 		NUM_PROFILE_OPTIONS_LINES );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
 
 void ScreenProfileOptions::ImportOptions()

@@ -60,8 +60,8 @@ void GroupList::Load( const CStringArray& asGroupNames )
 		m_textLabels.push_back( label );
 		m_ButtonFrames.push_back( frame );
 
-		button->Load( THEME->GetPathToG("GroupList bar") );
-		label->LoadFromFont( THEME->GetPathToF("GroupList label") );
+		button->Load( THEME->GetPathG("GroupList","bar") );
+		label->LoadFromFont( THEME->GetPathF("GroupList","label") );
 		label->SetShadowLength( 2 );
 		label->SetText( SONGMAN->ShortenGroupName( asGroupNames[i] ) );
 		

@@ -44,14 +44,14 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 		SET_XY( m_CurChar[pn] );
 	}
 	m_bSelected = false;
-	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenSelectMode list frame"));
+	m_ChoiceListFrame.Load( THEME->GetPathG("ScreenSelectMode","list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 	m_ChoiceListFrame.SetName("ChoiceListFrame");
 	this->AddChild( &m_ChoiceListFrame );
 
-	m_soundModeChange.Load( THEME->GetPathToS("ScreenSelectMode modechange"));
-	m_soundConfirm.Load( THEME->GetPathToS("ScreenSelectMode modeconfirm"));
-	m_soundStart.Load( THEME->GetPathToS("ScreenSelectMode menustart"));
+	m_soundModeChange.Load( THEME->GetPathS("ScreenSelectMode","modechange"));
+	m_soundConfirm.Load( THEME->GetPathS("ScreenSelectMode","modeconfirm"));
+	m_soundStart.Load( THEME->GetPathS("ScreenSelectMode","menustart"));
 	
 	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
@@ -60,8 +60,7 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 		//
 		// Load Sprite
 		//
-		CString sElementName = ssprintf("ScreenSelectMode %s", mc.m_sName.c_str() );
-		CString sElementPath = THEME->GetPathToG(sElementName);
+		CString sElementPath = THEME->GetPathG("ScreenSelectMode",mc.m_sName);
 
 		arrayLocations.push_back( sElementPath );
 		
@@ -100,7 +99,7 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 			}
 		}
 		for(pn=0;pn<NUM_PLAYERS;pn++)
-			m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode nochar") );	
+			m_CurChar[pn].Load( THEME->GetPathG("ScreenSelectMode","nochar") );	
 	}	
 
 	// m_ScrollingList.UseSpriteType(BANNERTYPE);
@@ -109,12 +108,12 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 	m_ScrollingList.SetName("ScrollingList");
 	this->AddChild( &m_ScrollingList );
 
-	m_ChoiceListHighlight.Load( THEME->GetPathToG("ScreenSelectMode list highlight"));
+	m_ChoiceListHighlight.Load( THEME->GetPathG("ScreenSelectMode","list highlight"));
 	m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y );
 	m_ChoiceListHighlight.SetName("ChoiceListHighlight");
 	this->AddChild(&m_ChoiceListHighlight);
 
-	m_Guide.Load( THEME->GetPathToG("select mode guide"));
+	m_Guide.Load( THEME->GetPathG("select mode","guide"));
 	m_Guide.SetXY( GUIDE_X, GUIDE_Y );
 	m_Guide.SetName("Guide");
 	this->AddChild( &m_Guide );
@@ -392,10 +391,10 @@ void ScreenSelectMode::MenuUp(PlayerNumber pn)
 			if(apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
 				m_CurChar[pn].Load( apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
 			else
-				m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode chariconmissing") );
+				m_CurChar[pn].Load( THEME->GetPathG("ScreenSelectMode","chariconmissing") );
 		}
 		else
-			m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode nochar") );	
+			m_CurChar[pn].Load( THEME->GetPathG("ScreenSelectMode","nochar") );	
 	}	
 }
 
@@ -437,10 +436,10 @@ void ScreenSelectMode::MenuDown(PlayerNumber pn)
 			if(apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
 				m_CurChar[pn].Load( apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
 			else
-				m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode chariconmissing") );
+				m_CurChar[pn].Load( THEME->GetPathG("ScreenSelectMode","chariconmissing") );
 		}
 		else
-			m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode nochar") );
+			m_CurChar[pn].Load( THEME->GetPathG("ScreenSelectMode","nochar") );
 	}
 }
 

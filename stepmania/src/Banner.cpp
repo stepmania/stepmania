@@ -33,7 +33,7 @@ void Banner::CacheGlobalBanners()
 bool Banner::Load( RageTextureID ID )
 {
 	if( ID.filename == "" )
-		ID = THEME->GetPathToG("Common fallback banner");
+		ID = THEME->GetPathG("Common","fallback banner");
 
 	ID = SongBannerTexture(ID);
 
@@ -140,7 +140,7 @@ void Banner::LoadIconFromCharacter( Character* pCharacter )
 
 void Banner::LoadTABreakFromCharacter( Character* pCharacter )
 {
-	if( pCharacter == NULL )					Load( THEME->GetPathToG("Common fallback takingabreak") );
+	if( pCharacter == NULL )					Load( THEME->GetPathG("Common","fallback takingabreak") );
 	else 
 	{
 		Load( pCharacter->GetTakingABreakPath() );
@@ -150,18 +150,18 @@ void Banner::LoadTABreakFromCharacter( Character* pCharacter )
 
 void Banner::LoadFallback()
 {
-	Load( THEME->GetPathToG("Common fallback banner") );
+	Load( THEME->GetPathG("Common","fallback banner") );
 }
 
 void Banner::LoadRoulette()
 {
-	Load( THEME->GetPathToG("Banner roulette") );
+	Load( THEME->GetPathG("Banner","roulette") );
 	m_bScrolling = (bool)SCROLL_RANDOM;
 }
 
 void Banner::LoadRandom()
 {
-	Load( THEME->GetPathToG("Banner random") );
+	Load( THEME->GetPathG("Banner","random") );
 	m_bScrolling = (bool)SCROLL_ROULETTE;
 }
 

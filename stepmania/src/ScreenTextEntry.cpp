@@ -43,10 +43,10 @@ ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString
 	m_sAnswer = CStringToWstring(sInitialAnswer);
 	m_bCancelled = false;
 
-	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenPrompt background") );
+	m_Background.LoadFromAniDir( THEME->GetPathB("ScreenPrompt","background") );
 	this->AddChild( &m_Background );
 
-	m_textQuestion.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textQuestion.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textQuestion.SetText( sQuestion );
 	m_textQuestion.SetXY( QUESTION_X, QUESTION_Y );
 	this->AddChild( &m_textQuestion );
@@ -57,16 +57,16 @@ ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString
 	m_rectAnswerBox.SetZoomY( ANSWER_HEIGHT );
 	this->AddChild( &m_rectAnswerBox );
 
-	m_textAnswer.LoadFromFont( THEME->GetPathToF("Common title") );
+	m_textAnswer.LoadFromFont( THEME->GetPathF("Common","title") );
 	m_textAnswer.SetXY( ANSWER_X, ANSWER_Y );
 	UpdateText();
 	this->AddChild( &m_textAnswer );
 
-	m_In.Load( THEME->GetPathToB("ScreenPrompt in") );
+	m_In.Load( THEME->GetPathB("ScreenPrompt","in") );
 	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 	
-	m_Out.Load( THEME->GetPathToB("ScreenPrompt out") );
+	m_Out.Load( THEME->GetPathB("ScreenPrompt","out") );
 	this->AddChild( &m_Out );
 }
 

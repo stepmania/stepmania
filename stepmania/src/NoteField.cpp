@@ -22,13 +22,13 @@ NoteField::NoteField()
 {	
 	m_pNoteData = NULL;
 
-	m_textMeasureNumber.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 
 	m_rectMarkerBar.SetShadowLength( 0 );
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
-	m_sprBars.Load( THEME->GetPathToG("NoteField bars") );
+	m_sprBars.Load( THEME->GetPathG("NoteField","bars") );
 	m_sprBars.StopAnimating();
 
 	m_iBeginMarker = m_iEndMarker = -1;
@@ -672,7 +672,7 @@ void NoteField::DrawPrimitives()
 			if( bIsAttack )
 			{
 				Sprite sprite;
-				sprite.Load( THEME->GetPathToG("NoteField attack "+tn.sAttackModifiers) );
+				sprite.Load( THEME->GetPathG("NoteField","attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
 				nd->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false );
 			}

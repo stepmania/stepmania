@@ -58,7 +58,7 @@ ScrollingList::ScrollingList()
 	m_iBounceDir=0;
 	m_iBounceWait=0;
 	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
-	m_sprBannerMask.Load( THEME->GetPathToG("ScreenSelectMusic banner mask") );
+	m_sprBannerMask.Load( THEME->GetPathG("ScreenSelectMusic","banner mask") );
 	m_sprBannerMask.SetClearZBuffer( true );
 	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
 	m_sprBannerMask.SetZWrite( true );	// do draw to the zbuffer

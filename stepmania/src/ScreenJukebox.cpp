@@ -178,11 +178,11 @@ void ScreenJukebox::Init()
 		return;
 	}
 
-	m_In.Load( THEME->GetPathToB("ScreenDemonstration in") );
+	m_In.Load( THEME->GetPathB("ScreenDemonstration","in") );
 	this->AddChild( &m_In );
 	m_In.StartTransitioning();
 
-	m_Out.Load( THEME->GetPathToB("ScreenDemonstration out") );
+	m_Out.Load( THEME->GetPathB("ScreenDemonstration","out") );
 	this->AddChild( &m_Out );
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.

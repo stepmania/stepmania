@@ -29,7 +29,7 @@ REGISTER_SCREEN_CLASS( ScreenNetRoom );
 ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sName )
 {
 	GAMESTATE->FinishStage();
-	m_soundChangeSel.Load( THEME->GetPathToS("ScreenNetRoom change sel"));
+	m_soundChangeSel.Load( THEME->GetPathS("ScreenNetRoom","change sel"));
 
 	m_iRoomPlace = 0;
 	m_SelectMode = SelectRooms;

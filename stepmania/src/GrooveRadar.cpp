@@ -26,7 +26,7 @@ GrooveRadar::GrooveRadar()
 
 	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
-		m_sprRadarLabels[c].Load( THEME->GetPathToG("GrooveRadar labels 1x5") );
+		m_sprRadarLabels[c].Load( THEME->GetPathG("GrooveRadar","labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
 		m_sprRadarLabels[c].SetState( c );
 		m_sprRadarLabels[c].SetXY( LABEL_OFFSET_X(c), LABEL_OFFSET_Y(c) );
@@ -63,7 +63,7 @@ void GrooveRadar::TweenOffScreen()
 
 GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 {
-	m_sprRadarBase.Load( THEME->GetPathToG("GrooveRadar base") );
+	m_sprRadarBase.Load( THEME->GetPathG("GrooveRadar","base") );
 	this->AddChild( &m_sprRadarBase );
 
 	FOREACH_PlayerNumber( p )

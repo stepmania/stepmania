@@ -10,7 +10,7 @@ MusicSortDisplay::MusicSortDisplay()
 
 void MusicSortDisplay::Set( SortOrder so ) 
 { 
-	Load( THEME->GetPathToG(ssprintf("MusicSortDisplay %s",SortOrderToString(so).c_str())) );
+	Load( THEME->GetPathG("MusicSortDisplay",SortOrderToString(so)) );
 }
 
 /*

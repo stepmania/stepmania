@@ -118,7 +118,7 @@ void Player::Init(
 	m_pPrimaryScoreKeeper = pPrimaryScoreKeeper;
 	m_pSecondaryScoreKeeper = pSecondaryScoreKeeper;
 
-	m_soundMine.Load( THEME->GetPathToS("Player mine"), true );
+	m_soundMine.Load( THEME->GetPathS("Player","mine"), true );
 
 	/* Attacks can be launched in course modes and in battle modes.  They both come
 	 * here to play, but allow loading a different sound for different modes. */
@@ -126,12 +126,12 @@ void Player::Init(
 	{
 	case PLAY_MODE_RAVE:
 	case PLAY_MODE_BATTLE:
-		m_soundAttackLaunch.Load( THEME->GetPathToS("Player battle attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathToS("Player battle attack ending"), true );
+		m_soundAttackLaunch.Load( THEME->GetPathS("Player","battle attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathS("Player","battle attack ending"), true );
 		break;
 	default:
-		m_soundAttackLaunch.Load( THEME->GetPathToS("Player course attack launch"), true );
-		m_soundAttackEnding.Load( THEME->GetPathToS("Player course attack ending"), true );
+		m_soundAttackLaunch.Load( THEME->GetPathS("Player","course attack launch"), true );
+		m_soundAttackEnding.Load( THEME->GetPathS("Player","course attack ending"), true );
 		break;
 	}
 

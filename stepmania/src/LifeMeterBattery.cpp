@@ -21,9 +21,8 @@ LifeMeterBattery::LifeMeterBattery()
 
 	m_fBatteryBlinkTime = 0;
 
-	
-	m_soundGainLife.Load( THEME->GetPathToS("LifeMeterBattery gain") );
-	m_soundLoseLife.Load( THEME->GetPathToS("LifeMeterBattery lose"),true );
+	m_soundGainLife.Load( THEME->GetPathS("LifeMeterBattery","gain") );
+	m_soundLoseLife.Load( THEME->GetPathS("LifeMeterBattery","lose"),true );
 }
 
 void LifeMeterBattery::Load( PlayerNumber pn )
@@ -32,10 +31,10 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled(pn);
 
-	m_sprFrame.Load( THEME->GetPathToG("LifeMeterBattery frame") );
+	m_sprFrame.Load( THEME->GetPathG("LifeMeterBattery","frame") );
 	this->AddChild( &m_sprFrame );
 
-	m_sprBattery.Load( THEME->GetPathToG("LifeMeterBattery lives 1x4") );
+	m_sprBattery.Load( THEME->GetPathG("LifeMeterBattery","lives 1x4") );
 	m_sprBattery.StopAnimating();
 	if( bPlayerEnabled )
 		this->AddChild( &m_sprBattery );

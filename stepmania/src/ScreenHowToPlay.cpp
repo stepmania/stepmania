@@ -74,12 +74,12 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	m_pmCharacter = NULL;
 	m_pmDancePad = NULL;
 
-	m_In.Load( THEME->GetPathToB("ScreenHowToPlay in") );
+	m_In.Load( THEME->GetPathB("ScreenHowToPlay","in") );
 	m_In.StartTransitioning();
 
-	m_Out.Load( THEME->GetPathToB("ScreenHowToPlay out") );
+	m_Out.Load( THEME->GetPathB("ScreenHowToPlay","out") );
 
-	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenHowToPlay overlay") );
+	m_Overlay.LoadFromAniDir( THEME->GetPathB("ScreenHowToPlay","overlay") );
 	m_Overlay.PlayCommand("On");
 	this->AddChild( &m_Overlay );
 

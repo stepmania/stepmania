@@ -27,23 +27,23 @@
 
 ModeSwitcher::ModeSwitcher() 
 { 
-	m_Nextmode.LoadFromFont( THEME->GetPathToF("ModeSwitcher stylenames") );
+	m_Nextmode.LoadFromFont( THEME->GetPathF("ModeSwitcher","stylenames") );
 	m_Nextmode.SetXY(NEXTMODE_X,NEXTMODE_Y);
 	m_Nextmode.SetZoom(NEXTMODE_ZOOM);
 	m_Nextmode.SetText(GetNextStyleName());
-	m_Prevmode.LoadFromFont( THEME->GetPathToF("ModeSwitcher stylenames") );
+	m_Prevmode.LoadFromFont( THEME->GetPathF("ModeSwitcher","stylenames") );
 	m_Prevmode.SetXY(PREVMODE_X,PREVMODE_Y);
 	m_Prevmode.SetText(GetPrevStyleName());
 	m_Prevmode.SetZoom(PREVMODE_ZOOM);
-	m_Stylename.LoadFromFont( THEME->GetPathToF("ModeSwitcher stylenames") );
+	m_Stylename.LoadFromFont( THEME->GetPathF("ModeSwitcher","stylenames") );
 	m_Stylename.SetXY(CURRMODE_X,CURRMODE_Y);
 	m_Stylename.SetText(GetStyleName());
 	m_Stylename.SetZoom(CURRMODE_ZOOM);
 
 
-	m_NextIcon.Load( THEME->GetPathToG("ModeSwitcher nexticon"));
+	m_NextIcon.Load( THEME->GetPathG("ModeSwitcher","nexticon"));
 	m_NextIcon.SetXY( NEXTICON_X, NEXTICON_Y);
-	m_PrevIcon.Load( THEME->GetPathToG("ModeSwitcher previcon"));
+	m_PrevIcon.Load( THEME->GetPathG("ModeSwitcher","previcon"));
 	m_PrevIcon.SetXY( PREVICON_X, PREVICON_Y);
 
 	this->AddChild( &m_NextIcon );

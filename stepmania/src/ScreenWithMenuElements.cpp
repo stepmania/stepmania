@@ -30,16 +30,15 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 
 	this->SetName( sClassName );
 
-	m_autoHeader.Load( THEME->GetPathToG(m_sName+" header") );
+	m_autoHeader.Load( THEME->GetPathG(m_sName,"header") );
 	m_autoHeader->SetName("Header");
 	SET_XY_AND_ON_COMMAND( m_autoHeader );
 	this->AddChild( m_autoHeader );
 
 	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
 	{
-		CString sIconFileName = CString("MenuElements icon ") + GAMESTATE->GetCurrentStyle()->m_szName;
 		m_sprStyleIcon.SetName( "StyleIcon" );
-		m_sprStyleIcon.Load( THEME->GetPathToG(sIconFileName) );
+		m_sprStyleIcon.Load( THEME->GetPathG("MenuElements",CString("icon ")+GAMESTATE->GetCurrentStyle()->m_szName) );
 		m_sprStyleIcon.StopAnimating();
 		m_sprStyleIcon.SetState( GAMESTATE->m_MasterPlayerNumber );
 		SET_XY_AND_ON_COMMAND( m_sprStyleIcon );
@@ -68,7 +67,7 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 		this->AddChild( m_MenuTimer );
 	}
 
-	m_autoFooter.Load( THEME->GetPathToG(m_sName+" footer") );
+	m_autoFooter.Load( THEME->GetPathG(m_sName,"footer") );
 	m_autoFooter->SetName("Footer");
 	SET_XY_AND_ON_COMMAND( m_autoFooter );
 	this->AddChild( m_autoFooter );
@@ -81,20 +80,20 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	m_textHelp->SetTips( asHelpTips );
 	this->AddChild( m_textHelp );
 
-	m_sprOverlay.Load( THEME->GetPathToB(m_sName+" overlay") );
+	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	SET_XY_AND_ON_COMMAND( m_sprOverlay );
 	this->AddChild( m_sprOverlay );
 
-	m_In.Load( THEME->GetPathToB(m_sName+" in") );
+	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
-	m_Out.Load( THEME->GetPathToB(m_sName+" out") );
+	m_Out.Load( THEME->GetPathB(m_sName,"out") );
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathToB("Common back") );
+	m_Back.Load( THEME->GetPathB("Common","back") );
 	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Back );
 

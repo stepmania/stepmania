@@ -208,7 +208,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 
 		Profile* pProfile = PROFILEMAN->GetProfile( p );
 
-		m_textPlayerName[p].LoadFromFont( THEME->GetPathToF("ScreenEnding player name") );
+		m_textPlayerName[p].LoadFromFont( THEME->GetPathF("ScreenEnding","player name") );
 		m_textPlayerName[p].SetText( pProfile ? pProfile->GetDisplayName() : CString("NO CARD") );
 		m_textPlayerName[p].SetName( ssprintf("PlayerNameP%d",p+1) );
 		SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
@@ -221,13 +221,13 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 	
 		FOREACH_EndingStatsLine( i )
 		{
-			m_Lines[i][p].title.LoadFromFont( THEME->GetPathToF("ScreenEnding stats title") );
+			m_Lines[i][p].title.LoadFromFont( THEME->GetPathF("ScreenEnding","stats title") );
 			m_Lines[i][p].title.SetText( GetStatsLineTitle(p, i) );
 			m_Lines[i][p].title.SetName( ssprintf("StatsTitleP%dLine%d",p+1,i+1) );
 			SET_XY_AND_ON_COMMAND( m_Lines[i][p].title );
 			this->AddChild( &m_Lines[i][p].title );
 		
-			m_Lines[i][p].value.LoadFromFont( THEME->GetPathToF("ScreenEnding stats value") );
+			m_Lines[i][p].value.LoadFromFont( THEME->GetPathF("ScreenEnding","stats value") );
 			m_Lines[i][p].value.SetText( GetStatsLineValue(p, i) );
 			m_Lines[i][p].value.SetName( ssprintf("StatsValueP%dLine%d",p+1,i+1) );
 			SET_XY_AND_ON_COMMAND( m_Lines[i][p].value );
@@ -235,7 +235,7 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		}
 
 		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
-		m_sprRemoveMemoryCard[p].Load( THEME->GetPathToG(ssprintf("ScreenEnding remove card P%d",p+1)) );
+		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",ssprintf("remove card P%d",p+1)) );
 		SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}

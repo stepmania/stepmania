@@ -292,7 +292,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	/* If this file doesn't exist, leave the music alone (eg. ScreenPlayerOptions music sample
 	 * left over from ScreenSelectMusic).  If you really want to play no music, add a redir
 	 * to _silent. */
-	CString MusicPath = THEME->GetPathToS( ssprintf("%s music", m_sName.c_str()), true );
+	CString MusicPath = THEME->GetPathS( m_sName, "music", true );
 	if( MusicPath != "" )
 		SOUND->PlayMusic( MusicPath );
 

@@ -19,6 +19,7 @@
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
 #include "Command.h"
+#include "RageLog.h"
 
 #define PREV_SCREEN				THEME->GetMetric ("ScreenEz2SelectMusic","PrevScreen")
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
@@ -81,7 +82,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 
 	if(PREVIEWMUSICMODE == 4)
 	{
-		m_soundBackMusic.Load( THEME->GetPathToS("ScreenEz2SelectMusic music"));
+		m_soundBackMusic.Load( THEME->GetPathS("ScreenEz2SelectMusic","music"));
 		m_soundBackMusic.Play();
 	}
 
@@ -94,11 +95,11 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 
 
 
-	m_soundButtonPress.Load( THEME->GetPathToS("ScreenEz2SelectMusic buttonpress"));
-	m_soundMusicChange.Load( THEME->GetPathToS("ScreenEz2SelectMusic change"));
-	m_soundMusicCycle.Load( THEME->GetPathToS("ScreenEz2SelectMusic cycle"));
+	m_soundButtonPress.Load( THEME->GetPathS("ScreenEz2SelectMusic","buttonpress"));
+	m_soundMusicChange.Load( THEME->GetPathS("ScreenEz2SelectMusic","change"));
+	m_soundMusicCycle.Load( THEME->GetPathS("ScreenEz2SelectMusic","cycle"));
 
-	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenEz2SelectMusic list frame"));
+	m_ChoiceListFrame.Load( THEME->GetPathG("ScreenEz2SelectMusic","list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListFrame );
 
@@ -111,15 +112,10 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 		this->AddChild( &m_MusicBannerWheel );
 
 
-		m_ChoiceListHighlight.Load( THEME->GetPathToG("ScreenEz2SelectMusic list highlight"));
+		m_ChoiceListHighlight.Load( THEME->GetPathG("ScreenEz2SelectMusic","list highlight"));
 		m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
 		this->AddChild( &m_ChoiceListHighlight );
 
-		#ifdef DEBUG
-		m_debugtext.LoadFromFont( THEME->GetPathToF("small titles") );
-		m_debugtext.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-		this->AddChild(&m_debugtext);
-		#endif
 
 		FOREACH_PlayerNumber( p )
 		{
@@ -127,27 +123,27 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 		//	m_FootMeter[p].SetShadowLength( 2 );
 		//	this->AddChild( &m_FootMeter[p] );
 
-			m_SpeedIcon[p].Load( THEME->GetPathToG("ScreenEz2SelectMusic speedicon"));
+			m_SpeedIcon[p].Load( THEME->GetPathG("ScreenEz2SelectMusic","speedicon"));
 			m_SpeedIcon[p].SetXY( SPEEDICON_X(p), SPEEDICON_Y(p) );
 			m_SpeedIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_SpeedIcon[p] );
 
-			m_MirrorIcon[p].Load( THEME->GetPathToG("ScreenEz2SelectMusic mirroricon"));
+			m_MirrorIcon[p].Load( THEME->GetPathG("ScreenEz2SelectMusic","mirroricon"));
 			m_MirrorIcon[p].SetXY( MIRRORICON_X(p), MIRRORICON_Y(p) );
 			m_MirrorIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_MirrorIcon[p] );
 
-			m_ShuffleIcon[p].Load( THEME->GetPathToG("ScreenEz2SelectMusic shuffleicon"));
+			m_ShuffleIcon[p].Load( THEME->GetPathG("ScreenEz2SelectMusic","shuffleicon"));
 			m_ShuffleIcon[p].SetXY( SHUFFLEICON_X(p), SHUFFLEICON_Y(p) );
 			m_ShuffleIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_ShuffleIcon[p] );
 
-			m_HiddenIcon[p].Load( THEME->GetPathToG("ScreenEz2SelectMusic hiddenicon"));
+			m_HiddenIcon[p].Load( THEME->GetPathG("ScreenEz2SelectMusic","hiddenicon"));
 			m_HiddenIcon[p].SetXY( HIDDENICON_X(p), HIDDENICON_Y(p) );
 			m_HiddenIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_HiddenIcon[p] );
 
-			m_VanishIcon[p].Load( THEME->GetPathToG("ScreenEz2SelectMusic vanishicon"));
+			m_VanishIcon[p].Load( THEME->GetPathG("ScreenEz2SelectMusic","vanishicon"));
 			m_VanishIcon[p].SetXY( VANISHICON_X(p), VANISHICON_Y(p) );
 			m_VanishIcon[p].SetDiffuse( RageColor(0,0,0,0) );
 			this->AddChild(&m_VanishIcon[p] );
@@ -157,42 +153,42 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 			m_iSelection[p] = 0;
 		}
 
-		m_Guide.Load( THEME->GetPathToG("ScreenEz2SelectMusic guide"));
+		m_Guide.Load( THEME->GetPathG("ScreenEz2SelectMusic","guide"));
 		m_Guide.SetXY( GUIDE_X, GUIDE_Y );
 		this->AddChild( &m_Guide );
 
-		m_InfoFrame.Load( THEME->GetPathToG("ScreenEz2SelectMusic infoframe") );
+		m_InfoFrame.Load( THEME->GetPathG("ScreenEz2SelectMusic","infoframe") );
 		m_InfoFrame.SetXY( INFOFRAME_X, INFOFRAME_Y );
 		this->AddChild( &m_InfoFrame );
 
 #ifdef _XBOX
 		//shorten filenames for FATX
-		m_PumpDifficultyCircle.Load( THEME->GetPathToG("ScreenEz2SelectMusic diff frame"));
+		m_PumpDifficultyCircle.Load( THEME->GetPathG("ScreenEz2SelectMusic","diff frame"));
 #else
-		m_PumpDifficultyCircle.Load( THEME->GetPathToG("ScreenEz2SelectMusic difficulty frame"));
+		m_PumpDifficultyCircle.Load( THEME->GetPathG("ScreenEz2SelectMusic","difficulty frame"));
 #endif
 
 		m_PumpDifficultyCircle.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
 		this->AddChild( &m_PumpDifficultyCircle );
 
-		m_PumpDifficultyRating.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic difficulty") );
+		m_PumpDifficultyRating.LoadFromFont( THEME->GetPathF("ScreenEz2SelectMusic","difficulty") );
 		m_PumpDifficultyRating.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
 		this->AddChild(&m_PumpDifficultyRating);
 
-		m_CurrentGroup.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentGroup.LoadFromFont( THEME->GetPathF("ScreenEz2SelectMusic","GroupName") );
 		m_CurrentGroup.SetXY( GROUPNAME_X, GROUPNAME_Y );
 		this->AddChild(&m_CurrentGroup );
 
-		m_CurrentTitle.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentTitle.LoadFromFont( THEME->GetPathF("ScreenEz2SelectMusic","GroupName") );
 		m_CurrentTitle.SetXY( TITLE_X, TITLE_Y );
 		this->AddChild(&m_CurrentTitle );
 
-		m_CurrentSubTitle.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentSubTitle.LoadFromFont( THEME->GetPathF("ScreenEz2SelectMusic","GroupName") );
 		m_CurrentSubTitle.SetXY( SUBTITLE_X, SUBTITLE_Y );
 		m_CurrentSubTitle.SetZoom(0.8f);
 		this->AddChild(&m_CurrentTitle );
 
-		m_CurrentArtist.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentArtist.LoadFromFont( THEME->GetPathF("ScreenEz2SelectMusic","GroupName") );
 		m_CurrentArtist.SetXY( ARTIST_X, ARTIST_Y );
 		this->AddChild(&m_CurrentArtist );
 
@@ -201,7 +197,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 		m_DifficultyRating.SetY(DIFFICULTYRATING_Y);
 		this->AddChild(&m_DifficultyRating);
 
-		m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenEz2SelectMusic options message") );
+		m_sprOptionsMessage.Load( THEME->GetPathG("ScreenEz2SelectMusic","options message") );
 		m_sprOptionsMessage.StopAnimating();
 		m_sprOptionsMessage.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		m_sprOptionsMessage.SetZoom( 1 );
@@ -215,11 +211,11 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 		}
 
 		m_sprBalloon.SetName( "Balloon" );
-		TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon long") );
-		TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+		TEXTUREMAN->CacheTexture( THEME->GetPathG("ScreenSelectMusic","balloon long") );
+		TEXTUREMAN->CacheTexture( THEME->GetPathG("ScreenSelectMusic","balloon marathon") );
 		this->AddChild( &m_sprBalloon );
 
-		m_soundOptionsChange.Load( THEME->GetPathToS("ScreenEz2SelectMusic options") );
+		m_soundOptionsChange.Load( THEME->GetPathS("ScreenEz2SelectMusic","options") );
 
 		m_bGoToOptions = false;
 		m_bMadeChoice = false;
@@ -314,9 +310,7 @@ void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)
 {
 	sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
 
-	#ifdef DEBUG
-		m_debugtext.SetText( "DEBUG: " + sOptions );
-	#endif
+	LOG->Trace( "DEBUG: " + sOptions );
 
 	asOptions.clear();
 	split( sOptions, ", ", asOptions, true );
@@ -617,13 +611,13 @@ void ScreenEz2SelectMusic::MusicChanged()
 	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 	{
 		m_sprBalloon.StopTweening();
-		m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+		m_sprBalloon.Load( THEME->GetPathG("ScreenSelectMusic","balloon marathon") );
 		SET_XY_AND_ON_COMMAND( m_sprBalloon );
 	}
 	else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 	{
 		m_sprBalloon.StopTweening();
-		m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon long") );
+		m_sprBalloon.Load( THEME->GetPathG("ScreenSelectMusic","balloon long") );
 		SET_XY_AND_ON_COMMAND( m_sprBalloon );
 	}
 	else

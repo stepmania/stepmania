@@ -73,15 +73,14 @@ void Inventory::Load( PlayerState* pPlayerState )
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_BATTLE:
-		m_soundAcquireItem.Load( THEME->GetPathToS("Inventory aquire item") );
+		m_soundAcquireItem.Load( THEME->GetPathS("Inventory","aquire item") );
 		for( unsigned i=0; i<g_Items.size(); i++ )
 		{
 			RageSound* pSound = new RageSound;
-			CString sPath = THEME->GetPathToS( ssprintf("Inventory use item %u",i+1) );
-			pSound->Load( sPath );
+			pSound->Load( THEME->GetPathS("Inventory",ssprintf("use item %u",i+1)) );
 			m_vpSoundUseItem.push_back( pSound );
 		}
-		m_soundItemEnding.Load( THEME->GetPathToS("Inventory item ending") );
+		m_soundItemEnding.Load( THEME->GetPathS("Inventory","item ending") );
 		break;
 	}
 }

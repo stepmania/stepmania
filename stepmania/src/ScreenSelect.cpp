@@ -98,7 +98,7 @@ void ScreenSelect::Update( float fDelta )
 	{
 		/* Don't play sounds during the ctor, since derived classes havn't loaded yet. */
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
-		SOUND->PlayMusic( THEME->GetPathToS(m_sName+" music") );
+		SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 	}
 
 	if( !IsTransitioning() )

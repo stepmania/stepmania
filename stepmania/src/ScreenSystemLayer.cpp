@@ -56,7 +56,7 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 		/* This is somewhat big.  Let's put it on the right side, where it'll
 		 * obscure the 2P side during gameplay; there's nowhere to put it that
 		 * doesn't obscure something, and it's just a diagnostic. */
-		m_textSkips[i].LoadFromFont( THEME->GetPathToF("Common normal") );
+		m_textSkips[i].LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textSkips[i].SetXY( SKIP_LEFT, SKIP_TOP + SKIP_Y_DIST*i );
 		m_textSkips[i].SetHorizAlign( Actor::align_left );
 		m_textSkips[i].SetVertAlign( Actor::align_top );
@@ -74,22 +74,22 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 
 void ScreenSystemLayer::ReloadCreditsText()
 {
-	m_textMessage.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer message") );
+	m_textMessage.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","message") );
 	m_textMessage.SetName( "Message" );
 	SET_XY_AND_ON_COMMAND( m_textMessage ); 
 
- 	m_textStats.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer stats") );
+ 	m_textStats.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","stats") );
 	m_textStats.SetName( "Stats" );
 	SET_XY_AND_ON_COMMAND( m_textStats ); 
 
-	m_textTime.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer time") );
+	m_textTime.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","time") );
 	m_textTime.SetName( "Time" );
 	m_textTime.SetHidden( !PREFSMAN->m_bTimestamping );
 	SET_XY_AND_ON_COMMAND( m_textTime ); 
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_textCredits[p].LoadFromFont( THEME->GetPathToF("ScreenManager credits") );
+		m_textCredits[p].LoadFromFont( THEME->GetPathF("ScreenManager","credits") );
 		m_textCredits[p].SetName( ssprintf("CreditsP%d",p+1) );
 		SET_XY_AND_ON_COMMAND( &m_textCredits[p] );
 	}

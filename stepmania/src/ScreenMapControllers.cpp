@@ -52,14 +52,14 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 		CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
 		CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), b );
 
-		m_textName[b].LoadFromFont( THEME->GetPathToF("Common title") );
+		m_textName[b].LoadFromFont( THEME->GetPathF("Common","title") );
 		m_textName[b].SetXY( SCREEN_CENTER_X, -6 );
 		m_textName[b].SetText( sName );
 		m_textName[b].SetZoom( 0.7f );
 		m_textName[b].SetShadowLength( 2 );
 		m_Line[b].AddChild( &m_textName[b] );
 
-		m_textName2[b].LoadFromFont( THEME->GetPathToF("Common title") );
+		m_textName2[b].LoadFromFont( THEME->GetPathF("Common","title") );
 		m_textName2[b].SetXY( SCREEN_CENTER_X, +6 );
 		m_textName2[b].SetText( sSecondary );
 		m_textName2[b].SetZoom( 0.5f );
@@ -70,7 +70,7 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 		{			
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathToF("ScreenMapControllers entry") );
+				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
 				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_GAME_TO_DEVICE_SLOTS+s], 0 );
 				m_textMappedTo[p][b][s].SetZoom( 0.5f );
 				m_textMappedTo[p][b][s].SetShadowLength( 0 );
@@ -83,7 +83,7 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
 	}	
 
-	m_textError.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textError.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textError.SetText( "" );
 	m_textError.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	m_textError.SetDiffuse( RageColor(0,1,0,0) );
@@ -97,7 +97,7 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 
 	m_iWaitingForPress = 0;
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenMapControllers music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenMapControllers","music") );
 
 	Refresh();
 }

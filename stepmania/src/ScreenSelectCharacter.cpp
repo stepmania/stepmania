@@ -87,12 +87,9 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 	}
 
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledPlayer( p )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p) )
-			continue;
-
-		m_sprTitle[p].Load( THEME->GetPathToG("ScreenSelectCharacter title 2x2") );
+		m_sprTitle[p].Load( THEME->GetPathG("ScreenSelectCharacter","title 2x2") );
 		m_sprTitle[p].SetState( GAMESTATE->IsHumanPlayer(p) ? p : 2+p );
 		m_sprTitle[p].StopAnimating();
 		m_sprTitle[p].RunCommands( TITLE_ON_COMMAND(p) );
@@ -102,7 +99,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 		m_sprCard[p].RunCommands( CARD_ON_COMMAND(p) );
 		this->AddChild( &m_sprCard[p] );
 
-		m_sprCardArrows[p].Load( THEME->GetPathToG("ScreenSelectCharacter card arrows") );
+		m_sprCardArrows[p].Load( THEME->GetPathG("ScreenSelectCharacter","card arrows") );
 		m_sprCardArrows[p].RunCommands( CARD_ARROWS_ON_COMMAND(p) );
 		this->AddChild( &m_sprCardArrows[p] );
 
@@ -114,7 +111,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 
 		if(GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE || GAMESTATE->m_PlayMode == PLAY_MODE_RAVE)
 		{
-			m_sprAttackFrame[p].Load( THEME->GetPathToG("ScreenSelectCharacter attack frame 1x2") );
+			m_sprAttackFrame[p].Load( THEME->GetPathG("ScreenSelectCharacter","attack frame 1x2") );
 			m_sprAttackFrame[p].StopAnimating();
 			m_sprAttackFrame[p].SetState( p );
 			m_sprAttackFrame[p].RunCommands( ATTACK_FRAME_ON_COMMAND(p) );
@@ -132,16 +129,16 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 		}
 	}
 
-	m_sprExplanation.Load( THEME->GetPathToG("ScreenSelectCharacter explanation") );
+	m_sprExplanation.Load( THEME->GetPathG("ScreenSelectCharacter","explanation") );
 	m_sprExplanation.RunCommands( EXPLANATION_ON_COMMAND );
 	this->AddChild( &m_sprExplanation );
 
 
-	m_soundChange.Load( THEME->GetPathToS("ScreenSelectCharacter change") );
+	m_soundChange.Load( THEME->GetPathS("ScreenSelectCharacter","change") );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectCharacter music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectCharacter","music") );
 
 	FOREACH_PlayerNumber( p )
 	{

@@ -60,13 +60,13 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 	this->AddChild( m_sprLogo );
 	SET_XY_AND_ON_COMMAND( m_sprLogo );
 
-	m_textVersion.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textVersion.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textVersion.SetName( "Version" );
 	m_textVersion.SetText( PRODUCT_VER );
 	this->AddChild( &m_textVersion );
 	SET_XY_AND_ON_COMMAND( m_textVersion );
 
-	m_textSongs.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textSongs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textSongs.SetName( "Songs" );
 	CString text = ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses() );
 	if( PREFSMAN->m_bUseUnlockSystem )

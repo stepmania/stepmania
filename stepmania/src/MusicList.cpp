@@ -23,7 +23,7 @@ void MusicList::Load()
 {
 	for( int i=0; i<NUM_COLUMNS; i++ )
 	{
-		m_textTitles[i].LoadFromFont( THEME->GetPathToF("MusicList titles") );
+		m_textTitles[i].LoadFromFont( THEME->GetPathF("MusicList","titles") );
 		m_textTitles[i].SetXY( START_X + i*SPACING_X, START_Y );
 		m_textTitles[i].RunCommands( INIT_COMMAND );
 		this->AddChild( &m_textTitles[i] );

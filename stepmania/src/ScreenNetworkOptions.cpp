@@ -56,7 +56,7 @@ ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions
 		g_NetworkOptionsLines, 
 		NUM_NETWORK_OPTIONS_LINES );
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenMachineOptions music") );
+	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
 
 

@@ -42,7 +42,7 @@ void DifficultyList::Load()
 
 	FOREACH_HumanPlayer( pn )
 	{
-		m_Cursors[pn].Load( THEME->GetPathToG(ssprintf("%s cursor p%i",m_sName.c_str(), pn+1)) );
+		m_Cursors[pn].Load( THEME->GetPathG(m_sName,ssprintf("cursor p%i",pn+1)) );
 		m_Cursors[pn]->SetName( ssprintf("CursorP%i",pn+1) );
 
 		/* Hack: we need to tween cursors both up to down (cursor motion) and visible to
@@ -63,11 +63,11 @@ void DifficultyList::Load()
 		this->AddChild( &m_Lines[m].m_Meter );
 
 		m_Lines[m].m_Description.SetName( "Description" );
-		m_Lines[m].m_Description.LoadFromFont( THEME->GetPathToF(ssprintf("%s description",m_sName.c_str())) );
+		m_Lines[m].m_Description.LoadFromFont( THEME->GetPathF(m_sName,"description") );
 		this->AddChild( &m_Lines[m].m_Description );
 
 		m_Lines[m].m_Number.SetName( "Number" );
-		m_Lines[m].m_Number.LoadFromFont( THEME->GetPathToF(ssprintf("%s number",m_sName.c_str())) );
+		m_Lines[m].m_Number.LoadFromFont( THEME->GetPathF(m_sName,"number") );
 		this->AddChild( &m_Lines[m].m_Number );
 	}
 

@@ -52,24 +52,21 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 	{
 		for( unsigned choice=0; choice<m_GameCommands[page].size(); choice++, c++ )
 		{
-			CString sInfoFile = ssprintf( "%s info%d", m_sName.c_str(), c+1 );
-			CString sPictureFile = ssprintf( "%s picture%d", m_sName.c_str(), c+1 );
-
 			m_sprPicture[page][choice].SetName( ssprintf("PicturePage%dChoice%d",page+1,choice+1) );
-			m_sprPicture[page][choice].Load( THEME->GetPathToG(sPictureFile) );
+			m_sprPicture[page][choice].Load( THEME->GetPathG(m_sName,ssprintf("picture%d",c+1)) );
 			m_framePages.AddChild( &m_sprPicture[page][choice] );
 
 			m_sprInfo[page][choice].SetName( ssprintf("InfoPage%dChoice%d",page+1,choice+1) );
-			m_sprInfo[page][choice].Load( THEME->GetPathToG(sInfoFile) );
+			m_sprInfo[page][choice].Load( THEME->GetPathG(m_sName,ssprintf("info%d",c+1)) );
 			m_framePages.AddChild( &m_sprInfo[page][choice] );
 		}
 
 		m_sprMore[page].SetName( ssprintf("MorePage%d",page+1) );
-		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("%s more page%d", m_sName.c_str(),page+1) ) );
+		m_sprMore[page].Load( THEME->GetPathG(m_sName,ssprintf("more page%d",page+1)) );
 		m_framePages.AddChild( &m_sprMore[page] );
 
 		m_sprExplanation[page].SetName( ssprintf("ExplanationPage%d",page+1) );
-		m_sprExplanation[page].Load( THEME->GetPathToG( m_sName + " explanation") );
+		m_sprExplanation[page].Load( THEME->GetPathG(m_sName,"explanation") );
 		m_sprExplanation[page].StopAnimating();
 		m_sprExplanation[page].SetState( page );
 		m_framePages.AddChild( &m_sprExplanation[page] );
@@ -85,20 +82,20 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 			continue;
 
 		m_sprShadow[p].SetName( "Shadow" );
-		m_sprShadow[p].Load( THEME->GetPathToG( m_sName + " shadow 2x1") );
+		m_sprShadow[p].Load( THEME->GetPathG(m_sName,"shadow 2x1") );
 		m_sprShadow[p].StopAnimating();
 		m_sprShadow[p].SetState( p );
 		m_sprShadow[p].SetDiffuse( RageColor(0,0,0,0.6f) );
 		m_framePages.AddChild( &m_sprShadow[p] );
 
 		m_sprCursor[p].SetName( "Cursor" );
-		m_sprCursor[p].Load( THEME->GetPathToG( m_sName + " cursor 2x1") );
+		m_sprCursor[p].Load( THEME->GetPathG(m_sName,"cursor 2x1") );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].SetName( "OK" );
-		m_sprOK[p].Load( THEME->GetPathToG( m_sName + " ok 2x1") );
+		m_sprOK[p].Load( THEME->GetPathG(m_sName,"ok 2x1") );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
 		m_sprOK[p].SetDiffuse( RageColor(1,1,1,0) );
@@ -107,7 +104,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 
 	this->AddChild( &m_framePages );
 	
-	m_soundChange.Load( THEME->GetPathToS( m_sName + " change"), true );
+	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
 	m_fLockInputTime = LOCK_INPUT_SECONDS;

@@ -69,8 +69,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	{
 		for( int i=0; i<NUM_CURSOR_PARTS; i++ )
 		{
-			CString sFName = ssprintf("%s Cursor Part%d", m_sName.c_str(),i+1);
-			m_sprCursor[i][0].Load( THEME->GetPathToG(sFName) );
+			m_sprCursor[i][0].Load( THEME->GetPathG(m_sName,ssprintf("Cursor Part%d",i+1)) );
 			m_sprCursor[i][0]->SetName( ssprintf("CursorPart%d",i+1) );
 			this->AddChild( m_sprCursor[i][0] );
 		}
@@ -81,8 +80,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		{
 			FOREACH_HumanPlayer( p )
 			{
-				CString sFName = ssprintf("%s Cursor Part%d P%d", m_sName.c_str(),i+1,p+1);
-				m_sprCursor[i][p].Load( THEME->GetPathToG(sFName) );
+				m_sprCursor[i][p].Load( THEME->GetPathG(m_sName,ssprintf("Cursor Part%d P%d",i+1,p+1)) );
 				m_sprCursor[i][p]->SetName( ssprintf("CursorPart%dP%d",i+1,p+1) );
 				this->AddChild( m_sprCursor[i][p] );
 			}
@@ -108,8 +106,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			{
 				const GameCommand& mc = m_aGameCommands[c];
 
-				CString sFName = ssprintf("%s Scroll Choice%s", m_sName.c_str(),mc.m_sName.c_str());
-				m_sprScroll[c][0].Load( THEME->GetPathToG(sFName) );
+				m_sprScroll[c][0].Load( THEME->GetPathG(m_sName,ssprintf("%s Scroll Choice%s",mc.m_sName.c_str())) );
 				m_sprScroll[c][0]->SetName( ssprintf("Scroll") );
 				m_sprScroll[c][0]->PlayCommand( "Init" );
 				m_Scroller[0].AddChild( m_sprScroll[c][0] );
@@ -133,8 +130,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 				{
 					const GameCommand& mc = m_aGameCommands[c];
 
-					CString sFName = ssprintf("%s Scroll Choice%s P%d", m_sName.c_str(),mc.m_sName.c_str(),p+1);
-					m_sprScroll[c][p].Load( THEME->GetPathToG(sFName) );
+					m_sprScroll[c][p].Load( THEME->GetPathG(m_sName,ssprintf("Scroll Choice%s P%d",mc.m_sName.c_str(),p+1)) );
 					m_sprScroll[c][p]->SetName( ssprintf("ScrollP%d",p+1) );
 					m_sprScroll[c][p]->PlayCommand( "Init" );
 					m_Scroller[p].AddChild( m_sprScroll[c][p] );
@@ -150,8 +146,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		// init icon
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 		{
-			CString sFName = ssprintf("%s Icon Part%d Choice%s", m_sName.c_str(),i+1,mc.m_sName.c_str());
-			m_sprIcon[i][c].Load( THEME->GetPathToG(sFName) );
+			m_sprIcon[i][c].Load( THEME->GetPathG(m_sName,ssprintf("Icon Part%d Choice%s",i+1,mc.m_sName.c_str())) );
 			m_sprIcon[i][c]->SetName( ssprintf("IconPart%dChoice%s",i+1,mc.m_sName.c_str()) );
 			this->AddChild( m_sprIcon[i][c] );
 		}
@@ -161,8 +156,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		{
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
-				CString sFName = ssprintf("%s Preview Part%d Choice%s", m_sName.c_str(),i+1,mc.m_sName.c_str());
-				m_sprPreview[i][c][0].Load( THEME->GetPathToG(sFName) );
+				m_sprPreview[i][c][0].Load( THEME->GetPathG(m_sName,ssprintf("Preview Part%d Choice%s",i+1,mc.m_sName.c_str())) );
 				m_sprPreview[i][c][0]->SetName( ssprintf("PreviewPart%d",i+1) );
 				this->AddChild( m_sprPreview[i][c][0] );
 			}
@@ -173,8 +167,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			{
 				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 				{
-					CString sFName = ssprintf("%s Preview Part%d Choice%s P%d", m_sName.c_str(),i+1,mc.m_sName.c_str(),p+1);
-					m_sprPreview[i][c][p].Load( THEME->GetPathToG(sFName) );
+					m_sprPreview[i][c][p].Load( THEME->GetPathG(m_sName,ssprintf("Preview Part%d Choice%s P%d",i+1,mc.m_sName.c_str(),p+1)) );
 					m_sprPreview[i][c][p]->SetName( ssprintf("PreviewPart%dP%d",i+1,p+1) );
 					this->AddChild( m_sprPreview[i][c][p] );
 				}
@@ -185,11 +178,11 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("%s more page%d",m_sName.c_str(), page+1) ) );
+		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
 		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
 		this->AddChild( m_sprMore[page] );
 
-		m_sprExplanation[page].Load( THEME->GetPathToG( ssprintf("%s explanation page%d",m_sName.c_str(), page+1) ) );
+		m_sprExplanation[page].Load( THEME->GetPathG(m_sName, ssprintf("explanation page%d",page+1)) );
 		m_sprExplanation[page]->SetName( ssprintf("ExplanationPage%d",page+1) );
 		this->AddChild( m_sprExplanation[page] );
 	}
@@ -201,9 +194,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		m_bChosen[p] = false;
 	}
 	
-	m_soundChange.Load( THEME->GetPathToS( ssprintf("%s change", m_sName.c_str())), true );
+	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
-	m_soundStart.Load( THEME->GetPathToS( ssprintf("%s start", m_sName.c_str())) );
+	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
 
 	// init m_Next order info
 	for( int dir = 0; dir < NUM_DIRS; ++dir )

@@ -105,11 +105,11 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 
-	m_SoundChangeCol.Load( THEME->GetPathToS("ScreenOptions change"), true );
-	m_SoundNextRow.Load( THEME->GetPathToS("ScreenOptions next"), true );
-	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev"), true );
-	m_SoundToggleOn.Load( THEME->GetPathToS("ScreenOptions toggle on") );
-	m_SoundToggleOff.Load( THEME->GetPathToS("ScreenOptions toggle off") );
+	m_SoundChangeCol.Load( THEME->GetPathS("ScreenOptions","change"), true );
+	m_SoundNextRow.Load( THEME->GetPathS("ScreenOptions","next"), true );
+	m_SoundPrevRow.Load( THEME->GetPathS("ScreenOptions","prev"), true );
+	m_SoundToggleOn.Load( THEME->GetPathS("ScreenOptions","toggle on") );
+	m_SoundToggleOff.Load( THEME->GetPathS("ScreenOptions","toggle off") );
 
 	// add everything to m_framePage so we can animate everything at once
 	this->AddChild( &m_framePage );
@@ -214,7 +214,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		}
 	}
 
-	m_sprPage.Load( THEME->GetPathToG(m_sName+" page") );
+	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
 	m_sprPage->SetName( "Page" );
 	SET_XY_AND_ON_COMMAND( m_sprPage );
 	m_framePage.AddChild( m_sprPage );
@@ -222,7 +222,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	// init line highlights
 	FOREACH_HumanPlayer( p )
 	{
-		m_sprLineHighlight[p].Load( THEME->GetPathToG("ScreenOptions line highlight") );
+		m_sprLineHighlight[p].Load( THEME->GetPathG("ScreenOptions","line highlight") );
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
 		m_sprLineHighlight[p].SetX( SCREEN_CENTER_X );
 		m_framePage.AddChild( &m_sprLineHighlight[p] );
@@ -265,7 +265,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 			// init text
 			BitmapText *bt = new BitmapText;
 			textItems.push_back( bt );
-			bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+			bt->LoadFromFont( THEME->GetPathF("ScreenOptions","item") );
 			CString sText = optline.choices[c];
 			if( CAPITALIZE_ALL_OPTION_NAMES )
 				sText.MakeUpper();
@@ -317,7 +317,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 
 				const int iChoiceInRowWithFocus = row.m_iChoiceInRowWithFocus[p];
 
-				bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+				bt->LoadFromFont( THEME->GetPathF("ScreenOptions","item") );
 				bt->SetText( optline.choices[iChoiceInRowWithFocus] );
 				bt->SetZoom( ITEMS_ZOOM );
 				bt->SetShadowLength( 0 );
@@ -365,7 +365,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	BitmapText *bt = new BitmapText;
 	row.m_textItems.push_back( bt );
 
-	bt->LoadFromFont( THEME->GetPathToF("ScreenOptions item") );
+	bt->LoadFromFont( THEME->GetPathF("ScreenOptions","item") );
 	bt->SetText( THEME->GetMetric("OptionNames","Exit") );
 	bt->SetZoom( ITEMS_ZOOM );
 	bt->SetShadowLength( 0 );
@@ -378,7 +378,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	// add explanation here so it appears on top
 	FOREACH_PlayerNumber( p )
 	{
-		m_textExplanation[p].LoadFromFont( THEME->GetPathToF("ScreenOptions explanation") );
+		m_textExplanation[p].LoadFromFont( THEME->GetPathF("ScreenOptions","explanation") );
 		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
 		m_textExplanation[p].SetShadowLength( 0 );
 		m_framePage.AddChild( &m_textExplanation[p] );
@@ -390,7 +390,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	{
 		FOREACH_HumanPlayer( p )
 		{
-			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
+			m_textPlayerName[p].LoadFromFont( THEME->GetPathF("ScreenOptions","player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
 			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName(p) );
 			SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
@@ -410,7 +410,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		m_framePage.AddChild( &m_ScrollBar );
 	}
 
-	m_sprMore.Load( THEME->GetPathToG( "ScreenOptions more") );
+	m_sprMore.Load( THEME->GetPathG( "ScreenOptions","more") );
 	m_sprMore->SetName( "ScreenOptions", "More" );
 	SET_XY_AND_ON_COMMAND( m_sprMore );
 	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
