@@ -103,8 +103,8 @@ public:
 	void  SetXY( float x, float y )	{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
 
 	// height and width vary depending on zoom
-	float GetUnzoomedWidth()		{ return m_size.x * m_baseScale.x; }
-	float GetUnzoomedHeight()		{ return m_size.y * m_baseScale.y; }
+	float GetUnzoomedWidth()		{ return m_size.x; }
+	float GetUnzoomedHeight()		{ return m_size.y; }
 	float GetZoomedWidth()			{ return m_size.x * m_baseScale.x * DestTweenState().scale.x; }
 	float GetZoomedHeight()			{ return m_size.y * m_baseScale.y * DestTweenState().scale.y; }
 	void  SetWidth( float width )	{ m_size.x = width; }
