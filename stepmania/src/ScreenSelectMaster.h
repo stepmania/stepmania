@@ -63,6 +63,7 @@ protected:
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
+	bool AnyOptionsArePlayable() const;
 
 	bool Move( PlayerNumber pn, MenuDir dir );
 	bool ChangePage( int iNewChoice );

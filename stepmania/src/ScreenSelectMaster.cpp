@@ -340,16 +340,30 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 			COMMAND( m_sprIcon[i][c], m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
 
+	/*
+	 * If no options are playable at all, just wait.  Some external
+	 * stimulus may make options available (such as coin insertion).
+	 *
+	 * If any options are playable, make sure one is selected.
+	 */
 	FOREACH_HumanPlayer( p )
-	{
 		if( !m_aGameCommands[m_iChoice[p]].IsPlayable() )
 			Move( p, MENU_DIR_AUTO );
-		ASSERT( m_aGameCommands[m_iChoice[p]].IsPlayable() );
-	}
+}
+
+bool ScreenSelectMaster::AnyOptionsArePlayable() const
+{
+	FOREACH_HumanPlayer( p )
+		if( m_aGameCommands[m_iChoice[p]].IsPlayable() )
+			return true;
+	return false;
 }
 
 bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 {
+	if( !AnyOptionsArePlayable() )
+		return false;
+
 	int iSwitchToIndex = m_iChoice[pn];
 	set<int> seen;
 	do
@@ -614,6 +628,12 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 		return;
 
 	GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
+
+	/* If no options are playable, then we're just waiting for one to become available.
+	 * If any options are playable, then the selection must be playable. */
+	if( !AnyOptionsArePlayable() )
+		return;
+		
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
 	
 	/* Play a copy of the sound, so it'll finish playing even if we leave the screen immediately. */
