@@ -391,6 +391,18 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 		LOG->Warn("This is a software renderer!");
 	}
 
+#if defined(_WINDOWS)
+	/* GLDirect is a Direct3D wrapper for OpenGL.  It's rather buggy; and if in
+	 * any case GLDirect can successfully render us, we should be able to do so
+	 * too using Direct3D directly.  (If we can't, it's a bug that we can work
+	 * around--if GLDirect can do it, so can we!) */
+	if( !strncmp( (const char *) glGetString(GL_RENDERER), "GLDirect", 8 ) )
+	{
+		delete wind;
+		RageException::ThrowNonfatal( "GLDirect was detected.  GLDirect is not compatible with StepMania, and should be disabled.\n" );
+	}
+#endif
+
 #if defined(unix)
 	if( !glXIsDirect( g_X11Display, glXGetCurrentContext() ) )
 	{
