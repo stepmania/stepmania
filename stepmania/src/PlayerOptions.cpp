@@ -2,7 +2,6 @@
 #include "PlayerOptions.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-
 #include "GameState.h"
 #include "NoteSkinManager.h"
 #include "song.h"
@@ -12,11 +11,13 @@
 #include "Foreach.h"
 #include "Style.h"
 #include "CommonMetrics.h"
+#include "arch/Dialog/Dialog.h"
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
 void PlayerOptions::Init()
 {
+	m_bSetScrollSpeed = false;
 	m_fTimeSpacing = 0;			m_SpeedfTimeSpacing = 1.0f;
 	m_fScrollSpeed = 1.0f;		m_SpeedfScrollSpeed = 1.0f;
 	m_fScrollBPM = 200;			m_SpeedfScrollBPM = 1.0f;
@@ -61,23 +62,30 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 	APP( fRandomSpeed );
 }
 
-static CString AddPart( float level, CString name )
+static void AddPart( vector<CString> &AddTo, float level, CString name )
 {
 	if( level == 0 )
-		return "";
+		return;
 
 	const CString LevelStr = (level == 1)? CString(""): ssprintf( "%i%% ", (int) roundf(level*100) );
 
-	return LevelStr + name + ", ";
+	AddTo.push_back( LevelStr + name );
 }
 
 CString PlayerOptions::GetString() const
+{
+	vector<CString> v;
+	GetMods( v );
+	return join( ", ", v );
+}
+
+void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 {
 	CString sReturn;
 
 	if( !m_fTimeSpacing )
 	{
-		if( m_fScrollSpeed != 1 )
+		if( m_bSetScrollSpeed || m_fScrollSpeed != 1 )
 		{
 			/* -> 1.00 */
 			CString s = ssprintf( "%2.2f", m_fScrollSpeed );
@@ -89,95 +97,91 @@ CString PlayerOptions::GetString() const
 					s.erase(s.GetLength()-2);	// delete last 2 chars
 				}
 			}
-			sReturn += s + "x, ";
+			AddTo.push_back( s + "x" );
 		}
 	}
 	else
 	{
 		CString s = ssprintf( "C%.0f", m_fScrollBPM );
-		sReturn += s + ", ";
+		AddTo.push_back( s );
 	}
 
-	sReturn += AddPart( m_fAccels[ACCEL_BOOST],		"Boost" );
-	sReturn += AddPart( m_fAccels[ACCEL_BRAKE],		"Brake" );
-	sReturn += AddPart( m_fAccels[ACCEL_WAVE],		"Wave" );
-	sReturn += AddPart( m_fAccels[ACCEL_EXPAND],	"Expand" );
-	sReturn += AddPart( m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
+	AddPart( AddTo, m_fAccels[ACCEL_BOOST],		"Boost" );
+	AddPart( AddTo, m_fAccels[ACCEL_BRAKE],		"Brake" );
+	AddPart( AddTo, m_fAccels[ACCEL_WAVE],		"Wave" );
+	AddPart( AddTo, m_fAccels[ACCEL_EXPAND],	"Expand" );
+	AddPart( AddTo, m_fAccels[ACCEL_BOOMERANG],	"Boomerang" );
 
-	sReturn += AddPart( m_fEffects[EFFECT_DRUNK],	"Drunk" );
-	sReturn += AddPart( m_fEffects[EFFECT_DIZZY],	"Dizzy" );
-	sReturn += AddPart( m_fEffects[EFFECT_MINI],	"Mini" );
-	sReturn += AddPart( m_fEffects[EFFECT_FLIP],	"Flip" );
-	sReturn += AddPart( m_fEffects[EFFECT_TORNADO],	"Tornado" );
-	sReturn += AddPart( m_fEffects[EFFECT_TIPSY],	"Tipsy" );
-	sReturn += AddPart( m_fEffects[EFFECT_BUMPY],	"Bumpy" );
-	sReturn += AddPart( m_fEffects[EFFECT_BEAT],	"Beat" );
+	AddPart( AddTo, m_fEffects[EFFECT_DRUNK],	"Drunk" );
+	AddPart( AddTo, m_fEffects[EFFECT_DIZZY],	"Dizzy" );
+	AddPart( AddTo, m_fEffects[EFFECT_MINI],	"Mini" );
+	AddPart( AddTo, m_fEffects[EFFECT_FLIP],	"Flip" );
+	AddPart( AddTo, m_fEffects[EFFECT_TORNADO],	"Tornado" );
+	AddPart( AddTo, m_fEffects[EFFECT_TIPSY],	"Tipsy" );
+	AddPart( AddTo, m_fEffects[EFFECT_BUMPY],	"Bumpy" );
+	AddPart( AddTo, m_fEffects[EFFECT_BEAT],	"Beat" );
 
-	sReturn += AddPart( m_fAppearances[APPEARANCE_HIDDEN],	"Hidden" );
-	sReturn += AddPart( m_fAppearances[APPEARANCE_SUDDEN],	"Sudden" );
-	sReturn += AddPart( m_fAppearances[APPEARANCE_STEALTH],	"Stealth" );
-	sReturn += AddPart( m_fAppearances[APPEARANCE_BLINK],	"Blink" );
-	sReturn += AddPart( m_fAppearances[APPEARANCE_RANDOMVANISH],	"RandomVanish" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_HIDDEN],		"Hidden" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_SUDDEN],		"Sudden" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_STEALTH],		"Stealth" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_BLINK],		"Blink" );
+	AddPart( AddTo, m_fAppearances[APPEARANCE_RANDOMVANISH],"RandomVanish" );
 
-	sReturn += AddPart( m_fScrolls[SCROLL_REVERSE],		"Reverse" );
-	sReturn += AddPart( m_fScrolls[SCROLL_SPLIT],		"Split" );
-	sReturn += AddPart( m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
-	sReturn += AddPart( m_fScrolls[SCROLL_CROSS],		"Cross" );
-	sReturn += AddPart( m_fScrolls[SCROLL_CENTERED],	"Centered" );
+	AddPart( AddTo, m_fScrolls[SCROLL_REVERSE],		"Reverse" );
+	AddPart( AddTo, m_fScrolls[SCROLL_SPLIT],		"Split" );
+	AddPart( AddTo, m_fScrolls[SCROLL_ALTERNATE],	"Alternate" );
+	AddPart( AddTo, m_fScrolls[SCROLL_CROSS],		"Cross" );
+	AddPart( AddTo, m_fScrolls[SCROLL_CENTERED],	"Centered" );
 
-	sReturn += AddPart( m_fDark, "Dark");
+	AddPart( AddTo, m_fDark, "Dark" );
 
-	sReturn += AddPart( m_fBlind,	"Blind");
-	sReturn += AddPart( m_fCover,	"Cover");
+	AddPart( AddTo, m_fBlind,	"Blind" );
+	AddPart( AddTo, m_fCover,	"Cover" );
 
-	sReturn += AddPart( m_fPassmark, "Passmark");
+	AddPart( AddTo, m_fPassmark, "Passmark" );
 
-	sReturn += AddPart( m_fRandomSpeed,	"RandomSpeed" );
+	AddPart( AddTo, m_fRandomSpeed, "RandomSpeed" );
 
-	if( m_bTurns[TURN_MIRROR] )			sReturn += "Mirror, ";
-	if( m_bTurns[TURN_LEFT] )			sReturn += "Left, ";
-	if( m_bTurns[TURN_RIGHT] )			sReturn += "Right, ";
-	if( m_bTurns[TURN_SHUFFLE] )		sReturn += "Shuffle, ";
-	if( m_bTurns[TURN_SUPER_SHUFFLE] )	sReturn += "SuperShuffle, ";
+	if( m_bTurns[TURN_MIRROR] )			AddTo.push_back( "Mirror" );
+	if( m_bTurns[TURN_LEFT] )			AddTo.push_back( "Left" );
+	if( m_bTurns[TURN_RIGHT] )			AddTo.push_back( "Right" );
+	if( m_bTurns[TURN_SHUFFLE] )		AddTo.push_back( "Shuffle" );
+	if( m_bTurns[TURN_SUPER_SHUFFLE] )	AddTo.push_back( "SuperShuffle" );
 
-	if( m_bTransforms[TRANSFORM_NOHOLDS] )	sReturn += "NoHolds, ";
-	if( m_bTransforms[TRANSFORM_NOMINES] )	sReturn += "NoMines, ";
-	if( m_bTransforms[TRANSFORM_LITTLE] )	sReturn += "Little, ";
-	if( m_bTransforms[TRANSFORM_WIDE] )		sReturn += "Wide, ";
-	if( m_bTransforms[TRANSFORM_BIG] )		sReturn += "Big, ";
-	if( m_bTransforms[TRANSFORM_QUICK] )	sReturn += "Quick, ";
-	if( m_bTransforms[TRANSFORM_BMRIZE] )	sReturn += "BMRize, ";
-	if( m_bTransforms[TRANSFORM_SKIPPY] )	sReturn += "Skippy, ";
-	if( m_bTransforms[TRANSFORM_MINES] )	sReturn += "Mines, ";
-	if( m_bTransforms[TRANSFORM_ECHO] )		sReturn += "Echo, ";
-	if( m_bTransforms[TRANSFORM_STOMP] )	sReturn += "Stomp, ";
-	if( m_bTransforms[TRANSFORM_PLANTED] )	sReturn += "Planted, ";
-	if( m_bTransforms[TRANSFORM_FLOORED] )	sReturn += "Floored, ";
-	if( m_bTransforms[TRANSFORM_TWISTER] )	sReturn += "Twister, ";
-	if( m_bTransforms[TRANSFORM_NOJUMPS] )	sReturn += "NoJumps, ";
-	if( m_bTransforms[TRANSFORM_NOHANDS] )	sReturn += "NoHands, ";
-	if( m_bTransforms[TRANSFORM_NOQUADS] )	sReturn += "NoQuads, ";
+	if( m_bTransforms[TRANSFORM_NOHOLDS] )	AddTo.push_back( "NoHolds" );
+	if( m_bTransforms[TRANSFORM_NOMINES] )	AddTo.push_back( "NoMines" );
+	if( m_bTransforms[TRANSFORM_LITTLE] )	AddTo.push_back( "Little" );
+	if( m_bTransforms[TRANSFORM_WIDE] )		AddTo.push_back( "Wide" );
+	if( m_bTransforms[TRANSFORM_BIG] )		AddTo.push_back( "Big" );
+	if( m_bTransforms[TRANSFORM_QUICK] )	AddTo.push_back( "Quick" );
+	if( m_bTransforms[TRANSFORM_BMRIZE] )	AddTo.push_back( "BMRize" );
+	if( m_bTransforms[TRANSFORM_SKIPPY] )	AddTo.push_back( "Skippy" );
+	if( m_bTransforms[TRANSFORM_MINES] )	AddTo.push_back( "Mines" );
+	if( m_bTransforms[TRANSFORM_ECHO] )		AddTo.push_back( "Echo" );
+	if( m_bTransforms[TRANSFORM_STOMP] )	AddTo.push_back( "Stomp" );
+	if( m_bTransforms[TRANSFORM_PLANTED] )	AddTo.push_back( "Planted" );
+	if( m_bTransforms[TRANSFORM_FLOORED] )	AddTo.push_back( "Floored" );
+	if( m_bTransforms[TRANSFORM_TWISTER] )	AddTo.push_back( "Twister" );
+	if( m_bTransforms[TRANSFORM_NOJUMPS] )	AddTo.push_back( "NoJumps" );
+	if( m_bTransforms[TRANSFORM_NOHANDS] )	AddTo.push_back( "NoHands" );
+	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
 
-	if( m_fSkew==1 && m_fPerspectiveTilt==-1 )
-		sReturn += "Incoming, ";
-	else if( m_fSkew==1 && m_fPerspectiveTilt==+1 )
-		sReturn += "Space, ";
-	else if( m_fSkew==0 && m_fPerspectiveTilt==-1 )
-		sReturn += "Hallway, ";
-	else if( m_fSkew==0 && m_fPerspectiveTilt==+1 )
-		sReturn += "Distant, ";
+	if( m_fSkew==1 && m_fPerspectiveTilt==-1 )		AddTo.push_back( "Incoming" );
+	else if( m_fSkew==1 && m_fPerspectiveTilt==+1 )	AddTo.push_back( "Space" );
+	else if( m_fSkew==0 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Hallway" );
+	else if( m_fSkew==0 && m_fPerspectiveTilt==+1 )	AddTo.push_back( "Distant" );
 
 	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
-		sReturn += m_sNoteSkin + ", ";
-
-	if( sReturn.GetLength() > 2 )
-		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
-	return sReturn;
+	{
+		CString s = m_sNoteSkin;
+		Capitalize( s );
+		AddTo.push_back( s );
+	}
 }
 
 /* Options are added to the current settings; call Init() beforehand if
  * you don't want this. */
-void PlayerOptions::FromString( CString sOptions )
+void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 {
 	ASSERT( NOTESKIN );
 //	Init();
@@ -304,6 +308,15 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "subtractscore" )		m_ScoreDisplay = SCORING_SUBTRACT;
 		else if( sBit == "averagescore" )		m_ScoreDisplay = SCORING_AVERAGE;
 		else if( sBit == "random" )				ChooseRandomMofifiers();
+		else
+		{
+			if( bWarnOnInvalid )
+			{
+				CString sWarning = ssprintf( "The options string '%s' contains an invalid mod name '%s'", sOptions.c_str(), sBit.c_str() );
+				LOG->Warn( sWarning );
+				Dialog::OK( sWarning, "INVALID_PLAYER_OPTION_WANRING" );
+			}
+		}
 	}
 }
 
@@ -569,45 +582,37 @@ bool PlayerOptions::IsEasierForCourseAndTrail( Course* pCourse, Trail* pTrail )
 	return false;
 }
 
-CString PlayerOptions::ThemeMod( CString sOneMod )
+void PlayerOptions::GetThemedMods( vector<CString> &AddTo ) const
 {
-	// Change all token to first letter capitalized, rest lowercase
-	CStringArray asTokens;
-	split( sOneMod, " ", asTokens );
-	FOREACH( CString, asTokens, s )
+	vector<CString> vMods;
+	GetMods( vMods );
+	FOREACH_CONST( CString, vMods, s )
 	{
-		s->MakeLower();
-		*s = Capitalize( *s );
+		const CString& sOneMod = *s;
+
+		ASSERT( !sOneMod.empty() );
+
+		CStringArray asTokens;
+		split( sOneMod, " ", asTokens );
+
+		if( asTokens.empty() )
+			continue;
+
+		// Strip the approach speed token, if any
+		if( asTokens[0][0] == '*' )
+			asTokens.erase( asTokens.begin() );
+
+		// capitalize NoteSkin names
+		asTokens.back() = Capitalize( asTokens.back() );
+
+		/* Theme the mod name (the last string).  Allow this to not exist, since
+		 * characters might use modifiers that don't exist in the theme. */
+		asTokens.back() = THEME_OPTION_ITEM( asTokens.back(), true );
+
+		CString sThemedMod = join( " ", asTokens );
+
+		AddTo.push_back( sThemedMod );
 	}
-
-	// Strip the approach speed token, if any
-	if( asTokens[0][0] == '*' )
-		asTokens.erase( asTokens.begin() );
-
-	// Strip "100%", if any
-	if( asTokens[0] == "100%" )
-		asTokens.erase( asTokens.begin() );
-
-	/* Theme the mod name (the last string).  Allow this to not exist, since
-	 * characters might use modifiers that don't exist in the theme. */
-	asTokens.back() = THEME_OPTION_ITEM( asTokens.back(), true );
-
-	return join( " ", asTokens );
-}
-
-CString PlayerOptions::GetThemedString() const
-{
-	CString sMods = GetString();
-
-	CStringArray asMods;
-	split( sMods, ", ", asMods );
-	CStringArray asThemedMods;
-	for( unsigned j=0; j<asMods.size(); j++ )
-	{
-		CString& sMod = asMods[j];
-		asThemedMods.push_back( ThemeMod(sMod) );
-	}
-	return join( ", ", asThemedMods );
 }
 
 bool PlayerOptions::ContainsTransformOrTurn() const

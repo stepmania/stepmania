@@ -32,11 +32,9 @@ void ActiveAttackList::Update( float fDelta )
 
 void ActiveAttackList::Refresh()
 {
-	CString s;
-
 	const AttackArray& attacks = m_pPlayerState->m_ActiveAttacks;
-	
-	// clear all lines, then add all active attacks
+
+	vector<CString> vsThemedMods;
 	for( unsigned i=0; i<attacks.size(); i++ )
 	{
 		const Attack& attack = attacks[i];
@@ -44,23 +42,12 @@ void ActiveAttackList::Refresh()
 		if( !attack.bOn )
 			continue; /* hasn't started yet */
 
-		CString sMods = attack.sModifier;
-		CStringArray asMods;
-		split( sMods, ",", asMods );
-		for( unsigned j=0; j<asMods.size(); j++ )
-		{
-			CString& sMod = asMods[j];
-			TrimLeft( sMod );
-			TrimRight( sMod );
-
-			sMod = PlayerOptions::ThemeMod( sMod );
-
-			if( s.empty() )
-				s = sMod;
-			else
-				s = sMod + "\n" + s;
-		}
+		PlayerOptions po;
+		po.FromString( attack.sModifier, true );
+		po.GetThemedMods( vsThemedMods );
 	}
+
+	CString s = join( "\n", vsThemedMods );
 
 	this->SetText( s );	// BitmapText will not rebuild vertices if these strings are the same.
 }

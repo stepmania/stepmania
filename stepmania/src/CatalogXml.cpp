@@ -232,7 +232,14 @@ void SaveCatalogXml()
 			for( set<CString>::const_iterator iter = modifiers.begin(); iter != modifiers.end(); iter++ )
 			{
 				XNode* pNode2 = pNode->AppendChild( "Modifier", *iter );
-				pNode2->AppendAttr( "DisplayAs", PlayerOptions::ThemeMod(*iter) );
+				PlayerOptions po;
+				CString s = *iter;
+				po.FromString( s, false );
+				vector<CString> v;
+				po.GetThemedMods( v );
+				if( v.empty() )
+					continue;
+				pNode2->AppendAttr( "DisplayAs", join(" ",v) );
 			}
 		}
 	}

@@ -410,11 +410,12 @@ void ScreenEvaluation::Init()
 					SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 					this->AddChild( &m_DifficultyMeter[p] );
 					
-					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF("Common","normal") );
-					CString sPO = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetThemedString();
-					sPO.Replace( ", ", PLAYER_OPTIONS_SEPARATOR );
+					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerOptions") );
 					m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
+					vector<CString> v;
+					GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetThemedMods( v );
+					CString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
 					m_textPlayerOptions[p].SetText( sPO );
 					this->AddChild( &m_textPlayerOptions[p] );
 
