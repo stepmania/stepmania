@@ -633,19 +633,10 @@ unsigned int GetHashForDirectory( CString sDir )
 
 unsigned GetFileSizeInBytes( const CString &sFilePath )
 {
-	HANDLE hFile = CreateFile(
-	  sFilePath,          // pointer to name of the file
-	  GENERIC_READ,       // access (read-write) mode
-	  FILE_SHARE_READ|FILE_SHARE_WRITE,	// share mode
-	  NULL,				   // pointer to security attributes
-	  OPEN_EXISTING,  // how to create
-	  FILE_ATTRIBUTE_NORMAL,  // file attributes
-	  NULL         // handle to file with attributes to 
-	);
+	struct stat st;
+	stat(sFilePath.GetString(), &st);
 
-	DWORD dwSize = GetFileSize( hFile, NULL );
-	CloseHandle( hFile );
-	return dwSize;
+	return st.st_size;
 }
 
 bool DoesFileExist( const CString &sPath )
