@@ -614,18 +614,24 @@ int ThemeManager::GetMetricI( CString sClassName, CString sValueName )
 
 float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 {
-	const CString str = GetMetricRaw( sClassName,sValueName );
+	CString str = GetMetricRaw( sClassName,sValueName );
+	// HACK: Many metrics have "//" comments that Lua fails to parse.
+	// Replace them with Lua-style comments.
+	str.Replace( "//", "--" );
 	return Lua::RunExpressionF( str );
 }
 
 // #include "LuaHelpers.h"
 bool ThemeManager::GetMetricB( CString sClassName, CString sValueName )
 {
-	const CString str = GetMetricRaw( sClassName,sValueName );
+	CString str = GetMetricRaw( sClassName,sValueName );
 	if( str == "0" )
 		return false; /* optimization */
 	if( str == "1" )
 		return true; /* optimization */
+	// HACK: Many metrics have "//" comments that Lua fails to parse.
+	// Replace them with Lua-style comments.
+	str.Replace( "//", "--" );
 	return Lua::RunExpressionB( str );
 }
 
