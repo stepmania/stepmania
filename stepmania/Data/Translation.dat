@@ -106,10 +106,10 @@ TitleTo: MOBO★MOGA
 TitleFrom: Love (Love )?Shine
 TitleTo: LOVE ♡ SHINE
 *
-TitleFrom: God of Romance
+TitleFrom: (God of Romance)|(Romansu no Kamisama)
 TitleTo: ロマンスの神様
 *
-TitleFrom: Dancing Pompokolin
+TitleFrom: (Dancing Pompokolin)|(Odoru Pompokolin)
 TitleTo: おどるポンポコリン
 *
 TitleFrom: Aoi Shoudou
@@ -334,6 +334,15 @@ SubtitleTo: WHY! パラパラ・リミックス
 *
 ArtistFrom: Zobekka
 ArtistTo: ゾベッカ
+*
+ArtistFrom: Omega Versus KTz
+ArtistTo: Ω Versus KTz
+*
+ArtistFrom: DJ Demon Versus Omega
+ArtistTo: DJ 鬼 Versus 鬼
+*
+ArtistFrom: NW 260, ZZ, and 290
+ArtistTo: NW 260, &doublezeta;, and 290
 *
 # Tokimeki Memorial Dancing Summer Vacation
 TitleFrom: Anata ni Aete
