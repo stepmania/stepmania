@@ -15,6 +15,7 @@
 #include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "LuaHelpers.h"
+#include "ModeChoice.h"
 
 #define CHOICES						THEME->GetMetric (m_sName,"Choices")
 #define CONDITION(choice)			THEME->GetMetric (m_sName,"Condition"+choice)
@@ -50,7 +51,13 @@ void ScreenBranch::HandleScreenMessage( const ScreenMessage SM )
 		{
 			CString sNextScreen = NEXT_SCREEN(m_sChoice);
 			LOG->Trace( "Branching to '%s'", sNextScreen.c_str() );
-			SCREENMAN->SetNewScreen( sNextScreen );
+
+			ModeChoice mc;
+			mc.Load( 0, sNextScreen );
+			if( mc.m_sScreen == "" )
+				RageException::Throw("Metric %s::%s must set \"screen\"",
+					m_sName, ("NextScreen"+m_sChoice).c_str() );
+			mc.ApplyToAllPlayers();
 		}
 		break;
 	}
