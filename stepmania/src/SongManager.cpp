@@ -419,9 +419,9 @@ void SongManager::SaveMachineScoresToDisk()
 				ASSERT(pCourse);
 
 				if( pCourse->m_bIsAutoGen )
-					LOG->Trace(" %p", pCourse->m_sName.c_str() );
+					fprintf(fp, "%s\n", pCourse->m_sName.c_str());
 				else
-					LOG->Trace(" %p", pCourse->m_sPath.c_str() );
+					fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
 				
 				for( int i=0; i<NUM_NOTES_TYPES; i++ )
 					for( int j=0; j<NUM_RANKING_LINES; j++ )
