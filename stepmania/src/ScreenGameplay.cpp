@@ -516,6 +516,9 @@ void ScreenGameplay::LoadNextSong()
 		// If it's the first song, record the options the player selected for later.
 		if( GAMESTATE->m_CurStageStats.iSongsPlayed[p] == 0 )
 			GAMESTATE->m_SelectedOptions[p] = GAMESTATE->m_PlayerOptions[p];
+
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			GAMESTATE->m_CurStageStats.iSongsPlayed[p]++;
 	}
 
 	switch( GAMESTATE->m_PlayMode )
@@ -527,7 +530,7 @@ void ScreenGameplay::LoadNextSong()
 	case PLAY_MODE_ENDLESS:
 		{
 			for( p=0; p<NUM_PLAYERS; p++ )
-				m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iSongsPlayed[p]+1) );
+				m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_CurStageStats.iSongsPlayed[p]) );
 
 			int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 			iPlaySongIndex %= m_apCourseSongs.size();
@@ -1232,7 +1235,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if( !GAMESTATE->IsPlayerEnabled(p) )
 					continue;
 
-				GAMESTATE->m_CurStageStats.iSongsPlayed[p]++;
 				if( !GAMESTATE->m_CurStageStats.bFailed[p] )
 					GAMESTATE->m_CurStageStats.iSongsPassed[p]++;
 			}
