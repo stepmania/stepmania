@@ -655,7 +655,7 @@ void SetupExtensions()
 	{
 		GLExt.glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
 		g_iMaxTextureUnits = 1;
-		glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, &g_iMaxTextureUnits );
+		glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, (GLint *)&g_iMaxTextureUnits );
 	}
 
 	if( HasExtension("GL_ARB_vertex_buffer_object") )
