@@ -1416,13 +1416,12 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			case stage:
 				if( m_bTryExtraStage || !(GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) )
 				{
-					/* Hack: finish the stage before moving on.  This will increment the stage
-					 * counter.  If we don't do this, the stage counter will be wrong for
-					 * ScreenSelectMusic code which is called before the ctor.  Watch out;
-					 * calling this will change the results of IsFinalStage(), etc. */
+					/* Finish the stage before moving on, so the stage counter will be correct
+					 * for ScreenSelectMusic code which is called before the ctor.  Grab NEXT_SCREEN
+					 * first, NEXT_SCREEN is a Lua script that depends on the stage counter. */
+					CString sNextScreen = NEXT_SCREEN;
 					GAMESTATE->FinishStage();
-
-					SCREENMAN->SetNewScreen( NEXT_SCREEN );
+					SCREENMAN->SetNewScreen( sNextScreen );
 					break;
 				}
 
