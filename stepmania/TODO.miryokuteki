@@ -2,92 +2,10 @@
 // Miryokuteki's Todo/Done Record //
 ////////////////////////////////////
 
-// Last Updated May 9th, 2003
+// Last Updated July 7th, 2003
 
 Todo List:
-  ** Find a way to get the length of a movie being played, so ScreenIntroMovie does not have to have a pre-determined length (I.e: exits when the movie is finished playing)
+     <cleared>
 
 Done as of 05/09/03:
-    ** Implemented a complete MAX2 style unlock system.
-
-
-
-
-
-Done as of 05/02/03:
-    ** Added more scripting to SSDEX, now supporting icon bar/icons/text/pic/info scripting. Having small probs with the highlight bar for each player, scripting-wise. Will work on this later
-
-
-
-
-
-Done as of 05/01/03:
-    ** Re-coded my ScreenSelectDifficultyEX, to support the icon bar like the arcade does, and added scripting support and much more configuration. Will add even more later tonight.
-
-
-
-
-
-
-Done as of 04/09/03:
-    ** Completely recoded my DDRExtreme-style difficulty select screen to correctly use vector like SSDifficulty does. Runs much nicer now. Also cleaned up redir's needed for this.
-
-
-
-
-
-Done as of 03/08/03:
-    NEW FEATURE** Almost done with support for .lrc files to display lyrics :)
-
-
-
-
-
-Done as of 02/27/03:
-    FEATURE FIX** Enhanced ScreenSelectDifficultyEX, for more arcade accuracy
-    NEW PICTURE** Created a new image for Battle mode
-    NEW FEATURE** Added an option for "Solo Singles", to allow 4-panel solo mode like 4th mix
-
-
-
-
-
-Done as of 02/21/03:
-    NEW FEATURE** New screen added, for DDREx style difficulty selection. This is optional in the APPEARANCE OPTIONS menu
-
-
-
-
-
-Done as of 02/19/03:
-    NEW FEATURE** Added screen to allow adjustment of Stepmania's internal volume, ScreenSoundOptions
-
-
-
-
-
-Done as of 02/17/03:
- FEATURE UPDATE** All-original Intro Movie is now available as an add-on. Not on CVS server due to complaints of size
-
-
-
-
-Done as of 02/12/03:
-    NEW FEATURE** Added 12x speed mod for the hell of it ^_^
-    NEW FEATURE** Song Options menu (2nd screen after entering options on song selection), can be enabled or disabled. This is in MACHINE OPTIONS
-         CHANGE** Game no longer resets when coin mode is changed.
-         CHANGE** Coin mode can be changed instantly, without a reset, at any screen with F3.
-  FEATURE FIXED** Operator & InsertCoin keys are no longer static, and are now configurable AND global. Also, Operator key -only- works outside of the edit system & options screens.. This saves hassles of "oops, hit the operator key, my edit is gone!"
-     FILE FIXED** For some reason, ScreenIntroMovie.h never made it into the project workspace.. fixed :-p
-
-
-
-
-Done as of 02/11/03:
-      BUG FIXED** 2nd player could join in reguardless of joint premium or credits
-      BUG FIXED** Credits could only be added on certain screens, the credit key is now predefined to F1 and is global
-    NEW FEATURE** Global Operator key (Left-CTRL)
-    NEW FEATURE** Credits now replicate arcade style count -- THANK YOU MATRIARK TERVEL!!
-    NEW ELEMENT** Joint Premium banner on the SelectStyle screen, as in DDRMAX2
-    NEW ELEMENT** Joint Premium scrolling msg banner on TitleScreen as in DDRMAX2
-  ARCADE-MIRROR** Selecting "RANDOM", now chooses the song FOR you, almost like DDREX does (ddrex just fades out and doesn't tell you what song it picked)
+     <cleared>
