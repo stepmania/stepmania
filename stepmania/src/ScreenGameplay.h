@@ -54,6 +54,7 @@ protected:
 	void LoadNextSong();
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
+	void PauseGame( bool bPause );
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 	void PlayAnnouncer( CString type, float fSeconds );
 	void UpdateLights();
@@ -73,6 +74,7 @@ protected:
 		STATE_OUTRO,	// not allowed to press Back
 		NUM_DANCING_STATES
 	} m_DancingState;
+	bool				m_bPaused;
 	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
 	vector<Steps*>		m_vpStepsQueue[NUM_PLAYERS];	// size may be >1 if playing a course
 	vector<AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
@@ -83,7 +85,7 @@ protected:
 	LyricDisplay		m_LyricDisplay;
 
 	Background			m_SongBackground;
-	Foreground			m_Foreground;
+	Foreground			m_SongForeground;
 
 	Transition	m_NextSongIn;	// shows between songs in a course
 	Transition	m_NextSongOut;	// shows between songs in a course

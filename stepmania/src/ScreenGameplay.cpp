@@ -110,6 +110,7 @@ void ScreenGameplay::Init()
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_GAMEPLAY );
 
 	m_pSoundMusic = NULL;
+	m_bPaused = false;
 
 	/* We do this ourself. */
 	SOUND->HandleSongTimer( false );
@@ -260,11 +261,15 @@ void ScreenGameplay::Init()
 
 
 
+	m_SongBackground.SetName( "SongBackground" );
 	m_SongBackground.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
+	ON_COMMAND( m_SongBackground );
 	this->AddChild( &m_SongBackground );
 
-	m_Foreground.SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
-	this->AddChild( &m_Foreground );
+	m_SongForeground.SetName( "SongForeground" );
+	m_SongForeground.SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
+	ON_COMMAND( m_SongBackground );
+	this->AddChild( &m_SongForeground );
 
 	if( PREFSMAN->m_bShowBeginnerHelper )
 	{
@@ -1060,7 +1065,7 @@ void ScreenGameplay::LoadNextSong()
 	else
 		m_BeginnerHelper.SetHidden( false );
 
-	m_Foreground.LoadFromSong( GAMESTATE->m_pCurSong );
+	m_SongForeground.LoadFromSong( GAMESTATE->m_pCurSong );
 
 	m_fTimeSinceLastDancingComment = 0;
 
@@ -1125,6 +1130,19 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 
 	/* Return the amount of time until the first beat. */
 	return fFirstSecond - fStartSecond;
+}
+
+
+void ScreenGameplay::PauseGame( bool bPause )
+{
+	if( m_bPaused == bPause )
+	{
+		LOG->Trace( "ScreenGameplay::PauseGame(%i) received, but already in that state; ignored", bPause );
+		return;
+	}
+
+	m_bPaused = bPause;
+	m_pSoundMusic->Pause( bPause );
 }
 
 // play assist ticks
