@@ -217,6 +217,9 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 		/* We can't do this in ScreenHowToPlay::~ScreenHowToPlay, since that happens
 		 * after the ctor of the next screen; we don't want to mess with its state. */
 		GAMESTATE->m_pCurSong = NULL;
+
+		/* turn the blind modifier back off so the demo screen doesn't have it on */
+		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 0;
 		break;
 	}
 	ScreenAttract::HandleScreenMessage( SM );
@@ -233,8 +236,8 @@ void ScreenHowToPlay::DrawPrimitives()
 		RageColor(0,0,0,1),
 		RageVector3(0, 0, 1) );
 
-	m_mDancePad.Draw();
-	m_mCharacter.Draw();
+//	m_mDancePad.Draw();
+//	m_mCharacter.Draw();
 
 	DISPLAY->SetLightOff( 0 );
 	DISPLAY->SetLighting( false );
