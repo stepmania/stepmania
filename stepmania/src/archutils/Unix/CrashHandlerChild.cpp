@@ -258,7 +258,7 @@ void BacktraceNames::FromAddr( void *p )
             switch (status)
             {
                 case 0:
-                    fprintf(stderr, "WTF? It returned success...\n");
+                    fprintf(stderr, "Something went wrong, it returned success, but failed.\n");
                     break;
                 case -1:
                     fprintf(stderr, "Memory allocation failure.\n");
