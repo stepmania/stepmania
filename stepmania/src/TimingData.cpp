@@ -44,16 +44,6 @@ void TimingData::GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
 
 void TimingData::AddBPMSegment( const BPMSegment &seg )
 {
-	/* If we already have a BPM segment at this beat, replace it. */
-	for( unsigned i=0; i<m_BPMSegments.size(); i++ )
-		if( fabsf(m_BPMSegments[i].m_fStartBeat-seg.m_fStartBeat) < 0.0001 )
-		{
-			LOG->Trace( "Replaced BPM segment at %f (%f BPM) with %f BPM",
-				m_BPMSegments[i].m_fStartBeat, m_BPMSegments[i].m_fBPM, seg.m_fBPM );
-			m_BPMSegments[i] = seg;
-			return;
-		}
-
 	m_BPMSegments.push_back( seg );
 	SortBPMSegmentsArray( m_BPMSegments );
 }
