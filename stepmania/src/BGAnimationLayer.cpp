@@ -20,7 +20,7 @@
 #include <math.h>
 #include "RageTimer.h"
 #include "RageLog.h"
-#include "Song.h"
+#include "song.h"
 #include "ThemeManager.h"
 
 

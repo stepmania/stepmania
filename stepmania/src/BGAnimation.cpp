@@ -17,7 +17,7 @@
 #include "IniFile.h"
 #include "BGAnimationLayer.h"
 #include "RageUtil.h"
-#include "Song.h"
+#include "song.h"
 #include "ThemeManager.h"
 
 
