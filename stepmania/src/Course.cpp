@@ -429,7 +429,7 @@ void Course::Save()
 }
 
 
-void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup, Difficulty diff )
+void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 {
 	m_bIsAutogen = true;
 	m_bRepeat = true;
@@ -437,15 +437,24 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	m_iLives = -1;
 	m_iMeter[0] = m_iMeter[1] = -1;
 
-	m_sName = SONGMAN->ShortenGroupName( sGroupName ) + GetAutogenDifficultySuffix( diff );
-	
-	m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
+	if( sGroupName == "" )
+	{
+		m_sName = "All Songs";
+		// m_sBannerPath = ""; // XXX
+	} else {
+		m_sName = SONGMAN->ShortenGroupName( sGroupName ) + GetAutogenDifficultySuffix( diff );
+		m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
+	}
 
 	// We want multiple songs, so we can try to prevent repeats during
 	// gameplay. (We might still get a repeat at the repeat boundary,
 	// but that'd be rare.) -glenn
 	CourseEntry e;
-	e.type = COURSE_ENTRY_RANDOM_WITHIN_GROUP;
+	if( sGroupName != "" )
+		e.type = COURSE_ENTRY_RANDOM_WITHIN_GROUP;
+	else
+		e.type = COURSE_ENTRY_RANDOM;
+
 	e.group_name = sGroupName;
 	e.difficulty = diff;
 	e.mystery = true;
@@ -456,39 +465,9 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 		m_entries.push_back( e );
 }
 
-void Course::AutogenEndlessFromVector( CString sCourseName, vector<Song*> &apSongsInCourse, Difficulty diff )
+void Course::AutogenNonstopFromGroup( CString sGroupName, Difficulty diff )
 {
-	m_bIsAutogen = true;
-	m_bRepeat = true;
-	m_bRandomize = true;
-	m_iLives = -1;
-	m_iMeter[0] = m_iMeter[1] = -1;
-
-	m_sName = SONGMAN->ShortenGroupName( sCourseName ) + GetAutogenDifficultySuffix( diff );
-	//m_sBannerPath = SONGMAN->GetGroupBannerPath( sBannerName );
-	
-	CourseEntry e;
-	e.type = COURSE_ENTRY_FIXED;
-	e.group_name = sCourseName;
-	e.difficulty = diff;
-	e.mystery = true;
-	
-	for ( unsigned i = 0; i < apSongsInCourse.size(); ++i )
-	{
-		e.pSong = apSongsInCourse[i];
-		m_entries.push_back( e );
-	}
-
-	//This means that the course will be the same each time until re-init
-	//Currently, this is only used for the All Songs endless course, so it's
-	//a non-issue
-	//Also, it appears to be what COURSE_ENTRY_RANDOM does anyways
-	random_shuffle(m_entries.begin(),m_entries.end());
-}
-
-void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup, Difficulty diff )
-{
-	AutogenEndlessFromGroup( sGroupName, apSongsInGroup, diff );
+	AutogenEndlessFromGroup( sGroupName, diff );
 
 	m_bRepeat = false;
 

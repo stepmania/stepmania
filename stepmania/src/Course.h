@@ -139,9 +139,8 @@ public:
 	void LoadFromCRSFile( CString sPath );
 	void Unload();
 	void Save();
-	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup, Difficulty diff );
-	void AutogenEndlessFromVector( CString sCourseName, vector<Song*> &apSongsInCourse, Difficulty diff );
-	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup, Difficulty diff );
+	void AutogenEndlessFromGroup( CString sGroupName, Difficulty diff );
+	void AutogenNonstopFromGroup( CString sGroupName, Difficulty diff );
 
 	RadarValues GetRadarValues( StepsType st, CourseDifficulty cd ) const;
 
