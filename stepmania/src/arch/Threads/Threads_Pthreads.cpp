@@ -59,7 +59,7 @@ int ThreadImpl_Pthreads::Wait()
 	void *val;
 	int ret = pthread_join( thread, &val );
 	if( ret )
-		RageException::Throw( "pthread_join: %s", strerror(ret) );
+		RageException::Throw( "pthread_join: %s", strerror(errno) );
 
 	return (int) val;
 }
@@ -111,12 +111,12 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	int ret = pthread_create( &thread->thread, NULL, StartThread, thread );
 	if( ret )
-		FAIL_M( ssprintf( "pthread_create: %s", strerror(errno)) );
+		FAIL_M( ssprintf( "MakeThread: pthread_create: %s", strerror(errno)) );
 
 	/* Don't return until StartThread sets m_piThreadID. */
 	ret = sem_wait( &thread->m_StartFinishedSem );
 	if( ret )
-		FAIL_M( ssprintf( "pthread_create: %s", strerror(errno)) );
+		FAIL_M( ssprintf( "MakeThread: sem_wait: %s", strerror(errno)) );
 	sem_destroy( &thread->m_StartFinishedSem );
 	
 	return thread;
@@ -132,7 +132,7 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 {
 	int ret = pthread_mutex_destroy( &mutex ) == -1;
 	if( ret )
-		RageException::Throw( "Error deleting mutex: %s", strerror(ret) );
+		RageException::Throw( "Error deleting mutex: %s", strerror(errno) );
 }
 
 
@@ -170,7 +170,7 @@ bool MutexImpl_Pthreads::Lock()
 			break;
 
 		default:
-			FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(ret)) );
+			FAIL_M( ssprintf("pthread_mutex_timedlock: %s", strerror(errno)) );
 		}
 	}
 
@@ -195,7 +195,7 @@ bool MutexImpl_Pthreads::TryLock()
 	if( ret == EBUSY )
 		return false;
 	if( ret )
-		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(ret) );
+		RageException::Throw( "pthread_mutex_lock failed: %s", strerror(errno) );
 	return true;
 }
 
@@ -254,7 +254,7 @@ bool SemaImpl_Pthreads::Wait()
 	}
 	while( ret == -1 && errno == EINTR );
 
-	ASSERT_M( ret == 0, ssprintf("sem_wait: %s", strerror(errno)) );
+	ASSERT_M( ret == 0, ssprintf("Wait: sem_wait: %s", strerror(errno)) );
 
 	return true;
 }
@@ -265,7 +265,7 @@ bool SemaImpl_Pthreads::TryWait()
 	if( ret == EBUSY )
 		return false;
 	if( ret )
-		RageException::Throw( "sem_trywait failed: %s", strerror(ret) );
+		RageException::Throw( "TryWait: sem_trywait failed: %s", strerror(errno) );
 	return true;
 }
 
