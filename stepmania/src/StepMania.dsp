@@ -2334,14 +2334,6 @@ SOURCE=.\SnapDisplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\SongCreditDisplay.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SongCreditDisplay.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\TextBanner.cpp
 # End Source File
 # Begin Source File
