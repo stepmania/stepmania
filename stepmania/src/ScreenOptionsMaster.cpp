@@ -37,7 +37,7 @@
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 
 /* Add the list named "ListName" to the given row/handler. */
-void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, CString ListName )
+void ScreenOptionsMaster::SetList( OptionRowDefinition &row, OptionRowHandler &hand, CString ListName )
 {
 	hand.type = ROW_LIST;
 	hand.m_bUseModNameForIcon = true;
@@ -77,9 +77,9 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 		if( asParts[i].CompareNoCase("together") == 0 )
 			row.bOneChoiceForAllPlayers = true;
 		else if( asParts[i].CompareNoCase("SelectMultiple") == 0 )
-			row.type = OptionRowData::SELECT_MULTIPLE;
+			row.selectType = OptionRowDefinition::SELECT_MULTIPLE;
 		else if( asParts[i].CompareNoCase("SelectNone") == 0 )
-			row.type = OptionRowData::SELECT_NONE;
+			row.selectType = OptionRowDefinition::SELECT_NONE;
 	}
 
 	for( int col = 0; col < NumCols; ++col )
@@ -101,7 +101,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 }
 
 /* Add a list of difficulties/edits to the given row/handler. */
-void ScreenOptionsMaster::SetSteps( OptionRowData &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetSteps( OptionRowDefinition &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_LIST;
 	row.name = "Steps";
@@ -157,7 +157,7 @@ void ScreenOptionsMaster::SetSteps( OptionRowData &row, OptionRowHandler &hand )
 
 
 /* Add the given configuration value to the given row/handler. */
-void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, CString param )
+void ScreenOptionsMaster::SetConf( OptionRowDefinition &row, OptionRowHandler &hand, CString param )
 {
 	/* Configuration values are never per-player. */
 	row.bOneChoiceForAllPlayers = true;
@@ -176,7 +176,7 @@ void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, C
 }
 
 /* Add a list of available characters to the given row/handler. */
-void ScreenOptionsMaster::SetCharacters( OptionRowData &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetCharacters( OptionRowDefinition &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_LIST;
 	row.bOneChoiceForAllPlayers = false;
@@ -206,7 +206,7 @@ void ScreenOptionsMaster::SetCharacters( OptionRowData &row, OptionRowHandler &h
 }
 
 /* Add a list of available styles to the given row/handler. */
-void ScreenOptionsMaster::SetStyles( OptionRowData &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetStyles( OptionRowDefinition &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_LIST;
 	row.bOneChoiceForAllPlayers = true;
@@ -227,7 +227,7 @@ void ScreenOptionsMaster::SetStyles( OptionRowData &row, OptionRowHandler &hand 
 }
 
 /* Add a list of available song groups to the given row/handler. */
-void ScreenOptionsMaster::SetGroups( OptionRowData &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetGroups( OptionRowDefinition &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_LIST;
 	row.bOneChoiceForAllPlayers = true;
@@ -255,7 +255,7 @@ void ScreenOptionsMaster::SetGroups( OptionRowData &row, OptionRowHandler &hand 
 }
 
 /* Add a list of available difficulties to the given row/handler. */
-void ScreenOptionsMaster::SetDifficulties( OptionRowData &row, OptionRowHandler &hand )
+void ScreenOptionsMaster::SetDifficulties( OptionRowDefinition &row, OptionRowHandler &hand )
 {
 	set<Difficulty> vDifficulties;
 	GAMESTATE->GetDifficultiesToShow( vDifficulties );
@@ -330,12 +330,12 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			bShowUnderlines = false;
 	}
 
-	m_OptionRowAlloc = new OptionRowData[asLineNames.size()];
+	m_OptionRowAlloc = new OptionRowDefinition[asLineNames.size()];
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
 
-		OptionRowData &row = m_OptionRowAlloc[i];
+		OptionRowDefinition &row = m_OptionRowAlloc[i];
 		
 		CString sRowCommands = LINE(sLineName);
 		
@@ -393,7 +393,7 @@ void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 		vbSelectedOut[i] = i==iSelection;
 }
 
-void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut )
+void ScreenOptionsMaster::ImportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -414,7 +414,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					/* The entry has no effect.  This is usually a default "none of the
 					 * above" entry.  It will always return true for DescribesCurrentMode().
 					 * It's only the selected choice if nothing else matches. */
-					if( row.type != OptionRowData::SELECT_MULTIPLE )
+					if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
 						FallbackOption = e;
 					continue;
 				}
@@ -424,7 +424,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					if( mc.DescribesCurrentModeForAllPlayers() )
 					{
 						UseFallbackOption = false;
-						if( row.type != OptionRowData::SELECT_MULTIPLE )
+						if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
 							vbSelectedOut[e] = true;
@@ -435,7 +435,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 					if( mc.DescribesCurrentMode(  pn) )
 					{
 						UseFallbackOption = false;
-						if( row.type != OptionRowData::SELECT_MULTIPLE )
+						if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelectedOut );
 						else
 							vbSelectedOut[e] = true;
@@ -443,7 +443,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 				}
 			}
 
-			if( row.type == OptionRowData::SELECT_ONE && 
+			if( row.selectType == OptionRowDefinition::SELECT_ONE && 
 				UseFallbackOption && 
 				FallbackOption != -1 )
 			{
@@ -464,7 +464,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 		ASSERT(0);
 	}
 
-	if( row.type != OptionRowData::SELECT_MULTIPLE )
+	if( row.selectType != OptionRowDefinition::SELECT_MULTIPLE )
 	{
 		// The first row ("go down") should not be selected.
 		ASSERT( !vbSelectedOut[0] );
@@ -483,8 +483,8 @@ void ScreenOptionsMaster::ImportOptions()
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowData &data = m_OptionRowAlloc[i];
-		Row &row = *m_Rows[i];
+		const OptionRowDefinition &data = m_OptionRowAlloc[i];
+		OptionRow &row = *m_Rows[i];
 
 		if( data.bOneChoiceForAllPlayers )
 		{
@@ -509,8 +509,8 @@ void ScreenOptionsMaster::ImportOptionsForPlayer( PlayerNumber pn )
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowData &data = m_OptionRowAlloc[i];
-		Row &row = *m_Rows[i];
+		const OptionRowDefinition &data = m_OptionRowAlloc[i];
+		OptionRow &row = *m_Rows[i];
 
 		if( data.bOneChoiceForAllPlayers )
 			continue;
@@ -528,7 +528,7 @@ int GetOneSelection( const vector<bool> &vbSelected )
 }
 
 /* Returns an OPT mask. */
-int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected )
+int ScreenOptionsMaster::ExportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
@@ -580,8 +580,8 @@ void ScreenOptionsMaster::ExportOptions()
 		CHECKPOINT_M( ssprintf("%i/%i", i, int(OptionRowHandlers.size())) );
 		
 		const OptionRowHandler &hand = OptionRowHandlers[i];
-		const OptionRowData &data = m_OptionRowAlloc[i];
-		Row &row = *m_Rows[i];
+		const OptionRowDefinition &data = m_OptionRowAlloc[i];
+		OptionRow &row = *m_Rows[i];
 
 		FOREACH_HumanPlayer( p )
 		{
@@ -686,11 +686,11 @@ void ScreenOptionsMaster::RefreshIcons()
 	{
         for( unsigned i=0; i<m_Rows.size(); ++i )     // foreach options line
 		{
-			if( m_Rows[i]->Type == Row::ROW_EXIT )
+			if( m_Rows[i]->Type == OptionRow::ROW_EXIT )
 				continue;	// skip
 
-			Row &row = *m_Rows[i];
-			const OptionRowData &data = row.m_RowDef;
+			OptionRow &row = *m_Rows[i];
+			const OptionRowDefinition &data = row.m_RowDef;
 
 			// find first selection and whether multiple are selected
 			int iFirstSelection = -1;

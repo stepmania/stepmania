@@ -21,8 +21,8 @@ REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 #define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
 const ScreenMessage SM_SMOnlinePack	    = ScreenMessage(SM_User+8);
 const ScreenMessage SM_PasswordDone	    = ScreenMessage(SM_User+9);
-OptionRowData g_ProfileLine[1] = {
-	OptionRowData("Profile",false)
+OptionRowDefinition g_ProfileLine[1] = {
+	OptionRowDefinition("Profile",false)
 };
 
 ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sClassName)
@@ -41,7 +41,7 @@ ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sCl
 	{
 		InitMenu(INPUTMODE_SHARE_CURSOR, g_ProfileLine, 1);
   		SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
-		Row &row = *m_Rows.back();
+		OptionRow &row = *m_Rows.back();
 		BitmapText *bt = row.m_textItems.back();
 		bt->SetText("Login");		//Change "Exit" Text
 	}
@@ -148,7 +148,7 @@ CString ScreenSMOnlineLogin::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	const Row &row = *m_Rows[GetCurrentRow()];
+	const OptionRow &row = *m_Rows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
 		return "";

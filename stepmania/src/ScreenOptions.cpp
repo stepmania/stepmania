@@ -15,6 +15,8 @@
 #include "Style.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
+#include "FontManager.h"
+#include "Font.h"
 
 
 /*
@@ -138,7 +140,7 @@ void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 	m_Rows[iRow]->m_OptionIcons[pn].Load( pn, sText, false );
 }
 
-void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNumOptionLines, bool bShowUnderlines )
+void ScreenOptions::InitMenu( InputMode im, OptionRowDefinition defs[], int iNumOptionLines, bool bShowUnderlines )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
@@ -148,14 +150,14 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 
 	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
-		m_Rows.push_back( new Row() );
-		Row &row = *m_Rows.back();
-		row.m_RowDef = OptionRows[r];
-		row.Type = Row::ROW_NORMAL;
+		m_Rows.push_back( new OptionRow() );
+		OptionRow &row = *m_Rows.back();
+		row.m_RowDef = defs[r];
+		row.Type = OptionRow::ROW_NORMAL;
 		
-		if( !OptionRows[r].choices.size() )
+		if( !defs[r].choices.size() )
 			RageException::Throw( "Screen %s menu entry \"%s\" has no choices",
-			m_sName.c_str(), OptionRows[r].name.c_str() );
+			m_sName.c_str(), defs[r].name.c_str() );
 		
 		FOREACH_PlayerNumber( p )
 		{
@@ -165,7 +167,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 				vbSelected[j] = false;
 			
 			// set select the first item if a SELECT_ONE row
-			if( row.m_RowDef.type == OptionRowData::SELECT_ONE )
+			if( row.m_RowDef.selectType == OptionRowDefinition::SELECT_ONE )
 				vbSelected[0] = true;
 		}
 	}
@@ -174,7 +176,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	
 	for( int r=0; r<iNumOptionLines; r++ )		// foreach row
 	{
-		Row &row = *m_Rows[r];
+		OptionRow &row = *m_Rows[r];
 		
 		// Make all selections the same if bOneChoiceForAllPlayers
 		if( row.m_RowDef.bOneChoiceForAllPlayers )
@@ -193,7 +195,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 			{
 				row.m_iChoiceInRowWithFocus[p] = 0;	// focus on the first row, which is "go down"
 			}
-			else if( row.m_RowDef.type == OptionRowData::SELECT_ONE )
+			else if( row.m_RowDef.selectType == OptionRowDefinition::SELECT_ONE )
 			{
 				/* Make sure the row actually has a selection. */
 				bool bHasSelection = false;
@@ -246,74 +248,51 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	{
 		for( unsigned l=0; l<m_Rows.size(); l++ )
 		{	
-			Row &row = *m_Rows[l];
+			OptionRow &row = *m_Rows[l];
 
 			LoadOptionIcon( p, l, "" );
 			m_framePage.AddChild( &row.m_OptionIcons[p] );
 		}
 	}
 
+	
+	Font* pFont = FONT->LoadFont( THEME->GetPathF(m_sName,"item") );
+
+
 	// init m_textItems from optionLines
 	for( unsigned  r=0; r<m_Rows.size(); r++ )		// foreach row
 	{
-		Row &row = *m_Rows[r];
+		OptionRow &row = *m_Rows[r];
 
 		vector<BitmapText *> & textItems = row.m_textItems;
-		const OptionRowData &optline = m_Rows[r]->m_RowDef;
+		const OptionRowDefinition &optline = m_Rows[r]->m_RowDef;
 
 		m_framePage.AddChild( &row.m_sprBullet );
 		m_framePage.AddChild( &row.m_textTitle );		
 
-		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( unsigned c=0; c<optline.choices.size(); c++ )
+
+		// If the items will go off the edge of the screen, then re-init with the "long row" style.
 		{
-			// init text
-			BitmapText *bt = new BitmapText;
-			textItems.push_back( bt );
-			bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
-			CString sText = optline.choices[c];
-			if( CAPITALIZE_ALL_OPTION_NAMES )
-				sText.MakeUpper();
-			bt->SetText( sText );
-			bt->SetZoom( ITEMS_ZOOM );
-			bt->SetShadowLength( 0 );
-
-			// set the X position of each item in the line
-			float fItemWidth = bt->GetZoomedWidth();
-			fX += fItemWidth/2;
-			bt->SetX( fX );
-
-			// init underlines
-			FOREACH_HumanPlayer( p )
+			float fX = ITEMS_START_X;
+			
+			for( unsigned c=0; c<optline.choices.size(); c++ )
 			{
-				OptionsCursor *ul = new OptionsCursor;
-				row.m_Underline[p].push_back( ul );
-				ul->Load( p, true );
-				ul->SetX( fX );
-				ul->SetWidth( truncf(fItemWidth) );
-			}
+				CString sText = optline.choices[c];
+				if( CAPITALIZE_ALL_OPTION_NAMES )
+					sText.MakeUpper();
+				fX += ITEMS_ZOOM * pFont->GetLineWidthInSourcePixels( CStringToWstring(sText) );
 
-			fX += fItemWidth/2 + ITEMS_GAP_X;
-
-			// It goes off the edge of the screen.  Re-init with the "long row" style.
-			if( fX > ITEMS_END_X ) 
-			{
-				row.m_bRowIsLong = true;
-				for( unsigned j=0; j<textItems.size(); j++ )	// for each option on this row
-					SAFE_DELETE( textItems[j] );
-				textItems.clear();
-				FOREACH_PlayerNumber( p )
+				if( fX > ITEMS_END_X ) 
 				{
-					for( unsigned j=0; j<row.m_Underline[p].size(); j++ )	// for each option on this row
-						SAFE_DELETE( row.m_Underline[p][j] );
-					row.m_Underline[p].clear();
+					row.m_RowDef.layoutType = OptionRowDefinition::SHOW_ONE_IN_LINE;
+					break;
 				}
-				break;
 			}
 		}
 
-		if( row.m_bRowIsLong )
+		switch( row.m_RowDef.layoutType )
 		{
+		case OptionRowDefinition::SHOW_ONE_IN_LINE:
 			// init text
 			FOREACH_HumanPlayer( p )
 			{
@@ -349,6 +328,46 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 				ul->SetX( float(iX) );
 				ul->SetWidth( float(iWidth) );
 			}
+			break;
+
+		case OptionRowDefinition::SHOW_ALL_IN_LINE:
+			{
+				float fX = ITEMS_START_X;
+				for( unsigned c=0; c<optline.choices.size(); c++ )
+				{
+					// init text
+					BitmapText *bt = new BitmapText;
+					textItems.push_back( bt );
+					bt->LoadFromFont( THEME->GetPathF(m_sName,"item") );
+					CString sText = optline.choices[c];
+					if( CAPITALIZE_ALL_OPTION_NAMES )
+						sText.MakeUpper();
+					bt->SetText( sText );
+					bt->SetZoom( ITEMS_ZOOM );
+					bt->SetShadowLength( 0 );
+
+					// set the X position of each item in the line
+					float fItemWidth = bt->GetZoomedWidth();
+					fX += fItemWidth/2;
+					bt->SetX( fX );
+
+					// init underlines
+					FOREACH_HumanPlayer( p )
+					{
+						OptionsCursor *ul = new OptionsCursor;
+						row.m_Underline[p].push_back( ul );
+						ul->Load( p, true );
+						ul->SetX( fX );
+						ul->SetWidth( truncf(fItemWidth) );
+					}
+
+					fX += fItemWidth/2 + ITEMS_GAP_X;
+				}
+			}
+			break;
+
+		default:
+			ASSERT(0);
 		}
 
 		// Add children here and not above because of the logic that starts
@@ -362,10 +381,14 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		}
 	}
 
+	FONT->UnloadFont( pFont );
+	pFont = NULL;
+
+
 	// TRICKY:  Add one more item.  This will be "EXIT"
-	m_Rows.push_back( new Row() );
-	Row &row = *m_Rows.back();
-	row.Type = Row::ROW_EXIT;
+	m_Rows.push_back( new OptionRow() );
+	OptionRow &row = *m_Rows.back();
+	row.Type = OptionRow::ROW_EXIT;
 
 	BitmapText *bt = new BitmapText;
 	row.m_textItems.push_back( bt );
@@ -472,7 +495,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 	 * easiest to queue the tweens and then force them to finish. */
 	for( int r=0; r<(int) m_Rows.size(); r++ )	// foreach options line
 	{
-		Row &row = *m_Rows[r];
+		OptionRow &row = *m_Rows[r];
 		row.m_sprBullet.FinishTweening();
 		row.m_textTitle.FinishTweening();
 
@@ -500,7 +523,7 @@ ScreenOptions::~ScreenOptions()
 
 CString ScreenOptions::GetExplanationText( int iRow ) const
 {
-	if( m_Rows[iRow]->Type == Row::ROW_EXIT )
+	if( m_Rows[iRow]->Type == OptionRow::ROW_EXIT )
 		return "";
 
 	CString sLineName = m_Rows[iRow]->m_RowDef.name;
@@ -512,7 +535,7 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 
 CString ScreenOptions::GetExplanationTitle( int iRow ) const
 {
-	if( m_Rows[iRow]->Type == Row::ROW_EXIT )
+	if( m_Rows[iRow]->Type == OptionRow::ROW_EXIT )
 		return "";
 	
 	CString sLineName = m_Rows[iRow]->m_RowDef.name;
@@ -556,22 +579,25 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )
 {
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
-	Row &row = *m_Rows[iRow];
-	if( row.Type == Row::ROW_EXIT )
+	OptionRow &row = *m_Rows[iRow];
+	if( row.Type == OptionRow::ROW_EXIT )
 		return *row.m_textItems[0];
 
 	bool bOneChoice = row.m_RowDef.bOneChoiceForAllPlayers;
 	int index = -1;
-	if( row.m_bRowIsLong )
+	switch( row.m_RowDef.layoutType )
 	{
+	case OptionRowDefinition::SHOW_ONE_IN_LINE:
 		index = bOneChoice ? 0 : pn;
 		/* If only P2 is enabled, his selections will be in index 0. */
 		if( row.m_textItems.size() == 1 )
 			index = 0;
-	}
-	else
-	{
+		break;
+	case OptionRowDefinition::SHOW_ALL_IN_LINE:
 		index = iChoiceOnRow;
+		break;
+	default:
+		ASSERT(0);
 	}
 
 	ASSERT_M( index < (int)row.m_textItems.size(), ssprintf("%i < %i", index, (int)row.m_textItems.size() ) );
@@ -595,8 +621,8 @@ void ScreenOptions::InitOptionsText()
 {
 	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 	{
-		Row &row = *m_Rows[i];
-		if( row.Type == Row::ROW_EXIT )
+		OptionRow &row = *m_Rows[i];
+		if( row.Type == OptionRow::ROW_EXIT )
 			continue;
 
 		const float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
@@ -632,21 +658,21 @@ void ScreenOptions::PositionUnderlines()
 	// Set the position of the underscores showing the current choice for each option line.
 	for( unsigned r=0; r<m_Rows.size(); r++ )	// foreach options line
 	{
-		Row &row = *m_Rows[r];
-		if( row.Type == Row::ROW_EXIT )
+		OptionRow &row = *m_Rows[r];
+		if( row.Type == OptionRow::ROW_EXIT )
 			continue;
 
 		FOREACH_HumanPlayer( p )
 		{
 			vector<OptionsCursor*> &vpUnderlines = row.m_Underline[p];
 
-			const int iNumUnderlines = row.m_bRowIsLong ? 1 : vpUnderlines.size();
+			const int iNumUnderlines = (row.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE) ? 1 : vpUnderlines.size();
 			
 			for( int i=0; i<iNumUnderlines; i++ )
 			{
 				OptionsCursor& ul = *vpUnderlines[i];
 	
-				int iChoiceWithFocus = row.m_bRowIsLong ? row.m_iChoiceInRowWithFocus[p] : i;
+				int iChoiceWithFocus = (row.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE) ? row.m_iChoiceInRowWithFocus[p] : i;
 
 				/* Don't tween X movement and color changes. */
 				int iWidth, iX, iY;
@@ -682,8 +708,8 @@ void ScreenOptions::PositionIcons()
 
 		for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
 		{
-			Row &row = *m_Rows[i];
-			if( row.Type == Row::ROW_EXIT )
+			OptionRow &row = *m_Rows[i];
+			if( row.Type == OptionRow::ROW_EXIT )
 				continue;
 
 			OptionIcon &icon = row.m_OptionIcons[p];
@@ -724,11 +750,11 @@ void ScreenOptions::PositionCursors()
 
 		const int iRow = m_iCurrentRow[pn];
 		ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
-		Row &Row = *m_Rows[iRow];
+		OptionRow &OptionRow = *m_Rows[iRow];
 
 		OptionsCursor &highlight = m_Highlight[pn];
 
-		const int iChoiceWithFocus = Row.m_iChoiceInRowWithFocus[pn];
+		const int iChoiceWithFocus = OptionRow.m_iChoiceInRowWithFocus[pn];
 
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
@@ -743,8 +769,8 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	const int iRow = m_iCurrentRow[pn];
 	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
 
-	const Row &Row = *m_Rows[iRow];
-	const int iChoiceWithFocus = Row.m_iChoiceInRowWithFocus[pn];
+	const OptionRow &OptionRow = *m_Rows[iRow];
+	const int iChoiceWithFocus = OptionRow.m_iChoiceInRowWithFocus[pn];
 
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
@@ -758,7 +784,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
 		COMMAND( m_sprLineHighlight[pn], "Change" );
-		if( m_Rows[iRow]->Type == Row::ROW_EXIT )
+		if( m_Rows[iRow]->Type == OptionRow::ROW_EXIT )
 			COMMAND( m_sprLineHighlight[pn], "ChangeToExit" );
 		m_sprLineHighlight[pn].SetY( (float)iY );
 	}
@@ -772,10 +798,10 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
  * Update the whole row. */
 void ScreenOptions::UpdateText( int iRow )
 {
-	Row &row = *m_Rows[iRow];
-	const OptionRowData &data = row.m_RowDef;
+	OptionRow &row = *m_Rows[iRow];
+	const OptionRowDefinition &data = row.m_RowDef;
 
-	if( !row.m_bRowIsLong )
+	if( !row.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE )
 		return;
 
 	FOREACH_HumanPlayer( pn )
@@ -797,7 +823,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 	// init text
 	for( unsigned i=0; i<m_Rows.size(); i++ )		// foreach line
 	{
-		Row &row = *m_Rows[i];
+		OptionRow &row = *m_Rows[i];
 
 		bool bThisRowIsSelected = false;
 		FOREACH_PlayerNumber( p )
@@ -829,7 +855,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 			}
 		}
 
-		if( row.Type == Row::ROW_EXIT )
+		if( row.Type == OptionRow::ROW_EXIT )
 		{
 			bool bExitRowIsSelectedByBoth = true;
 			FOREACH_PlayerNumber( p )
@@ -870,14 +896,14 @@ void ScreenOptions::DrawPrimitives()
 	Screen::DrawPrimitives();
 }
 
-void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType selectType, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
 	if( m_Back.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( type == IET_RELEASE )
+	if( selectType == IET_RELEASE )
 	{
 		switch( MenuI.button )
 		{
@@ -891,7 +917,7 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 	}
 
 	// default input handler
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	Screen::Input( DeviceI, selectType, GameI, MenuI, StyleI );
 }
 
 void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
@@ -939,10 +965,10 @@ void ScreenOptions::PositionItems()
 	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? m_iCurrentRow[PLAYER_1]: m_iCurrentRow[PLAYER_2];
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
-	vector<Row*> Rows( m_Rows );
-	Row *ExitRow = NULL;
+	vector<OptionRow*> Rows( m_Rows );
+	OptionRow *ExitRow = NULL;
 
-	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->Type == Row::ROW_EXIT )
+	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->Type == OptionRow::ROW_EXIT )
 	{
 		ExitRow = &*Rows.back();
 
@@ -1018,7 +1044,7 @@ void ScreenOptions::PositionItems()
 		else
 			ItemPosition = (float) total - 0.5f;
 			
-		Row &row = *Rows[i];
+		OptionRow &row = *Rows[i];
 
 		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*ItemPosition;
 		row.m_fY = fY;
@@ -1059,7 +1085,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 
 
 	/* If the last row is EXIT, and is hidden, then show MORE. */
-	const bool ShowMore = m_Rows.back()->Type == Row::ROW_EXIT && m_Rows.back()->m_bHidden;
+	const bool ShowMore = m_Rows.back()->Type == OptionRow::ROW_EXIT && m_Rows.back()->m_bHidden;
 	if( m_bMoreShown != ShowMore )
 	{
 		m_bMoreShown = ShowMore;
@@ -1072,7 +1098,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		if( GAMESTATE->IsHumanPlayer(p) )
 			TweenCursor(  p );
 
-		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == Row::ROW_EXIT;
+		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == OptionRow::ROW_EXIT;
 		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
 		{
 			if( m_bWasOnExit[p] != ExitSelected )
@@ -1126,28 +1152,28 @@ void ScreenOptions::StartGoToNextScreen()
 bool ScreenOptions::AllAreOnExit() const
 {
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
+		if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != OptionRow::ROW_EXIT )
 			return false;
 	return true;
 }
 
-void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType )
 {
-	switch( type )
+	switch( selectType )
 	{
 	case IET_FIRST_PRESS:
 		m_bGotAtLeastOneStartPressed[pn] = true;
 		break;
 	case IET_RELEASE:
 		return;	// ignore
-	default:	// repeat type
+	default:	// repeat selectType
 		if( !m_bGotAtLeastOneStartPressed[pn] )
 			return;	// don't allow repeat
 		break;
 	}
 	
-	Row &row = *m_Rows[m_iCurrentRow[pn]];
-	OptionRowData &data = row.m_RowDef;
+	OptionRow &row = *m_Rows[m_iCurrentRow[pn]];
+	OptionRowDefinition &data = row.m_RowDef;
 
 
 	/* If we are in a three-button mode, check to see if MENU_BUTTON_LEFT and
@@ -1162,7 +1188,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
 			if( bHoldingLeftAndRight )
 			{
-				MoveRow( pn, -1, type != IET_FIRST_PRESS );		
+				MoveRow( pn, -1, selectType != IET_FIRST_PRESS );		
 				return;
 			}
 		}
@@ -1170,10 +1196,10 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 
 
 	// If on exit, check it all players are on "Exit"
-	if( row.Type == Row::ROW_EXIT )
+	if( row.Type == OptionRow::ROW_EXIT )
 	{
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
-		if( AllAreOnExit()  &&  type == IET_FIRST_PRESS && !IsTransitioning() )
+		if( AllAreOnExit()  &&  selectType == IET_FIRST_PRESS && !IsTransitioning() )
 			StartGoToNextScreen();
 		return;
 	}
@@ -1184,13 +1210,13 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 		if( iChoiceInRow == 0 )
 		{
-			MenuDown( pn, type );
+			MenuDown( pn, selectType );
 			return;
 		}
 	}
 	
 	// If this is a bFirstChoiceGoesDown, then if this is a multiselect row.
-	if( data.type == OptionRowData::SELECT_MULTIPLE )
+	if( data.selectType == OptionRowDefinition::SELECT_MULTIPLE )
 	{
 		int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 		row.m_vbSelected[pn][iChoiceInRow] = !row.m_vbSelected[pn][iChoiceInRow];
@@ -1204,19 +1230,19 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 		{
 			// move to the first choice in the row
-			ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], type != IET_FIRST_PRESS );
+			ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], selectType != IET_FIRST_PRESS );
 		}
 	}
-	else	// data.type != SELECT_MULTIPLE
+	else	// data.selectType != SELECT_MULTIPLE
 	{
 		switch( m_OptionsNavigation )
 		{
 		case NAV_THREE_KEY:
-			MenuDown( pn, type );
+			MenuDown( pn, selectType );
 			break;
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( data.type != OptionRowData::SELECT_MULTIPLE )
+			if( data.selectType != OptionRowDefinition::SELECT_MULTIPLE )
 			{
 				int iChoiceInRow = row.m_iChoiceInRowWithFocus[pn];
 				if( row.m_RowDef.bOneChoiceForAllPlayers )
@@ -1225,19 +1251,19 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 					row.SetOneSelection( pn, iChoiceInRow );
 			}
 			if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
-				ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
+				ChangeValueInRow( pn, -row.m_iChoiceInRowWithFocus[pn], selectType != IET_FIRST_PRESS );	// move to the first choice
 			else
-				ChangeValueInRow( pn, 0, type != IET_FIRST_PRESS );
+				ChangeValueInRow( pn, 0, selectType != IET_FIRST_PRESS );
 			break;
 		case NAV_THREE_KEY_MENU:
 			/* Don't accept START to go to the next screen if we're still transitioning in. */
-			if( type == IET_FIRST_PRESS && !IsTransitioning() )
+			if( selectType == IET_FIRST_PRESS && !IsTransitioning() )
 				StartGoToNextScreen();
 			break;
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
-			MoveRow( pn, m_Rows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
+			MoveRow( pn, m_Rows.size()-m_iCurrentRow[pn]-1, selectType != IET_FIRST_PRESS );
 			break;
 		}
 	}
@@ -1246,8 +1272,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 void ScreenOptions::StoreFocus( PlayerNumber pn )
 {
 	/* Long rows always put us in the center, so don't update the focus. */
-	const Row &Row = *m_Rows[m_iCurrentRow[pn]];
-	if( Row.m_bRowIsLong )
+	const OptionRow &OptionRow = *m_Rows[m_iCurrentRow[pn]];
+	if( OptionRow.m_RowDef.layoutType == OptionRowDefinition::SHOW_ONE_IN_LINE )
 		return;
 
 	int iWidth, iY;
@@ -1260,10 +1286,10 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 {
 	const int iCurRow = m_iCurrentRow[pn];
-	Row &row = *m_Rows[iCurRow];
-	OptionRowData &optrow = m_Rows[iCurRow]->m_RowDef;
+	OptionRow &row = *m_Rows[iCurRow];
+	OptionRowDefinition &optrow = m_Rows[iCurRow]->m_RowDef;
 
-	const int iNumOptions = (row.Type == Row::ROW_EXIT)? 1: optrow.choices.size();
+	const int iNumOptions = (row.Type == OptionRow::ROW_EXIT)? 1: optrow.choices.size();
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
@@ -1278,7 +1304,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	if( Repeat )
 		return;
 
-	if( row.Type == Row::ROW_EXIT	)	// EXIT is selected
+	if( row.Type == OptionRow::ROW_EXIT	)	// EXIT is selected
 		return;		// don't allow a move
 
 	bool bOneChanged = false;
@@ -1327,7 +1353,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			}
 			else
 			{
-				if( optrow.type == OptionRowData::SELECT_MULTIPLE )
+				if( optrow.selectType == OptionRowDefinition::SELECT_MULTIPLE )
 					;	// do nothing.  User must press Start to toggle the selection.
 				else
 					row.SetOneSelection( p, iNewChoiceWithFocus );			
@@ -1342,7 +1368,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		}
 		else
 		{
-			if( optrow.type == OptionRowData::SELECT_MULTIPLE )
+			if( optrow.selectType == OptionRowDefinition::SELECT_MULTIPLE )
 				;	// do nothing.  User must press Start to toggle the selection.
 			else
 				row.SetOneSelection( pn, iNewChoiceWithFocus );
@@ -1366,7 +1392,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		// If moving from a bFirstChoiceGoesDown row, put focus back on 
 		// the first choice before moving.
 		const int iCurrentRow = m_iCurrentRow[pn];
-		Row &row = *m_Rows[iCurrentRow];
+		OptionRow &row = *m_Rows[iCurrentRow];
 		row.m_iChoiceInRowWithFocus[pn] = 0;
 	}
 
@@ -1391,7 +1417,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		{
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( !m_Rows[row]->m_bRowIsLong )
+			if( m_Rows[row]->m_RowDef.layoutType != OptionRowDefinition::SHOW_ONE_IN_LINE )
 			{
 				int iSelectionDist = -1;
 				for( unsigned i = 0; i < m_Rows[row]->m_textItems.size(); ++i )
@@ -1424,23 +1450,9 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 {
 	const int l = m_iCurrentRow[pn];
-	if( m_Rows[l]->Type != Row::ROW_NORMAL )
+	if( m_Rows[l]->Type != OptionRow::ROW_NORMAL )
 		return -1;
 	return l;
-}
-
-ScreenOptions::Row::Row()
-{
-	m_bRowIsLong = false;
-}
-
-ScreenOptions::Row::~Row()
-{
-	for( unsigned i = 0; i < m_textItems.size(); ++i )
-		SAFE_DELETE( m_textItems[i] );
-	FOREACH_PlayerNumber( p )
-		for( unsigned i = 0; i < m_Underline[p].size(); ++i )
-			SAFE_DELETE( m_Underline[p][i] );
 }
 
 /*

@@ -24,9 +24,9 @@ enum {
 	NO_START_SERVER
 };
 
-OptionRowData g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
-	OptionRowData( "Connection",	true, "PRESS START" ),
-	OptionRowData( "Server",		true, "PRESS START" )
+OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
+	OptionRowDefinition( "Connection",	true, "PRESS START" ),
+	OptionRowDefinition( "Server",		true, "PRESS START" )
 };
 
 const ScreenMessage	SM_DoneConnecting		= ScreenMessage(SM_User+1);

@@ -199,7 +199,8 @@ ActorsInMenus = \
 ActiveAttackList.cpp ActiveAttackList.h BPMDisplay.cpp BPMDisplay.h ComboGraph.cpp ComboGraph.h \
 CourseContentsList.cpp CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h \
 DifficultyDisplay.cpp DifficultyDisplay.h DifficultyList.cpp DifficultyList.h \
-DifficultyMeter.cpp DifficultyMeter.h DifficultyRating.cpp DifficultyRating.h DualScrollBar.cpp DualScrollBar.h \
+DifficultyMeter.cpp DifficultyMeter.h DifficultyRating.cpp DifficultyRating.h \
+DualScrollBar.cpp DualScrollBar.h \
 EditCoursesMenu.cpp EditCoursesMenu.h EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
 GradeDisplay.cpp GradeDisplay.h GraphDisplay.cpp GraphDisplay.h GrooveGraph.cpp GrooveGraph.h \
 GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h \
@@ -207,7 +208,8 @@ ListDisplay.cpp ListDisplay.h MemoryCardDisplay.cpp MemoryCardDisplay.h \
 MenuTimer.cpp MenuTimer.h ModeSwitcher.cpp ModeSwitcher.h MusicBannerWheel.cpp MusicBannerWheel.h \
 MusicList.cpp MusicList.h MusicSortDisplay.cpp MusicSortDisplay.h MusicWheel.cpp MusicWheel.h \
 MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h OptionIconRow.cpp OptionIconRow.h \
-OptionsCursor.cpp OptionsCursor.h PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
+OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
+PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 ScrollingList.cpp ScrollingList.h SnapDisplay.cpp SnapDisplay.h \
 TextBanner.cpp TextBanner.h WheelNotifyIcon.cpp WheelNotifyIcon.h
 

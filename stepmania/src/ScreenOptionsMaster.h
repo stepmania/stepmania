@@ -39,18 +39,18 @@ private:
 	CString m_sNextScreen;
 
 	vector<OptionRowHandler> OptionRowHandlers;
-	OptionRowData *m_OptionRowAlloc;
+	OptionRowDefinition *m_OptionRowAlloc;
 
-	int ExportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
-	void ImportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
+	int ExportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
+	void ImportOption( const OptionRowDefinition &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
 	
-	static void SetList( OptionRowData &row, OptionRowHandler &hand, CString param );
-	static void SetSteps( OptionRowData &row, OptionRowHandler &hand );
-	static void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param );
-	static void SetCharacters( OptionRowData &row, OptionRowHandler &hand );
-	static void SetStyles( OptionRowData &row, OptionRowHandler &hand );
-	static void SetGroups( OptionRowData &row, OptionRowHandler &hand );
-	static void SetDifficulties( OptionRowData &row, OptionRowHandler &hand );
+	static void SetList( OptionRowDefinition &row, OptionRowHandler &hand, CString param );
+	static void SetSteps( OptionRowDefinition &row, OptionRowHandler &hand );
+	static void SetConf( OptionRowDefinition &row, OptionRowHandler &hand, CString param );
+	static void SetCharacters( OptionRowDefinition &row, OptionRowHandler &hand );
+	static void SetStyles( OptionRowDefinition &row, OptionRowHandler &hand );
+	static void SetGroups( OptionRowDefinition &row, OptionRowHandler &hand );
+	static void SetDifficulties( OptionRowDefinition &row, OptionRowHandler &hand );
 
 protected:
 	virtual void ImportOptions();

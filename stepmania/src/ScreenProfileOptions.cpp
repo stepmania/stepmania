@@ -22,14 +22,14 @@ enum {
 	NUM_PROFILE_OPTIONS_LINES
 };
 
-OptionRowData g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
-	OptionRowData( "Player1\nProfile",	true ),
-	OptionRowData( "Player2\nProfile",	true ),
-	OptionRowData( "Create\nNew",		true, "PRESS START" ),
-	OptionRowData( "Delete",			true ),
-	OptionRowData( "Rename",			true ),
-	OptionRowData( "OS Mount\nPlayer1",	true, "" ),
-	OptionRowData( "OS Mount\nPlayer2",	true, "" ),
+OptionRowDefinition g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
+	OptionRowDefinition( "Player1\nProfile",	true ),
+	OptionRowDefinition( "Player2\nProfile",	true ),
+	OptionRowDefinition( "Create\nNew",		true, "PRESS START" ),
+	OptionRowDefinition( "Delete",			true ),
+	OptionRowDefinition( "Rename",			true ),
+	OptionRowDefinition( "OS Mount\nPlayer1",	true, "" ),
+	OptionRowDefinition( "OS Mount\nPlayer2",	true, "" ),
 };
 
 const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);
@@ -212,7 +212,7 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	const Row &row = *m_Rows[GetCurrentRow()];
+	const OptionRow &row = *m_Rows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
 		return "";
@@ -221,7 +221,7 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 
 CString ScreenProfileOptions::GetSelectedProfileName()
 {
-	const Row &row = *m_Rows[GetCurrentRow()];
+	const OptionRow &row = *m_Rows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
 		return "";

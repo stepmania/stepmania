@@ -5,32 +5,11 @@
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
-#include "BitmapText.h"
 #include "RandomSample.h"
-#include "Quad.h"
-#include "OptionsCursor.h"
-#include "OptionIcon.h"
 #include "DualScrollBar.h"
 #include "ThemeMetric.h"
+#include "OptionRow.h"
 
-
-struct OptionRowData
-{
-	CString name;
-	bool bOneChoiceForAllPlayers;
-	enum Type { SELECT_ONE, SELECT_MULTIPLE, SELECT_NONE } type;
-	vector<CString> choices;
-
-	OptionRowData(): name(""), bOneChoiceForAllPlayers(false), type(SELECT_ONE) { }
-
-	OptionRowData( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL ) :
-		name(n), bOneChoiceForAllPlayers(b), type(SELECT_ONE)
-	{
-#define PUSH( c )	if(c) choices.push_back(c);
-		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
-#undef PUSH
-	}
-};
 
 enum InputMode 
 { 
@@ -43,7 +22,7 @@ class ScreenOptions : public ScreenWithMenuElements
 {
 public:
 	ScreenOptions( CString sClassName );
-	void InitMenu( InputMode im, OptionRowData OptionRowData[], int iNumOptionLines, bool bShowUnderlines = true );
+	void InitMenu( InputMode im, OptionRowDefinition defs[], int iNumOptionLines, bool bShowUnderlines = true );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -83,7 +62,7 @@ protected:
 	void MenuDown( PlayerNumber pn, const InputEventType type ) { MoveRow( pn, +1, type != IET_FIRST_PRESS ); }
 	void MoveRow( PlayerNumber pn, int dir, bool Repeat );
 
-	/* Returns -1 if on a row with no OptionRowData (eg. EXIT). */
+	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
 	bool AllAreOnExit() const;
 
@@ -94,51 +73,7 @@ protected:	// derived classes need access to these
 
 protected:
 	/* Map menu lines to m_OptionRow entries. */
-	struct Row
-	{
-		Row();
-		~Row();
-		OptionRowData				m_RowDef;
-		enum { ROW_NORMAL, ROW_EXIT } Type;
-		vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
-		vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
-		Sprite					m_sprBullet;
-		BitmapText				m_textTitle;
-		OptionIcon				m_OptionIcons[NUM_PLAYERS];
-
-		float m_fY;
-		bool m_bRowIsLong;	// goes off edge of screen
-		bool m_bHidden; // currently off screen
-
-		int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
-
-		// Only one will true at a time if m_RowDef.bMultiSelect
-		vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size().
-		int GetOneSelection( PlayerNumber pn ) const
-		{
-			for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
-				if( m_vbSelected[pn][i] )
-					return i;
-			ASSERT(0);	// shouldn't call this if not expecting one to be selected
-			return -1;
-		}
-		int GetOneSharedSelection() const
-		{
-			return GetOneSelection( (PlayerNumber)0 );
-		}
-		void SetOneSelection( PlayerNumber pn, int iChoice )
-		{
-			for( unsigned i=0; i<(unsigned)m_vbSelected[pn].size(); i++ )
-				m_vbSelected[pn][i] = false;
-			m_vbSelected[pn][iChoice] = true;
-		}
-		void SetOneSharedSelection( int iChoice )
-		{
-			FOREACH_HumanPlayer( pn )
-				SetOneSelection( pn, iChoice );
-		}
-	};
-	vector<Row*>		m_Rows;
+	vector<OptionRow*>	m_Rows;
 
 	Navigation		m_OptionsNavigation;
 

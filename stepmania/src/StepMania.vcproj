@@ -1552,6 +1552,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="OptionIconRow.h">
 			</File>
 			<File
+				RelativePath="OptionRow.cpp">
+			</File>
+			<File
+				RelativePath="OptionRow.h">
+			</File>
+			<File
 				RelativePath="OptionsCursor.cpp">
 			</File>
 			<File
