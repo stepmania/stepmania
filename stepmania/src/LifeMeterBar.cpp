@@ -358,6 +358,10 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		m_iComboToRegainLife = max( m_iComboToRegainLife, NewComboToRegainLife );
 	}
 
+	/* If we've already failed, there's no point in letting them fill up the bar again. */
+	if( GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )
+		fDeltaLife = 0;
+
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:

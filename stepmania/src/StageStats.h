@@ -30,9 +30,12 @@ struct StageStats
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
 	int		iMeter[NUM_PLAYERS];
 	float	fAliveSeconds[NUM_PLAYERS];				// how far into the music did they last before failing?  Updated by Gameplay.
-	/* This indicates whether the player failed the song; it's always false for FAIL_OFF
-	 * and is only set to true in FAIL_END_OF_SONG at the end of the song. */
+
+	/* Set if the player actually failed at any point during the song.  This is always
+	 * false in FAIL_OFF.  If recovery is enabled and two players are playing,
+	 * this is only set if both players were failing at the same time. */
 	bool	bFailed[NUM_PLAYERS];
+
 	/* This indicates whether the player bottomed out his bar/ran out of lives at some
 	 * point during the song.  It's set in all fail modes. */
 	bool	bFailedEarlier[NUM_PLAYERS];

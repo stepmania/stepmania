@@ -65,7 +65,7 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 {
 	ASSERT( GAMESTATE->IsPlayerEnabled(pn) );	// should be calling this is player isn't joined!
 
-	if( bFailed[pn] )
+	if( bFailedEarlier[pn] )
 		return GRADE_E;
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation

@@ -1035,10 +1035,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
-		// Check to see what we animate on this one
-		// -------------------------------------------
-
-
 		//
 		// Update living players' alive time
 		//
@@ -1052,6 +1048,19 @@ void ScreenGameplay::Update( float fDeltaTime )
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat ) + 1;
 		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_NextSongOut.IsTransitioning() )
 			this->PostScreenMessage( SM_NotesEnded, 0 );
+
+		//
+		// Handle the background danger graphic.  Never show it in FAIL_OFF.  Don't
+		// show it if everyone is already failing: it's already too late and it's
+		// annoying for it to show for the entire duration of a song.
+		//
+		if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_OFF )
+		{
+			if( AllAreInDanger() && !AllAreFailing() )
+				m_Background.TurnDangerOn();
+			else
+				m_Background.TurnDangerOff();
+		}
 
 		//
 		// check for fail
@@ -1159,19 +1168,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_soundAssistTick.Play();
 }
 
-/* Set m_CurStageStats.bFailed for failed players, send SM_BeginFailed
- * if all players failed, and kill dead Oni players.  This is all FAIL_ARCADE
- * only.  In FAIL_END_OF_SONG, this happens in SM_NotesEnded.  */
+/* Set m_CurStageStats.bFailed for failed players.  In, FAIL_ARCADE, send
+ * SM_BeginFailed if all players failed, and kill dead Oni players. */
 void ScreenGameplay::UpdateCheckFail()
 {
-	if( GAMESTATE->m_SongOptions.m_FailType != SongOptions::FAIL_ARCADE )
-		return;
-
-	/* Handle the background danger graphic. */
-	if( AllAreFailing() )	SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
-	if( AllAreInDanger() )	m_Background.TurnDangerOn();
-	else					m_Background.TurnDangerOff();
-
 	// check for individual fail
 	for ( int pn=0; pn<NUM_PLAYERS; pn++ )
 	{
@@ -1183,10 +1183,15 @@ void ScreenGameplay::UpdateCheckFail()
 		if( GAMESTATE->m_CurStageStats.bFailed[pn] )
 			continue; /* failed and is already dead */
 		
+		/* If recovery is enabled, only set fail if both are failing. */
+		if( PREFSMAN->m_bTwoPlayerRecovery && !AllAreFailing() )
+			continue;
+
 		LOG->Trace("Player %d failed", (int)pn);
 		GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
 
-		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY &&
+			GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE )
 		{
 			if( !AllFailedEarlier() )	// if not the last one to fail
 			{
@@ -1198,6 +1203,11 @@ void ScreenGameplay::UpdateCheckFail()
 			}
 		}
 	}
+
+	/* If FAIL_ARCADE and everyone is failing, start SM_BeginFailed. */
+	if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_ARCADE &&
+		AllAreFailing() )
+		SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 }
 
 void ScreenGameplay::AbortGiveUp()
@@ -1560,14 +1570,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->RemoveAllActiveAttacks();
 
-			/* All players failed. */
-			if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
-			{
-				for( p=0; p<NUM_PLAYERS; p++ )
-					if( GAMESTATE->IsPlayerEnabled(p)  )
-						GAMESTATE->m_CurStageStats.bFailed[p]=true;
-			}
-
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsPlayerEnabled(p) )
@@ -1610,7 +1612,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 				GAMESTATE->RemoveAllActiveAttacks();
 
-				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllFailedEarlier() )
+				if( GAMESTATE->m_SongOptions.m_FailType == SongOptions::FAIL_END_OF_SONG  &&  AllAreFailing() )
 				{
 					this->PostScreenMessage( SM_BeginFailed, 0 );
 				}
