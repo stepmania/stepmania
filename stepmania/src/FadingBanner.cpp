@@ -34,15 +34,20 @@ void FadingBanner::DrawPrimitives()
 bool FadingBanner::Load( RageTextureID ID )
 {
 	BeforeChange();
-	return Banner::Load(ID);
+	
+	if(!Banner::Load(ID))
+		return false;
+
+	Update(0);
+	return true;
 }
 
 void FadingBanner::BeforeChange()
 {
 	// move the back banner to the front in preparation for a cross fade
-	if( this->GetTexturePath() != "" )
+	if( this->GetTexture() )
 	{
-		m_FrontBanner.Load( this->GetTexturePath() );
+		m_FrontBanner.Load( this->GetTexture()->GetID() );
 		m_FrontBanner.SetScrolling( this->IsScrolling(), this->ScrollingPercent() );
 	}
 
