@@ -157,6 +157,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 				m_asModifiersQueue[p].push_back( ci[c].Modifiers );
 			}
 		}
+		m_apSongsQueue.clear();
+		for( unsigned c=0; c<ci.size(); ++c )
+			m_apSongsQueue.push_back( ci[c].pSong );
 	}
 	else
 	{
