@@ -24,9 +24,6 @@ CachedThemeMetricF ATTACK_DURATION_SECONDS	("ScoreKeeperRave","AttackDurationSec
 ScoreKeeperRave::ScoreKeeperRave(PlayerNumber pn) : ScoreKeeper(pn)
 {
 	ATTACK_DURATION_SECONDS.Refresh();
-
-	m_soundLaunchAttack.Load( THEME->GetPathToS(ssprintf("ScoreKeeperRave launch attack p%d",pn+1)) );
-	m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("ScoreKeeperRave attack end p%d",pn+1)) );
 }
 
 void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, const NoteData* pNoteData )
@@ -125,8 +122,6 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 
 void ScoreKeeperRave::Update( float fDelta )
 {
-	if( GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber] )
-		m_soundAttackEnding.Play();
 }
 
 void ScoreKeeperRave::LaunchAttack( AttackLevel al )
@@ -157,6 +152,4 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	GAMESTATE->LaunchAttack( pnToAttack, a );
 
 //	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
-
-	m_soundLaunchAttack.Play();
 }

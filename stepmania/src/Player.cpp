@@ -232,8 +232,20 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 		m_soundMine.SetParams( p );
 	}
 
-	m_soundAttackLaunch.Load( THEME->GetPathToS(ssprintf("Player attack launch p%d",pn+1)), true );
-	m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("Player attack ending p%d",pn+1)), true );
+	/* Attacks can be launched in course modes and in battle modes.  They both come
+	 * here to play, but allow loading a different sound for different modes. */
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_RAVE:
+	case PLAY_MODE_BATTLE:
+		m_soundAttackLaunch.Load( THEME->GetPathToS(ssprintf("Player battle attack launch p%d",pn+1)), true );
+		m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("Player battle attack ending p%d",pn+1)), true );
+		break;
+	default:
+		m_soundAttackLaunch.Load( THEME->GetPathToS(ssprintf("Player course attack launch p%d",pn+1)), true );
+		m_soundAttackEnding.Load( THEME->GetPathToS(ssprintf("Player course attack ending p%d",pn+1)), true );
+		break;
+	}
 }
 
 void PlayerMinus::Update( float fDeltaTime )
