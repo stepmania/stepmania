@@ -28,5 +28,21 @@ AM_PATH_SDL
 # in a way that breaks some configurations.
 SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
+
+# For now, we're only using autoconf on Linux
+AH_TEMPLATE([WIN32],
+	[Indicates compilation on Windows])
+AH_TEMPLATE([LINUX],
+	[Indicates compilation on Linux])
+AC_DEFINE(LINUX)
+
+
+# Some extra defines
+AH_TEMPLATE([GL_COLOR_TABLE_FORMAT_EXT],
+	[Some systems (ie, Linux) don't define GL_COLOR_TABLE_FORMAT_EXT.
+	 In these cases, use GL_COLOR_TABLE_FORMAT instead])
+AC_CHECK_DECL(GL_COLOR_TABLE_FORMAT_EXT, [],
+	AC_DEFINE(GL_COLOR_TABLE_FORMAT_EXT,GL_COLOR_TABLE_FORMAT) )
+
 AC_OUTPUT([Makefile src/Makefile])
 
