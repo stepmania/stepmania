@@ -17,11 +17,11 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 {
 	LOG->Trace( "ScoreDisplayNormal::ScoreDisplayNormal()" );
 
-	m_sprFrame.Load( THEME->GetPathToG("ScoreDisplayNormal frame") );
+	m_sprFrame.Load( THEME->GetPathG("ScoreDisplayNormal","frame") );
 	this->AddChild( &m_sprFrame );
 
 	// init the text
-	m_text.LoadFromFont( THEME->GetPathToF("ScoreDisplayNormal") );
+	m_text.LoadFromFont( THEME->GetPathF("ScoreDisplayNormal","numbers") );
 	m_text.SetShadowLength( 0 );
 
 	m_iScore = 0;

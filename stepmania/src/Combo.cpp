@@ -31,7 +31,7 @@ ThemeMetric<bool>	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
 
 Combo::Combo()
 {
-	m_sprComboLabel.Load( THEME->GetPathToG( "Combo label") );
+	m_sprComboLabel.Load( THEME->GetPathG("Combo","label") );
 	m_sprComboLabel.SetShadowLength( 4 );
 	m_sprComboLabel.StopAnimating();
 	m_sprComboLabel.SetXY( LABEL_X, LABEL_Y );
@@ -40,7 +40,7 @@ Combo::Combo()
 	m_sprComboLabel.SetHidden( true );
 	this->AddChild( &m_sprComboLabel );
 
-	m_sprMissesLabel.Load( THEME->GetPathToG( "Combo misses") );
+	m_sprMissesLabel.Load( THEME->GetPathG("Combo","misses") );
 	m_sprMissesLabel.SetShadowLength( 4 );
 	m_sprMissesLabel.StopAnimating();
 	m_sprMissesLabel.SetXY( LABEL_X, LABEL_Y );
@@ -49,7 +49,7 @@ Combo::Combo()
 	m_sprMissesLabel.SetHidden( true );
 	this->AddChild( &m_sprMissesLabel );
 
-	m_textNumber.LoadFromFont( THEME->GetPathToF("Combo") );
+	m_textNumber.LoadFromFont( THEME->GetPathF("Combo","numbers") );
 	m_textNumber.SetShadowLength( 4 );
 	m_textNumber.SetXY( NUMBER_X, NUMBER_Y );
 	m_textNumber.SetHorizAlign( (Actor::HorizAlign)(int)NUMBER_HORIZ_ALIGN );
