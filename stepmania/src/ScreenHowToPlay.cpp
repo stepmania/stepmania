@@ -189,7 +189,7 @@ void ScreenHowToPlay::Update( float fDelta )
 				//Loop for HowToPlay static movement is 184~243
 			};
 
-			m_mCharacter.Update( (0+(fDelta*1.08)) );
+			m_mCharacter.Update( (0+(fDelta*1.08f)) );
 			//m_mCharacter.Draw();
 		};	
 
