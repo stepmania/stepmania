@@ -34,6 +34,20 @@ void ASMHClass::LogMessageNumbers( )
 		LOG->Trace( "ScreenMessage: %3d: %s", iter->second, (*iter).first.c_str() );
 }
 
+CString	ASMHClass::NumberToString( ScreenMessage SM )
+{
+	map < CString, ScreenMessage >::iterator iter;
+
+	//Log all ScreenMessages currently in the map
+
+	LOG->Trace( "Current ScreenMessage: %d  -- SM_User: %d", m_iCurScreenMessage, SM_User );
+    for ( iter = m_pScreenMessages->begin(); iter != m_pScreenMessages->end(); iter++ )
+		if ( SM == iter->second )
+			return (*iter).first;
+
+	return "";
+}
+
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard, Charles Lohr
  * All rights reserved.

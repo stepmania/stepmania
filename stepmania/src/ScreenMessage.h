@@ -54,6 +54,7 @@ class ASMHClass
 {
 public:
 	ScreenMessage ToMessageNumber( const CString & Name );
+	CString	NumberToString( ScreenMessage SM );
 	void LogMessageNumbers();
 private:
 	map < CString, ScreenMessage > *m_pScreenMessages;
