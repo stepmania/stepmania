@@ -47,10 +47,10 @@ SaveSignals::~SaveSignals()
 		sigaction(signals[i], &old_handlers[i], NULL);
 }
 
-static void SigHandler(int sig)
+static void SigHandler( int signal, siginfo_t *si, void *ucp )
 {
 	for(unsigned i = 0; i < handlers.size(); ++i)
-		handlers[i](sig);
+		handlers[i]( signal );
 }
 
 static int find_stack_direction2( char *p )
@@ -138,8 +138,10 @@ void SignalHandler::OnClose(handler h)
 		{
 			struct sigaction sa;
 
-			sa.sa_handler = SigHandler;
+			sa.sa_sigaction = SigHandler;
 			sa.sa_flags = p != NULL? SA_ONSTACK:0;
+			sa.sa_flags |= SA_NODEFER;
+			sa.sa_flags |= SA_SIGINFO;
 			sigemptyset(&sa.sa_mask);
 
 			sigaction(signals[i], &sa, NULL);
