@@ -64,7 +64,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			Driver = DriversToTry[i];
 			LOG->Trace("Initializing driver: %s", DriversToTry[i].c_str());
 
-#ifdef WINDOWS
+#ifdef _WINDOWS
 			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
 			if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
 			if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
