@@ -14,25 +14,19 @@
 #include "RageUtil.h"
 #include <fstream>
 
-//#include "crash.h"
-
-#include "dxerr8.h"
-#pragma comment(lib, "DxErr8.lib")
-
+#include "crash.h"
 
 RageLog* LOG;		// global and accessable from anywhere in the program
 
-
 // constants
 #define LOG_FILE_NAME "log.txt"
-
 
 RageLog::RageLog()
 {
 	// delete old log files
 	DeleteFile( LOG_FILE_NAME );
 
-	// Open log file and leave it open.  Let the OS close it when the app exits
+	// Open log file and leave it open.
 	m_fileLog = fopen( LOG_FILE_NAME, "w" );
 
 	SYSTEMTIME st;
@@ -76,22 +70,11 @@ void RageLog::Trace( const char *fmt, ...)
 
 	fprintf( m_fileLog, "%s\n", sBuff.GetString() ); 
 	printf( "%s\n", sBuff.GetString() ); 
-//	CrashLog(sBuff);
+	CrashLog(sBuff);
 
 #ifdef DEBUG
 	this->Flush();	// implicit flush
 #endif
-}
-
-void RageLog::Trace( HRESULT hr, const char *fmt, ...)
-{
-    va_list	va;
-    va_start(va, fmt);
-    CString s = vssprintf( fmt, va );
-    va_end(va);
-
-	s += ssprintf( "(%s)", DXGetErrorString8(hr) );
-	this->Trace( "%s", s.GetString() );
 }
 
 void RageLog::Warn( const char *fmt, ...)

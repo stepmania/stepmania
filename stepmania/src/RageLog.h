@@ -21,7 +21,6 @@ public:
 	~RageLog();
 
 	void Trace( const char *fmt, ...);
-	void Trace( HRESULT hr, const char *fmt, ...);
 	void Warn( const char *fmt, ...);
 	void Flush();
 

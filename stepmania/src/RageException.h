@@ -17,7 +17,6 @@ class RageException : public exception
 {
 public:
 	RageException( const char *fmt, ...);
-	RageException( HRESULT hr, const char *fmt, ...);
 
 	virtual const char *what() const throw();
 	virtual ~RageException() throw() { }
