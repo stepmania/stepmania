@@ -315,7 +315,8 @@ void ScreenSelectMusic::Init()
 	m_sprOptionsMessage.SetName( "OptionsMessage" );
 	m_sprOptionsMessage.Load( THEME->GetPathG(m_sName,"options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
-	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );	// invisible
+	m_sprOptionsMessage.SetHidden( true );
+	SET_XY( m_sprOptionsMessage );
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
 	FOREACH_PlayerNumber( p )
@@ -1190,8 +1191,8 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 //			float fShowSeconds = m_Out.GetLengthSeconds();
 
 			// show "hold START for options"
-			m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,1) );	// visible
-			SET_XY_AND_ON_COMMAND( m_sprOptionsMessage );
+			m_sprOptionsMessage.SetHidden( false );
+			ON_COMMAND( m_sprOptionsMessage );
 
 			m_bAllowOptionsMenu = true;
 			/* Don't accept a held START for a little while, so it's not
