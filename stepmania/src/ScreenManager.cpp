@@ -238,6 +238,9 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	 * apparent. */
 	DISPLAY->ResetStats();
 
+	/* This is a convenient time to clean up our song cache. */
+	SONGMAN->CleanCourses();
+
 	return ret;
 }
 

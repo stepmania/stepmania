@@ -57,6 +57,7 @@ public:
 
 	void InitCoursesFromDisk();
 	void ReloadCourses();
+	void CleanCourses();
 
 	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, const StyleDef *s, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );

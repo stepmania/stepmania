@@ -512,6 +512,20 @@ void SongManager::ReloadCourses()
 
 }
 
+/* Called periodically to wipe out cached NoteData.  This is called when we change
+ * screens. */
+void SongManager::CleanCourses()
+{
+	for( unsigned i=0; i<m_pSongs.size(); i++ )
+	{
+		for( unsigned n=0; n<m_pSongs[i]->m_apNotes.size(); n++ )
+		{	
+			m_pSongs[i]->m_apNotes[n]->Compress();
+		}
+	}
+
+}
+
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
