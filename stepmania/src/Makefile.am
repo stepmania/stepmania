@@ -125,7 +125,8 @@ ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTest
 ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
 ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h \
 ScreenAutogenOptions.cpp ScreenAutogenOptions.h ScreenCredits.cpp ScreenCredits.h \
-ScreenSelectCharacter.cpp ScreenSelectCharacter.h ScreenRaveOptions.cpp ScreenRaveOptions.h
+ScreenSelectCharacter.cpp ScreenSelectCharacter.h ScreenRaveOptions.cpp ScreenRaveOptions.h \
+ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h
  
 
 GlobalSingletons = \
@@ -147,9 +148,9 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.h
 
 Sound = $(Sound_Null)
-if ALSA
+#if ALSA
 Sound += $(Sound_ALSA9)
-endif
+#endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
