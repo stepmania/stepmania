@@ -16,19 +16,16 @@
 struct NoteDataWithScoring : public NoteData
 {
 	NoteDataWithScoring();
-	void Init();
-	void InitScoringData();
+	void Init(int taps=0, int holds=0);
 
 	// maintain this extra data in addition to the NoteData
 	TapNoteScore	m_TapNoteScores[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
-	HoldNoteScore	m_HoldNoteScores[MAX_HOLD_NOTES];
-	float			m_fHoldNoteLife[MAX_TAP_NOTE_ROWS];	// 1.0 means this HoldNote has full life.
-														// 0.0 means this HoldNote is dead
-														// When this value hits 0.0 for the first time, 
-														// m_HoldScore becomes HSS_NG.
-														// If the life is > 0.0 when the HoldNote ends, then
-														// m_HoldScore becomes HSS_OK.
-
+	vector<HoldNoteScore> m_HoldNoteScores;
+	/* 1.0 means this HoldNote has full life.
+	 * 0.0 means this HoldNote is dead
+	 * When this value hits 0.0 for the first time, m_HoldScore becomes HSS_NG.
+	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HSS_OK. */
+	vector<float>	m_fHoldNoteLife;
 
 	// statistics
 	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );

@@ -19,23 +19,20 @@ NoteDataWithScoring::NoteDataWithScoring()
 	Init();
 }
 
-void NoteDataWithScoring::Init()
+void NoteDataWithScoring::Init(int taps, int holds)
 {
 	NoteData::Init();
-	InitScoringData();
-}
 
-void NoteDataWithScoring::InitScoringData()
-{
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )
 			m_TapNoteScores[t][i] = TNS_NONE;
 
-	for( int i=0; i<MAX_HOLD_NOTES; i++ )
-	{
-		m_HoldNoteScores[i] = HNS_NONE;
-		m_fHoldNoteLife[i] = 1.0f;
-	}
+	m_HoldNoteScores.clear();
+	m_HoldNoteScores.insert(m_HoldNoteScores.begin(), holds, HNS_NONE);
+
+	m_fHoldNoteLife.clear();
+	// start with full life
+	m_fHoldNoteLife.insert(m_fHoldNoteLife.begin(), holds, 1.0f);
 }
 
 int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, const float fEndBeat )			

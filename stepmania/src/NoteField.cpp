@@ -51,7 +51,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 
 	m_fPercentFadeToFail = -1;
 
-	NoteDataWithScoring::Init();
+	NoteDataWithScoring::Init(pNoteData->GetNumTapNotes(), pNoteData->GetNumHoldNotes());
 
 	for( int i=0; i<MAX_HOLD_NOTES; i++ )
 		m_bIsHoldingHoldNote[i] = false;
@@ -61,11 +61,6 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 	// init note displays
 	for( int c=0; c<m_iNumTracks; c++ ) 
 		m_NoteDisplay[c].Load( c, pn );
-
-
-	for( i=0; i<MAX_HOLD_NOTES; i++ )
-		m_fHoldNoteLife[i] = 1;		// start with full life
-
 
 	ASSERT( m_iNumTracks == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 }
