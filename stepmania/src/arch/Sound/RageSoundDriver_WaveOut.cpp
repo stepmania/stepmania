@@ -56,6 +56,8 @@ void RageSound_WaveOut::MixerThread()
 
 		WaitForSingleObject(sound_event, 10);
 	}
+
+	waveOutReset(wo);
 }
 
 bool RageSound_WaveOut::GetData()
@@ -209,6 +211,7 @@ RageSound_WaveOut::~RageSound_WaveOut()
 {
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
+	SetEvent( sound_event );
 	LOG->Trace("Shutting down mixer thread ...");
 	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");

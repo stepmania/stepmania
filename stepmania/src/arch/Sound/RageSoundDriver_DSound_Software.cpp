@@ -51,6 +51,10 @@ void RageSound_DSound_Software::MixerThread()
 		while(GetData())
 			;
 	}
+
+	/* I'm not sure why, but if we don't stop the stream now, then the thread will take
+	 * 90ms (our buffer size) longer to close. */
+	str_ds->Stop();
 }
 
 bool RageSound_DSound_Software::GetData()
