@@ -1775,6 +1775,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case turn:
 			{
+				const NoteData OldClipboard( m_Clipboard );
 				HandleAreaMenuChoice( cut, NULL );
 				
 				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
@@ -1790,6 +1791,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				}
 
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+				m_Clipboard = OldClipboard;
 			}
 			break;
 		case transform:
@@ -1825,6 +1827,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			break;
 		case alter:
 			{
+				const NoteData OldClipboard( m_Clipboard );
 				HandleAreaMenuChoice( cut, NULL );
 				
 				AlterType at = (AlterType)iAnswers[c];
@@ -1844,11 +1847,13 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				}
 
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+				m_Clipboard = OldClipboard;
 			}
 			break;
 		case tempo:
 			{
-				// This affects ALL SETS OF STEPS; fun.
+				// This affects all steps.
+				const NoteData OldClipboard( m_Clipboard );
 				HandleAreaMenuChoice( cut, NULL );
 				
 				AlterType at = (AlterType)iAnswers[c];
@@ -1908,8 +1913,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					ndTemp.Convert2sAnd3sToHoldNotes();
 					sIter[i]->SetNoteData( &ndTemp );
 				}
-
-				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
 
 				m_NoteFieldEdit.m_fEndMarker = fNewClipboardEndBeat;
 
