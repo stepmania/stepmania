@@ -2,10 +2,14 @@
 // Microsoft Developer Studio generated include file.
 // Used by StepMania.RC
 //
+#define IDC_CRASH_SAVE                  16
 #define IDD_ERROR_DIALOG                111
 #define IDD_LOADING_DIALOG              116
 #define BITMAP_LOADING                  117
+#define BITMAP_CRASH                    121
 #define BITMAP_ERROR                    129
+#define IDD_DISASM                      138
+#define IDD_DISASM_CRASH                199
 #define IDC_SHOCKWAVEFLASH1             1000
 #define IDR_MAIN_ACCEL                  1001
 #define IDC_BUTTON_RESTART              1001
@@ -23,13 +27,17 @@
 #define IDC_STATIC_MESSAGE1             1010
 #define IDC_STATIC_MESSAGE2             1011
 #define IDC_STATIC_MESSAGE3             1013
+#define IDC_ASMBOX                      1133
+#define IDC_REGDUMP                     1283
+#define IDC_STATIC_BOMBREASON           1284
+#define IDC_CALL_STACK                  1310
 #define IDM_EXIT                        40003
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        118
+#define _APS_NEXT_RESOURCE_VALUE        123
 #define _APS_NEXT_COMMAND_VALUE         40009
 #define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           101
