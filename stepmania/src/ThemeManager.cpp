@@ -50,7 +50,7 @@ void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
 	GetDirListing( THEMES_DIR+"\\*", AddTo, true );
 	
 	// strip out the folder called "CVS"
-	for( int i=AddTo.GetSize()-1; i>=0; i-- )
+	for( int i=AddTo.size()-1; i >= 0; i-- )
 		if( 0 == stricmp(AddTo[i],"cvs") )
 			AddTo.RemoveAt(i);
 }
@@ -63,7 +63,7 @@ void ThemeManager::GetThemeNamesForCurGame( CStringArray& AddTo )
 	// strip out announcers that don't have the current game name in them
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	sGameName.MakeLower();
-	for( int i=AddTo.GetSize()-1; i>=0; i-- )
+	for( unsigned i=AddTo.size()-1; i>=0; i-- )
 	{
 		CString sLowercaseVer = AddTo[i];
 		sLowercaseVer.MakeLower();
@@ -77,7 +77,7 @@ bool ThemeManager::DoesThemeExist( CString sThemeName )
 {
 	CStringArray asThemeNames;	
 	GetAllThemeNames( asThemeNames );
-	for( int i=0; i<asThemeNames.GetSize(); i++ )
+	for( unsigned i=0; i<asThemeNames.size(); i++ )
 	{
 		if( 0==stricmp(sThemeName, asThemeNames[i]) )
 			return true;
@@ -125,7 +125,7 @@ try_element_again:
 
 	// look for a redirect
 	GetDirListing( sCurrentThemeDir + sAssetCategory+"\\"+sFileName + "*.redir", asPossibleElementFilePaths, false, true );
-	if( asPossibleElementFilePaths.GetSize() > 0 )
+	if( !asPossibleElementFilePaths.empty() )
 	{
 		CStdioFile file;
 		file.Open( asPossibleElementFilePaths[0], CFile::modeRead );
@@ -160,7 +160,7 @@ try_element_again:
 		GetDirListing( sDefaultThemeDir + sAssetCategory+"\\"+sFileName + asset_masks[i],
 						asPossibleElementFilePaths, false, true );
 
-	if( asPossibleElementFilePaths.GetSize() == 0 )
+	if( asPossibleElementFilePaths.empty() )
 	{
 #ifdef _DEBUG
 		switch( AfxMessageBox( ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString()), MB_ABORTRETRYIGNORE ) )

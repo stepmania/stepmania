@@ -181,7 +181,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 
 	CStringArray Cmds;
 	SplitCommandLine(CmdLine, Cmds);
-	for(int i = 0; i < Cmds.GetSize(); ++i)
+	for(unsigned i = 0; i < Cmds.size(); ++i)
 	{
 		if(Cmds[i] == "--fsck") { crash(); exit( 0 ); }
 	}
@@ -228,7 +228,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 		//
 		CStringArray asPackagePaths;
 		GetDirListing( "AutoInstall\\*.smzip", asPackagePaths, false, true );
-		for( i=0; i<asPackagePaths.GetSize(); i++ )
+		for( i=0; i<asPackagePaths.size(); i++ )
 		{
 			CString sCommandLine = ssprintf( "smpackage.exe %s", asPackagePaths[i].GetString() );
 
@@ -446,14 +446,14 @@ BOOL CALLBACK LoadingWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam 
 				IDC_STATIC_MESSAGE2, 
 				WM_SETTEXT, 
 				0, 
-				(LPARAM)(LPCTSTR)(asMessageLines.GetSize()>=2 ? asMessageLines[1] : "")
+				(LPARAM)(LPCTSTR)(asMessageLines.size()>=2 ? asMessageLines[1] : "")
 			);
 			SendDlgItemMessage( 
 				hWnd, 
 				IDC_STATIC_MESSAGE3, 
 				WM_SETTEXT, 
 				0, 
-				(LPARAM)(LPCTSTR)(asMessageLines.GetSize()>=3 ? asMessageLines[2] : "")
+				(LPARAM)(LPCTSTR)(asMessageLines.size()>=3 ? asMessageLines[2] : "")
 			);
 		}
 		break;
@@ -916,7 +916,7 @@ void Update()
 	ieArray.clear();	// empty the array
 	INPUTFILTER->GetInputEvents( ieArray, fDeltaTime );
 
-	for( int i=0; i<ieArray.GetSize(); i++ )
+	for( unsigned i=0; i<ieArray.size(); i++ )
 	{
 		DeviceInput DeviceI = (DeviceInput)ieArray[i];
 		InputEventType type = ieArray[i].type;
