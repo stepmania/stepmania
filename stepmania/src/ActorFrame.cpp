@@ -252,7 +252,12 @@ void ActorFrame::LoseFocus()
 
 void ActorFrame::PlayCommand( const CString &sCommandName )
 {
+	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
+	// Actor is loaded, and we don't want to call it again.
 	Actor::PlayCommand( sCommandName );
+
+	if( sCommandName == "Init" )
+		return;
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 	{
