@@ -377,7 +377,7 @@ void ScreenEvaluation::Init()
 					this->AddChild( &m_DifficultyIcon[p] );
 					
 					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathToF("Common normal") );
-					CString sPO = GAMESTATE->m_PlayerOptions[p].GetString();
+					CString sPO = GAMESTATE->m_PlayerOptions[p].GetThemedString();
 					sPO.Replace( ", ", PLAYER_OPTIONS_SEPARATOR );
 					m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
 					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
@@ -911,7 +911,7 @@ void ScreenEvaluation::CommitScores(
 			hs.iScore = stageStats.iScore[p];
 			hs.fPercentDP = stageStats.GetPercentDancePoints( p );
 			hs.fSurviveSeconds = stageStats.fAliveSeconds[p];
-			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetThemedString();
+			hs.sModifiers = GAMESTATE->m_PlayerOptions[p].GetString();
 			hs.time = time(NULL);
 			hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : "";
 			hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
