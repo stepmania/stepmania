@@ -38,6 +38,18 @@ struct TapNote
 		source = source_;
 		attackIndex = attackIndex_;
 	}
+	bool operator==( const TapNote &other )
+	{
+#define COMPARE(x)	if(x!=other.x) return false;
+		COMPARE(type);
+		COMPARE(source);
+//		COMPARE(bAttack);
+//		COMPARE(bKeysound);
+		COMPARE(attackIndex);
+//		COMPARE(keysoundIndex);
+#undef COMPARE
+		return true;
+	}
 };
 
 const unsigned MAX_NUM_ATTACKS = 2*2*2;	// 3 bits to hold the attack index currently

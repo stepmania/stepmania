@@ -8,13 +8,21 @@
 #include <set>
 #include "Attack.h"
 
+#define FOREACH_NONEMPTY_ROW_IN_TRACK( nd, track, row ) \
+	for( int row = 0; (nd).GetNextTapNoteRowForTrack(track,row); )
+#define FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( nd, track, row, start, last ) \
+	for( int row = start-1; (nd).GetNextTapNoteRowForTrack(track,row) && row <= (last); )
+#define FOREACH_NONEMPTY_ROW_ALL_TRACKS( nd, row ) \
+	for( int row = 0; (nd).GetNextTapNoteRowForAllTracks(row); )
+#define FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, row, start, last ) \
+	for( int row = start-1; (nd).GetNextTapNoteRowForAllTracks(row) && row <= (last); )
 
 class NoteData
 {
-	/* By convention, all TrackVectors have the same size.
-	 * If you want to set the size of one, be sure to set the rest. */
-	typedef vector<TapNote> TrackVector;
-	vector<TrackVector> m_TapNotes;
+	// There's no point in inserting empty notes into the map.
+	// Any blank space in the map is defined to be empty.
+	typedef map<int,TapNote> TrackMap;
+	vector<TrackMap> m_TapNotes;
 
 	vector<HoldNote>	m_HoldNotes;
 
@@ -44,9 +52,7 @@ public:
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
 	inline TapNote GetTapNote(unsigned track, int row) const
 	{
-		if(row < 0 || row >= (int) m_TapNotes[track].size()) 
-			return TAP_EMPTY;
-		return m_TapNotes[track][row];
+		return GetTapNoteX( track, row );
 	}
 	void ReserveRows( int row );
 
@@ -54,8 +60,20 @@ public:
 	 * which is much faster.  Be sure that 0 <= row < GetNumRows(). */
 	inline TapNote GetTapNoteX(unsigned track, int row) const
 	{
-		return m_TapNotes[track][row];
+		const TrackMap &mapTrack = m_TapNotes[track];
+		TrackMap::const_iterator iter = mapTrack.find( row );
+		if( iter != mapTrack.end() )
+			return iter->second;
+		else
+			return TAP_EMPTY;
 	}
+
+	// Use this to iterate over notes.
+	// Returns the row index of the first TapNote on the track that has a row
+	// index > afterRow.
+	bool GetNextTapNoteRowForTrack( int track, int &rowInOut ) const;
+	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
+	
 	void MoveTapNoteTrack(int dest, int src);
 	void SetTapNote(int track, int row, TapNote t);
 	
@@ -102,15 +120,10 @@ public:
 	//
 	// statistics
 	//
-	/* Return the number of beats/rows that might contain notes.  Use 
-	 * GetLast* if you need to know the location of the last note. */
-	float GetNumBeats() const { return NoteRowToBeat(GetNumRows()); }
-	int GetNumRows() const { return int(m_TapNotes[0].size()); }
-
-	float GetFirstBeat() const;	// return the beat number of the first note
-	int GetFirstRow() const;
-	float GetLastBeat() const;	// return the beat number of the last note
-	int GetLastRow() const;
+	int GetFirstRow() const;	// return the beat number of the first note
+	float GetFirstBeat() const { return NoteRowToBeat( GetFirstRow() ); }
+	int GetLastRow() const;	// return the beat number of the last note
+	float GetLastBeat() const { return NoteRowToBeat( GetLastRow() ); }
 	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumMines( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumHands( const float fStartBeat = 0, const float fEndBeat = -1 ) const;

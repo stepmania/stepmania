@@ -23,17 +23,18 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 { 
 	int iNumSuccessfulTapNotes = 0;
 
-	if(fEndBeat == -1)
-		fEndBeat = GetNumBeats()+1;
+	if( fEndBeat == -1 )
+		fEndBeat = GetLastBeat();
 
-	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
-	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+	iEndIndex = min( iEndIndex, GetLastRow() );
 
-	for( unsigned i=iStartIndex; i<min(float(iEndIndex), float(m_TapNoteScores[0].size())); i++ )
+	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		for( int t=0; t<GetNumTracks(); t++ )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, i, iStartIndex, iEndIndex )
 		{
-			if( this->GetTapNote(t, i).type != TapNote::empty && GetTapNoteScore(t, i) >= tns )
+			if( GetTapNoteScore(t, i) >= tns )
 				iNumSuccessfulTapNotes++;
 		}
 	}
@@ -44,13 +45,13 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const float fStartBeat, float fEndBeat ) const
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetNumBeats();
+		fEndBeat = GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetNumRows()-1 );
+	iEndIndex = min( iEndIndex, GetLastRow() );
 
 	int iNumSuccessfulDoubles = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -76,10 +77,10 @@ int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const 
 
 int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat, float fEndBeat ) const
 {
-	int iNumSuccessfulHolds = 0;
+	if( fEndBeat == -1 )
+		fEndBeat = GetLastBeat();
 
-	if(fEndBeat == -1)
-		fEndBeat = GetNumBeats();
+	int iNumSuccessfulHolds = 0;
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
@@ -98,13 +99,13 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) const
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetNumBeats();
+		fEndBeat = GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetNumRows()-1 );
+	iEndIndex = min( iEndIndex, GetLastRow() );
 
 	int iNumSuccessfulMinesNotes = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
@@ -123,14 +124,14 @@ int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) 
 int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) const
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetNumBeats();
+		fEndBeat = GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetNumRows()-1 );
+	iEndIndex = min( iEndIndex, GetLastRow() );
 
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )

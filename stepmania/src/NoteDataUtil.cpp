@@ -342,8 +342,8 @@ void NoteDataUtil::LoadOverlapped( const NoteData &input, NoteData &out, int iNe
 
 	const int ShiftThreshold = BeatToNoteRow(1);
 
-	const int iNumRows = in.GetNumRows();
-	for( int row = 0; row < iNumRows; ++row )
+	const int iLastRow = in.GetLastRow();
+	for( int row = 0; row <= iLastRow; ++row )
 	{
 		for ( int i = 0; i < in.GetNumTracks(); i++ )
 		{
@@ -389,7 +389,8 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 	out.Config(in);
 	out.SetNumTracks( iNewNumTracks );
 
-	for( int r=0; r < Original.GetNumRows(); ++r )
+	int iLastRow = Original.GetLastRow();
+	for( int r=0; r <= iLastRow; ++r )
 	{
 		if( Original.IsRowEmpty( r ) )
 			continue;
@@ -496,10 +497,10 @@ float NoteDataUtil::GetChaosRadarValue( const NoteData &in, float fSongSeconds )
 		return 0.0f;
 	// count number of triplets or 16ths
 	int iNumChaosNotes = 0;
-	int rows = in.GetLastRow();
-	for( int r=0; r<=rows; r++ )
+
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
-		if( !in.IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
+		if( GetNoteType(r) >= NOTE_TYPE_12TH )
 			iNumChaosNotes++;
 	}
 
@@ -531,11 +532,8 @@ void NoteDataUtil::RemoveSimultaneousNotes(NoteData &in, int iMaxSimultaneous, f
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	// turn all the HoldNotes into TapNotes
-	for( int r=iStartIndex; r<=iEndIndex; r++ )	// iterate backwards so we can delete
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex )
 	{
-		if( in.IsRowEmpty(r) )
-			continue;	// skip
-
 		set<int> viTracksHeld;
 		in.GetTracksHeldAtRow( r, viTracksHeld );
 
@@ -586,7 +584,7 @@ void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 	int iRowStart = BeatToNoteRow(fStartBeat);
 	int iRowEnd = BeatToNoteRow(fEndBeat);
 	for( int t=0; t<in.GetNumTracks(); t++ )
-		for( int r=iRowStart; r<=iRowEnd; r++ ) 
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, iRowStart, iRowEnd ) 
 			if( in.GetTapNote(t,r).type == TapNote::mine )
 				in.SetTapNote( t, r, TAP_EMPTY );
 }
@@ -738,7 +736,7 @@ static void SuperShuffleTaps( NoteData &in, int iStartIndex, int iEndIndex )
 	 *
 	 * This is only called by NoteDataUtil::Turn.  "in" is in 4s, and iStartIndex
 	 * and iEndIndex are in range. */
-	for( int r=iStartIndex; r<=iEndIndex; r++ )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex )
 	{
 		for( int t1=0; t1<in.GetNumTracks(); t1++ )
 		{
@@ -771,14 +769,14 @@ void NoteDataUtil::Turn( NoteData &in, StepsType st, TrackMapping tt, float fSta
 	GetTrackMapping( st, tt, in.GetNumTracks(), iTakeFromTrack );
 
 	if( fEndBeat == -1 )
-		fEndBeat = in.GetNumBeats();
+		fEndBeat = in.GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, in.GetNumRows()-1 );
+	iEndIndex = min( iEndIndex, in.GetLastRow() );
 
 	/* XXX: We could do this without an extra temporary NoteData: calculate
 	 * a list of "swaps".  For example, the 4-track mapping 1 0 2 3 is swaps
@@ -793,7 +791,7 @@ void NoteDataUtil::Turn( NoteData &in, StepsType st, TrackMapping tt, float fSta
 
 	// transform notes
 	for( int t=0; t<in.GetNumTracks(); t++ )
-		for( int r=iStartIndex; r<=iEndIndex; r++ ) 			
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, r, iStartIndex, iEndIndex ) 			
 			tempNoteDataOut.SetTapNote(t, r, tempNoteData.GetTapNote(iTakeFromTrack[t], r));
 
 	if( tt == super_shuffle )
@@ -806,13 +804,13 @@ void NoteDataUtil::Backwards( NoteData &in )
 {
 	in.ConvertHoldNotesTo4s();
 	int max_row = in.GetLastRow();
-	for( int r=0; r<=max_row/2; r++ )
+	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		int iRowEarlier = r;
-		int iRowLater = max_row-r;
-
-		for( int t=0; t<in.GetNumTracks(); t++ )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, 0, max_row/2 )
 		{
+			int iRowEarlier = r;
+			int iRowLater = max_row-r;
+
 			TapNote tnEarlier = in.GetTapNote(t, iRowEarlier);
 			TapNote tnLater = in.GetTapNote(t, iRowLater);
 			in.SetTapNote(t, iRowEarlier, tnLater);
@@ -825,10 +823,9 @@ void NoteDataUtil::Backwards( NoteData &in )
 void NoteDataUtil::SwapSides( NoteData &in )
 {
 	in.ConvertHoldNotesTo4s();
-	int max_row = in.GetLastRow();
-	for( int r=0; r<=max_row; r++ )
+	for( int t=0; t<in.GetNumTracks()/2; t++ )
 	{
-		for( int t=0; t<in.GetNumTracks()/2; t++ )
+		FOREACH_NONEMPTY_ROW_IN_TRACK( in, t, r )
 		{
 			int iTrackEarlier = t;
 			int iTrackLater = t + in.GetNumTracks()/2 + in.GetNumTracks()%2;
@@ -845,12 +842,18 @@ void NoteDataUtil::SwapSides( NoteData &in )
 
 void NoteDataUtil::Little(NoteData &in, float fStartBeat, float fEndBeat)
 {
+	if( fEndBeat == -1 )
+		fEndBeat = in.GetLastBeat();
+
+	int iStartIndex = BeatToNoteRow( fStartBeat );
+	int iEndIndex = BeatToNoteRow( fEndBeat );
+
+
 	// filter out all non-quarter notes
-	int max_row = in.GetLastRow();
-	for( int i=0; i<=max_row; i+=1 ) 
-		if( i % ROWS_PER_BEAT != 0 )
-			for( int c=0; c<in.GetNumTracks(); c++ ) 
-				in.SetTapNote( c, i, TAP_EMPTY );
+	for( int t=0; t<in.GetNumTracks(); t++ ) 
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, i, iStartIndex, iEndIndex )
+			if( i % ROWS_PER_BEAT != 0 )
+					in.SetTapNote( t, i, TAP_EMPTY );
 
 	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )
 		if( fmodf(in.GetHoldNote(i).GetStartBeat(),1) != 0 )	// doesn't start on a beat
@@ -1508,7 +1511,8 @@ void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 		return;
 
 	// each row must pass at least one valid mask
-	for( int r=0; r<in.GetNumRows(); r++ )
+	int iLastRow = in.GetLastRow();
+	for( int r=0; r<=iLastRow; r++ )
 	{
 		// only check rows with jumps
 		if( in.GetNumTapNonEmptyTracks(r) < 2 )
