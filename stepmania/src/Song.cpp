@@ -711,8 +711,8 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		/* XXX スペース★マコのテーマ (space? special? * "mako"?'s team) (title or subtitle, not sure) */
 
 		/* Subtitles: */
-		/* XXX それぞれの明日 (every tomorrow?) (subtitle) (title is Graduation) */
-
+		/* それぞれの明日 (title is Graduation) */
+		ttab.push_back(TitleTrans("", "^Each Tomorrow$", "", "", "&hso;&hre;&hzo;&hre;&hno;&aka;&nichi;", "") );
 
 		/* Artists: */
 		ttab.push_back(TitleTrans("", "", "Omega", "", "", "&omega;") );
