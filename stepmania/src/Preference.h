@@ -15,7 +15,7 @@ enum PrefsGroup
 };
 const CString& PrefsGroupToString( PrefsGroup pg );
 
-
+struct lua_State;
 class IPreference
 {
 public:
@@ -28,6 +28,8 @@ public:
 
 	virtual CString ToString() const = 0;
 	virtual void FromString( const CString &s ) = 0;
+
+	virtual void PushValue( lua_State *L ) const;
 
 	PrefsGroup GetPrefsGroup() const { return m_PrefsGroup; }
 	const CString &GetName() const { return m_sName; }
@@ -57,6 +59,7 @@ public:
 
 	CString ToString() const;
 	void FromString( const CString &s );
+	void PushValue( lua_State *L ) const;
 
 	void LoadDefault()
 	{

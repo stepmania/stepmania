@@ -2,6 +2,8 @@
 #include "Preference.h"
 #include "PrefsManager.h"
 #include "IniFile.h"
+#include "RageLog.h"
+#include "LuaFunctions.h"
 
 static const CString PrefsGroupNames[NUM_PREFS_GROUPS] = {
 	"Debug",
@@ -20,6 +22,19 @@ IPreference::IPreference( PrefsGroup PrefsGroup, const CString& sName ):
 IPreference::~IPreference()
 {
 	PrefsManager::Unsubscribe( this );
+}
+
+void IPreference::PushValue( lua_State *L ) const
+{
+	if( LOG )
+		LOG->Trace( "The preference value \"%s\" is of a type not supported by Lua", m_sName.c_str() );
+
+	lua_pushnil( L );
+}
+
+void Preference<CString>::PushValue( lua_State *L ) const
+{
+	LuaManager::PushStack( m_currentValue, L );
 }
 
 void Preference<CString>::FromString( const CString &s )
@@ -41,6 +56,10 @@ CString Preference<CString>::ToString() const
 	{ \
 		return ::ToString( m_currentValue ); \
 	} \
+	void Preference<type>::PushValue( lua_State *L ) const \
+	{ \
+		LuaManager::PushStack( m_currentValue, L ); \
+	}
 
 READFROM_AND_WRITETO( int )
 READFROM_AND_WRITETO( float )
