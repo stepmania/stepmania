@@ -7,8 +7,13 @@
 #include <windows.h>
 #endif
 
-#include <GL/gl.h>
-#include <GL/glu.h>
+#if !defined(DARWIN)
+# include <GL/gl.h>
+# include <GL/glu.h>
+#else
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+#endif
 
 #undef __glext_h_
 #include "glext.h"
