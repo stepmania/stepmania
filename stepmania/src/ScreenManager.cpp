@@ -101,7 +101,8 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 
 	m_SkipBackground.StretchTo(RectF(SKIP_LEFT-8, SKIP_TOP-8,
 						SKIP_LEFT+SKIP_WIDTH, SKIP_TOP+SKIP_Y_DIST*NUM_SKIPS_TO_SHOW));
-	m_SkipBackground.SetDiffuse( RageColor(0,0,0,0) );
+	m_SkipBackground.SetDiffuse( RageColor(0,0,0,0.4f) );
+	m_SkipBackground.SetHidden( !PREFSMAN->m_bTimestamping );
 	this->AddChild(&m_SkipBackground);
 
 	for( int i=0; i<NUM_SKIPS_TO_SHOW; i++ )
@@ -137,6 +138,7 @@ void ScreenSystemLayer::ReloadCreditsText()
 
 	m_textTime.LoadFromFont( THEME->GetPathToF("ScreenSystemLayer time") );
 	m_textTime.SetName( "Time" );
+	m_textTime.SetHidden( !PREFSMAN->m_bTimestamping );
 	SET_XY_AND_ON_COMMAND( m_textTime ); 
 
 	FOREACH_PlayerNumber( p )
@@ -266,16 +268,6 @@ void ScreenSystemLayer::AddTimestampLine( const CString &txt, RageColor color )
 
 void ScreenSystemLayer::UpdateTimestampAndSkips()
 {
-	if(!PREFSMAN->m_bTimestamping)
-	{
-		/* Hide: */
-		m_textTime.SetDiffuse( RageColor(1,1,1,0) );
-		m_SkipBackground.SetDiffuse( RageColor(0,0,0,0) );
-	} else {
-		m_textTime.SetDiffuse( RageColor(1,0,1,1) );
-		m_SkipBackground.SetDiffuse(RageColor(0,0,0,0.4f));
-	}
-
 	/* Use our own timer, so we ignore `/tab. */
 	const float UpdateTime = SkipTimer.GetDeltaTime();
 
@@ -316,11 +308,8 @@ void ScreenSystemLayer::UpdateTimestampAndSkips()
 		}
 	}
 
-	if(PREFSMAN->m_bTimestamping)
-	{
-		CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()));
-		m_textTime.SetText( time );
-	}
+	if( PREFSMAN->m_bTimestamping )
+		m_textTime.SetText( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStart()) );
 }
 
 void ScreenSystemLayer::Update( float fDeltaTime )
