@@ -33,9 +33,13 @@ const float LIFE_LOCAL_Y[NUM_PLAYERS] = { -10, -10 };
 
 const float STAGE_NUMBER_LOCAL_X = 0;
 const float STAGE_NUMBER_LOCAL_Y = +20;
+const float STAGE_NUMBER_LOCALEZ2_Y = -30;
 
 const float SCORE_LOCAL_X[NUM_PLAYERS] = { -214, +214 };
 const float SCORE_LOCAL_Y[NUM_PLAYERS] = { -6, -6 };
+
+const float SCORE_LOCALEZ2_X[NUM_PLAYERS] = { -240, +240 };
+const float SCORE_LOCALEZ2_Y[NUM_PLAYERS] = { -32, -32 };
 
 const float PLAYER_OPTIONS_LOCAL_X[NUM_PLAYERS]	= { -0, +0 };
 const float PLAYER_OPTIONS_LOCAL_Y[NUM_PLAYERS]	= { -10, +10 };
@@ -151,6 +155,14 @@ ScreenGameplay::ScreenGameplay()
 		m_LifeMeter[p].SetZoomX( 256 );
 		m_LifeMeter[p].SetZoomY( (p==PLAYER_1) ? 20.0f : -20.0f );
 		m_frameTop.AddActor( &m_LifeMeter[p] );
+		
+		if ( GAMEMAN->m_CurGame == GAME_EZ2 )
+		{	
+			m_ScoreDisplay[p].SetXY( SCORE_LOCALEZ2_X[p], SCORE_LOCALEZ2_Y[p] );
+			m_ScoreDisplay[p].SetZoom( 0.5f );
+			m_ScoreDisplay[p].SetDiffuseColor( PlayerToColor(p) );
+			m_frameTop.AddActor( &m_ScoreDisplay[p] );
+		}
 	}
 
 	// TopFrame goes above LifeMeter
@@ -161,11 +173,17 @@ ScreenGameplay::ScreenGameplay()
 
 	m_textStageNumber.Load( THEME->GetPathTo(FONT_HEADER2) );
 	m_textStageNumber.TurnShadowOff();
-	m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCAL_Y );
+	if ( GAMEMAN->m_CurGame == GAME_EZ2 )
+	{
+		m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCALEZ2_Y );
+	}
+	else
+	{
+		m_textStageNumber.SetXY( STAGE_NUMBER_LOCAL_X, STAGE_NUMBER_LOCAL_Y );
+	}
 	m_textStageNumber.SetText( PREFSMAN->GetStageText() );
 	m_textStageNumber.SetDiffuseColor( PREFSMAN->GetStageColor() );
 	m_frameTop.AddActor( &m_textStageNumber );
-
 
 
 	//////////////////////////////////
@@ -173,22 +191,26 @@ ScreenGameplay::ScreenGameplay()
 	//////////////////////////////////
 	this->AddActor( &m_frameBottom );
 
-	m_sprBottomFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_BOTTOM_FRAME) );
-	m_frameBottom.AddActor( &m_sprBottomFrame );
-
-	m_frameBottom.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
+	if ( GAMEMAN->m_CurGame != GAME_EZ2 )
+	{
+		m_sprBottomFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_BOTTOM_FRAME) );
+		m_frameBottom.AddActor( &m_sprBottomFrame );
+		m_frameBottom.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
+	}
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
-
-		m_ScoreDisplay[p].SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
-		m_ScoreDisplay[p].SetZoom( 0.8f );
-		m_ScoreDisplay[p].SetDiffuseColor( PlayerToColor(p) );
-		m_frameBottom.AddActor( &m_ScoreDisplay[p] );
-
+		if ( GAMEMAN->m_CurGame != GAME_EZ2 )
+		{	
+			m_ScoreDisplay[p].SetXY( SCORE_LOCAL_X[p], SCORE_LOCAL_Y[p] );
+			m_ScoreDisplay[p].SetZoom( 0.8f );
+			m_ScoreDisplay[p].SetDiffuseColor( PlayerToColor(p) );
+			m_frameBottom.AddActor( &m_ScoreDisplay[p] );
+		}
+		
 		m_textPlayerOptions[p].Load( THEME->GetPathTo(FONT_NORMAL) );
 		m_textPlayerOptions[p].TurnShadowOff();
 		m_textPlayerOptions[p].SetXY( PLAYER_OPTIONS_LOCAL_X[p], PLAYER_OPTIONS_LOCAL_Y[p] );
@@ -207,12 +229,14 @@ ScreenGameplay::ScreenGameplay()
 	{
 		if( !GAMEMAN->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
-
-		float fDifficultyY = DIFFICULTY_Y[p];
-		if( PREFSMAN->m_PlayerOptions[p].m_bReverseScroll )
-			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p];
-		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
-		this->AddActor( &m_DifficultyBanner[p] );
+		if (GAMEMAN->m_CurGame != GAME_EZ2)
+		{
+			float fDifficultyY = DIFFICULTY_Y[p];
+			if( PREFSMAN->m_PlayerOptions[p].m_bReverseScroll )
+				fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p];
+			m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
+			this->AddActor( &m_DifficultyBanner[p] );
+		}
 	}
 
 
