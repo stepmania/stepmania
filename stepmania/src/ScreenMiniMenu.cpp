@@ -124,7 +124,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 		m_textAnswer[k].SetX( fAnswerX );
 	}
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMiniMenu music") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common prompt") );
 }
 
 void ScreenMiniMenu::Update( float fDeltaTime )
@@ -277,11 +277,18 @@ int ScreenMiniMenu::GetGoDownSpot()
 
 bool ScreenMiniMenu::CanGoLeft()
 {
-	return m_iCurAnswers[m_iCurLine] != 0;
+	int iNumInCurRow = m_Def.rows[m_iCurLine].choices.size();
+	if( iNumInCurRow==0 )
+		return false;
+	else
+		return m_iCurAnswers[m_iCurLine] != 0;
 }
 
 bool ScreenMiniMenu::CanGoRight()
 {
 	int iNumInCurRow = m_Def.rows[m_iCurLine].choices.size();
-	return m_iCurAnswers[m_iCurLine] != iNumInCurRow-1;
+	if( iNumInCurRow==0 )
+		return false;
+	else
+		return m_iCurAnswers[m_iCurLine] != iNumInCurRow-1;
 }

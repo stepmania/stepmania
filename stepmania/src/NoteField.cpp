@@ -174,6 +174,7 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
+	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
@@ -186,6 +187,7 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
+	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
@@ -198,10 +200,11 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
+	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,1,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,cosf(RageTimer::GetTimeSinceStart()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( sNewBGName );
-	m_textMeasureNumber.SetXY( +GetWidth()/2.f + 10, fYPos );
+	m_textMeasureNumber.SetXY( +GetWidth()/2.f, fYPos );
 	m_textMeasureNumber.Draw();
 }
 

@@ -12,22 +12,11 @@
 -----------------------------------------------------------------------------
 */
 
-
 #include "Sprite.h"
 #include "Quad.h"
 #include "ActorFrame.h"
-#include "song.h"
 #include "BGAnimation.h"
-
-
-struct BGSegment	// like a BGChange, but holds index of a background instead of name
-{
-	BGSegment() {};
-	BGSegment( float b, int i, bool f ) { m_fStartBeat = b; m_iBGIndex = i; m_bFade = f; };
-	float m_fStartBeat;
-	int m_iBGIndex;
-	bool m_bFade;
-};
+#include "Song.h"
 
 
 class Background : public ActorFrame
@@ -53,17 +42,21 @@ public:
 	virtual bool IsInDanger()		{ return m_bInDanger; };
 
 protected:
-	bool DangerVisible();
-	BGAnimation *GetBGA(const Song *pSong, const BackgroundChange &aniseg) const;
+	bool IsDangerVisible();
 		
 	BGAnimation		m_BGADanger;
 
-	// used in all BackgroundModes except OFF
-	vector<BGAnimation*> m_BGAnimations;
-	vector<BGSegment> m_aBGSegments;
-	int m_iCurBGSegment;	// this increases as we move into new segments
-	BGAnimation* GetCurBGA() { int index = m_aBGSegments[m_iCurBGSegment].m_iBGIndex; return m_BGAnimations[index]; };
-	BGAnimation* m_pCurrentBGA;
+
+	BGAnimation* CreateSongBGA(const Song *pSong, CString sBGName) const;
+	BGAnimation* CreateRandomBGA() const;
+
+	map<CString,BGAnimation*> m_BGAnimations;
+	vector<BackgroundChange> m_aBGChanges;
+	int m_iCurBGChange;	// starts at 0 and increases to m_aBGSegments.size()-1
+	BGAnimation* GetCurrentBGA()
+	{
+		return m_BGAnimations[ m_aBGChanges[m_iCurBGChange].m_sBGName ];
+	}
 	BGAnimation* m_pFadingBGA;
 	float m_fSecsLeftInFade;
 

@@ -213,7 +213,9 @@ try_element_again:
 			* the default theme point to "_shared background", and themes override
 			* just "_shared background"; the redirs in the default theme should end
 			* up resolving to the overridden background. */
-			CString sPath = GetPathTo(sAssetCategory, sNewFileName);
+			/* Use GetPathToOptional because we don't want report that there's an element
+			 * missing.  Instead we want to report that the redirect is invalid. */
+			CString sPath = GetPathToOptional(sAssetCategory, sNewFileName);
 
 			if( !sPath.empty() )
 				return sPath;

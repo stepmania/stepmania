@@ -79,7 +79,7 @@ ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool b
 
 	m_textAnswer[m_bAnswer].SetEffectGlowShift();
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenMenuPrompt music.mp3") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common prompt") );
 }
 
 void ScreenPrompt::Update( float fDeltaTime )

@@ -111,6 +111,7 @@ Menu g_KeyboardShortcuts
 	MenuRow( "Shift + Up/Down: Drag area marker",				false ),
 	MenuRow( "P: Play selection",								false ),
 	MenuRow( "Ctrl + P: Play whole song",						false ),
+	MenuRow( "Shift + P: Play current beat to end",				false ),
 	MenuRow( "F7/F8: Decrease/increase BPM at cur beat",		false ),
 	MenuRow( "F9/F10: Decrease/increase stop at cur beat",		false ),
 	MenuRow( "F11/F12: Decrease/increase music offset",			false ),
@@ -119,23 +120,25 @@ Menu g_KeyboardShortcuts
 		 * menu each time), so it doesn't use a whole bunch of hotkeys. */
 	MenuRow( "[ and ]: Decrease/increase sample music start",	false ),
 	MenuRow( "{ and }: Decrease/increase sample music length",	false ),
-	MenuRow( "M: Play sample music",							false )
+	MenuRow( "M: Play sample music",							false ),
+	MenuRow( "B: Add/Edit Background Change",					false )
 );
 
 Menu g_MainMenu
 (
 	"Main Menu",
-	MenuRow( "Edit Notes Statistics",	true ),
-	MenuRow( "Play Whole Song",			true ),
-	MenuRow( "Save",					true ),
-	MenuRow( "Player Options",			true ),
-	MenuRow( "Song Options",			true ),
-	MenuRow( "Edit Song Info",			true ),
-	MenuRow( "Add/Edit BPM Change",		true ),
-	MenuRow( "Add/Edit Stop",			true ),
-	MenuRow( "Add/Edit BG Change",		true ),
-	MenuRow( "Play preview music",		true ),
-	MenuRow( "Exit",					true )
+	MenuRow( "Edit Notes Statistics",		true ),
+	MenuRow( "Play Whole Song",				true ),
+	MenuRow( "Play Current Beat To End",	true ),
+	MenuRow( "Save",						true ),
+	MenuRow( "Player Options",				true ),
+	MenuRow( "Song Options",				true ),
+	MenuRow( "Edit Song Info",				true ),
+	MenuRow( "Add/Edit BPM Change",			true ),
+	MenuRow( "Add/Edit Stop",				true ),
+	MenuRow( "Add/Edit BG Change",			true ),
+	MenuRow( "Play preview music",			true ),
+	MenuRow( "Exit",						true )
 );
 
 Menu g_AreaMenu
@@ -913,11 +916,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case SDLK_m:
 		PlayPreviewMusic();
 		break;
+	case SDLK_b:
+		HandleMainMenuChoice( edit_bg_change, NULL );
+		break;
 	case SDLK_p:
 		{
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RCTRL)) )
 				HandleMainMenuChoice( play_whole_song, NULL );
+			else if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LSHIFT)) ||
+					 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_RSHIFT)) )
+				HandleMainMenuChoice( play_current_beat_to_end, NULL );
 			else
 				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
 					HandleAreaMenuChoice( play, NULL );
@@ -1088,24 +1097,6 @@ void ScreenEdit::OnSnapModeChange()
 
 // Begin helper functions for InputEdit
 
-void AddBGChange( CString sBGName )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	unsigned i;
-	for( i=0; i<pSong->m_BackgroundChanges.size(); i++ )
-	{
-		if( pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-			break;
-	}
-
-	if( i != pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
-		pSong->m_BackgroundChanges.erase( pSong->m_BackgroundChanges.begin()+i,
-										  pSong->m_BackgroundChanges.begin()+i+1);
-
-	// create a new BGChange
-	if( sBGName != "" )
-		pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
-}
 
 void ChangeDescription( CString sNew )
 {
@@ -1183,6 +1174,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				HandleAreaMenuChoice( play, NULL );
 			}
 			break;
+		case play_current_beat_to_end:
+			{
+				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
+				m_NoteFieldEdit.m_fEndMarker = m_NoteFieldEdit.GetLastBeat();
+				HandleAreaMenuChoice( play, NULL );
+			}
+			break;
 		case save:
 			{
 				// copy edit into current Notes
@@ -1193,7 +1191,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				GAMESTATE->m_pCurSong->Save();
 
 				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
-				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","edit save") );
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","ScreenEdit save") );
 			}
 			break;
 		case player_options:
@@ -1224,26 +1222,28 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				//
 				// Fill in option names
 				//
+
+				// m_pSong->GetSongDir() has trailing slash
 				g_BGChange.rows[add_song_bganimation].choices.clear();
-				GetDirListing( m_pSong->GetSongDir()+"/*.*", g_BGChange.rows[add_song_bganimation].choices, true );
+				GetDirListing( m_pSong->GetSongDir()+"*.*", g_BGChange.rows[add_song_bganimation].choices, true );
 
 				g_BGChange.rows[add_song_movie].choices.clear();
-				GetDirListing( m_pSong->GetSongDir()+"/*.avi", g_BGChange.rows[add_song_movie].choices, false );
-				GetDirListing( m_pSong->GetSongDir()+"/*.mpg", g_BGChange.rows[add_song_movie].choices, false );
-				GetDirListing( m_pSong->GetSongDir()+"/*.mpeg", g_BGChange.rows[add_song_movie].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"*.avi", g_BGChange.rows[add_song_movie].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"*.mpg", g_BGChange.rows[add_song_movie].choices, false );
+				GetDirListing( m_pSong->GetSongDir()+"*.mpeg", g_BGChange.rows[add_song_movie].choices, false );
 
 				g_BGChange.rows[add_global_random_movie].choices.clear();
-				GetDirListing( m_pSong->GetSongDir()+"/*.avi", g_BGChange.rows[add_global_random_movie].choices, false );
-				GetDirListing( m_pSong->GetSongDir()+"/*.mpg", g_BGChange.rows[add_global_random_movie].choices, false );
-				GetDirListing( m_pSong->GetSongDir()+"/*.mpeg", g_BGChange.rows[add_global_random_movie].choices, false );
+				GetDirListing( RANDOMMOVIES_DIR+"*.avi", g_BGChange.rows[add_global_random_movie].choices, false );
+				GetDirListing( RANDOMMOVIES_DIR+"*.mpg", g_BGChange.rows[add_global_random_movie].choices, false );
+				GetDirListing( RANDOMMOVIES_DIR+"*.mpeg", g_BGChange.rows[add_global_random_movie].choices, false );
 
 				g_BGChange.rows[add_global_bganimation].choices.clear();
-				GetDirListing( m_pSong->GetSongDir()+"/*.*", g_BGChange.rows[add_global_bganimation].choices, true );
+				GetDirListing( BG_ANIMS_DIR+"*.*", g_BGChange.rows[add_global_bganimation].choices, true );
 
 				g_BGChange.rows[add_global_visualization].choices.clear();
-				GetDirListing( m_pSong->GetSongDir()+"/*.avi", g_BGChange.rows[add_global_visualization].choices, false );
-				GetDirListing( m_pSong->GetSongDir()+"/*.mpg", g_BGChange.rows[add_global_visualization].choices, false );
-				GetDirListing( m_pSong->GetSongDir()+"/*.mpeg", g_BGChange.rows[add_global_visualization].choices, false );
+				GetDirListing( VISUALIZATIONS_DIR+"*.avi", g_BGChange.rows[add_global_visualization].choices, false );
+				GetDirListing( VISUALIZATIONS_DIR+"*.mpg", g_BGChange.rows[add_global_visualization].choices, false );
+				GetDirListing( VISUALIZATIONS_DIR+"*.mpeg", g_BGChange.rows[add_global_visualization].choices, false );
 
 
 				//
@@ -1256,7 +1256,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 
 				g_BGChange.rows[add_random].enabled = true;
 				g_BGChange.rows[add_song_bganimation].enabled = g_BGChange.rows[add_song_bganimation].choices.size() > 0;
-				g_BGChange.rows[add_song_movie].enabled = g_BGChange.rows[add_global_random_movie].choices.size() > 0;
+				g_BGChange.rows[add_song_movie].enabled = g_BGChange.rows[add_song_movie].choices.size() > 0;
 				g_BGChange.rows[add_global_random_movie].enabled = g_BGChange.rows[add_global_random_movie].choices.size() > 0;
 				g_BGChange.rows[add_global_bganimation].enabled = g_BGChange.rows[add_global_bganimation].choices.size() > 0;
 				g_BGChange.rows[add_global_visualization].enabled = g_BGChange.rows[add_global_visualization].choices.size() > 0;
@@ -1515,30 +1515,37 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 
+	CString sBGName;
+
 	switch( c )
 	{
 	case add_random:
-		SCREENMAN->TextEntry( SM_None, "Edit main title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitle, ChangeMainTitle, NULL );
+		sBGName = "-random-";
 		break;
 	case add_song_bganimation:
-		SCREENMAN->TextEntry( SM_None, "Edit sub title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitle, ChangeSubTitle, NULL );
-		break;
 	case add_song_movie:
-		SCREENMAN->TextEntry( SM_None, "Edit artist.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtist, ChangeArtist, NULL );
-		break;
 	case add_global_random_movie:
-		SCREENMAN->TextEntry( SM_None, "Edit main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitleTranslit, ChangeMainTitleTranslit, NULL );
-		break;
 	case add_global_bganimation:
-		SCREENMAN->TextEntry( SM_None, "Edit sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitleTranslit, ChangeSubTitleTranslit, NULL );
-		break;
 	case add_global_visualization:
-		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL );
+		sBGName = g_BGChange.rows[c].choices[iAnswers[c]];
 		break;
 	case delete_change:
-		SCREENMAN->TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, ChangeArtistTranslit, NULL );
+		sBGName = "";
 		break;
 	default:
 		ASSERT(0);
 	};
+
+	unsigned i;
+	for( i=0; i<m_pSong->m_BackgroundChanges.size(); i++ )
+		if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+			break;
+
+	if( i != m_pSong->m_BackgroundChanges.size() )	// there is already a BGChange here
+		m_pSong->m_BackgroundChanges.erase( m_pSong->m_BackgroundChanges.begin()+i,
+										  m_pSong->m_BackgroundChanges.begin()+i+1);
+
+	// create a new BGChange
+	if( sBGName != "" )
+		m_pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
 }

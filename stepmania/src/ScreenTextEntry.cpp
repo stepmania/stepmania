@@ -70,7 +70,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	UpdateText();
 	this->AddChild( &m_textAnswer );
 
-	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
+	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","Common prompt") );
 }
 
 void ScreenTextEntry::UpdateText()

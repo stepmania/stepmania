@@ -47,6 +47,8 @@ struct BackgroundChange
 	CString m_sBGName;
 };
 
+void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChanges );
+
 struct LyricSegment
 {
 	LyricSegment() { m_fStartTime = -1; };

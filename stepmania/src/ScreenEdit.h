@@ -104,6 +104,7 @@ public:
 	enum MainMenuChoice {
 		edit_notes_statistics,
 		play_whole_song,
+		play_current_beat_to_end,
 		save,
 		player_options,
 		song_options,

@@ -19,7 +19,8 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
-
+#include "NoteTypes.h"
+#include <math.h>	// for fmodf
 
 
 const float FADE_SECONDS = 1.0f;
@@ -31,20 +32,22 @@ const float FADE_SECONDS = 1.0f;
 
 #define RECT_BACKGROUND RectI(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
-int CompareBGSegments(const BGSegment &seg1, const BGSegment &seg2)
-{
-	return seg1.m_fStartBeat < seg2.m_fStartBeat;
-}
 
-void SortBGSegmentArray( vector<BGSegment> &arrayBGSegments )
+const CString STATIC_BACKGROUND = "static background";
+const int MAX_RANDOM_BACKGROUNDS = 5;
+const CString RANDOM_BACKGROUND[MAX_RANDOM_BACKGROUNDS] = 
 {
-	sort( arrayBGSegments.begin(), arrayBGSegments.end(), CompareBGSegments );
-}
+	"__random1",
+	"__random2",
+	"__random3",
+	"__random4",
+	"__random5"
+};
 
 
 Background::Background()
 {
-	m_iCurBGSegment = 0;
+	m_iCurBGChange = 0;
 	m_bInDanger = false;
 
 	m_pFadingBGA = NULL;
@@ -72,12 +75,14 @@ Background::~Background()
 
 void Background::Unload()
 {
-    for( unsigned i=0; i<m_BGAnimations.size(); i++ )
-		delete m_BGAnimations[i];
+    for( map<CString,BGAnimation*>::iterator iter = m_BGAnimations.begin();
+		 iter != m_BGAnimations.end();
+		 iter++ )
+		delete iter->second;
 	m_BGAnimations.clear();
 	
-	m_aBGSegments.clear();
-	m_iCurBGSegment = 0;
+	m_aBGChanges.clear();
+	m_iCurBGChange = 0;
 }
 
 void Background::LoadFromAniDir( CString sAniDir )
@@ -87,10 +92,10 @@ void Background::LoadFromAniDir( CString sAniDir )
 	BGAnimation* pTempBGA;
 	pTempBGA = new BGAnimation;
 	pTempBGA->LoadFromAniDir( sAniDir );
-	m_BGAnimations.push_back( pTempBGA );
+	m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
 }
 
-BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &aniseg) const
+BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 {
 	BGAnimation *pTempBGA;
 
@@ -100,7 +105,7 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 	CStringArray asFiles;
 
 	// Look for BGAnims in the song dir
-	GetDirListing( pSong->GetSongDir()+aniseg.m_sBGName, asFiles, true, true );
+	GetDirListing( pSong->GetSongDir()+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
@@ -108,7 +113,7 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 		return pTempBGA;
 	}
 	// Look for BG movies in the song dir
-	GetDirListing( pSong->GetSongDir()+aniseg.m_sBGName, asFiles, false, true );
+	GetDirListing( pSong->GetSongDir()+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
@@ -116,7 +121,7 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 		return pTempBGA;
 	}
 	// Look for movies in the RandomMovies dir
-	GetDirListing( RANDOMMOVIES_DIR+aniseg.m_sBGName, asFiles, false, true );
+	GetDirListing( RANDOMMOVIES_DIR+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
@@ -125,7 +130,7 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 	}
 
 	// Look for BGAnims in the BGAnims dir
-	GetDirListing( BG_ANIMS_DIR+aniseg.m_sBGName, asFiles, true, true );
+	GetDirListing( BG_ANIMS_DIR+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
@@ -134,14 +139,76 @@ BGAnimation *Background::GetBGA(const Song *pSong, const BackgroundChange &anise
 	}
 
 	// Look for BGAnims in the BGAnims dir
-	GetDirListing( VISUALIZATIONS_DIR+aniseg.m_sBGName, asFiles, false, true );
+	GetDirListing( VISUALIZATIONS_DIR+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
 		pTempBGA->LoadFromVisualization( asFiles[0] );
 		return pTempBGA;
 	}
+
+	// There is no background by this name.  
 	return NULL;
+}
+
+BGAnimation* Background::CreateRandomBGA() const
+{
+	switch( PREFSMAN->m_BackgroundMode )
+	{
+	default:
+		ASSERT(0);
+		// fall through
+	case PrefsManager::BGMODE_OFF:
+		return NULL;
+	case PrefsManager::BGMODE_ANIMATIONS:
+		{
+			CStringArray arrayPossibleAnims;
+			GetDirListing( BG_ANIMS_DIR+"*", arrayPossibleAnims, true, true );
+			// strip out "cvs" and "danger
+			int i;
+			for( i=arrayPossibleAnims.size()-1; i>=0; i-- )
+				if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") || 0==stricmp(arrayPossibleAnims[i].Right(3),"danger") )
+					arrayPossibleAnims.erase(arrayPossibleAnims.begin()+i,
+												arrayPossibleAnims.begin()+i+1);
+
+			if( arrayPossibleAnims.empty() )
+				return NULL;
+			unsigned index = rand() % arrayPossibleAnims.size();
+			BGAnimation *pTempBGA = new BGAnimation;
+			pTempBGA->LoadFromAniDir( arrayPossibleAnims[index] );
+			return pTempBGA;
+		}
+	case PrefsManager::BGMODE_MOVIEVIS:
+		{
+			CStringArray arrayPossibleMovies;
+			GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPossibleMovies, false, true );
+			GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPossibleMovies, false, true );
+			GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPossibleMovies, false, true );
+
+			if( arrayPossibleMovies.empty() )
+				return NULL;
+			unsigned index = rand() % arrayPossibleMovies.size();
+			BGAnimation* pTempBGA = new BGAnimation;
+			pTempBGA->LoadFromVisualization( arrayPossibleMovies[index] );
+			return pTempBGA;
+		}
+		break;
+	case PrefsManager::BGMODE_RANDOMMOVIES:
+		{
+			CStringArray arrayPossibleMovies;
+			GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPossibleMovies, false, true );
+			GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPossibleMovies, false, true );
+			GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPossibleMovies, false, true );
+
+			if( arrayPossibleMovies.empty() )
+				return NULL;
+			unsigned index = rand() % arrayPossibleMovies.size();
+			BGAnimation *pTempBGA = new BGAnimation;
+			pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false );
+			return pTempBGA;
+		}
+		break;
+	}
 }
 
 void Background::LoadFromSong( Song* pSong )
@@ -153,201 +220,94 @@ void Background::LoadFromSong( Song* pSong )
 
 	CString sSongBGPath = pSong && pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","Common fallback background");
 
-	//
 	// Load the static background that will before notes start and after notes end
-	//
-	
 	{
 		BGAnimation *pTempBGA = new BGAnimation;
 		pTempBGA->LoadFromStaticGraphic( sSongBGPath );
-		m_BGAnimations.push_back( pTempBGA );
+		m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
 	}
+
+
+	// Load random backgrounds
+	{
+		for( int i=0; i<MAX_RANDOM_BACKGROUNDS; i++ )
+		{
+			CString sBGName = RANDOM_BACKGROUND[ i ];
+			m_BGAnimations[sBGName] = CreateRandomBGA();
+		}
+	}
+
+	// start off showing the static song background
+	m_aBGChanges.push_back( BackgroundChange(-10000,STATIC_BACKGROUND) );
+
 
 	if( pSong->HasBGChanges() )
 	{
-		// start off showing the static song background
-		m_aBGSegments.push_back( BGSegment(-10000,0,false) );
-
-		// Load the animations used by the song's pre-defined animation plan.
-		// the song has a plan.  Use it.
+		// Load all song-specified backgrounds
 		for( unsigned i=0; i<pSong->m_BackgroundChanges.size(); i++ )
 		{
-			const BackgroundChange& aniseg = pSong->m_BackgroundChanges[i];
-			bool bFade = i==0;
+			float fStartBeat = pSong->m_BackgroundChanges[i].m_fStartBeat;
+			CString sBGName = pSong->m_BackgroundChanges[i].m_sBGName;
+			
+			bool bIsAlreadyLoaded = m_BGAnimations.find(sBGName) != m_BGAnimations.end();
 
-			BGAnimation *pTempBGA = GetBGA(pSong, aniseg);
-
-			if(pTempBGA != NULL)
+			if( !bIsAlreadyLoaded )
 			{
-				m_BGAnimations.push_back( pTempBGA );
-				// add to the plan
-				m_aBGSegments.push_back( BGSegment(aniseg.m_fStartBeat, m_BGAnimations.size()-1, bFade) );
+				BGAnimation *pTempBGA = CreateSongBGA(pSong, sBGName);
+				if( pTempBGA )
+					m_BGAnimations[sBGName] = pTempBGA;
+				else // the background was not found.  Use a random one instead
+					sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
 			}
+			
+			m_aBGChanges.push_back( BackgroundChange(fStartBeat, sBGName) );
 		}
-
-		// end showing the static song background
-		m_aBGSegments.push_back( BGSegment(pSong->m_fLastBeat,0,false) );
-
-		SortBGSegmentArray( m_aBGSegments );	// Need to sort in case there is a background change after the last beat (not likely)
 	}
 	else	// pSong doesn't have an animation plan
 	{
-
-		enum BackgroundMode { MODE_STATIC_BG, MODE_ANIMATIONS, MODE_MOVIE_VIS, MODE_RANDOMMOVIES } backgroundMode;
-
-		//
-		// figure out what BackgroundMode to use
-		//
-		if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
-			backgroundMode = MODE_STATIC_BG;
-		else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_MOVIEVIS )
-			backgroundMode = MODE_MOVIE_VIS;
-		else if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_RANDOMMOVIES )
-			backgroundMode = MODE_RANDOMMOVIES;
-		else
-			backgroundMode = MODE_ANIMATIONS;
-
-		bool bFade = backgroundMode==MODE_RANDOMMOVIES;
-
-		//
-		// Load animations that will play while notes are active
-		//
-		switch( backgroundMode )
-		{
-		case MODE_STATIC_BG:
-			break;
-		case MODE_MOVIE_VIS:
-			{
-				CStringArray arrayPossibleMovies;
-				GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPossibleMovies, false, true );
-				GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPossibleMovies, false, true );
-				GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPossibleMovies, false, true );
-
-				BGAnimation *pTempBGA = NULL;
-				if( !arrayPossibleMovies.empty() )
-				{
-					unsigned index = rand() % arrayPossibleMovies.size();
-					pTempBGA = new BGAnimation;
-					pTempBGA->LoadFromVisualization( arrayPossibleMovies[index] );
-				}
-				else
-				{
-					pTempBGA = new BGAnimation;
-					pTempBGA->LoadFromStaticGraphic( sSongBGPath );
-				}
-				m_BGAnimations.push_back( pTempBGA );
-			}
-			break;
-		case MODE_ANIMATIONS:
-			{
-				CStringArray arrayPossibleAnims;
-				GetDirListing( BG_ANIMS_DIR+"*", arrayPossibleAnims, true, true );
-				// strip out "cvs" and "danger
-				int i;
-				for( i=arrayPossibleAnims.size()-1; i>=0; i-- )
-					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") || 0==stricmp(arrayPossibleAnims[i].Right(3),"danger") )
-						arrayPossibleAnims.erase(arrayPossibleAnims.begin()+i,
-													arrayPossibleAnims.begin()+i+1);
-				for( i=0; i<4 && !arrayPossibleAnims.empty(); i++ )
-				{
-					unsigned index = rand() % arrayPossibleAnims.size();
-					BGAnimation *pTempBGA = new BGAnimation;
-					pTempBGA->LoadFromAniDir( arrayPossibleAnims[index] );
-					m_BGAnimations.push_back( pTempBGA );
-					arrayPossibleAnims.erase( arrayPossibleAnims.begin()+index,
-												 arrayPossibleAnims.begin()+index+1 );
-				}
-			}
-			break;
-		case MODE_RANDOMMOVIES:
-			{
-				CStringArray arrayPossibleMovies;
-				GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPossibleMovies, false, true );
-				GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPossibleMovies, false, true );
-				GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPossibleMovies, false, true );
-				for( int i=0; i<4 && !arrayPossibleMovies.empty(); i++ )
-				{
-					unsigned index = rand() % arrayPossibleMovies.size();
-					BGAnimation *pTempBGA = new BGAnimation;
-					pTempBGA->LoadFromMovie( arrayPossibleMovies[index], true, false );
-					m_BGAnimations.push_back( pTempBGA );
-					arrayPossibleMovies.erase( arrayPossibleMovies.begin()+index,
-												  arrayPossibleMovies.begin()+index+1 );
-				}	
-			}
-			break;
-		default:
-			ASSERT(0);
-		}
-
-
-		// At this point, m_BGAnimations[0] is the song background, and everything else
-		// in m_BGAnimations should be cycled through randomly while notes are playing.	
-		//
-		// Generate an animation plan
-		//
-		if( backgroundMode == MODE_MOVIE_VIS )
-		{
-			m_aBGSegments.push_back( BGSegment(-10000,1,false) );
-			return;
-		}
-		else
-		{
-			// start off showing the static song background
-			m_aBGSegments.push_back( BGSegment(-10000,0,false) );
-		}
-
 		const float fFirstBeat = pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
 
-		/* If we have only 2, only generate a single animation segment for for the
-		 * whole song.  Otherwise, if it's a movie, it'll loop every four measures; we
-		 * want it to play continuously. */
-		if( m_BGAnimations.size() == 2) {
-			m_aBGSegments.push_back( BGSegment(fFirstBeat,1,bFade) );
-		} else {
-			// change BG every 4 bars
-			for( float f=fFirstBeat; f<fLastBeat; f+=16 )
-			{
-				int index;
-				if( m_BGAnimations.size()==1 )
-					index = 0;
-				else if( f == fFirstBeat )
-					index = 1;	// force the first random background to play first
-				else
-					index = 1 + rand()%(m_BGAnimations.size()-1);
-				m_aBGSegments.push_back( BGSegment(f,index,bFade) );
-			}
-
-			// change BG every BPM change
-			for( unsigned i=0; i<pSong->m_BPMSegments.size(); i++ )
-			{
-				const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
-
-				if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
-					continue;	// skip]
-
-				int index;
-				if( m_BGAnimations.size()==1 )
-					index = 0;
-				else
-					index = 1 + int(bpmseg.m_fBPM)%(m_BGAnimations.size()-1);
-				m_aBGSegments.push_back( BGSegment(bpmseg.m_fStartBeat,index,bFade) );
-			}
+		// change BG every 4 bars
+		for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
+		{
+			CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+			m_aBGChanges.push_back( BackgroundChange(f,sBGName) );
 		}
 
-		// end showing the static song background
-		m_aBGSegments.push_back( BGSegment(pSong->m_fLastBeat,0,bFade) );
-		
-		// sort segments
-		SortBGSegmentArray( m_aBGSegments );
+		// change BG every BPM change that is at the beginning of a measure
+		for( unsigned i=0; i<pSong->m_BPMSegments.size(); i++ )
+		{
+			const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
+
+			if( fmodf(bpmseg.m_fStartBeat, BEATS_PER_MEASURE) != 0 )
+				continue;	// skip
+
+			if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
+				continue;	// skip
+
+			CString sBGName = RANDOM_BACKGROUND[ rand()%MAX_RANDOM_BACKGROUNDS ];
+			m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
+		}
 	}
 
-	for( unsigned i=0; i<m_BGAnimations.size(); i++ )
+
+	// end showing the static song background
+	m_aBGChanges.push_back( BackgroundChange(pSong->m_fLastBeat,STATIC_BACKGROUND) );
+
+		
+	// sort segments
+	SortBackgroundChangesArray( m_aBGChanges );
+
+
+
+    for( map<CString,BGAnimation*>::iterator iter = m_BGAnimations.begin();
+		 iter != m_BGAnimations.end();
+		 iter++ )
 	{
-		m_BGAnimations[i]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-		m_BGAnimations[i]->SetZoomX( fXZoom );
-		m_BGAnimations[i]->SetZoomY( fYZoom );
+		iter->second->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+		iter->second->SetZoomX( fXZoom );
+		iter->second->SetZoomY( fYZoom );
 	}
 		
 	m_BGADanger.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
@@ -360,7 +320,7 @@ void Background::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	if( DangerVisible() )
+	if( IsDangerVisible() )
 	{
 		m_BGADanger.Update( fDeltaTime );
 	}
@@ -375,17 +335,17 @@ void Background::Update( float fDeltaTime )
 
 		// Find the BGSegment we're in
 		unsigned i;
-		for( i=0; i<m_aBGSegments.size()-1; i++ )
-			if( GAMESTATE->m_fSongBeat < m_aBGSegments[i+1].m_fStartBeat )
+		for( i=0; i<m_aBGChanges.size()-1; i++ )
+			if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
 				break;
-		ASSERT( i >= 0  &&  i<m_aBGSegments.size() );
+		ASSERT( i >= 0  &&  i<m_aBGChanges.size() );
 
-		if( int(i) > m_iCurBGSegment )
+		if( int(i) > m_iCurBGChange )
 		{
 //			LOG->Trace( "%d, %d, %f, %f\n", m_iCurBGSegment, i, m_aBGSegments[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
-			BGAnimation* pOld = GetCurBGA();
-			m_iCurBGSegment = i;
-			BGAnimation* pNew = GetCurBGA();
+			BGAnimation* pOld = GetCurrentBGA();
+			m_iCurBGChange = i;
+			BGAnimation* pNew = GetCurrentBGA();
 
 			if( pOld != pNew )
 			{
@@ -393,11 +353,12 @@ void Background::Update( float fDeltaTime )
 				pNew->GainingFocus();
 
 				m_pFadingBGA = pOld;
-				m_fSecsLeftInFade = m_aBGSegments[m_iCurBGSegment].m_bFade ? FADE_SECONDS : 0;
+				bool bBGAnimsMode = PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_ANIMATIONS;
+				m_fSecsLeftInFade = bBGAnimsMode ? 0 : FADE_SECONDS;
 			}
 		}
 
-		GetCurBGA()->Update( fDeltaTime );
+		GetCurrentBGA()->Update( fDeltaTime );
 		if( m_pFadingBGA )
 		{
 			m_pFadingBGA->Update( fDeltaTime );
@@ -416,13 +377,13 @@ void Background::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 	
-	if( DangerVisible() )
+	if( IsDangerVisible() )
 	{
 		m_BGADanger.Draw();
 	}
 	else
 	{			
-		GetCurBGA()->Draw();
+		GetCurrentBGA()->Draw();
 		if( m_pFadingBGA )
 			m_pFadingBGA->Draw();
 	}
@@ -432,7 +393,7 @@ void Background::DrawPrimitives()
 		m_quadBorder[i].Draw();
 }
 
-bool Background::DangerVisible()
+bool Background::IsDangerVisible()
 {
 	return m_bInDanger  &&  PREFSMAN->m_bShowDanger  &&  (RageTimer::GetTimeSinceStart() - (int)RageTimer::GetTimeSinceStart()) < 0.5f;
 }
