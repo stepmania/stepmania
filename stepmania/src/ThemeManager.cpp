@@ -18,8 +18,10 @@ ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the pro
 
 
 
-CString ThemeManager::GetPathTo( ThemeElement te ) 
-{ 
+CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName ) 
+{
+	CString sThemeDir = ThemeNameToThemeDir( sThemeName );
+
 	CString sAssetPath;		// fill this in below
 
 	switch( te )
@@ -69,14 +71,6 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 		case GRAPHIC_MUSIC_SORT_ICONS:		sAssetPath = "Graphics\\music sort icons 1x5";			break;
 		case GRAPHIC_MUSIC_STATUS_ICONS:	sAssetPath = "Graphics\\music status icons 1x4";		break;
 
-		case SOUND_TITLE:					sAssetPath = "Sounds\\title";							break;
-		case SOUND_BACK:					sAssetPath = "Sounds\\back";							break;
-		case SOUND_CROWD_CHEER:				sAssetPath = "Sounds\\crowd cheer";						break;
-		case SOUND_CHANGE:					sAssetPath = "Sounds\\change";							break;
-		case SOUND_INVALID:					sAssetPath = "Sounds\\invalid";							break;
-		case SOUND_GOOD:					sAssetPath = "Sounds\\good";							break;
-		case SOUND_BAD:						sAssetPath = "Sounds\\bad";								break;
-		case SOUND_CLEARED:					sAssetPath = "Sounds\\cleared";							break;
 		case SOUND_FAILED:					sAssetPath = "Sounds\\failed";							break;
 		case SOUND_ASSIST:					sAssetPath = "Sounds\\Assist";							break;
 		case SOUND_SELECT:					sAssetPath = "Sounds\\select";							break;
@@ -135,26 +129,26 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 	///////////////////////////////////////
 	if( sAssetDir == "Graphics\\" )
 	{
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".sprite", arrayPossibleElementFileNames );
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".png", arrayPossibleElementFileNames );
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".jpg", arrayPossibleElementFileNames );
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".bmp", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".sprite", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".png", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".jpg", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".bmp", arrayPossibleElementFileNames );
 	}
 	else if( sAssetDir == "Sounds\\" )
 	{
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".set", arrayPossibleElementFileNames );
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".mp3", arrayPossibleElementFileNames );
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".wav", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".set", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".mp3", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".wav", arrayPossibleElementFileNames );
 	}
 	else if( sAssetDir == "Fonts\\" )
 	{
-		GetDirListing( m_sCurThemeDir + sAssetDir + sAssetFileName + ".font", arrayPossibleElementFileNames );
+		GetDirListing( sThemeDir + sAssetDir + sAssetFileName + ".font", arrayPossibleElementFileNames );
 	}
 	else if( sAssetDir == "Announcer\\" )
 	{
 		// return the directory, and let the SoundSet discover all the samples in that directory
-		if( DoesFileExist( m_sCurThemeDir + sAssetDir + sAssetFileName ) )
-			return m_sCurThemeDir + sAssetDir + sAssetFileName;
+		if( DoesFileExist( sThemeDir + sAssetDir + sAssetFileName ) )
+			return sThemeDir + sAssetDir + sAssetFileName;
 	}
 	else
 	{
@@ -162,7 +156,7 @@ CString ThemeManager::GetPathTo( ThemeElement te )
 	}
 
 	if( arrayPossibleElementFileNames.GetSize() > 0 )
-		return m_sCurThemeDir + sAssetDir + arrayPossibleElementFileNames[0];
+		return sThemeDir + sAssetDir + arrayPossibleElementFileNames[0];
 
 
 	///////////////////////////////////////

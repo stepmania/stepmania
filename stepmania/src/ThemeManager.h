@@ -61,14 +61,6 @@ enum ThemeElement {
 	GRAPHIC_MUSIC_SORT_ICONS,
 	GRAPHIC_MUSIC_STATUS_ICONS,
 	
-	SOUND_TITLE,	
-	SOUND_BACK,	
-	SOUND_CROWD_CHEER,	
-	SOUND_CHANGE,	
-	SOUND_INVALID,	
-	SOUND_GOOD,	
-	SOUND_BAD,	
-	SOUND_CLEARED,	
 	SOUND_FAILED,	
 	SOUND_ASSIST,	
 	SOUND_SELECT,	
@@ -127,6 +119,11 @@ class ThemeManager
 public:
 	ThemeManager()
 	{
+		CStringArray arrayThemeNames;
+		GetThemeNames( arrayThemeNames );
+		for( int i=0; i<arrayThemeNames.GetSize(); i++ )
+			CheckThemeIsComplete( arrayThemeNames[i] );
+
 		SetTheme( DEFAULT_THEME_NAME );
 	};
 
@@ -139,26 +136,43 @@ public:
 	{
 		sThemeName.MakeLower();
 		m_sCurThemeName = sThemeName;
-		m_sCurThemeDir = ssprintf( "Themes\\%s\\", m_sCurThemeName );
+		CString sThemeDir = ThemeNameToThemeDir( m_sCurThemeName );
 
-		if( !DoesFileExist( m_sCurThemeDir ) )
+		if( !DoesFileExist( sThemeDir ) )
 		{
-			RageError( ssprintf( "The theme in diretory '%' could not be loaded.", m_sCurThemeDir ) );
+			RageError( ssprintf( "The theme in diretory '%' could not be loaded.", sThemeDir ) );
+			return false;
+		}
+
+		return true;
+	};
+	bool CheckThemeIsComplete( CString sThemeName )		// return false if theme doesn't exist
+	{
+		for( int i=0; i<NUM_THEME_ELEMENTS; i++ )
+		{
+			if( GetPathTo( (ThemeElement)i, sThemeName ) == "" )
 			return false;
 		}
 
 		return true;
 	};
 
-	CString GetPathTo( ThemeElement te );
+	CString GetPathTo( ThemeElement te )
+	{
+		return GetPathTo( te, m_sCurThemeName );
+	};
+	CString GetPathTo( ThemeElement te, CString sThemeName );
 
 
 
 private:
 
-	CString m_sCurThemeName;
-	CString m_sCurThemeDir;		// with trailing backslash
+	CString ThemeNameToThemeDir( CString sThemeName )
+	{
+		return ssprintf( "Themes\\%s\\", sThemeName );
+	}
 
+	CString m_sCurThemeName;
 };
 
 
