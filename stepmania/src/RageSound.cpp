@@ -756,25 +756,6 @@ void RageSound::SetPlaybackRate( float NewSpeed )
 	}
 }
 
-/* This is used to start music.  It probably belongs in RageSoundManager. */
-void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
-{
-	LockMut(SOUNDMAN->lock);
-	if( GetLoadedFilePath() == sSoundFilePath && IsPlaying() )
-		return;		// do nothing
-
-	Load( sSoundFilePath );
-	if(IsPlaying())
-		StopPlaying();
-
-	/* Use defaults: the beginning, the whole file. */
-	SetStartSeconds();
-	SetLengthSeconds();
-	SetPositionSamples();
-	SetStopMode(M_LOOP);
-	StartPlaying();
-}
-
 void CircBuf::reserve(unsigned n)
 {
 	clear();

@@ -49,8 +49,6 @@ public:
 	 * they can be ignored most of the time, so we continue to work if a file
 	 * is broken or missing.) */
 	bool Load(CString fn, bool cache = true);
-
-	void LoadAndPlayIfNotAlready( CString sSoundFilePath );
 	void Unload();
 
 	void SetStopMode(StopMode_t m) { StopMode = m; }
