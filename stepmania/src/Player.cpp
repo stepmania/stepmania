@@ -24,7 +24,7 @@
 #include "ScoreKeeperMAX2.h"
 #include "RageLog.h"
 #include "RageMath.h"
-
+#include "Combo.h"
 
 #define JUDGE_PERFECT_ZOOM_X		THEME->GetMetricF("Player","JudgePerfectZoomX")
 #define JUDGE_PERFECT_ZOOM_Y		THEME->GetMetricF("Player","JudgePerfectZoomY")
@@ -97,6 +97,12 @@ Player::Player()
 	
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddChild( &m_HoldJudgement[c] );
+}
+
+
+int Player::GetPlayersMaxCombo()
+{
+	return(	m_Combo.GetMaxCombo() );
 }
 
 

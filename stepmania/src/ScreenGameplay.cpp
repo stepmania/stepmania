@@ -32,6 +32,9 @@
 // Defines
 //
 
+#define MAXCOMBO_X					THEME->GetMetricF("ScreenGameplay","MAXCOMBOX")
+#define MAXCOMBO_Y					THEME->GetMetricF("ScreenGameplay","MAXCOMBOY")
+#define MAXCOMBO_ZOOM				THEME->GetMetricF("ScreenGameplay","MAXCOMBOZoom")
 #define BPM_X					THEME->GetMetricF("ScreenGameplay","BPMX")
 #define BPM_Y					THEME->GetMetricF("ScreenGameplay","BPMY")
 #define BPM_ZOOM				THEME->GetMetricF("ScreenGameplay","BPMZoom")
@@ -281,6 +284,12 @@ ScreenGameplay::ScreenGameplay()
 	m_StageName.SetZoom( STAGENAME_ZOOM );
 	m_StageName.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 	this->AddChild( &m_StageName );
+
+	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
+	m_MaxCombo.SetXY( MAXCOMBO_X, MAXCOMBO_Y );
+	m_MaxCombo.SetZoom( MAXCOMBO_ZOOM );
+	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
+	this->AddChild( &m_MaxCombo );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -703,6 +712,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	GAMESTATE->m_fSongBeat = fSongBeat;
 	GAMESTATE->m_fCurBPS = fBPS;
 	GAMESTATE->m_bFreeze = bFreeze;
+	m_MaxCombo.SetText( ssprintf("%d", m_Player[GAMESTATE->m_MasterPlayerNumber].GetPlayersMaxCombo()) ); /* MAKE THIS WORK FOR BOTH PLAYERS! */
 	
 //	printf( "m_fSongBeat = %f\n", GAMESTATE->m_fSongBeat );
 

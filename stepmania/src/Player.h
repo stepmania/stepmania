@@ -47,7 +47,7 @@ public:
 	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore );
 	void CrossedRow( int iNoteRow );
 	void Step( int col );
-
+	int GetPlayersMaxCombo();
 
 	void	FadeToFail();
 	

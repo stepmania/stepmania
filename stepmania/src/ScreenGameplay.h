@@ -99,7 +99,8 @@ private:
 
 	BitmapText				m_textDebug;
 	BitmapText				m_textAutoPlay;		// shows whether AutoPlay is on.
-
+	
+	BitmapText				m_MaxCombo;
 
 	TransitionFadeWipe	m_Fade;
 	TransitionStarWipe	m_StarWipe;
