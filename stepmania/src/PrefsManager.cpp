@@ -295,6 +295,8 @@ void PrefsManager::Init()
 	m_bLogCheckpoints = false;
 	m_bShowLoadingWindow = true;
 
+	m_bMemoryCards = false;
+
 	FOREACH_PlayerNumber( p )
 	{
 		m_iMemoryCardUsbBus[p] = -1;
@@ -519,6 +521,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 
 	ini.GetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
 	ini.GetValue( "Options", "ProductID",						m_iProductID );
+	ini.GetValue( "Options", "MemoryCards",						m_bMemoryCards );
 	FOREACH_PlayerNumber( p )
 	{
 		ini.GetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
@@ -749,6 +752,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 	ini.SetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
 	ini.SetValue( "Options", "ProductID",						m_iProductID );
+	ini.SetValue( "Options", "MemoryCards",						m_bMemoryCards );
 	FOREACH_PlayerNumber( p )
 	{
 		ini.SetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );

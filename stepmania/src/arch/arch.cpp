@@ -150,6 +150,9 @@ LightsDriver *MakeLightsDriver(CString driver)
 
 MemoryCardDriver *MakeMemoryCardDriver()
 {
+	if( !PREFSMAN->m_bMemoryCards )
+		return new MemoryCardDriver_Null;
+
 	MemoryCardDriver *ret = NULL;
 
 #ifdef LINUX
