@@ -6,6 +6,10 @@
 #include "Steps.h"
 #include "XmlFile.h"
 #include "Course.h"
+#include "SongUtil.h"
+#include "StepsUtil.h"
+#include "CourseUtil.h"
+#include "TrailUtil.h"
 
 const CString CATALOG_XML	= "Catalog.xml";
 
