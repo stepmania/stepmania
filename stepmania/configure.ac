@@ -21,29 +21,37 @@ test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
 MDL_HAVE_OPENGL
 
-AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
-if test "x$have_SDL_image" = "xno"; then
-  echo
-  echo "*** SDL_image is required to build StepMania; please"
-  echo "*** make sure that SDL_image is installed to continue"
-  echo "*** the installation process."
-  exit 0;
-fi
+AM_PATH_SDL
+# sdl-config puts -L/usr/lib in the library search path, which reorders things
+# in a way that breaks some configurations.
+SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
+
+
+# These tests break my custom build environment.  I'll put them back in later.
+#AC_SEARCH_LIBS(IMG_Load, [SDL_image], have_SDL_image=yes,  have_SDL_image=no)
+#if test "x$have_SDL_image" = "xno"; then
+#  echo
+#  echo "*** SDL_image is required to build StepMania; please"
+#  echo "*** make sure that SDL_image is installed to continue"
+#  echo "*** the installation process."
+#  exit 0;
+#fi
+
 # Since we link statically against SDL_sound, we need to link all
 # of its support libraries ourself.
 AC_SEARCH_LIBS(vorbis_comment_add, [vorbis], have_vorbis=yes,  have_vorbis=no)
 AC_SEARCH_LIBS(ogg_stream_init, [ogg], have_ogg=yes,  have_ogg=no)
 AC_SEARCH_LIBS(ov_open, [vorbisfile], have_vorbisfile=yes,  have_vorbisfile=no)
 AC_SEARCH_LIBS(mad_synth_init, [mad], have_mad=yes,  have_mad=no)
-if test "x$have_mad" = "xno"; then
-  echo
-  echo "*** Madlib is required to build StepMania; please"
-  echo "*** make sure that madlib is installed to continue"
-  echo "*** the installation process."
-  exit 0;
-fi
 
-AM_PATH_SDL
+#if test "x$have_mad" = "xno"; then
+#  echo
+#  echo "*** Madlib is required to build StepMania; please"
+#  echo "*** make sure that madlib is installed to continue"
+#  echo "*** the installation process."
+#  exit 0;
+#fi
+
 
 AM_PATH_ALSA(0.9.0,AC_DEFINE([HAVE_ALSA],1,[Define presence of ALSA]),alsa=false)
 
@@ -98,9 +106,5 @@ AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
 
 CFLAGS="$CFLAGS $GTK_CFLAGS"
 CPPFLAGS="$CPPFLAGS $GTK_CFLAGS"
-
-# sdl-config puts -L/usr/lib in the library search path, which reorders things
-# in a way that breaks some configurations.
-SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
 
 AC_OUTPUT([Makefile src/Makefile])
