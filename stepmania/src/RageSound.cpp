@@ -512,7 +512,7 @@ void RageSound::StartPlaying()
 
 	/* If StartTime is in the past, then we probably set a start time but took too
 	 * long loading.  We don't want that; log it, since it can be unobvious. */
-	if( StartTime.Ago() > 0 )
+	if( !StartTime.IsZero() && StartTime.Ago() > 0 )
 		LOG->Trace("Sound \"%s\" has a start time %f seconds in the past",
 			GetLoadedFilePath().c_str(), StartTime.Ago() );
 
