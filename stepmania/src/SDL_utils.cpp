@@ -631,6 +631,7 @@ SDL_Surface *mySDL_LoadSurface( CString file )
 	SDL_Surface *img = SDL_CreateRGBSurface(
 			SDL_SWSURFACE, h.width, h.height, h.bpp,
 			h.Rmask, h.Gmask, h.Bmask, h.Amask);
+	ASSERT( img );
 	ASSERT( h.pitch == img->pitch );
 
 	if( f.Read( img->pixels, h.height * h.pitch ) != h.height * h.pitch )
