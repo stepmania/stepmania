@@ -103,6 +103,9 @@ PrefsManager::PrefsManager()
 	m_bForceLogFlush = false;
 	m_bLogging = true;
 	m_bShowBeginnerHelper = false;
+	m_bEndlessBreakEnabled = true;
+	m_iEndlessNumStagesUntilBreak = 5;
+	m_iEndlessBreakLength = 5;
 #ifdef DEBUG
 	m_bShowLogWindow = true;
 #else
@@ -281,6 +284,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ShowLogWindow",					m_bShowLogWindow );
 	ini.GetValueB( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.GetValue ( "Options", "Language",						m_sLanguage );
+	ini.GetValueB( "Options", "EndlessBreakEnabled",			m_bEndlessBreakEnabled );
+	ini.GetValueI( "Options", "EndlessStagesUntilBreak",		m_iEndlessNumStagesUntilBreak );
+	ini.GetValueI( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
 
 	ini.GetValue ( "Options", "CustomSpeedMod",					m_sCustomSpeedMod );
 
@@ -402,6 +408,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "ProgressiveNonstopLifebar",		m_iProgressiveNonstopLifebar );
 	ini.SetValueB( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
 	ini.SetValue ( "Options", "Language",						m_sLanguage );
+	ini.SetValueB( "Options", "EndlessBreakEnabled",			m_bEndlessBreakEnabled );
+	ini.SetValueI( "Options", "EndlessStagesUntilBreak",		m_iEndlessNumStagesUntilBreak );
+	ini.SetValueI( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
 
 	ini.SetValue ( "Options", "CustomSpeedMod",					m_sCustomSpeedMod );
 
