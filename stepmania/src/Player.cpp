@@ -161,19 +161,6 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 
 	m_NoteField.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 	m_GrayArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
-
-
-	// If solo-single is enabled..
-	/* XXX: Maybe this should be enabled for all ONE_PLAYER_ONE_CREDIT modes.
-	 * I don't feel like testing that right now, though. */
-	if( PREFSMAN->m_bSoloSingle && 
-		GAMESTATE->GetCurrentStyleDef()->m_NotesType == STYLE_DANCE_SINGLE &&
-		GAMESTATE->GetNumSidesJoined() == 1 )
-	{
-		SetX(SCREEN_WIDTH/2);
-	}
-
-
 	m_GhostArrowRow.SetY( bReverse ? SCREEN_BOTTOM-GRAY_ARROWS_Y : SCREEN_TOP+GRAY_ARROWS_Y );
 
 	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI] == 1 )
