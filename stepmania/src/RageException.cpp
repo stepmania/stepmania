@@ -39,10 +39,22 @@ void RageException::Throw(const char *fmt, ...)
     CString error = vssprintf( fmt, va );
     va_end(va);
 
+    CString msg = ssprintf(
+				"\n"
+				"//////////////////////////////////////////////////////\n"
+				"Exception: %s\n"
+				"//////////////////////////////////////////////////////\n"
+				"",
+				error.GetString());
 	if(LOG)
 	{
-		LOG->Trace("Fatal exception thrown: %s", error.GetString());
+		LOG->Trace("%s", msg.GetString());
 		LOG->Flush();
+	}
+	else
+	{
+		printf("%s\n", msg.GetString());
+		fflush(stdout);
 	}
 
 #if defined(WIN32) && defined(DEBUG)

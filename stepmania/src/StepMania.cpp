@@ -342,17 +342,6 @@ int main(int argc, char* argv[])
 	catch( RageException e )
 	{
 		g_sErrorString = e.what();
-
-		LOG->Trace( 
-			"\n"
-			"//////////////////////////////////////////////////////\n"
-			"Exception: %s\n"
-			"//////////////////////////////////////////////////////\n"
-			"\n",
-			g_sErrorString.GetString()
-			);
-
-		LOG->Flush();
 	}
 #endif
 
