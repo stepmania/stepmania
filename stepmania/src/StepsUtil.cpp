@@ -169,7 +169,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 		ret = p->GetSteps( st, dc, -1, -1, "", 0, true );
 	}
 	
-	if( !bAllowNull )
+	if( ( !bAllowNull ) && ( ret == NULL ) )
 		FAIL_M( ssprintf("%i, %i, \"%s\"", st, dc, sDescription.c_str()) );
 
 	if( bUseCache )
