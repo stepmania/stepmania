@@ -12,6 +12,7 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "RandomSample.h"
+#include "GameConstantsAndTypes.h"
 #include "MenuElements.h"
 #include "OptionIcon.h"
 #include "Banner.h"

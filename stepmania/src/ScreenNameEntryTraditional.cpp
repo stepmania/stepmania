@@ -27,6 +27,7 @@
 #include "ActorUtil.h"
 #include "FontCharAliases.h"
 #include "AnnouncerManager.h"
+#include "song.h"
 #include <math.h>
 
 

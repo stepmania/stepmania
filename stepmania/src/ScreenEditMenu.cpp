@@ -22,6 +22,7 @@
 #include "RageSounds.h"
 #include "ThemeManager.h"
 #include "Steps.h"
+#include "song.h"
 
 
 //
