@@ -88,7 +88,7 @@ static void ChangeToDirOfExecutable(const char *argv0)
 #ifdef _XBOX
 	DirOfExecutable = "D:\\" ;
 	return ;
-#endif
+#else
 
 	DirOfExecutable = argv0;
 	// strip off executable name
@@ -110,16 +110,9 @@ static void ChangeToDirOfExecutable(const char *argv0)
 	if( !IsAbsolutePath )
 		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
 
-#ifndef _XBOX
-	/* Make sure the current directory is the root program directory
-	 * We probably shouldn't do this; rather, we should know where things
-	 * are and use paths as needed, so we don't depend on the binary being
-	 * in the same place as "Songs" ... */
-	if( !DoesFileExist("Songs") )
-	{
-		chdir( DirOfExecutable );
-		FlushDirCache();
-	}
+	/* Make sure the current directory is the root program directory. */
+	chdir( DirOfExecutable );
+	FlushDirCache();
 #endif
 }
 
