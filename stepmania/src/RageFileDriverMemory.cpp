@@ -102,6 +102,13 @@ const CString &RageFileObjMem::GetString() const
 	return m_pFile->m_sBuf;
 }
 
+void RageFileObjMem::PutString( const CString &sBuf )
+{
+	m_pFile->m_Mutex.Lock();
+	m_pFile->m_sBuf = sBuf;
+	m_pFile->m_Mutex.Unlock();
+}
+
 RageFileDriverMem::RageFileDriverMem():
 	RageFileDriver( new NullFilenameDB ),
 	m_Mutex("RageFileDriverMem")

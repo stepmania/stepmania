@@ -22,6 +22,7 @@ public:
 
 	/* Retrieve the contents of this file. */
 	const CString &GetString() const;
+	void PutString( const CString &sBuf );
 
 private:
 	RageFileObjMemFile *m_pFile;
