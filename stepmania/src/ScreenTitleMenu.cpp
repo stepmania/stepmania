@@ -237,44 +237,45 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		return;
 	}
 
-	if( !MenuI.IsValid() )
-		return;
 
 	if( m_In.IsTransitioning() || m_Back.IsTransitioning() ) /* not m_Out */
 		return;
 
-	switch( MenuI.button )
+	if( MenuI.IsValid() )
 	{
-	case MENU_BUTTON_UP:
-	case MENU_BUTTON_LEFT:
-		MoveCursor( true );
-		break;
-	case MENU_BUTTON_DOWN:
-	case MENU_BUTTON_RIGHT:
-		MoveCursor( false );
-		break;
-	case MENU_BUTTON_BACK:
-		if( m_Out.IsTransitioning() )
-			break;
-		Back( SM_GoToAttractLoop );
-		break;
-	case MENU_BUTTON_START:
-		/* return if the choice is invalid */
-		const ModeChoice &mc = m_aModeChoices[m_Choice];
-		CString why;
-		if( !mc.IsPlayable( &why ) )
+		switch( MenuI.button )
 		{
-			SCREENMAN->PlayInvalidSound();
-			if( why != "" )
-				SCREENMAN->SystemMessage( why );
-			return;
+		case MENU_BUTTON_UP:
+		case MENU_BUTTON_LEFT:
+			MoveCursor( true );
+			break;
+		case MENU_BUTTON_DOWN:
+		case MENU_BUTTON_RIGHT:
+			MoveCursor( false );
+			break;
+		case MENU_BUTTON_BACK:
+			if( m_Out.IsTransitioning() )
+				break;
+			Back( SM_GoToAttractLoop );
+			break;
+		case MENU_BUTTON_START:
+			/* return if the choice is invalid */
+			const ModeChoice &mc = m_aModeChoices[m_Choice];
+			CString why;
+			if( !mc.IsPlayable( &why ) )
+			{
+				SCREENMAN->PlayInvalidSound();
+				if( why != "" )
+					SCREENMAN->SystemMessage( why );
+				return;
+			}
+
+			if( !Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
+				return;
+
+			if( !m_Out.IsTransitioning() )
+				StartTransitioning( SM_GoToNextScreen );
 		}
-
-		if( !Screen::JoinInput( DeviceI, type, GameI, MenuI, StyleI ) )
-			return;
-
-		if( !m_Out.IsTransitioning() )
-			StartTransitioning( SM_GoToNextScreen );
 	}
 
 	// detect codes
