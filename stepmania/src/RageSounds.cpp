@@ -54,6 +54,8 @@ struct MusicToPlay
 	bool HasTiming;
 	bool force_loop;
 	float start_sec, length_sec, fade_len;
+	bool pending;
+	MusicToPlay() { pending=false; }
 };
 
 static MusicToPlay g_MusicToPlay;
@@ -142,10 +144,16 @@ void StartPlayingMusic( const RageTimer &when, const MusicToPlay &ToPlay, MusicP
 
 void StartMusic( MusicToPlay &ToPlay )
 {
-	if( ToPlay.file.empty() )
-		return;
-
 	LockMutex L( *g_Mutex );
+
+	if( ToPlay.file.empty() )
+	{
+		if( g_Playing->m_Music.IsPlaying() )
+			g_Playing->m_Music.StopPlaying();
+		g_Playing->m_Music.Unload();
+		return;
+	}
+
 	MusicPlaying *NewMusic = new MusicPlaying;
 	NewMusic->m_Timing = g_Playing->m_Timing;
 
@@ -239,13 +247,13 @@ int MusicThread_start( void *p )
 		StartQueuedSounds();
 
 		LockMutex L( *g_Mutex );
-		if( !g_MusicToPlay.file.size() )
+		if( !g_MusicToPlay.pending )
 			continue;
 
 		/* We have a sound to start.  Don't keep the lock while we do this; if another
 		 * music tries to start in the meantime, it'll cause a skip. */
 		MusicToPlay ToPlay = g_MusicToPlay;
-		g_MusicToPlay.file = "";
+		g_MusicToPlay.pending = false;
 
 		L.Unlock();
 
@@ -342,15 +350,8 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 {
 	LockMut( *g_Mutex );
 //	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music.GetLoadedFilePath().c_str());
-	if( g_Playing->m_Music.IsPlaying() )
-	{
-		if( !g_Playing->m_Music.GetLoadedFilePath().CompareNoCase(file) )
-			return;		// do nothing
-
-		g_Playing->m_Music.StopPlaying();
-	}
-
-	g_Playing->m_Music.Unload();
+	if( g_Playing->m_Music.IsPlaying() && !g_Playing->m_Music.GetLoadedFilePath().CompareNoCase(file) )
+		return;		// do nothing
 
 	MusicToPlay ToPlay;
 
@@ -360,6 +361,7 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 	ToPlay.length_sec = length_sec;
 	ToPlay.fade_len = fade_len;
 	ToPlay.timing_file = timing_file;
+	ToPlay.pending = true;
 
 	/* If no timing file was specified, look for one in the same place as the music file. */
 	if( ToPlay.timing_file == "" )
@@ -368,7 +370,6 @@ void RageSounds::PlayMusic( const CString &file, const CString &timing_file, boo
 	if( g_ThreadedMusicStart )
 	{
 		g_MusicToPlay = ToPlay;
-		/* XXX: kick the music start thread */
 	}
 	else
 		StartMusic( ToPlay );
