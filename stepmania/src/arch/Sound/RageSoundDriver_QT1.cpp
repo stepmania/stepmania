@@ -152,7 +152,7 @@ bail:
 
 }
 
-void RageSound_QT1::StartMixing(RageSound *snd) {
+void RageSound_QT1::StartMixing(RageSoundBase *snd) {
     sound *s = new sound;
     s->snd = snd;
 
@@ -161,7 +161,7 @@ void RageSound_QT1::StartMixing(RageSound *snd) {
     LOG->Trace("There are %ld sounds playing", sounds.size());
 }
 
-void RageSound_QT1::StopMixing(RageSound *snd) {
+void RageSound_QT1::StopMixing(RageSoundBase *snd) {
     LockMutex L(SOUNDMAN->lock);
 
     /* Find the sound. */
@@ -193,7 +193,7 @@ void RageSound_QT1::Update(float delta) {
     }
 }
 
-int RageSound_QT1::GetPosition(const RageSound *snd) const {
+int RageSound_QT1::GetPosition(const RageSoundBase *snd) const {
 #pragma unused (snd)
     TimeRecord tr;
     ClockGetTime(clock, &tr);

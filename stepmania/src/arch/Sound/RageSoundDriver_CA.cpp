@@ -223,7 +223,7 @@ RageSound_CA::~RageSound_CA()
 #endif
 }
 
-void RageSound_CA::StartMixing(RageSound *snd)
+void RageSound_CA::StartMixing(RageSoundBase *snd)
 {
     LockMutex L(SOUNDMAN->lock);
     soundPtr s = new sound;
@@ -231,7 +231,7 @@ void RageSound_CA::StartMixing(RageSound *snd)
     sounds.push_back(s);
 }
 
-void RageSound_CA::StopMixing(RageSound *snd)
+void RageSound_CA::StopMixing(RageSoundBase *snd)
 {
     LockMutex L(SOUNDMAN->lock);
 
@@ -249,7 +249,7 @@ void RageSound_CA::StopMixing(RageSound *snd)
     sounds.erase(sounds.begin()+i);
 }
 
-int RageSound_CA::GetPosition(const RageSound *snd) const
+int RageSound_CA::GetPosition(const RageSoundBase *snd) const
 {
     AudioTimeStamp time;
     OSStatus err = AudioDeviceGetCurrentTime(outputDevice, &time);

@@ -12,7 +12,7 @@ class RageSound_ALSA9_Software: public RageSoundDriver
 private:
 	struct sound
 	{
-		RageSound *snd;
+		RageSoundBase *snd;
 		RageTimer start_time;
 		bool stopping;
 		int flush_pos; /* state == STOPPING only */
@@ -34,9 +34,9 @@ private:
 
 public:
 	/* virtuals: */
-	void StartMixing(RageSound *snd);
-	void StopMixing(RageSound *snd);
-	int GetPosition(const RageSound *snd) const;
+	void StartMixing(RageSoundBase *snd);
+	void StopMixing(RageSoundBase *snd);
+	int GetPosition(const RageSoundBase *snd) const;
 	float GetPlayLatency() const;
         int GetSampleRate( int rate ) const;
 	

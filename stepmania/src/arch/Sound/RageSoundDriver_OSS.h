@@ -10,7 +10,7 @@ class RageSound_OSS: public RageSoundDriver
 	int fd;
 
 	struct sound {
-	    RageSound *snd;
+	    RageSoundBase *snd;
 		RageTimer start_time;
 
 		bool stopping;
@@ -37,9 +37,9 @@ public:
 	int GetSampleRate( int rate ) const { return samplerate; }
 
 	/* virtuals: */
-	void StartMixing(RageSound *snd);	/* used by RageSound */
-	void StopMixing(RageSound *snd);		/* used by RageSound */
-	int GetPosition(const RageSound *snd) const;
+	void StartMixing(RageSoundBase *snd);	/* used by RageSoundBase */
+	void StopMixing(RageSoundBase *snd);		/* used by RageSoundBase */
+	int GetPosition(const RageSoundBase *snd) const;
 	float GetPlayLatency() const;
 
 	RageSound_OSS();

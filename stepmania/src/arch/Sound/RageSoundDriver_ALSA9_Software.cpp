@@ -132,7 +132,7 @@ bool RageSound_ALSA9_Software::GetData()
 }
 
 
-void RageSound_ALSA9_Software::StartMixing(RageSound *snd)
+void RageSound_ALSA9_Software::StartMixing(RageSoundBase *snd)
 {
 	sound *s = new sound;
 	s->snd = snd;
@@ -161,7 +161,7 @@ void RageSound_ALSA9_Software::Update(float delta)
 	}
 }
 
-void RageSound_ALSA9_Software::StopMixing(RageSound *snd)
+void RageSound_ALSA9_Software::StopMixing(RageSoundBase *snd)
 {
 	LockMutex L(SOUNDMAN->lock);
 
@@ -185,7 +185,7 @@ void RageSound_ALSA9_Software::StopMixing(RageSound *snd)
 }
 
 
-int RageSound_ALSA9_Software::GetPosition(const RageSound *snd) const
+int RageSound_ALSA9_Software::GetPosition(const RageSoundBase *snd) const
 {
 	return pcm->GetPosition();
 }       

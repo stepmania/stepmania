@@ -126,7 +126,7 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 }
 
 
-void RageSound_ALSA9::StartMixing(RageSound *snd)
+void RageSound_ALSA9::StartMixing(RageSoundBase *snd)
 {
 	LockMutex L(SOUNDMAN->lock);
 
@@ -192,7 +192,7 @@ void RageSound_ALSA9::Update(float delta)
 
 }
 
-void RageSound_ALSA9::StopMixing(RageSound *snd)
+void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
 {
 	ASSERT(snd != NULL);
 	LockMutex L(SOUNDMAN->lock);
@@ -215,14 +215,14 @@ void RageSound_ALSA9::StopMixing(RageSound *snd)
 	/* Flush two buffers worth of data. */
 	stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetPlayPos();
 
-	/* This function is called externally (by RageSound) to stop immediately.
+	/* This function is called externally (by RageSoundBase) to stop immediately.
 	 * We need to prevent SoundStopped from being called; it should only be
 	 * called when we stop implicitely at the end of a sound.  Set snd to NULL. */
 	stream_pool[i]->snd = NULL;
 }
 
 
-int RageSound_ALSA9::GetPosition(const RageSound *snd) const
+int RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
 {
 	LockMutex L(SOUNDMAN->lock);
 

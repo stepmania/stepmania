@@ -35,7 +35,7 @@ RageException::Throw(#func " failed with error: %d at %s:%d", err, __FILE__, __L
 
 typedef struct soundInfo
 {
-    RageSound *snd;
+    RageSoundBase *snd;
     long stopPos;
     bool stopping;
 
@@ -218,7 +218,7 @@ RageSound_QT::~RageSound_QT()
     DisposeHandle(Handle(sndDescHdl));
 }
 
-void RageSound_QT::StartMixing(RageSound *snd)
+void RageSound_QT::StartMixing(RageSoundBase *snd)
 {
     LockMutex L(SOUNDMAN->lock);
     CHECKPOINT;
@@ -228,7 +228,7 @@ void RageSound_QT::StartMixing(RageSound *snd)
     sounds.push_back(s);
 }
 
-void RageSound_QT::StopMixing(RageSound *snd)
+void RageSound_QT::StopMixing(RageSoundBase *snd)
 {
     LockMutex L(SOUNDMAN->lock);
     CHECKPOINT;
@@ -260,7 +260,7 @@ void RageSound_QT::Update(float delta)
     }
 }
 
-int RageSound_QT::GetPosition(const RageSound *snd) const
+int RageSound_QT::GetPosition(const RageSoundBase *snd) const
 {
     LockMutex L(SOUNDMAN->lock);
     return GetMovieTime(movie, NULL);

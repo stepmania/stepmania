@@ -15,9 +15,9 @@
 
 class RageSound_QT: public RageSoundDriver {
 protected:
-	virtual void StartMixing(RageSound *snd);
-	virtual void StopMixing(RageSound *snd);
-	virtual int GetPosition(const RageSound *snd) const;
+	virtual void StartMixing(RageSoundBase *snd);
+	virtual void StopMixing(RageSoundBase *snd);
+	virtual int GetPosition(const RageSoundBase *snd) const;
 	virtual void Update (float delta);
 	virtual float GetPlayLatency() const;
 

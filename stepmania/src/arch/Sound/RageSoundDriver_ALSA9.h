@@ -17,7 +17,7 @@ private:
 
 		/* Sound object that's playing on this stream, or NULL if this
 		 * channel is available: */
-		RageSound *snd;
+		RageSoundBase *snd;
 		RageTimer start_time;
 
 		enum {
@@ -49,9 +49,9 @@ private:
 
 public:
 	/* virtuals: */
-	void StartMixing(RageSound *snd);
-	void StopMixing(RageSound *snd);
-	int GetPosition(const RageSound *snd) const;
+	void StartMixing(RageSoundBase *snd);
+	void StopMixing(RageSoundBase *snd);
+	int GetPosition(const RageSoundBase *snd) const;
 	int GetSampleRate( int rate ) const;
 
 	void Update(float delta);
