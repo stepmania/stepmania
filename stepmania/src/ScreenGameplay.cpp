@@ -1703,15 +1703,15 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
-		case SDLK_F5:
+		case KEY_F5:
 			this->HandleScreenMessage( SM_NotesEnded );
 			break;
-		case SDLK_F6:
+		case KEY_F6:
 			m_bChangedOffsetOrBPM = true;
 			GAMESTATE->m_SongOptions.m_bAutoSync = !GAMESTATE->m_SongOptions.m_bAutoSync;	// toggle
 			UpdateAutoPlayText();
 			break;
-		case SDLK_F7:
+		case KEY_F7:
 			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
 
 			/* Store this change, so it sticks if we change songs: */
@@ -1724,13 +1724,13 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_textDebug.BeginTweening( 0.5f );	// fade out
 			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			break;
-		case SDLK_F8:
+		case KEY_F8:
 			{
 				PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
 				UpdateAutoPlayText();
 				bool bIsHoldingShift = 
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT));
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
                 FOREACH_HumanPlayer(p)
 				{
                     if( bIsHoldingShift )
@@ -1740,20 +1740,20 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				}
 			}
 			break;
-		case SDLK_F9:
-		case SDLK_F10:
+		case KEY_F9:
+		case KEY_F10:
 			{
 				m_bChangedOffsetOrBPM = true;
 
 				float fOffsetDelta;
 				switch( DeviceI.button )
 				{
-				case SDLK_F9:	fOffsetDelta = -0.020f;		break;
-				case SDLK_F10:	fOffsetDelta = +0.020f;		break;
+				case KEY_F9:	fOffsetDelta = -0.020f;		break;
+				case KEY_F10:	fOffsetDelta = +0.020f;		break;
 				default:	ASSERT(0);						return;
 				}
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 					fOffsetDelta /= 2; /* .010 */
 				else if( type == IET_FAST_REPEAT )
 					fOffsetDelta *= 10;
@@ -1769,20 +1769,20 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
 			}
 			break;
-		case SDLK_F11:
-		case SDLK_F12:
+		case KEY_F11:
+		case KEY_F12:
 			{
 				m_bChangedOffsetOrBPM = true;
 
 				float fOffsetDelta;
 				switch( DeviceI.button )
 				{
-				case SDLK_F11:	fOffsetDelta = -0.02f;		break;
-				case SDLK_F12:	fOffsetDelta = +0.02f;		break;
+				case KEY_F11:	fOffsetDelta = -0.02f;		break;
+				case KEY_F12:	fOffsetDelta = +0.02f;		break;
 				default:	ASSERT(0);						return;
 				}
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 					fOffsetDelta /= 20; /* 1ms */
 				else switch( type )
 				{

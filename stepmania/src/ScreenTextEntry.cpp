@@ -112,8 +112,8 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		c = DeviceI.ToChar();
 
 		bool bHoldingShift = 
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT));
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
 
 		// International keyboards often have other keys mapped to shifted keys, and always 
 		// using a US layout is a bit gimped.  This is better than nothing though.

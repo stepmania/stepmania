@@ -727,7 +727,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F9 )
+	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_F9 )
 	{
 		if( type != IET_FIRST_PRESS ) return;
 		PREFSMAN->m_bShowNative ^= 1;
@@ -846,7 +846,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	break;
 	case MENU_BUTTON_BACK:
 		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-		if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == SDLK_ESCAPE )
+		if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == KEY_ESC )
 			this->MenuBack( MenuI.player );
 		else
 			Screen::MenuBack( MenuI.player, type );
