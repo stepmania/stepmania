@@ -114,7 +114,7 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 
 		BeforeChange();
 // FIXME 			m_Banner[GetBackIndex()].LoadFromSong( pSong );
-		if( DoesFileExist(path) )
+		if( IsAFile(path) )
 			m_Banner[GetBackIndex()].Load( path );
 		else
 			m_Banner[GetBackIndex()].LoadFallback();
