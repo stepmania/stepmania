@@ -5,20 +5,23 @@
 
 class RageSoundMixBuffer
 {
-	int32_t *mixbuf;
-	unsigned bufsize; /* actual allocated samples */
-	unsigned used; /* used samples */
-	int vol; /* vol * 256 */
-
 public:
-	void write( const int16_t *buf, unsigned size, float volume = -1, int offset = 0 );
-	void read(int16_t *buf);
-	void read( float *buf );
-	unsigned size() const { return used; }
-	void SetVolume(float f);
+	void write( const int16_t *buf, unsigned size );
+	void read( int16_t *pBuf );
+	void read( float *pBuf );
+	unsigned size() const { return m_iBufUsed; }
+	void SetVolume( float f );
+	void SetWriteOffset( int iOffset );
 
 	RageSoundMixBuffer();
 	~RageSoundMixBuffer();
+
+private:
+	int32_t *m_pMixbuf;
+	unsigned m_iBufSize; /* actual allocated samples */
+	unsigned m_iBufUsed; /* used samples */
+	int m_iVolumeFactor; /* vol * 256 */
+	int m_iOffset;
 };
 
 #endif

@@ -1,60 +1,58 @@
 #include "global.h"
 #include "RageSoundMixBuffer.h"
-#include "RageSoundManager.h"
 #include "RageUtil.h"
 
 RageSoundMixBuffer::RageSoundMixBuffer()
 {
-	bufsize = used = 0;
-	mixbuf = NULL;
-	if( SOUNDMAN != NULL )
-		SetVolume( SOUNDMAN->GetMixVolume() );
-	else
-		SetVolume( 1.0f );
+	m_iBufSize = m_iBufUsed = 0;
+	m_pMixbuf = NULL;
+	m_iOffset = 0;
+	SetVolume( 1.0f );
 }
 
 RageSoundMixBuffer::~RageSoundMixBuffer()
 {
-	free(mixbuf);
+	free( m_pMixbuf );
 }
 
 void RageSoundMixBuffer::SetVolume( float f )
 {
-	vol = int(256*f);
+	m_iVolumeFactor = int(256*f);
 }
 
-void RageSoundMixBuffer::write( const int16_t *buf, unsigned size, float volume, int offset )
+void RageSoundMixBuffer::SetWriteOffset( int iOffset )
 {
-	int factor = vol;
-	if( volume != -1 )
-		factor = int( 256*volume );
+	m_iOffset = iOffset;
+}
 
-	const unsigned realsize = size+offset;
-	if( bufsize < realsize )
+void RageSoundMixBuffer::write( const int16_t *buf, unsigned size )
+{
+	const unsigned realsize = size+m_iOffset;
+	if( m_iBufSize < realsize )
 	{
-		mixbuf = (int32_t *) realloc( mixbuf, sizeof(int32_t) * realsize );
-		bufsize = realsize;
+		m_pMixbuf = (int32_t *) realloc( m_pMixbuf, sizeof(int32_t) * realsize );
+		m_iBufSize = realsize;
 	}
 
-	if( used < realsize )
+	if( m_iBufUsed < realsize )
 	{
-		memset( mixbuf + used, 0, (realsize - used) * sizeof(int32_t) );
-		used = realsize;
+		memset( m_pMixbuf + m_iBufUsed, 0, (realsize - m_iBufUsed) * sizeof(int32_t) );
+		m_iBufUsed = realsize;
 	}
 
 	/* Scale volume and add. */
-	for(unsigned pos = 0; pos < size; ++pos)
-		mixbuf[pos+offset] += buf[pos] * factor;
+	for( unsigned pos = 0; pos < size; ++pos )
+		m_pMixbuf[pos+m_iOffset] += buf[pos] * m_iVolumeFactor;
 }
 
-void RageSoundMixBuffer::read(int16_t *buf)
+void RageSoundMixBuffer::read( int16_t *buf )
 {
-	for( unsigned pos = 0; pos < used; ++pos )
+	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
 	{
-		int32_t out = (mixbuf[pos]) / 256;
+		int32_t out = (m_pMixbuf[pos]) / 256;
 		buf[pos] = (int16_t) clamp( out, -32768, 32767 );
 	}
-	used = 0;
+	m_iBufUsed = 0;
 }
 
 void RageSoundMixBuffer::read( float *buf )
@@ -62,10 +60,10 @@ void RageSoundMixBuffer::read( float *buf )
 	const int Minimum = -32768 * 256;
 	const int Maximum = 32767 * 256;
 
-	for( unsigned pos = 0; pos < used; ++pos )
-		buf[pos] = SCALE( (float)mixbuf[pos], Minimum, Maximum, -1.0f, 1.0f );
+	for( unsigned pos = 0; pos < m_iBufUsed; ++pos )
+		buf[pos] = SCALE( (float)m_pMixbuf[pos], Minimum, Maximum, -1.0f, 1.0f );
 
-	used = 0;
+	m_iBufUsed = 0;
 }
 
 /*
