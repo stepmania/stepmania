@@ -244,6 +244,8 @@ void PlayerMinus::Update( float fDeltaTime )
 	if( GAMESTATE->m_pCurSong==NULL )
 		return;
 
+	if( GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
+		m_soundAttackLaunch.Play();
 	if( GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber] )
 		m_soundAttackEnding.Play();
 

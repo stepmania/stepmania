@@ -85,7 +85,6 @@ void AttackDisplay::Update( float fDelta )
 	if( !GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] )
 		return;
 	// don't handle this again
-	GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] = false;
 
 	for( unsigned s=0; s<GAMESTATE->m_ActiveAttacks[m_PlayerNumber].size(); s++ )
 	{

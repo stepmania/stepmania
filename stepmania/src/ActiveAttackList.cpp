@@ -31,10 +31,9 @@ void ActiveAttackList::Update( float fDelta )
 { 
 	BitmapText::Update( fDelta ); 
 
-	// refresh text only once every 1/2 second
-	float fNowSeconds = RageTimer::GetTimeSinceStart();
-	float fLastSeconds = RageTimer::GetTimeSinceStart() - fDelta;
-	bool bTimeToUpdate = froundf(fNowSeconds,0.5f) != froundf(fLastSeconds,0.5f);
+	bool bTimeToUpdate = 
+		GAMESTATE->m_bAttackBeganThisUpdate[m_PlayerNumber] ||
+		GAMESTATE->m_bAttackEndedThisUpdate[m_PlayerNumber];
 
 	if( bTimeToUpdate )
 	{

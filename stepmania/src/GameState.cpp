@@ -333,8 +333,12 @@ void GameState::Update( float fDelta )
 	{
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
-		bool bRebuildPlayerOptions = false;
+		// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
+		// so we'll clear these flags here and let them get turned on later
+		m_bAttackBeganThisUpdate[p] = false;
 		m_bAttackEndedThisUpdate[p] = false;
+
+		bool bRebuildPlayerOptions = false;
 
 		/* See if any delayed attacks are starting or ending. */
 		for( unsigned s=0; s<m_ActiveAttacks[p].size(); s++ )
@@ -355,6 +359,8 @@ void GameState::Update( float fDelta )
 
 			if( m_ActiveAttacks[p][s].bOn && !bCurrentlyEnabled )
 				m_bAttackEndedThisUpdate[p] = true;
+			else if( !m_ActiveAttacks[p][s].bOn && bCurrentlyEnabled )
+				m_bAttackBeganThisUpdate[p] = true;
 
 			bRebuildPlayerOptions = true;
 
@@ -989,8 +995,6 @@ void GameState::SetNoteSkinForBeatRange( PlayerNumber pn, CString sNoteSkin, flo
 void GameState::LaunchAttack( PlayerNumber target, Attack a )
 {
 	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifier.c_str(), target+1, a.fStartSecond );
-
-	m_bAttackBeganThisUpdate[target] = true;
 
 	/* If fStartSecond is -1, it means "launch as soon as possible".  For m_ActiveAttacks,
 	 * mark the real time it's starting (now), so Update() can know when the attack started
