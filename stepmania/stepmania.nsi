@@ -74,7 +74,7 @@ do_uninstall_nsis:
 GetTempFileName $R3
 CopyFiles /SILENT $R1 $R3
 ExecWait '$R3 $R2$INSTDIR' $R4
-; Delete the copy of the installer.
+; Delete the copy of the uninstaller.
 Delete $R3
 
 ; $R4 is the exit value of the uninstaller.  0 means success, anything else is
@@ -86,6 +86,10 @@ Abort
 
 
 old_nsis_not_installed:
+
+; The 3.0 uninstaller leaves a VDI behind; delete it.
+Delete "$INSTDIR\StepMania.vdi"
+
 
 ; Check for DirectX 8.0 (to be moved to the right section later)
 ; We only use this for sound.  Actually, I could probably make the sound
