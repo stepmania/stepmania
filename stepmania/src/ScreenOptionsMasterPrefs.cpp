@@ -250,6 +250,7 @@ MOVE( SoloSingles,			PREFSMAN->m_bSoloSingle );
 MOVE( HiddenSongs,			PREFSMAN->m_bHiddenSongs );
 MOVE( EasterEggs,			PREFSMAN->m_bEasterEggs );
 MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
+MOVE( AllowExtraStage,		PREFSMAN->m_bAllowExtraStage );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
@@ -374,6 +375,7 @@ static void RefreshRate( int &sel, bool ToSel, const CStringArray &choices )
 MOVE( PreloadSounds,		PREFSMAN->m_bSoundPreloadAll );
 MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
 MOVE( AttractSound,			PREFSMAN->m_bAttractSound );
+MOVE( DemonstrationSound,	PREFSMAN->m_bDemonstrationSound );
 
 static void SoundVolume( int &sel, bool ToSel, const CStringArray &choices )
 {
@@ -428,6 +430,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Hidden\nSongs",		HiddenSongs,		"OFF","ON" ),
 	ConfOption( "Easter\nEggs",			EasterEggs,			"OFF","ON" ),
 	ConfOption( "Marvelous\nTiming",	MarvelousTiming,	"NEVER","COURSES ONLY","ALWAYS" ),
+	ConfOption( "Allow Extra\nStage",	AllowExtraStage,	"OFF","ON" ),
 	ConfOption( "Pick Extra\nStage",	PickExtraStage,		"OFF","ON" ),
 	ConfOption( "Unlock\nSystem",		UnlockSystem,		"OFF","ON" ),
 

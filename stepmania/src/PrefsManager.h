@@ -111,6 +111,7 @@ public:
 	float			m_fCenterImageScaleX;
 	float			m_fCenterImageScaleY;
 	bool			m_bAttractSound;
+	bool			m_bDemonstrationSound;
 	bool			m_bAllowExtraStage;
 
 	// course ranking
