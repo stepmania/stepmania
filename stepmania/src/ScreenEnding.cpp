@@ -69,7 +69,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 
 	switch( line )
 	{
-	case CALORIES_TODAY:		return pProfile->GetDisplayTotalCaloriesBurned();
+	case CALORIES_TODAY:		return pProfile->GetDisplayTotalCaloriesBurnedToday();
 	case CURRENT_COMBO:			return Commify( pProfile->m_iCurrentCombo );
 	case PERCENT_COMPLETE:
 		{
