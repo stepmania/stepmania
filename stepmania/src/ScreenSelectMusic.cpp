@@ -101,6 +101,11 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_Menu.Load( "ScreenSelectMusic" );
 	this->AddChild( &m_Menu );
 
+	m_MusicWheelUnder.Load( THEME->GetPathToG("ScreenSelectMusic wheel under") );
+	m_MusicWheelUnder->SetName( "WheelUnder" );
+	SET_XY( m_MusicWheelUnder );
+	this->AddChild( m_MusicWheelUnder );
+
 	m_MusicWheel.SetName( "MusicWheel", "Wheel" );
 	SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
@@ -458,6 +463,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_GrooveGraph );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_MusicSortDisplay );
+	ON_COMMAND( m_MusicWheelUnder );
 	m_MusicWheel.TweenOnScreen();
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
@@ -508,6 +514,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOffScreen();
+	OFF_COMMAND( m_MusicWheelUnder );
 	OFF_COMMAND( m_MusicWheel );
 	OFF_COMMAND( m_sprBalloon );
 	OFF_COMMAND( m_Artist );

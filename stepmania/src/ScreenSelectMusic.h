@@ -93,6 +93,7 @@ protected:
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
+	AutoActor			m_MusicWheelUnder;
 	Sprite				m_sprBalloon;
 	DifficultyDisplay   m_DifficultyDisplay;
 	DifficultyList		m_DifficultyList;
