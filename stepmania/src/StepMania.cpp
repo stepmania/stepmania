@@ -820,8 +820,9 @@ void Update()
 	
 	// This was a hack to fix timing issues with the old ScreenSelectSong
 	//
-	if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
-		fDeltaTime = 0.050f;
+	// See ScreenManager::Update comments for why we shouldn't do this. -glenn
+	//if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
+	// 	fDeltaTime = 0.050f;
 	
 	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, DIK_TAB) ) )
 		fDeltaTime *= 4;
