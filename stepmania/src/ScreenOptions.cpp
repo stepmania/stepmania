@@ -51,7 +51,7 @@ ScreenOptions::ScreenOptions( CString sClassName, bool bEnableTimer ) : Screen("
 	m_SoundPrevRow.Load( THEME->GetPathToS("ScreenOptions prev") );
 	m_SoundStart.Load( THEME->GetPathToS("Common start") );
 
-	m_Menu.Load( sClassName, bEnableTimer, false );	// no style icon
+	m_Menu.Load( sClassName, bEnableTimer );
 	this->AddChild( &m_Menu );
 
 	// add everything to m_framePage so we can animate everything at once
