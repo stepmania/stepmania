@@ -584,7 +584,6 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 				m_entries[i].type == COURSE_ENTRY_RANDOM_WITHIN_GROUP )
 				bHaveRandom = true;
 		
-		LOG->Trace("trail seed changed; regen? %i", bHaveRandom);
 		if( bHaveRandom )
 			ZERO( m_TrailCacheValid );
 
