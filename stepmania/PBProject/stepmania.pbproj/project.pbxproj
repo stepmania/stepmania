@@ -1101,6 +1101,7 @@
 				AA29CD390558741A00961A51,
 				AA29CD3A0558741A00961A51,
 				AA29CD3B0558741A00961A51,
+				AA9EC2F3055F5126007E5098,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3041,6 +3042,7 @@
 				AA29CE380558741A00961A51,
 				AA29CE390558741A00961A51,
 				AA29CE3A0558741A00961A51,
+				AA9EC2F2055F5126007E5098,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8175,6 +8177,7 @@
 		};
 		AA6EFDBB04770A83005F316C = {
 			children = (
+				AA1DCB6104A4872700D02EE9,
 				AA6EFD6D04770A7C005F316C,
 				AA6EFD6E04770A7C005F316C,
 				AA6EFD6F04770A7C005F316C,
@@ -8222,6 +8225,8 @@
 				AADB4E7C04D4FE5D00D02EE9,
 				AA6EFD8904770A7C005F316C,
 				AA6EFD8A04770A7C005F316C,
+				AA9EC2F0055F5126007E5098,
+				AA9EC2F1055F5126007E5098,
 				AA6EFD8B04770A7C005F316C,
 				AA6EFD8C04770A7C005F316C,
 				AA6EFD8D04770A7C005F316C,
@@ -8241,7 +8246,6 @@
 				AA6EFDBF04770AEA005F316C,
 				AA6EFDC004770AEA005F316C,
 				AA6EFDC104770AEA005F316C,
-				AA1DCB6104A4872700D02EE9,
 			);
 			isa = PBXGroup;
 			name = Rage;
@@ -11358,6 +11362,36 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
+		};
+		AA9EC2F0055F5126007E5098 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageTextureID.cpp;
+			path = /Users/steve/stepmania/src/RageTextureID.cpp;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA9EC2F1055F5126007E5098 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = RageTextureID.h;
+			path = /Users/steve/stepmania/src/RageTextureID.h;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA9EC2F2055F5126007E5098 = {
+			fileRef = AA9EC2F0055F5126007E5098;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA9EC2F3055F5126007E5098 = {
+			fileRef = AA9EC2F1055F5126007E5098;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAA0F7CE047AC7BF005F316C = {
 			expectedFileType = wrapper.framework;
