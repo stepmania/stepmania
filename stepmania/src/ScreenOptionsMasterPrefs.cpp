@@ -253,9 +253,30 @@ MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
+/* Coin options */
+MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
+
+static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
+MOVE( JointPremium,			PREFSMAN->m_bJointPremium );
+
+static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
+{
+	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
+
+	if( ToSel && PREFSMAN->m_bEventMode )
+		sel = 7;
+	if( !ToSel )
+		PREFSMAN->m_bEventMode = (sel == 7);
+}
+
 /* Machine options */
 MOVE( MenuTimer,			PREFSMAN->m_bMenuTimer );
-MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
 MOVE( ScoringType,			PREFSMAN->m_iScoringType );
 
 static void JudgeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
@@ -274,12 +295,6 @@ static void ShowSongOptions( int &sel, bool ToSel, const CStringArray &choices )
 {
 	const PrefsManager::Maybe mapping[] = { PrefsManager::NO,PrefsManager::YES,PrefsManager::ASK };
 	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, mapping, ARRAYSIZE(mapping) );
-}
-
-static void CoinsPerCredit( int &sel, bool ToSel, const CStringArray &choices )
-{
-	const int mapping[] = { 1,2,3,4,5,6,7,8 };
-	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
@@ -310,20 +325,6 @@ static void DefaultFailType( int &sel, bool ToSel, const CStringArray &choices )
 MOVE( ProgressiveLifebar,	PREFSMAN->m_iProgressiveLifebar );
 MOVE( ProgressiveStageLifebar,		PREFSMAN->m_iProgressiveStageLifebar );
 MOVE( ProgressiveNonstopLifebar,	PREFSMAN->m_iProgressiveNonstopLifebar );
-
-MOVE( JointPremium,			PREFSMAN->m_bJointPremium );
-
-
-static void SongsPerPlay( int &sel, bool ToSel, const CStringArray &choices )
-{
-	const int mapping[] = { 1,2,3,4,5,6,7,8 };
-	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
-
-	if( ToSel && PREFSMAN->m_bEventMode )
-		sel = 7;
-	if( !ToSel )
-		PREFSMAN->m_bEventMode = (sel == 7);
-}
 
 /* Graphic options */
 MOVE( DisplayMode,			PREFSMAN->m_bWindowed );
