@@ -106,7 +106,7 @@ TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp ScoreDisplayRave.h DancingC
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
-ScreenAttract.cpp ScreenAttract.h ScreenAutoGraphicDetail.cpp ScreenAutoGraphicDetail.h ScreenCaution.cpp ScreenCaution.h ScreenCompany.h \
+ScreenAttract.cpp ScreenAttract.h ScreenCaution.cpp ScreenCaution.h ScreenCompany.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenEdit.cpp ScreenEdit.h ScreenEditMenu.cpp \
 ScreenEditMenu.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h \
 ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp \
