@@ -979,7 +979,7 @@ int main(int argc, char* argv[])
 	CRYPTMAN	= new CryptManager;	// need to do this before ProfileMan
 	MEMCARDMAN	= new MemoryCardManager;
 	PROFILEMAN	= new ProfileManager;	// must load after SONGMAN
-	UNLOCKSYS	= new UnlockSystem;
+	UNLOCKMAN	= new UnlockSystem;
 	MODELMAN	= new ModelManager;
 	delete loading_window;		// destroy this before init'ing Display
 
@@ -1058,7 +1058,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
-	SAFE_DELETE( UNLOCKSYS );
+	SAFE_DELETE( UNLOCKMAN );
 	SAFE_DELETE( MODELMAN );
 	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
 	SAFE_DELETE( CRYPTMAN );
