@@ -512,6 +512,7 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Difficulty:\n     %s\n",			DifficultyToString( m_pNotes->GetDifficulty() ).c_str() );
 	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().c_str() : "no description" );
 	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.c_str() );
+	sText += ssprintf( "Sub title:\n     %s\n",				m_pSong->m_sSubTitle.c_str() );
 	sText += ssprintf( "Tap Steps:\n     %d\n",				iNumTapNotes );
 	sText += ssprintf( "Hold Steps:\n     %d\n",			iNumHoldNotes );
 	sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_fBeat0OffsetInSeconds );
