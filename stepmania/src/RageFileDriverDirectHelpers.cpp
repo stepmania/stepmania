@@ -165,9 +165,16 @@ bool PathReady( CString path )
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
 bool CreateDirectories( CString Path )
 {
+	/* XXX: handle "//foo/bar" paths in Windows */
 	CStringArray parts;
 	CString curpath;
-	split( Path, "/", parts, false );
+
+	/* If Path is absolute, add the initial slash ("ignore empty" will remove it). */
+	if( Path.Left(1) == "/" )
+		curpath = "/";
+
+	/* Ignore empty, so eg. "/foo/bar//baz" doesn't try to create "/foo/bar" twice. */
+	split( Path, "/", parts, true );
 
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
@@ -176,10 +183,9 @@ bool CreateDirectories( CString Path )
 		curpath += parts[i];
 
 #if defined(WIN32)
-		if( (curpath.size() == 2 && curpath[1] == ':') || /* C: */
-			(curpath.size() == 3 && curpath[1] == ':' && curpath[2] == '/') ) /* C:/ */
+		if( (curpath.size() == 2 && curpath[1] == ':') )  /* C: */
 		{
-			/* Don't try to create the drive letter alone, or the root directory. */
+			/* Don't try to create the drive letter alone. */
 			continue;
 		}
 #endif
