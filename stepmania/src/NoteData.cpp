@@ -42,10 +42,9 @@ NoteData::~NoteData()
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	this->ConvertHoldNotesTo4s();
-	/* XXX: if iNoteIndexEnd >= m_TapNotes[0].size(), just erase() */
 	for( int c=0; c<m_iNumTracks; c++ )
 	{
-		for( int i=iNoteIndexBegin; i <= iNoteIndexEnd && i < MAX_TAP_NOTE_ROWS; i++ )
+		for( int i=iNoteIndexBegin; i <= iNoteIndexEnd; i++ )
 			SetTapNote(c, i, TAP_EMPTY);
 	}
 	this->Convert4sToHoldNotes();
@@ -73,7 +72,7 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 	// copy recorded TapNotes
 	int f = iFromIndexBegin, t = iToIndexBegin;
 	
-	while( f<=iFromIndexEnd && f < MAX_TAP_NOTE_ROWS && t < MAX_TAP_NOTE_ROWS )
+	while( f<=iFromIndexEnd )
 	{
 		for( int c=0; c<m_iNumTracks; c++ )
 			SetTapNote(c, t, pFrom->GetTapNote(c, f));
@@ -95,7 +94,7 @@ void NoteData::CopyAll( NoteData* pFrom )
 {
 	Config(*pFrom);
 	m_HoldNotes.clear();
-	CopyRange( pFrom, 0, MAX_TAP_NOTE_ROWS );
+	CopyRange( pFrom, 0, pFrom->GetLastRow() );
 }
 
 void NoteData::AddHoldNote( HoldNote add )
@@ -260,7 +259,7 @@ int NoteData::GetNumDoubles( const float fStartBeat, const float fEndBeat ) cons
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
-	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		for( int t=0; t<m_iNumTracks; t++ )
@@ -356,8 +355,8 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 	for( int i=0; i<GetNumHoldNotes(); i++ ) 
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		int iHoldStartIndex = clamp(BeatToNoteRow(hn.m_fStartBeat), 0, MAX_TAP_NOTE_ROWS-1);
-		int iHoldEndIndex   = clamp(BeatToNoteRow(hn.m_fEndBeat), 0, MAX_TAP_NOTE_ROWS-1);
+		int iHoldStartIndex = max(BeatToNoteRow(hn.m_fStartBeat), 0);
+		int iHoldEndIndex   = max(BeatToNoteRow(hn.m_fEndBeat), 0);
 		
 		/* If they're the same, then they got clamped together, so just ignore it. */
 		if(iHoldStartIndex != iHoldEndIndex) {
@@ -404,8 +403,8 @@ void NoteData::ConvertHoldNotesTo4s()
 	for( int i=0; i<GetNumHoldNotes(); i++ ) 
 	{
 		const HoldNote &hn = GetHoldNote(i);
-		int iHoldStartIndex = clamp(BeatToNoteRow(hn.m_fStartBeat), 0, MAX_TAP_NOTE_ROWS);
-		int iHoldEndIndex   = clamp(BeatToNoteRow(hn.m_fEndBeat), 0, MAX_TAP_NOTE_ROWS);
+		int iHoldStartIndex = max(BeatToNoteRow(hn.m_fStartBeat), 0);
+		int iHoldEndIndex   = max(BeatToNoteRow(hn.m_fEndBeat), 0);
 
 		for( int j = iHoldStartIndex; j < iHoldEndIndex; ++j)
 			SetTapNote(hn.m_iTrack, j, TAP_HOLD);
@@ -963,8 +962,9 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 	in.ConvertHoldNotesTo2sAnd3s();
 
 	// transform notes
+	int max_row = in.GetLastRow();
 	for( t=0; t<in.m_iNumTracks; t++ )
-		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
+		for( int r=0; r<=max_row; r++ ) 			
 			tempNoteData.SetTapNote(t, r, in.GetTapNote(iTakeFromTrack[t], r));
 
 	in.CopyAll( &tempNoteData );		// copy note data from newData back into this
@@ -1022,7 +1022,8 @@ void NoteDataUtil::Turn( NoteData &in, PlayerOptions::TurnType tt )
 void NoteDataUtil::MakeLittle(NoteData &in)
 {
 	// filter out all non-quarter notes
-	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
+	int max_row = in.GetLastRow();
+	for( int i=0; i<=max_row; i++ ) 
 	{
 		if( i%ROWS_PER_BEAT != 0 )
 		{
