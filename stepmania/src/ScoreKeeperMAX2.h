@@ -22,6 +22,8 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	float			m_fScoreMultiplier;
 	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
 
+	void AddScore( TapNoteScore score );
+
 public:
 	ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, int pn);
 

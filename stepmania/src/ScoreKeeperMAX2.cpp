@@ -8,8 +8,12 @@ ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, int pn
 //	Stats_DoublesCount = true;
 
 	int Meter = notes? notes->m_iMeter : 5;
-	int m_iNumTapNotes = data.GetNumTapNotes();
-	int sum = (m_iNumTapNotes * (m_iNumTapNotes + 1)) / 2;
+
+	/* Hold notes count as two tap notes.  However, hold notes already count
+	 * as 1 in GetNumTapNotes(), so only add 1*GetNumHoldNotes, not 2. */
+	int iNumTapNotes = data.GetNumTapNotes() + data.GetNumHoldNotes();
+	
+	int sum = (iNumTapNotes * (iNumTapNotes + 1)) / 2;
 
 	if(sum)
 		m_fScoreMultiplier = float(Meter * 1000000) / sum;
@@ -20,6 +24,24 @@ ScoreKeeperMAX2::ScoreKeeperMAX2(Notes *notes, NoteDataWithScoring &data, int pn
 
 	m_iTapNotesHit = 0;
 	m_lScore = 0;
+}
+
+void ScoreKeeperMAX2::AddScore( TapNoteScore score )
+{
+	int p;	// score multiplier 
+	
+	switch( score )
+	{
+	case TNS_PERFECT:	p = 10;		break;
+	case TNS_GREAT:		p = 5;		break;
+	default:			p = 0;		break;
+	}
+
+	m_lScore += p * ++m_iTapNotesHit;
+
+	ASSERT(m_lScore >= 0);
+
+	GAMESTATE->m_fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier;
 }
 
 void ScoreKeeperMAX2::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
@@ -69,21 +91,8 @@ void ScoreKeeperMAX2::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
    keeping these seperate for as long as possible improves accuracy.
 
 */
-	int p;	// score multiplier 
-	
-	switch( score )
-	{
-	case TNS_PERFECT:	p = 10;		break;
-	case TNS_GREAT:		p = 5;		break;
-	default:			p = 0;		break;
-	}
-
 	for( int i=0; i<iNumTapsInRow; i++ )
-		m_lScore += p * ++m_iTapNotesHit;
-
-	ASSERT(m_lScore >= 0);
-
-	GAMESTATE->m_fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier;
+		AddScore( score );
 }
 
 
@@ -92,4 +101,7 @@ void ScoreKeeperMAX2::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore Tap
 	// update dance points totals
 	GAMESTATE->m_HoldNoteScores[m_PlayerNumber][score] ++;
 	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( score );
+
+	if( score == HNS_OK )
+		AddScore( TNS_PERFECT );
 }
