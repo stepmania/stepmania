@@ -252,8 +252,8 @@ static struct SetupMainThread
 		int slot = FindEmptyThreadSlot();
 		strcpy( g_ThreadSlots[slot].name, "Main thread" );
 		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Thread: %s", g_ThreadSlots[slot].name );
-		g_ThreadSlots[slot].pImpl = MakeThisThread();
 		g_ThreadSlots[slot].id = RageThread::GetCurrentThreadID();
+		g_ThreadSlots[slot].pImpl = MakeThisThread();
 	}
 } SetupMainThreadObj;
 
