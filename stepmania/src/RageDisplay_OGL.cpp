@@ -981,6 +981,7 @@ public:
 		glVertexPointer(3, GL_FLOAT, 0, &m_vPosition[0]);
 
 		glDisableClientState(GL_COLOR_ARRAY);
+		glColor4f(1,1,1,1);
 
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glTexCoordPointer(2, GL_FLOAT, 0, &m_vTexture[0]);
@@ -1188,6 +1189,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	AssertNoGLError();
 
 	glDisableClientState(GL_COLOR_ARRAY);
+	glColor4f(1,1,1,1);
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
