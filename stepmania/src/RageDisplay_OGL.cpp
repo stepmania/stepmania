@@ -918,27 +918,9 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-	/* This is an experiment: some people are seeing skips when the danger
-	 * background comes in.  One hypothesis: we're loading the danger background,
-	 * keeping it in memory without displaying it for several games, it gets
-	 * swapped out of texture memory, and then we skip swapping it in.
-	 *
-	 * It's rather small, so I'm not entirely convinced this is what's happening.
-	 * Let's try boosting the texture priority for the danger background and
-	 * see if it goes away.  If it does, I'll make texture pris a texture hint
-	 * (or find another way to do this; perhaps we should do a dummy render of
-	 * a texture when it's reused from our texture cache if it hasn't been used
-	 * in a long time). */
-	// TODO: Find a way to add this back in. -Chris
-//	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 0.5f);
-//	if(ID.filename.Find("danger") != -1)
-//		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
-
 	// texture must be power of two
 	ASSERT( img->w == power_of_two(img->w) );
 	ASSERT( img->h == power_of_two(img->h) );
-
-//retry:
 
 	if(pixfmt == FMT_PAL)
 	{
@@ -983,30 +965,13 @@ unsigned RageDisplay_OGL::CreateTexture(
 	GLenum error = glGetError();
 	ASSERT( error == GL_NO_ERROR );
 
-	/* If we're paletted, and didn't get the 8-bit palette we asked for ...*/
+	/* Sanity check: */
 	if( pixfmt == FMT_PAL )
 	{
 		GLint size = 0;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
 		if(size != 8)
-		{
-			/* I don't know any reason this should actually fail (paletted textures
-			 * but no support for 8-bit palettes?), so let's just disable paletted
-			 * textures the first time this happens. */
-			/* We can remove this if this doesn't actually happen, and simplify this code. */
 			RageException::Throw("Thought paletted textures worked, but they don't.");
-//			LOG->Info("Expected an 8-bit palette, got a %i-bit one instead; disabling paletted textures", size);
-//			DISPLAY->DisablePalettedTexture();
-			
-			/* TODO:  Fix this */
-			/* Shouldn't be needed anymore. */
-//			ASSERT(0);
-//			pixfmt = FMT_RGBA8;
-//			ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[pixfmt].bpp,
-//				PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
-//				PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
-//			goto retry;
-		}
 	}
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
