@@ -704,7 +704,7 @@ void ScreenGameplay::LoadNextSong()
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && GAMESTATE->m_CurStageStats.bFailed[p] )	// already failed
 			ShowOniGameOver((PlayerNumber)p);
 
-		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE && !PREFSMAN->m_bEventMode )
+		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE && !PREFSMAN->m_bEventMode && !m_bDemonstration)
 		{
 			m_pLifeMeter[p]->UpdateNonstopLifebar(
 				GAMESTATE->GetStageIndex(), 
@@ -713,9 +713,6 @@ void ScreenGameplay::LoadNextSong()
 		}
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
 		{
-			LOG->Trace("Song %d of %d", 
-				GAMESTATE->GetCourseSongIndex(), 
-				GAMESTATE->m_pCurCourse->GetEstimatedNumStages() );
 			m_pLifeMeter[p]->UpdateNonstopLifebar(
 				GAMESTATE->GetCourseSongIndex(), 
 				GAMESTATE->m_pCurCourse->GetEstimatedNumStages(),
