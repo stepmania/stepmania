@@ -315,19 +315,18 @@ bool UnlockSystem::Load()
 
 	for(i=0; i < m_SongEntries.size(); i++)
 	{
-		LOG->Trace( "UnlockSystem Entry %s", m_SongEntries[i].m_sSongName.c_str() );
-		if (m_SongEntries[i].m_pSong != NULL)
-			LOG->Trace( "          Translit %s", m_SongEntries[i].m_pSong->GetTranslitMainTitle().c_str() );
+		CString str = ssprintf( "Unlock: %s; ", m_SongEntries[i].m_sSongName.c_str() );
 		for( int j = 0; j < NUM_UNLOCK_TYPES; ++j )
 			if( m_SongEntries[i].m_fRequired[j] )
-				LOG->Trace( "                %s %f", g_UnlockNames[j], m_SongEntries[i].m_fRequired[j] );
+				str += ssprintf( "%s = %f; ", g_UnlockNames[j], m_SongEntries[i].m_fRequired[j] );
 
-		LOG->Trace( "              CODE %i", m_SongEntries[i].m_iCode );
-		LOG->Trace( "            Status %s", m_SongEntries[i].IsLocked()? "locked":"unlocked" );
+		str += ssprintf( "code = %i", m_SongEntries[i].m_iCode );
+		str += m_SongEntries[i].IsLocked()? "locked":"unlocked";
 		if( m_SongEntries[i].m_pSong )
-			LOG->Trace( "                   Found matching song entry" );
+			str += ( "(found song)" );
 		if( m_SongEntries[i].m_pCourse )
-			LOG->Trace( "                   Found matching course entry" );
+			str += ( "(found course)" );
+		LOG->Trace( "%s", str.c_str() );
 	}
 	
 	return true;
