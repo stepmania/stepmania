@@ -927,7 +927,7 @@ void mySDL_BlitSurface(
 	{
 		/* Duplicate the last row. */
 		char *srcp = (char *) dst->pixels;
-		srcp += dst->pitch * height;
+		srcp += dst->pitch * (height-1);
 		memcpy( srcp + dst->pitch, srcp, dst->pitch );
 	}
 }
