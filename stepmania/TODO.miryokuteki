@@ -1,0 +1,17 @@
+////////////////////////////////////
+//Miryokuteki's Todo/Done Record//
+////////////////////////////////////
+
+// Last Updated February 11th, 2003
+
+Todo List:
+  
+
+Done List:
+      BUG FIXED** 2nd player could join in reguardless of joint premium or credits
+      BUG FIXED** Credits could only be added on certain screens, the credit key is now predefined to F1 and is global
+    NEW FEATURE** Global Operator key (Left-CTRL)
+    NEW FEATURE** Credits now replicate arcade style count -- THANK YOU MATRIARK TERVEL!!
+    NEW ELEMENT** Joint Premium banner on the SelectStyle screen, as in DDRMAX2
+    NEW ELEMENT** Joint Premium scrolling msg banner on TitleScreen as in DDRMAX2
+  ARCADE-MIRROR** Selecting "RANDOM", now chooses the song FOR you, almost like DDREX does (ddrex just fades out and doesn't tell you what song it picked)
