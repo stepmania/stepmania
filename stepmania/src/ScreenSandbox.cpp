@@ -19,6 +19,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
+#include "RageLog.h"
 
 
 ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
@@ -39,12 +40,13 @@ ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")
 //	m_sprite.SetXY( CENTER_X, CENTER_Y );
 //	this->AddChild( &m_sprite );
 
-	m_model.LoadMilkshapeAscii( "C:\\stepmania\\stepmania\\Themes\\groove\\BGAnimations\\ScreenCaution background\\2 platforms and backbar.txt" );
+	//m_model.LoadMilkshapeAscii( "C:\\stepmania\\stepmania\\Themes\\groove\\BGAnimations\\ScreenCaution background\\2 platforms and backbar.txt" );
+
+	m_model.LoadMilkshapeAscii( "Characters\\DancePads-DDR.bones.txt" );
 	m_model.SetXY(CENTER_X, CENTER_Y);
-	m_model.SetZoom(15);
+	m_model.SetRotationX( 15 );
+	m_model.SetZoom(5);
 	this->AddChild(&m_model);
-	m_model.AddRotationH( 90 );
-//	m_model.SetEffectSpin( RageVector3(0,90,90) );
 
 //	this->AddChild( &m_In );
 
@@ -57,6 +59,15 @@ void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
+	if( DeviceI.button == SDLK_LEFT )
+		m_model.SetRotationY( m_model.GetRotationY()+5 );
+	if( DeviceI.button == SDLK_DOWN )
+		m_model.SetRotationX( m_model.GetRotationX()+5 );
+	if( DeviceI.button == SDLK_UP )
+		m_model.SetRotationX( m_model.GetRotationX()-5 );
+	if( DeviceI.button == SDLK_RIGHT )
+		m_model.SetRotationY( m_model.GetRotationY()-5 );
+
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
