@@ -273,6 +273,9 @@ void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
  * a slash. */
 void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 {
+	if( sPath == "" )
+		return;
+
 	vector<CString> parts;
 	split( sPath, "/", parts, false );
 
