@@ -94,6 +94,8 @@ public:
 	//
 	// General data
 	//
+	static CString MakeGuid();
+
 	CString m_sGuid;
 	map<CString,CString> m_sDefaultModifiers;
 	SortOrder m_SortOrder;

@@ -55,19 +55,21 @@ void Profile::InitEditableData()
 	m_iWeightPounds = 0;
 }
 
-void Profile::InitGeneralData()
+CString Profile::MakeGuid()
 {
-	// Init m_iGuid.
 	// Does the RNG need to be inited and seeded every time?
 	random_init();
 	random_add_noise( "ai8049ujr3odusj" );
 	
-	{
-		m_sGuid = "";
-		for( unsigned i=0; i<GUID_SIZE_BYTES; i++ )
-			m_sGuid += ssprintf( "%02x", random_byte() );
-	}
+	CString s;
+	for( unsigned i=0; i<GUID_SIZE_BYTES; i++ )
+		s += ssprintf( "%02x", random_byte() );
+	return s;
+}
 
+void Profile::InitGeneralData()
+{
+	m_sGuid = MakeGuid();
 
 	m_SortOrder = SORT_INVALID;
 	m_LastDifficulty = DIFFICULTY_INVALID;
