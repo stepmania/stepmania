@@ -81,11 +81,11 @@ dnl Check for Mesa first, unless we were asked not to.
 
     if test x"$use_Mesa" = xyes; then
        GL_search_list="MesaGL   GL"
-      GLU_search_list="MesaGLU GLU"
+dnl      GLU_search_list="MesaGLU GLU"
       GLX_search_list="MesaGLX GLX"
     else
        GL_search_list="GL  MesaGL"
-      GLU_search_list="GLU MesaGLU"
+dnl      GLU_search_list="GLU MesaGLU"
       GLX_search_list="GLX MesaGLX"
     fi      
 
@@ -116,7 +116,7 @@ dnl    LIBS="$GL_X_LIBS"
     exec AC_FD_MSG>/dev/null
 
     AC_SEARCH_LIBS(glAccum,          $GL_search_list, have_GL=yes,   have_GL=no)
-    AC_SEARCH_LIBS(gluBeginCurve,   $GLU_search_list, have_GLU=yes,  have_GLU=no)
+dnl    AC_SEARCH_LIBS(gluBeginCurve,   $GLU_search_list, have_GLU=yes,  have_GLU=no)
 dnl Don't link stuff we don't need.  These should really all be separate tests. -glenn
 dnl    AC_SEARCH_LIBS(glXChooseVisual, $GLX_search_list, have_GLX=yes,  have_GLX=no)
 dnl    AC_SEARCH_LIBS(glutInit,        glut,             have_glut=yes, have_glut=no)
