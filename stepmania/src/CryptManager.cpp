@@ -2,6 +2,7 @@
 #include "CryptManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "PrefsManager.h"
 
 
 static const CString SIGNATURE_APPEND = ".sig.rsa";
@@ -35,6 +36,13 @@ void CryptManager::DigestFile(const char *filename) { }
 using namespace CryptoPP;
 using namespace std;
 
+static const CString SIGNATURE_POSPEND = ".sig.rsa";
+static const CString PRIVATE_KEY_PATH = "Data/private.key.rsa";
+static const CString PUBLIC_KEY_PATH = "Data/public.key.rsa";
+static const int KEY_LENGTH = 1024;
+
+CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
+
 CryptManager::CryptManager()
 {
 	//
@@ -42,12 +50,15 @@ CryptManager::CryptManager()
 	//
 	/* This is crashing in crypto51/integer.cpp CryptoPP::RecursiveInverseModPower2
 	 * in Linux. -glenn */
-	if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
-	{
-		LOG->Warn( "Keys missing.  Generating new keys" );
-		GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH, "aoksdjaksd" );
-		FlushDirCache();
-	}
+//	if( PREFSMAN->m_bSignProfileData )
+//	{
+//		if( !DoesFileExist(PRIVATE_KEY_PATH) || !DoesFileExist(PUBLIC_KEY_PATH) )
+//		{
+//			LOG->Warn( "Keys missing.  Generating new keys" );
+//			GenerateRSAKey( KEY_LENGTH, PRIVATE_KEY_PATH, PUBLIC_KEY_PATH, "aoksdjaksd" );
+//			FlushDirCache();
+//		}
+//	}
 }
 
 CryptManager::~CryptManager()
@@ -57,6 +68,8 @@ CryptManager::~CryptManager()
 
 void CryptManager::GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed )
 {
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	AutoSeededRandomPool rng;
 
 	RSAES_OAEP_SHA_Decryptor priv(rng, keyLength);
@@ -72,6 +85,8 @@ void CryptManager::GenerateRSAKey(unsigned int keyLength, const char *privFilena
 
 void CryptManager::SignFile( CString sPath )
 {
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	CString sPrivFilename = PRIVATE_KEY_PATH;
 	CString sMessageFilename = sPath;;
 	CString sSignatureFilename = sPath + SIGNATURE_APPEND;
@@ -93,6 +108,8 @@ void CryptManager::SignFile( CString sPath )
 
 bool CryptManager::VerifyFile( CString sPath )
 {
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	CString sPubFilename = PUBLIC_KEY_PATH;
 	CString sMessageFilename = sPath;;
 	CString sSignatureFilename = sPath + SIGNATURE_APPEND;
@@ -125,6 +142,8 @@ bool CryptManager::VerifyFile( CString sPath )
 
 CString CryptManager::GetFileSignature( CString sPath )
 {
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	CString sPrivFilename = PRIVATE_KEY_PATH;
 	CString sMessageFilename = sPath;
 
@@ -147,6 +166,8 @@ CString CryptManager::GetFileSignature( CString sPath )
 
 bool CryptManager::VerifyFile( CString sPath, CString sSignature )
 {
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	CString sPubFilename = PUBLIC_KEY_PATH;
 	CString sMessageFilename = sPath;
 
@@ -175,6 +196,8 @@ bool CryptManager::VerifyFile( CString sPath, CString sSignature )
 
 void CryptManager::DigestFile(const char *filename)
 {
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 //	MD5 md5;
 //	HashFilter md5Filter(md5);
 //
@@ -190,5 +213,7 @@ void CryptManager::DigestFile(const char *filename)
 
 CString CryptManager::GetPublicKeyFileName()
 {
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	return PUBLIC_KEY_PATH;
 }

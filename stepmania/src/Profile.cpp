@@ -28,6 +28,7 @@
 #include "PrefsManager.h"
 #include "ProfileHtml.h"
 #include "ProfileManager.h"
+#include "RageFileManager.h"
 
 //
 // Old file versions for backward compatibility
@@ -37,6 +38,7 @@
 #define SM_390A12_CATEGORY_SCORES_DAT	"CategoryScores.dat"
 #define SM_390A12_SONG_SCORES_DAT		"SongScores.dat"
 #define SM_390A12_COURSE_SCORES_DAT		"CourseScores.dat"
+#define SM_390A12_PROFILE_INI			"Profile.ini"
 const int SM_390A12_CATEGORY_RANKING_VERSION = 6;
 const int SM_390A12_SONG_SCORES_VERSION = 9;
 const int SM_390A12_COURSE_SCORES_VERSION = 8;
@@ -44,20 +46,20 @@ const int SM_390A12_COURSE_SCORES_VERSION = 8;
 //
 // Current file versions
 //
-#define PROFILE_INI			"Profile.ini"
-#define CATEGORY_SCORES_XML	"CategoryScores.xml"
-#define SONG_SCORES_XML		"SongScores.xml"
-#define COURSE_SCORES_XML	"CourseScores.xml"
-#define SCREENSHOT_DATA_XML	"ScreenshotData.xml"
+#define STATS_XML			"Stats.xml"
+#define EDITABLE_XML		"Editable.xml"
+
+#define REASONABLE_EDITABLE_XML_SIZE_BYTES	1000	// 1kb
 
 
-#define DEFAULT_PROFILE_NAME	""
-
+void Profile::InitEditableData()
+{
+	m_sDisplayName = "";	
+	m_fWeightPounds = 0;
+}
 
 void Profile::InitGeneralData()
 {
-	// Fill in a default value in case ini doesn't have it.
-	m_sName = DEFAULT_PROFILE_NAME;	
 	m_sLastUsedHighScoreName = "";
 	m_bUsingProfileDefaultModifiers = false;
 	m_sDefaultModifiers = "";
@@ -65,7 +67,6 @@ void Profile::InitGeneralData()
 	m_iTotalPlaySeconds = 0;
 	m_iTotalGameplaySeconds = 0;
 	m_iCurrentCombo = 0;
-	m_fWeightPounds = 0;
 	m_fCaloriesBurned = 0;
 	m_sLastMachinePlayed = "";
 
@@ -104,8 +105,8 @@ void Profile::InitScreenshotData()
 
 CString Profile::GetDisplayName() const
 {
-	if( !m_sName.empty() )
-		return m_sName;
+	if( !m_sDisplayName.empty() )
+		return m_sDisplayName;
 	else if( !m_sLastUsedHighScoreName.empty() )
 		return m_sLastUsedHighScoreName;
 	else
@@ -130,9 +131,8 @@ int Profile::GetTotalNumSongsPlayed()
 
 CString Profile::GetProfileDisplayNameFromDir( CString sDir )
 {
-	Profile pro;
-	pro.LoadGeneralDataFromDir( sDir );
-	return pro.GetDisplayName();
+	// FIXME!
+	return "";
 }
 
 int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
@@ -273,73 +273,163 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 // Loading and saving
 //
 
+#define WARN	LOG->Warn("Error parsing file at %s:%d",__FILE__,__LINE__);
+#define WARN_AND_RETURN { WARN; return; }
+#define WARN_AND_CONTINUE { WARN; continue; }
+#define WARN_AND_BREAK { WARN; break; }
+#define LOAD_NODE(X)	{ \
+	XNode* X = xml.GetChild(#X); \
+	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
+	else Load##X##FromNode(X); }
+int g_iOnceCtr;
+#define FOR_ONCE	for(g_iOnceCtr=0;g_iOnceCtr<1;g_iOnceCtr++)
+
+
 bool Profile::LoadAllFromDir( CString sDir )
 {
+	CHECKPOINT;
+
 	InitAll();
-	bool bResult = LoadGeneralDataFromDir( sDir );
-	
+
 	// Only try to load old score formats if we're allowing unsigned data.
 	if( !PREFSMAN->m_bSignProfileData )
 	{
+		LoadProfileDataFromDirSM390a12( sDir );
 		LoadSongScoresFromDirSM390a12( sDir );
 		LoadCourseScoresFromDirSM390a12( sDir );
 		LoadCategoryScoresFromDirSM390a12( sDir );
 	}
+
+
+	// Read editable.xml.  This file is never signed.
+	FOR_ONCE
+	{
+		CString fn = sDir + EDITABLE_XML;
+
+		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
+
+		//
+		// Don't load unreasonably large editable.xml files.
+		//
+		if( iBytes > REASONABLE_EDITABLE_XML_SIZE_BYTES )
+		{
+			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
+			break;
+		}
+
+
+		LOG->Trace( "Reading profile data '%s'", fn.c_str() );
+
+		XNode xml;
+		if( !xml.LoadFromFile( fn ) )
+		{
+			LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
+			break;
+		}
+
+		if( xml.name != "Editable" )
+			WARN_AND_BREAK;
+
+		LOAD_NODE( EditableData );
+	}
+
 	
-	LoadSongScoresFromDir( sDir );
-	LoadCourseScoresFromDir( sDir );
-	LoadCategoryScoresFromDir( sDir );
-	LoadScreenshotDataFromDir( sDir );
-	return bResult;
+	// Read stats.xml
+	FOR_ONCE
+	{
+		CString fn = sDir + STATS_XML;
+
+		LOG->Trace( "Reading profile data '%s'", fn.c_str() );
+
+		if( PREFSMAN->m_bSignProfileData && !CryptManager::VerifyFile(fn) )
+		{
+			LOG->Warn( "The file '%s' has been tampered with.  Its data will be ignored.", fn.c_str() );
+			break;
+		}
+
+		XNode xml;
+		if( !xml.LoadFromFile( fn ) )
+		{
+			LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
+			break;
+		}
+
+		if( xml.name != "Stats" )
+			WARN_AND_BREAK;
+
+		LOAD_NODE( GeneralData );
+		LOAD_NODE( SongScores );
+		LOAD_NODE( CourseScores );
+		LOAD_NODE( CategoryScores );
+		LOAD_NODE( ScreenshotData );
+	}
+		
+	return true;	// FIXME?  Investigate what happens if we always return true.
 }
 
 bool Profile::SaveAllToDir( CString sDir ) const
 {
 	m_sLastMachinePlayed = PREFSMAN->m_sMachineName;
 
+	// Save editable.xml
+	{
+		CString fn = sDir + EDITABLE_XML;
+
+		XNode xml;
+		xml.name = "Editable";
+		xml.AppendChild( SaveEditableDataCreateNode() );
+		if( !xml.SaveToFile(fn) )
+			return false;
+	}
+
+	// Save stats.xml
+	{
+		CString fn = sDir + STATS_XML;
+
+		XNode xml;
+		xml.name = "Stats";
+		xml.AppendChild( SaveGeneralDataCreateNode() );
+		xml.AppendChild( SaveSongScoresCreateNode() );
+		xml.AppendChild( SaveCourseScoresCreateNode() );
+		xml.AppendChild( SaveCategoryScoresCreateNode() );
+		xml.AppendChild( SaveScreenshotDataCreateNode() );
+		if( !xml.SaveToFile(fn) )
+			return false;
+		if( PREFSMAN->m_bSignProfileData )
+			CryptManager::SignFile(fn);
+	}
+
+
 	// Delete old files after saving new ones so we don't try to load old
-	// and make duplicate records. 
-	// If the save fails, the delete will fail too... probably :-)
-	bool bResult = SaveGeneralDataToDir( sDir );
-	SaveSongScoresToDir( sDir );
-	DeleteSongScoresFromDirSM390a12( sDir );
-	SaveCourseScoresToDir( sDir );
-	DeleteCourseScoresFromDirSM390a12( sDir );
-	SaveCategoryScoresToDir( sDir );
-	DeleteCategoryScoresFromDirSM390a12( sDir );
-	SaveScreenshotDataToDir( sDir );
+	// files the next time and make duplicate records. 
+	if( !PREFSMAN->m_bSignProfileData )	// we tried to read the older formats
+	{
+		DeleteProfileDataFromDirSM390a12( sDir );
+		DeleteSongScoresFromDirSM390a12( sDir );
+		DeleteCourseScoresFromDirSM390a12( sDir );
+		DeleteCategoryScoresFromDirSM390a12( sDir );
+	}
+
 	SaveStatsWebPageToDir( sDir );
-	SaveMachinePublicKeyToDir( sDir );
-	return bResult;
+
+	return true;
 }
 
 
-#define WARN	LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__);
-#define WARN_AND_RETURN { WARN; return; }
-#define WARN_AND_CONTINUE { WARN; continue; }
-#define CRYPT_VERIFY_FILE	\
-	if( PREFSMAN->m_bSignProfileData && !CryptManager::VerifyFile(fn) )	{	\
-		LOG->Warn("Signature check failed for '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
-#define CRYPT_VERIFY_FILE_BOOL	\
-	if( PREFSMAN->m_bSignProfileData && !CryptManager::VerifyFile(fn) )	{	\
-		LOG->Warn("Signature check failed for '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return false; }
-#define CRYPT_WRITE_SIG		if( PREFSMAN->m_bSignProfileData ) { CryptManager::SignFile(fn); }
-
-bool Profile::LoadGeneralDataFromDir( CString sDir )
+void Profile::LoadProfileDataFromDirSM390a12( CString sDir )
 {
-	CString fn = sDir + PROFILE_INI;
+	CString fn = sDir + SM_390A12_PROFILE_INI;
+	InitEditableData();
 	InitGeneralData();
-
-	CRYPT_VERIFY_FILE_BOOL;
 
 	//
 	// read ini
 	//
 	IniFile ini( fn );
 	if( !ini.ReadFile() )
-		return false;
+		return;
 
-	ini.GetValue( "Profile", "DisplayName",						m_sName );
+	ini.GetValue( "Profile", "DisplayName",						m_sDisplayName );
 	ini.GetValue( "Profile", "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
 	ini.GetValue( "Profile", "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
 	ini.GetValue( "Profile", "DefaultModifiers",				m_sDefaultModifiers );
@@ -360,53 +450,135 @@ bool Profile::LoadGeneralDataFromDir( CString sDir )
 		ini.GetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(DifficultyToString((Difficulty)i)), m_iNumSongsPlayedByDifficulty[i] );
 	for( i=0; i<MAX_METER+1; i++ )
 		ini.GetValue( "Profile", "NumSongsPlayedByMeter"+ssprintf("%d",i), m_iNumSongsPlayedByMeter[i] );
-	
-	return true;
 }
 
-bool Profile::SaveGeneralDataToDir( CString sDir ) const
+XNode* Profile::SaveEditableDataCreateNode() const
 {
-	CString fn = sDir + PROFILE_INI;
-
-	IniFile ini( fn );
-	ini.SetValue( "Profile", "DisplayName",						m_sName );
-	ini.SetValue( "Profile", "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
-	ini.SetValue( "Profile", "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
-	ini.SetValue( "Profile", "DefaultModifiers",				m_sDefaultModifiers );
-	ini.SetValue( "Profile", "TotalPlays",						m_iTotalPlays );
-	ini.SetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
-	ini.SetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
-	ini.SetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
-	ini.SetValue( "Profile", "WeightPounds",					m_fWeightPounds );
-	ini.SetValue( "Profile", "CaloriesBurned",					m_fCaloriesBurned );
-	ini.SetValue( "Profile", "LastMachinePlayed",				m_sLastMachinePlayed );
-
-	unsigned i;
-	for( i=0; i<NUM_PLAY_MODES; i++ )
-		ini.SetValue( "Profile", "NumSongsPlayedByPlayMode"+Capitalize(PlayModeToString((PlayMode)i)), m_iNumSongsPlayedByPlayMode[i] );
-	for( i=0; i<NUM_STYLES; i++ )
-		ini.SetValue( "Profile", "NumSongsPlayedByStyle"+Capitalize(GAMEMAN->GetGameDefForGame(GAMEMAN->GetStyleDefForStyle((Style)i)->m_Game)->m_szName)+Capitalize(GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName), m_iNumSongsPlayedByStyle[i] );
-	for( i=0; i<NUM_DIFFICULTIES; i++ )
-		ini.SetValue( "Profile", "NumSongsPlayedByDifficulty"+Capitalize(DifficultyToString((Difficulty)i)), m_iNumSongsPlayedByDifficulty[i] );
-	for( i=0; i<MAX_METER+1; i++ )
-		ini.SetValue( "Profile", "NumSongsPlayedByMeter"+ssprintf("%d",i), m_iNumSongsPlayedByMeter[i] );
+	XNode* pEditableDataNode = new XNode;
+	pEditableDataNode->name = "EditableData";
 	
-	bool bResult = ini.WriteFile();
-	CRYPT_WRITE_SIG;
-	return bResult;
+	pEditableDataNode->AppendChild( "DisplayName",	m_sDisplayName );
+	pEditableDataNode->AppendChild( "WeightPounds",	m_fWeightPounds );
+
+	return pEditableDataNode;
 }
 
-void Profile::SaveSongScoresToDir( CString sDir ) const
+XNode* Profile::SaveGeneralDataCreateNode() const
+{
+	XNode* pGeneralDataNode = new XNode;
+	pGeneralDataNode->name = "GeneralData";
+	
+	pGeneralDataNode->AppendChild( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
+	pGeneralDataNode->AppendChild( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
+	pGeneralDataNode->AppendChild( "DefaultModifiers",				m_sDefaultModifiers );
+	pGeneralDataNode->AppendChild( "TotalPlays",					m_iTotalPlays );
+	pGeneralDataNode->AppendChild( "TotalPlaySeconds",				m_iTotalPlaySeconds );
+	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
+	pGeneralDataNode->AppendChild( "CurrentCombo",					m_iCurrentCombo );
+	pGeneralDataNode->AppendChild( "CaloriesBurned",				m_fCaloriesBurned );
+	pGeneralDataNode->AppendChild( "LastMachinePlayed",				m_sLastMachinePlayed );
+
+	{
+		XNode* pNumSongsPlayedByPlayMode = pGeneralDataNode->AppendChild("NumSongsPlayedByPlayMode");
+		FOREACH_PlayMode( pm )
+			pNumSongsPlayedByPlayMode->AppendChild( PlayModeToString(pm), m_iNumSongsPlayedByPlayMode[pm] );
+	}
+
+	{
+		XNode* pNumSongsPlayedByStyle = pGeneralDataNode->AppendChild("NumSongsPlayedByStyle");
+		for( int i=0; i<NUM_STYLES; i++ )
+		{
+			CString sStyle = GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName;
+			pNumSongsPlayedByStyle->AppendChild( sStyle, m_iNumSongsPlayedByStyle[i] );
+		}
+	}
+
+	{
+		XNode* pNumSongsPlayedByDifficulty = pGeneralDataNode->AppendChild("NumSongsPlayedByDifficulty");
+		FOREACH_Difficulty( dc )
+			pNumSongsPlayedByDifficulty->AppendChild( DifficultyToString(dc), m_iNumSongsPlayedByDifficulty[dc] );
+	}
+
+	{
+		XNode* pNumSongsPlayedByMeter = pGeneralDataNode->AppendChild("NumSongsPlayedByMeter");
+		for( int i=0; i<MAX_METER+1; i++ )
+			pNumSongsPlayedByMeter->AppendChild( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
+	}
+
+	return pGeneralDataNode;
+}
+
+void Profile::LoadEditableDataFromNode( const XNode* pNode )
+{
+	ASSERT( pNode->name == "EditableData");
+
+	pNode->GetChildValue("DisplayName", m_sDisplayName);
+	pNode->GetChildValue("WeightPounds", m_fWeightPounds);
+
+	// This is data that the user can change, so we have to validate it.
+	if( m_sDisplayName.GetLength() > 12 )
+		m_sDisplayName = m_sDisplayName.Left(12);
+	// TODO: strip invalid chars?
+	// TODO: is 12 chars reasonable for all UTF8 strings?
+	CLAMP( m_fWeightPounds, 0, 500 );
+}
+
+void Profile::LoadGeneralDataFromNode( const XNode* pNode )
+{
+	ASSERT( pNode->name == "GeneralData" );
+
+	pNode->GetChildValue( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
+	pNode->GetChildValue( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
+	pNode->GetChildValue( "DefaultModifiers",				m_sDefaultModifiers );
+	pNode->GetChildValue( "TotalPlays",						m_iTotalPlays );
+	pNode->GetChildValue( "TotalPlaySeconds",				m_iTotalPlaySeconds );
+	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
+	pNode->GetChildValue( "CurrentCombo",					m_iCurrentCombo );
+	pNode->GetChildValue( "CaloriesBurned",					m_fCaloriesBurned );
+	pNode->GetChildValue( "LastMachinePlayed",				m_sLastMachinePlayed );
+
+	{
+		XNode* pNumSongsPlayedByPlayMode = pNode->GetChild("NumSongsPlayedByPlayMode");
+		if( pNumSongsPlayedByPlayMode )
+			FOREACH_PlayMode( pm )
+				pNumSongsPlayedByPlayMode->GetChildValue( PlayModeToString(pm), m_iNumSongsPlayedByPlayMode[pm] );
+	}
+
+	{
+		XNode* pNumSongsPlayedByStyle = pNode->GetChild("NumSongsPlayedByStyle");
+		if( pNumSongsPlayedByStyle )
+			for( int i=0; i<NUM_STYLES; i++ )
+			{
+				CString sStyle = GAMEMAN->GetStyleDefForStyle((Style)i)->m_szName;
+				pNumSongsPlayedByStyle->GetChildValue( sStyle, m_iNumSongsPlayedByStyle[i] );
+			}
+	}
+
+	{
+		XNode* pNumSongsPlayedByDifficulty = pNode->GetChild("NumSongsPlayedByDifficulty");
+		if( pNumSongsPlayedByDifficulty )
+			FOREACH_Difficulty( dc )
+				pNumSongsPlayedByDifficulty->GetChildValue( DifficultyToString(dc), m_iNumSongsPlayedByDifficulty[dc] );
+	}
+
+	{
+		XNode* pNumSongsPlayedByMeter = pNode->GetChild("NumSongsPlayedByMeter");
+		if( pNumSongsPlayedByMeter )
+			for( int i=0; i<MAX_METER+1; i++ )
+				pNumSongsPlayedByMeter->GetChildValue( ssprintf("Meter%d",i), m_iNumSongsPlayedByMeter[i] );
+	}
+}
+
+
+XNode* Profile::SaveSongScoresCreateNode() const
 {
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	CString fn = sDir + SONG_SCORES_XML;
-
-	XNode xml;
-	xml.name = "SongScores";
+	XNode* pNode = new XNode;
+	pNode->name = "SongScores";
 
 	const vector<Song*> &vpSongs = SONGMAN->GetAllSongs();
 	
@@ -419,7 +591,7 @@ void Profile::SaveSongScoresToDir( CString sDir ) const
 		if( pProfile->GetSongNumTimesPlayed(pSong) == 0 )
 			continue;
 
-		LPXNode pSongNode = xml.AppendChild( "Song" );
+		LPXNode pSongNode = pNode->AppendChild( "Song" );
 		pSongNode->AppendChild( "SongDir", pSong->GetSongDir() );
 
 		const vector<Steps*> vSteps = pSong->GetAllSteps();
@@ -444,32 +616,15 @@ void Profile::SaveSongScoresToDir( CString sDir ) const
 		}
 	}
 	
-	xml.SaveToFile( fn );
-	CRYPT_WRITE_SIG;
+	return pNode;
 }
 
-void Profile::LoadSongScoresFromDir( CString sDir )
+void Profile::LoadSongScoresFromNode( const XNode* pNode )
 {
-	CHECKPOINT;
+	ASSERT( pNode->name == "SongScores" );
 
-	CString fn = sDir + SONG_SCORES_XML;
-	if( !IsAFile(fn) )
-		return;
-
-	CRYPT_VERIFY_FILE;
-
-	XNode xml;
-	if( !xml.LoadFromFile( fn ) )
-	{
-		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
-		return;
-	}
-	
-	if( xml.name != "SongScores" )
-		WARN_AND_RETURN;
-
-	for( XNodes::iterator song = xml.childs.begin(); 
-		song != xml.childs.end(); 
+	for( XNodes::const_iterator song = pNode->childs.begin(); 
+		song != pNode->childs.end(); 
 		song++ )
 	{
 		if( (*song)->name != "Song" )
@@ -798,18 +953,15 @@ void Profile::LoadCourseScoresFromDirSM390a12( CString sDir )
 }
 
 
-void Profile::SaveCourseScoresToDir( CString sDir ) const
+XNode* Profile::SaveCourseScoresCreateNode() const
 {
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	CString fn = sDir + COURSE_SCORES_XML;
-
-
-	XNode xml;
-	xml.name = "CourseScores";
+	XNode* pNode = new XNode;
+	pNode->name = "CourseScores";
 
 	vector<Course*> vpCourses;
 	SONGMAN->GetAllCourses( vpCourses, true );
@@ -822,7 +974,7 @@ void Profile::SaveCourseScoresToDir( CString sDir ) const
 		if( pProfile->GetCourseNumTimesPlayed(pCourse) == 0 )
 			continue;
 
-		XNode* pCourseNode = xml.AppendChild( "Course", pCourse->m_bIsAutogen ? pCourse->m_sName : pCourse->m_sPath );
+		XNode* pCourseNode = pNode->AppendChild( "Course", pCourse->m_bIsAutogen ? pCourse->m_sName : pCourse->m_sPath );
 
 		for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; ((int&)st)++ )
 		{
@@ -837,33 +989,18 @@ void Profile::SaveCourseScoresToDir( CString sDir ) const
 			pStepsTypeNode->AppendChild( hsl.CreateNode() );
 		}
 	}
-	
-	xml.SaveToFile( fn );
-	CRYPT_WRITE_SIG;
+
+	return pNode;
 }
 
-void Profile::LoadCourseScoresFromDir( CString sDir )
+void Profile::LoadCourseScoresFromNode( const XNode* pNode )
 {
 	CHECKPOINT;
 
-	CString fn = sDir + COURSE_SCORES_XML;
-	if( !IsAFile(fn) )
-		return;
+	ASSERT( pNode->name == "CourseScores" );
 
-	CRYPT_VERIFY_FILE;
-
-	XNode xml;
-	if( !xml.LoadFromFile( fn ) )
-	{
-		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
-		return;
-	}
-	
-	if( xml.name != "CourseScores" )
-		WARN_AND_RETURN;
-
-	for( XNodes::iterator course = xml.childs.begin(); 
-		course != xml.childs.end(); 
+	for( XNodes::const_iterator course = pNode->childs.begin(); 
+		course != pNode->childs.end(); 
 		course++ )
 	{
 		if( (*course)->name != "Course" )
@@ -895,17 +1032,15 @@ void Profile::LoadCourseScoresFromDir( CString sDir )
 	}
 }
 
-void Profile::SaveCategoryScoresToDir( CString sDir ) const
+XNode* Profile::SaveCategoryScoresCreateNode() const
 {
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	CString fn = sDir + CATEGORY_SCORES_XML;
-
-	XNode xml;
-	xml.name = "CategoryScores";
+	XNode* pNode = new XNode;
+	pNode->name = "CategoryScores";
 
 	FOREACH_StepsType( st )
 	{
@@ -913,7 +1048,7 @@ void Profile::SaveCategoryScoresToDir( CString sDir ) const
 		if( pProfile->GetCategoryNumTimesPlayed( st ) == 0 )
 			continue;
 
-		XNode* pStepsTypeNode = xml.AppendChild( "StepsType", st );
+		XNode* pStepsTypeNode = pNode->AppendChild( "StepsType", st );
 
 		FOREACH_RankingCategory( rc )
 		{
@@ -929,32 +1064,17 @@ void Profile::SaveCategoryScoresToDir( CString sDir ) const
 		}
 	}
 
-	xml.SaveToFile( fn );
-	CRYPT_WRITE_SIG;
+	return pNode;
 }
 
-void Profile::LoadCategoryScoresFromDir( CString sDir )
+void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 {
 	CHECKPOINT;
 
-	CString fn = sDir + CATEGORY_SCORES_XML;
-	if( !IsAFile(fn) )
-		return;
+	ASSERT( pNode->name == "CategoryScores" );
 
-	CRYPT_VERIFY_FILE;
-
-	XNode xml;
-	if( !xml.LoadFromFile( fn ) )
-	{
-		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
-		return;
-	}
-	
-	if( xml.name != "CategoryScores" )
-		WARN_AND_RETURN;
-
-	for( XNodes::iterator stepsType = xml.childs.begin(); 
-		stepsType != xml.childs.end(); 
+	for( XNodes::const_iterator stepsType = pNode->childs.begin(); 
+		stepsType != pNode->childs.end(); 
 		stepsType++ )
 	{
 		if( (*stepsType)->name != "StepsType" )
@@ -983,33 +1103,41 @@ void Profile::LoadCategoryScoresFromDir( CString sDir )
 	}
 }
 
+void Profile::DeleteProfileDataFromDirSM390a12( CString sDir ) const
+{
+	CString fn = sDir + SM_390A12_PROFILE_INI;
+	FILEMAN->Remove( fn );
+}
+
 void Profile::DeleteSongScoresFromDirSM390a12( CString sDir ) const
 {
 	CString fn = sDir + SM_390A12_SONG_SCORES_DAT;
-	// FIXME
+	FILEMAN->Remove( fn );
 }
 
 void Profile::DeleteCourseScoresFromDirSM390a12( CString sDir ) const
 {
 	CString fn = sDir + SM_390A12_COURSE_SCORES_DAT;
-	// FIXME
+	FILEMAN->Remove( fn );
 }
 
 void Profile::DeleteCategoryScoresFromDirSM390a12( CString sDir ) const
 {
 	CString fn = sDir + SM_390A12_CATEGORY_SCORES_DAT;
-	// FIXME
+	FILEMAN->Remove( fn );
 }
 
 void Profile::SaveStatsWebPageToDir( CString sDir ) const
 {
+	ASSERT( PROFILEMAN );
+
 	// UGLY...
-	bool bThisIsMachineProfile = this == PROFILEMAN->GetMachineProfile();
+	bool bThisIsMachineProfile = (this == PROFILEMAN->GetMachineProfile());
 
 	if( bThisIsMachineProfile )
 	{
 		SaveMachineHtmlToDir( sDir, this );
-//		SavePlayerHtmlToDir( sDir+"temp/", this, PROFILEMAN->GetMachineProfile() );	// remove this when done debugging
+		SavePlayerHtmlToDir( sDir+"temp/", this, PROFILEMAN->GetMachineProfile() );	// remove this when done debugging
 	}
 	else
 	{
@@ -1019,8 +1147,8 @@ void Profile::SaveStatsWebPageToDir( CString sDir ) const
 
 void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
 {
-	if( IsAFile(CRYPTMAN->GetPublicKeyFileName()) )
-		FileCopy( CRYPTMAN->GetPublicKeyFileName(), sDir+"public.key.rsa" );
+	if( PREFSMAN->m_bSignProfileData && IsAFile(CRYPTMAN->GetPublicKeyFileName()) )
+		FileCopy( CRYPTMAN->GetPublicKeyFileName(), "public.key.rsa" );
 }
 
 void Profile::AddScreenshot( Screenshot screenshot )
@@ -1028,28 +1156,13 @@ void Profile::AddScreenshot( Screenshot screenshot )
 	m_vScreenshots.push_back( screenshot );
 }
 
-void Profile::LoadScreenshotDataFromDir( CString sDir )
+void Profile::LoadScreenshotDataFromNode( const XNode* pNode )
 {
 	CHECKPOINT;
 
-	CString fn = sDir + SCREENSHOT_DATA_XML;
-	if( !IsAFile(fn) )
-		return;
-
-	CRYPT_VERIFY_FILE;
-
-	XNode xml;
-	if( !xml.LoadFromFile( fn ) )
-	{
-		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
-		return;
-	}
-	
-	if( xml.name != "ScreenshotData" )
-		WARN_AND_RETURN;
-
-	for( XNodes::iterator screenshot = xml.childs.begin(); 
-		screenshot != xml.childs.end(); 
+	ASSERT( pNode->name == "ScreenshotData" );
+	for( XNodes::const_iterator screenshot = pNode->childs.begin(); 
+		screenshot != pNode->childs.end(); 
 		screenshot++ )
 	{
 		if( (*screenshot)->name != "Screenshot" )
@@ -1074,29 +1187,26 @@ void Profile::LoadScreenshotDataFromDir( CString sDir )
 	}	
 }
 
-void Profile::SaveScreenshotDataToDir( CString sDir ) const
+XNode* Profile::SaveScreenshotDataCreateNode() const
 {
 	CHECKPOINT;
 
 	const Profile* pProfile = this;
 	ASSERT( pProfile );
 
-	CString fn = sDir + SCREENSHOT_DATA_XML;
-
-	XNode xml;
-	xml.name = "ScreenshotData";
+	XNode* pNode = new XNode;
+	pNode->name = "ScreenshotData";
 
 	for( unsigned i=0; i<m_vScreenshots.size(); i++ )
 	{
 		const Screenshot &ss = m_vScreenshots[i];
 
-		XNode* pScreenshotNode = xml.AppendChild( "Screenshot" );
+		XNode* pScreenshotNode = pNode->AppendChild( "Screenshot" );
 
 		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
 		pScreenshotNode->AppendChild( "Signature", ss.sSignature );
 		pScreenshotNode->AppendChild( ss.highScore.CreateNode() );
 	}
 
-	xml.SaveToFile( fn );
-	CRYPT_WRITE_SIG;
+	return pNode;
 }
