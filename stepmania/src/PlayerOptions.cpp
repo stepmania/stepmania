@@ -648,6 +648,11 @@ CString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_fScrollBPM );
 	SAVE( m_fScrolls[SCROLL_REVERSE] );
 	SAVE( m_fPerspectiveTilt );
+	SAVE( m_bTransforms[TRANSFORM_NOHOLDS] );
+	SAVE( m_bTransforms[TRANSFORM_NOMINES] );
+	SAVE( m_bTransforms[TRANSFORM_NOJUMPS] );
+	SAVE( m_bTransforms[TRANSFORM_NOHANDS] );
+	SAVE( m_bTransforms[TRANSFORM_NOQUADS] );
 	SAVE( m_sNoteSkin );
 #undef SAVE
 	return po_prefs.GetString();
