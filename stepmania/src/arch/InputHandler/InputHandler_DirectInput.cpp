@@ -443,6 +443,9 @@ void InputHandler_DInput::InputThreadMain()
 	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set DirectInput thread priority"));
 
+	/* Enable priority boosting. */
+	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
+
 	unsigned i;
 	vector<DIDevice*> BufferedDevices, UnbufferedDevices;
 	HANDLE Handle = CreateEvent(NULL, FALSE, FALSE, NULL);
