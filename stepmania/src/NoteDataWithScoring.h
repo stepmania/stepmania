@@ -4,36 +4,18 @@
 #define NOTEDATAWITHSCORING_H
 
 #include "GameConstantsAndTypes.h"
-#include "NoteData.h"
 #include "PlayerNumber.h"
 #include <map>
 
 struct RadarValues;
-
-class NoteDataWithScoring : public NoteData
+class NoteData;
+namespace NoteDataWithScoring
 {
-public:
-	bool IsRowCompletelyJudged( unsigned iRow ) const;
-	TapNoteScore MinTapNoteScore( unsigned iRow ) const;
-	TapNoteScore LastTapNoteScore( unsigned iRow ) const;
+	bool IsRowCompletelyJudged( const NoteData &in, unsigned iRow );
+	TapNoteScore MinTapNoteScore( const NoteData &in, unsigned iRow );
+	TapNoteScore LastTapNoteScore( const NoteData &in, unsigned iRow );
 
-	void GetActualRadarValues( PlayerNumber pn, float fSongSeconds, RadarValues& out ) const;
-
-private:
-	int LastTapNoteScoreTrack( unsigned iRow ) const;
-
-	// statistics
-	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetNumNWithScore( TapNoteScore tns, int iMinTaps, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetSuccessfulMines( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-	int GetSuccessfulHands( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
-
-	float GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const;
-	float GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const;
-	float GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const;
-	float GetActualFreezeRadarValue( float fSongSeconds, PlayerNumber pn ) const;
-	float GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const;
+	void GetActualRadarValues( const NoteData &in, PlayerNumber pn, float fSongSeconds, RadarValues& out );
 };
 
 #endif

@@ -945,7 +945,7 @@ void Player::Step( int col, RageTimer tm )
 		case TapNote::tap:
 		case TapNote::hold_head:
 			// don't the row if this note is a mine or tap attack
-			if( m_NoteData.IsRowCompletelyJudged(iIndexOverlappingNote) )
+			if( NoteDataWithScoring::IsRowCompletelyJudged( m_NoteData, iIndexOverlappingNote ) )
 				OnRowCompletelyJudged( iIndexOverlappingNote );
 		}
 
@@ -1026,8 +1026,8 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	 * the 2nd step of the jump, it sets another column's timer then AND's the jump 
 	 * columns with the "was pressed recently" columns to see whether or not you hit 
 	 * all the columns of the jump.  -Chris */
-//	TapNoteScore score = MinTapNoteScore(iIndexThatWasSteppedOn);
-	TapNoteScore score = m_NoteData.LastTapNoteScore( iIndexThatWasSteppedOn );
+//	TapNoteScore score = NoteDataWithScoring::MinTapNoteScore( m_NoteData, iIndexThatWasSteppedOn );
+	TapNoteScore score = NoteDataWithScoring::LastTapNoteScore( m_NoteData, iIndexThatWasSteppedOn );
 	ASSERT(score != TNS_NONE);
 	ASSERT(score != TNS_HIT_MINE);
 
@@ -1229,7 +1229,7 @@ void Player::RandomizeNotes( int iNoteRow )
 
 void Player::HandleTapRowScore( unsigned row )
 {
-	TapNoteScore scoreOfLastTap = m_NoteData.LastTapNoteScore(row);
+	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteScore( m_NoteData, row );
 	int iNumTapsInRow = m_NoteData.GetNumTracksWithTapOrHoldHead(row);
 	ASSERT(iNumTapsInRow > 0);
 

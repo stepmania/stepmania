@@ -2014,7 +2014,7 @@ void ScreenGameplay::SongFinished()
 		NoteDataUtil::GetRadarValues( m_Player[p].m_NoteData, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
 		g_CurStageStats.m_player[p].radarPossible += v;
 
-		m_Player[p].m_NoteData.GetActualRadarValues( p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
+		NoteDataWithScoring::GetActualRadarValues( m_Player[p].m_NoteData, p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
 		g_CurStageStats.m_player[p].radarActual += v;
 	}
 

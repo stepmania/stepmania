@@ -151,7 +151,7 @@ protected:
 	Steps*			m_pSteps;
 
 	NoteField		m_NoteFieldEdit;
-	NoteDataWithScoring	m_NoteDataEdit;
+	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;
 
 	AutoActor		m_sprOverlay;
@@ -177,7 +177,7 @@ protected:
 // for MODE_RECORD
 
 	NoteField		m_NoteFieldRecord;
-	NoteDataWithScoring		m_NoteDataRecord;
+	NoteData		m_NoteDataRecord;
 
 // for MODE_PLAY
 	void SetupCourseAttacks();

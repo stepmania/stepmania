@@ -1,23 +1,27 @@
 #include "global.h"
 #include "NoteDataWithScoring.h"
+#include "NoteData.h"
 #include "StageStats.h"
 
-int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
+namespace
+{
+
+int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, const float fStartBeat = 0, float fEndBeat = -1 )
 { 
 	int iNumSuccessfulTapNotes = 0;
 
 	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
+		fEndBeat = in.GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
-	iEndIndex = min( iEndIndex, GetLastRow() );
+	iEndIndex = min( iEndIndex, in.GetLastRow() );
 
-	for( int t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, r, iStartIndex, iEndIndex )
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, iStartIndex, iEndIndex )
 		{
-			const TapNote &tn = GetTapNote(t, r);
+			const TapNote &tn = in.GetTapNote(t, r);
 			if( tn.result.tns >= tns )
 				iNumSuccessfulTapNotes++;
 		}
@@ -26,25 +30,25 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 	return iNumSuccessfulTapNotes;
 }
 
-int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const float fStartBeat, float fEndBeat ) const
+int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, const float fStartBeat = 0, float fEndBeat = -1 )
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
+		fEndBeat = in.GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetLastRow() );
+	iEndIndex = min( iEndIndex, in.GetLastRow() );
 
 	int iNumSuccessfulDoubles = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
-		for( int t=0; t<GetNumTracks(); t++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
-			const TapNote &tn = GetTapNote(t,i);
+			const TapNote &tn = in.GetTapNote(t,i);
 			switch( tn.type )
 			{
 			case TapNote::tap:		
@@ -60,19 +64,19 @@ int NoteDataWithScoring::GetNumNWithScore( TapNoteScore tns, int MinTaps, const 
 	return iNumSuccessfulDoubles;
 }
 
-int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat, float fEndBeat ) const
+int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, float fStartBeat = 0, float fEndBeat = -1 )
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
+		fEndBeat = in.GetLastBeat();
 
 	int iNumSuccessfulHolds = 0;
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
-	for( int i=0; i<GetNumHoldNotes(); i++ )
+	for( int i=0; i<in.GetNumHoldNotes(); i++ )
 	{
-		const HoldNote &hn = GetHoldNote(i);
+		const HoldNote &hn = in.GetHoldNote(i);
 		if( iStartIndex > hn.iStartRow ||  hn.iEndRow > iEndIndex )
 			continue;
 		if( hn.result.hns == hns )
@@ -81,23 +85,23 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	return iNumSuccessfulHolds;
 }
 
-int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) const
+int GetSuccessfulMines( const NoteData &in, float fStartBeat = 0, float fEndBeat = -1 )
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
+		fEndBeat = in.GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetLastRow() );
+	iEndIndex = min( iEndIndex, in.GetLastRow() );
 
 	int iNumSuccessfulMinesNotes = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
-		for( int t=0; t<GetNumTracks(); t++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
-			const TapNote &tn = GetTapNote(t,i);
+			const TapNote &tn = in.GetTapNote(t,i);
 			if( tn.type == TapNote::mine  &&  tn.result.tns != TNS_HIT_MINE )
 				iNumSuccessfulMinesNotes++;
 		}
@@ -107,28 +111,28 @@ int NoteDataWithScoring::GetSuccessfulMines( float fStartBeat, float fEndBeat ) 
 }
 
 /* See NoteData::GetNumHands(). */
-int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) const
+int GetSuccessfulHands( const NoteData &in, float fStartBeat = 0, float fEndBeat = -1 )
 {
 	if( fEndBeat == -1 )
-		fEndBeat = GetLastBeat();
+		fEndBeat = in.GetLastBeat();
 
 	int iStartIndex = BeatToNoteRow( fStartBeat );
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	/* Clamp to known-good ranges. */
 	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, GetLastRow() );
+	iEndIndex = min( iEndIndex, in.GetLastRow() );
 
 	int iNum = 0;
 	for( int i=iStartIndex; i<=iEndIndex; i++ )
 	{
-		if( !RowNeedsHands(i) )
+		if( !in.RowNeedsHands(i) )
 			continue;
 
 		bool Missed = false;
-		for( int t=0; t<GetNumTracks(); t++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
-			TapNote tn = GetTapNote(t, i);
+			TapNote tn = in.GetTapNote(t, i);
 			if( tn.type == TapNote::empty )
 				continue;
 			if( tn.type == TapNote::mine ) // mines don't count
@@ -141,9 +145,9 @@ int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) 
 			continue;
 
 		/* Check hold scores. */
-		for( int j=0; j<GetNumHoldNotes(); j++ )
+		for( int j=0; j<in.GetNumHoldNotes(); j++ )
 		{
-			const HoldNote &hn = GetHoldNote(j);
+			const HoldNote &hn = in.GetHoldNote(j);
 
 			/* Check if the row we're checking is in range. */
 			if( !hn.RowIsInRange(i) )
@@ -165,41 +169,19 @@ int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) 
 	return iNum;
 }
 
-/* Return the minimum tap score of a row.  If the row isn't complete (not all
- * taps have been hit), return TNS_NONE or TNS_MISS. */
-TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
-{
-	TapNoteScore score = TNS_MARVELOUS;
-	for( int t=0; t<GetNumTracks(); t++ )
-	{
-		/* Don't coun, or else the score 
-		 * will always be TNS_NONE. */
-		const TapNote &tn = GetTapNote(t, row);
-		if( tn.type == TapNote::empty || tn.type == TapNote::mine) 
-			continue;
-		score = min( score, tn.result.tns );
-	}
-
-	return score;
-}
-
-bool NoteDataWithScoring::IsRowCompletelyJudged(unsigned row) const
-{
-	return MinTapNoteScore(row) >= TNS_MISS;
-}
-
 /* Return the last tap score of a row: the grade of the tap that completed
  * the row.  If the row has no tap notes, return -1.  If any tap notes aren't
  * graded (any tap is TNS_NONE) or are missed (TNS_MISS), return it. */
+
 /* XXX: this will fill in many empty tap notes due to excess GetTapnote calls */
-int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
+int LastTapNoteScoreTrack( const NoteData &in, unsigned iRow )
 {
 	float scoretime = -9999;
 	int best_track = -1;
-	for( int t=0; t<GetNumTracks(); t++ )
+	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		/* Skip empty tracks and mines */
-		const TapNote &tn = GetTapNote(t, row);
+		const TapNote &tn = in.GetTapNote( t, iRow );
 		if( tn.type == TapNote::empty || tn.type == TapNote::mine ) 
 			continue;
 
@@ -208,7 +190,6 @@ int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
 		if( tns == TNS_MISS || tns == TNS_NONE )
 			return t;
 
-		
 		float tm = tn.result.fTapNoteOffset;
 		if(tm < scoretime) continue;
 		
@@ -219,11 +200,37 @@ int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
 	return best_track;
 }
 
-TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
+}
+TapNoteScore NoteDataWithScoring::LastTapNoteScore( const NoteData &in, unsigned iRow )
 {
-	int track = LastTapNoteScoreTrack(row);
-	if(track == -1) return TNS_NONE;
-	return GetTapNote(track, row).result.tns;
+	int iTrack = LastTapNoteScoreTrack( in, iRow );
+	if( iTrack == -1 )
+		return TNS_NONE;
+	return in.GetTapNote(iTrack, iRow).result.tns;
+}
+
+
+/* Return the minimum tap score of a row.  If the row isn't complete (not all
+ * taps have been hit), return TNS_NONE or TNS_MISS. */
+TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row )
+{
+	TapNoteScore score = TNS_MARVELOUS;
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		/* Don't coun, or else the score 
+		 * will always be TNS_NONE. */
+		const TapNote &tn = in.GetTapNote(t, row);
+		if( tn.type == TapNote::empty || tn.type == TapNote::mine) 
+			continue;
+		score = min( score, tn.result.tns );
+	}
+
+	return score;
+}
+
+bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned row )
+{
+	return MinTapNoteScore( in, row ) >= TNS_MISS;
 }
 
 /* From aaroninjapan.com (http://www.aaroninjapan.com/ddr2.html)
@@ -238,40 +245,20 @@ TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
  * No idea what it actually could be, though.
  */
 
-void NoteDataWithScoring::GetActualRadarValues( PlayerNumber pn, float fSongSeconds, RadarValues& out ) const
+namespace
 {
-	// The for loop and the assert are used to ensure that all fields of 
-	// RadarValue get set in here.
-	FOREACH_RadarCategory( rc )
-	{
-		switch( rc )
-		{
-		case RADAR_STREAM:				out[rc] = GetActualStreamRadarValue( fSongSeconds, pn );	break;
-		case RADAR_VOLTAGE:				out[rc] = GetActualVoltageRadarValue( fSongSeconds, pn );	break;
-		case RADAR_AIR:					out[rc] = GetActualAirRadarValue( fSongSeconds, pn );		break;
-		case RADAR_FREEZE:				out[rc] = GetActualFreezeRadarValue( fSongSeconds, pn );	break;
-		case RADAR_CHAOS:				out[rc] = GetActualChaosRadarValue( fSongSeconds, pn );		break;
-		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) GetNumNWithScore( TNS_GOOD, 1 );			break;
-		case RADAR_NUM_JUMPS:			out[rc] = (float) GetNumNWithScore( TNS_GOOD, 2 );			break;
-		case RADAR_NUM_HOLDS:			out[rc] = (float) GetNumHoldNotesWithScore( HNS_OK );		break;
-		case RADAR_NUM_MINES:			out[rc] = (float) GetSuccessfulMines();						break;
-		case RADAR_NUM_HANDS:			out[rc] = (float) GetSuccessfulHands();						break;
-		default:	ASSERT(0);
-		}
-	}
-}
 
-float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const
+float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
-	int iTotalSteps = GetNumTapNotes();
+	int iTotalSteps = in.GetNumTapNotes();
 	if( iTotalSteps == 0 )
 		return 1.0f;
 
-	const int Perfects = GetNumTapNotesWithScore(TNS_PERFECT);
+	const int Perfects = GetNumTapNotesWithScore( in, TNS_PERFECT);
 	return clamp( float(Perfects)/iTotalSteps, 0.0f, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
+float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	/* g_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
 	 * might be on, and the way combo is counted varies depending on the mode and score
@@ -282,18 +269,18 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, Playe
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const
+float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
-	const int iTotalDoubles = GetNumDoubles();
+	const int iTotalDoubles = in.GetNumDoubles();
 	if( iTotalDoubles == 0 )
 		return 1.0f;  // no jumps in song
 
 	// number of doubles
-	const int iNumDoubles = GetNumNWithScore( TNS_PERFECT, 2 );
+	const int iNumDoubles = GetNumNWithScore( in, TNS_PERFECT, 2 );
 	return clamp( (float)iNumDoubles / iTotalDoubles, 0.0f, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const
+float GetActualChaosRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	const int iPossibleDP = g_CurStageStats.m_player[pn].iPossibleDancePoints;
 	if ( iPossibleDP == 0 )
@@ -303,15 +290,41 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerN
 	return clamp( float(ActualDP)/iPossibleDP, 0.0f, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds, PlayerNumber pn ) const
+float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	// number of hold steps
-	const int iTotalHolds = GetNumHoldNotes();
+	const int iTotalHolds = in.GetNumHoldNotes();
 	if( iTotalHolds == 0 )
 		return 1.0f;
 
-	const int ActualHolds = GetNumHoldNotesWithScore(HNS_OK);
+	const int ActualHolds = GetNumHoldNotesWithScore( in, HNS_OK );
 	return clamp( float(ActualHolds) / iTotalHolds, 0.0f, 1.0f );
+}
+
+}
+
+
+void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, PlayerNumber pn, float fSongSeconds, RadarValues& out )
+{
+	// The for loop and the assert are used to ensure that all fields of 
+	// RadarValue get set in here.
+	FOREACH_RadarCategory( rc )
+	{
+		switch( rc )
+		{
+		case RADAR_STREAM:				out[rc] = GetActualStreamRadarValue( in, fSongSeconds, pn );	break;
+		case RADAR_VOLTAGE:				out[rc] = GetActualVoltageRadarValue( in, fSongSeconds, pn );	break;
+		case RADAR_AIR:					out[rc] = GetActualAirRadarValue( in, fSongSeconds, pn );		break;
+		case RADAR_FREEZE:				out[rc] = GetActualFreezeRadarValue( in, fSongSeconds, pn );	break;
+		case RADAR_CHAOS:				out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pn );		break;
+		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) GetNumNWithScore( in, TNS_GOOD, 1 );			break;
+		case RADAR_NUM_JUMPS:			out[rc] = (float) GetNumNWithScore( in, TNS_GOOD, 2 );			break;
+		case RADAR_NUM_HOLDS:			out[rc] = (float) GetNumHoldNotesWithScore( in, HNS_OK );		break;
+		case RADAR_NUM_MINES:			out[rc] = (float) GetSuccessfulMines( in );						break;
+		case RADAR_NUM_HANDS:			out[rc] = (float) GetSuccessfulHands( in );						break;
+		default:	ASSERT(0);
+		}
+	}
 }
 
 /*

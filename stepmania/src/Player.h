@@ -56,7 +56,7 @@ public:
 
 	void CacheAllUsedNoteSkins( bool bDeleteUnused ) { m_pNoteField->CacheAllUsedNoteSkins(bDeleteUnused); }
 
-	NoteDataWithScoring	m_NoteData;
+	NoteData m_NoteData;
 
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
