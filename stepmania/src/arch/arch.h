@@ -22,7 +22,8 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers);
 #if defined(LINUX)
 #define DEFAULT_SOUND_DRIVER_LIST "ALSA9,OSS,Null"
 #elif defined(DARWIN)
-#define DEFAULT_SOUND_DRIVER_LIST "SDL,Null"
+//#define DEFAULT_SOUND_DRIVER_LIST "QT,SDL,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "QT,Null"
 #elif defined(WIN32)
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"
 #else
