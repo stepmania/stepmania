@@ -95,8 +95,10 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 		}
 	}
 
+	if( !m_aModeChoices.size() )
+		RageException::Throw( "Screen \"%s\" does not set any choices", m_sName.c_str() );
 
-	// devived classes can override if they want
+	// derived classes can override if they want
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
