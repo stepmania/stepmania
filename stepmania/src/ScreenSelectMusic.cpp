@@ -1505,6 +1505,11 @@ void ScreenSelectMusic::AfterMusicChange()
 				case 3:		sSuffix = "rd";	break;
 				default:	sSuffix = "th";	break;
 				}
+
+				// hack for teens: "11th", "113th", etc.
+				if( ((iDisplay%100) / 10) == 1 )
+					sSuffix = "th";
+
 				m_MachineRank.SetText( ssprintf("%i", iDisplay) + sSuffix );
 			}
 
