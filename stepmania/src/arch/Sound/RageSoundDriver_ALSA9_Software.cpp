@@ -6,6 +6,7 @@
 #include "RageSoundManager.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
+#include "ALSA9Dynamic.h"
 
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -179,6 +180,10 @@ static void GetKernel( CString &sys, int &vers )
 
 RageSound_ALSA9_Software::RageSound_ALSA9_Software()
 {
+	CString err = LoadALSA();
+	if( err != "" )
+		RageException::ThrowNonfatal("Driver unusable: %s", err.c_str());
+
 	shutdown = false;
 
 	max_writeahead = safe_writeahead;
@@ -204,6 +209,8 @@ RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
 	LOG->Trace("Mixer thread shut down.");
  
 	delete pcm;
+
+	UnloadALSA();
 }
 
 float RageSound_ALSA9_Software::GetPlayLatency() const

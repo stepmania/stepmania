@@ -5,6 +5,7 @@
 #include "RageSound.h"
 #include "RageSoundManager.h"
 #include "RageUtil.h"
+#include "ALSA9Dynamic.h"
 
 const int channels = 2;
 const int samplerate = 44100;
@@ -210,6 +211,10 @@ int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 
 RageSound_ALSA9::RageSound_ALSA9()
 {
+	CString err = LoadALSA();
+	if( err != "" )
+		RageException::ThrowNonfatal("Driver unusable: %s", err.c_str());
+
 	shutdown = false;
 
 	/* Create a bunch of streams and put them into the stream pool. */
@@ -256,6 +261,8 @@ RageSound_ALSA9::~RageSound_ALSA9()
  
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		delete stream_pool[i];
+
+	UnloadALSA();
 }
 
 /*
