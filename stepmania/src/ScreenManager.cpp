@@ -214,8 +214,15 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
 	// pass input only to topmost state
-	if( !m_ScreenStack.empty() )
-		m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
+	if( m_ScreenStack.empty() )
+		return;
+
+	/* If a screen is queued to load, discard other inputs.  Coin inputs
+	 * are handled before they get here, so they won't be discarded. */
+	if( m_sDelayedScreen != "" )
+		return;
+
+	m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 
