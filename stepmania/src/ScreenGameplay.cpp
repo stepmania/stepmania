@@ -186,8 +186,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_Background.SetDiffuse( RageColor(0.4f,0.4f,0.4f,1) );
 	this->AddChild( &m_Background );
 
-
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
