@@ -768,6 +768,7 @@ void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 	//
 
 	int iRowCount = 0;
+	int iPlaceEveryRows = 6;
 	for( int r=first_row; r<=last_row; r++ )
 	{
 		if( !in.IsRowEmpty(r) )
@@ -775,13 +776,17 @@ void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 			iRowCount++;
 
 			// place every 6 or 7 rows
-			if( (iRowCount>=7) || (iRowCount>=6 && rand()%2) )
+			if( iRowCount>=iPlaceEveryRows )
 			{
 				for( int t=0; t<in.GetNumTracks(); t++ )
 					if( in.GetTapNote(t,r) == TAP_TAP )
 						in.SetTapNote(t,r,TAP_MINE);
 				
 				iRowCount = 0;
+				if( iPlaceEveryRows == 6 )
+					iPlaceEveryRows = 7;
+				else
+					iPlaceEveryRows = 6;
 			}
 		}
 	}
