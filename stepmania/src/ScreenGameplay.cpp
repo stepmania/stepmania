@@ -777,22 +777,32 @@ void ScreenGameplay::LoadNextSong()
 	/* Set up song-specific graphics. */
 	
 	
-	// Beginner steps are always the same on both players.. Just get the # of 1 player that's using the Beginner steps, and go on.
-	int pn = -1;
-	for( int pb=0; pb<NUM_PLAYERS; pb++ )
-		if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
-			pn = pb;
-
-	/* TODO: fall back on m_Background if nobody is on beginner. */
-	if( PREFSMAN->m_bShowBeginnerHelper && pn != -1)
+	// Check to see if any players are in beginner mode.
+	// Note: steps can be different if turn modifiers are used.
+	if( PREFSMAN->m_bShowBeginnerHelper )
 	{
-		m_Background.Unload();	// BeginnerHelper has it's own BG control.
-		m_Background.StopAnimating();
-		
-		//m_BeginnerHelper.m_bEnabled = true;	// Not yet implemented
-		m_BeginnerHelper.Initialize( 2, &m_Player[pn] );	// Init for doubles
-		m_BeginnerHelper.SetX( CENTER_X );
-		m_BeginnerHelper.SetY( CENTER_Y );
+		bool anybeginners = false;
+
+		for( int pb=0; pb<NUM_PLAYERS; pb++ )
+			if( GAMESTATE->IsPlayerEnabled(pb) && GAMESTATE->m_PreferredDifficulty[pb] == DIFFICULTY_BEGINNER )
+			{
+				anybeginners = true;
+				m_BeginnerHelper.AddPlayer( pb, &m_Player[pb] );
+			}
+
+		if(anybeginners)
+		{
+			m_Background.Unload();	// BeginnerHelper has it's own BG control.
+			m_Background.StopAnimating();
+			
+			m_BeginnerHelper.Initialize( 2 );	// Init for doubles
+			m_BeginnerHelper.SetX( CENTER_X );
+			m_BeginnerHelper.SetY( CENTER_Y );
+		}
+		else
+		{
+			m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+		}
 	}
 	else
 	{

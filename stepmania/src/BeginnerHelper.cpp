@@ -37,7 +37,7 @@ BeginnerHelper::~BeginnerHelper()
 	LOG->Trace("BeginnerHelper::~BeginnerHelper()");
 }
 
-void BeginnerHelper::ShowStepCircle( int CSTEP )
+void BeginnerHelper::ShowStepCircle( int pn, int CSTEP )
 {
 	/*for( int ps=0; ps<NUM_PLAYERS; ps++ )
 	{
@@ -66,11 +66,18 @@ void BeginnerHelper::SetFlash( CString sFilename, float fX, float fY )
 	m_sFlash.SetY(fY);
 }
 
-void BeginnerHelper::Initialize( int iDancePadType, NoteData *pNotes )
+void BeginnerHelper::AddPlayer( int pn, NoteData *pNotes )
 {
-	// Copy the note data
-	ASSERT(pNotes != NULL);
-	m_NoteData.CopyAll(pNotes);
+	ASSERT( !m_bInitialized );
+	ASSERT( pNotes != NULL );
+	ASSERT( pn >= 0 && pn < NUM_PLAYERS);
+
+	m_NoteData[pn].CopyAll( pNotes );
+}
+
+void BeginnerHelper::Initialize( int iDancePadType )
+{
+	ASSERT( !m_bInitialized );
 
 	// Load the StepCircle, Background, and flash animation
 	m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
@@ -173,36 +180,33 @@ void BeginnerHelper::DrawPrimitives()
 	DISPLAY->SetLighting( false );
 }
 
-void BeginnerHelper::Step( int CSTEP )
+void BeginnerHelper::Step( int pn, int CSTEP )
 {
 	LOG->Trace( "BeginnerHelper::Step()" );
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	// First make sure this player is on beginner mode and enabled... The difficulty check may be redundant, tho.
+	if( (GAMESTATE->IsPlayerEnabled(pn)) && (GAMESTATE->m_PreferredDifficulty[pn] == DIFFICULTY_BEGINNER) )
 	{
-		// First make sure this player is on beginner mode and enabled... The difficulty check may be redundant, tho.
-		if( (GAMESTATE->IsPlayerEnabled(p)) && (GAMESTATE->m_PreferredDifficulty[p] == DIFFICULTY_BEGINNER) )
+		ShowStepCircle( pn, CSTEP);
+		m_mDancer[pn].StopTweening();
+		m_mDancer[pn].SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
+		switch( CSTEP )
 		{
-			ShowStepCircle(CSTEP);
-			m_mDancer[p].StopTweening();
-			m_mDancer[p].SetRotationY(0);	// Make sure we're not still inside of a JUMPUD tween.
-			switch( CSTEP )
-			{
-			case ST_LEFT:	m_mDancer[p].PlayAnimation( "Step-LEFT" ); break;
-			case ST_RIGHT:	m_mDancer[p].PlayAnimation( "Step-RIGHT" ); break;
-			case ST_UP:		m_mDancer[p].PlayAnimation( "Step-UP" ); break;
-			case ST_DOWN:	m_mDancer[p].PlayAnimation( "Step-DOWN" ); break;
-			case ST_JUMPLR: m_mDancer[p].PlayAnimation( "Step-JUMPLR" ); break;
-			case ST_JUMPUD:
-				// Until I can get an UP+DOWN jump animation, this will have to do.
-				m_mDancer[p].PlayAnimation( "Step-JUMPLR" );
-				
-				m_mDancer[p].StopTweening();
-				m_mDancer[p].BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
-				m_mDancer[p].SetRotationY( 90 );
-				m_mDancer[p].BeginTweening( (1/GAMESTATE->m_fCurBPS) ); //sleep between jump-frames
-				m_mDancer[p].BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
-				m_mDancer[p].SetRotationY( 0 );
-				break;
-			}
+		case ST_LEFT:	m_mDancer[pn].PlayAnimation( "Step-LEFT" ); break;
+		case ST_RIGHT:	m_mDancer[pn].PlayAnimation( "Step-RIGHT" ); break;
+		case ST_UP:		m_mDancer[pn].PlayAnimation( "Step-UP" ); break;
+		case ST_DOWN:	m_mDancer[pn].PlayAnimation( "Step-DOWN" ); break;
+		case ST_JUMPLR: m_mDancer[pn].PlayAnimation( "Step-JUMPLR" ); break;
+		case ST_JUMPUD:
+			// Until I can get an UP+DOWN jump animation, this will have to do.
+			m_mDancer[pn].PlayAnimation( "Step-JUMPLR" );
+			
+			m_mDancer[pn].StopTweening();
+			m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /8, TWEEN_LINEAR );
+			m_mDancer[pn].SetRotationY( 90 );
+			m_mDancer[pn].BeginTweening( (1/GAMESTATE->m_fCurBPS) ); //sleep between jump-frames
+			m_mDancer[pn].BeginTweening( GAMESTATE->m_fCurBPS /6, TWEEN_LINEAR );
+			m_mDancer[pn].SetRotationY( 0 );
+			break;
 		}
 	}
 }
@@ -214,23 +218,29 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 	float beat = fDeltaTime * GAMESTATE->m_fCurBPS;
 
-	int iStep = 0;
-	if( (m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
-		FlashOnce();
-	if((m_NoteData.IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)))))
+	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
 	{
-		for( int k=0; k<m_NoteData.GetNumTracks(); k++ )
-			if( m_NoteData.GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)) ) == TAP_TAP )
-			{
-				switch(k)
+		if( (!GAMESTATE->IsPlayerEnabled(pn)) || (GAMESTATE->m_PreferredDifficulty[pn] != DIFFICULTY_BEGINNER) )
+			continue;	// skip
+
+		int iStep = 0;
+		if( (m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
+			FlashOnce();
+		if((m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)))))
+		{
+			for( int k=0; k<m_NoteData[pn].GetNumTracks(); k++ )
+				if( m_NoteData[pn].GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)) ) == TAP_TAP )
 				{
-				case 0: iStep += 6; break;
-				case 1: iStep += 3; break;
-				case 2: iStep += 8; break;
-				case 3: iStep += 4; break;
-				};
-			}
-		Step( iStep );
+					switch(k)
+					{
+					case 0: iStep += 6; break;
+					case 1: iStep += 3; break;
+					case 2: iStep += 8; break;
+					case 3: iStep += 4; break;
+					};
+				}
+			Step( pn, iStep );
+		}
 	}
 
 	ActorFrame::Update( fDeltaTime );
