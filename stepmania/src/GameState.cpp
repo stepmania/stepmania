@@ -465,9 +465,6 @@ void GameState::FinishStage()
 
 	m_iNumStagesOfThisSong = 0;
 
-	// The round has ended; change the seed.
-	GAMESTATE->m_iRoundSeed = rand();
-
 	if( m_bDemonstrationOrJukebox )
 		return;
 
@@ -647,6 +644,10 @@ void GameState::ResetStageStatistics()
 		m_vLastPerDifficultyAwards[p].clear();
 		m_vLastPeakComboAwards[p].clear();
 	}
+
+	// Reset the round seed.  Do this here and not in FinishStage so that players
+	// get new shuffle patterns if they Back out of gameplay and play again.
+	GAMESTATE->m_iRoundSeed = rand();
 }
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
