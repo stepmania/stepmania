@@ -1497,7 +1497,11 @@ void crash() {
 /* RageLog feeds us logs; keep track of recent logs in a circular
  * buffer.  This lets us include recent logs in the crash report.
  * We don't want to include RageLog, since we don't want to pull
- * in MFC. */
+ * in MFC.
+ *
+ * Since this is a static, preallocated region, even if it gets
+ * trampled we'll just print garbage, not crash due to an invalid
+ * pointer. */
 static const int BACKLOG_LINES = 10;
 static char backlog[BACKLOG_LINES][1024];
 static int backlog_start=0, backlog_cnt=0;
