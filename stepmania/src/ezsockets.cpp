@@ -18,6 +18,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #endif
 
 EzSockets::EzSockets()
@@ -150,7 +151,7 @@ long EzSockets::uAddr()
 }
 
 
-bool EzSockets::connect(const std::string& host,unsigned short port)
+bool EzSockets::connect(const std::string& host, unsigned short port)
 {
 	if(!check())
 		return false;
@@ -159,14 +160,12 @@ bool EzSockets::connect(const std::string& host,unsigned short port)
 	// FIXME: Xbox doesn't have gethostbyname or any way to get a hostent.  
 	// Investigate the samples and figure out how this is supposed to work.
 	return false;
-#elif defined(_WINDOWS)
+#else
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
 	if (phe == NULL)
 		return false;
-    addr.sin_addr = *((LPIN_ADDR)* phe->h_addr_list);
-#else
-	inet_pton(AF_INET,host.c_str(), &addr.sin_addr);
+	memcpy(&addr.sin_addr, phe->h_addr, sizeof(struct in_addr));
 #endif 
 	addr.sin_family = AF_INET;
 	addr.sin_port   = htons(port);
