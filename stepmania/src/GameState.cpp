@@ -27,6 +27,7 @@
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
 #include "CommonMetrics.h"
+#include "NetworkSyncManager.h"	//Used for LUA query
 
 #include <ctime>
 #include <set>
@@ -1851,6 +1852,7 @@ LuaFunction_NoArgs( NumStagesLeft,			GAMESTATE->GetNumStagesLeft() )
 LuaFunction_NoArgs( IsFinalStage,			GAMESTATE->IsFinalStage() )
 LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
 LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
+LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
 LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
 LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
 LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
