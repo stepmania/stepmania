@@ -514,7 +514,7 @@ void GetFadeFlagsFromString( CString sFadeString,
 
 
 
-void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bOnToScreenOrOffOfScreen )
+void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff )
 {
 	sFadeString.MakeLower();
 
@@ -528,8 +528,8 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 
 	TweenType tt;
 	if( CONTAINS("linear") )			tt = TWEEN_LINEAR;
-	else if( CONTAINS("accelerate") )	tt = bOnToScreenOrOffOfScreen ? TWEEN_BIAS_END : TWEEN_BIAS_BEGIN;
-	else if( CONTAINS("bounce") )		tt = bOnToScreenOrOffOfScreen ? TWEEN_BOUNCE_END : TWEEN_BOUNCE_BEGIN;
+	else if( CONTAINS("accelerate") )	tt = bFadingOff ? TWEEN_BIAS_END : TWEEN_BIAS_BEGIN;
+	else if( CONTAINS("bounce") )		tt = bFadingOff ? TWEEN_BOUNCE_BEGIN : TWEEN_BOUNCE_END;
 	else if( CONTAINS("spring") )		tt = TWEEN_SPRING;
 	else								tt = TWEEN_LINEAR;
 
@@ -561,10 +561,10 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 
 
 	StopTweening();
-	m_current = bOnToScreenOrOffOfScreen ? original : mod;
+	m_current = bFadingOff ? original : mod;
 	BeginTweening( fSleepSeconds );
 	BeginTweening( fFadeSeconds, tt );
-	LatestTween() = bOnToScreenOrOffOfScreen ? mod : original;
+	LatestTween() = bFadingOff ? mod : original;
 }
 
 float Actor::TweenTime() const

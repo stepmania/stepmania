@@ -495,9 +495,9 @@ void SongManager::SaveMachineScoresToDisk()
 			{
 				fprintf(fp,"%d\n",COURSE_SCORES_VERSION);
 
-				for( unsigned c=0; c<m_pCourses.size(); c++ )	// foreach song
+				for( unsigned i=0; i<m_pCourses.size(); i++ )	// foreach song
 				{
-					Course* pCourse = m_pCourses[c];
+					Course* pCourse = m_pCourses[i];
 					ASSERT(pCourse);
 
 					if( pCourse->m_bIsAutoGen )
@@ -505,11 +505,11 @@ void SongManager::SaveMachineScoresToDisk()
 					else
 						fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
 					
-					for( int i=0; i<NUM_NOTES_TYPES; i++ )
+					for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
 						fprintf(fp, "%d %d %f\n", 
-							pCourse->m_MemCardScores[c][i].iNumTimesPlayed, 
-							pCourse->m_MemCardScores[c][i].iDancePoints, 
-							pCourse->m_MemCardScores[c][i].fSurviveTime);
+							pCourse->m_MemCardScores[c][nt].iNumTimesPlayed, 
+							pCourse->m_MemCardScores[c][nt].iDancePoints, 
+							pCourse->m_MemCardScores[c][nt].fSurviveTime);
 				}
 
 				fclose(fp);

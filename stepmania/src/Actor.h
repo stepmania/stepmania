@@ -190,7 +190,7 @@ public:
 	//
 	// fade command
 	//
-	void Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bOnToScreenOrOffOfScreen );
+	void Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff );
 	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
