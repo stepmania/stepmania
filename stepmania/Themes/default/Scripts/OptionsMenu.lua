@@ -16,7 +16,7 @@ function OptionsRowTest()
 		-- Flags for this row.  Note that as this table only defines
 		-- a row, not a menu, only row settings can be set here, not
 		-- OptionMenuFlags.
-		LayoutType = "ShowAllInLine",
+		LayoutType = "ShowAllInRow",
 		SelectType = "SelectMultiple",
 		OneChoiceForAllPlayers = false,
 		
