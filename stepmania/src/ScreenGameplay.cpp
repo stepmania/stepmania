@@ -78,8 +78,8 @@
 #define AUTOPLAY_Y						THEME->GetMetricF("ScreenGameplay","AutoPlayY")
 #define SURVIVE_TIME_X					THEME->GetMetricF("ScreenGameplay","SurviveTimeX")
 #define SURVIVE_TIME_Y					THEME->GetMetricF("ScreenGameplay","SurviveTimeY")
-CachedThemeMetric SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
-CachedThemeMetric G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+CachedThemeMetricF SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
+CachedThemeMetricF G_TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 
 const ScreenMessage	SM_PlayReady			= ScreenMessage(SM_User+0);
@@ -355,9 +355,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
+		case PLAY_MODE_NONSTOP:
 			m_pScoreDisplay[p] = new ScoreDisplayNormal;
 			break;
-		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
 			m_pScoreDisplay[p] = new ScoreDisplayOni;

@@ -14,20 +14,20 @@
 #include "ThemeManager.h"
 
 
-CachedThemeMetric	LABEL_X				("Combo","LabelX");
-CachedThemeMetric	LABEL_Y				("Combo","LabelY");
-CachedThemeMetric	LABEL_HORIZ_ALIGN	("Combo","LabelHorizAlign");
-CachedThemeMetric	LABEL_VERT_ALIGN	("Combo","LabelVertAlign");
-CachedThemeMetric	NUMBER_X			("Combo","NumberX");
-CachedThemeMetric	NUMBER_Y			("Combo","NumberY");
-CachedThemeMetric	NUMBER_HORIZ_ALIGN	("Combo","NumberHorizAlign");
-CachedThemeMetric	NUMBER_VERT_ALIGN	("Combo","NumberVertAlign");
-CachedThemeMetric	SHOW_COMBO_AT		("Combo","ShowComboAt");
-CachedThemeMetric	NUMBER_MIN_ZOOM		("Combo","NumberMinZoom");
-CachedThemeMetric	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
-CachedThemeMetric	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
-CachedThemeMetric	PULSE_ZOOM			("Combo","PulseZoom");
-CachedThemeMetric	C_TWEEN_SECONDS		("Combo","TweenSeconds");
+CachedThemeMetricF	LABEL_X				("Combo","LabelX");
+CachedThemeMetricF	LABEL_Y				("Combo","LabelY");
+CachedThemeMetricI	LABEL_HORIZ_ALIGN	("Combo","LabelHorizAlign");
+CachedThemeMetricI	LABEL_VERT_ALIGN	("Combo","LabelVertAlign");
+CachedThemeMetricF	NUMBER_X			("Combo","NumberX");
+CachedThemeMetricF	NUMBER_Y			("Combo","NumberY");
+CachedThemeMetricI	NUMBER_HORIZ_ALIGN	("Combo","NumberHorizAlign");
+CachedThemeMetricI	NUMBER_VERT_ALIGN	("Combo","NumberVertAlign");
+CachedThemeMetricI	SHOW_COMBO_AT		("Combo","ShowComboAt");
+CachedThemeMetricF	NUMBER_MIN_ZOOM		("Combo","NumberMinZoom");
+CachedThemeMetricF	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
+CachedThemeMetricF	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
+CachedThemeMetricF	PULSE_ZOOM			("Combo","PulseZoom");
+CachedThemeMetricF	C_TWEEN_SECONDS		("Combo","TweenSeconds");
 
 
 Combo::Combo()

@@ -19,8 +19,8 @@
 
 #include "RageLog.h"
 
-CachedThemeMetric	GR_STEP_SECONDS			("GrayArrow","StepSeconds");
-CachedThemeMetric	GR_STEP_ZOOM			("GrayArrow","StepZoom");
+CachedThemeMetricF	GR_STEP_SECONDS			("GrayArrow","StepSeconds");
+CachedThemeMetricF	GR_STEP_ZOOM			("GrayArrow","StepZoom");
 
 
 GrayArrow::GrayArrow()

@@ -26,7 +26,7 @@
 #include "ThemeManager.h"
 
 
-// MusicWheel stuff
+#define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, THEME->GetMetricI("MusicWheel","NumWheelItems") )
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
 #define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
@@ -34,8 +34,8 @@
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
 #define SCROLL_BAR_HEIGHT			THEME->GetMetricI("MusicWheel","ScrollBarHeight")
-#define ITEM_CURVE_X				THEME->GetMetricF("MusicWheel","ItemCurveX")
-#define ITEM_SPACING_Y				THEME->GetMetricF("MusicWheel","ItemSpacingY")
+CachedThemeMetricF ITEM_CURVE_X		("MusicWheel","ItemCurveX");
+CachedThemeMetricF ITEM_SPACING_Y	("MusicWheel","ItemSpacingY");
 #define NUM_SECTION_COLORS			THEME->GetMetricI("MusicWheel","NumSectionColors")
 #define SECTION_COLORS( i )			THEME->GetMetricC("MusicWheel",ssprintf("SectionColor%d",i+1))
 #define DEFAULT_SCROLL_DIRECTION	THEME->GetMetricI("Notes","DefaultScrollDirection")
@@ -45,7 +45,6 @@
 
 
 const int MAX_WHEEL_SOUND_SPEED = 15;
-float g_fItemSpacingY, g_fItemCurveX;	// cache
 
 static const SongSortOrder MaxSelectableSort = SORT_MOST_PLAYED;
 
@@ -70,10 +69,9 @@ MusicWheel::MusicWheel()
 			GAMESTATE->m_PlayerOptions[i].m_fReverseScroll = 1;
 	}
 
-
 	// update theme metric cache
-	g_fItemSpacingY = ITEM_SPACING_Y;
-	g_fItemCurveX = ITEM_CURVE_X;
+	ITEM_CURVE_X.Refresh();
+	ITEM_SPACING_Y.Refresh();
 
 	// for debugging
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
@@ -510,12 +508,12 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 {
-	return roundf( fPosOffsetsFromMiddle*g_fItemSpacingY );
+	return roundf( fPosOffsetsFromMiddle*ITEM_SPACING_Y );
 }
 
 float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 {	
-	float fX = (1-cosf(fPosOffsetsFromMiddle/PI))*g_fItemCurveX;
+	float fX = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
 	
 	return roundf( fX );
 }
@@ -527,14 +525,14 @@ void MusicWheel::RebuildWheelItemDisplays()
 	if( m_iSelection > int(m_CurWheelItemData.size()-1) )
 		m_iSelection = 0;
 	
-	iIndex -= NUM_WHEEL_ITEMS_TO_DRAW/2;
+	iIndex -= NUM_WHEEL_ITEMS/2;
 
 	ASSERT(m_CurWheelItemData.size());
 	while(iIndex < 0)
 		iIndex += m_CurWheelItemData.size();
 
 	// iIndex is now the index of the lowest WheelItem to draw
-	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemData     *data   = m_CurWheelItemData[iIndex];
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
@@ -551,7 +549,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 
 void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and top score
 {
-	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 		display.RefreshGrades();
@@ -562,7 +560,7 @@ void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and to
 
 void MusicWheel::DrawPrimitives()
 {
-	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 
@@ -574,7 +572,7 @@ void MusicWheel::DrawPrimitives()
 		case STATE_RANDOM_SPINNING:
 		case STATE_LOCKED:
 			{
-				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
+				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
 				float fY = GetBannerY( fThisBannerPositionOffsetFromSelection );
 				if( fY < -SCREEN_HEIGHT/2  ||  fY > SCREEN_HEIGHT/2 )
@@ -586,7 +584,7 @@ void MusicWheel::DrawPrimitives()
 			break;
 		}
 
-		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS_TO_DRAW/2 )
+		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
 			display.m_fPercentGray = 0.5f;
 		else
 			display.m_fPercentGray = 0;
@@ -602,10 +600,10 @@ void MusicWheel::UpdateScrollbar()
 	int total_num_items = m_CurWheelItemData.size();
 	float item_at=m_iSelection - m_fPositionOffsetFromSelection;
 
-	if(NUM_WHEEL_ITEMS_TO_DRAW > total_num_items) {
+	if(NUM_WHEEL_ITEMS > total_num_items) {
 		m_ScrollBar.SetPercentage( 0, 1 );
 	} else {
-		float size = float(NUM_WHEEL_ITEMS_TO_DRAW) / total_num_items;
+		float size = float(NUM_WHEEL_ITEMS) / total_num_items;
 		float center = item_at / total_num_items;
 		size *= 0.5f;
 
@@ -618,7 +616,7 @@ void MusicWheel::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	unsigned i;
-	for( i=0; i<int(NUM_WHEEL_ITEMS_TO_DRAW); i++ )
+	for( i=0; i<int(NUM_WHEEL_ITEMS); i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
 
@@ -1052,7 +1050,7 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 	m_sprSelectionOverlay.SetXY( fX+320, fY );
 
 	if(changing_sort) {
-		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS_TO_DRAW/2 * factor );	// sleep
+		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS/2 * factor );	// sleep
 		m_sprSelectionOverlay.BeginTweening( 0.2f * factor, Actor::TWEEN_ACCELERATE );
 	} else {
 		m_sprSelectionOverlay.BeginTweening( 0.05f * factor );	// sleep
@@ -1068,10 +1066,10 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 	m_ScrollBar.BeginTweening( 0.2f * factor , Actor::TWEEN_ACCELERATE );
 	m_ScrollBar.SetTweenX( SCROLL_BAR_X );	
 
-	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
-		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
+		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
 		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);
@@ -1099,7 +1097,7 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 	if(changing_sort) {
 		/* When changing sort, tween the overlay with the item in the center;
 		 * having it separate looks messy when we're moving fast. */
-		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS_TO_DRAW/2 * factor );	// sleep
+		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS/2 * factor );	// sleep
 		m_sprSelectionOverlay.BeginTweening( 0.2f * factor, Actor::TWEEN_DECELERATE );
 	} else {
 		m_sprSelectionOverlay.BeginTweening( 0 );	// sleep
@@ -1111,10 +1109,10 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 	m_ScrollBar.BeginTweening( 0.2f * factor, Actor::TWEEN_ACCELERATE );
 	m_ScrollBar.SetTweenX( SCROLL_BAR_X+30 );	
 
-	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
+	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];
-		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS_TO_DRAW/2 + m_fPositionOffsetFromSelection;
+		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
 		float fX = GetBannerX(fThisBannerPositionOffsetFromSelection);
 		float fY = GetBannerY(fThisBannerPositionOffsetFromSelection);

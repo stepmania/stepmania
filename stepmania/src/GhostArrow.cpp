@@ -16,14 +16,14 @@
 #include "ThemeManager.h"
 
 
-CachedThemeMetric	GA_SHOW_SECONDS			("GhostArrow","ShowSeconds");
-CachedThemeMetric	GA_ZOOM_START			("GhostArrow","ZoomStart");
-CachedThemeMetric	GA_ZOOM_END				("GhostArrow","ZoomEnd");
-CachedThemeMetric	GA_COLOR_MARVELOUS		("GhostArrow","ColorMarvelous");
-CachedThemeMetric	GA_COLOR_PERFECT		("GhostArrow","ColorPerfect");
-CachedThemeMetric	GA_COLOR_GREAT			("GhostArrow","ColorGreat");
-CachedThemeMetric	GA_COLOR_GOOD			("GhostArrow","ColorGood");
-CachedThemeMetric	GA_COLOR_BOO			("GhostArrow","ColorBoo");
+CachedThemeMetricF	GA_SHOW_SECONDS			("GhostArrow","ShowSeconds");
+CachedThemeMetricF	GA_ZOOM_START			("GhostArrow","ZoomStart");
+CachedThemeMetricF	GA_ZOOM_END				("GhostArrow","ZoomEnd");
+CachedThemeMetricC	GA_COLOR_MARVELOUS		("GhostArrow","ColorMarvelous");
+CachedThemeMetricC	GA_COLOR_PERFECT		("GhostArrow","ColorPerfect");
+CachedThemeMetricC	GA_COLOR_GREAT			("GhostArrow","ColorGreat");
+CachedThemeMetricC	GA_COLOR_GOOD			("GhostArrow","ColorGood");
+CachedThemeMetricC	GA_COLOR_BOO			("GhostArrow","ColorBoo");
 
 
 GhostArrow::GhostArrow()
@@ -50,7 +50,7 @@ void GhostArrow::Step( TapNoteScore score )
 	// HACK: set the length of each frame so the animation plays in exactly 1 pop up time.
 	//    We can't do this in the constructor because the image hasn't been loaded yet
 	for( int i=0; i<Sprite::GetNumStates(); i++ )
-		Sprite::m_fDelay[i] = (float)GA_SHOW_SECONDS / (float)Sprite::GetNumStates();
+		Sprite::m_fDelay[i] = GA_SHOW_SECONDS / Sprite::GetNumStates();
 
 	RageColor colorStart;
 	switch( score )

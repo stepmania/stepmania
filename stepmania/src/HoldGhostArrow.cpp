@@ -19,7 +19,7 @@
 #include "ThemeManager.h"
 
 
-CachedThemeMetric		WARM_UP_SECONDS		("HoldGhostArrow","WarmUpSeconds");
+CachedThemeMetricF		WARM_UP_SECONDS		("HoldGhostArrow","WarmUpSeconds");
 
 
 HoldGhostArrow::HoldGhostArrow()

@@ -34,7 +34,7 @@
 #define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
 #define COMBO_Y						THEME->GetMetricF("Player","ComboY")
 #define HOLD_JUDGMENT_Y				THEME->GetMetricF("Player","HoldJudgmentY")
-CachedThemeMetric					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
+CachedThemeMetricI					BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
 #define START_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StartDrawingAtPixels")
 #define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
 

@@ -74,7 +74,7 @@ const float NAMING_MENU_ITEM_X			=	CENTER_X-200;
 const float NAMING_MENU_ITEM_START_Y	=	SCREEN_TOP + 24;
 const float NAMING_MENU_ITEM_SPACING_Y	=	18;
 
-CachedThemeMetric	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
+CachedThemeMetricF	 TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
 
 
 const ScreenMessage SM_BackFromMainMenu				= (ScreenMessage)(SM_User+1);

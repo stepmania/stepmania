@@ -16,14 +16,14 @@
 #include "ThemeManager.h"
 
 
-CachedThemeMetric	GAB_SHOW_SECONDS		("GhostArrowBright","ShowSeconds");
-CachedThemeMetric	GAB_ZOOM_START			("GhostArrowBright","ZoomStart");
-CachedThemeMetric	GAB_ZOOM_END			("GhostArrowBright","ZoomEnd");
-CachedThemeMetric	GAB_COLOR_MARVELOUS		("GhostArrowBright","ColorMarvelous");
-CachedThemeMetric	GAB_COLOR_PERFECT		("GhostArrowBright","ColorPerfect");
-CachedThemeMetric	GAB_COLOR_GREAT			("GhostArrowBright","ColorGreat");
-CachedThemeMetric	GAB_COLOR_GOOD			("GhostArrowBright","ColorGood");
-CachedThemeMetric	GAB_COLOR_BOO			("GhostArrowBright","ColorBoo");
+CachedThemeMetricF	GAB_SHOW_SECONDS		("GhostArrowBright","ShowSeconds");
+CachedThemeMetricF	GAB_ZOOM_START			("GhostArrowBright","ZoomStart");
+CachedThemeMetricF	GAB_ZOOM_END			("GhostArrowBright","ZoomEnd");
+CachedThemeMetricC	GAB_COLOR_MARVELOUS		("GhostArrowBright","ColorMarvelous");
+CachedThemeMetricC	GAB_COLOR_PERFECT		("GhostArrowBright","ColorPerfect");
+CachedThemeMetricC	GAB_COLOR_GREAT			("GhostArrowBright","ColorGreat");
+CachedThemeMetricC	GAB_COLOR_GOOD			("GhostArrowBright","ColorGood");
+CachedThemeMetricC	GAB_COLOR_BOO			("GhostArrowBright","ColorBoo");
 
 
 GhostArrowBright::GhostArrowBright()
@@ -50,7 +50,7 @@ void GhostArrowBright::Step( TapNoteScore score )
 	// HACK: set the length of each frame so the animation plays in exactly 1 pop up time.
 	//    We can't do this in the constructor because the image hasn't been loaded yet
 	for( int i=0; i<Sprite::GetNumStates(); i++ )
-		Sprite::m_fDelay[i] = (float)GAB_SHOW_SECONDS / (float)Sprite::GetNumStates();
+		Sprite::m_fDelay[i] = GAB_SHOW_SECONDS / Sprite::GetNumStates();
 
 	RageColor colorStart;
 	switch( score )

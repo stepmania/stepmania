@@ -30,7 +30,7 @@
 #include "MusicWheelItem.h"
 
 
-const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
+const int MAX_WHEEL_ITEMS	=	15;
 
 
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
@@ -94,7 +94,7 @@ protected:
 	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
 	vector<WheelItemData *> m_CurWheelItemData;
 	
-	WheelItemDisplay	m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];
+	WheelItemDisplay	m_WheelItemDisplays[MAX_WHEEL_ITEMS];
 	
 	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;

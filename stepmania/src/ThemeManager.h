@@ -57,6 +57,7 @@ extern ThemeManager*	THEME;	// global and accessable from anywhere in our progra
 
 class CachedThemeMetric
 {
+protected:
 	CString m_sClassName;
 	CString m_sValueName;
 	bool	m_bInited;
@@ -87,10 +88,36 @@ public:
 	}
 
     operator const CString () const		{ ASSERT(m_bInited);	return m_sValue; };
-	operator const int () const			{ ASSERT(m_bInited);	return m_iValue; };
+};
+
+class CachedThemeMetricF : public CachedThemeMetric
+{
+public:
+	CachedThemeMetricF( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const float () const		{ ASSERT(m_bInited);	return m_fValue; };
+};
+
+class CachedThemeMetricI : public CachedThemeMetric
+{
+public:
+	CachedThemeMetricI( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
+	operator const int () const			{ ASSERT(m_bInited);	return m_iValue; };
+};
+
+class CachedThemeMetricB : public CachedThemeMetric
+{
+public:
+	CachedThemeMetricB( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const bool () const		{ ASSERT(m_bInited);	return m_bValue; };
+};
+
+class CachedThemeMetricC : public CachedThemeMetric
+{
+public:
+	CachedThemeMetricC( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const RageColor () const	{ ASSERT(m_bInited);	return m_cValue; };
 };
+
+
 
 #endif
