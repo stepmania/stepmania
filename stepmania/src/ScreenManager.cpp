@@ -110,7 +110,9 @@ ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 	}
 
 	ReloadCreditsText();
-	RefreshCreditsMessages();
+	/* This will be done when we set up the first screen, after GAMESTATE->Reset has
+	 * been called. */
+	// RefreshCreditsMessages();
 }
 
 void ScreenSystemLayer::ReloadCreditsText()
