@@ -769,6 +769,16 @@ void ScreenOptions::MenuStart( PlayerNumber pn )
 
 void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta ) 
 {
+	int iCurRow = m_iCurrentRow[pn];
+	OptionRow &row = m_OptionRow[iCurRow];
+
+	if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
+		return;		// don't allow a move
+
+	const int iNumOptions = row.choices.size();
+	if( iNumOptions <= 1 )	// 1 or 0
+		return;	// don't change, don't play sound
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 //		if( m_InputMode == INPUTMODE_INDIVIDUAL  &&  p != pn )
@@ -776,18 +786,9 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta )
 			           // options it moves everything by 2
 			continue;	// skip
 
-		int iCurRow = m_iCurrentRow[p];
-
-		if( iCurRow == m_iNumOptionRows	)	// EXIT is selected
-			return;		// don't allow a move
-
-		OptionRow &row = m_OptionRow[iCurRow];
-		const int iNumOptions = row.choices.size();
-		if( iNumOptions == 1 )
-			continue;
-
-		int iNewSel = (m_iSelectedOption[p][iCurRow]+iDelta+iNumOptions) % iNumOptions;
-
+		int iNewSel = m_iSelectedOption[p][iCurRow] + iDelta;
+		wrap( iNewSel, iNumOptions );
+		
 		if( row.bOneChoiceForAllPlayers )
 		{
 			for( int p2=0; p2<NUM_PLAYERS; p2++ )
