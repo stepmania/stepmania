@@ -139,7 +139,9 @@ void SignalHandler::OnClose(handler h)
 			struct sigaction sa;
 
 			sa.sa_sigaction = SigHandler;
-			sa.sa_flags = p != NULL? SA_ONSTACK:0;
+			sa.sa_flags = 0;
+			if( p != NULL )
+				sa.sa_flags |= SA_ONSTACK;
 			sa.sa_flags |= SA_NODEFER;
 			sa.sa_flags |= SA_SIGINFO;
 			sigemptyset(&sa.sa_mask);
