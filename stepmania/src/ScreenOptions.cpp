@@ -84,7 +84,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 
 	this->ImportOptions();
 
-	for( unsigned l=0; l<m_iNumOptionRows; l++ )
+	for( int l=0; l<m_iNumOptionRows; l++ )
 		if( m_OptionRow[l].bOneChoiceForAllPlayers )
 			m_iSelectedOption[PLAYER_2][l] = m_iSelectedOption[PLAYER_1][l];
 
