@@ -10001,29 +10001,29 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenCenterImage.cpp;
-			path = /Users/steve/stepmania/src/ScreenCenterImage.cpp;
-			refType = 0;
+			path = ../src/ScreenCenterImage.cpp;
+			refType = 4;
 		};
 		AAC622F905389A0500D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenCenterImage.h;
-			path = /Users/steve/stepmania/src/ScreenCenterImage.h;
-			refType = 0;
+			path = ../src/ScreenCenterImage.h;
+			refType = 4;
 		};
 		AAC622FA05389A0500D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenTestInput.cpp;
-			path = /Users/steve/stepmania/src/ScreenTestInput.cpp;
-			refType = 0;
+			path = ../src/ScreenTestInput.cpp;
+			refType = 4;
 		};
 		AAC622FB05389A0500D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScreenTestInput.h;
-			path = /Users/steve/stepmania/src/ScreenTestInput.h;
-			refType = 0;
+			path = ../src/ScreenTestInput.h;
+			refType = 4;
 		};
 		AAC622FC05389A0500D02EE9 = {
 			fileRef = AAC622F805389A0500D02EE9;
