@@ -137,6 +137,7 @@ void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &ha
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
 		row.layoutType = StringToLayoutType( pStr );
+		ASSERT( row.layoutType != LAYOUT_INVALID );
 		lua_pop( LUA->L, 1 );
 
 		lua_pushstring( LUA->L, "SelectType" );
@@ -145,6 +146,7 @@ void ScreenOptionsMaster::SetLua( OptionRowDefinition &row, OptionRowHandler &ha
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
 		row.selectType = StringToSelectType( pStr );
+		ASSERT( row.selectType != SELECT_INVALID );
 		lua_pop( LUA->L, 1 );
 
 		/* Iterate over the "Choices" table. */
