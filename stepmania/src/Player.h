@@ -52,7 +52,7 @@ public:
 	void Step( int col );
 	void RandomiseNotes( int iNoteRow );
 	void FadeToFail();
-	bool	m_bShowJudgment;	// Used in ScreenHowToPlay
+	void DontShowJudgement() { m_bShowJudgment = false; }	// Used in ScreenHowToPlay
 	
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
@@ -88,6 +88,7 @@ protected:
 	Inventory*		m_pInventory;
 
 	CString			m_sLastSeenNoteSkin;
+	bool m_bShowJudgment;
 };
 
 #endif
