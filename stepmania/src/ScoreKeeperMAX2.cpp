@@ -428,93 +428,20 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 /*
   http://www.aaroninjapan.com/ddr2.html
 
-  Regular play scoring
-
-  A "Perfect" is worth 2 points
-  A "Great" is worth 1 points
-  A "Good" is worth 0 points
-  A "Boo" will subtract 4 points
-  A "Miss" will subtract 8 points
-  An "OK" (Successful Freeze step) will add 6 points
-  A "NG" (Unsuccessful Freeze step) is worth 0 points
-
   Note on ONI Mode scoring
 
   The total number of Dance Points is calculated with Marvelous steps being worth 3 points, Perfects getting 
   2 points, OKs getting 3 points, Greats getting 1 point, and everything else is worth 0 points. (Note: The 
-  "Marvelous" step rating is a new rating to DDR Extreme only used in Oni and Nonstop modes. They are rated 
-  higher than "Perfect" steps). 
 
-  Note on NONSTOP Mode scoring
-
-  A "Marvelous" is worth 2 points
-  A "Perfect" is also worth 2 points
-  A "Great" is worth 1 points
-  A "Good" is worth 0 points
-  A "Boo" will subtract 4 points
-  A "Miss" will subtract 8 points
-  An "OK" (Successful Freeze step) will add 6 points
-  A "NG" (Unsuccessful Freeze step) is worth 0 points	
 */
 
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-	case PLAY_MODE_ENDLESS:
-	case PLAY_MODE_NONSTOP:
-		switch( tns )
-		{
-		case TNS_MARVELOUS:	return +2;
-		case TNS_PERFECT:	return +2;
-		case TNS_GREAT:		return +1;
-		case TNS_GOOD:		return +0;
-		case TNS_BOO:		return -4;
-		case TNS_MISS:		return -8;
-		}
-		break;
-	case PLAY_MODE_ONI:
-		switch( tns )
-		{
-		case TNS_MARVELOUS:	return (PREFSMAN->m_bDancePointsForOni ? +3 : +2);
-		case TNS_PERFECT:	return +2;
-		case TNS_GREAT:		return +1;
-		case TNS_GOOD:		return +0;
-		case TNS_BOO:		return +0;
-		case TNS_MISS:		return +0;
-		}
-		break;
-	default:
-		ASSERT(0);
-	}	
-	return +0;
+	/* This is used for Oni percentage displays.  Grading values are currently in
+	 * StageStats::GetGrade. */
+	const float TapScoreValues[NUM_TAP_NOTE_SCORES] = { 0, 0, 0, 0, +1, +2, +3 };
+	return TapScoreValues[tns];
 }
 
 int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 {
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-	case PLAY_MODE_ENDLESS:
-	case PLAY_MODE_NONSTOP:
-		switch( hns )
-		{
-		case HNS_OK:	return +6;
-		case HNS_NG:	return +0;
-		}
-		break;
-	case PLAY_MODE_ONI:
-		switch( hns )
-		{
-		case HNS_OK:	return GAMESTATE->ShowMarvelous() && PREFSMAN->m_bDancePointsForOni ? +3:+2;
-		case HNS_NG:	return +0;
-		}
-		break;
-	default:
-		ASSERT(0);
-	}
-	return +0;
+	return TapNoteScoreToDancePoints(TNS_MARVELOUS);
 }
