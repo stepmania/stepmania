@@ -11,6 +11,9 @@
 -----------------------------------------------------------------------------
 */
 
+class Song;
+class Course;
+
 struct PlayerOptions
 {
 	PlayerOptions() { Init(); };
@@ -134,6 +137,11 @@ struct PlayerOptions
 	void SetOneAppearance( Appearance a );
 	void SetOneScroll( Scroll s );
 	void ToggleOneTurn( Turn t );
+
+
+	// return true if any mods being used will make the song(s) easier
+	bool IsHandicapForSong( Song* pSong );
+	bool IsHandicapForCourse( Course* pCourse );
 };
 
 #endif

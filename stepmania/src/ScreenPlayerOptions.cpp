@@ -52,6 +52,8 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	m_bGoToOptions = ( PREFSMAN->m_ShowSongOptions == PrefsManager::YES );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
+
+	UpdateDisqualified();
 }
 
 
@@ -134,6 +136,10 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 	}
 
 	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
+
+	// UGLY: Update m_Disqualified whenever Start is pressed
+	if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START )
+		UpdateDisqualified();
 }
 
 void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
@@ -163,4 +169,33 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	ScreenOptionsMaster::HandleScreenMessage( SM );
+}
+
+void ScreenPlayerOptions::UpdateDisqualified()
+{
+	// save current player options 
+	PlayerOptions po[2];
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			po[p] = GAMESTATE->m_PlayerOptions[p];
+		}
+	}
+	
+	// export the currently selection options, which will fill GAMESTATE->m_PlayerOptions
+	this->ExportOptions();
+
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			bool bIsHandicap = GAMESTATE->IsCourseMode() ?
+				GAMESTATE->m_PlayerOptions[p].IsHandicapForCourse( GAMESTATE->m_pCurCourse ) :
+				GAMESTATE->m_PlayerOptions[p].IsHandicapForSong( GAMESTATE->m_pCurSong );
+			
+			m_sprDisqualify[p]->SetHidden( !bIsHandicap );
+
+			// restore previous player options in case the user escapes back after this
+			GAMESTATE->m_PlayerOptions[p] = po[p];
+		}
+	}
 }

@@ -439,6 +439,15 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 		ASSERT(0);
 	}
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_sprDisqualify[p].Load( THEME->GetPathToG( "ScreenOptions disqualify") );
+		m_sprDisqualify[p]->SetName( "ScreenOptions", ssprintf("DisqualifyP%i",p+1) );
+		UtilSetXYAndOnCommand( m_sprDisqualify[p], "ScreenOptions" );
+		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
+		m_framePage.AddChild( m_sprDisqualify[p] );
+	}
+
 	m_sprFrame.Load( THEME->GetPathToG( "ScreenOptions frame") );
 	m_sprFrame->SetXY( CENTER_X, CENTER_Y );
 	m_framePage.AddChild( m_sprFrame );

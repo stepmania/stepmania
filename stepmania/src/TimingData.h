@@ -38,6 +38,7 @@ public:
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
+	bool HasBpmChangesOrStops() const;
 
 	// used for editor fix - expand/contract needs to move BPMSegments
 	// and StopSegments that land during/after the edited range.

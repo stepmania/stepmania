@@ -174,7 +174,7 @@ public:
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const { m_Timing.GetBeatAndBPSFromElapsedTime( fElapsedTime, fBeatOut, fBPSOut, bFreezeOut ); }
 	float GetBeatFromElapsedTime( float fElapsedTime ) const { return m_Timing.GetBeatFromElapsedTime( fElapsedTime ); }
 	float GetElapsedTimeFromBeat( float fBeat ) const { return m_Timing.GetElapsedTimeFromBeat( fBeat ); }
-	
+	bool HasSignificantBpmChangesOrStops() const;
 	
 	
 	vector<Steps*> m_apNotes;

@@ -252,6 +252,11 @@ void TimingData::ShiftRows( float fStartBeat, float fBeatsToShift )
 	}
 }
 
+bool TimingData::HasBpmChangesOrStops() const
+{
+	return m_BPMSegments.size()>1 || m_StopSegments.size()>0;
+}
+
 /*
  * Copyright (c) 2001-2004 by the person(s) listed below.  All rights reserved.
  *	Chris Danford

@@ -25,6 +25,8 @@ private:
 	void GoToNextState();
 	void GoToPrevState();
 
+	void UpdateDisqualified();
+
 	bool            m_bAcceptedChoices;
 	bool            m_bGoToOptions;
 	bool            m_bAskOptionsMessage;

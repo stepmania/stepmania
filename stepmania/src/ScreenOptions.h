@@ -170,6 +170,9 @@ protected:
 
 	AutoActor		m_sprMore;
 	bool			m_bMoreShown, m_bWasOnExit[NUM_PLAYERS];
+
+	// show if the current selections will disqualify a high score
+	AutoActor		m_sprDisqualify[NUM_PLAYERS];
 	
 	// TRICKY: People hold Start to get to PlayerOptions, then 
 	// the repeat events cause them to zip to the bottom.  So, ignore

@@ -1679,3 +1679,13 @@ void Song::FreeAllLoadedFromProfiles()
 			this->RemoveNotes( pSteps );
 	}
 }
+
+bool Song::HasSignificantBpmChangesOrStops() const
+{
+	// Don't consider BPM changes that only are only for maintaining sync as 
+	// a real BpmChange.
+	if( m_DisplayBPMType == DISPLAY_SPECIFIED )
+		return false;
+
+	return m_Timing.HasBpmChangesOrStops();
+}

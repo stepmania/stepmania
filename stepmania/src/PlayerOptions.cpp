@@ -18,6 +18,8 @@
 #include "GameState.h"
 #include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
+#include "song.h"
+#include "Course.h"
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
@@ -536,4 +538,31 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 		COMPARE(m_bTransforms[i]);
 #undef COMPARE
 	return true;
+}
+
+bool PlayerOptions::IsHandicapForSong( Song* pSong )
+{
+	if( m_bTimeSpacing && pSong->HasSignificantBpmChangesOrStops() )
+		return true;
+
+	if( m_bTransforms[TRANSFORM_NOHOLDS] )	return true;
+	if( m_bTransforms[TRANSFORM_NOMINES] )	return true;
+	if( m_bTransforms[TRANSFORM_NOJUMPS] )	return true;
+	if( m_bTransforms[TRANSFORM_NOHANDS] )	return true;
+	if( m_bTransforms[TRANSFORM_NOQUADS] )	return true;
+	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
+	if( m_bTransforms[TRANSFORM_TWISTER] )	return true;
+	
+	return false;
+}
+
+bool PlayerOptions::IsHandicapForCourse( Course* pCourse )
+{
+	for( int i=0; i<pCourse->m_entries.size(); i++ )
+	{
+		const CourseEntry& ce = pCourse->m_entries[i];
+		if( IsHandicapForSong(ce.pSong) )
+			return true;
+	}
+	return false;
 }
