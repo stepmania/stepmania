@@ -134,6 +134,30 @@ MovieTexture_AVCodec::MovieTexture_AVCodec( RageTextureID ID ):
 	CreateFrameRects();
 }
 
+static CString averr_ssprintf( int err, const char *fmt, ... )
+{
+	ASSERT( err < 0 );
+
+	va_list     va;
+	va_start(va, fmt);
+	CString s = vssprintf( fmt, va );
+	va_end(va); 
+
+	CString Error;
+	switch( err )
+	{
+	case AVERROR_IO:			Error = "I/O error"; break;
+	case AVERROR_NUMEXPECTED:	Error = "number syntax expected in filename"; break;
+	case AVERROR_INVALIDDATA:	Error = "invalid data found"; break;
+	case AVERROR_NOMEM:			Error = "not enough memory"; break;
+	case AVERROR_NOFMT:			Error = "unknown format"; break;
+	case AVERROR_UNKNOWN:		Error = "unknown error"; break;
+	default: Error = ssprintf( "unknown error %i", err ); break;
+	}
+
+	return s + " (" + Error + ")";
+}
+
 
 
 void MovieTexture_AVCodec::Create()
@@ -149,23 +173,23 @@ void MovieTexture_AVCodec::Create()
 	avcodec::av_register_all();
 	int ret = av_open_input_file( &m_fctx, actualID.filename, NULL, 0, NULL );
 	if( ret < 0 )
-		RageException::Throw("AVCodec: Couldn't open \"%s\" (%i)", ret); /* XXX */
+		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", actualID.filename.c_str()) );
 
 	ret = av_find_stream_info( m_fctx );
 	if ( ret < 0 )
-		RageException::Throw("AVCodec: Couldn't find codec parameters"); /* XXX */
+		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find codec parameters") );
 	
 	m_stream = FindVideoStream( m_fctx );
 	if ( m_stream == NULL )
-		RageException::Throw("AVCodec: Couldn't find video stream"); /* XXX */
+		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find video stream") );
 
 	m_codec = avcodec_find_decoder( m_stream->codec.codec_id );
 	if( m_codec == NULL )
-		RageException::Throw("AVCodec: Couldn't find decoder"); /* XXX */
+		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't find decoder") );
 
 	ret = avcodec_open( &m_stream->codec, m_codec );
 	if ( ret < 0 )
-		RageException::Throw("AVCodec: Couldn't open decoder (%i)", ret ); /* XXX */
+		RageException::Throw( averr_ssprintf(ret, "AVCodec: Couldn't open decoder (%i)") );
 
 	/* I think avcodec wants a special case for this (no decoding); I don't
 	 * want to bother.  XXX: test and see if this is really needed */
@@ -247,7 +271,9 @@ void MovieTexture_AVCodec::CreateTexture()
 	 * TODO: We could get a big speed bonus by doing the above if the
 	 * hardware renderer can handle YUV textures.  I think D3D can do
 	 * this, as well as OpenGL on the Mac, but we don't have any infrastructure
-	 * for this right now. */
+	 * for this right now. 
+	 *
+	 * A hint: http://oss.sgi.com/projects/performer/mail/info-performer/perf-01-06/0017.html */
     PixelFormat pixfmt;
 	bool PreferHighColor = (TEXTUREMAN->GetMovieColorDepth() == 32);
 	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, PreferHighColor );
