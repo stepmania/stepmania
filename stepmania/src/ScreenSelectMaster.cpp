@@ -77,9 +77,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		for( i=0; i<NUM_ICON_PARTS; i++ )
 		{
 			CString sFName = ssprintf("%s Icon Part%d Choice%d", m_sName.c_str(),i+1,c+1);
-			m_sprIcon[i][c].SetName( ssprintf("IconPart%dChoice%d",i+1,c+1) );
 			m_sprIcon[i][c].Load( THEME->GetPathToG(sFName) );
-			this->AddChild( &m_sprIcon[i][c] );
+			m_sprIcon[i][c]->SetName( ssprintf("IconPart%dChoice%d",i+1,c+1) );
+			this->AddChild( m_sprIcon[i][c] );
 		}
 
 		if( SHARED_PREVIEW_AND_CURSOR )
@@ -87,9 +87,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			for( i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
 				CString sFName = ssprintf("%s Preview Part%d Choice%d", m_sName.c_str(),i+1,c+1);
-				m_sprPreview[i][c][0].SetName( ssprintf("PreviewPart%d",i+1) );
 				m_sprPreview[i][c][0].Load( THEME->GetPathToG(sFName) );
-				this->AddChild( &m_sprPreview[i][c][0] );
+				m_sprPreview[i][c][0]->SetName( ssprintf("PreviewPart%d",i+1) );
+				this->AddChild( m_sprPreview[i][c][0] );
 			}
 		}
 		else
@@ -101,9 +101,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 					if( !GAMESTATE->IsPlayerEnabled(p) )
 						continue;	// skip
 					CString sFName = ssprintf("%s Preview Part%d Choice%d P%d", m_sName.c_str(),i+1,c+1,p+1);
-					m_sprPreview[i][c][p].SetName( ssprintf("PreviewPart%dP%d",i+1,p+1) );
 					m_sprPreview[i][c][p].Load( THEME->GetPathToG(sFName) );
-					this->AddChild( &m_sprPreview[i][c][p] );
+					m_sprPreview[i][c][p]->SetName( ssprintf("PreviewPart%dP%d",i+1,p+1) );
+					this->AddChild( m_sprPreview[i][c][p] );
 				}
 			}
 		}
@@ -206,10 +206,10 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	{
 		if( m_aModeChoices[c].IsPlayable() )
 			for( int i=0; i<NUM_ICON_PARTS; i++ )
-				m_sprIcon[i][c].SetDiffuse( RageColor(1,1,1,1) );
+				m_sprIcon[i][c]->SetDiffuse( RageColor(1,1,1,1) );
 		else
 			for( int i=0; i<NUM_ICON_PARTS; i++ )
-				m_sprIcon[i][c].SetDiffuse( DISABLED_COLOR );
+				m_sprIcon[i][c]->SetDiffuse( DISABLED_COLOR );
 	}
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -334,7 +334,6 @@ void ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 			continue;	// skip
 
 		const int iOldChoice = m_iChoice[p];
-
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
@@ -349,6 +348,14 @@ void ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 			{
 				COMMAND( m_sprPreview[i][iOldChoice][p], "LoseFocus" );
 				COMMAND( m_sprPreview[i][iNewChoice][p], "GainFocus" );
+			}
+		}
+
+		{
+			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
+			{
+				COMMAND( m_sprIcon[i][iOldChoice], "LoseFocus" );
+				COMMAND( m_sprIcon[i][iNewChoice], "GainFocus" );
 			}
 		}
 
@@ -445,18 +452,29 @@ float ScreenSelectMaster::TweenOnScreen()
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
+		{
 			fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprIcon[i][c] ) );
+			for( int c=0; c<(int) m_aModeChoices.size(); c++ )
+			{
+				const bool GainingFocus = (c == m_iChoice[0]);
+				fSecs = max( fSecs, COMMAND( m_sprIcon[i][c], GainingFocus? "GainFocus":"LoseFocus" ) );
+				if( !GainingFocus )
+					m_sprIcon[i][c]->FinishTweening();
+			}
+
+		}
 
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
 			int p=0;
 			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			{
-				SET_XY( m_sprPreview[i][c][p] );
-				if( int(c)==m_iChoice[p] )
-					fSecs = max( fSecs, ON_COMMAND( m_sprPreview[i][c][p] ) );
-				else
-					m_sprPreview[i][c][p].SetDiffuseAlpha(0);
+				// SET_XY( m_sprPreview[i][c][p] );
+				fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] ) );
+				const bool GainingFocus = (int(c) == m_iChoice[p]);
+				fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][p], GainingFocus? "GainFocus":"LoseFocus" ) );
+				if( !GainingFocus )
+					m_sprPreview[i][c][p]->FinishTweening();
 			}
 		}
 		else
@@ -465,11 +483,12 @@ float ScreenSelectMaster::TweenOnScreen()
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 					{
-						SET_XY( m_sprPreview[i][c][p] );
-						if( int(c)==m_iChoice[p] )
-							fSecs = max( fSecs, ON_COMMAND( m_sprPreview[i][c][p] ) );
-						else
-							m_sprPreview[i][c][p].SetDiffuseAlpha(0);
+						// SET_XY( m_sprPreview[i][c][p] );
+						fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprPreview[i][c][p] ) );
+						const bool GainingFocus = (int(c) == m_iChoice[p]);
+						fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][p], GainingFocus? "GainFocus":"LoseFocus" ) );
+						if( !GainingFocus )
+							m_sprPreview[i][c][p]->FinishTweening();
 					}
 		}
 	}
@@ -482,9 +501,16 @@ float ScreenSelectMaster::TweenOnScreen()
 	else
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p) )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+			for( int c=0; c<(int) m_aModeChoices.size(); c++ )
 				for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
-					fSecs = max( fSecs, COMMAND( m_sprPreview[i][m_iChoice[p]][p], "GainFocus" ) );
+				{
+					const char *cmd = (c == m_iChoice[p])? "GainFocus":"LoseFocus";
+					fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][p], cmd ) );
+				}
+		}
 	}
 
 
@@ -565,10 +591,10 @@ float ScreenSelectMaster::TweenOffScreen()
 
 float ScreenSelectMaster::GetCursorX( PlayerNumber pn, int iPartIndex )
 {
-	return m_sprIcon[0][m_iChoice[pn]].GetX() + CURSOR_OFFSET_X_FROM_ICON(pn, iPartIndex);
+	return m_sprIcon[0][m_iChoice[pn]]->GetX() + CURSOR_OFFSET_X_FROM_ICON(pn, iPartIndex);
 }
 
 float ScreenSelectMaster::GetCursorY( PlayerNumber pn, int iPartIndex )
 {
-	return m_sprIcon[0][m_iChoice[pn]].GetY() + CURSOR_OFFSET_Y_FROM_ICON(pn, iPartIndex);
+	return m_sprIcon[0][m_iChoice[pn]]->GetY() + CURSOR_OFFSET_Y_FROM_ICON(pn, iPartIndex);
 }

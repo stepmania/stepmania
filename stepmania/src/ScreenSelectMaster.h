@@ -17,6 +17,7 @@
 #include "BitmapText.h"
 #include "RageSound.h"
 #include "RandomSample.h"
+#include "ActorUtil.h"
 
 class ScreenSelectMaster : public ScreenSelect
 {
@@ -53,9 +54,9 @@ protected:
 	Sprite	m_sprExplanation[NUM_PAGES];
 	Sprite	m_sprMore[NUM_PAGES];
 #define MAX_ICON_PARTS 3
-	Sprite	m_sprIcon[MAX_ICON_PARTS][MAX_CHOICES];
+	AutoActor m_sprIcon[MAX_ICON_PARTS][MAX_CHOICES];
 #define MAX_PREVIEW_PARTS 3
-	Sprite	m_sprPreview[MAX_PREVIEW_PARTS][MAX_CHOICES][NUM_PLAYERS];
+	AutoActor m_sprPreview[MAX_PREVIEW_PARTS][MAX_CHOICES][NUM_PLAYERS];
 #define MAX_CURSOR_PARTS 3
 	Sprite	m_sprCursor[MAX_CURSOR_PARTS][NUM_PLAYERS];
 
