@@ -138,6 +138,7 @@ ScreenHowToPlay::~ScreenHowToPlay()
 
 void ScreenHowToPlay::Update( float fDelta )
 {
+	float rate = 1;
 	if(GAMESTATE->m_pCurSong != NULL)
 	{
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
@@ -152,7 +153,7 @@ void ScreenHowToPlay::Update( float fDelta )
 			case 20: m_mCharacter.SetFrame(150); break;
 			case 22: m_mCharacter.SetFrame(270); break;
 			};
-			m_mCharacter.Update(0);
+			rate = 0;
 		}
 		else
 		{
@@ -191,15 +192,15 @@ void ScreenHowToPlay::Update( float fDelta )
 				if( (m_mCharacter.GetCurFrame() >=243) || (m_mCharacter.GetCurFrame() <=184) )
 					m_mCharacter.SetFrame(184);
 				//Loop for HowToPlay static movement is 184~243
-				m_mCharacter.Update(fDelta);
 			} else
 				// if we update at normal speed during a step animation, it is too slow and
 				// doesn't finish in time.
-				m_mCharacter.Update( fDelta*1.8f );
+				rate = 1.8f;
 		};	
 
 	}
 
+	m_mCharacter.Update(fDelta * rate);
 	m_mDancePad.Update(fDelta);
 	ScreenAttract::Update( fDelta );
 }
