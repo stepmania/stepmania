@@ -26,6 +26,12 @@ const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_DIFFICULTIES] = { -1, -1, 0, 1, 1 }
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
 
+#define SORT_LEVEL1_COLOR		THEME->GetMetricC("Course","SortLevel1Color")
+#define SORT_LEVEL2_COLOR		THEME->GetMetricC("Course","SortLevel2Color")
+#define SORT_LEVEL3_COLOR		THEME->GetMetricC("Course","SortLevel3Color")
+#define SORT_LEVEL4_COLOR		THEME->GetMetricC("Course","SortLevel4Color")
+#define SORT_LEVEL5_COLOR		THEME->GetMetricC("Course","SortLevel5Color")
+
 
 Course::Course()
 {
@@ -972,51 +978,35 @@ void Course::RegenerateNonFixedTrails()
 
 RageColor Course::GetColor() const
 {
-	// FIXME: These colors shouldn't be hard-coded
+	// FIXME: Calculate the meter.
 	int iMeter = 5;
 	
 	switch (PREFSMAN->m_iCourseSortOrder)
 	{
 	case PrefsManager::COURSE_SORT_SONGS:	
-		if( m_entries.size() >= 7 )
-			return RageColor(1,0,0,1);	// red
-		else if( m_entries.size() >= 4 )
-			return RageColor(1,1,0,1);	// yellow
-		else
-			return RageColor(0,1,0,1);	// green
-		// never should get here
-		break;
+		if( m_entries.size() >= 7 )				return SORT_LEVEL2_COLOR;
+		else if( m_entries.size() >= 4 )		return SORT_LEVEL4_COLOR;
+		else									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER:
-		if ( !IsFixed() )
-			return RageColor(0,0,1,1);  // blue
-		if (iMeter > 8.5)
-			return RageColor(1,0,0,1);  // red
-		if (iMeter >= 7)
-			return RageColor(1,0.5f,0,1); // orange
-		if (iMeter >= 5)
-			return RageColor(1,1,0,1);  // yellow
-		return RageColor(0,1,0,1); // green
+		if ( !IsFixed() )						return SORT_LEVEL1_COLOR;
+		else if (iMeter > 9)					return SORT_LEVEL2_COLOR;
+		else if (iMeter >= 7)					return SORT_LEVEL3_COLOR;
+		else if (iMeter >= 5)					return SORT_LEVEL4_COLOR;
+		else 									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER_SUM:
-		if ( !IsFixed() )
-			return RageColor(0,0,1,1);  // blue
-		if (m_SortOrder_TotalDifficulty >= 40)
-			return RageColor(1,0,0,1);  // red
-		if (m_SortOrder_TotalDifficulty >= 30)
-			return RageColor(1,0.5f,0,1); // orange
-		if (m_SortOrder_TotalDifficulty >= 20)
-			return RageColor(1,1,0,1);  // yellow
-		return RageColor(0,1,0,1); // green
+		if ( !IsFixed() )						return SORT_LEVEL1_COLOR;
+		if (m_SortOrder_TotalDifficulty >= 40)	return SORT_LEVEL2_COLOR;
+		if (m_SortOrder_TotalDifficulty >= 30)	return SORT_LEVEL3_COLOR;
+		if (m_SortOrder_TotalDifficulty >= 20)	return SORT_LEVEL4_COLOR;
+		else									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_RANK:
-		if (m_SortOrder_Ranking == 3)
-			return RageColor(0,0,1,1);  // blue
-		if (m_SortOrder_Ranking == 2)
-			return RageColor(1,0.5f,0,1); // orange
-		if (m_SortOrder_Ranking == 1)
-			return RageColor(0,1,0,1); // green
-		return RageColor(1,1,0,1); // yellow, never should get here
+		if (m_SortOrder_Ranking == 3)			return SORT_LEVEL1_COLOR;
+		else if (m_SortOrder_Ranking == 2)		return SORT_LEVEL3_COLOR;
+		else if (m_SortOrder_Ranking == 1)		return SORT_LEVEL5_COLOR;
+		else									return SORT_LEVEL4_COLOR;
 	default:
 		ASSERT(0);
 		return RageColor(1,1,1,1);  // white, never should reach here
