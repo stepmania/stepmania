@@ -288,7 +288,6 @@ void Course::Init()
 	m_sSubTitleTranslit = "";
 	m_sBannerPath = "";
 	m_sCDTitlePath = "";
-	ZERO( m_TrailCacheValid );
 	m_iTrailCacheSeed = 0;
 }
 
@@ -601,7 +600,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 				bHaveRandom = true;
 		
 		if( bHaveRandom )
-			ZERO( m_TrailCacheValid );
+			m_TrailCache.clear();
 
 		m_iTrailCacheSeed = GAMESTATE->m_iRoundSeed;
 	}
@@ -609,29 +608,30 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	//
 	// Look in the Trail cache
 	//
-	if( m_TrailCacheValid[st][cd] )
+	TrailCache_t::iterator it = m_TrailCache.find( CacheEntry(st, cd) );
+	if( it != m_TrailCache.end() )
 	{
-		if( m_TrailCacheNull[st][cd] )
+		CacheData &cache = it->second;
+		if( cache.null )
 			return NULL;
-		return &m_TrailCache[st][cd];
+		return &cache.trail;
 	}
 
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
-	Trail &trail = m_TrailCache[st][cd];
+	CacheData &cache = m_TrailCache[ CacheEntry(st, cd) ];
+	Trail &trail = cache.trail;
 	trail = Trail();
 	if( !GetTrailSorted( st, cd, trail ) || trail.m_vEntries.empty() )
 	{
 		/* This course difficulty doesn't exist. */
-		m_TrailCacheNull[st][cd] = true;
-		m_TrailCacheValid[st][cd] = true;
+		cache.null = true;
 		return NULL;
 	}
 
-	m_TrailCacheValid[st][cd] = true;
-	m_TrailCacheNull[st][cd] = false;
-	return &m_TrailCache[st][cd];
+	cache.null = false;
+	return &cache.trail;
 }
 
 bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
@@ -961,9 +961,15 @@ void Course::Invalidate( Song *pStaleSong )
 	// songs to be chosen.
 	FOREACH_StepsType( st )
 		FOREACH_ShownCourseDifficulty( cd )
-			if( m_TrailCacheValid[st][cd] && !m_TrailCacheNull[st][cd] )
+		{
+			TrailCache_t::iterator it = m_TrailCache.find( CacheEntry(st, cd) );
+			if( it == m_TrailCache.end() )
+				continue;
+			CacheData &cache = it->second;
+			if( !cache.null )
 				if( GetTrail( st, cd )->ContainsSong( pStaleSong ) )
-					m_TrailCacheValid[st][cd] = false;
+					m_TrailCache.erase( it );
+		}
 }
 
 void Course::RegenerateNonFixedTrails()
@@ -973,7 +979,7 @@ void Course::RegenerateNonFixedTrails()
 	// calculate RadarValues for Trails with one or more non-fixed 
 	// entry.
 	if( !IsFixed() )
-		ZERO( m_TrailCacheValid );
+		m_TrailCache.clear();
 }
 
 RageColor Course::GetColor() const
@@ -1102,10 +1108,13 @@ bool Course::IsRanking() const
 
 void Course::GetAllCachedTrails( vector<Trail *> &out )
 {
-	FOREACH_StepsType( st )
-		FOREACH_ShownCourseDifficulty( cd )
-			if( m_TrailCacheValid[st][cd] && !m_TrailCacheNull[st][cd] )
-				out.push_back( &m_TrailCache[st][cd] );
+	TrailCache_t::iterator it;
+	for( it = m_TrailCache.begin(); it != m_TrailCache.end(); ++it )
+	{
+		CacheData &cd = it->second;
+		if( !cd.null )
+			out.push_back( &cd.trail );
+	}
 }
 
 /*

@@ -155,9 +155,14 @@ private:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
-	mutable Trail m_TrailCache[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
-	mutable bool m_TrailCacheValid[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
-	mutable bool m_TrailCacheNull[NUM_STEPS_TYPES][NUM_DIFFICULTIES];
+	typedef pair<StepsType,Difficulty> CacheEntry;
+	struct CacheData
+	{
+		Trail trail;
+		bool null;
+	};
+	typedef map<CacheEntry, CacheData> TrailCache_t;
+	mutable TrailCache_t m_TrailCache;
 	mutable int m_iTrailCacheSeed;
 };
 
