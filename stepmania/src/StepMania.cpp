@@ -458,6 +458,17 @@ struct VideoCardDefaults
 		false
 	},
 	{
+		/* success report:
+		 * Video driver: IntelR 82845G/GL/GE/PE/GV Graphics Controller [Intel Corporation]
+		 * 6.14.10.3865, 7-1-2004 [pci\ven_8086&dev_2562] */
+		"Intel.*82845.*",
+		"opengl,d3d",
+		640,480,
+		16,16,16,
+		1024,
+		false
+	},
+	{
 		"Intel.*82810|Intel.*82815",
 		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
 		512,384,	// lower resolution for 60fps
