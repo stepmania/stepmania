@@ -301,6 +301,7 @@ ScreenEdit::ScreenEdit()
 
 	m_soundMusic.Load(m_pSong->GetMusicPath());
 	m_soundMusic.SetAccurateSync(true);
+	m_soundMusic.SetStopMode(RageSound::M_CONTINUE);
 
 	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","ScreenEdit assist tick") );
 
