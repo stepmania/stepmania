@@ -26,7 +26,7 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 
 	m_iNumCols = pStyle->m_iColsPerPlayer;
 
-	LOG->Trace("xxxsz: %i, %i", sizeof(GhostArrow), sizeof(HoldGhostArrow));
+	LOG->Trace("xxxsz: %lu, %lu", sizeof(GhostArrow), sizeof(HoldGhostArrow));
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
