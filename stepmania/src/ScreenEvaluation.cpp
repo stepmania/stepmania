@@ -135,7 +135,16 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 
 	Grade max_grade = GRADE_NO_DATA;
 	for( p=0; p<NUM_PLAYERS; p++ )
+	{
 		max_grade = max( max_grade, grade[p] ); 
+
+		// if its extra stage, update # passed stages
+		if (PREFSMAN->m_bUseUnlockSystem &&
+			(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) &&
+			grade[p] > GRADE_E &&
+			m_Type != summary)
+					GAMESTATE->m_pUnlockingSys->UnlockClearExtraStage();
+	}
 
 
 	//

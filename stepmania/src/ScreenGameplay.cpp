@@ -44,6 +44,7 @@
 #include "Inventory.h"
 #include "Course.h"
 #include "NoteDataUtil.h"
+#include "UnlockSystem.h"
 
 //
 // Defines
@@ -1810,7 +1811,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					fMaxSurviveSeconds = max( fMaxSurviveSeconds, GAMESTATE->m_CurStageStats.fAliveSeconds[p] );
 			ASSERT( fMaxSurviveSeconds > 0 );
 			m_textSurviveTime.SetText( "TIME: " + SecondsToTime(fMaxSurviveSeconds) );
-			SET_XY( m_textSurviveTime );
+			SET_XY_AND_ON_COMMAND( m_textSurviveTime );
+			
+			// if unlocks are on, update fail extra stage count
+			if (PREFSMAN->m_bUseUnlockSystem)
+				GAMESTATE->m_pUnlockingSys->UnlockFailExtraStage();
 		}
 
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay failed") );

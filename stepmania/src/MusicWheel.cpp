@@ -1174,7 +1174,8 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		StartRandom();
 		return false;
 	case TYPE_SONG:
-		GAMESTATE->m_pUnlockingSys->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
+		if (PREFSMAN->m_bUseUnlockSystem)
+			GAMESTATE->m_pUnlockingSys->RouletteUnlock( m_CurWheelItemData[m_iSelection]->m_pSong );
 		// fall-through - we want to check for unlocking only if its a song
 	case TYPE_COURSE:
 		return true;

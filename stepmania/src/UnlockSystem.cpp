@@ -46,6 +46,10 @@ UnlockSystem::UnlockSystem()
 
 void UnlockSystem::RouletteUnlock( const Song *song )
 {
+	// if its an extra stage, don't count it
+	if (GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+		return;
+
 	SongEntry *p = FindSong( song );
 	if (!p)
 		return;  // does not exist
