@@ -486,8 +486,13 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 
 void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 {
+	const SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
+
 	m_PlayerOptions[pn].FromString( sModifiers );
 	m_SongOptions.FromString( sModifiers );
+
+	if( ft != GAMESTATE->m_SongOptions.m_FailType )
+		GAMESTATE->m_bChangedFailType = true;
 }
 
 /* Store the player's preferred options.  This is called at the very beginning
