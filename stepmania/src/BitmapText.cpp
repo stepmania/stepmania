@@ -15,6 +15,7 @@
 // lua start
 LUA_REGISTER_CLASS( BitmapText )
 // lua end
+REGISTER_ACTOR_CLASS( BitmapText );
 
 /*
  * XXX: Changing a whole array of diffuse colors every frame (several times) is a waste,
@@ -86,6 +87,20 @@ BitmapText::~BitmapText()
 
 void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
+	/* XXX: How to handle translations?  Maybe we should have one metrics section,
+	 * "Text", eg:
+	 *
+	 * [Text]
+	 * SoundVolume=Sound Volume
+	 * TextItem=Hello
+	 *
+	 * and allow "$TextItem$" in .actors to reference that.
+	 */
+	/* It's a BitmapText. Note that we could do the actual text setting with metrics,
+	 * by adding "text" and "alttext" commands, but right now metrics can't contain
+	 * commas or semicolons.  It's useful to be able to refer to fonts in the real
+	 * theme font dirs, too. */
+
 	CString sText;
 	pNode->GetAttrValue("Text", sText );
 	CString sAltText;
@@ -99,6 +114,9 @@ void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 	 * loading the BGAnimationLayer that we're in. */
 	CString sFont;
 	pNode->GetAttrValue("Font", sFont );
+	if( sFont.empty() )
+		pNode->GetAttrValue("File", sFont );	// accept "File" for backward compatibility
+
 	if( sFont == "" )
 		RageException::Throw( "An object '%s' in '%s' is missing the Font attribute",
 			pNode->m_sName.c_str(), sDir.c_str() );

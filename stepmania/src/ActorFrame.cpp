@@ -10,6 +10,7 @@
 // lua start
 LUA_REGISTER_CLASS( ActorFrame )
 // lua end
+REGISTER_ACTOR_CLASS( ActorFrame );
 
 ActorFrame::ActorFrame()
 {

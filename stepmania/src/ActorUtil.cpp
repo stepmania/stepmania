@@ -23,6 +23,11 @@
 // Actor registration
 static map<CString,CreateActorFn>	*g_pmapRegistrees = NULL;
 
+static bool IsRegistered( const CString& sClassName )
+{
+	return g_pmapRegistrees->find( sClassName ) != g_pmapRegistrees->end();
+}
+
 void ActorUtil::Register( const CString& sClassName, CreateActorFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
@@ -58,9 +63,6 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		}
 	}
 
-
-	Actor* pActor = NULL;	// fill this in before we return
-
 	// Element name is the type in XML.
 	// Type= is the name in INI.
 	CString sType = pNode->m_sName;
@@ -86,62 +88,9 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		sType = "CourseBanner";
 
 
-	if( sType == "BGAnimation" )
+	if( IsRegistered(sType) )
 	{
-		BGAnimation *p = new BGAnimation;
-		p->LoadFromNode( sAniDir, pNode );
-		pActor = p;
-		return pActor; // we just ran LoadFromNode; don't run it again below
-	}
-	else if( 
-		sType == "GenreDisplay" ||
-		sType == "RollingNumbers" ||
-		sType == "ScoreDisplayCalories" )
-	{
-		pActor = ActorUtil::Create( sType, sAniDir, pNode );
-	}
-	else if( sType == "ActorFrame" )
-	{
-		ActorFrame *p = new ActorFrame;
-		p->LoadFromNode( sAniDir, pNode );
-		pActor = p;
-		return pActor; // we just ran LoadFromNode; don't run it again below
-	}
-	else if( sType == "BitmapText" )
-	{
-		/* XXX: How to handle translations?  Maybe we should have one metrics section,
-		 * "Text", eg:
-		 *
-		 * [Text]
-		 * SoundVolume=Sound Volume
-		 * TextItem=Hello
-		 *
-		 * and allow "$TextItem$" in .actors to reference that.
-		 */
-		/* It's a BitmapText. Note that we could do the actual text setting with metrics,
-		 * by adding "text" and "alttext" commands, but right now metrics can't contain
-		 * commas or semicolons.  It's useful to be able to refer to fonts in the real
-		 * theme font dirs, too. */
-		CString sAlttext;
-		pNode->GetAttrValue("AltText", sAlttext );
-
-		ThemeManager::EvaluateString( sText );
-		ThemeManager::EvaluateString( sAlttext );
-		
-		CString sFont = sFile;	// accept "File" for backward compatibility
-		pNode->GetAttrValue("Font", sFont );
-
-		BitmapText* pBitmapText = new BitmapText;
-
-		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
-		 * loading the BGAnimationLayer that we're in. */
-		if( sFont == "" )
-			RageException::Throw( "A BitmapText in '%s' is missing the Font attribute",
-				sAniDir.c_str() );
-
-		pBitmapText->LoadFromFont( THEME->GetPathToF( sFont ) );
-		pBitmapText->SetText( sText, sAlttext );
-		pActor = pBitmapText;
+		return ActorUtil::Create( sType, sAniDir, pNode );
 	}
 	else if( sType == "SongBackground" )
 	{
@@ -156,7 +105,8 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		 * with duplicates. */
 		Sprite* pSprite = new Sprite;
 		pSprite->LoadBG( sFile );
-		pActor = pSprite;
+	 	pSprite->LoadFromNode( sAniDir, pNode );
+		return pSprite;
 	}
 	else if( sType == "SongBanner" )
 	{
@@ -181,15 +131,14 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 			sFile = THEME->GetPathG("Common","fallback banner");
 
 		TEXTUREMAN->DisableOddDimensionWarning();
-
 		/* Always load banners with BannerTex.  It sets texture properties;
 		 * if we load a background without setting those properties, we'll end up
 		 * with duplicates. */
 		Sprite* pSprite = new Sprite;
 		pSprite->Load( Sprite::SongBannerTexture(sFile) );
-		pActor = pSprite;
-
+	 	pSprite->LoadFromNode( sAniDir, pNode );
 		TEXTUREMAN->EnableOddDimensionWarning();
+		return pSprite;
 	}
 	else if( sType == "CourseBanner" )
 	{
@@ -218,8 +167,9 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		TEXTUREMAN->DisableOddDimensionWarning();
 		Sprite* pSprite = new Sprite;
 		pSprite->Load( Sprite::SongBannerTexture(sFile) );
-		pActor = pSprite;
+	 	pSprite->LoadFromNode( sAniDir, pNode );
 		TEXTUREMAN->EnableOddDimensionWarning();
+		return pSprite;
 	}
 	else // sType is empty or garbage (e.g. "1" // 0==Sprite")
 	{
@@ -287,18 +237,12 @@ retry:
 
 		sNewPath = DerefRedir( sNewPath );
 
-		pActor = ActorUtil::MakeActor( sNewPath );
+		Actor *pActor = ActorUtil::MakeActor( sNewPath );
 		if( pActor == NULL )
 			return NULL;
+	 	pActor->LoadFromNode( sAniDir, pNode );
+		return pActor;
 	}
-
-	ASSERT( pActor );	// we should have filled this in above
-
-	// TODO: LoadFromNode should be called when we still have a pointer to the derived type.
-	// (Why isn't it virtual?)
- 	pActor->LoadFromNode( sAniDir, pNode );
-
-	return pActor;
 }
 
 Actor* ActorUtil::MakeActor( const RageTextureID &ID )
