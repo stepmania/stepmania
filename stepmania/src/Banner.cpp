@@ -139,6 +139,16 @@ void Banner::LoadIconFromCharacter( Character* pCharacter )
 	m_bScrolling = false;
 }
 
+void Banner::LoadTABreakFromCharacter( Character* pCharacter )
+{
+	if( pCharacter == NULL )					Load( THEME->GetPathToG("Common fallback takingabreak") );
+	else 
+	{
+		Load( pCharacter->GetTakingABreakPath() );
+		m_bScrolling = false;
+	}
+}
+
 void Banner::LoadFallback()
 {
 	Load( THEME->GetPathToG("Common fallback banner") );
