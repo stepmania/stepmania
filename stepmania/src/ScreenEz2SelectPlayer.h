@@ -35,8 +35,10 @@ private:
 	
 	Sprite	m_sprCursors[NUM_PLAYERS];
 	Sprite	m_sprControllers[NUM_PLAYERS];
+	Sprite  m_logo;
 
 	MenuElements m_Menu;
 
 	RageSoundSample m_soundSelect;	
+	BackgroundAnimation	m_Background;	
 };

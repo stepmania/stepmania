@@ -54,9 +54,23 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 
+	m_Menu.Load( 	
+		THEME->GetPathTo("Graphics","select player background"), 
+		THEME->GetPathTo("Graphics","select player top edge"),
+		HELP_TEXT, false, true, TIMER_SECONDS
+		);
+	this->AddChild( &m_Menu );
+
+	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","ez2 select player") );
+	this->AddChild( &m_Background ); // animated background =)
+
+	m_logo.Load( THEME->GetPathTo("Graphics","select player logo"));
+	m_logo.SetXY( CENTER_X, CENTER_Y);
+	this->AddChild( &m_logo );
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprControllers[p].Load( THEME->GetPathTo("Graphics","select player controller") );
+		m_sprControllers[p].Load( THEME->GetPathTo("Graphics",ssprintf("select player controller p%d", p+1)) ); // two of these for pump support.
 		m_sprControllers[p].SetXY( CONTROLLER_X(p), CONTROLLER_Y(p) );
 		this->AddChild( &m_sprControllers[p] );
 
@@ -65,13 +79,6 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 		m_sprCursors[p].SetEffectBouncing( D3DXVECTOR3(0,10,0), 0.5f );
 		this->AddChild( &m_sprCursors[p] );
 	}
-
-	m_Menu.Load( 	
-		THEME->GetPathTo("Graphics","select player background"), 
-		THEME->GetPathTo("Graphics","select player top edge"),
-		HELP_TEXT, false, true, TIMER_SECONDS
-		);
-	this->AddChild( &m_Menu );
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
