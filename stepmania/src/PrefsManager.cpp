@@ -110,7 +110,7 @@ PrefsManager::PrefsManager()
 	m_bPickExtraStage = false;
 
 	// default to old sort order
-	m_iCourseSortOrder = 0;
+	m_iCourseSortOrder = COURSE_SORT_SONGS;
 
 	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
 	m_fMarathonVerSongSeconds = 60*5.f;

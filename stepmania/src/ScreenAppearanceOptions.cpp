@@ -195,7 +195,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bShowLyrics						= !!m_iSelectedOption[0][AO_SHOW_LYRICS];
 	PREFSMAN->m_bDancePointsForOni				= !!m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI];
 	PREFSMAN->m_bTenFooterInRed					= !!m_iSelectedOption[0][AO_TEN_FOOT_RED];
-	PREFSMAN->m_iCourseSortOrder				=   m_iSelectedOption[0][AO_COURSE_SORT];
+	(int&)PREFSMAN->m_iCourseSortOrder			=   m_iSelectedOption[0][AO_COURSE_SORT];
 
 	PREFSMAN->SaveGamePrefsToDisk();
 	PREFSMAN->SaveGlobalPrefsToDisk();

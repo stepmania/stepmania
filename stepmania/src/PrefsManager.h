@@ -85,8 +85,7 @@ public:
 	bool			m_bTenFooterInRed;
 
 	// course ranking
-	// by # songs = 0, avg diff=1, total diff=2, ranking=3
-	int				m_iCourseSortOrder;
+	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;
