@@ -26,6 +26,11 @@ const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 
 float		g_fExpandSeconds = 0;
 
+static float GetNoteFieldHeight( PlayerNumber pn )
+{
+	return SCREEN_HEIGHT + fabsf(GAMESTATE->m_PlayerOptions[pn].m_fPerspectiveTilt)*200;
+}
+
 float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 {
 	float fYOffset;
@@ -57,17 +62,33 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 
 	if( fAccels[PlayerOptions::ACCEL_BOOST] > 0 )
 	{
-		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+SCREEN_HEIGHT/1.2f)/SCREEN_HEIGHT); 
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
+		float fEffectHeight = GetNoteFieldHeight(pn);
+		float fNewYOffset = fYOffset * 1.5f / ((fYOffset+fEffectHeight/1.2f)/fEffectHeight); 
+		float fAccelYAdjust =	fAccels[PlayerOptions::ACCEL_BOOST] * (fNewYOffset - fYOffset);
+		// TRICKY:	Clamp this value, or else BOOST+BOOMERANG will draw a ton of arrows on the screen.
+		CLAMP( fAccelYAdjust, -400.f, 400.f );
+		fYAdjust += fAccelYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_BRAKE] > 0 )
 	{
-		float fScale = SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 0, 1.f );
+		float fEffectHeight = GetNoteFieldHeight(pn);
+		float fScale = SCALE( fYOffset, 0.f, fEffectHeight, 0, 1.f );
 		float fNewYOffset = fYOffset * fScale; 
-		fYAdjust += fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
+		float fBrakeYAdjust = fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
+		// TRICKY:	Clamp this value the same way as BOOST so that in BOOST+BRAKE, BRAKE doesn't overpower BOOST
+		CLAMP( fBrakeYAdjust, -400.f, 400.f );
+		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] > 0 )
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*sinf( fYOffset/38.0f );
+
+	fYOffset += fYAdjust;
+
+	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
+		fYOffset +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
+
+	fYOffset *= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
+
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] > 0 )
 	{
 		/* Timers can't be global, since they'll be initialized before SDL. */
@@ -76,13 +97,9 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 			g_fExpandSeconds += timerExpand.GetDeltaTime();
 		else
 			timerExpand.GetDeltaTime();	// throw away
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_EXPAND] * (fYOffset * SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f ) - fYOffset); 
+		float fExpandScrollMultiplier = fAccels[PlayerOptions::ACCEL_EXPAND] * SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f );
+		fYOffset *=	fExpandScrollMultiplier; 
 	}
-	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] > 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_BOOMERANG] * (fYOffset * SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 1.5f, 0.5f )- fYOffset);
-
-	fYOffset += fYAdjust;
-	fYOffset *= GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed;
 
 	return fYOffset;
 }
@@ -268,22 +285,22 @@ static float GetHiddenSudden( PlayerNumber pn )
 // TRICKY:  We fudge hidden and sudden to be farther apart if they're both on.
 static float GetHiddenEndLine( PlayerNumber pn )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -0.0f, -1.25f );
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -1.0f, -1.25f );
 }
 
 static float GetHiddenStartLine( PlayerNumber pn )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +1.0f, -0.25f );
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +0.0f, -0.25f );
 }
 
 static float GetSuddenEndLine( PlayerNumber pn )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -1.0f, +0.25f );
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, -0.0f, +0.25f );
 }
 
 static float GetSuddenStartLine( PlayerNumber pn )
 {
-	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +0.0f, +1.25f );
+	return GetCenterLine( pn ) + FADE_DIST_Y * SCALE( GetHiddenSudden(pn), 0.f, 1.f, +1.0f, +1.25f );
 }
 
 // used by ArrowGetAlpha and ArrowGetGlow below
