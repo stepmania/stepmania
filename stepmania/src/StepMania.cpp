@@ -10,11 +10,6 @@
 -----------------------------------------------------------------------------
 */
 
-//-----------------------------------------------------------------------------
-// Includes
-//-----------------------------------------------------------------------------
-#include "resource.h"
-
 //
 // Rage global classes
 //
@@ -32,6 +27,7 @@
 
 #include "arch/arch.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
+#include "arch/ErrorDialog/ErrorDialog.h"
 
 #include "SDL.h"
 #include "SDL_syswm.h"		// for SDL_SysWMinfo
@@ -89,124 +85,28 @@ const int SM_PORT = 573;	// "Ko" + "na" + "mitsu"
 ------------------------------------------------*/
 int		flags = 0;		/* SDL video flags */
 int		window_w = SCREEN_WIDTH, window_h = SCREEN_HEIGHT;	/* window width and height */
-LoadingWindow *loading_window = NULL;
 CString  g_sErrorString = "";
 
-void ChangeToDirOfExecutable()
+static void ChangeToDirOfExecutable(const char *argv0)
 {
-	//
-	// Make sure the current directory is the root program directory
-	//
+	/* Make sure the current directory is the root program directory
+	 * We probably shouldn't do this; rather, we should know where things
+	 * are and use paths as needed, so we don't depend on the binary being
+	 * in the same place as "Songs" ... */
 	if( !DoesFileExist("Songs") )
 	{
-		// change dir to path of the execuctable
-		TCHAR szFullAppPath[MAX_PATH];
-		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-		
 		// strip off executable name
-		LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
-		*pLastBackslash = '\0';	// terminate the string
+		CString dir = argv0;
+		unsigned n = dir.find_last_of("/\\");
+		if (n != dir.npos) dir.erase(n);
 
-		SetCurrentDirectory( szFullAppPath );
+		chdir( dir.GetString() );
 	}
 }
 
 void CreateLoadingWindow()
 {
-	ASSERT( loading_window == NULL );
-
-	loading_window = MakeLoadingWindow();
-	SDL_WM_SetCaption("StepMania", "StepMania");
-
-	loading_window->Paint();
 }
-
-
-//-----------------------------------------------------------------------------
-// Name: ErrorWndProc()
-// Desc: Callback for all Windows messages
-//-----------------------------------------------------------------------------
-BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
-{
-	switch( msg )
-	{
-	case WM_INITDIALOG:
-		{
-			CString sMessage = g_sErrorString;
-
-			sMessage.Replace( "\n", "\r\n" );
-			
-			SendDlgItemMessage( 
-				hWnd, 
-				IDC_EDIT_ERROR, 
-				WM_SETTEXT, 
-				0, 
-				(LPARAM)(LPCTSTR)sMessage
-				);
-		}
-		break;
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDC_BUTTON_VIEW_LOG:
-			{
-				PROCESS_INFORMATION pi;
-				STARTUPINFO	si;
-				ZeroMemory( &si, sizeof(si) );
-
-				CreateProcess(
-					NULL,		// pointer to name of executable module
-					"notepad.exe log.txt",		// pointer to command line string
-					NULL,  // process security attributes
-					NULL,   // thread security attributes
-					false,  // handle inheritance flag
-					0, // creation flags
-					NULL,  // pointer to new environment block
-					NULL,   // pointer to current directory name
-					&si,  // pointer to STARTUPINFO
-					&pi  // pointer to PROCESS_INFORMATION
-				);
-			}
-			break;
-		case IDC_BUTTON_REPORT:
-			GotoURL( "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366" );
-			break;
-		case IDC_BUTTON_RESTART:
-			{
-				/* Clear the startup mutex, since we're starting a new
-				 * instance before ending ourself. */
-				TCHAR szFullAppPath[MAX_PATH];
-				GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-
-				// Launch StepMania
-				PROCESS_INFORMATION pi;
-				STARTUPINFO	si;
-				ZeroMemory( &si, sizeof(si) );
-
-				CreateProcess(
-					NULL,		// pointer to name of executable module
-					szFullAppPath,		// pointer to command line string
-					NULL,  // process security attributes
-					NULL,   // thread security attributes
-					false,  // handle inheritance flag
-					0, // creation flags
-					NULL,  // pointer to new environment block
-					NULL,   // pointer to current directory name
-					&si,  // pointer to STARTUPINFO
-					&pi  // pointer to PROCESS_INFORMATION
-				);
-			}
-			EndDialog( hWnd, 0 );
-			break;
-			// fall through
-		case IDOK:
-			EndDialog( hWnd, 0 );
-			break;
-		}
-	}
-	return FALSE;
-}
-
 
 //-----------------------------------------------------------------------------
 // Name: ApplyGraphicOptions()
@@ -259,7 +159,7 @@ void SetIcon()
 //-----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-	ChangeToDirOfExecutable();
+	ChangeToDirOfExecutable(argv[0]);
 
     atexit(SDL_Quit);   /* Clean up on exit */
 
@@ -297,7 +197,10 @@ int main(int argc, char* argv[])
 
 	SetIcon();
 
-	CreateLoadingWindow();
+	LoadingWindow *loading_window = MakeLoadingWindow();
+	/* This might be using SDL, so reset the caption. */
+	SDL_WM_SetCaption("StepMania", "StepMania");
+	loading_window->Paint();
 
 	//
 	// Create game objects
@@ -423,12 +326,10 @@ int main(int argc, char* argv[])
 	if( g_sErrorString != "" )
 	{
 		// throw up a pretty error dialog
-		DialogBox(
-			NULL,
-			MAKEINTRESOURCE(IDD_ERROR_DIALOG),
-			NULL,
-			ErrorWndProc
-			);
+		ErrorDialog *d = MakeErrorDialog();
+		d->SetErrorText(g_sErrorString);
+		d->ShowError();
+		delete d;
 	}
 
 	return 0;
