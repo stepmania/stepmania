@@ -101,15 +101,15 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 
 	// Look for a group banner in this group folder
 	CStringArray arrayGroupBanners;
-	GetDirListing( ssprintf("%s\\%s\\*.png", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
-	GetDirListing( ssprintf("%s\\%s\\*.jpg", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
-	GetDirListing( ssprintf("%s\\%s\\*.gif", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
-	GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir.GetString(), sGroupDirName.GetString()), arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*.png", arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*.jpg", arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*.gif", arrayGroupBanners );
+	GetDirListing( sDir+sGroupDirName+"/*.bmp", arrayGroupBanners );
 	CString sBannerPath;
 
 	if( !arrayGroupBanners.empty() )
 	{
-		sBannerPath = ssprintf("%s\\%s\\%s", sDir.GetString(), sGroupDirName.GetString(), arrayGroupBanners[0].GetString() );
+		sBannerPath = sDir+sGroupDirName+"/"+arrayGroupBanners[0] ;
 		LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.GetString(), sBannerPath.GetString() );
 	}
 
@@ -119,12 +119,13 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 
 void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 {
-	// trim off the trailing slash if any
+	/* Make sure sDir has a trailing slash. */
 	TrimRight( sDir, "/\\" );
+	sDir += "/";
 
 	// Find all group directories in "Songs" folder
 	CStringArray arrayGroupDirs;
-	GetDirListing( sDir+"\\*.*", arrayGroupDirs, true );
+	GetDirListing( sDir+"*", arrayGroupDirs, true );
 	SortCStringArray( arrayGroupDirs );
 	
 	for( unsigned i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Songs/
@@ -134,11 +135,11 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		if( 0 == stricmp( sGroupDirName, "cvs" ) )	// the directory called "CVS"
 			continue;		// ignore it
 
-		SanityCheckGroupDir(sDir+"\\"+sGroupDirName);
+		SanityCheckGroupDir(sDir+sGroupDirName);
 
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
-		GetDirListing( ssprintf("%s\\%s\\*.*", sDir.GetString(), sGroupDirName.GetString()), arraySongDirs, true );
+		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		SortCStringArray( arraySongDirs );
 
 		unsigned j;
@@ -148,16 +149,18 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		{
 			CString sSongDirName = arraySongDirs[j];
 
-			if( 0 == stricmp( sSongDirName, "cvs" ) )	// the directory called "CVS"
+			if( 0 == stricmp( Basename(sSongDirName), "cvs" ) )	// the directory called "CVS"
 				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
 			if( ld ) {
-				ld->SetText( ssprintf("Loading songs...\n%s\n%s", sGroupDirName.GetString(), sSongDirName.GetString()));
+				ld->SetText( ssprintf("Loading songs...\n%s\n%s",
+					Basename(sGroupDirName).GetString(),
+					Basename(sSongDirName).GetString()));
 				ld->Paint();
 			}
 			Song* pNewSong = new Song;
-			if( !pNewSong->LoadFromSongDir( ssprintf("%s\\%s\\%s", sDir.GetString(), sGroupDirName.GetString(), sSongDirName.GetString()) ) ) {
+			if( !pNewSong->LoadFromSongDir( sSongDirName ) ) {
 				/* The song failed to load. */
 				delete pNewSong;
 				continue;
