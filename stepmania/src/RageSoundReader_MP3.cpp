@@ -1026,6 +1026,7 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 	 * bitrate as the first frame.  If it is, assume the file is really CBR. */
 	seek_stream_to_byte( mad->filesize / 2 );
 
+	/* XXX use mad_header_decode and check more than one frame */
 	if(mad->length != -1 &&
 	   do_mad_frame_decode() &&
 	   mad->bitrate == (int) mad->Frame.header.bitrate)
@@ -1033,7 +1034,6 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 		return mad->length;
 	}
 
-	/* We have a filesize, so we're seekable. */
 	if( !MADLIB_rewind() )
 		return 0;
 
@@ -1046,6 +1046,7 @@ int RageSoundReader_MP3::GetLengthInternal( bool fast )
 	}
 
 	MADLIB_rewind();
+	/* XXX use mad_header_decode (do_mad_frame_decode(true)?) */
 	while(1)
 	{
 		int ret = do_mad_frame_decode();
