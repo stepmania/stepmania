@@ -29,7 +29,9 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 	    [AC_DEFINE(HAVE_LIBXTST, 1, [libXtst available])],
 	    ,
 	    [$XLIBS])
+	AC_DEFINE(HAVE_X11, 1, [X11 libraries present])
     fi
+	AM_CONDITIONAL(HAVE_X11, test "$no_x" != "yes")
 
     AC_SUBST(XCFLAGS)
     AC_SUBST(XLIBS)
