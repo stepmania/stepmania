@@ -55,7 +55,7 @@ using namespace std;
 #endif
 #include <dinput.h>
 
-#if 0
+#if 1
 
 #include "StdString.h"
 
