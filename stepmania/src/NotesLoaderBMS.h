@@ -9,13 +9,20 @@ class Steps;
 
 class BMSLoader: public NotesLoader
 {
-	bool LoadFromBMSFile( const CString &sPath, Steps &out1, const map<CString,int> &mapWavIdToKeysoundIndex );
-
 	void SlideDuplicateDifficulties( Song &p );
 
 	map<int, float> m_MeasureToTimeSig;
 	float GetBeatsPerMeasure( int iMeasure ) const;
 	int GetMeasureStartRow( int iMeasureNo ) const;
+
+	typedef multimap<CString, CString> NameToData_t;
+	bool ReadBMSFile( const CString &sPath, BMSLoader::NameToData_t &mapNameToData );
+	bool LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNameToData, Steps &out1 );
+	void ReadGlobalTags( const NameToData_t &mapNameToData, Song &out );
+	bool GetTagFromMap( const BMSLoader::NameToData_t &mapNameToData, const CString &sName, CString &sOut );
+
+	CString m_sDir;
+	map<CString,int> m_mapWavIdToKeysoundIndex;
 
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );
