@@ -74,14 +74,21 @@ wchar_t *wmemset(wchar_t *ws , wchar_t wc, size_t n)
 }
 
 #ifndef wstring
-template class std::basic_string<wchar_t, std::char_traits<wchar_t>, std::allocator<wchar_t> >;
+template class std::basic_string<wchar_t, std::char_traits<wchar_t>,
+								 std::allocator<wchar_t> >;
 #endif
 /* This has nothing to do with this file, but I might as well put it here
  * rather than make a new file just for it.
  */
 #include <iostream>
-template std::basic_istream<char, std::char_traits<char> >&
-    std::basic_istream<char, std::char_traits<char> >::seekg(std::fpos<__mbstate_t>);
+#include <fstream>
+using namespace std;
+
+template basic_istream<char, char_traits<char> >&
+    basic_istream<char, char_traits<char> >::seekg(fpos<__mbstate_t>);
+template streampos
+	basic_streambuf<char, char_traits<char> >::pubseekpos(fpos<__mbstate_t>,
+														  _Ios_Openmode);
 
 #endif
 
