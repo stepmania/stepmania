@@ -123,6 +123,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
 
+	/* This is usually done already, but we might have come here without going through
+	 * ScreenSelectMusic or the options menus at all. */
+	GAMESTATE->AdjustFailType();
+
 	/* Save selected options before we change them. */
 	GAMESTATE->StoreSelectedOptions();
 
