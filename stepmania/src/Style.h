@@ -30,4 +30,5 @@ enum Style
 	STYLE_EZ2_REAL_VERSUS,
 	NUM_STYLES,	// leave this at the end
 	STYLE_NONE,
+	STYLE_PUMP_COUPLE,
 };
