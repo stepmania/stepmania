@@ -690,8 +690,6 @@ void Player::Step( int col, const RageTimer &tm )
 	int iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat), 
 						   iStepSearchRows, iStepSearchRows, false );
 	
-	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
-
 	// calculate TapNoteScore
 	TapNoteScore score = TNS_NONE;
 
@@ -735,37 +733,8 @@ void Player::Step( int col, const RageTimer &tm )
 				break;
 
 			case TapNote::attack:
-				score = TNS_NONE;	// don't score this as anything
 				if( fSecondsFromPerfect <= ADJUSTED_WINDOW(Attack) && !tn.result.bHidden )
-				{
-					m_soundAttackLaunch.Play();
-
-					// put attack in effect
-					Attack attack(
-						ATTACK_LEVEL_1,
-						-1,	// now
-						tn.fAttackDurationSeconds,
-						tn.sAttackModifiers,
-						true,
-						false
-						);
-
-					// TODO: Remove use of PlayerNumber
-					PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-					GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[pn], attack );
-
-					// remove all TapAttacks on this row
-					for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
-					{
-						TapNote tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
-						if( tn.type == TapNote::attack )
-						{
-							tn.result.bHidden = true;
-							m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-						}
-					}
-				}
+					score = TNS_PERFECT; /* sentinel */
 				break;
 			default:
 				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW(Marvelous) )	score = TNS_MARVELOUS;
@@ -813,12 +782,56 @@ void Player::Step( int col, const RageTimer &tm )
 				else
 					score = TNS_HIT_MINE;
 			}
+
+			if( tn.type == TapNote::attack && score > TNS_GOOD )
+				score = TNS_PERFECT; /* sentinel */
+
+			/* AI will generate misses here.  Don't handle a miss like a regular note because
+			 * we want the judgment animation to appear delayed.  Instead, return early if
+			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
+			 * misses. */
+			if( score == TNS_MISS )
+				return;
+
 			break;
 
 		default:
 			ASSERT(0);
 			score = TNS_NONE;
 			break;
+		}
+
+		if( tn.type == TapNote::attack && score == TNS_PERFECT )
+		{
+			score = TNS_NONE;	// don't score this as anything
+
+			m_soundAttackLaunch.Play();
+
+			// put attack in effect
+			Attack attack(
+				ATTACK_LEVEL_1,
+				-1,	// now
+				tn.fAttackDurationSeconds,
+				tn.sAttackModifiers,
+				true,
+				false
+				);
+
+			// TODO: Remove use of PlayerNumber
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[pn], attack );
+
+			// remove all TapAttacks on this row
+			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
+			{
+				TapNote tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
+				if( tn.type == TapNote::attack )
+				{
+					tn.result.bHidden = true;
+					m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
+				}
+			}
 		}
 
 		if( score == TNS_HIT_MINE )
@@ -839,56 +852,6 @@ void Player::Step( int col, const RageTimer &tm )
 				m_pNoteField->DidTapNote( col, score, false );
 		}
 
-		switch( m_pPlayerState->m_PlayerController )
-		{
-		case PC_HUMAN:
-			break;
-		
-		case PC_CPU:
-		case PC_AUTOPLAY:
-			/* AI will generate misses here.  Don't handle a miss like a regular note because
-			 * we want the judgment animation to appear delayed.  Instead, return early if
-			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
-			 * misses. */
-			if( score == TNS_MISS )
-				return;
-
-
-			if( tn.type == TapNote::attack  &&  score > TNS_GOOD )
-			{
-				m_soundAttackLaunch.Play();
-				score = TNS_NONE;	// don't score this as anything
-				
-				// put attack in effect
-				Attack attack(
-					ATTACK_LEVEL_1,
-					-1,	// now
-					tn.fAttackDurationSeconds,
-					tn.sAttackModifiers,
-					true,
-					false
-					);
-
-				// TODO: Remove use of PlayerNumber.
-				PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-				GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[pn], attack );
-				
-				// remove all TapAttacks on this row
-				for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
-				{
-					TapNote tn = m_NoteData.GetTapNote(t, iIndexOverlappingNote);
-					if( tn.type == TapNote::attack )
-					{
-						tn.result.bHidden = true;
-						m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-					}
-				}
-			}
-
-			break;
-		}
-		
 
 		// Do game-specific score mapping.
 		const Game* pGame = GAMESTATE->GetCurrentGame();
