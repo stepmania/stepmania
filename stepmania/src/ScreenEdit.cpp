@@ -105,7 +105,7 @@ const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
 	"E:      Edit description",
 	"A:      Edit main title",
 	"U:      Edit subtitle",
-	"`:      Edit transliteration",
+	"Y:      Edit transliteration",
 	"I:      Toggle assist tick",
 	"B:      Add/Edit background change at current beat",
 	"Ins:    Insert blank beat and shift down",
@@ -971,7 +971,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SCREENMAN->TextEntry( SM_None, "Edit song sub title.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sSubTitle, ChangeSubTitle, NULL );
 		break;
 
-	case DIK_GRAVE:
+	case DIK_Y:
 		SCREENMAN->TextEntry( SM_None, "Edit song transliteration.\nPress Enter to confirm,\nEscape to cancel.", m_pSong->m_sTransliteration, ChangeTransliteration, NULL);
 		break;
 
