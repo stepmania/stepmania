@@ -152,6 +152,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	// Figure out which statistics and songs we're going to display
 	//
 	StageStats stageStats;
+	stageStats = g_CurStageStats;
 
 	if(stageStats.AllFailed() ) // if everyone failed
 		m_bFailed = true; // flag it for this screen
