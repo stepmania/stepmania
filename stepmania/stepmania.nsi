@@ -130,7 +130,7 @@ File "Courses\instructions.txt"
 File /r "Courses\Samples"
 
 CreateDirectory "$INSTDIR\Packages"
-File "Packages\instructions.txt"
+File "Packages\Instructions.txt"
 
 RMDir /r "$INSTDIR\NoteSkins\common\default"
 RMDir /r "$INSTDIR\NoteSkins\dance\MAX"
