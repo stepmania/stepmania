@@ -30,7 +30,7 @@ BeginnerHelper::BeginnerHelper()
 	LOG->Trace("BeginnerHelper::BeginnerHelper()");
 	m_bFlashEnabled = false;
 	m_bInitialized = false;
-	m_fLastBeatChecked = 0;
+	m_iLastRowChecked = 0;
 	this->AddChild(&m_sBackground);
 }
 
@@ -246,8 +246,8 @@ void BeginnerHelper::Update( float fDeltaTime )
 	if(!m_bInitialized)
 		return;
 
-	// the beat we want to check on this update
-	float fCurBeat = GAMESTATE->m_fSongBeat + 0.4f;
+	// the row we want to check on this update
+	int iCurRow = BeatToNoteRowNotRounded(GAMESTATE->m_fSongBeat + 0.4f);
 
 	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
 	{
@@ -256,13 +256,13 @@ void BeginnerHelper::Update( float fDeltaTime )
 
 		if( (m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
 			FlashOnce();
-		for(float fBeat=m_fLastBeatChecked; fBeat<fCurBeat; fBeat+=0.01f)
+		for(int iRow=m_iLastRowChecked; iRow<iCurRow; iRow++)
 		{
-			if((m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded(fBeat))))
+			if((m_NoteData[pn].IsThereATapAtRow( iRow )))
 			{
 				int iStep = 0;
 				for( int k=0; k<m_NoteData[pn].GetNumTracks(); k++ )
-					if( m_NoteData[pn].GetTapNote(k, BeatToNoteRowNotRounded(fBeat) ) == TAP_TAP )
+					if( m_NoteData[pn].GetTapNote(k, iRow ) == TAP_TAP )
 					{
 						switch(k)
 						{
@@ -276,7 +276,7 @@ void BeginnerHelper::Update( float fDeltaTime )
 			}
 		}
 	}
-	m_fLastBeatChecked = fCurBeat;
+	m_iLastRowChecked = iCurRow;
 
 	ActorFrame::Update( fDeltaTime );
 	m_mDancePad.Update( fDeltaTime );

@@ -49,7 +49,7 @@ protected:
 	Sprite	m_sBackground;
 	Sprite	m_sStepCircle[NUM_PLAYERS*2];	// Need two for each player during jumps
 
-	float m_fLastBeatChecked;
+	int  m_iLastRowChecked;
 	bool m_bInitialized;
 	bool m_bFlashEnabled;
 };
