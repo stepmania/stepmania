@@ -158,8 +158,8 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
-		pTempBGA = new BGAnimation( false );
-		pTempBGA->LoadFromAniDir( asFiles[0] );
+		pTempBGA = new BGAnimation;
+		pTempBGA->LoadFromAniDir( asFiles[0], false );
 		return pTempBGA;
 	}
 	// Look for BG movies or static graphics in the song dir

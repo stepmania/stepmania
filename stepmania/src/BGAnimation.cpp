@@ -8,10 +8,8 @@
 #include "Foreach.h"
 
 
-BGAnimation::BGAnimation( bool bGeneric )
+BGAnimation::BGAnimation()
 {
-	/* See BGAnimationLayer::BGAnimationLayer for explanation. */
-	m_bGeneric = bGeneric;
 }
 
 BGAnimation::~BGAnimation()
@@ -36,7 +34,7 @@ static bool CompareLayerNames( const CString& s1, const CString& s2 )
 	return i1 < i2;
 }
 
-void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo )
+void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo, bool bGeneric )
 {
 	if( _sAniDir.empty() )
 		 return;
@@ -91,12 +89,12 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &
 				// import a whole BGAnimation
 				sImportDir = sAniDir + sImportDir;
 				CollapsePath( sImportDir );
-				AddLayersFromAniDir( sImportDir, layersAddTo );
+				AddLayersFromAniDir( sImportDir, layersAddTo, bGeneric );
 			}
 			else
 			{
 				// import as a single layer
-				BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
+				BGAnimationLayer* pLayer = new BGAnimationLayer( bGeneric );
 				pLayer->LoadFromNode( sAniDir, *pKey );
 				layersAddTo.push_back( pLayer );
 			}
@@ -104,7 +102,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &
 	}
 }
 
-void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
+void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 {
 	Unload();
 
@@ -122,7 +120,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 	if( DoesFileExist(sPathToIni) )
 	{
 		// This is a new style BGAnimation (using .ini)
-		AddLayersFromAniDir( sAniDir, m_SubActors );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, m_SubActors, bGeneric );	// TODO: Check for circular load
 
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
@@ -161,7 +159,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 			const CString sPath = asImagePaths[i];
 			if( Basename(sPath).Left(1) == "_" )
 				continue;	// don't directly load files starting with an underscore
-			BGAnimationLayer* pLayer = new BGAnimationLayer( m_bGeneric );
+			BGAnimationLayer* pLayer = new BGAnimationLayer( bGeneric );
 			pLayer->LoadFromAniLayerFile( asImagePaths[i] );
 			AddChild( pLayer );
 		}

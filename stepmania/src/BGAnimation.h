@@ -12,17 +12,16 @@ struct XNode;
 class BGAnimation : public ActorScroller
 {
 public:
-	BGAnimation( bool Generic=true );
+	BGAnimation();
 	virtual ~BGAnimation();
 
 	void Unload();
 
-	void LoadFromAniDir( const CString &sAniDir );
+	void LoadFromAniDir( const CString &sAniDir, bool bGeneric=true );
 	void LoadFromNode( const CString &sDir, const XNode& node );
 
 protected:
-	void AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo );
-	bool	m_bGeneric;
+	static void AddLayersFromAniDir( const CString &_sAniDir, vector<Actor*> &layersAddTo, bool bGeneric );
 };
 
 #endif
