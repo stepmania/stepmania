@@ -39,8 +39,6 @@ const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+48);
 
 
 
-enum { SORT_ROULETTE = NUM_SORT_ORDERS+1 };
-
 struct CompareSongPointerArrayBySectionName;
 
 class MusicWheel : public ActorFrame
@@ -93,7 +91,7 @@ protected:
 	ScrollBar			m_ScrollBar;
 	Sprite				m_sprSelectionOverlay;
 
-	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS+2];
+	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
 	vector<WheelItemData *> m_CurWheelItemData;
 	
 	WheelItemDisplay	m_WheelItemDisplays[NUM_WHEEL_ITEMS_TO_DRAW];

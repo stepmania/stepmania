@@ -45,6 +45,8 @@
 const int MAX_WHEEL_SOUND_SPEED = 15;
 float g_fItemSpacingY, g_fItemCurveX;	// cache
 
+static const SongSortOrder MaxSelectableSort = SORT_MOST_PLAYED;
+
 inline RageColor GetNextSectionColor() {
 	static int i=0;
 	i = i % NUM_SECTION_COLORS;
@@ -141,7 +143,6 @@ MusicWheel::MusicWheel()
 	 * the extra stage, so it knows to always display it. */
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
-	BuildWheelItemDatas( m_WheelItemDatas[SORT_ROULETTE], SongSortOrder(SORT_ROULETTE) );
 
 	// If there is no currently selected song, select one.
 	if( GAMESTATE->m_pCurSong == NULL )
@@ -624,7 +625,9 @@ void MusicWheel::Update( float fDeltaTime )
 				CString sPrevSelectedSection = m_CurWheelItemData[m_iSelection]->m_sSectionName;
 
 				// change the sort order
-				GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) % NUM_SORT_ORDERS );
+				GAMESTATE->m_SongSortOrder = SongSortOrder( (GAMESTATE->m_SongSortOrder+1) );
+				if(GAMESTATE->m_SongSortOrder > MaxSelectableSort)
+					GAMESTATE->m_SongSortOrder = SongSortOrder(0);
 
 				SCREENMAN->SendMessageToTopScreen( SM_SortOrderChanged, 0 );
 				SetOpenGroup(GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SongSortOrder ));
