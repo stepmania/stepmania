@@ -265,9 +265,11 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 			if( pSteps == NULL )
 				continue;
 			
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: StepsType %d", pSteps->m_StepsType) );
 			if( pSteps->m_StepsType != st )
 				continue;
 			
+			CHECKPOINT_M( ssprintf("Profile::GetSongsActual: Difficulty %d", pSteps->GetDifficulty()) );
 			if( pSteps->GetDifficulty() != dc )
 				continue;	// skip
 			
