@@ -148,6 +148,11 @@ float RageSoundManager::GetPlayLatency() const
 	return driver->GetPlayLatency();
 }
 
+int RageSoundManager::GetDriverSampleRate() const
+{
+	return driver->GetSampleRate();
+}
+
 RageSound *RageSoundManager::PlaySound(RageSound &snd)
 {
 	RageSound *sound_to_play;

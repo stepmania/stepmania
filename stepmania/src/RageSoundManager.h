@@ -49,6 +49,7 @@ public:
 	int GetPosition(const RageSound *snd) const;	/* used by RageSound */
 	void AddFakeSound(RageSound *snd);		/* used by drivers */
 	float GetPlayLatency() const;
+	int GetDriverSampleRate() const;
 
 	void PlayOnce( CString sPath );
 	static void PlayOnceFromDir( CString sDir );
