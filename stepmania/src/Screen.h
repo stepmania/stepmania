@@ -40,6 +40,9 @@ public:
 	void SendScreenMessage( const ScreenMessage SM, const float fDelay );
 	void ClearMessageQueue() { m_QueuedMessages.SetSize(0,5); };
 
+	/* Used only by ScreenManager::Update. */
+	bool FirstUpdate();
+
 protected:
 
 	// structure for holding messages sent to a Screen
@@ -65,4 +68,7 @@ public:
 	virtual void MenuRight( PlayerNumber p )	{};
 	virtual void MenuStart( PlayerNumber p )	{};
 	virtual void MenuBack(	PlayerNumber p )	{};
+
+private:
+	bool m_FirstUpdate;
 };
