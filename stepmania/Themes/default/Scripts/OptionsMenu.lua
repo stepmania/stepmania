@@ -30,8 +30,8 @@ function OptionsRowTest()
 		-- Set list[1] to true if Option1 should be selected, and
 		-- list[2] if Option2 should be selected.  This will be
 		-- called once per enabled player.
-		GetSelections = (function(list, pn) list[1] = true; end),
-		SetSelections = Set,
+		LoadSelections = (function(list, pn) list[1] = true; end),
+		SaveSelections = Set,
 	}
 end
 
