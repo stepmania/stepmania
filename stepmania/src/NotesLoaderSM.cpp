@@ -182,9 +182,8 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	LOG->Trace( "Song::LoadFromSMFile(%s)", sPath.c_str() );
 
 	MsdFile msd;
-	bool bResult = msd.ReadFile( sPath );
-	if( !bResult )
-		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
+	if( !msd.ReadFile( sPath ) )
+		RageException::Throw( "Error opening file \"%s\": %s", sPath.c_str(), msd.GetError().c_str() );
 
 	out.m_Timing.m_sFile = sPath;
 	LoadTimingFromSMFile( msd, out.m_Timing );
@@ -391,9 +390,8 @@ bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 	}
 
 	MsdFile msd;
-	bool bResult = msd.ReadFile( sEditFilePath );
-	if( !bResult )
-		RageException::Throw( "Error opening file '%s'.", sEditFilePath.c_str() );
+	if( !msd.ReadFile( sEditFilePath ) )
+		RageException::Throw( "Error opening file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
 
 	Song* pSong = NULL;
 
