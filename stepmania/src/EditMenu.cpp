@@ -360,7 +360,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				
 				// if we don't have any edits, pad with NULL so that we have one slot for every difficulty
 				if( v.empty() )
-					m_vpSteps.push_back( NULL );
+					m_vpSourceSteps.push_back( NULL );
 			}
 			else
 			{
