@@ -43,7 +43,7 @@ private:
 	T			m_currentValue;
 
 public:
-	Preference( PrefsGroup PrefsGroup, CString sName, const T& defaultValue ):
+	Preference( PrefsGroup PrefsGroup, const CString& sName, const T& defaultValue ):
 		m_PrefsGroup( PrefsGroup ),
 		m_sName( sName ),
 		m_defaultValue( defaultValue ),
