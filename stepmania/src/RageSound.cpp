@@ -136,7 +136,7 @@ void RageSound::Unload()
 	databuf.clear();
 }
 
-bool RageSound::IsLoaded()
+bool RageSound::IsLoaded() const
 {
 	return Sample != NULL;
 }
