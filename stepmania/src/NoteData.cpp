@@ -24,13 +24,11 @@
 
 NoteData::NoteData()
 {
-	memset(m_TapNotes, 0, sizeof(m_TapNotes));
 	Init();
 }
 
 NoteData::NoteData(const NoteData &cpy)
 {
-	memset(m_TapNotes, 0, sizeof(m_TapNotes));
 	*this = cpy;
 }
 
@@ -38,7 +36,7 @@ NoteData &NoteData::operator= (const NoteData &cpy)
 {
 	Init();
 	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
-		memmove( m_TapNotes[t], cpy.m_TapNotes[t], sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
+		m_TapNotes[t] = cpy.m_TapNotes[t];
 	memmove(m_HoldNotes, cpy.m_HoldNotes, sizeof(m_HoldNotes));
 
 	m_iNumTracks = cpy.m_iNumTracks;
@@ -48,19 +46,12 @@ NoteData &NoteData::operator= (const NoteData &cpy)
 
 void NoteData::Init()
 {
-	for(int t = 0; t < MAX_NOTE_TRACKS; ++t) {
-		if(!m_TapNotes[t])
-			m_TapNotes[t] = new TapNote[MAX_TAP_NOTE_ROWS];
-		memset( m_TapNotes[t], TAP_EMPTY, sizeof(TapNote) * MAX_TAP_NOTE_ROWS );
-	}
 	m_iNumTracks = 0;
 	m_iNumHoldNotes = 0;
 }
 
 NoteData::~NoteData()
 {
-	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
-		delete[] m_TapNotes[t];
 }
 
 void NoteData::LoadFromSMNoteDataString( CString sSMNoteData )
@@ -168,6 +159,7 @@ CString NoteData::GetSMNoteDataString()
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
 	this->ConvertHoldNotesTo4s();
+	/* XXX: if iNoteIndexEnd == m_TapNotes[0].size(), just erase() */
 	for( int c=0; c<m_iNumTracks; c++ )
 	{
 		for( int i=iNoteIndexBegin; i <= iNoteIndexEnd && i < MAX_TAP_NOTE_ROWS; i++ )
@@ -907,7 +899,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 		ASSERT( iOriginalTrack < pOriginal->m_iNumTracks );
 		if( iOriginalTrack == -1 )
 			continue;
-		memcpy( m_TapNotes[t], pOriginal->m_TapNotes[iOriginalTrack], MAX_TAP_NOTE_ROWS*sizeof(TapNote) );
+		m_TapNotes[t] = pOriginal->m_TapNotes[iOriginalTrack];
 	}
 
 	pOriginal->Convert4sToHoldNotes();
@@ -1022,4 +1014,20 @@ NoteType NoteData::GetSmallestNoteTypeForMeasure( int iMeasureIndex )
 		return NOTE_TYPE_INVALID;	// well-formed notes created in the editor should never get here
 	else
 		return nt;
+}
+
+void NoteData::PadTapNotes(int rows)
+{
+	int needed = rows - m_TapNotes[0].size();
+	if(needed < 0) return;
+	vector<TapNote> pad(needed+1, TAP_EMPTY);
+	for(int track = 0; track < MAX_NOTE_TRACKS; ++track)
+		m_TapNotes[track].insert(m_TapNotes[track].end(), pad.begin(), pad.end());
+}
+
+void NoteData::SetTapNote(int track, int row, TapNote t)
+{
+	if(row < 0) return;
+	PadTapNotes(row);
+	m_TapNotes[track][row]=t;
 }

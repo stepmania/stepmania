@@ -32,21 +32,23 @@ public:
 	NoteData &operator=(const NoteData &cpy);
 
 	int			m_iNumTracks;
-	TapNote		*m_TapNotes[MAX_NOTE_TRACKS];
+
+	/* Keep this aligned, so that they all have the same size. */
+	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
 	HoldNote	m_HoldNotes[MAX_HOLD_NOTES];
 	int			m_iNumHoldNotes;
 
-	TapNote GetTapNote(int track, int row) const
+	/* Return the note at the given track and row.  Row may be out of
+	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
+	inline TapNote GetTapNote(unsigned track, unsigned row) const
 	{
-		if(row < 0 || row >= MAX_TAP_NOTE_ROWS) return TapNote('0');
+		if(row < 0 || row >= m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
 		return m_TapNotes[track][row];
 	}
 
-	void SetTapNote(int track, int row, TapNote t )
-	{
-		if(row < 0 || row >= MAX_TAP_NOTE_ROWS) return;
-		m_TapNotes[track][row]=t;
-	}
+	/* Pad m_TapNotes so it includes the row "rows". */
+	void PadTapNotes(int rows);
+	void SetTapNote(int track, int row, TapNote t);
 
 	void LoadFromSMNoteDataString( CString sSMNoteData );
 	CString GetSMNoteDataString();
