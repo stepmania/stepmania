@@ -32,15 +32,7 @@ static void EmptyDir( CString dir )
 	CStringArray asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
-	{
-		if (0 == stricmp( asCacheFileNames[i], ".cvsignore" ))	// don't delete .cvsignore files
-			continue;
-		if (0 == stricmp( asCacheFileNames[i], "instructions.txt" ))	// don't delete the instructions file.
-			continue;
-
 		remove( dir + asCacheFileNames[i] );
-	}
-
 }
 
 void SongCacheIndex::ReadCacheIndex()
