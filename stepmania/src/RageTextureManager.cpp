@@ -141,20 +141,19 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 		LOG->Trace("Performing texture garbage collection");
 		timeLastGarbageCollect = time(NULL);
 
-		// Chris:  What is the proper way to iterate through this if deleting from map?
-startovergc:
-
 		for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
-			i != m_mapPathToTexture.end(); ++i)
+			i != m_mapPathToTexture.end(); )
 		{
-			CString sPath = i->first;
-			RageTexture* pTexture = i->second;
+			std::map<CString, RageTexture*>::iterator j = i;
+			i++;
+
+			CString sPath = j->first;
+			RageTexture* pTexture = j->second;
 			if( pTexture->m_iRefCount==0  &&
-				pTexture->m_iTimeOfLastUnload+m_iSecondsBeforeUnload < time(NULL) )
+				pTexture->m_iTimeOfLastUnload+m_iSecondsBeforeUnload <= time(NULL) )
 			{
 				SAFE_DELETE( pTexture );		// free the texture
-				m_mapPathToTexture.erase(i);	// and remove the key in the map
-				goto startovergc;
+				m_mapPathToTexture.erase(j);	// and remove the key in the map
 			}
 		}
 	}
