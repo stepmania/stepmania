@@ -20,6 +20,9 @@
 StageStats::StageStats()
 {
 	memset( this, 0, sizeof(StageStats) );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		for( int i = 0; i < LIFE_RECORD_RESOLUTION; ++i )
+			fLifeRecord[p][i] = -1;
 }
 
 void StageStats::AddStats( const StageStats& other )
@@ -59,6 +62,9 @@ void StageStats::AddStats( const StageStats& other )
 		iSongsPassed[p] += other.iSongsPassed[p];
 		iSongsPlayed[p] += other.iSongsPlayed[p];
 		iTotalError[p] += other.iTotalError[p];
+
+		for( int i = 0; i < LIFE_RECORD_RESOLUTION; ++i )
+			fLifeRecord[p][i] = -1;
 	}
 }
 
@@ -145,4 +151,21 @@ float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 
 	float fPercentDancePoints =  iActualDancePoints[pn] / (float)iPossibleDancePoints[pn];
 	return clamp( fPercentDancePoints, 0, 1 );
+}
+
+void StageStats::SetLifeRecord( PlayerNumber pn, float life, float pos )
+{
+	int offset = (int) roundf( pos * LIFE_RECORD_RESOLUTION );
+	for( int i = 0; i <= offset; ++i )
+		if( fLifeRecord[pn][i] < 0 )
+			fLifeRecord[pn][i] = life;
+}
+
+void StageStats::GetLifeRecord( PlayerNumber pn, float *life, int nout ) const
+{
+	for( int i = 0; i < nout; ++i )
+	{
+		int from = i * (LIFE_RECORD_RESOLUTION-1) / nout;
+		life[i] = fLifeRecord[pn][from];
+	}
 }

@@ -57,6 +57,11 @@ struct StageStats
 	int		iSongsPassed[NUM_PLAYERS];
 	int		iSongsPlayed[NUM_PLAYERS];
 	int		iTotalError[NUM_PLAYERS];
+
+	enum { LIFE_RECORD_RESOLUTION=1000 };
+	float	fLifeRecord[NUM_PLAYERS][LIFE_RECORD_RESOLUTION];
+	void	SetLifeRecord( PlayerNumber pn, float life, float pos );
+	void	GetLifeRecord( PlayerNumber pn, float *life, int nout ) const;
 };
 
 
