@@ -220,7 +220,7 @@ bool ScreenEdit::DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const
 				for( int holdslot = 0; holdslot < NUM_EDIT_TO_DEVICE_SLOTS; ++holdslot )
 				{
 					DeviceInput hDI = pCurrentMap->hold[e][holdslot];
-					if( INPUTFILTER->IsBeingPressed(hDI) )
+					if( hDI.IsValid() && INPUTFILTER->IsBeingPressed(hDI) )
 						return true;
 				}
 			}
