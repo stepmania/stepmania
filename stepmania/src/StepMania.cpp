@@ -500,48 +500,53 @@ static void HandleInputEvents(float fDeltaTime)
 	}
 }
 
+static bool HandleSDLEvents()
+{
+	// process all queued events
+	SDL_Event event;
+	while(SDL_PollEvent(&event))
+	{
+		if(INPUTMAN->FeedSDLEvent(event))
+			continue; /* it took care of it */
+
+		switch(event.type)
+		{
+		case SDL_QUIT:
+			LOG->Trace("SDL_QUIT: shutting down");
+			return false; /* exit the main loop */
+		case SDL_VIDEORESIZE:
+			DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);
+			break;
+		case SDL_ACTIVEEVENT:
+		{
+			/* We don't care about mouse focus. */
+			if(event.active.state == SDL_APPMOUSEFOCUS)
+				break;
+
+			Uint8 i = SDL_GetAppState();
+			
+			g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
+			LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
+				i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
+
+			if(g_bHasFocus)
+				BoostAppPri();
+			else
+				RestoreAppPri();
+		}
+		}
+	}
+
+	return true;
+}
+
 static void GameLoop()
 {
-	for(int hack = 0; hack < 1024; ++hack)
-		SDL_PumpEvents();
-
 	RageTimer timer;
 	while(1)
 	{
-		// process all queued events
-		SDL_Event event;
-		while(SDL_PollEvent(&event))
-		{
-			if(INPUTMAN->FeedSDLEvent(event))
-				continue; /* it took care of it */
-
-			switch(event.type)
-			{
-			case SDL_QUIT:
-				LOG->Trace("SDL_QUIT: shutting down");
-				return; /* exit the main loop */
-			case SDL_VIDEORESIZE:
-				DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);
-				break;
-			case SDL_ACTIVEEVENT:
-				{
-					/* We don't care about mouse focus. */
-					if(event.active.state == SDL_APPMOUSEFOCUS)
-						break;
-
-					Uint8 i = SDL_GetAppState();
-					
-					g_bHasFocus = i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE;
-					LOG->Trace("App %s focus (%i%i)", g_bHasFocus? "has":"doesn't have",
-						i&SDL_APPINPUTFOCUS, i&SDL_APPACTIVE);
-
-					if(g_bHasFocus)
-						BoostAppPri();
-					else
-						RestoreAppPri();
-				}
-			}
-		}
+		if(!HandleSDLEvents())
+			return; /* exit the main loop (quit) */
 
 		/*
 		 * Update
@@ -562,16 +567,14 @@ static void GameLoop()
 		SCREENMAN->Update( fDeltaTime );
 		SOUNDMAN->Update( fDeltaTime );
 
-		/* Important:  Process input AFTER updaing game logic, or input will be acting on song beat from last frame */
+		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );
 
 		/*
 		 * Render
 		 */
 		DISPLAY->Clear();
-
-		SCREENMAN->Draw();		// draw the game
-
+		SCREENMAN->Draw();
 		DISPLAY->Flip();
 
 		if(g_bHasFocus)
