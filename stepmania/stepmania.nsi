@@ -91,6 +91,46 @@ old_nsis_not_installed:
 Delete "$INSTDIR\StepMania.vdi"
 
 
+; HACK:
+;
+; Final releases are installed to "StepMania"; alpha snapshots are installed to
+; "StepMania CVS".  I'm afraid of what will happen when we change from CVS to
+; final: people will install to the new (old) location, and find that they need
+; to move their songs and scores over.  If we leave the CVS installation in
+; place, they may move over things that they shouldn't, such as copying the entire
+; Data directory (overwriting "Translation.dat") when they only wanted their scores.
+;
+; I don't want to try to migrate automatically; this is a one-shot deal for most
+; users, and if something goes wrong and we're left with a half-moved tree, the
+; support issues could be annoying.  Let's prompt the user to uninstall the CVS
+; snapshot, so moving the rest over should be harmless.
+; Are we installing non-CVS?
+StrCmp ${PRODUCT_ID} "StepMania" +1 cvs_not_present
+
+; Read the CVS directory.
+ReadRegStr $R0 HKEY_LOCAL_MACHINE "Software\StepMania\StepMania CVS" ""
+StrLen $R1 $R0
+IntCmpU $R1 4 cvs_not_present cvs_not_present
+StrCpy $R1 "$R0\uninstall.exe"
+IfFileExists "$R1" +1 cvs_not_present
+
+MessageBox MB_YESNO|MB_ICONINFORMATION "A testing snapshot was found in $R0.  Unininstall it (recommended)?" IDNO cvs_not_present
+
+GetTempFileName $R3
+CopyFiles /SILENT $R1 $R3
+ExecWait '$R3 _?=$R0' $R4
+; Delete the copy of the uninstaller.
+Delete $R3
+
+; $R4 is the exit value of the uninstaller.  0 means success, anything else is
+; failure (eg. aborted).
+IntCmp $R4 0 cvs_not_present
+
+MessageBox MB_YESNO|MB_DEFBUTTON2|MB_ICONINFORMATION "Uninstallation failed.  Install anyway?" IDYES +2
+Abort
+
+cvs_not_present:
+
 ; Check for DirectX 8.0 (to be moved to the right section later)
 ; We only use this for sound.  Actually, I could probably make the sound
 ; work with an earlier one; I'm not sure if that's needed or not.  For one
@@ -128,6 +168,7 @@ WriteUninstaller "$INSTDIR\uninstall.exe"
 
 ; add registry entries
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" "" "$INSTDIR"
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" "Version" "${PRODUCT_VER}"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
