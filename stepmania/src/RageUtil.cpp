@@ -774,6 +774,8 @@ bool utf8_is_valid(const CString &str)
 		int len = utf8_get_char_len(str.c_str() + pos);
 		if(len == -1)
 			return false;
+		if( utf8_get_char( str.c_str() + pos ) == INVALID_CHAR )
+			return false;
 
 		pos += len;
 	}
