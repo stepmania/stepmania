@@ -18,17 +18,17 @@ struct RageVertex;
 
 #include "RageTypes.h"
 
-enum RefreshRateMode { REFRESH_DEFAULT, REFRESH_MAX, REFRESH_MIN };
+const int REFRESH_DEFAULT = 0;
 
 class RageDisplay
 {
 	friend class RageTexture;
 
 public:
-	RageDisplay( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync );
+	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 	~RageDisplay();
 
-	void SetVideoMode( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync );
+	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 
 	void Clear();
 	void Flip();
@@ -70,7 +70,6 @@ public:
 	void DrawStrip( const RageVertex v[], int iNumVerts );
 	void FlushQueue();
 
-	void GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const;
 	int GetMaxTextureSize() const;
 
 	/* Statistics */
@@ -81,6 +80,7 @@ public:
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
 	void SetBlendMode(int src, int dst);
+	void SetupOpenGL();
 };
 
 

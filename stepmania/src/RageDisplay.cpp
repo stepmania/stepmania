@@ -17,6 +17,7 @@
 #include "RageTimer.h"
 #include "RageException.h"
 #include "RageTexture.h"
+#include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
 #include "GameConstantsAndTypes.h"
@@ -72,31 +73,55 @@ void GetGLExtensions(set<string> &ext)
     LOG->Trace("OpenGL extensions: %s", buf);
 }
 
-RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync )
+RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
 //	LOG->Trace( "RageDisplay::RageDisplay()" );
 
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
-	
+
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
 
+	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
+	g_glVersion = int(roundf(fGLVersion * 10));
+	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
+	GetGLExtensions(g_glExts);
+	if(g_glExts.find("GL_EXT_texture_env_combine") != g_glExts.end())
+		g_GL_EXT_texture_env_combine = true;
+
 	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) SDL_GL_GetProcAddress ("glBlendFuncSeparate");
+
+	SetupOpenGL();
 }
 
+void RageDisplay::SetupOpenGL()
+{
+	/*
+	 * Set up OpenGL for 2D rendering.
+	 */
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+
+	/*
+	 * Set state variables
+	 */
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+}
 RageDisplay::~RageDisplay()
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
-//-----------------------------------------------------------------------------
-// Name: SwitchDisplayMode()
-// Desc:
-//-----------------------------------------------------------------------------
-void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync )
+/* Set the video mode.  In some cases, changing the video mode will reset
+ * the rendering context; returns true if we need to reload textures. */
+bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
 //	LOG->Trace( "RageDisplay::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
 
-
+	g_flags = 0;
 	if( !windowed )
 		g_flags |= SDL_FULLSCREEN;
 	g_flags |= SDL_DOUBLEBUF;
@@ -104,8 +129,6 @@ void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, R
 	g_flags |= SDL_OPENGL;
 
 	SDL_ShowCursor( ~g_flags & SDL_FULLSCREEN );
-
-	SDL_InitSubSystem(SDL_INIT_VIDEO);
 
 	switch( bpp )
 	{
@@ -127,46 +150,54 @@ void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, R
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	}
 
-	/* XXX: bpp? shouldn't this be 4 or 8? */
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, bpp);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, TRUE);
 
-	g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
-	if(!g_screen)
-		throw RageException("Failed to open screen!");
+#ifdef SDL_HAS_REFRESH_RATE
+	if(rate == REFRESH_DEFAULT)
+		SDL_SM_SetRefreshRate(0);
+	else
+		SDL_SM_SetRefreshRate(rate);
+#endif
 
-	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
-	g_glVersion = int(roundf(fGLVersion * 10));
-	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
-	GetGLExtensions(g_glExts);
-	if(g_glExts.find("GL_EXT_texture_env_combine") != g_glExts.end())
-		g_GL_EXT_texture_env_combine = true;
+	bool need_reload = false;
 
-	/*
-	 * Set up OpenGL for 2D rendering.
-	 */
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
+#ifndef SDL_HAS_CHANGEVIDEOMODEx
+	/* We can't change the video mode without nuking the GL context.  If we have
+	 * a screen, NULL it out, and signal the caller to reload all textures. */
+	if(g_screen) {
+		g_screen = NULL;
+		need_reload = true;
+		TEXTUREMAN->InvalidateTextures();
+	}
+#endif
 
+	if(!g_screen) {
+		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
+		if(!g_screen)
+			throw RageException("Failed to open screen!");
+
+		SDL_WM_SetCaption("StepMania", "StepMania");
+	}
+#ifdef SDL_HAS_CHANGEVIDEOMODEx
+	else
+	{
+		SDL_SM_ChangeVideoMode_OpenGL(g_flags, g_screen, width, height);
+	}
+#endif
+
+	if(need_reload) {
+		/* OpenGL state was lost; set up again. */
+		SetupOpenGL();
+	}
+	
 	glViewport(0, 0, g_screen->w, g_screen->h);
 
-	/*
-	 * Set state variables
-	 */
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	/* Clear any junk that's in the framebuffer. */
+	Clear();
+	Flip();
 
-//	glBegin( GL_TRIANGLES );
-//	glColor4f( 1,1,1,1 );
-//	glVertex3f( 0, 0, 0 ); 
-//	glVertex3f( 320, 0, 0 ); 
-//	glVertex3f( 320, 240, 0 );
-//	glEnd();
-
-//	SDL_GL_SwapBuffers();
+	return need_reload;
 }
 
 int RageDisplay::GetMaxTextureSize() const
@@ -199,12 +230,6 @@ void RageDisplay::Flip()
 		g_iDrawsSinceLastCheck = 0;
 		//LOG->Trace( "FPS: %d, VPF: %d, DPF: %d", m_iFPS, m_iVPF, m_iDPF );
 	}
-
-}
-
-
-void RageDisplay::GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const 
-{
 
 }
 
