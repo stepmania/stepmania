@@ -198,6 +198,14 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	SET_XY( m_MachineRank );
 	this->AddChild( &m_MachineRank );
 
+	if( SHOW_DIFFICULTY_LIST )
+	{
+		m_DifficultyList.SetName( "DifficultyList" );
+		m_DifficultyList.Load();
+		SET_XY_AND_ON_COMMAND( m_DifficultyList );
+		this->AddChild( &m_DifficultyList );
+	}
+
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -228,14 +236,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		m_sprMeterFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic meter frame p%d",p+1)) );
 		SET_XY( m_sprMeterFrame[p] );
 		this->AddChild( &m_sprMeterFrame[p] );
-
-		if( SHOW_DIFFICULTY_LIST )
-		{
-			m_DifficultyList.SetName( "DifficultyList" );
-			m_DifficultyList.Load();
-			SET_XY_AND_ON_COMMAND( m_DifficultyList );
-			this->AddChild( &m_DifficultyList );
-		}
 
 		if( SHOW_PANES )
 		{
