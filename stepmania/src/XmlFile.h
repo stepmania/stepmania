@@ -174,6 +174,7 @@ struct XNode
 	bool GetXML( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 
 	bool LoadFromFile( const CString &sFile, PARSEINFO *pi = &piDefault );
+	bool LoadFromFile( RageFileBasic &f, PARSEINFO *pi = &piDefault );
 	bool SaveToFile( const CString &sFile, DISP_OPT *opt = &optDefault );
 	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt = &optDefault );
 

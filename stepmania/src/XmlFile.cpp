@@ -1009,6 +1009,12 @@ bool XNode::LoadFromFile( const CString &sFile, PARSEINFO *pi )
 		LOG->Warn("Couldn't open %s for reading: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
 	}
+
+	return LoadFromFile( f, pi );
+}
+
+bool XNode::LoadFromFile( RageFileBasic &f, PARSEINFO *pi )
+{
 	CString s;
 	if( f.Read( s ) == -1 )
 	{
