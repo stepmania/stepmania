@@ -26,6 +26,7 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
+#include "ScreenTextEntry.h"
 
 const float RECORD_HOLD_SECONDS = 0.3f;
 
@@ -89,6 +90,8 @@ const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
 const ScreenMessage SM_BackFromCourseModeMenu		= (ScreenMessage)(SM_User+12);
 const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+13);
 const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
+const ScreenMessage SM_BackFromBPMChange			= (ScreenMessage)(SM_User+15);
+const ScreenMessage SM_BackFromStopChange			= (ScreenMessage)(SM_User+16);
 
 const CString HELP_TEXT = 
 #if !defined(XBOX)
@@ -169,6 +172,8 @@ static const MenuRow g_MainMenuItems[] =
 	{ "Player Options",				true, 0, { NULL } },
 	{ "Song Options",				true, 0, { NULL } },
 	{ "Edit Song Info",				true, 0, { NULL } },
+	{ "Edit BPM Change",			true, 0, { NULL } },
+	{ "Edit Stop",					true, 0, { NULL } },
 	{ "Add/Edit BG Change",			true, 0, { NULL } },
 	{ "Play preview music",			true, 0, { NULL } },
 	{ "Preferences",				true, 0, { NULL } },
@@ -1525,6 +1530,44 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BackFromEditSongInfo:
 		HandleEditSongInfoChoice( (EditSongInfoChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
 		break;
+	case SM_BackFromBPMChange:
+		{
+			float fBPM = atof( ScreenTextEntry::s_sLastAnswer.c_str() );
+			if ( fBPM <= 0 )
+				break;
+			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
+		}
+		break;
+	case SM_BackFromStopChange:
+		{
+			unsigned i;
+			bool sentinel = false;		//Tricky, we can't break out of this loop safely
+			for( i=0; (i<m_pSong->m_Timing.m_StopSegments.size()) && (!sentinel); i++ )
+			{
+				if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+					sentinel = true;
+			}
+
+			if ( sentinel )
+				i--;
+
+			float fStop = atof( ScreenTextEntry::s_sLastAnswer.c_str() );
+
+			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
+			{
+				if ( fStop > 0 )
+					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStop ) );
+			}
+			else	// StopSegment being modified is m_Timing.m_StopSegments[i]
+			{
+				m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds = fStop;
+				if( m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
+					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
+													  m_pSong->m_Timing.m_StopSegments.begin()+i+1);
+			}
+
+		}
+		break;
 	case SM_BackFromBGChange:
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastLine, ScreenMiniMenu::s_iLastAnswers );
 		break;
@@ -1790,10 +1833,23 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				SCREENMAN->MiniMenu( &g_EditSongInfo, SM_BackFromEditSongInfo );
 			}
 			break;
-//		case edit_bpm:
-//			break;
-//		case edit_stop:
-//			break;
+		case edit_bpm:
+			SCREENMAN->TextEntry( SM_BackFromBPMChange, "Enter new BPM value.", ssprintf( "%.4f", m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat ) ) );
+			break;
+		case edit_stop:
+			{
+				unsigned i;
+				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
+				{
+					if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+						break;
+				}
+				if ( i == m_pSong->m_Timing.m_StopSegments.size() )
+					SCREENMAN->TextEntry( SM_BackFromStopChange, "Enter new Stop value.", "0.00" );
+				else
+					SCREENMAN->TextEntry( SM_BackFromStopChange, "Enter new Stop value.", ssprintf( "%.4f", m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds ) );
+				break;
+			}
 		case edit_bg_change:
 			{
 				//
