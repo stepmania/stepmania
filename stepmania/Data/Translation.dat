@@ -652,6 +652,10 @@ ArtistTransTo: Asami Sanada + Yoshiko Kamei
 ArtistFrom: E-Paksa
 ArtistTo: 이박사
 *
+# http://www.sonicteam.com/sonicadv/snd/cd_1.html
+ArtistFrom: (Naofumi Hataya)|(Hataya Naofumi)
+ArtistTo: 幡谷尚史
+*
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
 TitleTo: 朝がまた来る
