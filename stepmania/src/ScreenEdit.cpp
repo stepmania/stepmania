@@ -298,6 +298,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	if( NOTESKIN->DoesNoteSkinExist("note") )
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
 	GAMESTATE->ResetNoteSkins();
+	GAMESTATE->StoreSelectedOptions();
 
 	m_BGAnimation.LoadFromAniDir( THEME->GetPathToB("ScreenEdit background") );
 
