@@ -160,7 +160,7 @@ void BitmapText::BuildChars()
 
 void BitmapText::DrawChars()
 {
-	for(unsigned start = 0; start < tex.size(); ++start)
+	for(unsigned start = 0; start < tex.size(); )
 	{
 		unsigned end = start;
 		while(end < tex.size() && tex[end] == tex[start])
@@ -168,7 +168,7 @@ void BitmapText::DrawChars()
 		DISPLAY->SetTexture( tex[start] );
 		DISPLAY->DrawQuads( &verts[start*4], (end-start)*4 );
 		
-		start = end+1;
+		start = end;
 	}
 }
 
