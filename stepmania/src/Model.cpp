@@ -264,7 +264,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
             m_Materials.resize( nNumMaterials );
       
 			int i;
-            char szName[MS_MAX_NAME];
+            char szName[256];
 
             for (i = 0; i < nNumMaterials && !bError; i++)
             {
