@@ -8,6 +8,8 @@
 #include "smpackageUtil.h"
 #include "EditInsallations.h"
 #include "ShowComment.h"
+#include "IniFile.h"	
+#include "UninstallOld.h"	
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -155,7 +157,93 @@ void CSMPackageInstallDlg::OnPaint()
 		CDialog::OnPaint();
 	}
 }
+#include <direct.h>
 
+bool CSMPackageInstallDlg::CheckPackages()
+{
+	CZipWordArray ar;
+	m_zip.FindMatches("smzip.ctl", ar);
+	if( ar.GetSize() != 1 )
+		return true;
+
+	CZipMemFile control;
+	m_zip.ExtractFile( ar[0], control );
+
+	char *buf = new char[control.GetLength()];
+	control.Seek( 0, CZipAbstractFile::begin );
+	control.Read(buf, control.GetLength());
+	IniFile ini;
+	ini.ReadBuf( CString(buf, control.GetLength()) );
+	delete[] buf;
+
+	int version = 0;
+	ini.GetValueI( "SMZIP", "Version", version );
+	if( version != 1 )
+		return true;
+
+	int cnt = 0;
+	ini.GetValueI( "Packages", "NumPackages", cnt );
+
+	int i;
+	CStringArray Directories;
+	for( i = 0; i < cnt; ++i )
+	{
+		CString path;
+		if( !ini.GetValue( "Packages", ssprintf("%i", i), path) )
+			continue;
+
+		/* Does this directory exist? */
+		if( !IsADirectory(path) )
+			continue;
+
+		if( !IsValidPackageDirectory(path) )
+			continue;
+		
+		Directories.push_back(path);
+	}
+
+	if( Directories.empty() )
+		return true;
+
+	{
+		UninstallOld UninstallOldDlg;
+		UninstallOldDlg.m_sPackages = join("\n", Directories);
+		int nResponse = UninstallOldDlg.DoModal();
+		if( nResponse == IDCANCEL )
+			return false;	// cancelled
+		if( nResponse == IDIGNORE )
+			return true;
+	}
+
+	char cwd_[MAX_PATH];
+	_getcwd(cwd_, MAX_PATH);
+	CString cwd(cwd_);
+	if( cwd[cwd.GetLength()-1] != '\\' )
+		cwd += "\\";
+
+	for( i = 0; i < (int) Directories.size(); ++i )
+	{
+		CString path = cwd+Directories[i];
+		char buf[1024];
+		memcpy(buf, path, path.GetLength()+1);
+		buf[path.GetLength()+1] = 0;
+
+		SHFILEOPSTRUCT op;
+		memset(&op, 0, sizeof(op));
+
+		op.wFunc = FO_DELETE;
+		op.pFrom = buf;
+		op.pTo = NULL;
+		op.fFlags = FOF_NOCONFIRMATION;
+		if( !SHFileOperation(&op) )
+			continue;
+
+		/* Something failed.  SHFileOperation displayed the error dialog, so just cancel. */
+		return false;
+	}
+
+	return true;
+}
 
 void CSMPackageInstallDlg::OnOK() 
 {
@@ -181,6 +269,10 @@ void CSMPackageInstallDlg::OnOK()
 		if( commentDlg.m_bDontShow )
 			SetPref( "DontShowComment", true );
 	}
+
+	/* Check for installed packages that should be deleted before installing. */
+	if( !CheckPackages() )
+		return;	// cancelled
 
 
 	// Unzip the SMzip package into the Stepmania installation folder

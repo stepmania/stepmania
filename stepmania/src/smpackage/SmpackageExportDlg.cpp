@@ -10,9 +10,11 @@
 #include "EnterComment.h"	
 #include "smpackageUtil.h"	
 #include "EditInsallations.h"	
+#include "IniFile.h"	
 
 #include <vector>
 #include <algorithm>
+#include <set>
 using namespace std;
 
 #ifdef _DEBUG
@@ -171,6 +173,34 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	vector<CString> asFilePaths;
 	for( i=0; i<asDirectoriesToExport.size(); i++ )
 		GetFilePaths( asDirectoriesToExport[i], asFilePaths );
+
+	{
+		IniFile ini;
+		ini.SetValueI( "SMZIP", "Version", 1 );
+
+		set<CString> Directories;
+		for( i=0; i<asFilePaths.size(); i++ )
+		{
+			const CString name = GetPackageDirectory( asFilePaths[i] );
+			if( name != "" )
+				Directories.insert( name );
+		}
+
+		set<CString>::const_iterator it;
+		int num = 0;
+		for( it = Directories.begin(); it != Directories.end(); ++it )
+			ini.SetValue( "Packages", ssprintf("%i", num++), *it );
+		ini.SetValueI( "Packages", "NumPackages", num );
+
+		CString buf;
+		ini.WriteBuf(buf);
+
+		CZipMemFile control;
+		control.Write( buf.GetBuffer(0), buf.GetLength() );
+
+		control.Seek( 0, CZipAbstractFile::begin );
+		zip.AddNewFile( control, "smzip.ctl" );
+	}
 
 	//
 	// Add files to zip

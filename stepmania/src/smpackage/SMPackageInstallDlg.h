@@ -37,6 +37,7 @@ public:
 // Implementation
 protected:
 	void RefreshInstallationList();
+	bool CheckPackages();
 
 	HICON m_hIcon;
 	CString m_sPackagePath;
