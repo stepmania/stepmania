@@ -150,8 +150,10 @@ static void GetVideoCodecDebugInfo()
 	ICINFO info = { sizeof(ICINFO) };
 	int i;
 	LOG->Info("Video codecs:");
+	VDCHECKPOINT;
 	for(i=0; ICInfo(ICTYPE_VIDEO, i, &info); ++i)
 	{
+		VDCHECKPOINT;
 		if( FourCCToString(info.fccHandler) == "ASV1" )
 		{
 			/* Broken. */
@@ -159,6 +161,7 @@ static void GetVideoCodecDebugInfo()
 			continue;
 		}
 
+		VDCHECKPOINT;
 		HIC hic;
 		hic = ICOpen(info.fccType, info.fccHandler, ICMODE_QUERY);
 		if(!hic)
@@ -168,6 +171,7 @@ static void GetVideoCodecDebugInfo()
 			continue;
 		}
 
+		VDCHECKPOINT;
 		if (ICGetInfo(hic, &info, sizeof(ICINFO)))
 			LOG->Info("    %s: %ls (%ls)",
 				FourCCToString(info.fccHandler).c_str(), info.szName, info.szDescription);
@@ -175,6 +179,7 @@ static void GetVideoCodecDebugInfo()
 			LOG->Info("ICGetInfo(%s) failed",
 				FourCCToString(info.fccHandler).c_str());
 
+		VDCHECKPOINT;
 		ICClose(hic);
 	}
 
