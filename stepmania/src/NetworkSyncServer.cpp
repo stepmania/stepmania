@@ -193,6 +193,9 @@ void GameClient::StartRequest(PacketFunctions &Packet) {
 	Player[1].combo = 0;
 	Player[1].projgrade = 0;
 
+	memset((void*)Player[0].steps, 0, sizeof(int)*8);
+	memset((void*)Player[1].steps, 0, sizeof(int)*8);
+
 	Ready = true;
 	InGame = true;
 }
@@ -223,7 +226,7 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 
 	Client[clientNum].Ready = false;
 	Client[clientNum].InGame = false;
-	for (int x = 0; (x < NUMBERCLIENTS)&&(allOver != false); x++) {
+	for (int x = 0; (x < NUMBERCLIENTS)&&(allOver); x++) {
 		if (Client[x].Used == true) {
 			if ((Client[x].InGame == true)) {
 				allOver = false;
@@ -235,6 +238,7 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 	if (allOver) {
 		numPlayers = SortStats(playersPtr);
 		Reply.ClearPacket();
+		Reply.Write1( 4+128 );
 		Reply.Write1(numPlayers);
 		for (int x = 0; x < numPlayers; x++) {
 			Reply.Write4(playersPtr[x]->score);
@@ -246,12 +250,14 @@ void StepManiaLanServer::GameOver(PacketFunctions &Packet, int clientNum) {
 			Reply.Write1(playersPtr[x]->diff);
 		}
 		for (int x = 0; x < numPlayers; x++) {
-			for (int y = 0; y < 6; y++) {
+			for (int y = 6; y >= 0; y--) {
+				//Dont send NoGoods
+				//Send in reverse
 				Reply.Write2(playersPtr[x]->steps[y]);
 			}
 		}
 		for (int x = 0; x < numPlayers; x++) {
-			Reply.Write1(playersPtr[x]->maxCombo);
+			Reply.Write2(playersPtr[x]->maxCombo);
 		}
 		SendNetPacket(clientNum, (char*)Reply.Data, Reply.Position);
 	}
