@@ -262,6 +262,7 @@ struct WhiteListEntry
 };
 static const WhiteListEntry g_AllowedEntries[] = 
   {
+#if 0
     { 0x0781, -1, "", "Cruzer" },   // SanDisk Cruzer* drives
     // Disallow the Rio Carbon.  After several mounts, usb-storage gets into a state where mounting will fail.
     // { 0x045a, -1, "", "" },  // Diamond Multimedia Systems (Rio)  
@@ -275,6 +276,8 @@ static const WhiteListEntry g_AllowedEntries[] =
     { 0x0ea0, -1, "", "Flash Disk" },   // other PNY Attache pen drives
     { 0x0ef5, -1, "", "Intelligent|Traveling" },  // PQI Intelligent Stick and Traveling Disk 
     { 0x08ec, -1, "", "M-Disk" },  // M-Systems flash drive
+#endif
+    { -1, -1, "", "" },  // allow anything
   };
 bool IsDeviceAllowed( int idVendor, int idProduct, CString sVendor, CString sProduct )
 {
@@ -399,7 +402,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			if( ReadFile( sPath + "device/../product", sBuf ) )
 			{
 				usbd.sProduct = sBuf;
-				TrimRight( usbd.sVendor );
+				TrimRight( usbd.sProduct );
 			}
 			if( ReadFile( sPath + "device/../manufacturer", sBuf ) )
 			{
@@ -407,13 +410,11 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				TrimRight( usbd.sVendor );
 			}
 
-			if( IsDeviceAllowed( usbd.idVendor, usbd.idProduct, usbd.sVendor, usbd.sProduct ) )
-			{
+			bool bAllowed = IsDeviceAllowed( usbd.idVendor, usbd.idProduct, usbd.sVendor, usbd.sProduct );
+			LOG->Trace( "iBus: %d, iLevel: %d, iPort: %d, sSerial  = %s (%s)",
+					usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str(), bAllowed? "allowed":"disallowed" );
+			if( bAllowed )
 				vDevicesOut.push_back( usbd );
-
-				LOG->Trace( "iBus: %d, iLevel: %d, iPort: %d, sSerial  = %s",
-						usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str() );
-			}
 		}
 	}
 
