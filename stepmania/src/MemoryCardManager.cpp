@@ -110,7 +110,6 @@ ThreadedMemoryCardWorker::ThreadedMemoryCardWorker():
 {
 	m_pDriver = MakeMemoryCardDriver();
 	m_MountThreadState = detect_and_mount;
-	SetHeartbeat( 0.1f );
 
 	StartThread();
 }
