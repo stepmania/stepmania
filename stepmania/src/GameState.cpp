@@ -128,6 +128,8 @@ int GameState::GetNumStagesLeft()
 {
 	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
 		return 1;
+	if(PREFSMAN->m_bEventMode)
+		return 999;
 	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
 }
 
