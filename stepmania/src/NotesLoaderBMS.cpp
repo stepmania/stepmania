@@ -877,32 +877,32 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	// Let's be absolutely sure we get a value!
 	for( unsigned i=0; i < aBMSData.size(); i++ )
 	{
-	    if( GetTagFromMap( aBMSData[i], "#title", commonSubstring ) )
-	    {
-		// This whole loop usually only runs once,
-		// but the less we assume, the better.
-		break;
-	    }
+		if( GetTagFromMap( aBMSData[i], "#title", commonSubstring ) )
+		{
+			// This whole loop usually only runs once,
+			// but the less we assume, the better.
+			break;
+		}
 	}
 
 	if( aBMSData.size() >= 2 )
 	{
-	    for(unsigned i=0; i < aBMSData.size(); i++ )
-	    {
-		CString sTitle; // Declare here for less memory thrashing
-		if( GetTagFromMap( aBMSData[i], "#title", sTitle ) )
+		for( unsigned i=0; i < aBMSData.size(); i++ )
 		{
-		    commonSubstring = FindLargestCommonSubstring( commonSubstring, sTitle );
-		    if( commonSubstring == "" )
-		    {
-			// All bets are off; the titles don't match at all.
-			// At this rate we're lucky if we even get the title right.
-			LOG->Warn("BMS files in %s have inconsistent titles", sDir.c_str() );
-			break;
-		    }
+			CString sTitle; // Declare here for less memory thrashing
+			if( GetTagFromMap( aBMSData[i], "#title", sTitle ) )
+			{
+				commonSubstring = FindLargestCommonSubstring( commonSubstring, sTitle );
+				if( commonSubstring == "" )
+				{
+					// All bets are off; the titles don't match at all.
+					// At this rate we're lucky if we even get the title right.
+					LOG->Warn("BMS files in %s have inconsistent titles", sDir.c_str() );
+					break;
+				}
+			}
+			// else no comparison, this file is missing a #title tag.
 		}
-		// else no comparison, this file is missing a #title tag.
-	    }
 	}
 	// Yay, we have our substring. (something like "LION SUKI")
 	
@@ -919,52 +919,51 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	// figure out where each goes.
 	for( unsigned i=0; i<aBMSData.size(); i++ )
 	{
-	    Steps *pSteps = apSteps[i];
-	    pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
-	    CString sTag;
-	    if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.GetLength() != commonSubstrLen )
-	    {
-		int tagSubstrLen = sTag.GetLength() - commonSubstrLen;
-		
-		sTag = sTag.substr( commonSubstrLen, sTag.GetLength() - commonSubstrLen );
-		sTag.ToLower();
-		
-		// XXX: Someone find me some DDR BMS examples!
-		
-		// XXX: We should do this with filenames too, I have plenty of examples.
-		//      however, filenames will be trickier, as stuffs at the beginning AND
-		//      end change per-file, so we'll need a fancier FindLargestCommonSubstring()
-		
-		// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
-		// XXX: This matches (double), but I haven't seen it used. Again, MORE EXAMPLES NEEDED
-		if( sTag.Find("l") != sTag.npos )
-		    pSteps->SetDifficulty( DIFFICULTY_EASY );
-		// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
-		else
-		    if( sTag.Find("a") != sTag.npos )
-			pSteps->SetDifficulty( DIFFICULTY_HARD );
-		// Other tags I've seen here include (5KEYS) (10KEYS) (7keys) (14keys) (dp) [MIX] [14] (14 Keys Mix)
-		// XXX: I'm sure [MIX] means something... anyone know?
-	    }
-	}
-
-	if ( commonSubstring == "" )
-	{
-	    // As said before, all bets are off.
-	    // From here on in, it's nothing but guesswork.
-
-	    /* Try to figure out the difficulty of each file. */
-	    for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
-	    {
-		// XXX: Is this really effective if Common Substring parsing failed?
 		Steps *pSteps = apSteps[i];
 		pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
 		CString sTag;
-		if( GetTagFromMap( aBMSData[i], "#title", sTag ) )
-			SearchForDifficulty( sTag, pSteps );
-		if( GetTagFromMap( aBMSData[i], "#genre", sTag ) )
-			SearchForDifficulty( sTag, pSteps );
-	    }
+		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.GetLength() != commonSubstrLen )
+		{
+			int tagSubstrLen = sTag.GetLength() - commonSubstrLen;
+
+			sTag = sTag.substr( commonSubstrLen, sTag.GetLength() - commonSubstrLen );
+			sTag.ToLower();
+
+			// XXX: Someone find me some DDR BMS examples!
+
+			// XXX: We should do this with filenames too, I have plenty of examples.
+			//      however, filenames will be trickier, as stuffs at the beginning AND
+			//      end change per-file, so we'll need a fancier FindLargestCommonSubstring()
+
+			// Any of [L7] [L14] (LIGHT7) (LIGHT14) (LIGHT) [L] <LIGHT7> <L7>... you get the idea.
+			// XXX: This matches (double), but I haven't seen it used. Again, MORE EXAMPLES NEEDED
+			if( sTag.Find("l") != sTag.npos )
+				pSteps->SetDifficulty( DIFFICULTY_EASY );
+			// [A] <A> (A) [ANOTHER] <ANOTHER> (ANOTHER) (ANOTHER7) Another (DP ANOTHER) (Another) -ANOTHER- [A7] [A14] etc etc etc
+			else if( sTag.Find("a") != sTag.npos )
+				pSteps->SetDifficulty( DIFFICULTY_HARD );
+			// Other tags I've seen here include (5KEYS) (10KEYS) (7keys) (14keys) (dp) [MIX] [14] (14 Keys Mix)
+			// XXX: I'm sure [MIX] means something... anyone know?
+		}
+	}
+
+	if( commonSubstring == "" )
+	{
+		// As said before, all bets are off.
+		// From here on in, it's nothing but guesswork.
+
+		/* Try to figure out the difficulty of each file. */
+		for( unsigned i=0; i<arrayBMSFileNames.size(); i++ )
+		{
+			// XXX: Is this really effective if Common Substring parsing failed?
+			Steps *pSteps = apSteps[i];
+			pSteps->SetDifficulty( DIFFICULTY_MEDIUM );
+			CString sTag;
+			if( GetTagFromMap( aBMSData[i], "#title", sTag ) )
+				SearchForDifficulty( sTag, pSteps );
+			if( GetTagFromMap( aBMSData[i], "#genre", sTag ) )
+				SearchForDifficulty( sTag, pSteps );
+		}
 	}
 
 	/* Prefer to read global tags from a DIFFICULTY_MEDIUM file.  These tend to
@@ -972,16 +971,16 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	 * title. */
 	int iMainDataIndex = 0;
 	for( unsigned i=1; i<apSteps.size(); i++ )
-	    if( apSteps[i]->GetDifficulty() == DIFFICULTY_MEDIUM )
-		iMainDataIndex = i;
+		if( apSteps[i]->GetDifficulty() == DIFFICULTY_MEDIUM )
+			iMainDataIndex = i;
 
 	ReadGlobalTags( aBMSData[iMainDataIndex], out );
 	    
 	// Override what that global tag said about the title if we have a good substring.
 	// Prevents clobbering and catches "D2R (7keys)" / "D2R (Another) (7keys)"
 	// Also catches "D2R (7keys)" / "D2R (14keys)"
-	if (commonSubstring != "" )
-	    GetMainAndSubTitlesFromFullTitle( commonSubstring, out.m_sMainTitle, out.m_sSubTitle );
+	if( commonSubstring != "" )
+		GetMainAndSubTitlesFromFullTitle( commonSubstring, out.m_sMainTitle, out.m_sSubTitle );
 
 	// Now that we've parsed the keysound data, load the Steps from the rest 
 	// of the .bms files.
