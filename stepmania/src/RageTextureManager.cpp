@@ -16,7 +16,9 @@
 //-----------------------------------------------------------------------------
 #include "RageTextureManager.h"
 #include "RageBitmapTexture.h"
-#include "RageMovieTexture.h"
+#if !defined(LINUX)
+# include "RageMovieTexture.h"
+#endif
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
