@@ -40,7 +40,7 @@ namespace X11Helper
 	// Destroy the connection, if appropriate; otherwise do some important
 	// internal session-tracking stuff (so you should call it anyway).
 	void Stop();
-}
+};
 
 #endif
 
