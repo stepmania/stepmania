@@ -69,6 +69,9 @@ BeginnerHelper::BeginnerHelper()
 
 BeginnerHelper::~BeginnerHelper()
 {
+	FOREACH_PlayerNumber( pn )
+		delete m_pDancer[pn];
+	delete m_pDancePad;
 }
 
 void BeginnerHelper::ShowStepCircle( PlayerNumber pn, int CSTEP )
