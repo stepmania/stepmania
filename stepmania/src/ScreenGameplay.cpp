@@ -1065,6 +1065,12 @@ void ScreenGameplay::LoadNextSong()
 	m_bZeroDeltaOnNextUpdate = true;
 
 
+	// (Re)Calculate the song position meter
+	m_fSongPosMeterOffset = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
+                        GAMESTATE->m_pCurSong->m_fFirstBeat );
+	m_fSongPosMeterEnd = ( GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
+                        GAMESTATE->m_pCurSong->m_fLastBeat ) - m_fSongPosMeterOffset );
+
 	//
 	// Load cabinet lights data
 	//
@@ -1592,19 +1598,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update song position meter
 	//
-	// Because most songs have a leadout, consider the last beat to be the
-	// end of the song as far as the meter is concerned. So, get the time of
-	// the last beat of the song.
-	//
-	// XXX My hunch tells me doing this every update will slow things down,
-	//     but at least it's somewhat accurate. We probably should do this
-	//     when the meter inits, shove it in a variable somewhere, and go by
-	//     that. At least it's better than blind fudging...
-	float fMusicLengthSeconds =
-		    GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
-			GAMESTATE->m_pCurSong->m_fLastBeat );
+	// IMHHO, The song position bar is best used to represent where in the
+	// step sequence the players are. It looks "better" that way, showing a
+	// song "depleting" as the players wear on. So, it starts "ticking" at
+	// the first arrow and winds down to the very end.
+	float fPercentPositionSong = ( GAMESTATE->m_fMusicSeconds - m_fSongPosMeterOffset ) /
+				     m_fSongPosMeterEnd;
 
-	float fPercentPositionSong = GAMESTATE->m_fMusicSeconds / fMusicLengthSeconds;
 	CLAMP( fPercentPositionSong, 0, 1 );
 	m_meterSongPosition.SetPercent( fPercentPositionSong );
 
