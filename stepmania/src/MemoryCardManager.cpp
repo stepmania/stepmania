@@ -249,7 +249,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 			return false;
 
 		struct stat st;
-		if( stat(ent->d_name, &st) == -1 )
+		if( fstat(g_fds, &st) == -1 )
 		{
 			LOG->Warn( "stat failed." );
 			return false;
@@ -266,6 +266,7 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 		if( UsbChanged() )
 		{
 		  SCREENMAN->SystemMessage( "USB changed" );
+		  return;
 			vector<UsbStorageDevice> vOld = g_StorageDevices;	// make a copy
 			UpdateAttachedUsbStorageDevices();
 			vector<UsbStorageDevice> &vNew = g_StorageDevices;
