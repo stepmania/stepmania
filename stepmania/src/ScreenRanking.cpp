@@ -256,7 +256,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 				} else {
 					m_textPoints[l].SetText( "" );
 					m_textTime[l].SetText( "" );
-					m_textScores[l].SetText( ssprintf("%9d",iScore) );
+					m_textScores[l].SetText( ssprintf("%09d",iScore) );
 				}
 				m_textNames[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				m_textPoints[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
