@@ -257,8 +257,9 @@ RageDisplay *CreateDisplay() { return CreateDisplay_OGL(); }
 static bool CardRequiresD3D()
 {
 	vector<Regex> Cards;
-	Cards.push_back(Regex(".*Voodoo.*"));
-//	Cards.push_back(Regex(".*nVidia.*")); // testing
+	Cards.push_back(Regex("Voodoo"));
+	Cards.push_back(Regex("3dfx"));
+//	Cards.push_back(Regex("nVidia")); // testing
 
 	const CString desc = GetPrimaryVideoDriverName();
 	for(unsigned i = 0; i < Cards.size(); ++i)
