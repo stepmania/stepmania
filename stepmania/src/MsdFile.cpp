@@ -46,10 +46,13 @@ void MsdFile::AddParam( char *buf, int len )
 void MsdFile::AddValue() /* (no extra charge) */
 {
 	values.push_back(value_t());
+	values.back().params.reserve( 32 );
 }
 
 void MsdFile::ReadBuf( char *buf, int len )
 {
+	values.reserve( 64 );
+
 	int value_start = -1;
 
 	bool ReadingValue=false;
