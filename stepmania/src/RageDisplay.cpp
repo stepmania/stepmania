@@ -134,8 +134,8 @@ void RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, R
 	if(!g_screen)
 		throw RageException("Failed to open screen!");
 
-	float fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
-	g_glVersion = int(roundf(fGLVersion) * 10);
+	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
+	g_glVersion = int(roundf(fGLVersion * 10));
 	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
 	GetGLExtensions(g_glExts);
 	if(g_glExts.find("GL_EXT_texture_env_combine") != g_glExts.end())
