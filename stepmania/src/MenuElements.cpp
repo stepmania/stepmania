@@ -40,7 +40,7 @@ MenuElements::MenuElements()
 {
 }
 
-void MenuElements::Load( CString sClassName, bool bEnableTimer )
+void MenuElements::Load( CString sClassName )
 {
 	LOG->Trace( "MenuElements::MenuElements()" );
 
@@ -64,16 +64,11 @@ void MenuElements::Load( CString sClassName, bool bEnableTimer )
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
-	/* XXX: If bEnableTimer is false, it means the timer is shown but disabled.
-	 * If TIMER_SECONDS is -1, then the timer isn't shown at all.  bTimerEnabled == 0
-	 * is the same as !bTimerEnabled.  Phase out bTimerEnabled and just set no timer
-	 * in the theme. */
-	m_bTimerEnabled = !bEnableTimer || (TIMER_SECONDS != -1);
-
+	m_bTimerEnabled = (TIMER_SECONDS != -1);
 	if( m_bTimerEnabled )
 	{
 		m_MenuTimer.Command( TIMER_ON_COMMAND );
-		if( bEnableTimer && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
+		if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
 			m_MenuTimer.SetSeconds( TIMER_SECONDS );
 		else
 			m_MenuTimer.Disable();
