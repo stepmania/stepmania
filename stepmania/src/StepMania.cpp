@@ -185,7 +185,7 @@ void ExitGame()
 	g_bQuitting = true;
 }
 
-void ResetGame()
+void ResetGame( bool ReturnToFirstScreen )
 {
 	GAMESTATE->Reset();
 	PREFSMAN->ReadGamePrefsFromDisk();
@@ -217,11 +217,13 @@ void ResetGame()
 	}
 	PREFSMAN->SaveGamePrefsToDisk();
 
-	SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
 	PREFSMAN->m_bFirstRun = false;
 
 	if( PREFSMAN->m_bAutoMapJoysticks )
 		INPUTMAPPER->AutoMapJoysticksForCurrentGame();
+
+	if( ReturnToFirstScreen )
+		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
 }
 
 static void GameLoop();

@@ -301,6 +301,10 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			if( GAMEMAN->IsGameEnabled(GAMESTATE->m_CurGame) )
 				break;	// found the first enabled game.  Stop searching.
 		}
+
+		/* Reload the theme if it's changed, but don't back to the initial screen. */
+		ResetGame( false );
+
 		SCREENMAN->SystemMessage( ssprintf("Game: %s",GAMESTATE->GetCurrentGameDef()->m_szName) );
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 	}
