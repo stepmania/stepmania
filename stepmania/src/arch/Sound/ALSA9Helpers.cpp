@@ -119,13 +119,12 @@ bool Alsa9Buf::SetSWParams()
 	snd_pcm_uframes_t boundary = 0;
 	err = dsnd_pcm_sw_params_get_boundary( swparams, &boundary );
 	ALSA_ASSERT("dsnd_pcm_sw_params_get_boundary");
-	if( err == 0 )
-	{
-		err = dsnd_pcm_sw_params_set_stop_threshold( pcm, swparams, boundary );
-		ALSA_ASSERT("dsnd_pcm_sw_params_set_stop_threshold");
-		err = dsnd_pcm_sw_params(pcm, swparams);
-		ALSA_ASSERT("dsnd_pcm_sw_params");
-	}
+
+	err = dsnd_pcm_sw_params_set_stop_threshold( pcm, swparams, boundary );
+	ALSA_ASSERT("dsnd_pcm_sw_params_set_stop_threshold");
+
+	err = dsnd_pcm_sw_params(pcm, swparams);
+	ALSA_ASSERT("dsnd_pcm_sw_params");
 
 	err = dsnd_pcm_prepare(pcm);
 	ALSA_ASSERT("dsnd_pcm_prepare");
