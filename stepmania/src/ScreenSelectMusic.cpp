@@ -108,13 +108,13 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
 	m_sprBannerMask.Load( THEME->GetPathToG("ScreenSelectMusic banner mask") );
 	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
-	m_sprBannerMask.SetUseZBuffer( true );	// do draw to the zbuffer
+	m_sprBannerMask.SetZWrite( true );	// do draw to the zbuffer
 	SET_XY( m_sprBannerMask );
 	this->AddChild( &m_sprBannerMask );
 
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
-	m_Banner.SetUseZBuffer( true );	// do have to pass the z test
+	m_Banner.SetZTest( true );	// do have to pass the z test
 	m_Banner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
