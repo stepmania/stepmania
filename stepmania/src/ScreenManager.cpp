@@ -53,6 +53,7 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 #define CREDITS_CREDITS			THEME->GetMetric ("ScreenSystemLayer","CreditsCredits")
 #define CREDITS_NOT_PRESENT		THEME->GetMetric ("ScreenSystemLayer","CreditsNotPresent")
 #define CREDITS_LOAD_FAILED		THEME->GetMetric ("ScreenSystemLayer","CreditsLoadFailed")
+#define CREDITS_LOADED_FROM_LAST_GOOD_APPEND		THEME->GetMetric ("ScreenSystemLayer","CreditsLoadedFromLastGoodAppend")
 #define CREDITS_JOIN_ONLY		THEME->GetMetricB("ScreenSystemLayer","CreditsJoinOnly")
 
 const int NUM_SKIPS_TO_SHOW = 5;
@@ -196,7 +197,13 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 			switch( mcs )
 			{
 			case MEMORY_CARD_STATE_NO_CARD:
-				if( pProfile )	// this is a local machine profile
+				// this is a local machine profile
+				if( PROFILEMAN->LastLoadWasFromLastGood(p) && pProfile )
+					sCredits = pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+				else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(p) )
+					sCredits = CREDITS_LOAD_FAILED;
+				// Prefer the name of the profile over the name of the card.
+				else if( pProfile )
 					sCredits = pProfile->GetDisplayName();
 				else if( GAMESTATE->PlayersCanJoin() )
 					sCredits = CREDITS_INSERT_CARD;
@@ -210,7 +217,9 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 				sCredits = CREDITS_CARD_TOO_LATE;
 				break;
 			case MEMORY_CARD_STATE_READY:
-				if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(p) )
+				if( PROFILEMAN->LastLoadWasFromLastGood(p) && pProfile )
+					sCredits = pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+				else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(p) )
 					sCredits = CREDITS_LOAD_FAILED;
 				// Prefer the name of the profile over the name of the card.
 				else if( pProfile )

@@ -28,7 +28,7 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define NEW_MEM_CARD_NAME		""
 #define USER_PROFILES_DIR		"Data/LocalProfiles/"
 #define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
-
+const CString LAST_GOOD_DIR	=	"LastGood/";
 
 ProfileManager::ProfileManager()
 {
@@ -44,6 +44,7 @@ void ProfileManager::Init()
 	{
 		m_bWasLoadedFromMemoryCard[p] = false;
 		m_bLastLoadWasTamperedOrCorrupt[p] = false;
+		m_bLastLoadWasFromLastGood[p] = false;
 	}
 
 	LoadMachineProfile();
@@ -77,44 +78,37 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	ASSERT( !sProfileDir.empty() );
 	ASSERT( sProfileDir.Right(1) == "/" );
 
-	if( bIsMemCard )
-		MEMCARDMAN->PauseMountingThread();
 
 	m_sProfileDir[pn] = sProfileDir;
 	m_bWasLoadedFromMemoryCard[pn] = bIsMemCard;
-	bool bSuccess = m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	m_bLastLoadWasFromLastGood[pn] = false;
 
-	m_bLastLoadWasTamperedOrCorrupt[pn] = !bSuccess;
+	// Try to load the original, non-backup data.
+	Profile::LoadResult lr = m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	
+	CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_DIR;
 
-	// Save a backup of the profile now that we've loaded it and know it's good.
-	// This should be reasonably fast because we're only saving Stats.xml and 
-	// signatures - not all of the files in the Profile.
-	if( bSuccess )
+	// Save a backup of the non-backup profile now that we've loaded it and know 
+	// it's good. This should be reasonably fast because we're only saving Stats.xml 
+	// and signatures - not all of the files in the Profile.
+	if( lr == Profile::success )
 	{
-		CString sBackupDir = m_sProfileDir[pn] + "LastGood/";
 		Profile::BackupToDir( m_sProfileDir[pn], sBackupDir );
 	}
 
-	if( bIsMemCard )
-		MEMCARDMAN->UnPauseMountingThread();
+	m_bLastLoadWasTamperedOrCorrupt[pn] = lr == Profile::failed_tampered;
 
-	LOG->Trace( "Done loading profile." );
+	// Try to load from the backup if the original data fails to load
+	//
+	if( lr == Profile::failed_tampered )
+	{
+		lr = m_Profile[pn].LoadAllFromDir( sBackupDir, PREFSMAN->m_bSignProfileData );
+		m_bLastLoadWasFromLastGood[pn] = lr == Profile::success;
+	}
 
-	return true;
-}
+	LOG->Trace( "Done loading profile - result %d", lr );
 
-bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
-{
-	bool bResult;
-
-	Profile pro;
-	pro.m_sDisplayName = sName;
-	bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
-	if( !bResult )
-		return false;
-
-	FlushDirCache();
-	return true;	
+	return lr == Profile::success;
 }
 
 bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
@@ -138,43 +132,25 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	// mount slot
 	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
 	{
+
 		CString sDir = MEM_CARD_MOUNT_POINT[pn];
 
 		// tack on a subdirectory so that we don't write everything to the root
 		sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
 		sDir += '/'; 
 
-		bool bResult;
-		bResult = LoadProfile( pn, sDir, true );
-		if( bResult )
-			return true;
-	
-		CreateMemoryCardProfile( pn );
-		
-		bResult = LoadProfile( pn, sDir, true );
-		return bResult;
+		MEMCARDMAN->PauseMountingThread();
+		bool bSuccess;
+		bSuccess = LoadProfile( pn, sDir, true );
+
+		MEMCARDMAN->UnPauseMountingThread();
+
+		return true; // If a card is inserted, we want to use the memory card to save - even if the Profile load failed.
 	}
 
 	return false;
 }
 			
-bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
-{
-//	CString sDir = MEM_CARD_DIR[pn];
-
-	ASSERT( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY );
-
-	CString sDir = MEM_CARD_MOUNT_POINT[pn];
-	
-	DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
-
-	// tack on a subdirectory so that we don't write everything to the root
-	sDir += PREFSMAN->m_sMemoryCardProfileSubdir;
-	sDir += '/'; 
-
-	return CreateProfile( sDir, NEW_MEM_CARD_NAME );
-}
-
 bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn )
 {
 	if( LoadProfileFromMemoryCard(pn) )
@@ -192,7 +168,7 @@ void ProfileManager::SaveAllProfiles() const
 
 	FOREACH_HumanPlayer( pn )
 	{
-		if( !this->IsUsingProfile(pn) )
+		if( !IsUsingProfile(pn) )
 			continue;
 
 		this->SaveProfile( pn );
@@ -220,6 +196,7 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 	m_sProfileDir[pn] = "";
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasTamperedOrCorrupt[pn] = false;
+	m_bLastLoadWasFromLastGood[pn] = false;
 	m_Profile[pn].InitAll();
 }
 
@@ -261,7 +238,7 @@ bool ProfileManager::CreateLocalProfile( CString sName )
 		return false;
 	sProfileDir += "/";
 
-	return CreateProfile( sProfileDir, sName );
+	return Profile::CreateNewProfile( sProfileDir, sName );
 }
 
 bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
@@ -271,13 +248,14 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
 
 	Profile pro;
-	bool bResult;
-	bResult = pro.LoadAllFromDir( sProfileDir, PREFSMAN->m_bSignProfileData );
-	if( !bResult )
+	Profile::LoadResult lr;
+	lr = pro.LoadAllFromDir( sProfileDir, PREFSMAN->m_bSignProfileData );
+	if( lr != Profile::success )
 		return false;
 	pro.m_sDisplayName = sNewName;
-	bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
-	if( !bResult )
+	bool bSuccess;
+	bSuccess = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
+	if( !bSuccess )
 		return false;
 
 	return true;
@@ -314,14 +292,12 @@ void ProfileManager::SaveMachineProfile() const
 	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
 }
 
-
-
-
 void ProfileManager::LoadMachineProfile()
 {
-	if( !m_MachineProfile.LoadAllFromDir(MACHINE_PROFILE_DIR, false) )
+	Profile::LoadResult lr = m_MachineProfile.LoadAllFromDir(MACHINE_PROFILE_DIR, false);
+	if( lr == Profile::failed_no_profile )
 	{
-		CreateProfile(MACHINE_PROFILE_DIR, "Machine");
+		Profile::CreateNewProfile(MACHINE_PROFILE_DIR, "Machine");
 		m_MachineProfile.LoadAllFromDir( MACHINE_PROFILE_DIR, false );
 	}
 
@@ -337,6 +313,11 @@ bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const
 bool ProfileManager::LastLoadWasTamperedOrCorrupt( PlayerNumber pn ) const
 {
 	return GetProfile(pn) && m_bLastLoadWasTamperedOrCorrupt[pn];
+}
+
+bool ProfileManager::LastLoadWasFromLastGood( PlayerNumber pn ) const
+{
+	return GetProfile(pn) && m_bLastLoadWasFromLastGood[pn];
 }
 
 CString ProfileManager::GetProfileDir( ProfileSlot slot ) const

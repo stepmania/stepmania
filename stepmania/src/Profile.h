@@ -260,7 +260,8 @@ public:
 	//
 	// Loading and saving
 	//
-	bool LoadAllFromDir( CString sDir, bool bRequireSignature );	// return false on a tamper or corruption error
+	enum LoadResult { success, failed_no_profile, failed_tampered };
+	LoadResult LoadAllFromDir( CString sDir, bool bRequireSignature );
 	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
 	void LoadEditableDataFromDir( CString sDir );
@@ -289,6 +290,7 @@ public:
 	void SaveStatsWebPageToDir( CString sDir ) const;
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
 
+	static bool CreateNewProfile( CString sProfileDir, CString sName );
 	static void BackupToDir( CString sFromDir, CString sToDir );
 
 private:

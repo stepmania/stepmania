@@ -563,11 +563,8 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 	XNode* X = xml.GetChild(#X); \
 	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
-int g_iOnceCtr;
-#define FOR_ONCE	for(g_iOnceCtr=0;g_iOnceCtr<1;g_iOnceCtr++)
 
-
-bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
+Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 {
 	CHECKPOINT;
 
@@ -581,7 +578,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 	// Check for the existance of stats.xml
 	CString fn = sDir + STATS_XML;
 	if( !IsAFile(fn) )
-		return true;	// This is a common case and not a load error, so return success.
+		return failed_no_profile;
 
 	//
 	// Don't unreasonably large stats.xml files.
@@ -592,7 +589,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
 		{
 			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-			return false;	// error
+			return failed_tampered;
 		}
 	}
 
@@ -606,7 +603,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
 		{
 			LOG->Warn( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
-			return false;	// error
+			return failed_tampered;
 		}
 		LOG->Trace( "Done." );
 
@@ -615,7 +612,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
 		{
 			LOG->Warn( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
-			return false;	// error
+			return failed_tampered;
 		}
 		LOG->Trace( "Done." );
 	}
@@ -625,19 +622,19 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 	if( !xml.LoadFromFile( fn ) )
 	{
 		LOG->Warn( "Couldn't open file '%s' for reading.", fn.c_str() );
-		return false;	// error
+		return failed_tampered;
 	}
 	LOG->Trace( "Done." );
 
 	/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
 	 * warn about it. */
 	if( xml.name == "html" )
-		return true;	// success
+		return failed_no_profile;
 
 	if( xml.name != "Stats" )
 	{
 		WARN_M( xml.name );
-		return false;	// error
+		return failed_tampered;
 	}
 
 	LOAD_NODE( GeneralData );
@@ -649,7 +646,7 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 	LOAD_NODE( RecentSongScores );
 	LOAD_NODE( RecentCourseScores );
 		
-	return true;	// success
+	return success;
 }
 
 bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
@@ -1578,9 +1575,19 @@ XNode* Profile::SaveCoinDataCreateNode() const
 
 void Profile::BackupToDir( CString sFromDir, CString sToDir )
 {
+	FileCopy( sFromDir+EDITABLE_INI,				sToDir+EDITABLE_INI );
 	FileCopy( sFromDir+STATS_XML,					sToDir+STATS_XML );
 	FileCopy( sFromDir+STATS_XML+SIGNATURE_APPEND,	sToDir+STATS_XML+SIGNATURE_APPEND );
 	FileCopy( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
+}
+
+bool Profile::CreateNewProfile( CString sProfileDir, CString sName )
+{
+	Profile pro;
+	pro.m_sDisplayName = sName;
+	bool bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
+	FlushDirCache();
+	return bResult;
 }
 
 /*
