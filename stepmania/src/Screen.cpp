@@ -168,12 +168,12 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 		return false;
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_F3 )
 	{
-		PREFSMAN->m_iCoinMode++;
-		wrap( PREFSMAN->m_iCoinMode, NUM_COIN_MODES );
+		((int&)PREFSMAN->m_CoinMode)++;
+		wrap( (int&)PREFSMAN->m_CoinMode, NUM_COIN_MODES );
 
 		/* Show the real coin mode, not GetCoinMode(), or F3 will go "home, free, free"
 		 * in event mode.  XXX: move GetCoinMode to GameState to keep PrefsManager dumb? */
-		CString sMessage = CoinModeToString( (CoinMode)PREFSMAN->m_iCoinMode );
+		CString sMessage = CoinModeToString( PREFSMAN->m_CoinMode );
 		sMessage.MakeUpper();
 		sMessage = "Coin Mode: " + sMessage;
 		SCREENMAN->RefreshCreditsMessages();
@@ -200,7 +200,7 @@ bool Screen::JoinInput( const DeviceInput& DeviceI, const InputEventType type, c
 			iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
 		// If joint premium don't take away a credit for the 2nd join.
-		if( PREFSMAN->GetPremium() == PrefsManager::JOINT_PREMIUM  &&  
+		if( PREFSMAN->GetPremium() == PREMIUM_JOINT  &&  
 			GAMESTATE->GetNumSidesJoined() == 1 )
 			iCoinsToCharge = 0;
 

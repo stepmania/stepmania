@@ -478,14 +478,11 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 	{
 		const int iOldChoice = m_iChoice[p];
 
-		if( !bMoveAll && p!=pn )
-			continue;	// skip
-
 		/* Set the new m_iChoice even for disabled players, since a player might
 		 * join on a SHARED_PREVIEW_AND_CURSOR after the cursor has been moved. */
 		m_iChoice[p] = iNewChoice;
 
-		if( !GAMESTATE->IsHumanPlayer(p) )
+		if( p!=pn )
 			continue;	// skip
 
 		if( SHARED_PREVIEW_AND_CURSOR )

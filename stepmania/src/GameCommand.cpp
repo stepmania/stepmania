@@ -56,6 +56,7 @@ void GameCommand::Init()
 	m_bInsertCredit = false;
 	m_bResetToFactoryDefaults = false;
 	m_bStopMusic = false;
+	m_bApplyDefaultOptions = false;
 }
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
@@ -289,6 +290,10 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		{
 			m_bStopMusic = true;
 		}
+		else if( sName == "applydefaultoptions" )
+		{
+			m_bApplyDefaultOptions = true;
+		}
 
 		else
 		{
@@ -323,7 +328,7 @@ int GetNumCreditsPaid()
 	int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
 
 	// players other than the first joined for free
-	if( PREFSMAN->GetPremium() == PrefsManager::JOINT_PREMIUM )
+	if( PREFSMAN->GetPremium() == PREMIUM_JOINT )
 		iNumCreditsPaid = min( iNumCreditsPaid, 1 );
 
 	return iNumCreditsPaid;
@@ -332,7 +337,7 @@ int GetNumCreditsPaid()
 
 int GetCreditsRequiredToPlayStyle( const Style *style )
 {
-	if( PREFSMAN->GetPremium() == PrefsManager::JOINT_PREMIUM )
+	if( PREFSMAN->GetPremium() == PREMIUM_JOINT )
 		return 1;
 
 	switch( style->m_StyleType )
@@ -342,7 +347,7 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 	case TWO_PLAYERS_TWO_SIDES:
 		return 2;
 	case ONE_PLAYER_TWO_SIDES:
-		return (PREFSMAN->GetPremium() == PrefsManager::DOUBLES_PREMIUM) ? 1 : 2;
+		return (PREFSMAN->GetPremium() == PREMIUM_DOUBLES) ? 1 : 2;
 	default:
 		ASSERT(0);
 		return 1;
@@ -509,7 +514,7 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		// players joined.  If enough players aren't joined, then 
 		// we need to subtract credits for the sides that will be
 		// joined as a result of applying this option.
-		if( PREFSMAN->m_iCoinMode == COIN_PAY )
+		if( PREFSMAN->m_CoinMode == COIN_PAY )
 		{
 			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
 			int iNumCreditsPaid = GetNumCreditsPaid();
@@ -571,8 +576,6 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		UNLOCKMAN->UnlockCode( m_iUnlockIndex );
 	if( m_sSoundPath != "" )
 		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
-	if( m_bStopMusic )
-		SOUND->StopMusic();
 	FOREACH_CONST( CString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
 	if( m_bDeletePreparedScreens )
@@ -672,6 +675,16 @@ void GameCommand::Apply( PlayerNumber pn ) const
 	{
 		PREFSMAN->ResetToFactoryDefaults();
 		SCREENMAN->SystemMessage( "All options reset to factory defaults." );
+	}
+	if( m_bStopMusic )
+	{
+		SOUND->StopMusic();
+	}
+	if( m_bApplyDefaultOptions )
+	{
+		FOREACH_PlayerNumber( p )
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+		GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 	}
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 

@@ -4,6 +4,7 @@
 #define PREFSMANAGER_H
 
 #include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
 #include "Grade.h"	// for NUM_GRADE_TIERS
 #include "Preference.h"
 class IniFile;
@@ -145,11 +146,10 @@ public:
 
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them.
-	enum Premium { NO_PREMIUM, DOUBLES_PREMIUM, JOINT_PREMIUM };
-	int				m_iCoinMode;
+	CoinMode		m_CoinMode;
 	Premium			m_Premium;
-	int GetCoinMode();
-	Premium	GetPremium();
+	CoinMode	GetCoinMode();
+	Premium		GetPremium();
 
 	bool			m_bDelayedCreditsReconcile;
 	bool			m_bPickExtraStage;

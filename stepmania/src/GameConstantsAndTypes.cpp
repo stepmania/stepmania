@@ -63,6 +63,14 @@ static const CString CoinModeNames[NUM_COIN_MODES] = {
 XToString( CoinMode );
 
 
+static const CString PremiumNames[NUM_PREMIUMS] = {
+	"none",
+	"doubles",
+	"joint",
+};
+XToString( Premium );
+
+
 static const CString SortOrderNames[NUM_SORT_ORDERS] = {
 	"Preferred",
 	"Group",

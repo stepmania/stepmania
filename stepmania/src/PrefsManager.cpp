@@ -211,9 +211,9 @@ void PrefsManager::Init()
 	m_iMusicWheelSwitchSpeed = 10;
 	m_bEasterEggs = true;
 	m_iMarvelousTiming = 2;
-	m_iCoinMode = COIN_HOME;
+	m_CoinMode = COIN_HOME;
 	m_iCoinsPerCredit = 1;
-	m_Premium = NO_PREMIUM;
+	m_Premium = PREMIUM_NONE;
 	m_bDelayedCreditsReconcile = false;
 	m_iBoostAppPriority = -1;
 	m_bSmoothLines = false;
@@ -461,7 +461,7 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
 	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
-	ini.GetValue( "Options", "CoinMode",						m_iCoinMode );
+	ini.GetValue( "Options", "CoinMode",						(int&)m_CoinMode );
 	ini.GetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
 	m_iCoinsPerCredit = max(m_iCoinsPerCredit, 1);
 	ini.GetValue( "Options", "Premium",							(int&)m_Premium );
@@ -695,7 +695,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "EasterEggs",						m_bEasterEggs );
 	ini.SetValue( "Options", "MarvelousTiming",					m_iMarvelousTiming );
 	ini.SetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
-	ini.SetValue( "Options", "CoinMode",						m_iCoinMode );
+	ini.SetValue( "Options", "CoinMode",						m_CoinMode );
 	ini.SetValue( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
 	ini.SetValue( "Options", "Premium",							m_Premium );
 	ini.SetValue( "Options", "DelayedCreditsReconcile",			m_bDelayedCreditsReconcile );
@@ -831,21 +831,27 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.WriteFile( STEPMANIA_INI_PATH );
 }
 
-int PrefsManager::GetCoinMode()
+CoinMode PrefsManager::GetCoinMode()
 {
-	if( m_bEventMode && m_iCoinMode == COIN_PAY )
+	if( m_bEventMode && m_CoinMode == COIN_PAY )
 		return COIN_FREE; 
 	else 
-		return m_iCoinMode; 
+		return m_CoinMode; 
 }
 
-PrefsManager::Premium	PrefsManager::GetPremium() 
+Premium	PrefsManager::GetPremium() 
 { 
 	if(m_bEventMode) 
-		return NO_PREMIUM; 
+		return PREMIUM_NONE; 
 	else 
 		return m_Premium; 
 }
+
+
+#include "LuaFunctions.h"
+LuaFunction_NoArgs( CoinMode,	PREFSMAN->m_CoinMode )
+LuaFunction_NoArgs( Premium,	PREFSMAN->m_Premium )
+
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez

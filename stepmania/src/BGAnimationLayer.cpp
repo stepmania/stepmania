@@ -494,14 +494,15 @@ void BGAnimationLayer::LoadFromIni( const CString& sAniDir_, const IniKey& layer
 			if( KeyName.Right(7) != "command" )
 				continue; /* not a command */
 
-			const CString &Data = i->second;
-			CString CmdName;
+			const CString &sData = i->second;
+			Commands cmds = ParseCommands( sData );
+			CString sCmdName;
 			/* Special case: "Command=foo" -> "OnCommand=foo" */
 			if( KeyName.size() == 7 )
-				CmdName="on";
+				sCmdName="on";
 			else
-				CmdName = KeyName.Left( KeyName.size()-7 );
-			m_asCommands[CmdName] = Data;
+				sCmdName = KeyName.Left( KeyName.size()-7 );
+			m_mapNameToCommands[sCmdName] = cmds;
 		}
 	}
 		
@@ -1005,18 +1006,21 @@ void BGAnimationLayer::LoseFocus()
 
 void BGAnimationLayer::PlayCommand( const CString &sCommandName )
 {
+	// Don't call base version.
+	//Actor::PlayCommand( sCommandName );
+	
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->RunCommands( ParseCommands("playcommand,"+sCommandName) );
 
 	CString sKey = sCommandName;
 	sKey.MakeLower();
-	map<CString, CString>::const_iterator it = m_asCommands.find( sKey );
+	map<CString, Commands>::const_iterator it = m_mapNameToCommands.find( sKey );
 
-	if( it == m_asCommands.end() )
+	if( it == m_mapNameToCommands.end() )
 		return;
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommands( ParseCommands(it->second) );
+		m_SubActors[i]->RunCommands( it->second );
 }
 
 /*

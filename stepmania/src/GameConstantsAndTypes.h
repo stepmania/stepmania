@@ -268,6 +268,14 @@ const CString& CoinModeToString( CoinMode cm );
 
 
 //
+// Premium
+//
+enum Premium { PREMIUM_NONE, PREMIUM_DOUBLES, PREMIUM_JOINT, NUM_PREMIUMS };
+
+const CString& PremiumToString( Premium p );
+
+
+//
 // Award stuff
 //
 

@@ -14,6 +14,7 @@
 #include "StepMania.h"
 #include "Game.h"
 #include "Foreach.h"
+#include "GameConstantsAndTypes.h"
 
 static void GetDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
@@ -281,13 +282,16 @@ MOVE( AllowExtraStage,		PREFSMAN->m_bAllowExtraStage );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
-/* Coin options */
-MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
+static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	const CoinMode mapping[] = { COIN_HOME, COIN_PAY, COIN_FREE };
+	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
+}
 
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 1,2 };
-	MoveMap( sel, PREFSMAN->m_iCoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
+	const CoinMode mapping[] = { COIN_PAY, COIN_FREE };
+	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -296,9 +300,9 @@ static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption 
 	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void Premium( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const PrefsManager::Premium mapping[] = { PrefsManager::NO_PREMIUM,PrefsManager::DOUBLES_PREMIUM,PrefsManager::JOINT_PREMIUM };
+	const Premium mapping[] = { PREMIUM_NONE, PREMIUM_DOUBLES, PREMIUM_JOINT };
 	MoveMap( sel, PREFSMAN->m_Premium, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
@@ -520,7 +524,7 @@ static void InitializeConfOptions()
 
 	/* Machine options */
 	ADD( ConfOption( "MenuTimer",				MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "CoinMode",				CoinMode,			"HOME","PAY","FREE PLAY" ) );
+	ADD( ConfOption( "CoinMode",				CoinModeM,			"HOME","PAY","FREE PLAY" ) );
 	ADD( ConfOption( "CoinModeNoHome",			CoinModeNoHome,		"PAY","FREE PLAY" ) );
 	ADD( ConfOption( "Songs Per\nPlay",			SongsPerPlay,		"1","2","3","4","5","6","7" ) );
 	ADD( ConfOption( "Event\nMode",				EventMode,			"OFF","ON" ) );
@@ -533,7 +537,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "Default\nFail Type",		DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG","OFF" ) );	
 	ADD( ConfOption( "DefaultFailTypeNoOff",	DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG" ) );	
 	ADD( ConfOption( "Coins Per\nCredit",		CoinsPerCredit,		"1","2","3","4","5","6","7","8" ) );
-	ADD( ConfOption( "Premium",					Premium,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ) );
+	ADD( ConfOption( "Premium",					PremiumM,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ) );
 	ADD( ConfOption( "Show Song\nOptions",		ShowSongOptions,	"HIDE","SHOW","ASK" ) );
 	ADD( ConfOption( "Show Name\nEntry",		ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ) );
 

@@ -32,7 +32,6 @@ public:
 	void LoseFocus();
 
 	void PlayCommand( const CString &sCommandName );
-	void PlayOffCommand() { PlayCommand( "Off" ); }
 
 protected:
 	vector<RageVector3> m_vParticleVelocity;
@@ -83,7 +82,6 @@ protected:
 	
 	// common stuff
 	bool m_bGeneric;
-	map<CString, CString> m_asCommands;
 	float m_fRepeatCommandEverySeconds;	// -1 = no repeat
 	float m_fSecondsUntilNextCommand;
 	float m_fUpdateRate;	// set by GainFocus

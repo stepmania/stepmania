@@ -104,11 +104,11 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 	switch( PREFSMAN->GetPremium() )
 	{
-	case PrefsManager::DOUBLES_PREMIUM:
+	case PREMIUM_DOUBLES:
 		m_sprPremium.Load( THEME->GetPathToG(m_sName + " doubles premium") );
 		this->AddChild( &m_sprPremium );
 		break;
-	case PrefsManager::JOINT_PREMIUM:
+	case PREMIUM_JOINT:
 		m_sprPremium.Load( THEME->GetPathToG(m_sName + " joint premium") );
 		this->AddChild( &m_sprPremium );
 		break;
