@@ -971,16 +971,6 @@ int RageSoundReader_MP3::SetPosition_estimate( int ms )
 
 int RageSoundReader_MP3::SetPosition_Accurate( int ms )
 {
-	/* We don't actually need to do this, since the below seeks are just as fast
-	 * and accurate for ms == 0.  However, we need to reproduce a glitch in
-	 * MADLIB_rewind to avoid changing sync. :( */
-	if( !ms )
-	{
-		if( !MADLIB_rewind() )
-			return -1; /* error */
-		return 0; /* error */
-	}
-
 	/* Seek using our own internal (accurate) TOC. */
 	if( SetPosition_toc( ms, false ) == -1 )
 		return -1; /* error */
