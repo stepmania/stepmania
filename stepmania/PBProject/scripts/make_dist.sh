@@ -11,7 +11,7 @@ DIRS=(Announcers/instructions.txt BGAnimations/instructions.txt \
 	NoteSkins/dance/note NoteSkins/dance/solo NoteSkins/pump/Classic \
 	NoteSkins/pump/default RandomMovies/instructions.txt \
 	Songs/instructions.txt Themes/instructions.txt Themes/default \
-	Visualizations/instructions.txt Data)
+	Visualizations/instructions.txt Data COPYING.txt README-FIRST.html NEWS)
 
 NUM=0
 TOTAL=0
