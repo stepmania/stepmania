@@ -307,7 +307,7 @@ void DSoundBuf::SetVolume(float vol)
 	if( volume == new_volume )
 		return;
 
-	HRESULT hr = buf->SetVolume( volume );
+	HRESULT hr = buf->SetVolume( new_volume );
 	if( FAILED(hr) )
 	{
 		static bool bWarned = false;
