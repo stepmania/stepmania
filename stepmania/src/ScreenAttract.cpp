@@ -8,7 +8,6 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "SongManager.h"
-#include "AnnouncerManager.h"
 #include "GameState.h"
 #include "GameManager.h"
 #include "InputMapper.h"
@@ -22,7 +21,7 @@
 
 
 REGISTER_SCREEN_CLASS( ScreenAttract );
-ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sName )
+ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWithMenuElements( sName )
 {
 	if( bResetGameState )
 		GAMESTATE->Reset();
@@ -36,18 +35,7 @@ void ScreenAttract::Init()
 {
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", m_sName.c_str() );
 
-	Screen::Init();
-
-	m_In.Load( THEME->GetPathB(m_sName,"in") );
-	m_In.StartTransitioning();
-	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
-	this->AddChild( &m_In );
-
-	m_Out.Load( THEME->GetPathB(m_sName,"out") );
-	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
-	this->AddChild( &m_Out );
-
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
+	ScreenWithMenuElements::Init();
 }
 
 
@@ -144,7 +132,7 @@ void ScreenAttract::Update( float fDelta )
 		else
 			SOUND->PlayMusic( "" );	// stop music
 	}
-	Screen::Update(fDelta);
+	ScreenWithMenuElements::Update(fDelta);
 }
 
 void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )

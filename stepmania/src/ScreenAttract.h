@@ -3,11 +3,10 @@
 #ifndef ScreenAttract_H
 #define ScreenAttract_H
 
-#include "Screen.h"
-#include "Transition.h"
+#include "ScreenWithMenuElements.h"
 
 
-class ScreenAttract : public Screen
+class ScreenAttract : public ScreenWithMenuElements
 {
 public:
 	ScreenAttract( CString sName, bool bResetGameState=true );
@@ -21,9 +20,6 @@ public:
 
 protected:
 	virtual bool AutoBeginFadingOut() const { return true; }
-
-	Transition		m_In;
-	Transition		m_Out;
 };
 
 

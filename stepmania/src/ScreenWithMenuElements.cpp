@@ -8,6 +8,8 @@
 #include "Style.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
+#include "GameSoundManager.h"
+#include "AnnouncerManager.h"
 
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 #define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
@@ -107,6 +109,8 @@ void ScreenWithMenuElements::Init()
 	this->AddChild( &m_Back );
 
 	m_In.StartTransitioning();
+
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
