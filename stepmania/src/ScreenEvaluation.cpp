@@ -246,7 +246,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			int iRankingIndex[NUM_PLAYERS];
 
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			pCourse->AddScores( nt, bIsHumanPlayer, stageStats.iActualDancePoints, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
+
+			int *score;
+			if( pCourse->IsOni() )
+				score = stageStats.iActualDancePoints;
+			else
+				score = stageStats.iScore;
+			pCourse->AddScores( nt, bIsHumanPlayer, score, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
 			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
 			GAMESTATE->m_pRankingCourse = pCourse;
 			GAMESTATE->m_RankingNotesType = nt;

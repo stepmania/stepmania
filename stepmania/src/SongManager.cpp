@@ -324,13 +324,13 @@ void SongManager::ReadCourseScoresFromFile( CString fn, int c )
 				if( !feof(fp) )
 				{
 					int iNumTimesPlayed;
-					int iDancePoints;
+					int iScore;
 					float fSurviveTime;
-					fscanf(fp, "%d %d %f\n", &iNumTimesPlayed, &iDancePoints, &fSurviveTime);
+					fscanf(fp, "%d %d %f\n", &iNumTimesPlayed, &iScore, &fSurviveTime);
 					if( pCourse )
 					{
 						pCourse->m_MemCardScores[c][i].iNumTimesPlayed = iNumTimesPlayed;
-						pCourse->m_MemCardScores[c][i].iDancePoints = iDancePoints;
+						pCourse->m_MemCardScores[c][i].iScore = iScore;
 						pCourse->m_MemCardScores[c][i].fSurviveTime = fSurviveTime;
 					}
 				}
@@ -385,13 +385,13 @@ void SongManager::ReadCourseRankingsFromFile( CString fn )
 				for( int j=0; j<NUM_RANKING_LINES; j++ )
 					if( !feof(fp) )
 					{
-						int iDancePoints;
+						int iScore;
 						float fSurviveTime;
 						char szName[256];
-						fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
+						fscanf(fp, "%d %f %[^\n]\n", &iScore, &fSurviveTime, szName);
 						if( pCourse )
 						{
-							pCourse->m_RankingScores[i][j].iDancePoints = iDancePoints;
+							pCourse->m_RankingScores[i][j].iScore = iScore;
 							pCourse->m_RankingScores[i][j].fSurviveTime = fSurviveTime;
 							pCourse->m_RankingScores[i][j].sName = szName;
 						}
@@ -471,7 +471,7 @@ void SongManager::SaveMachineScoresToDisk()
 					for( int j=0; j<NUM_RANKING_LINES; j++ )
 					{
 						fprintf(fp, "%d %f %s\n", 
-							pCourse->m_RankingScores[i][j].iDancePoints, 
+							pCourse->m_RankingScores[i][j].iScore, 
 							pCourse->m_RankingScores[i][j].fSurviveTime, 
 							pCourse->m_RankingScores[i][j].sName.c_str());
 					}
@@ -556,7 +556,7 @@ void SongManager::SaveMachineScoresToDisk()
 					for( int nt=0; nt<NUM_NOTES_TYPES; nt++ )
 						fprintf(fp, "%d %d %f\n", 
 							pCourse->m_MemCardScores[c][nt].iNumTimesPlayed, 
-							pCourse->m_MemCardScores[c][nt].iDancePoints, 
+							pCourse->m_MemCardScores[c][nt].iScore, 
 							pCourse->m_MemCardScores[c][nt].fSurviveTime);
 				}
 
@@ -808,7 +808,7 @@ void SongManager::CleanData()
 void SongManager::GetNonstopCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( !m_pCourses[i]->m_bRepeat && m_pCourses[i]->m_iLives <= 0 )	// use bar life meter
+		if( m_pCourses[i]->IsNonstop() )
 			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
 				AddTo.push_back( m_pCourses[i] );
 }
@@ -816,7 +816,7 @@ void SongManager::GetNonstopCourses( vector<Course*> &AddTo, bool bIncludeAutoge
 void SongManager::GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( !m_pCourses[i]->m_bRepeat && m_pCourses[i]->m_iLives > 0 )	// use battery life meter
+		if( m_pCourses[i]->IsOni() )
 			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
 				AddTo.push_back( m_pCourses[i] );
 }
@@ -824,7 +824,7 @@ void SongManager::GetOniCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 void SongManager::GetEndlessCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
-		if( m_pCourses[i]->m_bRepeat )
+		if( m_pCourses[i]->IsEndless() )
 			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
 				AddTo.push_back( m_pCourses[i] );
 }

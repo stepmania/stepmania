@@ -79,6 +79,9 @@ public:
 	bool ContainsAnyMysterySongs() const;
 	bool GetTotalSeconds( float& fSecondsOut ) const;
 
+	bool IsNonstop() const { return !m_bRepeat && m_iLives <= 0; } 	// use bar life meter
+	bool IsOni() const { return !m_bRepeat && m_iLives > 0; } 	// use battery life meter
+	bool IsEndless() const { return m_bRepeat; }
 
 	void LoadFromCRSFile( CString sPath );
 	void Save();
@@ -89,14 +92,15 @@ public:
 	// Statistics
 	struct RankingScore
 	{
-		int iDancePoints;
+		/* Dance points for oni, regular score for nonstop. */
+		int iScore;
 		float fSurviveTime;
 		CString	sName;
 	} m_RankingScores[NUM_NOTES_TYPES][NUM_RANKING_LINES];	// sorted highest to lowest by iDancePoints
 	struct MemCardScore
 	{
 		int iNumTimesPlayed;
-		int iDancePoints;
+		int iScore;
 		float fSurviveTime;
 	} m_MemCardScores[NUM_MEMORY_CARDS][NUM_NOTES_TYPES];
 	
@@ -105,6 +109,7 @@ public:
 
 private:
 	Song *FindSong(CString sGroup, CString sSong) const;
+	void SetDefaultScore();
 };
 
 

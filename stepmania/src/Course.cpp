@@ -35,13 +35,18 @@ Course::Course()
 	m_bDifficult = false;
 	m_iLives = -1;
 
+	SetDefaultScore();
+}
+
+void Course::SetDefaultScore()
+{
 	//
 	// Init high scores
 	//
 	for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
 		for( int j=0; j<NUM_RANKING_LINES; j++ )
 		{
-			m_RankingScores[i][j].iDancePoints = 573;
+			m_RankingScores[i][j].iScore = IsOni()? 573: 0;
 			m_RankingScores[i][j].fSurviveTime = 57.3f;
 			m_RankingScores[i][j].sName = DEFAULT_RANKING_NAME;
 		}
@@ -50,7 +55,7 @@ Course::Course()
 		for( unsigned i=0; i<NUM_NOTES_TYPES; i++ )
 		{
 			m_MemCardScores[m][i].iNumTimesPlayed = 0;
-			m_MemCardScores[m][i].iDancePoints = 0;
+			m_MemCardScores[m][i].iScore = 0;
 			m_MemCardScores[m][i].fSurviveTime = 0;
 		}
 }
@@ -254,6 +259,8 @@ void Course::LoadFromCRSFile( CString sPath )
 	CString ignore;
 	tsub.Subst(m_sName, ignore, ignore,
 				ignore, ignore, ignore);
+
+	SetDefaultScore();
 }
 
 
@@ -333,6 +340,8 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongs
 	SONGMAN->GetSongs( vSongs, e.group_name );
 	for( unsigned i = 0; i < vSongs.size(); ++i)
 		m_entries.push_back( e );
+
+	SetDefaultScore();
 }
 
 void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup )
@@ -348,6 +357,8 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongs
 		m_entries.push_back( m_entries[0] );
 	while( m_entries.size() > 4 )
 		m_entries.pop_back();
+
+	SetDefaultScore();
 }
 
 
@@ -609,14 +620,12 @@ bool Course::GetTotalSeconds( float& fSecondsOut ) const
 struct RankingToInsert
 {
 	PlayerNumber pn;
-	int iDancePoints;
+	int iScore;
 	float fSurviveTime;
 
-	static int CompareDescending( const RankingToInsert &hs1, const RankingToInsert &hs2 )
+	static bool CompareDescending( const RankingToInsert &hs1, const RankingToInsert &hs2 )
 	{
-		if( hs1.iDancePoints > hs2.iDancePoints )		return -1;
-		else if( hs1.iDancePoints == hs2.iDancePoints )	return 0;
-		else											return +1;
+		return hs1.iScore > hs2.iScore;
 	}
 	static void SortDescending( vector<RankingToInsert>& vHSout )
 	{ 
@@ -624,7 +633,7 @@ struct RankingToInsert
 	}
 };
 
-void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] )
+void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iScore[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] )
 {
 	vector<RankingToInsert> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -640,23 +649,23 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 		m_MemCardScores[p][nt].iNumTimesPlayed++;
 		m_MemCardScores[MEMORY_CARD_MACHINE][nt].iNumTimesPlayed++;
 
-		if( iDancePoints[p] > m_MemCardScores[p][nt].iDancePoints )
+		if( iScore[p] > m_MemCardScores[p][nt].iScore )
 		{
-			m_MemCardScores[p][nt].iDancePoints = iDancePoints[p];
+			m_MemCardScores[p][nt].iScore = iScore[p];
 			m_MemCardScores[p][nt].fSurviveTime = fSurviveTime[p];
 			bNewRecordOut[p] = true;
 		}
 
-		if( iDancePoints[p] > m_MemCardScores[MEMORY_CARD_MACHINE][nt].iDancePoints )
+		if( iScore[p] > m_MemCardScores[MEMORY_CARD_MACHINE][nt].iScore )
 		{
-			m_MemCardScores[MEMORY_CARD_MACHINE][nt].iDancePoints = iDancePoints[p];
+			m_MemCardScores[MEMORY_CARD_MACHINE][nt].iScore = iScore[p];
 			m_MemCardScores[MEMORY_CARD_MACHINE][nt].fSurviveTime = fSurviveTime[p];
 		}
 
 
 		// Update Ranking
 		RankingToInsert hs;
-		hs.iDancePoints = iDancePoints[p];
+		hs.iScore = iScore[p];
 		hs.fSurviveTime = fSurviveTime[p];
 		hs.pn = (PlayerNumber)p;
 		vHS.push_back( hs );
@@ -672,14 +681,14 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 		RankingScore* rankingScores = m_RankingScores[nt];
 		for( int i=0; i<NUM_RANKING_LINES; i++ )
 		{
-			if( newHS.iDancePoints > rankingScores[i].iDancePoints )
+			if( newHS.iScore > rankingScores[i].iScore )
 			{
 				// We found the insert point.  Shift down.
 				for( int j=NUM_RANKING_LINES-1; j>i; j-- )
 					rankingScores[j] = rankingScores[j-1];
 				// insert
 				rankingScores[i].fSurviveTime = newHS.fSurviveTime;
-				rankingScores[i].iDancePoints = newHS.iDancePoints;
+				rankingScores[i].iScore = newHS.iScore;
 				rankingScores[i].sName = DEFAULT_RANKING_NAME;
 				iRankingIndexOut[newHS.pn] = i;
 				break;

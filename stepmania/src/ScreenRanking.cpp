@@ -245,15 +245,23 @@ void ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 				CString sName = pts.pCourse->m_RankingScores[pts.nt][l].sName;
-				int iDancePoints = pts.pCourse->m_RankingScores[pts.nt][l].iDancePoints;
-				float fSurviveTime = pts.pCourse->m_RankingScores[pts.nt][l].fSurviveTime;
+				const int iScore = pts.pCourse->m_RankingScores[pts.nt][l].iScore;
+				const float fSurviveTime = pts.pCourse->m_RankingScores[pts.nt][l].fSurviveTime;
 				m_textNames[l].SetText( sName );
-				m_textScores[l].SetText( "" );
-				m_textPoints[l].SetText( ssprintf("%04d",iDancePoints) );
-				m_textTime[l].SetText( SecondsToTime(fSurviveTime) );
+				if( pts.pCourse->IsOni() )
+				{
+					m_textPoints[l].SetText( ssprintf("%04d",iScore) );
+					m_textTime[l].SetText( SecondsToTime(fSurviveTime) );
+					m_textScores[l].SetText( "" );
+				} else {
+					m_textPoints[l].SetText( "" );
+					m_textTime[l].SetText( "" );
+					m_textScores[l].SetText( ssprintf("%10d",iScore) );
+				}
 				m_textNames[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				m_textPoints[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				m_textTime[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
+				m_textScores[l].SetDiffuse( TEXT_COLOR(pts.colorIndex) );
 				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
 					if( pts.pCourse == GAMESTATE->m_pRankingCourse  &&
