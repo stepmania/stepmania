@@ -470,7 +470,11 @@ int main(int argc, char* argv[])
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
+	
+	loading_window->SetText("Loading banners ...");
+	loading_window->Paint();
 	BANNERCACHE = new BannerCache;
+	
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
 	delete loading_window;		// destroy this before init'ing Display
