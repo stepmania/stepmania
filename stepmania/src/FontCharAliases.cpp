@@ -268,6 +268,7 @@ static void InitCharAliases()
 	CharAliases["rightarrow"]	= 0x2192; /* → */
 	CharAliases["downarrow"]	= 0x2193; /* ↓ */
 	CharAliases["doublezeta"]	= 0xE009;
+	CharAliases["planet"]		= 0xE00A;
 
 	/* These are internal-use glyphs; they don't have real Unicode codepoints. */
 	CharAliases["up"]			= 0xE000;
