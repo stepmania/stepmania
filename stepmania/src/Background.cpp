@@ -152,8 +152,8 @@ void Background::LoadFromSong( Song* pSong )
 {
 	Unload();
 
-	const float fXZoom = RECTWIDTH(RECT_BACKGROUND) / (float)SCREEN_WIDTH;
-	const float fYZoom = RECTHEIGHT(RECT_BACKGROUND) / (float)SCREEN_HEIGHT;
+	const float fXZoom = RECT_BACKGROUND.GetWidth() / (float)SCREEN_WIDTH;
+	const float fYZoom = RECT_BACKGROUND.GetHeight() / (float)SCREEN_HEIGHT;
 
 	const CString sSongBackgroundPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background");
 

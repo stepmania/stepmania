@@ -323,8 +323,8 @@ void Actor::SetTweenGlow( RageColor c )					{ LatestTween().glow = c; };
 void Actor::ScaleTo( const RectI &rect, StretchType st )
 {
 	// width and height of rectangle
-	float rect_width = (float)RECTWIDTH(rect);
-	float rect_height = (float)RECTHEIGHT(rect);
+	float rect_width = (float) rect.GetWidth();
+	float rect_height = (float) rect.GetHeight();
 
 	if( rect_width < 0 )	SetRotationY( PI );
 	if( rect_height < 0 )	SetRotationX( PI );
@@ -356,8 +356,8 @@ void Actor::ScaleTo( const RectI &rect, StretchType st )
 void Actor::StretchTo( const RectI &rect )
 {
 	// width and height of rectangle
-	int rect_width = RECTWIDTH(rect);
-	int rect_height = RECTHEIGHT(rect);
+	int rect_width = rect.GetWidth();
+	int rect_height = rect.GetHeight();
 
 	// center of the rectangle
 	float rect_cx = rect.left + rect_width/2.0f;

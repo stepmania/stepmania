@@ -23,11 +23,6 @@
 #define ZERO(x)					memset(&x, 0, sizeof(x))
 #define COPY(a,b)				{ ASSERT(sizeof(a)==sizeof(b)); memcpy(&a, &b, sizeof(a)); }
 
-#define RECTWIDTH(rect)   ((rect).right  - (rect).left)
-#define RECTHEIGHT(rect)  ((rect).bottom - (rect).top)
-inline int RECTCENTERX(RECT rect) { return rect.left + (rect.right-rect.left)/2; }
-inline int RECTCENTERY(RECT rect) { return rect.top + (rect.bottom-rect.top)/2; }
-
 /* Common harmless mismatches. */
 #ifndef min
 inline float min(float a, int b) { return a < b? a:b; }
