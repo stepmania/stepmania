@@ -104,8 +104,8 @@ void FontPage::Load( FontPageSettings cfg )
 	SetTextureCoords(FrameWidths);
 	SetExtraPixels(cfg.DrawExtraPixelsLeft, cfg.DrawExtraPixelsRight);
 
-	LOG->Trace("Font %s: height %i, baseline %i ( == top %i)",
-		   m_sTexturePath.GetString(), height, baseline, baseline-height);
+//	LOG->Trace("Font %s: height %i, baseline %i ( == top %i)",
+//		   m_sTexturePath.GetString(), height, baseline, baseline-height);
 }
 
 void FontPage::SetTextureCoords(const vector<int> &widths)
@@ -456,8 +456,8 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	
 	ini.RenameKey("Char Widths", "main");
 
-	LOG->Trace("Loading font page '%s' settings from page name '%s'",
-		TexturePath.GetString(), PageName.GetString());
+//	LOG->Trace("Loading font page '%s' settings from page name '%s'",
+//		TexturePath.GetString(), PageName.GetString());
 	
 	ini.GetValueI( PageName, "DrawExtraPixelsLeft", cfg.DrawExtraPixelsLeft );
 	ini.GetValueI( PageName, "DrawExtraPixelsRight", cfg.DrawExtraPixelsRight );
@@ -772,9 +772,9 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 				TexturePaths[i].GetString(), WcharDisplayText(wchar_t(it->first)).GetString(), it->second, fp->m_pTexture->GetNumFrames() );
 		}
 
-		LOG->Trace("Adding page %s (%s) to %s; %i glyphs",
-			TexturePaths[i].GetString(), pagename.GetString(),
-			sFontOrTextureFilePath.GetString(), fp->m_iCharToGlyphNo.size());
+//		LOG->Trace("Adding page %s (%s) to %s; %i glyphs",
+//			TexturePaths[i].GetString(), pagename.GetString(),
+//			sFontOrTextureFilePath.GetString(), fp->m_iCharToGlyphNo.size());
 		AddPage(fp);
 
 		/* If this is the first font loaded, or it's called "main", this page's
