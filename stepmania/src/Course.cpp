@@ -387,7 +387,7 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		iRankingIndexOut[p] = -1;
-		bNewRecordOut = false;
+		bNewRecordOut[p] = false;
 
 		if( !bPlayerEnabled[p] )
 			continue;	// skip
