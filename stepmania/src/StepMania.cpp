@@ -524,8 +524,7 @@ int main(int argc, char* argv[])
 
 	/* Fire up the SDL, but don't actually start any subsystems.
 	 * We use our own error handlers. */
-	int SDL_flags = SDL_INIT_NOPARACHUTE;
-	SDL_Init(SDL_flags);
+	SDL_Init( SDL_INIT_NOPARACHUTE );
 
 	LoadingWindow *loading_window = MakeLoadingWindow();
 	if( loading_window == NULL )
