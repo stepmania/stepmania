@@ -1,7 +1,7 @@
 #ifndef NOTES_LOADER_H
 #define NOTES_LOADER_H
 
-#include "song.h"
+#include "Song.h"
 
 typedef int DanceNote;
 enum {
@@ -23,7 +23,7 @@ enum {
 class NotesLoader {
 protected:
 	virtual void GetApplicableFiles( CString sPath, CStringArray &out )=0;
-	void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
+	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 
 public:
 	virtual bool LoadFromDir( CString sPath, Song &out ) = 0;

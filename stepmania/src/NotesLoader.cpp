@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "NotesLoader.h"
 #include "NoteTypes.h"
+#include "NoteData.h"
 #include "GameManager.h"
+#include "RageUtil.h"
 
 bool NotesLoader::Loadable( CString sPath )
 {
