@@ -17,7 +17,7 @@ const float  GRAY_ARROW_TWEEN_TIME = 0.5f;
 
 GhostArrowBright::GhostArrowBright()
 {
-	Load( THEME->GetPathTo(GRAPHIC_GHOST_ARROW) );
+	Load( THEME->GetPathTo(GRAPHIC_BRIGHT_GHOST_ARROW) );
 	SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	TurnShadowOff();
 }
@@ -27,19 +27,19 @@ void GhostArrowBright::SetBeat( const float fSongBeat )
 	//SetState( fmod(fSongBeat,1)<0.25 ? 1 : 0 );
 }
 
-void GhostArrowBright::Step( StepScore score )
+void GhostArrowBright::Step( TapStepScore score )
 {
 	switch( score )
 	{
-	case perfect:	SetDiffuseColor( D3DXCOLOR(1.0f,1.0f,0.3f,0.9f) );	break;	// yellow
-	case great:		SetDiffuseColor( D3DXCOLOR(0.0f,1.0f,0.4f,0.9f) );	break;	// green
-	case good:		SetDiffuseColor( D3DXCOLOR(0.3f,0.8f,1.0f,0.9f) );	break;
-	case boo:		SetDiffuseColor( D3DXCOLOR(0.8f,0.0f,0.6f,0.9f) );	break;
-	case miss:		ASSERT( false );	break;
+	case TSS_PERFECT:	SetDiffuseColor( D3DXCOLOR(1.0f,1.0f,0.3f,1.0f) );	break;	// yellow
+	case TSS_GREAT:		SetDiffuseColor( D3DXCOLOR(0.0f,1.0f,0.4f,1.0f) );	break;	// green
+	case TSS_GOOD:		SetDiffuseColor( D3DXCOLOR(0.3f,0.8f,1.0f,1.0f) );	break;
+	case TSS_BOO:		SetDiffuseColor( D3DXCOLOR(0.8f,0.0f,0.6f,1.0f) );	break;
+	case TSS_MISS:		ASSERT( false );									break;
 	}
 	SetState( 0 );
 	SetZoom( 1.2f );
-	BeginTweening( 0.3f );
+	BeginTweening( 0.35f );
 	SetTweenZoom( 2.5f );
 	D3DXCOLOR colorTween = GetDiffuseColor();
 	colorTween.a = 0;

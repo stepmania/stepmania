@@ -26,12 +26,17 @@ class ScoreDisplayRolling : public BitmapText
 {
 public:
 	ScoreDisplayRolling();
+
 	void SetScore( float fNewScore );
+	float GetScore();
+	void AddToScore( TapStepScore stepscore, int iCurCombo );
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();
 
 protected:
+	float m_fScore;
+
 	int m_iCurrentScoreDigits[NUM_SCORE_DIGITS];
 	int m_iDestinationScoreDigits[NUM_SCORE_DIGITS];
 };

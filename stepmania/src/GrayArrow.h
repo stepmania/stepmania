@@ -22,7 +22,7 @@ public:
 	GrayArrow();
 
 	virtual void  SetBeat( const float fSongBeat );
-	void  Step( StepScore score );
+	void Step();
 };
 
 #endif 

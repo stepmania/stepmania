@@ -420,6 +420,14 @@ SOURCE=.\Steps.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Style.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Style.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ThemeManager.cpp
 # End Source File
 # Begin Source File
@@ -445,14 +453,6 @@ SOURCE=.\IniFile.h
 # Begin Source File
 
 SOURCE=.\dxutil.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\getdxver.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\getdxver.h
 # End Source File
 # Begin Source File
 
@@ -576,12 +576,32 @@ SOURCE=.\ActorFrame.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Background.cpp
+SOURCE=.\BitmapText.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Background.h
+SOURCE=.\BitmapText.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\Rectangle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Rectangle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Sprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Sprite.h
+# End Source File
+# End Group
+# Begin Group "Actors used in Menus"
+
+# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=.\Banner.cpp
@@ -589,14 +609,6 @@ SOURCE=.\Banner.cpp
 # Begin Source File
 
 SOURCE=.\Banner.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\BitmapText.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BitmapText.h
 # End Source File
 # Begin Source File
 
@@ -608,27 +620,11 @@ SOURCE=.\BPMDisplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ColorArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ColorArrow.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\DifficultyIcon.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\DifficultyIcon.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\FocusingSprite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FocusingSprite.h
 # End Source File
 # Begin Source File
 
@@ -640,51 +636,11 @@ SOURCE=.\FootMeter.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GhostArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowBright.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowBright.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\GradeDisplay.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\GradeDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldGhostArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldGhostArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\MotionBlurSprite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\MotionBlurSprite.h
 # End Source File
 # Begin Source File
 
@@ -712,30 +668,6 @@ SOURCE=.\MusicWheel.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Rectangle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Rectangle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayRolling.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayRolling.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Sprite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Sprite.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\StepsSelector.cpp
 # End Source File
 # Begin Source File
@@ -757,6 +689,146 @@ SOURCE=.\TipDisplay.cpp
 # Begin Source File
 
 SOURCE=.\TipDisplay.h
+# End Source File
+# End Group
+# Begin Group "Actors used in Dancing"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\Background.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Background.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorArrowField.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ColorArrowField.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Combo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Combo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\FocusingSprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\FocusingSprite.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrows.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrows.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrows.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrows.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldGhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldGhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldJudgement.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldJudgement.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Judgement.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Judgement.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterPills.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterPills.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\MotionBlurSprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MotionBlurSprite.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRolling.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRolling.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRollingWithFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRollingWithFrame.h
 # End Source File
 # End Group
 # Begin Source File

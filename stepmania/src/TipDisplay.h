@@ -25,7 +25,7 @@ public:
 	TipDisplay();
 	void SetTips( CStringArray &arrayTips );
 
-	void Update( float fDeltaTime );
+	virtual void Update( float fDeltaTime );
 
 protected:
 	BitmapText m_textTip;

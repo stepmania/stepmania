@@ -24,7 +24,7 @@ class HoldGhostArrow : public Sprite
 public:
 	HoldGhostArrow();
 
-	void Update( float fDeltaTime );
+	virtual void Update( float fDeltaTime );
 
 	void  SetBeat( const float fSongBeat );
 	void  Step();

@@ -46,9 +46,9 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 	case glowing:
 		break;
 	case wagging:
-		rotation.z = m_fWagRadians * (float)sin( 
+		rotation.z = m_fWagRadians * sinf( 
 			(m_fWagTimer / m_fWagPeriod)	// percent through wag
-			* 2.0 * D3DX_PI );
+			* 2.0f * D3DX_PI );
 		break;
 	case spinning:
 		// nothing special needed
@@ -61,13 +61,13 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 		break;
 	case bouncing:
 		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
-		float fPercentOffset = sin( fPercentThroughBounce*D3DX_PI ); 
+		float fPercentOffset = sinf( fPercentThroughBounce*D3DX_PI ); 
 		pos += m_vectBounce * fPercentOffset;
 		break;
 	}
 
 	
-	SCREEN->Translate( pos.x-0.5f, pos.y-0.5f, pos.z );	// offset so that pixels are aligned to texels
+	SCREEN->Translate( pos.x, pos.y, pos.z );	// offset so that pixels are aligned to texels
 	SCREEN->Scale( scale.x, scale.y, 1 );
 
 	// super slow!	
@@ -255,8 +255,8 @@ void Actor::SetTweenAddColor( D3DXCOLOR c )			{ GetLatestTween().m_end_colorAdd 
 void Actor::ScaleTo( LPRECT pRect, StretchType st )
 {
 	// width and height of rectangle
-	float rect_width = RECTWIDTH(*pRect);
-	float rect_height = RECTHEIGHT(*pRect);
+	float rect_width = (float)RECTWIDTH(*pRect);
+	float rect_height = (float)RECTHEIGHT(*pRect);
 
 	if( rect_width < 0 )	SetRotationY( D3DX_PI );
 	if( rect_height < 0 )	SetRotationX( D3DX_PI );
@@ -266,8 +266,8 @@ void Actor::ScaleTo( LPRECT pRect, StretchType st )
 	float rect_cy = pRect->top  + rect_height/2;
 
 	// zoom fActor needed to scale the Actor to fill the rectangle
-	float fNewZoomX = (float)fabs(rect_width  / m_size.x);
-	float fNewZoomY = (float)fabs(rect_height / m_size.y);
+	float fNewZoomX = fabsf(rect_width  / m_size.x);
+	float fNewZoomY = fabsf(rect_height / m_size.y);
 
 	float fNewZoom;
 	switch( st )

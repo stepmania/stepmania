@@ -54,12 +54,12 @@ void TransitionFadeWipe::RenderPrimitives()
 
 
 	m_rectBlack.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
-	m_rectBlack.StretchTo( CRect(fDarkOutsideX, 0, fDarkEdgeX, SCREEN_HEIGHT) );
+	m_rectBlack.StretchTo( CRect((int)fDarkOutsideX, 0, (int)fDarkEdgeX, (int)SCREEN_HEIGHT) );
 	m_rectBlack.Draw();
 	
 	m_rectGradient.SetDiffuseColorLeftEdge( D3DXCOLOR(0,0,0,1) );
 	m_rectGradient.SetDiffuseColorRightEdge( D3DXCOLOR(0,0,0,0) );
-	m_rectGradient.StretchTo( CRect(fDarkEdgeX, 0, fLightEdgeX, SCREEN_HEIGHT) );
+	m_rectGradient.StretchTo( CRect((int)fDarkEdgeX, 0, (int)fLightEdgeX, (int)SCREEN_HEIGHT) );
 	m_rectGradient.Draw();
 
 

@@ -256,6 +256,14 @@ MusicWheel::MusicWheel()
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
 
 
+	if( GAMEINFO->m_pCurSong == NULL	// if there is no currently selected song
+		&&  GAMEINFO->m_pSongs[0] )		// and there is at least one song
+	{
+		GAMEINFO->m_pCurSong = GAMEINFO->m_pSongs[0];	// select the first song
+	}
+
+
+
 	// find the previously selected song (if any)
 	for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 	{
@@ -266,6 +274,7 @@ MusicWheel::MusicWheel()
 			m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
 		}
 	}
+
 
 	// rebuild the WheelItems that appear on screen
 	RebuildWheelItemDisplays();
@@ -310,9 +319,9 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	case SORT_BPM:
 		SortSongPointerArrayByBPM( arraySongs );
 		break;
-	case SORT_ARTIST:
-		SortSongPointerArrayByArtist( arraySongs );
-		break;
+//	case SORT_ARTIST:
+//		SortSongPointerArrayByArtist( arraySongs );
+//		break;
 	case SORT_MOST_PLAYED:
 		SortSongPointerArrayByMostPlayed( arraySongs );
 		break;
@@ -330,7 +339,6 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	// ...and load new ones
 	switch( so )
 	{
-	case SORT_GROUP:
 	case SORT_MOST_PLAYED:
 	case SORT_BPM:
 		// make WheelItems without sections
@@ -346,8 +354,9 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			}
 		}
 		break;
+	case SORT_GROUP:
 	case SORT_TITLE:
-	case SORT_ARTIST:
+//	case SORT_ARTIST:
 		{
 		// make WheelItemDatas with sections
 
@@ -425,7 +434,7 @@ float MusicWheel::GetBannerY( float fPosOffsetsFromMiddle )
 
 float MusicWheel::GetBannerBrightness( float fPosOffsetsFromMiddle )
 {
-	return 1 - fabs(fPosOffsetsFromMiddle)*0.11f;
+	return 1 - fabsf(fPosOffsetsFromMiddle)*0.11f;
 }
 
 float MusicWheel::GetBannerAlpha( float fPosOffsetsFromMiddle )
@@ -452,25 +461,25 @@ float MusicWheel::GetBannerAlpha( float fPosOffsetsFromMiddle )
 
 float MusicWheel::GetBannerX( float fPosOffsetsFromMiddle )
 {	
-	float fX = (1-cos((fPosOffsetsFromMiddle)/3))*95.0f;
+	float fX = (1-cosf((fPosOffsetsFromMiddle)/3))*95.0f;
 
 	if( m_WheelState == STATE_FLYING_OFF_BEFORE_NEXT_SORT 
 	 || m_WheelState == STATE_TWEENING_OFF_SCREEN  )
 	{
-		float fDistFromCenter = fabs( fPosOffsetsFromMiddle );
+		float fDistFromCenter = fabsf( fPosOffsetsFromMiddle );
 		float fPercentOffScreen = 1- (m_fTimeLeftInState / FADE_TIME);
 		float fXLogicalOffset = max( 0, fPercentOffScreen - 1 + (fDistFromCenter+3)/6 );
-		fXLogicalOffset = pow( fXLogicalOffset, 1.7 );	// accelerate 
+		fXLogicalOffset = powf( fXLogicalOffset, 1.7f );	// accelerate 
 		float fXPixelOffset = fXLogicalOffset * 600;
 		fX += fXPixelOffset;
 	}
 	else if( m_WheelState == STATE_FLYING_ON_AFTER_NEXT_SORT
 		  || m_WheelState == STATE_TWEENING_ON_SCREEN )
 	{
-		float fDistFromCenter = fabs( fPosOffsetsFromMiddle );
+		float fDistFromCenter = fabsf( fPosOffsetsFromMiddle );
 		float fPercentOffScreen = m_fTimeLeftInState / FADE_TIME;
 		float fXLogicalOffset = max( 0, fPercentOffScreen - 1 + (fDistFromCenter+3)/6 );
-		fXLogicalOffset = pow( fXLogicalOffset, 1.7 );	// accelerate 
+		fXLogicalOffset = powf( fXLogicalOffset, 1.7f );	// accelerate 
 		float fXPixelOffset = fXLogicalOffset * 600;
 		fX += fXPixelOffset;
 	}
@@ -585,6 +594,7 @@ void MusicWheel::Update( float fDeltaTime )
 			m_fTimeLeftInState = FADE_TIME;
 
 			Song* pPrevSelectedSong = GetCurWheelItemDatas()[m_iSelection].m_pSong;
+			CString sPrevSelectedSection = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;
 
 			// change the sort order
 			m_SortOrder = SongSortOrder(m_SortOrder+1);
@@ -598,11 +608,31 @@ void MusicWheel::Update( float fDeltaTime )
 			m_MusicSortDisplay.SetTweenXY( SORT_ICON_ON_SCREEN_X, SORT_ICON_ON_SCREEN_Y );
 
 
-			// find the previously selected song, and select it
-			for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+			m_iSelection = 0;
+
+			if( pPrevSelectedSong != NULL )		// the previous selected item was a song
 			{
-				if( GetCurWheelItemDatas()[i].m_pSong == pPrevSelectedSong )
-					m_iSelection = i;
+				// find the previously selected song, and select it
+				for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+				{
+					if( GetCurWheelItemDatas()[i].m_pSong == pPrevSelectedSong )
+					{
+						m_iSelection = i;
+						break;
+					}
+				}
+			}
+			else	// the previously selected item was a section
+			{
+				// find the previously selected song, and select it
+				for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+				{
+					if( GetCurWheelItemDatas()[i].m_sSectionName == sPrevSelectedSection )
+					{
+						m_iSelection = i;
+						break;
+					}
+				}
 			}
 
 			RebuildWheelItemDisplays();
@@ -630,12 +660,12 @@ void MusicWheel::Update( float fDeltaTime )
 
 	// "rotate" wheel toward selected song
 
-	if( fabs(m_fPositionOffsetFromSelection) < 0.02f )
+	if( fabsf(m_fPositionOffsetFromSelection) < 0.02f )
 		m_fPositionOffsetFromSelection = 0;
 	else
 	{
 		m_fPositionOffsetFromSelection -= fDeltaTime * m_fPositionOffsetFromSelection*4;	// linear
-		float fSign = m_fPositionOffsetFromSelection / fabs(m_fPositionOffsetFromSelection);
+		float fSign = m_fPositionOffsetFromSelection / fabsf(m_fPositionOffsetFromSelection);
 		m_fPositionOffsetFromSelection -= fDeltaTime * fSign;	// constant
 	}
 }

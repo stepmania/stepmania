@@ -29,7 +29,7 @@ Background::Background()
 	m_sprDanger.SetXY( CENTER_X, CENTER_Y );
 
 	m_sprDangerBackground.Load( THEME->GetPathTo(GRAPHIC_DANGER_BACKGROUND) );
-	m_sprDangerBackground.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_sprDangerBackground.StretchTo( CRect((int)SCREEN_LEFT, (int)SCREEN_TOP, (int)SCREEN_RIGHT, (int)SCREEN_BOTTOM) );
 }
 
 bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )

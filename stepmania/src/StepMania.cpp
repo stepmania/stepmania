@@ -32,7 +32,7 @@
 
 #include "ScreenDimensions.h"
 
-#include <DXUtil.h>
+#include "DXUtil.h"
 
 //-----------------------------------------------------------------------------
 // Links

@@ -25,134 +25,63 @@
 #include "Player.h"
 #include "ActorFrame.h"
 #include "SoundSet.h"
-#include "ScoreDisplayRolling.h"
+#include "ScoreDisplayRollingWithFrame.h"
+#include "LifeMeterPills.h"
+#include "Judgement.h"
+#include "HoldJudgement.h"
+#include "Combo.h"
+#include "ColorArrowField.h"
+#include "GrayArrows.h"
+#include "GhostArrows.h"
 
 
-
-
-const int MAX_NUM_COLUMNS = 8;
 
 
 class Player : public ActorFrame
 {
 public:
 	Player();
-	void SetPlayerOptions( PlayerOptions po, PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference );
-	virtual void RenderPrimitives();
 
-	void SetSteps( Steps* pNewSteps, bool bLoadOnlyLeftSide = false, bool bLoadOnlyRightSide = false );
-	void SetX( float fX );
+	void Load( const Style& style, PlayerNumber player_no, const Steps& steps, const PlayerOptions& po );
 	void CrossedIndex( int iIndex );
+	void HandlePlayerStep( float fSongBeat, TapStep step, float fMaxBeatDiff );
+	int UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat );
 
 	ScoreSummary GetScoreSummary();
-	int	UpdateStepsMissedOlderThan( float fMissIfOlderThanThisBeat );
-	void HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeatDiff );
+
+	float GetLifePercentage() { return m_LifeMeter.GetLifePercentage(); };
+	bool IsThereANoteAtIndex( int iIndex );
 
 protected:
-	void CheckForCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff );
-	void OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDiff, int iStepIndex );
+	void CheckForCompleteStep( float fSongBeat, TapStep step, float fMaxBeatDiff );
+	void OnCompleteStep( float fSongBeat, TapStep step, float fMaxBeatDiff, int iStepIndex );
 
-	PlayerOptions m_PlayerOptions;
+	float			m_fSongBeat;
+	Style			m_Style;
 	PlayerNumber	m_PlayerNumber;
+	PlayerOptions	m_PlayerOptions;
 
-	int		m_iCurCombo;
-	int		m_iMaxCombo;
-	float	m_fSongBeat;
+	TapStep			m_TapStepsOriginal[MAX_TAP_STEP_ELEMENTS];	// the original steps that were loaded into player
+	TapStep			m_TapStepsRemaining[MAX_TAP_STEP_ELEMENTS];	// mask off the bits as the player steps
+	TapStepScore	m_TapStepScores[MAX_TAP_STEP_ELEMENTS];
+	HoldStep		m_HoldSteps[MAX_HOLD_STEP_ELEMENTS];
+	HoldStepScore	m_HoldStepScores[MAX_HOLD_STEP_ELEMENTS];
+	int				m_iNumHoldSteps;
 
-	// index is quarter beat number (e.g. beat 30 is index 30*4)
-	Step		m_OriginalStep[MAX_STEP_ELEMENTS];
-	Step		m_LeftToStepOn[MAX_STEP_ELEMENTS];
-	StepScore	m_StepScore[MAX_STEP_ELEMENTS];
-	CArray<HoldStep, HoldStep&>		m_HoldSteps;
-	//StepTiming	m_StepTiming[MAX_STEP_ELEMENTS];
-	CArray<HoldStepScore, HoldStepScore>		m_HoldStepScores;
 
-	// common to color and gray arrows
-	float m_fArrowsCenterX;
+	GrayArrows		m_GrayArrows;
+	ColorArrowField	m_ColorArrowField;
+	GhostArrows		m_GhostArrows;
 
-	int m_iNumColumns;	// will vary depending on the number panels (4,6,8,etc)
-	CMap<Step, Step, int, int>	m_StepToColumnNumber;
-	CMap<int, int, Step, Step>	m_ColumnNumberToStep;
-	CMap<int, int, float, float&>	m_ColumnToRotation;
-	float GetArrowColumnX( int iColNum );
-
-	// color arrows
-	void SetColorArrowsX( int iX );
-	void UpdateColorArrows( float fDeltaTime );
-	float GetColorArrowYPos( float fStepIndex, float fSongBeat );
-	float GetColorArrowYOffset( float fStepIndex, float fSongBeat );
-	float GetColorArrowAlphaFromYOffset( float fYOffset );
-	void DrawColorArrows();
-	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
-	ColorArrow	m_ColorArrow[MAX_NUM_COLUMNS];
-
-	// gray arrows
-	void SetGrayArrowsX( int iX );
-	void UpdateGrayArrows( float fDeltaTime );
-	float GetGrayArrowYPos();
-	void DrawGrayArrows();
-	void GrayArrowStep( int iCol, StepScore score );
-	GrayArrow	m_GrayArrow[MAX_NUM_COLUMNS];
-
-	// ghost arrows
-	void SetGhostArrowsX( int iX );
-	void UpdateGhostArrows( float fDeltaTime );
-	void DrawGhostArrows();
-	void GhostArrowStep( int iCol, StepScore score );
-	GhostArrow	m_GhostArrow[MAX_NUM_COLUMNS];
-	GhostArrowBright	m_GhostArrowBright[MAX_NUM_COLUMNS];
-	HoldGhostArrow	m_HoldGhostArrow[MAX_NUM_COLUMNS];
-
-	// holder for judgement and combo displays
-	ActorFrame m_frameJudgementAndCombo;
-
-	// judgement
-	void SetJudgementX( int iX );
-	void UpdateJudgement( float fDeltaTime );
-	void DrawJudgement();
-	void SetJudgement( StepScore score );
-	float		m_fJudgementDisplayCountdown;
-	Sprite		m_sprJudgement;
-
-	void SetHoldJudgement( int iCol, HoldStepScore::HoldScore score );
-	float		m_fHoldJudgementDisplayCountdown[MAX_NUM_COLUMNS];
-	Sprite		m_sprHoldJudgement[MAX_NUM_COLUMNS];
-
-	// combo
-	void SetComboX( int iX );
-	void UpdateCombo( float fDeltaTime );
-	void DrawCombo();
-	void ContinueCombo();
-	void EndCombo();
-	bool		m_bComboVisible;
-	Sprite		m_sprCombo;
-	BitmapText	m_textComboNumber;
-
-	// life meter
-	void SetLifeMeterX( int iX );
-	void UpdateLifeMeter( float fDeltaTime );
-	void DrawLifeMeter();
-	void ChangeLife( StepScore score );
-public:
-	float GetLifePercentage() { return m_fLifePercentage; };
-private:
-	float		m_fLifePercentage;
-	Sprite		m_sprLifeMeterFrame;
-	Sprite		m_sprLifeMeterPills;
-
-	// score
-	void SetScoreX( int iX );
-	void UpdateScore( float fDeltaTime );
-	void DrawScore();
-	void ChangeScore( StepScore stepscore, int iCurCombo );
-	float				m_fScore;
-	Sprite				m_sprScoreFrame;
-	ScoreDisplayRolling	m_ScoreDisplay;
-
-	// assist
-	SoundSet m_soundAssistTick;
+	Judgement						m_Judgement;
+	HoldJudgement					m_HoldJudgement[MAX_NUM_COLUMNS];
+	Combo							m_Combo;
+	LifeMeterPills					m_LifeMeter;
+	ScoreDisplayRollingWithFrame	m_Score;
+	
+	SoundSet		m_soundAssistTick;
 
 };
 

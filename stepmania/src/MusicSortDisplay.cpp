@@ -42,14 +42,8 @@ void MusicSortDisplay::Set( SongSortOrder so )
 	case SORT_BPM:
 		SetState( 2 );
 		break;
-	case SORT_ARTIST:
-		SetState( 3 );
-		break;
 	case SORT_MOST_PLAYED:
-		SetState( 4 );
-		break;
-	case NUM_SORT_ORDERS:
-		SetState( 5 );
+		SetState( 3 );
 		break;
 	default:
 		ASSERT( false );		// unimplemented MusicSortOrder

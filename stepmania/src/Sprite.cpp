@@ -199,6 +199,7 @@ void Sprite::Update( float fDeltaTime )
 
 void Sprite::RenderPrimitives()
 {
+	SCREEN->Translate( -0.5f, -0.5f, 0 );	// offset so that pixels are aligned to texels
 
 	if( m_pTexture == NULL )
 		return;

@@ -79,7 +79,7 @@ void TransitionStarWipe::RenderPrimitives()
 
 
 		m_sprStar.SetRotation( bIsAnEvenRow ? D3DX_PI : 0.0f );	// flip the sprite
-		m_sprStar.SetXY( bIsAnEvenRow?x-1:x, bIsAnEvenRow?y-1:y );	// fudge.  The rotation makes it off center
+		m_sprStar.SetXY( bIsAnEvenRow?x-1.0f:x+0.0f, bIsAnEvenRow?y-1.0f:y+0.0f );	// fudge.  The rotation makes it off center
 		m_sprStar.Draw();
 		
 		int x_rect_leading_edge = x + ( bIsAnEvenRow ? - m_iStarWidth/2 : m_iStarWidth/2 );
@@ -120,6 +120,6 @@ void TransitionStarWipe::CloseWipingLeft( WindowMessage send_when_done )
 void TransitionStarWipe::LoadNewStarSprite( CString sFileName )
 {
 	m_sprStar.Load( sFileName );
-	m_iStarWidth = m_sprStar.GetZoomedWidth();
-	m_iStarHeight = m_sprStar.GetZoomedHeight();
+	m_iStarWidth = (int)m_sprStar.GetZoomedWidth();
+	m_iStarHeight = (int)m_sprStar.GetZoomedHeight();
 }

@@ -24,8 +24,10 @@ class GhostArrow : public Sprite
 public:
 	GhostArrow();
 
+	virtual void Update( float fDeltaTime );
+
 	void  SetBeat( const float fSongBeat );
-	void  Step( StepScore score );
+	void  Step( TapStepScore score );
 
 	float m_fVisibilityCountdown;
 };

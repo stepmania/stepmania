@@ -25,7 +25,7 @@ void GrayArrow::SetBeat( const float fSongBeat )
 	SetState( fmod(fSongBeat,1)<0.25 ? 1 : 0 );
 }
 
-void GrayArrow::Step( StepScore score )
+void GrayArrow::Step()
 {
 	SetZoom( 0.50 );
 	BeginTweening( GRAY_ARROW_POP_UP_TIME );

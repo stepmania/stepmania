@@ -42,7 +42,7 @@ void HoldGhostArrow::Update( float fDeltaTime )
 			m_fHeatLevel = 0;
 	}
 
-	int iStateNum = min( m_fHeatLevel * GetNumStates(), GetNumStates()-1 );
+	int iStateNum = (int)min( m_fHeatLevel * GetNumStates(), GetNumStates()-1 );
 	SetState( iStateNum );
 
 	if( m_fHeatLevel == 1 )

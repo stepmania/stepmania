@@ -24,7 +24,7 @@ class BPMDisplay : public ActorFrame
 {
 public:
 	BPMDisplay();
-	void Update( float fDeltaTime ); 
+	virtual void Update( float fDeltaTime ); 
 	void SetBPMRange( float fLowBPM, float fHighBPM );
 
 protected:

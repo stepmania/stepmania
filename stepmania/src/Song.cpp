@@ -345,7 +345,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 					{
 					case 01:	// background music track
 						float fBeatOffset;
-						fBeatOffset = StepIndexToBeat(iStepIndex);
+						fBeatOffset = StepIndexToBeat( (float)iStepIndex );
 						float fBPS;
 						fBPS = m_BPMSegments[0].m_fBPM/60.0f;
 						m_fOffsetInSeconds = fBeatOffset / fBPS;
@@ -353,7 +353,7 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 						break;
 					case 03:	// bpm
 						BPMSegment new_seg;
-						new_seg.m_fStartBeat = StepIndexToBeat( iStepIndex );
+						new_seg.m_fStartBeat = StepIndexToBeat( (float)iStepIndex );
 						new_seg.m_fBPM = (float)arrayNotes[j];
 
 						m_BPMSegments.Add( new_seg );	// add to back for now (we'll sort later)
@@ -856,13 +856,12 @@ int CompareSongPointersByArtist(const void *arg1, const void *arg2)
 	CString sArtist1 = pSong1->GetArtist();
 	CString sArtist2 = pSong2->GetArtist();
 
-	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
-	CString sFilePath2 = pSong2->GetSongFilePath();
-
-	CString sCompareString1 = sArtist1 + sFilePath1;
-	CString sCompareString2 = sArtist2 + sFilePath2;
-
-	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
+	if( sArtist1 < sArtist2 )
+		return -1;
+	else if( sArtist1 == sArtist2 )
+		return CompareSongPointersByTitle( arg1, arg2 );
+	else
+		return 1;
 }
 
 void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers )
@@ -878,13 +877,12 @@ int CompareSongPointersByGroup(const void *arg1, const void *arg2)
 	CString sGroup1 = pSong1->GetGroupName();
 	CString sGroup2 = pSong2->GetGroupName();
 
-	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
-	CString sFilePath2 = pSong2->GetSongFilePath();
-
-	CString sCompareString1 = sGroup1 + sFilePath1;
-	CString sCompareString2 = sGroup2 + sFilePath2;
-
-	return CompareCStrings( (void*)&sCompareString1, (void*)&sCompareString2 );
+	if( sGroup1 < sGroup2 )
+		return -1;
+	else if( sGroup1 == sGroup2 )
+		return CompareSongPointersByTitle( arg1, arg2 );
+	else
+		return 1;
 }
 
 void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )
@@ -900,13 +898,10 @@ int CompareSongPointersByMostPlayed(const void *arg1, const void *arg2)
 	int iNumTimesPlayed1 = pSong1->GetNumTimesPlayed();
 	int iNumTimesPlayed2 = pSong2->GetNumTimesPlayed();
 
-	CString sFilePath1 = pSong1->GetSongFilePath();		// this is unique among songs
-	CString sFilePath2 = pSong2->GetSongFilePath();
-
-	if( iNumTimesPlayed1 > iNumTimesPlayed2 )
+	if( iNumTimesPlayed1 < iNumTimesPlayed2 )
 		return -1;
 	else if( iNumTimesPlayed1 == iNumTimesPlayed2 )
-		return CompareCStrings( (void*)&sFilePath1, (void*)&sFilePath2 );
+		return CompareSongPointersByTitle( arg1, arg2 );
 	else
 		return 1;
 }

@@ -13,7 +13,6 @@
 
 
 #include "Steps.h"
-class Steps;	// why is this needed?
 
 #include "GameInfo.h"	// for definition of GameMode
 enum GameMode;	// why is this needed?

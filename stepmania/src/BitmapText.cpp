@@ -96,7 +96,7 @@ bool BitmapText::Load( CString sFontFilePath )
 	if( sCharacters != "" )		// the creator supplied characters
 	{
 		// sanity check
-		if( sCharacters.GetLength() != Sprite::GetNumStates() )
+		if( sCharacters.GetLength() != (int)Sprite::GetNumStates() )
 			RageError( ssprintf("The characters in '%s' does not match the number of frames in the texture.", m_sFontFilePath) );
 
 		// set the char to frameno map
@@ -123,20 +123,20 @@ bool BitmapText::Load( CString sFontFilePath )
 		CStringArray arrayCharWidths;
 		split( sWidthsValue, ",", arrayCharWidths );
 
-		if( arrayCharWidths.GetSize() != Sprite::GetNumStates() )
+		if( arrayCharWidths.GetSize() != (int)Sprite::GetNumStates() )
 			RageError( ssprintf("The number of widths specified in '%s' (%d) do not match the number of frames in the texture (%u).", m_sFontFilePath, arrayCharWidths.GetSize(), Sprite::GetNumStates()) );
 
 		for( int i=0; i<arrayCharWidths.GetSize(); i++ )
 		{
-			m_fFrameNoToWidth[i] = atof( arrayCharWidths[i] );
+			m_fFrameNoToWidth[i] = (float)atof( arrayCharWidths[i] );
 		}
 
 	}
 	else	// no creator supplied withds.  Assume each character is the width of the frame
 	{
-		for( int i=0; i<Sprite::GetNumStates(); i++ )
+		for( int i=0; i<(int)Sprite::GetNumStates(); i++ )
 		{
-			m_fFrameNoToWidth[i] = m_pTexture->GetSourceFrameWidth();
+			m_fFrameNoToWidth[i] = (float)m_pTexture->GetSourceFrameWidth();
 		}
 	}
 
@@ -144,7 +144,7 @@ bool BitmapText::Load( CString sFontFilePath )
 	if( bFirstTimeBeingLoaded )
 	{
 		// tweak the textures frame rectangles so we don't draw extra to the left and right of the character
-		for( int i=0; i<Sprite::GetNumStates(); i++ )
+		for( int i=0; i<(int)Sprite::GetNumStates(); i++ )
 		{
 			FRECT* pFrect = m_pTexture->GetTextureCoordRect( i );
 

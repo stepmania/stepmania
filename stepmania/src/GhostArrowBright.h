@@ -25,7 +25,7 @@ public:
 	GhostArrowBright();
 
 	void  SetBeat( const float fSongBeat );
-	void  Step( StepScore score );
+	void  Step( TapStepScore score );
 
 	float m_fVisibilityCountdown;
 };

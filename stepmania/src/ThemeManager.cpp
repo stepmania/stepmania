@@ -38,6 +38,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_COLOR_ARROW_GRAY_PART:	sAssetPath = "Graphics\\Color Arrow gray part 2x2";		break;
 		case GRAPHIC_COLOR_ARROW_COLOR_PART:sAssetPath = "Graphics\\Color Arrow color part";		break;
 		case GRAPHIC_GHOST_ARROW:			sAssetPath = "Graphics\\ghost arrow";					break;
+		case GRAPHIC_BRIGHT_GHOST_ARROW:	sAssetPath = "Graphics\\bright ghost arrow";			break;
 		case GRAPHIC_HOLD_GHOST_ARROW:		sAssetPath = "Graphics\\hold ghost arrow";				break;
 		case GRAPHIC_GRAY_ARROW:			sAssetPath = "Graphics\\gray arrow";					break;
 		case GRAPHIC_JUDGEMENT:				sAssetPath = "Graphics\\judgement 1x9";					break;
@@ -65,7 +66,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_MUSIC_SELECTION_HIGHLIGHT:	sAssetPath = "Graphics\\music selection highlight";	break;
 		case GRAPHIC_STEPS_DESCRIPTION:		sAssetPath = "Graphics\\steps description 1x8";			break;
 		case GRAPHIC_SECTION_BACKGROUND:	sAssetPath = "Graphics\\section background";			break;
-		case GRAPHIC_MUSIC_SORT_ICONS:		sAssetPath = "Graphics\\music sort icons 1x5";			break;
+		case GRAPHIC_MUSIC_SORT_ICONS:		sAssetPath = "Graphics\\music sort icons 1x4";			break;
 		case GRAPHIC_MUSIC_STATUS_ICONS:	sAssetPath = "Graphics\\music status icons 1x4";		break;
 		case GRAPHIC_DANGER_TEXT:			sAssetPath = "Graphics\\danger text";					break;
 		case GRAPHIC_DANGER_BACKGROUND:		sAssetPath = "Graphics\\danger background";				break;
