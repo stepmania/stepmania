@@ -528,7 +528,7 @@ void ScreenEdit::Init()
 	m_pSteps->GetNoteData( noteData );
 
 
-	m_EditMode = MODE_EDITING;
+	TransitionEditMode( MODE_EDITING );
 	GAMESTATE->m_bPastHereWeGo = false;
 
 	GAMESTATE->m_bEditing = true;
@@ -546,22 +546,28 @@ void ScreenEdit::Init()
 
 	g_iShiftAnchor = -1;
 
+	
+	this->AddChild( &m_Background );
 
 	m_SnapDisplay.SetXY( EDIT_X, PLAYER_Y_STANDARD );
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
+	this->AddChild( &m_SnapDisplay );
+
+	m_NoteDataEdit.CopyAll( noteData );
 
 	m_NoteFieldEdit.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
-	m_NoteDataEdit.CopyAll( noteData );
-
 	m_NoteFieldEdit.Init( GAMESTATE->m_pPlayerState[PLAYER_1], PLAYER_HEIGHT*2 );
 	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 800 );
+	this->AddChild( &m_NoteFieldEdit );
+
+	m_NoteDataRecord.CopyAll( noteData );
 
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
-	m_NoteDataRecord.CopyAll( noteData );
 	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 350 );
 	m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
+	this->AddChild( &m_NoteFieldRecord );
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
@@ -577,6 +583,9 @@ void ScreenEdit::Init()
 	m_Player.Load( noteData );
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
+	this->AddChild( &m_Player );
+
+	this->AddChild( &m_Foreground );
 
 	m_textHelp.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
@@ -585,6 +594,7 @@ void ScreenEdit::Init()
 	m_textHelp.SetZoom( 0.5f );
 	m_textHelp.SetText( HELP_TEXT );
 	m_textHelp.SetShadowLength( 0 );
+	this->AddChild( &m_textHelp );
 
 	m_textInfo.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInfo.SetXY( INFO_TEXT_X, INFO_TEXT_Y );
@@ -592,16 +602,20 @@ void ScreenEdit::Init()
 	m_textInfo.SetVertAlign( Actor::align_top );
 	m_textInfo.SetZoom( 0.5f );
 	m_textInfo.SetShadowLength( 0 );
-	//m_textInfo.SetText();	// set this below every frame
+	this->AddChild( &m_textInfo );
 
-	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line") );
-	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap") );
-	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker") );
+
+	this->SortByDrawOrder();
+
+
+	m_soundChangeLine.Load( THEME->GetPathS("ScreenEdit","line"), true );
+	m_soundChangeSnap.Load( THEME->GetPathS("ScreenEdit","snap"), true );
+	m_soundMarker.Load(		THEME->GetPathS("ScreenEdit","marker"), true );
 
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
-	m_soundAssistTick.Load( THEME->GetPathS("ScreenEdit","assist tick") );
+	m_soundAssistTick.Load( THEME->GetPathS("ScreenEdit","assist tick"), true );
 
 	this->HandleScreenMessage( SM_DoUpdateTextInfo );
 }
@@ -702,41 +716,15 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
 	{
-		if( PREFSMAN->m_bEditorShowBGChangesPlay )
-		{
-			m_Background.Update( fDeltaTime );
-			m_Foreground.Update( fDeltaTime );
-		}
-
 		// check for end of playback/record
 
 		if( GAMESTATE->m_fSongBeat > NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) + 4 )		// give a one measure lead out
 		{
-			if( m_EditMode == MODE_RECORDING )
-			{
-				TransitionFromRecordToEdit();
-			}
-			else if( m_EditMode == MODE_PLAYING )
-			{
-				TransitionToEdit();
-			}
+			TransitionEditMode( MODE_EDITING );
 			GAMESTATE->m_fSongBeat = NoteRowToBeat( m_NoteFieldEdit.m_iEndMarker );
 		}
 	}
 
-	m_SnapDisplay.Update( fDeltaTime );
-	m_NoteFieldEdit.Update( fDeltaTime );
-	m_textHelp.Update( fDeltaTime );
-	m_textInfo.Update( fDeltaTime );
-
-
-	if( m_EditMode == MODE_RECORDING )
-		m_NoteFieldRecord.Update( fDeltaTime );
-
-	if( m_EditMode == MODE_PLAYING )
-	{
-		m_Player.Update( fDeltaTime );
-	}
 
 	//LOG->Trace( "ScreenEdit::Update(%f)", fDeltaTime );
 	ScreenWithMenuElements::Update( fDeltaTime );
@@ -785,47 +773,13 @@ void ScreenEdit::UpdateTextInfo()
 
 void ScreenEdit::DrawPrimitives()
 {
-	switch( m_EditMode )
-	{
-	case MODE_EDITING:
-		{
-			m_sprOverlay->Draw();
-			m_textHelp.Draw();
-			m_textInfo.Draw();
-			m_SnapDisplay.Draw();
-
-			// HACK:  Make NoteFieldEdit draw using the trailing beat
-			float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
-			GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
-			m_NoteFieldEdit.Draw();
-			GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
-		}
-		break;
-	case MODE_RECORDING:
-		if( PREFSMAN->m_bEditorShowBGChangesPlay )
-			m_Background.Draw();
-
-		m_sprOverlay->Draw();
-
-		m_NoteFieldRecord.Draw();
-		if( PREFSMAN->m_bEditorShowBGChangesPlay )
-			m_Foreground.Draw();
-		break;
-	case MODE_PLAYING:
-		if( PREFSMAN->m_bEditorShowBGChangesPlay )
-			m_Background.Draw();
-
-		m_sprOverlay->Draw();
-
-		m_Player.Draw();
-		if( PREFSMAN->m_bEditorShowBGChangesPlay )
-			m_Foreground.Draw();
-		break;
-	default:
-		ASSERT(0);
-	}
+	// HACK:  Draw using the trailing beat
+	float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
+	GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
 
 	ScreenWithMenuElements::DrawPrimitives();
+
+	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
 }
 
 void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -1355,7 +1309,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 {
 	if( EditB == EDIT_BUTTON_RETURN_TO_EDIT )
 	{
-		TransitionFromRecordToEdit();
+		TransitionEditMode( MODE_EDITING );
 		return;
 	}	
 
@@ -1397,7 +1351,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 	switch( EditB )
 	{
 	case EDIT_BUTTON_RETURN_TO_EDIT:
-		TransitionToEdit();
+		TransitionEditMode( MODE_EDITING );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
@@ -1443,44 +1397,66 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 
 }
 
-
-/* Switch to editing. */
-void ScreenEdit::TransitionToEdit()
+void ScreenEdit::TransitionEditMode( EditMode em )
 {
-	m_sprOverlay->PlayCommand( "Edit" );
-
-	/* Important: people will stop playing, change the BG and start again; make sure we reload */
-	m_Background.Unload();
-	m_Foreground.Unload();
-
-	m_EditMode = MODE_EDITING;
-	GAMESTATE->m_bPastHereWeGo = false;
-	m_soundMusic.StopPlaying();
-	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
+	EditMode old = m_EditMode;
 	
-	/* Make sure we're snapped. */
-	GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+	switch( em )
+	{
+	case MODE_EDITING:
+		m_sprOverlay->PlayCommand( "Edit" );
 
-	/* Playing and recording have lead-ins, which may start before beat 0;
-	 * make sure we don't stay there if we escaped out early. */
-	GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
+		/* Important: people will stop playing, change the BG and start again; make sure we reload */
+		m_Background.Unload();
+		m_Foreground.Unload();
 
-	/* Stop displaying course attacks, if any. */
-	GAMESTATE->RemoveAllActiveAttacks();
-	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
-	GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
-}
+		GAMESTATE->m_bPastHereWeGo = false;
+		m_soundMusic.StopPlaying();
+		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
-void ScreenEdit::TransitionFromRecordToEdit()
-{
-	TransitionToEdit();
+		/* Make sure we're snapped. */
+		GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
-	// delete old TapNotes in the range
-	m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+		/* Playing and recording have lead-ins, which may start before beat 0;
+			* make sure we don't stay there if we escaped out early. */
+		GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
 
-	m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, m_NoteFieldEdit.m_iBeginMarker );
+		/* Stop displaying course attacks, if any. */
+		GAMESTATE->RemoveAllActiveAttacks();
+		GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 
-	m_NoteDataRecord.ClearAll();
+		if( old == MODE_RECORDING )
+		{
+			// delete old TapNotes in the range
+			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+			m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, m_NoteFieldEdit.m_iBeginMarker );
+			m_NoteDataRecord.ClearAll();
+		}
+		break;
+	case MODE_RECORDING:
+		break;
+	case MODE_PLAYING:
+		break;
+	default:
+		ASSERT(0);
+	}
+
+
+	//
+	// Show/hide depending on em
+	//
+	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == MODE_EDITING );
+	m_textHelp.SetHidden( em != MODE_EDITING );
+	m_textInfo.SetHidden( em != MODE_EDITING );
+	m_SnapDisplay.SetHidden( em != MODE_EDITING );
+	m_NoteFieldEdit.SetHidden( em != MODE_EDITING );
+	m_NoteFieldRecord.SetHidden( em != MODE_RECORDING );
+	m_Player.SetHidden( em != MODE_PLAYING );
+	m_Foreground.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == MODE_EDITING );
+
+
+	m_EditMode = em;
 }
 
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
@@ -2149,7 +2125,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				SOUND->PlayMusic("");
 
-				m_EditMode = MODE_PLAYING;
+				TransitionEditMode( MODE_PLAYING );
 				m_sprOverlay->PlayCommand( "Play" );
 
 				GAMESTATE->m_bPastHereWeGo = true;
@@ -2201,7 +2177,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				SOUND->PlayMusic("");
 
-				m_EditMode = MODE_RECORDING;
+				TransitionEditMode( MODE_RECORDING );
 				m_sprOverlay->PlayCommand( "Record" );
 				GAMESTATE->m_bPastHereWeGo = true;
 

@@ -139,8 +139,8 @@ public:
 protected:
 	ThemeMetric<CString> PREV_SCREEN;
 	
-	void TransitionFromRecordToEdit();
-	void TransitionToEdit();
+	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING };
+	void TransitionEditMode( EditMode em );
 	void PlayTicks();
 	void PlayPreviewMusic();
 	void UpdateTextInfo();
@@ -150,7 +150,6 @@ protected:
 	void MenuItemLoseFocus( BitmapText* menuitem );
 
 
-	enum EditMode { MODE_EDITING, MODE_RECORDING, MODE_PLAYING };
 	EditMode m_EditMode;
 
 	Song*			m_pSong;
