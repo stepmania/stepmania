@@ -260,10 +260,6 @@ SOURCE=.\Grade.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\HoldNote.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\NoteData.cpp
 # End Source File
 # Begin Source File
