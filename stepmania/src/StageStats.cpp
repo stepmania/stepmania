@@ -189,7 +189,6 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 
 	if( ComboList[pn].size() == 0 || ComboList[pn].back().cnt >= cnt )
 	{
-		LOG->Trace("new combo, start %f", pos);
 		/* This is a new combo. */
 		Combo_t NewCombo;
 		NewCombo.start = pos;
@@ -199,7 +198,6 @@ void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 	Combo_t &combo = ComboList[pn].back();
 	combo.size = pos - combo.start;
 	combo.cnt = cnt;
-		LOG->Trace("combo pos %f, size %f, %i", pos, combo.size, combo.cnt );
 }
 
 /* SetLifeRecord and UpdateComboList take a percentage (0..1) in pos, but the values
@@ -219,7 +217,6 @@ void StageStats::Finish()
 		if( fabsf(First-Last) < 0.0001f )
 			continue;
 
-		LOG->Trace("xxx %f ... %f", First, Last );//, Scale);
 		unsigned i;
 		for( i = 0; i < ComboList[pn].size(); ++i )
 		{
