@@ -2,12 +2,12 @@
 #define SCREEN_OPTIONS_MASTER_PREFS_H
 
 static const int MAX_OPTIONS=16;
-#define OPT_SAVE_PREFERENCES			0x1
-#define OPT_APPLY_GRAPHICS				0x2
-#define OPT_APPLY_THEME					0x4
-#define OPT_RESET_GAME					0x8
-#define OPT_APPLY_SOUND					0x16
-#define OPT_APPLY_SONG					0x32
+#define OPT_SAVE_PREFERENCES			(1<<0)
+#define OPT_APPLY_GRAPHICS				(1<<1)
+#define OPT_APPLY_THEME					(1<<2)
+#define OPT_RESET_GAME					(1<<3)
+#define OPT_APPLY_SOUND					(1<<4)
+#define OPT_APPLY_SONG					(1<<5)
 
 struct ConfOption
 {
