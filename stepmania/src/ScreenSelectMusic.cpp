@@ -707,8 +707,10 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 
 	/* Loading the rest can cause small skips, so don't do it until the wheel settles. 
 	 * Do load if we're transitioning out, though, so we don't miss starting the music
-	 * for the options screen if a song is selected quickly. */
-	if( !m_MusicWheel.IsSettled() && !m_Out.IsTransitioning() )
+	 * for the options screen if a song is selected quickly.  Also, don't do this
+	 * if the wheel is locked, since we're just bouncing around after selecting TYPE_RANDOM,
+	 * and it'll take a while before the wheel will settle. */
+	if( !m_MusicWheel.IsSettled() && !m_MusicWheel.WheelIsLocked() && !m_Out.IsTransitioning() )
 		return;
 
 	if( g_bBannerWaiting )
