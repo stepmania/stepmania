@@ -1,12 +1,13 @@
 #include "global.h"
 #include "RageLog.h"
 #include "RageSoundReader_MP3.h"
-       #include <sys/types.h>
-       #include <sys/stat.h>
-       #include <fcntl.h>
 #include "RageTimer.h"
-
 #include "RageInputDevice.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 void ReadData( SoundReader *snd,
 	       int ms,		/* start */
