@@ -21,18 +21,18 @@
 #include "ModeChoice.h"
 #include "ActorUtil.h"
 
-#define NUM_CHOICES_ON_PAGE_1				THEME->GetMetricI("ScreenSelectDifficulty","NumChoicesOnPage1")
-#define LOCK_INPUT_SECONDS					THEME->GetMetricF("ScreenSelectDifficulty","LockInputSeconds")
-#define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF("ScreenSelectDifficulty","SleepAfterChoiceSeconds")
-#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectDifficulty","SleepAfterTweenOffSeconds")
-#define CURSOR_CHOOSE_COMMAND				THEME->GetMetric ("ScreenSelectDifficulty","CursorChooseCommand")
-#define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorP%dOffsetXFromPicture",p+1))
-#define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF("ScreenSelectDifficulty",ssprintf("CursorP%dOffsetYFromPicture",p+1))
-#define SHADOW_CHOOSE_COMMAND				THEME->GetMetric ("ScreenSelectDifficulty","ShadowChooseCommand")
-#define SHADOW_LENGTH_X						THEME->GetMetricF("ScreenSelectDifficulty","ShadowLengthX")
-#define SHADOW_LENGTH_Y						THEME->GetMetricF("ScreenSelectDifficulty","ShadowLengthY")
-#define OK_CHOOSE_COMMAND					THEME->GetMetric ("ScreenSelectDifficulty","OKChooseCommand")
-#define DISABLED_COLOR						THEME->GetMetricC("ScreenSelectDifficulty","DisabledColor")
+#define NUM_CHOICES_ON_PAGE_1				THEME->GetMetricI(m_sName,"NumChoicesOnPage1")
+#define LOCK_INPUT_SECONDS					THEME->GetMetricF(m_sName,"LockInputSeconds")
+#define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF(m_sName,"SleepAfterChoiceSeconds")
+#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"SleepAfterTweenOffSeconds")
+#define CURSOR_CHOOSE_COMMAND				THEME->GetMetric (m_sName,"CursorChooseCommand")
+#define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF(m_sName,ssprintf("CursorP%dOffsetXFromPicture",p+1))
+#define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF(m_sName,ssprintf("CursorP%dOffsetYFromPicture",p+1))
+#define SHADOW_CHOOSE_COMMAND				THEME->GetMetric (m_sName,"ShadowChooseCommand")
+#define SHADOW_LENGTH_X						THEME->GetMetricF(m_sName,"ShadowLengthX")
+#define SHADOW_LENGTH_Y						THEME->GetMetricF(m_sName,"ShadowLengthY")
+#define OK_CHOOSE_COMMAND					THEME->GetMetric (m_sName,"OKChooseCommand")
+#define DISABLED_COLOR						THEME->GetMetricC(m_sName,"DisabledColor")
 
 
 ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
@@ -59,8 +59,8 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 	{
 		for( unsigned choice=0; choice<m_ModeChoices[page].size(); choice++, c++ )
 		{
-			CString sInfoFile = ssprintf( "ScreenSelectDifficulty info%d", c+1 );
-			CString sPictureFile = ssprintf( "ScreenSelectDifficulty picture%d", c+1 );
+			CString sInfoFile = ssprintf( "%s info%d", m_sName.c_str(), c+1 );
+			CString sPictureFile = ssprintf( "%s picture%d", m_sName.c_str(), c+1 );
 
 			m_sprPicture[page][choice].SetName( ssprintf("PicturePage%dChoice%d",page+1,choice+1) );
 			m_sprPicture[page][choice].Load( THEME->GetPathToG(sPictureFile) );
@@ -72,11 +72,11 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 		}
 
 		m_sprMore[page].SetName( ssprintf("MorePage%d",page+1) );
-		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("ScreenSelectDifficulty more page%d",page+1) ) );
+		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("%s more page%d", m_sName.c_str(),page+1) ) );
 		m_framePages.AddChild( &m_sprMore[page] );
 
 		m_sprExplanation[page].SetName( ssprintf("ExplanationPage%d",page+1) );
-		m_sprExplanation[page].Load( THEME->GetPathToG( "ScreenSelectDifficulty explanation") );
+		m_sprExplanation[page].Load( THEME->GetPathToG( m_sName + " explanation") );
 		m_sprExplanation[page].StopAnimating();
 		m_sprExplanation[page].SetState( page );
 		m_framePages.AddChild( &m_sprExplanation[page] );
@@ -92,20 +92,20 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 			continue;
 
 		m_sprShadow[p].SetName( "Shadow" );
-		m_sprShadow[p].Load( THEME->GetPathToG( "ScreenSelectDifficulty shadow 2x1") );
+		m_sprShadow[p].Load( THEME->GetPathToG( m_sName + " shadow 2x1") );
 		m_sprShadow[p].StopAnimating();
 		m_sprShadow[p].SetState( p );
 		m_sprShadow[p].SetDiffuse( RageColor(0,0,0,0.6f) );
 		m_framePages.AddChild( &m_sprShadow[p] );
 
 		m_sprCursor[p].SetName( "Cursor" );
-		m_sprCursor[p].Load( THEME->GetPathToG( "ScreenSelectDifficulty cursor 2x1") );
+		m_sprCursor[p].Load( THEME->GetPathToG( m_sName + " cursor 2x1") );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].SetName( "OK" );
-		m_sprOK[p].Load( THEME->GetPathToG( "ScreenSelectDifficulty ok 2x1") );
+		m_sprOK[p].Load( THEME->GetPathToG( m_sName + " ok 2x1") );
 		m_sprOK[p].SetState( p );
 		m_sprOK[p].StopAnimating();
 		m_sprOK[p].SetDiffuse( RageColor(1,1,1,0) );
@@ -114,7 +114,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 
 	this->AddChild( &m_framePages );
 	
-	m_soundChange.Load( THEME->GetPathToS( "ScreenSelectDifficulty change") );
+	m_soundChange.Load( THEME->GetPathToS( m_sName + " change") );
 	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
