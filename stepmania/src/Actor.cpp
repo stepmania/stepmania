@@ -15,6 +15,7 @@
 #include "RageDisplay.h"
 #include "PrefsManager.h"
 #include "RageUtil.h"
+#include "RageMath.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 
@@ -72,6 +73,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	m_temp = m_current;
 
 
+	/* XXX: recheck rotations in here (all in degrees?) */
 	//
 	// set temporary drawing properties based on Effects 
 	//
@@ -164,13 +166,22 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	DISPLAY->Translate( m_temp.pos.x, m_temp.pos.y, m_temp.pos.z );
 	DISPLAY->Scale( m_temp.scale.x, m_temp.scale.y, m_temp.scale.z );
 
-
+	/* The only time rotation and quat should normally be used simultaneously
+	 * is for m_baseRotation. */
 	if( m_temp.rotation.x != 0 )	
 		DISPLAY->RotateX( m_temp.rotation.x );
 	if( m_temp.rotation.y != 0 )	
 		DISPLAY->RotateY( m_temp.rotation.y );
 	if( m_temp.rotation.z != 0 )	
 		DISPLAY->RotateZ( m_temp.rotation.z );
+
+	if( m_temp.quat.x != 0 ||  m_temp.quat.y != 0 ||  m_temp.quat.z != 0 || m_temp.quat.w != 1 )
+	{
+		RageMatrix mat;
+		RageMatrixFromQuat( &mat, m_temp.quat );
+
+		DISPLAY->MultMatrix(mat);
+	}
 }
 
 void Actor::EndDraw()
@@ -610,6 +621,21 @@ static CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndex
 		return "";
 }
 
+void Actor::AddRotationH( float rot )
+{
+	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromH(rot) );
+}
+
+void Actor::AddRotationP( float rot )
+{
+	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromP(rot) );
+}
+
+void Actor::AddRotationR( float rot )
+{
+	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
+}
+
 void Actor::Command( CString sCommandString )
 {
 	// OPTIMIZATION OPPORTUNITY:  sCommandString could be parsed more efficiently.
@@ -664,6 +690,9 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="rotationx" )		SetRotationX( fParam(1) );
 		else if( sName=="rotationy" )		SetRotationY( fParam(1) );
 		else if( sName=="rotationz" )		SetRotationZ( fParam(1) );
+		else if( sName=="heading" )			AddRotationH( fParam(1) );
+		else if( sName=="pitch" )			AddRotationP( fParam(1) );
+		else if( sName=="roll" ) 			AddRotationR( fParam(1) );
 		else if( sName=="shadowlength" )	SetShadowLength( fParam(1) );
 		else if( sName=="horizalign" )		SetHorizAlign( sParam(1) );
 		else if( sName=="vertalign" )		SetVertAlign( sParam(1) );
@@ -731,6 +760,7 @@ void Actor::TweenState::Init()
 {
 	pos	= RageVector3( 0, 0, 0 );
 	rotation = RageVector3( 0, 0, 0 );
+	quat = RageVector4( 0, 0, 0, 1 );
 	scale = RageVector3( 1, 1, 1 );
 	for(int i=0; i<4; i++) 
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
@@ -742,6 +772,8 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.pos			= ts1.pos	  + (ts2.pos		- ts1.pos	  )*fPercentBetween;
 	average_out.scale		= ts1.scale	  + (ts2.scale		- ts1.scale   )*fPercentBetween;
 	average_out.rotation	= ts1.rotation+ (ts2.rotation	- ts1.rotation)*fPercentBetween;
+	RageQuatSlerp(&average_out.quat, ts1.quat, ts2.quat, fPercentBetween);
+
 	for(int i=0; i<4; i++) 
 		average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
 	average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;

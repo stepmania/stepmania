@@ -42,6 +42,7 @@ public:
 		// start and end position for tweening
 		RageVector3 pos;
 		RageVector3 rotation;
+		RageVector4 quat;
 		RageVector3 scale;
 		RageColor   diffuse[4];
 		RageColor   glow;
@@ -113,6 +114,9 @@ public:
 	virtual void  SetRotationX( float rot )	{ DestTweenState().rotation.x = rot; }
 	virtual void  SetRotationY( float rot )	{ DestTweenState().rotation.y = rot; }
 	virtual void  SetRotationZ( float rot )	{ DestTweenState().rotation.z = rot; }
+	virtual void  AddRotationH( float rot );
+	virtual void  AddRotationP( float rot );
+	virtual void  AddRotationR( float rot );
 
 	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
 	virtual void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
