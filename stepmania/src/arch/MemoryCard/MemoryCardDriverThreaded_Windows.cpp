@@ -1,8 +1,6 @@
 #include "global.h"
 #include "MemoryCardDriverThreaded_Windows.h"
 #include "RageUtil.h"
-#include <io.h>
-#include <fcntl.h>
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "Profile.h"
