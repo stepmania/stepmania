@@ -177,52 +177,12 @@ void ScreenGameplay::Init()
 	//
 	// fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
 	//
-	if( GAMESTATE->IsCourseMode() )
-	{
-		Course* pCourse = GAMESTATE->m_pCurCourse;
-		ASSERT( pCourse );
+	InitSongQueues();
 
-		/* Increment the play count. */
-		if( !GAMESTATE->m_bDemonstrationOrJukebox )
-		{
-			FOREACH_EnabledPlayer(p)
-				PROFILEMAN->IncrementCoursePlayCount( pCourse, GAMESTATE->m_pCurTrail[p], p );
-		}
-
-		m_apSongsQueue.clear();
-		PlayerNumber pnMaster = GAMESTATE->m_MasterPlayerNumber;
-		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
-		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-		{
-			m_apSongsQueue.push_back( e->pSong );
-		}
-
-        FOREACH_EnabledPlayer(p)
-		{
-			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-			ASSERT( pTrail );
-
-			m_vpStepsQueue[p].clear();
-			m_asModifiersQueue[p].clear();
-			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-			{
-				m_vpStepsQueue[p].push_back( e->pSteps );
-				AttackArray a;
-				e->GetAttackArray( a );
-				m_asModifiersQueue[p].push_back( a );
-			}
-
-		}
-	}
-	else
-	{
-		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
-        FOREACH_PlayerNumber(p)
-		{
-			m_vpStepsQueue[p].push_back( GAMESTATE->m_pCurSteps[p] );
-			m_asModifiersQueue[p].push_back( AttackArray() );
-		}
-	}
+	/* Increment the course play count. */
+	if( GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox )
+		FOREACH_EnabledPlayer(p)
+			PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, GAMESTATE->m_pCurTrail[p], p );
 
 	/* Called once per stage (single song or single course). */
 	GAMESTATE->BeginStage();
@@ -761,6 +721,50 @@ void ScreenGameplay::Init()
 	// Get the transitions rolling on the first update.
 	// We can't do this in the constructor because ScreenGameplay is constructed 
 	// in the middle of ScreenStage.
+}
+
+//
+// fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
+//
+void ScreenGameplay::InitSongQueues()
+{
+	LOG->Trace("InitSongQueues");
+	if( GAMESTATE->IsCourseMode() )
+	{
+		Course* pCourse = GAMESTATE->m_pCurCourse;
+		ASSERT( pCourse );
+
+		m_apSongsQueue.clear();
+		PlayerNumber pnMaster = GAMESTATE->m_MasterPlayerNumber;
+		Trail *pTrail = GAMESTATE->m_pCurTrail[pnMaster];
+		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+			m_apSongsQueue.push_back( e->pSong );
+
+        FOREACH_EnabledPlayer(p)
+		{
+			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+			ASSERT( pTrail );
+
+			m_vpStepsQueue[p].clear();
+			m_asModifiersQueue[p].clear();
+			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+			{
+				m_vpStepsQueue[p].push_back( e->pSteps );
+				AttackArray a;
+				e->GetAttackArray( a );
+				m_asModifiersQueue[p].push_back( a );
+			}
+		}
+	}
+	else
+	{
+		m_apSongsQueue.push_back( GAMESTATE->m_pCurSong );
+        FOREACH_PlayerNumber(p)
+		{
+			m_vpStepsQueue[p].push_back( GAMESTATE->m_pCurSteps[p] );
+			m_asModifiersQueue[p].push_back( AttackArray() );
+		}
+	}
 }
 
 ScreenGameplay::~ScreenGameplay()

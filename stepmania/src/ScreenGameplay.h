@@ -85,6 +85,8 @@ protected:
 	void SongFinished();
 	void StageFinished( bool bBackedOut );
 
+	virtual void InitSongQueues();
+
 	enum DancingState { 
 		STATE_INTRO = 0, // not allowed to press Back
 		STATE_DANCING,
