@@ -784,11 +784,8 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 
 	/* XXX: I have no idea if this is correct--but it's better than overflowing,
 	 * anyway. -glenn */
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_EnabledPlayer( p )
 	{
-		if( !IsPlayerEnabled(p) )
-			continue;
-
 		for( int r = 0; r < NUM_RADAR_CATEGORIES; r++)
 		{
 			statsOut.fRadarPossible[p][r] /= vSongsOut.size();
@@ -813,7 +810,7 @@ void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
  * of gameplay. */
 void GameState::StoreSelectedOptions()
 {
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		this->m_StoredPlayerOptions[p] = this->m_PlayerOptions[p];
 	m_StoredSongOptions = m_SongOptions;
 }
@@ -1038,13 +1035,8 @@ void GameState::AdjustFailType()
 
 	/* Find the easiest difficulty notes selected by either player. */
 	Difficulty dc = DIFFICULTY_INVALID;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-	{
-		if( !this->IsHumanPlayer(p) )
-			continue;	// skip
-
+	FOREACH_HumanPlayer( p )
 		dc = min(dc, this->m_pCurNotes[p]->GetDifficulty());
-	}
 
 	/* Reset the fail type to the default. */
 	SongOptions so;

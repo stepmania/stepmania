@@ -12,6 +12,7 @@
 
 #include "PlayerNumber.h"
 #include "ThemeManager.h"
+#include "GameState.h"
 
 
 #define COLOR_P1		THEME->GetMetricC("Common","ColorP1")
@@ -31,5 +32,25 @@ RageColor PlayerToColor( PlayerNumber pn )
 RageColor PlayerToColor( int p ) 
 { 
 	return PlayerToColor( (PlayerNumber)p ); 
+}
+
+PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
+{
+	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
+	{
+		if( GAMESTATE->IsHumanPlayer(p) )
+			return p;
+	}
+	return PLAYER_INVALID;
+}
+
+PlayerNumber GetNextEnabledPlayer( PlayerNumber pn )
+{
+	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
+	{
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			return p;
+	}
+	return PLAYER_INVALID;
 }
 
