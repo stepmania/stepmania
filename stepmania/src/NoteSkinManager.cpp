@@ -301,6 +301,7 @@ CString NoteSkinManager::GetPathToFromDir( CString sDir, CString sFileName )
 	GetDirListing( sDir+sFileName+"*.jpg",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.bmp",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.gif",		matches, false, true );
+	GetDirListing( sDir+sFileName+"*",			matches, false, true );
 
 	if( matches.empty() )
 		return "";

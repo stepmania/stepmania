@@ -29,6 +29,8 @@ public:
 
 	void Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fYReverseOffsetPixels );
 
+	void Update( float fDeltaTime );
+
 	void DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting );
 	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels );
 	void DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActive, float fLife, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels );

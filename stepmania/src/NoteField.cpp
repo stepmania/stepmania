@@ -170,6 +170,23 @@ void NoteField::Update( float fDeltaTime )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
 
 	RefreshBeatToNoteSkin();
+
+
+	//
+	// update all NoteDisplayCols.  NoteDisplay's may contain BGAnimations 
+	// that need to be updated.
+	//
+	for( NDMap::iterator iter = m_BeatToNoteDisplays.begin();
+		iter != m_BeatToNoteDisplays.end();
+		iter++ )
+	{
+		NoteDisplayCols *nd = iter->second;
+		for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
+			nd->display[c].Update(fDeltaTime);
+//		nd->m_ReceptorArrowRow.Update(fDeltaTime);
+//		nd->m_GhostArrowRow.Update(fDeltaTime);
+	}
+
 }
 
 float NoteField::GetWidth()
@@ -498,6 +515,7 @@ void NoteField::DrawPrimitives()
 			DrawMarkerBar( m_fEndMarker );
 
 	}
+
 
 
 	//

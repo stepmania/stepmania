@@ -288,6 +288,18 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 	}
 }
 
+void NoteDisplay::Update( float fDeltaTime )
+{
+	int i;
+
+	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pTapNote[i])			m_pTapNote[i]->Update(fDeltaTime);
+	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pTapAddition[i])		m_pTapAddition[i]->Update(fDeltaTime);
+	m_pTapMine->Update(fDeltaTime);
+	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldHeadActive[i])	m_pHoldHeadActive[i]->Update(fDeltaTime);
+	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldHeadInactive[i])	m_pHoldHeadInactive[i]->Update(fDeltaTime);
+	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldTailActive[i])	m_pHoldTailActive[i]->Update(fDeltaTime);
+	for( i=0; i<NOTE_COLOR_IMAGES; i++ )	if(m_pHoldTailInactive[i])	m_pHoldTailInactive[i]->Update(fDeltaTime);
+}
 
 void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor )
 {
