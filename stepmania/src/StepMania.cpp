@@ -1333,7 +1333,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		{
 			THEME->ReloadMetrics();
 			TEXTUREMAN->ReloadAll();
-			SCREENMAN->ReloadCreditsText();
 			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 			CodeDetector::RefreshCacheItems();
 		

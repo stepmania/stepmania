@@ -95,10 +95,8 @@ void ScreenManager::ThemeChanged()
 	SAFE_DELETE( m_SystemLayer );
 	m_SystemLayer = new ScreenSystemLayer;
 	m_SystemLayer->Init();
+	m_SystemLayer->ReloadCreditsText();
 	m_SystemLayer->RefreshCreditsMessages();
-	
-	// reload shared BGA
-	m_pSharedBGA->LoadFromAniDir( m_sLastLoadedBackgroundPath );
 }
 
 void ScreenManager::EmptyDeleteQueue()
@@ -538,11 +536,6 @@ void ScreenManager::RefreshCreditsMessages()
 		joined = "none";
 
 	LOG->MapLog( "JOINED", "Players joined: %s", joined.c_str() );
-}
-
-void ScreenManager::ReloadCreditsText()
-{
-	m_SystemLayer->ReloadCreditsText();
 }
 
 /* Always play these sounds, even if we're in a silent attract loop. */
