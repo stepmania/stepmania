@@ -179,6 +179,7 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 	volume = -1; /* unset */
 	buffer_locked = false;
 	write_cursor_pos = write_cursor = buffer_bytes_filled = 0;
+	extra_writeahead = 0;
 	LastPosition = 0;
 	playing = false;
 
@@ -282,6 +283,8 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 	else if( (int) waveformat.nSamplesPerSec != samplerate )
 		LOG->Warn( "Secondary buffer set to %i instead of %i", waveformat.nSamplesPerSec, samplerate );
 #endif
+	
+	temp_buffer = new char[buffersize];
 }
 
 void DSoundBuf::SetSampleRate(int hz)
@@ -332,123 +335,24 @@ static bool contained( int start, int end, int pos )
 DSoundBuf::~DSoundBuf()
 {
 	buf->Release();
+	delete [] temp_buffer;
 }
 
-/* Figure out if we've underrun, and act if appropriate. */
-void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
+void round_up( int &i, int to )
 {
-	/* XXX We can figure out if we've underrun, and increase the write-ahead
-	 * when it happens.  Two problems:
-	 * 1. It's ugly to wait until we actually underrun. (We could store the
-	 *    write-ahead, though.)
-	 * 2. We don't want a random underrun (eg. virus scanner starts) to
-	 *    permanently increase our write-ahead.  We want the smallest possible
-	 *    that will give us reliable audio in normal conditions.  I'm not sure
-	 *    of a robust way to do this.
-	 *
-	 * Also, writeahead should be a static (all buffers write ahead the same
-	 * amount); writeahead in the ctor should be a hint only (initial value),
-	 * and the sound driver should query a sound to get the current writeahead
-	 * in GetLatencySeconds().
-	 */
+	i += (to-1);
+	i /= to;
+	i *= to;
+}
 
-	/* If the buffer is full, we can't be underrunning. */
-	if( buffer_bytes_filled >= buffersize )
+/* Check to make sure that, given the current writeahead and chunksize, we're
+ * capable of filling the prefetch region entirely.  If we aren't, increase
+ * the writeahead.  If this happens, we're underruning. */
+void DSoundBuf::CheckWriteahead( int cursorstart, int cursorend )
+{
+	/* If we're in a recovering-from-underrun state, stop. */
+	if( extra_writeahead )
 		return;
-
-	/* If nothing is expected to be filled, we can't underrun. */
-	if( cursorstart == cursorend )
-		return;
-
-	/* If there's no data in the buffer at all, then we've completely underrun.  Our
-	 * write cursor is irrelevant; we might be unrelated to the play position completely.
-	 * Realign. */
-	if( buffer_bytes_filled == 0 )
-	{
-		/* There's no data filled at all.  We've completely underrun.  Pretend that
-		 * the prefetch is full, and point our write cursor just after it.  This way,
-		 * we don't write into the prefetch; doing so shouldn't cause problems, but
-		 * let's play it safe.  Pretending the prefetch is full (instead of just moving
-		 * the write cursor) takes us out of a "major underrun" state. */
-		int missed_by = cursorend - write_cursor;
-		wrap( missed_by, buffersize );
-		int first_byte_filled = write_cursor-buffer_bytes_filled;
-		wrap( first_byte_filled, buffersize );
-
-		LOG->Trace( "major underrun: %i..%i filled but cursor at %i..%i (missed it by %i)",
-			first_byte_filled, write_cursor, cursorstart, cursorend, missed_by );
-
-		write_cursor = cursorend;
-		buffer_bytes_filled = int(cursorend) - cursorstart;
-		wrap( buffer_bytes_filled, buffersize );
-		return;
-	}
-
-	/*
-	 * Invariant: the filled region now starts at the beginning of the play region.
-	 * The "Update buffer_bytes_filled" logic, combined with the above empty buffer
-	 * check, guarantees this.
-	 *
-	 * This is important, so let's consider all cases as of the start of get_output_buf:
-	 *
-	 * 1: ....ffff....pppp... (no overlap)
-	 *   invalid: buffer_bytes_filled should have been set to 0.
-	 *
-	 * 2: ....ffff.... (overlap, filled is earlier)
-	 *    ..pppp......
-	 *   invalid: buffer_bytes_filled should have been set to 2, resulting in:
-	 *    ......ff....
-	 *    ...pppp.....
-	 *
-	 * 3: ......ffff.. (overlap, filled is later)
-	 *    ....pppp....
-	 *   invalid: This case can only happen if the play cursor has wrapped all the
-	 *   way around, in which case buffer_bytes_filled should have been set to 0.
-	 *
-	 * 4: ....ffff.... valid
-	 *    ....pppp....
-	 * 5: ....ff...... valid
-	 *    ....pppp....
-	 * 6: ............
-	 *    ....pppp....
-	 *   invalid: buffer_bytes_filled == 0; we handled this above
-	 */
-	int first_byte_filled = write_cursor-buffer_bytes_filled;
-	wrap( first_byte_filled, buffersize );
-	if( first_byte_filled != cursorstart )
-	{
-		LOG->Trace("%i..%i filled but cursor at %i..%i (%i max)",
-			first_byte_filled, write_cursor, cursorstart, cursorend, buffer_bytes_filled );
-		FAIL_M( "DSoundBuf::CheckUnderrun internal error" );
-	}
-
-	if( contained(first_byte_filled, write_cursor, cursorend) )
-	{
-		/* The end of the play cursor has data.  We haven't underrun (case #4). */
-		return;
-	}
-
-	/* We've underrun.  Let's figure out whether, if we continue filling, we'll fill
-	 * the buffer enough to stop underrunning.  This is a little ugly, since we need
-	 * to simulate. */
-	int fake_buffer_bytes_filled = buffer_bytes_filled;
-	int fake_write_cursor = write_cursor;
-	while(1)
-	{
-		if( fake_buffer_bytes_filled > writeahead )
-			break;
-
-		int num_bytes_empty = writeahead-fake_buffer_bytes_filled;
-		if( num_bytes_empty < chunksize )
-			break;
-
-		num_bytes_empty = min(num_bytes_empty, buffersize - fake_write_cursor);
-//		num_bytes_empty = min(num_bytes_empty, chunksize);
-
-		fake_buffer_bytes_filled += num_bytes_empty;
-		fake_write_cursor += num_bytes_empty;
-		wrap( fake_write_cursor, buffersize );
-	}
 
 	/* If the driver is requesting an unreasonably large prefetch, ignore it entirely.
 	 * Some drivers seem to give broken write cursors sporadically, requesting that
@@ -469,56 +373,61 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 		return;
 	}
 
-	LOG->Trace("write_cursor %i, fake_write_cursor %i, fake_buffer_bytes_filled %i",
-		write_cursor, fake_write_cursor, fake_buffer_bytes_filled );
-
-	bool bCanCatchUp = fake_buffer_bytes_filled >= buffersize || contained(first_byte_filled, fake_write_cursor, cursorend);
-	/*
-	 * If bCanCatchUp is false, then based on our writeahead and the chunksize, we'll
-	 * never fill the buffer.  This isn't fuzzy; we simply aren't filling enough, and
-	 * we need to increase the writeahead.
-	 *
-	 * If bCanCatchUp is true, we simply fell behind and we can catch up.  If this
-	 * happens repeatedly, then while the writeahead is sufficient for the prefetch,
-	 * the scheduler isn't keeping up, and we probably need to increase the writeahead.
-	 *
-	 * This is a tricky support issue.  We don't want to have to adjust the writeahead
-	 * dynamically if we can help it, since that means we've already underrun.  It's
-	 * much better to have a properly tuned writeahead for all systems to begin with.
-	 * I'd much prefer to receive bug reports when the writeahead wasn't enough, so we
-	 * can figure out the correct writeahead and use it by default.
-	 *
-	 * Also, unless we write the writeahead to a preference to keep it long-term (which
-	 * I'm wary of doing), we'll go through this every game.
-	 */
-	if( bCanCatchUp )
-	{
-		/* If we simply continue, we'll catch up.  We'll probably have an audible
-		 * glitch, but we can't prevent that.  However, we can probably avoid an
-		 * arrow skip. */
-		/* XXX: if this happens repeatedly over a period of time, increase writeahead */
-		int missed_by = cursorend - write_cursor;
-		wrap( missed_by, buffersize );
-		LOG->Trace("minor underrun: %i..%i filled but cursor at %i..%i (missed it by %i) %i/%i",
-			first_byte_filled, write_cursor, cursorstart, cursorend,
-			missed_by, buffer_bytes_filled, buffersize);
+	if( writeahead >= prefetch )
 		return;
+
+	/* We need to increase the writeahead. */
+	LOG->Trace("insufficient writeahead: wants %i (cursor at %i..%i), writeahead adjusted from %i to %i",
+		prefetch/bytes_per_frame(), cursorstart, cursorend, writeahead, prefetch );
+
+	writeahead = prefetch;
+}
+
+/* Figure out if we've underrun, and act if appropriate. */
+void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend )
+{
+	/* If the buffer is full, we can't be underrunning. */
+	if( buffer_bytes_filled >= buffersize )
+		return;
+
+	/* If nothing is expected to be filled, we can't underrun. */
+	if( cursorstart == cursorend )
+		return;
+
+	/* If we're already in a recovering-from-underrun state, stop. */
+	if( extra_writeahead )
+		return;
+
+	int first_byte_filled = write_cursor-buffer_bytes_filled;
+	wrap( first_byte_filled, buffersize );
+
+	/* If the end of the play cursor has data, we haven't underrun. */
+	if( contained(first_byte_filled, write_cursor, cursorend) )
+		return;
+
+	/* Extend the writeahead to force fill as much as required to stop underrunning.
+	 * This has a major benefit: if we havn't skipped so long we've passed a whole
+	 * buffer (64k = ~350ms), this doesn't break stride.  We'll skip forward, but
+	 * the beat won't be lost, which is a lot easier to recover from in play. */
+	/* XXX: If this happens repeatedly over a period of time, increase writeahead. */
+	int needed_writeahead = (cursorstart + writeahead) - write_cursor;
+	wrap( needed_writeahead, buffersize );
+	if( needed_writeahead > writeahead )
+	{
+		extra_writeahead = needed_writeahead - writeahead;
+		writeahead = needed_writeahead;
 	}
 
-	/*
-	 * Based on our writeahead and the chunksize, we'll never fill the buffer.  We
-	 * need to increase the writeahead.
-	 */
+	int missed_by = cursorend - write_cursor;
+	wrap( missed_by, buffersize );
 
-	int old_writeahead = writeahead;
-	writeahead = writeahead * 4 / 3;
-	/* Snap to bytes_per_frame. */
-	writeahead = (writeahead / bytes_per_frame()) * bytes_per_frame();
-	writeahead = min( writeahead, buffersize );
+	CString s = ssprintf( "underrun: %i..%i (%i) filled but cursor at %i..%i; missed it by %i",
+		first_byte_filled, write_cursor, buffer_bytes_filled, cursorstart, cursorend, missed_by );
 
-	LOG->Trace("insufficient writeahead: wants %i (cursor at %i..%i), but we'll only fill to %i; writeahead adjusted from %i to %i",
-		prefetch/bytes_per_frame(), cursorstart, cursorend,
-		fake_buffer_bytes_filled/bytes_per_frame(), old_writeahead/bytes_per_frame(), writeahead/bytes_per_frame() );
+	if( extra_writeahead )
+		s += ssprintf( "; extended writeahead by %i to %i", extra_writeahead, writeahead );
+
+	LOG->Trace( "%s", s.c_str() );
 }
 
 bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
@@ -564,9 +473,18 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 
 		buffer_bytes_filled -= bytes_played;
 		buffer_bytes_filled = max( 0, buffer_bytes_filled );
+
+		if( extra_writeahead )
+		{
+			int used = min( extra_writeahead, bytes_played );
+			LOG->Trace("used %i of %i", used, extra_writeahead);
+			writeahead -= used;
+			extra_writeahead -= used;
+		}
 	}
 
-	CheckUnderrun( cursorstart, cursorend, chunksize );
+	CheckWriteahead( cursorstart, cursorend );
+	CheckUnderrun( cursorstart, cursorend );
 
 	/* If we already have enough bytes written ahead, stop. */
 	if( buffer_bytes_filled > writeahead )
@@ -579,34 +497,16 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 	if( num_bytes_empty < chunksize )
 		return false;
 
-	/* I don't want to deal with DSound's split-circular-buffer locking stuff, so clamp
-	 * the writing space at the end of the physical buffer. */
-	num_bytes_empty = min(num_bytes_empty, buffersize - write_cursor);
-
-	/* Don't fill more than one chunk at a time.  This reduces the maximum
-	 * amount of time until we give data; that way, if we're short on time,
-	 * we'll give some data soon instead of lots of data later. */
-	/* Let's not do this; treat chunksize as a "min bytes to fill" above (so we're not
-	 * constantly filling in a few frames at a time), but not "max bytes to fill".  This
-	 * reduces cases where we don't fill the buffer as much as we should, and in practice
-	 * makes the "increase the writeahead" logic work much better. */
-//	num_bytes_empty = min(num_bytes_empty, chunksize);
-
 //	LOG->Trace("gave %i at %i (%i, %i) %i filled", num_bytes_empty, write_cursor, cursor, write, buffer_bytes_filled);
 
 	/* Lock the audio buffer. */
-#ifdef _XBOX
-	result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, NULL, 0 );
-#else
-	DWORD junk;
-	result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0 );
-#endif
+	result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)&locked_buf1, (DWORD *) &locked_size1, (LPVOID *)&locked_buf2, (DWORD *) &locked_size2, 0 );
 
 #ifndef _XBOX
 	if ( result == DSERR_BUFFERLOST )
 	{
 		buf->Restore();
-		result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0 );
+		result = buf->Lock( write_cursor, num_bytes_empty, (LPVOID *)&locked_buf1, (DWORD *) &locked_size1, (LPVOID *)&locked_buf2, (DWORD *) &locked_size2, 0 );
 	}
 #endif
 	if ( result != DS_OK )
@@ -614,6 +514,9 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 		LOG->Warn( hr_ssprintf(result, "Couldn't lock the DirectSound buffer.") );
 		return false;
 	}
+
+	*buffer = temp_buffer;
+	*bufsiz = locked_size1 + locked_size2;
 
 	write_cursor += num_bytes_empty;
 	if( write_cursor >= buffersize )
@@ -629,7 +532,9 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 
 void DSoundBuf::release_output_buf( char *buffer, unsigned bufsiz )
 {
-	buf->Unlock( buffer, bufsiz, NULL, 0 );
+	memcpy( locked_buf1, buffer, locked_size1 );
+	memcpy( locked_buf2, buffer+locked_size1, locked_size2 );
+	buf->Unlock( locked_buf1, locked_size1, locked_buf2, locked_size2 );
 	buffer_locked = false;
 }
 
@@ -677,6 +582,9 @@ void DSoundBuf::Stop()
 
 	write_cursor_pos = write_cursor = buffer_bytes_filled = 0;
 	LastPosition = 0;
+
+	writeahead -= extra_writeahead;
+	extra_writeahead = 0;
 
 	/* When stopped and rewound, the play and write cursors should both be 0. */
 	/* This isn't true on some broken cards. */
