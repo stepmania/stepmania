@@ -11,10 +11,6 @@ class Steps;
 class BMSLoader: public NotesLoader
 {
 	bool LoadFromBMSFile( const CString &sPath, Steps &out1 );
-	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, TapNote &tapNoteOut );
-	void PushTrackNumForMagic( int iTrackNum );
-	StepsType CheckTracksMagic();
-	void ResetTracksMagic();
 
 	void SlideDuplicateDifficulties( Song &p );
 

@@ -37,8 +37,8 @@
 
 	pnm-nine:   11-15,22-25
 	pnm-five:   13-15,21-22
-	bm-single:  11-16
-	bm-double:  11-16,21-26
+	bm-single5: 11-16
+	bm-double5: 11-16,21-26
 	bm-single7: 11-16,18-19
 	bm-double7: 11-16,18-19,21-26,28-29
 
@@ -48,10 +48,8 @@
 	bm-*: can't tell difference between bm-single and dance-solo
 		18/19 marks bm-single7, 28/29 marks bm-double7
 		bm-double uses 21-26. */
-
-static int iTracks[MAX_NOTE_TRACKS];
-
-enum
+	
+enum BmsTrack
 {
 	BMS_P1_KEY1 = 0,
 	BMS_P1_KEY2,
@@ -69,94 +67,113 @@ enum
 	BMS_P2_TURN,
 	BMS_P2_KEY6,
 	BMS_P2_KEY7,
+	NUM_BMS_TRACKS,
+	BMS_TRACK_INVALID,
 };
 
-
-void BMSLoader::ResetTracksMagic()
+static bool ConvertRawTrackToTapNote( int iRawTrack, BmsTrack &bmsTrackOut, TapNote &tapNoteOut )
 {
-	for( int i = 0; i<MAX_NOTE_TRACKS; i++ )
-		iTracks[i] = 0;
-}
-
-void BMSLoader::PushTrackNumForMagic( int iTrackNum )
-{
-	int ix = (iTrackNum < 20) ? (iTrackNum - 11) : (iTrackNum - 12);
-	iTracks[ix]++;
-}
-
-StepsType BMSLoader::CheckTracksMagic()
-{
-	int iTrackCount = 0;
-	for (int ix = 0; ix<MAX_NOTE_TRACKS; ix++) {
-		if(iTracks[ix] != 0) iTrackCount++;
-	}
-	/*	Panel counts:
-		4 - DDR
-		5 - PNM 5-key
-		6 - DDR Solo, BM 5-key
-		8 - DDR Double. BM 7-key
-		9 - PNM 9-key, BM 7-key
-		12 - BM Double 5-key
-		16 - BM Double 7-key */
-	switch(iTrackCount) {
-	case 4:
-		return STEPS_TYPE_DANCE_SINGLE;
-	case 5:
-		return STEPS_TYPE_PNM_FIVE;
-	case 6:
-		/*	No reason to return STEPS_TYPE_BM_SINGLE here...
-			...at least, none that I can see.  Same data, no way to distinguish.
-			We also don't need to autogen between them, though. */
-		return STEPS_TYPE_DANCE_SOLO;
-	case 8:
-		// Could also be couple or 7-key.
-		if (iTracks[7] == 0 && iTracks[8] == 0 && iTracks[1] == 0 && iTracks[3] == 0)
-			// these four tracks are BM-related
-			return STEPS_TYPE_DANCE_DOUBLE;
-		else
-			return STEPS_TYPE_BM_SINGLE7;
-	case 9:
-		return STEPS_TYPE_PNM_NINE;
-	case 12:
-		return STEPS_TYPE_BM_DOUBLE5;
-	case 16:
-		return STEPS_TYPE_BM_DOUBLE7;
-	default:
-		return STEPS_TYPE_INVALID;
-	}
-}
-
-void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, TapNote &tapNoteOut )
-{
-	if( iBMSTrack > 40 )
+	if( iRawTrack > 40 )
 	{
 		tapNoteOut = TAP_ORIGINAL_HOLD_HEAD;
-		iBMSTrack -= 40;
+		iRawTrack -= 40;
 	}
 	else
 	{
 		tapNoteOut = TAP_ORIGINAL_TAP;
 	}
 
-	switch( iBMSTrack )
+	switch( iRawTrack )
 	{
-	case 11:	iDanceColOut = BMS_P1_KEY1;				break;
-	case 12:	iDanceColOut = BMS_P1_KEY2;				break;
-	case 13:	iDanceColOut = BMS_P1_KEY3;				break;
-	case 14:	iDanceColOut = BMS_P1_KEY4;				break;
-	case 15:	iDanceColOut = BMS_P1_KEY5;				break;
-	case 16:	iDanceColOut = BMS_P1_TURN;				break;
-	case 18:	iDanceColOut = BMS_P1_KEY6;				break;
-	case 19:	iDanceColOut = BMS_P1_KEY7;				break;
-	case 21:	iDanceColOut = BMS_P2_KEY1;				break;
-	case 22:	iDanceColOut = BMS_P2_KEY2;				break;
-	case 23:	iDanceColOut = BMS_P2_KEY3;				break;
-	case 24:	iDanceColOut = BMS_P2_KEY4;				break;
-	case 25:	iDanceColOut = BMS_P2_KEY5;				break;
-	case 26:	iDanceColOut = BMS_P2_TURN;				break;
-	case 28:	iDanceColOut = BMS_P2_KEY6;				break;
-	case 29:	iDanceColOut = BMS_P2_KEY7;				break;
-	default:	iDanceColOut = -1;						break;
+	case 11:	bmsTrackOut = BMS_P1_KEY1;				break;
+	case 12:	bmsTrackOut = BMS_P1_KEY2;				break;
+	case 13:	bmsTrackOut = BMS_P1_KEY3;				break;
+	case 14:	bmsTrackOut = BMS_P1_KEY4;				break;
+	case 15:	bmsTrackOut = BMS_P1_KEY5;				break;
+	case 16:	bmsTrackOut = BMS_P1_TURN;				break;
+	case 18:	bmsTrackOut = BMS_P1_KEY6;				break;
+	case 19:	bmsTrackOut = BMS_P1_KEY7;				break;
+	case 21:	bmsTrackOut = BMS_P2_KEY1;				break;
+	case 22:	bmsTrackOut = BMS_P2_KEY2;				break;
+	case 23:	bmsTrackOut = BMS_P2_KEY3;				break;
+	case 24:	bmsTrackOut = BMS_P2_KEY4;				break;
+	case 25:	bmsTrackOut = BMS_P2_KEY5;				break;
+	case 26:	bmsTrackOut = BMS_P2_TURN;				break;
+	case 28:	bmsTrackOut = BMS_P2_KEY6;				break;
+	case 29:	bmsTrackOut = BMS_P2_KEY7;				break;
+	default:	// unknown track
+		return false;
+	}
+	return true;
+}
+
+
+static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
+{
+	ASSERT( NUM_BMS_TRACKS == nd.GetNumTracks() );
+
+	bool bTrackHasNote[NUM_BMS_TRACKS];
+	ZERO( bTrackHasNote );
+
+	for( unsigned t=0; t<nd.GetNumTracks(); t++ )
+	{
+		for( unsigned r=0; r<nd.GetNumRows(); r++ )
+		{
+			if( nd.GetTapNoteX(t, r).type != TapNote::empty )
+			{
+				bTrackHasNote[t] = true;
+				break;				
+			}
+		}
+	}
+
+	int iNumNonEmptyTracks = 0;
+	for( int t=0; t<nd.GetNumTracks(); t++ )
+		if( bTrackHasNote[t] )
+			iNumNonEmptyTracks++;
+
+	switch( iPlayer )
+	{
+	case 1:		// "1 player"		
+		/*	Track counts:
+			4 - DDR
+			5 - PNM 5-key
+			6 - DDR Solo, BM 5-key
+			8 - BM 7-key
+			9 - PNM 9-key */
+		switch( iNumNonEmptyTracks ) 
+		{
+		case 4:		return STEPS_TYPE_DANCE_SINGLE;
+		case 5:		return STEPS_TYPE_PNM_FIVE;
+		case 6:
+			// FIXME: There's no way to distinguish between these types.
+			// They use the same tracks.  Assume it's a BM type since they
+			// are more common.
+			//return STEPS_TYPE_DANCE_SOLO;
+			return STEPS_TYPE_BM_SINGLE5;
+		case 8:		return STEPS_TYPE_BM_SINGLE7;
+		case 9:		return STEPS_TYPE_PNM_NINE;
+		default:	return STEPS_TYPE_INVALID;
+		}
+		break;
+	case 2:		// couple/battle
+		return STEPS_TYPE_DANCE_COUPLE;
+	case 3:		// double
+	/*	Track counts:
+		8 - DDR Double
+		12 - BM Double 5-key
+		16 - BM Double 7-key */
+		switch( iNumNonEmptyTracks ) 
+		{
+		case 8:		return STEPS_TYPE_BM_SINGLE7;
+		case 12:	return STEPS_TYPE_BM_DOUBLE5;
+		case 16:	return STEPS_TYPE_BM_DOUBLE7;
+		default:	return STEPS_TYPE_INVALID;
+		}
+		break;
+	default:
+		LOG->Warn( "Invalid #PLAYER value %d", iPlayer );
+		return STEPS_TYPE_INVALID;
 	}
 }
 
@@ -166,9 +183,11 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 	out.m_StepsType = STEPS_TYPE_INVALID;
 
+	// BMS player code.  Fill in below and use to determine StepsType.
+	int iPlayer = -1;
+
 	NoteData* pNoteData = new NoteData;
-	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
-	ResetTracksMagic();
+	pNoteData->SetNumTracks( NUM_BMS_TRACKS );
 
 	RageFile file;
 	if( !file.Open(sPath) )
@@ -213,25 +232,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 		if( -1 != value_name.Find("#player") )
 		{
-			switch( atoi(value_data) )
-			{
-			case 1:		// 4 or 6 single
-				out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
-				/*	if the mode should be solo, then we'll update m_DanceStyle below when 
-					we read in step data */
-				break;
-			case 2:		// couple/battle
-				out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
-				break;
-			case 3:		// double
-				// Fix it if we find that.
-				out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
-				break;
-			default:
-				LOG->Warn( "Invalid #PLAYER in \"%s\": \"%s\"", sPath.c_str(), value_data.c_str() );
-				delete pNoteData;
-				return false;
-			}
+			iPlayer = atoi(value_data);
 		}
 		if( -1 != value_name.Find("#title") )
 		{
@@ -264,12 +265,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			 && IsAnInt( value_name.substr(1,3) )
 			 && IsAnInt( value_name.substr(4,2) ) )	// this is step or offset data.  Looks like "#00705"
 		{
-			int iMeasureNo	= atoi( value_name.substr(1,3).c_str() );
-			int iTrackNum	= atoi( value_name.substr(4,2).c_str() );
-
-			/*	fix for Pop N' and such, including "if there are six panels, then we have Solo" - check here,
-				then put the correct step type later */
-			PushTrackNumForMagic(iTrackNum);
+			int iMeasureNo		= atoi( value_name.substr(1,3).c_str() );
+			int iRawTrackNum	= atoi( value_name.substr(4,2).c_str() );
 
 			CString &sNoteData = value_data;
 			vector<bool> arrayNotes;
@@ -290,23 +287,17 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 					const int iNoteIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
 									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
-					int iColumnNumber;
-					TapNote tapNoteOut;
+					BmsTrack bmsTrack;
+					TapNote tapNote;
 
-					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, tapNoteOut );
-
-					if( iColumnNumber != -1 )
-						pNoteData->SetTapNote(iColumnNumber, iNoteIndex, tapNoteOut);
+					if( ConvertRawTrackToTapNote(iRawTrackNum, bmsTrack, tapNote) )
+						pNoteData->SetTapNote(bmsTrack, iNoteIndex, tapNote);
 				}
 			}
 		}
 	}
 
-	// dance-couple is the only one we should retain unchanged.
-	if( out.m_StepsType != STEPS_TYPE_DANCE_COUPLE)
-	{
-		out.m_StepsType = CheckTracksMagic();
-	}
+	out.m_StepsType = DetermineStepsType( iPlayer, *pNoteData );
 
 	// we're done reading in all of the BMS values
 	if( out.m_StepsType == STEPS_TYPE_INVALID )
@@ -317,9 +308,9 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	}
 
 	int iNumNewTracks = GameManager::StepsTypeToNumTracks( out.m_StepsType );
-	int iTransformNewToOld[MAX_NOTE_TRACKS];
+	int iTransformNewToOld[NUM_BMS_TRACKS];
 
-	for( int i = 0; i < MAX_NOTE_TRACKS; ++i)
+	for( int i = 0; i < NUM_BMS_TRACKS; ++i)
 		iTransformNewToOld[i] = -1;
 
 	switch( out.m_StepsType )
