@@ -8,9 +8,9 @@
  * --steve */
 #if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
-#define DEFAULT_MOVIE_DRIVER_LIST "DShow"
+#define DEFAULT_MOVIE_DRIVER_LIST "AVCodec,DShow,Null"
 #else
-#define DEFAULT_MOVIE_DRIVER_LIST "Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "AVCodec,Null"
 #endif
 
 #ifdef HAVE_AVCODEC
