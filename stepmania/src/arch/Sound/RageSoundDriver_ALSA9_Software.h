@@ -15,7 +15,7 @@ private:
 		RageSoundBase *snd;
 		RageTimer start_time;
 		bool stopping;
-		int flush_pos; /* state == STOPPING only */
+		int64_t flush_pos; /* state == STOPPING only */
 		sound() { snd = NULL; stopping=false; }
 	};
 
@@ -36,7 +36,7 @@ public:
 	/* virtuals: */
 	void StartMixing(RageSoundBase *snd);
 	void StopMixing(RageSoundBase *snd);
-	int GetPosition(const RageSoundBase *snd) const;
+	int64_t GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
         int GetSampleRate( int rate ) const;
 	

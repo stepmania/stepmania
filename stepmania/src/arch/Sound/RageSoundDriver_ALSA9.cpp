@@ -68,8 +68,8 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 		buf = new Sint16[max_writeahead*samples_per_frame];
 	char *cbuf = (char*) buf;
 
-	const int play_pos = pcm->GetPlayPos();
-	const int cur_play_pos = pcm->GetPosition();
+	const int64_t play_pos = pcm->GetPlayPos();
+	const int64_t cur_play_pos = pcm->GetPosition();
 
 	int len = frames_to_fill*bytes_per_frame;
 	/* It might be INACTIVE, when we're prebuffering. We just don't want to
@@ -83,11 +83,11 @@ bool RageSound_ALSA9::stream::GetData(bool init)
 		if( !start_time.IsZero() )
 		{
 			/* If the sound is supposed to start at a time past this buffer, insert silence. */
-			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+			const int64_t iFramesUntilThisBuffer = play_pos - cur_play_pos;
 			const float fSecondsBeforeStart = -start_time.Ago();
-			const int iFramesBeforeStart = int(fSecondsBeforeStart * pcm->GetSampleRate());
-			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
-			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
+			const int64_t iFramesBeforeStart = int64_t(fSecondsBeforeStart * pcm->GetSampleRate());
+			const int64_t iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
+			const int iSilentBytesInThisBuffer = clamp( int(iSilentFramesInThisBuffer * bytes_per_frame), 0, bytes_left );
 
 			memset( cbuf+bytes_read, 0, iSilentBytesInThisBuffer );
 			bytes_read += iSilentBytesInThisBuffer;
@@ -222,7 +222,7 @@ void RageSound_ALSA9::StopMixing(RageSoundBase *snd)
 }
 
 
-int RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
+int64_t RageSound_ALSA9::GetPosition(const RageSoundBase *snd) const
 {
 	LockMutex L(SOUNDMAN->lock);
 

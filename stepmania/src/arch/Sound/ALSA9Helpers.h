@@ -11,7 +11,8 @@ class Alsa9Buf
 {
 private:
 	int channels, samplerate, samplebits;
-	int buffersize, last_cursor_pos;
+	int buffersize;
+	int64_t last_cursor_pos;
 	bool samplerate_set_explicitly;
 
 	snd_pcm_sframes_t total_frames;
@@ -45,7 +46,7 @@ public:
 	void SetSampleRate(int hz);
 	int GetSampleRate() const { return samplerate; }
 
-	int GetPosition() const;
-	int GetPlayPos() const { return last_cursor_pos; }
+	int64_t GetPosition() const;
+	int64_t GetPlayPos() const { return last_cursor_pos; }
 };
 #endif

@@ -26,7 +26,7 @@ private:
 			STOPPING
 		} state;
 
-		int flush_pos; /* state == STOPPING only */
+		int64_t flush_pos; /* state == STOPPING only */
 
 		bool GetData( bool init );
 
@@ -51,7 +51,7 @@ public:
 	/* virtuals: */
 	void StartMixing(RageSoundBase *snd);
 	void StopMixing(RageSoundBase *snd);
-	int GetPosition(const RageSoundBase *snd) const;
+	int64_t GetPosition( const RageSoundBase *snd ) const;
 	int GetSampleRate( int rate ) const;
 
 	void Update(float delta);
