@@ -156,6 +156,11 @@ inline float Quantize( const float f, const float fRoundInterval )
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
 }
 
+inline int Quantize( const int i, const int iRoundInterval )
+{
+	return int( (i + iRoundInterval/2)/iRoundInterval ) * iRoundInterval;
+}
+
 /* return f truncated to the nearest multiple of fTruncInterval */
 inline float ftruncf( const float f, const float fTruncInterval )
 {

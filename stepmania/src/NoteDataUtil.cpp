@@ -880,7 +880,7 @@ void NoteDataUtil::Wide( NoteData &inout, float fStartBeat, float fEndBeat )
 	inout.ConvertHoldNotesTo4s();
 
 	/* Start on an even beat. */
-	fStartBeat = Quantize( fStartBeat, 2 );
+	fStartBeat = Quantize( fStartBeat, 2.0f );
 
 	const int first_row = BeatToNoteRow( fStartBeat );
 	const int last_row = min( BeatToNoteRow(fEndBeat), inout.GetLastRow() );
