@@ -298,6 +298,7 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 			/* The docs aren't particular about what this does, but it should never happen. */
 			FAIL_M( "WAIT_ABANDONED" );
 
+		case 1: /* bogus Win98 return value */
 		case WAIT_FAILED:
 			if( GetLastError() == ERROR_CALL_NOT_IMPLEMENTED )
 			{
@@ -307,16 +308,6 @@ static bool PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 			}
 
 			FAIL_M( werr_ssprintf(GetLastError(), "SignalObjectAndWait") );
-
-		//Strange.  Only (and always) occours on 9x.
-		//If you look at the error from it, it responds
-		//and says that the function is only available in
-		//win32 mode.  
-		//This function is not fully supported in 9x.  
-		//Program execution will continue properly if you
-		//break.
-		case 1:
-			break;
 
 		case WAIT_TIMEOUT:
 			return false;
