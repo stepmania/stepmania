@@ -404,12 +404,12 @@ The .SM song file format was created to be one file format that supports all
 game types that StepMania can play (dance, pump, beat, guitar, etc). The syntax 
 of a .SM is similar to .DWI and .KSF except that some tags are different.<br>
 <br>
-(Note that StepMania can load images can be in png, gif, jpg, or bmp format, and 
-can load sounds in ogg, mp3, or wav format.)<br>
+Note that StepMania can load images in PNG, GIF, PJG, and BMP formats, and 
+can load sounds in OGG, MP3, and WAV formats.<br>
 <br>
+Any text field in an SM file can contain UTF-8 characters.<br>
 <br>
-#TITLE:...; - The &quot;main title&quot; of the song. Supports for UTF-8 foreign 
-characters.<br>
+#TITLE:...; - The &quot;main title&quot; of the song.<br>
 #SUBTITLE:...; - This text will appear underneath the main title of the song on 
 the Select Music screen. e.g. &quot;~Dirty Mix~&quot; or &quot;(remix)&quot;.<br>
 #ARTIST:...; - The artist of the song.<br>
@@ -684,8 +684,8 @@ CRS files define the courses used in the Nonstop, Oni, and Endless modes.&nbsp; 
 files must reside in the &quot;Courses&quot; folder in the StepMania program folder.&nbsp; 
 These rules determine which of the three modes a course will appear in:<br>
 <br>
-Nonstop: Will appear if #LIVES=-1 and #REPEAT=OFF.<br>
-Oni (Challenge): Will appear if #LIVES &gt; 0 and #REPEAT=OFF.<br>
+Nonstop: Will appear if there is no #LIVES tag and #REPEAT is OFF.<br>
+Oni (Challenge): Will appear if there is a #LIVES tag and #REPEAT is OFF.<br>
 Endless: Will appear if #REPEAT is ON.<br>
 <br>
 #COURSE:...; - name of the course<br>
@@ -798,14 +798,21 @@ in the folder &quot;NoteSkins\&lt;Game Name&gt;\&lt;Note Skin Name&gt;&quot;. No
 to a particular game (dance, pump, etc). In the note skin folder, you must 
 implement the folling files for each note:<br>
 <br>
-&lt;NoteName&gt; receptor (2x1).png<br>
-&lt;NoteName&gt; tap parts (2xN).png<br>
-&lt;NoteName&gt; tap explosion bright (NxN).png<br>
-&lt;NoteName&gt; tap explosion dim (NxN).png<br>
-&lt;NoteName&gt; note color part (NxN).png<br>
-&lt;NoteName&gt; note gray part (NxN).png<br>
-&lt;NoteName&gt; hold parts (4x2).png<br>
-&lt;NoteName&gt; hold explosion (NxN).png<br>
+&lt;NoteName&gt; receptor (3x1).png<br>
+&lt;NoteName&gt; tap note (NxN).png<br>
+&lt;NoteName&gt; tap explosion bright.png<br>
+&lt;NoteName&gt; tap explosion bright.png<br>
+&lt;NoteName&gt; hold explosion.png<br>
+&lt;NoteName&gt; down hold topcap active.png.png<br>
+&lt;NoteName&gt; down hold topcap inactive.png.png<br>
+&lt;NoteName&gt; down hold head active.png.png<br>
+&lt;NoteName&gt; down hold head inactive.png.png<br>
+&lt;NoteName&gt; down hold body active.png.png<br>
+&lt;NoteName&gt; down hold body inactive.png.png<br>
+&lt;NoteName&gt; down hold tail active.png.png<br>
+&lt;NoteName&gt; down hold tail inactive.png.png<br>
+&lt;NoteName&gt; down hold bottomcap active.png.png<br>
+&lt;NoteName&gt; down hold bottomcap inactive.png.png<br>
 &lt;NoteName&gt; tap.colors<br>
 <br>
 &quot;&lt;NoteName&gt;&quot; must be the name of the note (e.g. &quot;left&quot;, &quot;upright&quot;, &quot;snare&quot;).&nbsp; 
@@ -814,8 +821,7 @@ each game.<br>
 <br>
 Most of the note skin elements can use any number of frames. For example, the 
 element &quot;tap exposion bright&quot; could have 4 frames (2x2), 2 frames (1x2), or just 
-a single frame. The exception to this rule is &quot;tap parts&quot; which must be 2 frames 
-wide, and hold parts which must be 4x2.<br>
+a single frame. The exception to this rule is &quot;receptor&quot;, which must have 3 frames.<br>
 <br>
 For more information on about textures with multiple frames, see the section 
 &quot;How StepMania Loads Textures&quot; in this document.<br>
@@ -835,7 +841,7 @@ Themes\&lt;ThemeName&gt;\Fonts\<br>
 Themes\&lt;ThemeName&gt;\Graphics\<br>
 Themes\&lt;ThemeName&gt;\Numbers\<br>
 Themes\&lt;ThemeName&gt;\Sounds\<br>
-Themes\&lt;ThemeName&gt;\metrics.ini\<br>
+Themes\&lt;ThemeName&gt;\metrics.ini<br>
 <br>
 The 5 possible folders in a theme hold &quot;theme elements&quot;. A theme element is 
 simply a little piece of the theme that can be changed. Each of the 5 folders 
@@ -845,8 +851,7 @@ BGAnimations: This folder contains BGAnimation elements for the different
 screens. Since all backgrounds for all the menus in the game are generated using 
 BGAnimations, any screen in the game can have an animating background. Also, 
 BGAnimations can contain movie layers. For more information about BGAnimations, 
-see the section &quot;BGAnimations Format&quot; in <br>
-this document.<br>
+see the section &quot;BGAnimations Format&quot; in this document.<br>
 <br>
 Fonts: This folder contains graphics and font width data used by the font 
 system. Font graphics and width files are generated using the program &quot;Bitmap 
@@ -1004,7 +1009,7 @@ image.<br>
 <br>
 However, paletted PNGs have a couple limitations:<br>
 - they support you to only &quot;on/off&quot; alpha.<br>
-- they support a maxiumum of 256 colors.  This can make smooth gradients 
+- they support a maximum of 256 colors.  This can make smooth gradients 
 look ugly. <br>
 <br>
 Alternatively, inserting "dither" into filenames will instruct StepMania
