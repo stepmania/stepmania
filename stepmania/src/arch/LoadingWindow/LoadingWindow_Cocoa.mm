@@ -16,7 +16,7 @@ void MakeNewCocoaWindow() {
 	NSImage *image = [NSImage imageNamed:@"loading"];
 	NSSize size = [image size];
 	float height = size.height;
-	NSImageView *iView = [[[NSImageView alloc] initWithFrame:NSMakeRect(0, height, size.width, height+1)] autorelease];
+	NSImageView *iView = [[[NSImageView alloc] initWithFrame:NSMakeRect(0, height+1, size.width, height)] autorelease];
 	NSView *view;
 	NSRect rect;
 	rect.origin = NSMakePoint(0, height);
