@@ -584,12 +584,12 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			m_sprWinFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation win frame p%d",p+1)) );
+			m_sprWinFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("win frame p%d",p+1)) );
 			m_sprWinFrame[p]->SetName( ssprintf("WinFrameP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprWinFrame[p] );
 			this->AddChild( m_sprWinFrame[p] );
 
-			m_sprWin[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation win p%d 1x3",p+1)) );
+			m_sprWin[p].Load( THEME->GetPathG(m_sName,ssprintf("win p%d 1x3",p+1)) );
 			m_sprWin[p].StopAnimating();
 			int iFrame = GAMESTATE->GetStageResult( p );
 			m_sprWin[p].SetState( iFrame );
