@@ -3,8 +3,6 @@
 #ifndef FONTMANAGER_H
 #define FONTMANAGER_H
 
-#include "RageUtil.h"
-
 class Font;
 class Game;
 
