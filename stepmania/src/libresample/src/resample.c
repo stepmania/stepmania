@@ -83,7 +83,7 @@ void *resample_open(int highQuality, double minFactor, double maxFactor)
    double Rolloff, Beta;
    rsdata *hp;
    UWORD   Xoff_min, Xoff_max;
-   int i;
+   unsigned int i;
 
    /* Just exit if we get invalid factors */
    if (minFactor <= 0.0 || maxFactor <= 0.0 || maxFactor < minFactor) {
@@ -132,8 +132,8 @@ void *resample_open(int highQuality, double minFactor, double maxFactor)
    free(Imp64);
 
    /* Calc reach of LP filter wing (plus some creeping room) */
-   Xoff_min = ((hp->Nmult+1)/2.0) * MAX(1.0, 1.0/minFactor) + 10;
-   Xoff_max = ((hp->Nmult+1)/2.0) * MAX(1.0, 1.0/maxFactor) + 10;
+   Xoff_min = (UWORD)(((hp->Nmult+1)/2.0) * MAX(1.0, 1.0/minFactor) + 10);
+   Xoff_max = (UWORD)(((hp->Nmult+1)/2.0) * MAX(1.0, 1.0/maxFactor) + 10);
    hp->Xoff = MAX(Xoff_min, Xoff_max);
 
    /* Make the inBuffer size at least 4096, but larger if necessary
@@ -200,7 +200,7 @@ int resample_process_stride(void   *handle,
    int inSampleCount, outSampleCount;
    UWORD Nout, Ncreep, Nreuse;
    int Nx;
-   int i, len;
+   unsigned int i, len;
 
    #if DEBUG
    fprintf(stderr, "resample_process: in=%d, out=%d stride=%d lastFlag=%d\n",
@@ -225,7 +225,7 @@ int resample_process_stride(void   *handle,
    /* Start by copying any samples still in the Y buffer to the output
       buffer */
    if (hp->Yp && outBufferLen>0) {
-      len = MIN(outBufferLen/BufferStride, hp->Yp);  // in samples
+      len = MIN(outBufferLen/BufferStride, (int)hp->Yp);  // in samples
       for(i=0; i<len; i++)
       {
          *outBuffer = hp->Y[i];
@@ -261,13 +261,13 @@ int resample_process_stride(void   *handle,
       /* Copy as many samples as we can from the input buffer into X */
       len = hp->XSize - hp->Xread;
 
-      if (len >= inBufferLen/BufferStride)
+      if ((int)len >= inBufferLen/BufferStride)
          len = inBufferLen/BufferStride;
 
       for(i=0; i<len; i++)
       {
          hp->X[hp->Xread + i] = *inBuffer;
-	 inBuffer += BufferStride;
+		  inBuffer += BufferStride;
       }
 
       inSampleCount += len*BufferStride;
@@ -342,7 +342,7 @@ int resample_process_stride(void   *handle,
 
       /* Copy as many samples as possible to the output buffer */
       if (hp->Yp && outBufferLen>0) {
-         len = MIN(outBufferLen/BufferStride, hp->Yp);
+         len = MIN(outBufferLen/BufferStride, (int)hp->Yp);
          for(i=0; i<len; i++)
 	 {
             *outBuffer = hp->Y[i];
