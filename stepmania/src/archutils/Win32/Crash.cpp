@@ -10,6 +10,7 @@
 
 #include "arch/Threads/Threads_Win32.h"
 #include "archutils/win32/WindowsResources.h"
+#include "archutils/Win32/GraphicsWindow.h" /* for GraphicsWindow::GetHwnd */
 #include "crash.h"
 #include "ProductInfo.h"
 
@@ -161,7 +162,6 @@ bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx );
 void VDDebugInfoDeinit(VDDebugInfoContext *pctx);
 
 
-extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 {
 	/* Flush the log it isn't cut off at the end. */
@@ -253,11 +253,11 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	/* Now things get more risky.  If we're fullscreen, the window will obscure the
 	 * crash dialog.  Try to hide the window.  Things might blow up here; do this
 	 * after DoSave, so we always write a crash dump. */
-	if( GetWindowThreadProcessId( g_hWndMain, NULL ) == GetCurrentThreadId() )
+	if( GetWindowThreadProcessId( GraphicsWindow::GetHwnd(), NULL ) == GetCurrentThreadId() )
 	{
 		/* The thread that crashed was the thread that created the main window.  Hide
 		 * the window.  This will also restore the video mode, if necessary. */
-		ShowWindow( g_hWndMain, SW_HIDE );
+		ShowWindow( GraphicsWindow::GetHwnd(), SW_HIDE );
 	} else {
 		/* A different thread crashed.  Simply kill all other windows.  We can't safely
 		 * call ShowWindow; the main thread might be deadlocked. */

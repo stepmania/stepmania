@@ -10,6 +10,7 @@
 #include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
 #include "archutils/win32/WindowsResources.h"
+#include "archutils/win32/GraphicsWindow.h"
 
 static bool g_Hush;
 static CString g_sMessage;
@@ -70,8 +71,6 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 
 
-extern HWND g_hWndMain;
-
 void DialogDriver_Win32::OK( CString sMessage, CString ID )
 {
 #if defined(HAVE_SDL)
@@ -81,7 +80,7 @@ void DialogDriver_Win32::OK( CString sMessage, CString ID )
 	g_AllowHush = ID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
-	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_OK), g_hWndMain, OKWndProc);
+	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_OK), GraphicsWindow::GetHwnd(), OKWndProc);
 	if( g_AllowHush && g_Hush )
 		Dialog::IgnoreMessage( ID );
 }
@@ -157,7 +156,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(g_hWndMain, sMessage, WINDOW_TITLE, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
+	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, WINDOW_TITLE, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
@@ -172,7 +171,7 @@ Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString ID )
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(g_hWndMain, sMessage, WINDOW_TITLE, MB_RETRYCANCEL ) )
+	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, WINDOW_TITLE, MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);

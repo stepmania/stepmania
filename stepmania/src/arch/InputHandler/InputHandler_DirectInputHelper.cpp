@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "StepMania.h"
+#include "archutils/Win32/GraphicsWindow.h"
 
 #pragma comment(lib, "dinput.lib")
 #if defined(_WINDOWS)
@@ -47,7 +48,7 @@ bool DIDevice::Open()
 	if( type == KEYBOARD )
 		coop = DISCL_FOREGROUND|DISCL_NONEXCLUSIVE;
 
-	hr = Device->SetCooperativeLevel( g_hWndMain, coop );
+	hr = Device->SetCooperativeLevel( GraphicsWindow::GetHwnd(), coop );
 	if ( hr != DI_OK )
 	{
 		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2::SetCooperativeLevel", JoystickInst.tszProductName) );

@@ -5,6 +5,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "archutils/Win32/AppInstance.h"
+#include "archutils/Win32/GraphicsWindow.h"
 #include "InputFilter.h"
 #include "PrefsManager.h"
 
@@ -350,7 +351,7 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 
 	/* XXX: We should check GetConsoleWindow(), to allow input while the console window
 	 * is focused. */
-	if( GetForegroundWindow() != g_hWndMain )
+	if( GetForegroundWindow() != GraphicsWindow::GetHwnd() )
 		return;
 
 	for(int i = 0; i < (int) numevents; ++i)

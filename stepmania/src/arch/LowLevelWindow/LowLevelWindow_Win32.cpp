@@ -47,7 +47,7 @@ LowLevelWindow_Win32::~LowLevelWindow_Win32()
 
 int ChooseWindowPixelFormat( RageDisplay::VideoModeParams p, PIXELFORMATDESCRIPTOR *PixelFormat )
 {
-	ASSERT( g_hWndMain != NULL );
+	ASSERT( GraphicsWindow::GetHwnd() != NULL );
 	ASSERT( GraphicsWindow::GetHDC() != NULL );
 
 	ZERO( *PixelFormat );
@@ -114,7 +114,7 @@ CString LowLevelWindow_Win32::TryVideoMode( RageDisplay::VideoModeParams p, bool
 	bool bCanSetPixelFormat = true;
 
 	/* Do we have an old window? */
-	if( g_hWndMain == NULL )
+	if( GraphicsWindow::GetHwnd() == NULL )
 	{
 		/* No.  Always create and show the window before changing the video mode.
 		 * Otherwise, some other window may have focus, and changing the video mode will
@@ -128,7 +128,7 @@ CString LowLevelWindow_Win32::TryVideoMode( RageDisplay::VideoModeParams p, bool
 		bCanSetPixelFormat = false;
 	}
 	
-	ASSERT( g_hWndMain );
+	ASSERT( GraphicsWindow::GetHwnd() );
 
 	/* Set the display mode: switch to a fullscreen mode or revert to windowed mode. */
 	LOG->Trace("SetScreenMode ...");
