@@ -994,19 +994,13 @@ void NoteDataUtil::Little(NoteData &in)
 {
 	// filter out all non-quarter notes
 	int max_row = in.GetLastRow();
-	for( int i=0; i<=max_row; i++ ) 
-	{
-		if( i%ROWS_PER_BEAT != 0 )
-		{
-			// filter out all non-quarter notes
-			for( int c=0; c<in.GetNumTracks(); c++ ) 
-			{
-				in.SetTapNote(c, i, TAP_EMPTY);
-			}
-		}
-	}
+	for( int i=0; i<=max_row; i+=ROWS_PER_BEAT ) 
+		for( int c=0; c<in.GetNumTracks(); c++ ) 
+			in.SetTapNote(c, i, TAP_EMPTY);
 
-	// leave HoldNotes unchanged (what should be do with them?)
+	for( int i=in.GetNumHoldNotes()-1; i>=0; i-- )
+		if( fmodf(in.GetHoldNote(i).fStartBeat,1) != 0 )	// doesn't start on a beat
+			in.RemoveHoldNote( i );
 }
 
 void NoteDataUtil::Wide( NoteData &in )

@@ -160,7 +160,9 @@ void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow, Inventory* pIn
 	case TNS_MISS:
 		{
 			// end combo
-			bool bItemAcquired = pInventory->OnComboBroken( m_PlayerNumber, m_iCurCombo );
+			bool bItemAcquired = false;
+			if( pInventory )
+				bItemAcquired = pInventory->OnComboBroken( m_PlayerNumber, m_iCurCombo );
 
 			if( !bItemAcquired  && m_iCurCombo>50 )		// don't play "combo stopped" if we got an item
 				SCREENMAN->SendMessageToTopScreen( SM_ComboStopped, 0 );

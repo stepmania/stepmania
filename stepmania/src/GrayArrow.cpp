@@ -19,16 +19,14 @@
 
 #include "RageLog.h"
 
-#define STEP_SECONDS		THEME->GetMetricF("GrayArrow","StepSeconds")
-#define STEP_ZOOM			THEME->GetMetricF("GrayArrow","StepZoom")
-
-float g_fStepSeconds, g_fStepZoom;
+CachedThemeMetric	GR_STEP_SECONDS			("GrayArrow","StepSeconds");
+CachedThemeMetric	GR_STEP_ZOOM			("GrayArrow","StepZoom");
 
 
 GrayArrow::GrayArrow()
 {
-	g_fStepSeconds = STEP_SECONDS;
-	g_fStepZoom = STEP_ZOOM;
+	GR_STEP_SECONDS.Refresh();
+	GR_STEP_ZOOM.Refresh();
 
 	StopAnimating();
 }
@@ -72,8 +70,8 @@ void GrayArrow::Update( float fDeltaTime )
 
 void GrayArrow::Step()
 {
-	SetZoom( g_fStepZoom );
+	SetZoom( GR_STEP_ZOOM );
 	StopTweening();
-	BeginTweening( g_fStepSeconds );
+	BeginTweening( GR_STEP_SECONDS );
 	SetTweenZoom( 1 );
 }

@@ -117,15 +117,15 @@ STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "StepMania Error"
 FONT 8, "MS Sans Serif"
 BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
     EDITTEXT        IDC_EDIT_ERROR,5,80,320,130,ES_MULTILINE | ES_READONLY | 
                     WS_VSCROLL | NOT WS_TABSTOP
-    DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
+    PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,8,215,74,15
+    PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,90,215,76,15
+    PUSHBUTTON      "Restart StepMania",IDC_BUTTON_RESTART,175,215,80,15
     CONTROL         129,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     LTEXT           "Sorry!  An error has occurred while running StepMania.\r\n\r\nSpecific details about the error may be listeted in the box below:",
                     IDC_STATIC,7,46,298,28
-    PUSHBUTTON      "Restart StepMania",IDC_BUTTON_RESTART,175,215,80,15
-    PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,90,215,76,15
-    PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,8,215,74,15
 END
 
 IDD_LOADING_DIALOG DIALOG DISCARDABLE  0, 0, 312, 82
