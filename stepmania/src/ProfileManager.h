@@ -28,6 +28,7 @@ struct Profile
 		m_iTotalPlays = 0;
 		m_iTotalPlaySeconds = 0;
 		m_iTotalGameplaySeconds = 0;
+		m_iCurrentCombo = 0;
 	}
 
 	bool LoadFromIni( CString sIniPath );
@@ -39,6 +40,7 @@ struct Profile
 	int m_iTotalPlays;
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
+	int m_iCurrentCombo;
 };
 
 class ProfileManager

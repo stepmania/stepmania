@@ -181,6 +181,10 @@ void GameState::EndGame()
 		pProfile->m_iTotalPlaySeconds += iPlaySeconds;
 		pProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 		pProfile->m_iTotalPlays++;
+		pProfile->m_iCurrentCombo = 
+			PREFSMAN->m_bComboContinuesBetweenSongs ? 
+			GAMESTATE->m_CurStageStats.iCurCombo[p] : 
+			0;
 	}
 
 	BOOKKEEPER->WriteToDisk();
@@ -293,8 +297,22 @@ void GameState::ResetStageStatistics()
 {
 	StageStats OldStats = GAMESTATE->m_CurStageStats;
 	m_CurStageStats = StageStats();
-	if( GetStageIndex() > 0 && PREFSMAN->m_bComboContinuesBetweenSongs )
-		memcpy( GAMESTATE->m_CurStageStats.iCurCombo, OldStats .iCurCombo,  sizeof(OldStats.iCurCombo) );
+	if( PREFSMAN->m_bComboContinuesBetweenSongs )
+	{
+		if( GetStageIndex() == 0 )
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);
+				if( pProfile )
+					GAMESTATE->m_CurStageStats.iCurCombo[p] = pProfile->m_iCurrentCombo;
+			}
+		}
+		else	// GetStageIndex() > 0
+		{
+			memcpy( GAMESTATE->m_CurStageStats.iCurCombo, OldStats.iCurCombo,  sizeof(OldStats.iCurCombo) );
+		}
+	}
 
 	RemoveAllActiveAttacks();
 	RemoveAllInventory();

@@ -252,6 +252,7 @@ bool Profile::LoadFromIni( CString sIniPath )
 	ini.GetValue( "Profile", "TotalPlays",						m_iTotalPlays );
 	ini.GetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	ini.GetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
+	ini.GetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
 	return true;
 }
 
@@ -265,6 +266,7 @@ bool Profile::SaveToIni( CString sIniPath )
 	ini.SetValue( "Profile", "TotalPlays",						m_iTotalPlays );
 	ini.SetValue( "Profile", "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	ini.SetValue( "Profile", "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
+	ini.SetValue( "Profile", "CurrentCombo",					m_iCurrentCombo );
 	ini.WriteFile();
 	return true;
 }
