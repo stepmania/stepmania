@@ -256,9 +256,9 @@ int RageSoundReader_Chain::ReadBlock( int16_t *pBuffer, int iFrames )
 		m_apActiveSounds.front().pSound->GetSampleRate() == m_iActualSampleRate )
 	{
 		/* We have only one source, and it matches our target.  Don't mix; read
-		 * directly from the source into the destination.  (This is to optimize
-		 * the common case of having one BGM track and no autoplay sounds.) */
-		int iBytes = m_apActiveSounds.front().pSound->Read( (char *) pBuffer, iFrames * sizeof(int16_t) * m_iChannels );
+		 * directly from the source into the destination.  This is to optimize
+		 * the common case of having one BGM track and no autoplay sounds. */
+		int iBytes = m_apActiveSounds.front().pSound->Read( (char *) pBuffer, iFramesToRead * sizeof(int16_t) * m_iChannels );
 		if( iBytes == 0 )
 			ReleaseSound( 0 );
 		return iBytes / (sizeof(int16_t) * m_iChannels);
