@@ -220,7 +220,10 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			{
 				m_textScore[p][i].SetName( ssprintf("ScoreP%i",p+1) );
 				m_textScore[p][i].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional score") );
-				m_textScore[p][i].SetText( ssprintf("%.2f%%", feat.Score) );
+				if( PREFSMAN->m_bPercentageScoring )
+					m_textScore[p][i].SetText( ssprintf("%.2f%%", feat.Score*100) );
+				else
+					m_textScore[p][i].SetText( ssprintf("%.0f", feat.Score) );
 				SET_ON( m_textScore[p][i] );
 				this->AddChild( &m_textScore[p][i] );
 			}
