@@ -625,7 +625,7 @@ void RageDisplay::ChangeCentering( int trans_x, int trans_y, float scale_x, floa
 {
 	RageMatrix m1;
 	RageMatrix m2;
-	RageMatrixTranslation( &m1, trans_x, trans_y, 0 );
+	RageMatrixTranslation( &m1, float(trans_x), float(trans_y), 0 );
 	RageMatrixScaling( &m2, scale_x, scale_y, 1 );
 	RageMatrixMultiply( &m_Centering, &m1, &m2 );
 }

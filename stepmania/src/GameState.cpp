@@ -761,12 +761,12 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 			int i;
 
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			for( i=0; i<m_vPlayedStageStats.size(); i++ )
+			for( i=0; i<(int)m_vPlayedStageStats.size(); i++ )
 			{
 				Song* pSong = m_vPlayedStageStats[i].pSong;
 				Steps* pSteps = m_vPlayedStageStats[i].pSteps[pn];
 				vector<Steps::MemCardData::HighScore> &vHighScores = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores;
-				for( int j=0; j<vHighScores.size(); j++ )
+				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
 					if( vHighScores[j].sName == RANKING_TO_FILL_IN_MARKER[pn] )
 					{
@@ -785,7 +785,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 			{
 				vector<SongManager::CategoryData::HighScore> &vHighScores = SONGMAN->m_CategoryDatas[nt][i].vHighScores;
-				for( int j=0; j<vHighScores.size(); j++ )
+				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
 					CString s = ssprintf("No. %d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
 					vpStringsToFillOut.push_back( &vHighScores[j].sName );
@@ -803,7 +803,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][MEMORY_CARD_MACHINE].vHighScores;
-			for( int i=0; i<vHighScores.size(); i++ )
+			for( unsigned i=0; i<vHighScores.size(); i++ )
 			{
 				if( vHighScores[i].sName == RANKING_TO_FILL_IN_MARKER[pn] )
 				{
@@ -824,7 +824,7 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 	vector<CString*> vpStringsToFill;
 	CStringArray asFeats;
 	GetRankingFeats( pn, asFeats, vpStringsToFill );
-	for( int i=0; i<vpStringsToFill.size(); i++ )
+	for( unsigned i=0; i<vpStringsToFill.size(); i++ )
 	{
 		(*vpStringsToFill[i]) = name;
 	}

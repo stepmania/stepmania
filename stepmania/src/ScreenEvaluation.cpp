@@ -217,7 +217,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
 				rc[p] = AverageMeterToRankingCategory( fAverageMeter );
-				float fTotalDP = stageStats.iActualDancePoints[p];
 
 				SongManager::CategoryData::HighScore hs;
 				hs.iScore = stageStats.iScore[p];
@@ -225,7 +224,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 				// If unlocking is enabled, save the dance points
 				if( PREFSMAN->m_bUseUnlockSystem )
-					UNLOCKSYS->UnlockAddDP( fTotalDP );
+					UNLOCKSYS->UnlockAddDP( stageStats.iActualDancePoints[p] );
 			}
 			break;
 		case course:
