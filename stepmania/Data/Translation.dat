@@ -480,8 +480,15 @@ SubTitleTo: ~二度目の哀悼~
 *
 # Subtitles:
 # (Title is Graduation.)
-SubtitleFrom: .*Each Tomorrow.*
+SubtitleFrom: .*(Each Tomorrow|sorezore no ashita).*
 SubtitleTo: ~それぞれの明日~
+*
+# Some files are missing the space, so the subtitle isn't parsed.
+TitleFrom: GRADUATION~(Each Tomorrow|sorezore no ashita)~
+TitleTo: GRADUATION
+SubtitleTo: ~それぞれの明日~
+SubtitleTransTo: sorezore no ashita
+DontTransliterate
 *
 
 # Artists:
