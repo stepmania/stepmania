@@ -24,6 +24,7 @@ class Character;
 class TimingData;
 struct StageStats;
 struct PlayerState;
+struct lua_State;
 
 class GameState
 {
@@ -271,6 +272,9 @@ public:
 	int m_iAddToAllCourseEntryMeters;	// 0 == no change
 	int m_iStopCourseAtSeconds;			// -1 == don't stop early
 	bool m_bAutoAdjustMeterDuringCorse;
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
 };
 
 

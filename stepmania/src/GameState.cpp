@@ -1867,6 +1867,44 @@ bool PlayerIsUsingModifier( PlayerNumber pn, const CString sModifier )
 	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
 }
 
+
+
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaGameState : public Luna<T>
+{
+public:
+	LunaGameState() { LUA->Register( Register ); }
+
+	static int IsPlayerEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsPlayerEnabled((PlayerNumber)(IArg(1)-1)) ); return 1; }
+	static int IsHumanPlayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsHumanPlayer((PlayerNumber)(IArg(1)-1)) ); return 1; }
+	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)(IArg(1)-1)) ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( IsPlayerEnabled )
+		ADD_METHOD( IsHumanPlayer )
+		ADD_METHOD( GetPlayerDisplayName )
+		Luna<T>::Register( L );
+
+		// add global singleton
+		ASSERT( GAMESTATE );
+		lua_pushstring(L, "GAMESTATE");
+		GAMESTATE->PushSelf( LUA->L );
+		lua_settable(L, LUA_GLOBALSINDEX);
+	}
+};
+
+LUA_REGISTER_CLASS( GameState )
+// lua end
+
+
+
+
+
 #include "LuaFunctions.h"
 LuaFunction_PlayerNumber( IsPlayerEnabled,	GAMESTATE->IsPlayerEnabled(pn) )
 LuaFunction_PlayerNumber( IsHumanPlayer,	GAMESTATE->IsHumanPlayer(pn) )
