@@ -27,15 +27,7 @@ public:
 	void UnloadTexture( CString sTexturePath );
 	void ReloadAll();
 
-	void SetPrefs( const DWORD dwMaxSize, const DWORD dwTextureColorDepth )
-	{
-		if( dwMaxSize == m_iMaxTextureSize  &&  dwTextureColorDepth == m_iTextureColorDepth )
-			return; 
-		ASSERT( m_iMaxTextureSize >= 64 );
-		m_iMaxTextureSize = dwMaxSize; 
-		m_iTextureColorDepth = dwTextureColorDepth;
-		ReloadAll(); 
-	};
+	void SetPrefs( DWORD dwMaxSize, DWORD dwTextureColorDepth );
 	DWORD GetMaxTextureSize() { return m_iMaxTextureSize; };
 	DWORD GetTextureColorDepth() { return m_iTextureColorDepth; };
 

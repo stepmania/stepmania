@@ -146,3 +146,13 @@ void RageTextureManager::ReloadAll()
 		pTexture->Reload( m_iMaxTextureSize, m_iTextureColorDepth, 0 );
 	}
 }
+
+void RageTextureManager::SetPrefs( DWORD dwMaxSize, DWORD dwTextureColorDepth )
+{
+	if( dwMaxSize == m_iMaxTextureSize  &&  dwTextureColorDepth == m_iTextureColorDepth )
+		return; 
+	ASSERT( m_iMaxTextureSize >= 64 );
+	m_iMaxTextureSize = dwMaxSize; 
+	m_iTextureColorDepth = dwTextureColorDepth;
+	ReloadAll(); 
+}
