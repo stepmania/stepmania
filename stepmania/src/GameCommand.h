@@ -49,6 +49,12 @@ struct GameCommand		// used in SelectMode
 	std::map<CString,CString> m_SetEnv;
 	CString		m_sSongGroup;
 	SortOrder	m_SortOrder;
+
+	bool m_bClearBookkeepingData;
+	bool m_bClearMachineStats;
+	bool m_bDownloadMachineStats;
+	bool m_bInsertCredit;
+	bool m_bResetToFactoryDefaults;
 };
 
 #endif

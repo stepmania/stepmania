@@ -19,6 +19,7 @@
 #include "Foreach.h"
 #include "Command.h"
 #include "arch/Dialog/Dialog.h"
+#include "Bookkeeper.h"
 
 void GameCommand::Init()
 {
@@ -39,6 +40,12 @@ void GameCommand::Init()
 	m_pTrail = NULL;
 	m_pCharacter = NULL;
 	m_SortOrder = SORT_INVALID;
+	
+	m_bClearBookkeepingData = false;
+	m_bClearMachineStats = false;
+	m_bDownloadMachineStats = false;
+	m_bInsertCredit = false;
+	m_bResetToFactoryDefaults = false;
 }
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
@@ -222,6 +229,27 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 				m_sInvalidReason = ssprintf( "SortOrder \"%s\" is not valid.", sValue.c_str() );
 				m_bInvalid |= true;
 			}
+		}
+		
+		else if( sName == "ClearBookkeepingData" )
+		{
+			m_bClearBookkeepingData = true;
+		}
+		else if( sName == "ClearMachineStats" )
+		{
+			m_bClearMachineStats = true;
+		}
+		else if( sName == "DownloadMachineStats" )
+		{
+			m_bDownloadMachineStats = true;
+		}
+		else if( sName == "InsertCredit" )
+		{
+			m_bInsertCredit = true;
+		}
+		else if( sName == "ResetToFactoryDefaults" )
+		{
+			m_bResetToFactoryDefaults = true;
 		}
 
 		else
@@ -501,6 +529,57 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_sPreferredSongGroup = m_sSongGroup;
 	if( m_SortOrder != SORT_INVALID )
 		GAMESTATE->m_SortOrder = m_SortOrder;
+
+	if( m_bClearBookkeepingData )
+	{
+		BOOKKEEPER->ClearAll();
+		BOOKKEEPER->WriteToDisk();
+		SCREENMAN->SystemMessage( "Bookkeeping data cleared." );
+	}
+	if( m_bClearMachineStats )
+	{
+		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		// don't reset the Guid
+		CString sGuid = pProfile->m_sGuid;
+		pProfile->InitAll();
+		pProfile->m_sGuid = sGuid;
+		PROFILEMAN->SaveMachineProfile();
+		SCREENMAN->SystemMessage( "Machine stats cleared." );
+	}
+	if( m_bDownloadMachineStats )
+	{
+		MEMCARDMAN->TryMountAllCards();
+
+		FOREACH_PlayerNumber( pn )
+		{
+			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+				continue;	// skip
+
+			CString sDir = MEM_CARD_MOUNT_POINT[pn];
+			sDir += "MachineProfile/";
+
+			
+			bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
+			if( bSaved )
+				SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
+			else
+				SCREENMAN->SystemMessage( ssprintf("Error saving stats to P%d card.",pn+1) );
+			return;
+		}
+
+		MEMCARDMAN->FlushAndReset();
+
+		SCREENMAN->SystemMessage( "Stats not saved - No memory cards ready." );
+	}
+	if( m_bInsertCredit )
+	{
+		InsertCredit();
+	}
+	if( m_bResetToFactoryDefaults )
+	{
+		PREFSMAN->ResetToFactoryDefaults();
+		SCREENMAN->SystemMessage( "All options reset to factory defaults." );
+	}
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.

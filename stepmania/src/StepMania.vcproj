@@ -194,18 +194,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCenterImage.h">
 			</File>
 			<File
-				RelativePath="ScreenClearBookkeepingData.cpp">
-			</File>
-			<File
-				RelativePath="ScreenClearBookkeepingData.h">
-			</File>
-			<File
-				RelativePath="ScreenClearMachineStats.cpp">
-			</File>
-			<File
-				RelativePath="ScreenClearMachineStats.h">
-			</File>
-			<File
 				RelativePath="ScreenCredits.cpp">
 			</File>
 			<File
@@ -219,12 +207,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenDimensions.h">
-			</File>
-			<File
-				RelativePath="ScreenDownloadMachineStats.cpp">
-			</File>
-			<File
-				RelativePath="ScreenDownloadMachineStats.h">
 			</File>
 			<File
 				RelativePath="ScreenEdit.cpp">
@@ -297,12 +279,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenHowToPlay.h">
-			</File>
-			<File
-				RelativePath="ScreenInsertCredit.cpp">
-			</File>
-			<File
-				RelativePath="ScreenInsertCredit.h">
 			</File>
 			<File
 				RelativePath="ScreenInstructions.cpp">
@@ -444,12 +420,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenReloadSongs.h">
-			</File>
-			<File
-				RelativePath="ScreenResetToDefaults.cpp">
-			</File>
-			<File
-				RelativePath="ScreenResetToDefaults.h">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.cpp">

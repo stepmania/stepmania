@@ -2386,22 +2386,6 @@ SOURCE=.\ScreenCenterImage.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenClearBookkeepingData.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenClearBookkeepingData.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenClearMachineStats.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenClearMachineStats.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenCredits.cpp
 # End Source File
 # Begin Source File
@@ -2415,14 +2399,6 @@ SOURCE=.\ScreenDemonstration.cpp
 # Begin Source File
 
 SOURCE=.\ScreenDemonstration.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenDownloadMachineStats.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenDownloadMachineStats.h
 # End Source File
 # Begin Source File
 
@@ -2529,14 +2505,6 @@ SOURCE=.\ScreenHowToPlay.cpp
 # Begin Source File
 
 SOURCE=.\ScreenHowToPlay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenInsertCredit.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenInsertCredit.h
 # End Source File
 # Begin Source File
 
@@ -2725,14 +2693,6 @@ SOURCE=.\ScreenReloadSongs.cpp
 # Begin Source File
 
 SOURCE=.\ScreenReloadSongs.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenResetToDefaults.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenResetToDefaults.h
 # End Source File
 # Begin Source File
 

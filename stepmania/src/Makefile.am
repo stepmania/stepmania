@@ -25,14 +25,13 @@ Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h ScreenBranch.cpp ScreenBranch.h \
 ScreenCenterImage.cpp ScreenCenterImage.h ScreenCredits.cpp ScreenCredits.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
-ScreenClearBookkeepingData.cpp ScreenClearBookkeepingData.h ScreenClearMachineStats.cpp ScreenClearMachineStats.h \
-ScreenDownloadMachineStats.cpp ScreenDownloadMachineStats.h ScreenEdit.cpp ScreenEdit.h \
+ScreenEdit.cpp ScreenEdit.h \
 ScreenEditCoursesMenu.cpp ScreenEditCoursesMenu.h EditCoursesSongMenu.cpp EditCoursesSongMenu.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
 ScreenEndlessBreak.cpp ScreenEndlessBreak.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp ScreenGameplay.h ScreenHowToPlay.cpp ScreenHowToPlay.h \
-ScreenInstructions.cpp ScreenInstructions.h ScreenInsertCredit.cpp ScreenInsertCredit.h \
+ScreenInstructions.cpp ScreenInstructions.h \
 ScreenJukebox.cpp ScreenJukebox.h \
 ScreenJukeboxMenu.cpp ScreenJukeboxMenu.h ScreenLogo.cpp ScreenLogo.h ScreenMapControllers.cpp ScreenMapControllers.h \
 ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenMusicScroll.cpp ScreenMusicScroll.h \
@@ -40,7 +39,7 @@ ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameE
 ScreenOptions.cpp ScreenOptions.h ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenNetworkOptions.h \
 ScreenNetworkOptions.cpp ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
-ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenResetToDefaults.cpp ScreenResetToDefaults.h ScreenSandbox.cpp ScreenSandbox.h \
+ScreenReloadSongs.cpp ScreenReloadSongs.h ScreenSandbox.cpp ScreenSandbox.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
 ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp ScreenSelectGroup.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
