@@ -1696,11 +1696,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 			palette[p++] = img->format->palette->colors[i].r;
 			palette[p++] = img->format->palette->colors[i].g;
 			palette[p++] = img->format->palette->colors[i].b;
-
-			if(img->flags & SDL_SRCCOLORKEY && i == int(img->format->colorkey))
-				palette[p++] = 0;
-			else
-				palette[p++] = img->format->palette->colors[i].unused;
+			palette[p++] = img->format->palette->colors[i].unused;
 		}
 
 		/* Set the palette. */
