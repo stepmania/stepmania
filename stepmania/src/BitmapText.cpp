@@ -105,7 +105,7 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 
 bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 {
-	LOG->Trace( "BitmapText::LoadFromTextureAndChars(%s)", sTexturePath.GetString() );
+	LOG->Trace( "BitmapText::LoadFromTextureAndChars(\"%s\",\"%s\")", sTexturePath.GetString(), sChars.GetString() );
 
 	if( m_pFont ) {
 		FONT->UnloadFont( m_pFont );
