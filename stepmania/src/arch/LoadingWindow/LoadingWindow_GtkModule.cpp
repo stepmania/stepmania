@@ -18,6 +18,7 @@ extern "C" const char *Init( int *argc, char ***argv )
 		return "Couldn't initialize gtk (cannot open display)";
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_position( GTK_WINDOW(window), GTK_WIN_POS_CENTER );
 	gtk_widget_realize(window);
 	loadmap = gdk_pixmap_create_from_xpm_d(window->window,NULL,NULL,loading);
 	loadimage = gtk_image_new_from_pixmap(loadmap,NULL);
