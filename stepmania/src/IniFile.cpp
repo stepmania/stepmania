@@ -46,9 +46,7 @@ bool IniFile::ReadFile()
 		return 0;
 	}
 
-	CString keyname, valuename, value;
-	CString temp;
-	CString line;
+	CString line, keyname;
 	while (getline(file, line))
 	{
 		if(line.size() >= 3 &&
@@ -71,17 +69,15 @@ bool IniFile::ReadFile()
 
 		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
 		{
-			keyname = line;
-			TrimLeft(keyname, "[");
-			TrimRight(keyname, "]");
+			keyname = line.substr(1, line.size()-2);
 		}
 		else //if a value
 		{
 			int iEqualIndex = line.Find("=");
 			if( iEqualIndex != -1 )
 			{
-				valuename = line.Left(iEqualIndex);
-				value = line.Right(line.GetLength()-valuename.GetLength()-1);
+				CString valuename = line.Left(iEqualIndex);
+				CString value = line.Right(line.GetLength()-valuename.GetLength()-1);
 				SetValue(keyname,valuename,value);
 			}
 		}
@@ -135,8 +131,7 @@ int IniFile::GetNumValues(const CString &keyname) const
 }
 
 // gets value of [keyname] valuename = 
-// overloaded to return CString, int, and double
-bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString& value)
+bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString& value) const
 {
 	keymap::const_iterator k = keys.find(keyname);
 	if (k == keys.end())
@@ -158,36 +153,39 @@ bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString
 }
 
 // gets value of [keyname] valuename = 
-// overloaded to return CString, int, and double
-bool IniFile::GetValueI(const CString &keyname, const CString &valuename, int& value)
+bool IniFile::GetValueI(const CString &keyname, const CString &valuename, int& value) const
 {
 	CString sValue;
-	bool bSuccess = GetValue(keyname,valuename,sValue);
-	if( !bSuccess )
+	if( !GetValue(keyname,valuename,sValue) )
 		return false;
-	value = atoi(sValue);
+	sscanf( sValue.c_str(), "%d", &value );
+	return true;
+}
+
+bool IniFile::GetValueU(const CString &keyname, const CString &valuename, unsigned &value) const
+{
+	CString sValue;
+	if( !GetValue(keyname,valuename,sValue) )
+		return false;
+	sscanf( sValue.c_str(), "%u", &value );
 	return true;
 }
 
 // gets value of [keyname] valuename = 
-// overloaded to return CString, int, and double
-bool IniFile::GetValueF(const CString &keyname, const CString &valuename, float& value)
+bool IniFile::GetValueF(const CString &keyname, const CString &valuename, float& value) const
 {
 	CString sValue;
-	bool bSuccess = GetValue(keyname,valuename,sValue);
-	if( !bSuccess )
+	if( !GetValue(keyname,valuename,sValue) )
 		return false;
-	value = (float)atof(sValue);
+	sscanf( sValue.c_str(), "%f", &value );
 	return true;
 }
 
 // gets value of [keyname] valuename = 
-// overloaded to return CString, int, and double
-bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& value)
+bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& value) const
 {
 	CString sValue;
-	bool bSuccess = GetValue(keyname,valuename,sValue);
-	if( !bSuccess )
+	if( !GetValue(keyname,valuename,sValue) )
 		return false;
 	value = atoi(sValue) != 0;
 	return true;
@@ -196,7 +194,6 @@ bool IniFile::GetValueB(const CString &keyname, const CString &valuename, bool& 
 // sets value of [keyname] valuename =.
 // specify the optional paramter as false (0) if you do not want it to create
 // the key if it doesn't exist. Returns true if data entered, false otherwise
-// overloaded to accept CString, int, and double
 bool IniFile::SetValue(const CString &keyname, const CString &valuename, const CString &value, bool create)
 {
 	if (!create && keys.find(keyname) == keys.end()) //if key doesn't exist
@@ -213,25 +210,21 @@ bool IniFile::SetValue(const CString &keyname, const CString &valuename, const C
 // sets value of [keyname] valuename =.
 // specify the optional paramter as false (0) if you do not want it to create
 // the key if it doesn't exist. Returns true if data entered, false otherwise
-// overloaded to accept CString, int, and double
 bool IniFile::SetValueI(const CString &keyname, const CString &valuename, int value, bool create)
 {
 	return SetValue(keyname, valuename, ssprintf("%d",value), create);
 }
 
-// sets value of [keyname] valuename =.
-// specify the optional paramter as false (0) if you do not want it to create
-// the key if it doesn't exist. Returns true if data entered, false otherwise
-// overloaded to accept CString, int, and double
+bool IniFile::SetValueU(const CString &keyname, const CString &valuename, unsigned value, bool create)
+{
+	return SetValue(keyname, valuename, ssprintf("%u",value), create);
+}
+
 bool IniFile::SetValueF(const CString &keyname, const CString &valuename, float value, bool create)
 {
 	return SetValue(keyname, valuename, ssprintf("%f",value), create);
 }
 
-// sets value of [keyname] valuename =.
-// specify the optional paramter as false (0) if you do not want it to create
-// the key if it doesn't exist. Returns true if data entered, false otherwise
-// overloaded to accept CString, int, and double
 bool IniFile::SetValueB(const CString &keyname, const CString &valuename, bool value, bool create)
 {
 	return SetValue(keyname, valuename, ssprintf("%d",value), create);

@@ -39,7 +39,7 @@ public:
 
 	//will contain error info if one occurs
 	//ended up not using much, just in ReadFile and GetValue
-	CString error;
+	mutable CString error;
 
 	//constructor, can specify pathname here instead of using SetPath later
 	IniFile(CString inipath = "");
@@ -68,22 +68,22 @@ public:
 	int GetNumValues(const CString &keyname) const;
 
 	//gets value of [keyname] valuename = 
-	//overloaded to return CString, int, and double,
 	//returns "", or 0 if key/value not found.  Sets error member to show problem
-	bool GetValue(const CString &key, const CString &valuename, CString& value);
-	bool GetValueI(const CString &key, const CString &valuename, int& value);
-	bool GetValueF(const CString &key, const CString &valuename, float& value);
-	bool GetValueB(const CString &key, const CString &valuename, bool& value);
-	bool GetValue(const CString &key, const CString &valuename, int& value) { return GetValueI(key, valuename, value); }
-	bool GetValue(const CString &key, const CString &valuename, float& value) { return GetValueF(key, valuename, value); }
-	bool GetValue(const CString &key, const CString &valuename, bool& value) { return GetValueB(key, valuename, value); }
+	bool GetValue(const CString &key, const CString &valuename, CString& value) const;
+	bool GetValueI(const CString &key, const CString &valuename, int& value) const;
+	bool GetValueU(const CString &key, const CString &valuename, unsigned& value) const;
+	bool GetValueF(const CString &key, const CString &valuename, float& value) const;
+	bool GetValueB(const CString &key, const CString &valuename, bool& value) const;
+	bool GetValue(const CString &key, const CString &valuename, int& value) const { return GetValueI(key, valuename, value); }
+	bool GetValue(const CString &key, const CString &valuename, float& value) const { return GetValueF(key, valuename, value); }
+	bool GetValue(const CString &key, const CString &valuename, bool& value) const { return GetValueB(key, valuename, value); }
 
 	//sets value of [keyname] valuename =.
 	//specify the optional paramter as false (0) if you do not want it to create
 	//the key if it doesn't exist. Returns true if data entered, false otherwise
-	//overloaded to accept CString, int, and double
 	bool SetValue(const CString &key, const CString &valuename, const CString &value, bool create = 1);
 	bool SetValueI(const CString &key, const CString &valuename, int value, bool create = 1);
+	bool SetValueU(const CString &key, const CString &valuename, unsigned value, bool create = 1);
 	bool SetValueF(const CString &key, const CString &valuename, float value, bool create = 1);
 	bool SetValueB(const CString &key, const CString &valuename, bool value, bool create = 1);
 	bool SetValue(const CString &key, const CString &valuename, int value, bool create = 1) { return SetValue(key, valuename, value, create); }
