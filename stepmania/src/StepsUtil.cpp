@@ -140,17 +140,22 @@ void StepsID::FromSteps( const Steps *p )
  * them back out (which we don't do except in the editor), it won't be permanent. 
  * We could do this during the actual Steps::GetID() call, instead, but then it'd have
  * to have access to Song::m_LoadedFromProfile. */
+typedef pair<SongID,StepsID> SongIDAndStepsID;
+static map<SongIDAndStepsID,Steps *> g_Cache;
 
-static map<StepsID,Steps *> g_StepsIDCache;
 Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 {
 	if( st == STEPS_TYPE_INVALID || dc == DIFFICULTY_INVALID )
 		return NULL;
 
+	SongID songID;
+	songID.FromSong( p );
+	SongIDAndStepsID sas = SongIDAndStepsID(songID,*this);
+	
 	if( bUseCache )
 	{
-		map<StepsID,Steps *>::iterator it = g_StepsIDCache.find( *this );
-		if( it != g_StepsIDCache.end() )
+		map<SongIDAndStepsID,Steps *>::iterator it = g_Cache.find( sas );
+		if( it != g_Cache.end() )
 			return it->second;
 	}
 
@@ -168,7 +173,7 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull, bool bUseCache ) const
 		RageException::Throw( "%i, %i, \"%s\"", st, dc, sDescription.c_str() );	
 
 	if( bUseCache )
-		g_StepsIDCache[*this] = ret;
+		g_Cache[sas] = ret;
 	
 	return ret;
 }
@@ -193,7 +198,7 @@ XNode* StepsID::CreateNode() const
 void StepsID::Invalidate( Song *pStaleSong )
 {
 	// FIXME: Only flush entries with the stale song
-	g_StepsIDCache.clear();
+	g_Cache.clear();
 }
 
 void StepsID::LoadFromNode( const XNode* pNode ) 
