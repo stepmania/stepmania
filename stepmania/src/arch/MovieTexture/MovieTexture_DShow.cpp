@@ -239,6 +239,8 @@ void MovieTexture_DShow::Create()
 	MultiByteToWideChar(CP_ACP, 0, actualID.filename.c_str(), -1, wFileName, MAX_PATH);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
+	/* No, it also happens if the movie can't be opened for some reason; for example,
+	 * if another program has it open and locked. */
     if( FAILED( hr = m_pGB->AddSourceFilter( wFileName, L"SOURCE", &pFSrc ) ) )
 	{
 		PrintCodecError(hr, "Could not create source filter to graph!");
@@ -317,11 +319,6 @@ void MovieTexture_DShow::CreateTexture()
 	if(m_uTexHandle)
 		return;
 
-	/* Have to free our frame holder becuase we might need a different 
-	 * PixelFormat than before. */
-	if( m_img )
-		SDL_FreeSurface( m_img );
-
 	/* My test clip (a high-res, MPEG1 video) goes from 12 fps to 14 fps
 	 * if I use a 16-bit internalformat instead of a 32-bit one; that's a
 	 * 16% jump, which is significant.  (Simply decoding this video is probably
@@ -357,10 +354,19 @@ void MovieTexture_DShow::CreateTexture()
 
 
 	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(m_PixelFormat);
-	m_img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight,
+	SDL_Surface *img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight,
 		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 
-	m_uTexHandle = DISPLAY->CreateTexture( m_PixelFormat, m_img );
+	m_uTexHandle = DISPLAY->CreateTexture( m_PixelFormat, img );
+
+	SDL_FreeSurface( img );
+
+	/* Have to free our frame holder because we might need a different 
+	 * PixelFormat than before. */
+	if( m_img )
+		SDL_FreeSurface( m_img );
+	m_img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iImageWidth, m_iImageHeight,
+		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 }
 
 bool MovieTexture_DShow::PlayMovie()
