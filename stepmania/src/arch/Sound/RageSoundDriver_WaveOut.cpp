@@ -220,7 +220,10 @@ RageSound_WaveOut::~RageSound_WaveOut()
 	waveOutClose(wo);
 
 	for(int b = 0; b < num_chunks; ++b)
+	{
+		waveOutUnprepareHeader( wo, &buffers[b], sizeof(buffers[b]) );
 		delete [] buffers[b].lpData;
+	}
 }
 
 float RageSound_WaveOut::GetPlayLatency() const
