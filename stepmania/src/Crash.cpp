@@ -297,7 +297,7 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc) {
 
 	// Attempt to read debug file.
 
-	bool bSuccess;
+	bool bSuccess=0;
 
 	if (cdw.vdc.pExtraData) {
 		bSuccess = VDDebugInfoInitFromMemory(&g_debugInfo, cdw.vdc.pExtraData);
@@ -954,13 +954,13 @@ bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src) {
 
 	// Check type string
 
-	if (!memcmp((char *)src + 6, "] VirtualDub disasm", 19))
+	if (!memcmp((char *)src + 6, "] StepMania disasm", 18))
 		src += *(long *)(src + 64) + 72;
 
 	if (src[0] != '[' || src[3] != '|')
 		return false;
 
-	if (memcmp((char *)src + 6, "] VirtualDub symbolic debug information", 39))
+	if (memcmp((char *)src + 6, "] StepMania symbolic debug information", 38))
 		return false;
 
 	// Check version number
@@ -1021,9 +1021,6 @@ bool VDDebugInfoInitFromFile(VDDebugInfoContext *pctx, const char *pszFilename) 
 			CloseHandle(h);
 			return true;
 		}
-
-		VirtualFree(pctx->pRawBlock, 0, MEM_RELEASE);
-
 	} while(false);
 
 	VDDebugInfoDeinit(pctx);
@@ -1120,12 +1117,12 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 	char buf[512];
 
 	if (!g_debugInfo.pRVAHeap) {
-		Report(hwnd, hFile, "Could not open debug resource file (VirtualDub.vdi).");
+		Report(hwnd, hFile, "Could not open debug resource file (StepMania.vdi).");
 		return false;
 	}
 
 	if (g_debugInfo.nBuildNumber != int(version_num)) {
-		Report(hwnd, hFile, "Incorrect VirtualDub.vdi file (build %d, expected %d) for this version of VirtualDub -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
+		Report(hwnd, hFile, "Incorrect StepMania.vdi file (build %d, expected %d) for this version of StepMania -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
 		return false;
 	}
 
@@ -1244,7 +1241,7 @@ void DoSave(const EXCEPTION_POINTERS *pExc) {
 		return;
 
 	Report(NULL, hFile,
-			"VirtualDub crash report -- build %d\r\n"
+			"StepMania crash report -- build %d\r\n"
 			"--------------------------------------\r\n"
 			"\r\n"
 			"Disassembly:", version_num);
@@ -1323,19 +1320,41 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		case WM_COMMAND:
 			switch(LOWORD(wParam)) {
-			case IDCANCEL: case IDOK:
+			case IDC_BUTTON_CLOSE:
 				EndDialog(hDlg, FALSE);
+				return TRUE;
+			case IDOK:
+				EndDialog(hDlg, TRUE);
 				return TRUE;
 			case IDC_CRASH_SAVE:
 				if (!s_bHaveCallstack)
 					if (IDOK != MessageBox(hDlg,
-						"VirtualDub cannot load its crash resource file, and thus the crash dump will be "
+						"StepMania cannot load its crash resource file, and thus the crash dump will be "
 						"missing the most important part, the call stack. Crash dumps are much less useful "
 						"without the call stack.",
-						"VirtualDub warning", MB_OK|MB_ICONEXCLAMATION))
+						"StepMania warning", MB_OK|MB_ICONEXCLAMATION))
 						return TRUE;
 
 				DoSave(s_pExc);
+
+				{
+					PROCESS_INFORMATION pi;
+					STARTUPINFO	si;
+					ZeroMemory( &si, sizeof(si) );
+
+					CreateProcess(
+						NULL,		// pointer to name of executable module
+						"notepad.exe crashinfo.txt",		// pointer to command line string
+						NULL,  // process security attributes
+						NULL,   // thread security attributes
+						false,  // handle inheritance flag
+						0, // creation flags
+						NULL,  // pointer to new environment block
+						NULL,   // pointer to current directory name
+						&si,  // pointer to STARTUPINFO
+						&pi  // pointer to PROCESS_INFORMATION
+					);
+				}
 				return TRUE;
 			case IDC_BUTTON_RESTART:
 				{

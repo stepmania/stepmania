@@ -499,7 +499,7 @@ bool VDDisasmInit(VDDisassemblyContext *pvdc, const char *pszFilename) {
 	if (src[0] != '[' || src[3] != '|')
 		return false;
 
-	if (memcmp((char *)src + 6, "] VirtualDub disasm module", 26))
+	if (memcmp((char *)src + 6, "] StepMania disasm module", 25))
 		return false;
 
 	// Check version number
@@ -591,7 +591,7 @@ CodeDisassemblyWindow::CodeDisassemblyWindow(void *_code, long _length, void *_r
 			);
 
 	if (!hFontMono) hFontMono = (HFONT)GetStockObject(ANSI_FIXED_FONT);
-
+	num_ents = 0;
 }
 
 CodeDisassemblyWindow::~CodeDisassemblyWindow() {

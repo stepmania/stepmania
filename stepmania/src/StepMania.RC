@@ -183,14 +183,15 @@ BEGIN
     LTEXT           "CPU registers",IDC_STATIC,287,46,44,8
     LTEXT           "StepMania has crashed due to a program error.  Please hit Save to dump diagnostic information to a file called 'crashinfo.txt' in the StepMania program directory, and then OK to bring up the normal crash box.",
                     IDC_STATIC,7,238,319,25
-    PUSHBUTTON      "Save",IDC_CRASH_SAVE,77,270,50,15
+    PUSHBUTTON      "Save",IDC_CRASH_SAVE,76,270,70,15
     LISTBOX         IDC_CALL_STACK,7,178,279,38,LBS_NOINTEGRALHEIGHT | 
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "Estimated call stack",IDC_STATIC,7,167,64,8
     CONTROL         121,IDC_STATIC,"Static",SS_BITMAP,1,2,396,36
-    PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,1,270,74,15
-    PUSHBUTTON      "Restart StepMania",IDC_BUTTON_RESTART,129,270,80,15
-    PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,211,270,76,15
+    PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,1,270,70,15
+    PUSHBUTTON      "Restart",IDC_BUTTON_RESTART,348,254,50,15
+    PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,207,270,76,15
+    PUSHBUTTON      "Close",IDC_BUTTON_CLOSE,348,238,50,15
 END
 
 
@@ -223,7 +224,7 @@ BEGIN
         LEFTMARGIN, 1
         RIGHTMARGIN, 398
         VERTGUIDE, 286
-        BOTTOMMARGIN, 274
+        BOTTOMMARGIN, 285
     END
 END
 #endif    // APSTUDIO_INVOKED
