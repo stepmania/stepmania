@@ -10204,15 +10204,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CharacterHead.cpp;
-			path = /Users/steve/stepmania/src/CharacterHead.cpp;
-			refType = 0;
+			path = ../src/CharacterHead.cpp;
+			refType = 4;
 		};
 		AAD6201A0528FA5E00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = CharacterHead.h;
-			path = /Users/steve/stepmania/src/CharacterHead.h;
-			refType = 0;
+			path = ../src/CharacterHead.h;
+			refType = 4;
 		};
 		AAD6201B0528FA5E00D02EE9 = {
 			fileRef = AAD620190528FA5E00D02EE9;
