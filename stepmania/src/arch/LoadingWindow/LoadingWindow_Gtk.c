@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include "global.h"
 
 static GtkWidget *label;
 static GtkWidget *window;
@@ -7,6 +8,7 @@ void CreateGtkLoadingWindow() {
   GtkWidget *vbox;
   GtkWidget *loadimage;
 
+  gtk_init(&g_argc,&g_argv);
   loadimage = gtk_image_new_from_file("loading.xpm");
   label = gtk_label_new(NULL);
   gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
