@@ -1002,6 +1002,8 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 		RunCommandOnChildren( "stoptweening" );
 		PlayCommand( "On" );
 	}
+
+	PlayCommand( "GainFocus" );
 }
 
 void BGAnimationLayer::LosingFocus()
@@ -1010,6 +1012,8 @@ void BGAnimationLayer::LosingFocus()
 		return;
 
 	m_SubActors[0]->Command( "pause" );
+
+	PlayCommand( "LoseFocus" );
 }
 
 void BGAnimationLayer::PlayCommand( const CString &sCommandName )
