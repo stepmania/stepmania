@@ -264,7 +264,6 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenRanking.h"
-#include "ScreenMemoryCard.h"
 #include "ScreenLogo.h"
 #include "ScreenUnlock.h"
 #include "ScreenDemonstration.h"
@@ -300,6 +299,8 @@ Screen* Screen::Create( CString sClassName )
 		sClassName = "ScreenAlbums@ScreenAttract";
 	if( !sClassName.CompareNoCase("ScreenWarning") )
 		sClassName = "ScreenWarning@ScreenAttract";
+	if( !sClassName.CompareNoCase("ScreenMemoryCard") )
+		sClassName = "ScreenMemoryCard@ScreenAttract";
 
 	if( !sClassName.CompareNoCase("ScreenEvaluationStage") )
 		sClassName = "ScreenEvaluationStage@ScreenEvaluation";
