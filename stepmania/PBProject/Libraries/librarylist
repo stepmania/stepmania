@@ -1,0 +1,14 @@
+SDL-1.2.7
+SDL_image-1.2.3
+ffmpeg-0.4.8
+jpeg-6b
+libmad-0.1.5.1b
+libogg-1.1
+libpng-1.2.5
+libvorbis-1.0.1
+lua-5.0
+
+Directions:
+1. Decompress all of those in the Libraries directory.
+2. Build frameworks from those libraries using xcode.
+3. Hope I haven't missed anything...
