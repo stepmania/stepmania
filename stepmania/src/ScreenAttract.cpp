@@ -38,6 +38,8 @@ ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )
 {
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s, %s)", sMetricName.c_str(), sElementName.c_str() );
 
+	GAMESTATE->Reset();
+
 	m_sMetricName = sMetricName;
 	m_sElementName = sElementName;
 
