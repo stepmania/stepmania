@@ -298,7 +298,7 @@ void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc )
 
 void ScreenNetRoom::ShiftRoomsUp() {
 	for (unsigned int x = 0; x < m_RoomList.size(); ++x) {
-		m_RoomList[x].StopTweening();
+		m_RoomList[x].FinishTweening();
 		if ((m_RoomList[x].GetY()-ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()-ROOMSPACEY < ROOMLOWERBOUND)) {
 			COMMAND(m_RoomList[x], "ShiftUp");
 			COMMAND(m_RoomList[x], "RoomsOn");
@@ -313,7 +313,7 @@ void ScreenNetRoom::ShiftRoomsDown()
 {
 	for( unsigned x = 0; x < m_RoomList.size(); ++x )
 	{
-		m_RoomList[x].StopTweening();
+		m_RoomList[x].FinishTweening();
 		if ((m_RoomList[x].GetY()+ROOMSPACEY >= ROOMUPPERBOUND)&&(m_RoomList[x].GetY()+ROOMSPACEY < ROOMLOWERBOUND)) {
 			COMMAND(m_RoomList[x], "ShiftDown");
 			COMMAND(m_RoomList[x], "RoomsOn");
