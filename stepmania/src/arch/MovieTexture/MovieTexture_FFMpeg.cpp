@@ -314,7 +314,7 @@ int FFMpeg_Helper::DecodePacket()
 	{
 		if ( GetNextTimestamp )
 		{
-			if (pkt.pts != AV_NOPTS_VALUE)
+			if (pkt.pts != int64_t(AV_NOPTS_VALUE))
 				pts = (float)pkt.pts * m_fctx->pts_num / m_fctx->pts_den;
 			else
 				pts = -1;
