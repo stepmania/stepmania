@@ -1822,6 +1822,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="Helpers"
 				Filter="">
 				<File
+					RelativePath="SDL_SaveJPEG.cpp">
+				</File>
+				<File
+					RelativePath="SDL_SaveJPEG.h">
+				</File>
+				<File
 					RelativePath="SDL_dither.cpp">
 				</File>
 				<File

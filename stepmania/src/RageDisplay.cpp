@@ -18,6 +18,8 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "SDL_utils.h"
+#include "SDL_image.h"
+#include "RageFile.h"
 
 //
 // Statistics stuff
@@ -633,4 +635,43 @@ void RageDisplay::ChangeCentering( int trans_x, int trans_y, float scale_x, floa
 	RageMatrixTranslation( &m1, float(trans_x), float(trans_y), 0 );
 	RageMatrixScaling( &m2, scale_x, scale_y, 1 );
 	RageMatrixMultiply( &m_Centering, &m1, &m2 );
+}
+
+bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
+{
+	SDL_Surface* surface = this->CreateScreenshot();
+
+	CString buf;
+	buf.reserve( 1024*1024 );
+
+	SDL_RWops *rw = OpenRWops( buf );
+
+	switch( format )
+	{
+	case bmp:
+		SDL_SaveBMP_RW( surface, rw, false );
+		break;
+	case jpg:
+		IMG_SaveJPG_RW( surface, rw );
+		break;
+	default:
+		ASSERT(0);
+		return false;
+	}
+
+	SDL_FreeRW( rw );
+
+	SDL_FreeSurface( surface );
+	surface = NULL;
+
+	RageFile out;
+	if( !out.Open( sPath, RageFile::WRITE ) )
+	{
+		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
+		return false;
+	}
+
+	out.Write( buf );
+
+	return true;
 }

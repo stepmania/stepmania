@@ -742,10 +742,8 @@ bool RageDisplay_OGL::Supports4BitPalettes()
 	return g_b4BitPalettesWork;
 }
 
-void RageDisplay_OGL::SaveScreenshot( CString sPath )
+SDL_Surface* RageDisplay_OGL::CreateScreenshot()
 {
-	ASSERT( sPath.Right(3).CompareNoCase("bmp") == 0 );	// we can only save bitmaps
-
 	int width = wind->GetVideoModeParams().width;
 	int height = wind->GetVideoModeParams().height;
 
@@ -770,23 +768,7 @@ void RageDisplay_OGL::SaveScreenshot( CString sPath )
 			3*width );
 	SDL_FreeSurface( image );
 
-	CString buf;
-	buf.reserve( 1024*1024 );
-
-	SDL_RWops *rw = OpenRWops( buf );
-	SDL_SaveBMP_RW( temp, rw, false );
-	SDL_FreeRW( rw );
-
-	SDL_FreeSurface( temp );
-
-	RageFile out;
-	if( !out.Open( sPath, RageFile::WRITE ) )
-	{
-		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
-		return;
-	}
-
-	out.Write( buf );
+	return temp;
 }
 
 RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }

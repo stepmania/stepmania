@@ -1176,6 +1176,9 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		 (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
 	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))))
 	{
+		// If holding LShift save a BMP, else save a JPG
+		bool bSaveBmp = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) );
+
 		// Save Screenshot.
 		CString sPath;
 		
@@ -1184,13 +1187,16 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		/* XXX slow? */
 		for( int i=0; i<10000; i++ )
 		{
-			sPath = ssprintf("Screenshots/screen%04d.bmp",i);
+			sPath = ssprintf("Screenshots/screen%04d.%s",i,bSaveBmp?"bmp":"jpg");
 			if( !DoesFileExist(sPath) )
 				break;
 		}
-		DISPLAY->SaveScreenshot( sPath );
-		SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
-		return true;
+		bool bResult = DISPLAY->SaveScreenshot( sPath, bSaveBmp ? RageDisplay::bmp : RageDisplay::jpg );
+		if( bResult )
+			SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
+		else
+			SOUND->PlayOnce( THEME->GetPathToS("Common invalid") );
+		return true;	// handled
 	}
 
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))

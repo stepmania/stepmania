@@ -670,7 +670,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
     return SUCCEEDED( hr );
 }
 
-void RageDisplay_D3D::SaveScreenshot( CString sPath )
+SDL_Surface* RageDisplay_D3D::CreateScreenshot()
 {
 #ifndef _XBOX
 	/* Get the back buffer. */
@@ -703,29 +703,13 @@ void RageDisplay_D3D::SaveScreenshot( CString sPath )
 		pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
 	}
 
-	SDL_Surface *Texture = CreateSurfaceFromPixfmt( FMT_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
-	ASSERT( Texture );
-
-	CString buf;
-	buf.reserve( 1024*1024 );
-
-	SDL_RWops *rw = OpenRWops( buf );
-	SDL_SaveBMP_RW( Texture, rw, false );
-	SDL_FreeRW( rw );
-
-	SDL_FreeSurface( Texture );
-
-	RageFile out;
-	if( !out.Open( sPath, RageFile::WRITE ) )
-	{
-		LOG->Trace("Couldn't write %s: %s", sPath.c_str(), out.GetError().c_str() );
-		return;
-	}
-
-	out.Write( buf );
+	SDL_Surface *surface = CreateSurfaceFromPixfmt( FMT_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
+	ASSERT( surface );
 
 	pCopy->UnlockRect();
 	pCopy->Release();
+
+	return surface;
 #endif
 }
 

@@ -210,7 +210,8 @@ public:
 
 	void DrawCircle( const RageSpriteVertex &v, float radius );
 
-	virtual void SaveScreenshot( CString sPath ) = 0;
+	enum GraphicsFileFormat{ bmp, jpg };
+	bool SaveScreenshot( CString sPath, GraphicsFileFormat format );
 
 	virtual CString GetTextureDiagnostics( unsigned id ) const { return ""; }
 
@@ -219,10 +220,12 @@ protected:
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
 	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
+	virtual SDL_Surface* CreateScreenshot() = 0;	// allocates a surface.  Caller must SDL_FreeSurface it.
 
 	virtual void SetViewport(int shift_left, int shift_down) = 0;
 
 	void DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
+
 
 	// Stuff in RageDisplay.cpp
 	void SetDefaultRenderStates();

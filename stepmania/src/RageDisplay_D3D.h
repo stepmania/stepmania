@@ -82,9 +82,9 @@ public:
 	void DrawIndexedTriangles( const RageModelVertex v[], int iNumVerts, const Uint16* pIndices, int iNumIndices );
 //	void DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
-	void SaveScreenshot( CString sPath );
 protected:
 	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
+	SDL_Surface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 };
