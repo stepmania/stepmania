@@ -91,14 +91,24 @@ bool RageSurfaceFormat::MapRGBA( uint8_t r, uint8_t g, uint8_t b, uint8_t a, uin
 
 bool RageSurfaceFormat::operator== ( const RageSurfaceFormat &rhs ) const
 {
+	if( !Equivalent(rhs) )
+		return false;
+
+	if( BytesPerPixel == 1 )
+		if( memcmp( palette, rhs.palette, sizeof(RageSurfaceFormat) ) )
+			return false;
+
+	return true;
+}
+
+bool RageSurfaceFormat::Equivalent( const RageSurfaceFormat &rhs ) const
+{
 #define COMP(a) if( a != rhs.a ) return false;
 	COMP( BytesPerPixel );
 	COMP( Rmask );
 	COMP( Gmask );
 	COMP( Bmask );
 	COMP( Amask );
-	if( BytesPerPixel == 1 )
-		COMP( palette );
 
 	return true;
 }
@@ -107,6 +117,7 @@ RageSurface::RageSurface()
 {
 	format = &fmt;
 	pixels = NULL;
+	pixels_owned = true;
 }
 
 RageSurface::RageSurface( const RageSurface &cpy )
@@ -117,8 +128,14 @@ RageSurface::RageSurface( const RageSurface &cpy )
 	h = cpy.h;
 	pitch = cpy.pitch;
 	flags = cpy.flags;
-	pixels = new uint8_t[ pitch*h ];
-	memcpy( pixels, cpy.pixels, pitch*h );
+	pixels_owned = true;
+	if( cpy.pixels )
+	{
+		pixels = new uint8_t[ pitch*h ];
+		memcpy( pixels, cpy.pixels, pitch*h );
+	}
+	else
+		pixels = NULL;
 }
 
 RageSurface::~RageSurface()
@@ -223,6 +240,7 @@ RageSurface *CreateSurfaceFrom( int width, int height, int BitsPerPixel, uint32_
 	pImg->flags = 0;
 	pImg->pitch = pitch;
 	pImg->pixels = pPixels;
+	pImg->pixels_owned = false;
 
 	return pImg;
 }

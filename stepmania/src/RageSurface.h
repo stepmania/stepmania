@@ -48,6 +48,10 @@ struct RageSurfaceFormat
 	uint32_t MapNearestRGBA( uint8_t r, uint8_t g, uint8_t b, uint8_t a ) const;
 	
 	bool operator== ( const RageSurfaceFormat &rhs ) const;
+
+	/* Like operator==, but ignores the palette (which is really a part of the
+	 * surface, not the format). */
+	bool Equivalent( const RageSurfaceFormat &rhs ) const;
 };
 
 struct RageSurface
@@ -56,6 +60,7 @@ struct RageSurface
 	RageSurfaceFormat fmt;
 
 	uint8_t *pixels;
+	bool pixels_owned;
 	int32_t w, h, pitch;
 	int32_t flags;
 

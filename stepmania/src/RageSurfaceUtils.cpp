@@ -137,8 +137,8 @@ void RageSurfaceUtils::CopySurface( RageSurface *src, RageSurface *dest )
 	/* Copy the palette, if we have one. */
 	if( src->format->BitsPerPixel == 8 && dest->format->BitsPerPixel == 8 )
 	{
-		ASSERT( dest->format->palette );
-		dest->fmt.palette = src->fmt.palette;
+		ASSERT( dest->fmt.palette );
+		*dest->fmt.palette = *src->fmt.palette;
 	}
 
 	Blit( src, dest, -1, -1, false );
@@ -150,8 +150,8 @@ bool RageSurfaceUtils::ConvertSurface( RageSurface *src, RageSurface *&dst,
 {
     dst = CreateSurface( width, height, bpp, R, G, B, A );
 
-	/* If the formats are the same, no conversion is needed. */
-	if( width == src->w && height == src->h && src->format == dst->format )
+	/* If the formats are the same, no conversion is needed.  Ignore the palette. */
+	if( width == src->w && height == src->h && src->format->Equivalent( *dst->format ) )
 	{
 		delete dst;
 		dst = NULL;
