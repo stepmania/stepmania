@@ -983,15 +983,8 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 		GAMESTATE->m_iCurrentStageIndex += iNumStagesOfLastSong;
 
 		// add current stage stats to accumulated total only if this song was passed
-		{
-			bool bOnePassed = false;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					bOnePassed |= !GAMESTATE->m_CurStageStats.bFailed[p];
-
-			if( bOnePassed )
-				GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
-		}
+		if( GAMESTATE->m_CurStageStats.OnePassed() )
+			GAMESTATE->m_vPassedStageStats.push_back( GAMESTATE->m_CurStageStats );	// Save this stage's stats
 		break;
 	}
 }
