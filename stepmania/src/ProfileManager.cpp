@@ -154,10 +154,13 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	// moust slot
 	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
 	{
-		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
-		LOG->Trace( "mount %s %s", MEMCARDMAN->GetOsMountDir(pn).c_str(), MEM_CARD_DIR[pn] );
+		// XXX: Remounting the same mount point is broken.  Investigate this later...
 
-		CString sDir = MEM_CARD_DIR[pn];
+//		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
+//		LOG->Trace( "mount %s %s", MEMCARDMAN->GetOsMountDir(pn).c_str(), MEM_CARD_DIR[pn] );
+//		CString sDir = MEM_CARD_DIR[pn];
+
+		CString sDir = MEMCARDMAN->GetOsMountDir(pn);
 
 		DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
 		
@@ -181,7 +184,9 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 			
 bool ProfileManager::CreateMemoryCardProfile( PlayerNumber pn )
 {
-	CString sDir = MEM_CARD_DIR[pn];
+//	CString sDir = MEM_CARD_DIR[pn];
+
+	CString sDir = MEMCARDMAN->GetOsMountDir(pn);
 	
 	DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
 
