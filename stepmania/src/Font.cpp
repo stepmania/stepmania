@@ -203,8 +203,7 @@ int Font::GetLineHeightInSourcePixels( const lstring &szLine ) const
 	/* The spacing of a line is the spacing of its tallest used font page. XXX */
 	for( unsigned i=0; i<szLine.size(); i++ )
 		iLineHeight = max(iLineHeight, GetGlyph(szLine[i]).fp->height);
-//		iLineSpacing = max(iLineSpacing, def->LineSpacing);
-// ?
+
 	return iLineHeight;
 }
 
@@ -215,8 +214,7 @@ int Font::GetLineSpacingInSourcePixels( const lstring &szLine ) const
 	/* The spacing of a line is the spacing of its tallest used font page. XXX */
 	for( unsigned i=0; i<szLine.size(); i++ )
 		iLineSpacing = max(iLineSpacing, GetGlyph(szLine[i]).fp->LineSpacing);
-//		iLineSpacing = max(iLineSpacing, def->LineSpacing);
-// ?
+
 	return iLineSpacing;
 }
 
