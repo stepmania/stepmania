@@ -437,12 +437,8 @@ unsigned int GetHashForFile( CString sPath )
 	unsigned int hash = 0;
 
 	hash += GetHashForString( sPath );
-
 	hash += GetFileSizeInBytes( sPath ); 
-
-	struct stat st;
-	if( DoStat(sPath, &st))
-		hash += st.st_mtime;
+	hash += GetFileModTime( sPath );
 
 	return hash;
 }

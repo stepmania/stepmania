@@ -6,7 +6,7 @@ bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );
 bool ResolvePath(CString &path);
 unsigned GetFileSizeInBytes( const CString &sFilePath );
-bool DoStat(CString sPath, struct stat *st);
+int GetFileModTime( const CString &sPath );
 
 void FlushDirCache();
 

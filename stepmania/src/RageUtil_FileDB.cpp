@@ -22,9 +22,12 @@ struct File {
 	istring name;
 	bool dir;
 	int size;
+	/* Modification time of the file.  The contents of this is undefined, except that
+	 * when the file has been modified, this value will change. */
+	int mtime;
 
-	File() { dir=false; size=-1; }
-	File( istring fn ): name(fn) { dir=false; size=-1; }
+	File() { dir=false; size=-1; mtime=-1; }
+	File( istring fn ): name(fn) { dir=false; size=-1; mtime=-1; }
 	
 	bool operator== (const File &rhs) const { return name==rhs.name; }
 	bool operator< (const File &rhs) const { return name<rhs.name; }
@@ -49,6 +52,7 @@ struct FileSet
 	bool IsADirectory(const CString &path) const;
 	bool IsAFile(const CString &path) const;
 	int GetFileSize(const CString &path) const;
+	int GetFileModTime(const CString &path) const;
 };
 
 void FileSet::LoadFromDir(const CString &dir)
@@ -71,6 +75,7 @@ void FileSet::LoadFromDir(const CString &dir)
 		f.name=fd.cFileName;
 		f.dir = !!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
 		f.size = fd.nFileSizeLow;
+		f.mtime = fd.ftLastWriteTime.dwLowDateTime;
 
 		files.insert(f);
 	} while( FindNextFile( hFind, &fd ) );
@@ -109,6 +114,7 @@ void FileSet::LoadFromDir(const CString &dir)
 		} else {
 			f.dir = (st.st_mode & S_IFDIR);
 			f.size = st.st_size;
+			f.mtime = st.st_mtime;
 		}
 
 		files.insert(f);
@@ -194,6 +200,14 @@ int FileSet::GetFileSize(const CString &path) const
 	return i->size;
 }
 
+int FileSet::GetFileModTime(const CString &path) const
+{
+	set<File>::const_iterator i = files.find(File(path.c_str()));
+	if(i == files.end())
+		return -1;
+	return i->mtime;
+}
+
 /* Given "foo/bar/baz/" or "foo/bar/baz", return "foo/bar/" and "baz". */
 static void SplitPath( CString Path, CString &Dir, CString &Name )
 {
@@ -241,6 +255,7 @@ public:
 	bool IsAFile(const CString &path);
 	bool IsADirectory(const CString &path);
 	int GetFileSize(const CString &path);
+	int GetFileModTime( const CString &sFilePath );
 
 	void FlushDirCache();
 };
@@ -277,6 +292,13 @@ int FilenameDB::GetFileSize( const CString &sPath )
 	return fs.GetFileSize(Name);
 }
 
+int FilenameDB::GetFileModTime( const CString &sPath )
+{
+	CString Dir, Name;
+	SplitPath(sPath, Dir, Name);
+	FileSet &fs = GetFileSet(Dir.c_str());
+	return fs.GetFileModTime(Name);
+}
 
 /* XXX: this won't work right for URIs, eg \\foo\bar */
 bool FilenameDB::ResolvePath(CString &path)
@@ -462,15 +484,21 @@ void FlushDirCache()
 bool DoesFileExist( const CString &sPath ) { return FDB.DoesFileExist(sPath); }
 bool IsAFile( const CString &sPath ) { return FDB.IsAFile(sPath); }
 bool IsADirectory( const CString &sPath ) { return FDB.IsADirectory(sPath); }
+int GetFileModTime( const CString &sPath ) { return FDB.GetFileModTime(sPath); }
 unsigned GetFileSizeInBytes( const CString &sPath )
 {
 	int ret = FDB.GetFileSize(sPath);
-	LOG->Trace("file '%s' size %i", sPath.c_str(), ret);
+//	LOG->Trace("file '%s' size %i", sPath.c_str(), ret);
 	if( ret == -1 )
 		return 0;
 	return ret;
 }
 #else
+static bool DoStat(CString sPath, struct stat *st)
+{
+	TrimRight(sPath, "/\\");
+    return stat(sPath.c_str(), st) != -1;
+}
 bool DoesFileExist( const CString &sPath )
 {
 	if(sPath.empty()) return false;
@@ -501,11 +529,13 @@ unsigned GetFileSizeInBytes( const CString &sFilePath )
 	
 	return st.st_size;
 }
-#endif
 
-/* XXX */
-bool DoStat(CString sPath, struct stat *st)
+int GetFileModTime( const CString &sPath )
 {
-	TrimRight(sPath, "/\\");
-    return stat(sPath.c_str(), st) != -1;
+	struct stat st;
+	if(!DoStat(sFilePath, &st))
+		return -1;
+	
+	return st.st_mtime;
 }
+#endif
