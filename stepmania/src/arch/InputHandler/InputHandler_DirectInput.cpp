@@ -307,17 +307,16 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 		}
 
 		case in.HAT:
-		{
-			ASSERT( in.num == 0 ); // XXX
-
-			const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
-			ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & SDL_HAT_UP));
-			ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & SDL_HAT_DOWN));
-			ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & SDL_HAT_LEFT));
-			ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & SDL_HAT_RIGHT));
+			if( in.num == 0 )
+			{
+				const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
+				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, tm), !!(pos & SDL_HAT_UP));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, tm), !!(pos & SDL_HAT_DOWN));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, tm), !!(pos & SDL_HAT_LEFT));
+				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, tm), !!(pos & SDL_HAT_RIGHT));
+			}
 
 			break;
-		}
 		}
 	}
 }
