@@ -114,6 +114,9 @@ void BitmapText::SetText( CString sText )
 	strncpy( m_szText, sText, MAX_TEXT_CHARS );
 	m_szText[MAX_TEXT_CHARS-1] = '\0';
 
+/*
+	Do NOT stop out all extended ASCII chars.  Why was this here?   -Chris
+
 	int iLength = strlen( m_szText );
 
 	//
@@ -124,7 +127,7 @@ void BitmapText::SetText( CString sText )
 		if( m_szText[i] < 0  || m_szText[i] > MAX_FONT_CHARS-1 )
 			m_szText[i] = ' ';
 	}
-
+*/
 	//
 	// break the string into lines
 	//
@@ -224,7 +227,7 @@ void BitmapText::DrawPrimitives()
 		for( int j=0; j<iLineLength; j++ )	// for each character in the line
 		{
 			const char c = szLine[j];
-			const int iFrameNo = m_pFont->m_iCharToFrameNo[c];
+			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
 			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
 				throw RageException( "The font '%s' does not implement the character '%c'", m_sFontFilePath, c );
 			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];

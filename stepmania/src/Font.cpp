@@ -157,7 +157,7 @@ int Font::GetLineWidthInSourcePixels( const char *szLine, int iLength )
 	for( int i=0; i<iLength; i++ )
 	{
 		const char c = szLine[i];
-		const int iFrameNo = m_iCharToFrameNo[c];
+		const int iFrameNo = m_iCharToFrameNo[ (unsigned char)c ];
 		if( iFrameNo == -1 )	// this font doesn't impelemnt this character
 			throw RageException( "The font '%s' does not implement the character '%c'", m_sTexturePath, c );
 

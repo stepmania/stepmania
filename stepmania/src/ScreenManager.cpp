@@ -25,26 +25,8 @@ ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our p
 
 #define STATS_X				THEME->GetMetricF("ScreenManager","StatsX")
 #define STATS_Y				THEME->GetMetricF("ScreenManager","StatsY")
-#define CREDITS_P1_X		THEME->GetMetricF("ScreenManager","CreditsP1X")
-#define CREDITS_P1_Y		THEME->GetMetricF("ScreenManager","CreditsP1Y")
-#define CREDITS_P2_X		THEME->GetMetricF("ScreenManager","CreditsP2X")
-#define CREDITS_P2_Y		THEME->GetMetricF("ScreenManager","CreditsP2Y")
-
-float CREDITS_X( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return CREDITS_P1_X;
-		case PLAYER_2:	return CREDITS_P2_X;
-		default:		ASSERT(0);	return 0;
-	}
-}
-float CREDITS_Y( int p ) {
-	switch( p ) {
-		case PLAYER_1:	return CREDITS_P1_Y;
-		case PLAYER_2:	return CREDITS_P2_Y;
-		default:		ASSERT(0);	return 0;
-	}
-}
-
+#define CREDITS_X( p )		THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dX",p+1))
+#define CREDITS_Y( p )		THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dY",p+1))
 
 
 ScreenManager::ScreenManager()

@@ -5,8 +5,6 @@ Fix
 on Ez2, the Ranking doesn't save (AAA, AA, A, B e.t.c.)
 but the score does, any ideas why?
 
-timing window in INI
-
 if you do an entire song in it. and save it'll crash
 
 re-add texture hints
@@ -15,17 +13,9 @@ refresh rates screwed up
 
 pump life meter
 
-Don't unload textures after loading them once
-
-
 SMANIAC difficulty BLUE DUDE! DO IT!
 yes because basically these days, Oni challenge modes are defined as smaniac
 Spig301: so really, challenge = smaniac
-
-
-the CDTitles DWI style arent being read anymore.
-
-faster IniFile (with std::map?)
 
 fix movie texture crash
 

@@ -26,7 +26,7 @@ ScoreDisplayOni::ScoreDisplayOni()
 	LOG->Trace( "ScoreDisplayOni::ScoreDisplayOni()" );
 
 	// init the text
-	BitmapText::LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay score numbers"), "01234 :56789%." );
+	BitmapText::LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
 	TurnShadowOff();
 }
 

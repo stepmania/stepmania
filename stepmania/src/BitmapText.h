@@ -45,8 +45,8 @@ protected:
 	Font* m_pFont;
 	
 	// recalculate the items below on SetText()
-	TCHAR   m_szText[MAX_TEXT_CHARS];
-	TCHAR*	m_szTextLines[MAX_TEXT_LINES];	// pointers into m_szText
+	char   m_szText[MAX_TEXT_CHARS];
+	char*	m_szTextLines[MAX_TEXT_LINES];	// pointers into m_szText
 	int		m_iLineLengths[MAX_TEXT_LINES];	// in characters
 	int		m_iNumLines;
 	int		m_iLineWidths[MAX_TEXT_LINES];	// in source pixels
