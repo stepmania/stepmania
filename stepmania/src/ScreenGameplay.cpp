@@ -674,6 +674,8 @@ hehe - Andy)
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
+	int pn;
+		
 	//LOG->Trace( "ScreenGameplay::Update(%f)", fDeltaTime );
 
 	m_soundMusic.Update( fDeltaTime );
@@ -725,6 +727,14 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( AllAreFailing() )	SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
 				if( AllAreInDanger() )	m_Background.TurnDangerOn();
 				else					m_Background.TurnDangerOff();
+
+				// check for individual fail
+				for ( pn=0; pn<NUM_PLAYERS; pn++ )
+				{
+					if ( m_pLifeMeter[pn]->IsFailing() && GAMESTATE->m_fSecondsBeforeFail[pn] == -1)
+						GAMESTATE->m_fSecondsBeforeFail[pn] = GAMESTATE->GetElapsedSeconds();
+				}
+						
 				break;
 			case SongOptions::LIFE_BATTERY:
 				if( AllFailedEarlier() )SCREENMAN->SendMessageToTopScreen( SM_BeginFailed, 0 );
