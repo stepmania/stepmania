@@ -671,7 +671,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	PositionItems();
 
 	/* Do positioning. */
-	PositionUnderlines( iCurRow,  pn );
+	PositionAllUnderlines();
 	RefreshIcons( iCurRow, pn );
 	PositionIcons();
 	UpdateEnabledDisabled();
