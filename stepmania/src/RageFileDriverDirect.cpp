@@ -246,6 +246,8 @@ RageFileObj *RageFileObjDirect::Copy( RageFile &p ) const
 	if( ret == NULL )
 		RageException::Throw("Couldn't reopen \"%s\": %s", path.c_str(), strerror(err) );
 
+	ret->Seek( parent.Tell() );
+
 	return ret;
 }
 

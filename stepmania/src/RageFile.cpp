@@ -66,14 +66,17 @@ RageFile::RageFile( const CString& path, RageFile::OpenMode mode )
 
 RageFile::RageFile( const RageFile &cpy )
 {
+	ResetBuf();
+
+	/* This will copy the file driver, including its internal file pointer. */
 	m_File = cpy.m_File->Copy( *this );
 	m_Path = cpy.m_Path;
 	m_Mode = cpy.m_Mode;
 	m_Error = cpy.m_Error;
 	m_EOF = cpy.m_EOF;
 	m_FilePos = cpy.m_FilePos;
-
-	ResetBuf();
+	memcpy( this->m_Buffer, cpy.m_Buffer, cpy.m_BufUsed );
+	m_BufUsed = cpy.m_BufUsed;
 }
 
 CString RageFile::GetPath() const
