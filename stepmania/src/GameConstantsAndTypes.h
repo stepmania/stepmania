@@ -76,14 +76,8 @@ enum NotesType
 //	NOTES_TYPE_EZ2_REAL_VERSUS,
 	NUM_NOTES_TYPES,		// leave this at the end
 	NOTES_TYPE_INVALID,
+	NOTES_TYPE_PUMP_COUPLE,
 };
-
-int NotesTypeToNumTracks( NotesType nt );
-
-NotesType StringToNotesType( CString sNotesType );
-
-CString NotesTypeToString( NotesType nt );
-
 
 //////////////////////////
 // Play mode stuff
