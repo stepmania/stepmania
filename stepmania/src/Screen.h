@@ -27,17 +27,17 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	static bool ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if CoinMode changed
-	static bool JoinInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if a player joined
 	virtual void HandleScreenMessage( const ScreenMessage SM ) {};
 
 	void PostScreenMessage( const ScreenMessage SM, const float fDelay );
 	void ClearMessageQueue();
 	void ClearMessageQueue( const ScreenMessage SM );	// clear of a specific SM
 
-	bool IsTransparent() { return m_bIsTransparent; }
+	bool IsTransparent() const { return m_bIsTransparent; }
 
 	static Screen* Create( CString sClassName );
+	static bool ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if CoinMode changed
+	static bool JoinInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if a player joined
 
 protected:
 	// structure for holding messages sent to a Screen
