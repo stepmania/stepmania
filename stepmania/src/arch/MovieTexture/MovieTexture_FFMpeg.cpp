@@ -542,6 +542,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 	float ClockOffset = 0;
 	bool FrameSkipMode = false;
 
+#if defined(_WINDOWS)
 	/* Movie decoding is bursty.  We burst decode a frame, then we sleep, then we burst
 	 * to YUV->RGB convert, then we wait for the frame to move, and we repeat.  */
 //	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL))
@@ -552,6 +553,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 	 * frame, resulting in skips in the gameplay thread. */
 	if(!SetThreadPriorityBoost(GetCurrentThread(), TRUE))
 		LOG->Warn(werr_ssprintf(GetLastError(), "SetThreadPriorityBoost failed"));
+#endif
 
 	CHECKPOINT;
 	bool FirstDecodedFrame = true;
