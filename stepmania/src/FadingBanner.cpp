@@ -142,8 +142,12 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 
 	BeforeChange();
 	m_Banner[GetBackIndex()].Load( ID );
-	m_sPendingBanner = path;
-	m_PendingTimer.GetDeltaTime(); /* reset */
+
+	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL )
+	{
+		m_sPendingBanner = path;
+		m_PendingTimer.GetDeltaTime(); /* reset */
+	}
 
 	return;
 }
