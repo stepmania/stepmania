@@ -372,7 +372,11 @@ RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err 
 	case STORED:
 		return pFile;
 	case DEFLATED:
-		return new RageFileObjInflate( pFile, info->uncompr_size );
+	{
+		RageFileObjInflate *pInflate = new RageFileObjInflate( pFile, info->uncompr_size );
+		pInflate->DeleteFileWhenFinished();
+		return pInflate;
+	}
 	default:
 		/* unknown compression method */
 		ASSERT( 0 );

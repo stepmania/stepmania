@@ -10,7 +10,8 @@ typedef struct z_stream_s z_stream;
 class RageFileObjInflate: public RageFileObj
 {
 public:
-	/* pFile will be freed. */
+	/* By default, pFile will not be freed.  To implement GetFileSize(), the
+	 * container format must store the file size. */
 	RageFileObjInflate( RageFileBasic *pFile, int iUncompressedSize );
 	RageFileObjInflate( const RageFileObjInflate &cpy );
 	~RageFileObjInflate();
@@ -20,10 +21,13 @@ public:
 	int GetFileSize() const { return m_iUncompressedSize; }
 	RageFileBasic *Copy() const;
 
+	void DeleteFileWhenFinished() { m_bFileOwned = true; }
+
 private:
 	int m_iUncompressedSize;
 	RageFileBasic *m_pFile;
 	int m_iFilePos;
+	bool m_bFileOwned;
 
 	z_stream *m_pInflate;
 	enum { INBUFSIZE = 1024*4 };

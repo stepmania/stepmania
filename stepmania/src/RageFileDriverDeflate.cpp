@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageFileDriverDeflate.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 
 #if defined(_WINDOWS) || defined(_XBOX)
         #include "zlib/zlib.h"
@@ -20,14 +21,13 @@
 
 RageFileObjInflate::RageFileObjInflate( RageFileBasic *pFile, int iUncompressedSize )
 {
+	m_bFileOwned = false;
 	m_pFile = pFile;
 	decomp_buf_avail = 0;
 	m_pInflate = new z_stream;
+	memset( m_pInflate, 0, sizeof(z_stream) );
 	
 	m_iUncompressedSize = iUncompressedSize;
-
-	m_pInflate->zalloc = Z_NULL;
-	m_pInflate->zfree = Z_NULL;
 
 	int err = inflateInit2( m_pInflate, -MAX_WBITS );
 	if( err == Z_MEM_ERROR )
@@ -48,6 +48,7 @@ RageFileObjInflate::RageFileObjInflate( const RageFileObjInflate &cpy ):
 	ASSERT( 0 );
 /*
 	m_pFile = cpy.m_pFile->Copy();
+	m_bFileOwned = true;
 	m_pInflate = new z_stream;
 	inflateCopy( m_pInflate, const_cast<z_stream*>(cpy.m_pInflate) );
 
@@ -68,7 +69,8 @@ RageFileBasic *RageFileObjInflate::Copy() const
 
 RageFileObjInflate::~RageFileObjInflate()
 {
-	delete m_pFile;
+	if( m_bFileOwned )
+		delete m_pFile;
 
 	int err = inflateEnd( m_pInflate );
 	if( err != Z_OK )
