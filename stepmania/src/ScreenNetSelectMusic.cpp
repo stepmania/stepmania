@@ -297,6 +297,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 			case '=':	c='+';	break;
 			case '[':	c='{';	break;
 			case ']':	c='}';	break;
+			case '\'':	c='"';	break;
 			case '\\':	c='|';	break;
 			case ';':	c=':';	break;
 			case ',':	c='<';	break;
@@ -304,8 +305,6 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 			case '/':	c='?';	break;
 			}
 		}
-		if ( !bHoldingShift && (c == '\"') )
-			c = '\'';
 
 		//Search list for given letter (to aide in searching)
 		if( bHoldingCtrl )
