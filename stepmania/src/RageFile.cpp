@@ -308,20 +308,6 @@ int RageFile::GetFileSize() const
 	return iRet;
 }
 
-void RageFile::Rewind()
-{
-	if( !IsOpen() )
-		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
-
-	if( !(m_Mode&READ) )
-		RageException::Throw("\"%s\" is not open for reading; can't Rewind", GetPath().c_str());
-
-	m_EOF = false;
-
-	m_FilePos = 0;
-	m_File->Rewind();
-}
-
 int RageFile::Read( CString &buffer, int bytes )
 {
 	buffer.erase( buffer.begin(), buffer.end() );

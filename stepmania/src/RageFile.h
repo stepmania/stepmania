@@ -51,7 +51,6 @@ public:
 	int Tell() const { return m_FilePos; }
 	int Seek( int offset );
 	int GetFileSize() const;
-	void Rewind();
     
 	/* Raw I/O: */
 	int Read( void *buffer, size_t bytes );
