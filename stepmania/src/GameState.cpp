@@ -304,12 +304,6 @@ const StyleDef* GameState::GetCurrentStyleDef()
 
 bool GameState::IsPlayable( const ModeChoice& mc )
 {
-	//
-	// If the ModeChoice doesn't specify something, we'll take that
-	// value from the current game state
-	//
-	const PlayMode &rPlayMode = mc.pm != PLAY_MODE_INVALID? mc.pm:m_PlayMode;
-
 	if ( mc.style != STYLE_INVALID )
 	{
 		const int SidesJoinedToPlay = GAMEMAN->GetStyleDefForStyle(mc.style)->NumSidesJoinedToPlay();
@@ -317,22 +311,24 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 			return false;
 	}
 
-	if( rPlayMode == PLAY_MODE_RAVE || rPlayMode == PLAY_MODE_BATTLE )
+	if( mc.pm == PLAY_MODE_RAVE || mc.pm == PLAY_MODE_BATTLE )
 	{
 		// Can't play Rave without characters for attack definitions.
 		if( m_pCharacters.empty() )
 			return false;
+	}
 
-		// If there is no current style ... well, we have no reasonable
-		// grounds to disallow
-		const Style &rStyle = mc.style != STYLE_INVALID? mc.style: m_CurStyle;
-		if (rStyle == STYLE_INVALID)
-			return true;
-
+	/* Don't set a PlayMode that's incompatible with our current Style (if any),
+	 * and vice versa. */
+	const PlayMode &rPlayMode = mc.pm != PLAY_MODE_INVALID? mc.pm:m_PlayMode;
+	if( rPlayMode == PLAY_MODE_RAVE || rPlayMode == PLAY_MODE_BATTLE )
+	{
 		// Can't play rave if there isn't enough room for two players.
 		// This is correct for dance (ie, no rave for solo and doubles),
 		// and should be okay for pump .. not sure about other game types.
-		if( GAMEMAN->GetStyleDefForStyle(rStyle)->m_iColsPerPlayer >= 6 )
+		const Style &rStyle = mc.style != STYLE_INVALID? mc.style: m_CurStyle;
+		if( rStyle != STYLE_INVALID &&
+			GAMEMAN->GetStyleDefForStyle(rStyle)->m_iColsPerPlayer >= 6 )
 			return false;
 
 		return true;
