@@ -1,5 +1,5 @@
 #ifndef MEMORY_CARD_DRIVER_H
-#define MEMORY_CARD_DRIVER_H 1
+#define MEMORY_CARD_DRIVER_H
 
 struct UsbStorageDevice
 {
@@ -13,10 +13,9 @@ struct UsbStorageDevice
 		iLevel = -1;
 		iScsiIndex = -1;
 		sScsiDevice = "";
-		sSerial = "";
+		sSerial = "<none>"; // be different than a card with no serial
 		sOsMountDir = "";
-		bNeedsWriteTest = true;
-		bWriteTestSucceeded = false;
+		m_State = STATE_NONE;
 		bIsNameAvailable = false;
 		sName = "";
 		idVendor = 0;
@@ -31,8 +30,26 @@ struct UsbStorageDevice
 	int iScsiIndex;
 	CString sScsiDevice;
 	CString	sOsMountDir;	// WITHOUT trailing slash
-	bool bNeedsWriteTest;
-	bool bWriteTestSucceeded;  // only valid if bNeedsWriteTest == false
+	enum State
+	{
+		/* Empty device.  This is used only by MemoryCardManager. */
+		STATE_NONE,
+
+		/* The card has been detected, but we havn't finished write tests, loading
+		 * the quick profile information, etc. yet.  We can display something on
+		 * screen, in order to appear responsive, show that something's happening and
+		 * aid diagnostics, though. */
+		STATE_CHECKING,
+
+		/* We can't write to the device; it may be write-protected, use a filesystem
+		 * that we don't understand, unformatted, etc. */
+		STATE_WRITE_ERROR,
+
+		/* The device is ready and usable.  sName is filled in, if available. */
+		STATE_READY,
+	};
+	State m_State;
+
 	bool bIsNameAvailable;  // Name in the profile on the memory card.
 	CString sName;  // Name in the profile on the memory card.
 	int idVendor;
@@ -40,7 +57,7 @@ struct UsbStorageDevice
 	CString sVendor;
 	CString sProduct;
 
-	bool IsBlank() const { return sOsMountDir.empty(); }
+	bool IsBlank() const { return m_State == STATE_NONE; }
 	void SetOsMountDir( const CString &s );
 
 	bool operator==(const UsbStorageDevice& other) const;

@@ -89,7 +89,7 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 
 			UsbStorageDevice usbd;
 			usbd.SetOsMountDir( sDrive );
-			usbd.bWriteTestSucceeded = TestWrite( sDrive );
+			usbd.m_State = TestWrite( sDrive )? UsbStorageDevice::STATE_READY:UsbStorageDevice::STATE_WRITE_ERROR;
 
 			// read name
 			this->Mount( &usbd );
