@@ -33,11 +33,13 @@ public:
 
 	void SetShowLogOutput( bool show ); // enable or disable logging to stdout
 	void SetLogToDisk( bool b );	// enable or disable logging to file
+	void SetInfoToDisk( bool b );	// enable or disable logging info.txt to file
 	void SetFlushing( bool b );	// enable or disable flushing
 	void SetTimestamping( bool b );	// enable or disable timestamping
 
 private:
 	bool m_bLogToDisk;
+	bool m_bInfoToDisk;
 	bool m_bFlush;
 	bool m_bTimestamping;
 	bool m_bShowLogOutput;

@@ -29,6 +29,8 @@
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "time.h"
 
+#include "ProductInfo.h"
+
 #include "SDL_utils.h"
 
 #include "Screen.h"
@@ -805,6 +807,31 @@ void __cdecl main()
 */
 #endif
 
+#if defined(HAVE_VERSION_INFO)
+extern unsigned long version_num;
+extern const char *version_time;
+#endif
+
+static void WriteLogHeader()
+{
+
+	LOG->Info( PRODUCT_NAME_VER );
+
+#if defined(HAVE_VERSION_INFO)
+	LOG->Info( "Compiled %s (build %lu)", version_time, version_num );
+#endif
+
+	time_t cur_time;
+	time(&cur_time);
+	struct tm now;
+	localtime_r( &cur_time, &now );
+
+	LOG->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
+		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour+1, now.tm_min, now.tm_sec );
+	LOG->Trace( " " );
+
+}
+
 int main(int argc, char* argv[])
 {
 #ifdef _XBOX
@@ -881,10 +908,12 @@ int main(int argc, char* argv[])
 
 	LOG->SetShowLogOutput( PREFSMAN->m_bShowLogOutput );
 	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
+	LOG->SetInfoToDisk( true );
 	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
 	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 
+	WriteLogHeader();
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
 	LoadingWindow *loading_window = MakeLoadingWindow();

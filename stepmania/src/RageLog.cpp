@@ -19,7 +19,6 @@
 #include "RageFile.h"
 #include "RageThreads.h"
 #include <time.h>
-#include "ProductInfo.h"
 #if defined(_WINDOWS)
 #include "windows.h"
 #endif
@@ -67,21 +66,14 @@ RageLog* LOG;		// global and accessable from anywhere in the program
  * map/unmap, using any mechanism to generate unique IDs. */
 map<CString, CString> LogMaps;
 
-// constants
-/* We need to use SYS_BASE_PATH here, because this doesn't go through RageFile. */
-#define LOG_PATH	SYS_BASE_PATH "log.txt"
-#define INFO_PATH	SYS_BASE_PATH "info.txt"
+#define LOG_PATH	"log.txt"
+#define INFO_PATH	"info.txt"
 
 static RageFile *g_fileLog, *g_fileInfo;
 
 /* Mutex writes to the files.  Writing to files is not thread-aware, and this is the
  * only place we write to the same file from multiple threads. */
 RageMutex *g_Mutex;
-
-#if defined(HAVE_VERSION_INFO)
-extern unsigned long version_num;
-extern const char *version_time;
-#endif
 
 /* staticlog gets info.txt
  * crashlog gets log.txt */
@@ -101,7 +93,8 @@ RageLog::RageLog()
 	
 	g_Mutex = new RageMutex;
 
-	m_bLogToDisk = true;
+	m_bLogToDisk = false;
+	m_bInfoToDisk = false;
 	m_bFlush = false;
 	m_bTimestamping = false;
 	m_bShowLogOutput = false;
@@ -109,28 +102,6 @@ RageLog::RageLog()
 	// delete old log files
 	remove( LOG_PATH );
 	remove( INFO_PATH );
-
-	// Open log file and leave it open.
-	if( !g_fileLog->Open( LOG_PATH, RageFile::WRITE|RageFile::STREAMED ) )
-		fprintf( stderr, "Couldn't open %s: %s\n", LOG_PATH, g_fileLog->GetError().c_str() );
-	
-	if( !g_fileInfo->Open( INFO_PATH, RageFile::WRITE|RageFile::STREAMED ) )
-		fprintf( stderr, "Couldn't open %s: %s\n", INFO_PATH, g_fileInfo->GetError().c_str() );
-
-	this->Info( PRODUCT_NAME_VER );
-
-#if defined(HAVE_VERSION_INFO)
-	this->Info( "Compiled %s (build %lu)", version_time, version_num );
-#endif
-
-	time_t cur_time;
-	time(&cur_time);
-	struct tm now;
-	localtime_r( &cur_time, &now );
-
-	this->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
-		1900+now.tm_year, now.tm_mon+1, now.tm_mday, now.tm_hour+1, now.tm_min, now.tm_sec );
-	this->Trace( " " );
 }
 
 RageLog::~RageLog()
@@ -162,7 +133,38 @@ RageLog::~RageLog()
 
 void RageLog::SetLogToDisk( bool b )
 {
+	if( m_bLogToDisk == b )
+		return;
+
 	m_bLogToDisk = b;
+
+	if( !m_bLogToDisk )
+	{
+		if( g_fileLog->IsOpen() )
+			g_fileLog->Close();
+		return;
+	}
+
+	if( !g_fileLog->Open( LOG_PATH, RageFile::WRITE|RageFile::STREAMED ) )
+		fprintf( stderr, "Couldn't open %s: %s\n", LOG_PATH, g_fileLog->GetError().c_str() );
+}
+
+void RageLog::SetInfoToDisk( bool b )
+{
+	if( m_bInfoToDisk == b )
+		return;
+
+	m_bInfoToDisk = b;
+
+	if( !m_bInfoToDisk )
+	{
+		if( g_fileInfo->IsOpen() )
+			g_fileInfo->Close();
+		return;
+	}
+
+	if( !g_fileInfo->Open( INFO_PATH, RageFile::WRITE|RageFile::STREAMED ) )
+		fprintf( stderr, "Couldn't open %s: %s\n", INFO_PATH, g_fileInfo->GetError().c_str() );
 }
 
 void RageLog::SetFlushing( bool b )
