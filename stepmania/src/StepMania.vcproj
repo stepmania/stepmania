@@ -1112,12 +1112,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\BPMDisplay.h">
 			</File>
 			<File
-				RelativePath="BannerWithFrame.cpp">
-			</File>
-			<File
-				RelativePath="BannerWithFrame.h">
-			</File>
-			<File
 				RelativePath="CourseContentsList.cpp">
 			</File>
 			<File
