@@ -274,9 +274,7 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
 {
-	// In battle and rave, all players are present.  Non-human players are CPU controlled.
-	if( m_PlayMode == PLAY_MODE_BATTLE )
-		return true;
+	// In rave, all players are present.  Non-human players are CPU controlled.
 	if( m_PlayMode == PLAY_MODE_RAVE )
 		return true;
 	

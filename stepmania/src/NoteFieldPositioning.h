@@ -55,7 +55,8 @@ public:
 	void Load(PlayerNumber pn);
 
 	void GetNamesForCurrentGame(vector<CString> &IDs);
-	bool IsValidModeForCurrentGame(CString mode) const { return GetID(mode) != -1; }
+	bool IsValidModeForCurrentStyle(CString mode) const;
+	bool IsValidModeForAnyStyle(CString mode) const;
 
 private:
 	CString m_Filename;

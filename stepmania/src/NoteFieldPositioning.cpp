@@ -228,3 +228,12 @@ void NoteFieldPositioning::GetNamesForCurrentGame(vector<CString> &IDs)
 		IDs.push_back(Modes[i].m_Name);
 	}
 }
+
+bool NoteFieldPositioning::IsValidModeForAnyStyle(CString mode) const
+{
+	for(unsigned i = 0; i < Modes.size(); ++i)
+		if(Modes[i].m_Name.CompareNoCase(mode)==0)
+			return true;
+
+	return false;
+}

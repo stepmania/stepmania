@@ -203,7 +203,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "timingassist")m_bTimingAssist = true;
 		else if( sBit == "incoming" )	m_fPerspectiveTilt = -1;
 		else if( sBit == "space" )		m_fPerspectiveTilt = +1;
-		else if( GAMESTATE->m_pPosition->IsValidModeForCurrentGame(sBit) )
+		else if( GAMESTATE->m_pPosition->IsValidModeForAnyStyle(sBit) )
 			m_sPositioning = sBit;
 		else if( NOTESKIN->DoesNoteSkinExist(sBit) )
 			m_sNoteSkin = sBit;
