@@ -864,17 +864,24 @@ void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 	StatsAddVerts( iNumVerts );
 }
 */
-void RageDisplay_D3D::SetTexture( RageTexture* pTexture )
+
+void RageDisplay_D3D::ClearAllTextures()
+{
+	for( int i=0; i<MAX_TEXTURE_UNITS; i++ )
+		SetTexture( i, NULL );
+}
+
+void RageDisplay_D3D::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 {
 	if( pTexture == NULL )
 	{
-		g_pd3dDevice->SetTexture( 0, NULL );
+		g_pd3dDevice->SetTexture( iTextureUnitIndex, NULL );
 		return;
 	}
 
 	unsigned uTexHandle = pTexture->GetTexHandle();
 	IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
-	g_pd3dDevice->SetTexture( 0, pTex );
+	g_pd3dDevice->SetTexture( iTextureUnitIndex, pTex );
 	
 	// Set palette (if any)
 	SetPalette(uTexHandle);
@@ -890,6 +897,16 @@ void RageDisplay_D3D::SetTextureModeModulate()
 }
 
 void RageDisplay_D3D::SetTextureModeGlow(GlowMode m)
+{
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+}
+
+void RageDisplay_D3D::SetTextureModeAdd()
 {
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
 	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );

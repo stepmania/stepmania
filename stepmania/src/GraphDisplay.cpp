@@ -122,11 +122,12 @@ void GraphDisplay::Update( float fDeltaTime )
 
 void GraphDisplay::DrawPrimitives()
 {
-	DISPLAY->SetTexture( m_pTexture );
+	DISPLAY->ClearAllTextures();
+	DISPLAY->SetTexture( 0, m_pTexture );
 	Actor::SetRenderStates();	// set Actor-specified render states
 
 	DISPLAY->DrawQuads( Slices, ARRAYSIZE(Slices) );
-	DISPLAY->SetTexture( NULL );
+	DISPLAY->SetTexture( 0, NULL );
 }
 
 

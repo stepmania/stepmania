@@ -335,7 +335,8 @@ void Sprite::DrawTexture( const TweenState *state )
 	v[2].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.bottom,	0 );	// bottom right
 	v[3].p = RageVector3( croppedQuadVerticies.right,	croppedQuadVerticies.top,		0 );	// top right
 
-	DISPLAY->SetTexture( m_pTexture );
+	DISPLAY->ClearAllTextures();
+	DISPLAY->SetTexture( 0, m_pTexture );
 
 	// Must call this after setting the texture or else texture 
 	// parameters have no effect.

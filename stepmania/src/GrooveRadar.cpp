@@ -141,7 +141,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 	// draw radar filling
 	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f*1.1f;
 
-	DISPLAY->SetTexture( NULL );
+	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTextureModeModulate();
 	RageSpriteVertex v[12];	// needed to draw 5 fan primitives and 10 strip primitives
 

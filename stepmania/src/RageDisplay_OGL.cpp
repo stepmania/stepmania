@@ -45,6 +45,7 @@ namespace GLExt {
 	extern PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 	extern PFNGLCOLORTABLEPROC glColorTableEXT;
 	extern PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
+	extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
 };
 
 #if defined(DARWIN)
@@ -83,6 +84,7 @@ namespace GLExt {
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT = NULL;
 PFNGLCOLORTABLEPROC GLExt::glColorTableEXT = NULL;
 PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT = NULL;
+PFNGLACTIVETEXTUREARBPROC GLExt::glActiveTextureARB = NULL;
 static bool g_bEXT_texture_env_combine = true;
 static bool g_bGL_EXT_bgra = true;
 
@@ -572,6 +574,7 @@ void SetupExtensions()
 #endif
 	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
 	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
+	GLExt::glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures( false );
@@ -1013,8 +1016,40 @@ void RageDisplay_OGL::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 	glDisable(GL_POINT_SMOOTH);
 }
 
-void RageDisplay_OGL::SetTexture( RageTexture* pTexture )
+void RageDisplay_OGL::ClearAllTextures()
 {
+	for( int i=0; i<MAX_TEXTURE_UNITS; i++ )
+		SetTexture( i, NULL );
+
+	// HACK:  Reset the active texture to 0.
+	// TODO:  Change all texture functions to take a stage number.
+	if( GLExt::glActiveTextureARB )
+		GLExt::glActiveTextureARB(GL_TEXTURE0_ARB);
+}
+
+void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
+{
+	if( GLExt::glActiveTextureARB == NULL )
+	{
+		// multitexture isn't supported.  Ignore all textures except for 0.
+		if( iTextureUnitIndex != 0 )
+			return;
+	}
+	else
+	{
+		switch( iTextureUnitIndex )
+		{
+		case 0:
+			GLExt::glActiveTextureARB(GL_TEXTURE0_ARB);
+			break;
+		case 1:
+			GLExt::glActiveTextureARB(GL_TEXTURE1_ARB);
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
+
 	if( pTexture )
 	{
 		glEnable( GL_TEXTURE_2D );
@@ -1056,6 +1091,12 @@ void RageDisplay_OGL::SetTextureModeGlow(GlowMode m)
 		return;
 	}
 }
+
+void RageDisplay_OGL::SetTextureModeAdd()
+{
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
+}
+
 void RageDisplay_OGL::SetTextureFiltering( bool b )
 {
 

@@ -492,7 +492,8 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 	RageSpriteVertex *v = &queue[0];
 	RageTexture* pTexture = pSprTopCap->GetTexture();
 	const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
-	DISPLAY->SetTexture( pTexture );
+	DISPLAY->ClearAllTextures();
+	DISPLAY->SetTexture( 0, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetBackfaceCull( false );
 	DISPLAY->SetTextureWrapping(false);
@@ -563,7 +564,8 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	RageSpriteVertex *v = &queue[0];
 	RageTexture* pTexture = pSprBody->GetTexture();
 	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
-	DISPLAY->SetTexture( pTexture );
+	DISPLAY->ClearAllTextures();
+	DISPLAY->SetTexture( 0, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetBackfaceCull( false );
 	DISPLAY->SetTextureWrapping( true );
@@ -665,7 +667,8 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	RageSpriteVertex *v = &queue[0];
 	RageTexture* pTexture = pBottomCap->GetTexture();
 	const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
-	DISPLAY->SetTexture( pTexture );
+	DISPLAY->ClearAllTextures();
+	DISPLAY->SetTexture( 0, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetBackfaceCull( false );
 	DISPLAY->SetTextureWrapping(false);

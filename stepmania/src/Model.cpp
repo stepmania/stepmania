@@ -569,22 +569,21 @@ void Model::DrawPrimitives()
 					mat.fShininess );
 
 				// render the first pass with texture 1
-				DISPLAY->SetTexture( mat.diffuse.ani.GetCurrentTexture() );
+				DISPLAY->SetTexture( 0, mat.diffuse.ani.GetCurrentTexture() );
 				DISPLAY->SetSphereEnironmentMapping( mat.diffuse.bSphereMapped );
 				// UGLY:  This overrides the Actor's BlendMode
-				DISPLAY->SetBlendMode( mat.diffuse.blendMode );
-				DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+//				DISPLAY->SetBlendMode( mat.diffuse.blendMode );
 
 				// render the second pass with texture 2
 				if( mat.alpha.ani.GetCurrentTexture() )
 				{
-					DISPLAY->SetTexture( mat.alpha.ani.GetCurrentTexture() );
+					DISPLAY->SetTexture( 1, mat.alpha.ani.GetCurrentTexture() );
 					DISPLAY->SetSphereEnironmentMapping( mat.alpha.bSphereMapped );
 					// UGLY:  This overrides the Actor's BlendMode
-					DISPLAY->SetBlendMode( mat.alpha.blendMode );
-					DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
+					DISPLAY->SetTextureModeAdd();
 				}
 
+				DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
 				DISPLAY->SetSphereEnironmentMapping( false );
 			}
 			else
@@ -600,7 +599,7 @@ void Model::DrawPrimitives()
 					diffuse,
 					specular,
 					shininess );
-				DISPLAY->SetTexture( NULL );
+				DISPLAY->ClearAllTextures();
 				DISPLAY->SetSphereEnironmentMapping( false );
 				DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
 			}
@@ -638,7 +637,8 @@ void Model::DrawPrimitives()
 					Diffuse,
 					mat.Specular,
 					mat.fShininess );
-				DISPLAY->SetTexture( mat.diffuse.ani.GetCurrentTexture() );
+				DISPLAY->ClearAllTextures();
+				DISPLAY->SetTexture( 0, mat.diffuse.ani.GetCurrentTexture() );
 			}
 			else
 			{
@@ -653,7 +653,7 @@ void Model::DrawPrimitives()
 					diffuse,
 					specular,
 					shininess );
-				DISPLAY->SetTexture( NULL );
+				DISPLAY->ClearAllTextures();
 			}
 
 			DISPLAY->DrawIndexedTriangles( &TempVertices[0], pMesh->Vertices.size(), (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );

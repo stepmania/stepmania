@@ -16,6 +16,7 @@
 
 const int REFRESH_DEFAULT = 0;
 struct SDL_Surface;
+const int MAX_TEXTURE_UNITS = 2;
 
 // VertexArray holds vertex data in a format that is most efficient for
 // the graphics API.
@@ -160,9 +161,11 @@ public:
 		int xoffset, int yoffset, int width, int height 
 		) = 0;
 	virtual void DeleteTexture( unsigned uTexHandle ) = 0;
-	virtual void SetTexture( RageTexture* pTexture ) = 0;
+	virtual void ClearAllTextures() = 0;
+	virtual void SetTexture( int iTextureUnitIndex, RageTexture* pTexture ) = 0;
 	virtual void SetTextureModeModulate() = 0;
 	virtual void SetTextureModeGlow( GlowMode m=GLOW_WHITEN ) = 0;
+	virtual void SetTextureModeAdd() = 0;
 	virtual void SetTextureWrapping( bool b ) = 0;
 	virtual int GetMaxTextureSize() const = 0;
 	virtual void SetTextureFiltering( bool b ) = 0;

@@ -42,9 +42,11 @@ public:
 		int xoffset, int yoffset, int width, int height 
 		);
 	void DeleteTexture( unsigned uTexHandle );
-	void SetTexture( RageTexture* pTexture );
+	void ClearAllTextures();
+	void SetTexture( int iTextureUnitIndex, RageTexture* pTexture );
 	void SetTextureModeModulate();
 	void SetTextureModeGlow( GlowMode m=GLOW_WHITEN );
+	void SetTextureModeAdd();
 	void SetTextureWrapping( bool b );
 	int GetMaxTextureSize() const;
 	void SetTextureFiltering( bool b);

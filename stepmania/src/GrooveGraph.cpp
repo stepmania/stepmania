@@ -119,7 +119,7 @@ void GrooveGraph::Mountain::Update( float fDeltaTime )
 
 void GrooveGraph::Mountain::DrawPrimitives()
 {
-	DISPLAY->SetTexture( NULL );
+	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTextureModeModulate();
 	RageSpriteVertex v[4];
 

@@ -219,7 +219,8 @@ void BitmapText::DrawChars()
 		unsigned end = start;
 		while(end < uEndGlyph && tex[end] == tex[start])
 			end++;
-		DISPLAY->SetTexture( tex[start] );
+		DISPLAY->ClearAllTextures();
+		DISPLAY->SetTexture( 0, tex[start] );
 		RageSpriteVertex &start_vertex = verts[start*4];
 		int iNumVertsToDraw = (end-start)*4;
 		DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
