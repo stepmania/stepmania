@@ -208,7 +208,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
 	ini.SetValueI( "Options", "MusicWheelSwitchSpeed",		m_iMusicWheelSwitchSpeed );
 	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
-	ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.SetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
