@@ -253,8 +253,16 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 
 				if( RandomFloat(0,1)>0.8f )
 					GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
+				/* This is a bitfield; choose a bit. 1<<0 chooses the first
+				 * option, 1<<1 the second, and so on.  NUM_EFFECT_TYPES is one
+				 * greater than the number of options (since it includes NONE);
+				 * we'll actually NONE if we choose NUM_EFFECT_TYPES, since that'll
+				 * do 1<<(NUM_EFFECT_TYPES-1), which will turn on a bit that doesn't
+				 * do anything.
+				 * 
+				 * It's simple, but it's a hack.  FIXME -glenn */
 				GAMESTATE->m_PlayerOptions[p].m_EffectType = 
-					PlayerOptions::EffectType(rand()%PlayerOptions::NUM_EFFECT_TYPES);
+						1 << (rand()%PlayerOptions::NUM_EFFECT_TYPES) ;
 				if( RandomFloat(0,1)>0.9f )
 					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
 				if( RandomFloat(0,1)>0.9f )

@@ -25,15 +25,22 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;
 	float fYOffset = fBeatsUntilStep * ARROW_GAP;
-	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
-	{
-	case PlayerOptions::EFFECT_BOOST:
+
+	/* With both boost and wave enabled, the effect is that the
+	 * notes "bufferr" at the bottom of the screen and shoot out
+	 * at high speed.
+	 *
+	 * With wave first, the boost appears halfway down the screen.
+	 * With boost first, it appears about 1/4 down the screen.
+	 *
+	 * I'm not sure which is better. - glenn
+	 */
+	int EffectType = GAMESTATE->m_PlayerOptions[pn].m_EffectType;
+	if ( EffectType & PlayerOptions::EFFECT_BOOST )
 		fYOffset *= 1.4f / ((fYOffset+SCREEN_HEIGHT/1.6f)/SCREEN_HEIGHT); 
-		break;
-	case PlayerOptions::EFFECT_WAVE:
+	if ( EffectType & PlayerOptions::EFFECT_WAVE )
 		fYOffset += 15.0f*sinf( fYOffset/38.0f ); 
-		break;
-	}
+
 	return fYOffset;
 }
 
@@ -42,12 +49,9 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[PLAYER_1][iColNum].fXOffset;
 	
-	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
-	{
-	case PlayerOptions::EFFECT_DRUNK:
+	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_DRUNK )
 		fPixelOffsetFromCenter += cosf( TIMER->GetTimeSinceStart() + iColNum*0.2f + fYPos*6/SCREEN_HEIGHT) * ARROW_SIZE*0.5f; 
-		break;
-	}
+
 	return fPixelOffsetFromCenter;
 }
 
@@ -55,12 +59,8 @@ float ArrowGetRotation( PlayerNumber pn, int iColNum, float fYOffset )
 {
 	float fRotation = 0; //StyleDef.m_ColumnToRotation[iColNum];
 
-	switch( GAMESTATE->m_PlayerOptions[pn].m_EffectType )
-	{
-	case PlayerOptions::EFFECT_DIZZY:
+	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_DIZZY)
 		fRotation += fYOffset/SCREEN_HEIGHT*6; 
-		break;
-	}
 	
 	return fRotation;
 }

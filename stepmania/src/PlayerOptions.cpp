@@ -26,17 +26,12 @@ CString PlayerOptions::GetString()
 		sReturn += s + "X, ";
 	}
 
-	switch( m_EffectType )
-	{
-	case EFFECT_NONE:							break;
-	case EFFECT_BOOST:	sReturn += "Boost, ";	break;
-	case EFFECT_WAVE:	sReturn += "Wave, ";	break;
-	case EFFECT_DRUNK:	sReturn += "Drunk, ";	break;
-	case EFFECT_DIZZY:	sReturn += "Dizzy, ";	break;
-	case EFFECT_SPACE:	sReturn += "Space, ";	break;
-	case EFFECT_MINI:	sReturn += "Mini, ";	break;
-	default:	ASSERT(0);	// invalid EFFECT
-	}
+	if( m_EffectType & EFFECT_BOOST ) sReturn += "Boost, ";
+	if( m_EffectType & EFFECT_WAVE ) sReturn += "Wave, ";
+	if( m_EffectType & EFFECT_DRUNK ) sReturn += "Drunk, ";
+	if( m_EffectType & EFFECT_DIZZY ) sReturn += "Dizzy, ";
+	if( m_EffectType & EFFECT_SPACE ) sReturn += "Space, ";
+	if( m_EffectType & EFFECT_MINI ) sReturn += "Mini, ";
 
 	switch( m_AppearanceType )
 	{
@@ -104,12 +99,12 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "4.0x" )		m_fArrowScrollSpeed = 4.0f;
 		else if( sBit == "5.0x" )		m_fArrowScrollSpeed = 5.0f;
 		else if( sBit == "8.0x" )		m_fArrowScrollSpeed = 8.0f;
-		else if( sBit == "boost" )		m_EffectType = EFFECT_BOOST;
-		else if( sBit == "wave" )		m_EffectType = EFFECT_WAVE;
-		else if( sBit == "drunk" )		m_EffectType = EFFECT_DRUNK;
-		else if( sBit == "dizzy" )		m_EffectType = EFFECT_DIZZY;
-		else if( sBit == "space" )		m_EffectType = EFFECT_SPACE;
-		else if( sBit == "mini" )		m_EffectType = EFFECT_MINI;
+		else if( sBit == "boost" )		m_EffectType |= EFFECT_BOOST;
+		else if( sBit == "wave" )		m_EffectType |= EFFECT_WAVE;
+		else if( sBit == "drunk" )		m_EffectType |= EFFECT_DRUNK;
+		else if( sBit == "dizzy" )		m_EffectType |= EFFECT_DIZZY;
+		else if( sBit == "space" )		m_EffectType |= EFFECT_SPACE;
+		else if( sBit == "mini" )		m_EffectType |= EFFECT_MINI;
 		else if( sBit == "hidden" )		m_AppearanceType = APPEARANCE_HIDDEN;
 		else if( sBit == "sudden" )		m_AppearanceType = APPEARANCE_SUDDEN;
 		else if( sBit == "stealth" )	m_AppearanceType = APPEARANCE_STEALTH;

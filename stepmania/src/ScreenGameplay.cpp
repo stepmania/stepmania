@@ -397,6 +397,8 @@ ScreenGameplay::ScreenGameplay()
 
 	TweenOnScreen();
 
+	/* XXX: We set m_textPlayerOptions[p] above, so that won't
+	 * include options set by the course.  Should it? -glenn */
 	LoadNextSong( true );
 
 

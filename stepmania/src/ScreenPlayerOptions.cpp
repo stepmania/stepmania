@@ -84,7 +84,18 @@ void ScreenPlayerOptions::ImportOptions()
 		else if( po.m_fArrowScrollSpeed == 8.0f )	m_iSelectedOption[p][PO_SPEED] = 8;
 		else										m_iSelectedOption[p][PO_SPEED] = 2;
 
-		m_iSelectedOption[p][PO_EFFECT]		= po.m_EffectType;
+		switch(po.m_EffectType) 
+		{
+		case PlayerOptions::EFFECT_NONE:	m_iSelectedOption[p][PO_EFFECT]=0; break;
+		case PlayerOptions::EFFECT_BOOST:	m_iSelectedOption[p][PO_EFFECT]=1; break;
+		case PlayerOptions::EFFECT_WAVE:	m_iSelectedOption[p][PO_EFFECT]=2; break;
+		case PlayerOptions::EFFECT_DRUNK:	m_iSelectedOption[p][PO_EFFECT]=3; break;
+		case PlayerOptions::EFFECT_DIZZY:	m_iSelectedOption[p][PO_EFFECT]=4; break;
+		case PlayerOptions::EFFECT_SPACE:	m_iSelectedOption[p][PO_EFFECT]=5; break;
+		case PlayerOptions::EFFECT_MINI:	m_iSelectedOption[p][PO_EFFECT]=6; break;
+		default:			; break;
+		}
+
 		m_iSelectedOption[p][PO_APPEAR]		= po.m_AppearanceType;
 		m_iSelectedOption[p][PO_TURN]		= po.m_TurnType;
 		m_iSelectedOption[p][PO_LITTLE]		= po.m_bLittle ? 1 : 0;
@@ -114,8 +125,17 @@ void ScreenPlayerOptions::ExportOptions()
 		case 8:	po.m_fArrowScrollSpeed = 8.0f;	break;
 		}
 
+		switch(m_iSelectedOption[p][PO_EFFECT])
+		{
+		case 0: po.m_EffectType = PlayerOptions::EFFECT_NONE; break;
+		case 1: po.m_EffectType = PlayerOptions::EFFECT_BOOST; break;
+		case 2: po.m_EffectType = PlayerOptions::EFFECT_WAVE; break;
+		case 3: po.m_EffectType = PlayerOptions::EFFECT_DRUNK; break;
+		case 4: po.m_EffectType = PlayerOptions::EFFECT_DIZZY; break;
+		case 5: po.m_EffectType = PlayerOptions::EFFECT_SPACE; break;
+		case 6: po.m_EffectType = PlayerOptions::EFFECT_MINI; break;
+		}
 
-		po.m_EffectType		= (PlayerOptions::EffectType)m_iSelectedOption[p][PO_EFFECT];
 		po.m_AppearanceType	= (PlayerOptions::AppearanceType)m_iSelectedOption[p][PO_APPEAR];
 		po.m_TurnType		= (PlayerOptions::TurnType)m_iSelectedOption[p][PO_TURN];
 		po.m_bLittle		= m_iSelectedOption[p][PO_LITTLE] == 1;
