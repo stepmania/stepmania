@@ -76,7 +76,7 @@ ActorsInMenus = \
 Banner.cpp Banner.h BannerWithFrame.cpp BannerWithFrame.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
 CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h CroppedSprite.cpp CroppedSprite.h \
 DifficultyIcon.cpp DifficultyIcon.h DifficultyRating.cpp DifficultyRating.h EditMenu.cpp EditMenu.h \
-FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveRadar.cpp \
+FadingBanner.cpp FadingBanner.h DifficultyMeter.cpp DifficultyMeter.h GradeDisplay.cpp GradeDisplay.h GrooveGraph.h GrooveGraph.h GrooveRadar.cpp \
 GrooveRadar.h GroupList.cpp GroupList.h JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h \
 MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp \
 MusicSortDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
@@ -94,7 +94,8 @@ LifeMeterBattery.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
 ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
 ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h LyricDisplay.cpp LyricDisplay.h \
-TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp  ScoreDisplayRave.h
+TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp  ScoreDisplayRave.h \
+Model.h Model.cpp mathlib.h mathlib.c
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
@@ -109,6 +110,7 @@ ScreenJukeboxMenu.h ScreenLogo.cpp ScreenLogo.h ScreenMachineOptions.cpp ScreenM
 ScreenManager.h ScreenMapControllers.cpp ScreenMapControllers.h ScreenMemoryCard.h ScreenMessage.h \
 ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h ScreenOptions.cpp ScreenOptions.h \
 ScreenOptionsMenu.cpp ScreenOptionsMenu.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenPrompt.cpp \
+ScreenRaveOptions.h ScreenRaveOptions.cpp \
 ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h ScreenSandbox.cpp ScreenSandbox.h ScreenSelectCourse.cpp \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCourse.h ScreenSelectDifficulty.cpp \
 ScreenSelectDifficulty.h ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h ScreenSelectGame.cpp \
