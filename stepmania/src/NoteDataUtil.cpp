@@ -779,7 +779,7 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, flo
 			        int r2;
 				for( r2=r+1; r2<=last_row; r2++ )
 				{
-					if( in.IsThereATapAtRow(r2) )
+					if( in.IsThereATapOrHoldHeadAtRow(r2) )
 					{
 						// If there are two taps in a row on the same track, 
 						// don't convert the earlier one to a hold.
