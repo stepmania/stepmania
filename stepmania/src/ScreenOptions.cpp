@@ -77,18 +77,21 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
+	CHECKPOINT;
 
 	m_InputMode = im;
 	m_OptionRow = OptionRows;
 	m_iNumOptionRows = iNumOptionLines;
 	m_bLoadExplanations = bLoadExplanations;
 
+	CHECKPOINT;
 
 	this->ImportOptions();
 	for( unsigned l=0; l<MAX_OPTION_LINES; l++ )
 		if( m_OptionRow[l].bOneChoiceForAllPlayers )
 			m_iSelectedOption[PLAYER_2][l] = m_iSelectedOption[PLAYER_1][l];
 
+	CHECKPOINT;
 
 
 	int p;
@@ -102,6 +105,8 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 		m_Highlight[p].Load( (PlayerNumber)p, false );
 		m_framePage.AddChild( &m_Highlight[p] );
 	}
+
+	CHECKPOINT;
 
 	// init underlines
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -118,6 +123,8 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 			m_framePage.AddChild( &m_Underline[p][l] );
 		}
 	}
+
+	CHECKPOINT;
 
 	// init m_textItems from optionLines
 	int r;
@@ -189,8 +196,10 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 			m_framePage.AddChild( textItems[c] );
 	}
 
+	CHECKPOINT;
 	InitOptionsText();
 
+	CHECKPOINT;
 	// TRICKY:  Add one more item.  This will be "EXIT"
 	{
 		BitmapText *bt = new BitmapText;
@@ -213,6 +222,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRows[], int iNumOptionLi
 	m_textExplanation.SetShadowLength( 0 );
 	m_framePage.AddChild( &m_textExplanation );
 
+	CHECKPOINT;
 
 	PositionItems();
 	PositionUnderlines();
