@@ -101,7 +101,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 	ASSERT( t->m_iRefCount >= 0 );
 
 	if( t->m_iRefCount )
-		continue; /* Can't unload textures that are still referenced. */
+		return; /* Can't unload textures that are still referenced. */
 
 	bool bDeleteThis = false;
 
