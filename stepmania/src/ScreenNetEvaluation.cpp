@@ -1,6 +1,6 @@
 #include "ScreenNetEvaluation.h"
 #include "ThemeManager.h"
-#include "Gamestate.h"
+#include "GameState.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
