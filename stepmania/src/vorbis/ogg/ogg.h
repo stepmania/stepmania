@@ -21,7 +21,7 @@
 extern "C" {
 #endif
 
-#include <vorbis/ogg/os_types.h>
+#include <ogg/os_types.h>
 
 typedef struct {
   long endbyte;
