@@ -302,9 +302,6 @@ void ScreenManager::SetNewScreen( CString sClassName )
 {
 	/* If we prepped a screen but didn't use it, nuke it. */
 	SAFE_DELETE( m_ScreenBuffered );
-	/* Explicitely flush the directory cache each time we load a new screen.
-	 * Perhaps we should only do this in debug? */
-	FlushDirCache();
 
 	RageTimer t;
 	
@@ -319,16 +316,12 @@ void ScreenManager::SetNewScreen( CString sClassName )
 
 void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
-	FlushDirCache();
-
 	// add the new state onto the back of the array
 	m_ScreenStack.push_back( new ScreenPrompt(SM_SendWhenDone, sText, bYesNo, bDefaultAnswer, OnYes, OnNo) );
 }
 
 void ScreenManager::TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCanel)() )
 {	
-	FlushDirCache();
-
 	// add the new state onto the back of the array
 	m_ScreenStack.push_back( new ScreenTextEntry(SM_SendWhenDone, sQuestion, sInitialAnswer, OnOK, OnCanel) );
 }
