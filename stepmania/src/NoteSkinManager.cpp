@@ -85,8 +85,16 @@ void NoteSkinManager::SwitchNoteSkin( CString sNewNoteSkin )
 	m_sCurNoteSkinName = sNewNoteSkin;
 
 	m_pIniMetrics->Reset();
-	m_pIniMetrics->SetPath( GetNoteSkinDir(BASE_NOTESKIN_NAME)+"metrics.ini" );
-	m_pIniMetrics->ReadFile();
+
+	/* Read only the default keys from the default noteskin. */
+	IniFile defaults;
+	defaults.SetPath( GetNoteSkinDir(BASE_NOTESKIN_NAME)+"metrics.ini" );
+	defaults.ReadFile();
+	const IniFile::key *def = defaults.GetKey("NoteDisplay");
+	if(def)
+		m_pIniMetrics->SetValue("NoteDisplay", *def);
+
+	/* Read the active theme. */
 	m_pIniMetrics->SetPath( GetNoteSkinDir(m_sCurNoteSkinName)+"metrics.ini" );
 	m_pIniMetrics->ReadFile();
 }
