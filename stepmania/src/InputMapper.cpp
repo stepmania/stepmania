@@ -74,6 +74,15 @@ struct AutoJoyMapping
 	struct {
 		int deviceButton;
 		GameButton gb;
+		/* If this is true, this is an auxilliary mapping assigned to the second
+		 * player.  If two of the same device are found, and the device has secondary
+		 * entries, the later entries take precedence.  This way, if a Pump pad is
+		 * found, it'll map P1 to the primary pad and P2 to the secondary pad.
+		 * (We can't tell if a slave pad is actually there.)  Then, if a second primary
+		 * is found (DEVICE_PUMP2), 2P will be mapped to it. 
+		 *
+		 * This isn't well-tested; I only have one Pump pad. */
+		bool SecondController;
 	} mapping[32];
 };
 const AutoJoyMapping g_AutoJoyMappings[] = 
@@ -122,6 +131,25 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ JOY_10,		DANCE_BUTTON_START },
 		}
 	},
+	{
+		GAME_PUMP,
+		"Pump USB",
+		false,
+		11,
+		{
+			{ PUMP_UL,		PUMP_BUTTON_UPLEFT },
+			{ PUMP_UR,		PUMP_BUTTON_UPRIGHT },
+			{ PUMP_MID,		PUMP_BUTTON_CENTER },
+			{ PUMP_DL,		PUMP_BUTTON_DOWNLEFT },
+			{ PUMP_DR,		PUMP_BUTTON_DOWNRIGHT },
+			{ PUMP_ESCAPE,	PUMP_BUTTON_BACK },
+			{ PUMP_2P_UL,	PUMP_BUTTON_UPLEFT,		true },
+			{ PUMP_2P_UR,	PUMP_BUTTON_UPRIGHT,	true },
+			{ PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
+			{ PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
+			{ PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
+		}
+	},
 };
 const int NUM_AUTO_JOY_MAPPINGS = sizeof(g_AutoJoyMappings) / sizeof(g_AutoJoyMappings[0]);
 
@@ -162,6 +190,9 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 
 				for( int k=0; k<mapping.numMappings; k++ )
 				{
+					if( mapping.mapping[k].SecondController && gc == GAME_CONTROLLER_1 )
+						gc = GAME_CONTROLLER_2;
+
 					DeviceInput di( device, mapping.mapping[k].deviceButton );
 					GameInput gi( gc, mapping.mapping[k].gb );
 					SetInputMap( di, gi, 1 );
