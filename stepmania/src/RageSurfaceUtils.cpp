@@ -319,7 +319,7 @@ int RageSurfaceUtils::FindSurfaceTraits( const RageSurface *img )
 		bool bHaveNonOpaque = false;
 		for( int c = 0; !bHaveNonOpaque && c < img->format->palette->ncolors; ++c )
 		{
-			if( img->format->palette->colors[c].a != 256 )
+			if( img->format->palette->colors[c].a != 0xFF )
 				bHaveNonOpaque = true;
 		}
 
