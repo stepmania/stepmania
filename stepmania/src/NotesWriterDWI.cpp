@@ -5,9 +5,37 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4, bool bCol5, bool bCol6 )
+/* Output is an angle bracket expression without angle brackets, eg. "468". */
+CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
 {
-	struct DWICharLookup {
+	const char dirs[] = { '4', 'C', '2', '8', 'D', '6' };
+	CString taps, holds, ret;
+	for( int col = 0; col < 6; ++col )
+	{
+		if( cNoteCols[col] == TAP_EMPTY )
+			continue;
+
+		if( cNoteCols[col] == TAP_HOLD_HEAD )
+			holds += dirs[col];
+		else
+			taps += dirs[col];
+	}
+
+	if( holds.size() + taps.size() == 0 )
+		return "0";
+
+//	CString combine = taps;
+//	for( unsigned i = 0; i < holds.size(); ++i )
+//		combine += ssprintf("%c!%c", holds[i], holds[i]);
+
+//	if( holds.size() + taps.size() > 1 )
+//		combine = ssprintf("<%s>", combine.c_str() );
+
+//	return combine;
+
+	/* More than one. */
+	return OptimizeDWIString( holds, taps );
+/*	struct DWICharLookup {
 		char c;
 		bool bCol[6];	
 	} const lookup[] = {
@@ -43,40 +71,109 @@ char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bC
 			return l.c;
 	}
 	LOG->Warn( "Failed to find the DWI character for the row %d %d %d %d %d %d", bCol1, bCol2, bCol3, bCol4, bCol5, bCol6 );
-	return '0';
-}
-
-char NotesWriterDWI::NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4 )
-{
-	return NotesToDWIChar( bCol1, 0, bCol2, bCol3, 0, bCol4 );
+	return '0';*/
 }
 
 CString NotesWriterDWI::NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4, TapNote cNoteCol5, TapNote cNoteCol6 )
 {
-	char cShow = NotesToDWIChar( 
-		cNoteCol1!=TAP_EMPTY,
-		cNoteCol2!=TAP_EMPTY,
-		cNoteCol3!=TAP_EMPTY,
-		cNoteCol4!=TAP_EMPTY,
-		cNoteCol5!=TAP_EMPTY,
-		cNoteCol6!=TAP_EMPTY );
-	char cHold = NotesToDWIChar( 
-		cNoteCol1==TAP_HOLD_HEAD, 
-		cNoteCol2==TAP_HOLD_HEAD, 
-		cNoteCol3==TAP_HOLD_HEAD, 
-		cNoteCol4==TAP_HOLD_HEAD,
-		cNoteCol5==TAP_HOLD_HEAD,
-		cNoteCol6==TAP_HOLD_HEAD );
+	const TapNote cNoteCols[6] = {
+		cNoteCol1, cNoteCol2, cNoteCol3, cNoteCol4, cNoteCol5, cNoteCol6
+	};
 
-	if( cHold != '0' )
-		return ssprintf( "%c!%c", cShow, cHold );
-	else
-		return ssprintf( "%c", cShow );
+	return NotesToDWIString( cNoteCols );
 }
 
 CString NotesWriterDWI::NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4 )
 {
 	return NotesToDWIString( cNoteCol1, TAP_EMPTY, cNoteCol2, cNoteCol3, TAP_EMPTY, cNoteCol4 );
+}
+
+char NotesWriterDWI::OptimizeDWIPair( char c1, char c2 )
+{
+	typedef pair<char,char> cpair;
+	static map< cpair, char > joins;
+	static bool Initialized = false;
+	if(!Initialized)
+	{
+		Initialized = true;
+		/* The first character in the pair is always the lowest. */
+		joins[ cpair('2', '4') ] = '1';
+		joins[ cpair('2', '6') ] = '3';
+		joins[ cpair('4', '8') ] = '7';
+		joins[ cpair('6', '8') ] = '9';
+		joins[ cpair('2', '8') ] = 'A';
+		joins[ cpair('4', '6') ] = 'B';
+		joins[ cpair('C', 'D') ] = 'M';
+		joins[ cpair('4', 'C') ] = 'E';
+		joins[ cpair('2', 'C') ] = 'F';
+		joins[ cpair('8', 'C') ] = 'G';
+		joins[ cpair('6', 'C') ] = 'H';
+		joins[ cpair('4', 'D') ] = 'I';
+		joins[ cpair('2', 'D') ] = 'J';
+		joins[ cpair('8', 'D') ] = 'K';
+		joins[ cpair('6', 'D') ] = 'L';
+	}
+
+	if( c1 > c2 )
+		swap( c1, c2 );
+
+	map< cpair, char >::const_iterator it = joins.find( cpair(c1, c2) );
+	ASSERT( it != joins.end() );
+
+	return it->second;
+}
+
+CString NotesWriterDWI::OptimizeDWIString( CString holds, CString taps )
+{
+	/* First, sort the holds and taps in ASCII order.  This puts 2468 first.
+	 * This way 1379 combinations will always be found first, so we'll always
+	 * do eg. 1D, not 2I. */
+	sort( holds.begin(), holds.end() );
+	sort( taps.begin(), taps.end() );
+
+	/* Combine characters as much as possible. */
+	CString comb_taps, comb_holds;
+
+	/* 24 -> 1 */
+	while( taps.size() > 1 )
+	{
+		comb_taps += OptimizeDWIPair( taps[0], taps[1] );
+		taps.erase(0, 2);
+	}
+
+	/* 2!24!4 -> 1!1 */
+	while( holds.size() > 1 )
+	{
+		const char to = OptimizeDWIPair( holds[0], holds[1] );
+		holds.erase(0, 2);
+		comb_holds += ssprintf( "%c!%c", to, to );
+	}
+
+	ASSERT( taps.size() <= 1 );
+	ASSERT( holds.size() <= 1 );
+
+	/* 24!4 -> 1!4 */
+	while( holds.size() == 1 && taps.size() == 1 )
+	{
+		const char to = OptimizeDWIPair( taps[0], holds[0] );
+		comb_holds += ssprintf( "%c!%c", to, holds[0] );
+		taps.erase(0, 1);
+		holds.erase(0, 1);
+	}
+
+	/* Now we have at most one single tap and one hold remaining, and any
+	 * number of taps and holds in comb_taps and comb_holds. */
+	CString ret;
+	ret += taps;
+	ret += comb_taps;
+	if( holds.size() == 1 )
+		ret += ssprintf( "%c!%c", holds[0], holds[0] );
+	ret += comb_holds;
+
+	if( ret.size() == 1 || (ret.size() == 3 && ret[1] == '!') )
+		return ret;
+	else
+		return ssprintf( "<%s>", ret.c_str() );
 }
 
 void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
@@ -305,3 +402,8 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 
 	return true;
 }
+/*
+ * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
+ *	Chris Danford
+ *	Glenn Maynard
+ */
