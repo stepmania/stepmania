@@ -259,8 +259,8 @@ void Sprite::DrawPrimitives()
 	{
 		if( m_bUsingCustomTexCoords ) 
 		{
-			v[0].t = RageVector2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
-			v[1].t = RageVector2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
+			v[0].t = RageVector2( m_CustomTexCoords[0], m_CustomTexCoords[1] );	// bottom left
+			v[1].t = RageVector2( m_CustomTexCoords[2],	m_CustomTexCoords[3] );	// top left
 			v[2].t = RageVector2( m_CustomTexCoords[4],	m_CustomTexCoords[5] );	// bottom right
 			v[3].t = RageVector2( m_CustomTexCoords[6],	m_CustomTexCoords[7] );	// top right
 		} 
@@ -338,11 +338,10 @@ void Sprite::SetState( int iNewState )
 void Sprite::SetCustomTextureRect( const RectF &new_texcoord_frect ) 
 { 
 	m_bUsingCustomTexCoords = true;
-	m_CustomTexCoords[0] = new_texcoord_frect.left;		m_CustomTexCoords[1] = new_texcoord_frect.bottom;	// bottom left
-	m_CustomTexCoords[2] = new_texcoord_frect.left;		m_CustomTexCoords[3] = new_texcoord_frect.top;		// top left
+	m_CustomTexCoords[0] = new_texcoord_frect.left;		m_CustomTexCoords[1] = new_texcoord_frect.top;		// top left
+	m_CustomTexCoords[2] = new_texcoord_frect.left;		m_CustomTexCoords[3] = new_texcoord_frect.bottom;	// bottom left
 	m_CustomTexCoords[4] = new_texcoord_frect.right;	m_CustomTexCoords[5] = new_texcoord_frect.bottom;	// bottom right
 	m_CustomTexCoords[6] = new_texcoord_frect.right;	m_CustomTexCoords[7] = new_texcoord_frect.top;		// top right
-
 }
 
 void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: bottom left, top left, bottom right, top right
@@ -352,8 +351,6 @@ void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: bottom left
 		m_CustomTexCoords[i] = fTexCoords[i]; 
 }
 
-/* Get the current custom texture coordinates.  Note that these are independent
- * */
 void Sprite::GetCustomTextureCoords( float fTexCoordsOut[8] ) // order: bottom left, top left, bottom right, top right
 { 
 	for( int i=0; i<8; i++ )
