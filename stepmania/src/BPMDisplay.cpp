@@ -202,6 +202,13 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 	m_fCycleTime = 0.2f;
 }
 
+void BPMDisplay::SetBPM( float fBPM )
+{
+	DisplayBpms bpms;
+	bpms.Add( fBPM );
+	SetBPMRange( bpms );
+}
+
 void BPMDisplay::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();

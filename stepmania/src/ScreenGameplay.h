@@ -119,6 +119,7 @@ protected:
 	BitmapText			m_textStepsDescription[NUM_PLAYERS];
 
 	BPMDisplay			m_BPMDisplay;
+	float				m_fLastBPS;
 
 	Sprite				m_sprScoreFrame;
 	ScoreDisplay*		m_pPrimaryScoreDisplay[NUM_PLAYERS];

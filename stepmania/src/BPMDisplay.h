@@ -21,6 +21,7 @@ public:
 	virtual void DrawPrimitives(); 
 	void SetBPM( const Song* pSong );
 	void SetBPM( const Course* pCourse );
+	void SetBPM( float fBPM );
 	void CycleRandomly();
 	void NoBPM();
 

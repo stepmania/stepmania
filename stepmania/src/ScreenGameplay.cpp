@@ -640,6 +640,7 @@ void ScreenGameplay::Init()
 	m_BPMDisplay.Load();
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
+	m_fLastBPS = 0;
 
 	ZERO( m_pInventory );
     FOREACH_PlayerNumber(p)
@@ -982,18 +983,6 @@ void ScreenGameplay::LoadNextSong()
 	m_pSoundMusic = m_AutoKeysounds.GetSound();
 
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
-
-	/* XXX: set it to the current BPM, not the range */
-	/* What does this comment mean?  -Chris 
-	 *
-	 * We're in gameplay.  A BPM display should display the current BPM, updating
-	 * it as it changes, instead of the "BPM preview" of ScreenSelectMusic.  That'd
-	 * be used in IIDX, anyway.  (Havn't done this since I don't know what this is
-	 * currently actually used for and don't feel like investigating it until it's
-	 * needed.)
-	 * -glenn
-	 */
-	m_BPMDisplay.SetBPM( GAMESTATE->m_pCurSong );
 
 	const bool bReverse[NUM_PLAYERS] = { 
 		GAMESTATE->m_PlayerOptions[0].m_fScrolls[PlayerOptions::SCROLL_REVERSE] == 1,
@@ -1500,6 +1489,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 
 		this->PostScreenMessage( SM_NotesEnded, 0 );
+	}
+
+	//
+	// update bpm display
+	//
+	if ( m_fLastBPS != GAMESTATE->m_fCurBPS )
+	{
+		m_fLastBPS = GAMESTATE->m_fCurBPS;
+		m_BPMDisplay.SetBPM( GAMESTATE->m_fCurBPS * 60.0 );
 	}
 
 	//
