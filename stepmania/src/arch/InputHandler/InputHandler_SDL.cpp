@@ -1,6 +1,5 @@
-#include "global.h"
-
-/* This input handler checks for SDL device input messages and sends them off to
+/*
+ * This input handler checks for SDL device input messages and sends them off to
  * InputFilter.  If we add mouse support, it should go here, too.
  *
  * Note that the SDL video event systems are interlinked--you can't use events
@@ -9,11 +8,11 @@
  * need to write other input handlers for those cases and load them instead of this.
  * (Part of this is probably because, in Windows, you need a window to get input.)
  */
+#include "global.h"
 #include "InputHandler_SDL.h"
 #include "SDL_utils.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
-#include "PrefsManager.h"
 
 
 static RageKeySym SDLSymToKeySym( SDLKey key )
