@@ -73,13 +73,20 @@ public:
 
 	void reserve( unsigned n )
 	{
+		clear();
+		delete[] buf;
+		buf = NULL;
+
 		/* Reserve an extra byte.  We'll never fill more than n bytes; the extra
 		 * byte is to guarantee that read_pos != write_pos when the buffer is full,
 		 * since that would be ambiguous with an empty buffer. */
-		clear();
-		delete[] buf;
-		buf = new T[n+1];
-		size = n+1;
+		if( n != 0 )
+		{
+			buf = new T[n+1];
+			size = n+1;
+		}
+		else
+			size = 0;
 	}
 
 	void clear()
