@@ -13,8 +13,10 @@
 #include "arch_default.h"
 
 /* Override them with arch-specific drivers, as available. */
-#if defined(LINUX) && !(defined DARWIN)
+#if defined(LINUX)
 #include "arch_linux.h"
+#elif defined(DARWIN)
+// #include "arch_darwin.h"
 #elif defined(WIN32)
 #include "arch_Win32.h"
 #endif
@@ -34,6 +36,11 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 //	Add.push_back(new InputHandler_Win32_Para);
 #endif
 }
+
+#if defined(LINUX)
+// #define HAVE_OSS
+#define HAVE_ALSA
+#endif
 
 /* Err, this is ugly--breaks arch encapsulation. Hmm. */
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
@@ -55,8 +62,11 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
 			if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
 #endif
-#if defined(LINUX) && !defined(DARWIN)	/* should use some define akin to HAS_ALSA9 */
+#ifdef HAVE_ALSA
 			if(!DriversToTry[i].CompareNoCase("ALSA9")) ret = new RageSound_ALSA9;
+#endif		
+#ifdef HAVE_OSS
+			if(!DriversToTry[i].CompareNoCase("OSS")) ret = new RageSound_OSS;
 #endif		
 			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
 			if( !ret )

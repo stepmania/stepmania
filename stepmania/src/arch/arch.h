@@ -17,9 +17,12 @@ LowLevelWindow *MakeLowLevelWindow();
 void MakeInputHandlers(vector<InputHandler *> &Add);
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
-/* Define the default list of sound drivers for each arch. */
-#if defined(LINUX) && !defined(DARWIN)
-#define DEFAULT_SOUND_DRIVER_LIST "ALSA9,Null"
+/* Define the default list of sound drivers for each arch.  It's
+ * OK to list drivers that may not be available. */
+#if defined(LINUX)
+#define DEFAULT_SOUND_DRIVER_LIST "ALSA9,OSS,Null"
+#elif defined(DARWIN)
+#define DEFAULT_SOUND_DRIVER_LIST "Null" /* XXX */
 #elif defined(WIN32)
 #define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"
 #else
