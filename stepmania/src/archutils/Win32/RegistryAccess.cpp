@@ -45,7 +45,7 @@ static HKEY OpenRegKey( const CString &key )
 	LONG retval = RegOpenKeyEx( type, subkey, 0, KEY_READ, &retkey );
 	if ( retval != ERROR_SUCCESS )
 	{
-		LOG->Warn( werr_ssprintf(retval, "RegOpenKeyEx(%i,%s) error", type, subkey.c_str()) );
+		LOG->Warn( werr_ssprintf(retval, "RegOpenKeyEx(%x,%s) error", type, subkey.c_str()) );
 		return NULL;
 	}
 
