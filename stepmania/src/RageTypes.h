@@ -109,10 +109,6 @@ public:
 
 	friend RageVector4 operator * ( float f, const RageVector4& other )	{ return other*f; }
 
-	/* unneeded; this is a POD type */
-//    bool operator == ( const RageVector4& other ) const		{ return x==other.x && y==other.y && z==other.z && w==other.w; }
-//    bool operator != ( const RageVector4& other ) const		{ return x!=other.x || y!=other.y || z!=other.z || w!=other.w; }
-
 	float x, y, z, w;
 };
 
@@ -130,14 +126,18 @@ public:
     // assignment operators
 	RageColor& operator += ( const RageColor& other )		{ r+=other.r; g+=other.g; b+=other.b; a+=other.a; return *this; }
     RageColor& operator -= ( const RageColor& other )		{ r-=other.r; g-=other.g; b-=other.b; a-=other.a; return *this; }
+    RageColor& operator *= ( const RageColor& other )		{ r*=other.r; g*=other.g; b*=other.b; a*=other.a; return *this; }
     RageColor& operator *= ( float f )						{ r*=f; g*=f; b*=f; a*=f; return *this; }
-    RageColor& operator /= ( float f )						{ r/=f; g/=f; b/=f; a/=f; return *this; }
+	/* Divide is rarely useful: you can always use multiplication, and you don't have to
+	 * worry about div/0. */
+//    RageColor& operator /= ( float f )						{ r/=f; g/=f; b/=f; a/=f; return *this; }
 
     // binary operators
     RageColor operator + ( const RageColor& other ) const	{ return RageColor( r+other.r, g+other.g, b+other.b, a+other.a ); }
     RageColor operator - ( const RageColor& other ) const	{ return RageColor( r-other.r, g-other.g, b-other.b, a-other.a ); }
+    RageColor operator * ( const RageColor& other ) const	{ return RageColor( r*other.r, g*other.g, b*other.b, a*other.a ); }
     RageColor operator * ( float f ) const					{ return RageColor( r*f, g*f, b*f, a*f ); }
-    RageColor operator / ( float f ) const					{ return RageColor( r/f, g/f, b/f, a/f ); }
+//    RageColor operator / ( float f ) const					{ return RageColor( r/f, g/f, b/f, a/f ); }
 
 	friend RageColor operator * ( float f, const RageColor& other )	{ return other*f; }		// What is this for?  Did I add this?  -Chris
 
