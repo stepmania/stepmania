@@ -1035,7 +1035,13 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 	glDeleteTextures(1,reinterpret_cast<GLuint*>(&uTexID));
 
 	GLenum error = glGetError();
-	ASSERT( error == GL_NO_ERROR );
+	if( error != GL_NO_ERROR )
+	{
+		ostringstream s;
+		s << "glDeleteTextures(): " << GLToString(error);
+		LOG->Trace( s.str().c_str() );
+		ASSERT(0);
+	}
 }
 
 
