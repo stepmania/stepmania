@@ -97,7 +97,6 @@ protected:
 	Quad			m_rectRecordBack;
 	RageSound		m_soundMusic;
 
-	int				m_iRowLastCrossed;
 	RageSound		m_soundAssistTick;
 
 

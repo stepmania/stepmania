@@ -217,8 +217,6 @@ ScreenEdit::ScreenEdit() : Screen("ScreenEdit")
 		GAMESTATE->m_bSideIsJoined[p] = true;
 	SCREENMAN->RefreshCreditsMessages();
 
-	m_iRowLastCrossed = -1;
-
 	m_pSong = GAMESTATE->m_pCurSong;
 
 	m_pNotes = GAMESTATE->m_pCurNotes[PLAYER_1];
