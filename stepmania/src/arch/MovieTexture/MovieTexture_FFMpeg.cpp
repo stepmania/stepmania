@@ -72,7 +72,7 @@ struct AVPixelFormat_t
 		false,
 		false
 	},
-	{ 0, { 0,0,0,0 }, avcodec::PIX_FMT_NB, true }
+	{ 0, { 0,0,0,0 }, avcodec::PIX_FMT_NB, true, false }
 };
 
 static void FixLilEndian()
