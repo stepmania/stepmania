@@ -47,7 +47,7 @@ void BacktraceNames::Demangle()
 	free(f);
 }
 #else
-CString BacktraceNames::Demangle() { }
+void BacktraceNames::Demangle() { }
 #endif
 
 
