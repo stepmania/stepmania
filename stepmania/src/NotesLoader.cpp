@@ -14,7 +14,7 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CS
 {
 	const CString sLeftSeps[]  = { " -", " ~", " (", " [" };
 
-	for( int i=0; i<ARRAYSIZE(sLeftSeps); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(sLeftSeps); i++ )
 	{
 		int iBeginIndex = sFullTitle.Find( sLeftSeps[i] );
 		if( iBeginIndex == -1 )
