@@ -43,6 +43,7 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
+#include "GameplayMessages.h"
 
 //
 // Defines

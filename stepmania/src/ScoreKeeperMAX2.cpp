@@ -5,7 +5,7 @@
 #include "Steps.h"
 #include "PrefsManager.h"
 #include "ScreenManager.h"
-#include "ScreenGameplay.h"
+#include "GameplayMessages.h"
 #include "GameState.h"
 #include "Course.h"
 #include "SongManager.h"
@@ -16,6 +16,7 @@
 #include "NetworkSyncManager.h"
 #include "PlayerState.h"
 #include "Style.h"
+#include "Song.h"
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( 
 		const vector<Song*>& apSongs, 

@@ -7,7 +7,7 @@
 #include "PrefsManager.h"
 #include "song.h"
 #include "ScreenManager.h"
-#include "ScreenGameplay.h"
+#include "GameplayMessages.h"
 #include "StageStats.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"

@@ -31,6 +31,7 @@
 #include "RageSoundManager.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
+#include "GameplayMessages.h"
 
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
