@@ -943,8 +943,6 @@ void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 				bPassedOneMask = true;
 				break;
 			}
-			else
-				int skjdksjd = 0;
 		}
 
 		if( !bPassedOneMask )
