@@ -243,7 +243,7 @@ try_element_again:
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:
-		FDB.FlushDirCache();
+		FlushDirCache();
 		goto try_element_again;
 	case IDCANCEL:
 		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 

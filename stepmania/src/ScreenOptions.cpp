@@ -764,9 +764,9 @@ void ScreenOptions::MenuUp( PlayerNumber pn )
 			continue;	// skip
 
 		if( m_iCurrentRow[p] == 0 )	// on first row
-			return;	// can't go up any more
-
-		m_iCurrentRow[p]--;
+			m_iCurrentRow[p] = m_iNumOptionRows;	// on exit
+		else
+			m_iCurrentRow[p]--;
 	}
 	m_SoundPrevRow.Play();
 	OnChange();
@@ -781,9 +781,9 @@ void ScreenOptions::MenuDown( PlayerNumber pn )
 			continue;	// skip
 
 		if( m_iCurrentRow[p] == m_iNumOptionRows )	// on exit
-			return;	// can't go down any more
-
-		m_iCurrentRow[p]++;
+			m_iCurrentRow[p] = 0;	// on first row
+		else
+			m_iCurrentRow[p]++;
 	}
 	m_SoundNextRow.Play();
 	OnChange();
