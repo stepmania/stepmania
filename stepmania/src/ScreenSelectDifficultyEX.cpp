@@ -155,7 +155,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX( CString sClassName ) : Scree
 
 	SetAllPlayersSelection( 0, false );
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 void ScreenSelectDifficultyEX::Update( float fDelta )

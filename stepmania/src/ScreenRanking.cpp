@@ -24,6 +24,14 @@
 #include "RageLog.h"
 #include "UnlockSystem.h"
 
+static const CString PageTypeNames[NUM_PAGE_TYPES] = {
+	"Category",
+	"Course",
+	"AllSteps",
+	"AllCourses",
+};
+XToString( PageType );
+
 
 #define STEPS_TYPES_TO_HIDE			THEME->GetMetric ("ScreenRanking","StepsTypesToHide")
 #define SHOW_CATEGORIES				THEME->GetMetricB("ScreenRanking","ShowCategories")
@@ -294,7 +302,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			for( int c=0; c<NUM_RANKING_CATEGORIES; c++ )
 			{
 				PageToShow pts;
-				pts.type = PageToShow::TYPE_CATEGORY;
+				pts.type = PAGE_TYPE_CATEGORY;
 				pts.colorIndex = i;
 				pts.category = (RankingCategory)c;
 				pts.nt = aStepsTypesToShow[i];
@@ -311,7 +319,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			for( unsigned c=0; c<asCoursePaths.size(); c++ )
 			{
 				PageToShow pts;
-				pts.type = PageToShow::TYPE_COURSE;
+				pts.type = PAGE_TYPE_COURSE;
 				pts.colorIndex = i;
 				pts.nt = aStepsTypesToShow[i];
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
@@ -330,7 +338,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			for( unsigned i=0; i<aStepsTypesToShow.size(); i++ )
 			{
 				PageToShow pts;
-				pts.type = PageToShow::TYPE_ALL_STEPS;
+				pts.type = PAGE_TYPE_ALL_STEPS;
 				pts.colorIndex = i;
 				pts.nt = aStepsTypesToShow[i];
 				m_vPagesToShow.push_back( pts );
@@ -347,16 +355,13 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			for( unsigned i=0; i<aStepsTypesToShow.size(); i++ )
 			{
 				PageToShow pts;
-				pts.type = PageToShow::TYPE_ALL_COURSES;
+				pts.type = PAGE_TYPE_ALL_COURSES;
 				pts.colorIndex = i;
 				pts.nt = aStepsTypesToShow[i];
 				m_vPagesToShow.push_back( pts );
 			}
 		}
 	}
-
-	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
-	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 
@@ -380,7 +385,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		if( m_vPagesToShow.size() > 0 )
 		{
 			float fSecsToShow = SetPage( m_vPagesToShow[0] );
-			this->SortByZ();
+			this->SortByDrawOrder();
 			m_vPagesToShow.erase( m_vPagesToShow.begin() );
 			this->PostScreenMessage( SM_HidePage, fSecsToShow-PAGE_FADE_SECONDS );
 		}
@@ -416,7 +421,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	bool bShowCourseScore = false;
 	switch( pts.type )
 	{
-	case PageToShow::TYPE_CATEGORY:
+	case PAGE_TYPE_CATEGORY:
 		bBanner = false; 
 		bBannerFrame = false;
 		bShowCategory = true;
@@ -430,7 +435,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bShowDifficulty = false;
 		bShowStepsScore = false;
 		break;
-	case PageToShow::TYPE_COURSE:
+	case PAGE_TYPE_COURSE:
 		bBanner = true; 
 		bBannerFrame = true;
 		bShowCategory = false;
@@ -444,7 +449,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bShowDifficulty = false;
 		bShowStepsScore = false;
 		break;
-	case PageToShow::TYPE_ALL_STEPS:
+	case PAGE_TYPE_ALL_STEPS:
 		bBanner = false; 
 		bBannerFrame = false;
 		bShowCategory = false;
@@ -458,7 +463,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bShowDifficulty = true;
 		bShowStepsScore = true;
 		break;
-	case PageToShow::TYPE_ALL_COURSES:
+	case PAGE_TYPE_ALL_COURSES:
 		bShowStepsType = true;
 		bShowCourseScore = true;
 		bShowCourseDifficulty = true;
@@ -503,6 +508,15 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_textStepsType.Reset();
 		SET_XY_AND_ON_COMMAND( m_textStepsType );
 	}
+
+	// UGLY: We have to call AddChild every time we re-load an AutoActor
+	// because the internal Actor* changes.
+	if( (Actor*)m_sprPageType )
+		this->RemoveChild( m_sprPageType );
+	m_sprPageType.Load( THEME->GetPathG(m_sName, "PageType "+PageTypeToString(pts.type)) );
+	m_sprPageType->SetName( "PageType" );
+	this->AddChild( m_sprPageType );
+	SET_XY_AND_ON_COMMAND( m_sprPageType );
 
 	{
 		for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -663,7 +677,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	//
 	switch( pts.type )
 	{
-	case PageToShow::TYPE_CATEGORY:
+	case PAGE_TYPE_CATEGORY:
 		{
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
 			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
@@ -702,7 +716,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			}
 		}
 		return SECONDS_PER_PAGE;
-	case PageToShow::TYPE_COURSE:
+	case PAGE_TYPE_COURSE:
 		{
 			m_textCourseTitle.SetText( pts.pCourse->m_sName );
 			m_Banner.LoadFromCourse( pts.pCourse );
@@ -753,7 +767,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			}
 		}
 		return SECONDS_PER_PAGE;
-	case PageToShow::TYPE_ALL_STEPS:
+	case PAGE_TYPE_ALL_STEPS:
 		{
 			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
@@ -798,7 +812,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 			}
 		}
 		return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
-	case PageToShow::TYPE_ALL_COURSES:
+	case PAGE_TYPE_ALL_COURSES:
 		{
 			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
 
@@ -847,6 +861,7 @@ void ScreenRanking::TweenPageOffScreen()
 	OFF_COMMAND( m_textCourseTitle );
 	OFF_COMMAND( m_textCategory );
 	OFF_COMMAND( m_textStepsType );
+	OFF_COMMAND( m_sprPageType );
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
 	{

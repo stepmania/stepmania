@@ -15,6 +15,10 @@
 #include "ActorCommands.h"	// for ParsedCommand
 #include <deque>
 
+#define DRAW_ORDER_BEFORE_EVERYTHING	-100
+#define DRAW_ORDER_TRANSITIONS			100
+#define DRAW_ORDER_AFTER_EVERYTHING		200
+
 class Actor
 {
 public:
@@ -278,6 +282,8 @@ public:
 	void SetShadowLength( float fLength );
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )	{ m_fHibernateSecondsLeft = fSecs; }
+	void SetDrawOrder( int iOrder )		{ m_iDrawOrder = iOrder; }
+	int GetDrawOrder() const			{ return m_iDrawOrder; }
 
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }	// Sprite needs to overload this
 	void StartAnimating()		{ this->EnableAnimation(true); };
@@ -376,6 +382,7 @@ protected:
 	float	m_fHibernateSecondsLeft;
 	float	m_fShadowLength;	// 0 == no shadow
 	bool	m_bIsAnimating;
+	int		m_iDrawOrder;
 
 	//
 	// render states

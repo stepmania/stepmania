@@ -298,17 +298,17 @@ void ScreenGameplay::Init()
 
 
 
-	m_Background.SetZ( 2 );	// behind everything else
+	m_Background.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
 	this->AddChild( &m_Background );
 
-	m_Foreground.SetZ( -5 );	// on top of everything else, including transitions
+	m_Foreground.SetDrawOrder( DRAW_ORDER_AFTER_EVERYTHING );	// on top of everything else, including transitions
 	this->AddChild( &m_Foreground );
 
 	
 	m_sprStaticBackground.SetName( "StaticBG" );
 	m_sprStaticBackground.Load( THEME->GetPathToG("ScreenGameplay Static Background"));
 	SET_XY( m_sprStaticBackground );
-	m_sprStaticBackground.SetZ( 2 );	// behind everything else
+	m_sprStaticBackground.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );	// behind everything else
 	this->AddChild(&m_sprStaticBackground);
 
 	if( !m_bDemonstration )	// only load if we're going to use it
@@ -344,13 +344,13 @@ void ScreenGameplay::Init()
 		this->AddChild( &m_sprOniGameOver[p] );
 	}
 
-	m_NextSongIn.SetZ( -2 ); // on top of everything else
+	m_NextSongIn.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	this->AddChild( &m_NextSongIn );
 
-	m_NextSongOut.SetZ( -2 ); // on top of everything else
+	m_NextSongOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	this->AddChild( &m_NextSongOut );
 
-	m_SongFinished.SetZ( -2 ); // on top of everything else
+	m_SongFinished.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 	this->AddChild( &m_SongFinished );
 
 	//
@@ -676,11 +676,11 @@ void ScreenGameplay::Init()
 		this->AddChild( &m_Go );
 
 		m_Cleared.Load( THEME->GetPathToB("ScreenGameplay cleared") );
-		m_Cleared.SetZ( -2 ); // on top of everything else
+		m_Cleared.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
 		this->AddChild( &m_Cleared );
 
 		m_Failed.Load( THEME->GetPathToB("ScreenGameplay failed") );
-		m_Failed.SetZ( -2 ); // on top of everything else
+		m_Failed.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
 		this->AddChild( &m_Failed );
 
 		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsFinalStage() )	// only load if we're going to use it
@@ -704,24 +704,22 @@ void ScreenGameplay::Init()
 			break;
 		}
 
-		m_In.Load( THEME->GetPathToB("ScreenGameplay in") );
-		m_In.SetZ( -2 ); // on top of everything else
-		this->AddChild( &m_In );
-
-
 		m_textDebug.LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textDebug.SetName( "Debug" );
 		SET_XY( m_textDebug );
 		this->AddChild( &m_textDebug );
 
+		m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay Overlay") );
+		m_Overlay.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
+		this->AddChild( &m_Overlay );
+
+		m_In.Load( THEME->GetPathToB("ScreenGameplay in") );
+		m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+		this->AddChild( &m_In );
 
 		m_Back.Load( THEME->GetPathToB("Common back") );
-		m_Back.SetZ( -4 ); // on top of everything else
+		m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS ); // on top of everything else
 		this->AddChild( &m_Back );
-
-		m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay Overlay") );
-		m_Overlay.SetZ( -3 ); // on top of everything else
-		this->AddChild( &m_Overlay );
 
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
@@ -730,7 +728,7 @@ void ScreenGameplay::Init()
 			m_textSurviveTime.SetShadowLength( 0 );
 			m_textSurviveTime.SetName( "SurviveTime" );
 			SET_XY( m_textSurviveTime );
-			m_textSurviveTime.SetZ( -3 ); // on top of everything else
+			m_textSurviveTime.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
 			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_textSurviveTime );
 		}
@@ -743,7 +741,7 @@ void ScreenGameplay::Init()
 
 	TweenOnScreen();
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 
 	if( !m_bDemonstration )	// only load if we're going to use it
 	{

@@ -28,6 +28,13 @@ void ActorFrame::AddChild( Actor* pActor )
 	m_SubActors.push_back( pActor );
 }
 
+void ActorFrame::RemoveChild( Actor* pActor )
+{
+	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
+	if( iter != m_SubActors.end() )
+		m_SubActors.erase( iter );
+}
+
 void ActorFrame::MoveToTail( Actor* pActor )
 {
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
@@ -130,15 +137,15 @@ float ActorFrame::GetTweenTimeLeft() const
 
 }
 
-bool CompareActorsByZDesc(const Actor *p1, const Actor *p2)
+bool CompareActorsByDrawOrder(const Actor *p1, const Actor *p2)
 {
-	return p1->GetZ() > p2->GetZ();
+	return p1->GetDrawOrder() < p2->GetDrawOrder();
 }
 
-void ActorFrame::SortByZ()
+void ActorFrame::SortByDrawOrder()
 {
-	// Preserve ordering of Actors with equal Z values.
-	stable_sort( m_SubActors.begin(), m_SubActors.end(), CompareActorsByZDesc );
+	// Preserve ordering of Actors with equal DrawOrders.
+	stable_sort( m_SubActors.begin(), m_SubActors.end(), CompareActorsByDrawOrder );
 }
 
 void ActorFrame::DeleteAllChildren()

@@ -124,7 +124,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 
 	TweenOnScreen();
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 void ScreenSelectDifficulty::Update( float fDelta )

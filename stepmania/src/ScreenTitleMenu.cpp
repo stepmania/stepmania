@@ -189,7 +189,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	this->PostScreenMessage( SM_PlayComment, SECONDS_BETWEEN_COMMENTS);
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 
 //	this->MoveToTail( &m_AttractOut );	// put it in the back so it covers up the stuff we just added
 }

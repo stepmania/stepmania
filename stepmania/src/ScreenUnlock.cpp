@@ -324,7 +324,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 	this->PostScreenMessage( SM_BeginFadingOut, TIME_TO_DISPLAY );
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 ScreenUnlock::~ScreenUnlock()

@@ -100,15 +100,15 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 
 
 	m_In.Load( THEME->GetPathToB(m_sName+" in") );
-	m_In.SetZ( -1000 );	// always on top
+	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
 	m_Out.Load( THEME->GetPathToB(m_sName+" out") );
-	m_Out.SetZ( -1000 );	// always on top
+	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
 	m_Back.Load( THEME->GetPathToB("Common back") );
-	m_Back.SetZ( -1000 );	// always on top
+	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Back );
 
 	m_In.StartTransitioning();

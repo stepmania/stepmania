@@ -17,9 +17,10 @@ class ActorFrame : public Actor
 {
 public:
 	virtual void AddChild( Actor* pActor );
+	virtual void RemoveChild( Actor* pActor );
 	virtual void MoveToTail( Actor* pActor );
 	virtual void MoveToHead( Actor* pActor );
-	virtual void SortByZ();
+	virtual void SortByDrawOrder();
 
 	virtual ~ActorFrame() { }
 	

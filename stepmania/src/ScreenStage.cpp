@@ -39,7 +39,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName + " "+GAMESTATE->GetStageText()) );
-	m_Background.SetZ( 10 ); // behind everything else
+	m_Background.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
 	this->AddChild( &m_Background );
 
 	m_Overlay.SetName( "Overlay" );
@@ -49,15 +49,15 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	m_In.Load( THEME->GetPathToB(m_sName + " in") );
 	m_In.StartTransitioning();
-	m_In.SetZ( -2 ); // on top of everything else
+	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
 	m_Out.Load( THEME->GetPathToB(m_sName + " out") );
-	m_Out.SetZ( -2 ); // on top of everything else
+	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
 	m_Back.Load( THEME->GetPathToB("Common back") );
-	m_Back.SetZ( -2 ); // on top of everything else
+	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Back );
 
 	/* Prep the new screen once m_In is complete. */
@@ -107,7 +107,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+GAMESTATE->GetStageText()) );
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 void ScreenStage::HandleScreenMessage( const ScreenMessage SM )

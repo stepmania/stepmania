@@ -497,7 +497,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 	m_sprMore->FinishTweening();
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 ScreenOptions::~ScreenOptions()

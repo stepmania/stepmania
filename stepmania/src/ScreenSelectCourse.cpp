@@ -143,7 +143,7 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : ScreenWithMenuEle
 	AfterCourseChange();
 	TweenOnScreen();
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 

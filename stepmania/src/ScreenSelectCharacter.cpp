@@ -168,7 +168,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 	}
 	TweenOnScreen();
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 

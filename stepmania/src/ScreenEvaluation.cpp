@@ -268,7 +268,7 @@ void ScreenEvaluation::Init()
 //	}
 	
 	m_bgOverlay.LoadFromAniDir( THEME->GetPathB(m_sName, "overlay") );
-	m_bgOverlay.SetZ( -1 ); /* draw on top of everything except transitions */
+	m_bgOverlay.SetDrawOrder( 1 ); /* draw on top of everything except transitions */
 	this->AddChild( &m_bgOverlay );
 
 	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
@@ -859,7 +859,7 @@ void ScreenEvaluation::Init()
 		break;
 	}
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEvaluation music") );

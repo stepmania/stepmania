@@ -54,7 +54,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 
 	TEXTUREMAN->SetDefaultTexturePolicy( OldPolicy );
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 void Foreground::Update( float fDeltaTime )

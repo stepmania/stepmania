@@ -17,9 +17,22 @@
 #include "BitmapText.h"
 #include "Banner.h"
 #include "ListDisplay.h"
+#include "ActorUtil.h"
 
 class Course;
 class Song;
+
+enum PageType
+{
+	PAGE_TYPE_CATEGORY, 
+	PAGE_TYPE_COURSE, 
+	PAGE_TYPE_ALL_STEPS, 
+	PAGE_TYPE_ALL_COURSES,
+	NUM_PAGE_TYPES
+};
+#define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, NUM_PAGE_TYPES, pt )
+const CString& PageTypeToString( PageType pt );
+
 
 class ScreenRanking : public ScreenAttract
 {
@@ -32,13 +45,17 @@ public:
 protected:
 	struct PageToShow
 	{
-		enum { TYPE_CATEGORY, TYPE_COURSE, TYPE_ALL_STEPS, TYPE_ALL_COURSES } type;
+		PageToShow()
+		{
+			pCourse = NULL;
+		}
+
+		PageType		type;
 		int				colorIndex;
 		StepsType		nt;
 		RankingCategory	category;
 		Course*			pCourse;
 		CourseDifficulty	cd;
-		PageToShow(): pCourse(NULL) { }
 	};
 
 	float SetPage( PageToShow pts );
@@ -51,6 +68,7 @@ protected:
 	BitmapText m_textCourseTitle; // for course
 	BitmapText m_textCategory;	// for category
 	BitmapText m_textStepsType;	// for category, course, all_steps
+	AutoActor  m_sprPageType;
 
 	Sprite	   m_sprBullets[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textNames[NUM_RANKING_LINES];	// for category and course

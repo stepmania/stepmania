@@ -144,7 +144,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 	TweenOnScreen();
 	m_GroupList.SetSelection(0);
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 

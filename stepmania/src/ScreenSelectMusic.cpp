@@ -338,7 +338,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	AfterMusicChange();
 	TweenOnScreen();
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 

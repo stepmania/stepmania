@@ -715,7 +715,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	SET_XY_AND_ON_COMMAND( m_sprExplanation[GetCurrentPage()] );
 	SET_XY_AND_ON_COMMAND( m_sprMore[GetCurrentPage()] );
 
-	this->SortByZ();
+	this->SortByDrawOrder();
 }
 
 void ScreenSelectMaster::TweenOffScreen()

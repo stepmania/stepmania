@@ -54,6 +54,7 @@ void Actor::Reset()
 	m_fShadowLength = 0;
 	m_bIsAnimating = true;
 	m_fHibernateSecondsLeft = 0;
+	m_iDrawOrder = 0;
 
 	m_bTextureWrapping = false;
 	m_BlendMode = BLEND_NORMAL;
@@ -735,6 +736,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="cullmode" )		SetCullMode( sParam(1) );
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
 	else if( sName=="hibernate" )		SetHibernate( fParam(1) );
+	else if( sName=="draworder" )		SetDrawOrder( iParam(1) );
 	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
 	else if( sName=="queuecommand" )	
 	{

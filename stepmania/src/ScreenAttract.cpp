@@ -49,9 +49,11 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sN
 
 	m_In.Load( THEME->GetPathToB(m_sName+" in") );
 	m_In.StartTransitioning();
+	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_In );
 
 	m_Out.Load( THEME->GetPathToB(m_sName+" out") );
+	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName) );
