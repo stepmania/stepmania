@@ -6,11 +6,6 @@
 
 
 
-
-
-
-
-
 void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 {
 	const char *fileName;
@@ -28,33 +23,33 @@ void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 
 unsigned long RageFileStore::MaxRetrievable() const
 {
-	if( !m_file.IsOpen() )
+	if( !m_file.IsGood() )
 		return 0;
-
+	
 	return m_file.GetFileSize() - m_file.Tell();
 }
 
 unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel, bool blocking)
 {
-	if( !m_file.IsOpen() )
+	if( !m_file.IsGood() )
 	{
 		transferBytes = 0;
 		return 0;
 	}
-
+	
 	unsigned long size=transferBytes;
 	transferBytes = 0;
-
+	
 	if (m_waiting)
 		goto output;
-
-	while( size && !m_file.AtEOF() )
+	
+	while( size && m_file.IsGood() )
 	{
 		{
-		unsigned int spaceSize = 1024;
-		m_space = HelpCreatePutSpace(target, channel, 1, (unsigned int)STDMIN(size, (unsigned long)UINT_MAX), spaceSize);
-
-		m_len = m_file.Read( (char *)m_space, STDMIN(size, (unsigned long)spaceSize));
+			unsigned int spaceSize = 1024;
+			m_space = HelpCreatePutSpace(target, channel, 1, (unsigned int)STDMIN(size, (unsigned long)UINT_MAX), spaceSize);
+			
+			m_len = m_file.Read( (char *)m_space, STDMIN(size, (unsigned long)spaceSize));
 		}
 		unsigned int blockedBytes;
 output:
@@ -65,44 +60,43 @@ output:
 		size -= m_len;
 		transferBytes += m_len;
 	}
-
-	if (!m_file.AtEOF())
+	
+	if (!m_file.IsGood() && !m_file.AtEOF())
 		throw ReadErr();
-
+	
 	return 0;
 }
 
 
 unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end, const std::string &channel, bool blocking) const
 {
-	if( !m_file.IsOpen() )
+	if( !m_file.IsGood() )
 		return 0;
-
+	
 	if (begin == 0 && end == 1)
 	{
 		int current = m_file.Tell();
 		byte result;
 		m_file.Read( &result, 1 );
+		m_file.Seek( current );
 		if (m_file.AtEOF())	// GCC workaround: 2.95.2 doesn't have char_traits<char>::eof()
 		{
-			m_file.Seek( current );
 			return 0;
 		}
 		else
 		{
 			unsigned int blockedBytes = target.ChannelPut(channel, byte(result), blocking);
 			begin += 1-blockedBytes;
-			m_file.Seek( current );
 			return blockedBytes;
 		}
 	}
-
+	
 	// TODO: figure out what happens on cin
 	int current = m_file.Tell();
 	int endPosition = m_file.GetFileSize();
 	m_file.Seek( endPosition );
 	int newPosition = current + (streamoff)begin;
-
+	
 	if (newPosition >= endPosition)
 	{
 		m_file.Seek(current);
@@ -129,7 +123,7 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	}
 	m_file.ClearError();
 	m_file.Seek(current);
-
+	
 	return 0;
 }
 
@@ -153,11 +147,11 @@ bool RageFileSink::IsolatedFlush(bool hardFlush, bool blocking)
 {
 	if (!m_file.IsOpen())
 		throw Err("FileSink: output stream not opened");
-
+	
 	m_file.Flush();
-	if( !m_file.GetError().empty() )
+	if( !m_file.IsGood() )
 		throw WriteErr();
-
+	
 	return false;
 }
 
@@ -165,15 +159,15 @@ unsigned int RageFileSink::Put2(const byte *inString, unsigned int length, int m
 {
 	if (!m_file.IsOpen())
 		throw Err("FileSink: output stream not opened");
-
+	
 	m_file.Write((const char *)inString, length);
-
+	
 	if (messageEnd)
 		m_file.Flush();
-
-	if( !m_file.GetError().empty() )
+	
+	if( !m_file.IsGood() )
 		throw WriteErr();
-
+	
 	return 0;
 }
 

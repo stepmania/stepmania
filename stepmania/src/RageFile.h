@@ -47,6 +47,7 @@ public:
 	bool AtEOF() const { return m_EOF; }
 	CString GetError() const { return m_Error; }
 	void ClearError() { m_Error = ""; }
+	bool IsGood() const { return IsOpen() && !AtEOF() && m_Error.empty(); }
 
 	int Tell() const { return m_FilePos; }
 	int Seek( int offset );
