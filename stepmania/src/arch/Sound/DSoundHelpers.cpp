@@ -17,7 +17,7 @@ BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPC
 	CString sLine = ssprintf( "DirectSound Driver: %s", lpcstrDescription );
 	if( lpcstrModule[0] )
 	{
-		sLine += ssprintf( " (%s", lpcstrModule );
+		sLine += ssprintf( " %s", lpcstrModule );
 
 #ifndef _XBOX
 		CString sPath = FindSystemFile( lpcstrModule );
@@ -28,8 +28,6 @@ BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPC
 				sLine += ssprintf(" %s", ver.c_str());
 		}
 #endif
-
-		sLine += ")";
 	}
 
 	LOG->Info( "%s", sLine.c_str() );
