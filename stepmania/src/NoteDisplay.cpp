@@ -594,7 +594,7 @@ struct StripBuffer
 	int Free() const { return size - Used(); }
 };
 
-void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset )
 {
 	//
 	// Draw the top cap (always wavy)
@@ -622,16 +622,29 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iBeat, const 
 	if( bGlow )
 		fColorScale = 1;
 
+	float fDrawYCapTop;
+	float fDrawYCapBottom;
+	{
+		float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYStartOffset, m_fYReverseOffsetPixels );
+		fDrawYCapTop = max( fYCapTop, fYStartPos );
+	}
+	{
+		float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYEndOffset, m_fYReverseOffsetPixels );
+		fDrawYCapBottom = min( fYCapBottom, fYEndPos );
+	}
+
+	// don't draw any part of the head that is after the middle of the tail
+	fDrawYCapBottom = min( fYTail, fDrawYCapBottom );
+
 	bool bAllAreTransparent = true;
 	bool bLast = false;
-	// don't draw any part of the head that is after the middle of the tail
-	float fY = fYCapTop;
-	float fYStop = min(fYTail,fYCapBottom);
+
+	float fY = fDrawYCapTop;
 	for( ; !bLast; fY+=fYStep )
 	{
-		if( fY >= fYStop )
+		if( fY >= fDrawYCapBottom )
 		{
-			fY = fYStop;
+			fY = fDrawYCapBottom;
 			bLast = true;
 		}
 
@@ -763,7 +776,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bo
 		queue.Draw();
 }
 
-void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int	fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow, float fYStartOffset, float fYEndOffset )
 {
 	//
 	// Draw the bottom cap (always wavy)
@@ -791,15 +804,26 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iBeat, con
 	if( bGlow )
 		fColorScale = 1;
 
+	float fDrawYCapTop;
+	float fDrawYCapBottom;
+	{
+		float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYStartOffset, m_fYReverseOffsetPixels );
+		fDrawYCapTop = max( fYCapTop, fYStartPos );
+	}
+	{
+		float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYEndOffset, m_fYReverseOffsetPixels );
+		fDrawYCapBottom = min( fYCapBottom, fYEndPos );
+	}
+
 	bool bAllAreTransparent = true;
 	bool bLast = false;
 	// don't draw any part of the tail that is before the middle of the head
-	float fY=max( fYCapTop, fYHead );
+	float fY=max( fDrawYCapTop, fYHead );
 	for( ; !bLast; fY += fYStep )
 	{
-		if( fY >= fYCapBottom )
+		if( fY >= fDrawYCapBottom )
 		{
-			fY = fYCapBottom;
+			fY = fDrawYCapBottom;
 			bLast = true;
 		}
 
@@ -987,10 +1011,10 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBein
 	DISPLAY->SetZWrite( WavyPartsNeedZBuffer );
 	
 	if( !bFlipHeadAndTail )
-		DrawHoldBottomCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldBottomCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 	DrawHoldBody( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 	if( bFlipHeadAndTail )
-		DrawHoldTopCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+		DrawHoldTopCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
