@@ -574,15 +574,48 @@ void SongManager::InitAutogenCourses()
 		GetSongs( apGroupSongs, sGroupName );
 
 		Course* pCourse;
-
+		//Generate random courses from each group for each of the main three difficulty levels
 		pCourse = new Course;
-		pCourse->AutogenEndlessFromGroup( sGroupName, apGroupSongs );
+		pCourse->AutogenEndlessFromGroup( sGroupName, apGroupSongs, DIFFICULTY_EASY );
 		m_pCourses.push_back( pCourse );
 
 		pCourse = new Course;
-		pCourse->AutogenNonstopFromGroup( sGroupName, apGroupSongs );
+		pCourse->AutogenEndlessFromGroup( sGroupName, apGroupSongs, DIFFICULTY_MEDIUM );
+		m_pCourses.push_back( pCourse );
+
+		pCourse = new Course;
+		pCourse->AutogenEndlessFromGroup( sGroupName, apGroupSongs, DIFFICULTY_HARD );
+		m_pCourses.push_back( pCourse );
+
+		pCourse = new Course;
+		pCourse->AutogenNonstopFromGroup( sGroupName, apGroupSongs, DIFFICULTY_EASY );
+		m_pCourses.push_back( pCourse );
+
+		pCourse = new Course;
+		pCourse->AutogenNonstopFromGroup( sGroupName, apGroupSongs, DIFFICULTY_MEDIUM );
+		m_pCourses.push_back( pCourse );
+		
+		pCourse = new Course;
+		pCourse->AutogenNonstopFromGroup( sGroupName, apGroupSongs, DIFFICULTY_HARD );
 		m_pCourses.push_back( pCourse );
 	}
+	
+	vector<Song*> apCourseSongs = GetAllSongs();
+
+	Course* pCourse;
+
+	//Generate "All Songs" endless course
+	pCourse = new Course;
+	pCourse->AutogenEndlessFromVector( "All Groups", apCourseSongs, DIFFICULTY_EASY );
+	m_pCourses.push_back( pCourse );
+
+	pCourse = new Course;
+	pCourse->AutogenEndlessFromVector( "All Groups", apCourseSongs, DIFFICULTY_MEDIUM );
+	m_pCourses.push_back( pCourse );
+
+	pCourse = new Course;
+	pCourse->AutogenEndlessFromVector( "All Groups", apCourseSongs, DIFFICULTY_HARD );
+	m_pCourses.push_back( pCourse );
 }
 
 

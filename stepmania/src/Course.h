@@ -139,8 +139,9 @@ public:
 	void LoadFromCRSFile( CString sPath );
 	void Unload();
 	void Save();
-	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
-	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup );
+	void AutogenEndlessFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup, Difficulty diff );
+	void AutogenEndlessFromVector( CString sCourseName, vector<Song*> &apSongsInCourse, Difficulty diff );
+	void AutogenNonstopFromGroup( CString sGroupName, vector<Song*> &apSongsInGroup, Difficulty diff );
 
 	RadarValues GetRadarValues( StepsType st, CourseDifficulty cd ) const;
 
@@ -155,6 +156,7 @@ public:
 	void ClearCache();
 
 private:
+	CString GetAutogenDifficultySuffix( Difficulty diff ) const;
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const;
 
 	typedef pair<StepsType,CourseDifficulty> InfoParams;
