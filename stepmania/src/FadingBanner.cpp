@@ -20,6 +20,7 @@ FadingBanner::FadingBanner()
 	MW_SWITCH_SECONDS.Refresh();
 
 	m_bMovingFast = false;
+	m_bSkipNextBannerUpdate = false;
 	m_iIndexFront = 0;
 	for( int i=0; i<2; i++ )
 		this->AddChild( &m_Banner[i] );
@@ -33,7 +34,17 @@ void FadingBanner::ScaleToClipped( float fWidth, float fHeight )
 
 void FadingBanner::Update( float fDeltaTime )
 {
-	ActorFrame::Update( fDeltaTime );
+	// update children manually
+	// ActorFrame::Update( fDeltaTime );
+	Actor::Update( fDeltaTime );
+
+	if( !m_bSkipNextBannerUpdate )
+	{
+		m_Banner[0].Update( fDeltaTime );
+		m_Banner[1].Update( fDeltaTime );
+	}
+
+	m_bSkipNextBannerUpdate = false;
 
 	/* Don't fade to the full banner until we finish fading. */
 	float HighQualTime = FADE_SECONDS;
@@ -78,6 +89,10 @@ void FadingBanner::BeforeChange()
 	m_Banner[m_iIndexFront].SetDiffuse( RageColor(1,1,1,0) );
 
 	m_sPendingBanner = "";
+
+	/* We're about to load a banner.  It'll probably cause a frame skip or
+	 * two.  Skip an update, so the fade-in doesn't skip. */
+	m_bSkipNextBannerUpdate = true;
 }
 
 /* If this returns false, the banner couldn't be loaded. */

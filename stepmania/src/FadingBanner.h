@@ -42,6 +42,7 @@ protected:
 	CString		m_sPendingBanner;
 	RageTimer	m_PendingTimer;
 	bool		m_bMovingFast;
+	bool		m_bSkipNextBannerUpdate;
 };
 
 #endif
