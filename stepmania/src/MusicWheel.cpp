@@ -389,14 +389,16 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			for( unsigned j = 0; so == SORT_INVALID && j < parts.size(); ++j )
 				so = StringToSongSortOrder( parts[j] );
 
+			// I'm removing this because it always forces this sort.
+			// When using UDUD to change sort, it won't change. 
+			/*
 			if ( !GAMESTATE->IsCourseMode() )
 			{	
 				// If we have a valid default sort in metrics, select it.
-				// BUT ONLY IF WE ARE NOT IN COURSE MODE
 				so = StringToSongSortOrder(DEFAULT_SORT);
 				if( so != SORT_INVALID )
 					GAMESTATE->m_SongSortOrder = so;
-			}
+			}  */
 
 			if( so == SORT_INVALID )
 				so = SORT_GROUP;
@@ -1198,6 +1200,7 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		return true;
 	case TYPE_SORT:
 		m_CurWheelItemData[m_iSelection]->m_Action.ApplyToAllPlayers();
+		LOG->Trace("New sort order selected: %s - %d", m_CurWheelItemData[m_iSelection]->m_sLabel.c_str(), m_CurWheelItemData[m_iSelection]->m_SongSortOrder );
 		ChangeSort( m_CurWheelItemData[m_iSelection]->m_SongSortOrder );
 		return false;
 	default:
