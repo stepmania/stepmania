@@ -132,6 +132,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
+	this->UpdateSelectableChoices();
+
 	m_fLockInputSecs = TweenOnScreen();
 }
 
@@ -215,12 +217,31 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-		{
-			MenuRight( (PlayerNumber)p );
-			MenuLeft( (PlayerNumber)p );
-		}
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;
+
+		if( !m_aModeChoices[m_iChoice[p]].IsPlayable() )
+			Move( (PlayerNumber) p, -1 );
+		if( !m_aModeChoices[m_iChoice[p]].IsPlayable() ) // if still
+			Move( (PlayerNumber)p, +1 );
+		ASSERT( m_aModeChoices[m_iChoice[p]].IsPlayable() );
 	}
+}
+
+bool ScreenSelectMaster::Move( PlayerNumber pn, int dir )
+{
+	int iSwitchToIndex = m_iChoice[pn];
+	while( iSwitchToIndex >= 0 && iSwitchToIndex < (int) m_aModeChoices.size() )
+	{
+		iSwitchToIndex += dir;
+		if( m_aModeChoices[iSwitchToIndex].IsPlayable() )
+			break;
+	}
+
+	while( iSwitchToIndex < 0 || iSwitchToIndex >= (int) m_aModeChoices.size() )
+		return false; // none found
+
+	return ChangeSelection( pn, iSwitchToIndex );
 }
 
 void ScreenSelectMaster::MenuLeft( PlayerNumber pn )
@@ -229,15 +250,10 @@ void ScreenSelectMaster::MenuLeft( PlayerNumber pn )
 		return;
 	if( m_bChosen[pn] )
 		return;
-	if( m_iChoice[pn] == 0 )	// can't go left any more
-		return;
 
-	if( GetPage(m_iChoice[pn]) != GetPage(m_iChoice[pn]-1) )
-		ChangePage( GetPage(m_iChoice[pn]-1) );
-	else
-		ChangeSelection( pn, m_iChoice[pn]-1 );
+	if( Move(pn, -1) )
+		m_soundChange.Play();
 }
-
 
 void ScreenSelectMaster::MenuRight( PlayerNumber pn )
 {
@@ -245,22 +261,19 @@ void ScreenSelectMaster::MenuRight( PlayerNumber pn )
 		return;
 	if( m_bChosen[pn] )
 		return;
-	if( m_iChoice[pn] == (int)m_aModeChoices.size()-1 )	// can't go right any more
-		return;
-
-	if( GetPage(m_iChoice[pn]) != GetPage(m_iChoice[pn]+1) )
-		ChangePage( GetPage(m_iChoice[pn]+1) );
-	else
-		ChangeSelection( pn, m_iChoice[pn]+1 );
+	if( Move(pn, +1) )
+		m_soundChange.Play();
 }
 
-void ScreenSelectMaster::ChangePage( Page newPage )
+bool ScreenSelectMaster::ChangePage( int iNewChoice )
 {
+	Page newPage = GetPage(iNewChoice);
+
 	// If anyone has already chosen, don't allow changing of pages
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsHumanPlayer(p) && m_bChosen[p] )
-			return;
+			return false;
 
 	float fSecs = 0;
 
@@ -314,18 +327,19 @@ void ScreenSelectMaster::ChangePage( Page newPage )
 	}
 
 	// change both players
-	int iNewChoice = (newPage==PAGE_1) ? (NUM_CHOICES_ON_PAGE_1-1) : NUM_CHOICES_ON_PAGE_1;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_iChoice[p] = iNewChoice;
 
-	m_soundChange.Play();
-
 	m_fLockInputSecs = PRE_SWITCH_PAGE_SECONDS;
 	this->PostScreenMessage( SM_PlayPostSwitchPage, PRE_SWITCH_PAGE_SECONDS );
+	return true;
 }
 
-void ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
+bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 {
+	if( GetPage(m_iChoice[pn]) != GetPage(iNewChoice) )
+		return ChangePage( iNewChoice );
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -355,7 +369,7 @@ void ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 		{
 			/* XXX: If !SharedPreviewAndCursor, this is incorrect.  (Nothing uses
 			 * both icon focus and !SharedPreviewAndCursor right now.) */
-			for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
+			for( int i=0; i<NUM_ICON_PARTS; i++ )
 			{
 				COMMAND( m_sprIcon[i][iOldChoice], "LoseFocus" );
 				COMMAND( m_sprIcon[i][iNewChoice], "GainFocus" );
@@ -382,7 +396,7 @@ void ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 		}
 	}
 
-	m_soundChange.Play();
+	return true;
 }
 
 ScreenSelectMaster::Page ScreenSelectMaster::GetPage( int iChoiceIndex )

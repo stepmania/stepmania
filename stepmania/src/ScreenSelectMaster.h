@@ -45,8 +45,9 @@ protected:
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
 
-	void ChangePage( Page page );
-	void ChangeSelection( PlayerNumber pn, int iNewChoice );
+	bool Move( PlayerNumber pn, int dir );
+	bool ChangePage( int iNewChoice );
+	bool ChangeSelection( PlayerNumber pn, int iNewChoice );
 
 	float GetCursorX( PlayerNumber pn, int iPartIndex );
 	float GetCursorY( PlayerNumber pn, int iPartIndex );
