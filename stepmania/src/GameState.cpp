@@ -409,6 +409,15 @@ void GameState::ResetStageStatistics()
 		m_iLastPositiveSumOfAttackLevels[p] = 0;
 		m_fSecondsUntilAttacksPhasedOut[p] = 0;	// PlayerAI not affected
 	}
+
+
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_vLastPerDifficultyAwards[p].clear();
+			m_vLastPeakComboAwards[p].clear();
+		}
+	}
 }
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )

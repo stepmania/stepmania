@@ -199,6 +199,31 @@ public:
 	float GetCaloriesBurnedForDay( Day day ) const;
 	
 	//
+	// Awards
+	//
+	struct AwardRecord
+	{
+		time_t first;
+		time_t last;
+		int iCount;	// num times achieved
+
+		AwardRecord() { Unset(); }
+
+		bool IsSet() const	{ return iCount>0; }
+		void Set(time_t t)	{ if (iCount==0) first = t; last = t; iCount++; }
+		void Unset()		{ iCount = 0; first = -1; last = -1; }
+		
+		XNode* CreateNode() const;
+		void LoadFromNode( const XNode* pNode );
+	};
+	AwardRecord m_PerDifficultyAwards[NUM_STEPS_TYPES][NUM_DIFFICULTIES][NUM_PER_DIFFICULTY_AWARDS];
+	AwardRecord m_PeakComboAwards[NUM_PEAK_COMBO_AWARDS];
+	void AddPerDifficultyAward( StepsType st, Difficulty dc, PerDifficultyAward pda );
+	void AddPeakComboAward( PeakComboAward pca );
+	bool HasPerDifficultyAward( StepsType st, Difficulty dc, PerDifficultyAward pda );
+	bool HasPeakComboAward( PeakComboAward pca );
+
+	//
 	// Init'ing
 	//
 	void InitAll()
@@ -210,6 +235,7 @@ public:
 		InitCategoryScores(); 
 		InitScreenshotData(); 
 		InitCalorieData(); 
+		InitAwards(); 
 	}
 	void InitEditableData(); 
 	void InitGeneralData(); 
@@ -218,6 +244,7 @@ public:
 	void InitCategoryScores(); 
 	void InitScreenshotData(); 
 	void InitCalorieData(); 
+	void InitAwards(); 
 
 	//
 	// Loading and saving
@@ -237,6 +264,7 @@ public:
 	void LoadCategoryScoresFromNode( const XNode* pNode );
 	void LoadScreenshotDataFromNode( const XNode* pNode );
 	void LoadCalorieDataFromNode( const XNode* pNode );
+	void LoadAwardsFromNode( const XNode* pNode );
 
 	void SaveEditableDataToDir( CString sDir ) const;
 	XNode* SaveGeneralDataCreateNode() const;
@@ -245,6 +273,7 @@ public:
 	XNode* SaveCategoryScoresCreateNode() const;
 	XNode* SaveScreenshotDataCreateNode() const;
 	XNode* SaveCalorieDataCreateNode() const;
+	XNode* SaveAwardsCreateNode() const;
 
 	void DeleteProfileDataFromDirSM390a12( CString sDir ) const;
 	void DeleteSongScoresFromDirSM390a12( CString sDir ) const;

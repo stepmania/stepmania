@@ -21,6 +21,7 @@
 #include "RageTimer.h"
 
 #include <map>
+#include <deque>
 
 class Song;
 class Steps;
@@ -246,6 +247,15 @@ public:
 	void GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut ) const;
 	void StoreRankingName( PlayerNumber pn, CString name );	// Called by name entry screens
 	vector<CString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
+
+
+	//
+	// Award stuff
+	//
+	// lowest priority in front, highest priority at the back.
+	deque<PerDifficultyAward> m_vLastPerDifficultyAwards[NUM_PLAYERS];
+	deque<PeakComboAward> m_vLastPeakComboAwards[NUM_PLAYERS];
+
 
 	//
 	// Arrow positioning

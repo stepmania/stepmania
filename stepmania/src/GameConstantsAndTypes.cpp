@@ -13,6 +13,7 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "RageUtil.h"
+#include "ThemeManager.h"
 
 
 CString RadarCategoryToString( RadarCategory cat )
@@ -224,3 +225,63 @@ CString MemoryCardStateToString( MemoryCardState mcs )
 	}
 }
 
+
+
+#define XToString(X)	\
+	CString X##ToString( X x ) \
+	{	\
+		ASSERT(x < ARRAYSIZE(X##Names));	\
+		return X##Names[x];	\
+	}
+
+#define XToThemedString(X)	\
+	CString X##ToThemedString( X x ) \
+	{	\
+		return THEME->GetMetric( #X, X##ToString(x) );	\
+	}
+
+#define StringToX(X)	\
+	X StringTo##X( CString s ) \
+	{	\
+		unsigned i;	\
+		for( i = 0; i < ARRAYSIZE(X##Names); ++i )	\
+			if( !s.CompareNoCase(X##Names[i]) )	\
+				return (X)i;	\
+		return (X)i;	\
+	}
+
+
+static const char *PerDifficultyAwardNames[NUM_PER_DIFFICULTY_AWARDS] = {
+	"FullComboGreats",
+	"FullComboPerfects",
+	"FullComboMarvelouses",
+	"SingleDigitGreats",
+	"SingleDigitPerfects",
+	"Greats80Percent",
+	"Greats90Percent",
+	"Greats100Percent",
+};
+
+XToString( PerDifficultyAward );
+XToThemedString( PerDifficultyAward );
+StringToX( PerDifficultyAward );
+
+// The number is not at the front so that these strings can be used as XML entity names
+// The number is not at the back so that "1000" and "10000" don't conflict when 
+// searching for theme elements.
+static const char *PeakComboAwardNames[NUM_PEAK_COMBO_AWARDS] = {
+	"Peak1000Combo",
+	"Peak2000Combo",
+	"Peak3000Combo",
+	"Peak4000Combo",
+	"Peak5000Combo",
+	"Peak6000Combo",
+	"Peak7000Combo",
+	"Peak8000Combo",
+	"Peak9000Combo",
+	"Peak10000Combo",
+};
+
+XToString( PeakComboAward );
+XToThemedString( PeakComboAward );
+StringToX( PeakComboAward );

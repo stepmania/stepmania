@@ -133,6 +133,7 @@ CString MemoryCardManager::GetOsMountDir( PlayerNumber pn )
 	else
 	{
 		CString sDir = m_Device[pn].sOsMountDir;
+		FixSlashesInPlace( sDir );
 		if( !sDir.empty() && sDir.Right(1)!="/" )
 			sDir += '/';
 		return sDir;

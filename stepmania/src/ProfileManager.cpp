@@ -154,15 +154,15 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	// moust slot
 	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
 	{
-		// XXX: Remounting the same mount point is broken.  Investigate this later...
+		// XXX: Remounting a different OS directory to the same mount point 
+		// seems to be broken.  Investigate this later...
+		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
+		LOG->Trace( "mount %s %s", MEMCARDMAN->GetOsMountDir(pn).c_str(), MEM_CARD_DIR[pn] );
+		CString sDir = MEM_CARD_DIR[pn];
 
-//		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
-//		LOG->Trace( "mount %s %s", MEMCARDMAN->GetOsMountDir(pn).c_str(), MEM_CARD_DIR[pn] );
-//		CString sDir = MEM_CARD_DIR[pn];
+//		CString sDir = MEMCARDMAN->GetOsMountDir(pn);
 
-		CString sDir = MEMCARDMAN->GetOsMountDir(pn);
-
-		DEBUG_ASSERT( FILEMAN->IsMounted(sDir) );	// should be called only if we've already mounted
+		DEBUG_ASSERT( MEMCARDMAN->GetOsMountDir(pn) );	// should be called only if we've already mounted
 		
 		// tack on a subdirectory so that we don't write everything to the root
 		sDir += PREFSMAN->m_sMemoryCardProfileSubdir;

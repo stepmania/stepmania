@@ -1536,6 +1536,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
+		case SDLK_F5:
+			this->HandleScreenMessage( SM_NotesEnded );
+			break;
 		case SDLK_F6:
 			m_bChangedOffsetOrBPM = true;
 			GAMESTATE->m_SongOptions.m_bAutoSync = !GAMESTATE->m_SongOptions.m_bAutoSync;	// toggle

@@ -327,4 +327,48 @@ enum CoinMode { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES };
 CString CoinModeToString( CoinMode cm );
 
 
+//
+// Award stuff
+//
+
+enum PerDifficultyAward
+{
+	AWARD_FULL_COMBO_GREATS,
+	AWARD_FULL_COMBO_PERFECTS,
+	AWARD_FULL_COMBO_MARVELOUSES,
+	AWARD_SINGLE_DIGIT_GREATS,
+	AWARD_SINGLE_DIGIT_PERFECTS,
+	AWARD_GREATS_80_PERCENT,
+	AWARD_GREATS_90_PERCENT,
+	AWARD_GREATS_100_PERCENT,
+	NUM_PER_DIFFICULTY_AWARDS,
+	PER_DIFFICULTY_AWARD_INVALID,
+};
+#define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS, pma )
+CString PerDifficultyAwardToString( PerDifficultyAward pma );
+CString PerDifficultyAwardToThemedString( PerDifficultyAward pma );
+PerDifficultyAward StringToPerDifficultyAward( CString pma );
+
+
+enum PeakComboAward 
+{ 
+	AWARD_1000_PEAK_COMBO,
+	AWARD_2000_PEAK_COMBO,
+	AWARD_3000_PEAK_COMBO,
+	AWARD_4000_PEAK_COMBO,
+	AWARD_5000_PEAK_COMBO,
+	AWARD_6000_PEAK_COMBO,
+	AWARD_7000_PEAK_COMBO,
+	AWARD_8000_PEAK_COMBO,
+	AWARD_9000_PEAK_COMBO,
+	AWARD_10000_PEAK_COMBO,
+	NUM_PEAK_COMBO_AWARDS,
+	PEAK_COMBO_AWARD_INVALID,
+};
+#define FOREACH_PeakComboAward( pca ) FOREACH_ENUM( PeakComboAward, NUM_PEAK_COMBO_AWARDS, pca )
+CString PeakComboAwardToString( PeakComboAward pma );
+CString PeakComboAwardToThemedString( PeakComboAward pma );
+PeakComboAward StringToPeakComboAward( CString pma );
+
+
 #endif

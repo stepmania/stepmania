@@ -124,6 +124,20 @@ void Profile::InitCalorieData()
 	m_mapDayToCaloriesBurned.clear();
 }
 
+void Profile::InitAwards()
+{
+	FOREACH_StepsType( st )
+	{
+		FOREACH_Difficulty( dc )
+			FOREACH_PerDifficultyAward( pda )
+				m_PerDifficultyAwards[st][dc][pda].Unset();
+	}
+	FOREACH_PeakComboAward( pca )
+	{
+		m_PeakComboAwards[pca].Unset();
+	}
+}
+
 CString Profile::GetDisplayName() const
 {
 	if( !m_sDisplayName.empty() )
@@ -390,6 +404,7 @@ bool Profile::LoadAllFromDir( CString sDir )
 		LOAD_NODE( CategoryScores );
 		LOAD_NODE( ScreenshotData );
 		LOAD_NODE( CalorieData );
+		LOAD_NODE( Awards );
 	}
 		
 	return true;	// FIXME?  Investigate what happens if we always return true.
@@ -414,6 +429,7 @@ bool Profile::SaveAllToDir( CString sDir ) const
 		xml.AppendChild( SaveCategoryScoresCreateNode() );
 		xml.AppendChild( SaveScreenshotDataCreateNode() );
 		xml.AppendChild( SaveCalorieDataCreateNode() );
+		xml.AppendChild( SaveAwardsCreateNode() );
 		bool bSaved = xml.SaveToFile(fn);
 		if( bSaved && PREFSMAN->m_bSignProfileData )
 		{
@@ -1530,4 +1546,155 @@ float Profile::GetCaloriesBurnedForDay( Day day ) const
 		return 0;
 	else
 		return i->second;
+}
+
+XNode* Profile::AwardRecord::CreateNode() const
+{
+	XNode* pNode = new XNode;
+	pNode->name = "AwardRecord";
+
+	pNode->AppendChild( "FirstTime", first );
+	pNode->AppendChild( "LastTime",	last );
+	pNode->AppendChild( "Count",	iCount );
+
+	return pNode;
+}
+
+void Profile::AwardRecord::LoadFromNode( const XNode* pNode )
+{
+	Unset();
+
+	ASSERT( pNode->name == "AwardRecord" );
+	pNode->GetChildValue( "FirstTime", (int&)first );	// time_t is a signed long in Win32.  Is this OK on other platforms?
+	pNode->GetChildValue( "LastTime", (int&)last );
+	pNode->GetChildValue( "Count", iCount );
+}
+
+void Profile::LoadAwardsFromNode( const XNode* pNode )
+{
+	CHECKPOINT;
+
+	ASSERT( pNode->name == "Awards" );
+	for( XNodes::const_iterator pAward = pNode->childs.begin(); 
+		pAward != pNode->childs.end(); 
+		pAward++ )
+	{
+		if( (*pAward)->name == "PerDifficultyAward" )
+		{
+			CString sStepsType;
+			if( !(*pAward)->GetAttrValue( "StepsType", sStepsType ) )
+				WARN_AND_CONTINUE;
+			StepsType st = GameManager::StringToNotesType( sStepsType );
+			if( st == STEPS_TYPE_INVALID )
+				WARN_AND_CONTINUE;
+
+			CString sDifficulty;
+			if( !(*pAward)->GetAttrValue( "Difficulty", sDifficulty ) )
+				WARN_AND_CONTINUE;
+			Difficulty dc = StringToDifficulty( sDifficulty );
+			if( dc == DIFFICULTY_INVALID )
+				WARN_AND_CONTINUE;
+
+			CString sPerDifficultyAward;
+			if( !(*pAward)->GetAttrValue( "PerDifficultyAward", sPerDifficultyAward ) )
+				WARN_AND_CONTINUE;
+			PerDifficultyAward pda = StringToPerDifficultyAward( sPerDifficultyAward );
+			if( pda == PER_DIFFICULTY_AWARD_INVALID )
+				WARN_AND_CONTINUE;
+
+			AwardRecord &ar = m_PerDifficultyAwards[st][dc][pda];
+			
+			XNode* pAwardRecord = (*pAward)->GetChild("AwardRecord");
+			if( pAwardRecord == NULL )
+				WARN_AND_CONTINUE;
+
+			ar.LoadFromNode( pAwardRecord );
+		}
+		else if( (*pAward)->name == "PeakComboAward" )
+		{
+			CString sPeakComboAward;
+			if( !(*pAward)->GetAttrValue( "PerDifficultyAward", sPeakComboAward ) )
+				WARN_AND_CONTINUE;
+			PeakComboAward pca = StringToPeakComboAward( sPeakComboAward );
+			if( pca == PEAK_COMBO_AWARD_INVALID )
+				WARN_AND_CONTINUE;
+
+			AwardRecord &ar = m_PeakComboAwards[pca];
+			
+			XNode* pAwardRecord = (*pAward)->GetChild("AwardRecord");
+			if( pAwardRecord == NULL )
+				WARN_AND_CONTINUE;
+
+			ar.LoadFromNode( pAwardRecord );
+		}
+		else
+			WARN_AND_CONTINUE;
+	}	
+}
+
+XNode* Profile::SaveAwardsCreateNode() const
+{
+	CHECKPOINT;
+
+	const Profile* pProfile = this;
+	ASSERT( pProfile );
+
+	XNode* pNode = new XNode;
+	pNode->name = "Awards";
+
+	FOREACH_StepsType( st )
+	{
+		FOREACH_Difficulty( dc )
+		{
+			FOREACH_PerDifficultyAward( pda )
+			{
+				const AwardRecord &ar = m_PerDifficultyAwards[st][dc][pda];
+				if( !ar.IsSet() )
+					continue;
+
+				XNode* pAward = pNode->AppendChild( "PerDifficultyAward" );
+
+				pAward->AppendAttr( "StepsType", GameManager::NotesTypeToString(st) );
+				pAward->AppendAttr( "Difficulty", DifficultyToString(dc) );
+				pAward->AppendAttr( "PerDifficultyAward", PerDifficultyAwardToString(pda) );
+				
+				pAward->AppendChild( ar.CreateNode() );
+			}
+		}
+	}
+
+	FOREACH_PeakComboAward( pca )
+	{
+		const AwardRecord &ar = m_PeakComboAwards[pca];
+		if( !ar.IsSet() )
+			continue;
+
+		XNode* pAward = pNode->AppendChild( "PeakComboAward" );
+
+		pAward->AppendAttr( "PeakComboAward", PeakComboAwardToString(pca) );
+		
+		pAward->AppendChild( ar.CreateNode() );
+	}
+
+	return pNode;
+}
+
+void Profile::AddPerDifficultyAward( StepsType st, Difficulty dc, PerDifficultyAward pda )
+{
+	m_PerDifficultyAwards[st][dc][pda].Set( time(NULL) );
+}
+
+void Profile::AddPeakComboAward( PeakComboAward pca )
+{
+	m_PeakComboAwards[pca].Set( time(NULL) );
+}
+
+bool Profile::HasPerDifficultyAward( StepsType st, Difficulty dc, PerDifficultyAward pda )
+{
+	return m_PerDifficultyAwards[st][dc][pda].IsSet();
+}
+
+bool Profile::HasPeakComboAward( PeakComboAward pca )
+{
+	return m_PeakComboAwards[pca].IsSet();
 }

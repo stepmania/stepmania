@@ -389,23 +389,51 @@ StageStats::Combo_t StageStats::GetMaxCombo( PlayerNumber pn ) const
 	return ComboList[pn][m];
 }
 
-bool StageStats::FullCombo( PlayerNumber pn ) const
+int	StageStats::GetComboAtStartOfStage( PlayerNumber pn ) const
 {
-	if( ComboList[pn].size() != 1 )
-	{
-		LOG->Trace("FullCombo(%i): %i != 1", pn, (int)ComboList[pn].size());
-		return false;
-	}
+	if( ComboList[pn].empty() )
+		return 0;
+	else
+		return ComboList[pn][0].rollover;
+}
 
-	const float ComboStart = ComboList[pn][0].start;
-	const float ComboEnd = ComboList[pn][0].start + ComboList[pn][0].size;
-
-	const bool ComboStartsAtBeginning = fabs( ComboStart - fFirstPos[pn] ) < 0.001f;
-	const bool ComboEndsAtEnd = fabs( ComboEnd - fLastPos[pn] ) < 0.001f;
+bool StageStats::FullComboOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOrEqual ) const
+{
+	ASSERT( tnsAllGreaterOrEqual >= TNS_GREAT );
+	ASSERT( tnsAllGreaterOrEqual <= TNS_MARVELOUS );
 	
-	LOG->Trace("FullCombo(%i): %f .. %f, %f .. %f, %i, %i",
-		pn, ComboStart, ComboEnd, fFirstPos[pn], fLastPos[pn], ComboStartsAtBeginning, ComboEndsAtEnd );
-	return ComboStartsAtBeginning && ComboEndsAtEnd;
+	for( int i=TNS_MISS; i<tnsAllGreaterOrEqual; i++ )
+	{
+		if( iTapNoteScores[pn][i] > 0 )
+			return false;
+	}
+	return true;
+}
+
+bool StageStats::SingleDigitsOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOrEqual ) const
+{
+	return FullComboOfScore( pn, tnsAllGreaterOrEqual ) &&
+		iTapNoteScores[pn][tnsAllGreaterOrEqual] < 10;
+}
+
+int StageStats::GetTotalTaps( PlayerNumber pn ) const
+{
+	int iTotalTaps = 0;
+	for( int i=TNS_MISS; i<NUM_TAP_NOTE_SCORES; i++ )
+	{
+		iTotalTaps += iTapNoteScores[pn][i];
+	}
+	return iTotalTaps;
+}
+
+float StageStats::GetPercentageOfTaps( PlayerNumber pn, TapNoteScore tns ) const
+{
+	int iTotalTaps = 0;
+	for( int i=TNS_MISS; i<NUM_TAP_NOTE_SCORES; i++ )
+	{
+		iTotalTaps += iTapNoteScores[pn][i];
+	}
+	return iTapNoteScores[pn][tns] / (float)iTotalTaps;
 }
 
 static Grade GetBestGrade()
@@ -487,4 +515,3 @@ Grade GetBestFinalGrade()
 	return top_grade;
 }
 LuaFunction_NoArgs( GetBestFinalGrade, GetBestFinalGrade() );
-

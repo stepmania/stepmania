@@ -94,7 +94,12 @@ struct StageStats
 	vector<Combo_t> ComboList[NUM_PLAYERS];
 	float fFirstPos[NUM_PLAYERS], fLastPos[NUM_PLAYERS];
 
-	bool	FullCombo( PlayerNumber pn ) const;
+	int		GetComboAtStartOfStage( PlayerNumber pn ) const;
+	bool	FullComboOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOrEqual ) const;
+	bool	FullCombo( PlayerNumber pn ) const { return FullComboOfScore(pn,TNS_GREAT); }
+	bool	SingleDigitsOfScore( PlayerNumber pn, TapNoteScore tnsAllGreaterOrEqual ) const;
+	int		GetTotalTaps( PlayerNumber pn ) const;
+	float	GetPercentageOfTaps( PlayerNumber pn, TapNoteScore tns ) const;
 	void	UpdateComboList( PlayerNumber pn, float pos, bool rollover );
 	Combo_t GetMaxCombo( PlayerNumber pn ) const;
 };

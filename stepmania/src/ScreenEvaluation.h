@@ -31,8 +31,8 @@
 #include "HighScore.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
-const int NUM_JUDGE_LINES =	9;	// marvelous, perfect, great, good, boo, miss, ok, max_combo, error
-const int NUM_STATS_LINES =	4;	// jumps, holds, mines, hands
+enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
+enum StatsLine { jumps, holds, mines, hands, NUM_STATS_LINES };
 
 // sound sequences for the evaluation screen
 struct EvalSoundSequence
@@ -136,7 +136,7 @@ protected:
 	Sprite				m_sprPersonalRecord[NUM_PLAYERS];
 	bool				m_bTryExtraStage;
 	Sprite				m_sprTryExtraStage;
-	AutoActor			m_FullCombo[NUM_PLAYERS];
+	AutoActor			m_PerDifficultyAward[NUM_PLAYERS];
 	bool m_bFailed;
 
 	RageSound	m_soundStart;	// sound played if the player passes or fails
