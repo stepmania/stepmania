@@ -3,7 +3,10 @@
 
 struct RageSurface;
 class RageFile;
-bool RageSurface_Save_BMP( RageSurface *surface, RageFile &f );
+namespace RageSurfaceUtils
+{
+	bool SaveBMP( RageSurface *surface, RageFile &f );
+};
 
 #endif
 

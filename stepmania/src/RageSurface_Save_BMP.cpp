@@ -27,7 +27,7 @@ static void write_le32( RageFile &f, CString &sError, uint32_t val )
 	WriteBytes( f, sError, &val, sizeof(uint32_t) );
 }
 
-bool RageSurface_Save_BMP( RageSurface *surface, RageFile &f )
+bool RageSurfaceUtils::SaveBMP( RageSurface *surface, RageFile &f )
 {
 	/* Convert the surface to 24bpp. */
 	RageSurface *converted_surface;

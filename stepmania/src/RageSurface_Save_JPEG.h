@@ -3,7 +3,10 @@
 
 struct RageSurface;
 class RageFile;
-bool IMG_SaveJPG_RW( RageSurface *surface, RageFile &f, bool bHighQual=true );
+namespace RageSurfaceUtils
+{
+	bool SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQual=true );
+};
 
 #endif
 

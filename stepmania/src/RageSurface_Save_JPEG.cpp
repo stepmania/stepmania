@@ -96,7 +96,7 @@ static void jpeg_RageFile_dest( jpeg::j_compress_ptr cinfo, RageFile &f )
 }
 
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
-bool IMG_SaveJPG_RW( RageSurface *surface, RageFile &f, bool bHighQual )
+bool RageSurfaceUtils::SaveJPEG( RageSurface *surface, RageFile &f, bool bHighQual )
 {
 	RageSurface *dst_surface;
 	if( RageSurfaceUtils::ConvertSurface( surface, dst_surface,
