@@ -28,9 +28,8 @@ void InitializeBacktrace();
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx = NULL );
 
 /* Set up a BacktraceContext to get a backtrace for a thread.  ThreadID may
- * be the current thread. */
-int GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx );
-void GetCurrentBacktraceContext( BacktraceContext *ctx );
+ * not be the current thread. */
+bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx );
 
 /* Set up a BacktraceContext to get a backtrace after receiving a signal, given
  * a ucontext_t (see sigaction(2)).  (This interface is UNIX-specific.) */

@@ -22,24 +22,12 @@ void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc )
 	ctx->pid = GetCurrentThreadId();
 }
 
-void GetCurrentBacktraceContext( BacktraceContext *ctx )
+static void GetCurrentBacktraceContext( BacktraceContext *ctx )
 {
 	register void *esp __asm__ ("esp");
 	ctx->esp = (long) esp;
 	ctx->eip = (long) GetThreadBacktraceContext;
 	ctx->ebp = (long) __builtin_frame_address(0);
-}
-
-int GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
-{
-	ctx->pid = ThreadID;
-
-	if( ThreadID != GetCurrentThreadId() )
-		return GetThreadContext( ThreadID, ctx );
-
-	GetCurrentBacktraceContext( ctx );
-
-	return 0;
 }
 
 static const char *itoa(unsigned n)
@@ -293,16 +281,18 @@ void GetExceptionBacktraceContext( BacktraceContext *ctx, const ExceptionInforma
 	ctx->FramePtr = (void *) exception->registerImage->R1.lo;
 }
 
-void GetCurrentBacktraceContext( BacktraceContext *ctx )
-{
-	ctx->FramePtr = __builtin_return_address(2);
-}
-
 void InitializeBacktrace() { }
 
 void GetBacktrace( const void **buf, size_t size, const BacktraceContext *ctx )
 {
-	Frame *frame = (Frame *) ctx->FramePtr;
+	BacktraceContext CurrentCtx;
+	if( ctx == NULL )
+	{
+		ctx = &CurrentCtx;
+		CurrentCtx.FramePtr = (void *) __builtin_frame_address(0);
+	}
+	
+	const Frame *frame = (Frame *) ctx->FramePtr;
 
 	unsigned i = 0;
 	while( frame && i < size-1 ) // -1 for NULL

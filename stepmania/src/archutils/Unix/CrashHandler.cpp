@@ -292,7 +292,10 @@ static void RunCrashHandler( const CrashData *crash )
 	
 	/* Do this early, so functions called below don't end up on the backtrace. */
 	const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-	GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, &crash->ctx );
+	if( crash->type == CrashData::FORCE_CRASH_THIS_THREAD )
+		GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, NULL );
+	else
+		GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, &crash->ctx );
 	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
@@ -333,7 +336,6 @@ void ForceCrashHandler( const char *reason )
 	strncpy( crash.reason, reason, sizeof(crash.reason) );
 	crash.reason[ sizeof(crash.reason)-1 ] = 0;
 
-	GetCurrentBacktraceContext( &crash.ctx );
 	RunCrashHandler( &crash );
 }
 

@@ -147,14 +147,14 @@ int ResumeThread( int ThreadID )
 }
 
 
-/* Get user_regs_struct for a thread.  tid must not be the current thread.
+/* Get a BacktraceContext for a thread.  ThreadID must not be the current thread.
  *
  * tid() is a PID (from getpid) or a TID (from gettid).  Note that this may have kernel compatibility
  * problems, because NPTL is new and its interactions with ptrace() aren't well-defined.
  * If we're on a non-NPTL system, tid is a regular PID. */
-int GetThreadContext( int ThreadID, BacktraceContext *ctx )
+bool GetThreadBacktraceContext( int ThreadID, BacktraceContext *ctx )
 {
-	/* Can't GetThreadContext the current thread. */
+	/* Can't GetThreadBacktraceContext the current thread. */
 	ASSERT( ThreadID != GetCurrentThreadId() );
 
 	/* Attach to the thread. */
@@ -187,7 +187,7 @@ int GetThreadContext( int ThreadID, BacktraceContext *ctx )
 		ASSERT( ret == 0 );
 	}
 
-
+	ctx->pid = ThreadID;
 	ctx->eip = regs.eip;
 	ctx->esp = regs.esp;
 	ctx->ebp = regs.ebp;

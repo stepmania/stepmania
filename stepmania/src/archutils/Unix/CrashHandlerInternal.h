@@ -22,6 +22,7 @@ struct CrashData
 		// FORCE_CRASH_DEADLOCK
 	} type;
 
+	/* Everything except FORCE_CRASH_THIS_THREAD: */
 	BacktraceContext ctx;
 
 	/* FORCE_CRASH_DEADLOCK only: */
