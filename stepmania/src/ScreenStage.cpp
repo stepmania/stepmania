@@ -235,7 +235,7 @@ ScreenStage::ScreenStage()
 	{
 		const int iStageNo = GAMESTATE->GetStageIndex()+1;	
 
-		int ez2Final=0; // if we're 0 it's not a final stage. if we're 1 it is.
+		bool ez2Final=false;
 		// why do this? Ez2dancer uses NORMAL for it's final stage but just re-arranges
 		// the elements. so the following takes us into NORMAL and just re-arranges stuff
 		// the ez2Final is so that when we're in normal we can go and see if we're really
@@ -248,7 +248,7 @@ ScreenStage::ScreenStage()
 				m_sprNumbers[i].Load( THEME->GetPathTo("Graphics","stage numbers final") );
 				m_sprNumbers[i].StopAnimating();
 			}
-			ez2Final=1;
+			ez2Final=true;
 			stage_mode = MODE_NORMAL;
 		}
 
@@ -291,7 +291,7 @@ ScreenStage::ScreenStage()
 
 			int bg_modeoffset=0; // used to shuffle some graphics if we're in FINAL rather than normal stage
 			float element_y_offsets=0.0f; // used to shuffle some graphics if we're in FINAL rather than nornal stage
-			if (ez2Final == 1) // if we're in final redefine those offsets
+			if (ez2Final) // if we're in final redefine those offsets
 			{
 				element_y_offsets = 25.0f;
 				bg_modeoffset = 4; // shuffle graphics +4 in the elements file for FINAL graphics.
@@ -310,7 +310,7 @@ ScreenStage::ScreenStage()
 			// so if we should actually be on final stage
 			// setup this extra background element
 			
-			if (ez2Final == 1) 
+			if (ez2Final) 
 			{
 				m_sprbgxtra.Load( THEME->GetPathTo("Graphics","stage elements") ); // get the graphic
 				m_sprbgxtra.StopAnimating(); 
@@ -325,10 +325,10 @@ ScreenStage::ScreenStage()
 
 
 			m_sprbg[0].SetXY( CENTER_X, CENTER_Y+150); // this is where we want the red bar graphic....
-			if (ez2Final == 1) // however in final...
+			if (ez2Final) // however in final...
 				m_sprbg[0].SetXY( CENTER_X-30, CENTER_Y-160); // we want it somewhere else
 			m_sprbg[0].ZoomToHeight( 100 ); // it's fairly high in normal
-			if (ez2Final == 1) // but in final...
+			if (ez2Final) // but in final...
 				m_sprbg[0].ZoomToHeight( 30 ); // it needs to be a bit more squashed
 			m_sprbg[0].ZoomToWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
 			m_sprbg[0].SetRotation( -20 ); // and is initially this rotation
@@ -355,7 +355,7 @@ ScreenStage::ScreenStage()
 				m_frameStage.AddChild( &m_sprbg[i] ); 
 			}
 
-			if (ez2Final == 1) // if we're in FINAL add that extra background element mentioned earlier.
+			if (ez2Final) // if we're in FINAL add that extra background element mentioned earlier.
 			{
 				m_frameStage.AddChild( &m_sprbgxtra );
 			}
@@ -388,7 +388,7 @@ ScreenStage::ScreenStage()
 			m_stagedesc[0].SetXY( CENTER_X-400, CENTER_Y-150+element_y_offsets ); // set the intiial desc positions
 			m_stagedesc[1].SetXY( CENTER_X+400, CENTER_Y+70+element_y_offsets ); 
 			
-			if (ez2Final == 1)
+			if (ez2Final)
 			{
 				m_stagedesc[1].SetY( CENTER_Y+140.0f ); // description text is in a different Y location on final stage
 			}
@@ -398,7 +398,7 @@ ScreenStage::ScreenStage()
 				m_ez2ukm[i].SetText( "STEPMANIA EZ2 MOVE" ); // choose something better if you like ;)
 				m_ez2ukm[i].SetDiffuse( D3DXCOLOR(1,1,1,1) ); // it's white
 				m_ez2ukm[i].BeginTweening(0.5f); // start it tweening
-				if (ez2Final == 1)
+				if (ez2Final)
 				{
 					m_stagedesc[i].SetText( "FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL FINAL" ); // this is the desc text for final stage
 					m_stagedesc[i].SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // it's blueish
@@ -458,7 +458,7 @@ ScreenStage::ScreenStage()
 					if (j == 0) // if it's the first set
 					{
 						m_sprScrollingBlobs[j][i].SetXY( CENTER_X-(SCREEN_WIDTH/2)-500-((i*i)*4), CENTER_Y + 135 ); // starting position
-						if (ez2Final == 1)
+						if (ez2Final)
 						{
 							m_sprScrollingBlobs[j][i].SetY( CENTER_Y-160); // different Y position for FINAL stage
 						}
@@ -466,7 +466,7 @@ ScreenStage::ScreenStage()
 					else // if it's the second set
 					{
 						m_sprScrollingBlobs[j][i].SetXY( CENTER_X+(SCREEN_WIDTH/2)+500-((i*i)*4), CENTER_Y+170 ); // starting position
-						if (ez2Final == 1)
+						if (ez2Final)
 						{
 							m_sprScrollingBlobs[j][i].SetY( CENTER_Y+180 ); // different Y position for FINAL stage
 						}
@@ -529,12 +529,12 @@ ScreenStage::ScreenStage()
 
 			m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*166.0f,1.0f/225.0f*83.0f,1/225.0f*16.0f,1) ); // orangey colour
 
-			if (ez2Final == 1) // if we're final stage 
+			if (ez2Final) // if we're final stage 
 			{
 				m_stagename.SetDiffuse( D3DXCOLOR(1.0f/225.0f*227.0f,1.0f/225.0f*228.0f,1/225.0f*255.0f,1) ); // blueish colour
 				m_stagename.SetText( "THE FINAL STAGE" );
 				stage_mode = MODE_FINAL; // set back to final again.
-				ez2Final = 0;
+				ez2Final = false;
 			}
 
 			m_stagename.BeginTweening(0.5f); // start tweening them to their new home
