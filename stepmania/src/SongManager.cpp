@@ -182,7 +182,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 	}
 
 	LOG->Trace( "Group banner for '%s' is '%s'.", sGroupDirName.c_str(), 
-		sBannerPath != ""? sBannerPath.c_str():"(none)" );
+				sBannerPath != ""? sBannerPath.c_str():"(none)" );
 	m_sGroupNames.push_back( sGroupDirName );
 	m_sGroupBannerPaths.push_back(sBannerPath);
 }
@@ -212,10 +212,11 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		SortCStringArray( arraySongDirs );
 
-		LOG->Trace("Attempting to load %i songs from \"%s\"", arraySongDirs.size(), (sDir+sGroupDirName).c_str() );
+		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
+				   (sDir+sGroupDirName).c_str() );
 		int loaded = 0;
 
-		for( unsigned j=0; j< arraySongDirs.size(); j++ )	// for each song dir
+		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
 			CString sSongDirName = arraySongDirs[j];
 
@@ -223,14 +224,16 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
-			if( ld ) {
+			if( ld )
+			{
 				ld->SetText( ssprintf("Loading songs...\n%s\n%s",
-					Basename(sGroupDirName).c_str(),
-					Basename(sSongDirName).c_str()));
+									  Basename(sGroupDirName).c_str(),
+									  Basename(sSongDirName).c_str()));
 				ld->Paint();
 			}
 			Song* pNewSong = new Song;
-			if( !pNewSong->LoadFromSongDir( sSongDirName ) ) {
+			if( !pNewSong->LoadFromSongDir( sSongDirName ) )
+			{
 				/* The song failed to load. */
 				delete pNewSong;
 				continue;
@@ -707,9 +710,10 @@ void SongManager::Invalidate( Song *pStaleSong )
 	// invalidate cache
 	StepsID::Invalidate( pStaleSong );
 
-#define CONVERT_COURSE_POINTER( pCourse ) { \
+#define CONVERT_COURSE_POINTER( pCourse ) do { \
 	CourseID id = mapOldCourseToCourseID[pCourse]; /* this will always succeed */ \
-	pCourse = id.ToCourse(); }
+	pCourse = id.ToCourse(); \
+} while(false)
 
 	/* Ugly: We need the course pointer to restore a trail pointer, and both have
 	 * been invalidated.  We need to go through our mapping, and update the course
@@ -726,7 +730,7 @@ void SongManager::Invalidate( Song *pStaleSong )
 	CONVERT_COURSE_POINTER( GAMESTATE->m_pCurCourse );
 	CONVERT_COURSE_POINTER( GAMESTATE->m_pPreferredCourse );
 
-#define CONVERT_TRAIL_POINTER( pTrail ) { \
+#define CONVERT_TRAIL_POINTER( pTrail ) do { \
 	if( pTrail != NULL ) { \
 		map<Trail*,TrailIDAndCourse>::iterator it; \
 		it = mapOldTrailToTrailIDAndCourse.find(pTrail); \
@@ -736,7 +740,7 @@ void SongManager::Invalidate( Song *pStaleSong )
 		const Course *pCourse = tidc.second; \
 		pTrail = id.ToTrail( pCourse, true ); \
 	} \
-}
+} while(false)
 
 	FOREACH_PlayerNumber( pn )
 	{
@@ -798,13 +802,13 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 
 
 
-#define CONVERT_STEPS_POINTER( pSteps ) { \
+#define CONVERT_STEPS_POINTER( pSteps ) do { \
 	if( pSteps != NULL ) { \
 		map<Steps*,StepsID>::iterator it = mapOldStepsToStepsID.find(pSteps); \
 		if( it != mapOldStepsToStepsID.end() ) \
 			pSteps = it->second.ToSteps( pSong, bAllowNotesLoss ); \
 	} \
-}
+} while(false)
 
 
 	FOREACH_PlayerNumber( p )
