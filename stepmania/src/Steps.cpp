@@ -277,6 +277,7 @@ void Steps::CreateBlank( StepsType ntTo )
 
 const Steps *Steps::Real() const
 {
+	ASSERT( this );
 	if(parent) return parent;
 	return this;
 }
