@@ -108,8 +108,8 @@ RageLog::RageLog()
 
 	this->Info( PRODUCT_NAME_VER );
 
-#if defined(_MSC_VER)
-	this->Info( "Last compiled on %s.", __TIMESTAMP__ );
+#if defined(HAVE_VERSION_INFO)
+	this->Info( "Compiled %s (build %lu)", version_time, version_num );
 #endif
 
 	time_t cur_time;
@@ -118,14 +118,10 @@ RageLog::RageLog()
 
 	if ( now )
 	{
-		this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
+		this->Info( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 			1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
 		this->Trace( " " );
 	}
-
-#if defined(HAVE_VERSION_INFO)
-	this->Info("Compiled %s (build %lu)", version_time, version_num);
-#endif
 }
 
 RageLog::~RageLog()
