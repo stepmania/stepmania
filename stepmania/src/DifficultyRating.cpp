@@ -71,7 +71,7 @@ void DifficultyRating::SetOrientation(int Orientation)
 		{
 			//damn! in that case everything is to the side of the middle....
 			int incrementor=1; // start on one... 0 is reserved for 'central' (read odd number)
-			int offset=0.5f;
+			float offset=0.5f;
 			for(int i=0; i<iMaxElements; i++)
 			{
 				if(incrementor == 1) // + offset
@@ -90,7 +90,7 @@ void DifficultyRating::SetOrientation(int Orientation)
 		else
 		{
 			int incrementor=0;
-			int offset=0;
+			float offset=0;
 			for(int i=0; i<iMaxElements; i++)
 			{
 				if(incrementor == 0) // special case.... this means we're in the middle.
