@@ -669,7 +669,8 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iBeat, const 
 }
 
 
-void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow )
+void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, float fPercentFadeToFail, float fColorScale, bool bGlow,
+							   float fYStartOffset, float fYEndOffset )
 {
 	//
 	// Draw the body (always wavy)
@@ -701,14 +702,29 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iBeat, const bo
 	if( bGlow )
 		fColorScale = 1;
 
+	/* Only draw the section that's within the range specified.  If a hold note is
+	 * very long, don't process or draw the part outside of the range.  Don't change
+	 * fYBodyTop or fYBodyBottom; they need to be left alone to calculate texture
+	 * coordinates. */
+	float fDrawYBodyTop;
+	float fDrawYBodyBottom;
+	{
+		float fYStartPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYStartOffset, m_fYReverseOffsetPixels );
+		fDrawYBodyTop = max( fYBodyTop, fYStartPos );
+	}
+	{
+		float fYEndPos = ArrowEffects::GetYPos( m_pPlayerState, iCol, fYEndOffset, m_fYReverseOffsetPixels );
+		fDrawYBodyBottom = min( fYBodyBottom, fYEndPos );
+	}
+
 	// top to bottom
 	bool bAllAreTransparent = true;
 	bool bLast = false;
-	for( float fY = fYBodyTop; !bLast; fY += fYStep )
+	for( float fY = fDrawYBodyTop; !bLast; fY += fYStep )
 	{
-		if( fY >= fYBodyBottom )
+		if( fY >= fDrawYBodyBottom )
 		{
-			fY = fYBodyBottom;
+			fY = fDrawYBodyBottom;
 			bLast = true;
 		}
 
@@ -926,7 +942,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iBeat, const bo
 	}
 }
 
-void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels )
+void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels, float fYStartOffset, float fYEndOffset )
 {
 	int iEndBeat = iBeat + tn.iDuration;
 
@@ -972,7 +988,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBein
 	
 	if( !bFlipHeadAndTail )
 		DrawHoldBottomCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
-	DrawHoldBody( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	DrawHoldBody( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly, fYStartOffset, fYEndOffset );
 	if( bFlipHeadAndTail )
 		DrawHoldTopCap( tn, iCol, iBeat, bIsBeingHeld, fYHead, fYTail, fYStep, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
@@ -984,7 +1000,7 @@ void NoteDisplay::DrawHold( const TapNote &tn, int iCol, int iBeat, bool bIsBein
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
-		DrawHold( tn, iCol, iBeat, bIsBeingHeld, bIsActive, Result, fPercentFadeToFail, true, fReverseOffsetPixels );
+		DrawHold( tn, iCol, iBeat, bIsBeingHeld, bIsActive, Result, fPercentFadeToFail, true, fReverseOffsetPixels, fYStartOffset, fYEndOffset );
 }
 
 void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting )
