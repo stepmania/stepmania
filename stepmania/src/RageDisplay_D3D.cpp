@@ -942,7 +942,7 @@ void RageDisplay_D3D::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 	g_iCurrentTextureIndex = iTextureUnitIndex;
 
 //	g_DeviceCaps.MaxSimultaneousTextures = 1;
-	if( g_iCurrentTextureIndex >= g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	if( pTexture == NULL )
@@ -964,7 +964,7 @@ void RageDisplay_D3D::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 }
 void RageDisplay_D3D::SetTextureModeModulate()
 {
-	if( g_iCurrentTextureIndex >= g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
@@ -977,7 +977,7 @@ void RageDisplay_D3D::SetTextureModeModulate()
 
 void RageDisplay_D3D::SetTextureModeGlow(GlowMode m)
 {
-	if( g_iCurrentTextureIndex >= g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
@@ -990,7 +990,7 @@ void RageDisplay_D3D::SetTextureModeGlow(GlowMode m)
 
 void RageDisplay_D3D::SetTextureModeAdd()
 {
-	if( g_iCurrentTextureIndex >= g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
@@ -1003,7 +1003,7 @@ void RageDisplay_D3D::SetTextureModeAdd()
 
 void RageDisplay_D3D::SetTextureFiltering( bool b )
 {
-	if( g_iCurrentTextureIndex >= g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
@@ -1070,7 +1070,7 @@ void RageDisplay_D3D::ClearZBuffer()
 
 void RageDisplay_D3D::SetTextureWrapping( bool b )
 {
-	if( g_iCurrentTextureIndex >= g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	int mode = b ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
@@ -1298,7 +1298,7 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 
 void RageDisplay_D3D::SetSphereEnironmentMapping( bool b )
 {
-	if( g_iCurrentTextureIndex >= g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	// http://www.gamasutra.com/features/20000811/wyatt_03.htm
