@@ -47,9 +47,11 @@ NotesLoaderDWI.cpp NotesLoaderDWI.h NotesLoaderKSF.cpp NotesLoaderKSF.h NotesLoa
 NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h NoteTypes.cpp NoteTypes.h Player.cpp Player.h \
 PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h StyleDef.cpp StyleDef.h StyleInput.h \
-TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h
+TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h \
+LyricsLoader.cpp LyricsLoader.h
 
-FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
+FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h LRCFile.cpp LRCFile.h
+
 
 StepMania = global.h ScreenDimensions.h StdString.h StepMania.cpp StepMania.h
 
