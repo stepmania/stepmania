@@ -1354,12 +1354,18 @@ bool Song::Matches(CString sGroup, CString sSong) const
 
 void Song::FreeAllLoadedFromProfiles()
 {
+	/* RemoveSteps will remove and recreate autogen notes, which may reorder
+	 * m_vpSteps, so be careful not to skip over entries. */
+	vector<Steps*> apToRemove;
 	for( int s=m_vpSteps.size()-1; s>=0; s-- )
 	{
 		Steps* pSteps = m_vpSteps[s];
 		if( pSteps->WasLoadedFromProfile() )
-			this->RemoveSteps( pSteps );
+			apToRemove.push_back( pSteps );
 	}
+
+	for( unsigned i = 0; i < apToRemove.size(); ++i )
+		this->RemoveSteps( apToRemove[i] );
 }
 
 int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
