@@ -179,8 +179,8 @@ void FontPage::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
 		float ExtraRight = min( float(DrawExtraPixelsRight), (iFrameWidth-iCharWidth)/2.0f );
 
 		/* Move left and expand right. */
-		glyphs[i].rect.left -= ExtraLeft / m_pTexture->GetTextureWidth();
-		glyphs[i].rect.right += ExtraRight / m_pTexture->GetTextureWidth();
+		glyphs[i].rect.left -= ExtraLeft / m_pTexture->GetSourceWidth();
+		glyphs[i].rect.right += ExtraRight / m_pTexture->GetSourceWidth();
 		glyphs[i].hshift -= ExtraLeft;
 		glyphs[i].width += ExtraLeft + ExtraRight;
 	}
