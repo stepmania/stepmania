@@ -79,12 +79,21 @@ bool IniFile::WriteFile( const CString &sPath )
 		if (k->second.empty())
 			continue;
 
-		f.PutLine( ssprintf("[%s]", k->first.c_str()) );
+		if( f.PutLine( ssprintf("[%s]", k->first.c_str()) ) == -1 )
+		{
+			m_sError = f.GetError();
+			return false;
+		}
+
 
 		for( key::const_iterator i = k->second.begin(); i != k->second.end(); ++i )
 			f.PutLine( ssprintf("%s=%s", i->first.c_str(), i->second.c_str()) );
 
-		f.PutLine( "" );
+		if( f.PutLine( "" ) == -1 )
+		{
+			m_sError = f.GetError();
+			return false;
+		}
 	}
 	return true;
 }
