@@ -291,7 +291,7 @@ static void LifeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
 
 static void ShowSongOptions( int &sel, bool ToSel, const CStringArray &choices )
 {
-	const PrefsManager::Maybe mapping[] = { PrefsManager::YES,PrefsManager::NO,PrefsManager::ASK };
+	const PrefsManager::Maybe mapping[] = { PrefsManager::NO,PrefsManager::YES,PrefsManager::ASK };
 	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
