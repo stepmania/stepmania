@@ -13,8 +13,11 @@ Global
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug.Build.0 = Debug|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.ActiveCfg = Release|Win32
 		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release.Build.0 = Release|Win32
+		{110FE3E0-9B08-420A-BAF8-06FF3E77EEA1}.Debug.ActiveCfg = Debug|Win32
+		{110FE3E0-9B08-420A-BAF8-06FF3E77EEA1}.Release.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		DPBuild = 5
 	EndGlobalSection
 	GlobalSection(ExtensibilityAddIns) = postSolution
 	EndGlobalSection
