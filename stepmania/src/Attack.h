@@ -18,6 +18,7 @@ struct Attack
 	bool IsBlank() { return sModifier.empty(); }
 	void MakeBlank() { sModifier=""; }
 	Attack() { fStartSecond = -1; bOn = false; bGlobal = false; }
+	bool operator== ( const Attack &rhs ) const;
 };
 typedef vector<Attack> AttackArray;
 

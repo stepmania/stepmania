@@ -26,3 +26,15 @@ void Attack::GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBea
 
 	RAGE_ASSERT_M( fEndBeat >= fStartBeat, ssprintf("%f >= %f", fEndBeat, fStartBeat) );
 }
+
+bool Attack::operator== ( const Attack &rhs ) const
+{
+#define EQUAL(a) (a==rhs.a)
+	return 
+		EQUAL(level) &&
+		EQUAL(fStartSecond) &&
+		EQUAL(fSecsRemaining) &&
+		EQUAL(sModifier) &&
+		EQUAL(bOn) &&
+		EQUAL(bGlobal);
+}
