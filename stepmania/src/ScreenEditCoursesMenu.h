@@ -10,7 +10,6 @@ class ScreenEditCoursesMenu : public ScreenWithMenuElements
 public:
 	ScreenEditCoursesMenu( CString sName );
 
-	virtual void DrawPrimitives();
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:

@@ -25,8 +25,6 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuEl
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 
-	GAMESTATE->m_CurStyle = STYLE_INVALID;
-
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
@@ -41,11 +39,6 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuEl
 	this->SortByDrawOrder();
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEditCoursesMenu music") );
-}
-
-void ScreenEditCoursesMenu::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
 }
 
 void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
