@@ -17,12 +17,10 @@ void CreateBinaryTestFile( RageFile &f, int size )
 	}
 }
 
-extern CString g_Root;
-
 void CreateBinaryTestFile( CString fn, int size )
 {
 	RageFile f;
-	f.Open( g_Root + "/" + fn, RageFile::WRITE );
+	f.Open( fn, RageFile::WRITE );
 	CreateBinaryTestFile( f, size );
 	f.Close();
 
@@ -102,7 +100,7 @@ void TestText( int LineSize, bool DOS )
 	if( CreateTestFiles )
 	{
 		RageFile f;
-		f.Open( g_Root + "/" + filename, RageFile::WRITE );
+		f.Open( filename, RageFile::WRITE );
 
 		for( unsigned line = 0; line < NumLines; ++line )
 		{
@@ -249,7 +247,7 @@ void TestSeek( bool relative )
 		/* Output a line of text, followed by some junk, followed by binary
 		 * test data. */
 		RageFile f;
-		f.Open( g_Root + "/" + "test.seek", RageFile::WRITE );
+		f.Open( "test.seek", RageFile::WRITE );
 		f.Write( TestLine );
 		f.Write( junk );
 		CreateBinaryTestFile( f, 1024 );
