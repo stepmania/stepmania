@@ -77,7 +77,9 @@ void Profile::InitGeneralData()
 	m_iTotalGameplaySeconds = 0;
 	m_iCurrentCombo = 0;
 	m_fTotalCaloriesBurned = 0;
+	m_GoalType = (GoalType)0;
 	m_iGoalCalories = 0;
+	m_iGoalSeconds = 0;
 	m_iTotalDancePoints = 0;
 	m_iNumExtraStagesPassed = 0;
 	m_iNumExtraStagesFailed = 0;
@@ -796,7 +798,9 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pGeneralDataNode->AppendChild( "CurrentCombo",					m_iCurrentCombo );
 	pGeneralDataNode->AppendChild( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
+	pGeneralDataNode->AppendChild( "GoalType",						m_GoalType );
 	pGeneralDataNode->AppendChild( "GoalCalories",					m_iGoalCalories );
+	pGeneralDataNode->AppendChild( "GoalSeconds",						m_iGoalSeconds );
 	pGeneralDataNode->AppendChild( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
 	pGeneralDataNode->AppendChild( "LastPlayedDate",				m_LastPlayedDate );
 	pGeneralDataNode->AppendChild( "TotalDancePoints",				m_iTotalDancePoints );
@@ -947,7 +951,9 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
 	pNode->GetChildValue( "CurrentCombo",					m_iCurrentCombo );
 	pNode->GetChildValue( "TotalCaloriesBurned",			m_fTotalCaloriesBurned );
+	pNode->GetChildValue( "GoalType",						(int&)m_GoalType );
 	pNode->GetChildValue( "GoalCalories",					m_iGoalCalories );
+	pNode->GetChildValue( "GoalSeconds",					m_iGoalSeconds );
 	pNode->GetChildValue( "LastPlayedMachineGuid",			m_sLastPlayedMachineGuid );
 	pNode->GetChildValue( "LastPlayedDate",					m_LastPlayedDate );
 	pNode->GetChildValue( "TotalDancePoints",				m_iTotalDancePoints );
@@ -1674,9 +1680,11 @@ class LunaProfile : public Luna<T>
 public:
 	LunaProfile() { LUA->Register( Register ); }
 
+	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
 	static int GetGoalCalories( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iGoalCalories ); return 1; }
+	static int GetGoalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_iGoalSeconds ); return 1; }
 	static int GetCaloriesBurnedToday( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCaloriesBurnedToday() ); return 1; }
-	static int GetSaved( T* p, lua_State *L )	{ p->m_SavedLuaData.PushSelf(L); return 1; }
+	static int GetSaved( T* p, lua_State *L )				{ p->m_SavedLuaData.PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
