@@ -1,5 +1,7 @@
-#ifndef RAGE_SOUND_READER_RESAMPLE_FAST
-#define RAGE_SOUND_READER_RESAMPLE_FAST
+/* RageSoundReader_Resample_Fast - interface for RageSoundResampler. */
+
+#ifndef RAGE_SOUND_READER_RESAMPLE_FAST_H
+#define RAGE_SOUND_READER_RESAMPLE_FAST_H
 
 #include "RageSoundReader.h"
 #include "RageSoundReader_Resample.h"

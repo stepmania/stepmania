@@ -1,3 +1,5 @@
+/* RageSoundResampler - Very low quality linear-interpolating audio resampler. */
+
 #ifndef RAGE_SOUND_RESAMPLER_H
 #define RAGE_SOUND_RESAMPLER_H
 

@@ -1,5 +1,7 @@
-#ifndef RAGE_SOUND_READER_RESAMPLE_GOOD
-#define RAGE_SOUND_READER_RESAMPLE_GOOD
+/* RageSoundReader_Resample_Fast - interface for libresample. */
+
+#ifndef RAGE_SOUND_READER_RESAMPLE_GOOD_H
+#define RAGE_SOUND_READER_RESAMPLE_GOOD_H
 
 #include "RageSoundReader.h"
 #include "RageSoundReader_Resample.h"
