@@ -119,7 +119,7 @@ void Background::LoadFromSong( Song* pSong )
 		m_BackgroundMode = MODE_ANIMATIONS;
 
 
-	const CString sSongBackgroundPath = sSongBackgroundPath;
+	const CString sSongBackgroundPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo("Graphics","fallback background");
 
 	//
 	// Load the static background that will before notes start and after notes end
