@@ -34,6 +34,18 @@ static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
 					g_iNumChecksSinceLastReset;
 
+CString PixelFormatToString( PixelFormat pixfmt )
+{
+	const CString s[NUM_PIX_FORMATS] = {
+		"FMT_RGBA8",
+		"FMT_RGBA4",
+		"FMT_RGB5A1",
+		"FMT_RGB5",
+		"FMT_RGB8",
+		"FMT_PAL" };
+	return s[pixfmt];
+};
+
 void RageDisplay::ProcessStatsOnFlip()
 {
 	g_iFramesRenderedSinceLastCheck++;

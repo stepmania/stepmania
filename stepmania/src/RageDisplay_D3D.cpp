@@ -122,7 +122,7 @@ static void SetPalette( unsigned TexResource )
 #define D3DFVF_RAGEVERTEX (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_DIFFUSE|D3DFVF_TEX1)	// D3D FVF flags which describe our vertex structure
 
 
-const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
+static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	{
 		/* A8B8G8R8 */
 		32,
@@ -164,6 +164,13 @@ const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		{ 0,0,0,0 } /* N/A */
 	}
 };
+
+const PixelFormatDesc *RageDisplay::GetPixelFormatDesc(PixelFormat pf) const
+{
+	ASSERT( pf < NUM_PIX_FORMATS );
+	return &PIXEL_FORMAT_DESC[pf];
+}
+
 
 
 RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync, CString sWindowTitle, CString sIconFile )

@@ -320,9 +320,9 @@ void MovieTexture_DShow::CreateTexture()
 	if(TEXTUREMAN->GetTextureColorDepth() == 16)
 		m_PixelFormat = FMT_RGB5;
 
-	m_img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight, PIXEL_FORMAT_DESC[m_PixelFormat].bpp,
-		PIXEL_FORMAT_DESC[m_PixelFormat].masks[0], PIXEL_FORMAT_DESC[m_PixelFormat].masks[1],
-		PIXEL_FORMAT_DESC[m_PixelFormat].masks[2], PIXEL_FORMAT_DESC[m_PixelFormat].masks[3]);
+	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(m_PixelFormat);
+	m_img = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, m_iTextureWidth, m_iTextureHeight,
+		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 
 	m_uTexHandle = DISPLAY->CreateTexture( m_PixelFormat, m_img );
 }

@@ -230,9 +230,9 @@ void RageBitmapTexture::Create()
 			(pixfmt==FMT_RGBA4 || pixfmt==FMT_RGB5A1) )	/* Don't dither if format is 32bpp; there's no point. */
 		{
 			/* Dither down to the destination format. */
-			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PIXEL_FORMAT_DESC[pixfmt].bpp,
-				PIXEL_FORMAT_DESC[pixfmt].masks[0], PIXEL_FORMAT_DESC[pixfmt].masks[1],
-				PIXEL_FORMAT_DESC[pixfmt].masks[2], PIXEL_FORMAT_DESC[pixfmt].masks[3]);
+			const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h,
+				pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 
 			SM_SDL_ErrorDiffusionDither(img, dst);
 			SDL_FreeSurface(img);
@@ -247,9 +247,10 @@ void RageBitmapTexture::Create()
 
 	/* Convert the data to the destination format and dimensions 
 	 * required by OpenGL if it's not in it already.  */
-	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, PIXEL_FORMAT_DESC[pixfmt].bpp,
-		PIXEL_FORMAT_DESC[pixfmt].masks[0], PIXEL_FORMAT_DESC[pixfmt].masks[1],
-		PIXEL_FORMAT_DESC[pixfmt].masks[2], PIXEL_FORMAT_DESC[pixfmt].masks[3]);
+
+	const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
+	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight,
+		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 	
 	m_uTexHandle = DISPLAY->CreateTexture( pixfmt, img );
 

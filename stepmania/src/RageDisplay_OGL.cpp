@@ -740,7 +740,7 @@ void RageDisplay::SetBackfaceCull( bool b )
         glDisable( GL_CULL_FACE );
 }
 
-const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
+static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 	{
 		/* B8G8R8A8 */
 		32,
@@ -782,6 +782,12 @@ const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		{ 0,0,0,0 } /* N/A */
 	}
 };
+
+const PixelFormatDesc *RageDisplay::GetPixelFormatDesc(PixelFormat pf) const
+{
+	ASSERT( pf < NUM_PIX_FORMATS );
+	return &PIXEL_FORMAT_DESC[pf];
+}
 
 
 struct GLPixFmtInfo_t {
