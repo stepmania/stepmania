@@ -104,7 +104,7 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStart() + iColNum*0.2f + fYPos*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
 	{
-		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
+//		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
 		const float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 		const float fDistance = -fRealPixelOffset * 2;
 		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
