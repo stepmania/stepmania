@@ -196,22 +196,14 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 #endif
 
 	//
-	// TRICKY:  This eliminates the need for a separate "ignore joy axes"
-	// preference.  Some adapters map the PlayStation digital d-pad to
-	// both axes and buttons.  We want buttons to be used for 
-	// any mappings where possible because presses of buttons aren't mutually 
-	// exclusive and presses of axes are (e.g. can't read presses of both Left and 
-	// Right simultaneously).  So, when the user presses a button, we'll wait
-	// until the next Update before adding a mapping so that we get a chance 
-	// to see all input events the user's press of a panel.  This screen will be
-	// receive input events for joystick axes presses first, then the input events 
-	// for button presses.  We'll use the last input event received in the same 
-	// Update so that a button presses are favored for mapping over axis presses.
+	// TRICKY:  Some adapters map the PlayStation digital d-pad to both axes and
+	// buttons.  We want buttons to be used for any mappings where possible because
+	// presses of buttons aren't mutually exclusive and presses of axes are (e.g.
+	// can't read presses of both Left and Right simultaneously).  So, when the user
+	// presses a button, we'll wait until the next Update before adding a mapping so
+	// that we get a chance to see all input events the user's press of a panel.
+	// Prefer non-axis events over axis events. 
 	//
-
-	/* We can't do that: it assumes that button presses are always received after
-	 * corresponding axis events.  We need to check and explicitly prefer non-axis events
-	 * over axis events. */
 	if( m_iWaitingForPress )
 	{
 		/* Don't allow function keys to be mapped. */
