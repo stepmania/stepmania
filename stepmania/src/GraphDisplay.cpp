@@ -22,8 +22,8 @@ void GraphDisplay::Load( CString TexturePath, float height )
 
 	Unload();
 	m_pTexture = TEXTUREMAN->LoadTexture( TexturePath );
-	m_size.y = (float) m_pTexture->GetTextureHeight();
-	m_size.x = (float) m_pTexture->GetTextureWidth();
+	m_size.x = (float) m_pTexture->GetSourceWidth();
+	m_size.y = (float) m_pTexture->GetSourceHeight();
 
 	for( int i = 0; i < VALUE_RESOLUTION; ++i )
 		m_CurValues[i] = height;
