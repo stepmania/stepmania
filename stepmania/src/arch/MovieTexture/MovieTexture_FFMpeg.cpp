@@ -415,6 +415,18 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
     Play();
 }
 
+MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
+{
+	StopThread();
+	DestroyDecoder();
+	DestroyTexture();
+
+	delete decoder;
+
+	SDL_DestroySemaphore( m_BufferFinished );
+}
+
+
 static CString averr_ssprintf( int err, const char *fmt, ... )
 {
 	ASSERT( err < 0 );
@@ -794,17 +806,6 @@ void MovieTexture_FFMpeg::DecoderThread()
 		ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT );
 	}
 	CHECKPOINT;
-}
-
-MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
-{
-	StopThread();
-	DestroyDecoder();
-	DestroyTexture();
-
-	delete decoder;
-
-	SDL_DestroySemaphore( m_BufferFinished );
 }
 
 void MovieTexture_FFMpeg::Update(float fDeltaTime)
