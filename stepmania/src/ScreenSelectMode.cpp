@@ -33,6 +33,8 @@ Chris Danford
 #define GUIDE_Y		THEME->GetMetricF("ScreenSelectMode", "GuideY")
 #define USECONFIRM THEME->GetMetricI("ScreenSelectMode","UseConfirm")
 #define USE_MODE_SPECIFIC_BGS THEME->GetMetricI("ScreenSelectMode", "UseModeSpecificBGAnims")
+#define ENABLE_CHAR_SELECT THEME->GetMetricB("ScreenSelectMode","EnableCharSelect")
+#define ONLY_2D_CHARS THEME->GetMetricB("ScreenSelectMode","Only2DChars")
 
 /************************************
 ScreenSelectMode (Constructor)
@@ -41,6 +43,14 @@ Desc: Sets up the screen display
 
 ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassName )
 {
+	m_b2DAvailable = m_bCharsAvailable = false;
+
+	for(int pn=0;pn<NUM_PLAYERS;pn++)
+	{
+		m_iCurrentChar[pn]= -1; // minus 1 indicates no character.
+		m_CurChar[pn].SetName(ssprintf("CharacterIconP%d",pn+1));
+		SET_XY( m_CurChar[pn] );
+	}
 	m_bSelected = false;
 	m_ChoiceListFrame.Load( THEME->GetPathToG("ScreenSelectMode list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
@@ -72,7 +82,35 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 			this->AddChild( &m_Backgrounds[i] );
 		}*/
 	}
-	
+
+	// check for character availability
+	vector<Character*> apCharacters;
+	if(ENABLE_CHAR_SELECT)
+	{
+		GAMESTATE->GetCharacters( apCharacters );
+
+		for(int i=0; i<apCharacters.size(); i++)
+		{
+			if(apCharacters[i] != NULL) // check its not null
+			{
+				m_bCharsAvailable = true;
+				if(apCharacters[i]->Has2DElems())
+				{
+					CString mpath = apCharacters[i]->GetSongSelectIconPath();
+					LOG->Trace("Char: %d, %s, 2D: true",i,mpath.c_str());						
+					m_b2DAvailable = true;
+				}
+				else
+				{
+					CString mpath = apCharacters[i]->GetSongSelectIconPath();
+					LOG->Trace("Char: %d, %s, 2D: false",i,mpath.c_str());						
+				}
+			}
+		}
+		for(pn=0;pn<NUM_PLAYERS;pn++)
+			m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode nochar") );	
+	}	
+
 	// m_ScrollingList.UseSpriteType(BANNERTYPE);
 	m_ScrollingList.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y );
 	m_ScrollingList.SetSpacing( ELEM_SPACING );
@@ -216,10 +254,50 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		{
 			m_bSelected = true;
+			SetCharacters();
 		}
 		break;
 	}
 	ScreenSelect::HandleScreenMessage(SM);
+}
+
+void ScreenSelectMode::SetCharacters()
+{
+	vector<Character*> apCharactersToUse;
+	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
+	{
+		if(ONLY_2D_CHARS && m_b2DAvailable)
+		{
+			vector<Character*> apCharacters;
+			GAMESTATE->GetCharacters( apCharacters );
+			for(int i=0; i<apCharacters.size(); i++)
+			{
+				if(apCharacters[i] != NULL) // check its not null
+				{
+					if(apCharacters[i]->Has2DElems())
+					{
+						apCharactersToUse.push_back(apCharacters[i]);
+					}
+				}
+			}
+		}
+		else if(m_bCharsAvailable)
+		{
+			GAMESTATE->GetCharacters( apCharactersToUse );
+		}
+	}
+	for(int pn=0; pn<NUM_PLAYERS; pn++)
+	{
+		if(GAMESTATE->IsPlayerEnabled(pn))
+		{
+			if(ENABLE_CHAR_SELECT && m_iCurrentChar[pn] != -1)
+			{
+				Character* pChar = apCharactersToUse[m_iCurrentChar[pn]];
+				GAMESTATE->m_pCurCharacters[pn] = pChar;
+			}
+		}
+
+	}
 }
 
 void ScreenSelectMode::MenuStart( PlayerNumber pn )
@@ -232,10 +310,13 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 		return;
 	}
 	m_soundStart.Play();
+	SetCharacters();
 	OFF_COMMAND( m_ScrollingList );
 	OFF_COMMAND( m_Guide );
 	OFF_COMMAND( m_ChoiceListHighlight );
 	OFF_COMMAND( m_ChoiceListFrame );
+	for(int i=0; i<NUM_PLAYERS; i++)
+		OFF_COMMAND( m_CurChar[i] );
 
 	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0.5f );
 }
@@ -259,5 +340,121 @@ void ScreenSelectMode::Update( float fDelta )
 //		}
 	}*/
 
+	for(int pn=0; pn<NUM_PLAYERS; pn++)
+	{
+		if(ENABLE_CHAR_SELECT && m_iCurrentChar[pn] != -1)
+		{
+			m_CurChar[pn].Update( fDelta );
+		}
+	}
+
 	ScreenSelect::Update( fDelta );
+}
+
+void ScreenSelectMode::DrawPrimitives()
+{
+	ScreenSelect::DrawPrimitives();
+	for(int pn=0; pn<NUM_PLAYERS; pn++)
+	{
+		if(GAMESTATE->IsPlayerEnabled(pn))
+		{
+			if(ENABLE_CHAR_SELECT)
+			{
+				m_CurChar[pn].Draw();
+			}
+		}
+	}
+}
+
+// todo: optimize the following - Frieza
+
+void ScreenSelectMode::MenuUp(PlayerNumber pn)
+{
+	vector<Character*> apCharactersToUse;
+	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
+	{
+		if(ONLY_2D_CHARS && m_b2DAvailable)
+		{
+			vector<Character*> apCharacters;
+			GAMESTATE->GetCharacters( apCharacters );
+			for(int i=0; i<apCharacters.size(); i++)
+			{
+				if(apCharacters[i] != NULL) // check its not null
+				{
+					if(apCharacters[i]->Has2DElems())
+					{
+						apCharactersToUse.push_back(apCharacters[i]);
+					}
+				}
+			}
+		}
+		else if(m_bCharsAvailable)
+		{
+			GAMESTATE->GetCharacters( apCharactersToUse );
+		}
+	}
+
+	m_CurChar[pn].UnloadTexture();
+	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
+	{
+		if(m_iCurrentChar[pn] <= -1)
+			m_iCurrentChar[pn] = apCharactersToUse.size() -1;
+		else
+			m_iCurrentChar[pn]--; // set to no character
+	
+		if(m_iCurrentChar[pn] != -1)
+		{
+			if(apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
+				m_CurChar[pn].Load( apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
+			else
+				m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode chariconmissing") );
+		}
+		else
+			m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode nochar") );	
+	}	
+}
+
+void ScreenSelectMode::MenuDown(PlayerNumber pn)
+{
+	vector<Character*> apCharactersToUse;
+	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
+	{
+		if(ONLY_2D_CHARS && m_b2DAvailable)
+		{
+			vector<Character*> apCharacters;
+			GAMESTATE->GetCharacters( apCharacters );
+			for(int i=0; i<apCharacters.size(); i++)
+			{
+				if(apCharacters[i] != NULL) // check its not null
+				{
+					if(apCharacters[i]->Has2DElems())
+					{
+						apCharactersToUse.push_back(apCharacters[i]);
+					}
+				}
+			}
+		}
+		else if(m_bCharsAvailable)
+		{
+			GAMESTATE->GetCharacters( apCharactersToUse );
+		}
+	}
+
+	m_CurChar[pn].UnloadTexture();
+	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
+	{
+		if(m_iCurrentChar[pn] < apCharactersToUse.size() - 1 || m_iCurrentChar[pn] == -1)
+			m_iCurrentChar[pn]++;
+		else
+			m_iCurrentChar[pn] = -1; // set to no character
+		if(m_iCurrentChar[pn] != -1)
+		{
+			if(apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
+				m_CurChar[pn].Load( apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
+			else
+				m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode chariconmissing") );
+		}
+		else
+			m_CurChar[pn].Load( THEME->GetPathToG("ScreenSelectMode nochar") );
+	}
 }

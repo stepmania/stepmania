@@ -140,6 +140,7 @@ static const CreditLine CREDIT_LINES[] =
 	{0,"Random Hajile"}, // sent me 3DDX stuff - friez
 	{0,"Chocobo Ghost"}, // sent me ez2 stuff - friez
 	{0,"Tyma"}, // sent me popnmusic stuff - friez
+	{0,"Deluxe"}, // para para noteskins - friez
 	{0,"Lagged"},
 	{0,"The Melting Pot"},
 	{0,"DDRJamz Global BBS"},

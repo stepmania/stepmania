@@ -33,7 +33,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void MenuBack( PlayerNumber pn );
-
+	
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;

@@ -30,9 +30,13 @@ public:
 	CString GetWarmUpAnimationPath() const;
 	CString GetDanceAnimationPath() const;
 	CString GetSongSelectIconPath() const;
+	bool Has2DElems();
+
 
 	CString m_sCharDir;
 	CString m_sName;
+
+
 
 	// All the stuff below will be filled in if this character is playable in Rave mode
 	bool	m_bUsableInRave;	

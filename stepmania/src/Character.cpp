@@ -142,3 +142,23 @@ CString Character::GetHeadPath() const
 		return as[0];
 }
 
+bool Character::Has2DElems()
+{
+	if( DoesFileExist(m_sCharDir + SLASH + "2DFail" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;
+	if( DoesFileExist(m_sCharDir + SLASH + "2DFever" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;
+	if( DoesFileExist(m_sCharDir + SLASH + "2DGood" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;	
+	if( DoesFileExist(m_sCharDir + SLASH + "2DMiss" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;
+	if( DoesFileExist(m_sCharDir + SLASH + "2DWin" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;
+	if( DoesFileExist(m_sCharDir + SLASH + "2DWinFever" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;
+	if( DoesFileExist(m_sCharDir + SLASH + "2DGreat" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;
+	if( DoesFileExist(m_sCharDir + SLASH + "2DIdle" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		return true;
+	return false;
+}

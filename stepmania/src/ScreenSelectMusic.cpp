@@ -101,6 +101,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_Menu.Load( "ScreenSelectMusic" );
 	this->AddChild( &m_Menu );
 
+	// pop'n music has this under the songwheel...
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		Character* pChar = GAMESTATE->m_pCurCharacters[p];
@@ -109,6 +110,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		SET_XY( m_sprCharacterIcon[p] );
 		this->AddChild( &m_sprCharacterIcon[p] );
 	}
+
+
 
 	m_MusicWheelUnder.Load( THEME->GetPathToG("ScreenSelectMusic wheel under") );
 	m_MusicWheelUnder->SetName( "WheelUnder" );
