@@ -103,7 +103,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
 		return;	// ScreenDemonstration will move us to the next scren.  We just need to survive for one update without crashing.
 
 	int p;
@@ -294,7 +294,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_StageName.TurnShadowOff();
 	m_StageName.SetXY( STAGENAME_X, STAGENAME_Y );
 	m_StageName.SetZoom( STAGENAME_ZOOM );
-	m_StageName.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 	this->AddChild( &m_StageName );
 
 	m_MaxCombo.LoadFromNumbers( THEME->GetPathTo("Numbers","gameplay score numbers") );
@@ -419,16 +418,11 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_sprToasty.SetDiffuse( RageColor(1,1,1,0) );
 	this->AddChild( &m_sprToasty );
 
-	Song* pSong;
-	pSong = GAMESTATE->m_pCurSong;
+
 	m_BPMDisplay.SetXY( BPM_X, BPM_Y );
 	m_BPMDisplay.SetZoom( BPM_ZOOM );
 	this->AddChild( &m_BPMDisplay );
-	float fMinBPM, fMaxBPM;
-	pSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
-	m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
 
-	
 	TweenOnScreen();
 
 	for( int i=0; i<30; i++ )
@@ -604,10 +598,18 @@ void ScreenGameplay::LoadNextSong()
 		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p] );
 	}
 
+	/* Set up song-specific graphics. */
 	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
 	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweening( 2 );
 	m_Background.SetTweenDiffuse( RageColor(1,1,1,1) );
+
+	m_StageName.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
+
+	/* XXX: set it to the current BPM, not the range */
+	float fMinBPM, fMaxBPM;
+	GAMESTATE->m_pCurSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
+	m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
 
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 }
