@@ -326,6 +326,31 @@ void Steps::SetRadarValues( const RadarValues& v )
 	m_RadarValues = v;
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaSteps : public Luna<T>
+{
+public:
+	LunaSteps() { LUA->Register( Register ); }
+
+	static int GetStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_StepsType ); return 1; }
+	static int GetDescription( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDescription() ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetStepsType )
+		ADD_METHOD( GetDescription )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Steps )
+// lua end
+
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard, David Wilson
  * All rights reserved.

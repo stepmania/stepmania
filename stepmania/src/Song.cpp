@@ -1404,6 +1404,38 @@ bool Song::HasSignificantBpmChangesOrStops() const
 	return m_Timing.HasBpmChangesOrStops();
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaSong : public Luna<T>
+{
+public:
+	LunaSong() { LUA->Register( Register ); }
+
+	static int GetFullDisplayTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullDisplayTitle() ); return 1; }
+	static int GetFullTranslitTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullTranslitTitle() ); return 1; }
+	static int GetAllSteps( T* p, lua_State *L )
+	{
+		const vector<Steps*> &v = p->GetAllSteps();
+		CreateTableFromArray<Steps*>( v, L );
+		return 1;
+	}
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetFullDisplayTitle )
+		ADD_METHOD( GetFullTranslitTitle )
+		ADD_METHOD( GetAllSteps )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Song )
+// lua end
+
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

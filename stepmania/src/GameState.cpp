@@ -1873,6 +1873,8 @@ public:
 		p->ApplyGameCommand(SArg(1),pn);
 		return 0;
 	}
+	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int SetCurrentSong( T* p, lua_State *L )			{ Song *pS = Luna<Song>::check(L,1); p->m_pCurSong = pS; return 0; }
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentCourse( T* p, lua_State *L )		{ Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; return 0; }
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
@@ -1884,6 +1886,8 @@ public:
 		ADD_METHOD( GetPlayerDisplayName )
 		ADD_METHOD( GetMasterPlayerNumber )
 		ADD_METHOD( ApplyGameCommand )
+		ADD_METHOD( GetCurrentSong )
+		ADD_METHOD( SetCurrentSong )
 		ADD_METHOD( GetCurrentCourse )
 		ADD_METHOD( SetCurrentCourse )
 		ADD_METHOD( SetTemporaryEventMode )

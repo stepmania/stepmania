@@ -15,6 +15,7 @@ class NotesLoader;
 class LyricsLoader;
 class Profile;
 class StepsID;
+struct lua_State;
 
 #define MAX_EDITS_PER_SONG_PER_PROFILE	5
 #define MAX_EDITS_PER_SONG				5*NUM_PROFILE_SLOTS
@@ -223,6 +224,9 @@ public:
 	// Any note that doesn't have a value in the range of this array
 	// means "this note doens't have a keysound".
 	vector<CString> m_vsKeysoundFile;
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	void AdjustDuplicateSteps(); // part of TidyUpData
