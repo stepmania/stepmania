@@ -34,7 +34,7 @@ public:
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Chris Gomez
+ * (c) 2004-2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
