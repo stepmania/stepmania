@@ -123,8 +123,6 @@ enum // BM Buttons
 	BM_BUTTON_KEY3,
 	BM_BUTTON_KEY4,
 	BM_BUTTON_KEY5,
-	BM_BUTTON_KEY6,
-	BM_BUTTON_KEY7,
 	BM_BUTTON_SCRATCHUP,
 	/* XXX special case: this button is an alias of BM_BUTTON_SCRATCHUP for track
 	 * matching. */
@@ -138,6 +136,30 @@ enum // BM Buttons
 	BM_BUTTON_COIN,
 	BM_BUTTON_OPERATOR,
 	NUM_BM_BUTTONS, // leave this at the end.
+};
+
+enum // IIDX Buttons
+{
+	IIDX_BUTTON_KEY1,
+	IIDX_BUTTON_KEY2,
+	IIDX_BUTTON_KEY3,
+	IIDX_BUTTON_KEY4,
+	IIDX_BUTTON_KEY5,
+	IIDX_BUTTON_KEY6,
+	IIDX_BUTTON_KEY7,
+	IIDX_BUTTON_SCRATCHUP,
+	/* XXX special case: this button is an alias of IIDX_BUTTON_SCRATCHUP for track
+	 * matching. */
+	IIDX_BUTTON_SCRATCHDOWN,
+	IIDX_BUTTON_START,
+	IIDX_BUTTON_SELECT,
+	IIDX_BUTTON_MENULEFT,
+	IIDX_BUTTON_MENURIGHT,
+	IIDX_BUTTON_MENUUP,
+	IIDX_BUTTON_MENUDOWN,
+	IIDX_BUTTON_COIN,
+	IIDX_BUTTON_OPERATOR,
+	NUM_IIDX_BUTTONS, // leave this at the end.
 };
 
 enum	// ManiaxButtons

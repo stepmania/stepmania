@@ -111,11 +111,14 @@ enum StepsType
 	STEPS_TYPE_PARA_SINGLE,
 	STEPS_TYPE_DS3DDX_SINGLE,
 	STEPS_TYPE_BM_SINGLE,
-//  MD 10/26/03 - uncomment the following three once we get support in for them
-//  MD 10/28/03 - I was bored.  I wrote support.
     STEPS_TYPE_BM_DOUBLE,
-    STEPS_TYPE_BM_SINGLE7,
-    STEPS_TYPE_BM_DOUBLE7,
+    STEPS_TYPE_IIDX_SINGLE7,
+    STEPS_TYPE_IIDX_DOUBLE7,
+    // These last two are probably going to be treated the same way
+	// as STEPS_TYPE_DANCE_COUPLE - autogenned for use, and then
+	// a duplicate "(edit)" entry for editing only.
+	STEPS_TYPE_IIDX_SINGLE5,
+    STEPS_TYPE_IIDX_DOUBLE5,
     STEPS_TYPE_MANIAX_SINGLE,
 	STEPS_TYPE_MANIAX_DOUBLE,
 	STEPS_TYPE_TECHNO_SINGLE8,

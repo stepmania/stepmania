@@ -19,6 +19,7 @@ enum Game
 	GAME_PARA,		// ParaPAraParadise
 	GAME_DS3DDX,	// Dance Station 3DDX.
 	GAME_BM,		// Beatmania
+	GAME_IIDX,		// Beatmania IIDX
 	GAME_MANIAX,	// DanceManiax
 	GAME_TECHNO,	// TechnoMotion
 	GAME_PNM,   // pop n music
