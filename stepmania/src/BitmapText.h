@@ -28,7 +28,6 @@ public:
 	bool LoadFromTextureAndChars( CString sTexturePath, CString sChars );
 	void SetText( CString sText, CString sAlternateText = "", int iWrapWidthPixels = -1 );
 	void SetMaxWidth( float MaxWidth );
-	void SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext = "" ); // deprecated
 	void SetWrapWidthPixels( int iWrapWidthPixels );
 
 	void CropToWidth( int iWidthInSourcePixels );

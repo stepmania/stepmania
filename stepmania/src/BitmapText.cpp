@@ -307,12 +307,6 @@ void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthP
 	UpdateBaseZoom();
 }
 
-void BitmapText::SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext )
-{
-	m_fMaxWidth = MaxWidth;
-	this->SetText(text, alttext);
-}
-
 void BitmapText::SetMaxWidth( float MaxWidth )
 {
 	m_fMaxWidth = MaxWidth;
