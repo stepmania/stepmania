@@ -642,9 +642,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="FontCharmaps.h">
 			</File>
 			<File
-				RelativePath="Game.h">
-			</File>
-			<File
 				RelativePath="GameConstantsAndTypes.cpp">
 			</File>
 			<File
