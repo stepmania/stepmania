@@ -117,11 +117,11 @@ void ScreenPlayerOptions::ImportOptions()
 
 		// highlight currently selected skin
 		m_iSelectedOption[p][PO_NOTE_SKIN] = -1;
-		for( unsigned i=0; i<m_OptionRowData[PO_NOTE_SKIN].iNumOptions; i++ )
+		for( unsigned j=0; j<m_OptionRowData[PO_NOTE_SKIN].iNumOptions; j++ )
 		{
-			if( 0==stricmp(m_OptionRowData[PO_NOTE_SKIN].szOptionsText[i], NOTESKIN->GetCurNoteSkinName((PlayerNumber)p)) )
+			if( 0==stricmp(m_OptionRowData[PO_NOTE_SKIN].szOptionsText[j], NOTESKIN->GetCurNoteSkinName((PlayerNumber)p)) )
 			{
-				m_iSelectedOption[p][PO_NOTE_SKIN] = i;
+				m_iSelectedOption[p][PO_NOTE_SKIN] = j;
 				break;
 			}
 		}
