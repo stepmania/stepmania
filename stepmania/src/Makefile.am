@@ -62,7 +62,7 @@ TransitionBGAnimation.cpp TransitionBGAnimation.h
 
 Actors = \
 Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h Sample3dObject.cpp Sample3dObject.h \
-Sprite.cpp Sprite.h 
+Sprite.cpp Sprite.h ActorScroller.cpp ActorScroller.h
 
 ActorsInMenus = \
 Banner.cpp Banner.h BannerWithFrame.cpp BannerWithFrame.h BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp \
@@ -73,7 +73,7 @@ GrooveRadar.h GroupList.cpp GroupList.h JukeboxMenu.cpp JukeboxMenu.h MenuElemen
 MenuTimer.cpp MenuTimer.h MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp \
 MusicSortDisplay.h MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
 OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h ScrollBar.cpp ScrollBar.h ScrollingList.cpp \
-ScrollingList.h SmallGradeDisplay.cpp SmallGradeDisplay.h SnapDisplay.cpp SnapDisplay.h TextBanner.cpp TextBanner.h \
+ScrollingList.h SnapDisplay.cpp SnapDisplay.h TextBanner.cpp TextBanner.h \
 HelpDisplay.cpp HelpDisplay.h WheelNotifyIcon.cpp WheelNotifyIcon.h
 
 ActorsInGameplay = \
@@ -95,7 +95,7 @@ ScreenDemonstration.cpp ScreenDemonstration.h ScreenEdit.cpp ScreenEdit.h Screen
 ScreenEditMenu.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h \
 ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp \
 ScreenGameplay.h ScreenGameplayOptions.cpp ScreenGameplayOptions.h ScreenGraphicOptions.cpp \
-ScreenGraphicOptions.h ScreenHowToPlay.h ScreenInputOptions.cpp ScreenInputOptions.h ScreenInstructions.cpp \
+ScreenGraphicOptions.h ScreenHowToPlay.cpp ScreenHowToPlay.h ScreenInputOptions.cpp ScreenInputOptions.h ScreenInstructions.cpp \
 ScreenInstructions.h ScreenIntroMovie.cpp ScreenIntroMovie.h ScreenJukebox.cpp ScreenJukebox.h ScreenJukeboxMenu.cpp \
 ScreenJukeboxMenu.h ScreenLogo.cpp ScreenLogo.h ScreenMachineOptions.cpp ScreenMachineOptions.h ScreenManager.cpp \
 ScreenManager.h ScreenMapControllers.cpp ScreenMapControllers.h ScreenMemoryCard.h ScreenMessage.h \
@@ -110,7 +110,7 @@ ScreenSelectStyle5th.h ScreenSongOptions.cpp ScreenSongOptions.h ScreenStage.cpp
 ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
 ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
 ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h \
-ScreenAutogenOptions.cpp ScreenAutogenOptions.h
+ScreenAutogenOptions.cpp ScreenAutogenOptions.h ScreenCredits.cpp ScreenCredits.h
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
@@ -123,6 +123,7 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    arch/arch.cpp \
 		    arch/LoadingWindow/LoadingWindow_SDL.cpp \
 		    arch/LoadingWindow/LoadingWindow_SDL.h \
+		    arch/LoadingWindow/LoadingWindow_Null.h \
 		    arch/MovieTexture/MovieTexture.cpp \
 		    arch/Sound/RageSoundDriver_Null.cpp
 
@@ -132,9 +133,10 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 # dealing with its build and libjpeg, png, etc--not worth it.
 stepmania_LDADD = \
 		  $(GL_LIBS) \
-		  SDL_sound-1.0.0/.libs/libSDL_sound.a \
-		  SDL-1.2.5/src/.libs/libSDL.a \
+		  $(VPATH)/SDL-1.2.5/src/.libs/libSDL.a \
+		  $(VPATH)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
 		  $(SDL_LIBS)
 
-INCLUDES = $(SDL_CFLAGS) -O0 -g
+INCLUDES = $(SDL_CFLAGS) 
+# -O0 -g
 
