@@ -30,9 +30,8 @@
 #include "disasm.h"
 #include "CrashList.h"
 
-// GotoURL pulls in MFC stuff that we really shouldn't have here.
-// #include "RageUtil.h" // for GotoURL
-HINSTANCE GotoURL(const char *url);
+#include "archutils/Win32/GotoURL.h"
+
 static void DoSave(const EXCEPTION_POINTERS *pExc);
 
 ///////////////////////////////////////////////////////////////////////////

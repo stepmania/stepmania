@@ -2,6 +2,8 @@
 #include "../../RageUtil.h"
 #include "../../resource.h"
 
+#include "../../archutils/Win32/GotoURL.h"
+
 #include "ErrorDialog_Win32.h"
 
 static CString g_sErrorString;
