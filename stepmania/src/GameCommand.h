@@ -60,9 +60,7 @@ public:
 	vector<CString>	m_vsScreensToPrepare;
 	bool		m_bDeletePreparedScreens;
 	int			m_iWeightPounds;	// -1 == none specified
-	int			m_iAddToAllCourseEntryMeters;	// -100 == not specified
 	int			m_iStopCourseAtSeconds; // -1 == none specified
-	bool		m_bAutoAdjustMeterDuringCorse;
 
 	bool m_bClearBookkeepingData;
 	bool m_bClearMachineStats;

@@ -193,9 +193,7 @@ void GameState::Reset()
 		ASSERT( m_pCurCharacters[p] );
 	}
 
-	m_iAddToAllCourseEntryMeters = 0;
 	m_iStopCourseAtSeconds = -1;
-	m_bAutoAdjustMeterDuringCorse = false;
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_ATTRACT );
 

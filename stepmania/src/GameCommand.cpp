@@ -50,9 +50,7 @@ void GameCommand::Init()
 	m_vsScreensToPrepare.clear();
 	m_bDeletePreparedScreens = false;
 	m_iWeightPounds = -1;
-	m_iAddToAllCourseEntryMeters = -100;
 	m_iStopCourseAtSeconds = -1;
-	m_bAutoAdjustMeterDuringCorse = false;
 
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
@@ -125,11 +123,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_iWeightPounds != -1 && GAMESTATE->m_pPlayerState[pn]->m_iWeightPounds != m_iWeightPounds )
 		return false;
-	if( m_iAddToAllCourseEntryMeters != -100 && GAMESTATE->m_iAddToAllCourseEntryMeters != m_iAddToAllCourseEntryMeters )
-		return false;
 	if( m_iStopCourseAtSeconds != -1 && GAMESTATE->m_iStopCourseAtSeconds != m_iStopCourseAtSeconds )
-		return false;
-	if( m_bAutoAdjustMeterDuringCorse && !GAMESTATE->m_bAutoAdjustMeterDuringCorse )
 		return false;
 
 	return true;
@@ -308,19 +302,9 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 			m_iWeightPounds = atoi( sValue );
 		}
 
-		else if( sName == "addtoallcourseentrymeters" )
-		{
-			m_iAddToAllCourseEntryMeters = atoi( sValue );
-		}
-
 		else if( sName == "stopcourseatseconds" )
 		{
 			m_iStopCourseAtSeconds = atoi( sValue );
-		}
-
-		else if( sName == "autoadjustmeterduringcorse" )
-		{
-			m_bAutoAdjustMeterDuringCorse = !!atoi( sValue );
 		}
 
 		else if( sName == "unlock" )
@@ -657,12 +641,8 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	if( m_iWeightPounds != -1 )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->m_pPlayerState[*pn]->m_iWeightPounds = m_iWeightPounds;
-	if( m_iAddToAllCourseEntryMeters != -100 )
-		GAMESTATE->m_iAddToAllCourseEntryMeters = m_iAddToAllCourseEntryMeters;
 	if( m_iStopCourseAtSeconds != -1 )
 		GAMESTATE->m_iStopCourseAtSeconds = m_iStopCourseAtSeconds;
-	if( m_bAutoAdjustMeterDuringCorse )
-		GAMESTATE->m_bAutoAdjustMeterDuringCorse = m_bAutoAdjustMeterDuringCorse;
 
 	/* If we're going to stop music, do so before preparing new screens, so we don't
 	 * stop music between preparing screens and loading screens. */
@@ -804,9 +784,7 @@ bool GameCommand::IsZero() const
 		!m_sSongGroup.empty() ||
 		m_SortOrder != SORT_INVALID ||
 		m_iWeightPounds != -1 ||
-		m_iAddToAllCourseEntryMeters != -1 ||
-		m_iStopCourseAtSeconds != -1 ||
-		m_bAutoAdjustMeterDuringCorse 
+		m_iStopCourseAtSeconds != -1
 		)
 		return false;
 

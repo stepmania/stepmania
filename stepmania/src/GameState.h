@@ -269,9 +269,7 @@ public:
 	//
 	// Workout stuff
 	//
-	int m_iAddToAllCourseEntryMeters;	// 0 == no change
 	int m_iStopCourseAtSeconds;			// -1 == don't stop early
-	bool m_bAutoAdjustMeterDuringCorse;
 
 	// Lua
 	void PushSelf( lua_State *L );
