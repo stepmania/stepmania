@@ -161,11 +161,14 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			Row &Row = *m_Rows[r];
 
 			if( Row.m_RowDef.bOneChoiceForAllPlayers )
+			{
+			// set the selection to be the same for all players
 				for( int p=1; p<NUM_PLAYERS; p++ )
 					Row.m_vbSelected[p] = m_Rows[r]->m_vbSelected[0];
+			}
 
 			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( Row.m_RowDef.bMultiSelect )
+				if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 					Row.m_iChoiceWithFocus[p] = 0;	// focus on the first row, which is "go down"
 				else
 					Row.m_iChoiceWithFocus[p] = Row.GetOneSelection( (PlayerNumber)p);	// focus on the only selected choice
@@ -838,31 +841,6 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 		}
 	}
 
-	// if we are in dedicated menubutton input and arcade navigation
-	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
-	/* This was left or right, instead of left and right.  Require both.  When
-	 * running through a menu quickly in three key mode with lots of right and
-	 * start taps, it's very easy to tap start before actually releasing the right
-	 * tap, causing the menu to move up when you wanted it to go down. */
-	const bool bHoldingLeftAndRight = MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
-		m_OptionsNavigation == NAV_THREE_KEY &&
-		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) &&
-		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
-
-	if( type != IET_RELEASE && bHoldingLeftAndRight )
-	{
-		// If moving up from a bFirstChoiceGoesDown row, put focus back on 
-		// the first choice before moving up.
-		int iCurrentRow = m_iCurrentRow[MenuI.player];
-		Row &row = *m_Rows[iCurrentRow];
-		if( NAV_FIRST_CHOICE_GOES_DOWN )
-			row.m_iChoiceWithFocus[MenuI.player] = 0;
-
-		MoveRow( MenuI.player, -1, type != IET_FIRST_PRESS );
-		
-		return;
-	}
-
 	// default input handler
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
@@ -1104,6 +1082,62 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	
 	Row &row = *m_Rows[m_iCurrentRow[pn]];
 	OptionRowData &data = row.m_RowDef;
+
+
+	// if we are in dedicated menubutton input and arcade navigation
+	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
+	/* This was left or right, instead of left and right.  Require both.  When
+	 * running through a menu quickly in three key mode with lots of right and
+	 * start taps, it's very easy to tap start before actually releasing the right
+	 * tap, causing the menu to move up when you wanted it to go down. */
+	switch( m_OptionsNavigation )
+	{
+	case NAV_THREE_KEY:
+	case NAV_FIRST_CHOICE_GOES_DOWN:
+		{
+			bool bHoldingLeftAndRight = 
+				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) &&
+				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
+			if( bHoldingLeftAndRight )
+			{
+				// If moving up from a bFirstChoiceGoesDown row, put focus back on 
+				// the first choice before moving up.
+				int iCurrentRow = m_iCurrentRow[pn];
+				Row &row = *m_Rows[iCurrentRow];
+				if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
+					row.m_iChoiceWithFocus[pn] = 0;
+
+				MoveRow( pn, -1, type != IET_FIRST_PRESS );		
+				return;
+			}
+		}
+	}
+
+
+	// If on exit, check it all players are on "Exit"
+	if( row.Type == Row::ROW_EXIT )
+	{
+		bool bAllOnExit = true;
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
+				bAllOnExit = false;
+
+		if( bAllOnExit  &&  type == IET_FIRST_PRESS )
+			StartGoToNextState();
+		return;
+	}
+
+
+	
+	if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+	{
+		int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+		if( iChoiceInRow == 0 )
+		{
+			MenuDown( pn, type );
+			return;
+		}
+	}
 	
 	// If this is a bFirstChoiceGoesDown, then  if this is a multiselect row.
 	// Is this the right thing to do for five key navigation?
@@ -1128,22 +1162,18 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		case NAV_THREE_KEY:
 		case NAV_FIRST_CHOICE_GOES_DOWN:
 			{
-				bool bAllOnExit = true;
-				for( int p=0; p<NUM_PLAYERS; p++ )
-					if( GAMESTATE->IsHumanPlayer(p)  &&  m_Rows[m_iCurrentRow[p]]->Type != Row::ROW_EXIT )
-						bAllOnExit = false;
-
-				if( row.Type == Row::ROW_EXIT  &&  bAllOnExit  &&  type == IET_FIRST_PRESS )
-					StartGoToNextState();
-				else if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
+				if( m_OptionsNavigation == NAV_FIRST_CHOICE_GOES_DOWN )
 				{
-					ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
-					int iChoiceInRow = row.m_iChoiceWithFocus[pn];
-					if( iChoiceInRow == 0 )
+					if( !data.bMultiSelect )
 					{
-						MenuDown( pn, type );
-						return;
+						int iChoiceInRow = row.m_iChoiceWithFocus[pn];
+						if( row.m_RowDef.bOneChoiceForAllPlayers )
+							row.SetOneSharedSelection( iChoiceInRow );
+						else
+							row.SetOneSelection( pn, iChoiceInRow );
 					}
+						
+					ChangeValueInRow( pn, -row.m_iChoiceWithFocus[pn], type != IET_FIRST_PRESS );	// move to the first choice
 				}
 				else
 					MenuDown( pn, type );
@@ -1199,7 +1229,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		{
 			row.m_iChoiceWithFocus[p] = iNewChoiceWithFocus;
 
-			if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN && iNewChoiceWithFocus==0 )
+			if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 			{
 				;	// do nothing
 			}
@@ -1218,7 +1248,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	{
 		row.m_iChoiceWithFocus[pn] = iNewChoiceWithFocus;
 
-		if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN && iNewChoiceWithFocus==0 )
+		if( m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN )
 		{
 			;	// do nothing
 		}
