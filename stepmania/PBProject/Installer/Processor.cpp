@@ -43,6 +43,9 @@ mError(Processor::DefaultError), mInstalling(i)
 
     if (mInstalling)
     {
+        if (!DoesFileExist(path))
+            throw CString("Archive file not present.");
+        
         char archivePath[] = "/tmp/installerXXXXXX.tar";
         int fd = mkstemps(archivePath, 4);
 
@@ -52,12 +55,16 @@ mError(Processor::DefaultError), mInstalling(i)
         mPath = archivePath;
 
         char toolPath[] = "/usr/bin/gunzip";
-
-        if(CallTool2(true, -1, fd, -1, toolPath, "-c", path.c_str(), NULL))
-        {
+        
+        try {
+            if(CallTool2(true, -1, fd, -1, toolPath, "-c", path.c_str(), NULL))
+                throw CString("Archive file not handled correctly.");
+        } catch (CString& e) {
+            close(fd);
             unlink(mPath);
-            throw CString("Archive file not handled correctly or not present.");
+            throw;
         }
+        close(fd);
     }
     else
         mPath = path;

@@ -119,6 +119,8 @@ err:
 
 int CallTool3(bool blocking, int fd_in, int fd_out, int fd_err, const char *path, char *const *arguments)
 {
+    if (!DoesFileExist(path))
+        throw CString("The tool \"") + path + "\" does not exist.";
     pid_t pid = fork();
 
     switch (pid)
