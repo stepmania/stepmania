@@ -101,6 +101,7 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 		float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
+		fDizzyRotation *= 180/PI;
 		return fDizzyRotation * GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY];
 	}
 	else
