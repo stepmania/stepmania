@@ -54,6 +54,11 @@ public:
 	int Read( void *buffer, size_t bytes );
 	int Read( const CString &buffer, size_t bytes );
 
+	/* These are just here to make wrappers (eg. vorbisfile, SDL_rwops) easier. */
+	int Write( const void *buffer, size_t bytes, int nmemb );
+	int Read( void *buffer, size_t bytes, int nmemb );
+	int Seek( int offset, int whence );
+
 	/* Line-based I/O: */
     CString GetLine();
 	int GetLine( CString &out );

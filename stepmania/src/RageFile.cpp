@@ -352,3 +352,37 @@ void RageFile::Rewind()
 }
 
 
+int RageFile::Write( const void *buffer, size_t bytes, int nmemb )
+{
+	/* Simple write.  We never return partial writes. */
+	int ret = Write( buffer, bytes*nmemb ) / bytes;
+	if( ret == -1 )
+		return -1;
+	return ret / bytes;
+}
+
+int RageFile::Read( void *buffer, size_t bytes, int nmemb )
+{
+	const int ret = Read( buffer, bytes*nmemb );
+	if( ret == -1 )
+		return -1;
+
+	/* If we're reading 10-byte blocks, and we got 27 bytes, we have 7 extra bytes.
+	 * Seek back. */
+	const int extra = ret % bytes;
+	Seek( Tell()-extra );
+
+	return ret/bytes;
+}
+
+int RageFile::Seek( int offset, int whence )
+{
+	switch( whence )
+	{
+	case SEEK_CUR:
+		return SeekCur( (int) offset );
+	case SEEK_END:
+		offset += GetFileSize();
+	}
+	return Seek( (int) offset );
+}
