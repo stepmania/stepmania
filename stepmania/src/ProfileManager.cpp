@@ -128,6 +128,8 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 
 bool ProfileManager::CreateProfile( CString sProfileDir, CString sName )
 {
+	ASSERT( !sName.empty() );
+
 	bool bResult;
 
 	Profile pro;
@@ -345,6 +347,8 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 
 void ProfileManager::SaveMachineScoresToDisk()
 {
+	m_MachineProfile.SaveToIni( MACHINE_PROFILE_DIR PROFILE_FILE );
+
 	SaveCategoryScoresToFile( MACHINE_PROFILE_DIR CATEGORY_SCORES_FILE, MEMORY_CARD_MACHINE );
 	SaveSongScoresToFile( MACHINE_PROFILE_DIR SONG_SCORES_FILE, MEMORY_CARD_MACHINE );
 	SaveCourseScoresToFile( MACHINE_PROFILE_DIR COURSE_SCORES_FILE, MEMORY_CARD_MACHINE );
@@ -589,6 +593,12 @@ void ProfileManager::InitMachineScoresFromDisk()
 	ReadCategoryScoresFromFile( MACHINE_PROFILE_DIR CATEGORY_SCORES_FILE, MEMORY_CARD_MACHINE );
 	ReadSongScoresFromFile( MACHINE_PROFILE_DIR SONG_SCORES_FILE, MEMORY_CARD_MACHINE );
 	ReadCourseScoresFromFile( MACHINE_PROFILE_DIR COURSE_SCORES_FILE, MEMORY_CARD_MACHINE );
+
+	if( !m_MachineProfile.LoadFromIni(MACHINE_PROFILE_DIR PROFILE_FILE) )
+	{
+		CreateProfile(MACHINE_PROFILE_DIR, "Machine");
+		m_MachineProfile.LoadFromIni(MACHINE_PROFILE_DIR PROFILE_FILE);
+	}
 }
 
 void ProfileManager::ReadSM300NoteScores()
@@ -858,6 +868,19 @@ static CString HTMLQuoteDoubleQuotes( CString str )
 
 void ProfileManager::SaveStatsWebPageToFile( CString fn, MemoryCard mc )
 {
+	//
+	// Get Profile
+	//
+	Profile* pProfile;
+	if( mc == MEMORY_CARD_MACHINE )
+		pProfile = GetMachineProfile();
+	else
+		pProfile = GetProfile( (PlayerNumber)mc );
+	ASSERT(pProfile);
+
+	//
+	// Open file
+	//
 	RageFile f;
 	if( !f.Open( fn, RageFile::WRITE ) )
 	{
@@ -865,6 +888,15 @@ void ProfileManager::SaveStatsWebPageToFile( CString fn, MemoryCard mc )
 		return;
 	}
 
+	//
+	// Make local song list
+	//
+	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
+	SortSongPointerArrayByGroupAndTitle( vpSongs );
+
+	//
+	// print HTML headers
+	//
 	f.PutLine( "<html>" );
 	f.PutLine( "<head>" );
 	f.PutLine( "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" );
@@ -872,35 +904,77 @@ void ProfileManager::SaveStatsWebPageToFile( CString fn, MemoryCard mc )
 	f.PutLine( "</head>" );
 	f.PutLine( "<body>" );
 
-	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
-	SortSongPointerArrayByGroupAndTitle( vpSongs );
+	//
+	// Print table of contents
+	//
+	f.PutLine( "<h1><a name='Table of Contents'>Table of Contents</a></h1><br>\n" );
+	f.PutLine( "<a href='#My Statistics'>My Statistics</a><br>\n" );
+	f.PutLine( "<a href='#Song/Steps List'>Song/Steps List</a><br>\n" );
+	f.PutLine( "<a href='#Difficulty Table'>Difficulty Table</a><br>\n" );
+	f.PutLine( "<br>\n" );
+
+	//
+	// Print My Statistics
+	//
+	f.PutLine( "<h1><a name='My Statistics'>My Statistics</a></h1><br><a href='#Table of Contents'>top</a>\n" );
+	f.PutLine( "<table border='1'>" );
+#define PRINT_STAT_S(szName,sVal) 	f.Write( ssprintf("<tr><td>%s</td><td>%s</td></tr>\n",szName,sVal.c_str()) )
+#define PRINT_STAT_B(szName,bVal) 	f.Write( ssprintf("<tr><td>%s</td><td>%s</td></tr>\n",szName,bVal?"yes":"no") )
+#define PRINT_STAT_I(szName,iVal) 	f.Write( ssprintf("<tr><td>%s</td><td>%d</td></tr>\n",szName,iVal) )
+	if( pProfile->m_sLastUsedHighScoreName.empty() )
+		PRINT_STAT_S( "Name", pProfile->m_sName );
+	else
+		PRINT_STAT_S( "Name", pProfile->m_sLastUsedHighScoreName );
+	PRINT_STAT_B( "UsingProfileDefaultModifiers", pProfile->m_bUsingProfileDefaultModifiers );
+	PRINT_STAT_S( "DefaultModifiers", pProfile->m_sDefaultModifiers );
+	PRINT_STAT_I( "TotalPlays", pProfile->m_iTotalPlays );
+	PRINT_STAT_I( "TotalPlaySeconds", pProfile->m_iTotalPlaySeconds );
+	PRINT_STAT_I( "TotalGameplaySeconds", pProfile->m_iTotalGameplaySeconds );
+	PRINT_STAT_I( "CurrentCombo", pProfile->m_iCurrentCombo );
+//#undef PRINT_STAT_S
+//#undef PRINT_STAT_B
+//#undef PRINT_STAT_I
+	f.PutLine( "</table>\n<br>" );
 
 	//
 	// Print song list
 	//
-	f.PutLine( "<table border='1'>" );
+	f.PutLine( "<h1><a name='Song/Steps List'>Song/Steps List</a></h1><a href='#Table of Contents'>top</a><br>\n" );
 	for( unsigned i=0; i<vpSongs.size(); i++ )
 	{
 		Song* pSong = vpSongs[i];
-		f.Write( "<tr>" );
+		f.PutLine( "<table border='1'>" );
 		/* XXX: We can't call pSong->HasBanner on every song; it'll effectively re-traverse the entire
 		 * song directory tree checking if each banner file really exists.
 		 *
 		 * (Note for testing this: remember that we'll cache directories for a time; this is only slow if
 		 * the directory cache expires before we get here.) */
+		/* Don't print the song banner anyway since this is going on the memory card. -Chris */
 		//CString sImagePath = pSong->HasBanner() ? pSong->GetBannerPath() : (pSong->HasBackground() ? pSong->GetBackgroundPath() : "" );
-		f.Write( "<td> </td>" );
-		f.Write( ssprintf("<td>%s<br>", pSong->GetTranslitMainTitle().c_str()) );
-		f.Write( ssprintf("<font size='-1'>%s</font><br>", pSong->GetTranslitSubTitle().c_str()) );
-		f.Write( ssprintf("<font size='-1'><i>%s</i></font></td>", pSong->GetTranslitArtist().c_str()) );
-		f.PutLine( "</tr>" );
+		PRINT_STAT_S( "MainTitle", pSong->GetTranslitMainTitle() );
+		PRINT_STAT_S( "SubTitle", pSong->GetTranslitSubTitle() );
+		PRINT_STAT_S( "Artist", pSong->GetTranslitArtist() );
+
+		//
+		// Print Steps list
+		//
+		vector<Steps*> vpSteps = pSong->GetAllSteps();
+		for( unsigned j=0; j<vpSteps.size(); j++ )
+		{
+			Steps* pSteps = vpSteps[j];
+			if( pSteps->IsAutogen() )
+				continue;
+			PRINT_STAT_S( "Difficulty", DifficultyToString(pSteps->GetDifficulty()) );
+		}
+
+		f.PutLine( "</table>\n<br>" );
 	}
-	f.PutLine( "</table>\n<br>" );
 
 
 	//
 	// Print steps tables
 	//
+	f.PutLine( "<h1><a name='Difficulty Table'>Difficulty Table</a></h1><a href='#Table of Contents'>top</a><br>\n" );
 	for( int g=0; g<NUM_GAMES; g++ )
 	{
 		Game game = (Game)g;

@@ -1021,6 +1021,12 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	{
 		THEME->ReloadMetrics();
 		TEXTUREMAN->ReloadAll();
+	
+		// HACK: Also save bookkeeping and profile info for debugging
+		// so we don't have to play through a whole song to get new output.
+		BOOKKEEPER->WriteToDisk();
+		PROFILEMAN->SaveMachineScoresToDisk();
+
 		SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
 		return true;
 	}

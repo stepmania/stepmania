@@ -243,6 +243,7 @@ public:
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( StepsType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const;
+	const vector<Steps*>& GetAllSteps() const { return m_apNotes; }
 	void GetSteps( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByDifficulty( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh, bool bIncludeAutoGen = true ) const;

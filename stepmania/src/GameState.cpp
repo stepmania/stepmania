@@ -167,6 +167,8 @@ void GameState::EndGame()
 	if( iPlaySeconds < 0 )
 		iPlaySeconds = 0;
 
+	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		int iGameplaySeconds = 0;
@@ -174,18 +176,27 @@ void GameState::EndGame()
 			iGameplaySeconds += m_vPlayedStageStats[i].fAliveSeconds[p];
 
 
-		Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
-		if( pProfile==NULL )
-			continue;
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
 
-		pProfile->m_iTotalPlaySeconds += iPlaySeconds;
-		pProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-		pProfile->m_iTotalPlays++;
-		pProfile->m_iCurrentCombo = 
+		pMachineProfile->m_iTotalPlaySeconds += iPlaySeconds;
+		pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+
+		if( pPlayerProfile )
+			pPlayerProfile->m_iTotalPlaySeconds += iPlaySeconds;
+		if( pPlayerProfile )
+			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+		if( pPlayerProfile )
+			pPlayerProfile->m_iTotalPlays++;
+		if( pPlayerProfile )
+			pPlayerProfile->m_iCurrentCombo = 
 			PREFSMAN->m_bComboContinuesBetweenSongs ? 
 			GAMESTATE->m_CurStageStats.iCurCombo[p] : 
 			0;
 	}
+
+	pMachineProfile->m_iTotalPlays++;
+	pMachineProfile->m_iCurrentCombo = 0;
+
 
 	BOOKKEEPER->WriteToDisk();
 	PROFILEMAN->SaveMachineScoresToDisk();
