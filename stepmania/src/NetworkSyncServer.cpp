@@ -268,8 +268,8 @@ int StepManiaLanServer::SortStats(LanPlayer *playersPtr[]) {
 
 	for (int x = 0; x < NUMBERCLIENTS; x++)
 		if (Client[x].Used == true)
-			if (Client[x].IsPlaying(0))
-				for (int y = 0; y < 2; y++)
+			for (int y = 0; y < 2; y++)
+				if (Client[x].IsPlaying(y))
 					playersPtr[counter++] = &Client[x].Player[y];
 
 
