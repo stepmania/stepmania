@@ -27,6 +27,7 @@
 #define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenInstructions","NextScreenArcade")
 #define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenInstructions","NextScreenOni")
 #define NEXT_SCREEN_BATTLE		THEME->GetMetric("ScreenInstructions","NextScreenBattle")
+#define NEXT_SCREEN_RAVE		THEME->GetMetric("ScreenInstructions","NextScreenRave")
 
 
 ScreenInstructions::ScreenInstructions()
@@ -129,6 +130,9 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		case PLAY_MODE_BATTLE:
 			SCREENMAN->SetNewScreen( NEXT_SCREEN_BATTLE );
+			break;
+		case PLAY_MODE_RAVE:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_RAVE );
 			break;
 		default:
 			ASSERT(0);

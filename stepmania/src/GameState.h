@@ -148,20 +148,27 @@ public:
 	void RestoreSelectedOptions();
 
 
+	// used in PLAY_MODE_RAVE
 	CString m_sCharacterName[NUM_PLAYERS];
 	AttackLevel	m_MaxAttackLevel[NUM_PLAYERS];
 	CString	m_sAttacks[NUM_PLAYERS][NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
+
+	// used in PLAY_MODE_BATTLE
 	CString	m_sInventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	
+	// used in PLAY_MODE_RAVE and PLAY_MODE_BATTLE
 	struct ActiveAttack
 	{
 		float fSecsRemaining;
 		CString sModifier;
 	};
-	ActiveAttack	m_sActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	ActiveAttack	m_ActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
 	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag so we can play sounds
-	void ActivateAttack( PlayerNumber target, ActiveAttack aa );
+	void LaunchAttack( PlayerNumber target, ActiveAttack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
+
+
 
 	bool HasEarnedExtraStage();
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"

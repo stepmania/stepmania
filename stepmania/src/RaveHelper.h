@@ -1,10 +1,10 @@
-#ifndef Inventory_H
-#define Inventory_H
+#ifndef RaveHelper_H
+#define RaveHelper_H
 /*
 -----------------------------------------------------------------------------
- Class: Inventory
+ Class: RaveHelper
 
- Desc: Inventory management for PLAY_MODE_BATTLE.
+ Desc: Launches attacks in PLAY_MODE_RAVE.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -14,28 +14,25 @@
 #include "Actor.h"
 #include "PlayerNumber.h"
 #include "RageSound.h"
+#include "GameConstantsAndTypes.h"
 
 
-class Inventory : public Actor
+class RaveHelper : public Actor
 {
 public:
-	Inventory();
+	RaveHelper();
 	void Load( PlayerNumber pn );
 
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives() {};
 
-	void UseItem( int iSlot );
-
 protected:
-	void AwardItem( int iItemIndex );
+	void LaunchAttack( AttackLevel al );
 
 	PlayerNumber m_PlayerNumber;
-	int m_iLastSeenCombo;
 
-	RageSound m_soundAcquireItem;
-	RageSound m_soundUseItem;
-	RageSound m_soundItemEnding;
+	RageSound m_soundLaunchAttack;
+	RageSound m_soundAttackEnding;
 };
 
 #endif

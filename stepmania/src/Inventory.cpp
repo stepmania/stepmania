@@ -15,16 +15,35 @@
 #include "RageUtil.h"
 #include "GameState.h"
 
-CachedThemeMetricF ATTACK_DURATION_SECONDS	("Inventory","AttackDurationSeconds");
-CachedThemeMetricI COMBO_PER_ATTACK_LEVEL	("Inventory","ComboPerAttackLevel");
+#define NUM_ITEM_TYPES				THEME->GetMetricF("Inventory","NumItemTypes")
+#define ITEM_DURATION_SECONDS		THEME->GetMetricF("Inventory","ItemDurationSeconds")
+#define ITEM_COMBO( i )				THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
+#define ITEM_EFFECT( i )			THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
+
+struct Item
+{
+	int iCombo;
+	CString sModifier;
+};
+vector<Item>	g_Items;
+
+void ReloadItems()
+{
+	g_Items.clear();
+	for( int i=0; i<NUM_ITEM_TYPES; i++ )
+	{
+		Item item;
+		item.iCombo = ITEM_COMBO(i);
+		item.sModifier = ITEM_EFFECT(i);
+	}
+}
 
 
 Inventory::Inventory()
 {
-	ATTACK_DURATION_SECONDS.Refresh();
-	COMBO_PER_ATTACK_LEVEL.Refresh();
+	ReloadItems();
 }
 
 void Inventory::Load( PlayerNumber pn )
@@ -33,23 +52,22 @@ void Inventory::Load( PlayerNumber pn )
 	m_iLastSeenCombo = 0;
 
 	// don't load battle sounds if they're not going to be used
-	switch( GAMESTATE->m_PlayMode )
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
 	{
-	case PLAY_MODE_BATTLE:
+		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				m_soundAcquireItem.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory aquire p%d",p+1)) );
-				m_soundUseItem.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory use p%d",p+1)) );
-				m_soundItemEnding.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory finished p%d",p+1)) );
-			}
+			m_soundAcquireItem.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory aquire item p%d",p+1)) );
+			m_soundUseItem.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory use item p%d",p+1)) );
+			m_soundItemEnding.Load( THEME->GetPathTo("Sounds",ssprintf("Inventory item ending p%d",p+1)) );
 		}
-		break;
 	}
 }
 
 void Inventory::Update( float fDelta )
 {
+	if( GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE )
+		return;
+
 	if( GAMESTATE->m_bActiveAttackEndedThisUpdate[m_PlayerNumber] )
 		m_soundItemEnding.Play();
 
@@ -62,27 +80,25 @@ void Inventory::Update( float fDelta )
 		m_iLastSeenCombo = GAMESTATE->m_CurStageStats.iCurCombo[pn];
 		int iNewCombo = m_iLastSeenCombo;
 		
-		int iLevelOfOldCombo = (iOldCombo/COMBO_PER_ATTACK_LEVEL) - 1;
-		int iLevelOfNewCombo = (iNewCombo/COMBO_PER_ATTACK_LEVEL) - 1;
+#define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)
 
-		if( iLevelOfOldCombo < iLevelOfNewCombo  &&  // combo increasing
-			iLevelOfNewCombo >= ATTACK_LEVEL_1 )  // attack level not negative
+		for( unsigned i=0; i<g_Items.size(); i++ )
 		{
-			// they deserve a new item
-			CLAMP( iLevelOfNewCombo, 0, GAMESTATE->m_MaxAttackLevel[pn] );
-			AttackLevel al = (AttackLevel)iLevelOfNewCombo;
-			AwardItem( al );
+			if( CROSSED(g_Items[i].iCombo) )
+			{
+				AwardItem( i );
+				break;
+			}
 		}
 	}
 }
 
-void Inventory::AwardItem( AttackLevel al )
+void Inventory::AwardItem( int iItemIndex )
 {
 	// search for the first open slot
 	int iOpenSlot = -1;
 
 	CString* asInventory = GAMESTATE->m_sInventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
-	CString* asAttacks = GAMESTATE->m_sAttacks[m_PlayerNumber][al];	//[NUM_ATTACKS_PER_LEVEL]
 
 	if( asInventory[NUM_INVENTORY_SLOTS/2] == "" )
 		iOpenSlot = NUM_INVENTORY_SLOTS/2;
@@ -98,14 +114,14 @@ void Inventory::AwardItem( AttackLevel al )
 
 	if( iOpenSlot != -1 )
 	{
-		CString sAttackToGive = asAttacks[ rand()%NUM_ATTACKS_PER_LEVEL ];
+		CString sAttackToGive = g_Items[iItemIndex].sModifier;
 		asInventory[iOpenSlot] = sAttackToGive;
 		m_soundAcquireItem.Play();
 	}
 	// else not enough room to insert item
 }
 
-void Inventory::UseAttack( int iSlot )
+void Inventory::UseItem( int iSlot )
 {
 	CString* asInventory = GAMESTATE->m_sInventory[m_PlayerNumber]; //[NUM_INVENTORY_SLOTS]
 
@@ -115,10 +131,10 @@ void Inventory::UseAttack( int iSlot )
     PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 
 	GameState::ActiveAttack aa;
-	aa.fSecsRemaining = ATTACK_DURATION_SECONDS;
+	aa.fSecsRemaining = ITEM_DURATION_SECONDS;
 	aa.sModifier = asInventory[iSlot];
 
-	GAMESTATE->ActivateAttack( pnToAttack, aa );
+	GAMESTATE->LaunchAttack( pnToAttack, aa );
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );
 
 	// remove the item

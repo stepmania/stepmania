@@ -59,6 +59,7 @@ CString PlayModeToString( PlayMode pm )
 	case PLAY_MODE_NONSTOP:		return "nonstop";
 	case PLAY_MODE_ENDLESS:		return "endless";
 	case PLAY_MODE_BATTLE:		return "battle";
+	case PLAY_MODE_RAVE:		return "rave";
 	default:	ASSERT(0);		return "";
 	}
 }

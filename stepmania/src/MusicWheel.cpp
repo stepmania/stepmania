@@ -320,6 +320,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	{
 	case PLAY_MODE_ARCADE:
 	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
 		{
 			///////////////////////////////////
 			// Make an array of Song*, then sort them

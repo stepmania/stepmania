@@ -104,13 +104,13 @@ void GameState::Update( float fDelta )
 
 		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
-			if( m_sActiveAttacks[p][s].fSecsRemaining > 0 )
+			if( m_ActiveAttacks[p][s].fSecsRemaining > 0 )
 			{
-				m_sActiveAttacks[p][s].fSecsRemaining -= fDelta;
-				if( m_sActiveAttacks[p][s].fSecsRemaining <= 0 )
+				m_ActiveAttacks[p][s].fSecsRemaining -= fDelta;
+				if( m_ActiveAttacks[p][s].fSecsRemaining <= 0 )
 				{
-					m_sActiveAttacks[p][s].fSecsRemaining = 0;
-					m_sActiveAttacks[p][s].sModifier = "";
+					m_ActiveAttacks[p][s].fSecsRemaining = 0;
+					m_ActiveAttacks[p][s].sModifier = "";
 					m_bActiveAttackEndedThisUpdate[p] = true;
 				}
 			}
@@ -243,8 +243,10 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
 {
-	// In battle, all players are present.  Non-human players are CPU controlled.
+	// In battle and rave, all players are present.  Non-human players are CPU controlled.
 	if( m_PlayMode == PLAY_MODE_BATTLE )
+		return true;
+	if( m_PlayMode == PLAY_MODE_RAVE )
 		return true;
 	
 	return IsHumanPlayer( pn );
@@ -372,13 +374,13 @@ void GameState::RestoreSelectedOptions()
 }
 
 
-void GameState::ActivateAttack( PlayerNumber target, ActiveAttack aa )
+void GameState::LaunchAttack( PlayerNumber target, ActiveAttack aa )
 {
 	// search for an open slot
 	for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
-		if( m_sActiveAttacks[target][s].fSecsRemaining <= 0 )
+		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )
 		{
-			m_sActiveAttacks[target][s] = aa;
+			m_ActiveAttacks[target][s] = aa;
 			return;
 		}
 }
@@ -388,8 +390,8 @@ void GameState::RemoveAllActiveAttacks()
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		for( unsigned s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
-			m_sActiveAttacks[p][s].fSecsRemaining = 0;
-			m_sActiveAttacks[p][s].sModifier = "";
+			m_ActiveAttacks[p][s].fSecsRemaining = 0;
+			m_ActiveAttacks[p][s].sModifier = "";
 		}
 }
 
@@ -399,7 +401,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 	PlayerOptions po = GAMESTATE->m_StoredPlayerOptions[pn];
 	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 	{
-		po.FromString( m_sActiveAttacks[pn][s].sModifier );
+		po.FromString( m_ActiveAttacks[pn][s].sModifier );
 	}
 	GAMESTATE->m_PlayerOptions[pn] = po;
 }

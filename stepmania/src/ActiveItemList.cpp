@@ -61,7 +61,7 @@ void ActiveItemList::Update( float fDelta )
 
 	if( (int)fNowSeconds != (int)fLastSeconds )
 	{
-		GameState::ActiveAttack* sActiveAttacks = GAMESTATE->m_sActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
+		GameState::ActiveAttack* sActiveAttacks = GAMESTATE->m_ActiveAttacks[m_PlayerNumber];	// NUM_INVENTORY_SLOTS
 		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
 			GameState::ActiveAttack& aa = sActiveAttacks[s];

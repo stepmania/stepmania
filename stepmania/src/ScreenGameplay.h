@@ -27,6 +27,7 @@
 #include "DifficultyIcon.h"
 #include "BPMDisplay.h"
 #include "Inventory.h"
+#include "RaveHelper.h"
 #include "ActiveItemList.h"
 //#include "BeginnerHelper.h"	// uncomment once it's checked in
 #include "LyricDisplay.h"
@@ -134,8 +135,12 @@ protected:
 
 	Player				m_Player[NUM_PLAYERS];
 
+	// used in PLAY_MODE_BATTLE
 	Inventory			m_Inventory[NUM_PLAYERS];
 	ActiveItemList		m_ActiveItemList[NUM_PLAYERS];
+	
+	// used in PLAY_MODE_RAVE
+	RaveHelper			m_RaveHelper[NUM_PLAYERS];
 
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 
