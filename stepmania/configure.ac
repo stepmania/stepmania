@@ -118,7 +118,4 @@ case $host in
 esac
 AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
 
-CFLAGS="$CFLAGS $GTK_CFLAGS"
-CPPFLAGS="$CPPFLAGS $GTK_CFLAGS"
-
 AC_OUTPUT([Makefile src/Makefile])
