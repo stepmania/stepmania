@@ -26,7 +26,7 @@ static int DoMkdir( const CString &sPath, int perm )
 {
 #if defined(XBOX)
 	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" ); /* just for mkdir */
+	TempPath.Replace( "/", "\\" );
 	return mkdir( TempPath, perm );
 #else
 	return mkdir( sPath, perm );
@@ -37,10 +37,21 @@ static int DoOpen( const CString &sPath, int flags, int perm )
 {
 #if defined(XBOX)
 	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" ); /* just for mkdir */
+	TempPath.Replace( "/", "\\" );
 	return open( TempPath, flags, perm );
 #else
 	return open( sPath, flags, perm );
+#endif
+}
+
+static int DoStat( const CString &sPath, struct stat *st )
+{
+#if defined(XBOX)
+	CString TempPath = sPath;
+	TempPath.Replace( "/", "\\" );
+	return stat( sPath, st );
+#else
+	return stat( sPath, st );
 #endif
 }
 
@@ -49,7 +60,7 @@ static HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
 {
 #if defined(XBOX)
 	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" ); /* just for mkdir */
+	TempPath.Replace( "/", "\\" );
 	return FindFirstFile( TempPath, fd );
 #else
 	return FindFirstFile( sPath, fd );
@@ -204,6 +215,15 @@ static bool CreateDirectories( CString Path )
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
 		curpath += parts[i] + "/";
+
+#if defined(WIN32)
+		if( i == 0 && curpath.size() > 1 && curpath[1] == ':' )
+		{
+			/* Don't try to create the drive letter alone. */
+			continue;
+		}
+#endif
+
 		if( DoMkdir(curpath, 0755) == 0 )
 			continue;
 
@@ -213,23 +233,18 @@ static bool CreateDirectories( CString Path )
 		// Log the error, but continue on.
 		/* When creating a directory that already exists over Samba, Windows is
 		 * returning ENOENT instead of EEXIST. */
-		/* On Win32 when Path is only a drive letter (e.g. "i:\"), the result is 
-		 * EINVAL. */
 		if( LOG )
 			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
 
 		/* Make sure it's a directory. */
-		FlushDirCache();
-		if( !IsADirectory(curpath) )
+		struct stat st;
+		DoStat( curpath, &st );
+		if( !(st.st_mode & S_IFDIR) )
 		{
 			if( LOG )
 				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
 			
-			// HACK: IsADirectory doesn't work if Path contains a drive letter.
-			// So, ignore IsADirectory's result and continue trying to create
-			// directories anyway.  This shouldn't change behavior, but 
-			// is inefficient because we don't bail early on an error.
-			//return false;
+			return false;
 		}
 	}
 	
