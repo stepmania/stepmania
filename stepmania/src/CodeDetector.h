@@ -23,8 +23,8 @@ public:
 		CODE_HARDER2,
 		CODE_NEXT_SORT1,
 		CODE_NEXT_SORT2,
-		CODE_ALL_SORTS1,
-		CODE_ALL_SORTS2,
+		CODE_MENU1,
+		CODE_MENU2,
 		CODE_MIRROR,
 		CODE_LEFT,
 		CODE_RIGHT,
@@ -59,7 +59,7 @@ public:
 	static bool EnteredEasierDifficulty( GameController controller );
 	static bool EnteredHarderDifficulty( GameController controller );
 	static bool EnteredNextSort( GameController controller );
-	static bool EnteredAllSorts( GameController controller );
+	static bool EnteredMenu( GameController controller );
 	static bool DetectAndAdjustMusicOptions( GameController controller );
 	static bool EnteredCode( GameController controller, Code code );
 	static bool EnteredNextBannerGroup( GameController controller );

@@ -29,8 +29,8 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"Harder2",
 	"NextSort1",
 	"NextSort2",
-	"AllSorts1",
-	"AllSorts2",
+	"Menu1",
+	"Menu2",
 	"Mirror",
 	"Left",
 	"Right",
@@ -209,9 +209,9 @@ bool CodeDetector::EnteredNextSort( GameController controller )
 	return EnteredCode(controller,CODE_NEXT_SORT1) || EnteredCode(controller,CODE_NEXT_SORT2);
 }
 
-bool CodeDetector::EnteredAllSorts( GameController controller )
+bool CodeDetector::EnteredMenu( GameController controller )
 {
-	return EnteredCode(controller,CODE_ALL_SORTS1) || EnteredCode(controller,CODE_ALL_SORTS2);
+	return EnteredCode(controller,CODE_MENU1) || EnteredCode(controller,CODE_MENU2);
 }
 
 #define  TOGGLE(v,a,b)	if(v!=a) v=a; else v=b;

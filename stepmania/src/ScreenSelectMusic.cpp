@@ -699,7 +699,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				HarderDifficulty( pn );
 			return;
 		}
-		if( CodeDetector::EnteredAllSorts(GameI.controller) )
+		if( CodeDetector::EnteredMenu(GameI.controller) )
 		{
 			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
