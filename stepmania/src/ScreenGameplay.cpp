@@ -1084,6 +1084,10 @@ void ScreenGameplay::PlayAnnouncer( CString type, float fSeconds )
 	if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 		return; // Shut the announcer up
 
+	/* Don't play in demonstration. */
+	if( GAMESTATE->m_bDemonstrationOrJukebox )
+		return;
+
 	/* Don't play before the first beat, or after we're finished. */
 	if( m_DancingState != STATE_DANCING )
 		return;
