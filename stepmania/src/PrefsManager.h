@@ -98,6 +98,7 @@ public:
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;
 	bool			m_bAllowUnacceleratedRenderer;
+	bool			m_bThreadedInput;
 
 	CString			m_sIgnoredMessageWindows;
 

@@ -125,6 +125,7 @@ PrefsManager::PrefsManager()
 	m_bSoundPreloadAll = false;
 	
 	m_bAllowUnacceleratedRenderer = false;
+	m_bThreadedInput = true;
 	m_sIgnoredMessageWindows = "";
 	
 	ReadGlobalPrefsFromDisk( true );
@@ -197,6 +198,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueI( "Options", "ShowSongOptions",			(int&)m_ShowSongOptions );
 	ini.GetValueB( "Options", "AllowUnacceleratedRenderer",	m_bAllowUnacceleratedRenderer );
+	ini.SetValueB( "Options", "ThreadedInput",				m_bThreadedInput );
 	ini.GetValue ( "Options", "IgnoredMessageWindows",		m_sIgnoredMessageWindows );
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
@@ -291,6 +293,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueI( "Options", "ShowSongOptions",			m_ShowSongOptions );
 	ini.SetValueB( "Options", "AllowUnacceleratedRenderer",	m_bAllowUnacceleratedRenderer );
+	ini.SetValueB( "Options", "ThreadedInput",				m_bThreadedInput );
 	ini.SetValue ( "Options", "IgnoredMessageWindows",		m_sIgnoredMessageWindows );
 	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
