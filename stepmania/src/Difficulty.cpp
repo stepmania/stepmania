@@ -52,7 +52,7 @@ XToString( CourseDifficulty );
 XToThemedString( CourseDifficulty );
 StringToX( CourseDifficulty );
 
-CourseDifficulty GetNextDisplayedCourseDifficulty( CourseDifficulty cd )
+CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 {
 	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_COURSE_DIFFICULTIES; ((int&)d)++ )
 	{

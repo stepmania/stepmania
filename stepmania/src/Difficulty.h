@@ -31,12 +31,12 @@ enum CourseDifficulty
 	COURSE_DIFFICULTY_INVALID
 };
 #define FOREACH_CourseDifficulty( cd ) FOREACH_ENUM( CourseDifficulty, NUM_COURSE_DIFFICULTIES, cd )
-#define FOREACH_DisplayedCourseDifficulty( cd ) for( CourseDifficulty cd=GetNextDisplayedCourseDifficulty((CourseDifficulty)-1); cd!=COURSE_DIFFICULTY_INVALID; cd=GetNextDisplayedCourseDifficulty(cd) )
+#define FOREACH_ShownCourseDifficulty( cd ) for( CourseDifficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=COURSE_DIFFICULTY_INVALID; cd=GetNextShownCourseDifficulty(cd) )
 
 const CString& CourseDifficultyToString( CourseDifficulty dc );
 CString CourseDifficultyToThemedString( CourseDifficulty dc );
 CourseDifficulty StringToCourseDifficulty( const CString& sDC );
 
-CourseDifficulty GetNextDisplayedCourseDifficulty( CourseDifficulty pn );
+CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty pn );
 
 #endif
