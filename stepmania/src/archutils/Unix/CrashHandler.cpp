@@ -81,14 +81,14 @@ static void parent_write(int to_child, const void *p, size_t size)
 	}
 }
 
-static void parent_process( int to_child, const void **BacktracePointers, int SignalReceived )
+static void parent_process( int to_child, const void **BacktracePointers, const CrashData *crash )
 {
 	/* 1. Write the backtrace pointers. */
 	parent_write(to_child, BacktracePointers, sizeof(void *)*BACKTRACE_MAX_SIZE);
 
-	/* 2. Write the signal. */
-	parent_write(to_child, &SignalReceived, sizeof(SignalReceived));
-
+	/* 2. Write the CrashData. */
+	parent_write(to_child, crash, sizeof(CrashData));
+	
 	/* 3. Write info. */
 	const char *p = RageLog::GetInfo();
 	int size = strlen(p)+1;
@@ -226,7 +226,106 @@ const char *SignalName( int signo )
 #endif
 }
 
-void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
+const char *SignalCodeName( int signo, int code )
+{
+	switch( code )
+	{
+	case SI_USER:    return "user signal";
+	case SI_KERNEL:  return "kernel signal";
+	case SI_QUEUE:   return "sigqueue signal";
+	case SI_TIMER:   return "timer expired";
+	case SI_MESGQ:   return "mesgq state changed";
+	case SI_ASYNCIO: return "async I/O completed";
+	case SI_SIGIO:   return "queued SIGIO";
+	}
+
+	switch( signo )
+	{
+	case SIGILL:
+		switch( code )
+		{
+		case ILL_ILLOPC: return "illegal opcode";
+		case ILL_ILLOPN: return "illegal operand";
+		case ILL_ILLADR: return "illegal addressing mode";
+		case ILL_ILLTRP: return "illegal trap";
+		case ILL_PRVOPC: return "privileged opcode";
+		case ILL_PRVREG: return "privileged register";
+		case ILL_COPROC: return "coprocessor error";
+		case ILL_BADSTK: return "internal stack error";
+		}
+		break;
+
+	case SIGFPE:
+		switch( code )
+		{
+		case FPE_INTDIV: return "integer divide by zero";
+		case FPE_INTOVF: return "integer overflow";
+		case FPE_FLTDIV: return "floating point divide by zero";
+		case FPE_FLTOVF: return "floating point overflow";
+		case FPE_FLTUND: return "floating point underflow";
+		case FPE_FLTRES: return "floating point inexact result";
+		case FPE_FLTINV: return "floating point invalid operation";
+		case FPE_FLTSUB: return "subscript out of range";
+		}
+		break;
+
+	case SIGSEGV:
+		switch( code )
+		{
+		case SEGV_MAPERR:    return "address not mapped";
+		case SEGV_ACCERR:    return "invalid permissions";
+		}
+		break;
+
+	case SIGBUS:
+		switch( code )
+		{
+		case BUS_ADRALN: return "invalid address alignment";
+		case BUS_ADRERR: return "non‐existent physical address";
+		case BUS_OBJERR: return "object specific hardware error";
+		}
+		break;
+
+	case SIGTRAP:
+		switch( code )
+		{
+		case TRAP_BRKPT: return "process breakpoint";
+		case TRAP_TRACE: return "process trace trap";
+		}
+		break;
+
+	case SIGCHLD:
+		switch( code )
+		{
+		case CLD_EXITED: return "child has exited";
+		case CLD_KILLED: return "child was killed";
+		case CLD_DUMPED: return "child terminated abnormally";
+		case CLD_TRAPPED: return "traced child has trapped";
+		case CLD_STOPPED: return "child has stopped";
+		case CLD_CONTINUED: return "stopped child has continued";
+		}
+		break;
+		
+	case SIGPOLL:
+		switch( code )
+		{
+		case POLL_IN:  return "data input available";
+		case POLL_OUT: return "output buffers available";
+		case POLL_MSG: return "input message available";
+		case POLL_ERR: return "i/o error";
+		case POLL_PRI: return "high priority input available";
+		case POLL_HUP: return "device disconnected";
+		}
+		break;
+	}
+
+	static char buf[128];
+	strcpy( buf, "Unknown code " );
+	strcat( buf, itoa(code) );
+	return buf;
+}
+
+static void RunCrashHandler( const CrashData *crash )
 {
 	if( g_pCrashHandlerArgv0 == NULL )
 	{
@@ -252,13 +351,12 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 		/* We've received a second signal.  This may mean that another thread
 		 * crashed before we stopped it, or it may mean that the crash handler
 		 * crashed. */
-		const char *str;
 		if( received == getpid() )
-			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(signal), ") received while still in the crash handler\n", NULL);
+			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(crash->signal), ") received while still in the crash handler\n", NULL);
 		else if( childpid == getpid() )
-			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(signal), ") received while in the crash handler child\n", NULL);
+			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(crash->signal), ") received while in the crash handler child\n", NULL);
 		else
-			safe_print( fileno(stderr), "Extra fatal signal (", SignalName(signal), ") received\n", NULL);
+			safe_print( fileno(stderr), "Extra fatal signal (", SignalName(crash->signal), ") received\n", NULL);
 		_exit(1);
 	}
 	received = getpid();
@@ -268,10 +366,8 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 	// RageThread::HaltAllThreads();
 	
 	/* Do this early, so functions called below don't end up on the backtrace. */
-	BacktraceContext ctx;
-	GetSignalBacktraceContext( &ctx, uc );
 	const void *BacktracePointers[BACKTRACE_MAX_SIZE];
-	GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, &ctx );
+	GetBacktrace( BacktracePointers, BACKTRACE_MAX_SIZE, &crash->ctx );
 	
 	/* We need to be very careful, since we're under crash conditions.  Let's fork
 	 * a process and exec ourself to get a clean environment to work in. */
@@ -297,13 +393,36 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 	else
 	{
 		close(fds[0]);
-		parent_process( fds[1], BacktracePointers, signal );
+		parent_process( fds[1], BacktracePointers, crash );
 		int status = 0;
 		waitpid( childpid, &status, 0 );
 		if( WIFSIGNALED(status) )
 			safe_print( fileno(stderr), "Crash handler child exited with signal ", itoa(WTERMSIG(status)), "\n", NULL);
 	}
 }
+
+void ForceCrashHandler( const char *reason )
+{
+	CrashData crash;
+	crash.type = CrashData::FORCE_CRASH_THIS_THREAD;
+	strncpy( crash.reason, reason, sizeof(crash.reason) );
+	crash.reason[ sizeof(crash.reason)-1 ] = 0;
+
+	GetCurrentBacktraceContext( &crash.ctx );
+	RunCrashHandler( &crash );
+}
+
+void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
+{
+	CrashData crash;
+	crash.type = CrashData::SIGNAL;
+	crash.signal = signal;
+	crash.si = *si;
+
+	GetSignalBacktraceContext( &crash.ctx, uc );
+	RunCrashHandler( &crash );
+}
+
 
 void InitializeCrashHandler()
 {

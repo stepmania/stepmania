@@ -68,9 +68,9 @@ static void child_process()
     void *BacktracePointers[BACKTRACE_MAX_SIZE];
     ret = read(3, BacktracePointers, sizeof(void *)*BACKTRACE_MAX_SIZE);
 
-    /* 2. Read the signal. */
-    int SignalReceived;
-    ret = read(3, &SignalReceived, sizeof(SignalReceived));
+    /* 2. Read the CrashData. */
+    CrashData crash;
+    ret = read(3, &crash, sizeof(CrashData));
 
     /* 3. Read info. */
     int size;
@@ -142,9 +142,32 @@ static void child_process()
     fprintf(CrashDump, "--------------------------------------\n");
     fprintf(CrashDump, "\n");
 
-    CString Signal = SignalName( SignalReceived );
-    
-    fprintf( CrashDump, "Crash reason: %s\n", Signal.c_str() );
+    CString reason;
+    switch( crash.type )
+    {
+    case CrashData::SIGNAL:
+    {
+	CString Signal = SignalName( crash.signal );
+
+	reason = ssprintf( "%s - %s", Signal.c_str(), SignalCodeName(crash.signal, crash.si.si_code) );
+	switch( crash.signal )
+	{
+	case SIGILL:
+	case SIGFPE:
+	case SIGSEGV:
+	case SIGBUS:
+	    reason += ssprintf( " at 0x%08x", (unsigned int) crash.si.si_addr );
+	}
+	break;
+    }
+
+    case CrashData::FORCE_CRASH_THIS_THREAD:
+	crash.reason[ sizeof(crash.reason)-1] = 0;
+	reason = crash.reason;
+	break;
+    }
+
+    fprintf( CrashDump, "Crash reason: %s\n", reason.c_str() );
     fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 
     fprintf(CrashDump, "Checkpoints:\n");
