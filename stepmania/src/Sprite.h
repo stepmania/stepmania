@@ -20,6 +20,7 @@ public:
 	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
 	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
 	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; }
+	static int setstate( T* p, lua_State *L )			{ p->SetState( IArg(1) ); return 0; }
 	/* Texture commands; these could be moved to RageTexture* (even though that's
 	 * not an Actor) if these are needed for other things that use textures.
 	 * We'd need to break the command helpers into a separate function; RageTexture
@@ -33,6 +34,7 @@ public:
 		ADD_METHOD( texcoordvelocity )
 		ADD_METHOD( scaletoclipped )
 		ADD_METHOD( stretchtexcoords )
+		ADD_METHOD( setstate )
 		ADD_METHOD( position )
 		ADD_METHOD( loop )
 		ADD_METHOD( rate )
