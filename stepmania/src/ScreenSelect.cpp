@@ -245,7 +245,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 
 			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
 			if( m_aGameCommands[iSelectionIndex].m_sScreen != "" )
-				SCREENMAN->SetNewScreen( m_aGameCommands[iSelectionIndex ].m_sScreen );
+				SCREENMAN->SetNewScreen( m_aGameCommands[iSelectionIndex].m_sScreen );
 			else
 				SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
 		}

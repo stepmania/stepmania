@@ -103,7 +103,7 @@ void ActorScroller::DrawPrimitives()
 	}
 	else
 	{
-		for( int i=0; i<m_SubActors.size(); i++ )
+		for( unsigned i=0; i<m_SubActors.size(); i++ )
 		{
 			float fItemOffset = i - m_fCurrentItem;
 

@@ -475,8 +475,6 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 	if( GetPage(m_iChoice[pn]) != GetPage(iNewChoice) )
 		return ChangePage( iNewChoice );
 
-	bool bMoveAll = SHARED_PREVIEW_AND_CURSOR || GetCurrentPage()!=PAGE_1;
-
 	FOREACH_PlayerNumber( p )
 	{
 		const int iOldChoice = m_iChoice[p];

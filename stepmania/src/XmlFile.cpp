@@ -699,7 +699,6 @@ const XNode *XNode::GetChild( const char* name ) const
 	multimap<CString, XNode*>::const_iterator it = m_childs.find( name );
 	if( it != m_childs.end() )
 	{
-		XNode* p = it->second;
 		DEBUG_ASSERT( name == it->second->m_sName );
 		return it->second;
 	}

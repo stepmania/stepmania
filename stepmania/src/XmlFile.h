@@ -31,30 +31,30 @@ typedef multimap<CString,XNode*> XNodes;
 #define FOREACH_Attr( pNode, Var ) \
 	XAttrs::iterator Var##Iter; \
 	XAttr *Var = NULL; \
-	for( Var##Iter = (pNode)->m_attrs.begin(); \
-		(Var##Iter != (pNode)->m_attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_attrs.end(); \
-		++Var##Iter )
+	for( Var##Iter = (pNode)->m_attrs.begin(), Var = Var##Iter->second; \
+		Var##Iter != (pNode)->m_attrs.end(); \
+		++Var##Iter, Var = Var##Iter->second )
 
 #define FOREACH_CONST_Attr( pNode, Var ) \
 	XAttrs::const_iterator Var##Iter; \
 	const XAttr *Var = NULL; \
-	for( Var##Iter = (pNode)->m_attrs.begin(); \
-		(Var##Iter != (pNode)->m_attrs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_attrs.end(); \
-		++Var##Iter )
+	for( Var##Iter = (pNode)->m_attrs.begin(), Var = Var##Iter->second; \
+		Var##Iter != (pNode)->m_attrs.end(); \
+		++Var##Iter, Var = Var##Iter->second )
 
 #define FOREACH_Child( pNode, Var ) \
 	XNodes::iterator Var##Iter; \
 	XNode *Var = NULL; \
-	for( Var##Iter = (pNode)->m_childs.begin(); \
-		(Var##Iter != (pNode)->m_childs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_childs.end(); \
-		++Var##Iter )
+	for( Var##Iter = (pNode)->m_childs.begin(), Var = Var##Iter->second; \
+		Var##Iter != (pNode)->m_childs.end(); \
+		++Var##Iter, Var = Var##Iter->second )
 
 #define FOREACH_CONST_Child( pNode, Var ) \
 	XNodes::const_iterator Var##Iter; \
 	const XNode *Var = NULL; \
-	for( Var##Iter = (pNode)->m_childs.begin(); \
-		(Var##Iter != (pNode)->m_childs.end() && (Var = Var##Iter->second) ),  Var##Iter != (pNode)->m_childs.end(); \
-		++Var##Iter )
+	for( Var##Iter = (pNode)->m_childs.begin(), Var = Var##Iter->second; \
+		Var##Iter != (pNode)->m_childs.end(); \
+		++Var##Iter, Var = Var##Iter->second )
 
 
 // Entity Encode/Decode Support

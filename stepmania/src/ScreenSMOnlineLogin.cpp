@@ -39,7 +39,7 @@ ScreenSMOnlineLogin::ScreenSMOnlineLogin( const CString& sName ) : ScreenWithMen
 
 	m_textUserName.LoadFromFont( THEME->GetPathF(m_sName,"text") );
 	m_textUserName.SetName( "UserName" );
-	m_textUserName.SetWrapWidthPixels( SCREEN_WIDTH );
+	m_textUserName.SetWrapWidthPixels( (int)SCREEN_WIDTH );
 	SET_XY_AND_ON_COMMAND( m_textUserName );
 	this->AddChild( &m_textUserName );
 
@@ -192,7 +192,7 @@ void ScreenSMOnlineLogin::UpdateTextInput()
 {
 	CString PasswordText;
 
-	for ( int i = 0; i < m_sPassword.length(); ++i )
+	for ( unsigned i = 0; i < m_sPassword.length(); ++i )
 		PasswordText+='*';
 
 	m_textPassword.SetText( PasswordText );  
