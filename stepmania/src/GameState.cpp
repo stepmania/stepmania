@@ -664,25 +664,25 @@ void GameState::FinishStage()
 	pMachineProfile->m_iCurrentCombo = 0;
 
 	CHECKPOINT;
-	FOREACH_HumanPlayer( p )
+	FOREACH_HumanPlayer( pn )
 	{
 		CHECKPOINT;
 
-		Profile* pPlayerProfile = PROFILEMAN->GetProfile( p );
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
 		if( pPlayerProfile )
 		{
 			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
 			pPlayerProfile->m_iCurrentCombo = 
 				PREFSMAN->m_bComboContinuesBetweenSongs ? 
-				g_CurStageStats.m_player[p].iCurCombo : 
+				g_CurStageStats.m_player[pn].iCurCombo : 
 				0;
 		}
 
 		const StageStats& ss = g_CurStageStats;
-		AddPlayerStatsToProfile( pMachineProfile, ss, p );
+		AddPlayerStatsToProfile( pMachineProfile, ss, pn );
 
 		if( pPlayerProfile )
-			AddPlayerStatsToProfile( pPlayerProfile, ss, p );
+			AddPlayerStatsToProfile( pPlayerProfile, ss, pn );
 
 		CHECKPOINT;
 	}
@@ -775,9 +775,8 @@ int GameState::GetCourseSongIndex() const
 {
 	int iSongIndex = 0;
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
-	FOREACH_PlayerNumber( p )
-		if( IsPlayerEnabled(p) )
-			iSongIndex = max( iSongIndex, g_CurStageStats.m_player[p].iSongsPlayed-1 );
+	FOREACH_EnabledPlayer( pn )
+		iSongIndex = max( iSongIndex, g_CurStageStats.m_player[pn].iSongsPlayed-1 );
 	return iSongIndex;
 }
 
@@ -864,9 +863,8 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 int	GameState::GetNumPlayersEnabled() const
 {
 	int count = 0;
-	FOREACH_PlayerNumber( p )
-		if( IsPlayerEnabled(p) )
-			count++;
+	FOREACH_EnabledPlayer( pn )
+		count++;
 	return count;
 }
 
@@ -901,26 +899,24 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 int GameState::GetNumHumanPlayers() const
 {
 	int count = 0;
-	FOREACH_PlayerNumber( p )
-		if( IsHumanPlayer(p) )
-			count++;
+	FOREACH_HumanPlayer( pn )
+		count++;
 	return count;
 }
 
 PlayerNumber GameState::GetFirstHumanPlayer() const
 {
-	FOREACH_PlayerNumber( p )
-		if( IsHumanPlayer(p) )
-			return p;
+	FOREACH_HumanPlayer( pn )
+		return pn;
 	ASSERT(0);	// there must be at least 1 human player
 	return PLAYER_INVALID;
 }
 
 PlayerNumber GameState::GetFirstDisabledPlayer() const
 {
-	FOREACH_PlayerNumber( p )
-		if( !IsPlayerEnabled(p) )
-			return p;
+	FOREACH_PlayerNumber( pn )
+		if( !IsPlayerEnabled(pn) )
+			return pn;
 	return PLAYER_INVALID;
 }
 
@@ -931,9 +927,8 @@ bool GameState::IsCpuPlayer( PlayerNumber pn ) const
 
 bool GameState::AnyPlayersAreCpu() const
 { 
-	FOREACH_PlayerNumber( p )
-		if( IsCpuPlayer(p) )
-			return true;
+	FOREACH_CpuPlayer( pn )
+		return true;
 	return false;
 }
 
@@ -975,10 +970,10 @@ bool GameState::HasEarnedExtraStage() const
 
 	if( (this->IsFinalStage() || this->IsExtraStage()) )
 	{
-		FOREACH_EnabledPlayer( p )
+		FOREACH_EnabledPlayer( pn )
 		{
-			if( this->m_pCurSteps[p]->GetDifficulty() != DIFFICULTY_HARD && 
-				this->m_pCurSteps[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
+			if( this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_HARD && 
+				this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 				continue; /* not hard enough! */
 
 			/* If "choose EX" is enabled, then we should only grant EX2 if the chosen
@@ -986,7 +981,7 @@ bool GameState::HasEarnedExtraStage() const
 			if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() && !this->m_bAllow2ndExtraStage )
 				continue;
 
-			if( g_CurStageStats.m_player[p].GetGrade() <= GRADE_TIER_3 )
+			if( g_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER_3 )
 				return true;
 		}
 	}
@@ -995,9 +990,9 @@ bool GameState::HasEarnedExtraStage() const
 
 PlayerNumber GameState::GetBestPlayer() const
 {
-	FOREACH_PlayerNumber( p )
-		if( GetStageResult(p) == RESULT_WIN )
-			return p;
+	FOREACH_PlayerNumber( pn )
+		if( GetStageResult(pn) == RESULT_WIN )
+			return pn;
 	return PLAYER_INVALID;	// draw
 }
 
@@ -1018,7 +1013,7 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 	}
 
 	StageResult win = RESULT_WIN;
-	for( int p=PLAYER_1; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( p == pn )
 			continue;
@@ -1064,12 +1059,12 @@ void GameState::GetFinalEvalStats( StageStats& statsOut ) const
 	 * and the rest, which are counters. */
 	// FIXME: Weight each song by the number of stages it took to account for 
 	// long, marathon.
-	FOREACH_EnabledPlayer( p )
+	FOREACH_EnabledPlayer( pn )
 	{
 		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
 		{
-			statsOut.m_player[p].radarPossible[r] /= statsOut.vpSongs.size();
-			statsOut.m_player[p].radarActual[r] /= statsOut.vpSongs.size();
+			statsOut.m_player[pn].radarPossible[r] /= statsOut.vpSongs.size();
+			statsOut.m_player[pn].radarActual[r] /= statsOut.vpSongs.size();
 		}
 	}
 }
@@ -1090,8 +1085,8 @@ void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
  * of gameplay. */
 void GameState::StoreSelectedOptions()
 {
-	FOREACH_PlayerNumber( p )
-		m_pPlayerState[p]->m_StoredPlayerOptions = m_pPlayerState[p]->m_PlayerOptions;
+	FOREACH_PlayerNumber( pn )
+		m_pPlayerState[pn]->m_StoredPlayerOptions = m_pPlayerState[pn]->m_PlayerOptions;
 	m_StoredSongOptions = m_SongOptions;
 }
 
@@ -1101,8 +1096,8 @@ void GameState::StoreSelectedOptions()
  * at the end of gameplay to restore options. */
 void GameState::RestoreSelectedOptions()
 {
-	FOREACH_PlayerNumber( p )
-		m_pPlayerState[p]->m_PlayerOptions = m_pPlayerState[p]->m_StoredPlayerOptions;
+	FOREACH_PlayerNumber( pn )
+		m_pPlayerState[pn]->m_PlayerOptions = m_pPlayerState[pn]->m_StoredPlayerOptions;
 	m_SongOptions = m_StoredSongOptions;
 }
 
