@@ -408,6 +408,7 @@ static void GameLoop()
 			switch(event.type)
 			{
 			case SDL_QUIT:
+				LOG->Trace("SDL_QUIT: shutting down");
 				return; /* exit the main loop */
 			case SDL_VIDEORESIZE:
 				DISPLAY->ResolutionChanged(event.resize.w, event.resize.h);

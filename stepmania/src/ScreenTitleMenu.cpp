@@ -234,7 +234,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		case CHOICE_EXIT:
 		default:
-			ASSERT(0);	// should never get here
+			RAGE_ASSERT_M(0, "CHOICE_EXIT reached?");	// should never get here
 			break;
 		}
 		break;
@@ -247,7 +247,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
 			case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
 			case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
-			case GAME_DS3DDX:		GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;			break; 
+			case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;		break;
 			default:	ASSERT(0);
 			}
 
@@ -390,6 +390,7 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 		event = (SDL_Event *) malloc(sizeof(event));
 		event->type = SDL_QUIT;
 		SDL_PushEvent(event);
+		LOG->Trace("CHOICE_EXIT: shutting down");
 		}
 		return;
 	default:
