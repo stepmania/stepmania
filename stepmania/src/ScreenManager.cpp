@@ -292,6 +292,10 @@ void ScreenManager::EmptyDeleteQueue()
 		SAFE_DELETE( m_ScreensToDelete[i] );
 
 	m_ScreensToDelete.clear();
+
+	/* Now that we've actually deleted the screen, it makes sense to clear out
+	 * cached textures. */
+	TEXTUREMAN->DeleteCachedTextures();
 }
 
 /* XXX: Big hack:
@@ -370,8 +374,6 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 
 Screen* ScreenManager::MakeNewScreen( CString sClassName )
 {
-	TEXTUREMAN->DeleteCachedTextures();
-
 	Screen *ret = Screen::Create( sClassName );
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
@@ -407,6 +409,7 @@ void ScreenManager::LoadPreppedScreen()
 void ScreenManager::DeletePreppedScreen()
 {
 	SAFE_DELETE( m_ScreenBuffered );
+	TEXTUREMAN->DeleteCachedTextures();
 }
 
 void ScreenManager::SetNewScreen( Screen *pNewScreen )
