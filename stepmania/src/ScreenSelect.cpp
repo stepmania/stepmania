@@ -111,7 +111,11 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_AllDoneChoosing:		
 		{
-			GAMESTATE->m_bPlayersCanJoin = false;
+			GAMESTATE->m_bPlayersCanJoin = ( GAMESTATE->m_CurStyle == STYLE_INVALID );
+			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+			if( m_aModeChoices[iSelectionIndex].m_style != STYLE_INVALID )
+				GAMESTATE->m_bPlayersCanJoin = false;
+
 			SCREENMAN->RefreshCreditsMessages();
 
 			if( !m_Menu.IsTransitioning() )
@@ -138,8 +142,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)].Apply( (PlayerNumber)p );
 
-			int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-			if( m_aModeChoices[iSelectionIndex ].m_sScreen != "" )
+			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
+			if( m_aModeChoices[iSelectionIndex].m_sScreen != "" )
 				SCREENMAN->SetNewScreen( m_aModeChoices[iSelectionIndex ].m_sScreen );
 			else
 				SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
