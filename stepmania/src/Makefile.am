@@ -2,18 +2,15 @@ bin_PROGRAMS = stepmania
 
 AM_LDFLAGS =
 AM_CXXFLAGS = -O2
-AM_CFLAGS =
+AM_CFLAGS = - O2
 
 if NHAVE_SDL
 AM_CXXFLAGS += -ISDL-1.2.6/include
 endif
 
-AM_CFLAGS   += -O2
-
-# This is a little hacky; we use our own version of SDL, and I don't
-# want to have to integrate the entire build system.
-
 if NHAVE_SDL
+# This is a little hacky; we statically link SDL if it isn't present on the system already, and I don't
+# want to have to integrate the entire build system.
 SDL-1.2.6/src/.libs/libSDL.a:
 	cd SDL-1.2.6 && ./configure \
 		--disable-nasm --disable-arts --disable-esd --enable-static --disable-shared \
@@ -40,11 +37,10 @@ ScreenSandbox.cpp ScreenSandbox.h ScreenSelect.cpp ScreenSelect.h ScreenSelectCh
 ScreenSelectCourse.cpp ScreenSelectCourse.h ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h \
 ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h ScreenSelectGame.cpp ScreenSelectGame.h \
 ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
-ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSelectStyle5th.cpp ScreenSelectStyle5th.h \
-ScreenSongOptions.cpp ScreenSongOptions.h ScreenSoundOptions.cpp ScreenSoundOptions.h ScreenStage.cpp ScreenStage.h \
-ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
-ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
-ScreenUnlock.cpp ScreenUnlock.h
+ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSongOptions.cpp ScreenSongOptions.h \
+ScreenSoundOptions.cpp ScreenSoundOptions.h ScreenStage.cpp ScreenStage.h ScreenStyleSplash.cpp ScreenStyleSplash.h \
+ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestSound.cpp ScreenTestSound.h \
+ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h
 
 DataStructures = \
 BannerCache.cpp BannerCache.h Character.cpp Character.h CodeDetector.cpp CodeDetector.h Course.cpp Course.h \
