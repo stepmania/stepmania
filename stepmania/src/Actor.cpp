@@ -131,8 +131,8 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 		CString sValue = a->m_sValue;
 		THEME->EvaluateString( sValue );
-        Commands cmds = ParseCommands( sValue );
-        apActorCommands apac( new ActorCommands( cmds ) );
+		Commands cmds = ParseCommands( sValue );
+		apActorCommands apac( new ActorCommands( cmds ) );
 
 		CString sCmdName;
 		/* Special case: "Command=foo" -> "OnCommand=foo" */
