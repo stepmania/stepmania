@@ -46,6 +46,11 @@ public:
 	 * Flush() to flush pending data, in order to check for errors. */
 	virtual int Flush() = 0;
 
+	/* This returns a descriptive path for the file, or "". */
+	virtual CString GetDisplayPath() const { return ""; }
+
+	virtual RageBasicFile *Copy() const = 0;
+
 	virtual int GetLine( CString &out ) = 0;
 	virtual int PutLine( const CString &str ) = 0;
 
@@ -73,6 +78,7 @@ public:
 	RageFile();
 	~RageFile() { Close(); }
 	RageFile( const RageFile &cpy );
+	RageBasicFile *Copy() const;
 
 	/* Use GetRealPath to get the path this file was opened with; use that if you
 	 * want a path that will probably get you the same file again.
@@ -116,7 +122,7 @@ protected:
 	void SetError( const CString &err );
 	
 private:
-	RageFileObj *m_File;
+	RageBasicFile *m_File;
 	CString	m_Path;
 	CString	m_sError;
 	int		m_Mode;

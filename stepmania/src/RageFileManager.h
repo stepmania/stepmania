@@ -10,7 +10,6 @@
 extern CString InitialWorkingDirectory;
 extern CString DirOfExecutable;
 
-class RageFileObj;
 class RageFileManager
 {
 public:
@@ -45,12 +44,12 @@ public:
 	void FlushDirCache( CString sPath );
 
 	/* Used only by RageFile: */
-	RageFileObj *Open( CString sPath, int mode, int &err );
-	void Close( RageFileObj *obj );
-	RageFileObj *CopyFileObj( const RageFileObj *cpy );
+	RageBasicFile *Open( CString sPath, int mode, int &err );
+	void Close( RageBasicFile *obj );
+	RageBasicFile *CopyFileObj( const RageBasicFile *cpy );
 
 private:
-	RageFileObj *OpenForWriting( CString sPath, int mode, int &err );
+	RageBasicFile *OpenForWriting( CString sPath, int mode, int &err );
 };
 
 extern RageFileManager *FILEMAN;

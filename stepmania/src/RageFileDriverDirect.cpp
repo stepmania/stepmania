@@ -47,7 +47,7 @@ public:
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes );
 	virtual int FlushInternal();
 	virtual int SeekInternal( int offset );
-	virtual RageFileObj *Copy() const;
+	virtual RageBasicFile *Copy() const;
 	virtual CString GetDisplayPath() const { return path; }
 	virtual int GetFileSize() const;
 };
@@ -158,7 +158,7 @@ bool RageFileDriverDirect::Remove( const CString &path )
 	}
 }
 
-RageFileObj *RageFileObjDirect::Copy() const
+RageBasicFile *RageFileObjDirect::Copy() const
 {
 	int err;
 	RageFileObj *ret = MakeFileObjDirect( path, m_iMode, err );

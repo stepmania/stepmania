@@ -83,14 +83,15 @@ int RageFileObjMem::GetFileSize() const
 	return m_pFile->m_sBuf.size();
 }
 
-RageFileObjMem::RageFileObjMem( const RageFileObjMem &cpy )
+RageFileObjMem::RageFileObjMem( const RageFileObjMem &cpy ):
+	RageFileObj( cpy )
 {
 	m_pFile = cpy.m_pFile;
 	m_iFilePos = cpy.m_iFilePos;
 	RageFileObjMemFile::AddReference( m_pFile );
 }
 
-RageFileObj *RageFileObjMem::Copy() const
+RageBasicFile *RageFileObjMem::Copy() const
 {
 	RageFileObjMem *pRet = new RageFileObjMem( *this );
 	return pRet;

@@ -24,6 +24,11 @@ RageFile::RageFile( const RageFile &cpy ):
 	m_Mode = cpy.m_Mode;
 }
 
+RageBasicFile *RageFile::Copy() const
+{
+	return new RageFile( *this );
+}
+
 CString RageFile::GetPath() const
 {
 	if ( !IsOpen() )

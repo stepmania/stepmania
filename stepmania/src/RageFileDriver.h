@@ -15,7 +15,7 @@ class RageFileDriver
 public:
 	RageFileDriver( FilenameDB *db ) { FDB = db; }
 	virtual ~RageFileDriver();
-	virtual RageFileObj *Open( const CString &path, int mode, int &err ) = 0;
+	virtual RageBasicFile *Open( const CString &path, int mode, int &err ) = 0;
 	virtual void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	virtual RageFileManager::FileType GetFileType( const CString &sPath );
 	virtual int GetFileSizeInBytes( const CString &sFilePath );
@@ -61,7 +61,7 @@ public:
 
 	virtual int GetFileSize() const = 0;
 	virtual CString GetDisplayPath() const { return ""; }
-	virtual RageFileObj *Copy() const { FAIL_M( "Copying unimplemented" ); }
+	virtual RageBasicFile *Copy() const { FAIL_M( "Copying unimplemented" ); }
 
 protected:
 	virtual int SeekInternal( int iOffset ) { FAIL_M( "Seeking unimplemented" ); }

@@ -18,7 +18,7 @@ public:
 	int WriteInternal( const void *buffer, size_t bytes );
 	int SeekInternal( int offset );
 	int GetFileSize() const;
-	RageFileObj *Copy() const;
+	RageBasicFile *Copy() const;
 
 	/* Retrieve the contents of this file. */
 	const CString &GetString() const;
