@@ -41,8 +41,6 @@ const float BUTTON_COLUMN_X[NUM_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
 };
 
 
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
-
 
 ScreenMapControllers::ScreenMapControllers()
 {

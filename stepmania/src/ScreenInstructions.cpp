@@ -28,9 +28,6 @@
 #define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenInstructions","NextScreenOni")
 
 
-const ScreenMessage SM_GoToPrevScreen	=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User+2);
-
 
 ScreenInstructions::ScreenInstructions()
 {

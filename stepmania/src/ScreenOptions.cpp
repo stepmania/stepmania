@@ -42,8 +42,6 @@
 
 
 const ScreenMessage SM_PlaySample			= ScreenMessage(SM_User-4);
-const ScreenMessage SM_GoToPrevScreen		= ScreenMessage(SM_User-5);
-const ScreenMessage SM_GoToNextScreen		= ScreenMessage(SM_User-6);
 const ScreenMessage SM_TweenOffScreen		= ScreenMessage(SM_User-7);
 
 

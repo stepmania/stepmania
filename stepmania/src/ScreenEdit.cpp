@@ -173,8 +173,6 @@ const std::pair<int, bool> NAMING_MENU_ITEM_KEY[NUM_NAMING_MENU_ITEMS] = {
 	std::make_pair(SDLK_a, true),
 };
 
-const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 
 
 ScreenEdit::ScreenEdit()

@@ -60,4 +60,5 @@ inline int GetStyleIndexRelativeToGame( int iGameIndex, Style style )
 	}
 	return iStyleIndex;
 }
+
 #endif

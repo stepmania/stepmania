@@ -108,8 +108,6 @@ const RageColor COLOR_P1_NOT_SELECTED = COLOR_P1_SELECTED*0.5f + RageColor(0,0,0
 const RageColor COLOR_P2_NOT_SELECTED = COLOR_P2_SELECTED*0.5f + RageColor(0,0,0,0.5f);
 
 
-const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_UpdateAnimations		=	ScreenMessage(SM_User + 3);
 const ScreenMessage SM_TweenExplanation2	=	ScreenMessage(SM_User + 4);
 

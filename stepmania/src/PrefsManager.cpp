@@ -39,7 +39,7 @@ PrefsManager::PrefsManager()
 	m_iTextureColorDepth = 32;
 	m_iMaxTextureResolution = 2048;
 	m_iRefreshRate = REFRESH_DEFAULT;
-	m_bIgnoreJoyAxes = true;
+	m_bIgnoreJoyAxes = false;		// when did this get changed to ON by default?
 	m_bOnlyDedicatedMenuButtons = false;
 #ifdef _DEBUG
 	m_bShowStats = true;

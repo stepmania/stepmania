@@ -24,7 +24,6 @@
 
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 2);
 const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 

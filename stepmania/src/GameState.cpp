@@ -83,7 +83,7 @@ void GameState::Reset()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_LastHighScoreCategory[p] = (HighScoreCategory)-1;
+		m_LastRankingCategory[p] = (RankingCategory)-1;
 		m_iLastHighScoreIndex[p] = -1;
 	}
 }

@@ -21,7 +21,7 @@
 #include "GameState.h"
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
-#include "ScreenHighScores.h"
+#include "ScreenRanking.h"
 #include <math.h>
 
 
@@ -62,8 +62,6 @@ const char NAME_CHARS[] =
 #define NUM_NAME_CHARS (sizeof(NAME_CHARS)/sizeof(char))
 #define HEIGHT_OF_ALL_CHARS		(NUM_NAME_CHARS * g_fCharsSpacingY)
 
-const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 
 
 int GetClosestCharIndex( float fFakeBeat )
@@ -106,13 +104,13 @@ ScreenNameEntry::ScreenNameEntry()
 
 	
 	// DEBUGGING STUFF
-	GAMESTATE->m_CurGame = GAME_DANCE;
-	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-	GAMESTATE->m_LastHighScoreCategory[PLAYER_1] = CATEGORY_A;
-	GAMESTATE->m_iLastHighScoreIndex[PLAYER_1] = 0;
+//	GAMESTATE->m_CurGame = GAME_DANCE;
+//	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+//	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
+//	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+//	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+//	GAMESTATE->m_LastRankingCategory[PLAYER_1] = RANKING_A;
+//	GAMESTATE->m_iLastHighScoreIndex[PLAYER_1] = 0;
 
 
 
@@ -143,14 +141,14 @@ ScreenNameEntry::ScreenNameEntry()
 		{
 			float ColX = pStyleDef->m_iCenterX[p] + pStyleDef->m_ColumnInfo[p][t].fXOffset;
 
-			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","high scores") );
+			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","ranking") );
 			m_textSelectedChars[p][t].SetX( ColX );
 			m_textSelectedChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textSelectedChars[p][t].SetDiffuse( g_SelectedCharsColor );
 			m_textSelectedChars[p][t].SetZoom( CHARS_ZOOM_LARGE );
 			this->AddChild( &m_textSelectedChars[p][t] );		// draw these manually
 			
-			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","high scores") );
+			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","ranking") );
 			m_textScrollingChars[p][t].SetX( ColX );
 			m_textScrollingChars[p][t].SetY( GRAY_ARROWS_Y );
 			m_textScrollingChars[p][t].SetDiffuse( g_ScrollingCharsColor );
@@ -164,7 +162,7 @@ ScreenNameEntry::ScreenNameEntry()
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-			sCategoryText += ssprintf(" in Type %c", 'A'+GAMESTATE->m_LastHighScoreCategory[p]);
+			sCategoryText += ssprintf(" in Type %c", 'A'+GAMESTATE->m_LastRankingCategory[p]);
 			break;
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:

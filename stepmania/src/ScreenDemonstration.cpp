@@ -24,7 +24,6 @@
 
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+101);	// MUST be same as in ScreenGameplay
 const ScreenMessage	SM_BeginFadingToNextScreen	= ScreenMessage(SM_User+1000);
-const ScreenMessage	SM_GoToNextScreen			= ScreenMessage(SM_User+1002);
 
 
 bool SetUpSongOptions()		// always return true.

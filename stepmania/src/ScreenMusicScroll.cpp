@@ -28,7 +28,6 @@
 #define TEXT_ZOOM			THEME->GetMetricF("ScreenMusicScroll","TextZoom")
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 2);
 
 
 const CString CREDIT_LINES[] = 

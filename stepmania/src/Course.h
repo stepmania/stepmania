@@ -12,7 +12,6 @@
 */
 
 #include "GameConstantsAndTypes.h"
-#include "Style.h"	// for NUM_STYLES
 
 struct PlayerOptions;
 struct SongOptions;
@@ -65,7 +64,7 @@ public:
 		int iDancePoints;
 		float fSurviveTime;
 		CString	sName;
-	} m_MachineScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_HIGH_SCORE_LINES];	// sorted highest to lowest by iDancePoints
+	} m_MachineScores[NUM_NOTES_TYPES][NUM_HIGH_SCORE_LINES];	// sorted highest to lowest by iDancePoints
 
 	bool IsNewMachineRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime ) const;	// return true if this is would be a new machine record
 	void AddMachineRecord( int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
@@ -74,7 +73,7 @@ public:
 	{
 		int iDancePoints;
 		float fSurviveTime;
-	} m_MemCardScores[NUM_STYLES][NUM_DIFFICULTIES][NUM_PLAYERS];
+	} m_MemCardScores[NUM_NOTES_TYPES][NUM_PLAYERS];
 
 	bool AddMemCardRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime );	// return true if this is a new record
 

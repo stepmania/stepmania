@@ -41,7 +41,6 @@ StageType g_StageType;	// cache for STAGE_TYPE because it's slow to look up
 
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_DoneFadingIn		=	ScreenMessage(SM_User + 2);
-const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 3);
 
 
 enum StageMode

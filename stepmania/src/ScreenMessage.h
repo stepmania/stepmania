@@ -20,6 +20,8 @@ enum ScreenMessage {
 	SM_DoneOpeningWipingLeft,
 	SM_DoneOpeningWipingRight,
 	SM_MenuTimer,
+	SM_GoToNextScreen,
+	SM_GoToPrevScreen,
 	SM_User	= 100
 };
 

@@ -34,23 +34,21 @@ Course::Course()
 	//
 	// Init high scores
 	//
-	unsigned i, j, k;
-	for( i=0; i<NUM_STYLES; i++ )
-		for( j=0; j<NUM_DIFFICULTIES; j++ )
-			for( k=0; k<NUM_HIGH_SCORE_LINES; k++ )
-			{
-				m_MachineScores[i][j][k].iDancePoints = 0;
-				m_MachineScores[i][j][k].fSurviveTime = 0;
-				m_MachineScores[i][j][k].sName = "STEP";
-			}
+	unsigned i, j;
+	for( i=0; i<NUM_NOTES_TYPES; i++ )
+		for( j=0; j<NUM_HIGH_SCORE_LINES; j++ )
+		{
+			m_MachineScores[i][j].iDancePoints = 0;
+			m_MachineScores[i][j].fSurviveTime = 0;
+			m_MachineScores[i][j].sName = "STEP";
+		}
 
-	for( i=0; i<NUM_STYLES; i++ )
-		for( j=0; j<NUM_DIFFICULTIES; j++ )
-			for( k=0; k<NUM_PLAYERS; k++ )
-			{
-				m_MemCardScores[i][j][k].iDancePoints = 0;
-				m_MemCardScores[i][j][k].fSurviveTime = 0;
-			}
+	for( i=0; i<NUM_NOTES_TYPES; i++ )
+		for( j=0; j<NUM_PLAYERS; j++ )
+		{
+			m_MemCardScores[i][j].iDancePoints = 0;
+			m_MemCardScores[i][j].fSurviveTime = 0;
+		}
 }
 
 void Course::LoadFromCRSFile( CString sPath, vector<Song*> &apSongs )
@@ -187,6 +185,8 @@ void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Diff
 	case DIFFICULTY_EASY:	m_sName += "Easy";		break;
 	case DIFFICULTY_MEDIUM:	m_sName += "Medium";	break;
 	case DIFFICULTY_HARD:	m_sName += "Hard";		break;
+	default:
+		ASSERT(0);
 	}
 
 	for( unsigned s=0; s<apSongsInGroup.size(); s++ )
@@ -306,7 +306,7 @@ bool Course::IsNewMachineRecord( PlayerNumber pn, int iDancePoints, float fSurvi
 {
 	for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
 	{
-		const MachineScore& hs = m_MachineScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[pn]][i];
+		const MachineScore& hs = m_MachineScores[GAMESTATE->m_CurStyle][i];
 		if( iDancePoints > hs.iDancePoints )
 			return true;
 	}
@@ -354,7 +354,7 @@ void Course::AddMachineRecord( int iDancePoints[NUM_PLAYERS], float fSurviveTime
 	for( unsigned i=0; i<vHS.size(); i++ )
 	{
 		MachineScoreAndPlayerNumber& newHS = vHS[i];
-		MachineScore* machineScores = m_MachineScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[newHS.pn]];
+		MachineScore* machineScores = m_MachineScores[GAMESTATE->m_CurStyle];
 		for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
 		{
 			if( newHS.iDancePoints > machineScores[i].iDancePoints )
@@ -372,7 +372,7 @@ void Course::AddMachineRecord( int iDancePoints[NUM_PLAYERS], float fSurviveTime
 
 bool Course::AddMemCardRecord( PlayerNumber pn, int iDancePoints, float fSurviveTime )	// return true if new record
 {
-	MemCardScore& hs = m_MemCardScores[GAMESTATE->m_CurStyle][GAMESTATE->m_PreferredDifficulty[pn]][pn];
+	MemCardScore& hs = m_MemCardScores[GAMESTATE->m_CurStyle][pn];
 	if( iDancePoints > hs.iDancePoints )
 	{
 		hs.iDancePoints = iDancePoints;

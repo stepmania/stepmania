@@ -31,8 +31,6 @@
 #define EXPLANATION_TEXT			THEME->GetMetric("ScreenEditMenu","ExplanationText")
 #define HELP_TEXT					THEME->GetMetric("ScreenEditMenu","HelpText")
 
-const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
 
 
 ScreenEditMenu::ScreenEditMenu()

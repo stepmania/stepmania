@@ -274,7 +274,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		case RM_ARCADE_SUMMARY:
 			{
 				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;	// intentional: doesn't count extra stage
-				HighScoreCategory hsc = AverageMeterToHighScoreCategory( fAverageMeter );
+				RankingCategory hsc = AverageMeterToRankingCategory( fAverageMeter );
 				m_bGoToNameEntry |= SONGMAN->IsNewMachineRecord( hsc, stageStats.fScore[p] );
 			}
 			break;

@@ -26,8 +26,6 @@ Chris Danford
 
 /* Constants */
 
-const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 
 
 #define JOIN_FRAME_X( p )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinFrameP%dX",p+1))

@@ -45,7 +45,6 @@
 #define NEXT_SCREEN						THEME->GetMetric("ScreenTitleMenu","NextScreen")
 
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+12);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 
 const CString CHOICE_TEXT[ScreenTitleMenu::NUM_CHOICES]= {

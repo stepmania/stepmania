@@ -250,12 +250,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenGraphicOptions.h">
 			</File>
 			<File
-				RelativePath="ScreenHighScores.cpp">
-			</File>
-			<File
-				RelativePath="ScreenHighScores.h">
-			</File>
-			<File
 				RelativePath="ScreenHowToPlay.h">
 			</File>
 			<File
@@ -329,6 +323,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenPrompt.h">
+			</File>
+			<File
+				RelativePath="ScreenRanking.cpp">
+			</File>
+			<File
+				RelativePath="ScreenRanking.h">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.cpp">

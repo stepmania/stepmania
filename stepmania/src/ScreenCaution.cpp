@@ -22,10 +22,8 @@
 #define NEXT_SCREEN				THEME->GetMetric("ScreenCaution","NextScreen")
 
 
-const ScreenMessage SM_GoToPrevScreen	= ScreenMessage(SM_User-6);
 const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
-const ScreenMessage SM_GoToNextScreen	= ScreenMessage(SM_User-9);
 
 
 ScreenCaution::ScreenCaution()

@@ -208,8 +208,8 @@ void SongManager::InitMachineScoresFromDisk()
 	
 	// Init category top scores
 	{
-		for( int i=0; i<NUM_STYLES; i++ )
-			for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+		for( int i=0; i<NUM_NOTES_TYPES; i++ )
+			for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 				for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
 				{
 					m_MachineScores[i][j][k].fScore = 573000;
@@ -226,8 +226,8 @@ void SongManager::InitMachineScoresFromDisk()
 			fscanf(fp, "%d\n", &version );
 			if( version == CATEGORY_TOP_SCORE_VERSION )
 			{			
-				for( int i=0; i<NUM_STYLES; i++ )
-					for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+				for( int i=0; i<NUM_NOTES_TYPES; i++ )
+					for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 						for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
 							if( fp && !feof(fp) )
 							{
@@ -256,22 +256,21 @@ void SongManager::InitMachineScoresFromDisk()
 						fscanf(fp, "%s\n", szPath);
 						Course* pCourse = GetCourseFromPath( szPath );
 						
-						for( int i=0; i<NUM_STYLES; i++ )
-							for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
-								for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
-									if( fp && !feof(fp) )
+						for( int i=0; i<NUM_NOTES_TYPES; i++ )
+							for( int j=0; j<NUM_HIGH_SCORE_LINES; j++ )
+								if( fp && !feof(fp) )
+								{
+									int iDancePoints;
+									float fSurviveTime;
+									char szName[256];
+									fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
+									if( pCourse )
 									{
-										int iDancePoints;
-										float fSurviveTime;
-										char szName[256];
-										fscanf(fp, "%d %f %[^\n]\n", &iDancePoints, &fSurviveTime, szName);
-										if( pCourse )
-										{
-											pCourse->m_MachineScores[i][j][k].iDancePoints = iDancePoints;
-											pCourse->m_MachineScores[i][j][k].fSurviveTime = fSurviveTime;
-											pCourse->m_MachineScores[i][j][k].sName = szName;
-										}
+										pCourse->m_MachineScores[i][j].iDancePoints = iDancePoints;
+										pCourse->m_MachineScores[i][j].fSurviveTime = fSurviveTime;
+										pCourse->m_MachineScores[i][j].sName = szName;
 									}
+								}
 				}
 			}
 			fclose(fp);
@@ -287,8 +286,8 @@ void SongManager::SaveMachineScoresToDisk()
 		if( fp )
 		{
 			fprintf(fp,"%d",CATEGORY_TOP_SCORE_VERSION);
-			for( int i=0; i<NUM_STYLES; i++ )
-				for( int j=0; j<NUM_HIGH_SCORE_CATEGORIES; j++ )
+			for( int i=0; i<NUM_NOTES_TYPES; i++ )
+				for( int j=0; j<NUM_RANKING_CATEGORIES; j++ )
 					for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
 						if( fp )
 							fprintf(fp, "%f %s\n", m_MachineScores[i][j][k].fScore, m_MachineScores[i][j][k].sName.c_str());
@@ -309,13 +308,12 @@ void SongManager::SaveMachineScoresToDisk()
 
 				fprintf(fp, "%s\n", pCourse->m_sPath.c_str());
 				
-				for( int i=0; i<NUM_STYLES; i++ )
-					for( int j=0; j<NUM_DIFFICULTIES; j++ )
-						for( int k=0; k<NUM_HIGH_SCORE_LINES; k++ )
-							fprintf(fp, "%d %f %s\n", 
-								pCourse->m_MachineScores[i][j][k].iDancePoints, 
-								pCourse->m_MachineScores[i][j][k].fSurviveTime, 
-								pCourse->m_MachineScores[i][j][k].sName.c_str());
+				for( int i=0; i<NUM_NOTES_TYPES; i++ )
+					for( int j=0; j<NUM_HIGH_SCORE_LINES; j++ )
+						fprintf(fp, "%d %f %s\n", 
+							pCourse->m_MachineScores[i][j].iDancePoints, 
+							pCourse->m_MachineScores[i][j].fSurviveTime, 
+							pCourse->m_MachineScores[i][j].sName.c_str());
 			}
 		}
 
@@ -632,7 +630,7 @@ bool SongManager::IsUsingMemoryCard( PlayerNumber pn )
 }
 
 
-bool SongManager::IsNewMachineRecord( HighScoreCategory hsc, float fScore ) const	// return true if this is would be a new machine record
+bool SongManager::IsNewMachineRecord( RankingCategory hsc, float fScore ) const	// return true if this is would be a new machine record
 {
 	for( int i=0; i<NUM_HIGH_SCORE_LINES; i++ )
 	{
@@ -659,7 +657,7 @@ struct MachineScoreAndPlayerNumber : public SongManager::MachineScore
 	}
 };
 
-void SongManager::AddMachineRecord( HighScoreCategory hsc, float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
+void SongManager::AddMachineRecord( RankingCategory hsc, float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
 {
 	vector<MachineScoreAndPlayerNumber> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )

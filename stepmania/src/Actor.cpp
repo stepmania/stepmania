@@ -534,7 +534,7 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	mod.glow.a *= CONTAINS("glow")?1:0;
 
 
-	StopTweening();
+//	StopTweening();		// Will commenting this out break some of the animations?
 	m_current = bOnToScreenOrOffOfScreen ? original : mod;
 	BeginTweening( fSleepSeconds );
 	BeginTweening( fFadeSeconds, tt );

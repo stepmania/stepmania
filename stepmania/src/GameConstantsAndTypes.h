@@ -176,16 +176,16 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 //
 // High Score stuff
 //
-enum HighScoreCategory
+enum RankingCategory
 {
-	CATEGORY_A,	// 1-3 meter per song avg.
-	CATEGORY_B,	// 4-6 meter per song avg.
-	CATEGORY_C,	// 7-9 meter per song avg.
-	CATEGORY_D,	// 10+ meter per song avg.	// doesn't count extra stage!
-	NUM_HIGH_SCORE_CATEGORIES
+	RANKING_A,	// 1-3 meter per song avg.
+	RANKING_B,	// 4-6 meter per song avg.
+	RANKING_C,	// 7-9 meter per song avg.
+	RANKING_D,	// 10+ meter per song avg.	// doesn't count extra stage!
+	NUM_RANKING_CATEGORIES
 };
 
-HighScoreCategory AverageMeterToHighScoreCategory( float fAverageMeter );
+RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 
 const int NUM_HIGH_SCORE_LINES	= 5;
 

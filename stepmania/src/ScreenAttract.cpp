@@ -31,7 +31,6 @@
 #define NEXT_SCREEN						THEME->GetMetric(m_sMetricName,"NextScreen")
 
 const ScreenMessage SM_BeginFadingOut	=	ScreenMessage(SM_User+2);
-const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User+3);
 
 
 ScreenAttract::ScreenAttract( CString sMetricName, CString sElementName )

@@ -57,12 +57,12 @@ RageColor PlayerToColor( int p )
 }
 
 
-HighScoreCategory AverageMeterToHighScoreCategory( float fAverageMeter )
+RankingCategory AverageMeterToRankingCategory( float fAverageMeter )
 {
-	if(      fAverageMeter <= 3 )	return CATEGORY_A;
-	else if( fAverageMeter <= 6 )	return CATEGORY_B;
-	else if( fAverageMeter <= 9 )	return CATEGORY_C;
-	else							return CATEGORY_D;
+	if(      fAverageMeter <= 3 )	return RANKING_A;
+	else if( fAverageMeter <= 6 )	return RANKING_B;
+	else if( fAverageMeter <= 9 )	return RANKING_C;
+	else							return RANKING_D;
 
 }
 

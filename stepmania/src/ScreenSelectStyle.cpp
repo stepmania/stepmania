@@ -40,9 +40,6 @@
 #define NEXT_SCREEN			THEME->GetMetric("ScreenSelectStyle","NextScreen")
 
 
-const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
-
 
 ScreenSelectStyle::ScreenSelectStyle()
 {

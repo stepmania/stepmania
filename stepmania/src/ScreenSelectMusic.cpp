@@ -78,9 +78,6 @@
 const float TWEEN_TIME		= 0.5f;
 
 
-const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
-const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
-
 
 
 ScreenSelectMusic::ScreenSelectMusic()

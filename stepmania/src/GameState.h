@@ -118,8 +118,8 @@ public:
 
 
 	// High score stuff.
-	// These should be set by final evaluation, and used by ScreenNameEntry and ScreenHighScores
-	HighScoreCategory	m_LastHighScoreCategory[NUM_PLAYERS];	// meaningless if a course was played
+	// These should be set by final evaluation, and used by ScreenNameEntry and ScreenRanking
+	RankingCategory	m_LastRankingCategory[NUM_PLAYERS];	// meaningless if a course was played
 	int					m_iLastHighScoreIndex[NUM_PLAYERS];		// -1 if no new high score
 };
 

@@ -192,7 +192,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenTitleMenu.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenWarning.h"
-#include "ScreenHighScores.h"
+#include "ScreenRanking.h"
 #include "ScreenMemoryCard.h"
 #include "ScreenCompany.h"
 #include "ScreenAlbums.h"
@@ -243,7 +243,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		ret = new ScreenTitleMenu;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	ret = new ScreenEz2SelectMusic;
 	else if( 0==stricmp(sClassName, "ScreenWarning") )			ret = new ScreenWarning;
-	else if( 0==stricmp(sClassName, "ScreenHighScores") )		ret = new ScreenHighScores;
+	else if( 0==stricmp(sClassName, "ScreenRanking") )		ret = new ScreenRanking;
 	else if( 0==stricmp(sClassName, "ScreenMemoryCard") )		ret = new ScreenMemoryCard;
 	else if( 0==stricmp(sClassName, "ScreenCompany") )			ret = new ScreenCompany;
 	else if( 0==stricmp(sClassName, "ScreenAlbums") )			ret = new ScreenAlbums;
