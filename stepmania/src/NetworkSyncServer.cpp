@@ -64,7 +64,7 @@ bool StepManiaLanServer::ServerStart()
 
 void StepManiaLanServer::ServerStop()
 {
-	for (unsigned int x = 0; x > Client.size(); ++x)
+	for (unsigned int x = 0; x < Client.size(); ++x)
 	{
 		Disconnect(x);
 	}
