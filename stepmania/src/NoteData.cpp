@@ -372,12 +372,14 @@ bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow ) const
 		case TapNote::attack:
 			return false;
 
+			//Some songs still have these for some reason.
+		case TapNote::hold_tail:
 		case TapNote::empty:
 		case TapNote::autoKeysound:
 			/* ignore */
 			continue;
 		default:
-			FAIL_M( ssprintf("%i", tn.type) );
+			LOG->Warn( "Found unknownnote type: %d.  Ignoring note.", tn.type );
 		}
 
 		if( bFoundHead )
