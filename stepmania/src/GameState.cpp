@@ -143,12 +143,14 @@ void GameState::Update( float fDelta )
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
+		int s;
+
 		m_CurrentPlayerOptions[p].Approach( m_PlayerOptions[p], fDelta );
 
 		bool RebuildPlayerOptions = false;
 
 		/* See if any delayed attacks are starting. */
-		for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+		for( s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		{
 			if( m_ActiveAttacks[p][s].fStartSecond < 0 )
 				continue; /* already started */
@@ -163,7 +165,7 @@ void GameState::Update( float fDelta )
 		/* See if any attacks are ending. */
 		m_bActiveAttackEndedThisUpdate[p] = false;
 
-		for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
+		for( s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		{
 			if( m_ActiveAttacks[p][s].fStartSecond >= 0 )
 				continue; /* hasn't started yet */
