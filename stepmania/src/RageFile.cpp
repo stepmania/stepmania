@@ -180,13 +180,6 @@ int RageFile::GetLine( CString &out )
 	return GotData? 1:0;
 }
 
-CString RageFile::GetLine()
-{
-	CString ret;
-	GetLine( ret );
-	return ret;
-}
-
 // Always use "\r\n".  Even though the program may be running on Unix, the 
 // files written to a memory card are likely to be edited using Windows.
 //#if defined(_WIN32)

@@ -68,7 +68,6 @@ public:
 	int Seek( int offset, int whence );
 
 	/* Line-based I/O: */
-    CString GetLine();
 	int GetLine( CString &out );
 	int PutLine( const CString &str );
 
