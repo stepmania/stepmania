@@ -183,6 +183,10 @@ bool NetworkSyncManager::Listen(unsigned short port)
 }
 
 
+void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber)
+{
+	m_lastOffset[PlayerNumber] = offset;
+}
 
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo)
 {
@@ -204,6 +208,24 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	Write2(m_packet, (uint16_t) combo);
 
 	Write2(m_packet, (uint16_t) m_playerLife[playerID]);
+
+	//Offset Info
+	//Note: if a 0 is sent, then disregard data.
+	//
+	//ASSUMED: No step will be more than 16 seconds off center
+	//If assumption false: read 16 seconds either direction
+	int iOffset = int((m_lastOffset[playerID]+16.384)*2000.0);
+
+	if (iOffset>65535)
+		iOffset=65535;
+	if (iOffset<1)
+		iOffset=1;
+
+	//Report 0 if hold, or miss (don't forget mines should report)
+	if (((step<TNS_BOO)||(step>TNS_MARVELOUS))&&(step!=TNS_HIT_MINE))
+		iOffset = 0;
+
+	Write2(m_packet, (uint16_t) iOffset);
 
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position); 
 

@@ -17,6 +17,7 @@ public:
 	~NetworkSyncManager();
 
     //If "useSMserver" then send score to server
+	void ReportTiming(float offset, int PlayerNumber);
 	void ReportScore(int playerID, int step, int score, int combo);	
 	void ReportSongOver();	//Report to server that song is over
 	void StartRequest(short position);	//Request a start.  Block until granted.
@@ -38,6 +39,9 @@ private:
 	void ProcessInput();
 
 	void StartUp();
+
+	float m_lastOffset[2];	//This is used to determine how much
+						//the last step was off.
 
 	int m_playerID;  //these are currently unused, but need to stay
 	int m_step;

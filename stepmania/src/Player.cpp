@@ -25,6 +25,7 @@
 #include "StageStats.h"
 #include "ArrowEffects.h"
 #include "Game.h"
+#include "NetworkSyncManager.h"	//used for sending timing offset
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
@@ -853,6 +854,9 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
+		//Keep this here so we get the same data as Autosync
+		NSMAN->ReportTiming(fNoteOffset,m_PlayerNumber);
+		
 		if( m_pPrimaryScoreKeeper )
 			m_pPrimaryScoreKeeper->HandleTapScore( score );
 		if( m_pSecondaryScoreKeeper )
