@@ -416,7 +416,9 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	case 6:	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select difficulty comment endless") );		break;
 	}
 
-	if( iSelection >= 3 )	// chose something on page 2
+	/* XXX: This will play the same announcer twice at the same time; that'll probably
+	 * result in an echo effect. */
+	if( IsOnPage2(iSelection) )	// chose something on page 2
 	{
 		// choose this for all the other players too
 		for( int p=0; p<NUM_PLAYERS; p++ )
