@@ -150,6 +150,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 	for( unsigned r=0; r<asRows.size(); r++ )
 	{
 		CString& sRowString = asRows[r];
+		StripCrnl( sRowString );
 		
 		if( sRowString == "" )
 			continue;	// skip
