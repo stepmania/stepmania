@@ -72,6 +72,7 @@ public:
 	int GetNumGroups() const;
 	int GetNumCourses() const;
 	Song* GetRandomSong();
+	Course* GetRandomCourse();
 
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
@@ -87,7 +88,7 @@ public:
 	Course* GetCourseFromName( CString sName );
 
 
-	void UpdateBest();	// update Players Best
+	void UpdateBestAndShuffled();	// update Players Best
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen
 
@@ -103,10 +104,12 @@ protected:
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs[NUM_MEMORY_CARDS];
+	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
 	CStringArray		m_sGroupNames;
 	CStringArray		m_sGroupBannerPaths; // each song group may have a banner associated with it
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pBestCourses[NUM_MEMORY_CARDS];
+	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 };
 
 

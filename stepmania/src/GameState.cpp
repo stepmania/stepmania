@@ -121,7 +121,7 @@ void GameState::Reset()
 
 	ResetMusicStatistics();
 	ResetStageStatistics();
-	SONGMAN->UpdateBest();
+	SONGMAN->UpdateBestAndShuffled();
 
 	g_vPlayedStageStats.clear();
 

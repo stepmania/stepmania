@@ -750,10 +750,26 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 
 Song* SongManager::GetRandomSong()
 {
-	if( m_pSongs.empty() )
+	if( m_pShuffledSongs.empty() )
 		return NULL;
 
-	return SONGMAN->m_pSongs[ rand()%m_pSongs.size() ];
+	static i = 0;
+	i++;
+	wrap( i, m_pShuffledSongs.size() );
+
+	return m_pShuffledSongs[ i ];
+}
+
+Course* SongManager::GetRandomCourse()
+{
+	if( m_pShuffledCourses.empty() )
+		return NULL;
+
+	static i = 0;
+	i++;
+	wrap( i, m_pShuffledCourses.size() );
+
+	return m_pShuffledCourses[ i ];
 }
 
 Song* SongManager::GetSongFromDir( CString sDir )
@@ -841,8 +857,9 @@ Course *SongManager::FindCourse( CString sName )
 	return NULL;
 }
 
-void SongManager::UpdateBest()
+void SongManager::UpdateBestAndShuffled()
 {
+	// update players best
 	for( int i = 0; i < NUM_MEMORY_CARDS; ++i )
 	{
 		m_pBestSongs[i] = m_pSongs;
@@ -851,6 +868,13 @@ void SongManager::UpdateBest()
 		m_pBestCourses[i] = m_pCourses;
 		SortCoursePointerArrayByMostPlayed( m_pBestCourses[i], (MemoryCard) i );
 	}
+
+	// update shuffled
+	m_pShuffledSongs = m_pSongs;
+	random_shuffle( m_pShuffledSongs.begin(), m_pShuffledSongs.end() );
+
+	m_pShuffledCourses = m_pCourses;
+	random_shuffle( m_pShuffledCourses.begin(), m_pShuffledCourses.end() );
 }
 
 void SongManager::UpdateRankingCourses()

@@ -184,7 +184,7 @@ MusicWheel::MusicWheel()
 	}
 
 	/* Update for SORT_MOST_PLAYED. */
-	SONGMAN->UpdateBest();
+	SONGMAN->UpdateBestAndShuffled();
 
 	RageTimer timer;
 	CString times;
