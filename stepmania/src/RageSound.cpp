@@ -621,9 +621,7 @@ int RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bo
 	return closest_position;
 }
 
-/* Get the position in frames (ignoring GetOffsetFix).  approximate is set to true
- * if the returned time is approximated because of underrun, the sound not having started
- * (after Play()) or finished (after EOF) yet. */
+/* Get the position in frames (ignoring GetOffsetFix). */
 int RageSound::GetPositionSecondsInternal( bool *approximate ) const
 {
 	LockMut(SOUNDMAN->lock);
@@ -654,6 +652,15 @@ int RageSound::GetPositionSecondsInternal( bool *approximate ) const
 
 	return SearchPosMap( pos_map, cur_sample, approximate );
 }
+
+/*
+ * If non-NULL, approximate is set to true if the returned time is approximated because of
+ * underrun, the sound not having started (after Play()) or finished (after EOF) yet.
+ *
+ * If non-NULL, Timestamp is set to the real clock time associated with the returned sound
+ * position.  We might take a variable amount of time before grabbing the timestamp (to
+ * lock SOUNDMAN); we might lose the scheduler after grabbing it, when releasing SOUNDMAN.
+ */
 
 float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) const
 {
