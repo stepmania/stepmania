@@ -16,7 +16,7 @@
 #include "RageTexture.h"
 #include "RageUtil.h"
 #include <string.h>
-
+#include <assert.h>
 
 //-----------------------------------------------------------------------------
 // RageTexture constructor

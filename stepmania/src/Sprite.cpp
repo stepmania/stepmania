@@ -10,11 +10,12 @@
 -----------------------------------------------------------------------------
 */
 
+#include <math.h>
+#include <assert.h>
 
 #include "Sprite.h"
 #include "RageTextureManager.h"
 #include "IniFile.h"
-#include <math.h>
 #include "RageLog.h"
 #include "RageException.h"
 #include "PrefsManager.h"

@@ -12,13 +12,14 @@
 
 #include "Font.h"
 #include "IniFile.h"
-#include <stdio.h>
+
 #include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
 
-
+#include <stdio.h>
+#include <assert.h>
 
 Font::Font( const CString &sFontFilePath )
 {
