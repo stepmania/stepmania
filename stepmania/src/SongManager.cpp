@@ -392,6 +392,9 @@ CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
 	sShortName.Replace( "Dance Dance Revolution", "DDR" );
 	sShortName.Replace( "dance dance revolution", "DDR" );
 	sShortName.Replace( "DANCE DANCE REVOLUTION", "DDR" );
+	sShortName.Replace( "Pump It Up", "Pump" );
+	sShortName.Replace( "pump it up", "pump" );
+	sShortName.Replace( "PUMP IT UP", "PUMP" );
 	return sShortName;
 }
 
