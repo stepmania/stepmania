@@ -414,7 +414,7 @@ void SongManager::GetSongsInGroup( const CString sGroupName, CArray<Song*, Song*
 		if( sGroupName == m_pSongs[i]->m_sGroupName )
 			AddTo.Add( pSong );
 	}
-	SortSongPointerArrayByGroup( AddTo );
+//	SortSongPointerArrayByGroup( AddTo );
 }
 
 CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
@@ -423,9 +423,9 @@ CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
 	sShortName.Replace( "Dance Dance Revolution", "DDR" );
 	sShortName.Replace( "dance dance revolution", "DDR" );
 	sShortName.Replace( "DANCE DANCE REVOLUTION", "DDR" );
-	sShortName.Replace( "Pump It Up", "Pump" );
-	sShortName.Replace( "pump it up", "pump" );
-	sShortName.Replace( "PUMP IT UP", "PUMP" );
+	sShortName.Replace( "Pump It Up", "PIU" );
+	sShortName.Replace( "pump it up", "PIU" );
+	sShortName.Replace( "PUMP IT UP", "PIU" );
 	return sShortName;
 }
 

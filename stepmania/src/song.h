@@ -198,6 +198,7 @@ public:
 };
 
 
+void SortSongPointerArrayByDifficulty( CArray<Song*, Song*> &arraySongPointers );
 void SortSongPointerArrayByTitle( CArray<Song*, Song*> &arraySongPointers );
 void SortSongPointerArrayByBPM( CArray<Song*, Song*> &arraySongPointers );
 void SortSongPointerArrayByArtist( CArray<Song*, Song*> &arraySongPointers );

@@ -1,4 +1,5 @@
 ------------------------CVS after 3.00 beta 6----------------
+CHANGE:  Initial sort order now sorts by meter of Easy notes, ala MAX.
 BUG FIX:  DWI music sample info now read correctly - again.
 NEW FEATURE:  Precise adjustment of timing window for each grade via the
 	stepmania.ini file (see JudgeWindowPerfectPercent, JudgeWindowGreatPercent,

@@ -25,6 +25,7 @@
 #include "PrefsManager.h"
 #include "StyleDef.h"
 #include "Notes.h"
+#include "GameState.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -795,6 +796,38 @@ bool Song::IsEasy( NotesType nt ) const
 // Sorting
 /////////////////////////////////////
 
+int CompareSongPointersByDifficulty(const void *arg1, const void *arg2)
+{
+	const Song* pSong1 = *(const Song**)arg1;
+	const Song* pSong2 = *(const Song**)arg2;
+
+	CArray<Notes*,Notes*> aNotes1;
+	CArray<Notes*,Notes*> aNotes2;
+
+	pSong1->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), PLAYER_1, aNotes1 );
+	pSong2->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), PLAYER_1, aNotes2 );
+
+	int iEasiestMeter1 = 1000;	// infinity
+	int iEasiestMeter2 = 1000;	// infinity
+
+	for( int i=0; i<aNotes1.GetSize(); i++ )
+		iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->m_iMeter );
+	for( int i=0; i<aNotes2.GetSize(); i++ )
+		iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->m_iMeter );
+
+	if( iEasiestMeter1 < iEasiestMeter2 )
+		return -1;
+	else if( iEasiestMeter1 == iEasiestMeter2 )
+		return 0;
+	else 
+		return +1;
+}
+
+void SortSongPointerArrayByDifficulty( CArray<Song*, Song*> &arraySongPointers )
+{
+	qsort( arraySongPointers.GetData(), arraySongPointers.GetSize(), sizeof(Song*), CompareSongPointersByDifficulty );
+}
+
 int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 {
 	const Song* pSong1 = *(const Song**)arg1;
@@ -877,8 +910,8 @@ int CompareSongPointersByGroup(const void *arg1, const void *arg2)
 	else if( sGroup1 > sGroup2 )
 		return 1;
 
-	/* Same group; compare by title. */
-	return CompareSongPointersByTitle( arg1, arg2 );
+	/* Same group; compare by difficulty. */
+	return CompareSongPointersByDifficulty( arg1, arg2 );
 }
 
 void SortSongPointerArrayByGroup( CArray<Song*, Song*> &arraySongPointers )

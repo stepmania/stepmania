@@ -215,8 +215,6 @@ void ScreenSelectMode::RefreshModeChoices()
 			m_BGAnimations[i].LoadFromAniDir( THEME->GetPathTo("BGAnimations",ssprintf("select mode %s %s", sGameName, sChoiceName)) );	
 		}
 	}
-
-
 }
 
 
