@@ -23,6 +23,10 @@
 #include <map>
 #include <set>
 
+#if !defined(WIN32)
+#include <dirent.h>
+#endif
+
 unsigned long randseed = time(NULL);
 
 /* Return a positive x mod y. */
@@ -1000,6 +1004,7 @@ void FileSet::LoadFromDir(const CString &dir)
 	GetCwd(oldpath);
 	if(chdir(dir) == -1) return;
 
+#if defined(WIN32)
 	WIN32_FIND_DATA fd;
 	HANDLE hFind = FindFirstFile( "*", &fd );
 
@@ -1021,7 +1026,23 @@ void FileSet::LoadFromDir(const CString &dir)
 		files.insert(f);
 	} while( FindNextFile( hFind, &fd ) );
 	FindClose(hFind);
+#else
+	DIR *d = opendir(".");
 
+	while(struct dirent *ent = readdir(d))
+	{
+		if(!strcmp(ent->d_name, ".")) continue;
+		if(!strcmp(ent->d_name, "..")) continue;
+		
+		File f;
+		f.dir = IsADirectory(ent->d_name);
+		f.name=ent->d_name;
+
+		files.insert(f);
+	}
+	       
+	closedir(d);
+#endif
 	chdir(oldpath);
 }
 
