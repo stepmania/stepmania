@@ -107,8 +107,6 @@ void NoteField::Load(
 	int iLastPixelToDraw, 
 	float fYReverseOffsetPixels )
 {
-	Unload();
-
 	m_pPlayerState = pPlayerState;
 	m_iStartDrawingPixel = iFirstPixelToDraw;
 	m_iEndDrawingPixel = iLastPixelToDraw;
