@@ -185,7 +185,6 @@ enum RageKeySym
 
 const int NUM_KEYBOARD_BUTTONS = NUM_KEYS;
 const int NUM_JOYSTICKS = 6;
-const int NUM_JOYSTICK_HATS = 1;
 const int NUM_PUMPS = 2;
 const int NUM_PARAS = 2;
 
