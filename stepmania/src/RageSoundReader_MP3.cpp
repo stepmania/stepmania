@@ -209,10 +209,10 @@ struct madlib_t
      * is to keep us from accidentally double-counting a header.  We do
      * reset these to 0 when we rewind, but it's possible we could 
      * seek_stream_to_byte in the middle of them. */
-    bool finished_header;
+    int finished_header;
 
     /* This data is filled in when the first frame is decoded. */
-    bool has_xing; /* whether xingtag is valid */
+    int has_xing; /* whether xingtag is valid */
     struct xing xingtag;
 
     /* If has_xing is true, this is filled in based on the xing header.
@@ -690,6 +690,13 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 	mad_synth_mute(&mad->Synth);
 	mad_timer_reset(&mad->Timer);
 	mad->outpos = mad->outleft = 0;
+
+	/* Gar.  We should do this, to completely reset the stream.  However, doing so
+	 * will change the output if there's unexpected stuff at the beginning of the
+	 * stream; I'm not familiar enough with MAD and MP3 to know exactly how.  That
+	 * results in sync changes. XXX */
+	// mad_stream_finish(&mad->Stream);
+	// mad_stream_init(&mad->Stream);
 	mad_stream_buffer(&mad->Stream, NULL, 0);
 	mad->inbuf_filepos = 0;
 	mad->header_bytes = 0;
@@ -860,6 +867,16 @@ int RageSoundReader_MP3::SetPosition_estimate( int ms )
 
 int RageSoundReader_MP3::SetPosition_Accurate( int ms )
 {
+	/* We don't actually need to do this, since the below seeks are just as fast
+	 * and accurate for ms == 0.  However, we need to reproduce a glitch in
+	 * MADLIB_rewind to avoid changing sync. :( */
+	if( !ms )
+	{
+		if( !MADLIB_rewind() )
+			return -1; /* error */
+		return 0; /* error */
+	}
+
 	/* Seek using our own internal (accurate) TOC. */
 	if( SetPosition_toc( ms, false ) == -1 )
 		return -1; /* error */
@@ -870,6 +887,14 @@ int RageSoundReader_MP3::SetPosition_Accurate( int ms )
 
 int RageSoundReader_MP3::SetPosition_Fast( int ms )
 {
+	/* Rewinding is always fast and accurate, and SetPosition_estimate is bad at 0. */
+	if( !ms )
+	{
+		if( !MADLIB_rewind() )
+			return -1; /* error */
+		return 0; /* error */
+	}
+
 	/* We can do a fast jump in VBR with Xing with more accuracy than without Xing. */
 	if( mad->has_xing )
 		return SetPosition_toc( ms, true );
