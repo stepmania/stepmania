@@ -12,7 +12,6 @@
 
 static vector<SignalHandler::handler> handlers;
 SaveSignals *saved_sigs;
-static bool initted = false;
 
 static int signals[] = {
 	SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL, SIGINT, SIGABRT,
