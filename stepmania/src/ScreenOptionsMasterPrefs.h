@@ -56,7 +56,7 @@ struct ConfOption
 	}
 
 
-private:
+// private:
 	vector<CString> names;
 	void (*MakeOptionsListCB)( CStringArray &out );
 };
