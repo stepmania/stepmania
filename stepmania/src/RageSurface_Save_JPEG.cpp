@@ -1,6 +1,8 @@
 #include "global.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "RageSurface_Save_JPEG.h"
+
 #include "RageUtil.h"
 #include "RageFile.h"
 
@@ -12,8 +14,6 @@ namespace jpeg
 #include <jpeglib.h>
 	}
 }
-
-#include "SDL_SaveJPEG.h"
 
 /* Pull in JPEG library here. */
 #ifdef _XBOX

@@ -223,8 +223,6 @@ ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
 ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp ScoreDisplayOni.h \
 ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDisplayRave.h
 
-Helpers = SDL_SaveJPEG.cpp SDL_SaveJPEG.h
-
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
 RageFile = \
@@ -235,7 +233,7 @@ RageFileDriverMemory.cpp RageFileDriverMemory.h RageFileDriverZip.cpp RageFileDr
 RageFileDriverDeflate.cpp RageFileDriverDeflate.h \
 RageFileDriverSlice.cpp RageFileDriverSlice.h
 
-Rage = $(Helpers) $(PCRE) $(RageFile) $(RageSoundFileReaders) \
+Rage = $(PCRE) $(RageFile) $(RageSoundFileReaders) \
 RageBitmapTexture.cpp RageBitmapTexture.h RageDisplay.cpp RageDisplay.h RageDisplay_OGL.cpp RageDisplay_OGL.h \
 RageDisplay_Null.cpp RageDisplay_Null.h RageException.cpp RageException.h RageInput.cpp RageInput.h \
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h \
@@ -249,6 +247,7 @@ RageSoundReader_Chain.cpp RageSoundReader_Chain.h \
 RageSoundResampler.cpp RageSoundResampler.h \
 RageSurface.cpp RageSurface.h RageSurfaceUtils.cpp RageSurfaceUtils.h \
 RageSurfaceUtils_Dither.cpp RageSurfaceUtils_Dither.h \
+RageSurface_Save_JPEG.cpp RageSurface_Save_JPEG.h \
 RageSurfaceUtils_Palettize.cpp RageSurfaceUtils_Palettize.h \
 RageSurfaceUtils_Zoom.cpp RageSurfaceUtils_Zoom.h \
 RageSurface_Load.cpp RageSurface_Load.h RageSurface_Load_PNG.cpp RageSurface_Load_PNG.h \

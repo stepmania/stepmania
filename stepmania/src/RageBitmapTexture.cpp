@@ -10,9 +10,8 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageSurfaceUtils_Zoom.h"
+#include "RageSurfaceUtils_Dither.h"
 #include "RageSurface_Load.h"
-
-#include "SDL_dither.h"
 
 static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
 {
