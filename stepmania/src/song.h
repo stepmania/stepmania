@@ -93,7 +93,7 @@ public:
 	CString	m_sArtist;
 	CString	m_sCredit;
 
-	CString GetFullTitle() const { return m_sMainTitle + " " + m_sSubTitle; }
+	CString GetFullTitle() const { return m_sMainTitle + (m_sSubTitle.GetLength()? (" " + m_sSubTitle):""); }
 	static void GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 
 
