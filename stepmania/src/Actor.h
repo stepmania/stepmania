@@ -159,8 +159,8 @@ public:
 	void SetGlobalDiffuseColor( RageColor c );
 	void SetGlobalX( float x );
 
-	void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
-	void SetDiffuseAlpha( float f ) { for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
+	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
+	virtual void SetDiffuseAlpha( float f ) { for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
 	void SetDiffuseColor( RageColor c );
 	void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
 	void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
@@ -181,8 +181,8 @@ public:
 
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
-	void FinishTweening();
-	void HurryTweening( float factor );
+	virtual void FinishTweening();
+	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
 	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
 	TweenState& DestTweenState()	// where Actor will end when its tween finish
@@ -290,10 +290,10 @@ public:
 	void SetTextureWrapping( bool b ) 	{ m_bTextureWrapping = b; } 
 	void SetClearZBuffer( bool b ) 		{ m_bClearZBuffer = b; } 
 	void SetUseZBuffer( bool b ) 		{ SetZTest(b); SetZWrite(b); } 
-	void SetZTest( bool b ) 			{ m_bZTest = b; } 
-	void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
-	void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
-	void SetCullMode( CString );
+	virtual void SetZTest( bool b ) 			{ m_bZTest = b; } 
+	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
+	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
+	virtual void SetCullMode( CString );
 
 	//
 	// Commands
