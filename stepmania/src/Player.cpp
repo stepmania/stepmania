@@ -506,15 +506,29 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		switch( GAMESTATE->m_PlayerController[m_PlayerNumber] )
 		{
 		case PC_HUMAN: {
-			/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-			float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
-			if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
-			else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-			else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
-			else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-			else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
-			else	score = TNS_NONE;
-
+			if(GAMESTATE->m_CurGame == GAME_EZ2)
+			{
+				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
+				/* Ez2 is only perfect / good / miss */
+				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
+				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+				else	score = TNS_NONE;
+			}
+			else
+			{
+				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
+				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
+				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
+				else	score = TNS_NONE;
+			}
 			// Penalize for stepping on mines
 			if( tn == TAP_MINE  &&  score > TNS_NONE )
 			{
@@ -527,6 +541,15 @@ void PlayerMinus::Step( int col, RageTimer tm )
 		}
 		case PC_CPU:
 			score = PlayerAI::GetTapNoteScore( GAMESTATE->m_iCpuSkill[m_PlayerNumber], GAMESTATE->GetSumOfActiveAttackLevels(m_PlayerNumber) );			
+
+
+			if( GAMESTATE->m_CurGame == GAME_EZ2 ) // scores are only perfect/good/miss on ez2 adjust accordingly
+			{
+				if(score == TNS_GREAT || score == TNS_MARVELOUS)
+					score = TNS_PERFECT;
+				if(score == TNS_BOO)
+					score = TNS_MISS;
+			}
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
@@ -544,8 +567,14 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			}
 			break;
 		case PC_AUTOPLAY:
-			score = TNS_MARVELOUS;
-
+			if(GAMESTATE->m_CurGame == GAME_EZ2)
+			{
+				score = TNS_PERFECT;
+			}
+			else
+			{
+				score = TNS_MARVELOUS;
+			}
 			// Don't step on mines
 			if( tn == TAP_MINE )
 				return;
