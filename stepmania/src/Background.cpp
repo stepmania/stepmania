@@ -301,44 +301,50 @@ void Background::LoadFromSong( Song* pSong )
 		// start off showing the static song background
 		m_aBGSegments.Add( BGSegment(-10000,0) );
 
-		// change BG every 4 bars
+		/* If we have only 2, only generate a single animation segment for for the
+		 * whole song.  Otherwise, if it's a movie., it'll loop every four bars; we
+		 * want it to play continuously. */
 		const float fFirstBeat = m_BackgroundMode==MODE_MOVIE_BG ? 0 : pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
-		for( float f=fFirstBeat; f<fLastBeat; f+=16 )
-		{
-			int index;
-			if( m_BackgroundAnimations.GetSize()==1 )
-				index = 0;
-			else if( f == fFirstBeat )
-				index = 1;	// force the first random background to play first
-			else
-				index = 1 + rand()%(m_BackgroundAnimations.GetSize()-1);
-			m_aBGSegments.Add( BGSegment(f,index) );
-		}
 
-		// change BG every BPM change
-		for( int i=0; i<pSong->m_BPMSegments.GetSize(); i++ )
-		{
-			const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
+		if( m_BackgroundAnimations.GetSize() == 2) {
+			m_aBGSegments.Add( BGSegment(fFirstBeat,1) );
+		} else {
+			// change BG every 4 bars
+			for( float f=fFirstBeat; f<fLastBeat; f+=16 )
+			{
+				int index;
+				if( m_BackgroundAnimations.GetSize()==1 )
+					index = 0;
+				else if( f == fFirstBeat )
+					index = 1;	// force the first random background to play first
+				else
+					index = 1 + rand()%(m_BackgroundAnimations.GetSize()-1);
+				m_aBGSegments.Add( BGSegment(f,index) );
+			}
 
-			if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
-				continue;	// skip]
+			// change BG every BPM change
+			for( int i=0; i<pSong->m_BPMSegments.GetSize(); i++ )
+			{
+				const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
 
-			int index;
-			if( m_BackgroundAnimations.GetSize()==1 )
-				index = 0;
-			else
-				index = 1 + int(bpmseg.m_fBPM)%(m_BackgroundAnimations.GetSize()-1);
-			m_aBGSegments.Add( BGSegment(bpmseg.m_fStartBeat,index) );
+				if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
+					continue;	// skip]
+
+				int index;
+				if( m_BackgroundAnimations.GetSize()==1 )
+					index = 0;
+				else
+					index = 1 + int(bpmseg.m_fBPM)%(m_BackgroundAnimations.GetSize()-1);
+				m_aBGSegments.Add( BGSegment(bpmseg.m_fStartBeat,index) );
+			}
 		}
 
 		// end showing the static song background
 		m_aBGSegments.Add( BGSegment(pSong->m_fLastBeat,0) );
-
+		
 		// sort segments
 		SortBGSegmentArray( m_aBGSegments );
-
-
 	}
 
 	for( int i=0; i<m_BackgroundAnimations.GetSize(); i++ )
