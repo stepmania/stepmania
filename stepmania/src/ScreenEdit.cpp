@@ -90,6 +90,7 @@ const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+13);
 const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
 
 const CString HELP_TEXT = 
+#if !defined(XBOX)
 	"Up/Down:\n     change beat\n"
 	"Left/Right:\n     change snap\n"
 	"Number keys:\n     add/remove\n     tap note\n"
@@ -98,10 +99,21 @@ const CString HELP_TEXT =
 	"Enter:\n     Area Menu\n"
 	"Escape:\n     Main Menu\n"
 	"F1:\n     Show\n     keyboard\n     shortcuts\n";
+#else
+	"Up/Down:\n     change beat\n"
+	"Left/Right:\n     change snap\n"
+	"A/B/X/Y:\n     add/remove\n     tap note\n"
+	"Create hold note:\n     Hold a button\n     while moving\n     Up or Down\n"
+	"White:\n     Set area\n     marker\n"
+	"Start:\n     Area Menu\n"
+	"Select:\n     Main Menu\n"
+	"Black:\n     Show\n     shortcuts\n";
+#endif
 
 
 static const MenuRow g_KeyboardShortcutsItems[] =
 {
+#if !defined(XBOX)
 	{ "PgUp/PgDn: jump measure",						false, 0, { NULL } },
 	{ "Home/End: jump to first/last beat",				false, 0, { NULL } },
 	{ "Ctrl + Up/Down: Change zoom",					false, 0, { NULL } },
@@ -130,6 +142,18 @@ static const MenuRow g_KeyboardShortcutsItems[] =
 														false, 0, { NULL } },
 	{ "Shift + number: Lay mine",						false, 0, { NULL } },
 	{ "Alt + number: Add to/remove from right half",	false, 0, { NULL } },
+#else
+	{ "L + Up/Down: Change zoom",					false, 0, { NULL } },
+	{ "R + Up/Down: Drag area marker",				false, 0, { NULL } },
+	{ "L + Select: Play selection",								false, 0, { NULL } },
+	{ "R + Start: Play whole song",						false, 0, { NULL } },
+	{ "R + Select: Record",								false, 0, { NULL } },
+	{ "L + Black: Toggle assist tick",							false, 0, { NULL } },
+	{ "R + White: Insert beat and shift down",				false, 0, { NULL } },
+	{ "R + Black: Delete beat and shift up",				false, 0, { NULL } },
+	{ "R + button: Lay mine",						false, 0, { NULL } },
+	{ "L + button: Add to/remove from right half",	false, 0, { NULL } },
+#endif
 	{ NULL, true, 0, { NULL } }
 };
 static Menu g_KeyboardShortcuts( "Keyboard Shortcuts", g_KeyboardShortcutsItems );
@@ -253,6 +277,103 @@ static Menu g_CourseMode( "Course Display", g_CourseModeItems );
 // menus.
 int g_iLastInsertAttackTrack = -1;
 float g_fLastInsertAttackDurationSeconds = -1;
+
+#if defined(XBOX)
+bool lIsHeld = false; // true if L (Ctrl) is being held
+bool rIsHeld = false; // true if R (Shift) is being held
+bool buttonHeld[4] = {false};
+
+DeviceInput TranslateInput(const DeviceInput& DeviceI, const InputEventType type)
+{
+	DeviceInput ret;
+	ret.device = DEVICE_KEYBOARD;
+	ret.button = 0;
+
+    int i = -1;
+	switch(DeviceI.button)
+	{
+	case JOY_HAT_LEFT:
+		ret.button = KEY_LEFT;
+		break;
+	case JOY_HAT_RIGHT:
+		ret.button = KEY_RIGHT;
+		break;
+	case JOY_HAT_UP:
+		ret.button = KEY_UP;
+		break;
+	case JOY_HAT_DOWN:
+		ret.button = KEY_DOWN;
+		break;
+	case JOY_AUX_1: // start
+		if(!lIsHeld)
+			ret.button = KEY_ENTER;
+		else
+			ret.button = KEY_CP;
+		break;
+	case JOY_AUX_2: // select
+		if(rIsHeld)
+			ret.button = KEY_Cr;
+		else if(lIsHeld)
+			ret.button = KEY_Cp;
+		else
+			ret.button = KEY_ESC;
+		break;
+	case JOY_1:
+		i = 1;
+		ret.button = KEY_C2;
+		break;
+	case JOY_2:
+		i = 3;
+		ret.button = KEY_C4;
+		break;
+	case JOY_3:
+		i = 0;
+		ret.button = KEY_C1;
+		break;
+	case JOY_4:
+		i = 2;
+		ret.button = KEY_C3;
+		break;
+	case JOY_5: // Black
+		if(lIsHeld)
+			ret.button = KEY_F4;
+		else if(rIsHeld)
+			ret.button = KEY_DEL;			
+		else
+			ret.button = KEY_F1;
+		break;
+	case JOY_6: // White
+		if(rIsHeld)
+			ret.button = KEY_INSERT;
+		else
+			ret.button = KEY_SPACE;
+		break;
+	case JOY_7: // L
+		if(type == IET_FIRST_PRESS)
+			lIsHeld = true;
+		else if(type == IET_RELEASE)
+			lIsHeld = false;
+		break;
+	case JOY_8: // R
+		if(type == IET_FIRST_PRESS)
+			rIsHeld = true;
+		else if(type == IET_RELEASE)
+			rIsHeld = false;
+		ret.button = KEY_LSHIFT;
+		break;
+	}
+
+	if(i != -1)
+	{
+		if(type == IET_FIRST_PRESS)
+			buttonHeld[i] = true;
+		else if(type == IET_RELEASE)
+			buttonHeld[i] = false;
+	}
+
+	return ret;
+}
+#endif
 
 ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
@@ -646,11 +767,17 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
+#if defined(XBOX)
+	DeviceInput di = TranslateInput(DeviceI, type);
+#else
+	DeviceInput& di = DeviceI;
+#endif
+
 	switch( m_EditMode )
 	{
-	case MODE_EDITING:		InputEdit( DeviceI, type, GameI, MenuI, StyleI );	break;
-	case MODE_RECORDING:	InputRecord( DeviceI, type, GameI, MenuI, StyleI );	break;
-	case MODE_PLAYING:		InputPlay( DeviceI, type, GameI, MenuI, StyleI );	break;
+	case MODE_EDITING:		InputEdit( di, type, GameI, MenuI, StyleI );	break;
+	case MODE_RECORDING:	InputRecord( di, type, GameI, MenuI, StyleI );	break;
+	case MODE_PLAYING:		InputPlay( di, type, GameI, MenuI, StyleI );	break;
 	default:	ASSERT(0);
 	}
 
@@ -702,8 +829,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 
 			// Alt + number = input to right half
+#if !defined(XBOX)
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)))
+#else
+			if(lIsHeld)
+#endif
 				iCol += m_NoteFieldEdit.GetNumTracks()/2;
 
 
@@ -732,7 +863,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			// Hold LShift to lay mine, hold RShift to lay an attack
+#if !defined(XBOX)
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
+#else
+			if(rIsHeld)
+#endif
 			{
 				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
 			}
@@ -752,8 +887,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case KEY_PGUP:
 	case KEY_PGDN:
 		{
+#if !defined(XBOX)
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
+#else
+			if(lIsHeld)
+#endif
 			{
 				float& fScrollSpeed = GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed;
 				float fNewScrollSpeed = fScrollSpeed;
@@ -807,17 +946,27 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				int iCol = n;
 
 				// Ctrl + number = input to right half
+#if !defined(XBOX)
 				if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) ||
 					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)))
+#else
+				if(lIsHeld)
+#endif
 					iCol += m_NoteFieldEdit.GetNumTracks()/2;
 
 				if( iCol >= m_NoteFieldEdit.GetNumTracks() )
 					continue;	// skip
 
+#if !defined(XBOX)
 				const DeviceInput di(DEVICE_KEYBOARD, KEY_C1+n);
 
-
 				if( !INPUTFILTER->IsBeingPressed(di) )
+#else
+				if(n > 3)
+					continue;
+
+				if(!buttonHeld[n])
+#endif
 					continue;
 
 				// create a new hold note
@@ -829,8 +978,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_NoteFieldEdit.AddHoldNote( newHN );
 			}
 
+#if !defined(XBOX)
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)))
+#else
+			if(rIsHeld)
+#endif
 			{
 				/* Shift is being held. 
 				 *
@@ -1149,6 +1302,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	}
 	case KEY_Cp:
 		{
+#if !defined(XBOX)
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
 				HandleMainMenuChoice( play_whole_song, NULL );
@@ -1158,29 +1312,41 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			else
 				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
 					HandleAreaMenuChoice( play, NULL );
+#else
+			if(rIsHeld)
+				HandleMainMenuChoice( play_whole_song, NULL );
+			else
+				HandleAreaMenuChoice( play, NULL );
+#endif
 		}
 		break;
 	case KEY_Cr:
 		{
+#if !defined(XBOX)
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
+#endif
 				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
 					HandleAreaMenuChoice( record, NULL );
 		}
 		break;
 	case KEY_INSERT:
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
+#if !defined(XBOX)
+		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
 				HandleAreaMenuChoice( shift_pauses_forward, NULL );
 			else
+#endif
 				HandleAreaMenuChoice( insert_and_shift, NULL );
 			SCREENMAN->PlayInvalidSound();
 		break;
 	case KEY_DEL:
+#if !defined(XBOX)
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
 				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
 				HandleAreaMenuChoice( shift_pauses_backward, NULL );
 			else
+#endif
 				HandleAreaMenuChoice( delete_and_shift, NULL );
 			SCREENMAN->PlayInvalidSound();
 		break;
