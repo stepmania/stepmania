@@ -277,7 +277,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathTo("Numbers","ScreenGameplay song num") );
+		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathTo("Numbers","ScreenGameplay song num") );
 		m_textCourseSongNumber[p].EnableShadow( false );
 		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
 		m_textCourseSongNumber[p].SetText( "" );
