@@ -71,7 +71,7 @@ LPRageTexture RageTextureManager::LoadTexture( CString sTexturePath )
 	}
 	else
 	{
-		RageLog( ssprintf("Didn't find '%s' already loaded.  Creating a new texture.", sTexturePath) );
+		RageLog( ssprintf("RageTextureManager: allocating space for '%s'.", sTexturePath) );
 		
 		CString sDrive, sDir, sFName, sExt;
 		splitpath( FALSE, sTexturePath, sDrive, sDir, sFName, sExt );
@@ -105,7 +105,7 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 
 	if( sTexturePath == "" )
 	{
-		RageLog( "RageTextureManager::UnloadTexture() tried to Unload a blank" );
+		RageLog( "RageTextureManager::UnloadTexture(): tried to Unload a blank" );
 		return;
 	}
 	
@@ -120,7 +120,7 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 		pTexture->m_iRefCount--;
 		if( pTexture->m_iRefCount == 0 )		// there are no more references to this texture
 		{
-			RageLog( ssprintf("The texture '%s' has no more references.  It will be deleted.", sTexturePath) );
+			RageLog( ssprintf("RageTextureManager: deallocating '%s'.", sTexturePath) );
 			SAFE_DELETE( pTexture );		// free the texture
 			m_mapPathToTexture.RemoveKey( sTexturePath );	// and remove the key in the map
 		}

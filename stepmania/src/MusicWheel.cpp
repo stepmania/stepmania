@@ -492,8 +492,15 @@ void MusicWheel::Update( float fDeltaTime )
 
 void MusicWheel::PrevMusic()
 {
-	if( m_WheelState != STATE_IDLE )
-		return;
+	switch( m_WheelState )
+	{
+	//case STATE_SWITCHING_TO_PREV_MUSIC:
+
+	case STATE_IDLE:
+		break;	// fall through
+	default:
+		return;	// don't fall through
+	}
 
 	MUSIC->Stop();
 

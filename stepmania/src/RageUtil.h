@@ -11,6 +11,11 @@
 #ifndef _RAGEUTIL_H_
 #define _RAGEUTIL_H_
 
+
+#include "dxerr8.h"
+#pragma comment(lib, "DxErr8.lib")
+
+
 //-----------------------------------------------------------------------------
 // SAFE_ Macros
 //-----------------------------------------------------------------------------
@@ -98,14 +103,11 @@ void SortCStringArray( CStringArray &AddTo, BOOL bSortAcsending = TRUE );
 //-----------------------------------------------------------------------------
 void RageLogStart();
 void RageLog( LPCTSTR fmt, ...);
+void RageLogHr( HRESULT hr, LPCTSTR fmt, ...);
 
 //-----------------------------------------------------------------------------
 // Error helpers
 //-----------------------------------------------------------------------------
-#include "dxerr8.h"
-#pragma comment(lib, "DxErr8.lib")
-
-
 VOID DisplayErrorAndDie( CString sError );
 
 

@@ -211,8 +211,6 @@ bool Song::LoadSongInfoFromBMSDir( CString sDir )
 	// get group name
 	CStringArray sDirectoryParts;
 	split( m_sSongDir, "\\", sDirectoryParts, true );
-	for( int p=0; p<sDirectoryParts.GetSize(); p++ )
-		RageLog( "sDirectoryParts[p] = '%s'", sDirectoryParts[p] );
 	m_sGroupName = sDirectoryParts[1];
 
 
@@ -369,8 +367,6 @@ bool Song::LoadSongInfoFromDWIFile( CString sPath )
 		// get group name
 		CStringArray sDirectoryParts;
 		split( m_sSongDir, "\\", sDirectoryParts, true );
-		for( int p=0; p<sDirectoryParts.GetSize(); p++ )
-			RageLog( "sDirectoryParts[p] = '%s'", sDirectoryParts[p] );
 		m_sGroupName = sDirectoryParts[1];
 	}
 

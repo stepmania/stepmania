@@ -60,6 +60,8 @@ enum ThemeElement {
 	GRAPHIC_SECTION_BACKGROUND,
 	GRAPHIC_MUSIC_SORT_ICONS,
 	GRAPHIC_MUSIC_STATUS_ICONS,
+	GRAPHIC_DANGER,
+	GRAPHIC_DANGER_BACKGROUND,
 	
 	SOUND_FAILED,	
 	SOUND_ASSIST,	
@@ -129,7 +131,17 @@ public:
 
 	void GetThemeNames( CStringArray& AddTo )
 	{
-		GetDirListing( "Themes\\*.*", AddTo, true );
+		GetDirListing( "Themes\\*", AddTo, true );
+		
+		// strip out the folder called "CVS"
+		for( int i=0; i<AddTo.GetSize(); i++ )
+		{
+			if( 0 == stricmp( AddTo[i], "cvs" ) )
+			{
+				AddTo.RemoveAt(i);
+				i--;
+			}
+		}
 	};
 
 	bool SetTheme( CString sThemeName )		// return false if theme doesn't exist

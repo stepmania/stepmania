@@ -92,8 +92,6 @@ void RageLogStart()
 //-----------------------------------------------------------------------------
 void RageLog( LPCTSTR fmt, ...)
 {
-
-#if defined(DEBUG) | defined(_DEBUG)
     va_list	va;
     va_start(va, fmt);
 
@@ -110,8 +108,15 @@ void RageLog( LPCTSTR fmt, ...)
 	fprintf(fp, sBuff);
 
 	fclose(fp);
-#endif
+}
 
+void RageLogHr( HRESULT hr, LPCTSTR fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+    CString s = vssprintf( fmt, va );
+	s += ssprintf( "(%s)", DXGetErrorString8(hr) );
+	RageLog( s );
 }
 
 
@@ -364,7 +369,7 @@ DWORD GetFileSizeInBytes( CString sFilePath )
 
 bool DoesFileExist( CString sPath )
 {
-	RageLog( "DoesFileExist(%s)", sPath );
+	//RageLog( "DoesFileExist(%s)", sPath );
 
     DWORD dwAttr = GetFileAttributes( sPath );
     if( dwAttr == (DWORD)-1 )

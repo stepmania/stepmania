@@ -7,8 +7,6 @@
 #define IDI_ICON                        1003
 #define IDC_CURSOR                      1004
 #define IDM_EXIT                        40003
-#define IDM_WINDOWED                    40008
-#define IDM_PADS                        40011
 
 // Next default values for new objects
 // 

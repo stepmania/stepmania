@@ -34,7 +34,7 @@ BitmapText::BitmapText()
 
 bool BitmapText::Load( CString sFontFilePath )
 {
-	RageLog( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
+	//RageLog( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
 	
 	m_sFontFilePath = sFontFilePath;	// save 
 

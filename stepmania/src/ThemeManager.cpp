@@ -70,6 +70,8 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case GRAPHIC_SECTION_BACKGROUND:	sAssetPath = "Graphics\\section background";			break;
 		case GRAPHIC_MUSIC_SORT_ICONS:		sAssetPath = "Graphics\\music sort icons 1x5";			break;
 		case GRAPHIC_MUSIC_STATUS_ICONS:	sAssetPath = "Graphics\\music status icons 1x4";		break;
+		case GRAPHIC_DANGER:				sAssetPath = "Graphics\\danger";						break;
+		case GRAPHIC_DANGER_BACKGROUND:		sAssetPath = "Graphics\\danger background";				break;
 
 		case SOUND_FAILED:					sAssetPath = "Sounds\\failed";							break;
 		case SOUND_ASSIST:					sAssetPath = "Sounds\\Assist";							break;
