@@ -41,8 +41,9 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 #define EXPLANATION_TOGETHER_Y			THEME->GetMetricF("ScreenOptions","ExplanationTogetherY")
 #define EXPLANATION_TOGETHER_ON_COMMAND	THEME->GetMetric ("ScreenOptions","ExplanationTogetherOnCommand")
 #define SHOW_SCROLL_BAR					THEME->GetMetricB("ScreenOptions","ShowScrollBar")
-#define SCROLL_BAR_HEIGHT				THEME->GetMetricF("ScreenOptions","ScrollBarHeight")
-#define SCROLL_BAR_TIME					THEME->GetMetricF("ScreenOptions","ScrollBarTime")
+/* Extra parens needed to work around stupid VC6 compiler crash: */
+#define SCROLL_BAR_HEIGHT				(THEME->GetMetricF("ScreenOptions","ScrollBarHeight"))
+#define SCROLL_BAR_TIME					(THEME->GetMetricF("ScreenOptions","ScrollBarTime"))
 #define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
 #define EXPLANATION_ZOOM				THEME->GetMetricF("ScreenOptions","ExplanationZoom")
 #define COLOR_SELECTED					THEME->GetMetricC("ScreenOptions","ColorSelected")
