@@ -120,7 +120,8 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj"
+				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj /FIXED:no
+"
 				OutputFile=".\../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -1437,6 +1438,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="RageSoundReader.h">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Preload.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Preload.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_SDL_Sound.cpp">

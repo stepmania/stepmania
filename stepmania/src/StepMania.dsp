@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                  	cl                                                                                   /Zl                                                                                   /nologo                                                                                   /c                                                                                   verstub.cpp                                                                                   /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                   	cl                                                                                    /Zl                                                                                    /nologo                                                                                    /c                                                                                    verstub.cpp                                                                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                  	cl                                                                                   /Zl                                                                                   /nologo                                                                                   /c                                                                                   verstub.cpp                                                                                   /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                   	cl                                                                                    /Zl                                                                                    /nologo                                                                                    /c                                                                                    verstub.cpp                                                                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -228,6 +228,14 @@ SOURCE=.\RageSoundManager.h
 # Begin Source File
 
 SOURCE=.\RageSoundReader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundReader_Preload.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundReader_Preload.h
 # End Source File
 # Begin Source File
 
