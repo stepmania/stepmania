@@ -46,6 +46,7 @@ public:
 	void PlayCommand( const CString &cmd );
 
 	float GetTweenTimeLeft() const;
+	void FinishTweening();
 
 protected:
 	vector<BGAnimationLayer*> m_Layers;

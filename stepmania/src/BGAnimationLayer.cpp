@@ -640,6 +640,12 @@ float BGAnimationLayer::GetMaxTweenTimeLeft() const
 	return ret;
 }
 
+void BGAnimationLayer::FinishTweening()
+{
+	for( unsigned i=0; i<m_pActors.size(); i++ )
+		m_pActors[i]->FinishTweening();
+}
+
 void BGAnimationLayer::Update( float fDeltaTime )
 {
 	fDeltaTime *= m_fUpdateRate;

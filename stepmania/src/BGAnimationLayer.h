@@ -36,6 +36,7 @@ public:
 	void SetDiffuse( RageColor c );
 
 	float GetMaxTweenTimeLeft() const;
+	void FinishTweening();
 	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
 	void LosingFocus();
 

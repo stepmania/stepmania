@@ -219,6 +219,12 @@ float BGAnimation::GetTweenTimeLeft() const
 	return tot;
 }
 
+void BGAnimation::FinishTweening()
+{
+	for( unsigned i=0; i<m_Layers.size(); i++ )
+		m_Layers[i]->FinishTweening();
+}
+
 void BGAnimation::PlayCommand( const CString &cmd )
 {
 	for( unsigned i=0; i<m_Layers.size(); i++ ) 
