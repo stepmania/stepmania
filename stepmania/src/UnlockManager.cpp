@@ -246,7 +246,12 @@ void UnlockManager::Load()
 			if( cmd.GetName() == "song" )
 				current.m_sSongName = cmd.GetArg(1);
 			else if( cmd.GetName() == "code" )
-				current.m_iCode = cmd.GetArg(1);
+			{
+				// Hack: Lua only has a floating point type, and codes may be big enough
+				// that converting them from string to float to int introduces rounding
+				// error.  Convert directly to int.
+				current.m_iCode = atoi( (CString) cmd.GetArg(1) );
+			}
 			else if( cmd.GetName() == "roulette" )
 				bRoulette = true;
 			else
