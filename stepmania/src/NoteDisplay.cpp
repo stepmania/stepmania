@@ -117,8 +117,8 @@ void NoteDisplay::GetTapEdgeColors( const float fNoteBeat, D3DXCOLOR &colorLeadi
 
 
 
-	float fPercentThroughColorsLeading;		// fill these in below
-	float fPercentThroughColorsTrailing;
+	float fPercentThroughColorsLeading=0.f;		// fill these in below
+	float fPercentThroughColorsTrailing=0.f;
 	switch( ct )
 	{
 	case PlayerOptions::COLOR_VIVID:
@@ -192,7 +192,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	const float fYTailBottom = fYTail+fFrameHeight/2;	
 
 	const float fYBodyTop = fYHead;			// middle of head		
-	const float fYBodyBottom = fYTailTop;	// top of tail
+//	const float fYBodyBottom = fYTailTop;	// top of tail
 
 	const int	fYStep = 8;		// draw a segment every 8 pixels	// this requires that the texture dimensions be a multiple of 8
 

@@ -74,9 +74,7 @@ void LifeMeterBar::Load( PlayerNumber pn )
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
 {
-	bool bWasHot = IsHot();
-
-	float fDeltaLife;
+	float fDeltaLife=0.f;
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:

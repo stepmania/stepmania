@@ -100,7 +100,7 @@ void GradeDisplay::SpinAndSettleOn( Grade g )
 
 	SetDiffuse( D3DXCOLOR(1,1,1,1) );
 
-	int iFrameNo;
+	int iFrameNo=0;
 	switch( g )
 	{
 	case GRADE_AAA:		iFrameNo = 0;	break;

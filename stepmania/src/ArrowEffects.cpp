@@ -46,7 +46,6 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 
 float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos ) 
 {
-	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 	
 	if( GAMESTATE->m_PlayerOptions[pn].m_EffectType & PlayerOptions::EFFECT_DRUNK )

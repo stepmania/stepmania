@@ -52,7 +52,7 @@ void TransitionRectWipe::DrawPrimitives()
 	// draw all rectangles
 	for( int i=0; i<NUM_RECTANGLES; i++ )
 	{
-		int iRectX		= (int)(RECTANGLE_WIDTH * (i+0.5));
+//		int iRectX		= (int)(RECTANGLE_WIDTH * (i+0.5));
 		int iRectWidth;
 		
 		if( i < iFadeLeftEdge )
