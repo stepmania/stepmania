@@ -153,9 +153,9 @@ Sound += arch/Sound/RageSoundDriver_OSS.cpp \
 	 arch/Sound/RageSoundDriver_OSS.h
 endif
 
-Loading = arch/LoadingWindow/LoadingWindow_SDL.cpp \
-	  arch/LoadingWindow/LoadingWindow_SDL.h \
-	  arch/LoadingWindow/LoadingWindow_Null.h
+Loading = arch/LoadingWindow/LoadingWindow_Null.h
+Loading += arch/LoadingWindow/LoadingWindow_SDL.cpp \
+	   arch/LoadingWindow/LoadingWindow_SDL.h
 
 if HAVE_GTK
 Loading += arch/LoadingWindow/LoadingWindow_Gtk.cpp \
