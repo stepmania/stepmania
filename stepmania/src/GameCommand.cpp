@@ -20,6 +20,9 @@
 #include "Command.h"
 #include "arch/Dialog/Dialog.h"
 #include "Bookkeeper.h"
+#include "UnlockSystem.h"
+#include "GameSoundManager.h"
+#include "ThemeManager.h"
 
 void GameCommand::Init()
 {
@@ -40,6 +43,8 @@ void GameCommand::Init()
 	m_pTrail = NULL;
 	m_pCharacter = NULL;
 	m_SortOrder = SORT_INVALID;
+	m_iUnlockIndex = -1;
+	m_sSoundPath = "";
 	
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
@@ -231,23 +236,33 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 			}
 		}
 		
-		else if( sName == "ClearBookkeepingData" )
+		else if( sName == "unlock" )
+		{
+			m_iUnlockIndex = atoi( sValue );
+		}
+		
+		else if( sName == "sound" )
+		{
+			m_sSoundPath = sValue;
+		}
+		
+		else if( sName == "clearbookkeepingdata" )
 		{
 			m_bClearBookkeepingData = true;
 		}
-		else if( sName == "ClearMachineStats" )
+		else if( sName == "clearmachinestats" )
 		{
 			m_bClearMachineStats = true;
 		}
-		else if( sName == "DownloadMachineStats" )
+		else if( sName == "downloadmachinestats" )
 		{
 			m_bDownloadMachineStats = true;
 		}
-		else if( sName == "InsertCredit" )
+		else if( sName == "insertcredit" )
 		{
 			m_bInsertCredit = true;
 		}
-		else if( sName == "ResetToFactoryDefaults" )
+		else if( sName == "resettofactorydefaults" )
 		{
 			m_bResetToFactoryDefaults = true;
 		}
@@ -529,6 +544,10 @@ void GameCommand::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_sPreferredSongGroup = m_sSongGroup;
 	if( m_SortOrder != SORT_INVALID )
 		GAMESTATE->m_SortOrder = m_SortOrder;
+	if( m_iUnlockIndex != -1 )
+		UNLOCKMAN->UnlockCode( m_iUnlockIndex );
+	if( m_sSoundPath != "" )
+		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
 
 	if( m_bClearBookkeepingData )
 	{

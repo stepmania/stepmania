@@ -49,6 +49,8 @@ struct GameCommand		// used in SelectMode
 	std::map<CString,CString> m_SetEnv;
 	CString		m_sSongGroup;
 	SortOrder	m_SortOrder;
+	int			m_iUnlockIndex;	// -1 for no unlock
+	CString		m_sSoundPath;	// "" for no sound
 
 	bool m_bClearBookkeepingData;
 	bool m_bClearMachineStats;
