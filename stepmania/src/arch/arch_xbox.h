@@ -3,10 +3,7 @@
 
 /* Load drivers for Xbox. */
 
-/* Using the SDL loading window without loading the SDLmain library causes a crash
- * so we'll use Null for now */
-//#include "LoadingWindow/LoadingWindow_SDL.h"
-#include "LoadingWindow/LoadingWindow_Null.h"
+#include "LoadingWindow/LoadingWindow_Xbox.h"
 
 #include "ArchHooks/ArchHooks_Xbox.h"
 
