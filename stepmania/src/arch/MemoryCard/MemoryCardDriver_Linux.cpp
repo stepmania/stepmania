@@ -119,7 +119,7 @@ MemoryCardDriver_Linux::MemoryCardDriver_Linux() :
 	m_bStorageDevicesChanged = false;
 
 	MountThread.SetName("MemCard Mount thread");
-	MountThread.Create( MountThread_Start, this );
+       	MountThread.Create( MountThread_Start, this );
 }
 
 MemoryCardDriver_Linux::~MemoryCardDriver_Linux()
@@ -377,16 +377,17 @@ void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 	if( pDevice->sOsMountDir.empty() )
 		return;
 
-	// unmount and mount again.  Is there a better way to flush?
 	// "sync" will only flush all file systems at the same time.  -Chris
 	// I don't think so.  Also, sync() merely queues a flush; it doesn't guarantee
 	// that the flush is completed on return.  However, we can mount the filesystem
 	// with the flag "-o sync", which forces synchronous access (but that's probably
 	// very slow.) -glenn
-	CString sCommand = "umount " + pDevice->sOsMountDir;
+	// Strangely, "-o sync" doesn't seem to force the data to be written to a USB 
+	// pen drive.  I see can see that SM wrote the files correctly, but if I unplug 
+	// without sync'ing or umount'ing, then the files are lost.  Maybe usb-strorage
+	// doesn't play nicely with -o sync?
+	CString sCommand = "sync";
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	system( sCommand );
-	sCommand = "mount " + pDevice->sOsMountDir;
 	system( sCommand );
 }
 
