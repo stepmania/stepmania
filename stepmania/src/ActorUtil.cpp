@@ -91,6 +91,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		BGAnimation *p = new BGAnimation;
 		p->LoadFromNode( sAniDir, pNode );
 		pActor = p;
+		return pActor; // we just ran LoadFromNode; don't run it again below
 	}
 	else if( 
 		sType == "GenreDisplay" ||
@@ -104,6 +105,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		ActorFrame *p = new ActorFrame;
 		p->LoadFromNode( sAniDir, pNode );
 		pActor = p;
+		return pActor; // we just ran LoadFromNode; don't run it again below
 	}
 	else if( sType == "BitmapText" )
 	{
@@ -293,6 +295,7 @@ retry:
 	ASSERT( pActor );	// we should have filled this in above
 
 	// TODO: LoadFromNode should be called when we still have a pointer to the derived type.
+	// (Why isn't it virtual?)
  	pActor->LoadFromNode( sAniDir, pNode );
 
 	return pActor;
