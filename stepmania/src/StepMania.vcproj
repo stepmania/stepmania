@@ -1369,6 +1369,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="NoteFieldPlus.h">
 			</File>
 			<File
+				RelativePath="PercentageDisplay.cpp">
+			</File>
+			<File
+				RelativePath="PercentageDisplay.h">
+			</File>
+			<File
 				RelativePath=".\Player.cpp">
 			</File>
 			<File
