@@ -59,6 +59,7 @@ protected:
 	Sprite m_sprDifficulty[NUM_DIFFICULTIES];	// for all_steps
 	struct StepsScoreRowItem : public ActorFrame	// for all_steps
 	{
+		Song *m_pSong;
 		Sprite	m_sprSongFrame;
 		BitmapText	m_textSongTitle;
 		BitmapText m_textStepsScore[NUM_DIFFICULTIES];
@@ -66,7 +67,14 @@ protected:
 	vector<StepsScoreRowItem*> m_vpStepsScoreRowItem;	// for all_steps
 	ListDisplay m_ListScoreRowItems;
 	Sprite m_sprCourseDifficulty[NUM_DIFFICULTIES];	// for all_courses
-	vector<StepsScoreRowItem*> m_vpCourseScoreRowItem;	// for all_courses
+	struct CourseScoreRowItem : public ActorFrame	// for all_steps
+	{
+		Course *m_pCourse;
+		Sprite	m_sprSongFrame;
+		BitmapText	m_textSongTitle;
+		BitmapText m_textStepsScore[NUM_DIFFICULTIES];
+	};
+	vector<CourseScoreRowItem*> m_vpCourseScoreRowItem;	// for all_courses
 	ListDisplay m_ListCourseRowItems;
 
 	vector<PageToShow>	m_vPagesToShow;
