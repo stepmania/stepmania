@@ -1320,12 +1320,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="Actors used in Gameplay"
 			Filter="">
 			<File
-				RelativePath="ActiveItemList.cpp">
-			</File>
-			<File
-				RelativePath="ActiveItemList.h">
-			</File>
-			<File
 				RelativePath="ArrowBackdrop.cpp">
 			</File>
 			<File
@@ -1342,6 +1336,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\Background.h">
+			</File>
+			<File
+				RelativePath="BeginnerHelper.cpp">
+			</File>
+			<File
+				RelativePath="BeginnerHelper.h">
 			</File>
 			<File
 				RelativePath="CombinedLifeMeterEnemy.cpp">
