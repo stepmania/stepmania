@@ -994,7 +994,12 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 
 	if( m_fRepeatCommandEverySeconds == -1 )	// if not repeating
 	{
-		StopTweening();
+		/* Yuck.  We send OnCommand on load, since that's what's wanted for
+		 * most backgrounds.  However, gameplay backgrounds (loaded from Background)
+		 * should run OnCommand when they're actually displayed, when GainingFocus
+		 * gets called.  We've already run OnCommand; abort it so we don't run tweens
+		 * twice. */
+		RunCommandOnChildren( "stoptweening" );
 		PlayCommand( "On" );
 	}
 }
