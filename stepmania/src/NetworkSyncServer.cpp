@@ -272,7 +272,7 @@ void StepManiaLanServer::SendStatsToClients() {
 		Reply.ClearPacket();
 		Reply.Write1(133);
 		Reply.Write1(0);
-		Reply.Write1(numPlayers);
+		Reply.Write1( (uint8_t) numPlayers );
 		StatsNameColumn(Reply, playersPtr, numPlayers);
 
 		for (x = 0; x < NUMBERCLIENTS; x++)
@@ -286,7 +286,7 @@ void StepManiaLanServer::SendStatsToClients() {
 
 	Reply.Write1(133);
 	Reply.Write1(1);
-	Reply.Write1(numPlayers);
+	Reply.Write1( (uint8_t) numPlayers );
 	StatsComboColumn(Reply, playersPtr, numPlayers);
 
 	for (x = 0; x < NUMBERCLIENTS; x++)
@@ -301,7 +301,7 @@ void StepManiaLanServer::SendStatsToClients() {
 
 	Reply.Write1(133);
 	Reply.Write1(2);
-	Reply.Write1(numPlayers);
+	Reply.Write1( (uint8_t) numPlayers );
 	StatsProjgradeColumn(Reply, playersPtr, numPlayers);
 
 	for (x = 0; x < NUMBERCLIENTS; x++)
@@ -329,16 +329,16 @@ void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, LanPlayer *playe
 	}
 }
 
-void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers) {
-	for (int x = 0; x < numPlayers; x++)
-		data.Write2(playersPtr[x]->combo);
-
+void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers)
+{
+	for( int x = 0; x < numPlayers; x++ )
+		data.Write2( (uint8_t) playersPtr[x]->combo);
 }
 
-void StepManiaLanServer::StatsProjgradeColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers) {
-	for (int x = 0; x < numPlayers; x++)
-		data.Write1(playersPtr[x]->projgrade);
-
+void StepManiaLanServer::StatsProjgradeColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers)
+{
+	for( int x = 0; x < numPlayers; x++ )
+		data.Write1( (uint8_t) playersPtr[x]->projgrade );
 }
 
 bool GameClient::IsPlaying(int x) {
