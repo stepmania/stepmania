@@ -107,7 +107,7 @@ public:
 	bool SetPositionSeconds( float fSeconds );
 	CString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return playing; }
-	unsigned GetPlayingThread() const { return playing_thread; }
+	uint64_t GetPlayingThread() const { return playing_thread; }
 
 	/* Lock and unlock this sound. */
 	void LockSound();
@@ -155,7 +155,7 @@ private:
 	mutable int64_t max_driver_frame;
 
 	/* If playing, record the thread that called Play(). */
-	unsigned playing_thread;
+	uint64_t playing_thread;
 
 	/* Unique ID number for this instance of RageSound. */
 	int ID;
