@@ -1,0 +1,17 @@
+---------------------------------------------------------------------
+			TODO for Tim Hentenaar
+
+			* = todo
+			^ = done
+---------------------------------------------------------------------
+
+As of: 2/18/2003
+* Add RageSoundDriver for Linux to the drivers list
+* Make a makefile for Linux if there isn't one
+* Do some testing...
+
+^ checked in RageSound Driver for Linux (ALSA)
+^ modified arch.cpp & arch.h to include Linux Sound Driver
+
+
+

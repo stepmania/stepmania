@@ -13,9 +13,12 @@
 #include "arch_default.h"
 
 /* Override them with arch-specific drivers, as available. */
-#if defined(WIN32)
+#if defined(LINUX)
+#include "RageSoundDriver_Linux.h"
+#elif defined(WIN32)
 #include "arch_Win32.h"
 #endif
+
 
 LoadingWindow *MakeLoadingWindow() { return new ARCH_LOADING_WINDOW; }
 ErrorDialog *MakeErrorDialog() { return new ARCH_ERROR_DIALOG; }
@@ -47,6 +50,8 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			if(!DriversToTry[i].CompareNoCase("DirectSound")) ret = new RageSound_DSound;
 			else if(!DriversToTry[i].CompareNoCase("DirectSound-sw")) ret = new RageSound_DSound_Software;
 			else if(!DriversToTry[i].CompareNoCase("WaveOut")) ret = new RageSound_WaveOut;
+			else if(!DriversToTry[i].CompareNoCase("Linux")) ret = new RageSound_Linux;
+			
 #else
 #warning No sound drivers defined!
 			if(1) ret = new RageSound_Null;
