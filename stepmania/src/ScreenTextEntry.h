@@ -1,4 +1,4 @@
-/* ScreenTextEntry - Displays a text entry box over the top of another screen.  Must use by calling SCREENMAN->AddScreenToTop( new ScreenTextEntry(...) ); */
+/* ScreenTextEntry - Displays a text entry box over the top of another screen. */
 
 #ifndef SCREEN_TEXT_ENTRY_H
 #define SCREEN_TEXT_ENTRY_H

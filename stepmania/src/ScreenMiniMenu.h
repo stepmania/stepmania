@@ -1,4 +1,4 @@
-/* ScreenMiniMenu - Displays a prompt over the top of another screen.  Call SCREENMAN->AddScreenToTop( new ScreenMiniMenu(...) ); */
+/* ScreenMiniMenu - Displays a simple menu over the top of another screen. */
 
 #ifndef SCREEN_MINI_MENU_H
 #define SCREEN_MINI_MENU_H

@@ -1,4 +1,4 @@
-/* ScreenPrompt - Displays a prompt on top of another screen.  Use by calling SCREENMAN->AddScreenToTop( new ScreenPrompt(...) ); */
+/* ScreenPrompt - Displays a prompt on top of another screen. */
 
 #ifndef SCREEN_PROMPT_H
 #define SCREEN_PROMPT_H
