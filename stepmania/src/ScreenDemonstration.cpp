@@ -91,6 +91,27 @@ ScreenDemonstration::ScreenDemonstration() : ScreenGameplay( false )
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 
 	// choose some cool options
+	int Benchmark = 0;
+	if(Benchmark)
+	{
+		/* Note that you also need to make sure you benchmark with the
+		 * same notes.  I use a copy of MaxU with only heavy notes included. */
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled(p) )
+				continue;
+
+			/* Lots and lots of arrows.  This might even bias to arrows a little
+			 * too much. */
+			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
+			GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = .25f;
+			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_SPACE ] = true;
+			GAMESTATE->m_PlayerOptions[p].m_bEffects[ PlayerOptions::EFFECT_MINI ] = true;
+		}
+		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
+	}
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
