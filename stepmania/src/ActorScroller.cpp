@@ -60,11 +60,14 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		return;
 
 #define GET_VALUE( szName, valueOut ) \
-	if( !pNode->GetAttrValue( szName, valueOut ) ) \
-		LOG->Warn( ssprintf("Animation in '%s' is missing the value Scroller::%s", sDir.c_str(), szName) );
+	if( !pNode->GetAttrValue( szName, valueOut ) ) { \
+		CString sError = ssprintf("Animation in '%s' is missing the value Scroller::%s", sDir.c_str(), szName); \
+		LOG->Warn( sError ); \
+		Dialog::OK( sError ); \
+	}
 
 	float fSecondsPerItem = 1;
-	float fNumItemsToDraw = 7;
+	float fNumItemsToDraw = 0;
 	RageVector3	vRotationDegrees = RageVector3(0,0,0);
 	RageVector3	vTranslateTerm0 = RageVector3(0,0,0);
 	RageVector3	vTranslateTerm1 = RageVector3(0,0,0);
@@ -74,18 +77,18 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 
 	GET_VALUE( "SecondsPerItem", fSecondsPerItem );
 	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
-	GET_VALUE( "RotationDegreesX", vRotationDegrees[0] );
-	GET_VALUE( "RotationDegreesY", vRotationDegrees[1] );
-	GET_VALUE( "RotationDegreesZ", vRotationDegrees[2] );
-	GET_VALUE( "TranslateTerm0X", vTranslateTerm0[0] );
-	GET_VALUE( "TranslateTerm0Y", vTranslateTerm0[1] );
-	GET_VALUE( "TranslateTerm0Z", vTranslateTerm0[2] );
-	GET_VALUE( "TranslateTerm1X", vTranslateTerm1[0] );
-	GET_VALUE( "TranslateTerm1Y", vTranslateTerm1[1] );
-	GET_VALUE( "TranslateTerm1Z", vTranslateTerm1[2] );
-	GET_VALUE( "TranslateTerm2X", vTranslateTerm2[0] );
-	GET_VALUE( "TranslateTerm2Y", vTranslateTerm2[1] );
-	GET_VALUE( "TranslateTerm2Z", vTranslateTerm2[2] );
+	GET_VALUE( "RotationDegreesX", vRotationDegrees.x );
+	GET_VALUE( "RotationDegreesY", vRotationDegrees.y );
+	GET_VALUE( "RotationDegreesZ", vRotationDegrees.z );
+	GET_VALUE( "TranslateTerm0X", vTranslateTerm0.x );
+	GET_VALUE( "TranslateTerm0Y", vTranslateTerm0.y );
+	GET_VALUE( "TranslateTerm0Z", vTranslateTerm0.z );
+	GET_VALUE( "TranslateTerm1X", vTranslateTerm1.x );
+	GET_VALUE( "TranslateTerm1Y", vTranslateTerm1.y );
+	GET_VALUE( "TranslateTerm1Z", vTranslateTerm1.z );
+	GET_VALUE( "TranslateTerm2X", vTranslateTerm2.x );
+	GET_VALUE( "TranslateTerm2Y", vTranslateTerm2.y );
+	GET_VALUE( "TranslateTerm2Z", vTranslateTerm2.z );
 	GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
 	GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
 #undef GET_VALUE
@@ -130,21 +133,21 @@ void ActorScroller::DrawPrimitives()
 
 			DISPLAY->PushMatrix();
 
-			if( m_vRotationDegrees[0] )
-				DISPLAY->RotateX( m_vRotationDegrees[0]*fItemOffset );
-			if( m_vRotationDegrees[1] )
-				DISPLAY->RotateY( m_vRotationDegrees[1]*fItemOffset );
-			if( m_vRotationDegrees[2] )
-				DISPLAY->RotateZ( m_vRotationDegrees[2]*fItemOffset );
+			if( m_vRotationDegrees.x )
+				DISPLAY->RotateX( m_vRotationDegrees.x*fItemOffset );
+			if( m_vRotationDegrees.y )
+				DISPLAY->RotateY( m_vRotationDegrees.y*fItemOffset );
+			if( m_vRotationDegrees.z )
+				DISPLAY->RotateZ( m_vRotationDegrees.z*fItemOffset );
 			
 			RageVector3 vTranslation = 
 				m_vTranslateTerm0 +								// m_vTranslateTerm0*itemOffset^0
 				m_vTranslateTerm1 * fItemOffset +				// m_vTranslateTerm1*itemOffset^1
 				m_vTranslateTerm2 * fItemOffset*fItemOffset;	// m_vTranslateTerm2*itemOffset^2
 			DISPLAY->Translate( 
-				vTranslation[0],
-				vTranslation[1],
-				vTranslation[2]
+				vTranslation.x,
+				vTranslation.y,
+				vTranslation.z
 				);
 
 			m_SubActors[i]->Draw();
