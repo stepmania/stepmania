@@ -55,6 +55,28 @@ void ScreenEditMenu::Init()
 	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
+ScreenEditMenu *g_pScreenEditMenu = NULL;
+
+// helpers for MenuStart() below
+void DeleteCurSteps( void* pThrowAway )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
+	pSong->RemoveSteps( pStepsToDelete );
+	if( HOME_EDIT_MODE )
+	{
+		SCREENMAN->AddNewScreenToTop( "ScreenMemcardSaveEditsAfterDeleteSteps", SM_None );
+	}
+	else
+	{
+		pSong->Save();
+		SCREENMAN->ZeroNextUpdate();
+	}
+	g_pScreenEditMenu->m_Selector.RefreshAll();
+}
+
+
+
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
@@ -104,27 +126,6 @@ void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
 		m_Selector.Right();
 	}
 }
-
-ScreenEditMenu *g_pScreenEditMenu = NULL;
-
-// helpers for MenuStart() below
-void DeleteCurSteps( void* pThrowAway )
-{
-	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
-	pSong->RemoveSteps( pStepsToDelete );
-	if( HOME_EDIT_MODE )
-	{
-		SCREENMAN->AddNewScreenToTop( "ScreenMemcardSaveEditsAfterDeleteSteps", SM_None );
-	}
-	else
-	{
-		pSong->Save();
-		SCREENMAN->ZeroNextUpdate();
-	}
-	g_pScreenEditMenu->m_Selector.RefreshAll();
-}
-
 
 static CString GetCopyDescription( const Steps *pSourceSteps )
 {
