@@ -1,5 +1,6 @@
 #include "global.h"
 #include "Threads_Pthreads.h"
+#include "RageUtil.h"
 #include <sys/time.h>
 #include <errno.h>
 
@@ -225,7 +226,7 @@ SemaImpl_Pthreads::~SemaImpl_Pthreads()
 int SemaImpl_Pthreads::GetValue() const
 {
 	int ret;
-	sem_getvalue( &sem, &ret );
+	sem_getvalue( const_cast<sem_t *>(&sem), &ret );
 	return ret;
 }
 

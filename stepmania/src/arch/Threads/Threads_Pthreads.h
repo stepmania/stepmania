@@ -7,6 +7,8 @@
 #define PID_BASED_THREADS
 #endif
 
+#include <semaphore.h>
+
 class ThreadImpl_Pthreads: public ThreadImpl
 {
 public:
