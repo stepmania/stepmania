@@ -803,8 +803,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	SlideDuplicateDifficulties( out );
 
-	ConvertString( out.m_sMainTitle, "japanese" );
-	ConvertString( out.m_sArtist, "japanese" );
+	ConvertString( out.m_sMainTitle, "utf-8,japanese" );
+	ConvertString( out.m_sArtist, "utf-8,japanese" );
 
 
 	return true;
