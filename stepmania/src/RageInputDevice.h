@@ -2,6 +2,7 @@
 #define RAGEINPUTDEVICE_H 1
 
 #include "SDL_keysym.h"
+#include "RageTimer.h"
 
 const int NUM_KEYBOARD_BUTTONS = SDLK_LAST;
 const int NUM_JOYSTICKS = 4;
@@ -60,6 +61,7 @@ struct DeviceInput
 public:
 	InputDevice device;
 	int button;
+	RageTimer ts;
 
 	DeviceInput() { device=DEVICE_NONE; };
 	DeviceInput( InputDevice d, int b ) { device=d; button=b; };
