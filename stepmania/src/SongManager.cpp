@@ -742,6 +742,24 @@ void SongManager::Invalidate( Song *pStaleSong )
  * reverting out of the editor.  If false, this is unexpected and will assert.
  * This is used when reverting out of gameplay, in which case we may have StageStats,
  * etc. which may cause hard-to-trace crashes down the line if we set them to NULL. */
+void CONVERT_STEPS_POINTER( Steps *&pSteps, const map<Steps*,StepsID> &mapOldStepsToStepsID, const Song *pSong, bool bAllowNotesLoss )
+{
+	if( pSteps == NULL )
+		return;
+
+	map<Steps*,StepsID>::const_iterator it = mapOldStepsToStepsID.find(pSteps);
+	if( it != mapOldStepsToStepsID.end() )
+		pSteps = it->second.ToSteps(pSong, bAllowNotesLoss);
+}
+void CONVERT_STEPS_POINTER( BroadcastOnChangePtr<Steps> &pSteps, const map<Steps*,StepsID> &mapOldStepsToStepsID, const Song *pSong, bool bAllowNotesLoss )
+{
+	if( pSteps == NULL )
+		return;
+
+	map<Steps*,StepsID>::const_iterator it = mapOldStepsToStepsID.find(pSteps);
+	if( it != mapOldStepsToStepsID.end() )
+		pSteps.Set( it->second.ToSteps(pSong, bAllowNotesLoss) );
+}
 void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 {
 	/* Reverting from disk is brittle, and touches a lot of tricky and rarely-
@@ -790,35 +808,19 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	StepsID::ClearCache();
 
 
-
-#define CONVERT_STEPS_POINTER( pSteps ) do { \
-	if( pSteps != NULL ) { \
-		map<Steps*,StepsID>::iterator it = mapOldStepsToStepsID.find(pSteps); \
-		if( it != mapOldStepsToStepsID.end() ) \
-			pSteps = it->second.ToSteps(pSong, bAllowNotesLoss); \
-	} \
-} while(false)
-
-#define CONVERT_STEPS_POINTER2( pSteps ) do { \
-	if( pSteps != NULL ) { \
-		map<Steps*,StepsID>::iterator it = mapOldStepsToStepsID.find(pSteps); \
-		if( it != mapOldStepsToStepsID.end() ) \
-			pSteps.Set( it->second.ToSteps(pSong, bAllowNotesLoss) ); \
-	} \
-} while(false)
-
-
 	FOREACH_PlayerNumber( p )
 	{
-		CONVERT_STEPS_POINTER2( GAMESTATE->m_pCurSteps[p] );
+		CONVERT_STEPS_POINTER( GAMESTATE->m_pCurSteps[p], mapOldStepsToStepsID, pSong, bAllowNotesLoss );
 
 		FOREACH( Steps*, STATSMAN->m_CurStageStats.m_player[p].vpSteps, pSteps )
-			CONVERT_STEPS_POINTER( *pSteps );
+			CONVERT_STEPS_POINTER( *pSteps, mapOldStepsToStepsID, pSong, bAllowNotesLoss );
 
 		FOREACH( StageStats, STATSMAN->m_vPlayedStageStats, ss )
 			FOREACH( Steps*, ss->m_player[p].vpSteps, pSteps )
-				CONVERT_STEPS_POINTER( *pSteps );
+				CONVERT_STEPS_POINTER( *pSteps, mapOldStepsToStepsID, pSong, bAllowNotesLoss );
 	}
+
+	CONVERT_STEPS_POINTER( GAMESTATE->m_pEditSourceSteps, mapOldStepsToStepsID, pSong, bAllowNotesLoss );
 }
 
 void SongManager::RegenerateNonFixedCourses()
