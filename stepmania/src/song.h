@@ -168,7 +168,6 @@ public:
 	bool HasMovieBackground() const;
 	bool HasBGChanges() const;
 	bool HasLyrics() const;
-	bool m_bIsLocked;
 
 	bool Matches(CString sGroup, CString sSong) const;
 

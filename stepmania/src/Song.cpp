@@ -84,7 +84,6 @@ void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChange
 //////////////////////////////
 Song::Song()
 {
-	m_bIsLocked = false;
 	m_bChangedSinceSave = false;
 	m_fBeat0OffsetInSeconds = 0;
 	m_fMusicSampleStartSeconds = -1;
