@@ -213,13 +213,27 @@ void RageLog::Flush()
 	fflush( m_fileInfo );
 }
 
+
+static char g_AdditionalLogStr[10240] = "";
+static int g_AdditionalLogSize = 0;
+
 void RageLog::UpdateMappedLog()
 {
 	CString str;
 	for(map<CString, CString>::const_iterator i = LogMaps.begin(); i != LogMaps.end(); ++i)
 		str += ssprintf("%s\n", i->second.c_str());
 
+	g_AdditionalLogSize = min( sizeof(g_AdditionalLogStr), str.size() );
+	memcpy( g_AdditionalLogStr, str.c_str(), g_AdditionalLogSize );
+
+	/* XXX: deprecated */
 	HOOKS->AdditionalLog(str);
+}
+
+void RageLog::GetAdditionalLog( const char* &p, int &size )
+{
+	p = g_AdditionalLogStr;
+	size = g_AdditionalLogSize;
 }
 
 void RageLog::MapLog(const CString &key, const char *fmt, ...)

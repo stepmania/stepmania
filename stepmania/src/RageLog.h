@@ -31,6 +31,8 @@ public:
 	void MapLog(const CString &key, const char *fmt, ...);
 	void UnmapLog(const CString &key);
 
+	static void GetAdditionalLog( const char* &p, int &size );
+
 private:
 	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
