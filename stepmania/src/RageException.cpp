@@ -44,7 +44,6 @@ void RageException::Throw(const char *fmt, ...)
 	}
 
 #if defined(_WINDOWS) && defined(DEBUG)
-	MessageBox( NULL, error, "Fatal Error", MB_OK );
 	DebugBreak();
 #endif
 
