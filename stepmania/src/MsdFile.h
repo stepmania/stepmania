@@ -26,10 +26,7 @@ public:
 	//returns true if successful, false otherwise
 	bool ReadFile( CString sFilePath );
 
-	char* m_szFileString;
-
-	char* m_szValuesAndParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
-	CString m_sValuesAndParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
+	CString m_sParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
 
 	int m_iNumValues;	// tells how many values are valid
 	int m_iNumParams[MAX_VALUES];	// tells how many params this value has

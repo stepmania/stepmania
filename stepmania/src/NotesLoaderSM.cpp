@@ -64,7 +64,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	for( i=0; i<msd.m_iNumValues; i++ )
 	{
 		int iNumParams = msd.m_iNumParams[i];
-		CString* sParams = msd.m_sValuesAndParams[i];
+		CString* sParams = msd.m_sParams[i];
 		CString sValueName = sParams[0];
 
 		// handle the data

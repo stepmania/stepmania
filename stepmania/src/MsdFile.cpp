@@ -15,13 +15,11 @@
 
 MsdFile::MsdFile()
 {
-	m_szFileString = NULL; 
 	m_iNumValues = 0;
 }
 
 MsdFile::~MsdFile()
 {
-	delete [] m_szFileString;
 }
 
 //returns true if successful, false otherwise
@@ -42,16 +40,16 @@ bool MsdFile::ReadFile( CString sNewPath )
 	CloseHandle( hFile );
 
 	// allocate a string to hold the file
-	delete [] m_szFileString;
-	m_szFileString = new char[iBufferSize];
+	char* szFileString = new char[iBufferSize];
+	char* szParams[MAX_VALUES][MAX_PARAMS_PER_VALUE];
 
 	FILE* fp = fopen(sNewPath, "r");
 	if( fp == NULL )
 		return false;
 
-	int iBytesRead = fread( m_szFileString, 1, iBufferSize, fp );
+	int iBytesRead = fread( szFileString, 1, iBufferSize, fp );
 
-	ASSERT( iBufferSize > iBytesRead );
+	ASSERT( iBufferSize > iBytesRead );		// why are these not always =?
 
 	m_iNumValues = 0;
 
@@ -59,7 +57,7 @@ bool MsdFile::ReadFile( CString sNewPath )
 	int i;
 	for( i=0; i<iBytesRead; i++ )
 	{
-		switch( m_szFileString[i] )
+		switch( szFileString[i] )
 		{
 		case '#':	// begins a new value
 			{
@@ -71,9 +69,9 @@ bool MsdFile::ReadFile( CString sNewPath )
 					/* Make sure this # is the first non-whitespace character on the line. */
 					bool FirstChar = true;
 					int j;
-					for(j = i-1; j >= 0 && !strchr("\r\n", m_szFileString[j]); --j)
+					for(j = i-1; j >= 0 && !strchr("\r\n", szFileString[j]); --j)
 					{
-						if(m_szFileString[j] == ' ' || m_szFileString[j] == '\t')
+						if(szFileString[j] == ' ' || szFileString[j] == '\t')
 							continue;
 
 						FirstChar = false;
@@ -84,45 +82,45 @@ bool MsdFile::ReadFile( CString sNewPath )
 						break;
 					}
 
-					for(j = i-1; j >= 0 && isspace(m_szFileString[j]); --j)
-					m_szFileString[j] = 0;
+					for(j = i-1; j >= 0 && isspace(szFileString[j]); --j)
+						szFileString[j] = 0;
 				}
 
 				ReadingValue=true;
 				m_iNumValues++;
 				int iCurValueIndex = m_iNumValues-1;
 				m_iNumParams[iCurValueIndex] = 1;
-				m_szValuesAndParams[iCurValueIndex][0] = &m_szFileString[i+1];
+				szParams[iCurValueIndex][0] = &szFileString[i+1];
 			}
 			break;
 		case ':':	// begins a new parameter
 			{
-				m_szFileString[i] = '\0';
+				szFileString[i] = '\0';
 				int iCurValueIndex = m_iNumValues-1;
 				m_iNumParams[iCurValueIndex] ++;
 				int iCurParamIndex = m_iNumParams[iCurValueIndex]-1;
-				m_szValuesAndParams[iCurValueIndex][iCurParamIndex] = &m_szFileString[i+1];
+				szParams[iCurValueIndex][iCurParamIndex] = &szFileString[i+1];
 			}
 			break;
 		case ';':	// ends a value
 			{
-				m_szFileString[i] = '\0';
+				szFileString[i] = '\0';
 				// fast forward until just before the next '#'
-				while( m_szFileString[i+1] != '#'  &&  i<iBytesRead )
+				while( szFileString[i+1] != '#'  &&  i<iBytesRead )
 					i++;
 				ReadingValue=false;
 			}
 			break;
 		case '/':
-			if( m_szFileString[i+1] == '/' )
+			if( szFileString[i+1] == '/' )
 			{
 				// advance until new line
 				for( ; i<iBytesRead; i++ )
 				{
-					if( m_szFileString[i] == '\n' )
+					if( szFileString[i] == '\n' )
 						break;
 					else
-						m_szFileString[i] = ' ';
+						szFileString[i] = ' ';
 				}
 			}
 			// fall through.  If we didn't take the if above, then this '/' is part of a parameter!
@@ -131,17 +129,18 @@ bool MsdFile::ReadFile( CString sNewPath )
 		}
 	}
 
-	m_szFileString[i] = '\0';
+	szFileString[i] = '\0';
 
 	for( i=0; i<m_iNumValues; i++ )
 	{
 		for( int j=0; j<m_iNumParams[i]; j++ )
 		{
-			m_sValuesAndParams[i][j] = m_szValuesAndParams[i][j];
+			m_sParams[i][j] = szParams[i][j];
 		}
 	}
 
 	fclose( fp );
+	delete [] szFileString;
 
 	return true;
 }

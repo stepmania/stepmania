@@ -42,8 +42,8 @@ void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 
 	for( int i=0; i<msd.m_iNumValues; i++ )
 	{
-		CString sValueName = msd.m_szValuesAndParams[i][0];
-		CString* sParams = msd.m_sValuesAndParams[i];
+		CString sValueName = msd.m_sParams[i][0];
+		CString* sParams = msd.m_sParams[i];
 
 		// handle the data
 		if( 0 == stricmp(sValueName, "COURSE") )
