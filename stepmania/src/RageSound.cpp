@@ -68,6 +68,7 @@ RageSound::RageSound()
 	original = this;
 	stream.Sample = NULL;
 	position = 0;
+	stopped_position = -1;
 	playing = false;
 	StopMode = M_STOP;
 	speed_input_samples = speed_output_samples = 1;
@@ -570,6 +571,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 void RageSound::StartPlaying()
 {
 	LockMut(SOUNDMAN->lock);
+	stopped_position = -1;
 
 	ASSERT(!playing);
 
@@ -580,6 +582,8 @@ void RageSound::StartPlaying()
 
 void RageSound::StopPlaying()
 {
+	stopped_position = GetPositionSeconds();
+
 	/* Tell the sound manager to stop mixing this sound. */
 	SOUNDMAN->StopMixing(this);
 	playing = false;
@@ -624,7 +628,11 @@ float RageSound::GetPositionSeconds() const
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
+	{
+		if(stopped_position != -1)
+			return stopped_position;
 		return GetPlaybackRate() * position / float(samplerate);
+	}
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so report the static position. */
