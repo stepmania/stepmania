@@ -6,12 +6,13 @@ SM=$CURRENT/../..
 DEST=$SM/PBProject/StepMania
 APP=$SM/PBProject/build/StepMania.app
 DIRS=(Announcers/instructions.txt BGAnimations/instructions.txt \
-	CDTitles/instructions.txt  Courses/instructions.txt Courses/Samples \
-	NoteSkins/instructions.txt NoteSkins/dance/default NoteSkins/dance/flat \
-	NoteSkins/dance/note NoteSkins/dance/solo NoteSkins/pump/Classic \
-	NoteSkins/pump/default RandomMovies/instructions.txt \
-	Songs/instructions.txt Themes/instructions.txt Themes/default \
-	Visualizations/instructions.txt Data COPYING.txt README-FIRST.html NEWS)
+    CDTitles/instructions.txt  Courses/instructions.txt Courses/Samples \
+    NoteSkins/instructions.txt NoteSkins/dance/default NoteSkins/dance/flat \
+    NoteSkins/dance/note NoteSkins/dance/solo NoteSkins/pump/Classic \
+    NoteSkins/pump/default RandomMovies/instructions.txt \
+    Songs/instructions.txt Themes/instructions.txt Themes/default \
+    Visualizations/instructions.txt Data COPYING.txt README-FIRST.html NEWS \
+    NoteSkins/common/default)
 
 NUM=0
 TOTAL=0
