@@ -304,18 +304,35 @@ float FindFirstDisplayedBeat( PlayerNumber pn, int iFirstPixelToDraw )
 
 float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 {
-	// probe for last note to draw
-	float fLastBeatToDraw = GAMESTATE->m_fSongBeat+20;	// worst case is 0.25x + boost.  Adjust to balance of performance and showing enough notes.
-	while( fLastBeatToDraw > GAMESTATE->m_fSongBeat )
+	//
+	// Probe for last note to draw.
+	// worst case is 0.25x + boost.  Adjust search distance to 
+	// so that notes don't pop onto the screen.
+	//
+	float fSearchDistance = 20;
+	float fLastBeatToDraw = GAMESTATE->m_fSongBeat+fSearchDistance;	
+	if( GAMESTATE->m_fSongBeat < 0 )
+		fLastBeatToDraw = fSearchDistance;	
+
+	const int NUM_ITERATIONS = 15;
+
+	for( int i=0; i<NUM_ITERATIONS; i++ )
 	{
 		float fYOffset = ArrowGetYOffset( pn, 0, fLastBeatToDraw );
 		float fYPosWOReverse = ArrowGetYPosWithoutReverse( pn, 0, fYOffset );
+
 		if( fYPosWOReverse > iLastPixelToDraw )	// off screen
-			fLastBeatToDraw -= 0.1f;	// move toward fSongBeat
+			fLastBeatToDraw -= fSearchDistance;
 		else	// on screen
-			break;	// stop probing
+			fLastBeatToDraw += fSearchDistance;
+
+		float fOffBy = fYPosWOReverse - iLastPixelToDraw;
+		if( i==NUM_ITERATIONS-1 )
+			ASSERT( fabs(fOffBy)<10 );	// accurate to 10 pixels
+		
+		fSearchDistance /= 2;
 	}
-	fLastBeatToDraw += 0.1f;	// fast forward since we intentionally overshot
+
 	return fLastBeatToDraw;
 }
 
@@ -492,7 +509,7 @@ void NoteField::DrawPrimitives()
 		///////////////////////////////////
 		int first = iFirstIndexToDraw;
 		int last = iLastIndexToDraw;
-		int increment = 1;
+		int increment = 1;	// What is the reason for this?  We always want to draw all rows, right?  -Chris
 
 /*		if (ColDisplay[c] == '1')
 		{
@@ -503,7 +520,9 @@ void NoteField::DrawPrimitives()
 */		
 		CurDisplay = m_BeatToNoteDisplays.begin();
 		NextDisplay = CurDisplay; ++NextDisplay;
-		for( i=first; i <= last; i+=increment )	//	 for each row
+
+		// draw notes from furthest to closest
+		for( i=last; i>=first; i-=increment )	//	 for each row
 		{	
 			TapNote tn = GetTapNote(c, i);
 			if( tn == TAP_EMPTY )	// no note here
