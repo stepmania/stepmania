@@ -41,11 +41,15 @@ RageVertex			g_vertQueue[MAX_NUM_VERTICIES];
 RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
 float				g_fLastCheckTime;
-int					g_iFramesRenderedSinceLastCheck;
-int					g_iVertsRenderedSinceLastCheck;
-int					g_iDrawsSinceLastCheck;
-int					g_iFPS, g_iTPF, g_iDPF;
+int					g_iFPS, g_iVPF, g_iDPF;
 
+int RageDisplay::GetFPS() const { return g_iFPS; }
+int RageDisplay::GetVPF() const { return g_iVPF; }
+int RageDisplay::GetDPF() const { return g_iDPF; }
+
+static int			g_iFramesRenderedSinceLastCheck,
+					g_iVertsRenderedSinceLastCheck,
+					g_iDrawsSinceLastCheck;
 
 RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, RefreshRateMode rate, bool vsync )
 {
@@ -159,11 +163,11 @@ void RageDisplay::Flip()
 		g_LastCheckTimer.GetDeltaTime();
 		g_iFPS = g_iFramesRenderedSinceLastCheck;
 		g_iFramesRenderedSinceLastCheck = 0;
-		g_iTPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
+		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
 		g_iVertsRenderedSinceLastCheck = 0;
 		g_iDPF = g_iDrawsSinceLastCheck / g_iFPS;
 		g_iDrawsSinceLastCheck = 0;
-		//LOG->Trace( "FPS: %d, TPF: %d, DPF: %d", m_iFPS, m_iTPF, m_iDPF );
+		//LOG->Trace( "FPS: %d, VPF: %d, DPF: %d", m_iFPS, m_iVPF, m_iDPF );
 	}
 
 }

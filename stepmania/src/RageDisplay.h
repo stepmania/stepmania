@@ -71,6 +71,11 @@ public:
 	void GetHzAtResolution(int width, int height, int bpp, CArray<int,int> &add) const;
 	int GetMaxTextureSize() const;
 
+	/* Statistics */
+	int GetFPS() const;
+	int GetVPF() const;
+	int GetDPF() const;
+
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
 };

@@ -134,7 +134,7 @@ void ScreenManager::Draw()
 
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
-		m_textStats.SetText( "??? FPS" );
+		m_textStats.SetText( ssprintf("%i FPS\n%i VPF\n%i DPF", DISPLAY->GetFPS(), DISPLAY->GetVPF(), DISPLAY->GetDPF()) );
 		m_textStats.Draw();
 	}
 	for( int p=0; p<NUM_PLAYERS; p++ )
