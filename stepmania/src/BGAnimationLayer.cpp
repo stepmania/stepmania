@@ -573,10 +573,12 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 			Sprite* pSprite = new Sprite;
 			m_pActors.push_back( pSprite );
 			RageTextureID ID(sPath);
-			ID.bStretch = true;
+			/* Don't stretch.  It takes a lot of time to resize the image, we don't support
+			 * it at all for movie textures, and it lowers the quality of the image slightly. */
+//			ID.bStretch = true;
 			pSprite->LoadBG( ID );
 			pSprite->StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
+//			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
 		}
 		break;
 	case TYPE_PARTICLES:
