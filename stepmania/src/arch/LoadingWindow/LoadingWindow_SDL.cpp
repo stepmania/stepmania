@@ -9,6 +9,13 @@
 
 LoadingWindow_SDL::LoadingWindow_SDL()
 {
+	/* There's no consistent way to hint SDL that we want a centered
+	 * window.  X11 way: */
+#if defined(unix)
+	static char center[]="SDL_VIDEO_CENTERED=1";
+	putenv( center );
+#endif
+
     /* Initialize the SDL library */
     if( SDL_InitSubSystem(SDL_INIT_VIDEO) < 0 )
         RageException::Throw( "Couldn't initialize SDL: %s", SDL_GetError() );
