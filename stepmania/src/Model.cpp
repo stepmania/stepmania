@@ -69,7 +69,8 @@ void Model::LoadFromModelFile( CString sPath )
 	Clear();
 
 	IniFile ini;
-	ini.ReadFile( sPath );
+	if( !ini.ReadFile( sPath ) )
+		RageException::Throw( "Model::LoadFromModelFile: Could not open \"%s\": %s", sPath.c_str(), ini.GetError().c_str() );
 
 	CString sDir = Dirname( sPath );
 
