@@ -18,7 +18,7 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageException.h"
-#include "SDL.h"
+#include "SDL_utils.h"
 #include "SDL/SDL_thread.h"
 #include "global.h"
 
