@@ -67,21 +67,23 @@ float ArrowGetYOffset( PlayerNumber pn, float fNoteBeat )
 
 float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos ) 
 {
-	float fPixelOffsetFromCenter = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
+	float fPixelOffsetFromCenter = 0;
 	
 	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] > 0 )
 	{
-		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 		float fMinX, fMaxX;
-		pStyleDef->GetMinAndMaxColX( pn, fMinX, fMaxX );
+		GAMESTATE->GetCurrentStyleDef()->GetMinAndMaxColX( pn, fMinX, fMaxX );
 
-		float fPositionBetween = SCALE( fPixelOffsetFromCenter, fMinX, fMaxX, -1, 1 );
+		float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
+		float fPositionBetween = SCALE( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
 		float fRads = acosf( fPositionBetween );
 		fRads += fYPos * 6 / SCREEN_HEIGHT;
 		
-		fPixelOffsetFromCenter = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
+		float fAdjustedPixelOffset = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
+
+		fPixelOffsetFromCenter = fAdjustedPixelOffset - fRealPixelOffset;
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )

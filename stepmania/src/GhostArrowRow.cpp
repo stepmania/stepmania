@@ -18,6 +18,7 @@
 #include "NoteSkinManager.h"
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "NoteFieldPositioning.h"
 
 
 GhostArrowRow::GhostArrowRow()
@@ -61,6 +62,8 @@ void GhostArrowRow::DrawPrimitives()
 {
 	for( int c=0; c<m_iNumCols; c++ )
 	{
+		GAMESTATE->m_Position[m_PlayerNumber]->BeginDrawTrack(c);
+
 		float fX = ArrowGetXPos( m_PlayerNumber, c, 0 );
 		m_GhostArrowRow[c].SetX( fX );
 		m_GhostArrowRowBright[c].SetX( fX );
@@ -69,6 +72,8 @@ void GhostArrowRow::DrawPrimitives()
 		m_GhostArrowRow[c].Draw();
 		m_GhostArrowRowBright[c].Draw();
 		m_HoldGhostArrowRow[c].Draw();
+
+		GAMESTATE->m_Position[m_PlayerNumber]->EndDrawTrack(c);
 	}
 }
 
