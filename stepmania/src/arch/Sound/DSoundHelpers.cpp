@@ -143,7 +143,8 @@ void DSoundBuf::SetSampleRate(int hz)
 {
 	samplerate = hz;
 	HRESULT hr = buf->SetFrequency(hz);
-	LOG->Trace(hr_ssprintf(hr, "samp"));
+	if(FAILED(hr))
+		RageException::Throw(hr_ssprintf(hr, "buf->SetFrequency(%i)", hz));
 }
 
 void DSoundBuf::SetVolume(float vol)

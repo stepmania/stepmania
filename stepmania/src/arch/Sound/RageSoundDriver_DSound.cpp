@@ -250,7 +250,7 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 	if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
 		stream_pool[i]->state = stream_pool[i]->PLAYING;
 
-	LOG->Trace("new sound assigned to channel %i", i);
+//	LOG->Trace("new sound assigned to channel %i", i);
 }
 
 /* Called by a RageSound; asks us to stop mixing them.  When this
