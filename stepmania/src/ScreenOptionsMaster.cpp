@@ -278,7 +278,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
 {
-	delete m_OptionRowAlloc;
+	delete [] m_OptionRowAlloc;
 }
 
 int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHandler &hand, int pn )
