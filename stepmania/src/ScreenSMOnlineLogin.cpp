@@ -57,6 +57,7 @@ ScreenSMOnlineLogin::ScreenSMOnlineLogin( const CString& sName ) : ScreenWithMen
 	SET_XY_AND_ON_COMMAND( m_textLoginMessage );
 	this->AddChild( &m_textLoginMessage );
 
+	NSMAN->isSMOLoggedIn = false;
 }
 
 void ScreenSMOnlineLogin::Input( const DeviceInput& DeviceI, const InputEventType type,
@@ -146,14 +147,17 @@ void ScreenSMOnlineLogin::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
 		break;
 	case SM_SMOnlinePack:
-		
+
 		int ResponceCode = NSMAN->m_SMOnlinePacket.Read1();
 		if ( ResponceCode == 0 )
 		{
 			int Status = NSMAN->m_SMOnlinePacket.Read1();
 			if ( Status == 0 )
+			{
+				NSMAN->isSMOLoggedIn = true;
 				SCREENMAN->SendMessageToTopScreen( SM_GoToNextScreen );
-			else
+			} 
+			else 
 			{
 				CString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
 				m_textLoginMessage.SetText( Responce );
@@ -209,7 +213,8 @@ void ScreenSMOnlineLogin::SendLogin()
 
 	MD5Init( &BASE );
 
-	MD5Update( &BASE, Input, 5);
+
+	MD5Update( &BASE, Input, m_sPassword.length());
 
 	MD5Final( Output, &BASE );
 
@@ -221,13 +226,19 @@ void ScreenSMOnlineLogin::SendLogin()
 		if ( PreHashedName.c_str()[i] == ' ' )
 			HashedName += '0';
 		else
-			HashedName += PreHashedName.c_str()[i];
+			if ( PreHashedName.c_str()[i]=='\0' )
+				HashedName += ' ';
+			else
+				HashedName += PreHashedName.c_str()[i];
 
-	NSMAN->m_SMOnlinePacket.ClearPacket();
+		NSMAN->m_SMOnlinePacket.ClearPacket();
+
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0); //Login command
+	NSMAN->m_SMOnlinePacket.Write1((uint8_t)m_iPlayer); //Player
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0); //MD5 hash style
 	NSMAN->m_SMOnlinePacket.WriteNT(m_sUserName);
 	NSMAN->m_SMOnlinePacket.WriteNT(HashedName);
+
 	NSMAN->SendSMOnline( );
 
 }

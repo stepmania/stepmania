@@ -109,6 +109,7 @@ public:
 
 	bool useSMserver;
 	bool isSMOnline;
+	bool isSMOLoggedIn;
 
 	vector <int> m_PlayerStatus;
 	int m_ActivePlayers;

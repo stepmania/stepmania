@@ -50,6 +50,7 @@ ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( s
 	COMMAND( m_sprExistingBG, "Back" );
 	COMMAND( m_sprWebBG, "Away" );
 
+//	m_fOutputFile.
 	m_textPackages.LoadFromFont( THEME->GetPathF(m_sName,"default") );
 	m_textPackages.SetShadowLength( 0 );
 	m_textPackages.SetName( "Packages" );

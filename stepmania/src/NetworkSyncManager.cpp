@@ -66,10 +66,10 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
     NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
-
    
 	useSMserver = false;
 	isSMOnline = false;
+	isSMOLoggedIn = false;
 
 	m_startupStatus = 0;	//By default, connection not tried.
 
@@ -98,6 +98,7 @@ void NetworkSyncManager::CloseConnection()
 		return ;
 	m_ServerVersion = 0;
    	useSMserver = false;
+	isSMOLoggedIn = false;
 	m_startupStatus = 0;
 	NetPlayerClient->close();
 }
@@ -124,6 +125,8 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 			return;
 		}
 	}
+
+	isSMOLoggedIn = false;
 
 	useSMserver = true;
 
@@ -810,7 +813,7 @@ void PacketFunctions::ClearPacket()
 
 LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
 LuaFunction_NoArgs( IsNetSMOnline,			NSMAN->isSMOnline )
-
+LuaFunction_NoArgs(	IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn )
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
  * All rights reserved.
