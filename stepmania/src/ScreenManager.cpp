@@ -42,7 +42,7 @@ void ScreenManager::Register( const CString& sClassName, CreateScreenFn pfn )
 		g_pmapRegistrees = new map<CString,CreateScreenFn>;
 
 	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.") );
+	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.", sClassName.c_str()) );
 
 	(*g_pmapRegistrees)[sClassName] = pfn;
 }
