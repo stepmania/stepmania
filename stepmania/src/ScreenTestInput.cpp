@@ -121,6 +121,7 @@ void ScreenTestInput::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenTestInput::MenuStart( PlayerNumber pn )
 {
+	MenuBack(pn);
 }
 
 void ScreenTestInput::MenuBack( PlayerNumber pn )
