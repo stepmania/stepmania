@@ -377,7 +377,7 @@ void NetworkSyncManager::ProcessInput()
 		//Check to make sure command is valid from server
 		if (command<128)
 		{		
-			LOG->Info("CMD (below 128) Invalid> %d",command);
+			LOG->Trace("CMD (below 128) Invalid> %d",command);
  			break;
 		}
 
@@ -459,7 +459,7 @@ uint8_t NetworkSyncManager::Read1(NetPacket &Packet)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE)
 		return 0;
-
+	
 	return Packet.Data[Packet.Position++];
 }
 
@@ -470,8 +470,8 @@ uint16_t NetworkSyncManager::Read2(NetPacket &Packet)
 
 	uint16_t Temp;
 	memcpy( &Temp, Packet.Data + Packet.Position,2 );
-	Packet.Position+=2;
-	return Swap16BE(Temp);
+	Packet.Position+=2;		
+	return ntohs(Temp);	
 }
 
 uint32_t NetworkSyncManager::Read4(NetPacket &Packet)
@@ -482,7 +482,7 @@ uint32_t NetworkSyncManager::Read4(NetPacket &Packet)
 	uint32_t Temp;
 	memcpy( &Temp, Packet.Data + Packet.Position,4 );
 	Packet.Position+=4;
-	return Swap32BE(Temp);
+	return ntohl(Temp);
 }
 
 CString NetworkSyncManager::ReadNT(NetPacket &Packet)
@@ -509,7 +509,7 @@ void NetworkSyncManager::Write2(NetPacket &Packet, uint16_t Data)
 {
 	if (Packet.Position>=NETMAXBUFFERSIZE-1)
 		return;
-	Data = Swap16BE(Data);
+	Data = htons(Data);
 	memcpy( &Packet.Data[Packet.Position], &Data,2 );
 	Packet.Position+=2;
 }
@@ -519,7 +519,7 @@ void NetworkSyncManager::Write4(NetPacket &Packet, uint32_t Data)
 	if (Packet.Position>=NETMAXBUFFERSIZE-3)
 		return ;
 
-	Data = Swap32BE(Data);
+	Data = htonl(Data);
 	memcpy( &Packet.Data[Packet.Position], &Data,4 );
 	Packet.Position+=4;
 }
@@ -529,7 +529,6 @@ void NetworkSyncManager::WriteNT(NetPacket &Packet, CString Data)
 	int index=0;
 	while ((Packet.Position<NETMAXBUFFERSIZE)&&(index<Data.GetLength()))
 		Packet.Data[Packet.Position++] = (unsigned char)(Data.c_str()[index++]);
-			//Is it proper to do "(unsigned char)(Data.c_str()[index++])"?
 	Packet.Data[Packet.Position++] = 0;
 }
 
