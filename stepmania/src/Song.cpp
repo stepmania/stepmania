@@ -493,12 +493,10 @@ static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturn
 /* This is called within TidyUpData, before autogen notes are added. */
 static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 {
-	CHECKPOINT;
 	/* vSteps have the same StepsType and Difficulty.  Delete them if they have the
 	 * same m_sDescription, m_iMeter and SMNoteData. */
 	for( unsigned i=0; i<vSteps.size(); i++ )
 	{
-		CHECKPOINT;
 		const Steps *s1 = vSteps[i];
 		for( unsigned j=i+1; j<vSteps.size(); j++ )
 		{
@@ -510,12 +508,9 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 			if( s1->GetSMNoteData() != s2->GetSMNoteData() )
 				continue;
 
-			CHECKPOINT;
 			LOG->Trace("Removed duplicate steps in song \"%s\" with description \"%s\" and meter \"%i\"",
 				song->GetSongDir().c_str(), s1->GetDescription().c_str(), s1->GetMeter() );
 				
-			CHECKPOINT;
-
 			/* Don't use RemoveNotes; autogen notes havn't yet been created and it'll
 			 * create them. */
 			for( int k=song->m_apNotes.size()-1; k>=0; k-- )
@@ -528,13 +523,10 @@ static void DeleteDuplicateSteps( Song *song, vector<Steps*> &vSteps )
 				}
 			}
 
-			CHECKPOINT;
 			vSteps.erase(vSteps.begin()+j);
-			CHECKPOINT;
 			--j;
 		}
 	}
-	CHECKPOINT;
 }
 
 
