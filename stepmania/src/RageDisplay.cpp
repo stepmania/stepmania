@@ -84,19 +84,6 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
 
-	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
-	g_glVersion = int(roundf(fGLVersion * 10));
-	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
-	GetGLExtensions(g_glExts);
-	if(g_glExts.find("GL_EXT_texture_env_combine") != g_glExts.end())
-		g_GL_EXT_texture_env_combine = true;
-
-	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) SDL_GL_GetProcAddress ("glBlendFuncSeparate");
-
-	/* Windows vsync: */
-	if(g_glExts.find("WGL_EXT_swap_control") != g_glExts.end())
-	    wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
-
 	SetupOpenGL();
 }
 
@@ -117,9 +104,29 @@ void RageDisplay::SetupOpenGL()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
+
 RageDisplay::~RageDisplay()
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+}
+
+void RageDisplay::SetupExtensions()
+{
+	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
+	g_glVersion = int(roundf(fGLVersion * 10));
+	LOG->Trace( "OpenGL version %.1f", g_glVersion / 10.);
+	GetGLExtensions(g_glExts);
+	if(g_glExts.find("GL_EXT_texture_env_combine") != g_glExts.end())
+		g_GL_EXT_texture_env_combine = true;
+
+	glBlendFuncSeparate = (PFNGLBLENDFUNCSEPARATEPROC) SDL_GL_GetProcAddress ("glBlendFuncSeparate");
+
+	/* Windows vsync: */
+	if(g_glExts.find("WGL_EXT_swap_control") != g_glExts.end()) {
+	    wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
+		if(wglSwapIntervalEXT)
+			LOG->Trace("Got wglSwapIntervalEXT");
+	}
 }
 
 /* Set the video mode.  In some cases, changing the video mode will reset
@@ -179,11 +186,6 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	}
 #endif
 
-	/* Set vsync the Windows way, if we can.  (What other extensions are there
-	 * to do this, for other archs?) */
-	if(wglSwapIntervalEXT)
-	    wglSwapIntervalEXT(vsync);
-
 	if(!g_screen) {
 		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
 		if(!g_screen)
@@ -197,6 +199,16 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		SDL_SM_ChangeVideoMode_OpenGL(g_flags, g_screen, width, height);
 	}
 #endif
+
+	/* Now that we've initialized, we can search for extensions (some of which
+	 * we may need to set up the video mode). */
+	SetupExtensions();
+
+	/* Set vsync the Windows way, if we can.  (What other extensions are there
+	 * to do this, for other archs?) */
+	if(wglSwapIntervalEXT) {
+	    wglSwapIntervalEXT(vsync);
+	}
 
 	if(need_reload) {
 		/* OpenGL state was lost; set up again. */
@@ -240,7 +252,7 @@ void RageDisplay::Flip()
 		g_iVertsRenderedSinceLastCheck = 0;
 		g_iDPF = g_iDrawsSinceLastCheck / g_iFPS;
 		g_iDrawsSinceLastCheck = 0;
-		//LOG->Trace( "FPS: %d, VPF: %d, DPF: %d", m_iFPS, m_iVPF, m_iDPF );
+		LOG->Trace( "FPS: %d, VPF: %d, DPF: %d", g_iFPS, g_iVPF, g_iDPF );
 	}
 
 }

@@ -81,6 +81,7 @@ protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
 	void SetBlendMode(int src, int dst);
 	void SetupOpenGL();
+	void SetupExtensions();
 };
 
 
