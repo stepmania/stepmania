@@ -515,7 +515,12 @@ CString DerefRedir(const CString &path)
 	if(sNewFileName == "")
 		return "";
 
+	FixSlashesInPlace( sNewFileName );
+
 	CString path2 = sDir+sNewFileName;
+
+	CollapsePath( path2 );
+
 	ResolvePath( path2 );
 	return path2;
 }
