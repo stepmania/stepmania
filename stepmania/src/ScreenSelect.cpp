@@ -20,7 +20,7 @@
 
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
-#define CHOICE( sChoiceName )	THEME->GetMetric (m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
+#define CHOICE( sChoiceName )	THEME->GetMetricA(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
 #define NUM_CODES				THEME->GetMetricI(m_sName,"NumCodes")
 #define CODE( c )				THEME->GetMetric (m_sName,ssprintf("Code%d",c+1))
 #define CODE_ACTION( c )		THEME->GetMetric (m_sName,ssprintf("Code%dAction",c+1))
@@ -47,11 +47,10 @@ ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClass
 		for( unsigned c=0; c<asChoiceNames.size(); c++ )
 		{
 			CString sChoiceName = asChoiceNames[c];
-			CString sChoice = CHOICE(sChoiceName);
 
 			GameCommand mc;
 			mc.m_sName = sChoiceName;
-			mc.Load( c, ParseCommands(sChoice) );
+			mc.Load( c, CHOICE(sChoiceName) );
 			m_aGameCommands.push_back( mc );
 		
 			CString sBGAnimationDir = THEME->GetPath(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
