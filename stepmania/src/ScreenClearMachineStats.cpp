@@ -8,7 +8,15 @@
 
 ScreenClearMachineStats::ScreenClearMachineStats( CString sName ): Screen( sName )
 {
-	PROFILEMAN->GetMachineProfile()->InitAll();
+	Profile* pProfile = PROFILEMAN->GetMachineProfile();
+	
+	// don't reset the Guid
+	CString sGuid = pProfile->m_sGuid;
+
+	pProfile->InitAll();
+
+	pProfile->m_sGuid = sGuid;
+
 	PROFILEMAN->SaveMachineProfile();
 
 	SCREENMAN->SystemMessage( "Machine stats cleared." );
