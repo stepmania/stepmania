@@ -33,13 +33,13 @@ GrayArrow::GrayArrow()
 	StopAnimating();
 }
 
-bool GrayArrow::Load( PlayerNumber pn, int iColNo )
+bool GrayArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
 {
 	CString Button = g_NoteFieldMode[pn].GrayButtonNames[iColNo];
 	if( Button == "" )
 		Button = NoteSkinManager::ColToButtonName( iColNo );
 
-	CString sPath = NOTESKIN->GetPathTo( pn, Button, "receptor" );
+	CString sPath = NOTESKIN->GetPathTo( NoteSkin, Button, "receptor" );
 	bool ret = Sprite::Load( sPath );
 
 	// XXX

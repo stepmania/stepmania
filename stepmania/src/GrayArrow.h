@@ -20,7 +20,7 @@ class GrayArrow : public Sprite
 {
 public:
 	GrayArrow();
-	bool Load( PlayerNumber pn, int iColNo );
+	bool Load( CString NoteSkin, PlayerNumber pn, int iColNo );
 
 	virtual void  Update( float fDeltaTime );
 	void Step();
