@@ -3,7 +3,9 @@
 @implementation InstallerWindowController
 - (void)awakeFromNib
 {
-    helper = [[Helper alloc] initWithPath:@"files"];
+    NSString *path = [[[[[NSBundle mainBundle] bundlePath] stringByDeletingLastPathComponent]
+        stringByAppendingPathComponent:@"files"] stringByStandardizingPath];
+    helper = [[Helper alloc] initWithPath:path];
     finished = NO;
 }
 

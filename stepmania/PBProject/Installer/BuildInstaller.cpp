@@ -9,31 +9,40 @@
 
 using namespace std;
 
-#include "StdString.h"
-#include "InstallerFile.h"
-#include "Processor.h"
 #include <unistd.h>
 #include <sys/param.h>
+#include <sys/wait.h>
 #include <cstdio>
 #include <cstdlib>
 #include <stack>
 #include <map>
+#include "StdString.h"
+#include "InstallerFile.h"
+#include "Processor.h"
+#include "Util.h"
 
 void HandleFile(const CString& file, const CString& dir, const CString& archivePath, bool overwrite)
 {
     static bool archiveMade = false;
-    CString command;
+    char path[] = "/usr/bin/tar";
+    char arg1[] = "-rf";
+    char arg2[archivePath.length() + 1];
+    char arg3[] = "-C";
+    char arg4[dir.length() + 1];
+    char arg5[file.length() + 1];
 
-    if (archiveMade)
-        command = "tar rfPC '";
-    else
+    if (!archiveMade)
     {
+        arg1[1] = 'c';
         archiveMade = true;
-        command = "tar cfPC '";
     }
-    command += archivePath + "' '" + dir +"' '" + file + "'";
-    
-    system(command);
+
+    strcpy(arg2, archivePath);
+    strcpy(arg4, dir);
+    strcpy(arg5, file);
+
+    if (CallTool(path, arg1, arg2, arg3, arg4, arg5, NULL))
+        exit(-10);
 }
 
 const CString GetPath(const CString& ID)
@@ -107,13 +116,10 @@ int main(int argc, char *argv[])
         printf("Couldn't read config file, \"%s\".\n", inFile.c_str());
         return 3;
     }
-
-    /* Create the directory--the lazy man's way */
-    CString command = "mkdir -p '" + outDir + "'";
     
-    if (system(command))
+    if (mkdir_p(outDir))
     {
-        printf("The system(\"%s\") call failed.\n", command.c_str());
+        printf("The mkdir_p call failed.\n");
         return 4;
     }
 
@@ -126,14 +132,17 @@ int main(int argc, char *argv[])
 
     printf("Compressing the archive.\n");
     
-    /* Compress the archive after it is created */
-    command = "gzip '" + archivePath + "'";
-    system(command);
+    char toolPath[] = "/usr/bin/gzip";
+    if (CallTool(toolPath, archivePath.c_str(), NULL))
+    {
+        printf("Gzip failed.\n");
+        return 6;
+    }
 
     if (!config.WriteFile(outDir + "/config"))
     {
         printf("%s\n", strerror(errno));
-        return 6;
+        return 7;
     }
 
     return 0;

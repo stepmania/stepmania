@@ -13,6 +13,7 @@
 using namespace std;
 #include <stack>
 #include <map>
+#include <set>
 #include "StdString.h"
 
 class Processor
@@ -23,6 +24,9 @@ private:
     typedef const CString (*getPathFunc)(const CString& ID);
     typedef void (*errorFunc)(const char *fmt, ...);
     typedef bool (*askFunc)(const CString& question);
+    typedef bool (*authFunc)(void);
+    typedef void (*echoFunc)(const CString& message, bool loud);
+    typedef void (*privFunc)(bool privileged);
 
     stack<unsigned> mReturnStack;
     bool mDoGoto;
@@ -30,12 +34,16 @@ private:
     map<CString, bool> mConditionals;
     map<CString, CString> mVars;
     map<CString, unsigned> mLabels;
+    set<CString> mIgnore;
     CString mPath;
     CString mCWD;
     handleFileFunc mHandleFile;
     getPathFunc mGetPath;
     askFunc mAsk;
     errorFunc mError;
+    authFunc mAuth;
+    echoFunc mEcho;
+    privFunc mPriv;
     bool mInstalling;
 
     const CString& ResolveVar(const CString& var);
@@ -43,8 +51,12 @@ private:
     static void DefaultError(const char *fmt, ...);
 public:
     Processor(CString& path, handleFileFunc f, getPathFunc p, askFunc a, bool i);
+    ~Processor();
     void ProcessLine(const CString& line, unsigned& nextLine);
     void SetErrorFunc(errorFunc f) { mError = f; }
+    void SetAuthFunc(authFunc f) { mAuth = f; }
+    void SetEchoFunc(echoFunc f) { mEcho = f; }
+    void SetPrivFunc(privFunc f) { mPriv = f; }
 };
 
 #endif

@@ -9,27 +9,15 @@
 
 using namespace std;
 
-#include <vector>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/errno.h>
 #include <sys/param.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include "StdString.h"
 #include "Processor.h"
-
-void split(const CString& Source, const CString& Deliminator, vector<CString>& AddIt)
-{
-    unsigned startpos = 0;
-
-    do {
-        unsigned pos = Source.find(Deliminator, startpos);
-        if (pos == Source.npos) pos=Source.size();
-
-        CString AddCString = Source.substr(startpos, pos-startpos);
-        AddIt.push_back(AddCString);
-
-        startpos=pos+Deliminator.size();
-    } while (startpos <= Source.size());
-}
+#include "Util.h"
 
 bool IsAVar(const CString& var)
 {
@@ -44,7 +32,7 @@ CString StripVar(const CString& var)
 }
 
 Processor::Processor(CString& path, handleFileFunc f, getPathFunc p, askFunc a, bool i)
-: mDoGoto(false), mPath(path), mHandleFile(f), mGetPath(p), mAsk(a),
+: mDoGoto(false), mHandleFile(f), mGetPath(p), mAsk(a),
 mError(Processor::DefaultError), mInstalling(i)
 {
     char cwd[MAXPATHLEN];
@@ -52,6 +40,33 @@ mError(Processor::DefaultError), mInstalling(i)
     getwd(cwd);
     mCWD = cwd;
     mConditionals["INSTALLING"] = i;
+
+    if (mInstalling)
+    {
+        char archivePath[] = "/tmp/installerXXXXXX.tar";
+        int fd = mkstemps(archivePath, 4);
+
+        if (fd == -1)
+            throw CString("Couldn't create temporary file");
+
+        mPath = archivePath;
+
+        char toolPath[] = "/usr/bin/gunzip";
+
+        if(CallTool2(true, -1, fd, -1, toolPath, "-c", path.c_str(), NULL))
+        {
+            unlink(mPath);
+            throw CString("Archive file not handled correctly or not present.");
+        }
+    }
+    else
+        mPath = path;
+}
+
+Processor::~Processor()
+{
+    if (mInstalling)
+        unlink(mPath);
 }
 
 void Processor::ProcessLine(const CString& line, unsigned& nextLine)
@@ -60,6 +75,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 
     split(line, ":", parts);    
 
+#pragma mark LABEL
     if (parts[0] == "LABEL")
     {
         printf("%u: %s\n", nextLine, line.c_str());
@@ -82,17 +98,50 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
 
     printf("%u: %s\n", nextLine, line.c_str());
 
+#pragma mark FILE
     if (parts[0] == "FILE")
     {
         if (parts.size() != 3)
             goto error;
-        bool overwrite = ResolveConditional(parts[2]);
-        (*mHandleFile)(parts[1], mCWD, mPath, overwrite);
+        CString file, dir;
+        if (parts[1][0] == '/')
+        {
+            file = parts[1].substr(1);
+            dir = "/";
+        }
+        else
+        {
+            file = parts[1];
+            dir = mCWD;
+        }
+        
+        if (mInstalling)
+            (*mHandleFile)(file, dir, mPath, ResolveConditional(parts[2]));
+        else
+        {
+            CStringArray list, dirs;
+            if (IsADirectory((dir == "/" ? dir : dir + "/" ) + file))
+            {
+                int fd = open(".", O_RDONLY, 0);
+
+                chdir(dir);                
+                FileListingForDirectoryWithIgnore(file, list, dirs, mIgnore);
+                fchdir(fd);
+                close(fd);
+                if (list.size() == 0) //empty directory or ignored directory
+                    (*mHandleFile)(file, dir, mPath, true);
+                for (unsigned i=0; i<list.size(); ++i)
+                    (*mHandleFile)(list[i], dir, mPath, true);
+            }
+            else
+                (*mHandleFile)(file, dir, mPath, true);
+        }
 
         ++nextLine;
         return;
     }
-    
+
+#pragma mark GETPATH
     if (parts[0] == "GETPATH")
     {
         if (parts.size() != 3)
@@ -101,7 +150,8 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         ++nextLine;
         return;
     }
-        
+
+#pragma mark CD
     if (parts[0] == "CD")
     {
         if (parts.size() != 3)
@@ -114,20 +164,26 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
             mCWD = path;
         else
             mCWD += "/" + path;
-        struct stat st;
-        if (stat(mCWD, &st))
-            (*mError)("%s\n", strerror(errno));
-        if (!(st.st_mode & S_IFDIR))
+        if (!IsADirectory(mCWD))
             (*mError)("%s is not a directory.\n", mCWD.c_str());
         return;
     }
 
     if (!mInstalling)
     {
+#pragma mark IGNORE
+        if (parts[0] == "IGNORE")
+        {
+            if (parts.size() != 2)
+                goto error;
+            mIgnore.insert(ResolveVar(parts[1]));
+        }
+        
         ++nextLine;
         return;
     }
 
+#pragma mark GOTO
     if (parts[0] == "GOTO")
     {
         if (parts.size() != 2)
@@ -146,7 +202,8 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         mReturnStack.push(++nextLine);
         return;
     }    
-    
+
+#pragma mark IF
     if (parts[0] == "IF")
     {
         if (parts.size() != 4)
@@ -172,6 +229,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
+#pragma mark RETURN
     if (parts[0] == "RETURN")
     {
         if (mReturnStack.empty())
@@ -184,6 +242,7 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
+#pragma mark SETVAR
     if (parts[0] == "SETVAR")
     {
         if (parts.size() < 3)
@@ -196,38 +255,93 @@ void Processor::ProcessLine(const CString& line, unsigned& nextLine)
         return;
     }
 
+#pragma mark MKDIR
     if (parts[0] == "MKDIR")
-    {
-        if (parts.size() != 2)
-            goto error;
-        CString path = mCWD + "/" + ResolveVar(parts[1]);
-        if (mkdir(path, 0777))
-        {
-            if (errno != EEXIST)
-                (*mError)("%s\n", strerror(errno));
-        }
-        ++nextLine;
-        return;
-    }
-
-    if (parts[0] == "RM")
     {
         if (parts.size() != 2)
             goto error;
         CString path = ResolveVar(parts[1]);
         if (path[0] != '/')
-            path = mCWD + "/" + path;
-        CString command = "rm -rf '" + path + "'";
-        system(command); // lazy
+            path =  mCWD + "/" + path;
+        if (mkdir_p(path))
+            (*mError)(strerror(errno));
         ++nextLine;
         return;
     }
 
+#pragma mark RM
+    if (parts[0] == "RM")
+    {
+        if (parts.size() != 2)
+            goto error;
+        CString path = ResolveVar(parts[1]);
+        
+        if (path[0] != '/')
+            path = mCWD + "/" + path;
+
+        if (IsADirectory(path))
+        {
+            CStringArray files, dirs;
+            FileListingForDirectoryWithIgnore(path, files, dirs, set<CString>(), false);
+            for (unsigned i=0; i<files.size(); ++i)
+            {
+                if (unlink(files[i]))
+                    (*mError)("%s", strerror(errno));
+            }
+
+            while (!dirs.empty())
+            {
+                if (rmdir(dirs.back()))
+                    (*mError)("%s", strerror(errno));
+                dirs.pop_back();
+            }
+        }
+        else
+        {
+            if (unlink(path))
+                (*mError)("%s", strerror(errno));
+        }
+        
+        ++nextLine;
+        return;
+    }
+
+#pragma mark ASK
     if (parts[0] == "ASK")
     {
         if (parts.size() != 3)
             goto error;
-        mVars[parts[1]] = (*mAsk)(parts[2]);
+        mConditionals[parts[1]] = (*mAsk)(parts[2]);
+        ++nextLine;
+        return;
+    }
+
+#pragma mark AUTH
+    if (parts[0] == "AUTH")
+    {
+        if (parts.size() != 2)
+            goto error;
+        mConditionals[parts[1]] = (*mAuth)();
+        ++nextLine;
+        return;
+    }
+
+#pragma mark ECHO
+    if (parts[0] == "ECHO")
+    {
+        if (parts.size() != 3)
+            goto error;
+        (mEcho)(parts[1], ResolveConditional(parts[2]));
+        ++nextLine;
+        return;
+    }
+
+#pragma mark PRIVILEGED
+    if (parts[0] == "PRIVILEGED")
+    {
+        if (parts.size() != 2)
+            goto error;
+        (mPriv)(ResolveConditional(parts[1]));
         ++nextLine;
         return;
     }
