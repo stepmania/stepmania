@@ -115,9 +115,11 @@ public:
 	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
 	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
 	void  SetBaseZoomZ( float zoom )	{ m_baseScale.z = zoom; }
+	void  SetBaseZoom( const RageVector3 &zoom ) { m_baseScale = zoom; }
 	void  SetBaseRotationX( float rot )	{ m_baseRotation.x = rot; }
 	void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
 	void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
+	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
 
 	float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
 	float GetZoomX()				{ return DestTweenState().scale.x; }
