@@ -202,27 +202,28 @@ void SoundMixBuffer::SetVolume( float f )
 	vol = int(256*f);
 }
 
-void SoundMixBuffer::write( const Sint16 *buf, unsigned size, float volume )
+void SoundMixBuffer::write( const Sint16 *buf, unsigned size, float volume, int offset )
 {
 	int factor = vol;
 	if( volume != -1 )
 		factor = int( 256*volume );
 
-	if(bufsize < size)
+	const unsigned realsize = size+offset;
+	if( bufsize < realsize )
 	{
-		mixbuf = (Sint32 *) realloc(mixbuf, sizeof(Sint32) * size);
+		mixbuf = (Sint32 *) realloc( mixbuf, sizeof(Sint32) * realsize );
 		bufsize = size;
 	}
 
-	if(used < size)
+	if( used < realsize )
 	{
-		memset(mixbuf + used, 0, (size - used) * sizeof(Sint32));
-		used = size;
+		memset( mixbuf + used, 0, (realsize - used) * sizeof(Sint32) );
+		used = realsize;
 	}
 
 	/* Scale volume and add. */
 	for(unsigned pos = 0; pos < size; ++pos)
-		mixbuf[pos] += buf[pos] * factor;
+		mixbuf[pos+offset] += buf[pos] * factor;
 }
 
 void SoundMixBuffer::read(Sint16 *buf)
