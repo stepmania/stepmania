@@ -699,7 +699,25 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 			pActor->SetDiffuse( colorDiffuse );
 			pActor->SetGlow( RageColor(0,0,0,0) );
 		}
+
+		if( cache->m_bUseLighting )
+		{
+			DISPLAY->SetLighting( true );
+			DISPLAY->SetLightDirectional( 
+				0, 
+				RageColor(0.1f,0.1f,0.1f,1), 
+				RageColor(1,1,1,1),
+				RageColor(1,1,1,1),
+				RageVector3(1, 0, +1) );
+		}
+
 		pActor->Draw();
+
+		if( cache->m_bUseLighting )
+		{
+			DISPLAY->SetLightOff( 0 );
+			DISPLAY->SetLighting( false );
+		}
 	}
 
 	// now, draw the glow pass
@@ -743,7 +761,7 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 		DISPLAY->SetLighting( true );
 		DISPLAY->SetLightDirectional( 
 			0, 
-			RageColor(0.0f,0.0f,0.0f,1), 
+			RageColor(0.1f,0.1f,0.1f,1), 
 			RageColor(1,1,1,1),
 			RageColor(1,1,1,1),
 			RageVector3(1, 0, +1) );
