@@ -401,6 +401,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	m_sprMore.Load( THEME->GetPathToG( "ScreenOptions more") );
 	m_sprMore->SetName( "ScreenOptions", "More" );
 	UtilSetXYAndOnCommand( m_sprMore, "ScreenOptions" );
+	UtilCommand( m_sprMore, "ScreenOptions", m_bMoreShown? "ShowMore":"HideMore" );
 	m_framePage.AddChild( m_sprMore );
 
 	switch( m_InputMode )
@@ -464,6 +465,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 			row.m_OptionIcons[p].FinishTweening();
 		}
 	}
+
 	m_sprMore->FinishTweening();
 }
 
@@ -1039,7 +1041,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 		if( m_bMoreShown != ShowMore )
 		{
 			m_bMoreShown = ShowMore;
-			UtilCommand( m_sprMore, "ScreenOptions", ShowMore? "ShowMore":"HideMore" );
+			UtilCommand( m_sprMore, "ScreenOptions", m_bMoreShown? "ShowMore":"HideMore" );
 		}
 
 		const bool ExitSelected = m_Rows[m_iCurrentRow[pn]]->Type == Row::ROW_EXIT;
