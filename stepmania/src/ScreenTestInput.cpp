@@ -74,10 +74,14 @@ void ScreenTestInput::Update( float fDeltaTime )
 				GameInput gi;
 				if( INPUTMAPPER->DeviceToGame(di,gi) )
 				{
-					CString sName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[b];
-					CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[b];
+					CString sName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[gi.button];
+					CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[gi.button];
 					
-					sTemp += "(" + sName + ", " + sSecondary + ")";
+					sTemp += "  (" + sName + ")  " + sSecondary;
+				}
+				else
+				{
+					sTemp += "  (not mapped)";
 				}
 
 				asInputs.push_back( sTemp );
@@ -85,7 +89,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 		}
 	}
 
-	m_sDeviceInputs = join( "\n ", asInputs );
+	m_textInputs.SetText( join( "\n ", asInputs ) );
 }
 
 
@@ -112,5 +116,18 @@ void ScreenTestInput::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		break;
+	}
+}
+
+void ScreenTestInput::MenuStart( PlayerNumber pn )
+{
+}
+
+void ScreenTestInput::MenuBack( PlayerNumber pn )
+{
+	if(!m_Menu.IsTransitioning())
+	{
+		SOUND->PlayOnce( THEME->GetPathToS("Common start") );
+		m_Menu.StartTransitioning( SM_GoToPrevScreen );		
 	}
 }
