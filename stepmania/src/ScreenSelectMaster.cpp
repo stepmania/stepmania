@@ -14,18 +14,13 @@
 #include "Foreach.h"
 #include "RageSoundManager.h"
 
-#define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
-
-/* OptionOrderLeft=0:1,1:2,2:3,3:4 */
-const char *ScreenSelectMaster::dirs[NUM_DIRS] =
-{
-	"Up", "Down", "Left", "Right", "Auto"
-};
 
 const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
 CString CURSOR_OFFSET_X_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetXFromIcon",part+1,p+1); }
 CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p, size_t part ) { return ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1); }
+/* e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4" */
+CString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName ),
@@ -39,6 +34,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	PRE_SWITCH_PAGE_SECONDS(m_sName,"PreSwitchPageSeconds"),
 	POST_SWITCH_PAGE_SECONDS(m_sName,"PostSwitchPageSeconds"),
 	EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"ExtraSleepAfterTweenOffSeconds"),
+	OPTION_ORDER(m_sName,OPTION_ORDER_NAME,NUM_MENU_DIRS),
 	WRAP_CURSOR(m_sName,"WrapCursor"),
 	SHOW_SCROLLER(m_sName,"ShowScroller"),
 	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
@@ -202,7 +198,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
 
 	// init m_Next order info
-	for( int dir = 0; dir < NUM_DIRS; ++dir )
+	FOREACH_MenuDir( dir )
 	{
 		/* Reasonable defaults: */
 		for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
@@ -210,21 +206,20 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			int add;
 			switch( dir )
 			{
-			case DIR_UP:
-			case DIR_LEFT:	add = -1; break;
-			default:		add = +1; break;
+			case MENU_DIR_UP:
+			case MENU_DIR_LEFT:	add = -1; break;
+			default:			add = +1; break;
 			}
 
 			m_Next[dir][c] = c + add;
-			/* Always wrap around DIR_AUTO. */
-			if( dir == DIR_AUTO || (bool)WRAP_CURSOR )
+			/* Always wrap around MENU_DIR_AUTO. */
+			if( dir == MENU_DIR_AUTO || (bool)WRAP_CURSOR )
 				wrap( m_Next[dir][c], m_aGameCommands.size() );
 			else
 				m_Next[dir][c] = clamp( m_Next[dir][c], 0, (int)m_aGameCommands.size()-1 );
 		}
 
-		const CString dirname = dirs[dir];
-		const CString order = OPTION_ORDER( dirname );
+		const CString order = OPTION_ORDER.GetValue( dir );
 		vector<CString> parts;
 		split( order, ",", parts, true );
 
@@ -236,7 +231,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			unsigned from, to;
 			if( sscanf( parts[part], "%u:%u", &from, &to ) != 2 )
 			{
-				LOG->Warn( "%s::OptionOrder%s parse error", m_sName.c_str(), dirname.c_str() );
+				LOG->Warn( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;
 			}
 
@@ -246,7 +241,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			if( from >= m_aGameCommands.size() ||
 				to >= m_aGameCommands.size() )
 			{
-				LOG->Warn( "%s::OptionOrder%s out of range", m_sName.c_str(), dirname.c_str() );
+				LOG->Warn( "%s::OptionOrder%s out of range", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;
 			}
 
@@ -339,12 +334,12 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	FOREACH_HumanPlayer( p )
 	{
 		if( !m_aGameCommands[m_iChoice[p]].IsPlayable() )
-			Move( p, DIR_AUTO );
+			Move( p, MENU_DIR_AUTO );
 		ASSERT( m_aGameCommands[m_iChoice[p]].IsPlayable() );
 	}
 }
 
-bool ScreenSelectMaster::Move( PlayerNumber pn, Dirs dir )
+bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 {
 	int iSwitchToIndex = m_iChoice[pn];
 	set<int> seen;
@@ -366,7 +361,7 @@ void ScreenSelectMaster::MenuLeft( PlayerNumber pn )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( Move(pn, DIR_LEFT) )
+	if( Move(pn, MENU_DIR_LEFT) )
 		m_soundChange.Play();
 }
 
@@ -374,7 +369,7 @@ void ScreenSelectMaster::MenuRight( PlayerNumber pn )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( Move(pn, DIR_RIGHT) )
+	if( Move(pn, MENU_DIR_RIGHT) )
 		m_soundChange.Play();
 }
 
@@ -382,7 +377,7 @@ void ScreenSelectMaster::MenuUp( PlayerNumber pn )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( Move(pn, DIR_UP) )
+	if( Move(pn, MENU_DIR_UP) )
 		m_soundChange.Play();
 }
 
@@ -390,7 +385,7 @@ void ScreenSelectMaster::MenuDown( PlayerNumber pn )
 {
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( Move(pn, DIR_DOWN) )
+	if( Move(pn, MENU_DIR_DOWN) )
 		m_soundChange.Play();
 }
 

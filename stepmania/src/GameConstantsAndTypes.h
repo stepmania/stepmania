@@ -35,7 +35,6 @@ const CString& RadarCategoryToString( RadarCategory cat );
 const CString& RadarCategoryToThemedString( RadarCategory cat );
 
 
-
 enum StepsType
 {
 	STEPS_TYPE_DANCE_SINGLE = 0,
@@ -341,6 +340,19 @@ enum StyleType
 };
 const CString& StyleTypeToString( StyleType s );
 StyleType StringToStyleType( const CString& s );
+
+
+enum MenuDir
+{
+	MENU_DIR_UP,
+	MENU_DIR_DOWN,
+	MENU_DIR_LEFT,
+	MENU_DIR_RIGHT,
+	MENU_DIR_AUTO, // when players join and the selection becomes invalid
+	NUM_MENU_DIRS
+};
+#define FOREACH_MenuDir( md ) FOREACH_ENUM( MenuDir, NUM_MENU_DIRS, md )
+const CString& MenuDirToString( MenuDir md );
 
 
 #endif

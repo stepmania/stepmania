@@ -237,6 +237,18 @@ static const CString StyleTypeNames[NUM_STYLE_TYPES] = {
 XToString( StyleType );
 StringToX( StyleType );
 
+
+static const CString MenuDirNames[NUM_MENU_DIRS] = {
+	"Up",
+	"Down",
+	"Left",
+	"Right",
+	"Auto",
+};
+XToString( MenuDir );
+StringToX( MenuDir );
+
+
 #include "LuaFunctions.h"
 LuaFunction_NoArgs( CoinMode,   CoinModeToString(PREFSMAN->m_CoinMode) )
 LuaFunction_NoArgs( Premium,    PremiumToString(PREFSMAN->m_Premium) )

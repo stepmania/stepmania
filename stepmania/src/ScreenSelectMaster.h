@@ -46,7 +46,7 @@ protected:
 	ThemeMetric<float> PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float> POST_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float> EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
-	//OPTION_ORDER( dir )                                             THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
+	ThemeMetric1D<CString,NUM_MENU_DIRS> OPTION_ORDER;
 	ThemeMetric<bool> WRAP_CURSOR;
 	ThemeMetric<bool> SHOW_SCROLLER;
 	ThemeMetric<float> SCROLLER_SECONDS_PER_ITEM;
@@ -55,22 +55,12 @@ protected:
 	ThemeMetric<float> SCROLLER_SPACING_Y;
 	ThemeMetric<CString> DEFAULT_CHOICE;
 
-	enum Dirs
-	{
-		DIR_UP,
-		DIR_DOWN,
-		DIR_LEFT,
-		DIR_RIGHT,
-		DIR_AUTO, // when players join and the selection becomes invalid
-		NUM_DIRS
-	};
-	static const char *dirs[NUM_DIRS];
-	int m_Next[NUM_DIRS][MAX_CHOICES];
+	int m_Next[NUM_MENU_DIRS][MAX_CHOICES];
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
 
-	bool Move( PlayerNumber pn, Dirs dir );
+	bool Move( PlayerNumber pn, MenuDir dir );
 	bool ChangePage( int iNewChoice );
 	bool ChangeSelection( PlayerNumber pn, int iNewChoice );
 	float DoMenuStart( PlayerNumber pn );
