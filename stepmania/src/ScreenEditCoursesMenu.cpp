@@ -97,7 +97,7 @@ void ScreenEditCoursesMenu::MenuBack( PlayerNumber pn )
 }
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2002-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
