@@ -35,7 +35,9 @@ HRESULT CTextureRenderer::CheckMediaType(const CMediaType *pmt)
     if( *pmt->FormatType() != FORMAT_VideoInfo )
         return E_INVALIDARG;
     
-	// Force the graph to R8G8B8.
+	/* Force the graph to R8G8B8.  DirectShow won't generate a FMT_RGB5 that OpenGL
+	 * can handle.  It's faster to generate FMT8 and let OpenGL convert on the fly
+	 * than to generate FMT_RGB5 and convert it ourself. */
     pvi = (VIDEOINFO *)pmt->Format();
     if(IsEqualGUID( *pmt->Type(),    MEDIATYPE_Video)  &&
        IsEqualGUID( *pmt->Subtype(), MEDIASUBTYPE_RGB24))
