@@ -146,6 +146,9 @@ InputHandler_Win32_Pump::~InputHandler_Win32_Pump()
 
 int InputHandler_Win32_Pump::dev_t::GetPadEvent()
 {
+	if(h == INVALID_HANDLE_VALUE)
+		return -1;
+
     int ret;
 
     if(!pending)
@@ -173,7 +176,9 @@ int InputHandler_Win32_Pump::dev_t::GetPadEvent()
 
     if(ret == 0) {
 		// this prints too much info in Win98
-//		LOG->Warn(werr_ssprintf(GetLastError(), "Error reading Pump pad"));
+		// See if it's fixed--h should be INVALID_HANDLE_VALUE if
+		// the pad isn't there. -glenn
+		LOG->Warn(werr_ssprintf(GetLastError(), "Error reading Pump pad"));
 	    return -1;
     }
 
