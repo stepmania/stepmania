@@ -4,9 +4,10 @@
 #define SCREEN_DIMENSIONS_H
 
 #include "ThemeManager.h"
+#include "ThemeMetric.h"
 
-#define	SCREEN_WIDTH	THEME->GetMetricF("Common","ScreenWidth")
-#define	SCREEN_HEIGHT	THEME->GetMetricF("Common","ScreenHeight")
+extern ThemeMetric<float> SCREEN_WIDTH;
+extern ThemeMetric<float> SCREEN_HEIGHT;
 
 #define		SCREEN_LEFT		(0)
 #define		SCREEN_RIGHT	(SCREEN_WIDTH)

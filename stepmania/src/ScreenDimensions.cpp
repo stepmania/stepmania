@@ -1,6 +1,8 @@
 #include "global.h"
 #include "ScreenDimensions.h"
 
+ThemeMetric<float> SCREEN_WIDTH("Common","ScreenWidth");
+ThemeMetric<float> SCREEN_HEIGHT("Common","ScreenHeight");
 
 /*
  * (c) 2001-2002 Chris Danford
