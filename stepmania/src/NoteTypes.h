@@ -1,6 +1,48 @@
 #ifndef NOTE_TYPES_H
 #define NOTE_TYPES_H
 
+#include "GameConstantsAndTypes.h"
+
+struct TapNoteResult
+{
+	TapNoteResult()
+	{
+		tns = TNS_NONE;
+		fTapNoteOffset = 0;
+	}
+	TapNoteScore tns;
+
+	/* Offset, in seconds, for a tap grade.  Negative numbers mean the note
+	 * was hit early; positive numbers mean it was hit late.  These values are
+	 * only meaningful for graded taps (tns >= TNS_BOO). */
+	float fTapNoteOffset;
+};
+
+struct HoldNoteResult
+{
+	HoldNoteScore hns;
+
+	/* 1.0 means this HoldNote has full life.
+	 * 0.0 means this HoldNote is dead
+	 * When this value hits 0.0 for the first time, m_HoldScore becomes HSS_NG.
+	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HSS_OK. */
+	float fLife;
+
+	/* Last index where fLife was greater than 0.  If the tap was missed, this will
+	 * be the first index of the hold. */
+	int iLastHeldRow;
+
+	HoldNoteResult()
+	{
+		hns = HNS_NONE;
+		fLife = 1.0f;
+		iLastHeldRow = 0;
+	}
+
+	float GetLastHeldBeat() const;
+};
+
+
 struct TapNote
 {
 	enum Type { 
@@ -66,6 +108,10 @@ struct TapNote
 #undef COMPARE
 		return true;
 	}
+
+	/* This data is only used and manipulated by NoteDataWithScoring.  It's only in
+	 * here for the sake of efficiency. */
+
 };
 
 const unsigned MAX_NUM_ATTACKS = 2*2*2;	// 3 bits to hold the attack index currently
@@ -125,7 +171,7 @@ inline float NoteRowToBeat( int row )			{ return NoteRowToBeat( (float)row );	 }
 
 struct HoldNote
 {
-	HoldNote( int t, int s, int e ) { iTrack=t; iStartRow=s; iEndRow=e; }
+	HoldNote( int t, int s, int e ) { iTrack=t; iStartRow=s; iEndRow=e; bHeld = bActive = false; }
 	bool RowIsInRange( int row ) const { return iStartRow <= row && row <= iEndRow; }
 	bool RangeOverlaps( int start, int end ) const
 	{
@@ -145,6 +191,12 @@ struct HoldNote
 	int		iStartRow;
 	int		iEndRow;
 	int		iTrack;	
+
+	/* This data is only used and manipulated by NoteDataWithScoring.  It's only in
+	 * here for the sake of efficiency. */
+	HoldNoteResult result;
+	bool bHeld;
+	bool bActive;
 };
 
 #endif

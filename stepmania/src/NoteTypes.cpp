@@ -76,6 +76,11 @@ bool IsNoteOfType( int row, NoteType t )
 	return GetNoteType(row) == t;
 }
 
+float HoldNoteResult::GetLastHeldBeat() const
+{
+	return NoteRowToBeat(iLastHeldRow);
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

@@ -30,9 +30,6 @@ public:
 		float fYReverseOffsetPixels );
 	virtual void Unload();
 
-	map<RowTrack,bool> m_HeldHoldNotes;	// true if button is being held down
-	map<RowTrack,bool> m_ActiveHoldNotes;	// true if hold has life > 0
-
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();

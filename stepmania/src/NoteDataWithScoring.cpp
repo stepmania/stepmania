@@ -15,8 +15,6 @@ void NoteDataWithScoring::Init()
 
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 		m_TapNoteScores[t].clear();
-
-	m_HoldNoteScores.clear();
 }
 
 int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
@@ -90,7 +88,7 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 		const HoldNote &hn = GetHoldNote(i);
 		if( iStartIndex > hn.iStartRow ||  hn.iEndRow > iEndIndex )
 			continue;
-		if( GetHoldNoteScore(hn) == hns )
+		if( hn.result.hns == hns )
 			iNumSuccessfulHolds++;
 	}
 	return iNumSuccessfulHolds;
@@ -158,7 +156,6 @@ int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) 
 		for( int j=0; j<GetNumHoldNotes(); j++ )
 		{
 			const HoldNote &hn = GetHoldNote(j);
-			HoldNoteResult hnr = GetHoldNoteResult( hn );
 
 			/* Check if the row we're checking is in range. */
 			if( !hn.RowIsInRange(i) )
@@ -169,7 +166,7 @@ int NoteDataWithScoring::GetSuccessfulHands( float fStartBeat, float fEndBeat ) 
 			 * to be sure that the hold was still held at the point of this row.
 			 * (Note that if the hold head tap was missed, then iLastHeldRow == i
 			 * and this won't fail--but the tap check above will have already failed.) */
-			if( hnr.iLastHeldRow < i )
+			if( hn.result.iLastHeldRow < i )
 				Missed = true;
 		}
 
@@ -366,58 +363,6 @@ void NoteDataWithScoring::SetTapNoteOffset(unsigned track, unsigned row, float o
 	TapNoteResult tnr = m_TapNoteScores[track][row];
 	tnr.fTapNoteOffset = offset;
 	m_TapNoteScores[track][row] = tnr;
-}
-
-/* We use the end row to index hold notes, instead of the start row, because the start row
- * changes when hold notes are being stepped on, but end rows never change. */
-HoldNoteScore NoteDataWithScoring::GetHoldNoteScore( const HoldNote &hn ) const
-{
-	return GetHoldNoteResult(hn).hns;
-}
-
-void NoteDataWithScoring::SetHoldNoteScore( const HoldNote &hn, HoldNoteScore hns )
-{
-	HoldNoteResult *hnr = CreateHoldNoteResult( hn );
-	hnr->hns = hns;
-}
-
-void NoteDataWithScoring::SetHoldNoteLife( const HoldNote &hn, float f )
-{
-	HoldNoteResult *hnr = CreateHoldNoteResult( hn );
-	hnr->fLife = f;
-}
-
-float NoteDataWithScoring::GetHoldNoteLife( const HoldNote &hn ) const
-{
-	return GetHoldNoteResult(hn).fLife;
-}
-
-const HoldNoteResult NoteDataWithScoring::GetHoldNoteResult( const HoldNote &hn ) const
-{
-	map<RowTrack, HoldNoteResult>::const_iterator it = m_HoldNoteScores.find( RowTrack(hn) );
-	if( it == m_HoldNoteScores.end() )
-		return HoldNoteResult(hn);
-
-	return it->second;
-}
-
-HoldNoteResult *NoteDataWithScoring::CreateHoldNoteResult( const HoldNote &hn )
-{
-	map<RowTrack, HoldNoteResult>::iterator it = m_HoldNoteScores.find( RowTrack(hn) );
-	if( it == m_HoldNoteScores.end() )
-	{
-		HoldNoteResult *ret = &m_HoldNoteScores[hn];
-		ret->iLastHeldRow = hn.iStartRow;
-		return ret;
-	}
-	return &it->second;
-}
-
-HoldNoteResult::HoldNoteResult( const HoldNote &hn )
-{
-	hns = HNS_NONE;
-	fLife = 1.0f;
-	iLastHeldRow = hn.iStartRow;
 }
 
 /*

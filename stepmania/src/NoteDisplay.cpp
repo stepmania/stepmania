@@ -928,7 +928,8 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 
 	int	iCol = hn.iTrack;
 	bool bReverse = m_pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol) > 0.5;
-	float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, Result.GetLastHeldBeat() );
+	float fStartBeat = NoteRowToBeat( max(hn.result.iLastHeldRow, hn.iStartRow) );
+	float fStartYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, iCol, fStartBeat );
 	
 	// HACK: If active, don't allow the top of the hold to go above the receptor
 	if( bIsActive )
@@ -946,7 +947,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 	/* Hack: Z effects need a finer grain step. */
 	const int	fYStep = WavyPartsNeedZBuffer? 4: 16; //bWavy ? 16 : 128;	// use small steps only if wavy
 
-	const float fColorScale		= 1*Result.fLife + (1-Result.fLife)*cache->m_fHoldNGGrayPercent;
+	const float fColorScale		= 1*hn.result.fLife + (1-hn.result.fLife)*cache->m_fHoldNGGrayPercent;
 
 	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 

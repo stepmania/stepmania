@@ -117,9 +117,6 @@ void NoteField::Load(
 
 	NoteDataWithScoring::Init();
 
-	m_HeldHoldNotes.clear();
-	m_ActiveHoldNotes.clear();
-
 	this->CopyAll( *pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
@@ -564,7 +561,7 @@ void NoteField::DrawPrimitives()
 			if( hn.iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
 
-			const HoldNoteResult Result = GetHoldNoteResult( hn );
+			const HoldNoteResult &Result = hn.result;
 			if( Result.hns == HNS_OK )	// if this HoldNote was completed
 				continue;	// don't draw anything
 
@@ -584,8 +581,8 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 			}
 
-			const bool bIsActive = m_ActiveHoldNotes[hn];
-			const bool bIsHoldingNote = m_HeldHoldNotes[hn];
+			const bool bIsActive = hn.bActive;
+			const bool bIsHoldingNote = hn.bHeld;
 			if( bIsActive )
 				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
 			

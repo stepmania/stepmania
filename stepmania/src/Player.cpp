@@ -340,16 +340,25 @@ void Player::Update( float fDeltaTime )
 	//
 	for( int i=0; i < m_NoteData.GetNumHoldNotes(); i++ )		// for each HoldNote
 	{
-		const HoldNote &hn = m_NoteData.GetHoldNote(i);
-		HoldNoteScore hns = m_NoteData.GetHoldNoteScore(hn);
+		HoldNote &hn = m_NoteData.GetHoldNote(i);
 
+		/* Find the associated hold note in m_pNoteField. */
+		/* ack: this iterates over all hold notes */
+		int iHN = m_pNoteField->GetMatchingHoldNote( hn );
+		HoldNote &NoteFieldHoldNote = m_pNoteField->GetHoldNote( iHN );
+
+
+		// set hold flags so NoteField can do intelligent drawing
+		hn.bHeld = false;
+		hn.bActive = false;
 		if( m_pNoteField )
 		{
-			m_pNoteField->m_HeldHoldNotes[hn] = false;	// set hold flag so NoteField can do intelligent drawing
-			m_pNoteField->m_ActiveHoldNotes[hn] = false;	// set hold flag so NoteField can do intelligent drawing
+			NoteFieldHoldNote.bHeld = false;
+			NoteFieldHoldNote.bActive = false;
 		}
 
 
+		HoldNoteScore hns = hn.result.hns;
 		if( hns != HNS_NONE )	// if this HoldNote already has a result
 			continue;	// we don't need to update the logic for this one
 		if( iSongRow < hn.iStartRow )
@@ -365,38 +374,34 @@ void Player::Update( float fDeltaTime )
 		const TapNoteScore tns = m_NoteData.GetTapNoteScore( hn.iTrack, hn.iStartRow );
 		const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
 
-		float fLife = m_NoteData.GetHoldNoteLife(hn);
+		float fLife = hn.result.fLife;
 
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 		// TODO: Make the CPU miss sometimes.
 		if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 			bIsHoldingButton = true;
 
-		if( bSteppedOnTapNote && bIsHoldingButton )
+		if( bSteppedOnTapNote && fLife != 0 )
 		{
 			/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
 			 * Do this even if we're a little beyond the end of the hold note, to make sure
 			 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
-			HoldNoteResult *hnr = NULL;
-
 			if( m_pNoteField )
-			{
-				hnr = m_pNoteField->CreateHoldNoteResult( hn );
-				hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
-			}
+				NoteFieldHoldNote.result.iLastHeldRow = min( iSongRow, hn.iEndRow );
 
-			hnr = m_NoteData.CreateHoldNoteResult( hn );
-			hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
+			hn.result.iLastHeldRow = min( iSongRow, hn.iEndRow );
 		}
 
 		// If the song beat is in the range of this hold:
 		if( hn.RowIsInRange(iSongRow) )
 		{
 			// set hold flag so NoteField can do intelligent drawing
+			hn.bHeld = bIsHoldingButton && bSteppedOnTapNote;
+			hn.bActive = bSteppedOnTapNote;
 			if( m_pNoteField )
 			{
-				m_pNoteField->m_HeldHoldNotes[hn] = bIsHoldingButton && bSteppedOnTapNote;
-				m_pNoteField->m_ActiveHoldNotes[hn] = bSteppedOnTapNote;
+				NoteFieldHoldNote.bHeld = bIsHoldingButton && bSteppedOnTapNote;
+				NoteFieldHoldNote.bActive = bSteppedOnTapNote;
 			}
 
 			if( bSteppedOnTapNote && bIsHoldingButton )
@@ -452,12 +457,12 @@ void Player::Update( float fDeltaTime )
 
 		if( m_pNoteField )
 		{
-			m_pNoteField->SetHoldNoteLife(hn, fLife);	// update the NoteField display
-			m_pNoteField->SetHoldNoteScore(hn, hns);	// update the NoteField display
+			NoteFieldHoldNote.result.fLife = fLife;
+			NoteFieldHoldNote.result.hns = hns;
 		}
 
-		m_NoteData.SetHoldNoteLife(hn, fLife);
-		m_NoteData.SetHoldNoteScore(hn, hns);
+		hn.result.fLife = fLife;
+		hn.result.hns = hns;
 	}
 
 	// TODO: Remove use of PlayerNumber.

@@ -15,51 +15,10 @@ struct RowTrack: public pair<int,int>
 	RowTrack( const HoldNote &hn ): pair<int,int>( hn.iEndRow, hn.iTrack ) { }
 };
 
-struct TapNoteResult
-{
-	TapNoteResult()
-	{
-		tns = TNS_NONE;
-		fTapNoteOffset = 0;
-	}
-	TapNoteScore tns;
-
-	/* Offset, in seconds, for a tap grade.  Negative numbers mean the note
-	 * was hit early; positive numbers mean it was hit late.  These values are
-	 * only meaningful for graded taps (tns >= TNS_BOO). */
-	float fTapNoteOffset;
-};
-
-struct HoldNoteResult
-{
-	HoldNoteScore hns;
-
-	/* 1.0 means this HoldNote has full life.
-	 * 0.0 means this HoldNote is dead
-	 * When this value hits 0.0 for the first time, m_HoldScore becomes HSS_NG.
-	 * If the life is > 0.0 when the HoldNote ends, then m_HoldScore becomes HSS_OK. */
-	float fLife;
-
-	/* Last index where fLife was greater than 0.  If the tap was missed, this will
-	 * be the first index of the hold. */
-	int iLastHeldRow;
-
-	HoldNoteResult()
-	{
-		hns = HNS_NONE;
-		fLife = 1.0f;
-		iLastHeldRow = 0;
-	}
-	HoldNoteResult( const HoldNote &hn );
-
-	float GetLastHeldBeat() const { return NoteRowToBeat(iLastHeldRow); }
-};
-
 class NoteDataWithScoring : public NoteData
 {
 	// maintain this extra data in addition to the NoteData
 	vector<TapNoteResult> m_TapNoteScores[MAX_NOTE_TRACKS];
-	map<RowTrack, HoldNoteResult> m_HoldNoteScores;
 
 public:
 	NoteDataWithScoring();
@@ -75,13 +34,6 @@ public:
 	void SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns);
 	float GetTapNoteOffset(unsigned track, unsigned row) const;
 	void SetTapNoteOffset(unsigned track, unsigned row, float offset);
-
-	HoldNoteScore GetHoldNoteScore( const HoldNote &hn ) const;
-	void SetHoldNoteScore( const HoldNote &hn, HoldNoteScore hns );
-	float GetHoldNoteLife( const HoldNote &hn ) const;
-	void SetHoldNoteLife( const HoldNote &hn, float f );
-	const HoldNoteResult GetHoldNoteResult( const HoldNote &hn ) const;
-	HoldNoteResult *CreateHoldNoteResult( const HoldNote &hn );
 
 	bool IsRowCompletelyJudged(unsigned row) const;
 	TapNoteScore MinTapNoteScore(unsigned row) const;
