@@ -176,6 +176,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenAttract.h">
 			</File>
 			<File
+				RelativePath="ScreenBookkeeping.cpp">
+			</File>
+			<File
+				RelativePath="ScreenBookkeeping.h">
+			</File>
+			<File
 				RelativePath="ScreenCaution.cpp">
 			</File>
 			<File
@@ -315,6 +321,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenNameEntry.h">
+			</File>
+			<File
+				RelativePath="ScreenNameEntryTraditional.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNameEntryTraditional.h">
 			</File>
 			<File
 				RelativePath="ScreenOptions.cpp">
@@ -1753,6 +1765,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="arch\ArchHooks\ArchHooks.cpp">
+			</File>
+			<File
+				RelativePath="Bookkeeper.cpp">
+			</File>
+			<File
+				RelativePath="Bookkeeper.h">
 			</File>
 			<File
 				RelativePath=".\FontManager.cpp">
