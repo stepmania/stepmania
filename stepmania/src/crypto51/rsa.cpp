@@ -8,39 +8,12 @@
 #include "nbtheory.h"
 #include "sha.h"
 #include "algparam.h"
-#include "fips140.h"
-
-#ifndef NDEBUG
-#include "pssr.h"
-#endif
 
 #include "oaep.cpp"
 
 NAMESPACE_BEGIN(CryptoPP)
 
-#ifndef NDEBUG
-void RSA_TestInstantiations()
-{
-	RSASS<PKCS1v15, SHA>::Verifier x1(1, 1);
-	RSASS<PKCS1v15, SHA>::Signer x2(NullRNG(), 1);
-	RSASS<PKCS1v15, SHA>::Verifier x3(x2);
-	RSASS<PKCS1v15, SHA>::Verifier x4(x2.GetKey());
-	RSASS<PSS, SHA>::Verifier x5(x3);
-#ifndef __MWERKS__
-	RSASS<PSSR, SHA>::Signer x6 = x2;
-	x3 = x2;
-	x6 = x2;
-#endif
-	RSAES<PKCS1v15>::Encryptor x7(x2);
-#ifndef __GNUC__
-	RSAES<PKCS1v15>::Encryptor x8(x3);
-#endif
-	RSAES<OAEP<SHA> >::Encryptor x9(x2);
-
-	x4 = x2.GetKey();
-}
-#endif
-
+ 
 template class OAEP<SHA>;
 
 OID RSAFunction::GetAlgorithmID() const
@@ -66,16 +39,7 @@ void RSAFunction::DEREncodeKey(BufferedTransformation &bt) const
 
 Integer RSAFunction::ApplyFunction(const Integer &x) const
 {
-	DoQuickSanityCheck();
 	return a_exp_b_mod_c(x, m_e, m_n);
-}
-
-bool RSAFunction::Validate(RandomNumberGenerator &rng, unsigned int level) const
-{
-	bool pass = true;
-	pass = pass && m_n > Integer::One() && m_n.IsOdd();
-	pass = pass && m_e > Integer::One() && m_e.IsOdd() && m_e < m_n;
-	return pass;
 }
 
 bool RSAFunction::GetVoidValue(const char *name, const std::type_info &valueType, void *pValue) const
@@ -130,17 +94,6 @@ void InvertibleRSAFunction::GenerateRandom(RandomNumberGenerator &rng, const Nam
 	m_dq = m_d % (m_q-1);
 	m_n = m_p * m_q;
 	m_u = m_q.InverseMod(m_p);
-
-	if (FIPS_140_2_ComplianceEnabled())
-	{
-		RSASS<PKCS1v15, SHA>::Signer signer(*this);
-		RSASS<PKCS1v15, SHA>::Verifier verifier(signer);
-		SignaturePairwiseConsistencyTest_FIPS_140_Only(signer, verifier);
-
-		RSAES<OAEP<SHA> >::Decryptor decryptor(*this);
-		RSAES<OAEP<SHA> >::Encryptor encryptor(decryptor);
-		EncryptionPairwiseConsistencyTest_FIPS_140_Only(encryptor, decryptor);
-	}
 }
 
 void InvertibleRSAFunction::Initialize(RandomNumberGenerator &rng, unsigned int keybits, const Integer &e)
@@ -215,7 +168,6 @@ void InvertibleRSAFunction::DEREncodeKey(BufferedTransformation &bt) const
 
 Integer InvertibleRSAFunction::CalculateInverse(RandomNumberGenerator &rng, const Integer &x) const 
 {
-	DoQuickSanityCheck();
 	ModularArithmetic modn(m_n);
 	Integer r(rng, Integer::One(), m_n - Integer::One());
 	Integer re = modn.Exponentiate(r, m_e);
@@ -227,27 +179,6 @@ Integer InvertibleRSAFunction::CalculateInverse(RandomNumberGenerator &rng, cons
 	if (modn.Exponentiate(y, m_e) != x)		// check
 		throw Exception(Exception::OTHER_ERROR, "InvertibleRSAFunction: computational error during private key operation");
 	return y;
-}
-
-bool InvertibleRSAFunction::Validate(RandomNumberGenerator &rng, unsigned int level) const
-{
-	bool pass = RSAFunction::Validate(rng, level);
-	pass = pass && m_p > Integer::One() && m_p.IsOdd() && m_p < m_n;
-	pass = pass && m_q > Integer::One() && m_q.IsOdd() && m_q < m_n;
-	pass = pass && m_d > Integer::One() && m_d.IsOdd() && m_d < m_n;
-	pass = pass && m_dp > Integer::One() && m_dp.IsOdd() && m_dp < m_p;
-	pass = pass && m_dq > Integer::One() && m_dq.IsOdd() && m_dq < m_q;
-	pass = pass && m_u.IsPositive() && m_u < m_p;
-	if (level >= 1)
-	{
-		pass = pass && m_p * m_q == m_n;
-		pass = pass && m_e*m_d % LCM(m_p-1, m_q-1) == 1;
-		pass = pass && m_dp == m_d%(m_p-1) && m_dq == m_d%(m_q-1);
-		pass = pass && m_u * m_q % m_p == 1;
-	}
-	if (level >= 2)
-		pass = pass && VerifyPrime(rng, m_p, level-2) && VerifyPrime(rng, m_q, level-2);
-	return pass;
 }
 
 bool InvertibleRSAFunction::GetVoidValue(const char *name, const std::type_info &valueType, void *pValue) const

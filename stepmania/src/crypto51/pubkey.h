@@ -35,7 +35,6 @@
 #include "integer.h"
 #include "filters.h"
 #include "eprecomp.h"
-#include "fips140.h"
 #include "argnames.h"
 #include <memory>
 
@@ -852,13 +851,6 @@ public:
 	void GenerateRandom(RandomNumberGenerator &rng, const NameValuePairs &params)
 	{
 		BASE::GenerateRandom(rng, params);
-
-		if (FIPS_140_2_ComplianceEnabled())
-		{
-			typename SIGNATURE_SCHEME::Signer signer(*this);
-			typename SIGNATURE_SCHEME::Verifier verifier(signer);
-			SignaturePairwiseConsistencyTest_FIPS_140_Only(signer, verifier);
-		}
 	}
 };
 

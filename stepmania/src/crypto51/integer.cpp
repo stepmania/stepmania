@@ -2163,61 +2163,6 @@ void MontgomeryReduce(word *R, word *T, const word *X, const word *M, const word
 	CopyWords(R, T + (borrow ? N : 0), N);
 }
 
-// R[N] --- result = X/(2**(WORD_BITS*N/2)) mod M
-// T[2*N] - temporary work space
-// X[2*N] - number to be reduced
-// M[N] --- modulus
-// U[N/2] - multiplicative inverse of M mod 2**(WORD_BITS*N/2)
-// V[N] --- 2**(WORD_BITS*3*N/2) mod M
-
-void HalfMontgomeryReduce(word *R, word *T, const word *X, const word *M, const word *U, const word *V, unsigned int N)
-{
-	assert(N%2==0 && N>=4);
-
-#define M0		M
-#define M1		(M+N2)
-#define V0		V
-#define V1		(V+N2)
-
-#define X0		X
-#define X1		(X+N2)
-#define X2		(X+N)
-#define X3		(X+N+N2)
-
-	const unsigned int N2 = N/2;
-	Multiply(T0, T2, V0, X3, N2);
-	int c2 = Add(T0, T0, X0, N);
-	MultiplyBottom(T3, T2, T0, U, N2);
-	MultiplyTop(T2, R, T0, T3, M0, N2);
-	c2 -= Subtract(T2, T1, T2, N2);
-	Multiply(T0, R, T3, M1, N2);
-	c2 -= Subtract(T0, T2, T0, N2);
-	int c3 = -(int)Subtract(T1, X2, T1, N2);
-	Multiply(R0, T2, V1, X3, N2);
-	c3 += Add(R, R, T, N);
-
-	if (c2>0)
-		c3 += Increment(R1, N2);
-	else if (c2<0)
-		c3 -= Decrement(R1, N2, -c2);
-
-	assert(c3>=-1 && c3<=1);
-	if (c3>0)
-		Subtract(R, R, M, N);
-	else if (c3<0)
-		Add(R, R, M, N);
-
-#undef M0
-#undef M1
-#undef V0
-#undef V1
-
-#undef X0
-#undef X1
-#undef X2
-#undef X3
-}
-
 #undef A0
 #undef A1
 #undef B0
@@ -2285,15 +2230,6 @@ static inline void AtomicDivide(word *Q, const word *A, const word *B)
 		T[0] = A[0]; T[1] = A[1]; T[2] = A[2]; T[3] = A[3];
 		Q[1] = SubatomicDivide(T+1, B[0], B[1]);
 		Q[0] = SubatomicDivide(T, B[0], B[1]);
-
-#ifndef NDEBUG
-		// multiply quotient and divisor and add remainder, make sure it equals dividend
-		assert(!T[2] && !T[3] && (T[1] < B[1] || (T[1]==B[1] && T[0]<B[0])));
-		word P[4];
-		LowLevel::Multiply2(P, Q, B);
-		Add(P, P, T, 4);
-		assert(memcmp(P, A, 4*WORD_SIZE)==0);
-#endif
 	}
 }
 

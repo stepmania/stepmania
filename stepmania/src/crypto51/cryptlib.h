@@ -940,19 +940,6 @@ public:
 	/*! \note This function can be used to create a public key from a private key. */
 	virtual void AssignFrom(const NameValuePairs &source) =0;
 
-	//! check this object for errors
-	/*! \param level denotes the level of thoroughness:
-		0 - using this object won't cause a crash or exception (rng is ignored)
-		1 - this object will probably function (encrypt, sign, etc.) correctly (but may not check for weak keys and such)
-		2 - make sure this object will function correctly, and do reasonable security checks
-		3 - do checks that may take a long time
-		\return true if the tests pass */
-	virtual bool Validate(RandomNumberGenerator &rng, unsigned int level) const =0;
-
-	//! throws InvalidMaterial if this object fails Validate() test
-	virtual void ThrowIfInvalid(RandomNumberGenerator &rng, unsigned int level) const
-		{if (!Validate(rng, level)) throw InvalidMaterial("CryptoMaterial: this object contains invalid values");}
-
 //	virtual std::vector<std::string> GetSupportedFormats(bool includeSaveOnly=false, bool includeLoadOnly=false);
 
 	//! save key into a BufferedTransformation
@@ -980,9 +967,6 @@ public:
 	//! save precomputation for later use
 	virtual void SavePrecomputation(BufferedTransformation &storedPrecomputation) const
 		{assert(!SupportsPrecomputation()); throw NotImplemented("CryptoMaterial: this object does not support precomputation");}
-
-	// for internal library use
-	void DoQuickSanityCheck() const	{ThrowIfInvalid(NullRNG(), 0);}
 };
 
 //! interface for generatable crypto material, such as private keys and crypto parameters

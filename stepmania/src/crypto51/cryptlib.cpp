@@ -5,7 +5,6 @@
 #include "misc.h"
 #include "filters.h"
 #include "algparam.h"
-#include "fips140.h"
 #include "argnames.h"
 
 #include <memory>
@@ -31,14 +30,6 @@ BufferedTransformation & TheBitBucket()
 
 Algorithm::Algorithm(bool checkSelfTestStatus)
 {
-	if (checkSelfTestStatus && FIPS_140_2_ComplianceEnabled())
-	{
-		if (GetPowerUpSelfTestStatus() == POWER_UP_SELF_TEST_NOT_DONE && !PowerUpSelfTestInProgressOnThisThread())
-			throw SelfTestFailure("Cryptographic algorithms are disabled before the power-up self tests are performed.");
-
-		if (GetPowerUpSelfTestStatus() == POWER_UP_SELF_TEST_FAILED)
-			throw SelfTestFailure("Cryptographic algorithms are disabled after power-up a self test failed.");
-	}
 }
 
 void SimpleKeyingInterface::SetKeyWithRounds(const byte *key, unsigned int length, int rounds)

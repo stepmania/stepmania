@@ -19,10 +19,6 @@ void BuildPrimeTable();
 
 // ************ primality testing ****************
 
-// generate a provable prime
-Integer MaurerProvablePrime(RandomNumberGenerator &rng, unsigned int bits);
-Integer MihailescuProvablePrime(RandomNumberGenerator &rng, unsigned int bits);
-
 bool IsSmallPrime(const Integer &p);
 
 // returns true if p is divisible by some prime less than bound
@@ -31,10 +27,6 @@ bool TrialDivision(const Integer &p, unsigned bound);
 
 // returns true if p is NOT divisible by small primes
 bool SmallDivisorsTest(const Integer &p);
-
-// These is no reason to use these two, use the ones below instead
-bool IsFermatProbablePrime(const Integer &n, const Integer &b);
-bool IsLucasProbablePrime(const Integer &n);
 
 bool IsStrongProbablePrime(const Integer &n, const Integer &b);
 bool IsStrongLucasProbablePrime(const Integer &n);
@@ -110,33 +102,6 @@ bool SolveModularQuadraticEquation(Integer &r1, Integer &r2, const Integer &a, c
 // returns log base 2 of estimated number of operations to calculate discrete log or factor a number
 unsigned int DiscreteLogWorkFactor(unsigned int bitlength);
 unsigned int FactoringWorkFactor(unsigned int bitlength);
-
-// ********************************************************
-
-//! generator of prime numbers of special forms
-class PrimeAndGenerator
-{
-public:
-	PrimeAndGenerator() {}
-	// generate a random prime p of the form 2*q+delta, where delta is 1 or -1 and q is also prime
-	// Precondition: pbits > 5
-	// warning: this is slow, because primes of this form are harder to find
-	PrimeAndGenerator(signed int delta, RandomNumberGenerator &rng, unsigned int pbits)
-		{Generate(delta, rng, pbits, pbits-1);}
-	// generate a random prime p of the form 2*r*q+delta, where q is also prime
-	// Precondition: qbits > 4 && pbits > qbits
-	PrimeAndGenerator(signed int delta, RandomNumberGenerator &rng, unsigned int pbits, unsigned qbits)
-		{Generate(delta, rng, pbits, qbits);}
-	
-	void Generate(signed int delta, RandomNumberGenerator &rng, unsigned int pbits, unsigned qbits);
-
-	const Integer& Prime() const {return p;}
-	const Integer& SubPrime() const {return q;}
-	const Integer& Generator() const {return g;}
-
-private:
-	Integer p, q, g;
-};
 
 NAMESPACE_END
 
