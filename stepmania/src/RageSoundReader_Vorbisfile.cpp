@@ -120,11 +120,7 @@ int RageSoundReader_Vorbisfile::SetPosition(int ms, bool accurate)
 	const float to = ms/1000.0f;
 #endif
 
-	int ret;
-//	if( ms )
-		ret = ov_time_seek( vf, to );
-//	else
-//		ret = ov_raw_seek( vf, 0 );
+	int ret = ov_time_seek( vf, to );
 	if(ret < 0)
 	{
 		SetError( ov_ssprintf(ret, "ogg: SetPosition failed") );
@@ -153,8 +149,6 @@ int RageSoundReader_Vorbisfile::Read(char *buf, unsigned len)
 			int ret = ov_read(vf, tmpbuf, sizeof(tmpbuf), (SDL_BYTEORDER == SDL_BIG_ENDIAN)?1:0, 2, 1, &bstream);
 #endif
 
-//int ret = 4096;
-//memset(tmpbuf, 0, sizeof(tmpbuf));
 			if(ret == OV_HOLE)
 				continue;
 			if(ret == OV_EBADLINK)
