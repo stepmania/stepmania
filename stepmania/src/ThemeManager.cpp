@@ -78,7 +78,8 @@ CString ClassAndElementToFileName( const CString &sClassName, const CString &sEl
 
 ThemeManager::ThemeManager()
 {
-	m_pIniMetrics = new IniFile;
+	m_pIniCurMetrics = new IniFile;
+	m_pIniBaseMetrics = new IniFile;
 
 	m_sCurThemeName = BASE_THEME_NAME;	// Use the base theme for now.  It's up to PrefsManager to change this.
 	m_uHashForCurThemeMetrics = 0;
@@ -94,7 +95,8 @@ ThemeManager::ThemeManager()
 
 ThemeManager::~ThemeManager()
 {
-	delete m_pIniMetrics;
+	delete m_pIniCurMetrics;
+	delete m_pIniBaseMetrics;
 }
 
 void ThemeManager::GetThemeNames( CStringArray& AddTo )
@@ -174,25 +176,26 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	m_uHashForCurThemeCurLanguage = GetHashForFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
 
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
-	m_pIniMetrics->Reset();
-	m_pIniMetrics->SetPath( GetMetricsIniPath(FALLBACK_THEME_NAME) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetMetricsIniPath(BASE_THEME_NAME) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetMetricsIniPath(m_sCurThemeName) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
-	m_pIniMetrics->ReadFile();
-	m_pIniMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
-	m_pIniMetrics->ReadFile();
+	m_pIniCurMetrics->Reset();
+	m_pIniBaseMetrics->Reset();
+	m_pIniBaseMetrics->SetPath( GetMetricsIniPath(FALLBACK_THEME_NAME) );
+	m_pIniBaseMetrics->ReadFile();
+	m_pIniBaseMetrics->SetPath( GetMetricsIniPath(BASE_THEME_NAME) );
+	m_pIniBaseMetrics->ReadFile();
+	m_pIniCurMetrics->SetPath( GetMetricsIniPath(m_sCurThemeName) );
+	m_pIniCurMetrics->ReadFile();
+	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
+	m_pIniBaseMetrics->ReadFile();
+	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
+	m_pIniBaseMetrics->ReadFile();
+	m_pIniCurMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
+	m_pIniCurMetrics->ReadFile();
+	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
+	m_pIniBaseMetrics->ReadFile();
+	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
+	m_pIniBaseMetrics->ReadFile();
+	m_pIniCurMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
+	m_pIniCurMetrics->ReadFile();
 
 	LOG->MapLog("theme", "Theme: %s", sThemeName.c_str());
 	LOG->MapLog("language", "Language: %s", sLanguage.c_str());
@@ -215,7 +218,8 @@ CString ThemeManager::GetPathToAndFallback( CString sThemeName, ElementCategory 
 
 		// search fallback name (if any)
 		CString sFallback;
-		if( !m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
+		GetMetricRaw( sClassName, "Fallback", sFallback );
+		if( sFallback.empty() )
 			return "";
 		sClassName = sFallback;
 	}
@@ -491,19 +495,27 @@ void ThemeManager::ReloadMetrics()
 
 bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString &ret )
 {
-	int n = 100;
-	while( n-- )
-	{
-		if( m_pIniMetrics->GetValue(sClassName,sValueName,ret) )
-			return true;
+	CString sFallback;
 
-		CString sFallback;
-		if( !m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
-			return false;
-		sClassName = sFallback;
+	// TODO:  Add recursion checking
+
+	if( m_pIniCurMetrics->GetValue(sClassName,sValueName,ret) )
+		return true;
+	if( m_pIniCurMetrics->GetValue(sClassName,"Fallback",sFallback) )
+	{
+		if( GetMetricRaw(sFallback,sValueName,ret) )
+			return true;
 	}
 
-	RageException::Throw("Infinite recursion looking up theme metric from class \"%s\"", sClassName.c_str() );
+	if( m_pIniBaseMetrics->GetValue(sClassName,sValueName,ret) )
+		return true;
+	if( m_pIniBaseMetrics->GetValue(sClassName,"Fallback",sFallback) )
+	{
+		if( GetMetricRaw(sFallback,sValueName,ret) )
+			return true;
+	}
+
+	return false;
 }
 
 CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )

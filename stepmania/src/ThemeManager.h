@@ -78,7 +78,8 @@ protected:
 	CString m_sCurThemeName;
 	CString m_sCurLanguage;
 
-	IniFile* m_pIniMetrics;	// make this a pointer so we don't have to include IniFile here
+	IniFile* m_pIniCurMetrics;	// make this a pointer so we don't have to include IniFile here
+	IniFile* m_pIniBaseMetrics;	// make this a pointer so we don't have to include IniFile here
 	unsigned m_uHashForCurThemeMetrics;
 	unsigned m_uHashForBaseThemeMetrics;
 	unsigned m_uHashForCurThemeCurLanguage;
