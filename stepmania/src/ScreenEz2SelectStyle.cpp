@@ -28,6 +28,8 @@ and sloppy and err needs cleaning up ;)
 #include "Background.h"
 #include "ScreenSelectGroup.h"
 #include "GameState.h"
+#include "RageException.h"
+#include "RageTimer.h"
 
 /* Constants */
 

@@ -105,7 +105,7 @@ void ScreenManager::Draw()
 void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	LOG->WriteLine( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
-		DeviceI.device, DeviceI.button, GameI.number, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
+		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
 
 	// pass input only to topmost state
 	if( m_ScreenStack.GetSize() > 0 )
@@ -124,13 +124,13 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 void ScreenManager::AddScreenToTop( Screen *pNewScreen )
 {
 	// our responsibility to tell the old state that it's losing focus
-	m_ScreenStack[m_ScreenStack.GetSize()-1]->HandleScreenMessage( SM_LosingInputFocus );
+//	m_ScreenStack[m_ScreenStack.GetSize()-1]->HandleScreenMessage( SM_LosingInputFocus );
 
 	// add the new state onto the back of the array
 	m_ScreenStack.Add( pNewScreen );
 }
 
-void ScreenManager::PopTopScreen()
+void ScreenManager::PopTopScreen( ScreenMessage SM )
 {
 	Screen* pScreenToPop = m_ScreenStack[m_ScreenStack.GetSize()-1];	// top menu
 	//pScreenToPop->HandleScreenMessage( SM_LosingInputFocus );
@@ -138,7 +138,7 @@ void ScreenManager::PopTopScreen()
 	m_ScreensToDelete.Add( pScreenToPop );
 	
 	Screen* pNewTopScreen = m_ScreenStack[m_ScreenStack.GetSize()-1];
-	pNewTopScreen->HandleScreenMessage( SM_RegainingInputFocus );
+	pNewTopScreen->HandleScreenMessage( SM );
 }
 
 void ScreenManager::SendMessageToTopScreen( ScreenMessage SM, float fDelay )

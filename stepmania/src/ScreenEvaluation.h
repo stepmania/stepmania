@@ -12,7 +12,6 @@
 
 #include "Screen.h"
 #include "Sprite.h"
-#include "Score.h"
 #include "RandomStream.h"
 #include "BitmapText.h"
 #include "GradeDisplay.h"

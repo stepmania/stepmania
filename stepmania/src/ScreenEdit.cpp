@@ -440,6 +440,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 				pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
 				GAMESTATE->m_pCurSong->SaveToSMFile();
+				SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_EDIT_SAVE) );
 			}
 			break;
 		case DIK_UP:

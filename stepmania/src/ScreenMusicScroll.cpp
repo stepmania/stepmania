@@ -169,7 +169,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 	this->AddSubActor( &m_Fade );
 
-	if ( GAMESTATE->GetCurGame() != GAME_EZ2 )	
+	if ( GAMESTATE->m_CurGame != GAME_EZ2 )	
 	{
 		m_soundMusic.Load( THEME->GetPathTo(SOUND_MUSIC_SCROLL_MUSIC) );
 	}
@@ -179,7 +179,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 	}
 
 	m_Fade.OpenWipingRight();
-	if ( GAMESTATE->GetCurGame() != GAME_EZ2 )
+	if ( GAMESTATE->m_CurGame != GAME_EZ2 )
 	{
 		m_soundMusic.Play( true );
 	}

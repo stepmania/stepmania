@@ -20,6 +20,8 @@
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5.0f * iValueIndex; }
 
+const float RADAR_EDGE_WIDTH	= 2;
+
 GrooveRadar::GrooveRadar()
 {
 	this->AddSubActor( &m_GrooveRadarValueMap );
@@ -197,8 +199,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const int c = i%NUM_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
-			const float fDistFromCenterInner = fDistFromCenter-2;
-			const float fDistFromCenterOutter = fDistFromCenter+2;
+			const float fDistFromCenterInner = fDistFromCenter-RADAR_EDGE_WIDTH/2;
+			const float fDistFromCenterOutter = fDistFromCenter+RADAR_EDGE_WIDTH/2;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
 			const float fXInner = cosf(fRotation) * fDistFromCenterInner;
 			const float fXOutter = cosf(fRotation) * fDistFromCenterOutter;

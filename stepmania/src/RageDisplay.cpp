@@ -14,6 +14,8 @@
 
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageTimer.h"
+#include "RageException.h"
 
 
 RageDisplay*		DISPLAY	= NULL;

@@ -3,10 +3,10 @@
 -----------------------------------------------------------------------------
  Class: Notes
 
- Desc: Hold Notes data and metadata.  Does not hold gameplay-time information,
-	   like keeping track of which Notes have been stepped on (PlayerSteps does that).
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -20,6 +20,7 @@
 #include "NoteData.h"
 
 #include "GameInput.h"
+#include "RageException.h"
 
 
 typedef int DanceNote;
@@ -305,7 +306,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 
 
 
-void DWIcharToNote( char c, InstrumentNumber i, DanceNote &note1Out, DanceNote &note2Out )
+void DWIcharToNote( char c, GameController i, DanceNote &note1Out, DanceNote &note2Out )
 {
 	switch( c )
 		{
@@ -337,9 +338,9 @@ void DWIcharToNote( char c, InstrumentNumber i, DanceNote &note1Out, DanceNote &
 
 	switch( i )
 	{
-	case INSTRUMENT_1:
+	case GAME_CONTROLLER_1:
 		break;
-	case INSTRUMENT_2:
+	case GAME_CONTROLLER_2:
 		if( note1Out != DANCE_NOTE_NONE )
 			note1Out += 6;
 		if( note2Out != DANCE_NOTE_NONE )
@@ -474,7 +475,7 @@ bool Notes::LoadFromDWITokens(
 					char holdChar = sStepData[i++];
 					
 					DanceNote note1, note2;
-					DWIcharToNote( holdChar, (InstrumentNumber)pad, note1, note2 );
+					DWIcharToNote( holdChar, (GameController)pad, note1, note2 );
 
 					if( note1 != DANCE_NOTE_NONE )
 					{
@@ -493,7 +494,7 @@ bool Notes::LoadFromDWITokens(
 					int iIndex = BeatToNoteRow( (float)fCurrentBeat );
 
 					DanceNote note1, note2;
-					DWIcharToNote( c, (InstrumentNumber)pad, note1, note2 );
+					DWIcharToNote( c, (GameController)pad, note1, note2 );
 
 					if( note1 != DANCE_NOTE_NONE )
 					{
@@ -610,7 +611,8 @@ DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescript
 {
 	sDescription.MakeLower();
 
-	const CString sDescriptionParts[NUM_DIFFICULTY_CLASSES][4] = {
+	const int DESCRIPTIONS_PER_CLASS = 4;
+	const CString sDescriptionParts[NUM_DIFFICULTY_CLASSES][DESCRIPTIONS_PER_CLASS] = {
 		{
 			"easy",
 			"basic",
@@ -632,7 +634,7 @@ DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescript
 	};
 
 	for( int i=0; i<NUM_DIFFICULTY_CLASSES; i++ )
-		for( int j=0; j<3; j++ )
+		for( int j=0; j<DESCRIPTIONS_PER_CLASS; j++ )
 			if( sDescription.Find(sDescriptionParts[i][j]) != -1 )
 				return DifficultyClass(i);
 	

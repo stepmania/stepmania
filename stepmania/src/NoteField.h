@@ -37,7 +37,7 @@ public:
 		MODE_EDITING,
 	};
 	
-	void Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, float fNumArrowsToDrawBehind, float fNumArrowsToDrawAhead, NoteFieldMode mode );
+	void Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, int iPixelsToDrawBehind, int iPixelsToDrawAhead, NoteFieldMode mode );
 	void RemoveTapNoteRow( int iIndex );
 	void SetHoldNoteLife( int iIndex, float fLife );
 
@@ -57,8 +57,8 @@ protected:
 
 	PlayerOptions	m_PlayerOptions;
 
-	float			m_fNumBeatsToDrawBehind;
-	float			m_fNumBeatsToDrawAhead;
+	int				m_iPixelsToDrawBehind;
+	int				m_iPixelsToDrawAhead;
 
 	float			m_fSongBeat;
 

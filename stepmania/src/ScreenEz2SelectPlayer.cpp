@@ -23,6 +23,8 @@ Andrew Livy
 #include "AnnouncerManager.h"
 #include "ScreenEz2SelectStyle.h"
 #include "GameState.h"
+#include "RageException.h"
+#include "RageTimer.h"
 
 /* Constants */
 

@@ -67,7 +67,7 @@ ScreenSelectGame::ScreenSelectGame() :
 
 void ScreenSelectGame::ImportOptions()
 {
-	m_iSelectedOption[0][SG_GAME] = GAMESTATE->GetCurGame();
+	m_iSelectedOption[0][SG_GAME] = GAMESTATE->m_CurGame;
 }
 
 void ScreenSelectGame::ExportOptions()
@@ -79,7 +79,7 @@ void ScreenSelectGame::ExportOptions()
 
 	// Switch the current style to the frist style of the selected game
 	Game game = (Game)m_iSelectedOption[0][SG_GAME];
-	GAMESTATE->SwitchGame( game );
+	GAMESTATE->m_CurGame = game;
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 }

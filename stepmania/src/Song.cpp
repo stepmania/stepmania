@@ -18,6 +18,8 @@
 #include "Song.h"
 #include "NoteData.h"
 #include "MsdFile.h"
+#include "RageSoundStream.h"
+#include "RageException.h"
 
 
 const int FILE_CACHE_VERSION = 45;	// increment this to force a cache reload (useful when the SM file format changes)
@@ -574,7 +576,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 							file.Close();
 						}
 						break;
-					case 9:	// freeze
+					case 9:	// stop
 						{
 							// This is a very inefficient way to parse, but it doesn't 
 							// matter much because this is only parsed on the first run after the song is installed.
@@ -616,7 +618,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 									value_name = line;
 								}
 
-								if( 0==stricmp(value_name, sTagToLookFor) == 0 )
+								if( 0==stricmp(value_name, sTagToLookFor) )
 								{
 									// find the BPM at the time of this freeze
 									float fBPM = -1;
@@ -787,7 +789,10 @@ bool Song::LoadFromDWIFile( CString sPath )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"#SINGLE") || 0==stricmp(sValueName,"#DOUBLE") || 0==stricmp(sValueName,"#COUPLE") )
+		else if( 0==stricmp(sValueName,"#SINGLE")  || 
+			     0==stricmp(sValueName,"#DOUBLE")  ||
+				 0==stricmp(sValueName,"#COUPLE")  || 
+				 0==stricmp(sValueName,"#SOLO"))
 		{
 			Notes* pNewNotes = new Notes;
 			pNewNotes->LoadFromDWITokens( 
@@ -1012,6 +1017,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*banner*.png"), arrayPossibleBanners );
 		GetDirListing( m_sSongDir + CString("*banner*.jpg"), arrayPossibleBanners );
 		GetDirListing( m_sSongDir + CString("*banner*.bmp"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*banner*.gif"), arrayPossibleBanners );
 		if( arrayPossibleBanners.GetSize() > 0 )
 			m_sBannerFile = arrayPossibleBanners[0];
 	}
@@ -1025,9 +1031,11 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*bg*.png"), arrayPossibleBGs );
 		GetDirListing( m_sSongDir + CString("*bg*.jpg"), arrayPossibleBGs );
 		GetDirListing( m_sSongDir + CString("*bg*.bmp"), arrayPossibleBGs );
+		GetDirListing( m_sSongDir + CString("*bg*.gif"), arrayPossibleBGs );
 		GetDirListing( m_sSongDir + CString("*background*.png"), arrayPossibleBGs );
 		GetDirListing( m_sSongDir + CString("*background*.jpg"), arrayPossibleBGs );
 		GetDirListing( m_sSongDir + CString("*background*.bmp"), arrayPossibleBGs );
+		GetDirListing( m_sSongDir + CString("*background*.gif"), arrayPossibleBGs );
 		if( arrayPossibleBGs.GetSize() > 0 )
 			m_sBackgroundFile = arrayPossibleBGs[0];
 	}
@@ -1041,6 +1049,7 @@ void Song::TidyUpData()
 		GetDirListing( m_sSongDir + CString("*cdtitle*.png"), arrayPossibleCDTitles );
 		GetDirListing( m_sSongDir + CString("*cdtitle*.jpg"), arrayPossibleCDTitles );
 		GetDirListing( m_sSongDir + CString("*cdtitle*.bmp"), arrayPossibleCDTitles );
+		GetDirListing( m_sSongDir + CString("*cdtitle*.gif"), arrayPossibleCDTitles );
 		if( arrayPossibleCDTitles.GetSize() > 0 )
 			m_sCDTitleFile = arrayPossibleCDTitles[0];
 	}
@@ -1053,6 +1062,7 @@ void Song::TidyUpData()
 	GetDirListing( m_sSongDir + CString("*.png"), arrayImages );
 	GetDirListing( m_sSongDir + CString("*.jpg"), arrayImages );
 	GetDirListing( m_sSongDir + CString("*.bmp"), arrayImages );
+	GetDirListing( m_sSongDir + CString("*.gif"), arrayImages );
 
 	for( int i=0; i<arrayImages.GetSize(); i++ )	// foreach image
 	{

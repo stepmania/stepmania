@@ -55,7 +55,7 @@ public:
 	virtual void MenuLeft(	const PlayerNumber p, const InputEventType type )	{ if( type==IET_FIRST_PRESS) MenuLeft(p); };
 	virtual void MenuRight( const PlayerNumber p, const InputEventType type )	{ if( type==IET_FIRST_PRESS) MenuRight(p); };
 	virtual void MenuStart( const PlayerNumber p, const InputEventType type )	{ if( type==IET_FIRST_PRESS) MenuStart(p); };
-	virtual void MenuBack(	const PlayerNumber p, const InputEventType type )	{ if( type==IET_FIRST_PRESS) MenuBack(p); };
+	virtual void MenuBack(	const PlayerNumber p, const InputEventType type )	{ if( type==IET_SLOW_REPEAT) MenuBack(p); };
 
 	virtual void MenuUp(	const PlayerNumber p )	{};
 	virtual void MenuDown(	const PlayerNumber p )	{};

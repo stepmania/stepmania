@@ -95,12 +95,12 @@ void ScreenAppearanceOptions::ImportOptions()
 	m_OptionLineData[AO_THEME].iNumOptions	=	arrayThemeNames.GetSize() + 1; 
 	
 	for( i=0; i<arrayThemeNames.GetSize(); i++ )
-		strcpy( m_OptionLineData[AO_THEME].szOptionsText[i+1], arrayThemeNames[i] ); 
+		strcpy( m_OptionLineData[AO_THEME].szOptionsText[i], arrayThemeNames[i] ); 
 
 
 	// highlight currently selected theme
 	m_iSelectedOption[0][AO_THEME] = -1;
-	for( i=1; i<m_OptionLineData[AO_THEME].iNumOptions; i++ )
+	for( i=0; i<m_OptionLineData[AO_THEME].iNumOptions; i++ )
 	{
 		if( 0==stricmp(m_OptionLineData[AO_THEME].szOptionsText[i], THEME->GetCurThemeName()) )
 		{
@@ -161,8 +161,8 @@ void ScreenAppearanceOptions::GoToPrevState()
 
 void ScreenAppearanceOptions::GoToNextState()
 {
+	PREFSMAN->SaveGamePrefsToDisk();
 	SCREENMAN->SetNewScreen( new ScreenTitleMenu );
-	PREFSMAN->SaveGlobalPrefsToDisk();
 }
 
 

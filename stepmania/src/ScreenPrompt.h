@@ -1,10 +1,12 @@
 /*
 -----------------------------------------------------------------------------
- File: ScreenPrompt.h
+ Class: ScreenPrompt
 
- Desc: Area for testing.
+ Desc: Displays a prompt over the top of another screen.  Must use by calling
+	SCREENMAN->AddScreenToTop( new ScreenPrompt(...) );
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -18,13 +20,13 @@
 enum PromptType{ PROMPT_OK, PROMPT_YES_NO };
 
 
-const int NUM_QUESTION_LINES = 10;
-
 
 class ScreenPrompt : public Screen
 {
 public:
-	ScreenPrompt( CString sText, PromptType pt, bool* pbAnswer = NULL );
+	ScreenPrompt();
+	ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, PromptType pt, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL );
+
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -37,14 +39,14 @@ protected:
 	void MenuStart( const PlayerNumber p );
 
 
-	TransitionFade m_Fade;
-	BitmapText		m_textTitle;
-	BitmapText		m_textQuestion[NUM_QUESTION_LINES];
-	Quad	m_rectAnswerBox;
+	TransitionFade	m_Fade;
+	BitmapText		m_textQuestion;
+	Quad			m_rectAnswerBox;
 	BitmapText		m_textAnswer[2];	// "YES" or "NO"
 	PromptType		m_PromptType;
-	bool*			m_pbAnswer;		// true = "YES", false = "NO";
-
-	RandomSample m_soundSelect;
+	bool			m_bAnswer;		// true = "YES", false = "NO";
+	ScreenMessage	m_SMSendWhenDone;
+	void(*m_pOnYes)(void* pContext);
+	void(*m_pOnNo)(void* pContext);
 };
 

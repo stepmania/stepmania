@@ -34,7 +34,7 @@ public:
 				blinking,	camelion,   glowing,
 				wagging,	spinning,
 				vibrating,	flickering,
-				bouncing
+				bouncing,	bobbing
 				};
 
 	// let subclasses override
@@ -154,6 +154,7 @@ public:
 	void SetEffectVibrating( float fVibrationDistance = 5.0 );
 	void SetEffectFlickering();
 	void SetEffectBouncing( D3DXVECTOR3 vectBounceDir, float fPeriod );
+	void SetEffectBobbing( D3DXVECTOR3 vectBobDir, float fPeriod );
 	Effect GetEffect() { return m_Effect; };
 
 
@@ -210,7 +211,7 @@ protected:
 
 	TweenState	m_QueuedTweens[MAX_TWEEN_STATES];
 	int			m_iNumTweenStates;
-	TweenState& GetLatestTween() { return m_QueuedTweens[m_iNumTweenStates-1]; };
+	TweenState& GetLatestTween() { ASSERT(m_iNumTweenStates>0 && m_iNumTweenStates<MAX_TWEEN_STATES);	return m_QueuedTweens[m_iNumTweenStates-1]; };
 
 
 	//

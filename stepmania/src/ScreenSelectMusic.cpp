@@ -372,7 +372,7 @@ void ScreenSelectMusic::MenuStart( const PlayerNumber p )
 			{
 				if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
 				{
-					SCREENMAN->AddScreenToTop( new ScreenPrompt( "ERROR:\n \nThis song does not have a music file\n and cannot be played.", PROMPT_OK) );
+					SCREENMAN->AddScreenToTop( new ScreenPrompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played.", PROMPT_OK) );
 					return;
 				}
 

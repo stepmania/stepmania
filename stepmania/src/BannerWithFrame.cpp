@@ -36,3 +36,8 @@ void BannerWithFrame::LoadFromGroup( CString sGroupName )
 {
 	m_Banner.LoadFromGroup( sGroupName );
 }
+
+void BannerWithFrame::LoadFromCourse( Course* pCourse )
+{
+	m_Banner.LoadFromCourse( pCourse );
+}

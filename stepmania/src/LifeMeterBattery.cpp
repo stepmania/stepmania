@@ -50,7 +50,7 @@ LifeMeterBattery::LifeMeterBattery()
 	m_textPercent.Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
 	m_textPercent.TurnShadowOff();
 	m_textPercent.SetZoom( 0.7f );
-	m_textPercent.SetText( "0.00" );
+	m_textPercent.SetText( "00.0" );
 	this->AddSubActor( &m_textPercent );
 	
 	m_soundGainLife.Load( THEME->GetPathTo(SOUND_GAMEPLAY_ONI_GAIN_LIFE) );
@@ -97,8 +97,12 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		for( int i=0; i<GAMESTATE->m_aGameplayStatistics.GetSize(); i++ )
 			iActualDancePoints += GAMESTATE->m_aGameplayStatistics[i].iActualDancePoints[m_PlayerNumber];
 		int iPossibleDancePoints = GAMESTATE->m_iCoursePossibleDancePoints;
-		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.0001f;	// correct for rounding errors
-		m_textPercent.SetText( ssprintf("%1.2f", fPercentDancePoints) );
+		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.001f;	// correct for rounding errors
+		float fNumToDisplay = fPercentDancePoints*100;
+		CString sNumToDisplay = ssprintf("%03.1f", fNumToDisplay);
+		if( sNumToDisplay.GetLength() == 3 )
+			sNumToDisplay = "0" + sNumToDisplay;
+		m_textPercent.SetText( sNumToDisplay );
 	}
 
 	switch( score )

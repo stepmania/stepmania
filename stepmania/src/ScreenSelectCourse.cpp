@@ -54,15 +54,13 @@ ScreenSelectCourse::ScreenSelectCourse()
 {
 	LOG->WriteLine( "ScreenSelectCourse::ScreenSelectCourse()" );
 
-	// for debugging
-	if( GAMESTATE->m_CurStyle == STYLE_NONE )
-		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+	m_bMadeChoice = false;
+	m_bGoToOptions = false;
 
 	m_Menu.Load(
 		THEME->GetPathTo(GRAPHIC_SELECT_COURSE_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_SELECT_COURSE_TOP_EDGE),
-		ssprintf("%c or %c change course    then press START", 
-		char(1), char(2), char(3), char(3), char(4), char(4), char(3), char(4), char(3), char(4) ),
+		ssprintf("%c or %c change course    then press START", char(1), char(2)),
 		false, true, 60 
 		);
 	this->AddSubActor( &m_Menu );
@@ -78,11 +76,10 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	m_textHoldForOptions.Load( THEME->GetPathTo(FONT_STAGE) );
 	m_textHoldForOptions.SetXY( CENTER_X, CENTER_Y );
-	m_textHoldForOptions.SetText( "hold START for options" );
+	m_textHoldForOptions.SetText( "press START again for options" );
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
 	m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
-	m_textHoldForOptions.SetZ( -2 );
 	this->AddSubActor( &m_textHoldForOptions );
 
 
@@ -117,6 +114,10 @@ void ScreenSelectCourse::TweenOnScreen()
 	m_CourseInfoFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BIAS_END );
 	m_CourseInfoFrame.SetTweenXY( COURSE_INFO_FRAME_X, COURSE_INFO_FRAME_Y );
 
+	m_CourseContentsFrame.SetXY( COURSE_CONTENTS_FRAME_X - 400, COURSE_CONTENTS_FRAME_Y );
+	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BIAS_END );
+	m_CourseContentsFrame.SetTweenXY( COURSE_CONTENTS_FRAME_X, COURSE_CONTENTS_FRAME_Y );
+
 	m_MusicWheel.TweenOnScreen();
 }
 
@@ -124,6 +125,9 @@ void ScreenSelectCourse::TweenOffScreen()
 {
 	m_CourseInfoFrame.BeginTweening( TWEEN_TIME, Actor::TWEEN_BOUNCE_END );
 	m_CourseInfoFrame.SetTweenXY( COURSE_INFO_FRAME_X - 400, COURSE_INFO_FRAME_Y );
+
+	m_CourseContentsFrame.BeginTweeningQueued( TWEEN_TIME, Actor::TWEEN_BOUNCE_END );
+	m_CourseContentsFrame.SetTweenXY( COURSE_CONTENTS_FRAME_X - 400, COURSE_CONTENTS_FRAME_Y );
 
 	m_MusicWheel.TweenOffScreen();
 }
@@ -138,6 +142,14 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType
 
 	if( MenuI.player == PLAYER_INVALID )
 		return;
+
+	if( m_bMadeChoice && !m_bGoToOptions && MenuI.button == MENU_BUTTON_START )
+	{
+		m_bGoToOptions = true;
+		m_textHoldForOptions.SetText( "Entering Options..." );
+		SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_START) );
+		return;
+	}
 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
@@ -168,14 +180,12 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 				bIsHoldingNext = true;
 		}
 
-		if( bIsHoldingNext )
+		if( bIsHoldingNext || m_bGoToOptions )
 		{
 			SCREENMAN->SetNewScreen( new ScreenPlayerOptions );
 		}
 		else
 		{
-			MUSIC->Stop();
-
 			SCREENMAN->SetNewScreen( new ScreenStage );
 		}
 		break;
@@ -210,6 +220,8 @@ void ScreenSelectCourse::MenuStart( const PlayerNumber p )
 		TweenOffScreen();
 
 		m_soundSelect.PlayRandom();
+
+		m_bMadeChoice = true;
 
 		// show "hold START for options"
 		m_textHoldForOptions.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
@@ -250,6 +262,8 @@ void ScreenSelectCourse::AfterCourseChange()
 			m_CourseInfoFrame.SetFromCourse( pCourse );
 			m_CourseContentsFrame.SetFromCourse( pCourse );
 		}
+		break;
+	case TYPE_SECTION:	// this probably means "no courses"
 		break;
 	default:
 		ASSERT(0);

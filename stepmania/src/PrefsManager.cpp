@@ -14,6 +14,7 @@
 #include "IniFile.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "RageException.h"
 
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
@@ -24,7 +25,7 @@ PrefsManager::PrefsManager()
 	m_bWindowed = false;
 	m_iDisplayResolution = 640;
 	m_iTextureResolution = 512;
-	m_iRefreshRate = 60;
+	m_iRefreshRate = 0;
 	m_bIgnoreJoyAxes = false;
 	m_bShowFPS = false;
 	m_BackgroundMode = BGMODE_ANIMATIONS;
@@ -73,7 +74,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	{
 		Game game;
 		if( ini.GetValueI("Options", "Game", (int&)game) )
-			GAMESTATE->SwitchGame( game );
+			GAMESTATE->m_CurGame = game;
 	}
 }
 
@@ -99,7 +100,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 
 	ini.SetValue( "Options", "SongFolders", join(",", m_asSongFolders) );
 
-	ini.SetValueI( "Options", "Game",	GAMESTATE->GetCurGame() );
+	ini.SetValueI( "Options", "Game",	GAMESTATE->m_CurGame );
 
 	ini.WriteFile();
 }
@@ -141,4 +142,20 @@ void PrefsManager::SaveGamePrefsToDisk()
 	ini.SetValue( "Options", "NoteSkin",			GAMEMAN->GetCurNoteSkin() );
 
 	ini.WriteFile();
+}
+
+
+int PrefsManager::GetDisplayHeight()
+{
+	switch( m_iDisplayResolution )
+	{
+	case 1280:	return 1024;	break;
+	case 1024:	return 768;	break;
+	case 800:	return 600;	break;
+	case 640:	return 480;	break;
+	case 512:	return 384;	break;
+	case 400:	return 300;	break;
+	case 320:	return 240;	break;
+	default:	throw RageException( "Invalid DisplayWidth '%d'", m_iDisplayResolution );	return 480;
+	}
 }

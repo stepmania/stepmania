@@ -49,8 +49,8 @@ public:
 	struct ColumnInfo 
 	{ 
 		int track;					// take note data from this track
-		InstrumentNumber number;	// use this instrument to hit a note on this track
-		InstrumentButton button;	// use this button to hit a note on this track
+		GameController number;	// use this instrument to hit a note on this track
+		GameButton button;	// use this button to hit a note on this track
 		float	fXOffset;			// x position of the column relative to player center
 	};
 	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
@@ -58,8 +58,8 @@ public:
 
 	inline GameInput StyleInputToGameInput( const StyleInput StyleI )
 	{
-		InstrumentNumber n = m_ColumnInfo[StyleI.player][StyleI.col].number;
-		InstrumentButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
+		GameController n = m_ColumnInfo[StyleI.player][StyleI.col].number;
+		GameButton b = m_ColumnInfo[StyleI.player][StyleI.col].button;
 		return GameInput( n, b );
 	};
 
@@ -69,7 +69,7 @@ public:
 		{
 			for( int t=0; t<MAX_NOTE_TRACKS; t++ )
 			{
-				if( m_ColumnInfo[p][t].number == GameI.number  &&
+				if( m_ColumnInfo[p][t].number == GameI.controller  &&
 					m_ColumnInfo[p][t].button == GameI.button )
 				{
 					return StyleInput( (PlayerNumber)p, t );

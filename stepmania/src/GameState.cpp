@@ -54,13 +54,6 @@ void GameState::Reset()
 	m_iCurrentStageIndex = 0;
 }
 
-void GameState::SwitchGame( Game newGame )
-{
-	ASSERT( newGame >= 0  &&  newGame < NUM_GAMES );
-	
-	m_CurGame = newGame;
-}
-
 int GameState::GetStageIndex()
 {
 	return m_iCurrentStageIndex;

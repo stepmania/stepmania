@@ -16,6 +16,7 @@
 
 #include "IniFile.h"
 #include "StyleDef.h"
+#include "RageException.h"
 
 
 CString GameDef::ElementToGraphicSuffix( const SkinElement gbg ) 

@@ -41,9 +41,8 @@ enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_COURSE };
 struct WheelItemData
 {
 public:
-	WheelItemData();
-
-	void Load( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const D3DXCOLOR color );
+	WheelItemData() {};	// this is needed to use a CArray of these
+	WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const D3DXCOLOR color );
 
 	WheelItemType	m_WheelItemType;
 	CString			m_sSectionName;

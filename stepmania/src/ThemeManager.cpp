@@ -13,6 +13,7 @@
 #include "ThemeManager.h"
 #include "RageLog.h"
 #include "PrefsManager.h"
+#include "RageException.h"
 
 
 
@@ -50,8 +51,10 @@ bool ThemeManager::DoesThemeExist( CString sThemeName )
 	CStringArray asThemeNames;	
 	GetThemeNames( asThemeNames );
 	for( int i=0; i<asThemeNames.GetSize(); i++ )
+	{
 		if( 0==stricmp(sThemeName, asThemeNames[i]) )
 			return true;
+	}
 	return false;
 }
 
@@ -66,7 +69,7 @@ void ThemeManager::SwitchTheme( CString sThemeName )
 {
 	if( m_sCurThemeName == "" )
 		m_sCurThemeName = BASE_THEME_NAME;
-	if( !DoesThemeExist(sThemeName) )
+	else if( !DoesThemeExist(sThemeName) )
 		m_sCurThemeName = BASE_THEME_NAME;
 	else
 		m_sCurThemeName = sThemeName;
@@ -124,6 +127,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case GRAPHIC_GAMEPLAY_LIFEMETER_BATTERY:		sAssetPrefix = "Graphics\\gameplay lifemeter battery 1x4";	break;
 		case GRAPHIC_GAMEPLAY_LIFEMETER_STREAM_NORMAL:	sAssetPrefix = "Graphics\\gameplay lifemeter stream normal";break;
 		case GRAPHIC_GAMEPLAY_LIFEMETER_STREAM_HOT:		sAssetPrefix = "Graphics\\gameplay lifemeter stream hot";	break;		
+		case GRAPHIC_GAMEPLAY_ONI_GAMEOVER:				sAssetPrefix = "Graphics\\gameplay oni gameover";			break;		
 		case GRAPHIC_LOADING:							sAssetPrefix = "Graphics\\loading";							break;
 		case GRAPHIC_KEEP_ALIVE:						sAssetPrefix = "Graphics\\keep alive";						break;
 		case GRAPHIC_MENU_BOTTOM_EDGE:					sAssetPrefix = "Graphics\\menu bottom edge";				break;
@@ -189,6 +193,8 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case GRAPHIC_SELECT_MUSIC_SONG_BAR:				sAssetPrefix = "Graphics\\select music song bar";			break;
 		case GRAPHIC_SELECT_MUSIC_SONG_HIGHLIGHT:		sAssetPrefix = "Graphics\\select music song highlight";		break;
 		case GRAPHIC_SELECT_MUSIC_TOP_EDGE:				sAssetPrefix = "Graphics\\select music top edge";			break;
+		case GRAPHIC_SELECT_MUSIC_LONG_BALLOON:			sAssetPrefix = "Graphics\\select music long balloon";		break;
+		case GRAPHIC_SELECT_MUSIC_MARATHON_BALLOON:		sAssetPrefix = "Graphics\\select music marathon balloon";	break;
 		case GRAPHIC_SELECT_STYLE_BACKGROUND:			sAssetPrefix = "Graphics\\select Style background";			break;
 		case GRAPHIC_SELECT_STYLE_EXPLANATION:			sAssetPrefix = "Graphics\\select Style explanation";		break;
 		case GRAPHIC_SELECT_STYLE_TOP_EDGE:				sAssetPrefix = "Graphics\\select Style top edge";			break;
@@ -198,17 +204,17 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 0 style 2";	break;
 		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_3:		sAssetPrefix = "Graphics\\select style info game 0 style 3";	break;
 		case GRAPHIC_SELECT_STYLE_INFO_GAME_0_STYLE_4:		sAssetPrefix = "Graphics\\select style info game 0 style 4";	break;
-//		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_0:		sAssetPrefix = "Graphics\\select style info game 1 style 0";	break;
-//		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_1:		sAssetPrefix = "Graphics\\select style info game 1 style 1";	break;
-//		case GRAPHIC_SELECT_STYLE_INFO_GAME_1_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 1 style 2";	break;
+//		case GRAPHIC_SELECT_STYLE_INFO_GAME_CONTROLLER_1_STYLE_0:		sAssetPrefix = "Graphics\\select style info game 1 style 0";	break;
+//		case GRAPHIC_SELECT_STYLE_INFO_GAME_CONTROLLER_1_STYLE_1:		sAssetPrefix = "Graphics\\select style info game 1 style 1";	break;
+//		case GRAPHIC_SELECT_STYLE_INFO_GAME_CONTROLLER_1_STYLE_2:		sAssetPrefix = "Graphics\\select style info game 1 style 2";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 0 style 0";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 0 style 1";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 0 style 2";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_3:	sAssetPrefix = "Graphics\\select style preview game 0 style 3";	break;
 		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_0_STYLE_4:	sAssetPrefix = "Graphics\\select style preview game 0 style 4";	break;
-//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 1 style 0";	break;
-//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 1 style 1";	break;
-//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_1_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 1 style 2";	break;
+//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_CONTROLLER_1_STYLE_0:	sAssetPrefix = "Graphics\\select style preview game 1 style 0";	break;
+//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_CONTROLLER_1_STYLE_1:	sAssetPrefix = "Graphics\\select style preview game 1 style 1";	break;
+//		case GRAPHIC_SELECT_STYLE_PREVIEW_GAME_CONTROLLER_1_STYLE_2:	sAssetPrefix = "Graphics\\select style preview game 1 style 2";	break;
 		case GRAPHIC_SONG_OPTIONS_BACKGROUND:			sAssetPrefix = "Graphics\\song options background";			break;	
 		case GRAPHIC_SONG_OPTIONS_TOP_EDGE:				sAssetPrefix = "Graphics\\song options top edge";			break;
 		case GRAPHIC_TITLE_MENU_BACKGROUND:				sAssetPrefix = "Graphics\\title menu background";			break;

@@ -131,7 +131,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 	// Andy:
 	// Fake COOL! / GOOD / OOPS for Ez2dancer using the DDR Rankings.
-	if( GAMESTATE->GetCurGame() == GAME_EZ2 ) 
+	if( GAMESTATE->m_CurGame == GAME_EZ2 ) 
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -145,7 +145,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	///////////////////////////
 	// Init the song banners depending on m_ResultMode
 	///////////////////////////
-	if( GAMESTATE->GetCurGame() != GAME_EZ2 )
+	if( GAMESTATE->m_CurGame != GAME_EZ2 )
 	{
 		switch( m_ResultMode )
 		{
@@ -178,7 +178,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			}
 			break;
 		case RM_ONI:
-			m_BannerWithFrame[0].LoadFromGroup( GAMESTATE->m_sPreferredGroup );
+			m_BannerWithFrame[0].LoadFromCourse( GAMESTATE->m_pCurCourse );
 			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 			this->AddSubActor( &m_BannerWithFrame[0] );
 			break;
@@ -201,7 +201,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
-		if (GAMESTATE->GetCurGame() != GAME_EZ2)
+		if (GAMESTATE->m_CurGame != GAME_EZ2)
 		{
 			m_sprJudgeLabels[l].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_JUDGE_LABELS) );
 			m_sprJudgeLabels[l].StopAnimating();
@@ -222,23 +222,23 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 			// RE-ARRANGE the scoreboard for EZ2Dancer Scoring
 
-			if (l == 0 && GAMESTATE->GetCurGame() == GAME_EZ2) // Change Position For Ez2dancer
+			if (l == 0 && GAMESTATE->m_CurGame == GAME_EZ2) // Change Position For Ez2dancer
 			{
 				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y);
 			}
-			else if (l == 2 && GAMESTATE->GetCurGame() == GAME_EZ2)
+			else if (l == 2 && GAMESTATE->m_CurGame == GAME_EZ2)
 			{
 				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 55);
 			}
-			else if (l == 4 && GAMESTATE->GetCurGame() == GAME_EZ2)
+			else if (l == 4 && GAMESTATE->m_CurGame == GAME_EZ2)
 			{
 				m_textJudgeNumbers[l][p].SetXY( JUDGE_NUMBERS_X_EZ2[p], JUDGE_EZ2_COOL_Y + 120);
 			}
-			else if ((l == 1 || l == 3 ) && GAMESTATE->GetCurGame() == GAME_EZ2)
+			else if ((l == 1 || l == 3 ) && GAMESTATE->m_CurGame == GAME_EZ2)
 			{
 				m_textJudgeNumbers[l][p].SetZoomX(0); // Hide These Ones
 			}
-			else if (l == 5 && GAMESTATE->GetCurGame() == GAME_EZ2 ) // sneakily use this one for the max combo.
+			else if (l == 5 && GAMESTATE->m_CurGame == GAME_EZ2 ) // sneakily use this one for the max combo.
 			{
 				if (p == PLAYER_1 )
 				{
@@ -254,7 +254,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		}
 	}
 
-	if (GAMESTATE->GetCurGame() != GAME_EZ2)
+	if (GAMESTATE->m_CurGame != GAME_EZ2)
 	{
 		m_sprScoreLabel.Load( THEME->GetPathTo(GRAPHIC_EVALUATION_SCORE_LABELS) );
 		m_sprScoreLabel.StopAnimating();
@@ -265,7 +265,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 	for( p=0; p<NUM_PLAYERS; p++ ) 
 	{
-		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) || GAMESTATE->GetCurGame() == GAME_EZ2 )
+		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) || GAMESTATE->m_CurGame == GAME_EZ2 )
 			continue;	// skip
 
 		m_ScoreDisplay[p].SetXY( SCORE_DISPLAY_X[p], SCORE_Y );
@@ -309,7 +309,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 
 		// SNEAKY! We take the max combo, and put it into element 5, because Ez2dancer 
 		// doesn't care for OK's and plus this text element is already nicely aligned =)
-		if (GAMESTATE->GetCurGame() == GAME_EZ2)
+		if (GAMESTATE->m_CurGame == GAME_EZ2)
 		{
 			m_textJudgeNumbers[5][p].SetText( ssprintf("%4d", totalGS.max_combo[p]) );
 		}
@@ -370,7 +370,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 			continue;	// skip
 
-		if ( GAMESTATE->GetCurGame() != GAME_EZ2)
+		if ( GAMESTATE->m_CurGame != GAME_EZ2)
 		{
 			m_sprGradeFrame[p].Load( THEME->GetPathTo(GRAPHIC_EVALUATION_GRADE_FRAME) );
 			m_sprGradeFrame[p].StopAnimating();
@@ -401,7 +401,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			break;
 		case RM_ARCADE_STAGE:
 		case RM_ARCADE_SUMMARY:
-			if (GAMESTATE->GetCurGame() != GAME_EZ2 )
+			if (GAMESTATE->m_CurGame != GAME_EZ2 )
 			{
 				m_Grades[p].SetXY( GRADE_X[p], GRADE_Y );
 				m_Grades[p].SetZ( -2 );
@@ -430,7 +430,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 			break;
 		}
 
-		if ( GAMESTATE->GetCurGame() == GAME_EZ2)
+		if ( GAMESTATE->m_CurGame == GAME_EZ2)
 			continue;
 
 		m_BonusInfoFrame[p].SetXY( BONUS_FRAME_X[p], BONUS_FRAME_Y );
@@ -529,7 +529,7 @@ void ScreenEvaluation::TweenOnScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		if (GAMESTATE->GetCurGame() != GAME_EZ2)
+		if (GAMESTATE->m_CurGame != GAME_EZ2)
 		{
 			fOriginalY = m_sprJudgeLabels[i].GetY();
 			m_sprJudgeLabels[i].SetY( fOriginalY + SCREEN_HEIGHT );
@@ -548,7 +548,7 @@ void ScreenEvaluation::TweenOnScreen()
 		}
 	}
 
-	if (GAMESTATE->GetCurGame() != GAME_EZ2)
+	if (GAMESTATE->m_CurGame != GAME_EZ2)
 	{
 
 		fOriginalY = m_sprScoreLabel.GetY();
@@ -604,7 +604,7 @@ void ScreenEvaluation::TweenOffScreen()
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
-		if (GAMESTATE->GetCurGame() != GAME_EZ2)
+		if (GAMESTATE->m_CurGame != GAME_EZ2)
 		{
 			m_sprJudgeLabels[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 			m_sprJudgeLabels[i].SetTweenZoomY( 0 );
@@ -617,7 +617,7 @@ void ScreenEvaluation::TweenOffScreen()
 		}
 	}
 	
-	if (GAMESTATE->GetCurGame() != GAME_EZ2)
+	if (GAMESTATE->m_CurGame != GAME_EZ2)
 	{
 		m_sprScoreLabel.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 		m_sprScoreLabel.SetTweenZoomY( 0 );

@@ -16,6 +16,18 @@
 #include "resource.h"
 
 //
+// Rage global classes
+//
+#include "RageLog.h"
+#include "RageDisplay.h"
+#include "RageTextureManager.h"
+#include "RageSound.h"
+#include "RageMusic.h"
+#include "RageInput.h"
+#include "RageTimer.h"
+#include "RageException.h"
+
+//
 // StepMania global classes
 //
 #include "PrefsManager.h"
@@ -578,6 +590,8 @@ HRESULT CreateObjects( HWND hWnd )
 
 	TEXTUREMAN	= new RageTextureManager( DISPLAY );
 
+	PREFSMAN->ReadGlobalPrefsFromDisk( true );
+
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
@@ -614,6 +628,7 @@ HRESULT CreateObjects( HWND hWnd )
 //-----------------------------------------------------------------------------
 void DestroyObjects()
 {
+	SAFE_DELETE( SCREENMAN );
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
@@ -627,7 +642,6 @@ void DestroyObjects()
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( TIMER );
-	SAFE_DELETE( SCREENMAN );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
@@ -875,8 +889,8 @@ void ApplyGraphicOptions()
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
 		goto success;
 
-	// We failed.  Try full screen with same params.
-	iRefreshRate = 60;
+	// We failed.  Using default refresh rate.
+	iRefreshRate = 0;
 	if( DISPLAY->SwitchDisplayMode(bWindowed, iDisplayWidth, iDisplayHeight, iDisplayBPP, iRefreshRate) )
 		goto success;
 

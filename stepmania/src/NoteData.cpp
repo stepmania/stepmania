@@ -1,7 +1,7 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: NoteData.cpp
+ Class: NoteData
 
  Desc: See header.
 
@@ -17,6 +17,7 @@
 #include "ArrowEffects.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
+#include "RageException.h"
 
 
 

@@ -35,12 +35,11 @@ enum {
 	PO_COLOR,
 	PO_HOLD_NOTES,
 	PO_DARK,
-	PO_DRAIN,
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Speed",	8, {"x0.5","x0.75","x1","x1.5","x2","x3","x5","x8"} },	
-	{ "Effect", 6, {"OFF","BOOST","WAVE", "DRUNK", "DIZZY", "SPACE"} },	
+	{ "Effect", 7, {"OFF","BOOST","WAVE", "DRUNK", "DIZZY","SPACE","MINI"} },	
 	{ "Appear", 4, {"VISIBLE","HIDDEN","SUDDEN","STEALTH"} },	
 	{ "Turn",	5, {"OFF","MIRROR","LEFT","RIGHT","SHUFFLE"} },	
 	{ "Little", 2, {"OFF","ON"} },	
@@ -48,9 +47,7 @@ OptionLineData g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	{ "Color",	4, {"ARCADE","NOTE","FLAT","PLAIN"} },	
 	{ "Holds",	2, {"OFF","ON"} },	
 	{ "Dark",	2, {"OFF","ON"} },	
-	{ "Drain",	3, {"NORMAL", "NO-RECOVER", "SUDDEN-DEATH"} },
 };
-
 
 
 ScreenPlayerOptions::ScreenPlayerOptions() :
@@ -93,7 +90,6 @@ void ScreenPlayerOptions::ImportOptions()
 		m_iSelectedOption[p][PO_COLOR]		= po.m_ColorType;
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_bDark ? 1 : 0;
-		m_iSelectedOption[p][PO_DRAIN]		= po.m_DrainType;
 	}
 }
 
@@ -124,7 +120,6 @@ void ScreenPlayerOptions::ExportOptions()
 		po.m_ColorType		= (PlayerOptions::ColorType)m_iSelectedOption[p][PO_COLOR];
 		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
 		po.m_bDark			= (m_iSelectedOption[p][PO_DARK] == 1);
-		po.m_DrainType		= (PlayerOptions::DrainType)m_iSelectedOption[p][PO_DRAIN];		
 	}
 }
 

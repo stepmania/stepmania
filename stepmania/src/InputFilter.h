@@ -14,8 +14,8 @@
 
 #include "RageInput.h"
 
-const float TIME_BEFORE_SLOW_REPEATS = 0.7f;
-const float TIME_BEFORE_FAST_REPEATS = 2.0f;
+const float TIME_BEFORE_SLOW_REPEATS = 0.6f;
+const float TIME_BEFORE_FAST_REPEATS = 1.5f;
 
 //const float TIME_BETWEEN_SLOW_REPEATS = 0.25f;
 const float TIME_BETWEEN_SLOW_REPEATS = 0.125f;

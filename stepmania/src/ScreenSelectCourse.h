@@ -48,6 +48,8 @@ protected:
 	CourseContentsFrame	m_CourseContentsFrame;
 	MusicWheel			m_MusicWheel;
 
+	bool				m_bMadeChoice;
+	bool				m_bGoToOptions;
 	BitmapText			m_textHoldForOptions;
 
 	RandomSample		m_soundSelect;

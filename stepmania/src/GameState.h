@@ -12,6 +12,8 @@
 
 #include "GameConstantsAndTypes.h"
 #include "GameplayStatistics.h"
+#include "PlayerOptions.h"
+#include "SongOptions.h"
 
 
 class Song;
@@ -43,11 +45,9 @@ public:
 	CArray<GameplayStatistics,GameplayStatistics>	m_aGameplayStatistics;	// for passing from Dancing to Results
 	GameplayStatistics&		GetLatestGameplayStatistics();
 
-protected:
+
+
 	Game			m_CurGame;
-public:
-	Game			GetCurGame()	{ return m_CurGame; };
-	void			SwitchGame( Game newGame );
 	Style			m_CurStyle;
 	PlayerNumber	m_MasterPlayerNumber;
 
@@ -55,7 +55,7 @@ public:
 	StyleDef*	GetCurrentStyleDef();
 
 	bool IsPlayerEnabled( PlayerNumber pn );
-	//bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber
+	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };	// for those too lasy to cast all those p's to a PlayerNumber
 
 
 	CString			m_sLoadingMessage;

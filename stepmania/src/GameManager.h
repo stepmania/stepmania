@@ -26,7 +26,6 @@ public:
 
 	void GetGameNames( CStringArray &AddTo );
 	bool DoesGameExist( CString sGameName );
-	void SwitchGame( Game newGame );
 
 	void GetNoteSkinNames( CStringArray &AddTo );	// looks up current Game in GAMESTATE
 	bool DoesNoteSkinExist( CString sSkinName );	// looks up current Game in GAMESTATE

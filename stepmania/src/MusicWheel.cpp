@@ -66,13 +66,8 @@ inline D3DXCOLOR GetNextSectionColor()
 	return SECTION_COLORS[i++];
 }
 
-WheelItemData::WheelItemData()
-{
-	m_pSong = NULL;
-	m_MusicStatusDisplayType = TYPE_NONE;
-}
 
-void WheelItemData::Load( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const D3DXCOLOR color )
+WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, const CString &sSectionName, Course* pCourse, const D3DXCOLOR color )
 {
 	m_WheelItemType = wit;
 	m_pSong = pSong;
@@ -80,6 +75,7 @@ void WheelItemData::Load( WheelItemType wit, Song* pSong, const CString &sSectio
 	m_pCourse = pCourse;
 	m_color = color;
 }
+
 
 WheelItemDisplay::WheelItemDisplay()
 {
@@ -442,7 +438,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			}
 
 
-			// sort the SONGMAN
+			// sort the songs
 			switch( so )
 			{
 			case SORT_GROUP:
@@ -467,11 +463,9 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 
 			///////////////////////////////////
-			// Build an array of WheelItemDatas from the sorted list of Song*
+			// Build an array of WheelItemDatas from the sorted list of Song*s
 			///////////////////////////////////
-			arrayWheelItemDatas.RemoveAll();	// clear out the previous wheel items...
-
-			// ...and load new ones
+			arrayWheelItemDatas.SetSize( 0, 300 );	// clear out the previous wheel items and set large capacity jumps
 
 			bool bUseSections;
 			switch( so )
@@ -489,8 +483,6 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			if( bUseSections )
 			{
 				// make WheelItemDatas with sections
-				arrayWheelItemDatas.SetSize( arraySongs.GetSize()*2 );	// make sure we have enough room for all music and section items
-
 				CString sLastSection = "";
 				D3DXCOLOR colorSection;
 				int iCurWheelItem = 0;
@@ -501,41 +493,39 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 					int iSectionColorIndex = 0;
 					if( sThisSection != sLastSection )	// new section, make a section item
 					{
-						WheelItemData &WID = arrayWheelItemDatas[iCurWheelItem++];
 						colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS[iSectionColorIndex];
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-						WID.Load( TYPE_SECTION, NULL, sThisSection, NULL, colorSection );
+						arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
 						sLastSection = sThisSection;
 					}
 
-					WheelItemData &WID = arrayWheelItemDatas[iCurWheelItem++];
-					WID.Load( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName) );
+					arrayWheelItemDatas.Add( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName)) );
 				}
-				arrayWheelItemDatas.SetSize( iCurWheelItem );	// make sure we have enough room for all music and section items	
 			}
 			else
 			{
-				arrayWheelItemDatas.SetSize( arraySongs.GetSize() );
+				for( int i=0; i<arraySongs.GetSize(); i++ )
 				{
-					for( int i=0; i<arraySongs.GetSize(); i++ )
-					{
-						Song* pSong = arraySongs[i];
-						WheelItemData &WID = arrayWheelItemDatas[i];
-						WID.Load( TYPE_SONG, pSong, "", NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName) );
-					}
+					Song* pSong = arraySongs[i];
+					if( bRoulette  &&  GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
+						continue;	// skip
+					arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetGroupColor(pSong->m_sGroupName)) );
 				}
 			}
 		}
 		break;
 	case PLAY_MODE_ONI:
 		{
-			arrayWheelItemDatas.SetSize( 0, 20 );	// clear out the previous wheel items...
-			for( int c=0; c<SONGMAN->m_aCourses.GetSize(); c++ )	// foreach course
+			CArray<Course*,Course*> apCourses;
+			for( int i=0; i<SONGMAN->m_aCourses.GetSize(); i++ )
+				apCourses.Add( &SONGMAN->m_aCourses[i] );
+
+			SortCoursePointerArrayByDifficulty( apCourses );
+
+			for( int c=0; c<apCourses.GetSize(); c++ )	// foreach course
 			{
-				Course* pCourse = &SONGMAN->m_aCourses[c];
-				arrayWheelItemDatas.Add( WheelItemData() );
-				WheelItemData &WID = arrayWheelItemDatas[arrayWheelItemDatas.GetSize()-1];
-				WID.Load( TYPE_COURSE, NULL, "", pCourse, D3DXCOLOR(1,1,1,1) );
+				Course* pCourse = apCourses[c];
+				arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
 			}
 		}
 		break;
@@ -566,13 +556,11 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 
 	if( arrayWheelItemDatas.GetSize() == 0 )
 	{
-		arrayWheelItemDatas.SetSize( 1 );
-		arrayWheelItemDatas[0].Load( TYPE_SECTION, NULL, "NO SONGS", NULL, D3DXCOLOR(1,0,0,1) );
+		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "EMPTY", NULL, D3DXCOLOR(1,0,0,1)) );
 	}
 	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE  &&  !bRoulette )
 	{
-		arrayWheelItemDatas.SetSize( arrayWheelItemDatas.GetSize()+1 );
-		arrayWheelItemDatas[arrayWheelItemDatas.GetSize()-1].Load( TYPE_ROULETTE, NULL, "", NULL, D3DXCOLOR(1,0,0,1) );
+		arrayWheelItemDatas.Add( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, D3DXCOLOR(1,0,0,1)) );
 	}
 }
 
@@ -937,8 +925,6 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 		return;	// don't fall through
 	}
 
-	MUSIC->Stop();
-
 	// decrement m_iSelection
 	do
 	{
@@ -985,7 +971,6 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 		return;	// don't continue
 	}
 
-	MUSIC->Stop();
 
 	// increment m_iSelection
 	do
@@ -1023,8 +1008,6 @@ void MusicWheel::NextSort()
 	default:
 		return;	// don't continue
 	}
-
-	MUSIC->Stop();
 
 	m_soundChangeSort.Play();
 	m_MusicSortDisplay.BeginTweening( FADE_TIME, TWEEN_BIAS_END );

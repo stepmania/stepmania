@@ -24,6 +24,7 @@
 #include "LifeMeter.h"
 #include "ScoreDisplay.h"
 #include "DifficultyBanner.h"
+#include "TransitionFadeWipe.h"
 
 
 // messages sent by Combo
@@ -50,13 +51,6 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	enum DancingState { 
-		STATE_INTRO = 0, // not allowed to press Back
-		STATE_DANCING,
-		STATE_OUTRO,	// not allowed to press Back
-		NUM_DANCING_STATES
-	};
-
 
 private:
 	void TweenOnScreen();
@@ -64,12 +58,23 @@ private:
 
 	void LoadNextSong( bool bPlayMusic );
 
+	bool OneIsHot();
+	bool AllAreInDanger();
+	bool AllAreFailing();
+	bool AllFailedEarlier();
 
+	enum DancingState { 
+		STATE_INTRO = 0, // not allowed to press Back
+		STATE_DANCING,
+		STATE_OUTRO,	// not allowed to press Back
+		NUM_DANCING_STATES
+	};
 	DancingState			m_DancingState;
+	bool					m_bAutoPlayerWasOn;
+	bool					m_bChangedOffsetOrBPM;
 
 	CArray<Song*,Song*>		m_apSongQueue;	// nearest songs are on back of queue
 	CArray<Notes*,Notes*>	m_apNotesQueue[NUM_PLAYERS];	// nearest notes are on back of queue
-	bool					m_bBothHaveFailed;
 
 	float					m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
 
@@ -89,6 +94,7 @@ private:
 	BitmapText				m_textDebug;
 
 
+	TransitionFadeWipe	m_Fade;
 	TransitionStarWipe	m_StarWipe;
 
 	FocusingSprite		m_sprReady;

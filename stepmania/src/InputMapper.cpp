@@ -76,13 +76,13 @@ void InputMapper::SaveMappingsToDisk()
 
 
 	// iterate over our input map and write all mappings to the ini file
-	for( int i=0; i<MAX_INSTRUMENTS; i++ )
+	for( int i=0; i<MAX_GAME_CONTROLLERS; i++ )
 	{
-		for( int j=0; j<MAX_INSTRUMENT_BUTTONS; j++ )
+		for( int j=0; j<MAX_GAME_BUTTONS; j++ )
 		{
 			CString sNameString, sValueString;
 			
-			GameInput GameI( (InstrumentNumber)i, (InstrumentButton)j );
+			GameInput GameI( (GameController)i, (GameButton)j );
 			sNameString = GameI.toString();
 			sValueString = ssprintf( "%s,%s,%s", 
 				m_GItoDI[i][j][0].toString(), m_GItoDI[i][j][1].toString(), m_GItoDI[i][j][2].toString() );
@@ -105,7 +105,7 @@ void InputMapper::SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIn
 	ClearFromInputMap( DeviceI );
 	ClearFromInputMap( GameI, iSlotIndex );
 
-	m_GItoDI[GameI.number][GameI.button][iSlotIndex] = DeviceI;
+	m_GItoDI[GameI.controller][GameI.button][iSlotIndex] = DeviceI;
 
 
 	UpdateTempDItoGI();
@@ -115,9 +115,9 @@ void InputMapper::ClearFromInputMap( DeviceInput DeviceI )
 {
 	// search for where this DeviceI maps to
 
-	for( int p=0; p<MAX_INSTRUMENTS; p++ )
+	for( int p=0; p<MAX_GAME_CONTROLLERS; p++ )
 	{
-		for( int b=0; b<MAX_INSTRUMENT_BUTTONS; b++ )
+		for( int b=0; b<MAX_GAME_BUTTONS; b++ )
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
@@ -135,7 +135,7 @@ void InputMapper::ClearFromInputMap( GameInput GameI, int iSlotIndex )
 	if( GameI.IsBlank() )
 		return;
 
-	m_GItoDI[GameI.number][GameI.button][iSlotIndex].MakeBlank();
+	m_GItoDI[GameI.controller][GameI.button][iSlotIndex].MakeBlank();
 
 	UpdateTempDItoGI();
 }
@@ -153,13 +153,13 @@ void InputMapper::UpdateTempDItoGI()
 
 
 	// repopulate m_tempDItoGI
-	for( int n=0; n<MAX_INSTRUMENTS; n++ )
+	for( int n=0; n<MAX_GAME_CONTROLLERS; n++ )
 	{
-		for( int b=0; b<MAX_INSTRUMENT_BUTTONS; b++ )
+		for( int b=0; b<MAX_GAME_BUTTONS; b++ )
 		{
 			for( int s=0; s<NUM_GAME_TO_DEVICE_SLOTS; s++ )
 			{
-				GameInput GameI( (InstrumentNumber)n, (InstrumentButton)b );
+				GameInput GameI( (GameController)n, (GameButton)b );
 				DeviceInput DeviceI = m_GItoDI[n][b][s];
 
 				if( DeviceI.IsBlank() )
@@ -174,12 +174,12 @@ void InputMapper::UpdateTempDItoGI()
 bool InputMapper::DeviceToGame( DeviceInput DeviceI, GameInput& GameI ) // return true if there is a mapping from device to pad
 {
 	GameI = m_tempDItoGI[DeviceI.device][DeviceI.button];
-	return GameI.number != PLAYER_INVALID;
+	return GameI.controller != PLAYER_INVALID;
 }
 
 bool InputMapper::GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
 {
-	DeviceI = m_GItoDI[GameI.number][GameI.button][iSoltNum];
+	DeviceI = m_GItoDI[GameI.controller][GameI.button][iSoltNum];
 	return DeviceI.device != DEVICE_NONE;
 }
 

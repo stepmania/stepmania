@@ -224,6 +224,10 @@ SOURCE=.\Font.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\GameConstantsAndTypes.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\GameConstantsAndTypes.h
 # End Source File
 # Begin Source File
@@ -233,6 +237,10 @@ SOURCE=.\GameDef.cpp
 # Begin Source File
 
 SOURCE=.\GameDef.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameInput.cpp
 # End Source File
 # Begin Source File
 
@@ -300,6 +308,14 @@ SOURCE=.\PlayerInput.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\PlayerOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\PlayerOptions.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RandomSample.cpp
 # End Source File
 # Begin Source File
@@ -321,6 +337,14 @@ SOURCE=.\Song.cpp
 # Begin Source File
 
 SOURCE=.\song.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongOptions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SongOptions.h
 # End Source File
 # Begin Source File
 

@@ -57,7 +57,7 @@ ScreenSelectStyle::ScreenSelectStyle()
 	for( int s=0; s<NUM_STYLES; s++ )
 	{
 		Style style = (Style)s;
-		if( StyleToGame(style) == GAMESTATE->GetCurGame() )	// games match
+		if( StyleToGame(style) == GAMESTATE->m_CurGame )	// games match
 			m_aPossibleStyles.Add( style );		
 	}
 

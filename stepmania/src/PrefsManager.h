@@ -30,7 +30,7 @@ public:
 	bool	m_bWindowed;
 	int		m_iDisplayResolution;
 	int		m_iTextureResolution;
-	int		m_iRefreshRate;
+	int		m_iRefreshRate;		// 0 means 'default'
 	bool	m_bIgnoreJoyAxes;
 	bool	m_bShowFPS;
 	BackgroundMode	m_BackgroundMode;
@@ -43,20 +43,7 @@ public:
 
 	CStringArray m_asSongFolders;
 
-	int GetDisplayHeight()
-	{
-		switch( m_iDisplayResolution )
-		{
-		case 1280:	return 1024;	break;
-		case 1024:	return 768;	break;
-		case 800:	return 600;	break;
-		case 640:	return 480;	break;
-		case 512:	return 384;	break;
-		case 400:	return 300;	break;
-		case 320:	return 240;	break;
-		default:	throw RageException( "Invalid DisplayWidth '%d'", m_iDisplayResolution );	return 480;
-		}
-	}
+	int GetDisplayHeight();
 
 	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
 	void SaveGlobalPrefsToDisk();

@@ -14,6 +14,8 @@
 #include "IniFile.h"
 #include "FontManager.h"
 #include "RageLog.h"
+#include "RageException.h"
+#include "RageTimer.h"
 
 
 

@@ -35,13 +35,15 @@ const float DIFFICULTY_ITEM_X[NUM_DIFFICULTY_ITEMS] = {
 	CENTER_X-200,			// easy
 	CENTER_X,				// medium
 	CENTER_X+200,			// hard
-	SCREEN_WIDTH+CENTER_X,	// Oni, page 2
+	SCREEN_WIDTH+CENTER_X-100,	// Oni, page 2
+	SCREEN_WIDTH+CENTER_X+100,	// Endless, page 2
 };
 // these sprites are bottom aligned!
 const float DIFFICULTY_ITEM_Y[NUM_DIFFICULTY_ITEMS] = {
 	CENTER_Y-40,
 	CENTER_Y-60,
 	CENTER_Y-40,
+	CENTER_Y-60,
 	CENTER_Y-60,
 };
 
@@ -50,12 +52,14 @@ const float DIFFICULTY_ARROW_Y[NUM_DIFFICULTY_ITEMS] = {
 	DIFFICULTY_ITEM_Y[1]+205,
 	DIFFICULTY_ITEM_Y[2]+205,
 	DIFFICULTY_ITEM_Y[3]+205,
+	DIFFICULTY_ITEM_Y[4]+205,
 };
 const float DIFFICULTY_ARROW_X[NUM_DIFFICULTY_ITEMS][NUM_PLAYERS] = {
 	{ DIFFICULTY_ITEM_X[0]-40, DIFFICULTY_ITEM_X[0]+40 },
 	{ DIFFICULTY_ITEM_X[1]-40, DIFFICULTY_ITEM_X[1]+40 },
 	{ DIFFICULTY_ITEM_X[2]-40, DIFFICULTY_ITEM_X[2]+40 },
 	{ DIFFICULTY_ITEM_X[3]-40, DIFFICULTY_ITEM_X[3]+40 },
+	{ DIFFICULTY_ITEM_X[4]-40, DIFFICULTY_ITEM_X[4]+40 },
 };
 
 
@@ -232,9 +236,12 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 			break;
 		case 3:
-		case 4:
 			GAMESTATE->m_PlayMode = PLAY_MODE_ONI;
 			SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+			break;
+		case 4:
+			GAMESTATE->m_PlayMode = PLAY_MODE_ENDLESS;
+			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 			break;
 		default:
 			ASSERT(0);	// bad selection
@@ -269,6 +276,23 @@ void ScreenSelectDifficulty::MenuRight( const PlayerNumber p )
 		return;
 
 	ChangeTo( p, m_iSelection[p], m_iSelection[p]+1 );
+}
+
+bool ScreenSelectDifficulty::IsItemOnPage2( int iItemIndex )
+{
+	ASSERT( iItemIndex >= 0  &&  iItemIndex < NUM_DIFFICULTY_ITEMS );
+
+	return iItemIndex >= NUM_DIFFICULTY_CLASSES;
+}
+
+bool ScreenSelectDifficulty::SelectedSomethingOnPage2()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( GAMESTATE->IsPlayerEnabled(p)  &&  IsItemOnPage2(m_iSelection[p]) )
+			return true;
+	}
+	return false;
 }
 
 void ScreenSelectDifficulty::ChangeTo( const PlayerNumber pn, int iSelectionWas, int iSelectionIs )
@@ -421,7 +445,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 	for( int d=0; d<NUM_DIFFICULTY_ITEMS; d++ )
 	{
-		if( d >= 3 )	// this item is on page 2
+		if( SelectedSomethingOnPage2() != IsItemOnPage2(d) )	// item isn't on selected page
 			continue;	// don't tween
 
 		const float fPauseTime = d*0.2f;
@@ -490,9 +514,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 	{
 		const float fPauseTime = d*0.2f;
 
-		bool bIsOnPage1 = m_iSelection[PLAYER_1] >= 3;
-
-		if( bIsOnPage1  &&  d >= 3 )	// they are on page 1, but this item is on page 2
+		if( SelectedSomethingOnPage2() != IsItemOnPage2(d) )	// item isn't on the current page
 			continue;	// don't tween
 
 		// set off screen

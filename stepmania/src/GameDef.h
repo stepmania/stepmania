@@ -40,7 +40,7 @@ public:
 	char	m_szDescription[60];
 	int		m_iNumInstruments;
 	int		m_iButtonsPerInstrument;
-	char	m_szButtonNames[60][MAX_INSTRUMENT_BUTTONS];	// e.g. "left", "right", "middle C", "snare"
+	char	m_szButtonNames[60][MAX_GAME_BUTTONS];	// e.g. "left", "right", "middle C", "snare"
 
 //	int ButtonNameToIndex( const CString &sButtonName )
 //	{
@@ -66,7 +66,7 @@ public:
 
 	inline MenuInput GameInputToMenuInput( const GameInput GameI )
 	{
-		PlayerNumber p = (PlayerNumber)GameI.number;
+		PlayerNumber p = (PlayerNumber)GameI.controller;
 		for( int b=0; b<NUM_MENU_BUTTONS; b++ )
 		{
 			if( m_iMenuButtons[b] == GameI.button )
@@ -76,7 +76,7 @@ public:
 	};
 	inline GameInput MenuInputToGameInput( const MenuInput MenuI )
 	{
-		return GameInput( (InstrumentNumber)MenuI.player, (InstrumentButton)m_iMenuButtons[MenuI.button] );
+		return GameInput( (GameController)MenuI.player, (GameButton)m_iMenuButtons[MenuI.button] );
 	};
 
 };

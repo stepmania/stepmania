@@ -71,7 +71,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 
 	// reset game info
-	GAMESTATE->SwitchGame( GAMESTATE->GetCurGame() );
 	GAMESTATE->Reset();
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
@@ -105,7 +104,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	m_textVersion.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textVersion.SetHorizAlign( Actor::align_right );
-	m_textVersion.SetText( "v3.0 beta 4" );
+	m_textVersion.SetText( "v3.0 beta 5" );
 	m_textVersion.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( SCREEN_RIGHT-16, SCREEN_BOTTOM-20 );
 	m_textVersion.SetZoom( 0.5f );
@@ -148,7 +147,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	// I don't wanna fix this a 3rd TIME!!
 	// - Andy.
 
-	if( GAMESTATE->GetCurGame() != GAME_EZ2 )
+	if( GAMESTATE->m_CurGame != GAME_EZ2 )
 		PREFSMAN->m_sAnnouncer = "";
 
 
@@ -185,7 +184,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	static int announcercheck=0; 
 
-	if( GAMESTATE->GetCurGame() != GAME_EZ2  &&  PREFSMAN->m_sAnnouncer == "ez2" && announcercheck == 0)
+	if( GAMESTATE->m_CurGame != GAME_EZ2  &&  PREFSMAN->m_sAnnouncer == "ez2" && announcercheck == 0)
 	{
 		ANNOUNCER->SwitchAnnouncer( "default" );
 		announcercheck = 1;
@@ -321,7 +320,7 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 	switch( m_TitleMenuChoice )
 	{
 	case CHOICE_GAME_START:
-		if( GAMESTATE->GetCurGame() == GAME_EZ2 )
+		if( GAMESTATE->m_CurGame == GAME_EZ2 )
 		{
 			m_soundSelect.PlayRandom();
 			m_Fade.CloseWipingRight( SM_GoToEz2 );

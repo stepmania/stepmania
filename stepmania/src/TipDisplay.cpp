@@ -52,5 +52,6 @@ void TipDisplay::Update( float fDeltaTime )
 		m_iCurTipIndex++;
 		m_iCurTipIndex = m_iCurTipIndex % m_arrayTips.GetSize();
 		m_fSecsUntilSwitch = TIP_SHOW_TIME;
+		m_textTip.SetText( m_arrayTips[m_iCurTipIndex] );
 	}
 }

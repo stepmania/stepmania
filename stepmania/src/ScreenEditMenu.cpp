@@ -113,8 +113,8 @@ ScreenEditMenu::ScreenEditMenu()
 	m_Menu.Load( 
 		THEME->GetPathTo(GRAPHIC_EDIT_BACKGROUND), 
 		THEME->GetPathTo(GRAPHIC_EDIT_TOP_EDGE),
-		ssprintf("%s %s change music    START to continue", CString(char(1)), CString(char(2)) ),
-		false, true, 40 
+		ssprintf("%c %c change line    %c %c change value    START to continue", char(3), char(4), char(1), char(2) ),
+		false, false, 40 
 		);
 	this->AddSubActor( &m_Menu );
 
@@ -173,7 +173,9 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		//  Set the current Style, then let ScreenEdit infer the desired
 		//  NotesType from that Style.
 		NotesType nt = GetSelectedNotesType();
-		GAMESTATE->m_CurStyle = GAMEMAN->GetStyleThatPlaysNotesType( nt );
+		Style style = GAMEMAN->GetStyleThatPlaysNotesType( nt );
+		GAMESTATE->m_CurStyle = style;
+		GAMESTATE->m_CurGame = StyleToGame(style);
 
 		SCREENMAN->SetNewScreen( new ScreenEdit );
 		break;

@@ -13,7 +13,8 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "Banner.h"
-
+class Song;
+class Course;
 
 class BannerWithFrame : public ActorFrame
 {
@@ -22,6 +23,7 @@ public:
 
 	void LoadFromSong( Song* pSong );
 	void LoadFromGroup( CString sGroupName );
+	void LoadFromCourse( Course* pCourse );
 
 protected:
 

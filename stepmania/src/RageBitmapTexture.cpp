@@ -24,6 +24,7 @@
 #include "DXUtil.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageException.h"
 
 
 

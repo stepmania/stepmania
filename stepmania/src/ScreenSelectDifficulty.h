@@ -17,7 +17,7 @@
 #include "MenuElements.h"
 
 
-const int NUM_DIFFICULTY_ITEMS = NUM_DIFFICULTY_CLASSES + 1;	// easy, medium, hard, Oni
+const int NUM_DIFFICULTY_ITEMS = NUM_DIFFICULTY_CLASSES + 2;	// easy, medium, hard, Oni, Endless
 const int NUM_PAGES = 2;	// easy-medium-hard, Oni
 
 class ScreenSelectDifficulty : public Screen
@@ -40,6 +40,9 @@ public:
 
 private:
 	void ChangeTo( const PlayerNumber pn, int iSelectionWas, int iSelectionIs );
+
+	bool IsItemOnPage2( int iItemIndex );
+	bool SelectedSomethingOnPage2();	// checks selection of players
 
 	MenuElements m_Menu;
 

@@ -16,79 +16,63 @@
 #include "GameManager.h"
 #include "SongManager.h"
 #include "GameState.h"
+#include "RageException.h"
+#include "RageLog.h"
+#include "MsdFile.h"
 
 
 void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
 {
-	CStdioFile file;	
-	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
+	MsdFile msd;
+	if( !msd.ReadFile(sPath) )
 		throw RageException( "Error opening CRS file '%s'.", sPath );
 
+	CString sDir, sFName, sExt;
+	splitrelpath( sPath, sDir, sFName, sExt );
 
-	// read the whole file into a sFileText
-	CString sFileText;
-	CString buffer;
-	while( file.ReadString(buffer) )
-		sFileText += buffer + "\n";
-	file.Close();
+	CStringArray arrayPossibleBanners;
+	GetDirListing( "Courses\\" + sFName + ".png", arrayPossibleBanners, false, true );
+	GetDirListing( "Courses\\" + sFName + ".jpg", arrayPossibleBanners, false, true );
+	GetDirListing( "Courses\\" + sFName + ".bmp", arrayPossibleBanners, false, true );
+	GetDirListing( "Courses\\" + sFName + ".gif", arrayPossibleBanners, false, true );
+	if( arrayPossibleBanners.GetSize() > 0 )
+		m_sBannerPath = arrayPossibleBanners[0];
 
-	// strip comments out of sFileText
-	while( sFileText.Find("//") != -1 )
+	for( int i=0; i<msd.m_iNumValues; i++ )
 	{
-		int iIndexCommentStart = sFileText.Find("//");
-		int iIndexCommentEnd = sFileText.Find("\n", iIndexCommentStart);
-		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
-			sFileText.Delete( iIndexCommentStart, 2 );
-		else
-			sFileText.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
-	}
-
-	// split sFileText into strings containing each value expression
-	CStringArray arrayValueStrings;
-	split( sFileText, ";", arrayValueStrings, false );
-
-
-	// for each value expression string, parse it into a value name and data
-	for( int i=0; i < arrayValueStrings.GetSize(); i++ )
-	{
-		CString sValueString = arrayValueStrings[i];
-
-		// split the value string into tokens
-		CStringArray arrayValueTokens;
-		split( sValueString, ":", arrayValueTokens, false );
-		for( int j=0; j<arrayValueTokens.GetSize(); j++ )
-		{
-			arrayValueTokens[j].TrimLeft();
-			arrayValueTokens[j].TrimRight();
-		}
-		if( arrayValueTokens.GetSize() == 0 )
-			continue;
-
-		CString sValueName = arrayValueTokens.GetAt( 0 );
+		CString sValueName = msd.m_szValuesAndParams[i][0];
+		CString* sParams = msd.m_sValuesAndParams[i];
 
 		// handle the data
-		if( sValueName == "#COURSE" )
-			m_sName = arrayValueTokens[1];
+		if( 0 == stricmp(sValueName, "COURSE") )
+			m_sName = sParams[1];
 
-		else if( sValueName == "#REPEAT" )
+		else if( 0 == stricmp(sValueName, "REPEAT") )
 		{
-			arrayValueTokens[1].MakeLower();
-			if( arrayValueTokens[1].Find("yes") != -1 )
+			sParams[1].MakeLower();
+			if( sParams[1].Find("yes") != -1 )
 				m_bRepeat = true;
 		}
 
-		else if( sValueName == "#SONG" )
+		else if( 0 == stricmp(sValueName, "LIVES") )
 		{
-			CString sSongDir = arrayValueTokens[1];
-			CString sNotesDescription = arrayValueTokens[2];
+			m_iLives = atoi( sParams[1] );
+		}
+
+		else if( 0 == stricmp(sValueName, "SONG") )
+		{
+			CString sSongDir = "Songs\\" + sParams[1] + "\\";
+			CString sNotesDescription = sParams[2];
 
 			int i;
 
 			Song* pSong = NULL;
-			for( i=0; i<apSongs.GetSize(); i++ )
-				if( 0 == stricmp(apSongs[i]->m_sSongDir, sSongDir) )
+			for( i=0; i<apSongs.GetSize(); i++ )	// foreach song
+			{
+				CString sThisSongDir = apSongs[i]->m_sSongDir;
+				if( 0 == stricmp(sThisSongDir, sSongDir) )
 					pSong = apSongs[i];
-
+			}
 			if( pSong == NULL )	// we didn't find the Song
 				continue;	// skip this song
 			
@@ -164,4 +148,40 @@ void Course::GetSongAndNotesForCurrentStyle( CArray<Song*,Song*>& apSongsOut, CA
 		for( int p=0; p<NUM_PLAYERS; p++ )
 			apNotesOut[p].Add( pNotes );
 	}
+}
+
+D3DXCOLOR Course::GetColor()
+{
+	// This could be made smarter
+	if( m_iStages >= 7 )
+		return D3DXCOLOR(1,0,0,1);	// red
+	else if( m_iStages >= 4 )
+		return D3DXCOLOR(1,0.5f,0,1);	// orange
+	else
+		return D3DXCOLOR(0,1,0,1);	// green
+}
+
+//
+// Sorting stuff
+//
+
+int CompareCoursePointersByDifficulty(const void *arg1, const void *arg2)
+{
+	Course* pCourse1 = *(Course**)arg1;
+	Course* pCourse2 = *(Course**)arg2;
+	
+	float fScore1 = (float)pCourse1->m_iStages;
+	float fScore2 = (float)pCourse2->m_iStages;
+
+	if( fScore1 < fScore2 )
+		return -1;
+	else if( fScore1 == fScore2 )
+		return 0;
+	else
+		return 1;
+}
+
+void SortCoursePointerArrayByDifficulty( CArray<Course*,Course*> &apCourses )
+{
+	qsort( apCourses.GetData(), apCourses.GetSize(), sizeof(Course*), CompareCoursePointersByDifficulty );
 }

@@ -91,6 +91,7 @@ void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString 
 	if( !bTimerEnabled  ||  !PREFSMAN->m_bMenuTimer )
 	{
 		m_MenuTimer.SetTimer( 99 );
+		m_MenuTimer.Update( 0 );
 		m_MenuTimer.StopTimer();
 	}
 	else

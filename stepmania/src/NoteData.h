@@ -14,6 +14,7 @@
 */
 
 #include "GameConstantsAndTypes.h"
+#include "PlayerOptions.h"
 
 // '1' = tap note
 // '2' = hold note begin

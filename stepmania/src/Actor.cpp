@@ -109,8 +109,15 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 		m_temp_pos += m_vectBounce * fPercentOffset;
 		}
 		break;
+	case bobbing:
+		{
+		float fPercentThroughBounce = m_fTimeIntoBounce / m_fBouncePeriod;
+		float fPercentOffset = sinf( fPercentThroughBounce*D3DX_PI ); 
+		m_temp_pos += m_vectBounce * fPercentOffset;
+		}
+		break;
 	default:
-		ASSERT( false );	// invalid Effect
+		ASSERT(0);	// invalid Effect
 	}
 
 
@@ -189,6 +196,7 @@ void Actor::Update( float fDeltaTime )
 	case flickering:
 		break;
 	case bouncing:
+	case bobbing:
 		m_fTimeIntoBounce += fDeltaTime;
 		if( m_fTimeIntoBounce >= m_fBouncePeriod )
 			m_fTimeIntoBounce -= m_fBouncePeriod;
@@ -457,6 +465,16 @@ void Actor::SetEffectBouncing( D3DXVECTOR3 vectBounce, float fPeriod )
 	m_Effect = bouncing;
 	
 	m_vectBounce = vectBounce;
+	m_fBouncePeriod = fPeriod;
+	m_fTimeIntoBounce = 0;
+
+}
+
+void Actor::SetEffectBobbing( D3DXVECTOR3 vectBob, float fPeriod )
+{
+	m_Effect = bobbing;
+	
+	m_vectBounce = vectBob;
 	m_fBouncePeriod = fPeriod;
 	m_fTimeIntoBounce = 0;
 

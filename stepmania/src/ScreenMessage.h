@@ -18,8 +18,6 @@ enum ScreenMessage {
 	SM_DoneClosingWipingRight,
 	SM_DoneOpeningWipingLeft,
 	SM_DoneOpeningWipingRight,
-	SM_LosingInputFocus,
-	SM_RegainingInputFocus,
 	SM_MenuTimer,
 	SM_User	= 100
 };

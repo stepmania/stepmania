@@ -18,6 +18,9 @@
 #include "PrefsManager.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "RageException.h"
+#include "RageTimer.h"
+
 
 const float HOLD_NOTE_BITS_PER_BEAT	= 6;
 const float HOLD_NOTE_BITS_PER_ROW	= HOLD_NOTE_BITS_PER_BEAT / ELEMENTS_PER_BEAT;
@@ -41,11 +44,11 @@ NoteField::NoteField()
 }
 
 
-void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, float fNumBeatsToDrawBehind, float fNumBeatsToDrawAhead, NoteFieldMode mode )
+void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, PlayerOptions po, int iPixelsToDrawBehind, int iPixelsToDrawAhead, NoteFieldMode mode )
 {
 	m_PlayerOptions = po;
-	m_fNumBeatsToDrawBehind = fNumBeatsToDrawBehind;
-	m_fNumBeatsToDrawAhead = fNumBeatsToDrawAhead;
+	m_iPixelsToDrawBehind = iPixelsToDrawBehind;
+	m_iPixelsToDrawAhead = iPixelsToDrawAhead;
 	m_Mode = mode;
 
 	this->CopyAll( pNoteData );
@@ -56,8 +59,7 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber p, StyleDef* pStyleDef, 
 		CArray<D3DXCOLOR,D3DXCOLOR>	arrayTweenColors;
 		GAMEMAN->GetTweenColors( c, arrayTweenColors );
 
-		m_ColorNote[c].m_sprColorPart.Load( GAMEMAN->GetPathTo(c, GRAPHIC_NOTE_COLOR_PART) );
-		m_ColorNote[c].m_sprGrayPart.Load( GAMEMAN->GetPathTo(c, GRAPHIC_NOTE_GRAY_PART) );
+		m_ColorNote[c].Load( c, p );
 	}
 
 
@@ -194,9 +196,10 @@ void NoteField::DrawPrimitives()
 
 	int iBaseFrameNo = (int)(m_fSongBeat*2.5) % NUM_FRAMES_IN_COLOR_ARROW_SPRITE;	// 2.5 is a "fudge number" :-)  This should be based on BPM
 	
-	int iIndexFirstArrowToDraw = BeatToNoteRow( m_fSongBeat - m_fNumBeatsToDrawBehind );	// 2 beats earlier
-	if( iIndexFirstArrowToDraw < 0 ) iIndexFirstArrowToDraw = 0;
-	int iIndexLastArrowToDraw  = BeatToNoteRow( m_fSongBeat + m_fNumBeatsToDrawAhead );	// 7 beats later
+	const float fBeatsToDrawBehind = m_iPixelsToDrawBehind * (1/(float)ARROW_SIZE) * (1/m_PlayerOptions.m_fArrowScrollSpeed);
+	const float fBeatsToDrawAhead  = m_iPixelsToDrawAhead  * (1/(float)ARROW_SIZE) * (1/m_PlayerOptions.m_fArrowScrollSpeed);
+	const int iIndexFirstArrowToDraw = max( 0, BeatToNoteRow( m_fSongBeat - fBeatsToDrawBehind ) );
+	const int iIndexLastArrowToDraw  = BeatToNoteRow( m_fSongBeat + fBeatsToDrawAhead );
 
 	//LOG->WriteLine( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
@@ -290,7 +293,7 @@ void NoteField::DrawPrimitives()
 			const bool bActive = NoteRowToBeat(hn.m_iStartIndex-1) <= m_fSongBeat  &&  m_fSongBeat <= NoteRowToBeat(hn.m_iEndIndex);	// hack: added -1 because hn.m_iStartIndex changes as note is held
 
 			// parts of the hold
-			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS );
+			const float fStartDrawingAtBeat = froundf( (float)hn.m_iStartIndex, ROWS_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed );
 			for( float j=fStartDrawingAtBeat; 
 				 j<=hn.m_iEndIndex; 
 				 j+=ROWS_BETWEEN_HOLD_BITS/m_PlayerOptions.m_fArrowScrollSpeed )	// for each bit of the hold

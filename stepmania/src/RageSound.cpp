@@ -13,6 +13,7 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageException.h"
 
 
 #include "bass/bass.h"

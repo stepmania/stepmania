@@ -67,7 +67,7 @@ public:
 	{
 		for(int i=0; i<NUM_BLUR_GHOSTS; i++) 
 		{
-			m_sprites[i].BeginTweeningQueued( i*0.1f+0.01f, tt );	// delay
+			m_sprites[i].BeginTweeningQueued( i*0.1f+0.01f, tt );	// sleep
 			m_sprites[i].BeginTweeningQueued( time, tt );	// original tween
 		}
 	};

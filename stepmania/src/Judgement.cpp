@@ -60,7 +60,7 @@ void Judgement::SetJudgement( TapNoteScore score )
 	default:	ASSERT( false );
 	}
 
-	if ( GAMESTATE->GetCurGame() == GAME_EZ2 ) // Resize Judgement graphics for Ez2.
+	if ( GAMESTATE->m_CurGame == GAME_EZ2 ) // Resize Judgement graphics for Ez2.
 	{
 		m_sprJudgement.SetHeight( 22.0f * 2.1f );
 		m_sprJudgement.SetWidth( 143.0f * 2.1f );

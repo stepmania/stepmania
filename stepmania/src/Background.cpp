@@ -15,6 +15,8 @@
 #include "PrefsManager.h"
 #include "PrefsManager.h"
 #include "RageBitmapTexture.h"
+#include "RageException.h"
+#include "RageTimer.h"
 
 
 const CString BG_ANIMS_DIR = "BGAnimations\\";
@@ -91,12 +93,7 @@ bool Background::LoadFromSong( Song* pSong, bool bDisableVisualizations )
 	else
 		m_BackgroundMode = MODE_ANIMATIONS;
 
-
-	//
-	// load song background
-	// force reload, dither, and stretch (stretch is needed by background animations for scrolling effects)
-	//
-	m_sprSongBackground.Load( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), true, 2, 0, true, m_BackgroundMode==MODE_ANIMATIONS );
+	m_sprSongBackground.Load( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathTo(GRAPHIC_FALLBACK_BACKGROUND), true, 4, 0, true );
 	
 	m_sprSongBackground.StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 

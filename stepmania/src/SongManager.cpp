@@ -17,6 +17,8 @@
 
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "RageException.h"
+#include "RageTimer.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -393,9 +395,12 @@ void SongManager::InitCoursesFromDisk()
 	{
 		Course course;
 		course.LoadFromCRSFile( "Courses\\" + saCourseFiles[i], m_pSongs );
-		m_aCourses.Add( course );
+		if( course.m_iStages > 0 )
+			m_aCourses.Add( course );
 	}
 
+/*
+	Chris: Default courses were a bad idea.  Get rid of them.
 
 	//
 	// Create default courses
@@ -417,6 +422,7 @@ void SongManager::InitCoursesFromDisk()
 				m_aCourses.Add( course );
 		}
 	}
+	*/
 }
 
 void SongManager::ReloadCourses()

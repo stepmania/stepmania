@@ -82,7 +82,15 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 	if( po.m_bLittle )
 		this->MakeLittle();
 
-	m_NoteField.Load( (NoteData*)this, player_no, pStyleDef, po, 1.5f, 5.5f, NoteField::MODE_DANCING );
+	int iPixelsToDrawBefore = 64;
+	int iPixelsToDrawAfter = 320;
+	switch( po.m_EffectType )
+	{
+	case PlayerOptions::EFFECT_MINI:	iPixelsToDrawBefore *= 2;	iPixelsToDrawAfter *= 2;	break;
+	case PlayerOptions::EFFECT_SPACE:	iPixelsToDrawBefore *= 2;	iPixelsToDrawAfter *= 2;	break;
+	}
+
+	m_NoteField.Load( (NoteData*)this, player_no, pStyleDef, po, iPixelsToDrawBefore, iPixelsToDrawAfter, NoteField::MODE_DANCING );
 	
 	m_GrayArrowRow.Load( player_no, pStyleDef, po );
 	m_GhostArrowRow.Load( player_no, pStyleDef, po );
@@ -100,6 +108,13 @@ void Player::Load( PlayerNumber player_no, StyleDef* pStyleDef, NoteData* pNoteD
 	m_NoteField.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	m_GrayArrowRow.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
 	m_GhostArrowRow.SetY( po.m_bReverseScroll ? SCREEN_HEIGHT - ARROWS_Y : ARROWS_Y );
+
+	if( po.m_EffectType == PlayerOptions::EFFECT_MINI )
+	{
+		m_NoteField.SetZoom( 0.5f );
+		m_GrayArrowRow.SetZoom( 0.5f );
+		m_GhostArrowRow.SetZoom( 0.5f );
+	}
 }
 
 void Player::Update( float fDeltaTime, float fSongBeat, float fMaxBeatDifference )
@@ -205,10 +220,6 @@ void Player::DrawPrimitives()
 
 	if( m_PlayerOptions.m_EffectType == PlayerOptions::EFFECT_SPACE )
 	{
-		// turn off Z Buffering
-		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZENABLE,      FALSE );
-		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, FALSE );
-
 		// save old view and projection
 		DISPLAY->GetDevice()->GetTransform( D3DTS_VIEW, &matOldView );
 		DISPLAY->GetDevice()->GetTransform( D3DTS_PROJECTION, &matOldProj );
@@ -216,10 +227,21 @@ void Player::DrawPrimitives()
 
 		// construct view and project matrix
 		D3DXMATRIX matNewView;
-		D3DXMatrixLookAtLH( &matNewView, &D3DXVECTOR3( CENTER_X, GetY()+800.0f, 300.0f ), 
-										 &D3DXVECTOR3( CENTER_X
-										 , GetY()+400.0f,   0.0f ), 
-										 &D3DXVECTOR3(          0.0f,         -1.0f,   0.0f ) );
+		if( m_PlayerOptions.m_bReverseScroll )
+			D3DXMatrixLookAtLH( 
+				&matNewView, 
+				&D3DXVECTOR3( CENTER_X, GetY()-300.0f, 400.0f ),
+				&D3DXVECTOR3( CENTER_X, GetY()+100.0f, 0.0f ), 
+				&D3DXVECTOR3( 0.0f,     -1.0f,           0.0f ) 
+				);
+		else
+			D3DXMatrixLookAtLH( 
+				&matNewView, 
+				&D3DXVECTOR3( CENTER_X, GetY()+800.0f, 400.0f ),
+				&D3DXVECTOR3( CENTER_X, GetY()+400.0f, 0.0f ), 
+				&D3DXVECTOR3( 0.0f,     -1.0f,           0.0f ) 
+				);
+
 		DISPLAY->GetDevice()->SetTransform( D3DTS_VIEW, &matNewView );
 
 		D3DXMATRIX matNewProj;
@@ -238,10 +260,6 @@ void Player::DrawPrimitives()
 		// restire old view and projection
 		DISPLAY->GetDevice()->SetTransform( D3DTS_VIEW, &matOldView );
 		DISPLAY->GetDevice()->SetTransform( D3DTS_PROJECTION, &matOldProj );
-
-		// turn Z Buffering back on
-		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZENABLE,      TRUE );
-		DISPLAY->GetDevice()->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
 	}
 
 	m_frameJudgement.Draw();
@@ -367,6 +385,7 @@ void Player::OnRowDestroyed( float fSongBeat, int col, float fMaxBeatDiff, int i
 				m_pScore->AddToScore( score, m_Combo.GetCurrentCombo() );	// update score - called once per note in this row
 
 			// update dance points for Oni lifemeter
+			if( GAMESTATE->m_aGameplayStatistics.GetSize() > 0 )
 			GAMESTATE->GetLatestGameplayStatistics().iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( score );
 
 			// update combo - called once per note in this row

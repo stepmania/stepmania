@@ -12,6 +12,9 @@
 
 #include "LifeMeterBar.h"
 #include "PrefsManager.h"
+#include "RageException.h"
+#include "RageTimer.h"
+#include "GameState.h"
 
 const int NUM_LIFE_STREAM_SECTIONS = 3;
 const float LIFE_STREAM_SECTION_WIDTH = 1.0f/NUM_LIFE_STREAM_SECTIONS;
@@ -67,9 +70,9 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	bool bWasHot = IsHot();
 
 	float fDeltaLife;
-	switch( m_PlayerOptions.m_DrainType )
+	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
-	case PlayerOptions::DRAIN_NORMAL:
+	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
 		case TNS_PERFECT:	fDeltaLife = +0.008f;	break;
@@ -81,7 +84,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		if( IsHot()  &&  score < TNS_GOOD )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 		break;
-	case PlayerOptions::DRAIN_NO_RECOVER:
+	case SongOptions::DRAIN_NO_RECOVER:
 		switch( score )
 		{
 		case TNS_PERFECT:	fDeltaLife = +0.000f;	break;
@@ -91,7 +94,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_MISS:		fDeltaLife = -0.080f;	break;
 		}
 		break;
-	case PlayerOptions::DRAIN_SUDDEN_DEATH:
+	case SongOptions::DRAIN_SUDDEN_DEATH:
 		fDeltaLife = -1;
 		break;
 	}
@@ -181,6 +184,11 @@ void LifeMeterBar::DrawPrimitives()
 	float fPercentRed = IsInDanger() ? sinf( TIMER->GetTimeSinceStart()*D3DX_PI*4 )/2+0.5f : 0;
 	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(fPercentRed*0.8f,0,0,1) );
 
+	if( !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
+	{
+		m_sprStreamNormal.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		m_sprStreamHot.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	}
 	ActorFrame::DrawPrimitives();
 }
 

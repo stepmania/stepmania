@@ -6,6 +6,8 @@
 
 #include "HoldGhostArrow.h"
 #include "PrefsManager.h"
+#include "RageException.h"
+#include "RageTimer.h"
 
 
 const float  HOLD_GHOST_ARROW_TWEEN_TIME = 0.5f;

@@ -15,6 +15,8 @@
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "RageException.h"
+#include "RageTimer.h"
 
 
 float ArrowGetYOffset( const PlayerOptions& po, float fStepIndex, float fSongBeat )

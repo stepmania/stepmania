@@ -16,19 +16,20 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-#define VC_EXTRALEAN		// Exclude rarely-used stuff from Screens headers
+#define VC_EXTRALEAN		// Exclude rarely-used stuff
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxtempl.h>		// MFC templated collections
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>			// MFC support for Screens Common Controls
+#include <afxcmn.h>			// MFC support for Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
 
 //
 // Rage global classes
 //
+/*
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
@@ -37,7 +38,7 @@
 #include "RageInput.h"
 #include "RageTimer.h"
 #include "RageException.h"
-
+*/
 
 
 //{{AFX_INSERT_LOCATION}}

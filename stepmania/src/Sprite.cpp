@@ -16,7 +16,7 @@
 #include "IniFile.h"
 #include <math.h>
 #include "RageLog.h"
-
+#include "RageException.h"
 #include "PrefsManager.h"
 
 

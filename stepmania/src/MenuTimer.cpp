@@ -44,7 +44,16 @@ void MenuTimer::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	if( m_bTimerStopped )
+	{
+		m_textDigit1.SetText( ssprintf("%d", ((int)m_fSecondsLeft)/10) ); 
+		m_textDigit2.SetText( ssprintf("%d", ((int)m_fSecondsLeft)%10) ); 
+
+		m_textDigit1.SetZoomX( 1 ); 
+		m_textDigit2.SetZoomX( 1 ); 
+
 		return;
+	}
+
 
 	if( m_fStallSeconds > 0 )
 	{
@@ -105,4 +114,5 @@ void MenuTimer::StallTimer()
 void MenuTimer::SetTimer( int iSeconds )
 {
 	m_fSecondsLeft = (float)iSeconds;
+	CLAMP( m_fSecondsLeft, 0, 99 );
 }

@@ -1,11 +1,12 @@
 #pragma once
 /*
 -----------------------------------------------------------------------------
- File: ScreenSandbox.h
+ Class: ScreenSandbox
 
  Desc: Area for testing.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -16,6 +17,7 @@
 #include "TransitionStarWipe.h"
 #include "MenuElements.h"
 #include "TipDisplay.h"
+#include "RageSoundStream.h"
 
 
 class ScreenSandbox : public Screen

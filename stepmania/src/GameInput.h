@@ -9,72 +9,54 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-enum InstrumentNumber
+enum GameController
 {
-	INSTRUMENT_1 = 0,
-	INSTRUMENT_2,
-	MAX_INSTRUMENTS,	// leave this at the end
-	INSTRUMENT_NONE,
+	GAME_CONTROLLER_1 = 0,
+	GAME_CONTROLLER_2,
+	MAX_GAME_CONTROLLERS,	// leave this at the end
+	GAME_CONTROLLER_NONE,
 };
 
-enum InstrumentButton
+enum GameButton
 {
-	INSTRUMENT_BUTTON_1 = 0,
-	INSTRUMENT_BUTTON_2,
-	INSTRUMENT_BUTTON_3,
-	INSTRUMENT_BUTTON_4,
-	INSTRUMENT_BUTTON_5,
-	INSTRUMENT_BUTTON_6,
-	INSTRUMENT_BUTTON_7,
-	INSTRUMENT_BUTTON_8,
-	INSTRUMENT_BUTTON_9,
-	INSTRUMENT_BUTTON_10,
-	INSTRUMENT_BUTTON_11,
-	INSTRUMENT_BUTTON_12,
-	INSTRUMENT_BUTTON_13,
-	INSTRUMENT_BUTTON_14,
-	INSTRUMENT_BUTTON_15,
-	INSTRUMENT_BUTTON_16,
-	MAX_INSTRUMENT_BUTTONS,		// leave this at the end
-	INSTRUMENT_BUTTON_NONE
+	GAME_BUTTON_1 = 0,
+	GAME_BUTTON_2,
+	GAME_BUTTON_3,
+	GAME_BUTTON_4,
+	GAME_BUTTON_5,
+	GAME_BUTTON_6,
+	GAME_BUTTON_7,
+	GAME_BUTTON_8,
+	GAME_BUTTON_9,
+	GAME_BUTTON_10,
+	GAME_BUTTON_11,
+	GAME_BUTTON_12,
+	GAME_BUTTON_13,
+	GAME_BUTTON_14,
+	GAME_BUTTON_15,
+	GAME_BUTTON_16,
+	MAX_GAME_BUTTONS,		// leave this at the end
+	GAME_BUTTON_NONE
 };
 
 
 struct GameInput
 {
 	GameInput() { MakeBlank(); };
-	GameInput( InstrumentNumber n, InstrumentButton b ) { number = n; button = b; };
+	GameInput( GameController c, GameButton b ) { controller = c; button = b; };
 
 
-	InstrumentNumber number;	// instrument number
-	InstrumentButton button;	// instrument button
+	GameController	controller;	// 
+	GameButton		button;	// instrument button
 
-	bool operator==( const GameInput &other ) { return number == other.number && button == other.button; };
+	bool operator==( const GameInput &other ) { return controller == other.controller && button == other.button; };
 
-	inline bool IsBlank() const { return number == INSTRUMENT_NONE; };
+	inline bool IsBlank() const { return controller == GAME_CONTROLLER_NONE; };
 	inline bool IsValid() const { return !IsBlank(); };
-	inline void MakeBlank() { number = INSTRUMENT_NONE; button = INSTRUMENT_BUTTON_NONE; };
+	inline void MakeBlank() { controller = GAME_CONTROLLER_NONE; button = GAME_BUTTON_NONE; };
 
-
-	CString toString() 
-	{
-		return ssprintf("%d-%d", number, button );
-	}
-
-	bool fromString( CString s )
-	{ 
-		CStringArray a;
-		split( s, "-", a);
-
-		if( a.GetSize() != 2 ) {
-			MakeBlank();
-			return false;
-		}
-
-		number = (InstrumentNumber)atoi( a[0] );
-		button = (InstrumentButton)atoi( a[1] );
-		return true;
-	};
+	CString toString();
+	bool fromString( CString s );
 };
 
 

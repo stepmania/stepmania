@@ -337,6 +337,9 @@
 				RelativePath=".\Font.h">
 			</File>
 			<File
+				RelativePath="GameConstantsAndTypes.cpp">
+			</File>
+			<File
 				RelativePath="GameConstantsAndTypes.h">
 			</File>
 			<File
@@ -344,6 +347,9 @@
 			</File>
 			<File
 				RelativePath="GameDef.h">
+			</File>
+			<File
+				RelativePath="GameInput.cpp">
 			</File>
 			<File
 				RelativePath="GameInput.h">
@@ -391,6 +397,12 @@
 				RelativePath=".\Player.h">
 			</File>
 			<File
+				RelativePath="PlayerOptions.cpp">
+			</File>
+			<File
+				RelativePath="PlayerOptions.h">
+			</File>
+			<File
 				RelativePath=".\RandomSample.cpp">
 			</File>
 			<File
@@ -407,6 +419,12 @@
 			</File>
 			<File
 				RelativePath="Song.h">
+			</File>
+			<File
+				RelativePath="SongOptions.cpp">
+			</File>
+			<File
+				RelativePath="SongOptions.h">
 			</File>
 			<File
 				RelativePath=".\StyleDef.cpp">
@@ -457,6 +475,9 @@
 			</File>
 			<File
 				RelativePath=".\dxutil.cpp">
+			</File>
+			<File
+				RelativePath="dxutil.h">
 			</File>
 			<File
 				RelativePath=".\resource.h">

@@ -34,7 +34,7 @@ public:
 
 	void SetNewScreen( Screen *pNewScreen );
 	void AddScreenToTop( Screen *pNewScreen );
-	void PopTopScreen();
+	void PopTopScreen( ScreenMessage SM_SendToNewTopScreen );
 
 	void SystemMessage( CString sMessage );
 

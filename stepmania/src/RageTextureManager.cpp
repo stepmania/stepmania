@@ -19,6 +19,7 @@
 #include "RageMovieTexture.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageException.h"
 
 
 RageTextureManager*		TEXTUREMAN		= NULL;
