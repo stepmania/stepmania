@@ -229,9 +229,17 @@ Alsa9Buf::~Alsa9Buf()
 
 
 /* Don't fill the buffer any more than than "writeahead".  Don't write any
- * more than "chunksize" at a time. */
+ * more than "chunksize" at a time.  (These numbers are hints; if the hardware
+ * parameters require it, they can be ignored.) */
 int Alsa9Buf::GetNumFramesToFill( snd_pcm_sframes_t writeahead, snd_pcm_sframes_t chunksize )
 {
+	/* We have to write at least xfer_align bytes. */
+	chunksize = max( chunksize, xfer_align );
+
+	/* Make sure we can write ahead at least two chunks.  Otherwise, we'll only
+	 * fill one chunk ahead, and underrun. */
+	writeahead = max( writeahead, chunksize*2 );
+
     snd_pcm_sframes_t avail_frames = dsnd_pcm_avail_update(pcm);
 	
 	if( avail_frames > total_frames )
