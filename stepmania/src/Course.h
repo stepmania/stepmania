@@ -96,6 +96,7 @@ public:
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd ) const;
+	void GetTrails( vector<Trail*> &out, StepsType st ) const;
 	float GetMeter( StepsType st, CourseDifficulty cd ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
@@ -134,9 +135,8 @@ public:
 private:
 	void GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
-	typedef pair<StepsType,CourseDifficulty> TrailParams;
-	typedef map<TrailParams, Trail> TrailCache;
-	mutable TrailCache m_TrailCache;
+	mutable Trail m_TrailCache[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
+	mutable bool m_TrailCacheValid[NUM_STEPS_TYPES][NUM_COURSE_DIFFICULTIES];
 };
 
 #endif

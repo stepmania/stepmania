@@ -266,6 +266,7 @@ void Course::Init()
 	ZERO( m_iCustomMeter );
 	m_entries.clear();
 	m_sPath = m_sName = m_sNameTranslit = m_sBannerPath = m_sCDTitlePath = "";
+	ZERO( m_TrailCacheValid );
 }
 
 void Course::Save()
@@ -554,23 +555,21 @@ CString Course::GetDisplayName() const
 
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
- * results. */
+ * results.  Returned pointers remain valid for the lifetime of the Course. */
+/* XXX: if !HasCourseDifficulty(cd), return NULL instead of COURSE_DIFFICULTY_REGULAR */
 Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 {
 	//
 	// Look in the Trail cache
 	//
-	const TrailParams params( st, cd );
-	TrailCache::iterator it = m_TrailCache.find( params );
-	if( it != m_TrailCache.end() )
-	{
-		return &it->second;
-	}
+	if( m_TrailCacheValid[st][cd] )
+		return &m_TrailCache[st][cd];
 
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
-	Trail trail;
+	Trail &trail = m_TrailCache[st][cd];
+	trail = Trail();
 	GetTrailUnsorted( st, cd, trail );
 
 	if( this->m_bSortByMeter )
@@ -599,9 +598,8 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 			trail.m_vEntries[i] = entries[i].entry;
 	}
 
-	/* Cache results. */
-	m_TrailCache[params] = trail;
-	return &m_TrailCache[params];
+	m_TrailCacheValid[st][cd] = true;
+	return &m_TrailCache[st][cd];
 }
 
 void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
@@ -803,6 +801,20 @@ void Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	}
 }
 
+void Course::GetTrails( vector<Trail*> &out, StepsType st ) const
+{
+	FOREACH_CourseDifficulty( cd )
+	{
+		if( !HasCourseDifficulty(st, cd) )
+			continue;
+
+		Trail *pTrail = GetTrail( st, cd );
+		if( pTrail == NULL )
+			continue;
+		out.push_back( pTrail );
+	}
+}
+
 bool Course::HasMods() const
 {
 	for( unsigned i=0; i<m_entries.size(); i++ )
@@ -826,7 +838,7 @@ bool Course::AllSongsAreFixed() const
 
 void Course::ClearCache()
 {
-	m_TrailCache.clear();
+	ZERO( m_TrailCacheValid );
 }
 
 RageColor Course::GetColor() const
