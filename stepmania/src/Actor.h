@@ -69,10 +69,10 @@ public:
 	virtual void  SetZoomY( float zoom ){ m_scale.y = zoom; }
 
 	virtual float GetRotation()				{ return m_rotation.z; }
-	virtual void  SetRotation( float rot )	{ m_rotation.z = rot; }
 	virtual float GetRotationX()			{ return m_rotation.x; }
-	virtual void  SetRotationX( float rot )	{ m_rotation.x = rot; }
 	virtual float GetRotationY()			{ return m_rotation.y; }
+	virtual void  SetRotation( float rot )	{ m_rotation.z = rot; }
+	virtual void  SetRotationX( float rot )	{ m_rotation.x = rot; }
 	virtual void  SetRotationY( float rot )	{ m_rotation.y = rot; }
 
 	virtual void SetDiffuseColor( D3DXCOLOR colorDiffuse ) { for(int i=0; i<4; i++) m_colorDiffuse[i] = colorDiffuse; };
