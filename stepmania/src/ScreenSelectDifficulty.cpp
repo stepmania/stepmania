@@ -286,7 +286,8 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 
 	// Find the first Playable mode on the new page
 	int iSwitchToIndex = -1;
-	if( !bPageIncreasing ) {
+	if( !bPageIncreasing )
+	{
 		for( int i=m_ModeChoices[newPage].size()-1; i>=0; i-- )
 		{
 			if( m_ModeChoices[newPage][i].IsPlayable() )
@@ -305,7 +306,8 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 			}
 		}
 	}
-	ASSERT( iSwitchToIndex != -1 );
+	if( iSwitchToIndex == -1 )
+		RageException::Throw( "%s has no selectable choices on page %i", m_sName.c_str(), newPage);
 
 	// change both players
 	FOREACH_PlayerNumber( p )
