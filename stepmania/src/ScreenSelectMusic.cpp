@@ -1420,6 +1420,9 @@ void ScreenSelectMusic::AfterMusicChange()
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 
 		SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic course music");
+		m_fSampleStartSeconds = 0;
+		m_fSampleLengthSeconds = -1;
+
 //		m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
 //		float fTotalSeconds;
 //		if( pCourse->GetTotalSeconds(fTotalSeconds) )
