@@ -1124,10 +1124,10 @@ void RageDisplay_OGL::SetTextureWrapping( bool b )
 }
 
 void RageDisplay_OGL::SetMaterial( 
-	float emissive[4],
-	float ambient[4],
-	float diffuse[4],
-	float specular[4],
+	const RageColor &emissive,
+	const RageColor &ambient,
+	const RageColor &diffuse,
+	const RageColor &specular,
 	float shininess
 	)
 {
@@ -1150,10 +1150,10 @@ void RageDisplay_OGL::SetLightOff( int index )
 }
 void RageDisplay_OGL::SetLightDirectional( 
 	int index, 
-	RageColor ambient, 
-	RageColor diffuse, 
-	RageColor specular, 
-	RageVector3 dir )
+	const RageColor &ambient, 
+	const RageColor &diffuse, 
+	const RageColor &specular, 
+	const RageVector3 &dir )
 {
 	// Light coordinates are transformed by the modelview matrix, but
 	// we are being passed in world-space coords.

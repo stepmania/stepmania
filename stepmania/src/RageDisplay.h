@@ -178,10 +178,10 @@ public:
 	virtual void SetAlphaTest( bool b ) = 0;
 	
 	virtual void SetMaterial( 
-		float emissive[4],
-		float ambient[4],
-		float diffuse[4],
-		float specular[4],
+		const RageColor &emissive,
+		const RageColor &ambient,
+		const RageColor &diffuse,
+		const RageColor &specular,
 		float shininess
 		) = 0;
 
@@ -189,10 +189,10 @@ public:
 	virtual void SetLightOff( int index ) = 0;
 	virtual void SetLightDirectional( 
 		int index, 
-		RageColor ambient, 
-		RageColor diffuse, 
-		RageColor specular, 
-		RageVector3 dir ) = 0;
+		const RageColor &ambient, 
+		const RageColor &diffuse, 
+		const RageColor &specular, 
+		const RageVector3 &dir ) = 0;
 
 	virtual void SetSphereEnironmentMapping( bool b ) = 0;
 

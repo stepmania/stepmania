@@ -972,10 +972,10 @@ void RageDisplay_D3D::SetTextureWrapping( bool b )
 }
 
 void RageDisplay_D3D::SetMaterial( 
-	float emissive[4],
-	float ambient[4],
-	float diffuse[4],
-	float specular[4],
+	const RageColor &emissive,
+	const RageColor &ambient,
+	const RageColor &diffuse,
+	const RageColor &specular,
 	float shininess
 	)
 {
@@ -1004,10 +1004,10 @@ void RageDisplay_D3D::SetLightOff( int index )
 }
 void RageDisplay_D3D::SetLightDirectional( 
 	int index, 
-	RageColor ambient, 
-	RageColor diffuse, 
-	RageColor specular, 
-	RageVector3 dir )
+	const RageColor &ambient, 
+	const RageColor &diffuse, 
+	const RageColor &specular, 
+	const RageVector3 &dir )
 {
 	g_pd3dDevice->LightEnable( index, true );
 

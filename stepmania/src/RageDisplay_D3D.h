@@ -53,20 +53,20 @@ public:
 	void SetBackfaceCull( bool b );
 	void SetAlphaTest( bool b );
 	void SetMaterial( 
-		float emissive[4],
-		float ambient[4],
-		float diffuse[4],
-		float specular[4],
+		const RageColor &emissive,
+		const RageColor &ambient,
+		const RageColor &diffuse,
+		const RageColor &specular,
 		float shininess
 		);
 	void SetLighting( bool b );
 	void SetLightOff( int index );
 	void SetLightDirectional( 
 		int index, 
-		RageColor ambient, 
-		RageColor diffuse, 
-		RageColor specular, 
-		RageVector3 dir );
+		const RageColor &ambient, 
+		const RageColor &diffuse, 
+		const RageColor &specular, 
+		const RageVector3 &dir );
 
 	void SetSphereEnironmentMapping( bool b );
 
