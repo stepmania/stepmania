@@ -422,11 +422,17 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	if( m_sModifiers != "" )
 		GAMESTATE->ApplyModifiers( pn, m_sModifiers );
 	if( m_pSong )
+	{
 		GAMESTATE->m_pCurSong = m_pSong;
+		GAMESTATE->m_pPreferredSong = m_pSong;
+	}
 	if( m_pSteps )
 		GAMESTATE->m_pCurSteps[pn] = m_pSteps;
 	if( m_pCourse )
+	{
 		GAMESTATE->m_pCurCourse = m_pCourse;
+		GAMESTATE->m_pPreferredCourse = m_pCourse;
+	}
 	if( m_pCharacter )
 		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
 	if( m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )

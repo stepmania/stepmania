@@ -1291,14 +1291,17 @@ void ScreenSelectMusic::AfterMusicChange()
 	}
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
+	GAMESTATE->m_pCurSong = pSong;
 	if( pSong )
-		GAMESTATE->m_pCurSong = pSong;
+		GAMESTATE->m_pPreferredSong = pSong;
 
 	m_GrooveGraph.SetFromSong( pSong );
 
 	Course* pCourse = m_MusicWheel.GetSelectedCourse();
+	GAMESTATE->m_pCurCourse = pCourse;
 	if( pCourse )
-		GAMESTATE->m_pCurCourse = pCourse;
+		GAMESTATE->m_pPreferredCourse = pCourse;
+
 
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)

@@ -89,6 +89,7 @@ void Profile::InitGeneralData()
 	m_LastDifficulty = DIFFICULTY_INVALID;
 	m_LastCourseDifficulty = COURSE_DIFFICULTY_INVALID;
 	m_pLastSong = NULL;
+	m_pLastCourse = NULL;
 	m_iTotalPlays = 0;
 	m_iTotalPlaySeconds = 0;
 	m_iTotalGameplaySeconds = 0;
@@ -741,6 +742,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "LastDifficulty",				DifficultyToString(m_LastDifficulty) );
 	pGeneralDataNode->AppendChild( "LastCourseDifficulty",			CourseDifficultyToString(m_LastCourseDifficulty) );
 	if( m_pLastSong )	pGeneralDataNode->AppendChild( "LastSong",	m_pLastSong->GetSongDir() );
+	if( m_pLastCourse )	pGeneralDataNode->AppendChild( "LastCourse",m_pLastCourse->m_sPath );
 	pGeneralDataNode->AppendChild( "TotalPlays",					m_iTotalPlays );
 	pGeneralDataNode->AppendChild( "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	pGeneralDataNode->AppendChild( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );
@@ -881,6 +883,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "LastDifficulty",					s );	m_LastDifficulty = StringToDifficulty( s );
 	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = StringToCourseDifficulty( s );
 	pNode->GetChildValue( "LastSong",						s );	m_pLastSong = SONGMAN->GetSongFromDir(s);
+	pNode->GetChildValue( "LastCourse",						s );	m_pLastCourse = SONGMAN->GetCourseFromPath(s);
 	pNode->GetChildValue( "TotalPlays",						m_iTotalPlays );
 	pNode->GetChildValue( "TotalPlaySeconds",				m_iTotalPlaySeconds );
 	pNode->GetChildValue( "TotalGameplaySeconds",			m_iTotalGameplaySeconds );

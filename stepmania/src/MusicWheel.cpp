@@ -160,7 +160,7 @@ void MusicWheel::Load()
 			pSteps,
 			po,
 			so );
-		GAMESTATE->m_pCurSong = pSong;
+		GAMESTATE->m_pCurSong = GAMESTATE->m_pPreferredSong = pSong;
 		FOREACH_PlayerNumber( p )
 		{
 			if( GAMESTATE->IsHumanPlayer(p) )
@@ -268,8 +268,6 @@ bool MusicWheel::SelectSong( Song *p )
 {
 	if(p == NULL)
 		return false;
-
-	GAMESTATE->m_pCurSong = p;
 
 	unsigned i;
 	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];

@@ -102,6 +102,7 @@ public:
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
 	Song* m_pLastSong;
+	Course* m_pLastCourse;
 	int m_iTotalPlays;
 	int m_iTotalPlaySeconds;
 	int m_iTotalGameplaySeconds;
