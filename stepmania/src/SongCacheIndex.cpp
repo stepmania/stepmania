@@ -22,6 +22,22 @@ SongCacheIndex::~SongCacheIndex()
 
 }
 
+static void EmptyDir( CString dir )
+{
+	ASSERT(dir[dir.size()-1] == '/');
+
+	CStringArray asCacheFileNames;
+	GetDirListing( dir, asCacheFileNames );
+	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
+	{
+		if (0 == stricmp( asCacheFileNames[i], ".cvsignore" ))	// don't delete .cvsignore files
+			continue;
+
+		remove( dir + asCacheFileNames[i] );
+	}
+
+}
+
 void SongCacheIndex::ReadCacheIndex()
 {
 	CacheIndex.ReadFile();	// don't care if this fails
@@ -32,15 +48,9 @@ void SongCacheIndex::ReadCacheIndex()
 		return; /* OK */
 
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
-	CStringArray asCacheFileNames;
-	GetDirListing( "Cache/*", asCacheFileNames );
-	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
-	{
-		if (0 == stricmp( asCacheFileNames[i], ".cvsignore" ))	// don't delete .cvsignore files
-			continue;
+	EmptyDir( "Cache/" );
+	EmptyDir( "Cache/Banners/" );
 
-		remove( "Cache/" + asCacheFileNames[i] );
-	}
 	CacheIndex.Reset();
 }
 
