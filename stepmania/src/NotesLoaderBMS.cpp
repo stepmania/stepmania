@@ -658,10 +658,10 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					float fBPM = out.GetBPMAtBeat( NoteRowToBeat(iStepIndex) );
 					float fNewBPM = fBPM / (float) atof(value_data);
 
-					out.AddBPMSegment( BPMSegment( NoteRowToBeat(iStepIndex), fNewBPM ) );
+					out.SetBPMAtBeat( NoteRowToBeat(iStepIndex), fNewBPM );
 
 					/* Undo the BPM change at the end of the measure. */
-					out.AddBPMSegment( BPMSegment( NoteRowToBeat(iStepIndex)+4, fBPM ) );
+					out.SetBPMAtBeat( NoteRowToBeat(iStepIndex)+4, fBPM );
 					LOG->Trace( "Inserting new temp BPM change at beat %f, BPM %f", NoteRowToBeat(iStepIndex), fNewBPM );
 					break;
 				}
@@ -679,9 +679,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					    {
 							int iRow = iStepIndex+(1/(totalPairs*ROWS_PER_MEASURE));
 							float fBeat = NoteRowToBeat( iRow );
-							BPMSegment newSeg( fBeat, (float) iBPM );
-							out.AddBPMSegment( newSeg );
-							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+							out.SetBPMAtBeat( fBeat, (float) iBPM );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %i", fBeat, iBPM );
 					    }
 					}
 					break;
