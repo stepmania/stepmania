@@ -1101,6 +1101,12 @@ cl                                                                              
 					<File
 						RelativePath="arch\LoadingWindow\LoadingWindow.h">
 					</File>
+					<File
+						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
+					</File>
+					<File
+						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
+					</File>
 				</Filter>
 				<Filter
 					Name="Sound"
