@@ -55,7 +55,6 @@ public:
 
 	virtual void Play();
 	virtual void Pause();
-	virtual void Stop();
 	virtual void SetPosition( float fSeconds );
 	virtual void SetPlaybackRate( float fRate );
 	virtual bool IsPlaying() const { return m_bPlaying; }

@@ -399,27 +399,13 @@ void MovieTexture_DShow::Pause()
     m_pGB.QueryInterface(&pMC);
 
 	HRESULT hr;
+	/* Use Pause(), so we'll get a still frame in CTextureRenderer::OnReceiveFirstSample. */
 	if( FAILED( hr = pMC->Pause() ) )
         RageException::Throw( hr_ssprintf(hr, "Could not pause the DirectShow graph.") );
 
 	StopSkippingUpdates();
 }
 
-void MovieTexture_DShow::Stop()
-{
-	SkipUpdates();
-
-	CComPtr<IMediaControl> pMC;
-    m_pGB.QueryInterface(&pMC);
-
-	HRESULT hr;
-	if( FAILED( hr = pMC->Stop() ) )
-        RageException::Throw( hr_ssprintf(hr, "Could not stop the DirectShow graph.") );
-
-	m_bPlaying = false;
-
-	StopSkippingUpdates();
-}
 
 void MovieTexture_DShow::SetPosition( float fSeconds )
 {
