@@ -1013,7 +1013,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		m_DancingState != STATE_OUTRO  &&
 		!m_Fade.IsClosing() )
 	{
-		if( (DeviceI.device==DEVICE_KEYBOARD && type==IET_SLOW_REPEAT)  ||
+		if( !PREFSMAN->m_bDelayedEscape ||
+			(DeviceI.device==DEVICE_KEYBOARD && type==IET_SLOW_REPEAT)  ||
 			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
 		{
 			m_DancingState = STATE_OUTRO;
