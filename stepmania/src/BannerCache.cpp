@@ -387,8 +387,8 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 		/* If an old image is loaded, free it. */
 		if( m_BannerPathToImage.find(BannerPath) != m_BannerPathToImage.end() )
 		{
-			SDL_Surface *img = m_BannerPathToImage[BannerPath];
-			SDL_FreeSurface( img );
+			SDL_Surface *oldimg = m_BannerPathToImage[BannerPath];
+			SDL_FreeSurface( oldimg );
 			m_BannerPathToImage.erase(BannerPath);
 		}
 
