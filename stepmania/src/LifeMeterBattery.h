@@ -16,6 +16,7 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "RageSound.h"
+#include "PercentageDisplay.h"
 
 
 class LifeMeterBattery : public LifeMeter
@@ -48,7 +49,8 @@ private:
 	Sprite		m_sprFrame;
 	Sprite		m_sprBattery;
 	BitmapText	m_textNumLives;
-	BitmapText	m_textPercent;
+
+	PercentageDisplay	m_Percent;
 
 	RageSound	m_soundLoseLife;
 	RageSound	m_soundGainLife;
