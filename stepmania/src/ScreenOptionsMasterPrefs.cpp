@@ -30,6 +30,34 @@ static void SetDefaultModifiers( const PlayerOptions &po, const SongOptions &so 
 	PREFSMAN->m_sDefaultModifiers = join(", ",as);
 }
 
+template<class T>
+static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cnt )
+{
+	if( ToSel )
+	{
+		/* opt -> sel.  Find the closest entry in mapping. */
+		T best_dist = (T) 0;
+		bool have_best = false;
+
+		for( unsigned i = 0; i < cnt; ++i )
+		{
+			const T val = mapping[i];
+			T dist = opt > val? (T)(opt-val): (T)(val-opt);
+			if( have_best && dist > best_dist )
+				continue;
+
+			have_best = true;
+			best_dist = dist;
+
+			sel = i;
+		}
+	} else {
+		/* sel -> opt */
+		opt = mapping[sel];
+	}
+}
+
+
 /* "sel" is the selection in the menu. */
 template<class T>
 static void MoveData( int &sel, T &opt, bool ToSel )
@@ -199,18 +227,14 @@ MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
 
 static void BGBrightness( int &sel, bool ToSel, const CStringArray &choices )
 {
-	if( ToSel )
-		sel = clamp( (int)( PREFSMAN->m_fBGBrightness*10+0.5f ), 0, 10 );
-	else
-		PREFSMAN->m_fBGBrightness = sel / 10.0f;
+	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
+	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void NumBackgrounds( int &sel, bool ToSel, const CStringArray &choices )
 {
-	if( ToSel )
-		sel = clamp((PREFSMAN->m_iNumBackgrounds/5)-1, 0, 3);
-	else
-		PREFSMAN->m_iNumBackgrounds = (sel+1) * 5;
+	const int mapping[] = { 5,10,15,20 };
+	MoveMap( sel, PREFSMAN->m_iNumBackgrounds, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Input options */
@@ -249,33 +273,6 @@ MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 MOVE( MenuTimer,			PREFSMAN->m_bMenuTimer );
 MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
 MOVE( ScoringType,			PREFSMAN->m_iScoringType );
-template<class T>
-static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cnt )
-{
-	if( ToSel )
-	{
-		/* opt -> sel.  Find the closest entry in mapping. */
-		T best_dist = (T) 0;
-		bool have_best = false;
-
-		for( unsigned i = 0; i < cnt; ++i )
-		{
-			const T val = mapping[i];
-			T dist = opt > val? (T)(opt-val): (T)(val-opt);
-			if( have_best && dist > best_dist )
-				continue;
-
-			have_best = true;
-			best_dist = dist;
-
-			sel = i;
-		}
-	} else {
-		/* sel -> opt */
-		opt = mapping[sel];
-	}
-}
-
 
 static void JudgeDifficulty( int &sel, bool ToSel, const CStringArray &choices )
 {
