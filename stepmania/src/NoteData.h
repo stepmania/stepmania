@@ -103,7 +103,7 @@ public:
 	void RemoveHoldNote( int index );
 	HoldNote &GetHoldNote( int index ) { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
 	const HoldNote &GetHoldNote( int index ) const { ASSERT( index < (int) m_HoldNotes.size() ); return m_HoldNotes[index]; }
-	int GetMatchingHoldNote( const HoldNote &hn ) const;
+	bool IsHoldNoteAtBeat( int iTrack, int iRow ) const; /* must be in 2sAnd3s */
 
 	//
 	// statistics

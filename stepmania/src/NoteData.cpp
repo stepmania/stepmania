@@ -267,16 +267,38 @@ void NoteData::RemoveHoldNote( int iHoldIndex )
 	m_HoldNotes.erase(m_HoldNotes.begin()+iHoldIndex, m_HoldNotes.begin()+iHoldIndex+1);
 }
 
-/* Get a hold note with the same track and end row as hn. */
-int NoteData::GetMatchingHoldNote( const HoldNote &hn ) const
+/* Return true if a hold note lies on the given spot.  Must be in 2sAnd3s. */
+bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow ) const
 {
-	for( int i=0; i<GetNumHoldNotes(); i++ )	// for each HoldNote
+	/* Starting at iRow, search upwards.  If we find a TapNote::hold_head, we're within
+	 * a hold.  If we find a tap, mine or attack, we're not--those never lie within hold
+	 * notes.  Ignore autoKeysound. */
+	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE_REVERSE( *this, iTrack, r, iRow, 0 )
 	{
-		const HoldNote &ret = GetHoldNote(i);
-		if( ret.iTrack == hn.iTrack && ret.iEndRow == hn.iEndRow )
-			return i;
+		const TapNote &tn = GetTapNote( iTrack, r );
+		switch( tn.type )
+		{
+		case TapNote::hold_head:
+			return true;
+
+		case TapNote::tap:
+		case TapNote::mine:
+		case TapNote::attack:
+		case TapNote::hold_tail:
+			return false;
+		case TapNote::empty:
+		case TapNote::autoKeysound:
+			/* ignore */
+			continue;
+		case TapNote::hold:
+			/* Don't call this function when in 4s mode! */
+			FAIL_M("hold");
+		default:
+			FAIL_M( ssprintf("%i", tn.type) );
+		}
 	}
-	FAIL_M( ssprintf("%i..%i, %i", hn.iStartRow, hn.iEndRow, hn.iTrack) );
+
+	return false;
 }
 
 int NoteData::GetFirstRow() const
@@ -581,30 +603,31 @@ void NoteData::ConvertHoldNotesTo4s()
 }
 
 // -1 for iOriginalTracksToTakeFrom means no track
-void NoteData::LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
+void NoteData::LoadTransformed( const NoteData& in, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
 {
 	// reset all notes
 	Init();
 	
-	NoteData Original;
-	Original.To4s( original );
-
-	Config( Original );
 	SetNumTracks( iNewNumTracks );
 
 	// copy tracks
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		ASSERT_M( iOriginalTrack < Original.GetNumTracks(), ssprintf("from %i >= %i (to %i)", 
-			iOriginalTrack, Original.GetNumTracks(), iOriginalTrackToTakeFrom[t]));
+		ASSERT_M( iOriginalTrack < in.GetNumTracks(), ssprintf("from %i >= %i (to %i)", 
+			iOriginalTrack, in.GetNumTracks(), iOriginalTrackToTakeFrom[t]));
 
 		if( iOriginalTrack == -1 )
 			continue;
-		m_TapNotes[t] = Original.m_TapNotes[iOriginalTrack];
+		m_TapNotes[t] = in.m_TapNotes[iOriginalTrack];
 	}
 
-	Convert4sToHoldNotes();
+	// copy holds
+	for( int i=0; i<in.GetNumHoldNotes(); i++ )	// for each HoldNote
+	{
+		const HoldNote &hn = in.GetHoldNote(i);
+		this->AddHoldNote( hn );
+	}
 }
 
 void NoteData::MoveTapNoteTrack( int dest, int src )

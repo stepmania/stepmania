@@ -387,13 +387,11 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 	out.Init();
 
 	NoteData Original;
-	Original.To4s( in );
+	Original.To2sAnd3s( in );
 
-	out.Config(in);
 	out.SetNumTracks( iNewNumTracks );
 
-	int iLastRow = Original.GetLastRow();
-	for( int r=0; r <= iLastRow; ++r )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
 		if( Original.IsRowEmpty( r ) )
 			continue;
@@ -404,7 +402,7 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 		 * don't write huge streams of tap notes. */
 		bool bHoldNoteOnThisRow = false;
 		for( int t=0; t<Original.GetNumTracks(); t++ )
-			if( Original.GetTapNote(t,r).type == TapNote::hold )
+			if( Original.IsHoldNoteAtBeat(t,r) )
 				bHoldNoteOnThisRow = true;
 
 		for( int t=0; t<out.GetNumTracks(); t++ )
@@ -414,7 +412,7 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 		}
 	}
 
-	out.Convert4sToHoldNotes();
+	out.Convert2sAnd3sToHoldNotes();
 }
 
 void NoteDataUtil::GetRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
