@@ -76,10 +76,6 @@ void mySDL_BlitTransform( const SDL_Surface *src, SDL_Surface *dst,
 void mySDL_BlitSurface( 
 	SDL_Surface *src, SDL_Surface *dst, int width, int height, bool ckey);
 
-/* Use the "unused1" field in surfaces to mark paletted surfaces that only use
- * 16 palette values. */
-enum { FOUR_BIT_PALETTE = 0x1 };
-
 SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits );
 
 SDL_Surface *SDL_LoadImage( const CString &sPath );

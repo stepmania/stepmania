@@ -89,7 +89,6 @@ static bool g_bEXT_texture_env_combine = true;
 static bool g_bGL_EXT_bgra = true;
 
 static bool g_bReversePackedPixelsWorks = true;
-static bool g_b4BitPalettesWork = true;
 
 /* OpenGL system information that generally doesn't change at runtime. */
 
@@ -508,7 +507,7 @@ bool HasExtension(CString ext)
 	return g_glExts.find(ext) != g_glExts.end();
 }
 
-static void CheckPalettedTextures( bool LowColor )
+static void CheckPalettedTextures()
 {
 	CString error;
 	do
@@ -537,12 +536,6 @@ static void CheckPalettedTextures( bool LowColor )
 		GLenum glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
 
 		int bits = 8;
-
-		if( LowColor )
-		{
-			glTexFormat = GL_COLOR_INDEX4_EXT;
-			bits = 4;
-		}
 
 		FlushGLErrors();
 #define GL_CHECK_ERROR(f) \
@@ -573,7 +566,7 @@ static void CheckPalettedTextures( bool LowColor )
 
 		GLubyte palette[256*4];
 		memset(palette, 0, sizeof(palette));
-		GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 1 << bits, GL_RGBA, GL_UNSIGNED_BYTE, palette);
+		GLExt::glColorTableEXT(GL_PROXY_TEXTURE_2D, GL_RGBA8, 256, GL_RGBA, GL_UNSIGNED_BYTE, palette);
 		GL_CHECK_ERROR( "glColorTableEXT" );
 
 		GLint size = 0;
@@ -608,18 +601,11 @@ static void CheckPalettedTextures( bool LowColor )
 	if( error == "" )
 		return;
 
-	if( LowColor )
-	{
-		/* Disable 4-bit palettes, but allow 8-bit ones. */
-		g_b4BitPalettesWork = false;
-		LOG->Info("4-bit paletted textures disabled: %s.", error.c_str());
-	} else {
-		/* If 8-bit palettes don't work, disable them entirely--don't trust 4-bit
-		 * palettes if it can't even get 8-bit ones right. */
-		GLExt::glColorTableEXT = NULL;
-		GLExt::glGetColorTableParameterivEXT = NULL;
-		LOG->Info("Paletted textures disabled: %s.", error.c_str());
-	}
+	/* If 8-bit palettes don't work, disable them entirely--don't trust 4-bit
+	 * palettes if it can't even get 8-bit ones right. */
+	GLExt::glColorTableEXT = NULL;
+	GLExt::glGetColorTableParameterivEXT = NULL;
+	LOG->Info("Paletted textures disabled: %s.", error.c_str());
 }
 
 static void CheckReversePackedPixels()
@@ -668,9 +654,7 @@ void SetupExtensions()
 	GLExt::glDrawRangeElements = (PFNGLDRAWRANGEELEMENTSPROC) wind->GetProcAddress("glDrawRangeElements");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
-	CheckPalettedTextures( false );
-	if( g_b4BitPalettesWork ) // don't bother if the last one failed
-		CheckPalettedTextures( true );
+	CheckPalettedTextures();
 	CheckReversePackedPixels();
 }
 
@@ -829,11 +813,6 @@ void RageDisplay_OGL::EndFrame()
 {
 	wind->SwapBuffers();
 	ProcessStatsOnFlip();
-}
-
-bool RageDisplay_OGL::Supports4BitPalettes()
-{
-	return g_b4BitPalettesWork;
 }
 
 SDL_Surface* RageDisplay_OGL::CreateScreenshot()
@@ -1667,16 +1646,6 @@ unsigned RageDisplay_OGL::CreateTexture(
 	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
 	GLenum glImageType = GL_PIXFMT_INFO[imgpixfmt].type;
 
-	/* If we support 4-bit palettes, and this image fits in 4 bits, then change
-	 * internalformat to GL_COLOR_INDEX4_EXT.  We'll still upload it as 256 colors,
-	 * but OpenGL can discard the extra bits. */
-	if( (img->unused1 & FOUR_BIT_PALETTE) && Supports4BitPalettes() )
-	{
-		LOG->Trace("did 4 bit");
-		glTexFormat = GL_COLOR_INDEX4_EXT;
-	}
-
-	
 	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
 	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
 	// http://pyopengl.sourceforge.net/documentation/manual/gluBuild2DMipmaps.3G.html

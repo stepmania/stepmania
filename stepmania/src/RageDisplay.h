@@ -170,12 +170,6 @@ public:
 
 	virtual bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) = 0;
 
-	/* This really indicates whether 4-bit palettes will actually use less memory
-	 * than 8-bit ones.  Note that 4-bit palettes are uploaded as 8-bit paletted
-	 * surfaces with color index values in the range 0..15; not as 4-bit "packed
-	 * indexes". */
-	virtual bool Supports4BitPalettes() { return false; }
-
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */
 	virtual unsigned CreateTexture( 

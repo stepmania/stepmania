@@ -1062,9 +1062,6 @@ SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits
 	const int Amask = ((1 << AlphaBits) - 1) << Ashift;	// alpha mask
 	const int Aloss = 8-AlphaBits;
 
-	if( TotalColors <= 16 )
-		dst_surf->unused1 |= FOUR_BIT_PALETTE;
-
 	for( int index = 0; index < TotalColors; ++index )
 	{
 		const int I = (index & Imask) >> Ishift;

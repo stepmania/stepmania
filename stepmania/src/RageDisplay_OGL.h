@@ -21,7 +21,6 @@ public:
 	VideoModeParams GetVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
-	bool Supports4BitPalettes();
 	unsigned CreateTexture( 
 		PixelFormat pixfmt, 
 		SDL_Surface* img,
