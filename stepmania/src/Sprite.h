@@ -39,7 +39,7 @@ public:
 
 	virtual bool Load( RageTextureID ID )
 	{
-		ASSERT( ID.filename != "" );
+		if( ID.filename == "" ) return true;
 		if( ID.filename.Right(7) == ".sprite" )
 			return LoadFromSpriteFile( ID );
 		else 
