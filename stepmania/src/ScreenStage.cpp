@@ -545,13 +545,13 @@ ScreenStage::ScreenStage()
 		// END stage name         //
 		//////////////////////////////
 
-			// Add in the number graphics that were neglected earlier
-			CString sStageNo = ssprintf("%d", iStageNo);
-			const int iNumChars = sStageNo.GetLength()+1;
-			for( i=0; i<iNumChars; i++ )
-				m_frameStage.AddChild( &m_sprNumbers[i] );
-			m_frameStage.AddChild( &m_sprStage );
-			m_sprStage.SetZoom( 0 ); // hide this element for Ez2 :)
+		// Add in the number graphics that were neglected earlier
+		CString sStageNo = ssprintf("%d", iStageNo);
+		const int iNumChars = sStageNo.GetLength()+1;
+		for( i=0; i<iNumChars; i++ )
+			m_frameStage.AddChild( &m_sprNumbers[i] );
+		m_frameStage.AddChild( &m_sprStage );
+		m_sprStage.SetZoom( 0 ); // hide this element for Ez2 :)
 	}
 
 	this->SendScreenMessage( SM_DoneFadingIn, 1.0f );
