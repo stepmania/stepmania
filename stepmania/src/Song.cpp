@@ -647,6 +647,8 @@ void Song::TranslateTitles()
 		/* 青い振動 */
 		ttab.push_back(TitleTrans("^Aoi Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
 		ttab.push_back(TitleTrans("^Blue Impulse$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
+		/* Handle a typo: */
+		ttab.push_back(TitleTrans("^Aio Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
 
 		/* 大見解 */
 		ttab.push_back(TitleTrans("^Daikenkai$", "", "", "&ookii;&kenkai1;&kenkai2;", "", "") );
