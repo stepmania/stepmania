@@ -1070,20 +1070,21 @@ bool MusicWheel::Select()	// return true of a playable item was chosen
 	if( m_WheelState == STATE_ROULETTE_SLOWING_DOWN )
 		return false;
 
+	m_Moving = 0;
+
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
 		m_WheelState = STATE_ROULETTE_SLOWING_DOWN;
-		m_Moving = 0;
 		m_iSwitchesLeftInSpinDown = ROULETTE_SLOW_DOWN_SWITCHES/2+1 + rand()%(ROULETTE_SLOW_DOWN_SWITCHES/2);
 		m_fTimeLeftInState = 0.1f;
 		return false;
 	}
 
+
 	if( m_WheelState == STATE_RANDOM_SPINNING )
 	{
 		m_fPositionOffsetFromSelection = max(m_fPositionOffsetFromSelection, 0.3f);
 		m_WheelState = STATE_LOCKED;
-		m_Moving = 0;
 		m_soundStart.Play();
 		m_fLockedWheelVelocity = 0;
 		SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
