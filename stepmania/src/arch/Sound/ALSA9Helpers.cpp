@@ -189,6 +189,8 @@ void Alsa9Buf::ErrorHandler(const char *file, int line, const char *function, in
 /* NOP */
 }
 
+static CString DeviceName = "hw:0";
+
 Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 {
 	GetSoundCardDebugInfo();
@@ -204,7 +206,7 @@ Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
 	/* Open the device. */
 	int err;
 //	err = dsnd_pcm_open( &pcm, "dmix", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
-	err = dsnd_pcm_open( &pcm, "hw:0", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
+	err = dsnd_pcm_open( &pcm, DeviceName, SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if (err < 0)
 		RageException::ThrowNonfatal("dsnd_pcm_open: %s", dsnd_strerror(err));
 
@@ -375,3 +377,25 @@ void Alsa9Buf::SetSampleRate(int hz)
 	SetSWParams();
 }
 
+CString Alsa9Buf::GetHardwareID( CString name )
+{
+	if( name.empty() )
+		name = DeviceName;
+	
+	snd_ctl_t *handle;
+	int err;
+	err = dsnd_ctl_open( &handle, name, 0 );
+	if ( err < 0 )
+	{
+		LOG->Info( "Couldn't open card \"%s\" to get ID: %s", name.c_str(), dsnd_strerror(err) );
+		return "???";
+	}
+
+	snd_ctl_card_info_t *info;
+	dsnd_ctl_card_info_alloca(&info);
+	err = dsnd_ctl_card_info( handle, info );
+	CString ret = dsnd_ctl_card_info_get_id( info );
+	dsnd_ctl_close(handle);
+
+	return ret;
+}
