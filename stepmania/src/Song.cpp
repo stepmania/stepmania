@@ -381,7 +381,9 @@ bool Song::LoadFromSongDir( CString sDir )
 	// save group name
 	CStringArray sDirectoryParts;
 	split( m_sSongDir, SLASH, sDirectoryParts, false );
+	ASSERT( sDirectoryParts.size() >= 4 ); /* Songs/Slow/Taps/ */
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
+	ASSERT( m_sGroupName != "" );
 
 	//
 	// First look in the cache for this song (without loading NoteData)
