@@ -129,7 +129,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 	case TYPE_SORT:
 		{
 			CString sDisplayName;
-			BitmapText *bt;
+			BitmapText *bt = NULL;
 			switch( pWID->m_Type )
 			{
 				case TYPE_SECTION:
@@ -144,6 +144,8 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 					sDisplayName = SongSortOrderToString(data->m_SongSortOrder);
 					bt = &m_textSort;
 					break;
+				default:
+					ASSERT(0);
 			}
 
 			bt->SetZoom( 1 );

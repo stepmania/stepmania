@@ -255,15 +255,17 @@ public:
 	Grade GetGradeForDifficulty( const StyleDef *s, PlayerNumber pn, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;
+	int	GetNumNotesWithGrade( Grade g ) const;
 
 	void AddNotes( Notes* pNotes );		// we are responsible for deleting the memory pointed to by pNotes!
 	void RemoveNotes( Notes* pNotes );
 };
 
-
+CString MakeSortString( CString s );
 void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers );
+void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByArtist( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &arraySongPointers );
 void SortSongPointerArrayByGroupAndTitle( vector<Song*> &arraySongPointers );

@@ -316,24 +316,25 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 	}
 }
 
-struct CompareSongPointerArrayBySectionName
-{
-	SongSortOrder so;
-	CompareSongPointerArrayBySectionName( SongSortOrder so_ ): so(so_) { }
-	bool operator() (const Song *p1, const Song *p2) const
-	{
-		CString sec1 = MusicWheel::GetSectionNameFromSongAndSort( p1, so );
-		CString sec2 = MusicWheel::GetSectionNameFromSongAndSort( p2, so );
-		/* In the TITLE sort, make sure NUM comes first and OTHER comes last. */
-
-		if(so == SORT_TITLE && sec1 == "NUM" && sec2 != "NUM") return true;
-		if(so == SORT_TITLE && sec1 != "NUM" && sec2 == "NUM") return false;
-		if(so == SORT_TITLE && sec1 != "OTHER" && sec2 == "OTHER") return true;
-		if(so == SORT_TITLE && sec1 == "OTHER" && sec2 != "OTHER") return false;
-
-		return sec1 < sec2;
-	}
-};
+//
+//struct CompareSongPointerArrayBySectionName
+//{
+//	SongSortOrder so;
+//	CompareSongPointerArrayBySectionName( SongSortOrder so_ ): so(so_) { }
+//	bool operator() (const Song *p1, const Song *p2) const
+//	{
+//		CString sec1 = MusicWheel::GetSectionNameFromSongAndSort( p1, so );
+//		CString sec2 = MusicWheel::GetSectionNameFromSongAndSort( p2, so );
+//	
+//		/* In the TITLE sort, make sure NUM comes first and OTHER comes last. */
+//		if(so == SORT_TITLE && sec1 == "NUM" && sec2 != "NUM") return true;
+//		if(so == SORT_TITLE && sec1 != "NUM" && sec2 == "NUM") return false;
+//		if(so == SORT_TITLE && sec1 != "OTHER" && sec2 == "OTHER") return true;
+//		if(so == SORT_TITLE && sec1 == "OTHER" && sec2 != "OTHER") return false;
+//
+//		return sec1 < sec2;
+//	}
+//};
 
 void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas, SongSortOrder so )
 {
@@ -384,6 +385,12 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				if( arraySongs.size() > 30 )
 					arraySongs.erase(arraySongs.begin()+30, arraySongs.end());
 				break;
+			case SORT_GRADE:
+				SortSongPointerArrayByGrade( arraySongs );
+				break;
+			case SORT_ARTIST:
+				SortSongPointerArrayByArtist( arraySongs );
+				break;
 			default:
 				ASSERT(0);	// unhandled SortOrder
 			}
@@ -398,10 +405,12 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			switch( so )
 			{
 			case SORT_PREFERRED:	bUseSections = false;	break;
-			case SORT_MOST_PLAYED:	bUseSections = false;	break;
-			case SORT_BPM:			bUseSections = true;	break;
 			case SORT_GROUP:		bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;	break;
 			case SORT_TITLE:		bUseSections = true;	break;
+			case SORT_BPM:			bUseSections = true;	break;
+			case SORT_MOST_PLAYED:	bUseSections = false;	break;
+			case SORT_GRADE:		bUseSections = true;	break;
+			case SORT_ARTIST:		bUseSections = true;	break;
 			case SORT_ROULETTE:		bUseSections = false;	break;
 			default:		ASSERT( 0 );
 			}
@@ -411,10 +420,12 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			if( bUseSections )
 			{
-				/* We're using sections, so use the section name as the top-level
-				 * sort. */
-				stable_sort(arraySongs.begin(), arraySongs.end(),
-							CompareSongPointerArrayBySectionName(so));
+				// Sorting twice isn't necessary.  Instead, modify the compatator functions 
+				// in Song.cpp to have the desired effect. -Chris
+//				/* We're using sections, so use the section name as the top-level
+//				 * sort. */
+//				stable_sort(arraySongs.begin(), arraySongs.end(),
+//							CompareSongPointerArrayBySectionName(so));
 
 				// make WheelItemDatas with sections
 				CString sLastSection = "";
@@ -749,6 +760,8 @@ void MusicWheel::Update( float fDeltaTime )
 				case SORT_GROUP:
 				case SORT_TITLE:
 				case SORT_BPM:
+				case SORT_GRADE:
+				case SORT_ARTIST:
 				case SORT_MOST_PLAYED:
 				case SORT_ROULETTE:
 					// Look for the last selected song or course
@@ -1228,36 +1241,33 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 	if( pSong == NULL )
 		return "";
 
-	CString sTemp;
-
 	switch( so )
 	{
+	case SORT_PREFERRED:
+		return "";
 	case SORT_GROUP:	
-		sTemp = pSong->m_sGroupName;
-		return sTemp;
-//	case SORT_ARTIST:	
-//		sTemp = pSong->m_sArtist;
-//		sTemp.MakeUpper();
-//		sTemp =  (sTemp.GetLength() > 0) ? sTemp.Left(1) : "";
-//		if( IsAnInt(sTemp) )
-//			sTemp = "NUM";
-//		return sTemp;
+		return pSong->m_sGroupName;
 	case SORT_TITLE:
-		sTemp = pSong->GetTranslitMainTitle();
-		sTemp.MakeUpper();
-		if(sTemp.empty()) return "";
-
-		/* If it starts with a number, or a decimal point followed by a number,
-		 * sort it in NUM. */
-		if( sTemp[0] >= '0' && sTemp[0] <= '9' )
-			return "NUM";
-		else if( sTemp.size() > 1 && sTemp[0] == '.' && sTemp[1] >= '0' && sTemp[1] <= '9' )
-			return "NUM";
-		else if(toupper(sTemp[0]) < 'A' || toupper(sTemp[0]) > 'Z')
-			return "OTHER";
-
-		sTemp = sTemp[0];
-		return sTemp;
+	case SORT_ARTIST:	
+		{
+			CString s;
+			switch( so )
+			{
+			case SORT_TITLE:	s = pSong->GetTranslitMainTitle();	break;
+			case SORT_ARTIST:	s = pSong->m_sArtist;				break;
+			default:	ASSERT(0);
+			}
+			s = MakeSortString(s);	// resulting string will be uppercase
+			
+			if( s.empty() )
+				return "";
+			else if( s[0] >= '0' && s[0] <= '9' )
+				return "NUM";
+			else if( s[0] < 'A' || s[0] > 'Z')
+				return "OTHER";
+			else
+				return s.Left(1);
+		}
 	case SORT_BPM:
 		{
 			const int iBPMGroupSize = 20;
@@ -1268,7 +1278,22 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}
 	case SORT_MOST_PLAYED:
+		return "";
+	case SORT_GRADE:
+		{
+			for( int i=NUM_GRADES; i>GRADE_NO_DATA; i-- )
+			{
+				Grade g = (Grade)i;
+				int iCount = pSong->GetNumNotesWithGrade( g );
+				if( iCount > 0 )
+					return ssprintf( "%4s x %d", GradeToString(g).c_str(), iCount );
+			}
+			return "NO DATA";
+		}
+	case SORT_SORT:
+		return "";
 	default:
+		ASSERT(0);
 		return "";
 	}
 }

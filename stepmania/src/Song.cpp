@@ -1082,14 +1082,38 @@ bool Song::HasEdits( NotesType nt ) const
 // Sorting
 /////////////////////////////////////
 
+CString MakeSortString( CString s )
+{
+	s.MakeUpper();
+
+	// Make sure that non-alphanumeric characters are placed at the very end
+	if( s.size()>0 )
+	{
+		if( s[0] == '.' )	// ".59"
+			s.erase(s.begin());
+		if( s[0] < 'A' || s[0] > 'Z' )
+			if( s[0] < '0' && s[0] > '9' )
+				s = char(126) + s;	// prepend with a high ASCII character
+	}
+
+	return s;
+}
+
 bool CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 {
 	// Prefer transliterations to full titles
-	int ret = pSong1->GetTranslitMainTitle().CompareNoCase(pSong2->GetTranslitMainTitle());
-	if(ret < 0) return true;
-	if(ret > 0) return false;
+	CString s1 = pSong1->GetTranslitMainTitle();
+	CString s2 = pSong2->GetTranslitMainTitle();
+	if( s1 == s2 )
+	{
+		s1 = pSong1->GetTranslitSubTitle();
+		s2 = pSong2->GetTranslitSubTitle();
+	}
 
-	ret = pSong1->GetTranslitSubTitle().CompareNoCase(pSong2->GetTranslitSubTitle());
+	s1 = MakeSortString(s1);
+	s2 = MakeSortString(s2);
+
+	int ret = s1.CompareNoCase( s2 );
 	if(ret < 0) return true;
 	if(ret > 0) return false;
 
@@ -1184,14 +1208,40 @@ void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers )
 }
 
 
+bool CompareSongPointersByGrade(const Song *pSong1, const Song *pSong2)
+{
+	for( int i=NUM_GRADES; i>GRADE_NO_DATA; i-- )
+	{
+		Grade g = (Grade)i;
+		int iCount1 = pSong1->GetNumNotesWithGrade( g );
+		int iCount2 = pSong2->GetNumNotesWithGrade( g );
+
+		if( iCount1 > iCount2 )
+			return true;
+		if( iCount1 < iCount2 )
+			return false;
+	}
+	
+	return CompareSongPointersByTitle( pSong1, pSong2 );
+}
+
+void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
+{
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersByGrade );
+}
+
+
 int CompareSongPointersByArtist(const Song *pSong1, const Song *pSong2)
 {
-	CString sArtist1 = pSong1->m_sArtist;
-	CString sArtist2 = pSong2->m_sArtist;
+	CString s1 = pSong1->m_sArtist;
+	CString s2 = pSong2->m_sArtist;
 
-	if( sArtist1 < sArtist2 )
+	s1 = MakeSortString(s1);
+	s2 = MakeSortString(s2);
+
+	if( s1 < s2 )
 		return true;
-	if( sArtist1 > sArtist2 )
+	if( s1 > s2 )
 		return false;
 	return CompareSongPointersByTitle( pSong1, pSong2 );
 }
@@ -1440,4 +1490,15 @@ void Song::RemoveNotes( Notes* pNotes )
 	}
 
 	AddAutoGenNotes();
+}
+
+int	Song::GetNumNotesWithGrade( Grade g ) const
+{
+	int iCount = 0;
+	vector<Notes*> vNotes;
+	this->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+	for( unsigned j=0; j<vNotes.size(); j++ )
+		if( vNotes[j]->m_MemCardScores[MEMORY_CARD_MACHINE].grade == g )
+			iCount++;
+	return iCount;
 }

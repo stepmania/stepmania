@@ -110,14 +110,17 @@ CString CoinModeToString( CoinMode cm )
 
 CString SongSortOrderToString( SongSortOrder so )
 {
-	CString s[NUM_SORT_ORDERS] = {
-		"PREFERRED",
-		"GROUP", 
-		"TITLE", 
-		"BPM", 
-		"MOST PLAYED", 
-		"SORT"
-		"ROULETTE"
-	};
-	return s[so];
+	switch( so )
+	{
+	case SORT_PREFERRED:	return "PREFERRED";
+	case SORT_GROUP:		return "GROUP";
+	case SORT_TITLE:		return "TITLE";
+	case SORT_BPM:			return "BPM";
+	case SORT_MOST_PLAYED:	return "PLAYERS BEST";
+	case SORT_GRADE:		return "TOP GRADE";
+	case SORT_ARTIST:		return "ARTIST";
+	default:
+		ASSERT(0);
+		return "";
+	}
 }

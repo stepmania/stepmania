@@ -27,17 +27,5 @@ MusicSortDisplay::MusicSortDisplay()
 
 void MusicSortDisplay::Set( SongSortOrder so ) 
 { 
-	switch( so )
-	{
-	case SORT_PREFERRED:
-	case SORT_GROUP:
-	case SORT_TITLE:
-	case SORT_BPM:
-	case SORT_MOST_PLAYED:
-	case SORT_SORT:
-		SetState( so );
-		break;
-	default:
-		ASSERT(0);		// unimplemented MusicSortOrder
-	}
+	SetState( so );
 }
