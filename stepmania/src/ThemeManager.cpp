@@ -413,21 +413,29 @@ void ThemeManager::ReloadMetricsIfNecessary()
 
 CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )
 {
-#if defined(DEBUG) && defined(WIN32)
 try_metric_again:
-#endif
+
 	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
 	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
-
 
 	CString sValue;
 	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
 		return sValue;
 
-#if defined(DEBUG) && defined(WIN32)
-	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str()),"ThemeManager",MB_RETRYCANCEL ) )
-		goto try_metric_again;
-#endif
+	if( DISPLAY->IsWindowed() )
+	{
+		CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
+		switch( HOOKS->MessageBoxRetryCancel(sMessage) )
+		{
+		case ArchHooks::retry:
+			ReloadMetricsIfNecessary();
+			goto try_metric_again;
+		case ArchHooks::cancel:
+			break;	// fall through
+		default:
+			ASSERT(0);
+		}
+	}
 
 	RageException::Throw( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
 		sClassName.c_str(),
