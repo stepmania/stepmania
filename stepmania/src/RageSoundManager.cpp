@@ -323,6 +323,7 @@ void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, boo
 	set<RageSound *>::iterator it;
 	for( it = sounds.begin(); it != sounds.end(); ++it )
 	{
+		CHECKPOINT_M( ssprintf("%p %p", *it, parent) );
 		if( (*it)->GetOriginal() != parent )
 			continue;
 		if( bLockSounds )
