@@ -14,6 +14,7 @@ using namespace std;
 #include <sys/wait.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <stack>
 #include <map>
 #include "StdString.h"
@@ -52,13 +53,14 @@ const CString GetPath(const CString& ID)
         char cwd[MAXPATHLEN];
         char path[MAXPATHLEN];
         char *ptr;
+        size_t temp;
 
         getwd(cwd);
         printf("Enter a path (relative or absolute) to the install files\n"
                "The current working directory is: %s\n"
                "> ", cwd);
-        ptr = fgets(path, path, stdin);
-        if ((size_t temp = strlen(path)))
+        ptr = fgets(path, MAXPATHLEN, stdin);
+        if ((temp = strlen(path)))
         {
             if (path[temp - 1] == '\n')
                 path[temp - 1] = '\000';
