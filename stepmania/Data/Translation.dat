@@ -208,6 +208,16 @@ SubtitleTransTo: Seiken Densetsu 2 OST
 ArtistTo: 菊田裕樹
 ArtistTransTo: Hiroki Kikuta
 *
+ArtistFrom: Ayumi and Vincent de Moor
+ArtistTo: あゆみ and Vincent de Moor
+*
+ArtistFrom: Toshio Sakurai
+ArtistTo: 桜井敏郎
+*
+ArtistFrom: Yasunori Mitsuda
+ArtistTo: 光田康典
+*
+
 # Subtitles:
 # (Title is Graduation.)
 SubtitleFrom: .*Each Tomorrow.*
@@ -400,7 +410,7 @@ ArtistTo: 石田燿子
 ArtistFrom: (You?ko Kanno)|(Kanno You?ko)
 ArtistTo: 菅野よう子
 *
-ArtistFrom: You?ko Kanno and the Seatbelts
+ArtistFrom: You?ko Kanno (and|&) the Seatbelts
 ArtistTo: 菅野よう子 and the Seatbelts
 *
 ArtistFrom: (Megumi Ogata)|(Ogata Megumi)
