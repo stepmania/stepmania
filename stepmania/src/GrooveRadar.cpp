@@ -173,7 +173,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			v[1+i].c = v[0].c;
 		}
 
-		DISPLAY->DrawFan( v, 7 );
+		DISPLAY->DrawFan( v, NUM_RADAR_CATEGORIES+2 );
 
 		//
 		// use a line loop to draw the thick line
