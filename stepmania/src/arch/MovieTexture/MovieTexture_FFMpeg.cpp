@@ -121,6 +121,8 @@ static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	RageMovieTexture( ID )
 {
+	LOG->Trace( "MovieTexture_FFMpeg::MovieTexture_FFMpeg(%s)", ID.filename.c_str() );
+
 	FixLilEndian();
 
 	m_uTexHandle = 0;
@@ -373,6 +375,8 @@ void MovieTexture_FFMpeg::DecoderThread()
 				if( !m_bLoop )
 					return;
 
+				LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
+
 				/* Restart. */
 				DestroyDecoder();
 				CreateDecoder();
@@ -492,6 +496,9 @@ void MovieTexture_FFMpeg::DecoderThread()
 				 * we simply don't have enough CPU for the video; it's better to just
 				 * stay in frame skip mode than to enter and exit it constantly, but we
 				 * don't want to do that due to a single timing glitch.
+				 *
+				 * XXX: is there a setting for hurry_up we can use when we're going to ignore
+				 * a frame to make it take less time?
 				 */
 				const float FrameSkipThreshold = 0.5f;
 
@@ -515,6 +522,8 @@ void MovieTexture_FFMpeg::DecoderThread()
 						(avcodec::AVPicture *) &frame, m_stream->codec.pix_fmt, 
 						m_stream->codec.width, m_stream->codec.height);
 
+				ASSERT( SDL_SemValue( m_BufferFinished ) == 0 );
+
 				/* Signal the main thread to update the image on the next Update. */
 				m_ImageWaiting=true;
 
@@ -524,6 +533,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 				CHECKPOINT;
 				SDL_SemWait( m_BufferFinished );
 				CHECKPOINT;
+
 				/* If the frame wasn't used, then we must be shutting down. */
 				ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT );
 			}

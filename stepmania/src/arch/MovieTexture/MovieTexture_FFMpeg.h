@@ -48,7 +48,6 @@ private:
 	float m_Position;
 	float m_Rate;
 	bool m_ImageWaiting;
-	bool m_shutdown;
 	bool m_bLoop;
 
 	/*
