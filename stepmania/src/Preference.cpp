@@ -4,6 +4,7 @@
 #include "IniFile.h"
 #include "RageLog.h"
 #include "LuaFunctions.h"
+#include "LuaManager.h"
 
 static const CString PrefsGroupNames[NUM_PREFS_GROUPS] = {
 	"Debug",
