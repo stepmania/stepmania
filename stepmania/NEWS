@@ -11,33 +11,34 @@ NEW FEATURE:  New Edit menus with ability to delete Notes patterns and new
 	options	for importing existing patterns into a new Notes pattern.
 NEW FEATURE:  Jukebox mode.  Like demonstration, but plays entire songs 
 	and loops.
-NEW FEATURE:  F5 to save screenshot.  Saved in StepMania program directory
+NEW FEATURE:  Print screen to save screenshot.  Saved in "Screenshots"
 	as "screenshotXXXX.bmp".
 CHANGE:  Reorganization of options screens.
-NEW FEATURE: Option for user-selectable extra stage 1
+NEW FEATURE: Option for user-selectable extra stage.
 CHANGE:  Documentation now in HTML format.
 CHANGE:  Overhauled NoteSkin format.  See README-FIRST.html for details.
-BUG FIX:  Super-shuffle fixed (now doesn't add extra notes)
-NEW FEATURE:  Added WIDE transform (changes notes on beats to jumps)
-NEW FEATURE:  Added BIG transform (strategically inserts 8ths)
-NEW FEATURE:  Added QUICK transform (strategically inserts 16ths)
-NEW FEATURE:  Added SKIPPY transform
+BUG FIX:  Super-shuffle fixed (now doesn't add extra notes).
+NEW FEATURE:  Added WIDE transform (changes notes on beats to jumps).
+NEW FEATURE:  Added BIG transform (strategically inserts 8ths).
+NEW FEATURE:  Added QUICK transform (strategically inserts 16ths).
+NEW FEATURE:  Added SKIPPY transform.
+NEW FEATURE:  Added HALLWAY, DISTANCE and INCOMING perspectives.
+NEW FEATURE:  Added tipsy, split, alternate, blind.
 BUG FIX:  Fixed song seeking in editor at non 1x music rates
 NEW FEATURE:  More complete controls for BackgroundChanges in editor
 NEW FEATURE:  Shift+P in editor for "play current beat until end"
-NEW FEATURE:  Select between Normal and Difficult in Nonstop and Endless mode
+NEW FEATURE:  Select between Normal and Difficult in course modes
 CHANGE:  Nonstop and Oni scoring and combo counter behave exactly like DDREX
 CHANGE:  HoldNote life snaps to full when button is pressed (instead of 
 	refilling slowly) ala DDR
 NEW FEATURE:  Toggle for Autogen of missing steps
 NEW FEATURE:  Toggle for Autogen of group Nonstop and Endless Courses
-OPTIMIZATION:  Turned off compression when exporting package, which makes
+OPTIMIZATION:  Turned off compression when exporting packages, which makes
 	exporting significantly faster.
 NEW FEATURE:  Convert a theme from the 3.0 naming convention to the 4.0 
 	naming convention using "Analyze Theme" in smpackage.exe.
 NEW FEATURE:  Check for redundant and possibly mis-named theme elements using
 	"Analyze Theme" in smpackage.exe.
-NEW FEATURE:  PlayerOption:  Perspective - Incoming
 NEW FEATURE:  Set default player and song options in stepmania.ini using 
 	DefaultModifiers.
 NEW FEATURE:  Courses can be organized into group folders.  See 
@@ -49,7 +50,6 @@ NEW FEATURE:  New parameters for background changes: rate, fade old, loop,
 CHANGE:  Background playback speed scaled by song rate, so movies stay in 
 	sync (although syncing isn't very accurate at some song rates).
 NEW FEATURE:  Automatic mapping of joysticks.
-NEW FEATURE:  Automatically adjust graphic detail on first run.
 NEW FEATURE:  #DISPLAYBPM tag for SM and DWI files.
 NEW FEATURE:  Korean characters in KSF files are converted correctly
 NEW FEATURE:  Music rates .3x and .5x
@@ -60,6 +60,77 @@ NEW FEATURE:  Courses can be made more difficult; use the same codes as selectin
 NEW FEATURE:  Beginner difficulty
 NEW FEATURE:  Music wheel can be set to have sections for ABC only
 NEW FEATURE:  Note skins can now be selected per-player on the player options screen
+CHANGE:  "Challenge" steps are good enough for an extra stage.
+NEW FEATURE:  Turn off autofail by default for beginner/easy; turn off failure
+	completely for beginner first stage.
+BUG FIX:  Check the alternative song folders for extra stage courses.
+BUG FIX:  Don't make the gain-life song between Oni courses if we didn't
+	actually gain any life.
+NEW FEATURE:  Added long and marathon balloons.
+Try not to repeat songs in random courses.
+CHANGE:  Little removes HoldNotes that don't start on a beat.
+NEW FEATURE:  Allow showing dance points instead of percentage in oni.
+NEW FEATURE:  Write #BEGINNER, #FILE and #CDTITLE to DWIs.  Implement
+	<2468> jumps.
+NEW FEATURE:  DWI reading: Implement `192nds', <46> jumps, and <4!46!6> hold
+	jumps. <4006> (containing 0s) is still treated as 192nds, for
+	backwards compatibility.
+NEW FEATURE:  Guess titles from directory names if #TITLE is missing.
+NEW FEATURE:  Remove song length limits.
+NEW FEATURE:  Added lyrics support.
+NEW FEATURE:  Song options screen is optional.
+CHANGE:  Jumps are now graded on the score that completes the row, not the
+	minimum score of the row.
+NEW FEATURE:  Added a theme metric editor.
+NEW FEATURE:  How To Play screen.
+NEW FEATURE:  Maximum number of random backgrounds is configurable.
+CHANGE:  Changed 1280x1024 to 1280x960.
+CHANGE:  Removed limit of 1200 songs in the music screen.
+NEW FEATURE:  Added banner caching.
+CHANGE:  Changed nonstop scoring: all nonstop courses sum to 100mil points.
+NEW FEATURE:  Add option screen scrolling.
+NEW FEATURE:  Add steps selection to the player options menu.
+NEW FEATURE:  Add new music wheel sorts.
+NEW FEATURE:  Handle group banners in the parent dir.
+NEW FEATURE:  Return to the select course screen after name entry in event mode.
+NEW FEATURE:  Allow configuring bit depth for movies.
+NEW FEATURE:  "Courses only" option for marvelous judgement.
+CHANGE:  Challenge notes no longer make a song red.
+NEW FEATURE:  Setting a background brightness of 0 disables backgrounds
+	completely.
+NEW FEATURE:  SMPackage: Allow disabling comments
+NEW FEATURE:  SMPackage: Uninstall packages before installing new ones
+NEW FEATURE:  Never use files listed in (otherwise unused) #DISPLAYTITLE
+	and #DISPLAYARTIST DWI fields as song banners, nor  images
+	containing "-char".
+NEW FEATURE:  Added progressive lifebar motion.
+NEW FEATURE:  Added random caprice courses.
+NEW FEATURE:  Added JUSTICE.
+NEW FEATURE:  Added generated "stats.html"
+NEW FEATURE:  Added beginner helper
+NEW FEATURE:  Added dancing character to the how to play screen
+NEW FEATURE:  Added announcers "gameplay oni fail", "gameplay oni fail halfway" and "gameplay combo overflow"
+NEW FEATURE:  Added FFMpeg-based movie decoding.
+NEW FEATURE:  Added left+right+start to move back in options menus when in arcade-style navigation
+CHANGE:  Require a combo before regaining life after bottoming out
+NEW FEATURE:  Added profiles support
+CHANGE:  Removed IgnoreJoyAxes; no longer needed
+NEW FEATURE:  Added title menu switch game code (LRLLRRLR)
+CHANGE:  Improved DWI/SM file error recovery.
+NEW FEATURE:  Support for up to 6 joysticks and 32 buttons per joystick.
+NEW FEATURE:  Screen centering adjustment.
+NEW FEATURE:  Added input test screen.
+NEW FEATURE:  Added option for silent attract sequence.
+NEW FEATURE:  Name entry announcer.
+CHANGE:  Don't show the danger animation if failure is disabled.
+CHANGE:  Only lock and fail in fail-end-of-song if both players are failing
+	at the same time.
+CHANGE:  Fail-end-of-song fails after the current song in course play.
+NEW FEATURE:  Editor: Added alt-F11, F12 to change offset in 1ms increments
+NEW FEATURE:  Editor: Added F5/F6 to switch steps
+NEW FEATURE:  Editor: Added Alt-F7/F8 for finer BPM adjustment
+CHANGE:  Editor: Don't clear area before recording
+NEW FEATURE:  Editor: Added subtitle and song credit editing
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 
