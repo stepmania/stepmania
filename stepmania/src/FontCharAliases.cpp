@@ -79,6 +79,7 @@ static void InitCharAliases()
 	CharAliases["tobira"]		= 0x6249; /* 扉 */
 	CharAliases["yozora1"]		= 0x7A7A; /* 夜 */
 	CharAliases["yozora2"]		= 0x6249; /* 空 */
+	CharAliases["sai"]			= 0x624D; /* 才 */
 	
 	CharAliases["num-ichi"]		= 0x4E00; /* 一 */
 	CharAliases["num-ni"]		= 0x4E01; /* 二 */
