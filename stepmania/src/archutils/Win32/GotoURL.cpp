@@ -1,4 +1,4 @@
-#include "../../stdafx.h"
+#include "global.h"
 #include "GotoURL.h"
 
 static LONG GetRegKey(HKEY key, const char *subkey, LPTSTR retdata)

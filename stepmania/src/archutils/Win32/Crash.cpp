@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 
 //	from VirtualDub
 //	Copyright (C) 1998-2001 Avery Lee

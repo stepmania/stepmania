@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 #include "DebugInfoHunt.h"
 #include "RageLog.h"
 #include "RageUtil.h"
