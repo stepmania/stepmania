@@ -31,8 +31,7 @@ RageDisplay*		DISPLAY	= NULL;
 ////////////
 // Globals
 ////////////
-SDL_Surface			*g_screen = NULL;		// this class is a singleton, so there can be only one
-int					g_flags = 0;		/* SDL video flags */
+bool				g_Windowed;
 GLenum				g_vertMode = GL_TRIANGLES;
 RageTimer			g_LastCheckTimer;
 int					g_iNumVerts;
@@ -76,11 +75,7 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 
 	m_oglspecs = new oglspecs_t;
 	
-	SDL_InitSubSystem(SDL_INIT_VIDEO);
-
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
-
-	SetupOpenGL();
 
 	// Log driver details
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
@@ -212,15 +207,18 @@ void RageDisplay::SetupExtensions()
 bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync )
 {
 //	LOG->Trace( "RageDisplay::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
+    if(!SDL_WasInit(SDL_INIT_VIDEO))
+        SDL_InitSubSystem(SDL_INIT_VIDEO);
 
-	g_flags = 0;
+	int flags = 0;
 	if( !windowed )
-		g_flags |= SDL_FULLSCREEN;
-	g_flags |= SDL_DOUBLEBUF;
-	g_flags |= SDL_RESIZABLE;
-	g_flags |= SDL_OPENGL;
+		flags |= SDL_FULLSCREEN;
+	flags |= SDL_DOUBLEBUF;
+	flags |= SDL_RESIZABLE;
+	flags |= SDL_OPENGL;
 
-	SDL_ShowCursor( ~g_flags & SDL_FULLSCREEN );
+	g_Windowed = windowed;
+	SDL_ShowCursor( g_Windowed );
 
 	ASSERT( bpp == 16 || bpp == 32 );
 	switch( bpp )
@@ -248,8 +246,8 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 
 	bool NewOpenGLContext = false;
 
-	g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
-	if(!g_screen)
+	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
+	if(!screen)
 		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
 
 	/* XXX: This event only exists in the SDL tree, and is only needed in
@@ -266,29 +264,11 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		if(TEXTUREMAN)
 			TEXTUREMAN->InvalidateTextures();
 
-		SetupOpenGL();
-
 		SDL_WM_SetCaption("StepMania", "StepMania");
 
 		NewOpenGLContext = true;
 	}
 #endif
-
-	DumpOpenGLDebugInfo();
-
-	/* Now that we've initialized, we can search for extensions (some of which
-	 * we may need to set up the video mode). */
-	SetupExtensions();
-
-	/* Set vsync the Windows way, if we can.  (What other extensions are there
-	 * to do this, for other archs?) */
-	if(m_oglspecs->WGL_EXT_swap_control) {
-	    GLExt::wglSwapIntervalEXT(vsync);
-	}
-	
-	g_CurrentWidth = g_screen->w;
-	g_CurrentHeight = g_screen->h;
-	g_CurrentBPP = bpp;
 
 	{
 		/* Find out what we really got. */
@@ -304,6 +284,23 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		LOG->Info("Got %i bpp (%i%i%i%i), %i depth, %i stencil",
 			colorbits, r, g, b, a, depth, stencil);
 	}
+
+	SetupOpenGL();
+	DumpOpenGLDebugInfo();
+
+	/* Now that we've initialized, we can search for extensions (some of which
+	 * we may need to set up the video mode). */
+	SetupExtensions();
+
+	/* Set vsync the Windows way, if we can.  (What other extensions are there
+	 * to do this, for other archs?) */
+	if(m_oglspecs->WGL_EXT_swap_control) {
+	    GLExt::wglSwapIntervalEXT(vsync);
+	}
+	
+	g_CurrentWidth = screen->w;
+	g_CurrentHeight = screen->h;
+	g_CurrentBPP = bpp;
 
 	SetViewport(0,0);
 
@@ -482,7 +479,7 @@ void RageDisplay::SaveScreenshot( CString sPath )
 
 bool RageDisplay::IsWindowed() const 
 {
-	return !(g_flags & SDL_FULLSCREEN);
+	return g_Windowed;
 }
 
 void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, lower-right, lower-left
