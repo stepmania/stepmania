@@ -45,7 +45,9 @@ RageNetworkClient::RageNetworkClient()
 	m_priSock = 0;
 	m_priSockSet = NULL;
 
-	SDL_Init(0);	// this may have already been init'd somewhere else
+	/* Don't do this; it'll fire up things we might not want.  Let StepMania.cpp
+	 * do the initial SDL config. */
+	// SDL_Init(0);	// this may have already been init'd somewhere else
 
 	if( SDLNet_Init() < 0 )
 		throw RageException("SDLNet_Init: %s\n", SDLNet_GetError());
