@@ -142,7 +142,6 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 					ASSERT(0);
 			}
 
-			bt->SetZoom( 1 );
 			bt->SetText( sDisplayName, sTranslitName );
 			bt->SetDiffuse( data->m_color );
 			bt->TurnRainbowOff();
