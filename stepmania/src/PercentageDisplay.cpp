@@ -7,8 +7,9 @@
 #include "ActorUtil.h"
 
 #include "RageLog.h"
-
-const int NUM_DANCE_POINT_DIGITS	=	5;
+#define DANCE_POINT_DIGITS			THEME->GetMetricI(m_sName,"DancePointsDigits")
+#define PERCENT_DECIMAL_PLACES		THEME->GetMetricI(m_sName,"PercentDecimalPlaces")
+#define PERCENT_TOTAL_SIZE			THEME->GetMetricI(m_sName,"PercentTotalSize")
 
 PercentageDisplay::PercentageDisplay()
 {
@@ -27,7 +28,7 @@ void PercentageDisplay::Load( PlayerNumber pn )
 	if( PREFSMAN->m_bDancePointsForOni )
 		m_textPercent.SetText( "     " );
 	else
-		m_textPercent.SetText( "00.0%" );
+		m_textPercent.SetText( ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, 0 ) );
 }
 
 void PercentageDisplay::Update( float fDeltaTime )
@@ -44,15 +45,11 @@ void PercentageDisplay::Update( float fDeltaTime )
 		iPossibleDancePoints = max( 1, iPossibleDancePoints );
 		float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.00001f;	// correct for rounding errors
 
-	//	LOG->Trace( "Actual %d, Possible %d, Percent %f\n", iActualDancePoints, iPossibleDancePoints, fPercentDancePoints );
-
 		float fNumToDisplay = max( 0, fPercentDancePoints*100 );
-		sNumToDisplay = ssprintf("%03.1f%%", fNumToDisplay);
-		if( sNumToDisplay.GetLength() == 4 )
-			sNumToDisplay = "0" + sNumToDisplay;
+		sNumToDisplay = ssprintf( "%0*.*f%%", PERCENT_TOTAL_SIZE, PERCENT_DECIMAL_PLACES, fNumToDisplay );
 	}
 	else
-		sNumToDisplay = ssprintf( "%*d", NUM_DANCE_POINT_DIGITS , iActualDancePoints );
+		sNumToDisplay = ssprintf( "%*d", DANCE_POINT_DIGITS, iActualDancePoints );
 
 	m_textPercent.SetText( sNumToDisplay );
 }
