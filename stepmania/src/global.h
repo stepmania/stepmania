@@ -13,6 +13,10 @@
 #ifndef STDAFX_H
 #define STDAFX_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #if _MSC_VER >= 1000
 #pragma once
 #endif // _MSC_VER >= 1000
@@ -95,28 +99,28 @@ using namespace std;
 #endif
 
 /* Define a few functions if necessary */
-/* This is the wrong way to do this; see my post to sm-devs. -glenn */
-#if 0
-#ifndef powf
-#define powf (float)pow
+/* You're right, that was the wrong way, how's this? */
+#include <math.h>
+#ifndef HAVE_POWF
+inline float powf (float x, float y){ return float(pow(double(x),double(y))); }
 #endif
 
-#ifndef sqrtf
-#define sqrtf (float)sqrt
+#ifndef HAVE_SQRTF
+inline float sqrtf (float x) { return float(sqrt(double(x))); }
 #endif
 
-#ifndef sinf
-#define sinf (float)sin
+#ifndef HAVE_SINF
+inline float sinf (float x) { return float(sin(double(x))); }
 #endif
 
-#ifndef cosf
-#define cosf (float)cos
+#ifndef HAVE_COSF
+inline float cosf (float x) { return float(cos(double(x))); }
 #endif
 
-#ifndef acosf
-#define acosf (float)acos
+#ifndef HAVE_ACOSF
+inline float acosf (float x) { return float(acos(double(x))); }
 #endif
-#endif
+
 
 /* Don't include our own headers here, since they tend to change often. */
 
