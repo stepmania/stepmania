@@ -73,8 +73,8 @@ SongManager::SongManager( LoadingWindow *ld )
 	SONGMAN = this;
 	try
 	{
-		InitSongArrayFromDisk( ld );
-		InitCoursesFromDisk();
+		InitSongsFromDisk( ld );
+		InitCoursesFromDisk( ld );
 		InitAutogenCourses();
 		InitMachineScoresFromDisk();
 
@@ -91,7 +91,23 @@ SongManager::~SongManager()
 {
 	SaveMachineScoresToDisk();
 
-	FreeSongArray();
+	FreeSongs();
+}
+
+
+void SongManager::ReloadSongs()
+{
+	FlushDirCache();
+	FreeSongs();
+	InitSongsFromDisk(NULL);
+}
+
+void SongManager::ReloadCourses()
+{
+	FlushDirCache();
+	FreeCourses();
+	InitCoursesFromDisk(NULL);
+	InitAutogenCourses();
 }
 
 void SongManager::SaveMachineScoresToDisk()
@@ -105,7 +121,7 @@ void SongManager::SaveMachineScoresToDisk()
 	}
 }
 
-void SongManager::InitSongArrayFromDisk( LoadingWindow *ld )
+void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	LoadStepManiaSongDir( SONGS_DIR, ld );
 
@@ -241,7 +257,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 	}
 }
 
-void SongManager::FreeSongArray()
+void SongManager::FreeSongs()
 {
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
@@ -250,12 +266,6 @@ void SongManager::FreeSongArray()
 	m_GroupBannerPaths.clear();
 }
 
-
-void SongManager::ReloadSongArray()
-{
-	InitSongArrayFromDisk( NULL );
-	FreeSongArray();
-}
 
 
 void SongManager::ReadNoteScoresFromFile( CString fn, int c )
@@ -745,7 +755,7 @@ int SongManager::GetNumStagesForSong( const Song* pSong )
 		return 1;
 }
 
-void SongManager::InitCoursesFromDisk()
+void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	unsigned i;
 
@@ -759,6 +769,15 @@ void SongManager::InitCoursesFromDisk()
 		Course* pCourse = new Course;
 		pCourse->LoadFromCRSFile( saCourseFiles[i] );
 		m_pCourses.push_back( pCourse );
+
+		if( ld )
+		{
+			ld->SetText( ssprintf("Loading courses...\n%s\n%s",
+				"Courses",
+				Basename(saCourseFiles[i]).c_str()));
+			ld->Paint();
+		}
+
 	}
 
 
@@ -781,6 +800,14 @@ void SongManager::InitCoursesFromDisk()
 
 		for( unsigned j=0; j<arrayCoursePaths.size(); j++ )
 		{
+			if( ld )
+			{
+				ld->SetText( ssprintf("Loading courses...\n%s\n%s",
+					Basename(arrayGroupDirs[i]).c_str(),
+					Basename(arrayCoursePaths[j]).c_str()));
+				ld->Paint();
+			}
+
 			Course* pCourse = new Course;
 			pCourse->LoadFromCRSFile( arrayCoursePaths[j] );
 			m_pCourses.push_back( pCourse );
@@ -824,7 +851,7 @@ void SongManager::FreeCourses()
 
 /* Called periodically to wipe out cached NoteData.  This is called when we change
  * screens. */
-void SongManager::CleanData()
+void SongManager::CompressSongs()
 {
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
 	{

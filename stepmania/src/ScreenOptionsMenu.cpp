@@ -23,6 +23,7 @@
 #include "GameManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
+#include "SongManager.h"
 
 
 enum {
@@ -35,6 +36,7 @@ enum {
 	OM_GRAPHIC,
 	OM_MACHINE,
 //	OM_SOUND,
+	OM_RELOAD,
 	NUM_OPTIONS_MENU_LINES
 };
 
@@ -48,6 +50,7 @@ OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 	OptionRow( "",	"Graphic Options" ),
 	OptionRow( "",	"Machine Options" ),
 //	OptionRow( "",	"Sound Options" ),
+	OptionRow( "",	"Reload Songs/Courses" ),
 };
 
 ScreenOptionsMenu::ScreenOptionsMenu() :
@@ -103,6 +106,11 @@ void ScreenOptionsMenu::GoToNextState()
 		case OM_INPUT:			SCREENMAN->SetNewScreen("ScreenInputOptions");		break;
 		case OM_MACHINE:		SCREENMAN->SetNewScreen("ScreenMachineOptions");	break;
 //		case OM_SOUND:			SCREENMAN->SetNewScreen("ScreenSoundOptions");		break;
+		case OM_RELOAD:
+			SONGMAN->ReloadSongs();
+			SONGMAN->ReloadCourses();
+			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+			break;
 		default:	// Exit
 			SCREENMAN->SetNewScreen("ScreenTitleMenu");
 	}

@@ -32,9 +32,15 @@ public:
 	SongManager( LoadingWindow *ld );
 	~SongManager();
 
-	void InitSongArrayFromDisk( LoadingWindow *ld );
-	void FreeSongArray();
-	void ReloadSongArray();
+	void InitSongsFromDisk( LoadingWindow *ld );
+	void FreeSongs();
+	void ReloadSongs();
+	void CompressSongs();
+
+	void InitCoursesFromDisk( LoadingWindow *ld );
+	void InitAutogenCourses();
+	void FreeCourses();
+	void ReloadCourses();
 
 
 	CString GetGroupBannerPath( CString sGroupName );
@@ -47,18 +53,6 @@ public:
 
 	static CString ShortenGroupName( CString sLongGroupName );
 	static int     GetNumStagesForSong( const Song* pSong );	// LongVer songs take 2 stages, MarathonVer take 3
-
-
-	//
-	// Courses for Nonstop, Oni, and Endless
-	//
-	vector<Course*> m_pCourses;
-
-	void InitCoursesFromDisk();
-	void InitAutogenCourses();
-	void FreeCourses();
-	void CleanData();
-
 
 
 	// Lookup
@@ -132,6 +126,7 @@ protected:
 	vector<Song*>		m_pBestSongs;
 	CStringArray		m_arrayGroupNames;
 	CStringArray		m_GroupBannerPaths;		// each song group has a banner associated with it
+	vector<Course*> m_pCourses;
 };
 
 
