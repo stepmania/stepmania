@@ -382,14 +382,7 @@ void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )
 	// that the flush is completed on return.  However, we can mount the filesystem
 	// with the flag "-o sync", which forces synchronous access (but that's probably
 	// very slow.) -glenn
-	// Strangely, "-o sync" doesn't seem to force the data to be written to a USB 
-	// pen drive.  I see can see that SM wrote the files correctly, but if I unplug 
-	// without sync'ing or umount'ing, then the files are lost.  Maybe usb-strorage
-	// doesn't play nicely with -o sync? -Chris
-	// "sync" seems to work fine for our purpose.  We don't need the flush to 
-	// happen by the time we return, because the player won't immediately pull 
-	// their cards out after the flush happens. -Chris
-	CString sCommand = "sync";
+	CString sCommand = "mount -o remount " + pDevice->sOsMountDir;
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	system( sCommand );
 }
