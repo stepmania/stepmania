@@ -17,7 +17,9 @@ void ActorFrame::AddChild( Actor* pActor )
 #if _DEBUG
 	// check that this Actor isn't already added.
 	vector<Actor*>::iterator iter = find( m_SubActors.begin(), m_SubActors.end(), pActor );
-	ASSERT( iter == m_SubActors.end() );	// didn't find
+	if( iter != m_SubActors.end() )
+		RageException::Throw( "Actor \"%s\" adds child \"%s\" more than once",
+			m_sName.c_str(), pActor->m_sName.c_str() );
 #endif
 
 	ASSERT( pActor );
