@@ -136,15 +136,12 @@ public:
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;
 
-	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
+	void ReadGlobalPrefsFromDisk();
 	void SaveGlobalPrefsToDisk() const;
 
 
 	void ReadGamePrefsFromDisk();
 	void SaveGamePrefsToDisk();
-
-private:
-	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame, CString fn );
 };
 
 

@@ -793,7 +793,7 @@ int main(int argc, char* argv[])
 	delete loading_window;		// destroy this before init'ing Display
 
 	/* XXX: Why do we reload global prefs?  PREFSMAN loads them in the ctor. -glenn */
-	PREFSMAN->ReadGlobalPrefsFromDisk( true );
+	PREFSMAN->ReadGlobalPrefsFromDisk();
 	ReadGamePrefsFromDisk();
 
 	DISPLAY = CreateDisplay();

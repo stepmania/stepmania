@@ -162,19 +162,23 @@ PrefsManager::PrefsManager()
 
 	m_sCoursesToShowRanking = "";
 
-	ReadGlobalPrefsFromDisk( true );
+	ReadGlobalPrefsFromDisk();
 }
 
 PrefsManager::~PrefsManager()
 {
 }
 
-void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame, CString fn )
+void PrefsManager::ReadGlobalPrefsFromDisk()
 {
 	IniFile ini;
-	ini.SetPath( fn );
-	if( !ini.ReadFile() )
-		return;		// could not read config file, load nothing
+	ini.SetPath( STEPMANIA_INI_PATH );
+	ini.ReadFile();
+
+	/* Load this on top of the regular INI; if it exists, any settings listed
+	 * in it will override user settings. */
+	ini.SetPath( STATIC_INI_PATH );
+	ini.ReadFile();
 
 	ini.GetValue( "Options", "Windowed",						m_bWindowed );
 	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
@@ -291,15 +295,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame, CStrin
 		m_asAdditionalSongFolders.clear();
 		split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );
 	}
-}
-
-void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
-{
-	ReadGlobalPrefsFromDisk( bSwitchToLastPlayedGame, STEPMANIA_INI_PATH );
-
-	/* Load this on top of the regular INI; if it exists, any settings listed
-	 * in it will override user settings. */
-	ReadGlobalPrefsFromDisk( bSwitchToLastPlayedGame, STATIC_INI_PATH );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
