@@ -560,7 +560,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		}
 	}
 
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PRINT))
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_SYSREQ))
 	{
 		// Save Screenshot.
 		CString sPath;
