@@ -32,6 +32,8 @@ public:
 	Song* GetSelectedSong();
 	int CheckSongsExist() { return SongsExist; }
 	void PlayMusicSample();
+	void StartBouncing();
+	void StopBouncing();
 private:
 	void SetNewPos(int NewPos);
 	void LoadSongData();

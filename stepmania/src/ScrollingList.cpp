@@ -52,12 +52,17 @@ Initializes Variables for the ScrollingList
 ****************************************/
 ScrollingList::ScrollingList()
 {
+	m_iBouncingState = 0;
+	m_fNextTween = 0;
 	m_iBannerPrefs = BANNERPREFS_EZ2;
 	m_iSpriteType = SPRITE_TYPE_SPRITE;
 	m_iSelection = 0;
 	m_fSelectionLag = 0;
 	m_iSpacing = DEFAULT_SPACING;
 	m_iNumVisible = DEFAULT_VISIBLE_ELEMENTS;
+	m_iBounceDir=0;
+	m_iBounceWait=0;
+	m_RippleCSprite.SetXY(0,0);
 }
 
 void ScrollingList::UseSpriteType(int NewSpriteType)
@@ -84,6 +89,31 @@ void ScrollingList::Unload()
 			delete m_apCSprites[i];
 		m_apCSprites.clear();
 	}
+}
+
+void ScrollingList::StartBouncing()
+{
+	m_iBouncingState = 1;
+	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
+	{
+
+	}
+	else
+	{
+		m_RippleCSprite.Load( m_apCSprites[m_iSelection]->GetTexturePath() );
+		m_RippleCSprite.SetXY( m_apCSprites[m_iSelection]->GetX(), m_apCSprites[m_iSelection]->GetY() );
+		m_RippleCSprite.SetZoom( 2.0f );
+		m_RippleCSprite.SetDiffuse( RageColor(1,1,1,0.5f));
+	}
+}
+
+void ScrollingList::StopBouncing()
+{
+	m_iBouncingState = 0;
+	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
+		m_apSprites[m_iSelection]->SetZoom( 1.0f );
+	else
+		m_apCSprites[m_iSelection]->SetZoom( 1.0f );
 }
 
 /************************************
@@ -245,6 +275,55 @@ void ScrollingList::Update( float fDeltaTime )
 	}
 	else
 	{
+		if(m_iBouncingState)	// bouncing
+		{
+			if(m_fNextTween <= 0) // we're ready to update stuff
+			{
+				m_fNextTween = 0.1f; // reset the tween count
+				if(m_apCSprites[m_iSelection]->GetZoom() >= 1.2f && m_iBounceDir == 1) // if we're over biggest boundary
+				{
+					m_iBounceDir = 2; // next phase will be a wait
+					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() - 0.25f); // make it smaller
+					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() - 0.30f); // make the ripple smaller
+				}
+				else if(m_apCSprites[m_iSelection]->GetZoom() <= 1.0f && m_iBounceDir == 0) // if we're over smallest boundary
+				{
+					m_iBounceDir = 1; // next phase will be making graphic bigger
+					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() + 0.25f); // make it bigger
+					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() + 0.30f); // make ripple bigger
+					m_RippleCSprite.SetDiffuse( RageColor(1,1,1,0.5f)); // make ripple appear semi transparent
+				}
+				else if(m_iBounceDir == 0 && m_apCSprites[m_iSelection]->GetZoom() != 1.0f) // travelling smaller
+				{
+					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() - 0.25f); // make smaller
+					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() - 0.30f); // make smaller
+				}
+				else if(m_iBounceDir == 1 && m_apCSprites[m_iSelection]->GetZoom() != 1.2f) // travelling bigger
+				{
+					m_apCSprites[m_iSelection]->SetZoom( m_apCSprites[m_iSelection]->GetZoom() + 0.25f); // make bigger
+					m_RippleCSprite.SetZoom( m_RippleCSprite.GetZoom() + 0.30f ); // make bigger
+				}
+				else if(m_iBounceDir == 2) // we're waiting before doing bounce processes again
+				{
+					if(m_iBounceWait == 0) // if we're at 0 from last time....
+						m_iBounceWait = 3; // start wait at 3
+					else
+						m_iBounceWait--; // otherwise decrease by 1
+					
+					if(m_iBounceWait == 2) // if we're one moment after start of wait
+						m_RippleCSprite.SetDiffuse( RageColor(1,1,1,0.0f)); // hide the ripple
+
+					if(m_iBounceWait == 0) // if we just turned to 0 
+						m_iBounceDir = 0; // go to the 'make smaller' stage. as we SHOULD already be pretty small, we should start increasing in size a couple phases on.
+				}
+			}
+			else
+			{
+				m_fNextTween -= fDeltaTime; // update the tween time.
+			}
+
+		}
+
 		for( unsigned i=0; i<m_apCSprites.size(); i++ )
 			m_apCSprites[i]->Update( fDeltaTime );
 	}
@@ -350,6 +429,16 @@ void ScrollingList::DrawPrimitives()
 				m_apCSprites[iIndexToDraw1]->Draw();
 				m_apCSprites[iIndexToDraw2]->Draw();
 			}
+		}
+	}
+	if(m_iSpriteType == SPRITE_TYPE_SPRITE)
+	{
+	}
+	else
+	{
+		if(m_iBouncingState)
+		{
+			m_RippleCSprite.Draw();
 		}
 	}
 }

@@ -332,6 +332,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 0)
 	{
 		iConfirmSelection = 1;
+		m_MusicBannerWheel.StartBouncing();
 		m_MusicBannerWheel.PlayMusicSample();
 		return;
 	}

@@ -288,6 +288,16 @@ Song* MusicBannerWheel::GetSelectedSong()
 	return(pSong);
 }
 
+void MusicBannerWheel::StartBouncing()
+{
+	m_ScrollingList.StartBouncing();
+}
+
+void MusicBannerWheel::StopBouncing()
+{
+	m_ScrollingList.StopBouncing();
+}
+
 void MusicBannerWheel::PlayMusicSample()
 {
 	Song* pSong = GetSelectedSong();
@@ -301,6 +311,7 @@ void MusicBannerWheel::PlayMusicSample()
 
 void MusicBannerWheel::BannersLeft()
 {
+	StopBouncing();
 	if(currentPos==0)
 		currentPos=arraySongs.size()-1;
 	else
@@ -327,6 +338,7 @@ void MusicBannerWheel::BannersLeft()
 
 void MusicBannerWheel::BannersRight()
 {
+	StopBouncing();
 	if(currentPos>=arraySongs.size()-1)
 		currentPos=0;
 	else

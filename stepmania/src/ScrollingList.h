@@ -35,17 +35,27 @@ public:
 	void SetNumberVisible( int iNumVisibleElements );
 	void SetSpacing( int iSpacingInPixels );
 	void UseSpriteType(int NewSpriteType);
+	void StartBouncing();
+	void StopBouncing();
 	void Left();
 	void Right();
 
 protected:
 	
+	int						m_iBouncingState;
+	int						m_iBounceDir;
+	int						m_iBounceWait;
+
 	int						m_iBannerPrefs;
 	int						m_iSpriteType;
 	int						m_iSelection;
 	float					m_fSelectionLag;
 	int						m_iSpacing;
 	int						m_iNumVisible;
+	float					m_fNextTween;
+
+	CroppedSprite	m_RippleCSprite;
+
 	vector<Sprite*>	m_apSprites;	// stores the list of elements (left to right)
 	vector<CroppedSprite*>	m_apCSprites;	// stores the list of elements (left to right)
 };
