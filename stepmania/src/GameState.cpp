@@ -900,6 +900,9 @@ void GameState::RestoreSelectedOptions()
 
 bool GameState::IsDisqualified( PlayerNumber pn )
 {
+	if( !PREFSMAN->m_bDisqualification )
+		return false;
+
 	if( GAMESTATE->IsCourseMode() )
 	{
 		return GAMESTATE->m_PlayerOptions[pn].IsEasierForCourse( 

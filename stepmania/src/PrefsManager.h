@@ -157,6 +157,7 @@ public:
 	bool			m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
 	bool			m_bPercentageScoring;
 	float			m_fMinPercentageForHighScore;
+	bool			m_bDisqualification;
 	bool			m_bShowLyrics;
 	bool			m_bAutogenSteps;
 	bool			m_bAutogenGroupCourses;
