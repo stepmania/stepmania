@@ -149,9 +149,8 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCours
 	course_sort_val.clear();
 	for(unsigned i = 0; i < apCourses.size(); ++i)
 	{
-		Trail* pTrail = apCourses[i]->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-		ASSERT( pTrail ); /* don't give unplayable courses! */
-		course_sort_val[apCourses[i]] = (float) pTrail->GetMeter();
+		const Trail* pTrail = apCourses[i]->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		course_sort_val[apCourses[i]] = pTrail != NULL? (float) pTrail->GetMeter(): 0.0f;
 	}
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
 	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersBySortValueAscending );

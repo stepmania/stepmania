@@ -1008,9 +1008,9 @@ void Course::UpdateCourseStats( StepsType st )
 		return;
 	}
 
-	Trail* pTrail = GetTrail( st, DIFFICULTY_MEDIUM );
+	const Trail* pTrail = GetTrail( st, DIFFICULTY_MEDIUM );
 
-	m_SortOrder_TotalDifficulty += pTrail->GetTotalMeter();
+	m_SortOrder_TotalDifficulty += pTrail != NULL? pTrail->GetTotalMeter():0;
 
 	// OPTIMIZATION: Ranking info isn't dependant on style, so
 	// call it sparingly.  Its handled on startup and when
