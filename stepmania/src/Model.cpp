@@ -56,20 +56,20 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 	FixSlashesInPlace(sPath);
 	const CString sDir = Dirname( sPath );
 
-	FILE *file = fopen (sPath, "rt");
-	if( !file )
-		RageException::Throw( "Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), strerror(errno) );
+	RageFile f;
+	if( !f.Open( sPath ) )
+		RageException::Throw( "Model::LoadMilkshapeAscii Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
 	Clear ();
 
     bool bError = false;
-    char szLine[256];
+	CString szLine;
     char szName[MS_MAX_NAME];
     int nFlags, nIndex, i, j;
 
 	ClearBounds (m_vMins, m_vMaxs);
 
-    while (fgets (szLine, 256, file) != NULL  && !bError)
+    while( f.GetLine( szLine ) > 0 && !bError )
     {
         if (!strncmp (szLine, "//", 2))
             continue;
@@ -95,7 +95,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
             {
 				msMesh& mesh = m_Meshes[i];
 
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -115,7 +115,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 //
                 // vertices
                 //
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -132,7 +132,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
                 for (j = 0; j < nNumVertices; j++)
                 {
-                    if (!fgets (szLine, 256, file))
+				    if( f.GetLine( szLine ) <= 0 )
                     {
                         bError = true;
                         break;
@@ -164,7 +164,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 //
                 // normals
                 //
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -181,7 +181,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 				Normals.resize( nNumNormals );
                 for (j = 0; j < nNumNormals; j++)
                 {
-                    if (!fgets (szLine, 256, file))
+				    if( f.GetLine( szLine ) <= 0 )
                     {
                         bError = true;
                         break;
@@ -203,7 +203,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 //
                 // triangles
                 //
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -220,7 +220,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
                 for (j = 0; j < nNumTriangles; j++)
                 {
-                    if (!fgets (szLine, 256, file))
+				    if( f.GetLine( szLine ) <= 0 )
                     {
                         bError = true;
                         break;
@@ -272,7 +272,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 				msMaterial& Material = m_Materials[i];
 
                 // name
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -285,7 +285,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 strcpy( Material.szName, szName );
 
                 // ambient
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -299,7 +299,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
                 // diffuse
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -313,7 +313,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
                 // specular
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -327,7 +327,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
                 // emissive
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -341,7 +341,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
                 // shininess
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -355,7 +355,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 Material.fShininess = fShininess;
 
                 // transparency
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -369,7 +369,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
                 Material.fTransparency = fTransparency;
 
                 // diffuse texture
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -391,7 +391,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 				}
 
                 // alpha texture
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -403,7 +403,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
         }
     }
 
-	fclose (file);
+	f.Close();
 
 	LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sPath );
 
@@ -423,15 +423,15 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 	FixSlashesInPlace(sPath);
 	const CString sDir = Dirname( sPath );
 
-	FILE *file = fopen (sPath, "rt");
-	if (!file)
-		RageException::Throw( "Model:: Could not open '%s'.", sPath.c_str() );
+	RageFile f;
+	if ( !f.Open(sPath) )
+		RageException::Throw( "Model:: Could not open \"%s\": %s", sPath.c_str(), f.GetError().c_str() );
 
     bool bError = false;
-    char szLine[256];
+	CString szLine;
     int nFlags, j;
 
-    while (fgets (szLine, 256, file) != NULL  && !bError)
+    while( f.GetLine( szLine ) > 0 && !bError )
     {
         if (!strncmp (szLine, "//", 2))
             continue;
@@ -455,7 +455,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 				msBone& Bone = Animation.Bones[i];
 
                 // name
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -468,7 +468,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 strcpy( Bone.szName, szName );
 
                 // parent
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -480,7 +480,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
                 // flags, position, rotation
                 msVec3 Position, Rotation;
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -500,7 +500,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 float fTime;
 
                 // position key count
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -516,7 +516,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
                 for (j = 0; j < nNumPositionKeys; j++)
                 {
-                    if (!fgets (szLine, 256, file))
+				    if( f.GetLine( szLine ) <= 0 )
                     {
                         bError = true;
                         break;
@@ -532,7 +532,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
                 }
 
                 // rotation key count
-                if (!fgets (szLine, 256, file))
+			    if( f.GetLine( szLine ) <= 0 )
                 {
                     bError = true;
                     break;
@@ -548,7 +548,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
                 for (j = 0; j < nNumRotationKeys; j++)
                 {
-                    if (!fgets (szLine, 256, file))
+				    if( f.GetLine( szLine ) <= 0 )
                     {
                         bError = true;
                         break;
@@ -579,8 +579,6 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 			PlayAnimation( sAniName );
 		}
 	}
-
-	fclose (file);
 
 	return true;
 }
