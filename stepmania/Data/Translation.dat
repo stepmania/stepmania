@@ -227,14 +227,16 @@ DontTransliterate
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
 *
-TitleFrom: THE STRONG JAEGER
+TitleFrom: The Strong Jaeger
 TitleTo: 合体せよ！ストロングイェーガー！！
-SubTitleTo: (THE STRONG JAEGER)
 *
 # TM3:
 TitleFrom: Tsugaru Kaikyou no Onna
 TitleTo: 津軽海峡の女
 ArtistTo: ソニン
+*
+TitleFrom: Kaniyuuutsu
+TitleTo: 甘いユウウツ
 *
 # TM4:
 TitleFrom: Akumajo Dracula MEDLEY
@@ -389,6 +391,12 @@ ArtistTo: 郑秀文
 *
 ArtistFrom: (Wong Faye)|(Faye Wong)
 ArtistTo: 王菲
+*
+TitleFrom: This Is Unmei
+TitleTo: This is 運命
+*
+TitleFrom: Michyo
+TitleTo: 미쳐
 *
 # Subtitles:
 # (Title is Graduation.)
@@ -748,6 +756,7 @@ ArtistTo: NW 260, &doublezeta;, and 290
 TitleFrom: Renai Revolution 21
 TitleTo: 恋愛レボリューション21
 *
+# http://bemanistyle.com/sims/viewsim.php?id=1160
 SubtitleFrom: ~Ai no Big Band~
 SubtitleTo: ~愛のビッグバンドｰ~
 *
@@ -867,4 +876,6 @@ TitleTo: DanceMania 連
 TitleFrom: (Otome no Michi|Maiden Star Road)
 TitleTo: 乙女☆道
 *
-
+TitleFrom: (Oni no Ran)|(Rebellion of Demons)
+TitleTo: 鬼の乱
+*
