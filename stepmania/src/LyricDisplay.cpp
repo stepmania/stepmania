@@ -94,8 +94,7 @@ void LyricDisplay::Update( float fDeltaTime )
 		 * "Diffuse=1,1,1,0;linear,.2;Diffuse=1,1,1,1;linear,.2;LyricDiffuse"
 		 */
 
-		float fZoom = 1.0f;
-		fZoom = min(fZoom, float(SCREEN_WIDTH)/(m_textLyrics[i].GetWidestLineWidthInSourcePixels()+1) );
+		const float fZoom = min( 1.0f, float(SCREEN_WIDTH)/(m_textLyrics[i].GetZoomedWidth()+1) );
 
 		m_textLyrics[i].StopTweening();
 		m_textLyrics[i].SetZoomX(fZoom);
