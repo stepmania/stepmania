@@ -17,7 +17,7 @@
 
 SongCreditDisplay::SongCreditDisplay()
 {
-	m_text.LoadFromFont( THEME->GetPathToF("SongCreditDisplay",(CString)"text") );
+	this->LoadFromFont( THEME->GetPathToF("SongCreditDisplay",(CString)"text") );
 	
 	Song* pSong = GAMESTATE->m_pCurSong;
 	CString s;
@@ -43,7 +43,5 @@ SongCreditDisplay::SongCreditDisplay()
 	// erase the last newline
 	s.erase( s.end()-1 );
 
-	m_text.SetText( s );
-	m_text.SetHorizAlign( Actor::align_left );
-	this->AddChild( &m_text );
+	this->SetText( s );
 }

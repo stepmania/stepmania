@@ -11,16 +11,12 @@
 -----------------------------------------------------------------------------
 */
 
-#include "ActorFrame.h"
 #include "BitmapText.h"
 
-class SongCreditDisplay : public ActorFrame
+class SongCreditDisplay : public BitmapText
 {
 public:
 	SongCreditDisplay();
-
-protected:
-	BitmapText m_text;
 };
 
 #endif
