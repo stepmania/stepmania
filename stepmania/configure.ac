@@ -19,13 +19,36 @@ test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="-Wall -W -Wno-unused -Wno-switch"
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
+compile=release
 AC_ARG_WITH(debug, AC_HELP_STRING([--with-debug], [Enable debug mode]), with_debug=$withval, with_debug=no)
+AC_ARG_WITH(fast-compile, AC_HELP_STRING([--with-fast-compile], [Enable fast compile]), with_fast_compile=$withval, with_fast_compile=no)
 if test "$with_debug" = "yes"; then
-	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -g"
-	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -g"
-else
+	compile=debug
+fi
+if test "$with_fast_compile" = "yes"; then
+	compile=fast
+fi
+
+case $compile in
+	release)
 	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -O3"
 	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -O3"
+	;;
+	debug)
+	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -g"
+	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -g"
+	;;
+	fast)
+	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -O2 -fno-inline"
+	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -O2 -fno-inline"
+	;;
+esac
+
+AC_ARG_WITH(prof, AC_HELP_STRING([--with-prof], [Enable profiling]), with_prof=$withval, with_prof=no)
+if test "$with_prof" = "yes"; then
+	test "$DEFAULT_CFLAGS" = "yes" && CFLAGS="$CFLAGS -pg"
+	test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS="$CXXFLAGS -pg"
+	test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS="$LDFLAGS -pg"
 fi
 
 SM_OPENGL
