@@ -37,7 +37,7 @@ private:
 	int m_score;
 	int m_combo;
     
-	bool appendWithZero;	//Append 4 0s at end of packet.
+	bool FlashXMLStyle;	//Append 4 0s at end of packet.
 							//For FLASH client.
 
 	bool useSMserver;
@@ -57,6 +57,11 @@ private:
         int m_combo;	//Player's Current Combo
 		int m_life;		//Player's Life
     };
+
+	struct netHolderFlash
+	{
+		char data[73];
+	};
     
 };
 

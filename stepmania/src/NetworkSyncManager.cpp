@@ -10,8 +10,26 @@
 	Joshua Allen
 -----------------------------------------------------------------------------
 */
+
+
+
+/*
+-----------------------
+NOTE TO DEVS:
+
+This file is still under heavy editing.
+Don't bother to edit it.  I will be editing it as I go.
+-----------------------
+*/
+
+
+
 #include "global.h"
+#include <string.h>
 #include "NetworkSyncManager.h"
+
+#include "BPMDisplay.h"
+//for ssprintf
 #include "ezsockets.h"
 #include "RageLog.h"
 
@@ -28,44 +46,37 @@ NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 		if (!tempargv.CompareNoCase("LISTEN"))
 			if (Listen(8765)) {
 				useSMserver = true;
-				int ClientCommand=3;
-				NetPlayerClient->send((char*) &ClientCommand, 4);
-				NetPlayerClient->send(0);//Send 0 for flash client
-
-				NetPlayerClient->receive(m_ServerVersion);
-					//If network play is desired
-					//AND the connection works
-					//Halt until we know what server 
-					//version we're dealing with
-				if (((m_ServerVersion / 512) % 2) == 1)
-					appendWithZero = true;
-				else
-					appendWithZero = false;
 			} else
 				useSMserver = false;
 		else
 			if (Connect(argv[1],8765) == true)
 			{
 				useSMserver = true;
-				int ClientCommand=3;
-				NetPlayerClient->send((char*) &ClientCommand, 4);
-				NetPlayerClient->send(0);//Send 0 for flash client
-
-				NetPlayerClient->receive(m_ServerVersion);
-					//If network play is desired
-					//AND the connection works
-					//Halt until we know what server 
-					//version we're dealing with
-				if (((m_ServerVersion / 512) % 2) == 1)
-					appendWithZero = true;
-				else
-					appendWithZero = false;
 			} else
 				useSMserver = false;
 
 	}
     else
         useSMserver = false;
+
+	if (useSMserver) {
+		int ClientCommand=3;
+		NetPlayerClient->send((char*) &ClientCommand, 4);
+		NetPlayerClient->send(0);//Send 0 for flash client
+
+		NetPlayerClient->receive(m_ServerVersion);
+			//If network play is desired
+			//AND the connection works
+			//Halt until we know what server 
+			//version we're dealing with
+		if (((m_ServerVersion / 512) % 2) == 1)
+			FlashXMLStyle = true;
+		else
+			FlashXMLStyle = false;
+
+		LOG->Info("Server Version: %d",m_ServerVersion);
+	}
+
 }
 
 NetworkSyncManager::~NetworkSyncManager ()
@@ -126,7 +137,7 @@ bool NetworkSyncManager::Listen(unsigned short port)
 	EZListener->close();	//Kill Listener
 	delete EZListener;
     
-	LOG->Info("Accept Responce:",useSMserver);
+	//LOG->Info("Accept Responce: ",useSMserver);
 	useSMserver=true;
 	return useSMserver;
 }
@@ -147,11 +158,42 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	SendNetPack.m_life=m_playerLife[playerID];
 
     //Send packet to server
-	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+	if (FlashXMLStyle)
+	{
+		netHolderFlash FlashSendPack;	
+		FlashSendPack.data[72]='\0';
+		int i=0;
+		for (i=0;i<72;i++)
+			FlashSendPack.data[i] = ' ';
+		CString TID;
+		FlashSendPack.data[0]='D';
+		TID = ssprintf("%d",playerID);
+		for (i=0;i<TID.GetLength();i++)
+			FlashSendPack.data[i+1] = (TID.c_str())[i];
+		
+		TID = ssprintf("%d",combo);
+		for (i=0;i<TID.GetLength();i++)
+			FlashSendPack.data[i+17] = (TID.c_str())[i];
 
-	if (appendWithZero)
-		NetPlayerClient->send(0);
+		TID =  ssprintf("%d",score);
+		for (i=0;i<TID.GetLength();i++)
+			FlashSendPack.data[i+33] = (TID.c_str())[i];
+
+		TID = ssprintf("%d",step-1);
+		for (i=0;i<TID.GetLength();i++)
+			FlashSendPack.data[i+65] = (TID.c_str())[i];
+
+		TID = ssprintf("%d",m_playerLife[playerID]);
+		for (i=0;i<TID.GetLength();i++)
+			FlashSendPack.data[i+81] = (TID.c_str())[i];
+
+		NetPlayerClient->send((char*)&FlashSendPack,sizeof(netHolderFlash));
+
+	} else
+		NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
+
 }
+	
 
 void NetworkSyncManager::ReportSongOver() 
 {
@@ -166,11 +208,17 @@ void NetworkSyncManager::ReportSongOver()
 	SendNetPack.m_step=0;
 	SendNetPack.m_life=0;
 	
-	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 
-	if (appendWithZero)
-		NetPlayerClient->send(0);
-	
+	if (FlashXMLStyle)
+	{
+		netHolderFlash FlashSendPack;	
+		FlashSendPack.data[72]='\0';
+		for ( int i=0;i<72;i++)
+			FlashSendPack.data[i] = ' ';
+		FlashSendPack.data[0] = 'E';
+		NetPlayerClient->send((char*)&FlashSendPack,sizeof(netHolderFlash));
+	} else
+		NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 	return;
 }
 
@@ -191,7 +239,16 @@ void NetworkSyncManager::StartRequest()
 	SendNetPack.m_step=0;
 	SendNetPack.m_life=0;
 
-	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder));
+	if (FlashXMLStyle)
+	{
+		netHolderFlash FlashSendPack;	
+		FlashSendPack.data[72]='\0';
+		for (int i=0;i<72;i++)
+			FlashSendPack.data[i] = ' ';
+		FlashSendPack.data[0] = 'S';
+		NetPlayerClient->send((char*)&FlashSendPack,sizeof(netHolderFlash));
+	} else
+		NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder)); 
 	
 	LOG->Info("Waiting for RECV");
 
