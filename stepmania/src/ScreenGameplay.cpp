@@ -604,6 +604,46 @@ bool ScreenGameplay::AllFailedEarlier()
 	return true;
 }
 
+// play assist ticks
+bool ScreenGameplay::PlayTicks() const
+{
+	// Sound cards have a latency between when a sample is Play()ed and when the sound
+	// will start coming out the speaker.  Compensate for this by boosting
+	// fPositionSeconds ahead
+
+	if( GAMESTATE->m_SongOptions.m_AssistType != SongOptions::ASSIST_TICK )
+		return false;
+
+	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+	float fSongBeat, fBPS;
+	bool bFreeze;	
+
+	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
+	fPositionSeconds += (SOUND->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
+	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
+
+	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+	iRowNow = max( 0, iRowNow );
+	static int iRowLastCrossed = 0;
+
+	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
+
+	for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;		// skip
+
+			bAnyoneHasANote |= m_Player[p].IsThereANoteAtRow( r );
+			break;	// this will only play the tick for the first player that is joined
+		}
+	}
+
+	iRowLastCrossed = iRowNow;
+
+	return bAnyoneHasANote;
+}
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
@@ -737,41 +777,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 	}
 
 
-	// 
-	// play assist ticks
-	//
-	// Sound cards have a latency between when a sample is Play()ed and when the sound
-	// will start coming out the speaker.  Compensate for this by boosting
-	// fPositionSeconds ahead
-	if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
-	{
-		fPositionSeconds += (SOUND->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
-		GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
-
-		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-		iRowNow = max( 0, iRowNow );
-		static int iRowLastCrossed = 0;
-
-		bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indicies we crossed
-
-		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
-		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-					continue;		// skip
-
-				bAnyoneHasANote |= m_Player[p].IsThereANoteAtRow( r );
-				break;	// this will only play the tick for the first player that is joined
-			}
-		}
-
-		if( bAnyoneHasANote )
-			m_soundAssistTick.Play();
-
-
-		iRowLastCrossed = iRowNow;
-	}
+	if(PlayTicks())
+		m_soundAssistTick.Play();
 
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
 		m_textAutoPlay.SetDiffuse( D3DXCOLOR(1,1,1,1) );

@@ -66,6 +66,7 @@ private:
 	bool AllAreInDanger();
 	bool AllAreFailing();
 	bool AllFailedEarlier();
+	bool PlayTicks() const;
 
 	enum DancingState { 
 		STATE_INTRO = 0, // not allowed to press Back
