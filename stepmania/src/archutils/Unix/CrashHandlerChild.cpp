@@ -61,7 +61,7 @@ void BacktraceNames::Demangle() { }
 CString BacktraceNames::Format() const
 {
     CString ShortenedPath = File;
-    if( Symbol != "" )
+    if( ShortenedPath != "" )
     {
         /* We have some sort of symbol name, so abbreviate or elide the module name. */
         if( ShortenedPath == g_argv[0] )
