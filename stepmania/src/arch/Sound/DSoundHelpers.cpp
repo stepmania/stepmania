@@ -448,7 +448,7 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 	LOG->Trace("write_cursor %i, fake_write_cursor %i, fake_buffer_bytes_filled %i",
 		write_cursor, fake_write_cursor, fake_buffer_bytes_filled );
 
-	bool bCanCatchUp = contained(first_byte_filled, fake_write_cursor, cursorend);
+	bool bCanCatchUp = fake_buffer_bytes_filled >= buffersize || contained(first_byte_filled, fake_write_cursor, cursorend);
 	/*
 	 * If bCanCatchUp is false, then based on our writeahead and the chunksize, we'll
 	 * never fill the buffer.  This isn't fuzzy; we simply aren't filling enough, and
@@ -617,9 +617,12 @@ void DSoundBuf::release_output_buf( char *buffer, unsigned bufsiz )
 int64_t DSoundBuf::GetPosition() const
 {
 	DWORD cursor, junk;
-	buf->GetCurrentPosition( &cursor, &junk );
+	HRESULT hr = buf->GetCurrentPosition( &cursor, &junk );
+	ASSERT_M( SUCCEEDED(hr), hr_ssprintf(hr, "GetCurrentPosition") );
+	ASSERT_M( (int) cursor < buffersize, ssprintf("%i, %i", cursor, buffersize) );
+
 	int cursor_frames = int(cursor) / bytes_per_frame();
-	int write_cursor_frames = write_cursor  / bytes_per_frame();
+	int write_cursor_frames = write_cursor / bytes_per_frame();
 
 	int frames_behind = write_cursor_frames - cursor_frames;
 	/* frames_behind will be 0 if we're called before the buffer starts playing:
