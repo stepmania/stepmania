@@ -201,6 +201,10 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 		if( pNotes->IsAutogen() )
 			continue; /* don't write autogen notes */
 
+		/* Only save steps that weren't loaded from a profile. */
+		if( pNotes->WasLoadedFromProfile() )
+			continue;
+
 		WriteSMNotesTag( *out.m_apNotes[i], f, bSavingCache );
 	}
 
