@@ -115,6 +115,7 @@ InputHandler_DInput::InputHandler_DInput()
 			Devices[i].buffered? "buffered": "unbuffered" );
 	}
 
+	InputThreadPtr = NULL;
 	StartThread();
 }
 
@@ -125,7 +126,6 @@ void InputHandler_DInput::StartThread()
 		InputThreadPtr = SDL_CreateThread(InputThread_Start, this);
 	else
 		InputThreadPtr = NULL;
-
 }
 
 void InputHandler_DInput::ShutdownThread()
