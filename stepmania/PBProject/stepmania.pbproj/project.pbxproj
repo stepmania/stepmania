@@ -1984,7 +1984,6 @@
 				AA29CC430558741A00961A51,
 				AA29CC440558741A00961A51,
 				AA29CC450558741A00961A51,
-				AA29CC460558741A00961A51,
 				AA29CC470558741A00961A51,
 				AA29CC480558741A00961A51,
 				AA29CC490558741A00961A51,
@@ -2347,6 +2346,7 @@
 				AA3D793406A279530064B980,
 				AA3A705F06AA144C006F755E,
 				AA3A706306AA1645006F755E,
+				AA9A78AC06B5C72200B03E97,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2527,12 +2527,6 @@
 		};
 		AA29CC450558741A00961A51 = {
 			fileRef = AA6EFDDA04770C79005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CC460558741A00961A51 = {
-			fileRef = AA6EFDDC04770C79005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3946,7 +3940,6 @@
 				AA29CD5B0558741A00961A51,
 				AA29CD5C0558741A00961A51,
 				AA29CD5D0558741A00961A51,
-				AA29CD5E0558741A00961A51,
 				AA29CD5F0558741A00961A51,
 				AA29CD600558741A00961A51,
 				AA29CD610558741A00961A51,
@@ -4263,6 +4256,7 @@
 				AA3D790106A275E90064B980,
 				AA3D793306A279530064B980,
 				AA3A706206AA1645006F755E,
+				AA9A78AB06B5C72200B03E97,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4431,12 +4425,6 @@
 		};
 		AA29CD5D0558741A00961A51 = {
 			fileRef = AA6EFDD904770C79005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CD5E0558741A00961A51 = {
-			fileRef = AA6EFDDB04770C79005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10058,6 +10046,8 @@
 		};
 		AA6EFDC804770AF1005F316C = {
 			children = (
+				AA9A78A906B5C72200B03E97,
+				AA9A78AA06B5C72200B03E97,
 				AA3A706006AA1645006F755E,
 				AA3A706106AA1645006F755E,
 				AA3D793106A279530064B980,
@@ -13453,6 +13443,36 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 1;
+		};
+		AA9A78A906B5C72200B03E97 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = Game.cpp;
+			path = ../src/Game.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA9A78AA06B5C72200B03E97 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Game.h;
+			path = ../src/Game.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AA9A78AB06B5C72200B03E97 = {
+			fileRef = AA9A78A906B5C72200B03E97;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA9A78AC06B5C72200B03E97 = {
+			fileRef = AA9A78AA06B5C72200B03E97;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AA9D236C0561B6CE00FC7F14 = {
 			explicitFileType = sourcecode.cpp;
