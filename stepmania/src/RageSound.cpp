@@ -598,7 +598,7 @@ int RageSound::GetPositionSecondsInternal() const
 		if(dist < closest_position_dist)
 		{
 			closest_position_dist = dist;
-			closest_position = pos_map[i].position;
+			closest_position = pos_map[i].position - dist;
 		}
 
 		/* See if the current position is close to the end of this block. */
@@ -606,7 +606,7 @@ int RageSound::GetPositionSecondsInternal() const
 		if(dist < closest_position_dist)
 		{
 			closest_position_dist = dist + pos_map[i].samples;
-			closest_position = pos_map[i].position + pos_map[i].samples;
+			closest_position = pos_map[i].position + pos_map[i].samples + dist;
 		}
 	}
 
