@@ -28,7 +28,7 @@
 #include "CourseContentsList.h"
 #include "HelpDisplay.h"
 #include "PaneDisplay.h"
-
+#include "Character.h"
 
 class ScreenSelectMusic : public Screen
 {
@@ -74,6 +74,7 @@ protected:
 
 	MenuElements		m_Menu;
 
+	Sprite				m_sprCharacterIcon[NUM_PLAYERS];
 	Sprite				m_sprBannerMask;
 	FadingBanner		m_Banner;
 	AutoActor			m_sprBannerFrame;

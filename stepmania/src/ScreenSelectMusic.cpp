@@ -101,6 +101,15 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_Menu.Load( "ScreenSelectMusic" );
 	this->AddChild( &m_Menu );
 
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		Character* pChar = GAMESTATE->m_pCurCharacters[p];
+		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
+		m_sprCharacterIcon[p].Load( pChar->GetSongSelectIconPath() );
+		SET_XY( m_sprCharacterIcon[p] );
+		this->AddChild( &m_sprCharacterIcon[p] );
+	}
+
 	m_MusicWheelUnder.Load( THEME->GetPathToG("ScreenSelectMusic wheel under") );
 	m_MusicWheelUnder->SetName( "WheelUnder" );
 	SET_XY( m_MusicWheelUnder );
@@ -252,6 +261,9 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 		m_DifficultyMeter[p].Load();
 		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
+
+		// add an icon onto the song select to show what
+		// character they're using.
 
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
@@ -474,6 +486,7 @@ void ScreenSelectMusic::TweenOnScreen()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
+		ON_COMMAND( m_sprCharacterIcon[p] );
 		ON_COMMAND( m_OptionIconRow[p] );
 		ON_COMMAND( m_sprHighScoreFrame[p] );
 		ON_COMMAND( m_textHighScore[p] );
@@ -525,6 +538,7 @@ void ScreenSelectMusic::TweenOffScreen()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
+		OFF_COMMAND(m_sprCharacterIcon[p]);
 		OFF_COMMAND( m_OptionIconRow[p] );
 		OFF_COMMAND( m_sprHighScoreFrame[p] );
 		OFF_COMMAND( m_textHighScore[p] );

@@ -77,6 +77,32 @@ CString Character::GetTakingABreakPath() const
 		return as[0];
 }
 
+CString Character::GetSongSelectIconPath() const
+{
+	CStringArray as;
+	// first try and find an icon specific to the select music screen
+	// so you can have different icons for music select / char select
+	GetDirListing( m_sCharDir+"selectmusicicon.png", as, false, true );
+	GetDirListing( m_sCharDir+"selectmusicicon.jpg", as, false, true );
+	GetDirListing( m_sCharDir+"selectmusicicon.gif", as, false, true );
+	GetDirListing( m_sCharDir+"selectmusicicon.bmp", as, false, true );
+
+	if( as.empty() )
+	{
+		// if that failed, try using the regular icon
+		GetDirListing( m_sCharDir+"icon.png", as, false, true );
+		GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
+		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
+		if( as.empty() )
+			return "";
+		else
+			return as[0];
+	}
+	else
+		return as[0];
+}
+
 CString Character::GetCardPath() const
 {
 	CStringArray as;

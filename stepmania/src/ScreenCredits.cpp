@@ -137,6 +137,9 @@ const CreditLine CREDIT_LINES[] =
 	{0,"DDRLlama"},
 	{0,"DDRManiaX"}, // boards and all round support
 	{0,"NMR"},
+	{0,"DJ Paranoia"}, // pop'n stuff, general help - friez
+	{0,"DJ Yuz"}, // same as above
+	{0,"Reo"}, // pop'n stuff.
 	{0,"Random Hajile"}, // sent me 3DDX stuff - friez
 	{0,"Chocobo Ghost"}, // sent me ez2 stuff - friez
 	{0,"Tyma"}, // sent me popnmusic stuff - friez

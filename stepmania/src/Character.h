@@ -29,6 +29,7 @@ public:
 	CString GetRestAnimationPath() const;
 	CString GetWarmUpAnimationPath() const;
 	CString GetDanceAnimationPath() const;
+	CString GetSongSelectIconPath() const;
 
 	CString m_sCharDir;
 	CString m_sName;
