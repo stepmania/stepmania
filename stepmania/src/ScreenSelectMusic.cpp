@@ -1268,7 +1268,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	}
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
-	GAMESTATE->m_pCurSong = pSong;
+	if( pSong )
+		GAMESTATE->m_pCurSong = pSong;
 
 	m_GrooveGraph.SetFromSong( pSong );
 
