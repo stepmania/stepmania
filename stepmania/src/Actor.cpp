@@ -117,7 +117,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = sinf( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
-		ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
+		ASSERT_M( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1, ssprintf("%f",fPercentBetweenColors) );
 		float fOriginalAlpha = m_tempState.diffuse[0].a;
 
 		int i;
