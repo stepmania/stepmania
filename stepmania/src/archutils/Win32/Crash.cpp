@@ -1563,7 +1563,7 @@ void StaticLog(const char *str)
 	if(!staticlog_ptr)
 		return;
 
-	int len = strlen(str)+2; /* +newline +null */
+	int len = strlen(str)+3; /* +\r +\n +null */
 	if(staticlog_ptr+len >= staticlog_end)
 	{
 		const char *txt = "\nStaticlog limit reached\n";
@@ -1578,6 +1578,7 @@ void StaticLog(const char *str)
 
 	strcpy(staticlog_ptr, str);
 
+	staticlog_ptr[len-3] = '\r';
 	staticlog_ptr[len-2] = '\n';
 	staticlog_ptr[len-1] = 0;
 	/* Advance to sit on the NULL, so the terminator will be overwritten
@@ -1588,6 +1589,8 @@ void StaticLog(const char *str)
 static void ReportStaticLog(HWND hwnd, HANDLE hFile)
 {
 	Report(NULL, hFile, "Static log:");
-	Report(hwnd, hFile, "%s", staticlog);
+	DWORD dwActual;
+	WriteFile(hFile, staticlog, staticlog_ptr-staticlog, &dwActual, NULL);
+//	Report(hwnd, hFile, "%s", staticlog);
 }
 
