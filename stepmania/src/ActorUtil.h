@@ -10,17 +10,17 @@ struct XNode;
 #define ON_COMMAND( actor )		ActorUtil::OnCommand( actor, m_sName )
 #define OFF_COMMAND( actor )	ActorUtil::OffCommand( actor, m_sName )
 #define SET_XY_AND_ON_COMMAND( actor )		ActorUtil::SetXYAndOnCommand( actor, m_sName )
-#define COMMAND( actor, command_name )		ActorUtil::Command( actor, m_sName, command_name )
+#define COMMAND( actor, command_name )		ActorUtil::RunCommand( actor, m_sName, command_name )
 
 namespace ActorUtil
 {
 	void SetXY( Actor& actor, const CString &sScreenName );
 	inline void SetXY( Actor* pActor, const CString &sScreenName ) { SetXY( *pActor, sScreenName ); }
 
-	void Command( Actor& actor, const CString &sScreenName, const CString &sCommandName );
+	void RunCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName );
 
-	inline void OnCommand( Actor& actor, const CString &sScreenName ) { Command( actor, sScreenName, "On" ); }
-	inline void OffCommand( Actor& actor, const CString &sScreenName ) { Command( actor, sScreenName, "Off" ); }
+	inline void OnCommand( Actor& actor, const CString &sScreenName ) { RunCommand( actor, sScreenName, "On" ); }
+	inline void OffCommand( Actor& actor, const CString &sScreenName ) { RunCommand( actor, sScreenName, "Off" ); }
 	inline void SetXYAndOnCommand( Actor& actor, const CString &sScreenName )
 	{
 		SetXY( actor, sScreenName );
@@ -28,7 +28,7 @@ namespace ActorUtil
 	}
 
 	/* convenience */
-	inline void Command( Actor* pActor, const CString &sScreenName, const CString &sCommandName ) { if(pActor) Command( *pActor, sScreenName, sCommandName ); }
+	inline void RunCommand( Actor* pActor, const CString &sScreenName, const CString &sCommandName ) { if(pActor) RunCommand( *pActor, sScreenName, sCommandName ); }
 	inline void OnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) OnCommand( *pActor, sScreenName ); }
 	inline void OffCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) OffCommand( *pActor, sScreenName ); }
 	inline void SetXYAndOnCommand( Actor* pActor, const CString &sScreenName ) { if(pActor) SetXYAndOnCommand( *pActor, sScreenName ); }

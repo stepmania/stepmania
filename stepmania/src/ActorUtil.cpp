@@ -341,7 +341,7 @@ void ActorUtil::SetXY( Actor& actor, const CString &sScreenName )
 	actor.SetXY( THEME->GetMetricF(sScreenName,actor.GetID()+"X"), THEME->GetMetricF(sScreenName,actor.GetID()+"Y") );
 }
 
-void ActorUtil::Command( Actor& actor, const CString &sScreenName, const CString &sCommandName )
+void ActorUtil::RunCommand( Actor& actor, const CString &sScreenName, const CString &sCommandName )
 {
 	actor.PlayCommand( sCommandName );
 
