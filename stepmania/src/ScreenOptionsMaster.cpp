@@ -438,6 +438,24 @@ void ScreenOptionsMaster::ImportOptions()
 	}
 }
 
+/* Import only settings specific to the given player. */
+void ScreenOptionsMaster::ImportOptionsForPlayer( PlayerNumber pn )
+{
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return;
+
+	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
+	{
+		const OptionRowHandler &hand = OptionRowHandlers[i];
+		const OptionRowData &data = m_OptionRowAlloc[i];
+		Row &row = *m_Rows[i];
+
+		if( data.bOneChoiceForAllPlayers )
+			continue;
+		ImportOption( data, hand, pn, i, row.m_vbSelected[pn] );
+	}
+}
+
 int GetOneSelection( const vector<bool> &vbSelected )
 {
 	for( unsigned i=0; i<vbSelected.size(); i++ )

@@ -130,7 +130,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		
 		UtilCommand( m_sprCancelAll[pn], m_sName, "Show" );
 
-		this->ImportOptions();
+		this->ImportOptionsForPlayer( pn );
 		this->PositionUnderlines();
 	}
 

@@ -54,6 +54,7 @@ private:
 protected:
 	virtual void ImportOptions();
 	virtual void ExportOptions();
+	virtual void ImportOptionsForPlayer( PlayerNumber pn ); // used by ScreenPlayerOptions
 
 	virtual void GoToNextState();
 	virtual void GoToPrevState();
