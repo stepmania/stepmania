@@ -594,6 +594,14 @@ static int GetNumStagesForCurrentSong()
 /* Called by ScreenGameplay.  Set the length of the current song. */
 void GameState::BeginStage()
 {
+	/* This should only be called once per stage. */
+	if( m_iNumStagesOfThisSong != 0 )
+		LOG->Warn( "XXX: m_iNumStagesOfThisSong == %i?", m_iNumStagesOfThisSong );
+
+	/* Finish the last stage (if any), if we havn't already.  (For example, we might
+	 * have, for some reason, gone from gameplay to evaluation straight back to gameplay.) */
+	FinishStage();
+
 	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
 	ASSERT( m_iNumStagesOfThisSong != -1 );
 }

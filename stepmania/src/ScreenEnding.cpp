@@ -66,6 +66,9 @@ CString GetStatsLineValue( PlayerNumber pn, int iLine )
 
 ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, false/*dont reset GAMESTATE*/ )
 {
+	/* Make sure the last stage was finished. */
+	GAMESTATE->FinishStage();
+
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );

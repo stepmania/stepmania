@@ -169,6 +169,9 @@ static const CreditLine CREDIT_LINES[] =
 
 ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 {
+	/* Make sure the last stage was finished. */
+	GAMESTATE->FinishStage();
+
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
