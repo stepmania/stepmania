@@ -1297,7 +1297,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 
 	FOREACH_CONST( Screenshot, m_vScreenshots, ss )
 	{
-		XNode* pScreenshotNode = pNode->AppendChild( ss->CreateNode() );
+		pNode->AppendChild( ss->CreateNode() );
 	}
 
 	return pNode;
