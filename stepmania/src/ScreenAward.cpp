@@ -107,11 +107,10 @@ void ScreenAward::Input( const DeviceInput& DeviceI, const InputEventType type, 
 				
 				if( !sFileName.empty() )
 				{
-					Profile::Screenshot screenshot;
+					Screenshot screenshot;
 					screenshot.sFileName = sFileName;
 					screenshot.sMD5 = CRYPTMAN->GetMD5( sPath );
-					screenshot.time = time(NULL);
-					screenshot.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
+					// FIXME: save HighScore
 					pProfile->AddScreenshot( screenshot );
 				}
 

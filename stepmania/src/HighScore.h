@@ -92,6 +92,16 @@ struct HighScoreList
 	void LoadFromNode( const XNode* pNode );
 };
 
+struct Screenshot
+{
+	CString sFileName;	// no directory part - just the file name
+	CString sMD5;		// MD5 hash of the screenshot file
+	HighScore highScore;
+
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
+};
+
 #endif
 
 /*

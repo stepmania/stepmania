@@ -174,15 +174,8 @@ public:
 	//
 	// Screenshot Data
 	//
-	struct Screenshot
-	{
-		CString sFileName;	// no directory part - just the file name
-		CString sMD5;		// MD5 hash of the screenshot file
-		time_t time;		// return value of time() when screenshot was taken
-		CString sMachineGuid;	// where this screenshot was taken
-	};
 	vector<Screenshot> m_vScreenshots;
-	void AddScreenshot( Screenshot screenshot );
+	void AddScreenshot( const Screenshot &screenshot );
 	int GetNextScreenshotIndex() { return m_vScreenshots.size(); }
 
 

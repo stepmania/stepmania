@@ -189,6 +189,30 @@ void HighScoreList::LoadFromNode( const XNode* pNode )
 	}
 }
 
+XNode* Screenshot::CreateNode() const
+{
+	XNode* pNode = new XNode;
+	pNode->name = "Screenshot";
+
+	// TRICKY:  Don't write "name to fill in" markers.
+	pNode->AppendChild( "FileName",		sFileName );
+	pNode->AppendChild( "MD5",			sMD5 );
+	pNode->AppendChild( highScore.CreateNode() );
+
+	return pNode;
+}
+
+void Screenshot::LoadFromNode( const XNode* pNode ) 
+{
+	ASSERT( pNode->name == "Screenshot" );
+
+	pNode->GetChildValue( "FileName",	sFileName );
+	pNode->GetChildValue( "MD5",		sMD5 );
+	XNode* pHighScore = pNode->GetChild( "HighScore" );
+	if( pHighScore )
+		highScore.LoadFromNode( pHighScore );
+}
+
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.

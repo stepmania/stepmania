@@ -1392,6 +1392,8 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 	if( GameI.IsValid() )
 	{
 		PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
+		HighScore &hs = m_HighScore[pn];
+
 
 		if( CodeDetector::EnteredCode(GameI.controller, CodeDetector::CODE_SAVE_SCREENSHOT) )
 		{
@@ -1406,11 +1408,10 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 				
 				if( !sFileName.empty() )
 				{
-					Profile::Screenshot screenshot;
+					Screenshot screenshot;
 					screenshot.sFileName = sFileName;
 					screenshot.sMD5 = CRYPTMAN->GetMD5( sPath );
-					screenshot.time = time(NULL);
-					screenshot.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
+					screenshot.highScore = hs;
 					pProfile->AddScreenshot( screenshot );
 				}
 

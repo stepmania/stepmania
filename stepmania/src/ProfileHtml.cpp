@@ -1138,7 +1138,7 @@ void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vec
 	PRINT_CLOSE(f);
 }
 
-void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
+void PrintScreenshot( RageFile &f, const Screenshot &ss )
 {
 	CString sImagePath = SCREENSHOTS_SUBDIR+ss.sFileName;
 	CString sImgHtml = ssprintf("<a href='%s' target='_new'><img class='screenshot' src='%s' width='160' height='120'></a>", sImagePath.c_str(), sImagePath.c_str() );
@@ -1153,8 +1153,7 @@ void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
 
 	TABLE_LINE2( "File", ss.sFileName );
 	TABLE_LINE2( "MD5", ss.sMD5 );
-	TABLE_LINE2( "Time", (CString)ctime(&ss.time) );
-	TABLE_LINE2( "Machine", ss.sMachineGuid );
+	TABLE_LINE2( "Results", HighScoreToString(ss.highScore) );
 
 	END_TABLE;
 
@@ -1172,9 +1171,9 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 
 		for( int i = (int)pProfile->m_vScreenshots.size()-1; i >= 0; i-- )
 		{
-			Profile::Screenshot ss = pProfile->m_vScreenshots[i];
+			Screenshot ss = pProfile->m_vScreenshots[i];
 			tm new_time;
-			localtime_r( &ss.time, &new_time );
+			localtime_r( &ss.highScore.time, &new_time );
 			int iYear = new_time.tm_year+1900;
 			int iMonth = new_time.tm_mon+1;
 			CString sNewMonth = ssprintf("%02d/%d", iMonth, iYear );

@@ -1263,7 +1263,7 @@ void Profile::SaveMachinePublicKeyToDir( CString sDir ) const
 		FileCopy( CRYPTMAN->GetPublicKeyFileName(), sDir+PUBLIC_KEY_FILE );
 }
 
-void Profile::AddScreenshot( Screenshot screenshot )
+void Profile::AddScreenshot( const Screenshot &screenshot )
 {
 	m_vScreenshots.push_back( screenshot );
 }
@@ -1273,26 +1273,13 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pNode )
 	CHECKPOINT;
 
 	ASSERT( pNode->name == "ScreenshotData" );
-	for( XNodes::const_iterator screenshot = pNode->childs.begin(); 
-		screenshot != pNode->childs.end(); 
-		screenshot++ )
+	FOREACH_CONST( XNode*, pNode->childs, screenshot )
 	{
 		if( (*screenshot)->name != "Screenshot" )
 			WARN_AND_CONTINUE;
 
 		Screenshot ss;
-		
-		if( !(*screenshot)->GetChildValue("FileName",ss.sFileName) )
-			WARN;
-
-		if( !(*screenshot)->GetChildValue("MD5",ss.sMD5) )
-			WARN;
-
-		if( !(*screenshot)->GetChildValue("Time",(int&)ss.time) )	// time_t is a signed long on Win32.  Is this ok on other platforms?
-			WARN;
-
-		if( !(*screenshot)->GetChildValue("MachineGuid",ss.sMachineGuid) )
-			WARN;
+		ss.LoadFromNode( *screenshot );
 
 		m_vScreenshots.push_back( ss );
 	}	
@@ -1308,16 +1295,9 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "ScreenshotData";
 
-	for( unsigned i=0; i<m_vScreenshots.size(); i++ )
+	FOREACH_CONST( Screenshot, m_vScreenshots, ss )
 	{
-		const Screenshot &ss = m_vScreenshots[i];
-
-		XNode* pScreenshotNode = pNode->AppendChild( "Screenshot" );
-
-		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
-		pScreenshotNode->AppendChild( "MD5", ss.sMD5 );
-		pScreenshotNode->AppendChild( "Time", (int) ss.time );
-		pScreenshotNode->AppendChild( "MachineGuid", ss.sMachineGuid );
+		XNode* pScreenshotNode = pNode->AppendChild( ss->CreateNode() );
 	}
 
 	return pNode;
@@ -1328,9 +1308,7 @@ void Profile::LoadCalorieDataFromNode( const XNode* pNode )
 	CHECKPOINT;
 
 	ASSERT( pNode->name == "CalorieData" );
-	for( XNodes::const_iterator pDay = pNode->childs.begin(); 
-		pDay != pNode->childs.end(); 
-		pDay++ )
+	FOREACH_CONST( XNode*, pNode->childs, pDay )
 	{
 		if( (*pDay)->name != "Day" )
 			WARN_AND_CONTINUE;
