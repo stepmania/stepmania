@@ -343,7 +343,7 @@ bool FileRead( ifstream& f, float& fOut )
 	CString s;
 	if( !FileRead( f, s ) )
 		return false;
-	fOut = atof( s );
+	fOut = (float) atof( s );
 	return true;
 }
 void FileWrite( ofstream& f, const CString& sWrite )
@@ -393,7 +393,7 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 		if( !FileRead(f, iNumNotes) )
 			WARN_AND_RETURN;
 
-		for( unsigned n=0; n<iNumNotes; n++ )
+		for( int n=0; n<iNumNotes; n++ )
 		{
 			StepsType nt;
 			if( !FileRead(f, (int&)nt) )
@@ -439,7 +439,7 @@ void SongManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 					WARN_AND_RETURN;
 				CLAMP( grade, (Grade)0, (Grade)(NUM_GRADES-1) );
 
-				float iScore;
+				int iScore;
 				if( !FileRead(f, iScore) )
 					WARN_AND_RETURN;
 
