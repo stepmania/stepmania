@@ -122,6 +122,14 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 	SAFE_DELETE( m_textHelp );
 }
 
+void ScreenWithMenuElements::StartPlayingMusic()
+{
+	/* Some screens should leave the music alone (eg. ScreenPlayerOptions music 
+	 * sample left over from ScreenSelectMusic). */
+	if( PLAY_MUSIC )
+		SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
+}
+
 void ScreenWithMenuElements::Update( float fDeltaTime )
 {
 	if( m_bFirstUpdate )
@@ -130,11 +138,8 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 		 * Play sounds after so loading so we don't thrash while loading files. */
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
 
-		/* Some screens should leave the music alone (eg. ScreenPlayerOptions music 
-		 * sample left over from ScreenSelectMusic). */
-		if( PLAY_MUSIC )
-			SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
-
+		StartPlayingMusic();
+		
 		/* Evaluate FirstUpdateCommand. */
 		this->RunCommands( FIRST_UPDATE_COMMAND );
 	}

@@ -108,15 +108,19 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 //	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
+void ScreenAttract::StartPlayingMusic()
+{
+	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
+	{
+		SOUND->PlayMusic( "" ); // stop music
+		return;
+	}
+
+	ScreenWithMenuElements::StartPlayingMusic();
+}
+
 void ScreenAttract::Update( float fDelta )
 {
-	if( IsFirstUpdate() )
-	{
-		if( GAMESTATE->IsTimeToPlayAttractSounds() )
-			SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
-		else
-			SOUND->PlayMusic( "" );	// stop music
-	}
 	ScreenWithMenuElements::Update(fDelta);
 }
 
@@ -135,7 +139,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		 * going to interrupt it when we fade in, stop the old music before we fade out. */
 		bool bMusicChanging = false;
 		if( PLAY_MUSIC )
-			bMusicChanging = THEME->GetPathS(NEXT_SCREEN,"music") != THEME->GetPathS(m_sName,"music",true);	// GetPath optional on the next screen because it may not have music.
+			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(NEXT_SCREEN,"music",true);	// GetPath optional on the next screen because it may not have music.
 
 		if( bMusicChanging )
 			SOUND->PlayMusic( "" );	// stop the music

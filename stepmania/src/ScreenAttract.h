@@ -19,6 +19,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	virtual void StartPlayingMusic();
 };
 
 

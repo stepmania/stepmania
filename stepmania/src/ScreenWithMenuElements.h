@@ -29,6 +29,8 @@ public:
 	void ResetTimer();
 
 protected:
+	virtual void StartPlayingMusic();
+
 	AutoActor			m_sprUnderlay;
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
