@@ -137,6 +137,8 @@
 		};
 		29B97314FDCFA39411CA2CEA = {
 			children = (
+				AA1C6595050EE6390073A143,
+				AA1C657F050EE1BA0073A143,
 				AA52E9BD04DBBCF400D02EE9,
 				AA6E00FE047711FF005F316C,
 				AA6EFF7404770F8B005F316C,
@@ -210,7 +212,6 @@
 		29B97326FDCFA39411CA2CEA = {
 			buildPhases = (
 				AA52E9BF04DBBD2C00D02EE9,
-				AADB4F0B04D5CD5900D02EE9,
 				29B97327FDCFA39411CA2CEA,
 				29B97328FDCFA39411CA2CEA,
 				29B9732BFDCFA39411CA2CEA,
@@ -225,8 +226,8 @@
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof";
-				OTHER_LDFLAGS = "-lSDLmain -lpng ../src/SDL_sound-1.0.0/SDL_sound.o ../src/SDL_sound-1.0.0/ogg.o ../src/SDL_sound-1.0.0/wav.o ../src/SDL_sound-1.0.0/audio_convert.o ../src/SDL_sound-1.0.0/madlib.o -lmad -logg -lvorbisfile -lvorbis";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof -DSOUND_SUPPORTS_MADLIB -DSOUND_SUPPORTS_WAV -DSOUND_SUPPORTS_OGG";
+				OTHER_LDFLAGS = "-lSDLmain -lpng -lmad -logg -lvorbisfile -lvorbis";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = NO;
@@ -544,6 +545,10 @@
 				AA14ED120509F40000E3FAD7,
 				AA1C6555050D23200073A143,
 				AA1C6559050D234B0073A143,
+				AA1C6583050EE2380073A143,
+				AA1C6590050EE2B50073A143,
+				AA1C6592050EE2B50073A143,
+				AA1C6597050EE68F0073A143,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -805,6 +810,13 @@
 				AA14ED110509F40000E3FAD7,
 				AA1C6554050D23200073A143,
 				AA1C6558050D234B0073A143,
+				AA1C6582050EE2380073A143,
+				AA1C6589050EE26C0073A143,
+				AA1C658A050EE26C0073A143,
+				AA1C658B050EE26C0073A143,
+				AA1C658C050EE26C0073A143,
+				AA1C6591050EE2B50073A143,
+				AA1C6594050EE3050073A143,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1308,6 +1320,174 @@
 		};
 		AA1C656C050D2D740073A143 = {
 			fileRef = AA1C653B050C00CF0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C657F050EE1BA0073A143 = {
+			children = (
+				AA1C658E050EE2B50073A143,
+				AA1C658F050EE2B50073A143,
+				AA1C658D050EE2B50073A143,
+				AA1C6593050EE3050073A143,
+				AA1C6584050EE2400073A143,
+				AA1C6580050EE2380073A143,
+				AA1C6581050EE2380073A143,
+			);
+			isa = PBXGroup;
+			name = "SDL_sound-1.0.0";
+			path = "../src/SDL_sound-1.0.0";
+			refType = 4;
+		};
+		AA1C6580050EE2380073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = extra_rwops.c;
+			refType = 4;
+		};
+		AA1C6581050EE2380073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = extra_rwops.h;
+			refType = 4;
+		};
+		AA1C6582050EE2380073A143 = {
+			fileRef = AA1C6580050EE2380073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6583050EE2380073A143 = {
+			fileRef = AA1C6581050EE2380073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6584050EE2400073A143 = {
+			children = (
+				AA1C6585050EE26C0073A143,
+				AA1C6586050EE26C0073A143,
+				AA1C6587050EE26C0073A143,
+				AA1C6588050EE26C0073A143,
+			);
+			isa = PBXGroup;
+			path = decoders;
+			refType = 4;
+		};
+		AA1C6585050EE26C0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = flac.c;
+			refType = 4;
+		};
+		AA1C6586050EE26C0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = madlib.c;
+			refType = 4;
+		};
+		AA1C6587050EE26C0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ogg.c;
+			refType = 4;
+		};
+		AA1C6588050EE26C0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = wav.c;
+			refType = 4;
+		};
+		AA1C6589050EE26C0073A143 = {
+			fileRef = AA1C6585050EE26C0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C658A050EE26C0073A143 = {
+			fileRef = AA1C6586050EE26C0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C658B050EE26C0073A143 = {
+			fileRef = AA1C6587050EE26C0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C658C050EE26C0073A143 = {
+			fileRef = AA1C6588050EE26C0073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C658D050EE2B50073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SDL_sound_internal.h;
+			refType = 4;
+		};
+		AA1C658E050EE2B50073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SDL_sound.c;
+			refType = 4;
+		};
+		AA1C658F050EE2B50073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SDL_sound.h;
+			refType = 4;
+		};
+		AA1C6590050EE2B50073A143 = {
+			fileRef = AA1C658D050EE2B50073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6591050EE2B50073A143 = {
+			fileRef = AA1C658E050EE2B50073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6592050EE2B50073A143 = {
+			fileRef = AA1C658F050EE2B50073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6593050EE3050073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = audio_convert.c;
+			refType = 4;
+		};
+		AA1C6594050EE3050073A143 = {
+			fileRef = AA1C6593050EE3050073A143;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA1C6595050EE6390073A143 = {
+			children = (
+				AA1C6596050EE68F0073A143,
+			);
+			isa = PBXGroup;
+			name = "SDL_net-1.2.5";
+			path = "../src/SDL_net-1.2.5";
+			refType = 4;
+		};
+		AA1C6596050EE68F0073A143 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SDL_net.h;
+			path = include/SDL_net.h;
+			refType = 4;
+		};
+		AA1C6597050EE68F0073A143 = {
+			fileRef = AA1C6596050EE68F0073A143;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10017,19 +10197,6 @@
 			name = ArchHooks_Unix.h;
 			path = ArchHooks/ArchHooks_Unix.h;
 			refType = 4;
-		};
-		AADB4F0B04D5CD5900D02EE9 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			generatedFileNames = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			neededFileNames = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = scripts/make_libSDL_sound.sh;
 		};
 		AADB4F5504D8EB7500D02EE9 = {
 			fileRef = AADB4E8804D50FB900D02EE9;
