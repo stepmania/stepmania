@@ -20,6 +20,26 @@ enum NSScoreBoardColumn
 
 class EzSockets;
 
+class PacketFunctions
+{
+public:
+	unsigned char Data[NETMAXBUFFERSIZE];	//Data
+	int Position;				//Other info (Used for following functions)
+
+	//Commands used to operate on NetPackets
+	uint8_t Read1();
+	uint16_t Read2();
+	uint32_t Read4();
+	CString ReadNT();
+
+	void Write1(uint8_t Data);
+	void Write2(uint16_t Data);
+	void Write4(uint32_t Data);
+	void WriteNT(CString Data);
+
+	void ClearPacket();
+};
+
 class NetworkSyncManager 
 {
 public:
@@ -77,32 +97,7 @@ private:
 
 	bool Listen(unsigned short port);
 
-
-	//This is it's own type, so that more info can 
-	//be put at the end of it; after the data.
-	struct NetPacket
-	{
-		unsigned char Data[NETMAXBUFFERSIZE];	//Data
-
-		int Position;				//Other info
-	};
-
-	//We only want to create this once per instance.
-	//No need to allocate and deallocate one all the time.
-	NetPacket m_packet;
-
-	//Commands used to operate on NetPackets
-	uint8_t Read1(NetPacket &Packet);
-	uint16_t Read2(NetPacket &Packet);
-	uint32_t Read4(NetPacket &Packet);
-	CString ReadNT(NetPacket &Packet);
-
-	void Write1(NetPacket &Packet, uint8_t Data);
-	void Write2(NetPacket &Packet, uint16_t Data);
-	void Write4(NetPacket &Packet, uint32_t Data);
-	void WriteNT(NetPacket &Packet, CString Data);
-
-	inline void ClearPacket(NetPacket &Packet)	{ memset((void*)(&Packet),0, sizeof(NetPacket)); }
+	PacketFunctions m_packet;
 
 #endif
 };

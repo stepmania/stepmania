@@ -95,13 +95,13 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	// If network play is desired and the connection works,
 	// halt until we know what server version we're dealing with
 
-	ClearPacket(m_packet);
+	m_packet.ClearPacket();
 
-	Write1(m_packet, 2);	//Hello Packet
+	m_packet.Write1(2);	//Hello Packet
 
-	Write1(m_packet, NETPROTOCOLVERSION);
+	m_packet.Write1(NETPROTOCOLVERSION);
 
-	WriteNT(m_packet, CString(PRODUCT_NAME_VER)); 
+	m_packet.WriteNT(CString(PRODUCT_NAME_VER)); 
 
 	//Block until responce is received
 	//Move mode to blocking in order to give CPU back to the 
@@ -113,21 +113,21 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	//Following packet must get through, so we block for it.
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 
-	ClearPacket(m_packet);
+	m_packet.ClearPacket();
 
 	while (dontExit)
 	{
-		ClearPacket(m_packet);
+		m_packet.ClearPacket();
 		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
 			dontExit=false; // Also allow exit if there is a problem on the socket
-		if (Read1(m_packet) == (128+2))
+		if (m_packet.Read1() == (128+2))
 			dontExit=false;
 		//Only allow passing on handshake. 
 		//Otherwise scoreboard updates and such will confuse us.
 	}
 	NetPlayerClient->blocking = false;
-	m_ServerVersion = Read1(m_packet);
-	m_ServerName = ReadNT(m_packet);
+	m_ServerVersion = m_packet.Read1();
+	m_ServerName = m_packet.ReadNT();
 
 	LOG->Info("Server Version: %d %s", m_ServerVersion, m_ServerName.c_str());
 }
@@ -204,21 +204,21 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	if (!useSMserver) //Make sure that we are using the network
 		return;
 	
-	ClearPacket(m_packet);
+	m_packet.ClearPacket();
 
-	Write1(m_packet,5);
+	m_packet.Write1(5);
 	uint8_t ctr = (uint8_t) (playerID * 16 + step - 1);
-	Write1(m_packet,ctr);
+	m_packet.Write1(ctr);
 
 	ctr = uint8_t( g_CurStageStats.GetGrade((PlayerNumber)playerID)*16 );
 
-	Write1(m_packet,ctr);
+	m_packet.Write1(ctr);
 
-	Write4(m_packet,score);
+	m_packet.Write4(score);
 
-	Write2(m_packet, (uint16_t) combo);
+	m_packet.Write2((uint16_t) combo);
 
-	Write2(m_packet, (uint16_t) m_playerLife[playerID]);
+	m_packet.Write2((uint16_t) m_playerLife[playerID]);
 
 	//Offset Info
 	//Note: if a 0 is sent, then disregard data.
@@ -236,7 +236,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	if (((step<TNS_BOO)||(step>TNS_MARVELOUS))&&(step!=TNS_HIT_MINE))
 		iOffset = 0;
 
-	Write2(m_packet, (uint16_t) iOffset);
+	m_packet.Write2((uint16_t) iOffset);
 
 	NetPlayerClient->SendPack((char*)m_packet.Data, m_packet.Position); 
 
@@ -248,9 +248,9 @@ void NetworkSyncManager::ReportSongOver()
 	if (!useSMserver)	//Make sure that we are using the network
 		return ;
 
-	ClearPacket(m_packet);
+	m_packet.ClearPacket();
 
-	Write1(m_packet,4);
+	m_packet.Write1(4);
 
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 	return;
@@ -260,14 +260,14 @@ void NetworkSyncManager::ReportStyle()
 {
 	if (!useSMserver)
 		return;
-	ClearPacket( m_packet );
-	Write1( m_packet, 6 );
-	Write1( m_packet, (int8_t) GAMESTATE->GetNumPlayersEnabled() );
+	m_packet.ClearPacket();
+	m_packet.Write1(6);
+	m_packet.Write1( (int8_t) GAMESTATE->GetNumPlayersEnabled() );
 
 	FOREACH_EnabledPlayer( pn ) 
 	{
-		Write1( m_packet,(uint8_t) pn );
-		WriteNT( m_packet, GAMESTATE->GetPlayerDisplayName(pn) );
+		m_packet.Write1((uint8_t) pn );
+		m_packet.WriteNT(GAMESTATE->GetPlayerDisplayName(pn) );
 	}
 
 	NetPlayerClient->SendPack( (char*)&m_packet.Data, m_packet.Position );
@@ -283,9 +283,9 @@ void NetworkSyncManager::StartRequest(short position)
 
 	LOG->Trace("Requesting Start from Server.");
 
-	ClearPacket( m_packet );
+	m_packet.ClearPacket();
 
-	Write1( m_packet,3 );
+	m_packet.Write1(3 );
 
 	unsigned char ctr=0;
 
@@ -298,38 +298,38 @@ void NetworkSyncManager::StartRequest(short position)
 	if (tSteps!=NULL)
 		ctr = uint8_t(ctr+tSteps->GetMeter());
 
-	Write1(m_packet,ctr);
+	m_packet.Write1(ctr);
 	
 	//Notify server if this is for sync or not.
 	ctr = char(position*16);
-	Write1(m_packet,ctr);
+	m_packet.Write1(ctr);
 
 	if (GAMESTATE->m_pCurSong !=NULL) {
-		WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sMainTitle);
-		WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sSubTitle);
-		WriteNT(m_packet,GAMESTATE->m_pCurSong->m_sArtist);
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sMainTitle);
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sSubTitle);
+		m_packet.WriteNT(GAMESTATE->m_pCurSong->m_sArtist);
 	} else {
-		WriteNT(m_packet,"");
-		WriteNT(m_packet,"");
-		WriteNT(m_packet,"");
+		m_packet.WriteNT("");
+		m_packet.WriteNT("");
+		m_packet.WriteNT("");
 	}
 
 	if (GAMESTATE->m_pCurCourse != NULL)
-		WriteNT(m_packet,GAMESTATE->m_pCurCourse->GetFullDisplayTitle());
+		m_packet.WriteNT(GAMESTATE->m_pCurCourse->GetFullDisplayTitle());
 	else
-		WriteNT(m_packet,CString(""));
+		m_packet.WriteNT(CString(""));
 
 	//Send Player (and song) Options
-	WriteNT(m_packet,GAMESTATE->m_SongOptions.GetString());
+	m_packet.WriteNT(GAMESTATE->m_SongOptions.GetString());
 
 	int players=0;
 	FOREACH_PlayerNumber (p)
 	{
 		players++;
-		WriteNT(m_packet,GAMESTATE->m_PlayerOptions[p].GetString());
+		m_packet.WriteNT(GAMESTATE->m_PlayerOptions[p].GetString());
 	}
 	for (int i=0;i<2-players;i++)
-		WriteNT(m_packet,"");	//Write a NULL if no player
+		m_packet.WriteNT("");	//Write a NULL if no player
 
 
 
@@ -345,15 +345,15 @@ void NetworkSyncManager::StartRequest(short position)
 	
 	LOG->Trace("Waiting for RECV");
 
-	ClearPacket(m_packet);
+	m_packet.ClearPacket();
 
 	
 	while (dontExit)
 	{
-		ClearPacket(m_packet);
+		m_packet.ClearPacket();
 		if (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)<1)
 			dontExit=false; // Also allow exit if there is a problem on the socket
-		if (Read1(m_packet) == (128+3))
+		if (m_packet.Read1() == (128+3))
 			dontExit=false;
 		//Only allow passing on Start request. 
 		//Otherwise scoreboard updates and such will confuse us.
@@ -402,11 +402,11 @@ void NetworkSyncManager::ProcessInput()
 
 	NetPlayerClient->update();
 
-	ClearPacket(m_packet);
+	m_packet.ClearPacket();
 
 	while (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)>0)
 	{
-		int command = Read1(m_packet);
+		int command = m_packet.Read1();
 		//Check to make sure command is valid from server
 		if (command<128)
 		{		
@@ -418,8 +418,8 @@ void NetworkSyncManager::ProcessInput()
 
 		switch (command) {
 		case 0: //Ping packet responce
-			ClearPacket(m_packet);
-			Write1(m_packet,0);
+			m_packet.ClearPacket();
+			m_packet.Write1(0);
 			NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
 			break;
 		case 1:	//These are in responce to when/if we send packet 0's
@@ -428,25 +428,25 @@ void NetworkSyncManager::ProcessInput()
 		case 4: //Undefined
 		case 5: //Scoreboard Update
 			{	//Ease scope
-				int ColumnNumber=Read1(m_packet);
-				int NumberPlayers=Read1(m_packet);
+				int ColumnNumber=m_packet.Read1();
+				int NumberPlayers=m_packet.Read1();
 				CString ColumnData;
 				int i;
 				switch (ColumnNumber) {
 				case 0:
 					ColumnData = "Names\n";
 					for (i=0;i<NumberPlayers;i++)
-						ColumnData += ReadNT(m_packet) + "\n";
+						ColumnData += m_packet.ReadNT() + "\n";
 					break;
 				case 1:
 					ColumnData = "Combo\n";
 					for (i=0;i<NumberPlayers;i++)
-						ColumnData += ssprintf("%d\n",Read2(m_packet));
+						ColumnData += ssprintf("%d\n",m_packet.Read2());
 					break;
 				case 2:
 					ColumnData = "Grade\n";
 					for (i=0;i<NumberPlayers;i++)
-						switch (Read1(m_packet)) {
+						switch (m_packet.Read1()) {
 						case 0:
 							ColumnData+="AAAA\n"; break;
 						case 1:
@@ -472,7 +472,7 @@ void NetworkSyncManager::ProcessInput()
 			break;
 		case 6:	//System message from server
 			{
-				CString SysMSG = ReadNT(m_packet);
+				CString SysMSG = m_packet.ReadNT();
 				SCREENMAN->SystemMessage(SysMSG);
 			}
 			break;
@@ -480,7 +480,7 @@ void NetworkSyncManager::ProcessInput()
 			SCREENMAN->SendMessageToTopScreen(SM_NET_SelectSong);
 			break;
 		}
-		ClearPacket(m_packet);
+		m_packet.ClearPacket();
 	}
 }
 
@@ -493,93 +493,88 @@ bool NetworkSyncManager::ChangedScoreboard(int Column)
 }
 
 
-
-
-
-
-
-
-//Functions to deal with this protocol
-
-
-uint8_t NetworkSyncManager::Read1(NetPacket &Packet)
+uint8_t PacketFunctions::Read1()
 {
-	if (Packet.Position>=NETMAXBUFFERSIZE)
+	if (Position>=NETMAXBUFFERSIZE)
 		return 0;
 	
-	return Packet.Data[Packet.Position++];
+	return Data[Position++];
 }
 
-uint16_t NetworkSyncManager::Read2(NetPacket &Packet)
+uint16_t PacketFunctions::Read2()
 {
-	if (Packet.Position>=NETMAXBUFFERSIZE-1)
+	if (Position>=NETMAXBUFFERSIZE-1)
 		return 0;
 
 	uint16_t Temp;
-	memcpy( &Temp, Packet.Data + Packet.Position,2 );
-	Packet.Position+=2;		
+	memcpy( &Temp, Data + Position,2 );
+	Position+=2;		
 	return ntohs(Temp);	
 }
 
-uint32_t NetworkSyncManager::Read4(NetPacket &Packet)
+uint32_t PacketFunctions::Read4()
 {
-	if (Packet.Position>=NETMAXBUFFERSIZE-3)
+	if (Position>=NETMAXBUFFERSIZE-3)
 		return 0;
 
 	uint32_t Temp;
-	memcpy( &Temp, Packet.Data + Packet.Position,4 );
-	Packet.Position+=4;
+	memcpy( &Temp, Data + Position,4 );
+	Position+=4;
 	return ntohl(Temp);
 }
 
-CString NetworkSyncManager::ReadNT(NetPacket &Packet)
+CString PacketFunctions::ReadNT()
 {
 	//int Orig=Packet.Position;
 	CString TempStr;
-	while ((Packet.Position<NETMAXBUFFERSIZE)&& (((char*)Packet.Data)[Packet.Position]!=0))
-		TempStr= TempStr + (char)Packet.Data[Packet.Position++];
+	while ((Position<NETMAXBUFFERSIZE)&& (((char*)Data)[Position]!=0))
+		TempStr= TempStr + (char)Data[Position++];
 
-	Packet.Position++;
+	Position++;
 	return TempStr;
 }
 
 
-void NetworkSyncManager::Write1(NetPacket &Packet, uint8_t Data)
+void PacketFunctions::Write1(uint8_t data)
 {
-	if (Packet.Position>=NETMAXBUFFERSIZE)
+	if (Position>=NETMAXBUFFERSIZE)
 		return;
-	memcpy( &Packet.Data[Packet.Position], &Data,1 );
-	Packet.Position++;
+	memcpy( &Data[Position], &data,1 );
+	Position++;
 }
 
-void NetworkSyncManager::Write2(NetPacket &Packet, uint16_t Data)
+void PacketFunctions::Write2(uint16_t data)
 {
-	if (Packet.Position>=NETMAXBUFFERSIZE-1)
+	if (Position>=NETMAXBUFFERSIZE-1)
 		return;
-	Data = htons(Data);
-	memcpy( &Packet.Data[Packet.Position], &Data,2 );
-	Packet.Position+=2;
+	data = htons(data);
+	memcpy( &Data[Position], &data,2 );
+	Position+=2;
 }
 
-void NetworkSyncManager::Write4(NetPacket &Packet, uint32_t Data)
+void PacketFunctions::Write4(uint32_t data)
 {
-	if (Packet.Position>=NETMAXBUFFERSIZE-3)
+	if (Position>=NETMAXBUFFERSIZE-3)
 		return ;
 
-	Data = htonl(Data);
-	memcpy( &Packet.Data[Packet.Position], &Data,4 );
-	Packet.Position+=4;
+	data = htonl(data);
+	memcpy( &Data[Position], &data,4 );
+	Position+=4;
 }
 
-void NetworkSyncManager::WriteNT(NetPacket &Packet, CString Data)
+void PacketFunctions::WriteNT(CString data)
 {
 	int index=0;
-	while ((Packet.Position<NETMAXBUFFERSIZE)&&(index<Data.GetLength()))
-		Packet.Data[Packet.Position++] = (unsigned char)(Data.c_str()[index++]);
-	Packet.Data[Packet.Position++] = 0;
+	while ((Position<NETMAXBUFFERSIZE)&&(index<data.GetLength()))
+		Data[Position++] = (unsigned char)(data.c_str()[index++]);
+	Data[Position++] = 0;
 }
 
-
+void PacketFunctions::ClearPacket()
+{
+	memset((void*)(&Data),0, NETMAXBUFFERSIZE);
+	Position = 0;
+}
 #endif
 
 
