@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageFileDriverDirect.h"
+#include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
@@ -16,100 +17,6 @@
 #include <windows.h>
 #include <io.h>
 #endif
-
-#if !defined(O_BINARY)
-#define O_BINARY 0
-#endif
-
-#if defined(XBOX)
-/* Wrappers for low-level file functions, to work around Xbox issues: */
-static int DoMkdir( const CString &sPath, int perm )
-{
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return mkdir( TempPath );
-}
-
-static int DoOpen( const CString &sPath, int flags, int perm )
-{
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return open( TempPath, flags, perm );
-}
-
-static int DoStat( const CString &sPath, struct stat *st )
-{
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return stat( sPath, st );
-}
-
-static HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
-{
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return FindFirstFile( TempPath, fd );
-}
-
-#else
-#define DoOpen open
-#define DoStat stat
-#define DoMkdir mkdir
-#define DoFindFirstFile FindFirstFile
-#endif
-
-#if defined(WIN32)
-
-static int WinMoveFile( const CString sOldPath, const CString sNewPath )
-{
-	static bool Win9x = false;
-
-	if( !Win9x )
-	{
-		if( MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING ) )
-			return 1;
-
-		if( GetLastError() == ERROR_NOT_SUPPORTED || GetLastError() == ERROR_CALL_NOT_IMPLEMENTED )
-			return 0;
-
-		Win9x = true;
-	}
-
-	if( MoveFile( sOldPath, sNewPath ) )
-		return 1;
-	
-	if( GetLastError() != ERROR_ALREADY_EXISTS )
-		return 0;
-
-	if( !DeleteFile( sNewPath ) )
-		return 0;
-
-	return MoveFile( sOldPath, sNewPath );
-}
-#endif
-
-static int DoRemove( const CString &sPath )
-{
-#if defined(XBOX)
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return remove( sPath );
-#else
-	return remove( sPath );
-#endif
-}
-
-static int DoRmdir( const CString &sPath )
-{
-#if defined(XBOX)
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return rmdir( sPath );
-#else
-	return rmdir( sPath );
-#endif
-}
-
 
 /* This driver handles direct file access. */
 class DirectFilenameDB: public FilenameDB
@@ -232,7 +139,6 @@ public:
 	virtual int Flush();
 	virtual void Rewind();
 	virtual int Seek( int offset );
-	virtual int GetFileSize();
 	virtual RageFileObj *Copy( RageFile &p ) const;
 	virtual CString GetDisplayPath() const { return path; }
 };
@@ -395,53 +301,9 @@ RageFileObj *RageFileObjDirect::Copy( RageFile &p ) const
 	return ret;
 }
 
-#ifdef _WINDOWS
-#include "windows.h"
-#endif
 bool RageFileDriverDirect::Ready()
 {
-#ifdef _WINDOWS
-	// Windows will throw up a message box if we try to write to a
-	// removable drive with no disk inserted.  Find out whether there's a 
-	// disk in the drive w/o writing a file.
-
-	// find drive letter
-	vector<CString> matches;
-	static Regex parse("^([A-Za-z]+):");
-	parse.Compare( root, matches );
-	if( matches.size() != 1 )
-		return false;
-
-	CString sDrive = matches[0];
-	TCHAR szVolumeNameBuffer[MAX_PATH];
-	DWORD dwVolumeSerialNumber;
-	DWORD dwMaximumComponentLength;
-	DWORD lpFileSystemFlags;
-	TCHAR szFileSystemNameBuffer[MAX_PATH];
-	BOOL bResult = GetVolumeInformation( 
-		sDrive + ":\\",
-		szVolumeNameBuffer,
-		sizeof(szVolumeNameBuffer),
-		&dwVolumeSerialNumber,
-		&dwMaximumComponentLength,
-		&lpFileSystemFlags,
-		szFileSystemNameBuffer,
-		sizeof(szFileSystemNameBuffer) );
-	return !!bResult;
-#else
-	// Try to create directory before writing a temp file.
-	CreateDirectories( root );
-	
-	// Try to write a file.
-	const CString sFile = root + "temp";
-	int fd = DoOpen( sFile, O_WRONLY|O_CREAT|O_TRUNC );
-	if( fd == -1 )
-		return false;
-
-	close( fd );
-	remove( sFile );
-	return true;
-#endif
+	return PathReady( root );
 }
 
 static const unsigned int BUFSIZE = 1024*64;
@@ -509,27 +371,9 @@ RageFileObjDirect::~RageFileObjDirect()
 		CString sOldPath = MakeTempFilename(path);
 		CString sNewPath = path;
 
-#if defined(XBOX)
-		sOldPath.Replace( "/", "\\" );
-		sNewPath.Replace( "/", "\\" );
-#endif
-
 #if defined(WIN32)
-		/* Windows botches rename: it returns error if the file exists.  In NT,
-		 * we can use MoveFileEx( new, old, MOVEFILE_REPLACE_EXISTING ) (though I
-		 * don't know if it has similar atomicity guarantees to rename).  In
-		 * 9x, we're screwed, so just delete any existing file (we aren't going
-		 * to be robust on 9x anyway). */
 		if( WinMoveFile(sOldPath, sNewPath) )
 			return;
-		if( GetLastError() == ERROR_ACCESS_DENIED )
-		{
-			/* Try turning off the read-only bit on the file we're overwriting. */
-			SetFileAttributes( sNewPath, FILE_ATTRIBUTE_NORMAL );
-
-			if( WinMoveFile( sOldPath, sNewPath ) )
-				return;
-		}
 
 		/* We failed. */
 		int err = GetLastError();
@@ -613,17 +457,8 @@ int RageFileObjDirect::Seek( int offset )
 	return lseek( fd, offset, SEEK_SET );
 }
 
-int RageFileObjDirect::GetFileSize()
-{
-	const int OldPos = lseek( fd, 0, SEEK_CUR );
-	const int ret = lseek( fd, 0, SEEK_END );
-	lseek( fd, OldPos, SEEK_SET );
-	return ret;
-}
-
 /*
  * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
  *   Glenn Maynard
  *   Chris Danford
  */
-
