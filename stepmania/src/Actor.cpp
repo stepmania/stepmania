@@ -272,7 +272,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 	m_TweenStates.resize( m_TweenStates.size()+1 );
 	m_TweenInfo.resize( m_TweenInfo.size()+1 );
 
-	ASSERT( m_TweenStates.size() == m_TweenInfo.size() )
+	ASSERT( m_TweenStates.size() == m_TweenInfo.size() );
 
 	TweenState &TS = m_TweenStates.back();	// latest
 	TweenInfo  &TI = m_TweenInfo.back();	// latest
@@ -512,7 +512,8 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	{
 		// start with no glow, no alpha
 		start.glow.a = 0;
-		for( int i=0; i<4; i++ )
+		int i;
+		for( i=0; i<4; i++ )
 			start.diffuse[i].a = 0;
 		
 		m_current = start;
