@@ -188,7 +188,14 @@ extern HWND g_hWndMain;
 long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 {
 	/* Flush the log it isn't cut off at the end. */
-	LOG->Flush();
+	/* 1. We can't do regular file access in the crash handler.
+	 * 2. We can't access LOG itself at all, since it may not be set up or the pointer might
+	 * be munged.  We must only ever use the RageLog:: methods that access static data, that
+	 * we're being very careful to null-terminate as needed.
+	 *
+	 * Logs are rarely important, anyway.  Only info.txt and crashinfo.txt are needed 99%
+	 * of the time. */
+//	LOG->Flush();
 
 	/* We aren't supposed to receive these exceptions.  For example, if you do
 	 * a floating point divide by zero, you should receive a result of #INF.  Only
