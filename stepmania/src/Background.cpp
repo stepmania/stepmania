@@ -425,6 +425,24 @@ void Background::LoadFromSong( const Song* pSong )
 		m_pDancingCharacters->LoadNextSong();
 
 	TEXTUREMAN->SetDefaultTexturePolicy( OldPolicy );
+
+	/* Song backgrounds always sync from the music by default, unlike other actors
+	 * which sync from the regular clock by default.  If you don't want this, set
+	 * the clock back with "effectclock,timer" in your OnCommand.  Note that at this
+	 * point, we havn't run the OnCommand yet, so it'll override correctly. */
+	map<CString,BGAnimation*>::iterator it;
+	for( it = m_BGAnimations.begin(); it != m_BGAnimations.end(); ++it )
+	{
+		BGAnimation *pBGA = it->second;
+
+		/* Be sure that we run this command recursively on all children; the tree
+		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
+		 * may be deeper, like "BGAnimation, BGAnimationLayer, BGAnimation,
+		 * BGAnimationLayer, Sprite". */
+		pBGA->Command( "propagate,1" );
+		pBGA->Command( "effectclock,music" );
+		pBGA->Command( "propagate,0" );
+	}
 }
 
 int Background::FindBGSegmentForBeat( float fBeat ) const
