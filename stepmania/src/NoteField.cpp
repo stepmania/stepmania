@@ -25,7 +25,7 @@
 #include <math.h>
 #include "ThemeManager.h"
 #include "NoteFieldPositioning.h"
-
+#include "NoteSkinManager.h"
 
 const float HOLD_NOTE_BITS_PER_BEAT	= 6;
 const float HOLD_NOTE_BITS_PER_ROW	= HOLD_NOTE_BITS_PER_BEAT / ROWS_PER_BEAT;
@@ -360,7 +360,7 @@ void NoteField::DrawPrimitives()
 	//
 
 	float fSelectedRangeGlow = SCALE( cosf(RageTimer::GetTimeSinceStart()*2), -1, 1, 0.1f, 0.3f );
-
+	CString ColDisplay = NOTESKIN->GetMetric(m_PlayerNumber, "NoteDisplay", "ReverseDrawOrder");
 
 	for( int c=0; c<GetNumTracks(); c++ )	// for each arrow column
 	{
@@ -403,7 +403,18 @@ void NoteField::DrawPrimitives()
 		///////////////////////////////////
 		// Draw all TapNotes in this column
 		///////////////////////////////////
-		for( i=iFirstIndexToDraw; i<=iLastIndexToDraw; i++ )	//	 for each row
+		int first = iFirstIndexToDraw;
+		int last = iLastIndexToDraw;
+		int increment = 1;
+
+		if (ColDisplay[c] == '1')
+		{
+			first = iLastIndexToDraw;
+			last = iFirstIndexToDraw;
+			increment = -1;
+		}
+		
+		for( i=first; (increment * i) <= (increment * last); i+=increment )	//	 for each row
 		{	
 			if( GetTapNote(c, i) == TAP_EMPTY )	// no note here
 				continue;	// skip
