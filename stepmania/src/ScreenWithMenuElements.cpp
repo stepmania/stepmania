@@ -10,6 +10,7 @@
 #include "ScreenManager.h"
 
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
+#define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
 
@@ -65,6 +66,8 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	if( m_bTimerEnabled )
 	{
 		m_MenuTimer->SetName( "Timer" );
+		if( TIMER_STEALTH )
+			m_MenuTimer->EnableStealth( true );
 		UtilSetXY( m_MenuTimer, m_sName );
 		UtilOnCommand( m_MenuTimer, m_sName );
 		ResetTimer();

@@ -97,6 +97,7 @@ public:
 	 * be set up only if needed.  Doesn't fail. */
 	void LoadSoundReader( SoundReader *pSound );
 	void Unload();
+	bool IsLoaded();
 
 	void StartPlaying();
 	void StopPlaying();

@@ -94,7 +94,10 @@ void MenuTimer::Update( float fDeltaTime )
 	}
 
 	if( iNewDisplay <= WARNING_BEEP_START )
-		m_soundBeep.Play();
+	{
+		if( m_soundBeep.IsLoaded() )
+			m_soundBeep.Play();
+	}
 }
 
 

@@ -136,6 +136,11 @@ void RageSound::Unload()
 	databuf.clear();
 }
 
+bool RageSound::IsLoaded()
+{
+	return Sample != NULL;
+}
+
 void RageSound::Fail(CString reason)
 {
 	LOG->Warn("Decoding %s failed: %s", GetLoadedFilePath().c_str(), reason.c_str() );
