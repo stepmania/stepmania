@@ -8,8 +8,6 @@
 
 #include "ezsockets.h"
 
-#include "global.h" // StepMania only includes
-
 #if defined(_XBOX)
 #elif defined(_WINDOWS) // We need the WinSock32 Library on Windows
 #pragma comment(lib,"wsock32.lib")
@@ -115,8 +113,19 @@ typedef int socklen_t;
 
 bool EzSockets::accept(EzSockets& socket)
 {
+
 	if (!blocking && !CanRead())
 		return false;
+
+	#if defined(HAVE_INET_NTOP)
+		char buf[INET_ADDRSTRLEN];
+
+		inet_ntop(AF_INET, &addr.sin_addr, buf, INET_ADDRSTRLEN);
+		address = buf;
+
+	#elif defined(HAVE_INET_NTOA)
+		address = inet_ntoa(addr.sin_addr);
+	#endif
 	
 	int length = sizeof(socket);
 	
@@ -389,33 +398,6 @@ ostream& operator<<(ostream &os, EzSockets &obj)
 	return os;
 }
 
-EzSockets& EzSockets::operator=(const EzSockets &socket)
-{
-	if (this == &socket) {
-		return *this;
-	}
-	else
-	{
-		blocking = socket.blocking;
-		fromAddr = socket.fromAddr;
-		fromAddr_len = socket.fromAddr_len;
-		string inBuffer = socket.inBuffer;
-		outBuffer = socket.outBuffer;
-		state = socket.state;
-		lastCode = socket.lastCode;	//Used for debugging purposes
-		MAXCON = socket.MAXCON;
-		sock = socket.sock;
-		addr = socket.addr;
-		if (scks == NULL)
-			scks = new fd_set;
-		*scks = *socket.scks;
-		if (scks == NULL)
-			times = new timeval;
-		*times = *socket.times;
-		return *this;
-	}
-}
-
 
 /**************************\
 |   Internal Data System   |
@@ -460,11 +442,6 @@ int EzSockets::pReadData(char* data)
 int EzSockets::pWriteData(const char* data, int dataSize)
 {
 	return send(sock, data, dataSize, 0);
-}
-
-in_addr EzSockets::GetIn_addr()
-{
-	return addr.sin_addr;
 }
 
 /* 

@@ -18,6 +18,7 @@
 #include <vector>
 #include <fcntl.h>
 #include <ctype.h>
+#include "global.h" // StepMania only includes
 
 #if defined(_XBOX)
 // Summary : WinsockX is bad, XTL is good.
@@ -93,8 +94,6 @@ public:
 	char operator[] (int i); //Access buffer
 	friend istream& operator>>(istream& is, EzSockets& obj);
 	friend ostream& operator<<(ostream& os, const EzSockets& obj);
-	EzSockets& operator=(const EzSockets &socket);
-
 
 	bool blocking;
 	enum SockState
@@ -122,11 +121,11 @@ public:
 	int pReadData(char * data);
 	int pWriteData(const char * data, int dataSize);
 
-	in_addr GetIn_addr();
-
 	SockState state;
 
 	int lastCode;	//Used for debugging purposes
+
+	CString address;
 
 private:
 
