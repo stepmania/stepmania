@@ -43,6 +43,12 @@ public:
 		return m_TapNotes[track][row];
 	}
 
+	void SetTapNote(int track, int row, TapNote t )
+	{
+		if(row < 0 || row >= MAX_TAP_NOTE_ROWS) return;
+		m_TapNotes[track][row]=t;
+	}
+
 	void LoadFromSMNoteDataString( CString sSMNoteData );
 	CString GetSMNoteDataString();
 
