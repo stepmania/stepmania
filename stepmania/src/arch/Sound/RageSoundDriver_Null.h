@@ -20,24 +20,21 @@ class RageSound_Null: public RageSoundDriver
 public:
 	struct sound {
 		RageSound *snd;
-                bool stopping;
-                int flush_pos; /* state == STOPPING only */
-            sound() { snd = NULL; stopping=false; }
-        };
+        bool stopping;
+		int samples_buffered; /* fake */
+        sound() { snd = NULL; stopping=false; samples_buffered = 0; }
+	};
 
-        /* List of currently playing sounds: */
-        vector<sound *> sounds;
-
+    /* List of currently playing sounds: */
+    vector<sound *> sounds;
 
 	bool shutdown;
-        int last_cursor_pos;
-        time_t startup_time;
 
-        static int MixerThread_start(void *p);
-        void MixerThread();
-        SDL_Thread *MixerThreadPtr;
+    static int MixerThread_start(void *p);
+    void MixerThread();
+    SDL_Thread *MixerThreadPtr;
 
-        bool GetData();
+    bool GetData();
 
 	/* virtuals: */
 	void StartMixing(RageSound *snd);
@@ -45,10 +42,10 @@ public:
 	int GetPosition(const RageSound *snd) const;
 	float GetPlayLatency() const;
 
-	void RageSound_Null::Update(float delta);
+	void Update(float delta);
 
-        RageSound_Null();
-        ~RageSound_Null();
+    RageSound_Null();
+    ~RageSound_Null();
 };
 
 #endif
