@@ -142,7 +142,6 @@ protected:
 	void TransitionEditMode( EditMode em );
 	void PlayTicks();
 	void PlayPreviewMusic();
-	void UpdateTextInfo();
 	
 	// Call this before modifying m_NoteDataEdit.
 	void SaveUndo();
@@ -169,7 +168,11 @@ protected:
 	SnapDisplay		m_SnapDisplay;
 
 	BitmapText		m_textInputTips;
+
+	void UpdateTextInfo();
 	BitmapText		m_textInfo;		// status information that changes
+	bool			m_bTextInfoNeedsUpdate;
+
 	BitmapText		m_textPlayRecordHelp;
 
 	// keep track of where we are and what we're doing

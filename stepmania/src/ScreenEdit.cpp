@@ -48,6 +48,7 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 
 #define PLAY_RECORD_HELP_TEXT	THEME->GetMetric(m_sName,"PlayRecordHelpText")
 
+AutoScreenMessage( SM_UpdateTextInfo )
 AutoScreenMessage( SM_BackFromMainMenu )
 AutoScreenMessage( SM_BackFromAreaMenu )
 AutoScreenMessage( SM_BackFromStepsInformation )
@@ -59,7 +60,6 @@ AutoScreenMessage( SM_BackFromInsertAttackPlayerOptions )
 AutoScreenMessage( SM_BackFromPrefs ) 
 AutoScreenMessage( SM_BackFromCourseModeMenu )
 AutoScreenMessage( SM_DoRevertToLastSave )
-
 AutoScreenMessage( SM_BackFromBPMChange )
 AutoScreenMessage( SM_BackFromStopChange )
 AutoScreenMessage( SM_DoSaveAndExit )
@@ -596,6 +596,9 @@ void ScreenEdit::Init()
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
 	m_soundAssistTick.Load( THEME->GetPathS("ScreenEdit","assist tick"), true );
+
+	this->HandleScreenMessage( SM_UpdateTextInfo );
+	m_bTextInfoNeedsUpdate = true;
 }
 
 ScreenEdit::~ScreenEdit()
@@ -725,6 +728,15 @@ void ScreenEdit::UpdateTextInfo()
 	if( m_pSteps == NULL )
 		return;
 
+	// Don't update the text during playback or record.  It causes skips.
+	if( m_EditMode != MODE_EDITING )
+		return;
+
+	if( !m_bTextInfoNeedsUpdate )
+		return;
+
+	m_bTextInfoNeedsUpdate = false;
+
 	int iNumTaps = m_NoteDataEdit.GetNumTapNotes();
 	int iNumJumps = m_NoteDataEdit.GetNumJumps();
 	int iNumHands = m_NoteDataEdit.GetNumHands();
@@ -787,9 +799,7 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	{
 	case MODE_EDITING:
 		InputEdit( di, type, GameI, MenuI, StyleI, EditB );
-		/* Make sure the displayed time is up-to-date after possibly changing something,
-		* so it doesn't feel lagged. */
-		UpdateTextInfo();
+		m_bTextInfoNeedsUpdate = true;
 		break;
 	case MODE_RECORDING:
 		InputRecord( di, type, GameI, MenuI, StyleI, EditB );
@@ -1503,12 +1513,15 @@ void ScreenEdit::TransitionEditMode( EditMode em )
 
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
-	// There are lots of different messages that signal information changed.
-	// Rather than picking out those specific messages, just UpdateTextInfo
-	// on all messages.
-	UpdateTextInfo();
+	if( SM != SM_UpdateTextInfo )
+		m_bTextInfoNeedsUpdate = true;
 
-	if( SM == SM_GoToNextScreen )
+	if( SM == SM_UpdateTextInfo )
+	{
+		UpdateTextInfo();
+		this->PostScreenMessage( SM_UpdateTextInfo, 0.5f );
+	}
+	else if( SM == SM_GoToNextScreen )
 	{
 		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		GAMESTATE->m_bEditing = false;
