@@ -16,6 +16,7 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "Quad.h"
+#include "ActorUtil.h"
 class Song;
 class Course;
 
@@ -36,7 +37,7 @@ protected:
 	void SetBPMRange( const vector<float> &m_BPMS );
 
 	BitmapText m_textBPM;
-	Sprite m_sprLabel;
+	AutoActor m_sprLabel;
 
 	float m_fBPMFrom, m_fBPMTo;
 	int m_iCurrentBPM;

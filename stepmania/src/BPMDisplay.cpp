@@ -22,7 +22,9 @@
 #define NORMAL_COLOR		THEME->GetMetricC(m_sName,"NormalColor")
 #define CHANGE_COLOR		THEME->GetMetricC(m_sName,"ChangeColor")
 #define EXTRA_COLOR			THEME->GetMetricC(m_sName,"ExtraColor")
-
+#define CYCLE				THEME->GetMetricB(m_sName,"Cycle")
+#define SEPARATOR			THEME->GetMetric (m_sName,"Separator")
+#define NO_BPM_TEXT			THEME->GetMetric (m_sName,"NoBPMText")
 
 BPMDisplay::BPMDisplay()
 {
@@ -35,19 +37,17 @@ BPMDisplay::BPMDisplay()
 
 void BPMDisplay::Load()
 {
+	m_textBPM.SetName( "Text" );
 	m_textBPM.LoadFromNumbers( THEME->GetPathToN("BPMDisplay") );
-	m_textBPM.EnableShadow( false );
-	m_textBPM.SetHorizAlign( Actor::align_right );
+	SET_XY_AND_ON_COMMAND( m_textBPM );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
-	m_textBPM.SetXY( 0, 0 );
 	this->AddChild( &m_textBPM );
 
 	m_sprLabel.Load( THEME->GetPathToG("BPMDisplay label") );
-	m_sprLabel.EnableShadow( false );
-	m_sprLabel.SetDiffuse( NORMAL_COLOR );
-	m_sprLabel.SetHorizAlign( Actor::align_left );
-	m_sprLabel.SetXY( 0, 0 );
-	this->AddChild( &m_sprLabel );
+	m_sprLabel->SetName( "Label" );
+	SET_XY_AND_ON_COMMAND( m_sprLabel );
+	m_sprLabel->SetDiffuse( NORMAL_COLOR );
+	this->AddChild( m_sprLabel );
 }
 
 float BPMDisplay::GetActiveBPM() const
@@ -59,6 +59,8 @@ void BPMDisplay::Update( float fDeltaTime )
 { 
 	ActorFrame::Update( fDeltaTime ); 
 
+	if( !CYCLE )
+		return;
 	if( m_BPMS.size() == 0 )
 		return; /* no bpm */
 
@@ -93,43 +95,61 @@ void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 {
 	ASSERT( BPMS.size() );
 
-	m_BPMS.clear();
 	unsigned i;
 	bool AllIdentical = true;
 	for( i = 0; i < BPMS.size(); ++i )
 	{
 		if( i > 0 && BPMS[i] != BPMS[i-1] )
 			AllIdentical = false;
-
-		m_BPMS.push_back(BPMS[i]);
-		if( BPMS[i] != -1 )
-			m_BPMS.push_back(BPMS[i]); /* hold */
 	}
 
-	m_iCurrentBPM = min(1u, m_BPMS.size()); /* start on the first hold */
-	m_fBPMFrom = BPMS[0];
-	m_fBPMTo = BPMS[0];
-	m_fPercentInState = 1;
+	if( !CYCLE )
+	{
+		int MinBPM=99999999;
+		int MaxBPM=-99999999;
+		for( i = 0; i < BPMS.size(); ++i )
+		{
+			MinBPM = min( MinBPM, (int) roundf(BPMS[i]) );
+			MaxBPM = max( MaxBPM, (int) roundf(BPMS[i]) );
+		}
+		if( MinBPM == MaxBPM )
+			m_textBPM.SetText( ssprintf("%i", MinBPM) );
+		else
+			m_textBPM.SetText( ssprintf("%i%s%i", MinBPM, SEPARATOR.c_str(), MaxBPM) );
+		return;
+	} else {
+		m_BPMS.clear();
+		for( i = 0; i < BPMS.size(); ++i )
+		{
+			m_BPMS.push_back(BPMS[i]);
+			if( BPMS[i] != -1 )
+				m_BPMS.push_back(BPMS[i]); /* hold */
+		}
+
+		m_iCurrentBPM = min(1u, m_BPMS.size()); /* start on the first hold */
+		m_fBPMFrom = BPMS[0];
+		m_fBPMTo = BPMS[0];
+		m_fPercentInState = 1;
+	}
 
 	m_textBPM.StopTweening();
-	m_sprLabel.StopTweening();
+	m_sprLabel->StopTweening();
 	m_textBPM.BeginTweening(0.5f);
-	m_sprLabel.BeginTweening(0.5f);
-
+	m_sprLabel->BeginTweening(0.5f);
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
 		m_textBPM.SetDiffuse( EXTRA_COLOR );
-		m_sprLabel.SetDiffuse( EXTRA_COLOR );		
+		m_sprLabel->SetDiffuse( EXTRA_COLOR );		
 	}
 	else if( !AllIdentical )
 	{
 		m_textBPM.SetDiffuse( CHANGE_COLOR );
-		m_sprLabel.SetDiffuse( CHANGE_COLOR );
+		m_sprLabel->SetDiffuse( CHANGE_COLOR );
 	}
 	else
 	{
 		m_textBPM.SetDiffuse( NORMAL_COLOR );
-		m_sprLabel.SetDiffuse( NORMAL_COLOR );
+		m_sprLabel->SetDiffuse( NORMAL_COLOR );
 	}
 
 }
@@ -146,10 +166,10 @@ void BPMDisplay::CycleRandomly()
 void BPMDisplay::NoBPM()
 {
 	m_BPMS.clear();
-	m_textBPM.SetText( "..." ); 
+	m_textBPM.SetText( NO_BPM_TEXT ); 
 
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
-	m_sprLabel.SetDiffuse( NORMAL_COLOR );
+	m_sprLabel->SetDiffuse( NORMAL_COLOR );
 }
 
 void BPMDisplay::SetBPM( const Song* pSong )
