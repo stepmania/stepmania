@@ -62,7 +62,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\projects\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                   	cl                                                                                                                                                    /Zl                                                                                                                                                    /nologo                                                                                                                                                    /c                                                                                                                                                    verstub.cpp                                                                                                                                                    /Fo$(IntDir)\ 
@@ -138,7 +138,7 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\projects\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
 PreLink_Cmds=disasm\verinc                                                                                                                                                   	cl                                                                                                                                                    /Zl                                                                                                                                                    /nologo                                                                                                                                                    /c                                                                                                                                                    verstub.cpp                                                                                                                                                    /Fo$(IntDir)\ 
@@ -1056,6 +1056,21 @@ SOURCE=.\LyricsLoader.cpp
 # Begin Source File
 
 SOURCE=.\LyricsLoader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ModeChoice.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
