@@ -664,7 +664,21 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		switch( m_Type )
 		{
 		case stage:
-			SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(max_grade)) );
+			switch( GAMESTATE->m_PlayMode )
+			{
+			case PLAY_MODE_BATTLE:
+				{
+					bool bWon = GAMESTATE->GetBattleResult(GAMESTATE->m_MasterPlayerNumber) == RESULT_WIN;
+					if( bWon )
+						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation win") );
+					else
+						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation lose") );
+				}
+				break;
+			default:
+				SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(max_grade)) );
+				break;
+			}
 			break;
 		case course:
 		case summary:

@@ -37,7 +37,8 @@
 #include "ActorUtil.h"
 #include "NoteSkinManager.h"
 #include "RageTextureManager.h"
-
+#include "EnemyHealth.h"
+#include "EnemyFace.h"
 
 //
 // Defines
@@ -240,6 +241,19 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
 		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
 		this->AddChild( &m_sprOniGameOver[p] );
+	}
+
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+	{
+		m_pEnemyFace = new EnemyFace;
+		m_pEnemyFace->SetName( "EnemyFace" );
+		this->AddChild( m_pEnemyFace );
+		SET_XY( *m_pEnemyFace );
+
+		m_pEnemyHealth = new EnemyHealth;
+		m_pEnemyHealth->SetName( "EnemyHealth" );
+		this->AddChild( m_pEnemyHealth );
+		SET_XY( *m_pEnemyHealth );
 	}
 
 	this->AddChild(&m_TimingAssist);
@@ -530,6 +544,19 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
 		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
 		m_soundAssistTick.Load(			THEME->GetPathToS("ScreenGameplay assist tick") );
+
+		if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+		{
+			m_announcerBattleTrickLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level1") );
+			m_announcerBattleTrickLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level2") );
+			m_announcerBattleTrickLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle trick level3") );
+			m_soundBattleTrickLevel1.Load(	THEME->GetPathToS("ScreenGameplay battle trick level1") );
+			m_soundBattleTrickLevel2.Load(	THEME->GetPathToS("ScreenGameplay battle trick level2") );
+			m_soundBattleTrickLevel3.Load(	THEME->GetPathToS("ScreenGameplay battle trick level3") );
+			m_announcerBattleDamageLevel1.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level1") );
+			m_announcerBattleDamageLevel2.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level2") );
+			m_announcerBattleDamageLevel3.Load(	ANNOUNCER->GetPathTo("gameplay battle damage level3") );
+		}
 	}
 
 	// Get the transitions rolling on the first update.
@@ -547,6 +574,9 @@ ScreenGameplay::~ScreenGameplay()
 		SAFE_DELETE( m_pScoreDisplay[p] );
 		SAFE_DELETE( m_pScoreKeeper[p] );
 	}
+
+	delete m_pEnemyHealth;
+	delete m_pEnemyFace;
 
 	m_soundMusic.StopPlaying();
 }
@@ -956,6 +986,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( OneIsHot() )			m_announcerHot.PlayRandom();
 				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
 				else						m_announcerGood.PlayRandom();
+				if( m_pEnemyFace )
+					m_pEnemyFace->SetFace( EnemyFace::taunt );
 				break;
 			case PLAY_MODE_NONSTOP:
 			case PLAY_MODE_ONI:
@@ -994,6 +1026,67 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
 		m_soundAssistTick.Play();
+
+
+	// launch battle attacks
+
+	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
+	{
+#define CROSSED_SONG_SECONDS( s ) ((GAMESTATE->m_fMusicSeconds-fDeltaTime) < s  &&  (GAMESTATE->m_fMusicSeconds) >= s )
+
+		static const CString sPossibleModifiers[NUM_ATTACK_LEVELS][3] = 
+		{
+			{
+				"1.5x",
+				"dizzy",
+				"drunk"
+			},
+			{
+				"sudden",
+				"hidden",
+				"wave",
+			},
+			{
+				"expand",
+				"tornado",
+				"flip"
+			}
+		};
+
+		if( CROSSED_SONG_SECONDS(20) || CROSSED_SONG_SECONDS(40) )
+		{
+			GameState::Attack a;
+			a.fSecsRemaining = 10;
+			a.level = ATTACK_LEVEL_1;
+			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+			this->HandleScreenMessage( SM_BattleTrickLevel1 );
+		}
+		if( CROSSED_SONG_SECONDS(60) || CROSSED_SONG_SECONDS(80) )
+		{
+			GameState::Attack a;
+			a.fSecsRemaining = 10;
+			a.level = ATTACK_LEVEL_2;
+			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+			this->HandleScreenMessage( SM_BattleTrickLevel2 );
+		}
+		if( CROSSED_SONG_SECONDS(100) )
+		{
+			GameState::Attack a;
+			a.fSecsRemaining = 10;
+			a.level = ATTACK_LEVEL_3;
+			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+			this->HandleScreenMessage( SM_BattleTrickLevel3 );
+		}
+	}
 }
 
 
@@ -1408,82 +1501,136 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				m_Toasty.StartTransitioning();
 		break;
 
+#define SECS_SINCE_LAST_COMMENT (SECONDS_BETWEEN_COMMENTS-m_fTimeLeftBeforeDancingComment)
 	case SM_100Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer100Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_200Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer200Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_300Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer300Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_400Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer400Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_500Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer500Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_600Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer600Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_700Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer700Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_800Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer800Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_900Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer900Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_1000Combo:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcer1000Combo.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
 		break;
 	case SM_ComboStopped:
-		if( m_fTimeLeftBeforeDancingComment < 12 )
+		if( SECS_SINCE_LAST_COMMENT > 10 )
 		{
 			m_announcerComboStopped.PlayRandom();
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		}
+		break;
+	
+	case SM_BattleTrickLevel1:
+		if( SECS_SINCE_LAST_COMMENT > 5 )
+		{
+			m_announcerBattleTrickLevel1.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+		}
+		m_soundBattleTrickLevel1.PlayRandom();
+		m_pEnemyFace->SetFace( EnemyFace::attack );
+		break;
+	case SM_BattleTrickLevel2:
+		if( SECS_SINCE_LAST_COMMENT > 5 )
+		{
+			m_announcerBattleTrickLevel2.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+		}
+		m_soundBattleTrickLevel2.PlayRandom();
+		m_pEnemyFace->SetFace( EnemyFace::attack );
+		break;
+	case SM_BattleTrickLevel3:
+		if( SECS_SINCE_LAST_COMMENT > 5 )
+		{
+			m_announcerBattleTrickLevel3.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+		}
+		m_soundBattleTrickLevel3.PlayRandom();
+		m_pEnemyFace->SetFace( EnemyFace::attack );
+		break;
+	
+	case SM_BattleDamageLevel1:
+		if( SECS_SINCE_LAST_COMMENT > 5 )
+		{
+			m_announcerBattleDamageLevel1.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+		}
+		m_pEnemyFace->SetFace( EnemyFace::damage );
+		break;
+	case SM_BattleDamageLevel2:
+		if( SECS_SINCE_LAST_COMMENT > 5 )
+		{
+			m_announcerBattleDamageLevel2.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+		}
+		m_pEnemyFace->SetFace( EnemyFace::damage );
+		break;
+	case SM_BattleDamageLevel3:
+		if( SECS_SINCE_LAST_COMMENT > 5 )
+		{
+			m_announcerBattleDamageLevel3.PlayRandom();
+			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+		}
+		m_pEnemyFace->SetFace( EnemyFace::damage );
 		break;
 	
 	case SM_SaveChangedBeforeGoingBack:
@@ -1595,6 +1742,10 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_textPlayerOptions[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 	}
+	if( m_pEnemyFace )
+		ON_COMMAND( *m_pEnemyFace );
+	if( m_pEnemyHealth )
+		ON_COMMAND( *m_pEnemyHealth );
 }
 
 void ScreenGameplay::TweenOffScreen()
@@ -1613,6 +1764,10 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_textPlayerOptions[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 	}
+	if( m_pEnemyFace )
+		OFF_COMMAND( *m_pEnemyFace );
+	if( m_pEnemyHealth )
+		OFF_COMMAND( *m_pEnemyHealth );
 
 	if(m_textDebug.GetTweenTimeLeft() > 1/8.f)
 	{

@@ -30,6 +30,8 @@
 //#include "BeginnerHelper.h"	// uncomment once it's checked in
 #include "LyricDisplay.h"
 #include "TimingAssist.h"
+class EnemyHealth;
+class EnemyFace;
 
 
 // messages sent by Combo
@@ -46,6 +48,13 @@ const ScreenMessage	SM_800Combo					= ScreenMessage(SM_User+207);
 const ScreenMessage	SM_900Combo					= ScreenMessage(SM_User+208);
 const ScreenMessage	SM_1000Combo				= ScreenMessage(SM_User+209);
 const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
+
+const ScreenMessage SM_BattleTrickLevel1		= ScreenMessage(SM_User+300);
+const ScreenMessage SM_BattleTrickLevel2		= ScreenMessage(SM_User+301);
+const ScreenMessage SM_BattleTrickLevel3		= ScreenMessage(SM_User+302);
+const ScreenMessage SM_BattleDamageLevel1		= ScreenMessage(SM_User+303);
+const ScreenMessage SM_BattleDamageLevel2		= ScreenMessage(SM_User+304);
+const ScreenMessage SM_BattleDamageLevel3		= ScreenMessage(SM_User+305);
 
 class LyricsLoader;
 class ScreenGameplay : public Screen
@@ -139,6 +148,8 @@ protected:
 	// used in PLAY_MODE_BATTLE
 	Inventory			m_Inventory[NUM_PLAYERS];
 	ActiveItemList		m_ActiveItemList[NUM_PLAYERS];
+	EnemyHealth*		m_pEnemyHealth;
+	EnemyFace*			m_pEnemyFace;
 	
 	// used in PLAY_MODE_RAVE
 	RaveHelper			m_RaveHelper[NUM_PLAYERS];
@@ -169,6 +180,15 @@ protected:
 	RandomSample	m_announcer900Combo;
 	RandomSample	m_announcer1000Combo;
 	RandomSample	m_announcerComboStopped;
+	RandomSample	m_announcerBattleTrickLevel1;
+	RandomSample	m_announcerBattleTrickLevel2;
+	RandomSample	m_announcerBattleTrickLevel3;
+	RandomSample	m_soundBattleTrickLevel1;
+	RandomSample	m_soundBattleTrickLevel2;
+	RandomSample	m_soundBattleTrickLevel3;
+	RandomSample	m_announcerBattleDamageLevel1;
+	RandomSample	m_announcerBattleDamageLevel2;
+	RandomSample	m_announcerBattleDamageLevel3;
 
 	bool			m_bZeroDeltaOnNextUpdate;
 	bool			m_bDemonstration;

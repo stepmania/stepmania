@@ -86,7 +86,6 @@ void RaveHelper::LaunchAttack( AttackLevel al )
 	a.sModifier = sAttackToGive;
 
 	GAMESTATE->LaunchAttack( pnToAttack, a );
-	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );
 
 	m_soundLaunchAttack.Play();
 }

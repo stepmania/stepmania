@@ -173,7 +173,7 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 
     SoundReader_SDL_Sound *NewSample = new SoundReader_SDL_Sound;
 	if(!NewSample->Open(sSoundFilePath.c_str()))
-		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound %s: %s",
+		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
 			sSoundFilePath.c_str(), NewSample->GetError().c_str());
 	Sample = NewSample;
 

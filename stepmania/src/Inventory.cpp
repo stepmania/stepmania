@@ -17,6 +17,8 @@
 #include "RageTimer.h"
 #include "PrefsManager.h"
 #include "song.h"
+#include "ScreenManager.h"
+#include "ScreenGameplay.h"
 
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
@@ -56,6 +58,13 @@ Inventory::Inventory()
 {
 }
 
+Inventory::~Inventory()
+{
+	for( unsigned i=0; i<m_vpSoundUseItem.size(); i++ )
+		delete m_vpSoundUseItem[i];
+	m_vpSoundUseItem.clear();
+}
+
 void Inventory::Load( PlayerNumber pn )
 {
 	ITEM_USE_RATE_SECONDS.Refresh();
@@ -68,12 +77,15 @@ void Inventory::Load( PlayerNumber pn )
 	// don't load battle sounds if they're not going to be used
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_BATTLE )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
+		m_soundAcquireItem.Load( THEME->GetPathToS("Inventory aquire item") );
+		for( unsigned i=0; i<g_Items.size(); i++ )
 		{
-			m_soundAcquireItem.Load( THEME->GetPathToS("Inventory aquire item") );
-			m_soundUseItem.Load( THEME->GetPathToS("Inventory use item") );
-			m_soundItemEnding.Load( THEME->GetPathToS("Inventory item ending") );
+			RageSound* pSound = new RageSound;
+			CString sPath = THEME->GetPathToS( ssprintf("Inventory use item %u",i+1) );
+			pSound->Load( sPath );
+			m_vpSoundUseItem.push_back( pSound );
 		}
+		m_soundItemEnding.Load( THEME->GetPathToS("Inventory item ending") );
 	}
 }
 
@@ -172,10 +184,17 @@ void Inventory::UseItem( int iSlot )
     PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_PlayerNumber];
 	GameState::Attack a = asInventory[iSlot];
 
-	GAMESTATE->LaunchAttack( pnToAttack, a );
-	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );
+//	GAMESTATE->LaunchAttack( pnToAttack, a );
+//	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( pnToAttack );
+
+	float fPercentHealthToDrain = (a.level+1) / 10.f;
+	ASSERT( fPercentHealthToDrain > 0 );
+	GAMESTATE->m_fOpponentHealthPercent -= fPercentHealthToDrain;
+	CLAMP( GAMESTATE->m_fOpponentHealthPercent, 0.f, 1.f );
 
 	// remove the item
 	asInventory[iSlot].MakeBlank();
-	m_soundUseItem.Play();
+	m_vpSoundUseItem[a.level]->Play();
+
+	SCREENMAN->SendMessageToTopScreen( (ScreenMessage)(SM_BattleDamageLevel1+a.level) );
 }

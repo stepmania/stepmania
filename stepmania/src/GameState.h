@@ -175,6 +175,7 @@ public:
 
 	// used in PLAY_MODE_BATTLE
 	Attack	m_Inventory[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	float	m_fOpponentHealthPercent;
 	
 	bool	m_bActiveAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
 	void LaunchAttack( PlayerNumber target, Attack aa );

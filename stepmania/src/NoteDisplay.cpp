@@ -65,6 +65,7 @@ Actor* MakeModelOrSprite( CString sFile )
 #define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	NOTESKIN->GetMetricI(pn,name,"StartDrawingHoldBodyOffsetFromHead")
 #define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI(pn,name,"StopDrawingHoldBodyOffsetFromTail")
 #define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF(pn,name,"HoldNGGrayPercent")
+#define USE_LIGHTING								NOTESKIN->GetMetricB(pn,name,"UseLighting")
 
 // cache
 struct NoteMetricCache_t {
@@ -90,6 +91,7 @@ struct NoteMetricCache_t {
 	int m_iStartDrawingHoldBodyOffsetFromHead;
 	int m_iStopDrawingHoldBodyOffsetFromTail;
 	float m_fHoldNGGrayPercent;
+	bool m_bUseLighting;
 
 	void Load(PlayerNumber pn, const CString &name);
 } *NoteMetricCache;
@@ -118,6 +120,7 @@ void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
 	m_iStartDrawingHoldBodyOffsetFromHead = START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD;
 	m_iStopDrawingHoldBodyOffsetFromTail = STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL;
 	m_fHoldNGGrayPercent = HOLD_NG_GRAY_PERCENT;
+	m_bUseLighting = USE_LIGHTING;
 }
 
 NoteDisplay::NoteDisplay()
@@ -700,19 +703,24 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	pActor->SetDiffuse( diffuse );
 	pActor->SetGlow( glow );
 
-	
-	DISPLAY->EnableLighting( true );
-	DISPLAY->SetLightDirectional( 
-		0, 
-		RageColor(0.0f,0.0f,0.0f,1), 
-		RageColor(1,1,1,1),
-		RageColor(1,1,1,1),
-		RageVector3(1, 0, +1) );
+	if( cache->m_bUseLighting )
+	{
+		DISPLAY->EnableLighting( true );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			RageColor(0.0f,0.0f,0.0f,1), 
+			RageColor(1,1,1,1),
+			RageColor(1,1,1,1),
+			RageVector3(1, 0, +1) );
+	}
 
 	pActor->Draw();
 
-	DISPLAY->SetLightOff( 0 );
-	DISPLAY->EnableLighting( false );
+	if( cache->m_bUseLighting )
+	{
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->EnableLighting( false );
+	}
 }
 
 

@@ -1096,6 +1096,14 @@ SOURCE=.\FadingBanner.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\MeterDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\MeterDisplay.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Transition.cpp
 # End Source File
 # Begin Source File
@@ -1145,6 +1153,22 @@ SOURCE=.\DancingCharacters.cpp
 # Begin Source File
 
 SOURCE=.\DancingCharacters.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\EnemyFace.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EnemyFace.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\EnemyHealth.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\EnemyHealth.h
 # End Source File
 # Begin Source File
 

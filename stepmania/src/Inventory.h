@@ -20,6 +20,7 @@ class Inventory : public Actor
 {
 public:
 	Inventory();
+	~Inventory();
 	void Load( PlayerNumber pn );
 
 	virtual void Update( float fDelta );
@@ -34,7 +35,7 @@ protected:
 	int m_iLastSeenCombo;
 
 	RageSound m_soundAcquireItem;
-	RageSound m_soundUseItem;
+	vector<RageSound*> m_vpSoundUseItem;
 	RageSound m_soundItemEnding;
 };
 
