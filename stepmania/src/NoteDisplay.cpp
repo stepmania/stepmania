@@ -859,9 +859,12 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	else
 		DISPLAY->SetTextureModeModulate();
 	DISPLAY->SetZBuffer( WavyPartsNeedZBuffer );
-	DrawHoldBottomCap( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	
+	if( !bFlipHeadAndTail )
+		DrawHoldBottomCap( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 	DrawHoldBody( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
-	DrawHoldTopCap( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	if( bFlipHeadAndTail )
+		DrawHoldTopCap( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	/* These set the texture mode themselves. */
 	if( cache->m_bHoldTailIsAboveWavyParts )
