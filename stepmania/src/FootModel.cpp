@@ -33,7 +33,7 @@ FootModel::FootModel(Steps* model)
 	if (model->GetDifficulty() == DIFFICULTY_EASY) m_predictedMeter += LIGHT;
 }
 
-FootModel::GetPMeter()
+double FootModel::GetPMeter()
 {
 	return m_predictedMeter;
 }

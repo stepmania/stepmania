@@ -35,6 +35,6 @@ private:
 
 public:
 	FootModel(Steps* model);
-	double GetPMeter;
+	double GetPMeter();
 };
 #endif
