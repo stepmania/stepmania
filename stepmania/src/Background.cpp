@@ -280,7 +280,7 @@ void Background::LoadFromSong( Song* pSong )
 		{
 			const BPMSegment& bpmseg = pSong->m_BPMSegments[i];
 
-			if( fmodf(bpmseg.m_fStartBeat, BEATS_PER_MEASURE) != 0 )
+			if( fmodf(bpmseg.m_fStartBeat, (float)BEATS_PER_MEASURE) != 0 )
 				continue;	// skip
 
 			if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )

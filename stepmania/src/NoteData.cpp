@@ -1017,8 +1017,20 @@ void NoteDataUtil::Wide( NoteData &in )
 	for( int i=0; i<=max_row; i+=ROWS_PER_BEAT ) 
 	{
 		if( in.GetNumTapNonEmptyTracks(i) != 1 )
-			continue;	// skip
+			continue;	// skip.  Don't place during holds
+
 		if( in.GetNumTracksWithTap(i) != 1 )
+			continue;	// skip
+
+		bool bSpaceAroundIsEmpty = true;	// no other notes with a 1/8th of this row
+		for( int j=i-ROWS_PER_BEAT/2+1; j<i+ROWS_PER_BEAT/2-1; j++ )
+			if( j!=i  &&  in.GetNumTapNonEmptyTracks(j) > 0 )
+			{
+				bSpaceAroundIsEmpty = false;
+				break;
+			}
+				
+		if( !bSpaceAroundIsEmpty )
 			continue;	// skip
 
 		// add a note determinitsitcally

@@ -1521,8 +1521,6 @@ void ScreenEdit::HandleEditSongInfoChoice( EditSongInfoChoice c, int* iAnswers )
 
 void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, int* iAnswers )
 {
-	Song* pSong = GAMESTATE->m_pCurSong;
-
 	CString sBGName;
 
 	switch( c )
