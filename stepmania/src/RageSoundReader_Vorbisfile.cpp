@@ -6,7 +6,7 @@
 #include "RageSoundReader_Vorbisfile.h"
 #include "RageLog.h"
 
-#if defined(INTEGER_OGG)
+#if defined(INTEGER_VORBIS)
 #include <tremor/ivorbisfile.h>
 #else
 #include <vorbis/vorbisfile.h>
@@ -139,7 +139,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_Vorbisfile::Open(CString file
 
 int RageSoundReader_Vorbisfile::GetLength() const
 {
-#if defined(INTEGER_OGG)
+#if defined(INTEGER_VORBIS)
 	int len = ov_time_total(vf, -1);
 #else
 	int len = int(ov_time_total(vf, -1) * 1000);
@@ -220,7 +220,7 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 	if( ret == 0 )
 	{
 		int bstream;
-#if defined(INTEGER_OGG)
+#if defined(INTEGER_VORBIS)
 		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), &bstream );
 #else // float vorbis decoder
 		ret = ov_read( vf, tmpbuf, sizeof(tmpbuf), (SDL_BYTEORDER == SDL_BIG_ENDIAN)?1:0, 2, 1, &bstream );
