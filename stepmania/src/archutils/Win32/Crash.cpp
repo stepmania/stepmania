@@ -701,7 +701,7 @@ static void DoSave(const EXCEPTION_POINTERS *pExc)
 {
 	char szModName2[MAX_PATH];
 
-	SpliceProgramPath(szModName2, sizeof szModName2, "crashinfo.txt");
+	SpliceProgramPath(szModName2, sizeof szModName2, "../crashinfo.txt");
 
 	HANDLE hFile = CreateFile(szModName2, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (INVALID_HANDLE_VALUE == hFile)
@@ -795,7 +795,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 				EndDialog(hDlg, TRUE);
 				return TRUE;
 			case IDC_VIEW_LOG:
-				ViewWithNotepad("log.txt");
+				ViewWithNotepad("../log.txt");
 				break;
 			case IDC_CRASH_SAVE:
 				if (!s_bHaveCallstack)
@@ -806,7 +806,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 						PRODUCT_NAME " warning", MB_OK|MB_ICONEXCLAMATION))
 						return TRUE;
 
-				ViewWithNotepad("crashinfo.txt");
+				ViewWithNotepad("../crashinfo.txt");
 				return TRUE;
 			case IDC_BUTTON_RESTART:
 				{
