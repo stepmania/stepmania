@@ -63,12 +63,24 @@ AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 #endif
 ])
 
+AC_CHECK_DECLS([SIGPWR, SIGUSR1],,,[#include <signal.h>])
+AH_VERBATIM([SIGNALS],
+[#if !HAVE_DECL_SIGPWR
+#if HAVE_DECL_SIGUSR1
+#define SIGPWR SIGUSR1
+#else  //!HAVE_DECL_SIGUSR1
+#define SIGPWR 30
+#endif //HAVE_DECL_SIGUSR1
+#endif //!HAVE_DECL_SIGPWR
+])
+
 case $host in
 	*-*-darwin*)
 		AC_DEFINE(DARWIN, 1, [Use different sound drivers than linux])
 		darwin=true;;
 esac
 AM_CONDITIONAL(DARWIN, test x$darwin = xtrue)
+
 
 # sdl-config puts -L/usr/lib in the library search path, which reorders things
 # in a way that breaks some configurations.
