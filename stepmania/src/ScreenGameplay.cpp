@@ -812,7 +812,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				{
 				case DIK_F9:	fOffsetDelta = -0.025f;		break;
 				case DIK_F10:	fOffsetDelta = +0.025f;		break;
-				default:	ASSERT(0);
+				default:	ASSERT(0);						return;
 				}
 				if( type == IET_FAST_REPEAT )
 					fOffsetDelta *= 10;
@@ -838,7 +838,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				{
 				case DIK_F11:	fOffsetDelta = -0.02f;		break;
 				case DIK_F12:	fOffsetDelta = +0.02f;		break;
-				default:	ASSERT(0);
+				default:	ASSERT(0);						return;
 				}
 				if( type == IET_FAST_REPEAT )
 					fOffsetDelta *= 10;

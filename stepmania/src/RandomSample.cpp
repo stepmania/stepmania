@@ -68,20 +68,19 @@ void RandomSample::PlayRandom()
 	if( m_pSamples.GetSize() == 0 )
 	{
 		LOG->Trace( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
+		return;
 	}
-	else
-	{
-		int iIndexToPlay;
-		for( int i=0; i<5; i++ )
-		{
-			iIndexToPlay = rand() % m_pSamples.GetSize();
-			if( iIndexToPlay != m_iIndexLastPlayed )
-				break;
-		}
 
-		m_pSamples[iIndexToPlay]->Play();
-		m_iIndexLastPlayed = iIndexToPlay;
+	int iIndexToPlay = 0;
+	for( int i=0; i<5; i++ )
+	{
+		iIndexToPlay = rand() % m_pSamples.GetSize();
+		if( iIndexToPlay != m_iIndexLastPlayed )
+			break;
 	}
+
+	m_pSamples[iIndexToPlay]->Play();
+	m_iIndexLastPlayed = iIndexToPlay;
 }
 
 void RandomSample::Pause()

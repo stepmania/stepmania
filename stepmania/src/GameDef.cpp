@@ -61,7 +61,6 @@ CString GameDef::GetPathToGraphic( const CString sSkinName, const CString sButto
 
 	ASSERT(0);
 	throw RageException( "The game button graphic '%s%s %s' is missing.", sSkinDir, sButtonName, sGraphicSuffix );
-	return "";
 }
 
 void GameDef::GetTapTweenColors( const CString sSkinName, const CString sButtonName, CArray<D3DXCOLOR,D3DXCOLOR> &aTapColorsOut ) const
@@ -192,7 +191,7 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 		pn = GAMESTATE->m_MasterPlayerNumber;
 		break;
 	default:
-		ASSERT(0);	// invalid m_StyleType
+		ASSERT(0);	return MenuInput(); // invalid m_StyleType
 	};
 
 	for( int i=0; i<NUM_MENU_BUTTONS; i++ )
