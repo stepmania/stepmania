@@ -260,7 +260,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 					row.m_Underline[p].push_back( ul );
 					ul->Load( (PlayerNumber)p, true );
 					ul->SetX( fX );
-					ul->SetWidth( (int)fItemWidth );
+					ul->SetWidth( truncf(fItemWidth) );
 				}
 
 				fX += fItemWidth/2 + ITEMS_GAP_X;
@@ -302,7 +302,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 					if( optline.bOneChoiceForAllPlayers )
 					{
-						bt->SetX( (int)(ITEM_X[0]+ITEM_X[1])/2 );	// center the item
+						bt->SetX( truncf((ITEM_X[0]+ITEM_X[1])/2) );	// center the item
 						break;	// only initialize one item since it's shared
 					}
 					else
@@ -323,8 +323,8 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 						ul->Load( (PlayerNumber)p, true );
 						float fX = optline.bOneChoiceForAllPlayers ? textItems[0]->GetX() : textItems[p]->GetX();
 						float fWidth = optline.bOneChoiceForAllPlayers ? textItems[0]->GetZoomedWidth() : textItems[p]->GetZoomedWidth();
-						ul->SetX( (int)fX );
-						ul->SetWidth( (int)fWidth );
+						ul->SetX( truncf(fX) );
+						ul->SetWidth( truncf(fWidth) );
 					}
 				}
 			}
