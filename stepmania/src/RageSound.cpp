@@ -219,7 +219,11 @@ void RageSound::SetStartSeconds( float secs )
 
 void RageSound::SetLengthSeconds(float secs)
 {
-	m_LengthSamples = int(secs*samplerate);
+	ASSERT(secs == -1 || secs >= 0);
+	if(secs == -1)
+		m_LengthSamples = -1;
+	else
+		m_LengthSamples = int(secs*samplerate);
 }
 
 /* Start playing from the current position.  If the sound is already
@@ -314,24 +318,17 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 	while(size)
 	{
 		int got;
-		int MaxBytes;
+		int MaxBytes = size;
 		if(m_LengthSamples != -1)
 		{
 			/* We have a length; only read up to the end.  MaxPosition is the
 			 * sample position of the end. */
-			int MaxPosition = m_StartSample + m_LengthSamples;
+			int SamplesToRead = m_StartSample + m_LengthSamples - position;
 
-			/* Number of bytes until MaxPosition. */
-			MaxBytes = (MaxPosition - position) * samplesize;
-
-			/* If it's negative, we're past the end, so cap it at 0. */
-			MaxBytes = max(0, MaxBytes);
-
-			/* Don't read more than size. */
-			MaxBytes = min(MaxBytes, size);
+			/* If it's negative, we're past the end, so cap it at 0. Don't read
+			 * more than size. */
+			MaxBytes = clamp(SamplesToRead * samplesize, 0, size);
 		}
-		else
-			MaxBytes = size;
 
 		if(position < 0) {
 			/* We havn't *really* started playing yet, so just feed silence.  How
@@ -349,8 +346,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 			int byte_pos = position * samplesize;
 			got = min(int(full_buf.size())-byte_pos, MaxBytes);
 			got = max(got, 0);
-			if(got)
-				memcpy(buffer, full_buf.data()+byte_pos, got);
+			memcpy(buffer, full_buf.data()+byte_pos, got);
 		}
 
 		if(!got)
