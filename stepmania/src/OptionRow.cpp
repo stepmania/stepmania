@@ -731,7 +731,7 @@ void OptionRow::HandleMessage( const CString& sMessage )
 #define INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( vbSelected ) \
 	if( GetFirstItemGoesDown() ) \
 		vbSelected.insert( vbSelected.begin(), false );
-static void VerifySelected( SelectType st, const vector<bool> vbSelected )
+static void VerifySelected( SelectType st, const vector<bool> &vbSelected )
 {
 	int iNumSelected = 0;
 	if( st == SELECT_ONE )
@@ -757,7 +757,7 @@ void OptionRow::ImportOptions( PlayerNumber pn )
 	ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
 	m_pHand->ImportOption( m_RowDef, pn, m_vbSelected[pn] );
 	INSERT_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
-	//VerifySelected( m_RowDef.selectType, m_vbSelected[pn] );
+	VerifySelected( m_RowDef.selectType, m_vbSelected[pn] );
 }
 
 void OptionRow::ImportOptions()
@@ -775,6 +775,7 @@ int OptionRow::ExportOptions( PlayerNumber pn )
 
 	int iChangeMask = 0;
 	
+	VerifySelected( m_RowDef.selectType, m_vbSelected[pn] );
 	ASSERT( m_vbSelected[pn].size() == m_RowDef.choices.size() );
 	ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[pn] );
 	iChangeMask |= m_pHand->ExportOption( m_RowDef, pn, m_vbSelected[pn] );
