@@ -106,7 +106,7 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 		return;
 	}
 
-	SetMeter( pSteps->GetMeter(), pSteps->GetDifficulty() );
+	SetFromMeterAndDifficulty( pSteps->GetMeter(), pSteps->GetDifficulty() );
 	SetDifficulty( DifficultyToString( pSteps->GetDifficulty() ) );
 }
 
@@ -135,7 +135,7 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse, PlayerNumber pn )
 	else
 		FakeDifficulty = DIFFICULTY_CHALLENGE;
 
-	SetMeter( meter, FakeDifficulty );
+	SetFromMeterAndDifficulty( meter, FakeDifficulty );
 	SetDifficulty( DifficultyToString(FakeDifficulty) + "Course" );
 }
 
@@ -144,7 +144,7 @@ void DifficultyMeter::Unset()
 	m_textFeet.SetEffectNone();
 	if( FEET_IS_DIFFICULTY_COLOR )
 		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
-	SetMeter( 0, DIFFICULTY_BEGINNER );
+	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
 	SetDifficulty( "None" );
 }
 
@@ -153,7 +153,7 @@ void DifficultyMeter::SetFromDifficulty( Difficulty dc )
 	m_textFeet.SetEffectNone();
 	if( FEET_IS_DIFFICULTY_COLOR )
 		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
-	SetMeter( 0, DIFFICULTY_BEGINNER );
+	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
 	SetDifficulty( DifficultyToString( dc ) );
 }
 
@@ -162,7 +162,7 @@ void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
 	m_textFeet.SetEffectNone();
 	if( FEET_IS_DIFFICULTY_COLOR )
 		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
-	SetMeter( 0, DIFFICULTY_BEGINNER );
+	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
 	SetDifficulty( CourseDifficultyToString( cd ) );
 }
 
@@ -186,7 +186,7 @@ void DifficultyMeter::SetFromGameState( PlayerNumber pn )
 	}
 }
 
-void DifficultyMeter::SetMeter( int iMeter, Difficulty dc )
+void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
 {
 	if( SHOW_FEET )
 	{

@@ -299,9 +299,14 @@ void DifficultyList::SetFromGameState()
 
 				row.m_dc = d;
 
-				m_Lines[i].m_Meter.SetMeter( 3*(d), d );
-				m_Lines[i].m_Number.SetText( "?" );
+				m_Lines[i].m_Meter.SetFromMeterAndDifficulty( 3*(d), d );
+
 				m_Lines[i].m_Description.SetText( GetDifficultyString(d) );
+				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(d) );
+
+				m_Lines[i].m_Number.SetZoomX(1);
+				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(d) );
+				m_Lines[i].m_Number.SetText( "?" );
 			}
 		}
 		else

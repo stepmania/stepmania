@@ -28,14 +28,15 @@ public:
 
 	void Load();
 	void SetFromGameState( PlayerNumber pn );
-	void SetFromDifficulty( Difficulty dc );
-	void SetFromCourseDifficulty( CourseDifficulty cd );
+	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );
 	void SetFromSteps( const Steps* pSteps );
 	void SetFromCourse( const Course* pCourse, PlayerNumber pn );
 	void Unset();
-	void SetMeter( int iMeter, Difficulty dc );
 
 private:
+	void SetFromDifficulty( Difficulty dc );
+	void SetFromCourseDifficulty( CourseDifficulty cd );
+
 	void SetDifficulty( CString diff );
 	BitmapText		m_textFeet;
 
