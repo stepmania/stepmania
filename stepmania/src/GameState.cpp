@@ -85,6 +85,7 @@ void GameState::Reset()
 	m_CurStyle = STYLE_INVALID;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_bSideIsJoined[p] = false;
+	m_bPlayersFinalized = false;
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= GROUP_ALL_MUSIC;
@@ -195,6 +196,11 @@ void CheckStageStats( const StageStats &ss, int p )
 
 void GameState::PlayersFinalized()
 {
+	if( m_bPlayersFinalized )
+		return;
+
+	m_bPlayersFinalized = true;
+
 	MEMCARDMAN->LockCards( true );
 	SONGMAN->LoadAllFromProfiles();
 
@@ -224,8 +230,6 @@ void GameState::PlayersFinalized()
 		if( m_pCurSong == NULL && pProfile->m_pLastSong )
 			m_pCurSong = pProfile->m_pLastSong;
 	}
-
-
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */

@@ -36,6 +36,7 @@
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "CourseUtil.h"
+#include "RageFileManager.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -954,9 +955,12 @@ void SongManager::UpdateRankingCourses()
 
 void SongManager::LoadAllFromProfiles()
 {
-	for( int s=0; s<NUM_PROFILE_SLOTS; s++ )
+	FOREACH_ProfileSlot( s )
 	{
-		CString sProfileDir = PROFILEMAN->GetProfileDir( (ProfileSlot)s );
+		if( !PROFILEMAN->IsUsingProfile(s) )
+			continue;
+
+		CString sProfileDir = PROFILEMAN->GetProfileDir( s );
 		if( sProfileDir.empty() )
 			continue;	// skip
 		//
@@ -964,6 +968,9 @@ void SongManager::LoadAllFromProfiles()
 		//
 		{
 			CString sEditsDir = sProfileDir+"Edits/";
+
+			FILEMAN->FlushDirCache( sEditsDir );
+
 			CStringArray asEditsFilesWithPath;
 			GetDirListing( sEditsDir+"*.sm", asEditsFilesWithPath, false, true );
 
