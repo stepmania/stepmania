@@ -186,7 +186,7 @@ void BitmapText::BuildChars()
 			v[3].t = RageVector2( g.rect.right,	g.rect.top );
 
 			verts.insert(verts.end(), &v[0], &v[4]);
-			tex.push_back(m_pFont->GetGlyphTexture(szLine[j]));
+			tex.push_back(g.GetTexture());
 		}
 
 		/* The amount of padding a line needs: */
