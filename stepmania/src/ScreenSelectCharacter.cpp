@@ -250,13 +250,13 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 					for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 						m_AttackIcons[pnAffected][i][j].Load( pnAffected, pChar->m_sAttacks[i][j] );
 
-			unsigned c = m_iSelectedCharacter[pnAffected] - MAX_CHAR_ICONS_TO_SHOW/2;
-			WRAP( c, GAMESTATE->m_pCharacters.size() );
+			int c = m_iSelectedCharacter[pnAffected] - MAX_CHAR_ICONS_TO_SHOW/2;
+			wrap( c, GAMESTATE->m_pCharacters.size() );
 
 			for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
 			{
 				c++;
-				WRAP( c, GAMESTATE->m_pCharacters.size() );
+				wrap( c, GAMESTATE->m_pCharacters.size() );
 				Character* pCharacter = GAMESTATE->m_pCharacters[c];
 				Banner &banner = m_sprIcons[pnAffected][i];
 				banner.LoadIconFromCharacter( pCharacter );

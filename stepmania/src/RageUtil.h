@@ -58,7 +58,14 @@ inline unsigned long max(unsigned long a, unsigned int b) { return a > b? a:b; }
 
 #define CLAMP(x, l, h)	{if (x > h) x = h; else if (x < l) x = l;}
 
-#define WRAP(x, n)	{if (x<0) x += ((-x/n)+1)*n; x = x%n;}
+inline void wrap( int &x, int n)
+{
+	if (x<0)
+		x += ((-x/n)+1)*n;
+	
+	x %= n;
+}
+
 
 
 //-----------------------------------------------------------------------------
