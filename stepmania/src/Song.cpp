@@ -1002,9 +1002,18 @@ int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 
 	unsigned i;
 	for( i=0; i<aNotes1.size(); i++ )
-		iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->GetMeter() );
+		if(aNotes1[i]->GetDifficulty() != DIFFICULTY_BEGINNER) //sort by anything but beginner
+			iEasiestMeter1 = min( iEasiestMeter1, aNotes1[i]->GetMeter() );
 	for( i=0; i<aNotes2.size(); i++ )
-		iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->GetMeter() );
+		if(aNotes2[i]->GetDifficulty() != DIFFICULTY_BEGINNER)
+			iEasiestMeter2 = min( iEasiestMeter2, aNotes2[i]->GetMeter() );
+
+	// odd case where there are only beginner steps... what to do? should probably
+	// act just like it was a 1-footer, even if the beginner steps aren't	
+	if( iEasiestMeter1 == 1000 )
+		iEasiestMeter1 = 1;
+	if( iEasiestMeter2 == 1000 )
+		iEasiestMeter2 = 1;
 
 	if( iEasiestMeter1 < iEasiestMeter2 )
 		return true;
