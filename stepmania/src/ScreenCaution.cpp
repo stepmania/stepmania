@@ -32,6 +32,12 @@ ScreenCaution::ScreenCaution()
 {
 	GAMESTATE->m_bPlayersCanJoin = true;
 
+	if(!PREFSMAN->m_bShowDontDie)
+	{
+		this->SendScreenMessage( SM_GoToNextScreen, 0.f );
+		return;
+	}
+
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","caution") );
 	this->AddChild( &m_Background );
 	
