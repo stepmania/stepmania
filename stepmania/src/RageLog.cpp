@@ -137,7 +137,6 @@ RageLog::RageLog()
 
 RageLog::~RageLog()
 {
-	fprintf(stderr, "XXXXXXXXXXXXXXXXXXXXXXXXXXX shutdown\n");
 	/* Add the mapped log data to info.txt. */
 	const CString AdditionalLog = GetAdditionalLog();
 	vector<CString> AdditionalLogLines;
