@@ -411,6 +411,8 @@ void ScoreKeeper5th::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTap
 		SCREENMAN->PostMessageToTopScreen( SM_900Combo, 0 );
 	else if( CROSSED(1000))	
 		SCREENMAN->PostMessageToTopScreen( SM_1000Combo, 0 );
+	else if( (iOldCombo / 100) < (iCurCombo / 100) && iCurCombo > 1000 )
+		SCREENMAN->PostMessageToTopScreen( SM_ComboContinuing, 0 );
 }
 
 
