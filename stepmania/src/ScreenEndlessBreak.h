@@ -1,4 +1,4 @@
-/* Class: ScreenEndlessBreak - Break periods during endless mode. */
+/* ScreenEndlessBreak - Break periods during endless mode. */
 
 #ifndef SCREENENDLESSBREAK_H
 #define SCREENENDLESSBREAK_H

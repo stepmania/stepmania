@@ -1,7 +1,7 @@
-/* CodeDetector Uses InputQueue to detect input of codes. */
+/* CodeDetector - Uses InputQueue to detect input of codes. */
 
-#ifndef CODEDETECTOR_H
-#define CODEDETECTOR_H
+#ifndef CODE_DETECTOR_H
+#define CODE_DETECTOR_H
 
 #include "GameInput.h"
 

@@ -1,3 +1,24 @@
+/*
+ * This can be used in two ways: as a timestamp or as a timer.
+ *
+ * As a timer,
+ * RageTimer Timer;
+ * while(1) {
+ *   printf( "Will be approximately: %f", Timer.PeekDeltaTime()) ;
+ *   float fDeltaTime = Timer.GetDeltaTime();
+ * }
+ *
+ * or as a timestamp:
+ * void foo( RageTimer &timestamp ) {
+ *     if( timestamp.IsZero() )
+ *         printf( "The timestamp isn't set." );
+ *     else
+ *         printf( "The timestamp happened %f ago", timestamp.Ago() );
+ *     timestamp.Touch();
+ *     printf( "Near zero: %f", timestamp.Age() );
+ * }
+ */
+
 #include "global.h"
 
 #include "RageTimer.h"

@@ -1,6 +1,4 @@
-/*
- * RageTypes - vector and matrix types
- */
+/* RageTypes - vector and matrix types. */
 
 #ifndef RAGETYPES_H
 #define RAGETYPES_H

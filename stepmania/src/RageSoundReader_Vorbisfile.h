@@ -1,35 +1,35 @@
-/*
- * RageSoundReader_Vorbisfile - Read from a Vorbisfile interface
- */
+/* RageSoundReader_Vorbisfile - Read from a Vorbisfile interface. */
 
-#ifndef RAGE_SOUND_READER_VORBISFILE
-#define RAGE_SOUND_READER_VORBISFILE
+#ifndef RAGE_SOUND_READER_VORBISFILE_H
+#define RAGE_SOUND_READER_VORBISFILE_H
 
 #include "RageSoundReader_FileReader.h"
 
 typedef struct OggVorbis_File OggVorbis_File;
 
-class RageSoundReader_Vorbisfile: public SoundReader_FileReader {
-	OggVorbis_File *vf;
-	bool eof;
-	int SetPosition(int ms, bool accurate);
-	bool FillBuf();
-	CString filename;
-	int read_offset;
-	unsigned channels;
-
+class RageSoundReader_Vorbisfile: public SoundReader_FileReader
+{
 public:
 	OpenResult Open(CString filename);
 	int GetLength() const;
 	int GetLength_Fast() const;
-	int SetPosition_Accurate(int ms)  { return SetPosition(ms, true); }
-	int SetPosition_Fast(int ms) { return SetPosition(ms, false); }
+	int SetPosition_Accurate(int ms) { return SetPosition( ms, true ); }
+	int SetPosition_Fast(int ms) { return SetPosition( ms, false ); }
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const;
 	unsigned GetNumChannels() const { return channels; }
 	RageSoundReader_Vorbisfile();
 	~RageSoundReader_Vorbisfile();
 	SoundReader *Copy() const;
+
+private:
+	OggVorbis_File *vf;
+	bool eof;
+	int SetPosition( int ms, bool accurate );
+	bool FillBuf();
+	CString filename;
+	int read_offset;
+	unsigned channels;
 };
 
 #endif

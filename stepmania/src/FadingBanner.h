@@ -1,4 +1,4 @@
-/* FadingBanner Fades between two banners. */
+/* FadingBanner - Fades between two banners. */
 
 #ifndef FADING_BANNER_H
 #define FADING_BANNER_H
