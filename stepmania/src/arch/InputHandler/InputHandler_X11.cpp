@@ -127,18 +127,17 @@ void InputHandler_X11::Update(float fDeltaTime)
 	/* XXX: This steals input from other windows, but XCheckMaskEvent won't return anything
 	 * if it isn't called. */
 	if (X11Helper::Win())
-		XGrabKeyboard(X11Helper::Dpy(),X11Helper::Win(),true,GrabModeAsync,GrabModeAsync,CurrentTime);
-	while(XCheckMaskEvent(X11Helper::Dpy(), KeyPressMask, &event)
-		|| XCheckMaskEvent(X11Helper::Dpy(), KeyReleaseMask, &event) )
-	{
-		LOG->Trace("key: sym %i, key %i, state %i",
-			XLookupKeysym(&event.xkey,0), XSymToKeySym(XLookupKeysym(&event.xkey,0)),
-							event.type == KeyPress );
+		while(XCheckTypedWindowEvent(X11Helper::Dpy(), X11Helper::Win(), KeyPress, &event)
+			|| XCheckTypedWindowEvent(X11Helper::Dpy(), X11Helper::Win(), KeyRelease, &event) )
+		{
+			LOG->Trace("key: sym %i, key %i, state %i",
+				XLookupKeysym(&event.xkey,0), XSymToKeySym(XLookupKeysym(&event.xkey,0)),
+								event.type == KeyPress );
 
-		DeviceInput di( DEVICE_KEYBOARD,
-					XSymToKeySym(XLookupKeysym(&event.xkey,0)) );
-		ButtonPressed(di, event.type == KeyPress);
-	}
+			DeviceInput di( DEVICE_KEYBOARD,
+						XSymToKeySym(XLookupKeysym(&event.xkey,0)) );
+			ButtonPressed(di, event.type == KeyPress);
+		}
 
 	InputHandler::UpdateTimer();
 }
