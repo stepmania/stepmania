@@ -27,7 +27,7 @@ public:
 	void UnloadTexture( CString sTexturePath );
 	void ReloadAll();
 
-	void SetPrefs( int iMaxSize, int iTextureColorDepth, bool bUnloadWhenDone );
+	void SetPrefs( int iMaxSize, int iTextureColorDepth, int iMaxTextureMB );
 	int GetMaxTextureSize() { return m_iMaxTextureSize; };
 	int GetTextureColorDepth() { return m_iTextureColorDepth; };
 
@@ -36,9 +36,8 @@ protected:
 
 	int m_iMaxTextureSize;
 	int m_iTextureColorDepth;
-	bool  m_bUnloadWhenDone;
+	int m_iSecondsBeforeUnload;
 
-	// map from file name to a texture holder
 	std::map<CString, RageTexture*> m_mapPathToTexture;
 };
 

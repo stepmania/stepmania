@@ -88,6 +88,7 @@ public:
 	CString GetFilePath() const {return m_sFilePath;}
 
 	int					m_iRefCount;
+	int					m_iTimeOfLastUnload;
 
 protected:
 	virtual void CreateFrameRects();

@@ -234,6 +234,13 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 		for( int j=0; j<asFilePaths.GetSize(); j++ )
 		{
 			CString sFilePath = asFilePaths[j];
+			
+			// don't export "thumbs.db" files
+			CString sDir, sFName, sExt;
+			splitrelpath( sFilePath, sDir, sFName, sExt );
+			if( 0==stricmp(sFName,"thumbs.db") )
+				continue;	// skip
+
 			try
 			{
 				zip.AddNewFile( sFilePath, Z_BEST_COMPRESSION, true );

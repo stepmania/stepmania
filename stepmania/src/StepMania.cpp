@@ -706,6 +706,8 @@ HRESULT CreateObjects( HWND hWnd )
 
 	TEXTUREMAN	= new RageTextureManager( DISPLAY );
 
+	ApplyGraphicOptions();	// call this again to set texture prefs
+
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );
 
 	// These things depend on the TextureManager, so do them after!
@@ -946,7 +948,7 @@ void ApplyGraphicOptions()
 	 * is dependent on the bit depth. */
 	int iTextureBPP		= 16;
 
-	bool bUnloadTextures	= PREFSMAN->m_bUnloadTextures;
+	int iUnloadTextureDelaySeconds	= PREFSMAN->m_iUnloadTextureDelaySeconds;
 
 	int &iRefreshRate	= PREFSMAN->m_iRefreshRate;
 
@@ -1000,7 +1002,7 @@ success:
 	// Let the texture manager know about our preferences
 	//
 	if( TEXTUREMAN != NULL )
-		TEXTUREMAN->SetPrefs( iTextureSize, iTextureBPP, bUnloadTextures );
+		TEXTUREMAN->SetPrefs( iTextureSize, iTextureBPP, iUnloadTextureDelaySeconds );
 
 	RestoreObjects();
 

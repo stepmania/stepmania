@@ -32,7 +32,7 @@ RageTextureManager::RageTextureManager( RageDisplay* pScreen )
 	m_pScreen = pScreen;
 	m_iMaxTextureSize = 2048;	// infinite size
 	m_iTextureColorDepth = 16;
-	m_bUnloadWhenDone = true;
+	m_iSecondsBeforeUnload = 60*30;		// 30 mins
 }
 
 RageTextureManager::~RageTextureManager()
@@ -124,16 +124,40 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 	
 	pTexture = p->second;
 	pTexture->m_iRefCount--;
+	pTexture->m_iTimeOfLastUnload = time(NULL);
 	ASSERT( pTexture->m_iRefCount >= 0 );
-	if( pTexture->m_iRefCount == 0 )	// There are no more references to this texture.
+	if( pTexture->m_iRefCount == 0  &&  pTexture->IsAMovie() )	// always unload if a movie so we don't waste time decoding
 	{
-		if( pTexture->IsAMovie()  ||  m_bUnloadWhenDone )	// always unload if a movie so we don't waste time decoding
-		{
 		//	LOG->Trace( "RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount );
-			SAFE_DELETE( pTexture );		// free the texture
-			m_mapPathToTexture.erase(p);	// and remove the key in the map
+		SAFE_DELETE( pTexture );		// free the texture
+		m_mapPathToTexture.erase(p);	// and remove the key in the map
+	}
+
+	// Search for old textures with refcount==0 to unload
+	static int timeLastGarbageCollect = time(NULL);
+	if( timeLastGarbageCollect+m_iSecondsBeforeUnload/2 < time(NULL) )
+	{
+		LOG->Trace("Performing texture garbage collection");
+		timeLastGarbageCollect = time(NULL);
+
+		// Chris:  What is the proper way to iterate through this if deleting from map?
+startovergc:
+
+		for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+			i != m_mapPathToTexture.end(); ++i)
+		{
+			CString sPath = i->first;
+			RageTexture* pTexture = i->second;
+			if( pTexture->m_iRefCount==0  &&
+				pTexture->m_iTimeOfLastUnload+m_iSecondsBeforeUnload < time(NULL) )
+			{
+				SAFE_DELETE( pTexture );		// free the texture
+				m_mapPathToTexture.erase(i);	// and remove the key in the map
+				goto startovergc;
+			}
 		}
 	}
+
 
 	//LOG->Trace( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
 }
@@ -150,9 +174,10 @@ void RageTextureManager::ReloadAll()
 	}
 }
 
-void RageTextureManager::SetPrefs( int iMaxSize, int iTextureColorDepth, bool bUnloadWhenDone )
+void RageTextureManager::SetPrefs( int iMaxSize, int iTextureColorDepth, int iSecondsBeforeUnload )
 {
-	m_bUnloadWhenDone = bUnloadWhenDone;
+	m_iSecondsBeforeUnload = max( iSecondsBeforeUnload, 1 );
+	ASSERT( m_iSecondsBeforeUnload > 0 );
 	if( iMaxSize == m_iMaxTextureSize  &&  iTextureColorDepth == m_iTextureColorDepth )
 		return;
 	m_iMaxTextureSize = iMaxSize; 

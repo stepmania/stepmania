@@ -35,17 +35,19 @@ Table of Contents
 11. Questions, Bugs, Suggestions, and Help 
 12. The StepMania Editor
 13. The .SM File Format
-14. Background Animations
-15. The .CRS File Format
-16. Extra Stages
-17. Creating an Announcer
-18. Creating a Note Skin
-19. Creating a Theme
-20. How StepMania Loads Textures
-21. Building StepMania from CVS Source
-22. Thanks
+14. Backgrounds
+15. BGAnimations format
+16. The .CRS File Format
+17. Extra Stages
+18. Creating an Announcer
+19. Creating a Note Skin
+20. Creating a Theme
+21. How StepMania Loads Textures
+22. Building StepMania from CVS Source
+23. Thanks
 
 See the file "NEWS" for version history.
+
 
 ************************************************************
 1. About StepMania
@@ -112,7 +114,7 @@ are on right half.
 
 The following is a list of special keys:
 
-Anywhere:
+Any time:
   * F4 = toggle fullscreen
   * F5 = toggle detail
   * Hold Tab = increase game speed 4x (useful for moving through menus quickly)
@@ -132,35 +134,11 @@ In gameplay:
   * Hold Escape = abort playing
 
 
-
-		This controls the state of the background behind the arrows.
-		OFF - Only the background graphic of the song is displayed.
-		ANIMATIONS - Along with the background graphic, animated graphics 
-			(found in the BGAnimations folder) will dance around behind the 
-			arrows.  Keep in mind that the animation files are small graphics, 
-			and must be loaded on the fly.  On slower computers, this will 
-			cause jumpiness during the song.  If this is a problem, try 
-			changing to Visualizations or even off.
-		VISUALIZATIONS - Along with the background graphic, movies (found in 
-			the Visualizations folder) will be played.  The default StepMania 
-			Visualizations pack (available at www.stepmania.com) contains 
-			swirling and twisting effects, but in theory any AVI or MPEG video 
-			can be used.  You must have the DivX codec installed on your 
-			computer for this to work.  Keep in mind that DivX decoding is 
-			processor-intensive, and will decrease the framerate.  Slower 
-			computers will have a hard time playing StepMania AND decoding 
-			DivX backgrounds.
-		RANDOM MOVIES - Movie files from the "RandomMovies" folder will be
-			played as the background for the song.
-		Sample animations, visualizations, and random movies can be found at 
-		www.stepmania.com.
-
-
 ************************************************************
 6. How StepMania Loads Songs
 ************************************************************
 
-All song files for a specific song (data file, music file, banner, background) 
+All files for a specific song (data file, music file, banner, background) 
 must reside in a single folder.  This folder must have the following path:
 
    Songs/<group folder>/<song folder>/
@@ -173,25 +151,21 @@ For example, the song B4U may consist of the following files:
    Songs/Dance Dance Revolution 4th Mix/B4U/b4u.png
    Songs/Dance Dance Revolution 4th Mix/B4U/b4u-movie.avi
 
-StepMania supports the SM, DWI, BMS, and KSF song file formats.
+StepMania supports the SM, DWI, BMS, and KSF song file formats.  If the song
+file format is BMS or KSF, simply put all the KSF or BMS files into the song 
+folder.
 
 If a song file does not specify a valid banner file, StepMania first looks 
-for a graphic in the song folder that contains the letters "banner".  If that
+for a graphic in the song folder that contains the word "banner".  If that
 search fails, StepMania will guess which image is most appropriate.
 
 If a song file does not specify a valid background file, StepMania first looks 
-for a graphic in the song folder that contains the letters "bg" or "background".
+for a graphic in the song folder that contains the words "bg" or "background".
 If that search fails, StepMania will guess which image is most appropriate.
 
 If a song file does not specify a valid CDTitle file, StepMania will look
-for a graphic in the song folder that contains the letters "cdtitle".  If that 
+for a graphic in the song folder that contains the words "cdtitle".  If that 
 search fails, StepMania will guess which image is most appropriate.
-
-Also, for compatibility with DWI, if can reading CDTitles from the .\CDTitles 
-folder.  Song makers are not encouraged to not use this feature and instead 
-should put the CDTitle graphic in the song folder.  Having a separate CDTitles 
-folder breaks the principle that all files needed to play a song should reside 
-in the song folder.
 
 If a song file does not specify a valid movie background file, StepMania will 
 look for a movie in the song folder that contains the letters "movie".  If 
@@ -213,15 +187,15 @@ of registering simultaneous presses of Left+Right or Up+Down.  This
 restriction will cause the player to miss many notes where two buttons must 
 be hit simultaneously.
 
-* Highly Recommended:  Special PlayStation->USB adaptor
+* Highly Recommended:  specific brands of PlayStation->USB adaptor
 
 There is just one brand of PlayStation->USB adaptor that functions perfectly 
-with StepMania.  These adaptors are available for purchase at the StepMania 
-web site (www.stepmania.com) and through some importers (www.liksang.com).  
-The adaptor is made by "Boom", and it small and black with a detachable USB 
-cable.  These adaptors cost about $15 and allow you to attach one dance pad 
-per adaptor.  The primary advantage of these adaptors is that they do not 
-require special drivers and require no configuring.
+with StepMania.  These adaptors are available for purchase through some 
+importers (www.liksang.com).  The adaptor is made by "Boom", and it small and 
+black with a detachable USB cable.  These adaptors cost about $15 and allow 
+you to attach one dance pad per adaptor.  The primary advantage of these 
+adaptors is that they do not require special drivers and require no 
+configuring.
 
 * Semi-Recommended:  PlayStation->Parallel adaptor
 
@@ -244,6 +218,7 @@ NTPad XP 1.x, found at
    http://www.aldostools.com/dpad.html
 PSXPAD 0.8.2002.0606b, found at
    http://www.psxpad.com/download/downcnt.php?name=psxp_a020606b
+
 
 ************************************************************
 8. Compatibility Issues
@@ -315,7 +290,7 @@ I'd rather not going to say.  Sorry.  It's gotten me in trouble before.
 
 * Why won't you tell me?  I promise I won't tell anyone else.
 
-The reason I won't tell is because: a) I don't know yet, and b) I don't want 
+The reasons I won't tell is because: a) I don't know yet, and b) I don't want 
 to make anyone angry if it takes longer than expected (it usually does).
 
 
@@ -333,21 +308,21 @@ visualizations to all be installed by the Package Manager.
 
 The file format of an .smzip file is actually the PK-Zip standard.  This means 
 you can rename any .smzip file to have the extension '.zip', and then open the 
-file in any compression package (e.g. WinZip).
+file in any compression application (e.g. WinZip, WinRAR).
 
-The StepMania Package Manager (smpackage.exe) can also create song packages 
+The StepMania Package Manager (smpackage.exe) can also export song packages 
 for you.  Simply launch the Package Manager 
-(Start Menu->Programs->StepMania->Package Manager), click the song you want to 
-create a package for, click the Export button, and a .smzip package will be 
-placed on your desktop.
+(Start Menu->Programs->StepMania->Package Manager), click the items you would 
+like to make a package for, then click the Export button.  A .smzip package 
+will be placed on your desktop, and you can share it with friends.
 
 
 ************************************************************
 11. Questions, Bugs, Suggestions, and Help
 ************************************************************
 
-If you have a question or problem about StepMania, please try asking your 
-question to the StepMania message board.  A link is available from the StepMania 
+If you have a question about or problem with StepMania, please first ask your 
+question a StepMania message board.  A link is available from the StepMania 
 web site - http://www.stepmania.com.
 
 If you have found a bug, please file a bug report into the SourceForge bug 
@@ -355,7 +330,7 @@ tracking system (http://sourceforge.net/tracker/?group_id=37892&atid=421366).  
 This will allow the developers to track and fix bugs much more efficiently.  
 
 * In a bug report, please specify your video card brand and model, and your OS 
-version.
+version (Win98, WinXP, etc).
 * PLEASE, PLEASE enter your e-mail address on the bug reports. In many cases, 
 we need more information from the bug reporter.
 
@@ -374,10 +349,22 @@ to the StepMania developers list (stepmania-devs@sourceforge.net) or to Chris
 ************************************************************
 
 The StepMania editor allows you to edit, record, synchronize, and play back 
-note patterns.  Current, it support saving only in the .SM format.  If you save 
-a song that was originally in DWI or BMS format, the old DWI and BMS files will 
-be renamed to have ".old" appended to avoid conflicts when the song is next 
-loaded.  All of the commands are listed along the left side of the screen.
+note patterns.  When you choose 'Save', your song will be saved in both the .SM
+format and the DWI format for use in Dance With Intensity.  If you save 
+a song that was originally in the BMS or KSF format, the old files will be
+appended with ".old", and a new .SM file will be written with your new song 
+data.
+
+Following are a few basic commands that you will find useful in learning to use
+the editor:
+
+Esc - show/dimiss menu
+Up/Down - change beat
+Left/Right - change beat snap value
+Enter - Set selection begin marker
+Space - Set selection end marker
+P - Play back current selection (if no selection, play whole song)
+R - Record over current selection (if no selection, record whole song)
 
 
 ************************************************************
@@ -395,49 +382,49 @@ mp3, or wav format.
 
 #TITLE:...;    - The "main title" of the song.
 #SUBTITLE:...; - This text will appear underneath the main title of the song 
-on the Select Music screen.  e.g. "-Dirty Mix-", "(remix)".
+    on the Select Music screen.  e.g. "~Dirty Mix~" or "(remix)".
 #ARTIST:...;   - The artist of the song.
 #CREDIT:...;   - Give yourself some credit here for creating a wonderful song.
 #BPM:...;      - BPM of the music
 #BANNER:...;   - The file name of the banner image.  e.g. "b4u-banner.png".  
-This image must reside in the song folder.
+    This image must reside in the song folder.
 #BACKGROUND:...;   - The file name of the background image.  e.g. "b4u-bg.png". 
-This image must reside in the song folder.
+    This image must reside in the song folder.
 #CDTITLE:...;   - The file name of the spinning CD logo.  e.g. "b4u-cdtitle.png".  
-This image must reside in the song folder.
-#MOVIEBACKGROUND:...;   - The file name of the a background movie.  e.g. "b4u-movie.avi".  
-This movie must reside in the song folder.
+    This image must reside in the song folder.
+#MOVIEBACKGROUND:...;   - The file name of the a background movie.  e.g. 
+    "b4u-movie.avi".  This movie must reside in the song folder.
 #MUSIC:...;   - The file name of the music file.  e.g. "b4u.mp3".  This image 
-must reside in the song folder.
+    must reside in the song folder.
 #MUSICBYTES:...;   - The size in bytes of the music file that this song was last 
-synchronized with.  A "Song may be out of synch" warning will be displayed if 
-the value of this tag does not match the actual size of the music file.
+    synchronized with.  A "Song may be out of synch" warning will be displayed if 
+    the value of this tag does not match the actual size of the music file.
 #OFFSET:...;   - The time in seconds at which beat 0 occurs in the music.  This 
-is specified as a floating point value.  e.g. "2.34".
+    is specified as a floating point value.  e.g. "2.34".
 #SAMPLESTART:...;   - The time in seconds to start the music sample that plays 
-on the Select Music screen.  This is specified as a floating point value.  e.g. 
-"32.34".
+    on the Select Music screen.  This is specified as a floating point value.  
+	e.g. "32.34".
 #SAMPLELENGTH:...;   - The time in seconds let the sample music play after 
-starting.  This is specified as a floating point value.  e.g. "32.34".  Note 
-that in the last 1 second of playing the music will fade out.
+    starting.  This is specified as a floating point value.  e.g. "32.34".  Note 
+    that in the last 1 second of playing the music will fade out.
 #SELECTABLE:...;   - If "NO", the song can not be selected manually and can
-only be played as part of a course.  If "ROULETTE", the song can can also be
-selected via roulette.  The default value is "YES".
+    only be played as part of a course.  If "ROULETTE", the song can can also be
+    selected via roulette.  The default value is "YES".
 #BPMS:...; - A value of the format "beat=bpm".  Indicates that at 'beat', the 
-speed of the arrows will change to "bpm".  Both of these values are specified 
-as floating point values.  You must specifiy a BPM value for beat 0.  Multiple 
-BPMs can be given by separating them with commas.  e.g. "0=160,120=80".  
+    speed of the arrows will change to "bpm".  Both of these values are specified 
+    as floating point values.  You must specifiy a BPM value for beat 0.  Multiple 
+    BPMs can be given by separating them with commas.  e.g. "0=160,120=80".  
 #STOPS:...;   - A value of the format "beat=sec".  Indicates that at 'beat', 
-the motion of the arrows should stop for "sec" seconds.  Both of these values 
-are specified as floating point values.  Multiple stops can be given by 
-separating them with commas.  e.g. "60=2.23,80=1.12".
-#ANIMATIONS:...;   - A value of the format "beat=anim name".  Indicates that at 'beat', 
-the background animation should change to the animation names 'anim name'.  'beat'
-is a floating point value and 'anim name' is a string.  Different animation change 
-are separated by commas.  e.g. "60=falling,80=flower".
+    the motion of the arrows should stop for "sec" seconds.  Both of these values 
+    are specified as floating point values.  Multiple stops can be given by 
+    separating them with commas.  e.g. "60=2.23,80=1.12".
+#BGCHANGE:...;   - A value of the format "beat=bg name".  Indicates that at 'beat', 
+	the background should begin playing 'bg name'.  'beat' is a fractional value
+	value and 'anim name' is a string.  Different animation change are separated 
+	by commas.  e.g. "60=falling,80=flower".
 
 
-Each pattern of steps for different modes have the same basic format:
+Each pattern of notes has have the same basic format:
 
 #NOTES:<NotesType>:<Description>:<DifficultyClass>:<DifficultyMeter>:<RadarValues>:<NoteData>;
 
@@ -462,36 +449,36 @@ values are "0.95,0.98,0.22,0.12,0.13".  These values will automatically be
 written when you save the song in the StepMania editor, but you may edit the 
 .SM file afterward to tweak them.
 
-NoteData:  This value requires a longer explanation.  The format is pretty 
-similar to that used in KSF files.
+NoteData:  This value requires a longer explanation.
 
 Each note is represented by a character:
 
+0 = no note here
 1 = a regular "tap note"
 2 = beginning of a "hold note"
 3 = end of a "hold note"
-a-z,A-z = reserved for game types that have sounds associated with notes
+a-z,A-z = tap notes reserved for game types that have sounds associated with notes
 
-Notes are grouped into rows.  The number of notes in a row depends on the 
-NotesType field.
+Notes that are hit at the same time are grouped into rows.  For example, if the  
+NotesType is "dance-single", the row "1001" would specify that both the Left 
+and Right and Down panels should be hit at the same time.
 
-dance-single = 4 notes/row
+The number of notes per row (also called the number of 'columns') depends on 
+the "NotesType.
+
+dance-single = 4 notes/row  (Left,Down,Up,Right)
 dance-double = 8 notes/row
 dance-couple = 8 notes/row
 dance-solo = 6 notes/row
 pump-single = 5 notes/row
 pump-double = 10 notes/row
 
-For example, a note row for a dance-single pattern may look like "1001" (press 
-Left and Right simultaneously.  A note row for a dance-double pattern may look 
-like "10010000" (press Left and Right simultaneously on the left pad).
-
-Note rows are grouped into measures.  The number of note rows in a measure will 
-determine the time value of each note.  For example, if there are 4 note rows
-in a measure, each note will be treated as a quarter note.  If there are 8 notes 
-rows in a measure, each note will be treated as a eighth note.  If there are 12 
-notes rows in a measure, each note will be treated as a triplet note.  Measures 
-are separated by a comma.
+Note rows are grouped into measures.  The number of note rows you specify in a 
+measure will determine the time value of each note.  For example, if there are 
+4 note rows in a measure, each note will be treated as a quarter note.  If there 
+are 8 notes rows in a measure, each note will be treated as a eighth note.  If 
+there are 12 notes rows in a measure, each note will be treated as a triplet 
+(1/12th) note.  Measures are separated by a comma.
 
 Example:
 
@@ -512,80 +499,126 @@ Example:
 ;
 
 ************************************************************
-14. Background Animations
+14. Backgrounds
 ************************************************************
+
+StepMania supports three different modes of backgrounds:
+
+BGAnimations - The background will cycle randomly through different sprite 
+animations.  Each of these animation must reside in the "BGAnimations" 
+folder in the StepMania program directory.  See the section called 
+"BGAnimations" in the readme for more information on the BGAnimations format.
+BGAnimations will perform better than the other background modes on slower 
+computers.
+
+Random Movies - The background will cycle randomly over any avi or mpg files 
+in the "RandomMovies" folder in the StepMania program directory.
+
+Visualizations - A random avi or mpg file will be chosen from the 
+"Visualizations" folder in the StepMania program directory.  This movie file 
+will be played and blended over top of the song's background graphic.
+
+Many video AVIs will require the DivX codec for playback.  If you haven't yet
+downloaded DivX, you can get it from www.divx.com.  Playing movies as the 
+background is very processor intensive, and may cause the frame rate to 
+decrease on slower computers.
+
+Sample animations, visualizations, and random movies can be found at 
+www.stepmania.com.
+
+
+************************************************************
+15. BGAnimations Format
+************************************************************
+
+The BGAnimations folder in the StepMania program directory may contain several
+BGAnimation folders.
 
 \BGAnimations\<anim folder>\<layer files>
 
-Why?
+<anim folder> is the name of the animation.
 
-Grouping all of the graphics for an animation into one file would be a pain.  If you want your sprites to have animation and you put all the frames for multiple animations into one big graphics file:  a) That file would be huge and many video cards can't draw large textures, b) You'd have to create some other text file that says which frames of the graphic belong to which sprite, c) If your sprites are different sizes, there will be a lot of wasted space between the frames of that graphic, and d) It's a pain for the artist to cut and paste a whole bunch of frames from different animations into one graphic (and make sure everything is lined up right).
+<layer files> are one or more graphics files that will be used as layers in the 
+animation.  Each sprite represents exactly one layer.  Multiple layers can be 
+specified by having multiple <layer files>.  
 
-The BGAnimations folder should contain several folders for individual background animations.  Currently, these background animations cycle in order of their folder names, changing every 4 measures of the song.
+For example, a BGAnimation named "flower" may include the files:
 
-In an animation folder, each sprite represents one layer.  Multiple layers can be specified by having multiple sprites.  Layers are drawn from back to front in order of their file name.  Different "layer effects" are specified by adding tokens to the file name.  Here are an explanation of the currently supported tokens:
+	BGAnimations\flower\1 TileScrollUp.png
+	BGAnimations\flower\2 StartOnRandomFrame ParticlesFloatDown 1x2.png
+	BGAnimations\flower\3 TileScrollLeft CycleColor 2x2.png
 
-usesongbg - Use the song's background file instead of this graphics file.  Since this graphics file will not be used, you might want to make this graphic a 1x1 graphic to save space.
+The first number in the name of a <layer file> will specifies its drawing 
+order.  A layers with a small number will be drawn before a layer with a larger
+number.
 
-add - use additive blending instead of normal blending.
+Different "effects" are specified for each layer by adding tokens to the file 
+name.  Here are an explanation of the currently supported tokens:
 
-cyclecolor - cycle the color of the layer over the colors of the rainbow
+UseSongBg - Use the song's background file instead of this graphics file.  
+Since this graphics file is merely a placeholder, you might want to make this 
+graphic a 1x1 graphic to save disk space.
 
-cyclealpha - cycle the alpha channel of the layer over type
+Add - use additive blending instead of normal blending.
 
-startonrandomframe - Start the animation on a random frame.  This is mainly useful for Tile or Particle effects.  
+CycleColor - cycle the color of the layer over the colors of the rainbow
 
-dontanimate - Stay on the first frame of this animation.  This is only useful for layers with multiple frames.
+CycleAlpha - cycle the alpha channel of the layer over type
+
+StartOnRandomFrame - Start the animation on a random frame.  This is mainly 
+useful for Tile or Particle effects.  
+
+DontAnimate - Stay on the first frame of this animation.  This is only useful 
+for layers with multiple frames.
 
 (stretch effects) - These scretch the graphic across the extire screen.
-scretchscrollleft,
-stretchscrollright,
-stretchscrollup,
-stretchscrolldown,
+ScretchScrollLeft,
+StretchScrollRight,
+StretchScrollUp,
+StretchScrollDown,
        - Scroll the layer in a direction
 
-stretchwater,
-stretchbubble,
-stretchtwist,
-stretchspin,
+StretchWater,
+StretchBubble,
+StretchTwist,
+StretchSpin,
        - Deform the background sprite with an effect.  Only stretch spin is currently implemented.
 
 (particle effects) - Use the graphic to make individual particles on the screen.
-particlesspiralout,
-particlesspiralin,
+ParticlesSpiralOut,
+ParticlesSpiralIn,
        - Spiral particles away from/toward the center of the screen.
-particlesfloatup,
-particlesfloatdown,
-particlesfloatleft,
-particlesfloatright,
+ParticlesFloatUp,
+ParticlesFloatDown,
+ParticlesFloatLeft,
+ParticlesFloatRight,
        - Scroll the particles across the screen.
-particlesbounce,
+ParticlesBounce,
        - Particles start traveling in random directions and bounce when they hit the edge of the screen.
 
 (tile effects) - Tile the graphics across the screen, forming a grid of graphics.
-tilestill,
-tilescrollleft,
-tilescrollright,
-tilescrollup,
-tilescrolldown,
+TileStill,
+TileScrollLeft,
+TileScrollRight,
+TileScrollUp,
+TileScrollDown,
        - Scroll the tiles
 
-tileflipx,
-tileflipy,
+TileFlipX,
+TileFlipY,
        - Flip the tiles along the X or Y axis.
 
-tilepulse,
+TilePulse,
        - Tiles zoom in and out.
-
 
 
 ************************************************************
 15. The .CRS File Format
 ************************************************************
 
-Place holder...
+CRS files define the courses used in the "Oni" Nonstop Challenge mode.  All CRS
+files must reside in the "Courses" folder in the StepMania program folder.
 
-Header section...
 #COURSE:...; - name of the course
 #LIVES:<0..10>;  - An integer between 0 and 10.  This line is optional.
 #REPEAT:<YES|NO>;  - start over after last stage?
@@ -615,11 +648,13 @@ Header section...
 
 You can manually specify extra stages for each song group by creating .CRS
 files called "extra1.crs" and "extra2.crs".  These courses must contain
-exactly one valid song.  Don't forget to specify modifiers - see the CRS
-File Format section for more information.  If a CRS file is not found or
-is invalid, the program will choose appropriate songs, notes and options.
+exactly one song in the course.  Don't forget to specify modifiers - see the 
+CRS File Format section for more information.  If a CRS file is not found or
+is invalid, the program will choose an appropriate song, notes, and modifiers.
 
-Place these course files in the song group folder, not in "Courses".
+Don't forget: extra stage CRS files belong in the song group folder 
+(e.g. "Songs/DDRMAX/"), not in "Courses".
+
 
 ************************************************************
 17. Creating an Announcer
@@ -637,6 +672,7 @@ that you name the sound files according to what is being said (e.g.
 "everybodys waiting for you.mp3").  If there are 0 sound files in a trigger 
 folder, or the trigger folder is missing, then no sound will be played for 
 that trigger.
+
 
 ************************************************************
 18. Creating a Note Skin
