@@ -17,13 +17,14 @@
 
 NoteData::NoteData()
 {
+	m_iNumTracks = 0;
 	Init();
 }
 
 void NoteData::Init()
 {
-	m_iNumTracks = 0;	// must do this before calling ClearAll()!
 	ClearAll();
+	m_iNumTracks = 0;	// must do this after calling ClearAll()!
 }
 
 NoteData::~NoteData()
@@ -452,7 +453,8 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 	for( int t=0; t<m_iNumTracks; t++ )
 	{
 		const int iOriginalTrack = iOriginalTrackToTakeFrom[t];
-		ASSERT( iOriginalTrack < Original.m_iNumTracks );
+		RAGE_ASSERT_M( iOriginalTrack < Original.m_iNumTracks, ssprintf("from %i >= %i (to %i)", 
+			iOriginalTrack, Original.m_iNumTracks, iOriginalTrackToTakeFrom[t]));
 
 		if( iOriginalTrack == -1 )
 			continue;
