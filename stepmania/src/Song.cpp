@@ -210,7 +210,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 		}
 
 
-		if( fElapsedTime > fSecondsInThisSegment )
+		if( !bIsLastBPMSegment && fElapsedTime > fSecondsInThisSegment )
 		{
 			// this BPMSegement is NOT the current segment
 			fElapsedTime -= fSecondsInThisSegment;
