@@ -44,14 +44,13 @@ void FadingBanner::BeforeChange()
 	if( m_Banner[0].GetTexturePath() != "" )
 	{
 		m_Banner[1].Load( m_Banner[0].GetTexturePath() );
-		m_Banner[1].SetScrolling( m_Banner[0].IsScrolling() );
+		m_Banner[1].SetScrolling( m_Banner[0].IsScrolling(), m_Banner[0].ScrollingPercent() );
 	}
 
 	m_Banner[1].SetDiffuse( RageColor(1,1,1,1) );
 	m_Banner[1].StopTweening();
 	m_Banner[1].BeginTweening( 0.25f );		// fade out
 	m_Banner[1].SetTweenDiffuse( RageColor(1,1,1,0) );
-
 }
 
 void FadingBanner::SetFromSong( Song* pSong )

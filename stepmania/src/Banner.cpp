@@ -53,6 +53,15 @@ void Banner::Update( float fDeltaTime )
 	}
 }
 
+void Banner::SetScrolling( bool bScroll, float Percent)
+{
+	m_bScrolling = bScroll;
+	m_fPercentScrolling = Percent;
+
+	/* Set up the texture coord rects for the current state. */
+	Update(0);
+}
+
 bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
 	m_bScrolling = false;

@@ -31,8 +31,9 @@ public:
 	bool LoadFromCourse( Course* pCourse );
 	bool LoadRoulette();
 
-	inline void SetScrolling( bool bScroll ) { m_bScrolling = bScroll; };
-	inline bool IsScrolling() { return m_bScrolling; };
+	void SetScrolling( bool bScroll, float Percent = 0);
+	bool IsScrolling() { return m_bScrolling; }
+	float ScrollingPercent() { return m_fPercentScrolling; }
 
 protected:
 	bool m_bScrolling;
