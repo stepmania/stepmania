@@ -47,6 +47,16 @@ void PrefsManager::Unsubscribe( IPreference *p )
 	g_pvpSubscribers->erase( iter );
 }
 
+IPreference *PrefsManager::GetPreferenceByName( const CString &sName )
+{
+	FOREACH( IPreference*, *g_pvpSubscribers, p )
+	{
+		if( !(*p)->GetName().CompareNoCase( sName ) )
+			return *p;
+	}
+
+	return NULL;
+}
 
 bool g_bAutoRestart = false;
 

@@ -13,6 +13,7 @@ class PrefsManager
 public:
 	PrefsManager();
 	~PrefsManager();
+	IPreference *GetPreferenceByName( const CString &sName );
 
 	void Init();
 
