@@ -482,7 +482,7 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 			///////////////////////////////////
 			arrayWheelItemDatas.SetSize( 0, 300 );	// clear out the previous wheel items and set large capacity jumps
 
-			bool bUseSections;
+			bool bUseSections = false;
 			switch( so )
 			{
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
@@ -500,7 +500,6 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				// make WheelItemDatas with sections
 				CString sLastSection = "";
 				D3DXCOLOR colorSection;
-				int iCurWheelItem = 0;
 				for( int i=0; i< arraySongs.GetSize(); i++ )
 				{
 					Song* pSong = arraySongs[i];
@@ -696,10 +695,6 @@ void MusicWheel::RebuildWheelItemDisplays()
 
 void MusicWheel::NotesChanged( PlayerNumber pn )	// update grade graphics and top score
 {
-	DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[pn];
-	Song* pSong = GAMESTATE->m_pCurSong;
-	Notes* m_pNotes = GAMESTATE->m_pCurNotes[ pn ];
-	
 	for( int i=0; i<NUM_WHEEL_ITEMS_TO_DRAW; i++ )
 	{
 		WheelItemDisplay& display = m_WheelItemDisplays[i];

@@ -55,8 +55,6 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 	for( int i=0; i<MAX_HOLD_NOTES; i++ )
 		m_bIsHoldingHoldNote[i] = false;
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-
 	this->CopyAll( pNoteData );
 
 	// init note displays

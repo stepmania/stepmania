@@ -29,7 +29,6 @@ void GrayArrowRow::Load( PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	GameDef* pGameDef = GAMESTATE->GetCurrentGameDef();
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
 	m_iNumCols = pStyleDef->m_iColsPerPlayer;

@@ -209,9 +209,6 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, const InputEventType
 	if( m_bMadeChoice )
 		return;
 
-	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
-
-
 	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
 	{
 		m_soundOptionsChange.Play();

@@ -686,8 +686,6 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 //	m_BPMDisplay.BeginTweening( 0.2f );
 //	m_BPMDisplay.SetTweenZoomY( 1.2f );
 
-	DifficultyClass dc = GAMESTATE->m_PreferredDifficultyClass[pn];
-	Song* pSong = GAMESTATE->m_pCurSong;
 	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 	
 	if( m_pNotes )

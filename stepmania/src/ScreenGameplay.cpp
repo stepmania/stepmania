@@ -288,9 +288,6 @@ ScreenGameplay::ScreenGameplay()
 	this->AddChild( &m_textSongOptions );
 
 
-	// Get the current StyleDef definition (used below)
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
