@@ -2346,9 +2346,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SongFinished();
 		StageFinished( false );
 
-		LUA->SetGlobal( "Passed", SM == SM_GoToStateAfterCleared );
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		LUA->UnsetGlobal( "Passed" );
 		break;
 
 	case SM_LoseFocus:

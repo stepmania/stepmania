@@ -49,6 +49,7 @@ end
 
 function GetGameplayNextScreen()
 	Trace( "GetGameplayNextScreen: " )
+	local Passed = not AllFailed()
 	if( Passed ) then
 		Trace( "Passed" )
 	else
