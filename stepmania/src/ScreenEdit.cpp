@@ -684,7 +684,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_PGUP:
 	case DIK_PGDN:
 		{
-			float fBeatsToMove;
+			float fBeatsToMove=0.f;
 			switch( DeviceI.button )
 			{
 			case DIK_UP:
@@ -811,7 +811,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					case DIK_J:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_12TH;	break;
 					case DIK_K:	noteType1 = NOTE_TYPE_16TH;	noteType2 = NOTE_TYPE_16TH;	break;
 					case DIK_L:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_16TH;	break;
-					default:	ASSERT( false );
+					default:	ASSERT( false );		return;
 				}
 
 				m_NoteFieldEdit.SnapToNearestNoteType( noteType1, noteType2, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
@@ -892,7 +892,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		{
 			NoteData temp;
 			temp.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
-			int iTakeFromRow;
+			int iTakeFromRow=0;
 			int iPasteAtRow;
 			switch( DeviceI.button )
 			{
