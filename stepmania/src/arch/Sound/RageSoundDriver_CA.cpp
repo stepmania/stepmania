@@ -30,7 +30,7 @@ typedef CAStreamBasicDescription Desc;
 static float g_fLastIOProcTime = 0;
 static const int NUM_MIX_TIMES = 16;
 static float g_fLastMixTimes[NUM_MIX_TIMES];
-static int g_fLastMixTimePos = 0;
+static int g_iLastMixTimePos = 0;
 static int g_iNumIOProcCalls = 0;
 
 static CString FormatToString( int fmt )
@@ -196,9 +196,9 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
 	int16_t buffer[dataPackets * (kBytesPerPacket >> 1)];
 		
 	This->Mix(buffer, dataPackets, decodePos, now);
-	g_fLastMixTimes[g_fLastMixTimePos] = tm2.GetDeltaTime();
-	++g_fLastMixTimePos;
-	wrap(g_fLastMixTimePos, NUM_MIX_TIMES);
+	g_fLastMixTimes[g_iLastMixTimePos] = tm2.GetDeltaTime();
+	++g_iLastMixTimePos;
+	wrap(g_iLastMixTimePos, NUM_MIX_TIMES);
 		
 	AudioConverterConvertBuffer(This->mConverter, dataPackets * kBytesPerPacket,
 								buffer, &buf.mDataByteSize, buf.mData);
@@ -219,7 +219,7 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
 	CString Output;
 	for( int i = NUM_MIX_TIMES-1; i >= 0; --i )
 	{
-		int pos = (g_fLastMixTimePos+i) % NUM_MIX_TIMES;
+		int pos = (g_iLastMixTimePos+i) % NUM_MIX_TIMES;
 		Output += ssprintf( "%.3f ", g_fLastMixTimes[pos] );
 	}
 
