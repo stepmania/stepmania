@@ -477,7 +477,7 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 	case PLAY_MODE_ONI:
 		switch( tns )
 		{
-		case TNS_MARVELOUS:	return +3;
+		case TNS_MARVELOUS:	return (PREFSMAN->m_bDancePointsForOni ? +3 : +2);
 		case TNS_PERFECT:	return +2;
 		case TNS_GREAT:		return +1;
 		case TNS_GOOD:		return +0;
