@@ -2142,6 +2142,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="crypto51\nbtheory.cpp">
 			</File>
 			<File
+				RelativePath="crypto51\osrng.cpp">
+			</File>
+			<File
 				RelativePath="crypto51\pkcspad.cpp">
 			</File>
 			<File

@@ -19,7 +19,7 @@
 #include "RageException.h"
 #include <map>
 
-FontManager*	FONT	= NULL;
+FontManager*	FONT	= NULL;	// global and accessable from anywhere in our program
 
 // map from file name to a texture holder
 typedef pair<CString,CString> FontName;

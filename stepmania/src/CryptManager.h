@@ -4,12 +4,17 @@
 class CryptManager
 {
 public:
-	static void GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed);
+	CryptManager();
+	~CryptManager();
+
+	static void GenerateRSAKey(unsigned int keyLength, const char *privFilename, const char *pubFilename, const char *seed );
 
 	static void SignFile( CString sPath );
 	static bool VerifyFile( CString sPath );
 
 	static void DigestFile(const char *filename);
 };
+
+extern CryptManager*	CRYPTMAN;	// global and accessable from anywhere in our program
 
 #endif

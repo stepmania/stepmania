@@ -32,7 +32,6 @@
 #include "SDL_utils.h"
 
 #include "CodeDetector.h"
-#include "CryptManager.h"
 
 //
 // StepMania global classes
@@ -59,6 +58,7 @@
 #include "Bookkeeper.h"
 #include "LightsManager.h"
 #include "ModelManager.h"
+#include "CryptManager.h"
 
 
 #if defined(_XBOX)
@@ -960,6 +960,7 @@ int main(int argc, char* argv[])
 	
 	/* depends on SONGINDEX: */
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
+	CRYPTMAN	= new CryptManager;	// need to do this before ProfileMan
 	MEMCARDMAN	= new MemoryCardManager;
 	PROFILEMAN	= new ProfileManager;	// must load after SONGMAN
 	UNLOCKSYS	= new UnlockSystem;
@@ -1044,6 +1045,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( UNLOCKSYS );
 	SAFE_DELETE( MODELMAN );
 	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
+	SAFE_DELETE( CRYPTMAN );
 	SAFE_DELETE( MEMCARDMAN );
 	SAFE_DELETE( SONGMAN );
 	SAFE_DELETE( BANNERCACHE );
