@@ -57,10 +57,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                    	cl                                                                     /Zl                                                                     /nologo                                                                     /c                                                                     verstub.cpp                                                                     /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                     	cl                                                                      /Zl                                                                      /nologo                                                                      /c                                                                      verstub.cpp                                                                      /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania
+TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                    	cl                                                                     /Zl                                                                     /nologo                                                                     /c                                                                     verstub.cpp                                                                     /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                     	cl                                                                      /Zl                                                                      /nologo                                                                      /c                                                                      verstub.cpp                                                                      /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -111,14 +111,6 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # Begin Group "Helpers"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\RageMovieTextureHelper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageMovieTextureHelper.h
-# End Source File
 # Begin Source File
 
 SOURCE=.\regex.c
@@ -216,14 +208,6 @@ SOURCE=.\RageMath.cpp
 # Begin Source File
 
 SOURCE=.\RageMath.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageMovieTexture.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageMovieTexture.h
 # End Source File
 # Begin Source File
 
@@ -698,6 +682,34 @@ SOURCE=.\arch\InputHandler\InputHandler_Win32_Pump.cpp
 # Begin Source File
 
 SOURCE=.\arch\InputHandler\InputHandler_Win32_Pump.h
+# End Source File
+# End Group
+# Begin Group "MovieTexture"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\MovieTexture\MovieTexture.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MovieTexture\MovieTexture.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MovieTexture\MovieTexture_DShow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MovieTexture\MovieTexture_DShow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MovieTexture\MovieTexture_DShowHelper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MovieTexture\MovieTexture_DShowHelper.h
 # End Source File
 # End Group
 # Begin Source File
