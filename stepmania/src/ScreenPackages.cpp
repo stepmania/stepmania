@@ -200,7 +200,7 @@ void ScreenPackages::MenuDown( PlayerNumber pn, const InputEventType type )
 	
 	if ( m_iDLorLST == 0)
 	{
-		if ( m_iPackagesPos < m_Packages.size() - 1 )
+		if( (unsigned) m_iPackagesPos < m_Packages.size() - 1 )
 		{
 			m_iPackagesPos++;
 			UpdatePackagesList();
@@ -208,7 +208,7 @@ void ScreenPackages::MenuDown( PlayerNumber pn, const InputEventType type )
 	}
 	else
 	{
-		if ( m_iLinksPos < m_LinkTitles.size() - 1 )
+		if( (unsigned) m_iLinksPos < m_LinkTitles.size() - 1 )
 		{
 			m_iLinksPos++;
 			UpdateLinksList();
@@ -286,7 +286,7 @@ void ScreenPackages::RefreshPackages()
 	if ( m_iPackagesPos < 0 )
 		m_iPackagesPos = 0;
 	
-	if ( m_iPackagesPos >= m_Packages.size() )
+	if( (unsigned) m_iPackagesPos >= m_Packages.size() )
 		m_iPackagesPos = m_Packages.size() - 1;
 
 	UpdatePackagesList();
@@ -299,7 +299,7 @@ void ScreenPackages::UpdatePackagesList()
 	int max = m_iPackagesPos+NUM_PACKAGES_SHOW;
 	for (int i=min; i<max; i++ )
 	{
-		if ( ( i >= 0 ) && ( i < m_Packages.size() ) )
+		if ( i >= 0 && (unsigned) i < m_Packages.size() )
 			TempText += m_Packages[i] + '\n';
 		else
 			TempText += '\n';
@@ -310,19 +310,19 @@ void ScreenPackages::UpdatePackagesList()
 void ScreenPackages::UpdateLinksList()
 {
 	CString TempText="";
-	if ( m_iLinksPos >= m_LinkTitles.size() )
+	if( (unsigned) m_iLinksPos >= m_LinkTitles.size() )
 		m_iLinksPos = m_LinkTitles.size() - 1;
 	int min = m_iLinksPos-NUM_LINKS_SHOW;
 	int max = m_iLinksPos+NUM_LINKS_SHOW;
 	for (int i=min; i<max; i++ )
 	{
-		if ( ( i >= 0 ) && ( i < m_LinkTitles.size() ) )
+		if( i >= 0 && (unsigned) i < m_LinkTitles.size() )
 			TempText += m_LinkTitles[i] + '\n';
 		else
 			TempText += '\n';
 	}
 	m_textWeb.SetText( TempText );
-	if ( ( m_iLinksPos >=0 ) && ( m_iLinksPos < m_Links.size() ) )
+	if ( m_iLinksPos >= 0 && (unsigned) m_iLinksPos < m_Links.size() )
 		m_textURL.SetText( m_Links[m_iLinksPos] );
 	else
 		m_textURL.SetText( " " );
@@ -392,7 +392,7 @@ CString ScreenPackages::URLEncode( const CString &URL )
 	CString Input = StripOutContainers( URL );
 	CString Output;
 
-	for (int k = 0; k < Input.length(); k++ )
+	for( unsigned k = 0; k < Input.size(); k++ )
 	{
 		char t = Input.at( k );
 		if ( ( t >= '!' ) && ( t <= 'z' ) )
@@ -407,10 +407,10 @@ CString ScreenPackages::URLEncode( const CString &URL )
 
 CString ScreenPackages::StripOutContainers( const CString & In )
 {
-	if ( In.length() == 0 )
+	if( In.size() == 0 )
 		return "";
 
-	int i = 0;
+	unsigned i = 0;
 	char t = In.at(i);
 	while( t == ' ' && i < In.length() )
 	{
@@ -419,7 +419,7 @@ CString ScreenPackages::StripOutContainers( const CString & In )
 
 	if( t == '\"' || t == '\'' )
 	{
-		int j = i+1; 
+		unsigned j = i+1; 
 		char u = In.at(j);
 		while( u != t && j < In.length() )
 		{
@@ -535,7 +535,7 @@ void ScreenPackages::EnterURL( const CString & sURL )
 
 	m_wSocket.blocking = true;
 
-	if( !m_wSocket.connect( Server, Port ) )
+	if( !m_wSocket.connect( Server, (short) Port ) )
 	{
 		m_sStatus = "Failed to connect.";
 		UpdateProgress();
