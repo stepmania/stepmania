@@ -46,7 +46,7 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 	FILE *file = fopen (sPath, "rt");
 	if (!file)
-		return false;
+		RageException::Throw( "Model:: Could not open '%s'.", sPath.c_str() );
 
 	Clear ();
 
@@ -538,7 +538,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sPath )
 
 	FILE *file = fopen (sPath, "rt");
 	if (!file)
-		return false;
+		RageException::Throw( "Model:: Could not open '%s'.", sPath.c_str() );
 
     bool bError = false;
     char szLine[256];
@@ -702,15 +702,7 @@ void Model::DrawPrimitives()
 		return;
 
 	DISPLAY->SetBlendModeNormal();
-	DISPLAY->EnableLighting( true );
 	DISPLAY->EnableZBuffer();
-	DISPLAY->SetLightDirectional( 
-		0, 
-		RageColor(0.2f,0.2f,0.2f,1), 
-		RageColor(0.8f,0.8f,0.8f,0.8f),
-		RageColor(0.8f,0.8f,0.8f,0.8f),
-		RageVector3(+1, 0, +1) );
-
 
 	for (int i = 0; i < (int)m_pModel->Meshes.size(); i++)
 	{
@@ -755,14 +747,16 @@ void Model::DrawPrimitives()
 
 			memcpy( &tempVert.t, originalVert.uv, sizeof(originalVert.uv) );
 			
-			memcpy( &tempVert.n, originalVert.Normal, sizeof(originalVert.Normal) );
-
 			if( originalVert.nBoneIndex == -1 )
 			{
+				memcpy( &tempVert.n, originalVert.Normal, sizeof(originalVert.Normal) );
+			
 				memcpy( &tempVert.p, originalVert.Vertex, sizeof(originalVert.Vertex) );
 			}
 			else
 			{
+				VectorRotate (originalVert.Normal, m_pBones[originalVert.nBoneIndex].mFinal, tempVert.n);
+
 				int bone = originalVert.nBoneIndex;
 				VectorRotate (originalVert.Vertex, m_pBones[originalVert.nBoneIndex].mFinal, tempVert.p);
 				tempVert.p[0] += m_pBones[bone].mFinal[0][3];
@@ -771,11 +765,10 @@ void Model::DrawPrimitives()
 			}
 		}
 
-		DISPLAY->DrawIndexedTriangles( TempVertices.begin(), (Uint16*)pMesh->Triangles.begin(), pMesh->Triangles.size()*3 );
+		DISPLAY->DrawIndexedTriangles( &TempVertices[0], (Uint16*)&pMesh->Triangles[0], pMesh->Triangles.size()*3 );
 	}
 
-	DISPLAY->SetLightOff( 0 );
-	DISPLAY->EnableLighting( false );
+	DISPLAY->DisableZBuffer();
 
 }
 
