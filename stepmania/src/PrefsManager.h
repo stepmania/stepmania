@@ -95,6 +95,7 @@ public:
 	int				m_iProgressiveStageLifebar;
 	int				m_iProgressiveNonstopLifebar;
 	bool			m_bShowBeginnerHelper;
+	bool			m_bIgnoreJoyAxes;
 	CString			m_sLanguage;
 	CString			m_sDefaultProfile[NUM_PLAYERS];	// directory name of profile on HD
 
