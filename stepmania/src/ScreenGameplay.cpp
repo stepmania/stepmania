@@ -408,9 +408,9 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ENDLESS:
-        FOREACH_EnabledPlayer(p)
+        FOREACH_PlayerNumber(p)
 		{
-			if( !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
+			if( !GAMESTATE->IsPlayerEnabled(p) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 				continue;	// skip
 
 			switch( GAMESTATE->m_SongOptions.m_LifeType )
