@@ -17,7 +17,6 @@
 #include "RandomSample.h"
 #include "ScreenSelect.h"
 #include "Sprite.h"
-#include "DifficultyIcon.h"
 #include "OptionsCursor.h"
 
 class ScreenSelectDifficultyEX : public ScreenSelect

@@ -19,7 +19,12 @@ class Steps;
 
 class DifficultyIcon : public Sprite
 {
+	bool m_bBlank;
+
 public:
+	DifficultyIcon();
+	virtual bool EarlyAbortDraw() { return m_bBlank || Sprite::EarlyAbortDraw(); }
+
 	bool Load( CString sFilePath );
 
 	void SetFromNotes( PlayerNumber pn, Steps* pNotes );

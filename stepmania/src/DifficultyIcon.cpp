@@ -26,6 +26,10 @@
 #include "RageDisplay.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
+DifficultyIcon::DifficultyIcon()
+{
+	m_bBlank = false;
+}
 
 bool DifficultyIcon::Load( CString sPath )
 {
@@ -48,13 +52,14 @@ bool DifficultyIcon::Load( CString sPath )
 void DifficultyIcon::SetFromNotes( PlayerNumber pn, Steps* pNotes )
 {
 	if( pNotes == NULL )
-		SetHidden(true);
+		m_bBlank = true;
 	else
 		SetFromDifficulty( pn, pNotes->GetDifficulty() );
 }
 
 void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 {
+	m_bBlank = false;
 	switch( GetNumStates() )
 	{
 	case NUM_DIFFICULTIES:		SetState( dc );			break;
@@ -65,6 +70,7 @@ void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 
 void DifficultyIcon::SetFromCourseDifficulty( PlayerNumber pn, CourseDifficulty cd  )
 {
+	m_bBlank = false;
 	switch( cd )
 	{
 	case COURSE_DIFFICULTY_REGULAR:		SetFromDifficulty(pn,DIFFICULTY_MEDIUM);	break;
