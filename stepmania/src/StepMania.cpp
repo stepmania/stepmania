@@ -1452,6 +1452,9 @@ static void HandleInputEvents(float fDeltaTime)
 
 void FocusChanged( bool bHasFocus )
 {
+	if( g_bHasFocus == bHasFocus )
+		return;
+
 	g_bHasFocus = bHasFocus;
 
 	LOG->Trace( "App %s focus", g_bHasFocus? "has":"doesn't have" );
