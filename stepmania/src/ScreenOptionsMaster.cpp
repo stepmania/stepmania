@@ -281,55 +281,85 @@ ScreenOptionsMaster::~ScreenOptionsMaster()
 	delete [] m_OptionRowAlloc;
 }
 
-int ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int rowno )
+void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
+{
+	for( int i=0; i<vbSelectedOut.size(); i++ )
+		vbSelectedOut[i] = i==iSelection;
+}
+
+void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int rowno, vector<bool> &vbSelectedOut )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
 	{
 	case ROW_LIST:
-	{
-		int ret = -1;
-		for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
 		{
-			const ModeChoice &mc = hand.ListEntries[e];
-
-			if( mc.IsZero() )
+			for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
 			{
-				/* The entry has no effect.  This is usually a default "none of the
-				 * above" entry.  It will always return true for DescribesCurrentMode().
-				 * It's only the selected choice if nothing else matches. */
-				ret = e;
-				continue;
+				const ModeChoice &mc = hand.ListEntries[e];
+
+				bool &bSelected = vbSelectedOut[e];
+				bSelected = false;
+
+				if( mc.IsZero() )
+				{
+					/* The entry has no effect.  This is usually a default "none of the
+					 * above" entry.  It will always return true for DescribesCurrentMode().
+					 * It's only the selected choice if nothing else matches. */
+					if( !row.bMultiSelect )
+						SelectExactlyOne( e, vbSelectedOut );
+					continue;
+				}
+
+				if( row.bOneChoiceForAllPlayers )
+				{
+					if( mc.DescribesCurrentModeForAllPlayers() )
+					{
+						if( !row.bMultiSelect )
+							SelectExactlyOne( e, vbSelectedOut );
+						else
+							bSelected = true;
+					}
+				}
+				else
+				{
+					if( mc.DescribesCurrentMode( (PlayerNumber) pn) )
+					{
+						if( !row.bMultiSelect )
+							SelectExactlyOne( e, vbSelectedOut );
+						else
+							bSelected = true;
+					}
+				}
 			}
 
-			if( row.bOneChoiceForAllPlayers )
+			if( !row.bMultiSelect )
 			{
-				if( mc.DescribesCurrentModeForAllPlayers() )
-					return e;
-			} else {
-				if( mc.DescribesCurrentMode( (PlayerNumber) pn) )
-					return e;
+				// there should be exactly one option selected
+				int iNumSelected = 0;
+				for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
+					if( vbSelectedOut[e] )
+						iNumSelected++;
+				ASSERT( iNumSelected == 1 );
 			}
-		}
 
-		if( ret == -1 )
-		{
-			LOG->Warn( "%s line %i (\"%s\"): couldn't find default", m_sName.c_str(), rowno, row.name.c_str() );
-			ret = 0;
+			return;
 		}
-
-		return ret;
-	}
 	case ROW_STEP:
 		if( GAMESTATE->m_bEditing )
-			return 0;
+		{
+			SelectExactlyOne( 0, vbSelectedOut );
+			return;
+		}
 
 		if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
 			if( GAMESTATE->m_bDifficultCourses &&
 				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
-				return 1;
-			return 0;
+				SelectExactlyOne( 1, vbSelectedOut );
+			else
+				SelectExactlyOne( 0, vbSelectedOut );
+			return;
 		}
 
 		if( GAMESTATE->m_pCurSong )	// playing a song
@@ -340,30 +370,42 @@ int ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRow
 			for( unsigned i=0; i<vNotes.size(); i++ )
 			{
 				if( GAMESTATE->m_pCurNotes[pn] == vNotes[i] )
-					return i;
+				{
+					SelectExactlyOne( i, vbSelectedOut );
+					return;
+				}
 			}
 		}
-		return 0;
+		SelectExactlyOne( 0, vbSelectedOut );
+		return;
 
 	case ROW_CHARACTER:
-	{
-		vector<Character*> apCharacters;
-		GAMESTATE->GetCharacters( apCharacters );
-		for( unsigned i=0; i<apCharacters.size(); i++ )
-			if( GAMESTATE->m_pCurCharacters[pn] == apCharacters[i] )
-				return i+1;
-		return 0;
-	}
+		{
+			vector<Character*> apCharacters;
+			GAMESTATE->GetCharacters( apCharacters );
+			for( unsigned i=0; i<apCharacters.size(); i++ )
+				if( GAMESTATE->m_pCurCharacters[pn] == apCharacters[i] )
+				{
+					SelectExactlyOne( i+1, vbSelectedOut );
+					return;
+				}
+			SelectExactlyOne( 0, vbSelectedOut );
+			return;
+		}
 
 	case ROW_CONFIG:
-		return hand.opt->Get( row.choices );
+		{
+			int iSelection = hand.opt->Get( row.choices );
+			SelectExactlyOne( iSelection, vbSelectedOut );
+			return;
+		}
 
 	case ROW_SAVE_TO_PROFILE:
-		return 0;
+		SelectExactlyOne( 0, vbSelectedOut );
+		return;
 
 	default:
 		ASSERT(0);
-		return 0;
 	}
 }
 
@@ -377,107 +419,128 @@ void ScreenOptionsMaster::ImportOptions()
 
 		if( data.bOneChoiceForAllPlayers )
 		{
-			int choice = ImportOption( data, hand, 0, i );
-			row.SetOneSharedSelection( choice );
-			ASSERT( row.GetOneSharedSelection() < (int)data.choices.size() );
+			ImportOption( data, hand, 0, i, row.m_vbSelected[0] );
 		}
 		else
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
 				if( !GAMESTATE->IsHumanPlayer(p) )
-					continue;
-
-				int choice = ImportOption( data, hand, p, i );
-				row.SetOneSelection( (PlayerNumber)p, choice );
-				ASSERT( row.GetOneSelection((PlayerNumber)p) < (int)data.choices.size() );
+					continue;	// skip
+				ImportOption( data, hand, p, i, row.m_vbSelected[p] );
 			}
 		}
 	}
 }
 
+int GetOneSelection( const vector<bool> &vbSelected )
+{
+	for( int i=0; i<vbSelected.size(); i++ )
+		if( vbSelected[i] )
+			return i;
+	ASSERT(0);	// shouldn't call this if not expecting one to be selected
+	return -1;
+}
 
 /* Returns an OPT mask. */
-int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int sel )
+int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, const vector<bool> &vbSelected )
 {
 	/* Figure out which selection is the default. */
 	switch( hand.type )
 	{
 	case ROW_LIST:
-		hand.Default.Apply( (PlayerNumber)pn );
-		hand.ListEntries[sel].Apply( (PlayerNumber)pn );
+		{
+			hand.Default.Apply( (PlayerNumber)pn );
+			for( int i=0; i<vbSelected.size(); i++ )
+				if( vbSelected[i] )
+					hand.ListEntries[i].Apply( (PlayerNumber)pn );
+		}
 		break;
 
 	case ROW_CONFIG:
-	{
-		/* Get the original choice. */
-		int Original = hand.opt->Get( row.choices );
+		{
+			int sel = GetOneSelection( vbSelected );
 
-		/* Apply. */
-		hand.opt->Put( sel, row.choices );
+			/* Get the original choice. */
+			int Original = hand.opt->Get( row.choices );
 
-		/* Get the new choice. */
-		int New = hand.opt->Get( row.choices );
+			/* Apply. */
+			hand.opt->Put( sel, row.choices );
 
-		/* If it didn't change, don't return any side-effects. */
-		if( Original == New )
-			return 0;
+			/* Get the new choice. */
+			int New = hand.opt->Get( row.choices );
 
-		return hand.opt->GetEffects();
-	}
+			/* If it didn't change, don't return any side-effects. */
+			if( Original == New )
+				return 0;
+
+			return hand.opt->GetEffects();
+		}
 
 	case ROW_CHARACTER:
-		if( sel == 0 )
-			GAMESTATE->m_pCurCharacters[pn] = GAMESTATE->GetDefaultCharacter();
-		else
 		{
-			vector<Character*> apCharacters;
-			GAMESTATE->GetCharacters( apCharacters );
-			ASSERT( sel - 1 < (int)apCharacters.size() );
-			GAMESTATE->m_pCurCharacters[pn] = apCharacters[sel - 1];
+			int sel = GetOneSelection( vbSelected );
+	
+			if( sel == 0 )
+				GAMESTATE->m_pCurCharacters[pn] = GAMESTATE->GetDefaultCharacter();
+			else
+			{
+				vector<Character*> apCharacters;
+				GAMESTATE->GetCharacters( apCharacters );
+				ASSERT( sel - 1 < (int)apCharacters.size() );
+				GAMESTATE->m_pCurCharacters[pn] = apCharacters[sel - 1];
+			}
 		}
 		break;
 
 	case ROW_STEP:
-		if( GAMESTATE->m_bEditing )
 		{
-			// do nothing
-		}
-		else if( GAMESTATE->m_pCurCourse )   // playing a course
-		{
-			if( sel == 1 )
+			int sel = GetOneSelection( vbSelected );
+	
+			if( GAMESTATE->m_bEditing )
 			{
-				GAMESTATE->m_bDifficultCourses = true;
-				LOG->Trace("ScreenPlayerOptions: Using difficult course");
+				// do nothing
 			}
-			else
+			else if( GAMESTATE->m_pCurCourse )   // playing a course
 			{
-				GAMESTATE->m_bDifficultCourses = false;
-				LOG->Trace("ScreenPlayerOptions: Using normal course");
+				if( sel == 1 )
+				{
+					GAMESTATE->m_bDifficultCourses = true;
+					LOG->Trace("ScreenPlayerOptions: Using difficult course");
+				}
+				else
+				{
+					GAMESTATE->m_bDifficultCourses = false;
+					LOG->Trace("ScreenPlayerOptions: Using normal course");
+				}
+			
+			}
+			else if( GAMESTATE->m_pCurSong )   // playing a song
+			{
+				vector<Steps*> vSteps;
+				GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+				SortNotesArrayByDifficulty( vSteps );
+				Steps* pSteps = vSteps[ sel ];
+				// set current notes
+				GAMESTATE->m_pCurNotes[pn] = pSteps;
+				// set preferred difficulty
+				GAMESTATE->m_PreferredDifficulty[pn] = pSteps->GetDifficulty();
 			}
 		}
-		else if( GAMESTATE->m_pCurSong )   // playing a song
-		{
-			vector<Steps*> vSteps;
-			GAMESTATE->m_pCurSong->GetSteps( vSteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
-			SortNotesArrayByDifficulty( vSteps );
-			Steps* pSteps = vSteps[ sel ];
-			// set current notes
-			GAMESTATE->m_pCurNotes[pn] = pSteps;
-			// set preferred difficulty
-			GAMESTATE->m_PreferredDifficulty[pn] = pSteps->GetDifficulty();
-		}
-
 		break;
 
 	case ROW_SAVE_TO_PROFILE:
-		if( sel == 1 )
 		{
-			if( PROFILEMAN->IsUsingProfile((PlayerNumber)pn) )
+			int sel = GetOneSelection( vbSelected );
+
+			if( sel == 1 )
 			{
-				Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)pn);
-				pProfile->m_bUsingProfileDefaultModifiers = true;
-				pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
+				if( PROFILEMAN->IsUsingProfile((PlayerNumber)pn) )
+				{
+					Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)pn);
+					pProfile->m_bUsingProfileDefaultModifiers = true;
+					pProfile->m_sDefaultModifiers = GAMESTATE->m_PlayerOptions[pn].GetString();
+				}
 			}
 		}
 		break;
@@ -506,7 +569,9 @@ void ScreenOptionsMaster::ExportOptions()
 			if( !GAMESTATE->IsHumanPlayer(p) )
 				continue;
 
-			ChangeMask |= ExportOption( data, hand, p, row.GetOneSelection((PlayerNumber)p) );
+			vector<bool> &vbSelected = row.m_vbSelected[p];
+
+			ChangeMask |= ExportOption( data, hand, p, vbSelected );
 		}
 	}
 
@@ -618,7 +683,7 @@ void ScreenOptionsMaster::RefreshIcons()
 
 			if( bMultipleSelected )
 			{
-				sIcon = "Multiple";
+				sIcon = "Multi";
 			}
 			else if( iFirstSelection != -1 )
 			{

@@ -41,8 +41,8 @@ private:
 	vector<OptionRowHandler> OptionRowHandlers;
 	OptionRowData *m_OptionRowAlloc;
 
-	int ExportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int sel );
-	int ImportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int rowno );
+	int ExportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, const vector<bool> &vbSelected );
+	void ImportOption( const OptionRowData &row, const OptionRowHandler &hand, int pn, int rowno, vector<bool> &vbSelectedOut );
 	void SetList( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut );
 	void SetStep( OptionRowData &row, OptionRowHandler &hand );
 	void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut );
