@@ -33,6 +33,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void Draw();
+	void Load(CString sFontName) { LoadFromFont(sFontName); }
 
 protected:
 	PlayerNumber m_PlayerNumber;

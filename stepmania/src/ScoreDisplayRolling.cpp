@@ -130,7 +130,7 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 
 	static int iNumTimesCalled = 0;
 	iNumTimesCalled ++;
-	LOG->WriteLine("Called %d times - param %d.",iNumTimesCalled, iCurCombo);
+	LOG->Trace("Called %d times - param %d.",iNumTimesCalled, iCurCombo);
 
 
 	int p;	// score multiplier 
@@ -147,7 +147,7 @@ void ScoreDisplayRolling::AddToScore( TapNoteScore score, int iCurCombo )
 	int B = m_iNotesMeter * 1000000;
 	float S = (1+N)*N/2.0f;
 
-	int one_step_score = roundf( p * (B/S) * n );
+	int one_step_score = (int)roundf( p * (B/S) * n );
 
 	m_fScore += one_step_score;
 	ASSERT( m_fScore >= 0 );
