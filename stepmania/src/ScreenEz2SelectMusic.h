@@ -20,7 +20,6 @@
 #include "MenuElements.h"
 #include "DifficultyMeter.h"
 #include "DifficultyRating.h"
-#include "RageTimer.h"
 #include "ModeSwitcher.h"
 
 class ScreenEz2SelectMusic : public Screen

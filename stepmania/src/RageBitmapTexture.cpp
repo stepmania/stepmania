@@ -27,8 +27,6 @@
 #include "SDL_utils.h"
 #include "SDL_dither.h"
 
-#include "RageTimer.h"
-
 static void GetResolutionFromFileName( CString sPath, int &Width, int &Height )
 {
 	/* Match:

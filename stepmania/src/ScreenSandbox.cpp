@@ -19,7 +19,6 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
-#include "RageTimer.h"
 
 
 ScreenSandbox::ScreenSandbox() : Screen("ScreenSandbox")

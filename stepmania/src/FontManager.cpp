@@ -17,7 +17,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-#include "RageTimer.h"
 
 FontManager*	FONT	= NULL;
 

@@ -12,7 +12,6 @@
 #include "RageMath.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
-#include "RageTimer.h"
 #include "RageLog.h"
 
 #include <numeric>

@@ -15,7 +15,6 @@
 #include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "CombinedLifeMeterEnemy.h"
-#include "RageTimer.h"
 #include <math.h>
 #include "ThemeManager.h"
 #include "GameState.h"

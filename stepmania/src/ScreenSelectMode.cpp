@@ -20,7 +20,6 @@ Chris Danford
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "RageException.h"
-#include "RageTimer.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "ActorUtil.h"

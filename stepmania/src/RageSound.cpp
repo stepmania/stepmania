@@ -37,7 +37,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
-#include "RageTimer.h"
 
 #include "PrefsManager.h"
 
