@@ -44,15 +44,18 @@ bool DSound::IsEmulated() const
 }
 
 DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
-			int channels_, int samplerate_, int samplebits_, int buffersize_)
+			int channels_, int samplerate_, int samplebits_, int writeahead_)
 {
 	channels = channels_;
 	samplerate = samplerate_;
 	samplebits = samplebits_;
-	buffersize = buffersize_;
+	writeahead = writeahead_;
 	buffer_locked = false;
 	last_cursor_pos = write_cursor = 0;
 
+	/* The size of the actual DSound buffer.  This can be large; we generally
+	 * won't fill it completely. */
+	buffersize = 1024*64;
 
 	WAVEFORMATEX waveformat;
 	memset(&waveformat, 0, sizeof(waveformat));
@@ -119,6 +122,46 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 	int num_bytes_empty = cursor - write_cursor;
 	if(num_bytes_empty <= 0) num_bytes_empty += buffersize; /* unwrap */
 
+	/* XXX We can figure out if we've underrun, and increase the write-ahead
+	 * when it happens.  Two problems:
+	 * 1. It's ugly to wait until we actually underrun. (We could store the
+	 *    write-ahead, though.)
+	 * 2. We don't want a random underrun (eg. virus scanner starts) to
+	 *    permanently increase our write-ahead.  We want the smallest possible
+	 *    that will give us reliable audio in normal conditions.  I'm not sure
+	 *    of a robust way to do this.  We could decrease the buffer size if
+	 *    we seem to be consistently ahead, but that's getting a little messy ...
+	 *
+	 * Also, writeahead should be a static (all buffers write ahead the same
+	 * amount); writeahead in the ctor should be a hint only (initial value),
+	 * and the sound driver should query a sound to get the current writeahead
+	 * in GetLatencySeconds().
+	 */
+#if 0
+	{
+	    /* Figure out the amount of space we're not supposed to write to: */
+	    int unwritable = write-cursor;
+	    if(unwritable < 0) unwritable += buffersize; /* unwrap */
+
+	    if(writeahead < unwritable)
+	    {
+			writeahead = unwritable*2;
+			LOG->Trace("boosted buffersize to %i", writeahead);
+	    }
+
+	    /* */
+	    if(num_bytes_empty > buffersize - unwritable)
+	    {
+//			writeahead += 512;
+//			LOG->Trace("underflow; bs now %i", writeahead);
+	    }
+	}
+#endif
+
+	int num_bytes_filled = buffersize - num_bytes_empty;
+	if(num_bytes_filled > writeahead)
+		return false;
+
 	/* num_bytes_empty is now the actual amount of free buffer space.  If it's
 	 * too small, come back later. */
 	if(num_bytes_empty < chunksize)
@@ -132,6 +175,8 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 	 * amount of time until we give data; that way, if we're short on time,
 	 * we'll give some data soon instead of lots of data later. */
 	num_bytes_empty = min(num_bytes_empty, chunksize);
+
+//	LOG->Trace("gave %i at %i (%i, %i) %i filled", num_bytes_empty, write_cursor, cursor, write, num_bytes_filled );
 
 	/* Lock the audio buffer. */
 	result = buf->Lock(write_cursor, num_bytes_empty, (LPVOID *)buffer, (DWORD *) bufsiz, NULL, &junk, 0);
@@ -155,7 +200,6 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 
 	buffer_locked = true;
 
-//	LOG->Trace("gave %i", num_bytes_empty);
 	return true;
 }
 

@@ -22,8 +22,10 @@ class DSoundBuf
 {
 	IDirectSoundBuffer8 *buf;
 
-	int channels, samplerate, samplebits, buffersize;
+	int channels, samplerate, samplebits, writeahead;
 
+	int buffersize;
+	
 	int buffersize_frames() const { return buffersize / samplesize(); }
 	int samplesize() const { return channels*samplebits/8; }
 
@@ -38,7 +40,7 @@ class DSoundBuf
 public:
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 	DSoundBuf(DSound &ds, hw hardware, 
-		int channels, int samplerate, int samplebits, int buffersize);
+		int channels, int samplerate, int samplebits, int writeahead);
 
 	bool get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, int chunksize);
 	void release_output_buf(char *buffer, unsigned bufsiz);
