@@ -43,6 +43,19 @@ bool IsAnInt( const CString &s )
 	return true;
 }
 
+bool IsHexVal( const CString &s )
+{
+	if( s[0] == '\0' )
+		return false;
+
+	for( int i=0; s[i]; i++ )
+		if( !(s[i] >= '0' && s[i] <= '9') && 
+			!(toupper(s[i]) >= 'A' && toupper(s[i]) <= 'F'))
+			return false;
+
+	return true;
+}
+
 float TimeToSeconds( CString sHMS )
 {
 	CStringArray arrayBits;

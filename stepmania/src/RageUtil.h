@@ -114,6 +114,7 @@ inline float froundf( const float f, const float fRoundInterval )
 
 int power_of_two(int input);
 bool IsAnInt( const CString &s );
+bool IsHexVal( const CString &s );
 float TimeToSeconds( CString sHMS );
 CString SecondsToTime( float fSecs );
 
