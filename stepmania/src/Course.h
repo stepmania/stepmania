@@ -12,21 +12,23 @@
 */
 
 #include "GameConstantsAndTypes.h"
+
 struct PlayerOptions;
 struct SongOptions;
 class Song;
 struct Notes;
 
-
-const int MAX_COURSE_STAGES = 300; // Increased since the user can place all Bemani songs in a single folder
-
-
 class Course
 {
-	CString		m_asDescriptions[MAX_COURSE_STAGES];
-	CString		m_asModifiers[MAX_COURSE_STAGES];	// set player and song options from these
-	Song*		m_apSongs[MAX_COURSE_STAGES];
 	int			m_iStages;
+
+	struct course_entry {
+		CString description;
+		CString modifiers; // set player and song options from these
+		Song *song;
+	};
+	vector<course_entry> entries;
+	vector<int> order;
 
 public:
 	Course();
@@ -56,7 +58,6 @@ public:
 	RageColor	GetColor();
 
 private:
-	int SongOrdering[MAX_COURSE_STAGES];
 	void Shuffle();
 };
 

@@ -25,13 +25,10 @@
 
 Course::Course()
 {
-	m_iStages = 0;
 	m_bRepeat = false;
 	m_bRandomize = false;
 	m_iLives = 4;
 	m_iExtra = 0;
-	for( int i=0; i<MAX_COURSE_STAGES; i++ )
-		m_apSongs[i] = NULL;
 }
 
 void Course::LoadFromCRSFile( CString sPath, CArray<Song*,Song*> &apSongs )
@@ -183,13 +180,13 @@ void Course::Shuffle()
 {
 	/* Shuffle the list. */
 	for( int i = 0; i < GetNumStages(); ++i)
-		swap(SongOrdering[i], SongOrdering[rand() % GetNumStages()]);
+		swap(order[i], order[rand() % GetNumStages()]);
 }
 
 Notes* Course::GetNotesForStage( int iStage )
 {
-	Song* pSong = m_apSongs[iStage];
-	CString sDescription = m_asDescriptions[iStage];
+	Song* pSong = GetSong(iStage);
+	CString sDescription = entries[iStage].description;
 	unsigned i;
 	
 	for( i=0; i<pSong->m_apNotes.size(); i++ )
@@ -218,28 +215,28 @@ Notes* Course::GetNotesForStage( int iStage )
 
 Song *Course::GetSong( int iStage ) const
 {
-	return m_apSongs[iStage];
+	return entries[iStage].song;
 }
 
 CString Course::GetDescription( int iStage ) const
 {
-	return m_asDescriptions[iStage];
+	return entries[iStage].description;
 }
 
 CString Course::GetModifiers( int iStage ) const
 {
-	return m_asModifiers[iStage];
+	return entries[iStage].modifiers;
 }
 
 void Course::AddStage( Song* pSong, CString sDescription, CString sModifiers )
 {
-	ASSERT( m_iStages <= MAX_COURSE_STAGES - 1 );
-	m_apSongs[m_iStages] = pSong;
-	m_asDescriptions[m_iStages] = sDescription;
-	m_asModifiers[m_iStages] = sModifiers;
-	SongOrdering[m_iStages] = m_iStages;
+	course_entry e;
+	e.song = pSong;
+	e.description = sDescription;
+	e.modifiers = sModifiers;
+	entries.push_back(e);
 
-	m_iStages++;
+	order.push_back(order.size());
 }
 
 /* When bShuffled is true, returns courses in the song ordering list. */
@@ -251,11 +248,11 @@ void Course::GetSongAndNotesForCurrentStyle(
 {
 	for( int i=0; i<GetNumStages(); i++ )
 	{
-		int num = bShuffled? SongOrdering[i]:i;
+		int num = bShuffled? order[i]:i;
 
-		Song* pSong = m_apSongs[num];
+		Song* pSong = GetSong(num);
 		Notes* pNotes = GetNotesForStage( num );
-		CString sModifiers = m_asModifiers[num];
+		CString sModifiers = entries[num].modifiers;
 
 		if( !pSong->HasMusic() )
 			continue;	// skip
@@ -294,7 +291,7 @@ void Course::GetSongOptions( SongOptions* pSO_out )
 
 int Course::GetNumStages() const
 {
-	return m_iStages;
+	return entries.size();
 }
 
 //
