@@ -751,7 +751,6 @@ ScreenGameplay::~ScreenGameplay()
 	}
 	SAFE_DELETE( m_pCombinedLifeMeter );
 
-	SOUND->StopMusic();
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 }
 
