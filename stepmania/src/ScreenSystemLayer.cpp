@@ -12,28 +12,27 @@
 #include "Command.h"
 
 
-#define CREDITS_PRESS_START						THEME->GetMetric ("ScreenSystemLayer","CreditsPressStart")
-#define CREDITS_INSERT_CARD						THEME->GetMetric ("ScreenSystemLayer","CreditsInsertCard")
-#define CREDITS_CARD_ERROR						THEME->GetMetric ("ScreenSystemLayer","CreditsCardError")
-#define CREDITS_CARD_TOO_LATE					THEME->GetMetric ("ScreenSystemLayer","CreditsCardTooLate")
-#define CREDITS_CARD_NO_NAME					THEME->GetMetric ("ScreenSystemLayer","CreditsCardNoName")
-#define CREDITS_CARD_READY						THEME->GetMetric ("ScreenSystemLayer","CreditsCardReady")
-#define CREDITS_CARD_CHECKING					THEME->GetMetric ("ScreenSystemLayer","CreditsCardChecking")
-#define CREDITS_CARD_REMOVED					THEME->GetMetric ("ScreenSystemLayer","CreditsCardRemoved")
-#define CREDITS_FREE_PLAY						THEME->GetMetric ("ScreenSystemLayer","CreditsFreePlay")
-#define CREDITS_CREDITS							THEME->GetMetric ("ScreenSystemLayer","CreditsCredits")
-#define CREDITS_NOT_PRESENT						THEME->GetMetric ("ScreenSystemLayer","CreditsNotPresent")
-#define CREDITS_LOAD_FAILED						THEME->GetMetric ("ScreenSystemLayer","CreditsLoadFailed")
-#define CREDITS_LOADED_FROM_LAST_GOOD_APPEND	THEME->GetMetric ("ScreenSystemLayer","CreditsLoadedFromLastGoodAppend")
-#define CREDITS_JOIN_ONLY						THEME->GetMetricB("ScreenSystemLayer","CreditsJoinOnly")
-
-
 REGISTER_SCREEN_CLASS( ScreenSystemLayer );
 ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
 {
 	MESSAGEMAN->Subscribe( this, "RefreshCreditText" );
 	MESSAGEMAN->Subscribe( this, "SystemMessage" );
 	MESSAGEMAN->Subscribe( this, "SystemMessageNoAnimate" );
+
+	CREDITS_PRESS_START.Load("ScreenSystemLayer","CreditsPressStart");
+	CREDITS_INSERT_CARD.Load("ScreenSystemLayer","CreditsInsertCard");
+	CREDITS_CARD_ERROR.Load("ScreenSystemLayer","CreditsCardError");
+	CREDITS_CARD_TOO_LATE.Load("ScreenSystemLayer","CreditsCardTooLate");
+	CREDITS_CARD_NO_NAME.Load("ScreenSystemLayer","CreditsCardNoName");
+	CREDITS_CARD_READY.Load("ScreenSystemLayer","CreditsCardReady");
+	CREDITS_CARD_CHECKING.Load("ScreenSystemLayer","CreditsCardChecking");
+	CREDITS_CARD_REMOVED.Load("ScreenSystemLayer","CreditsCardRemoved");
+	CREDITS_FREE_PLAY.Load("ScreenSystemLayer","CreditsFreePlay");
+	CREDITS_CREDITS.Load("ScreenSystemLayer","CreditsCredits");
+	CREDITS_NOT_PRESENT.Load("ScreenSystemLayer","CreditsNotPresent");
+	CREDITS_LOAD_FAILED.Load("ScreenSystemLayer","CreditsLoadFailed");
+	CREDITS_LOADED_FROM_LAST_GOOD_APPEND.Load("ScreenSystemLayer","CreditsLoadedFromLastGoodAppend");
+	CREDITS_JOIN_ONLY.Load( m_sName, "CreditsJoinOnly" );
 }
 
 ScreenSystemLayer::~ScreenSystemLayer()
@@ -135,35 +134,35 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		case MEMORY_CARD_STATE_NO_CARD:
 			// this is a local machine profile
 			if( PROFILEMAN->LastLoadWasFromLastGood(pn) && pProfile )
-				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND.GetValue();
 			else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) )
-				return CREDITS_LOAD_FAILED;
+				return CREDITS_LOAD_FAILED.GetValue();
 			// Prefer the name of the profile over the name of the card.
 			else if( pProfile )
 				return pProfile->GetDisplayName();
 			else if( GAMESTATE->PlayersCanJoin() )
-				return CREDITS_INSERT_CARD;
+				return CREDITS_INSERT_CARD.GetValue();
 			else
 				return "";
 
-		case MEMORY_CARD_STATE_WRITE_ERROR: return CREDITS_CARD_ERROR;
-		case MEMORY_CARD_STATE_TOO_LATE:	return CREDITS_CARD_TOO_LATE;
-		case MEMORY_CARD_STATE_CHECKING:	return CREDITS_CARD_CHECKING;
-		case MEMORY_CARD_STATE_REMOVED:		return CREDITS_CARD_REMOVED;
+		case MEMORY_CARD_STATE_WRITE_ERROR: return CREDITS_CARD_ERROR.GetValue();
+		case MEMORY_CARD_STATE_TOO_LATE:	return CREDITS_CARD_TOO_LATE.GetValue();
+		case MEMORY_CARD_STATE_CHECKING:	return CREDITS_CARD_CHECKING.GetValue();
+		case MEMORY_CARD_STATE_REMOVED:		return CREDITS_CARD_REMOVED.GetValue();
 		case MEMORY_CARD_STATE_READY:
 			if( PROFILEMAN->LastLoadWasFromLastGood(pn) && pProfile )
-				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND.GetValue();
 			else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) )
-				return CREDITS_LOAD_FAILED;
+				return CREDITS_LOAD_FAILED.GetValue();
 			// Prefer the name of the profile over the name of the card.
 			else if( pProfile )
 				return pProfile->GetDisplayName();
 			else if( !MEMCARDMAN->IsNameAvailable(pn) )
-				return CREDITS_CARD_READY;
+				return CREDITS_CARD_READY.GetValue();
 			else if( !MEMCARDMAN->GetName(pn).empty() )
 				return MEMCARDMAN->GetName(pn);
 			else
-				return CREDITS_CARD_NO_NAME;
+				return CREDITS_CARD_NO_NAME.GetValue();
 
 		default:
 			FAIL_M( ssprintf("%i",mcs) );
@@ -175,9 +174,9 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		{
 		case COIN_HOME:
 			if( GAMESTATE->PlayersCanJoin() )
-				return CREDITS_PRESS_START;
+				return CREDITS_PRESS_START.GetValue();
 			else
-				return CREDITS_NOT_PRESENT;
+				return CREDITS_NOT_PRESENT.GetValue();
 
 		case COIN_PAY:
 		{
@@ -192,9 +191,9 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		}
 		case COIN_FREE:
 			if( GAMESTATE->PlayersCanJoin() )
-				return CREDITS_FREE_PLAY;
+				return CREDITS_FREE_PLAY.GetValue();
 			else
-				return CREDITS_NOT_PRESENT;
+				return CREDITS_NOT_PRESENT.GetValue();
 
 		default:
 			ASSERT(0);
@@ -308,7 +307,7 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 }
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

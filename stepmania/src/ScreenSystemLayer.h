@@ -6,6 +6,7 @@
 #include "Screen.h"
 #include "BitmapText.h"
 #include "Quad.h"
+#include "ThemeMetric.h"
 
 const int NUM_SKIPS_TO_SHOW = 5;
 
@@ -33,13 +34,28 @@ private:
 	void AddTimestampLine( const CString &txt, const RageColor &color );
 	void UpdateTimestampAndSkips();
 	CString GetCreditsMessage( PlayerNumber pn ) const;
+
+	ThemeMetric<CString> CREDITS_PRESS_START;
+	ThemeMetric<CString> CREDITS_INSERT_CARD;
+	ThemeMetric<CString> CREDITS_CARD_ERROR;
+	ThemeMetric<CString> CREDITS_CARD_TOO_LATE;
+	ThemeMetric<CString> CREDITS_CARD_NO_NAME;
+	ThemeMetric<CString> CREDITS_CARD_READY;
+	ThemeMetric<CString> CREDITS_CARD_CHECKING;
+	ThemeMetric<CString> CREDITS_CARD_REMOVED;
+	ThemeMetric<CString> CREDITS_FREE_PLAY;
+	ThemeMetric<CString> CREDITS_CREDITS;
+	ThemeMetric<CString> CREDITS_NOT_PRESENT;
+	ThemeMetric<CString> CREDITS_LOAD_FAILED;
+	ThemeMetric<CString> CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+	ThemeMetric<bool> CREDITS_JOIN_ONLY;
 };
 
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
