@@ -17,7 +17,7 @@
 #include <io.h>
 #endif
 
-#if defined(XBOX)
+#if defined(_XBOX)
 /* Wrappers for low-level file functions, to work around Xbox issues: */
 int DoMkdir( const CString &sPath, int perm )
 {
@@ -100,7 +100,7 @@ int WinMoveFileInternal( const CString &sOldPath, const CString &sNewPath )
 
 int WinMoveFile( CString sOldPath, CString sNewPath )
 {
-#if defined(XBOX)
+#if defined(_XBOX)
 	sOldPath.Replace( "/", "\\" );
 	sNewPath.Replace( "/", "\\" );
 #endif
@@ -152,7 +152,7 @@ bool PathReady( CString path )
 	
 	// Try to write a file.
 	const CString sFile = path + "temp";
-	int fd = DoOpen( sFile, O_WRONLY|O_CREAT|O_TRUNC );
+	int fd = DoOpen( sFile, O_WRONLY|O_CREAT|O_TRUNC, 0644 ); //last arg is a bogus one
 	if( fd == -1 )
 		return false;
 

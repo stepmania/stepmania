@@ -5,7 +5,7 @@
 
 #include <fcntl.h>
 
-#if defined(XBOX)
+#if defined(_XBOX)
 int DoMkdir( const CString &sPath, int perm );
 int DoOpen( const CString &sPath, int flags, int perm );
 int DoStat( const CString &sPath, struct stat *st );
