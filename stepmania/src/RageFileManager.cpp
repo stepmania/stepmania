@@ -64,42 +64,43 @@ public:
 };
 static RageFileDriverMountpoints *g_Mountpoints = NULL;
 
-
-static void ChangeToDirOfExecutable( CString argv0 )
+static CString GetDirOfExecutable( CString argv0 )
 {
 #ifdef _XBOX
-	DirOfExecutable = "D:\\";
-	InitialWorkingDirectory = "D:\\";
+	return "D:\\";
 #else
-
-	char tmp[1024];
-	getcwd( tmp, 1024 );
-	tmp[1023] = 0;
-	InitialWorkingDirectory = tmp;
-
-	DirOfExecutable = argv0;
-	DirOfExecutable.Replace( "\\", "/" );
+	CString sPath = argv0;
+	sPath.Replace( "\\", "/" );
 
 	bool IsAbsolutePath = false;
-	if( DirOfExecutable.size() == 0 || DirOfExecutable[0] == '/' )
+	if( sPath.size() == 0 || sPath[0] == '/' )
 		IsAbsolutePath = true;
 #if defined(_WIN32)
-	if( DirOfExecutable.size() > 2 && DirOfExecutable[1] == ':' && DirOfExecutable[2] == '/' )
+	if( sPath.size() > 2 && sPath[1] == ':' && sPath[2] == '/' )
 		IsAbsolutePath = true;
 #endif
 
 	// strip off executable name
-	unsigned n = DirOfExecutable.find_last_of("/");
-	if( n != DirOfExecutable.npos )
-		DirOfExecutable.erase(n);
+	unsigned n = sPath.find_last_of("/");
+	if( n != sPath.npos )
+		sPath.erase(n);
 	else
-		DirOfExecutable.erase();
+		sPath.erase();
 
 	if( !IsAbsolutePath )
 	{
-		DirOfExecutable = GetCwd() + "/" + DirOfExecutable;
-		DirOfExecutable.Replace( "\\", "/" );
+		sPath = GetCwd() + "/" + sPath;
+		sPath.Replace( "\\", "/" );
 	}
+
+	return sPath;
+#endif
+}
+
+static void ChangeToDirOfExecutable( CString argv0 )
+{
+	InitialWorkingDirectory = GetCwd();
+	DirOfExecutable = GetDirOfExecutable( argv0 );
 
 	/* Set the CWD.  Any effects of this is platform-specific; most files are read and
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
@@ -107,8 +108,6 @@ static void ChangeToDirOfExecutable( CString argv0 )
 	chdir( DirOfExecutable + "/.." );
 #elif defined(DARWIN)
 	chdir(DirOfExecutable + "/../../..");
-#endif
-	
 #endif
 }
 
