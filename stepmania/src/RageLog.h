@@ -45,7 +45,7 @@ struct Checkpoint_
 	Checkpoint_(CString key, int n, CString fmt, ...);
 	~Checkpoint_();
 };
-#define Checkpoint(t) Checkpoint_ CP_( __FUNCTION__, __LINE__, t )
+#define Checkpoint(t) Checkpoint_ CP_( __FILE__, __LINE__, t )
 
 extern RageLog*	LOG;	// global and accessable from anywhere in our program
 #endif
