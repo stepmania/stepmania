@@ -36,8 +36,6 @@ void Sample3dObject::Update( float fDeltaTime )
  */
 void Sample3dObject::DrawPrimitives()
 {
-//	DISPLAY->FlushQueue(); /* do this before rendering directly */
-
 	/* If this is a sub-object (3d object within a 3d object), this won't
 	 * actually do anything: */
 	DISPLAY->EnterPerspective(60);
