@@ -311,14 +311,13 @@ void PlayerMinus::Update( float fDeltaTime )
 	{
 		CHECKPOINT_M( ssprintf("%i %i", col, iNumCols) );
 		const StyleInput StyleI( m_PlayerNumber, col );
+		ASSERT(StyleI.col == col);
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && GAMESTATE->m_PlayerController[m_PlayerNumber]==PC_HUMAN )
 			m_pNoteField->SetPressed( col );
 	}
-	
-	CHECKPOINT;
 	
 	//
 	// update HoldNotes logic
