@@ -6,6 +6,23 @@
 #include "RageFileManager.h"
 #include "song.h"
 
+/*
+ * A quick explanation of song cache hashes: Each song has two hashes; a hash of the
+ * song path, and a hash of the song directory.  The former is Song::GetCacheFilePath;
+ * it stays the same if the contents of the directory change.  The latter is 
+ * GetHashForDirectory(m_sSongDir), and changes on each modification.
+ *
+ * The file hash is used as the cache filename.  We don't want to use the directory
+ * hash: if we do that, then we'll write a new cache file every time the song changes,
+ * and they'll accumulate or we'll have to be careful to delete them.
+ *
+ * The directory hash is stored in here, indexed by the song path, and used to determine
+ * if a song has changed.
+ *
+ * Another advantage of this system is that we can load songs from cache given only their
+ * path; we don't have to actually look in the directory (to find out the directory hash)
+ * in order to find the cache file.
+ */
 #define CACHE_DIR "Cache/"
 
 SongCacheIndex *SONGINDEX;
