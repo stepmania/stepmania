@@ -6,7 +6,6 @@
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
-#include "BGAnimation.h"
 #include "GradeDisplay.h"
 #include "Banner.h"
 #include "HighScore.h"

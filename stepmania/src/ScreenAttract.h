@@ -5,7 +5,6 @@
 
 #include "Screen.h"
 #include "Transition.h"
-#include "BGAnimation.h"
 
 
 class ScreenAttract : public Screen

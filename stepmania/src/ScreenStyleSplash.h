@@ -4,7 +4,6 @@
 #define SCREEN_STYLE_SPLASH_H
 
 #include "ScreenWithMenuElements.h"
-#include "BGAnimation.h"
 
 class ScreenStyleSplash : public ScreenWithMenuElements
 {

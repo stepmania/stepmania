@@ -9,7 +9,6 @@
 #include "BitmapText.h"
 #include "Player.h"
 #include "RageSound.h"
-#include "BGAnimation.h"
 #include "SnapDisplay.h"
 #include "Background.h"
 #include "Foreground.h"

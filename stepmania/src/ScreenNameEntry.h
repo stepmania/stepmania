@@ -8,7 +8,6 @@
 #include "Transition.h"
 #include "RandomSample.h"
 #include "ReceptorArrowRow.h"
-#include "BGAnimation.h"
 #include "MenuTimer.h"
 
 
