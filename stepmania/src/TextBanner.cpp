@@ -108,9 +108,10 @@ void TextBanner::LoadFromString(
 	m_textSubTitle.SetZoomY( fSubTitleZoom );
 	m_textArtist.SetZoomY( fArtistZoom );
 
-	fTitleZoom		= min( fTitleZoom,		g_fWidth/m_textTitle.GetWidestLineWidthInSourcePixels() );
-	fSubTitleZoom	= min( fSubTitleZoom,	g_fWidth/m_textSubTitle.GetWidestLineWidthInSourcePixels() );
-	fArtistZoom		= min( fArtistZoom,		g_fWidth/m_textArtist.GetWidestLineWidthInSourcePixels() );
+	/* Avoid division by zero. */
+	fTitleZoom		= min( fTitleZoom,		g_fWidth/(m_textTitle.GetWidestLineWidthInSourcePixels()+1) );
+	fSubTitleZoom	= min( fSubTitleZoom,	g_fWidth/(m_textSubTitle.GetWidestLineWidthInSourcePixels()+1) );
+	fArtistZoom		= min( fArtistZoom,		g_fWidth/(m_textArtist.GetWidestLineWidthInSourcePixels()+1) );
 
 	m_textTitle.SetZoomX( fTitleZoom );
 	m_textSubTitle.SetZoomX( fSubTitleZoom );
