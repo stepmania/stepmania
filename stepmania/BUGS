@@ -1,0 +1,35 @@
+These are all minor bugs and bugs that are either annoying or difficult
+to fix.  One purpose of this file is to allow bored developers looking for
+something to do a quick list of minor outstanding bugs.  So, if you're
+adding something here, try to either 1: make sure it's really a bug, or
+2: if it's unconfirmed or unreproducable, say so.  Try not to put subjective
+things here, like cosmetic differences that some people don't like (unless
+they're actually bugs).
+
+This isn't intended as a replacement for the SF BTS; once we clean that
+up and start using it, we might drop this file.
+
+For more minor bugs, grep for "XXX" in the source (but not all of
+those are bugs).  Some of those might be duplicated here.
+
+Major bugs are usually either fixed or discussed on the list, so this
+list only has minor bugs.
+
+
+--------
+
+Many menu screens don't tween completely offscreen if a selection is made
+before the tween-in finishes.  Easy to fix: don't tween from current loc to
+eg. current loc+screen width; always tween to the real dest loc+screen
+width.
+
+Selecting in a second player on the select style screen changes the
+available options.  If you do that while it's tweening in, the dims
+will be adjusted as if there was no tweens; the net result is the change
+is wiped out as the tween finishes.  Changing tweenable properties that
+have nothing to do with the current tween (eg. here, changing the dim
+while we're tweening X,Y) is tricky right now; I'm not sure how to handle
+this cleanly ...
+
+Doubles is misaligned if the second player side is selected first.
+
