@@ -179,7 +179,7 @@ void MusicBannerWheel::InsertNewBanner(int direction)
 	{
 		ASSERT(0); // we should be going in some sort of direction.
 	}
-	if(PREVIEWMUSICMODE == 0)
+	if(PREVIEWMUSICMODE == 0 || PREVIEWMUSICMODE == 3)
 		PlayMusicSample();
 }
 
@@ -270,7 +270,7 @@ void MusicBannerWheel::LoadSongData()
 		m_ScrollingList.Load( asGraphicPaths );
 	if(SingleLoad == 2)
 		SingleLoad = 1;
-	if(PREVIEWMUSICMODE == 0)
+	if(PREVIEWMUSICMODE == 0 || PREVIEWMUSICMODE == 3)
 		PlayMusicSample();
 }
 

@@ -33,6 +33,7 @@
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
+#define SCROLLING_LIST_ROT		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListRotation")
 #define PUMP_DIFF_X				THEME->GetMetricF("ScreenEz2SelectMusic","PumpDifficultyX")
 #define PUMP_DIFF_Y				THEME->GetMetricF("ScreenEz2SelectMusic","PumpDifficultyY")
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectMusic","HelpText")
@@ -75,9 +76,10 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
 
-	if(PREVIEWMUSICMODE == 1)
+	if(PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3)
 	{
-		SOUNDMAN->StopMusic();
+		if(PREVIEWMUSICMODE == 1)
+			SOUNDMAN->StopMusic();
 		iConfirmSelection = 0;
 	}
 
@@ -95,6 +97,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 
 	m_MusicBannerWheel.SetX(SCROLLING_LIST_X);
 	m_MusicBannerWheel.SetY(SCROLLING_LIST_Y);
+	m_MusicBannerWheel.SetRotationZ(SCROLLING_LIST_ROT);
 
 	if(m_MusicBannerWheel.CheckSongsExist() != 0)
 	{
@@ -414,7 +417,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 
 	m_soundSelect.Play();
 
-	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 0)
+	if((PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 0)
 	{
 		iConfirmSelection = 1;
 		m_MusicBannerWheel.StartBouncing();
@@ -482,11 +485,12 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 	if( m_iSelection[pn] == 0 )
 		return;
 
-	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
+	if((PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
 		m_MusicBannerWheel.StopBouncing();
-		SOUNDMAN->StopMusic();
+		if(PREVIEWMUSICMODE == 1)
+			SOUNDMAN->StopMusic();
 	}
 
 	m_iSelection[pn]--;
@@ -525,12 +529,13 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 		return;
 	}
 
-	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
+	if((PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
 
 		m_MusicBannerWheel.StopBouncing();
-		SOUNDMAN->StopMusic();
+		if(PREVIEWMUSICMODE == 1)
+			SOUNDMAN->StopMusic();
 	}
 
 	m_iSelection[pn]++;
@@ -571,10 +576,11 @@ void ScreenEz2SelectMusic::MusicChanged()
 		OFF_COMMAND( m_sprBalloon );
 	}
 
-	if(PREVIEWMUSICMODE == 1 && iConfirmSelection == 1)
+	if((PREVIEWMUSICMODE == 1 || PREVIEWMUSICMODE == 3) && iConfirmSelection == 1)
 	{
 		iConfirmSelection = 0;
-		SOUNDMAN->StopMusic();
+		if(PREVIEWMUSICMODE == 1)
+			SOUNDMAN->StopMusic();
 	}
 
 	int pn;

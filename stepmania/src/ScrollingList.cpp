@@ -37,6 +37,8 @@ enum BANNER_PREFS_TYPES
 
 #define ZOOM_OFFSET THEME->GetMetricF("ScreenEz2SelectMusic","BannerZoomOffset")
 #define FADE_OFFSET THEME->GetMetricF("ScreenEz2SelectMusic","BannerFadeOffset")
+#define BANNER_ROTATION THEME->GetMetricF("ScreenEz2SelectMusic","BannerRotation")
+
 
 #define SPRITE_TYPE_SPRITE 0
 #define SPRITE_TYPE_CROPPEDSPRITE 1
@@ -491,6 +493,9 @@ void ScrollingList::DrawPrimitives()
 			m_apCSprites[iIndexToDraw2]->SetX( (+i+m_fSelectionLag) * m_iSpacing );
 			m_apCSprites[iIndexToDraw1]->SetZ( (m_iNumVisible)/2 - i);
 			m_apCSprites[iIndexToDraw2]->SetZ( (m_iNumVisible)/2 - i);
+			m_apCSprites[iIndexToDraw1]->SetRotationZ(BANNER_ROTATION);
+			m_apCSprites[iIndexToDraw2]->SetRotationZ(BANNER_ROTATION);
+			m_sprBannerMask.SetRotationZ(BANNER_ROTATION);
 			if( i==0 )	// so we don't draw 0 twice
 			{
 				if(!m_iBouncingState)
