@@ -292,7 +292,7 @@ CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
 	return GetThemeDirFromName( sThemeName ) + "metrics.ini";
 }
 
-CString ThemeManager::GetMetric( CString sClassName, CString sValueName )
+CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )
 {
 #if defined(DEBUG) && defined(WIN32)
 try_metric_again:
@@ -319,15 +319,7 @@ try_metric_again:
 
 	CString sValue;
 	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
-	{
-		sValue.Replace("::","\n");	// "::" means newline since you can't use line breaks in an ini file.
-
-		/* XXX: add a parameter to turn this off if there are some metrics where
-		 * we don't want markers */
-		FontCharAliases::ReplaceMarkers(sValue);
-
 		return sValue;
-	}
 
 #if defined(DEBUG) && defined(WIN32)
 	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()),"ThemeManager",MB_RETRYCANCEL ) )
@@ -342,29 +334,44 @@ try_metric_again:
 		);
 }
 
+/* Get a string metric. */
+CString ThemeManager::GetMetric( CString sClassName, CString sValueName )
+{
+	CString sValue = GetMetricRaw(sClassName,sValueName);
+
+	// "::" means newline since you can't use line breaks in an ini file.
+	sValue.Replace("::","\n");
+
+	/* XXX: add a parameter to turn this off if there are some metrics where
+	 * we don't want markers */
+	FontCharAliases::ReplaceMarkers(sValue);
+
+	return sValue;
+}
+
 int ThemeManager::GetMetricI( CString sClassName, CString sValueName )
 {
-	return atoi( GetMetric(sClassName,sValueName) );
+	return atoi( GetMetricRaw(sClassName,sValueName) );
 }
 
 float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 {
-	return (float)atof( GetMetric(sClassName,sValueName) );
+	return (float)atof( GetMetricRaw(sClassName,sValueName) );
 }
 
 bool ThemeManager::GetMetricB( CString sClassName, CString sValueName )
 {
-	return atoi( GetMetric(sClassName,sValueName) ) != 0;
+	return atoi( GetMetricRaw(sClassName,sValueName) ) != 0;
 }
 
 RageColor ThemeManager::GetMetricC( CString sClassName, CString sValueName )
 {
 	float r=1,b=1,g=1,a=1;	// initialize in case sscanf fails
-	CString sValue = GetMetric(sClassName,sValueName);
-	int result = sscanf( GetMetric(sClassName,sValueName), "%f,%f,%f,%f", &r, &g, &b, &a );
+	CString sValue = GetMetricRaw(sClassName,sValueName);
+	int result = sscanf( GetMetricRaw(sClassName,sValueName), "%f,%f,%f,%f", &r, &g, &b, &a );
 	if( result != 4 )
 	{
-		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetric(sClassName,sValueName).GetString(), sClassName.GetString(), sValueName.GetString() );
+		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).GetString(), sClassName.GetString(), sValueName.GetString() );
 		ASSERT(0);
 	}
 
