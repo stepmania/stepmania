@@ -118,7 +118,10 @@ static int LuaPanic( lua_State *L )
 	 * an exception from there. */
 	jbuf_error = err;
 	longjmp( jbuf, 1 );
-    return 0; // control never reaches here but quiets warning
+	/* This causes an "unreachable code" warning in VC.  If you're getting a "control reaches
+	 * end of function" warning, then your headers aren't correctly marking longjmp as NORETURN.
+	 * My headers (glibc 2.3.2) do. -glenn */
+//    return 0; // control never reaches here but quiets warning
 }
 
 bool Lua::RunExpression( const CString &str )
