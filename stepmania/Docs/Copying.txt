@@ -122,6 +122,22 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************************
 
+Code in RageSurfaceUtilsPalettize.cpp is under the following permissive
+license:
+
+Copyright (C) 1989, 1991 by Jef Poskanzer.
+Copyright (C) 1997, 2000, 2002 by Greg Roelofs; based on an idea by
+                               Stefan Schneider.
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted, provided
+that the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.  This software is provided "as is" without express or
+implied warranty.
+
+******************************************************************************
+
 The only files which are under copyleft licenses are RageSoundReader_MP3,
 which is under the GPL (COPYING.GPL), and RageSoundReader_WAV, under
 the LGPL (COPYING.LGPL).  These files can be disabled at compile-time.
