@@ -14,12 +14,6 @@
 #include <png.h>
 #endif
 
-/*
- * The png_jmpbuf() macro, used in error handling, became available in
- * libpng version 1.0.6.  If you want to be able to run your code with older
- * versions of libpng, you must define the macro yourself (but only if it
- * is not already defined by libpng!).
- */
 #ifndef png_jmpbuf
 #define png_jmpbuf(png) ((png)->jmpbuf)
 #endif
@@ -207,16 +201,10 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	}
 	ASSERT( img );
 
-	/* alloca to prevent memleaks if libpng longjmps us */
-	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
-
+	png_byte *pixels = (png_byte *) img->pixels;
 	for( unsigned y = 0; y < height; ++y )
-	{
-		png_byte *p = (png_byte *) img->pixels;
-		row_pointers[y] = p + img->pitch*y;
-	}
+		png_read_row( png, pixels + img->pitch*y, NULL );
 
-	png_read_image( png, row_pointers );
 	png_read_end( png, info_ptr );
 	png_destroy_read_struct( &png, &info_ptr, png_infopp_NULL );
 
