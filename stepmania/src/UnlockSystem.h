@@ -51,12 +51,17 @@ class UnlockSystem
 {
 public:
 	UnlockSystem();
+
 	float DancePointsUntilNextUnlock();
 	float ArcadePointsUntilNextUnlock();
 	float SongPointsUntilNextUnlock();
+
 	bool SongIsLocked( const Song *song );
+	bool CourseIsLocked( const Course *course );
+
 	bool SongIsRoulette( const Song *song );
 	bool LoadFromDATFile( CString sPath );
+
 	vector<SongEntry>	m_SongEntries;	// All locked songs are stored here
 
 	// functions that add to values, which don't really work.
@@ -75,6 +80,7 @@ private:
 	void SortSongEntriesArray();  // sorts unlocks
 	bool ParseRow(CString text, CString &type, float &qty, CString &songname);
 	SongEntry *FindSong( const Song *pSong );
+	SongEntry *FindCourse( const Course *pCourse );
 	void InitRouletteSeeds(int MaxRouletteSlot);
 };
 

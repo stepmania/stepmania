@@ -14,6 +14,7 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "song.h"
+#include "course.h"
 #include "RageException.h"
 #include "RageUtil.h"
 #include "UnlockSystem.h"
@@ -39,7 +40,25 @@ bool UnlockSystem::RouletteUnlock( const Song *song )
 	return true;
 }
 
+bool UnlockSystem::CourseIsLocked( const Course *course )
+{
+	// I know, its not a song, but for purposes of title
+	// comparison, its the same thing.
+	SongEntry *p = FindCourse( course );
 
+	CString tmp;
+
+	if (p)
+	{
+		p->updateLocked();
+
+		if (!p->isLocked) tmp = "un";
+		LOG->Trace( "current status: %slocked", tmp.c_str() );
+	}
+	
+	return (p != NULL) && (p->isLocked);
+
+}
 
 bool UnlockSystem::SongIsLocked( const Song *song )
 {
@@ -71,6 +90,22 @@ bool UnlockSystem::SongIsRoulette( const Song *song )
 	
 	return p && (p->m_iRouletteSeed != 0) ;
 }
+
+SongEntry *UnlockSystem::FindCourse( const Course *pCourse )
+{
+	CString CourseName = pCourse->m_sName;
+
+	CourseName.MakeUpper();
+
+	for(unsigned i = 0; i < m_SongEntries.size(); i++)
+	{
+		if( CourseName == m_SongEntries[i].m_sSongName )
+			return &m_SongEntries[i];
+	}
+
+	return NULL;
+}
+
 
 SongEntry *UnlockSystem::FindSong( const Song *pSong )
 {
@@ -396,7 +431,4 @@ void UnlockSystem::InitRouletteSeeds(int MaxRouletteSlot)
 		seeds += "0";
 
 	PREFSMAN->m_RouletteSeeds = seeds;
-
-
-
 }

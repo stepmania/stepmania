@@ -552,6 +552,11 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 				Course* pCourse = apCourses[c];
 
+				// if unlocks are on, make sure it is unlocked
+				if ( PREFSMAN->m_bUseUnlockSystem)
+					if ( GAMESTATE->m_pUnlockingSys->CourseIsLocked( pCourse) )
+						continue;
+
 				// check that this course has at least one song playable in the current style
 				if( pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_NotesType) )
                     arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor(), SORT_INVALID) );
