@@ -276,7 +276,7 @@ CString NoteSkinManager::GetPathTo( CString NoteSkin, CString sButtonName, CStri
 		sButtonName.c_str(), sFileName.c_str(), 
 		GetNoteSkinDir(NoteSkin).c_str(),
 		GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME).c_str(),
-		GAME_BASE_NOTESKIN_NAME.c_str() );
+		GLOBAL_BASE_NOTESKIN_DIR.c_str() );
 }
 
 CString NoteSkinManager::GetPathTo( CString sDir, CString sFileName )
