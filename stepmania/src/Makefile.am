@@ -24,14 +24,13 @@ endif
 $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && ./configure && make
 
-
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
 ScreenAttract.cpp ScreenAttract.h ScreenAutogenOptions.cpp ScreenAutogenOptions.h \
 ScreenBackgroundOptions.cpp ScreenBackgroundOptions.h ScreenCaution.cpp ScreenCaution.h ScreenCompany.h \
 ScreenCredits.cpp ScreenCredits.h ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h ScreenEdit.cpp ScreenEdit.h \
 ScreenEditCoursesMenu.cpp ScreenEditCoursesMenu.h ScreenEditMenu.cpp ScreenEditMenu.h ScreenEvaluation.cpp ScreenEvaluation.h \
-ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
+ScreenExit.cpp ScreenExit.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp ScreenGameplay.h ScreenGameplayOptions.cpp ScreenGameplayOptions.h \
 ScreenGraphicOptions.cpp ScreenGraphicOptions.h ScreenHowToPlay.cpp ScreenHowToPlay.h ScreenInputOptions.cpp ScreenInputOptions.h \
 ScreenInstructions.cpp ScreenInstructions.h ScreenIntroMovie.cpp ScreenIntroMovie.h ScreenJukebox.cpp ScreenJukebox.h \
@@ -48,7 +47,7 @@ ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyl
 ScreenSoundOptions.cpp ScreenSoundOptions.h ScreenStage.cpp ScreenStage.h ScreenStyleSplash.cpp ScreenStyleSplash.h \
 ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestSound.cpp ScreenTestSound.h \
 ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h \
-ScreenExit.cpp ScreenExit.h
+ScreenWarning.h 
 
 DataStructures = \
 BannerCache.cpp BannerCache.h Character.cpp Character.h CodeDetector.cpp CodeDetector.h Course.cpp Course.h \
@@ -61,15 +60,15 @@ NotesLoaderBMS.cpp NotesLoaderBMS.h NotesLoaderDWI.cpp NotesLoaderDWI.h NotesLoa
 NotesLoaderSM.cpp NotesLoaderSM.h NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h \
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h \
 ScoreKeeper.h ScoreKeeper5th.cpp ScoreKeeper5th.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreKeeperRave.cpp ScoreKeeperRave.h \
-ScreenWarning.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h \
-Steps.cpp Steps.h Style.h StyleDef.cpp StyleDef.h StyleInput.h TitleSubstitution.cpp TitleSubstitution.h
+Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
+Style.h StyleDef.cpp StyleDef.h StyleInput.h TitleSubstitution.cpp TitleSubstitution.h
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
 
 StepMania = StdString.h StepMania.cpp StepMania.h global.cpp global.h
 
 LoadingWindow = arch/LoadingWindow/LoadingWindow_Null.h \
-		arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
+				arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
 
 if HAVE_GTK
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
@@ -130,10 +129,9 @@ DifficultyIcon.cpp DifficultyIcon.h MeterDisplay.cpp MeterDisplay.h Transition.c
 ActorsInMenus = \
 BPMDisplay.cpp BPMDisplay.h CourseContentsList.cpp CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDisplay.h \
 DifficultyDisplay.cpp DifficultyDisplay.h DifficultyMeter.cpp DifficultyMeter.h DifficultyRating.cpp DifficultyRating.h \
-EditCoursesMenu.cpp EditCoursesMenu.h EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
-GradeDisplay.cpp GradeDisplay.h GrooveGraph.cpp GrooveGraph.h GrooveRadar.cpp GrooveRadar.h \
-GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h JukeboxMenu.cpp JukeboxMenu.h \
-MenuElements.cpp MenuElements.h MenuTimer.cpp MenuTimer.h ModeSwitcher.cpp ModeSwitcher.h \
+EditCoursesMenu.cpp EditCoursesMenu.h EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h GradeDisplay.cpp GradeDisplay.h \
+GrooveGraph.cpp GrooveGraph.h GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h \
+JukeboxMenu.cpp JukeboxMenu.h MenuElements.cpp MenuElements.h MenuTimer.cpp MenuTimer.h ModeSwitcher.cpp ModeSwitcher.h \
 MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDisplay.cpp MusicSortDisplay.h \
 MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
 OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h ScrollBar.cpp ScrollBar.h \
@@ -163,10 +161,9 @@ RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMat
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.h RageSoundReader_FileReader.cpp RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
 RageSoundReader_Resample_Fast.cpp RageSoundReader_Resample_Fast.h RageSoundReader_Resample_Good.cpp RageSoundReader_Resample_Good.h \
-RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h \
-RageTexture.cpp RageTexture.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h \
-RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
-RageUtil_FileDB.cpp RageUtil_FileDB.h \
+RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h RageTexture.cpp RageTexture.h \
+RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h RageTimer.cpp RageTimer.h RageTypes.h \
+RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h RageUtil_FileDB.cpp RageUtil_FileDB.h \
 $(RageSoundFileReaders)
 
 Actors = \
@@ -182,8 +179,8 @@ ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp
 UnlockSystem.cpp UnlockSystem.h
 
 stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
-		    $(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
-		    $(Rage) $(Actors) $(GlobalSingletons)
+					$(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
+					$(Rage) $(Actors) $(GlobalSingletons)
 
 # Note that we still end up linking dynamically to the shared system library
 # for SDL_image.  This is annoying, but it's not a major problem.  The
@@ -204,7 +201,6 @@ stepmania_LDADD = \
 		  $(srcdir)/libresample/libresample.a
 
 INCLUDES = $(SDL_CFLAGS)
-# -O0 -g
 
 if HAVE_GTK
 bin_PROGRAMS += GtkModule.so
