@@ -86,6 +86,7 @@ enum {
 RageLog::RageLog()
 {
 	m_bEnabled = true;
+	m_bFlush = false;
 
 	// delete old log files
 	remove( LOG_PATH );
@@ -138,6 +139,11 @@ RageLog::~RageLog()
 void RageLog::SetLogging( bool b )
 {
 	m_bEnabled = b;
+}
+
+void RageLog::SetFlushing( bool b )
+{
+	m_bFlush = b;
 }
 
 void RageLog::ShowConsole()
@@ -230,7 +236,7 @@ void RageLog::Write( int where, CString str)
 
 	printf("%s\n", str.c_str() );
 
-	if( (PREFSMAN && PREFSMAN->m_bForceLogFlush) || (where & WRITE_TO_INFO) )
+	if( m_bFlush || (where & WRITE_TO_INFO) )
 		Flush();
 }
 

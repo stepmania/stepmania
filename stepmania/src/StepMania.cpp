@@ -636,6 +636,7 @@ int main(int argc, char* argv[])
 	HOOKS->DumpDebugInfo();
 
 	LOG->SetLogging( PREFSMAN->m_bLogging );
+	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
 
 	CheckSettings();
 

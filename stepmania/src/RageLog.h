@@ -35,9 +35,11 @@ public:
 	static const char *GetRecentLog( int n );
 
 	void SetLogging( bool b );	// enable or disable logging
+	void SetFlushing( bool b );	// enable or disable flushing
 
 private:
 	bool m_bEnabled;
+	bool m_bFlush;
 	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
 	void UpdateMappedLog();
