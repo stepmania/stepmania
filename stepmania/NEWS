@@ -1,4 +1,5 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  Pump couples support.
 BUG FIX:  Editor no longer crashes if you try to drag a hold note up
 	before beat 0.
 CHANGE:  Hold head now drawn in place tap note graphic when a Hold starts
