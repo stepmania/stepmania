@@ -1,4 +1,7 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+NEW FEATURE:  #TRANSLITERATION tag-- this is used in sorting
+	so songs like sana & matsuri can go in the proper alphabetic group,
+	but still be displayed in their proper language (once we support that)
 NEW FEATURE:  DWI tree loading via "DWIPath".
 NEW FEATURE:  Pump couples support.
 BUG FIX:  Editor no longer crashes if you try to drag a hold note up

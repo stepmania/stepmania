@@ -74,6 +74,9 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"SUBTITLE") )
 			out.m_sSubTitle = sParams[1];
 
+		else if( 0==stricmp(sValueName,"TRANSLITERATION") )
+			out.m_sTransliteration = sParams[1];
+
 		else if( 0==stricmp(sValueName,"ARTIST") )
 			out.m_sArtist = sParams[1];
 

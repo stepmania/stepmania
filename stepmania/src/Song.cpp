@@ -627,6 +627,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 
 	fprintf( fp, "#TITLE:%s;\n", m_sMainTitle );
 	fprintf( fp, "#SUBTITLE:%s;\n", m_sSubTitle );
+	fprintf( fp, "#TRANSLITERATION:%s;\n", m_sTransliteration );
 	fprintf( fp, "#ARTIST:%s;\n", m_sArtist );
 	fprintf( fp, "#CREDIT:%s;\n", m_sCredit );
 	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile );
@@ -797,7 +798,13 @@ int CompareSongPointersByTitle(const void *arg1, const void *arg2)
 	const Song* pSong1 = *(const Song**)arg1;
 	const Song* pSong2 = *(const Song**)arg2;
 	
-	int ret = pSong1->GetFullTitle().CompareNoCase(pSong2->GetFullTitle());
+	//Prefer transliterations to full titles
+	CString sTitle1 = pSong1->GetTransliteration();
+	CString sTitle2 = pSong2->GetTransliteration();
+	if(sTitle1.IsEmpty()) sTitle1 = pSong1->GetFullTitle();
+	if(sTitle2.IsEmpty()) sTitle2 = pSong2->GetFullTitle();
+
+	int ret = sTitle1.CompareNoCase(sTitle2);
 	if(ret != 0) return ret;
 
 	/* The titles are the same.  Ensure we get a consistent ordering

@@ -89,10 +89,12 @@ public:
 
 	CString	m_sMainTitle;
 	CString	m_sSubTitle;
+	CString m_sTransliteration;
 	CString	m_sArtist;
 	CString	m_sCredit;
 
 	CString GetFullTitle() const { return m_sMainTitle + (m_sSubTitle.GetLength()? (" " + m_sSubTitle):""); }
+	CString GetTransliteration() const { return m_sTransliteration; }
 
 	CString	m_sMusicFile;
 	DWORD	m_iMusicBytes;
