@@ -529,16 +529,15 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			// make WheelItemDatas with sections
 			CString sLastSection = "";
-			RageColor colorSection;
+			int iSectionColorIndex = 0;
 			for( unsigned i=0; i< arraySongs.size(); i++ )
 			{
 				Song* pSong = arraySongs[i];
 				CString sThisSection = GetSectionNameFromSongAndSort( pSong, so );
-				int iSectionColorIndex = 0;
 
 				if( sThisSection != sLastSection)	// new section, make a section item
 				{
-					colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
+					RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS(iSectionColorIndex);
 					iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection, SORT_INVALID) );
 					sLastSection = sThisSection;
