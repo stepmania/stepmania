@@ -307,6 +307,10 @@ void Course::GetStageInfo(
 
 	vector<Song*> vSongsByMostPlayed;
 
+	vector<Song*> AllSongsShuffled = SONGMAN->GetAllSongs();
+	random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end() );
+	int CurSong = 0; /* Current offset into AllSongsShuffled */
+
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
 		const Entry& e = entries[i];
@@ -330,35 +334,27 @@ void Course::GetStageInfo(
 		case Entry::random:
 		case Entry::random_within_group:
 			{
-				vector<Song*> vSongs;
-				switch( e.type )
+				// find a song with the notes we want
+				for( unsigned j=0; j<AllSongsShuffled.size(); j++ )
 				{
-				case Entry::random:
-					vSongs = SONGMAN->GetAllSongs();
-					break;
-				case Entry::random_within_group:
-					SONGMAN->GetSongs( vSongs, e.group_name );
-					break;
-				}
+					/* See if the first song matches what we want. */
+					pSong = AllSongsShuffled[CurSong];
+					CurSong = (CurSong+1) % AllSongsShuffled.size();
 
-				if( vSongs.size() == 0 )
-					break;
+					if(e.type == Entry::random_within_group &&
+					   pSong->m_sGroupName.CompareNoCase(e.group_name))
+					   continue; /* wrong group */
 
-				// probe to find a song with the notes we want
-				for( int j=0; j<500; j++ )	// try 500 times before giving up
-				{
-					pSong = vSongs[rand()%vSongs.size()];
 					if( e.difficulty == DIFFICULTY_INVALID )
 						pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter );
 					else
 						pNotes = pSong->GetNotes( nt, e.difficulty );
+
 					if( pNotes )	// found a match
 						break;		// stop searching
-					else
-					{
-						pSong = NULL;
-						pNotes = NULL;
-					}
+
+					pSong = NULL;
+					pNotes = NULL;
 				}
 			}
 			break;
