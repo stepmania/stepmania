@@ -13,7 +13,6 @@
 
 #include "GhostArrow.h"
 #include "NoteSkinManager.h"
-#include "GameState.h"
 
 GhostArrow::GhostArrow()
 {
@@ -38,18 +37,18 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 			sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sElement);	// not optional
 		m_spr[i].Load( sPath );
 	}
-}
-
-void GhostArrow::Init( PlayerNumber pn )
-{
-	m_PlayerNumber = pn;
 
 	for( int i=0; i<NUM_TAP_NOTE_SCORES; i++ )
 	{
 		CString sJudge = TapNoteScoreToString( (TapNoteScore)i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = NOTESKIN->GetMetric(GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin,m_sName,sCommand);
+		m_sScoreCommand[i] = NOTESKIN->GetMetric( sNoteSkin, m_sName, sCommand );
 	}
+}
+
+void GhostArrow::Init( PlayerNumber pn )
+{
+	m_PlayerNumber = pn;
 }
 
 void GhostArrow::Step( TapNoteScore score )
