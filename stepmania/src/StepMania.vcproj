@@ -500,6 +500,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenStyleSplash.h">
 			</File>
 			<File
+				RelativePath="ScreenSystemLayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSystemLayer.h">
+			</File>
+			<File
 				RelativePath="ScreenTest.cpp">
 			</File>
 			<File
@@ -945,12 +951,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Filter="">
 			<File
 				RelativePath="ProductInfo.h">
-			</File>
-			<File
-				RelativePath="ScreenSystemLayer.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSystemLayer.h">
 			</File>
 			<File
 				RelativePath="StdString.h">
