@@ -175,14 +175,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 
 
-	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
-	const bool bReverse[NUM_PLAYERS] = { 
-		GAMESTATE->m_PlayerOptions[0].m_fReverseScroll == 1,
-		GAMESTATE->m_PlayerOptions[1].m_fReverseScroll == 1
-	};
-
-
-
 	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_bAutoSync;
 
 
@@ -219,8 +211,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_Player[p].SetX( fPlayerX );
 		this->AddChild( &m_Player[p] );
 	
-		m_ActiveItemList[p].SetXY( ACTIVE_ITEMS_X(p), ACTIVE_ITEMS_Y(p,bExtra,bReverse[p]) );
 		m_ActiveItemList[p].Init( (PlayerNumber)p, &m_Inventory );
+		/* Position it in LoadNextSong. */
 		this->AddChild( &m_ActiveItemList[p] );
 
 		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","gameplay oni gameover") );
@@ -238,6 +230,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_sprMiddleFrame.Load( THEME->GetPathTo("Graphics","Gameplay Middle Frame") );
 	m_sprMiddleFrame.SetXY( MIDDLE_FRAME_X, MIDDLE_FRAME_Y );
 
+	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 
 	// LifeFrame goes below LifeMeter
 	CString sLifeFrameName;
@@ -380,7 +373,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 			continue;
 
 		m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","gameplay difficulty icons 2x5") );
-		m_DifficultyIcon[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
+		/* Position it in LoadNextSong. */
 		this->AddChild( &m_DifficultyIcon[p] );
 	}
 
@@ -453,11 +446,14 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	m_BPMDisplay.SetZoom( BPM_ZOOM );
 	this->AddChild( &m_BPMDisplay );
 
+	/* LoadNextSong first, since that positions some elements which need to be
+	 * positioned before we TweenOnScreen. */
+	LoadNextSong();
+
 	TweenOnScreen();
 
 	for( int i=0; i<30; i++ )
 		this->SendScreenMessage( ScreenMessage(SM_User+i), i/2.0f );	// Send messages to we can get the introduction rolling
-	LoadNextSong();
 	m_soundToasty.Load( THEME->GetPathTo("Sounds","gameplay toasty") );
 
 
@@ -627,6 +623,21 @@ void ScreenGameplay::LoadNextSong()
 	float fMinBPM, fMaxBPM;
 	GAMESTATE->m_pCurSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
 	m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
+
+	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
+	const bool bReverse[NUM_PLAYERS] = { 
+		GAMESTATE->m_PlayerOptions[0].m_fReverseScroll == 1,
+		GAMESTATE->m_PlayerOptions[1].m_fReverseScroll == 1
+	};
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+			continue;
+
+		m_ActiveItemList[p].SetXY( ACTIVE_ITEMS_X(p), ACTIVE_ITEMS_Y(p,bExtra,bReverse[p]) );
+		m_DifficultyIcon[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
+	}
 
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 }
