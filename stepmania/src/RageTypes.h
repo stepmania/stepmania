@@ -141,6 +141,25 @@ public:
 
 	friend RageColor operator * ( float f, const RageColor& other )	{ return other*f; }		// What is this for?  Did I add this?  -Chris
 
+	bool FromString( const CString &str )
+	{
+		int result = sscanf( str, "%f,%f,%f,%f", &r, &g, &b, &a );
+		if( result == 4 )
+			return true;
+
+		int ir=255, ib=255, ig=255, ia=255;
+		result = sscanf( str, "#%2x%2x%2x%2x", &ir, &ig, &ib, &ia );
+		if( result >= 3 )
+		{
+			r = ir / 255.0f; g = ig / 255.0f; b = ib / 255.0f;
+			if( result == 4 )
+				a = ia / 255.0f;
+			return true;
+		}
+
+		r=1; b=1; g=1; a=1;
+		return false;
+	}
 	float r, g, b, a;
 };
 
