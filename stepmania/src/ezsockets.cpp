@@ -12,12 +12,12 @@
 #include "global.h"
 #include "ezsockets.h"
 
+#if defined(WIN32)
+#pragma comment(lib,"wsock32.lib")
+#else
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-
-#if defined(WIN32)
-#pragma comment(lib,"wsock32.lib")
 #endif
 
 EzSockets::EzSockets()
