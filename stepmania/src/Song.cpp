@@ -796,7 +796,7 @@ void Song::TidyUpData()
 			{
 				Steps* pSteps = vSteps[k];
 			
-				Difficulty dc2 = (Difficulty)(dc+1);
+				Difficulty dc2 = min( (Difficulty)(dc+1), DIFFICULTY_CHALLENGE );
 				pSteps->SetDifficulty( dc2 );
 			}
 		}
