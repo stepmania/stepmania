@@ -704,7 +704,7 @@ void RageSound::SetPlaybackRate( float NewSpeed )
 		speed_input_samples = 1; speed_output_samples = 1;
 	} else {
 		/* Approximate it to the nearest tenth. */
-		speed_input_samples = int(NewSpeed * 10);
+		speed_input_samples = int(roundf(NewSpeed * 10));
 		speed_output_samples = 10;
 	}
 }
