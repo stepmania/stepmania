@@ -33,11 +33,17 @@ static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 
 static int GetOneSelection( const vector<bool> &vbSelected )
 {
+	int iRet = -1;
 	for( unsigned i=0; i<vbSelected.size(); i++ )
+	{
 		if( vbSelected[i] )
-			return i;
-	ASSERT(0);	// shouldn't call this if not expecting one to be selected
-	return -1;
+		{
+			ASSERT( iRet == -1 );	// only one should be selected
+			iRet = i;
+		}
+	}
+	ASSERT( iRet != -1 );	// shouldn't call this if not expecting one to be selected
+	return iRet;
 }
 
 
