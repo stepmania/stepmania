@@ -103,15 +103,20 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		 * the effect can happen from .40 to .55 by setting offset to .40 and
 		 * delay to .85. */
 		const float fTotalPeriod = m_fEffectPeriodSeconds + m_fEffectDelay;
+		CHECKPOINT_M( ssprintf("%f = %f + %f", fTotalPeriod, m_fEffectPeriodSeconds, m_fEffectDelay) );
 		const float fSecsIntoPeriod = fmodfp( m_fSecsIntoEffect+m_fEffectOffset, fTotalPeriod );
+		CHECKPOINT_M( ssprintf("%f = fmodfp(%f + %f, %f)", fSecsIntoPeriod, m_fSecsIntoEffect, m_fEffectOffset, fTotalPeriod) );
 
 		float fPercentThroughEffect = SCALE( fSecsIntoPeriod, 0, m_fEffectPeriodSeconds, 0, 1 );
+		CHECKPOINT_M( ssprintf("%f = SCALE(%f, 0, %f, 0, 1)", fPercentThroughEffect, fSecsIntoPeriod, m_fEffectPeriodSeconds) );
 		fPercentThroughEffect = clamp( fPercentThroughEffect, 0, 1 );
+		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1,
+			ssprintf("%f", fPercentThroughEffect) );
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = sinf( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
-		ASSERT_M( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1,
-			ssprintf("%f, %f, %f, %f, %f, %f, %f", fPercentBetweenColors, fPercentThroughEffect, fSecsIntoPeriod, m_fEffectPeriodSeconds, m_fEffectDelay, m_fSecsIntoEffect, m_fEffectOffset ) );
+		ASSERT_M( fPercentBetweenColors >= 0 && fPercentBetweenColors <= 1,
+			ssprintf("%f, %f", fPercentBetweenColors, fPercentThroughEffect) );
 		float fOriginalAlpha = m_tempState.diffuse[0].a;
 
 		int i;
