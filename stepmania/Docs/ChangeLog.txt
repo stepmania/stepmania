@@ -1,3 +1,34 @@
+* 3.9 rc1
+Fixed movie frame semaphore timeout.
+Fixed stretched images becoming slightly transparent.
+Fixed MP3 sync for cut MP3s (TM4 Discow Moscow).
+Fixed ScreenRaveOptions text.
+Fixed image scaling causing slight transparency.
+Fixed slow "random vanish".
+Fixed some MPEG4 movies skipping frames and not looping cleanly.
+Windows: Intel 82845G reverted back to D3D.
+OSX: Fixed "Illegal instruction" on G3s.
+Added OSC3 "Sabishii Kute Loneliness" translit.
+Added kanji for Foonmix songs.
+
+* Alpha 24
+Fixed music sample not starting when a song is selected quickly.
+Fixed swapped NG/OK scoring.
+Fixed double-width slash character.
+Fixed loading half-doubles from KSFs.
+Fixed legacy songs not finishing with the song background.
+Fixed character rendering artifacts when a freeze segment lies on beat 0.
+Fixed screen overlay graphics not being reloaded on theme change.
+Fixed joystick mapping problems.
+Windows: DirectSound underrun fixes.
+Windows: Fixed refresh rate setting in D3D.
+Windows: Fixed crash when fullscreen D3D window loses focus.
+Windows: Use OpenGL for Intel 82845G.
+Linux: Fixed GTK window not being centered.
+Added OSC3 Red Sun translit.
+Player 2 Back button now defaults to NumLock instead of Insert.
+More options are saved to the profile.
+
 * Alpha 23
 Fixed garbled mono sounds.
 Fixed graphics being reset after exiting menus that don't affect graphics.
