@@ -856,19 +856,15 @@ Model::AdvanceFrame (float dt)
 			}
 			if (pLastRotationKey != 0 && pThisRotationKey != 0)
 			{
-				float d = pThisRotationKey->fTime - pLastRotationKey->fTime;
-				float s = (m_fCurrFrame - pLastRotationKey->fTime) / d;
+				const float s = SCALE( m_fCurrFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 
-				RageVector4 q1a(0,0,0,1);
-				RageQuatFromHPR( &q1a, RageVector3(pLastRotationKey->Rotation) * (180 / PI) );
-				RageVector4 q2a(0,0,0,1);
-				RageQuatFromHPR( &q2a, RageVector3(pThisRotationKey->Rotation) * (180 / PI) );
-				RageVector4 qa;
-				RageQuatSlerp( &qa, q1a, q2a, s );
+				RageVector4 q1, q2, q;
+				RageQuatFromHPR( &q1, RageVector3(pLastRotationKey->Rotation) * (180 / PI) );
+				RageQuatFromHPR( &q2, RageVector3(pThisRotationKey->Rotation) * (180 / PI) );
+				RageQuatSlerp( &q, q1, q2, s );
 
 				RageMatrix mm;
-				RageMatrixFromQuat( &mm, qa );
-
+				RageMatrixFromQuat( &mm, q );
 				MakeMatrix( m, mm );
 			}
 			else if (pLastRotationKey == 0)
