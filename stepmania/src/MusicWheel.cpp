@@ -532,7 +532,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				* so don't re-sort for them. */
 //				/* We're using sections, so use the section name as the top-level
 //				 * sort. */
-			if( so != SORT_BPM )
+			if( so != SORT_GRADE && so != SORT_BPM )
 				SortSongPointerArrayBySectionName(arraySongs, so);
 
 			// make WheelItemDatas with sections

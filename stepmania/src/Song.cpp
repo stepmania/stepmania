@@ -1298,11 +1298,11 @@ void SortSongPointerArrayByBPM( vector<Song*> &arraySongPointers )
 
 void AppendOctal( int n, int digits, CString &out )
 {
-	for( int p = digits; p >= 0; --p )
+	for( int p = digits-1; p >= 0; --p )
 	{
 		const int shift = p*3;
 		int n2 = (n >> shift) & 0x7;
-		out.insert( out.begin(), (char) n2 );
+		out.insert( out.end(), (char) (n2+'0') );
 	}
 }
 
@@ -1324,7 +1324,7 @@ void SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 
 		CString foo;
 		foo.reserve(256);
-		for( int g=NUM_GRADES-1; g>GRADE_NO_DATA; g-- )
+		for( int g=GRADE_TIER_1; g<=GRADE_NO_DATA; ++g )
 		{
 			int n = pSong->GetNumNotesWithGrade( (Grade)g );
 			AppendOctal( n, 3, foo );
