@@ -78,33 +78,21 @@ void ActorFrame::Update( float fDeltaTime )
 		(*it)->Update(fDeltaTime);
 }
 
+#define PropagateActorFrameCommand( cmd, type ) \
+	void ActorFrame::cmd( type f )		\
+	{									\
+		Actor::cmd( f );				\
+										\
+		/* set all sub-Actors */		\
+		for( unsigned i=0; i<m_SubActors.size(); i++ ) \
+			m_SubActors[i]->cmd( f );	\
+	}
 
-void ActorFrame::SetDiffuse( RageColor c )
-{
-	Actor::SetDiffuse( c );
-
-	// set all sub-Actors
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->SetDiffuse(c );
-}
-
-void ActorFrame::SetZTest( bool b )
-{
-	Actor::SetZTest( b );
-
-	// set all sub-Actors
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->SetZTest( b );
-}
-
-void ActorFrame::SetZWrite( bool b )
-{
-	Actor::SetZWrite( b );
-
-	// set all sub-Actors
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->SetZWrite( b );
-}
+PropagateActorFrameCommand( SetDiffuse,			RageColor )
+PropagateActorFrameCommand( SetDiffuseAlpha,	float )
+PropagateActorFrameCommand( SetZTest,			bool )
+PropagateActorFrameCommand( SetZWrite,			bool )
+PropagateActorFrameCommand( HurryTweening,		float )
 
 void ActorFrame::FinishTweening()
 {
@@ -113,15 +101,6 @@ void ActorFrame::FinishTweening()
 	// set all sub-Actors
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->FinishTweening();
-}
-
-void ActorFrame::HurryTweening( float factor )
-{
-	Actor::HurryTweening( factor );
-
-	// set all sub-Actors
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->HurryTweening( factor );
 }
 
 float ActorFrame::GetTweenTimeLeft() const
