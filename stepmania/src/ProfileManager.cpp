@@ -46,7 +46,6 @@ ProfileManager::ProfileManager()
 
 ProfileManager::~ProfileManager()
 {
-	SaveMachineProfile();
 }
 
 void ProfileManager::Init()

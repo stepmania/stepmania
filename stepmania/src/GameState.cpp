@@ -107,8 +107,7 @@ void GameState::ApplyCmdline()
 
 void GameState::Reset()
 {
-	if( !m_timeGameStarted.IsZero() && g_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
-		EndGame();
+	EndGame();
 	
 	
 	ASSERT( THEME );
@@ -316,6 +315,9 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 void GameState::EndGame()
 {
 	LOG->Trace( "GameState::EndGame" );
+
+	if( m_timeGameStarted.IsZero() || !g_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
+		return;
 
 	/* Finish the final stage. */
 	FinishStage();
