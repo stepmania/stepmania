@@ -1,15 +1,5 @@
-#ifndef NOTETYPES_H
-#define NOTETYPES_H
-/*
------------------------------------------------------------------------------
- File: NoteTypes.h
-
- Desc: 
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
------------------------------------------------------------------------------
-*/
+#ifndef NOTE_TYPES_H
+#define NOTE_TYPES_H
 
 #include "PlayerOptions.h"
 
@@ -37,7 +27,6 @@ static const TapNote TAP_ADDITION	= '5';
 // mine note - don't step!
 static const TapNote TAP_MINE		= '6';
 
-// MD 11/12/03 - for future modifiers
 // TAP_ADD_HOLD is to TAP_HOLD what TAP_ADDITION is to TAP_TAP.
 // There is no equivalent for TAP_MINE.
 static const TapNote TAP_ADD_HOLD	= '7';	// is this supposed to be TAP_ADD_HOLD_HEAD? -Chris
@@ -67,8 +56,6 @@ static const TapNote TAP_REMOVED_HOLD_HEAD	= '.';
 // KM-specific
 // Kills an auto-sound from a hold.
 static const TapNote TAP_REMOVED_HOLD_TAIL	= '\'';
-
-// MD 11/12/03 end
 
 // step for an item
 static const TapNote TAP_ATTACK_BEGIN		= 'a';
@@ -163,8 +150,29 @@ struct HoldNote
 	int		iTrack;	
 };
 
-
-
-
-
 #endif
+
+/*
+ * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */

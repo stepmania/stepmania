@@ -1555,6 +1555,11 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	}
 }
 
+/*bool GameState::IsNameBlacklisted( CString name )
+{
+
+}*/
+
 void GameState::StoreRankingName( PlayerNumber pn, CString name )
 {
 	//
