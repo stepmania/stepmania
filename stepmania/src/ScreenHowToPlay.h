@@ -24,19 +24,17 @@ public:
 	
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void DrawPrimitives();
 
 protected:
 	LifeMeterBar	m_LifeMeter;
 	Player			m_Player;
 	Model			m_mCharacter;
+	Model			m_mDancePad;
 
 	Song*			m_pSong;
 	float			m_fFakeSecondsIntoSong;
 	float			m_fSecondsUntilNextKeyFrame;
-	
-	/*#define NUM_KEY_FRAMES 10
-	float			m_fKeyFrames[NUM_KEY_FRAMES];
-	float			m_fCurKeyFrame;*/
 };
 
 

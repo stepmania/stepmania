@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "GameDef.h"
 #include "RageLog.h"
+#include "RageDisplay.h"
 #include "SongManager.h"
 #include "NoteFieldPositioning.h"
 #include "GameManager.h"
@@ -51,7 +52,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 
 
-	// Display character
+	// Display character+pad
 	if( GAMESTATE->m_pCharacters.size() )
 	{
 		int iRnd;
@@ -59,10 +60,15 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		if( iRnd != 0 )
 		{
 			m_mCharacter.LoadMilkshapeAscii( GAMESTATE->m_pCharacters[iRnd]->GetModelPath() );
+			m_mDancePad.LoadMilkshapeAscii("Characters\\DancePad-DDR.bones.txt");
 			m_mCharacter.LoadMilkshapeAsciiBones("howtoplay", GAMESTATE->m_pCharacters[iRnd]->GetHowToPlayAnimationPath() );
-			m_mCharacter.SetZoom(20);
-			m_mCharacter.Command("X,150;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,100;Y,425");
-			this->AddChild(&m_mCharacter);
+			
+			m_mCharacter.SetRotationX( 40 );
+			m_mDancePad.SetRotationX( 35 );
+			m_mCharacter.Command("X,150;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,120;Y,400");
+			m_mDancePad.Command("X,40;Y,310;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,230;Y,390");
+			this->AddChild(&m_mCharacter);		
+			this->AddChild(&m_mDancePad);
 		}
 	}
 	//
@@ -143,7 +149,7 @@ void ScreenHowToPlay::Update( float fDelta )
 	{
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
 		m_fFakeSecondsIntoSong += fDelta;
-		
+
 		if( GAMESTATE->m_bFreeze )
 		{
 			switch(int(GAMESTATE->m_fSongBeat))
@@ -189,7 +195,6 @@ void ScreenHowToPlay::Update( float fDelta )
 			};
 
 			m_mCharacter.Update( (0+(fDelta*1.08f)) );
-			//m_mCharacter.Draw();
 		};	
 
 	}
@@ -208,4 +213,22 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	}
 	ScreenAttract::HandleScreenMessage( SM );
+}
+
+void ScreenHowToPlay::DrawPrimitives()
+{
+	Screen::DrawPrimitives();
+	DISPLAY->SetLighting( true );
+	DISPLAY->SetLightDirectional( 
+		0, 
+		RageColor(0.5,0.5,0.5,1), 
+		RageColor(1,1,1,1),
+		RageColor(0,0,0,1),
+		RageVector3(0, 0, 1) );
+
+	m_mDancePad.Draw();
+	m_mCharacter.Draw();
+
+	DISPLAY->SetLightOff( 0 );
+	DISPLAY->SetLighting( false );
 }
