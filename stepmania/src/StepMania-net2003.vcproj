@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,lua-5.0\include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -63,10 +63,10 @@
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
+				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="archutils\Win32\verinc
+				CommandLine="disasm\verinc
 cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 "/>
 			<Tool
@@ -105,7 +105,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;"
+				AdditionalIncludeDirectories=".,SDL-1.2.6/include,SDL_image-1.2,vorbis,libjpeg,lua-5.0\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -147,10 +147,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				TypeLibraryName=".\../StepMania.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
+				CommandLine="disasm\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="archutils\Win32\verinc
+				CommandLine="disasm\verinc
 cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 "/>
 			<Tool
@@ -590,12 +590,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Attack.h">
 			</File>
 			<File
-				RelativePath=".\AutoKeysounds.cpp">
-			</File>
-			<File
-				RelativePath=".\AutoKeysounds.h">
-			</File>
-			<File
 				RelativePath="BannerCache.cpp">
 			</File>
 			<File
@@ -851,9 +845,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScoreKeeperRave.h">
 			</File>
 			<File
-				RelativePath="ScreenDimensions.cpp">
-			</File>
-			<File
 				RelativePath=".\Song.cpp">
 			</File>
 			<File
@@ -1090,12 +1081,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.h">
 					</File>
 					<File
-						RelativePath="arch\InputHandler\InputHandler_MonkeyKeyboard.cpp">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_MonkeyKeyboard.h">
-					</File>
-					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Para.cpp">
 					</File>
 					<File
@@ -1149,10 +1134,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\LowLevelWindow\LowLevelWindow.h">
 					</File>
 					<File
-						RelativePath="arch\LowLevelWindow\LowLevelWindow_Win32.cpp">
+						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.cpp">
 					</File>
 					<File
-						RelativePath="arch\LowLevelWindow\LowLevelWindow_Win32.h">
+						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1278,12 +1263,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\GotoURL.h">
 				</File>
 				<File
-					RelativePath="archutils\Win32\GraphicsWindow.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\GraphicsWindow.h">
-				</File>
-				<File
 					RelativePath="archutils\Win32\RegistryAccess.cpp">
 				</File>
 				<File
@@ -1309,12 +1288,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="archutils\Win32\VideoDriverInfo.h">
-				</File>
-				<File
-					RelativePath="archutils\Win32\WindowIcon.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\WindowIcon.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\WindowsResources.h">
@@ -1934,12 +1907,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="RageSoundManager.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundMixBuffer.cpp">
-			</File>
-			<File
-				RelativePath=".\RageSoundMixBuffer.h">
-			</File>
-			<File
 				RelativePath="RageSoundPosMap.cpp">
 			</File>
 			<File
@@ -1947,12 +1914,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageSoundReader.h">
-			</File>
-			<File
-				RelativePath=".\RageSoundReader_Chain.cpp">
-			</File>
-			<File
-				RelativePath=".\RageSoundReader_Chain.h">
 			</File>
 			<File
 				RelativePath="RageSoundReader_FileReader.cpp">
@@ -2007,12 +1968,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageSoundResampler.h">
-			</File>
-			<File
-				RelativePath=".\RageSoundUtil.cpp">
-			</File>
-			<File
-				RelativePath=".\RageSoundUtil.h">
 			</File>
 			<File
 				RelativePath="RageSurface.cpp">
@@ -2163,6 +2118,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="SDL_SaveJPEG.h">
+				</File>
+				<File
+					RelativePath="SDL_utils.cpp">
+				</File>
+				<File
+					RelativePath="SDL_utils.h">
 				</File>
 				<Filter
 					Name="pcre"
