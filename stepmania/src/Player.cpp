@@ -704,7 +704,6 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	}
 		
 	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
-	m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 
 	m_Judgment.SetJudgment( score );
 }
@@ -768,13 +767,11 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		{
 			iNumMissesFound++;
 			HandleTapRowScore( r );
-			m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 		}
 		else if( MissedMineOnThisRow )
 		{
 			iNumMinesMissed++;
 			HandleTapRowScore( r );
-			m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 		}
 	}
 
@@ -905,6 +902,8 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 
 	if(m_pSecondaryScoreKeeper)
 		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, iNumAdditions );
+
+	m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
 	if ( CROSSED(100) )	
