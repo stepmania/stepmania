@@ -778,11 +778,11 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_arrayNotes[pn].clear();
 
 	bool no_banner_change = false;
-	if(PREFSMAN->m_BannerCacheType == PREFSMAN->preload_none && m_MusicWheel.IsMoving()) 
-	{
+//	if(PREFSMAN->m_BannerCacheType == PREFSMAN->preload_none && m_MusicWheel.IsMoving()) 
+//	{
 		/* If we're moving fast and we didn't preload banners, don't touch it. */
-		no_banner_change = true;
-	}
+//		no_banner_change = true;
+//	}
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{
