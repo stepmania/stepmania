@@ -167,6 +167,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		val = (float) GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetNumTimesPlayed( PlayerMemCard(m_PlayerNumber) );
 		break;
 
+	case SONG_MACHINE_HIGH_NAME: /* set val for color */
 	case SONG_MACHINE_HIGH_SCORE:
 		val = 100.0f * GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( MEMORY_CARD_MACHINE ).fPercentDP;
 		break;
