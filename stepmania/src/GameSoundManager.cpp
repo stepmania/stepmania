@@ -10,6 +10,7 @@
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
+#include "song.h"
 
 GameSoundManager *SOUND = NULL;
 
@@ -71,9 +72,14 @@ struct MusicToPlay
 {
 	CString file, timing_file;
 	bool HasTiming;
+	TimingData timing_data;
 	bool force_loop;
 	float start_sec, length_sec, fade_len;
 	bool align_beat;
+	MusicToPlay()
+	{
+		HasTiming = false;
+	}
 };
 CircBuf<MusicToPlay *> g_MusicsToPlay;
 
@@ -99,14 +105,11 @@ CHECKPOINT;
 	NewMusic->m_Timing = g_Playing->m_Timing;
 CHECKPOINT;
 
-	/* See if we can find timing data. */
-	ToPlay.HasTiming = false;
-CHECKPOINT;
-
-	if( IsAFile(ToPlay.timing_file) )
+	/* See if we can find timing data, if it's not already loaded. */
+	if( !ToPlay.HasTiming && IsAFile(ToPlay.timing_file) )
 	{
 		LOG->Trace("Found '%s'", ToPlay.timing_file.c_str());
-		if( SMLoader::LoadTimingFromFile( ToPlay.timing_file, NewMusic->m_NewTiming ) )
+		if( SMLoader::LoadTimingFromFile( ToPlay.timing_file, ToPlay.timing_data ) )
 			ToPlay.HasTiming = true;
 	}
 CHECKPOINT;
@@ -192,6 +195,8 @@ CHECKPOINT;
 	L.Unlock();
 	{
 		NewMusic->m_HasTiming = ToPlay.HasTiming;
+		if( ToPlay.HasTiming )
+			NewMusic->m_NewTiming = ToPlay.timing_data;
 		NewMusic->m_TimingDelayed = true;
 		NewMusic->m_Music->Load( ToPlay.file, false );
 
@@ -474,6 +479,32 @@ void GameSoundManager::PlayMusic( const CString &file, const CString &timing_fil
 	/* If no timing file was specified, look for one in the same place as the music file. */
 	if( ToPlay->timing_file == "" )
 		ToPlay->timing_file = SetExtension( file, "sm" );
+
+	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
+	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
+		delete ToPlay;
+
+	if( !g_ThreadedMusicStart )
+		StartQueuedSounds();
+}
+
+void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
+{
+	MusicToPlay *ToPlay = new MusicToPlay;
+	
+
+	ToPlay->file = file;
+	if( pTiming )
+	{
+		ToPlay->HasTiming = true;
+		ToPlay->timing_data = *pTiming;
+	}
+
+	ToPlay->force_loop = force_loop;
+	ToPlay->start_sec = start_sec;
+	ToPlay->length_sec = length_sec;
+	ToPlay->fade_len = fade_len;
+	ToPlay->align_beat = align_beat;
 
 	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
 	if( !g_MusicsToPlay.write( &ToPlay, 1 ) )
