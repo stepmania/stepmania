@@ -173,14 +173,14 @@ void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escap
 	{
 		len = _tcselen( escape, psz, end );
 //		char* pss = ps->GetBufferSetLength( len );
-		char* szTemp = new char[len];
+		char szTemp[len];
 		strlen( szTemp, escape, psz, end );
 		*ps = szTemp;
 	}
 	else
 	{
 //		char* pss = ps->GetBufferSetLength(len + 1 );
-		char* szTemp = new char[len+1];
+		char szTemp[len+1];
 		memcpy( szTemp, psz, len );
 		szTemp[len] = '\0';
 		*ps = szTemp;
