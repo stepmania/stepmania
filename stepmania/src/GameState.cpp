@@ -674,6 +674,15 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 	}
 }
 
+int GameState::GetNumHumanPlayers() const
+{
+	int count = 0;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( IsHumanPlayer(p) )
+			count++;
+	return count;
+}
+
 PlayerNumber GameState::GetFirstHumanPlayer() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )

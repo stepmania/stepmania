@@ -76,6 +76,7 @@ public:
 
 	bool IsHumanPlayer( PlayerNumber pn ) const;
 	bool IsHumanPlayer( int p ) const { return IsHumanPlayer( (PlayerNumber)p ); };
+	int GetNumHumanPlayers() const;
 	PlayerNumber GetFirstHumanPlayer() const;
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool IsCpuPlayer( int p ) const { return IsCpuPlayer( (PlayerNumber)p ); };
