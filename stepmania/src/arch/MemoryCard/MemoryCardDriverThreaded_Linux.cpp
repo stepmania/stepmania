@@ -220,7 +220,10 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	else
 	{
 	  if( !UsbStorageDevicesChanged() )
-	    return;
+	    {
+	      usleep(1000*300);  // 300 ms
+	      return;
+	    }
 	}
 	
 	// TRICKY: We're waiting for a change in the USB device list, but 
@@ -272,7 +275,15 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	bool bDidAnyMounts = false;	
 	
 	// unmount all disconnects
-	if( ShouldDoOsMount() )
+	//if( ShouldDoOsMount() )
+	for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
+	  {
+	    UsbStorageDevice &d = m_vDevicesLastSeen[i];
+	    d.bNeedsWriteTest = false;
+	    d.bWriteTestSucceeded = true;
+	  }
+
+	if( false )
 	{
 		for( unsigned i=0; i<vDisconnects.size(); i++ )
 		{
@@ -293,6 +304,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 			bDidAnyMounts = true;
 			
 			d.bNeedsWriteTest = false;
+
+			d.bWriteTestSucceeded = true;
 			
 			CString sCommand;
 			
@@ -319,7 +332,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 			profile.LoadEditableDataFromDir( sProfileDir );
 			d.sName = profile.GetDisplayName();
 			UnmountMountPoint( TEMP_MOUNT_POINT );
-			
+
 			LOG->Trace( "WriteTest: %s, Name: %s", d.bWriteTestSucceeded ? "succeeded" : "failed", d.sName.c_str() );
 		}
 	}
@@ -770,7 +783,11 @@ void MemoryCardDriverThreaded_Linux::Mount( UsbStorageDevice* pDevice, CString s
         // HACK: Do OS mount for m_bMemoryCardsMountOnlyWhenNecessary
         CString sCommand = "mount " + pDevice->sOsMountDir;
         LOG->Trace( "hack mount (%s)", sCommand.c_str() );
-        ExecuteCommand( sCommand );
+        bool bMountedSuccessfully = ExecuteCommand( sCommand );
+
+	pDevice->bWriteTestSucceeded = bMountedSuccessfully && TestWrite( pDevice->sOsMountDir );
+
+	LOG->Trace( "WriteTest: %s, Name: %s", pDevice->bWriteTestSucceeded ? "succeeded" : "failed", pDevice->sName.c_str() );
 }
 
 void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice, CString sMountPoint )

@@ -124,7 +124,7 @@ bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 		return false;
 
 	this->Mount( pDevice, sMountPoint );
-	return true;
+	return pDevice->bWriteTestSucceeded;
 }
 
 
