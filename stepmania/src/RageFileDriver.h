@@ -23,6 +23,9 @@ public:
 	virtual void FlushDirCache( const CString &sPath );
 	virtual bool Remove( const CString &sPath ) { return false; }
 
+	/* Optional: Move to a different place, as if reconstructed with a different path. */
+	virtual bool Remount( const CString &sPath ) { return false; }
+
 	/* Possible error returns from Open, in addition to standard errno.h values: */
 	enum { ERROR_WRITING_NOT_SUPPORTED = -1 };
 // protected:

@@ -498,6 +498,22 @@ void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )
 	}
 }
 
+void RageFileManager::Remount( CString sMountpoint, CString sPath )
+{
+	RageFileDriver *pDriver = FILEMAN->GetFileDriver( sMountpoint );
+	if( pDriver == NULL )
+	{
+		LOG->Warn( "Remount(%s,%s): mountpoint not found",
+			sMountpoint.c_str(), sPath.c_str() );
+		return;
+	}
+
+	if( !pDriver->Remount(sPath) )
+		LOG->Warn( "Remount(%s,%s): remount failed (does the driver support remounting?)" );
+
+	FILEMAN->ReleaseFileDriver( pDriver );
+}
+
 bool RageFileManager::IsMounted( CString MountPoint )
 {
 	LockMut( *g_Mutex );

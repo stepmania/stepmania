@@ -54,14 +54,9 @@ public:
 
 
 RageFileDriverDirect::RageFileDriverDirect( CString root_ ):
-	RageFileDriver( new DirectFilenameDB(root_) ),
-	root(root_)
+	RageFileDriver( new DirectFilenameDB(root_) )
 {
-	if( root.Right(1) != "/" )
-		root += '/';
-
-	/* If the root path doesn't exist, create it. */
-	CreateDirectories( root );
+	Remount( root_ );
 }
 
 
@@ -174,6 +169,18 @@ RageFileBasic *RageFileObjDirect::Copy() const
 bool RageFileDriverDirect::Ready()
 {
 	return PathReady( root );
+}
+
+bool RageFileDriverDirect::Remount( const CString &sPath )
+{
+	root = sPath;
+	if( root.Right(1) != "/" )
+		root += '/';
+
+	/* If the root path doesn't exist, create it. */
+	CreateDirectories( root );
+
+	return true;
 }
 
 static const unsigned int BUFSIZE = 1024*64;

@@ -34,6 +34,11 @@ public:
 
 	void Mount( CString Type, CString RealPath, CString MountPoint );
 	void Unmount( CString Type, CString Root, CString MountPoint );
+
+	/* Change the root of a filesystem.  Only a couple drivers support this; it's
+	 * used to change memory card mountpoints without having to actually unmount
+	 * the driver. */
+	static void Remount( CString sMountpoint, CString sPath );
 	bool IsMounted( CString MountPoint );
 	bool MountpointIsReady( CString MountPoint );
 	struct DriverLocation
