@@ -49,7 +49,9 @@ void RageSound_DSound::MixerThread()
 	while(!shutdown) {
 		VDCHECKPOINT;
 
-		float sleep_secs = (float(chunksize/2) / samplerate);
+		/* Sleep for the size of one chunk. */
+		const int chunksize_frames = buffersize_frames / num_chunks;
+		float sleep_secs = (float(chunksize_frames) / samplerate);
 		Sleep(int(1000 * sleep_secs));
 
 		VDCHECKPOINT;
