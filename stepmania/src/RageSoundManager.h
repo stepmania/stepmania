@@ -52,13 +52,13 @@ public:
 
 	RageSound *PlaySound(RageSound &snd);
 	void StopPlayingSound(RageSound &snd);
-	void GetCopies(RageSound &snd, vector<RageSound *> &snds);
 	/* A list of all sounds that currently exist.  RageSound adds and removes
 	 * itself to this. */
 	set<RageSound *> all_sounds;
 	
 	/* RageSound adds and removes itself to this. */
 	set<RageSound *> playing_sounds;
+	void GetCopies(RageSound &snd, vector<RageSound *> &snds);
 
 	static void MixAudio(Sint16 *dst, const Sint16 *src, Uint32 len, float volume);
 	static void AttenuateBuf( Sint16 *buf, int samples, float vol );
