@@ -256,6 +256,7 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 		0: See if client has song
 		1: See if client has song, if so, scroll to song
 		2: See if client has song, if so, scroll to song, and play that song
+		3: Blindly start song
     NT		Song Title    (As gotten by GetTranslitMainTitle)
     NT		Song Artist   (As Gotten by GetTranslitArtist)
     NT		Song Subtitle (As gotten by GetTranslitSubTitle)

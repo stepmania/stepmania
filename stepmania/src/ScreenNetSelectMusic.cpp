@@ -380,6 +380,8 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 			switch (NSMAN->m_iSelectMode)
 			{
+			case 3:
+				StartSelectedSong();
 			case 2: //We need to do cmd 1 as well here
 				if (haveSong)
 				{
