@@ -16,6 +16,7 @@
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Notes.h"
+#include "SongManager.h"
 
 
 const int NUM_FEET_IN_METER					=	10;
@@ -40,7 +41,7 @@ void FootMeter::SetFromNotes( Notes* pNotes )
 		else
 			this->SetEffectNone();
 
-		SetDiffuse( pNotes->GetColor() );
+		SetDiffuse( SONGMAN->GetDifficultyColor(pNotes->GetDifficulty()) );
 	}
 	else
 	{

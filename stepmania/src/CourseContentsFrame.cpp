@@ -61,12 +61,13 @@ CourseContentDisplay::CourseContentDisplay()
 	this->AddChild( &m_textDifficultyNumber );
 }
 
-void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
+
+void CourseContentDisplay::LoadFromSongAndNotes( int iNum, Song* pSong, Notes* pNotes )
 {
 	m_textNumber.SetText( ssprintf("%d", iNum) );
 
 	RageColor colorGroup = SONGMAN->GetSongColor( pSong );
-	RageColor colorNotes = pNotes->GetColor();
+	RageColor colorNotes = SONGMAN->GetDifficultyColor( pNotes->GetDifficulty() );
 
 	m_TextBanner.LoadFromSong( pSong );
 	m_TextBanner.SetDiffuse( colorGroup );
@@ -78,7 +79,39 @@ void CourseContentDisplay::Load( int iNum, Song* pSong, Notes* pNotes )
 	m_textDifficultyNumber.SetDiffuse( colorNotes );
 }
 
+void CourseContentDisplay::LoadFromDifficulty( int iNum, Difficulty dc )
+{
+	m_textNumber.SetText( ssprintf("%d", iNum) );
 
+	RageColor colorGroup = RageColor(1,1,1,1);	// TODO: What should this be?
+	RageColor colorNotes = SONGMAN->GetDifficultyColor( dc );
+
+	m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
+	m_TextBanner.SetDiffuse( colorGroup );
+
+	m_textFoot.SetText( "1" );
+	m_textFoot.SetDiffuse( colorNotes );
+
+	m_textDifficultyNumber.SetText( "?" );
+	m_textDifficultyNumber.SetDiffuse( colorNotes );
+}
+
+void CourseContentDisplay::LoadFromMeterRange( int iNum, int iLow, int iHigh )
+{
+	m_textNumber.SetText( ssprintf("%d", iNum) );
+
+	RageColor colorGroup = RageColor(1,1,1,1);	// TODO: What should this be?
+	RageColor colorNotes = RageColor(1,1,1,1);
+
+	m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
+	m_TextBanner.SetDiffuse( colorGroup );
+
+	m_textFoot.SetText( "1" );
+	m_textFoot.SetDiffuse( colorNotes );
+
+	m_textDifficultyNumber.SetText( ssprintf("%d-%d", iLow, iHigh) );
+	m_textDifficultyNumber.SetDiffuse( colorNotes );
+}
 
 CourseContentsFrame::CourseContentsFrame()
 {
@@ -105,24 +138,38 @@ void CourseContentsFrame::SetFromCourse( Course* pCourse )
 	vector<Song*> vSongs;
 	vector<Notes*> vNotes;
 	vector<CString> vsModifiers;
-	pCourse->GetCourseInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
+	pCourse->GetStageInfo( vSongs, vNotes, vsModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
 
 	for( int i=0; i<min((int)vSongs.size(), MAX_TOTAL_CONTENTS); i++ )
 	{
-		Song* pSong = vSongs[i];
-		Notes* pNotes = vNotes[i];
-		CString sModifiers = vsModifiers[i];
+		CourseContentDisplay& display = m_CourseContentDisplays[m_iNumContents];
+	
+		if( pCourse->IsMysterySong(i) )
+		{
+			Difficulty dc = pCourse->GetDifficulty(i);
+			int iMeterLow, iMeterHigh;
+			pCourse->GetMeterRange(i, iMeterLow, iMeterHigh);
 
-		LOG->Trace( "Adding song '%s'\n", pSong->m_sMainTitle.GetString() );
-		m_CourseContentDisplays[m_iNumContents].Load( m_iNumContents+1, pSong, pNotes );
-		m_CourseContentDisplays[m_iNumContents].SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
-		m_CourseContentDisplays[m_iNumContents].StopTweening();
-		m_CourseContentDisplays[m_iNumContents].BeginTweening( m_iNumContents*0.1f );
-		m_CourseContentDisplays[m_iNumContents].SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + m_iNumContents) * float(ContentsBarHeight) );
+			if( dc == DIFFICULTY_INVALID )
+				display.LoadFromMeterRange( m_iNumContents+1, iMeterLow, iMeterHigh );
+			else
+				display.LoadFromDifficulty( m_iNumContents+1, pCourse->GetDifficulty(i) );
+		}
+		else
+		{
+			Song* pSong = vSongs[i];
+			Notes* pNotes = vNotes[i];
+			CString sModifiers = vsModifiers[i];
+			display.LoadFromSongAndNotes( m_iNumContents+1, pSong, pNotes );
+		}
+
+		display.SetXY( 0, -((MAX_VISIBLE_CONTENTS-1)/2) * float(ContentsBarHeight) );
+		display.StopTweening();
+		display.BeginTweening( m_iNumContents*0.1f );
+		display.SetTweenY( (-(MAX_VISIBLE_CONTENTS-1)/2 + m_iNumContents) * float(ContentsBarHeight) );
 		
 		m_iNumContents ++;
 	}
-	LOG->Trace( "m_iNumContents is %d\n", m_iNumContents );
 }
 
 void CourseContentsFrame::Update( float fDeltaTime )

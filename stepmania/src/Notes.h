@@ -45,7 +45,6 @@ public:
 	void			SetNoteData( NoteData* pNewNoteData );
 	void			SetSMNoteData( const CString &out );
 	CString 		GetSMNoteData() const;
-	RageColor		GetColor() const;	// a function of difficulty
 
 	// initializers
 	void AutogenFrom( Notes *parent, NotesType ntTo );

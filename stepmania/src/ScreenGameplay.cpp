@@ -141,7 +141,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	case PLAY_MODE_ENDLESS:
 		{
 			Course* pCourse = GAMESTATE->m_pCurCourse;
-			pCourse->GetCourseInfo( m_apCourseSongs, m_apCourseNotes, m_asCourseModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
+			pCourse->GetStageInfo( m_apCourseSongs, m_apCourseNotes, m_asCourseModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType, false );
 
 			int iTotalMeter = 0;
 			int iTotalPossibleDancePoints = 0;

@@ -247,25 +247,55 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	//
 	// update persistent statistics
 	//
-	bool bIsPlayerEnabled[NUM_PLAYERS];
-	for( p=0; p<NUM_PLAYERS; p++ )
-		bIsPlayerEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
-	int iRankingLine[NUM_PLAYERS] = { -1, -1 };
 	bool bNewRecord[NUM_PLAYERS] = { false, false };
+
 
 	switch( m_ResultMode )
 	{
 	case RM_ARCADE_STAGE:
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p) )
-				GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.fScore[p], bNewRecord[p] );
+		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.fScore[p], bNewRecord[p] );
+		}
 		break;
 	case RM_ARCADE_SUMMARY:
+		{
+			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			bool bIsPlayerEnabled[NUM_PLAYERS];
+			for( p=0; p<NUM_PLAYERS; p++ )
+				bIsPlayerEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
+
+			RankingCategory cat[NUM_PLAYERS];
+			int iRankingIndex[NUM_PLAYERS];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
+				cat[p] = AverageMeterToRankingCategory( fAverageMeter );
+			}
+
+			SONGMAN->AddScores( nt, bIsPlayerEnabled, cat, stageStats.fScore, iRankingIndex );
+
+			COPY( GAMESTATE->m_RankingCategory, cat );
+			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
+			GAMESTATE->m_RankingNotesType = nt;
+		}
 		break;
 	case RM_COURSE:
-		NotesType nt;
-		nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-		GAMESTATE->m_pCurCourse->AddScores( nt, bIsPlayerEnabled, stageStats.iActualDancePoints, stageStats.fAliveSeconds, iRankingLine, bNewRecord );
+		{
+			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			bool bIsPlayerEnabled[NUM_PLAYERS];
+			for( p=0; p<NUM_PLAYERS; p++ )
+				bIsPlayerEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
+
+			int iRankingIndex[NUM_PLAYERS];
+
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			pCourse->AddScores( nt, bIsPlayerEnabled, stageStats.iActualDancePoints, stageStats.fAliveSeconds, iRankingIndex, bNewRecord );
+			COPY( GAMESTATE->m_iRankingIndex, iRankingIndex );
+			GAMESTATE->m_pRankingCourse = pCourse;
+			GAMESTATE->m_RankingNotesType = nt;
+		}
 		break;
 	default:
 		ASSERT(0);

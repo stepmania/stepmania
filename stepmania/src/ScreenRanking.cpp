@@ -211,9 +211,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
 					bRecentHighScore |=
-						pts.nt == GAMESTATE->m_LastRankingNotesType  &&
-						GAMESTATE->m_LastRankingCategory[p] == pts.category  &&
-						GAMESTATE->m_iLastRankingIndex[p] == l;
+						pts.nt == GAMESTATE->m_RankingNotesType  &&
+						GAMESTATE->m_RankingCategory[p] == pts.category  &&
+						GAMESTATE->m_iRankingIndex[p] == l;
 				}
 
 				if( bRecentHighScore )
@@ -248,9 +248,9 @@ void ScreenRanking::SetPage( PageToShow pts )
 				m_textTime[l].SetDiffuse( TEXT_COLOR );
 				for( int p=0; p<NUM_PLAYERS; p++ )
 				{
-					if( pts.pCourse == GAMESTATE->m_pLastPlayedCourse  &&
-						pts.nt == GAMESTATE->m_LastRankingNotesType  &&
-						GAMESTATE->m_iLastRankingIndex[p] == l )
+					if( pts.pCourse == GAMESTATE->m_pRankingCourse  &&
+						pts.nt == GAMESTATE->m_RankingNotesType  &&
+						GAMESTATE->m_iRankingIndex[p] == l )
 					{
 						m_textNames[l].SetEffectBlinking();
 						m_textScores[l].SetEffectBlinking();

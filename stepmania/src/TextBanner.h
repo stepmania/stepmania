@@ -19,9 +19,14 @@ class TextBanner : public ActorFrame
 {
 public:
 	TextBanner();
-	bool LoadFromSong( const Song* pSong );
+	void LoadFromSong( const Song* pSong );
+	void LoadFromString( 
+		CString sDisplayTitle, CString sTranslitTitle, 
+		CString sDisplaySubTitle, CString sTranslitSubTitle, 
+		CString sDisplayArtist, CString sTranslitArtist );
 
 private:
+
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 };
 

@@ -89,20 +89,14 @@ TextBanner::TextBanner()
 }
 
 
-bool TextBanner::LoadFromSong( const Song* pSong )
+void TextBanner::LoadFromString( 
+	CString sDisplayTitle, CString sTranslitTitle, 
+	CString sDisplaySubTitle, CString sTranslitSubTitle, 
+	CString sDisplayArtist, CString sTranslitArtist )
 {
-	if( pSong == NULL )
-	{
-		m_textTitle.SetText( "" );
-		m_textSubTitle.SetText( "" );
-		m_textArtist.SetText( "" );
-		return true;
-	}
-
-	m_textTitle.SetText( pSong->GetDisplayMainTitle(), pSong->GetTranslitMainTitle() );
-	m_textSubTitle.SetText( pSong->GetDisplaySubTitle(), pSong->GetTranslitSubTitle() );
-	m_textArtist.SetText( g_sArtistPrependString + pSong->GetDisplayArtist(),
-						  g_sArtistPrependString + pSong->GetTranslitArtist() );
+	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );
+	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
+	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
 
 	bool bTwoLines = m_textSubTitle.GetText().size() == 0;
 
@@ -129,7 +123,20 @@ bool TextBanner::LoadFromSong( const Song* pSong )
 	m_textTitle.SetY( fTitleY );
 	m_textSubTitle.SetY( fSubTitleY );
 	m_textArtist.SetY( fArtistY );
-
-
-	return true;
 }
+
+void TextBanner::LoadFromSong( const Song* pSong )
+{
+	CString sDisplayTitle = pSong ? pSong->GetDisplayMainTitle() : "";
+	CString sTranslitTitle = pSong ? pSong->GetTranslitMainTitle() : "";
+	CString sDisplaySubTitle = pSong ? pSong->GetDisplaySubTitle() : "";
+	CString sTranslitSubTitle = pSong ? pSong->GetTranslitSubTitle() : "";
+	CString sDisplayArtist = pSong ? g_sArtistPrependString + pSong->GetDisplayArtist() : "";
+	CString sTranslitArtist = pSong ? g_sArtistPrependString + pSong->GetTranslitArtist() : "";
+
+	LoadFromString( 
+		sDisplayTitle, sTranslitTitle, 
+		sDisplaySubTitle, sTranslitSubTitle, 
+		sDisplayArtist, sTranslitArtist );
+}
+

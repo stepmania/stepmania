@@ -23,14 +23,8 @@
 #include "RageException.h"
 #include "MsdFile.h"
 #include "GameManager.h"
-#include "ThemeManager.h"
 
 
-#define COLOR_BEGINNER	THEME->GetMetricC("Notes","ColorBeginner")
-#define COLOR_EASY		THEME->GetMetricC("Notes","ColorEasy")
-#define COLOR_MEDIUM	THEME->GetMetricC("Notes","ColorMedium")
-#define COLOR_HARD		THEME->GetMetricC("Notes","ColorHard")
-#define COLOR_CHALLENGE	THEME->GetMetricC("Notes","ColorChallenge")
 
 Notes::Notes()
 {
@@ -104,19 +98,6 @@ CString Notes::GetSMNoteData() const
 	}
 
 	return *notes_comp;
-}
-
-RageColor Notes::GetColor() const
-{
-	switch( GetDifficulty() )
-	{
-	case DIFFICULTY_BEGINNER:	return COLOR_BEGINNER;
-	case DIFFICULTY_EASY:		return COLOR_EASY;
-	case DIFFICULTY_MEDIUM:		return COLOR_MEDIUM;
-	case DIFFICULTY_HARD:		return COLOR_HARD;
-	case DIFFICULTY_CHALLENGE:	return COLOR_CHALLENGE;
-	default:	ASSERT(0);	return COLOR_BEGINNER;
-	}
 }
 
 void Notes::TidyUpData()

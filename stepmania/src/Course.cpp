@@ -154,17 +154,53 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
-			CString sSongDir = sParams[1];
-			Difficulty dc = StringToDifficulty( sParams[2] );
-			CString sModifiers = sParams[3];
+			// infer entry::Type from the first param
+			Entry new_entry;
 
-			if( sSongDir.GetLength() == 0 ) {
-			    /* Err. */
-			    LOG->Trace( "Course file '%s' has an empty #SONG.  Ignored.", sPath.GetString(), sSongDir.GetString() );
-			    continue;
+			if( sParams[1].Left(strlen("PlayersBest")) == "PlayersBest" )
+			{
+				new_entry.type = Entry::players_best;
+				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("PlayersBest")) ) - 1;
+				CLAMP( new_entry.players_index, 0, 500 );
 			}
-			
-			m_entries.push_back( course_entry(sSongDir, dc, sModifiers) );
+			else if( sParams[1].Left(strlen("PlayersWorst")) == "PlayersWorst" )
+			{
+				new_entry.type = Entry::players_worst;
+				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("PlayersWorst")) ) - 1;
+				CLAMP( new_entry.players_index, 0, 500 );
+			}
+			else if( sParams[1] == "*" )
+			{
+				new_entry.type = Entry::random;
+			}
+			else if( sParams[1].Right(1) == "*" )
+			{
+				new_entry.type = Entry::random_within_group;
+				CString sThrowAway;
+				splitrelpath( sParams[1], new_entry.group_name, sThrowAway, sThrowAway );
+				new_entry.group_name.resize( new_entry.group_name.size()-1 );		// chomp triling slash
+			}
+			else
+			{
+				new_entry.type = Entry::fixed;
+				CString sThrowAway;
+				splitrelpath( sParams[1], new_entry.group_name, new_entry.song_name, sThrowAway );
+			}
+
+			new_entry.difficulty = StringToDifficulty( sParams[2] );
+			if( new_entry.difficulty == DIFFICULTY_INVALID )
+			{
+				int retval = sscanf( sParams[2], "%d..%d", &new_entry.low_meter, &new_entry.high_meter );
+				if( retval != 2 )
+				{
+					new_entry.low_meter = 3;
+					new_entry.high_meter = 6;
+				}
+			}
+
+			new_entry.modifiers = sParams[3];
+
+			m_entries.push_back( new_entry );
 		}
 
 		else
@@ -205,11 +241,12 @@ void Course::AutoGenEndlessFromGroupAndDifficulty( CString sGroupName, Difficult
 		ASSERT(0);
 	}
 
-	for( unsigned s=0; s<apSongsInGroup.size(); s++ )
-	{
-		Song* pSong = apSongsInGroup[s];
-		m_entries.push_back( course_entry(pSong->GetSongDir(), dc, "") );
-	}
+	// only need one song because it repeats
+	Entry e;
+	e.type = Entry::random_within_group;
+	e.group_name = sGroupName;
+	e.difficulty = dc;
+	m_entries.push_back( e );
 }
 
 
@@ -221,8 +258,13 @@ bool Course::HasDifficult() const
 	return true;
 }
 
+bool Course::IsPlayableIn( NotesType nt ) const
+{
+	return true;
+}
 
-void Course::GetCourseInfo( 
+
+void Course::GetStageInfo( 
 	vector<Song*>& vSongsOut, 
 	vector<Notes*>& vNotesOut, 
 	vector<CString>& vsModifiersOut, 
@@ -233,58 +275,91 @@ void Course::GetCourseInfo(
 		ASSERT( HasDifficult() );
 
 
-	vector<course_entry> entries = m_entries;
+	vector<Entry> entries = m_entries;
 
 	if( m_bRandomize )
 		random_shuffle( entries.begin(), entries.end() );
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
-		CString sSongDir = entries[i].songDir;
+		const Entry& e = entries[i];
 
-		Song* pSong;
-		if( sSongDir.Left(strlen("PlayersBest")) == "PlayersBest" )
+		Song* pSong = NULL;	// fill this in
+		Notes* pNotes = NULL;	// fill this in
+
+		vector<Song*> vSongsByMostPlayed = SONGMAN->GetAllSongs();
+		SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
+
+
+		switch( e.type )
 		{
-			int iNumber = atoi( sSongDir.Right(sSongDir.length()-strlen("PlayersBest")) );
-			int index = iNumber - 1;
-			pSong = SONGMAN->GetPlayersBest( index );
+		case Entry::fixed:
+			pSong = SONGMAN->GetSongFromDir( e.group_name + "/" + e.song_name );
+			break;
+		case Entry::random:
+		case Entry::random_within_group:
+			{
+				vector<Song*> vSongs;
+				SONGMAN->GetSongs( vSongs, e.group_name );
+
+				if( vSongs.size() == 0 )
+					break;
+
+				// probe to find a song with the notes we want
+				for( int j=0; j<500; j++ )	// try 500 times before giving up
+				{
+					pSong = vSongs[rand()%vSongs.size()];
+					if( e.difficulty == DIFFICULTY_INVALID )
+						pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter );
+					else
+						pNotes = pSong->GetNotes( nt, e.difficulty );
+					if( pNotes )	// found a match
+						break;		// stop searching
+					else
+					{
+						pSong = NULL;
+						pNotes = NULL;
+					}
+				}
+			}
+			break;
+		case Entry::players_best:
+		case Entry::players_worst:
+			{
+				if( e.players_index >= (int)vSongsByMostPlayed.size() )
+					break;
+
+				switch( e.type )
+				{
+				case Entry::players_best:
+					pSong = vSongsByMostPlayed[e.players_index];
+					break;
+				case Entry::players_worst:
+					pSong = vSongsByMostPlayed[vSongsByMostPlayed.size()-1-e.players_index];
+					break;
+				default:
+					ASSERT(0);
+				}
+
+				if( e.difficulty == DIFFICULTY_INVALID )
+					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter );
+				else
+					pNotes = pSong->GetNotes( nt, e.difficulty );
+
+				if( pNotes == NULL )
+					pNotes = pSong->GetClosestNotes( nt, DIFFICULTY_MEDIUM );
+			}
+			break;
+		default:
+			ASSERT(0);
 		}
-		else if( sSongDir.Left(strlen("PlayersWorst")) == "PlayersWorst" )
-		{
-			int iNumber = atoi( sSongDir.Right(sSongDir.length()-strlen("PlayersWorst")) );
-			int index = iNumber - 1;
-			pSong = SONGMAN->GetPlayersWorst( index );
-		}
-		else if( sSongDir.Right(1) == "*" )
-		{
-			CStringArray asSongDirs;
-			GetDirListing( sSongDir, asSongDirs, true, true );
-			if( asSongDirs.empty() )
-				pSong = NULL;
-			else
-				pSong = FindSong( asSongDirs[rand()%asSongDirs.size()] );
-		}
-		else
-			pSong = FindSong( sSongDir );
 
-		if( pSong == NULL )
-			continue;	// skip
-
-
-		Difficulty dc = entries[i].difficulty;
-		if( bDifficult  &&  dc != NUM_DIFFICULTIES-1 )
-			dc = (Difficulty)(dc+1);
-		Notes* pNotes = pSong->GetNotes( nt, dc );
-
-		if( pNotes == NULL )
-			continue;	// skip
-
-
-		CString sModifiers = entries[i].modifiers;
+		if( !pSong || !pNotes )
+			continue;	// this song entry isn't playable.  Skip.
 
 		vSongsOut.push_back( pSong ); 
 		vNotesOut.push_back( pNotes ); 
-		vsModifiersOut.push_back( sModifiers );
+		vsModifiersOut.push_back( e.modifiers );
 	}
 }
 
@@ -298,7 +373,7 @@ bool Course::GetFirstStageInfo(
 	vector<Notes*> vNotes; 
 	vector<CString> vsModifiers;
 
-	GetCourseInfo(
+	GetStageInfo(
 		vSongs, 
 		vNotes, 
 		vsModifiers, 
@@ -326,8 +401,26 @@ RageColor Course::GetColor() const
 
 bool Course::IsMysterySong( int stage ) const
 {
-	CString sSongDir = m_entries[stage].songDir;
-	return sSongDir.Right(1) == "*";
+	switch( m_entries[stage].type )
+	{
+	case Entry::fixed:					return false;
+	case Entry::random:					return true;
+	case Entry::random_within_group:	return true;
+	case Entry::players_best:			return false;
+	case Entry::players_worst:			return false;
+	default:		ASSERT(0);			return true;
+	}
+}
+
+Difficulty Course::GetDifficulty( int stage ) const
+{
+	return m_entries[stage].difficulty;
+}
+
+void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const
+{
+	iMeterLowOut = m_entries[stage].low_meter;
+	iMeterHighOut = m_entries[stage].high_meter;
 }
 
 bool Course::ContainsAnyMysterySongs() const
@@ -346,7 +439,7 @@ bool Course::GetTotalSeconds( float& fSecondsOut ) const
 	vector<Song*> vSongsOut;
 	vector<Notes*> vNotesOut;
 	vector<CString> vsModifiersOut;
-	GetCourseInfo(
+	GetStageInfo(
 		vSongsOut, 
 		vNotesOut, 
 		vsModifiersOut, 
@@ -380,9 +473,6 @@ struct RankingToInsert
 
 void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDancePoints[NUM_PLAYERS], float fSurviveTime[NUM_PLAYERS], int iRankingIndexOut[NUM_PLAYERS], bool bNewRecordOut[NUM_PLAYERS] )
 {
-	m_MemCardScores[MEMORY_CARD_MACHINE][nt].iNumTimesPlayed++;
-
-
 	vector<RankingToInsert> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -395,12 +485,19 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 
 		// Update memory card
 		m_MemCardScores[p][nt].iNumTimesPlayed++;
+		m_MemCardScores[MEMORY_CARD_MACHINE][nt].iNumTimesPlayed++;
 
 		if( iDancePoints[p] > m_MemCardScores[p][nt].iDancePoints )
 		{
 			m_MemCardScores[p][nt].iDancePoints = iDancePoints[p];
 			m_MemCardScores[p][nt].fSurviveTime = fSurviveTime[p];
 			bNewRecordOut[p] = true;
+		}
+
+		if( iDancePoints[p] > m_MemCardScores[MEMORY_CARD_MACHINE][nt].iDancePoints )
+		{
+			m_MemCardScores[MEMORY_CARD_MACHINE][nt].iDancePoints = iDancePoints[p];
+			m_MemCardScores[MEMORY_CARD_MACHINE][nt].fSurviveTime = fSurviveTime[p];
 		}
 
 
@@ -425,13 +522,14 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 			if( newHS.iDancePoints > rankingScores[i].iDancePoints )
 			{
 				// We found the insert point.  Shift down.
-				for( int j=i+1; j<NUM_RANKING_LINES; j++ )
+				for( int j=NUM_RANKING_LINES-1; j>i; j-- )
 					rankingScores[j] = rankingScores[j-1];
 				// insert
 				rankingScores[i].fSurviveTime = newHS.fSurviveTime;
 				rankingScores[i].iDancePoints = newHS.iDancePoints;
 				rankingScores[i].sName = DEFAULT_RANKING_NAME;
 				iRankingIndexOut[newHS.pn] = i;
+				break;
 			}
 		}
 	}

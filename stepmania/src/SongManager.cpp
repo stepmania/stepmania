@@ -40,6 +40,11 @@ const int COURSE_SCORES_VERSION = 1;
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")
 #define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
+#define BEGINNER_COLOR		THEME->GetMetricC("SongManager","BeginnerColor")
+#define EASY_COLOR			THEME->GetMetricC("SongManager","EasyColor")
+#define MEDIUM_COLOR		THEME->GetMetricC("SongManager","MediumColor")
+#define HARD_COLOR			THEME->GetMetricC("SongManager","HardColor")
+#define CHALLENGE_COLOR		THEME->GetMetricC("SongManager","ChallengeColor")
 #define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
 
 vector<RageColor> g_vGroupColors;
@@ -315,8 +320,13 @@ void SongManager::InitMachineScoresFromDisk()
 						NotesType nt;
 						Difficulty dc;
 						char szDescription[256];
-						fscanf(fp, "[%d\n%d\n%[^\n]\n", &nt, &dc, szDescription);
-						Notes* pNotes = !pSong ? NULL : pSong->GetNotes( nt, dc, true, szDescription );
+						fscanf(fp, "%d\n%d\n%[^\n]\n", &nt, &dc, szDescription);
+						Notes* pNotes = NULL;
+						if( pSong )
+							if( dc==DIFFICULTY_INVALID )
+								pNotes = pSong->GetNotes( nt, szDescription );
+							else
+								pNotes = pSong->GetNotes( nt, dc );
 
 						int iNumTimesPlayed;
 						Grade grade;
@@ -536,6 +546,19 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	return GetGroupColor( pSong->m_sGroupName );
 }
 
+RageColor SongManager::GetDifficultyColor( Difficulty dc )
+{
+	switch( dc )
+	{
+	case DIFFICULTY_BEGINNER:	return BEGINNER_COLOR;
+	case DIFFICULTY_EASY:		return EASY_COLOR;
+	case DIFFICULTY_MEDIUM:		return MEDIUM_COLOR;
+	case DIFFICULTY_HARD:		return HARD_COLOR;
+	case DIFFICULTY_CHALLENGE:	return CHALLENGE_COLOR;
+	default:	ASSERT(0);	return CHALLENGE_COLOR;
+	}
+}
+
 void SongManager::GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages ) const
 {
 	AddTo.clear();
@@ -650,29 +673,19 @@ void SongManager::CleanData()
 
 void SongManager::GetNonstopCourses( vector<Course*> &AddTo )
 {
-	PlayerOptions po;
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
 	{
-		if( m_pCourses[i]->m_bRepeat )
-			continue;	// skip
-		if( m_pCourses[i]->m_iLives > 0 )	// use battery life meter
-			continue;
-		
-		AddTo.push_back( m_pCourses[i] );
+		if( !m_pCourses[i]->m_bRepeat && m_pCourses[i]->m_iLives <= 0 )	// use bar life meter
+			AddTo.push_back( m_pCourses[i] );
 	}
 }
 
 void SongManager::GetOniCourses( vector<Course*> &AddTo )
 {
-	PlayerOptions po;
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
 	{
-		if( m_pCourses[i]->m_bRepeat )
-			continue;	// skip
-		if( m_pCourses[i]->m_iLives <= 0 )	// use bar life meter
-			continue;
-		
-		AddTo.push_back( m_pCourses[i] );
+		if( !m_pCourses[i]->m_bRepeat && m_pCourses[i]->m_iLives > 0 )	// use battery life meter
+			AddTo.push_back( m_pCourses[i] );
 	}
 }
 
@@ -834,24 +847,6 @@ Song* SongManager::GetRandomSong()
 	return SONGMAN->m_pSongs[ rand()%m_pSongs.size() ];
 }
 
-Song* SongManager::GetPlayersBest( int index )
-{
-	vector<Song*> vSongs = m_pSongs;
-	if( (unsigned)index >= vSongs.size() )
-		return NULL;
-	SortSongPointerArrayByMostPlayed( vSongs );
-	return vSongs[index];
-}
-
-Song* SongManager::GetPlayersWorst( int index )
-{
-	vector<Song*> vSongs = m_pSongs;
-	if( (unsigned)index >= vSongs.size() )
-		return NULL;
-	SortSongPointerArrayByMostPlayed( vSongs );
-	return vSongs[vSongs.size()-1-index];
-}
-
 Song* SongManager::GetSongFromDir( CString sDir )
 {
 	if( sDir[sDir.GetLength()-1] != '/' )
@@ -907,14 +902,14 @@ struct CategoryScoreToInsert
 	}
 };
 
-void SongManager::AddMachineRecords( NotesType nt, RankingCategory hsc[NUM_PLAYERS], float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
+void SongManager::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], RankingCategory hsc[NUM_PLAYERS], float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] )	// set iNewRecordIndex = -1 if not a new record
 {
 	vector<CategoryScoreToInsert> vHS;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		iNewRecordIndexOut[p] = -1;
 
-		if( !GAMESTATE->IsPlayerEnabled(p) )
+		if( !bPlayerEnabled[p] )
 			continue;	// skip
 
 		CategoryScoreToInsert hs;

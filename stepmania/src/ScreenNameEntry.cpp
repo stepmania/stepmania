@@ -125,68 +125,6 @@ ScreenNameEntry::ScreenNameEntry()
 	}
 
 
-	// Find out if any of the players deserve to enter their name
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-		{
-			StageStats stageStats;
-			vector<Song*> vSongs;
-			GAMESTATE->GetFinalEvalStatsAndSongs( stageStats, vSongs );
-			
-			float fAverageMeter[NUM_PLAYERS];
-			RankingCategory cat[NUM_PLAYERS];
-			float fScore[NUM_PLAYERS];
-			int iRankingIndex[NUM_PLAYERS];
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				fAverageMeter[p] = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
-				cat[p] = AverageMeterToRankingCategory( fAverageMeter[p] );
-				fScore[p] = stageStats.fScore[p];
-			}
-
-			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-			SONGMAN->AddMachineRecords( nt, cat, fScore, iRankingIndex );
-
-			GAMESTATE->m_LastRankingNotesType = nt;
-			COPY( GAMESTATE->m_LastRankingCategory, cat );
-			COPY( GAMESTATE->m_iLastRankingIndex, iRankingIndex );
-		}
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		{
-			StageStats stageStats;
-			vector<Song*> vSongs;
-			GAMESTATE->GetFinalEvalStatsAndSongs( stageStats, vSongs );
-	
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-		
-			bool bPlayerIsEnabled[NUM_PLAYERS];
-			int iDancePoints[NUM_PLAYERS];
-			float fAliveSeconds[NUM_PLAYERS];
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				bPlayerIsEnabled[p] = GAMESTATE->IsPlayerEnabled(p);
-				iDancePoints[p] = stageStats.iActualDancePoints[p];
-				fAliveSeconds[p] = stageStats.fAliveSeconds[p];
-			}
-
-			int iRankingIndex[NUM_PLAYERS];
-			bool bNewRecord[NUM_PLAYERS];
-
-			NotesType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
-			pCourse->AddScores( nt, bPlayerIsEnabled, iDancePoints, fAliveSeconds, iRankingIndex, bNewRecord );
-	
-			GAMESTATE->m_LastRankingNotesType = nt;
-			GAMESTATE->m_pLastPlayedCourse = pCourse;
-			COPY( GAMESTATE->m_iLastRankingIndex, iRankingIndex );
-		}
-		break;
-	}
-
-	
 	GAMESTATE->m_bPastHereWeGo = true;	// enable the gray arrows
 
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","name entry") );
@@ -194,7 +132,8 @@ ScreenNameEntry::ScreenNameEntry()
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		bool bNewHighScore = GAMESTATE->m_iLastRankingIndex[p] != -1;
+		// Find out if player deserves to enter their name
+		bool bNewHighScore = GAMESTATE->m_iRankingIndex[p] != -1;
 		m_bStillEnteringName[p] = bNewHighScore;	// false if they made a new high score
 		for( int i=0; i<MAX_RANKING_NAME_LENGTH; i++ )
 			m_sSelectedName[p] += ' ';
@@ -235,16 +174,21 @@ ScreenNameEntry::ScreenNameEntry()
 		m_textCategory[p].LoadFromFont( THEME->GetPathTo("Fonts","header2") );
 		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyleDef()->m_iCenterX[p] );
 		m_textCategory[p].SetY( CATEGORY_Y );
-		CString sCategoryText = ssprintf("No. %d", GAMESTATE->m_iLastRankingIndex[p]+1);
+		CString sCategoryText = ssprintf("No. %d", GAMESTATE->m_iRankingIndex[p]+1);
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-			sCategoryText += ssprintf(" in Type %c", 'A'+GAMESTATE->m_LastRankingCategory[p]);
+			{
+				StageStats SS;
+				vector<Song*> vSongs;
+				GAMESTATE->GetFinalEvalStatsAndSongs( SS, vSongs );
+				sCategoryText += ssprintf(" in Type %c (%d)", 'A'+GAMESTATE->m_RankingCategory[p], SS.iMeter );
+			}
 			break;
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			sCategoryText += ssprintf(" in %s", GAMESTATE->m_pCurCourse->m_sName.c_str());
+			sCategoryText += ssprintf(" in \n%s", GAMESTATE->m_pCurCourse->m_sName.c_str());
 			break;
 		default:
 			ASSERT(0);
@@ -419,12 +363,12 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:
-			SONGMAN->m_MachineScores[GAMESTATE->m_LastRankingNotesType][GAMESTATE->m_LastRankingCategory[pn]][GAMESTATE->m_iLastRankingIndex[pn]].sName = m_sSelectedName[pn];
+			SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
 			break;
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
-			GAMESTATE->m_pLastPlayedCourse->m_RankingScores[GAMESTATE->m_LastRankingNotesType][GAMESTATE->m_iLastRankingIndex[pn]].sName = m_sSelectedName[pn];
+			GAMESTATE->m_pRankingCourse->m_RankingScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
 			break;
 		default:
 			ASSERT(0);

@@ -376,7 +376,10 @@ bool Song::LoadFromSongDir( CString sDir )
 	/* Add AutoGen pointers.  (These aren't cached.) */
 	AddAutoGenNotes();
 
-	return true;
+	if( !HasMusic() )
+		return false;	// don't load this song
+	else
+		return true;	// do load this song
 }
 
 
@@ -627,22 +630,75 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	}
 }
 
-void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen ) const
+void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, Difficulty dc, int iMeterLow, int iMeterHigh, CString sDescription, bool bIncludeAutoGen ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 		if( m_apNotes[i]->m_NotesType == nt )
-			if( bIncludeAutoGen || !m_apNotes[i]->IsAutogen() )
-				arrayAddTo.push_back( m_apNotes[i] );
+			if( dc==DIFFICULTY_INVALID || dc==m_apNotes[i]->GetDifficulty() )
+				if( iMeterLow==-1 || iMeterLow>=m_apNotes[i]->GetMeter() )
+					if( iMeterHigh==-1 || iMeterHigh<=m_apNotes[i]->GetMeter() )
+						if( sDescription=="" || sDescription==m_apNotes[i]->GetDescription() )
+							if( bIncludeAutoGen || !m_apNotes[i]->IsAutogen() )
+								arrayAddTo.push_back( m_apNotes[i] );
 }
 
-Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen, CString sDescription ) const
+Notes* Song::GetNotes( NotesType nt, Difficulty dc ) const
 {
-	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
-		if( m_apNotes[i]->m_NotesType==nt &&  m_apNotes[i]->GetDifficulty()==dc )
-			if( bIncludeAutoGen || !m_apNotes[i]->IsAutogen() )
-				if( sDescription.empty() || m_apNotes[i]->GetDescription()==sDescription )
-					return m_apNotes[i];
-	return NULL;
+	vector<Notes*> vNotes;
+	GetNotes( vNotes, nt, dc );
+	if( vNotes.size() == 0 )
+		return NULL;
+	else 
+		return vNotes[0];
+}
+
+Notes* Song::GetNotes( NotesType nt, int iMeterLow, int iMeterHigh ) const
+{
+	vector<Notes*> vNotes;
+	GetNotes( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh );
+	if( vNotes.size() == 0 )
+		return NULL;
+	else 
+		return vNotes[0];
+}
+
+Notes* Song::GetNotes( NotesType nt, CString sDescription ) const
+{
+	vector<Notes*> vNotes;
+	GetNotes( vNotes, nt, DIFFICULTY_INVALID, -1, -1, sDescription );
+	if( vNotes.size() == 0 )
+		return NULL;
+	else 
+		return vNotes[0];
+}
+
+
+Notes* Song::GetClosestNotes( NotesType nt, Difficulty dc ) const
+{
+	Difficulty newDC = dc;
+	Notes* pNotes;
+	pNotes = GetNotes( nt, newDC );
+	if( pNotes )
+		return pNotes;
+	newDC = (Difficulty)(dc-1);
+	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
+	pNotes = GetNotes( nt, newDC );
+	if( pNotes )
+		return pNotes;
+	newDC = (Difficulty)(dc+1);
+	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
+	pNotes = GetNotes( nt, newDC );
+	if( pNotes )
+		return pNotes;
+	newDC = (Difficulty)(dc-2);
+	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
+	pNotes = GetNotes( nt, newDC );
+	if( pNotes )
+		return pNotes;
+	newDC = (Difficulty)(dc+2);
+	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
+	pNotes = GetNotes( nt, newDC );
+	return pNotes;
 }
 
 void Song::GetEdits( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen ) const

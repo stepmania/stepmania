@@ -31,7 +31,9 @@ class CourseContentDisplay : public ActorFrame
 public:
 	CourseContentDisplay();
 
-	void Load( int iNum, Song* pSong, Notes* pNotes );
+	void LoadFromSongAndNotes( int iNum, Song* pSong, Notes* pNotes );
+	void LoadFromDifficulty( int iNum, Difficulty dc );
+	void LoadFromMeterRange( int iNum, int iLow, int iHigh );
 
 	Sprite		m_sprFrame;
 	BitmapText	m_textNumber;

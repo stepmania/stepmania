@@ -95,8 +95,8 @@ void GameState::ResetLastRanking()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_LastRankingCategory[p] = (RankingCategory)-1;
-		m_iLastRankingIndex[p] = -1;
+		m_RankingCategory[p] = (RankingCategory)-1;
+		m_iRankingIndex[p] = -1;
 	}
 }
 

@@ -35,6 +35,7 @@ public:
 	void GetGroupNames( CStringArray &AddTo );
 	RageColor GetGroupColor( const CString &sGroupName );
 	RageColor GetSongColor( const Song* pSong );
+	RageColor GetDifficultyColor( Difficulty dc );
 
 	static CString ShortenGroupName( CString sLongGroupName );
 	static int     GetNumStagesForSong( const Song* pSong );	// LongVer songs take 2 stages, MarathonVer take 3
@@ -60,8 +61,6 @@ public:
 	int GetNumGroups() const;
 	int GetNumCourses() const;
 	Song* GetRandomSong();
-	Song* GetPlayersBest( int index );
-	Song* GetPlayersWorst( int index );
 
 
 	void GetNonstopCourses( vector<Course*> &AddTo );	// add to if life meter type is BAR.
@@ -93,7 +92,7 @@ public:
 		float fScore;
 		CString	sName;
 	} m_MachineScores[NUM_NOTES_TYPES][NUM_RANKING_CATEGORIES][NUM_RANKING_LINES];
-	void AddMachineRecords( NotesType nt, RankingCategory hsc[NUM_PLAYERS], float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
+	void AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], RankingCategory hsc[NUM_PLAYERS], float fScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );

@@ -447,10 +447,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				Course* pCourse = apCourses[c];
 
 				// check that this course has at least one song playable in the current style
-				Song* pSongs;
-				Notes* pNotes;
-				CString sModifiers;
-				if( pCourse->GetFirstStageInfo(pSongs, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType) )
+				if( pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_NotesType) )
                     arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
 			}
 		}

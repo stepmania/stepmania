@@ -205,8 +205,11 @@ public:
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
-	void GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
-	Notes* GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true, CString sDescription = "" ) const;
+	void GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, CString sDescription = "", bool bIncludeAutoGen = true ) const;
+	Notes* GetNotes( NotesType nt, Difficulty dc ) const;
+	Notes* GetNotes( NotesType nt, int iMeterLow, int iMeterHigh ) const;
+	Notes* GetNotes( NotesType nt, CString sDescription ) const;
+	Notes* GetClosestNotes( NotesType nt, Difficulty dc ) const;
 	void GetEdits( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;

@@ -20,19 +20,25 @@ struct Notes;
 
 class Course
 {
-	struct course_entry {
-		course_entry( CString dir, Difficulty dc, CString mod )
-		{
-			songDir = dir;
-			difficulty = dc;
-			modifiers = mod;			
-		}
+	struct Entry {
+		enum Type { fixed, random, random_within_group, players_best, players_worst } type;
+		CString group_name;	
+		CString song_name;	// the name of the song folder
+		Difficulty difficulty;		// = DIFFICULTY_INVALID if no difficulty specified
+		int low_meter;		// = -1 if no meter range specified
+		int high_meter;		// = -1 if no meter range specified
+		int players_index;	// ignored if type isn't a players_*
+		CString modifiers;	// set player and song options using these
 
-		CString songDir;	
-		Difficulty difficulty;	// the Notes description
-		CString modifiers;	// set player and song options from these
+		Entry()
+		{
+			difficulty = DIFFICULTY_INVALID;
+			low_meter = -1;
+			high_meter = -1;
+			players_index = -1;
+		}
 	};
-	vector<course_entry> m_entries;
+	vector<Entry> m_entries;
 
 public:
 	Course();
@@ -50,7 +56,8 @@ public:
 
 	int GetEstimatedNumStages() const { return m_entries.size(); }
 	bool HasDifficult() const;
-	void GetCourseInfo(		// Derefrences course_entries and returns only the playable Songs and Notes
+	bool IsPlayableIn( NotesType nt ) const;
+	void GetStageInfo(		// Derefrences course_entries and returns only the playable Songs and Notes
 		vector<Song*>& vSongsOut, 
 		vector<Notes*>& vNotesOut, 
 		vector<CString>& vsModifiersOut, 
@@ -63,6 +70,8 @@ public:
 		NotesType nt ) const;
 	RageColor GetColor() const;
 	bool IsMysterySong( int stage ) const;
+	Difficulty GetDifficulty( int stage ) const;
+	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut ) const;
 	bool ContainsAnyMysterySongs() const;
 	bool GetTotalSeconds( float& fSecondsOut ) const;
 
