@@ -327,7 +327,8 @@ void DancingCharacters::DrawPrimitives()
 		m_LookAt,
 		RageVector3(0,1,0) );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+    int p;
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( GAMESTATE->IsPlayerEnabled(p) )
 		{
