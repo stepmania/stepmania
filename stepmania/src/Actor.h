@@ -48,7 +48,6 @@ public:
 		RectF		fade;	// 0 = no fade
 		RageColor   diffuse[4];
 		RageColor   glow;
-		GlowMode	glowmode;
 		Command	command;	// command to execute when this 
 
 		void Init();
@@ -178,8 +177,6 @@ public:
 	RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
 	void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
 	RageColor GetGlow()							{ return DestTweenState().glow; };
-	void SetGlowMode( GlowMode m )				{ DestTweenState().glowmode = m; };
-	GlowMode GetGlowMode()						{ return DestTweenState().glowmode; };
 
 
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
