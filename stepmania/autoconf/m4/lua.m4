@@ -5,8 +5,6 @@ if test "$LUA_CONFIG" != ""; then
 	LUA_CFLAGS=`lua-config --include`
 	LUA_LIBS=`lua-config --static`
 else
-	LUA_CFLAGS=
-	LUA_LIBS=
 	if test "$LIB_LUA" = ""; then
 		AC_CHECK_LIB(lualib, lua_open, LIB_LUA=-llua)
 	fi
@@ -26,6 +24,8 @@ else
 		echo "*** the installation process."
 		exit 0;
 	fi
+	LUA_CFLAGS=
+	LUA_LIBS="$LIB_LUA $LIB_LUA_LIB"
 fi
 AC_SUBST(LUA_CFLAGS)
 AC_SUBST(LUA_LIBS)
