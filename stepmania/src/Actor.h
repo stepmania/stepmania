@@ -18,6 +18,8 @@ public:
 	virtual ~Actor() {}
 	virtual void Reset();
 
+	static void SetBGMTime( float fTime );
+
 	enum TweenType { 
 		TWEEN_LINEAR, 
 		TWEEN_ACCELERATE, 
@@ -53,7 +55,7 @@ public:
 		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
 	};
 
-	enum EffectClock { CLOCK_TIMER, CLOCK_BGM };
+	enum EffectClock { CLOCK_TIMER, CLOCK_BGM, NUM_CLOCKS };
 
 	void Draw();						// calls, NeedsDraw, BeginDraw, DrawPrimitives, EndDraw
 	virtual bool EarlyAbortDraw() { return false; }	// return true to early abort drawing of this Actor
