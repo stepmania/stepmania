@@ -108,7 +108,7 @@ void ScreenPlayerOptions::ImportOptions()
 	m_OptionRow[PO_PERSPECTIVE].choices.push_back( "SPACE" ); 
 
 	CStringArray arrayPosNames;
-	GAMESTATE->m_Position->GetNamesForCurrentGame(arrayPosNames);
+	GAMESTATE->m_pPosition->GetNamesForCurrentGame(arrayPosNames);
 	for( i=0; i<arrayPosNames.size(); i++ )
 	{
 		arrayPosNames[i].MakeUpper();
@@ -177,7 +177,7 @@ void ScreenPlayerOptions::ImportOptions()
 		{
 			vector<CString> &choices = m_OptionRow[PO_PERSPECTIVE].choices;
 			for(unsigned n = 3; n < choices.size(); ++n)
-				if(!choices[n].CompareNoCase(po.m_sPositioning))
+				if(!choices[n].CompareNoCase(GAMESTATE->m_sPositioning[p]))
 					m_iSelectedOption[p][PO_PERSPECTIVE] = n;
 		}
 
@@ -241,7 +241,7 @@ void ScreenPlayerOptions::ExportOptions()
 		if(m_iSelectedOption[p][PO_PERSPECTIVE] > 2)
 		{
 			const int choice = m_iSelectedOption[p][PO_PERSPECTIVE];
-			po.m_sPositioning = m_OptionRow[PO_PERSPECTIVE].choices[choice];
+			GAMESTATE->m_sPositioning[p] = m_OptionRow[PO_PERSPECTIVE].choices[choice];
 		}
 	}
 }

@@ -89,7 +89,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_pScoreKeeper = pScoreKeeper;
 
 	/* Ensure that this is up-to-date. */
-	GAMESTATE->m_Position->Load(pn);
+	GAMESTATE->m_pPosition->Load(pn);
 
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
@@ -416,7 +416,7 @@ void Player::Step( int col )
 			break;
 		default:
 			ASSERT(0);
-			score==TNS_NONE;
+			score=TNS_NONE;
 		}
 
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )

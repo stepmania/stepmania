@@ -33,7 +33,6 @@ void PlayerOptions::Init()
 	m_bTimingAssist = false;
 	m_fPerspectiveTilt = 0;
 	m_bTimeSpacing = false;
-	m_sPositioning = "";
 }
 
 void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
@@ -127,7 +126,6 @@ CString PlayerOptions::GetString()
 	if( !m_bHoldNotes )		sReturn += "NoHolds, ";
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
 
-	if( m_sPositioning != "" )	sReturn += m_sPositioning + ", ";
 	switch( (int)m_fPerspectiveTilt )
 	{
 	case -1:	sReturn += "Incoming, ";	break;
@@ -198,8 +196,6 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "timingassist")m_bTimingAssist = true;
 		else if( sBit == "incoming" )	m_fPerspectiveTilt = -1;
 		else if( sBit == "space" )		m_fPerspectiveTilt = +1;
-		else if( GAMESTATE->m_Position->IsValidModeForCurrentGame(sBit) )
-				m_sPositioning = sBit;
 	}
 }
 

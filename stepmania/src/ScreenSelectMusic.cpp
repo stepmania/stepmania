@@ -234,6 +234,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOffScreen();
 	OFF_COMMAND( m_MusicWheel );
+	OFF_COMMAND( m_sprBalloon );
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{		

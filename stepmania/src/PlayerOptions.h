@@ -78,8 +78,6 @@ struct PlayerOptions
 	float		m_fPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 	bool		m_bTimeSpacing;	// instead of Beat spacing
 
-	/* The current positioning mode, or empty to use the normal positions. */
-	CString		m_sPositioning;
 
 	void NextAccel();
 	void NextEffect();

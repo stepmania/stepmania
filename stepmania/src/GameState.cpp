@@ -36,13 +36,14 @@ GameState::GameState()
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN. */
 //	Reset();
+	m_pPosition = NULL;
 
 	ResetLastRanking();
 }
 
 GameState::~GameState()
 {
-	delete m_Position;
+	SAFE_DELETE( m_pPosition );
 }
 
 void GameState::Reset()
@@ -85,14 +86,12 @@ void GameState::Reset()
 	}
 	m_SongOptions.Init();
 	for( p=0; p<NUM_PLAYERS; p++ )
-	{
-		m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
-	}
-	m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
-	for( p=0; p<NUM_PLAYERS; p++ )
-		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
-
-	m_Position = new NoteFieldPositioning("Positioning.ini");
+		m_sPositioning[p] = "";
+	SAFE_DELETE( m_pPosition );
+	m_pPosition = new NoteFieldPositioning("Positioning.ini");
+	
+	// apply defaults
+	this->ApplyModifiers( PREFSMAN->m_sDefaultModifiers );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -416,6 +415,45 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 	}
 }
 
+
+void GameState::ApplyModifiers( CString sModifiers )
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_PlayerOptions[p].FromString( sModifiers );
+	m_SongOptions.FromString( sModifiers );
+	
+
+	sModifiers.MakeLower();
+	CStringArray asBits;
+	split( sModifiers, ",", asBits, true );
+
+	for( unsigned i=0; i<asBits.size(); i++ )
+	{
+		CString& sBit = asBits[i];
+		TrimLeft(sBit);
+		TrimRight(sBit);
+
+		// change NoteSkin
+		if( NOTESKIN->DoesNoteSkinExist(sBit) )
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				NOTESKIN->SwitchNoteSkin( (PlayerNumber)p, sBit );
+		if( m_pPosition->IsValidModeForCurrentGame(sBit) )
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				m_sPositioning[p] = sBit;
+	}
+}
+
+CString GameState::GetModifiers()
+{
+	// This is really PLAYER_1's modifiers string!
+	CStringArray as;
+#define PUSH_IF_NOT_EMPTY( s )	if( !s.empty() ) as.push_back( s );
+
+	PUSH_IF_NOT_EMPTY( m_PlayerOptions[PLAYER_1].GetString() );
+	PUSH_IF_NOT_EMPTY( m_SongOptions.GetString() );
+	PUSH_IF_NOT_EMPTY( m_sPositioning[PLAYER_1] );
+	return join( ",", as );
+}
 
 /* Store the player's preferred options.  This is called at the very beginning
  * of gameplay. */

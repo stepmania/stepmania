@@ -183,7 +183,7 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 	}
 
 	/* Is there a custom mode with the current name that fits the current game? */
-	const int ModeNum = GetID(GAMESTATE->m_PlayerOptions[pn].m_sPositioning);
+	const int ModeNum = GetID(GAMESTATE->m_sPositioning[pn]);
 	if(ModeNum == -1)
 		return; /* No, only use the style table settings. */
 

@@ -150,6 +150,8 @@ public:
 	SongOptions		m_SongOptions;
 	SongOptions		m_StoredSongOptions;
 
+	void ApplyModifiers( CString sModifiers );
+	CString GetModifiers();
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();
 
@@ -200,7 +202,8 @@ public:
 	//
 	// Arrow positioning
 	//
-	NoteFieldPositioning *m_Position;
+	CString				m_sPositioning[NUM_PLAYERS];	/* The current positioning mode, or empty to use the normal positions. */
+	NoteFieldPositioning *m_pPosition;
 };
 
 

@@ -116,6 +116,8 @@ void ResetGame()
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 
+	/*
+	GameState::Reset() will switch the NoteSkin
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		PlayerNumber pn = (PlayerNumber)p;
@@ -126,6 +128,7 @@ void ResetGame()
 			NOTESKIN->SwitchNoteSkin( pn, asNoteSkinNames[0] );
 		}
 	}
+	*/
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
 		CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
