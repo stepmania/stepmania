@@ -82,6 +82,15 @@ static int WinMoveFile( const CString sOldPath, const CString sNewPath )
 		Win9x = true;
 	}
 
+	if( MoveFile( sOldPath, sNewPath ) )
+		return 1;
+	
+	if( GetLastError() != ERROR_ALREADY_EXISTS )
+		return 0;
+
+	if( !DeleteFile( sNewPath ) )
+		return 0;
+
 	return MoveFile( sOldPath, sNewPath );
 }
 #endif
