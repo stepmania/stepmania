@@ -942,7 +942,7 @@ bool StepManiaLanServer::CheckCheat(int clientNum)
 			if ((Client[clientNum].Player[x].currstep == 6)&&
 				(PREFSMAN->m_fJudgeWindowSecondsMarvelous < Client[clientNum].Player[x].offset))
 				return true;
-			if ((Client[clientNum].Player[x].currstep == 8)&&
+			if ((Client[clientNum].Player[x].currstep == 7)&&
 				(PREFSMAN->m_fJudgeWindowSecondsOK < Client[clientNum].Player[x].offset))
 				return true;
 		}
