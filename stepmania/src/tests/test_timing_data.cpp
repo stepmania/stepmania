@@ -7,9 +7,6 @@
 #include "RageFileManager.h"
 #include "TimingData.h"
 
-CString InitialWorkingDirectory = ".";
-CString DirOfExecutable = ".";
-
 void run()
 {
 #define CHECK(call, exp) \
@@ -138,9 +135,10 @@ LOG->Trace("... %i in %f", q, foobar.GetDeltaTime());
 	CHECK( test2.GetElapsedTimeFromBeat(2), 3.0f );
 }
 
-int main()
+int main( int argc, char *argv[] )
 {
-	FILEMAN			= new RageFileManager;
+	FILEMAN			= new RageFileManager( argv[0] );
+	FILEMAN->Mount( "dir", ".", "" );
 	LOG                     = new RageLog();
 	PREFSMAN		= new PrefsManager; // TimingData needs PREFSMAN; it probably shouldn't
 	LOG->SetShowLogOutput( true );

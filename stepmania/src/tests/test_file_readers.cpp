@@ -227,9 +227,10 @@ void TestSeek( bool relative )
 
 
 
-int main( char *argv[], int argc )
+int main( int argc, char *argv[] )
 {
 	FILEMAN = new RageFileManager( argv[0] );
+	FILEMAN->Mount( "dir", ".", "" );
 
 	LOG			= new RageLog();
 	LOG->SetShowLogOutput( true );
