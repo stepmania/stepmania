@@ -583,13 +583,13 @@ void GameCommand::Apply( PlayerNumber pn ) const
 	Apply( vpns );
 }
 
-static HighScore MakeRandomHighScore()
+static HighScore MakeRandomHighScore( float fPercentDP )
 {
 	HighScore hs;
 	hs.sName = "FAKE";
 	hs.grade = (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER01, GRADE_TIER05 );
 	hs.iScore = rand()%100*1000;
-	hs.fPercentDP = randomf( 0.5f, 1.0f );
+	hs.fPercentDP = fPercentDP;
 	hs.fSurviveSeconds = randomf( 30.0f, 100.0f );
 	PlayerOptions po;
 	po.ChooseRandomMofifiers();
@@ -758,6 +758,10 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_bFillMachineStats )
 	{
+		// Choose a percent for all scores.  This is useful for testing unlocks
+		// where some elements are unlocked at a certain percent complete
+		float fPercentDP = randomf( 60, 120 );
+
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
 
 		vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
@@ -770,7 +774,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
 				{
 					int iIndex = 0;
-					pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(), iIndex );
+					pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(fPercentDP), iIndex );
 				}
 			}
 		}
@@ -787,7 +791,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
 				{
 					int iIndex = 0;
-					pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(), iIndex );
+					pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
 				}
 			}
 		}
