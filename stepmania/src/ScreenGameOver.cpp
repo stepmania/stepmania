@@ -11,10 +11,6 @@
 */
 
 #include "ScreenGameOver.h"
-#include "PrefsManager.h"
-#include "RageLog.h"
-#include "Sprite.h"
-#include "AnnouncerManager.h"
 #include "ScreenManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
