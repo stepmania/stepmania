@@ -323,7 +323,6 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	// Regular combo
 	//
 	int &iCurCombo = GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber];
-	int iOldCombo = iCurCombo;
 	
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -333,60 +332,13 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
   Your combo counter only increased with a "Marvelous/Perfect", and double Marvelous/Perfect steps (left and right, etc.)
   only add 1 to your combo instead of 2. The combo counter thus becomes a "Marvelous/Perfect" counter. 
 */
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_ARCADE:
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ENDLESS:
-		switch( scoreOfLastTap )
-		{
-		case TNS_MARVELOUS:
-		case TNS_PERFECT:
-		case TNS_GREAT:
-			iCurCombo += iNumTapsInRow;
-			break;
-		}
-		break;
-	case PLAY_MODE_ONI:
-		switch( scoreOfLastTap )
-		{
-		case TNS_MARVELOUS:
-		case TNS_PERFECT:
-			iCurCombo++;
-			break;
-		}
-		break;
-	default:
-		ASSERT(0);
-	}
+	/* True if a jump is one to combo, false if combo is purely based on tap count. */
+	const bool ComboIsPerRow = (GAMESTATE->m_PlayMode == PLAY_MODE_ONI);
+	const int ComboCountIfHit = ComboIsPerRow? 1: iNumTapsInRow;
+	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
 
-
-#define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
-
-	if ( CROSSED(100) )	
-		SCREENMAN->PostMessageToTopScreen( SM_100Combo, 0 );
-	else if( CROSSED(200) )	
-		SCREENMAN->PostMessageToTopScreen( SM_200Combo, 0 );
-	else if( CROSSED(300) )	
-		SCREENMAN->PostMessageToTopScreen( SM_300Combo, 0 );
-	else if( CROSSED(400) )	
-		SCREENMAN->PostMessageToTopScreen( SM_400Combo, 0 );
-	else if( CROSSED(500) )	
-		SCREENMAN->PostMessageToTopScreen( SM_500Combo, 0 );
-	else if( CROSSED(600) )	
-		SCREENMAN->PostMessageToTopScreen( SM_600Combo, 0 );
-	else if( CROSSED(700) )	
-		SCREENMAN->PostMessageToTopScreen( SM_700Combo, 0 );
-	else if( CROSSED(800) )	
-		SCREENMAN->PostMessageToTopScreen( SM_800Combo, 0 );
-	else if( CROSSED(900) )	
-		SCREENMAN->PostMessageToTopScreen( SM_900Combo, 0 );
-	else if( CROSSED(1000))	
-		SCREENMAN->PostMessageToTopScreen( SM_1000Combo, 0 );
-	else if( (iOldCombo / 100) < (iCurCombo / 100) && iCurCombo > 1000 )
-		SCREENMAN->PostMessageToTopScreen( SM_ComboContinuing, 0 );
+	if( scoreOfLastTap >= MinScoreToContinueCombo )
+		iCurCombo += ComboCountIfHit;
 }
 
 
