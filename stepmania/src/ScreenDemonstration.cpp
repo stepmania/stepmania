@@ -75,7 +75,7 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	
 
 	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-		SOUNDMAN->SetPrefs( 0 );	// slient
+		SOUNDMAN->SetPrefs( 0 );	// silent
 }
 
 ScreenDemonstration::~ScreenDemonstration()
