@@ -45,7 +45,7 @@ OptionRow g_AppearanceOptionsLines[NUM_APPEARANCE_OPTIONS_LINES] = {
 	OptionRow( "Announcer"			 ),
 	OptionRow( "Theme"				 ),
 	OptionRow( "Default\nNoteSkin"	 ),
-	OptionRow( "How To\nPlay",		"SKIP","SHOW"),
+	OptionRow( "Instructions",		"SKIP","SHOW"),
 	OptionRow( "Caution",			"SKIP","SHOW"),
 	OptionRow( "Oni Score\nDisplay","PERCENT","DANCE POINTS"),
 	OptionRow( "Song\nGroup",		"ALL MUSIC","CHOOSE"),

@@ -10,12 +10,24 @@
 */
 
 #include "ScreenAttract.h"
+#include "Player.h"
+#include "LifeMeterBar.h"
 
 
 class ScreenHowToPlay : public ScreenAttract
 {
 public:
-	ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay") {};
+	ScreenHowToPlay();
+	~ScreenHowToPlay();
+	
+	virtual void Update( float fDelta );
+
+protected:
+	LifeMeterBar	m_LifeMeter;
+	Player			m_Player;
+
+	Song*			m_pSong;
+	float			m_fFakeSecondsIntoSong;
 };
 
 

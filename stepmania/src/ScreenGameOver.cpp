@@ -22,6 +22,9 @@ const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
 
+#define NEXT_SCREEN		THEME->GetMetric("ScreenGameOver","NextScreen")
+
+
 ScreenGameOver::ScreenGameOver()
 {
 	GAMESTATE->Reset();
@@ -50,7 +53,7 @@ void ScreenGameOver::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}
 }
