@@ -287,8 +287,6 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 
 void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 {
-	Screen::HandleScreenMessage( SM );
-
 	switch( SM )
 	{
 	case SM_AllowOptionsMenuRepeat:
@@ -323,6 +321,8 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 		AfterCourseChange();
 		break;
 	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenSelectCourse::MenuStart( PlayerNumber pn )

@@ -948,8 +948,6 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 
 void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
-	Screen::HandleScreenMessage( SM );
-
 	switch( SM )
 	{
 	case SM_AllowOptionsMenuRepeat:
@@ -1019,6 +1017,8 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		SortOrderChanged();
 		break;
 	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenSelectMusic::MenuStart( PlayerNumber pn )
