@@ -77,6 +77,11 @@ bool BitmapText::LoadFromFont( CString sFontFilePath )
 {
 	LOG->Trace( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
 
+	if( m_pFont ) {
+		FONT->UnloadFont( m_pFont->m_sTexturePath );
+		m_pFont = NULL;
+	}
+
 	// load font
 	m_pFont = FONT->LoadFont( sFontFilePath );
 
