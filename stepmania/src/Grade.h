@@ -45,5 +45,6 @@ CString GradeToString( Grade g );
 CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility
 CString GradeToThemedString( Grade g );
 Grade StringToGrade( const CString &s );
+#define FOREACH_Grade( g ) FOREACH_ENUM( Grade, NUM_GRADES, g )
 
 #endif
