@@ -152,22 +152,34 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 }
 
 
-void split( const CString &Source, const CString &Deliminator, CStringArray& AddIt, const bool bIgnoreEmpty )
+template <class S>
+void do_split( const S &Source, const S &Deliminator, vector<S> &AddIt, const bool bIgnoreEmpty )
 {
-	int startpos = 0;
+	unsigned startpos = 0;
 
 	do {
-		int pos = Source.Find(Deliminator, startpos);
-		if ( pos == -1 ) pos=Source.GetLength();
+		unsigned pos = Source.find_first_of(Deliminator, startpos);
+		if ( pos == Source.npos ) pos=Source.size();
 
-		CString AddCString = Source.substr(startpos, pos-startpos);
+		S AddCString = Source.substr(startpos, pos-startpos);
 		if( AddCString.empty() && bIgnoreEmpty )
 			; // do nothing
 		else
 			AddIt.push_back(AddCString);
 
-		startpos=pos+Deliminator.GetLength();
-	} while ( startpos <= Source.GetLength() );
+		startpos=pos+Deliminator.size();
+	} while ( startpos <= Source.size() );
+}
+
+
+void split( const CString &Source, const CString &Deliminator, CStringArray &AddIt, const bool bIgnoreEmpty )
+{
+	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
+}
+
+void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty )
+{
+	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
 }
 
 

@@ -155,6 +155,7 @@ void split(
 	CStringArray& AddIt, 
 	const bool bIgnoreEmpty = true 
 );
+void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty = true );
 
 // Joins a CStringArray to create a CString according the Deliminator.
 CString join(
