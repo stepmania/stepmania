@@ -516,9 +516,9 @@ char* XNode::Load( const char* pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-void XAttr::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
+bool XAttr::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 {
-	f.Write(name + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) + "' ");
+	return f.Write(name + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value) + "' ") != -1;
 }
 
 //========================================================
@@ -530,44 +530,52 @@ void XAttr::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-void XNode::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
+bool XNode::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 {
 
 	// tab
 	if( opt && opt->newline )
 	{
 		if( opt && opt->newline )
-			f.Write("\r\n");
+			if( f.Write("\r\n") == -1 )
+				return false;
 		for( int i = 0 ; i < opt->tab_base ; i++)
-			f.Write("\t");
+			if( f.Write("\t") == -1 )
+				return false;
 	}
 
 	// <TAG
-	f.Write("<" + name);
+	if( f.Write("<" + name) == -1 )
+		return false;
 
 	// <TAG Attr1="Val1" 
-	if( attrs.empty() == false ) f.Write(" "); //os << ' ';
+	if( attrs.empty() == false )
+		if( f.Write(" ") == -1 )
+			return false;
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
-	{
-		attrs[i]->GetXML(f, opt);
-	}
+		if( !attrs[i]->GetXML(f, opt) )
+			return false;
 	
 	if( childs.empty() && value.empty() )
 	{
 		// <TAG Attr1="Val1"/> alone tag 
-		f.Write("/>");
+		if( f.Write("/>") == -1 )
+			return false;
 	}
 	else
 	{
 		// <TAG Attr1="Val1"> and get child
-		f.Write(">");
+		if( f.Write(">") == -1 )
+			return false;
+			
 		if( opt && opt->newline && !childs.empty() )
 		{
 			opt->tab_base++;
 		}
 
 		for( unsigned i = 0 ; i < childs.size(); i++ )
-			childs[i]->GetXML( f, opt );
+			if( !childs[i]->GetXML( f, opt ) )
+				return false;
 		
 		// Text Value
 		if( value != ("") )
@@ -575,21 +583,27 @@ void XNode::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 			if( opt && opt->newline && !childs.empty() )
 			{
 				if( opt && opt->newline )
-					f.Write("\r\n");
+					if( f.Write("\r\n") == -1 )
+						return false;
 				for( int i = 0 ; i < opt->tab_base ; i++)
-					f.Write("\t");
+					if( f.Write("\t") == -1 )
+						return false;
 			}
-			f.Write((opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value));
+			if( f.Write((opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value)) == -1 )
+				return false;
 		}
 
 		// </TAG> CloseTag
 		if( opt && opt->newline && !childs.empty() )
 		{
-			f.Write("\r\n");
+			if( f.Write("\r\n") == -1 )
+				return false;
 			for( int i = 0 ; i < opt->tab_base-1 ; i++)
-				f.Write("\t");
+				if( f.Write("\t") == -1 )
+					return false;
 		}
-		f.Write("</" + name + ">");
+		if( f.Write("</" + name + ">") == -1 )
+			return false;
 
 		if( opt && opt->newline )
 		{
@@ -597,6 +611,7 @@ void XNode::GetXML( RageFile &f, LPDISP_OPT opt /*= &optDefault*/ )
 				opt->tab_base--;
 		}
 	}
+	return true;
 }
 
 //========================================================
@@ -1191,7 +1206,18 @@ bool XNode::LoadFromFile( CString sFile, LPPARSEINFO pi )
 		return false;
 	}
 	CString s;
-	f.Read( s );
+	if( f.Read( s ) == -1 )
+	{
+		if( pi )
+		{
+			pi->erorr_occur = true;
+			pi->error_pointer = NULL;
+			pi->error_code = PIE_READ_ERROR;
+			pi->error_string = f.GetError();
+		}
+		
+		return false;
+	}
 	this->Load( s, pi );
 	return true;
 }
@@ -1204,6 +1230,9 @@ bool XNode::SaveToFile( CString sFile, LPDISP_OPT opt )
 		LOG->Warn("Couldn't open %s for writing: %s", sFile.c_str(), f.GetError().c_str() );
 		return false;
 	}
-	this->GetXML(f, opt);
+	if( !this->GetXML(f, opt) )
+		return false;
+	if( f.Flush() == -1 )
+		return false;
 	return true;
 }

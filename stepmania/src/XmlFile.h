@@ -62,7 +62,8 @@ enum PCODE
 	PIE_ALONE_NOT_CLOSED,
 	PIE_NOT_CLOSED,
 	PIE_NOT_NESTED,
-	PIE_ATTR_NO_VALUE
+	PIE_ATTR_NO_VALUE,
+	PIE_READ_ERROR
 };
 
 // Parse info.
@@ -110,7 +111,7 @@ struct XAttr
 	
 	XNode*	parent;
 
-	void GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
+	bool GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
 };
 typedef XAttr* LPXAttr;
 
@@ -134,7 +135,7 @@ struct XNode
 	// Load/Save XML
 	char*	Load( const char* pszXml, LPPARSEINFO pi = &piDefault );
 	char*	LoadAttributes( const char* pszAttrs, LPPARSEINFO pi = &piDefault );
-	void GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
+	bool GetXML( RageFile &f, LPDISP_OPT opt = &optDefault );
 
 	bool LoadFromFile( CString sFile, LPPARSEINFO pi = &piDefault );
 	bool SaveToFile( CString sFile, LPDISP_OPT opt = &optDefault );
