@@ -1045,6 +1045,8 @@ void GameState::GetFinalEvalStats( StageStats& statsOut ) const
 
 	/* Scale radar percentages back down to roughly 0..1.  Don't scale RADAR_NUM_TAPS_AND_HOLDS
 	 * and the rest, which are counters. */
+	// FIXME: Weight each song by the number of stages it took to account for 
+	// long, marathon.
 	FOREACH_EnabledPlayer( p )
 	{
 		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
