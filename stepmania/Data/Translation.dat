@@ -41,9 +41,10 @@ TitleFrom: (CanCan XX)|(Can Can XX)|(Kang Kang XX)|(KangKang XX)|(Kang Kang)|(Ka
 TitleTo: Can Can
 ArtistTo: F2 Original
 *
-# So many people like to rape this name...
-ArtistFrom: (.*Banya.*)
-ArtistTo: Banya
+# Also...
+TitleFrom: cancan
+ArtistFrom: F2 Original
+TitleTo: Can Can
 *
 ArtistFrom: (¹ÚÁöÀ±)|(Park Ji Yoon)
 ArtistTo: 박지윤
@@ -54,8 +55,29 @@ ArtistTo: 뱩지옝
 *
 # Lee Hyun Do - Pierrot
 TitleFrom: Pierrot
-ArtistFrom: (Lee Hyun Do)|(Li Hyun Do)
 ArtistTo: 이혠도
+*
+# Lee Hyun Do (most probably)
+ArtistFrom: Lee Hyun Do
+ArtistTo: 이혠도
+*
+# Some versions of People Crew - YahWah have the name the wrong way round
+# people aren't sure who the band is or what the song name is.
+# for the record the band is People Crew (http://www.people-crew.co.kr) and the song
+# is Yahwah
+TitleFrom: People Crew
+TitleTo: YahWah
+ArtistTo: People Crew
+*
+TitleFrom: YahWah
+ArtistTo: People Crew
+*
+TitleFrom: Yah Wah
+ArtistTo: People Crew
+*
+TitleFrom: Flower Of Night
+ArtistTo: People Crew
+TitleTo: YahWah
 *
 # Yu Seung Jun - Hope Find You
 TitleFrom: Hope Find You
