@@ -30,6 +30,7 @@ MemoryCardDriverThreaded::MemoryCardDriverThreaded() :
 m_mutexStorageDevices("StorageDevices")
 {
 	m_bShutdown = false;
+	m_bStorageDevicesChanged = false;
 }
 
 void MemoryCardDriverThreaded::StartThread()
