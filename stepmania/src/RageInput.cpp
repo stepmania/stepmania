@@ -16,11 +16,8 @@
 #pragma comment(lib, "dinput8.lib") 
 #pragma comment(lib, "dxguid.lib") 
 
-//#define HAVE_DDK
-#ifdef HAVE_DDK
-#pragma comment(lib, "setupapi.lib") 
-#pragma comment(lib, "hid.lib") 
-#endif
+#pragma comment(lib, "ddk/setupapi.lib") 
+#pragma comment(lib, "ddk/hid.lib") 
 
 //-----------------------------------------------------------------------------
 // Includes
@@ -808,20 +805,13 @@ bool RageInput::WasBeingPressed( DeviceInput di )
 	return false;	// how did we get here?!?
 }
 
-#ifdef HAVE_DDK
 extern "C" {
-#include <setupapi.h>
-#include <hidsdi.h>
+#include "ddk/setupapi.h"
+#include "ddk/hidsdi.h"
 }
-#endif
 
 char *USB::GetUSBDevicePath (int num)
 {
-#ifndef HAVE_DDK
-	LOG->Trace( "Can't get USB device #%i: DDK not available.", 
-		num );
-	return NULL;
-#else
     GUID guid;
     HidD_GetHidGuid(&guid);
 
@@ -854,16 +844,10 @@ err:
     SetupDiDestroyDeviceInfoList (DeviceInfo);
     free (DeviceDetail);
     return ret;
-#endif
 }
 
 HANDLE USB::OpenUSB (int VID, int PID, int num, bool share)
 {
-#ifndef HAVE_DDK
-	LOG->Trace( "Can't open USB device %-4.4x:%-4.4x#%i: DDK not available.", 
-		VID, PID, num );
-    return INVALID_HANDLE_VALUE;
-#else
     DWORD index = 0;
 
     char *path;
@@ -900,7 +884,6 @@ HANDLE USB::OpenUSB (int VID, int PID, int num, bool share)
 		CloseHandle (h);
 
     return INVALID_HANDLE_VALUE;
-#endif
 }
 
 RageInput::pump_t::pump_t()
