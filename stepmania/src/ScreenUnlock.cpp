@@ -42,7 +42,11 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 
-	if (!PREFSMAN->m_bUseUnlockSystem)
+	int NumUnlocks = NUM_UNLOCKS;
+	if (GAMESTATE->m_pUnlockingSys->m_SongEntries.size() < NumUnlocks)
+		NumUnlocks = GAMESTATE->m_pUnlockingSys->m_SongEntries.size();
+
+	if (!PREFSMAN->m_bUseUnlockSystem || NumUnlocks == 0)
 	{
 		this->HandleScreenMessage( SM_GoToNextScreen );
 		return;
@@ -59,7 +63,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	CString IconCommand = ICON_COMMAND;
 
 	int i;
-	for(i=1; i <= NUM_UNLOCKS; i++)
+	for(i=1; i <= NumUnlocks; i++)
 	{
 		Sprite* entry = new Sprite;
 
@@ -97,7 +101,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	// scrolling text
 	if (UNLOCK_TEXT_SCROLL != 0)
 	{
-		int NumberUnlocks = NUM_UNLOCKS;
+		int NumberUnlocks = NumUnlocks;
 		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
 		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
 		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
@@ -176,9 +180,9 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 			text->SetXY(ScrollingTextX, ScrollingTextStartY);
 
-			if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NUM_UNLOCKS)
+			if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NumUnlocks)
 			{
-				float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NUM_UNLOCKS;
+				float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NumUnlocks;
 				float StopOffPoint = ScrollingTextEndY - TargetRow / UNLOCK_TEXT_SCROLL_ROWS * (ScrollingTextEndY - ScrollingTextStartY);
 				float FirstCycleTime = (UNLOCK_TEXT_SCROLL_ROWS - TargetRow) * SECS_PER_CYCLE;
 				float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
@@ -204,9 +208,9 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				IconCount->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 				IconCount->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 
-				if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NUM_UNLOCKS)
+				if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NumUnlocks)
 				{
-					float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NUM_UNLOCKS;
+					float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NumUnlocks;
 					float StopOffPoint = ScrollingTextEndY - TargetRow / UNLOCK_TEXT_SCROLL_ROWS * (ScrollingTextEndY - ScrollingTextStartY);
 					float FirstCycleTime = (UNLOCK_TEXT_SCROLL_ROWS - TargetRow) * SECS_PER_CYCLE;
 					float SecondCycleTime = (6 + TargetRow) * SECS_PER_CYCLE - FirstCycleTime;
@@ -232,7 +236,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	if (UNLOCK_TEXT_SCROLL == 3)
 	{
-		int NumberUnlocks = NUM_UNLOCKS;
+		int NumberUnlocks = NumUnlocks;
 		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
 		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
 		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
