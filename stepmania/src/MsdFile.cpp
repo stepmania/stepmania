@@ -23,16 +23,6 @@
  * #VALUE2:PARAM2
  * we'll recover.
  *
- * Extension: If : is followed by ASCII 1 (^A), we read a binary value, in this
- * form:
- *
- * #VALUE:^A4,DATA:more tags;
- * "4" is the number of bytes of data to expect, not including itself, and not
- * including the comma separating it from the data.  The data is completely unparsed
- * and may contain colons, #, or whitespace without fear of corruption.  The ^A
- * character is used to avoid it showing up in real data.  We only use this internally
- * for caching; this is ugly, so don't use it in distributed data!
- *
  * TODO: Normal text fields need some way of escaping.  We need to be able to escape
  * colons and "//".  Also, we should escape #s, so if we really want to put a # at the
  * beginning of a line, we can. 
