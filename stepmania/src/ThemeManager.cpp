@@ -817,6 +817,11 @@ void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueNa
 	valueOut = GetMetricA( sClassName, sValueName ); 
 }
 
+void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, LuaExpression &valueOut )
+{
+	CString sValue = GetMetricRaw( sClassName, sValueName );
+	valueOut.SetFromExpression( sValue );
+}
 
 // lua start
 #include "LuaBinding.h"

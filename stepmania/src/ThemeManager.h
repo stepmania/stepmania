@@ -74,6 +74,7 @@ public:
 	void	GetMetric( const CString &sClassName, const CString &sValueName, bool &valueOut )			{ valueOut = GetMetricB( sClassName, sValueName ); }
 	void	GetMetric( const CString &sClassName, const CString &sValueName, RageColor &valueOut )		{ valueOut = GetMetricC( sClassName, sValueName ); }
 	void	GetMetric( const CString &sClassName, const CString &sValueName, Command &valueOut );
+	void	GetMetric( const CString &sClassName, const CString &sValueName, LuaExpression &valueOut );
 	void	GetMetric( const CString &sClassName, const CString &sValueName, apActorCommands &valueOut );
 
 	//
