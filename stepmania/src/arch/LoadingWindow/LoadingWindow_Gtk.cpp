@@ -34,7 +34,8 @@ try {
 	if( ret != NULL )
 		RageException::ThrowNonfatal( ret );
 } catch(...) {
-	dlclose( Handle );
+	if( Handle )
+		dlclose( Handle );
 	Handle = NULL;
 	throw;
 }
