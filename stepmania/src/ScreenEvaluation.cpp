@@ -811,20 +811,20 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
-		if(SHOW_JUDGMENT(l))
+		if(!SHOW_JUDGMENT(l))
+			continue;
+
+		if(m_TimeToPlayJudgeSound[l] == -1)
+			continue;
+
+		RageColor c;
+		c.a = 1;
+		if((m_fScreenCreateTime + m_TimeToPlayJudgeSound[l]) < RageTimer::GetTimeSinceStart())
 		{
-			if(m_TimeToPlayJudgeSound[l] != -1)
+			if((SOUND_ON_FULL_ALPHA && (m_sprJudgeLabels[l].GetDiffuse().a ==  c.a || m_textJudgeNumbers[l][PLAYER_1].GetDiffuse().a == c.a || m_textJudgeNumbers[l][PLAYER_2].GetDiffuse().a == c.a) || !SOUND_ON_FULL_ALPHA) )
 			{
-				RageColor c;
-				c.a = 1;
-				if((m_fScreenCreateTime + m_TimeToPlayJudgeSound[l]) < RageTimer::GetTimeSinceStart())
-				{
-					if((SOUND_ON_FULL_ALPHA && (m_sprJudgeLabels[l].GetDiffuse().a ==  c.a || m_textJudgeNumbers[l][PLAYER_1].GetDiffuse().a == c.a || m_textJudgeNumbers[l][PLAYER_2].GetDiffuse().a == c.a) || !SOUND_ON_FULL_ALPHA) )
-					{
-						m_soundJudgeSound[l].Play();
-						m_TimeToPlayJudgeSound[l] = -1;
-					}
-				}
+				m_soundJudgeSound[l].Play();
+				m_TimeToPlayJudgeSound[l] = -1;
 			}
 		}
 	}
