@@ -105,11 +105,9 @@ Sound += arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h arch/Sound/ALSA9F
 AM_CXXFLAGS += $(ALSA_CFLAGS)
 endif
 
-ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
-		arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
+ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h
 
-InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler.h \
-		arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
+InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler.h
 
 MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture.h \
 		arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
@@ -122,27 +120,46 @@ Lights = arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
 MemoryCard = arch/MemoryCard/MemoryCardDriver.h \
-	     arch/MemoryCard/MemoryCardDriverThreaded.cpp arch/MemoryCard/MemoryCardDriverThreaded.h \
-	     arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h 
+	     arch/MemoryCard/MemoryCardDriverThreaded.cpp arch/MemoryCard/MemoryCardDriverThreaded.h
+LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h
 
-LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h \
-		arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
+ArchUtils =
 
-ArchUtils = archutils/Unix/AssertionHandler.cpp \
+Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h
+
+Threads = arch/Threads/Threads.h
+
+if HAVE_SDL
+InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
+LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
+
+# This isn't really in ArchUtils, but it's used by lots of other SDL-related drivers.
+ArchUtils += SDL_utils.cpp SDL_utils.h
+endif
+
+# Platform-specific drivers:
+
+if UNIX
+ArchHooks += arch/ArchHooks/ArchHooks_Unix.cpp arch/ArchHooks/ArchHooks_Unix.h
+Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
+
+ArchUtils +=    archutils/Unix/AssertionHandler.cpp \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
 		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
 		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h
 
 if USE_CRASH_HANDLER
-ArchUtils += archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
+ArchUtils +=    archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
 		archutils/Unix/BacktraceNames.cpp archutils/Unix/BacktraceNames.h \
 		archutils/Unix/CrashHandler.cpp archutils/Unix/CrashHandler.h \
 		archutils/Unix/CrashHandlerChild.cpp archutils/Unix/CrashHandlerInternal.h
 endif
 
-Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h
+endif
 
-Threads = arch/Threads/Threads.h arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
+if LINUX
+MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h
+endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
 	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
@@ -194,8 +211,7 @@ ScoreDisplayPercentage.cpp ScoreDisplayPercentage.h ScoreDisplayRave.cpp ScoreDi
 
 Helpers = SDL_SaveJPEG.cpp SDL_SaveJPEG.h \
 	  SDL_dither.cpp SDL_dither.h \
-	  SDL_rotozoom.cpp SDL_rotozoom.h \
-	  SDL_utils.cpp SDL_utils.h
+	  SDL_rotozoom.cpp SDL_rotozoom.h
 
 PCRE = pcre/chartables.c pcre/get.c pcre/internal.h pcre/maketables.c pcre/pcre.c pcre/pcre.h pcre/study.c
 
@@ -337,6 +353,16 @@ test_timing_data_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_timing_data.cpp \
 		TimingData.cpp TimingData.h
+
+#TESTS += test_notedata
+#test_notedata_SOURCES = \
+#		$(all_test_SOURCES) \
+#		tests/test_notedata.cpp \
+#		NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h \
+#		NewNoteData.cpp NewNoteData.h \
+#		NoteTypes.cpp NoteTypes.h \
+#		TimingData.cpp TimingData.h
+#NewNoteDataUtil.cpp NewNoteDataUtil.h
 
 TESTS += test_threads
 test_threads_SOURCES = \
