@@ -75,6 +75,7 @@
 #define DIFFICULTY_ON_COMMAND		THEME->GetMetric ("ScreenRanking","DifficultyOnCommand")
 #define DIFFICULTY_OFF_COMMAND		THEME->GetMetric ("ScreenRanking","DifficultyOffCommand")
 #define SECONDS_PER_PAGE			THEME->GetMetricF("ScreenRanking","SecondsPerPage")
+#define PAGE_FADE_SECONDS			THEME->GetMetricF("ScreenRanking","PageFadeSeconds")
 #define SHOW_CATEGORIES				THEME->GetMetricB("ScreenRanking","ShowCategories")
 #define SHOW_ALL_SONGS				THEME->GetMetricB("ScreenRanking","ShowAllSongs")
 #define NOTES_TYPES_TO_HIDE			THEME->GetMetric ("ScreenRanking","NotesTypesToHide")
@@ -251,7 +252,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		{
 			SetPage( m_vPagesToShow[0] );
 			m_vPagesToShow.erase( m_vPagesToShow.begin() );
-			this->PostScreenMessage( SM_HidePage, SECONDS_PER_PAGE-1 );
+			this->PostScreenMessage( SM_HidePage, SECONDS_PER_PAGE-PAGE_FADE_SECONDS );
 		}
 		else
 		{
