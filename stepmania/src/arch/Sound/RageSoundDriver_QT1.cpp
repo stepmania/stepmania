@@ -28,7 +28,8 @@ static volatile Uint32 fill_me = 0;
 static UInt8  *buffer[2];
 static CmpSoundHeader header;
 
-RageSound_QT1::RageSound_QT1() {
+RageSound_QT1::RageSound_QT1()
+{
     SndCallBackUPP callback;
     callback = NewSndCallBackUPP(GetData);
     memset(&header, 0, sizeof(header));
@@ -52,7 +53,8 @@ RageSound_QT1::RageSound_QT1() {
 
     OSErr err = SndNewChannel(&channel, sampledSynth, initStereo, callback);
 
-    if (err != noErr) {
+    if (err != noErr)
+    {
         delete channel;
         channel = NULL;
         RageException::ThrowNonfatal("Unable to create audio channel");
@@ -78,7 +80,8 @@ RageSound_QT1::RageSound_QT1() {
         RageException::ThrowNonfatal("Unable to create audio channel");
 }
 
-RageSound_QT1::~RageSound_QT1() {
+RageSound_QT1::~RageSound_QT1()
+{
     if (channel)
         SndDisposeChannel(channel, true);
     SAFE_DELETE(channel);
@@ -86,7 +89,8 @@ RageSound_QT1::~RageSound_QT1() {
     SAFE_DELETE_ARRAY(buffer[1]);
 }
 
-void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
+void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed)
+{
     while (!SOUNDMAN)
         SDL_Delay(10);
     LockMutex L(SOUNDMAN->lock);
@@ -96,7 +100,8 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
     fill_me = cmd_passed->param2;
     UInt32 play_me = !fill_me;
 
-    if (!P->last_pos){
+    if (!P->last_pos)
+    {
         TimeRecord tr;
         ClockGetTime(P->clock, &tr);
         UInt64 temp = tr.value.hi;
@@ -106,7 +111,8 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
         temp = static_cast<UInt64>(d);
         P->last_pos = static_cast<UInt32>(temp & 0x00000000FFFFFFFFLL);
         P->last_pos += samples * 3 / 2;
-    } else
+    }
+    else
         P->last_pos += samples;
 
     bool moreThanOneSound;
@@ -124,14 +130,17 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
     memset(buffer[fill_me], 0, buffersize);
     moreThanOneSound = P->sounds.size() > 1;
 
-    for (unsigned i=0; i<P->sounds.size(); ++i) {
+    for (unsigned i=0; i<P->sounds.size(); ++i)
+    {
         if (P->sounds[i]->stopping)
             continue;
 
-        unsigned got = P->sounds[i]->snd->GetPCM(reinterpret_cast<char *>(buffer[fill_me]), buffersize, P->last_pos);
+        unsigned got = P->sounds[i]->snd->GetPCM(reinterpret_cast<char *>(buffer[fill_me]),
+                                                 buffersize, P->last_pos);
         if (moreThanOneSound)
             mix.write(reinterpret_cast<SInt16 *>(buffer[fill_me]), got / 2);
-        if (got < buffersize) {
+        if (got < buffersize)
+        {
             P->sounds[i]->stopping = true;
             P->sounds[i]->flush_pos = P->last_pos + (got * 8 / samplesize);
         }
@@ -152,16 +161,17 @@ bail:
 
 }
 
-void RageSound_QT1::StartMixing(RageSoundBase *snd) {
+void RageSound_QT1::StartMixing(RageSoundBase *snd)
+{
     sound *s = new sound;
     s->snd = snd;
 
     LockMutex L(SOUNDMAN->lock);
     sounds.push_back(s);
-    LOG->Trace("There are %ld sounds playing", sounds.size());
 }
 
-void RageSound_QT1::StopMixing(RageSoundBase *snd) {
+void RageSound_QT1::StopMixing(RageSoundBase *snd)
+{
     LockMutex L(SOUNDMAN->lock);
 
     /* Find the sound. */
@@ -179,12 +189,14 @@ void RageSound_QT1::StopMixing(RageSoundBase *snd) {
     LOG->Trace("There are %ld sounds playing", sounds.size());
 }
 
-void RageSound_QT1::Update(float delta) {
+void RageSound_QT1::Update(float delta)
+{
 #pragma unused (delta)
     LockMutex L(SOUNDMAN->lock);
 
     vector<sound *>snds = sounds;
-    for (unsigned i = 0; i < snds.size(); ++i) {
+    for (unsigned i = 0; i < snds.size(); ++i)
+    {
         if (!sounds[i]->stopping)
             continue;
         if (GetPosition(snds[i]->snd) < sounds[i]->flush_pos)
@@ -193,7 +205,8 @@ void RageSound_QT1::Update(float delta) {
     }
 }
 
-int RageSound_QT1::GetPosition(const RageSoundBase *snd) const {
+int64_t RageSound_QT1::GetPosition(const RageSoundBase *snd) const
+{
 #pragma unused (snd)
     TimeRecord tr;
     ClockGetTime(clock, &tr);
@@ -201,10 +214,10 @@ int RageSound_QT1::GetPosition(const RageSoundBase *snd) const {
     temp <<= 32;
     temp |= tr.value.lo;
     double d = static_cast<double>(temp)/tr.scale*freq;
-    temp = static_cast<UInt64>(d);
-    return static_cast<UInt32>(temp & 0x00000000FFFFFFFFLL);
+    return static_cast<UInt64>(d);
 }
 
-float RageSound_QT1::GetPlayLatency() const {
+float RageSound_QT1::GetPlayLatency() const
+{
     return latency;
 }

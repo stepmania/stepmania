@@ -17,15 +17,18 @@
 * How do I do this without using phony namespaces?
 * --Steve
 */
-namespace QT {
+namespace QT
+{
 #include <QuickTime/QuickTime.h>
 }
 #include "RageSound.h"
 #include "RageSoundDriver.h"
 
-class RageSound_QT1: public RageSoundDriver {
+class RageSound_QT1: public RageSoundDriver
+{
 private:
-    struct sound {
+    struct sound
+    {
         RageSoundBase *snd;
         bool stopping;
         int flush_pos;
@@ -41,7 +44,7 @@ private:
 protected:
     virtual void StartMixing(RageSoundBase *snd);
     virtual void StopMixing(RageSoundBase *snd);
-    virtual int GetPosition(const RageSoundBase *snd) const;
+    virtual int64_t GetPosition(const RageSoundBase *snd) const;
     virtual void Update (float delta);
     virtual float GetPlayLatency() const;
 
