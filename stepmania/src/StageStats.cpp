@@ -291,7 +291,6 @@ void StageStats::GetLifeRecord( PlayerNumber pn, float *life, int nout ) const
 	for( int i = 0; i < nout; ++i )
 	{
 		float from = SCALE( i, 0, (float)nout, fFirstPos[pn], fLastPos[pn] );
-		LOG->Trace("get %i from %f", i, from);
 		life[i] = GetLifeRecordLerpAt( (PlayerNumber)pn, from );
 	}
 }
