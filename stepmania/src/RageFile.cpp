@@ -44,8 +44,3 @@ void CollapsePath( CString &sPath )
 	sPath = join( SLASH, as );
 }
 
-// replacement for fopen
-FILE* Ragefopen( const char *szPath, const char *szMode )
-{
-	return fopen( FixSlashes(szPath), szMode ); 
-}

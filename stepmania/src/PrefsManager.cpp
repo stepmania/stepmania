@@ -100,8 +100,13 @@ PrefsManager::PrefsManager()
 	m_bFirstRun = true;
 	m_bAutoMapJoysticks = true;
 	m_fGlobalOffsetSeconds = 0;
-	m_bDebugMode = false;
-
+	m_bForceLogFlush = false;
+	m_bLogging = true;
+#ifdef DEBUG
+	m_bShowLogWindow = true;
+#else
+	m_bShowLogWindow = false;
+#endif
 	m_bTenFooterInRed = true;
 	
 	// set to 0 so people aren't shocked at first
@@ -257,7 +262,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 #endif
 	ini.GetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 	ini.GetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
-	ini.GetValueB( "Options", "DebugMode",					m_bDebugMode );
+	ini.GetValueB( "Options", "ForceLogFlush",				m_bForceLogFlush );
+	ini.GetValueB( "Options", "Logging",					m_bLogging );
+	ini.GetValueB( "Options", "ShowLogWindow",				m_bShowLogWindow );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -357,7 +364,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 #endif
 	ini.SetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 	ini.SetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
-	ini.SetValueB( "Options", "DebugMode",					m_bDebugMode );
+	ini.SetValueB( "Options", "ForceLogFlush",				m_bForceLogFlush );
+	ini.SetValueB( "Options", "Logging",					m_bLogging );
+	ini.SetValueB( "Options", "ShowLogWindow",				m_bShowLogWindow );
 
 	ini.SetValueB( "Options", "TenFooterInRed",				m_bTenFooterInRed );
 	ini.SetValueI( "Options", "CourseSortOrder",			m_iCourseSortOrder );

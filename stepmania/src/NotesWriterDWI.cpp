@@ -323,7 +323,7 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Steps &out )
 
 bool NotesWriterDWI::Write( CString sPath, const Song &out )
 {
-	FILE* fp = Ragefopen( sPath, "w" );	
+	FILE* fp = fopen( sPath, "w" );	
 	if( fp == NULL )
 		RageException::Throw( "Error opening song file '%s' for writing.", sPath.c_str() );
 

@@ -67,7 +67,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 	NoteData* pNoteData = new NoteData;
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
 
-	Rageifstream file(sPath);
+	ifstream file(sPath);
 	if( file.bad() )
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
@@ -284,7 +284,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
-	Rageifstream file(sPath);
+	ifstream file(sPath);
 	if( file.bad() )
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
@@ -423,7 +423,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					Rageifstream file(sPath);
+					ifstream file(sPath);
 					if( file.bad() )
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
@@ -485,7 +485,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					Rageifstream file(sPath);
+					ifstream file(sPath);
 					if( file.bad() )
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 

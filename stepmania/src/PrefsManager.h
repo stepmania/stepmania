@@ -85,7 +85,9 @@ public:
 	bool			m_bFirstRun;
 	bool			m_bAutoMapJoysticks;
 	float			m_fGlobalOffsetSeconds;
-	bool			m_bDebugMode;
+	bool			m_bForceLogFlush;
+	bool			m_bLogging;
+	bool			m_bShowLogWindow;
 	bool			m_bTenFooterInRed;
 	int				m_iProgressiveLifebar;
 	int				m_iProgressiveStageLifebar;

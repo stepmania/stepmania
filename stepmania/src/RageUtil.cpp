@@ -505,7 +505,7 @@ CString DerefRedir(const CString &path)
 
 	CString sNewFileName;
 	{
-		Rageifstream file(path);
+		ifstream file(path);
 		getline(file, sNewFileName);
 	}
 
@@ -534,7 +534,7 @@ CString GetRedirContents(const CString &path)
 
 	CString sNewFileName;
 	{
-		Rageifstream file(path);
+		ifstream file(path);
 		getline(file, sNewFileName);
 	}
 

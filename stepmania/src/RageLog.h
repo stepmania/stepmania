@@ -36,7 +36,10 @@ public:
 	/* Returns NULL if past the last recent log. */
 	static const char *GetRecentLog( int n );
 
+	void SetLogging( bool b );	// enable or disable logging
+
 private:
+	bool m_bEnabled;
 	FILE *m_fileLog, *m_fileInfo;
 	void Write( int, CString );
 	void UpdateMappedLog();

@@ -42,7 +42,7 @@ void IniFile::SetPath(CString newpath)
 bool IniFile::ReadFile()
 {
 LOG->Trace("INI: Reading '%s'",path.c_str() );
-	FILE *f = Ragefopen(path, "r");
+	FILE *f = fopen(path, "r");
 
 	if (f == NULL)
 	{
@@ -101,7 +101,7 @@ LOG->Trace("INI: Reading '%s'",path.c_str() );
 // writes data stored in class to ini file
 void IniFile::WriteFile()
 {
-	FILE* fp = Ragefopen( path, "w" );
+	FILE* fp = fopen( path, "w" );
 
 	if( fp == NULL )
 		return;

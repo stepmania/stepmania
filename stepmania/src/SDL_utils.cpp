@@ -605,7 +605,7 @@ struct SurfaceHeader
 /* Save and load SDL_Surfaces to disk.  This avoids problems with bitmaps. */
 bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 {
-	FILE *f = Ragefopen(file.c_str(), "wb+");
+	FILE *f = fopen(file.c_str(), "wb+");
 	if(f == NULL)
 		return false;
 
@@ -643,7 +643,7 @@ bool mySDL_SaveSurface( SDL_Surface *img, CString file )
 
 SDL_Surface *mySDL_LoadSurface( CString file )
 {
-	FILE *f = Ragefopen(file.c_str(), "rb");
+	FILE *f = fopen(file.c_str(), "rb");
 	if(f == NULL)
 		return NULL;
 

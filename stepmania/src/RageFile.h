@@ -15,22 +15,11 @@
 #include <fstream>
 using namespace std;	// using "std::ifstream" causes problems below in VC6.  Why?!?
 
+// call FixSlashes on any path that came from the user
 void FixSlashesInPlace( CString &sPath );
 CString FixSlashes( CString sPath );
 
 void CollapsePath( CString &sPath );
-
-FILE* Ragefopen( const char *szPath, const char *szMode );
-
-// replacement for ifstream
-class Rageifstream : public std::ifstream
-{
-public:
-	Rageifstream() {};
-	Rageifstream( Rageifstream &cpy ); /* not defined; hush warning */
-	Rageifstream( const char *szPath ) : ifstream(FixSlashes(szPath)) {}
-	void open( const char *szPath ) { ifstream::open(FixSlashes(szPath)); }
-};
 
 
 #endif

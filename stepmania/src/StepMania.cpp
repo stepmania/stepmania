@@ -481,8 +481,10 @@ int main(int argc, char* argv[])
 	GAMESTATE	= new GameState;
 	PREFSMAN	= new PrefsManager;
 
-	if( PREFSMAN->m_bDebugMode )
+	if( PREFSMAN->m_bShowLogWindow )
 		LOG->ShowConsole();
+
+	LOG->SetLogging( PREFSMAN->m_bLogging );
 
 	CheckSettings();
 

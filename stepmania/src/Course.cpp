@@ -298,7 +298,7 @@ void Course::Save()
 {
 	ASSERT( !m_bIsAutogen );
 
-	FILE* fp = Ragefopen( m_sPath, "w" );
+	FILE* fp = fopen( m_sPath, "w" );
 	if( fp == NULL )
 	{
 		LOG->Warn( "Could not write course file '%s'.", m_sPath.c_str() );

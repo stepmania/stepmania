@@ -266,7 +266,7 @@ void SongManager::FreeSongs()
 
 void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 {
-	Rageifstream f(fn);
+	ifstream f(fn);
 	if( !f.good() )
 		return;
 	CString line;
@@ -329,7 +329,7 @@ void SongManager::ReadNoteScoresFromFile( CString fn, int c )
 
 void SongManager::ReadCourseScoresFromFile( CString fn, int c )
 {
-	FILE* fp = Ragefopen( fn, "r" );
+	FILE* fp = fopen( fn, "r" );
 
 	if( !fp )
 		return;
@@ -369,7 +369,7 @@ void SongManager::ReadCourseScoresFromFile( CString fn, int c )
 
 void SongManager::ReadCategoryRankingsFromFile( CString fn )
 {
-	FILE* fp = Ragefopen( fn, "r" );
+	FILE* fp = fopen( fn, "r" );
 	if( !fp )
 		return;
 
@@ -392,7 +392,7 @@ void SongManager::ReadCategoryRankingsFromFile( CString fn )
 
 void SongManager::ReadCourseRankingsFromFile( CString fn )
 {
-	FILE* fp = Ragefopen( fn, "r" );
+	FILE* fp = fopen( fn, "r" );
 
 	if( !fp )
 		return;
@@ -465,7 +465,7 @@ void SongManager::SaveCategoryRankingsToFile( CString fn )
 	// category ranking
 	LOG->Trace("Writing category ranking");
 
-	FILE* fp = Ragefopen( fn, "w" );
+	FILE* fp = fopen( fn, "w" );
 	if( fp )
 	{
 		fprintf(fp,"%d\n",CATEGORY_RANKING_VERSION);
@@ -483,7 +483,7 @@ void SongManager::SaveCourseRankingsToFile( CString fn )
 	// course ranking
 	LOG->Trace("Writing course ranking");
 	{
-		FILE* fp = Ragefopen( fn, "w" );
+		FILE* fp = fopen( fn, "w" );
 
 		if( fp )
 		{
@@ -519,7 +519,7 @@ void SongManager::SaveNoteScoresToFile( CString fn, int c )
 	// notes scores
 	LOG->Trace("Writing note scores");
 	{
-		FILE* fp = Ragefopen( fn, "w" );
+		FILE* fp = fopen( fn, "w" );
 		if( fp )
 		{
 			fprintf(fp,"%d\n",NOTES_SCORES_VERSION);
@@ -573,7 +573,7 @@ void SongManager::SaveCourseScoresToFile( CString fn, int c )
 	// course scores
 	LOG->Trace("Writing course scores");
 	{
-		FILE* fp = Ragefopen( fn, "w" );
+		FILE* fp = fopen( fn, "w" );
 		if( fp )
 		{
 			fprintf(fp,"%d\n",COURSE_SCORES_VERSION);

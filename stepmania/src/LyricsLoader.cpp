@@ -21,7 +21,7 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 {
 	LOG->Trace( "LyricsLoader::LoadFromLRCFile(%s)", sPath.c_str() );
 	
-	Rageifstream input(sPath);
+	ifstream input(sPath);
 	if(input.bad())
 	{
 		LOG->Warn( "Error opening file '%s' for reading.", sPath.c_str() );

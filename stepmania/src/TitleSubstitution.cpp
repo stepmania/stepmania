@@ -100,7 +100,7 @@ TitleSubst::TitleSubst(const CString &section)
 
 void TitleSubst::Load(const CString &filename, const CString &section)
 {
-	Rageifstream f;
+	ifstream f;
 	f.open(filename);
 	if(!f.good()) return;
 

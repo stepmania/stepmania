@@ -85,18 +85,24 @@ enum {
 
 RageLog::RageLog()
 {
+	m_bEnabled = true;
+
 	// delete old log files
 	remove( LOG_PATH );
 	remove( INFO_PATH );
 
 	// Open log file and leave it open.
-	m_fileLog = Ragefopen( LOG_PATH, "w" );
-	if( m_fileLog == NULL )
-		RageException::Throw( " Couldn't open log.txt: %s", strerror(errno) );
+	m_fileLog = fopen( LOG_PATH, "w" );
+	
+	// Failing to open shouldn't be fatal
+	//if( m_fileLog == NULL )
+	//	RageException::Throw( " Couldn't open log.txt: %s", strerror(errno) );
 
-	m_fileInfo = Ragefopen( INFO_PATH, "w" );
-	if( m_fileInfo == NULL )
-		RageException::Throw( " Couldn't open info.txt: %s", strerror(errno) );
+	m_fileInfo = fopen( INFO_PATH, "w" );
+
+	// Failing to open shouldn't be fatal
+	//if( m_fileInfo == NULL )
+	//	RageException::Throw( " Couldn't open info.txt: %s", strerror(errno) );
 
 	this->Info( PRODUCT_NAME_VER );
 
@@ -119,13 +125,17 @@ RageLog::RageLog()
 RageLog::~RageLog()
 {
 	/* Add the mapped log data to info.txt. */
-	fprintf( m_fileInfo, "%s", GetAdditionalLog() );
-	fprintf( m_fileLog, "\nStatics:\n%s", GetAdditionalLog() );
+	this->Info( "Statics:\n%s", GetAdditionalLog() );
 
 	Flush();
 	HideConsole();
 	if(m_fileLog) fclose( m_fileLog );
 	if(m_fileInfo) fclose( m_fileInfo );
+}
+
+void RageLog::SetLogging( bool b )
+{
+	m_bEnabled = b;
 }
 
 void RageLog::ShowConsole()
@@ -147,6 +157,9 @@ void RageLog::HideConsole()
 
 void RageLog::Trace( const char *fmt, ...)
 {
+	if( !m_bEnabled )
+		return;
+
     va_list	va;
     va_start(va, fmt);
     CString sBuff = vssprintf( fmt, va );
@@ -159,6 +172,9 @@ void RageLog::Trace( const char *fmt, ...)
  * in crash dumps. */
 void RageLog::Info( const char *fmt, ...)
 {
+	if( !m_bEnabled )
+		return;
+
     va_list	va;
     va_start(va, fmt);
     CString sBuff = vssprintf( fmt, va );
@@ -169,6 +185,9 @@ void RageLog::Info( const char *fmt, ...)
 
 void RageLog::Warn( const char *fmt, ...)
 {
+	if( !m_bEnabled )
+		return;
+
     va_list	va;
     va_start(va, fmt);
     CString sBuff = vssprintf( fmt, va );
@@ -208,7 +227,7 @@ void RageLog::Write( int where, CString str)
 
 	printf("%s\n", str.c_str() );
 
-	if( (PREFSMAN && PREFSMAN->m_bDebugMode) || (where & WRITE_TO_INFO) )
+	if( (PREFSMAN && PREFSMAN->m_bForceLogFlush) || (where & WRITE_TO_INFO) )
 		Flush();
 }
 
