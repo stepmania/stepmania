@@ -347,8 +347,11 @@ static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
+	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
+	ASSERT( pPref != NULL );
+
 	const float mapping[] = { 1,2,3,4,5,6,7 };
-	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, *pPref, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -574,7 +577,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "MenuTimer",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "CoinMode",				CoinModeM,			"HOME","PAY","FREE PLAY" ) );
 	ADD( ConfOption( "CoinModeNoHome",			CoinModeNoHome,		"PAY","FREE PLAY" ) );
-	ADD( ConfOption( "Songs Per\nPlay",			SongsPerPlay,		"1","2","3","4","5","6","7" ) );
+	ADD( ConfOption( "SongsPerPlay",			SongsPerPlay,		"1","2","3","4","5","6","7" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","6","7","EVENT" ) );
 	ADD( ConfOption( "EventMode",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "Scoring\nType",			ScoringType,		"MAX2","5TH" ) );

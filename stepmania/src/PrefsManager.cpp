@@ -119,7 +119,7 @@ PrefsManager::PrefsManager() :
 	m_fLifeDeltaPercentChangeNG			( Options, "LifeDeltaPercentChangeNG",			-0.080f ),
 	m_bShowCaution						( Options, "ShowCaution", true ),
 	m_bEventMode						( Options, "EventMode", false ),
-	m_iNumArcadeStages					( Options, "NumArcadeStages", 3 ),
+	m_iNumArcadeStages					( Options, "SongsPerPlay", 3 ),
 	m_fGlobalOffsetSeconds				( Options, "GlobalOffsetSeconds", 0 )
 {
 	Init();
