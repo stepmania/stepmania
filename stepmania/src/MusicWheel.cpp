@@ -698,9 +698,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 			if( iIndex < 0 )
 				iIndex = GetCurWheelItemDatas().size()-1;
 		} 
-		while( GetCurWheelItemDatas()[iIndex].m_WheelItemType == TYPE_SONG 
-			&& GetCurWheelItemDatas()[iIndex].m_sSectionName != ""
-			&& GetCurWheelItemDatas()[iIndex].m_sSectionName != m_sExpandedSectionName );
+		while( !WheelItemIsVisible(iIndex) );
 	}
 
 	// iIndex is now the index of the lowest WheelItem to draw
@@ -718,9 +716,7 @@ void MusicWheel::RebuildWheelItemDisplays()
 			if( iIndex > int(GetCurWheelItemDatas().size()-1) )
 				iIndex = 0;
 		} 
-		while( GetCurWheelItemDatas()[iIndex].m_WheelItemType == TYPE_SONG 
-			&& GetCurWheelItemDatas()[iIndex].m_sSectionName != ""
-			&& GetCurWheelItemDatas()[iIndex].m_sSectionName != m_sExpandedSectionName );
+		while( !WheelItemIsVisible(iIndex) );
 	}
 
 }
@@ -1011,9 +1007,7 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 		if( m_iSelection < 0 )
 			m_iSelection = GetCurWheelItemDatas().size()-1;
 	} 
-	while( (GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_SONG || GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_COURSE)
-		&& GetCurWheelItemDatas()[m_iSelection].m_sSectionName != ""
-		&& GetCurWheelItemDatas()[m_iSelection].m_sSectionName != m_sExpandedSectionName );
+	while(!WheelItemIsVisible(m_iSelection));
 
 	RebuildWheelItemDisplays();
 
@@ -1050,16 +1044,14 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 
 
 	// increment m_iSelection
+RageTimer xxx;
 	do
 	{
 		m_iSelection++;
 		if( m_iSelection > int(GetCurWheelItemDatas().size()-1) )
 			m_iSelection = 0;
 	} 
-	while( (GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_SONG || GetCurWheelItemDatas()[m_iSelection].m_WheelItemType == TYPE_COURSE)
-		&& GetCurWheelItemDatas()[m_iSelection].m_sSectionName != ""
-		&& GetCurWheelItemDatas()[m_iSelection].m_sSectionName != m_sExpandedSectionName );
-
+	while(!WheelItemIsVisible(m_iSelection));
 	RebuildWheelItemDisplays();
 
 	m_fPositionOffsetFromSelection += 1;
@@ -1261,4 +1253,19 @@ CString MusicWheel::GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so
 	default:
 		return "";
 	}
+}
+
+bool MusicWheel::WheelItemIsVisible(int n)
+{
+	/* Only songs and courses get hidden. */
+	if(GetCurWheelItemDatas()[n].m_WheelItemType != TYPE_SONG &&
+	   GetCurWheelItemDatas()[n].m_WheelItemType != TYPE_COURSE)
+		return true;
+
+	/* If there's no section name, it's always shown. */
+	if(GetCurWheelItemDatas()[n].m_sSectionName.empty())
+		return true;
+
+	/* Otherwise, only show it if it's in the selected section. */
+	return GetCurWheelItemDatas()[n].m_sSectionName == m_sExpandedSectionName;
 }

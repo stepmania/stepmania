@@ -165,6 +165,7 @@ protected:
 	RageSoundSample m_soundLocked;
 
 	CString GetSectionNameFromSongAndSort( Song* pSong, SongSortOrder so );
+	bool WheelItemIsVisible(int n);
 };
 
 #endif
