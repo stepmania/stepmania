@@ -890,14 +890,22 @@ void NoteDataUtil::AddMines( NoteData &in, float fStartBeat, float fEndBeat )
 	{
 		HoldNote &hn = in.GetHoldNote(i);
 		float fHoldEndBeat = hn.GetEndBeat();
-		int iMineRow = BeatToNoteRow( fHoldEndBeat+0.5f );
+		float fMineBeat = fHoldEndBeat+0.5f;
+		int iMineRow = BeatToNoteRow( fMineBeat );
+
 		if( iMineRow < first_row || iMineRow > last_row )
 			continue;
-		
-		// Add a mine right after the hold end.h
+
+		// Only place a mines if there's not another step nearby
+		int iMineRangeBegin = BeatToNoteRow( fMineBeat-0.5f ) + 1;
+		int iMineRangeEnd = BeatToNoteRow( fMineBeat+0.5f ) - 1;
+		if( !in.IsRangeEmpty(hn.iTrack, iMineRangeBegin, iMineRangeEnd) )
+			continue;
+	
+		// Add a mine right after the hold end.
 		in.SetTapNote(hn.iTrack,iMineRow,TAP_MINE);
 
-		// Convert all other notes in this row to mines.
+		// Convert all notes in this row to mines.
 		for( int t=0; t<in.GetNumTracks(); t++ )
 			if( in.GetTapNote(t,iMineRow) == TAP_TAP )
 				in.SetTapNote(t,iMineRow,TAP_MINE);

@@ -75,6 +75,7 @@ public:
 	void CopyAll( const NoteData* pFrom );
 
 	bool IsRowEmpty( int index ) const;
+	bool IsRangeEmpty( int track, int iIndexBegin, int iIndexEnd ) const;
 	int GetNumTapNonEmptyTracks( int index ) const;
 	int GetFirstNonEmptyTrack( int index ) const;
 	int GetNumTracksWithTap( int index ) const;

@@ -141,6 +141,19 @@ bool NoteData::IsRowEmpty( int index ) const
 	return true;
 }
 
+bool NoteData::IsRangeEmpty( int track, int iIndexBegin, int iIndexEnd ) const
+{
+	ASSERT( track<m_iNumTracks );
+	
+	CLAMP( iIndexBegin, 0, GetMaxRow() );
+	CLAMP( iIndexEnd, 0, GetMaxRow() );
+
+	for( int i=iIndexBegin; i<=iIndexEnd; i++ )
+		if( GetTapNoteX(track,i) != TAP_EMPTY )
+			return false;
+	return true;
+}
+
 int NoteData::GetNumTapNonEmptyTracks( int index ) const
 {
 	int iNum = 0;
