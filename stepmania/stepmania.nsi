@@ -28,7 +28,7 @@
 !system "utils\upx SDL_image.dll" ignore
 
 Name "${PRODUCT_NAME}"
-OutFile "StepMania-CVS-20030611b.exe"
+OutFile "StepMania-CVS-20030704b.exe"
 ;OutFile "StepMania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -237,7 +237,7 @@ SetShellVarContext all	; install in "All Users" if NT
 CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\stepmania.exe"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open Songs Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\Songs\"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open StepMania Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\smpackage.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.html"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
