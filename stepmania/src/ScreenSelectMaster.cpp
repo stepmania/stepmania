@@ -22,6 +22,7 @@
 #include "ActorUtil.h"
 #include "RageLog.h"
 #include <set>
+#include "Foreach.h"
 
 #define NUM_ICON_PARTS							THEME->GetMetricI(m_sName,"NumIconParts")
 #define NUM_PREVIEW_PARTS						THEME->GetMetricI(m_sName,"NumPreviewParts")
@@ -38,7 +39,7 @@
 #define SCROLLER_SECONDS_PER_ITEM				THEME->GetMetricF(m_sName,"ScrollerSecondsPerItem")
 #define SCROLLER_SPACING_X						THEME->GetMetricF(m_sName,"ScrollerSpacingX")
 #define SCROLLER_SPACING_Y						THEME->GetMetricF(m_sName,"ScrollerSpacingY")
-#define DEFAULT_CHOICE							THEME->GetMetricI(m_sName,"DefaultChoice")
+#define DEFAULT_CHOICE							THEME->GetMetric (m_sName,"DefaultChoice")
 
 /* OptionOrderLeft=0:1,1:2,2:3,3:4 */
 const char *ScreenSelectMaster::dirs[NUM_DIRS] =
@@ -50,9 +51,21 @@ const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
+	int iDefaultChoice = -1;
+	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	{
+		const ModeChoice& mc = m_aModeChoices[c];
+		if( mc.m_sName == DEFAULT_CHOICE )
+		{
+			iDefaultChoice = c;
+			break;
+		}
+	}
+
+
 	FOREACH_PlayerNumber( p )
 	{
-		m_iChoice[p] = clamp( DEFAULT_CHOICE-1, 0, (int) m_aModeChoices.size() );
+		m_iChoice[p] = (iDefaultChoice!=-1) ? iDefaultChoice : 0;
 		m_bChosen[p] = false;
 	}
 
