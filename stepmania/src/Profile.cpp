@@ -621,9 +621,10 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 			const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
 			
-			pStepsNode->AppendChild( "StepsType", pSteps->m_StepsType );
-			pStepsNode->AppendChild( "Difficulty", pSteps->GetDifficulty() );
-			pStepsNode->AppendChild( "Description", pSteps->GetDescription() );
+			pStepsNode->AppendChild( "StepsType", GameManager::NotesTypeToString(pSteps->m_StepsType) );
+			pStepsNode->AppendChild( "Difficulty", DifficultyToString(pSteps->GetDifficulty()) );
+			if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
+				pStepsNode->AppendChild( "Description", pSteps->GetDescription() );
 
 			pStepsNode->AppendChild( hsl.CreateNode() );
 		}
@@ -658,21 +659,28 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 			if( (*steps)->name != "Steps" )
 				continue;
 
-			StepsType st;
-			if( !(*steps)->GetChildValue("StepsType", (int&)st) )
+			CString str;
+			if( !(*steps)->GetChildValue("StepsType", str) )
+				WARN_AND_CONTINUE;
+			const StepsType st = GameManager::StringToNotesType( str );
+			if( st == STEPS_TYPE_INVALID )
 				WARN_AND_CONTINUE;
 
-			Difficulty dc;
-			if( !(*steps)->GetChildValue("Difficulty", (int&)dc) )
+			if( !(*steps)->GetChildValue("Difficulty", str) )
+				WARN_AND_CONTINUE;
+			const Difficulty dc = StringToDifficulty( str );
+			if( dc == DIFFICULTY_INVALID )
 				WARN_AND_CONTINUE;
 		
-			CString sDescription;
-			if( !(*steps)->GetChildValue("Description", sDescription) )
-				WARN_AND_CONTINUE;
-
 			Steps* pSteps = NULL;
 			if( dc == DIFFICULTY_EDIT )
+			{
+				CString sDescription;
+				if( !(*steps)->GetChildValue("Description", sDescription) )
+					WARN_AND_CONTINUE;
+
 				pSteps = pSong->GetStepsByDescription( st, sDescription );				
+			}
 			else
 				pSteps = pSong->GetStepsByDifficulty( st, dc );
 			if( pSteps == NULL )
