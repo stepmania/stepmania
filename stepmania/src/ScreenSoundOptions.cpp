@@ -58,7 +58,7 @@ void ScreenSoundOptions::Input( const DeviceInput& DeviceI, const InputEventType
 
 void ScreenSoundOptions::ImportOptions()
 {
-	float fVolPercent = PREFSMAN->m_fSoundVolume;
+//	float fVolPercent = PREFSMAN->m_fSoundVolume;
 //	m_iSelectedOption[0][SO_MASTER_VOLUME] = (int)(PREFSMAN->m_fSoundVolume*5);
 	m_iSelectedOption[0][SO_PRELOAD_SOUND] = PREFSMAN->m_bSoundPreloadAll;
 }
