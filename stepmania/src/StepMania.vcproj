@@ -1009,13 +1009,31 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</Filter>
 		</Filter>
 		<Filter
-			Name="Transitions"
+			Name="Actors used in Gameplay and Menus"
 			Filter="">
 			<File
-				RelativePath=".\Transition.cpp">
+				RelativePath="BGAnimation.cpp">
 			</File>
 			<File
-				RelativePath=".\Transition.h">
+				RelativePath="BGAnimation.h">
+			</File>
+			<File
+				RelativePath="BGAnimationLayer.cpp">
+			</File>
+			<File
+				RelativePath="BGAnimationLayer.h">
+			</File>
+			<File
+				RelativePath=".\Banner.cpp">
+			</File>
+			<File
+				RelativePath=".\Banner.h">
+			</File>
+			<File
+				RelativePath="CroppedSprite.cpp">
+			</File>
+			<File
+				RelativePath="CroppedSprite.h">
 			</File>
 			<File
 				RelativePath="TransitionBGAnimation.cpp">
@@ -1034,12 +1052,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\BPMDisplay.h">
 			</File>
 			<File
-				RelativePath=".\Banner.cpp">
-			</File>
-			<File
-				RelativePath=".\Banner.h">
-			</File>
-			<File
 				RelativePath="BannerWithFrame.cpp">
 			</File>
 			<File
@@ -1056,12 +1068,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="CourseEntryDisplay.h">
-			</File>
-			<File
-				RelativePath="CroppedSprite.cpp">
-			</File>
-			<File
-				RelativePath="CroppedSprite.h">
 			</File>
 			<File
 				RelativePath="DifficultyIcon.cpp">
@@ -1240,18 +1246,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\ArrowEffects.h">
-			</File>
-			<File
-				RelativePath="BGAnimation.cpp">
-			</File>
-			<File
-				RelativePath="BGAnimation.h">
-			</File>
-			<File
-				RelativePath="BGAnimationLayer.cpp">
-			</File>
-			<File
-				RelativePath="BGAnimationLayer.h">
 			</File>
 			<File
 				RelativePath=".\Background.cpp">

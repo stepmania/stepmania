@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                     	cl                                                                                                      /Zl                                                                                                      /nologo                                                                                                      /c                                                                                                      verstub.cpp                                                                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                      	cl                                                                                                       /Zl                                                                                                       /nologo                                                                                                       /c                                                                                                       verstub.cpp                                                                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                                                     	cl                                                                                                      /Zl                                                                                                      /nologo                                                                                                      /c                                                                                                      verstub.cpp                                                                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                                                      	cl                                                                                                       /Zl                                                                                                       /nologo                                                                                                       /c                                                                                                       verstub.cpp                                                                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -931,26 +931,6 @@ SOURCE=.\StepMania.cpp
 SOURCE=.\StepMania.h
 # End Source File
 # End Group
-# Begin Group "Transitions"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\Transition.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Transition.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\TransitionBGAnimation.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TransitionBGAnimation.h
-# End Source File
-# End Group
 # Begin Group "Actors"
 
 # PROP Default_Filter ""
@@ -1011,7 +991,7 @@ SOURCE=.\Sprite.cpp
 SOURCE=.\Sprite.h
 # End Source File
 # End Group
-# Begin Group "Actors used in Menus"
+# Begin Group "Actors used in Gameplay & Menu"
 
 # PROP Default_Filter ""
 # Begin Source File
@@ -1022,6 +1002,262 @@ SOURCE=.\Banner.cpp
 
 SOURCE=.\Banner.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\BGAnimation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BGAnimation.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BGAnimationLayer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BGAnimationLayer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CroppedSprite.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CroppedSprite.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionBGAnimation.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TransitionBGAnimation.h
+# End Source File
+# End Group
+# Begin Group "Actors used in Gameplay"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ActiveItemList.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActiveItemList.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ArrowEffects.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ArrowEffects.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Background.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Background.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Combo.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Combo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowBright.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowRow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GhostArrowRow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrowRow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GrayArrowRow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldGhostArrow.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldGhostArrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldJudgment.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\HoldJudgment.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Judgment.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Judgment.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeter.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterBar.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterBar.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterBattery.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LifeMeterBattery.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\LyricDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\LyricDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteField.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\NoteField.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\Player.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Player.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplay.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayBattle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayBattle.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayNormal.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayNormal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayOni.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayOni.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRave.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayRave.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeperMAX2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeperMAX2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\TimingAssist.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\TimingAssist.h
+# End Source File
+# End Group
+# Begin Group "Actors used in Menus"
+
+# PROP Default_Filter ""
 # Begin Source File
 
 SOURCE=.\BPMDisplay.cpp
@@ -1045,14 +1281,6 @@ SOURCE=.\CourseEntryDisplay.cpp
 # Begin Source File
 
 SOURCE=.\CourseEntryDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\CroppedSprite.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\CroppedSprite.h
 # End Source File
 # Begin Source File
 
@@ -1261,242 +1489,6 @@ SOURCE=.\WheelNotifyIcon.cpp
 # Begin Source File
 
 SOURCE=.\WheelNotifyIcon.h
-# End Source File
-# End Group
-# Begin Group "Actors used in Gameplay"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\ActiveItemList.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ActiveItemList.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ArrowEffects.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ArrowEffects.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Background.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Background.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\BGAnimation.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BGAnimation.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\BGAnimationLayer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BGAnimationLayer.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Combo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Combo.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowBright.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowBright.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowRow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GhostArrowRow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrowRow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrayArrowRow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldGhostArrow.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldGhostArrow.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldJudgment.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\HoldJudgment.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Judgment.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Judgment.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeter.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeter.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeterBar.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeterBar.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeterBattery.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\LifeMeterBattery.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LyricDisplay.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\LyricDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteDisplay.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteField.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteField.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Player.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Player.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplay.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplay.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayBattle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayBattle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayNormal.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayNormal.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayOni.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayOni.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayRave.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreDisplayRave.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreKeeper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreKeeper.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreKeeperMAX2.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScoreKeeperMAX2.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\TimingAssist.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TimingAssist.h
 # End Source File
 # End Group
 # Begin Group "Screens"
@@ -1972,6 +1964,10 @@ SOURCE=.\ScreenUnlock.h
 SOURCE=.\ScreenWarning.h
 # End Source File
 # End Group
+# Begin Group "Utils"
+
+# PROP Default_Filter ""
+# End Group
 # Begin Group "Global Singletons"
 
 # PROP Default_Filter ""
@@ -2071,10 +2067,6 @@ SOURCE=.\ThemeManager.cpp
 
 SOURCE=.\ThemeManager.h
 # End Source File
-# End Group
-# Begin Group "Utils"
-
-# PROP Default_Filter ""
 # End Group
 # Begin Source File
 
