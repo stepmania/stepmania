@@ -90,20 +90,23 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	// debugging
 	//
-/*	
-	GAMESTATE->m_PlayMode = PLAY_MODE_RAVE;
-	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
-	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-	GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
-//	GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
-	GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->m_apNotes[0];
-	GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->m_apNotes[0];
-	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
-	GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
-	GAMESTATE->m_iCurrentStageIndex = 2;
-	for( float f = 0; f < 1.0f; f += .005f )
-		GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_1, fmodf(f*4+.3f,1), f );
-*/
+	
+	if( PREFSMAN->m_bScreenTestMode )
+	{
+		GAMESTATE->m_PlayMode = PLAY_MODE_RAVE;
+		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+		GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
+//		GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
+		GAMESTATE->m_pCurNotes[PLAYER_1] = GAMESTATE->m_pCurSong->m_apNotes[0];
+		GAMESTATE->m_pCurNotes[PLAYER_2] = GAMESTATE->m_pCurSong->m_apNotes[0];
+		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
+		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
+		GAMESTATE->m_iCurrentStageIndex = 2;
+		for( float f = 0; f < 1.0f; f += .005f )
+			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_1, fmodf(f*4+.3f,1), f );
+	}
+
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
