@@ -48,6 +48,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define CDTITLE_SPIN_SECONDS				THEME->GetMetricF("ScreenSelectMusic","CDTitleSpinSeconds")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
+CString g_sFallbackCDTitlePath;
 
 /* We make a backface for the CDTitle by rotating it on Y and mirroring it
  * on Y by flipping texture coordinates. */
@@ -66,6 +67,8 @@ ScreenSelectMusic::ScreenSelectMusic() : Screen("ScreenSelectMusic")
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 
+	/* Cache: */
+	g_sFallbackCDTitlePath = THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");
 
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
@@ -800,8 +803,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	if( pSong )
 		GAMESTATE->m_pCurSong = pSong;
 
-	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
-
 	m_GrooveGraph.SetFromSong( pSong );
 
 	int pn;
@@ -823,6 +824,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_BPMDisplay.NoBPM();
 			m_sprCDTitleFront.UnloadTexture();
 			m_sprCDTitleBack.UnloadTexture();
+			m_DifficultyDisplay.UnsetDifficulties();
 
 			switch( m_MusicWheel.GetSelectedType() )
 			{
@@ -866,7 +868,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				m_BPMDisplay.SetBPM( pSong );
 			}
 
-			const CString CDTitlePath = pSong->HasCDTitle()? pSong->GetCDTitlePath():THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");
+			const CString CDTitlePath = pSong->HasCDTitle()? pSong->GetCDTitlePath():g_sFallbackCDTitlePath;
 			m_sprCDTitleFront.Load( CDTitlePath );
 			m_sprCDTitleBack.Load( CDTitlePath );
 			FlipSpriteHorizontally(m_sprCDTitleBack);
@@ -911,6 +913,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_BPMDisplay.NoBPM();
 		m_sprCDTitleFront.UnloadTexture();
 		m_sprCDTitleBack.UnloadTexture();
+		m_DifficultyDisplay.UnsetDifficulties();
 
 		SOUNDMAN->StopMusic();
 		m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
