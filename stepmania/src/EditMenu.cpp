@@ -127,7 +127,7 @@ EditMenu::EditMenu()
 			vector<Steps*>::const_iterator iter = find( m_vpSteps.begin(), m_vpSteps.end(), GAMESTATE->m_pCurSteps[PLAYER_1] );
 			if( iter != m_vpSteps.end() )
 			{
-				m_iSelection[ROW_STEPS] = m_vpSteps.begin() - iter;
+				m_iSelection[ROW_STEPS] = iter - m_vpSteps.begin();
 				OnRowValueChanged( ROW_STEPS );
 			}
 		}
