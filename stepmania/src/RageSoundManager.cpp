@@ -191,7 +191,7 @@ void RageSoundManager::PlayOnce( CString sPath )
 	/* We're responsible for freeing it. */
 	owned_sounds.insert(snd);
 
-	snd->Play();
+//	snd->Play();
 }
 
 void RageSoundManager::PlayOnceFromDir( CString sDir )
@@ -247,7 +247,7 @@ void RageSoundManager::PlayMusic(CString file, bool loop, float start_sec, float
 
 	if(music->IsPlaying())
 		music->StopPlaying();
-	music->Load( file );
+	music->Load( file, false );
 
 	music->SetStopMode(loop? RageSound::M_LOOP:RageSound::M_STOP);
 
