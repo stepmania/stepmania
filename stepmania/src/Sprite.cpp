@@ -15,8 +15,9 @@
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
+
 // lua start
-//LUA_REGISTER_CLASS( Sprite, Actor )
+LUA_REGISTER_CLASS( Sprite )
 // lua end
 
 
@@ -912,6 +913,11 @@ void Sprite::StretchTexCoords( float fX, float fY )
 	SetCustomTextureCoords( fTexCoords );
 }
 
+void Sprite::SetPosition( float f )			{ GetTexture()->SetPosition(f); }
+void Sprite::SetLooping( bool b )			{ GetTexture()->SetLooping(b); }
+void Sprite::SetPlaybackRate( float f )		{ GetTexture()->SetPlaybackRate(f); }
+
+/*
 void Sprite::HandleCommand( const Command &command )
 {
 	BeginHandleArgs;
@@ -925,10 +931,10 @@ void Sprite::HandleCommand( const Command &command )
 	else if( sName=="scaletoclipped" )	ScaleToClipped( fArg(1),fArg(2) );
 	else if( sName=="stretchtexcoords" )	StretchTexCoords( fArg(1),fArg(2) );
 
-	/* Texture commands; these could be moved to RageTexture* (even though that's
-	 * not an Actor) if these are needed for other things that use textures.
-	 * We'd need to break the command helpers into a separate function; RageTexture
-	 * shouldn't depend on Actor. */
+	// Texture commands; these could be moved to RageTexture* (even though that's
+	// not an Actor) if these are needed for other things that use textures.
+	// We'd need to break the command helpers into a separate function; RageTexture
+	// shouldn't depend on Actor.
 	else if( sName=="position" )		GetTexture()->SetPosition( fArg(1) );
 	else if( sName=="loop" )			GetTexture()->SetLooping( bArg(1) );
 	else if( sName=="rate" )			GetTexture()->SetPlaybackRate( fArg(1) );
@@ -940,6 +946,7 @@ void Sprite::HandleCommand( const Command &command )
 
 	EndHandleArgs;
 }
+*/
 
 void Sprite::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
@@ -968,6 +975,12 @@ void Sprite::LoseFocus()
 
 	Actor::LoseFocus();
 }
+
+void Sprite::PushSelf( lua_State *L )
+{
+	Luna<Sprite,LuaSprite>::Push( L, this );
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford

@@ -1,25 +1,33 @@
-#ifndef SCORE_DISPLAY_PERCENTAGE_H
-#define SCORE_DISPLAY_PERCENTAGE_H
+/* Commands - Actor command parsing and reading helpers. */
 
-#include "ScoreDisplay.h"
-#include "PercentageDisplay.h"
-#include "Sprite.h"
+#ifndef ActorCommands_H
+#define ActorCommands_H
 
-class ScoreDisplayPercentage : public ScoreDisplay
+#include <memory>	// auto_ptr
+class Commands;
+
+class ActorCommands
 {
 public:
-	ScoreDisplayPercentage();
-	void Init( const PlayerState* pPlayerState );
+	ActorCommands( const Commands& cmds );
+	~ActorCommands();
+
+
+	CString GetFunctionName() const;
 
 private:
-	PercentageDisplay	m_Percent;
-	Sprite		m_sprFrame;
+	void Register( const Commands& cmds );
+	void Unregister();
+
+	CString m_sLuaFunctionName;
 };
+
+typedef auto_ptr<ActorCommands> apActorCommands;
 
 #endif
 
 /*
- * (c) 2003 Glenn Maynard
+ * (c) 2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

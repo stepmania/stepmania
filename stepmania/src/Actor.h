@@ -4,24 +4,197 @@
 #define ACTOR_H
 
 #include "RageTypes.h"
-#include "Command.h"
+#include "ActorCommands.h"
 #include <deque>
 #include <map>
 struct XNode;
+struct lua_State;
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-100
 #define DRAW_ORDER_TRANSITIONS			100
 #define DRAW_ORDER_AFTER_EVERYTHING		200
 
-/*
+
 #define LUA_Actor_METHODS( T ) \
-	static int GetX( T* p, lua_State *L ) { lua_pushnumber(L, p->GetX()); return 1; } \
-	static int SetX( T* p, lua_State *L ) { p->SetX(luaL_checknumber(L, 1)); return 0; } \
+	static int sleep( T* p, lua_State *L )			{ p->Sleep(FArg(1)); return 0; } \
+	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_LINEAR); return 0; } \
+	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_ACCELERATE); return 0; } \
+	static int decelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_DECELERATE); return 0; } \
+	static int bouncebegin( T* p, lua_State *L )	{ p->BeginTweening(FArg(1),Actor::TWEEN_BOUNCE_BEGIN); return 0; } \
+	static int bounceend( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_BOUNCE_END); return 0; } \
+	static int spring( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_SPRING); return 0; } \
+	static int stoptweening( T* p, lua_State *L )	{ p->StopTweening(); p->BeginTweening( 0.0001f, Actor::TWEEN_LINEAR ); return 0; } \
+	static int finishtweening( T* p, lua_State *L )	{ p->FinishTweening(); return 0; } \
+	static int hurrytweening( T* p, lua_State *L )	{ p->HurryTweening(FArg(1)); return 0; } \
+	static int x( T* p, lua_State *L )				{ p->SetX(FArg(1)); return 0; } \
+	static int y( T* p, lua_State *L )				{ p->SetY(FArg(1)); return 0; } \
+	static int z( T* p, lua_State *L )				{ p->SetZ(FArg(1)); return 0; } \
+	static int addx( T* p, lua_State *L )			{ p->AddX(FArg(1)); return 0; } \
+	static int addy( T* p, lua_State *L )			{ p->AddY(FArg(1)); return 0; } \
+	static int addz( T* p, lua_State *L )			{ p->AddZ(FArg(1)); return 0; } \
+	static int zoom( T* p, lua_State *L )			{ p->SetZoom(FArg(1)); return 0; } \
+	static int zoomx( T* p, lua_State *L )			{ p->SetZoomX(FArg(1)); return 0; } \
+	static int zoomy( T* p, lua_State *L )			{ p->SetZoomY(FArg(1)); return 0; } \
+	static int zoomz( T* p, lua_State *L )			{ p->SetZoomZ(FArg(1)); return 0; } \
+	static int zoomtowidth( T* p, lua_State *L )	{ p->ZoomToWidth(FArg(1)); return 0; } \
+	static int zoomtoheight( T* p, lua_State *L )	{ p->ZoomToHeight(FArg(1)); return 0; } \
+	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int cropleft( T* p, lua_State *L )		{ p->SetCropLeft(FArg(1)); return 0; } \
+	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); return 0; } \
+	static int cropright( T* p, lua_State *L )		{ p->SetCropRight(FArg(1)); return 0; } \
+	static int cropbottom( T* p, lua_State *L )		{ p->SetCropBottom(FArg(1)); return 0; } \
+	static int fadeleft( T* p, lua_State *L )		{ p->SetFadeLeft(FArg(1)); return 0; } \
+	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); return 0; } \
+	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); return 0; } \
+	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); return 0; } \
+	static int diffuse( T* p, lua_State *L )			{ p->SetDiffuse( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int diffuseleftedge( T* p, lua_State *L )	{ p->SetDiffuseLeftEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int diffuserightedge( T* p, lua_State *L )	{ p->SetDiffuseRightEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int diffusetopedge( T* p, lua_State *L )		{ p->SetDiffuseTopEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int diffusebottomedge( T* p, lua_State *L )	{ p->SetDiffuseBottomEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int diffusealpha( T* p, lua_State *L )	{ p->SetDiffuseAlpha(FArg(1)); return 0; } \
+	static int diffusecolor( T* p, lua_State *L )	{ p->SetDiffuseColor( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int glow( T* p, lua_State *L )			{ p->SetGlow( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); return 0; } \
+	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); return 0; } \
+	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); return 0; } \
+	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); return 0; } \
+	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; } \
+	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); return 0; } \
+	static int shadowlength( T* p, lua_State *L )	{ p->SetShadowLength(FArg(1)); return 0; } \
+	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlignString(SArg(1)); return 0; } \
+	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlignString(SArg(1)); return 0; } \
+	static int diffuseblink( T* p, lua_State *L )	{ p->SetEffectDiffuseBlink(); return 0; } \
+	static int diffuseshift( T* p, lua_State *L )	{ p->SetEffectDiffuseShift(); return 0; } \
+	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(); return 0; } \
+	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(); return 0; } \
+	static int rainbow( T* p, lua_State *L )		{ p->SetEffectRainbow(); return 0; } \
+	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(); return 0; } \
+	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(); return 0; } \
+	static int bob( T* p, lua_State *L )			{ p->SetEffectBob(); return 0; } \
+	static int pulse( T* p, lua_State *L )			{ p->SetEffectPulse(); return 0; } \
+	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(); return 0; } \
+	static int vibrate( T* p, lua_State *L )		{ p->SetEffectVibrate(); return 0; } \
+	static int stopeffect( T* p, lua_State *L )		{ p->SetEffectNone(); return 0; } \
+	static int effectcolor1( T* p, lua_State *L )		{ p->SetEffectColor1( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int effectcolor2( T* p, lua_State *L )		{ p->SetEffectColor2( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int effectperiod( T* p, lua_State *L )		{ p->SetEffectPeriod(FArg(1)); return 0; } \
+	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; } \
+	static int effectdelay( T* p, lua_State *L )		{ p->SetEffectDelay(FArg(1)); return 0; } \
+	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; } \
+	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; } \
+	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; } \
+	static int scaletofit( T* p, lua_State *L )			{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; } \
+	static int animate( T* p, lua_State *L )			{ p->EnableAnimation(BArg(1)); return 0; } \
+	static int play( T* p, lua_State *L )				{ p->EnableAnimation(true); return 0; } \
+	static int pause( T* p, lua_State *L )				{ p->EnableAnimation(false); return 0; } \
+	static int setstate( T* p, lua_State *L )			{ p->SetState(IArg(1)); return 0; } \
+	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(BArg(1)); return 0; } \
+	static int additiveblend( T* p, lua_State *L )		{ p->SetBlendMode(BArg(1) ? BLEND_ADD : BLEND_NORMAL); return 0; } \
+	static int blend( T* p, lua_State *L )				{ p->SetBlendModeString(SArg(1)); return 0; } \
+	static int zbuffer( T* p, lua_State *L )			{ p->SetUseZBuffer(BArg(1)); return 0; } \
+	static int ztest( T* p, lua_State *L )				{ p->SetZTestMode(BArg(1)?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; } \
+	static int ztestmode( T* p, lua_State *L )			{ p->SetZTestModeString(SArg(1)); return 0; } \
+	static int zwrite( T* p, lua_State *L )				{ p->SetZWrite(BArg(1)); return 0; } \
+	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(BArg(1)); return 0; } \
+	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode(BArg(1) ? CULL_BACK : CULL_NONE); return 0; } \
+	static int cullmode( T* p, lua_State *L )			{ p->SetCullModeString(SArg(1)); return 0; } \
+	static int hidden( T* p, lua_State *L )				{ p->SetHidden(BArg(1)); return 0; } \
+	static int hibernate( T* p, lua_State *L )			{ p->SetHibernate(FArg(1)); return 0; } \
+	static int draworder( T* p, lua_State *L )			{ p->SetDrawOrder(IArg(1)); return 0; } \
+	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1)); return 0; } \
+	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; } \
 
 #define LUA_Actor_METHODS_MAP( T ) \
-	LUA_METHOD_MAP( T, GetX ) \
-	LUA_METHOD_MAP( T, SetX ) \
-*/
+	LUA_METHOD_MAP( T, sleep ) \
+	LUA_METHOD_MAP( T, linear ) \
+	LUA_METHOD_MAP( T, accelerate ) \
+	LUA_METHOD_MAP( T, decelerate ) \
+	LUA_METHOD_MAP( T, bouncebegin ) \
+	LUA_METHOD_MAP( T, bounceend ) \
+	LUA_METHOD_MAP( T, spring ) \
+	LUA_METHOD_MAP( T, stoptweening ) \
+	LUA_METHOD_MAP( T, finishtweening ) \
+	LUA_METHOD_MAP( T, hurrytweening ) \
+	LUA_METHOD_MAP( T, x ) \
+	LUA_METHOD_MAP( T, y ) \
+	LUA_METHOD_MAP( T, z ) \
+	LUA_METHOD_MAP( T, addx ) \
+	LUA_METHOD_MAP( T, addy ) \
+	LUA_METHOD_MAP( T, addz ) \
+	LUA_METHOD_MAP( T, zoom ) \
+	LUA_METHOD_MAP( T, zoomx ) \
+	LUA_METHOD_MAP( T, zoomy ) \
+	LUA_METHOD_MAP( T, zoomz ) \
+	LUA_METHOD_MAP( T, zoomtowidth ) \
+	LUA_METHOD_MAP( T, zoomtoheight ) \
+	LUA_METHOD_MAP( T, stretchto ) \
+	LUA_METHOD_MAP( T, cropleft ) \
+	LUA_METHOD_MAP( T, croptop ) \
+	LUA_METHOD_MAP( T, cropright ) \
+	LUA_METHOD_MAP( T, cropbottom ) \
+	LUA_METHOD_MAP( T, fadeleft ) \
+	LUA_METHOD_MAP( T, fadetop ) \
+	LUA_METHOD_MAP( T, faderight ) \
+	LUA_METHOD_MAP( T, fadebottom ) \
+	LUA_METHOD_MAP( T, diffuse ) \
+	LUA_METHOD_MAP( T, diffuseleftedge ) \
+	LUA_METHOD_MAP( T, diffuserightedge ) \
+	LUA_METHOD_MAP( T, diffusetopedge ) \
+	LUA_METHOD_MAP( T, diffusebottomedge ) \
+	LUA_METHOD_MAP( T, diffusealpha ) \
+	LUA_METHOD_MAP( T, diffusecolor ) \
+	LUA_METHOD_MAP( T, glow ) \
+	LUA_METHOD_MAP( T, rotationx ) \
+	LUA_METHOD_MAP( T, rotationy ) \
+	LUA_METHOD_MAP( T, rotationz ) \
+	LUA_METHOD_MAP( T, heading ) \
+	LUA_METHOD_MAP( T, pitch ) \
+	LUA_METHOD_MAP( T, roll ) \
+	LUA_METHOD_MAP( T, shadowlength ) \
+	LUA_METHOD_MAP( T, horizalign ) \
+	LUA_METHOD_MAP( T, vertalign ) \
+	LUA_METHOD_MAP( T, diffuseblink ) \
+	LUA_METHOD_MAP( T, diffuseshift ) \
+	LUA_METHOD_MAP( T, glowblink ) \
+	LUA_METHOD_MAP( T, glowshift ) \
+	LUA_METHOD_MAP( T, rainbow ) \
+	LUA_METHOD_MAP( T, wag ) \
+	LUA_METHOD_MAP( T, bounce ) \
+	LUA_METHOD_MAP( T, bob ) \
+	LUA_METHOD_MAP( T, pulse ) \
+	LUA_METHOD_MAP( T, spin ) \
+	LUA_METHOD_MAP( T, vibrate ) \
+	LUA_METHOD_MAP( T, stopeffect ) \
+	LUA_METHOD_MAP( T, effectcolor1 ) \
+	LUA_METHOD_MAP( T, effectcolor2 ) \
+	LUA_METHOD_MAP( T, effectperiod ) \
+	LUA_METHOD_MAP( T, effectoffset ) \
+	LUA_METHOD_MAP( T, effectdelay ) \
+	LUA_METHOD_MAP( T, effectclock ) \
+	LUA_METHOD_MAP( T, effectmagnitude ) \
+	LUA_METHOD_MAP( T, scaletocover ) \
+	LUA_METHOD_MAP( T, scaletofit ) \
+	LUA_METHOD_MAP( T, animate ) \
+	LUA_METHOD_MAP( T, play ) \
+	LUA_METHOD_MAP( T, pause ) \
+	LUA_METHOD_MAP( T, setstate ) \
+	LUA_METHOD_MAP( T, texturewrapping ) \
+	LUA_METHOD_MAP( T, additiveblend ) \
+	LUA_METHOD_MAP( T, blend ) \
+	LUA_METHOD_MAP( T, zbuffer ) \
+	LUA_METHOD_MAP( T, ztest ) \
+	LUA_METHOD_MAP( T, ztestmode ) \
+	LUA_METHOD_MAP( T, zwrite ) \
+	LUA_METHOD_MAP( T, clearzbuffer ) \
+	LUA_METHOD_MAP( T, backfacecull ) \
+	LUA_METHOD_MAP( T, cullmode ) \
+	LUA_METHOD_MAP( T, hidden ) \
+	LUA_METHOD_MAP( T, hibernate ) \
+	LUA_METHOD_MAP( T, draworder ) \
+	LUA_METHOD_MAP( T, playcommand ) \
+	LUA_METHOD_MAP( T, queuecommand ) \
+
 
 class Actor
 {
@@ -60,7 +233,7 @@ public:
 		RectF		fade;	// 0 = no fade
 		RageColor   diffuse[4];
 		RageColor   glow;
-		Command	command;	// command to execute when this 
+		CString sCommandName;	// command to execute when this TweenState goes into effect
 
 		void Init();
 		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
@@ -194,7 +367,7 @@ public:
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
 	void Sleep( float time );
-	void QueueCommand( const Command& command );
+	void QueueCommand( const CString& sCommandName );
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
@@ -223,11 +396,11 @@ public:
 	//
 	enum HorizAlign { align_left, align_center, align_right };
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
-	virtual void SetHorizAlign( const CString &s );
+	virtual void SetHorizAlignString( const CString &s );	// convenience
 
 	enum VertAlign { align_top, align_middle, align_bottom };
 	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
-	virtual void SetVertAlign( const CString &s );
+	virtual void SetVertAlignString( const CString &s );	// convenience
 
 
 	//
@@ -241,7 +414,7 @@ public:
 	void SetEffectDelay( float fTime )			{ m_fEffectDelay = fTime; }
 	void SetEffectOffset( float fPercent )		{ m_fEffectOffset = fPercent; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
-	void SetEffectClock( const CString &s );
+	void SetEffectClockString( const CString &s );	// convenience
 
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 
@@ -300,23 +473,26 @@ public:
 	// render states
 	//
 	void SetBlendMode( BlendMode mode )			{ m_BlendMode = mode; } 
-	void SetBlendMode( const CString &s );
+	void SetBlendModeString( const CString &s );	// convenience
 	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
 	void SetClearZBuffer( bool b ) 				{ m_bClearZBuffer = b; } 
 	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
 	virtual void SetZTestMode( ZTestMode mode ) { m_ZTestMode = mode; } 
-	virtual void SetZTestMode( const CString &s );
+	void SetZTestModeString( const CString &s );	// convenience
 	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
-	virtual void SetCullMode( const CString &s );
+	void SetCullModeString( const CString &s );	// convenience
 
 	//
 	// Commands
 	//
+	virtual void PushSelf( lua_State *L );
 	virtual void PlayCommand( const CString &sCommandName );
-	void RunCommands( const Commands &cmds );
-	virtual void HandleCommand( const Command &command );	// derivable
-	static float GetCommandsLengthSeconds( const Commands &cmds );
+	virtual void RunCommands( const ActorCommands& cmds );
+	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
+
+	static float GetCommandsLengthSeconds( const ActorCommands& cmds );
+	static float GetCommandsLengthSeconds( const apActorCommands& cmds ) { return GetCommandsLengthSeconds( *cmds ); }	// convenience
 
 	//
 	// Animation
@@ -420,7 +596,7 @@ protected:
 	//
 	// commands
 	//
-	map<CString, Commands> m_mapNameToCommands;
+	map<CString, apActorCommands> m_mapNameToCommands;
 };
 
 #endif

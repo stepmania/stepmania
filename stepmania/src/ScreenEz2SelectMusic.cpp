@@ -18,6 +18,7 @@
 #include "StepsUtil.h"
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
+#include "Command.h"
 
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
 #define SCROLLING_LIST_Y		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListY")
@@ -413,10 +414,10 @@ void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::TweenOffScreen()
 {
-	static const Commands cmds = ParseCommands("linear,0.5;zoomy,0");
+	ActorCommands cmds( ParseCommands("linear,0.5;zoomy,0") );
 	m_MusicBannerWheel.RunCommands(		 cmds );
 
-	static const Commands cmds2 = ParseCommands("Linear,1;DiffuseAlpha,0");
+	ActorCommands cmds2( ParseCommands("Linear,1;DiffuseAlpha,0") );
 	m_PumpDifficultyCircle.RunCommands( cmds2 );
 	m_Guide.RunCommands(				cmds2 );
 	m_PumpDifficultyRating.RunCommands( cmds2 );

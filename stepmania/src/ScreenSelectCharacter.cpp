@@ -10,6 +10,7 @@
 #include "Character.h"
 #include "PrefsManager.h"
 #include "RageTextureManager.h"
+#include "Command.h"
 
 
 #define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))

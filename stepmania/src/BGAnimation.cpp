@@ -4,8 +4,9 @@
 #include "BGAnimationLayer.h"
 #include "RageUtil.h"
 #include "ActorUtil.h"
-#include "LuaManager.h"
 #include "Foreach.h"
+#include "Command.h"
+#include "LuaManager.h"
 
 
 BGAnimation::BGAnimation()
@@ -184,14 +185,12 @@ void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 		/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
 		 * modify draw order between BGAs in a Foreground.  Most things should be done
 		 * in metrics.ini commands, not here. */
-		this->RunCommands( ParseCommands(sInitCommand) );
+		this->RunCommands( ActorCommands(ParseCommands(sInitCommand)) );
 	}
 
 	ActorScroller::LoadFromNode( sDir, pNode );
 
-	Command cmd;
-	cmd.Load( "PlayCommand,Init" );
-	this->RunCommandOnChildren( cmd );
+	this->RunCommandsOnChildren( ActorCommands(ParseCommands("PlayCommand,Init")) );
 
 
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy

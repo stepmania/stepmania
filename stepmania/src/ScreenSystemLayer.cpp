@@ -9,6 +9,7 @@
 #include "ProfileManager.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
+#include "Command.h"
 
 
 #define CREDITS_PRESS_START						THEME->GetMetric ("ScreenSystemLayer","CreditsPressStart")
@@ -97,8 +98,8 @@ void ScreenSystemLayer::ReloadCreditsText()
 void ScreenSystemLayer::SystemMessage( const CString &sMessage )
 {
 	m_textMessage.SetText( sMessage );
-	static const Commands cmds = ParseCommands("finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0");
-	m_textMessage.RunCommands( cmds );
+	ActorCommands c = ActorCommands( ParseCommands("finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0") );
+	m_textMessage.RunCommands( c );
 }
 
 void ScreenSystemLayer::SystemMessageNoAnimate( const CString &sMessage )

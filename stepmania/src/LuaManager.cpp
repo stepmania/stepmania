@@ -175,8 +175,11 @@ void LuaManager::ResetState()
 
 	if( g_vRegisterActors )
 	{
-		FOREACH( RegisterActorFn, *g_vRegisterActors, fn )
-			(*fn)( L );
+		for( unsigned i=0; i<g_vRegisterActors->size(); i++ )
+		{
+			RegisterActorFn fn = (*g_vRegisterActors)[i];
+			fn( L );
+		}
 	}
 }
 

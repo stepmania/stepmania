@@ -28,7 +28,7 @@ public:
 	DancingCharacters();
 	virtual ~DancingCharacters();
 
-	virtual void LoadNextSong();
+	void LoadNextSong();
  
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();

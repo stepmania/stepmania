@@ -13,7 +13,7 @@
 static const ThemeMetric<int>	WARNING_START		("MenuTimer","WarningStart");
 static const ThemeMetric<int>	WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
 #define		WARNING_COMMAND(i)	THEME->GetMetricA	("MenuTimer", ssprintf("WarningCommand%i",i))
-static const ThemeMetric<Commands> ON_COMMAND	("MenuTimer","OnCommand");
+static const ThemeMetric<apActorCommands> ON_COMMAND	("MenuTimer","OnCommand");
 
 static const int TIMER_SECONDS = 99;
 static const int MAX_STALL_SECONDS = 30;

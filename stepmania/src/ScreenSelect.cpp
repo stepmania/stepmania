@@ -16,13 +16,14 @@
 #include "RageDisplay.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LightsManager.h"
+#include "Command.h"
 
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
-#define CHOICE( sChoiceName )	THEME->GetMetricA(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
+#define CHOICE( sChoiceName )	THEME->GetMetricM(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
 #define CODE_NAMES				THEME->GetMetric (m_sName,"CodeNames")
 #define CODE( c )				THEME->GetMetric (m_sName,ssprintf("Code%d",c+1))
-#define CODE_ACTION( c )		THEME->GetMetricA(m_sName,ssprintf("Code%dAction",c+1))
+#define CODE_ACTION( c )		THEME->GetMetricM(m_sName,ssprintf("Code%dAction",c+1))
 #define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
 #define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define ALLOW_DISABLED_PLAYER_INPUT		THEME->GetMetricB(m_sName,"AllowDisabledPlayerInput")

@@ -31,7 +31,7 @@ bool ReceptorArrow::Load( CString NoteSkin, const PlayerState* pPlayerState, int
 	{
 		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = NOTESKIN->GetMetricA( NoteSkin, m_sName, sCommand );
+		m_sScoreCommand[i] = apActorCommands( new ActorCommands(NOTESKIN->GetMetricA(NoteSkin,m_sName,sCommand)) );
 	}
 
 	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
@@ -71,8 +71,8 @@ void ReceptorArrow::Step( TapNoteScore score )
 {
 	m_pReceptorGo->FinishTweening();
 	m_pReceptorWaiting->FinishTweening();
-	m_pReceptorGo->RunCommands( m_sScoreCommand[score] );
-	m_pReceptorWaiting->RunCommands( m_sScoreCommand[score] );
+	m_pReceptorGo->RunCommands( *m_sScoreCommand[score] );
+	m_pReceptorWaiting->RunCommands( *m_sScoreCommand[score] );
 }
 
 /*

@@ -12,6 +12,11 @@
 #include <cerrno>
 #include "ModelManager.h"
 #include "Foreach.h"
+#include "LuaBinding.h"
+
+// lua start
+LUA_REGISTER_CLASS( Model )
+// lua end
 
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
@@ -750,6 +755,7 @@ void Model::SetSecondsIntoAnimation( float fSeconds )
 	}
 }
 
+/*
 void Model::HandleCommand( const Command &command )
 {
 	BeginHandleArgs;
@@ -767,6 +773,7 @@ void Model::HandleCommand( const Command &command )
 
 	EndHandleArgs;
 }
+*/
 
 bool Model::MaterialsNeedNormals() const
 {
@@ -776,6 +783,11 @@ bool Model::MaterialsNeedNormals() const
 			return true;
 	}
 	return false;
+}
+
+void Model::PushSelf( lua_State *L )
+{
+	Luna<Model,LuaModel>::Push( L, this );
 }
 
 /*

@@ -5,6 +5,7 @@
 
 #include "BitmapText.h"
 #include "ScreenAttract.h"
+#include "Sprite.h"
 
 enum EndingStatsLine
 {

@@ -3,7 +3,19 @@
 #ifndef BITMAPTEXT_H
 #define BITMAPTEXT_H
 
-#include "Sprite.h"
+#include "Actor.h"
+class RageTexture;
+
+#define LUA_BitmapText_METHODS( T ) \
+	LUA_Actor_METHODS( T ) \
+	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; } \
+	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; } \
+
+#define LUA_BitmapText_METHODS_MAP( T ) \
+	LUA_Actor_METHODS_MAP( T ) \
+	LUA_METHOD_MAP( T, wrapwidthpixels ) \
+	LUA_METHOD_MAP( T, maxwidth ) \
+
 
 class Font;
 
@@ -37,7 +49,10 @@ public:
 	/* Return true if the string 's' will use an alternate string, if available. */
 	bool StringWillUseAlternate(const CString& sText, const CString& sAlternateText) const;
 
-	virtual void HandleCommand( const Command &command );
+	//
+	// Commands
+	//
+	virtual void PushSelf( lua_State *L );
 
 public:
 	Font* m_pFont;

@@ -14,11 +14,12 @@
 #include "HelpDisplay.h"
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
+#include "Command.h"
 
-static const ThemeMetric<Commands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
-static const ThemeMetric<Commands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
-static const ThemeMetric<Commands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
-static const ThemeMetric<Commands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
+static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
+static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
+static const ThemeMetric<apActorCommands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
+static const ThemeMetric<apActorCommands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
 
 const int FramesToWaitForInput = 2;
 

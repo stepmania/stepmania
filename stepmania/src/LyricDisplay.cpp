@@ -5,8 +5,8 @@
 #include "GameState.h"
 #include "ThemeMetric.h"
 
-static ThemeMetric<Commands>	IN_COMMAND		("LyricDisplay","InCommand");
-static ThemeMetric<Commands>	OUT_COMMAND		("LyricDisplay","OutCommand");
+static ThemeMetric<apActorCommands>	IN_COMMAND		("LyricDisplay","InCommand");
+static ThemeMetric<apActorCommands>	OUT_COMMAND		("LyricDisplay","OutCommand");
 static ThemeMetric<RageColor>		WIPE_DIM_FACTOR	("LyricDisplay","WipeDimFactor");
 
 static float g_TweenInTime, g_TweenOutTime;
@@ -112,14 +112,14 @@ void LyricDisplay::Update( float fDeltaTime )
 			m_textLyrics[i].SetCropLeft(0);
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(1);
-		m_textLyrics[i].RunCommands(IN_COMMAND);
+		m_textLyrics[i].RunCommands( IN_COMMAND );
 		m_textLyrics[i].BeginTweening( fShowLength * 0.75f ); /* sleep */
 		if( i==0 )
 			m_textLyrics[i].SetCropLeft(1);
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(0);
 		m_textLyrics[i].BeginTweening( fShowLength * 0.25f ); /* sleep */
-		m_textLyrics[i].RunCommands(OUT_COMMAND);
+		m_textLyrics[i].RunCommands( OUT_COMMAND );
 	}
 
 	m_iCurLyricNumber++;

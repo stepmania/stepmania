@@ -7,26 +7,26 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-static ThemeMetric<Commands>	MARVELOUS_COMMAND		("Judgment","MarvelousCommand");
-static ThemeMetric<Commands>	PERFECT_COMMAND			("Judgment","PerfectCommand");
-static ThemeMetric<Commands>	GREAT_COMMAND			("Judgment","GreatCommand");
-static ThemeMetric<Commands>	GOOD_COMMAND			("Judgment","GoodCommand");
-static ThemeMetric<Commands>	BOO_COMMAND				("Judgment","BooCommand");
-static ThemeMetric<Commands>	MISS_COMMAND			("Judgment","MissCommand");
+static ThemeMetric<apActorCommands>	MARVELOUS_COMMAND		("Judgment","MarvelousCommand");
+static ThemeMetric<apActorCommands>	PERFECT_COMMAND			("Judgment","PerfectCommand");
+static ThemeMetric<apActorCommands>	GREAT_COMMAND			("Judgment","GreatCommand");
+static ThemeMetric<apActorCommands>	GOOD_COMMAND			("Judgment","GoodCommand");
+static ThemeMetric<apActorCommands>	BOO_COMMAND				("Judgment","BooCommand");
+static ThemeMetric<apActorCommands>	MISS_COMMAND			("Judgment","MissCommand");
 
-static ThemeMetric<Commands>	MARVELOUS_ODD_COMMAND	("Judgment","MarvelousOddCommand");
-static ThemeMetric<Commands>	PERFECT_ODD_COMMAND		("Judgment","PerfectOddCommand");
-static ThemeMetric<Commands>	GREAT_ODD_COMMAND		("Judgment","GreatOddCommand");
-static ThemeMetric<Commands>	GOOD_ODD_COMMAND		("Judgment","GoodOddCommand");
-static ThemeMetric<Commands>	BOO_ODD_COMMAND			("Judgment","BooOddCommand");
-static ThemeMetric<Commands>	MISS_ODD_COMMAND		("Judgment","MissOddCommand");
+static ThemeMetric<apActorCommands>	MARVELOUS_ODD_COMMAND	("Judgment","MarvelousOddCommand");
+static ThemeMetric<apActorCommands>	PERFECT_ODD_COMMAND		("Judgment","PerfectOddCommand");
+static ThemeMetric<apActorCommands>	GREAT_ODD_COMMAND		("Judgment","GreatOddCommand");
+static ThemeMetric<apActorCommands>	GOOD_ODD_COMMAND		("Judgment","GoodOddCommand");
+static ThemeMetric<apActorCommands>	BOO_ODD_COMMAND			("Judgment","BooOddCommand");
+static ThemeMetric<apActorCommands>	MISS_ODD_COMMAND		("Judgment","MissOddCommand");
 
-static ThemeMetric<Commands>	MARVELOUS_EVEN_COMMAND	("Judgment","MarvelousEvenCommand");
-static ThemeMetric<Commands>	PERFECT_EVEN_COMMAND	("Judgment","PerfectEvenCommand");
-static ThemeMetric<Commands>	GREAT_EVEN_COMMAND		("Judgment","GreatEvenCommand");
-static ThemeMetric<Commands>	GOOD_EVEN_COMMAND		("Judgment","GoodEvenCommand");
-static ThemeMetric<Commands>	BOO_EVEN_COMMAND		("Judgment","BooEvenCommand");
-static ThemeMetric<Commands>	MISS_EVEN_COMMAND		("Judgment","MissEvenCommand");
+static ThemeMetric<apActorCommands>	MARVELOUS_EVEN_COMMAND	("Judgment","MarvelousEvenCommand");
+static ThemeMetric<apActorCommands>	PERFECT_EVEN_COMMAND	("Judgment","PerfectEvenCommand");
+static ThemeMetric<apActorCommands>	GREAT_EVEN_COMMAND		("Judgment","GreatEvenCommand");
+static ThemeMetric<apActorCommands>	GOOD_EVEN_COMMAND		("Judgment","GoodEvenCommand");
+static ThemeMetric<apActorCommands>	BOO_EVEN_COMMAND		("Judgment","BooEvenCommand");
+static ThemeMetric<apActorCommands>	MISS_EVEN_COMMAND		("Judgment","MissEvenCommand");
 
 
 Judgment::Judgment()

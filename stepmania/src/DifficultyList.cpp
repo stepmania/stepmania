@@ -11,6 +11,7 @@
 #include "ThemeManager.h"
 #include "StepsUtil.h"
 #include "CommonMetrics.h"
+#include "Command.h"
 
 #define ITEMS_SPACING_Y				THEME->GetMetricF(m_sName,"ItemsSpacingY")
 #define DESCRIPTION_MAX_WIDTH		THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
@@ -214,10 +215,11 @@ void DifficultyList::PositionItems()
 		if( m_Lines[m].m_Number.GetDestY() != row.m_fY ||
 			m_Lines[m].m_Number.DestTweenState().diffuse[0][3] != DiffuseAlpha )
 		{
-			m_Lines[m].m_Description.RunCommands( MOVE_COMMAND );
-			m_Lines[m].m_Meter.RunCommands( MOVE_COMMAND );
-			m_Lines[m].m_Meter.RunCommandOnChildren( MOVE_COMMAND );
-			m_Lines[m].m_Number.RunCommands( MOVE_COMMAND );
+			apActorCommands c(MOVE_COMMAND);
+			m_Lines[m].m_Description.RunCommands( c );
+			m_Lines[m].m_Meter.RunCommands( c );
+			m_Lines[m].m_Meter.RunCommandsOnChildren( c );
+			m_Lines[m].m_Number.RunCommands( c );
 		}
 
 		m_Lines[m].m_Description.SetY( row.m_fY );
@@ -231,10 +233,10 @@ void DifficultyList::PositionItems()
 		if( m_bShown && m < (int)m_Rows.size() )
 			bHidden = m_Rows[m].m_bHidden;
 
-		const Commands cmds = ParseCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) );
-		m_Lines[m].m_Description.RunCommands( cmds );
-		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
-		m_Lines[m].m_Number.RunCommands( cmds );
+		ActorCommands c = ActorCommands( ParseCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) ) );
+		m_Lines[m].m_Description.RunCommands( c );
+		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
+		m_Lines[m].m_Number.RunCommands( c );
 	}
 
 
@@ -352,10 +354,10 @@ void DifficultyList::HideRows()
 {
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		static const Commands cmds = ParseCommands( "finishtweening;diffusealpha,0" );
-		m_Lines[m].m_Description.RunCommands( cmds );
-		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
-		m_Lines[m].m_Number.RunCommands( cmds );
+		ActorCommands c = ActorCommands( ParseCommands( "finishtweening;diffusealpha,0" ) );
+		m_Lines[m].m_Description.RunCommands( c );
+		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
+		m_Lines[m].m_Number.RunCommands( c );
 	}
 }
 
@@ -365,10 +367,10 @@ void DifficultyList::TweenOnScreen()
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
 	{
-		static const Commands cmds = ParseCommands( "finishtweening" );
-		m_Lines[m].m_Description.RunCommands( cmds );
-		m_Lines[m].m_Meter.RunCommandOnChildren( cmds );
-		m_Lines[m].m_Number.RunCommands( cmds );
+		ActorCommands c = ActorCommands( ParseCommands( "finishtweening" ) );
+		m_Lines[m].m_Description.RunCommands( c );
+		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
+		m_Lines[m].m_Number.RunCommands( c );
 	}
 
 //	PositionItems();

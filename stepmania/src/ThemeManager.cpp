@@ -19,6 +19,7 @@
 #include "ThemeMetric.h"
 #include "LuaManager.h"
 #include "ScreenDimensions.h"
+#include "Command.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -745,9 +746,14 @@ RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sV
 	return ret;
 }
 
-Commands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
+Commands ThemeManager::GetMetricM( const CString &sClassName, const CString &sValueName )
 {
 	return ParseCommands( GetMetricRaw(sClassName,sValueName) );
+}
+
+apActorCommands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
+{
+	return apActorCommands( new ActorCommands( ParseCommands( GetMetricRaw(sClassName,sValueName) ) ) );
 }
 
 void ThemeManager::NextTheme()
@@ -807,7 +813,7 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 	}
 }
 
-void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, Commands &valueOut )
+void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, apActorCommands &valueOut )
 {
 	valueOut = GetMetricA( sClassName, sValueName ); 
 }

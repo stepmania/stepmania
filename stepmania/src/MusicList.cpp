@@ -12,7 +12,7 @@ static const ThemeMetric<float>			START_X			("MusicList","StartX");
 static const ThemeMetric<float>			START_Y			("MusicList","StartY");
 static const ThemeMetric<float>			SPACING_X		("MusicList","SpacingX");
 static const ThemeMetric<float>			CROP_WIDTH		("MusicList","CropWidth");
-static const ThemeMetric<Commands> INIT_COMMAND	("MusicList","InitCommand");
+static const ThemeMetric<apActorCommands> INIT_COMMAND	("MusicList","InitCommand");
 
 MusicList::MusicList()
 {

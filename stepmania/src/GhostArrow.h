@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "ActorFrame.h"
+#include "ActorCommands.h"
 
 class GhostArrow : public ActorFrame
 {
@@ -21,7 +22,7 @@ public:
 protected:
 	PlayerNumber m_PlayerNumber;
 	Sprite	m_spr[NUM_TAP_NOTE_SCORES];
-	Commands m_acScoreCommand[NUM_TAP_NOTE_SCORES];
+	apActorCommands m_acScoreCommand[NUM_TAP_NOTE_SCORES];
 };
 
 

@@ -32,6 +32,12 @@
 #include "CommonMetrics.h"
 #include "Game.h"
 
+// temp
+#include "Command.h"
+#include "LuaBinding.h"
+#include "ActorCommands.h"
+#include "Sprite.h"
+
 //
 // StepMania global classes
 //
@@ -1085,6 +1091,41 @@ int main(int argc, char* argv[])
 	CheckSettings();
 
 	LUA			= new LuaManager;
+
+
+	RageTimer t;
+	float fDelta = 0;
+	Sprite s;
+	CString sCommands = "x,SCREEN_LEFT+100";
+	Commands cmds = ParseCommands("horizalign,left;vertalign,top;zoom,0.8;shadowlength,2");
+	ActorCommands* pacmds = new ActorCommands( cmds );
+
+	LUA->RunScript( 
+		"SCREEN_LEFT = 100\n"
+		"left = 'left'\n"
+		"center = 'center'\n"
+		"right = 'right'\n"
+		"top = 'top'\n"
+		"middle = 'middle'\n"
+		"bottom = 'bottom'\n"
+		"F2 = function(self)"
+		"	self:vertalign(top)"
+		"	self:horizalign(left)"
+		"	self:zoom(0.8)"
+		"	self:shadowlength(2)"
+		"end"
+		);
+	t.GetDeltaTime();
+	for( int i=0; i<100000; i++ )
+	{
+//		s.RunCommands( *pacmds );
+	}
+	LOG->Trace( "Lua2 took %f", t.GetDeltaTime() );
+	
+
+	SAFE_DELETE( pacmds );
+
+
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;

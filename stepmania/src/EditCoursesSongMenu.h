@@ -10,6 +10,7 @@
 #include "Course.h"
 #include "ScreenMessage.h"
 #include "song.h"
+#include "Sprite.h"
 
 
 class EditCoursesSongMenu: public ActorFrame 

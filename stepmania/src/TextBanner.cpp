@@ -8,14 +8,15 @@
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
+#include "Command.h"
 
 ThemeMetric<CString>		ARTIST_PREPEND_STRING		("TextBanner","ArtistPrependString");
-ThemeMetric<Commands> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
-ThemeMetric<Commands> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
-ThemeMetric<Commands> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
-ThemeMetric<Commands> THREE_LINES_TITLE_COMMAND	("TextBanner","ThreeLinesTitleCommand");
-ThemeMetric<Commands> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
-ThemeMetric<Commands> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
+ThemeMetric<apActorCommands> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
+ThemeMetric<apActorCommands> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
+ThemeMetric<apActorCommands> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
+ThemeMetric<apActorCommands> THREE_LINES_TITLE_COMMAND	("TextBanner","ThreeLinesTitleCommand");
+ThemeMetric<apActorCommands> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
+ThemeMetric<apActorCommands> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
 
 void TextBanner::Init()
 {

@@ -31,7 +31,8 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 	{
 		CString sJudge = TapNoteScoreToString( i );
 		CString sCommand = Capitalize(sJudge)+"Command";
-		m_acScoreCommand[i] = NOTESKIN->GetMetricA( sNoteSkin, m_sName, sCommand );
+		apActorCommands p( new ActorCommands(NOTESKIN->GetMetricA(sNoteSkin,m_sName,sCommand)) );
+		m_acScoreCommand[i] = p;
 	}
 }
 

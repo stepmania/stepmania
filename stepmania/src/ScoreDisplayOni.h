@@ -5,7 +5,7 @@
 
 #include "ScoreDisplay.h"
 #include "BitmapText.h"
-
+#include "Sprite.h"
 
 class ScoreDisplayOni : public ScoreDisplay
 {

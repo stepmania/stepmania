@@ -29,6 +29,7 @@
 #include "Style.h"
 #include "MemoryCardManager.h"
 #include "PlayerState.h"
+#include "Command.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 

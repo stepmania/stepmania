@@ -12,13 +12,13 @@ static const ThemeMetric<float>			START_X						("GroupList","StartX");
 static const ThemeMetric<float>			START_Y						("GroupList","StartY");
 static const ThemeMetric<float>			SPACING_X					("GroupList","SpacingX");
 static const ThemeMetric<float>			SPACING_Y					("GroupList","SpacingY");
-static const ThemeMetric<Commands>	SCROLL_TWEEN_COMMAND		("GroupList","ScrollTweenCommand");
-static const ThemeMetric<Commands>	GAIN_FOCUS_ITEM_COMMAND		("GroupList","GainFocusItemCommand");
-static const ThemeMetric<Commands>	LOSE_FOCUS_ITEM_COMMAND		("GroupList","LoseFocusItemCommand");
-static const ThemeMetric<Commands>	GAIN_FOCUS_GROUP_COMMAND	("GroupList","GainFocusGroupCommand");
-static const ThemeMetric<Commands>	LOSE_FOCUS_GROUP_COMMAND	("GroupList","LoseFocusGroupCommand");
-static const ThemeMetric<Commands>	HIDE_ITEM_COMMAND			("GroupList","HideItemCommand");
-static const ThemeMetric<Commands>	SHOW_ITEM_COMMAND			("GroupList","ShowItemCommand");
+static const ThemeMetric<apActorCommands>	SCROLL_TWEEN_COMMAND		("GroupList","ScrollTweenCommand");
+static const ThemeMetric<apActorCommands>	GAIN_FOCUS_ITEM_COMMAND		("GroupList","GainFocusItemCommand");
+static const ThemeMetric<apActorCommands>	LOSE_FOCUS_ITEM_COMMAND		("GroupList","LoseFocusItemCommand");
+static const ThemeMetric<apActorCommands>	GAIN_FOCUS_GROUP_COMMAND	("GroupList","GainFocusGroupCommand");
+static const ThemeMetric<apActorCommands>	LOSE_FOCUS_GROUP_COMMAND	("GroupList","LoseFocusGroupCommand");
+static const ThemeMetric<apActorCommands>	HIDE_ITEM_COMMAND			("GroupList","HideItemCommand");
+static const ThemeMetric<apActorCommands>	SHOW_ITEM_COMMAND			("GroupList","ShowItemCommand");
 
 const int MAX_GROUPS_ONSCREEN = 7;
 

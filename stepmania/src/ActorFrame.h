@@ -5,6 +5,14 @@
 
 #include "Actor.h"
 
+#define LUA_ActorFrame_METHODS( T ) \
+	LUA_Actor_METHODS( T ) \
+	static int propagate( T* p, lua_State *L )	{ p->SetPropagateCommands( BArg(1) ); return 0; } \
+
+#define LUA_ActorFrame_METHODS_MAP( T ) \
+	LUA_Actor_METHODS_MAP( T ) \
+	LUA_METHOD_MAP( T, propagate ) \
+
 class ActorFrame : public Actor
 {
 public:
@@ -15,16 +23,19 @@ public:
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
-	virtual void MoveToTail( Actor* pActor );
-	virtual void MoveToHead( Actor* pActor );
-	virtual void SortByDrawOrder();
+	void MoveToTail( Actor* pActor );
+	void MoveToHead( Actor* pActor );
+	void SortByDrawOrder();
 
 	void DeleteChildrenWhenDone( bool bDelete=true ) { m_bDeleteChildren = bDelete; }
 	void DeleteAllChildren();
 
-	virtual void RunCommandOnChildren( const Commands &cmds ); /* but not on self */
-	virtual void RunCommandOnChildren( const Command &cmd ); /* but not on self */
-	virtual void HandleCommand( const Command &command );	// derivable
+	//
+	// Commands
+	//
+	void PushSelf( lua_State *L );
+	void RunCommandsOnChildren( const ActorCommands& cmds ); /* but not on self */
+	void RunCommandsOnChildren( const apActorCommands& cmds ) { RunCommandsOnChildren( *cmds ); }	// convenience
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -37,12 +48,16 @@ public:
 	virtual void FinishTweening();
 	virtual void HurryTweening( float factor );
 	
+	void SetPropagateCommands( bool b );
+
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
 	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
 	virtual void LoseFocus();
 	virtual void PlayCommand( const CString &sCommandName );
+	virtual void RunCommands( const ActorCommands& cmds );
+	void RunCommands( const apActorCommands& cmds ) { ActorFrame::RunCommands( *cmds ); }	// convenience
 
 protected:
 	vector<Actor*>	m_SubActors;

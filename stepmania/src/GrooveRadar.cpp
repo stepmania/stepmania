@@ -11,9 +11,9 @@
 
 #define		LABEL_OFFSET_X( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define 	LABEL_OFFSET_Y( i )		THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
-static const ThemeMetric<Commands>	LABEL_ON_COMMAND			("GrooveRadar","LabelOnCommand");
+static const ThemeMetric<apActorCommands>	LABEL_ON_COMMAND			("GrooveRadar","LabelOnCommand");
 static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
-static const ThemeMetric<Commands>	LABEL_ON_COMMAND_POST_DELAY ("GrooveRadar","LabelOnCommandPostDelay");
+static const ThemeMetric<apActorCommands>	LABEL_ON_COMMAND_POST_DELAY ("GrooveRadar","LabelOnCommandPostDelay");
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 

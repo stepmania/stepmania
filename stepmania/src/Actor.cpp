@@ -10,11 +10,12 @@
 #include "Foreach.h"
 #include "XmlFile.h"
 #include "LuaBinding.h"
-#include "LuaManager.h"
+#include "Command.h"
+#include "ActorCommands.h"
 
 
 // lua start
-//LUA_REGISTER_CLASS( Actor, null )
+LUA_REGISTER_CLASS( Actor )
 // lua end
 
 
@@ -99,13 +100,15 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 		const CString &sCommands = a->m_sValue;
 		Commands cmds = ParseCommands( sCommands );
+		apActorCommands apac( new ActorCommands( cmds ) );
+
 		CString sCmdName;
 		/* Special case: "Command=foo" -> "OnCommand=foo" */
 		if( sKeyName.size() == 7 )
 			sCmdName="on";
 		else
 			sCmdName = sKeyName.Left( sKeyName.size()-7 );
-		m_mapNameToCommands[sCmdName] = cmds;
+		m_mapNameToCommands[sCmdName] = apac;
 	}
 }
 
@@ -307,9 +310,10 @@ void Actor::UpdateTweening( float fDeltaTime )
 			m_start = m_current;		// set the start position
 
 			// Execute the command in this tween (if any).
-			const Command &command = TS.command;
-			if( command.m_vsArgs.size() )
-				this->HandleCommand( command );
+			if( TS.sCommandName.size() )
+			{
+				this->PlayCommand( TS.sCommandName );
+			}
 		}
 
 		float fSecsToSubtract = min( TI.m_fTimeLeftInTween, fDeltaTime );
@@ -433,7 +437,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 		TS = m_Tweens[m_Tweens.size()-2].state;
 
 		// don't inherit the queued state's command
-		TS.command.Clear();
+		TS.sCommandName = "";
 	}
 	else
 	{
@@ -499,28 +503,28 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
-void Actor::SetHorizAlign( const CString &s )
+void Actor::SetHorizAlignString( const CString &s )
 {
-	if     (s.CompareNoCase("left")==0)		SetHorizAlign( align_left ); /* call derived */
-	else if(s.CompareNoCase("center")==0)	SetHorizAlign( align_center );
-	else if(s.CompareNoCase("right")==0)	SetHorizAlign( align_right );
+	if     (s.CompareNoCase("left")==0)		this->SetHorizAlign( align_left ); /* call derived */
+	else if(s.CompareNoCase("center")==0)	this->SetHorizAlign( align_center );
+	else if(s.CompareNoCase("right")==0)	this->SetHorizAlign( align_right );
 	else	ASSERT(0);
 }
 
-void Actor::SetVertAlign( const CString &s )
+void Actor::SetVertAlignString( const CString &s )
 {
-	if     (s.CompareNoCase("top")==0)		SetVertAlign( align_top ); /* call derived */
-	else if(s.CompareNoCase("middle")==0)	SetVertAlign( align_middle );
-	else if(s.CompareNoCase("bottom")==0)	SetVertAlign( align_bottom );
+	if     (s.CompareNoCase("top")==0)		this->SetVertAlign( align_top ); /* call derived */
+	else if(s.CompareNoCase("middle")==0)	this->SetVertAlign( align_middle );
+	else if(s.CompareNoCase("bottom")==0)	this->SetVertAlign( align_bottom );
 	else	ASSERT(0);
 }
 
-void Actor::SetEffectClock( const CString &s )
+void Actor::SetEffectClockString( const CString &s )
 {
-	if     (s.CompareNoCase("timer")==0)	SetEffectClock( CLOCK_TIMER );
-	else if(s.CompareNoCase("beat")==0)		SetEffectClock( CLOCK_BGM_BEAT );
-	else if(s.CompareNoCase("music")==0)	SetEffectClock( CLOCK_BGM_TIME );
-	else if(s.CompareNoCase("bgm")==0)		SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
+	if     (s.CompareNoCase("timer")==0)	this->SetEffectClock( CLOCK_TIMER );
+	else if(s.CompareNoCase("beat")==0)		this->SetEffectClock( CLOCK_BGM_BEAT );
+	else if(s.CompareNoCase("music")==0)	this->SetEffectClock( CLOCK_BGM_TIME );
+	else if(s.CompareNoCase("bgm")==0)		this->SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
 	else	ASSERT(0);
 }
 
@@ -671,12 +675,15 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::RunCommands( const Commands &cmds )
+void Actor::RunCommands( const ActorCommands& cmds )
 {
-	FOREACH_CONST( Command, cmds.v, c )
-		this->HandleCommand( *c );
+	lua_pushstring(LUA->L, cmds.GetFunctionName()); // function name
+	lua_gettable(LUA->L, LUA_GLOBALSINDEX); // function to be called
+	this->PushSelf( LUA->L ); // 1st parameter
+	lua_call(LUA->L, 1, 0); // call function with 1 argument and 0 results
 }
 
+/*
 void Actor::HandleCommand( const Command &command )
 {
 	BeginHandleArgs;
@@ -730,7 +737,7 @@ void Actor::HandleCommand( const Command &command )
 	else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( cArg(1) );
 	else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( cArg(1) );
 	else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( cArg(1) );
-	/* Add left/right/top/bottom for alpha if needed. */
+	// Add left/right/top/bottom for alpha if needed.
 	else if( sName=="diffusealpha" )	SetDiffuseAlpha( fArg(1) );
 	else if( sName=="diffusecolor" )	SetDiffuseColor( cArg(1) );
 	else if( sName=="glow" )			SetGlow( cArg(1) );
@@ -791,10 +798,10 @@ void Actor::HandleCommand( const Command &command )
 		return;	// don't do argument count checking
 	}
 
-	/* These are commands intended for a Sprite commands, but they will get 
-	 * sent to all sub-actors (which aren't necessarily Sprites) on 
-	 * GainFocus and LoseFocus.  So, don't run EndHandleArgs 
-	 * on these commands. */
+	// These are commands intended for a Sprite commands, but they will get 
+	// sent to all sub-actors (which aren't necessarily Sprites) on 
+	// GainFocus and LoseFocus.  So, don't run EndHandleArgs 
+	// on these commands.
 	else if( 
 		sName=="customtexturerect" || 
 		sName=="texcoordvelocity" || 
@@ -816,8 +823,9 @@ void Actor::HandleCommand( const Command &command )
 
 	EndHandleArgs;
 }
+*/
 
-float Actor::GetCommandsLengthSeconds( const Commands &cmds )
+float Actor::GetCommandsLengthSeconds( const ActorCommands& cmds )
 {
 	Actor temp;
 	temp.RunCommands(cmds);
@@ -916,28 +924,28 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;
 }
 
-void Actor::SetBlendMode( const CString &s )
+void Actor::SetBlendModeString( const CString &s )
 {
-	if     (s.CompareNoCase("normal")==0)	SetBlendMode( BLEND_NORMAL );
-	else if(s.CompareNoCase("add")==0)		SetBlendMode( BLEND_ADD );
-	else if(s.CompareNoCase("noeffect")==0)	SetBlendMode( BLEND_NO_EFFECT );
+	if     (s.CompareNoCase("normal")==0)	this->SetBlendMode( BLEND_NORMAL );
+	else if(s.CompareNoCase("add")==0)		this->SetBlendMode( BLEND_ADD );
+	else if(s.CompareNoCase("noeffect")==0)	this->SetBlendMode( BLEND_NO_EFFECT );
 	else	ASSERT(0);
 }
 
-void Actor::SetCullMode( const CString &s )
+void Actor::SetCullModeString( const CString &s )
 {
-	if     (s.CompareNoCase("back")==0)		SetCullMode( CULL_BACK );
-	else if(s.CompareNoCase("front")==0)	SetCullMode( CULL_FRONT );
-	else if(s.CompareNoCase("none")==0)		SetCullMode( CULL_NONE );
+	if     (s.CompareNoCase("back")==0)		this->SetCullMode( CULL_BACK );
+	else if(s.CompareNoCase("front")==0)	this->SetCullMode( CULL_FRONT );
+	else if(s.CompareNoCase("none")==0)		this->SetCullMode( CULL_NONE );
 	else	ASSERT(0);
 }
 
-void Actor::SetZTestMode( const CString &s )
+void Actor::SetZTestModeString( const CString &s )
 {
 	// for metrics backward compatibility
-	if(s.CompareNoCase("off")==0)				SetZTestMode( ZTEST_OFF );
-	else if(s.CompareNoCase("writeonpass")==0)	SetZTestMode( ZTEST_WRITE_ON_PASS );
-	else if(s.CompareNoCase("writeonfail")==0)	SetZTestMode( ZTEST_WRITE_ON_FAIL );
+	if(s.CompareNoCase("off")==0)				this->SetZTestMode( ZTEST_OFF );
+	else if(s.CompareNoCase("writeonpass")==0)	this->SetZTestMode( ZTEST_WRITE_ON_PASS );
+	else if(s.CompareNoCase("writeonfail")==0)	this->SetZTestMode( ZTEST_WRITE_ON_FAIL );
 	else	ASSERT(0);
 }
 
@@ -954,22 +962,27 @@ void Actor::Sleep( float time )
 	BeginTweening( 0, TWEEN_LINEAR ); 
 }
 
-void Actor::QueueCommand( const Command& command )
+void Actor::QueueCommand( const CString& sCommandName )
 {
-	BeginTweening( 0, TWEEN_LINEAR ); 
-	DestTweenState().command = command;
+	BeginTweening( 0, TWEEN_LINEAR );
+	DestTweenState().sCommandName = sCommandName;
 }
 
 void Actor::PlayCommand( const CString &sCommandName )
 {
 	CString sKey = sCommandName;
 	sKey.MakeLower();
-	map<CString, Commands>::const_iterator it = m_mapNameToCommands.find( sKey );
+	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sKey );
 
 	if( it == m_mapNameToCommands.end() )
 		return;
 
-	RunCommands( it->second );
+	RunCommands( *it->second );
+}
+
+void Actor::PushSelf( lua_State *L )
+{
+	Luna<Actor,LuaActor>::Push( L, this );
 }
 
 /*

@@ -4,6 +4,12 @@
 #include "RageUtil.h"
 #include "XmlFile.h"
 #include "ActorUtil.h"
+#include "LuaBinding.h"
+#include "ActorCommands.h"
+
+// lua start
+LUA_REGISTER_CLASS( ActorFrame )
+// lua end
 
 ActorFrame::ActorFrame()
 {
@@ -95,16 +101,10 @@ void ActorFrame::DrawPrimitives()
 		m_SubActors[i]->Draw();
 }
 
-void ActorFrame::RunCommandOnChildren( const Commands &cmd )
+void ActorFrame::RunCommandsOnChildren( const ActorCommands& cmds )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommands( cmd );
-}
-
-void ActorFrame::RunCommandOnChildren( const Command &cmd )
-{
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->HandleCommand( cmd );
+		m_SubActors[i]->RunCommands( cmds );
 }
 
 void ActorFrame::Update( float fDeltaTime )
@@ -143,7 +143,6 @@ void ActorFrame::SetDiffuseAlpha( float f )
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->SetDiffuseAlpha( f );
 }
-
 
 void ActorFrame::FinishTweening()
 {
@@ -186,6 +185,20 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
+void ActorFrame::RunCommands( const ActorCommands& cmds )
+{
+	if( m_bPropagateCommands )
+		RunCommandsOnChildren( cmds );
+	else
+		Actor::RunCommands( cmds );
+}
+
+void ActorFrame::SetPropagateCommands( bool b )
+{
+	m_bPropagateCommands = b;
+}
+
+/*
 void ActorFrame::HandleCommand( const Command &command )
 {
 	BeginHandleArgs;
@@ -206,12 +219,13 @@ void ActorFrame::HandleCommand( const Command &command )
 		EndHandleArgs;
 	} while(0);
 
-	/* By default, don't propograte most commands to children; it makes no sense
-	 * to run "x,50" recursively.  If m_bPropagateCommands is set, propagate all
-	 * commands. */
+	// By default, don't propograte most commands to children; it makes no sense
+	// to run "x,50" recursively.  If m_bPropagateCommands is set, propagate all
+	// commands.
 	if( m_bPropagateCommands && sName!="propagate" )
 		RunCommandOnChildren( command );
 }
+*/
 
 void ActorFrame::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
@@ -238,6 +252,11 @@ void ActorFrame::PlayCommand( const CString &sCommandName )
 		Actor* pActor = m_SubActors[i];
 		pActor->PlayCommand( sCommandName );
 	}
+}
+
+void ActorFrame::PushSelf( lua_State *L )
+{
+	Luna<ActorFrame,LuaActorFrame>::Push( L, this );
 }
 
 /*

@@ -44,10 +44,10 @@ public:
 	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
 
-private:
 	/* Run an expression.  The result is left on the Lua stack. */
 	bool RunExpression( const CString &str );
 	lua_State *L;
+private:
 };
 
 extern LuaManager *LUA;

@@ -2,12 +2,22 @@
  * Modified by Chris.
  */
 
-#include "lua.h"
-#include "lauxlib.h"
+extern "C"
+{
+#include <lua.h>
+#include <lauxlib.h>
+}
+
 #include "LuaManager.h"
 
 
-#define LUA_REGISTER_CLASS( T, base ) \
+#define SArg(n) (luaL_checkstring(L,n))
+#define IArg(n) (luaL_checkint(L,n))
+#define BArg(n) (!!IArg(n))
+#define FArg(n) (luaL_checknumber(L,n))
+
+
+#define LUA_REGISTER_CLASS( T ) \
 class Lua##T { \
 public: \
 	Lua##T() { LUA->Register( Register ); } \
@@ -15,11 +25,6 @@ public: \
 	static Luna<T,Lua##T>::RegType methods[]; \
 	static void Register( lua_State* L ) { \
 		Luna<T,Lua##T>::Register(L); \
-		if( stricmp(#base,"null") != 0 ) \
-			LUA->RunScript( "getmetatable("#T").__index = "#base ); \
-	} \
-	static T* MakeNew( lua_State* L ) { \
-		return new T; \
 	} \
 	LUA_##T##_METHODS( T ) \
 }; \
@@ -63,20 +68,6 @@ public:
     lua_pushcfunction(L, tostring_T);
     lua_settable(L, metatable);
 
-    lua_pushliteral(L, "__gc");
-    lua_pushcfunction(L, gc_T);
-    lua_settable(L, metatable);
-
-    lua_newtable(L);                // mt for method table
-    int mt = lua_gettop(L);
-    lua_pushliteral(L, "__call");
-    lua_pushcfunction(L, new_T);
-    lua_pushliteral(L, "new");
-    lua_pushvalue(L, -2);           // dup new_T function
-    lua_settable(L, methods);       // add new_T to method table
-    lua_settable(L, mt);            // mt.__call = new_T
-    lua_setmetatable(L, methods);
-
     // fill method table with methods from class T
     for (RegType *l = TInfo::methods; l->name; l++) {
       lua_pushstring(L, l->name);
@@ -109,26 +100,18 @@ private:
     return (*(l->mfunc))(obj,L);  // call member function
   }
 
+public:
   // create a new T object and
   // push onto the Lua stack a userdata containing a pointer to T object
-  static int new_T(lua_State *L) {
-    lua_remove(L, 1);   // use classname:new(), instead of classname.new()
-    T *obj = TInfo::MakeNew(L);  // call constructor for T objects
-    userdataType *ud =
-      static_cast<userdataType*>(lua_newuserdata(L, sizeof(userdataType)));
-    ud->pT = obj;  // store pointer to object in userdata
+  static int Push(lua_State *L, T* p ) {
+    userdataType *ud = static_cast<userdataType*>(lua_newuserdata(L, sizeof(userdataType)));
+    ud->pT = p;  // store pointer to object in userdata
     luaL_getmetatable(L, TInfo::className);  // lookup metatable in Lua registry
     lua_setmetatable(L, -2);
     return 1;  // userdata containing pointer to T object
   }
 
-  // garbage collection metamethod
-  static int gc_T(lua_State *L) {
-    userdataType *ud = static_cast<userdataType*>(lua_touserdata(L, 1));
-    T *obj = ud->pT;
-    delete obj;  // call destructor for T objects
-    return 0;
-  }
+private:
 
   static int tostring_T (lua_State *L) {
     char buff[32];

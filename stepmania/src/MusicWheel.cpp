@@ -52,7 +52,7 @@ ThemeMetric<float>	NUM_WHEEL_ITEMS_TO_DRAW	("MusicWheel","NumWheelItems");
 #define MOST_PLAYED_SONGS_TO_SHOW	THEME->GetMetricI("MusicWheel","MostPlayedSongsToShow")
 #define SORT_MENU_CHOICE_NAMES		THEME->GetMetric ("MusicWheel","SortMenuChoiceNames")
 #define MODE_MENU_CHOICE_NAMES		THEME->GetMetric ("MusicWheel","ModeMenuChoiceNames")
-#define CHOICE( sChoiceName )		THEME->GetMetricA("MusicWheel",ssprintf("Choice%s",sChoiceName.c_str()))
+#define CHOICE( sChoiceName )		THEME->GetMetricM("MusicWheel",ssprintf("Choice%s",sChoiceName.c_str()))
 #define WHEEL_ITEM_ON_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOnDelayCenter")
 #define WHEEL_ITEM_ON_DELAY_OFFSET	THEME->GetMetricF("MusicWheel","WheelItemOnDelayOffset")
 #define WHEEL_ITEM_OFF_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOffDelayCenter")

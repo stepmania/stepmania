@@ -17,6 +17,7 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
+#include "Command.h"
 
 #include <set>
 
@@ -29,7 +30,7 @@ ThemeMetric<float> BOTTOM_EDGE						("Background","BottomEdge");
 #define RECT_BACKGROUND RectF						(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 ThemeMetric<bool> BLINK_DANGER_ALL					("Background","BlinkDangerAll");
 ThemeMetric<bool> DANGER_ALL_IS_OPAQUE				("Background","DangerAllIsOpaque");
-ThemeMetric<Commands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
+ThemeMetric<apActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
 
 static float g_fBackgroundCenterWidth = 40;
 const CString STATIC_BACKGROUND = "static background";
@@ -468,9 +469,8 @@ void Background::LoadFromSong( const Song* pSong )
 		 * may look something like "BGAnimation, BGAnimationLayer, Sprite" or it
 		 * may be deeper, like "BGAnimation, BGAnimationLayer, BGAnimation,
 		 * BGAnimationLayer, Sprite". */
-		pBGA->RunCommands( ParseCommands("propagate,1") );
-		pBGA->RunCommands( ParseCommands("effectclock,music") );
-		pBGA->RunCommands( ParseCommands("propagate,0") );
+		ActorCommands acmds( ParseCommands("effectclock,music") );
+		pBGA->RunCommands( acmds );
 	}
 }
 
@@ -735,7 +735,7 @@ void BrightnessOverlay::Set( float fBrightness )
 
 void BrightnessOverlay::FadeToActualBrightness()
 {
-	this->RunCommandOnChildren( BRIGHTNESS_FADE_COMMAND );
+	this->RunCommandsOnChildren( BRIGHTNESS_FADE_COMMAND );
 	SetActualBrightness();
 }
 

@@ -10,6 +10,11 @@
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
 #include "ActorUtil.h"	// for BeginHandleArgs
+#include "LuaBinding.h"
+
+// lua start
+LUA_REGISTER_CLASS( BitmapText )
+// lua end
 
 /*
  * XXX: Changing a whole array of diffuse colors every frame (several times) is a waste,
@@ -517,6 +522,7 @@ void BitmapText::SetVertAlign( VertAlign va )
 	BuildChars();
 }
 
+/*
 void BitmapText::HandleCommand( const Command &command )
 {
 	BeginHandleArgs;
@@ -535,6 +541,7 @@ void BitmapText::HandleCommand( const Command &command )
 
 	EndHandleArgs;
 }
+*/
 
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 {
@@ -542,6 +549,11 @@ void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 	if( m_iWrapWidthPixels == iWrapWidthPixels )
 		return;
 	SetText( m_sText, "", iWrapWidthPixels );
+}
+
+void BitmapText::PushSelf( lua_State *L )
+{
+	Luna<BitmapText,LuaBitmapText>::Push( L, this );
 }
 
 /*

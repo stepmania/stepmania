@@ -9,6 +9,7 @@
 #include <set>
 #include "PlayerState.h"
 
+
 CString GetAttackPath( const CString &sAttack )
 {
 	CString ret = ssprintf( "AttackDisplay attack %s", sAttack.c_str() );
@@ -110,7 +111,7 @@ void AttackDisplay::SetAttack( const CString &sText )
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 	const CString sName = ssprintf( "%sP%i", sText.c_str(), pn+1 );
-	m_sprAttack.RunCommands( THEME->GetMetricA("AttackDisplay", sName + "OnCommand" ) );
+	m_sprAttack.RunCommands( THEME->GetMetricA("AttackDisplay", sName + "OnCommand") );
 }
 
 /*

@@ -5,8 +5,7 @@
 
 #include "ScoreDisplay.h"
 #include "BitmapText.h"
-
-
+#include "Sprite.h"
 
 class ScoreDisplayNormal : public ScoreDisplay
 {

@@ -2,9 +2,10 @@
 #include "DifficultyDisplay.h"
 #include "song.h"
 #include "ThemeMetric.h"
+#include "Command.h"
 
-ThemeMetric<Commands>  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
-ThemeMetric<Commands>  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
+ThemeMetric<apActorCommands>  ICONONCOMMAND	("DifficultyDisplay","IconOnCommand");
+ThemeMetric<apActorCommands>  ICONOFFCOMMAND	("DifficultyDisplay","IconOffCommand");
 
 DifficultyDisplay::DifficultyDisplay()
 {

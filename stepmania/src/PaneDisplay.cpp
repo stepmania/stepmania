@@ -9,6 +9,7 @@
 #include "SongManager.h"
 #include "Course.h"
 #include "Style.h"
+#include "Command.h"
 
 #define SHIFT_X(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iY", p+1))
@@ -322,7 +323,7 @@ done:
 			continue;
 		spec.erase( spec.begin(), spec.begin()+1 );
 
-		m_textContents[c].RunCommands( ParseCommands(join(";", spec)) );
+		m_textContents[c].RunCommands( ActorCommands( ParseCommands(join(";", spec)) ) );
 		break;
 	}
 }

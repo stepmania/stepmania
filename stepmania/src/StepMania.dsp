@@ -632,6 +632,14 @@ SOURCE=.\RageUtil_FileDB.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\ActorCommands.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActorCommands.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Attack.cpp
 # End Source File
 # Begin Source File

@@ -8,13 +8,33 @@
 
 class RageTexture;
 
-/*
+
 #define LUA_Sprite_METHODS( T ) \
 	LUA_Actor_METHODS( T ) \
+	/* Commands that go in the tweening queue: 
+	 * Commands that take effect immediately (ignoring the tweening queue): */ \
+	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; } \
+	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; } \
+	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; } \
+	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; } \
+	/* Texture commands; these could be moved to RageTexture* (even though that's
+	 * not an Actor) if these are needed for other things that use textures.
+	 * We'd need to break the command helpers into a separate function; RageTexture
+	 * shouldn't depend on Actor. */ \
+	static int position( T* p, lua_State *L )			{ p->SetPosition(FArg(1)); return 0; } \
+	static int loop( T* p, lua_State *L )				{ p->SetLooping(BArg(1)); return 0; } \
+	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate(FArg(1)); return 0; } \
 
 #define LUA_Sprite_METHODS_MAP( T ) \
 	LUA_Actor_METHODS_MAP( T ) \
-*/
+	LUA_METHOD_MAP( T, customtexturerect ) \
+	LUA_METHOD_MAP( T, texcoordvelocity ) \
+	LUA_METHOD_MAP( T, scaletoclipped ) \
+	LUA_METHOD_MAP( T, stretchtexcoords ) \
+	LUA_METHOD_MAP( T, position ) \
+	LUA_METHOD_MAP( T, loop ) \
+	LUA_METHOD_MAP( T, rate ) \
+
 
 class Sprite: public Actor
 {
@@ -63,6 +83,9 @@ public:
 	void StopUsingCustomCoords();
 	void GetActiveTextureCoords(float fTexCoordsOut[8]) const;
 	void StretchTexCoords( float fX, float fY );
+	void SetPosition( float f );
+	void SetLooping( bool b );
+	void SetPlaybackRate( float f );
 
 
 	void SetTexCoordVelocity(float fVelX, float fVelY) { m_fTexCoordVelocityX = fVelX; m_fTexCoordVelocityY = fVelY; }	
@@ -71,7 +94,10 @@ public:
 	void ScaleToClipped( float fWidth, float fHeight );
 	static bool IsDiagonalBanner( int iWidth, int iHeight );
 
-	virtual void HandleCommand( const Command &command );
+	//
+	// Commands
+	//
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	virtual bool LoadFromTexture( RageTextureID ID );
@@ -103,6 +129,7 @@ protected:
 	float m_fTexCoordVelocityX;
 	float m_fTexCoordVelocityY;
 };
+
 
 #endif
 

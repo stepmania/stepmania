@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "ThemeMetric.h"
+#include "Command.h"
 
 
 ThemeMetric<float>	LABEL_X				("Combo","LabelX");
@@ -21,10 +22,10 @@ ThemeMetric<float>	NUMBER_MAX_ZOOM		("Combo","NumberMaxZoom");
 ThemeMetric<float>	NUMBER_MAX_ZOOM_AT	("Combo","NumberMaxZoomAt");
 ThemeMetric<float>	PULSE_ZOOM			("Combo","PulseZoom");
 ThemeMetric<float>	C_TWEEN_SECONDS		("Combo","TweenSeconds");
-ThemeMetric<Commands>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
-ThemeMetric<Commands>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
-ThemeMetric<Commands>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
-ThemeMetric<Commands>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
+ThemeMetric<apActorCommands>	FULL_COMBO_GREATS_COMMAND		("Combo","FullComboGreatsCommand");
+ThemeMetric<apActorCommands>	FULL_COMBO_PERFECTS_COMMAND		("Combo","FullComboPerfectsCommand");
+ThemeMetric<apActorCommands>	FULL_COMBO_MARVELOUSES_COMMAND	("Combo","FullComboMarvelousesCommand");
+ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND		("Combo","FullComboBrokenCommand");
 ThemeMetric<bool>	SHOW_MISS_COMBO		("Combo","ShowMissCombo");
 
 

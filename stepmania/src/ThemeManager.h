@@ -7,10 +7,11 @@
 #include "RageTimer.h"
 #include <set>
 #include <deque>
+#include "Command.h"
+#include "ActorCommands.h"
 
 class IThemeMetric;
 class IniFile;
-class Commands;
 
 enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, Other, NUM_ELEMENT_CATEGORIES };
 
@@ -62,14 +63,16 @@ public:
 	float		GetMetricF( const CString &sClassName, const CString &sValueName );
 	bool		GetMetricB( const CString &sClassName, const CString &sValueName );
 	RageColor	GetMetricC( const CString &sClassName, const CString &sValueName );
-	Commands	GetMetricA( const CString &sClassName, const CString &sValueName );
+	Commands	GetMetricM( const CString &sClassName, const CString &sValueName );
+	apActorCommands	GetMetricA( const CString &sClassName, const CString &sValueName );
 
 	void	GetMetric( const CString &sClassName, const CString &sValueName, CString &valueOut )		{ valueOut = GetMetric( sClassName, sValueName ); }
 	void	GetMetric( const CString &sClassName, const CString &sValueName, int &valueOut )			{ valueOut = GetMetricI( sClassName, sValueName ); }
 	void	GetMetric( const CString &sClassName, const CString &sValueName, float &valueOut )			{ valueOut = GetMetricF( sClassName, sValueName ); }
 	void	GetMetric( const CString &sClassName, const CString &sValueName, bool &valueOut )			{ valueOut = GetMetricB( sClassName, sValueName ); }
 	void	GetMetric( const CString &sClassName, const CString &sValueName, RageColor &valueOut )		{ valueOut = GetMetricC( sClassName, sValueName ); }
-	void	GetMetric( const CString &sClassName, const CString &sValueName, Commands &valueOut );
+	void	GetMetric( const CString &sClassName, const CString &sValueName, Command &valueOut );
+	void	GetMetric( const CString &sClassName, const CString &sValueName, apActorCommands &valueOut );
 
 	//
 	// For self-registering metrics

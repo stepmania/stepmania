@@ -23,7 +23,7 @@
 #include "Foreach.h"
 #include "Style.h"
 #include "ScreenDimensions.h"
-
+#include "Command.h"
 
 //
 // Defines specific to ScreenNameEntryTraditional
@@ -83,10 +83,10 @@ void HighScoreWheelItem::LoadBlank( int iRankIndex )
 
 void HighScoreWheelItem::ShowFocus()
 {
-	Commands cmds = ParseCommands("diffuseshift;EffectColor1,1,1,0,1;EffectColor2,0,1,1,1");
-	m_textRank.RunCommands( cmds );
-	m_textName.RunCommands( cmds );
-	m_textScore.RunCommands( cmds );
+	ActorCommands c( ParseCommands("diffuseshift;EffectColor1,1,1,0,1;EffectColor2,0,1,1,1") );
+	m_textRank.RunCommands( c );
+	m_textName.RunCommands( c );
+	m_textScore.RunCommands( c );
 }
 
 void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
