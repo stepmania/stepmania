@@ -26,26 +26,26 @@
 #define USERS_X						THEME->GetMetricF(m_sName,"UsersX")
 
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
-const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);
+const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);			
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
 REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
 ScreenNetSelectBase::ScreenNetSelectBase( const CString& sName ) : ScreenWithMenuElements( sName )
 {
 	//ChatBox
-	m_rectChatInputBox.SetDiffuse( CHATINPUT_COLOR ); 
-	m_rectChatInputBox.SetName( "ChatInputBox" );
-	m_rectChatInputBox.SetWidth( CHATINPUT_WIDTH );
-	m_rectChatInputBox.SetHeight( CHATINPUT_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectChatInputBox );
-	this->AddChild( &m_rectChatInputBox );
+	m_sprChatInputBox.SetName( "ChatInputBox" );
+	m_sprChatInputBox.Load( THEME->GetPathG( m_sName, "ChatInputBox" ) );
+	m_sprChatInputBox.SetWidth( CHATINPUT_WIDTH );
+	m_sprChatInputBox.SetHeight( CHATINPUT_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_sprChatInputBox );
+	this->AddChild( &m_sprChatInputBox );
 
-	m_rectChatOutputBox.SetDiffuse( CHATOUTPUT_COLOR );
-	m_rectChatOutputBox.SetName( "ChatOutputBox" );
-	m_rectChatOutputBox.SetWidth( CHATOUTPUT_WIDTH );
-	m_rectChatOutputBox.SetHeight( CHATOUTPUT_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_rectChatOutputBox );
-	this->AddChild( &m_rectChatOutputBox );
+	m_sprChatOutputBox.SetName( "ChatOutputBox" );
+	m_sprChatOutputBox.Load( THEME->GetPathG( m_sName, "ChatOutputBox" ) );
+	m_sprChatOutputBox.SetWidth( CHATOUTPUT_WIDTH );
+	m_sprChatOutputBox.SetHeight( CHATOUTPUT_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_sprChatOutputBox );
+	this->AddChild( &m_sprChatOutputBox );
 
 	m_textChatInput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
 	m_textChatInput.SetHorizAlign( align_left );
@@ -201,8 +201,8 @@ void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNetSelectBase::TweenOffScreen()
 {
-	OFF_COMMAND( m_rectChatInputBox );
-	OFF_COMMAND( m_rectChatOutputBox );
+	OFF_COMMAND( m_sprChatInputBox );
+	OFF_COMMAND( m_sprChatOutputBox );
 	OFF_COMMAND( m_textChatInput );
 	OFF_COMMAND( m_textChatOutput );
 

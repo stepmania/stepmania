@@ -27,6 +27,8 @@
 
 #define GROUPSBG_WIDTH				THEME->GetMetricF(m_sName,"GroupsBGWidth")
 #define SONGSBG_WIDTH				THEME->GetMetricF(m_sName,"SongsBGWidth")
+#define SELECTION_WIDTH				THEME->GetMetricF(m_sName,"SelectionWidth")
+#define SELECTION_HEIGHT			THEME->GetMetricF(m_sName,"SelectionHeight")
 
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
@@ -120,9 +122,12 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSe
 	}
 
 	m_SelectMode = SelectGroup;
-	m_rectSelection.SetName( "Sel" );
-	SET_QUAD_INIT( m_rectSelection );
-	this->AddChild( &m_rectSelection );
+	m_sprSelection.Load( THEME->GetPathG( m_sName, "Selection" ) );
+	m_sprSelection.SetName( "Selection" );
+	m_sprSelection.SetWidth( SELECTION_WIDTH );
+	m_sprSelection.SetHeight( SELECTION_HEIGHT );
+	SET_XY_AND_ON_COMMAND( m_sprSelection );
+	this->AddChild( &m_sprSelection );
 
 
 	SONGMAN->GetGroupNames( m_vGroups );
@@ -413,16 +418,16 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode - 1) % (int)SelectModes);
 	if ( (int) m_SelectMode < 0) 
 		m_SelectMode = (NetScreenSelectModes) (SelectModes - 1);
-	m_rectSelection.StopTweening( );
-	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
+	m_sprSelection.StopTweening( );
+	COMMAND( m_sprSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
 void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type )
 {
 	m_soundChangeSel.Play();
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode + 1) % (int)SelectModes);
-	m_rectSelection.StopTweening( );
-	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
+	m_sprSelection.StopTweening( );
+	COMMAND( m_sprSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
 void ScreenNetSelectMusic::MenuStart( PlayerNumber pn )
@@ -453,7 +458,7 @@ void ScreenNetSelectMusic::TweenOffScreen()
 {
 	ScreenNetSelectBase::TweenOffScreen();
 
-	OFF_COMMAND( m_rectSelection );
+	OFF_COMMAND( m_sprSelection );
 	OFF_COMMAND( m_textGroups );
 	OFF_COMMAND( m_rectGroupsBackground );
 

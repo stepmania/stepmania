@@ -62,7 +62,7 @@ protected:
 	void TweenOffScreen();
 private:
 	//Selection
-	Quad			m_rectSelection;
+	Sprite			m_sprSelection;
 
 	//Groups
 	BitmapText		m_textGroups;

@@ -26,8 +26,8 @@ private:
 	BitmapText		m_textChatInput;
 	BitmapText		m_textChatOutput;
 	BitmapText		m_textOutHidden;
-	Quad			m_rectChatInputBox;
-	Quad			m_rectChatOutputBox;
+	Sprite			m_sprChatInputBox;
+	Sprite			m_sprChatOutputBox;
 	CString			m_sTextInput;
 	CString			m_actualText;
 
