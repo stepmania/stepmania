@@ -85,7 +85,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 		if( pSong == NULL)
 		{
-			LOG->Trace("Can't find song");
+			LOG->Trace("Can't find song %s", SongTitle);
 			continue;
 		}
 
