@@ -51,6 +51,8 @@ const int NUM_SCORE_DIGITS	=	9;
 #define NEXT_OPTIONS_SCREEN( play_mode )	THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen"+Capitalize(PlayModeToString(play_mode)))
 #define COURSE_CONTENTS_X					THEME->GetMetricF("ScreenSelectMusic","CourseContentsX")
 #define COURSE_CONTENTS_Y					THEME->GetMetricF("ScreenSelectMusic","CourseContentsY")
+#define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%iSortChangeCommand", i+1))
+#define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -461,32 +463,12 @@ void ScreenSelectMusic::ExitCourseDisplayMode()
 
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 {
-	/* XXX metric this with MusicWheel::TweenOnScreen */
-	float factor = 0.25f;
-
-	vector<Actor*> apActorsInScore;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		apActorsInScore.push_back( &m_sprHighScoreFrame[p] );
-		apActorsInScore.push_back( &m_textHighScore[p] );
-	}
-	for( unsigned i=0; i<apActorsInScore.size(); i++ )
-	{
-		/* Grab the tween destination.  (If we're tweening, this is where
-		 * it'll end up; otherwise it's the static position.) */
-		Actor::TweenState original = apActorsInScore[i]->DestTweenState();
-
-		apActorsInScore[i]->StopTweening();
-
-		float fOriginalX = apActorsInScore[i]->GetX();
-		apActorsInScore[i]->BeginTweening( factor*0.5f, TWEEN_DECELERATE );		// tween off screen
-		apActorsInScore[i]->SetX( fOriginalX+400 );
-		
-		apActorsInScore[i]->BeginTweening( factor*0.5f );		// sleep
-
-		/* Go back to where we were (or to where we were going.) */
-		apActorsInScore[i]->BeginTweening( factor*1, TWEEN_ACCELERATE );		// tween back on screen
-		apActorsInScore[i]->SetLatestTween(original);
+		if( !GAMESTATE->IsHumanPlayer(p) )
+			continue;	// skip
+		m_textHighScore[p].Command( SCORE_SORT_CHANGE_COMMAND(p) );
+		m_sprHighScoreFrame[p].Command( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
 	}
 
 	switch( GAMESTATE->m_SongSortOrder )
@@ -794,15 +776,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SONG: {
-		if( !m_MusicWheel.GetSelectedSong()->HasMusic() )
-		{
-			/* TODO: gray these out. 
-				*
-				* XXX: also, make sure they're not selected by roulette */
-			SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
-			return;
-		}
-
 		bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
 		bool bIsHard = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
