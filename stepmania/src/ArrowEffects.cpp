@@ -111,6 +111,50 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYPos )
 		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
 	}
 
+	if( fEffects[PlayerOptions::EFFECT_BEAT] > 0 )
+	do {
+		float fAccelTime = 0.2f, fTotalTime = 0.5f;
+		
+		/* If the song is really fast, slow down the rate, but speed up the
+		 * acceleration to compensate or it'll look weird. */
+		const float fBPM = GAMESTATE->m_fCurBPS * 60;
+		const float fDiv = max(1.0f, truncf( fBPM / 150.0f ));
+		fAccelTime /= fDiv;
+		fTotalTime /= fDiv;
+
+		float fBeat = GAMESTATE->m_fSongBeat + fAccelTime;
+		fBeat /= fDiv;
+
+		const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
+
+		/* -100.2 -> -0.2 -> 0.2 */
+		if( fBeat < 0 )
+			break;
+
+		fBeat -= truncf( fBeat );
+		fBeat += 1;
+		fBeat -= truncf( fBeat );
+
+		if( fBeat >= fTotalTime )
+			break;
+
+		float fAmount;
+		if( fBeat < fAccelTime )
+		{
+			fAmount = SCALE( fBeat, 0.0f, fAccelTime, 0.0f, 1.0f);
+			fAmount *= fAmount;
+		} else /* fBeat < fTotalTime */ {
+			fAmount = SCALE( fBeat, fAccelTime, fTotalTime, 1.0f, 0.0f);
+			fAmount = 1 - (1-fAmount) * (1-fAmount);
+		}
+
+		if( bEvenBeat )
+			fAmount *= -1;
+
+		const float fShift = 20.0f*fAmount*sinf( fYPos / 15.0f + PI/2.0f );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
+	} while(0);
+
 	return fPixelOffsetFromCenter;
 }
 

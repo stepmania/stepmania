@@ -93,6 +93,7 @@ CString PlayerOptions::GetString()
 	if( m_fEffects[EFFECT_FLIP]==1 )	sReturn += "Flip, ";
 	if( m_fEffects[EFFECT_TORNADO]==1 )	sReturn += "Tornado, ";
 	if( m_fEffects[EFFECT_BUMPY]==1 )	sReturn += "Bumpy, ";
+	if( m_fEffects[EFFECT_BEAT]==1 )	sReturn += "Beat, ";
 
 	if( m_fAppearances[APPEARANCE_HIDDEN]==1 )	sReturn += "Hidden, ";
 	if( m_fAppearances[APPEARANCE_SUDDEN]==1 )	sReturn += "Sudden, ";
@@ -186,6 +187,7 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "flip" )		m_fEffects[EFFECT_FLIP] = 1;
 		else if( sBit == "tornado" )	m_fEffects[EFFECT_TORNADO] = 1;
 		else if( sBit == "bumpy" )		m_fEffects[EFFECT_BUMPY] = 1;
+		else if( sBit == "beat" )		m_fEffects[EFFECT_BEAT] = 1;
 		else if( sBit == "hidden" )		m_fAppearances[APPEARANCE_HIDDEN] = 1;
 		else if( sBit == "sudden" )		m_fAppearances[APPEARANCE_SUDDEN] = 1;
 		else if( sBit == "stealth" )	m_fAppearances[APPEARANCE_STEALTH] = 1;

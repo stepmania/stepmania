@@ -36,6 +36,7 @@ struct PlayerOptions
 		EFFECT_FLIP,
 		EFFECT_TORNADO,
 		EFFECT_BUMPY,
+		EFFECT_BEAT,
 		NUM_EFFECTS
 	};
 	enum Appearance {
