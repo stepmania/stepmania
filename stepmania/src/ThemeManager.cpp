@@ -506,9 +506,9 @@ try_metric_again:
 	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
 		return sValue;
 
-	CString sBaseClass;
-	if( m_pIniMetrics->GetValue(sClassName,"BaseClass",sBaseClass) )
-		return GetMetricRaw( sBaseClass, sValueName );
+	CString sFallback;
+	if( m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
+		return GetMetricRaw( sFallback, sValueName );
 
 	CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
 	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
