@@ -15,12 +15,11 @@
 #include "StepMania.h"
 #include "RageUtil.h"
 #include "D3dx8math.h"
-#include "SDL_video.h"	// for RageSurface
-#include "SDL_utils.h"
 #include "D3DX8Core.h"
 #include "PrefsManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "archutils/Win32/GraphicsWindow.h"
 #include "ScreenDimensions.h"
 
 #include "arch/arch.h"
@@ -47,7 +46,7 @@ CString GetErrorString( HRESULT hr )
 //
 // Globals
 //
-#if !defined(_XBOX)
+#if !defined(XBOX)
 HMODULE					g_D3D8_Module = NULL;
 #endif
 LPDIRECT3D8				g_pd3d = NULL;
@@ -56,7 +55,6 @@ D3DCAPS8				g_DeviceCaps;
 D3DDISPLAYMODE			g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
 int						g_ModelMatrixCnt=0;
-RageDisplay::VideoModeParams	g_CurrentParams;
 int						g_iCurrentTextureIndex = 0;
 
 /* Direct3D doesn't associate a palette with textures.
@@ -91,7 +89,7 @@ static void SetPalette( unsigned TexResource )
 		}
 
 		/* Load it. */
-#ifndef _XBOX
+#if !defined(XBOX)
 		TexturePalette& pal = g_TexResourceToTexturePalette[TexResource];
 		g_pd3dDevice->SetPaletteEntries( iPalIndex, pal.p );
 #else
@@ -113,7 +111,7 @@ static void SetPalette( unsigned TexResource )
 		break;
 	}
 
-#ifndef _XBOX
+#if !defined(XBOX)
 	g_pd3dDevice->SetCurrentTexturePalette( iPalIndex );
 #else
 	ASSERT(0);
@@ -199,6 +197,8 @@ const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFor
 
 RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 {
+	GraphicsWindow::Initialize();
+
 	try
 	{
 		LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
@@ -206,7 +206,7 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 
 		typedef IDirect3D8 * (WINAPI * Direct3DCreate8_t) (UINT SDKVersion);
 		Direct3DCreate8_t pDirect3DCreate8;
-#if defined(_XBOX)
+#if defined(XBOX)
 		pDirect3DCreate8 = Direct3DCreate8;
 #else
 		g_D3D8_Module = LoadLibrary("D3D8.dll");
@@ -250,27 +250,6 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 			if( SUCCEEDED( g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, u, &mode ) ) )
 				LOG->Trace( "  %ux%u %uHz, format %d", mode.Width, mode.Height, mode.RefreshRate, mode.Format );
 
-		/* Up until now, all we've done is set up g_pd3d and do some queries.  Now,
-		 * actually initialize the window.  Do this after as many error conditions
-		 * as possible, because if we have to shut it down again we'll flash a window
-		 * briefly. */
-		if(!SDL_WasInit(SDL_INIT_VIDEO))
-		{
-			if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
-				RageException::Throw( "SDL_INIT_VIDEO failed: %s", SDL_GetError() );
-		}
-
-		/* By default, ignore all SDL events.  We'll enable them as we need them.
-		 * We must not enable any events we don't actually want, since we won't
-		 * query for them and they'll fill up the event queue. 
-		 *
-		 * This needs to be done after we initialize video, since it's really part
-		 * of the SDL video system--it'll be reinitialized on us if we do this first. */
-		SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
-		SDL_EventState( SDL_VIDEORESIZE, SDL_ENABLE );
-		SDL_EventState( SDL_ACTIVEEVENT, SDL_ENABLE );
-		SDL_EventState( SDL_QUIT, SDL_ENABLE );
-
 		g_PaletteIndex.clear();
 		for( int i = 0; i < 256; ++i )
 			g_PaletteIndex.push_back(i);
@@ -278,92 +257,45 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 		// Save the original desktop format.
 		g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
 
-#if defined _WINDOWS
-		// Create the SDL window
-		int flags = SDL_RESIZABLE | SDL_SWSURFACE;
-		SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
-		if(!screen)
-			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
-#endif
-
+		/* Up until now, all we've done is set up g_pd3d and do some queries.  Now,
+		 * actually initialize the window.  Do this after as many error conditions
+		 * as possible, because if we have to shut it down again we'll flash a window
+		 * briefly. */
 		SetVideoMode( p );
-
-		const SDL_version *ver = SDL_Linked_Version();
-		LOG->Info( "SDL version: %i.%i.%i", ver->major, ver->minor, ver->patch );
 	} catch(...) {
 		// Clean up; ~RageDisplay will not be called.
-#if defined _WINDOWS
-		if( SDL_WasInit(SDL_INIT_VIDEO) )
-			SDL_QuitSubSystem(SDL_INIT_VIDEO);
-#endif
-
 		if( g_pd3d )
 		{
 			g_pd3d->Release();
 			g_pd3d = NULL;
 		}
 
-#if !defined(_XBOX)
+#if !defined(XBOX)
 		if( g_D3D8_Module )
 		{
 			FreeLibrary( g_D3D8_Module );
 			g_D3D8_Module = NULL;
 		}
 #endif
+		GraphicsWindow::Shutdown();
+
 		throw;
 	}
 }
 
 void RageDisplay_D3D::Update(float fDeltaTime)
 {
-	/* This needs to be called before anything that handles SDL events. */
-	SDL_PumpEvents();
-
-#if defined _WINDOWS
-	SDL_Event event;
-	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK|SDL_QUITMASK))
-	{
-		switch(event.type)
-		{
-		case SDL_VIDEORESIZE:
-			g_CurrentParams.width = event.resize.w;
-			g_CurrentParams.height = event.resize.h;
-
-			/* Let DISPLAY know that our resolution has changed. */
-			ResolutionChanged();
-			break;
-		case SDL_ACTIVEEVENT:
-			{
-				/* We don't care about mouse focus. */
-				if(event.active.state == SDL_APPMOUSEFOCUS)
-					break;
-
-				uint8_t i = SDL_GetAppState();
-				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
-			}
-			break;
-		case SDL_QUIT:
-			LOG->Trace("SDL_QUIT: shutting down");
-			ExitGame();
-			break;
-		}
-	}
-#endif
+	GraphicsWindow::Update();
 }
 
 RageDisplay_D3D::~RageDisplay_D3D()
 {
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
 
-	SDL_EventState( SDL_VIDEORESIZE, SDL_IGNORE );
-	SDL_EventState( SDL_ACTIVEEVENT, SDL_IGNORE );
-	SDL_EventState( SDL_QUIT, SDL_IGNORE );
-#if defined _WINDOWS
-	SDL_QuitSubSystem(SDL_INIT_VIDEO);
-#endif
-
 	g_pd3dDevice->Release();
     g_pd3d->Release();
+
+	GraphicsWindow::Shutdown();
 }
 
 D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
@@ -382,7 +314,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	}
 	if( iBPP == 32 || bWindowed )
 	{
-#ifndef _XBOX
+#if !defined(XBOX)
 		vBackBufferFormats.push_back( D3DFMT_R8G8B8 );
 #endif
 		vBackBufferFormats.push_back( D3DFMT_X8R8G8B8 );
@@ -390,9 +322,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	}
 	if( !bWindowed && iBPP != 16 && iBPP != 32 )
 	{
-#if defined _WINDOWS
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-#endif
+		GraphicsWindow::Shutdown();
 		throw RageException( ssprintf("Invalid BPP '%u' specified", iBPP) );
 	}
 
@@ -422,115 +352,19 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	}
 
 	LOG->Trace( "Couldn't find an appropriate back buffer format." );
-	return (D3DFORMAT)-1;
+	return D3DFMT_UNKNOWN;
 }
 
-#if defined _WINDOWS
-HWND GetHwnd()
+CString SetD3DParams( bool &bNewDeviceOut )
 {
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if( SDL_GetWMInfo(&info) < 0 ) 
-	{
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-		RageException::Throw( "SDL_GetWMInfo failed" );
-	}
-	return info.window;
-}
-#endif
-
-
-/* Set the video mode. */
-CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
-{
-	g_CurrentParams = p;
-
-	HRESULT hr;
-
-	if( FindBackBufferType( p.windowed, p.bpp ) == -1 )	// no possible back buffer formats
-		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
-
-#if defined _WINDOWS
-	/* Set SDL window title and icon -before- creating the window */
-	SDL_WM_SetCaption( p.sWindowTitle, "" );
-	mySDL_WM_SetIcon( p.sIconFile );
-
-	
-	// HACK: On Windows 98, we can't call SDL_SetVideoMode while D3D is full screen.
-	// It will result in "SDL_SetVideoMode  failed: DirectDraw2::CreateSurface(PRIMARY): 
-	// Not in exclusive access mode".  So, we'll Reset the D3D device, then resize the 
-	// SDL window only if we're not fullscreen.
-
-	SDL_ShowCursor( p.windowed );
-#endif
-	
-#ifdef _XBOX
-	p.windowed = false;
-#endif
-
-	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
-
-	g_d3dpp.BackBufferWidth			=	p.width;
-	g_d3dpp.BackBufferHeight		=	p.height;
-	g_d3dpp.BackBufferFormat		=	FindBackBufferType( p.windowed, p.bpp );
-	g_d3dpp.BackBufferCount			=	1;
-	g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
-	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
-	g_d3dpp.hDeviceWindow			=	NULL;
-	g_d3dpp.Windowed				=	p.windowed;
-	g_d3dpp.EnableAutoDepthStencil	=	TRUE;
-	g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
-
-	if(p.windowed)
-		g_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-	else
-		g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-
-#ifndef _XBOX
-	g_d3dpp.Flags					=	0;
-	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-	if( !p.windowed && p.rate != REFRESH_DEFAULT )
-		g_d3dpp.FullScreen_RefreshRateInHz = p.rate;
-#else
-	if(XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I)
-	{
-		//get supported video flags
-		DWORD videoFlags = XGetVideoFlags();
-		
-		//set pal60 if available.
-		if(videoFlags & XC_VIDEO_FLAGS_PAL_60Hz)
-			g_d3dpp.FullScreen_RefreshRateInHz = 60;
-		else
-			g_d3dpp.FullScreen_RefreshRateInHz = 50;
-	}
-	else
-		g_d3dpp.FullScreen_RefreshRateInHz = 60;
-
-	g_d3dpp.Flags					=	0;
-#endif
-
-	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
-		g_d3dpp.BackBufferWidth, g_d3dpp.BackBufferHeight, g_d3dpp.BackBufferFormat,
-		g_d3dpp.BackBufferCount,
-		g_d3dpp.MultiSampleType, g_d3dpp.SwapEffect, g_d3dpp.hDeviceWindow,
-		g_d3dpp.Windowed, g_d3dpp.EnableAutoDepthStencil, g_d3dpp.AutoDepthStencilFormat,
-		g_d3dpp.Flags, g_d3dpp.FullScreen_RefreshRateInHz,
-		g_d3dpp.FullScreen_PresentationInterval
-	);
-
-#ifdef _XBOX
-	if ( D3D__pDevice )
-		g_pd3dDevice = D3D__pDevice;
-#endif
-
 	if( g_pd3dDevice == NULL )		// device is not yet created.  We need to create it
 	{
 		bNewDeviceOut = true;
-		hr = g_pd3d->CreateDevice(
+		HRESULT hr = g_pd3d->CreateDevice(
 			D3DADAPTER_DEFAULT, 
 			D3DDEVTYPE_HAL, 
-#ifndef _XBOX
-			GetHwnd(),
+#if !defined(XBOX)
+			g_hWndMain,
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 #else
 			NULL,
@@ -547,37 +381,197 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	else
 	{
 		bNewDeviceOut = false;
-		hr = g_pd3dDevice->Reset( &g_d3dpp );
+		HRESULT hr = g_pd3dDevice->Reset( &g_d3dpp );
 		if( FAILED(hr) )
 		{
 			// Likely D3D_ERR_INVALIDCALL.  The driver probably doesn't support this video mode.
 			return ssprintf("g_pd3dDevice->Reset failed: '%s'", GetErrorString(hr).c_str() );
 		}
 	}
-	
-	if( p.windowed )
+
+	return "";
+}
+
+/* If the given parameters have failed, try to lower them. */
+bool D3DReduceParams( D3DPRESENT_PARAMETERS	*pp )
+{
+	D3DDISPLAYMODE current;
+	current.Format = pp->BackBufferFormat;
+	current.Height = pp->BackBufferHeight;
+	current.Width = pp->BackBufferWidth;
+	current.RefreshRate = pp->FullScreen_RefreshRateInHz;
+
+	const int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT );
+	int iBest = -1;
+	int iBestScore = 0;
+	LOG->Trace( "cur: %ux%u %uHz, format %i", current.Width, current.Height, current.RefreshRate, current.Format );
+	for( int i = 0; i < iCnt; ++i )
 	{
-#if defined _WINDOWS
-		int flags = SDL_RESIZABLE | SDL_SWSURFACE;
-		
-		// Don't use SDL to change the video mode.  This will cause a 
-		// D3DERR_DRIVERINTERNALERROR on TNTs, V3s, and probably more.
-	//	if( !windowed )
-	//		flags |= SDL_FULLSCREEN;
+		D3DDISPLAYMODE mode;
+		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, i, &mode );
 
-		SDL_ShowCursor( p.windowed );
+		/* Never change the format. */
+		if( mode.Format != current.Format )
+			continue;
+		/* Never increase the parameters. */
+		if( mode.Height > current.Height || mode.Width > current.Width || mode.RefreshRate > current.RefreshRate )
+			continue;
 
-		SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
-		if(!screen)
+		/* Never go below 640x480 unless we already are. */
+		if( (current.Width >= 640 && current.Height >= 480) && (mode.Width < 640 || mode.Height < 480) )
+			continue;
+
+		/* Never go below 60Hz. */
+		if( mode.RefreshRate && mode.RefreshRate < 60 )
+			continue;
+
+		/* If mode.RefreshRate is 0, it means "default".  We don't know what that means;
+		 * assume it's 60Hz. */
+
+		/* Higher scores are better. */
+		int iScore = 0;
+		if( current.RefreshRate >= 70 && mode.RefreshRate < 70 )
 		{
-			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
+			/* Top priority: we really want to avoid dropping to a refresh rate that's
+			 * below 70Hz. */
+			iScore -= 100000;
 		}
-#endif
+		else if( mode.RefreshRate < current.RefreshRate )
+		{
+			/* Low priority: We're lowering the refresh rate, but not too far.  current.RefreshRate
+			 * might be 0, in which case this simply gives points for higher refresh
+			 * rates. */
+			iScore += (mode.RefreshRate - current.RefreshRate);
+		}
+
+		/* Medium priority: */
+		int iResolutionDiff = (current.Height - mode.Height) + (current.Width - mode.Width);
+		iScore -= iResolutionDiff * 100;
+
+		if( iBest == -1 || iScore > iBestScore )
+		{
+			iBest = i;
+			iBestScore = iScore;
+		}
+
+		LOG->Trace( "try: %ux%u %uHz, format %i: score %i", mode.Width, mode.Height, mode.RefreshRate, mode.Format, iScore );
 	}
 
-	/* Recreating the window changes the hwnd. */
-	SDL_UpdateHWnd();
+	if( iBest == -1 )
+		return false;
+
+	D3DDISPLAYMODE BestMode;
+	g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, iBest, &BestMode );
+	pp->BackBufferHeight = BestMode.Height;
+	pp->BackBufferWidth = BestMode.Width;
+	pp->FullScreen_RefreshRateInHz = BestMode.RefreshRate;
+
+	return true;
+}
+
+
+/* Set the video mode. */
+CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
+{
+	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
+		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
+
+	if( g_hWndMain == NULL )
+		GraphicsWindow::CreateGraphicsWindow( p );
+
+#if defined(XBOX)
+	p.windowed = false;
+#endif
+
+	/* Set up and display the window before setting up D3D.  If we don't do this,
+	 * then setting up a fullscreen window (when we're not coming from windowed)
+	 * causes all other windows on the system to be resized to the new resolution. */
+	GraphicsWindow::ConfigureGraphicsWindow( p );
+
+	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
+
+	g_d3dpp.BackBufferWidth			=	p.width;
+	g_d3dpp.BackBufferHeight		=	p.height;
+	g_d3dpp.BackBufferFormat		=	FindBackBufferType( p.windowed, p.bpp );
+	g_d3dpp.BackBufferCount			=	1;
+	g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
+	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
+	g_d3dpp.hDeviceWindow			=	g_hWndMain;
+	g_d3dpp.Windowed				=	p.windowed;
+	g_d3dpp.EnableAutoDepthStencil	=	TRUE;
+	g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
+
+	if(p.windowed)
+		g_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+	else
+		g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+
+#if !defined(XBOX)
+	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	if( !p.windowed && p.rate != REFRESH_DEFAULT )
+		g_d3dpp.FullScreen_RefreshRateInHz = p.rate;
+#else
+	if( XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I )
+	{
+		/* Get supported video flags. */
+		DWORD VideoFlags = XGetVideoFlags();
+		
+		/* Set pal60 if available. */
+		if( VideoFlags & XC_VIDEO_FLAGS_PAL_60Hz )
+			g_d3dpp.FullScreen_RefreshRateInHz = 60;
+		else
+			g_d3dpp.FullScreen_RefreshRateInHz = 50;
+	}
+	else
+		g_d3dpp.FullScreen_RefreshRateInHz = 60;
+#endif
+
+	g_d3dpp.Flags					=	0;
+
+	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
+		g_d3dpp.BackBufferWidth, g_d3dpp.BackBufferHeight, g_d3dpp.BackBufferFormat,
+		g_d3dpp.BackBufferCount,
+		g_d3dpp.MultiSampleType, g_d3dpp.SwapEffect, g_d3dpp.hDeviceWindow,
+		g_d3dpp.Windowed, g_d3dpp.EnableAutoDepthStencil, g_d3dpp.AutoDepthStencilFormat,
+		g_d3dpp.Flags, g_d3dpp.FullScreen_RefreshRateInHz,
+		g_d3dpp.FullScreen_PresentationInterval
+	);
+
+#if defined(XBOX)
+	if( D3D__pDevice )
+		g_pd3dDevice = D3D__pDevice;
+#endif
+
+	/* Display the window immediately, so we don't display the desktop ... */
+
+	while( 1 )
+	{
+		/* Try the video mode. */
+		CString sErr = SetD3DParams( bNewDeviceOut );
+		if( sErr.empty() )
+			break;
+
+		/* It failed.  We're probably selecting a video mode that isn't supported.
+		 * If we're fullscreen, search the mode list and find the nearest lower
+		 * mode. */
+		if( p.windowed || !D3DReduceParams( &g_d3dpp ) )
+			return sErr;
+
+		/* Store the new settings we're about to try. */
+		p.height = g_d3dpp.BackBufferHeight;
+		p.width = g_d3dpp.BackBufferWidth;
+		if( g_d3dpp.FullScreen_RefreshRateInHz == D3DPRESENT_RATE_DEFAULT )
+			p.rate = REFRESH_DEFAULT;
+		else
+			p.rate = g_d3dpp.FullScreen_RefreshRateInHz;
+	}
+
+	/* Call this again after changing the display mode.  If we're going to a window
+	 * from fullscreen, the first call can't set a larger window than the old fullscreen
+	 * resolution or set the window position. */
+	GraphicsWindow::ConfigureGraphicsWindow( p );
+
+	GraphicsWindow::SetVideoModeParams( p );
 
 	ResolutionChanged();
 
@@ -591,28 +585,23 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 
 void RageDisplay_D3D::ResolutionChanged()
 {
-#ifdef _XBOX
+#if defined(XBOX)
 	D3DVIEWPORT8 viewData = { 0,0,640,480, 0.f, 1.f };
 	g_pd3dDevice->SetViewport( &viewData );
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 #endif
-	// no need to clear because D3D uses an overlay
-//	SetViewport(0,0);
-//
-//	/* Clear any junk that's in the framebuffer. */
-//	Clear();
-//	Flip();
 }
 
 void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(g_CurrentParams.width) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(g_CurrentParams.height) / SCREEN_HEIGHT );
+	RageDisplay::VideoModeParams p = GraphicsWindow::GetParams();
+	shift_left = int( shift_left * float(p.width) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(p.height) / SCREEN_HEIGHT );
 
-	D3DVIEWPORT8 viewData = { shift_left, -shift_down, g_CurrentParams.width, g_CurrentParams.height, 0.f, 1.f };
+	D3DVIEWPORT8 viewData = { shift_left, -shift_down, p.width, p.height, 0.f, 1.f };
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
@@ -629,7 +618,7 @@ bool RageDisplay_D3D::BeginFrame()
 	case D3DERR_DEVICELOST:
 		return false;
 	case D3DERR_DEVICENOTRESET:
-		SetVideoMode( g_CurrentParams );
+		SetVideoMode( GraphicsWindow::GetParams() );
 		break;
 	}
 #endif
@@ -649,12 +638,13 @@ void RageDisplay_D3D::EndFrame()
 
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 {
-#if defined _XBOX
+#if defined(XBOX)
 	// Lazy...  Xbox handles paletted textures completely differently
 	// than D3D and I don't want to add a bunch of code for it.  Also, 
 	// paletted textures result in worse cache efficiency (see "Xbox 
 	// Palettized Texture Performance" in XDK).  So, we'll force 32bit
 	// ARGB textures.  -Chris
+	// This is also needed for XGSwizzleRect().
 	return pixfmt == FMT_RGBA8;
 #endif
 
@@ -680,7 +670,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
-#if defined(_XBOX)
+#if defined(XBOX)
 	return NULL;
 #else
 	/* Get the back buffer. */
@@ -732,7 +722,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 #endif
 }
 
-RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { return g_CurrentParams; }
+RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { return GraphicsWindow::GetParams(); }
 
 void RageDisplay_D3D::SendCurrentMatrices()
 {
@@ -1256,7 +1246,7 @@ void RageDisplay_D3D::UpdateTexture(
 	//
 	// Copy bits
 	//
-#if _XBOX
+#if defined(XBOX)
 	// Xbox textures need to be swizzled
 	XGSwizzleRect(
 		img->pixels,	// pSource, 
