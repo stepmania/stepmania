@@ -189,7 +189,7 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 	//	}
 }
 
-static BothPlayersModeChoice( const ModeChoice &mc )
+static bool BothPlayersModeChoice( const ModeChoice &mc )
 {
 	switch( mc.m_pm )
 	{
