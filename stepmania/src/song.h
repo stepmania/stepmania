@@ -47,6 +47,8 @@ struct BackgroundChange
 
 class Song
 {
+	CString m_sSongDir;
+
 public:
 	/* Set when this song should be displayed in the music wheel: */
 	enum { SHOW_ALWAYS,		/* all the time */
@@ -77,8 +79,7 @@ public:
 	void AutoGen( NotesType ntTo, NotesType ntFrom );	// create Notes of type ntTo from Notes of type ntFrom
 
 	/* Directory this song data came from: */
-	const CString &GetSongDir() const;
-	CString m_sSongDir;
+	const CString &GetSongDir() const { return m_sSongDir; }
 
 	/* Filename associated with this file.  This will always have
 	 * an .SM extension.  If we loaded an .SM, this will point to 

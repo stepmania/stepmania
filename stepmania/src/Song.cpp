@@ -19,6 +19,7 @@
 #include "NoteData.h"
 #include "MsdFile.h"
 #include "RageSoundStream.h"
+#include "RageSound.h"
 #include "RageException.h"
 #include "SongCacheIndex.h"
 #include "GameManager.h"
@@ -389,9 +390,15 @@ void Song::TidyUpData()
 
 	if( HasMusic() )
 	{
+#if 1
 		RageSoundStream sound;
 		sound.Load( GetMusicPath() );
+#else
+		RageSound sound;
+		sound.Load( GetMusicPath(), false ); /* don't pre-cache */
+#endif
 		m_fMusicLengthSeconds = sound.GetLengthSeconds();
+		/* XXX: if(m_fMusicLengthSeconds == -1), warn and throw out the song */
 	}
 	else	// ! HasMusic()
 	{
@@ -1085,11 +1092,6 @@ CString Song::GetCDTitlePath() const
 CString Song::GetBackgroundPath() const
 {
 	return m_sSongDir+m_sBackgroundFile;
-}
-
-const CString& Song::GetSongDir() const 
-{
-	return m_sSongDir; 
 }
 
 /* Get the first/last beat of any currently active note pattern.  If two
