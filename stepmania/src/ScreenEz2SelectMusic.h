@@ -9,7 +9,7 @@
 	Andrew Livy
 -----------------------------------------------------------------------------
 */
-
+/*
 #include "Screen.h"
 #include "Sprite.h"
 #include "BitmapText.h"
@@ -94,3 +94,5 @@ protected:
 	RageSoundSample		m_soundOptionsChange;
 	RageSoundSample		m_soundLocked;
 };
+
+  */

@@ -11,7 +11,16 @@
 -----------------------------------------------------------------------------
 */
 
+/* OKAY!!!
+Sod it!
+I'll do this when you guys feel that it's OKAY to do it!!!
 
+  - ANDY
+
+*/
+
+
+/*
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenManager.h"
 #include "PrefsManager.h"
@@ -505,7 +514,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	/* why do this? breaks tabs and roulette -glenn */
 //		if( pn != PLAYER_INVALID )
 //			this->SendScreenMessage( SM_MenuTimer, 1 );	// re-throw a timer message
-	}
+/*	}
 	else	// if !bResult
 	{
 		// a song was selected
@@ -518,7 +527,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 					/* TODO: gray these out. 
 					 *
 					 * XXX: also, make sure they're not selected by roulette */
-					SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
+/*					SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
 					return;
 				}
 
@@ -733,3 +742,4 @@ void ScreenEz2SelectMusic::SortOrderChanged()
 	m_MusicSortDisplay.SetTweenDiffuse( D3DXCOLOR(1,1,1,1) );		
 }
 
+*/

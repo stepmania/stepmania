@@ -708,7 +708,7 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		"EZ2Double",							// m_szName
 		{ NOTES_TYPE_EZ2_DOUBLE,NOTES_TYPE_EZ2_DOUBLE },	// m_NotesTypes
 		NOTES_TYPE_INVALID,						// m_FallbackNotesType
-		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
+		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
 		{ 160, 480 },							// m_iCenterX
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
