@@ -37,7 +37,7 @@ MemoryCardDriver *MakeMemoryCardDriver();
 	#define DEFAULT_SOUND_DRIVER_LIST "Null"
 #endif
 
-#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,Null"
 
 /* Choose your renderers. */
 #if defined(_WINDOWS)
