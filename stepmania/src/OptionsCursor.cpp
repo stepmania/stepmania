@@ -42,7 +42,7 @@ void OptionsCursor::Load( PlayerNumber pn, bool bUnderline )
 	{
 	case PLAYER_1:		iBaseFrameNo = 0;	break;
 	case PLAYER_2:		iBaseFrameNo = 3;	break;
-	default:			ASSERT(0);			break;
+	default:			ASSERT(0);			return;
 	}
 	m_sprLeft.SetState(   iBaseFrameNo+0 );
 	m_sprMiddle.SetState( iBaseFrameNo+1 );

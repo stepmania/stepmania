@@ -176,7 +176,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 		const float fPercentThroughTween = 1-(TI.m_fTimeLeftInTween / TI.m_fTweenTime);
 
 		// distort the percentage if appropriate
-		float fPercentAlongPath;
+		float fPercentAlongPath = 0.f;
 		switch( TI.m_TweenType )
 		{
 		case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;														break;
@@ -325,7 +325,7 @@ void Actor::ScaleTo( LPRECT pRect, StretchType st )
 	float fNewZoomX = fabsf(rect_width  / m_size.x);
 	float fNewZoomY = fabsf(rect_height / m_size.y);
 
-	float fNewZoom;
+	float fNewZoom = 0.f;
 	switch( st )
 	{
 	case cover:
