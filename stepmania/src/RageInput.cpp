@@ -382,22 +382,23 @@ HRESULT RageInput::Initialize()
 
 	// Create our DirectInput Object for the Keyboard
     if( FAILED( hr = m_pDI->CreateDevice( GUID_SysKeyboard, &m_pKeyboard, NULL ) ) )
-		throw RageException( hr, "CreateDevice keyboard failed." );
+		m_pKeyboard = NULL;
 
-	// Set our Cooperation Level with each Device
-	if( FAILED( hr = m_pKeyboard->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | 
-															  DISCL_NOWINKEY |
-															  DISCL_NONEXCLUSIVE) ) )
-		throw RageException( hr, "m_pKeyboard->SetCooperativeLevel failed." );
+	if(m_pKeyboard) {
+		// Set our Cooperation Level with each Device
+		if( FAILED( hr = m_pKeyboard->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | 
+																  DISCL_NOWINKEY |
+																  DISCL_NONEXCLUSIVE) ) )
+			throw RageException( hr, "m_pKeyboard->SetCooperativeLevel failed." );
 
-	// Set the Data Format of each device
-	if( FAILED( hr = m_pKeyboard->SetDataFormat(&c_dfDIKeyboard) ) )
-		throw RageException( hr, "m_pKeyboard->SetDataFormat failed." );
+		// Set the Data Format of each device
+		if( FAILED( hr = m_pKeyboard->SetDataFormat(&c_dfDIKeyboard) ) )
+			throw RageException( hr, "m_pKeyboard->SetDataFormat failed." );
 
-	// Acquire the Keyboard Device
-	//if( FAILED( hr = m_pKeyboard->Acquire() ) )
-	//	throw RageException( "m_pKeyboard->Acquire failed.", hr );
-
+		// Acquire the Keyboard Device
+		//if( FAILED( hr = m_pKeyboard->Acquire() ) )
+		//	throw RageException( "m_pKeyboard->Acquire failed.", hr );
+	}
 
 
 	//////////////////////////
@@ -406,14 +407,14 @@ HRESULT RageInput::Initialize()
 	
 	// Obtain an interface to the system mouse device.
 	if( FAILED( hr = m_pDI->CreateDevice( GUID_SysMouse, &m_pMouse, NULL ) ) )
-		throw RageException( hr, "CreateDevice mouse failed." );
+		m_pMouse = NULL;
 
-    if( FAILED( hr = m_pMouse->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE|DISCL_FOREGROUND ) ) )
-		throw RageException( hr, "m_pMouse->SetCooperativeLevel failed." );
+	if(m_pMouse) {
+		if( FAILED( hr = m_pMouse->SetCooperativeLevel( m_hWnd, DISCL_NONEXCLUSIVE|DISCL_FOREGROUND ) ) )
+			throw RageException( hr, "m_pMouse->SetCooperativeLevel failed." );
     
-	if( FAILED( hr = m_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) )
-		throw RageException( hr, "m_pMouse->SetDataFormat failed." );
-
+		if( FAILED( hr = m_pMouse->SetDataFormat( &c_dfDIMouse2 ) ) )
+			throw RageException( hr, "m_pMouse->SetDataFormat failed." );
 /*
     DIPROPDWORD dipdw;
     dipdw.diph.dwSize       = sizeof(DIPROPDWORD);
@@ -427,12 +428,11 @@ HRESULT RageInput::Initialize()
 	//if( FAILED( hr = m_pMouse->Acquire()))
 	//	throw RageException( "m_pMouse->Acquire failed.", hr );
 
-	m_RelPosition_x = 0;
-	m_RelPosition_y = 0;
+		m_RelPosition_x = m_RelPosition_y = 0;
 
-	m_AbsPosition_x = 640/2;
-	m_AbsPosition_y = 480/2;
-	
+		m_AbsPosition_x = 640/2;
+		m_AbsPosition_y = 480/2;
+	}	
 	//////////////////////////////
 	// Create the joystick devices
 	//////////////////////////////
@@ -518,6 +518,61 @@ void RageInput::Release()
 	delete[] m_Pumps;
 }
 
+HRESULT RageInput::UpdateMouse()
+{
+	if( NULL == m_pMouse ) 
+		return E_FAIL;
+
+	ZeroMemory( &m_mouseState, sizeof(m_mouseState) );
+
+	// Get the input's device state, and put the state in DIMOUSESTATE2
+    if (FAILED(m_pMouse->GetDeviceState( sizeof(DIMOUSESTATE2), &m_mouseState )))
+    {
+        // If input is lost then acquire and keep trying 
+		HRESULT hr = m_pMouse->Acquire();
+        while( hr == DIERR_INPUTLOST ) 
+            hr = m_pMouse->Acquire();
+
+		return E_FAIL;
+    }
+
+
+	m_RelPosition_x = m_mouseState.lX;
+	m_RelPosition_y = m_mouseState.lY;
+
+	m_AbsPosition_x += m_mouseState.lX;
+	m_AbsPosition_y += m_mouseState.lY;
+
+	/* Clamp the mouse to 0...640-1, 0...480-1. */
+	m_AbsPosition_x = clamp(m_AbsPosition_x, 0, 640-1);
+	m_AbsPosition_y = clamp(m_AbsPosition_y, 0, 480-1);
+
+	return S_OK;
+}
+
+HRESULT RageInput::UpdateKeyboard()
+{
+	if( NULL == m_pKeyboard ) 
+		return E_FAIL;
+
+	if( FAILED(m_pKeyboard->GetDeviceState( sizeof(m_keys),(LPVOID)&m_keys )) )
+	{
+		// DirectInput may be telling us that the input stream has been
+		// interrupted.  We aren't tracking any state between polls, so
+		// we don't have any special reset that needs to be done.
+		// We just re-acquire and try again.
+        
+		// If input is lost then acquire and keep trying 
+		HRESULT hr = m_pKeyboard->Acquire();
+		while( hr == DIERR_INPUTLOST ) 
+			hr = m_pKeyboard->Acquire();
+
+		return E_FAIL;
+	}
+
+
+	return S_OK;
+}
 
 HRESULT RageInput::Update()
 {
@@ -547,55 +602,12 @@ HRESULT RageInput::Update()
 	////////////////////
 	// Read the keyboard
 	////////////////////
-	if( NULL == m_pKeyboard ) 
-		return E_FAIL;
-
-	if FAILED(m_pKeyboard->GetDeviceState( sizeof(m_keys),(LPVOID)&m_keys ))
-	{
-		// DirectInput may be telling us that the input stream has been
-		// interrupted.  We aren't tracking any state between polls, so
-		// we don't have any special reset that needs to be done.
-		// We just re-acquire and try again.
-        
-		// If input is lost then acquire and keep trying 
-		hr = m_pKeyboard->Acquire();
-		while( hr == DIERR_INPUTLOST ) 
-			hr = m_pKeyboard->Acquire();
-
-		return E_FAIL;
-	}
-
+	UpdateKeyboard();
 
 	////////////////////
 	// Read the mouse
 	////////////////////
-	if( NULL == m_pMouse ) 
-		return E_FAIL;
-
-	ZeroMemory( &m_mouseState, sizeof(m_mouseState) );
-
-	// Get the input's device state, and put the state in DIMOUSESTATE2
-    if (FAILED(m_pMouse->GetDeviceState( sizeof(DIMOUSESTATE2), &m_mouseState )))
-    {
-        // If input is lost then acquire and keep trying 
-        hr = m_pMouse->Acquire();
-        while( hr == DIERR_INPUTLOST ) 
-            hr = m_pMouse->Acquire();
-
-		return E_FAIL;
-    }
-
-
-	m_RelPosition_x = m_mouseState.lX;
-	m_RelPosition_y = m_mouseState.lY;
-
-	m_AbsPosition_x += m_mouseState.lX;
-	m_AbsPosition_y += m_mouseState.lY;
-
-	/* Clamp the mouse to 0...640-1, 0...480-1. */
-	m_AbsPosition_x = clamp(m_AbsPosition_x, 0, 640-1);
-	m_AbsPosition_y = clamp(m_AbsPosition_y, 0, 480-1);
-
+	UpdateMouse();
 
 	/////////////////////
 	// Read the joysticks

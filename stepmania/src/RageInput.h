@@ -151,6 +151,9 @@ private:
 	INT m_RelPosition_x;
 	INT m_RelPosition_y;
 
+	HRESULT UpdateMouse();
+	HRESULT UpdateKeyboard();
+
 public:
 	RageInput(HWND hWnd);
 	~RageInput();
