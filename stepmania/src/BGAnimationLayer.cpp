@@ -320,7 +320,7 @@ found_effect:
 
 	CString sDir, sFName, sExt;
 	splitrelpath( sPath, sDir, sFName, sExt );
-	CString sIniPath = sDir+"\\"+sFName+".ini";
+	CString sIniPath = sDir+"/"+sFName+".ini";
 	IniFile ini;
 	ini.SetPath( sIniPath );
 	if( ini.ReadFile() )

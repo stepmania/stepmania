@@ -234,7 +234,7 @@ float Song::GetElapsedTimeFromBeat( float fBeat ) const
 
 CString Song::GetCacheFilePath() const
 {
-	return ssprintf( "Cache\\%u", GetHashForString(m_sSongDir) );
+	return ssprintf( "Cache/%u", GetHashForString(m_sSongDir) );
 }
 
 /* Get a path to the SM containing data for this song.  It might
@@ -303,7 +303,7 @@ bool Song::LoadFromSongDir( CString sDir )
 //	LOG->Trace( "Song::LoadFromSongDir(%s)", sDir.GetString() );
 
 	sDir.Replace("\\", "/");
-	// make sure there is a trailing '\\' at the end of sDir
+	// make sure there is a trailing slash at the end of sDir
 	if( sDir.Right(1) != "/" )
 		sDir += "/";
 
@@ -1044,13 +1044,13 @@ CString Song::GetMusicPath() const
 {
 	/* If there's no path in the music file, the file is in the same directory
 	 * as the song.  (This is the preferred configuration.) */
-	if( m_sMusicFile.Find('\\') == -1)
+	if( m_sMusicFile.Find('/') == -1)
 		return m_sSongDir+m_sMusicFile;
 
 	/* The file has a path.  If it was loaded from the m_DWIPath, it's relative
 	 * to that. */
 	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
-		return PREFSMAN->m_DWIPath+"\\"+m_sMusicFile;
+		return PREFSMAN->m_DWIPath+"/"+m_sMusicFile;
 
 	/* Otherwise, it's relative to the top of the SM directory (the CWD), so
 	 * return it directly. */
@@ -1064,11 +1064,11 @@ CString Song::GetBannerPath() const
 
 CString Song::GetCDTitlePath() const
 {
-	if( m_sCDTitleFile.Find('\\') == -1)
+	if( m_sCDTitleFile.Find('/') == -1)
 		return m_sSongDir+m_sCDTitleFile;
 
 	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
-		return PREFSMAN->m_DWIPath+"\\"+m_sCDTitleFile;
+		return PREFSMAN->m_DWIPath+"/"+m_sCDTitleFile;
 
 	return m_sCDTitleFile;
 }

@@ -28,7 +28,7 @@ ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the pro
 
 
 const CString BASE_THEME_NAME = "default";
-const CString THEMES_DIR  = "Themes\\";
+const CString THEMES_DIR  = "Themes/";
 
 ThemeManager::ThemeManager()
 {
@@ -50,7 +50,7 @@ ThemeManager::~ThemeManager()
 
 void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
 {
-	GetDirListing( THEMES_DIR+"\\*", AddTo, true );
+	GetDirListing( THEMES_DIR+"/*", AddTo, true );
 	
 	// strip out the folder called "CVS"
 	for( CStringArray::iterator i=AddTo.begin(); i != AddTo.end(); ++i )
@@ -113,7 +113,7 @@ void ThemeManager::SwitchTheme( CString sThemeName )
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 {
-	return THEMES_DIR + sThemeName + "\\";
+	return THEMES_DIR + sThemeName + "/";
 }
 
 CString ThemeManager::GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName ) 

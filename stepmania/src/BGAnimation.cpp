@@ -50,8 +50,8 @@ void BGAnimation::LoadFromAniDir( CString sAniDir, CString sSongBGPath )
 {
 	Unload();
 
-	if( sAniDir.Right(1) != "\\" )
-		sAniDir += "\\";
+	if( sAniDir.Right(1) != "/" )
+		sAniDir += "/";
 
 	// loading a directory of layers
 	CStringArray asImagePaths;

@@ -123,10 +123,10 @@ void Course::LoadFromCRSFile( CString sPath )
 	splitrelpath( sPath, sDir, sFName, sExt );
 
 	CStringArray arrayPossibleBanners;
-	GetDirListing( "Courses\\" + sFName + ".png", arrayPossibleBanners, false, true );
-	GetDirListing( "Courses\\" + sFName + ".jpg", arrayPossibleBanners, false, true );
-	GetDirListing( "Courses\\" + sFName + ".bmp", arrayPossibleBanners, false, true );
-	GetDirListing( "Courses\\" + sFName + ".gif", arrayPossibleBanners, false, true );
+	GetDirListing( "Courses/" + sFName + ".png", arrayPossibleBanners, false, true );
+	GetDirListing( "Courses/" + sFName + ".jpg", arrayPossibleBanners, false, true );
+	GetDirListing( "Courses/" + sFName + ".bmp", arrayPossibleBanners, false, true );
+	GetDirListing( "Courses/" + sFName + ".gif", arrayPossibleBanners, false, true );
 	if( !arrayPossibleBanners.empty() )
 		m_sBannerPath = arrayPossibleBanners[0];
 
@@ -191,10 +191,10 @@ void Course::CreateEndlessCourseFromGroupAndDifficulty( CString sGroupName, Diff
 	m_iLives = -1;
 
 	CStringArray asPossibleBannerPaths;
-	GetDirListing( "Songs\\" + sGroupName + "\\banner.png", asPossibleBannerPaths, false, true );
-	GetDirListing( "Songs\\" + sGroupName + "\\banner.jpg", asPossibleBannerPaths, false, true );
-	GetDirListing( "Songs\\" + sGroupName + "\\banner.gif", asPossibleBannerPaths, false, true );
-	GetDirListing( "Songs\\" + sGroupName + "\\banner.bmp", asPossibleBannerPaths, false, true );
+	GetDirListing( "Songs/" + sGroupName + "/banner.png", asPossibleBannerPaths, false, true );
+	GetDirListing( "Songs/" + sGroupName + "/banner.jpg", asPossibleBannerPaths, false, true );
+	GetDirListing( "Songs/" + sGroupName + "/banner.gif", asPossibleBannerPaths, false, true );
+	GetDirListing( "Songs/" + sGroupName + "/banner.bmp", asPossibleBannerPaths, false, true );
 	if( !asPossibleBannerPaths.empty() )
 		m_sBannerPath = asPossibleBannerPaths[0];
 

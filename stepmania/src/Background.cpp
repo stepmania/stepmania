@@ -21,9 +21,9 @@
 #include "PrefsManager.h"
 
 
-const CString BG_ANIMS_DIR = "BGAnimations\\";
-const CString VISUALIZATIONS_DIR = "Visualizations\\";
-const CString RANDOMMOVIES_DIR = "RandomMovies\\";
+const CString BG_ANIMS_DIR = "BGAnimations/";
+const CString VISUALIZATIONS_DIR = "Visualizations/";
+const CString RANDOMMOVIES_DIR = "RandomMovies/";
 
 const float FADE_SECONDS = 1.0f;
 

@@ -44,7 +44,7 @@ void NoteSkinManager::GetNoteSkinNames( Game game, CStringArray &AddTo ) const
 {
 	GameDef* pGameDef = GAMEMAN->GetGameDefForGame( game );
 
-	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "\\";
+	CString sBaseSkinFolder = NOTESKINS_DIR + pGameDef->m_szName + "/";
 	GetDirListing( sBaseSkinFolder + "*", AddTo, true );
 
 	// strip out "CVS"

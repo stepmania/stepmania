@@ -74,7 +74,7 @@ void SongManager::InitSongArrayFromDisk( LoadingWindow *ld )
         LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], ld );
 
 	if( PREFSMAN->m_DWIPath != "" )
-		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "\\Songs", ld );
+		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "/Songs", ld );
 
 	LOG->Trace( "Found %d Songs.", m_pSongs.size() );
 }
@@ -83,14 +83,14 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 {
 	// Check to see if they put a song directly inside the group folder.
 	CStringArray arrayFiles;
-	GetDirListing( sDir + "\\*.mp3", arrayFiles );
-	GetDirListing( sDir + "\\*.ogg", arrayFiles );
-	GetDirListing( sDir + "\\*.wav", arrayFiles );
+	GetDirListing( sDir + "/*.mp3", arrayFiles );
+	GetDirListing( sDir + "/*.ogg", arrayFiles );
+	GetDirListing( sDir + "/*.wav", arrayFiles );
 	if( !arrayFiles.empty() )
 		RageException::Throw( 
 			"The folder '%s' contains music files.\n\n"
 			"This means that you have a music outside of a song folder.\n"
-			"All song folders must reside in a group folder.  For example, 'Songs\\DDR 4th Mix\\B4U'.\n"
+			"All song folders must reside in a group folder.  For example, 'Songs/DDR 4th Mix/B4U'.\n"
 			"See the StepMania readme for more info.",
 			sDir.GetString()
 		);
@@ -526,7 +526,7 @@ void SongManager::GetEndlessCourses( vector<Course*> &AddTo )
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	CString sCoursePath = "Songs\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+	CString sCoursePath = "Songs/" + sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	if( !DoesFileExist(sCoursePath) ) 
 	{
 		bool bFound = false;
@@ -534,7 +534,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 		/* try alternative song folders */
 		for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
 		{
-			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + "\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + "/" + sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 			if( DoesFileExist(sCoursePath) ) 
 			{
 				bFound = true;
@@ -544,7 +544,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 
 		if( !bFound && PREFSMAN->m_DWIPath != "" )
 		{
-			sCoursePath = PREFSMAN->m_DWIPath + "\\Songs\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+			sCoursePath = PREFSMAN->m_DWIPath + "/Songs/" + sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 			if( DoesFileExist(sCoursePath) )
 				bFound = true;
 		}
@@ -672,8 +672,8 @@ Song* SongManager::GetRandomSong()
 
 Song* SongManager::GetSongFromDir( CString sDir )
 {
-	if( sDir[sDir.GetLength()-1] != '\\' )
-		sDir += '\\';
+	if( sDir[sDir.GetLength()-1] != '/' )
+		sDir += '/';
 
 	for( unsigned int i=0; i<m_pSongs.size(); i++ )
 		if( sDir.CompareNoCase(m_pSongs[i]->GetSongDir()) == 0 )

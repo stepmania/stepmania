@@ -25,7 +25,7 @@
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
 
 
-const CString NOTESKIN_DIR  = "NoteSkins\\";
+const CString NOTESKIN_DIR  = "NoteSkins/";
 
 
 const int DANCE_COL_SPACING = 64;
