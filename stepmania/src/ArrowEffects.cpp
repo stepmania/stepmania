@@ -167,8 +167,25 @@ float ArrowGetXPos( PlayerNumber pn, int iColNum, float fYOffset )
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] > 0 )
 	{
-		float fMinX, fMaxX;
-		GAMESTATE->GetCurrentStyleDef()->GetMinAndMaxColX( pn, fMinX, fMaxX );
+		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+
+		// TRICKY: Tornado is very unplayable in doubles, so use a smaller
+		// tornado width if there are many columns
+		bool bWideField = pStyleDef->m_iColsPerPlayer > 4;
+		int iTornadoWidth = bWideField ? 2 : 3;
+
+		int iStartCol = iColNum - iTornadoWidth;
+		int iEndCol = iColNum + iTornadoWidth;
+		CLAMP( iStartCol, 0, pStyleDef->m_iColsPerPlayer-1 );
+		CLAMP( iEndCol, 0, pStyleDef->m_iColsPerPlayer-1 );
+
+		float fMinX = +100000;
+		float fMaxX = -100000;
+		for( int i=iStartCol; i<=iEndCol; i++ )
+		{
+			fMinX = min( fMinX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
+			fMaxX = max( fMaxX, pStyleDef->m_ColumnInfo[pn][i].fXOffset );
+		}
 
 		const float fRealPixelOffset = GAMESTATE->GetCurrentStyleDef()->m_ColumnInfo[pn][iColNum].fXOffset;
 		const float fPositionBetween = SCALE( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
