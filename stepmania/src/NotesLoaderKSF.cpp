@@ -128,14 +128,8 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		notedata.m_iNumTracks = 10;
 		out.m_NotesType = NOTES_TYPE_PUMP_DOUBLE;
 	} else if( sFName.Find("_2") != -1 ) {
-		/* We never import a COUPLE_1; the _1 side gets imported
-		 * as the SINGLE mode and it gets used as a fallback. This
-		 * way, people can still create separate couples steps for
-		 * the 1p side in Pump (just like you can with any other
-		 * game); we're not stuck with the limitations of KSFs. 
-		 * -glenn
-		 */
-		out.m_NotesType = NOTES_TYPE_PUMP_COUPLE_2;
+		notedata.m_iNumTracks = 10;
+		out.m_NotesType = NOTES_TYPE_PUMP_COUPLE;
 	}
 
 	out.m_sSMNoteData = notedata.GetSMNoteDataString();
@@ -240,7 +234,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 		else if( 0==stricmp(sValueName,"TICKCOUNT") ||
 				 0==stricmp(sValueName,"STEP") ||
 				 0==stricmp(sValueName,"DIFFICULTY"))
-			; /* Handled in Notes::LoadFromKSFFile; don't warn. */
+			; /* Handled in LoadFromKSFFile; don't warn. */
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName );
 	}

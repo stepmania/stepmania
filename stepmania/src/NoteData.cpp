@@ -503,8 +503,7 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 			break;
 		case NOTES_TYPE_PUMP_SINGLE:
 		case NOTES_TYPE_PUMP_DOUBLE:
-		case NOTES_TYPE_PUMP_COUPLE_1:
-		case NOTES_TYPE_PUMP_COUPLE_2:
+		case NOTES_TYPE_PUMP_COUPLE:
 			iTakeFromTrack[0] = 1;
 			iTakeFromTrack[1] = 3;
 			iTakeFromTrack[2] = 2;
