@@ -392,7 +392,8 @@ void Course::Save( CString sPath, bool bSavingCache )
 		CString s;
 		FOREACHS_CONST( CourseDifficulty, m_vDifficultiesToHide, cd )
 			s += CourseDifficultyToString( *cd ) + ',';
-		s.erase( s.end()-1 );	// erase last ','
+		if( !s.empty() )
+			s.erase( s.end()-1 );	// erase last ','
 		f.PutLine( "#DIFFICULTIESTOHIDE:" + s + ";" );
 	}
 
