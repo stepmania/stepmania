@@ -53,6 +53,11 @@ CString RageDisplay::PixelFormatToString( PixelFormat pixfmt )
 bool RageDisplay::SetVideoMode( VideoModeParams p )
 {
 	/* Round to the nearest valid fullscreen resolution */
+	/* Don't do this: we might be manually set to a less common resolution,
+	 * like 1280x1024 or 640x240, which are occasionally useful. XXX: how
+	 * should we do this sanity check?  A list of acceptable height/widths,
+	 * forcing unknown ones? */
+	/*
 	if( !p.windowed )
 	{
 		if(      p.width <= 320 )	p.width = 320;
@@ -75,7 +80,7 @@ bool RageDisplay::SetVideoMode( VideoModeParams p )
 		default:	ASSERT(0);
 		}
 	}
-
+*/
 	bool bNeedReloadTextures;
 	
 	CString err;
