@@ -625,7 +625,7 @@ void SongManager::GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxSt
 	AddTo.clear();
 
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
-		if( sGroupName=="" || sGroupName==m_pSongs[i]->m_sGroupName )
+		if( sGroupName==GROUP_ALL_MUSIC || sGroupName==m_pSongs[i]->m_sGroupName )
 			if( GetNumStagesForSong(m_pSongs[i])<=iMaxStages )
 				AddTo.push_back( m_pSongs[i] );
 }
