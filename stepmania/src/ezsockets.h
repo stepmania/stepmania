@@ -10,6 +10,8 @@
 
   Modified by Charles Lohr for use on
    windows and Unix.
+  Modified by Charles Lohr for use with
+   Macromedia Flash.
 ********************************************/
 
 #ifndef __EZSOCKETS_H
@@ -30,6 +32,8 @@
 #include <unistd.h>
 #include <netdb.h>
 #endif
+
+using namespace std;
 
 class EzSockets {
  private:
@@ -64,6 +68,8 @@ class EzSockets {
   bool receive(std::vector<char> &data);
   //Receive structure
   bool receive(int &x);
+  //Receive Structure (or other data)
+  int receive(char *data, int MAXlength);
   //Send string
   bool send(const std::string& data);
   //Send Structure (or other data)
@@ -73,7 +79,12 @@ class EzSockets {
   //Connect to remote host
   //NOTE: YOU MUST PUT IN IP, NOT NAME
   bool connect(const std::string& host, unsigned short port);
+
+  //Used for sending and receiving functions from flash
+  bool sendFlash (const std::string & inData);
   
+  std::string recvFlash ();
+
   long uAddr(); 
   //Kill socket
   void close();

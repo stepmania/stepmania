@@ -1,4 +1,6 @@
-#include "global.h"
+//#include "global.h"
+//Commented out because there is no StepMania here.
+
 /*******************************************
   ezsockets.cpp -- Header for sockets.cpp
    Designed by Josh Allen and Charles
@@ -14,9 +16,12 @@
 ********************************************/
 
 // We need the WinSock32 Library on Windows
-#ifdef _WINDOWS
+#if defined(WIN32)
 #pragma comment(lib,"wsock32.lib")
 #endif
+
+#include <iostream>//REMOVE SOON
+
 
 #include "ezsockets.h"
 
@@ -77,7 +82,10 @@ bool EzSockets::listen()
 }
 
 // glibc already has socklen_t defined
-#if !defined(LINUX)
+// to whoever edited this:
+// please do not assume LINUX is defined if you're compiling on linux!
+// it will not compile properly.
+#if defined(WIN32)
 	typedef int socklen_t;
 #endif
 
@@ -114,6 +122,42 @@ bool EzSockets::receiveLength( int &length ) {
 
 	if ( desc <= 0 )
 		return false;
+	return true;
+}
+
+int EzSockets::receive(char *data, int MAXlength)
+{
+	int x=0;
+	if ( !receiveLength(x))
+		return false;
+
+	int desc=1;
+	std::string outData;
+	char buf[4];
+
+	outData = "";
+
+	
+
+	//YES! I know this is a crappy way to do it, but 
+	//until someone tells me better... DON'T COMPLAIN
+
+	while ((outData.length()<x) && (desc>0)) {
+		desc = ::recv( sock, buf, 1 , 0 );
+		if (desc!=0)
+			outData+=buf[0];
+	}
+	if (desc==0)
+	{
+		return false;
+	}
+	if (x>MAXlength)
+	{
+		return false;
+	}
+
+	memcpy (data,outData.c_str(),x);
+
 	return true;
 }
 
@@ -281,6 +325,45 @@ bool EzSockets::connect( const std::string& host, unsigned short port )
 
 	return desc >= 0;
 }
+
+bool EzSockets::sendFlash (const std::string & inData)
+{
+	int inDataSize = inData.length();
+	int desc = ::send( sock, inData.c_str(), inDataSize+1 , 0 );
+		//Over-ride the C-string by one.
+	if (desc)
+		return (true);
+	else
+		return (false);
+}
+
+std::string EzSockets::recvFlash ()
+{
+	int desc=1;
+	std::string outData;
+	char buf[4];
+
+	outData = "";
+
+	
+
+	//YES! I know this is a crappy way to do it, but 
+	//until someone tells me better... DON'T COMPLAIN
+
+	buf[0] = '\r'; //Put something in buf to stop while.
+	while ((buf[0] != '\0') && (desc>0)) {
+		desc = ::recv( sock, buf, 1 , 0 );
+		if (desc!=0)
+			outData+=buf[0];
+	}
+	if (desc==0)
+	{
+		outData = "999Data Failure";
+	}
+	return outData;
+}
+
+
 
 long EzSockets::uAddr()
 {
