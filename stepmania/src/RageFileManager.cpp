@@ -139,6 +139,7 @@ RageFileManager::~RageFileManager()
 	g_Mountpoints = NULL;
 
 	delete g_Mutex;
+	g_Mutex = NULL;
 }
 
 CString LoadedDriver::GetPath( CString path )
@@ -491,8 +492,6 @@ RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, Ra
 
 void RageFileManager::Close( RageFileObj *obj )
 {
-	LockMut( *g_Mutex );
-
 	if( obj == NULL )
 		return;
 
