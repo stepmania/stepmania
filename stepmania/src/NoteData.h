@@ -42,7 +42,7 @@ public:
 	~NoteData();
 	void Init();
 
-	int GetNumTracks();
+	int GetNumTracks() const;
 	void SetNumTracks( int iNewNumTracks );
 
 	/* Return the note at the given track and row.  Row may be out of

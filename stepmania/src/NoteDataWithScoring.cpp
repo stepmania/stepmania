@@ -30,7 +30,7 @@ void NoteDataWithScoring::Init()
 	m_fHoldNoteLife.clear();
 }
 
-int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat )
+int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
 { 
 	int iNumSuccessfulTapNotes = 0;
 
@@ -52,7 +52,7 @@ int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float 
 	return iNumSuccessfulTapNotes;
 }
 
-int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat )
+int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
 {
 	int iNumSuccessfulDoubles = 0;
 
@@ -81,7 +81,7 @@ int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float f
 	return iNumSuccessfulDoubles;
 }
 
-int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat, float fEndBeat )
+int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat, float fEndBeat ) const
 {
 	int iNumSuccessfulHolds = 0;
 
@@ -97,7 +97,7 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	return iNumSuccessfulHolds;
 }
 
-bool NoteDataWithScoring::IsRowComplete( int index )
+bool NoteDataWithScoring::IsRowComplete( int index ) const
 {
 	for( int t=0; t<GetNumTracks(); t++ )
 		if( GetTapNote(t, index) != TAP_EMPTY && GetTapNoteScore(t, index) < TNS_GREAT )
@@ -105,7 +105,7 @@ bool NoteDataWithScoring::IsRowComplete( int index )
 	return true;
 }
 
-float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, float fSongSeconds )
+float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const
 {
 	switch( rv )
 	{
@@ -118,7 +118,7 @@ float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, float fSongSec
 	}
 }
 
-float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds )
+float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds ) const
 {
 	// density of steps
 	int iNumSuccessfulNotes = 
@@ -131,7 +131,7 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds )
 	return min( fReturn, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
+float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds ) const
 {
 	float fAvgBPS = GetLastBeat() / fSongSeconds;
 
@@ -156,7 +156,7 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 	return min( fReturn, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds )
+float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds ) const
 {
 	// number of doubles
 	int iNumDoubles = 
@@ -167,7 +167,7 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds )
 	return min( fReturn, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
+float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds ) const
 {
 	// count number of triplets
 	int iNumChaosNotesCompleted = 0;
@@ -181,7 +181,7 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 	return min( fReturn, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds )
+float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds ) const
 {
 	// number of hold steps
 	float fReturn = GetNumHoldNotesWithScore(HNS_OK) / fSongSeconds;

@@ -37,7 +37,7 @@ NoteData::~NoteData()
 {
 }
 
-int NoteData::GetNumTracks()
+int NoteData::GetNumTracks() const
 {
 	return m_iNumTracks;
 }

@@ -31,9 +31,9 @@ public:
 	void Init();
 
 	// statistics
-	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 );
-	int GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 );
-	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 );
+	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 
 	TapNoteScore GetTapNoteScore(unsigned track, unsigned row) const;
 	void SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns);
@@ -42,14 +42,14 @@ public:
 	float GetHoldNoteLife(unsigned h) const;
 	void SetHoldNoteLife(unsigned h, float f);
 
-	bool IsRowComplete( int index );
+	bool IsRowComplete( int index ) const;
 
-	float GetActualRadarValue( RadarCategory rv, float fSongSeconds );
-	float GetActualStreamRadarValue( float fSongSeconds );
-	float GetActualVoltageRadarValue( float fSongSeconds );
-	float GetActualAirRadarValue( float fSongSeconds );
-	float GetActualFreezeRadarValue( float fSongSeconds );
-	float GetActualChaosRadarValue( float fSongSeconds );
+	float GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const;
+	float GetActualStreamRadarValue( float fSongSeconds ) const;
+	float GetActualVoltageRadarValue( float fSongSeconds ) const;
+	float GetActualAirRadarValue( float fSongSeconds ) const;
+	float GetActualFreezeRadarValue( float fSongSeconds ) const;
+	float GetActualChaosRadarValue( float fSongSeconds ) const;
 };
 
 #endif
