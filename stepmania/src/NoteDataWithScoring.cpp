@@ -179,17 +179,6 @@ float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber p
 
 float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-/*	// density of steps
-	int iNumSuccessfulNotes = 
-		GetNumTapNotesWithScore(TNS_MARVELOUS) + 
-		GetNumTapNotesWithScore(TNS_PERFECT) + 
-		GetNumTapNotesWithScore(TNS_GREAT)/2 + 
-		GetNumHoldNotesWithScore(HNS_OK);
-	float fNotesPerSecond = iNumSuccessfulNotes/fSongSeconds;
-	float fReturn = fNotesPerSecond / 7;
-	return min( fReturn, 1.0f );
-	*/
-
 	int TotalSteps = GetNumTapNotes();
 	if( !TotalSteps )
 		return 1;
@@ -200,69 +189,30 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, Player
 
 float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-	const int TotalSteps = GetNumTapNotes();
-	if( !TotalSteps )
-		return 1;
-	
-	const int MaxCombo = GAMESTATE->m_CurStageStats.iMaxCombo[pn];
-	return clamp( (float)MaxCombo/TotalSteps, 0.0f, 1.0f );
-
-	// voltage is essentialy perfects divided by # of steps
-/*	float fAvgBPS = GetLastBeat() / fSongSeconds;
-
-	// peak density of steps
-	float fMaxDensitySoFar = 0;
-
-	const int BEAT_WINDOW = 8;
-
-	const int fEndBeat = (int) GetMaxBeat()+1;
-
-	for( int i=0; i<fEndBeat; i+=BEAT_WINDOW )
-	{
-		int iNumNotesThisWindow = 0;
-		iNumNotesThisWindow += GetNumTapNotesWithScore(TNS_MARVELOUS,(float)i,(float)i+BEAT_WINDOW);
-		iNumNotesThisWindow += GetNumTapNotesWithScore(TNS_PERFECT,(float)i,(float)i+BEAT_WINDOW);
-		iNumNotesThisWindow += GetNumHoldNotesWithScore(HNS_OK,(float)i,(float)i+BEAT_WINDOW);
-		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
-		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
-	}
-
-	float fReturn = fMaxDensitySoFar*fAvgBPS/10;
-	return min( fReturn, 1.0f );
-	*/
+	/* m_CurStageStats.iMaxCombo is unrelated to GetNumTapNotes: m_bComboContinuesBetweenSongs
+	 * might be on, and the way combo is counted varies depending on the mode and score
+	 * keeper.  Instead, let's use the length of the longest recorded combo.  This is
+	 * only subtly different: it's the percent of the song the longest combo took to get. */
+	const StageStats::Combo_t MaxCombo = GAMESTATE->m_CurStageStats.GetMaxCombo( pn );
+	return clamp( MaxCombo.size, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-//	float fReturn = iNumDoubles / fSongSeconds;
 	const int iTotalDoubles = GetNumDoubles();
 	if (iTotalDoubles == 0)
 		return 1;  // no jumps in song
 
 	// number of doubles
-	const int iNumDoubles = 
-		GetNumDoublesWithScore(TNS_MARVELOUS) + GetNumDoublesWithScore(TNS_PERFECT);
-
+	const int iNumDoubles = GetNumDoublesWithScore(TNS_MARVELOUS) + GetNumDoublesWithScore(TNS_PERFECT);
 	return clamp( (float)iNumDoubles / iTotalDoubles, 0.0f, 1.0f );
 }
 
 float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
-/*	// count number of triplets
-	int iNumChaosNotesCompleted = 0;
-	for( unsigned r=0; r<m_TapNoteScores[0].size(); r++ )
-	{
-		if( !IsRowEmpty(r) && MinTapNoteScore(r) >= TNS_GREAT && GetNoteType(r) >= NOTE_TYPE_12TH )
-			iNumChaosNotesCompleted++;
-	}
-
-	float fReturn = iNumChaosNotesCompleted / fSongSeconds * 0.5f;
-	return min( fReturn, 1.0f );
-	*/
-
 	const int PossibleDP = GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn];
 	if ( PossibleDP == 0 )
-		return 1;  // no jumps in song
+		return 1;
 
 	const int ActualDP = GAMESTATE->m_CurStageStats.iActualDancePoints[pn];
 	return clamp( float(ActualDP)/PossibleDP, 0.0f, 1.0f );
@@ -276,7 +226,6 @@ float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds, Player
 		return 1.0f;
 
 	const int ActualHolds = GetNumHoldNotesWithScore(HNS_OK);
-
 	return clamp( float(ActualHolds) / TotalHolds, 0.0f, 1.0f );
 }
 
