@@ -282,7 +282,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 					if( !GAMESTATE->IsPlayerEnabled(p) )
 						continue;	// skip
 
-					m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenEvaluation difficulty icons 1x7") );
+					m_DifficultyIcon[p].Load( THEME->GetPathToG("ScreenEvaluation difficulty icons 1x10") );
 					m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
 					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 					UtilSetXYAndOnCommand( m_DifficultyIcon[p], "ScreenEvaluation" );

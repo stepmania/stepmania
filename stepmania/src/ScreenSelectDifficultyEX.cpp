@@ -60,7 +60,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX() : ScreenSelect( "ScreenSele
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprDifficultyIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty icons 1x7") );
+		m_sprDifficultyIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic difficulty icons 1x10") );
 		
 		m_sprDifficultyIcon[p].SetX( 200 );
 		m_sprDifficultyIcon[p].SetY( 200 );
