@@ -124,7 +124,7 @@ File "BGAnimations\instructions.txt"
 
 CreateDirectory "$INSTDIR\CDTitles"
 SetOutPath "$INSTDIR\CDTitles"
-File "CDTitles\instructions.txt"
+File "CDTitles\Instructions.txt"
 
 #CreateDirectory "$INSTDIR\Characters"
 #SetOutPath "$INSTDIR\Characters"
@@ -175,7 +175,7 @@ File "RandomMovies\instructions.txt"
 
 CreateDirectory "$INSTDIR\Songs"
 SetOutPath "$INSTDIR\Songs"
-File "Songs\instructions.txt"
+File "Songs\Instructions.txt"
 
 RMDir /r "$INSTDIR\Themes\default"
 CreateDirectory "$INSTDIR\Themes"
@@ -275,7 +275,7 @@ RMDir "$INSTDIR\BGAnimations"
 Delete "$INSTDIR\Cache\instructions.txt"
 RMDir "$INSTDIR\Cache"
 
-Delete "$INSTDIR\CDTitles\instructions.txt"
+Delete "$INSTDIR\CDTitles\Instructions.txt"
 RMDir "$INSTDIR\CDTitles"
 
 #Delete "$INSTDIR\Characters\instructions.txt"
@@ -307,7 +307,7 @@ RMDir "$INSTDIR\NoteSkins"
 Delete "$INSTDIR\RandomMovies\instructions.txt"
 RMDir "$INSTDIR\RandomMovies"
 
-Delete "$INSTDIR\Songs\instructions.txt"
+Delete "$INSTDIR\Songs\Instructions.txt"
 RMDir "$INSTDIR\Songs"	; will delete only if empty
 
 Delete "$INSTDIR\Themes\instructions.txt"
