@@ -90,9 +90,9 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	// copy group names into a vector
 	std::vector<CString> asGroupNames;
-	for( std::map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++i )
-		asGroupNames.push_back( iter->first );
 	asGroupNames.push_back( "ALL MUSIC" );	// "ALL MUSIC" is a special group
+	for( std::map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++iter )
+		asGroupNames.push_back( iter->first );
 
 	// Add songs to the MusicList.
 	for( unsigned g=0; g < asGroupNames.size(); g++ ) /* for each group */
