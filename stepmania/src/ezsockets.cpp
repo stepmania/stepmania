@@ -273,7 +273,7 @@ int EzSockets::PeekData(char *data, unsigned int bytes)
 void EzSockets::SendPack(const char *data, unsigned int bytes)
 {
 	unsigned int SendSize = htonl(bytes);
-	SendData((const char *)&SendSize, sizeof(int));
+	outBuffer.append( (const char *) & SendSize, 4);	//Add size to buffer, but don't send yet.
 	SendData(data, bytes);
 }
 
