@@ -186,15 +186,15 @@ RageSurface::OpenResult RageSurface_Load_GIF( const CString &sPath, SDL_Surface 
 				memcpy( LocalColorMap, GlobalColorMap, sizeof(LocalColorMap) );
 			}
 
-			SDL_Surface *image = ReadImage( f, LM_to_uint(buf[4], buf[5]), LM_to_uint(buf[6], buf[7]),
+			ret = ReadImage( f, LM_to_uint(buf[4], buf[5]), LM_to_uint(buf[6], buf[7]),
 					LocalColorMap, BitSet(buf[8], INTERLACE),
 					imageCount != imageNumber );
 
-			if( !image )
+			if( !ret )
 				continue;
 
 			if( transparency != -1 )
-				mySDL_AddColorKey( image, transparency );
+				mySDL_AddColorKey( ret, transparency );
 
 			return RageSurface::OPEN_OK;
 		}
