@@ -51,7 +51,7 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	samplebits = samplebits_;
 	writeahead = writeahead_;
 	buffer_locked = false;
-	last_cursor_pos = write_cursor = 0;
+	last_cursor_pos = write_cursor = LastPosition = 0;
 
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
