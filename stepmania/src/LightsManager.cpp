@@ -19,6 +19,7 @@
 #include "GameInput.h"	// for GameController
 #include "InputMapper.h"
 #include "GameDef.h"
+#include "PrefsManager.h"
 
 
 static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
@@ -54,7 +55,8 @@ LightsManager::LightsManager(CString sDriver)
 
 	m_pDriver = MakeLightsDriver(sDriver);
 
-	ZERO( m_fSecsLeftInBlink );
+	ZERO( m_fSecsLeftInCabinetLightBlink );
+	ZERO( m_fSecsLeftInGameButtonBlink );
 }
 
 LightsManager::~LightsManager()
@@ -67,15 +69,18 @@ void LightsManager::Update( float fDeltaTime )
 	// update lights falloff
 	{
 		FOREACH_CabinetLight( cl )
-			m_fSecsLeftInBlink[cl] = max( 0, m_fSecsLeftInBlink[cl] - fDeltaTime );
+			fapproach( m_fSecsLeftInCabinetLightBlink[cl], 0, fDeltaTime );
+		FOREACH_GameController( gc )
+			FOREACH_GameButton( gb )
+				fapproach( m_fSecsLeftInGameButtonBlink[gc][gb], 0, fDeltaTime );
 	}
 
 	//
 	// Set new lights state cabinet lights
 	//
 	{
-		FOREACH_CabinetLight( cl )
-			m_LightsState.m_bCabinetLights[cl] = false;
+		ZERO( m_LightsState.m_bCabinetLights );
+		ZERO( m_LightsState.m_bGameButtonLights );
 	}
 
 	switch( m_LightsMode )
@@ -147,12 +152,7 @@ void LightsManager::Update( float fDeltaTime )
 	case LIGHTSMODE_GAMEPLAY:
 		{
 			FOREACH_CabinetLight( cl )
-				m_LightsState.m_bCabinetLights[cl] = false;
-
-			{
-				FOREACH_CabinetLight( cl )
-					m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInBlink[cl] > 0 ;
-			}
+				m_LightsState.m_bCabinetLights[cl] = m_fSecsLeftInCabinetLightBlink[cl] > 0 ;
 		}
 		break;
 	case LIGHTSMODE_STAGE:
@@ -221,16 +221,29 @@ void LightsManager::Update( float fDeltaTime )
 		break;
 	case LIGHTSMODE_GAMEPLAY:
 		{
-			FOREACH_GameController( gc )
+			if( PREFSMAN->m_bBlinkGameplayButtonLightsOnNote )
 			{
-				// don't blink unjoined sides
-				if( !GAMESTATE->m_bSideIsJoined[gc] )
-					continue;
-
-				FOREACH_GameButton( gb )
+				FOREACH_GameController( gc )
 				{
-					bool bOn = INPUTMAPPER->IsButtonDown( GameInput(gc,gb) );
-					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
+					FOREACH_GameButton( gb )
+					{
+						m_LightsState.m_bGameButtonLights[gc][gb] = m_fSecsLeftInGameButtonBlink[gc][gb] > 0 ;
+					}
+				}
+			}
+			else
+			{
+				FOREACH_GameController( gc )
+				{
+					// don't blink unjoined sides
+					if( !GAMESTATE->m_bSideIsJoined[gc] )
+						continue;
+
+					FOREACH_GameButton( gb )
+					{
+						bool bOn = INPUTMAPPER->IsButtonDown( GameInput(gc,gb) );
+						m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
+					}
 				}
 			}
 		}
@@ -259,9 +272,14 @@ void LightsManager::Update( float fDeltaTime )
 	m_pDriver->Set( &m_LightsState );
 }
 
-void LightsManager::GameplayBlinkLight( CabinetLight cl )
+void LightsManager::BlinkCabinetLight( CabinetLight cl )
 {
-	m_fSecsLeftInBlink[cl] = LIGHTS_FALLOFF_SECONDS;
+	m_fSecsLeftInCabinetLightBlink[cl] = LIGHTS_FALLOFF_SECONDS;
+}
+
+void LightsManager::BlinkGameButton( GameInput gi )
+{
+	m_fSecsLeftInGameButtonBlink[gi.controller][gi.button] = LIGHTS_FALLOFF_SECONDS;
 }
 
 void LightsManager::SetLightsMode( LightsMode lm )

@@ -62,13 +62,15 @@ public:
 	
 	void Update( float fDeltaTime );
 
-	void GameplayBlinkLight( CabinetLight cl );
+	void BlinkCabinetLight( CabinetLight cl );
+	void BlinkGameButton( GameInput gi );
 
 	void SetLightsMode( LightsMode lm );
 	LightsMode GetLightsMode();
 
 private:
-	float m_fSecsLeftInBlink[NUM_CABINET_LIGHTS];
+	float m_fSecsLeftInCabinetLightBlink[NUM_CABINET_LIGHTS];
+	float m_fSecsLeftInGameButtonBlink[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
 
 	LightsDriver* m_pDriver;
 	LightsMode m_LightsMode;

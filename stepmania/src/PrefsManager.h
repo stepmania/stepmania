@@ -234,6 +234,7 @@ public:
 	int				m_iSoundResampleQuality;
 	CString			m_sMovieDrivers;
 	CString			m_sLightsDriver;
+	bool			m_bBlinkGameplayButtonLightsOnNote;
 	bool			m_bAllowUnacceleratedRenderer;
 	bool			m_bThreadedInput;
 	bool			m_bThreadedMovieDecode;

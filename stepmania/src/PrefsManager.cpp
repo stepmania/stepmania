@@ -254,6 +254,7 @@ PrefsManager::PrefsManager()
 
 	m_sLightsDriver = DEFAULT_LIGHTS_DRIVER;
 
+	m_bBlinkGameplayButtonLightsOnNote = false;
 	m_bAllowUnacceleratedRenderer = false;
 	m_bThreadedInput = true;
 	m_bThreadedMovieDecode = true;
@@ -435,6 +436,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
 	ini.GetValue( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
 	ini.GetValue( "Options", "ShowSongOptions",					(int&)m_ShowSongOptions );
+	ini.GetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
 	ini.GetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.GetValue( "Options", "ThreadedInput",					m_bThreadedInput );
 	ini.GetValue( "Options", "ThreadedMovieDecode",				m_bThreadedMovieDecode );
@@ -656,6 +658,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
 	ini.SetValue( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
 	ini.SetValue( "Options", "ShowSongOptions",					m_ShowSongOptions );
+	ini.SetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
 	ini.SetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.SetValue( "Options", "ThreadedInput",					m_bThreadedInput );
 	ini.SetValue( "Options", "ThreadedMovieDecode",				m_bThreadedMovieDecode );
