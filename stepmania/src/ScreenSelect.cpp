@@ -212,17 +212,6 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		if( !IsTransitioning() )
 			StartTransitioning( SM_GoToNextScreen );
 		break;
-	case SM_MenuTimer:
-		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					MenuStart( (PlayerNumber)p );
-		}
-		break;
-	case SM_GoToPrevScreen:
-		SOUND->StopMusic();
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		break;
 	case SM_GoToNextScreen:
 		{
 			/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
@@ -238,8 +227,10 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			else
 				SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
 		}
-		break;
+		return;
 	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenSelect::MenuBack( PlayerNumber pn )

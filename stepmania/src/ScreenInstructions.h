@@ -22,7 +22,6 @@ public:
 	ScreenInstructions( CString sName );
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );

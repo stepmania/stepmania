@@ -81,22 +81,6 @@ void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
-void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_MenuTimer:
-		this->MenuStart(PLAYER_1);
-		break;
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( PREV_SCREEN );		
-		break;
-	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
-	}
-}
-
 void ScreenInstructions::MenuBack( PlayerNumber pn )
 {
 	Back( SM_GoToPrevScreen );
