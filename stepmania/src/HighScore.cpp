@@ -68,6 +68,9 @@ void HighScore::LoadFromNode( const XNode* pNode )
 		else if( (*child)->name == "SurviveSeconds" )	(*child)->GetValue( fSurviveSeconds );
 		else if( (*child)->name == "Modifiers" )		(*child)->GetValue( sModifiers );
 	}
+
+	/* Validate input. */
+	grade = clamp( grade, GRADE_TIER_1, GRADE_FAILED );
 }
 
 
