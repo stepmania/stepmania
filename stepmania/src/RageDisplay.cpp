@@ -176,11 +176,20 @@ void RageDisplay::SetupExtensions()
 
 	/* Make sure we have all components for detected extensions. */
 	if(m_oglspecs->WGL_EXT_swap_control)
-		ASSERT(wglSwapIntervalEXT);
+	{
+		if(!wglSwapIntervalEXT)
+		{
+			LOG->Warn("wglSwapIntervalEXT but wglSwapIntervalEXT() not found");
+			m_oglspecs->WGL_EXT_swap_control=false;
+		}
+	}
 	if(m_oglspecs->EXT_paletted_texture)
 	{
-		ASSERT(glColorTableEXT);
-		ASSERT(glGetColorTableParameterivEXT);
+		if(!glColorTableEXT || !glGetColorTableParameterivEXT)
+		{
+			LOG->Warn("GL_EXT_paletted_texture but glColorTableEXT or glGetColorTableParameterivEXT not found");
+			m_oglspecs->EXT_paletted_texture = false;
+		}
 	}
 }
 
