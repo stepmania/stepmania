@@ -344,7 +344,7 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 	int slotno = GetCurThreadSlot();
 	/* We can't ASSERT here, since that uses checkpoints. */
 	if( slotno == -1 )
-		*(char*)0=0;
+		return;
 
 	ThreadSlot &slot = g_ThreadSlots[slotno];
 	
