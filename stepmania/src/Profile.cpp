@@ -294,13 +294,13 @@ int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 
 int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 {
+	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
+	if( hsSong == NULL )
+		return 0;
+
 	int iTotalNumTimesPlayed = 0;
-
-	std::map<SongID,HighScoresForASong> &songHighScores = ((Profile*)(this))->m_SongHighScores;
-	const HighScoresForASong& hsSong = songHighScores[songID];
-
-	for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
-		j != hsSong.m_StepsHighScores.end();
+	for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsSong->m_StepsHighScores.begin();
+		j != hsSong->m_StepsHighScores.end();
 		j++ )
 	{
 		const HighScoresForASteps &hsSteps = j->second;
@@ -347,6 +347,32 @@ void Profile::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps )
 	GetStepsHighScoreList(pSong,pSteps).iNumTimesPlayed++;
 }
 
+void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES] ) const
+{
+	SongID songID;
+	songID.FromSong( pSong );
+
+	
+	memset( iCounts, 0, sizeof(int)*NUM_GRADES );
+	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
+	if( hsSong == NULL )
+		return;
+
+	FOREACH_Grade(g)
+	{
+		std::map<StepsID,HighScoresForASteps>::const_iterator it;
+		for( it = hsSong->m_StepsHighScores.begin(); it != hsSong->m_StepsHighScores.end(); ++it )
+		{
+			const StepsID &id = it->first;
+			if( !id.MatchesStepsType(st) )
+				continue;
+
+			const HighScoresForASteps &hsSteps = it->second;
+			if( hsSteps.hs.GetTopScore().grade == g )
+				iCounts[g]++;
+		}
+	}
+}
 
 //
 // Course high scores
@@ -1973,3 +1999,11 @@ void Profile::AddCourseLastScore( const Course* pCourse, StepsType st, CourseDif
 	m_vLastCourseScores.push_back( h );
 }
 
+const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const
+{
+	std::map<SongID,HighScoresForASong>::const_iterator it;
+	it = m_SongHighScores.find( songID );
+	if( it == m_SongHighScores.end() )
+		return NULL;
+	return &it->second;
+}

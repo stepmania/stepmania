@@ -137,6 +137,7 @@ public:
 	HighScoreList& GetStepsHighScoreList( const Song* pSong, const Steps* pSteps );
 	int GetStepsNumTimesPlayed( const Song* pSong, const Steps* pSteps ) const;
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps );
+	void GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES] ) const;
 
 
 	//
@@ -339,6 +340,9 @@ public:
 
 	void SaveStatsWebPageToDir( CString sDir ) const;
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
+
+private:
+	const HighScoresForASong *GetHighScoresForASong( const SongID& songID ) const;
 };
 
 
