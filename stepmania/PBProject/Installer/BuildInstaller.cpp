@@ -61,7 +61,7 @@ const CString GetPath(const CString& ID)
         if ((size_t temp = strlen(path)))
         {
             if (path[temp - 1] == '\n')
-                path[temp - -1] = '\000';
+                path[temp - 1] = '\000';
         }
         ASSERT(ptr);
         while (*ptr != '\000' && (*ptr == ' ' || *ptr == '\t'))
