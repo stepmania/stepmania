@@ -453,13 +453,15 @@ void Profile::LoadSongScoresFromDir( CString sDir )
 	CHECKPOINT;
 
 	CString fn = sDir + SONG_SCORES_XML;
+	if( !IsAFile(fn) )
+		return;
 
 	CRYPT_VERIFY_FILE;
 
 	XNode xml;
 	if( !xml.LoadFromFile( fn ) )
 	{
-		LOG->Warn( "Couldn't open file \"%s\" for writing.", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
 		return;
 	}
 	
@@ -845,13 +847,15 @@ void Profile::LoadCourseScoresFromDir( CString sDir )
 	CHECKPOINT;
 
 	CString fn = sDir + COURSE_SCORES_XML;
+	if( !IsAFile(fn) )
+		return;
 
 	CRYPT_VERIFY_FILE;
 
 	XNode xml;
 	if( !xml.LoadFromFile( fn ) )
 	{
-		LOG->Warn( "Couldn't open file \"%s\" for writing.", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
 		return;
 	}
 	
@@ -934,13 +938,15 @@ void Profile::LoadCategoryScoresFromDir( CString sDir )
 	CHECKPOINT;
 
 	CString fn = sDir + CATEGORY_SCORES_XML;
+	if( !IsAFile(fn) )
+		return;
 
 	CRYPT_VERIFY_FILE;
 
 	XNode xml;
 	if( !xml.LoadFromFile( fn ) )
 	{
-		LOG->Warn( "Couldn't open file \"%s\" for writing.", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
 		return;
 	}
 	
@@ -1027,13 +1033,15 @@ void Profile::LoadScreenshotDataFromDir( CString sDir )
 	CHECKPOINT;
 
 	CString fn = sDir + SCREENSHOT_DATA_XML;
+	if( !IsAFile(fn) )
+		return;
 
 	CRYPT_VERIFY_FILE;
 
 	XNode xml;
 	if( !xml.LoadFromFile( fn ) )
 	{
-		LOG->Warn( "Couldn't open file \"%s\" for writing.", fn.c_str() );
+		LOG->Warn( "Couldn't open file \"%s\" for reading.", fn.c_str() );
 		return;
 	}
 	
