@@ -116,7 +116,7 @@ struct msAnimation
 {
     vector<msBone>     Bones;
 
-	int FindBoneByName( const char* szName )
+	int FindBoneByName( const char* szName ) const
 	{
 		for( unsigned i=0; i<Bones.size(); i++ )
 			if( strcmp(Bones[i].szName, szName)==0 )
