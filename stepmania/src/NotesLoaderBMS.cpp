@@ -924,8 +924,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		CString sTag;
 		if( GetTagFromMap( aBMSData[i], "#title", sTag ) && sTag.GetLength() != commonSubstrLen )
 		{
-			int tagSubstrLen = sTag.GetLength() - commonSubstrLen;
-
 			sTag = sTag.substr( commonSubstrLen, sTag.GetLength() - commonSubstrLen );
 			sTag.ToLower();
 
