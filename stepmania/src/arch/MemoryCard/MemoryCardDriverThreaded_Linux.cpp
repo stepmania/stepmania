@@ -139,6 +139,8 @@ MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 MemoryCardDriverThreaded_Linux::~MemoryCardDriverThreaded_Linux()
 {
 	this->StopThread();
+	if( m_fd != -1 )
+		close( m_fd );
 }
 
 void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
