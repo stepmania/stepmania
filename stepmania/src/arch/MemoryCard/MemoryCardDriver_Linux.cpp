@@ -135,7 +135,7 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 	{
 		// Read all usb-storage descriptors and map from our array to usb-storage device index.
 		int iConnectedDeviceIndex = 0;
-		for( int iUsbStorageIndex = 0; true; iUsbStorageIndex++; )
+		for( int iUsbStorageIndex = 0; true; iUsbStorageIndex++ )
 		{
 			UsbStorageDevice& usbd = vDevicesOut[iConnectedDeviceIndex];
 			// Output looks like:
