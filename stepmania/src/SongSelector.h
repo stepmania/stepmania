@@ -44,11 +44,11 @@ private:
 	SelectedRow m_SelectedRow;
 
 	CStringArray m_sGroups;
-	int			m_iSelectedGroup;		// index into m_sGroups
+	unsigned	m_iSelectedGroup;		// index into m_sGroups
 	BitmapText	m_textGroup;
 
 	CArray<Song*, Song*> m_pSongs;
-	int			m_iSelectedSong;	// index into m_pSongs
+	unsigned 	m_iSelectedSong;	// index into m_pSongs
 	Banner		m_Banner;
 	TextBanner  m_TextBanner;
 
@@ -56,11 +56,11 @@ private:
 	Sprite		m_sprArrowRight;
 
 	CArray<Style, Style> m_Styles;
-	int			m_iSelectedStyle;	// index into m_Styles
+	unsigned 	m_iSelectedStyle;	// index into m_Styles
 	BitmapText	m_textStyle;
 
 	CArray<Notes*, Notes*> m_pNotess;
-	int			m_iSelectedNotes;	// index into m_pNotess
+	unsigned 	m_iSelectedNotes;	// index into m_pNotess
 	BitmapText	m_textNotes;
 
 	RandomSample	m_soundChangeMusic;

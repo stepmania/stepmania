@@ -51,8 +51,8 @@ ScreenSelectGroup::ScreenSelectGroup()
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 
 
-	int i;
-
+	unsigned i;
+	int j;
 
 	// The new process by which the group and song lists are formed
 	// is bizarre and complex but yields the end result that songs
@@ -69,23 +69,23 @@ ScreenSelectGroup::ScreenSelectGroup()
 	CArray<Song*, Song*> aAllSongs = SONGMAN->m_pSongs;
 
 	// Filter out Songs that can't be played by the current Style
-	for( i=aAllSongs.GetSize()-1; i>=0; i-- )		// foreach Song, back to front
+	for( j=aAllSongs.size()-1; j>=0; j-- )		// foreach Song, back to front
 	{
-		if( aAllSongs[i]->SongCompleteForStyle(GAMESTATE->GetCurrentStyleDef()) && 
-			aAllSongs[i]->NormallyDisplayed() )
+		if( aAllSongs[j]->SongCompleteForStyle(GAMESTATE->GetCurrentStyleDef()) && 
+			aAllSongs[j]->NormallyDisplayed() )
 			continue;
 
-		aAllSongs.RemoveAt( i );
+		aAllSongs.RemoveAt( j );
 	}
 
 	CStringArray asGroupNames;
-	for( i=0; i<aAllSongs.GetSize(); i++ ) {
+	for( i=0; i<aAllSongs.size(); i++ ) {
 		asGroupNames.Add( aAllSongs[i]->m_sGroupName );
 	}
 
 	/* Remove duplicate groups. */
 	SortCStringArray(asGroupNames, true);
-	for( i=asGroupNames.GetSize()-1; i > 0; --i ) {
+	for( i=asGroupNames.size()-1; i > 0; --i ) {
 		if( asGroupNames[i] == asGroupNames[i-1] )
 			asGroupNames.RemoveAt( i );
 	}
@@ -93,11 +93,11 @@ ScreenSelectGroup::ScreenSelectGroup()
 	asGroupNames.insert(asGroupNames.begin(), "ALL MUSIC" );
 
 	// Add songs to the MusicList.
-	for( int j=0; j < asGroupNames.GetSize(); j++ ) /* for each group */
+	for( unsigned j=0; j < asGroupNames.size(); j++ ) /* for each group */
 	{
 		CArray<Song*,Song*> aSongsInGroup;
 		/* find all songs */
-		for( i=0; i<aAllSongs.GetSize(); i++ )		// foreach Song
+		for( i=0; i<aAllSongs.size(); i++ )		// foreach Song
 		{
 			/* group 0 gets all songs */
 			if( j != 0 && aAllSongs[i]->m_sGroupName != asGroupNames[j] )
@@ -146,7 +146,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 
 	this->AddChild( &m_MusicList );
 	
-	for( i=0; i < asGroupNames.GetSize(); ++i )
+	for( i=0; i < asGroupNames.size(); ++i )
 		m_GroupList.AddGroup( asGroupNames[i] );
 	m_GroupList.DoneAddingGroups();
 	this->AddChild( &m_GroupList );

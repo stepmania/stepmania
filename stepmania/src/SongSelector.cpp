@@ -89,26 +89,26 @@ SongSelector::SongSelector()
 
 	if( GAMESTATE->m_pCurSong )
 	{
-		int i;
+		unsigned i;
 
-		for( i=0; i<m_sGroups.GetSize(); i++ )
+		for( i=0; i<m_sGroups.size(); i++ )
 			if( GAMESTATE->m_pCurSong->m_sGroupName == m_sGroups[i] )
 				m_iSelectedGroup = i;
 		OnGroupChange();
 
-		for( i=0; i<m_pSongs.GetSize(); i++ )
+		for( i=0; i<m_pSongs.size(); i++ )
 			if( GAMESTATE->m_pCurSong == m_pSongs[i] )
 				m_iSelectedSong = i;
 		OnSongChange();
 
-		for( i=0; i<m_Styles.GetSize(); i++ )
+		for( i=0; i<m_Styles.size(); i++ )
 		{
 			if( GAMESTATE->GetCurrentStyleDef() == GAMEMAN->GetStyleDefForStyle(m_Styles[i]) )
 				m_iSelectedStyle = i;
 		}
 		OnNotesTypeChange();
 
-		for( i=0; i<m_pNotess.GetSize(); i++ )
+		for( i=0; i<m_pNotess.size(); i++ )
 			if( GAMESTATE->m_pCurNotes[PLAYER_1] == m_pNotess[i] )
 				m_iSelectedNotes = i;
 		OnNotesChange();
@@ -184,25 +184,25 @@ void SongSelector::Right()
 	switch( m_SelectedRow )
 	{
 	case ROW_GROUP:
-		if( m_iSelectedGroup == m_sGroups.GetSize()-1 )	// can't go right any further
+		if( m_iSelectedGroup == m_sGroups.size()-1 )	// can't go right any further
 			return;
 		m_iSelectedGroup++;
 		OnGroupChange();
 		break;
 	case ROW_SONG:
-		if( m_iSelectedSong == m_pSongs.GetSize()-1 )	// can't go right any further
+		if( m_iSelectedSong == m_pSongs.size()-1 )	// can't go right any further
 			return;
 		m_iSelectedSong++;
 		OnSongChange();
 		break;
 	case ROW_STYLE:
-		if( m_iSelectedStyle == m_Styles.GetSize()-1 )	// can't go right any further
+		if( m_iSelectedStyle == m_Styles.size()-1 )	// can't go right any further
 			return;
 		m_iSelectedStyle++;
 		OnNotesTypeChange();
 		break;
 	case ROW_STEPS:
-		if( m_iSelectedNotes == m_pNotess.GetSize()-1 )	// can't go right any further
+		if( m_iSelectedNotes == m_pNotess.size()-1 )	// can't go right any further
 			return;
 		m_iSelectedNotes++;
 		OnNotesChange();
@@ -237,7 +237,7 @@ void SongSelector::ChangeSelectedRow( SelectedRow row )
 
 void SongSelector::OnGroupChange()
 {
-	m_iSelectedGroup = clamp( m_iSelectedGroup, 0, m_sGroups.GetSize()-1 );
+	m_iSelectedGroup = clamp( m_iSelectedGroup, 0u, m_sGroups.size()-1 );
 
 	m_textGroup.SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
 
@@ -250,7 +250,7 @@ void SongSelector::OnGroupChange()
 
 void SongSelector::OnSongChange()
 {
-	m_iSelectedSong = clamp( m_iSelectedSong, 0, m_pSongs.GetSize()-1 );
+	m_iSelectedSong = clamp( m_iSelectedSong, 0u, m_pSongs.size()-1 );
 
 	m_Banner.LoadFromSong( GetSelectedSong() );
 	m_TextBanner.LoadFromSong( GetSelectedSong() );
@@ -260,7 +260,7 @@ void SongSelector::OnSongChange()
 
 void SongSelector::OnNotesTypeChange()
 {
-	m_iSelectedStyle = clamp( m_iSelectedStyle, 0, m_Styles.GetSize()-1 );
+	m_iSelectedStyle = clamp( m_iSelectedStyle, 0u, m_Styles.size()-1 );
 
 	m_textStyle.SetText( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_szName );
 
@@ -275,7 +275,7 @@ void SongSelector::OnNotesTypeChange()
 
 void SongSelector::OnNotesChange()
 {
-	m_iSelectedNotes = clamp( m_iSelectedNotes, 0, m_pNotess.GetSize()-1 );
+	m_iSelectedNotes = clamp( m_iSelectedNotes, 0u, m_pNotess.size()-1 );
 
 	if( GetSelectedNotes() == NULL )
 		m_textNotes.SetText( "(NEW)" );

@@ -52,7 +52,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	for( int t=0; t<13; t++ )
 		iHoldStartRow[t] = -1;
 
-	for( int r=0; r<asRows.GetSize(); r++ )
+	for( unsigned r=0; r<asRows.size(); r++ )
 	{
 		CString& sRowString = asRows[r];
 		
@@ -151,11 +151,11 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	CStringArray arrayKSFFileNames;
 	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
 
-	if( arrayKSFFileNames.GetSize() == 0 )
+	if( arrayKSFFileNames.empty() )
 		throw RageException( "Couldn't find any KSF files in '%s'", sDir.GetString() );
 
 	// load the Notes from the rest of the KSF files
-	for( int i=0; i<arrayKSFFileNames.GetSize(); i++ ) 
+	for( unsigned i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
 		LoadFromKSFFile( out.m_sSongDir + arrayKSFFileNames[i], *pNewNotes );
@@ -169,7 +169,8 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	if( !bResult )
 		throw RageException( "Error opening file '%s'.", sPath.GetString() );
 
-	for( i=0; i<msd.m_iNumValues; i++ )
+	// XXX msd::iNumValues should be unsigned
+	for( i=0; i<unsigned(msd.m_iNumValues); i++ )
 	{
 		CString* sParams = msd.m_sParams[i];
 		CString sValueName = sParams[0];
@@ -183,7 +184,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 
 			/* It's often "artist - songtitle - difficulty".  Ignore
 			 * the difficulty, since we get that from the filename. */
-			if( asBits.GetSize() == 3 &&
+			if( asBits.size() == 3 &&
 				(!stricmp(asBits[2], "double") ||
 				 !stricmp(asBits[2], "easy") ||
 				 !stricmp(asBits[2], "normal") ||
@@ -193,7 +194,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 				asBits.RemoveAt(2);
 			}
 
-			if( asBits.GetSize() == 2 )
+			if( asBits.size() == 2 )
 			{
 				out.m_sArtist = asBits[0];
 				out.m_sMainTitle = asBits[1];
@@ -210,11 +211,11 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 				{
 					CStringArray asBits;
 					split( sDir, "\\", asBits, true);
-					CString sSongFolderName = asBits[ asBits.GetSize()-1 ];
+					CString sSongFolderName = asBits[ asBits.size()-1 ];
 					asBits.clear();
 
 					split( sSongFolderName, " - ", asBits, false );
-					if( asBits.GetSize() == 2 )
+					if( asBits.size() == 2 )
 					{
 						out.m_sArtist = asBits[0];
 						out.m_sMainTitle = asBits[1];
@@ -247,7 +248,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	GetDirListing( out.m_sSongDir + CString("song.ogg"), arrayPossibleMusic );
 	GetDirListing( out.m_sSongDir + CString("song.wav"), arrayPossibleMusic );
 
-	if( arrayPossibleMusic.GetSize() > 0 )		// we found a match
+	if( !arrayPossibleMusic.empty() )		// we found a match
 		out.m_sMusicFile = arrayPossibleMusic[0];
 
 	return TRUE;
