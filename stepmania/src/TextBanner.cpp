@@ -10,13 +10,13 @@
 #include "ThemeMetric.h"
 #include "Command.h"
 
-ThemeMetric<CString>		ARTIST_PREPEND_STRING		("TextBanner","ArtistPrependString");
+ThemeMetric<CString>		ARTIST_PREPEND_STRING			("TextBanner","ArtistPrependString");
 ThemeMetric<apActorCommands> TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
-ThemeMetric<apActorCommands> TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
+ThemeMetric<apActorCommands> TWO_LINES_SUBTITLE_COMMAND		("TextBanner","TwoLinesSubtitleCommand");
 ThemeMetric<apActorCommands> TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
-ThemeMetric<apActorCommands> THREE_LINES_TITLE_COMMAND	("TextBanner","ThreeLinesTitleCommand");
+ThemeMetric<apActorCommands> THREE_LINES_TITLE_COMMAND		("TextBanner","ThreeLinesTitleCommand");
 ThemeMetric<apActorCommands> THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
-ThemeMetric<apActorCommands> THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
+ThemeMetric<apActorCommands> THREE_LINES_ARTIST_COMMAND		("TextBanner","ThreeLinesArtistCommand");
 
 void TextBanner::Init()
 {
