@@ -20,13 +20,10 @@ static const ThemeMetric<int>			NUM_PERFECTS		("ScreenHowToPlay","NumPerfects");
 static const ThemeMetric<int>			NUM_MISSES			("ScreenHowToPlay","NumMisses");
 //
 static const ThemeMetric<bool>			USELIFEBAR			("ScreenHowToPlay","UseLifeMeterBar");
-static const ThemeMetric<ActorCommands>	LIFEBARONCOMMAND	("ScreenHowToPlay","LifeMeterBarOnCommand");
 //
 static const ThemeMetric<bool>			USECHARACTER		("ScreenHowToPlay","UseCharacter");
-static const ThemeMetric<ActorCommands>	CHARACTERONCOMMAND	("ScreenHowToPlay","CharacterOnCommand");
 //
 static const ThemeMetric<bool>			USEPAD				("ScreenHowToPlay","UsePad");
-static const ThemeMetric<ActorCommands>	PADONCOMMAND		("ScreenHowToPlay","PadOnCommand");
 //
 static const ThemeMetric<bool>			USEPLAYER			("ScreenHowToPlay","UseNotefield");
 static const ThemeMetric<float>			PLAYERX				("ScreenHowToPlay","PlayerX");
@@ -90,9 +87,10 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	if( (bool)USEPAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
 	{
 		m_pmDancePad = new Model;
+		m_pmDancePad->SetName( "Pad" );
 		m_pmDancePad->LoadMilkshapeAscii( GetAnimPath(ANIM_DANCE_PAD) );
 		m_pmDancePad->SetRotationX( 35 );
-		m_pmDancePad->Command( PADONCOMMAND );
+		SET_XY_AND_ON_COMMAND( m_pmDancePad );
 	}
 	
 	// Display random character
@@ -119,7 +117,7 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 			
 			m_pmCharacter->SetRotationX( 40 );
 			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the DDR PC character models have the vertex order flipped
-			m_pmCharacter->Command( CHARACTERONCOMMAND );
+			SET_XY_AND_ON_COMMAND( m_pmCharacter );
 		}
 	}
 	
@@ -127,8 +125,9 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	if( USELIFEBAR )
 	{
 		m_pLifeMeterBar = new LifeMeterBar;
+		m_pLifeMeterBar->SetName("LifeMeterBar");
 		m_pLifeMeterBar->Load( PLAYER_1 );
-		m_pLifeMeterBar->Command( LIFEBARONCOMMAND );
+		SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 	}
 
