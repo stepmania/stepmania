@@ -31,6 +31,7 @@
 #include "GrayArrowRow.h"
 #include "GhostArrowRow.h"
 #include "NoteDataWithScoring.h"
+#include "ScoreKeeper.h"
 
 #define	SAMPLE_COUNT	16
 
@@ -41,6 +42,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	~Player();
 
 	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore );
 	void CrossedRow( int iNoteRow );
@@ -53,17 +55,11 @@ protected:
 	int UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
 	void OnRowDestroyed( int iStepIndex );
 	void HandleNoteScore( TapNoteScore score, int iNumTapsInRow );
-	void HandleNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore );
+	void HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore );
 
 	static float GetMaxBeatDifference();
 
 	PlayerNumber	m_PlayerNumber;
-
-	int				m_iNumTapNotes;	// num of TapNotes for the current notes needed by scoring
-	int				m_iTapNotesHit;	// number of notes judged so far, needed by scoring
-	int				m_iMeter;		// meter of current steps, needed by scoring
-	long			m_lScore;
-	float			m_fScoreMultiplier;
 
 	float			m_fOffset[SAMPLE_COUNT];//for AutoAdjust
 	int				m_iOffsetSample;		//
@@ -82,5 +78,5 @@ protected:
 
 	LifeMeter*		m_pLifeMeter;
 	ScoreDisplay*	m_pScore;
-	
+	ScoreKeeper*	m_ScoreKeeper;
 };

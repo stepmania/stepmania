@@ -1082,6 +1082,22 @@ SOURCE=.\ScoreDisplayOni.cpp
 
 SOURCE=.\ScoreDisplayOni.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeper.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeper.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeperMAX2.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreKeeperMAX2.h
+# End Source File
 # End Group
 # Begin Group "Screens"
 

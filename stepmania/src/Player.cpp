@@ -21,6 +21,7 @@
 #include "InputMapper.h"
 #include "SongManager.h"
 #include "GameState.h"
+#include "ScoreKeeperMAX2.h"
 #include "RageLog.h"
 #include "RageMath.h"
 
@@ -80,7 +81,8 @@ Player::Player()
 
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
-
+	m_ScoreKeeper = NULL;
+	
 	m_iOffsetSample = 0;
 
 	this->AddChild( &m_GrayArrowRow );
@@ -95,6 +97,12 @@ Player::Player()
 	
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddChild( &m_HoldJudgement[c] );
+}
+
+
+Player::~Player()
+{
+	delete m_ScoreKeeper;
 }
 
 
@@ -123,13 +131,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 //	m_Combo.Reset();		// don't reset combos between songs in a course!
 	m_Judgement.Reset();
 
-	m_iNumTapNotes = pNoteData->GetNumTapNotes();
-	m_iTapNotesHit = 0;
-	m_lScore = 0;
-	m_iMeter = GAMESTATE->m_pCurNotes[m_PlayerNumber] ? GAMESTATE->m_pCurNotes[m_PlayerNumber]->m_iMeter : 5;
-	m_fScoreMultiplier = float(m_iMeter * 1000000) / float ((m_iNumTapNotes * (m_iNumTapNotes + 1)) / 2);
-	ASSERT(m_fScoreMultiplier >= 0.0);
-
+	if(m_ScoreKeeper) delete m_ScoreKeeper;
+	m_ScoreKeeper = new ScoreKeeperMAX2(GAMESTATE->m_pCurNotes[m_PlayerNumber], *this, pn);
 
 	if( m_pScore )
 		m_pScore->Init( pn );
@@ -257,7 +260,7 @@ void Player::Update( float fDeltaTime )
 		if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
 		{
 			hns = HNS_NG;
-			HandleNoteScore( hns, tns );
+			HandleHoldNoteScore( hns, tns );
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
 			m_NoteField.m_HoldNoteScores[i] = HNS_NG;	// update the NoteField display
 		}
@@ -267,7 +270,7 @@ void Player::Update( float fDeltaTime )
 		{
 			fLife = 1;
 			hns = HNS_OK;
-			HandleNoteScore( hns, tns );
+			HandleHoldNoteScore( hns, tns );
 			m_GhostArrowRow.TapNote( StyleI.col, TNS_PERFECT, true );	// bright ghost flash
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_OK );
 			m_NoteField.m_fHoldNoteLife[i] = fLife;		// update the NoteField display
@@ -576,80 +579,30 @@ void Player::CrossedRow( int iNoteRow )
 
 void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 {
+printf("SCORE 1\n");
 	ASSERT( iNumTapsInRow >= 1 );
 
 	// don't accumulate points if AutoPlay is on.
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
 		return;
 
-	// update dance points for Oni lifemeter
-	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += iNumTapsInRow * TapNoteScoreToDancePoints( score );
-	GAMESTATE->m_TapNoteScores[m_PlayerNumber][score] += iNumTapsInRow;
-	if( m_pLifeMeter )
-		m_pLifeMeter->ChangeLife( score );
-	if( m_pLifeMeter )
-		m_pLifeMeter->OnDancePointsChange();	// update oni life meter
-
-
-//A single step's points are calculated as follows: 
-//
-//p = score multiplier (Perfect = 10, Great = 5, other = 0)
-//N = total number of steps and freeze steps
-//S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
-//n = number of the current step or freeze step (varies from 1 to N)
-//B = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
-//So, the score for one step is: 
-//one_step_score = p * (B/S) * n 
-//
-//*IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one, so if you get a double L+R on the 112th step of a song, you score is calculated with a Perfect/Great/whatever for both the 112th and 113th steps. Got it? Now, through simple algebraic manipulation 
-//S = 1+...+N = (1+N)*N/2 (1 through N added together) 
-//Okay, time for an example: 
-//
-//So, for example, suppose we wanted to calculate the step score of a "Great" on the 57th step of a 441 step, 8-foot difficulty song (I'm just making this one up): 
-//
-//S = (1 + 441)*441 / 2
-//= 194,222 / 2
-//= 97,461
-//StepScore = p * (B/S) * n
-//= 5 * (8,000,000 / 97,461) * 57
-//= 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
-//= 23,370
-//Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system. 
-//
-//Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible score for any song is the number of feet difficulty X 10,000,000. 
-//3dfsux:
-//I redid this code so it will store the score as a long, then correct the score for each song based on that value.
-//		lScore == p * n
-//		m_fScoreMultiplier = (B/S)
-// keeping these seperate for as long as possible improves accuracy.
-	int p;	// score multiplier 
-	
-	switch( score )
-	{
-	case TNS_PERFECT:	p = 10;		break;
-	case TNS_GREAT:		p = 5;		break;
-	default:			p = 0;		break;
-	}
-
-	for( int i=0; i<iNumTapsInRow; i++ )
-		m_lScore += p * ++m_iTapNotesHit;
-
-	ASSERT(m_lScore >= 0);
+	if(m_ScoreKeeper)
+		m_ScoreKeeper->HandleNoteScore(score, iNumTapsInRow);
 
 	if (m_pScore)
-		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber] = m_lScore * m_fScoreMultiplier);
+		m_pScore->SetScore(GAMESTATE->m_fScore[m_PlayerNumber]);
 }
 
 
-void Player::HandleNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore )
+void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore )
 {
 	// don't accumulate points if AutoPlay is on.
 	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
 		return;
 
-	// update dance points totals
-	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( score );
-	GAMESTATE->m_HoldNoteScores[m_PlayerNumber][score] ++;
+	if(m_ScoreKeeper) {
+		m_ScoreKeeper->HandleHoldNoteScore(score, TapNoteScore);
+	}
 
 	if( m_pLifeMeter ) {
 		if( score == HNS_NG ) {

@@ -952,6 +952,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath="ScoreDisplayOni.h">
 			</File>
+			<File
+				RelativePath="ScoreKeeper.cpp">
+			</File>
+			<File
+				RelativePath="ScoreKeeper.h">
+			</File>
+			<File
+				RelativePath="ScoreKeeperMAX2.cpp">
+			</File>
+			<File
+				RelativePath="ScoreKeeperMAX2.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Rage"
