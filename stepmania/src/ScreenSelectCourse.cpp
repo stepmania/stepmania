@@ -125,7 +125,7 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 
 	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
-	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music change options") );
+	m_soundOptionsChange.Load( THEME->GetPathTo("Sounds","select music options") );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course intro") );
 
