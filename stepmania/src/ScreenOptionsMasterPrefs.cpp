@@ -281,10 +281,15 @@ static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 /* Gameplay options */
 MOVE( SoloSingles,			PREFSMAN->m_bSoloSingle );
 MOVE( EasterEggs,			PREFSMAN->m_bEasterEggs );
-MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
 MOVE( AllowExtraStage,		PREFSMAN->m_bAllowExtraStage );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
+
+static void MarvelousTiming( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	const int mapping[] = { 0, 1, 2 };
+	MoveMap( sel, PREFSMAN->m_iMarvelousTiming, ToSel, mapping, ARRAYSIZE(mapping) );
+}
 
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
