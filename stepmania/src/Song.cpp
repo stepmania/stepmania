@@ -46,7 +46,7 @@
 
 #define CACHE_DIR BASE_PATH "Cache" SLASH
 
-const int FILE_CACHE_VERSION = 126;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 127;	// increment this when Song or Notes changes to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
