@@ -231,12 +231,8 @@ void BitmapText::SetText( CString sText, CString sAlternateText )
 {
 	ASSERT( m_pFont );
 
-	if(sAlternateText.size())
-	{
-		if(!m_pFont->FontCompleteForString(CStringToWstring(sText)) &&
-			m_pFont->FontCompleteForString(CStringToWstring(sAlternateText)))
-			sText = sAlternateText;
-	}
+	if(StringWillUseAlternate(sText, sAlternateText))
+		sText = sAlternateText;
 
 	if(m_szText == sText)
 		return;
@@ -248,6 +244,22 @@ void BitmapText::SetText( CString sText, CString sAlternateText )
 	split(CStringToWstring(m_szText), L"\n", m_szTextLines, false);
 	
 	BuildChars();
+}
+
+bool BitmapText::StringWillUseAlternate(CString sText, CString sAlternateText) const
+{
+	ASSERT( m_pFont );
+
+	/* Can't use the alternate if there isn't one. */
+	if(!sAlternateText.size()) return false;
+
+	/* False if the alternate isn't needed. */
+	if(m_pFont->FontCompleteForString(CStringToWstring(sText))) return false;
+
+	/* False if the alternate is also incomplete. */
+	if(!m_pFont->FontCompleteForString(CStringToWstring(sAlternateText))) return false;
+
+	return true;
 }
 
 void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )

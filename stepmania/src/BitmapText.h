@@ -40,6 +40,8 @@ public:
 	void SetVertAlign( VertAlign va );
 
 	CString GetText() const { return m_szText; }
+	/* Return true if the string 's' will use an alternate string, if available. */
+	bool StringWillUseAlternate(CString sText, CString sAlternateText) const;
 
 public:
 	Font* m_pFont;
