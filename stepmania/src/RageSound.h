@@ -74,6 +74,7 @@ public:
 
 	float GetLengthSeconds();
 	float GetPositionSeconds() const;
+	int GetSampleRate() const;
 	bool SetPositionSeconds( float fSeconds = -1);
 	void SetAccurateSync(bool yes=true) { AccurateSync = yes; }
 	void SetPlaybackRate( float fScale );

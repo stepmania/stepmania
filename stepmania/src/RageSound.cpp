@@ -47,7 +47,8 @@
 
 const int channels = 2;
 const int samplesize = 2 * channels; /* 16-bit */
-inline int samplerate() { return SOUNDMAN->GetDriverSampleRate(); }
+// inline int samplerate() { return SOUNDMAN->GetDriverSampleRate(); }
+#define samplerate() Sample->GetSampleRate()
 
 /* The most data to buffer when streaming.  This should generally be at least as large
  * as the largest hardware buffer. */
@@ -57,9 +58,8 @@ const int internal_buffer_size = 1024*16;
 const int read_block_size = 1024;
 
 /* The number of samples we should keep pos_map data for.  This being too high
- * is mostly harmless (the data is small).  Let's keep a second; no sane audio
- * driver will have that much latency. */
-int pos_map_backlog_samples() { return samplerate(); }
+ * is mostly harmless; the data is small. */
+const int pos_map_backlog_samples = 100000;
 
 RageSound::RageSound()
 {
@@ -177,11 +177,12 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 			sSoundFilePath.GetString(), NewSample->GetError().c_str());
 	Sample = NewSample;
 
-	if(Sample->GetSampleRate() != samplerate())
+	if(SOUNDMAN->GetDriverSampleRate() != -1 &&
+	   Sample->GetSampleRate() != SOUNDMAN->GetDriverSampleRate())
 	{
 		RageSoundReader_Resample *Resample = new RageSoundReader_Resample;
 		Resample->Open(Sample);
-		Resample->SetSampleRate(samplerate());
+		Resample->SetSampleRate(SOUNDMAN->GetDriverSampleRate());
 		Sample = Resample;
 	}
 
@@ -393,7 +394,7 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 
 	ASSERT(playing);
 	/* Erase old pos_map data. */
-	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples())
+	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples)
 		pos_map.pop_front();
 
 	/*
@@ -632,6 +633,13 @@ bool RageSound::SetPositionSeconds( float fSeconds )
 {
 	return SetPositionSamples( fSeconds == -1? -1: int(fSeconds * samplerate()) );
 }
+
+/* This is always the desired sample rate of the current driver. */
+int RageSound::GetSampleRate() const
+{
+	return Sample->GetSampleRate();
+}
+
 
 bool RageSound::SetPositionSamples( int samples )
 {
