@@ -5,8 +5,52 @@
 #include "../../resource.h"
 #include <windows.h>
 
+HBITMAP g_hBitmap = NULL;
+
+
 BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
+	AppInstance handle;
+
+	switch( msg )
+	{
+	case WM_INITDIALOG:
+		g_hBitmap = 
+			(HBITMAP)LoadImage( 
+				handle.Get(), 
+				"Data\\splash.bmp",
+				IMAGE_BITMAP,
+				0, 0,
+				LR_LOADFROMFILE );
+		break;
+	case WM_PAINT:
+		{
+			if( g_hBitmap )
+			{
+				PAINTSTRUCT ps;
+				HDC hdcDst = BeginPaint( hWnd, &ps );
+				HDC hdcSrc = CreateCompatibleDC( NULL );
+				SelectObject( hdcSrc, g_hBitmap );
+				BOOL bSuccess = BitBlt(
+					hdcDst,
+					0, 0,
+					1000, 1000,		// let GDI do the clipping...
+					hdcSrc,
+					0, 0,
+					SRCCOPY );
+				DWORD dwLastError = GetLastError();
+				ASSERT( bSuccess );
+				EndPaint( hWnd, &ps );
+			}
+			return FALSE;
+		}
+		break;
+	case WM_DESTROY:
+		DeleteObject( g_hBitmap );
+		g_hBitmap = NULL;
+		break;
+	}
+
 	return FALSE;
 }
 
