@@ -1,19 +1,9 @@
 AC_DEFUN(SM_OPENGL,
 [
-    AC_ARG_ENABLE(mesa, AC_HELP_STRING([--enable-mesa], [Use libMesaGL]), enable_mesa=$enableval, enable_mesa=no)
-
     GL_LIBS=
-    if test "$enable_mesa" = "yes"; then
-	AC_CHECK_LIB(MesaGL, glPushMatrix, have_mesagl=yes)
-	AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes,, -lMesaGL)
-	if test "$have_mesagl" = "yes" -a "$have_mesaglu" = "yes"; then
-	    GL_LIBS="-lMesaGL -lMesaGLU"
-	fi
-    fi
-
     if test "$GL_LIBS" = ""; then
 	AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
-	AC_CHECK_LIB(GLU, gluGetString, have_glu=yes,, -lGL)
+	AC_CHECK_LIB(GLU, gluGetString, have_glu=yes, , [-lGL])
 	if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
 	    GL_LIBS="-lGL -lGLU"
 	fi
@@ -29,17 +19,9 @@ AC_DEFUN(SM_OPENGL,
 	EXTRALIBS="$X_LIBS $X_EXTRA_LIBS $X_PRE_LIBS -lX11"
 	LIBS="$LIBS $EXTRALIBS"
 
-	if test "$enable_mesa" = "yes"; then
-	    AC_CHECK_LIB(MesaGL, glPushMatrix, have_mesagl=yes)
-	    AC_CHECK_LIB(MesaGLU, gluGetString, have_mesaglu=yes,, -lMesaGL)
-	    if test "$have_mesagl" = "yes" -a "$have_mesaglu" = "yes"; then
-		GL_LIBS="-lMesaGL -lMesaGLU"
-	    fi
-	fi
-
 	if test "$GL_LIBS" = ""; then
 	    AC_CHECK_LIB(GL, glPushMatrix, have_gl=yes)
-	    AC_CHECK_LIB(GLU, gluGetString, have_glu=yes,, -lGL)
+	    AC_CHECK_LIB(GLU, gluGetString, have_glu=yes, , [-lGL])
 	    if test "$have_gl" = "yes" -a "$have_glu" = "yes"; then
 		GL_LIBS="-lGL -lGLU"
 	    fi
@@ -54,11 +36,12 @@ AC_DEFUN(SM_OPENGL,
     fi
 
     if test "$GL_LIBS" = ""; then
-	AC_MSG_ERROR([No OpenGL libraries could be found.  If you want
-to search for MesaGL, pass the "--enable-mesa" flag to configure.])
+    	if test "$have_gl" != "yes"; then
+	    AC_MSG_ERROR([No OpenGL library could be found.])
+	else
+	    AC_MSG_ERROR([No GLU library could be found.])
+	fi
     fi
     AC_SUBST(GL_LIBS)
 ])
-
-
 
