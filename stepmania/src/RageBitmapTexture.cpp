@@ -138,6 +138,24 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 	if(img == NULL)
 		RageException::Throw( "Couldn't load %s: %s", GetFilePath().GetString(), SDL_GetError() );
 
+	if(m_ActualID.bHotPinkColorKey)
+	{
+		/* Annoying: SDL will do a nearest-match on paletted images if
+		 * they don't have the color we ask for, so images without HOT PINK
+		 * will get some other random color transparent.  We have to make
+		 * sure the value returned for paletted images is exactly #FF00FF. */
+		int color = SDL_MapRGB(img->format, 0xFF, 0, 0xFF);
+		if( img->format->BitsPerPixel == 8 ) {
+			if(img->format->palette->colors[color].r != 0xFF ||
+			   img->format->palette->colors[color].g != 0x00 ||
+			   img->format->palette->colors[color].b != 0xFF )
+			   color = -1;
+		}
+
+		if( color != -1 )
+			SDL_SetColorKey( img, SDL_SRCCOLORKEY, color);
+	}
+
 	GLenum fmtTexture;
 	/* Figure out which texture format to use. */
 	if( m_ActualID.iColorDepth == 16 )
@@ -243,7 +261,7 @@ SDL_Surface *RageBitmapTexture::CreateImg(int &pixfmt)
 	 */
 	/* We could check to see if we happen to simply be in a reversed
 	 * pixel order, and tell OpenGL to do the switch for us. */
-	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, PixFmtMasks[pixfmt].bpp,
+	ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[pixfmt].bpp,
 			PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
 			PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
 
@@ -275,8 +293,14 @@ void RageBitmapTexture::Create()
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, img->w, img->h, 0,
-			GL_RGBA, PixFmtMasks[pixfmt].type, img->pixels);
+
+	/* Here's a trick for loading a texture that doesn't necessarily have power-of-two
+	 * dimensions into a texture, without wasting time converting it: */
+	glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, power_of_two(img->w), power_of_two(img->h), 0,
+			GL_RGBA, PixFmtMasks[pixfmt].type, NULL);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 
+                    img->w, img->h, GL_RGBA, PixFmtMasks[pixfmt].type, img->pixels); 
+
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	glFlush();
 

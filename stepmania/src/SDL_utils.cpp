@@ -140,6 +140,7 @@ void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4])
 	bits[2] = 8 - fmt->Bloss;
 	bits[3] = 8 - fmt->Aloss;
 }
+#include "RageLog.h"
 
 void ConvertSDLSurface(SDL_Surface *&image,
 		int width, int height, int bpp,
@@ -149,33 +150,16 @@ void ConvertSDLSurface(SDL_Surface *&image,
             SDL_SWSURFACE, width, height, bpp, R, G, B, A);
 	ASSERT(ret_image != NULL);
 
-	/* If the formats are the same, no conversion is needed. */
-/*	if(width == image->w && height == image->h &&
+	/* If the formats are the same, no conversion is needed.  One exception:
+	 * if we have a color key and we're not paletted (8-bit).  (If we have
+	 * a color key but we're paletted, we'll handle this on texture load.) xxx unimplemented */
+	if(!(image->flags & SDL_SRCCOLORKEY) &&
+		width == image->w && height == image->h &&
 	   !memcmp(image->format, ret_image->format, sizeof(SDL_PixelFormat)))
 	{
+		LOG->Trace("noconv");
 		SDL_FreeSurface(ret_image);
 		return;
-	}
-
-	It's needed because of the color key; the blit converts it to alpha.  (Gah.) */
-
-	/* I'd really like to do away with this, but a lot of song images use it.
-	 * I suppose this should be yet another hint, but they're getting cumbersome ... */
-	if(!(image->flags & SDL_SRCCOLORKEY)) {
-		/* Annoying: SDL will do a nearest-match on paletted images if
-		 * they don't have the color we ask for, so images without HOT PINK
-		 * will get some other random color transparent; so we have to make
-		 * sure the value returned for paletted images is exactly #FF00FF. */
-		int color = SDL_MapRGB(image->format, 0xFF, 0, 0xFF);
-		if( image->format->BitsPerPixel == 8 ) {
-			if(image->format->palette->colors[color].r != 0xFF ||
-			   image->format->palette->colors[color].g != 0x00 ||
-			   image->format->palette->colors[color].b != 0xFF )
-			   color = -1;
-		}
-
-		if( color != -1 )
-			SDL_SetColorKey( image, SDL_SRCCOLORKEY, color);
 	}
 
 	/* We don't want to actually blend the alpha channel over the destination converted
