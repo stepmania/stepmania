@@ -132,7 +132,12 @@ CString vssprintf( const char *fmt, va_list argList)
 }
 
 #ifdef WIN32
+#ifdef _XBOX
 #include "D3DX8Core.h"
+#else
+#include "Dxerr8.h"
+#pragma comment(lib, "Dxerr8.lib")
+#endif
 
 CString hr_ssprintf( int hr, const char *fmt, ...)
 {
@@ -141,9 +146,15 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
     CString s = vssprintf( fmt, va );
     va_end(va);
 
+#ifdef _XBOX
+	/* XXX: This doesn't work for DirectInput or DirectSound; why is it needed? 
+	 * XBox uses DI and DS, too, right? -glenn */
 	char szError[1024] = "";
 	D3DXGetErrorString( hr, szError, sizeof(szError) );
-	
+#else	
+	const char *szError = DXGetErrorString8( hr );
+#endif
+
 	return s + ssprintf( " (%s)", szError );
 }
 
