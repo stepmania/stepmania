@@ -173,7 +173,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
 	m_sprCDTitleFront.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
-	m_sprCDTitleFront.SetUseBackfaceCull(true);
+	m_sprCDTitleFront.SetCullMode( CULL_BACK );
 	m_sprCDTitleFront.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprCDTitleFront.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
 	SET_XY( m_sprCDTitleFront );
@@ -182,7 +182,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_sprCDTitleBack.SetName( "CDTitle" );
 	m_sprCDTitleBack.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
 	FlipSpriteHorizontally(m_sprCDTitleBack);
-	m_sprCDTitleBack.SetUseBackfaceCull(true);
+	m_sprCDTitleBack.SetCullMode( CULL_BACK );
 	m_sprCDTitleBack.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
 	m_sprCDTitleBack.SetRotationY( 180 );
 	m_sprCDTitleBack.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );

@@ -62,7 +62,7 @@ void Actor::Reset()
 	m_bClearZBuffer = false;
 	m_bZTest = false;
 	m_bZWrite = false;
-	m_bUseBackfaceCull = false;
+	m_CullMode = CULL_NONE;
 }
 
 Actor::Actor()
@@ -230,7 +230,7 @@ void Actor::SetRenderStates()
 	DISPLAY->SetZTest( m_bZTest );
 	if( m_bClearZBuffer )
 		DISPLAY->ClearZBuffer();
-	DISPLAY->SetBackfaceCull( m_bUseBackfaceCull );
+	DISPLAY->SetCullMode( m_CullMode );
 }
 
 void Actor::EndDraw()
@@ -823,7 +823,8 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	else if( sName=="ztest" )			SetZTest( bParam(1) );
 	else if( sName=="zwrite" )			SetZWrite( bParam(1) );
 	else if( sName=="clearzbuffer" )	SetClearZBuffer( bParam(1) );
-	else if( sName=="backfacecull" )	SetUseBackfaceCull( bParam(1) );
+	else if( sName=="backfacecull" )	SetCullMode( bParam(1) ? CULL_BACK : CULL_NONE );
+	else if( sName=="cullmode" )		SetCullMode( sParam(1) );
 	else if( sName=="hidden" )			SetHidden( bParam(1) );
 	else if( sName=="hibernate" )		SetHibernate( fParam(1) );
 	else if( sName=="playcommand" )		PlayCommand( sParam(1) );
@@ -954,6 +955,15 @@ void Actor::SetBlendMode( CString s )
 	if     (s=="normal")	SetBlendMode( BLEND_NORMAL );
 	else if(s=="add")		SetBlendMode( BLEND_ADD );
 	else if(s=="noeffect")	SetBlendMode( BLEND_NO_EFFECT );
+	else	ASSERT(0);
+}
+
+void Actor::SetCullMode( CString s )
+{
+	s.MakeLower();
+	if     (s=="back")	SetCullMode( CULL_BACK );
+	else if(s=="front")	SetCullMode( CULL_FRONT );
+	else if(s=="none")	SetCullMode( CULL_NONE );
 	else	ASSERT(0);
 }
 

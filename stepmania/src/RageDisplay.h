@@ -177,7 +177,7 @@ public:
 	virtual void ClearZBuffer() = 0;
 	void SetZBuffer( bool b ) { SetZWrite(b); SetZTest(b); } // shortcut
 
-	virtual void SetBackfaceCull( bool b ) = 0;
+	virtual void SetCullMode( CullMode mode ) = 0;
 	
 	virtual void SetAlphaTest( bool b ) = 0;
 	

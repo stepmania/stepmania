@@ -287,7 +287,8 @@ public:
 	virtual void SetUseZBuffer( bool b ) 		{ SetZTest(b); SetZWrite(b); } 
 	virtual void SetZTest( bool b ) 			{ m_bZTest = b; } 
 	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
-	virtual void SetUseBackfaceCull( bool b ) 	{ m_bUseBackfaceCull = b; } 
+	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
+	virtual void SetCullMode( CString );
 
 	//
 	// fade command
@@ -381,7 +382,7 @@ protected:
 	BlendMode	m_BlendMode;
 	bool	m_bClearZBuffer;
 	bool	m_bZTest, m_bZWrite;
-	bool	m_bUseBackfaceCull;
+	CullMode	m_CullMode;
 };
 
 #endif

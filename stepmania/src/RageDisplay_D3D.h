@@ -55,7 +55,7 @@ public:
 	void SetZWrite( bool b );
 	void SetZTest( bool b );
 	void ClearZBuffer();
-	void SetBackfaceCull( bool b );
+	void SetCullMode( CullMode mode );
 	void SetAlphaTest( bool b );
 	void SetMaterial( 
 		const RageColor &emissive,

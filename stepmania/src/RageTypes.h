@@ -17,6 +17,7 @@
  * put this here. */
 enum GlowMode { GLOW_BRIGHTEN, GLOW_WHITEN };
 enum BlendMode { BLEND_NORMAL, BLEND_ADD, BLEND_NO_EFFECT, BLEND_INVALID };
+enum CullMode { CULL_BACK, CULL_FRONT, CULL_NONE };
 
 
 struct RageVector2

@@ -1049,9 +1049,22 @@ void RageDisplay_D3D::SetLightDirectional(
 	g_pd3dDevice->SetLight( index, &light );
 }
 
-void RageDisplay_D3D::SetBackfaceCull( bool b )
+void RageDisplay_D3D::SetCullMode( CullMode mode )
 {
-	g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, b ? D3DCULL_CW : D3DCULL_NONE );
+	switch( mode )
+	{
+	case CULL_BACK:
+		g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_CW );
+		break;
+	case CULL_FRONT:
+		g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_CCW );
+		break;
+	case CULL_NONE:
+		g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 void RageDisplay_D3D::DeleteTexture( unsigned uTexHandle )

@@ -205,7 +205,7 @@ void RageDisplay::DrawCircle( const RageSpriteVertex &p, float radius )
 void RageDisplay::SetDefaultRenderStates()
 {
 	SetLighting( false );
-	SetBackfaceCull( false );
+	SetCullMode( CULL_NONE );
 	SetZBuffer( false );
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );

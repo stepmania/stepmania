@@ -151,7 +151,8 @@ void ActorFrame::DeleteAllChildren()
 void ActorFrame::HandleCommand( const ParsedCommand &command )
 {
 	Actor::HandleCommand( command );
-	// don't propograte to children
+
+	// don't propograte most commands to children
 }
 
 void ActorFrame::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )

@@ -495,7 +495,7 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( 0, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
-	DISPLAY->SetBackfaceCull( false );
+	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
 	const float fFrameWidth  = pSprTopCap->GetUnzoomedWidth();
@@ -567,7 +567,7 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( 0, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
-	DISPLAY->SetBackfaceCull( false );
+	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping( true );
 
 
@@ -670,7 +670,7 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( 0, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
-	DISPLAY->SetBackfaceCull( false );
+	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
 
 	const float fFrameWidth		= pBottomCap->GetUnzoomedWidth();

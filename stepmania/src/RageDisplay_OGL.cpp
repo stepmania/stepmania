@@ -1218,12 +1218,24 @@ void RageDisplay_OGL::SetLightDirectional(
 	glPopMatrix();
 }
 
-void RageDisplay_OGL::SetBackfaceCull( bool b )
+void RageDisplay_OGL::SetCullMode( CullMode mode )
 {
-	if( b )
+	switch( mode )
+	{
+	case CULL_BACK:
 		glEnable( GL_CULL_FACE );
-	else
+		glCullFace( GL_BACK );
+		break;
+	case CULL_FRONT:
+		glEnable( GL_CULL_FACE );
+		glCullFace( GL_FRONT );
+		break;
+	case CULL_NONE:
         glDisable( GL_CULL_FACE );
+		break;
+	default:
+		ASSERT(0);
+	}
 }
 
 const RageDisplay::PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
