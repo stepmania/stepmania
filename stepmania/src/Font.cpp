@@ -364,6 +364,11 @@ CString Font::GetFontName(CString FileName)
 	if(DimSpec.Compare(FileName, mat))
 		FileName.erase(FileName.size()-mat[0].size());
 
+	/* If it ends in texture hints, remove them. */
+	static Regex Hints("( \\([^\\)]+\\))$");
+	if(Hints.Compare(FileName, mat))
+		FileName.erase(FileName.size()-mat[0].size());
+
 	/* If it ends in a page name, remove it. */
 	static Regex PageName("( \\[.+\\])$");
 	if(PageName.Compare(FileName, mat))
