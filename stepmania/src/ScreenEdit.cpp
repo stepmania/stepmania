@@ -280,6 +280,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_Clipboard.SetNumTracks( m_NoteFieldEdit.GetNumTracks() );
 
 
+	GAMESTATE->m_PlayerOptions[PLAYER_1].Init();	// don't allow weird options in editor.  It doesn't handle reverse well.
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_sNoteSkin = "default";	// change noteskin back to default before loading player
 	GAMESTATE->ResetNoteSkins();
 

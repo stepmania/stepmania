@@ -26,7 +26,7 @@ public:
 	bool LoadFromFont( CString sFontName );
 	bool LoadFromNumbers( CString sTexturePath )	{ return LoadFromTextureAndChars(sTexturePath,"0123456789%. :x"); };
 	bool LoadFromTextureAndChars( CString sTexturePath, CString sChars );
-	void SetText( CString sText, CString sAlternateText = "" );
+	void SetText( CString sText, CString sAlternateText = "", int iWrapWidthPixels = -1 );
 	void SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext = "" );
 
 	int GetWidestLineWidthInSourcePixels() { return m_iWidestLineWidth; };

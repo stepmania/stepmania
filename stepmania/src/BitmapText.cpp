@@ -230,7 +230,7 @@ void BitmapText::DrawChars()
 /* sText is UTF-8.  If not all of the characters in sText are available in the
  * font, sAlternateText will be used instead.  If there are unavailable characters
  * in sAlternateText, too, just use sText. */
-void BitmapText::SetText( CString sText, CString sAlternateText )
+void BitmapText::SetText( CString sText, CString sAlternateText, int iWrapWidthPixels )
 {
 	ASSERT( m_pFont );
 
@@ -239,13 +239,61 @@ void BitmapText::SetText( CString sText, CString sAlternateText )
 
 	if(m_szText == sText)
 		return;
-
 	m_szText = sText;
 
-	/* Break the string into lines. */
+
+	// Break the string into lines.
+	//
 	m_szTextLines.clear();
-	split(CStringToWstring(m_szText), L"\n", m_szTextLines, false);
-	
+
+	if( iWrapWidthPixels == -1 )
+	{
+		split( CStringToWstring(sText), L"\n", m_szTextLines, false );
+	}
+	else
+	{
+		//
+		// Break sText into lines that don't exceed iWrapWidthPixels
+		// (if only one word fits on the line, it may be larger than iWrapWidthPixels ).
+		//
+		// TODO: Investigate whether this works in all languages
+		// TODO: Move this wrapping logic into Font
+		CStringArray asWords;
+		split( sText, " ", asWords );
+
+		CString sCurLine;
+		int iCurLineWidth = 0;
+
+		for( int i=0; i<asWords.size(); i++ )
+		{
+			CString sWord = asWords[i];
+			int iWidthWord = m_pFont->GetLineWidthInSourcePixels( CStringToWstring(sWord) );
+
+			if( sCurLine.empty() )
+			{
+				sCurLine = sWord;
+				iCurLineWidth = iWidthWord;
+			}
+			else
+			{
+				CString sToAdd = " " + sWord;
+				int iWidthToAdd = m_pFont->GetLineWidthInSourcePixels(L" ") + iWidthWord;
+				if( iCurLineWidth + iWidthToAdd <= iWrapWidthPixels )	// will fit on current line
+				{
+					sCurLine += sToAdd;
+					iCurLineWidth += iWidthToAdd;
+				}
+				else
+				{
+					m_szTextLines.push_back( CStringToWstring(sCurLine) );
+					sCurLine = sWord;
+					iCurLineWidth = iWidthWord;
+				}
+			}
+		}
+		m_szTextLines.push_back( CStringToWstring(sCurLine) );
+	}
+
 	BuildChars();
 }
 

@@ -791,7 +791,7 @@ void ScreenOptions::OnChange()
 			sLineName.Replace("\n-","");
 			sLineName.Replace("\n","");
 			sLineName.Replace(" ","");
-			pText->SetText( THEME->GetMetric(m_sName,sLineName) );
+			pText->SetText( THEME->GetMetric(m_sName,sLineName), "", 800 );
 		}
 	}
 }
