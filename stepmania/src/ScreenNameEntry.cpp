@@ -112,8 +112,8 @@ ScreenNameEntry::ScreenNameEntry()
 //	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 //	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 //	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-//	GAMESTATE->m_LastRankingCategory[PLAYER_1] = RANKING_A;
-//	GAMESTATE->m_iLastRankingIndex[PLAYER_1] = 0;
+//	GAMESTATE->m_RankingCategory[PLAYER_1] = RANKING_A;
+//	GAMESTATE->m_iRankingIndex[PLAYER_1] = 0;
 
 
 
@@ -153,8 +153,23 @@ ScreenNameEntry::ScreenNameEntry()
 
 
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
+
+		m_ColToStringIndex[p].insert(m_ColToStringIndex[p].begin(), pStyleDef->m_iColsPerPlayer, -1);
+		int CurrentStringIndex = 0;
+
 		for( int t=0; t<pStyleDef->m_iColsPerPlayer; t++ )
 		{
+			if(CurrentStringIndex == MAX_RANKING_NAME_LENGTH)
+				continue; /* We have enough columns. */
+
+			/* Find out if this column is associated with the START menu button. */
+			StyleInput si(PlayerNumber(p), t);
+			GameInput gi=GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput(si);
+			MenuInput m=GAMESTATE->GetCurrentGameDef()->GameInputToMenuInput(gi);
+			if(m.button == MENU_BUTTON_START)
+				continue;
+			m_ColToStringIndex[p][t] = CurrentStringIndex++;
+
 			float ColX = pStyleDef->m_iCenterX[p] + pStyleDef->m_ColumnInfo[p][t].fXOffset;
 
 			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathTo("Fonts","ranking") );
@@ -267,11 +282,15 @@ void ScreenNameEntry::DrawPrimitives()
 
 		float fY = GRAY_ARROWS_Y + GetClosestCharYPos(m_fFakeBeat) - g_iNumCharsToDrawBehind*g_fCharsSpacingY;
 		int iCharIndex = iStartDrawingIndex % NUM_NAME_CHARS;
+		
 		for( int i=0; i<NUM_CHARS_TO_DRAW_TOTAL; i++ )
 		{
 			char c = NAME_CHARS[iCharIndex];
-			for( int t=0; t<pStyleDef->m_iColsPerPlayer && t<MAX_RANKING_NAME_LENGTH; t++ )
+			for( int t=0; t<pStyleDef->m_iColsPerPlayer; t++ )
 			{
+				if(m_ColToStringIndex[p][t] == -1)
+					continue;
+
 				m_textScrollingChars[p][t].SetText( ssprintf("%c",c) );	// why doens't CStdStr have a contructor that takes a char?
 				m_textScrollingChars[p][t].SetY( fY );
 				float fZoom = g_fCharsZoomSmall;
@@ -313,13 +332,14 @@ void ScreenNameEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( StyleI.IsValid() )
 	{
-		if( StyleI.col < MAX_RANKING_NAME_LENGTH )
+		int StringIndex = m_ColToStringIndex[StyleI.player][StyleI.col];
+		if(StringIndex != -1)
 		{
 			m_GrayArrowRow[StyleI.player].Step( StyleI.col );
 			m_soundStep.Play();
 			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
 			m_textSelectedChars[StyleI.player][StyleI.col].SetText( ssprintf("%c",c) );
-			m_sSelectedName[StyleI.player][StyleI.col] = c;
+			m_sSelectedName[StyleI.player][StringIndex] = c;
 		}
 	}
 
@@ -347,37 +367,35 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenNameEntry::MenuStart( PlayerNumber pn )
 {
-	if( m_bStillEnteringName[pn] )
+	if( !m_bStillEnteringName[pn] )
+		return;
+	m_bStillEnteringName[pn] = false;
+
+	m_soundStep.Play();
+
+	TrimRight( m_sSelectedName[pn], " " );
+	TrimLeft( m_sSelectedName[pn], " " );
+
+	if( m_sSelectedName[pn] == "" )
+		m_sSelectedName[pn] = DEFAULT_RANKING_NAME;
+	
+	switch( GAMESTATE->m_PlayMode )
 	{
-		m_soundStep.Play();
-
-		m_bStillEnteringName[pn] = false;
-
-		TrimRight( m_sSelectedName[pn], " " );
-		TrimLeft( m_sSelectedName[pn], " " );
-
-		if( m_sSelectedName[pn] == "" )
-			m_sSelectedName[pn] = DEFAULT_RANKING_NAME;
-
-		
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_ARCADE:
-			SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
-			break;
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			GAMESTATE->m_pRankingCourse->m_RankingScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
-			break;
-		default:
-			ASSERT(0);
-		}
-
-		bool bAnyStillEntering = false;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			bAnyStillEntering |= m_bStillEnteringName[p];
-		if( !bAnyStillEntering && !m_Fade.IsClosing() )
-			m_Fade.CloseWipingRight( SM_GoToNextScreen );
+	case PLAY_MODE_ARCADE:
+		SONGMAN->m_MachineScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_RankingCategory[pn]][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
+		break;
+	case PLAY_MODE_NONSTOP:
+	case PLAY_MODE_ONI:
+	case PLAY_MODE_ENDLESS:
+		GAMESTATE->m_pRankingCourse->m_RankingScores[GAMESTATE->m_RankingNotesType][GAMESTATE->m_iRankingIndex[pn]].sName = m_sSelectedName[pn];
+		break;
+	default:
+		ASSERT(0);
 	}
+
+	bool bAnyStillEntering = false;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		bAnyStillEntering |= m_bStillEnteringName[p];
+	if( !bAnyStillEntering && !m_Fade.IsClosing() )
+		m_Fade.CloseWipingRight( SM_GoToNextScreen );
 }

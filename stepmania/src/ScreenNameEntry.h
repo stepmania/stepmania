@@ -48,6 +48,8 @@ private:
 	float			m_fFakeBeat;
 	CString			m_sSelectedName[NUM_PLAYERS];
 	bool			m_bStillEnteringName[NUM_PLAYERS];
+
+	vector<int>		m_ColToStringIndex[NUM_PLAYERS];
 };
 
 
