@@ -16,6 +16,7 @@ enum ScreenMessage {
 	SM_GainFocus,
 	SM_LoseFocus,
 	SM_StopMusic,
+	SM_Pause,
 	SM_User	= 100
 };
 

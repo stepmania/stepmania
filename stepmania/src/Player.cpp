@@ -62,6 +62,7 @@ Player::Player()
 	m_pSecondaryScoreKeeper = NULL;
 	m_pInventory = NULL;
 	
+	m_bPaused = false;
 	m_iOffsetSample = 0;
 
 	this->AddChild( &m_Judgment );
@@ -280,6 +281,8 @@ void Player::Update( float fDeltaTime )
 	if( GAMESTATE->m_pCurSong==NULL )
 		return;
 
+	ActorFrame::Update( fDeltaTime );
+
 	if( m_pPlayerState->m_bAttackBeganThisUpdate )
 		m_soundAttackLaunch.Play();
 	if( m_pPlayerState->m_bAttackEndedThisUpdate )
@@ -321,6 +324,11 @@ void Player::Update( float fDeltaTime )
 	if( m_pNoteField )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
 	m_Judgment.SetZoom( fJudgmentZoom );
+
+	// If we're paused, don't update tap or hold note logic, so hold notes can be released
+	// during pause.
+	if( m_bPaused )
+		return;
 
 	//
 	// Check for TapNote misses
@@ -493,8 +501,6 @@ void Player::Update( float fDeltaTime )
 
 	// process transforms that are waiting to be applied
 	ApplyWaitingTransforms();
-
-	ActorFrame::Update( fDeltaTime );
 }
 
 void Player::ApplyWaitingTransforms()

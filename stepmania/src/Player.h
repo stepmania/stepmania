@@ -51,6 +51,7 @@ public:
 	void FadeToFail();
 	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
 	void ApplyWaitingTransforms();
+	void SetPaused( bool bPaused ) { m_bPaused = bPaused; }
 
 	static float GetMaxStepDistanceSeconds();
 
@@ -75,6 +76,7 @@ protected:
 	PlayerStageStats*	m_pPlayerStageStats;
 	float			m_fNoteFieldHeight;
 
+	bool			m_bPaused;
 	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
 	int				m_iOffsetSample;
 

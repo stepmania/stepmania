@@ -1147,6 +1147,9 @@ void ScreenGameplay::PauseGame( bool bPause )
 		this->PlayCommand( "Pause" );
 	else
 		this->PlayCommand( "Unpause" );
+
+	FOREACH_EnabledPlayer(p)
+		m_Player[p].SetPaused( m_bPaused );
 }
 
 // play assist ticks
@@ -1318,6 +1321,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 	 * !PREFSMAN->m_bDelayedScreenLoad.  (The new screen was loaded when we called Screen::Update,
 	 * and the ctor might set a new GAMESTATE->m_pCurSong, so the above check can fail.) */
 	if( SCREENMAN->GetTopScreen() != this )
+		return;
+
+	/* Update actors when paused, but never move on to another state. */
+	if( m_bPaused )
 		return;
 
 	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID && !m_MaxCombo.GetHidden() )
@@ -1731,6 +1738,14 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( type == IET_LEVEL_CHANGED )
 		return;
+
+	if( m_bPaused )
+	{
+		/* If we're paused, only accept MENU_BUTTON_START to unpause. */
+		if( MenuI.IsValid() && MenuI.button == MENU_BUTTON_START && type == IET_FIRST_PRESS )
+			this->PauseGame( false );
+		return;
+	}
 
 	if( MenuI.IsValid()  &&  
 		m_DancingState != STATE_OUTRO  &&
@@ -2389,6 +2404,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_StopMusic:
 		m_pSoundMusic->Stop();
+		break;
+
+	case SM_Pause:
+		if( !m_bPaused )
+			PauseGame( true );
 		break;
 	}
 }
