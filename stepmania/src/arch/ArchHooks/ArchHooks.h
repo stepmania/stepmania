@@ -28,10 +28,12 @@ public:
 	 * and we can safely log and throw. */
 	virtual void DumpDebugInfo() { }
 
-	/* Message box stuff.  Not supported on all archs. */
+	/* Message box stuff.  Not supported on all archs.  The ID can be used
+	 * to identify a class of messages, for "don't display this dialog"-type
+	 * prompts. */
 	enum MessageBoxResult { abort, retry, ignore };
-	virtual void MessageBoxOK( CString sMessage ) {}
-	virtual MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage ) { return ignore; } 
+	virtual void MessageBoxOK( CString sMessage, CString ID = "" ) {}
+	virtual MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID = "" ) { return ignore; } 
 
 	virtual ~ArchHooks() { }
 };

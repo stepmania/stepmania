@@ -4,13 +4,16 @@
 #include "ArchHooks.h"
 class ArchHooks_Win32: public ArchHooks
 {
+	bool MessageIsIgnored( CString ID );
+	void IgnoreMessage( CString ID );
+
 public:
 	ArchHooks_Win32();
 	void Log(CString str, bool important);
 	void DumpDebugInfo();
 	void AdditionalLog(CString str);
-	void MessageBoxOK( CString sMessage );
-	MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage );
+	void MessageBoxOK( CString sMessage, CString ID );
+	MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID );
 };
 
 #undef ARCH_HOOKS
