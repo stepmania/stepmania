@@ -14,6 +14,7 @@
 #include "Sound/RageSoundDriver_QT.h"
 #include "LoadingWindow/LoadingWindow_Cocoa.h"
 #include "InputHandler/InputHandler_SDL.h"
+#include "LowLevelWindow/LowLevelWindow_SDL.h"
 
 #include "ArchHooks/ArchHooks_darwin.h"
 

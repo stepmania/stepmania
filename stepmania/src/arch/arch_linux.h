@@ -13,6 +13,7 @@
 #  include "LoadingWindow/LoadingWindow_Gtk.h"
 #endif
 #include "InputHandler/InputHandler_SDL.h"
+#include "LowLevelWindow/LowLevelWindow_SDL.h"
 
 #endif
 /*
