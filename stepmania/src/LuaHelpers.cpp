@@ -178,9 +178,9 @@ void Lua::UpdateGlobals()
 	lua_setglobal( L, "SCREEN_TOP" );
 	lua_pushnumber( L, SCREEN_BOTTOM );
 	lua_setglobal( L, "SCREEN_BOTTOM" );
-	lua_pushnumber( L, CENTER_X );
+	lua_pushnumber( L, SCREEN_CENTER_X );
 	lua_setglobal( L, "SCREEN_CENTER_X" );
-	lua_pushnumber( L, CENTER_Y );
+	lua_pushnumber( L, SCREEN_CENTER_Y );
 	lua_setglobal( L, "SCREEN_CENTER_Y" );
 }
 

@@ -51,14 +51,14 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 		CString sSecondary = GAMESTATE->GetCurrentGame()->m_szSecondaryFunction[b];
 
 		m_textName[b].LoadFromFont( THEME->GetPathToF("Common title") );
-		m_textName[b].SetXY( CENTER_X, -6 );
+		m_textName[b].SetXY( SCREEN_CENTER_X, -6 );
 		m_textName[b].SetText( sName );
 		m_textName[b].SetZoom( 0.7f );
 		m_textName[b].SetShadowLength( 2 );
 		m_Line[b].AddChild( &m_textName[b] );
 
 		m_textName2[b].LoadFromFont( THEME->GetPathToF("Common title") );
-		m_textName2[b].SetXY( CENTER_X, +6 );
+		m_textName2[b].SetXY( SCREEN_CENTER_X, +6 );
 		m_textName2[b].SetText( sSecondary );
 		m_textName2[b].SetZoom( 0.5f );
 		m_textName2[b].SetShadowLength( 2 );
@@ -83,7 +83,7 @@ ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMen
 
 	m_textError.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textError.SetText( "" );
-	m_textError.SetXY( CENTER_X, CENTER_Y );
+	m_textError.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	m_textError.SetDiffuse( RageColor(0,1,0,0) );
 	m_textError.SetZoom( 0.8f );
 	this->AddChild( &m_textError );

@@ -188,7 +188,7 @@ void RageDisplay::SetDefaultRenderStates()
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );
 	SetTextureFiltering( true );
-	LoadMenuPerspective(0, CENTER_X, CENTER_Y);	// 0 FOV = ortho
+	LoadMenuPerspective(0, SCREEN_CENTER_X, SCREEN_CENTER_Y);	// 0 FOV = ortho
 	ChangeCentering(0,0,0,0);
 }
 
@@ -454,8 +454,8 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, fl
 		fVanishPointX = SCALE( fVanishPointX, SCREEN_LEFT, SCREEN_RIGHT, SCREEN_RIGHT, SCREEN_LEFT );
 		fVanishPointY = SCALE( fVanishPointY, SCREEN_TOP, SCREEN_BOTTOM, SCREEN_BOTTOM, SCREEN_TOP );
 
-		fVanishPointX -= CENTER_X;
-		fVanishPointY -= CENTER_Y;
+		fVanishPointX -= SCREEN_CENTER_X;
+		fVanishPointY -= SCREEN_CENTER_Y;
 
 
 		/* It's the caller's responsibility to push first. */
@@ -470,8 +470,8 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, fl
 
 		g_ViewStack.LoadMatrix( 
 			RageLookAt(
-				-fVanishPointX+CENTER_X, -fVanishPointY+CENTER_Y, fDistCameraFromImage,
-				-fVanishPointX+CENTER_X, -fVanishPointY+CENTER_Y, 0,
+				-fVanishPointX+SCREEN_CENTER_X, -fVanishPointY+SCREEN_CENTER_Y, fDistCameraFromImage,
+				-fVanishPointX+SCREEN_CENTER_X, -fVanishPointY+SCREEN_CENTER_Y, 0,
 				0.0f, 1.0f, 0.0f) );
 	}
 }

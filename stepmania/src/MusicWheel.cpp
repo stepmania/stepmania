@@ -828,8 +828,8 @@ void MusicWheel::DrawPrimitives()
 
 		// construct view and project matrix
 //		RageVector3 Up( 0.0f, 1.0f, 0.0f );
-//		RageVector3 Eye( CENTER_X, CENTER_Y, 550 );
-//		RageVector3 At( CENTER_X, CENTER_Y, 0 );
+//		RageVector3 Eye( SCREEN_CENTER_X, SCREEN_CENTER_Y, 550 );
+//		RageVector3 At( SCREEN_CENTER_X, SCREEN_CENTER_Y, 0 );
 
 //		DISPLAY->LookAt(Eye, At, Up);
 	}

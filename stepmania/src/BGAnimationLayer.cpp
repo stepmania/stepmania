@@ -221,7 +221,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			Sprite* pSprite = new Sprite;
 			m_SubActors.push_back( pSprite );
 			pSprite->Load( sPath );
-			pSprite->SetXY( CENTER_X, CENTER_Y );
+			pSprite->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		}
 		break;
 	case EFFECT_STRETCH_STILL:
@@ -572,7 +572,7 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 				if( Stretch )
 					pActor->StretchTo( FullScreenRectF );
 				else
-					pActor->SetXY( CENTER_X, CENTER_Y );
+					pActor->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 			}
 		}
 		break;
@@ -691,8 +691,8 @@ void BGAnimationLayer::Update( float fDeltaTime )
 			float fRadius = (m_SubActors[i].GetZoom()-SPIRAL_MIN_ZOOM);
 			fRadius *= fRadius;
 			fRadius *= 200;
-			m_SubActors[i].SetX( CENTER_X + cosf(m_SubActors[i].GetRotationZ())*fRadius );
-			m_SubActors[i].SetY( CENTER_Y + sinf(m_SubActors[i].GetRotationZ())*fRadius );
+			m_SubActors[i].SetX( SCREEN_CENTER_X + cosf(m_SubActors[i].GetRotationZ())*fRadius );
+			m_SubActors[i].SetY( SCREEN_CENTER_Y + sinf(m_SubActors[i].GetRotationZ())*fRadius );
 		}
 		break;
 	case EFFECT_PARTICLES_SPIRAL_IN:
@@ -707,8 +707,8 @@ void BGAnimationLayer::Update( float fDeltaTime )
 			float fRadius = (m_SubActors[i].GetZoom()-SPIRAL_MIN_ZOOM);
 			fRadius *= fRadius;
 			fRadius *= 200;
-			m_SubActors[i].SetX( CENTER_X + cosf(m_SubActors[i].GetRotationZ())*fRadius );
-			m_SubActors[i].SetY( CENTER_Y + sinf(m_SubActors[i].GetRotationZ())*fRadius );
+			m_SubActors[i].SetX( SCREEN_CENTER_X + cosf(m_SubActors[i].GetRotationZ())*fRadius );
+			m_SubActors[i].SetY( SCREEN_CENTER_Y + sinf(m_SubActors[i].GetRotationZ())*fRadius );
 		}
 		break;
 */
@@ -947,7 +947,7 @@ void BGAnimationLayer::DrawPrimitives()
 	if( m_fFOV != -1 )
 	{
 		DISPLAY->CameraPushMatrix();
-		DISPLAY->LoadMenuPerspective( m_fFOV, CENTER_X, CENTER_Y );
+		DISPLAY->LoadMenuPerspective( m_fFOV, SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	}
 
 	if( m_bLighting )

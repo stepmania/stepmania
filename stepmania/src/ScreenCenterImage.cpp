@@ -25,7 +25,7 @@ ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuEleme
 	
 	m_textInstructions.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textInstructions.SetText( "" );
-	m_textInstructions.SetXY( CENTER_X, CENTER_Y );
+	m_textInstructions.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	m_textInstructions.SetDiffuse( RageColor(0,1,0,0) );
 	m_textInstructions.SetZoom( 0.8f );
 	this->AddChild( &m_textInstructions );

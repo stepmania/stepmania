@@ -27,22 +27,22 @@ void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 
 ScreenTestFonts::ScreenTestFonts( CString sClassName ) : Screen( sClassName )
 {
-	Hline.SetXY(CENTER_X, CENTER_Y);
+	Hline.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 	Hline.SetZoomX(LineWidth);
 	Hline.SetDiffuse( RageColor(1, 1, 1, 1) );
 	this->AddChild(&Hline);
 
-	Vline.SetXY(CENTER_X, CENTER_Y);
+	Vline.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 	Vline.SetZoomY(LineHeight);
 	Vline.SetDiffuse( RageColor(0, 1, 0, .8f) );
 	this->AddChild(&Vline);
 	
-	font.SetXY( CENTER_X, CENTER_Y+100 );
+	font.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y+100 );
 	font.LoadFromFont( "Themes/default/Fonts/Common Normal" );
 	font.SetZoom(.5);
 	this->AddChild(&font);
 
-	txt.SetXY( CENTER_X, CENTER_Y );
+	txt.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	SetFont( "Themes/default/Fonts/Common Normal" );
 	SetText( "Foo" );
 }

@@ -14,11 +14,11 @@
 #include "archutils/Xbox/VirtualKeyboard.h"
 #endif
 
-#define QUESTION_X		(CENTER_X)
-#define QUESTION_Y		(CENTER_Y - 60)
+#define QUESTION_X		(SCREEN_CENTER_X)
+#define QUESTION_Y		(SCREEN_CENTER_Y - 60)
 
-#define ANSWER_X		(CENTER_X)
-#define ANSWER_Y		(CENTER_Y + 120)
+#define ANSWER_X		(SCREEN_CENTER_X)
+#define ANSWER_Y		(SCREEN_CENTER_Y + 120)
 #define ANSWER_WIDTH	(440)
 #define ANSWER_HEIGHT	(30)
 

@@ -8,11 +8,11 @@
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
 
-#define QUESTION_X	(CENTER_X)
-#define QUESTION_Y	(CENTER_Y - 60)
+#define QUESTION_X	(SCREEN_CENTER_X)
+#define QUESTION_Y	(SCREEN_CENTER_Y - 60)
 
-#define PROMPT_X	(CENTER_X)
-#define PROMPT_Y	(CENTER_Y + 120)
+#define PROMPT_X	(SCREEN_CENTER_X)
+#define PROMPT_Y	(SCREEN_CENTER_Y + 120)
 
 bool ScreenPrompt::s_bLastAnswer = false;
 

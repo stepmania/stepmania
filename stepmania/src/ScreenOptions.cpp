@@ -210,7 +210,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 		m_sprLineHighlight[p].Load( THEME->GetPathToG("ScreenOptions line highlight") );
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
-		m_sprLineHighlight[p].SetX( CENTER_X );
+		m_sprLineHighlight[p].SetX( SCREEN_CENTER_X );
 		m_framePage.AddChild( &m_sprLineHighlight[p] );
 		UtilOnCommand( m_sprLineHighlight[p], "ScreenOptions" );
 	}
@@ -367,7 +367,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	bt->SetText( THEME->GetMetric("OptionNames","Exit") );
 	bt->SetZoom( ITEMS_ZOOM );
 	bt->SetShadowLength( 0 );
-	bt->SetX( CENTER_X );
+	bt->SetX( SCREEN_CENTER_X );
 
 	m_framePage.AddChild( bt );
 
@@ -441,7 +441,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 	}
 
 	m_sprFrame.Load( THEME->GetPathToG( "ScreenOptions frame") );
-	m_sprFrame->SetXY( CENTER_X, CENTER_Y );
+	m_sprFrame->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	m_framePage.AddChild( m_sprFrame );
 
 	// poke once at all the explanation metrics so that we catch missing ones early

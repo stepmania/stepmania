@@ -21,7 +21,7 @@ ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuEleme
 	
 	m_textTitle.LoadFromFont( THEME->GetPathToF("Common title") );
 	m_textTitle.SetText( "header" );
-	m_textTitle.SetXY( CENTER_X, 60 );
+	m_textTitle.SetXY( SCREEN_CENTER_X, 60 );
 	m_textTitle.SetDiffuse( RageColor(1,1,1,1) );
 	m_textTitle.SetZoom( 0.8f );
 	this->AddChild( &m_textTitle );
@@ -29,7 +29,7 @@ ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuEleme
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
 		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-160 );
-		float fY = CENTER_Y+16;
+		float fY = SCREEN_CENTER_Y+16;
 		m_textCols[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textCols[i].SetText( ssprintf("%d",i) );
 		m_textCols[i].SetXY( fX, fY );

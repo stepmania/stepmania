@@ -52,10 +52,10 @@ ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sCla
 
 	for( unsigned i=0; i<m_textLines.size(); i++ )
 	{
-		m_textLines[i]->SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
+		m_textLines[i]->SetXY( SCREEN_CENTER_X, SCREEN_BOTTOM + 40 );
 		m_textLines[i]->BeginTweening( SCROLL_DELAY * i );
 		m_textLines[i]->BeginTweening( 2.0f*SCROLL_SPEED );
-		m_textLines[i]->SetXY( CENTER_X, SCREEN_TOP - 40 );	
+		m_textLines[i]->SetXY( SCREEN_CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
 	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added

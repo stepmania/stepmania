@@ -17,7 +17,7 @@ ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements(
 
 	m_textInputs.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textInputs.SetText( "" );
-	m_textInputs.SetXY( CENTER_X, CENTER_Y );
+	m_textInputs.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	m_textInputs.SetDiffuse( RageColor(1,1,1,1) );
 	m_textInputs.SetZoom( 0.8f );
 	this->AddChild( &m_textInputs );

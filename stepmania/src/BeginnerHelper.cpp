@@ -140,9 +140,9 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 	{
 		m_sBackground.Load( THEME->GetPathToG("BeginnerHelper background") );
 		this->AddChild(&m_sBackground);
-		m_sBackground.SetXY(CENTER_X, CENTER_Y);
+		m_sBackground.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		m_sFlash.Load(THEME->GetPathToG("BeginnerHelper flash"));
-		m_sFlash.SetXY(CENTER_X, CENTER_Y);
+		m_sFlash.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		m_sFlash.SetDiffuseAlpha(0);
 	}
 	

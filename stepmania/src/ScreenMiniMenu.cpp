@@ -46,7 +46,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 	m_textTitle.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textTitle.SetText( m_Def.title );
-	m_textTitle.SetXY( CENTER_X, CENTER_Y - fHeightOfAll/2 - 30 );
+	m_textTitle.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y - fHeightOfAll/2 - 30 );
 	m_textTitle.SetZoom( 0.8f );
 	this->AddChild( &m_textTitle );
 
@@ -62,9 +62,9 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 		float fY;
 		if( m_Def.rows.size() > 1 )
-			fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, CENTER_Y-fHeightOfAll/2, CENTER_Y+fHeightOfAll/2 );
+			fY = SCALE( i, 0.f, m_Def.rows.size()-1.f, SCREEN_CENTER_Y-fHeightOfAll/2, SCREEN_CENTER_Y+fHeightOfAll/2 );
 		else
-			fY = CENTER_Y;
+			fY = SCREEN_CENTER_Y;
 
 		m_textLabel[i].LoadFromFont( THEME->GetPathToF("Common normal") );
 		m_textLabel[i].SetText( line.name );

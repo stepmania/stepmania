@@ -40,13 +40,13 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before showing ScreenInstructions." );
 
 	m_sprHowToPlay.Load( THEME->GetPathG(m_sName,PlayModeToString(GAMESTATE->m_PlayMode)) );
-	m_sprHowToPlay.SetXY( CENTER_X, CENTER_Y );
+	m_sprHowToPlay.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	this->AddChild( &m_sprHowToPlay );
 
 	m_sprHowToPlay.SetX( SCREEN_LEFT-SCREEN_WIDTH );
 	m_sprHowToPlay.BeginTweening( 0.4f );		// sleep
 	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_DECELERATE );
-	m_sprHowToPlay.SetX( CENTER_X );
+	m_sprHowToPlay.SetX( SCREEN_CENTER_X );
 
 	this->SortByDrawOrder();
 

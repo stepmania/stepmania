@@ -31,7 +31,7 @@ void NoteFieldMode::BeginDrawTrack(int tn)
 	 * for a transformation.  However, this is a big waste of matrix
 	 * stack space, as each of these will push.  Profile this. XXX */
 	if(m_fFov) 
-		DISPLAY->LoadMenuPerspective(m_fFov, CENTER_X, CENTER_Y);
+		DISPLAY->LoadMenuPerspective(m_fFov, SCREEN_CENTER_X, SCREEN_CENTER_Y);
 	
 	if(tn != -1)
 	{

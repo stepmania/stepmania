@@ -49,7 +49,7 @@ ScreenReloadSongs::ScreenReloadSongs( CString sClassName ): Screen(sClassName)
 	m_iUpdates = 0;
 
 	m_Loading.LoadFromFont( THEME->GetPathF("Common", "normal") );
-	m_Loading.SetXY( CENTER_X, CENTER_Y );
+	m_Loading.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	this->AddChild( &m_Loading );
 
 	m_LoadingWindow = new ScreenReloadSongsLoadingWindow( m_Loading );

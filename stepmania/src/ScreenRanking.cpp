@@ -212,7 +212,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 		m_ListScoreRowItems.SetName( "ListScoreRowItems" );
 		this->AddChild( &m_ListScoreRowItems );
-		m_ListScoreRowItems.SetXY( CENTER_X, CENTER_Y );
+		m_ListScoreRowItems.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	}
 
 	{
@@ -260,7 +260,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 		m_ListCourseRowItems.SetName( "ListCourseRowItems" );
 		this->AddChild( &m_ListCourseRowItems );
-		m_ListCourseRowItems.SetXY( CENTER_X, CENTER_Y );
+		m_ListCourseRowItems.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	}
 
 	// calculate which StepsTypes to show

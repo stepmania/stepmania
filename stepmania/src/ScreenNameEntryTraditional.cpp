@@ -479,7 +479,7 @@ void ScreenNameEntryTraditional::Update( float fDelta )
 void ScreenNameEntryTraditional::DrawPrimitives()
 {
 	DISPLAY->CameraPushMatrix();
-	DISPLAY->LoadMenuPerspective( FOV, CENTER_X, CENTER_Y );
+	DISPLAY->LoadMenuPerspective( FOV, SCREEN_CENTER_X, SCREEN_CENTER_Y );
 
 	Screen::DrawPrimitives();
 	

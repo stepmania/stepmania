@@ -540,7 +540,7 @@ void PlayerMinus::DrawPrimitives()
 	float fCenterY = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 //	float fHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 
-	DISPLAY->LoadMenuPerspective( 45, SCALE(fSkew,0.f,1.f,this->GetX(),CENTER_X), fCenterY );
+	DISPLAY->LoadMenuPerspective( 45, SCALE(fSkew,0.f,1.f,this->GetX(),SCREEN_CENTER_X), fCenterY );
 
 	float fOriginalY = 	m_pNoteField->GetY();
 

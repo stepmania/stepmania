@@ -33,7 +33,7 @@ ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 
 		m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenPlayerOptions options") );
 		m_sprOptionsMessage.StopAnimating();
-		m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
+		m_sprOptionsMessage.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		m_sprOptionsMessage.SetZoom( 1 );
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		//this->AddChild( &m_sprOptionsMessage );       // we have to draw this manually over the top of transitions

@@ -113,7 +113,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 
 		#ifdef DEBUG
 		m_debugtext.LoadFromFont( THEME->GetPathToF("small titles") );
-		m_debugtext.SetXY( CENTER_X, CENTER_Y );
+		m_debugtext.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		this->AddChild(&m_debugtext);
 		#endif
 
@@ -199,14 +199,14 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElem
 
 		m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenEz2SelectMusic options message") );
 		m_sprOptionsMessage.StopAnimating();
-		m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
+		m_sprOptionsMessage.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		m_sprOptionsMessage.SetZoom( 1 );
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
 		this->AddChild( &m_sprOptionsMessage );
 
 		if(USE_MODE_SWITCHER == 1)
 		{
-			m_ModeSwitcher.SetXY(CENTER_X,CENTER_Y);
+			m_ModeSwitcher.SetXY(SCREEN_CENTER_X,SCREEN_CENTER_Y);
 			this->AddChild( &m_ModeSwitcher );
 		}
 

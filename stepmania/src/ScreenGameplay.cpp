@@ -1059,8 +1059,8 @@ void ScreenGameplay::LoadNextSong()
 	{
 		m_Background.Unload();	// BeginnerHelper has its own BG control.
 		m_Background.StopAnimating();
-		m_BeginnerHelper.SetX( CENTER_X );
-		m_BeginnerHelper.SetY( CENTER_Y );
+		m_BeginnerHelper.SetX( SCREEN_CENTER_X );
+		m_BeginnerHelper.SetY( SCREEN_CENTER_Y );
 	}
 	else
 	{
@@ -2485,7 +2485,7 @@ void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 {
 	m_sprOniGameOver[pn].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprOniGameOver[pn].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprOniGameOver[pn].SetY( CENTER_Y );
+	m_sprOniGameOver[pn].SetY( SCREEN_CENTER_Y );
 	m_sprOniGameOver[pn].SetEffectBob( 4, RageVector3(0,6,0) );
 }
 
