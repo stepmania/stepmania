@@ -105,7 +105,8 @@ bool RageSound_DSound::stream::GetData(bool init)
 
 	char *locked_buf;
 	unsigned len;
-	const int play_pos = str_ds->GetOutputPosition();
+	int play_pos = str_ds->GetOutputPosition();
+	const int cur_play_pos = str_ds->GetPosition();
 
 	if(init) {
 		/* We're initializing; fill the entire buffer. The buffer is supposed to
@@ -122,14 +123,43 @@ bool RageSound_DSound::stream::GetData(bool init)
 	 * fill anything in STOPPING; in that case, we just clear the audio buffer. */
 	if(state != STOPPING)
 	{
-		unsigned got = snd->GetPCM(locked_buf, len, play_pos);
+		unsigned bytes_read = 0;
+		unsigned bytes_left = len;
 
-		if(got < len) {
+		/* Does the sound have a start time? */
+		if( !start_time.IsZero() )
+		{
+			/* If the sound is supposed to start at a time past this buffer, fill with
+			 * silence. */
+			const float fSecondsBeforeStart = -start_time.Ago();
+
+			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
+			const float fSecondsUntilThisBuffer = float(iFramesUntilThisBuffer) / str_ds->GetSampleRate();
+
+			const float fSilentSecondsInThisBuffer = max( 0, fSecondsBeforeStart-fSecondsUntilThisBuffer );
+			const int iSilentFramesInThisBuffer = int( fSilentSecondsInThisBuffer * str_ds->GetSampleRate() );
+			const int iActualSilentFramesInThisBuffer = min( iSilentFramesInThisBuffer, (int) bytes_left/samplesize );
+			const int iSilentBytesInThisBuffer = iActualSilentFramesInThisBuffer * samplesize;
+
+			memset( locked_buf, 0, iSilentBytesInThisBuffer );
+			bytes_read += iSilentBytesInThisBuffer;
+			bytes_left -= iSilentBytesInThisBuffer;
+			play_pos += iSilentFramesInThisBuffer;
+
+			if( !iSilentBytesInThisBuffer )
+				start_time.SetZero();
+		}
+
+		unsigned got = snd->GetPCM( locked_buf+bytes_read, len-bytes_read, play_pos );
+		bytes_read += got;
+
+		if( bytes_read < len )
+		{
 			/* Fill the remainder of the buffer with silence. */
-			memset(locked_buf+got, 0, len-got);
+			memset( locked_buf+got, 0, len-bytes_read );
 
 			/* STOPPING tells the mixer thread to release the stream once str->flush_bufs
-			* buffers have been flushed. */
+			 * buffers have been flushed. */
 			state = STOPPING;
 
 			/* Flush two buffers worth of data. */
@@ -242,6 +272,7 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 	/* Give the stream to the playing sound and remove it from the pool. */
 	stream_pool[i]->snd = snd;
 	stream_pool[i]->str_ds->SetSampleRate(snd->GetSampleRate());
+	stream_pool[i]->start_time = snd->GetStartTime();
 
 	/* Pre-buffer the stream. */
 	/* There are two buffers of data; fill them both ahead of time so the

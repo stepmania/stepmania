@@ -4,6 +4,7 @@
 #include "RageSoundDriver.h"
 #include "DSoundHelpers.h"
 #include "RageThreads.h"
+#include "RageTimer.h"
 
 struct IDirectSound;
 struct IDirectSoundBuffer;
@@ -26,6 +27,7 @@ class RageSound_DSound: public RageSoundDriver
 
 		int flush_pos; /* state == STOPPING only */
 
+		RageTimer start_time;
 		bool GetData(bool init);
 
 	    stream() { str_ds = NULL; snd = NULL; state=INACTIVE; }
