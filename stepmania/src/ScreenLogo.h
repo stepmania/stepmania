@@ -12,6 +12,7 @@
 */
 
 #include "ScreenAttract.h"
+#include "Sprite.h"
 
 
 class ScreenLogo : public ScreenAttract
