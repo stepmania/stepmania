@@ -1532,40 +1532,16 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BackFromBPMChange:
 		{
-			float fBPM = atof( ScreenTextEntry::s_sLastAnswer.c_str() );
-			if ( fBPM <= 0 )
-				break;
-			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
+			float fBPM = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
+			if( fBPM > 0 )
+				m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fBPM );
 		}
 		break;
 	case SM_BackFromStopChange:
 		{
-			unsigned i;
-			bool sentinel = false;		//Tricky, we can't break out of this loop safely
-			for( i=0; (i<m_pSong->m_Timing.m_StopSegments.size()) && (!sentinel); i++ )
-			{
-				if( m_pSong->m_Timing.m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
-					sentinel = true;
-			}
-
-			if ( sentinel )
-				i--;
-
-			float fStop = atof( ScreenTextEntry::s_sLastAnswer.c_str() );
-
-			if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
-			{
-				if ( fStop > 0 )
-					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStop ) );
-			}
-			else	// StopSegment being modified is m_Timing.m_StopSegments[i]
-			{
-				m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds = fStop;
-				if( m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds <= 0 )
-					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
-													  m_pSong->m_Timing.m_StopSegments.begin()+i+1);
-			}
-
+			float fStop = strtof( ScreenTextEntry::s_sLastAnswer, NULL );
+			if( fStop >= 0 )
+				m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, fStop );
 		}
 		break;
 	case SM_BackFromBGChange:
