@@ -184,9 +184,15 @@ void DifficultyMeter::SetMeter( int iMeter, Difficulty dc )
 
 	if( SHOW_METER )
 	{
-		const CString sMeter = ssprintf( "%i", iMeter );
-		if( sMeter != m_textMeter.GetText() )
+		if( iMeter == 0 )	// Unset calls with this
+		{
+			m_textMeter.SetText( "x" );
+		}
+		else
+		{
+			const CString sMeter = ssprintf( "%i", iMeter );
 			m_textMeter.SetText( sMeter );
+		}
 	}
 }
 
