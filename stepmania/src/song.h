@@ -161,21 +161,24 @@ public:
 	};
 	float GetBPMAtBeat( float fBeat ) const
 	{
-		for( unsigned i=0; i<m_BPMSegments.size()-1; i++ )
+		unsigned i;
+		for( i=0; i<m_BPMSegments.size()-1; i++ )
 			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BPMSegments[i].m_fBPM;
 	};
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat )
 	{
-		for( unsigned i=0; i<m_BPMSegments.size()-1; i++ )
+		unsigned i;
+		for( i=0; i<m_BPMSegments.size()-1; i++ )
 			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BPMSegments[i];
 	};
 	CString GetBackgroundAtBeat( float fBeat )
 	{
-		for( unsigned i=0; i<m_BackgroundChanges.size()-1; i++ )
+		unsigned i;
+		for( i=0; i<m_BackgroundChanges.size()-1; i++ )
 			if( m_BackgroundChanges[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BackgroundChanges[i].m_sBGName;
