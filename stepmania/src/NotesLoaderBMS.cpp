@@ -53,8 +53,7 @@ static int iTracks[MAX_NOTE_TRACKS];
 
 enum
 {
-	BMS_NULL_COLUMN = 0,
-	BMS_P1_KEY1,
+	BMS_P1_KEY1 = 0,
 	BMS_P1_KEY2,
 	BMS_P1_KEY3,
 	BMS_P1_KEY4,
@@ -111,8 +110,7 @@ StepsType BMSLoader::CheckTracksMagic()
 		return STEPS_TYPE_DANCE_SOLO;
 	case 8:
 		// Could also be couple or 7-key.
-		if (iTracks[7] == 0 && iTracks[8] == 0 && iTracks[1] == 0 && iTracks[3] == 
-0)
+		if (iTracks[7] == 0 && iTracks[8] == 0 && iTracks[1] == 0 && iTracks[3] == 0)
 			// these four tracks are IIDX-related
 			return STEPS_TYPE_DANCE_DOUBLE;
 		else
@@ -437,6 +435,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 void BMSLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 {
 	GetDirListing( sPath + CString("*.bms"), out );
+	GetDirListing( sPath + CString("*.bme"), out );
 }
 
 bool BMSLoader::LoadFromDir( CString sDir, Song &out )
