@@ -34,7 +34,7 @@ Luna<T,Lua##T>::RegType Lua##T::methods[] = { \
 	LUA_##T##_METHODS_MAP( T ) \
 	{0,0} \
 };
-#define LUA_METHOD_MAP( T, Method ) 	{ #Method, Lua##T::##Method },
+#define LUA_METHOD_MAP( T, Method ) 	{ #Method, Lua##T::Method },
 
 
 template <typename T, typename TInfo> class Luna {
