@@ -554,31 +554,16 @@ static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int Nu
 		{
 			// TRICKY: Shuffle so that both player get the same shuffle mapping
 			// in the same round.
+			int iOrig[MAX_NOTE_TRACKS];
+			memcpy( iOrig, iTakeFromTrack, sizeof(iOrig) );
+
 			int iShuffleSeed = GAMESTATE->m_iRoundSeed;
-reshuffle:
-			RandomGen rnd( iShuffleSeed );
-
-			vector<int> aiTracksLeftToMap;
-			for( t=0; t<NumTracks; t++ )
-				aiTracksLeftToMap.push_back( t );
-			
-			bool bIsIdentity = true;
-			for( t=0; t<NumTracks; t++ )
-			{
-				int iRandTrackIndex = rnd( aiTracksLeftToMap.size() );
-				int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
-				aiTracksLeftToMap.erase( aiTracksLeftToMap.begin()+iRandTrackIndex,
-										 aiTracksLeftToMap.begin()+iRandTrackIndex+1 );
-				iTakeFromTrack[t] = iRandTrack;
-				if( iTakeFromTrack[t] != t )
-					bIsIdentity = false;
-			}
-
-			if( bIsIdentity )
-			{
+			do {
+				RandomGen rnd( iShuffleSeed );
+				random_shuffle( &iTakeFromTrack[0], &iTakeFromTrack[NumTracks], rnd );
 				iShuffleSeed++;
-				goto reshuffle;
 			}
+			while ( !memcmp( iOrig, iTakeFromTrack, sizeof(iOrig) ) );
 		}
 		break;
 	case NoteDataUtil::stomp:
