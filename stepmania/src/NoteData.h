@@ -7,7 +7,7 @@
  Desc: Holds data about the notes that the player is supposed to hit.  NoteData
 	is organized by:
 	track - corresponds to different columns of notes on the screen
-	index - corresponds to subdivisions of beats
+	row/index - corresponds to subdivisions of beats
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
@@ -133,6 +133,12 @@ public:
 
 	void Convert4sToHoldNotes();
 	void ConvertHoldNotesTo4s();
+
+	// True if no notes in row that aren't true in the mask
+	bool RowPassesValidMask( int row, bool bValidMask[] );
+
+	// Remove all tap notes that fail this mask
+	void EliminateNonPassingTaps( int row, bool bValidMask[] ); 
 };
 
 

@@ -64,6 +64,12 @@ namespace NoteDataUtil
 	inline void SnapToNearestNoteType( NoteData &in, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( in, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
 
 	void FixImpossibleRows( NoteData &in, StepsType st );
+
+	// True if no notes in row that aren't true in the mask
+	bool RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] );
+
+	// Remove all tap notes that fail this mask
+	void EliminateNonPassingTaps( NoteData &in, int row, const bool bValidMask[] ); 
 };
 
 #endif

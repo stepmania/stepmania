@@ -520,4 +520,3 @@ void NoteData::SetTapNote(int track, int row, TapNote t)
 	PadTapNotes(row);
 	m_TapNotes[track][row]=t;
 }
-

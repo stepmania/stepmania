@@ -823,9 +823,47 @@ void NoteDataUtil::ShiftRight( NoteData &in )
 }
 
 
-//NUM_STEPS_TYPES
+struct ValidRow
+{
+	StepsType st;
+	bool bValidMask[MAX_NOTE_TRACKS];
+};
+#define T true
+#define f false
+const ValidRow g_ValidRows[] = 
+{
+	{ STEPS_TYPE_DANCE_DOUBLE, { T,T,T,T,f,f,f,f } },
+	{ STEPS_TYPE_DANCE_DOUBLE, { f,T,T,T,T,f,f,f } },
+	{ STEPS_TYPE_DANCE_DOUBLE, { f,f,f,T,T,T,T,f } },
+	{ STEPS_TYPE_DANCE_DOUBLE, { f,f,f,f,T,T,T,T } },
+};
 
 void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 {
-	
+	for( int i=0; i<ARRAYSIZE(g_ValidRows); i++ )
+	{
+		const ValidRow vr = g_ValidRows[i];
+		if( vr.st != st )
+			continue;	// skip
+
+		for( int r=0; r<=in.GetLastRow(); r++ )
+			if( !NoteDataUtil::RowPassesValidMask(in,r,vr.bValidMask) )	// failed mask
+				NoteDataUtil::EliminateNonPassingTaps(in,r,vr.bValidMask);
+	}
+}
+
+bool NoteDataUtil::RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] )
+{
+	for( int t=0; t<in.GetNumTracks(); t++ )
+		if( !bValidMask[t] && in.GetTapNote(t,row) != TAP_EMPTY )
+			return false;
+
+	return true;
+}
+
+void NoteDataUtil::EliminateNonPassingTaps( NoteData &in, int row, const bool bValidMask[] )
+{
+	for( int t=0; t<in.GetNumTracks(); t++ )
+		if( !bValidMask[t] && in.GetTapNote(t,row) != TAP_EMPTY )
+			in.SetTapNote(t,row,TAP_EMPTY);
 }
