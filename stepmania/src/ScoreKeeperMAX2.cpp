@@ -200,8 +200,6 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	// What does this do?  "Don't use a multiplier if 
 	// the player has failed"?
-	// Also, why does this switch on score again instead
-	// of just adding p?  -Chris
 	if( GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )
 	{
 		m_iScore += p;
