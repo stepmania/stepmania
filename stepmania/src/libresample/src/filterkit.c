@@ -81,9 +81,9 @@ static double Izero(double x)
    return(sum);
 }
 
-void LpFilter(double c[], int N, double frq, double Beta, int Num)
+void lrsLpFilter(double c[], int N, double frq, double Beta, int Num)
 {
-   double IBeta, temp, inm1;
+   double IBeta, temp, temp1, inm1;
    int i;
 
    /* Calculate ideal lowpass filter impulse response coefficients: */
@@ -103,17 +103,22 @@ void LpFilter(double c[], int N, double frq, double Beta, int Num)
    inm1 = 1.0/((double)(N-1));
    for (i=1; i<N; i++) {
       temp = (double)i * inm1;
-      c[i] *= Izero(Beta*sqrt(1.0-temp*temp)) * IBeta;
+      temp1 = 1.0 - temp*temp;
+      temp1 = (temp1<0? 0: temp1); /* make sure it's not negative since
+                                      we're taking the square root - this
+                                      happens on Pentium 4's due to tiny
+                                      roundoff errors */
+      c[i] *= Izero(Beta*sqrt(temp1)) * IBeta;
    }
 }
 
-float FilterUp(float Imp[],  /* impulse response */
-               float ImpD[], /* impulse response deltas */
-               UWORD Nwing, /* len of one wing of filter */
-               BOOL Interp,  /* Interpolate coefs using deltas? */
-               float *Xp,    /* Current sample */
-               double Ph,    /* Phase */
-               int Inc)      /* increment (1 for right wing or -1 for left) */
+float lrsFilterUp(float Imp[],  /* impulse response */
+                  float ImpD[], /* impulse response deltas */
+                  UWORD Nwing,  /* len of one wing of filter */
+                  BOOL Interp,  /* Interpolate coefs using deltas? */
+                  float *Xp,    /* Current sample */
+                  double Ph,    /* Phase */
+                  int Inc)    /* increment (1 for right wing or -1 for left) */
 {
    float *Hp, *Hdp = NULL, *End;
    double a = 0;
@@ -161,14 +166,14 @@ float FilterUp(float Imp[],  /* impulse response */
    return v;
 }
 
-float FilterUD(float Imp[],  /* impulse response */
-               float ImpD[], /* impulse response deltas */
-               UWORD Nwing,  /* len of one wing of filter */
-               BOOL Interp,  /* Interpolate coefs using deltas? */
-               float *Xp,    /* Current sample */
-               double Ph,    /* Phase */
-               int Inc,      /* increment (1 for right wing or -1 for left) */
-               double dhb)   /* filter sampling period */
+float lrsFilterUD(float Imp[],  /* impulse response */
+                  float ImpD[], /* impulse response deltas */
+                  UWORD Nwing,  /* len of one wing of filter */
+                  BOOL Interp,  /* Interpolate coefs using deltas? */
+                  float *Xp,    /* Current sample */
+                  double Ph,    /* Phase */
+                  int Inc,    /* increment (1 for right wing or -1 for left) */
+                  double dhb) /* filter sampling period */
 {
    float a;
    float *Hp, *Hdp, *End;

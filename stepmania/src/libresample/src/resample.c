@@ -15,7 +15,7 @@
 **********************************************************************/
 
 /* External interface */
-#include "../include/resample.h"
+#include "../include/libresample.h"
 
 /* Definitions */
 #include "resample_defs.h"
@@ -114,7 +114,7 @@ void *resample_open(int highQuality, double minFactor, double maxFactor)
 
    Imp64 = (double *)malloc(hp->Nwing * sizeof(double));
 
-   LpFilter(Imp64, hp->Nwing, 0.5*Rolloff, Beta, Npc);
+   lrsLpFilter(Imp64, hp->Nwing, 0.5*Rolloff, Beta, Npc);
 
    hp->Imp = (float *)malloc(hp->Nwing * sizeof(float));
    hp->ImpD = (float *)malloc(hp->Nwing * sizeof(float));
@@ -269,12 +269,12 @@ int resample_process(void   *handle,
 
       /* Resample stuff in input buffer */
       if (factor >= 1) {      /* SrcUp() is faster if we can use it */
-         Nout = SrcUp(hp->X, hp->Y, factor, &hp->Time, Nx,
-                      Nwing, LpScl, Imp, ImpD, interpFilt);
+         Nout = lrsSrcUp(hp->X, hp->Y, factor, &hp->Time, Nx,
+                         Nwing, LpScl, Imp, ImpD, interpFilt);
       }
       else {
-         Nout = SrcUD(hp->X, hp->Y, factor, &hp->Time, Nx,
-                      Nwing, LpScl, Imp, ImpD, interpFilt);
+         Nout = lrsSrcUD(hp->X, hp->Y, factor, &hp->Time, Nx,
+                         Nwing, LpScl, Imp, ImpD, interpFilt);
       }
 
       #ifdef DEBUG

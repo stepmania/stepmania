@@ -31,6 +31,22 @@ I removed all of that code and replaced it with an API that
 lets you pass samples in small chunks.  It should be easy
 to link to resample-1.7 as a library.
 
+Changes in version 0.1.3:
+
+* Fixed two bugs that were causing subtle problems
+  on Intel x86 processors due to differences in roundoff errors.
+
+* Prefixed most function names with lrs and changed header file
+  from resample.h to libresample.h, to avoid namespace
+  collisions with existing programs and libraries.
+
+* Added resample_dup (thanks to Glenn Maynard)
+
+* Argument to resample_get_filter_width takes a const void *
+  (thanks to Glenn Maynard)
+
+* resample-sndfile clips output to -1...1 (thanks to Glenn Maynard)
+
 Usage notes:  
 
 - If the output buffer you pass is too small, resample_process

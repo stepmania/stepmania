@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageSoundReader_Resample_Good.h"
 
-#include "libresample/include/resample.h"
+#include "libresample/include/libresample.h"
 #ifdef _WINDOWS
 #pragma comment(lib, "libresample/resample.lib")
 #endif

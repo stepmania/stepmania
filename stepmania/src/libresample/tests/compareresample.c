@@ -11,7 +11,7 @@
 
 **********************************************************************/
 
-#include "../include/resample.h"
+#include "../include/libresample.h"
 
 #include <samplerate.h>
 
