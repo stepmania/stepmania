@@ -2134,29 +2134,29 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*3.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_4,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*2.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*3.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*2.5f },
+				{ TRACK_2,	-TECHNO_COL_SPACING*1.5f },
+				{ TRACK_3,	-TECHNO_COL_SPACING*0.5f },
+				{ TRACK_4,	+TECHNO_COL_SPACING*0.5f },
+				{ TRACK_5,	+TECHNO_COL_SPACING*1.5f },
+				{ TRACK_6,	+TECHNO_COL_SPACING*2.5f },
+				{ TRACK_7,	+TECHNO_COL_SPACING*3.5f },
+				{ TRACK_8,	+TECHNO_COL_SPACING*4.5f },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*3.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_4,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*2.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*3.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*4.5f },
+				{ TRACK_2,	-TECHNO_COL_SPACING*3.5f },
+				{ TRACK_3,	-TECHNO_COL_SPACING*2.5f },
+				{ TRACK_4,	-TECHNO_COL_SPACING*1.5f },
+				{ TRACK_5,	-TECHNO_COL_SPACING*0.5f },
+				{ TRACK_6,	+TECHNO_COL_SPACING*0.5f },
+				{ TRACK_7,	+TECHNO_COL_SPACING*1.5f },
+				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 1, 6, 4, Style::NO_MAPPING, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
-			{ 1, 6, 4, Style::NO_MAPPING, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7
@@ -2269,8 +2269,10 @@ Style g_Styles[] =
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
-			{ 1, 6, 4, Style::NO_MAPPING, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
-			{ 1, 6, 4, Style::NO_MAPPING, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+			{ 1, 6, 4, 3, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+//			{ 1, 6, 4, Style::NO_MAPPING, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
+//			{ 1, 6, 4, Style::NO_MAPPING, 2, 5, Style::NO_MAPPING, 0, 7, Style::END_MAPPING },
 		},
 		{	// m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 			0,1,2,3,4,5,6,7
