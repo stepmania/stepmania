@@ -1,4 +1,5 @@
 bin_PROGRAMS = stepmania
+AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0 -DLINUX
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
@@ -57,10 +58,7 @@ FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
 
 StepMania = global.h ScreenDimensions.h StdString.h StepMania.cpp StepMania.h
 
-Transitions = \
-Transition.cpp Transition.h TransitionFade.cpp TransitionFade.h \
-TransitionOniFade.cpp TransitionOniFade.h \
-TransitionBGAnimation.cpp TransitionBGAnimation.h
+Transitions = Transition.cpp Transition.h
 
 Actors = \
 Actor.cpp Actor.h ActorFrame.cpp ActorFrame.h BitmapText.cpp BitmapText.h Quad.h Sample3dObject.cpp Sample3dObject.h \
@@ -84,7 +82,7 @@ BGAnimationLayer.h Combo.cpp Combo.h GhostArrow.cpp GhostArrow.h \
 GhostArrowBright.cpp GhostArrowBright.h GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
 GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
 Judgment.cpp Judgment.h LifeMeter.cpp LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h LifeMeterBattery.cpp \
-LifeMeterBattery.h MotionBlurSprite.cpp MotionBlurSprite.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
+LifeMeterBattery.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
 ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
 ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h LyricDisplay.cpp LyricDisplay.h \
@@ -122,6 +120,16 @@ GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMap
 NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h SongManager.cpp SongManager.h \
 ThemeManager.cpp ThemeManager.h 
 
+Sound_ALSA9 = \
+	arch/Sound/RageSoundDriver_ALSA9.cpp \
+	arch/Sound/RageSoundDriver_ALSA9.h
+
+Sound_Null = \
+	arch/Sound/RageSoundDriver_Null.cpp \
+	arch/Sound/RageSoundDriver_Null.h
+
+Sound = $(Sound_Null) $(Sound_ALSA9)
+
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
 		    $(Actors) $(ActorsInMenus) $(ActorsInGameplay) $(Screens) $(GlobalSingletons) \
 		    arch/arch.cpp \
@@ -131,10 +139,10 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    arch/LoadingWindow/LoadingWindow_SDL.h \
 		    arch/LoadingWindow/LoadingWindow_Null.h \
 		    arch/MovieTexture/MovieTexture.cpp \
-		    arch/Sound/RageSoundDriver_Null.cpp \
+		    $(Sound) \
 		    arch/LowLevelWindow/LowLevelWindow.h \
 		    arch/LowLevelWindow/LowLevelWindow_SDL.cpp \
-		    arch/LowLevelWindow/LowLevelWindow_SDL.h \
+		    arch/LowLevelWindow/LowLevelWindow_SDL.h
 
 # Note that we still end up linking dynamically to the shared system library
 # for SDL_image.  This is annoying, but it's not a major problem.  The
@@ -146,6 +154,6 @@ stepmania_LDADD = \
 		  $(VPATH)/SDL_sound-1.0.0/.libs/libSDL_sound.a \
 		  $(SDL_LIBS)
 
-INCLUDES = $(SDL_CFLAGS) 
+INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
 
