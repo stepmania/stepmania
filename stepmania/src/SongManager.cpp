@@ -663,9 +663,12 @@ void SongManager::Cleanup()
 	}
 
 	// FIXME
-//	/* Erase cached course info. */
-//	for( unsigned i=0; i < m_pCourses.size(); i++ )
-//		m_pCourses[i]->ClearCache();
+	/* Why was this commented out?  If this isn't done, we'll have stale Steps* in
+	 * course caches, and we'll crash later. */
+	/* Erase cached course info. */
+	for( unsigned i=0; i < m_pCourses.size(); i++ )
+		m_pCourses[i]->RegenTrails();
+	StepsID::FlushCache();
 }
 
 void SongManager::RegenRandomTrailEntries()
