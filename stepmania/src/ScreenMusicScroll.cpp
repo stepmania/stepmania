@@ -44,7 +44,7 @@ ScreenMusicScroll::ScreenMusicScroll( CString sClassName ) : ScreenAttract( sCla
 
 //	for( i=0; i<min(NUM_CREDIT_LINES, MAX_CREDIT_LINES); i++ )
 //	{
-//		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathToF("ScreenMusicScroll titles") );
+//		m_textLines[m_iNumLines].LoadFromFont( THEME->GetPathF("ScreenMusicScroll, "titles") );
 //		m_textLines[m_iNumLines].SetText( CREDIT_LINES[i] );
 //		m_textLines[m_iNumLines].SetZoom( TEXT_ZOOM );
 //
