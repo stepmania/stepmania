@@ -263,15 +263,6 @@
 #define STDSTRING_H
 
 //#define SS_NOLOCALE	// prevents use/inclusion of <locale> header
-//#define SS_UNSIGNED	// add CString ctor/assign op. for usigned characters
-
-// MACRO: SS_NO_REFCOUNT:
-//		turns off reference counting at the assignment level.  Only needed
-//		for the version of basic_string<> that comes with Visual C++ versions
-//		6.0 or earlier, and only then in some heavily multithreaded scenarios.
-//		Uncomment it if you feel you need it.
-
-//#define SS_NO_REFCOUNT	
 
 // In non-Visual C++ and/or non-Win32 builds, we can't use some cool stuff.
 
@@ -687,14 +678,6 @@ inline PWSTR StdCodeCvt(PWSTR pDst, PCWSTR pSrc, int nChars)
 // non-standard, but often significantly faster Visual C++ way.
 // =============================================================================
 
-// If they defined SS_NO_REFCOUNT, then we must convert all assignments
-
-#ifdef SS_NO_REFCOUNT
-	#define SSREF(x) (x).c_str()
-#else
-	#define SSREF(x) (x)
-#endif
-
 // -----------------------------------------------------------------------------
 // sslen: strlen/wcslen wrappers
 // -----------------------------------------------------------------------------
@@ -746,7 +729,7 @@ inline void	ssasn(std::string& sDst, const std::string& sSrc)
 	if ( sDst.c_str() != sSrc.c_str() )
 	{
 		sDst.erase();
-		sDst.assign(SSREF(sSrc));
+		sDst.assign(sSrc);
 	}
 }
 inline void	ssasn(std::string& sDst, PCSTR pA)
@@ -800,7 +783,7 @@ inline void	ssasn(std::wstring& sDst, const std::wstring& sSrc)
 	if ( sDst.c_str() != sSrc.c_str() )
 	{
 		sDst.erase();
-		sDst.assign(SSREF(sSrc));
+		sDst.assign(sSrc);
 	}
 }
 inline void	ssasn(std::wstring& sDst, PCWSTR pW)
@@ -1294,18 +1277,18 @@ public:
 	{
 	}
 
-	CStdStr(const MYTYPE& str) : MYBASE(SSREF(str))
+	CStdStr(const MYTYPE& str) : MYBASE(str)
 	{
 	}
 
 	CStdStr(const std::string& str)
 	{
-		ssasn(*this, SSREF(str));
+		ssasn(*this, str);
 	}
 
 	CStdStr(const std::wstring& str)
 	{
-		ssasn(*this, SSREF(str));
+		ssasn(*this, str);
 	}
 
 	CStdStr(PCMYSTR pT, MYSIZE n) : MYBASE(pT, n)
@@ -1390,7 +1373,7 @@ public:
 	// Overloads  also needed to fix the MSVC assignment bug (KB: Q172398)
 	//  *** Thanks to Pete The Plumber for catching this one ***
 	// They also are compiled if you have explicitly turned off refcounting
-	#if ( defined(_MSC_VER) && ( _MSC_VER < 1200 ) ) || defined(SS_NO_REFCOUNT) 
+	#if ( defined(_MSC_VER) && ( _MSC_VER < 1200 ) )
 
 		MYTYPE& assign(const MYTYPE& str)
 		{
@@ -1612,15 +1595,6 @@ public:
 		return this->empty() ? const_cast<CT*>(this->data()) : &(this->at(0));
 	}
 
-	CT* SetBuf(int nLen)
-	{
-		nLen = ( nLen > 0 ? nLen : 0 );
-		if ( this->capacity() < 1 && nLen == 0 )
-			this->resize(1);
-
-		this->resize(static_cast<MYSIZE>(nLen));
-		return const_cast<CT*>(this->data());
-	}
 	void RelBuf(int nNewLen=-1)
 	{
 		this->resize(static_cast<MYSIZE>(nNewLen > -1 ? nNewLen : sslen(this->c_str())));
@@ -1655,14 +1629,6 @@ public:
 		va_list argList;
 		va_start(argList, szFmt);
 		FormatV(szFmt, argList);
-		va_end(argList);
-	}
-
-	void AppendFormat(const CT* szFmt, ...)
-	{
-		va_list argList;
-		va_start(argList, szFmt);
-		AppendFormatV(szFmt, argList);
 		va_end(argList);
 	}
 
@@ -1749,15 +1715,6 @@ public:
 	// The following methods are intended to allow you to use this class as a
 	// drop-in replacement for CString.
 	// -------------------------------------------------------------------------
-	#ifndef SS_ANSI
-		BSTR AllocSysString() const
-		{
-			ostring os;
-			ssasn(os, *this);
-			return ::SysAllocString(os.c_str());
-		}
-	#endif
-
 	int CompareNoCase(PCMYSTR szThat)	const
 	{
 		return ssicmp(this->c_str(), szThat);
@@ -1986,15 +1943,6 @@ public:
 		this->at(static_cast<MYSIZE>(nIndex))		= ch;
 	}
 
-	// I have intentionally not implemented the following CString
-	// functions.   You cannot make them work without taking advantage
-	// of implementation specific behavior.  However if you absolutely
-	// MUST have them, uncomment out these lines for "sort-of-like"
-	// their behavior.  You're on your own.
-
-//	CT*				LockBuffer()	{ return GetBuf(); }// won't really lock
-//	void			UnlockBuffer(); { }	// why have UnlockBuffer w/o LockBuffer?
-
 	// Array-indexing operators.  Required because we defined an implicit cast
 	// to operator const CT* (Thanks to Julian Selman for pointing this out)
 	CT& operator[](int nIdx)
@@ -2016,7 +1964,6 @@ public:
 	{
 		return MYBASE::operator[](static_cast<MYSIZE>(nIdx));
 	}
-
 #ifndef SS_NO_IMPLICIT_CASTS
 	operator const CT*() const
 	{
@@ -2034,7 +1981,7 @@ template<typename CT>
 inline
 CStdStr<CT> operator+(const  CStdStr<CT>& str1, const  CStdStr<CT>& str2)
 {
-	CStdStr<CT> strRet(SSREF(str1));
+	CStdStr<CT> strRet(str1);
 	strRet.append(str2);
 	return strRet;
 }
@@ -2046,7 +1993,7 @@ CStdStr<CT> operator+(const  CStdStr<CT>& str, CT t)
 	// this particular overload is needed for disabling reference counting
 	// though it's only an issue from line 1 to line 2
 
-	CStdStr<CT> strRet(SSREF(str));	// 1
+	CStdStr<CT> strRet(str);	// 1
 	strRet.append(1, t);				// 2
 	return strRet;
 }
@@ -2071,7 +2018,7 @@ template<typename CT>
 inline
 CStdStr<CT> operator+(const CStdStr<CT>& str, PCWSTR pW)
 { 
-	return CStdStr<CT>(SSREF(str)) + CStdStr<CT>(pW);
+	return CStdStr<CT>(str) + CStdStr<CT>(pW);
 }
 
 template<typename CT>
@@ -2099,7 +2046,7 @@ inline
 CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str1,
 						   const CStdStr<wchar_t>& str2)
 {
-	CStdStr<wchar_t> strRet(SSREF(str1));
+	CStdStr<wchar_t> strRet(str1);
 	strRet.append(str2);
 	return strRet;
 }
@@ -2110,7 +2057,7 @@ CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str, wchar_t t)
 	// this particular overload is needed for disabling reference counting
 	// though it's only an issue from line 1 to line 2
 
-	CStdStr<wchar_t> strRet(SSREF(str));	// 1
+	CStdStr<wchar_t> strRet(str);	// 1
 	strRet.append(1, t);					// 2
 	return strRet;
 }
@@ -2132,7 +2079,7 @@ CStdStr<wchar_t> operator+(PCWSTR pA, const  CStdStr<wchar_t>& str)
 inline
 CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str, PCSTR pW)
 { 
-	return CStdStr<wchar_t>(SSREF(str)) + CStdStr<wchar_t>(pW);
+	return CStdStr<wchar_t>(str) + CStdStr<wchar_t>(pW);
 }
 
 inline
@@ -2146,7 +2093,7 @@ CStdStr<wchar_t> operator+(PCSTR pW, const CStdStr<wchar_t>& str)
 inline
 CStdStr<char> operator+(const  CStdStr<char>& str1, const  CStdStr<char>& str2)
 {
-	CStdStr<char> strRet(SSREF(str1));
+	CStdStr<char> strRet(str1);
 	strRet.append(str2);
 	return strRet;
 }
@@ -2157,7 +2104,7 @@ CStdStr<char> operator+(const  CStdStr<char>& str, char t)
 	// this particular overload is needed for disabling reference counting
 	// though it's only an issue from line 1 to line 2
 
-	CStdStr<char> strRet(SSREF(str));	// 1
+	CStdStr<char> strRet(str);	// 1
 	strRet.append(1, t);				// 2
 	return strRet;
 }
@@ -2179,7 +2126,7 @@ CStdStr<char> operator+(PCSTR pA, const  CStdStr<char>& str)
 inline
 CStdStr<char> operator+(const CStdStr<char>& str, PCWSTR pW)
 { 
-	return CStdStr<char>(SSREF(str)) + CStdStr<char>(pW);
+	return CStdStr<char>(str) + CStdStr<char>(pW);
 }
 
 inline
