@@ -20,12 +20,10 @@ using namespace QT;
 
 const unsigned channels = 2;
 const unsigned samplesize = channels*16;
-const unsigned samples = 512;
+const unsigned samples = 2048;
 const unsigned freq = 44100;
 const unsigned buffersize = samples*samplesize/8;
 
-/* Oh boy! dealing with memory at inturupt time. What fun! */
-#pragma options align=power
 static volatile Uint32 fill_me = 0;
 static UInt8  *buffer[2];
 static CmpSoundHeader header;
@@ -49,13 +47,7 @@ RageSound_QT1::RageSound_QT1() {
     channel->userInfo = reinterpret_cast<long>(this);
     channel->qLength = 2;
 
-    soundOutput = OpenDefaultComponent(kSoundOutputDeviceType, NULL);
-    ASSERT(soundOutput != NULL);
-
-    TimeRecord      record;
-    SoundComponentGetInfo(soundOutput, NULL, siOutputLatency, &record);
-    latency = record.value.lo / record.scale;
-    latency += static_cast<float>(samples) / freq; /* double buffer */
+    latency = static_cast<float>(samples) / freq; /* double buffer */
     LOG->Trace("The output latency is %f", latency);
 
     OSErr err = SndNewChannel(&channel, sampledSynth, initStereo, callback);
@@ -92,8 +84,6 @@ RageSound_QT1::~RageSound_QT1() {
     SAFE_DELETE(channel);
     SAFE_DELETE_ARRAY(buffer[0]);
     SAFE_DELETE_ARRAY(buffer[1]);
-    if (soundOutput)
-        CloseComponent(soundOutput);
 }
 
 void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
@@ -119,6 +109,7 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
     } else
         P->last_pos += samples;
 
+    bool moreThanOneSound;
     /* Swap buffers */
     header.samplePtr = reinterpret_cast<Ptr>(buffer[play_me]);
     SndCommand cmd;
@@ -131,20 +122,23 @@ void RageSound_QT1::GetData(SndChannel *chan, SndCommand *cmd_passed) {
 
     /* Clear the fill buffer */
     memset(buffer[fill_me], 0, buffersize);
+    moreThanOneSound = P->sounds.size() > 1;
 
     for (unsigned i=0; i<P->sounds.size(); ++i) {
         if (P->sounds[i]->stopping)
             continue;
 
         unsigned got = P->sounds[i]->snd->GetPCM(reinterpret_cast<char *>(buffer[fill_me]), buffersize, P->last_pos);
-        mix.write(reinterpret_cast<SInt16 *>(buffer[fill_me]), got / 2);
+        if (moreThanOneSound)
+            mix.write(reinterpret_cast<SInt16 *>(buffer[fill_me]), got / 2);
         if (got < buffersize) {
             P->sounds[i]->stopping = true;
             P->sounds[i]->flush_pos = P->last_pos + (got * 8 / samplesize);
         }
     }
 
-    mix.read(reinterpret_cast<SInt16 *>(buffer[fill_me]));
+    if (moreThanOneSound)
+        mix.read(reinterpret_cast<SInt16 *>(buffer[fill_me]));
 
     cmd.cmd = callBackCmd;
     cmd.param2 = play_me;

@@ -34,7 +34,6 @@ private:
 
     vector<sound *> sounds;
     QT::ComponentInstance clock;
-    QT::ComponentInstance soundOutput;
     QT::SndChannelPtr channel;
     int last_pos;
     float latency;
