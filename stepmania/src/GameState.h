@@ -201,7 +201,7 @@ public:
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
 	
 
-	vector<StageStats>	m_vPassedStageStats;	// Only useful in Arcade for final evaluation
+	vector<StageStats>	m_vPlayedStageStats;	// Only useful in Arcade for final evaluation
 												// A song is only inserted here if at least one player passed.
 												// StageStats are added by the Evaluation screen
 

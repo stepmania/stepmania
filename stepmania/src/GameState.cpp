@@ -92,7 +92,7 @@ void GameState::Reset()
 	ResetStageStatistics();
 	SONGMAN->UpdateBest();
 
-	m_vPassedStageStats.clear();
+	m_vPlayedStageStats.clear();
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{	
@@ -447,9 +447,9 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 
 	// Show stats only for the latest 3 normal songs + passed extra stages
 	int PassedRegularSongsLeft = 3;
-	for( int i = (int)GAMESTATE->m_vPassedStageStats.size()-1; i >= 0; --i )
+	for( int i = (int)GAMESTATE->m_vPlayedStageStats.size()-1; i >= 0; --i )
 	{
-		const StageStats &s = GAMESTATE->m_vPassedStageStats[i];
+		const StageStats &s = GAMESTATE->m_vPlayedStageStats[i];
 
 		if( !s.OnePassed() )
 			continue;
