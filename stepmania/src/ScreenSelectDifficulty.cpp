@@ -168,9 +168,8 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 	
 	m_soundChange.Load( THEME->GetPathTo("Sounds", "select difficulty change") );
 	m_soundSelect.Load( THEME->GetPathTo("Sounds", "menu start") );
+	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
-	m_bPlayedChallengeSound = false;
-	
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty intro") );
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
@@ -346,10 +345,10 @@ void ScreenSelectDifficulty::ChangeTo( PlayerNumber pn, int iSelectionWas, int i
 	}
 
 
-	if( !m_bPlayedChallengeSound  &&  bChangedPagesFrom1To2 )
+	if( bChangedPagesFrom1To2 )
 	{
-		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select difficulty challenge") );
-		m_bPlayedChallengeSound = true;
+		m_soundDifficult.Stop();
+		m_soundDifficult.PlayRandom();
 	}
 
 	if( bChangedPagesFrom1To2 || bChangedPagesFrom2To1 )

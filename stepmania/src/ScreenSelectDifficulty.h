@@ -15,6 +15,7 @@
 #include "Screen.h"
 #include "Quad.h"
 #include "MenuElements.h"
+#include "RandomSample.h"
 
 
 const int NUM_ITEMS_ON_PAGE_1 = 3;	// easy, medium, hard, 
@@ -62,8 +63,7 @@ private:
 
 	RageSoundSample m_soundChange;
 	RageSoundSample m_soundSelect;
-
-	bool m_bPlayedChallengeSound;
+	RandomSample m_soundDifficult;
 
 	int m_iSelection[NUM_PLAYERS];
 	bool m_bChosen[NUM_PLAYERS];
