@@ -863,7 +863,7 @@ static void ApplyLogPreferences()
  * --foo; short arguments (-x) are not supported.  (As commandline arguments
  * are not intended for common, general use, having short options isn't
  * needed.)  If argument is non-NULL, accept an argument. */
-bool GetCommandlineArgument( const CString &option, CString *argument )
+bool GetCommandlineArgument( const CString &option, CString *argument, int iIndex )
 {
 	const CString optstr = "--" + option;
 	
@@ -877,6 +877,12 @@ bool GetCommandlineArgument( const CString &option, CString *argument )
 			continue; /* no match */
 
 		/* Found it. */
+		if( iIndex )
+		{
+			--iIndex;
+			continue;
+		}
+
 		if( argument )
 		{
 			if( i != CString::npos )
