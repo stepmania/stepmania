@@ -18,6 +18,8 @@
 #include "Steps.h"
 #include "ThemeMetric.h"
 
+const int NUM_EDIT_BUTTON_COLUMNS = 10;
+
 enum EditButton
 {
 	EDIT_BUTTON_COLUMN_0,
@@ -153,6 +155,8 @@ protected:
 	void OnSnapModeChange();
 	void MenuItemGainFocus( BitmapText* menuitem );
 	void MenuItemLoseFocus( BitmapText* menuitem );
+
+	float GetMaximumBeat() const;	// don't allow Down key to go past this beat.
 
 
 	EditMode m_EditMode;

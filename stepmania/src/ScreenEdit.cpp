@@ -32,6 +32,7 @@
 #include "CommonMetrics.h"
 #include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
 #include "ScreenSongOptions.h"	// for SM_BackFromSongOptions
+#include <float.h>
 
 //
 // Defines specific to ScreenEdit
@@ -951,13 +952,15 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				break;
 			}
 
-			const float fStartBeat = GAMESTATE->m_fSongBeat;
-			float fEndBeat = max( GAMESTATE->m_fSongBeat + fBeatsToMove, 0 );
-			fEndBeat = Quantize( fEndBeat , NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
-			GAMESTATE->m_fSongBeat = fEndBeat;
+			const float fOriginalBeat = GAMESTATE->m_fSongBeat;
+			float fDestinationBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
+			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+			CLAMP( fDestinationBeat, 0, GetMaximumBeat() );
+
+			GAMESTATE->m_fSongBeat = fDestinationBeat;
 
 			// check to see if they're holding a button
-			for( int n=0; n<=9; n++ )	// for each number key
+			for( int n=0; n<NUM_EDIT_BUTTON_COLUMNS; n++ )
 			{
 				int iCol = n;
 
@@ -973,16 +976,16 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					continue;
 
 				// create a new hold note
-				int iStartRow = BeatToNoteRow( min(fStartBeat, fEndBeat) );
-				int iEndRow = BeatToNoteRow( max(fStartBeat, fEndBeat) );
+				int iOriginalRow = BeatToNoteRow( min(fOriginalBeat, fDestinationBeat) );
+				int iDestinationRow = BeatToNoteRow( max(fOriginalBeat, fDestinationBeat) );
 
-				iStartRow = max( iStartRow, 0 );
-				iEndRow = max( iEndRow, 0 );
+				iOriginalRow = max( iOriginalRow, 0 );
+				iDestinationRow = max( iDestinationRow, 0 );
 
 				// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
 				// that the user made.  Dragging the hold bigger can only absorb and remove
 				// other taps, so dragging won't cause us to exceed the note limit.
-				m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
+				m_NoteDataEdit.AddHoldNote( iCol, iOriginalRow, iDestinationRow, TAP_ORIGINAL_HOLD_HEAD );
 			}
 
 			if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
@@ -991,11 +994,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				 *
 				 * If this is the first time we've moved since shift was depressed,
 				 * the old position (before this move) becomes the start pos: */
-				int iEndBeat = BeatToNoteRow( fEndBeat );
+				int iDestinationRow = BeatToNoteRow( fDestinationBeat );
 				if( g_iShiftAnchor == -1 )
-					g_iShiftAnchor = BeatToNoteRow(fStartBeat);
+					g_iShiftAnchor = BeatToNoteRow(fOriginalBeat);
 				
-				if( iEndBeat == g_iShiftAnchor )
+				if( iDestinationRow == g_iShiftAnchor )
 				{
 					/* We're back at the anchor, so we have nothing selected. */
 					m_NoteFieldEdit.m_iBeginMarker = m_NoteFieldEdit.m_iEndMarker = -1;
@@ -1003,7 +1006,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				else
 				{
 					m_NoteFieldEdit.m_iBeginMarker = g_iShiftAnchor;
-					m_NoteFieldEdit.m_iEndMarker = iEndBeat;
+					m_NoteFieldEdit.m_iEndMarker = iDestinationRow;
 					if( m_NoteFieldEdit.m_iBeginMarker > m_NoteFieldEdit.m_iEndMarker )
 						swap( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 				}
@@ -2573,6 +2576,29 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 			SCREENMAN->Prompt( SM_None, sError );
 			return;
 		}
+	}
+}
+
+float ScreenEdit::GetMaximumBeat() const
+{
+	if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
+	{
+		// Jump to GetLastBeat even if it's past m_pCurSong->m_fLastBeat
+		// so that users can delete garbage steps past then end that they have 
+		// have inserted in a text editor.  Once they delete all steps on 
+		// GetLastBeat() and move off of that beat, they won't be able to return.
+		float fEndBeat = max( m_NoteDataEdit.GetLastBeat(), GAMESTATE->m_pCurSong->m_fLastBeat );
+
+		// Round up to the next measure end.  Some songs end on weird beats 
+		// mid-measure, and it's odd to have movement capped to these weird
+		// beats.
+		fEndBeat += BEATS_PER_MEASURE;
+		fEndBeat = ftruncf( fEndBeat, (float)BEATS_PER_MEASURE );
+		return fEndBeat;
+	}
+	else
+	{
+		return FLT_MAX;
 	}
 }
 
