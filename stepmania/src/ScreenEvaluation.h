@@ -16,7 +16,6 @@
 #include "GraphDisplay.h"
 #include "ComboGraph.h"
 #include "ActorUtil.h"
-#include "ConditionalBGA.h"
 #include "HighScore.h"
 #include "RageSound.h"
 
@@ -62,8 +61,6 @@ protected:
 	Type				m_Type;
 
 	float m_fScreenCreateTime;
-
-	ConditionalBGA m_bgCondBga;
 
 	// banner area
 	Banner				m_LargeBanner;

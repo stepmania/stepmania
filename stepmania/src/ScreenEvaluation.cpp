@@ -300,8 +300,6 @@ void ScreenEvaluation::Init()
 		m_sndPassFail.Load( THEME->GetPathS(m_sName, "passed") );
 	m_sndPassFail.Play();
 
-	m_bgCondBga.Load(m_sName);
-
 	//
 	// load other sounds
 	//
@@ -1270,7 +1268,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 {
 	ScreenWithMenuElements::Update( fDeltaTime );
 
-	m_bgCondBga.Update(fDeltaTime);
 	if( !m_bPassFailTriggered )
 	{
 		float fTime = m_bFailed? FAILED_SOUND_TIME:PASSED_SOUND_TIME;
@@ -1321,8 +1318,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 
 void ScreenEvaluation::DrawPrimitives()
 {
-	m_bgCondBga.DrawPrimitives();
-
 	Screen::DrawPrimitives();
 }
 
