@@ -29,9 +29,14 @@ wchar_t VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput 
 	*nextChar = false;
 	MenuButton button = MenuI.button;
 
-	if(button == MENU_BUTTON_LEFT)
-		return KEY_BACK;
-	else if(button == MENU_BUTTON_RIGHT)
+	switch( button )
+	{
+	case MENU_BUTTON_LEFT: return KEY_BACK;
+	case MENU_BUTTON_START: return KEY_ENTER;
+	case MENU_BUTTON_BACK: return KEY_ESC;
+	}
+
+	if(button == MENU_BUTTON_RIGHT)
 	{
 		*nextChar = true;
 		if(currentMode == VKMODE_PROFILE)
@@ -113,10 +118,6 @@ wchar_t VirtualKeyboard::Translate( const DeviceInput& DeviceI, const MenuInput 
 			return c;
 		}
 	}
-	else if(button == MENU_BUTTON_START)
-		return KEY_ENTER;
-	else if(button == MENU_BUTTON_BACK)
-		return KEY_ESC;
 	else
 	{
 		// platform specific handlers here
