@@ -968,9 +968,12 @@ void NoteDataUtil::InsertIntelligentTaps(
 	/* Start on a multiple of fBeatInterval. */
 	iStartIndex = Quantize( iStartIndex, iWindowStrideRows );
 
-	// Insert a beat in the middle of every fBeatInterval.
-	for( int i=iStartIndex; i<iEndIndex; i+=iWindowStrideRows ) 
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, i, iStartIndex, iEndIndex )
 	{
+		// Insert a beat in the middle of every fBeatInterval.
+		if( i % iWindowStrideRows != 0 )
+			continue;	// even beats only
+
 		int iRowEarlier = i;
 		int iRowLater = i + iWindowSizeRows;
 		int iRowToAdd = i + iInsertOffsetRows;
