@@ -20,7 +20,6 @@ public:
 	void Halt( bool Kill );
 	void Resume();
 	uint64_t GetThreadId() const;
-	uint64_t GetCrashHandle() const;
 	int Wait();
 };
 

@@ -40,11 +40,6 @@ uint64_t ThreadImpl_Win32::GetThreadId() const
 	return (uint64_t) ThreadId;
 }
 
-uint64_t ThreadImpl_Win32::GetCrashHandle() const
-{
-	return (uint64_t) ThreadHandle;
-}
-
 int ThreadImpl_Win32::Wait()
 {
 	WaitForSingleObject( ThreadHandle, INFINITE );

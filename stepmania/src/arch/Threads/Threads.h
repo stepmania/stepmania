@@ -17,8 +17,6 @@ public:
 	 * one thread.  (This means that Win32 thread handles are not acceptable as ThreadIds.) */
 	virtual uint64_t GetThreadId() const = 0;
 
-	virtual uint64_t GetCrashHandle() const { return 0; }
-
 	virtual int Wait() = 0;
 };
 
