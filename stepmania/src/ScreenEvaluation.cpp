@@ -862,7 +862,8 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 		case stage:
 			{
 				// don't save scores for a failed song
-				if( m_bFailed ) continue;
+				if( stageStats.bFailed[p] )
+					continue;
 
 				ASSERT( GAMESTATE->m_pCurNotes[p] );
 
@@ -877,10 +878,9 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 
 		case summary:
 			{
-				// don't save scores for a failed game
-				// (I'm not sure if this is a case that can actally
-				// happen -avh4)
-				if( m_bFailed ) continue;
+				// don't save scores if any stage was failed
+				if( stageStats.bFailed[p] ) 
+					continue;
 
 				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
@@ -900,10 +900,10 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 				Course* pCourse = GAMESTATE->m_pCurCourse;
 				if( pCourse )
 				{
-					// don't save scores for a failed Nonstop (is this
-					// correct? -avh4)
+					// don't save scores for a failed Nonstop
 					// DO save scores for a failed Oni/Endless
-					if( m_bFailed && pCourse->IsNonstop() ) continue;
+					if( stageStats.bFailed[p] && pCourse->IsNonstop() )
+						continue;
 
 					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 					Course::MemCardData::HighScore hs;
