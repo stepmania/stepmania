@@ -1,4 +1,5 @@
-#pragma once
+#ifndef RAGE_TEXTURE_H
+#define RAGE_TEXTURE_H
 /*
 -----------------------------------------------------------------------------
  Class: RageTexture
@@ -98,4 +99,4 @@ protected:
 	CArray<RectF,RectF>	m_TextureCoordRects;	// size = m_iFramesWide * m_iFramesHigh
 };
 
-
+#endif

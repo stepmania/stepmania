@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RAGE_TEXTURE_MANAGER_H
+#define RAGE_TEXTURE_MANAGER_H
+
 /*
 -----------------------------------------------------------------------------
  Class: RageTextureManager
@@ -43,3 +45,5 @@ protected:
 };
 
 extern RageTextureManager*	TEXTUREMAN;	// global and accessable from anywhere in our program
+
+#endif

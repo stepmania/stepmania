@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAME_CONSTANTS_AND_TYPES_H
+#define GAME_CONSTANTS_AND_TYPES_H
+
 /*
 -----------------------------------------------------------------------------
  File: GameConstantsAndTypes.h
@@ -162,3 +164,5 @@ inline int HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	default:	ASSERT(0);	return 0;
 	}
 }
+
+#endif
