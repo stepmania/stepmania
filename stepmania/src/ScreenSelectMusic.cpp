@@ -1078,6 +1078,29 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	}
 }
 
+template<class T>
+int FindCourseIndexOfSameMode( T begin, T end, const Course *p )
+{
+	const PlayMode pm = p->GetPlayMode();
+	
+	int n = 0;
+	for( T it = begin; it != end; ++it )
+	{
+		if( *it == p )
+			return n;
+
+		/* If it's not playable in this mode, don't increment.  It might result in 
+		 * different output in different modes, but that's better than having holes. */
+		if( !(*it)->IsPlayableIn( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
+			continue;
+		if( (*it)->GetPlayMode() != pm )
+			continue;
+		++n;
+	}
+
+	return -1;
+}
+
 void ScreenSelectMusic::AfterMusicChange()
 {
 	if( !m_MusicWheel.IsRouletting() )
@@ -1266,7 +1289,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		}
 
 		const vector<Course*> best = SONGMAN->GetBestCourses( MEMORY_CARD_MACHINE );
-		const int index = FindIndex( best.begin(), best.end(), pCourse );
+		const int index = FindCourseIndexOfSameMode( best.begin(), best.end(), pCourse );
 		if( index != -1 )
 			m_MachineRank.SetText( ssprintf("%i", index+1) );
 
