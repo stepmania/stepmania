@@ -5,10 +5,12 @@
 
 #ifdef OS_RNG_AVAILABLE
 
-#include "filters.h"
+//removed
+//#include "randpool.h"
 
 //added
 #include "cryptlib.h"
+#include "filters.h"
 
 NAMESPACE_BEGIN(CryptoPP)
 
