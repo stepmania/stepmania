@@ -13,7 +13,6 @@
 
 #include "ScoreDisplay.h"
 #include "GameConstantsAndTypes.h"
-#include "MeterDisplay.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
