@@ -791,7 +791,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 		// calculate radar values
 		//
 		NoteData tempNoteData;
-		pSteps->GetNoteData( &tempNoteData );
+		pSteps->GetNoteData( tempNoteData );
 
 		RadarValues v;
 		NoteDataUtil::GetRadarValues( tempNoteData, m_fMusicLengthSeconds, v );

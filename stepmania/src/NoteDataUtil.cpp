@@ -141,7 +141,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 						if( 1 == sscanf( p, "%u]", &uKeysoundIndex ) )	// not fatal if this fails due to malformed data
 						{
 							tn.bKeysound = true;
-							tn.keysoundIndex = (uint16_t)uKeysoundIndex;
+		 					tn.keysoundIndex = (uint16_t)uKeysoundIndex;
 						}
 
 						// skip past the ']'
@@ -1723,10 +1723,10 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, fl
 	const int iScaledFirstRowAfterRegion = (int)((fStartBeat + (fEndBeat - fStartBeat) * fScale) * ROWS_PER_BEAT);
 
 	if( fStartBeat != 0 )
-		temp1.CopyRange( &nd, 0, BeatToNoteRowNotRounded(fStartBeat) );
+		temp1.CopyRange( nd, 0, BeatToNoteRowNotRounded(fStartBeat) );
 	if( nd.GetLastRow() > iFirstRowAtEndOfRegion )
-		temp1.CopyRange( &nd, iFirstRowAtEndOfRegion, nd.GetLastRow(), iScaledFirstRowAfterRegion);
-	temp2.CopyRange( &nd, BeatToNoteRowNotRounded(fStartBeat), iFirstRowAtEndOfRegion );
+		temp1.CopyRange( nd, iFirstRowAtEndOfRegion, nd.GetLastRow(), iScaledFirstRowAfterRegion);
+	temp2.CopyRange( nd, BeatToNoteRowNotRounded(fStartBeat), iFirstRowAtEndOfRegion );
 	nd.ClearAll();
 
 	for( int r=0; r<=temp2.GetLastRow(); r++ )
@@ -1744,7 +1744,7 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, fl
 		}
 	}
 
-	nd.CopyAll( &temp1 );
+	nd.CopyAll( temp1 );
 }
 
 void NoteDataUtil::ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShift )
@@ -1762,9 +1762,9 @@ void NoteDataUtil::ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShif
 	else	// delete rows
 		iTakeFromRow += BeatToNoteRow( -fBeatsToShift );
 
-	temp.CopyRange( &nd, iTakeFromRow, nd.GetLastRow() );
+	temp.CopyRange( nd, iTakeFromRow, nd.GetLastRow() );
 	nd.ClearRange( min(iTakeFromRow,iPasteAtRow), nd.GetLastRow()  );
-	nd.CopyRange( &temp, 0, temp.GetLastRow(), iPasteAtRow );		
+	nd.CopyRange( temp, 0, temp.GetLastRow(), iPasteAtRow );		
 }
 
 /*

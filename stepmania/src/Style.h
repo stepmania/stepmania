@@ -59,7 +59,7 @@ public:
 
 	PlayerNumber ControllerToPlayerNumber( GameController controller ) const;
 
-	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* pOriginal, NoteData* pNoteDataOut ) const;
+	void GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const;
 
 	bool MatchesStepsType( StepsType type ) const;
 

@@ -22,7 +22,7 @@
 #include "NoteData.h"
 
 
-void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* pOriginal, NoteData* pNoteDataOut ) const
+void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const
 {
 	int iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
 	for( int col=0; col<m_iColsPerPlayer; col++ )
@@ -33,7 +33,7 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData* pOr
 		iNewToOriginalTrack[col] = originalTrack;
 	}
 	
-	pNoteDataOut->LoadTransformed( pOriginal, m_iColsPerPlayer, iNewToOriginalTrack );
+	noteDataOut.LoadTransformed( original, m_iColsPerPlayer, iNewToOriginalTrack );
 }
 
 

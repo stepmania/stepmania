@@ -35,7 +35,7 @@ public:
 
 	/* Set up to hold the data in From; same number of tracks, same
 	 * divisor.  Doesn't allocate or copy anything. */
-	void Config( const NoteData &From );
+	void Config( const NoteData& from );
 
 	NoteData();
 	~NoteData();
@@ -79,8 +79,8 @@ public:
 	
 	void ClearRange( int iNoteIndexBegin, int iNoteIndexEnd );
 	void ClearAll();
-	void CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = 0 );
-	void CopyAll( const NoteData* pFrom );
+	void CopyRange( const NoteData& from, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin = 0 );
+	void CopyAll( const NoteData& from );
 
 	bool IsRowEmpty( int index ) const;
 	bool IsRangeEmpty( int track, int iIndexBegin, int iIndexEnd ) const;
@@ -138,18 +138,18 @@ public:
 	int RowNeedsHands( int row ) const;
 
 	// Transformations
-	void LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
+	void LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
 
 	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
 	void Convert2sAnd3sToHoldNotes();
 	void ConvertHoldNotesTo2sAnd3s();
-	void To2sAnd3s( const NoteData &out );
-	void From2sAnd3s( const NoteData &out );
+	void To2sAnd3s( const NoteData& from );
+	void From2sAnd3s( const NoteData& from );
 
 	void Convert4sToHoldNotes();
 	void ConvertHoldNotesTo4s();
-	void To4s( const NoteData &out );
-	void From4s( const NoteData &out );
+	void To4s( const NoteData& from );
+	void From4s( const NoteData& from );
 
 	void EliminateAllButOneTap( int row ); 
 };

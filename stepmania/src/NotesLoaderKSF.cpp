@@ -210,7 +210,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 //	if( song.m_Timing.m_BPMSegments.size() > 1 )
 //		RemoveHoles( notedata, song );
 
-	out.SetNoteData(&notedata);
+	out.SetNoteData( notedata );
 
 	out.TidyUpData();
 

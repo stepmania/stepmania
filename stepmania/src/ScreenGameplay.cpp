@@ -810,13 +810,13 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	 * once in Player::Load, then again in Player::ApplyActiveAttacks.  This 
 	 * is very bad for transforms like AddMines.
 	 */
-	NoteData pOriginalNoteData;
-	GAMESTATE->m_pCurSteps[p]->GetNoteData( &pOriginalNoteData );
+	NoteData originalNoteData;
+	GAMESTATE->m_pCurSteps[p]->GetNoteData( originalNoteData );
 	
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	NoteData pNewNoteData;
-	pStyle->GetTransformedNoteDataForStyle( p, &pOriginalNoteData, &pNewNoteData );
-	m_Player[p].Load( p, &pNewNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
+	NoteData newNoteData;
+	pStyle->GetTransformedNoteDataForStyle( p, originalNoteData, newNoteData );
+	m_Player[p].Load( p, newNoteData, m_pLifeMeter[p], m_pCombinedLifeMeter, m_pPrimaryScoreDisplay[p], m_pSecondaryScoreDisplay[p], m_pInventory[p], m_pPrimaryScoreKeeper[p], m_pSecondaryScoreKeeper[p] );
 
 
 	// Put course options into effect.  Do this after Player::Load so
@@ -939,9 +939,9 @@ void ScreenGameplay::LoadNextSong()
 
 		/* The actual note data for scoring is the base class of Player.  This includes
 		 * transforms, like Wide.  Otherwise, the scoring will operate on the wrong data. */
-		m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
+		m_pPrimaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p].m_NoteData );
 		if( m_pSecondaryScoreKeeper[p] )
-			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p] );
+			m_pSecondaryScoreKeeper[p]->OnNextSong( GAMESTATE->GetCourseSongIndex(), GAMESTATE->m_pCurSteps[p], &m_Player[p].m_NoteData );
 
 		if( m_bDemonstration )
 		{
@@ -1027,7 +1027,7 @@ void ScreenGameplay::LoadNextSong()
 		FOREACH_HumanPlayer( p )
 		{
 			if( GAMESTATE->m_pCurSteps[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
-				m_BeginnerHelper.AddPlayer( p, &m_Player[p] );
+				m_BeginnerHelper.AddPlayer( p, &m_Player[p].m_NoteData );
 		}
 	}
 
@@ -1068,8 +1068,8 @@ void ScreenGameplay::LoadNextSong()
 	// (Re)Calculate the song position meter
 	m_fSongPosMeterOffset = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
                         GAMESTATE->m_pCurSong->m_fFirstBeat );
-	m_fSongPosMeterEnd = GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
-                        GAMESTATE->m_pCurSong->m_fLastBeat );
+	m_fSongPosMeterEnd = ( GAMESTATE->m_pCurSong->m_Timing.GetElapsedTimeFromBeat(
+                        GAMESTATE->m_pCurSong->m_fLastBeat ) - m_fSongPosMeterOffset );
 
 	//
 	// Load cabinet lights data
@@ -1081,7 +1081,7 @@ void ScreenGameplay::LoadNextSong()
 		Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
 		if( pSteps != NULL )
 		{
-			pSteps->GetNoteData( &m_CabinetLightsNoteData );
+			pSteps->GetNoteData( m_CabinetLightsNoteData );
 		}
 		else
 		{
@@ -1089,7 +1089,7 @@ void ScreenGameplay::LoadNextSong()
 			if( pSteps )
 			{
 				NoteData TapNoteData;
-				pSteps->GetNoteData( &TapNoteData );
+				pSteps->GetNoteData( TapNoteData );
 				NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
 			}
 		}
@@ -1155,7 +1155,7 @@ void ScreenGameplay::PlayTicks()
 
 	int iTickRow = -1;
 	for( int r=iRowLastCrossed+1; r<=iSongRow; r++ )  // for each index we crossed since the last update
-		if( m_Player[GAMESTATE->m_MasterPlayerNumber].IsThereATapOrHoldHeadAtRow( r ) )
+		if( m_Player[GAMESTATE->m_MasterPlayerNumber].m_NoteData.IsThereATapOrHoldHeadAtRow( r ) )
 			iTickRow = r;
 
 	iRowLastCrossed = iSongRow;
@@ -1351,7 +1351,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 						// kill them!
 						SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
 						ShowOniGameOver(pn);
-						m_Player[pn].Init();		// remove all notes and scoring
+						m_Player[pn].m_NoteData.Init();		// remove all notes and scoring
 						m_Player[pn].FadeToFail();	// tell the NoteField to fade to white
 					}
 				}
@@ -1432,7 +1432,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				{
 					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
                     ShowOniGameOver( p );
-                    m_Player[p].Init();		// remove all notes and scoring
+                    m_Player[p].m_NoteData.Init();		// remove all notes and scoring
                     m_Player[p].FadeToFail();	// tell the NoteField to fade to white
 				}
 			}
@@ -1522,9 +1522,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			}
 			FOREACH_EnabledPlayer( pn )
 			{
-				for( int t=0; t<m_Player[pn].GetNumTracks(); t++ )
+				for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
 				{
-					TapNote tn = m_Player[pn].GetTapNote(t,r);
+					TapNote tn = m_Player[pn].m_NoteData.GetTapNote(t,r);
 					bool bBlink = (tn.type != TapNote::empty && tn.type != TapNote::mine);
 					if( bBlink )
 					{
@@ -1548,9 +1548,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		FOREACH_EnabledPlayer( pn )
 		{
 			// check if a hold should be active
-			for( int i=0; i < m_Player[pn].GetNumHoldNotes(); i++ )		// for each HoldNote
+			for( int i=0; i < m_Player[pn].m_NoteData.GetNumHoldNotes(); i++ )		// for each HoldNote
 			{
-				const HoldNote &hn = m_Player[pn].GetHoldNote(i);
+				const HoldNote &hn = m_Player[pn].m_NoteData.GetHoldNote(i);
 				if( hn.iStartRow <= iSongRow && iSongRow <= hn.iEndRow )
 				{
 					StyleInput si( pn, hn.iTrack );
@@ -1970,10 +1970,10 @@ void ScreenGameplay::SongFinished()
 		 * not for the percentages (RADAR_AIR). */
 		RadarValues v;
 		
-		NoteDataUtil::GetRadarValues( m_Player[p], GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
+		NoteDataUtil::GetRadarValues( m_Player[p].m_NoteData, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
 		g_CurStageStats.radarPossible[p] += v;
 
-		m_Player[p].GetActualRadarValues( p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
+		m_Player[p].m_NoteData.GetActualRadarValues( p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );
 		g_CurStageStats.radarActual[p] += v;
 	}
 

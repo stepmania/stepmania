@@ -30,14 +30,14 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 		Steps* pSteps = apSteps[i];
 		const AttackArray &aa = asModifiers[i];
 		NoteData ndTemp;
-		pSteps->GetNoteData( &ndTemp );
+		pSteps->GetNoteData( ndTemp );
 
 		/* We might have been given lots of songs; don't keep them in memory uncompressed. */
 		pSteps->Compress();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		NoteData nd;
-		pStyle->GetTransformedNoteDataForStyle( pn_, &ndTemp, &nd );
+		pStyle->GetTransformedNoteDataForStyle( pn_, ndTemp, nd );
 
 		/* Compute RadarValues before applying any user-selected mods.  Apply
 		 * Course mods and count them in the "pre" RadarValues because they're

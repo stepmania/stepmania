@@ -120,7 +120,10 @@ RageSound &RageSound::operator=( const RageSound &cpy )
 
 	databuf.reserve(internal_buffer_size);
 	delete Sample;
-	Sample = cpy.Sample->Copy();
+	if( cpy.Sample )
+		Sample = cpy.Sample->Copy();
+	else
+		Sample = NULL;
 
 	m_sFilePath = cpy.m_sFilePath;
 

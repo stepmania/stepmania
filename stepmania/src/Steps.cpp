@@ -52,14 +52,14 @@ Steps::~Steps()
 	delete notes_comp;
 }
 
-void Steps::SetNoteData( const NoteData* pNewNoteData )
+void Steps::SetNoteData( const NoteData& noteDataNew )
 {
-	ASSERT( pNewNoteData->GetNumTracks() == GameManager::StepsTypeToNumTracks(m_StepsType) );
+	ASSERT( noteDataNew.GetNumTracks() == GameManager::StepsTypeToNumTracks(m_StepsType) );
 
 	DeAutogen();
 
 	delete notes;
-	notes = new NoteData(*pNewNoteData);
+	notes = new NoteData( noteDataNew );
 	
 	delete notes_comp;
 	notes_comp = new CompressedNoteData;
@@ -67,19 +67,18 @@ void Steps::SetNoteData( const NoteData* pNewNoteData )
 	m_uHash = GetHashForString( notes_comp->notes );
 }
 
-void Steps::GetNoteData( NoteData* pNoteDataOut ) const
+void Steps::GetNoteData( NoteData& noteDataOut ) const
 {
 	ASSERT(this);
-	ASSERT(pNoteDataOut);
 
 	Decompress();
 
 	if( notes != NULL )
-		*pNoteDataOut = *notes;
+		noteDataOut = *notes;
 	else
 	{
-		pNoteDataOut->ClearAll();
-		pNoteDataOut->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
+		noteDataOut.ClearAll();
+		noteDataOut.SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
 	}
 }
 
@@ -170,8 +169,8 @@ void Steps::Decompress() const
 	if(parent)
 	{
 		// get autogen notes
-		NoteData pdata;
-		parent->GetNoteData(&pdata);
+		NoteData notedata;
+		parent->GetNoteData( notedata );
 
 		notes = new NoteData;
 
@@ -179,9 +178,9 @@ void Steps::Decompress() const
 
 		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 		{
-			NoteDataUtil::LoadTransformedLights( pdata, *notes, iNewTracks );
+			NoteDataUtil::LoadTransformedLights( notedata, *notes, iNewTracks );
 		} else {
-			NoteDataUtil::LoadTransformedSlidingWindow( pdata, *notes, iNewTracks );
+			NoteDataUtil::LoadTransformedSlidingWindow( notedata, *notes, iNewTracks );
 
 			NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
 		}
@@ -280,9 +279,9 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have 
 {
 	m_StepsType = ntTo;
 	NoteData noteData;
-	pSource->GetNoteData( &noteData );
+	pSource->GetNoteData( noteData );
 	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) ); 
-	this->SetNoteData( &noteData );
+	this->SetNoteData( noteData );
 	this->SetDescription( "Copied from "+pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
 	this->SetMeter( pSource->GetMeter() );
@@ -294,7 +293,7 @@ void Steps::CreateBlank( StepsType ntTo )
 	m_StepsType = ntTo;
 	NoteData noteData;
 	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) );
-	this->SetNoteData( &noteData );
+	this->SetNoteData( noteData );
 }
 
 

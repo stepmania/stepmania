@@ -47,8 +47,8 @@ public:
 	
 	StepsType	m_StepsType;
 
-	void		GetNoteData( NoteData* pNoteDataOut ) const;
-	void		SetNoteData( const NoteData* pNewNoteData );
+	void		GetNoteData( NoteData& noteDataOut ) const;
+	void		SetNoteData( const NoteData& noteDataNew );
 	void		SetSMNoteData( const CString &notes_comp, const CString &attacks_comp );
 	void		GetSMNoteData( CString &notes_comp_out, CString &attacks_comp_out ) const;
 

@@ -88,7 +88,7 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 	m_HeldHoldNotes.clear();
 	m_ActiveHoldNotes.clear();
 
-	this->CopyAll( pNoteData );
+	this->CopyAll( *pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 
 	CacheAllUsedNoteSkins();

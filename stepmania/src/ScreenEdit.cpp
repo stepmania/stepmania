@@ -273,7 +273,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_pAttacksFromCourse = NULL;
 
 	NoteData noteData;
-	m_pSteps->GetNoteData( &noteData );
+	m_pSteps->GetNoteData( noteData );
 
 
 	m_EditMode = MODE_EDITING;
@@ -324,7 +324,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 	/* XXX: Do we actually have to send real note data here, and to m_NoteFieldRecord? 
 	 * (We load again on play/record.) */
-	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+	m_Player.Load( PLAYER_1, noteData, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_HUMAN;
 	m_Player.SetX( PLAYER_X );
 	/* Why was this here?  Nothing ever sets Player Y values; this was causing
@@ -399,7 +399,7 @@ void ScreenEdit::PlayTicks()
 
 	int iTickRow = -1;
 	for( int r=iRowLastCrossed+1; r<=iSongRow; r++ )  // for each index we crossed since the last update
-		if( m_Player.IsThereATapOrHoldHeadAtRow( r ) )
+		if( m_Player.m_NoteData.IsThereATapOrHoldHeadAtRow( r ) )
 			iTickRow = r;
 
 	iRowLastCrossed = iSongRow;
@@ -938,7 +938,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 			ASSERT( pSteps );
-			pSteps->SetNoteData( &m_NoteFieldEdit );
+			pSteps->SetNoteData( m_NoteFieldEdit );
 
 			// Get all Steps of this StepsType
 			StepsType st = pSteps->m_StepsType;
@@ -975,7 +975,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			pSteps = *it;
 			GAMESTATE->m_pCurSteps[PLAYER_1] = m_pSteps = pSteps;
-			pSteps->GetNoteData( &m_NoteFieldEdit );
+			pSteps->GetNoteData( m_NoteFieldEdit );
 			SCREENMAN->SystemMessage( ssprintf(
 				"Switched to %s %s '%s'",
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
@@ -1323,7 +1323,7 @@ void ScreenEdit::TransitionFromRecordToEdit()
 	// delete old TapNotes in the range
 	m_NoteFieldEdit.ClearRange( iNoteIndexBegin, iNoteIndexEnd );
 
-	m_NoteFieldEdit.CopyRange( &m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
+	m_NoteFieldEdit.CopyRange( m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
 }
 
 /* Helper for SM_DoReloadFromDisk */
@@ -1451,7 +1451,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SystemMessage( sMessage );
 
 		m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1] = pSteps;
-		m_pSteps->GetNoteData( &m_NoteFieldEdit );
+		m_pSteps->GetNoteData( m_NoteFieldEdit );
 
 		break;
 	}
@@ -1590,7 +1590,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 				ASSERT( pSteps );
 
-				pSteps->SetNoteData( &m_NoteFieldEdit );
+				pSteps->SetNoteData( m_NoteFieldEdit );
 				GAMESTATE->m_pCurSong->Save();
 
 				// we shouldn't say we're saving a DWI if we're on any game besides
@@ -1741,7 +1741,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				int iFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
 				int iLastRow  = BeatToNoteRow( m_NoteFieldEdit.m_fEndMarker );
 				m_Clipboard.ClearAll();
-				m_Clipboard.CopyRange( &m_NoteFieldEdit, iFirstRow, iLastRow );
+				m_Clipboard.CopyRange( m_NoteFieldEdit, iFirstRow, iLastRow );
 			}
 			break;
 		case paste_at_current_beat:
@@ -1749,7 +1749,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				int iSrcFirstRow = 0;
 				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
 				int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
-				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
+				m_NoteFieldEdit.CopyRange( m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
 			}
 			break;
 		case paste_at_begin_marker:
@@ -1758,7 +1758,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				int iSrcFirstRow = 0;
 				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
 				int iDestFirstRow = BeatToNoteRow( m_NoteFieldEdit.m_fBeginMarker );
-				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
+				m_NoteFieldEdit.CopyRange( m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
 			}
 			break;
 		case clear:
@@ -1910,11 +1910,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 						(sIter[i]->GetDifficulty() == GAMESTATE->m_pCurSteps[PLAYER_1]->GetDifficulty()) )
 						continue;
 
-					sIter[i]->GetNoteData( &ndTemp );
+					sIter[i]->GetNoteData( ndTemp );
 					ndTemp.ConvertHoldNotesTo2sAnd3s();
 					NoteDataUtil::ScaleRegion( ndTemp, fScale, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
 					ndTemp.Convert2sAnd3sToHoldNotes();
-					sIter[i]->SetNoteData( &ndTemp );
+					sIter[i]->SetNoteData( ndTemp );
 				}
 
 				m_NoteFieldEdit.m_fEndMarker = fNewClipboardEndBeat;
@@ -1944,7 +1944,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				SetupCourseAttacks();
 
-				m_Player.Load( PLAYER_1, &m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
+				m_Player.Load( PLAYER_1, m_NoteFieldEdit, NULL, NULL, NULL, NULL, NULL, NULL, NULL );
 				GAMESTATE->m_PlayerController[PLAYER_1] = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
 				m_rectRecordBack.StopTweening();
@@ -1959,7 +1959,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					 * and recalc it. */
 					Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 					ASSERT( pSteps );
-					pSteps->SetNoteData( &m_NoteFieldEdit );
+					pSteps->SetNoteData( m_NoteFieldEdit );
 					m_pSong->ReCalculateRadarValuesAndLastBeat();
 
 					m_Background.Unload();

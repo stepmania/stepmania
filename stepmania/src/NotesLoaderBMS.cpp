@@ -427,9 +427,9 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out, const map<CSt
 
 	NoteData* pNoteData2 = new NoteData;
 	pNoteData2->SetNumTracks( iNumNewTracks );
-	pNoteData2->LoadTransformed( pNoteData, iNumNewTracks, iTransformNewToOld );
+	pNoteData2->LoadTransformed( *pNoteData, iNumNewTracks, iTransformNewToOld );
 
-	out.SetNoteData(pNoteData2);
+	out.SetNoteData(*pNoteData2);
 
 	delete pNoteData;
 	delete pNoteData2;

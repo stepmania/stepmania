@@ -65,12 +65,12 @@ void NoteData::ClearAll()
 
 /* Copy a range from pFrom to this.  (Note that this does *not* overlay;
  * all data in the range is overwritten.) */
-void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin )
+void NoteData::CopyRange( const NoteData& from, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin )
 {
-	ASSERT( pFrom->GetNumTracks() == GetNumTracks() );
+	ASSERT( from.GetNumTracks() == GetNumTracks() );
 
 	NoteData From, To;
-	From.To4s( *pFrom );
+	From.To4s( from );
 	To.To4s( *this );
 
 	// copy recorded TapNotes
@@ -97,20 +97,20 @@ void NoteData::CopyRange( const NoteData* pFrom, int iFromIndexBegin, int iFromI
 	this->From4s( To );
 }
 
-void NoteData::Config( const NoteData &From )
+void NoteData::Config( const NoteData& from )
 {
-	SetNumTracks( From.GetNumTracks() );
+	SetNumTracks( from.GetNumTracks() );
 }
 
-void NoteData::CopyAll( const NoteData* pFrom )
+void NoteData::CopyAll( const NoteData& from )
 {
-	Config(*pFrom);
+	Config(from);
 	ClearAll();
 
 	for( int c=0; c<GetNumTracks(); c++ )
-		m_TapNotes[c] = pFrom->m_TapNotes[c];
-	m_HoldNotes = pFrom->m_HoldNotes;
-	m_AttackMap = pFrom->m_AttackMap;
+		m_TapNotes[c] = from.m_TapNotes[c];
+	m_HoldNotes = from.m_HoldNotes;
+	m_AttackMap = from.m_AttackMap;
 }
 
 bool NoteData::IsRowEmpty( int index ) const
@@ -628,27 +628,27 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 }
 
 
-void NoteData::To2sAnd3s( const NoteData &out )
+void NoteData::To2sAnd3s( const NoteData& from )
 {
-	CopyAll( &out );
+	CopyAll( from );
 	ConvertHoldNotesTo2sAnd3s();
 }
 
-void NoteData::From2sAnd3s( const NoteData &out )
+void NoteData::From2sAnd3s( const NoteData& from )
 {
-	CopyAll( &out );
+	CopyAll( from );
 	Convert2sAnd3sToHoldNotes();
 }
 
-void NoteData::To4s( const NoteData &out )
+void NoteData::To4s( const NoteData& from )
 {
-	CopyAll( &out );
+	CopyAll( from );
 	ConvertHoldNotesTo4s();
 }
 
-void NoteData::From4s( const NoteData &out )
+void NoteData::From4s( const NoteData& from )
 {
-	CopyAll( &out );
+	CopyAll( from );
 	Convert4sToHoldNotes();
 }
 
@@ -694,13 +694,13 @@ void NoteData::ConvertHoldNotesTo4s()
 }
 
 // -1 for iOriginalTracksToTakeFrom means no track
-void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
+void NoteData::LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
 {
 	// reset all notes
 	Init();
 	
 	NoteData Original;
-	Original.To4s( *pOriginal );
+	Original.To4s( original );
 
 	Config( Original );
 	SetNumTracks( iNewNumTracks );

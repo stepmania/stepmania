@@ -189,7 +189,7 @@ CString NotesWriterDWI::OptimizeDWIString( CString holds, CString taps )
 void NotesWriterDWI::WriteDWINotesField( RageFile &f, const Steps &out, int start )
 {
 	NoteData notedata;
-	out.GetNoteData( &notedata );
+	out.GetNoteData( notedata );
 	notedata.ConvertHoldNotesTo2sAnd3s();
 
 	const int iLastMeasure = int( notedata.GetLastBeat()/BEATS_PER_MEASURE );

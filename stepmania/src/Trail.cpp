@@ -76,7 +76,7 @@ RadarValues Trail::GetRadarValues() const
 			if( !pSteps->IsAutogen() && e->ContainsTransformOrTurn() )
 			{
 				NoteData nd;
-				pSteps->GetNoteData( &nd );
+				pSteps->GetNoteData( nd );
 				RadarValues rv_orig;
 				NoteDataUtil::GetRadarValues( nd, e->pSong->m_fMusicLengthSeconds, rv_orig );
 				PlayerOptions po;

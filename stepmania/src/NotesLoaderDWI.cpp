@@ -297,7 +297,7 @@ bool DWILoader::LoadFromDWITokens(
 
 	ASSERT( newNoteData.GetNumTracks() > 0 );
 
-	out.SetNoteData(&newNoteData);
+	out.SetNoteData( newNoteData );
 
 	out.TidyUpData();
 

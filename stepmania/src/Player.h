@@ -29,7 +29,7 @@ class Inventory;
 #define	SAMPLE_COUNT	16
 
 
-class PlayerMinus : public NoteDataWithScoring, public ActorFrame
+class PlayerMinus : public ActorFrame
 {
 public:
 	PlayerMinus();
@@ -38,17 +38,29 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteField* pNoteField );
+	void Load( 
+		PlayerNumber player_no, 
+		const NoteData& noteData, 
+		LifeMeter* pLM, 
+		CombinedLifeMeter* pCombinedLM, 
+		ScoreDisplay* pScoreDisplay, 
+		ScoreDisplay* pSecondaryScoreDisplay, 
+		Inventory* pInventory, 
+		ScoreKeeper* pPrimaryScoreKeeper, 
+		ScoreKeeper* pSecondaryScoreKeeper, 
+		NoteField* pNoteField );
 	void CrossedRow( int iNoteRow );
 	void CrossedMineRow( int iNoteRow );
 	void Step( int col, RageTimer tm );
-	void RandomiseNotes( int iNoteRow );
+	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
 	int GetDancingCharacterState() const { return m_iDCState; };
 	void SetCharacterState(int iDCState) { m_iDCState = iDCState; };
 	void ApplyWaitingTransforms();
 
 	static float GetMaxStepDistanceSeconds();
+
+	NoteDataWithScoring	m_NoteData;
 
 protected:
 	void UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat );
@@ -100,7 +112,16 @@ protected:
 class Player : public PlayerMinus
 {
 public:
-	void Load( PlayerNumber player_no, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScoreDisplay, ScoreDisplay* pSecondaryScoreDisplay, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper );
+	void Load( 
+		PlayerNumber player_no, 
+		const NoteData& noteData, 
+		LifeMeter* pLM, 
+		CombinedLifeMeter* pCombinedLM, 
+		ScoreDisplay* pScoreDisplay, 
+		ScoreDisplay* pSecondaryScoreDisplay, 
+		Inventory* pInventory, 
+		ScoreKeeper* pPrimaryScoreKeeper, 
+		ScoreKeeper* pSecondaryScoreKeeper );
 
 protected:
 	NoteField		m_NoteField;

@@ -105,7 +105,7 @@ void BeginnerHelper::AddPlayer( PlayerNumber pn, NoteData *pSteps )
 	if(!DoesFileExist(Character->GetModelPath()))
 		return;
 
-	m_NoteData[pn].CopyAll(pSteps);
+	m_NoteData[pn].CopyAll(*pSteps);
 	m_bPlayerEnabled[pn] = true;
 }
 
