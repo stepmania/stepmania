@@ -111,6 +111,12 @@ else
 	AC_DEFINE(NO_JPEG_SUPPORT, 1, [JPEG support not available])
 fi
 
+AC_ARG_WITH(network, AC_HELP_STRING([--without-network], [Disable networking]), with_network=$withval, with_network=yes)
+if test "$with_network" = "no"; then
+	AC_DEFINE(WITHOUT_NETWORKING, 1, [Networking support not available])
+fi
+AM_CONDITIONAL(WITHOUT_NETWORKING, test "$with_network" = "no")
+
 SM_LUA
 SM_ZLIB
 SM_AUDIO
