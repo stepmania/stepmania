@@ -16,6 +16,9 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 
+class Steps;
+class Character;
+
 struct ModeChoice		// used in SelectMode
 {
 	ModeChoice() { Init(); }
@@ -29,6 +32,7 @@ struct ModeChoice		// used in SelectMode
 	bool IsPlayable( CString *why = NULL ) const;
 	bool IsZero() const;
 
+	CString		m_sName;	// display name
 	bool		m_bInvalid;
 	int			m_iIndex;
 	Game		m_game;
@@ -38,7 +42,8 @@ struct ModeChoice		// used in SelectMode
 	CString		m_sAnnouncer;
 	CString		m_sModifiers;
 	CString		m_sScreen;
-	CString		m_sName;
+	Steps*		m_pSteps;
+	Character*	m_pCharacter;
 };
 
 #endif

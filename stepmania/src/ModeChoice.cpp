@@ -16,6 +16,8 @@
 
 void ModeChoice::Init()
 {
+	m_sName = "";
+	m_bInvalid = true;
 	m_iIndex = -1;
 	m_game = GAME_INVALID;
 	m_style = STYLE_INVALID;
@@ -23,9 +25,9 @@ void ModeChoice::Init()
 	m_dc = DIFFICULTY_INVALID;
 	m_sModifiers = "";
 	m_sAnnouncer = "";
-	m_sName = "";
 	m_sScreen = "";
-	m_bInvalid = true;
+	m_pSteps = NULL;
+	m_pCharacter = NULL;
 }
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
@@ -70,6 +72,11 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 		if( so != GAMESTATE->m_SongOptions )
 			return false;
 	}
+
+	if( m_pSteps && GAMESTATE->m_pCurNotes[pn] != m_pSteps )
+		return false;
+	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
+		return false;
 
 	return true;
 }
@@ -270,6 +277,10 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
 	if( m_sModifiers != "" )
 		GAMESTATE->ApplyModifiers( pn, m_sModifiers );
+	if( m_pSteps )
+		GAMESTATE->m_pCurNotes[pn] = m_pSteps;
+	if( m_pCharacter )
+		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
