@@ -113,7 +113,8 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 
 	NetPlayerClient->ReadPack((char*)m_packet.Data,NETMAXBUFFERSIZE);
 
-	int command = Read1(m_packet);
+	//int command = Read1(m_packet);
+	Read1(m_packet);
 	m_ServerVersion = Read1(m_packet);
 	m_ServerName = ReadNT(m_packet);
 
@@ -321,7 +322,7 @@ unsigned int NetworkSyncManager::Read4(NetPacket &Packet)
 
 CString NetworkSyncManager::ReadNT(NetPacket &Packet)
 {
-	int Orig=Packet.Position;
+	//int Orig=Packet.Position;
 	CString TempStr;
 	while ((Packet.Position<NETMAXBUFFERSIZE)&& (((char*)Packet.Data)[Packet.Position]!=0))
 		TempStr= TempStr + (char)Packet.Data[Packet.Position++];
