@@ -214,8 +214,8 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OPTIMIZATION_CFLAGS = "-O2";
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof";
+				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof ";
 				OTHER_LDFLAGS = "-lSDLmain -lpng ../src/SDL_sound-1.0.0/SDL_sound.o ../src/SDL_sound-1.0.0/ogg.o ../src/SDL_sound-1.0.0/wav.o ../src/SDL_sound-1.0.0/audio_convert.o ../src/SDL_sound-1.0.0/madlib.o -lmad -logg -lvorbisfile -lvorbis";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -239,9 +239,11 @@
 	<key>CFBundleExecutable</key>
 	<string>StepMania</string>
 	<key>CFBundleGetInfoString</key>
-	<string>StepMania 3.9 b1</string>
+	<string>StepMania 3.9 alpha 2</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>StepMania</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -249,11 +251,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.9 b1</string>
+	<string>3.9  alpha 2</string>
 	<key>CFBundleSignature</key>
 	<string>Step</string>
 	<key>CFBundleVersion</key>
-	<string>3.9 b1</string>
+	<string>3.9 alpha 2</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -365,7 +367,6 @@
 				AA6EFF4004770F63005F316C,
 				AA6EFF4204770F63005F316C,
 				AA6EFF4404770F63005F316C,
-				AA6EFF4604770F63005F316C,
 				AA6EFF4804770F63005F316C,
 				AA6EFF4A04770F63005F316C,
 				AA6EFF4C04770F63005F316C,
@@ -525,6 +526,10 @@
 				AA0E393604DA8EE700D02EE9,
 				AAF4310004DC98BC00D02EE9,
 				AA4F38C304E2D0B700D02EE9,
+				AAADA4AF04E5F3DE00D02EE9,
+				AAADA51904E75DD300D02EE9,
+				AAADA51D04E7609A00D02EE9,
+				AAADA52004E77F4400D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -636,7 +641,6 @@
 				AA6EFF3F04770F63005F316C,
 				AA6EFF4104770F63005F316C,
 				AA6EFF4304770F63005F316C,
-				AA6EFF4504770F63005F316C,
 				AA6EFF4704770F63005F316C,
 				AA6EFF4904770F63005F316C,
 				AA6EFF4B04770F63005F316C,
@@ -778,6 +782,9 @@
 				AA52E9BE04DBBCF400D02EE9,
 				AAF430FF04DC98BC00D02EE9,
 				AA4F38C204E2D0B700D02EE9,
+				AAADA51804E75DD300D02EE9,
+				AAADA51C04E7609A00D02EE9,
+				AAADA52104E77F4400D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -888,8 +895,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = ScreenSelectMaster.cpp;
-			path = /Users/steve/stepmania/src/ScreenSelectMaster.cpp;
-			refType = 0;
+			path = ../src/ScreenSelectMaster.cpp;
+			refType = 2;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -1035,8 +1042,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageFile.cpp;
-			path = /Users/steve/stepmania/src/RageFile.cpp;
-			refType = 0;
+			path = ../src/RageFile.cpp;
+			refType = 2;
 		};
 		AA272C3104CD757100D02EE9 = {
 			fileEncoding = 30;
@@ -1410,6 +1417,8 @@
 				AA6E0081047711F3005F316C,
 				AA6E0082047711F3005F316C,
 				AA6E0083047711F3005F316C,
+				AAADA51604E75DD300D02EE9,
+				AAADA51704E75DD300D02EE9,
 			);
 			isa = PBXGroup;
 			name = Screens;
@@ -3777,6 +3786,8 @@
 				AA6E012F047712BE005F316C,
 				AA8F275F04A1127900D02EE9,
 				AA8F275E04A1127900D02EE9,
+				AAADA51F04E77F4400D02EE9,
+				AAADA51E04E77F4400D02EE9,
 			);
 			isa = PBXGroup;
 			name = Sound;
@@ -6160,6 +6171,7 @@
 			children = (
 				AA1DCB6004A4872700D02EE9,
 				AA272BFB04CB779F00D02EE9,
+				AAADA4AE04E5F3DE00D02EE9,
 				AA6EFE6104770CF7005F316C,
 				AA6EFE6204770CF7005F316C,
 				AA6EFE6304770CF7005F316C,
@@ -6187,6 +6199,8 @@
 				AA6EFE8104770E7C005F316C,
 				AA6EFE8204770E7C005F316C,
 				AA6EFE8304770E7C005F316C,
+				AAADA51A04E7609A00D02EE9,
+				AAADA51B04E7609A00D02EE9,
 				AA6EFE8404770E7C005F316C,
 				AA6EFE8504770E7C005F316C,
 				AA6EFE8A04770E7C005F316C,
@@ -7255,8 +7269,6 @@
 				AA6EFF0804770F63005F316C,
 				AA6EFF0904770F63005F316C,
 				AA6EFF0A04770F63005F316C,
-				AA6EFF0B04770F63005F316C,
-				AA6EFF0C04770F63005F316C,
 				AA6EFF0D04770F63005F316C,
 				AA6EFF0E04770F63005F316C,
 				AA6EFF0F04770F63005F316C,
@@ -7461,26 +7473,6 @@
 			isa = PBXFileReference;
 			name = GhostArrow.h;
 			path = ../src/GhostArrow.h;
-			refType = 2;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6EFF0B04770F63005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = GhostArrowBright.cpp;
-			path = ../src/GhostArrowBright.cpp;
-			refType = 2;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6EFF0C04770F63005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = GhostArrowBright.h;
-			path = ../src/GhostArrowBright.h;
 			refType = 2;
 			tabWidth = 4;
 			usesTabs = 1;
@@ -7957,18 +7949,6 @@
 		};
 		AA6EFF4404770F63005F316C = {
 			fileRef = AA6EFF0A04770F63005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA6EFF4504770F63005F316C = {
-			fileRef = AA6EFF0B04770F63005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA6EFF4604770F63005F316C = {
-			fileRef = AA6EFF0C04770F63005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -8722,11 +8702,105 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ActorUtil.cpp;
-			path = /Users/steve/stepmania/src/ActorUtil.cpp;
-			refType = 0;
+			path = ../src/ActorUtil.cpp;
+			refType = 2;
 		};
 		AAA983CB04B9060A00D02EE9 = {
 			fileRef = AAA983CA04B9060A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA4AE04E5F3DE00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ProductInfo.h;
+			refType = 4;
+		};
+		AAADA4AF04E5F3DE00D02EE9 = {
+			fileRef = AAADA4AE04E5F3DE00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA51604E75DD300D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenEditCoursesMenu.cpp;
+			path = /Users/steve/stepmania/src/ScreenEditCoursesMenu.cpp;
+			refType = 0;
+		};
+		AAADA51704E75DD300D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScreenEditCoursesMenu.h;
+			path = /Users/steve/stepmania/src/ScreenEditCoursesMenu.h;
+			refType = 0;
+		};
+		AAADA51804E75DD300D02EE9 = {
+			fileRef = AAADA51604E75DD300D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA51904E75DD300D02EE9 = {
+			fileRef = AAADA51704E75DD300D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA51A04E7609A00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = EditCoursesMenu.cpp;
+			path = /Users/steve/stepmania/src/EditCoursesMenu.cpp;
+			refType = 0;
+		};
+		AAADA51B04E7609A00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = EditCoursesMenu.h;
+			path = /Users/steve/stepmania/src/EditCoursesMenu.h;
+			refType = 0;
+		};
+		AAADA51C04E7609A00D02EE9 = {
+			fileRef = AAADA51A04E7609A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA51D04E7609A00D02EE9 = {
+			fileRef = AAADA51B04E7609A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA51E04E77F4400D02EE9 = {
+			fileEncoding = 4;
+			indentWidth = 4;
+			isa = PBXFileReference;
+			name = RageSoundDriver_QT1.h;
+			path = ../src/arch/Sound/RageSoundDriver_QT1.h;
+			refType = 2;
+			tabWidth = 4;
+		};
+		AAADA51F04E77F4400D02EE9 = {
+			fileEncoding = 4;
+			indentWidth = 4;
+			isa = PBXFileReference;
+			name = RageSoundDriver_QT1.cpp;
+			path = ../src/arch/Sound/RageSoundDriver_QT1.cpp;
+			refType = 2;
+			tabWidth = 4;
+		};
+		AAADA52004E77F4400D02EE9 = {
+			fileRef = AAADA51E04E77F4400D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA52104E77F4400D02EE9 = {
+			fileRef = AAADA51F04E77F4400D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -9121,8 +9195,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = RageSounds.cpp;
-			path = /Users/steve/stepmania/src/RageSounds.cpp;
-			refType = 0;
+			path = ../src/RageSounds.cpp;
+			refType = 2;
 		};
 		AADB4E7C04D4FE5D00D02EE9 = {
 			fileEncoding = 30;
@@ -9600,8 +9674,8 @@
 			indentWidth = 4;
 			isa = PBXFileReference;
 			name = RageUtil_FileDB.cpp;
-			path = /Users/steve/stepmania/src/RageUtil_FileDB.cpp;
-			refType = 0;
+			path = ../src/RageUtil_FileDB.cpp;
+			refType = 2;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
