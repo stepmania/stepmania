@@ -215,6 +215,7 @@ bool BeginnerHelper::Initialize( int iDancePadType )
 		m_mDancer[pl].SetX( HELPER_X + PLAYER_X(pl) );
 		m_mDancer[pl].SetY( HELPER_Y + 10 );
 		m_mDancer[pl].SetZoom( 20 );
+		m_mDancer[pl].SetCullMode( CULL_NONE );	// many of the DDR PC character models have the vertex order flipped
 		m_mDancer[pl].m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
 	}
 
