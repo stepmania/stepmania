@@ -81,6 +81,33 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 	
 }
 
+void SongManager::AddGroup( CString sDir, CString sGroupDirName )
+{
+	int j;
+	for(j = 0; j < m_arrayGroupNames.GetSize(); ++j)
+		if( sGroupDirName == m_arrayGroupNames[j] ) break;
+
+	if( j != m_arrayGroupNames.GetSize() )
+		return; /* the group is already added */
+
+	// Look for a group banner in this group folder
+	CStringArray arrayGroupBanners;
+	GetDirListing( ssprintf("%s\\%s\\*.png", sDir, sGroupDirName), arrayGroupBanners );
+	GetDirListing( ssprintf("%s\\%s\\*.jpg", sDir, sGroupDirName), arrayGroupBanners );
+	GetDirListing( ssprintf("%s\\%s\\*.gif", sDir, sGroupDirName), arrayGroupBanners );
+	GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir, sGroupDirName), arrayGroupBanners );
+	CString sBannerPath;
+
+	if( arrayGroupBanners.GetSize() > 0 )
+	{
+		sBannerPath = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
+		LOG->Trace( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, sBannerPath) );
+	}
+
+	m_arrayGroupNames.Add( sGroupDirName );
+	m_GroupBannerPaths.Add(sBannerPath);
+}
+
 void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 {
 	// trim off the trailing slash if any
@@ -99,20 +126,6 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 			continue;		// ignore it
 
 		SanityCheckGroupDir(sDir+"\\"+sGroupDirName);
-
-		// Look for a group banner in this group folder
-		CStringArray arrayGroupBanners;
-		GetDirListing( ssprintf("%s\\%s\\*.png", sDir, sGroupDirName), arrayGroupBanners );
-		GetDirListing( ssprintf("%s\\%s\\*.jpg", sDir, sGroupDirName), arrayGroupBanners );
-		GetDirListing( ssprintf("%s\\%s\\*.gif", sDir, sGroupDirName), arrayGroupBanners );
-		GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir, sGroupDirName), arrayGroupBanners );
-		CString sBannerPath;
-
-		if( arrayGroupBanners.GetSize() > 0 )
-		{
-			sBannerPath = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
-			LOG->Trace( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, sBannerPath) );
-		}
 
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
@@ -143,14 +156,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		if(!loaded) continue;
 
 		/* Add this group to the group array. */
-		for(j = 0; j < m_arrayGroupNames.GetSize(); ++j)
-			if( sGroupDirName == m_arrayGroupNames[j] ) break;
-
-		if( j == m_arrayGroupNames.GetSize() )
-		{
-			m_arrayGroupNames.Add( sGroupDirName );
-			m_GroupBannerPaths.Add(sBannerPath);
-		}
+		AddGroup(sDir, sGroupDirName);
 	}
 
 	GAMESTATE->m_sLoadingMessage = "Done loading songs.";

@@ -69,6 +69,7 @@ protected:
 	bool GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 					   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 	void SanityCheckGroupDir( CString sDir ) const;
+	void AddGroup( CString sDir, CString sGroupDirName );
 
 	CStringArray		m_arrayGroupNames;
 	CStringArray		m_GroupBannerPaths;		// each song group has a banner associated with it
