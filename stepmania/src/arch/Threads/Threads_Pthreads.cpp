@@ -292,34 +292,22 @@ bool SemaImpl_Pthreads::Wait()
 		pthread_mutex_lock( &m_Mutex );
 
 		int tries = 2;
-		while( tries-- )
+		while( !m_iValue && tries )
 		{
 			int ret = pthread_cond_timedwait( &m_Cond, &m_Mutex, &ts );
 
 			switch( ret )
 			{
 			case 0:
-				if( !m_iValue )
-				{
-					++tries;
-					continue;
-				}
-
-				--m_iValue;
-				pthread_mutex_unlock( &m_Mutex );
-
-				return true;
-
 			case EINTR:
-				/* Ignore it. */
-				++tries;
-				continue;
+				break;
 
 			case ETIMEDOUT:
 				/* Timed out.  Probably deadlocked.  Try again one more time, with a smaller
 				 * timeout, just in case we're debugging and happened to stop while waiting
 				 * on the mutex. */
 				++ts.tv_sec;
+				tries--;
 				break;
 
 			default:
@@ -327,8 +315,18 @@ bool SemaImpl_Pthreads::Wait()
 			}
 		}
 
-		pthread_mutex_unlock( &m_Mutex );
-		return false;
+		if( !m_iValue )
+		{
+			/* Timed out. */
+			pthread_mutex_unlock( &m_Mutex );
+			return false;
+		}
+		else
+		{
+			--m_iValue;
+			pthread_mutex_unlock( &m_Mutex );
+			return true;
+		}
 	}
 #endif
 
