@@ -241,6 +241,10 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 
 	SetUnhandledExceptionFilter(NULL);
 
+	/* Forcibly terminate; if we keep going, we'll try to shut down threads and do other
+	 * things that may deadlock, which is confusing for users. */
+	TerminateProcess( GetCurrentProcess(), 0 );
+
 	return EXCEPTION_EXECUTE_HANDLER;
 }
 
