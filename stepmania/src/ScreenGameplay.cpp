@@ -1405,7 +1405,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		bool bBeginFailed = false;
 		SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
 		if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->IsCourseMode() && GAMESTATE->GetCourseSongIndex()==0 )
-			ft = SongOptions::FAIL_COMBO_OF_30_MISSES;
+		{
+			// take the least harsh of the two FailTypes
+			ft = max( ft, SongOptions::FAIL_COMBO_OF_30_MISSES );
+		}
 		switch( ft )
 		{
 		case SongOptions::FAIL_IMMEDIATE:
