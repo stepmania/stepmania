@@ -84,6 +84,7 @@ public:
 	bool			m_bDebugMode;
 	bool			m_bTenFooterInRed;
 	int				m_iProgressiveLifebar;
+	int				m_iProgressiveStageLifebar;
 	int				m_iProgressiveNonstopLifebar;
 
 	// course ranking

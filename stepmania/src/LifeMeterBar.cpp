@@ -467,12 +467,16 @@ void LifeMeterBar::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 }
 
-void LifeMeterBar::UpdateNonstopLifebar(const int cleared, const int total, int ProgressiveLifebarDifficulty)
+void LifeMeterBar::UpdateNonstopLifebar(const int cleared, 
+		const int total, int ProgressiveLifebarDifficulty)
 {
 //	if (cleared > total) cleared = total; // clear/total <= 1
 //	if (total == 0) total = 1;  // no division by 0
 
-	m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty * cleared / total;
+	if (total > 1)
+		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * (int)(ProgressiveLifebarDifficulty * cleared / (total - 1));
+	else
+		m_fLifeDifficulty = m_fBaseLifeDifficulty - 0.2f * ProgressiveLifebarDifficulty;
 
 	if (m_fLifeDifficulty >= 0.4) return;
 

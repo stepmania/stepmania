@@ -31,6 +31,7 @@ enum {
 	MO_JUDGE_DIFFICULTY,
 	MO_LIFE_DIFFICULTY,
 	MO_PROGRESSIVE_LIFEBAR,
+	MO_PROG_STAGE_LIFEBAR,
 	MO_PROG_NONSTOP_LIFEBAR,
 	MO_FAIL,
 	MO_SHOWSTATS,
@@ -47,6 +48,7 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Judge\nDifficulty",		"1","2","3","4","5","6","7","8","JUSTICE" ),
 	OptionRow( "Life\nDifficulty",		"1","2","3","4","5","6","7" ),
 	OptionRow( "Progressive\nLifebar",	"OFF","1","2","3","4","5","6","7","8"),
+	OptionRow( "Progressive\nStage Lifebar", "OFF","1","2","3","4"),
 	OptionRow( "Progressive\nNonstop Lifebar",	"OFF","1","2","3","4"),
 	OptionRow( "Default\nFail Type",	"ARCADE","END OF SONG","OFF" ),	
 	OptionRow( "Show\nStats",			"OFF","ON" ),
@@ -108,6 +110,7 @@ void ScreenMachineOptions::ImportOptions()
 	so.FromString( PREFSMAN->m_sDefaultModifiers );
 	m_iSelectedOption[0][MO_PROGRESSIVE_LIFEBAR]	= PREFSMAN->m_iProgressiveLifebar;
 	m_iSelectedOption[0][MO_PROG_NONSTOP_LIFEBAR]	= PREFSMAN->m_iProgressiveNonstopLifebar;
+	m_iSelectedOption[0][MO_PROG_STAGE_LIFEBAR]		= PREFSMAN->m_iProgressiveStageLifebar;
 	m_iSelectedOption[0][MO_FAIL]					= so.m_FailType;
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
@@ -123,11 +126,12 @@ void ScreenMachineOptions::ImportOptions()
 
 void ScreenMachineOptions::ExportOptions()
 {
-	PREFSMAN->m_iCoinMode				= m_iSelectedOption[0][MO_COIN_MODE];
-	PREFSMAN->m_bMenuTimer				= m_iSelectedOption[0][MO_MENU_TIMER] == 1;
-	PREFSMAN->m_iNumArcadeStages		= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] + 1;
-	PREFSMAN->m_bEventMode				= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
-	PREFSMAN->m_iProgressiveNonstopLifebar = m_iSelectedOption[0][MO_PROG_NONSTOP_LIFEBAR];
+	PREFSMAN->m_iCoinMode					= m_iSelectedOption[0][MO_COIN_MODE];
+	PREFSMAN->m_bMenuTimer					= m_iSelectedOption[0][MO_MENU_TIMER] == 1;
+	PREFSMAN->m_iNumArcadeStages			= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] + 1;
+	PREFSMAN->m_bEventMode					= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
+	PREFSMAN->m_iProgressiveNonstopLifebar	= m_iSelectedOption[0][MO_PROG_NONSTOP_LIFEBAR];
+	PREFSMAN->m_iProgressiveStageLifebar	= m_iSelectedOption[0][MO_PROG_STAGE_LIFEBAR];
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{
