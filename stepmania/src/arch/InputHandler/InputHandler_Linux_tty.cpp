@@ -4,7 +4,6 @@
 
 #include "InputHandler_Linux_tty.h"
 #include "InputHandler_Linux_tty_keys.h"
-#include "InputFilter.h"
 
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -183,7 +182,7 @@ void InputHandler_Linux_tty::Update(float fDeltaTime)
 			const int butno = keys[key];
 			const bool pressed = !(keybuf[i] & 0x80);
 			
-			INPUTFILTER->ButtonPressed(DeviceInput(DEVICE_KEYBOARD, butno), pressed);
+			ButtonPressed(DeviceInput(DEVICE_KEYBOARD, butno), pressed);
 		}
 	}
 

@@ -3,7 +3,6 @@
 
 #include "RageLog.h"
 #include "RageInputDevice.h"
-#include "InputFilter.h"
 #include "archutils/Win32/USB.h"
 
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()

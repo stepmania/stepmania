@@ -11,7 +11,6 @@
  */
 #include "InputHandler_SDL.h"
 #include "SDL_utils.h"
-#include "InputFilter.h"
 #include "RageLog.h"
 
 static const Sint8 Handled_SDL_Events[] = {
@@ -90,7 +89,7 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		case SDL_KEYUP:
 			{
 			DeviceInput di(DEVICE_KEYBOARD, event.key.keysym.sym);
-			INPUTFILTER->ButtonPressed(di, event.key.state == SDL_PRESSED);
+			ButtonPressed(di, event.key.state == SDL_PRESSED);
 			}
 			continue;
 
@@ -105,7 +104,7 @@ void InputHandler_SDL::Update(float fDeltaTime)
 				continue;
 			}
 			DeviceInput di(i, Button);
-			INPUTFILTER->ButtonPressed(di, event.jbutton.state == SDL_PRESSED);
+			ButtonPressed(di, event.jbutton.state == SDL_PRESSED);
 			continue;
 		}
 		
@@ -114,18 +113,18 @@ void InputHandler_SDL::Update(float fDeltaTime)
 			InputDevice i = InputDevice(DEVICE_JOY1 + event.jaxis.which);
 			JoystickButton neg = (JoystickButton)(JOY_LEFT+2*event.jaxis.axis);
 			JoystickButton pos = (JoystickButton)(JOY_RIGHT+2*event.jaxis.axis);
-			INPUTFILTER->ButtonPressed(DeviceInput(i, neg), event.jaxis.value < -16000);
-			INPUTFILTER->ButtonPressed(DeviceInput(i, pos), event.jaxis.value > +16000);
+			ButtonPressed(DeviceInput(i, neg), event.jaxis.value < -16000);
+			ButtonPressed(DeviceInput(i, pos), event.jaxis.value > +16000);
 			continue;
 		}
 		
 		case SDL_JOYHATMOTION:
 		{
 			InputDevice i = InputDevice(DEVICE_JOY1 + event.jhat.which);
-			INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_UP), !!(event.jhat.value & SDL_HAT_UP));
-			INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_DOWN), !!(event.jhat.value & SDL_HAT_DOWN));
-			INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_LEFT), !!(event.jhat.value & SDL_HAT_LEFT));
-			INPUTFILTER->ButtonPressed(DeviceInput(i, JOY_HAT_RIGHT), !!(event.jhat.value & SDL_HAT_RIGHT));
+			ButtonPressed(DeviceInput(i, JOY_HAT_UP), !!(event.jhat.value & SDL_HAT_UP));
+			ButtonPressed(DeviceInput(i, JOY_HAT_DOWN), !!(event.jhat.value & SDL_HAT_DOWN));
+			ButtonPressed(DeviceInput(i, JOY_HAT_LEFT), !!(event.jhat.value & SDL_HAT_LEFT));
+			ButtonPressed(DeviceInput(i, JOY_HAT_RIGHT), !!(event.jhat.value & SDL_HAT_RIGHT));
 			continue;
 		}
 		}
