@@ -4,6 +4,7 @@
 #include "ScreenNetEvaluation.h"
 #include "ThemeManager.h"
 #include "GameState.h"
+#include "RageLog.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -29,12 +30,10 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 		if ( GAMESTATE->IsPlayerEnabled( pn ) )
 			m_pActivePlayer = pn;
 
-	int ShowSide;
-
 	if (m_pActivePlayer == PLAYER_1)
-		ShowSide = 2;
+		m_iShowSide = 2;
 	else
-		ShowSide = 1;
+		m_iShowSide = 1;
 
 	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
 	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
@@ -43,15 +42,26 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 	ON_COMMAND( m_rectUsersBG );
 	
 	m_rectUsersBG.SetXY(
-		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dX",ShowSide)),
-		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dY",ShowSide)) );
+		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dX",m_iShowSide)),
+		THEME->GetMetricF("ScreenNetEvaluation",ssprintf("UsersBG%dY",m_iShowSide)) );
 
 	this->AddChild( &m_rectUsersBG );
 
-	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",ShowSide));
-	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",ShowSide));
-	
+	RedoUserTexts();
+
+	NSMAN->ReportNSSOnOff( 5 );
+}
+
+void ScreenNetEvaluation::RedoUserTexts()
+{
 	m_iActivePlayers = NSMAN->m_ActivePlayers;
+	//If unessiary, just don't do this function.
+	if ( m_iActivePlayers == m_textUsers.size() )
+		return;
+
+	float cx = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dX",m_iShowSide));
+	float cy = THEME->GetMetricF("ScreenNetEvaluation",ssprintf("User%dY",m_iShowSide));
+	
 	m_iCurrentPlayer = 0;
 
 	m_textUsers.resize(m_iActivePlayers);
@@ -67,7 +77,6 @@ ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEv
 		cx+=USERDX;
 		cy+=USERDY;
 	}
-	NSMAN->ReportNSSOnOff( 5 );
 }
 
 void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
@@ -77,6 +86,8 @@ void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetEvaluation::MenuUp( PlayerNumber pn, const InputEventType type )
 {
+	if ( m_iActivePlayers == 0 )
+		return;
 	if (!m_bHasStats)
 		return;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
@@ -92,7 +103,9 @@ void ScreenNetEvaluation::MenuRight( PlayerNumber pn, const InputEventType type 
 
 void ScreenNetEvaluation::MenuDown( PlayerNumber pn, const InputEventType type )
 {
-	if (!m_bHasStats)
+	if ( m_iActivePlayers == 0 )
+		return;
+	if ( !m_bHasStats )
 		return;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + 1) % m_iActivePlayers;
@@ -106,7 +119,12 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_GotEval:
 		m_bHasStats = true;
-		m_textUsers.resize(m_iActivePlayers);
+
+		LOG->Trace("SMNETDebug:%d,%d",m_iActivePlayers,NSMAN->m_ActivePlayers);
+
+		RedoUserTexts();
+
+		LOG->Trace("SMNETCheckpoint");
 		for( int i=0; i<m_iActivePlayers; ++i )
 		{
 			m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_EvalPlayerData[i].name] );
@@ -115,6 +133,7 @@ void ScreenNetEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			else
 				m_textUsers[i].TurnRainbowOff();
 			ON_COMMAND( m_textUsers[i] );
+			LOG->Trace("SMNETCheckpoint%d",i);
 		}
 		return;	//no need to let ScreenEvaluation get ahold of this.
 	case SM_GoToNextScreen:
