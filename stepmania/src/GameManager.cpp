@@ -1,4 +1,5 @@
 #include "global.h"
+#define COMPAT_KEYSYMS
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
@@ -8,10 +9,9 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "NoteSkinManager.h"
-#include "SDL_keysym.h"		// for SDLKeys
+#include "RageInputDevice.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"	// for NUM_CABINET_LIGHTS
-
 
 GameManager*	GAMEMAN = NULL;	// global and accessable from anywhere in our program
 

@@ -1,8 +1,9 @@
 #include "global.h"
+#include "SDL_utils.h"
+#define COMPAT_KEYSYMS
 #include "InputHandler_DirectInputHelper.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "SDL_utils.h"
 
 #pragma comment(lib, "dinput.lib")
 #if defined(_WINDOWS)

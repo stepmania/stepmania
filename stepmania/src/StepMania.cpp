@@ -1273,9 +1273,9 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F2))
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2))
 	{
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) ) )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) ) )
 		{
 			// HACK: Also save bookkeeping and profile info for debugging
 			// so we don't have to play through a whole song to get new output.
@@ -1305,10 +1305,10 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		return true;
 	}
 #ifndef DARWIN
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4))
 	{
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
+			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 		{
 			// pressed Alt+F4
 			ExitGame();
@@ -1316,10 +1316,10 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		}
 	}
 #else
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_q))
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq))
 	{
-		if(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))
+		if(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)))
 		{
 			// pressed CMD-Q
 			ExitGame();
@@ -1332,26 +1332,26 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	 * pressing PrntScrn, or will capture the foregroud with focus upon pressing
 	 * Alt+PrntScrn.  Windows will do this whether or not we save a screenshot 
 	 * ourself by dumping the frame buffer.  */
-	/* Pressing F13 on an Apple keyboard sends SDLK_PRINT.
+	/* Pressing F13 on an Apple keyboard sends KEY_PRINT.
 	 * However, notebooks don't have F13. Use cmd-F12 then*/
 	// "if pressing PrintScreen and not pressing Alt"
-	if( (DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PRINT) &&
-		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) &&
-		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT))) ||
-	    (DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F12) &&
-		 (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
-	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA)))))
+	if( (DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) &&
+		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) &&
+		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT))) ||
+	    (DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) &&
+		 (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) ||
+	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)))))
 	{
 		// If holding LShift save uncompressed, else save compressed
-		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT) );
+		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
 		SaveScreenshot( "Screenshots/", bSaveCompressed, false );
 		return true;	// handled
 	}
 
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER))
 	{
-		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
+			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 		{
 			/* alt-enter */
 			PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
@@ -1360,7 +1360,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		}
 	}
 
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PAUSE))
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PAUSE))
 	{
 		static bool bMute = false;
 		bMute = !bMute;
@@ -1413,7 +1413,7 @@ static void HandleInputEvents(float fDeltaTime)
 		// Filter out all NumLock repeat messages
 		/* XXX: Is this still needed?  If so, it should probably be done in the
 		 * affected input driver. */
-		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_NUMLOCK && type != IET_FIRST_PRESS )
+		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_NUMLOCK && type != IET_FIRST_PRESS )
 			continue;	// skip
 
 		if( HandleGlobalInputs(DeviceI, type, GameI, MenuI, StyleI ) )
@@ -1475,13 +1475,13 @@ static void GameLoop()
 		
 		CheckSkips( fDeltaTime );
 
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB) ) ) {
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
 				fDeltaTime = 0; /* both; stop time */
 			else
 				fDeltaTime *= 4;
 		}
-		else if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
+		else if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
 		{
 			fDeltaTime /= 4;
 		}

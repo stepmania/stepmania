@@ -15,6 +15,109 @@
 #include "RageDisplay.h"
 #include "PrefsManager.h"
 
+
+static RageKeySym SDLSymToKeySym( SDLKey key )
+{
+#define KEY_INV KEY_INVALID
+	const RageKeySym ASCIIKeySyms[] =
+	{
+		KEY_INV,	KEY_INV,	KEY_INV,	KEY_INV,	/* 0-3 */
+		KEY_INV,	KEY_INV,	KEY_INV,	KEY_INV,	/* 4-7 */
+		KEY_BACK,	KEY_TAB,	KEY_INV,	KEY_INV,	/* 8-11 */
+		KEY_INV,	KEY_ENTER,	KEY_INV,	KEY_INV,	/* 12-15 */
+		KEY_INV,	KEY_INV,	KEY_INV,	KEY_PAUSE,	/* 16-19 */
+		KEY_INV,	KEY_INV,	KEY_INV,	KEY_INV,	/* 20-23 */
+		KEY_INV,	KEY_INV,	KEY_INV,	KEY_ESC,	/* 24-27 */
+		KEY_INV,	KEY_INV,	KEY_INV,	KEY_INV,	/* 28-31 */
+		KEY_SPACE,	KEY_EXCL,	KEY_QUOTE,	KEY_HASH,	/* 32-35 */
+		KEY_DOLLAR,	KEY_PERCENT,KEY_AMPER,	KEY_SQUOTE,	/* 36-39 */
+		KEY_LPAREN,	KEY_RPAREN,	KEY_ASTERISK,KEY_PLUS,	/* 40-43 */
+		KEY_COMMA,	KEY_HYPHEN,	KEY_PERIOD,	KEY_SLASH,	/* 44-47 */
+		KEY_C0,		KEY_C1,		KEY_C2,		KEY_C3,		/* 48-51 */
+		KEY_C4,		KEY_C5,		KEY_C6,		KEY_C7,		/* 52-55 */
+		KEY_C8,		KEY_C9,		KEY_COLON,	KEY_SEMICOLON,	/* 56-59 */
+		KEY_LANGLE,	KEY_EQUAL,	KEY_RANGLE,	KEY_QUESTION,	/* 60-63 */
+		KEY_AT, KEY_CA, KEY_CB, KEY_CC, KEY_CD, KEY_CE, KEY_CF, KEY_CG, KEY_CH, /* 64-72 */
+		KEY_CI, KEY_CJ, KEY_CK, KEY_CL, KEY_CM, KEY_CN, KEY_CO, KEY_CP, KEY_CQ, /* 73-81 */
+		KEY_CR, KEY_CS, KEY_CT, KEY_CU, KEY_CV, KEY_CW, KEY_CX, KEY_CY, KEY_CZ, /* 82-90 */
+		KEY_LBRACKET, KEY_BACKSLASH, KEY_RBRACKET, KEY_CARAT, /* 91-94 */
+		KEY_UNDERSCORE, KEY_ACCENT, KEY_Ca, KEY_Cb,		/* 95-98 */
+		KEY_Cc, KEY_Cd, KEY_Ce, KEY_Cf, KEY_Cg, KEY_Ch, KEY_Ci, KEY_Cj, KEY_Ck, /* 99-107 */
+		KEY_Cl, KEY_Cm, KEY_Cn, KEY_Co, KEY_Cp, KEY_Cq, KEY_Cr, KEY_Cs, KEY_Ct, /* 108-116 */
+		KEY_Cu, KEY_Cv, KEY_Cw, KEY_Cx, KEY_Cy, KEY_Cz, /* 117-122 */
+		KEY_LBRACE, KEY_PIPE, KEY_RBRACE, KEY_INV, KEY_DEL /* 123-127 */
+	};
+
+	/* 0...127: */
+	if( key < ARRAYSIZE(ASCIIKeySyms) )
+		return ASCIIKeySyms[key];
+
+	/* SDLK_WORLD_0 ... SDLK_WORLD_95 to KEY_OTHER_0 ... KEY_OTHER_0 + 95 */
+	if( key >= SDLK_WORLD_0 && key <= SDLK_WORLD_95 )
+		return (RageKeySym) (key - SDLK_WORLD_0 + KEY_OTHER_0);
+
+	/* SDLK_KP0 ... SDLK_KP9 to KEY_KP_C0 ... KEY_KP_C9 */
+	if( key >= SDLK_KP0 && key <= SDLK_KP9 )
+		return (RageKeySym) (key - SDLK_KP0 + KEY_KP_C0);
+	
+	switch( key )
+	{
+	case SDLK_KP_PERIOD:	return KEY_KP_PERIOD;
+	case SDLK_KP_DIVIDE:	return KEY_KP_SLASH;
+	case SDLK_KP_MULTIPLY:	return KEY_KP_ASTERISK;
+	case SDLK_KP_MINUS:		return KEY_KP_HYPHEN;
+	case SDLK_KP_PLUS:		return KEY_KP_PLUS;
+	case SDLK_KP_ENTER:		return KEY_KP_ENTER;
+	case SDLK_UP:			return KEY_UP;
+	case SDLK_DOWN:			return KEY_DOWN;
+	case SDLK_RIGHT:		return KEY_RIGHT;
+	case SDLK_LEFT:			return KEY_LEFT;
+	case SDLK_INSERT:		return KEY_INSERT;
+	case SDLK_HOME:			return KEY_HOME;
+	case SDLK_END:			return KEY_END;
+	case SDLK_PAGEUP:		return KEY_PGUP;
+	case SDLK_PAGEDOWN:		return KEY_PGDN;
+	case SDLK_F1:			return KEY_F1;
+	case SDLK_F2:			return KEY_F2;
+	case SDLK_F3:			return KEY_F3;
+	case SDLK_F4:			return KEY_F4;
+	case SDLK_F5:			return KEY_F5;
+	case SDLK_F6:			return KEY_F6;
+	case SDLK_F7:			return KEY_F7;
+	case SDLK_F8:			return KEY_F8;
+	case SDLK_F9:			return KEY_F9;
+	case SDLK_F10:			return KEY_F10;
+	case SDLK_F11:			return KEY_F11;
+	case SDLK_F12:			return KEY_F12;
+	case SDLK_F13:			return KEY_F13;
+	case SDLK_F14:			return KEY_F14;
+	case SDLK_F15:			return KEY_F15;
+
+	case SDLK_NUMLOCK:		return KEY_NUMLOCK;
+	case SDLK_CAPSLOCK:		return KEY_CAPSLOCK;
+	case SDLK_SCROLLOCK:	return KEY_SCRLLOCK;
+	case SDLK_SYSREQ:		return KEY_PRTSC;
+	case SDLK_PRINT:		return KEY_PRTSC;
+	case SDLK_RSHIFT:		return KEY_RSHIFT;
+	case SDLK_LSHIFT:		return KEY_LSHIFT;
+	case SDLK_RCTRL:		return KEY_RCTRL;
+	case SDLK_LCTRL:		return KEY_LCTRL;
+	case SDLK_RALT:			return KEY_RALT;
+	case SDLK_LALT:			return KEY_LALT;
+	case SDLK_RMETA:		return KEY_LMETA;
+	case SDLK_LMETA:		return KEY_RMETA;
+	case SDLK_LSUPER:		return KEY_LSUPER;
+	case SDLK_RSUPER:		return KEY_RSUPER;
+	case SDLK_MENU:			return KEY_MENU;
+	}
+
+	/* Map anything else to key+KEY_OTHER_0+95. */
+	if( key+KEY_OTHER_0+95 < KEY_LAST_OTHER )
+		return (RageKeySym) (key+KEY_OTHER_0+95);
+
+	return KEY_INVALID;
+}
+
 static const Sint8 Handled_SDL_Events[] = {
 	SDL_KEYDOWN, SDL_KEYUP, SDL_JOYBUTTONDOWN, SDL_JOYBUTTONUP,
 	SDL_JOYAXISMOTION, SDL_JOYHATMOTION, -1
@@ -103,12 +206,7 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		case SDL_KEYDOWN:
 		case SDL_KEYUP:
 			{
-			DeviceInput di(DEVICE_KEYBOARD, event.key.keysym.sym);
-
-			/* SDL is inconsistent about this key: */
-			if( di.button == SDLK_SYSREQ )
-				di.button = SDLK_PRINT;
-
+			DeviceInput di( DEVICE_KEYBOARD, SDLSymToKeySym(event.key.keysym.sym) );
 			ButtonPressed(di, event.key.state == SDL_PRESSED);
 			}
 			continue;

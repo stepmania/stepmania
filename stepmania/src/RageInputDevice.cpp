@@ -7,7 +7,7 @@
 #include "RageInputDevice.h"
 #include "RageUtil.h"
 
-#include "SDL_keyboard.h"
+//#include "SDL_keyboard.h"
 
 static const char *PumpButtonNames[] = {
 	"UL", "UR", "MID", "DL", "DR", "Esc",
@@ -132,8 +132,97 @@ CString DeviceInput::GetDescription()
 		break;
 
 	case DEVICE_KEYBOARD:		// keyboard
-		sReturn = ssprintf("Key %s", SDL_GetKeyName((SDLKey)button) );
+		sReturn = "Key ";
+		if( button >= 33 && button < 127 &&
+			!(button >= 'A' && button <= 'Z' ) )
+		{
+			/* All printable ASCII except for uppercase alpha characters line up. */
+			sReturn += ssprintf( "%c", button );
+			break;
+		}
+
+		if( button >= KEY_OTHER_0 && button < KEY_LAST_OTHER )
+		{
+			sReturn += ssprintf( "unk %i", button-KEY_OTHER_0 );
+			break;
+		}
+
+		switch( button )
+		{
+		case KEY_SPACE:			sReturn += "space"; break;
+		case KEY_DEL:			sReturn += "delete"; break;
+
+		case KEY_BACK:			sReturn += "backspace"; break;
+		case KEY_TAB:			sReturn += "tab"; break;
+		case KEY_ENTER:			sReturn += "enter"; break;
+		case KEY_PAUSE:			sReturn += "pause"; break;
+		case KEY_ESC:			sReturn += "escape"; break;
+
+		case KEY_F1:			sReturn += "F1"; break;
+		case KEY_F2:			sReturn += "F2"; break;
+		case KEY_F3:			sReturn += "F3"; break;
+		case KEY_F4:			sReturn += "F4"; break;
+		case KEY_F5:			sReturn += "F5"; break;
+		case KEY_F6:			sReturn += "F6"; break;
+		case KEY_F7:			sReturn += "F7"; break;
+		case KEY_F8:			sReturn += "F8"; break;
+		case KEY_F9:			sReturn += "F9"; break;
+		case KEY_F10:			sReturn += "F10"; break;
+		case KEY_F11:			sReturn += "F11"; break;
+		case KEY_F12:			sReturn += "F12"; break;
+		case KEY_F13:			sReturn += "F13"; break;
+		case KEY_F14:			sReturn += "F14"; break;
+		case KEY_F15:			sReturn += "F15"; break;
+		case KEY_F16:			sReturn += "F16"; break;
+
+		case KEY_LCTRL:			sReturn += "left ctrl"; break;
+		case KEY_RCTRL:			sReturn += "right ctrl"; break;
+		case KEY_LSHIFT:		sReturn += "left shift"; break;
+		case KEY_RSHIFT:		sReturn += "right shift"; break;
+		case KEY_LALT:			sReturn += "left alt"; break;
+		case KEY_RALT:			sReturn += "right alt"; break;
+		case KEY_LMETA:			sReturn += "left meta"; break;
+		case KEY_RMETA:			sReturn += "right meta"; break;
+		case KEY_LSUPER:		sReturn += "left wnd"; break;
+		case KEY_RSUPER:		sReturn += "right wnd"; break;
+		case KEY_MENU:			sReturn += "menu"; break;
+
+		case KEY_NUMLOCK:		sReturn += "num lock"; break;
+		case KEY_SCRLLOCK:		sReturn += "scroll lock"; break;
+		case KEY_CAPSLOCK:		sReturn += "caps lock"; break;
+		case KEY_PRTSC:			sReturn += "prtsc"; break;
+
+		case KEY_UP:			sReturn += "up"; break;
+		case KEY_DOWN:			sReturn += "down"; break;
+		case KEY_LEFT:			sReturn += "left"; break;
+		case KEY_RIGHT:			sReturn += "right"; break;
+
+		case KEY_INSERT:		sReturn += "insert"; break;
+		case KEY_HOME:			sReturn += "home"; break;
+		case KEY_END:			sReturn += "end"; break;
+		case KEY_PGUP:			sReturn += "pgup"; break;
+		case KEY_PGDN:			sReturn += "pgdn"; break;
+
+		case KEY_KP_C0:			sReturn += "KP 0"; break;
+		case KEY_KP_C1:			sReturn += "KP 1"; break;
+		case KEY_KP_C2:			sReturn += "KP 2"; break;
+		case KEY_KP_C3:			sReturn += "KP 3"; break;
+		case KEY_KP_C4:			sReturn += "KP 4"; break;
+		case KEY_KP_C5:			sReturn += "KP 5"; break;
+		case KEY_KP_C6:			sReturn += "KP 6"; break;
+		case KEY_KP_C7:			sReturn += "KP 7"; break;
+		case KEY_KP_C8:			sReturn += "KP 8"; break;
+		case KEY_KP_C9:			sReturn += "KP 9"; break;
+		case KEY_KP_SLASH:		sReturn += "KP /"; break;
+		case KEY_KP_ASTERISK:	sReturn += "KP *"; break;
+		case KEY_KP_HYPHEN:		sReturn += "KP -"; break;
+		case KEY_KP_PLUS:		sReturn += "KP +"; break;
+		case KEY_KP_PERIOD:		sReturn += "KP ."; break;
+		case KEY_KP_ENTER:		sReturn += "KP enter"; break;
+		default:				sReturn += "unknown"; break;
+		}
 		break;
+		
 	default:
 		ASSERT(0);	// what device is this?
 	}
