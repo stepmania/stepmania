@@ -468,7 +468,7 @@ void InputHandler_DInput::InputThread()
 			int ret = WaitForSingleObjectEx( Handle, Delay, true );
 			if( ret == -1 )
 			{
-				LOG->Trace( werr_ssprintf(GetLastError(), "WaitForMultipleObjectsEx failed") );
+				LOG->Trace( werr_ssprintf(GetLastError(), "WaitForSingleObjectEx failed") );
 				continue;
 			}
 

@@ -93,7 +93,6 @@ bool DIDevice::Open()
 		dipdw.dwData = INPUT_QSIZE;
 		hr = IDirectInputDevice2_SetProperty(Device,
 						DIPROP_BUFFERSIZE, &dipdw.diph);
-		/* XXX: Try to use event notification.  It might give better response in a thread. */
 		if ( hr == DI_POLLEDDEVICE )
 		{
 			/* This device doesn't support buffering, so we're forced
