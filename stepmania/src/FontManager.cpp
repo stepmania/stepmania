@@ -356,8 +356,8 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 		/* XXX; these should be in a data file somewhere (theme metrics?) 
 		 * (The comments here are UTF-8; they won't show up in VC6.) */
 		CharAliases["default"]		= Font::DEFAULT_GLYPH; /* ? */
-		CharAliases["kakumei1"]		= 0x547D; /* 革 */
-		CharAliases["kakumei2"]		= 0x9769; /* 命 */
+		CharAliases["kakumei1"]		= 0x9769; /* 革 */
+		CharAliases["kakumei2"]		= 0x547D; /* 命 */
 		CharAliases["matsuri"]		= 0x796D; /* 祭 */
 		CharAliases["oni"]			= 0x9B3C; /* 鬼 */
 		CharAliases["michi"]		= 0x9053; /* 道 */

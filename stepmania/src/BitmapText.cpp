@@ -22,6 +22,25 @@
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
 
+/*
+ * Forward planning:
+ *
+ * This can't handle full CJK fonts; it's not reasonable to load a 2000+ glyph bitmap
+ * font into memory.  We want to be able to fall back on a real font renderer when
+ * we're missing characters.  However, we make use of custom glyphs, and we don't want
+ * custom glyphs and fallback fonts to be mutually exclusive.
+ *
+ * So, if we have a fallback font renderer active, and we're missing any characters at
+ * all, send the text to the fallback renderer.  If it can't render a character
+ * (because it's a special-use character), render up to that character, render the
+ * special character ourself, then start again on the next character.  The data
+ * rendered can be put into textures and put into the verts/tex lists as if it came
+ * from a regular font (nothing says we can't put more than one character per quad)
+ * and DrawChars won't have to be changed at all.
+ *
+ * Some mechanism to hint which fallback font size/style a given font wants, to make
+ * a best effort to line up font types.  This could be a setting in the font INI.
+ */
 #define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 
 const int NUM_RAINBOW_COLORS = 7;
