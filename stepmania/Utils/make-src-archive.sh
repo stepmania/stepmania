@@ -24,10 +24,14 @@ cp -a src $PRODUCTVER/
 cp COPYING.txt NEWS README-FIRST.html Makefile.am aclocal.m4 \
    configure Makefile.in configure.ac   $PRODUCTVER
 
+mkdir $PRODUCTVER/Docs/
+cp Docs/ChangeLog $PRODUCTVER/Docs/
+
 echo Pruning...
 cd $PRODUCTVER/src
 # Obsolete and going away:
 rm -rf SDL-1.2.5
+rm -rf SDL-1.2.6
 # Incomplete:
 rm -rf Texture Font Generator
 # Xbox:
@@ -39,7 +43,6 @@ rm -rf smlobby
 # I don't want to spend an extra half hour to upload separate Windows and
 # *nix source archives.
 #rm -rf mad-0.15.0b
-#rm -rf SDL_image-1.2
 
 rm -rf vorbis
 rm -rf BaseClasses
