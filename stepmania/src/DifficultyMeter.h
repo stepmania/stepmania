@@ -23,8 +23,15 @@ public:
 	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
 	static int SetFromSteps( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->SetFromSteps( NULL ); }
-		else { Steps *pS = Luna<Steps>::check(L,1); p->SetFromSteps( pS ); }
+		if( lua_isnil(L,1) )
+		{
+			p->SetFromSteps( NULL );
+		}
+		else
+		{
+			Steps *pS = Luna<Steps>::check(L,1);
+			p->SetFromSteps( pS );
+		}
 		return 0;
 	}
 
@@ -54,6 +61,8 @@ public:
 private:
 	void SetFromDifficulty( Difficulty dc );
 	void SetFromCourseDifficulty( CourseDifficulty cd );
+
+	CString			m_sType;
 
 	void SetDifficulty( CString diff );
 	BitmapText		m_textFeet;

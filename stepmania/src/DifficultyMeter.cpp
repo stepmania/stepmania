@@ -45,18 +45,20 @@ DifficultyMeter::DifficultyMeter()
 
 void DifficultyMeter::Load( const CString &sType )
 {
+	m_sType = sType;
+
 	/* We can't use global ThemeMetric<CString>s, because we can have multiple
 	 * DifficultyMeters on screen at once, with different names. */
-	m_iNumFeetInMeter = THEME->GetMetricI(sType,"NumFeetInMeter");
-	m_iMaxFeetInMeter = THEME->GetMetricI(sType,"MaxFeetInMeter");
-	m_iGlowIfMeterGreaterThan = THEME->GetMetricI(sType,"GlowIfMeterGreaterThan");
-	m_bShowFeet = THEME->GetMetricB(sType,"ShowFeet");
+	m_iNumFeetInMeter = THEME->GetMetricI(m_sType,"NumFeetInMeter");
+	m_iMaxFeetInMeter = THEME->GetMetricI(m_sType,"MaxFeetInMeter");
+	m_iGlowIfMeterGreaterThan = THEME->GetMetricI(m_sType,"GlowIfMeterGreaterThan");
+	m_bShowFeet = THEME->GetMetricB(m_sType,"ShowFeet");
 	/* "easy", "hard" */
-	m_bShowDifficulty = THEME->GetMetricB(sType,"ShowDifficulty");
+	m_bShowDifficulty = THEME->GetMetricB(m_sType,"ShowDifficulty");
 	/* 3, 9 */
-	m_bShowMeter = THEME->GetMetricB(sType,"ShowMeter");
-	m_bFeetIsDifficultyColor = THEME->GetMetricB(sType,"FeetIsDifficultyColor");
-	m_bFeetPerDifficulty = THEME->GetMetricB(sType,"FeetPerDifficulty");
+	m_bShowMeter = THEME->GetMetricB(m_sType,"ShowMeter");
+	m_bFeetIsDifficultyColor = THEME->GetMetricB(m_sType,"FeetIsDifficultyColor");
+	m_bFeetPerDifficulty = THEME->GetMetricB(m_sType,"FeetPerDifficulty");
 
 	if( m_bShowFeet )
 	{
@@ -70,24 +72,24 @@ void DifficultyMeter::Load( const CString &sType )
 		}
 		else
 			Feet = "0X";
-		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(sType,"bar"), Feet );
-		SET_XY_AND_ON_COMMAND( &m_textFeet );
+		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(m_sType,"bar"), Feet );
+		ActorUtil::SetXYAndOnCommand( m_textFeet, m_sType );
 		this->AddChild( &m_textFeet );
 	}
 
 	if( m_bShowDifficulty )
 	{
-		m_Difficulty.Load( THEME->GetPathG(sType,"difficulty") );
+		m_Difficulty.Load( THEME->GetPathG(m_sType,"difficulty") );
 		m_Difficulty->SetName( "Difficulty" );
-		SET_XY_AND_ON_COMMAND( m_Difficulty );
+		ActorUtil::SetXYAndOnCommand( m_Difficulty, m_sType );
 		this->AddChild( m_Difficulty );
 	}
 
 	if( m_bShowMeter )
 	{
 		m_textMeter.SetName( "Meter" );
-		m_textMeter.LoadFromFont( THEME->GetPathF(sType,"meter") );
-		SET_XY_AND_ON_COMMAND( m_textMeter );
+		m_textMeter.LoadFromFont( THEME->GetPathF(m_sType,"meter") );
+		ActorUtil::SetXYAndOnCommand( m_textMeter, m_sType );
 		this->AddChild( &m_textMeter );
 	}
 
@@ -203,9 +205,9 @@ void DifficultyMeter::SetDifficulty( CString diff )
 	m_CurDifficulty = diff;
 
 	if( m_bShowDifficulty )
-		COMMAND( m_Difficulty, "Set" + Capitalize(diff) );
+		ActorUtil::RunCommand( m_Difficulty, m_sType, "Set" + Capitalize(diff) );
 	if( m_bShowMeter )
-		COMMAND( m_textMeter, "Set" + Capitalize(diff) );
+		ActorUtil::RunCommand( m_textMeter, m_sType, "Set" + Capitalize(diff) );
 }
 
 /*
