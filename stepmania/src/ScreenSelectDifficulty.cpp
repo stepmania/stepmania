@@ -164,7 +164,7 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 		{
 			/* If the icon is text, use a dimmer diffuse, or we won't be
 			 * able to see the glow. */
-			if( GAMESTATE->IsPlayable(m_ModeChoices[page][i]) )
+			if( m_ModeChoices[page][i].IsPlayable() )
 			{
 				m_sprInfo[page][i].SetDiffuse( RageColor(1,1,1,1) );
 				m_sprPicture[page][i].SetDiffuse( RageColor(1,1,1,1) );
@@ -198,7 +198,7 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 	int iSwitchToIndex = -1;
 	for( int i=m_iChoiceOnPage[pn]-1; i>=0; i-- )
 	{
-		if( GAMESTATE->IsPlayable(m_ModeChoices[m_CurrentPage][i]))
+		if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -226,7 +226,7 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 	int iSwitchToIndex = -1;
 	for( int i=m_iChoiceOnPage[pn]+1; i<(int) m_ModeChoices[m_CurrentPage].size(); i++ )
 	{
-		if( GAMESTATE->IsPlayable(m_ModeChoices[m_CurrentPage][i]))
+		if( m_ModeChoices[m_CurrentPage][i].IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -270,7 +270,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 	if( !bPageIncreasing ) {
 		for( int i=m_ModeChoices[newPage].size()-1; i>=0; i-- )
 		{
-			if( GAMESTATE->IsPlayable(m_ModeChoices[newPage][i]))
+			if( m_ModeChoices[newPage][i].IsPlayable() )
 			{
 				iSwitchToIndex = i;
 				break;
@@ -279,7 +279,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 	} else {
 		for( unsigned i=0; i<m_ModeChoices[newPage].size(); i++ )
 		{
-			if( GAMESTATE->IsPlayable(m_ModeChoices[newPage][i]))
+			if( m_ModeChoices[newPage][i].IsPlayable() )
 			{
 				iSwitchToIndex = i;
 				break;

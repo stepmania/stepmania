@@ -222,11 +222,13 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case MENU_BUTTON_START:
 		/* return if the choice is invalid */
 		const ModeChoice &mc = m_aModeChoices[m_Choice];
-		if( mc.m_bInvalid )
+		CString why;
+		
+		if( !mc.IsPlayable( &why ) )
 		{
 			m_soundInvalid.Play();
-			if( mc.m_sInvalidReason != "" )
-				SCREENMAN->SystemMessage( mc.m_sInvalidReason );
+			if( why != "" )
+				SCREENMAN->SystemMessage( why );
 			return;
 		}
 

@@ -204,7 +204,7 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	 * will be undone by the tween.  Hmm. */
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
-		if( GAMESTATE->IsPlayable(m_aModeChoices[c]) )
+		if( m_aModeChoices[c].IsPlayable() )
 			for( int i=0; i<NUM_ICON_PARTS; i++ )
 				m_sprIcon[i][c].SetDiffuse( RageColor(1,1,1,1) );
 		else

@@ -139,7 +139,7 @@ void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
 	int iSwitchToIndex = -1;	// -1 means none found
 	for( int i=m_iSelection-1; i>=0; i-- )
 	{
-		if( GAMESTATE->IsPlayable(m_aModeChoices[i]) )
+		if( m_aModeChoices[i].IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -160,7 +160,7 @@ void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 	int iSwitchToIndex = -1;	// -1 means none found
 	for( unsigned i=m_iSelection+1; i<m_aModeChoices.size(); i++ )	
 	{
-		if( GAMESTATE->IsPlayable(m_aModeChoices[i]) )
+		if( m_aModeChoices[i].IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -223,7 +223,7 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 	{
 		/* If the icon is text, use a dimmer diffuse, or we won't be
 		 * able to see the glow. */
-		if( GAMESTATE->IsPlayable(m_aModeChoices[i]) )
+		if( m_aModeChoices[i].IsPlayable() )
 		{
 			m_sprIcon[i].SetDiffuse( RageColor(1,1,1,1) );
 			m_textIcon[i].SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );	// gray so glow is visible
@@ -241,7 +241,7 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 	int iSwitchToStyleIndex = -1;	// -1 means none found
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
-		if( GAMESTATE->IsPlayable(m_aModeChoices[i]) )
+		if( m_aModeChoices[i].IsPlayable() )
 		{
 			iSwitchToStyleIndex = i;
 			break;
