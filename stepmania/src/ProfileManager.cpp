@@ -994,10 +994,10 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 #define PRINT_SECTION_START(szName)				f.Write( ssprintf("<h2><a name='%s'>"szName"</a> <a href='#top'>(top)</a></h2>\n", szName) )
 #define PRINT_SECTION_END						f.Write( "\n" )
 #define PRINT_DIV_START(szName)					f.Write( ssprintf("<div class='section1'>\n" "<h3>%s</h3>\n", szName) )
-#define PRINT_DIV_START_ANCHOR(uAnchor,szName)	f.Write( ssprintf("<div class='section1'>\n" "<h3><a name='%u'>%s</a></h3>\n", uAnchor, szName) )
+#define PRINT_DIV_START_ANCHOR(uAnchor,szName)	f.Write( ssprintf("<div class='section1'>\n" "<h3><a name='%u'>%s</a></h3>\n", (unsigned)uAnchor, szName) )
 #define PRINT_DIV_END							f.Write( "</div>\n" )
 #define PRINT_DIV2_START(szName)				f.Write( ssprintf("<div class='section2'>\n" "<h3>%s</h3>\n", szName) )
-#define PRINT_DIV2_START_ANCHOR(uAnchor,szName)	f.Write( ssprintf("<div class='section2'>\n" "<h3><a name='%u'>%s</a></h3>\n", uAnchor, szName) )
+#define PRINT_DIV2_START_ANCHOR(uAnchor,szName)	f.Write( ssprintf("<div class='section2'>\n" "<h3><a name='%u'>%s</a></h3>\n", (unsigned)uAnchor, szName) )
 #define PRINT_DIV2_END							f.Write( "</div>\n" )
 #define PRINT_LINK(szName,szLink)				f.Write( ssprintf("<p><a href='%s'>%s</a></p>\n",szLink,szName) )
 #define PRINT_LINE_S(szName,sVal) 				f.Write( ssprintf("<p>%s = <b>%s</b></p>\n",szName,sVal.c_str()) )
@@ -1108,7 +1108,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			for( unsigned i=0; i<uNumToShow; i++ )
 			{
 				Song* pSong = vpSongs[i];
-				PRINT_LINE_RANK_LINK( i+1, pSong->GetFullDisplayTitle(), ssprintf("#%u",pSong).c_str(), pSong->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, pSong->GetFullDisplayTitle(), ssprintf("#%u",(unsigned)pSong).c_str(), pSong->GetNumTimesPlayed(mc) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1129,7 +1129,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
 				s += " ";
 				s += DifficultyToString(pSteps->GetDifficulty());
-				PRINT_LINE_RANK_LINK( i+1, s, ssprintf("#%u",pSteps).c_str(), pSteps->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, s, ssprintf("#%u",(unsigned)pSteps).c_str(), pSteps->GetNumTimesPlayed(mc) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1143,7 +1143,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			for( unsigned i=0; i<uNumToShow; i++ )
 			{
 				Course* pCourse = vpCourses[i];
-				PRINT_LINE_RANK_LINK( i+1, pCourse->m_sName, ssprintf("#%u",pCourse).c_str(), pCourse->GetNumTimesPlayed(mc) );
+				PRINT_LINE_RANK_LINK( i+1, pCourse->m_sName, ssprintf("#%u",(unsigned)pCourse).c_str(), pCourse->GetNumTimesPlayed(mc) );
 			}
 			PRINT_DIV_END;
 		}
@@ -1185,7 +1185,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				f.PutLine( "<tr>" );
 				
 				f.Write( ssprintf("<td><a href='#%u'>%s</a></td>", 
-					pSong,	// use pointer value as the hash
+					(unsigned)pSong,	// use pointer value as the hash
 					pSong->GetFullDisplayTitle().c_str()) );
 
 				for( Difficulty dc=(Difficulty)0; dc<NUM_DIFFICULTIES; dc=(Difficulty)(dc+1) )
@@ -1193,7 +1193,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 					Steps* pSteps = pSong->GetStepsByDifficulty( st, dc, false );
 					if( pSteps )
 						f.PutLine( ssprintf("<td><p align='right'><a href='#%u'>%d</a></p></td>", 
-						pSteps,		// use pointer value as the hash
+						(unsigned)pSteps,		// use pointer value as the hash
 						pSteps->GetMeter()) );
 					else
 						f.PutLine( "<td>&nbsp;</td>" );
