@@ -15,8 +15,8 @@
 
 MsdFile::MsdFile()
 {
-	m_szFileString = NULL;
-	int m_iNumValues = 0;
+	m_szFileString = NULL; 
+	m_iNumValues = 0;
 }
 
 MsdFile::~MsdFile()
