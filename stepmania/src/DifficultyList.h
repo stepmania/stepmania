@@ -26,7 +26,7 @@ public:
 private:
 	void UpdatePositions();
 	void PositionItems();
-	void GetCurrentRows( int iCurrentRow[NUM_PLAYERS] ) const;
+	int GetCurrentRowIndex( PlayerNumber pn ) const;
 	void HideRows();
 
 	AutoActor		m_Cursors[NUM_PLAYERS];
@@ -45,14 +45,21 @@ private:
 
 	struct Row
 	{
-		Row();
+		Row()
+		{
+			m_Steps = NULL;
+			m_dc = DIFFICULTY_INVALID;
+			m_fY = 0;
+			m_bHidden = false;
+		}
 		
 		Steps *m_Steps;
+		Difficulty m_dc;
 		float m_fY;
 		bool m_bHidden; // currently off screen
 	};
 	
-	vector<Row*>		m_Rows;
+	vector<Row>		m_Rows;
 };
 
 #endif

@@ -87,29 +87,33 @@ void DifficultyList::Load()
 	PositionItems();
 }
 
-void DifficultyList::GetCurrentRows( int iCurrentRow[NUM_PLAYERS] ) const
+int DifficultyList::GetCurrentRowIndex( PlayerNumber pn ) const
 {
-	for( int pn = 0;pn < NUM_PLAYERS; ++pn )
+	for( unsigned i=0; i<m_Rows.size(); i++ )
 	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
+		const Row &row = m_Rows[i];
 
-		for( iCurrentRow[pn] = 0; iCurrentRow[pn] < (int) m_Rows.size(); ++iCurrentRow[pn] )
+		if( GAMESTATE->m_pCurNotes[pn] == NULL )
 		{
-			if( GAMESTATE->m_pCurNotes[pn] == m_Rows[iCurrentRow[pn]]->m_Steps )
-				break;
-			if( GAMESTATE->m_pCurNotes[pn] == NULL && 
-				m_Rows[iCurrentRow[pn]]->m_Steps->GetDifficulty() == GAMESTATE->m_PreferredDifficulty[pn] )
-				break;
+			if( row.m_dc == GAMESTATE->m_PreferredDifficulty[pn] )
+				return i;
+		}
+		else
+		{
+			if( GAMESTATE->m_pCurNotes[pn] == row.m_Steps )
+				return i;
 		}
 	}
+	
+	return 0;
 }
 
 /* Update m_fY and m_bHidden[]. */
 void DifficultyList::UpdatePositions()
 {
 	int iCurrentRow[NUM_PLAYERS];
-	GetCurrentRows( iCurrentRow );
+	FOREACH_HumanPlayer( p )
+		iCurrentRow[p] = GetCurrentRowIndex( p );
 
 	const int total = NUM_SHOWN_ITEMS;
 	const int halfsize = total / 2;
@@ -120,7 +124,7 @@ void DifficultyList::UpdatePositions()
 	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? iCurrentRow[PLAYER_1]: iCurrentRow[PLAYER_2];
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? iCurrentRow[PLAYER_2]: iCurrentRow[PLAYER_1];
 
-	vector<Row*> Rows( m_Rows );
+	vector<Row> &Rows = m_Rows;
 
 	const bool BothPlayersActivated = GAMESTATE->IsHumanPlayer(PLAYER_1) && GAMESTATE->IsHumanPlayer(PLAYER_2);
 	if( !BothPlayersActivated )
@@ -185,7 +189,7 @@ void DifficultyList::UpdatePositions()
 		else
 			ItemPosition = (float) total - 0.5f;
 			
-		Row &row = *Rows[i];
+		Row &row = Rows[i];
 
 		float fY = ITEMS_SPACING_Y*ItemPosition;
 		row.m_fY = fY;
@@ -209,7 +213,7 @@ void DifficultyList::PositionItems()
 	int m;
 	for( m = 0; m < (int)m_Rows.size(); ++m )
 	{
-		Row &row = *m_Rows[m];
+		Row &row = m_Rows[m];
 		bool bHidden = row.m_bHidden;
 		if( !m_bShown )
 			bHidden = true;
@@ -233,7 +237,7 @@ void DifficultyList::PositionItems()
 	{
 		bool bHidden = true;
 		if( m_bShown && m < (int)m_Rows.size() )
-			bHidden = m_Rows[m]->m_bHidden;
+			bHidden = m_Rows[m].m_bHidden;
 
 		const CString cmd = ssprintf( "diffusealpha,%f", bHidden? 0.0f:1.0f );
 		m_Lines[m].m_Description.Command( cmd );
@@ -241,23 +245,18 @@ void DifficultyList::PositionItems()
 		m_Lines[m].m_Number.Command( cmd );
 	}
 
-	int iCurrentRow[NUM_PLAYERS];
-	GetCurrentRows( iCurrentRow );
 
 	FOREACH_HumanPlayer( pn )
 	{
+		int iCurrentRow = GetCurrentRowIndex( pn );
+
 		float fY = 0;
-		if( iCurrentRow[pn] < (int) m_Rows.size() )
-			fY = m_Rows[iCurrentRow[pn]]->m_fY;
+		if( iCurrentRow < (int) m_Rows.size() )
+			fY = m_Rows[iCurrentRow].m_fY;
 
 		COMMAND( m_CursorFrames[pn], "Change" );
 		m_CursorFrames[pn].SetY( fY );
 	}
-}
-
-DifficultyList::Row::Row()
-{
-	m_Steps = NULL;
 }
 
 void DifficultyList::SetFromGameState()
@@ -278,6 +277,8 @@ void DifficultyList::SetFromGameState()
 			m_Lines[m].m_Description.SetText( "" );
 		}
 
+		m_Rows.clear();
+
 		if( song == NULL )
 		{
 			// FIXME: This clamps to between the min and the max difficulty, but
@@ -290,6 +291,12 @@ void DifficultyList::SetFromGameState()
 				Difficulty d = StringToDifficulty( asDiff[i] );
 				if( d == DIFFICULTY_INVALID )
 					continue;
+
+				m_Rows.resize( m_Rows.size()+1 );
+
+				Row &row = m_Rows.back();
+
+				row.m_dc = d;
 
 				m_Lines[i].m_Meter.SetMeter( 3*(d), d );
 				m_Lines[i].m_Number.SetText( "?" );
@@ -304,34 +311,29 @@ void DifficultyList::SetFromGameState()
 			/* Should match the sort in ScreenSelectMusic::AfterMusicChange. */
 			StepsUtil::SortNotesArrayByDifficulty( CurSteps );
 
-			unsigned i;
-			for( i = 0; i < m_Rows.size(); ++i )
-				delete m_Rows[i];
-			m_Rows.clear();
-
-			for( i = 0; i < CurSteps.size(); ++i )
+			m_Rows.resize( CurSteps.size() );
+			for( unsigned i = 0; i < CurSteps.size(); ++i )
 			{
-				m_Rows.push_back( new Row() );
-				Row &row = *m_Rows[i];
+				Row &row = m_Rows[i];
 
 				row.m_Steps = CurSteps[i];
 
-				m_Lines[i].m_Meter.SetFromNotes( m_Rows[i]->m_Steps );
+				m_Lines[i].m_Meter.SetFromNotes( m_Rows[i].m_Steps );
 
-				Difficulty dc = row.m_Steps->GetDifficulty();
+				row.m_dc = row.m_Steps->GetDifficulty();
 				
 				CString s;
 				if( row.m_Steps->GetDifficulty() == DIFFICULTY_EDIT )
 					s = row.m_Steps->GetDescription();
 				else
-					s = DifficultyToThemedString(dc);
+					s = DifficultyToThemedString(row.m_dc);
 				m_Lines[i].m_Description.SetMaxWidth( DESCRIPTION_MAX_WIDTH );
 				m_Lines[i].m_Description.SetText( s );
 				/* Don't mess with alpha; it might be fading on. */
-				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+				m_Lines[i].m_Description.SetDiffuseColor( SONGMAN->GetDifficultyColor(row.m_dc) );
 				
 				m_Lines[i].m_Number.SetZoomX(1);
-				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(dc) );
+				m_Lines[i].m_Number.SetDiffuseColor( SONGMAN->GetDifficultyColor(row.m_dc) );
 				m_Lines[i].m_Number.SetText( ssprintf("%d",row.m_Steps->GetMeter()) );
 			}
 		}
