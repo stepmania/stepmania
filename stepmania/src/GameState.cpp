@@ -1582,7 +1582,12 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 		
 		while (!file.AtEOF())
 		{
-			line = file.GetLine();
+			if( file.GetLine( line ) == -1 )
+			{
+				LOG->Warn( "Error reading \"%s\": %s", NAMES_BLACKLIST_FILE, file.GetError().c_str() );
+				break;
+			}
+
 			line.MakeUpper();
 			if( !line.empty() && name.Find(line) != -1 )	// name contains a bad word
 			{

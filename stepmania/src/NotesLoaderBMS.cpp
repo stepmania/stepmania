@@ -178,7 +178,14 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 	while( !file.AtEOF() )
 	{
-		CString line = file.GetLine();
+		CString line;
+		if( file.GetLine( line ) == -1 )
+		{
+			LOG->Warn( "Error reading \"%s\": %s", sPath.c_str(), file.GetError().c_str() );
+			delete pNoteData;
+			return false;
+		}
+
 		StripCrnl(line);
 		CString value_name;		// fill these in
 		CString value_data;
@@ -463,13 +470,18 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
-	RageFile file(sPath);
-
-	if (!file.IsOpen())
+	RageFile file;
+	if( !file.Open(sPath) )
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 	while (!file.AtEOF())
 	{
-		CString line = file.GetLine();
+		CString line;
+		if( file.GetLine( line ) == -1 )
+		{
+			LOG->Warn( "Error reading \"%s\": %s", sPath.c_str(), file.GetError().c_str() );
+			return false;
+		}
+
 		StripCrnl(line);
 		CString value_name;		// fill these in
 		CString value_data;
@@ -601,7 +613,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 					while (!file.AtEOF())
 					{
-						CString line = file.GetLine();
+						CString line;
+						file.GetLine( line );
 						StripCrnl(line);
 						CString value_name;		// fill these in
 						CString value_data;
@@ -659,7 +672,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
                         RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 					while (!file.AtEOF())
 					{
-						CString line = file.GetLine();
+						CString line;
+						file.GetLine( line );
 						StripCrnl(line);
 						CString value_name;		// fill these in
 						CString value_data;
