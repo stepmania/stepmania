@@ -7,10 +7,10 @@ class ArchHooks_Win32: public ArchHooks
 public:
     ArchHooks_Win32();
     void DumpDebugInfo();
-    void MessageBoxOK( CString sMessage, CString ID );
-	void MessageBoxError( CString error );
-    MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID );
-    MessageBoxResult MessageBoxRetryCancel( CString sMessage, CString ID );
+    void MessageBoxOKPrivate( CString sMessage, CString ID );
+	void MessageBoxErrorPrivate( CString error );
+    MessageBoxResult MessageBoxAbortRetryIgnorePrivate( CString sMessage, CString ID );
+    MessageBoxResult MessageBoxRetryCancelPrivate( CString sMessage, CString ID );
 	void RestartProgram();
 };
 

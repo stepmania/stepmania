@@ -28,12 +28,12 @@ public:
 
 	/* Message box stuff.  Not supported on all archs.  The ID can be used
 	 * to identify a class of messages, for "don't display this dialog"-type
-	 * prompts. */
+	 * prompts.  (Don't overload these, overload *Private below.) */
 	enum MessageBoxResult { abort, retry, ignore, cancel };
-	virtual void MessageBoxError( CString error ) { printf("Error: %s\n", error.c_str()); }
-	virtual void MessageBoxOK( CString sMessage, CString ID = "" );
-	virtual MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID = "" );
-	virtual MessageBoxResult MessageBoxRetryCancel( CString sMessage, CString ID = "" );
+	void MessageBoxError( CString error );
+	void MessageBoxOK( CString sMessage, CString ID = "" );
+	MessageBoxResult MessageBoxAbortRetryIgnore( CString sMessage, CString ID = "" );
+	MessageBoxResult MessageBoxRetryCancel( CString sMessage, CString ID = "" );
 
 	virtual ~ArchHooks() { }
 	/* This is called once each time through the game loop */
@@ -43,6 +43,7 @@ public:
 	virtual void RestartProgram() { }
 
 protected:
+	virtual void MessageBoxErrorPrivate( CString sMessage ) { printf("Error: %s\n", sMessage.c_str()); }
 	virtual void MessageBoxOKPrivate( CString sMessage, CString ID ) {}
 	virtual MessageBoxResult MessageBoxAbortRetryIgnorePrivate( CString sMessage, CString ID ) { return ignore; } 
 	virtual MessageBoxResult MessageBoxRetryCancelPrivate( CString sMessage, CString ID ) { return cancel; } 
