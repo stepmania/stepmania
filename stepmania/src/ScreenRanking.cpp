@@ -421,8 +421,8 @@ void ScreenRanking::SetPage( PageToShow pts )
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				ProfileManager::CategoryData::HighScore hs;
-				if( l < (int)PROFILEMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores.size() )
-					hs = PROFILEMAN->m_CategoryDatas[pts.nt][pts.category].vHighScores[l];
+				if( l < (int)PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][pts.nt][pts.category].vHighScores.size() )
+					hs = PROFILEMAN->m_CategoryDatas[MEMORY_CARD_MACHINE][pts.nt][pts.category].vHighScores[l];
 				if( hs.sName.empty() )
 					hs.sName = EMPTY_SCORE_NAME;
 

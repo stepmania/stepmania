@@ -951,21 +951,24 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 			GetFinalEvalStatsAndSongs( stats, vSongs );
 
 
-			for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
+			for( int mc=0; mc<NUM_MEMORY_CARDS; mc++ )
 			{
-				vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[nt][i].vHighScores;
-				for( unsigned j=0; j<vHighScores.size(); j++ )
+				for( i=0; i<NUM_RANKING_CATEGORIES; i++ )
 				{
-					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
-						continue;
+					vector<ProfileManager::CategoryData::HighScore> &vHighScores = PROFILEMAN->m_CategoryDatas[mc][nt][i].vHighScores;
+					for( unsigned j=0; j<vHighScores.size(); j++ )
+					{
+						if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+							continue;
 
-					RankingFeats feat;
-					feat.Type = RankingFeats::RANKING;
-					feat.Feat = ssprintf("#%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
-					feat.pStringToFill = &vHighScores[j].sName;
-					feat.g = GRADE_NO_DATA;
-					feat.Score = (float) vHighScores[j].iScore;
-					asFeatsOut.push_back( feat );
+						RankingFeats feat;
+						feat.Type = RankingFeats::RANKING;
+						feat.Feat = ssprintf("#%d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
+						feat.pStringToFill = &vHighScores[j].sName;
+						feat.g = GRADE_NO_DATA;
+						feat.Score = (float) vHighScores[j].iScore;
+						asFeatsOut.push_back( feat );
+					}
 				}
 			}
 		}

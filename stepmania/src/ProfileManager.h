@@ -92,22 +92,24 @@ public:
 
 		void AddHighScore( HighScore hs, int &iIndexOut );
 
-	} m_CategoryDatas[NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
+	} m_CategoryDatas[NUM_MEMORY_CARDS][NUM_STEPS_TYPES][NUM_RANKING_CATEGORIES];
 
 	void AddHighScore( StepsType nt, RankingCategory rc, PlayerNumber pn, CategoryData::HighScore hs, int &iMachineIndexOut )
 	{
 		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-		m_CategoryDatas[nt][rc].AddHighScore( hs, iMachineIndexOut );
+		m_CategoryDatas[pn][nt][rc].AddHighScore( hs, iMachineIndexOut );
+		m_CategoryDatas[MEMORY_CARD_MACHINE][nt][rc].AddHighScore( hs, iMachineIndexOut );
 	}
 
 	void ReadSM300NoteScores();
-	void ReadStepsMemCardDataFromFile( CString fn, int c );
-	void ReadCourseMemCardDataFromFile( CString fn, int c );
-	void ReadCategoryRankingsFromFile( CString fn );
+	void ReadSongScoresFromFile( CString fn, MemoryCard mc );
+	void ReadCourseScoresFromFile( CString fn, MemoryCard mc );
+	void ReadCategoryScoresFromFile( CString fn, MemoryCard mc );
 
-	void SaveStepsMemCardDataToFile( CString fn, int c );
-	void SaveCourseMemCardDataToFile( CString fn, int c );
-	void SaveCategoryRankingsToFile( CString fn );
+	void SaveSongScoresToFile( CString fn, MemoryCard mc );
+	void SaveCourseScoresToFile( CString fn, MemoryCard mc );
+	void SaveCategoryScoresToFile( CString fn, MemoryCard mc );
+	void SaveStatsWebPageToFile( CString fn, MemoryCard mc );
 
 private:
 	bool LoadDefaultProfileFromMachine( PlayerNumber pn );
@@ -126,7 +128,6 @@ private:
 
 	Profile m_MachineProfile;
 
-	void WriteStatsWebPage();
 };
 
 

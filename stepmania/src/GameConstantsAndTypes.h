@@ -265,8 +265,6 @@ const int ITEM_NONE = -1;
 #define RANDOMMOVIES_DIR	CString(BASE_PATH "RandomMovies" SLASH)
 
 
-#define PROFILES_DIR		BASE_PATH "Data" SLASH "Profiles" SLASH
-
 
 //
 // Coin stuff

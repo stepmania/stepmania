@@ -32,20 +32,21 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 
 #define PROFILE_FILE		"Profile.ini"
 
-#define STEPS_MEM_CARD_DATA_FILE	"StepsMemCardData.dat"
-#define COURSE_MEM_CARD_DATA_FILE	"CourseMemCardData.dat"
-#define NEW_MEM_CARD_NAME			"NewCard"
-#define NEW_PROFILE_NAME			"NewProfile"
-
+#define CATEGORY_SCORES_FILE	"CategoryScores.dat"
+#define SONG_SCORES_FILE		"SongScores.dat"
+#define COURSE_SCORES_FILE		"CourseScores.dat"
+#define STATS_HTML_FILE			"stats.html"
+#define NEW_MEM_CARD_NAME		"NewCard"
+#define NEW_PROFILE_NAME		"NewProfile"
 
 #define SM_300_STATISTICS_FILE	BASE_PATH "statistics.ini"
-#define STATS_PATH				BASE_PATH "stats.html"
-const CString CATEGORY_RANKING_FILE =			BASE_PATH "Data" SLASH "CategoryRanking.dat";
-const CString MACHINE_STEPS_MEM_CARD_DATA =		BASE_PATH "Data" SLASH "MachineStepsMemCardData.dat";
-const CString MACHINE_COURSE_MEM_CARD_DATA =	BASE_PATH "Data" SLASH "MachineCourseMemCardData.dat";
-const int CATEGORY_RANKING_VERSION = 3;
-const int STEPS_MEM_CARD_DATA_VERSION = 7;
-const int COURSE_MEM_CARD_DATA_VERSION = 5;
+
+#define USER_PROFILES_DIR		BASE_PATH "Data" SLASH "UserProfiles" SLASH
+#define MACHINE_PROFILE_DIR		BASE_PATH "Data" SLASH "MachineProfile" SLASH
+
+const int CATEGORY_RANKING_VERSION = 4;
+const int STEPS_SCORES_VERSION = 8;
+const int COURSE_SCORES_VERSION = 6;
 
 
 static const char *MemCardDirs[NUM_PLAYERS] =
@@ -70,14 +71,12 @@ ProfileManager::ProfileManager()
 
 ProfileManager::~ProfileManager()
 {
-	WriteStatsWebPage();
-
 	SaveMachineScoresToDisk();
 }
 
 void ProfileManager::GetMachineProfileIDs( vector<CString> &asProfileIDsOut )
 {
-	GetDirListing( PROFILES_DIR "*", asProfileIDsOut, true, false );
+	GetDirListing( USER_PROFILES_DIR "*", asProfileIDsOut, true, false );
 }
 
 void ProfileManager::GetMachineProfileNames( vector<CString> &asNamesOut )
@@ -89,7 +88,7 @@ void ProfileManager::GetMachineProfileNames( vector<CString> &asNamesOut )
 		CString sProfileID = vsProfileIDs[i];
 
 		Profile pro;
-		pro.LoadFromIni( PROFILES_DIR + sProfileID + SLASH + PROFILE_FILE );
+		pro.LoadFromIni( USER_PROFILES_DIR + sProfileID + SLASH + PROFILE_FILE );
 		asNamesOut.push_back( pro.m_sName );
 	}
 }
@@ -112,8 +111,9 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	}
 
 	// Load scores into SONGMAN
-	PROFILEMAN->ReadStepsMemCardDataFromFile( m_sProfileDir[pn]+STEPS_MEM_CARD_DATA_FILE, (MemoryCard)pn );
-	PROFILEMAN->ReadCourseMemCardDataFromFile( m_sProfileDir[pn]+COURSE_MEM_CARD_DATA_FILE, (MemoryCard)pn );
+	PROFILEMAN->ReadCategoryScoresFromFile( m_sProfileDir[pn]+SONG_SCORES_FILE, (MemoryCard)pn );
+	PROFILEMAN->ReadSongScoresFromFile( m_sProfileDir[pn]+SONG_SCORES_FILE, (MemoryCard)pn );
+	PROFILEMAN->ReadCourseScoresFromFile( m_sProfileDir[pn]+COURSE_SCORES_FILE, (MemoryCard)pn );
 
 	// apply saved default modifiers if any
 	if( m_Profile[pn].m_bUsingProfileDefaultModifiers )
@@ -148,7 +148,7 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 		return false;
 	}
 
-	CString sDir = PROFILES_DIR + sProfileID + SLASH;
+	CString sDir = USER_PROFILES_DIR + sProfileID + SLASH;
 
 	return LoadProfile( pn, sDir, false );
 }
@@ -202,12 +202,10 @@ bool ProfileManager::SaveProfile( PlayerNumber pn )
 
 	m_Profile[pn].SaveToIni( m_sProfileDir[pn]+PROFILE_FILE );
 
-	//
-	// Save scores into SONGMAN
-	//
-	// TODO: move record data to this class
-	SaveStepsMemCardDataToFile( m_sProfileDir[pn]+STEPS_MEM_CARD_DATA_FILE, (MemoryCard)pn );
-	SaveCourseMemCardDataToFile( m_sProfileDir[pn]+COURSE_MEM_CARD_DATA_FILE, (MemoryCard)pn );
+	SaveCategoryScoresToFile( m_sProfileDir[pn]+CATEGORY_SCORES_FILE, (MemoryCard)pn );
+	SaveSongScoresToFile( m_sProfileDir[pn]+SONG_SCORES_FILE, (MemoryCard)pn );
+	SaveCourseScoresToFile( m_sProfileDir[pn]+COURSE_SCORES_FILE, (MemoryCard)pn );
+	SaveStatsWebPageToFile( m_sProfileDir[pn]+STATS_HTML_FILE, (MemoryCard)pn );
 	
 	return true;
 }
@@ -278,7 +276,7 @@ bool ProfileManager::CreateMachineProfile( CString sName )
 	for( i=0; i<MAX_TRIES; i++ )
 	{
 		sProfileID = ssprintf("%08d",i);
-		sProfileDir = PROFILES_DIR + sProfileID;
+		sProfileDir = USER_PROFILES_DIR + sProfileID;
 		if( !DoesFileExist(sProfileDir) )
 			break;
 	}
@@ -302,7 +300,7 @@ bool ProfileManager::RenameMachineProfile( CString sProfileID, CString sNewName 
 {
 	ASSERT( !sProfileID.empty() );
 
-	CString sProfileDir = PROFILES_DIR + sProfileID;
+	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
 	CString sProfileFile = sProfileDir + SLASH PROFILE_FILE;
 
 	Profile pro;
@@ -321,7 +319,7 @@ bool ProfileManager::RenameMachineProfile( CString sProfileID, CString sNewName 
 bool ProfileManager::DeleteMachineProfile( CString sProfileID )
 {
 	// delete all files in profile dir
-	CString sProfileDir = PROFILES_DIR + sProfileID;
+	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
 	CStringArray asFilesToDelete;
 	GetDirListing( sProfileDir + SLASH "*", asFilesToDelete, false, true );
 	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
@@ -339,9 +337,10 @@ bool ProfileManager::DeleteMachineProfile( CString sProfileID )
 
 void ProfileManager::SaveMachineScoresToDisk()
 {
-	SaveCategoryRankingsToFile( CATEGORY_RANKING_FILE );
-	SaveStepsMemCardDataToFile( MACHINE_STEPS_MEM_CARD_DATA, MEMORY_CARD_MACHINE );
-	SaveCourseMemCardDataToFile( MACHINE_COURSE_MEM_CARD_DATA, MEMORY_CARD_MACHINE );
+	SaveCategoryScoresToFile( MACHINE_PROFILE_DIR CATEGORY_SCORES_FILE, MEMORY_CARD_MACHINE );
+	SaveSongScoresToFile( MACHINE_PROFILE_DIR SONG_SCORES_FILE, MEMORY_CARD_MACHINE );
+	SaveCourseScoresToFile( MACHINE_PROFILE_DIR COURSE_SCORES_FILE, MEMORY_CARD_MACHINE );
+	SaveStatsWebPageToFile( MACHINE_PROFILE_DIR STATS_HTML_FILE, MEMORY_CARD_MACHINE );
 }
 
 void ProfileManager::CategoryData::AddHighScore( HighScore hs, int &iIndexOut )
@@ -422,7 +421,7 @@ void FileWrite(RageFile& f, float fWrite)
 #define WARN_AND_RETURN { LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
 
 
-void ProfileManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
+void ProfileManager::ReadSongScoresFromFile( CString fn, MemoryCard mc )
 {
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
@@ -431,7 +430,7 @@ void ProfileManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 	int version;
 	if( !FileRead(f, version) )
 		WARN_AND_RETURN;
-	if( version != STEPS_MEM_CARD_DATA_VERSION )
+	if( version != STEPS_SCORES_VERSION )
 		WARN_AND_RETURN;
 
 	int iNumSongs;
@@ -517,7 +516,7 @@ void ProfileManager::ReadStepsMemCardDataFromFile( CString fn, int mc )
 }
 
 
-void ProfileManager::ReadCategoryRankingsFromFile( CString fn )
+void ProfileManager::ReadCategoryScoresFromFile( CString fn, MemoryCard mc )
 {
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
@@ -533,7 +532,7 @@ void ProfileManager::ReadCategoryRankingsFromFile( CString fn )
 	{
 		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
 		{
-			m_CategoryDatas[st][rc].vHighScores.resize(NUM_RANKING_LINES);
+			m_CategoryDatas[mc][st][rc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				CString sName;
@@ -542,14 +541,14 @@ void ProfileManager::ReadCategoryRankingsFromFile( CString fn )
 				int iScore;
 				if( !FileRead(f, iScore) )
 					WARN_AND_RETURN;
-				m_CategoryDatas[st][rc].vHighScores[l].sName = sName;
-				m_CategoryDatas[st][rc].vHighScores[l].iScore = iScore;
+				m_CategoryDatas[mc][st][rc].vHighScores[l].sName = sName;
+				m_CategoryDatas[mc][st][rc].vHighScores[l].iScore = iScore;
 			}
 		}
 	}
 }
 
-void ProfileManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
+void ProfileManager::ReadCourseScoresFromFile( CString fn, MemoryCard mc )
 {
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
@@ -558,7 +557,7 @@ void ProfileManager::ReadCourseMemCardDataFromFile( CString fn, int mc )
 	int version;
 	if( !FileRead(f, version) )
 		WARN_AND_RETURN;
-	if( version != COURSE_MEM_CARD_DATA_VERSION )
+	if( version != COURSE_SCORES_VERSION )
 		WARN_AND_RETURN;
 
 	int iNumCourses;
@@ -627,9 +626,9 @@ void ProfileManager::InitMachineScoresFromDisk()
 	ReadSM300NoteScores();
 
 	// category ranking
-	ReadCategoryRankingsFromFile( CATEGORY_RANKING_FILE );
-	ReadCourseMemCardDataFromFile( MACHINE_COURSE_MEM_CARD_DATA, MEMORY_CARD_MACHINE );
-	ReadStepsMemCardDataFromFile( MACHINE_STEPS_MEM_CARD_DATA, MEMORY_CARD_MACHINE );
+	ReadCategoryScoresFromFile( MACHINE_PROFILE_DIR CATEGORY_SCORES_FILE, MEMORY_CARD_MACHINE );
+	ReadSongScoresFromFile( MACHINE_PROFILE_DIR SONG_SCORES_FILE, MEMORY_CARD_MACHINE );
+	ReadCourseScoresFromFile( MACHINE_PROFILE_DIR COURSE_SCORES_FILE, MEMORY_CARD_MACHINE );
 }
 
 void ProfileManager::ReadSM300NoteScores()
@@ -702,7 +701,7 @@ void ProfileManager::ReadSM300NoteScores()
 }
 
 
-void ProfileManager::SaveCategoryRankingsToFile( CString fn )
+void ProfileManager::SaveCategoryScoresToFile( CString fn, MemoryCard mc )
 {
 	LOG->Trace("SongManager::SaveCategoryRankingsToFile");
 
@@ -716,29 +715,29 @@ void ProfileManager::SaveCategoryRankingsToFile( CString fn )
 	{
 		for( int rc=0; rc<NUM_RANKING_CATEGORIES; rc++ )
 		{
-			m_CategoryDatas[st][rc].vHighScores.resize(NUM_RANKING_LINES);
+			m_CategoryDatas[mc][st][rc].vHighScores.resize(NUM_RANKING_LINES);
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
 				// tricky:  wipe out "name to fill in" markers
-				if( IsRankingToFillIn(m_CategoryDatas[st][rc].vHighScores[l].sName) )
-					m_CategoryDatas[st][rc].vHighScores[l].sName = "";
+				if( IsRankingToFillIn(m_CategoryDatas[mc][st][rc].vHighScores[l].sName) )
+					m_CategoryDatas[mc][st][rc].vHighScores[l].sName = "";
 
-				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].sName );
-				FileWrite( f, m_CategoryDatas[st][rc].vHighScores[l].iScore );
+				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].sName );
+				FileWrite( f, m_CategoryDatas[mc][st][rc].vHighScores[l].iScore );
 			}
 		}
 	}
 }
 
-void ProfileManager::SaveCourseMemCardDataToFile( CString fn, int mc )
+void ProfileManager::SaveCourseScoresToFile( CString fn, MemoryCard mc )
 {
-	LOG->Trace("SongManager::SaveCourseMemCardDataToFile");
+	LOG->Trace("SongManager::SaveCourseScoresToFile");
 
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
 		return;
 	
-	FileWrite( f, COURSE_MEM_CARD_DATA_VERSION );
+	FileWrite( f, COURSE_SCORES_VERSION );
 
 	vector<Course*> vpCourses;
 	SONGMAN->GetAllCourses( vpCourses, true );
@@ -786,15 +785,15 @@ void ProfileManager::SaveCourseMemCardDataToFile( CString fn, int mc )
 	}
 }
 
-void ProfileManager::SaveStepsMemCardDataToFile( CString fn, int mc )
+void ProfileManager::SaveSongScoresToFile( CString fn, MemoryCard mc )
 {
-	LOG->Trace("SongManager::SaveStepsMemCardDataToFile %s", fn.c_str());
+	LOG->Trace("SongManager::SaveSongScoresToFile %s", fn.c_str());
 
 	RageFile f(fn);
 	if (!f.IsOpen() || f.GetError() != 0)
 		return;
 	
-	FileWrite( f, STEPS_MEM_CARD_DATA_VERSION );
+	FileWrite( f, STEPS_SCORES_VERSION );
 
 	const vector<Song*> &vpSongs = SONGMAN->GetAllSongs();
 	
@@ -889,10 +888,10 @@ static CString HTMLQuoteDoubleQuotes( CString str )
 	return str;
 }
 
-void ProfileManager::WriteStatsWebPage()
+void ProfileManager::SaveStatsWebPageToFile( CString fn, MemoryCard mc )
 {
 	RageFile f;
-	if( !f.Open( STATS_PATH, RageFile::WRITE ) )
+	if( !f.Open( fn, RageFile::WRITE ) )
 		return;
 
 	f.PutLine( "<html>" );
