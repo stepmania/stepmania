@@ -68,12 +68,12 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_MARVELOUS:		fPercentToMove = PREFSMAN->m_fTugMeterMarvelousPercentChange;	break;
-	case TNS_PERFECT:		fPercentToMove = PREFSMAN->m_fTugMeterPerfectPercentChange;	break;
-	case TNS_GREAT:			fPercentToMove = PREFSMAN->m_fTugMeterGreatPercentChange;		break;
-	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fTugMeterGoodPercentChange;		break;
-	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fTugMeterBooPercentChange;		break;
-	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fTugMeterMissPercentChange;		break;
+	case TNS_MARVELOUS:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeMarvelous;	break;
+	case TNS_PERFECT:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangePerfect;	break;
+	case TNS_GREAT:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeGreat;		break;
+	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeGood;		break;
+	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeBoo;		break;
+	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeMiss;		break;
 	default:	ASSERT(0);	break;
 	}
 
@@ -90,8 +90,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case HNS_OK:			fPercentToMove = PREFSMAN->m_fTugMeterOKPercentChange;	break;
-	case HNS_NG:			fPercentToMove = PREFSMAN->m_fTugMeterNGPercentChange;	break;
+	case HNS_OK:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeOK;	break;
+	case HNS_NG:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeNG;	break;
 	default:	ASSERT(0);	break;
 	}
 
@@ -100,7 +100,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 
 void CombinedLifeMeterTug::ChangeLifeMine( PlayerNumber pn )
 {
-	float fPercentToMove = PREFSMAN->m_fTugMeterHitMinePercentChange;
+	float fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHitMine;
 
 	ChangeLife( pn, fPercentToMove );
 }

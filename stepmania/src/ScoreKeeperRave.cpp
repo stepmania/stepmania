@@ -39,7 +39,7 @@ void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterHitMinePercentChange;	break;
+	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeHitMine;	break;
 	}
 
 	AddSuperMeterDelta( fPercentToMove );
@@ -52,12 +52,12 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	float fPercentToMove;
 	switch( scoreOfLastTap )
 	{
-	case TNS_MARVELOUS:		fPercentToMove = PREFSMAN->m_fSuperMeterMarvelousPercentChange;	break;
-	case TNS_PERFECT:		fPercentToMove = PREFSMAN->m_fSuperMeterPerfectPercentChange;	break;
-	case TNS_GREAT:			fPercentToMove = PREFSMAN->m_fSuperMeterGreatPercentChange;		break;
-	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fSuperMeterGoodPercentChange;		break;
-	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fSuperMeterBooPercentChange;		break;
-	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fSuperMeterMissPercentChange;		break;
+	case TNS_MARVELOUS:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeMarvelous;	break;
+	case TNS_PERFECT:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangePerfect;	break;
+	case TNS_GREAT:			fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeGreat;		break;
+	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeGood;		break;
+	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeBoo;		break;
+	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeMiss;		break;
 	default:	ASSERT(0);	fPercentToMove = +0.00f;	break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
@@ -68,7 +68,7 @@ void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	float fPercentToMove = 0;
 	switch( tapScore )
 	{
-	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterHitMinePercentChange;	break;
+	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChangeHitMine;	break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }

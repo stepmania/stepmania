@@ -344,7 +344,7 @@ void PlayerMinus::Update( float fDeltaTime )
 //				if( fSongBeat-hn.fStartBeat > GAMESTATE->m_fCurBPS * GetMaxStepDistanceSeconds() )
 //				{
 					// Decrease life
-					fLife -= fDeltaTime/PREFSMAN->m_fJudgeWindowOKSeconds;
+					fLife -= fDeltaTime/PREFSMAN->m_fJudgeWindowSecondsOK;
 					fLife = max( fLife, 0 );	// clamp
 //				}
 			}
@@ -624,22 +624,22 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
 				/* Ez2 is only perfect / good / miss */
 				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
-				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsMarvelous )	score = TNS_PERFECT; 
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsPerfect )	score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGreat )		score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGood )		score = TNS_GOOD;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsBoo )		score = TNS_MISS;
 				else	score = TNS_NONE;
 			}
 			else if(GAMESTATE->m_CurGame == GAME_PNM)
 			{
 				/* PNM Goods = Great / Boo = Miss */
 				float fScaledSecondsFromPerfect = fSecondsFromPerfect / PREFSMAN->m_fJudgeWindowScale;
-				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS; 
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GREAT;
-				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+				if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsMarvelous )	score = TNS_MARVELOUS; 
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsPerfect )	score = TNS_PERFECT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGreat )		score = TNS_GREAT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGood )		score = TNS_GREAT;
+				else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsBoo )		score = TNS_MISS;
 				else	score = TNS_NONE;
 			}
 
@@ -648,7 +648,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			{
 			case TAP_MINE:
 				// stepped too close to mine?
-				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
+				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsMine )
 				{
 					m_soundMine.Play();
 					score = TNS_HIT_MINE;
@@ -666,7 +666,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 				if( IsTapAttack(tn) )
 				{
 					score = TNS_NONE;	// don't score this as anything
-					if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowAttackSeconds )
+					if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsAttack )
 					{
 						m_soundAttackLaunch.Play();
 						// put attack in effect
@@ -692,21 +692,21 @@ void PlayerMinus::Step( int col, RageTimer tm )
 					{
 						/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
 						/* Ez2 is only perfect / good / miss */
-						if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_PERFECT; 
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_PERFECT;
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_MISS;
+						if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsMarvelous )	score = TNS_PERFECT; 
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsPerfect )	score = TNS_PERFECT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGreat )		score = TNS_PERFECT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGood )		score = TNS_GOOD;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsBoo )		score = TNS_MISS;
 						else	score = TNS_NONE;
 					}
 					else
 					{
 						/* 1 is normal.  2 means scoring is half as hard; .5 means it's twice as hard. */
-						if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMarvelousSeconds )	score = TNS_MARVELOUS;
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowPerfectSeconds )	score = TNS_PERFECT;
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGreatSeconds )		score = TNS_GREAT;
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowGoodSeconds )		score = TNS_GOOD;
-						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowBooSeconds )		score = TNS_BOO;
+						if(		 fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsMarvelous )	score = TNS_MARVELOUS;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsPerfect )	score = TNS_PERFECT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGreat )		score = TNS_GREAT;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsGood )		score = TNS_GOOD;
+						else if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowSecondsBoo )		score = TNS_BOO;
 						else	score = TNS_NONE;
 					}
 				}
@@ -1219,7 +1219,7 @@ void PlayerMinus::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScor
 
 float PlayerMinus::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.m_fMusicRate * PREFSMAN->m_fJudgeWindowBooSeconds * PREFSMAN->m_fJudgeWindowScale;
+	return GAMESTATE->m_SongOptions.m_fMusicRate * PREFSMAN->m_fJudgeWindowSecondsBoo * PREFSMAN->m_fJudgeWindowScale;
 }
 
 void PlayerMinus::FadeToFail()

@@ -459,13 +459,13 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 	int TapScoreValues[NUM_TAP_NOTE_SCORES] =
 	{
 		0,
-		PREFSMAN->m_iPercentScoreHitMineWeight,
-		PREFSMAN->m_iPercentScoreMissWeight,
-		PREFSMAN->m_iPercentScoreBooWeight,
-		PREFSMAN->m_iPercentScoreGoodWeight,
-		PREFSMAN->m_iPercentScoreGreatWeight,
-		PREFSMAN->m_iPercentScorePerfectWeight,
-		PREFSMAN->m_iPercentScoreMarvelousWeight,
+		PREFSMAN->m_iPercentScoreWeightHitMine,
+		PREFSMAN->m_iPercentScoreWeightMiss,
+		PREFSMAN->m_iPercentScoreWeightBoo,
+		PREFSMAN->m_iPercentScoreWeightGood,
+		PREFSMAN->m_iPercentScoreWeightGreat,
+		PREFSMAN->m_iPercentScoreWeightPerfect,
+		PREFSMAN->m_iPercentScoreWeightMarvelous,
 	};
 	return TapScoreValues[tns];
 }
@@ -475,8 +475,8 @@ int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	int HoldScoreValues[NUM_TAP_NOTE_SCORES] =
 	{
 		0,
-		PREFSMAN->m_iPercentScoreNGWeight,
-		PREFSMAN->m_iPercentScoreOKWeight,
+		PREFSMAN->m_iPercentScoreWeightNG,
+		PREFSMAN->m_iPercentScoreWeightOK,
 	};
 	return HoldScoreValues[hns];
 }

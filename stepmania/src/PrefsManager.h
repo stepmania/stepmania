@@ -58,74 +58,80 @@ public:
 	bool			m_bEventMode;
 
 	float			m_fJudgeWindowScale;
-	float			m_fLifeDifficultyScale;
-	float			m_fJudgeWindowMarvelousSeconds;
-	float			m_fJudgeWindowPerfectSeconds;
-	float			m_fJudgeWindowGreatSeconds;
-	float			m_fJudgeWindowGoodSeconds;
-	float			m_fJudgeWindowBooSeconds;
-	float			m_fJudgeWindowOKSeconds;
-	float			m_fJudgeWindowMineSeconds;
-	float			m_fJudgeWindowAttackSeconds;
+	float			m_fJudgeWindowSecondsMarvelous;
+	float			m_fJudgeWindowSecondsPerfect;
+	float			m_fJudgeWindowSecondsGreat;
+	float			m_fJudgeWindowSecondsGood;
+	float			m_fJudgeWindowSecondsBoo;
+	float			m_fJudgeWindowSecondsOK;
+	float			m_fJudgeWindowSecondsMine;
+	float			m_fJudgeWindowSecondsAttack;
 
-	float			m_fLifeDeltaMarvelousPercentChange;
-	float			m_fLifeDeltaPerfectPercentChange;
-	float			m_fLifeDeltaGreatPercentChange;
-	float			m_fLifeDeltaGoodPercentChange;
-	float			m_fLifeDeltaBooPercentChange;
-	float			m_fLifeDeltaMissPercentChange;
-	float			m_fLifeDeltaHitMinePercentChange;
-	float			m_fLifeDeltaOKPercentChange;
-	float			m_fLifeDeltaNGPercentChange;
+	float			m_fLifeDifficultyScale;
+	float			m_fLifeDeltaPercentChangeMarvelous;
+	float			m_fLifeDeltaPercentChangePerfect;
+	float			m_fLifeDeltaPercentChangeGreat;
+	float			m_fLifeDeltaPercentChangeGood;
+	float			m_fLifeDeltaPercentChangeBoo;
+	float			m_fLifeDeltaPercentChangeMiss;
+	float			m_fLifeDeltaPercentChangeHitMine;
+	float			m_fLifeDeltaPercentChangeOK;
+	float			m_fLifeDeltaPercentChangeNG;
+
 	// tug meter used in rave
-	float			m_fTugMeterMarvelousPercentChange;
-	float			m_fTugMeterPerfectPercentChange;
-	float			m_fTugMeterGreatPercentChange;
-	float			m_fTugMeterGoodPercentChange;
-	float			m_fTugMeterBooPercentChange;
-	float			m_fTugMeterMissPercentChange;
-	float			m_fTugMeterHitMinePercentChange;
-	float			m_fTugMeterOKPercentChange;
-	float			m_fTugMeterNGPercentChange;
+	float			m_fTugMeterPercentChangeMarvelous;
+	float			m_fTugMeterPercentChangePerfect;
+	float			m_fTugMeterPercentChangeGreat;
+	float			m_fTugMeterPercentChangeGood;
+	float			m_fTugMeterPercentChangeBoo;
+	float			m_fTugMeterPercentChangeMiss;
+	float			m_fTugMeterPercentChangeHitMine;
+	float			m_fTugMeterPercentChangeOK;
+	float			m_fTugMeterPercentChangeNG;
+	
+	// Whoever added these: Please add a comment saying what they do. -Chris
 	int				m_iRegenComboAfterFail;
 	int				m_iRegenComboAfterMiss;
 	int				m_iMaxRegenComboAfterFail;
 	int				m_iMaxRegenComboAfterMiss;
 	bool			m_bTwoPlayerRecovery;
-	bool			m_bMercifulDrain;
+	bool			m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
 
-	int				m_iPercentScoreMarvelousWeight;
-	int				m_iPercentScorePerfectWeight;
-	int				m_iPercentScoreGreatWeight;
-	int				m_iPercentScoreGoodWeight;
-	int				m_iPercentScoreBooWeight;
-	int				m_iPercentScoreMissWeight;
-	int				m_iPercentScoreHitMineWeight;
-	int				m_iPercentScoreOKWeight;
-	int				m_iPercentScoreNGWeight;
-	int				m_iGradeMarvelousWeight;
-	int				m_iGradePerfectWeight;
-	int				m_iGradeGreatWeight;
-	int				m_iGradeGoodWeight;
-	int				m_iGradeBooWeight;
-	int				m_iGradeMissWeight;
-	int				m_iGradeHitMineWeight;
-	int				m_iGradeOKWeight;
-	int				m_iGradeNGWeight;
-	bool			m_bGradeTier1IsAllMarvelouses;
-	bool			m_bGradeTier2IsAllPerfects;
-	float			m_fGradePercentTier[NUM_GRADE_TIERS];
+	// percent score (the number that is shown on the screen and saved to memory card)
+	int				m_iPercentScoreWeightMarvelous;
+	int				m_iPercentScoreWeightPerfect;
+	int				m_iPercentScoreWeightGreat;
+	int				m_iPercentScoreWeightGood;
+	int				m_iPercentScoreWeightBoo;
+	int				m_iPercentScoreWeightMiss;
+	int				m_iPercentScoreWeightHitMine;
+	int				m_iPercentScoreWeightOK;
+	int				m_iPercentScoreWeightNG;
 
-	float			m_fSuperMeterMarvelousPercentChange;
-	float			m_fSuperMeterPerfectPercentChange;
-	float			m_fSuperMeterGreatPercentChange;
-	float			m_fSuperMeterGoodPercentChange;
-	float			m_fSuperMeterBooPercentChange;
-	float			m_fSuperMeterMissPercentChange;
-	float			m_fSuperMeterHitMinePercentChange;
-	float			m_fSuperMeterOKPercentChange;
-	float			m_fSuperMeterNGPercentChange;
-	bool			m_bMercifulSuperMeter;
+	// grades are calculated based on a percentage, but might have different weights than the percent score
+	int				m_iGradeWeightMarvelous;
+	int				m_iGradeWeightPerfect;
+	int				m_iGradeWeightGreat;
+	int				m_iGradeWeightGood;
+	int				m_iGradeWeightBoo;
+	int				m_iGradeWeightMiss;
+	int				m_iGradeWeightHitMine;
+	int				m_iGradeWeightOK;
+	int				m_iGradeWeightNG;
+
+	float			m_fGradePercentTier[NUM_GRADE_TIERS];	// the minimum percent necessary achieve a grade
+	bool			m_bGradeTier02IsAllPerfects;	// DDR special case.  If true, m_fGradePercentTier[GRADE_TIER_2] is ignored
+
+	float			m_fSuperMeterPercentChangeMarvelous;
+	float			m_fSuperMeterPercentChangePerfect;
+	float			m_fSuperMeterPercentChangeGreat;
+	float			m_fSuperMeterPercentChangeGood;
+	float			m_fSuperMeterPercentChangeBoo;
+	float			m_fSuperMeterPercentChangeMiss;
+	float			m_fSuperMeterPercentChangeHitMine;
+	float			m_fSuperMeterPercentChangeOK;
+	float			m_fSuperMeterPercentChangeNG;
+	bool			m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 
 	bool			m_bAutoPlay;
 	bool			m_bDelayedEscape;

@@ -16,7 +16,6 @@
 #define NUM_GRADE_TIERS 20
 enum Grade 
 { 
-	GRADE_NO_DATA=0,
 	GRADE_TIER_1,	// = AAAA
 	GRADE_TIER_2,	// = AAA
 	GRADE_TIER_3,	// = AA
@@ -38,10 +37,12 @@ enum Grade
 	GRADE_TIER_19,
 	GRADE_TIER_20,
 	GRADE_FAILED,	// = E
-	NUM_GRADES 
+	NUM_GRADES, 
+	GRADE_NO_DATA,	// ~GRADE_INVALID
 };
 
 CString GradeToString( Grade g );
+CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility
 Grade StringToGrade( const CString &s );
 
 #endif

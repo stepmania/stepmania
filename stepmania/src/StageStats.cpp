@@ -149,19 +149,19 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	int TapScoreValues[NUM_TAP_NOTE_SCORES] = 
 	{ 
 		0,
-		PREFSMAN->m_iGradeHitMineWeight,
-		PREFSMAN->m_iGradeMissWeight,
-		PREFSMAN->m_iGradeBooWeight,
-		PREFSMAN->m_iGradeGoodWeight,
-		PREFSMAN->m_iGradeGreatWeight,
-		PREFSMAN->m_iGradePerfectWeight,
-		PREFSMAN->m_iGradeMarvelousWeight,
+		PREFSMAN->m_iGradeWeightHitMine,
+		PREFSMAN->m_iGradeWeightMiss,
+		PREFSMAN->m_iGradeWeightBoo,
+		PREFSMAN->m_iGradeWeightGood,
+		PREFSMAN->m_iGradeWeightGreat,
+		PREFSMAN->m_iGradeWeightPerfect,
+		PREFSMAN->m_iGradeWeightMarvelous,
 	};
 	int HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
 	{
 		0,
-		PREFSMAN->m_iGradeNGWeight,
-		PREFSMAN->m_iGradeOKWeight,
+		PREFSMAN->m_iGradeWeightNG,
+		PREFSMAN->m_iGradeWeightOK,
 	};
 
 	float Possible = 0, Actual = 0;
@@ -178,48 +178,29 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 		Possible += iHoldNoteScores[pn][i] * HoldScoreValues[HNS_OK];
 	}
 
-	float fPercentDancePoints = Actual / Possible;
-	fPercentDancePoints = max( 0.f, fPercentDancePoints );
-	LOG->Trace( "GetGrade: Actual: %f, Possible: %f, Percent: %f", Actual, Possible, fPercentDancePoints );
+	float fPercent = Actual / Possible;
+	LOG->Trace( "GetGrade: Actual: %f, Possible: %f, Percent: %f", Actual, Possible, fPercent );
 
-	/* check for "AAAA".  Check DP == 100%: if we're using eg. "LITTLE", we might have all
-	 * marvelouses but still not qualify for a AAAA. */
-	if( PREFSMAN->m_bGradeTier1IsAllMarvelouses &&
-		fPercentDancePoints > .9999 &&
-		iTapNoteScores[pn][TNS_MARVELOUS] > 0 &&
-		iTapNoteScores[pn][TNS_PERFECT] == 0 &&
-		iTapNoteScores[pn][TNS_GREAT] == 0 &&
-		iTapNoteScores[pn][TNS_GOOD] == 0 &&
-		iTapNoteScores[pn][TNS_BOO] == 0 &&
-		iTapNoteScores[pn][TNS_MISS] == 0 &&
-		iHoldNoteScores[pn][HNS_NG] == 0 )
-		return GRADE_TIER_1;
+	// calculate grade
 
-	if( PREFSMAN->m_bGradeTier2IsAllPerfects &&
-		fPercentDancePoints > .9999 &&
+#define ROUNDING_ERROR 0.00001f
+	Grade grade = (Grade)(NUM_GRADE_TIERS-1);	// lowest non-failing grade
+
+	for( int g=0; g<NUM_GRADES; g++ )
+		if( fPercent >= PREFSMAN->m_fGradePercentTier[g]-ROUNDING_ERROR )
+			grade = (Grade)g;
+
+	if( PREFSMAN->m_bGradeTier02IsAllPerfects &&
 		iTapNoteScores[pn][TNS_PERFECT] > 0 &&
 		iTapNoteScores[pn][TNS_GREAT] == 0 &&
 		iTapNoteScores[pn][TNS_GOOD] == 0 &&
 		iTapNoteScores[pn][TNS_BOO] == 0 &&
 		iTapNoteScores[pn][TNS_MISS] == 0 &&
+		iTapNoteScores[pn][TNS_HIT_MINE] == 0 &&
 		iHoldNoteScores[pn][HNS_NG] == 0 )
 		return GRADE_TIER_2;
 
-
-	// Start checking at TIER_3 if m_bGradeTier2IsAllPerfects is true.
-	// Start checking at TIER_2 if m_bGradeTier1IsAllMarvelouses is true.
-	int g;
-	if( PREFSMAN->m_bGradeTier2IsAllPerfects )
-		g = 2;
-	else if( PREFSMAN->m_bGradeTier1IsAllMarvelouses )
-		g = 1;
-	else
-		g = 0;
-	for( ; g<NUM_GRADE_TIERS; g++ )
-		if( fPercentDancePoints >= PREFSMAN->m_fGradePercentTier[g] )
-			return (Grade)(GRADE_TIER_1+g);
-
-	return (Grade)(GRADE_TIER_1+NUM_GRADE_TIERS-1);
+	return grade;
 }
 
 bool StageStats::OnePassed() const

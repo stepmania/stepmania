@@ -201,10 +201,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		}
 	}
 
-	Grade max_grade = GRADE_NO_DATA;
+	Grade best_grade = GRADE_NO_DATA;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		max_grade = max( max_grade, grade[p] ); 
+		best_grade = min( best_grade, grade[p] ); 
 
 		// if its extra stage, update # passed stages
 		if (PREFSMAN->m_bUseUnlockSystem &&
@@ -822,20 +822,20 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				}
 				break;
 			default:
-				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(max_grade)) );
+				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToString(best_grade)) );
 				break;
 			}
 			break;
 		case course:
 		case summary:
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToString(max_grade)) );
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
 			break;
 		default:
 			ASSERT(0);
 		}
 	}
 
-	switch( max_grade )
+	switch( best_grade )
 	{
 	case GRADE_TIER_1:
 	case GRADE_TIER_2:	
