@@ -15,7 +15,6 @@ public:
 		m_CurStageStats.Init();
 		m_vPlayedStageStats.clear();
 		m_AccumStageStats.Init();
-		m_FinalEvalStageStats.Init();
 		
 		CalcAccumStageStats();
 	}
@@ -38,7 +37,6 @@ public:
 
 private:
 	StageStats m_AccumStageStats;
-	StageStats m_FinalEvalStageStats;
 };
 
 
