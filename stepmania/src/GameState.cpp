@@ -87,7 +87,7 @@ void GameState::Reset()
 	for( p=0; p<NUM_PLAYERS; p++ )
 		NOTESKIN->SwitchNoteSkin( PlayerNumber(p), PREFSMAN->m_sDefaultNoteSkin );
 
-	m_Position = new NoteFieldPositioning("test.ini");
+	m_Position = new NoteFieldPositioning("Positioning.ini");
 }
 
 void GameState::Update( float fDelta )
