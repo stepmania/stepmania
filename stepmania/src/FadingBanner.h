@@ -7,6 +7,26 @@
 #include "ActorFrame.h"
 #include "RageTimer.h"
 
+template<class T>
+class LunaFadingBanner : public LunaActorFrame<T>
+{
+public:
+	LunaFadingBanner() { LUA->Register( Register ); }
+
+	static int LoadFromSong( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
+		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
+		return 0;
+	}
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( LoadFromSong )
+		LunaActor<T>::Register( L );
+	}
+};
+
 class FadingBanner : public ActorFrame
 {
 public:
@@ -30,6 +50,9 @@ public:
 	void SetMovingFast( bool fast ) { m_bMovingFast=fast; }
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 	void BeforeChange();
