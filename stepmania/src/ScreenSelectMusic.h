@@ -67,7 +67,7 @@ protected:
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	Sprite				m_AutoGenIcon[NUM_PLAYERS];
-	GrooveRadar			m_GrooveRadar;
+    GrooveRadar			m_GrooveRadar;
 //	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText			m_textSongOptions;
 	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];

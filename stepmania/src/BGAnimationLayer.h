@@ -93,6 +93,10 @@ protected:
 	float m_TweenX;
 	float m_TweenY;
 	float m_TweenSpeed;
+
+	int m_TweenState;
+	int m_TweenPassedX;
+	int m_TweenPassedY;
 };
 
 #endif

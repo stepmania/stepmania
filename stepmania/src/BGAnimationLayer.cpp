@@ -102,6 +102,9 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath, CString sSongBGPath 
 	m_TweenX = 0.0;
 	m_TweenY = 0.0;
 	m_TweenSpeed = 0;
+	m_TweenState = 0;
+	m_TweenPassedX = 0;
+	m_TweenPassedY = 0;
 
 	if( sPath.Find("usesongbg") != -1 )
 	{
@@ -567,10 +570,74 @@ void BGAnimationLayer::Update( float fDeltaTime  )
 			// Going as fast as m_TweenSpeed specifies.
 			// however, TWEEN falls over on its face at this point.
 			// Lovely.
-
+			// Instead: Manual tweening. Blah.
+			m_TweenState = 1;
+			if(m_PosX == m_TweenX)
+			{
+				m_TweenPassedX = 1;
+			}
+			if(m_PosY == m_TweenY)
+			{
+				m_TweenPassedY = 1;
+			}
 		}		
 	}
 
+	if(m_TweenState) // A FAR from perfect Tweening Mechanism.
+	{
+		if(m_TweenPassedY != 1) // Check to see if we still need to Tween Along the Y Axis
+		{
+			if(m_Sprites[0].GetY() < m_TweenY) // it needs to travel down
+			{
+				// Speed = Distance / Time....
+				// Take away from the current position... the distance it has to travel divided by the time they want it done in...
+				m_Sprites[0].SetY(m_Sprites[0].GetY() + ((m_TweenY - m_PosY)/(m_TweenSpeed*60)));
+
+				if(m_Sprites[0].GetY() > m_TweenY) // passed the location we wanna go to?
+				{
+					m_Sprites[0].SetY(m_TweenY); // set it to the exact location we want
+					m_TweenPassedY = 1; // say we passed it.
+				}
+			}
+			else // travelling up
+			{
+				m_Sprites[0].SetY(m_Sprites[0].GetY() - ((m_TweenY + m_PosY)/(m_TweenSpeed*60)));
+
+				if(m_Sprites[0].GetY() < m_TweenY)
+				{
+					m_Sprites[0].SetY(m_TweenY);
+					m_TweenPassedY = 1;
+				}
+			}
+		}
+
+		if(m_TweenPassedX != 1) // Check to see if we still need to Tween Along the X Axis
+		{
+			if(m_Sprites[0].GetX() < m_TweenX) // it needs to travel right
+			{
+				m_Sprites[0].SetX(m_Sprites[0].GetX() + ((m_TweenX - m_PosX)/(m_TweenSpeed*60)));
+				if(m_Sprites[0].GetX() > m_TweenX)
+				{
+					m_Sprites[0].SetX(m_TweenX);
+					m_TweenPassedX = 1;
+				}
+			}
+			else // travelling left
+			{
+				m_Sprites[0].SetX(m_Sprites[0].GetX() - ((m_TweenX + m_PosX)/(m_TweenSpeed*60)));
+				if(m_Sprites[0].GetX() < m_TweenX)
+				{
+					m_Sprites[0].SetX(m_TweenX);
+					m_TweenPassedX = 1;
+				}
+			}
+		}
+
+		if(m_TweenPassedY == 1 && m_TweenPassedX == 1) // totally passed both X and Y? Stop tweening.
+		{
+			m_TweenState = 0;
+		}
+	}
 
 	if(m_ShowTime != 0 && !(m_ShowTime < 0))
 	{
