@@ -775,17 +775,17 @@ bool NoteData::GetNextTapNoteRowForTrack( int track, int &rowInOut ) const
 
 	// lower_bound and upper_bound have the same effect here because duplicate 
 	// keys aren't allowed.
+	//
+	// lower_bound "finds the first element whose key is not less than k" (>=);
+	// upper_bound "finds the first element whose key greater than k".  They don't
+	// have the same effect, but lower_bound(row+1) should equal upper_bound(row). -glenn
 	TrackMap::const_iterator iter = mapTrack.lower_bound( rowInOut+1 );	// "find the first note for which row+1 < key == false"
-	if( iter != mapTrack.end() )
-	{
-		ASSERT( iter->first > rowInOut );
-		rowInOut = iter->first;
-		return true;
-	}
-	else
-	{
+	if( iter == mapTrack.end() )
 		return false;
-	}
+
+	ASSERT( iter->first > rowInOut );
+	rowInOut = iter->first;
+	return true;
 }
 
 bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
