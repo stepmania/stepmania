@@ -198,6 +198,8 @@ float TimingData::GetElapsedTimeFromBeat( float fBeat ) const
 			return fElapsedTime;
 	}
 
+	// This assert fires if you leave the game running overnight with the 
+	// the menu timer off and the music wheel sitting on one song.
 	ASSERT(0);
 	return fElapsedTime;
 }
