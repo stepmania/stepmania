@@ -300,12 +300,6 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	int p;
 
-	/* If this is a high score name that was set during this game, use "YOU".
-	 * The players name might be too long and overlap the label. */
-	for( p=0; p < NUM_PLAYERS; ++p )
-		if( str == RANKING_TO_FILL_IN_MARKER[p] )
-			str = "YOU"; // TODO: move this to a metric //PROFILEMAN->GetPlayerName( (PlayerNumber)p );
-
 	m_textContents[c].SetText( str );
 
 	const int num = NUM_ITEM_COLORS( g_Contents[c].name );
