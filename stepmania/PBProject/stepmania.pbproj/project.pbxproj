@@ -38,13 +38,17 @@
 //104
 		1058C7A0FEA54F0111CA2CBB = {
 			children = (
-				1058C7A1FEA54F0111CA2CBB,
+				AA7D404A04FC3E180020E02B,
+				AA0DF1B00503C262003DE00C,
 				AAA0F7CE047AC7BF005F316C,
+				1058C7A1FEA54F0111CA2CBB,
+				AA5D1C9404FE259500BE5E4F,
+				AAF33F2A04FF213100F93C24,
 				AAA0F7D0047AC7EA005F316C,
-				AAA0F7D2047ACBC9005F316C,
 				AA8DD84904A2E51400D02EE9,
-				AAE443F704B1032300D02EE9,
+				AAA0F7D2047ACBC9005F316C,
 				AAE443F804B1032300D02EE9,
+				AAE443F704B1032300D02EE9,
 			);
 			isa = PBXGroup;
 			name = "Linked Frameworks";
@@ -142,6 +146,7 @@
 				AA6EFDBB04770A83005F316C,
 				29B97315FDCFA39411CA2CEA,
 				29B97317FDCFA39411CA2CEA,
+				AA14ED150509F94C00E3FAD7,
 				29B97323FDCFA39411CA2CEA,
 				19C28FACFE9D520D11CA2CBB,
 			);
@@ -167,7 +172,7 @@
 			children = (
 				AAB895E504A9057100D02EE9,
 				089C165CFE840E0CC02AAC07,
-				AAEF3D1204B5473900D02EE9,
+				AA505F40050A87E400F96139,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -208,14 +213,13 @@
 				AAF4310104DCC5F800D02EE9,
 			);
 			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(HOME)/Library/Frameworks\"";
 				HEADER_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(SYSTEM_LIBRARY_DIR)/Frameworks/SDL_image.framework/Versions/A/Headers\" \"$(SYSTEM_LIBRARY_DIR)/SDL.framework/Headers\"";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof ";
+				OTHER_CFLAGS = "-I../src -I/usr/local/include/SDL -DPBBUILD  -Wno-switch -Wno-missing-braces -fcoalesce-templates -fno-rtti -Wnewline-eof";
 				OTHER_LDFLAGS = "-lSDLmain -lpng ../src/SDL_sound-1.0.0/SDL_sound.o ../src/SDL_sound-1.0.0/ogg.o ../src/SDL_sound-1.0.0/wav.o ../src/SDL_sound-1.0.0/audio_convert.o ../src/SDL_sound-1.0.0/madlib.o -lmad -logg -lvorbisfile -lvorbis";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -239,7 +243,7 @@
 	<key>CFBundleExecutable</key>
 	<string>StepMania</string>
 	<key>CFBundleGetInfoString</key>
-	<string>StepMania 3.9 alpha 4</string>
+	<string>StepMania 3.9 alpha 4b</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -251,11 +255,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.9  alpha 4</string>
+	<string>3.9  alpha 4b</string>
 	<key>CFBundleSignature</key>
 	<string>Step</string>
 	<key>CFBundleVersion</key>
-	<string>3.9 alpha 4</string>
+	<string>3.9 alpha 4b</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -512,7 +516,6 @@
 				AAB3B39304C5921800D02EE9,
 				AA272C3304CD757100D02EE9,
 				AA272C3404CD7F8600D02EE9,
-				AA272C4D04CD94FA00D02EE9,
 				AA272D1C04CEC06300D02EE9,
 				AA272D1F04CEC06300D02EE9,
 				AA272D2404CEC23700D02EE9,
@@ -533,6 +536,8 @@
 				AAABAD3C04F0E12B00D02EE9,
 				AAABAD4004F0E12B00D02EE9,
 				AAC28BBC04F758E500D02EE9,
+				AA7D404804FC3C270020E02B,
+				AA14ED120509F40000E3FAD7,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -542,7 +547,7 @@
 			files = (
 				089C165EFE840E0CC02AAC07,
 				AAB895E604A9057100D02EE9,
-				AAEF3D1304B5473900D02EE9,
+				AA505F41050A87E400F96139,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -790,6 +795,8 @@
 				AAADA52404E851EF00D02EE9,
 				AAABAD3F04F0E12B00D02EE9,
 				AAC28BBB04F758E500D02EE9,
+				AA7D404904FC3C270020E02B,
+				AA14ED110509F40000E3FAD7,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -804,6 +811,13 @@
 				AA8DD84A04A2E51400D02EE9,
 				AAE443F904B1032300D02EE9,
 				AAE443FA04B1032300D02EE9,
+				AA5D1C9504FE259500BE5E4F,
+				AAF33F2B04FF213100F93C24,
+				AAF33F6504FF8A9100F93C24,
+				AA0DF1B10503C262003DE00C,
+				AA14ED180509F98600E3FAD7,
+				AA14ED190509F98600E3FAD7,
+				AA14ED1B0509FA1F00E3FAD7,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -853,6 +867,18 @@
 			settings = {
 			};
 		};
+		AA0DF1B00503C262003DE00C = {
+			isa = PBXFrameworkReference;
+			name = AudioUnit.framework;
+			path = /System/Library/Frameworks/AudioUnit.framework;
+			refType = 0;
+		};
+		AA0DF1B10503C262003DE00C = {
+			fileRef = AA0DF1B00503C262003DE00C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		AA0E393304DA8EE700D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -875,6 +901,79 @@
 		};
 		AA0E393604DA8EE700D02EE9 = {
 			fileRef = AA0E393404DA8EE700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA14ED0F0509F40000E3FAD7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = MovieTexture_FFMpeg.cpp;
+			path = MovieTexture/MovieTexture_FFMpeg.cpp;
+			refType = 4;
+		};
+		AA14ED100509F40000E3FAD7 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = MovieTexture_FFMpeg.h;
+			path = MovieTexture/MovieTexture_FFMpeg.h;
+			refType = 4;
+		};
+		AA14ED110509F40000E3FAD7 = {
+			fileRef = AA14ED0F0509F40000E3FAD7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA14ED120509F40000E3FAD7 = {
+			fileRef = AA14ED100509F40000E3FAD7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA14ED150509F94C00E3FAD7 = {
+			children = (
+				AA14ED160509F98600E3FAD7,
+				AA14ED170509F98600E3FAD7,
+				AA14ED1A0509FA1F00E3FAD7,
+			);
+			isa = PBXGroup;
+			name = Libaries;
+			path = "";
+			refType = 4;
+		};
+		AA14ED160509F98600E3FAD7 = {
+			isa = PBXFileReference;
+			name = libavcodec.a;
+			path = /usr/local/lib/libavcodec.a;
+			refType = 0;
+		};
+		AA14ED170509F98600E3FAD7 = {
+			isa = PBXFileReference;
+			name = libavformat.a;
+			path = /usr/local/lib/libavformat.a;
+			refType = 0;
+		};
+		AA14ED180509F98600E3FAD7 = {
+			fileRef = AA14ED160509F98600E3FAD7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA14ED190509F98600E3FAD7 = {
+			fileRef = AA14ED170509F98600E3FAD7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA14ED1A0509FA1F00E3FAD7 = {
+			isa = PBXFileReference;
+			name = libz.a;
+			path = /usr/local/lib/libz.a;
+			refType = 0;
+		};
+		AA14ED1B0509FA1F00E3FAD7 = {
+			fileRef = AA14ED1A0509FA1F00E3FAD7;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1075,18 +1174,6 @@
 			settings = {
 			};
 		};
-		AA272C4C04CD94FA00D02EE9 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = LowLevelWindow_Null.h;
-			refType = 4;
-		};
-		AA272C4D04CD94FA00D02EE9 = {
-			fileRef = AA272C4C04CD94FA00D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA272D1804CEC06300D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1196,15 +1283,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteDataUtil.cpp;
-			path = /Users/steve/stepmania/src/NoteDataUtil.cpp;
-			refType = 0;
+			path = ../src/NoteDataUtil.cpp;
+			refType = 4;
 		};
 		AA4F38C104E2D0B700D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = NoteDataUtil.h;
-			path = /Users/steve/stepmania/src/NoteDataUtil.h;
-			refType = 0;
+			path = ../src/NoteDataUtil.h;
+			refType = 4;
 		};
 		AA4F38C204E2D0B700D02EE9 = {
 			fileRef = AA4F38C004E2D0B700D02EE9;
@@ -1214,6 +1301,18 @@
 		};
 		AA4F38C304E2D0B700D02EE9 = {
 			fileRef = AA4F38C104E2D0B700D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA505F40050A87E400F96139 = {
+			isa = PBXFileReference;
+			name = splash.bmp;
+			path = ../Data/splash.bmp;
+			refType = 4;
+		};
+		AA505F41050A87E400F96139 = {
+			fileRef = AA505F40050A87E400F96139;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1242,6 +1341,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = scripts/increment_version.sh;
+		};
+		AA5D1C9404FE259500BE5E4F = {
+			isa = PBXFrameworkReference;
+			name = CoreAudio.framework;
+			path = /System/Library/Frameworks/CoreAudio.framework;
+			refType = 0;
+		};
+		AA5D1C9504FE259500BE5E4F = {
+			fileRef = AA5D1C9404FE259500BE5E4F;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AA6E000004770FFD005F316C = {
 			fileRef = AA6EFFBB04770FFD005F316C;
@@ -3405,7 +3516,6 @@
 				AA6E0040047711F3005F316C,
 				AA6E010F0477128A005F316C,
 				AA6E01100477128A005F316C,
-				AA6E01110477128A005F316C,
 				AA6E01120477128A005F316C,
 				AA6E01130477128A005F316C,
 				AA6E01140477128A005F316C,
@@ -3600,9 +3710,8 @@
 			fileEncoding = 30;
 			indentWidth = 4;
 			isa = PBXFileReference;
-			name = StepmaniaTemplates.cpp;
-			path = ../src/StepmaniaTemplates.cpp;
-			refType = 2;
+			path = StepmaniaTemplates.cpp;
+			refType = 4;
 			tabWidth = 4;
 			usesTabs = 1;
 		};
@@ -3787,6 +3896,8 @@
 		AA6E012D04771299005F316C = {
 			children = (
 				AABE37030497CF85005F316C,
+				AA7D404704FC3C270020E02B,
+				AA7D404604FC3C270020E02B,
 				AA6E012E047712BE005F316C,
 				AA6E012F047712BE005F316C,
 				AA8F275F04A1127900D02EE9,
@@ -3906,7 +4017,6 @@
 				AA6E01630477136A005F316C,
 				AA6E01640477136A005F316C,
 				AA6E01650477136A005F316C,
-				AA272C4C04CD94FA00D02EE9,
 			);
 			isa = PBXGroup;
 			path = LowLevelWindow;
@@ -4010,6 +4120,8 @@
 				AAB3B38604C5701D00D02EE9,
 				AAB3B38704C5701D00D02EE9,
 				AAB3B38804C5701D00D02EE9,
+				AA14ED0F0509F40000E3FAD7,
+				AA14ED100509F40000E3FAD7,
 				AAB3B39004C5921800D02EE9,
 				AAB3B39104C5921800D02EE9,
 			);
@@ -6174,6 +6286,7 @@
 		};
 		AA6EFE6A04770D01005F316C = {
 			children = (
+				AA6E01110477128A005F316C,
 				AA1DCB6004A4872700D02EE9,
 				AA272BFB04CB779F00D02EE9,
 				AAADA4AE04E5F3DE00D02EE9,
@@ -8484,6 +8597,40 @@
 			settings = {
 			};
 		};
+		AA7D404604FC3C270020E02B = {
+			fileEncoding = 4;
+			indentWidth = 4;
+			isa = PBXFileReference;
+			path = RageSoundDriver_CA.h;
+			refType = 4;
+			tabWidth = 4;
+		};
+		AA7D404704FC3C270020E02B = {
+			fileEncoding = 4;
+			indentWidth = 4;
+			isa = PBXFileReference;
+			path = RageSoundDriver_CA.cpp;
+			refType = 4;
+			tabWidth = 4;
+		};
+		AA7D404804FC3C270020E02B = {
+			fileRef = AA7D404604FC3C270020E02B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA7D404904FC3C270020E02B = {
+			fileRef = AA7D404704FC3C270020E02B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA7D404A04FC3E180020E02B = {
+			isa = PBXFrameworkReference;
+			name = AudioToolbox.framework;
+			path = /System/Library/Frameworks/AudioToolbox.framework;
+			refType = 0;
+		};
 		AA8B6C7804AFD82B00D02EE9 = {
 			children = (
 				AA8B6C7904AFD87300D02EE9,
@@ -8826,15 +8973,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScoreKeeper5th.cpp;
-			path = /Users/steve/stepmania/src/ScoreKeeper5th.cpp;
-			refType = 0;
+			path = ../src/ScoreKeeper5th.cpp;
+			refType = 4;
 		};
 		AAADA52304E851EF00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = ScoreKeeper5th.h;
-			path = /Users/steve/stepmania/src/ScoreKeeper5th.h;
-			refType = 0;
+			path = ../src/ScoreKeeper5th.h;
+			refType = 4;
 		};
 		AAADA52404E851EF00D02EE9 = {
 			fileRef = AAADA52204E851EF00D02EE9;
@@ -9645,14 +9792,20 @@
 			settings = {
 			};
 		};
-		AAEF3D1204B5473900D02EE9 = {
-			isa = PBXFileReference;
-			name = loading.bmp;
-			path = /Users/steve/stepmania/loading.bmp;
+		AAF33F2A04FF213100F93C24 = {
+			isa = PBXFrameworkReference;
+			name = CoreFoundation.framework;
+			path = /System/Library/Frameworks/CoreFoundation.framework;
 			refType = 0;
 		};
-		AAEF3D1304B5473900D02EE9 = {
-			fileRef = AAEF3D1204B5473900D02EE9;
+		AAF33F2B04FF213100F93C24 = {
+			fileRef = AAF33F2A04FF213100F93C24;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAF33F6504FF8A9100F93C24 = {
+			fileRef = AA7D404A04FC3E180020E02B;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -9661,15 +9814,15 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Steps.cpp;
-			path = /Users/steve/stepmania/src/Steps.cpp;
-			refType = 0;
+			path = ../src/Steps.cpp;
+			refType = 4;
 		};
 		AAF430FE04DC98BC00D02EE9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Steps.h;
-			path = /Users/steve/stepmania/src/Steps.h;
-			refType = 0;
+			path = ../src/Steps.h;
+			refType = 4;
 		};
 		AAF430FF04DC98BC00D02EE9 = {
 			fileRef = AAF430FD04DC98BC00D02EE9;
