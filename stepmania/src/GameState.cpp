@@ -135,6 +135,9 @@ void GameState::Reset()
 	
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		// I can't think of a good reason to have both game-specific
+		// default mods and theme specific default mods.  We should choose 
+		// one or the other. -Chris
 		ApplyModifiers( (PlayerNumber)p, DEFAULT_MODIFIERS );
 		ApplyModifiers( (PlayerNumber)p, PREFSMAN->m_sDefaultModifiers );
 	}

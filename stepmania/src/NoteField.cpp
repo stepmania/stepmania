@@ -335,6 +335,9 @@ NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
 	// This assert is firing with Beat = -7408. -Chris
 	// Again with Beat = -7254 and GAMESTATE->m_fMusicSeconds = -3043.61
 	// Again with Beat = -9806 and GAMESTATE->m_fMusicSeconds = -3017.22
+	// Again with Beat = -9806 and GAMESTATE->m_fMusicSeconds = -3017.22
+	// Again in the middle of Remember December in Hardcore Galore:
+	//    Beat = -9373.56 and GAMESTATE->m_fMusicSeconds = -2923.48
  	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
 	--it;
 	RAGE_ASSERT_M( it != m_BeatToNoteDisplays.end(), ssprintf("%f",Beat) );
