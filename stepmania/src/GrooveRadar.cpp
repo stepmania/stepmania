@@ -24,6 +24,7 @@
 
 #define LABEL_OFFSET_X( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetX",i+1))
 #define LABEL_OFFSET_Y( i )	THEME->GetMetricF("GrooveRadar",ssprintf("Label%dOffsetY",i+1))
+#define DISABLE_RADAR THEME->GetMetricI("GrooveRadar","DisableRadar")
 
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
@@ -102,6 +103,8 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 
 void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Notes* pNotes )		// NULL means no song
 {
+	if(DISABLE_RADAR == 1) // if the theme says not to disable it
+		return;
 	if( pNotes != NULL )
 	{
 		for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
@@ -109,12 +112,12 @@ void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Notes* pNo
 			const float fValueCurrent = m_fValuesOld[pn][c] * (1-m_PercentTowardNew[pn]) + m_fValuesNew[pn][c] * m_PercentTowardNew[pn];
 			m_fValuesOld[pn][c] = fValueCurrent;
 			m_fValuesNew[pn][c] = pNotes->GetRadarValues()[c];
-		}
+		}	
 
 		if( m_bValuesVisible[pn] == false )	// the values WERE invisible
 			m_PercentTowardNew[pn] = 1;
 		else
-			m_PercentTowardNew[pn] = 0;
+			m_PercentTowardNew[pn] = 0;	
 
 		m_bValuesVisible[pn] = true;
 	}
@@ -128,9 +131,12 @@ void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	if(DISABLE_RADAR != 1)
 	{
-		m_PercentTowardNew[p] = min( m_PercentTowardNew[p]+4.0f*fDeltaTime, 1 );
+		for( int p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_PercentTowardNew[p] = min( m_PercentTowardNew[p]+4.0f*fDeltaTime, 1 );
+		}
 	}
 }
 
@@ -138,6 +144,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
+	if(DISABLE_RADAR == 1) // if they disabled the radar
+		return; // get out of here...
 	// draw radar filling
 	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f*1.1f;
 
