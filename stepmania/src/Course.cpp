@@ -813,7 +813,16 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.bMystery = e.mystery;
 		te.iLowMeter = low_meter;
 		te.iHighMeter = high_meter;
-		te.dc = dc;
+		/* If we chose based on meter (not difficulty), then store DIFFICULTY_INVALID, so
+		 * other classes can tell that we used meter. */
+		if( e.difficulty == DIFFICULTY_INVALID )
+			te.dc = DIFFICULTY_INVALID;
+		else
+		{
+			/* Otherwise, store the actual difficulty we got (post-course-difficulty).
+			 * This may or may not be the same as e.difficulty. */
+			te.dc = dc;
+		}
 		trail.m_vEntries.push_back( te ); 
 	}
 
