@@ -16,6 +16,8 @@ static const CString DifficultyNames[NUM_DIFFICULTIES] = {
 XToString( Difficulty, NUM_DIFFICULTIES );
 XToThemedString( Difficulty, NUM_DIFFICULTIES );
 
+LuaFunction_Int( DifficultyToThemedString, DifficultyToThemedString((Difficulty)a1) );
+
 /* We prefer the above names; recognize a number of others, too.  (They'l
  * get normalized when written to SMs, etc.) */
 Difficulty StringToDifficulty( const CString& sDC )
@@ -69,6 +71,8 @@ static const CString CourseDifficultyNames[NUM_DIFFICULTIES] =
 XToString( CourseDifficulty, NUM_DIFFICULTIES );
 XToThemedString( CourseDifficulty, NUM_DIFFICULTIES );
 StringToX( CourseDifficulty );
+
+LuaFunction_Int( CourseDifficultyToThemedString, CourseDifficultyToThemedString((CourseDifficulty)a1) );
 
 CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 {
