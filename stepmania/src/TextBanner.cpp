@@ -17,6 +17,18 @@ void TextBanner::Init()
 		return;
 	m_bInitted = true;
 
+	m_textTitle.SetName( "Title" );
+	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"text") );
+	this->AddChild( &m_textTitle );
+
+	m_textSubTitle.SetName( "Subtitle" );
+	m_textSubTitle.LoadFromFont( THEME->GetPathF(m_sName,"text") );
+	this->AddChild( &m_textSubTitle );
+
+	m_textArtist.SetName( "Artist" );
+	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"text") );
+	this->AddChild( &m_textArtist );
+
 	ARTIST_PREPEND_STRING			.Load(m_sName,"ArtistPrependString");
 	TWO_LINES_TITLE_COMMAND			.Load(m_sName,"TwoLinesTitleCommand");
 	TWO_LINES_SUBTITLE_COMMAND		.Load(m_sName,"TwoLinesSubtitleCommand");
@@ -34,18 +46,6 @@ void TextBanner::Init()
 
 TextBanner::TextBanner()
 {
-	m_textTitle.SetName( "Title" );
-	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	this->AddChild( &m_textTitle );
-
-	m_textSubTitle.SetName( "Subtitle" );
-	m_textSubTitle.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	this->AddChild( &m_textSubTitle );
-
-	m_textArtist.SetName( "Artist" );
-	m_textArtist.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	this->AddChild( &m_textArtist );
-
 	m_bInitted = false;
 }
 
