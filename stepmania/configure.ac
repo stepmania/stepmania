@@ -212,9 +212,6 @@ case $host in
 	AC_DEFINE(UNIX, 1, [Unix])
 	linux=yes
 	unix=yes
-	if test $host = powerpc-unknown-linux-gnu; then
-		AC_DEFINE(LINUX_PPC, 1, [Linux PPC])
-	fi
 	;;
 
 *)
@@ -224,6 +221,20 @@ case $host in
 esac
 AM_CONDITIONAL(UNIX, test "$unix" = "yes" )
 AM_CONDITIONAL(LINUX, test "$linux" = "yes" )
+
+# Define macros for individual CPU types, for a few bits of inline assembly.
+# This is for major, compatible CPU classes--"CPU_X86" includes P2, P3, P4,
+# AMD, etc.  If you need CPU-specific assembly, check at runtime--don't create
+# separate binaries for each CPU if the binaries themselves are otherwise
+# compatible.
+case $host in
+i?86-*)
+	AC_DEFINE(CPU_X86, 1, [x86])
+	;;
+powerpc-*)
+	AC_DEFINE(CPU_PPC, 1, [PPC])
+	;;
+esac
 
 AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
