@@ -1641,6 +1641,28 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				<File
 					RelativePath="regex.h">
 				</File>
+				<Filter
+					Name="pcre"
+					Filter="">
+					<File
+						RelativePath="pcre\get.c">
+					</File>
+					<File
+						RelativePath="pcre\internal.h">
+					</File>
+					<File
+						RelativePath="pcre\maketables.c">
+					</File>
+					<File
+						RelativePath="pcre\pcre.c">
+					</File>
+					<File
+						RelativePath="pcre\pcre.h">
+					</File>
+					<File
+						RelativePath="pcre\study.c">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
