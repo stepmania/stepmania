@@ -5,7 +5,6 @@
 #include "mqueue.h"
 #include "fltrimpl.h"
 #include "argnames.h"
-#include <memory>
 #include <functional>
 
 NAMESPACE_BEGIN(CryptoPP)
