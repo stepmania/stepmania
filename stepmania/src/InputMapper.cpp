@@ -223,6 +223,28 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	},
 	{
 		GAME_DANCE,
+		"Psx Gamepad",
+		"PSXPAD",
+		{
+			{ 0, JOY_LEFT,	DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_RIGHT,	DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_UP,	DANCE_BUTTON_UP,		false },
+			{ 0, JOY_DOWN,	DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_2,		DANCE_BUTTON_LEFT,		false },
+			{ 1, JOY_1,		DANCE_BUTTON_RIGHT,		false },
+			{ 1, JOY_4,		DANCE_BUTTON_UP,		false },
+			{ 1, JOY_3,		DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_7,		DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_5,		DANCE_BUTTON_UPRIGHT,	false },
+			{ 1, JOY_8,		DANCE_BUTTON_UPLEFT,	false },
+			{ 1, JOY_6,		DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_10,	DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_9,		DANCE_BUTTON_START,		false },
+			{-1, -1, -1, false },	// end marker
+		}
+	},
+	{
+		GAME_DANCE,
 		"XBOX Gamepad Plugin V0.01",
 		"X-Box gamepad",
 		{
