@@ -64,7 +64,7 @@ GameState::~GameState()
 
 void GameState::Reset()
 {
-	if( m_timeGameStarted != 0 && m_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
+	if( m_timeGameStated != 0 && m_vPlayedStageStats.size() )	// we were in the middle of a game and played at least one song
 		EndGame();
 	
 	
@@ -72,7 +72,7 @@ void GameState::Reset()
 
 	int p;
 
-	m_timeGameStarted = 0;
+	m_timeGameStated = 0;
 	m_CurStyle = STYLE_INVALID;
 	for( p=0; p<NUM_PLAYERS; p++ )
 		m_bSideIsJoined[p] = false;
@@ -155,7 +155,7 @@ void GameState::Reset()
 
 void GameState::BeginGame()
 {
-	m_timeGameStarted = time(NULL);
+	m_timeGameStated = time(NULL);
 }
 
 void GameState::EndGame()
@@ -163,7 +163,7 @@ void GameState::EndGame()
 	// Update profile stats
 
 	time_t now = time(NULL);
-	int iPlaySeconds = now - m_timeGameStarted;
+	int iPlaySeconds = now - m_timeGameStated;
 	if( iPlaySeconds < 0 )
 		iPlaySeconds = 0;
 
