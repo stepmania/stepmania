@@ -67,6 +67,10 @@
 #include "Archutils/Xbox/VirtualMemory.h"
 #endif
 
+#if defined(WIN32)
+#include <windows.h>
+#endif
+
 #define ZIPS_DIR "Packages/"
 
 int g_argc = 0;
