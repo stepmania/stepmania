@@ -77,14 +77,14 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 			if(!DriversToTry[i].CompareNoCase("OSS")) ret = new RageSound_OSS;
 #endif
 #ifdef RAGE_SOUND_QT
-      if(!DriversToTry[i].CompareNoCase("QT")) ret = new RageSound_QT;
+			if(!DriversToTry[i].CompareNoCase("QT")) ret = new RageSound_QT;
 #endif
 #ifdef RAGE_SOUND_QT1
-	  if(!DriversToTry[i].CompareNoCase("QT1")) ret = new RageSound_QT1;
+			if(!DriversToTry[i].CompareNoCase("QT1")) ret = new RageSound_QT1;
 #endif
-	  if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
-	  if( !ret )
-		  LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].c_str());
+			if(!DriversToTry[i].CompareNoCase("Null")) ret = new RageSound_Null;
+			if( !ret )
+				LOG->Warn("Unknown sound driver name: %s", DriversToTry[i].c_str());
 		} catch(const RageException &e) {
 			LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), e.what());
 		}
