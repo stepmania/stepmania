@@ -540,6 +540,8 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 	}
 
 	Convert4sToHoldNotes();
+
+	m_AttackMap = Original.GetAttackMap();
 }
 
 void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
@@ -645,6 +647,8 @@ void NoteData::LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNew
 	}
 
 	Convert4sToHoldNotes();
+
+	m_AttackMap = Original.GetAttackMap();
 }
 
 void NoteData::PadTapNotes(int rows)
