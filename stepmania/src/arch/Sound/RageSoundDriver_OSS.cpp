@@ -203,7 +203,8 @@ RageSound_OSS::RageSound_OSS()
 	if(ioctl(fd, SNDCTL_DSP_SETFRAGMENT, &i) == -1)
 		RageException::ThrowNonfatal("RageSound_OSS: ioctl(SNDCTL_DSP_SETFRAGMENT, %i): %s", i, strerror(errno));
 
-	MixerThreadPtr = SDL_CreateThread(MixerThread_start, this);
+	MixingThread.SetName( "RageSound_OSS" );
+	MixingThread.Create( MixerThread_start, this );
 }
 
 
@@ -212,7 +213,7 @@ RageSound_OSS::~RageSound_OSS()
 	/* Signal the mixing thread to quit. */
 	shutdown = true;
 	LOG->Trace("Shutting down mixer thread ...");
-	SDL_WaitThread(MixerThreadPtr, NULL);
+	MixingThread.Wait();
 	LOG->Trace("Mixer thread shut down.");
 
 	close(fd);
