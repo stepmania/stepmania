@@ -51,5 +51,6 @@ void SaveCatalogXml( CString sDir )
 		}
 	}
 
-	bool bSaved = xml.SaveToFile(fn);
+	// bool bSaved =
+	xml.SaveToFile(fn);
 }
