@@ -110,8 +110,10 @@ inline double trunc( double f )	{ return float(int(f)); };
 #include <math.h>
 #endif
 inline float truncf( float f )	{ return float(int(f)); };
+#ifndef HAVE_ROUNDF
 inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
 inline double roundf( double f ){ if(f < 0) return trunc(f-0.5); return trunc(f+0.5);  };
+#endif
 inline float froundf( const float f, const float fRoundInterval )
 {
 	return int( (f + fRoundInterval/2)/fRoundInterval ) * fRoundInterval;
