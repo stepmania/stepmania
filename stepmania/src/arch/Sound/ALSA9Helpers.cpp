@@ -9,7 +9,7 @@
 #define ALSA_CHECK(x) \
        if ( err < 0 ) { LOG->Info("ALSA9: %s: %s", x, dsnd_strerror(err)); return false; }
 #define ALSA_ASSERT(x) \
-        if (err < 0) { LOG->Trace("ALSA9: %s: %s", x, dsnd_strerror(err)); }
+        if (err < 0) { LOG->Warn("ALSA9: %s: %s", x, dsnd_strerror(err)); }
 
 bool Alsa9Buf::SetHWParams()
 {
@@ -45,15 +45,21 @@ bool Alsa9Buf::SetHWParams()
 	err = dsnd_pcm_hw_params_set_channels(pcm, hwparams, 2);
 	ALSA_CHECK("dsnd_pcm_hw_params_set_channels");
 
-	if( samplerate != Alsa9Buf::DYNAMIC_SAMPLERATE )
-	{
-		unsigned int rate = samplerate;
-		err = dsnd_pcm_hw_params_set_rate_near(pcm, hwparams, &rate, 0);
-		ALSA_CHECK("dsnd_pcm_hw_params_set_rate_near");
+	/* Set the sample rate.  We shouldn't need to set it if rate is DYNAMIC_SAMPLERATE,
+	 * but I've had alsalib crashes if I don't. */
+	if( samplerate == Alsa9Buf::DYNAMIC_SAMPLERATE )
+		samplerate = 44100;
+	
+	unsigned int rate = samplerate;
+	err = dsnd_pcm_hw_params_set_rate_near(pcm, hwparams, &rate, 0);
+	ALSA_CHECK("dsnd_pcm_hw_params_set_rate_near");
 
-		if( (int) rate != samplerate )
-			LOG->Warn("Alsa9Buf::SetHWParams: Couldn't get %ihz (got %ihz instead)", samplerate, rate);
-	}
+	if( (int) rate != samplerate )
+		LOG->Warn("Alsa9Buf::SetHWParams: Couldn't get %ihz (got %ihz instead)", samplerate, rate);
+
+	snd_pcm_uframes_t buffersize = 1024*32;
+	err = dsnd_pcm_hw_params_set_buffer_size_near( pcm, hwparams, &buffersize );
+	ALSA_CHECK("dsnd_pcm_hw_params_set_buffer_size_near");
 
 	/* write the hardware parameters to the device */
 	err = dsnd_pcm_hw_params( pcm, hwparams );

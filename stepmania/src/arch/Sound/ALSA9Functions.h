@@ -28,6 +28,10 @@ FUNC(int, snd_pcm_hw_params_set_access, (snd_pcm_t *pcm, snd_pcm_hw_params_t *pa
 FUNC(int, snd_pcm_hw_params_set_channels, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int val));
 FUNC(int, snd_pcm_hw_params_set_format, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_format_t val));
 FUNC(int, snd_pcm_hw_params_set_rate_near, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, unsigned int *val, int *dir));
+FUNC(int, snd_pcm_hw_params_set_buffer_size_near, (snd_pcm_t *pcm, snd_pcm_hw_params_t *params, snd_pcm_uframes_t *val));
+FUNC(int, snd_pcm_status, (snd_pcm_t *pcm, snd_pcm_status_t *status));
+FUNC(snd_pcm_uframes_t, snd_pcm_status_get_avail, (const snd_pcm_status_t *obj));
+FUNC(size_t, snd_pcm_status_sizeof, (void));
 FUNC(int, snd_pcm_hwsync, (snd_pcm_t *pcm));
 FUNC(int, snd_ctl_pcm_next_device, (snd_ctl_t *ctl, int *device));
 FUNC(int, snd_ctl_pcm_info, (snd_ctl_t *ctl, snd_pcm_info_t * info));
