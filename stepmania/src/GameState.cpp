@@ -103,7 +103,7 @@ void GameState::Reset()
 	m_BeatToNoteSkinRev = 0;
 	m_iNumStagesOfThisSong = 0;
 
-	NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_CurGame );
+	NOTESKIN->RefreshNoteSkinData( this->m_CurGame );
 
 	m_iGameSeed = rand();
 	m_iRoundSeed = rand();
@@ -414,7 +414,7 @@ float GameState::GetSongPercent( float beat ) const
 void GameState::BeginStage()
 {
 	if( m_pCurSong )
-		m_iNumStagesOfThisSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+		m_iNumStagesOfThisSong = SongManager::GetNumStagesForSong( this->m_pCurSong );
 	else if( m_pCurCourse )
 		m_iNumStagesOfThisSong = 1;
 	else
@@ -422,7 +422,7 @@ void GameState::BeginStage()
 
 	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
 
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+	if( this->IsExtraStage() || this->IsExtraStage2() )
 	{
 		/* If it's an extra stage, always increment by one.  This is because in some
 		 * unusual cases we can pick a long or marathon song as an extra stage.  The
@@ -535,7 +535,7 @@ int GameState::GetCourseSongIndex() const
 
 bool GameState::PlayersCanJoin() const
 {
-	return GetNumSidesJoined() == 0 || GAMESTATE->m_CurStyle == STYLE_INVALID;
+	return GetNumSidesJoined() == 0 || this->m_CurStyle == STYLE_INVALID;
 }
 
 int GameState::GetNumSidesJoined() const
@@ -641,7 +641,7 @@ bool GameState::IsCourseMode() const
 
 bool GameState::IsBattleMode() const
 {
-	switch( GAMESTATE->m_PlayMode )
+	switch( this->m_PlayMode )
 	{
 	case PLAY_MODE_BATTLE:
 		return true;
@@ -650,7 +650,7 @@ bool GameState::IsBattleMode() const
 	}
 }
 
-bool GameState::HasEarnedExtraStage()
+bool GameState::HasEarnedExtraStage() const
 {
 	if( PREFSMAN->m_bEventMode )
 		return false;
@@ -658,23 +658,23 @@ bool GameState::HasEarnedExtraStage()
 	if( !PREFSMAN->m_bAllowExtraStage )
 		return false;
 
-	if( GAMESTATE->m_PlayMode != PLAY_MODE_ARCADE )
+	if( this->m_PlayMode != PLAY_MODE_ARCADE )
 		return false;
 
-	if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage()) )
+	if( (this->IsFinalStage() || this->IsExtraStage()) )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
+			if( !this->IsPlayerEnabled(p) )
 				continue;	// skip
 
-			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_HARD && 
-				GAMESTATE->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
+			if( this->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_HARD && 
+				this->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 				continue; /* not hard enough! */
 
 			/* If "choose EX" is enabled, then we should only grant EX2 if the chosen
 			 * stage was the EX we would have chosen (m_bAllow2ndExtraStage is true). */
-			if( PREFSMAN->m_bPickExtraStage && GAMESTATE->IsExtraStage() && !GAMESTATE->m_bAllow2ndExtraStage )
+			if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() && !this->m_bAllow2ndExtraStage )
 				continue;
 
 			if( g_CurStageStats.GetGrade((PlayerNumber)p) <= GRADE_TIER_2 )
@@ -684,7 +684,7 @@ bool GameState::HasEarnedExtraStage()
 	return false;
 }
 
-PlayerNumber GameState::GetBestPlayer()
+PlayerNumber GameState::GetBestPlayer() const
 {
 	for( int p=PLAYER_1; p<NUM_PLAYERS; p++ )
 		if( GetStageResult( (PlayerNumber)p ) == RESULT_WIN )
@@ -692,9 +692,9 @@ PlayerNumber GameState::GetBestPlayer()
 	return PLAYER_INVALID;	// draw
 }
 
-StageResult GameState::GetStageResult( PlayerNumber pn )
+StageResult GameState::GetStageResult( PlayerNumber pn ) const
 {
-	switch( GAMESTATE->m_PlayMode )
+	switch( this->m_PlayMode )
 	{
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
@@ -771,13 +771,13 @@ void GameState::GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& 
 
 void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 {
-	const SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
+	const SongOptions::FailType ft = this->m_SongOptions.m_FailType;
 
 	m_PlayerOptions[pn].FromString( sModifiers );
 	m_SongOptions.FromString( sModifiers );
 
-	if( ft != GAMESTATE->m_SongOptions.m_FailType )
-		GAMESTATE->m_bChangedFailType = true;
+	if( ft != this->m_SongOptions.m_FailType )
+		this->m_bChangedFailType = true;
 }
 
 /* Store the player's preferred options.  This is called at the very beginning
@@ -785,7 +785,7 @@ void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 void GameState::StoreSelectedOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		GAMESTATE->m_StoredPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
+		this->m_StoredPlayerOptions[p] = this->m_PlayerOptions[p];
 	m_StoredSongOptions = m_SongOptions;
 }
 
@@ -796,7 +796,7 @@ void GameState::StoreSelectedOptions()
 void GameState::RestoreSelectedOptions()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		GAMESTATE->m_PlayerOptions[p] = GAMESTATE->m_StoredPlayerOptions[p];
+		this->m_PlayerOptions[p] = this->m_StoredPlayerOptions[p];
 	m_SongOptions = m_StoredSongOptions;
 }
 
@@ -811,7 +811,7 @@ void GameState::ResetNoteSkins()
 void GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
 {
 	m_BeatToNoteSkin[pn].clear();
-	m_BeatToNoteSkin[pn][-1000] = GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin;
+	m_BeatToNoteSkin[pn][-1000] = this->m_PlayerOptions[pn].m_sNoteSkin;
 
 	++m_BeatToNoteSkinRev;
 }
@@ -820,15 +820,15 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 {
 	for( int pn=0; pn<NUM_PLAYERS; ++pn )
 	{
-		out.push_back( GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin );
+		out.push_back( this->m_PlayerOptions[pn].m_sNoteSkin );
 
-		switch( GAMESTATE->m_PlayMode )
+		switch( this->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
 			for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
 			{
-				const Character *ch = GAMESTATE->m_pCurCharacters[pn];
+				const Character *ch = this->m_pCurCharacters[pn];
 				ASSERT( ch );
 				const CString* asAttacks = ch->m_sAttacks[al];
 				for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
@@ -849,7 +849,7 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 
 /* From NoteField: */
 
-void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat )
+void GameState::GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ) const
 {
 	/* If reasonable, push the attack forward so notes on screen don't change suddenly. */
 	StartBeat = min( this->m_fSongBeat+BEATS_PER_MEASURE*2, m_fLastDrawnBeat[pn] );
@@ -902,10 +902,10 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 	 * knows to apply attack transforms correctly.  (yuck) */
 	m_ModsToApply[target].push_back( a );
 	if( a.fStartSecond == -1 )
-		a.fStartSecond = GAMESTATE->m_fMusicSeconds;
+		a.fStartSecond = this->m_fMusicSeconds;
 	m_ActiveAttacks[target].push_back( a );
 
-	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( target );
+	this->RebuildPlayerOptionsFromActiveAttacks( target );
 }
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
@@ -962,7 +962,7 @@ void GameState::RemoveAllActiveAttacks()	// called on end of song
 		RemoveActiveAttacksForPlayer( (PlayerNumber)p );
 }
 
-int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )
+int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn ) const
 {
 	int iSum = 0;
 
@@ -996,34 +996,34 @@ void GameState::AdjustFailType()
 		return;
 
 	/* If the player changed the fail mode explicitly, leave it alone. */
-	if( GAMESTATE->m_bChangedFailType )
+	if( this->m_bChangedFailType )
 		return;
 
 	/* Find the easiest difficulty notes selected by either player. */
 	Difficulty dc = DIFFICULTY_INVALID;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
+		if( !this->IsHumanPlayer(p) )
 			continue;	// skip
 
-		dc = min(dc, GAMESTATE->m_pCurNotes[p]->GetDifficulty());
+		dc = min(dc, this->m_pCurNotes[p]->GetDifficulty());
 	}
 
 	/* Reset the fail type to the default. */
 	SongOptions so;
 	so.FromString( PREFSMAN->m_sDefaultModifiers );
-	GAMESTATE->m_SongOptions.m_FailType = so.m_FailType;
+	this->m_SongOptions.m_FailType = so.m_FailType;
 
     /* Easy and beginner are never harder than FAIL_END_OF_SONG. */
 	if(dc <= DIFFICULTY_EASY)
-		setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_END_OF_SONG);
+		setmax(this->m_SongOptions.m_FailType, SongOptions::FAIL_END_OF_SONG);
 
 	/* If beginner's steps were chosen, and this is the first stage,
 		* turn off failure completely--always give a second try. */
 	if(dc == DIFFICULTY_BEGINNER &&
 		!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
-		GAMESTATE->m_iCurrentStageIndex == 0)
-		setmax(GAMESTATE->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
+		this->m_iCurrentStageIndex == 0)
+		setmax(this->m_SongOptions.m_FailType, SongOptions::FAIL_OFF);
 }
 
 bool GameState::ShowMarvelous() const
@@ -1076,20 +1076,20 @@ struct SongAndSteps
 	bool operator<( const SongAndSteps& other ) const { return pSong<=other.pSong && pSteps<=other.pSteps; }
 };
 
-void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut )
+void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut ) const
 {
 	if( !IsHumanPlayer(pn) )
 		return;
 
-	CHECKPOINT_M(ssprintf("PlayMode %i",GAMESTATE->m_PlayMode));
-	switch( GAMESTATE->m_PlayMode )
+	CHECKPOINT_M(ssprintf("PlayMode %i",this->m_PlayMode));
+	switch( this->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
 		{
 			CHECKPOINT;
 			unsigned i, j;
 
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType nt = this->GetCurrentStyleDef()->m_StepsType;
 
 			//
 			// Find unique Song and Steps combinations that were played.
@@ -1222,8 +1222,8 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsO
 	case PLAY_MODE_ENDLESS:
 		{
 			CHECKPOINT;
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-			Course* pCourse = GAMESTATE->m_pCurCourse;
+			StepsType nt = this->GetCurrentStyleDef()->m_StepsType;
+			Course* pCourse = this->m_pCurCourse;
 			ASSERT( pCourse );
 
 			// Find Machine Records
@@ -1313,7 +1313,7 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 bool GameState::AllAreInDangerOrWorse() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) )
+		if( this->IsPlayerEnabled(p) )
 			if( m_HealthState[p] < DANGER )
 				return false;
 	return true;
@@ -1322,7 +1322,7 @@ bool GameState::AllAreInDangerOrWorse() const
 bool GameState::AllAreDead() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(p) )
+		if( this->IsPlayerEnabled(p) )
 			if( m_HealthState[p] < DEAD )
 				return false;
 	return true;
@@ -1331,7 +1331,7 @@ bool GameState::AllAreDead() const
 bool GameState::OneIsHot() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
+		if( this->IsPlayerEnabled(PlayerNumber(p)) )
 			if( m_HealthState[p] == HOT )
 				return true;
 	return false;
@@ -1351,7 +1351,7 @@ bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 	if( diff < 0 || diff >= NUM_COURSE_DIFFICULTIES )
 		return false;
 
-	GAMESTATE->m_CourseDifficulty[pn] = diff;
+	this->m_CourseDifficulty[pn] = diff;
 	if( PREFSMAN->m_bLockCourseDifficulties )
 		for( int p = 0; p < NUM_PLAYERS; ++p )
 			m_CourseDifficulty[p] = m_CourseDifficulty[pn];

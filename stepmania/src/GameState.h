@@ -181,15 +181,15 @@ public:
 	
 	bool	m_bAttackBeganThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
 	bool	m_bAttackEndedThisUpdate[NUM_PLAYERS];	// flag for other objects to watch (play sounds)
-	void GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ); // only meaningful when a NoteField is in use
+	void GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ) const; // only meaningful when a NoteField is in use
 	void LaunchAttack( PlayerNumber target, Attack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
 	void RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
 	void RemoveAllInventory();
-	int GetSumOfActiveAttackLevels( PlayerNumber pn );
-	PlayerNumber GetBestPlayer();
-	StageResult GetStageResult( PlayerNumber pn );
+	int GetSumOfActiveAttackLevels( PlayerNumber pn ) const;
+	PlayerNumber GetBestPlayer() const;
+	StageResult GetStageResult( PlayerNumber pn ) const;
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
 	void GetFinalEvalStatsAndSongs( StageStats& statsOut, vector<Song*>& vSongsOut ) const;	// shown on arcade final evaluation
@@ -212,9 +212,10 @@ public:
 	void AdjustFailType();
 
 	// character stuff
-	private:
-		vector<Character*> m_pCharacters;
-	public:
+private:
+	vector<Character*> m_pCharacters;
+
+public:
 	Character* m_pCurCharacters[NUM_PLAYERS];
 
 	void ReloadCharacters();
@@ -222,7 +223,7 @@ public:
 	
 
 
-	bool HasEarnedExtraStage();
+	bool HasEarnedExtraStage() const;
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"
 
 
@@ -241,7 +242,7 @@ public:
 		CString *pStringToFill;
 	};
 
-	void GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut );
+	void GetRankingFeats( PlayerNumber pn, vector<RankingFeats> &asFeatsOut ) const;
 	void StoreRankingName( PlayerNumber pn, CString name );	// Called by name entry screens
 	vector<CString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
 
