@@ -53,7 +53,7 @@ struct MusicPlaying
 
 	~MusicPlaying()
 	{
-		delete m_Music;
+		SOUNDMAN->DeleteSound( m_Music );
 	}
 };
 

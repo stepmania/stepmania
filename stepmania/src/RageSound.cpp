@@ -519,7 +519,9 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 /* Indicate that a block of audio data has been written to the device. */
 void RageSound::CommitPlayingPosition( int64_t frameno, int pos, int got_frames )
 {
+	m_Mutex.Lock();
 	pos_map.Insert( frameno, pos, got_frames );
+	m_Mutex.Unlock();
 }
 
 /* Called by the mixer: return a block of sound data. 

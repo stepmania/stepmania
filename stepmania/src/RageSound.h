@@ -2,6 +2,7 @@
 #define RAGE_SOUND_OBJ_H
 
 #include <deque>
+#include "RageThreads.h"
 #include "RageTimer.h"
 #include "RageUtil_CircularBuffer.h"
 #include "RageSoundPosMap.h"

@@ -53,6 +53,10 @@ public:
 	int GetDriverSampleRate( int rate ) const;
 	set<RageSound *> GetPlayingSounds() const;
 
+	/* When deleting a sound from any thread except the one calling Update(), this
+	 * must be used to prevent race conditions. */
+	void DeleteSound( RageSound *p );
+
 	void PlayOnce( CString sPath );
 
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params );

@@ -161,9 +161,7 @@ void RageSoundManager::CommitPlayingPosition( int ID, int64_t frameno, int pos, 
 
 RageSound *RageSoundManager::GetSoundByID( int ID )
 {
-	/* You must lock this mutex before calling this function.  If you don't,
-	 * from any thread, the returned sound may be invalidated. */
-	ASSERT( g_SoundManMutex.IsLockedByThisThread() );
+	LockMut( g_SoundManMutex );
 
 	/* Find the sound with p.ID. */
 	set<RageSound *>::iterator it;
@@ -176,10 +174,6 @@ RageSound *RageSoundManager::GetSoundByID( int ID )
 /* This is only called by RageSoundManager::Update. */
 void RageSoundManager::FlushPosMapQueue()
 {
-	/* Lock, to make sure sounds returned by GetSoundByID remain valid until we're
-	 * done with them. */
-	LockMut(g_SoundManMutex);
-
 	queued_pos_map_t p;
 
 	/* We don't need to lock to access pos_map_queue. */
@@ -260,6 +254,18 @@ set<RageSound *> RageSoundManager::GetPlayingSounds() const
 	return playing_sounds;
 }
 
+void RageSoundManager::DeleteSound( RageSound *p )
+{
+	/* Stop playing the sound. */
+	p->StopPlaying();
+
+	/* Add it to owned_sounds.  It'll be deleted the next time we come around
+	 * to Update(). */
+	g_SoundManMutex.Lock(); /* lock for access to owned_sounds */
+	owned_sounds.insert( p );
+	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
+}
+
 void RageSoundManager::StopPlayingSoundsForThisThread()
 {
 	/* Lock to make sure sounds don't become invalidated below before we get to them. */
@@ -295,7 +301,7 @@ void RageSoundManager::GetCopies( RageSound &snd, vector<RageSound *> &snds, boo
 
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
 	set<RageSound *> sounds = all_sounds;
-	g_SoundManMutex.Unlock(); /* finished with owned_sounds */
+	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 	
 	RageSound *parent = snd.GetOriginal();
 
