@@ -171,7 +171,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	switch( PREFSMAN->m_iCoinMode )
 	{
 	case COIN_HOME:
-		sCredits = "";
+		sCredits = CREDITS_TEXT_HOME;
 		break;
 	case COIN_PAY:
 		{
