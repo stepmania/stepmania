@@ -21,6 +21,7 @@ Andrew Livy
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
+#include "ScreenEz2SelectStyle.h"
 
 /* Constants */
 
@@ -63,37 +64,6 @@ Desc: Sets up the screen display
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()
 {
 	LOG->WriteLine( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
-
-	/*
-	for( int s=0; s<NUM_STYLES; s++ )
-	{
-		Style style = (Style)s;
-		if( StyleToGame(style) == GAMEMAN->m_CurGame )	// games match
-			m_aPossibleStyles.Add( style );		
-	}
-*/
-//	m_iSelection = 0;
-/*
-	for( int i=0; i<m_aPossibleStyles.GetSize(); i++ )
-	{
-		Style style = m_aPossibleStyles[i];
-		m_sprIcon[i].Load( THEME->GetPathTo(GRAPHIC_SELECT_STYLE_ICONS) );
-		m_sprIcon[i].StopAnimating();
-		m_sprIcon[i].SetState( style );
-		m_sprIcon[i].SetXY( ICONS_START_X + ICONS_SPACING_X*i, ICON_Y );
-		this->AddActor( &m_sprIcon[i] );
-	}
-
-	m_sprExplanation.Load( THEME->GetPathTo(GRAPHIC_SELECT_STYLE_EXPLANATION) );
-	m_sprExplanation.SetXY( EXPLANATION_X, EXPLANATION_Y );
-	this->AddActor( &m_sprExplanation );
-	
-	m_sprPreview.SetXY( PREVIEW_X, PREVIEW_Y );
-	this->AddActor( &m_sprPreview );
-	
-	m_sprInfo.SetXY( INFO_X, INFO_Y );
-	this->AddActor( &m_sprInfo );
-*/	
 
 m_iSelectedStyle=0;
 
@@ -266,7 +236,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
+		SCREENMAN->SetNewScreen( new ScreenEz2SelectStyle );
 		break;
 	}
 }
@@ -362,6 +332,8 @@ presses the button bound to start
 void ScreenEz2SelectPlayer::MenuStart( PlayerNumber p )
 {
 //	GAME->m_sCurrentStyle = DANCE_STYLES[m_iSelectedStyle];
+
+	MUSIC->Stop();
 	
 	m_soundSelect.PlayRandom();
 	

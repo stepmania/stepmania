@@ -17,6 +17,7 @@ class ScreenStage : public Screen
 {
 public:
 	ScreenStage();
+	ScreenStage( bool bTryExtraStage );
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

@@ -18,15 +18,11 @@ const int NUM_SECTIONS = 3;
 const float SECTION_WIDTH = 1.0f/NUM_SECTIONS;
 
 
-const float ABOUT_TO_FAIL_THRESHOLD = -0.3f;
-const float FAIL_THRESHOLD = 0;
-
 LifeMeterBar::LifeMeterBar()
 {
 	m_fLifePercentage = 0.5f;
 	m_fTrailingLifePercentage = 0;
 	m_fLifeVelocity = 0;
-	m_bHasFailed = false;
 
 	ResetBarVelocity();
 }
@@ -38,20 +34,20 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	float fDeltaLife;
 	switch( score )
 	{
-	case TNS_PERFECT:	fDeltaLife = +0.015f;	break;
-	case TNS_GREAT:		fDeltaLife = +0.008f;	break;
-	case TNS_GOOD:		fDeltaLife = +0.000f;	break;
-	case TNS_BOO:		fDeltaLife = -0.050f;	break;
-	case TNS_MISS:		fDeltaLife = -0.100f;	break;
+	case TNS_PERFECT:	fDeltaLife = +0.02f;	break;
+	case TNS_GREAT:		fDeltaLife = +0.01f;	break;
+	case TNS_GOOD:		fDeltaLife = +0.00f;	break;
+	case TNS_BOO:		fDeltaLife = -0.06f;	break;
+	case TNS_MISS:		fDeltaLife = -0.12f;	break;
 	}
 
 	if( bWasDoingGreat && !IsDoingGreat() )
-		fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
+		fDeltaLife = -0.12f;		// make it take a while to get back to "doing great"
 
 	m_fLifePercentage += fDeltaLife;
-	m_fLifePercentage = min( m_fLifePercentage, 1 );
+	m_fLifePercentage = clamp( m_fLifePercentage, 0, 1 );
 
-	if( m_fLifePercentage < FAIL_THRESHOLD )
+	if( m_fLifePercentage == 0 )
 		m_bHasFailed = true;
 
 	ResetBarVelocity();
@@ -72,7 +68,7 @@ bool LifeMeterBar::IsDoingGreat()
 
 bool LifeMeterBar::IsAboutToFail() 
 { 
-	return m_fLifePercentage < ABOUT_TO_FAIL_THRESHOLD; 
+	return m_fLifePercentage < 0.3f; 
 }
 
 bool LifeMeterBar::HasFailed() 
@@ -90,7 +86,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 	float fNewDelta = m_fLifePercentage - m_fTrailingLifePercentage;
 
 	if( fDelta * fNewDelta < 0 )	// the deltas have different signs
-		m_fLifeVelocity /= 4;		// make some drag
+		m_fLifeVelocity /= 4;
 	m_fTrailingLifePercentage = clamp( m_fTrailingLifePercentage, 0, 1 );
 }
 

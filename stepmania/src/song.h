@@ -86,7 +86,7 @@ public:
 	CString GetArtist()				{return m_sArtist; };
 	CString GetCredit()				{return m_sCredit; };
 	float GetBeatOffsetInSeconds()	{return m_fOffsetInSeconds; };
-	void SetBeatOffsetInSeconds(float fNewOffset)	{m_fOffsetInSeconds = fNewOffset; SetChangedSinceLastSave(); };
+	void SetBeatOffsetInSeconds(float fNewOffset)	{m_fOffsetInSeconds = fNewOffset; };
 	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM )
 	{
 		fMaxBPM = 0;
@@ -114,13 +114,12 @@ public:
 	bool IsNew() { return GetNumTimesPlayed()==0; };
 
 	bool HasChangedSinceLastSave()	{ return m_bChangedSinceSave;	}
+	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
 
 	Grade GetGradeForDifficultyClass( NotesType nt, DifficultyClass dc );
 
 
 private:
-	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
-
 	CString m_sSongFilePath;
 	CString m_sSongDir;
 	CString m_sGroupName;

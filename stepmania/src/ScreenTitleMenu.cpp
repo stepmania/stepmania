@@ -27,6 +27,7 @@
 #include "RageLog.h"
 #include "SongManager.h"
 #include "AnnouncerManager.h"
+#include "ScreenEz2SelectPlayer.h"
 
 #include "GameManager.h"
 
@@ -61,6 +62,7 @@ const ScreenMessage SM_GoToGameOptions		=	ScreenMessage(SM_User+6);
 const ScreenMessage SM_GoToSynchronize		=	ScreenMessage(SM_User+9);
 const ScreenMessage SM_GoToEdit				=	ScreenMessage(SM_User+10);
 const ScreenMessage SM_DoneOpening			=	ScreenMessage(SM_User+11);
+const ScreenMessage SM_GoToEz2				=	ScreenMessage(SM_User+12);
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
@@ -95,7 +97,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	m_textVersion.Load( THEME->GetPathTo(FONT_NORMAL) );
 	m_textVersion.SetHorizAlign( Actor::align_right );
-	m_textVersion.SetText( "v3.0 public test" );
+	m_textVersion.SetText( "v3.0 compatibility test" );
 	m_textVersion.SetDiffuseColor( D3DXCOLOR(0.6f,0.6f,0.6f,1) );	// light gray
 	m_textVersion.SetXY( SCREEN_RIGHT-16, SCREEN_BOTTOM-20 );
 	m_textVersion.SetZoom( 0.5f );
@@ -193,6 +195,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToEdit:
 		SCREENMAN->SetNewScreen( new ScreenEditMenu );
 		break;
+	case SM_GoToEz2:
+		SCREENMAN->SetNewScreen( new ScreenEz2SelectPlayer );
+		break;
 	}
 }
 
@@ -250,8 +255,16 @@ void ScreenTitleMenu::MenuStart( const PlayerNumber p )
 	switch( m_TitleMenuChoice )
 	{
 	case CHOICE_GAME_START:
-		m_soundSelect.PlayRandom();
-		m_Fade.CloseWipingRight( SM_GoToCaution );
+		if ( GAMEMAN->m_CurGame == GAME_EZ2 )
+		{
+			m_soundSelect.PlayRandom();
+			m_Fade.CloseWipingRight( SM_GoToEz2 );
+		}
+		else
+		{
+			m_soundSelect.PlayRandom();
+			m_Fade.CloseWipingRight( SM_GoToCaution );
+		}
 		return;
 	case CHOICE_SELECT_GAME:
 		m_soundSelect.PlayRandom();

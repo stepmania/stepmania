@@ -131,7 +131,6 @@ protected:
 	MusicSortDisplay	m_MusicSortDisplay;
 
 	ActorFrame			m_frameOverlay;
-
 	// Actors inside of m_frameOverlay
 	Sprite				m_sprSelectionOverlay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
@@ -146,12 +145,10 @@ protected:
 	int					m_iSelection;		// index into GetCurWheelItemDatas()
 	CString				m_sExpandedSectionName;
 
-	int					m_iSwitchesLeftInSpinDown;		
-	float				m_fLockedWheelVelocity;
-	float				m_fTimeLeftBeforePlayMusicSample;	// Triggers a message send when crosses 0
 
 	enum WheelState { 
-		STATE_SELECTING_MUSIC,
+		STATE_IDLE, 
+		STATE_SWITCHING_MUSIC, 
 		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
 		STATE_FLYING_ON_AFTER_NEXT_SORT, 
 		STATE_TWEENING_ON_SCREEN, 
@@ -171,7 +168,6 @@ protected:
 	RageSoundSample m_soundChangeSort;
 	RageSoundSample m_soundExpand;
 	RageSoundSample m_soundStart;
-	RageSoundSample m_soundLocked;
 
 
 

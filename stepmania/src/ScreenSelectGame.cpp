@@ -77,14 +77,17 @@ void ScreenSelectGame::ExportOptions()
 	{
 	case GAME_DANCE:	
 		GAMEMAN->m_CurStyle = STYLE_DANCE_SINGLE;
+		GAMEMAN->m_CurGame = GAME_DANCE;
 		ANNOUNCER->SwitchAnnouncer( "default" );
 		break;
 	case GAME_PUMP:		
 		GAMEMAN->m_CurStyle = STYLE_PUMP_SINGLE;
+		GAMEMAN->m_CurGame = GAME_PUMP;
 		ANNOUNCER->SwitchAnnouncer( "default" );
 		break;
 	case GAME_EZ2:		
-		GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;		
+		GAMEMAN->m_CurStyle = STYLE_EZ2_SINGLE;	
+		GAMEMAN->m_CurGame = GAME_EZ2;
 		ANNOUNCER->SwitchAnnouncer( "ez2" );
 		break;
 	default:	ASSERT(0);	// invalid Game

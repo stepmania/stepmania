@@ -72,10 +72,6 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 {
 	LOG->WriteLine( "ScreenSelectDifficulty::ScreenSelectDifficulty()" );
 
-	// Reset the current PlayMode
-	PREFSMAN->m_PlayMode = PLAY_MODE_INVALID;
-
-
 	int p;
 	
 	m_Menu.Load(
@@ -211,22 +207,11 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( new ScreenTitleMenu );
 		break;
 	case SM_GoToNextState:
-		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				switch( m_iSelection[p] )
-				{
-				case 0:	PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_EASY;	break;
-				case 1:	PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_MEDIUM;	break;
-				case 2:	PREFSMAN->m_PreferredDifficultyClass[p] = CLASS_HARD;	break;
-				}
-		}
-
 		switch( m_iSelection[PLAYER_1] )
 		{
 		case 0:
 		case 1:
 		case 2:	// something on page 1 was chosen
-			PREFSMAN->m_PlayMode = PLAY_MODE_ARCADE;
 			SCREENMAN->SetNewScreen( new ScreenSelectGroup );
 			break;
 		case 3:

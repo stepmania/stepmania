@@ -13,15 +13,15 @@
 
 struct StyleInput
 {
-	StyleInput() { player = PLAYER_INVALID; col = -1; };
+	StyleInput() { player = PLAYER_NONE; col = -1; };
 	StyleInput( PlayerNumber p, int c ) { player = p; col = c; };
 	bool operator==( const StyleInput &other ) { return player == other.player && col == other.col; };
 
 	PlayerNumber player;
 	int col;
 
-	inline bool IsBlank() const { return player == PLAYER_INVALID; };
+	inline bool IsBlank() const { return player == PLAYER_NONE; };
 	inline bool IsValid() const { return !IsBlank(); };
-	inline void MakeBlank() { player = PLAYER_INVALID; col = -1; };
+	inline void MakeBlank() { player = PLAYER_NONE; col = -1; };
 
 };

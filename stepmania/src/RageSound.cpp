@@ -25,14 +25,13 @@ RageSound*		SOUND	= NULL;
 RageSound::RageSound( HWND hWnd )
 {
 	LOG->WriteLine( "RageSound::RageSound()" );
-
 	// save the HWND
 	if( !hWnd )
 		throw RageException( "RageSound called with NULL hWnd." );
 	m_hWndApp = hWnd;
 
-	if( BASS_GetVersion() != MAKELONG(1,6) )
-		throw RageException( "BASS version 1.6 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
+	if( BASS_GetVersion() != MAKELONG(1,5) )
+		throw RageException( "BASS version 1.5 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
 
 	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL|BASS_DEVICE_LATENCY, m_hWndApp ) )
 	{
@@ -73,8 +72,6 @@ RageSound::RageSound( HWND hWnd )
 
 RageSound::~RageSound()
 {
-	LOG->WriteLine( "RageSound::~RageSound()" );
-
 	BASS_Stop();
 	BASS_Free();
 }
@@ -88,7 +85,7 @@ void RageSound::PlayOnceStreamed( CString sPath )
 	if( FALSE == BASS_StreamPlay( hStream, FALSE, 0 ) )
 		throw RageException( "RageSound: Error playing a sound stream." );
 
-	// this stream will free itself when stopped 	
+	// this stream will free itself when stopped 
 }
 
 void RageSound::PlayOnceStreamedFromDir( CString sDir )

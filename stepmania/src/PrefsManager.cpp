@@ -29,13 +29,12 @@ PrefsManager::PrefsManager()
 	m_bAnnouncer = true;
 	m_bEventMode = true;
 	m_iNumArcadeStages = 3;
-	m_bAutoPlay = false;
-	m_fJudgeWindow = 0.10f;
+	m_iDifficulty = 4;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_PreferredDifficultyClass[p] = CLASS_EASY;
 	m_SongSortOrder = SORT_GROUP;
-	m_PlayMode = PLAY_MODE_INVALID;
+	m_PlayMode = PLAY_MODE_ARCADE;
 	m_iCurrentStageIndex = 0;
 
 	ReadPrefsFromDisk();
@@ -62,8 +61,7 @@ void PrefsManager::ReadPrefsFromDisk()
 	ini.GetValueB( "Options", "Announcer",			m_bAnnouncer );
 	ini.GetValueB( "Options", "EventMode",			m_bEventMode );
 	ini.GetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
-	ini.GetValueB( "Options", "AutoPlay",			m_bAutoPlay );
-	ini.GetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
+	ini.GetValueI( "Options", "Difficulty",			m_iDifficulty );
 }
 
 
@@ -81,8 +79,7 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValueB( "Options", "Announcer",			m_bAnnouncer );
 	ini.SetValueB( "Options", "EventMode",			m_bEventMode );
 	ini.SetValueI( "Options", "NumArcadeStages",	m_iNumArcadeStages );
-	ini.SetValueB( "Options", "AutoPlay",			m_bAutoPlay );
-	ini.SetValueF( "Options", "JudgeWindow",		m_fJudgeWindow );
+	ini.SetValueI( "Options", "Difficulty",			m_iDifficulty );
 
 	ini.WriteFile();
 }
@@ -92,30 +89,20 @@ int PrefsManager::GetStageIndex()
 	return m_iCurrentStageIndex;
 }
 
+int PrefsManager::GetStageNumber()
+{
+	return m_iCurrentStageIndex+1;
+}
+
 bool PrefsManager::IsFinalStage()
 {
 	return m_iCurrentStageIndex == m_iNumArcadeStages-1;
 }
 
-bool PrefsManager::IsExtraStage()
-{
-	return m_iCurrentStageIndex == m_iNumArcadeStages;
-}
-
-bool PrefsManager::IsExtraStage2()
-{
-	return m_iCurrentStageIndex == m_iNumArcadeStages+1;
-}
-
 CString PrefsManager::GetStageText()
 {
-	if( IsFinalStage() )
+	if( m_iCurrentStageIndex == m_iNumArcadeStages-1 )
 		return "Final";
-	else if( IsExtraStage() )
-		return "Extra";
-	else if( IsExtraStage2() )
-		return "Extra 2";
-
 
 	int iStageNo = m_iCurrentStageIndex+1;
 
@@ -135,16 +122,6 @@ CString PrefsManager::GetStageText()
 		default:sNumberSuffix = "th";	break;
 		}
 	}
-	return ssprintf( "%d%s", iStageNo, sNumberSuffix );
-}
-
-D3DXCOLOR PrefsManager::GetStageColor()
-{
-	if( IsFinalStage() )
-		return D3DXCOLOR(1,0.1f,0.1f,1);	// red
-	else if( IsExtraStage() || IsExtraStage2() )
-		return D3DXCOLOR(1,1,0.3f,1);		// yellow
-	else
-		return D3DXCOLOR(0.3f,1,0.3f,1);	// green
+	return ssprintf( "%d%s", this->GetStageNumber(), sNumberSuffix );
 }
 

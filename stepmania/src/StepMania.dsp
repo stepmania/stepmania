@@ -79,7 +79,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 /nologo /subsystem:windows /profile /debug /machine:I386 /out:"../StepMania-debug.exe"
+# ADD LINK32 /nologo /subsystem:windows /debug /machine:I386 /out:"../StepMania-debug.exe" /pdbtype:sept
 
 !ENDIF 
 
@@ -257,14 +257,6 @@ SOURCE=.\NoteData.cpp
 # Begin Source File
 
 SOURCE=.\NoteData.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteDataWithScoring.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NoteDataWithScoring.h
 # End Source File
 # Begin Source File
 
@@ -666,22 +658,6 @@ SOURCE=.\TipDisplay.h
 # Begin Group "Actors used in Gameplay"
 
 # PROP Default_Filter ""
-# Begin Group "ParticleSystems"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\DroppingParticleSystem.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ParticleSystem.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ParticleSystem.h
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\ArrowEffects.cpp
@@ -872,6 +848,22 @@ SOURCE=.\ScreenEditMenu.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenEz2SelectPlayer.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEz2SelectPlayer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEz2SelectStyle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEz2SelectStyle.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenGameOptions.cpp
 # End Source File
 # Begin Source File
@@ -1054,6 +1046,10 @@ SOURCE=.\ScreenTitleMenu.h
 # Begin Group "Global Singletons"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\AnnouncerManager.cpp
+# End Source File
 # Begin Source File
 
 SOURCE=.\AnnouncerManager.h

@@ -71,7 +71,7 @@ public:
 			if( m_iMenuButtons[b] == GameI.button )
 				return MenuInput( p, (MenuButton)b );
 		}
-		return MenuInput( PLAYER_INVALID, MENU_BUTTON_INVALID );
+		return MenuInput( PLAYER_NONE, MENU_BUTTON_NONE );
 	};
 	inline GameInput MenuInputToGameInput( const MenuInput MenuI )
 	{
