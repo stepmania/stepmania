@@ -234,8 +234,11 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			m_iCurButton++;
 			break;
 		case SDLK_ESCAPE: /* Quit the screen. */
-			SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
-			m_Menu.StartTransitioning( SM_GoToNextScreen );		
+			if(!m_Menu.IsTransitioning())
+			{
+				SOUNDMAN->PlayOnce( THEME->GetPathToS("Common start") );
+				m_Menu.StartTransitioning( SM_GoToNextScreen );		
+			}
 			break;
 		case SDLK_RETURN: /* Change the selection. */
 			m_bWaitingForPress = true;	
