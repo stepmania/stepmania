@@ -9,6 +9,8 @@
 
 struct ConfOption;
 
+#define ENTRY_NAME(s)				THEME->GetMetric ("OptionNames", s)
+
 class OptionRowHandler
 {
 public:
