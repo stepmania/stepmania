@@ -203,21 +203,32 @@ void NoteField::DrawPrimitives()
 		//
 		vector<BPMSegment> &aBPMSegments = GAMESTATE->m_pCurSong->m_BPMSegments;
 		for( i=0; i<aBPMSegments.size(); i++ )
-			DrawBPMText( aBPMSegments[i].m_fStartBeat, aBPMSegments[i].m_fBPM );
-
+		{
+			if(aBPMSegments[i].m_fStartBeat >= fFirstBeatToDraw &&
+			   aBPMSegments[i].m_fStartBeat <= fLastBeatToDraw)
+				DrawBPMText( aBPMSegments[i].m_fStartBeat, aBPMSegments[i].m_fBPM );
+		}
 		//
 		// Freeze text
 		//
 		vector<StopSegment> &aStopSegments = GAMESTATE->m_pCurSong->m_StopSegments;
 		for( i=0; i<aStopSegments.size(); i++ )
+		{
+			if(aStopSegments[i].m_fStartBeat >= fFirstBeatToDraw &&
+			   aStopSegments[i].m_fStartBeat <= fLastBeatToDraw)
 			DrawFreezeText( aStopSegments[i].m_fStartBeat, aStopSegments[i].m_fStopSeconds );
+		}
 
 		//
 		// BGChange text
 		//
 		vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges;
 		for( i=0; i<aBackgroundChanges.size(); i++ )
-			DrawBGChangeText( aBackgroundChanges[i].m_fStartBeat, aBackgroundChanges[i].m_sBGName );
+		{
+			if(aBackgroundChanges[i].m_fStartBeat >= fFirstBeatToDraw &&
+			   aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw)
+				DrawBGChangeText( aBackgroundChanges[i].m_fStartBeat, aBackgroundChanges[i].m_sBGName );
+		}
 
 		//
 		// Draw marker bars
