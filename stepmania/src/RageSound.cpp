@@ -565,16 +565,15 @@ float RageSound::GetPositionSecondsInternal() const
 	{
 		if(stopped_position != -1)
 			return stopped_position;
-		return GetPlaybackRate() * position / float(samplerate());
+		return position / float(samplerate());
 	}
 
 	/* If we don't yet have any position data, GetPCM hasn't yet been called at all,
 	 * so report the static position. */
+	if(pos_map.empty())
 	{
-		if(pos_map.empty()) {
-			LOG->Trace("no data yet; %i", position);
-			return GetPlaybackRate() * position / float(samplerate());
-		}
+		LOG->Trace("no data yet; %i", position);
+		return position / float(samplerate());
 	}
 
 	/* Get our current hardware position. */
@@ -591,7 +590,7 @@ float RageSound::GetPositionSecondsInternal() const
 			/* cur_sample lies in this block; it's an exact match.  Figure
 			 * out the exact position. */
 			int diff = pos_map[i].position - pos_map[i].sampleno;
-			return GetPlaybackRate() * float(cur_sample + diff) / samplerate();
+			return float(cur_sample + diff) / samplerate();
 		}
 
 		/* See if the current position is close to the beginning of this block. */
@@ -622,12 +621,13 @@ float RageSound::GetPositionSecondsInternal() const
 	 */
 	LOG->Trace("Approximate sound time: sample %i, dist %i, closest %i", cur_sample, closest_position_dist, closest_position);
 
-	return GetPlaybackRate() * closest_position / float(samplerate());
+	return closest_position / float(samplerate());
 }
 
 float RageSound::GetPositionSeconds() const
 {
-	return GetPositionSecondsInternal() + Sample->GetOffsetFix();
+	const float ret = GetPositionSecondsInternal() + Sample->GetOffsetFix();
+	return GetPlaybackRate() * ret;
 }
 
 
