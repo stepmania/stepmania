@@ -20,6 +20,9 @@ uint64_t GetCurrentThreadId()
 
 bool GetThreadBacktraceContext(uint64_t iCrashHandle, BacktraceContext *ctx)
 {
+	/* Can't GetThreadBacktraceContext the current thread. */
+	ASSERT(iCrashHandle != GetCurrentThreadId());
+
 	thread_act_t thread = thread_act_t(iCrashHandle);
 	ppc_thread_state state;
 	mach_msg_type_number_t count = PPC_THREAD_STATE_COUNT;
