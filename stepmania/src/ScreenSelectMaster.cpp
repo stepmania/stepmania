@@ -33,6 +33,10 @@
 #define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
 #define EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"ExtraSleepAfterTweenOffSeconds")
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
+#define SHOW_SCROLLER							THEME->GetMetricB(m_sName,"ShowScroller")
+#define SCROLLER_SECONDS_PER_ITEM				THEME->GetMetricF(m_sName,"ScrollerSecondsPerItem")
+#define SCROLLER_SPACING_X						THEME->GetMetricF(m_sName,"ScrollerSpacingX")
+#define SCROLLER_SPACING_Y						THEME->GetMetricF(m_sName,"ScrollerSpacingY")
 
 /* OptionOrderLeft=0:1,1:2,2:3,3:4 */
 const char *ScreenSelectMaster::dirs[NUM_DIRS] =
@@ -52,6 +56,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		m_bChosen[p] = false;
 	}
 
+	// init cursor
 	if( SHARED_PREVIEW_AND_CURSOR )
 	{
 		for( i=0; i<NUM_CURSOR_PARTS; i++ )
@@ -78,10 +83,54 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		}
 	}
 
+	// init scroll
+	if( SHOW_SCROLLER )
+	{
+		if( SHARED_PREVIEW_AND_CURSOR )
+		{
+			m_Scroller[0].Load( SCROLLER_SECONDS_PER_ITEM, SCROLLER_SPACING_X, SCROLLER_SPACING_Y );
+			m_Scroller[0].SetName( "Scroller" );
+			this->AddChild( &m_Scroller[0] );
+
+			for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+			{
+		//		const ModeChoice& mc = m_aModeChoices[c];
+
+				CString sFName = ssprintf("%s Scroll Choice%d", m_sName.c_str(),c+1);
+				m_sprScroll[c][0].Load( THEME->GetPathToG(sFName) );
+				m_sprScroll[c][0]->SetName( ssprintf("Scroll") );
+				m_Scroller[0].AddChild( m_sprScroll[c][0] );
+			}
+		}
+		else
+		{
+			for( p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAMESTATE->IsPlayerEnabled(p) )
+					continue;	// skip
+	
+				m_Scroller[p].Load( SCROLLER_SECONDS_PER_ITEM, SCROLLER_SPACING_X, SCROLLER_SPACING_Y );
+				m_Scroller[p].SetName( ssprintf("ScrollerP%d",p+1) );
+				this->AddChild( &m_Scroller[p] );
+				
+				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+				{
+			//		const ModeChoice& mc = m_aModeChoices[c];
+
+					CString sFName = ssprintf("%s Scroll Choice%d P%d", m_sName.c_str(),c+1,p+1);
+					m_sprScroll[c][p].Load( THEME->GetPathToG(sFName) );
+					m_sprScroll[c][p]->SetName( ssprintf("ScrollP%d",p+1) );
+					m_Scroller[p].AddChild( m_sprScroll[c][p] );
+				}
+			}
+		}
+	}
+
 	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
 	{
 //		const ModeChoice& mc = m_aModeChoices[c];
 
+		// init icon
 		for( i=0; i<NUM_ICON_PARTS; i++ )
 		{
 			CString sFName = ssprintf("%s Icon Part%d Choice%d", m_sName.c_str(),i+1,c+1);
@@ -90,6 +139,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			this->AddChild( m_sprIcon[i][c] );
 		}
 
+		// init preview 
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
 			for( i=0; i<NUM_PREVIEW_PARTS; i++ )
@@ -102,12 +152,12 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		}
 		else
 		{
-			for( i=0; i<NUM_PREVIEW_PARTS; i++ )
+			for( p=0; p<NUM_PLAYERS; p++ )
 			{
-				for( p=0; p<NUM_PLAYERS; p++ )
+				if( !GAMESTATE->IsPlayerEnabled(p) )
+					continue;	// skip
+				for( i=0; i<NUM_PREVIEW_PARTS; i++ )
 				{
-					if( !GAMESTATE->IsPlayerEnabled(p) )
-						continue;	// skip
 					CString sFName = ssprintf("%s Preview Part%d Choice%d P%d", m_sName.c_str(),i+1,c+1,p+1);
 					m_sprPreview[i][c][p].Load( THEME->GetPathToG(sFName) );
 					m_sprPreview[i][c][p]->SetName( ssprintf("PreviewPart%dP%d",i+1,p+1) );
@@ -116,6 +166,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			}
 		}
 	}
+
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
@@ -139,6 +190,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	m_soundSelect.Load( THEME->GetPathToS( "Common start") );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 
+	// init m_Next order info
 	for( int dir = 0; dir < NUM_DIRS; ++dir )
 	{
 		const CString dirname = dirs[dir];
@@ -370,6 +422,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 		// XXX: only play this once (I thought we already did that?)
 		// DDR plays it on every change to page 2.  -Chris
 		/* That sounds ugly if you go back and forth quickly. -g */
+		// DDR locks input while it's scrolling.  Should we do the same? -Chris
 		m_soundDifficult.Stop();
 		m_soundDifficult.PlayRandom();
 	}
@@ -444,7 +497,23 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 				m_sprCursor[i][p].SetXY( GetCursorX((PlayerNumber)p,i), GetCursorY((PlayerNumber)p,i) );
 			}
 		}
+
+		if( SHOW_SCROLLER )
+		{
+			if( SHARED_PREVIEW_AND_CURSOR )
+				m_Scroller[0].SetDestinationItem( iNewChoice );
+			else
+				m_Scroller[p].SetDestinationItem( iNewChoice );
+
+			if( SHARED_PREVIEW_AND_CURSOR )
+				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+					COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" );
+			else
+				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+					COMMAND( *m_sprScroll[c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" );
+		}
 	}
+
 
 	return true;
 }
@@ -577,6 +646,25 @@ float ScreenSelectMaster::TweenOnScreen()
 				}
 	}
 
+	if( SHOW_SCROLLER )
+	{
+		if( SHARED_PREVIEW_AND_CURSOR )
+		{
+			m_Scroller[0].SetCurrentAndDestinationItem( m_iChoice[0] );
+			fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_Scroller[0] ) );
+			for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+				fSecs = max( fSecs, COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" ) );
+		}
+		else
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+				{
+					m_Scroller[p].SetCurrentAndDestinationItem( m_iChoice[p] );
+					fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_Scroller[p] ) );
+					for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+						fSecs = max( fSecs, COMMAND( *m_sprScroll[c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" ) );
+				}
+	}
 
 	fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprExplanation[GetCurrentPage()] ) );
 	fSecs = max( fSecs, SET_XY_AND_ON_COMMAND( m_sprMore[GetCurrentPage()] ) );
@@ -644,6 +732,15 @@ float ScreenSelectMaster::TweenOffScreen()
 						fSecs = max( fSecs, COMMAND( m_sprPreview[i][c][0], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" ) );
 					}
 		}
+	}
+
+	if( SHOW_SCROLLER )
+	{
+		if( SHARED_PREVIEW_AND_CURSOR )
+			fSecs = max( fSecs, OFF_COMMAND( m_Scroller[0] ) );
+		else
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				fSecs = max( fSecs, OFF_COMMAND( m_Scroller[p] ) );
 	}
 
 	fSecs = max( fSecs, OFF_COMMAND( m_sprExplanation[GetCurrentPage()] ) );

@@ -22,6 +22,8 @@ public:
 	virtual void SortByZ();
 
 	virtual ~ActorFrame() { }
+	
+	void DeleteAllChildren();
 
 	virtual void RunCommandOnChildren( const CString &cmd ); /* but not on self */
 

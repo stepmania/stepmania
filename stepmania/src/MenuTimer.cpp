@@ -94,11 +94,13 @@ void MenuTimer::Update( float fDeltaTime )
 		m_textDigit1.Command( WARNING_COMMAND(iNewDisplay) );
 		m_textDigit2.Command( WARNING_COMMAND(iNewDisplay) );
 	}
-
+	
 	if( iNewDisplay == 0 )
 	{
 		Stop();
 		SCREENMAN->PostMessageToTopScreen( SM_MenuTimer, 0 );
+		m_textDigit1.SetEffectNone();
+		m_textDigit2.SetEffectNone();
 	}
 
 	if( iNewDisplay <= WARNING_BEEP_START )

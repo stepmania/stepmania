@@ -23,24 +23,18 @@
 #include "BitmapText.h"
 
 
-#define BACKGROUNDS_BASE_X		THEME->GetMetricF("ScreenCredits","BackgroundsBaseX")
-#define BACKGROUNDS_BASE_Y		THEME->GetMetricF("ScreenCredits","BackgroundsBaseY")
-#define BACKGROUNDS_VELOCITY_X	THEME->GetMetricF("ScreenCredits","BackgroundsVelocityX")
-#define BACKGROUNDS_VELOCITY_Y	THEME->GetMetricF("ScreenCredits","BackgroundsVelocityY")
-#define BACKGROUNDS_SPACING_X	THEME->GetMetricF("ScreenCredits","BackgroundsSpacingX")
-#define BACKGROUNDS_SPACING_Y	THEME->GetMetricF("ScreenCredits","BackgroundsSpacingY")
-#define BACKGROUNDS_WIDTH		THEME->GetMetricF("ScreenCredits","BackgroundsWidth")
-#define BACKGROUNDS_HEIGHT		THEME->GetMetricF("ScreenCredits","BackgroundsHeight")
-#define TEXTS_COLOR_INTRO		THEME->GetMetricC("ScreenCredits","TextsColorIntro")
-#define TEXTS_COLOR_HEADER		THEME->GetMetricC("ScreenCredits","TextsColorHeader")
-#define TEXTS_COLOR_NORMAL		THEME->GetMetricC("ScreenCredits","TextsColorNormal")
-#define TEXTS_ZOOM				THEME->GetMetricF("ScreenCredits","TextsZoom")
-#define TEXTS_BASE_X			THEME->GetMetricF("ScreenCredits","TextsBaseX")
-#define TEXTS_BASE_Y			THEME->GetMetricF("ScreenCredits","TextsBaseY")
-#define TEXTS_VELOCITY_X		THEME->GetMetricF("ScreenCredits","TextsVelocityX")
-#define TEXTS_VELOCITY_Y		THEME->GetMetricF("ScreenCredits","TextsVelocityY")
-#define TEXTS_SPACING_X			THEME->GetMetricF("ScreenCredits","TextsSpacingX")
-#define TEXTS_SPACING_Y			THEME->GetMetricF("ScreenCredits","TextsSpacingY")
+#define BACKGROUNDS_SPACING_X				THEME->GetMetricF("ScreenCredits","BackgroundsSpacingX")
+#define BACKGROUNDS_SPACING_Y				THEME->GetMetricF("ScreenCredits","BackgroundsSpacingY")
+#define BACKGROUNDS_SCROLL_SECONDS_PER_ITEM	THEME->GetMetricF("ScreenCredits","BackgroundsScrollSecondsPerItem")
+#define BACKGROUNDS_WIDTH					THEME->GetMetricF("ScreenCredits","BackgroundsWidth")
+#define BACKGROUNDS_HEIGHT					THEME->GetMetricF("ScreenCredits","BackgroundsHeight")
+#define TEXTS_COLOR_INTRO					THEME->GetMetricC("ScreenCredits","TextsColorIntro")
+#define TEXTS_COLOR_HEADER					THEME->GetMetricC("ScreenCredits","TextsColorHeader")
+#define TEXTS_COLOR_NORMAL					THEME->GetMetricC("ScreenCredits","TextsColorNormal")
+#define TEXTS_ZOOM							THEME->GetMetricF("ScreenCredits","TextsZoom")
+#define TEXTS_SPACING_X						THEME->GetMetricF("ScreenCredits","TextsSpacingX")
+#define TEXTS_SPACING_Y						THEME->GetMetricF("ScreenCredits","TextsSpacingY")
+#define TEXTS_SCROLL_SECONDS_PER_ITEM		THEME->GetMetricF("ScreenCredits","TextsScrollSecondsPerItem")
 
 const int NUM_BACKGROUNDS = 20;
 
@@ -60,7 +54,9 @@ static const CreditLine CREDIT_LINES[] =
 	{0,"Lucas “v1ral” Tang"}, 
 	// "Who?" = "what is this person's real name", not "what did they do".
 	// Who knows? Some people might not want to reveal their real name. - Friez.
-	// FYI: Several people have requested that their real names not be shown. -Chris
+	// Several people have requested that their real names not be shown. -Chris
+	// This isn't a good place to keep a master list of contributors because 
+	// it's not a very complete list. -Chris
 	{0,"SPiGuMuS"}, // who?
 	{0,"Visage"}, // who? makes para para theme graphics for me, wants to do BM and IIDX graphics too. - Friez
 	{0,"Ryan “DJ McFox” McKanna"},
@@ -171,7 +167,6 @@ static const CreditLine CREDIT_LINES[] =
 	{1,"Join the StepMania team"},
 	{1,"and help us out!"},
 };
-const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CreditLine);
 
 
 ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
@@ -180,50 +175,54 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	SONGMAN->GetSongs( arraySongs );
 	SortSongPointerArrayByTitle( arraySongs );
 
-	int i;
-	for( i=0; i<NUM_BACKGROUNDS; i++ )
-	{
-		Song* pSong = NULL;
-		for( int j=0; j<50; j++ )
-		{
-			pSong = arraySongs[ rand()%arraySongs.size() ];
-			if( pSong->HasBackground() )
-				break;
-		}
-
-		Sprite* pBackground = new Sprite;
-		pBackground->LoadBG( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background") );
-		pBackground->ScaleToClipped( BACKGROUNDS_WIDTH, BACKGROUNDS_HEIGHT );
-		m_vBackgrounds.push_back( pBackground );
-
-		Sprite* pFrame = new Sprite;
-		pFrame->Load( THEME->GetPathToG("ScreenCredits background frame") );
-		m_vFrames.push_back( pFrame );
-	}
-	m_ScrollerBackgrounds.Load( m_vBackgrounds, BACKGROUNDS_BASE_X, BACKGROUNDS_BASE_Y, BACKGROUNDS_VELOCITY_X, BACKGROUNDS_VELOCITY_Y, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
+	m_ScrollerBackgrounds.Load( BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
 	this->AddChild( &m_ScrollerBackgrounds );
-	m_ScrollerFrames.Load( m_vFrames, BACKGROUNDS_BASE_X, BACKGROUNDS_BASE_Y, BACKGROUNDS_VELOCITY_X, BACKGROUNDS_VELOCITY_Y, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
+	m_ScrollerFrames.Load( BACKGROUNDS_SCROLL_SECONDS_PER_ITEM, BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y );
 	this->AddChild( &m_ScrollerFrames );
-	
 
-	for( i=0; i<int(NUM_CREDIT_LINES); i++ )
 	{
-		BitmapText* pText = new BitmapText;
-		pText->LoadFromFont( THEME->GetPathToF("ScreenCredits titles") );
-		pText->SetText( CREDIT_LINES[i].text );
-		switch( CREDIT_LINES[i].colorIndex )
+		for( int i=0; i<NUM_BACKGROUNDS; i++ )
 		{
-		case 1:	pText->SetDiffuse( TEXTS_COLOR_INTRO );		break;
-		case 2:	pText->SetDiffuse( TEXTS_COLOR_HEADER );	break;
-		case 0:	pText->SetDiffuse( TEXTS_COLOR_NORMAL );	break;
-		default:	ASSERT(0);
+			Song* pSong = NULL;
+			for( int j=0; j<50; j++ )
+			{
+				pSong = arraySongs[ rand()%arraySongs.size() ];
+				if( pSong->HasBackground() )
+					break;
+			}
+
+			Sprite* pBackground = new Sprite;
+			pBackground->LoadBG( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background") );
+			pBackground->ScaleToClipped( BACKGROUNDS_WIDTH, BACKGROUNDS_HEIGHT );
+			m_ScrollerBackgrounds.AddChild( pBackground );
+
+			Sprite* pFrame = new Sprite;
+			pFrame->Load( THEME->GetPathToG("ScreenCredits background frame") );
+			m_ScrollerFrames.AddChild( pFrame );
 		}
-		pText->SetZoom( TEXTS_ZOOM );
-		m_vTexts.push_back( pText );
 	}
-	m_ScrollerTexts.Load( m_vTexts, TEXTS_BASE_X, TEXTS_BASE_Y, TEXTS_VELOCITY_X, TEXTS_VELOCITY_Y, TEXTS_SPACING_X, TEXTS_SPACING_Y );
+	
+	m_ScrollerTexts.Load( TEXTS_SCROLL_SECONDS_PER_ITEM, TEXTS_SPACING_X, TEXTS_SPACING_Y );
 	this->AddChild( &m_ScrollerTexts );
 	
+	{
+		for( int i=0; i<ARRAYSIZE(CREDIT_LINES); i++ )
+		{
+			BitmapText* pText = new BitmapText;
+			pText->LoadFromFont( THEME->GetPathToF("ScreenCredits titles") );
+			pText->SetText( CREDIT_LINES[i].text );
+			switch( CREDIT_LINES[i].colorIndex )
+			{
+			case 1:	pText->SetDiffuse( TEXTS_COLOR_INTRO );		break;
+			case 2:	pText->SetDiffuse( TEXTS_COLOR_HEADER );	break;
+			case 0:	pText->SetDiffuse( TEXTS_COLOR_NORMAL );	break;
+			default:	ASSERT(0);
+			}
+			pText->SetZoom( TEXTS_ZOOM );
+			m_ScrollerTexts.AddChild( pText );
+		}
+	}
+
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenCredits overlay") );
 	this->AddChild( &m_Overlay );
 
@@ -231,26 +230,16 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
-	this->PostScreenMessage( SM_BeginFadingOut, m_ScrollerTexts.GetTotalSecsToScroll() );
+	this->PostScreenMessage( SM_BeginFadingOut, m_Background.GetLengthSeconds() );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
 }
 
 ScreenCredits::~ScreenCredits()
 {
-	unsigned i;
-	
-	for( i=0; i<m_vBackgrounds.size(); i++ )
-		delete m_vBackgrounds[i];
-	m_vBackgrounds.clear();
-
-	for( i=0; i<m_vFrames.size(); i++ )
-		delete m_vFrames[i];
-	m_vFrames.clear();
-
-	for( i=0; i<m_vTexts.size(); i++ )
-		delete m_vTexts[i];
-	m_vTexts.clear();
+	m_ScrollerBackgrounds.DeleteAllChildren();
+	m_ScrollerFrames.DeleteAllChildren();
+	m_ScrollerTexts.DeleteAllChildren();
 }
 
 

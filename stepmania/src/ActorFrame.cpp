@@ -128,3 +128,11 @@ void ActorFrame::SortByZ()
 	// Preserve ordering of Actors with equal Z values.
 	stable_sort( m_SubActors.begin(), m_SubActors.end(), CompareActorsByZDesc );
 }
+
+void ActorFrame::DeleteAllChildren()
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		delete m_SubActors[i];
+	m_SubActors.clear();
+}
+

@@ -25,13 +25,8 @@ public:
 
 private:
 	ActorScroller			m_ScrollerBackgrounds;
-	vector<Actor*>			m_vBackgrounds;
-
 	ActorScroller			m_ScrollerFrames;
-	vector<Actor*>			m_vFrames;
-
 	ActorScroller			m_ScrollerTexts;
-	vector<Actor*>			m_vTexts;
 
 	BGAnimation				m_Overlay;
 };

@@ -4,35 +4,33 @@
 -----------------------------------------------------------------------------
  Class: ActorScroller
 
- Desc: A container for other actors.
+ Desc: An ActorFrame that moves its children.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-#include "Actor.h"
+#include "ActorFrame.h"
 
 
-class ActorScroller : public Actor
+class ActorScroller : public ActorFrame
 {
 public:
 	ActorScroller();
 
-	// owner's responsibility to delete vActors!
-	void Load( vector<Actor*> vActors, float fBaseX, float fBaseY, float fVelX, float fVelY, float fSpacingX, float fSpacingY );
+	void Load( float fScrollSecondsPerItem, float fSpacingX, float fSpacingY );
 
-	void Update( float fDelta );
-	void DrawPrimitives();
+	virtual void Update( float fDelta );
 
-	float GetTotalSecsToScroll();
+	void SetDestinationItem( int iItem ) { m_fDestinationItem = iItem; }
+	void SetCurrentAndDestinationItem( int iItem ) { m_fCurrentItem = m_fDestinationItem = iItem; }
 
 protected:
-	float		m_fSecsIntoScroll;
-	RageVector2	m_vBase;
-	RageVector2	m_vVelocity;
+	float		m_fCurrentItem; // usually between 0 and m_SubActors.size()
+	float		m_fDestinationItem;
+	float		m_fScrollSecondsPerItem;
 	RageVector2	m_vSpacing;
-	vector<Actor*> m_vActors;
 };
 
 
