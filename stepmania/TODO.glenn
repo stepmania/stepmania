@@ -381,3 +381,7 @@ We're more fillbound than most apps: we don't draw very many polys,
 but backgrounds can result in multiple fullscreen passes.
 (Okay, this isn't a TODO ...)
 
+********
+
+debug option to show console in release
+
