@@ -44,7 +44,7 @@ TitleTo: 祭 JAPAN
 /* Fix up hacked titles: */
 TitleFrom: Max 300
 ArtistFrom: %
-SubtitleTo: Ω
+ArtistTo: Ω
 *
 TitleFrom: Bre=kdown
 TitleTo: BRE∀K DOWN!
@@ -151,10 +151,13 @@ TitleTo: La Señorita
 TitleFrom: La Senorita Virtual
 TitleTo: La Señorita Virtual
 *
+TitleFrom: Chotto Kiitena
+TitleTo: ちょっときいてな
+*
 # Subtitles:
 # (Title is Graduation.)
 SubtitleFrom: Each Tomorrow
-ArtistTo: それぞれの明日
+SubtitleTo: それぞれの明日
 *
 
 # Artists:
@@ -175,13 +178,13 @@ ArtistFrom: Sanae? Shintani
 ArtistTo: 新谷さなえ
 *
 ArtistFrom: dj TAKA feat. ?Noria
-SubtitleTo: dj TAKA feat. のりあ
+ArtistTo: dj TAKA feat. のりあ
 *
 ArtistFrom: Miyuki Kunitake
-SubtitleTo: くにたけみゆき
+ArtistTo: くにたけみゆき
 *
 ArtistFrom: Kunitake Miyuki
-SubtitleTo: くにたけみゆき
+ArtistTo: くにたけみゆき
 *
 # Courses:
 TitleFrom: Kidou
@@ -220,3 +223,107 @@ TitleTo: 鬼の遅道
 TitleFrom: True Demon Road
 TitleTo: 真鬼道
 *
+# DREAMS COME TRUE:
+TitleFrom: Asa ga Mata Kuru
+TitleTo: 朝がまた来る
+*
+TitleFrom: Haretara Line
+TitleTo: 晴れたらいいね
+*
+TitleFrom: Kessenwa Kinyoubi
+TitleTo: 決戦は金曜日
+*
+TitleFrom: Nante Koi Shitandaro
+TitleTo: なんて恋したんだろ
+*
+TitleFrom: Ureshii! Tanoshii! Daisuki!
+TitleTo: うれしい! たのしい! 大好き!
+*
+# OHA:
+ArtistFrom: Warijiennu
+ArtistTo: わるじぇんぬ
+*
+ArtistFrom: Yamachan with Jimusasuhikaru
+ArtistTo: やまちゃん with ジムナスひかる
+*
+TitleFrom: OHA OHA Sutaataa
+TitleTo: OHA OHA スターター
+*
+ArtistFrom: Yamachan & Reimondo
+ArtistTo: やまちゃん&レイモンド
+*
+ArtistFrom: Oha Kids with Imakuni
+ArtistTo: おはおはキッズ with イマクニ
+*
+TitleFrom: Sayonara no Kawari Ni
+TitleTo: サヨナラのかわりに
+*
+ArtistFrom: Ohhagumi
+ArtistTo: おはぐみ
+*
+ArtistFrom: Morikubo Shoutarou
+ArtistTo: 怪人ゾナー
+*
+TitleFrom: Zonapara
+SubtitleFrom: WHY! Parapara Remix
+ArtistFrom: Zobekka
+TitleTo: ゾナパラ
+SubtitleTo: WHY! パラパラ・リミックス
+ArtistTo: ゾベッカ
+*
+
+# Fanboy bonus:
+
+ArtistFrom: (Megumi Hayashibara)|(Hayashibara Megumi)
+ArtistTo: 林原めぐみ
+*
+ArtistFrom: (Ayumi Hamasaki)|(Hamasaki Ayumi)
+ArtistTo: 浜崎あゆみ
+*
+ArtistFrom: (Hiroko Kasahara)|(Kasahara Hiroko)
+ArtistTo: 笠原拡子 
+*
+ArtistFrom: (Mai Kuraki)|(Kuraki Mai)
+ArtistTo: 倉木麻衣
+*
+ArtistFrom: (Yuki Kimura)|(Kimura Yuki)
+ArtistTo: 木村由姫
+*
+ArtistFrom: (Takako Matsu)|(Matsu Takako)
+ArtistTo: 松たか子
+*
+ArtistFrom: (Suzuki Ami)|(Ami Suzuki)
+ArtistTo: 鈴木あみ
+*
+ArtistFrom: (Sakura Tange)|(Tange Sakura)
+ArtistTo: 丹下桜
+*
+ArtistFrom: (Hikaru Utada)|(Utada Hikaru)
+ArtistTo: 宇多田ひかる
+*
+ArtistFrom: (Masami Okui)|(Okui Masami)
+ArtistTo: 奥井雅美
+*
+ArtistFrom: Morning Musume
+ArtistTo: Morning娘
+*
+ArtistFrom: (Youko Ishida)|(Ishida Youko)
+ArtistTo: 石田燿子
+*
+ArtistFrom: (Youko Kanno)|(Kanno Youko)
+ArtistTo: 菅野よう子
+*
+ArtistFrom: (Megumi Ogata)|(Ogata Megumi)
+ArtistTo: 緒方恵美
+*
+ArtistFrom: (Yoko Takahashi)|(Takahashi Yoko)
+ArtistTo: 高橋洋子
+*
+ArtistFrom: (Daichi Akitaroh)|(Akitaroh Daichi)
+ArtistTo: 大地丙太郎
+*
+ArtistFrom: (Yui Horie)|(Horie Yui)
+ArtistTo: 堀江由衣
+*
+ArtistFrom: (Nobuo Uematsu)|(Uematsu Nobuo)
+ArtistTo: 植松伸夫
