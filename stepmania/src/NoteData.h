@@ -47,9 +47,9 @@ public:
 
 	/* Return the note at the given track and row.  Row may be out of
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
-	inline TapNote GetTapNote(unsigned track, unsigned row) const
+	inline TapNote GetTapNote(unsigned track, int row) const
 	{
-		if(row < 0 || row >= m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
+		if(row < 0 || row >= (int) m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
 		return m_TapNotes[track][row];
 	}
 	void MoveTapNoteTrack(int dest, int src);
