@@ -465,6 +465,7 @@ static const ConfOption g_ConfOptions[] =
 	ConfOption( "Preload\nSounds",		PreloadSounds,		"NO","YES" ),
 	ConfOption( "Resampling\nQuality",	ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ),
 	ConfOption( "Attract\nSound",		AttractSound,		"OFF","ON" ),
+	ConfOption( "Demonstartion\nSound",	DemonstrationSound,	"OFF","ON" ),
 	ConfOption( "Sound\nVolume",		SoundVolume,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","10%" ),
 	ConfOption( "", NULL )	// end marker
 };

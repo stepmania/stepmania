@@ -312,7 +312,6 @@ void SoundMixBuffer::write(const Sint16 *buf, unsigned size)
 
 void SoundMixBuffer::read(Sint16 *buf)
 {
-	int clip=0;
 	for(unsigned pos = 0; pos < used; ++pos)
 	{
 		Sint32 out = (mixbuf[pos]) / 256;

@@ -185,11 +185,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		case stage:
 			{
 				ASSERT( GAMESTATE->m_pCurNotes[p] );
-				float score;
+				int score;
 				if( PREFSMAN->m_bPercentageScoring )
 					score = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 				else
-					score = float(stageStats.iScore[p] + stageStats.iBonus[p]);
+					score = stageStats.iScore[p] + stageStats.iBonus[p];
 				Steps::MemCardData::HighScore hs;
 				hs.grade = grade[p];
 				hs.iScore = score;

@@ -146,7 +146,6 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	// init all the difficulty graphics
 	for( int d=0; d<NUM_DIFFICULTIES; d++ )
 	{
-		Difficulty diff = (Difficulty)d;
 		bool bShowThis = find(m_vDiffsToShow.begin(), m_vDiffsToShow.end(), d) != m_vDiffsToShow.end();
 
 		m_sprDiffHeaders[d].Load( THEME->GetPathToG(("ScreenRanking difficulty 1x5")) );
@@ -226,7 +225,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		{
 			for( unsigned i=0; i<aNotesTypesToShow.size(); i++ )
 			{
-				for( unsigned j=0; j<NUM_SONGS_TO_SHOW; j++ )
+				for( int j=0; j<NUM_SONGS_TO_SHOW; j++ )
 				{
 					PageToShow pts;
 					pts.type = PageToShow::TYPE_SONG;
@@ -281,7 +280,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenRanking::SetPage( PageToShow pts )
 {
-	bool bShowNames, bShowScores, bShowPoints, bShowTime, bShowDifficulty, bShowPercent;
+	bool bShowNames=false, bShowScores=false, bShowPoints=false, bShowTime=false, bShowDifficulty=false, bShowPercent=false;
 	switch( pts.type )
 	{
 	case PageToShow::TYPE_CATEGORY:
