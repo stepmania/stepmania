@@ -1127,7 +1127,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 			if(img->flags & SDL_SRCCOLORKEY && i == int(img->format->colorkey))
 				palette[p++] = 0;
 			else
-				palette[p++] = 0xFF; /* opaque */
+				palette[p++] = img->format->palette->colors[i].unused;
 		}
 
 		/* Set the palette. */

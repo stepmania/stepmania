@@ -972,7 +972,7 @@ unsigned RageDisplay_D3D::CreateTexture(
 			pal.p[i].peGreen = c.g;
 			pal.p[i].peBlue = c.b;
 			bool bIsColorKey = img->flags & SDL_SRCCOLORKEY && (unsigned)i == img->format->colorkey;
-			pal.p[i].peFlags = bIsColorKey ? 0x00 : 0xFF;
+			pal.p[i].peFlags = bIsColorKey ? BYTE(0x00) : c.unused;
 		}
 
 		ASSERT( g_TexResourceToTexturePalette.find(uTexHandle) == g_TexResourceToTexturePalette.end() );
