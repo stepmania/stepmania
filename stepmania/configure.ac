@@ -46,8 +46,8 @@ echo $with_int_vorbis
 have_vorbis=no
 if test "$with_vorbis" = "yes" -a "$with_int_vorbis" = "no"; then
 	oldlibs="$LIBS"
-	AC_SEARCH_LIBS(vorbis_comment_add, [vorbis], have_libvorbis=yes,  have_libvorbis=no)
 	AC_SEARCH_LIBS(ogg_stream_init, [ogg], have_libogg=yes,  have_libogg=no)
+	AC_SEARCH_LIBS(vorbis_comment_add, [vorbis], have_libvorbis=yes,  have_libvorbis=no)
 	AC_SEARCH_LIBS(ov_open, [vorbisfile], have_libvorbisfile=yes,  have_libvorbisfile=no)
 	if test "$have_libvorbis" = "yes" -a "$have_libogg" = "yes" -a "$have_libvorbisfile" = "yes"; then
 		have_vorbis=yes
