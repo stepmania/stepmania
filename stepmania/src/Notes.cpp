@@ -763,7 +763,7 @@ bool Notes::LoadFromKSFFile( const CString &sPath )
 	if( iTickCount == -1 )
 	{
 		iTickCount = 2;
-		LOG->Warn( "TICKCOUNT not found; defaulting to %i", sPath, iTickCount );
+		LOG->Warn( "%s:\nTICKCOUNT not found; defaulting to %i", sPath, iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
@@ -780,31 +780,37 @@ bool Notes::LoadFromKSFFile( const CString &sPath )
 	{
 		CString& sRowString = asRows[r];
 		ASSERT( sRowString.GetLength() == 13 );		// why 13 notes per row.  Beats me!
+		
+		/* All 2s indicates the end of the song. */
 		if( sRowString == "2222222222222" )
 			break;
-		float fBeatThisRow = r/(float)iTickCount;	// the length of a note in a row depends on TICKCOUNT
+
+		// the length of a note in a row depends on TICKCOUNT
+		float fBeatThisRow = r/(float)iTickCount;
 		int row = BeatToNoteRow(fBeatThisRow);
 		for( int t=0; t<13; t++ )
 		{
 			if( sRowString[t] == '4' )
 			{
+				/* Remember when each hold starts; ignore the middle. */
 				if( iHoldStartRow[t] == -1 )
 					iHoldStartRow[t] = r;
-				else
-					;	// ignore middle of hold
-			}
-			else	// sRowString[t] != '4'
-			{
-				if( iHoldStartRow[t] != -1 )	// this ends the hold
-				{
-					HoldNote hn = { t, iHoldStartRow[t]/(float)iTickCount, (r-1)/(float)iTickCount };
-					notedata.AddHoldNote( hn );
-					iHoldStartRow[t] = -1;
-				}
+
+				continue;
 			}
 
-			if( sRowString[t] != '4' )
-				notedata.m_TapNotes[t][row] = sRowString[t];
+			if( iHoldStartRow[t] != -1 )	// this ends the hold
+			{
+				HoldNote hn = {
+					t, /* button */
+					iHoldStartRow[t]/(float)iTickCount, /* start */
+					(r-1)/(float)iTickCount /* end */
+				};
+				notedata.AddHoldNote( hn );
+				iHoldStartRow[t] = -1;
+			}
+
+			notedata.m_TapNotes[t][row] = sRowString[t];
 		}
 	}
 
