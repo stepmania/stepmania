@@ -714,7 +714,7 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 	{
 		const float curve = CIRCLE_PERCENT*2*PI;
 		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-NUM_WHEEL_ITEMS/2.0f,+NUM_WHEEL_ITEMS/2.0f,-curve/2.f,+curve/2.f);
-		fX_out = 0;
+		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
 		fY_out = WHEEL_3D_RADIUS*sinf(fRotationX_out);
 		fZ_out = -100+WHEEL_3D_RADIUS*cosf(fRotationX_out);
 		fRotationX_out *= 180.f/PI;	// to degrees
