@@ -31,6 +31,7 @@
 #define CURSOR_OFFSET_Y_FROM_ICON( p, part )	THEME->GetMetricF(m_sName,ssprintf("CursorPart%dP%dOffsetYFromIcon",part+1,p+1))
 #define PRE_SWITCH_PAGE_SECONDS					THEME->GetMetricF(m_sName,"PreSwitchPageSeconds")
 #define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
+#define EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"SleepAfterTweenOffSeconds")
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
 
 /* OptionOrderLeft=0:1,1:2,2:3,3:4 */
@@ -231,6 +232,10 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_BeginFadingOut:
 		float fSecs = TweenOffScreen();
+		/* This can be used to allow overlap between the main tween-off and the MenuElements
+		 * tweenoff. */
+		fSecs += EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS;
+		fSecs = max( fSecs, 0 );
 		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// nofify parent that we're finished
 		m_Menu.StopTimer();
 		break;
