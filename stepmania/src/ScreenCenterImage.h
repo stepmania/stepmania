@@ -16,11 +16,16 @@ public:
 	virtual ~ScreenCenterImage();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Update( float fDeltaTime );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	void DrawPrimitives();
 
 private:
 	BitmapText	m_textInstructions;
+
+	enum Axis { AXIS_TRANS_X, AXIS_TRANS_Y, AXIS_SCALE_X, AXIS_SCALE_Y, NUM_AXES };
+	float m_fScale[NUM_AXES];
+
+	void Move( Axis axis, float fDeltaTime );
 };
 
 #endif

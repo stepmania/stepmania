@@ -16,8 +16,9 @@ ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuEleme
 {
 	LOG->Trace( "ScreenCenterImage::ScreenCenterImage()" );
 
-#ifdef _XBOX
-	PREFSMAN->resizing = true;
+	ZERO( m_fScale );
+
+#if defined(XBOX)
 	CStringArray strArray;
 	CString text("Use the left analog stick to translate the screen and right right analog stick to scale");
 	strArray.push_back(text);
@@ -39,124 +40,147 @@ ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuEleme
 ScreenCenterImage::~ScreenCenterImage()
 {
 	LOG->Trace( "ScreenCenterImage::~ScreenCenterImage()" );
-#ifdef _XBOX
-	PREFSMAN->resizing = false;
-#endif
 }
 
 
-
-void ScreenCenterImage::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
 
 void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( IsTransitioning() )
 		return;
 
-	if( type == IET_RELEASE )
+	if( type == IET_FIRST_PRESS  )
+	{
+		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_SPACE )
+		{
+			PREFSMAN->m_iCenterImageTranslateX = PREFSMAN->m_iCenterImageTranslateY = 0;
+			PREFSMAN->m_fCenterImageScaleX = PREFSMAN->m_fCenterImageScaleY = 1;
+			return;
+		}
+
+		switch( MenuI.button )
+		{
+		case MENU_BUTTON_START:
+			SCREENMAN->PlayStartSound();
+			StartTransitioning( SM_GoToNextScreen );		
+			return;
+
+		case MENU_BUTTON_BACK:
+			SCREENMAN->PlayBackSound();
+			StartTransitioning( SM_GoToPrevScreen );		
+			return;
+		}
+	}
+
+	bool bIncrease = false;
+
+	Axis axis = NUM_AXES;
+	switch( MenuI.button )
+	{
+	case MENU_BUTTON_UP:	axis = AXIS_TRANS_Y; bIncrease = false;	break;
+	case MENU_BUTTON_DOWN:	axis = AXIS_TRANS_Y; bIncrease = true;	break;
+	case MENU_BUTTON_LEFT:	axis = AXIS_TRANS_X; bIncrease = false;	break;
+	case MENU_BUTTON_RIGHT:	axis = AXIS_TRANS_X; bIncrease = true;	break;
+	default:
+		if( !DeviceI.IsJoystick() )
+			return;
+
+		/* Secondary axes aren't always mapped correctly; for example, PS2 converters
+		 * tend to map the right stick to weird things, and every one is different,
+		 * so they usually won't work. */
+		switch( DeviceI.button )
+		{
+		case JOY_UP:		axis = AXIS_TRANS_Y;	bIncrease = false;	break;
+		case JOY_DOWN:		axis = AXIS_TRANS_Y;	bIncrease = true;	break;
+		case JOY_LEFT:		axis = AXIS_TRANS_X;	bIncrease = false;	break;
+		case JOY_RIGHT:		axis = AXIS_TRANS_X;	bIncrease = true;	break;
+		case JOY_UP_2:		axis = AXIS_SCALE_Y;	bIncrease = false;	break;
+		case JOY_DOWN_2:	axis = AXIS_SCALE_Y;	bIncrease = true;	break;
+		case JOY_LEFT_2:	axis = AXIS_SCALE_X;	bIncrease = false;	break;
+		case JOY_RIGHT_2:	axis = AXIS_SCALE_X;	bIncrease = true;	break;
+		}
+	}
+	
+	if( axis == NUM_AXES )
 		return;
 
-	bool bHoldingShift = 
-		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
-		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
-
-	int iScale;
-	switch( type )
+	if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
 	{
-	case IET_SLOW_REPEAT:	iScale = 4;		break;
-	case IET_FAST_REPEAT:	iScale = 16;	break;
-	default:				iScale = 1;		break;
+		const Axis switch_axis[] = { AXIS_SCALE_X, AXIS_SCALE_Y, AXIS_TRANS_X, AXIS_TRANS_Y };
+		axis = switch_axis[axis];
 	}
 
-#ifdef _XBOX
-	switch(DeviceI.button)
-	{
-	case JOY_9:
-		if(!IsTransitioning())
-		{
-			SCREENMAN->PlayStartSound();
-			StartTransitioning( SM_GoToNextScreen );		
-		}
-		break;
-	case JOY_10:
-		if(!IsTransitioning())
-		{
-			SCREENMAN->PlayBackSound();
-			StartTransitioning( SM_GoToPrevScreen );		
-		}
-		break;
-	}
-	return;
-#endif
+	float fScale = 1.0f;
+	if( type == IET_RELEASE )
+		fScale = 0;
 
-	switch( DeviceI.button )
+	if( DeviceI.level >= 0 )
 	{
-	case KEY_SPACE:
-		PREFSMAN->m_iCenterImageTranslateX = 0;
-		PREFSMAN->m_iCenterImageTranslateY = 0;
-		PREFSMAN->m_fCenterImageScaleX = 1;
-		PREFSMAN->m_fCenterImageScaleY = 1;
-		break;
-	case KEY_LEFT:
-		if( bHoldingShift )
-			PREFSMAN->m_fCenterImageScaleX -= 0.001f * iScale;
+		/* Increase the dead zone.  XXX: input drivers should handle dead zones */
+		if( DeviceI.level < 0.10f )
+			fScale = 0;
 		else
-			PREFSMAN->m_iCenterImageTranslateX -= 1 * iScale;
-		break;
-	case KEY_RIGHT:
-		if( bHoldingShift )
-			PREFSMAN->m_fCenterImageScaleX += 0.001f * iScale;
-		else
-			PREFSMAN->m_iCenterImageTranslateX += 1 * iScale;
-		break;
-	case KEY_UP:
-		if( bHoldingShift )
-			PREFSMAN->m_fCenterImageScaleY -= 0.001f * iScale;
-		else
-			PREFSMAN->m_iCenterImageTranslateY -= 1 * iScale;
-		break;
-	case KEY_DOWN:
-		if( bHoldingShift )
-			PREFSMAN->m_fCenterImageScaleY += 0.001f * iScale;
-		else
-			PREFSMAN->m_iCenterImageTranslateY += 1 * iScale;
-		break;
+			fScale = SCALE( DeviceI.level, 0.10f, 1.0f, 0.0f, 1.0f );
 	}
 
-	switch( DeviceI.button )
+	if( DeviceI.level < 0 )
 	{
-	case KEY_SPACE:
-	case KEY_LEFT:
-	case KEY_RIGHT:
-	case KEY_UP:
-	case KEY_DOWN:
-		DISPLAY->ChangeCentering(
-			PREFSMAN->m_iCenterImageTranslateX, 
-			PREFSMAN->m_iCenterImageTranslateY,
-			PREFSMAN->m_fCenterImageScaleX,
-			PREFSMAN->m_fCenterImageScaleY );
-		break;
+		switch( type )
+		{
+		case IET_SLOW_REPEAT:	fScale *= 4;	break;
+		case IET_FAST_REPEAT:	fScale *= 16;	break;
+		}
+
+		if( !bIncrease )
+			fScale *= -1;
+
+		Move( axis, fScale );
+		return;
 	}
 
-	switch( DeviceI.button )
+	fScale = SCALE( fScale, 0.0f, 1.0f, 0.0f, 25.0f );
+	fScale = powf( fScale, 2.0f );
+
+	if( !bIncrease )
+		fScale *= -1;
+
+	m_fScale[axis] = fScale;
+}
+
+void ScreenCenterImage::Move( Axis axis, float fDelta )
+{
+	float fValues[4] =
 	{
-	case KEY_ESC:
-		if(!IsTransitioning())
-		{
-			SCREENMAN->PlayBackSound();
-			StartTransitioning( SM_GoToPrevScreen );		
-		}
-	case KEY_ENTER:
-	case KEY_KP_ENTER:
-		if(!IsTransitioning())
-		{
-			SCREENMAN->PlayStartSound();
-			StartTransitioning( SM_GoToNextScreen );		
-		}
-	}
+		(float) PREFSMAN->m_iCenterImageTranslateX,
+		(float) PREFSMAN->m_iCenterImageTranslateY,
+		PREFSMAN->m_fCenterImageScaleX,
+		PREFSMAN->m_fCenterImageScaleY
+	};
+
+	if( axis == AXIS_SCALE_X || axis == AXIS_SCALE_Y )
+		fDelta *= 0.001f;
+
+	fValues[axis] += fDelta;
+
+	PREFSMAN->m_iCenterImageTranslateX = lrintf( fValues[0] );
+	PREFSMAN->m_iCenterImageTranslateY = lrintf( fValues[1] );
+	PREFSMAN->m_fCenterImageScaleX = fValues[2];
+	PREFSMAN->m_fCenterImageScaleY = fValues[3];
+
+	DISPLAY->ChangeCentering(
+		PREFSMAN->m_iCenterImageTranslateX, 
+		PREFSMAN->m_iCenterImageTranslateY,
+		PREFSMAN->m_fCenterImageScaleX,
+		PREFSMAN->m_fCenterImageScaleY );
+}
+
+void ScreenCenterImage::Update( float fDeltaTime )
+{
+	for( int i = 0; i < NUM_AXES; ++i )
+		Move( (Axis) i, m_fScale[i] * fDeltaTime );
+
+	Screen::Update( fDeltaTime );
 }
 
 void ScreenCenterImage::HandleScreenMessage( const ScreenMessage SM )
