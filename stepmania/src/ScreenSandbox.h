@@ -15,12 +15,11 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "Quad.h"
-#include "TransitionStarWipe.h"
 #include "MenuElements.h"
-#include "TipDisplay.h"
-#include "RageSoundStream.h"
+#include "RageSound.h"
 #include "Sample3dObject.h"
 
+const int nsounds = 5;
 
 class ScreenSandbox : public Screen
 {
@@ -29,6 +28,18 @@ public:
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+
+	void Update(float f);
+	void UpdateText(int n);
+
+	struct Sound {
+		RageSound s;
+		BitmapText txt;
+	};
+	Sound s[nsounds];
+	BitmapText HEEEEEEEEELP;
+	
+	int selected;
 
 	Quad m_quad;
 	Sprite m_sprite;
