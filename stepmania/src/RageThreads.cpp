@@ -30,6 +30,7 @@
 
 #define MAX_THREADS 128
 
+static const int UnknownThreadID = 0xFFFFFFFF;
 struct ThreadSlot
 {
 	char name[1024];
@@ -83,6 +84,7 @@ struct ThreadSlot
 
 	void SetupThisThread();
 	void ShutdownThisThread();
+	void SetupUnknownThread();
 };
 
 void ThreadSlot::ThreadCheckpoint::Set(const char *File_, int Line_, const char *Message_)
@@ -151,6 +153,18 @@ static int GetCurThreadSlot()
 	return -1;
 }
 
+static int GetUnknownThreadSlot()
+{
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		if( g_ThreadSlots[entry].threadid == UnknownThreadID )
+			return entry;
+	}
+
+	sm_crash();
+}
 
 RageThread::RageThread()
 {
@@ -184,8 +198,17 @@ void ThreadSlot::SetupThisThread()
 	CHECKPOINT;
 }
 
+void ThreadSlot::SetupUnknownThread()
+{
+	threadid = UnknownThreadID;
+
+	sprintf(ThreadFormattedOutput, "Unknown thread", threadid, name);
+}
+
 void ThreadSlot::ShutdownThisThread()
 {
+	ASSERT( threadid != UnknownThreadID );
+
 #ifdef _WINDOWS
 	CloseHandle( ThreadHandle );
 #endif
@@ -232,7 +255,8 @@ void RageThread::Create( int (*fn)(void *), void *data )
 		RageException::Throw( "Thread creation failed: %s", SDL_GetError() );
 }
 
-struct SetupMainThread
+/* On startup, register the main thread's slot. */
+static struct SetupMainThread
 {
 	SetupMainThread()
 	{
@@ -241,6 +265,17 @@ struct SetupMainThread
 		g_ThreadSlots[slot].SetupThisThread();
 	}
 } SetupMainThreadObj;
+
+/* Register the "unknown thread" slot. */
+static struct SetupUnknownThread
+{
+	SetupUnknownThread()
+	{
+		int slot = FindEmptyThreadSlot();
+		strcpy( g_ThreadSlots[slot].name, "Unknown thread" );
+		g_ThreadSlots[slot].SetupUnknownThread();
+	}
+} SetupUnknownThreadObj;
 
 const char *RageThread::GetCurThreadName()
 {
@@ -342,9 +377,11 @@ void Checkpoints::LogCheckpoints( bool on )
 void Checkpoints::SetCheckpoint( const char *file, int line, const char *message )
 {
 	int slotno = GetCurThreadSlot();
+	if( slotno == -1 )
+		slotno = GetUnknownThreadSlot();
 	/* We can't ASSERT here, since that uses checkpoints. */
 	if( slotno == -1 )
-		return;
+		sm_crash();
 
 	ThreadSlot &slot = g_ThreadSlots[slotno];
 	
@@ -368,6 +405,10 @@ static const char *GetCheckpointLog( int slotno, int lineno )
 	if( !slot.used )
 		return NULL;
 
+	/* Only show the "Unknown thread" entry if it has at least one checkpoint. */
+	if( slot.threadid == UnknownThreadID && slot.GetFormattedCheckpoint( 0 ) == NULL )
+		return NULL;
+
 	if( lineno != 0 )
 		return slot.GetFormattedCheckpoint( lineno-1 );
 
@@ -385,7 +426,7 @@ const char *Checkpoints::GetLogs( const char *delim )
 	{
 		const char *buf = GetCheckpointLog( slotno, 0 );
 		if( buf == NULL )
-			break;
+			continue;
 		strcat( ret, buf );
 		strcat( ret, delim );
 		
