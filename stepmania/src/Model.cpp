@@ -536,7 +536,7 @@ void Model::DrawPrimitives()
 		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
 		{
 			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			RageModelVertexVector& TempVertices = m_vTempVerticesByMesh[i];
+			RageModelVertexVector& TempVertices = bUseTempVertices ? m_vTempVerticesByMesh[i] : pMesh->Vertices;
 
 			// apply material
 			if( pMesh->nMaterialIndex != -1 )
