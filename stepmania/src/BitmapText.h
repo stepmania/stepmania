@@ -24,7 +24,7 @@ protected:
 
 public:
 	BitmapText();
-	~BitmapText();
+	virtual ~BitmapText();
 
 
 	bool LoadFromFont( CString sFontName );

@@ -19,6 +19,7 @@ class CroppedSprite : public Sprite
 {
 public:
 	CroppedSprite();
+	virtual ~CroppedSprite() { }
 
 	bool Load( CString sFilePath, bool bForceReload = false, int iMipMaps = 4, int iAlphaBits = 4, bool bDither = false, bool bStretch = false );
 	void SetCroppedSize( float fWidth, float fHeight );

@@ -19,8 +19,7 @@ class Actor
 {
 public:
 	Actor();
-
-
+	virtual ~Actor() { }
 
 	enum TweenType { 
 		TWEEN_LINEAR, 

@@ -32,7 +32,7 @@ public:
 		bool bDither = false, 
 		bool bStretch = false 
 		);
-	~RageBitmapTexture();
+	virtual ~RageBitmapTexture();
 
 	virtual void Reload( 
 		DWORD dwMaxSize, 
