@@ -231,6 +231,17 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	// Save the original desktop format.
 	g_pd3d->GetAdapterDisplayMode( D3DADAPTER_DEFAULT, &g_DesktopMode );
 
+
+	// Create the SDL window
+	int flags = SDL_RESIZABLE | SDL_SWSURFACE;
+	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
+	if(!screen)
+	{
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
+	}
+
+
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
 }
 
@@ -352,35 +363,15 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 {
 	// HACK: On Windows 98, we can't call SDL_SetVideoMode while D3D is full screen.
 	// It will result in "SDL_SetVideoMode  failed: DirectDraw2::CreateSurface(PRIMARY): 
-	// Not in exclusive access mode".  Release and recreate in this condition.
-	if( IsWin98() && g_pd3dDevice && !this->IsWindowed() )
-	{
-		SAFE_RELEASE( g_pd3dDevice );
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-		SDL_InitSubSystem(SDL_INIT_VIDEO);
-	}
-
-	int flags = SDL_RESIZABLE | SDL_SWSURFACE;
-	
-	// Don't use SDL to change the video mode.  This will cause a 
-	// D3DERR_DRIVERINTERNALERROR on TNTs, V3s, and probably more.
-//	if( !windowed )
-//		flags |= SDL_FULLSCREEN;
+	// Not in exclusive access mode".  So, we'll Reset the D3D device, then resize the 
+	// SDL window only if we're not fullscreen.
 
 	g_Windowed = windowed;
-	SDL_ShowCursor( g_Windowed );
-
-	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
-	if(!screen)
-	{
-		SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
-		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
-	}
-
 	g_CurrentWidth = width;
 	g_CurrentHeight = height;
 	g_CurrentBPP = bpp;
 
+	SDL_ShowCursor( windowed );
 
     ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 	g_d3dpp.BackBufferWidth			=	width;
@@ -437,6 +428,25 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 		g_pd3dDevice->Reset( &g_d3dpp );
 	}
 	
+	if( this->IsWindowed() )
+	{
+		int flags = SDL_RESIZABLE | SDL_SWSURFACE;
+		
+		// Don't use SDL to change the video mode.  This will cause a 
+		// D3DERR_DRIVERINTERNALERROR on TNTs, V3s, and probably more.
+	//	if( !windowed )
+	//		flags |= SDL_FULLSCREEN;
+
+		SDL_ShowCursor( g_Windowed );
+
+		SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
+		if(!screen)
+		{
+			SDL_QuitSubSystem(SDL_INIT_VIDEO);	// exit out of full screen.  The ~RageDisplay will not be called!
+			RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
+		}
+	}
+
 	ResolutionChanged();
 
 	this->SetDefaultRenderStates();
