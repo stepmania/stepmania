@@ -26,7 +26,7 @@ XToString( RadarCategory );
 XToThemedString( RadarCategory, NUM_RADAR_CATEGORIES );
 
 
-void LuaStepsType(lua_State* L)
+static void LuaStepsType(lua_State* L)
 {
 	FOREACH_StepsType( st )
 	{
@@ -50,7 +50,7 @@ static const CString PlayModeNames[NUM_PLAY_MODES] = {
 XToString( PlayMode );
 XToThemedString( PlayMode, NUM_PLAY_MODES );
 StringToX( PlayMode );
-void LuaPlayMode(lua_State* L)
+static void LuaPlayMode(lua_State* L)
 {
 	FOREACH_PlayMode( pm )
 	{
@@ -281,7 +281,7 @@ static const CString GoalTypeNames[NUM_GOAL_TYPES] = {
 };
 XToString( GoalType );
 StringToX( GoalType );
-void LuaGoalType(lua_State* L)
+static void LuaGoalType(lua_State* L)
 {
 	FOREACH_GoalType( gt )
 	{
@@ -302,7 +302,7 @@ static const CString EditMenuActionNames[NUM_EDIT_MENU_ACTIONS] = {
 };
 XToString( EditMenuAction );
 StringToX( EditMenuAction );
-void LuaEditMenuAction(lua_State* L)
+static void LuaEditMenuAction(lua_State* L)
 {
 	FOREACH_EditMenuAction( ema )
 	{

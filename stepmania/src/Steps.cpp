@@ -337,11 +337,13 @@ public:
 	LunaSteps() { LUA->Register( Register ); }
 
 	static int GetStepsType( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_StepsType ); return 1; }
+	static int GetDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetDifficulty() ); return 1; }
 	static int GetDescription( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDescription() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetStepsType )
+		ADD_METHOD( GetDifficulty )
 		ADD_METHOD( GetDescription )
 		Luna<T>::Register( L );
 	}

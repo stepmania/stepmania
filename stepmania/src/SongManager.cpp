@@ -1252,12 +1252,14 @@ public:
 		CreateTableFromArray<Course*>( v, L );
 		return 1;
 	}
+	static int FindSong( T* p, lua_State *L )	{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int FindCourse( T* p, lua_State *L ) { Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetAllSongs )
 		ADD_METHOD( GetAllCourses )
+		ADD_METHOD( FindSong )
 		ADD_METHOD( FindCourse )
 		Luna<T>::Register( L );
 

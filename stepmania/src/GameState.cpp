@@ -1804,8 +1804,15 @@ public:
 	static int GetCurrentSong( T* p, lua_State *L )			{ if(p->m_pCurSong) p->m_pCurSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentSong( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->m_pCurSong = NULL; }
-		else { Song *pS = Luna<Song>::check(L,1); p->m_pCurSong = pS; }
+		if( lua_isnil(L,1) )
+		{
+			p->m_pCurSong = NULL; 
+		}
+		else
+		{
+			Song *pS = Luna<Song>::check(L,1);
+			p->m_pCurSong = pS;
+		}
 		return 0;
 	}
 	static int GetCurrentSteps( T* p, lua_State *L )
@@ -1819,9 +1826,8 @@ public:
 	static int SetCurrentSteps( T* p, lua_State *L )
 	{ 
 		PlayerNumber pn = (PlayerNumber)IArg(1);
-		Steps *pSteps = p->m_pCurSteps[pn];  
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn] = NULL; }
-		else					{ Song *pS = Luna<Song>::check(L,2); p->m_pCurSteps[pn] = pS; }
+		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn] = pS; }
 		return 0;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
@@ -1842,6 +1848,8 @@ public:
 		ADD_METHOD( ApplyGameCommand )
 		ADD_METHOD( GetCurrentSong )
 		ADD_METHOD( SetCurrentSong )
+		ADD_METHOD( GetCurrentSteps )
+		ADD_METHOD( SetCurrentSteps )
 		ADD_METHOD( GetCurrentCourse )
 		ADD_METHOD( SetCurrentCourse )
 		ADD_METHOD( SetTemporaryEventMode )
