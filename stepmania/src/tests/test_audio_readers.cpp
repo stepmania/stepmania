@@ -43,7 +43,7 @@ void dump_bin( const char *fn, const char *buf, int size )
 	close( fd );
 }
 
-void dump( const char *fn, const Sint16 *buf, int samples )
+void dump( const char *fn, const int16_t *buf, int samples )
 {
 	FILE *f = fopen( fn, "w+");
 	ASSERT( f );
@@ -69,7 +69,7 @@ void dump( const char *buf, int size )
 	printf("\n\n");
 }
 
-void dump( const Sint16 *buf, int samples )
+void dump( const int16_t *buf, int samples )
 {
 	for( int i = 0; i < samples; ++i )
 		printf( "0x%04hx,", buf[i] );
@@ -77,7 +77,7 @@ void dump( const Sint16 *buf, int samples )
 }
 
 
-void compare_buffers( const Sint16 *expect, const Sint16 *got, int frames,
+void compare_buffers( const int16_t *expect, const int16_t *got, int frames,
 		int &NumInaccurateSamplesAtStart,
 		int &NumInaccurateSamples )
 {
@@ -103,7 +103,7 @@ void compare_buffers( const Sint16 *expect, const Sint16 *got, int frames,
 
 }
 
-bool compare_buffers( const Sint16 *expect, const Sint16 *got, int frames, int channels )
+bool compare_buffers( const int16_t *expect, const int16_t *got, int frames, int channels )
 {
 	/* Compare each channel separately.  Try to figure out if
 	 * the data is exactly the same, 
@@ -145,8 +145,8 @@ bool test_read( SoundReader *snd, const char *expected_data, int bytes )
 //	printf("b %i, cmp %i\n",
 //			bytes, memcmp(expected_data, buf, bytes) );
 	const int skip = 32;
-	//compare_buffers( (const Sint16 *) expected_data,
-	//		 (const Sint16 *) buf,
+	//compare_buffers( (const int16_t *) expected_data,
+	//		 (const int16_t *) buf,
 	//		 bytes/2,
 	//		 2 );
 			 
@@ -154,8 +154,8 @@ bool test_read( SoundReader *snd, const char *expected_data, int bytes )
 	{
 		if( !memcmp(expected_data+skip, buf+skip, bytes-skip) )
 			return true;
-		dump( (const Sint16 *) expected_data, min(100, bytes/2) );
-		dump( (const Sint16 *) buf, min(100, bytes/2) );
+		dump( (const int16_t *) expected_data, min(100, bytes/2) );
+		dump( (const int16_t *) buf, min(100, bytes/2) );
 
 	}
 	
@@ -220,7 +220,7 @@ bool CheckSetPositionAccurate( SoundReader *snd )
 	return true;
 }
 
-int FramesOfSilence( const Sint16 *data, int frames )
+int FramesOfSilence( const int16_t *data, int frames )
 {
 	int SilentFrames = 0;
 	while( SilentFrames < frames )
@@ -284,10 +284,10 @@ struct TestFile
 	int SilentFrames;
 
 	/* The first two frames (four samples): */
-	Sint16 initial[TestDataSize*2];
+	int16_t initial[TestDataSize*2];
 
 	/* Frames of data half a second in: */
-	Sint16 later[TestDataSize*2];
+	int16_t later[TestDataSize*2];
 };
 const int channels = 2;
 
@@ -307,8 +307,8 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 	/* Read the first second of the file.  Do this without calling any
 	 * seek functions. */
 	const int one_second_frames = snd->GetSampleRate();
-	const int one_second=one_second_frames*sizeof(Sint16)*2;
-	Sint16 sdata[one_second_frames*2];
+	const int one_second=one_second_frames*sizeof(int16_t)*2;
+	int16_t sdata[one_second_frames*2];
 	char *data = (char *) sdata;
 	memset( data, 0x42, one_second );
 	ReadData( snd, -1, data, one_second );
@@ -317,7 +317,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 		/* Find out how many frames of silence we have. */
 		int SilentFrames = FramesOfSilence( sdata, one_second_frames );
 		
-		const Sint16 *InitialData = sdata + SilentFrames*2;
+		const int16_t *InitialData = sdata + SilentFrames*2;
 		const int InitialDataSize = one_second_frames - SilentFrames;
 
 		if( InitialDataSize < (int) sizeof(tf.initial) )
@@ -350,7 +350,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 
 		const int LaterOffsetFrames = one_second_frames/2; /* half second */
 		const int LaterOffsetSamples = LaterOffsetFrames * channels;
-		const Sint16 *LaterData = sdata + LaterOffsetSamples;
+		const int16_t *LaterData = sdata + LaterOffsetSamples;
 		Identical = !memcmp( LaterData, tf.later, sizeof(tf.later) );
 		if( !Identical )
 		{
@@ -361,7 +361,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 			Failed = true;
 
 			/* See if we can find the half second data. */
-			Sint16 *p = (Sint16 *) xmemsearch( sdata, one_second, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(Sint16) );
+			int16_t *p = (int16_t *) xmemsearch( sdata, one_second, tf.later, sizeof(tf.later), LaterOffsetSamples*sizeof(int16_t) );
 			if( p )
 			{
 				int SamplesOff = p-sdata;
@@ -370,7 +370,7 @@ bool RunTests( SoundReader *snd, const TestFile &tf )
 						FramesOff, LaterOffsetFrames, FramesOff-LaterOffsetFrames );
 			}
 //			else
-//				dump( "foo", sdata, one_second/sizeof(Sint16) );
+//				dump( "foo", sdata, one_second/sizeof(int16_t) );
 
 		}
 
