@@ -2,6 +2,7 @@
 #define MEMORY_CARD_DRIVER_LINUX_H 1
 
 #include "MemoryCardDriver.h"
+#include "RageThreads.h"
 
 class MemoryCardDriver_Linux : public MemoryCardDriver
 {
@@ -14,9 +15,14 @@ public:
 	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint );
 	virtual void Flush( UsbStorageDevice* pDevice );
 	virtual void ResetUsbStorage();
+	static int MountThread_Start( void *p );
+	void MountThreadMain();
 protected:
-	int m_fds;
-	time_t m_lastModTime;
+	RageThread MountThread;
+	bool shutdown;
+
+	RageMutex m_StorageDevicesChangedMutex;
+	bool m_bStorageDevicesChanged;
 };
 
 #endif

@@ -14,50 +14,138 @@
 #include <fstream>
 
 static const char *USB_DEVICE_LIST_FILE = "/proc/bus/usb/devices";
+static const char *ETC_MTAB = "/etc/mtab";
 
-MemoryCardDriver_Linux::MemoryCardDriver_Linux()
+int MemoryCardDriver_Linux::MountThread_Start( void *p )
 {
-	m_lastModTime = 0;
-	m_fds = open(USB_DEVICE_LIST_FILE, O_RDONLY);
-	if( m_fds == -1 )
-		LOG->Trace( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
+  ((MemoryCardDriver_Linux*)p)->MountThreadMain();
+  return 0;
+}
+
+void MemoryCardDriver_Linux::MountThreadMain()
+{
+  int fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
+  if( fd == -1 )
+    {
+      LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
+      return;
+    }
+
+  time_t lastModTime = 0;
+
+  vector<UsbStorageDevice> vDevicesLastSeen;
+
+  while( !shutdown )
+    {      
+      struct stat st;
+      if( fstat(fd, &st) == -1 )
+        {
+	  LOG->Warn( "stat '%s' failed: %s", USB_DEVICE_LIST_FILE, strerror(errno) );
+	  close( fd );
+	  return;
+        }
+
+      bool bChanged = st.st_mtime != lastModTime;
+      lastModTime = st.st_mtime;
+
+      if( bChanged )
+	{
+	  // TRICKY: We're waiting for a change in the USB device list, but 
+	  // the usb-storage descriptors take a bit longer to update.  It's more convenient to wait
+	  // on the USB device list because the usb-storage descriptors are separate files per 
+	  // device.  So, sleep for a little bit of time after we detect a new USB device and give
+	  // usb-storage a chance to initialize.  
+	  usleep(1000*300);
+
+	  vector<UsbStorageDevice> vDevicesNow;
+	  this->GetStorageDevices( vDevicesNow );
+
+	  bool bDevicesChanged = false;
+	  if( vDevicesLastSeen.size() != vDevicesNow.size() )
+	    {
+	      bDevicesChanged = true;
+	    }
+	  else
+	    {
+	      for( unsigned i=0; i<vDevicesLastSeen.size(); i++ )
+		{
+		  const UsbStorageDevice d1 = vDevicesLastSeen[i];
+		  const UsbStorageDevice d2 = vDevicesNow[i];
+		  if( d1 != d2 )
+		    {
+		      bDevicesChanged = true;
+		      break;
+		    }
+		}
+	    }
+
+	  if( bDevicesChanged )
+	    {
+	      // unmount all old devices
+              for( unsigned i=0; i<vDevicesLastSeen.size(); i++ )
+                {
+                  const UsbStorageDevice d = vDevicesLastSeen[i];
+                  CString sCommand = "umount " + d.sOsMountDir;
+                  LOG->Trace( "executing '%s'", sCommand.c_str() );
+                  if( system(sCommand) == -1 )
+		    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+                }
+
+	      for( unsigned i=0; i<vDevicesNow.size(); i++ )
+		{	  
+		  const UsbStorageDevice d = vDevicesNow[i];
+		  CString sCommand = "mount " + d.sOsMountDir;
+		  LOG->Trace( "executing '%s'", sCommand.c_str() );
+		  if( system(sCommand) == -1 )
+                    LOG->Warn( "failed to execute '%s'", sCommand.c_str() );
+		}
+
+	      {
+		LockMut( m_StorageDevicesChangedMutex );
+		m_bStorageDevicesChanged = true;
+	      }
+	    }
+	  vDevicesLastSeen = vDevicesNow;
+	}
+      usleep( 1000*100 );  // 100 ms
+    }
+  CHECKPOINT;
+}
+
+MemoryCardDriver_Linux::MemoryCardDriver_Linux() :
+  m_StorageDevicesChangedMutex("StorageDevicesChanged")
+{
+	shutdown = false;
+	m_bStorageDevicesChanged = false;
+
+	MountThread.SetName("MemCard Mount thread");
+	MountThread.Create( MountThread_Start, this );
 }
 
 MemoryCardDriver_Linux::~MemoryCardDriver_Linux()
 {
-	if( m_fds != -1 ) 
-	{
-		close( m_fds );
-		m_fds = -1;
-	}
+     shutdown = true;
+     LOG->Trace( "Shutting down Mount thread..." );
+     MountThread.Wait();
+     LOG->Trace( "Mount thread shut down." );
 }
 
 bool MemoryCardDriver_Linux::StorageDevicesChanged()
 {
-	// has USB_DEVICE_LIST_FILE changed?
-	if( m_fds == -1 )	// file not opened
-		return false;	// we'll never know...
-
-	struct stat st;
-	if( fstat(m_fds, &st) == -1 )
-	{
-		LOG->Warn( "stat '%s' failed: %s", USB_DEVICE_LIST_FILE, strerror(errno) );
-		return false;
-	}
-
-	bool bChanged = st.st_mtime != m_lastModTime;
-	m_lastModTime = st.st_mtime;
-	    
-	return bChanged;
+  LockMut( m_StorageDevicesChangedMutex );
+  if( m_bStorageDevicesChanged )
+    {
+      m_bStorageDevicesChanged = false;
+      return true;
+    }
+  else
+    {
+      return false;
+    }
 }
 
 void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
-	/* If we couldn't open it before, we probably can't open it now; don't
-	 * output more errors. */
-	if( m_fds == -1 )
-		return;
-
 	vDevicesOut.clear();
 
 	{
@@ -235,12 +323,13 @@ bool MemoryCardDriver_Linux::MountAndTestWrite( UsbStorageDevice* pDevice, CStri
 	if( pDevice->sOsMountDir.empty() )
 		return false;
 
-	CString sCommand = "umount " + pDevice->sOsMountDir;
-	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	system( sCommand );
-	sCommand = "mount " + pDevice->sOsMountDir;
-	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	system( sCommand );
+	// Already mounted by the mount thread
+	//CString sCommand = "umount " + pDevice->sOsMountDir;
+	//LOG->Trace( "executing '%s'", sCommand.c_str() );
+	//system( sCommand );
+	//sCommand = "mount " + pDevice->sOsMountDir;
+	//LOG->Trace( "executing '%s'", sCommand.c_str() );
+	//system( sCommand );
 
 	// Try to write a file.
 	// TODO: Can we use RageFile for this?
@@ -277,9 +366,10 @@ void MemoryCardDriver_Linux::Unmount( UsbStorageDevice* pDevice, CString sMountP
 	if( pDevice->sOsMountDir.empty() )
 		return;
 
-	CString sCommand = "umount " + pDevice->sOsMountDir;
-	LOG->Trace( "executing '%s'", sCommand.c_str() );
-	system( sCommand );
+	// already unmounted by the mounting thread
+	//CString sCommand = "umount " + pDevice->sOsMountDir;
+	//LOG->Trace( "executing '%s'", sCommand.c_str() );
+	//system( sCommand );
 }
 
 void MemoryCardDriver_Linux::Flush( UsbStorageDevice* pDevice )

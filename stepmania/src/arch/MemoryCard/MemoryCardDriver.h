@@ -7,6 +7,7 @@ struct UsbStorageDevice
 
 	void MakeBlank()
 	{
+	  // -1 means "don't know"
 		iBus = -1;
 		iDeviceOnBus = -1;
 		iPortOnHub = -1;
@@ -23,17 +24,18 @@ struct UsbStorageDevice
 
 	bool IsBlank() { return sOsMountDir.empty(); }
 
-	bool operator==(const UsbStorageDevice& other)
+	bool operator==(const UsbStorageDevice& other) const
 	{
-		// ugly...
-#if _WINDOWS
-		// we don't have hub/port number info on Windows
-		return sOsMountDir==other.sOsMountDir;  // every time a device is plugged in, it gets a unique device number
-#else	// LINUX or other
-		return iBus==other.iBus &&
-			iDeviceOnBus==other.iDeviceOnBus;  // every time a device is plugged in, it gets a unique device number
-#endif
+	  if( (iBus!=-1 || other.iBus!=-1) && iBus != other.iBus )
+	      return false;
+          if( (iDeviceOnBus!=-1 || other.iDeviceOnBus!=-1) && iDeviceOnBus != other.iDeviceOnBus )
+	    return false;
+	  return sOsMountDir==other.sOsMountDir;  // every time a device is plugged in, it gets a unique device number
 	}
+  bool operator!=(const UsbStorageDevice& other) const
+  {
+    return !operator==(other);
+  }
 };
 
 class MemoryCardDriver
