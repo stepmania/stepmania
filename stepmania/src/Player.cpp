@@ -71,6 +71,7 @@ Player::Player()
 	this->AddChild( &m_GrayArrowRow );
 	this->AddChild( &m_GhostArrowRow );
 	this->AddChild( &m_Judgment );
+	this->AddChild( &m_ProTimingDisplay );
 	this->AddChild( &m_Combo );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
 		this->AddChild( &m_HoldJudgment[c] );
@@ -165,9 +166,12 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	m_Combo.SetY( bReverse ? SCREEN_BOTTOM-COMBO_Y : SCREEN_TOP+COMBO_Y );
 	m_Judgment.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
+	m_ProTimingDisplay.SetX( JUDGMENT_X(m_PlayerNumber,bPlayerUsingBothSides) );
+	m_ProTimingDisplay.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
 	/* These commands add to the above positioning, and are usually empty. */
 	m_Judgment.Command( g_NoteFieldMode[pn].m_JudgmentCmd );
+	m_ProTimingDisplay.Command( g_NoteFieldMode[pn].m_JudgmentCmd );
 	m_Combo.Command( g_NoteFieldMode[pn].m_ComboCmd );
 
 	int c;
@@ -284,6 +288,12 @@ void Player::Update( float fDeltaTime )
 			/* this note has been judged */
 			HandleHoldScore( hns, tns );
 			m_HoldJudgment[hn.iTrack].SetHoldJudgment( hns );
+
+			int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
+
+			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
+			if( hns == HNS_NG ) /* don't show a 0 for an OK */
+				m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
 		}
 
 		m_NoteField.SetHoldNoteLife(i, fLife);	// update the NoteField display
@@ -346,7 +356,12 @@ void Player::DrawPrimitives()
 		DISPLAY->ExitPerspective();
 
 	if (m_bShowJudgment)
-		m_Judgment.Draw();
+	{
+		if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_bProTiming )
+			m_ProTimingDisplay.Draw();
+		else
+			m_Judgment.Draw();
+	}
 
 	for( int c=0; c<GetNumTracks(); c++ )
 		m_HoldJudgment[c].Draw();
@@ -471,6 +486,7 @@ void Player::Step( int col, RageTimer tm )
 			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
 
 			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += ms_error;
+			m_ProTimingDisplay.SetJudgment( ms_error, score );
 		}
 
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
@@ -602,6 +618,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			MissedNoteOnThisRow = true;
 			SetTapNoteScore(t, r, TNS_MISS);
 			GAMESTATE->m_CurStageStats.iTotalError[m_PlayerNumber] += MAX_PRO_TIMING_ERROR;
+			m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
 		}
 
 		if(!MissedNoteOnThisRow) continue;

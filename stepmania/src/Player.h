@@ -31,6 +31,7 @@
 #include "NoteDataWithScoring.h"
 #include "ArrowBackdrop.h"
 #include "RageTimer.h"
+#include "ProTimingDisplay.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -82,6 +83,7 @@ protected:
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 
 	Judgment		m_Judgment;
+	ProTimingDisplay m_ProTimingDisplay;
 	
 	Combo			m_Combo;
 
