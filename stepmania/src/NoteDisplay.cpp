@@ -521,51 +521,36 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 	const float fYCapTop	 = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead-fFrameHeight;
 	const float fYCapBottom  = fYHead+cache->m_iStartDrawingHoldBodyOffsetFromHead;
 
+	bool bLast = false;
 	for( float fY=fYCapTop; fY<fYCapBottom; fY+=fYStep )
 	{
-		const float fYTop					= fY;
-		const float fYOffsetTop				= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fYTop, m_fYReverseOffsetPixels );
-		const float fStepHeight				= min( fYStep, fFrameHeight );
-		const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
-		const float fYOffsetBottom			= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fYBottom, m_fYReverseOffsetPixels );
-		const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffsetTop );
-		const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffsetBottom );
-		const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYOffsetTop );
-		const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYOffsetBottom );
-		const float fXTopLeft				= fXTop - fFrameWidth/2;
-		const float fXTopRight				= fXTop + fFrameWidth/2;
-		const float fXBottomLeft			= fXBottom - fFrameWidth/2;
-		const float fXBottomRight			= fXBottom + fFrameWidth/2;
-		const float fTopDistFromHeadTop		= fYTop - fYCapTop;
-		const float fBottomDistFromHeadTop	= fYBottom - fYCapTop;
+		if( fY >= fYCapBottom )
+		{
+			fY = fYCapBottom;
+			bLast = true;
+		}
+
+		const float fYOffset				= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ						= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
+		const float fX						= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
+		const float fXLeft					= fX - fFrameWidth/2;
+		const float fXRight					= fX + fFrameWidth/2;
+		const float fTopDistFromHeadTop		= fY - fYCapTop;
 		const float fTexCoordTop			= SCALE( fTopDistFromHeadTop,    0, fFrameHeight, pRect->top, pRect->bottom );
-		const float fTexCoordBottom			= SCALE( fBottomDistFromHeadTop, 0, fFrameHeight, pRect->top, pRect->bottom );
-		ASSERT( fTexCoordTop>=-0.0001 && fTexCoordBottom<=1.0001 ); /* allow for rounding error */
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffsetTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffsetBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffsetTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffsetBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
-		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
-		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
+		const float	fAlpha					= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlow					= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor colorDiffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+		const RageColor colorGlow			= RageColor(1,1,1,fGlow);
 
-		if( bGlow && colorGlowTop.a==0 && colorGlowBottom.a==0 )
-			continue;
-		if( !bGlow && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
-			continue;
-
-		v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bGlow? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-		v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bGlow? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-		v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bGlow? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-		v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bGlow? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
-		v+=4;
+		v[0].p = RageVector3(fXLeft,  fY, fZ); v[0].c = bGlow? colorGlow:colorDiffuse; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+		v[1].p = RageVector3(fXRight, fY, fZ); v[1].c = bGlow? colorGlow:colorDiffuse; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v+=2;
 		if( v-queue >= size )
 			break;
 	}
-	DISPLAY->DrawQuads( queue, v-queue );
+	DISPLAY->DrawQuadStrip( queue, v-queue );
 }
 
 void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
@@ -598,77 +583,38 @@ void NoteDisplay::DrawHoldBody( const HoldNote& hn, const bool bIsBeingHeld, flo
 	bool bAnchorToBottom = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
 	// top to bottom
-	for( float fY=fYBodyTop; fY<=fYBodyBottom; fY+=fYStep )
+	bool bLast = false;
+	for( float fY = fYBodyTop; !bLast; fY += fYStep )
 	{
-		const float fYTop					= fY;
-		const float fYOffsetTop				= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fYTop, m_fYReverseOffsetPixels );
-		const float fYBottom				= min( fY+fYStep, fYBodyBottom );
-		const float fYOffsetBottom			= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fYBottom, m_fYReverseOffsetPixels );
-		const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffsetTop );
-		const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffsetBottom );
-		const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYOffsetTop );
-		const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYOffsetBottom );
-		const float fXTopLeft				= fXTop - fFrameWidth/2;
-		const float fXTopRight				= fXTop + fFrameWidth/2;
-		const float fXBottomLeft			= fXBottom - fFrameWidth/2;
-		const float fXBottomRight			= fXBottom + fFrameWidth/2;
-		const float fTopDistFromBodyBottom		= fYBodyBottom - fYTop;
-		const float fBottomDistFromBodyBottom	= fYBodyBottom - fYBottom;
-		const float fTopDistFromBodyTop		= fYTop - fYBodyTop;
-		const float fBottomDistFromBodyTop	= fYBottom - fYBodyTop;
-		float fTexCoordTop		= SCALE( bAnchorToBottom ? fTopDistFromBodyTop : fTopDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
-		float fTexCoordBottom	= SCALE( bAnchorToBottom ? fBottomDistFromBodyTop : fBottomDistFromBodyBottom, 0, fFrameHeight, pRect->bottom, pRect->top );
-		if( fTexCoordTop < 0 )
+		if( fY >= fYBodyBottom )
 		{
-			int iToSubtract = (int)fTexCoordTop - 1;
-			fTexCoordTop -= iToSubtract;
-			fTexCoordBottom -= iToSubtract;
+			fY = fYBodyBottom;
+			bLast = true;
 		}
-		else if( fTexCoordBottom > 2 )
-		{
-			int iToSubtract = (int)fTexCoordBottom;
-			fTexCoordTop -= iToSubtract;
-			fTexCoordBottom -= iToSubtract;
-		}
-		if( fTexCoordBottom < 0 )
-		{
-			int iToSubtract = (int)fTexCoordBottom - 1;
-			fTexCoordTop -= iToSubtract;
-			fTexCoordBottom -= iToSubtract;
-		}
-		else if( fTexCoordTop > 2 )
-		{
-			int iToSubtract = (int)fTexCoordTop;
-			fTexCoordTop -= iToSubtract;
-			fTexCoordBottom -= iToSubtract;
-		}
-		ASSERT( fTexCoordTop>=0 && fTexCoordBottom>=0 );
-		ASSERT( fTexCoordTop<=2 && fTexCoordBottom<=2 );
-		const float fTexCoordLeft			= pRect->left;
-		const float fTexCoordRight			= pRect->right;
-		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffsetTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffsetBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffsetTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffsetBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
-		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
-		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
 
-		if( bGlow && colorGlowTop.a==0 && colorGlowBottom.a==0 )
-			continue;
-		if( !bGlow && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
-			continue;
+		const float fYOffset			= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ					= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
+		const float fX					= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
+		const float fXLeft				= fX - fFrameWidth/2;
+		const float fXRight				= fX + fFrameWidth/2;
+		const float fDistFromBodyBottom	= fYBodyBottom - fY;
+		const float fDistFromBodyTop	= fY - fYBodyTop;
+		const float fTexCoordTop		= SCALE( bAnchorToBottom ? fDistFromBodyTop : fDistFromBodyBottom,    0, fFrameHeight, pRect->bottom, pRect->top );
+		const float fTexCoordLeft		= pRect->left;
+		const float fTexCoordRight		= pRect->right;
+		const float	fAlpha				= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlow				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor colorDiffuse	= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+		const RageColor colorGlow		= RageColor(1,1,1,fGlow);
 
-		v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bGlow? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
-		v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bGlow? colorGlowTop    : colorDiffuseTop;		v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-		v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bGlow? colorGlowBottom : colorDiffuseBottom;	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-		v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bGlow? colorGlowBottom : colorDiffuseBottom;	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
-		v+=4;
+		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = bGlow? colorGlow: colorDiffuse; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop);
+		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = bGlow? colorGlow: colorDiffuse; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v+=2;
 		if( v-queue >= size )
 			break;
-	}	
-	DISPLAY->DrawQuads( queue, v-queue );
+	}
+
+	DISPLAY->DrawQuadStrip( queue, v-queue );
 }
 
 void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld, float fYHead, float fYTail, int fYStep, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
@@ -697,51 +643,37 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	const float fYCapBottom		= fYTail+cache->m_iStopDrawingHoldBodyOffsetFromTail+fFrameHeight;
 
 	// don't draw any part of the tail that is before the middle of the head
+	bool bLast = false;
 	float fY=max( fYCapTop, fYHead );
-	for( ; fY<fYCapBottom; fY+=fYStep )	
+	for( ; !bLast; fY += fYStep )
 	{
-		const float fYTop					= fY;
-		const float fYOffsetTop				= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fYTop, m_fYReverseOffsetPixels );
-		const float fStepHeight				= min( fYStep, fFrameHeight );
-		const float fYBottom				= min( fY+fStepHeight, fYCapBottom );
-		const float fYOffsetBottom			= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fYBottom, m_fYReverseOffsetPixels );
-		const float fZTop					= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffsetTop );
-		const float fZBottom				= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffsetBottom );
-		const float fXTop					= ArrowGetXPos( m_PlayerNumber, iCol, fYOffsetTop );
-		const float fXBottom				= ArrowGetXPos( m_PlayerNumber, iCol, fYOffsetBottom );
-		const float fXTopLeft				= fXTop - fFrameWidth/2;
-		const float fXTopRight				= fXTop + fFrameWidth/2;
-		const float fXBottomLeft			= fXBottom - fFrameWidth/2;
-		const float fXBottomRight			= fXBottom + fFrameWidth/2;
-		const float fTopDistFromTailTop		= fYTop - fYCapTop;
-		const float fBottomDistFromTailTop	= fYBottom - fYCapTop;
-		const float fTexCoordTop			= SCALE( fTopDistFromTailTop,    0, fFrameHeight, pRect->top, pRect->bottom );
-		const float fTexCoordBottom			= SCALE( fBottomDistFromTailTop, 0, fFrameHeight, pRect->top, pRect->bottom );
+		if( fY >= fYCapBottom )
+		{
+			fY = fYCapBottom;
+			bLast = true;
+		}
+
+		const float fYOffset				= ArrowGetYOffsetFromYPos( m_PlayerNumber, iCol, fY, m_fYReverseOffsetPixels );
+		const float fZ						= ArrowGetZPos(	m_PlayerNumber, iCol, fYOffset );
+		const float fX						= ArrowGetXPos( m_PlayerNumber, iCol, fYOffset );
+		const float fXLeft					= fX - fFrameWidth/2;
+		const float fXRight					= fX + fFrameWidth/2;
+		const float fTopDistFromTail		= fY - fYCapTop;
+		const float fTexCoordTop			= SCALE( fTopDistFromTail,    0, fFrameHeight, pRect->top, pRect->bottom );
 		const float fTexCoordLeft			= pRect->left;
 		const float fTexCoordRight			= pRect->right;
-		const float	fAlphaTop				= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffsetTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fAlphaBottom			= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffsetBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlowTop				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffsetTop, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const float	fGlowBottom				= ArrowGetGlow( m_PlayerNumber, iCol, fYOffsetBottom, fPercentFadeToFail, m_fYReverseOffsetPixels );
-		const RageColor colorDiffuseTop		= RageColor(fColorScale,fColorScale,fColorScale,fAlphaTop);
-		const RageColor colorDiffuseBottom	= RageColor(fColorScale,fColorScale,fColorScale,fAlphaBottom);
-		const RageColor colorGlowTop		= RageColor(1,1,1,fGlowTop);
-		const RageColor colorGlowBottom		= RageColor(1,1,1,fGlowBottom);
+		const float	fAlpha					= ArrowGetAlpha( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const float	fGlow					= ArrowGetGlow( m_PlayerNumber, iCol, fYOffset, fPercentFadeToFail, m_fYReverseOffsetPixels );
+		const RageColor colorDiffuse		= RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+		const RageColor colorGlow			= RageColor(1,1,1,fGlow);
 
-		if( bGlow && colorGlowTop.a==0 && colorGlowBottom.a==0 )
-			continue;
-		if( !bGlow && colorDiffuseTop.a==0 && colorDiffuseBottom.a==0 )
-			continue;
-
-		v[0].p = RageVector3(fXTopLeft,    fYTop,   fZTop);		v[0].c = bGlow ? colorGlowTop    : colorDiffuseTop;		v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
-		v[1].p = RageVector3(fXTopRight,   fYTop,   fZTop);		v[1].c = bGlow ? colorGlowTop    : colorDiffuseTop;    	v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
-		v[2].p = RageVector3(fXBottomRight,fYBottom,fZBottom);	v[2].c = bGlow ? colorGlowBottom : colorDiffuseBottom; 	v[2].t = RageVector2(fTexCoordRight, fTexCoordBottom);
-		v[3].p = RageVector3(fXBottomLeft, fYBottom,fZBottom);	v[3].c = bGlow ? colorGlowBottom : colorDiffuseBottom; 	v[3].t = RageVector2(fTexCoordLeft,  fTexCoordBottom);
-		v+=4;
+		v[0].p = RageVector3(fXLeft,  fY, fZ);	v[0].c = bGlow ? colorGlow:colorDiffuse; v[0].t = RageVector2(fTexCoordLeft,  fTexCoordTop),
+		v[1].p = RageVector3(fXRight, fY, fZ);	v[1].c = bGlow ? colorGlow:colorDiffuse; v[1].t = RageVector2(fTexCoordRight, fTexCoordTop);
+		v+=2;
 		if( v-queue >= size )
 			break;
 	}
-	DISPLAY->DrawQuads( queue, v-queue );
+	DISPLAY->DrawQuadStrip( queue, v-queue );
 }
 
 void NoteDisplay::DrawHoldTail( const HoldNote& hn, bool bIsBeingHeld, float fYTail, int iCol, float fPercentFadeToFail, float fColorScale, bool bGlow )
