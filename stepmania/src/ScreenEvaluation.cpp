@@ -140,7 +140,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	LIGHTSMAN->SetLightMode( LIGHTMODE_MENU );
 
-	m_bFailed = false; // the evaluation is not showing failed results by default
+	m_bFailed = g_CurStageStats.AllFailed();
 
 	ZERO( m_bSavedScreenshot );
 
@@ -155,17 +155,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	else
 		RageException::Throw("Unknown evaluation type \"%s\"", TYPE.c_str() );
 		
-	int p;
-	
 
 	//
 	// Figure out which statistics and songs we're going to display
 	//
 	StageStats stageStats;
-	stageStats = g_CurStageStats;
-
-	if(stageStats.AllFailed() ) // if everyone failed
-		m_bFailed = true; // flag it for this screen
 
 	vector<Song*> vSongsToShow;
 	switch( m_Type )
@@ -201,6 +195,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	// Calculate grades
 	//
 	Grade grade[NUM_PLAYERS];
+	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( GAMESTATE->IsPlayerEnabled(p) )
@@ -982,8 +977,10 @@ void ScreenEvaluation::CommitScores( const StageStats &stageStats, int iPersonal
 			continue;	// skip
 		if( iMachineHighScoreIndex[p] == -1 )	// no record
 			continue;	// skip
-		if( m_bFailed ) // both players failed
-			continue; // skip
+		/* If we aren't saving scores on fail, it'll be handled above; m_bFailed is only
+		 * meaningful in stage and course eval. */
+		// if( m_bFailed ) // both players failed
+		//	continue; // skip
 
 		for( int p2=0; p2<p; p2++ )
 		{
