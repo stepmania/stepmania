@@ -3,23 +3,74 @@
 #include "NotesLoaderKSF.h"
 
 #include "RageException.h"
+#include "RageUtil_CharConversions.h"
 #include "MsdFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "NoteData.h"
 #include "NoteTypes.h"
 
-bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
+#if 0
+void KSFLoader::RemoveHoles( NoteData &out, const Song &song )
+{
+	/* Start at the second BPM segment; the first one is already aligned. */
+	for( unsigned seg = 1; seg < song.m_BPMSegments.size(); ++seg )
+	{
+//		const float FromBeat = song.m_BPMSegments[seg].m_fStartBeat;
+		const float FromBeat = song.m_BPMSegments[seg].m_fStartBeat * song.m_BPMSegments[seg].m_fBPM / song.m_BPMSegments[0].m_fBPM;
+		const int FromRow = (int) BeatToNoteRow(FromBeat);
+		const int ToRow = (int) BeatToNoteRow(song.m_BPMSegments[seg].m_fStartBeat);
+
+		LOG->Trace("from %f (%i) to (%i)", FromBeat, FromRow, ToRow);
+//		const int ToRow = (int) roundf(FromRow * song.m_BPMSegments[0].m_fBPM / song.m_BPMSegments[seg].m_fBPM);
+//		const int Rows = out.GetLastRow() - FromRow + 1;
+//		int LastRow;
+//		if(seg+1 < song.m_BPMSegments().size())
+//			LastRow = (int) NoteRowToBeat( song.m_BPMSegments[seg+1].m_fStartBeat ) - 1;
+//		else
+//			LastRow = out.GetLastRow();
+		NoteData tmp;
+		tmp.SetNumTracks(out.GetNumTracks());
+		tmp.CopyRange( &out, FromRow, out.GetLastRow() );
+		out.ClearRange( FromRow, out.GetLastRow() );
+		out.CopyRange( &tmp, 0, tmp.GetLastRow(), ToRow );
+	}
+
+/*
+	out.ConvertHoldNotesTo2sAnd3s();
+	for( t = 0; t < notedata.GetNumTracks(); ++t )
+	{
+		const float CurBPM = song.GetBPMAtBeat( NoteRowToBeat(row) );
+		song.m_BPMSegments.size()
+		for( int row = 0; row <= notedata.GetLastRow(); ++row )
+		{
+			TapNote tn = notedata.GetTapNote(t, row);
+			if( tn == TAP_EMPTY )
+				continue;
+
+			const int RealRow = (int) roundf(row * OrigBPM / CurBPM);
+			if( RealRow == row )
+				continue;
+			LOG->Trace("from %i to %i", row, RealRow);
+			notedata.SetTapNote( t, RealRow, tn );
+			notedata.SetTapNote( t, row, TAP_EMPTY );
+		}
+	}
+	out.Convert2sAnd3sToHoldNotes();
+*/
+}
+#endif
+
+bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out, const Song &song )
 {
 	LOG->Trace( "Notes::LoadFromKSFFile( '%s' )", sPath.c_str() );
 
 	MsdFile msd;
-	bool bResult = msd.ReadFile( sPath );
-	if( !bResult )
+	if( !msd.ReadFile( sPath ) )
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
-	CString iStep;			// this is the value we read for STEP
+	CStringArray asRows;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -31,7 +82,11 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 			iTickCount = atoi(sParams[1]);
 
 		else if( 0==stricmp(sValueName,"STEP") )
-			iStep = sParams[1];
+		{
+			CString step = sParams[1];
+			TrimLeft(step);
+			split( step, "\n", asRows, true );
+		}
 		else if( 0==stricmp(sValueName,"DIFFICULTY") )
 			out.SetMeter(atoi(sParams[1]));
 	}
@@ -39,14 +94,10 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	if( iTickCount == -1 )
 	{
 		iTickCount = 2;
-		LOG->Warn( "%s:\nTICKCOUNT not found; defaulting to %i", sPath.c_str(), iTickCount );
+		LOG->Warn( "\"%s\": TICKCOUNT not found; defaulting to %i", sPath.c_str(), iTickCount );
 	}
 
 	NoteData notedata;	// read it into here
-
-	CStringArray asRows;
-	TrimLeft(iStep);
-	split( iStep, "\n", asRows, true );
 
 	{
 		CString sDir, sFName, sExt;
@@ -88,7 +139,8 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 	}
 
 	int iHoldStartRow[13];
-	for( int t=0; t<13; t++ )
+	int t;
+	for( t=0; t<13; t++ )
 		iHoldStartRow[t] = -1;
 
 	for( unsigned r=0; r<asRows.size(); r++ )
@@ -146,6 +198,10 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 		}
 	}
 
+	/* We need to remove holes where the BPM increases. */
+//	if( song.m_BPMSegments.size() > 1 )
+//		RemoveHoles( notedata, song );
+
 	out.SetNoteData(&notedata);
 
 	return true;
@@ -154,6 +210,46 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 void KSFLoader::GetApplicableFiles( CString sPath, CStringArray &out )
 {
 	GetDirListing( sPath + CString("*.ksf"), out );
+}
+
+void KSFLoader::LoadTags( const CString &str, Song &out )
+{
+	/* str is either a #TITLE or a directory component.  Fill in missing information.
+	 * str is either "title", "artist - title", or "artist - title - difficulty". */
+	CStringArray asBits;
+	split( str, " - ", asBits, false );
+	/* Ignore the difficulty, since we get that elsewhere. */
+	if( asBits.size() == 3 &&
+		(!stricmp(asBits[2], "double") ||
+		 !stricmp(asBits[2], "easy") ||
+		 !stricmp(asBits[2], "normal") ||
+		 !stricmp(asBits[2], "hard") ||
+		 !stricmp(asBits[2], "crazy")) )
+	{
+		asBits.erase(asBits.begin()+2, asBits.begin()+3);
+	}
+
+	CString title, artist;
+	if( asBits.size() == 2 )
+	{
+		artist = asBits[0];
+		title = asBits[1];
+	}
+	else
+	{
+		title = asBits[0];
+	}
+
+	/* Convert, if possible.  Most KSFs are in Korean encodings (CP942/EUC-KR). */
+	if( !ConvertString( title, "korean" ) )
+		title = "";
+	if( !ConvertString( artist, "korean" ) )
+		artist = "";
+
+	if( out.m_sMainTitle == "" )
+		out.m_sMainTitle = title;
+	if( out.m_sArtist == "" )
+		out.m_sArtist = artist;
 }
 
 bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
@@ -172,34 +268,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 
 		// handle the data
 		if( 0==stricmp(sValueName,"TITLE") )
-		{
-			//title is usually in format "artist - songtitle"
-			CStringArray asBits;
-			split( sParams[1], " - ", asBits, false );
-
-			/* It's often "artist - songtitle - difficulty".  Ignore
-			 * the difficulty, since we get that from the filename. */
-			if( asBits.size() == 3 &&
-				(!stricmp(asBits[2], "double") ||
-				 !stricmp(asBits[2], "easy") ||
-				 !stricmp(asBits[2], "normal") ||
-				 !stricmp(asBits[2], "hard") ||
-				 !stricmp(asBits[2], "crazy")) )
-			{
-				asBits.erase(asBits.begin()+2, asBits.begin()+3);
-			}
-
-			if( asBits.size() == 2 )
-			{
-				out.m_sArtist = asBits[0];
-				out.m_sMainTitle = asBits[1];
-			}
-			else
-			{
-				out.m_sMainTitle = sParams[1];
-			}
-		}
-
+			LoadTags(sParams[1], out);
 		else if( 0==stricmp(sValueName,"BPM") )
 			out.AddBPMSegment( BPMSegment(0, (float)atof(sParams[1])) );
 		else if( 0==stricmp(sValueName,"BPM2") )
@@ -227,30 +296,13 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 		out.AddBPMSegment( BPMSegment(beat, BPM2) );
 	}
 
-
-	/* XXX: Once we use iconv, this can be more intelligent. */
-	if(out.m_sMainTitle == "" || !utf8_is_valid(out.m_sMainTitle))
+	/* Try to fill in missing bits of information from the pathname. */
 	{
-		CString SongDir = sPath;
-		SongDir.Replace("\\", "/");
-
 		CStringArray asBits;
-		split( SongDir, "/", asBits, true);
+		split( sPath, "/", asBits, true);
+
 		ASSERT(asBits.size() > 1);
-
-		CString sSongFolderName = asBits[asBits.size()-2];
-
-		asBits.clear();
-		split( sSongFolderName, " - ", asBits, false );
-		if( asBits.size() == 2 )
-		{
-			out.m_sArtist = asBits[0];
-			out.m_sMainTitle = asBits[1];
-		}
-		else
-		{
-			out.m_sMainTitle = asBits[0];
-		}
+		LoadTags(asBits[asBits.size()-2], out);
 	}
 
 	// search for music with song in the file name
@@ -280,11 +332,10 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 		return false;
 
 	// load the Notes from the rest of the KSF files
-	unsigned i;
-	for( i=0; i<arrayKSFFileNames.size(); i++ ) 
+	for( unsigned i=0; i<arrayKSFFileNames.size(); i++ ) 
 	{
 		Notes* pNewNotes = new Notes;
-		if(!LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes ))
+		if(!LoadFromKSFFile( out.GetSongDir() + arrayKSFFileNames[i], *pNewNotes, out ))
 		{
 			delete pNewNotes;
 			continue;

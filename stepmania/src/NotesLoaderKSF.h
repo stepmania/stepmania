@@ -6,8 +6,10 @@
 #include "NotesLoader.h"
 
 class KSFLoader: public NotesLoader {
-	bool LoadFromKSFFile( const CString &sPath, Notes &out );
-	bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out );
+	bool LoadFromKSFFile( const CString &sPath, Notes &out, const Song &song );
+	bool LoadGlobalData( const CString &sPath, Song &out );
+	void RemoveHoles( NoteData &out, const Song &song );
+	void LoadTags( const CString &str, Song &out );
 
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );
