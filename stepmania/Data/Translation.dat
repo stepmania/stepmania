@@ -624,8 +624,33 @@ ArtistTo: 홍석
 ArtistFrom: KaW vs. Smiley vs. Inspector K
 ArtistTo: KaW vs. ☺ vs. Inspector K
 *
+# http://www.hicbc.com/tv/kirby/staff/
 ArtistFrom: Miyagawa Akira
 ArtistTo: 宮川彬良
+*
+# OSC:
+TitleFrom: Love Hina
+SubtitleFrom: - main theme
+ArtistFrom: Hayashibra Megumi\(Haruka Urashima\)
+TitleTo: 桜咲く
+TitleTransTo: Sakura Saku
+SubtitleTo: -erase-
+SubtitleTransTo: -erase-
+ArtistTo: 林原めぐみ
+ArtistTransTo: Hayashibara Megumi (Haruka Urashima)
+*
+# OSC2:
+TitleFrom: Dejiko to Gema
+SubtitleFrom: no RAP DE DATE
+TitleTo: でじことゲマの
+SubtitleTo: ラップDEデート
+ArtistFrom: Assami Sanada \+ Yoshiko Kamei
+ArtistTo: 真田アサミ＆亀井芳子
+ArtistTransTo: Asami Sanada + Yoshiko Kamei
+*
+# OSC3:
+ArtistFrom: E-Paksa
+ArtistTo: 이박사
 *
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
