@@ -131,7 +131,12 @@ CString MemoryCardManager::GetOsMountDir( PlayerNumber pn )
 	if( m_Device[pn].IsBlank() )
 		return "";
 	else
-		return m_Device[pn].sOsMountDir;
+	{
+		CString sDir = m_Device[pn].sOsMountDir;
+		if( !sDir.empty() && sDir.Right(1)!="/" )
+			sDir += '/';
+		return sDir;
+	}
 }
 
 void MemoryCardManager::LockCards( bool bLock )
