@@ -372,12 +372,12 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 	case ROW_CONFIG:
 		{
 			int iSelection = hand.opt->Get( row.choices );
-			SelectExactlyOne( iSelection+(NAV_FIRST_CHOICE_GOES_DOWN?1:0), vbSelectedOut );
+			SelectExactlyOne( iSelection+(m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0), vbSelectedOut );
 			return;
 		}
 
 	case ROW_SAVE_TO_PROFILE:
-		SelectExactlyOne( 0+(NAV_FIRST_CHOICE_GOES_DOWN?1:0), vbSelectedOut );
+		SelectExactlyOne( 0+(m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0), vbSelectedOut );
 		return;
 
 	default:
@@ -450,7 +450,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 
 	case ROW_CONFIG:
 		{
-			int sel = GetOneSelection(vbSelected) - (NAV_FIRST_CHOICE_GOES_DOWN?1:0);
+			int sel = GetOneSelection(vbSelected) - (m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0);
 
 			/* Get the original choice. */
 			int Original = hand.opt->Get( row.choices );
@@ -471,7 +471,7 @@ int ScreenOptionsMaster::ExportOption( const OptionRowData &row, const OptionRow
 
 	case ROW_SAVE_TO_PROFILE:
 		{
-			int sel = GetOneSelection(vbSelected) - (NAV_FIRST_CHOICE_GOES_DOWN?1:0);
+			int sel = GetOneSelection(vbSelected) - (m_OptionsNavigation==NAV_FIRST_CHOICE_GOES_DOWN?1:0);
 
 			if( sel == 1 )
 			{
