@@ -499,7 +499,7 @@ CString GetCwd()
  *   http://www.theorem.com/java/CRC32.java,
  *   http://www.faqs.org/rfcs/rfc1952.html
  */
-void CRC32( unsigned int &iCRC, const char *pBuffer, size_t iSize )
+void CRC32( unsigned int &iCRC, const void *pVoidBuffer, size_t iSize )
 {
 	static unsigned tab[256];
 	static bool initted = false;
@@ -522,6 +522,7 @@ void CRC32( unsigned int &iCRC, const char *pBuffer, size_t iSize )
 	}
 
 	unsigned crc = 0;
+	const char *pBuffer = (const char *) pVoidBuffer;
 	for( unsigned i = 0; i < iSize; ++i )
 		iCRC = (iCRC >> 8) ^ tab[(iCRC ^ pBuffer[i]) & 0xFF];
 }
