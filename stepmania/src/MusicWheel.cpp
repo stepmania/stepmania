@@ -496,6 +496,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		// Build an array of WheelItemDatas from the sorted list of Song*'s
 		///////////////////////////////////
 		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
+		arrayWheelItemDatas.reserve( arraySongs.size() );
 
 		if( PREFSMAN->m_MusicWheelUsesSections == PrefsManager::NEVER || (so != SORT_TITLE && PREFSMAN->m_MusicWheelUsesSections == PrefsManager::ABC_ONLY ))
 			bUseSections = false;
@@ -589,10 +590,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		default: ASSERT(0); break;
 		}
 
-		// default sort order; other songs may alter this
-		SortCoursePointerArrayByDifficulty( apCourses );
-
-		if (PREFSMAN->m_iCourseSortOrder != PrefsManager::COURSE_SORT_SONGS)
+		if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_SONGS)
+			SortCoursePointerArrayByDifficulty( apCourses );
+		else
 		{
 			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_METER)
 				SortCoursePointerArrayByAvgDifficulty( apCourses );
