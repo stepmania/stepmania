@@ -386,9 +386,15 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 		int got_frames = GetData( (char *) buffer, size );
 		if( !got_frames )
 		{
-			/* We're at the end of the data.  If we're looping, rewind and restart. */
-			if( GetStopMode() == RageSoundParams::M_LOOP )
+			/* EOF. */
+			switch( GetStopMode() )
 			{
+			case RageSoundParams::M_STOP:
+				/* Not looping.  Normally, we'll just stop here. */
+				return false;
+
+			case RageSoundParams::M_LOOP:
+				/* Rewind and restart. */
 				NumRewindsThisCall++;
 				if(NumRewindsThisCall > 3)
 				{
@@ -418,18 +424,17 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 					/* Stop here. */
 					return false;
 				}
-
 				continue;
+
+			case RageSoundParams::M_CONTINUE:
+				/* Keep playing silence. */
+				memset( buffer, 0, size*framesize );
+				got_frames = size;
+				break;
+
+			default:
+				ASSERT(0);
 			}
-
-			/* Not looping.  Normally, we'll just stop here. */
-			if( GetStopMode() == RageSoundParams::M_STOP )
-				return false;
-
-			/* We're out of data, but we're not going to stop, so fill in the
-			 * rest with silence. */
-			memset( buffer, 0, size*framesize );
-			got_frames = size;
 		}
 
 		/* This block goes from position to position+got_frames. */
