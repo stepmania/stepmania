@@ -14,7 +14,7 @@ SaveSignals *saved_sigs;
 static bool initted = false;
 
 static int signals[] = {
-	SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL, SIGINT, SIGABRT, SIGPIPE,
+	SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL, SIGINT, SIGABRT,
 	SIGQUIT, SIGSEGV, SIGTRAP, SIGTERM, SIGVTALRM, SIGXCPU, SIGXFSZ,
 #if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
 	SIGPWR,
@@ -133,21 +133,23 @@ void SignalHandler::OnClose(handler h)
 			}
 		}
 		
+		struct sigaction sa;
+
+		sa.sa_flags = 0;
+		if( p != NULL )
+			sa.sa_flags |= SA_ONSTACK;
+		sa.sa_flags |= SA_NODEFER;
+		sa.sa_flags |= SA_SIGINFO;
+		sigemptyset(&sa.sa_mask);
+
 		/* Set up our signal handlers. */
+		sa.sa_sigaction = SigHandler;
 		for(int i = 0; signals[i] != -1; ++i)
-		{
-			struct sigaction sa;
-
-			sa.sa_sigaction = SigHandler;
-			sa.sa_flags = 0;
-			if( p != NULL )
-				sa.sa_flags |= SA_ONSTACK;
-			sa.sa_flags |= SA_NODEFER;
-			sa.sa_flags |= SA_SIGINFO;
-			sigemptyset(&sa.sa_mask);
-
 			sigaction(signals[i], &sa, NULL);
-		}
+
+		/* Block SIGPIPE, so we get EPIPE. */
+		sa.sa_handler = SIG_IGN;
+		sigaction( SIGPIPE, &sa, NULL );
 	}
 	handlers.push_back(h);
 }
