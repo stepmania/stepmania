@@ -68,6 +68,10 @@ CString DeviceInput::GetDescription()
 		case JOY_HAT_RIGHT:	sReturn += "H-Right";	break;
 		case JOY_HAT_UP:	sReturn += "H-Up";		break;
 		case JOY_HAT_DOWN:	sReturn += "H-Down";	break;
+		case JOY_AUX_1:	sReturn += "Aux1";	break;
+		case JOY_AUX_2:	sReturn += "Aux2";	break;
+		case JOY_AUX_3:	sReturn += "Aux3";	break;
+		case JOY_AUX_4:	sReturn += "Aux4";	break;
 		case JOY_1:		sReturn += "1";		break;
 		case JOY_2:		sReturn += "2";		break;
 		case JOY_3:		sReturn += "3";		break;
