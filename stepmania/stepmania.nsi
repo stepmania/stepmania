@@ -216,7 +216,7 @@ SetOutPath "$INSTDIR\Data"
 File "Data\Translation.dat"
 File "Data\AI.ini"
 File "Data\Unlocks.dat"
-File "Data\splash.bmp"
+File "Data\splash.png"
 
 SetOutPath "$INSTDIR\Program"
 File "Program\stepmania.exe"
