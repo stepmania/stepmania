@@ -337,6 +337,10 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			{
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
+				if(arrayBPMChangeValues.GetSize() != 2) {
+					LOG->Warn( "Invalid CHANGEBPM: \"%s\"", arrayBPMChangeExpressions[b]);
+					continue;
+				}
 				float fIndex = atoi( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
 				float fBeat = NoteRowToBeat( fIndex );
 				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
