@@ -75,6 +75,7 @@ void Notes::SetNoteData( NoteData* pNewNoteData )
 
 void Notes::GetNoteData( NoteData* pNoteDataOut ) const
 {
+	ASSERT(pNoteDataOut);
 	Decompress();
 	pNoteDataOut->m_iNumTracks = notes->m_iNumTracks;
 	*pNoteDataOut = *notes;
