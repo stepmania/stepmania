@@ -178,6 +178,7 @@ bool EzSockets::CanRead()
 
 	return select(sock+1, scks, NULL, NULL, times) > 0;
 }
+
 bool EzSockets::IsError()
 {
 	if (state == skERROR)
@@ -186,7 +187,9 @@ bool EzSockets::IsError()
 	FD_ZERO(scks);
 	FD_SET((unsigned)sock,scks);
 
-	return select(sock+1, NULL, NULL, scks, times);
+	/* What is this trying to do?  Errors are returned by read/write functions, not via
+	 * the select() exception field. */
+	return !!select(sock+1, NULL, NULL, scks, times);
 }
 bool EzSockets::CanWrite()
 {
