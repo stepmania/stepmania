@@ -325,7 +325,7 @@ void Player::Update( float fDeltaTime )
 
 
 	// process transforms that are waiting to be applied
-	for( i=0; i<GAMESTATE->m_TransformsToApply[m_PlayerNumber].size(); i++ )
+	for( unsigned i=0; i<GAMESTATE->m_TransformsToApply[m_PlayerNumber].size(); i++ )
 	{
 		// Start beat needs to be far enough ahead to be off screen so that
 		// addition arrows don't suddenly pop on.
