@@ -83,6 +83,7 @@ protected:
 
 	RageSound	m_sndType;
 	RageSound	m_sndBackspace;
+	RageSound	m_sndChange;
 };
 
 

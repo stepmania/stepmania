@@ -123,6 +123,7 @@ void ScreenTextEntry::Init()
 
 	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
 	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
+	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
 }
 
 ScreenTextEntry::~ScreenTextEntry()
@@ -208,6 +209,7 @@ void ScreenTextEntry::MoveX( int iDir )
 	}
 	while( sKey == "" );
 
+	m_sndChange.Play();
 	PositionCursor();
 }
 
@@ -239,6 +241,7 @@ void ScreenTextEntry::MoveY( int iDir )
 	}
 	while( sKey == "" );
 
+	m_sndChange.Play();
 	PositionCursor();
 }
 
