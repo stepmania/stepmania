@@ -5,11 +5,6 @@
 
 GhostArrow::GhostArrow()
 {
-	FOREACH_TapNoteScore( i )
-	{
-		m_spr[i].SetHidden( true );
-		this->AddChild( &m_spr[i] );
-	}
 }
 
 void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
@@ -24,7 +19,12 @@ void GhostArrow::Load( CString sNoteSkin, CString sButton, CString sElement )
 		CString sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sFullElement, true);	// optional
 		if( sPath.empty() )
 			sPath = NOTESKIN->GetPathToFromNoteSkinAndButton(sNoteSkin, sButton, sElement);	// not optional
+
+		ASSERT( !m_spr[i].IsLoaded() );	// don't double-load
+
 		m_spr[i].Load( sPath );
+		m_spr[i]->SetHidden( true );
+		this->AddChild( m_spr[i] );
 	}
 
 	FOREACH_TapNoteScore( i )
@@ -43,13 +43,13 @@ void GhostArrow::Step( TapNoteScore score )
 		// HACK: never hide the mine explosion
 		if( i == TNS_HIT_MINE )
 			continue;
-		m_spr[i].StopTweening();
-		m_spr[i].SetHidden( true );
+		m_spr[i]->StopTweening();
+		m_spr[i]->SetHidden( true );
 	}
 
-	m_spr[score].SetHidden( false );
-	m_spr[score].StopTweening();
-	m_spr[score].RunCommands( m_acScoreCommand[score] );
+	m_spr[score]->SetHidden( false );
+	m_spr[score]->StopTweening();
+	m_spr[score]->RunCommands( m_acScoreCommand[score] );
 }
 
 /*

@@ -3,7 +3,7 @@
 #ifndef GHOSTARROW_H
 #define GHOSTARROW_H
 
-#include "Sprite.h"
+#include "AutoActor.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "ActorFrame.h"
@@ -19,7 +19,7 @@ public:
 	void Step( TapNoteScore score );
 
 protected:
-	Sprite	m_spr[NUM_TAP_NOTE_SCORES];
+	AutoActor	m_spr[NUM_TAP_NOTE_SCORES];
 	apActorCommands m_acScoreCommand[NUM_TAP_NOTE_SCORES];
 };
 
