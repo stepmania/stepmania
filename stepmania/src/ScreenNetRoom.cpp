@@ -29,6 +29,7 @@ ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sNam
 	m_soundChangeSel.Load( THEME->GetPathToS("ScreenNetRoom change sel"));
 
 	m_iRoomPlace = 0;
+	m_SelectMode = SelectRooms;
 
 	m_rectTitleBG.SetName( "TitleBG" );
 	SET_QUAD_INIT( m_rectTitleBG );
