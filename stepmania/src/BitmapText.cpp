@@ -219,14 +219,13 @@ void BitmapText::DrawChars()
 	}
 }
 
-/* sText is UTF-8.  If PREFSMAN->UseAlternateText is enabled, and not all
+/* sText is UTF-8.  If PREFSMAN->m_bUseAlternateText is enabled, and not all
  * of the characters in sText are available in the font, sAlternateText
  * will be used instead.  This is normally enabled; the option exists
  * as a troubleshooting option (so should only be shown in a debug options
  * menu) for the case that a string isn't being displayed, to find out
  * which character is causing problems.  If there are unavailable characters
- * in sAlternateText, too, just use sText. 
- * XXX: implement PREFSMAN->UseAlternateText */
+ * in sAlternateText, too, just use sText. */
 void BitmapText::SetText( CString sText, CString sAlternateText )
 {
 	ASSERT( m_pFont );
@@ -249,6 +248,8 @@ void BitmapText::SetText( CString sText, CString sAlternateText )
 bool BitmapText::StringWillUseAlternate(CString sText, CString sAlternateText) const
 {
 	ASSERT( m_pFont );
+
+	if(!PREFSMAN->m_bUseAlternateText) return false;
 
 	/* Can't use the alternate if there isn't one. */
 	if(!sAlternateText.size()) return false;
