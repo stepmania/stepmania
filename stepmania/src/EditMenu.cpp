@@ -281,9 +281,12 @@ void EditMenu::OnRowValueChanged( Row row )
 			CString s = DifficultyToThemedString(GetSelectedDifficulty());
 			Steps *pSteps = GetSelectedSteps();
 			if( pSteps  &&  GetSelectedDifficulty() == DIFFICULTY_EDIT )
-				s += " - " pSteps->GetDescription();
+				s += " - " + pSteps->GetDescription();
 			m_textValue[ROW_STEPS].SetText( s );
-			m_Meter.SetFromSteps( GetSelectedSteps() );
+			if( GetSelectedSteps() )
+				m_Meter.SetFromSteps( GetSelectedSteps() );
+			else
+				m_Meter.SetFromMeterAndDifficulty( 0, GetSelectedDifficulty() );
 		}
 		// fall through
 	case ROW_SOURCE_STEPS_TYPE:
@@ -308,7 +311,10 @@ void EditMenu::OnRowValueChanged( Row row )
 		m_textLabel[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 		m_textValue[ROW_SOURCE_STEPS].SetHidden( GetSelectedSteps() ? true : false );
 		m_textValue[ROW_SOURCE_STEPS].SetText( DifficultyToThemedString(GetSelectedSourceDifficulty()) );
-		m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
+		if( GetSelectedSourceSteps() )
+			m_SourceMeter.SetFromSteps( GetSelectedSourceSteps() );
+		else
+			m_SourceMeter.SetFromMeterAndDifficulty( 0, GetSelectedSourceDifficulty() );
 		m_SourceMeter.SetHidden( GetSelectedSteps() ? true : false );
 
 		m_Actions.clear();
