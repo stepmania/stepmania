@@ -183,7 +183,7 @@ struct GLPixFmtInfo_t {
 
 static void FixBigEndian()
 {
-#if SDL_BYTEORDER != SDL_LIL_ENDIAN
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
 	static bool Initialized = false;
 	if( Initialized )
 		return;
@@ -198,7 +198,15 @@ static void FixBigEndian()
 			continue;
 
 		for( int mask = 0; mask < 4; ++mask)
-			pf.masks[mask] = SDL_Swap32( pf.masks[mask] );
+		{
+			int m = pf.masks[mask];
+			switch( pf.bpp )
+			{
+			case 16: m = SDL_Swap16(m); break;
+			case 32: m = SDL_Swap32(m); break;
+			}
+			pf.masks[mask] = m;
+		}
 	}
 #endif
 }
