@@ -16,7 +16,7 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "Course.h"
-
+#include "PrefsManager.h"
 
 #define CATEGORY_X				THEME->GetMetricF("ScreenRanking","CategoryX")
 #define CATEGORY_Y				THEME->GetMetricF("ScreenRanking","CategoryY")
@@ -98,7 +98,7 @@ ScreenRanking::ScreenRanking() : ScreenAttract("ScreenRanking")
 		this->AddChild( &m_textTime[i] );
 
 		if( PREFSMAN->m_sCoursesToShowRanking == "" )
-			m_sCoursesToShowRanking = THEME->GetMetric("ScreenRanking","CoursesToShow");
+			PREFSMAN->m_sCoursesToShowRanking = THEME->GetMetric("ScreenRanking","CoursesToShow");
 	}
 
 
