@@ -1443,6 +1443,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			Name="Actors used in Gameplay"
 			Filter="">
 			<File
+				RelativePath="ActiveAttackList.cpp">
+			</File>
+			<File
+				RelativePath="ActiveAttackList.h">
+			</File>
+			<File
 				RelativePath="ArrowBackdrop.cpp">
 			</File>
 			<File
@@ -2066,6 +2072,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="MemoryCardManager.h">
 			</File>
 			<File
+				RelativePath="NetworkSyncManager.cpp">
+			</File>
+			<File
+				RelativePath="NetworkSyncManager.h">
+			</File>
+			<File
 				RelativePath="NoteSkinManager.cpp">
 			</File>
 			<File
@@ -2106,6 +2118,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="UnlockSystem.h">
+			</File>
+			<File
+				RelativePath="ezsockets.cpp">
+			</File>
+			<File
+				RelativePath="ezsockets.h">
 			</File>
 		</Filter>
 		<Filter

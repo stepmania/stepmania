@@ -63,12 +63,14 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 	m_textRank.SetName( "Rank" );
 	m_textRank.LoadFromFont( THEME->GetPathF(m_sName,"rank") );
 	m_textRank.SetText( ssprintf("%d", iRankIndex+1) );
+	m_textRank.SetShadowLength( 2 );
 	this->AddChild( &m_textRank );
 	SET_XY_AND_ON_COMMAND( m_textRank );
 
 	m_textName.SetName( "Name" );
 	m_textName.LoadFromFont( THEME->GetPathF(m_sName,"name") );
 	m_textName.SetText( hs.GetDisplayName() );
+	m_textName.SetShadowLength( 2 );
 	this->AddChild( &m_textName );
 	SET_XY_AND_ON_COMMAND( m_textName );
 
@@ -78,6 +80,7 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 		m_textScore.SetText( ssprintf("%.2f%%", hs.fPercentDP*100) );
 	else
 		m_textScore.SetText( ssprintf("%i", hs.iScore) );
+	m_textScore.SetShadowLength( 2 );
 	this->AddChild( &m_textScore );
 	SET_XY_AND_ON_COMMAND( m_textScore );
 }

@@ -552,6 +552,7 @@ bool PlayerOptions::IsHandicapForSong( Song* pSong )
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	return true;
 	if( m_bTransforms[TRANSFORM_PLANTED] )	return true;
 	if( m_bTransforms[TRANSFORM_TWISTER] )	return true;
+	if( m_bTransforms[TRANSFORM_ECHO] )	return true;
 	
 	return false;
 }

@@ -184,11 +184,11 @@ void MenuElements::DrawTopLayer()
 
 	m_autoHeader->Draw();
 	m_sprStyleIcon.Draw();
+	m_autoFooter->Draw();
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		m_MemoryCardDisplay[p].Draw();
 	if( m_bTimerEnabled )
 		m_MenuTimer->Draw();
-	m_autoFooter->Draw();
 	m_textHelp->Draw();
 	m_In.Draw();
 	m_Out.Draw();

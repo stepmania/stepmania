@@ -31,6 +31,7 @@ class Inventory;
 #include "Character.h"
 #include "Attack.h"
 #include "MeterDisplay.h"
+#include "ActiveAttackList.h"
 
 // messages sent by Combo
 const ScreenMessage SM_PlayToasty			= ScreenMessage(SM_User+104);
@@ -132,6 +133,7 @@ protected:
 	ScoreKeeper*		m_pSecondaryScoreKeeper[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText			m_textSongOptions;
+	ActiveAttackList	m_ActiveAttackList[NUM_PLAYERS];
 
 	BitmapText			m_textDebug;
 

@@ -593,6 +593,16 @@ void ScreenGameplay::Init()
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
 	this->AddChild( &m_textSongOptions );
 
+	{
+		FOREACH_EnabledPlayer( pn )
+		{
+			m_ActiveAttackList[pn].LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
+			m_ActiveAttackList[pn].Init( pn );
+			m_ActiveAttackList[pn].SetName( ssprintf("ActiveAttackListP%d",pn+1) );
+			SET_XY( m_ActiveAttackList[pn] );
+			this->AddChild( &m_ActiveAttackList[pn] );
+		}
+	}
 
 
 
@@ -2244,6 +2254,7 @@ void ScreenGameplay::TweenOnScreen()
 		if( m_pSecondaryScoreDisplay[p] )
 			ON_COMMAND( *m_pSecondaryScoreDisplay[p] );
 		ON_COMMAND( m_textPlayerOptions[p] );
+		ON_COMMAND( m_ActiveAttackList[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 	}
 	m_Overlay.PlayCommand("On");
@@ -2276,6 +2287,7 @@ void ScreenGameplay::TweenOffScreen()
 		if( m_pSecondaryScoreDisplay[p] )
 			OFF_COMMAND( *m_pSecondaryScoreDisplay[p] );
 		OFF_COMMAND( m_textPlayerOptions[p] );
+		OFF_COMMAND( m_ActiveAttackList[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 	}
 	m_Overlay.PlayCommand("Off");
