@@ -316,12 +316,16 @@ ScreenStage::ScreenStage()
 		}
 
 
-		m_sprbg[0].SetXY( CENTER_X, CENTER_Y+150); // this is where we want the red bar graphic....
-		if (stage_mode == MODE_FINAL) // however in final...
-			m_sprbg[0].SetXY( CENTER_X-30, CENTER_Y-160); // we want it somewhere else
-		m_sprbg[0].ZoomToHeight( 100 ); // it's fairly high in normal
-		if (stage_mode == MODE_FINAL) // but in final...
-			m_sprbg[0].ZoomToHeight( 30 ); // it needs to be a bit more squashed
+		if (stage_mode == MODE_FINAL)
+			m_sprbg[0].SetXY( CENTER_X-30, CENTER_Y-160);
+		else
+			m_sprbg[0].SetXY( CENTER_X, CENTER_Y+150);
+		// Fairly high in normal, "squashed" in final.
+		if (stage_mode == MODE_FINAL)
+			m_sprbg[0].ZoomToHeight( 30 );
+		else
+			m_sprbg[0].ZoomToHeight( 100 ); 
+
 		m_sprbg[0].ZoomToWidth( SCREEN_WIDTH + 50 ); // no matter what... it's this wide
 		m_sprbg[0].SetRotation( -20 ); // and is initially this rotation
 		m_sprbg[0].BeginTweening(0.3f); // start tweening
@@ -440,13 +444,6 @@ ScreenStage::ScreenStage()
 				m_sprScrollingBlobs[j][i].StopAnimating();
 				m_sprScrollingBlobs[j][i].SetState( 3+bg_modeoffset ); // shuffle the state according to offset
 																		// (final uses different blobs)
-			}
-		}
-
-		for( j=0; j<2; j++) // 2 sets...
-		{
-			for (i=0; i<20; i++) // 20 blobs....
-			{
 				if (j == 0) // if it's the first set
 				{
 					m_sprScrollingBlobs[j][i].SetXY( CENTER_X-(SCREEN_WIDTH/2)-500-((i*i)*4), CENTER_Y + 135 ); // starting position
@@ -463,13 +460,7 @@ ScreenStage::ScreenStage()
 						m_sprScrollingBlobs[j][i].SetY( CENTER_Y+180 ); // different Y position for FINAL stage
 					}
 				}
-			}
-		}
 
-		for( j=0; j<2; j++) // 2 sets...
-		{
-			for (i=0; i<20; i++) // 20 blobs...
-			{
 				m_sprScrollingBlobs[j][i].BeginTweening(0.2f * i / 7); // start them tweening, different delay for each blob
 				if (j == 0) // set 1
 					m_sprScrollingBlobs[j][i].SetTweenX(CENTER_X-(SCREEN_WIDTH/2)+30+(i*30.0f)); // keep them at equal distance when they arrive
