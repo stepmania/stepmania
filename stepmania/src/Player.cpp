@@ -152,7 +152,7 @@ void Player::Init(
 
 void Player::Load( const NoteData& noteData )
 {
-	m_iDCState = AS2D_IDLE;
+	m_LastTapNoteScore = TNS_NONE;
 
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
@@ -911,16 +911,7 @@ void Player::Step( int col, const RageTimer &tm )
 				OnRowCompletelyJudged( iIndexOverlappingNote );
 		}
 
-		if( score == TNS_MISS || score == TNS_BOO )
-			m_iDCState = AS2D_MISS;
-		else if( score == TNS_GOOD || score == TNS_GREAT )
-			m_iDCState = AS2D_GOOD;
-		else if( score == TNS_PERFECT || score == TNS_MARVELOUS )
-		{
-			m_iDCState = AS2D_GREAT;
-			if( m_pLifeMeter && m_pLifeMeter->GetLife() == 1.0f) // full life
-				m_iDCState = AS2D_FEVER; // super celebrate time :)
-		}
+		m_LastTapNoteScore = score;
 	}
 
 	if( m_pNoteField )
@@ -1205,8 +1196,8 @@ void Player::HandleTapRowScore( unsigned row )
 
 	case TNS_MISS:
 		++iCurMissCombo;
-		m_iDCState = AS2D_MISS; // update dancing 2d characters that may have missed a note
-	
+		m_LastTapNoteScore = TNS_MISS;
+
 	case TNS_GOOD:
 	case TNS_BOO:
 		if( iCurCombo > 50 )

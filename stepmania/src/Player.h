@@ -48,8 +48,7 @@ public:
 	void Step( int col, const RageTimer &tm );
 	void RandomizeNotes( int iNoteRow );
 	void FadeToFail();
-	int GetDancingCharacterState() const { return m_iDCState; };
-	void SetCharacterState(int iDCState) { m_iDCState = iDCState; };
+	TapNoteScore GetLastTapNoteScore() const { return m_LastTapNoteScore; }
 	void ApplyWaitingTransforms();
 
 	static float GetMaxStepDistanceSeconds();
@@ -87,7 +86,7 @@ protected:
 
 	AttackDisplay	m_AttackDisplay;
 
-	int m_iDCState;
+	TapNoteScore		m_LastTapNoteScore;
 	LifeMeter*			m_pLifeMeter;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	ScoreDisplay*		m_pScoreDisplay;
