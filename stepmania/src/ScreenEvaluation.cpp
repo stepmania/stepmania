@@ -25,6 +25,7 @@
 #include "ThemeManager.h"
 
 
+#define SONGSEL_SCREEN				THEME->GetMetric("ScreenEvaluation","SongSelectScreen")
 #define BANNER_X				THEME->GetMetricF("ScreenEvaluation","BannerX")
 #define BANNER_Y				THEME->GetMetricF("ScreenEvaluation","BannerY")
 #define STAGE_X					THEME->GetMetricF("ScreenEvaluation","StageX")
@@ -818,7 +819,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 		MenuStart( PLAYER_INVALID );
 		break;
 	case SM_GoToSelectMusic:
-		SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+	//	SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+		SCREENMAN->SetNewScreen( SONGSEL_SCREEN );
 		break;
 	case SM_GoToSelectCourse:
 		SCREENMAN->SetNewScreen( "ScreenSelectCourse" );

@@ -34,6 +34,8 @@ const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User + 2);
 #define JOIN_FRAME_Y( i )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinFrameP%dY",i+1))
 #define JOIN_MESSAGE_X( p )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinMessageP%dX",p+1))
 #define JOIN_MESSAGE_Y( i )				THEME->GetMetricF("ScreenSelectMode",ssprintf("JoinMessageP%dY",i+1))
+#define GUIDE_X							THEME->GetMetricF("ScreenSelectMode","GuideX")
+#define GUIDE_Y							THEME->GetMetricF("ScreenSelectMode","GuideY")
 #define HELP_TEXT						THEME->GetMetric("ScreenSelectMode","HelpText")
 #define TIMER_SECONDS					THEME->GetMetricI("ScreenSelectMode","TimerSeconds")
 #define NEXT_SCREEN						THEME->GetMetric("ScreenSelectMode","NextScreen")
@@ -75,6 +77,10 @@ ScreenSelectMode::ScreenSelectMode()
 	m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
 	m_ChoiceListHighlight.SetXY( CENTER_X, SCROLLING_LIST_Y);
 	this->AddChild( &m_ChoiceListHighlight );
+
+	m_Guide.Load( THEME->GetPathTo("Graphics","select mode guide"));
+	m_Guide.SetXY( GUIDE_X, GUIDE_Y );
+	this->AddChild( &m_Guide );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{

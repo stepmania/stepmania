@@ -17,6 +17,10 @@
 #include "ScrollingList.h"
 #include "SongManager.h"
 #include "BitmapText.h"
+#include "SongManager.h"
+#include "PlayerOptions.h"
+#include "SongOptions.h"
+
 
 class MusicBannerWheel : public ActorFrame
 {
@@ -30,6 +34,7 @@ private:
 	void SetNewPos(int NewPos);
 	void PlayMusicSample();
 	void LoadSongData();
+	void ChangeNotes();
 
 	BitmapText	m_debugtext;
 

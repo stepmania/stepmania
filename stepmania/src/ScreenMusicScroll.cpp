@@ -115,7 +115,6 @@ const CString CREDIT_LINES[] =
 	"Garett Sakamoto",
 	"SailorBob",
 	"AngelTK (Kenny Lai)",
-	"spds (James Sanders)",
 	"Illusionz - Issaquah, WA",
 	"Quarters - Kirkland, WA",
 	"Segapark - Bournemouth, UK",

@@ -17,6 +17,7 @@
 #include "SongManager.h"
 #include "ThemeManager.h"
 #include "RageMusic.h"
+#include "StyleDef.h"
 
 #define BANNERSPACING 200
 #define MAXSONGSINBUFFER 5
@@ -33,6 +34,24 @@ MusicBannerWheel::MusicBannerWheel()
 	this->AddChild( &m_ScrollingList );
 	
 	arraySongs = SONGMAN->m_pSongs;
+
+	// If there is no currently selected song, select one.
+	if( GAMESTATE->m_pCurSong == NULL )
+	{
+		currentPos=0;
+	}
+	else // theres a song already selected (i.e. they came back from gameplay)...
+	{
+		// find our song and change the currentPos to wherever it may be.
+		for(int i=0; i<arraySongs.size(); i++)
+		{
+			if( GAMESTATE->m_pCurSong == arraySongs[i])
+			{
+				currentPos=i;
+				i=(arraySongs.size()-1); // get us out of the loop by moving i ahead to the end
+			}
+		}
+	}
 
 	LoadSongData();
 
@@ -123,7 +142,6 @@ void MusicBannerWheel::BannersLeft()
 	else
 		currentPos--;
 
-
 	if(scrlistPos==0)
 		scrlistPos = MAXSONGSINBUFFER-1;
 	else
@@ -133,6 +151,7 @@ void MusicBannerWheel::BannersLeft()
 	LoadSongData();
 	m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
 	m_ScrollingList.Left();
+	ChangeNotes();
 }
 
 void MusicBannerWheel::BannersRight()
@@ -151,7 +170,13 @@ void MusicBannerWheel::BannersRight()
 	LoadSongData();
 	m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
 	m_ScrollingList.Right();
+	ChangeNotes();
 }
+
+void MusicBannerWheel::ChangeNotes()
+{
+}
+
 
 MusicBannerWheel::~MusicBannerWheel()
 {

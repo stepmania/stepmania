@@ -33,6 +33,8 @@
 // Defines
 //
 
+#define SONGSEL_SCREEN				THEME->GetMetric("ScreenGameplay","SongSelectScreen")
+
 #define MAXCOMBO_X					THEME->GetMetricF("ScreenGameplay","MAXCOMBOX")
 #define MAXCOMBO_Y					THEME->GetMetricF("ScreenGameplay","MAXCOMBOY")
 #define MAXCOMBO_ZOOM				THEME->GetMetricF("ScreenGameplay","MAXCOMBOZoom")
@@ -1389,7 +1391,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_ARCADE:	
-			SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+			// SCREENMAN->SetNewScreen( "ScreenSelectMusic" );
+			SCREENMAN->SetNewScreen( SONGSEL_SCREEN );
 			break;
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:

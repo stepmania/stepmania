@@ -2,12 +2,12 @@
 #define SCREENEZ2SELECTMUSIC_H
 /*
 -----------------------------------------------------------------------------
- Class: ScreenSandbox
+ Class: ScreenEz2SelectMusic
 
- Desc: Area for testing.
+ Desc: A Scrolling List Of Song Banners used to select the song the player wants.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Chris Danford
+	Andrew Livy
 -----------------------------------------------------------------------------
 */
 
@@ -20,6 +20,7 @@
 #include "RageSoundStream.h"
 #include "MusicBannerWheel.h"
 #include "MenuElements.h"
+#include "FootMeter.h"
 
 class ScreenEz2SelectMusic : public Screen
 {
@@ -30,10 +31,27 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuLeft( PlayerNumber pn, const InputEventType type );
+	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
+	virtual void MenuBack( PlayerNumber pn );
+
 protected:
+	void AfterNotesChange( PlayerNumber pn );
+	void MusicChanged();
+
+	void EasierDifficulty( PlayerNumber pn );
+	void HarderDifficulty( PlayerNumber pn );
+
+	Sprite  m_ChoiceListFrame;
+	Sprite  m_ChoiceListHighlight;
+	Sprite  m_Guide;
+	BitmapText	m_PumpDifficultyRating;
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;
-
+	FootMeter			m_FootMeter[NUM_PLAYERS];
+	CArray<Notes*, Notes*> m_arrayNotes[NUM_PLAYERS];
+	int					m_iSelection[NUM_PLAYERS];
 };
 
 

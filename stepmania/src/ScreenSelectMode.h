@@ -54,6 +54,7 @@ protected:
 	Sprite	m_sprJoinFrame[NUM_PLAYERS];
 	Sprite  m_ChoiceListFrame;
 	Sprite  m_ChoiceListHighlight;
+	Sprite  m_Guide;
 
 	CArray<ModeChoice*,ModeChoice*> m_apPossibleModeChoices;
 
