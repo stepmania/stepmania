@@ -296,6 +296,9 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 
 bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Steps &out )
 {
+	/* Flush dir cache when writing steps, so the old size isn't cached. */
+	FlushDirCache();
+
 	LOG->Trace( "Steps::WriteDWINotesTag" );
 
 	switch( out.m_StepsType )

@@ -114,6 +114,9 @@ void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp )
 
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 {
+	/* Flush dir cache when writing steps, so the old size isn't cached. */
+	FlushDirCache();
+
 	unsigned i;
 
 	FILE* fp = fopen( sPath, "w" );	
