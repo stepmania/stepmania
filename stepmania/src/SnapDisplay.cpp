@@ -10,7 +10,7 @@ SnapDisplay::SnapDisplay()
 {
 	for( int i=0; i<2; i++ )
 	{
-		m_sprIndicators[i].Load( THEME->GetPathG("SnapDisplay","icon 8x1") );
+		m_sprIndicators[i].Load( THEME->GetPathG("SnapDisplay","icon 9x1") );
 		m_sprIndicators[i].StopAnimating();
 		this->AddChild( &m_sprIndicators[i] );
 	}
@@ -40,7 +40,7 @@ bool SnapDisplay::PrevSnapMode()
 
 bool SnapDisplay::NextSnapMode()
 {
-	if( m_NoteType == NOTE_TYPE_64TH )	// this is the smallest snap we should allow
+	if( m_NoteType == NOTE_TYPE_192ND )	// this is the smallest snap we should allow
 		return false;
 	m_NoteType = NoteType(m_NoteType+1);
 
