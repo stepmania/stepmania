@@ -708,8 +708,6 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 		fRotationX_out *= 180.f/PI;	// to degrees
 
 //		printf( "fRotationX_out = %f\n", fRotationX_out );
-
-		fRotationX_out *= 180.f/PI;	// to degrees
 	}
 	else if(!USE_LINEAR_WHEEL)
 	{
