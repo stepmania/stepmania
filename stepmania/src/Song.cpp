@@ -612,19 +612,23 @@ void Song::GetStepsThatMatchGameMode( GameMode gm, CArray<Steps*, Steps*&>& arra
 
 		switch( gm )	// different logic for different game modes
 		{
-		case single4:
+		case MODE_SINGLE:
 			if( sm == Steps::SMsingle4 )
 				arrayAddTo.Add( pCurrentSteps );
 			break;
-		case single6:
+		case MODE_SOLO:
 			if( sm == Steps::SMsingle6 )
 				arrayAddTo.Add( pCurrentSteps );
 			break;
-		case versus4:
-			if( sm == Steps::SMsingle4  ||  sm == Steps::SMcouple  ||  sm == Steps::SMbattle )
+		case MODE_VERSUS:
+			if( sm == Steps::SMsingle4 )
 				arrayAddTo.Add( pCurrentSteps );
 			break;
-		case double4:
+		case MODE_COUPLE:
+			if( sm == Steps::SMcouple  ||  sm == Steps::SMbattle )
+				arrayAddTo.Add( pCurrentSteps );
+			break;
+		case MODE_DOUBLE:
 			if( sm == Steps::SMdouble4 )
 				arrayAddTo.Add( pCurrentSteps );
 			break;

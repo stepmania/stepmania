@@ -63,8 +63,9 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case GRAPHIC_DANCER_P2:				sAssetPath = "Graphics\\dancer p2";						break;
 		case GRAPHIC_PAD_SINGLE:			sAssetPath = "Graphics\\Pad single";					break;
 		case GRAPHIC_PAD_DOUBLE:			sAssetPath = "Graphics\\Pad double";					break;
-		case GRAPHIC_STYLE_ICONS:			sAssetPath = "Graphics\\style icons 1x4";				break;
-		case GRAPHIC_STYLE_EXPLANATIONS:	sAssetPath = "Graphics\\style explanations 1x8";		break;
+		case GRAPHIC_PAD_SOLO:				sAssetPath = "Graphics\\Pad solo";						break;
+		case GRAPHIC_STYLE_ICONS:			sAssetPath = "Graphics\\style icons 1x5";				break;
+		case GRAPHIC_STYLE_EXPLANATIONS:	sAssetPath = "Graphics\\style explanations 1x10";		break;
 		case GRAPHIC_MUSIC_SELECTION_HIGHLIGHT:	sAssetPath = "Graphics\\music selection highlight";	break;
 		case GRAPHIC_STEPS_DESCRIPTION:		sAssetPath = "Graphics\\steps description 1x8";			break;
 		case GRAPHIC_SECTION_BACKGROUND:	sAssetPath = "Graphics\\section background";			break;

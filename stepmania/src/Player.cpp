@@ -99,8 +99,9 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 
 	switch( GAMEINFO->m_GameMode )
 	{
-	case single4:
-	case versus4:
+	case MODE_SINGLE:
+	case MODE_VERSUS:
+	case MODE_COUPLE:
 		m_iNumColumns = 4;		// LEFT, DOWN, UP, RIGHT
 		m_StepToColumnNumber[STEP_PAD1_LEFT]	= 0;
 		m_StepToColumnNumber[STEP_PAD1_DOWN]	= 1;
@@ -115,7 +116,7 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 		m_ColumnToRotation[2] = mapStepToRotation[STEP_PAD1_UP];
 		m_ColumnToRotation[3] = mapStepToRotation[STEP_PAD1_RIGHT];
 		break;
-	case single6:
+	case MODE_SOLO:
 		m_iNumColumns = 6;		// LEFT, UP+LEFT, DOWN, UP, UP+RIGHT, RIGHT
 		m_StepToColumnNumber[STEP_PAD1_LEFT]	= 0;
 		m_StepToColumnNumber[STEP_PAD1_UPLEFT]	= 1;
@@ -136,7 +137,7 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 		m_ColumnToRotation[4] = mapStepToRotation[STEP_PAD1_UPRIGHT];
 		m_ColumnToRotation[5] = mapStepToRotation[STEP_PAD1_RIGHT];
 		break;
-	case double4:
+	case MODE_DOUBLE:
 		m_iNumColumns = 8;		// 1_LEFT, 1_DOWN, 1_UP, 1_RIGHT, 2_LEFT, 2_DOWN, 2_UP, 2_RIGHT
 		m_StepToColumnNumber[STEP_PAD1_LEFT]	= 0;
 		m_StepToColumnNumber[STEP_PAD1_DOWN]	= 1;
@@ -163,6 +164,8 @@ Player::Player( PlayerOptions po, PlayerNumber pn )
 		m_ColumnToRotation[6] = mapStepToRotation[STEP_PAD2_UP];
 		m_ColumnToRotation[7] = mapStepToRotation[STEP_PAD2_RIGHT];
 		break;
+	default:
+		ASSERT( true );	// invalid GameMode
 	}
 
 
