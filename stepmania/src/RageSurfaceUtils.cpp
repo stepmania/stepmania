@@ -528,36 +528,10 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 	RageSurfaceUtils::GetBitsPerChannel(src_surf->format, src_bits);
 	RageSurfaceUtils::GetBitsPerChannel(dst_surf->format, dst_bits);
 
-	/* XXX: We should store the shifts and masks as an array in RageSurfaceFormat. */
-	const int src_shifts[4] = {
-		src_surf->format->Rshift,
-		src_surf->format->Gshift,
-		src_surf->format->Bshift,
-		src_surf->format->Ashift,
-	};
-
-	const int dst_shifts[4] = {
-		dst_surf->format->Rshift,
-		dst_surf->format->Gshift,
-		dst_surf->format->Bshift,
-		dst_surf->format->Ashift,
-	};
-
-	const uint32_t src_masks[4] =
-	{
-		src_surf->format->Rmask,
-		src_surf->format->Gmask,
-		src_surf->format->Bmask,
-		src_surf->format->Amask
-	};
-
-	const uint32_t dst_masks[4] =
-	{
-		dst_surf->format->Rmask,
-		dst_surf->format->Gmask,
-		dst_surf->format->Bmask,
-		dst_surf->format->Amask
-	};
+	const uint32_t *src_shifts = src_surf->format->Shift;
+	const uint32_t *dst_shifts = dst_surf->format->Shift;
+	const uint32_t *src_masks = src_surf->format->Mask;
+	const uint32_t *dst_masks = dst_surf->format->Mask;
 
 	uint8_t lookup[4][256];
 	for( int c = 0; c < 4; ++c )
