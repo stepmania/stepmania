@@ -41,14 +41,6 @@
 
 #include <math.h>
 
-#if defined(OGG_ONLY)
-#include "RageSoundReader_Vorbisfile.h"
-#define RageSoundReader_LowLevel RageSoundReader_Vorbisfile
-#else
-#include "RageSoundReader_SDL_Sound.h"
-#define RageSoundReader_LowLevel SoundReader_SDL_Sound
-#endif
-
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample.h"
 
@@ -150,6 +142,7 @@ void RageSound::Fail(CString reason)
 	error = reason;
 }
 
+
 bool RageSound::Load(CString sSoundFilePath, int precache)
 {
 	LOG->Trace( "RageSound::LoadSound( '%s' )", sSoundFilePath.c_str() );
@@ -173,12 +166,11 @@ bool RageSound::Load(CString sSoundFilePath, int precache)
 	else
 		SetStopMode( M_STOP );
 
-
-    SoundReader_FileReader *NewSample = new RageSoundReader_LowLevel;
-	if(!NewSample->Open(sSoundFilePath.c_str()))
+	CString error;
+	Sample = SoundReader::OpenFile( sSoundFilePath, error );
+	if( Sample == NULL )
 		RageException::Throw( "RageSoundManager::RageSoundManager: error opening sound '%s': '%s'",
-			sSoundFilePath.c_str(), NewSample->GetError().c_str());
-	Sample = NewSample;
+			sSoundFilePath.c_str(), error.c_str());
 
 	if(SOUNDMAN->GetDriverSampleRate() != -1 &&
 	   Sample->GetSampleRate() != SOUNDMAN->GetDriverSampleRate())
