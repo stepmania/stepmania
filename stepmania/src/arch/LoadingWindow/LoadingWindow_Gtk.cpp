@@ -25,15 +25,17 @@ LoadingWindow_Gtk::LoadingWindow_Gtk()
 	gtk_container_add(GTK_CONTAINER(window),vbox);
 	gtk_box_pack_start(GTK_BOX(vbox),loadimage,FALSE,FALSE,0);
 	gtk_box_pack_end(GTK_BOX(vbox),label,TRUE,TRUE,0);
-	gtk_widget_show(loadimage);
-	gtk_widget_show(label);
-	gtk_widget_show(vbox);
-	gtk_widget_show(window);
+
+	gtk_widget_show_all(window);
 	gtk_main_iteration_do(FALSE);
 }
 
 LoadingWindow_Gtk::~LoadingWindow_Gtk()
 {
+	gtk_widget_hide_all(window);
+	g_signal_emit_by_name (G_OBJECT (window), "destroy");
+	while( gtk_events_pending() )
+		gtk_main_iteration_do(FALSE);
 }
 
 void LoadingWindow_Gtk::SetText( CString s )
