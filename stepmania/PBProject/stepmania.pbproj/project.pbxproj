@@ -2359,6 +2359,7 @@
 				AA64218906EC606F00C21584,
 				AA8A3EC906EDDAE4002F25AB,
 				AA8A405206EEFF72002F25AB,
+				AA3D9D8006F5CAB2000294FA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5994,6 +5995,21 @@
 		};
 		AA3D793406A279530064B980 = {
 			fileRef = AA3D793206A279530064B980;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AA3D9D7F06F5CAB2000294FA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Preference.h;
+			path = "/Users/steve/programming/sm-v390/src/Preference.h";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		AA3D9D8006F5CAB2000294FA = {
+			fileRef = AA3D9D7F06F5CAB2000294FA;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10156,6 +10172,7 @@
 				AA6EFE0204770C79005F316C,
 				AA6EFE0304770C79005F316C,
 				AA6EFE0404770C79005F316C,
+				AA3D9D7F06F5CAB2000294FA,
 				AA50201D05D6D7B200ACEFD0,
 				AA50201E05D6D7B200ACEFD0,
 				AA3D78FF06A275E90064B980,
