@@ -330,8 +330,6 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 		if( rStyle != STYLE_INVALID &&
 			GAMEMAN->GetStyleDefForStyle(rStyle)->m_iColsPerPlayer >= 6 )
 			return false;
-
-		return true;
 	}
 
 	return true;    // no grounds to deny the request
