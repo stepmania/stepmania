@@ -187,7 +187,7 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 	// copy recorded TapNotes
 	int f = iFromIndexBegin, t = iToIndexBegin;
 	
-	while( f<=iFromIndexEnd )
+	while( f<=iFromIndexEnd && f < MAX_TAP_NOTE_ROWS )
 	{
 		for( int c=0; c<m_iNumTracks; c++ )
 			m_TapNotes[c][t] = pFrom->m_TapNotes[c][f];
