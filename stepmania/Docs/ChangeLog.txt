@@ -1,3 +1,15 @@
+* 3.9 rc2
+Fixed stage count problems.
+Fixed crash when portal is used with no open sections.
+Fixed obscure leap year problems.
+Fixed crash when looping movies.
+Fixed grades being too high.
+Windows: Worked around GTXP audio driver bug.
+Windows: Fixed minor DirectSound underrun recovery problems.
+Linux x86-64: Fixed Fedora build problems.
+Linux x86-64: Fixed crash in vssprintf.
+Linux x86-64: Fixed crash handler.
+
 * 3.9 rc1
 Fixed movie frame semaphore timeout.
 Fixed stretched images becoming slightly transparent.
