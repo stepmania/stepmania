@@ -9,7 +9,7 @@
 #include "PrefsManager.h"
 #include "BitmapText.h"
 #include "Quad.h"
-#include "NoteDataWithScoring.h"
+#include "NoteData.h"
 #include "NoteDisplay.h"
 #include "ReceptorArrowRow.h"
 #include "GhostArrowRow.h"

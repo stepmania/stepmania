@@ -11,7 +11,6 @@
 #include "NoteTypes.h"
 #include "NoteFieldPositioning.h"
 #include "ActorUtil.h"
-#include "NoteDataWithScoring.h"
 #include "Game.h"
 #include "PlayerState.h"
 
