@@ -775,6 +775,7 @@ int main(int argc, char* argv[])
 
 	srand( time(NULL) );	// seed number generator	
 	
+	/* Testing */
 	//
 	// Create game objects
 	//
