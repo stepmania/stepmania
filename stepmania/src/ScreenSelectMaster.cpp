@@ -24,6 +24,7 @@
 #define POST_SWITCH_PAGE_SECONDS				THEME->GetMetricF(m_sName,"PostSwitchPageSeconds")
 #define EXTRA_SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"ExtraSleepAfterTweenOffSeconds")
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
+#define WRAP_CURSOR								THEME->GetMetricB(m_sName,"WrapCursor")
 #define SHOW_SCROLLER							THEME->GetMetricB(m_sName,"ShowScroller")
 #define SCROLLER_SECONDS_PER_ITEM				THEME->GetMetricF(m_sName,"ScrollerSecondsPerItem")
 #define SCROLLER_NUM_ITEMS_TO_DRAW				THEME->GetMetricF(m_sName,"ScrollerNumItemsToDraw")
@@ -218,8 +219,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			}
 
 			m_Next[dir][c] = c + add;
-			/* By default, only wrap around for DIR_AUTO. */
-			if( dir == DIR_AUTO )
+			/* Always wrap around DIR_AUTO. */
+			if( dir == DIR_AUTO || WRAP_CURSOR )
 				wrap( m_Next[dir][c], m_aGameCommands.size() );
 			else
 				m_Next[dir][c] = clamp( m_Next[dir][c], 0, (int)m_aGameCommands.size()-1 );
