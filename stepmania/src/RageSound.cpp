@@ -225,7 +225,9 @@ void RageSound::SetLengthSeconds(float secs)
  * we read data; the sound thread will always read more if it's needed. */
 void RageSound::Update(float delta)
 {
-	if(playing && delta)
+	LockMut(SOUNDMAN->lock);
+
+	if( playing && delta )
 		FillBuf(int(delta * GetSampleRate() * samplesize));
 }
 
