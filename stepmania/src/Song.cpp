@@ -33,6 +33,7 @@
 #include "NotesLoaderBMS.h"
 #include "NotesLoaderKSF.h"
 #include "NotesWriterDWI.h"
+#include "NotesWriterSM.h"
 
 #include "SDL.h"
 #include "SDL_image.h"
@@ -662,90 +663,10 @@ void Song::Save()
 
 void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 {
-	LOG->Trace( "Song::SaveToSMDir('%s')", sPath.GetString() );
+	LOG->Trace( "Song::SaveToSMFile('%s')", sPath.GetString() );
 
-	unsigned i;
-
-	FILE* fp = fopen( sPath, "w" );	
-	if( fp == NULL )
-		throw RageException( "Error opening song file '%s' for writing.", sPath.GetString() );
-
-	fprintf( fp, "#TITLE:%s;\n", m_sMainTitle.GetString() );
-	fprintf( fp, "#SUBTITLE:%s;\n", m_sSubTitle.GetString() );
-	fprintf( fp, "#ARTIST:%s;\n", m_sArtist.GetString() );
-	fprintf( fp, "#TITLETRANSLIT:%s;\n", m_sMainTitleTranslit.GetString() );
-	fprintf( fp, "#SUBTITLETRANSLIT:%s;\n", m_sSubTitleTranslit.GetString() );
-	fprintf( fp, "#ARTISTTRANSLIT:%s;\n", m_sArtistTranslit.GetString() );
-	fprintf( fp, "#CREDIT:%s;\n", m_sCredit.GetString() );
-	fprintf( fp, "#BANNER:%s;\n", m_sBannerFile.GetString() );
-	fprintf( fp, "#BACKGROUND:%s;\n", m_sBackgroundFile.GetString() );
-	fprintf( fp, "#CDTITLE:%s;\n", m_sCDTitleFile.GetString() );
-	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile.GetString() );
-	fprintf( fp, "#MUSICBYTES:%u;\n", m_iMusicBytes );
-	fprintf( fp, "#MUSICLENGTH:%.3f;\n", m_fMusicLengthSeconds );
-	if(bSavingCache) {
-		fprintf( fp, "#FIRSTBEAT:%.3f;\n", m_fFirstBeat );
-		fprintf( fp, "#LASTBEAT:%.3f;\n", m_fLastBeat );
-	}
-	fprintf( fp, "#OFFSET:%.3f;\n", m_fBeat0OffsetInSeconds );
-	fprintf( fp, "#SAMPLESTART:%.3f;\n", m_fMusicSampleStartSeconds );
-	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", m_fMusicSampleLengthSeconds );
-	fprintf( fp, "#SELECTABLE:" );
-	switch(m_SelectionDisplay) {
-	default: ASSERT(0);  /* fallthrough */
-	case SHOW_ALWAYS:
-		fprintf( fp, "YES" ); break;
-	case SHOW_NEVER:
-		fprintf( fp, "NO" ); break;
-	case SHOW_ROULETTE:
-		fprintf( fp, "ROULETTE" ); break;
-	}
-	fprintf( fp, ";\n" );
-
-	fprintf( fp, "#BPMS:" );
-	for( i=0; i<m_BPMSegments.size(); i++ )
-	{
-		BPMSegment &bs = m_BPMSegments[i];
-
-		fprintf( fp, "%.3f=%.3f", bs.m_fStartBeat, bs.m_fBPM );
-		if( i != m_BPMSegments.size()-1 )
-			fprintf( fp, "," );
-	}
-	fprintf( fp, ";\n" );
-
-	fprintf( fp, "#STOPS:" );
-	for( i=0; i<m_StopSegments.size(); i++ )
-	{
-		StopSegment &fs = m_StopSegments[i];
-
-		fprintf( fp, "%.3f=%.3f", fs.m_fStartBeat, fs.m_fStopSeconds );
-		if( i != m_StopSegments.size()-1 )
-			fprintf( fp, "," );
-	}
-	fprintf( fp, ";\n" );
-	
-	fprintf( fp, "#BGCHANGES:" );
-	for( i=0; i<m_BackgroundChanges.size(); i++ )
-	{
-		BackgroundChange &seg = m_BackgroundChanges[i];
-
-		fprintf( fp, "%.3f=%s", seg.m_fStartBeat, seg.m_sBGName.GetString() );
-		if( i != m_BackgroundChanges.size()-1 )
-			fprintf( fp, "," );
-	}
-	fprintf( fp, ";\n" );
-	
-	//
-	// Save all Notes for this file
-	//
-	for( i=0; i<m_apNotes.size(); i++ ) 
-	{
-		Notes* pNotes = m_apNotes[i];
-		if( bSavingCache  ||  !pNotes->m_bAutoGen )	// If notes aren't autogen
-			m_apNotes[i]->WriteSMNotesTag( fp );
-	}
-
-	fclose( fp );
+	NotesWriterSM wr;
+	wr.Write(sPath, *this, bSavingCache);
 }
 
 void Song::SaveToDWIFile()
