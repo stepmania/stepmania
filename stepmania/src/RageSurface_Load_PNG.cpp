@@ -134,6 +134,8 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 	case PNG_COLOR_TYPE_RGB_ALPHA:
 		type = RGBA;
 		break;
+	default:
+		FAIL_M(ssprintf( "%i", color_type) );
 	}
 
 	if( color_type == PNG_COLOR_TYPE_GRAY )
@@ -193,13 +195,16 @@ static SDL_Surface *RageSurface_Load_PNG( RageFile *f, const char *fn, char erro
 		break;
 	case RGBX:
 	case RGBA:
-		int r = SDL_SwapBE32( 0xFF000000 );
-		int g = SDL_SwapBE32( 0x00FF0000 );
-		int b = SDL_SwapBE32( 0x0000FF00 );
-		int a = SDL_SwapBE32( type == RGBA? 0x000000FF:0x00000000 );
-		ASSERT( surf );
-		surf = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 32, r, g, b, a );
+		surf = SDL_CreateRGBSurfaceSane( SDL_SWSURFACE, width, height, 32,
+				SDL_SwapBE32( 0xFF000000 ),
+				SDL_SwapBE32( 0x00FF0000 ),
+				SDL_SwapBE32( 0x0000FF00 ),
+				SDL_SwapBE32( type == RGBA? 0x000000FF:0x00000000 ) );
+		break;
+	default:
+		FAIL_M(ssprintf( "%i", type) );
 	}
+	ASSERT( surf );
 
 	/* alloca to prevent memleaks if libpng longjmps us */
 	png_byte **row_pointers = (png_byte **) alloca( sizeof(png_byte*) * height );
