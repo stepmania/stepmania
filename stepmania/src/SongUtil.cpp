@@ -341,6 +341,9 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortValueAscending );
 }
 
+//////////////////////////////////
+// SongID
+//////////////////////////////////
 
 void SongID::FromSong( const Song *p )
 {

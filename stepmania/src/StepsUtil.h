@@ -14,11 +14,13 @@ namespace StepsUtil
 	bool CompareNotesPointersByRadarValues(const Steps* pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByMeter(const Steps *pSteps1, const Steps* pSteps2);
 	bool CompareNotesPointersByDifficulty(const Steps *pSteps1, const Steps *pSteps2);
-	void SortNotesArrayByDifficulty( vector<Steps*> &arrayNotess );
+	void SortNotesArrayByDifficulty( vector<Steps*> &arrayNotess );	
 	bool CompareStepsPointersByTypeAndDifficulty(const Steps *pStep1, const Steps *pStep2);
 	void SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers );
 	void SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, ProfileSlot slot, bool bDescending );
 	void SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, const Profile* pProfile, bool bDescending );
+	bool CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2);
+	void SortStepsByDescription( vector<Steps*> &vStepsPointers );
 };
 
 class StepsID

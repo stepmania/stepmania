@@ -107,6 +107,20 @@ void StepsUtil::SortStepsByTypeAndDifficulty( vector<Steps*> &arraySongPointers 
 	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByTypeAndDifficulty );
 }
 
+bool StepsUtil::CompareStepsPointersByDescription(const Steps *pStep1, const Steps *pStep2)
+{
+	return pStep1->GetDifficulty() < pStep2->GetDifficulty();
+}
+
+void StepsUtil::SortStepsByDescription( vector<Steps*> &arraySongPointers )
+{
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareStepsPointersByDescription );
+}
+
+
+////////////////////////////////
+// StepsID
+////////////////////////////////
 
 void StepsID::FromSteps( const Steps *p )
 {
