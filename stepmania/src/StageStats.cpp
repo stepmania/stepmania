@@ -477,6 +477,7 @@ LuaFunction_NoArgs( GetStagesPlayed,		(int) g_vPlayedStageStats.size() );
 LuaFunction_NoArgs( GetBestGrade,			GetBestGrade() );
 LuaFunction_NoArgs( GetWorstGrade,			GetWorstGrade() );
 LuaFunction_NoArgs( OnePassed,				g_CurStageStats.OnePassed() );
+LuaFunction_NoArgs( AllFailed,				g_CurStageStats.AllFailed() );
 LuaFunction_PlayerNumber( FullCombo,		g_CurStageStats.m_player[pn].FullCombo() )
 LuaFunction_PlayerNumber( MaxCombo,			g_CurStageStats.m_player[pn].GetMaxCombo().cnt )
 LuaFunction_PlayerNumber( GetGrade,			g_CurStageStats.m_player[pn].GetGrade() )
@@ -529,9 +530,8 @@ Grade GetBestFinalGrade()
 	Grade top_grade = GRADE_FAILED;
 	StageStats stats;
 	GAMESTATE->GetFinalEvalStats( stats );
-	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsHumanPlayer(p) )
-			top_grade = min( top_grade, stats.m_player[p].GetGrade() );
+	FOREACH_HumanPlayer( p )
+		top_grade = min( top_grade, stats.m_player[p].GetGrade() );
 	return top_grade;
 }
 LuaFunction_NoArgs( GetBestFinalGrade, GetBestFinalGrade() );
