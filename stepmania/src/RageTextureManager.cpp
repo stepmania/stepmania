@@ -165,6 +165,9 @@ void RageTextureManager::PermanentTexture( RageTextureID ID )
 
 void RageTextureManager::UnloadTexture( RageTexture *t )
 {
+	if( t == NULL )
+		return;
+
 	t->m_iRefCount--;
 	ASSERT( t->m_iRefCount >= 0 );
 
