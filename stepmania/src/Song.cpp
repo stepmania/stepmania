@@ -279,8 +279,6 @@ bool Song::LoadWithoutCache( CString sDir )
 	if(!success)
 		return false;
 
-	AddAutoGenNotes();
-
 	TidyUpData();
 	
 	// save a cache file so we don't have to parse it all over again next time
@@ -368,6 +366,30 @@ bool Song::LoadFromSongDir( CString sDir )
 
 void Song::TidyUpData()
 {
+	/* This must be done before radar calculation. */
+	if( HasMusic() )
+	{
+#if 1
+		RageSoundStream sound;
+		sound.Load( GetMusicPath() );
+#else
+		RageSound sound;
+		sound.Load( GetMusicPath(), false ); /* don't pre-cache */
+#endif
+		m_fMusicLengthSeconds = sound.GetLengthSeconds();
+		/* XXX: if(m_fMusicLengthSeconds == -1), warn and throw out the song */
+	}
+	else	// ! HasMusic()
+	{
+		m_fMusicLengthSeconds = 100;		// guess
+	}
+
+	/* Generate these before we autogen notes, so the new notes can inherit
+	 * their source's values. */
+	ReCalulateRadarValuesAndLastBeat();
+
+	AddAutoGenNotes();
+
 	TrimRight(m_sMainTitle);
 	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
 	TrimRight(m_sSubTitle);
@@ -388,24 +410,6 @@ void Song::TidyUpData()
 //		else
 //			throw RageException( "The song in '%s' is missing a music file.  You must place a music file in the song folder or remove the song", m_sSongDir.GetString() );
 	}
-
-	if( HasMusic() )
-	{
-#if 1
-		RageSoundStream sound;
-		sound.Load( GetMusicPath() );
-#else
-		RageSound sound;
-		sound.Load( GetMusicPath(), false ); /* don't pre-cache */
-#endif
-		m_fMusicLengthSeconds = sound.GetLengthSeconds();
-		/* XXX: if(m_fMusicLengthSeconds == -1), warn and throw out the song */
-	}
-	else	// ! HasMusic()
-	{
-		m_fMusicLengthSeconds = 100;		// guess
-	}
-
 
 	// We're going to try and do something intelligent here...
 	// The MusicSampleStart always seems to be about 100-120 beats into 
@@ -540,8 +544,6 @@ void Song::TidyUpData()
 		}
 	}
 
-	ReCalulateRadarValuesAndLastBeat();
-
 	// challenge notes are encoded as smaniac.  If there is only one Notes for 
 	// a NotesType and it's "smaniac", then convert it to "Challenge"
 	for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
@@ -571,7 +573,14 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		pNotes->GetNoteData( &tempNoteData );
 
 		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		{
+			/* If it's autogen, and we already have radar values, leave them alone.
+			 * If it's not autogen, regen them, since the radar calculation might
+			 * have changed. */
+			if(pNotes->m_bAutoGen && pNotes->m_fRadarValues[r] != -1)
+				continue;
 			pNotes->m_fRadarValues[r] = NoteDataUtil::GetRadarValue( tempNoteData, (RadarCategory)r, m_fMusicLengthSeconds );
+		}
 
 		float fFirstBeat = tempNoteData.GetFirstBeat();
 		float fLastBeat = tempNoteData.GetLastBeat();
@@ -748,6 +757,10 @@ void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 			pNewNotes->m_sDescription	= pOriginalNotes->m_sDescription;
 			pNewNotes->m_bAutoGen		= true;
 			pNewNotes->m_NotesType		= ntTo;
+			/* Assume the radar values are the same, so we don't spend a long
+			 * time recomputing them. */
+			for(int i = 0; i < NUM_RADAR_VALUES; ++i)
+				pNewNotes->m_fRadarValues[i] = pOriginalNotes->m_fRadarValues[i];
 
 			NoteData originalNoteData;
 			NoteData newNoteData;
