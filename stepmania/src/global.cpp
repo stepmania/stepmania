@@ -1,14 +1,19 @@
 #include "global.h"
 
 #if defined(_WINDOWS)
+#define _WIN32_WINDOWS 0x0410 // include Win98 stuff
 #include "windows.h"
+#include "archutils/Win32/Crash.h"
 void NORETURN sm_crash( const char *reason )
 {
-	// throws an exception that gets caught by the exception handler
-	DebugBreak();
+	/* If we're being debugged, throw a debug break so it'll suspend the process. */
+	if( IsDebuggerPresent() )
+		DebugBreak();
+	else
+		ForceCrashHandler( reason );
 
-	/* Do something after calling DebugBreak, so the call/return isn't optimized
-	 * to a jmp; that way, this function will appear in backtrace stack traces. */
+	/* Do something after the above, so the call/return isn't optimized to a jmp; that
+	 * way, this function will appear in backtrace stack traces. */
 	_asm nop;
 }
 #elif defined(LINUX) || defined(DARWIN)
