@@ -601,6 +601,12 @@ void TrimRight(CString &str, const char *s)
 	str.erase(str.begin()+n, str.end());
 }
 
+void StripCrnl(CString &s)
+{
+	while(s[s.size()-1] == '\r' || s[s.size()-1] == '\n')
+		s.erase(s.size()-1);
+}
+
 /* path is a .redir pathname.  Read it and return the real one. */
 CString DerefRedir(const CString &path)
 {

@@ -193,6 +193,7 @@ float calc_stddev(const float *start, const float *end);
 
 void TrimLeft(CString &str, const char *s = "\r\n\t ");
 void TrimRight(CString &str, const char *s = "\r\n\t ");
+void StripCrnl(CString &s);
 
 CString DerefRedir(const CString &path);
 
