@@ -3,6 +3,7 @@
 #include "arch/arch.h"
 
 #include "RageUtil.h"
+#include "RageLog.h"
 #include "FontCharAliases.h"
 
 #include "RageFile.h"
@@ -150,6 +151,8 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 			else if(!id.CompareNoCase("TitleTransTo")) tr.TitleTransTo = txt;
 			else if(!id.CompareNoCase("ArtistTransTo")) tr.ArtistTransTo = txt;
 			else if(!id.CompareNoCase("SubtitleTransTo")) tr.SubTransTo = txt;
+			else
+				LOG->Warn( "Unknown TitleSubst tag: \"%s\"", id.c_str() );
 		}
 
 		/* Add the translation if this is a terminator (*) or section
