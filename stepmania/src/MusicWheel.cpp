@@ -689,10 +689,55 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	}
 }
 
+RageVector2 Bezier( RageVector2 p1, RageVector2 p2, RageVector2 p3, float t )
+{
+	const float t2 = t * t;
+	const float tm1 = 1 - t;
+	const float tm12 = tm1 * tm1;
+
+	return RageVector2(
+		p1.x*tm12 + 2*p2.x * tm1 * t + p3.x * t2,
+		p1.y*tm12 + 2*p2.y * tm1 * t + p3.y * t2
+	);
+}
+
 void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out )
 {
 	if( USE_3D )
 	{
+/*		bool neg = false;
+		if( fPosOffsetsFromMiddle < 0 )
+		{
+			neg = true;
+			fPosOffsetsFromMiddle *= -1;
+		}
+
+		float fv[6] = { 
+			THEME->GetMetricF("MusicWheel","X1"),
+			THEME->GetMetricF("MusicWheel","Y1"),
+			THEME->GetMetricF("MusicWheel","X2"),
+			THEME->GetMetricF("MusicWheel","Y2"),
+			THEME->GetMetricF("MusicWheel","X3"),
+			THEME->GetMetricF("MusicWheel","Y3") };
+		const float t = SCALE( fPosOffsetsFromMiddle, 0, NUM_WHEEL_ITEMS/2.0f, 0.0f, 1.0f );
+		RageVector2 c1(fv[0], fv[1]);
+		RageVector2 c2(fv[2], fv[3]);
+		RageVector2 c3(fv[4], fv[5]);
+		const RageVector2 v = Bezier( c1, c2, c3, t );
+		LOG->Trace("%f, Y %f X %f, %f x %f",
+fPosOffsetsFromMiddle * (neg? -1.0f:+1.0f),
+			v.x, v.y,
+			v.x * (neg? -1.0f:+1.0f), v.y );
+
+		fY_out = v.x * (neg? -1.0f:+1.0f);
+		fZ_out = v.y;
+
+		const float curve = CIRCLE_PERCENT*2*PI;
+		fRotationX_out = SCALE(fPosOffsetsFromMiddle,0,NUM_WHEEL_ITEMS/2.0f,0,+curve/2.f);
+		if( neg )
+			fRotationX_out *= -1;
+*/
+
 		const float curve = CIRCLE_PERCENT*2*PI;
 		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-NUM_WHEEL_ITEMS/2.0f,+NUM_WHEEL_ITEMS/2.0f,-curve/2.f,+curve/2.f);
 		fX_out = 0;

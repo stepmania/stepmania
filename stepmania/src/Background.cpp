@@ -27,6 +27,7 @@
 #include "DancingCharacters.h"
 #include "arch/arch.h"
 #include "BeginnerHelper.h"
+#include "StageStats.h"
 
 
 const float FADE_SECONDS = 1.0f;
@@ -539,15 +540,18 @@ bool Background::IsDangerAllVisible()
 	if( !PREFSMAN->m_bShowDanger )
 		return false;
 
-	if( GAMESTATE->AllAreInDangerOrWorse() )
-	{
-		if( BLINK_DANGER_ALL )
-			return (RageTimer::GetTimeSinceStart() - (int)RageTimer::GetTimeSinceStart()) < 0.5f;
-		else
-			return true;
-	}
-	else
+	/* Don't show it if everyone is already failing: it's already too late and it's
+	 * annoying for it to show for the entire duration of a song. */
+	if( g_CurStageStats.AllFailedEarlier() )
 		return false;
+
+	if( !GAMESTATE->AllAreInDangerOrWorse() )
+		return false;
+
+	if( BLINK_DANGER_ALL )
+		return (RageTimer::GetTimeSinceStart() - (int)RageTimer::GetTimeSinceStart()) < 0.5f;
+	else
+		return true;
 }
 
 bool Background::IsDangerPlayerVisible( PlayerNumber pn )
