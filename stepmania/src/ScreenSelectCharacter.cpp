@@ -34,19 +34,23 @@
 #define EXPLANATION_OFF_COMMAND				THEME->GetMetric ("ScreenSelectCharacter","ExplanationOffCommand")
 #define ATTACK_FRAME_ON_COMMAND( p )		THEME->GetMetric ("ScreenSelectCharacter",ssprintf("AttackFrameP%dOnCommand",p+1))
 #define ATTACK_FRAME_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectCharacter",ssprintf("AttackFrameP%dOffCommand",p+1))
-#define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
-#define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
-#define ICONS_START_X( p )					THEME->GetMetricF("ScreenSelectCharacter",ssprintf("IconsP%dStartX",p+1))
-#define ICONS_START_Y( p )					THEME->GetMetricF("ScreenSelectCharacter",ssprintf("IconsP%dStartY",p+1))
-#define ICONS_SPACING_X						THEME->GetMetricF("ScreenSelectCharacter","IconsSpacingX")
-#define ICONS_SPACING_Y						THEME->GetMetricF("ScreenSelectCharacter","IconsSpacingY")
-#define ICONS_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOnCommand",p+1))
-#define ICONS_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOffCommand",p+1))
+#define ATTACK_ICON_WIDTH					THEME->GetMetricF("ScreenSelectCharacter","AttackIconWidth")
+#define ATTACK_ICON_HEIGHT					THEME->GetMetricF("ScreenSelectCharacter","AttackIconHeight")
+#define ATTACK_ICONS_START_X( p )			THEME->GetMetricF("ScreenSelectCharacter",ssprintf("AttackIconsP%dStartX",p+1))
+#define ATTACK_ICONS_START_Y( p )			THEME->GetMetricF("ScreenSelectCharacter",ssprintf("AttackIconsP%dStartY",p+1))
+#define ATTACK_ICONS_SPACING_X				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingX")
+#define ATTACK_ICONS_SPACING_Y				THEME->GetMetricF("ScreenSelectCharacter","AttackIconsSpacingY")
+#define ATTACK_ICONS_ON_COMMAND( p )		THEME->GetMetric ("ScreenSelectCharacter",ssprintf("AttackIconsP%dOnCommand",p+1))
+#define ATTACK_ICONS_OFF_COMMAND( p )		THEME->GetMetric ("ScreenSelectCharacter",ssprintf("AttackIconsP%dOffCommand",p+1))
 #define HELP_TEXT							THEME->GetMetric ("ScreenSelectCharacter","HelpText")
 #define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectCharacter","SleepAfterTweenOffSeconds")
 #define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectCharacter","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
 #define NEXT_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectCharacter","NextScreen"+Capitalize(PlayModeToString(play_mode)))
+#define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
+#define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
+#define ICONS_ON_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOnCommand",p+1))
+#define ICONS_OFF_COMMAND( p )				THEME->GetMetric ("ScreenSelectCharacter",ssprintf("IconsP%dOffCommand",p+1))
 
 #define LEVEL_CURSOR_X( p, l )	( ICONS_START_X(p)+ICONS_SPACING_X*((NUM_ATTACKS_PER_LEVEL-1)/2.f) )
 #define LEVEL_CURSOR_Y( p, l )	( ICONS_START_Y(p)+ICONS_SPACING_Y*l )
@@ -134,10 +138,10 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 				{
-					float fX = ICONS_START_X(p) + ICONS_SPACING_X*j; 
-					float fY = ICONS_START_Y(p) + ICONS_SPACING_Y*i; 
+					float fX = ATTACK_ICONS_START_X(p) + ATTACK_ICONS_SPACING_X*j; 
+					float fY = ATTACK_ICONS_START_Y(p) + ATTACK_ICONS_SPACING_Y*i; 
 					m_AttackIcons[p][i][j].SetXY( fX, fY );
-					m_AttackIcons[p][i][j].Command( ICONS_ON_COMMAND(p) );
+					m_AttackIcons[p][i][j].Command( ATTACK_ICONS_ON_COMMAND(p) );
 					this->AddChild( &m_AttackIcons[p][i][j] );
 				}
 		}
@@ -162,6 +166,9 @@ ScreenSelectCharacter::ScreenSelectCharacter() : Screen("ScreenSelectCharacter")
 			AfterRowChange( (PlayerNumber)p );
 			AfterValueChange( (PlayerNumber)p );
 		}
+
+		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
+			m_sprIcons[p][i].Command( ICONS_ON_COMMAND(p) );
 	}
 	TweenOnScreen();
 }
@@ -386,8 +393,10 @@ void ScreenSelectCharacter::TweenOffScreen()
 			m_sprAttackFrame[p].Command( ATTACK_FRAME_OFF_COMMAND(p) );
 			for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 				for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
-					m_AttackIcons[p][i][j].Command( ICONS_OFF_COMMAND(p) );
+					m_AttackIcons[p][i][j].Command( ATTACK_ICONS_OFF_COMMAND(p) );
 		}
+		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
+			m_sprIcons[p][i].Command( ICONS_OFF_COMMAND(p) );
 	}
 	m_sprExplanation.Command( EXPLANATION_OFF_COMMAND );
 }
