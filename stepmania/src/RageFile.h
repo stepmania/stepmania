@@ -13,9 +13,8 @@
 -----------------------------------------------------------------------------
 */
 
-#include <fstream>
 #include <cstdio>
-using namespace std;	// using "std::ifstream" causes problems below in VC6.  Why?!?
+#include <fstream>
 
 // call FixSlashes on any path that came from the user
 void FixSlashesInPlace( CString &sPath );
@@ -38,8 +37,8 @@ public:
     bool Open(const CString& path, const char *mode = "r");
     void Close();
     
-    bool IsOpen() { return (mFP == NULL); }
-    bool AtEOF() { return !!feof(mFP); }
+    bool IsOpen() { return (mFP != NULL); }
+    bool AtEOF() { return (feof(mFP) != 0); }
     int GetError() { return ferror(mFP); }
     FILE *GetFilePointer() { return mFP; }
     
