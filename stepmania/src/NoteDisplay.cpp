@@ -25,6 +25,7 @@
 #include "NoteTypes.h"
 #include "NoteFieldPositioning.h"
 #include "ActorUtil.h"
+#include "NoteDataWithScoring.h"
 
 enum part
 {
@@ -767,13 +768,13 @@ void NoteDisplay::DrawHoldHead( const HoldNote& hn, bool bIsBeingHeld, float fYH
 	}
 }
 
-void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActive, float fLife, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels )
+void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels )
 {
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
 
 	int	iCol			= hn.iTrack;
 	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(iCol) > 0.5;
-	float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, iCol, hn.GetStartBeat() );
+	float fStartYOffset	= ArrowGetYOffset( m_PlayerNumber, iCol, Result.GetLastHeldBeat() );
 	
 	// HACK: If active, don't allow the top of the hold to go above the receptor
 	if( bIsActive )
@@ -791,7 +792,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 	/* Hack: Z effects need a finer grain step. */
 	const int	fYStep = WavyPartsNeedZBuffer? 4: 16; //bWavy ? 16 : 128;	// use small steps only if wavy
 
-	const float fColorScale		= 1*fLife + (1-fLife)*cache->m_fHoldNGGrayPercent;
+	const float fColorScale		= 1*Result.fLife + (1-Result.fLife)*cache->m_fHoldNGGrayPercent;
 
 	bool bFlipHeadAndTail = bReverse && cache->m_bFlipHeadAndTailWhenReverse;
 
@@ -822,7 +823,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, bool bIsBeingHeld, bool bIsActiv
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
-		DrawHold( hn, bIsBeingHeld, bIsActive, fLife, fPercentFadeToFail, true, fReverseOffsetPixels );
+		DrawHold( hn, bIsBeingHeld, bIsActive, Result, fPercentFadeToFail, true, fReverseOffsetPixels );
 }
 
 void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting )

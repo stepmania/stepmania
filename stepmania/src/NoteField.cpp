@@ -543,8 +543,8 @@ void NoteField::DrawPrimitives()
 			if( hn.iTrack != c )	// this HoldNote doesn't belong to this column
 				continue;
 
-			const HoldNoteScore hns = GetHoldNoteScore( hn );
-			if( hns == HNS_OK )	// if this HoldNote was completed
+			const HoldNoteResult Result = GetHoldNoteResult( hn );
+			if( Result.hns == HNS_OK )	// if this HoldNote was completed
 				continue;	// don't draw anything
 
 			// If no part of this HoldNote is on the screen, skip it
@@ -565,7 +565,6 @@ void NoteField::DrawPrimitives()
 
 			const bool bIsActive = m_ActiveHoldNotes[hn];
 			const bool bIsHoldingNote = m_HeldHoldNotes[hn];
-			const float fLife = GetHoldNoteLife( hn );
 			if( bIsActive )
 				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
 			
@@ -577,7 +576,7 @@ void NoteField::DrawPrimitives()
 				bIsInSelectionRange = hn.ContainedByRange( BeatToNoteRow( m_fBeginMarker ), BeatToNoteRow( m_fEndMarker ) );
 
 			NoteDisplayCols *nd = CurDisplay->second;
-			nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
+			nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 		}
 		
 

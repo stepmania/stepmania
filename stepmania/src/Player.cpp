@@ -356,12 +356,15 @@ void PlayerMinus::Update( float fDeltaTime )
 			m_pNoteField->m_HeldHoldNotes[hn] = bIsHoldingButton && bSteppedOnTapNote;
 			m_pNoteField->m_ActiveHoldNotes[hn] = bSteppedOnTapNote;
 
-			if( bSteppedOnTapNote )		// this note is not judged and we stepped on its head
+			if( bSteppedOnTapNote )
 			{
-				// Move the start of this Hold
-				const int n = m_pNoteField->GetMatchingHoldNote( hn );
-				HoldNote &fhn = m_pNoteField->GetHoldNote( n );
-				fhn.iStartRow = min( iSongRow, fhn.iEndRow );
+				/* This hold note is not judged and we stepped on its head.  Update
+				 * iLastHeldRow. */
+				HoldNoteResult *hnr = m_pNoteField->CreateHoldNoteResult( hn );
+				hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
+
+				hnr = this->CreateHoldNoteResult( hn );
+				hnr->iLastHeldRow = min( iSongRow, hn.iEndRow );
 			}
 
 
