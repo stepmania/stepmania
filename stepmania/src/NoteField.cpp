@@ -17,6 +17,7 @@
 #include "ScreenDimensions.h"
 #include "PlayerState.h"
 #include "Style.h"
+#include "CommonMetrics.h"
 
 NoteField::NoteField()
 {	
@@ -484,21 +485,24 @@ void NoteField::DrawPrimitives()
 		//
 		// BGChange text
 		//
-		vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges;
-		for( unsigned i=0; i<aBackgroundChanges.size(); i++ )
+		if( !HOME_EDIT_MODE )
 		{
-			if(aBackgroundChanges[i].m_fStartBeat >= fFirstBeatToDraw &&
-			   aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw)
+			vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges;
+			for( unsigned i=0; i<aBackgroundChanges.size(); i++ )
 			{
-				const BackgroundChange& change = aBackgroundChanges[i];
-				CString sChangeText = ssprintf("%s\n%.0f%%%s%s%s",
-					change.m_sBGName.c_str(),
-					change.m_fRate*100,
-					change.m_bFadeLast ? " Fade" : "",
-					change.m_bRewindMovie ? " Rewind" : "",
-					change.m_bLoop ? " Loop" : "" );
+				if(aBackgroundChanges[i].m_fStartBeat >= fFirstBeatToDraw &&
+				aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw)
+				{
+					const BackgroundChange& change = aBackgroundChanges[i];
+					CString sChangeText = ssprintf("%s\n%.0f%%%s%s%s",
+						change.m_sBGName.c_str(),
+						change.m_fRate*100,
+						change.m_bFadeLast ? " Fade" : "",
+						change.m_bRewindMovie ? " Rewind" : "",
+						change.m_bLoop ? " Loop" : "" );
 
-				DrawBGChangeText( change.m_fStartBeat, sChangeText );
+					DrawBGChangeText( change.m_fStartBeat, sChangeText );
+				}
 			}
 		}
 
@@ -511,7 +515,6 @@ void NoteField::DrawPrimitives()
 			DrawMarkerBar( m_iBeginMarker );
 		else if( m_iEndMarker != -1 )
 			DrawMarkerBar( m_iEndMarker );
-
 	}
 
 
