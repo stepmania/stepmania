@@ -541,8 +541,8 @@ TitleTo: 遥か彼方
 TitleFrom: Honjitsu wa Seiten Nari
 TitleTo: 本日は晴天なり
 *
-TitleFrom: Yuusha-oh Tanjou!
-TitleTo: 勇者王誕生！
+TitleFrom: Strong Star Soldier
+TitleTo: 強いぞ星の戦士
 *
 TitleFrom: O M E G A
 TitleTo: Ω
@@ -550,6 +550,9 @@ TitleTo: Ω
 # http://www.makusonia.com/discography/album/album_2.html
 TitleFrom: (Majimena|Urajimena) *Kikkake
 TitleTo: 真面目なキッカケ
+*
+TitleFrom: Guri Guri
+TitleTo: グリグリ
 *
 # Don't translit all songs named "Sigma" to Σ; only the ones that are actually
 # intended to be written that way.
@@ -593,7 +596,7 @@ ArtistTo: 椎名林檎
 ArtistFrom: KLONOA *\(kumiko watanabe\)
 ArtistTo: KLONOA （渡辺久美子）
 *
-SubtitleFrom: -HOSHI NO UMI KAZE NO YUME-
+SubtitleFrom: - HOSHI NO UMI  KAZE NO YUME -
 SubtitleTo: -星の海風の夢-
 ArtistFrom: RainbowColors. feat. DR
 ArtistTo: RainbowColors☆ feat. DR
@@ -622,6 +625,9 @@ ArtistTo: 홍석
 # http://www.ampcast.com/music/14706/artist.php
 ArtistFrom: KaW vs. Smiley vs. Inspector K
 ArtistTo: KaW vs. ☺ vs. Inspector K
+*
+ArtistFrom: Miyagawa Akira
+ArtistTo: 宮川彬良
 *
 # DREAMS COME TRUE:
 TitleFrom: Asa ga Mata Kuru
