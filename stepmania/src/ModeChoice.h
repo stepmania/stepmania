@@ -34,6 +34,7 @@ struct ModeChoice		// used in SelectMode
 	PlayMode	m_pm;
 	Difficulty	m_dc;
 	CString		m_sAnnouncer;
+	CString		m_sModifiers;
 	CString		m_sScreen;
 	CString		m_sName;
 };

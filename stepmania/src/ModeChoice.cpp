@@ -19,6 +19,7 @@ void ModeChoice::Init()
 	m_style = STYLE_INVALID;
 	m_pm = PLAY_MODE_INVALID;
 	m_dc = DIFFICULTY_INVALID;
+	m_sModifiers = "";
 	m_sAnnouncer = "";
 	m_sName = "";
 	m_sScreen = "";
@@ -110,21 +111,20 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		}
 
 		if( sName == "announcer" )
-		{
 			m_sAnnouncer = sValue;
-		}
 
-		/* Hmm.  I feel like I'm overloading ModeChoice here; this makes it
-		 * a generic menu choice. */
 		if( sName == "name" )
-		{
 			m_sName = sValue;
-		}
 
-		if( sName == "screen" )
+		if( sName == "mod" )
 		{
-			m_sScreen = sValue;
+			if( m_sModifiers != "" )
+				m_sModifiers += ",";
+			m_sModifiers += sValue;
 		}
+		
+		if( sName == "screen" )
+			m_sScreen = sValue;
 	}
 }
 
@@ -204,6 +204,9 @@ void ModeChoice::Apply( PlayerNumber pn )
 		GAMESTATE->m_PreferredDifficulty[pn] = m_dc;
 	if( m_sAnnouncer != "" )
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
+	if( m_sModifiers != "" )
+		for( int pn=0; pn<NUM_PLAYERS; pn++ )
+			GAMESTATE->ApplyModifiers( (PlayerNumber)pn, m_sModifiers );
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
