@@ -1894,6 +1894,21 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				GetDirListing( RANDOMMOVIES_DIR+"*.avi", g_BGChange.rows[add_global_random_movie].choices, false );
 				GetDirListing( RANDOMMOVIES_DIR+"*.mpg", g_BGChange.rows[add_global_random_movie].choices, false );
 				GetDirListing( RANDOMMOVIES_DIR+"*.mpeg", g_BGChange.rows[add_global_random_movie].choices, false );
+				
+				vector<CString> vSubDirs;
+				GetDirListing( RANDOMMOVIES_DIR+"*", vSubDirs, true );
+				FOREACH_CONST( CString, vSubDirs, s )
+				{
+					const CString &sSubDir = *s;
+					vector<CString> vsMovies;
+
+					GetDirListing( RANDOMMOVIES_DIR+sSubDir+"/*.avi", vsMovies, false );
+					GetDirListing( RANDOMMOVIES_DIR+sSubDir+"/*.mpg", vsMovies, false );
+					GetDirListing( RANDOMMOVIES_DIR+sSubDir+"/*.mpeg", vsMovies, false );
+
+					FOREACH_CONST( CString, vsMovies, m )
+						g_BGChange.rows[add_global_random_movie].choices.push_back( sSubDir +"/"+ *m );
+				}
 
 				g_BGChange.rows[add_global_bganimation].choices.clear();
 				GetDirListing( BG_ANIMS_DIR+"*", g_BGChange.rows[add_global_bganimation].choices, true );
