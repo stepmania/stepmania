@@ -26,6 +26,7 @@ void NORETURN debug_crash();
 
 void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
 void SymLookup( const void *ptr, char *buf );
+void ForceCrashHandler( const char *reason );
 void NORETURN Crash_BacktraceThread( HANDLE hThread );
 
 #endif

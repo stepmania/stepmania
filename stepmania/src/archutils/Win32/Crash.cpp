@@ -976,3 +976,10 @@ void NORETURN Crash_BacktraceThread( HANDLE hThread )
 	debug_crash();
 }
 
+void ForceCrashHandler( const char *reason )
+{
+	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
+	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;
+
+	debug_crash();
+}
