@@ -1028,21 +1028,19 @@ CString FixSlashes( CString sPath )
 
 /*
  * Keep trailing slashes, since that can be used to illustrate that a path always
- * represents a directory.  Not sure if we should always keep leading "." (we do
- * because it's simpler), but be sure to keep the "." if it's all that's there, so
- * collapsing "." doesn't result in "". 
+ * represents a directory.
  *
  * foo/bar -> foo/bar
  * foo/bar/ -> foo/bar/
  * foo///bar/// -> foo/bar/
  * foo/bar/./baz -> foo/bar/baz
  * foo/bar/../baz -> foo/baz
- * ./foo -> foo
+ * ./foo -> foo (if bRemoveLeadingDot), ./foo (if !bRemoveLeadingDot)
  * ./ -> .
  * ./// -> .
  */
 
-void CollapsePath( CString &sPath )
+void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 {
 	/* Don't ignore empty: we do want to keep trailing slashes. */
 	CStringArray as;
@@ -1062,7 +1060,7 @@ void CollapsePath( CString &sPath )
 			as.erase( as.begin()+i );
 			i -= 1;
 		}
-		else if( as[i] == "." && i != 0 )
+		else if( as[i] == "." && (bRemoveLeadingDot || i != 0) )
 		{
 			as.erase( as.begin()+i );
 			i -= 1;

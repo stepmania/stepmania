@@ -305,7 +305,7 @@ void FlushDirCache();
 // call FixSlashes on any path that came from the user
 void FixSlashesInPlace( CString &sPath );
 CString FixSlashes( CString sPath );
-void CollapsePath( CString &sPath );
+void CollapsePath( CString &sPath, bool bRemoveLeadingDot=false );
 
 // helper file functions used by Bookkeeper and ProfileManager
 //
