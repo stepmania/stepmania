@@ -189,7 +189,7 @@ void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4])
 void mySDL_SetPalette(SDL_Surface *dst, SDL_Color *colors, int start, int cnt)
 {
 	ASSERT( dst->format->palette );
-	ASSERT( start+cnt >= dst->format->palette->ncolors );
+	ASSERT( start+cnt <= dst->format->palette->ncolors );
 	memcpy( dst->format->palette->colors + start, colors,
 				cnt * sizeof(SDL_Color) );
 }
