@@ -12,6 +12,10 @@
 #include "ScreenNetSelectBase.h"	//Used for Quad Utility
 #include "ScreenManager.h"
 
+#if defined(XBOX)
+#include "archutils/Xbox/VirtualKeyboard.h"
+#endif
+
 #define EXISTINGBG_WIDTH			THEME->GetMetricF(m_sName,"PackagesBGWidth")
 #define WEBBG_WIDTH					THEME->GetMetricF(m_sName,"WebBGWidth")
 #define	NUM_PACKAGES_SHOW			THEME->GetMetricI(m_sName,"NumPackagesShow")
@@ -140,7 +144,12 @@ void ScreenPackages::MenuStart( PlayerNumber pn )
 	if ( m_iDLorLST == 1 )
 	{
 		if ( m_iLinksPos == 0 )
+		{
+#if defined(XBOX)
+			XBOX_VKB.Reset(VKMODE_PROFILE); // allow all characters
+#endif
 			SCREENMAN->TextEntry( SM_BackFromURL, "Enter URL:", "http://" );
+		}
 		else
 			EnterURL( m_Links[m_iLinksPos] );
 	}
