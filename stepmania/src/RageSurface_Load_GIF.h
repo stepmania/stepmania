@@ -1,40 +1,11 @@
-#include "global.h"
-#include "RageSurface_Load.h"
-#include "RageSurface_Load_PNG.h"
-#include "RageSurface_Load_GIF.h"
-#include "RageUtil.h"
-#include "SDL_image.h"
+#ifndef RAGE_SURFACE_LOAD_GIF_H
+#define RAGE_SURFACE_LOAD_GIF_H
 
-SDL_Surface *RageSurface::LoadFile( const CString &sPath )
-{
-	const CString ext = GetExtension( sPath );
+#include "SDL_utils.h"
 
-	CString error;
-	SDL_Surface *ret = NULL;
-	if( !ext.CompareNoCase("png") )
-		ret = RageSurface_Load_PNG( sPath, error );
-	else if( !ext.CompareNoCase("gif") )
-		ret = RageSurface_Load_GIF( sPath, error );
-	else
-	{
-		SDL_RWops *rw = OpenRWops( sPath );
-		if( rw == NULL )
-			return NULL;
+SDL_Surface *RageSurface_Load_GIF( const CString &sPath, CString &error );
 
-		SDL_Surface *ret = IMG_LoadTyped_RW( rw, false, (char *) GetExtension(sPath).c_str() );
-		SDL_RWclose( rw );
-		SDL_FreeRW( rw );
-
-		mySDL_FixupPalettedAlpha( ret );
-
-		return ret;
-	}
-
-	if( ret == NULL )
-		SDL_SetError( "%s", error.c_str() );
-
-	return ret;
-}
+#endif
 
 /*
  * (c) 2004 Glenn Maynard
