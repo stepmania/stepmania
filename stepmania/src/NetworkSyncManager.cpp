@@ -20,25 +20,50 @@ NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
     NetPlayerClient = new EzSockets;
 	m_ServerVersion = 0;
 
-    if (argc > 2)
-        if (Connect(argv[1],8765) == true)
-		{
-			useSMserver = true;
-			int ClientCommand=3;
-			NetPlayerClient->send((char*) &ClientCommand, 4);
-			NetPlayerClient->send(0);//Send 0 for flash client
+	CString tempargv(argv[1]);
 
-			NetPlayerClient->receive(m_ServerVersion);
-				//If network play is desired
-				//AND the connection works
-				//Halt until we know what server 
-				//version we're dealing with
-			if (((m_ServerVersion / 512) % 2) == 1)
-				appendWithZero = true;
-			else
-				appendWithZero = false;
-		} else
-			useSMserver = false;
+    if (argc > 2) {
+		LOG->Info("Multiple arguements were entered.");
+		
+		if (!tempargv.CompareNoCase("LISTEN"))
+			if (Listen(8765)) {
+				useSMserver = true;
+				int ClientCommand=3;
+				NetPlayerClient->send((char*) &ClientCommand, 4);
+				NetPlayerClient->send(0);//Send 0 for flash client
+
+				NetPlayerClient->receive(m_ServerVersion);
+					//If network play is desired
+					//AND the connection works
+					//Halt until we know what server 
+					//version we're dealing with
+				if (((m_ServerVersion / 512) % 2) == 1)
+					appendWithZero = true;
+				else
+					appendWithZero = false;
+			} else
+				useSMserver = false;
+		else
+			if (Connect(argv[1],8765) == true)
+			{
+				useSMserver = true;
+				int ClientCommand=3;
+				NetPlayerClient->send((char*) &ClientCommand, 4);
+				NetPlayerClient->send(0);//Send 0 for flash client
+
+				NetPlayerClient->receive(m_ServerVersion);
+					//If network play is desired
+					//AND the connection works
+					//Halt until we know what server 
+					//version we're dealing with
+				if (((m_ServerVersion / 512) % 2) == 1)
+					appendWithZero = true;
+				else
+					appendWithZero = false;
+			} else
+				useSMserver = false;
+
+	}
     else
         useSMserver = false;
 }
@@ -53,6 +78,7 @@ NetworkSyncManager::~NetworkSyncManager ()
 
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 {
+	LOG->Info("Beginning to connect");
 	if (port!=8765) 
 		return false;
 	//Make sure using port 8765
@@ -71,6 +97,41 @@ bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
     
 	return useSMserver;
 }
+
+
+//Listen (Wait for connection in-bound)
+//NOTE: Right now, StepMania cannot connect back to StepMania!
+
+bool NetworkSyncManager::Listen(unsigned short port)
+{
+	LOG->Info("Beginning to Listen");
+	if (port!=8765) 
+		return false;
+	//Make sure using port 8765
+	//This may change in future versions
+	//It is this way now for protocol's purpose.
+	//If there is a new protocol developed down the road
+
+
+	EzSockets * EZListener = new EzSockets;
+
+	EZListener->create();
+	NetPlayerClient->create(); // Initilize Socket
+
+	EZListener->bind(8765);
+    
+	useSMserver = EZListener->listen();
+	useSMserver = EZListener->accept( *NetPlayerClient);  //Wait for someone to connect
+
+	EZListener->close();	//Kill Listener
+	delete EZListener;
+    
+	LOG->Info("Accept Responce:",useSMserver);
+	useSMserver=true;
+	return useSMserver;
+}
+
+
 
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo)
 {
@@ -120,7 +181,7 @@ void NetworkSyncManager::StartRequest()
 
 	vector <char> tmp;	//Temporary vector used by receive function when waiting
 
-	LOG->Trace("Requesting Start from Server.");
+	LOG->Info("Requesting Start from Server.");
 
 	netHolder SendNetPack;
 
@@ -132,12 +193,12 @@ void NetworkSyncManager::StartRequest()
 
 	NetPlayerClient->send((char*)&SendNetPack, sizeof(netHolder));
 	
-	LOG->Trace("Waiting for RECV");
+	LOG->Info("Waiting for RECV");
 
 	//Block until go is recieved.
 	NetPlayerClient->receive(tmp);	
 
-	LOG->Trace("Starting Game.");
+	LOG->Info("Starting Game.");
 }
 
 //Global and accessable from anywhere

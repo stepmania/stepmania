@@ -45,6 +45,9 @@ private:
     EzSockets *NetPlayerClient;
 
 	int m_ServerVersion; //ServerVersion
+
+	bool Listen(unsigned short port);
+
     
     struct netHolder		//Data structure used for sending data to server
     {
