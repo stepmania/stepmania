@@ -201,6 +201,38 @@ void LuaData::Register()
 	m_sSerializedData.erase( m_sSerializedData.begin(), m_sSerializedData.end() );
 }
 
+LuaTable::LuaTable()
+{
+	lua_newtable( LUA->L );
+	this->SetFromStack();
+}
+
+void LuaTable::Set( const CString &sKey )
+{
+	int iTop = lua_gettop( LUA->L );
+	this->PushSelf( LUA->L );
+	lua_pushstring( LUA->L, sKey ); // push the key
+	lua_pushvalue( LUA->L, iTop ); // push the value
+	lua_settable( LUA->L, iTop+1 );
+	lua_settop( LUA->L, iTop-1 ); // remove all of the above
+}
+
+void LuaTable::Unset( const CString &sKey )
+{
+	lua_pushnil( LUA->L );
+	Set( sKey );
+}
+
+void LuaTable::SetKeyAndValue()
+{
+	int iTop = lua_gettop( LUA->L );
+	this->PushSelf( LUA->L );
+	lua_pushvalue( LUA->L, iTop-1 ); // push the value after the table
+	lua_pushvalue( LUA->L, iTop ); // push the key after the value
+	lua_settable( LUA->L, iTop+1 );
+	lua_settop( LUA->L, iTop-1 ); // remove all of the above
+}
+
 /*
  * (c) 2005 Glenn Maynard, Chris Danford
  * All rights reserved.

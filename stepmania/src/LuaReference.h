@@ -80,6 +80,23 @@ protected:
 	bool m_bWasSet;
 };
 
+class LuaTable: public LuaData
+{
+public:
+	LuaTable();
+
+	/* Set a key by the given name to a value on the stack, and pop the value
+	 * off the stack. */
+	void Set( const CString &sKey );
+
+	/* Unset the given key (set it to nil). */
+	void Unset( const CString &sKey );
+
+	/* Set a key on the stack to a value on the stack; push the key first.  Pop
+	 * both the key and the value off the stack. */
+	void SetKeyAndValue();
+};
+
 #endif
 
 /*
