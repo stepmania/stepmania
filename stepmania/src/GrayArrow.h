@@ -23,6 +23,7 @@ public:
 	// animates a step on the arrow
 	virtual void Step();
 
+	virtual void CalculateColor( const float fBeatsTilStep );
 };
 
 #endif 

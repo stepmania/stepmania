@@ -428,8 +428,11 @@ void Player::UpdateGrayArrows( const float &fDeltaTime )
 void Player::DrawGrayArrows()
 {
 	for( int i=0; i<m_iNumColumns; i++ )
+	{
 		//m_sprGrayArrow[i].Draw();
+		m_GrayArrow[i].CalculateColor( m_fSongBeat );
 		m_GrayArrow[i].Draw();
+	}
 }
 
 void Player::SetGrayArrowsX( int iNewX )
