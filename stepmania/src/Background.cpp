@@ -244,7 +244,7 @@ void Background::LoadFromSong( Song* pSong )
 		case MODE_ANIMATIONS:
 			{
 				CStringArray arrayPossibleAnims;
-				GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
+				GetDirListing( BG_ANIMS_DIR+"*", arrayPossibleAnims, true, true );
 				// strip out "cvs" and "danger
 				int i;
 				for( i=arrayPossibleAnims.size()-1; i>=0; i-- )

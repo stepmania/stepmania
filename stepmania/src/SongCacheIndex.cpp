@@ -30,7 +30,7 @@ void SongCacheIndex::ReadCacheIndex()
 
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
 	CStringArray asCacheFileNames;
-	GetDirListing( "Cache/*.*", asCacheFileNames );
+	GetDirListing( "Cache/*", asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
 		DeleteFile( "Cache/" + asCacheFileNames[i] );
 	CacheIndex.Reset();
