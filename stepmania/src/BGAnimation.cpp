@@ -32,7 +32,7 @@ void BGAnimation::Unload()
 {
     for( int i=0; i<m_Layers.GetSize(); i++ )
 		delete m_Layers[i];
-	m_Layers.RemoveAll();
+	m_Layers.clear();
 }
 
 void BGAnimation::LoadFromStaticGraphic( CString sPath )

@@ -56,7 +56,7 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	m_sprHoldParts.TurnShadowOff();
 
 
-	m_colorTapTweens.RemoveAll();
+	m_colorTapTweens.clear();
 	const CString sColorsFilePath = GAMEMAN->GetPathTo( iColNum, "Tap.colors" );
 	FILE* fp = fopen( sColorsFilePath, "r" );
 	if( fp == NULL )

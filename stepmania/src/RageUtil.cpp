@@ -341,7 +341,7 @@ void DirCache::FlushCache()
 {
 	for(int i = 0; i < directory_cache.GetSize(); ++i)
 		delete directory_cache[i];
-	directory_cache.RemoveAll();
+	directory_cache.clear();
 }
 
 void FlushDirCache() { DirectoryCache.FlushCache(); }

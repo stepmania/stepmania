@@ -73,7 +73,7 @@ void ScreenManager::EmptyDeleteQueue()
 	for( int i=0; i<m_ScreensToDelete.GetSize(); i++ )
 		SAFE_DELETE( m_ScreensToDelete[i] );
 
-	m_ScreensToDelete.RemoveAll();
+	m_ScreensToDelete.clear();
 }
 
 void ScreenManager::Update( float fDeltaTime )
@@ -244,7 +244,7 @@ void ScreenManager::SetNewScreen( Screen *pNewScreen )
 	// move current screen(s) to ScreenToDelete
 	m_ScreensToDelete.insert(m_ScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
 
-	m_ScreenStack.RemoveAll();
+	m_ScreenStack.clear();
 	m_ScreenStack.Add( pNewScreen );
 }
 

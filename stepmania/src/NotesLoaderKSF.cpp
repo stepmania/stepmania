@@ -209,7 +209,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 					CStringArray asBits;
 					split( sDir, "\\", asBits, true);
 					CString sSongFolderName = asBits[ asBits.GetSize()-1 ];
-					asBits.RemoveAll();
+					asBits.clear();
 
 					split( sSongFolderName, " - ", asBits, false );
 					if( asBits.GetSize() == 2 )

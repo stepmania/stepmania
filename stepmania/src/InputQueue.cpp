@@ -24,7 +24,7 @@ InputQueue*	INPUTQUEUE = NULL;	// global and accessable from anywhere in our pro
 InputQueue::InputQueue()
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_aQueue[p].SetSize( MAX_INPUT_QUEUE_LENGTH );
+		m_aQueue[p].insert(m_aQueue[p].begin(), MAX_INPUT_QUEUE_LENGTH, GameButtonAndTime() );
 }
 
 void InputQueue::RememberInput( const GameInput GameI )
@@ -56,7 +56,7 @@ bool InputQueue::MatchesPattern( const GameController c, const MenuButton* butto
 		}
 		if( sequence_index == 0 )		// we matched the whole pattern
 		{
-			m_aQueue[c].RemoveAll();	// empty the queue so we don't match on it again
+			m_aQueue[c].clear();	// empty the queue so we don't match on it again
 			return true;
 		}
 		sequence_index--;
@@ -82,7 +82,7 @@ bool InputQueue::MatchesPattern( const GameController c, const GameButton* butto
 		}
 		if( sequence_index == 0 )		// we matched the whole pattern
 		{
-			m_aQueue[c].RemoveAll();	// empty the queue so we don't match on it again
+			m_aQueue[c].clear();	// empty the queue so we don't match on it again
 			return true;
 		}
 		sequence_index--;

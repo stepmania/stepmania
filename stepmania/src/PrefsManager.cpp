@@ -109,7 +109,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.GetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 
-	m_asAdditionalSongFolders.RemoveAll();
+	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
 	ini.GetValue( "Options", "AdditionalSongFolders", sAdditionalSongFolders );
 	split( sAdditionalSongFolders, ",", m_asAdditionalSongFolders, true );

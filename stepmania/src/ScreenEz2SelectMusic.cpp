@@ -630,7 +630,7 @@ void ScreenEz2SelectMusic::AfterMusicChange()
 
 	GAMESTATE->m_pCurSong = pSong;
 
-	m_arrayNotes.RemoveAll();
+	m_arrayNotes.clear();
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{

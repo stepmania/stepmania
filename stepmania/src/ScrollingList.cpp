@@ -47,7 +47,7 @@ void ScrollingList::Unload()
 {
 	for( int i=0; i<m_apSprites.GetSize(); i++ )
 		delete m_apSprites[i];
-	m_apSprites.RemoveAll();
+	m_apSprites.clear();
 }
 
 /************************************

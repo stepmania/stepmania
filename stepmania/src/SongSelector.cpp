@@ -242,7 +242,7 @@ void SongSelector::OnGroupChange()
 	m_textGroup.SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
 
 	// reload songs
-	m_pSongs.RemoveAll();
+	m_pSongs.clear();
 	SONGMAN->GetSongsInGroup( GetSelectedGroup(), m_pSongs );
 
 	OnSongChange();
@@ -264,7 +264,7 @@ void SongSelector::OnNotesTypeChange()
 
 	m_textStyle.SetText( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_szName );
 
-	m_pNotess.RemoveAll();
+	m_pNotess.clear();
 	GetSelectedSong()->GetNotesThatMatch( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_NotesType, m_pNotess );
 	SortNotesArrayByDifficulty( m_pNotess );
 	m_pNotess.Add( NULL );		// marker for "(NEW)"

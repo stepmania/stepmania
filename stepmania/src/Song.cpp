@@ -88,7 +88,7 @@ Song::~Song()
 	for( int i=0; i<m_apNotes.GetSize(); i++ )
 		SAFE_DELETE( m_apNotes[i] );
 
-	m_apNotes.RemoveAll();
+	m_apNotes.clear();
 }
 
 

@@ -51,8 +51,8 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 {
 	LOG->Trace( "Song::LoadFromSMDir(%s)", sPath );
 
-	out.m_BPMSegments.RemoveAll();
-	out.m_StopSegments.RemoveAll();
+	out.m_BPMSegments.clear();
+	out.m_StopSegments.clear();
 
 	int i;
 

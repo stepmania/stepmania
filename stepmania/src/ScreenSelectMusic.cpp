@@ -703,7 +703,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
-		m_arrayNotes[pn].RemoveAll();
+		m_arrayNotes[pn].clear();
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{

@@ -77,9 +77,9 @@ void Background::Unload()
 {
     for( int i=0; i<m_BGAnimations.GetSize(); i++ )
 		delete m_BGAnimations[i];
-	m_BGAnimations.RemoveAll();
+	m_BGAnimations.clear();
 	
-	m_aBGSegments.RemoveAll();
+	m_aBGSegments.clear();
 	m_iCurBGSegment = 0;
 }
 

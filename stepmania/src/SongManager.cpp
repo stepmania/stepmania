@@ -234,9 +234,9 @@ void SongManager::FreeSongArray()
 {
 	for( int i=0; i<m_pSongs.GetSize(); i++ )
 		SAFE_DELETE( m_pSongs[i] );
-	m_pSongs.RemoveAll();
+	m_pSongs.clear();
 
-	m_GroupBannerPaths.RemoveAll();
+	m_GroupBannerPaths.clear();
 }
 
 

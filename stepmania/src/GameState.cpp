@@ -75,7 +75,7 @@ void GameState::Reset()
 	m_bFreeze = 0;
 	
 
-	m_apSongsPlayed.RemoveAll();
+	m_apSongsPlayed.clear();
 	
 	m_iSongsIntoCourse = 0;
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -169,7 +169,7 @@ void GameState::ResetStageStatistics()
 	{
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
-		m_apSongsPlayed.RemoveAll();
+		m_apSongsPlayed.clear();
 		break;
 	}
 
