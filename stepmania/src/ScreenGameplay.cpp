@@ -900,9 +900,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_iRowLastCrossed = iRowNow;
 	}
 
-	if( GAMESTATE->m_SongOptions.m_bAssistTick )
-		if( IsTimeToPlayTicks() )
-			m_soundAssistTick.Play();
+	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
+		m_soundAssistTick.Play();
 }
 
 
