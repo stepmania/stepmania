@@ -511,18 +511,14 @@ RageMatrix RageMatrixIdentity()
 
 void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles )
 {
-	float		angle;
-	float		sr, sp, sy, cr, cp, cy;
+	const RageVector3 angles_radians( angles * 2*PI / 360 );
 	
-	angle = angles[2] * (PI*2 / 360);
-	sy = sin(angle);
-	cy = cos(angle);
-	angle = angles[1] * (PI*2 / 360);
-	sp = sin(angle);
-	cp = cos(angle);
-	angle = angles[0] * (PI*2 / 360);
-	sr = sin(angle);
-	cr = cos(angle);
+	const float sy = sinf( angles_radians[2] );
+	const float cy = cosf( angles_radians[2] );
+	const float sp = sinf( angles_radians[1] );
+	const float cp = cosf( angles_radians[1] );
+	const float sr = sinf( angles_radians[0] );
+	const float cr = cosf( angles_radians[0] );
 
 	RageMatrixIdentity( pOut );
 
