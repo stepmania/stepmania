@@ -341,6 +341,11 @@ void Actor::StopTweening()
 	ASSERT( m_TweenInfo.empty() );
 }
 
+void Actor::FinishTweening()
+{
+	m_current = DestTweenState();
+	StopTweening();
+}
 
 
 void Actor::ScaleTo( const RectI &rect, StretchType st )
