@@ -113,7 +113,6 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, Notes* pNotes )
 
 void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
-	int p = 0;	// score multiplier 
 /*
   http://www.aaroninjapan.com/ddr2.html
 
@@ -126,6 +125,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
   Let p = score multiplier (Marvelous = 10, Perfect = 9, Great = 5, other = 0)
 
 */
+	int p = 0;	// score multiplier 
 	switch( GAMESTATE->m_PlayMode )
 	{
 	case PLAY_MODE_ARCADE:
@@ -340,7 +340,7 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
 
 	if( holdScore == HNS_OK )
-		AddScore( TNS_PERFECT );
+		AddScore( TNS_MARVELOUS );
 }
 
 
