@@ -14,6 +14,8 @@
 #include "arch/Sound/RageSoundDriver.h"
 #include "SDL_audio.h"
 
+RageSoundManager *SOUNDMAN = NULL;
+
 RageSoundManager::RageSoundManager(CString drivers)
 {
 	/* needs to be done first */
