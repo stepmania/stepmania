@@ -47,8 +47,6 @@ public:
 	void RegisterSound( RageSound *p );		/* used by RageSound */
 	void UnregisterSound( RageSound *p );	/* used by RageSound */
 	int GetUniqueID();						/* used by RageSound */
-	void RegisterPlayingSound( RageSound *p );	/* used by RageSound */
-	void UnregisterPlayingSound( RageSound *p );	/* used by RageSound */
 	void CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_bytes );	/* used by drivers */
 	float GetPlayLatency() const;
 	int GetDriverSampleRate( int rate ) const;

@@ -144,20 +144,6 @@ int RageSoundManager::GetUniqueID()
 	return ++iID;
 }
 
-void RageSoundManager::RegisterPlayingSound( RageSound *p )
-{
-	g_SoundManMutex.Lock(); /* lock for access to playing_sounds */
-	SOUNDMAN->playing_sounds.insert( p );
-	g_SoundManMutex.Unlock(); /* finished with playing_sounds */
-}
-
-void RageSoundManager::UnregisterPlayingSound( RageSound *p )
-{
-	g_SoundManMutex.Lock(); /* lock for access to playing_sounds */
-	SOUNDMAN->playing_sounds.erase( p );
-	g_SoundManMutex.Unlock(); /* finished with playing_sounds */
-}
-
 void RageSoundManager::CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_frames )
 {
 	/* This can be called from realtime threads; don't lock any mutexes. */
