@@ -10,6 +10,7 @@ class BMSLoader: public NotesLoader {
 	void mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, char &cNoteCharOut );
 	void PushTrackNumForMagic( int iTrackNum );
 	StepsType CheckTracksMagic( void );
+	void ResetTracksMagic( void );
 
 public:
 	void GetApplicableFiles( CString sPath, CStringArray &out );

@@ -26,8 +26,12 @@ float NoteTypeToBeat( NoteType nt )
 	case NOTE_TYPE_64TH:	return 1.0f/16;
 	// MD 11/03/03 - NOTE_TYPE_INVALID should be treated as equivalent to
 	//               NOTE_TYPE_192ND; NOTE_TYPE_96TH should not exist.
+	// MD 11/12/03 - And, really, since NOTE_TYPE_192ND had to be added, we'll
+	//				 keep the behavior of NOTE_TYPE_INVALID being the same, but
+	//				 it shouldn't ever come up anyway.
+	case NOTE_TYPE_192ND:	return 1.0f/48;
+	default:	ASSERT(0); // and fall through
 	case NOTE_TYPE_INVALID:	return 1.0f/48;
-	default:	ASSERT(0);	return 0;
 	}
 }
 
@@ -56,6 +60,7 @@ CString NoteTypeToString( NoteType nt )
 	case NOTE_TYPE_32ND:	return "32nd";
 	case NOTE_TYPE_48TH:	return "48th";
 	case NOTE_TYPE_64TH:	return "64th";
+	case NOTE_TYPE_192ND:	// fall through
 	case NOTE_TYPE_INVALID:	return "192nd";
 	default:	ASSERT(0);	return "";
 	}

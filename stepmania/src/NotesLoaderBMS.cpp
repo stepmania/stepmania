@@ -49,6 +49,9 @@
 
 int iTracks[MAX_NOTE_TRACKS];
 
+void BMSLoader::ResetTracksMagic( void ) {
+	for (int ix = 0; ix<MAX_NOTE_TRACKS; ix++) iTracks[ix] = 0;
+}
 void BMSLoader::PushTrackNumForMagic( int iTrackNum ) {
 	int ix = (iTrackNum < 20) ? (iTrackNum - 11) : (iTrackNum - 12);
 	iTracks[ix]++;
@@ -150,6 +153,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 	NoteData* pNoteData = new NoteData;
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
+	ResetTracksMagic();
 
 	ifstream file(sPath);
 	if( file.bad() )

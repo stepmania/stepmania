@@ -293,8 +293,9 @@ Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 	NoteType nt = NoteType(0);
 	if( cache->m_bTapNoteAnimationIsNoteColor )
 		nt = BeatToNoteType( fNoteBeat );
+//  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
-		nt = NOTE_TYPE_32ND;
+		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 
 	Actor *pActorOut = m_pTapNote[nt];
@@ -338,8 +339,9 @@ Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bActive )
 	NoteType nt = NoteType(0);
 	if( cache->m_bHoldTopCapAnimationIsNoteColor )
 		nt = BeatToNoteType( fNoteBeat );
+//  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
-		nt = NOTE_TYPE_32ND;
+		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 	
 	Sprite *pSpriteOut = bActive ? &m_sprHoldTopCapActive[nt] : &m_sprHoldTopCapInactive[nt];
@@ -359,8 +361,9 @@ Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bActive )
 	NoteType nt = NoteType(0);
 	if( cache->m_bHoldBottomCapAnimationIsNoteColor )
 		nt = BeatToNoteType( fNoteBeat );
+//  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
-		nt = NOTE_TYPE_32ND;
+		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 	
 	Sprite *pSpriteOut = bActive ? &m_sprHoldBottomCapActive[nt] : &m_sprHoldBottomCapInactive[nt];
@@ -381,8 +384,9 @@ Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bActive )
 	NoteType nt = NoteType(0);
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
 		nt = BeatToNoteType( fNoteBeat );
+//  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
-		nt = NOTE_TYPE_32ND;
+		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 
 	Actor *pActorOut = bActive ? m_pHoldHeadActive[nt] : m_pHoldHeadInactive[nt];
@@ -402,8 +406,9 @@ Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bActive )
 	NoteType nt = NoteType(0);
 	if( cache->m_bHoldBodyAnimationIsNoteColor )
 		nt = BeatToNoteType( fNoteBeat );
+//  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
-		nt = NOTE_TYPE_32ND;
+		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 
 	Sprite *pSpriteOut = bActive ? &m_sprHoldBodyActive[nt] : &m_sprHoldBodyInactive[nt];
@@ -423,8 +428,9 @@ Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bActive )
 	NoteType nt = NoteType(0);
 	if( cache->m_bHoldTailAnimationIsNoteColor )
 		nt = BeatToNoteType( fNoteBeat );
+//  NOTE_TYPE_INVALID is 192nds at this point.
 	if( nt == NOTE_TYPE_INVALID )
-		nt = NOTE_TYPE_32ND;
+		nt = NOTE_TYPE_192ND;
 	nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
 
 	Actor *pActorOut = bActive ? m_pHoldTailActive[nt] : m_pHoldTailInactive[nt];
