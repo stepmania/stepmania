@@ -48,7 +48,9 @@ NotesWriterDWI.cpp NotesWriterDWI.h NotesWriterSM.cpp NotesWriterSM.h NoteTypes.
 PlayerOptions.cpp PlayerOptions.h RandomSample.cpp RandomSample.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h StyleDef.cpp StyleDef.h StyleInput.h \
 TitleSubstitution.cpp TitleSubstitution.h Inventory.cpp Inventory.h PlayerNumber.cpp PlayerNumber.h \
-LyricsLoader.cpp LyricsLoader.h NoteFieldPositioning.cpp NoteFieldPositioning.h
+LyricsLoader.cpp LyricsLoader.h NoteFieldPositioning.cpp NoteFieldPositioning.h RaveHelper.cpp RaveHelper.h \
+PlayerAI.cpp PlayerAI.h Character.cpp Character.h
+
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
 
@@ -86,7 +88,7 @@ LifeMeterBattery.h MotionBlurSprite.cpp MotionBlurSprite.h NoteDisplay.cpp NoteD
 NoteField.h ScoreDisplay.cpp ScoreDisplay.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h ScoreDisplayOni.cpp \
 ScoreDisplayOni.h ScoreKeeper.cpp ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreDisplayBattle.cpp \
 ScoreDisplayBattle.h ActiveItemList.cpp ActiveItemList.h LyricDisplay.cpp LyricDisplay.h \
-TimingAssist.cpp TimingAssist.h
+TimingAssist.cpp TimingAssist.h ScoreDisplayRave.cpp  ScoreDisplayRave.h
 
 Screens = \
 Screen.cpp Screen.h ScreenAlbums.cpp ScreenAlbums.h ScreenAppearanceOptions.cpp ScreenAppearanceOptions.h \
@@ -110,7 +112,9 @@ ScreenSelectStyle5th.h ScreenSongOptions.cpp ScreenSongOptions.h ScreenStage.cpp
 ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
 ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
 ScreenUnlock.h ScreenWarning.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenSoundOptions.cpp ScreenSoundOptions.h \
-ScreenAutogenOptions.cpp ScreenAutogenOptions.h ScreenCredits.cpp ScreenCredits.h
+ScreenAutogenOptions.cpp ScreenAutogenOptions.h ScreenCredits.cpp ScreenCredits.h \
+ScreenSelectCharacter.cpp ScreenSelectCharacter.h
+ 
 
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
@@ -125,7 +129,10 @@ stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transi
 		    arch/LoadingWindow/LoadingWindow_SDL.h \
 		    arch/LoadingWindow/LoadingWindow_Null.h \
 		    arch/MovieTexture/MovieTexture.cpp \
-		    arch/Sound/RageSoundDriver_Null.cpp
+		    arch/Sound/RageSoundDriver_Null.cpp \
+		    arch/LowLevelWindow/LowLevelWindow.h \
+		    arch/LowLevelWindow/LowLevelWindow_SDL.cpp \
+		    arch/LowLevelWindow/LowLevelWindow_SDL.h \
 
 # Note that we still end up linking dynamically to the shared system library
 # for SDL_image.  This is annoying, but it's not a major problem.  The
