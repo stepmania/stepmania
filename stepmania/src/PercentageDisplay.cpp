@@ -18,6 +18,7 @@ PercentageDisplay::PercentageDisplay()
 
 void PercentageDisplay::Load( PlayerNumber pn )
 {
+	ASSERT( m_sName != "" ); // set this!
 	m_PlayerNumber = pn;
 	m_Last = -1;
 
