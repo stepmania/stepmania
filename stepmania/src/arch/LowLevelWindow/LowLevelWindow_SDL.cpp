@@ -84,8 +84,15 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 #endif
 
 	if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
-		RageException::Throw( "SDL_INIT_VIDEO failed: %s", mySDL_GetError().c_str() );
+	{
+		const CString err = mySDL_GetError();
 
+		/* Check for a confusing SDL error message. */
+		if( !err.CompareNoCase( "X11 driver not configured with OpenGL" ) )
+			RageException::Throw( "Your installation of SDL was not compiled with OpenGL enabled." );
+		RageException::Throw( "SDL_INIT_VIDEO failed: %s", err.c_str() );
+	}
+	
 	/* Put them back. */
 	for( i = 0; i < SDL_NUMEVENTS; ++i)
 		mySDL_EventState((Uint8) i, EventEnabled[i]);
@@ -96,7 +103,7 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	mySDL_WM_SetIcon( p.sIconFile );
 
 
-	int flags = SDL_RESIZABLE | SDL_OPENGL; // | SDL_DOUBLEBUF; // no need for DirectDraw to be double-buffered
+	int flags = SDL_RESIZABLE | SDL_OPENGL;
 	if( !p.windowed )
 		flags |= SDL_FULLSCREEN;
 
