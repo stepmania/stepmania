@@ -6,11 +6,12 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 
+#include "arch/arch_platform.h"
+
 /* _WINDOWS is Windows only, where _WIN32 is Windows and Xbox, I think. Does this
  * work on the Xbox? -glenn */
 #if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
-#define HAVE_FFMPEG
 #endif
 
 #ifdef HAVE_FFMPEG
