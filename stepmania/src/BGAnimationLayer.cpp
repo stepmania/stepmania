@@ -964,13 +964,19 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	// FIXME:  Very dangerous.  How could we handle this better?
 	Sprite* pSprite = (Sprite*)m_pActors[0];
 
-	pSprite->GetTexture()->SetPlaybackRate(fRate);
+
+	//
+	// The order of these actions is important.
+	// At this point, the movie is probably paused (by LosingFocus()).
+	// Play the movie, then set the playback rate (which can 
+	// potentially pause the movie again).
+	//
 	if( bRewindMovie )
 		pSprite->GetTexture()->SetPosition( 0 );
 	pSprite->GetTexture()->SetLooping(bLoop);
 
-	// if movie texture, pause and play movie so we don't waste CPU cycles decoding frames that won't be shown
 	pSprite->GetTexture()->Play();
+	pSprite->GetTexture()->SetPlaybackRate(fRate);
 
 	for( unsigned i=0; i<m_pActors.size(); i++ )
 		m_pActors[i]->Command( m_sOnCommand );

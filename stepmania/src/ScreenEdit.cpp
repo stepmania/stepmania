@@ -193,7 +193,7 @@ Menu g_EditSongInfo
 Menu g_BGChange
 (
 	"Background Change",
-	MenuRow( "Rate (applies to new adds)",			true, 5, "50%","60%","70%","80%","90%","100%","110%","120%","130%","140%","150%","160%","170%","180%","190%","200%" ),
+	MenuRow( "Rate (applies to new adds)",			true, 15, "-100%","-80%","-60%","-40%","-20%","0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
 	MenuRow( "Fade Last (applies to new adds)",		true, 0, "NO","YES" ),
 	MenuRow( "Rewind Movie (applies to new adds)",	true, 0, "NO","YES" ),
 	MenuRow( "Loop (applies to new adds)",			true, 1, "NO","YES" ),

@@ -414,13 +414,10 @@ void Background::Update( float fDeltaTime )
 
 				m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
 
-				if( pOld != m_pCurrentBGA )
-				{
-					if( pOld )
-						pOld->LosingFocus();
-					if( m_pCurrentBGA )
-						m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
-				}
+				if( pOld )
+					pOld->LosingFocus();
+				if( m_pCurrentBGA )
+					m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
 
 				m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
 			}
