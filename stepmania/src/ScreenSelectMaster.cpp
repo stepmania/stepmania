@@ -602,9 +602,15 @@ float ScreenSelectMaster::TweenOffScreen()
 			continue;	// skip
 
 		bool SelectedByEitherPlayer = false;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( GAMESTATE->IsPlayerEnabled(p) && m_iChoice[p] == (int)c )
+		if( SHARED_PREVIEW_AND_CURSOR )
+		{
+			if( m_iChoice[0] == (int)c )
 				SelectedByEitherPlayer = true;
+		}
+		else
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) && m_iChoice[p] == (int)c )
+					SelectedByEitherPlayer = true;
 
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 		{
