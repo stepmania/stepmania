@@ -50,9 +50,9 @@ protected:
 	void ExitCourseDisplayMode();
 	bool m_bInCourseDisplayMode;
 	void TweenSongPartsOnScreen( bool Initial );
-	void TweenSongPartsOffScreen();
+	void TweenSongPartsOffScreen( bool Final );
 	void TweenCoursePartsOnScreen( bool Initial );
-	void TweenCoursePartsOffScreen();
+	void TweenCoursePartsOffScreen( bool Final );
 	void SkipSongPartTweens();
 	void SkipCoursePartTweens();
 

@@ -308,7 +308,7 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 	}
 }
 
-void ScreenSelectMusic::TweenSongPartsOffScreen()
+void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 {
 	m_GrooveRadar.TweenOffScreen();
 	m_GrooveGraph.TweenOffScreen();
@@ -335,7 +335,7 @@ void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
 		m_CourseContentsFrame.SetFromCourse(NULL);
 }
 
-void ScreenSelectMusic::TweenCoursePartsOffScreen()
+void ScreenSelectMusic::TweenCoursePartsOffScreen( bool Final )
 {
 	m_CourseContentsFrame.SetZoomY( 1 );
 	m_CourseContentsFrame.FadeOff( 0, "foldy", 0.3f );
@@ -366,19 +366,20 @@ void ScreenSelectMusic::SkipCoursePartTweens()
 
 void ScreenSelectMusic::TweenOnScreen()
 {
+	TweenSongPartsOnScreen( true );
+	TweenCoursePartsOnScreen( true );
+
 	switch( GAMESTATE->m_SongSortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
-		TweenCoursePartsOnScreen( true );
-		TweenSongPartsOffScreen();
+		TweenSongPartsOffScreen( false );
 		SkipSongPartTweens();
 		break;
 	default:
-		TweenSongPartsOnScreen( true );
-		TweenCoursePartsOffScreen();
+		TweenCoursePartsOffScreen( false );
 		SkipCoursePartTweens();
 		break;
 	}
@@ -420,10 +421,10 @@ void ScreenSelectMusic::TweenOffScreen()
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
-		TweenCoursePartsOffScreen();
+		TweenCoursePartsOffScreen( true );
 		break;
 	default:
-		TweenSongPartsOffScreen();
+		TweenSongPartsOffScreen( true );
 		break;
 	}
 
@@ -463,7 +464,7 @@ void ScreenSelectMusic::EnterCourseDisplayMode()
 		return;
 	m_bInCourseDisplayMode = true;
 
-	TweenSongPartsOffScreen();
+	TweenSongPartsOffScreen( false );
 	TweenCoursePartsOnScreen( false );
 }
 
@@ -474,7 +475,7 @@ void ScreenSelectMusic::ExitCourseDisplayMode()
 	m_bInCourseDisplayMode = false;
 
 	TweenSongPartsOnScreen( false );
-	TweenCoursePartsOffScreen();
+	TweenCoursePartsOffScreen( false );
 }
 
 void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
