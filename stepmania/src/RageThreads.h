@@ -1,7 +1,8 @@
 #ifndef RAGE_THREADS_H
 #define RAGE_THREADS_H
 
-#include "SDL_thread.h"
+struct SDL_mutex;
+struct SDL_Thread;
 
 class RageThread
 {
@@ -23,8 +24,14 @@ public:
 	static const char *GetCurThreadName();
 
 	int Wait();
+	bool IsCreated() const { return thr != NULL; }
 };
 
+void SetCheckpoint( const char *file, int line, const char *message );
+const char *GetCheckpointLogs( const char *delim );
+
+#define CHECKPOINT (SetCheckpoint(__FILE__, __LINE__, NULL))
+#define CHECKPOINT_M(m) (SetCheckpoint(__FILE__, __LINE__, m))
 
 /* Mutex class that follows the behavior of Windows mutexes: if the same
  * thread locks the same mutex twice, we just increase a refcount; a mutex
@@ -33,7 +40,7 @@ public:
  * coupled threads, so that's OK.) */
 class RageMutex
 {
-	Uint32 LockedBy;
+	unsigned LockedBy;
 	int Locked;
 	SDL_mutex *mut, *mutwait;
 

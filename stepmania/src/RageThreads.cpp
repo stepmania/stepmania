@@ -16,6 +16,7 @@
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "SDL_thread.h"
 
 #ifdef _WINDOWS
 #include "archutils/win32/tls.h"
@@ -39,6 +40,9 @@ struct ThreadSlot
 	char name[1024];
 	Uint32 threadid;
 
+	/* Format this beforehand, since it's easier to do that than to do it under crash conditions. */
+	char ThreadFormattedOutput[1024];
+
 	bool used;
 
 #if defined(PID_BASED_THREADS)
@@ -48,13 +52,31 @@ struct ThreadSlot
 	int pid;
 #endif
 
+	#undef CHECKPOINT_COUNT
+	#define CHECKPOINT_COUNT 2
+	struct ThreadCheckpoint
+	{
+		const char *File, *Message;
+		int Line;
+		char FormattedBuf[1024];
+
+		ThreadCheckpoint() { Set( NULL, 0, NULL ); }
+		void Set(const char *File_, int Line_, const char *Message_=NULL);
+		const char *GetFormattedCheckpoint();
+	};
+	ThreadCheckpoint Checkpoints[CHECKPOINT_COUNT];
+	int CurCheckpoint, NumCheckpoints;
+	const char *GetFormattedCheckpoint( int lineno );
+
 	/* Used to bootstrap the thread: */
 	int (*fn)(void *);
 	void *data;
 
-	ThreadSlot()
+	ThreadSlot() { Init(); }
+	void Init()
 	{
 		used = false;
+		CurCheckpoint = NumCheckpoints = 0;
 #if defined(PID_BASED_THREADS)
 		pid = -1;
 #endif
@@ -64,6 +86,39 @@ struct ThreadSlot
 	void ShutdownThisThread();
 };
 
+void ThreadSlot::ThreadCheckpoint::Set(const char *File_, int Line_, const char *Message_)
+{
+	File=File_;
+	Line=Line_;
+	Message=Message_;
+	sprintf( FormattedBuf, "        %s:%i %s",
+		File, Line, Message? Message:"" );
+}
+
+const char *ThreadSlot::ThreadCheckpoint::GetFormattedCheckpoint()
+{
+	if( File == NULL )
+		return NULL;
+
+	/* Make sure it's terminated: */
+	FormattedBuf [ sizeof(FormattedBuf)-1 ] = 0;
+
+	return FormattedBuf;
+}
+
+const char *ThreadSlot::GetFormattedCheckpoint( int lineno )
+{
+	if( lineno >= CHECKPOINT_COUNT || lineno >= NumCheckpoints )
+		return NULL;
+
+	if( NumCheckpoints == CHECKPOINT_COUNT )
+	{
+		lineno += CurCheckpoint;
+		lineno %= CHECKPOINT_COUNT;
+	}
+
+	return Checkpoints[lineno].GetFormattedCheckpoint();
+}
 
 static ThreadSlot g_ThreadSlots[MAX_THREADS];
 static RageMutex g_ThreadSlotsLock;
@@ -120,14 +175,14 @@ void ThreadSlot::SetupThisThread()
 #endif
 
 	threadid = SDL_ThreadID();
+
+	sprintf(ThreadFormattedOutput, "Thread %08x (%s)", threadid, name);
+	CHECKPOINT;
 }
 
 void ThreadSlot::ShutdownThisThread()
 {
-#if defined(PID_BASED_THREADS)
-	pid = -1;
-#endif
-	used = false;
+	Init();
 }
 
 static int StartThread( void *p )
@@ -174,7 +229,7 @@ struct SetupMainThread
 	SetupMainThread()
 	{
 		int slot = FindEmptyThreadSlot();
-		strcpy( g_ThreadSlots[slot].name, "main thread" );
+		strcpy( g_ThreadSlots[slot].name, "Main thread" );
 		g_ThreadSlots[slot].SetupThisThread();
 	}
 } SetupMainThreadObj;
@@ -223,6 +278,62 @@ void RageThread::HaltAllThreads( bool Kill )
 	}
 #endif
 }
+
+
+void SetCheckpoint( const char *file, int line, const char *message )
+{
+	int slotno = GetCurThreadSlot();
+	ASSERT( slotno != -1 );
+
+	ThreadSlot &slot = g_ThreadSlots[slotno];
+	
+	slot.Checkpoints[slot.CurCheckpoint].Set( file, line, message );
+
+	++slot.CurCheckpoint;
+	slot.NumCheckpoints = max( slot.NumCheckpoints, slot.CurCheckpoint );
+	slot.CurCheckpoint %= CHECKPOINT_COUNT;
+}
+
+/* This is called under crash conditions.  Be careful. */
+const char *GetCheckpointLog( int slotno, int lineno )
+{
+	static char ret[1024*32];
+	ret[0] = 0;
+
+	ThreadSlot &slot = g_ThreadSlots[slotno];
+	if( !slot.used )
+		return NULL;
+
+	if( lineno != 0 )
+		return slot.GetFormattedCheckpoint( lineno-1 );
+
+	slot.ThreadFormattedOutput[sizeof(slot.ThreadFormattedOutput)-1] = 0;
+	strcat(ret, slot.ThreadFormattedOutput);
+	return ret;
+}
+
+const char *GetCheckpointLogs( const char *delim )
+{
+	static char ret[1024*32];
+	ret[0] = 0;
+
+	for( int slotno = 0; slotno < MAX_THREADS; ++slotno )
+	{
+		const char *buf = GetCheckpointLog( slotno, 0 );
+		if( buf == NULL )
+			break;
+		strcat( ret, buf );
+		strcat( ret, delim );
+		
+		for( int line = 1; (buf = GetCheckpointLog( slotno, line )) != NULL; ++line )
+		{
+			strcat( ret, buf );
+			strcat( ret, delim );
+		}
+	}	
+	return ret;
+}
+
 
 RageMutex::RageMutex()
 {
