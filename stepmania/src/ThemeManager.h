@@ -14,7 +14,19 @@ class IThemeMetric;
 class IniFile;
 struct lua_State;
 
-enum ElementCategory { BGAnimations, Fonts, Graphics, Numbers, Sounds, Other, NUM_ELEMENT_CATEGORIES };
+enum ElementCategory
+{
+	ELEMENT_CATEGORY_BGANIMATIONS,
+	ELEMENT_CATEGORY_FONTS,
+	ELEMENT_CATEGORY_GRAPHICS,
+	ELEMENT_CATEGORY_NUMBERS,
+	ELEMENT_CATEGORY_SOUNDS,
+	ELEMENT_CATEGORY_OTHER,
+	NUM_ELEMENT_CATEGORIES
+};
+#define FOREACH_ElementCategory( ec ) FOREACH_ENUM( ElementCategory, NUM_ELEMENT_CATEGORIES, ec )
+const CString& ElementCategoryToString( ElementCategory ec );
+ElementCategory StringToElementCategory( const CString& s );
 
 struct Theme;
 
@@ -44,11 +56,11 @@ public:
 	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also
 	 * easier to search for uses of obsolete functions if they have a different name. */
 	CString GetPath( ElementCategory category, const CString &sClassName, const CString &sElement, bool bOptional=false );
-	CString GetPathB( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(BGAnimations,sClassName,sElement,bOptional); };
-	CString GetPathF( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Fonts,sClassName,sElement,bOptional); };
-	CString GetPathG( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Graphics,sClassName,sElement,bOptional); };
-	CString GetPathS( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Sounds,sClassName,sElement,bOptional); };
-	CString GetPathO( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(Other,sClassName,sElement,bOptional); };
+	CString GetPathB( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_BGANIMATIONS,sClassName,sElement,bOptional); };
+	CString GetPathF( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_FONTS,sClassName,sElement,bOptional); };
+	CString GetPathG( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_GRAPHICS,sClassName,sElement,bOptional); };
+	CString GetPathS( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_SOUNDS,sClassName,sElement,bOptional); };
+	CString GetPathO( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_OTHER,sClassName,sElement,bOptional); };
 
 	// TODO: remove these and update the places that use them
 	CString GetPathToB( const CString &sFileName, bool bOptional=false );

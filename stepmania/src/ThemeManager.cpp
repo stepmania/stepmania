@@ -24,14 +24,7 @@
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
-
-const CString BASE_THEME_NAME = "default";
-const CString LANGUAGES_SUBDIR = "Languages/";
-const CString BASE_LANGUAGE = "english";
-const CString THEMES_DIR  = "Themes/";
-const CString METRICS_FILE = "metrics.ini";
-const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
-{
+static const CString ElementCategoryNames[NUM_ELEMENT_CATEGORIES] = {
 	"BGAnimations",
 	"Fonts",
 	"Graphics",
@@ -39,6 +32,26 @@ const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 	"Sounds",
 	"Other"
 };
+XToString( ElementCategory );
+StringToX( ElementCategory );
+static void LuaElementCategory(lua_State* L)
+{
+	FOREACH_ElementCategory( ec ) 
+	{
+		CString s = ElementCategoryNames[ec];
+		s.MakeUpper();
+		LUA->SetGlobal( "ELEMENT_CATEGORY_"+s, ec );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaElementCategory );
+
+
+
+const CString BASE_THEME_NAME = "default";
+const CString LANGUAGES_SUBDIR = "Languages/";
+const CString BASE_LANGUAGE = "english";
+const CString THEMES_DIR  = "Themes/";
+const CString METRICS_FILE = "metrics.ini";
 
 
 struct Theme
@@ -342,13 +355,13 @@ CString ThemeManager::GetPathToRaw( const CString &sThemeName_, ElementCategory 
 try_element_again:
 
 	const CString sThemeDir = GetThemeDirFromName( sThemeName );
-	const CString &sCategory = ELEMENT_CATEGORY_STRING[category];
+	const CString &sCategory = ElementCategoryToString(category);
 
 	CStringArray asElementPaths;
 
 	// If sFileName already has an extension, we're looking for a specific file
 	bool bLookingForSpecificFile = sElement.find_last_of('.') != sElement.npos;
-	bool bDirsOnly = category==BGAnimations;
+	bool bDirsOnly = category==ELEMENT_CATEGORY_BGANIMATIONS;
 
 	if( bLookingForSpecificFile )
 	{
@@ -356,7 +369,7 @@ try_element_again:
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
-		const CString wildcard = (category == BGAnimations? "":"*");
+		const CString wildcard = (category == ELEMENT_CATEGORY_BGANIMATIONS? "":"*");
 
 		/* First, look for redirs. */
 		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + wildcard + ".redir",
@@ -397,7 +410,7 @@ try_element_again:
 			}
 		}
 		
-		if( category == Fonts )
+		if( category == ELEMENT_CATEGORY_FONTS )
 			Font::WeedFontNames(asElementPaths, ClassAndElementToFileName(sClassName,sElement));
 	}
 	
@@ -405,8 +418,8 @@ try_element_again:
 	if( asElementPaths.size() == 0 )
 	{
 		// HACK: have Fonts fall back to Numbers.  Eventually Numbers will be removed.
-		if( category == Fonts )
-			return GetPathToRaw( sThemeName, Numbers, sClassName, sElement ) ;
+		if( category == ELEMENT_CATEGORY_FONTS )
+			return GetPathToRaw( sThemeName, ELEMENT_CATEGORY_NUMBERS, sClassName, sElement ) ;
 		return "";	// This isn't fatal.
 	}
 
@@ -450,7 +463,7 @@ try_element_again:
 		FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
 		
 		/* backwards-compatibility hack */
-		if( category == Fonts )
+		if( category == ELEMENT_CATEGORY_FONTS )
 			sNewFileName.Replace(" 16x16.png", "");
 
 		/* Search again.  For example, themes/default/Fonts/foo might redir
@@ -525,12 +538,12 @@ try_element_again:
 		return "";
 	}
 
-	const CString &sCategory = ELEMENT_CATEGORY_STRING[category];
+	const CString &sCategory = ElementCategoryToString(category);
 
 	/* We can't fall back on _missing in Other: the file types are unknown. */
 	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
 	Dialog::Result res;
-	if( category != Other )
+	if( category != ELEMENT_CATEGORY_OTHER )
 		res = Dialog::AbortRetryIgnore(sMessage, "MissingThemeElement");
 	else
 		res = Dialog::AbortRetry(sMessage, "MissingThemeElement");
@@ -821,10 +834,12 @@ public:
 	LunaThemeManager() { LUA->Register( Register ); }
 
 	static int GetMetric( T* p, lua_State *L )		{ lua_pushstring(L, p->GetMetric(SArg(1),SArg(2)) ); return 1; }
+	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath((ElementCategory)IArg(1),SArg(2),SArg(3)) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetMetric )
+		ADD_METHOD( GetPath )
 		Luna<T>::Register( L );
 
 		// add global singleton
