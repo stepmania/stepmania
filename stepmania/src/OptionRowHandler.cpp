@@ -982,12 +982,9 @@ public:
 			defOut.choices.push_back( "none" );
 		}
 
-		if( m_ppStepsToFill->Get() == NULL )
-		{
-			if( m_pDifficultyToFill )
-				m_pDifficultyToFill->Set( m_vDifficulties[0] );
-			m_ppStepsToFill->Set( m_vSteps[0] );
-		}
+		if( m_pDifficultyToFill )
+			m_pDifficultyToFill->Set( m_vDifficulties[0] );
+		m_ppStepsToFill->Set( m_vSteps[0] );
 	}
 	virtual void ImportOption( const OptionRowDefinition &def, PlayerNumber pn, vector<bool> &vbSelectedOut ) const
 	{

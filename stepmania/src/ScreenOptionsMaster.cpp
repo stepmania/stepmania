@@ -69,12 +69,13 @@ void ScreenOptionsMaster::Init()
 			RageException::Throw( "Unknown flag \"%s\"", sFlag.c_str() );
 	}
 
-	m_OptionRowAlloc.resize( asLineNames.size() );
+	vector<OptionRowDefinition> OptionRowDefs;
+	OptionRowDefs.resize( asLineNames.size() );
 	OptionRowHandlers.resize( asLineNames.size() );
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
-		OptionRowDefinition &def = m_OptionRowAlloc[i];
+		OptionRowDefinition &def = OptionRowDefs[i];
 		CString sRowCommands = LINE(sLineName);
 		OptionRowHandler* &pHand = OptionRowHandlers[i];
 		pHand = NULL;
@@ -92,7 +93,7 @@ void ScreenOptionsMaster::Init()
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	InitMenu( im, m_OptionRowAlloc, OptionRowHandlers );
+	InitMenu( im, OptionRowDefs, OptionRowHandlers );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
@@ -145,6 +146,41 @@ void ScreenOptionsMaster::ExportOptions( int r )
 {
 	OptionRow &row = *m_Rows[r];
 	m_iChangeMask |= row.ExportOptions();
+}
+
+void ScreenOptionsMaster::BeginFadingOut()
+{
+	/* If the selection is on a LIST, and the selected LIST option sets the screen,
+	* honor it. */
+	m_sNextScreen = "";
+
+	const unsigned uFocusRow = this->GetCurrentRow();
+
+	for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
+	{
+		OptionRow &row = *m_Rows[r];
+
+		CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
+		
+		/* If SELECT_NONE, only apply it if it's the selected option. */
+		if( row.GetRowDef().selectType == SELECT_NONE && r != uFocusRow )
+			continue;
+
+		OptionRowHandler *pHand = OptionRowHandlers[r];
+
+		const int iChoice = row.GetChoiceInRowWithFocus(GAMESTATE->m_MasterPlayerNumber);
+		CString sScreen = pHand->GetAndEraseScreen( iChoice );
+		if( !sScreen.empty() )
+			m_sNextScreen = sScreen;
+	}
+	CHECKPOINT;
+
+	// NEXT_SCREEN;
+	if( m_sNextScreen == "" )
+		m_sNextScreen = NEXT_SCREEN;
+
+	if( !m_sNextScreen.empty() )
+		ScreenOptions::BeginFadingOut();
 }
 
 void ScreenOptionsMaster::GoToNextScreen()
@@ -221,36 +257,14 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		
 			CHECKPOINT;
 
-			const unsigned uFocusRow = this->GetCurrentRow();
-			/* If the selection is on a LIST, and the selected LIST option sets the screen,
-			* honor it. */
-			m_sNextScreen = "";
-
 			for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
 			{
-				OptionRow &row = *m_Rows[r];
+				const OptionRow &row = *m_Rows[r];
 
 				CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
-				
-				/* If SELECT_NONE, only apply it if it's the selected option. */
-				const OptionRowDefinition &def = m_OptionRowAlloc[r];
-				if( def.selectType == SELECT_NONE && r != uFocusRow )
-					continue;
-
-				OptionRowHandler *pHand = OptionRowHandlers[r];
-
-				const int iChoice = row.GetChoiceInRowWithFocus(GAMESTATE->m_MasterPlayerNumber);
-				CString sScreen = pHand->GetAndEraseScreen( iChoice );
-				if( !sScreen.empty() )
-					m_sNextScreen = sScreen;
-
+			
 				ExportOptions( r );
 			}
-			CHECKPOINT;
-
-			// NEXT_SCREEN;
-			if( m_sNextScreen == "" )
-				m_sNextScreen = NEXT_SCREEN;
 
 			if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
 			{

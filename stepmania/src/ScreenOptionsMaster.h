@@ -5,7 +5,7 @@
 
 class OptionRowHandler;
 
-class ScreenOptionsMaster: public ScreenOptions
+class ScreenOptionsMaster : public ScreenOptions
 {
 public:
 	ScreenOptionsMaster( CString sName );
@@ -19,7 +19,6 @@ protected:
 	CString m_sNextScreen;
 
 	vector<OptionRowHandler*> OptionRowHandlers;
-	vector<OptionRowDefinition> m_OptionRowAlloc;
 	
 protected:
 	void HandleScreenMessage( const ScreenMessage SM );
@@ -28,6 +27,7 @@ protected:
 	virtual void ExportOptions( int row );
 	virtual void ImportOptionsForPlayer( PlayerNumber pn ); // used by ScreenPlayerOptions
 
+	virtual void BeginFadingOut();
 	virtual void GoToNextScreen();
 	virtual void GoToPrevScreen();
 

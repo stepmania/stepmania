@@ -53,8 +53,7 @@ protected:
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 
-	void StartGoToNextScreen();
-
+	virtual void BeginFadingOut() { this->PostScreenMessage( SM_BeginFadingOut, 0 ); }
 	virtual void GoToNextScreen() = 0;
 	virtual void GoToPrevScreen() = 0;
 
@@ -68,7 +67,8 @@ protected:
 
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
-	bool AllAreOnExit() const;
+	bool IsOnLastRow( PlayerNumber pn ) const;
+	bool AllAreOnLastRow() const;
 
 protected:	// derived classes need access to these
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );
@@ -133,6 +133,7 @@ protected:
 	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
 	ThemeMetric<apActorCommands>	FRAME_OFF_COMMAND;
+	ThemeMetric<bool>				SHOW_EXIT_ROW;
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
 	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
 	ThemeMetric<CString>			OPTION_ROW_TYPE;

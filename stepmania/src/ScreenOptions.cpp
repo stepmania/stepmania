@@ -91,6 +91,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SHOW_BPM_IN_SPEED_TITLE			(m_sName,"ShowBpmInSpeedTitle"),
 	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
 	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
+	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
 	OPTION_ROW_TYPE					(m_sName,"OptionRowType")
@@ -191,9 +192,9 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		m_framePage.AddChild( &row );
 	}
 
-	if( SEPARATE_EXIT_ROW )
+	if( SHOW_EXIT_ROW )
 	{
-		// TRICKY:  Add one more item.  This will be "EXIT"
+		// TRICKY:  Add "EXIT" item
 		m_Rows.push_back( new OptionRow() );
 		OptionRow &row = *m_Rows.back();
 		row.LoadMetrics( OPTION_ROW_TYPE );
@@ -298,10 +299,9 @@ ScreenOptions::~ScreenOptions()
 CString ScreenOptions::GetExplanationText( int iRow ) const
 {
 	OptionRow &row = *m_Rows[iRow];
-	if( row.GetRowType() == OptionRow::ROW_EXIT )
-		return "";
 
 	CString sLineName = row.GetRowDef().name;
+	ASSERT( !sLineName.empty() );
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
@@ -311,8 +311,6 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 CString ScreenOptions::GetExplanationTitle( int iRow ) const
 {
 	OptionRow &row = *m_Rows[iRow];
-	if( row.GetRowType() == OptionRow::ROW_EXIT )
-		return "";
 	
 	CString sLineName = row.GetRowDef().name;
 	sLineName.Replace("\n-","");
@@ -515,7 +513,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_MenuTimer:
-		StartGoToNextScreen();
+		this->BeginFadingOut();
 		break;
 	case SM_GoToPrevScreen:
 //		this->ExportOptions();	// Don't save options if we're going back!
@@ -738,16 +736,19 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 	Back( SM_GoToPrevScreen );
 }
 
-void ScreenOptions::StartGoToNextScreen()
+bool ScreenOptions::IsOnLastRow( PlayerNumber pn ) const
 {
-	this->PostScreenMessage( SM_BeginFadingOut, 0 );
+	int iCurRow = m_iCurrentRow[pn];
+	return iCurRow == (int)(m_Rows.size()-1);
 }
 
-bool ScreenOptions::AllAreOnExit() const
+bool ScreenOptions::AllAreOnLastRow() const
 {
 	FOREACH_HumanPlayer( p )
-		if( m_Rows[m_iCurrentRow[p]]->GetRowType() != OptionRow::ROW_EXIT )
+	{
+		if( !IsOnLastRow(p) )
 			return false;
+	}
 	return true;
 }
 
@@ -766,7 +767,8 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		break;
 	}
 	
-	OptionRow &row = *m_Rows[m_iCurrentRow[pn]];
+	int iCurRow = m_iCurrentRow[pn];
+	OptionRow &row = *m_Rows[iCurRow];
 	
 
 	/* If we are in a three-button mode, check to see if MENU_BUTTON_LEFT and
@@ -789,11 +791,11 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 
 
 	// If on exit, check it all players are on "Exit"
-	if( row.GetRowType() == OptionRow::ROW_EXIT )
+	if( IsOnLastRow(pn) )
 	{
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
-		if( AllAreOnExit()  &&  selectType == IET_FIRST_PRESS && !IsTransitioning() )
-			StartGoToNextScreen();
+		if( AllAreOnLastRow()  &&  selectType == IET_FIRST_PRESS && !IsTransitioning() )
+			this->BeginFadingOut();
 		return;
 	}
 
@@ -851,7 +853,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType selectType 
 		case NAV_THREE_KEY_MENU:
 			/* Don't accept START to go to the next screen if we're still transitioning in. */
 			if( selectType == IET_FIRST_PRESS && !IsTransitioning() )
-				StartGoToNextScreen();
+				this->BeginFadingOut();
 			break;
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
@@ -882,7 +884,10 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	const int iCurRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_Rows[iCurRow];
 	
-	const int iNumOptions = (row.GetRowType() == OptionRow::ROW_EXIT)? 1: row.GetRowDef().choices.size();
+	if( row.GetRowType() == OptionRow::ROW_EXIT	)	// EXIT is selected
+		return;		// don't allow a move
+
+	const int iNumOptions = row.GetRowDef().choices.size();
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
@@ -896,9 +901,6 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	if( Repeat )
 		return;
-
-	if( row.GetRowType() == OptionRow::ROW_EXIT	)	// EXIT is selected
-		return;		// don't allow a move
 
 	bool bOneChanged = false;
 
