@@ -248,6 +248,8 @@ CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIR
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\uninst.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
 
+CreateShortCut "$INSTDIR\stepmania.lnk" "$INSTDIR\Program\stepmania.exe"
+
 # We want to delete a few old desktop icons, since they weren't being
 # uninstalled correctly during alpha 2 and 3.  They were installed in
 # the 'all' context.  Try to delete them in both contexts.
