@@ -21,11 +21,8 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"
-#include "AnnouncerManager.h"
-#include "InputMapper.h"
 #include "GameState.h"
 #include "CodeDetector.h"
-#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "ActorUtil.h"
@@ -333,7 +330,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_soundOptionsChange.Load( THEME->GetPathToS("ScreenSelectMusic options") );
 	m_soundLocked.Load( THEME->GetPathToS("ScreenSelectMusic locked") );
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
+	SOUND->PlayOnceFromAnnouncer( "select music intro" );
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -1065,13 +1062,13 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			bIsRepeat = false;
 
 		if( bIsRepeat )
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment repeat") );
+			SOUND->PlayOnceFromAnnouncer( "select music comment repeat" );
 		else if( bIsNew )
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment new") );
+			SOUND->PlayOnceFromAnnouncer( "select music comment new" );
 		else if( bIsHard )
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
+			SOUND->PlayOnceFromAnnouncer( "select music comment hard" );
 		else
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment general") );
+			SOUND->PlayOnceFromAnnouncer( "select music comment general" );
 
 		m_bMadeChoice = true;
 
@@ -1084,7 +1081,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	}
 	case TYPE_COURSE:
 	{
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select course comment general") );
+		SOUND->PlayOnceFromAnnouncer( "select course comment general" );
 
 		Course *pCourse = m_MusicWheel.GetSelectedCourse();
 		ASSERT( pCourse );
