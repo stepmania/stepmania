@@ -73,7 +73,6 @@ protected:
 	void GetFilesMatching(const CString &dir, 
 		const CString &beginning, const CString &containing, const CString &ending, 
 		vector<CString> &out, bool bOnlyDirs);
-	void AddFileSet( CString sPath, FileSet *fs );
 
 	/* The given path wasn't cached.  Cache it, and return the cached FileSet or
 	 * NULL on failure. */
@@ -84,6 +83,8 @@ public:
 	FilenameDB::FilenameDB():
 		ExpireSeconds( -1 ) { }
 	FilenameDB::~FilenameDB() { FlushDirCache(); }
+
+	void AddFileSet( CString sPath, FileSet *fs );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
