@@ -3,10 +3,6 @@
 
 #include "PlayerNumber.h"
 #include "Style.h"
-#include "PlayerNumber.h"
-#include "Actor.h"
-
-#include <set>
 
 class IniFile;
 
@@ -25,21 +21,14 @@ struct NoteFieldMode
 	/* Unique ID from the INI. */
 	CString m_Id;
 
-	/* Styles that this is valid for; empty means all. */
-	set<const Style*> Styles;
-
-	Actor m_Center;
-	Actor m_CenterTrack[MAX_NOTE_TRACKS];
-
 	CString GrayButtonNames[MAX_NOTE_TRACKS];
 	CString NoteButtonNames[MAX_NOTE_TRACKS];
 	CString GhostButtonNames[MAX_NOTE_TRACKS];
 
 	/* 0 = no perspective */
 	float m_fFov, m_fNear, m_fFar;
-	Actor m_Position;
-	Actor m_PositionTrack[MAX_NOTE_TRACKS];
-
+	float m_fPositionTrackX[MAX_NOTE_TRACKS];
+	
 	float m_fFirstPixelToDrawScale, m_fLastPixelToDrawScale;
 	CString m_Backdrop;
 

@@ -30,27 +30,20 @@ void NoteFieldMode::BeginDrawTrack(int tn)
 	/* It's useful to be able to use Actors like this, functioning only
 	 * for a transformation.  However, this is a big waste of matrix
 	 * stack space, as each of these will push.  Profile this. XXX */
-	m_Center.BeginDraw();
-	if(tn != -1)
-		m_CenterTrack[tn].BeginDraw();
-
 	if(m_fFov) 
 		DISPLAY->LoadMenuPerspective(m_fFov, CENTER_X, CENTER_Y);
 	
-	m_Position.BeginDraw();
 	if(tn != -1)
-		m_PositionTrack[tn].BeginDraw();
+	{
+		DISPLAY->PushMatrix();
+		DISPLAY->Translate( m_fPositionTrackX[tn], 0, 0 );
+	}
 }
 
 void NoteFieldMode::EndDrawTrack(int tn)
 {
 	if(tn != -1)
-		m_PositionTrack[tn].EndDraw();
-	m_Position.EndDraw();
-
-	if(tn != -1)
-		m_CenterTrack[tn].EndDraw();
-	m_Center.EndDraw();
+		DISPLAY->PopMatrix();
 
 	DISPLAY->CameraPopMatrix();
 }
@@ -64,44 +57,12 @@ static bool GetValue(IniFile &ini, int pn,
 	return ini.GetValue(key, valuename, value);
 }
 
-static bool GetValue(IniFile &ini, int pn,
-				   const CString &key, const CString &valuename, Actor &value )
-{
-	CString str;
-	if(!GetValue(ini, pn, key, valuename, str))
-		return false;
-
-	value.Command(str);
-	return true;
-}
-
 void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 {
 	m_Id = id;
 
 	/* Required: */
 	ASSERT( ini.GetValue ( id, "Name",			m_Name ) );
-
-	/* Grab this directly; don't try to set game specs per-player. */
-	CString sGames;
-	if(ini.GetValue( id, "Games", sGames ))
-	{
-		vector<CString> games;
-		split(sGames, ",", games);
-		for(unsigned n = 0; n < games.size(); ++n)
-		{
-			vector<CString> bits;
-			split(games[n], "-", bits);
-			ASSERT(bits.size() == 2);
-
-			const Game* pGame = GAMEMAN->StringToGameType( bits[0] );
-			ASSERT(pGame != NULL);
-
-			const Style *style = GAMEMAN->GameAndStringToStyle( pGame, bits[1] );
-			ASSERT(style != NULL);
-			Styles.insert(style);
-		}
-	}
 
 	// if we aren't loading a player, we can bail here.
 	if(pn == -1)
@@ -114,8 +75,6 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 	GetValue( ini, pn, id, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
 	GetValue( ini, pn, id, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
 
-	GetValue( ini, pn, id, "Center",				m_Center );
-	GetValue( ini, pn, id, "Position",				m_Position );
 	GetValue( ini, pn, id, "Judgment",				m_JudgmentCmd );
 	GetValue( ini, pn, id, "Combo",					m_ComboCmd );
 
@@ -123,9 +82,6 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 	int t;
 	for(t = 0; t < MAX_NOTE_TRACKS; ++t)
 	{
-		GetValue( ini, pn, id, ssprintf("Center%i", t+1), m_CenterTrack[t] );
-		GetValue( ini, pn, id, ssprintf("Position%i", t+1), m_PositionTrack[t] );
-
 		GetValue( ini, pn, id, ssprintf("GrayButton"), GrayButtonNames[t] );
 		GetValue( ini, pn, id, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
 
@@ -158,12 +114,6 @@ NoteFieldPositioning::NoteFieldPositioning(CString fn)
 
 bool NoteFieldMode::MatchesCurrentGame() const
 {
-	if(Styles.empty())
-		return true;
-
-	if(Styles.find(GAMESTATE->m_pCurStyle) == Styles.end())
-		return false;
-
 	return true;
 }
 
@@ -179,7 +129,7 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 	for(int tn = 0; tn < MAX_NOTE_TRACKS; ++tn)
 	{
 		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][tn].fXOffset;
-		mode.m_PositionTrack[tn].SetX(fPixelXOffsetFromCenter);
+		mode.m_fPositionTrackX[tn] = fPixelXOffsetFromCenter;
 	}
 
 	/* Is there a custom mode with the current name that fits the current game? */
