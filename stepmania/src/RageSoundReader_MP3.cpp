@@ -182,7 +182,6 @@ struct madlib_t
     Uint8 inbuf[16384], outbuf[8192];
     int outpos;
 	unsigned outleft;
-    int inbytes;
 
     struct mad_stream	Stream;
     struct mad_frame	Frame;
@@ -308,17 +307,16 @@ int RageSoundReader_MP3::handle_first_frame()
 int RageSoundReader_MP3::fill_buffer()
 {
 	/* Need more data. */
+	int inbytes = 0;
 	if( mad->Stream.next_frame != NULL )
 	{
 		/* Pull out remaining data from the last buffer. */
-		mad->inbytes = mad->Stream.bufend-mad->Stream.next_frame;
-		memmove( mad->inbuf, mad->Stream.next_frame, mad->inbytes );
+		inbytes = mad->Stream.bufend-mad->Stream.next_frame;
+		memmove( mad->inbuf, mad->Stream.next_frame, inbytes );
 		mad->inbuf_filepos += mad->Stream.next_frame - mad->inbuf;
-	} else {
-		mad->inbytes = 0;
 	}
 
-	int rc = file.Read( mad->inbuf + mad->inbytes, sizeof (mad->inbuf)-mad->inbytes );
+	int rc = file.Read( mad->inbuf + inbytes, sizeof (mad->inbuf)-inbytes );
 	if( rc < 0 )
 	{
 		SetError( file.GetError() );
@@ -327,8 +325,8 @@ int RageSoundReader_MP3::fill_buffer()
 	if ( rc == 0 )
 		return 0;
 
-	mad->inbytes += rc;
-	mad_stream_buffer( &mad->Stream, mad->inbuf, mad->inbytes );
+	inbytes += rc;
+	mad_stream_buffer( &mad->Stream, mad->inbuf, inbytes );
 	return rc;
 }
 
@@ -594,7 +592,7 @@ int RageSoundReader_MP3::seek_stream_to_byte( int byte )
 	mad_stream_finish(&mad->Stream);
 	mad_stream_init(&mad->Stream);
 
-	mad->inbytes = mad->outleft = mad->outpos = 0;
+	mad->outleft = mad->outpos = 0;
 
 	mad->inbuf_filepos = byte;
 
