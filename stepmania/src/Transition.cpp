@@ -81,18 +81,13 @@ void Transition::Update( float fDeltaTime )
 	}
 }
 
+bool Transition::EarlyAbortDraw()
+{
+	return m_State != transitioning;
+}
+
 void Transition::DrawPrimitives()
 {
-	// Unless we're transitioning, don't draw because we'll waste resources drawing things
-	// that aren't visible.  -Chris
-	switch( m_State )
-	{
-	case waiting:
-		return;
-	case finished:
-		return;
-	}
-
 	m_BGAnimation.Draw();
 }
 

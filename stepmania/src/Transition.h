@@ -28,6 +28,7 @@ public:
 	virtual void DrawPrimitives();
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
+	virtual bool EarlyAbortDraw();
 
 	bool IsTransitioning() const	{ return m_State == transitioning; };
 	bool IsFinished() const	{ return m_State == finished; };
