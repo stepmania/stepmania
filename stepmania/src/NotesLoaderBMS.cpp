@@ -194,7 +194,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	}
 
 	// we're done reading in all of the BMS values
-	if( out.m_NotesType )
+	if( out.m_NotesType == NOTES_TYPE_INVALID )
 	{
 		LOG->Warn("Couldn't determine note types of file '%s'", sPath.c_str() );
 		delete pNoteData;
@@ -275,9 +275,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	{
 		Notes* pNewNotes = new Notes;
 
-		LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i],
-			*pNewNotes );
-		if(pNewNotes->m_NotesType != NOTES_TYPE_INVALID)
+		const bool ok = LoadFromBMSFile( out.GetSongDir() + arrayBMSFileNames[i], *pNewNotes );
+		if( ok )
 			out.m_apNotes.push_back( pNewNotes );
 		else
 			delete pNewNotes;
