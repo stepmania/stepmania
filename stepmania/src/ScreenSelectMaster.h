@@ -44,6 +44,8 @@ protected:
 	ThemeMetric<int>		NUM_CHOICES_ON_PAGE_1;
 	ThemeMetric2D<float>	CURSOR_OFFSET_X_FROM_ICON;
 	ThemeMetric2D<float>	CURSOR_OFFSET_Y_FROM_ICON;
+	ThemeMetric<bool>		OVERRIDE_LOCK_INPUT_SECONDS;
+	ThemeMetric<float>		LOCK_INPUT_SECONDS;
 	ThemeMetric<float>		PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>		POST_SWITCH_PAGE_SECONDS;
 	ThemeMetric<bool>		OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS;

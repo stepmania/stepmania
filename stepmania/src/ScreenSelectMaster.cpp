@@ -31,6 +31,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	NUM_CHOICES_ON_PAGE_1(m_sName,"NumChoicesOnPage1"),
 	CURSOR_OFFSET_X_FROM_ICON(m_sName,CURSOR_OFFSET_X_FROM_ICON_NAME,NUM_PLAYERS,NUM_CURSOR_PARTS),
 	CURSOR_OFFSET_Y_FROM_ICON(m_sName,CURSOR_OFFSET_Y_FROM_ICON_NAME,NUM_PLAYERS,NUM_CURSOR_PARTS),
+	OVERRIDE_LOCK_INPUT_SECONDS(m_sName,"OverrideLockInputSeconds"),
+	LOCK_INPUT_SECONDS(m_sName,"LockInputSeconds"),
 	PRE_SWITCH_PAGE_SECONDS(m_sName,"PreSwitchPageSeconds"),
 	POST_SWITCH_PAGE_SECONDS(m_sName,"PostSwitchPageSeconds"),
 	OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"OverrideSleepAfterTweenOffSeconds"),
@@ -256,10 +258,8 @@ void ScreenSelectMaster::Init()
 	this->UpdateSelectableChoices();
 
 	TweenOnScreen();
-	m_fLockInputSecs = 
-		THEME->HasMetric(m_sName,"LockInputSeconds") ?
-		THEME->GetMetricF(m_sName,"LockInputSeconds") : 
-		this->GetTweenTimeLeft();
+
+	m_fLockInputSecs = (bool)OVERRIDE_LOCK_INPUT_SECONDS ? LOCK_INPUT_SECONDS : this->GetTweenTimeLeft();
 }
 
 void ScreenSelectMaster::Update( float fDelta )
