@@ -6,17 +6,9 @@
 namespace
 {
 
-int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, const float fStartBeat = 0, float fEndBeat = -1 )
+int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, int iStartIndex = 0, int iEndIndex = 999999 )
 { 
 	int iNumSuccessfulTapNotes = 0;
-
-	if( fEndBeat == -1 )
-		fEndBeat = in.GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-	iEndIndex = min( iEndIndex, in.GetLastRow() );
-
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, t, r, iStartIndex, iEndIndex )
@@ -30,19 +22,10 @@ int GetNumTapNotesWithScore( const NoteData &in, TapNoteScore tns, const float f
 	return iNumSuccessfulTapNotes;
 }
 
-int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, const float fStartBeat = 0, float fEndBeat = -1 )
+int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iStartIndex = 0, int iEndIndex = 999999 )
 {
-	if( fEndBeat == -1 )
-		fEndBeat = in.GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, in.GetLastRow() );
-
 	int iNumSuccessfulDoubles = 0;
-	for( int i=iStartIndex; i<=iEndIndex; i++ )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
 	{
 		int iNumNotesThisIndex = 0;
 		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
@@ -64,20 +47,13 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, const f
 	return iNumSuccessfulDoubles;
 }
 
-int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, float fStartBeat = 0, float fEndBeat = -1 )
+int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, int iStartIndex = 0, int iEndIndex = 999999 )
 {
-	if( fEndBeat == -1 )
-		fEndBeat = in.GetLastBeat();
-
 	int iNumSuccessfulHolds = 0;
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
 	for( int i=0; i<in.GetNumHoldNotes(); i++ )
 	{
 		const HoldNote &hn = in.GetHoldNote(i);
-		if( iStartIndex > hn.iStartRow ||  hn.iEndRow > iEndIndex )
+		if( !hn.ContainedByRange(iStartIndex, iEndIndex) )
 			continue;
 		if( hn.result.hns == hns )
 			iNumSuccessfulHolds++;
@@ -85,19 +61,10 @@ int GetNumHoldNotesWithScore( const NoteData &in, HoldNoteScore hns, float fStar
 	return iNumSuccessfulHolds;
 }
 
-int GetSuccessfulMines( const NoteData &in, float fStartBeat = 0, float fEndBeat = -1 )
+int GetSuccessfulMines( const NoteData &in, int iStartIndex = 0, int iEndIndex = 999999 )
 {
-	if( fEndBeat == -1 )
-		fEndBeat = in.GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, in.GetLastRow() );
-
 	int iNumSuccessfulMinesNotes = 0;
-	for( int i=iStartIndex; i<=iEndIndex; i++ )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
 	{
 		for( int t=0; t<in.GetNumTracks(); t++ )
 		{
@@ -111,20 +78,10 @@ int GetSuccessfulMines( const NoteData &in, float fStartBeat = 0, float fEndBeat
 }
 
 /* See NoteData::GetNumHands(). */
-int GetSuccessfulHands( const NoteData &in, float fStartBeat = 0, float fEndBeat = -1 )
+int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex = 999999 )
 {
-	if( fEndBeat == -1 )
-		fEndBeat = in.GetLastBeat();
-
-	int iStartIndex = BeatToNoteRow( fStartBeat );
-	int iEndIndex = BeatToNoteRow( fEndBeat );
-
-	/* Clamp to known-good ranges. */
-	iStartIndex = max( iStartIndex, 0 );
-	iEndIndex = min( iEndIndex, in.GetLastRow() );
-
 	int iNum = 0;
-	for( int i=iStartIndex; i<=iEndIndex; i++ )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( in, i, iStartIndex, iEndIndex )
 	{
 		if( !in.RowNeedsHands(i) )
 			continue;
@@ -254,7 +211,7 @@ float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerN
 	if( iTotalSteps == 0 )
 		return 1.0f;
 
-	const int Perfects = GetNumTapNotesWithScore( in, TNS_PERFECT);
+	const int Perfects = GetNumTapNotesWithScore( in, TNS_PERFECT );
 	return clamp( float(Perfects)/iTotalSteps, 0.0f, 1.0f );
 }
 
