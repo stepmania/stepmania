@@ -52,6 +52,7 @@ private:
 class LuaExpression: public LuaReference
 {
 public:
+	LuaExpression( const CString &sExpression = "" ) { SetFromExpression( sExpression ); }
 	void SetFromExpression( const CString &sExpression );
 
 protected:
