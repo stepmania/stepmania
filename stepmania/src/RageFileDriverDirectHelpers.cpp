@@ -167,7 +167,7 @@ bool CreateDirectories( CString Path )
 {
 	CStringArray parts;
 	CString curpath;
-	split( Path, "/", parts, true );
+	split( Path, "/", parts, false );
 
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
