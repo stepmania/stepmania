@@ -20,16 +20,17 @@
 #include <string.h>
 #include <errno.h>
 #include "RageLog.h"
+#include "RageTimer.h"
 
-static int fd = 0;
+static int fd = -1;
 
-void WriteString( char* sz, int len )
+void WriteString( const char *sz, int len )
 {
     int iOut;
-    if (fd < 1)
+    if( fd == -1 )
     {
         LOG->Warn("Lights port is not open\n");
-        return ;
+        return;
     }
 
     iOut = write(fd, sz, len);
@@ -43,33 +44,35 @@ void WriteString( char* sz, int len )
 
 LightsDriver_LinuxSerial::LightsDriver_LinuxSerial()
 {
-    fd = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY);	// COM1
+    fd = open("/dev/ttyS0", O_RDWR | O_NOCTTY);	// COM1
     if (fd < 0)
 		RageException::Throw( "open error %d %s\n", errno, strerror(errno) );
 
+    tcflush(fd, TCIFLUSH);
+
     struct termios my_termios;
     tcgetattr(fd, &my_termios);
-    tcflush(fd, TCIFLUSH);
     
-    my_termios.c_cflag = B2400 | CS8 |CREAD | CLOCAL | HUPCL;
-    
+//	my_termios.c_iflag = IGNBRK;
+//    my_termios.c_lflag = 0;
+//    my_termios.c_oflag = 0;
+//    my_termios.c_cflag |= CREAD | CLOCAL;
+    my_termios.c_cflag &= ~CRTSCTS;
 	my_termios.c_iflag &= ~(IXON | IXOFF | IXANY); /* no flow control */
-	my_termios.c_oflag &= ~(IXON | IXOFF | IXANY); /* no flow control */
-	fcntl(fd, F_SETFL, 0);
+//	my_termios.sg_ispeed = my_termios.sg_ispeed = B2400;
 
+//    my_termios.c_cflag = B2400 | CS8 | CREAD | CLOCAL | HUPCL;
+//	my_termios.c_oflag &= ~0; /* no flow control */
+//	fcntl(fd, F_SETFL, 0);
+
+    cfsetispeed(&my_termios, B2400);
     cfsetospeed(&my_termios, B2400);
     tcsetattr(fd, TCSANOW, &my_termios);
-
     LOG->Info("Lights info:");
     LOG->Info("  new cflag=%08lx", my_termios.c_cflag);
     LOG->Info("  new oflag=%08lx", my_termios.c_oflag);
     LOG->Info("  new iflag=%08lx", my_termios.c_iflag);
     LOG->Info("  new lflag=%08lx", my_termios.c_lflag);
-    // c_line dosen't seem to be defined in every termios.h file
-    // Is it really needed in info?
-#if 0
-    LOG->Info("  new line=%02x", my_termios.c_line);
-#endif
 }
 
 LightsDriver_LinuxSerial::~LightsDriver_LinuxSerial()
@@ -98,27 +101,24 @@ void LightsDriver_LinuxSerial::SetLight( Light light, bool bOn )
 void LightsDriver_LinuxSerial::Flush()
 {
 	// temp HACK: only write once every 30 times
-	static int counter = 0;
-	if( counter < 30 )
-	{
-		counter++;
+	static RageTimer tm;
+	if( tm.PeekDeltaTime() < 0.02f )
 		return;
-	}
-	else
-	{
-		counter = 0;
-		// fall through and write
-	}
+	tm.Touch();
 
-	LOG->Trace( "Entering LightsDriver_LinuxSerial::Flush()" );
+//	LOG->Trace( "Entering LightsDriver_LinuxSerial::Flush()" );
 
 	char temp_data_to_write[2+NUM_DATA_BYTES] = "";
 	temp_data_to_write[0] = 'Y';
 	temp_data_to_write[1] = 'o';
+
 	for( int i=0; i<NUM_DATA_BYTES; i++ )
 		temp_data_to_write[2+i] = ~g_data[i];	// flip bits so that 0=on, 1=off.
 
+	RageTimer testing;
 	WriteString( temp_data_to_write, sizeof(temp_data_to_write) );
+	if( testing.PeekDeltaTime() > 0.1f )
+		LOG->Warn("WriteString took %F", testing.GetDeltaTime());
 
-	LOG->Trace( "Leaving LightsDriver_LinuxSerial::Flush()" );
+//	LOG->Trace( "Leaving LightsDriver_LinuxSerial::Flush()" );
 }
