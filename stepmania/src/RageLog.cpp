@@ -68,8 +68,6 @@ RageLog::RageLog()
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 					 st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond );
 	this->Trace( "" );
-
-	ShowConsole();
 }
 
 RageLog::~RageLog()
