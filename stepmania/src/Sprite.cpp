@@ -41,6 +41,21 @@ Sprite::~Sprite()
 	UnloadTexture();
 }
 
+bool Sprite::LoadBG( RageTextureID ID )
+{
+	ID.iMipMaps = 1;
+	ID.bDither = true;
+	return Load(ID);
+}
+
+bool Sprite::Load( RageTextureID ID )
+{
+	if( ID.filename == "" ) return true;
+	if( ID.filename.Right(7) == ".sprite" )
+		return LoadFromSpriteFile( ID );
+	else 
+		return LoadFromTexture( ID );
+};
 
 
 // Sprite file has the format:
@@ -137,6 +152,13 @@ void Sprite::UnloadTexture()
 	if( m_pTexture != NULL )			// If there was a previous bitmap...
 		TEXTUREMAN->UnloadTexture( m_pTexture );	// Unload it.
 	m_pTexture = NULL;
+}
+
+void Sprite::EnableAnimation( bool bEnable )
+{ 
+	Actor::EnableAnimation( bEnable ); 
+	if(m_pTexture) 
+		bEnable ? m_pTexture->Play() : m_pTexture->Pause(); 
 }
 
 bool Sprite::LoadFromTexture( RageTextureID ID )

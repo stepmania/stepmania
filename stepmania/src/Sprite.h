@@ -28,35 +28,18 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
-	/* Just a convenience function; load an image that'll be used in the
-	 * background. */
-	virtual bool LoadBG( RageTextureID ID )
-	{
-		ID.iMipMaps = 1;
-		ID.bDither = true;
-		return Load(ID);
-	}
-
-	virtual bool Load( RageTextureID ID )
-	{
-		if( ID.filename == "" ) return true;
-		if( ID.filename.Right(7) == ".sprite" )
-			return LoadFromSpriteFile( ID );
-		else 
-			return LoadFromTexture( ID );
-	};
-	void UnloadTexture();
-	RageTexture* GetTexture() { return m_pTexture; };
-
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 
-	virtual void EnableAnimation( bool bEnable )
-	{ 
-		Actor::EnableAnimation( bEnable ); 
-		if(m_pTexture) 
-			bEnable ? m_pTexture->Play() : m_pTexture->Pause(); 
-	};
+	/* Just a convenience function; load an image that'll be used in the
+	 * background. */
+	virtual bool LoadBG( RageTextureID ID );
+	virtual bool Load( RageTextureID ID );
+
+	void UnloadTexture();
+	RageTexture* GetTexture() { return m_pTexture; };
+
+	virtual void EnableAnimation( bool bEnable );
 	virtual void SetState( int iNewState );
 	
 	int		GetNumStates()		{ return m_iNumStates; };
