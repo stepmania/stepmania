@@ -704,7 +704,7 @@ void Song::Save()
 	{
 		CString sOldPath = m_sSongDir + arrayOldFileNames[i];
 		CString sNewPath = sOldPath + ".old";
-		MoveFile( sOldPath, sNewPath );
+		rename( sOldPath, sNewPath );
 	}
 
 	ReCalculateRadarValuesAndLastBeat();

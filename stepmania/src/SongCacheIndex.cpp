@@ -1,5 +1,8 @@
 #include "stdafx.h"
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "SongCacheIndex.h"
 #include "RageLog.h"
 #include "RageUtil.h"
@@ -32,7 +35,7 @@ void SongCacheIndex::ReadCacheIndex()
 	CStringArray asCacheFileNames;
 	GetDirListing( "Cache/*", asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
-		DeleteFile( "Cache/" + asCacheFileNames[i] );
+		remove( "Cache/" + asCacheFileNames[i] );
 	CacheIndex.Reset();
 }
 
