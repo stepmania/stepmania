@@ -21,9 +21,10 @@
 #include "PrefsManager.h"
 
 
-#define HELP_TEXT		THEME->GetMetric("ScreenInstructions","HelpText")
-#define TIMER_SECONDS	THEME->GetMetricI("ScreenInstructions","TimerSeconds")
-#define NEXT_SCREEN		THEME->GetMetric("ScreenInstructions","NextScreen")
+#define HELP_TEXT		THEME->GetMetric (m_sName,"HelpText")
+#define TIMER_SECONDS	THEME->GetMetricI(m_sName,"TimerSeconds")
+#define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
+#define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
 
 
 ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )
@@ -53,7 +54,7 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 
 	CString sHowToPlayPath;
 	if( GAMESTATE->m_PlayMode != PLAY_MODE_INVALID )
-		sHowToPlayPath = THEME->GetPathToG("ScreenInstructions "+PlayModeToString(GAMESTATE->m_PlayMode)) ;
+		sHowToPlayPath = THEME->GetPathG(m_sName,PlayModeToString(GAMESTATE->m_PlayMode)) ;
 	else
 		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before showing ScreenInstructions." );
 
@@ -68,24 +69,7 @@ ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements
 
 	this->SortByDrawOrder();
 
-	SOUND->PlayMusic( THEME->GetPathToS("ScreenInstructions music") );
-}
-
-ScreenInstructions::~ScreenInstructions()
-{
-	LOG->Trace( "ScreenInstructions::~ScreenInstructions()" );
-}
-
-void ScreenInstructions::Update( float fDeltaTime )
-{
-	//LOG->Trace( "ScreenInstructions::Update(%f)", fDeltaTime );
-
-	Screen::Update( fDeltaTime );
-}
-
-void ScreenInstructions::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
+	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
 void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -105,7 +89,7 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 		this->MenuStart(PLAYER_1);
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );		
+		SCREENMAN->SetNewScreen( PREV_SCREEN );		
 		break;
 	case SM_GoToNextScreen:
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
