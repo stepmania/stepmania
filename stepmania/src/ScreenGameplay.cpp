@@ -75,7 +75,6 @@ const ScreenMessage	SM_GoToScreenAfterFail	= ScreenMessage(SM_User+31);
 const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
 const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
-
 ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
@@ -190,20 +189,12 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		}
 	}
 
-
-
-
 	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_bAutoSync;
-
 
 	m_DancingState = STATE_INTRO;
 	m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
-
 	
 	m_bZeroDeltaOnNextUpdate = false;
-
-
-
 
 	// If this is beginner mode, show the helper
 	/* !! Working on this.. having probs loading the BG sequences -- Miryokuteki */
@@ -667,7 +658,6 @@ bool ScreenGameplay::IsLastSong()
 {
 	if( GAMESTATE->m_pCurCourse  &&  GAMESTATE->m_pCurCourse->m_bRepeat )
 		return false;
-
 	return GAMESTATE->GetCourseSongIndex()+1 == (int)m_apSongsQueue.size(); // GetCourseSongIndex() is 0-based but size() is not
 }
 
@@ -838,7 +828,7 @@ void ScreenGameplay::LoadNextSong()
 
 	/* m_soundMusic and m_Background take a very long time to load,
 	 * so cap fDelta at 0 so m_NextSongIn will show up on screen.
-	 * -Chris */ 
+	 * -Chris */
 	m_bZeroDeltaOnNextUpdate = true;
 }
 
@@ -1045,7 +1035,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( AllAreFailing() )	SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
 				if( AllAreInDanger() )	m_Background.TurnDangerOn();
 				else					m_Background.TurnDangerOff();
-
 				// check for individual fail
 				for ( pn=0; pn<NUM_PLAYERS; pn++ )
 				{
@@ -1056,7 +1045,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 						GAMESTATE->m_CurStageStats.bFailed[pn] = true;	// fail
 					}
 				}
-						
 				break;
 			case SongOptions::LIFE_BATTERY:
 				if( AllFailedEarlier() )SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
@@ -1103,8 +1091,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		default:
 			ASSERT(0);
 		}
-
-
+		
 		//
 		// Check for enemy death in enemy battle
 		//
@@ -1157,8 +1144,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 				}
 			}
 		}
+		/* What is this line for? pn is always 2 here which goes into iPossibleDancePoints[0]
 		GAMESTATE->m_CurStageStats.bFailed[pn] = true;
-
+		*/
 
 		//
 		// Check to see if it's time to play a ScreenGameplay comment
@@ -1186,11 +1174,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			default:
 				ASSERT(0);
 			}
-
 			m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;	// reset for the next comment
 		}
 	}
-
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
 		m_soundAssistTick.Play();
 }
@@ -1794,6 +1780,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToStateAfterCleared );
 			break;
 		}
+		
 		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 
