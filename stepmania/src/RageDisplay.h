@@ -19,6 +19,7 @@ struct RageVertex;
 #include "RageTypes.h"
 
 const int REFRESH_DEFAULT = 0;
+struct oglspecs_t;
 
 class RageDisplay
 {
@@ -84,12 +85,17 @@ public:
 	int GetDPF() const;
 	void ResetStats();
 
+	const oglspecs_t &GetSpecs() const { return *m_oglspecs; }
+
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
 	void SetBlendMode(int src, int dst);
 	void SetupOpenGL();
 	void SetupExtensions();
 	void SetViewport(int shift_left, int shift_down);
+	oglspecs_t *m_oglspecs;
+	/* Don't use this to check extensions; use GetSpecs. */
+	bool HasExtension(CString ext) const;
 };
 
 

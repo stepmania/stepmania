@@ -11,6 +11,7 @@
 */
 
 #include "RageDisplay.h"
+#include "RageDisplayInternal.h"
 
 #include "RageUtil.h"
 #include "RageLog.h"
@@ -21,16 +22,6 @@
 #include "RageMath.h"
 #include "RageTypes.h"
 #include "GameConstantsAndTypes.h"
-
-#include <set>
-
-#include "SDL.h"
-/* ours is more up-to-date */
-#define NO_SDL_GLEXT
-#define __glext_h_ /* try harder to stop glext.h from being forced on us by someone else */
-#include "SDL_opengl.h"
-
-#include "glext.h"
 
 RageDisplay*		DISPLAY	= NULL;
 
@@ -51,25 +42,6 @@ int					g_iFPS, g_iVPF, g_iDPF;
 
 int					g_PerspectiveMode = 0;
 
-struct oglspecs_t {
-    /* OpenGL system information that generally doesn't change at runtime. */
-    
-	/* Range and granularity of points and lines: */
-	float line_range[2];
-	float line_granularity;
-	float point_range[2];
-	float point_granularity;
-
-	/* OpenGL version * 10: */
-	int glVersion;
-
-    /* Available extensions: */
-	set<string> glExts;
-
-	/* Which extensions we actually use are supported: */
-	bool EXT_texture_env_combine;
-} g_oglspecs;
-
 int					g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
 
 int RageDisplay::GetFPS() const { return g_iFPS; }
@@ -79,9 +51,6 @@ int RageDisplay::GetDPF() const { return g_iDPF; }
 static int			g_iFramesRenderedSinceLastCheck,
 					g_iVertsRenderedSinceLastCheck,
 					g_iDrawsSinceLastCheck;
-
-typedef BOOL (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
-PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 
 void GetGLExtensions(set<string> &ext)
 {
@@ -99,6 +68,8 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 {
 //	LOG->Trace( "RageDisplay::RageDisplay()" );
 
+	m_oglspecs = new oglspecs_t;
+	
 	SDL_InitSubSystem(SDL_INIT_VIDEO);
 
 	SetVideoMode( windowed, width, height, bpp, rate, vsync );
@@ -107,14 +78,14 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 
 	/* Log this, so if people complain that the radar looks bad on their
 	 * system we can compare them: */
-	glGetFloatv(GL_LINE_WIDTH_RANGE, g_oglspecs.line_range);
-	LOG->Trace("Line width range: %f, %f", g_oglspecs.line_range[0], g_oglspecs.line_range[1]);
-	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &g_oglspecs.line_granularity);
-	LOG->Trace("Line width granularity: %f", g_oglspecs.line_granularity);
-	glGetFloatv(GL_POINT_SIZE_RANGE, g_oglspecs.point_range);
-	LOG->Trace("Point size range: %f-%f", g_oglspecs.point_range[0], g_oglspecs.point_range[1]);
-	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_oglspecs.point_granularity);
-	LOG->Trace("Point size granularity: %f", g_oglspecs.point_granularity);
+	glGetFloatv(GL_LINE_WIDTH_RANGE, m_oglspecs->line_range);
+	LOG->Trace("Line width range: %f, %f", m_oglspecs->line_range[0], m_oglspecs->line_range[1]);
+	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &m_oglspecs->line_granularity);
+	LOG->Trace("Line width granularity: %f", m_oglspecs->line_granularity);
+	glGetFloatv(GL_POINT_SIZE_RANGE, m_oglspecs->point_range);
+	LOG->Trace("Point size range: %f-%f", m_oglspecs->point_range[0], m_oglspecs->point_range[1]);
+	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &m_oglspecs->point_granularity);
+	LOG->Trace("Point size granularity: %f", m_oglspecs->point_granularity);
 }
 
 void RageDisplay::SetupOpenGL()
@@ -151,23 +122,33 @@ void RageDisplay::SetupOpenGL()
 RageDisplay::~RageDisplay()
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	delete m_oglspecs;
+}
+
+bool RageDisplay::HasExtension(CString ext) const
+{
+	return m_oglspecs->glExts.find(ext) != m_oglspecs->glExts.end();
 }
 
 void RageDisplay::SetupExtensions()
 {
 	double fGLVersion = atof( (const char *) glGetString(GL_VERSION) );
-	g_oglspecs.glVersion = int(roundf(fGLVersion * 10));
-	LOG->Trace( "OpenGL version %.1f", g_oglspecs.glVersion / 10.);
-	GetGLExtensions(g_oglspecs.glExts);
-	if(g_oglspecs.glExts.find("GL_EXT_texture_env_combine") != g_oglspecs.glExts.end())
-		g_oglspecs.EXT_texture_env_combine = true;
+	m_oglspecs->glVersion = int(roundf(fGLVersion * 10));
+	LOG->Trace( "OpenGL version %.1f", m_oglspecs->glVersion / 10.);
+	GetGLExtensions(m_oglspecs->glExts);
 
-	/* Windows vsync: */
-	if(g_oglspecs.glExts.find("WGL_EXT_swap_control") != g_oglspecs.glExts.end()) {
-	    wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
-		if(wglSwapIntervalEXT)
-			LOG->Trace("Got wglSwapIntervalEXT");
-	}
+	/* Check for extensions: */
+	m_oglspecs->EXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
+	m_oglspecs->ARB_texture_compression = HasExtension("GL_ARB_texture_compression");
+	m_oglspecs->EXT_texture_compression_s3tc = HasExtension("GL_EXT_texture_compression_s3tc");
+	m_oglspecs->WGL_EXT_swap_control = HasExtension("WGL_EXT_swap_control");
+
+	/* Find extension functions. */
+	wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
+	
+	/* Make sure we have all components for detected extensions. */
+	if(m_oglspecs->WGL_EXT_swap_control)
+		ASSERT(wglSwapIntervalEXT);
 }
 
 /* Set the video mode.  In some cases, changing the video mode will reset
@@ -250,7 +231,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
-	if(wglSwapIntervalEXT) {
+	if(m_oglspecs->WGL_EXT_swap_control) {
 	    wglSwapIntervalEXT(vsync);
 	}
 
@@ -396,8 +377,8 @@ void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth
 
 	/* Clamp the width to the hardware max for both lines and points (whichever
 	 * is more restrictive). */
-	LineWidth = clamp(LineWidth, g_oglspecs.line_range[0], g_oglspecs.line_range[1]);
-	LineWidth = clamp(LineWidth, g_oglspecs.point_range[0], g_oglspecs.point_range[1]);
+	LineWidth = clamp(LineWidth, m_oglspecs->line_range[0], m_oglspecs->line_range[1]);
+	LineWidth = clamp(LineWidth, m_oglspecs->point_range[0], m_oglspecs->point_range[1]);
 
 	/* Hmm.  The granularity of lines and points might be different; for example,
 	 * if lines are .5 and points are .25, we might want to snap the width to the
@@ -695,7 +676,7 @@ void RageDisplay::SetTextureModeGlow()
 {
 	FlushQueue();
 
-	if(!g_oglspecs.EXT_texture_env_combine) {
+	if(!m_oglspecs->EXT_texture_env_combine) {
 		SetBlendMode( GL_SRC_ALPHA, GL_ONE );
 		return;
 	}
