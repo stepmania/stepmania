@@ -19,8 +19,9 @@
 
 void FixSlashesInPlace( CString &sPath )
 {
-    sPath.Replace( "/", SLASH );
-    sPath.Replace( "\\", SLASH );
+	for( unsigned i = 0; i < sPath.size(); ++i )
+		if( sPath[i] == '\\' )
+			sPath[i] = '/';
 }
 
 CString FixSlashes( CString sPath )
