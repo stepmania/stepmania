@@ -87,27 +87,26 @@ void ScreenManager::Update( float fDeltaTime )
 
 	EmptyDeleteQueue();
 
-	// Update all windows in the stack
-	for( unsigned i=0; i<m_ScreenStack.size(); i++ ) {
-		/* Screens take some time to load.  If we don't do this, then screens
-		 * receive an initial update that includes all of the time they spent
-		 * loading, which will chop off their tweens.  
-		 *
-		 * We don't want to simply cap update times; for example, the stage
-		 * screen sets a 4 second timer, preps the gameplay screen, and then
-		 * displays the prepped screen after the timer runs out; this lets the
-		 * load time be masked (as long as the load takes less than 4 seconds).
-		 * If we cap that large update delta from the screen load, the update
-		 * to load the new screen will come after 4 seconds plus the load time.
-		 *
-		 * So, let's just drop the first update for every screen.
-		 */
-		if( m_ScreenStack[i]->IsFirstUpdate() )
-			m_ScreenStack[i]->Update( 0 );
-		else
-			m_ScreenStack[i]->Update( fDeltaTime );
-	}
+	// Only update the topmost screen on the stack.
 
+	/* Screens take some time to load.  If we don't do this, then screens
+	 * receive an initial update that includes all of the time they spent
+	 * loading, which will chop off their tweens.  
+	 *
+	 * We don't want to simply cap update times; for example, the stage
+	 * screen sets a 4 second timer, preps the gameplay screen, and then
+	 * displays the prepped screen after the timer runs out; this lets the
+	 * load time be masked (as long as the load takes less than 4 seconds).
+	 * If we cap that large update delta from the screen load, the update
+	 * to load the new screen will come after 4 seconds plus the load time.
+	 *
+	 * So, let's just drop the first update for every screen.
+	 */
+	Screen* pScreen = m_ScreenStack[m_ScreenStack.size()-1];
+	if( pScreen->IsFirstUpdate() )
+		pScreen->Update( 0 );
+	else
+		pScreen->Update( fDeltaTime );
 }
 
 

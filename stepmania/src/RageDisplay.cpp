@@ -63,7 +63,6 @@ void GetGLExtensions(set<string> &ext)
 
 	for(unsigned i = 0; i < lst.size(); ++i)
 		ext.insert(lst[i]);
-    LOG->Trace("OpenGL extensions: %s", buf);
 }
 
 RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync )
@@ -81,6 +80,9 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
 	LOG->Info("OGL Renderer: %s", glGetString(GL_RENDERER));
 	LOG->Info("OGL Version: %s", glGetString(GL_VERSION));
+	LOG->Info("OGL Extensions: %s", glGetString(GL_EXTENSIONS));
+	if( IsSoftwareRenderer() )
+		LOG->Warn("This is a software renderer!");
 
 
 	/* Log this, so if people complain that the radar looks bad on their
@@ -93,6 +95,13 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	LOG->Trace("Point size range: %f-%f", m_oglspecs->point_range[0], m_oglspecs->point_range[1]);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &m_oglspecs->point_granularity);
 	LOG->Trace("Point size granularity: %f", m_oglspecs->point_granularity);
+}
+
+bool RageDisplay::IsSoftwareRenderer()
+{
+	return 
+		( stricmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation")==0 ) &&
+		( stricmp((const char*)glGetString(GL_RENDERER),"GDI Generic")==0 );
 }
 
 void RageDisplay::SetupOpenGL()

@@ -83,7 +83,7 @@ PrefsManager::PrefsManager()
 	m_bHiddenSongs = false;
 	m_bVsync = true;
 
-	m_bSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
+	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 
 	ReadGlobalPrefsFromDisk( true );
@@ -93,7 +93,7 @@ PrefsManager::~PrefsManager()
 {
 }
 
- void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
+void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 {
 	IniFile ini;
 	ini.SetPath( "StepMania.ini" );
@@ -136,7 +136,7 @@ PrefsManager::~PrefsManager()
 	ini.GetValueB( "Options", "CoinOpMode",					m_bCoinOpMode );
 	ini.GetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
 	ini.GetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
-	ini.GetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+	ini.GetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.GetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.GetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",				m_fSoundVolume );
@@ -199,7 +199,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "UnloadTextureDelaySeconds",	m_iUnloadTextureDelaySeconds );
 	ini.SetValueB( "Options", "MusicWheelUsesSections",		m_bMusicWheelUsesSections );
 	ini.SetValueB( "Options", "ChangeBannersWhenFast",		m_bChangeBannersWhenFast );
-	ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+	ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	ini.SetValueB( "Options", "EasterEggs",					m_bEasterEggs );
 	ini.SetValueB( "Options", "MarvelousTiming",			m_bMarvelousTiming );
 	ini.SetValueI( "Options", "CoinMode",					(int&)m_CoinMode );
@@ -210,8 +210,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
 	 * tweaked this value). */
-	if(m_bSoundDrivers != DEFAULT_SOUND_DRIVER_LIST)
-		ini.SetValue ( "Options", "SoundDrivers",				m_bSoundDrivers );
+	if(m_sSoundDrivers != DEFAULT_SOUND_DRIVER_LIST)
+		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
 	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
 		ini.SetValueF( "Options", "SoundVolume",			m_fSoundVolume );
 

@@ -29,6 +29,8 @@ public:
 	RageDisplay( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 	~RageDisplay();
 
+	bool IsSoftwareRenderer();
+
 	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 
 	/* Call this when the resolution has been changed externally: */

@@ -271,7 +271,7 @@ int main(int argc, char* argv[])
 	PREFSMAN	= new PrefsManager;
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
-	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_bSoundDrivers);
+	SOUNDMAN	= new RageSoundManager(PREFSMAN->m_sSoundDrivers);
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
@@ -315,6 +315,19 @@ int main(int argc, char* argv[])
 	BoostAppPri();
 
 	ResetGame();
+	if( DISPLAY->IsSoftwareRenderer() )
+		SCREENMAN->Prompt( 
+			SM_None, 
+			"OpenGL hardware acceleration\n"
+			"was not detected.\n\n"
+			"StepMania will use the Microsoft\n"
+			"software OpenGL renderer.\n"
+			"However, the game is not playable\n"
+			"with this software renderer.\n"
+			"Please install the latest video\n"
+			"driver from your graphics card vendor\n"
+			"to enable OpenGL hardware acceleration."
+			);
 
 	/* Run the main loop. */
 	GameLoop();

@@ -12,7 +12,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
 /* Define the default list of sound drivers for each arch. */
 #if defined(WIN32)
-#define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw"
+#define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"
 #endif
 
 #endif

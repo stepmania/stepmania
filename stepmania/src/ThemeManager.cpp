@@ -344,6 +344,8 @@ abort:
 		sFileName.GetString(), 
 		GetThemeDirFromName(m_sCurThemeName).GetString(), 
 		GetThemeDirFromName(BASE_THEME_NAME).GetString() );
+
+	return "";	// shut VC6 up
 }
 
 

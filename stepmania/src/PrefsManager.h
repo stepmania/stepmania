@@ -68,7 +68,7 @@ public:
 	CStringArray m_asAdditionalSongFolders;
 	CString m_DWIPath;
 
-	CString			m_bSoundDrivers;
+	CString			m_sSoundDrivers;
 	float			m_fSoundVolume;
 
 	void ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame );
