@@ -18,6 +18,11 @@ MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 	StartThread();
 }
 
+MemoryCardDriverThreaded_Windows::~MemoryCardDriverThreaded_Windows()
+{
+	StopThread();
+}
+
 typedef const CString& CCStringRef;
 
 static bool TestReady( CCStringRef sDrive )

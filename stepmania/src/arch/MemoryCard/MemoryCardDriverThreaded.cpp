@@ -34,12 +34,21 @@ void MemoryCardDriverThreaded::StartThread()
 	m_threadMemoryCardMount.Create( MountThread_Start, this );
 }
 
-MemoryCardDriverThreaded::~MemoryCardDriverThreaded()
+void MemoryCardDriverThreaded::StopThread()
 {
 	m_bShutdownNextUpdate = true;
 	LOG->Trace( "Shutting down Mount thread..." );
 	m_threadMemoryCardMount.Wait();
 	LOG->Trace( "Mount thread shut down." );
+}
+
+MemoryCardDriverThreaded::~MemoryCardDriverThreaded()
+{
+	/* Must call StopThread from the derived destructor.  Otherwise, we can
+	 * call MountThreadDoOneUpdate from the thread after the derived dtor,
+	 * which means that function is now virtual, and we'll crash with "pure
+	 * virtual method called". */
+	ASSERT( !m_threadMemoryCardMount.IsCreated() );
 }
 
 void MemoryCardDriverThreaded::PauseMountingThread()

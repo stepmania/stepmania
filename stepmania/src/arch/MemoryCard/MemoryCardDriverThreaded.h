@@ -42,6 +42,7 @@ private:
 
 protected:
 	void StartThread();	// call this in the derived constructor to start the mounting thread
+	void StopThread(); // call this in the derived desstructor to stop the mounting thread
 	virtual void MountThreadDoOneUpdate() = 0;	// this will get called as fast as possible
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;
 

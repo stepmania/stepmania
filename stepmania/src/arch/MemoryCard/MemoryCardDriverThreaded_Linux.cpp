@@ -136,6 +136,11 @@ MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 	this->StartThread();
 }
 
+MemoryCardDriverThreaded_Linux::~MemoryCardDriverThreaded_Linux()
+{
+	this->StopThread();
+}
+
 void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 {
 	//

@@ -7,6 +7,7 @@ class MemoryCardDriverThreaded_Linux : public MemoryCardDriverThreaded
 {
 public:
 	MemoryCardDriverThreaded_Linux();
+	virtual ~MemoryCardDriverThreaded_Linux();
 
 	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint );
 	virtual void Flush( UsbStorageDevice* pDevice );

@@ -8,6 +8,7 @@ class MemoryCardDriverThreaded_Windows : public MemoryCardDriverThreaded
 {
 public:
 	MemoryCardDriverThreaded_Windows();
+	virtual ~MemoryCardDriverThreaded_Windows();
 
 	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint );
 	virtual void Flush( UsbStorageDevice* pDevice );
