@@ -303,11 +303,9 @@ static void RunCrashHandler( const CrashData *crash )
 		 * crashed. */
 		switch( crash->type )
 		{
-#if !defined(DARWIN)
 		case CrashData::SIGNAL:
 			safe_print( fileno(stderr), "Fatal signal (", SignalName(crash->signal), ")", NULL );
 			break;
-#endif
 
 #if defined(DARWIN)
 		case CrashData::OSX_EXCEPTION:
@@ -407,7 +405,6 @@ void ForceCrashHandlerDeadlock( const char *reason, const BacktraceContext *ctx 
 
 /* XXX test for recursive crashes here (eg. GetBacktrace crashing) */
 
-#if !defined(DARWIN)
 void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	CrashData crash;
@@ -423,7 +420,6 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 
 	RunCrashHandler( &crash );
 }
-#endif
 
 #if defined(DARWIN)
 OSStatus CrashExceptionHandler( ExceptionInformation *e )
