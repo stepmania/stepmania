@@ -85,5 +85,7 @@ void SongOptions::FromString( CString sOptions )
 		else if( sBit == "1.3xmusic" )		m_fMusicRate = 1.3f;
 		else if( sBit == "1.4xmusic" )		m_fMusicRate = 1.4f;
 		else if( sBit == "1.5xmusic" )		m_fMusicRate = 1.5f;
+		else if( sBit == "failendofsong" )	m_FailType = FAIL_END_OF_SONG;
+		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
 	}
 }

@@ -85,7 +85,6 @@ PrefsManager::PrefsManager()
 	m_iBoostAppPriority = -1;
 	m_iPolygonRadar = -1;
 	m_bShowSongOptions = true;
-	m_DefaultFailType = SongOptions::FAIL_ARCADE;
 	m_bDancePointsForOni = false; //DDR-Extreme style dance points instead of max2 percent
 	m_bTimestamping = false;
 	m_bShowLyrics = true;
@@ -184,14 +183,14 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
-	ini.GetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 	ini.GetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.GetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.GetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
 	ini.GetValueB( "Options", "ShowLyrics",					m_bShowLyrics );
 	ini.GetValueB( "Options", "AutogenMissingTypes",		m_bAutogenMissingTypes );
 	ini.GetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
-	ini.GetValueB( "Options", "Timestamping",			m_bTimestamping );
+	ini.GetValueB( "Options", "Timestamping",				m_bTimestamping );
+	ini.GetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -264,7 +263,6 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
-	ini.SetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
 	ini.SetValueB( "Options", "AllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.SetValueB( "Options", "SoloSingle",					m_bSoloSingle );
 	ini.SetValueB( "Options", "DancePointsForOni",			m_bDancePointsForOni );
@@ -272,6 +270,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "AutogenMissingTypes",		m_bAutogenMissingTypes );
 	ini.SetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
+	ini.SetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

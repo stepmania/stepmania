@@ -127,18 +127,6 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
 
-	// If both options are on, we *do* need to multiply it twice.
-	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI]==1 )
-	{
-		iStartDrawingAtPixels *= 2;
-		iStopDrawingAtPixels *= 2;
-	}
-	if( GAMESTATE->m_PlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_SPACE]==1 )
-	{
-		iStartDrawingAtPixels *= 2;
-		iStopDrawingAtPixels *= 2;
-	}
-
 	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels );
 	
 	m_GrayArrowRow.Load( pn );
@@ -269,20 +257,21 @@ void Player::DrawPrimitives()
 {
 	m_Combo.Draw();	// draw this below everything else
 
-	if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_SPACE] == 1 )
+	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
+	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll==1;
+	float fReverseScale = bReverse ? -1 : 1;
+
+	if( fTilt != 0 )
 	{
 		DISPLAY->PushMatrix();
 		DISPLAY->EnterPerspective(45, false);
 
 		// construct view and project matrix
 		RageVector3 Eye, At, Up( 0.0f, 1.0f, 0.0f );
-		if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fReverseScroll==1 ) {
-			Eye = RageVector3( CENTER_X, -300.0f, 400.0f );
-			At = RageVector3( CENTER_X, 100.0f, 0.0f );
-		} else {
-			Eye = RageVector3( CENTER_X, 800, 400 );
-			At = RageVector3( CENTER_X, 400, 0.0f );
-		}
+		Eye = RageVector3( CENTER_X, CENTER_Y+SCALE(fTilt*fReverseScale,-1,1,-350,350), 500 );
+		// give a push the receptors toward the edge of the screen so they aren't so far in the middle
+		float fYOffset = SCALE(fTilt,-1,+1,10*fReverseScale,60*fReverseScale);
+		At = RageVector3( CENTER_X, CENTER_Y+fYOffset, 0 );
 
 		DISPLAY->LookAt(Eye, At, Up);
 	}
@@ -293,7 +282,7 @@ void Player::DrawPrimitives()
 	m_NoteField.Draw();
 	m_GhostArrowRow.Draw();
 
-	if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_SPACE]==1 )
+	if( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt != 0 )
 	{
 		DISPLAY->ExitPerspective();
 		DISPLAY->PopMatrix();

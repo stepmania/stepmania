@@ -39,35 +39,33 @@ struct OptionColumnEntry
 
 const OptionColumnEntry g_OptionColumnEntries[] =
 {
-	{"Boost",	0},
-	{"Land",	0},
-	{"Wave",	0},
-	{"Expand",	0},
-	{"Boomerang",0},
-	{"Drunk",	1},
-	{"Dizzy",	1},
-	{"Space",	1},
-	{"Mini",	1},
-	{"Flip",	1},
-	{"Tornado",	1},
-	{"Hidden",	2},
-	{"Sudden",	2},
-	{"Stealth",	2},
-	{"Blink",	2},
-	{"Mirror",	3},
-	{"Left",	3},
-	{"Right",	3},
-	{"Shuffle",	3},
-	{"SuperShuffle",	3},
-	{"Little",	4},
-	{"NoHolds",	4},
-	{"Dark",	4},
-	{"Reverse",	5},
-	{"Note",	6},
-	{"Flat",	6},
-	{"Plain",	6},
+	{"Boost",		0},
+	{"Brake",		0},
+	{"Wave",		0},
+	{"Expand",		0},
+	{"Boomerang",	0},
+	{"Drunk",		1},
+	{"Dizzy",		1},
+	{"Mini",		1},
+	{"Flip",		1},
+	{"Tornado",		1},
+	{"Hidden",		2},
+	{"Sudden",		2},
+	{"Stealth",		2},
+	{"Blink",		2},
+	{"Mirror",		3},
+	{"Left",		3},
+	{"Right",		3},
+	{"Shuffle",		3},
+	{"SuperShuffle",3},
+	{"Little",		4},
+	{"NoHolds",		4},
+	{"Dark",		4},
+	{"Reverse",		5},
+	{"Incoming",	6},
+	{"Space",		6},
 
-	{"TimingAssist",	-1},
+	{"TimingAssist",-1},
 };
 const int NUM_OPTION_COL_ENTRIES = sizeof(g_OptionColumnEntries)/sizeof(OptionColumnEntry);
 
@@ -85,7 +83,7 @@ int OptionToPreferredColumn( CString sOptionText )
 			return g_OptionColumnEntries[i].iSlotIndex;
 
 	LOG->Warn("Unknown option: '%s'", sOptionText.GetString() );
-	return -1;
+	return 0;
 }
 
 void OptionIconRow::Refresh( PlayerNumber pn )

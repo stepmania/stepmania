@@ -337,10 +337,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type )
 
 			m_Grades[p].Load( THEME->GetPathTo("Graphics","ScreenEvaluation grades") );
 			m_Grades[p].SetGrade( (PlayerNumber)p, grade[p] );
+			m_Grades[p].Command( GRADE_ON_COMMAND(p) );
 			if( SPIN_GRADES )
 				m_Grades[p].Spin();
-			else
-			m_Grades[p].Command( GRADE_ON_COMMAND(p) );
 			this->AddChild( &m_Grades[p] );
 		}
 	}

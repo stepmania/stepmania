@@ -27,6 +27,7 @@ void PlayerOptions::Init()
 	m_Transform = TRANSFORM_NONE;
 	m_bHoldNotes = true;
 	m_bTimingAssist = false;
+	m_fPerspectiveTilt = 0;
 }
 
 void FLOAT_APPROACH( float& val, float other_val, float deltaPercent )
@@ -54,6 +55,7 @@ void PlayerOptions::Approach( const PlayerOptions& other, float fDeltaSeconds )
 		FLOAT_APPROACH( m_fAppearances[i], other.m_fAppearances[i], fDeltaSeconds );
 	FLOAT_APPROACH( m_fReverseScroll, other.m_fReverseScroll, fDeltaSeconds );
 	FLOAT_APPROACH( m_fDark, other.m_fDark, fDeltaSeconds );
+	FLOAT_APPROACH( m_fPerspectiveTilt, other.m_fPerspectiveTilt, fDeltaSeconds );
 }
 
 CString PlayerOptions::GetString()
@@ -76,14 +78,13 @@ CString PlayerOptions::GetString()
 	}
 
 	if( m_fAccels[ACCEL_BOOST]==1 )		sReturn += "Boost, ";
-	if( m_fAccels[ACCEL_LAND]==1 )		sReturn += "Land, ";
+	if( m_fAccels[ACCEL_BRAKE]==1 )		sReturn += "Brake, ";
 	if( m_fAccels[ACCEL_WAVE]==1 )		sReturn += "Wave, ";
 	if( m_fAccels[ACCEL_EXPAND]==1 )	sReturn += "Expand, ";
 	if( m_fAccels[ACCEL_BOOMERANG]==1 )	sReturn += "Boomerang, ";
 
 	if( m_fEffects[EFFECT_DRUNK]==1 )	sReturn += "Drunk, ";
 	if( m_fEffects[EFFECT_DIZZY]==1 )	sReturn += "Dizzy, ";
-	if( m_fEffects[EFFECT_SPACE]==1 )	sReturn += "Space, ";
 	if( m_fEffects[EFFECT_MINI]==1 )	sReturn += "Mini, ";
 	if( m_fEffects[EFFECT_FLIP]==1 )	sReturn += "Flip, ";
 	if( m_fEffects[EFFECT_TORNADO]==1 )	sReturn += "Tornado, ";
@@ -96,7 +97,6 @@ CString PlayerOptions::GetString()
 	if( m_fReverseScroll == 1 )		sReturn += "Reverse, ";
 
 	if( m_fDark == 1)				sReturn += "Dark, ";
-
 
 	switch( m_Turn )
 	{
@@ -122,6 +122,12 @@ CString PlayerOptions::GetString()
 
 	if( !m_bHoldNotes )		sReturn += "NoHolds, ";
 	if( m_bTimingAssist )	sReturn += "TimingAssist, ";
+
+	switch( (int)m_fPerspectiveTilt )
+	{
+	case -1:	sReturn += "Incoming, ";	break;
+	case +1:	sReturn += "Space, ";		break;
+	}
 
 	if( sReturn.GetLength() > 2 )
 		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
@@ -153,13 +159,12 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "5.0x" )		m_fScrollSpeed = 5.0f;
 		else if( sBit == "8.0x" )		m_fScrollSpeed = 8.0f;
 		else if( sBit == "boost" )		m_fAccels[ACCEL_BOOST] = 1;
-		else if( sBit == "land" )		m_fAccels[ACCEL_LAND] = 1;
+		else if( sBit == "brake" )		m_fAccels[ACCEL_BRAKE] = 1;
 		else if( sBit == "wave" )		m_fAccels[ACCEL_WAVE] = 1;
 		else if( sBit == "expand" )		m_fAccels[ACCEL_EXPAND] = 1;
 		else if( sBit == "boomerang" )	m_fAccels[ACCEL_BOOMERANG] = 1;
 		else if( sBit == "drunk" )		m_fEffects[EFFECT_DRUNK] = 1;
 		else if( sBit == "dizzy" )		m_fEffects[EFFECT_DIZZY] = 1;
-		else if( sBit == "space" )		m_fEffects[EFFECT_SPACE] = 1;
 		else if( sBit == "mini" )		m_fEffects[EFFECT_MINI] = 1;
 		else if( sBit == "flip" )		m_fEffects[EFFECT_FLIP] = 1;
 		else if( sBit == "tornado" )	m_fEffects[EFFECT_TORNADO] = 1;
@@ -182,6 +187,8 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "nofreeze" )	m_bHoldNotes = false;
 		else if( sBit == "dark" )		m_fDark = 1;
 		else if( sBit == "timingassist")m_bTimingAssist = true;
+		else if( sBit == "incoming" )	m_fPerspectiveTilt = -1;
+		else if( sBit == "space" )		m_fPerspectiveTilt = +1;
 	}
 }
 
@@ -230,6 +237,16 @@ void PlayerOptions::NextTurn()
 void PlayerOptions::NextTransform()
 {
 	m_Transform = (Transform) ((m_Transform+1)%NUM_TRANSFORMS);
+}
+
+void PlayerOptions::NextPerspective()
+{
+	switch( (int)m_fPerspectiveTilt )
+	{
+	case -1:			m_fPerspectiveTilt =  0;	break;
+	case  0:			m_fPerspectiveTilt = +1;	break;
+	case +1: default:	m_fPerspectiveTilt = -1;	break;
+	}
 }
 
 void PlayerOptions::ChooseRandomMofifiers()

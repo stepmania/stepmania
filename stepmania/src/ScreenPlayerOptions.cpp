@@ -32,12 +32,13 @@ enum {
 	PO_NOTE_SKIN,
 	PO_HOLD_NOTES,
 	PO_DARK,
+	PO_PERSPECTIVE,
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Speed",				"x0.25","x0.5","x0.75","x1","x1.5","x2","x3","x4","x5","x8", "x12" ),	
-	OptionRow( "Acceler\n-ation",	"OFF","BOOST","LAND","WAVE","EXPAND","BOOMERANG" ),	
-	OptionRow( "Effect",			"OFF","DRUNK","DIZZY","SPACE","MINI","FLIP","TORNADO" ),	
+	OptionRow( "Acceler\n-ation",	"OFF","BOOST","BRAKE","WAVE","EXPAND","BOOMERANG" ),	
+	OptionRow( "Effect",			"OFF","DRUNK","DIZZY","MINI","FLIP","TORNADO" ),	
 	OptionRow( "Appear\n-ance",		"VISIBLE","HIDDEN","SUDDEN","STEALTH","BLINK" ),	
 	OptionRow( "Turn",				"OFF","MIRROR","LEFT","RIGHT","SHUFFLE","SUPER SHUFFLE" ),	
 	OptionRow( "Trans\n-form",		"OFF","LITTLE","WIDE","BIG","QUICK","SKIPPY" ),	
@@ -45,6 +46,7 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Note\nSkin",		"" ),	
 	OptionRow( "Holds",				"OFF","ON" ),	
 	OptionRow( "Dark",				"OFF","ON" ),	
+	OptionRow( "Perspec\n-tive",	"INCOMING","OVERHEAD","SPACE" ),	
 };
 
 
@@ -121,6 +123,7 @@ void ScreenPlayerOptions::ImportOptions()
 
 		m_iSelectedOption[p][PO_HOLD_NOTES]	= po.m_bHoldNotes ? 1 : 0;
 		m_iSelectedOption[p][PO_DARK]		= po.m_fDark==1 ? 1 : 0;
+		m_iSelectedOption[p][PO_PERSPECTIVE]= SCALE( po.m_fPerspectiveTilt, -1, +1, 0, 2 );
 
 
 		po.Init();
@@ -166,8 +169,9 @@ void ScreenPlayerOptions::ExportOptions()
 		NOTESKIN->SwitchNoteSkin( (PlayerNumber)p, sNewSkin );
 
 
-		po.m_bHoldNotes		= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
-		po.m_fDark			= (m_iSelectedOption[p][PO_DARK] == 1) ? 1.f : 0.f;
+		po.m_bHoldNotes			= (m_iSelectedOption[p][PO_HOLD_NOTES] == 1);
+		po.m_fDark				= (m_iSelectedOption[p][PO_DARK] == 1) ? 1.f : 0.f;
+		po.m_fPerspectiveTilt	= SCALE( m_iSelectedOption[p][PO_PERSPECTIVE], 0, 2, -1, +1 );
 	}
 }
 

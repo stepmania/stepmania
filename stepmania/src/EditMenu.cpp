@@ -67,7 +67,7 @@ EditMenu::EditMenu()
 
 	for( i=0; i<NUM_ROWS; i++ )
 	{
-		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","header2") );
+		m_textLabel[i].LoadFromFont( THEME->GetPathTo("Fonts","Common title") );
 		m_textLabel[i].SetXY( ROW_LABELS_X, ROW_Y(i) );
 		m_textLabel[i].SetText( RowToString((Row)i) );
 		m_textLabel[i].SetZoom( 0.8f );

@@ -685,7 +685,7 @@ void RageDisplay::EnterPerspective(float fov, bool preserve_loc)
 	glPushMatrix();
 	glLoadIdentity();
 	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
-	gluPerspective(fov, aspect, 1.000f, 1000.0f);
+	gluPerspective(fov, aspect, 1.000f, 1000.0f);	// This far clipping this might cause Z-fighting if we ever turn the z-buffer on
 
 	/* Flip the Y coordinate, so positive numbers go down. */
 	glScalef(1, -1, 1);

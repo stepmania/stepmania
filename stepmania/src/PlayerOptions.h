@@ -23,7 +23,7 @@ struct PlayerOptions
 
 	enum Accel {
 		ACCEL_BOOST,
-		ACCEL_LAND,
+		ACCEL_BRAKE,
 		ACCEL_WAVE,
 		ACCEL_EXPAND,
 		ACCEL_BOOMERANG,
@@ -32,7 +32,6 @@ struct PlayerOptions
 	enum Effect	{
 		EFFECT_DRUNK,
 		EFFECT_DIZZY,
-		EFFECT_SPACE,
 		EFFECT_MINI,
 		EFFECT_FLIP,
 		EFFECT_TORNADO,
@@ -63,7 +62,6 @@ struct PlayerOptions
 		TRANSFORM_SKIPPY,
 		NUM_TRANSFORMS
 	};
-
 	
 	float		m_fScrollSpeed;
 	float		m_fAccels[NUM_ACCELS];
@@ -75,12 +73,14 @@ struct PlayerOptions
 	Transform	m_Transform;
 	bool		m_bHoldNotes;
 	bool		m_bTimingAssist;
+	float		m_fPerspectiveTilt;		// -1 = near, 0 = overhead, +1 = space
 
 	void NextAccel();
 	void NextEffect();
 	void NextAppearance();
 	void NextTurn();
 	void NextTransform();
+	void NextPerspective();
 
 	Accel GetFirstAccel();
 	Effect GetFirstEffect();

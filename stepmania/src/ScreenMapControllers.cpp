@@ -51,7 +51,7 @@ ScreenMapControllers::ScreenMapControllers()
 		CString sName = GAMESTATE->GetCurrentGameDef()->m_szButtonNames[b];
 		CString sSecondary = GAMESTATE->GetCurrentGameDef()->m_szSecondaryFunction[b];
 
-		m_textName[b].LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
+		m_textName[b].LoadFromFont( THEME->GetPathTo("Fonts","Common title") );
 		m_textName[b].SetXY( CENTER_X, LINE_START_Y + b*LINE_GAP_Y-6 );
 
 		m_textName[b].SetText( sName );
@@ -59,7 +59,7 @@ ScreenMapControllers::ScreenMapControllers()
 		m_textName[b].SetShadowLength( 2 );
 		this->AddChild( &m_textName[b] );
 
-		m_textName2[b].LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
+		m_textName2[b].LoadFromFont( THEME->GetPathTo("Fonts","Common title") );
 		m_textName2[b].SetXY( CENTER_X, LINE_START_Y + b*LINE_GAP_Y+6 );
 		m_textName2[b].SetText( sSecondary );
 		m_textName2[b].SetZoom( 0.5f );

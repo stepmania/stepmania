@@ -864,18 +864,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	po_out.m_fReverseScroll = 1;
 	po_out.m_fScrollSpeed = 1.5f;
 	so_out.m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
-
-	// should we do something fancy here, like turn on different effects?
-	int iSongHash = GetHashForString( pSongOut->GetSongDir() );
-	switch( ((unsigned int)iSongHash) % 5 )
-	{
-	case 0:	po_out.m_fEffects[PlayerOptions::EFFECT_DIZZY] = 1;	break;
-	case 1:	po_out.m_fDark = 1;									break;
-	case 2:	po_out.m_fEffects[PlayerOptions::EFFECT_DRUNK] = 1;	break;
-	case 3:	po_out.m_fEffects[PlayerOptions::EFFECT_MINI] = 1;	break;
-	case 4:	po_out.m_fEffects[PlayerOptions::EFFECT_SPACE] = 1;	break;
-	default:	ASSERT(0);
-	}
+	po_out.m_fDark = 1;
 }
 
 Song* SongManager::GetRandomSong()

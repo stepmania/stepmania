@@ -214,6 +214,20 @@ void NoteField::DrawPrimitives()
 
 	const float fSongBeat = GAMESTATE->m_fSongBeat;
 
+	//
+	// Adjust draw range depending on some effects
+	//
+	int iFirstPixelToDraw = m_iFirstPixelToDraw;
+	int iLastPixelToDraw = m_iLastPixelToDraw;
+	
+	float fDrawScale = 1;
+	fDrawScale *= 1 + fabsf( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fPerspectiveTilt );
+	fDrawScale *= 1 + fabsf( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI] );
+
+	iFirstPixelToDraw *= fDrawScale;
+	iLastPixelToDraw *= fDrawScale;
+
+
 	// CPU OPTIMIZATION OPPORTUNITY:
 	// change this probing to binary search
 
@@ -223,7 +237,7 @@ void NoteField::DrawPrimitives()
 	{
 		float fYOffset = ArrowGetYOffset(m_PlayerNumber, fFirstBeatToDraw);
 		float fYPosWOReverse = ArrowGetYPosWithoutReverse(m_PlayerNumber, fYOffset );
-		if( fYPosWOReverse < m_iFirstPixelToDraw )	// off screen
+		if( fYPosWOReverse < iFirstPixelToDraw )	// off screen
 			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
 		else	// on screen
 			break;	// stop probing
@@ -236,7 +250,7 @@ void NoteField::DrawPrimitives()
 	{
 		float fYOffset = ArrowGetYOffset(m_PlayerNumber, fLastBeatToDraw);
 		float fYPosWOReverse = ArrowGetYPosWithoutReverse(m_PlayerNumber, fYOffset );
-		if( fYPosWOReverse > m_iLastPixelToDraw )	// off screen
+		if( fYPosWOReverse > iLastPixelToDraw )	// off screen
 			fLastBeatToDraw -= 0.1f;	// move toward fSongBeat
 		else	// on screen
 			break;	// stop probing

@@ -246,15 +246,18 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		switch( m_Choice )
 		{
 		case CHOICE_GAME_START:
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+			{
+				// apply default options
+				for( int p=0; p<NUM_PLAYERS; p++ )
+					GAMESTATE->m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
+				GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+
+				SCREENMAN->SetNewScreen( NEXT_SCREEN );
+			}
 			break;
 		case CHOICE_SELECT_GAME:
 			SCREENMAN->SetNewScreen( "ScreenSelectGame" );
 			break;
-		/* At request, moved this into the options/operator menu -- Miryokuteki */
-		/*case CHOICE_MAP_KEY_JOY:
-			SCREENMAN->SetNewScreen( "ScreenMapControllers" );
-			break;*/
 		case CHOICE_OPTIONS:
 			SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 			break;

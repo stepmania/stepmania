@@ -93,8 +93,6 @@ ScreenSelectMusic::ScreenSelectMusic()
 
 	CodeDetector::RefreshCacheItems();
 
-	GAMESTATE->m_SongOptions.m_FailType = PREFSMAN->m_DefaultFailType;
-
 	int p;
 
 	m_Menu.Load( "ScreenSelectMusic" );
@@ -489,18 +487,18 @@ void ScreenSelectMusic::AdjustOptions()
 	 * player changes to a mode easier than the preference setting, we might
 	 * reset it to the preference later. XXX */
 
-	SongOptions::FailType ft = SongOptions::FailType(-1);
+	// Note all these if()s are mutually exclusive.
 
 	/* Easy and beginner are never harder than FAIL_END_OF_SONG. */
 	if(dc <= DIFFICULTY_EASY)
-		ft = SongOptions::FAIL_END_OF_SONG;
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
 	
 	/* If beginner's steps were chosen, and this is the first stage,
 	 * turn off failure completely--always give a second try. */
 	if(dc == DIFFICULTY_BEGINNER &&
 		!PREFSMAN->m_bEventMode && /* stage index is meaningless in event mode */
 		GAMESTATE->m_iCurrentStageIndex == 0)
-		ft = SongOptions::FAIL_OFF;
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 
 	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
 	{
@@ -511,15 +509,7 @@ void ScreenSelectMusic::AdjustOptions()
 		 *
 		 * Besides, extra stage should probably always be FAIL_ARCADE anyway,
 		 * unless the extra stage course says otherwise. */
-		ft = SongOptions::FAIL_ARCADE;
-	}
-
-	if(ft != SongOptions::FailType(-1))
-	{
-		/* Never make the difficulty harder than the default.  (If the main options
-		 * are set to FAIL_END_OF_SONG, we should never set it to ARCADE.) */
-	   ft = max(ft, PREFSMAN->m_DefaultFailType);
-	   GAMESTATE->m_SongOptions.m_FailType = ft;
+		GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
 	}
 }
 

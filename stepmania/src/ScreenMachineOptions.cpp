@@ -21,6 +21,8 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
+#include "PlayerOptions.h"
+#include "SongOptions.h"
 
 
 enum {
@@ -97,7 +99,9 @@ void ScreenMachineOptions::ImportOptions()
 	else if( PREFSMAN->m_fLifeDifficultyScale == 0.40f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 6;
 	else													m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 3;
 
-	m_iSelectedOption[0][MO_FAIL]					= PREFSMAN->m_DefaultFailType;
+	SongOptions so;
+	so.FromString( PREFSMAN->m_sDefaultModifiers );
+	m_iSelectedOption[0][MO_FAIL]					= so.m_FailType;
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_CoinMode;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
@@ -135,8 +139,26 @@ void ScreenMachineOptions::ExportOptions()
 	case 6:	PREFSMAN->m_fLifeDifficultyScale = 0.40f;	break;
 	default:	ASSERT(0);
 	}
-	
-	(int&)PREFSMAN->m_DefaultFailType	= m_iSelectedOption[0][MO_FAIL];
+
+	CString sModifiers = PREFSMAN->m_sDefaultModifiers;
+	PlayerOptions po;
+	po.FromString( sModifiers );
+	SongOptions so;
+	so.FromString( sModifiers );
+	switch( m_iSelectedOption[0][MO_FAIL] )
+	{
+	case 0:	so.m_FailType = SongOptions::FAIL_ARCADE;		break;
+	case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;	break;
+	case 2:	so.m_FailType = SongOptions::FAIL_OFF;			break;
+	default:
+		ASSERT(0);
+	}
+	CStringArray as;
+	if( po.GetString() != "" )
+		as.push_back( po.GetString() );
+	if( so.GetString() != "" )
+		as.push_back( so.GetString() );
+	PREFSMAN->m_sDefaultModifiers		= join(", ",as);
 	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
 	(int&)PREFSMAN->m_CoinMode			= m_iSelectedOption[0][MO_COIN_MODE];
 	PREFSMAN->m_iCoinsPerCredit			= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;

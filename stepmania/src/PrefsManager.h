@@ -59,7 +59,6 @@ public:
 	enum			{ NEVER, ALWAYS, ABC_ONLY } m_MusicWheelUsesSections;
 	int				m_iMusicWheelSwitchSpeed;
 	bool			m_bChangeBannersWhenFast;
-	bool			m_bDDRExtremeDifficultySelect;
 	bool			m_bEasterEggs;
 	bool			m_bMarvelousTiming;
 	enum { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES } m_CoinMode;
@@ -70,12 +69,12 @@ public:
 	float			m_fMarathonVerSongSeconds;
 	bool			m_bShowSongOptions;
 	bool			m_bSoloSingle;
-	SongOptions::FailType m_DefaultFailType;
 	bool			m_bDancePointsForOni;
 	bool			m_bTimestamping;
 	bool			m_bShowLyrics;
 	bool			m_bAutogenMissingTypes;
 	bool			m_bAutogenGroupCourses;
+	CString			m_sDefaultModifiers;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;
@@ -83,8 +82,8 @@ public:
 	/* 0 = no; 1 = yes; -1 = auto (turn on for known-bad drivers) */
 	int				m_iPolygonRadar;
 
-	CStringArray m_asAdditionalSongFolders;
-	CString m_DWIPath;
+	CStringArray	m_asAdditionalSongFolders;
+	CString			m_DWIPath;
 
 	CString			m_sSoundDrivers;
 	float			m_fSoundVolume;

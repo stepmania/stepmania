@@ -99,8 +99,8 @@ void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case '4': SetText("WAAI\nWAAI"); break;
 	case '5': SetText("WAAI &oni;\nWAAI"); break;
 
-	case 'q': SetFont( "Themes/default/Fonts/header1" ); break;
-	case 'w': SetFont( "Themes/default/Fonts/header2" ); break;
+	case 'q': SetFont( "Themes/default/Fonts/_common11" ); break;
+	case 'w': SetFont( "Themes/default/Fonts/_common2" ); break;
 	case 'e': SetFont( "Themes/default/Fonts/Normal" ); break;
 	case 'r': SetFont( "Themes/SMMAX2/Fonts/titlemenu" ); break;
 	case 't': SetFont( "Themes/default/Fonts/small titles" ); break;
