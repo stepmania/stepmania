@@ -41,12 +41,11 @@ public:
 	void FadeToFail();
 
 protected:
-//	inline void CreateTapNoteInstance( ColorNoteInstance &cni, const int iCol, const float fIndex, const bool bUseHoldNoteBeginColor = false );
-//	inline void CreateHoldNoteInstance( ColorNoteInstance &cni, const bool bActive, const float fIndex, const HoldNote &hn, const float fHoldNoteLife );
-	inline void DrawMeasureBar( const int iMeasureIndex );
-	inline void DrawMarkerBar( const float fBeat );
-	inline void DrawBPMText( const float fBeat, const float fBPM );
-	inline void DrawFreezeText( const float fBeat, const float fBPM );
+	void DrawMeasureBar( const int iMeasureIndex );
+	void DrawMarkerBar( const float fBeat );
+	void DrawBPMText( const float fBeat, const float fBPM );
+	void DrawFreezeText( const float fBeat, const float fBPM );
+	void DrawBGChangeText( const float fBeat, const CString sNewBGName );
 
 	float	m_fPercentFadeToFail;	// -1 of not fading to fail
 

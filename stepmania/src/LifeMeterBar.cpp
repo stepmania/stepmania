@@ -46,8 +46,8 @@ LifeMeterBar::LifeMeterBar()
 	m_fDangerThreshold = DANGER_THRESHOLD;
 
 	m_quadBlackBackground.SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
-	m_quadBlackBackground.SetZoomX( m_iMeterWidth );
-	m_quadBlackBackground.SetZoomY( m_iMeterHeight );
+	m_quadBlackBackground.SetZoomX( (float)m_iMeterWidth );
+	m_quadBlackBackground.SetZoomY( (float)m_iMeterHeight );
 	m_frame.AddSubActor( &m_quadBlackBackground );
 
 	m_sprStreamNormal.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream normal") );
@@ -127,6 +127,11 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		m_bFailedEarlier = true;
 
 	ResetBarVelocity();
+}
+
+void LifeMeterBar::ChangeLife( HoldNoteScore score )
+{
+	// do nothing
 }
 
 void LifeMeterBar::ResetBarVelocity()

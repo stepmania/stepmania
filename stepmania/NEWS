@@ -1,6 +1,7 @@
 ------------------------CVS after 3.00 beta 6----------------
 CHANGE:  While AutoPlay is on, life, score, and dance points will not 
 	accumulate.
+CHANGE:  DWI save support added to editor.
 NEW FEATURE:  Editor can edit BackgroundChanges.  Use the 'B' key.
 NEW FEATURE:  Delayed escape/back key is now optional.
 CHANGE:  Slow-motion is now ~ instead of LShift.

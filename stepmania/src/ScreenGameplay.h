@@ -94,6 +94,7 @@ private:
 	BitmapText				m_textSongOptions;
 
 	BitmapText				m_textDebug;
+	BitmapText				m_textAutoPlay;		// shows whether AutoPlay is on.
 
 
 	TransitionFadeWipe	m_Fade;

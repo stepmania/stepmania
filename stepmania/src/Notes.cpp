@@ -227,7 +227,7 @@ bool Notes::LoadFromBMSFile( const CString &sPath )
 					float fPercentThroughMeasure = (float)j/(float)iNumNotesInThisMeasure;
 
 					const int iNoteIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
-									 * BEATS_PER_MEASURE * ELEMENTS_PER_BEAT );
+									 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
 					int iColumnNumber;
 					char cNoteChar;
 					mapBMSTrackToDanceNote( iTrackNum, iColumnNumber, cNoteChar );
@@ -626,7 +626,7 @@ char NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4, bool bCol5,
 	for( int i=0; i<iNumLookups; i++ )
 	{
 		const DWICharLookup& l = lookup[i];
-		if( l.bCol[0] && bCol1, l.bCol[1] && bCol2, l.bCol[2] && bCol3, l.bCol[3] && bCol4, l.bCol[4] && bCol5, l.bCol[5] && bCol6 )
+		if( l.bCol[0]==bCol1 && l.bCol[1]==bCol2 && l.bCol[2]==bCol3 && l.bCol[3]==bCol4 && l.bCol[4]==bCol5 && l.bCol[5]==bCol6 )
 			return l.c;
 	}
 	ASSERT(0);
@@ -638,10 +638,10 @@ char NotesToDWIChar( bool bCol1, bool bCol2, bool bCol3, bool bCol4 )
 	return NotesToDWIChar( 0, bCol1, bCol2, bCol3, bCol4, 0 );
 }
 
-CString NotesToDWIString( int iNoteCol1, int iNoteCol2, int iNoteCol3, int iNoteCol4, int iNoteCol5, int iNoteCol6 )
+CString NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4, char cNoteCol5, char cNoteCol6 )
 {
-	char cShow = NotesToDWIChar( iNoteCol1!=0, iNoteCol2!=0, iNoteCol3!=0, iNoteCol4!=0, iNoteCol5!=0, iNoteCol6!=0 );
-	char cHold = NotesToDWIChar( iNoteCol1==2, iNoteCol2==2, iNoteCol3==2, iNoteCol4==2, iNoteCol5==2, iNoteCol6==2 );
+	char cShow = NotesToDWIChar( cNoteCol1!='0', cNoteCol2!='0', cNoteCol3!='0', cNoteCol4!='0', cNoteCol5!='0', cNoteCol6!='0' );
+	char cHold = NotesToDWIChar( cNoteCol1=='2', cNoteCol2=='2', cNoteCol3=='2', cNoteCol4=='2', cNoteCol5=='2', cNoteCol6=='2' );
 	
 	if( cHold != '0' )
 		return ssprintf( "%c!%c", cShow, cHold );
@@ -649,13 +649,15 @@ CString NotesToDWIString( int iNoteCol1, int iNoteCol2, int iNoteCol3, int iNote
 		return cShow;
 }
 
-CString NotesToDWIString( int iNoteCol1, int iNoteCol2, int iNoteCol3, int iNoteCol4 )
+CString NotesToDWIString( char cNoteCol1, char cNoteCol2, char cNoteCol3, char cNoteCol4 )
 {
-	return NotesToDWIString( 0, iNoteCol1, iNoteCol2, iNoteCol3, iNoteCol4, 0 );
+	return NotesToDWIString( '0', cNoteCol1, cNoteCol2, cNoteCol3, cNoteCol4, '0' );
 }
 
 void Notes::WriteDWINotesTag( FILE* fp )
 {
+	LOG->Trace( "Notes::WriteDWINotesTag" );
+
 	switch( m_NotesType )
 	{
 	case NOTES_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
@@ -679,33 +681,86 @@ void Notes::WriteDWINotesTag( FILE* fp )
 	this->GetNoteData( &notedata );
 	notedata.ConvertHoldNotesTo2sAnd3s();
 
-	fprintf( fp, "<" );		// begin a 48th note series
-	for( int r=0; r<notedata.GetLastRow(); r++ )
+	const int iNumPads = (m_NotesType==NOTES_TYPE_DANCE_COUPLE || m_NotesType==NOTES_TYPE_DANCE_DOUBLE) ? 2 : 1;
+	const int iLastMeasure = int( notedata.GetLastBeat()/BEATS_PER_MEASURE );
+
+	for( int pad=0; pad<iNumPads; pad++ )
 	{
-		switch( m_NotesType )
+		if( pad == 1 )	// 2nd pad
+			fprintf( fp, ":\n" );
+
+		for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 		{
-		case NOTES_TYPE_DANCE_SINGLE:
-		case NOTES_TYPE_DANCE_COUPLE:
-		case NOTES_TYPE_DANCE_DOUBLE:
-			fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][r], notedata.m_TapNotes[1][r], notedata.m_TapNotes[2][r], notedata.m_TapNotes[3][r] ) );
-			break;
-		case NOTES_TYPE_DANCE_SOLO:
-			fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][r], notedata.m_TapNotes[1][r], notedata.m_TapNotes[2][r], notedata.m_TapNotes[3][r], notedata.m_TapNotes[4][r], notedata.m_TapNotes[5][r] ) );
-			break;
-		default:	return;	// not a type supported by DWI
+			NoteType nt = notedata.GetSmallestNoteTypeForMeasure( m );
+
+			double fCurrentIncrementer;
+			switch( nt )
+			{
+			case NOTE_TYPE_4TH:
+			case NOTE_TYPE_8TH:	
+				fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
+				break;
+			case NOTE_TYPE_12TH:
+				fprintf( fp, "[" );
+				fCurrentIncrementer = 1.0/24 * BEATS_PER_MEASURE;
+				break;
+			case NOTE_TYPE_16TH:
+				fprintf( fp, "(" );
+				fCurrentIncrementer = 1.0/16 * BEATS_PER_MEASURE;
+				break;
+			default:
+				ASSERT(0);
+				// fall though
+			case NOTE_TYPE_INVALID:
+				fprintf( fp, "<" );
+				fCurrentIncrementer = 1.0/192 * BEATS_PER_MEASURE;
+				break;
+			}
+
+			double fFirstBeatInMeasure = m * BEATS_PER_MEASURE;
+			double fLastBeatInMeasure = (m+1) * BEATS_PER_MEASURE;
+
+			for( double b=fFirstBeatInMeasure; b<fLastBeatInMeasure; b+=fCurrentIncrementer )
+			{
+				int row = BeatToNoteRow( (float)b );
+
+				switch( m_NotesType )
+				{
+				case NOTES_TYPE_DANCE_SINGLE:
+				case NOTES_TYPE_DANCE_COUPLE:
+				case NOTES_TYPE_DANCE_DOUBLE:
+					fprintf( fp, NotesToDWIString( notedata.m_TapNotes[pad*4+0][row], notedata.m_TapNotes[pad*4+1][row], notedata.m_TapNotes[pad*4+2][row], notedata.m_TapNotes[pad*4+3][row] ) );
+					break;
+				case NOTES_TYPE_DANCE_SOLO:
+					fprintf( fp, NotesToDWIString( notedata.m_TapNotes[0][row], notedata.m_TapNotes[1][row], notedata.m_TapNotes[2][row], notedata.m_TapNotes[3][row], notedata.m_TapNotes[4][row], notedata.m_TapNotes[5][row] ) );
+					break;
+				default:	return;	// not a type supported by DWI
+				}
+			}
+
+			switch( nt )
+			{
+			case NOTE_TYPE_4TH:
+			case NOTE_TYPE_8TH:	
+				break;
+			case NOTE_TYPE_12TH:
+				fprintf( fp, "]" );
+				break;
+			case NOTE_TYPE_16TH:
+				fprintf( fp, ")" );
+				break;
+			default:
+				ASSERT(0);
+				// fall though
+			case NOTE_TYPE_INVALID:
+				fprintf( fp, ">" );
+				break;
+			}
+			fprintf( fp, "\n" );
 		}
 	}
-	fprintf( fp, "<" );		// end a 48th note series
 
-	if( m_NotesType == NOTES_TYPE_DANCE_COUPLE  ||  m_NotesType == NOTES_TYPE_DANCE_DOUBLE )
-	{
-		fprintf( fp, ":" );
-		fprintf( fp, "<" );		// begin a 48th note series
-		for( int r=0; r<notedata.GetLastRow(); r++ )
-			fprintf( fp, NotesToDWIString( notedata.m_TapNotes[4][r], notedata.m_TapNotes[5][r], notedata.m_TapNotes[6][r], notedata.m_TapNotes[7][r] ) );
-	}
-
-	fprintf( fp, ">" );	// end series
+	fprintf( fp, ";\n" );
 }
 
 void Notes::SetNoteData( NoteData* pNewNoteData )

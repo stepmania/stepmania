@@ -23,6 +23,7 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "ScreenTextEntry.h"
 
 
 //
@@ -38,8 +39,8 @@ const float DEBUG_Y			= CENTER_Y-100;
 const float HELP_X			= SCREEN_LEFT + 10;
 const float HELP_Y			= SCREEN_BOTTOM - 10;
 
-const float SHORTCUTS_X		= SCREEN_LEFT + 10;
-const float SHORTCUTS_Y		= SCREEN_TOP + 8;
+const float SHORTCUTS_X		= CENTER_X - 150;
+const float SHORTCUTS_Y		= CENTER_Y;
 
 const float INFO_X			= SCREEN_RIGHT - 10 ;
 const float INFO_Y			= SCREEN_BOTTOM - 10;
@@ -53,11 +54,11 @@ const float PLAYER_Y		=	SCREEN_TOP;
 
 const float MENU_ITEM_X			=	CENTER_X-200;
 const float MENU_ITEM_START_Y	=	SCREEN_TOP + 30;
-const float MENU_ITEM_SPACING_Y	=	24;
+const float MENU_ITEM_SPACING_Y	=	20;
 
 const CString HELP_TEXT = 
 	"Esc: show menu\n"
-	"Hold F1 to show keyboard shortcuts\n"
+	"Hold F1 to show more commands\n"
 	"Up/Down: change beat\n"
 	"Left/Right: change snap\n"
 	"PgUp/PgDn: jump 1 measure\n"
@@ -68,7 +69,7 @@ const CString HELP_TEXT =
 
 const CString SHORTCUT_TEXT = 
 	"S: save changes\n"
-	"I: save as SM and DWI (lossy)\n"
+	"W: save as SM and DWI (lossy)\n"
 	"Enter/Space: set begin/end selection markers\n"
 	"G/H/J/K/L: Snap selection to nearest\n"
 	"      4th / 8th / 12th / 16th / 12th or 16th\n"
@@ -92,11 +93,6 @@ const CString SHORTCUT_TEXT =
 const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
 	"Set begin marker (Enter)",
 	"Set end marker (Space)",
-	"Snap selection to nearest quarter note (G)",
-	"Snap selection to nearest eighth note (H)",
-	"Snap selection to nearest triplet (J)",
-	"Snap selection to nearest sixteenth note (K)",
-	"Snap selection to nearest triplet or sixteenth note (L)",
 	"(P)lay selection",
 	"(R)ecord in selection",
 	"(T)oggle Play/Record rate",
@@ -104,20 +100,22 @@ const CString MENU_ITEM_TEXT[NUM_MENU_ITEMS] = {
 	"Copy selection (C)",
 	"Paste clipboard at current beat (V)",
 	"Toggle (D)ifficulty",
+	"Add (B)ackground change",
 	"(Ins)ert blank beat and shift down",
 	"(Del)ete blank beat and shift up",
+	"Snap selection to nearest quarter note (G)",
+	"Snap selection to nearest eighth note (H)",
+	"Snap selection to nearest triplet (J)",
+	"Snap selection to nearest sixteenth note (K)",
+	"Snap selection to nearest triplet or sixteenth note (L)",
 	"Play sample (M)usic",
 	"(S)ave changes",
+	"Save as D(W)I and SM (lossy)",
 	"(Q)uit"
 };
 int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_RETURN,
 	DIK_SPACE,
-	DIK_G,
-	DIK_H,
-	DIK_J,
-	DIK_K,
-	DIK_L,
 	DIK_P,
 	DIK_R,
 	DIK_T,
@@ -125,10 +123,17 @@ int MENU_ITEM_KEY[NUM_MENU_ITEMS] = {
 	DIK_C,
 	DIK_V,
 	DIK_D,
+	DIK_B,
 	DIK_INSERT,
 	DIK_DELETE,
+	DIK_G,
+	DIK_H,
+	DIK_J,
+	DIK_K,
+	DIK_L,
 	DIK_M,
 	DIK_S,
+	DIK_W,
 	DIK_Q,
 };
 
@@ -241,10 +246,13 @@ ScreenEdit::ScreenEdit()
 	m_textHelp.SetShadowLength( 2 );
 	m_textHelp.SetText( HELP_TEXT );
 
+	m_rectShortcutsBack.StretchTo( CRect(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
+	m_rectShortcutsBack.SetDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
+
 	m_textShortcuts.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textShortcuts.SetXY( SHORTCUTS_X, SHORTCUTS_Y );
 	m_textShortcuts.SetHorizAlign( Actor::align_left );
-	m_textShortcuts.SetVertAlign( Actor::align_top );
+	m_textShortcuts.SetVertAlign( Actor::align_middle );
 	m_textShortcuts.SetZoom( 0.5f );
 	m_textShortcuts.SetShadowLength( 2 );
 	m_textShortcuts.SetText( SHORTCUT_TEXT );
@@ -325,6 +333,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_Fade.Update( fDeltaTime );
 	m_textHelp.Update( fDeltaTime );
 	m_textInfo.Update( fDeltaTime );
+	m_rectShortcutsBack.Update( fDeltaTime );
 	m_textShortcuts.Update( fDeltaTime );
 
 	m_rectRecordBack.Update( fDeltaTime );
@@ -385,11 +394,11 @@ void ScreenEdit::Update( float fDeltaTime )
 	CString sNoteType;
 	switch( m_SnapDisplay.GetSnapMode() )
 	{
-	case NOTE_4TH:	sNoteType = "quarter notes";	break;
-	case NOTE_8TH:	sNoteType = "eighth notes";		break;
-	case NOTE_12TH:	sNoteType = "triplets";			break;
-	case NOTE_16TH:	sNoteType = "sixteenth notes";	break;
-	default:  ASSERT( false );
+	case NOTE_TYPE_4TH:		sNoteType = "quarter notes";	break;
+	case NOTE_TYPE_8TH:		sNoteType = "eighth notes";		break;
+	case NOTE_TYPE_12TH:	sNoteType = "triplets";			break;
+	case NOTE_TYPE_16TH:	sNoteType = "sixteenth notes";	break;
+	default:  ASSERT(0);
 	}
 
 	static int iNumTapNotes = 0, iNumHoldNotes = 0;
@@ -437,11 +446,14 @@ void ScreenEdit::DrawPrimitives()
 	m_NoteFieldEdit.Draw();
 	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
 
-	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
-		m_textShortcuts.Draw();
 	m_textHelp.Draw();
 	m_textInfo.Draw();
 	m_Fade.Draw();
+	if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,DIK_F1) ) )
+	{
+		m_rectShortcutsBack.Draw();
+		m_textShortcuts.Draw();
+	}
 
 	m_rectRecordBack.Draw();
 
@@ -562,6 +574,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SCREENMAN->SetNewScreen( new ScreenEditMenu );
 		break;
 	case DIK_S:
+	case DIK_W:
 		{
 			// copy edit into current Notes
 			Song* pSong = GAMESTATE->m_pCurSong;
@@ -578,7 +591,19 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
-			GAMESTATE->m_pCurSong->SaveToSMFile();
+			switch( DeviceI.button )
+			{
+			case DIK_S:
+				GAMESTATE->m_pCurSong->SaveToSMFile();
+				SCREENMAN->SystemMessage( "Saved as SM." );
+				break;
+			case DIK_W:
+				GAMESTATE->m_pCurSong->SaveToSMAndDWIFile();
+				SCREENMAN->SystemMessage( "Saved as SM and DWI." );
+				break;
+			default:
+				ASSERT(0);
+			}
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","edit save") );
 		}
 		break;
@@ -709,11 +734,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				NoteType noteType2;
 				switch( DeviceI.button )
 				{
-					case DIK_G:	noteType1 = NOTE_4TH;	noteType2 = NOTE_4TH;	break;
-					case DIK_H:	noteType1 = NOTE_8TH;	noteType2 = NOTE_8TH;	break;
-					case DIK_J:	noteType1 = NOTE_12TH;	noteType2 = NOTE_12TH;	break;
-					case DIK_K:	noteType1 = NOTE_16TH;	noteType2 = NOTE_16TH;	break;
-					case DIK_L:	noteType1 = NOTE_12TH;	noteType2 = NOTE_16TH;	break;
+					case DIK_G:	noteType1 = NOTE_TYPE_4TH;	noteType2 = NOTE_TYPE_4TH;	break;
+					case DIK_H:	noteType1 = NOTE_TYPE_8TH;	noteType2 = NOTE_TYPE_8TH;	break;
+					case DIK_J:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_12TH;	break;
+					case DIK_K:	noteType1 = NOTE_TYPE_16TH;	noteType2 = NOTE_TYPE_16TH;	break;
+					case DIK_L:	noteType1 = NOTE_TYPE_12TH;	noteType2 = NOTE_TYPE_16TH;	break;
 					default:	ASSERT( false );
 				}
 
@@ -857,6 +882,21 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 
+	case DIK_B:
+		{
+			CString sOldBackground;
+			for( int i=0; i<m_pSong->m_BackgroundChanges.GetSize(); i++ )
+			{
+				if( m_pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+					break;
+			}
+			if( i != m_pSong->m_BackgroundChanges.GetSize() )	// there is already a BGChange here
+				sOldBackground = m_pSong->m_BackgroundChanges[i].m_sBGName;
+
+			SCREENMAN->AddScreenToTop( new ScreenTextEntry(SM_None, "Type a background name.\nPress Enter to keep,\nEscape to cancel.\nEnter an empty string to remove\nthe Background Change.", sOldBackground, AddBGChange, NULL) );
+		}
+		break;
+
 	case DIK_F7:
 	case DIK_F8:
 		{
@@ -896,17 +936,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case DIK_F9:
 	case DIK_F10:
 		{
-			float fFreezeDelta;
+			float fStopDelta;
 			switch( DeviceI.button )
 			{
-			case DIK_F9:	fFreezeDelta = -0.020f;		break;
-			case DIK_F10:	fFreezeDelta = +0.020f;		break;
+			case DIK_F9:	fStopDelta = -0.020f;		break;
+			case DIK_F10:	fStopDelta = +0.020f;		break;
 			default:	ASSERT(0);
 			}
 			switch( type )
 			{
-			case IET_SLOW_REPEAT:	fFreezeDelta *= 10;	break;
-			case IET_FAST_REPEAT:	fFreezeDelta *= 40;	break;
+			case IET_SLOW_REPEAT:	fStopDelta *= 10;	break;
+			case IET_FAST_REPEAT:	fStopDelta *= 40;	break;
 			}
 
 			for( int i=0; i<m_pSong->m_StopSegments.GetSize(); i++ )
@@ -918,12 +958,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			if( i == m_pSong->m_StopSegments.GetSize() )	// there is no BPMSegment at the current beat
 			{
 				// create a new StopSegment
-				if( fFreezeDelta > 0 )
-					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fFreezeDelta) );
+				if( fStopDelta > 0 )
+					m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fStopDelta) );
 			}
 			else	// StopSegment being modified is m_StopSegments[i]
 			{
-				m_pSong->m_StopSegments[i].m_fStopSeconds += fFreezeDelta;
+				m_pSong->m_StopSegments[i].m_fStopSeconds += fStopDelta;
 				if( m_pSong->m_StopSegments[i].m_fStopSeconds <= 0 )
 					m_pSong->m_StopSegments.RemoveAt( i );
 			}
@@ -982,6 +1022,24 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	}
 }
 
+void ScreenEdit::AddBGChange( CString sBGName )
+{
+	Song* pSong = GAMESTATE->m_pCurSong;
+
+	for( int i=0; i<pSong->m_BackgroundChanges.GetSize(); i++ )
+	{
+		if( pSong->m_BackgroundChanges[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
+			break;
+	}
+
+	if( i != pSong->m_BackgroundChanges.GetSize() )	// there is already a BGChange here
+		pSong->m_BackgroundChanges.RemoveAt( i );
+
+	// create a new BGChange
+	if( sBGName != "" )
+		pSong->AddBackgroundChange( BackgroundChange(GAMESTATE->m_fSongBeat, sBGName) );
+}
+
 void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if(type == IET_RELEASE) return; // don't care
@@ -1010,7 +1068,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			if( type == IET_FIRST_PRESS )
 			{
 				m_NoteFieldRecord.m_TapNotes[iCol][iNoteIndex] = '1';
-				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_12TH, NOTE_16TH, max(0,GAMESTATE->m_fSongBeat-1), GAMESTATE->m_fSongBeat+1);
+				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_TYPE_12TH, NOTE_TYPE_16TH, max(0,GAMESTATE->m_fSongBeat-1), GAMESTATE->m_fSongBeat+1);
 				m_GrayArrowRowRecord.Step( iCol );
 			}
 			else
@@ -1030,7 +1088,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 				newHN.m_fEndBeat = fEndBeat;
 
 				m_NoteFieldRecord.AddHoldNote( newHN );
-				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_12TH, NOTE_16TH, max(0,GAMESTATE->m_fSongBeat-2), GAMESTATE->m_fSongBeat+2);
+				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_TYPE_12TH, NOTE_TYPE_16TH, max(0,GAMESTATE->m_fSongBeat-2), GAMESTATE->m_fSongBeat+2);
 			}
 			break;
 	}

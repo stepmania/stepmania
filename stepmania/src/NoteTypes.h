@@ -43,20 +43,20 @@ const int MAX_BEATS			= 1500;	// BMR's Pulse has about 1300
 const int BEATS_PER_MEASURE = 4;
 const int MAX_MEASURES		= MAX_BEATS / BEATS_PER_MEASURE;
 
-const int ELEMENTS_PER_BEAT	= 12;	// It is important that this number is evenly divisible by 2, 3, and 4.
-const int ELEMENTS_PER_MEASURE = ELEMENTS_PER_BEAT * BEATS_PER_MEASURE;
-const int MAX_TAP_NOTE_ROWS = MAX_BEATS*ELEMENTS_PER_BEAT;
+const int ROWS_PER_BEAT	= 12;	// It is important that this number is evenly divisible by 2, 3, and 4.
+const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
+const int MAX_TAP_NOTE_ROWS = MAX_BEATS*ROWS_PER_BEAT;
 
 const int MAX_HOLD_NOTES = 400;	// BMR's Connected has about 300
 
 enum NoteType 
 { 
-	NOTE_4TH,	// quarter notes
-	NOTE_8TH,	// eighth notes
-	NOTE_12TH,	// triplets
-	NOTE_16TH,	// sixteenth notes
+	NOTE_TYPE_4TH,	// quarter note
+	NOTE_TYPE_8TH,	// eighth note
+	NOTE_TYPE_12TH,	// triplet
+	NOTE_TYPE_16TH,	// sixteenth note
 	NUM_NOTE_TYPES,
-	NOTE_INVALID
+	NOTE_TYPE_INVALID
 };
 
 D3DXCOLOR NoteTypeToColor( NoteType nt );
@@ -76,9 +76,9 @@ struct HoldNote
 };
 
 
-inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ELEMENTS_PER_BEAT + 0.5f); };	// round
-inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ELEMENTS_PER_BEAT ); };
-inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ELEMENTS_PER_BEAT;	 };
+inline int   BeatToNoteRow( float fBeatNum )			{ return int( fBeatNum * ROWS_PER_BEAT + 0.5f); };	// round
+inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); };
+inline float NoteRowToBeat( float fNoteIndex )			{ return fNoteIndex / (float)ROWS_PER_BEAT;	 };
 inline float NoteRowToBeat( int iNoteIndex )			{ return NoteRowToBeat( (float)iNoteIndex );	 };
 
 

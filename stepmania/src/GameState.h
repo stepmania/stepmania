@@ -116,7 +116,6 @@ public:
 	CArray<Song*,Song*>	m_apSongsPlayed;	// an array of completed songs.  
 											// This is useful for the final evaluation screen,
 											// and used to calculate the time into a course
-	bool m_bUsedAutoPlayer;					// Used autoplayer at any time during any stage/course/song
 
 	// Only used in final evaluation screen in play mode Arcade.
 	// Before being displayed, these values should be normalized by dividing by number of stages

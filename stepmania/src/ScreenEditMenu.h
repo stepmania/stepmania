@@ -28,8 +28,8 @@ private:
 
 	void MenuUp( const PlayerNumber p );
 	void MenuDown( const PlayerNumber p );
-	void MenuLeft( const PlayerNumber p );
-	void MenuRight( const PlayerNumber p );
+	void MenuLeft( const PlayerNumber p, const InputEventType type );
+	void MenuRight( const PlayerNumber p, const InputEventType type );
 	void MenuBack( const PlayerNumber p );
 	void MenuStart( const PlayerNumber p );
 

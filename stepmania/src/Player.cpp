@@ -417,8 +417,6 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 
 	// update the judgement, score, and life
 	m_Judgement.SetJudgement( score );
-	if( m_pLifeMeter )
-		m_pLifeMeter->ChangeLife( score );
 
 	// zoom the judgement and combo like a heart beat
 	float fStartZoom;
@@ -463,9 +461,6 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 				bFoundAMissInThisRow = true;
 				HandleNoteScore( TNS_MISS );
 			}
-			if( bFoundAMissInThisRow )
-				if( m_pLifeMeter )
-					m_pLifeMeter->ChangeLife( TNS_MISS );
 		}
 	}
 
@@ -496,9 +491,15 @@ void Player::CrossedRow( int iNoteRow )
 
 void Player::HandleNoteScore( TapNoteScore score )
 {
+	// don't accumulate points if AutoPlay is on.
+	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
+		return;
+
 	// update dance points for Oni lifemeter
 	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += TapNoteScoreToDancePoints( score );
 	GAMESTATE->m_TapNoteScores[m_PlayerNumber][score]++;
+	if( m_pLifeMeter )
+		m_pLifeMeter->ChangeLife( score );
 	if( m_pLifeMeter )
 		m_pLifeMeter->OnDancePointsChange();
 
@@ -566,11 +567,18 @@ void Player::HandleNoteScore( TapNoteScore score )
 
 void Player::HandleNoteScore( HoldNoteScore score )
 {
+	// don't accumulate points if AutoPlay is on.
+	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
+		return;
+
 	// update dance points for Oni lifemeter
 	GAMESTATE->m_iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( score );
 	GAMESTATE->m_HoldNoteScores[m_PlayerNumber][score]++;
+
 	if( m_pLifeMeter )
-		m_pLifeMeter->OnDancePointsChange();
+		m_pLifeMeter->ChangeLife( score );
+	if( m_pLifeMeter )
+		m_pLifeMeter->OnDancePointsChange();	
 
 	// HoldNoteScores don't effect m_fScore
 }

@@ -321,6 +321,12 @@
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
+				RelativePath="ScreenTextEntry.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTextEntry.h">
+			</File>
+			<File
 				RelativePath="ScreenTitleMenu.cpp">
 			</File>
 			<File

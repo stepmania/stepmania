@@ -330,7 +330,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	Grade grade[NUM_PLAYERS];
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(p)  ||  GAMESTATE->m_bUsedAutoPlayer  ||  GAMESTATE->m_fSecondsBeforeFail[p] != -1 )
+		if( !GAMESTATE->IsPlayerEnabled(p)  ||  GAMESTATE->m_fSecondsBeforeFail[p] != -1 )
 		{
 			grade[p] = GRADE_E;
 		}
@@ -370,7 +370,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
-		if( GAMESTATE->m_bUsedAutoPlayer )
+		if( grade[p] == GRADE_E )
 			continue;
 
 		switch( m_ResultMode )

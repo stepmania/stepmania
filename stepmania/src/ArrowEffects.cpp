@@ -20,7 +20,7 @@
 #include "NoteDisplay.h"
 
 
-float ArrowGetYOffset2( const PlayerNumber pn, float fNoteBeat )
+float ArrowGetYOffset( const PlayerNumber pn, float fNoteBeat )
 {
 	float fSongBeat = GAMESTATE->m_fSongBeat;
 	float fBeatsUntilStep = fNoteBeat - fSongBeat;

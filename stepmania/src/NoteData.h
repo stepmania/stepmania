@@ -98,6 +98,8 @@ public:
 
 	void SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
 
+	NoteType GetSmallestNoteTypeForMeasure( int iMeasureIndex );
+
 	// Convert between HoldNote representation and '2' and '3' markers in TapNotes
 	void Convert2sAnd3sToHoldNotes();
 	void ConvertHoldNotesTo2sAnd3s();

@@ -44,7 +44,7 @@ OptionLineData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Texture Res",	3,  {"256","512","1024"} },
 	{ "Refresh Rate",	11, {"MAX","DEFAULT","60","70","72","75","80","85","90","100","120"} },
 	{ "Show Stats",		2,  {"OFF","ON"} },
-	{ "BG Mode",		6,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES","fsdflksjfdlksjdflksfdj","fsdflksjfdlksjdflksfdj"} },
+	{ "BG Mode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
 	{ "BG Brightness",	5,  {"20%","40%","60%","80%","100%"} },
 	{ "Movie Decode",	4,  {"1ms","2ms","3ms","4ms"} },
 	{ "BG For Banner",	2,  {"NO", "YES (slow)"} },

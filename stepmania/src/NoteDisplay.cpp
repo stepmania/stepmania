@@ -498,9 +498,9 @@ void NoteDisplay::DrawList( int iCount, NoteDisplayInstance cni[], bool bDrawAdd
 void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail )
 {
 	const int	iCol			= hn.m_iTrack;
-	const float fStartYOffset	= ArrowGetYOffset2(	m_PlayerNumber, hn.m_fStartBeat );
+	const float fStartYOffset	= ArrowGetYOffset(	m_PlayerNumber, hn.m_fStartBeat );
 	const float fStartYPos		= ArrowGetYPos(		m_PlayerNumber, fStartYOffset );
-	const float fEndYOffset		= ArrowGetYOffset2(	m_PlayerNumber, hn.m_fEndBeat );
+	const float fEndYOffset		= ArrowGetYOffset(	m_PlayerNumber, hn.m_fEndBeat );
 	const float fEndYPos		= ArrowGetYPos(		m_PlayerNumber, fEndYOffset );
 
 	// draw from bottom to top
@@ -624,7 +624,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bUseHoldColor, const float fPercentFadeToFail )
 {
-	const float fYOffset		= ArrowGetYOffset2(	m_PlayerNumber, fBeat );
+	const float fYOffset		= ArrowGetYOffset(	m_PlayerNumber, fBeat );
 	const float fYPos			= ArrowGetYPos(		m_PlayerNumber, fYOffset );
 	const float fRotation		= ArrowGetRotation(	m_PlayerNumber, iCol, fYOffset );
 	const float fXPos			= ArrowGetXPos2(	m_PlayerNumber, iCol, fYPos );

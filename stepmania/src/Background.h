@@ -19,12 +19,12 @@
 #include "BackgroundAnimation.h"
 
 
-struct AnimSeg
+struct BGSegment	// like a BGChange, but holds index of a background instead of name
 {
-	AnimSeg() {};
-	AnimSeg( float b, int i ) { m_fStartBeat = b; m_iAnimationIndex = i; };
+	BGSegment() {};
+	BGSegment( float b, int i ) { m_fStartBeat = b; m_iBGIndex = i; };
 	float m_fStartBeat;
-	int m_iAnimationIndex;
+	int m_iBGIndex;
 };
 
 
@@ -61,9 +61,9 @@ protected:
 
 	// used in all BackgroundModes except OFF
 	CArray<BackgroundAnimation*,BackgroundAnimation*> m_BackgroundAnimations;
-	CArray<AnimSeg,AnimSeg&> m_aAnimSegs;
-	int m_iCurAnimSegment;	// this increases as we move into new segments
-	BackgroundAnimation* GetCurBGA() { int index = m_aAnimSegs[m_iCurAnimSegment].m_iAnimationIndex; return m_BackgroundAnimations[index]; };
+	CArray<BGSegment,BGSegment&> m_aBGSegments;
+	int m_iCurBGSegment;	// this increases as we move into new segments
+	BackgroundAnimation* GetCurBGA() { int index = m_aBGSegments[m_iCurBGSegment].m_iBGIndex; return m_BackgroundAnimations[index]; };
 
 
 	Quad m_quadBGBrightness;

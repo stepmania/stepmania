@@ -33,12 +33,12 @@ struct StopSegment
 	float m_fStopSeconds;
 };
 
-struct AnimationSegment 
+struct BackgroundChange 
 {
-	AnimationSegment() { m_fStartBeat = -1; };
-	AnimationSegment( float s, CString sAnimName ) { m_fStartBeat = s; m_sAnimationName = sAnimName; };
+	BackgroundChange() { m_fStartBeat = -1; };
+	BackgroundChange( float s, CString sBGName ) { m_fStartBeat = s; m_sBGName = sBGName; };
 	float m_fStartBeat;
-	CString m_sAnimationName;
+	CString m_sBGName;
 };
 
 
@@ -116,15 +116,15 @@ public:
 	bool HasBackground()		{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); };
 	bool HasCDTitle()			{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); };
 	bool HasMovieBackground()	{return m_sMovieBackgroundFile != ""&&  IsAFile(GetMovieBackgroundPath()); };
-
+	bool HasBGChanges()			{return m_BackgroundChanges.GetSize() > 0; };
 
 	CArray<BPMSegment, BPMSegment&> m_BPMSegments;	// this must be sorted before gameplay
 	CArray<StopSegment, StopSegment&> m_StopSegments;	// this must be sorted before gameplay
-	CArray<AnimationSegment, AnimationSegment&> m_AnimationSegments;	// this must be sorted before gameplay
+	CArray<BackgroundChange, BackgroundChange&> m_BackgroundChanges;	// this must be sorted before gameplay
 
 	void AddBPMSegment( BPMSegment seg );
 	void AddStopSegment( StopSegment seg );
-	void AddAnimationSegment( AnimationSegment seg );
+	void AddBackgroundChange( BackgroundChange seg );
 
 	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM ) const
 	{
@@ -151,12 +151,12 @@ public:
 				break;
 		return m_BPMSegments[i];
 	};
-	CString GetAnimationAtBeat( float fBeat )
+	CString GetBackgroundAtBeat( float fBeat )
 	{
-		for( int i=0; i<m_AnimationSegments.GetSize()-1; i++ )
-			if( m_AnimationSegments[i+1].m_fStartBeat > fBeat )
+		for( int i=0; i<m_BackgroundChanges.GetSize()-1; i++ )
+			if( m_BackgroundChanges[i+1].m_fStartBeat > fBeat )
 				break;
-		return m_AnimationSegments[i].m_sAnimationName;
+		return m_BackgroundChanges[i].m_sBGName;
 	};
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
 	float GetElapsedTimeFromBeat( float fBeat ) const;

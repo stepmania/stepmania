@@ -65,8 +65,8 @@ ScreenManager::ScreenManager()
 
 	m_textSystemMessage.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textSystemMessage.SetHorizAlign( Actor::align_left );
-	m_textSystemMessage.SetVertAlign( Actor::align_bottom );
-	m_textSystemMessage.SetXY( 5.0f, 10.0f );
+	m_textSystemMessage.SetVertAlign( Actor::align_top );
+	m_textSystemMessage.SetXY( 4.0f, 4.0f );
 	m_textSystemMessage.SetZoom( 0.5f );
 	m_textSystemMessage.SetShadowLength( 2 );
 	m_textSystemMessage.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );

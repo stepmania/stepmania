@@ -86,6 +86,8 @@
 #define DIFFICULTY_P2_EXTRA_REVERSE_Y	THEME->GetMetricF("Gameplay","DifficultyP2ExtraReverseY")
 #define DEBUG_X							THEME->GetMetricF("Gameplay","DebugX")
 #define DEBUG_Y							THEME->GetMetricF("Gameplay","DebugY")
+#define AUTOPLAY_X						THEME->GetMetricF("Gameplay","AutoPlayX")
+#define AUTOPLAY_Y						THEME->GetMetricF("Gameplay","AutoPlayY")
 #define SURVIVE_TIME_X					THEME->GetMetricF("Gameplay","SurviveTimeX")
 #define SURVIVE_TIME_Y					THEME->GetMetricF("Gameplay","SurviveTimeY")
 #define SECONDS_BETWEEN_COMMENTS		THEME->GetMetricF("Gameplay","SecondsBetweenComments")
@@ -245,8 +247,6 @@ ScreenGameplay::ScreenGameplay()
 	}
 
 
-
-	GAMESTATE->m_bUsedAutoPlayer |= PREFSMAN->m_bAutoPlay;
 	m_bChangedOffsetOrBPM = false;
 
 
@@ -478,7 +478,12 @@ ScreenGameplay::ScreenGameplay()
 	m_textDebug.SetXY( DEBUG_X, DEBUG_Y );
 	m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 	this->AddSubActor( &m_textDebug );
-
+	
+	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
+	m_textAutoPlay.SetXY( AUTOPLAY_X, AUTOPLAY_Y );
+	m_textAutoPlay.SetText( "AutoPlay is ON" );
+	m_textAutoPlay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	this->AddSubActor( &m_textAutoPlay );
 	
 	
 	m_StarWipe.SetClosed();
@@ -904,6 +909,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 		iRowLastCrossed = iRowNow;
 	}
 
+	if( PREFSMAN->m_bAutoPlay  &&  !GAMESTATE->m_bDemonstration )
+		m_textAutoPlay.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+	else
+		m_textAutoPlay.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
 	Screen::Update( fDeltaTime );
 }
@@ -937,7 +946,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		return;	// don't fall through below
 	}
 
-
 	// Handle special keys to adjust the offset
 	if( DeviceI.device == DEVICE_KEYBOARD )
 	{
@@ -945,13 +953,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 		case DIK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-			GAMESTATE->m_bUsedAutoPlayer |= PREFSMAN->m_bAutoPlay;
-			m_textDebug.SetText( ssprintf("Autoplayer %s.", (PREFSMAN->m_bAutoPlay ? "ON" : "OFF")) );
-			m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
-			m_textDebug.StopTweening();
-			m_textDebug.BeginTweeningQueued( 3 );		// sleep
-			m_textDebug.BeginTweeningQueued( 0.5f );	// fade out
-			m_textDebug.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 			break;
 		case DIK_F9:
 		case DIK_F10:
@@ -971,7 +972,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 				seg.m_fBPM += fOffsetDelta;
 
-				m_textDebug.SetText( ssprintf("Cur BPM = %f.", seg.m_fBPM) );
+				m_textDebug.SetText( ssprintf("Cur BPM = %f", seg.m_fBPM) );
 				m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweeningQueued( 3 );		// sleep
@@ -996,7 +997,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds += fOffsetDelta;
 
-				m_textDebug.SetText( ssprintf("Offset = %f.", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
+				m_textDebug.SetText( ssprintf("Offset = %f", GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds) );
 				m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweeningQueued( 3 );		// sleep
@@ -1026,17 +1027,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	//
 	// handle a step
 	//
-	if( m_DancingState == STATE_DANCING )
-	{
-		if( type == IET_FIRST_PRESS )
-		{
-			if( StyleI.IsValid() )
-			{
-				if( GAMESTATE->IsPlayerEnabled( StyleI.player ) )
-					m_Player[StyleI.player].Step( StyleI.col ); 
-			}
-		}
-	}
+	if( m_DancingState == STATE_DANCING  &&  type == IET_FIRST_PRESS  &&  !PREFSMAN->m_bAutoPlay   &&  StyleI.IsValid() )
+		if( GAMESTATE->IsPlayerEnabled( StyleI.player ) )
+			m_Player[StyleI.player].Step( StyleI.col ); 
 }
 
 void SaveChanges()

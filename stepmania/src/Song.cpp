@@ -70,11 +70,11 @@ void SortStopSegmentsArray( CArray<StopSegment,StopSegment&> &arrayStopSegments 
 	qsort( arrayStopSegments.GetData(), arrayStopSegments.GetSize(), sizeof(StopSegment), CompareStopSegments );
 }
 
-int CompareAnimationSegments(const void *arg1, const void *arg2)
+int CompareBackgroundChanges(const void *arg1, const void *arg2)
 {
 	// arg1 and arg2 are of type Step**
-	const AnimationSegment* seg1 = (const AnimationSegment*)arg1;
-	const AnimationSegment* seg2 = (const AnimationSegment*)arg2;
+	const BackgroundChange* seg1 = (const BackgroundChange*)arg1;
+	const BackgroundChange* seg2 = (const BackgroundChange*)arg2;
 
 	float score1 = seg1->m_fStartBeat;
 	float score2 = seg2->m_fStartBeat;
@@ -87,9 +87,9 @@ int CompareAnimationSegments(const void *arg1, const void *arg2)
 		return 1;
 }
 
-void SortAnimationSegmentsArray( CArray<AnimationSegment,AnimationSegment&> &arrayAnimationSegments )
+void SortBackgroundChangesArray( CArray<BackgroundChange,BackgroundChange&> &arrayBackgroundChanges )
 {
-	qsort( arrayAnimationSegments.GetData(), arrayAnimationSegments.GetSize(), sizeof(AnimationSegment), CompareAnimationSegments );
+	qsort( arrayBackgroundChanges.GetData(), arrayBackgroundChanges.GetSize(), sizeof(BackgroundChange), CompareBackgroundChanges );
 }
 
 
@@ -131,10 +131,10 @@ void Song::AddStopSegment( StopSegment seg )
 }
 
 
-void Song::AddAnimationSegment( AnimationSegment seg )
+void Song::AddBackgroundChange( BackgroundChange seg )
 {
-	m_AnimationSegments.Add( seg );
-	SortAnimationSegmentsArray( m_AnimationSegments );
+	m_BackgroundChanges.Add( seg );
+	SortBackgroundChangesArray( m_BackgroundChanges );
 }
 
 float Song::GetMusicStartBeat() const
@@ -486,7 +486,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 				// index is in quarter beats starting at beat 0
 				int iStepIndex = (int) ( (iMeasureNo + fPercentThroughMeasure)
-								 * BEATS_PER_MEASURE * ELEMENTS_PER_BEAT );
+								 * BEATS_PER_MEASURE * ROWS_PER_BEAT );
 
 				switch( iBMSTrackNo )
 				{
@@ -726,7 +726,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 			{
 				CStringArray arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
-				float fIndex = atoi( arrayFreezeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
+				float fIndex = atoi( arrayFreezeValues[0] ) * ROWS_PER_BEAT / 4.0f;
 				float fFreezeBeat = NoteRowToBeat( fIndex );
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
@@ -744,7 +744,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 			{
 				CStringArray arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
-				float fIndex = atoi( arrayBPMChangeValues[0] ) * ELEMENTS_PER_BEAT / 4.0f;
+				float fIndex = atoi( arrayBPMChangeValues[0] ) * ROWS_PER_BEAT / 4.0f;
 				float fBeat = NoteRowToBeat( fIndex );
 				float fNewBPM = (float)atof( arrayBPMChangeValues[1] );
 				
@@ -887,20 +887,20 @@ bool Song::LoadFromSMFile( CString sPath )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"ANIMATIONS") )
+		else if( 0==stricmp(sValueName,"BGCHANGES") )
 		{
-			CStringArray arrayAnimationExpressions;
-			split( sParams[1], ",", arrayAnimationExpressions );
+			CStringArray aBGChangeExpressions;
+			split( sParams[1], ",", aBGChangeExpressions );
 
-			for( int b=0; b<arrayAnimationExpressions.GetSize(); b++ )
+			for( int b=0; b<aBGChangeExpressions.GetSize(); b++ )
 			{
-				CStringArray arrayAnimationValues;
-				split( arrayAnimationExpressions[b], "=", arrayAnimationValues );
-				float fBeat = (float)atof( arrayAnimationValues[0] );
-				CString sAnimName = arrayAnimationValues[1];
-				sAnimName.MakeLower();
+				CStringArray aBGChangeValues;
+				split( aBGChangeExpressions[b], "=", aBGChangeValues );
+				float fBeat = (float)atof( aBGChangeValues[0] );
+				CString sBGName = aBGChangeValues[1];
+				sBGName.MakeLower();
 				
-				AddAnimationSegment( AnimationSegment(fBeat, sAnimName) );
+				AddBackgroundChange( BackgroundChange(fBeat, sBGName) );
 			}
 		}
 
@@ -1308,13 +1308,13 @@ void Song::SaveToSMFile( CString sPath )
 	}
 	fprintf( fp, ";\n" );
 	
-	fprintf( fp, "#ANIMATIONS:" );
-	for( i=0; i<m_AnimationSegments.GetSize(); i++ )
+	fprintf( fp, "#BGCHANGES:" );
+	for( i=0; i<m_BackgroundChanges.GetSize(); i++ )
 	{
-		AnimationSegment &seg = m_AnimationSegments[i];
+		BackgroundChange &seg = m_BackgroundChanges[i];
 
-		fprintf( fp, "%.2f=%s", seg.m_fStartBeat, seg.m_sAnimationName );
-		if( i != m_AnimationSegments.GetSize()-1 )
+		fprintf( fp, "%.2f=%s", seg.m_fStartBeat, seg.m_sBGName );
+		if( i != m_BackgroundChanges.GetSize()-1 )
 			fprintf( fp, "," );
 	}
 	fprintf( fp, ";\n" );
@@ -1352,7 +1352,7 @@ void Song::SaveToSMAndDWIFile()
 	for( int i=0; i<m_StopSegments.GetSize(); i++ )
 	{
 		StopSegment &fs = m_StopSegments[i];
-		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) / ELEMENTS_PER_BEAT * 4.0f, roundf(fs.m_fStopSeconds*1000) );
+		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, roundf(fs.m_fStopSeconds*1000) );
 		if( i != m_StopSegments.GetSize()-1 )
 			fprintf( fp, "," );
 	}
@@ -1362,7 +1362,7 @@ void Song::SaveToSMAndDWIFile()
 	for( i=1; i<m_BPMSegments.GetSize(); i++ )
 	{
 		BPMSegment &bs = m_BPMSegments[i];
-		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) / ELEMENTS_PER_BEAT * 4.0f, bs.m_fBPM );
+		fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) / ROWS_PER_BEAT * 4.0f, bs.m_fBPM );
 		if( i != m_BPMSegments.GetSize()-1 )
 			fprintf( fp, "," );
 	}

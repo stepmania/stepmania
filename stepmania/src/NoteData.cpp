@@ -104,48 +104,21 @@ CString NoteData::GetSMNoteDataString()
 
 	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
-		int iMeasureStartIndex = m * ELEMENTS_PER_MEASURE;
-		int iMeasureLastIndex = (m+1) * ELEMENTS_PER_MEASURE - 1;
-
-		// probe to find the smallest note type
-		NoteType nt;
-		int iNoteIndexSpacing;
-		for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )
-		{
-			float fBeatSpacing = NoteTypeToBeat( nt );
-			iNoteIndexSpacing = roundf( fBeatSpacing * ELEMENTS_PER_BEAT );
-
-			bool bFoundSmallerNote = false;
-			for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure
-			{
-				if( i % iNoteIndexSpacing == 0 )
-					continue;	// skip
-				
-				if( !IsRowEmpty(i) )
-				{
-					bFoundSmallerNote = true;
-					break;
-				}
-				
-			}
-			if( bFoundSmallerNote )
-				continue;	// keep searching
-			else
-				break;	// stop searching
-		}
-
-		if( nt == NUM_NOTE_TYPES )	// we didn't find one
-			iNoteIndexSpacing = 1;
-
+		NoteType nt = GetSmallestNoteTypeForMeasure( m );
+		float fBeatSpacing = NoteTypeToBeat( nt );
+		int iRowSpacing = roundf( fBeatSpacing * ROWS_PER_BEAT );
 
 		CStringArray asMeasureLines;
 		asMeasureLines.Add( ssprintf("  // measure %d", m+1) );
 
-		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i+=iNoteIndexSpacing )
+		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
+		const int iMeasureLastRow = (m+1) * ROWS_PER_MEASURE - 1;
+
+		for( int r=iMeasureStartRow; r<=iMeasureLastRow; r+=iRowSpacing )
 		{
 			char szLineString[MAX_NOTE_TRACKS];
 			for( int t=0; t<m_iNumTracks; t++ )
-				szLineString[t] = m_TapNotes[t][i];
+				szLineString[t] = m_TapNotes[t][r];
 			szLineString[t] = '\0';
 			asMeasureLines.Add( szLineString );
 		}
@@ -610,7 +583,7 @@ void NoteData::MakeLittle()
 	// filter out all non-quarter notes
 	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
 	{
-		if( i%ELEMENTS_PER_BEAT != 0 )
+		if( i%ROWS_PER_BEAT != 0 )
 		{
 			// filter out all non-quarter notes
 			for( int c=0; c<m_iNumTracks; c++ ) 
@@ -669,20 +642,20 @@ void NoteData::SnapToNearestNoteType( NoteType nt1, NoteType nt2, float fBeginBe
 	float fSnapInterval1, fSnapInterval2;
 	switch( nt1 )
 	{
-		case NOTE_4TH:	fSnapInterval1 = 1/1.0f;	break;
-		case NOTE_8TH:	fSnapInterval1 = 1/2.0f;	break;
-		case NOTE_12TH:	fSnapInterval1 = 1/3.0f;	break;
-		case NOTE_16TH:	fSnapInterval1 = 1/4.0f;	break;
+		case NOTE_TYPE_4TH:		fSnapInterval1 = 1/1.0f;	break;
+		case NOTE_TYPE_8TH:		fSnapInterval1 = 1/2.0f;	break;
+		case NOTE_TYPE_12TH:	fSnapInterval1 = 1/3.0f;	break;
+		case NOTE_TYPE_16TH:	fSnapInterval1 = 1/4.0f;	break;
 		default:	ASSERT( false );
 	}
 
 	switch( nt2 )
 	{
-		case NOTE_4TH:	fSnapInterval2 = 1/1.0f;	break;
-		case NOTE_8TH:	fSnapInterval2 = 1/2.0f;	break;
-		case NOTE_12TH:	fSnapInterval2 = 1/3.0f;	break;
-		case NOTE_16TH:	fSnapInterval2 = 1/4.0f;	break;
-		case -1:		fSnapInterval2 = 10000;		break;	// nothing will ever snap to this.  That is good!
+		case NOTE_TYPE_4TH:		fSnapInterval2 = 1/1.0f;	break;
+		case NOTE_TYPE_8TH:		fSnapInterval2 = 1/2.0f;	break;
+		case NOTE_TYPE_12TH:	fSnapInterval2 = 1/3.0f;	break;
+		case NOTE_TYPE_16TH:	fSnapInterval2 = 1/4.0f;	break;
+		case -1:				fSnapInterval2 = 10000;		break;	// nothing will ever snap to this.  That's what we want!
 		default:	ASSERT( false );
 	}
 
@@ -758,7 +731,7 @@ float NoteData::GetChaosRadarValue( float fSongSeconds )
 	int iNumChaosNotes = 0;
 	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
 	{
-		if( !IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_12TH )
+		if( !IsRowEmpty(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
 			iNumChaosNotes++;
 	}
 
@@ -804,3 +777,39 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 
 }
 
+NoteType NoteData::GetSmallestNoteTypeForMeasure( int iMeasureIndex )
+{
+	const int iMeasureStartIndex = iMeasureIndex * ROWS_PER_MEASURE;
+	const int iMeasureLastIndex = (iMeasureIndex+1) * ROWS_PER_MEASURE - 1;
+
+	// probe to find the smallest note type
+	NoteType nt;
+	for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )		// for each NoteType, largest to largest
+	{
+		float fBeatSpacing = NoteTypeToBeat( nt );
+		int iRowSpacing = roundf( fBeatSpacing * ROWS_PER_BEAT );
+
+		bool bFoundSmallerNote = false;
+		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure
+		{
+			if( i % iRowSpacing == 0 )
+				continue;	// skip
+			
+			if( !IsRowEmpty(i) )
+			{
+				bFoundSmallerNote = true;
+				break;
+			}
+		}
+
+		if( bFoundSmallerNote )
+			continue;	// searching the next NoteType
+		else
+			break;	// stop searching.  We found the smallest NoteType
+	}
+
+	if( nt == NUM_NOTE_TYPES )	// we didn't find one
+		return NOTE_TYPE_INVALID;	// well-formed notes created in the editor should never get here
+	else
+		return nt;
+}

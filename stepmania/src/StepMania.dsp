@@ -1152,6 +1152,14 @@ SOURCE=.\ScreenStage.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenTextEntry.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenTextEntry.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenTitleMenu.cpp
 # End Source File
 # Begin Source File

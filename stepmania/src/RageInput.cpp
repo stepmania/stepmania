@@ -267,9 +267,84 @@ bool DeviceInput::fromString( const CString &s )
 	device = (InputDevice)atoi( a[0] );
 	button = atoi( a[1] );
 	return true;
-};
+}
 
-
+char DeviceInput::ToChar() const
+{
+	switch( device )
+	{
+	case DEVICE_KEYBOARD:
+		switch( button )
+		{
+			case DIK_1:			return '1';
+			case DIK_2:			return '2';
+			case DIK_3:			return '3';
+			case DIK_4:			return '4';
+			case DIK_5:			return '5';
+			case DIK_6:			return '6';
+			case DIK_7:			return '7';
+			case DIK_8:			return '8';
+			case DIK_9:			return '9';
+			case DIK_0:			return '0';
+			case DIK_MINUS:		return '-';
+			case DIK_EQUALS:	return '=';
+			case DIK_Q:			return 'Q';
+			case DIK_W:			return 'W';
+			case DIK_E:			return 'E';
+			case DIK_R:			return 'R';
+			case DIK_T:			return 'T';
+			case DIK_Y:			return 'Y';
+			case DIK_U:			return 'U';
+			case DIK_I:			return 'I';
+			case DIK_O:			return 'O';
+			case DIK_P:			return 'P';
+			case DIK_LBRACKET:	return '[';
+			case DIK_RBRACKET:	return ']';
+			case DIK_A:			return 'A';
+			case DIK_S:			return 'S';
+			case DIK_D:			return 'D';
+			case DIK_F:			return 'F';
+			case DIK_G:			return 'G';
+			case DIK_H:			return 'H';
+			case DIK_J:			return 'J';
+			case DIK_K:			return 'K';
+			case DIK_L:			return 'L';
+			case DIK_SEMICOLON:	return ';';
+			case DIK_APOSTROPHE:return '\'';
+			case DIK_BACKSLASH:	return '\\';
+			case DIK_Z:			return 'Z';
+			case DIK_X:			return 'X';
+			case DIK_C:			return 'C';
+			case DIK_V:			return 'V';
+			case DIK_B:			return 'B';
+			case DIK_N:			return 'N';
+			case DIK_M:			return 'M';
+			case DIK_COMMA:		return ',';
+			case DIK_PERIOD:	return '.';
+			case DIK_SLASH:		return '/';
+			case DIK_MULTIPLY:	return '*';
+			case DIK_SPACE:		return ' ';
+			case DIK_NUMPAD7:	return '7';
+			case DIK_NUMPAD8:	return '8';
+			case DIK_NUMPAD9:	return '9';
+			case DIK_SUBTRACT:	return '-';
+			case DIK_NUMPAD4:	return '4';
+			case DIK_NUMPAD5:	return '5';
+			case DIK_NUMPAD6:	return '6';
+			case DIK_ADD:		return '+';
+			case DIK_NUMPAD1:	return '1';
+			case DIK_NUMPAD2:	return '2';
+			case DIK_NUMPAD3:	return '3';
+			case DIK_NUMPAD0:	return '0';
+			case DIK_DECIMAL:	return '.';
+			default:
+				return '\0';
+		}
+		break;
+	default:
+		return '\0';
+	}
+}
 
 
 //-----------------------------------------------------------------------------

@@ -27,7 +27,7 @@ SnapDisplay::SnapDisplay()
 		this->AddSubActor( &m_sprIndicators[i] );
 	}
 
-	m_NoteType = NOTE_4TH;
+	m_NoteType = NOTE_TYPE_4TH;
 	D3DXCOLOR color = NoteTypeToColor( m_NoteType );
 	
 	for( i=0; i<2; i++ )

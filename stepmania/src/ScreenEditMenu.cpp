@@ -112,12 +112,12 @@ void ScreenEditMenu::MenuDown( const PlayerNumber p )
 	Selector.Down();
 }
 
-void ScreenEditMenu::MenuLeft( const PlayerNumber p )
+void ScreenEditMenu::MenuLeft( const PlayerNumber p, const InputEventType type )
 {
 	Selector.Left();
 }
 
-void ScreenEditMenu::MenuRight( const PlayerNumber p )
+void ScreenEditMenu::MenuRight( const PlayerNumber p, const InputEventType type )
 {
 	Selector.Right();
 }

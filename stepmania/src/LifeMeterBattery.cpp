@@ -125,6 +125,11 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		m_bFailedEarlier = true;
 }
 
+void LifeMeterBattery::ChangeLife( HoldNoteScore score )
+{
+	// do nothing
+}
+
 void LifeMeterBattery::OnDancePointsChange()
 {
 	int iActualDancePoints = GAMESTATE->m_iActualDancePoints[m_PlayerNumber];

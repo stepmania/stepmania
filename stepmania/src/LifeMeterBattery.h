@@ -28,6 +28,7 @@ public:
 
 	virtual void SongEnded();
 	virtual void ChangeLife( TapNoteScore score );
+	virtual void ChangeLife( HoldNoteScore score );
 	virtual void OnDancePointsChange();	// look in GAMESTATE and update the display
 	virtual bool IsInDanger();
 	virtual bool IsHot();

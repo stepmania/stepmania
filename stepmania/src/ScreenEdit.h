@@ -22,7 +22,7 @@
 #include "SnapDisplay.h"
 
 
-const int NUM_MENU_ITEMS = 19;
+const int NUM_MENU_ITEMS = 21;
 
 
 class ScreenEdit : public Screen
@@ -46,6 +46,8 @@ protected:
 	void MenuItemGainFocus( int iItemIndex );
 	void MenuItemLoseFocus( int iItemIndex );
 
+	static void AddBGChange( CString sBGName );
+
 	enum EditMode { MODE_EDITING, MODE_MENU, MODE_RECORDING, MODE_PLAYING };
 	EditMode m_EditMode;
 
@@ -60,6 +62,7 @@ protected:
 
 	BitmapText				m_textInfo;		// status information that changes
 	BitmapText				m_textHelp;
+	Quad					m_rectShortcutsBack;
 	BitmapText				m_textShortcuts;
 
 	// keep track of where we are and what we're doing

@@ -140,7 +140,7 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 	int iNumChaosNotesCompleted = 0;
 	for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ )
 	{
-		if( !IsRowEmpty(r)  &&  IsRowComplete(r)  &&  GetNoteType(r) >= NOTE_12TH )
+		if( !IsRowEmpty(r)  &&  IsRowComplete(r)  &&  GetNoteType(r) >= NOTE_TYPE_12TH )
 			iNumChaosNotesCompleted++;
 	}
 

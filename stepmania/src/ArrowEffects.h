@@ -21,7 +21,7 @@ const float ARROW_GAP	= ARROW_SIZE;// + 2;
 //	fYOffset is a vertical position in pixels relative to the center.
 //	(positive if has not yet been stepped on, negative if has already passed).
 //	The ArrowEffect is applied in this stage.
-float ArrowGetYOffset2( const PlayerNumber pn, float fNoteBeat );
+float ArrowGetYOffset( const PlayerNumber pn, float fNoteBeat );
 
 
 //	fRotation is Z rotation of an arrow.  This will depend on the column of 

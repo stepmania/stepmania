@@ -70,7 +70,6 @@ void GameState::Reset()
 		m_fSecondsBeforeFail[p] = -1;
 		m_iSongsBeforeFail[p] = 0;
 	}
-	m_bUsedAutoPlayer = false;
 
 
 	for( p=0; p<NUM_PLAYERS; p++ )
