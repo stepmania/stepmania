@@ -5,13 +5,15 @@
 #include "MovieTexture_Null.h"
 #include "PrefsManager.h"
 
-/* Why is this _WINDOWS and not WIN32?
- * --steve 
- *
- * _WINDOWS is Windows only, where _WIN32 is Windows and Xbox, I think. Does this
+/* _WINDOWS is Windows only, where _WIN32 is Windows and Xbox, I think. Does this
  * work on the Xbox? -glenn */
 #if defined(_WINDOWS)
 #include "MovieTexture_DShow.h"
+#define HAVE_FFMPEG
+#endif
+
+/* I don't like this. It should not be here. */
+#if defined (DARWIN)
 #define HAVE_FFMPEG
 #endif
 
