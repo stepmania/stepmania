@@ -22,7 +22,7 @@ struct TapScoreDistribution
 	{
 		float fRand = randomf(0,1);
 		ASSERT( iDifficultyExponent >= 1 );
-		fRand = powf(fRand, iDifficultyExponent);
+		fRand = powf( fRand, (float)iDifficultyExponent );
 		for( int i=TNS_MISS; i<=TNS_MARVELOUS; i++ )
 			if( fRand <= fCumulativeProbability[i] )
 				return (TapNoteScore)i;

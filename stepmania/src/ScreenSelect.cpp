@@ -158,7 +158,7 @@ void ScreenSelect::DrawPrimitives()
 
 void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->Trace( "ScreenSelect::Input()" );
+//	LOG->Trace( "ScreenSelect::Input()" );
 
 	if( MenuI.IsValid() && MenuI.button==MENU_BUTTON_START )
 	{

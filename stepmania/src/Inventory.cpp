@@ -15,6 +15,7 @@
 #include "RageUtil.h"
 #include "GameState.h"
 #include "RageTimer.h"
+#include "PrefsManager.h"
 
 
 #define NUM_ITEM_TYPES			THEME->GetMetricF("Inventory","NumItemTypes")
@@ -89,10 +90,17 @@ void Inventory::Update( float fDelta )
 		int iNewCombo = m_iLastSeenCombo;
 		
 #define CROSSED(i) (iOldCombo<i)&&(iNewCombo>=i)
+#define BROKE_ABOVE(i) (iNewCombo<iOldCombo)&&(iOldCombo>=i)
 
 		for( unsigned i=0; i<g_Items.size(); i++ )
 		{
-			if( CROSSED(g_Items[i].iCombo) )
+			bool bEarnedThisItem = false;
+			if( PREFSMAN->m_bBreakComboToGetItem )
+				bEarnedThisItem = BROKE_ABOVE(g_Items[i].iCombo);
+			else
+				bEarnedThisItem = CROSSED(g_Items[i].iCombo);
+			
+			if( bEarnedThisItem )
 			{
 				AwardItem( i );
 				break;

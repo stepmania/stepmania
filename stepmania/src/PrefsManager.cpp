@@ -85,11 +85,12 @@ PrefsManager::PrefsManager()
 	m_iBoostAppPriority = -1;
 	m_iPolygonRadar = -1;
 	m_bShowSongOptions = true;
-	m_bDancePointsForOni = false; //DDR-Extreme style dance points instead of max2 percent
+	m_bDancePointsForOni = false;
 	m_bTimestamping = false;
 	m_bShowLyrics = true;
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
+	m_bBreakComboToGetItem = false;
 
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -191,6 +192,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.GetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.GetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
+	ini.GetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -271,6 +273,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "AutogenGroupCourses",		m_bAutogenGroupCourses );
 	ini.SetValueB( "Options", "Timestamping",				m_bTimestamping );
 	ini.SetValue ( "Options", "DefaultModifiers",			m_sDefaultModifiers );
+	ini.SetValueB( "Options", "BreakComboToGetItem",		m_bBreakComboToGetItem );
 
 
 	/* Only write these if they aren't the default.  This ensures that we can change

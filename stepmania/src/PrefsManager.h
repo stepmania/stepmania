@@ -69,12 +69,13 @@ public:
 	float			m_fMarathonVerSongSeconds;
 	bool			m_bShowSongOptions;
 	bool			m_bSoloSingle;
-	bool			m_bDancePointsForOni;
+	bool			m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
 	bool			m_bTimestamping;
 	bool			m_bShowLyrics;
 	bool			m_bAutogenMissingTypes;
 	bool			m_bAutogenGroupCourses;
 	CString			m_sDefaultModifiers;
+	bool			m_bBreakComboToGetItem;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
 	int				m_iBoostAppPriority;
