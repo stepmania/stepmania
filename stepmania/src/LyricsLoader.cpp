@@ -44,16 +44,16 @@ bool LyricsLoader::LoadFromLRCFile( CString sPath, Song &out )
 		if( 0==stricmp(sValueName,"COLOUR") || 0==stricmp(sValueName,"COLOR") )
 		{
 			// set color var here for this segment
-			float r=1,b=1,g=1;	// initialize in case sscanf fails
+			int r, g, b;
 			int result = sscanf( sValueData.GetString(), "0x%2x%2x%2x", &r, &g, &b );
 			if(result != 3)
 			{
 				LOG->Trace( "The color value '%s' in '%s' is invalid.",
-				sValueData.GetString(), sPath.GetString() );
+					sValueData.GetString(), sPath.GetString() );
 				continue;
 			}
 
-			m_LastFoundColor = RageColor(r,g,b,1);
+			m_LastFoundColor = RageColor(r / 256.0f, g / 256.0f, b / 256.0f, 1);
 			continue;
 		}
 
