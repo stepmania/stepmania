@@ -352,6 +352,9 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
+		if( GAMESTATE->m_bUsedAutoPlayer )
+			continue;
+
 		switch( m_ResultMode )
 		{
 		case RM_ARCADE_STAGE:

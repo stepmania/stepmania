@@ -122,7 +122,7 @@ ScreenGameplay::ScreenGameplay()
 
 
 
-	GAMESTATE->m_bUsedAutoPlayer &= PREFSMAN->m_bAutoPlay;
+	GAMESTATE->m_bUsedAutoPlayer |= PREFSMAN->m_bAutoPlay;
 	m_bChangedOffsetOrBPM = false;
 
 
@@ -676,7 +676,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		{
 		case DIK_F8:
 			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-			GAMESTATE->m_bUsedAutoPlayer &= PREFSMAN->m_bAutoPlay;
+			GAMESTATE->m_bUsedAutoPlayer |= PREFSMAN->m_bAutoPlay;
 			m_textDebug.SetText( ssprintf("Autoplayer %s.", (PREFSMAN->m_bAutoPlay ? "ON" : "OFF")) );
 			m_textDebug.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 			m_textDebug.StopTweening();
