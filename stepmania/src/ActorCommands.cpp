@@ -30,6 +30,8 @@ ActorCommands::ActorCommands( const CString &sCommands )
 		{
 			const Command& cmd = (*c);
 			CString sName = cmd.GetName();
+			TrimLeft( sName );
+			TrimRight( sName );
 			s << "\tself:" << sName << "(";
 
 			bool bFirstParamIsString =
