@@ -84,7 +84,6 @@ CString AnnouncerManager::GetPathTo( CString sFolderName )
 		LOG->Trace( "The empty announcer is missing the folder '%s'.", sFolderName.GetString() );
 //		MessageBeep( MB_OK );
 		CreateDirectories( sPathToFolderEmpty );
-		CreateDirectories( sPathToFolderEmpty );
 	}
 #endif
 
