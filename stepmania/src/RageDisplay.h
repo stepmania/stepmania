@@ -234,7 +234,7 @@ public:
 
 	// hacks for cell-shaded models
 	virtual void SetPolygonMode( PolygonMode pm ) {}
-	virtual void SetLineWidth( int iWidth ) {}
+	virtual void SetLineWidth( float fWidth ) {}
 
 	enum GraphicsFileFormat
 	{

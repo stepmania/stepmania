@@ -1826,9 +1826,9 @@ void RageDisplay_OGL::SetPolygonMode( PolygonMode pm )
 	glPolygonMode( GL_FRONT_AND_BACK, m );
 }
 
-void RageDisplay_OGL::SetLineWidth( int iWidth )
+void RageDisplay_OGL::SetLineWidth( float fWidth )
 {
-	glLineWidth( iWidth );
+	glLineWidth( fWidth );
 }
 
 CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
