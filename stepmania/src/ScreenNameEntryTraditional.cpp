@@ -314,6 +314,8 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		actor.FinishTweening(); \
 	}
 
+		m_FeatDisplay[p].reserve( g_vPlayedStageStats.size() );
+
 		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
 			StageStats &ss = g_vPlayedStageStats[i];
@@ -323,7 +325,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 			int iHighScoreIndex = -1;	// -1 means "out of ranking"
 			Grade grade = ss.GetGrade( p );
 			int iScore = ss.iScore[p];
-			float fPercentDP = ss.GetPercentDancePoints( p);
+			float fPercentDP = ss.GetPercentDancePoints( p );
 
 			// If this is a SHOW_NEVER song, then it's probably a training.
 			// Don't show a high score
