@@ -832,8 +832,8 @@ bool RageSoundReader_MP3::MADLIB_rewind()
 	mad_stream_init(&mad->Stream);
 	mad_stream_buffer(&mad->Stream, NULL, 0);
 	mad->inbuf_filepos = 0;
-	mad->header_bytes = 0;
-	mad->first_frame = true;
+//	mad->header_bytes = 0;
+//	mad->first_frame = true;
     mad->Stream.this_frame = NULL;
 
 	return true;
