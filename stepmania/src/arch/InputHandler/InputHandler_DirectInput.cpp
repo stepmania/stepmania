@@ -4,6 +4,7 @@
 #include "global.h"
 #include "InputHandler_DirectInput.h"
 
+#include "StepMania.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "SDL_utils.h"
@@ -337,6 +338,11 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 		LOG->Trace( hr_ssprintf(hr, "UpdateBuffered: IDirectInputDevice2_GetDeviceData") );
 		return;
 	}
+
+	/* XXX: We should check GetConsoleWindow(), to allow input while the console window
+	 * is focused. */
+	if( GetForegroundWindow() != g_hWndMain )
+		return;
 
 	for(int i = 0; i < (int) numevents; ++i)
 	{
