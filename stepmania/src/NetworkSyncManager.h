@@ -20,8 +20,10 @@ class EzSockets;
 class NetworkSyncManager 
 {
 public:
-	NetworkSyncManager(int argc, char **argv);
+	NetworkSyncManager();
 	~NetworkSyncManager();
+
+	void StartUp (CString ServerIP);
 
     //If "useSMserver" then send score to server
 	void ReportScore(int playerID, int step, int score, int combo);	

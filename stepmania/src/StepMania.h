@@ -21,6 +21,11 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );
 void SaveGamePrefsToDisk();
 void ChangeCurrentGame( Game g );
 
+void ProcessArgsFirst(int argc, char ** argv); 
+	//First wave of arguements, before display actually loads
+void ProcessArgsSecond(int argc, char ** argv);
+	//Second wave of arguements, after display loads
+
 // If successful, return filename of screenshot in sDir, else return ""
 CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
 

@@ -989,7 +989,12 @@ int main(int argc, char* argv[])
 	MODELMAN	= new ModelManager;
 	delete loading_window;		// destroy this before init'ing Display
     
-    NSMAN       = new NetworkSyncManager(argc, argv);
+    NSMAN       = new NetworkSyncManager; 
+		//Load Network Sync manager, but do not connect
+
+	ProcessArgsFirst(argc,argv);
+	
+
 
 	DISPLAY = CreateDisplay();
 
@@ -1035,6 +1040,9 @@ int main(int argc, char* argv[])
 
 	/* Initialize which courses are ranking courses here. */
 	SONGMAN->UpdateRankingCourses();
+
+	/* Run the second argcheck, you can do your other options here */
+	ProcessArgsSecond(argc, argv);
 
 	/* Run the main loop. */
 	GameLoop();
@@ -1472,5 +1480,67 @@ static void GameLoop()
 		else
 			SDL_Delay( 1 );	// give some time to other processes and threads
 #endif
+	}
+}
+
+//Process args first, put command line options that
+//have to run before the SM window loads here
+void ProcessArgsFirst(int argc, char ** argv)
+{
+	int argCtr = 1,i;	//argv[0] is exe
+	while (argCtr<argc)
+	{
+		CString Arguement(argv[argCtr]);
+		
+		// StepMaina.exe  argbase=argparameter
+			//Where argparameter can contain = signs
+
+		CString ArgBase;
+		CString ArgParameter;
+
+		for (i=0;i<Arguement.GetLength();i++)
+			if (Arguement.at(i) == '=')
+				break;
+		ArgBase = Arguement.substr(0,i);
+		if (Arguement.GetLength()>i)
+			ArgParameter = Arguement.substr(i+1,Arguement.GetLength()-i-1);
+
+		//For now using an IF/ELSEIF clause
+		if (ArgBase.CompareNoCase("--TESTARGS") == 0)
+			LOG->Info ("Test of arguements requested.  Now in First argcheck");
+		else if (ArgBase.CompareNoCase("--NETIP") == 0)
+			NSMAN->StartUp(ArgParameter.c_str());
+
+
+		argCtr++;
+	}
+}
+void ProcessArgsSecond(int argc, char ** argv)
+{
+	int argCtr = 1,i;	//argv[0] is exe
+	while (argCtr<argc)
+	{
+		CString Arguement(argv[argCtr]);
+		
+		// StepMaina.exe  argbase=argparameter
+			//Where argparameter can contain = signs
+
+		CString ArgBase;
+		CString ArgParameter;
+
+		for (i=0;i<Arguement.GetLength();i++)
+			if (Arguement.at(i) == '=')
+				break;
+		ArgBase = Arguement.substr(0,i);
+		if (Arguement.GetLength()>i)
+			ArgParameter = Arguement.substr(i+1,Arguement.GetLength()-i-1);
+
+		//For now using an IF/ELSEIF clause
+
+		if (ArgBase.CompareNoCase("--TESTARGS") == 0)
+			LOG->Info ("Test of arguements requested.  Now in Second argcheck");
+
+
+		argCtr++;
 	}
 }

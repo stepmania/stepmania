@@ -21,46 +21,42 @@
 #include "RageUtil.h"
 	//String compare functions for command line args
 
-NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
+NetworkSyncManager::NetworkSyncManager()
 {
     NetPlayerClient = new EzSockets;
 	m_ServerVersion = 0;
+    
+	useSMserver = false;
 
-    if (argc > 1) {
-		LOG->Trace("Multiple arguements were entered.");
-		int argCtr = 1;
 
-		while (argCtr<argc) {
-			CString tempargv(argv[argCtr]);
-			CString Checking(tempargv.substr(0,8));
-			Checking.MakeUpper();
-			if (strcmp(Checking.c_str(),"--NETIP:")==0)
-			{
-				CString IPAddy (tempargv.substr(8,tempargv.GetLength()-8));
 
-				LOG->Trace ("NetIP Found:%s",IPAddy.c_str());
+
+}
+
+NetworkSyncManager::~NetworkSyncManager ()
+{
+	//Close Connection to server nicely.
+    if (useSMserver)
+        NetPlayerClient->close();
+	delete NetPlayerClient;
+}
+
+void NetworkSyncManager::StartUp (CString ServerIP)
+{
+	LOG->Trace ("Network Sync IP:%s",ServerIP.c_str());
 			
-				if (!IPAddy.CompareNoCase("LISTEN"))
-					if (Listen(8765)) {
-						useSMserver = true;
-					} else
-						useSMserver = false;
-				else
-					if (Connect(IPAddy.c_str(),8765) == true)
-					{
-						useSMserver = true;
-					} else
-						useSMserver = false;
-
-				break;//Once connected, break outta loop.
-			}
-			argCtr++;
-		}
-	}
-    else
-        useSMserver = false;
-
-
+	if (!ServerIP.CompareNoCase("LISTEN"))
+		if (Listen(8765)) {
+			useSMserver = true;
+		} else
+			useSMserver = false;
+	else
+		if (Connect(ServerIP.c_str(),8765) == true)
+		{
+			useSMserver = true;
+		} else
+			useSMserver = false;
+		
 
 	if (useSMserver) {
 		int ClientCommand=3;
@@ -90,17 +86,10 @@ NetworkSyncManager::NetworkSyncManager(int argc, char **argv)
 			NetPlayerClient->send((char*) &PlayerName,20);
 		}
 		LOG->Info("Server Version: %d",m_ServerVersion);
-	}
-
+	} else
+		LOG->Info("Network Sync Manager failed to connect");
 }
 
-NetworkSyncManager::~NetworkSyncManager ()
-{
-	//Close Connection to server nicely.
-    if (useSMserver)
-        NetPlayerClient->close();
-	delete NetPlayerClient;
-}
 
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port)
 {
