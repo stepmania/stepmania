@@ -240,7 +240,7 @@ void ArchHooks_darwin::DumpDebugInfo()
               dDescription.c_str(), dVersion.c_str(), dDate.c_str(), dDeviceID.c_str());
 }
 
-void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID)
+void ArchHooks_darwin::MessageBoxOKPrivate(CString sMessage, CString ID)
 {
     bool allowHush = ID != "";
     
@@ -263,7 +263,7 @@ void ArchHooks_darwin::MessageBoxError(CString sError)
     CFRelease(error);
 }
 
-ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString sMessage, CString ID)
+ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnorePrivate(CString sMessage, CString ID)
 {
     CFStringRef error = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
     SInt16 result = ShowAlert(kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore"));
