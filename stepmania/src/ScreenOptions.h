@@ -67,6 +67,7 @@ protected:
 	void RefreshIcons();
 	void PositionCursors();
 	void TweenCursor( PlayerNumber player_no );
+	void UpdateText( PlayerNumber player_no );
 	void UpdateEnabledDisabled();
 	virtual void OnChange();
 
@@ -88,16 +89,16 @@ protected:
 	bool			m_bUseIcons;
 	bool			m_bLoadExplanations;
 
-	OptionRow*	m_OptionRow;
+	OptionRow*		m_OptionRow;
 	int				m_iNumOptionRows;
 
 	MenuElements	m_Menu;
 
 	ActorFrame		m_framePage;
 	Sprite			m_sprPage;
-	Sprite			m_sprLineArrows[MAX_OPTION_LINES];
-	BitmapText		m_textOptionLineTitles[MAX_OPTION_LINES];
-	BitmapText		m_textOptions[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
+	Sprite			m_sprBullets[MAX_OPTION_LINES];
+	BitmapText		m_textTitles[MAX_OPTION_LINES];
+	BitmapText		m_textItems[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];	// this array has to be big enough to hold all of the options
 	bool			m_OptionDim[MAX_OPTION_LINES][MAX_OPTIONS_PER_LINE];
 	void DimOption(int line, int option, bool dim);
 	bool RowCompletelyDimmed(int line) const;

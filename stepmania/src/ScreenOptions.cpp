@@ -21,6 +21,8 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 
+const int MAX_ITEMS_PER_ROW = 8;
+const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
 #define ICONS_X( p )		THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
 #define ARROWS_X			THEME->GetMetricF("ScreenOptions","ArrowsX")
@@ -119,16 +121,16 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 	int i;
 	for( i=0; i<m_iNumOptionRows; i++ )		// foreach line
 	{
-		m_framePage.AddChild( &m_sprLineArrows[i] );
+		m_framePage.AddChild( &m_sprBullets[i] );
 
-		m_framePage.AddChild( &m_textOptionLineTitles[i] );		
+		m_framePage.AddChild( &m_textTitles[i] );		
 
 		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-			m_framePage.AddChild( &m_textOptions[i][j] );	// this array has to be big enough to hold all of the options
+			m_framePage.AddChild( &m_textItems[i][j] );	// this array has to be big enough to hold all of the options
 	}
 
 	// TRICKY:  Add one more item.  This will be "EXIT"
-	m_framePage.AddChild( &m_textOptions[i][0] );
+	m_framePage.AddChild( &m_textItems[i][0] );
 
 	// add explanation here so it appears on top
 	m_textExplanation.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions explanation") );
@@ -155,19 +157,22 @@ ScreenOptions::~ScreenOptions()
 
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
-	int iOptionInRow = m_iSelectedOption[pn][iRow];
-	BitmapText &option = m_textOptions[iRow][iOptionInRow];
+	bool bExitRow = iRow == m_iNumOptionRows;
+	bool bLotsOfOptions = m_OptionRow[iRow].choices.size()>=MAX_ITEMS_PER_ROW;
+	int iOptionInRow = bExitRow ? 0 : bLotsOfOptions ? pn : m_iSelectedOption[pn][iRow];
 
-	iWidthOut = int(roundf( option.GetWidestLineWidthInSourcePixels() * option.GetZoomX() ));
-	iXOut = int(roundf( option.GetX() ));
-	iYOut = int(roundf( option.GetY() ));
+	BitmapText &text = m_textItems[iRow][iOptionInRow];
+
+	iWidthOut = int(roundf( text.GetWidestLineWidthInSourcePixels() * text.GetZoomX() ));
+	iXOut = int(roundf( text.GetX() ));
+	iYOut = int(roundf( text.GetY() ));
 }
 
 void ScreenOptions::InitOptionsText()
 {
 	const float fLineGap = ITEMS_SPACING_Y - max(0, (m_iNumOptionRows-10)*2);
 
-	// init m_textOptions from optionLines
+	// init m_textItems from optionLines
 	int i;
 	for( i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 	{
@@ -175,7 +180,7 @@ void ScreenOptions::InitOptionsText()
 
 		float fY = ITEMS_START_Y + fLineGap*i;
 
-		BitmapText &title = m_textOptionLineTitles[i];
+		BitmapText &title = m_textTitles[i];
 
 		title.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions title") );
 		CString sText = optline.name;
@@ -188,31 +193,55 @@ void ScreenOptions::InitOptionsText()
 		title.EnableShadow( false );		
 
 
-		Sprite &arrow = m_sprLineArrows[i];
-		arrow.Load( THEME->GetPathTo("Graphics","ScreenOptions bullet") );
-		arrow.SetXY( ARROWS_X, fY );
+		Sprite &bullet = m_sprBullets[i];
+		bullet.Load( THEME->GetPathTo("Graphics","ScreenOptions bullet") );
+		bullet.SetXY( ARROWS_X, fY );
 
 
 		// init all text in this line and count the width of the line
-		float fX = ITEMS_START_X;	// indent 70 pixels
-		for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
+		if( optline.choices.size() >= MAX_ITEMS_PER_ROW )
 		{
-			BitmapText &option = m_textOptions[i][j];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( GAMESTATE->IsPlayerEnabled(p) )
+				{
+					BitmapText &option = m_textItems[i][p];
 
-			option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
-			option.SetText( optline.choices[j] );
-			option.SetZoom( ITEMS_ZOOM );
-			option.EnableShadow( false );
+					int iChoiceInRow = m_iSelectedOption[p][i];
 
-			// set the XY position of each item in the line
-			float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
-			fX += fItemWidth/2;
-			option.SetXY( fX, fY );
-			fX += fItemWidth/2 + ITEMS_GAP_X;
+					option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
+					option.SetText( m_OptionRow[i].choices[iChoiceInRow] );
+					option.SetZoom( ITEMS_ZOOM );
+					option.EnableShadow( false );
+
+					option.SetXY( ITEM_X[p], fY );
+
+					UpdateText( (PlayerNumber)p );
+				}
+			}
+		}
+		else
+		{
+			float fX = ITEMS_START_X;	// indent 70 pixels
+			for( unsigned j=0; j<optline.choices.size(); j++ )	// for each option on this line
+			{
+				BitmapText &option = m_textItems[i][j];
+
+				option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
+				option.SetText( optline.choices[j] );
+				option.SetZoom( ITEMS_ZOOM );
+				option.EnableShadow( false );
+
+				// set the XY position of each item in the line
+				float fItemWidth = option.GetWidestLineWidthInSourcePixels() * option.GetZoomX();
+				fX += fItemWidth/2;
+				option.SetXY( fX, fY );
+				fX += fItemWidth/2 + ITEMS_GAP_X;
+			}
 		}
 	}
 
-	BitmapText &option = m_textOptions[i][0];
+	BitmapText &option = m_textItems[i][0];
 	option.LoadFromFont( THEME->GetPathTo("Fonts","ScreenOptions item") );
 	option.SetText( "EXIT" );
 	option.SetZoom( ITEMS_ZOOM );
@@ -227,21 +256,12 @@ void ScreenOptions::DimOption(int line, int option, bool dim)
 		return;
 
 	m_OptionDim[line][option] = dim;
-	m_textOptions[line][option].StopTweening();
-	m_textOptions[line][option].BeginTweening(.250);
+	m_textItems[line][option].StopTweening();
+	m_textItems[line][option].BeginTweening(.250);
 	if(m_OptionDim[line][option])
-		m_textOptions[line][option].SetTweenDiffuse( RageColor(.5,.5,.5,1) );
+		m_textItems[line][option].SetTweenDiffuse( RageColor(.5,.5,.5,1) );
 	else
-		m_textOptions[line][option].SetTweenDiffuse( RageColor(1,1,1,1) );
-
-	/* Don't know if I like this ...-glenn
-	m_textOptionLineTitles[line].BeginTweening(.250);
-	if(RowCompletelyDimmed(line))
-		m_textOptionLineTitles[line].SetTweenZoom( 0.6f );
-	else
-		m_textOptionLineTitles[line].SetTweenZoom( 0.7f );
-	*/
-
+		m_textItems[line][option].SetTweenDiffuse( RageColor(1,1,1,1) );
 }
 
 bool ScreenOptions::RowCompletelyDimmed(int line) const
@@ -258,7 +278,6 @@ void ScreenOptions::PositionUnderlines()
 	{
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 		{
-//			Quad &underline = m_OptionUnderline[p][i];
 			OptionsCursor &underline = m_Underline[p][i];
 
 			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
@@ -277,14 +296,13 @@ void ScreenOptions::PositionUnderlines()
 
 void ScreenOptions::PositionIcons()
 {
-	// Set the position of the underscores showing the current choice for each option line.
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
 		{
 			OptionIcon &icon = m_OptionIcons[p][i];
 
-			int iWidth, iX, iY;
+			int iWidth, iX, iY;			// We only use iY
 			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
 			icon.SetXY( ICONS_X(p), (float)iY );
 		}
@@ -293,7 +311,6 @@ void ScreenOptions::PositionIcons()
 
 void ScreenOptions::RefreshIcons()
 {
-	// Set the position of the underscores showing the current choice for each option line.
 	for( int p=0; p<NUM_PLAYERS; p++ )	// foreach player
 	{
 		for( int i=0; i<m_iNumOptionRows; i++ )	// foreach options line
@@ -336,10 +353,22 @@ void ScreenOptions::TweenCursor( PlayerNumber player_no )
 
 	int iWidth, iX, iY;
 	GetWidthXY( player_no, iCurRow, iWidth, iX, iY );
+
 	highlight.StopTweening();
 	highlight.BeginTweening( 0.2f );
 	highlight.TweenBarWidth( iWidth );
 	highlight.SetTweenXY( (float)iX, (float)iY );
+}
+
+void ScreenOptions::UpdateText( PlayerNumber player_no )
+{
+	int iCurRow = m_iCurrentRow[player_no];
+	int iChoiceInRow = m_iSelectedOption[player_no][iCurRow];
+
+	bool bLotsOfOptions = m_OptionRow[iCurRow].choices.size()>=MAX_ITEMS_PER_ROW;
+
+	if( bLotsOfOptions )
+		m_textItems[iCurRow][player_no].SetText( m_OptionRow[iCurRow].choices[iChoiceInRow] );
 }
 
 void ScreenOptions::UpdateEnabledDisabled()
@@ -356,23 +385,27 @@ void ScreenOptions::UpdateEnabledDisabled()
 			if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] == i )
 				bThisRowIsSelected = true;
 
-		m_sprLineArrows[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+		m_sprBullets[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 
-		m_textOptionLineTitles[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+		m_textTitles[i].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 
-		for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
-			m_textOptions[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+		if( m_OptionRow[i].choices.size() >= MAX_ITEMS_PER_ROW )
+			for( unsigned j=0; j<NUM_PLAYERS; j++ )
+				m_textItems[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
+		else
+			for( unsigned j=0; j<m_OptionRow[i].choices.size(); j++ )
+				m_textItems[i][j].SetDiffuse( bThisRowIsSelected ? colorSelected : colorNotSelected );
 	}
 
 	bool bThisRowIsSelectedByBoth = true;
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p)  &&  m_iCurrentRow[p] != i )
 			bThisRowIsSelectedByBoth = false;
-		m_textOptions[i][0].SetDiffuse( bThisRowIsSelectedByBoth ? colorNotSelected : colorSelected );
+		m_textItems[i][0].SetDiffuse( bThisRowIsSelectedByBoth ? colorNotSelected : colorSelected );
 	if( bThisRowIsSelectedByBoth )
-		m_textOptions[i][0].SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
+		m_textItems[i][0].SetEffectDiffuseShift( 1.0f, colorSelected, colorNotSelected );
 	else
-		m_textOptions[i][0].SetEffectNone();
+		m_textItems[i][0].SetEffectNone();
 }
 
 void ScreenOptions::Update( float fDeltaTime )
@@ -506,6 +539,7 @@ void ScreenOptions::MenuLeft( PlayerNumber pn )
 
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]-1+iNumOptions) % iNumOptions;
 		
+		UpdateText( (PlayerNumber)p );
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
@@ -530,6 +564,7 @@ void ScreenOptions::MenuRight( PlayerNumber pn )
 
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]+1) % iNumOptions;
 		
+		UpdateText( (PlayerNumber)p );
 		TweenCursor( (PlayerNumber)p );
 	}
 	m_SoundChangeCol.Play();
