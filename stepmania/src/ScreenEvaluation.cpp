@@ -1338,22 +1338,17 @@ void ScreenEvaluation::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 
 	m_bgCondBga.Update(fDeltaTime);
-	if(m_bFailed && (m_Type==stage||m_Type==course))
+	if( !m_bPassFailTriggered && (m_Type==stage || m_Type==course) )
 	{
-		if(	m_timerSoundSequences.Ago() > FAILED_SOUND_TIME && !m_bPassFailTriggered )
+		float fTime = m_bFailed? FAILED_SOUND_TIME:PASSED_SOUND_TIME;
+		if(	m_timerSoundSequences.Ago() > fTime )
 		{
-			if(!m_sndPassFail.IsPlaying()) m_sndPassFail.Play();
+			if( !m_sndPassFail.IsPlaying() )
+				m_sndPassFail.Play();
 			m_bPassFailTriggered = true;
 		}
 	}
-	else if (m_Type==stage||m_Type==course) // STAGE/NONSTOP eval AND passed
-	{
-		if(	m_timerSoundSequences.Ago() > PASSED_SOUND_TIME && !m_bPassFailTriggered )
-		{
-			if(!m_sndPassFail.IsPlaying()) m_sndPassFail.Play();
-			m_bPassFailTriggered = true;
-		}
-	}
+
 //	if(m_Type == stage) // stage eval ... pass / fail / whatever
 //	{
 		for( unsigned snd=0; snd<m_SoundSequences.size(); snd++ )
