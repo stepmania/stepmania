@@ -1364,6 +1364,7 @@
 				AA34ED220611FB83003E5955,
 				AA34ED290611FE33003E5955,
 				AA34ED2A0611FE33003E5955,
+				AADBA563062007BA005D4FC2,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8378,6 +8379,7 @@
 		};
 		AA6E01400477136A005F316C = {
 			children = (
+				AADBA562062007BA005D4FC2,
 				AA6E01410477136A005F316C,
 				AABE36F80497CE16005F316C,
 				AA98E298049ACE39005F316C,
@@ -14889,6 +14891,20 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
+		};
+		AADBA562062007BA005D4FC2 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = arch_platform.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AADBA563062007BA005D4FC2 = {
+			fileRef = AADBA562062007BA005D4FC2;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AADBE360053D5F8A00D02EE9 = {
 			fileEncoding = 30;
