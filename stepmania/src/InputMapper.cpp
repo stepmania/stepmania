@@ -99,7 +99,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_14,		DANCE_BUTTON_RIGHT,		false },
 			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
 			{ 0, JOY_15,		DANCE_BUTTON_DOWN,		false },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 	{
@@ -111,7 +111,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_14,		DANCE_BUTTON_RIGHT,		false },
 			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
 			{ 0, JOY_15,		DANCE_BUTTON_DOWN,		false },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 	{
@@ -131,7 +131,27 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_9,			DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_10,		DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
+		}
+	},
+	{
+		GAME_DANCE,
+		"SideWinder Game Pad USB version 1.0",
+		"SideWinder Game Pad USB",
+		{
+			{ 0, JOY_LEFT,		DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_RIGHT,		DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_UP,		DANCE_BUTTON_UP,		false },
+			{ 0, JOY_DOWN,		DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_4,			DANCE_BUTTON_LEFT,		false },
+			{ 1, JOY_2,			DANCE_BUTTON_RIGHT,		false },
+			{ 1, JOY_5,			DANCE_BUTTON_UP,		false },
+			{ 1, JOY_1,			DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_7,			DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_9,			DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_10,		DANCE_BUTTON_START,		false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 	{
@@ -153,7 +173,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 	{
@@ -175,7 +195,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 	{
@@ -195,13 +215,14 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },	// R shoulder
 			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 	{
 		GAME_DANCE,
 		"0b43:0003", // The EMS USB2 doesn't provide a model string, so Linux 
-		"EMS USB2",  // just gives us the VendorID and ModelID in hex.
+					 // just gives us the VendorID and ModelID in hex.
+		"EMS USB2",
 		{
 			// Player 1.
 			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
@@ -219,7 +240,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_18,		DANCE_BUTTON_UPRIGHT,	true },
 			{ 0, JOY_19,		DANCE_BUTTON_UPLEFT,	true },
 			{ 0, JOY_26,		DANCE_BUTTON_START,		true },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 	{
@@ -238,7 +259,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
 			{ 0, PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
 			{ 0, PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
-			{-1, -1, -1, false },
+			{-1, -1, -1, false },	// end marker
 		}
 	},
 };
