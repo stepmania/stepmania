@@ -270,10 +270,6 @@ int FFMpeg_Helper::DecodePacket()
 
 		GetNextTimestamp = true;
 
-		/* Length of this frame: */
-		LastFrameDelay = (float)m_stream->codec.frame_rate_base / m_stream->codec.frame_rate;
-		LastFrameDelay += frame.repeat_pict * (LastFrameDelay * 0.5f);
-
 		if ( m_stream->codec.has_b_frames &&
 				frame.pict_type != FF_B_TYPE )
 		{
@@ -290,6 +286,10 @@ int FFMpeg_Helper::DecodePacket()
 			 * time of the last frame plus the length of the last frame. */
 			CurrentTimestamp += LastFrameDelay;
 		}
+
+		/* Length of this frame: */
+		LastFrameDelay = (float)m_stream->codec.frame_rate_base / m_stream->codec.frame_rate;
+		LastFrameDelay += frame.repeat_pict * (LastFrameDelay * 0.5f);
 
 		return 1;
 	}
@@ -539,6 +539,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 {
 	RageTimer Timer;
 	float Clock = 0;
+	float ClockOffset = 0;
 	bool FrameSkipMode = false;
 
 	/* Movie decoding is bursty.  We burst decode a frame, then we sleep, then we burst
@@ -553,6 +554,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 //		LOG->Warn(werr_ssprintf(GetLastError(), "SetThreadPriorityBoost failed"));
 
 	CHECKPOINT;
+	bool FirstDecodedFrame = true;
 
 	while( m_State != DECODER_QUIT )
 	{
@@ -574,6 +576,28 @@ void MovieTexture_FFMpeg::DecoderThread()
 		int ret = decoder->GetFrame();
 		if( ret == -1 )
 			return;
+
+		if( FirstDecodedFrame )
+		{
+			/* Some videos start with a timestamp other than 0.  I think this is used
+			 * when audio starts before the video.  We don't want to honor that, since
+			 * the DShow renderer doesn't and we don't want to break sync compatibility.
+			 *
+			 * Subtlety: this isn't actually the first frame (unless it's a rewind)--we
+			 * did that when we loaded.  That's important: if we have B-frames, the first
+			 * frame will be an I-frame with the timestamp of the next P-frame, not its
+			 * own timestamp, and we want to ignore that and look at the next B-frame.
+			 */
+			const float expect = decoder->LastFrameDelay;
+			const float actual = decoder->CurrentTimestamp;
+			if( actual - expect > 0 )
+			{
+				LOG->Trace("Expect %f, got %f -> %f", expect, actual, actual - expect );
+				ClockOffset = actual - expect;
+				Clock += ClockOffset;
+			}
+			FirstDecodedFrame = false;
+		}
 
 		if( m_bWantRewind && decoder->CurrentTimestamp == 0 )
 			m_bWantRewind = false; /* ignore */
@@ -597,7 +621,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 			CreateDecoder();
 
 			decoder->Init();
-			Clock = 0;
+			Clock = ClockOffset;
 			continue;
 		}
 
