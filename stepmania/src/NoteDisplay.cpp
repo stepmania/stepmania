@@ -531,7 +531,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	for( fY=max(fYTailTop,fYHead); fY<fYTailBottom; fY+=fYStep )	// don't draw the part of the tail that is before the middle of the head
 	{
 		const float fYTop			= fY;
-		const float fYBottom		= fY+fYStep;
+		const float fYBottom		= fY+min(fYStep, fYTailBottom-fY);
 		const float fXTop			= ArrowGetXPos2( m_PlayerNumber, iCol, fYTop );
 		const float fXBottom		= ArrowGetXPos2( m_PlayerNumber, iCol, fYBottom );
 		const float fXTopLeft		= fXTop - fFrameWidth/2;
@@ -542,6 +542,7 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 		const float fBottomDistFromTailTop	= fYBottom - fYTailTop;
 		const float fTexCoordTop	= SCALE( fTopDistFromTailTop,    0, fFrameHeight, 0.5f, 1.0f );
 		const float fTexCoordBottom = SCALE( fBottomDistFromTailTop, 0, fFrameHeight, 0.5f, 1.0f );
+		ASSERT( fBottomDistFromTailTop <= fFrameHeight );
 		const float fTexCoordLeft	= bActive ? 0.25f : 0.00f;
 		const float fTexCoordRight	= bActive ? 0.50f : 0.25f;
 		const float	fAlphaTop		= ArrowGetAlpha( m_PlayerNumber, fYTop );

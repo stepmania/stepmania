@@ -19,9 +19,16 @@ class ScrollBar : public ActorFrame
 public:
 	ScrollBar();
 	
-	void SetPercentage( float fPercentageFromTop );
+	void SetBarHeight( int iHeight );
+	void SetPercentage( float fStartPercent, float fEndPercent);
 
-private:
-	Sprite m_sprTopButton, m_sprBottomButton;
-	Sprite m_sprBackground, m_sprScrollThumb;
+protected:
+
+	int		m_iBarHeight;
+
+	Sprite	m_sprTopButton;
+	Sprite	m_sprBottomButton;
+	Sprite	m_sprBackground;
+	Sprite	m_sprScrollThumbPart1;
+	Sprite	m_sprScrollThumbPart2;
 };

@@ -13,6 +13,7 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "BitmapText.h"
+#include "GameConstantsAndTypes.h"	// for TapNoteScore
 
 
 
@@ -21,8 +22,7 @@ class Combo : public ActorFrame
 public:
 	Combo();
 
-	void ContinueCombo();
-	void EndCombo();
+	void UpdateScore( TapNoteScore score );
 
 	int GetCurrentCombo();
 	int GetMaxCombo();
@@ -30,6 +30,7 @@ public:
 protected:
 	int			m_iCurCombo;
 	int			m_iMaxCombo;
+	int			m_iCurComboOfPerfects;
 
 	bool		m_bComboVisible;
 	Sprite		m_sprCombo;

@@ -29,6 +29,8 @@
 
 
 // messages sent by Combo
+const ScreenMessage SM_BeginToasty			= ScreenMessage(SM_User+104);
+
 const ScreenMessage	SM_100Combo					= ScreenMessage(SM_User+200);
 const ScreenMessage	SM_200Combo					= ScreenMessage(SM_User+201);
 const ScreenMessage	SM_300Combo					= ScreenMessage(SM_User+202);
@@ -102,7 +104,7 @@ private:
 
 	FocusingSprite		m_sprReady;
 	FocusingSprite		m_sprHereWeGo;
-	FocusingSprite		m_sprCleared;
+	MotionBlurSprite	m_sprCleared;
 	MotionBlurSprite	m_sprFailed;
 
 	BitmapText			m_textSurviveTime;	// only shown in extra stage
@@ -114,6 +116,8 @@ private:
 
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber p );
+
+	Sprite				m_sprToasty;	// easter egg
 
 	Quad				m_quadDemonstrationBox;
 	Sprite				m_sprDemonstration;
@@ -138,11 +142,13 @@ private:
 	RandomSample	m_announcerComboStopped;
 
 	
-
 	int				m_iRowLastCrossed;
-	RandomSample	m_soundAssistTick;
+	RageSoundSample	m_soundAssistTick;
 
-	RageSoundStream		m_soundMusic;
+	RageSoundSample	m_soundToasty;
+
+
+	RageSoundStream	m_soundMusic;
 
 };
 

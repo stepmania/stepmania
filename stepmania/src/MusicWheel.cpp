@@ -42,6 +42,7 @@
 #define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
 #define SCROLL_BAR_X				THEME->GetMetricF("MusicWheel","ScrollBarX")
+#define SCROLL_BAR_HEIGHT			THEME->GetMetricI("MusicWheel","ScrollBarHeight")
 #define SECTION_COLOR_1				THEME->GetMetricC("MusicWheel","SectionColor1")
 #define SECTION_COLOR_2				THEME->GetMetricC("MusicWheel","SectionColor2")
 #define SECTION_COLOR_3				THEME->GetMetricC("MusicWheel","SectionColor3")
@@ -301,6 +302,7 @@ MusicWheel::MusicWheel()
 	AddSubActor( &m_sprSelectionOverlay );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X ); 
+	m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT ); 
 	this->AddSubActor( &m_ScrollBar );
 	
 	m_soundChangeMusic.Load(	THEME->GetPathTo("Sounds","select music change music"), 16 );
@@ -750,7 +752,8 @@ void MusicWheel::Update( float fDeltaTime )
 	}
 
 	float fScrollPercentage = (m_iSelection-m_fPositionOffsetFromSelection) / (float)GetCurWheelItemDatas().GetSize();
-	m_ScrollBar.SetPercentage( fScrollPercentage );
+	float fPercentItemsShowing = NUM_WHEEL_ITEMS_TO_DRAW / (float)GetCurWheelItemDatas().GetSize();
+	m_ScrollBar.SetPercentage( fScrollPercentage-fPercentItemsShowing/2, fScrollPercentage+fPercentItemsShowing/2 );
 
 	if( m_WheelState == STATE_ROULETTE_SPINNING )
 	{
@@ -922,7 +925,7 @@ void MusicWheel::Update( float fDeltaTime )
 		if( m_WheelState == STATE_ROULETTE_SPINNING )
 			fSpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
 		else
-			fSpinSpeed = 0.6f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_SECONDS;
+			fSpinSpeed = 0.2f + fabsf(m_fPositionOffsetFromSelection)/SWITCH_SECONDS;
 
 		if( m_fPositionOffsetFromSelection > 0 )
 		{

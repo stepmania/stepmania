@@ -200,7 +200,6 @@ void Player::Update( float fDeltaTime )
 		{
 			hns = HNS_NG;
 			HandleNoteScore( hns );
-			m_Combo.EndCombo();
 			m_HoldJudgement[hn.m_iTrack].SetHoldJudgement( HNS_NG );
 			m_NoteField.m_HoldNoteScores[i] = HNS_NG;	// update the NoteField display
 		}
@@ -401,18 +400,8 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 			HandleNoteScore( score );	// update score - called once per note in this row
 
 			// update combo - called once per note in this row
-			switch( score )
-			{
-			case TNS_PERFECT:
-			case TNS_GREAT:
-				m_Combo.ContinueCombo();
-				GAMESTATE->m_iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
-				break;
-			case TNS_GOOD:
-			case TNS_BOO:
-				m_Combo.EndCombo();
-				break;
-			}
+			m_Combo.UpdateScore( score );
+			GAMESTATE->m_iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
 		}
 	}
 
@@ -468,7 +457,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanThisBeat )
 	if( iNumMissesFound > 0 )
 	{
 		m_Judgement.SetJudgement( TNS_MISS );
-		m_Combo.EndCombo();
+		m_Combo.UpdateScore( TNS_MISS );
 	}
 
 	return iNumMissesFound;

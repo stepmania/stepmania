@@ -1,4 +1,7 @@
 ﻿------------------------CVS after 3.00 beta 6----------------
+CHANGE:  NG no longer breaks combo.
+NEW FEATURE:  Hidden easter egg.  You have to be "perfect" to find it.
+	And cheaters never prosper!
 NEW FEATURE:  If a song is missing Notes of a certain NotesType, Notes of 
 	the missing type will be generated from the existing types.  For 
 	example, this will allow any pump song to be played in the dance

@@ -179,7 +179,7 @@ float PLAYER_OPTIONS_Y( int p, bool bExtra ) {
 const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+101);
 const ScreenMessage	SM_BeginLoadingNextSong	= ScreenMessage(SM_User+102);
 const ScreenMessage	SM_BeginFadingToTitleMenu	= ScreenMessage(SM_User+103);
-
+const ScreenMessage SM_PlayToastySound		= ScreenMessage(SM_User+105);
 
 // received while STATE_OUTRO
 const ScreenMessage	SM_ShowCleared			= ScreenMessage(SM_User+111);
@@ -534,6 +534,12 @@ ScreenGameplay::ScreenGameplay()
 	m_textSurviveTime.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
 	this->AddSubActor( &m_textSurviveTime );
 
+
+	m_sprToasty.Load( THEME->GetPathTo("Graphics","gameplay toasty") );
+	m_sprToasty.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+	this->AddSubActor( &m_sprToasty );
+	
+	m_soundToasty.Load( THEME->GetPathTo("Sounds","gameplay toasty") );
 
 
 	if( !GAMESTATE->m_bDemonstration )	// don't load sounds if just playing demonstration
@@ -903,7 +909,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		}
 
 		if( bAnyoneHasANote )
-			m_soundAssistTick.PlayRandom();
+			m_soundAssistTick.Play();
 
 
 		iRowLastCrossed = iRowNow;
@@ -945,7 +951,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","insert coin") );
 			::Sleep( 1000 );	// do a little pause, like the arcade does
 			this->SendScreenMessage( SM_GoToTitleMenu, 0 );
-//			m_Fade.CloseWipingRight( SM_GoToTitleMenu );
 		}
 		return;	// don't fall through below
 	}
@@ -955,6 +960,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
+//		case DIK_F6:
+//			this->SendScreenMessage( SM_BeginToasty, 0 );
+//			break;
 		case DIK_F7:
 			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
 				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
@@ -1251,6 +1259,26 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_Fade.CloseWipingRight( SM_GoToTitleMenu );
 		break;
 
+	case SM_BeginToasty:
+		this->SendScreenMessage( SM_PlayToastySound, 0.3f );
+
+		// set off screen
+		m_sprToasty.SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
+		m_sprToasty.SetX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
+		m_sprToasty.SetY( SCREEN_BOTTOM-m_sprToasty.GetUnzoomedHeight()/2 );
+		m_sprToasty.BeginTweeningQueued( 0.2f, Actor::TWEEN_BIAS_BEGIN ); // slide on
+		m_sprToasty.SetTweenX( SCREEN_RIGHT-m_sprToasty.GetUnzoomedWidth()/2 );
+		m_sprToasty.BeginTweeningQueued( 0.6f );	// sleep
+		m_sprToasty.BeginTweeningQueued( 0.3f, Actor::TWEEN_BIAS_END );	// slide off
+		m_sprToasty.SetTweenX( SCREEN_RIGHT+m_sprToasty.GetUnzoomedWidth()/2 );
+		m_sprToasty.BeginTweeningQueued( 0.001f );	// fade out
+		m_sprToasty.SetDiffuseColor( D3DXCOLOR(1,1,1,0) );
+		break;
+
+	case SM_PlayToastySound:
+		m_soundToasty.Play();
+		break;
+
 	case SM_100Combo:
 		if( m_fTimeLeftBeforeDancingComment < 12 )
 		{
@@ -1332,11 +1360,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	// received while STATE_OUTRO
 	case SM_ShowCleared:
-		m_sprCleared.StartFocusing();
+		m_sprCleared.BeginTweening(1.0f);
+		m_sprCleared.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 		SCREENMAN->SendMessageToTopScreen( SM_HideCleared, 2.5 );
 		break;
 	case SM_HideCleared:
-		m_sprCleared.StartBlurring();
+		m_sprCleared.BeginTweening(1.0f);
+		m_sprCleared.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 1 );
 		break;
 	case SM_SaveChangedBeforeGoingBack:
