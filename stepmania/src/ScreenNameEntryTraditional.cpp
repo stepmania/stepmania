@@ -138,6 +138,8 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 {
 	LOG->Trace( "ScreenNameEntryTraditional::ScreenNameEntryTraditional()" );
 
+	ZERO( m_NumFeats[p] );
+	ZERO( m_CurFeat[p] );
 
 	if( PREFSMAN->m_bScreenTestMode )
 	{
@@ -488,10 +490,8 @@ void ScreenNameEntryTraditional::ChangeDisplayedFeat()
 	
 	LOG->Trace( "ScreenNameEntryTraditional::ChangeDisplayedFeat" );
 
-	for( int pn=0; pn<NUM_PLAYERS; ++pn )
+	FOREACH_HumanPlayer( pn )
 	{
-		if( !GAMESTATE->IsHumanPlayer(pn) )
-			continue;
 		if( m_NumFeats[pn] < 2 )
 			continue;
 
