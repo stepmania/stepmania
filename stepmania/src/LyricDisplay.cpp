@@ -15,6 +15,7 @@ LyricDisplay::LyricDisplay()
 	{
 		m_textLyrics[i].LoadFromFont( THEME->GetPathToF("LyricDisplay text") );
 		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
+		m_textLyrics[i].SetDiffuse( RageColor(1,1,1,1) );
 		this->AddChild(&m_textLyrics[i]);
 	}
 
@@ -97,7 +98,11 @@ void LyricDisplay::Update( float fDeltaTime )
 
 		RageColor color = GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_Color;
 		if( i==0 )
-			color /= 2;
+		{
+			for( int c=0; c<4; c++ )
+				color[c] /= 2;
+			color.a = 0.5f;
+		}
 		m_textLyrics[i].SetDiffuse(color);
 
 		if( i==1 )
