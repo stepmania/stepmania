@@ -414,7 +414,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 				float fFreezeSeconds = (float)atof( arrayFreezeValues[1] ) / 1000.0f;
 				
 				out.AddStopSegment( StopSegment(fFreezeBeat, fFreezeSeconds) );
-				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
+//				LOG->Trace( "Adding a freeze segment: beat: %f, seconds = %f", fFreezeBeat, fFreezeSeconds );
 			}
 		}
 
