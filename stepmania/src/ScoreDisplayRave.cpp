@@ -37,11 +37,12 @@ ScoreDisplayRave::ScoreDisplayRave()
 		this->AddChild( &m_sprMeter[i] );
 	}
 
+	this->AddChild( &m_sprFrameOverlay );
+
 	m_textLevel.LoadFromNumbers( THEME->GetPathToN("ScoreDisplayRave level") );
 	m_textLevel.SetText( "1" );
+	m_textLevel.SetShadowLength( 0 );
 	this->AddChild( &m_textLevel );
-
-	this->AddChild( &m_sprFrameOverlay );
 }
 
 void ScoreDisplayRave::Init( PlayerNumber pn )

@@ -33,6 +33,9 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 	}
 	m_Stream[PLAYER_2].SetZoomX( -1 );
 
+	m_sprSeparator.Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug separator")) );
+	this->AddChild( &m_sprSeparator );
+
 	m_sprFrame.Load( THEME->GetPathToG(ssprintf("CombinedLifeMeterTug frame")) );
 	this->AddChild( &m_sprFrame );
 	
@@ -52,6 +55,10 @@ void CombinedLifeMeterTug::Update( float fDelta )
 {
 	m_Stream[PLAYER_1].SetPercent( GAMESTATE->m_fTugLifePercentP1 );
 	m_Stream[PLAYER_2].SetPercent( 1-GAMESTATE->m_fTugLifePercentP1 );
+
+	float fSeparatorX = SCALE( GAMESTATE->m_fTugLifePercentP1, 0.f, 1.f, -METER_WIDTH/2.f, +METER_WIDTH/2.f );
+
+	m_sprSeparator.SetX( fSeparatorX );
 
 	ActorFrame::Update( fDelta );
 }

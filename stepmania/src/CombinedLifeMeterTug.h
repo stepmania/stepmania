@@ -34,7 +34,8 @@ public:
 protected:
 
 	MeterDisplay	m_Stream[NUM_PLAYERS];
-	Sprite m_sprFrame;
+	Sprite	m_sprSeparator;
+	Sprite	m_sprFrame;
 
 	CharacterHead	m_Head[NUM_PLAYERS];
 };
