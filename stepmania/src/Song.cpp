@@ -922,30 +922,26 @@ Steps* Song::GetStepsByDescription( StepsType st, CString sDescription ) const
 
 Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 {
-	Difficulty newDC = dc;
-	Steps* pSteps;
-	pSteps = GetStepsByDifficulty( st, newDC );
-	if( pSteps )
-		return pSteps;
-	newDC = (Difficulty)(dc-1);
-	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pSteps = GetStepsByDifficulty( st, newDC );
-	if( pSteps )
-		return pSteps;
-	newDC = (Difficulty)(dc+1);
-	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pSteps = GetStepsByDifficulty( st, newDC );
-	if( pSteps )
-		return pSteps;
-	newDC = (Difficulty)(dc-2);
-	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pSteps = GetStepsByDifficulty( st, newDC );
-	if( pSteps )
-		return pSteps;
-	newDC = (Difficulty)(dc+2);
-	CLAMP( (int&)newDC, 0, NUM_DIFFICULTIES-1 );
-	pSteps = GetStepsByDifficulty( st, newDC );
-	return pSteps;
+	ASSERT( dc != DIFFICULTY_INVALID );
+
+	const vector<Steps*>& vpSteps = GetAllSteps(st);
+	Steps *pClosest = NULL;
+	int iClosestDistance = 999;
+	for( unsigned i=0; i<vpSteps.size(); i++ )	// for each of the Song's Steps
+	{
+		Steps* pSteps = vpSteps[i];
+
+		if( pSteps->GetDifficulty() == DIFFICULTY_EDIT && dc != DIFFICULTY_EDIT )
+			continue;
+		int iDistance = abs(dc - pSteps->GetDifficulty());
+		if( iDistance < iClosestDistance )
+		{
+			pClosest = pSteps;
+			iClosestDistance = iDistance;
+		}
+	}
+
+	return pClosest;
 }
 
 /* Return whether the song is playable in the given style. */
