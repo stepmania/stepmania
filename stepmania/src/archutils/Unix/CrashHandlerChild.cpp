@@ -60,34 +60,34 @@ void BacktraceNames::Demangle()
 
 void BacktraceNames::Demangle()
 {
-    /* demangle the name using __cxa_demangle() if needed */
-    if (Symbol.substr(0, 2) == "_Z")
-    {
-        int status = 0;
-        const char *name = abi::__cxa_demangle(Symbol, 0, 0, &status);
-        if (name)
-            Symbol = name;
-        else
-        {
-            switch (status)
-            {
-                case 0:
-                    fprintf(stderr, "Something went wrong, it returned success, but failed.\n");
-                    break;
-                case -1:
-                    fprintf(stderr, "Memory allocation failure.\n");
-                    break;
-                case -2:
-                    fprintf(stderr, "Invalid mangled name: %s.\n", Symbol.c_str());
-                    break;
-                case -3:
-                    fprintf(stderr, "Invalid arguments.\n");
-                    break;
-                default:
-                    fprintf(stderr, "No idea what happened here.");
-            }
-        }
-    }
+	/* demangle the name using __cxa_demangle() if needed */
+	if( Symbol.substr(0, 2) != "_Z" )
+		return;
+	
+	int status = 0;
+	char *name = abi::__cxa_demangle( Symbol, 0, 0, &status );
+	if( name )
+	{
+		Symbol = name;
+		free( name );
+		return;
+	}
+
+	switch( status )
+	{
+	case -1:
+		fprintf( stderr, "Out of memory\n" );
+		break;
+	case -2:
+		fprintf( stderr, "Invalid mangled name: %s.\n", Symbol.c_str() );
+		break;
+	case -3:
+		fprintf( stderr, "Invalid arguments.\n" );
+		break;
+	default:
+		fprintf( stderr, "Unexpected __cxa_demangle status: %i", status );
+		break;
+	}
 }
 #else
 void BacktraceNames::Demangle() { }
