@@ -10,11 +10,19 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
-
+#include "HelpDisplay.h"
 
 ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenCenterImage::ScreenCenterImage()" );
+
+#ifdef _XBOX
+	PREFSMAN->resizing = true;
+	CStringArray strArray;
+	CString text("Use the left analog stick to translate the screen and right right analog stick to scale");
+	strArray.push_back(text);
+	m_textHelp->SetTips(strArray);
+#endif
 	
 	m_textInstructions.LoadFromFont( THEME->GetPathToF("Common normal") );
 	m_textInstructions.SetText( "" );
@@ -31,6 +39,9 @@ ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuEleme
 ScreenCenterImage::~ScreenCenterImage()
 {
 	LOG->Trace( "ScreenCenterImage::~ScreenCenterImage()" );
+#ifdef _XBOX
+	PREFSMAN->resizing = false;
+#endif
 }
 
 
@@ -48,7 +59,6 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	if( type == IET_RELEASE )
 		return;
 
-
 	bool bHoldingShift = 
 		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) ||
 		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT));
@@ -60,6 +70,27 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	case IET_FAST_REPEAT:	iScale = 16;	break;
 	default:				iScale = 1;		break;
 	}
+
+#ifdef _XBOX
+	switch(DeviceI.button)
+	{
+	case JOY_9:
+		if(!IsTransitioning())
+		{
+			SCREENMAN->PlayStartSound();
+			StartTransitioning( SM_GoToNextScreen );		
+		}
+		break;
+	case JOY_10:
+		if(!IsTransitioning())
+		{
+			SCREENMAN->PlayBackSound();
+			StartTransitioning( SM_GoToPrevScreen );		
+		}
+		break;
+	}
+	return;
+#endif
 
 	switch( DeviceI.button )
 	{

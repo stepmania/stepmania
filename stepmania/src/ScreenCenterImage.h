@@ -20,7 +20,6 @@ public:
 	void DrawPrimitives();
 
 private:
-
 	BitmapText	m_textInstructions;
 };
 

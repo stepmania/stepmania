@@ -240,6 +240,7 @@ void PrefsManager::Init()
 	m_fScreenPosY = 0;
 	m_fScreenWidth = 640;
 	m_fScreenHeight = 480;
+	resizing = false;
 #else
 	m_bInterlaced = false;
 #endif
