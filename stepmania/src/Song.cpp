@@ -490,8 +490,6 @@ void Song::TidyUpData()
 			m_fMusicLengthSeconds = 0;
 		} else if(m_fMusicLengthSeconds == 0) {
 			LOG->Warn("File %s is empty?", GetMusicPath().c_str());
-		} else if(m_fMusicLengthSeconds == -1) {
-			LOG->Warn("File %s: error getting length", GetMusicPath().c_str());
 		}
 	}
 	else	// ! HasMusic()
