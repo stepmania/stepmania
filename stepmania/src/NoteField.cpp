@@ -38,6 +38,9 @@ NoteField::NoteField()
 	m_rectMarkerBar.TurnShadowOff();
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
+	m_sprBars.Load( THEME->GetPathTo("Graphics","edit bars") );
+	m_sprBars.StopAnimating();
+
 	m_fBeginMarker = m_fEndMarker = -1;
 
 	m_fPercentFadeToFail = -1;
@@ -91,48 +94,41 @@ void NoteField::DrawBeatBar( const float fBeat )
 
 	NoteType nt = BeatToNoteType( fBeat );
 
-	const float fYOffset	= ArrowGetYOffset(			m_PlayerNumber, fBeat );
+	const float fYOffset	= ArrowGetYOffset( m_PlayerNumber, fBeat );
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
-
-	RageVertex v[4];	// upper-left, upper-right, lower-right, lower-left
-	memset( v, 0, sizeof(v) );
-
-
-	int iSegWidth;
-	int iSpaceWidth;
-	float fBrightness;
-	float fScrollSpeed = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed;
-	switch( nt )
+	float fAlpha;
+	int iState;
+	
+	if( bIsMeasure )
 	{
-	default:	ASSERT(0);
-	case NOTE_TYPE_4TH:	iSegWidth = 16; iSpaceWidth = 0; fBrightness = 1;	break;
-	case NOTE_TYPE_8TH:	iSegWidth = 12; iSpaceWidth = 4; fBrightness = SCALE(fScrollSpeed,1.f,2.f,0.f,1.f);	break;
-	case NOTE_TYPE_16TH:iSegWidth = 4;  iSpaceWidth = 4; fBrightness = SCALE(fScrollSpeed,2.f,4.f,0.f,1.f);	break;
+		fAlpha = 1;
+		iState = 0;
 	}
-	CLAMP( fBrightness, 0, 1 );
-
-	DISPLAY->SetTexture( NULL );
-	DISPLAY->SetTextureModeModulate();
-	DISPLAY->SetBlendModeNormal();
+	else
+	{
+		float fScrollSpeed = GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fScrollSpeed;
+		switch( nt )
+		{
+		default:	ASSERT(0);
+		case NOTE_TYPE_4TH:	fAlpha = 1;										iState = 1;	break;
+		case NOTE_TYPE_8TH:	fAlpha = SCALE(fScrollSpeed,1.f,2.f,0.f,1.f);	iState = 2;	break;
+		case NOTE_TYPE_16TH:fAlpha = SCALE(fScrollSpeed,2.f,4.f,0.f,1.f);	iState = 3;	break;
+		}
+		CLAMP( fAlpha, 0, 1 );
+	}
 
 	float fWidth = GetWidth();
-	for( float f=-fWidth/2; f<+fWidth/2; )
-	{
-		v[0].c = v[1].c = v[2].c = v[3].c = RageColor(1,1,1,0.5f*fBrightness);
+	float fFrameWidth = m_sprBars.GetUnzoomedWidth();
 
-		float fLeft = f;
-		float fRight = f+iSegWidth;
-		float fHeight = bIsMeasure ? 6.f : 3.f;
-		v[0].p = RageVector3( fLeft, fYPos-fHeight/2, 0 );	// upper-left
-		v[1].p = RageVector3( fRight, fYPos-fHeight/2, 0 );	// upper-right
-		v[2].p = RageVector3( fRight, fYPos+fHeight/2, 0 );	// lower-right
-		v[3].p = RageVector3( fLeft, fYPos+fHeight/2, 0 );	// lower-left
+	m_sprBars.SetX( 0 );
+	m_sprBars.SetY( fYPos );
+	m_sprBars.SetDiffuse( RageColor(1,1,1,fAlpha) );
+	m_sprBars.SetState( iState );
+	m_sprBars.SetCustomTextureRect( RectF(0,SCALE(iState,0.f,4.f,0.f,1.f), fWidth/fFrameWidth, SCALE(iState+1,0.f,4.f,0.f,1.f)) );
+	m_sprBars.SetZoomX( fWidth/m_sprBars.GetUnzoomedWidth() );
+	m_sprBars.Draw();
 
-		DISPLAY->DrawQuad( v );
-
-		f += iSegWidth + iSpaceWidth;
-	}
 
 	if( bIsMeasure )
 	{

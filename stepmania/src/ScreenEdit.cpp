@@ -338,18 +338,8 @@ void ScreenEdit::Update( float fDeltaTime )
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed += fToMove;
 	}
 
-
-	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
-	float fSongBeat, fBPS;
-	bool bFreeze;
-	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
-
-
-	// update the global music statistics for other classes to access
-	GAMESTATE->m_fMusicSeconds = fPositionSeconds;
-	GAMESTATE->m_fCurBPS = fBPS;
-	GAMESTATE->m_bFreeze = bFreeze;
-
+	if(m_soundMusic.IsPlaying())
+		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
 	if( m_EditMode == MODE_RECORDING  )	
 	{
@@ -381,7 +371,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
 	{
-		GAMESTATE->m_fSongBeat = fSongBeat;
+//		GAMESTATE->m_fSongBeat = fSongBeat;
 
 		if( GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker + 4 )		// give a one measure lead out
 		{
@@ -624,7 +614,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 						m_fDestinationScrollSpeed = 2;
 						m_soundMarker.Play();
 					}
-					else // if( m_fDestinationScrollSpeed == 2 )
+					else if( m_fDestinationScrollSpeed == 2 )
 					{
 						m_fDestinationScrollSpeed = 1;
 						m_soundMarker.Play();
@@ -638,7 +628,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 						m_fDestinationScrollSpeed = 4;
 						m_soundMarker.Play();
 					}
-					else //if( m_fDestinationScrollSpeed == 1 )
+					else if( m_fDestinationScrollSpeed == 1 )
 					{
 						m_fDestinationScrollSpeed = 2;
 						m_soundMarker.Play();
@@ -753,20 +743,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		else	// both markers are laid
 		{
-			if( GAMESTATE->m_fSongBeat == m_NoteFieldEdit.m_fBeginMarker )
-			{
-				m_NoteFieldEdit.m_fBeginMarker = m_NoteFieldEdit.m_fEndMarker;
-				m_NoteFieldEdit.m_fEndMarker = -1;
-			}
-			else if( GAMESTATE->m_fSongBeat == m_NoteFieldEdit.m_fEndMarker )
-			{
-				m_NoteFieldEdit.m_fEndMarker = -1;
-			}
-			else
-			{
-				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
-				m_NoteFieldEdit.m_fEndMarker = -1;
-			}
+			m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
+			m_NoteFieldEdit.m_fEndMarker = -1;
 		}
 		m_soundMarker.Play();
 		break;
@@ -1294,6 +1272,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case quick:			NoteDataUtil::Quick( m_Clipboard );								break;
 				case left:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::left );			break;
 				case right:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::right );			break;
+				case mirror:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::mirror );		break;
 				case shuffle:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::shuffle );		break;
 				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::super_shuffle );	break;
 				case backwards:		NoteDataUtil::Backwards( m_Clipboard );							break;

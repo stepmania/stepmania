@@ -102,6 +102,8 @@ PrefsManager::PrefsManager()
 	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 
+	m_bAllowSoftwareRenderer = false;
+
 	m_sDefaultNoteSkin = "default";
 
 	ReadGlobalPrefsFromDisk( true );
@@ -173,6 +175,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.GetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
 	ini.GetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
+	ini.GetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.GetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
 
 
@@ -247,7 +250,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 	ini.SetValueB( "Options", "ShowSongOptions",			m_bShowSongOptions );
 	ini.SetValueI( "Options", "DefaultFailType",			(int&)m_DefaultFailType );
+	ini.SetValueB( "Options", "bAllowSoftwareRenderer",		m_bAllowSoftwareRenderer );
 	ini.SetValueB( "Options", "DDRExtremeDifficultySelect",	m_bDDRExtremeDifficultySelect );
+
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

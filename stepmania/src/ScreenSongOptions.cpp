@@ -107,7 +107,6 @@ void ScreenSongOptions::ExportOptions()
 
 void ScreenSongOptions::GoToPrevState()
 {
-	SOUNDMAN->StopMusic();
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen( SM_None );
 	else
@@ -116,7 +115,6 @@ void ScreenSongOptions::GoToPrevState()
 
 void ScreenSongOptions::GoToNextState()
 {
-	SOUNDMAN->StopMusic();
 	if( GAMESTATE->m_bEditing )
 		SCREENMAN->PopTopScreen();
 	else

@@ -60,6 +60,7 @@ protected:
 	NoteDisplay		m_NoteDisplay[MAX_NOTE_TRACKS];
 	
 	// used in MODE_EDIT
+	Sprite			m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th
 	BitmapText		m_textMeasureNumber;
 	Quad			m_rectMarkerBar;
 	Quad			m_rectAreaHighlight;

@@ -660,15 +660,9 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 	// Sound cards have a latency between when a sample is Play()ed and when the sound
 	// will start coming out the speaker.  Compensate for this by boosting
 	// fPositionSeconds ahead
-
-	if( GAMESTATE->m_SongOptions.m_AssistType != SongOptions::ASSIST_TICK )
-		return false;
-
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-
-	// HACK:  Play the sound a little bit early to account for the fact that the middle of the tick sounds occurs 0.015 seconds into playing.
 	fPositionSeconds += (SOUNDMAN->GetPlayLatency()+g_fTickEarlySecondsCache) * m_soundMusic.GetPlaybackRate();
-	float fSongBeat=GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+	float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 	iRowNow = max( 0, iRowNow );
@@ -701,14 +695,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 	 * If you don't do this first, the classes are all acting on old 
 	 * information and will lag.  -Chris */
 
-	// update the global music statistics for other classes to access
 	/* If ScreenJukebox is changing screens, it'll stop m_soundMusic to tell
 	 * us not to update the time here.  (In that case, we've already created
 	 * a new ScreenJukebox and reset music statistics, and if we do this then
 	 * we'll un-reset them.) */
 	if(m_soundMusic.IsPlaying())
 		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
-
 
 	Screen::Update( fDeltaTime );
 
@@ -850,8 +842,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		m_iRowLastCrossed = iRowNow;
 	}
 
-	if(IsTimeToPlayTicks())
-		m_soundAssistTick.Play();
+	if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
+		if( IsTimeToPlayTicks() )
+			m_soundAssistTick.Play();
 }
 
 

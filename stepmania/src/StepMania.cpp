@@ -325,7 +325,7 @@ int main(int argc, char* argv[])
 	BoostAppPri();
 
 	ResetGame();
-	if( DISPLAY->IsSoftwareRenderer() )
+	if( DISPLAY->IsSoftwareRenderer() && !PREFSMAN->m_bAllowSoftwareRenderer )
 		SCREENMAN->Prompt( 
 			SM_None, 
 			"OpenGL hardware acceleration\n"
