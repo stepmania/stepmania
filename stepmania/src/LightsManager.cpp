@@ -52,6 +52,9 @@ LightsManager::LightsManager(CString sDriver)
 	m_LightsMode = LIGHTSMODE_JOINING;
 
 	m_pDriver = MakeLightsDriver(sDriver);
+
+	m_fSecsLeftInMarqueeBlink = 0;
+	m_fSecsLeftInBassBlink = 0;
 }
 
 LightsManager::~LightsManager()
@@ -61,29 +64,34 @@ LightsManager::~LightsManager()
 
 void LightsManager::Update( float fDeltaTime )
 {
+	m_fSecsLeftInMarqueeBlink = max( 0, m_fSecsLeftInMarqueeBlink - fDeltaTime );
+	m_fSecsLeftInBassBlink =	max( 0, m_fSecsLeftInBassBlink - fDeltaTime );
+
 	//
 	// Update cabinet lights
 	//
+	FOREACH_CabinetLight( cl )
+		m_LightsState.m_bCabinetLights[cl] = false;
+
 	switch( m_LightsMode )
 	{
 	case LIGHTSMODE_JOINING:
 		{
-			switch( GAMESTATE->GetNumSidesJoined() )
+			int iSec = (int)(RageTimer::GetTimeSinceStart()*4);
+			bool bBlinkOn = (iSec%2)==0; 
+
+			FOREACH_PlayerNumber( pn )
 			{
-			case 0:
+				if( GAMESTATE->m_bSideIsJoined[pn] )
 				{
-					int iSec = (int)(RageTimer::GetTimeSinceStart()*2);
-//					float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
-					bool bOn = (iSec%2)==0; 
-					for( int i=0; i<8; i++ )
-						m_LightsState.m_bCabinetLights[i] = bOn;
+					m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT+pn] = true;
+					m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT+pn] = true;
+					m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = true;
+					m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT+pn] = true;
 				}
-				break;
-			default:
-				for( int i=0; i<8; i++ )
+				else
 				{
-					bool bOn = GAMESTATE->m_bSideIsJoined[i%2];
-					m_LightsState.m_bCabinetLights[i] = bOn;
+					m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = bBlinkOn;
 				}
 			}
 		}
@@ -91,69 +99,67 @@ void LightsManager::Update( float fDeltaTime )
 	case LIGHTSMODE_ATTRACT:
 		{
 			int iSec = (int)RageTimer::GetTimeSinceStart();
-			int i;
-			for( i=0; i<4; i++ )
+			int iTopIndex = iSec % 4;
+			switch( iTopIndex )
 			{
-				bool bOn = (iSec%4)==i;
-				m_LightsState.m_bCabinetLights[i] = bOn;
+			case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
+			case 1:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT] = true;	break;
+			case 2:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT] = true;	break;
+			case 3:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]  = true;	break;
+			default:	ASSERT(0);
 			}
-			for( i=4; i<6; i++ )
-			{
-				bool bOn = false;
-				m_LightsState.m_bCabinetLights[i] = bOn;
-			}
-			for( i=6; i<8; i++ )
-			{
-				bool bOn = (iSec%3)==0;
-				m_LightsState.m_bCabinetLights[i] = bOn;
-			}
+
+			bool bOn = (iSec%4)==0;
+			m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT]			= bOn;
+			m_LightsState.m_bCabinetLights[LIGHT_BASS_RIGHT]		= bOn;
 		}
 		break;
 	case LIGHTSMODE_MENU:
 		{
-			int iSec = (int)RageTimer::GetTimeSinceStart();
-			int i;
-			for( i=0; i<2; i++ )
+			FOREACH_CabinetLight( cl )
+				m_LightsState.m_bCabinetLights[cl] = false;
+
+			int iBeat = (int)(GAMESTATE->m_fSongBeat);
+			int iTopIndex = iBeat % 4;
+			switch( iTopIndex )
 			{
-				bool bOn = (iSec%2)==0;
-				m_LightsState.m_bCabinetLights[i] = bOn;
+			case 0:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]  = true;	break;
+			case 1:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT] = true;	break;
+			case 2:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT] = true;	break;
+			case 3:	m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]  = true;	break;
+			default:	ASSERT(0);
 			}
-			for( i=2; i<4; i++ )
+
+			bool bBlinkOn = (iBeat%2)==0;
+
+			FOREACH_PlayerNumber( pn )
 			{
-				bool bOn = (iSec%2)==1;
-				m_LightsState.m_bCabinetLights[i] = bOn;
-			}
-			for( i=4; i<6; i++ )
-			{
-				bool bOn = (iSec%2)==0;
-				m_LightsState.m_bCabinetLights[i] = bOn;
-			}
-			for( i=6; i<8; i++ )
-			{
-				bool bOn = (iSec%2)==1;
-				m_LightsState.m_bCabinetLights[i] = bOn;
+				if( GAMESTATE->m_bSideIsJoined[pn] )
+				{
+					m_LightsState.m_bCabinetLights[LIGHT_BUTTONS_LEFT+pn] = bBlinkOn;
+				}
 			}
 		}
 		break;
 	case LIGHTSMODE_DEMONSTRATION:
 	case LIGHTSMODE_GAMEPLAY:
 		{
-			int i;
+			FOREACH_CabinetLight( cl )
+				m_LightsState.m_bCabinetLights[cl] = false;
 
-			bool bMarqueeLightsOn = GAMESTATE->m_bPastHereWeGo;
+			bool bAllMarqueeLightsOn = !GAMESTATE->m_bPastHereWeGo;
 
-			for( i=0; i<4; i++ )
-				m_LightsState.m_bCabinetLights[i] = bMarqueeLightsOn;
+			bool bOn;
+			
+			bOn = bAllMarqueeLightsOn || (m_fSecsLeftInMarqueeBlink > 0);
+			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_LEFT]	= bOn;
+			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_UP_RIGHT]	= bOn;
+			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_LEFT]	= bOn;
+			m_LightsState.m_bCabinetLights[LIGHT_MARQUEE_LR_RIGHT]	= bOn;
 
-			// menu lights are always off
-			for( i=4; i<6; i++ )
-				m_LightsState.m_bCabinetLights[i] = false;
-
-			// bass lights
-			float fBeatPercentage = GAMESTATE->m_fSongBeat - (int)GAMESTATE->m_fSongBeat;
-			bool bOn = fBeatPercentage < 0.1 || fBeatPercentage > 0.9; 
-			for( i=6; i<8; i++ )
-				m_LightsState.m_bCabinetLights[i] = bOn;
+			bOn = m_fSecsLeftInBassBlink > 0;
+			m_LightsState.m_bCabinetLights[LIGHT_BASS_LEFT]			= bOn;
+			m_LightsState.m_bCabinetLights[LIGHT_BASS_RIGHT]		= bOn;
 		}
 		break;
 	case LIGHTSMODE_STAGE:
@@ -236,6 +242,16 @@ void LightsManager::Update( float fDeltaTime )
 
 	// apply new light values we set above
 	m_pDriver->Set( &m_LightsState );
+}
+
+void LightsManager::GameplayBlinkMarqueeLights()
+{
+	m_fSecsLeftInMarqueeBlink = 0.1f;
+}
+
+void LightsManager::GameplayBlinkBassLights()
+{
+	m_fSecsLeftInBassBlink = 0.1f;
 }
 
 void LightsManager::SetLightsMode( LightsMode lm )

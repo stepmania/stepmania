@@ -1021,6 +1021,24 @@ void ScreenGameplay::LoadNextSong()
 	 * so cap fDelta at 0 so m_NextSongIn will show up on screen.
 	 * -Chris */
 	m_bZeroDeltaOnNextUpdate = true;
+
+
+	//
+	// Load lights data
+	//
+	m_MarqueeLightsNoteData.Init();
+	m_BassLightsNoteData.Init();
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	Steps* pStepsEasy = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_EASY, false );
+	Steps* pStepsMedium = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_MEDIUM, false );
+	if( pStepsEasy )	pStepsEasy->GetNoteData( &m_BassLightsNoteData );
+	if( pStepsMedium )	pStepsMedium->GetNoteData( &m_MarqueeLightsNoteData );
+	
+	// optimization: collapse to one and free unused tracks
+	NoteDataUtil::CollapseToOne(m_BassLightsNoteData);
+	m_BassLightsNoteData.SetNumTracks(1);
+	NoteDataUtil::CollapseToOne(m_MarqueeLightsNoteData);
+	m_MarqueeLightsNoteData.SetNumTracks(1);
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
@@ -1353,9 +1371,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 	//
 	// update lights
 	//
-	bool bAnyoneHasANote = false;	// set this to true if any player has a note at one of the indices we crossed
+	bool bBlinkMarqueeLights = false;
+	bool bBlinkBassLights = false;
+	bool bCrossedABeat = false;
 	{
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds - 0.05f;	// trigger the light a tiny bit early
 		fPositionSeconds += (SOUND->GetPlayLatency()) * GAMESTATE->m_SongOptions.m_fMusicRate;
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
@@ -1363,35 +1383,26 @@ void ScreenGameplay::Update( float fDeltaTime )
 		iRowNow = max( 0, iRowNow );
 		static int iRowLastCrossed = 0;
 
+		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));
+		float fBeatNow = roundf(NoteRowToBeat(iRowNow));
+
+		bCrossedABeat = fBeatLast != fBeatNow;
 
 		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )  // for each index we crossed since the last update
 		{
-			for( int p=0; p<NUM_PLAYERS; p++ )
-			{
-				if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
-					continue;		// skip
-
-				bAnyoneHasANote |= m_Player[p].IsThereATapOrHoldHeadAtRow( r );
-				break;	// this will only play the tick for the first player that is joined
-			}
+			bBlinkMarqueeLights |=	m_MarqueeLightsNoteData.IsThereATapOrHoldHeadAtRow( r );
+			bBlinkBassLights |=		m_BassLightsNoteData.IsThereATapOrHoldHeadAtRow( r );
 		}
 
 		iRowLastCrossed = iRowNow;
 	}
 
-	static float s_fSecsLeftOnUpperLights = 0;
-	if( bAnyoneHasANote )
-	{
-		float fSecsPerBeat = 1.f/GAMESTATE->m_fCurBPS;
-		float fSecsToLight = fSecsPerBeat*.2f;
-		s_fSecsLeftOnUpperLights = fSecsToLight;
-	}
-	else
-	{
-		s_fSecsLeftOnUpperLights -= fDeltaTime;
-		if( s_fSecsLeftOnUpperLights < 0 )
-			s_fSecsLeftOnUpperLights = 0;
-	}
+	bool bOverrideBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat) && bCrossedABeat;
+
+	if( bOverrideBlink || bBlinkMarqueeLights )
+		LIGHTSMAN->GameplayBlinkMarqueeLights();
+	if( bOverrideBlink || bBlinkBassLights )
+		LIGHTSMAN->GameplayBlinkBassLights();
 
 	//
 	// update song position meter

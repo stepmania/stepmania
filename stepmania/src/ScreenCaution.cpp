@@ -17,7 +17,6 @@
 #include "AnnouncerManager.h"
 #include "RageSounds.h"
 #include "ThemeManager.h"
-#include "LightsManager.h"
 
 
 #define NEXT_SCREEN				THEME->GetMetric("ScreenCaution","NextScreen")
@@ -79,10 +78,8 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 		break;
 	case SM_GoToNextScreen:
-		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	}

@@ -28,6 +28,7 @@
 #include "RageDisplay.h"
 #include "UnlockSystem.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "LightsManager.h"
 
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
@@ -93,6 +94,10 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 			m_aCodeChoices.push_back( mc );
 		}
 	}
+
+
+	// devived classes can override if they want
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
 

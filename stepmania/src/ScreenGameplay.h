@@ -179,6 +179,9 @@ protected:
 	RageSound		*m_soundMusic;
 
 	BeginnerHelper	m_BeginnerHelper;
+
+	NoteData		m_MarqueeLightsNoteData;
+	NoteData		m_BassLightsNoteData;
 };
 
 

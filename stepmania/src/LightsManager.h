@@ -60,10 +60,15 @@ public:
 	
 	void Update( float fDeltaTime );
 
+	void GameplayBlinkMarqueeLights();
+	void GameplayBlinkBassLights();
+
 	void SetLightsMode( LightsMode lm );
 	LightsMode GetLightsMode();
 
 private:
+	float m_fSecsLeftInMarqueeBlink;
+	float m_fSecsLeftInBassBlink;
 
 	LightsDriver* m_pDriver;
 	LightsMode m_LightsMode;
