@@ -59,6 +59,13 @@ void LuaManager::PushStackNil()
 	lua_pushnil( L );
 }
 
+void LuaManager::PushNopFunction()
+{
+	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, m_iNopFunction );
+
+	ASSERT_M( !lua_isnil(L, -1), ssprintf("%i", m_iNopFunction) )
+}
+
 void LuaManager::PushStack( int out, lua_State *L )
 {
 	if( L == NULL )
@@ -185,7 +192,9 @@ void LuaManager::ResetState()
 	luaopen_string( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
-	RunScript( "nop = function(self) end" );
+	/* Set up the NOP function pointer. */
+	RunScript( "return function() end", 1 );
+	m_iNopFunction = luaL_ref( L, LUA_REGISTRYINDEX );
 
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
 		lua_register( L, p->name, p->func );
@@ -235,7 +244,7 @@ bool LuaManager::RunScriptFile( const CString &sFile )
 	return RunScript( sScript );
 }
 
-bool LuaManager::RunScript( const CString &sScript )
+bool LuaManager::RunScript( const CString &sScript, int iReturnValues )
 {
 	// load string
 	{
@@ -257,7 +266,7 @@ bool LuaManager::RunScript( const CString &sScript )
 
 	// evaluate
 	{
-		int ret = lua_pcall(L, 0, 0, 0);
+		int ret = lua_pcall( L, 0, iReturnValues, 0 );
 		if( ret )
 		{
 			CString err;

@@ -12,18 +12,12 @@ template<>
 set<ActorCommands*>* SubscriptionManager<ActorCommands>::s_pSubscribers = NULL;
 
 
-static CString GetNextFunctionName()
-{
-	static int id = 0;
-	++id;
-	return ssprintf( "F%08x",id );
-}
-
 ActorCommands::ActorCommands( const Commands& cmds )
 {
 	SubscriptionManager<ActorCommands>::Subscribe( this );
 	
 	m_cmds = cmds;
+	m_iLuaFunction = LUA_NOREF;
 
 	Register();
 }
@@ -32,24 +26,16 @@ ActorCommands::~ActorCommands()
 {
 	SubscriptionManager<ActorCommands>::Unsubscribe( this );
 
-	if( m_sLuaFunctionName.size() )
-		Unregister();
+	Unregister();
 }
 
 ActorCommands::ActorCommands( const ActorCommands& cpy )
 {
 	SubscriptionManager<ActorCommands>::Subscribe( this );
 
-	m_sLuaFunctionName = GetNextFunctionName();
-
-	/* We need to make a new function, since we'll be unregistered separately.  Set
-	 * the function by reference, so we don't make a new function unless we're actually
-	 * changed. */
-	ostringstream s;
-	s << m_sLuaFunctionName << " = " << cpy.m_sLuaFunctionName;
-
-	CString s2 = s.str();
-	LUA->RunScript( s2 );
+	/* Make a new reference. */
+	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iLuaFunction );
+	m_iLuaFunction = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
 }
 
 ActorCommands &ActorCommands::operator=( const ActorCommands& cpy )
@@ -63,31 +49,30 @@ ActorCommands &ActorCommands::operator=( const ActorCommands& cpy )
 
 void ActorCommands::PushSelf( lua_State *L ) const
 {
-	lua_pushstring( L, m_sLuaFunctionName ); // function name
-	lua_gettable( L, LUA_GLOBALSINDEX ); // function to be called
+	ASSERT( m_iLuaFunction != LUA_NOREF );
 
-	ASSERT_M( !lua_isnil(L, -1), m_sLuaFunctionName.c_str() )
+	if( m_iLuaFunction != LUA_REFNIL )
+		lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, m_iLuaFunction );
+	else
+		LUA->PushNopFunction();
+
+	ASSERT_M( !lua_isnil(L, -1), ssprintf("%i", m_iLuaFunction) )
 }
 
 void ActorCommands::Register()
 {
 	if( m_cmds.v.size() == 0 )
 	{
-		m_sLuaFunctionName = "nop";
+		m_iLuaFunction = LUA_REFNIL;
 		return;
 	}
-
-	// TODO: calculate a better function name, or figure out how
-	// to keep a pointer directly to the Lua function so no global
-	// table lookup is necessary.
-	m_sLuaFunctionName = GetNextFunctionName();
 
 	//
 	// Convert cmds to a Lua function
 	//
 	ostringstream s;
 	
-	s << m_sLuaFunctionName << " = function(self)\n";
+	s << "return function(self)\n";
 
 	FOREACH_CONST( Command, m_cmds.v, c )
 	{
@@ -139,7 +124,10 @@ void ActorCommands::Register()
 
 
 	CString s2 = s.str();
-	LUA->RunScript( s2 );
+	LUA->RunScript( s2, 1 );
+
+	/* The function is now on the stack. */
+	m_iLuaFunction = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
 }
 
 void ActorCommands::Unregister()
@@ -147,24 +135,26 @@ void ActorCommands::Unregister()
 	if( LUA == NULL )
 		return;	// nothing to do
 
-	ASSERT( m_sLuaFunctionName.size() );
-
-	if( m_sLuaFunctionName != "nop" )
-	{
-		lua_pushstring( LUA->L, m_sLuaFunctionName );
-		lua_pushnil( LUA->L );
-		lua_settable( LUA->L, LUA_GLOBALSINDEX );
-	}
-
-	m_sLuaFunctionName = "";
+	luaL_unref( LUA->L, LUA_REGISTRYINDEX, m_iLuaFunction );
+	m_iLuaFunction = LUA_NOREF;
 }
+
+void ActorCommands::ReRegister()
+{
+	/* When called, the Lua state has been wiped.  Don't try to unregister our old
+	 * function reference, since it's already gone (and the number may point somewhere
+	 * else). */
+	m_iLuaFunction = LUA_NOREF;
+	Register();
+}
+
 
 void ActorCommands::ReRegisterAll()
 {
 	if( SubscriptionManager<ActorCommands>::s_pSubscribers == NULL )
 		return;
 	FOREACHS( ActorCommands*, *SubscriptionManager<ActorCommands>::s_pSubscribers, p )
-		(*p)->Register();
+		(*p)->ReRegister();
 }
 
 

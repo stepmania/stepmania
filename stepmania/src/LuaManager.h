@@ -22,7 +22,7 @@ public:
 	void ResetState();
 
 	/* Run a complete script in the global environment, which returns no value. */
-	bool RunScript( const CString &sScript );
+	bool RunScript( const CString &sScript, int iReturnValues = 0 );
 
 	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );
@@ -39,6 +39,7 @@ public:
 	void UnsetGlobal( const CString &sName ) { PushStackNil(); SetGlobal( sName ); }
 
 	void PushStackNil();
+	void PushNopFunction();
 	static void PushStack( bool val, lua_State *L = NULL );
 	static void PushStack( float val, lua_State *L = NULL );
 	static void PushStack( int val, lua_State *L = NULL );
@@ -53,6 +54,7 @@ public:
 	bool RunExpression( const CString &str );
 	lua_State *L;
 private:
+	int m_iNopFunction;
 };
 
 extern LuaManager *LUA;

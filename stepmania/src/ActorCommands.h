@@ -22,10 +22,11 @@ public:
 
 private:
 	void Register();
+	void ReRegister();
 	void Unregister();
 
 	Commands m_cmds;
-	CString m_sLuaFunctionName;
+	int m_iLuaFunction;
 };
 
 typedef AutoPtrCopyOnWrite<ActorCommands> apActorCommands;
