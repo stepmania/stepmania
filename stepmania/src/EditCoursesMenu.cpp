@@ -408,7 +408,11 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 		pEntry = GetSelectedEntry();
 		if( pEntry == NULL )
 		{
-			pCourse->m_entries.push_back( CourseEntry() );
+			CourseEntry ce;
+			const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
+			ASSERT( !apSongs.empty() );
+			ce.pSong = apSongs[0];
+			pCourse->m_entries.push_back( ce );
 			pEntry = GetSelectedEntry();
 		}
 		// fall through
