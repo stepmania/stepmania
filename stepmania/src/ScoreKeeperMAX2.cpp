@@ -157,7 +157,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 	printf( "score: %10.0f\n", m_fScore );
 
-	GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber] = m_fScore;
+	GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber] = float(m_fScore);
 }
 
 void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, Inventory* pInventory )
