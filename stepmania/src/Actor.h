@@ -99,8 +99,8 @@ public:
 	virtual float GetUnzoomedHeight()		{ return m_size.y; }
 	virtual float GetZoomedWidth()			{ return m_size.x * DestTweenState().scale.x; }
 	virtual float GetZoomedHeight()			{ return m_size.y * DestTweenState().scale.y; }
-//	virtual void  SetWidth( float width )	{ DestTweenState().size.x = width; }
-//	virtual void  SetHeight( float height )	{ DestTweenState().size.y = height; }
+	virtual void  SetWidth( float width )	{ m_size.x = width; }
+	virtual void  SetHeight( float height )	{ m_size.y = height; }
 
 	virtual float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
 	virtual float GetZoomX()				{ return DestTweenState().scale.x; }

@@ -1487,7 +1487,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToStateAfterCleared );
 			break;
 		}
-		SCREENMAN->SetNewScreen( "ScreenEvaluation" );
+		SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
 		break;
 
 	case SM_BeginFailed:
@@ -1558,7 +1558,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  
 			GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS ||
 			GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
-			SCREENMAN->SetNewScreen( "ScreenEvaluation" );
+			SCREENMAN->SetNewScreen( "ScreenEvaluationSummary" );
 		else if( PREFSMAN->m_bEventMode )
 			HandleScreenMessage( SM_GoToScreenAfterBack );
 		else

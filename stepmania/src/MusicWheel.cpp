@@ -1173,7 +1173,8 @@ void MusicWheel::Move(int n)
 	{
 		if(n)
 		{
-			m_fLockedWheelVelocity = LOCKED_INITIAL_VELOCITY;
+			int iSign = n/abs(n);
+			m_fLockedWheelVelocity = iSign*LOCKED_INITIAL_VELOCITY;
 			m_soundLocked.Play();
 		}
 		return;

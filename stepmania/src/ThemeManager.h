@@ -30,6 +30,7 @@ public:
 	CString GetPathTo( CString sAssetCategory, CString sFileName );	// looks up the current theme in PREFSMAN
 	CString GetPathToOptional( CString sAssetCategory, CString sFileName );	// looks up the current theme in PREFSMAN
 
+	bool		HasMetric( CString sClassName, CString sValueName );
 	CString		GetMetricRaw( CString sClassName, CString sValueName );
 	CString		GetMetric( CString sClassName, CString sValueName );
 	int			GetMetricI( CString sClassName, CString sValueName );

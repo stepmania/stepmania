@@ -292,6 +292,12 @@ CString ThemeManager::GetMetricsPathFromName( CString sThemeName )
 	return GetThemeDirFromName( sThemeName ) + "metrics.ini";
 }
 
+bool ThemeManager::HasMetric( CString sClassName, CString sValueName )
+{
+	CString sThrowAway;
+	return m_pIniMetrics->GetValue(sClassName,sValueName,sThrowAway);
+}
+
 CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )
 {
 #if defined(DEBUG) && defined(WIN32)

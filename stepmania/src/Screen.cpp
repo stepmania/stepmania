@@ -279,8 +279,9 @@ Screen* Screen::Create( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenCaution") )				ret = new ScreenCaution;
 	else if( 0==stricmp(sClassName, "ScreenEdit") )					ret = new ScreenEdit;
 	else if( 0==stricmp(sClassName, "ScreenEditMenu") )				ret = new ScreenEditMenu;
-	else if( 0==stricmp(sClassName, "ScreenEvaluation") )			ret = new ScreenEvaluation;
-	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )		ret = new ScreenFinalEvaluation;
+	else if( 0==stricmp(sClassName, "ScreenEvaluationStage") )		ret = new ScreenEvaluationStage;
+	else if( 0==stricmp(sClassName, "ScreenEvaluationSummary") )	ret = new ScreenEvaluationSummary;
+	else if( 0==stricmp(sClassName, "ScreenEvaluationCourse") )		ret = new ScreenEvaluationCourse;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )		ret = new ScreenEz2SelectPlayer;
 	else if( 0==stricmp(sClassName, "ScreenSelectMode") )			ret = new ScreenSelectMode;
 	else if( 0==stricmp(sClassName, "ScreenGameOver") )				ret = new ScreenGameOver;

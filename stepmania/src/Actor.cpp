@@ -371,38 +371,50 @@ void Actor::StretchTo( const RectF &r )
 
 void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = diffuse_blink;
+	if( m_Effect != diffuse_blink )
+	{
+		m_Effect = diffuse_blink;
+		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		m_fSecsIntoEffect = 0;
+	}
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
-	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
-	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = diffuse_shift;
+	if( m_Effect != diffuse_shift )
+	{
+		m_Effect = diffuse_shift;
+		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		m_fSecsIntoEffect = 0;
+	}
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
-	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
-	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = glow_blink;
+	if( m_Effect != glow_blink )
+	{
+		m_Effect = glow_blink;
+		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		m_fSecsIntoEffect = 0;
+	}
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
-	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
-	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageColor c2 )
 {
-	m_Effect = glow_shift;
+	if( m_Effect != glow_shift )
+	{
+		m_Effect = glow_shift;
+		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		m_fSecsIntoEffect = 0;
+	}
 	m_effectColor1 = c1;
 	m_effectColor2 = c2;
-	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
-	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
@@ -552,9 +564,18 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	}
 }
 
+CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
+{
+	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
+	if( iIndex < sParams.size() )
+		return sParams[iIndex];
+	else
+		return "";
+}
+
 void Actor::Command( CString sCommandString )
 {
-	// OPTIMIZATION OPPORTUNITY:  sCommandString could be parsed much more efficiently.
+	// OPTIMIZATION OPPORTUNITY:  sCommandString could be parsed more efficiently.
 
 	CStringArray asCommands;
 	split( sCommandString, ";", asCommands, true );
@@ -563,49 +584,49 @@ void Actor::Command( CString sCommandString )
 	{
 		CStringArray asTokens;
 		split( asCommands[c], ",", asTokens, true );
-		asTokens.resize(5);	// make this big so we don't go out of bounds below
-							// if the user doesn't provide enough parameters, tough.
 
-		CString& sName = asTokens[0];
-		sName.MakeLower();
+		int iMaxIndexAccessed = 0;
 
-#define sParam(i) (asTokens[(unsigned)i+1])
+#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
 #define fParam(i) ((float)atof(sParam(i)))
 #define iParam(i) (atoi(sParam(i)))
 #define bParam(i) (iParam(i)!=0)
 
+		CString& sName = asTokens[0];
+		sName.MakeLower();
+
 		// Act on command
-		if     ( sName=="sleep" )			BeginTweening( fParam(0), TWEEN_LINEAR );
-		else if( sName=="linear" )			BeginTweening( fParam(0), TWEEN_LINEAR );
-		else if( sName=="accelerate" )		BeginTweening( fParam(0), TWEEN_ACCELERATE );
-		else if( sName=="decelerate" )		BeginTweening( fParam(0), TWEEN_DECELERATE );
-		else if( sName=="bouncebegin" )		BeginTweening( fParam(0), TWEEN_BOUNCE_BEGIN );
-		else if( sName=="bounceend" )		BeginTweening( fParam(0), TWEEN_BOUNCE_END );
-		else if( sName=="spring" )			BeginTweening( fParam(0), TWEEN_SPRING );
+		if     ( sName=="sleep" )			BeginTweening( fParam(1), TWEEN_LINEAR );
+		else if( sName=="linear" )			BeginTweening( fParam(1), TWEEN_LINEAR );
+		else if( sName=="accelerate" )		BeginTweening( fParam(1), TWEEN_ACCELERATE );
+		else if( sName=="decelerate" )		BeginTweening( fParam(1), TWEEN_DECELERATE );
+		else if( sName=="bouncebegin" )		BeginTweening( fParam(1), TWEEN_BOUNCE_BEGIN );
+		else if( sName=="bounceend" )		BeginTweening( fParam(1), TWEEN_BOUNCE_END );
+		else if( sName=="spring" )			BeginTweening( fParam(1), TWEEN_SPRING );
 		else if( sName=="stoptweening" )	{ StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }
-		else if( sName=="x" )				SetX( fParam(0) );
-		else if( sName=="y" )				SetY( fParam(0) );
-		else if( sName=="xoffset" )			SetX( GetX()+fParam(0) );
-		else if( sName=="yoffset" )			SetY( GetY()+fParam(0) );
-		else if( sName=="zoom" )			SetZoom( fParam(0) );
-		else if( sName=="zoomx" )			SetZoomX( fParam(0) );
-		else if( sName=="zoomy" )			SetZoomY( fParam(0) );
-		else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(0) );
-		else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(0) );
-		else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
-		else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
-		else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
-		else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
-		else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="x" )				SetX( fParam(1) );
+		else if( sName=="y" )				SetY( fParam(1) );
+		else if( sName=="xoffset" )			SetX( GetX()+fParam(1) );
+		else if( sName=="yoffset" )			SetY( GetY()+fParam(1) );
+		else if( sName=="zoom" )			SetZoom( fParam(1) );
+		else if( sName=="zoomx" )			SetZoomX( fParam(1) );
+		else if( sName=="zoomy" )			SetZoomY( fParam(1) );
+		else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(1) );
+		else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(1) );
+		else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="diffuseleftedge" )		SetDiffuseLeftEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="diffuserightedge" )	SetDiffuseRightEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		/* Add left/right/top/bottom for alpha if needed. */
 		else if( sName=="diffusealpha" )	{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = fParam(0); SetDiffuses( i, c ); } }
-		else if( sName=="glow" )			SetGlow( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
-		else if( sName=="rotationx" )		SetRotationX( fParam(0) );
-		else if( sName=="rotationy" )		SetRotationY( fParam(0) );
-		else if( sName=="rotationz" )		SetRotationZ( fParam(0) );
-		else if( sName=="shadowlength" )	SetShadowLength( fParam(0) );
-		else if( sName=="horizalign" )		SetHorizAlign( sParam(0) );
-		else if( sName=="vertalign" )		SetVertAlign( sParam(0) );
+		else if( sName=="glow" )			SetGlow( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="rotationx" )		SetRotationX( fParam(1) );
+		else if( sName=="rotationy" )		SetRotationY( fParam(1) );
+		else if( sName=="rotationz" )		SetRotationZ( fParam(1) );
+		else if( sName=="shadowlength" )	SetShadowLength( fParam(1) );
+		else if( sName=="horizalign" )		SetHorizAlign( sParam(1) );
+		else if( sName=="vertalign" )		SetVertAlign( sParam(1) );
 		else if( sName=="diffuseblink" )	SetEffectDiffuseBlink();
 		else if( sName=="diffuseshift" )	SetEffectDiffuseShift();
 		else if( sName=="glowblink" )		SetEffectGlowBlink();
@@ -618,13 +639,13 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="spin" )			SetEffectSpin();
 		else if( sName=="vibrate" )			SetEffectVibrate();
 		else if( sName=="stopeffect" )		SetEffectNone();
-		else if( sName=="effectcolor1" )	SetEffectColor1( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
-		else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );
-		else if( sName=="effectperiod" )	SetEffectPeriod( fParam(0) );
-		else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(0),fParam(1),fParam(2)) );
-		else if( sName=="animate" )			EnableAnimation( bParam(0) );
-		else if( sName=="texturewrapping" )	EnableTextureWrapping( bParam(0) );
-		else if( sName=="additiveblend" )	EnableAdditiveBlend( bParam(0) );
+		else if( sName=="effectcolor1" )	SetEffectColor1( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
+		else if( sName=="effectperiod" )	SetEffectPeriod( fParam(1) );
+		else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="animate" )			EnableAnimation( bParam(1) );
+		else if( sName=="texturewrapping" )	EnableTextureWrapping( bParam(1) );
+		else if( sName=="additiveblend" )	EnableAdditiveBlend( bParam(1) );
 		else
 		{
 			CString sError = ssprintf( "Unrecognized command name '%s' in command string '%s'.", sName.GetString(), sCommandString.GetString() );
@@ -633,7 +654,17 @@ void Actor::Command( CString sCommandString )
 			if( DISPLAY->IsWindowed() )
 				MessageBox(NULL, sError, "Actor::Command", MB_OK);
 #endif
+		}
 
+
+		if( iMaxIndexAccessed != (int)asTokens.size()-1 )
+		{
+			CString sError = ssprintf( "Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).GetString(), iMaxIndexAccessed+1, (int)asTokens.size() );
+			LOG->Warn( sError );
+#if defined(WIN32) // XXX arch?
+			if( DISPLAY->IsWindowed() )
+				MessageBox(NULL, sError, "Actor::Command", MB_OK);
+#endif
 		}
 	}
 }
