@@ -166,7 +166,7 @@ void ScreenAppearanceOptions::ExportOptions()
 	PREFSMAN->m_bInstructions					= !!m_iSelectedOption[0][AO_INSTRUCTIONS];
 	PREFSMAN->m_bShowDontDie					= !!m_iSelectedOption[0][AO_CAUTION];
 	PREFSMAN->m_bShowSelectGroup				= !!m_iSelectedOption[0][AO_SELECT_GROUP];
-	(int&)PREFSMAN->m_MusicWheelUsesSections	= m_iSelectedOption[0][AO_WHEEL_SECTIONS];
+	(int&)PREFSMAN->m_MusicWheelUsesSections	=   m_iSelectedOption[0][AO_WHEEL_SECTIONS];
 	PREFSMAN->m_bShowNative						=  !m_iSelectedOption[0][AO_SHOW_TRANSLATIONS];
 	PREFSMAN->m_bShowLyrics						= !!m_iSelectedOption[0][AO_SHOW_LYRICS];
 	PREFSMAN->m_bDancePointsForOni				= !!m_iSelectedOption[0][AO_DANCE_POINTS_FOR_ONI];
