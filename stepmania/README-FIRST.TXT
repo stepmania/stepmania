@@ -37,8 +37,12 @@ Table of Contents
 13. The .SM File Format
 14. Background Animations
 15. The .CRS File Format
-16. Building StepMania from CVS Source
-17. Version History
+16. Improving Image Quality with Texture Hints
+17. Creating a StepMania announcer pack
+18. Creating a StepMania theme pack
+19. Building StepMania from CVS Source
+20. Version History
+21. Thanks
 
 ************************************************************
 1. About StepMania
@@ -516,7 +520,42 @@ Header section...
 //
 
 ************************************************************
-15. Building StepMania from CVS source
+16. Improving Image Quality with Texture Hints
+************************************************************
+
+All are textures loaded by StepMania are 16-bits.  The default the texture 
+format is 4444 (4 bits for R,G,B, 4 bits for alpha), which can cause some 
+banding artifacts or a washed-out look.  You can change the texture format by 
+adding "hints" to the file name.  Hints:
+
+"no alpha" - This will force a 5650 texture format (5 bits for R, 6 for G, 5 
+for B, 0 for alpha).  5650 textures cannot have transparency, but have much 
+better color fidelity.
+"1 alpha" - This will force a 5551 texture format.  If your graphic has only 
+"on or off" alpha (like a GIF file), use this hint for better color fidelity.
+"dither" - This will dither an image upon load.  Dithering will reduce banding, 
+but can cause transparency artifacts.  
+
+Hints can be placed anywhere in the file name, but are usually placed at the 
+end of a file name in parenthesis. For example:
+
+caution (dither, no alpha).png
+Arrows Left 1x4 (1 alpha).png
+
+************************************************************
+17. Creating a StepMania announcer pack
+************************************************************
+
+
+
+************************************************************
+18. Creating a StepMania theme pack
+************************************************************
+
+
+
+************************************************************
+19. Building StepMania from CVS source
 ************************************************************
 
 CVS is the repository that manages the StepMania source code.  Our CVS server is 
@@ -571,12 +610,10 @@ variables take effect.
 * DONE! Enjoy staying on the bleeding edge of StepMania releases! 
 
 ************************************************************
-16. Version History
+20. Version History
 ************************************************************
 
-------------------------CVS after 3.00 beta 4----------------
-
-Additions by drokulix: (Edit this line out for production version)
+------------------------CVS after 3.00 beta 5----------------
 BUG FIX:  Old hashing algorithm caused some songs to have the same cache
      filename, causing at least one broken duplicate of a song in the game and
      at least one inaccessible song. New hashing algorithm is stronger and far
@@ -590,6 +627,19 @@ BUG FIX:  Opening a "(NEW)" sequence in Edit/Record/Synch mode with a style
      way would cause an error such as "Actual number of note columns (6) is
      different from the NotesType (4)." either when selected from the song
      wheel or when starting the program again. This has been fixed.
+OPTIMIZATION:  Faster song loading.
+BUG FIX:  Oni life meter now works correctly.
+NEW FEATURE:  Theme support.  See readme for more info.
+
+------------------------Version 3.00 beta 4------------------
+OPTIMIZATION:  Startup time greatly reduced thanks to hiding the log window and
+     SM parsing optimizations
+CHANGE:  Display resolution and max texture size sliders re-enabled
+NEW FEATURE:  Refresh rate slider
+NEW FEATURE:  0.5x, 0.75x scroll speed
+CHANGE:  Now hold L&R while pressing start to change sort on Select Music
+CHANGE:  Combo display now draws behind notes
+BUG FIX:  Stage counter reset after fail (thanks Andy)
 
 ------------------------Version 3.00 beta 4------------------
 BUG FIX:  Fixed crash entering Config Joy/Key (duh!)
@@ -927,6 +977,13 @@ Bug fix: Good and Boo arrows not being drawn.
 
 
 -------------------------Version 0.50-------------------------
+
+************************************************************
+21. Thanks
+************************************************************
+
+Thnaks to:
+	Dj Slash & Tony Thai for the caution graphic
 
 ************************************************************
 End of document
