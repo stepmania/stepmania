@@ -31,8 +31,6 @@ BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPC
 	}
 
 	LOG->Info( "%s", sLine.c_str() );
-	if(lpGuid)
-		LOG->Info( "    ID: {%8.8x-%4.4x-%4.4x-%6.6x}", lpGuid->Data1, lpGuid->Data2, lpGuid->Data3, lpGuid->Data4 );
 
 	return TRUE;
 }
