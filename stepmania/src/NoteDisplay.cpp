@@ -62,6 +62,8 @@ Actor* MakeModelOrSprite( CString sFile )
 #define HOLD_BODY_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(pn,name,"HoldBodyAnimationIsNoteColor")
 #define HOLD_BOTTOMCAP_ANIMATION_IS_NOTE_COLOR		NOTESKIN->GetMetricB(pn,name,"HoldBottomCapAnimationIsNoteColor")
 #define HOLD_TAIL_ANIMATION_IS_NOTE_COLOR			NOTESKIN->GetMetricB(pn,name,"HoldTailAnimationIsNoteColor")
+#define HOLD_HEAD_IS_ABOVE_WAVY_PARTS				NOTESKIN->GetMetricB(pn,name,"HoldHeadIsAboveWavyParts")
+#define HOLD_TAIL_IS_ABOVE_WAVY_PARTS				NOTESKIN->GetMetricB(pn,name,"HoldTailIsAboveWavyParts")
 #define START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD	NOTESKIN->GetMetricI(pn,name,"StartDrawingHoldBodyOffsetFromHead")
 #define STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL		NOTESKIN->GetMetricI(pn,name,"StopDrawingHoldBodyOffsetFromTail")
 #define HOLD_NG_GRAY_PERCENT						NOTESKIN->GetMetricF(pn,name,"HoldNGGrayPercent")
@@ -88,6 +90,8 @@ struct NoteMetricCache_t {
 	bool m_bHoldBodyAnimationIsNoteColor;
 	bool m_bHoldBottomCapAnimationIsNoteColor;
 	bool m_bHoldTailAnimationIsNoteColor;
+	bool m_bHoldHeadIsAboveWavyParts;
+	bool m_bHoldTailIsAboveWavyParts;
 	int m_iStartDrawingHoldBodyOffsetFromHead;
 	int m_iStopDrawingHoldBodyOffsetFromTail;
 	float m_fHoldNGGrayPercent;
@@ -117,6 +121,8 @@ void NoteMetricCache_t::Load(PlayerNumber pn, const CString &name)
 	m_bHoldBodyAnimationIsNoteColor = HOLD_BODY_ANIMATION_IS_NOTE_COLOR;
 	m_bHoldBottomCapAnimationIsNoteColor = HOLD_BOTTOMCAP_ANIMATION_IS_NOTE_COLOR;
 	m_bHoldTailAnimationIsNoteColor = HOLD_TAIL_ANIMATION_IS_NOTE_COLOR;
+	m_bHoldHeadIsAboveWavyParts = HOLD_HEAD_IS_ABOVE_WAVY_PARTS;
+	m_bHoldTailIsAboveWavyParts = HOLD_TAIL_IS_ABOVE_WAVY_PARTS;
 	m_iStartDrawingHoldBodyOffsetFromHead = START_DRAWING_HOLD_BODY_OFFSET_FROM_HEAD;
 	m_iStopDrawingHoldBodyOffsetFromTail = STOP_DRAWING_HOLD_BODY_OFFSET_FROM_TAIL;
 	m_fHoldNGGrayPercent = HOLD_NG_GRAY_PERCENT;
@@ -728,6 +734,11 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 
 	/* The body and caps should have no overlap, so their order doesn't matter.
 	 * Draw the head last, so it appears on top. */
+	if( !cache->m_bHoldHeadIsAboveWavyParts )
+		DrawHoldHead( hn, bActive, fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	if( !cache->m_bHoldTailIsAboveWavyParts )
+		DrawHoldTail( hn, bActive, fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+
 	if( bDrawGlowOnly )
 		DISPLAY->SetTextureModeGlow();
 	else
@@ -738,8 +749,10 @@ void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float 
 	DrawHoldTopCap( hn, bActive, fYHead, fYTail, fYStep, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	/* These set the texture mode themselves. */
-	DrawHoldTail( hn, bActive, fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
-	DrawHoldHead( hn, bActive, fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	if( cache->m_bHoldTailIsAboveWavyParts )
+		DrawHoldTail( hn, bActive, fYTail, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
+	if( cache->m_bHoldHeadIsAboveWavyParts )
+		DrawHoldHead( hn, bActive, fYHead, iCol, fPercentFadeToFail, fColorScale, bDrawGlowOnly );
 
 	// now, draw the glow pass
 	if( !bDrawGlowOnly )
