@@ -166,6 +166,8 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 				{
 					if( strcmp(szTemp,"Yes")==0 )
 					{
+						LOG->Trace( "iConnectedDeviceIndex: %d, iUsbStorageIndex: %d", 
+							iConnectedDeviceIndex, iUsbStorageIndex );
 						usbd.iUsbStorageIndex = iUsbStorageIndex;
 						iConnectedDeviceIndex++;
 					}
