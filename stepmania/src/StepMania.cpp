@@ -198,6 +198,7 @@ void ShutdownGame()
 	SAFE_DELETE( PREFSMAN );
 	SAFE_DELETE( GAMESTATE );
 	SAFE_DELETE( GAMEMAN );
+	SAFE_DELETE( LUA );
 	SAFE_DELETE( NOTESKIN );
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
@@ -207,7 +208,6 @@ void ShutdownGame()
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
-	SAFE_DELETE( LUA );
 	Dialog::Shutdown();
 	SAFE_DELETE( LOG );
 	SAFE_DELETE( FILEMAN );
@@ -1045,11 +1045,11 @@ int main(int argc, char* argv[])
 
 	CheckSettings();
 
-	LUA			= new LuaManager;
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;
+	LUA			= new LuaManager;
 
 	/* Set up the theme and announcer. */
 	ReadGamePrefsFromDisk();
