@@ -374,7 +374,14 @@ static void do_backtrace(void **buf, size_t size)
     unsigned i;
     for (i=0; frame && frame->linkReg && i<size; ++i, frame=frame->stackPointer)
         buf[i] = frame->linkReg;
+    i = (i == size ? size - 1 : i);
     buf[i] = NULL;
+}
+#else
+#warning Undefined BACKTRACE_METHOD_*
+static void do_backtrace(void **buf, size_t size)
+{
+    buf[0] = NULL;
 }
 #endif
 

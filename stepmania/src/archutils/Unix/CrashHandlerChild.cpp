@@ -251,7 +251,14 @@ void BacktraceNames::FromAddr( void *p )
     }
 }
 #else
-#error BACKTRACE_LOOKUP_METHOD_* required
+#warning Undefined BACKTRACE_LOOKUP_METHOD_*
+void BacktraceNames::FromAddr( void *p )
+{
+    Address = long(p);
+    Offset = 0;
+    Symbol = "";
+    File = "";
+}
 #endif
 
 
