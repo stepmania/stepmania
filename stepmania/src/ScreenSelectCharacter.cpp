@@ -82,6 +82,12 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 
 void ScreenSelectCharacter::Init()
 {
+	vector<Character*> apCharacters;
+	GAMESTATE->GetCharacters( apCharacters );
+	if(	apCharacters.empty() )
+		return;
+
+
 	ScreenWithMenuElements::Init();
 	
 	FOREACH_PlayerNumber( p )
