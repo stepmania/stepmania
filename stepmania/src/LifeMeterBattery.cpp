@@ -92,6 +92,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 	case TNS_GOOD:
 	case TNS_BOO:
 	case TNS_MISS:
+	case TNS_HIT_MINE:
 		m_iTrailingLivesLeft = m_iLivesLeft;
 		m_iLivesLeft--;
 		m_soundLoseLife.Play();
@@ -126,11 +127,6 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 
 void LifeMeterBattery::ChangeLife( float fDeltaLifePercent )
 {
-}
-
-void LifeMeterBattery::ChangeLifeMine()
-{
-	ChangeLife( TNS_MISS );		// same as a miss
 }
 
 void LifeMeterBattery::OnDancePointsChange()

@@ -68,6 +68,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeGood;		break;
 	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeBoo;		break;
 	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeMiss;		break;
+	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHitMine; break;
 	default:	ASSERT(0);	break;
 	}
 
@@ -88,13 +89,6 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 	case HNS_NG:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeNG;	break;
 	default:	ASSERT(0);	break;
 	}
-
-	ChangeLife( pn, fPercentToMove );
-}
-
-void CombinedLifeMeterTug::ChangeLifeMine( PlayerNumber pn )
-{
-	float fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHitMine;
 
 	ChangeLife( pn, fPercentToMove );
 }

@@ -20,7 +20,6 @@ public:
 	/* Change life after receiving a hold note grade.  tscore is the score
 	 * received for the initial tap note. */
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore ) = 0;
-	virtual void ChangeLifeMine() = 0;
 	virtual void OnDancePointsChange() = 0;	// look in GAMESTATE and update the display
 	virtual bool IsInDanger() const = 0;
 	virtual bool IsHot() const = 0;

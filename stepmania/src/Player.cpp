@@ -834,13 +834,13 @@ void Player::Step( int col, const RageTimer &tm )
 			m_soundMine.Play();
 
 			if( m_pLifeMeter )
-				m_pLifeMeter->ChangeLifeMine();
+				m_pLifeMeter->ChangeLife( score );
 
 			// TODO: Remove use of PlayerNumber
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
 			if( m_pCombinedLifeMeter )
-				m_pCombinedLifeMeter->ChangeLifeMine( pn );
+				m_pCombinedLifeMeter->ChangeLife( pn, score );
 			tn.result.bHidden = true;
 			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 			if( m_pNoteField )
@@ -907,9 +907,7 @@ void Player::Step( int col, const RageTimer &tm )
 	 * backwards indefinitely, and ignore grading. */
 	if( iIndexOverlappingNote == -1 )
 		iIndexOverlappingNote = GetClosestNote( col, BeatToNoteRow(fSongBeat),
-						   iStepSearchRows,
-						   MAX_NOTE_ROW,
-						   true );
+						   iStepSearchRows, MAX_NOTE_ROW, true );
 	if( iIndexOverlappingNote != -1 )
 	{
 		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
