@@ -891,16 +891,10 @@ void MusicWheel::Update( float fDeltaTime )
 			else
 			{
 				m_iSwitchesLeftInSpinDown--;
-				switch( m_iSwitchesLeftInSpinDown )
-				{
-				case 4:		m_fTimeLeftInState = 0.2f;	break;
-				case 3:		m_fTimeLeftInState = 0.4f;	break;
-				case 2:		m_fTimeLeftInState = 0.8f;	break;
-				case 1:		m_fTimeLeftInState = 1.3f;	break;
-				case 0:		m_fTimeLeftInState = 0.5f;	break;
-				default:	ASSERT(0);
-				}
-				
+				const float SwitchTimes[] = { 0.5f, 1.3f, 0.8f, 0.4f, 0.2f };
+				ASSERT(m_iSwitchesLeftInSpinDown >= 0 && m_iSwitchesLeftInSpinDown <= 4);
+				m_fTimeLeftInState = SwitchTimes[m_iSwitchesLeftInSpinDown];
+
 				LOG->Trace( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
 
 				if( m_iSwitchesLeftInSpinDown < 2 )
