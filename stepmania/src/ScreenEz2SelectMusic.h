@@ -46,12 +46,19 @@ protected:
 	Sprite  m_ChoiceListFrame;
 	Sprite  m_ChoiceListHighlight;
 	Sprite  m_Guide;
+	Sprite				m_sprOptionsMessage;
 	BitmapText	m_PumpDifficultyRating;
 	MusicBannerWheel			m_MusicBannerWheel;
 	MenuElements		m_Menu;
 	FootMeter			m_FootMeter[NUM_PLAYERS];
 	CArray<Notes*, Notes*> m_arrayNotes[NUM_PLAYERS];
 	int					m_iSelection[NUM_PLAYERS];
+	bool m_bGoToOptions;
+	bool m_bMadeChoice;
+
+	int i_ErrorDetected;
+
+	RageSoundSample		m_soundSelect;
 };
 
 

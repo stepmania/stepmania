@@ -27,13 +27,45 @@ MusicBannerWheel::MusicBannerWheel()
 { 
 	currentPos=0;
 	scrlistPos=0;
+	SongsExist=0;
 
 	m_ScrollingList.UseSpriteType(BANNERTYPE);
 	m_ScrollingList.SetXY( 0, 0 );
 	m_ScrollingList.SetSpacing( BANNERSPACING );
 	this->AddChild( &m_ScrollingList );
-	
-	arraySongs = SONGMAN->m_pSongs;
+
+	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
+	{
+		arraySongs = SONGMAN->m_pSongs;
+	}
+	else // Get the Group They Want
+	{
+		for( unsigned i=0; i< SONGMAN->m_pSongs.size(); i++ )
+		{
+			Song* pSong = SONGMAN->m_pSongs[i];
+
+			if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
+			{
+				continue;
+			}
+			else
+			{
+				arraySongs.push_back(pSong);
+			}
+		}
+
+	}
+
+	if( arraySongs.size() > 0)
+	{
+		SongsExist=1;
+	}
+	else
+	{
+		SongsExist=0;
+		return;
+	}
+
 
 	// If there is no currently selected song, select one.
 	if( GAMESTATE->m_pCurSong == NULL )

@@ -30,6 +30,7 @@ public:
 	void BannersLeft();
 	void BannersRight();
 	Song* GetSelectedSong();
+	int CheckSongsExist() { return SongsExist; }
 private:
 	void SetNewPos(int NewPos);
 	void PlayMusicSample();
@@ -41,6 +42,8 @@ private:
 	ScrollingList m_ScrollingList;
 	int currentPos;
 	int scrlistPos;
+	
+	int SongsExist;
 
 	CArray<Song*, Song*> arraySongs;
 };

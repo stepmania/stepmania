@@ -43,9 +43,12 @@
 #define GUIDE_Y							THEME->GetMetricF("ScreenSelectMode","GuideY")
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
 ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 {	
+	i_ErrorDetected=0;
 	CodeDetector::RefreshCacheItems();
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","select music"), 
@@ -54,6 +57,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		);
 	this->AddChild( &m_Menu );
 
+	m_soundSelect.Load( THEME->GetPathTo("Sounds","menu start") );
 
 	m_ChoiceListFrame.Load( THEME->GetPathTo("Graphics","select mode list frame"));
 	m_ChoiceListFrame.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
@@ -65,26 +69,40 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 
 	m_MusicBannerWheel.SetX(SCROLLING_LIST_X);
 	m_MusicBannerWheel.SetY(SCROLLING_LIST_Y);
-	this->AddChild( &m_MusicBannerWheel );
-
-	m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
-	m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
-	this->AddChild( &m_ChoiceListHighlight );
-
-	for(int p=0; p<NUM_PLAYERS; p++ )
+	if(m_MusicBannerWheel.CheckSongsExist() != 0)
 	{
-		m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
-		m_FootMeter[p].SetShadowLength( 2 );
-		this->AddChild( &m_FootMeter[p] );
+		this->AddChild( &m_MusicBannerWheel );
 
-		m_iSelection[p] = 0;
+		m_ChoiceListHighlight.Load( THEME->GetPathTo("Graphics","select mode list highlight"));
+		m_ChoiceListHighlight.SetXY( SCROLLING_LIST_X, SCROLLING_LIST_Y);
+		this->AddChild( &m_ChoiceListHighlight );	
+
+		for(int p=0; p<NUM_PLAYERS; p++ )
+		{
+			m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
+			m_FootMeter[p].SetShadowLength( 2 );
+			this->AddChild( &m_FootMeter[p] );
+
+			m_iSelection[p] = 0;
+		}
+
+		m_PumpDifficultyRating.LoadFromFont( THEME->GetPathTo("Fonts","pump songselect difficulty") );
+		m_PumpDifficultyRating.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
+		this->AddChild(&m_PumpDifficultyRating);
+
+	
+		m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message") );
+		m_sprOptionsMessage.StopAnimating();
+		m_sprOptionsMessage.SetXY( CENTER_X, CENTER_Y );
+		m_sprOptionsMessage.SetZoom( 1 );
+		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+		this->AddChild( &m_sprOptionsMessage );
+
+		m_bGoToOptions = false;
+		m_bMadeChoice = false;
+
+		MusicChanged();
 	}
-
-	m_PumpDifficultyRating.LoadFromFont( THEME->GetPathTo("Fonts","pump songselect difficulty") );
-	m_PumpDifficultyRating.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
-	this->AddChild(&m_PumpDifficultyRating);
-
-	MusicChanged();
 
 	m_Menu.TweenOnScreenFromMenu( SM_None );
 }
@@ -93,6 +111,24 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 {
 //	if( type != IET_FIRST_PRESS )
 //		return;	// ignore
+
+	if(i_ErrorDetected) return; // don't let the user do anything if theres an error
+
+	if( type == IET_RELEASE )	return;		// don't care
+
+	if( m_Menu.IsClosing() )	return;		// ignore
+
+	if( !GameI.IsValid() )		return;		// don't care
+
+	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START )
+	{
+		SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu start") );
+		m_bGoToOptions = true;
+		m_sprOptionsMessage.SetState( 1 );
+	}
+
+	if( m_bMadeChoice )
+		return;
 
 	PlayerNumber pn = GAMESTATE->GetCurrentStyleDef()->ControllerToPlayerNumber( GameI.controller );
 
@@ -119,7 +155,22 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToPrevScreen:
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
+	case SM_GoToNextScreen:
+		if( m_bGoToOptions )
+		{
+			SCREENMAN->SetNewScreen( "ScreenPlayerOptions" );
+		}
+		else
+		{
+			MUSIC->Stop();
+			SCREENMAN->SetNewScreen( "ScreenStage" );
+		}
+		break;
+	case SM_NoSongs:
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	break;
 	}
+
 }
 
 
@@ -147,19 +198,43 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 {
 	if( !m_MusicBannerWheel.GetSelectedSong()->HasMusic() )
 	{
-		/* TODO: gray these out. 
-			*
-			* XXX: also, make sure they're not selected by roulette */
 		SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
 		return;
 	}
-	MUSIC->Stop();
-	SCREENMAN->SetNewScreen( "ScreenStage" );
+
+	m_bMadeChoice = true;
+
+	// show "hold START for options"
+	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
+	m_sprOptionsMessage.BeginTweening( 0.25f );	// fade in
+	m_sprOptionsMessage.SetTweenZoomY( 1 );
+	m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,1) );
+	m_sprOptionsMessage.BeginTweening( 2.0f );	// sleep
+	m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
+	m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
+	m_sprOptionsMessage.SetTweenZoomY( 0 );
+	
+	m_soundSelect.Play();
+
+	m_Menu.TweenOffScreenToBlack( SM_None, false );
+
+	m_Menu.StopTimer();
+
+	this->SendScreenMessage( SM_GoToNextScreen, 2.5f );
+
+//	SCREENMAN->SetNewScreen( "ScreenStage" );
 }
 
 
 void ScreenEz2SelectMusic::Update( float fDeltaTime )
 {
+	if(m_MusicBannerWheel.CheckSongsExist() == 0 && ! i_ErrorDetected)
+	{
+		SCREENMAN->Prompt( SM_NoSongs, "ERROR:\n \nThere are no songs available for play!" );
+		i_ErrorDetected=1;
+		this->SendScreenMessage( SM_NoSongs, 5.5f ); // timeout incase the user decides to do nothing :D
+	}
+
 	Screen::Update( fDeltaTime );
 }
 
