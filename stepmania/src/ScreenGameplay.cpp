@@ -543,14 +543,14 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 		m_DifficultyIcon[p].SetFromNotes( PlayerNumber(p), GAMESTATE->m_pCurNotes[p] );
 
 
-		NoteData* pOriginalNoteData = new NoteData;
-		GAMESTATE->m_pCurNotes[p]->GetNoteData( pOriginalNoteData );
+		NoteData pOriginalNoteData;
+		GAMESTATE->m_pCurNotes[p]->GetNoteData( &pOriginalNoteData );
 		
 		const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-		NoteData* pNewNoteData = new NoteData;
-		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, pOriginalNoteData, pNewNoteData );
+		NoteData pNewNoteData;
+		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
-		m_Player[p].Load( (PlayerNumber)p, pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p] );
+		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p] );
 	}
 
 	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
