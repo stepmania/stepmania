@@ -401,15 +401,23 @@ void NoteField::DrawPrimitives()
 	NoteDisplayCols *cur = SearchForSongBeat();
 	cur->m_ReceptorArrowRow.Draw();
 
+	const PlayerOptions &current_po = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber];
+
 	//
 	// Adjust draw range depending on some effects
 	//
 	int iFirstPixelToDraw = m_iStartDrawingPixel;
+	// HACK: if boomerang and converge are on, then we want to draw much 
+	// earlier to that the notes don't pop on screen.
+	float fConvergeTimesBoomerang = 
+		current_po.m_fScrolls[PlayerOptions::SCROLL_CONVERGE] * 
+		current_po.m_fAccels[PlayerOptions::ACCEL_BOOMERANG];
+	iFirstPixelToDraw += SCALE( fConvergeTimesBoomerang, 0.f, 1.f, 0.f, -SCREEN_HEIGHT/2 );
 	int iLastPixelToDraw = m_iEndDrawingPixel;
 	
 	float fDrawScale = 1;
-	fDrawScale *= 1 + 0.5f * fabsf( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt );
-	fDrawScale *= 1 + fabsf( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI] );
+	fDrawScale *= 1 + 0.5f * fabsf( current_po.m_fPerspectiveTilt );
+	fDrawScale *= 1 + fabsf( current_po.m_fEffects[PlayerOptions::EFFECT_MINI] );
 	
 	float fFirstDrawScale = g_NoteFieldMode[m_PlayerNumber].m_fFirstPixelToDrawScale;
 	float fLastDrawScale = g_NoteFieldMode[m_PlayerNumber].m_fLastPixelToDrawScale;
