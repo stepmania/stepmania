@@ -243,8 +243,7 @@ void BitmapText::DrawChars()
 
 			if( FadeSize.left > 0.001f )
 			{
-				/* Add .5, so we fade wrt. the center of the vert, not the left side.
-				 * TODO: fade all channels, not just alpha */
+				/* Add .5, so we fade wrt. the center of the vert, not the left side. */
 				float fPercent = SCALE( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
 				fPercent *= LeftAlpha;
