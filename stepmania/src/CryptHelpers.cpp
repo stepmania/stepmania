@@ -95,7 +95,6 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 			m_file.Seek( current );
 			return blockedBytes;
 		}
-		m_file.Seek( current );
 	}
 
 	// TODO: figure out what happens on cin

@@ -33,7 +33,7 @@ public:
 private:
 	void StoreInitialize(const NameValuePairs &parameters);
 	
-	mutable RageFile m_file;	// mutable so that we can call RageFile::GetFileSize()
+	mutable RageFile m_file;	// mutable because reading from a file is not a const operation
 	byte *m_space;
 	unsigned int m_len;
 	bool m_waiting;
