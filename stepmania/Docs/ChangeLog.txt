@@ -1,3 +1,16 @@
+* 3.9 rc1
+Fixed movie frame semaphore timeout.
+Fixed stretched images becoming slightly transparent.
+Fixed MP3 sync for cut MP3s (TM4 Discow Moscow).
+Fixed ScreenRaveOptions text.
+Fixed image scaling causing slight transparency.
+Fixed slow "random vanish".
+Fixed some MPEG4 movies skipping frames and not looping cleanly.
+Windows: Intel 82845G reverted back to D3D.
+OSX: Fixed "Illegal instruction" on G3s.
+Added OSC3 "Sabishii Kute Loneliness" translit.
+Added kanji for Foonmix songs.
+
 * Alpha 24
 Fixed music sample not starting when a song is selected quickly.
 Fixed swapped NG/OK scoring.
