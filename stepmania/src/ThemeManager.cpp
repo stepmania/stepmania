@@ -100,6 +100,8 @@ void ThemeManager::SwitchTheme( CString sThemeName )
 	m_pIniMetrics->ReadFile();
 	m_pIniMetrics->SetPath( GetMetricsPathFromName(m_sCurThemeName) );
 	m_pIniMetrics->ReadFile();
+
+	LOG->Info("Set theme %s", sThemeName.c_str());
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
