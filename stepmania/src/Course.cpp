@@ -273,6 +273,8 @@ void Course::LoadFromCRSFile( CString sPath )
 						new_entry.mystery = false;
 					else if( !mods[j].CompareNoCase("noshowcourse") )
 						new_entry.mystery = true;
+					else if( !mods[j].CompareNoCase("nodifficult") )
+						new_entry.no_difficult = true;
 					else 
 						continue;
 					mods.erase(mods.begin() + j);
@@ -382,15 +384,24 @@ void Course::Save()
 			line += DifficultyToString(entry.difficulty);
 		else if( entry.low_meter != -1  &&  entry.high_meter != -1 )
 			line += ssprintf( "%d..%d", entry.low_meter, entry.high_meter );
-		line += ssprintf( ":%s", entry.modifiers.c_str() );
+		line += ":";
 
+		CString modifiers = entry.modifiers;
 		bool default_mystery = (entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
 		if( default_mystery != entry.mystery )
 		{
-			if( entry.modifiers != "" )
-				line += ",";
-			line += entry.mystery? "noshowcourse":"showcourse";
+			if( modifiers != "" )
+				modifiers += ",";
+			modifiers += entry.mystery? "noshowcourse":"showcourse";
 		}
+
+		if( entry.no_difficult )
+		{
+			if( modifiers != "" )
+				modifiers += ",";
+			modifiers += "nodifficult";
+		}
+		line += modifiers;
 
 		line += ";";
 		f.PutLine( line );
@@ -578,6 +589,9 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
 		const CourseEntry &e = entries[i];
+		CourseDifficulty entry_difficulty = cd;
+		if( e.no_difficult && entry_difficulty == COURSE_DIFFICULTY_DIFFICULT )
+			entry_difficulty = COURSE_DIFFICULTY_REGULAR;
 
 		Song* pSong = NULL;	// fill this in
 		Steps* pNotes = NULL;	// fill this in
@@ -585,7 +599,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 		/* This applies difficult mode for meter ranges.  (If it's a difficulty
 		 * class, we'll do it below.) */
 		int low_meter, high_meter;
-		GetMeterRange( i, low_meter, high_meter, cd );
+		GetMeterRange( i, low_meter, high_meter, entry_difficulty );
 
 		switch( e.type )
 		{
@@ -679,12 +693,12 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 
 		/* If e.difficulty == DIFFICULTY_INVALID, then we already increased difficulty
 		 * based on meter. */
-		if( cd > COURSE_DIFFICULTY_REGULAR  &&  e.difficulty != DIFFICULTY_INVALID )
+		if( entry_difficulty > COURSE_DIFFICULTY_REGULAR  &&  e.difficulty != DIFFICULTY_INVALID )
 		{
 			/* See if we can find a NoteData that's one notch more difficult than
 			 * the one we found above. */
 			Difficulty dc = pNotes->GetDifficulty();
-			Difficulty new_dc = Difficulty( dc + cd );
+			Difficulty new_dc = Difficulty( dc + entry_difficulty );
 			if( new_dc < NUM_DIFFICULTIES )
 			{
 				Steps* pNewNotes = pSong->GetStepsByDifficulty( nt, new_dc );
@@ -701,7 +715,7 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 		cinfo.Random = ( e.type == COURSE_ENTRY_RANDOM || e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP );
 		cinfo.Mystery = e.mystery;
 		cinfo.CourseIndex = i;
-		cinfo.Difficulty = cd;
+		cinfo.Difficulty = entry_difficulty;
 		ci.push_back( cinfo ); 
 	}
 

@@ -53,6 +53,7 @@ public:
 	Song* pSong;			// used in type=fixed
 	CString group_name;		// used in type=random_within_group
 	Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
+	bool no_difficult;		// if true, difficult course setting doesn't affect this entry
 	int low_meter;			// = -1 if no meter range specified
 	int high_meter;			// = -1 if no meter range specified
 	int players_index;		// ignored if type isn't 'best' or 'worst'
@@ -66,6 +67,7 @@ public:
 		pSong = NULL;
 		group_name = "";
 		difficulty = DIFFICULTY_INVALID;
+		no_difficult = false;
 		low_meter = -1;
 		high_meter = -1;
 		players_index = 0;
