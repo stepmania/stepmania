@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks_Xbox.h"
 #include "dsound.h"	// for timeGetTime
+#include "archutils/Xbox/custom_launch_params.h" // for XGetCustomLaunchData
 
 static bool g_bTimerInitialized;
 static DWORD g_iStartTime;
