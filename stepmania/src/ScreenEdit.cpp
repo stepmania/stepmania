@@ -1546,7 +1546,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				float fMusicSeconds = m_soundMusic.GetLengthSeconds();
 
 				g_EditNotesStatistics.rows[difficulty].defaultChoice = pSteps->GetDifficulty();
-				g_EditNotesStatistics.rows[meter].defaultChoice = pSteps->GetMeter()-1;
+				g_EditNotesStatistics.rows[meter].defaultChoice = clamp( pSteps->GetMeter()-1, 0, 14 );
 				g_EditNotesStatistics.rows[predict_meter].choices.resize(1);g_EditNotesStatistics.rows[predict_meter].choices[0] = ssprintf("%f",pSteps->PredictMeter());
 				g_EditNotesStatistics.rows[description].choices.resize(1);	g_EditNotesStatistics.rows[description].choices[0] = pSteps->GetDescription();
 				g_EditNotesStatistics.rows[tap_notes].choices.resize(1);	g_EditNotesStatistics.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumTapNotes());
