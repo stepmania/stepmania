@@ -27,21 +27,20 @@ inline void UtilSetXY( Actor* pActor, CString sClassName ) { UtilSetXY( *pActor,
 
 
 float UtilCommand( Actor& actor, CString sClassName, CString sCommandName );
-inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { return UtilCommand( *pActor, sClassName, sCommandName ); }
 
 inline float UtilOnCommand( Actor& actor, CString sClassName ) { return UtilCommand( actor, sClassName, "On" ); }
-inline float UtilOnCommand( Actor* pActor, CString sClassName ) { return UtilOnCommand( *pActor, sClassName ); }
-
 inline float UtilOffCommand( Actor& actor, CString sClassName ) { return UtilCommand( actor, sClassName, "Off" ); }
-inline float UtilOffCommand( Actor* pActor, CString sClassName ) { return UtilOffCommand( *pActor, sClassName ); }
-
 inline float UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
 {
 	UtilSetXY( actor, sClassName );
 	return UtilOnCommand( actor, sClassName );
 }
-inline float UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { return UtilSetXYAndOnCommand( *pActor, sClassName ); }
 
+/* convenience */
+inline float UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { return UtilCommand( *pActor, sClassName, sCommandName ); }
+inline float UtilOnCommand( Actor* pActor, CString sClassName ) { return UtilOnCommand( *pActor, sClassName ); }
+inline float UtilOffCommand( Actor* pActor, CString sClassName ) { return UtilOffCommand( *pActor, sClassName ); }
+inline float UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { return UtilSetXYAndOnCommand( *pActor, sClassName ); }
 
 // Return a Sprite, BitmapText, or Model depending on the file type
 Actor* MakeActor( RageTextureID ID );
