@@ -160,13 +160,13 @@ void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &arraySongPointers )
 	{
 		Song *pSong = arraySongPointers[i];
 
+		int iCounts[NUM_GRADES];
+		PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType, iCounts );
+
 		CString foo;
 		foo.reserve(256);
 		for( int g=GRADE_TIER_1; g<=GRADE_NO_DATA; ++g )
-		{
-			int n = pSong->GetNumNotesWithGrade( (Grade)g );
-			AppendOctal( n, 3, foo );
-		}
+			AppendOctal( iCounts[g], 3, foo );
 		vals.push_back( val(pSong, foo) );
 	}
 
@@ -276,12 +276,14 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 		return "";
 	case SORT_GRADE:
 		{
+			int iCounts[NUM_GRADES];
+			PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType, iCounts );
+
 			for( int i=GRADE_TIER_1; i<NUM_GRADES; ++i )
 			{
 				Grade g = (Grade)i;
-				int iCount = pSong->GetNumNotesWithGrade( g );
-				if( iCount > 0 )
-					return ssprintf( "%4s x %d", GradeToThemedString(g).c_str(), iCount );
+				if( iCounts[i] > 0 )
+					return ssprintf( "%4s x %d", GradeToThemedString(g).c_str(), iCounts[i] );
 			}
 			return GradeToThemedString( GRADE_NO_DATA );
 		}
