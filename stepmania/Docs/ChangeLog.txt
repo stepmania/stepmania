@@ -4,6 +4,7 @@ Fixed crash when portal is used with no open sections.
 Fixed obscure leap year problems.
 Fixed crash when looping movies.
 Fixed grades being too high.
+Fixed saving "GradePercentTier" to StepMania.ini.
 Windows: Worked around GTXP audio driver bug.
 Windows: Fixed minor DirectSound underrun recovery problems.
 Linux x86-64: Fixed Fedora build problems.
