@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                       	cl                                        /Zl                                        /nologo                                        /c                                        verstub.cpp                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                        	cl                                         /Zl                                         /nologo                                         /c                                         verstub.cpp                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                       	cl                                        /Zl                                        /nologo                                        /c                                        verstub.cpp                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                        	cl                                         /Zl                                         /nologo                                         /c                                         verstub.cpp                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -113,27 +113,11 @@ PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\RageSound.cpp
+SOURCE=.\RageMovieTextureHelper.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageSound.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageSoundManager.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageThreads.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageThreads.h
+SOURCE=.\RageMovieTextureHelper.h
 # End Source File
 # Begin Source File
 
@@ -243,11 +227,27 @@ SOURCE=.\RageNetworkClient.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RageSound.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSound.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\RageSoundBass.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\RageSoundBass.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageSoundManager.h
 # End Source File
 # Begin Source File
 
@@ -280,6 +280,14 @@ SOURCE=.\RageTextureManager.cpp
 # Begin Source File
 
 SOURCE=.\RageTextureManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageThreads.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageThreads.h
 # End Source File
 # Begin Source File
 

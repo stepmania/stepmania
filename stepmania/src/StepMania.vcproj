@@ -687,6 +687,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath=".\StepMania.RC">
 				</File>
 				<File
+					RelativePath="archutils\Win32\arch_setup.h">
+				</File>
+				<File
 					RelativePath=".\resource.h">
 				</File>
 			</Filter>
@@ -1124,7 +1127,13 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageMovieTexture.cpp">
 			</File>
 			<File
-				RelativePath=".\RageMovieTexture.h">
+				RelativePath="RageMovieTexture.h">
+			</File>
+			<File
+				RelativePath="RageMovieTextureHelper.cpp">
+			</File>
+			<File
+				RelativePath="RageMovieTextureHelper.h">
 			</File>
 			<File
 				RelativePath=".\RageMusic.cpp">
