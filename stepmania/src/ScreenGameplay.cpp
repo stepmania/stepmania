@@ -779,11 +779,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 	{
 	case STATE_DANCING:
 		//
-		// Update players' alive time
+		// Update living players' alive time
 		//
 		for( pn=0; pn<NUM_PLAYERS; pn++ )
-			if( GAMESTATE->IsPlayerEnabled(pn) )
-				GAMESTATE->m_CurStageStats.fAliveSeconds[pn] += fDeltaTime;
+			if( GAMESTATE->IsPlayerEnabled(pn) && !GAMESTATE->m_CurStageStats.bFailed[pn])
+				GAMESTATE->m_CurStageStats.fAliveSeconds [pn] += fDeltaTime;
 
 		//
 		// Check for end of song
