@@ -403,11 +403,7 @@ CString ScreenPackages::URLEncode( const CString &URL )
 			Output+=t;
 		}
 		else
-		{
-			char out[2];
-			itoa( t, out, 16 );
-			Output += "%" + CString(out);
-		}
+			Output += "%" + ssprintf( "%X", t );
 	}
 	return Output;
 }
