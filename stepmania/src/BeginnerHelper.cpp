@@ -30,6 +30,7 @@ BeginnerHelper::BeginnerHelper()
 	LOG->Trace("BeginnerHelper::BeginnerHelper()");
 	m_bFlashEnabled = false;
 	m_bInitialized = false;
+	m_fLastBeatChecked = 0;
 	this->AddChild(&m_sBackground);
 }
 
@@ -220,29 +221,36 @@ void BeginnerHelper::Update( float fDeltaTime )
 	if(!m_bInitialized)
 		return;
 
+	// the beat we want to check on this update
+	float fCurBeat = GAMESTATE->m_fSongBeat + 0.5f;
+
 	for(int pn = 0; pn < NUM_PLAYERS; pn++ )
 	{
 		if( !( GAMESTATE->IsPlayerEnabled(pn) && GAMESTATE->m_pCurNotes[pn]->GetDifficulty() == DIFFICULTY_BEGINNER) )
 			continue;	// skip
 
-		int iStep = 0;
 		if( (m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.01f)) ) ) )
 			FlashOnce();
-		if((m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)))))
+		for(float fBeat=m_fLastBeatChecked; fBeat<fCurBeat; fBeat+=0.01f)
 		{
-			for( int k=0; k<m_NoteData[pn].GetNumTracks(); k++ )
-				if( m_NoteData[pn].GetTapNote(k, BeatToNoteRowNotRounded((GAMESTATE->m_fSongBeat+0.5f)) ) == TAP_TAP )
-				{
-					switch(k)
+			if((m_NoteData[pn].IsThereATapAtRow( BeatToNoteRowNotRounded(fBeat))))
+			{
+				int iStep = 0;
+				for( int k=0; k<m_NoteData[pn].GetNumTracks(); k++ )
+					if( m_NoteData[pn].GetTapNote(k, BeatToNoteRowNotRounded(fBeat) ) == TAP_TAP )
 					{
-					case 0: iStep += 6; break;
-					case 1: iStep += 3; break;
-					case 2: iStep += 8; break;
-					case 3: iStep += 4; break;
-					};
-				}
-			Step( pn, iStep );
+						switch(k)
+						{
+						case 0: iStep += 6; break;
+						case 1: iStep += 3; break;
+						case 2: iStep += 8; break;
+						case 3: iStep += 4; break;
+						};
+					}
+				Step( pn, iStep );
+			}
 		}
+		m_fLastBeatChecked = fCurBeat;
 	}
 
 	ActorFrame::Update( fDeltaTime );

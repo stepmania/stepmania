@@ -46,7 +46,7 @@ protected:
 	Sprite	m_sBackground;
 	Sprite	m_sStepCircle[NUM_PLAYERS*2];	// Need two for each player during jumps
 
-	int	iDancePadType;  // 0=none, 1=single, 2=double || This entire class only uses 1 pad.
+	float m_fLastBeatChecked;
 	bool m_bInitialized;
 	bool m_bFlashEnabled;
 };
