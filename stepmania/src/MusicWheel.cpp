@@ -37,7 +37,6 @@
 // MusicWheel stuff
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
 #define SWITCH_SECONDS				THEME->GetMetricF("MusicWheel","SwitchSeconds")
-#define SAMPLE_MUSIC_DELAY			THEME->GetMetricF("MusicWheel","SampleMusicDelay")
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
 #define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
 #define LOCKED_INITIAL_VELOCITY		THEME->GetMetricF("MusicWheel","LockedInitialVelocity")
@@ -298,8 +297,6 @@ MusicWheel::MusicWheel()
 	m_soundStart.Load(			THEME->GetPathTo("Sounds","menu start") );
 	m_soundLocked.Load(			THEME->GetPathTo("Sounds","select music wheel locked") );
 
-
-	m_fTimeLeftBeforePlayMusicSample = 0;
 
 	// init m_mapGroupNameToBannerColor
 
@@ -761,13 +758,6 @@ void MusicWheel::Update( float fDeltaTime )
 		NextMusic( false );	// spin as fast as possible
 	}
 
-	if( m_fTimeLeftBeforePlayMusicSample > 0 )
-	{
-		m_fTimeLeftBeforePlayMusicSample -= fDeltaTime;
-		if( m_fTimeLeftBeforePlayMusicSample < 0 )
-			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
-	}
-
 	// update wheel state
 	m_fTimeLeftInState -= fDeltaTime;
 	if( m_fTimeLeftInState <= 0 )	// time to go to a new state
@@ -836,11 +826,9 @@ void MusicWheel::Update( float fDeltaTime )
 			}
 			break;
 		case STATE_FLYING_ON_AFTER_NEXT_SORT:
-			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
 			m_WheelState = STATE_SELECTING_MUSIC;	// now, wait for input
 			break;
 		case STATE_TWEENING_ON_SCREEN:
-			SCREENMAN->SendMessageToTopScreen( SM_PlaySongSample, 0 );
 			m_fTimeLeftInState = 0;
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			{
@@ -943,7 +931,7 @@ void MusicWheel::Update( float fDeltaTime )
 			if( m_fPositionOffsetFromSelection < 0 )
 			{
 				m_fPositionOffsetFromSelection = 0;
-				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
+//				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
 			}
 		}
 		else if( m_fPositionOffsetFromSelection < 0 )
@@ -952,7 +940,7 @@ void MusicWheel::Update( float fDeltaTime )
 			if( m_fPositionOffsetFromSelection > 0 )
 			{
 				m_fPositionOffsetFromSelection = 0;
-				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
+//				m_fTimeLeftBeforePlayMusicSample = SAMPLE_MUSIC_DELAY;
 			}
 		}
 	}
@@ -971,8 +959,6 @@ void MusicWheel::PrevMusic( bool bSendSongChangedMessage )
 	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is busy spinning
 		return;
 	
-	m_fTimeLeftBeforePlayMusicSample = 0;
-
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:
@@ -1016,8 +1002,6 @@ void MusicWheel::NextMusic( bool bSendSongChangedMessage )
 	if( fabsf(m_fPositionOffsetFromSelection) > 0.5f )	// wheel is very busy spinning
 		return;
 	
-	m_fTimeLeftBeforePlayMusicSample = 0;
-
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING_MUSIC:

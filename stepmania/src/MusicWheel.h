@@ -32,8 +32,7 @@ const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
 
 
 const ScreenMessage	SM_SongChanged		=	ScreenMessage(SM_User+47);	// this should be unique!
-const ScreenMessage SM_PlaySongSample	=	ScreenMessage(SM_User+48);	
-const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+49);	
+const ScreenMessage SM_SortOrderChanged	=	ScreenMessage(SM_User+48);	
 
 
 enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_COURSE };
@@ -141,7 +140,6 @@ protected:
 
 	int					m_iSwitchesLeftInSpinDown;		
 	float				m_fLockedWheelVelocity;
-	float				m_fTimeLeftBeforePlayMusicSample;	// Triggers a message send when crosses 0
 
 	enum WheelState { 
 		STATE_SELECTING_MUSIC,

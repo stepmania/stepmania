@@ -69,12 +69,14 @@
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectMusic","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
 #define SCORE_CONNECTED_TO_MUSIC_WHEEL	THEME->GetMetricB("ScreenSelectMusic","ScoreConnectedToMusicWheel")
+#define SAMPLE_MUSIC_DELAY		THEME->GetMetricF("ScreenSelectMusic","SampleMusicDelay")
 
 const float TWEEN_TIME		= 0.5f;
 
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToNextScreen		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_PlaySongSample		=	ScreenMessage(SM_User+3);	
 
 
 
@@ -544,9 +546,6 @@ void ScreenSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) ) )
 			return;		// ignore
 	
-	if( ! m_MusicWheel.WheelIsLocked() )
-		MUSIC->Stop();
-
 	m_MusicWheel.PrevMusic();
 }
 
@@ -555,9 +554,6 @@ void ScreenSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
 {
 	if( type >= IET_SLOW_REPEAT  &&  INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) ) )
 		return;		// ignore
-
-	if( ! m_MusicWheel.WheelIsLocked() )
-		MUSIC->Stop();
 
 	m_MusicWheel.NextMusic();
 }
@@ -723,6 +719,9 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_SONG:
 		{
+			MUSIC->Stop();
+			this->SendScreenMessage( SM_PlaySongSample, SAMPLE_MUSIC_DELAY );
+
 			for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
 				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef(), pn, m_arrayNotes[pn] );
 				SortNotesArrayByDifficulty( m_arrayNotes[pn] );
@@ -766,7 +765,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 void ScreenSelectMusic::PlayMusicSample()
 {
-	//LOG->Trace( "ScreenSelectSong::PlaySONGample()" );
+	//LOG->Trace( "ScreenSelectSong::PlayMusicSample()" );
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	if( pSong  &&  pSong->HasMusic() )
@@ -775,8 +774,8 @@ void ScreenSelectMusic::PlayMusicSample()
 		MUSIC->Load( pSong->GetMusicPath() );
 		MUSIC->Play( true, pSong->m_fMusicSampleStartSeconds, pSong->m_fMusicSampleLengthSeconds );
 	}
-	else
-		MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select music music") );
+//	else
+//		MUSIC->LoadAndPlayIfNotAlready( THEME->GetPathTo("Sounds","select music music") );
 }
 
 void ScreenSelectMusic::UpdateOptionsDisplays()
