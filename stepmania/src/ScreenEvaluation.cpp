@@ -229,16 +229,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				UNLOCKSYS->UnlockClearStage();
 				UNLOCKSYS->UnlockAddAP( grade[p] );
 				UNLOCKSYS->UnlockAddSP( grade[p] );
-
-				// we want to save dance points here if we are in event mode.
-				// otherwise, dance points will never get saved except
-				// in nonstop mode.
-				if( PREFSMAN->m_bEventMode )
-					UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
-				break;
-
-			case summary:
-				UNLOCKSYS->UnlockAddDP( (float) stageStats.iActualDancePoints[p] );
+				UNLOCKSYS->UnlockAddDP( (float)stageStats.iActualDancePoints[p] );
 				break;
 
 			case course:
