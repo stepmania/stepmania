@@ -380,7 +380,7 @@ void ScreenEdit::Update( float fDeltaTime )
 				fEndBeat = froundf( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 				// create a new hold note
-				HoldNote newHN = { t, fStartBeat, fEndBeat };
+				HoldNote newHN( t, fStartBeat, fEndBeat );
 				m_NoteFieldRecord.AddHoldNote( newHN );
 			}
 		}
@@ -684,10 +684,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					continue;
 
 				// create a new hold note
-				HoldNote newHN;
-				newHN.iTrack = col;
-				newHN.fStartBeat = min(fStartBeat, fEndBeat);
-				newHN.fEndBeat = max(fStartBeat, fEndBeat);
+				HoldNote newHN( col, min(fStartBeat, fEndBeat), max(fStartBeat, fEndBeat) );
 
 				newHN.fStartBeat = max(newHN.fStartBeat, 0);
 				newHN.fEndBeat = max(newHN.fEndBeat, 0);

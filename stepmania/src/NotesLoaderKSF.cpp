@@ -125,11 +125,11 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Notes &out )
 
 			if( iHoldStartRow[t] != -1 )	// this ends the hold
 			{
-				HoldNote hn = {
+				HoldNote hn (
 					t, /* button */
 					iHoldStartRow[t]/(float)iTickCount, /* start */
 					(r-1)/(float)iTickCount /* end */
-				};
+				);
 				notedata.AddHoldNote( hn );
 				iHoldStartRow[t] = -1;
 			}

@@ -341,8 +341,7 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 
 				SetTapNote(col, j, TAP_EMPTY);
 
-				HoldNote hn = { col, NoteRowToBeat(i), NoteRowToBeat(j) };
-				AddHoldNote( hn );
+				AddHoldNote( HoldNote(col, NoteRowToBeat(i), NoteRowToBeat(j)) );
 				break;
 			}
 		}
@@ -385,7 +384,7 @@ void NoteData::Convert4sToHoldNotes()
 			if( GetTapNote(col, i) != TAP_HOLD )	// this is a HoldNote body
 				continue;
 
-			HoldNote hn = { col, NoteRowToBeat(i), 0 };
+			HoldNote hn( col, NoteRowToBeat(i), 0 );
 			// search for end of HoldNote
 			do {
 				SetTapNote(col, i, TAP_EMPTY);

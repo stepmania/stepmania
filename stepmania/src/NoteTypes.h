@@ -75,6 +75,7 @@ CString NoteTypeToString( NoteType nt );
 
 struct HoldNote
 {
+	HoldNote( int t, float s, float e ) { iTrack=t; fStartBeat=s; fEndBeat=e; }
 	int		iTrack;	
 	float	fStartBeat;
 	float	fEndBeat;
