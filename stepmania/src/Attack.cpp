@@ -54,6 +54,17 @@ bool Attack::ContainsTransformOrTurn() const
 	return po.ContainsTransformOrTurn();
 }
 
+Attack Attack::FromGlobalCourseModifier( const CString &sModifiers )
+{
+	Attack a;
+	a.fStartSecond = 0;
+	a.fSecsRemaining = 10000; /* whole song */
+	a.level = ATTACK_LEVEL_1;
+	a.sModifier = sModifiers;
+	a.bGlobal = true;
+	return a;
+}
+
 bool AttackArray::ContainsTransformOrTurn() const
 {
 	FOREACH_CONST( Attack, *this, a )

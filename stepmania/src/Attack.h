@@ -37,6 +37,7 @@ struct Attack
 	bool IsBlank() const { return sModifier.empty(); }
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
+	static Attack FromGlobalCourseModifier( const CString &sModifiers );
 };
 
 struct AttackArray : public vector<Attack>

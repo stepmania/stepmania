@@ -1106,6 +1106,18 @@ bool Course::IsRanking() const
 	return false;
 }
 
+const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
+{
+	for( unsigned i = 0; i < m_entries.size(); ++i )
+	{
+		const CourseEntry *pEntry = &m_entries[i];
+		if( pEntry->type == COURSE_ENTRY_FIXED && pEntry->pSong == pSong )
+			return pEntry;
+	}
+
+	return NULL;
+}
+
 void Course::GetAllCachedTrails( vector<Trail *> &out )
 {
 	TrailCache_t::iterator it;

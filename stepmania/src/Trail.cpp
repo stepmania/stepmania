@@ -10,16 +10,7 @@
 void TrailEntry::GetAttackArray( AttackArray &out ) const
 {
 	if( !Modifiers.empty() )
-	{
-		Attack a;
-		a.fStartSecond = 0;
-		a.fSecsRemaining = 10000; /* whole song */
-		a.level = ATTACK_LEVEL_1;
-		a.sModifier = Modifiers;
-		a.bGlobal = true;
-
-		out.push_back( a );
-	}
+		out.push_back( Attack::FromGlobalCourseModifier( Modifiers ) );
 
 	out.insert( out.end(), Attacks.begin(), Attacks.end() );
 }

@@ -151,6 +151,8 @@ public:
 
 	void GetAllCachedTrails( vector<Trail *> &out );
 
+	const CourseEntry *FindFixedSong( const Song *pSong ) const;
+
 private:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
