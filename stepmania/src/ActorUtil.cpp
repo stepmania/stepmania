@@ -255,7 +255,7 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 		XNode xml;
 		PARSEINFO pi;
 		if( !xml.LoadFromFile( ID.filename, &pi ) )
-			RageException::Throw( pi.error_string );
+			RageException::Throw( ssprintf("Error loading %s: %s", ID.filename.c_str(), pi.error_string.c_str()) );
 		CString sDir = Dirname( ID.filename );
 		return LoadFromActorFile( sDir, &xml );
 	}
@@ -308,7 +308,7 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 			XNode xml;
 			PARSEINFO pi;
 			if( !xml.LoadFromFile( sXml, &pi ) )
-				RageException::Throw( pi.error_string );
+				RageException::Throw( ssprintf("Error loading %s: %s", sXml.c_str(), pi.error_string.c_str()) );
 			return LoadFromActorFile( sDir, &xml );
 		}
 		else
