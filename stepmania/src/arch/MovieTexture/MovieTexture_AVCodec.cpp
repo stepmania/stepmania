@@ -346,6 +346,9 @@ void MovieTexture_AVCodec::DecoderThread()
 		if( m_State == PAUSE_DECODER )
 		{
 			SDL_Delay( 5 );
+			
+			/* The video isn't running; skip time. */
+			m_RunningTimer.GetDeltaTime();
 			continue;
 		}
 
