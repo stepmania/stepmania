@@ -22,7 +22,6 @@
 class Background : public ActorFrame
 {
 public:
-
 	Background();
 	~Background();
 
@@ -46,14 +45,12 @@ protected:
 		
 	BGAnimation		m_BGADanger;
 
-
 	BGAnimation* CreateSongBGA(const Song *pSong, CString sBGName) const;
 	BGAnimation* CreateRandomBGA() const;
 
 	map<CString,BGAnimation*> m_BGAnimations;
 	vector<BackgroundChange> m_aBGChanges;
-	int m_iCurBGChange;	// starts at 0 and increases to m_aBGSegments.size()-1
-	BGAnimation* GetCurrentBGA();
+	BGAnimation* m_pCurrentBGA;
 	BGAnimation* m_pFadingBGA;
 	float m_fSecsLeftInFade;
 

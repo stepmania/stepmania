@@ -345,6 +345,8 @@ void Player::Step( int col )
 	
 	//LOG->Trace( "iIndexStartLookingAt = %d, iNumElementsToExamine = %d", iIndexStartLookingAt, iNumElementsToExamine );
 
+	bool bGrayArrowStep = true;
+
 	if( iIndexOverlappingNote != -1 )
 	{
 		// compute the score for this hit
@@ -384,8 +386,7 @@ void Player::Step( int col )
 		if( score==TNS_MARVELOUS  &&  !PREFSMAN->m_bMarvelousTiming )
 			score = TNS_PERFECT;
 
-		if( score < TNS_GOOD )
-			m_GrayArrowRow.Step( col );
+		bGrayArrowStep = score < TNS_GOOD;
 
 		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		
@@ -401,6 +402,9 @@ void Player::Step( int col )
 		if( IsRowCompletelyJudged(iIndexOverlappingNote) )
 			OnRowCompletelyJudged( iIndexOverlappingNote );
 	}
+
+	if( bGrayArrowStep )
+		m_GrayArrowRow.Step( col );
 }
 
 void Player::HandleAutosync(float fNoteOffset)

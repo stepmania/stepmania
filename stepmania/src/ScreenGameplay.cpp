@@ -90,7 +90,7 @@ const ScreenMessage	SM_PlayGo				= ScreenMessage(SM_User+1);
 
 // received while STATE_DANCING
 const ScreenMessage	SM_NotesEnded			= ScreenMessage(SM_User+10);
-const ScreenMessage	SM_BeginLoadingNextSong	= ScreenMessage(SM_User+11);
+const ScreenMessage	SM_LoadNextSong			= ScreenMessage(SM_User+11);
 
 // received while STATE_OUTRO
 const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+20);
@@ -185,6 +185,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 
 	
+	m_bZeroDeltaOnNextUpdate = false;
 
 
 
@@ -245,8 +246,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 
 	this->AddChild(&m_TimingAssist);
 
-	m_OniFade.SetOpened();
-	this->AddChild( &m_OniFade );
+	this->AddChild( &m_NextSongIn );
+
+	this->AddChild( &m_NextSongOut );
 
 
 	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
@@ -622,12 +624,6 @@ void ScreenGameplay::LoadNextSong()
 		m_TimingAssist.Reset();
 	}
 
-	/* Set up song-specific graphics. */
-	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
-	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
-	m_Background.BeginTweening( 2 );
-	m_Background.SetDiffuse( RageColor(1,1,1,1) );
-
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 
 	/* XXX: set it to the current BPM, not the range */
@@ -650,17 +646,35 @@ void ScreenGameplay::LoadNextSong()
 		m_DifficultyIcon[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bExtra,bReverse[p]) );
 	}
 
+	/* Load the Oni transitions */
+	m_NextSongIn.Load( THEME->GetPathToB("ScreenGameplay next song in") );
+	// Instead, load this right before it's used
+//	m_NextSongOut.Load( THEME->GetPathToB("ScreenGameplay next song out") );
+
 	/* XXX: We want to put the lyrics out of the way, but it's likely that one
 	 * player is in reverse and the other isn't.  What to do? */
 	m_LyricDisplay.SetXY( LYRICS_X, LYRICS_Y(bExtra,bReverse[GAMESTATE->m_MasterPlayerNumber]) );
-
-	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
 
 	// Load lyrics
 	// XXX: don't load this here
 	LyricsLoader LL;
 	if( GAMESTATE->m_pCurSong->HasLyrics()  )
 		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
+
+	
+	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
+	
+	/* Set up song-specific graphics. */
+	m_Background.LoadFromSong( GAMESTATE->m_pCurSong );
+	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
+	m_Background.BeginTweening( 2 );
+	m_Background.SetDiffuse( RageColor(1,1,1,1) );
+
+
+	/* m_soundMusic and m_Background take a very long time to load,
+	 * so cap fDelta at 0 so m_NextSongIn will show up on screen.
+	 * -Chris */ 
+	m_bZeroDeltaOnNextUpdate = true;
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
@@ -813,7 +827,16 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if(m_soundMusic.IsPlaying())
 		GAMESTATE->UpdateSongPosition(m_soundMusic.GetPositionSeconds());
 
-	Screen::Update( fDeltaTime );
+	if( m_bZeroDeltaOnNextUpdate )
+		int sdkjfskdf = 0;
+
+	if( m_bZeroDeltaOnNextUpdate )
+	{
+		Screen::Update( 0 );
+		m_bZeroDeltaOnNextUpdate = false;
+	}
+	else
+		Screen::Update( fDeltaTime );
 
 	if( GAMESTATE->m_pCurSong == NULL )
 		return;
@@ -838,7 +861,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		// Check for end of song
 		//
 		float fSecondsToStop = GAMESTATE->m_pCurSong->GetElapsedTimeFromBeat( GAMESTATE->m_pCurSong->m_fLastBeat ) + 1;
-		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_OniFade.IsClosing() )
+		if( GAMESTATE->m_fMusicSeconds > fSecondsToStop  &&  !m_NextSongOut.IsTransitioning() )
 		{
 			GAMESTATE->m_fSongBeat = 0;
 			this->PostScreenMessage( SM_NotesEnded, 0 );
@@ -1277,7 +1300,19 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				for( p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsPlayerEnabled(p) && !GAMESTATE->m_CurStageStats.bFailed[p] )
 					m_pLifeMeter[p]->OnSongEnded();	// give a little life back between stages
-				m_OniFade.CloseWipingRight( SM_BeginLoadingNextSong );
+
+				// HACK:  Temporarily set the song pointer to the next song so that 
+				// this m_NextSongOut will show the next song banner
+				Song* pCurSong = GAMESTATE->m_pCurSong;
+
+				int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
+				iPlaySongIndex %= m_apSongsQueue.size();
+				GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
+
+				m_NextSongOut.Load( THEME->GetPathToB("ScreenGameplay next song out") );
+				GAMESTATE->m_pCurSong = pCurSong;
+
+				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
 			}
 			else	// IsLastSong
 			{
@@ -1296,26 +1331,24 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					{
 						m_Extra.StartTransitioning( SM_GoToStateAfterCleared );
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay extra") );
-//						this->PostScreenMessage( SM_ShowTryExtraStage, 1 );
 					}
 					else
 					{
 						m_Cleared.StartTransitioning( SM_GoToStateAfterCleared );
 						SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo("gameplay cleared") );
-//						this->PostScreenMessage( SM_ShowCleared, 1 );
 					}
 				}
 			}
 		}
 		break;
 
-	case SM_BeginLoadingNextSong:
+	case SM_LoadNextSong:
 		LoadNextSong();
 		GAMESTATE->m_bPastHereWeGo = true;
 		/* We're fading in, so don't hit any notes for a few seconds; they'll be
 		 * obscured by the fade. */
-		StartPlayingSong( 3, 0 );
-		m_OniFade.OpenWipingRight( SM_None );
+		StartPlayingSong( m_NextSongIn.GetLengthSeconds()+2, 0 );
+		m_NextSongIn.StartTransitioning( SM_None );
 		break;
 
 	case SM_PlayToasty:
@@ -1402,48 +1435,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		break;
 	
-
-/*	// received while STATE_OUTRO
-	case SM_ShowCleared:
-		m_sprCleared.BeginTweening(1.0f);
-		m_sprCleared.SetDiffuse( RageColor(1,1,1,1) );
-		m_sprCleared.BeginTweening(1.5f); // sleep
-		m_sprCleared.BeginTweening(0.7f);
-		m_sprCleared.SetDiffuse( RageColor(1,1,1,0) );
-		SCREENMAN->PostMessageToTopScreen( SM_GoToStateAfterCleared, 4 );
-		break;
-*/
-/*	case SM_ShowTryExtraStage:
-		{
-			m_soundTryExtraStage.PlayRandom();
-
-			// make the background invisible so we don't waste mem bandwidth drawing it
-			m_Background.BeginTweening( 1 );
-			m_Background.SetDiffuse( RageColor(1,1,1,0) );
-
-			RageColor colorStage = GAMESTATE->GetStageColor();
-			colorStage.a *= 0.7f;
-
-			m_sprTryExtraStage.SetZoom( 4 );
-			m_sprTryExtraStage.BeginBlurredTweening( 0.8f, TWEEN_DECELERATE );
-			m_sprTryExtraStage.SetZoom( 0.4f );			// zoom out
-			m_sprTryExtraStage.SetDiffuse( colorStage );	// and fade in
-			m_sprTryExtraStage.BeginTweening( 0.2f );
-			m_sprTryExtraStage.SetZoom( 0.8f );			// bounce
-			m_sprTryExtraStage.SetDiffuse( colorStage );	// and fade in
-			m_sprTryExtraStage.BeginTweening( 0.2f );
-			m_sprTryExtraStage.SetZoom( 1.0f );			// come to rest
-			m_sprTryExtraStage.SetDiffuse( colorStage );	// and fade in
-
-			colorStage.a = 0;
-
-			m_sprTryExtraStage.BeginTweening( 2 );	// sleep
-			m_sprTryExtraStage.BeginTweening( 1 );	// fade out
-			m_sprTryExtraStage.SetDiffuse( colorStage );
-			SCREENMAN->PostMessageToTopScreen( SM_GoToStateAfterCleared, 5 );
-		}
-		break;
-*/
 	case SM_SaveChangedBeforeGoingBack:
 		if( m_bChangedOffsetOrBPM )
 		{

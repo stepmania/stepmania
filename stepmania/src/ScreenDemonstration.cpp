@@ -17,6 +17,7 @@
 #include "SongManager.h"
 #include "StepMania.h"
 #include "ScreenAttract.h"	// for AttractInput()
+#include "ScreenManager.h"
 
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenDemonstration","SecondsToShow")

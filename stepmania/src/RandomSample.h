@@ -17,7 +17,7 @@ class RandomSample
 {
 public:
 	RandomSample();
-	~RandomSample();
+	virtual ~RandomSample();
 
 	bool Load( CString sFilePath, int iMaxToLoad = 1000 /*load all*/ );
 	void PlayRandom();

@@ -22,12 +22,18 @@
 #include "PrefsManager.h"
 
 
-#define HELP_TEXT				THEME->GetMetric("ScreenInstructions","HelpText")
-#define TIMER_SECONDS			THEME->GetMetricI("ScreenInstructions","TimerSeconds")
-#define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenInstructions","NextScreenArcade")
-#define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenInstructions","NextScreenOni")
-#define NEXT_SCREEN_BATTLE		THEME->GetMetric("ScreenInstructions","NextScreenBattle")
-#define NEXT_SCREEN_RAVE		THEME->GetMetric("ScreenInstructions","NextScreenRave")
+#define HELP_TEXT					THEME->GetMetric("ScreenInstructions","HelpText")
+#define TIMER_SECONDS				THEME->GetMetricI("ScreenInstructions","TimerSeconds")
+CString Capitalize( CString s )	
+{
+	if( s.GetLength()==0 )
+		return "";
+	CString s1 = s.Left(1);
+	s1.MakeUpper();
+	CString s2 = s.Right( s.GetLength()-1 );
+	return s1+s2;
+}
+#define NEXT_SCREEN( pm )		THEME->GetMetric("ScreenInstructions","NextScreen"+Capitalize(PlayModeToString(pm)) )
 
 
 ScreenInstructions::ScreenInstructions() : Screen("ScreenInstructions")
@@ -118,25 +124,7 @@ void ScreenInstructions::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );		
 		break;
 	case SM_GoToNextScreen:
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_ARCADE:
-			SCREENMAN->SetNewScreen( NEXT_SCREEN_ARCADE );
-			break;
-		case PLAY_MODE_NONSTOP:
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );
-			break;
-		case PLAY_MODE_BATTLE:
-			SCREENMAN->SetNewScreen( NEXT_SCREEN_BATTLE );
-			break;
-		case PLAY_MODE_RAVE:
-			SCREENMAN->SetNewScreen( NEXT_SCREEN_RAVE );
-			break;
-		default:
-			ASSERT(0);
-		}
+		SCREENMAN->SetNewScreen( NEXT_SCREEN(GAMESTATE->m_PlayMode) );
 		break;
 	}
 }

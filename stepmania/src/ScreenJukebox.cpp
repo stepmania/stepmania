@@ -17,6 +17,7 @@
 #include "SongManager.h"
 #include "StepMania.h"
 #include "SDL_utils.h"
+#include "ScreenManager.h"
 
 
 

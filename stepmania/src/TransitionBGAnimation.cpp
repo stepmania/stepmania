@@ -18,7 +18,7 @@
 
 TransitionBGAnimation::TransitionBGAnimation()
 {
-	m_State = waiting,
+	m_State = waiting;
 	m_fSecsIntoTransition = 0.0f;
 }
 
@@ -28,6 +28,9 @@ void TransitionBGAnimation::Load( CString sBGAniDir )
 		sBGAniDir += "/";
 
 	m_BGAnimation.LoadFromAniDir( sBGAniDir );
+
+	m_State = waiting;
+	m_fSecsIntoTransition = 0.0f;
 
 	// load sound from file specified by ini, or use the first sound in the directory
 	IniFile ini;
@@ -62,8 +65,12 @@ void TransitionBGAnimation::Update( float fDeltaTime )
 
 void TransitionBGAnimation::DrawPrimitives()
 {
-//	if( m_State == transitioning )
-		m_BGAnimation.Draw();
+	// Unless we're transitioning, don't draw because we'll waste resources drawing things
+	// that aren't visible.  -Chris
+	if( m_State != transitioning )
+		return;
+
+	m_BGAnimation.Draw();
 }
 
 void TransitionBGAnimation::StartTransitioning( ScreenMessage send_when_done )

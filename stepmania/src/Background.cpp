@@ -35,22 +35,21 @@ const float FADE_SECONDS = 1.0f;
 
 
 const CString STATIC_BACKGROUND = "static background";
-const int MAX_RANDOM_BACKGROUNDS = 5;
+const int MAX_RANDOM_BACKGROUNDS = 4;
 const CString RANDOM_BACKGROUND[MAX_RANDOM_BACKGROUNDS] = 
 {
 	"__random1",
 	"__random2",
 	"__random3",
 	"__random4",
-	"__random5"
 };
 
 
 Background::Background()
 {
-	m_iCurBGChange = 0;
 	m_bInDanger = false;
 
+	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
 
@@ -83,7 +82,8 @@ void Background::Unload()
 	m_BGAnimations.clear();
 	
 	m_aBGChanges.clear();
-	m_iCurBGChange = 0;
+	m_pCurrentBGA = NULL;
+	m_pFadingBGA = NULL;
 }
 
 void Background::LoadFromAniDir( CString sAniDir )
@@ -345,36 +345,42 @@ void Background::Update( float fDeltaTime )
 		if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
 			return; /* hasn't been updated yet */
 
+		if( m_aBGChanges.size() == 0 )
+			return;
+
 		/* If we're in a freeze, hold all animations (don't animate by calling Update). */
 		if( GAMESTATE->m_bFreeze )
 			return;
 
 		// Find the BGSegment we're in
-		unsigned i;
-		for( i=0; i<m_aBGChanges.size()-1; i++ )
+		int i;
+		int size = (int)(m_aBGChanges.size()) - 1;
+		for( i=0; i<size; i++ )
 			if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
 				break;
-		ASSERT( i >= 0  &&  i<m_aBGChanges.size() );
 
-		if( int(i) > m_iCurBGChange )
+		BGAnimation* pOld = m_pCurrentBGA;
+		CString sNewBGName = m_aBGChanges[i].m_sBGName;
+		BGAnimation* pNew = m_BGAnimations[sNewBGName];
+
+		if( pOld != pNew )
 		{
-			LOG->Trace( "new bga %d, %d, %f, %f", m_iCurBGChange, i, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
-			BGAnimation* pOld = GetCurrentBGA();
-			m_iCurBGChange = i;
-			BGAnimation* pNew = GetCurrentBGA();
+	//		LOG->Trace( "new bga %d, %d, %f, %f", m_iCurBGChange, i, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+	
+			m_pFadingBGA = pOld;
+			m_pCurrentBGA = pNew;
 
-			if( pOld != pNew )
-			{
+			if( pOld )
 				pOld->LosingFocus();
+			if( pNew )
 				pNew->GainingFocus();
 
-				m_pFadingBGA = pOld;
-				bool bBGAnimsMode = PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_ANIMATIONS;
-				m_fSecsLeftInFade = bBGAnimsMode ? 0 : FADE_SECONDS;
-			}
+			bool bBGAnimsMode = PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_ANIMATIONS;
+			m_fSecsLeftInFade = bBGAnimsMode ? 0 : FADE_SECONDS;
 		}
 
-		GetCurrentBGA()->Update( fDeltaTime );
+		if( m_pCurrentBGA )
+			m_pCurrentBGA->Update( fDeltaTime );
 		if( m_pFadingBGA )
 		{
 			m_pFadingBGA->Update( fDeltaTime );
@@ -398,8 +404,9 @@ void Background::DrawPrimitives()
 		m_BGADanger.Draw();
 	}
 	else
-	{			
-		GetCurrentBGA()->Draw();
+	{	
+		if( m_pCurrentBGA )
+			m_pCurrentBGA->Draw();
 		if( m_pFadingBGA )
 			m_pFadingBGA->Draw();
 	}
@@ -426,11 +433,4 @@ void Background::FadeOut()
 	m_quadBGBrightness.BeginTweening( 0.5f );
 	m_quadBGBrightness.SetDiffuse( RageColor(0,0,0,1-0.5f) );
 
-}
-
-BGAnimation* Background::GetCurrentBGA()
-{
-	CString sBGName = m_aBGChanges[m_iCurBGChange].m_sBGName;
-	ASSERT( m_BGAnimations[ sBGName ] );
-	return m_BGAnimations[ sBGName ];
 }

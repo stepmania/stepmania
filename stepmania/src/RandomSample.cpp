@@ -23,12 +23,12 @@ RandomSample::RandomSample()
 	m_iIndexLastPlayed = -1;
 }
 
+
 RandomSample::~RandomSample()
 {
 	for( unsigned i=0; i<m_pSamples.size(); i++ )
-		SAFE_DELETE( m_pSamples[i] );
+		delete m_pSamples[i];
 }
-
 
 bool RandomSample::Load( CString sFilePath, int iMaxToLoad )
 {

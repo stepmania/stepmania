@@ -14,7 +14,6 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "TransitionBGAnimation.h"
-#include "TransitionOniFade.h"
 #include "BitmapText.h"
 #include "Player.h"
 #include "RandomSample.h"
@@ -98,7 +97,8 @@ protected:
 
 	Background			m_Background;
 
-	TransitionOniFade	m_OniFade;	// shows between songs in a course
+	TransitionBGAnimation	m_NextSongIn;	// shows between songs in a course
+	TransitionBGAnimation	m_NextSongOut;	// shows between songs in a course
 
 	Sprite				m_sprLifeFrame;
 	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
@@ -168,6 +168,7 @@ protected:
 	RandomSample	m_announcer1000Combo;
 	RandomSample	m_announcerComboStopped;
 
+	bool			m_bZeroDeltaOnNextUpdate;
 	bool			m_bDemonstration;
 	int				m_iRowLastCrossed;
 

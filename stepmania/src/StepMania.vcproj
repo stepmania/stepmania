@@ -1023,12 +1023,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath="TransitionBGAnimation.h">
 			</File>
-			<File
-				RelativePath="TransitionOniFade.cpp">
-			</File>
-			<File
-				RelativePath="TransitionOniFade.h">
-			</File>
 		</Filter>
 		<Filter
 			Name="Actors used in Menus"
