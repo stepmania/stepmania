@@ -28,6 +28,12 @@ public:
 
 	Font* LoadFont( const CString &sFontOrTextureFilePath, CString sChars = "" );
 	void UnloadFont( Font *fp );
+
+	/* Warning: This reloads fonts completely, so all BitmapTexts need to be
+	 * reset, too.  If this isn't done, best case they end up with old font
+	 * metrics; worst case, they get left with stale pointers to RageTextures
+	 * that'll get freed eventually and crash.  This is only used for realtime
+	 * adjustment of fonts in ScreenTestFonts at the moment. */
 	void ReloadFonts();
 
 	/* Return true if FileName is a part of the font "FontName". */
