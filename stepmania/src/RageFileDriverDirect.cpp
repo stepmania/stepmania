@@ -50,7 +50,8 @@ RageFileObj *RageFileDriverDirect::Open( CString sPath, RageFile::OpenMode mode,
 		flags |= O_RDONLY;
 	else
 		flags |= O_WRONLY|O_CREAT|O_TRUNC;
-	int fd = open( root + sPath, flags );
+
+	int fd = open( root + sPath, flags, 0644 );
 	if( fd == -1 )
 	{
 		err = errno;
