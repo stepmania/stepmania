@@ -663,6 +663,8 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	 * function is only called when a row is completed. */
 	/* Instead, use the last tap score (ala DDR).  Using the minimum results in 
 	 * slightly more harsh scoring than DDR */
+	/* I'm not sure this is right, either.  Can you really jump a boo and a perfect
+	 * and get scored for a perfect?  (That's so loose, you can gallop jumps.) -glenn */
 //	TapNoteScore score = MinTapNoteScore(iIndexThatWasSteppedOn);
 	TapNoteScore score = LastTapNoteScore(iIndexThatWasSteppedOn);
 	ASSERT(score != TNS_NONE);
@@ -711,24 +713,27 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Steps::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
-	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
-	bool bFreeze;
-	float fMissIfOlderThanThisBeat;
-	float fThrowAway;
-	GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze );
-
-	int iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
-	if( bFreeze )
+	int iMissIfOlderThanThisIndex;
 	{
-		/* iMissIfOlderThanThisIndex is a freeze.  Include the index of the freeze,
-		 * too.  Otherwise we won't show misses for tap notes on freezes until the
-		 * freeze finishes. */
-		iMissIfOlderThanThisIndex++;
+		const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
+		bool bFreeze;
+		float fMissIfOlderThanThisBeat;
+		float fThrowAway;
+		GAMESTATE->m_pCurSong->GetBeatAndBPSFromElapsedTime( fEarliestTime, fMissIfOlderThanThisBeat, fThrowAway, bFreeze );
+
+		iMissIfOlderThanThisIndex = BeatToNoteRow( fMissIfOlderThanThisBeat );
+		if( bFreeze )
+		{
+			/* iMissIfOlderThanThisIndex is a freeze.  Include the index of the freeze,
+			 * too.  Otherwise we won't show misses for tap notes on freezes until the
+			 * freeze finishes. */
+			iMissIfOlderThanThisIndex++;
+		}
 	}
 
 	// Since this is being called every frame, let's not check the whole array every time.
 	// Instead, only check 10 elements back.  Even 10 is overkill.
-	int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
+	const int iStartCheckingAt = max( 0, iMissIfOlderThanThisIndex-10 );
 
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
