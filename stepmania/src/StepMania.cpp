@@ -232,9 +232,6 @@ void ResetGame( bool ReturnToFirstScreen )
 	vector<InputDevice> vDevices;
 	vector<CString> vDescriptions;
 	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
-
-	vector<CString> vOldDescriptions;
-	split( PREFSMAN->m_sLastSeenInputDevices, ",", vOldDescriptions );
 	CString sInputDevices = join( ",", vDescriptions );
 
 	if( PREFSMAN->m_sLastSeenInputDevices != sInputDevices )
@@ -261,6 +258,19 @@ static bool ChangeAppPri()
 {
 	if(PREFSMAN->m_iBoostAppPriority == 0)
 		return false;
+
+	// if using NTPAD don't boost or else input is laggy
+	if(PREFSMAN->m_iBoostAppPriority == -1)
+	{	vector<InputDevice> vDevices;
+		vector<CString> vDescriptions;
+		INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
+		CString sInputDevices = join( ",", vDescriptions );
+		if( sInputDevices.Find("NTPAD") != -1 )
+		{
+			LOG->Trace( "Using NTPAD.  Don't boost priority." );
+			return false;
+		}
+	}
 
 	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
 #ifdef DEBUG
