@@ -14,7 +14,7 @@ public:
 	void *GetProcAddress(CString s);
 	bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync );
 	void SwapBuffers();
-	void ResolutionChanged(int width, int height) { CurrentWidth = width; CurrentHeight = height; }
+	void Update(float fDeltaTime);
 
 	bool IsWindowed() const { return Windowed; }
 	int GetWidth() const { return CurrentWidth; }

@@ -11,12 +11,23 @@ LowLevelWindow_SDL::LowLevelWindow_SDL()
     if(!SDL_WasInit(SDL_INIT_VIDEO))
 		SDL_InitSubSystem(SDL_INIT_VIDEO);
 
+	/* By default, ignore all SDL events.  We'll enable them as we need them.
+	 * We must not enable any events we don't actually want, since we won't
+	 * query for them and they'll fill up the event queue. 
+	 *
+	 * This needs to be done after we initialize video, since it's really part
+	 * of the SDL video system--it'll be reinitialized on us if we do this first. */
+	SDL_EventState(0xFF /*SDL_ALLEVENTS*/, SDL_IGNORE);
+
+	SDL_EventState(SDL_VIDEORESIZE, SDL_ENABLE);
+
 	Windowed = false;
 }
 
 LowLevelWindow_SDL::~LowLevelWindow_SDL()
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_EventState(SDL_VIDEORESIZE, SDL_IGNORE);
 }
 
 void *LowLevelWindow_SDL::GetProcAddress(CString s)
@@ -57,6 +68,10 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 		SDL_SM_SetRefreshRate(rate);
 #endif
 
+#if defined(WIN32)
+	SDL_EventState(SDL_OPENGLRESET, SDL_ENABLE);
+#endif
+
 	SDL_Surface *screen = SDL_SetVideoMode(width, height, bpp, flags);
 	if(!screen)
 		RageException::Throw("SDL_SetVideoMode failed: %s", SDL_GetError());
@@ -76,6 +91,8 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 
 		NewOpenGLContext = true;
 	}
+
+	SDL_EventState(SDL_OPENGLRESET, SDL_IGNORE);
 #endif
 
 	{
@@ -104,3 +121,22 @@ void LowLevelWindow_SDL::SwapBuffers()
 {
 	SDL_GL_SwapBuffers();
 }
+
+void LowLevelWindow_SDL::Update(float fDeltaTime)
+{
+	SDL_Event event;
+	while(SDL_PeepEvents(&event, 1, SDL_GETEVENT, SDL_VIDEORESIZEMASK))
+	{
+		switch(event.type)
+		{
+		case SDL_VIDEORESIZE:
+			CurrentWidth = event.resize.w;
+			CurrentHeight = event.resize.h;
+
+			/* Let DISPLAY know that our resolution has changed. */
+			DISPLAY->ResolutionChanged();
+			break;
+		}
+	}
+}
+

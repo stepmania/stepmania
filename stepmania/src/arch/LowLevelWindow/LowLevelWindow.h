@@ -16,10 +16,7 @@ public:
 	virtual bool SetVideoMode( bool windowed, int width, int height, int bpp, int rate, bool vsync ) = 0;
 
 	virtual void SwapBuffers() = 0;
-
-	/* This is currently only called when we get SDL resize events; any other
-	 * models can probably ignore this. */
-	virtual void ResolutionChanged(int width, int height) { }
+	virtual void Update(float fDeltaTime) { }
 
 	virtual bool IsWindowed() const = 0;
 	virtual int GetWidth() const = 0;
