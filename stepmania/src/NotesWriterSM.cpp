@@ -130,20 +130,21 @@ static CString JoinLineList( vector<CString> &lines )
 	while( j < lines.size() && lines.size() == 0 )
 		++j;
 
-	return join( "\n", lines.begin()+j, lines.end() );
+	return join( "\r\n", lines.begin()+j, lines.end() );
 }
 
 CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bSavingCache )
 {
-	CString sRet;
-	sRet += "\n";
-	sRet += ssprintf( "//---------------%s - %s----------------\n",
-		GameManager::StepsTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() );
-	sRet += song.m_vsKeysoundFile.empty() ? "#NOTES:\n" : "#NOTES2:\n";
-	sRet += ssprintf( "     %s:\n", GameManager::StepsTypeToString(in.m_StepsType).c_str() );
-	sRet += ssprintf( "     %s:\n", in.GetDescription().c_str() );
-	sRet += ssprintf( "     %s:\n", DifficultyToString(in.GetDifficulty()).c_str() );
-	sRet += ssprintf( "     %d:\n", in.GetMeter() );
+	vector<CString> lines;
+
+	lines.push_back( "" );
+	lines.push_back( ssprintf("//---------------%s - %s----------------",
+		GameManager::StepsTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str()) );
+	lines.push_back( song.m_vsKeysoundFile.empty() ? "#NOTES:" : "#NOTES2:" );
+	lines.push_back( ssprintf( "     %s:", GameManager::StepsTypeToString(in.m_StepsType).c_str() ) );
+	lines.push_back( ssprintf( "     %s:", in.GetDescription().c_str() ) );
+	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
+	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
 	int MaxRadar = bSavingCache? NUM_RADAR_CATEGORIES:5;
 	CStringArray asRadarValues;
@@ -152,17 +153,15 @@ CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.
 	 * If we add it here, then every time we write unmodified data we'll add an extra
 	 * newline and they'll accumulate. */
-	sRet += ssprintf( "     %s:", join(",",asRadarValues).c_str() );
+	lines.push_back( ssprintf( "     %s:", join(",",asRadarValues).c_str() ) );
 
 	CString sNoteData;
 	in.GetSMNoteData( sNoteData );
 
-	vector<CString> lines;
+	split( sNoteData, "\n", lines, true );
+	lines.push_back( ";" );
 
-	split( sNoteData, "\n", lines, false );
-	sRet += JoinLineList( lines );
-	sRet += ";\n";
-	return sRet;
+	return JoinLineList( lines );
 }
 
 bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
