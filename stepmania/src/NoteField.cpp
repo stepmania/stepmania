@@ -15,7 +15,6 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ArrowEffects.h"
-#include "PrefsManager.h"
 #include "GameManager.h"
 #include "GameState.h"
 #include "RageException.h"
@@ -27,10 +26,6 @@
 #include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
 #include "song.h"
-
-const float HOLD_NOTE_BITS_PER_BEAT	= 6;
-const float HOLD_NOTE_BITS_PER_ROW	= HOLD_NOTE_BITS_PER_BEAT / ROWS_PER_BEAT;
-const float ROWS_BETWEEN_HOLD_BITS	= 1 / HOLD_NOTE_BITS_PER_ROW;	
 
 NoteField::NoteField()
 {	
