@@ -65,7 +65,8 @@ NotesLoaderSM.cpp NotesLoaderSM.h NotesWriterDWI.cpp NotesWriterDWI.h NotesWrite
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h Profile.cpp Profile.h RandomSample.cpp RandomSample.h \
 ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreKeeperRave.cpp ScoreKeeperRave.h \
 Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
-Style.h StyleDef.cpp StyleDef.h StyleInput.h TimingData.cpp TimingData.h TitleSubstitution.cpp TitleSubstitution.h
+Style.h StyleDef.cpp StyleDef.h StyleInput.h TimingData.cpp TimingData.h TitleSubstitution.cpp TitleSubstitution.h \
+CryptHelpers.cpp CryptHelpers.h LuaHelpers.cpp LuaHelpers.h LuaFunctions.h
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h XmlFile.cpp XmlFile.h
 
@@ -219,6 +220,7 @@ stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arc
 stepmania_LDADD = \
 		  $(GL_LIBS) \
 		  $(USE_SDL_LIBS) -lSDL_image \
+		  $(LUA_LIBS) \
 		  $(AUDIO_LIBS) \
 		  $(srcdir)/libresample/libresample.a
 
@@ -262,7 +264,7 @@ test_file_readers_LDADD = \
 test_timing_data_SOURCES = $(all_test_SOURCES) \
 		tests/test_timing_data.cpp TimingData.cpp TimingData.h
 
-INCLUDES = $(SDL_CFLAGS)
+INCLUDES = $(SDL_CFLAGS) $(LUA_CFLAGS)
 
 if HAVE_GTK
 bin_PROGRAMS += GtkModule.so
