@@ -405,6 +405,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	{
 		for( p=0; p<NUM_PLAYERS; p++ ) 
 		{
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;	// skip
+
 			m_sprPercentFrame[p].SetName( ssprintf("PercentFrameP%d",p+1) );
 			m_sprPercentFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation percent frame p%d",p+1)) );
 			UtilSetXYAndOnCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
@@ -737,6 +740,9 @@ void ScreenEvaluation::TweenOffScreen()
 	{
 		for( p=0; p<NUM_PLAYERS; p++ ) 
 		{
+			if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
+				continue;	// skip
+
 			UtilOffCommand( m_sprPercentFrame[p], "ScreenEvaluation" );
 			m_Percent[p].Command( THEME->GetMetric("ScreenEvaluation",ssprintf("PercentP%dOffCommand",p+1)) );
 			m_Percent[p].TweenOffScreen();
