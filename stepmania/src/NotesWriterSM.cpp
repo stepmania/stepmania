@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "GameManager.h"
 #include "RageLog.h"
+#include "RageFile.h"
 #include <string.h>
 #include <errno.h>
 
@@ -113,7 +114,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 {
 	unsigned i;
 
-	FILE* fp = fopen( sPath, "w" );	
+	FILE* fp = Ragefopen( sPath, "w" );	
 	if( fp == NULL )
 	{
 		LOG->Warn( "Error opening song file '%s' for writing: %s", sPath.c_str(), strerror(errno) );

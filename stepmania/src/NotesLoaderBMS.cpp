@@ -8,7 +8,7 @@
 #include "RageLog.h"
 #include "GameManager.h"
 #include "RageException.h"
-#include <fstream>
+#include "RageFile.h"
 
 // BMS encoding:     tap-hold
 // 4&8panel:   Player1     Player2
@@ -67,8 +67,8 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	NoteData* pNoteData = new NoteData;
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
 
-	ifstream file(sPath);
-	if( !file.good() )
+	Rageifstream file(sPath);
+	if( file.bad() )
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 	CString line;
@@ -284,8 +284,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 	CString sPath = out.GetSongDir() + arrayBMSFileNames[0];
 
-	ifstream file(sPath);
-	if( !file.good() )
+	Rageifstream file(sPath);
+	if( file.bad() )
 		RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 	CString line;
@@ -423,8 +423,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					ifstream file(sPath);
-					if( !file.good() )
+					Rageifstream file(sPath);
+					if( file.bad() )
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 					CString line;
@@ -485,8 +485,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 
 
 					// open the song file again and and look for this tag's value
-					ifstream file(sPath);
-					if( !file.good() )
+					Rageifstream file(sPath);
+					if( file.bad() )
 						RageException::Throw( "Failed to open %s for reading.", sPath.c_str() );
 
 					CString line;

@@ -12,11 +12,12 @@
 */
 
 #include "arch/ArchHooks/ArchHooks.h"
+#include "arch/arch.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
 #include "PrefsManager.h"
-#include <fstream>
+#include "RageFile.h"
 #include <time.h>
 
 RageLog* LOG;		// global and accessable from anywhere in the program
@@ -62,10 +63,10 @@ RageLog* LOG;		// global and accessable from anywhere in the program
 map<CString, CString> LogMaps;
 
 // constants
-#define LOG_FILE_NAME "log.txt"
-#define INFO_FILE_NAME "info.txt"
+#define LOG_PATH BASE_PATH "log.txt"
+#define INFO_PATH BASE_PATH "info.txt"
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 extern unsigned long version_num;
 extern const char *version_time;
 #endif
@@ -84,12 +85,12 @@ enum {
 RageLog::RageLog()
 {
 	// delete old log files
-	remove( LOG_FILE_NAME );
-	remove( INFO_FILE_NAME );
+	remove( LOG_PATH );
+	remove( INFO_PATH );
 
 	// Open log file and leave it open.
-	m_fileLog = fopen( LOG_FILE_NAME, "w" );
-	m_fileInfo = fopen( INFO_FILE_NAME, "w" );
+	m_fileLog = Ragefopen( LOG_PATH, "w" );
+	m_fileInfo = Ragefopen( INFO_PATH, "w" );
 
 #if defined(_MSC_VER)
 	this->Trace( "Last compiled on %s.", __TIMESTAMP__ );
@@ -102,7 +103,7 @@ RageLog::RageLog()
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
 	this->Trace( "" );
-#if defined(WIN32)
+#if defined(_WINDOWS)
 	this->Info("Compiled %s (build %i)", version_time, version_num);
 #endif
 }
@@ -199,7 +200,7 @@ void RageLog::Write( int where, CString str)
 
 	printf("%s\n", str.c_str() );
 
-#ifdef DEBUG
+//#ifdef DEBUG
 	Flush();
 #else
 	if( (PREFSMAN && PREFSMAN->m_bDebugMode) || (where & WRITE_TO_INFO) )

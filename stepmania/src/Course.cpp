@@ -25,6 +25,8 @@
 #include "Notes.h"
 #include "GameState.h"
 #include "BannerCache.h"
+#include "RageFile.h"
+#include "arch/arch.h"
 
 /* Amount to increase meter ranges to make them difficult: */
 const int DIFFICULT_METER_CHANGE = 2;
@@ -85,6 +87,8 @@ int Course::GetMeter() const
 	if( m_iMeter != -1 )
 		return m_iMeter + GAMESTATE->m_bDifficultCourses? DifficultMeterRamp:0;
 
+	LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
+			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? SLASH:"", sSong.c_str());
 	vector<Info> ci;
 	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
 
@@ -265,7 +269,7 @@ void Course::Save()
 {
 	ASSERT( !m_bIsAutogen );
 
-	FILE* fp = fopen( m_sPath, "w" );
+	FILE* fp = Ragefopen( m_sPath, "w" );
 	if( fp == NULL )
 	{
 		LOG->Warn( "Could not write course file '%s'.", m_sPath.c_str() );
@@ -290,7 +294,7 @@ void Course::Save()
 			fprintf( fp, "#SONG:*" );
 			break;
 		case Entry::random_within_group:
-			fprintf( fp, "#SONG:%s/*", entry.group_name.c_str() );
+			fprintf( fp, "#SONG:" + entry.group_name + SLASH "*" );
 			break;
 		case Entry::best:
 			fprintf( fp, "#SONG:BEST%d", entry.players_index+1 );

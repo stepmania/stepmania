@@ -17,6 +17,7 @@
 #include <string.h>
 #include <errno.h>
 using namespace std;
+#include "RageFile.h"
 
 //constructor, can specify pathname here instead of using SetPath later
 IniFile::IniFile(CString inipath)
@@ -40,7 +41,8 @@ void IniFile::SetPath(CString newpath)
 // returns true if successful, false otherwise
 bool IniFile::ReadFile()
 {
-	FILE *f = fopen(path, "r");
+LOG->Trace("INI: Reading '%s'",path.c_str() );
+	FILE *f = Ragefopen(path, "r");
 
 	if (f == NULL)
 	{
@@ -55,6 +57,7 @@ bool IniFile::ReadFile()
 	{
 		buf[sizeof(buf)-1]=0;
 		CString line(buf);
+//		LOG->Trace("Read line '%s'", line.c_str());
 
 		if(line.size() >= 3 &&
 			line[0] == '\xef' &&
@@ -70,6 +73,7 @@ bool IniFile::ReadFile()
 			continue;
 
 		StripCrnl(line);
+//		LOG->Trace("Stripped: '%s'", line.c_str());
 
 		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
 			continue; /* comment */
@@ -97,7 +101,7 @@ bool IniFile::ReadFile()
 // writes data stored in class to ini file
 void IniFile::WriteFile()
 {
-	FILE* fp = fopen( path, "w" );
+	FILE* fp = Ragefopen( path, "w" );
 
 	if( fp == NULL )
 		return;
