@@ -347,7 +347,7 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Notes* pNotes = pSong->m_apNotes[i];
-		if( pNotes->GetMeter() == 10 )
+		if( pNotes->GetMeter() >= 10 )
 			return EXTRA_COLOR;
 	}
 
