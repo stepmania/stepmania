@@ -53,6 +53,7 @@ void DifficultyList::Load()
 			* in separate tweening stacks.  This means the Cursor command can't change diffuse
 			* colors; I think we do need a diffuse color stack ... */
 		m_CursorFrames[pn].SetName( ssprintf("CursorP%i",pn+1) );
+		ActorUtil::LoadCommand( m_CursorFrames[pn], m_sName,  "Change" );
 		m_CursorFrames[pn].AddChild( m_Cursors[pn] );
 		this->AddChild( &m_CursorFrames[pn] );
 	}
@@ -132,7 +133,9 @@ void DifficultyList::UpdatePositions()
 		first_start = max( P1Choice - halfsize, 0 );
 		first_end = first_start + total;
 		second_start = second_end = first_end;
-	} else {
+	}
+	else
+	{
 		/* First half: */
 		const int earliest = min( P1Choice, P2Choice );
 		first_start = max( earliest - halfsize/2, 0 );
@@ -209,23 +212,21 @@ void DifficultyList::PositionItems()
 		m_Lines[i].m_Number.SetHidden( bUnused );
 	}
 
-	int m;
-	for( m = 0; m < (int)m_Rows.size(); ++m )
+	for( int m = 0; m < (int)m_Rows.size(); ++m )
 	{
 		Row &row = m_Rows[m];
 		bool bHidden = row.m_bHidden;
 		if( !m_bShown )
 			bHidden = true;
 
-		const float DiffuseAlpha = bHidden? 0.0f:1.0f;
+		const float fDiffuseAlpha = bHidden? 0.0f:1.0f;
 		if( m_Lines[m].m_Number.GetDestY() != row.m_fY ||
-			m_Lines[m].m_Number.DestTweenState().diffuse[0][3] != DiffuseAlpha )
+			m_Lines[m].m_Number.DestTweenState().diffuse[0][3] != fDiffuseAlpha )
 		{
-			apActorCommands c(MOVE_COMMAND);
-			m_Lines[m].m_Description.RunCommands( c );
-			m_Lines[m].m_Meter.RunCommands( c );
-			m_Lines[m].m_Meter.RunCommandsOnChildren( c );
-			m_Lines[m].m_Number.RunCommands( c );
+			m_Lines[m].m_Description.RunCommands( MOVE_COMMAND );
+			m_Lines[m].m_Meter.RunCommands( MOVE_COMMAND );
+			m_Lines[m].m_Meter.RunCommandsOnChildren( MOVE_COMMAND );
+			m_Lines[m].m_Number.RunCommands( MOVE_COMMAND );
 		}
 
 		m_Lines[m].m_Description.SetY( row.m_fY );
@@ -233,16 +234,17 @@ void DifficultyList::PositionItems()
 		m_Lines[m].m_Number.SetY( row.m_fY );
 	}
 
-	for( m=0; m < MAX_METERS; ++m )
+	for( int m=0; m < MAX_METERS; ++m )
 	{
 		bool bHidden = true;
 		if( m_bShown && m < (int)m_Rows.size() )
 			bHidden = m_Rows[m].m_bHidden;
 
-		ActorCommands c = ActorCommands( ssprintf("diffusealpha,%f",bHidden?0.0f:1.0f) );
-		m_Lines[m].m_Description.RunCommands( c );
-		m_Lines[m].m_Meter.RunCommandsOnChildren( c );
-		m_Lines[m].m_Number.RunCommands( c );
+		float fDiffuseAlpha = bHidden?0.0f:1.0f;
+
+		m_Lines[m].m_Description.SetDiffuseAlpha( fDiffuseAlpha );
+		m_Lines[m].m_Meter.SetDiffuseAlpha( fDiffuseAlpha );
+		m_Lines[m].m_Number.SetDiffuseAlpha( fDiffuseAlpha );
 	}
 
 
@@ -254,7 +256,7 @@ void DifficultyList::PositionItems()
 		if( iCurrentRow < (int) m_Rows.size() )
 			fY = m_Rows[iCurrentRow].m_fY;
 
-		COMMAND( m_CursorFrames[pn], "Change" );
+		m_CursorFrames[pn].PlayCommand( "Change" );
 		m_CursorFrames[pn].SetY( fY );
 	}
 }
