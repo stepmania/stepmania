@@ -260,7 +260,7 @@ public:
 
 #ifndef NDEBUG
 	AlgorithmParameters(const AlgorithmParameters &copy)
-		: m_base(copy.m_base), m_name(copy.m_name), m_value(copy.m_value), m_used(false)
+		: NameValuePairs( copy ), m_base(copy.m_base), m_name(copy.m_name), m_value(copy.m_value), m_used(false)
 	{
 		copy.m_used = true;
 	}
