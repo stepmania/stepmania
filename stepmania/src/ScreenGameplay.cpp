@@ -202,7 +202,14 @@ ScreenGameplay::ScreenGameplay()
 	}
 
 	// TopFrame goes above LifeMeter
-	m_sprTopFrame.Load( THEME->GetPathTo("Graphics",bExtra?"gameplay extra top frame":"gameplay top frame") );
+	CString sTopFrameName;
+	if( bExtra )
+		sTopFrameName = "gameplay extra top frame";
+	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		sTopFrameName = "gameplay oni top frame";
+	else 
+		sTopFrameName = "gameplay top frame";
+	m_sprTopFrame.Load( THEME->GetPathTo("Graphics",sTopFrameName) );
 	m_sprTopFrame.SetXY( TOP_FRAME_X, TOP_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprTopFrame );
 
@@ -241,7 +248,14 @@ ScreenGameplay::ScreenGameplay()
 	//
 	// Add all Actors in bottom frame
 	//
-	m_sprBottomFrame.Load( THEME->GetPathTo("Graphics",bExtra?"gameplay extra bottom frame":"gameplay bottom frame") );
+	CString sBottomFrameName;
+	if( bExtra )
+		sBottomFrameName = "gameplay extra bottom frame";
+	else if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY )
+		sBottomFrameName = "gameplay oni bottom frame";
+	else 
+		sBottomFrameName = "gameplay bottom frame";
+	m_sprBottomFrame.Load( THEME->GetPathTo("Graphics",sBottomFrameName) );
 	m_sprBottomFrame.SetXY( BOTTOM_FRAME_X, BOTTOM_FRAME_Y(bExtra) );
 	this->AddChild( &m_sprBottomFrame );
 

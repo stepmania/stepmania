@@ -50,10 +50,16 @@ LifeMeterBar::LifeMeterBar()
 	m_quadBlackBackground.SetZoomY( (float)m_iMeterHeight );
 	m_frame.AddChild( &m_quadBlackBackground );
 
-	m_sprStreamNormal.Load( THEME->GetPathTo("Graphics",(GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2())?"gameplay extra lifemeter stream normal":"gameplay lifemeter stream normal") );
+	if( GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2() )
+		m_sprStreamNormal.Load( THEME->GetPathTo("Graphics","gameplay extra lifemeter stream normal") );
+	else
+		m_sprStreamNormal.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream normal") );
 	m_frame.AddChild( &m_sprStreamNormal );
 
-	m_sprStreamHot.Load( THEME->GetPathTo("Graphics",(GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2())?"gameplay extra lifemeter stream hot":"gameplay lifemeter stream hot") );
+	if( GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2() )
+		m_sprStreamHot.Load( THEME->GetPathTo("Graphics","gameplay extra lifemeter stream hot") );
+	else
+		m_sprStreamHot.Load( THEME->GetPathTo("Graphics","gameplay lifemeter stream hot") );
 	m_frame.AddChild( &m_sprStreamHot );
 
 	m_sprFrame.Load( THEME->GetPathTo("Graphics","gameplay lifemeter bar") );
