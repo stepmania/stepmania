@@ -218,6 +218,7 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 	if( ExpireSeconds != -1 && i != dirs.end() && i->second->age.PeekDeltaTime() >= ExpireSeconds )
 	{
 		delete i->second;
+		dirs.erase( i );
 		i = dirs.end();
 	}
 
@@ -233,6 +234,10 @@ FileSet &FilenameDB::GetFileSet( CString dir )
 void FilenameDB::AddFileSet( CString sPath, FileSet *fs )
 {
 	sPath.MakeLower();
+	map<CString, FileSet *>::iterator it = dirs.find( sPath );
+	if( it != dirs.end() )
+		delete it->second;
+
 	dirs[sPath] = fs;
 }
 
