@@ -190,6 +190,9 @@ void GameState::ReloadCharacters()
 		else
 			delete pChar;
 	}
+	
+	if( !m_pCharacters.size() )
+		RageException::Throw( "Couldn't find any character definitions" );
 }
 
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
@@ -308,13 +311,6 @@ bool GameState::IsPlayable( const ModeChoice& mc )
 	{
 		const int SidesJoinedToPlay = GAMEMAN->GetStyleDefForStyle(mc.style)->NumSidesJoinedToPlay();
 		if( SidesJoinedToPlay != GAMESTATE->GetNumSidesJoined() )
-			return false;
-	}
-
-	if( mc.pm == PLAY_MODE_RAVE || mc.pm == PLAY_MODE_BATTLE )
-	{
-		// Can't play Rave without characters for attack definitions.
-		if( m_pCharacters.empty() )
 			return false;
 	}
 
