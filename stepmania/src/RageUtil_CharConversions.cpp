@@ -45,6 +45,11 @@ static bool ConvertFromCharset( CString &txt, const char *charset )
 		return true;
 
 	iconv_t converter = iconv_open( "UTF-8", charset );
+	if( converter == (iconv_t) -1 )
+	{
+		LOG->MapLog( ssprintf("conv %s", charset), "iconv_open(%s): %s", charset, strerror(errno) );
+		return false;
+	}
 
 	/* Copy the string into a char* for iconv */
 	char *txtin = new char[ txt.size() + 1 ];
