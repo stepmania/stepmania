@@ -441,7 +441,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 			}
 		return;
 	}
-	if( CodeDetector::DetectAndAdjustOptions(GameI.controller) )
+	if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustOptions(GameI.controller) )
 	{
 		m_soundOptionsChange.Play();
 		UpdateOptionsDisplays();
