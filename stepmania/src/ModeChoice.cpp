@@ -45,7 +45,8 @@ bool ModeChoice::DescribesCurrentMode() const
 bool ModeChoice::FromString( CString sChoice, bool bIgnoreUnknown )
 {
 	strncpy( this->name, sChoice, min(sChoice.size()+1, sizeof(this->name)) );
-	sChoice[sizeof(this->name)-1] = 0;
+//	sChoice[sizeof(this->name)-1] = 0;
+	name[sChoice.GetLength()] = 0;
 
 	bool bChoiceIsInvalid = false;
 
