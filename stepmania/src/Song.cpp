@@ -1315,7 +1315,7 @@ that have all been played 0 times.
 }
 /* Actually, just calculating GetNumTimesPlayed within the sort is pretty
  * slow, so let's precompute it.  (This could be generalized with a template.) */
-map<const Song*, int> song_sort_val;
+map<const Song*, CString> song_sort_val;
 
 bool CompareSongPointersBySortVal(const Song *pSong1, const Song *pSong2)
 {
@@ -1325,7 +1325,7 @@ bool CompareSongPointersBySortVal(const Song *pSong1, const Song *pSong2)
 void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers )
 {
 	for(unsigned i = 0; i < arraySongPointers.size(); ++i)
-		song_sort_val[arraySongPointers[i]] = arraySongPointers[i]->GetNumTimesPlayed();
+		song_sort_val[arraySongPointers[i]] = ssprintf("%9i", arraySongPointers[i]->GetNumTimesPlayed());
 	stable_sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongPointersBySortVal );
 	reverse( arraySongPointers.begin(), arraySongPointers.end() );
 	song_sort_val.clear();
