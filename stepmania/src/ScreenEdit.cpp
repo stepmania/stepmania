@@ -1436,7 +1436,10 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		/* If we still couldn't find any steps, then all steps of the current StepsType
 		 * were removed.  Don't create them; only do that in EditMenu. */
 		if( pSteps == NULL )
-			FAIL_M("!!!"); // XXX
+		{
+			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
+			return;
+		}
 
 		SCREENMAN->SystemMessage( sMessage );
 
