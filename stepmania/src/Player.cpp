@@ -666,12 +666,10 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
 
 	if( m_pLifeMeter ) {
-		if( score == HNS_NG ) {
-			m_pLifeMeter->ChangeLife( score, TapNoteScore );
-		
-			// refresh Oni life meter
-			m_pLifeMeter->OnDancePointsChange();
-		}
+		m_pLifeMeter->ChangeLife( score, TapNoteScore );
+	
+		// refresh Oni life meter
+		m_pLifeMeter->OnDancePointsChange();
 	}
 }
 
