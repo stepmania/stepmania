@@ -3,19 +3,17 @@
  * Each sound gets its own stream, which allows for very little startup
  * latency for each sound and lower CPU usage. */
 
-#include "../../stdafx.h"
+#include "stdafx.h"
 #include "RageSoundDriver_DSound.h"
 #include "DSoundHelpers.h"
 
-#include "../../RageSoundManager.h"
-#include "../../RageException.h"
-#include "../../RageUtil.h"
-#include "../../RageSound.h"
-#include "../../RageLog.h"
-#include "../../tls.h"
+#include "RageSoundManager.h"
+#include "RageException.h"
+#include "RageUtil.h"
+#include "RageSound.h"
+#include "RageLog.h"
+#include "archutils/win32/tls.h"
 #include "SDL.h"
-
-#include "../../RageTimer.h"
 
 RageSoundManager *SOUNDMAN = NULL;
 

@@ -15,7 +15,8 @@
 #include "RageUtil.h"
 #include <fstream>
 
-#include "crash.h"
+/* XXX */
+#include "archutils/win32/crash.h"
 
 RageLog* LOG;		// global and accessable from anywhere in the program
 

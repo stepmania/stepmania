@@ -1,12 +1,12 @@
-#include "../../stdafx.h"
+#include "stdafx.h"
 #include "RageSoundDriver_DSound_Software.h"
 #include "DSoundHelpers.h"
 
-#include "../../RageTimer.h"
-#include "../../RageLog.h"
-#include "../../RageSound.h"
-#include "../../RageUtil.h"
-#include "../../tls.h"
+#include "RageTimer.h"
+#include "RageLog.h"
+#include "RageSound.h"
+#include "RageUtil.h"
+#include "archutils/win32/tls.h"
 
 #include "SDL.h"
 

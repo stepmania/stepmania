@@ -1,13 +1,13 @@
-#include "../../stdafx.h"
+#include "stdafx.h"
 #include "RageSoundDriver_WaveOut.h"
 
 #pragma comment(lib, "winmm.lib")
 
-#include "../../RageTimer.h"
-#include "../../RageLog.h"
-#include "../../RageSound.h"
-#include "../../RageUtil.h"
-#include "../../tls.h"
+#include "RageTimer.h"
+#include "RageLog.h"
+#include "RageSound.h"
+#include "RageUtil.h"
+#include "archutils/win32/tls.h"
 
 #include "SDL.h"
 

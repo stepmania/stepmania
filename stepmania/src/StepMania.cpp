@@ -46,20 +46,16 @@
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
 
-//
-// StepMania common classes
-//
-#include "GameConstantsAndTypes.h"
 
-#include "tls.h"
-#include "crash.h"
+#include "archutils/win32/tls.h"
+#include "archutils/win32/crash.h"
 
 
 #include "SDL.h"
 #include "SDL_opengl.h"
 
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #pragma comment(lib, "SDL-1.2.5/lib/SDLmaind.lib")
 #else
 #pragma comment(lib, "SDL-1.2.5/lib/SDLmain.lib")
@@ -72,8 +68,6 @@ HWND g_hWndMain = NULL;
 #endif
 
 static bool g_bHasFocus = true;
-
-#include <time.h>
 
 
 static void ChangeToDirOfExecutable(const char *argv0)
@@ -258,11 +252,11 @@ int main(int argc, char* argv[])
 	SDL_WM_SetCaption("StepMania", "StepMania");
 	loading_window->Paint();
 
+	srand( (unsigned)RageTimer::GetTimeSinceStart() );	// seed number generator
+	
 	//
 	// Create game objects
 	//
-	srand( (unsigned)time(NULL) );	// seed number generator
-	
 	LOG			= new RageLog();
 #ifdef _DEBUG
 	LOG->ShowConsole();
