@@ -248,51 +248,35 @@ void MemoryCardManager::TryMountAllCards()
 }
 
 /* Called in EndGame just before writing the profile.  Should block. */
-void MemoryCardManager::MountAllUsedCards()
+void MemoryCardManager::MountUsedCard( PlayerNumber pn )
 {
-	FOREACH_EnabledPlayer( p )
-	{
-		if( m_Device[p].IsBlank() )	// they don't have an assigned card
-			continue;
-		
-		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded || !PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
-			continue;
-
-		MountCard( p );
-	}
-}
-
-/* Called in EndGame just after writing the profile.  Called by PlayersFinalized just after
- * reading the profile.  Should never block; use FlushAndReset to block until writes complete. */
-void MemoryCardManager::UnmountAllUsedCards()
-{
-	FOREACH_EnabledPlayer( p )
-	{
-		if( m_Device[p].IsBlank() )	// they don't have an assigned card
-			continue;
-		
-		if( m_bTooLate[p] || !m_Device[p].bWriteTestSucceeded || !PROFILEMAN->ProfileWasLoadedFromMemoryCard(p) )
-			continue;
-
-		UnmountCard( p );
-	}
+	if( m_Device[pn].IsBlank() )	// they don't have an assigned card
+		return;
+	
+	MountCard( pn );
 }
 
 void MemoryCardManager::MountCard( PlayerNumber pn )
 {
 	ASSERT( !m_Device[pn].IsBlank() );
 
+	if( !m_Device[pn].bWriteTestSucceeded || m_bTooLate[pn] )
+		return;
+
 	/* Pause the mounting thread when we mount the first drive. */
-	bool bNeedPause = true;
+	bool bStartingMemoryCardAccess = true;
 	FOREACH_PlayerNumber( p )
 		if( m_bMounted[p] )
-			bNeedPause = false;
-	if( bNeedPause )
+			bStartingMemoryCardAccess = false; /* already did */
+	if( bStartingMemoryCardAccess )
+	{
+		/* We're starting to do stuff to the memory cards. */
 		this->PauseMountingThread();
+	}
 
 	if( !m_pDriver->MountAndTestWrite(&m_Device[pn]) )
 	{
-		if( bNeedPause )
+		if( bStartingMemoryCardAccess )
 			this->UnPauseMountingThread();
 
 		return;
@@ -319,6 +303,8 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
 	}
 }
 
+/* Called in EndGame just after writing the profile.  Called by PlayersFinalized just after
+ * reading the profile.  Should never block; use FlushAndReset to block until writes complete. */
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
 	ASSERT( !m_Device[pn].IsBlank() );

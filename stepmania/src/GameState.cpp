@@ -232,12 +232,11 @@ void GameState::PlayersFinalized()
 
 	MEMCARDMAN->LockCards();
 
-	/* Mount all available cards, for loading the profile and edits. */
-	MEMCARDMAN->TryMountAllCards();
-
 	// apply saved default modifiers if any
 	FOREACH_HumanPlayer( pn )
 	{
+		MEMCARDMAN->MountUsedCard( pn );
+
 		PROFILEMAN->LoadFirstAvailableProfile( pn );	// load full profile
 
 		if( !PROFILEMAN->IsUsingProfile(pn) )
@@ -266,17 +265,18 @@ void GameState::PlayersFinalized()
 			m_pPreferredSong = pProfile->m_lastSong.ToSong();
 		if( m_pPreferredCourse == NULL )
 			m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
+
+		SONGMAN->LoadAllFromProfile( (ProfileSlot) pn );
+		MEMCARDMAN->UnmountCard( pn );
 	}
 
-	SONGMAN->LoadAllFromProfiles();
+	SONGMAN->LoadAllFromProfile( PROFILE_SLOT_MACHINE );
 
 	FOREACH_PlayerNumber( pn )
 	{
 		if( !IsHumanPlayer(pn) )
 			ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
 	}
-
-	MEMCARDMAN->UnmountAllUsedCards();
 }
 
 /* This data is added to each player profile, and to the machine profile per-player. */
@@ -350,21 +350,23 @@ void GameState::EndGame()
 		}
 	}
 
-	MEMCARDMAN->MountAllUsedCards();
-
 	BOOKKEEPER->WriteToDisk();
-	PROFILEMAN->SaveAllProfiles();
 
 	FOREACH_HumanPlayer( pn )
 	{
 		if( !PROFILEMAN->IsUsingProfile(pn) )
 			continue;
 
+		if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
+			MEMCARDMAN->MountUsedCard( pn );
+		PROFILEMAN->SaveProfile( pn );
+		MEMCARDMAN->UnmountCard( pn );
+
 		PROFILEMAN->UnloadProfile( pn );
 	}
 
-	MEMCARDMAN->UnmountAllUsedCards();
-	
+	PROFILEMAN->SaveMachineProfile();
+
 	// Reset the USB storage device numbers -after- saving
 	CHECKPOINT;
 	MEMCARDMAN->FlushAndReset();

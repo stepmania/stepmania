@@ -33,7 +33,7 @@ public:
 	void RegenerateNonFixedCourses();
 	void SetPreferences();
 
-	void LoadAllFromProfiles();	// song, edits
+	void LoadAllFromProfile( ProfileSlot s );	// songs, edits
 	void FreeAllLoadedFromProfiles();
 
 	void LoadGroupSymLinks( CString sDir, CString sGroupFolder );
