@@ -151,7 +151,7 @@ CString LuaData::Serialize() const
 
 void LuaData::LoadFromString( const CString &s )
 {
-	/* Restore the serialized data by evaluating the serialized data. */
+	/* Restore the serialized data by evaluating it. */
 	CString sError;
 	if( !LUA->RunScript( s, "serialization", sError, 1 ) )
 	{
