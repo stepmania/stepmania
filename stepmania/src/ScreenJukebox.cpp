@@ -58,7 +58,7 @@ bool PrepareForJukebox()		// always return true.
 			continue;	// skip
 
 		vector<Notes*> apNotes;
-		pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, apNotes );
+		pSong->GetNotes( apNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
 		if( apNotes.empty() )
 			continue;	// skip

@@ -20,64 +20,66 @@
 #include "ThemeManager.h"
 
 
+
 MusicStatusDisplay::MusicStatusDisplay()
 {
-	Load( THEME->GetPathTo("Graphics","music status icons 1x5") );
+	Load( THEME->GetPathTo("Graphics","music status icons 4x2") );
 	StopAnimating();
-
-	SetType( none );
 }
 
-void MusicStatusDisplay::SetType( Type type )
+void MusicStatusDisplay::SetFlags( Flags flags )
 {
-	m_type = type;
+	m_vIconsToShow.clear();
 
-	SetDiffuse( RageColor(1,1,1,1) );
+	// push onto vector in highest to lowest priority
 
-	switch( type )
+	switch( flags.iPlayersBestNumber )
 	{
-	case none:
-		SetEffectNone();
-		SetDiffuse( RageColor(1,1,1,0) );
-		break;
-	case easy:
-		SetEffectNone();
-		SetState( 0 );	
-		break;
-	case crown1:
-		SetState( 1 );	
-		break;
-	case crown2:
-		SetState( 2 );	
-		break;
-	case crown3:
-		SetState( 3 );	
-		break;
-	default:
-		ASSERT(0);
+	case 1:	m_vIconsToShow.push_back( best1 );	break;
+	case 2:	m_vIconsToShow.push_back( best2 );	break;
+	case 3:	m_vIconsToShow.push_back( best3 );	break;
 	}
-}
 
-void MusicStatusDisplay::Update( float fDeltaTime )
-{
-	Sprite::Update( fDeltaTime );
+	if( flags.bEdits )
+		m_vIconsToShow.push_back( edits );
+
+	switch( flags.iStagesForSong )
+	{
+	case 1:										break;
+	case 2:	m_vIconsToShow.push_back( long_ver );	break;
+	case 3:	m_vIconsToShow.push_back( marathon );	break;
+	default:	ASSERT(0);
+	}
+
+	if( flags.bHasBeginnerOr1Meter )
+		m_vIconsToShow.push_back( training );
+
+
+	// HACK:  Make players best blink if it's the only icon
+	if( m_vIconsToShow.size() == 1 )
+	{
+		if( m_vIconsToShow[0] >= best1  &&  m_vIconsToShow[0] <= best3 )
+			m_vIconsToShow.push_back( empty );		
+	}
+
+
+	m_vIconsToShow.resize( min(m_vIconsToShow.size(),2u) );	// crop to most important 2
+
+	if( m_vIconsToShow.size() == 0 )
+		Sprite::SetDiffuse( RageColor(1,1,1,0) );
+	else
+		Sprite::SetDiffuse( RageColor(1,1,1,1) );
 }
 
 void MusicStatusDisplay::DrawPrimitives()
 {
-	switch( m_type )
+		float fSecondFraction = fmodf(RageTimer::GetTimeSinceStart(), 1 );
+	if( m_vIconsToShow.size() > 0 )
 	{
-	case none:
-	case easy:
-		break;
-	case crown1:
-	case crown2:
-	case crown3:
-		if( fmodf(RageTimer::GetTimeSinceStart(), 1) > 0.5f )
-			return;	// blink
-		break;
-	default:
-		ASSERT(0);
+		int index = (int)(fSecondFraction*m_vIconsToShow.size());
+		Sprite::SetState( m_vIconsToShow[index] );
 	}
+
 	Sprite::DrawPrimitives();
 }
+

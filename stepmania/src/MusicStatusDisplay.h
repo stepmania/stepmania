@@ -21,14 +21,23 @@ class MusicStatusDisplay : public Sprite
 public:
 	MusicStatusDisplay();
 
-	enum Type { none, easy, crown1, crown2, crown3, edits };
-	void SetType( Type type );
+	struct Flags
+	{
+		Flags() { bHasBeginnerOr1Meter = bEdits = false; iPlayersBestNumber = iStagesForSong = 0; }
+		bool bHasBeginnerOr1Meter;
+		int iPlayersBestNumber;
+		bool bEdits;
+		int iStagesForSong;
+	};
 
-	virtual void Update( float fDeltaTime );
+	void SetFlags( Flags flags );
+
 	virtual void DrawPrimitives();
-
+	
 protected:
-	Type m_type;
+	enum Icons { training=0, best1, best2, best3, edits, long_ver, marathon, empty };
+
+	vector<Icons> m_vIconsToShow;
 };
 
 #endif

@@ -185,7 +185,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 				CString sName = SONGMAN->m_MachineScores[pts.nt][pts.category][l].sName;
 				float fScore = SONGMAN->m_MachineScores[pts.nt][pts.category][l].fScore;
 				m_textNames[l].SetText( sName );
-				m_textScores[l].SetText( ssprintf("%.0f",fScore) );
+				m_textScores[l].SetText( ssprintf("%9.0f",fScore) );
 				m_textNames[l].SetDiffuse( NAMES_COLOR );
 				m_textScores[l].SetDiffuse( SCORES_COLOR );
 
@@ -220,7 +220,7 @@ void ScreenRanking::SetPage( PageToShow pts )
 				CString sName = pts.pCourse->m_MachineScores[pts.nt][l].sName;
 				int iDancePoints = pts.pCourse->m_MachineScores[pts.nt][l].iDancePoints;
 				m_textNames[l].SetText( sName );
-				m_textScores[l].SetText( ssprintf("%d",iDancePoints) );
+				m_textScores[l].SetText( ssprintf("%4d",iDancePoints) );
 				m_textNames[l].SetDiffuse( NAMES_COLOR );
 				m_textScores[l].SetDiffuse( SCORES_COLOR );
 				for( int p=0; p<NUM_PLAYERS; p++ )

@@ -36,8 +36,8 @@ public:
 	RageColor GetGroupColor( const CString &sGroupName );
 	RageColor GetSongColor( const Song* pSong );
 
-	static CString ShortenGroupName( const CString &sOrigGroupName );
-
+	static CString ShortenGroupName( CString sLongGroupName );
+	static int     GetNumStagesForSong( const Song* pSong );	// LongVer songs take 2 stages, MarathonVer take 3
 
 
 	//
@@ -52,9 +52,10 @@ public:
 
 
 	// Lookup
-	void GetAllSongs( vector<Song*> &AddTo ) const;
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	void GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo );
+	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;
+	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,"",iMaxStages); }
+	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
 	int GetNumSongs() const;
 	int GetNumGroups() const;
 	Song* GetRandomSong();

@@ -150,7 +150,7 @@ ScreenMusicScroll::ScreenMusicScroll()
 
 
 	vector<Song*> arraySongs;
-	SONGMAN->GetAllSongs( arraySongs );
+	SONGMAN->GetSongs( arraySongs );
 	SortSongPointerArrayByTitle( arraySongs );
 	
 	m_iNumLines = 0;

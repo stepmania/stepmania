@@ -19,7 +19,7 @@ class TextBanner : public ActorFrame
 {
 public:
 	TextBanner();
-	bool LoadFromSong( Song* pSong );
+	bool LoadFromSong( const Song* pSong );
 
 private:
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;

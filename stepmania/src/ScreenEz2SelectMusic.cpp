@@ -472,7 +472,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 	{
-		pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, m_arrayNotes[pn] );
+		pSong->GetNotes( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 		SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 	}
 

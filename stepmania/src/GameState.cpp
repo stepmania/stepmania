@@ -20,6 +20,7 @@
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
+#include "SongManager.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -120,11 +121,20 @@ int GameState::GetStageIndex()
 	return m_iCurrentStageIndex;
 }
 
+int GameState::GetNumStagesLeft()
+{
+	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
+}
+
 bool GameState::IsFinalStage()
 {
 	if( PREFSMAN->m_bEventMode )
 		return false;
-	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1;
+	int iPredictedStageForCurSong = 1;
+	if( m_pCurSong != NULL )
+		iPredictedStageForCurSong = SongManager::GetNumStagesForSong( m_pCurSong );
+	
+	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iNumArcadeStages;
 }
 
 bool GameState::IsExtraStage()

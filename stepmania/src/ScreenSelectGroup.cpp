@@ -83,7 +83,7 @@ ScreenSelectGroup::ScreenSelectGroup()
 	// causes a crash when there are duplicate song names.
 	
 	vector<Song*> aAllSongs;
-	SONGMAN->GetAllSongs( aAllSongs );
+	SONGMAN->GetSongs( aAllSongs );
 
 	// Filter out Songs that can't be played by the current Style
 	for( j=aAllSongs.size()-1; j>=0; j-- )		// foreach Song, back to front

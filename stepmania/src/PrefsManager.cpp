@@ -87,6 +87,9 @@ PrefsManager::PrefsManager()
 	 * stage CRS files) don't get it changed around on them						*/
 	m_bPickExtraStage = false;
 
+	m_fLongVerSongSeconds = 60*3;
+	m_fMarathonVerSongSeconds = 60*5;
+
 	/* I'd rather get occasional people asking for support for this even though it's
 	 * already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs = false;
@@ -158,6 +161,9 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 	ini.GetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
 	ini.GetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
+	ini.GetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
+	ini.GetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
+
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -224,6 +230,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "BoostAppPriority",			m_iBoostAppPriority );
 	ini.SetValueI( "Options", "PolygonRadar",				m_iPolygonRadar );
 	ini.SetValueB( "Options", "PickExtraStage",				m_bPickExtraStage );
+	ini.SetValueF( "Options", "LongVerSeconds",				m_fLongVerSongSeconds );
+	ini.SetValueF( "Options", "MarathonVerSeconds",			m_fMarathonVerSongSeconds );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

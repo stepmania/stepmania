@@ -372,22 +372,14 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	return GetGroupColor( pSong->m_sGroupName );
 }
 
-
-void SongManager::GetAllSongs( vector<Song*> &AddTo ) const
-{
-	AddTo = m_pSongs;
-}
-
-void SongManager::GetSongsInGroup( const CString sGroupName, vector<Song*> &AddTo )
+void SongManager::GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages ) const
 {
 	AddTo.clear();
 
 	for( unsigned i=0; i<m_pSongs.size(); i++ )
-	{
-		Song* pSong = m_pSongs[i];
-		if( sGroupName == m_pSongs[i]->m_sGroupName )
-			AddTo.push_back( pSong );
-	}
+		if( sGroupName=="" || sGroupName==m_pSongs[i]->m_sGroupName )
+			if( GetNumStagesForSong(m_pSongs[i])<=iMaxStages )
+				AddTo.push_back( m_pSongs[i] );
 }
 
 int SongManager::GetNumSongs() const
@@ -400,25 +392,35 @@ int SongManager::GetNumGroups() const
 	return m_arrayGroupNames.size();
 }
 
-CString SongManager::ShortenGroupName( const CString &sOrigGroupName )
+CString SongManager::ShortenGroupName( CString sLongGroupName )
 {
-	CString sShortName = sOrigGroupName;
-	sShortName.Replace( "Dance Dance Revolution", "DDR" );
-	sShortName.Replace( "dance dance revolution", "DDR" );
-	sShortName.Replace( "DANCE DANCE REVOLUTION", "DDR" );
-	sShortName.Replace( "Pump It Up", "PIU" );
-	sShortName.Replace( "pump it up", "PIU" );
-	sShortName.Replace( "PUMP IT UP", "PIU" );
-	sShortName.Replace( "ParaParaParadise", "PPP" );
-	sShortName.Replace( "paraparaparadise", "PPP" );
-	sShortName.Replace( "PARAPARAPARADISE", "PPP" );
-	sShortName.Replace( "Para Para Paradise", "PPP" );
-	sShortName.Replace( "para para paradise", "PPP" );
-	sShortName.Replace( "PARA PARA PARADISE", "PPP" );
-	sShortName.Replace( "Dancing Stage", "DS" );
-	sShortName.Replace( "Dancing Stage", "DS" );
-	sShortName.Replace( "Dancing Stage", "DS" );
-	return sShortName;
+	sLongGroupName.Replace( "Dance Dance Revolution", "DDR" );
+	sLongGroupName.Replace( "dance dance revolution", "DDR" );
+	sLongGroupName.Replace( "DANCE DANCE REVOLUTION", "DDR" );
+	sLongGroupName.Replace( "Pump It Up", "PIU" );
+	sLongGroupName.Replace( "pump it up", "PIU" );
+	sLongGroupName.Replace( "PUMP IT UP", "PIU" );
+	sLongGroupName.Replace( "ParaParaParadise", "PPP" );
+	sLongGroupName.Replace( "paraparaparadise", "PPP" );
+	sLongGroupName.Replace( "PARAPARAPARADISE", "PPP" );
+	sLongGroupName.Replace( "Para Para Paradise", "PPP" );
+	sLongGroupName.Replace( "para para paradise", "PPP" );
+	sLongGroupName.Replace( "PARA PARA PARADISE", "PPP" );
+	sLongGroupName.Replace( "Dancing Stage", "DS" );
+	sLongGroupName.Replace( "Dancing Stage", "DS" );
+	sLongGroupName.Replace( "Dancing Stage", "DS" );
+	return sLongGroupName;
+}
+
+int SongManager::GetNumStagesForSong( const Song* pSong )
+{
+	ASSERT( pSong );
+	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
+		return 3;
+	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
+		return 2;
+	else
+		return 1;
 }
 
 void SongManager::InitCoursesFromDisk()
@@ -448,7 +450,7 @@ void SongManager::InitCoursesFromDisk()
 	{
 		CString sGroupName = saGroupNames[g];
 		vector<Song*> apGroupSongs;
-		GetSongsInGroup( sGroupName, apGroupSongs );
+		GetSongs( apGroupSongs, sGroupName );
 
 		for( Difficulty dc=DIFFICULTY_EASY; dc<=DIFFICULTY_HARD; dc=Difficulty(dc+1) )	// foreach Difficulty
 		{
@@ -597,13 +599,14 @@ void SongManager::GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, cons
 	Notes*	pExtra2Notes = NULL;
 	
 	vector<Song*> apSongs;
-	SONGMAN->GetSongsInGroup( (GAMESTATE->m_sPreferredGroup == "ALL MUSIC" ? GAMESTATE->m_pCurSong->m_sGroupName : GAMESTATE->m_sPreferredGroup), apSongs );
+	CString sGroup = GAMESTATE->m_sPreferredGroup=="ALL MUSIC" ? GAMESTATE->m_pCurSong->m_sGroupName : GAMESTATE->m_sPreferredGroup;
+	SONGMAN->GetSongs( apSongs, sGroup );
 	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
 	{
 		Song* pSong = apSongs[s];
 
 		vector<Notes*> apNotes;
-		pSong->GetNotesThatMatch( sd->m_NotesType, apNotes );
+		pSong->GetNotes( apNotes, sd->m_NotesType );
 		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Notes
 		{
 			Notes* pNotes = apNotes[n];

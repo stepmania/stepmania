@@ -63,7 +63,8 @@ public:
 	int				m_iCoinsPerCredit;
 	bool			m_bJointPremium;
 	bool			m_bPickExtraStage;
-
+	float			m_fLongVerSongSeconds;
+	float			m_fMarathonVerSongSeconds;
 
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */

@@ -195,11 +195,13 @@ public:
 	bool SongCompleteForStyle( const StyleDef *st ) const;
 	bool SongHasNotesType( NotesType nt ) const;
 	bool SongHasNotesTypeAndDifficulty( NotesType nt, Difficulty dc ) const;
-	void GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo, bool bIncludeAutoGen = true ) const;
-	Notes* GetNotesThatMatch( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	void GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
+	Notes* GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
+	void GetEdits( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen = true ) const;
 	int GetNumTimesPlayed() const;
 	bool IsNew() const;
 	bool IsEasy( NotesType nt ) const;
+	bool HasEdits( NotesType nt ) const;
 	Grade GetGradeForDifficulty( const StyleDef *s, PlayerNumber pn, Difficulty dc ) const;
 	bool NormallyDisplayed() const;
 	bool RouletteDisplayed() const;

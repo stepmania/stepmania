@@ -19,7 +19,7 @@
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${VERSION}"
 
 Name "${PRODUCT_NAME}"
-OutFile "stepmania-CVS-20030205.exe"
+OutFile "stepmania-CVS-20030207.exe"
 ;OutFile "stepmania301.exe"
 
 ; Some default compiler settings (uncomment and change at will):
@@ -136,9 +136,11 @@ RMDir /r "$INSTDIR\NoteSkins\dance\note"
 SetOutPath "$INSTDIR\NoteSkins"
 File "NoteSkins\instructions.txt"
 CreateDirectory "$INSTDIR\NoteSkins\dance\default"
+CreateDirectory "$INSTDIR\NoteSkins\dance\flat"
 CreateDirectory "$INSTDIR\NoteSkins\dance\note"
 SetOutPath "$INSTDIR\NoteSkins\dance"
 File /r "NoteSkins\dance\default"
+File /r "NoteSkins\dance\flat"
 File /r "NoteSkins\dance\note"
 
 SetOutPath "$INSTDIR\NoteSkins\pump"
@@ -295,13 +297,14 @@ Delete "$INSTDIR\zliba.dll"
 Delete "$INSTDIR\SDL.dll"
 Delete "$INSTDIR\SDL_image.dll"
 Delete "$INSTDIR\COPYING.txt"
-Delete "$INSTDIR\README-FIRST.TXT"
+Delete "$INSTDIR\README-FIRST.htm"
 Delete "$INSTDIR\NEWS"
 Delete "$INSTDIR\stepmania.exe"
 Delete "$INSTDIR\stepmania.ini"
 Delete "$INSTDIR\smpackage.exe"
 Delete "$INSTDIR\StepMania.vdi"
 Delete "$INSTDIR\log.txt"
+Delete "$INSTDIR\info.txt"
 
 RMDir "$INSTDIR"	; will delete only if empty
 

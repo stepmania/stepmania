@@ -117,10 +117,11 @@ ScreenNameEntry::ScreenNameEntry()
 
 
 	// reset Player and Song Options
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
-	GAMESTATE->m_SongOptions = SongOptions();
-
+	{
+		for( int p=0; p<NUM_PLAYERS; p++ )
+			GAMESTATE->m_PlayerOptions[p] = PlayerOptions();
+		GAMESTATE->m_SongOptions = SongOptions();
+	}
 
 
 	// Find out if any of the players deserve to enter their name
@@ -186,7 +187,7 @@ ScreenNameEntry::ScreenNameEntry()
 	m_Background.LoadFromAniDir( THEME->GetPathTo("BGAnimations","name entry") );
 	this->AddChild( &m_Background );
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		bool bNewHighScore = GAMESTATE->m_iLastRankingIndex[p] != -1;
 		m_bStillEnteringName[p] = bNewHighScore;	// false if they made a new high score

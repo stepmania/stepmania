@@ -234,7 +234,7 @@ void SongSelector::OnRowValueChanged( Row row )
 		m_textValue[ROW_GROUP].SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
 		m_GroupBanner.LoadFromGroup( GetSelectedGroup() );
 		m_pSongs.clear();
-		SONGMAN->GetSongsInGroup( GetSelectedGroup(), m_pSongs );
+		SONGMAN->GetSongs( m_pSongs, GetSelectedGroup() );
 		m_iSelection[ROW_SONG] = 0;
 		// fall through
 	case ROW_SONG:
@@ -289,10 +289,10 @@ void SongSelector::OnRowValueChanged( Row row )
 
 Notes* SongSelector::GetSelectedNotes()
 {
-	return GetSelectedSong()->GetNotesThatMatch(GetSelectedNotesType(),GetSelectedDifficulty(), false);
+	return GetSelectedSong()->GetNotes(GetSelectedNotesType(),GetSelectedDifficulty(), false);
 }
 
 Notes* SongSelector::GetSelectedSourceNotes()
 {
-	return GetSelectedSong()->GetNotesThatMatch(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
+	return GetSelectedSong()->GetNotes(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
 }

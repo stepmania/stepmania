@@ -22,6 +22,7 @@
 #include "DifficultyIcon.h"
 #include "FootMeter.h"
 #include "OptionIconRow.h"
+#include "StageDisplay.h"
 
 
 class ScreenSelectMusic : public Screen
@@ -63,7 +64,7 @@ protected:
 	Sprite				m_sprBannerFrame;
 	FadingBanner		m_Banner;
 	BPMDisplay			m_BPMDisplay;
-	BitmapText			m_textStage;
+	StageDisplay		m_StageDisplay;
 	Sprite				m_sprCDTitle;
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];

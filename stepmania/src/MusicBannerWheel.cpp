@@ -51,25 +51,10 @@ MusicBannerWheel::MusicBannerWheel()
 	this->AddChild( &m_ScrollingList );
 
 	if( 0 == stricmp(GAMESTATE->m_sPreferredGroup, "All Music") )
-	{
-		SONGMAN->GetAllSongs( arraySongs );
-	}
+		SONGMAN->GetSongs( arraySongs, GAMESTATE->GetNumStagesLeft() );
 	else // Get the Group They Want
-	{
-		vector<Song*> apAllSongs;
-		SONGMAN->GetAllSongs( apAllSongs );
+		SONGMAN->GetSongs( arraySongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );
 
-		for( unsigned i=0; i<apAllSongs.size(); i++ )
-		{
-			Song* pSong = apAllSongs[i];
-
-			if( GAMESTATE->m_sPreferredGroup != "ALL MUSIC"  &&  pSong->m_sGroupName != GAMESTATE->m_sPreferredGroup )
-				continue;
-			else
-				arraySongs.push_back(pSong);
-		}
-
-	}
 
 	if( arraySongs.size() > 0)
 	{

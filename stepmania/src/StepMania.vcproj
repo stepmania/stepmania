@@ -1021,6 +1021,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\MusicWheel.h">
 			</File>
 			<File
+				RelativePath="MusicWheelItem.cpp">
+			</File>
+			<File
+				RelativePath="MusicWheelItem.h">
+			</File>
+			<File
 				RelativePath="OptionIcon.cpp">
 			</File>
 			<File
@@ -1073,6 +1079,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="SongSelector.h">
+			</File>
+			<File
+				RelativePath="StageDisplay.cpp">
+			</File>
+			<File
+				RelativePath="StageDisplay.h">
 			</File>
 			<File
 				RelativePath=".\TextBanner.cpp">

@@ -810,9 +810,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		else if( m_ResultMode == RM_ARCADE_STAGE )
 		{
-			if( GAMESTATE->m_iCurrentStageIndex < PREFSMAN->m_iNumArcadeStages-1  )
-				m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
-			else
+			if( GAMESTATE->IsFinalStage()  )
 			{
 				/* Tween the screen out, but leave the MenuElements where they are.
 				 * Play the "swoosh" sound manually (would normally be played by the ME
@@ -820,6 +818,10 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu swoosh") );
 				TweenOffScreen();
 				SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
+			}
+			else
+			{
+				m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 			}
 		}
 		else
@@ -829,7 +831,10 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 	switch( m_ResultMode )
 	{
 	case RM_ARCADE_STAGE:
-		GAMESTATE->m_iCurrentStageIndex++;		// Increment the stage counter.
+		// Increment the stage counter.
+		int iNumStagesOfLastSong;
+		iNumStagesOfLastSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+		GAMESTATE->m_iCurrentStageIndex += iNumStagesOfLastSong;
 
 		// add current stage stats to accumulated total only if this song was passed
 		{

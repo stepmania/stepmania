@@ -758,7 +758,7 @@ void Song::ReCalculateRadarValuesAndLastBeat()
 	}
 }
 
-void Song::GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo, bool bIncludeAutoGen ) const
+void Song::GetNotes( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 		if( m_apNotes[i]->m_NotesType == nt )
@@ -766,7 +766,7 @@ void Song::GetNotesThatMatch( NotesType nt, vector<Notes*>& arrayAddTo, bool bIn
 				arrayAddTo.push_back( m_apNotes[i] );
 }
 
-Notes* Song::GetNotesThatMatch( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
+Notes* Song::GetNotes( NotesType nt, Difficulty dc, bool bIncludeAutoGen ) const
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Notes
 		if( m_apNotes[i]->m_NotesType==nt &&  m_apNotes[i]->GetDifficulty()==dc )
@@ -774,6 +774,11 @@ Notes* Song::GetNotesThatMatch( NotesType nt, Difficulty dc, bool bIncludeAutoGe
 				return m_apNotes[i];
 	return NULL;
 }
+
+void Song::GetEdits( vector<Notes*>& arrayAddTo, NotesType nt, bool bIncludeAutoGen ) const
+{
+}
+
 
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const StyleDef *st ) const
@@ -879,7 +884,7 @@ void Song::AddAutoGenNotes()
 		for( NotesType nt=(NotesType)0; nt<NUM_NOTES_TYPES; nt=(NotesType)(nt+1) )
 		{
 			vector<Notes*> apNotes;
-			this->GetNotesThatMatch( nt, apNotes );
+			this->GetNotes( apNotes, nt );
 
 			if(apNotes.empty() || apNotes[0]->IsAutogen())
 				continue; /* can't autogen from other autogen */
@@ -931,7 +936,7 @@ Grade Song::GetGradeForDifficulty( const StyleDef *st, PlayerNumber pn, Difficul
 {
 	// return max grade of notes in difficulty class
 	vector<Notes*> aNotes;
-	this->GetNotesThatMatch( st->m_NotesType, aNotes );
+	this->GetNotes( aNotes, st->m_NotesType );
 	SortNotesArrayByDifficulty( aNotes );
 
 	Grade grade = GRADE_NO_DATA;
@@ -966,6 +971,13 @@ bool Song::IsEasy( NotesType nt ) const
 	return false;
 }
 
+bool Song::HasEdits( NotesType nt ) const
+{
+	vector<Notes*> vpNotes;
+	this->GetEdits( vpNotes, nt );
+	return vpNotes.size() > 0;
+}
+
 /////////////////////////////////////
 // Sorting
 /////////////////////////////////////
@@ -995,8 +1007,8 @@ int CompareSongPointersByDifficulty(const Song *pSong1, const Song *pSong2)
 	vector<Notes*> aNotes1;
 	vector<Notes*> aNotes2;
 
-	pSong1->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, aNotes1 );
-	pSong2->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, aNotes2 );
+	pSong1->GetNotes( aNotes1, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+	pSong2->GetNotes( aNotes2, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
 	int iEasiestMeter1 = 1000;	// infinity
 	int iEasiestMeter2 = 1000;	// infinity

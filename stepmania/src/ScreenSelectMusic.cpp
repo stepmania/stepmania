@@ -109,13 +109,10 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_BPMDisplay.SetZoom( BPM_ZOOM );
 	this->AddChild( &m_BPMDisplay );
 
-	m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
-	m_textStage.TurnShadowOff();
-	m_textStage.SetZoom( STAGE_ZOOM );
-	m_textStage.SetXY( STAGE_X, STAGE_Y );
-	m_textStage.SetText( GAMESTATE->GetStageText() );
-	m_textStage.SetDiffuse( GAMESTATE->GetStageColor() );
-	this->AddChild( &m_textStage );
+	m_StageDisplay.SetZoom( STAGE_ZOOM );
+	m_StageDisplay.SetXY( STAGE_X, STAGE_Y );
+	m_StageDisplay.Refresh();
+	this->AddChild( &m_StageDisplay );
 
 	m_sprCDTitle.Load( THEME->GetPathTo("Graphics","fallback cd title") );
 	m_sprCDTitle.TurnShadowOff();
@@ -266,7 +263,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	m_sprBannerFrame.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_Banner.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_BPMDisplay.FadeOn( 0, "bounce left", TWEEN_TIME );
-	m_textStage.FadeOn( 0, "bounce left", TWEEN_TIME );
+	m_StageDisplay.FadeOn( 0, "bounce left", TWEEN_TIME );
 	m_sprCDTitle.FadeOn( 0, "bounce left", TWEEN_TIME );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
@@ -309,7 +306,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	m_sprBannerFrame.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 	m_Banner.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 	m_BPMDisplay.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
-	m_textStage.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
+	m_StageDisplay.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 	m_sprCDTitle.FadeOff( 0, "bounce left", TWEEN_TIME*2 );
 
 	int p;
@@ -774,6 +771,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
 
+	m_StageDisplay.Refresh();
+
 	int pn;
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 		m_arrayNotes[pn].clear();
@@ -813,7 +812,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_fPlaySampleCountdown = SAMPLE_MUSIC_DELAY;
 
 			for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
-				pSong->GetNotesThatMatch( GAMESTATE->GetCurrentStyleDef()->m_NotesType, m_arrayNotes[pn] );
+				pSong->GetNotes( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 				SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 			}
 

@@ -70,6 +70,7 @@ public:
 	int				m_iCurrentStageIndex;	// incremented on Eval screen
 
 	int				GetStageIndex();
+	int				GetNumStagesLeft();
 	bool			IsFinalStage();
 	bool			IsExtraStage();
 	bool			IsExtraStage2();
