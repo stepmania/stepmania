@@ -468,11 +468,11 @@ static void CheckPalettedTextures( bool LowColor )
 	}
 
 	/* Check to see if paletted textures really work. */
-	GLenum glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
-	GLenum glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
-	GLenum glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
+	GLenum glTexFormat; glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
+	GLenum glImageFormat; glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
+	GLenum glImageType; glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
 
-	int bits = 8;
+	int bits; bits = 8;
 
 	if( LowColor )
 	{
