@@ -195,13 +195,12 @@ enum RankingCategory
 	NUM_RANKING_CATEGORIES
 };
 
-const CString DEFAULT_RANKING_NAME = "";
+#define DEFAULT_RANKING_NAME CString("")
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 
 RankingCategory AverageMeterToRankingCategory( float fAverageMeter );
 
 const int NUM_RANKING_LINES	= 5;
-const int MAX_RANKING_NAME_LENGTH	= 4;
 
 
 //
