@@ -127,16 +127,16 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 		GetValue( ini, pn, id, ssprintf("Center%i", t+1), m_CenterTrack[t] );
 		GetValue( ini, pn, id, ssprintf("Position%i", t+1), m_PositionTrack[t] );
 
-		GetValue( ini, pn, id, ssprintf("GrayButton", t+1), GrayButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("GrayButton"), GrayButtonNames[t] );
 		GetValue( ini, pn, id, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
 
-		GetValue( ini, pn, id, ssprintf("NoteButton", t+1), NoteButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("NoteButton"), NoteButtonNames[t] );
 		GetValue( ini, pn, id, ssprintf("NoteButton%i", t+1), NoteButtonNames[t] );
 
-		GetValue( ini, pn, id, ssprintf("GhostButton", t+1), GhostButtonNames[t] );
+		GetValue( ini, pn, id, ssprintf("GhostButton"), GhostButtonNames[t] );
 		GetValue( ini, pn, id, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
 
-		GetValue( ini, pn, id, ssprintf("HoldJudgment", t+1),	m_HoldJudgmentCmd[t] );
+		GetValue( ini, pn, id, ssprintf("HoldJudgment"),	m_HoldJudgmentCmd[t] );
 		GetValue( ini, pn, id, ssprintf("HoldJudgment%i", t+1), m_HoldJudgmentCmd[t] );
 	}
 }
