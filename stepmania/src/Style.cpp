@@ -60,8 +60,8 @@ StyleInput Style::GameInputToStyleInput( const GameInput &GameI ) const
 				SI = StyleInput( (PlayerNumber)p, t );
 
 				// HACK:  Looking up the player number using m_ColumnInfo 
-				// returns the wrong answer for ONE_PLAYER_TWO_CREDITS styles
-				if( m_StyleType == ONE_PLAYER_TWO_CREDITS )
+				// returns the wrong answer for ONE_PLAYER_TWO_SIDES styles
+				if( m_StyleType == ONE_PLAYER_TWO_SIDES )
 					SI.player = GAMESTATE->m_MasterPlayerNumber;
 				
 				return SI;
@@ -76,10 +76,10 @@ PlayerNumber Style::ControllerToPlayerNumber( GameController controller ) const
 {
 	switch( m_StyleType )
 	{
-	case ONE_PLAYER_ONE_CREDIT:
-	case TWO_PLAYERS_TWO_CREDITS:
+	case ONE_PLAYER_ONE_SIDE:
+	case TWO_PLAYERS_TWO_SIDES:
 		return (PlayerNumber)controller;
-	case ONE_PLAYER_TWO_CREDITS:
+	case ONE_PLAYER_TWO_SIDES:
 		return GAMESTATE->m_MasterPlayerNumber;
 	default:
 		ASSERT(0);

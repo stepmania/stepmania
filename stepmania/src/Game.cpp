@@ -29,16 +29,16 @@ MenuInput Game::GameInputToMenuInput( GameInput GameI ) const
 {
 	PlayerNumber pn;
 
-	Style::StyleType type = Style::TWO_PLAYERS_TWO_CREDITS;
+	StyleType type = TWO_PLAYERS_TWO_SIDES;
 	if( GAMESTATE->GetCurrentStyle() )
 		type = GAMESTATE->GetCurrentStyle()->m_StyleType;
 	switch( type )
 	{
-	case Style::ONE_PLAYER_ONE_CREDIT:
-	case Style::TWO_PLAYERS_TWO_CREDITS:
+	case ONE_PLAYER_ONE_SIDE:
+	case TWO_PLAYERS_TWO_SIDES:
 		pn = (PlayerNumber)GameI.controller;
 		break;
-	case Style::ONE_PLAYER_TWO_CREDITS:
+	case ONE_PLAYER_TWO_SIDES:
 		pn = GAMESTATE->m_MasterPlayerNumber;
 		break;
 	default:
@@ -69,19 +69,19 @@ void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 	GameIout[3].MakeInvalid();	
 
 	GameController controller[2];
-	Style::StyleType type = Style::TWO_PLAYERS_TWO_CREDITS;
+	StyleType type = TWO_PLAYERS_TWO_SIDES;
 	if( GAMESTATE->GetCurrentStyle() )
 		type = GAMESTATE->GetCurrentStyle()->m_StyleType;
 
 	int iNumSidesUsing = 1;
 	switch( type )
 	{
-	case Style::ONE_PLAYER_ONE_CREDIT:
-	case Style::TWO_PLAYERS_TWO_CREDITS:
+	case ONE_PLAYER_ONE_SIDE:
+	case TWO_PLAYERS_TWO_SIDES:
 		controller[0] = (GameController)MenuI.player;
 		iNumSidesUsing = 1;
 		break;
-	case Style::ONE_PLAYER_TWO_CREDITS:
+	case ONE_PLAYER_TWO_SIDES:
 		controller[0] = GAME_CONTROLLER_1;
 		controller[1] = GAME_CONTROLLER_2;
 		iNumSidesUsing = 2;

@@ -246,11 +246,11 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 
 	switch( style->m_StyleType )
 	{
-	case Style::ONE_PLAYER_ONE_CREDIT:
+	case ONE_PLAYER_ONE_SIDE:
 		return 1;
-	case Style::TWO_PLAYERS_TWO_CREDITS:
+	case TWO_PLAYERS_TWO_SIDES:
 		return 2;
-	case Style::ONE_PLAYER_TWO_CREDITS:
+	case ONE_PLAYER_TWO_SIDES:
 		return (PREFSMAN->GetPremium() == PrefsManager::DOUBLES_PREMIUM) ? 1 : 2;
 	default:
 		ASSERT(0);
@@ -275,7 +275,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 			return false;
 		
 		/* Don't allow battle modes if the style takes both sides. */
-		if( style->m_StyleType==Style::ONE_PLAYER_TWO_CREDITS )
+		if( style->m_StyleType==ONE_PLAYER_TWO_SIDES )
 			return false;
 	}
 
@@ -336,7 +336,7 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 		/* If both sides are joined, disallow singles modes, since easy to select them
 		 * accidentally, instead of versus mode. */
-		if( m_pStyle->m_StyleType == Style::ONE_PLAYER_ONE_CREDIT &&
+		if( m_pStyle->m_StyleType == ONE_PLAYER_ONE_SIDE &&
 			GAMESTATE->GetNumSidesJoined() > 1 )
 		{
 			if( why )
@@ -433,10 +433,10 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		// that requires both sides, join the other side.
 		switch( m_pStyle->m_StyleType )
 		{
-		case Style::ONE_PLAYER_ONE_CREDIT:
+		case ONE_PLAYER_ONE_SIDE:
 			break;
-		case Style::TWO_PLAYERS_TWO_CREDITS:
-		case Style::ONE_PLAYER_TWO_CREDITS:
+		case TWO_PLAYERS_TWO_SIDES:
+		case ONE_PLAYER_TWO_SIDES:
 			{
 				FOREACH_PlayerNumber( p )
 					GAMESTATE->m_bSideIsJoined[p] = true;

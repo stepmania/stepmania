@@ -39,6 +39,7 @@
 #define TIMER_SECONDS				THEME->GetMetricI("ScreenNameEntry","TimerSeconds")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
+#define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
 
 // cache for frequently used metrics
@@ -181,8 +182,10 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		/* Ensure that this is up-to-date. */
 		GAMESTATE->m_pPosition->Load( (PlayerNumber)p );
 
-		m_ReceptorArrowRow[p].Load( (PlayerNumber)p, GAMESTATE->m_PlayerOptions[p].m_sNoteSkin, 0 );
-		m_ReceptorArrowRow[p].SetX( (float)GAMESTATE->GetCurrentStyle()->m_iCenterX[p] );
+		float fPlayerX = PLAYER_X(p,GAMESTATE->GetCurrentStyle()->m_StyleType);
+
+		m_ReceptorArrowRow[p].Load( p, GAMESTATE->m_PlayerOptions[p].m_sNoteSkin, 0 );
+		m_ReceptorArrowRow[p].SetX( fPlayerX );
 		m_ReceptorArrowRow[p].SetY( SCREEN_TOP + 100 );
 		this->AddChild( &m_ReceptorArrowRow[p] );
 
@@ -198,14 +201,14 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 				continue; /* We have enough columns. */
 
 			/* Find out if this column is associated with the START menu button. */
-			StyleInput si((PlayerNumber)p, t);
+			StyleInput si(p, t);
 			GameInput gi=GAMESTATE->GetCurrentStyle()->StyleInputToGameInput(si);
 			MenuInput m=GAMESTATE->GetCurrentGame()->GameInputToMenuInput(gi);
 			if(m.button == MENU_BUTTON_START)
 				continue;
 			m_ColToStringIndex[p][t] = CurrentStringIndex++;
 
-			float ColX = pStyle->m_iCenterX[p] + pStyle->m_ColumnInfo[p][t].fXOffset;
+			float ColX = fPlayerX + pStyle->m_ColumnInfo[p][t].fXOffset;
 
 			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathToF("ScreenNameEntry letters") );
 			m_textSelectedChars[p][t].SetX( ColX );
@@ -224,7 +227,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		}
 
 		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntry category") );
-		m_textCategory[p].SetX( (float)GAMESTATE->GetCurrentStyle()->m_iCenterX[p] );
+		m_textCategory[p].SetX( fPlayerX );
 		m_textCategory[p].SetY( CATEGORY_Y );
 		m_textCategory[p].SetZoom( CATEGORY_ZOOM );
 		CString joined;

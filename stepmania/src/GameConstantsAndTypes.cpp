@@ -219,6 +219,14 @@ bool DisplayBpms::IsMystery()
 	return false;
 }
 
+static const CString StyleTypeNames[NUM_STYLE_TYPES] = {
+	"OnePlayerOneSide",
+	"TwoPlayersTwoSides",
+	"OnePlayerTwoSides",
+};
+XToString( StyleType );
+StringToX( StyleType );
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

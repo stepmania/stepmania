@@ -55,6 +55,7 @@
 /* XXX: This is ugly; most people don't need to override this per-mode.  This will
  * go away eventually, once metrics can redirect to Lua calls. */
 #define INITIAL_BACKGROUND_BRIGHTNESS( play_mode )	THEME->GetMetricF(m_sName,"InitialBackgroundBrightness"+Capitalize(PlayModeToString(play_mode)))
+#define PLAYER_X( p, styleType )				THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 static ThemeMetric<float> TICK_EARLY_SECONDS		("ScreenGameplay","TickEarlySeconds");
@@ -301,7 +302,7 @@ void ScreenGameplay::Init()
 
     FOREACH_EnabledPlayer(p)
 	{
-		float fPlayerX = (float) GAMESTATE->GetCurrentStyle()->m_iCenterX[p];
+		float fPlayerX = PLAYER_X( p, GAMESTATE->GetCurrentStyle()->m_StyleType );
 
 		/* Perhaps this should be handled better by defining a new
 		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
@@ -310,11 +311,12 @@ void ScreenGameplay::Init()
 		if( PREFSMAN->m_bSoloSingle && 
 			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
 			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
-			GAMESTATE->GetCurrentStyle()->m_StyleType == Style::ONE_PLAYER_ONE_CREDIT )
-			fPlayerX = SCREEN_WIDTH/2;
+			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
+			fPlayerX = SCREEN_CENTER_X;
 
 		m_Player[p].SetName( ssprintf("Player%i", p+1) );
 		m_Player[p].SetX( fPlayerX );
+		m_Player[p].SetY( SCREEN_CENTER_Y );
 		this->AddChild( &m_Player[p] );
 	
 		m_sprOniGameOver[p].SetName( ssprintf("OniGameOver%i", p+1) );

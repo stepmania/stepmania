@@ -868,7 +868,7 @@ int	GameState::GetNumPlayersEnabled() const
 
 bool GameState::PlayerUsingBothSides() const
 {
-	return this->GetCurrentStyle()->m_StyleType==Style::ONE_PLAYER_TWO_CREDITS;
+	return this->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES;
 }
 
 bool GameState::IsHumanPlayer( PlayerNumber pn ) const
@@ -883,10 +883,10 @@ bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 
 	switch( GetCurrentStyle()->m_StyleType )
 	{
-	case Style::TWO_PLAYERS_TWO_CREDITS:
+	case TWO_PLAYERS_TWO_SIDES:
 		return true;
-	case Style::ONE_PLAYER_ONE_CREDIT:
-	case Style::ONE_PLAYER_TWO_CREDITS:
+	case ONE_PLAYER_ONE_SIDE:
+	case ONE_PLAYER_TWO_SIDES:
 		return pn == m_MasterPlayerNumber;
 	default:
 		ASSERT(0);		// invalid style type

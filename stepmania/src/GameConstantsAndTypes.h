@@ -323,6 +323,17 @@ struct DisplayBpms
 	vector<float> vfBpms;
 };
 
+enum StyleType
+{
+	ONE_PLAYER_ONE_SIDE,	// e.g. single
+	TWO_PLAYERS_TWO_SIDES,	// e.g. versus
+	ONE_PLAYER_TWO_SIDES,	// e.g. double
+	NUM_STYLE_TYPES
+};
+const CString& StyleTypeToString( StyleType s );
+StyleType StringToStyleType( const CString& s );
+
+
 #endif
 
 /*

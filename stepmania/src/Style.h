@@ -31,16 +31,8 @@ public:
 	 * the Steps with the tag "dance-single". */
 	StepsType	m_StepsType;
 									
-	enum StyleType
-	{
-		ONE_PLAYER_ONE_CREDIT,	// e.g. single
-		TWO_PLAYERS_TWO_CREDITS,	// e.g. versus
-		ONE_PLAYER_TWO_CREDITS,	// e.g. double
-	};
-
-	
 	StyleType	m_StyleType;
-	int			m_iCenterX[NUM_PLAYERS];	// center of the player
+	
 	int			m_iColsPerPlayer;	// number of total tracks this style expects (e.g. 4 for versus, but 8 for double)
 	struct ColumnInfo 
 	{ 

@@ -190,7 +190,7 @@ void PlayerMinus::Load(
 	m_ArrowBackdrop.SetPlayer( pn );
 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].GetReversePercentForColumn(0) == 1;
-	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==Style::ONE_PLAYER_TWO_CREDITS;
+	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
 	m_Combo.SetX( COMBO_X(m_PlayerNumber,bPlayerUsingBothSides) );
 	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
 	m_AttackDisplay.SetX( ATTACK_DISPLAY_X(m_PlayerNumber,bPlayerUsingBothSides) - 40 );
@@ -504,7 +504,7 @@ void PlayerMinus::ApplyWaitingTransforms()
 void PlayerMinus::DrawPrimitives()
 {
 	// May have both players in doubles (for battle play); only draw primary player.
-	if( GAMESTATE->GetCurrentStyle()->m_StyleType == Style::ONE_PLAYER_TWO_CREDITS  &&
+	if( GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_TWO_SIDES  &&
 		m_PlayerNumber != GAMESTATE->m_MasterPlayerNumber )
 		return;
 
