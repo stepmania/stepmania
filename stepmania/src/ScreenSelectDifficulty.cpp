@@ -235,6 +235,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 
 	if( newPage == PAGE_2 )
 	{
+		/* XXX: only play this once (I thought we already did that?) */
 		m_soundDifficult.Stop();
 		m_soundDifficult.PlayRandom();
 	}
