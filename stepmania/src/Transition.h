@@ -29,9 +29,9 @@ public:
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 
-	bool IsTransitioning()	{ return m_State == transitioning; };
-	bool IsFinished()	{ return m_State == finished; };
-	float GetLengthSeconds();
+	bool IsTransitioning() const	{ return m_State == transitioning; };
+	bool IsFinished() const	{ return m_State == finished; };
+	float GetLengthSeconds() const;
 
 protected:
 

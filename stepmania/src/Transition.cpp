@@ -106,7 +106,7 @@ void Transition::StartTransitioning( ScreenMessage send_when_done )
 	m_fSecsIntoTransition = 0.0;
 }
 
-float Transition::GetLengthSeconds()
+float Transition::GetLengthSeconds() const
 {
 	return m_BGAnimation.GetLengthSeconds();
 }
