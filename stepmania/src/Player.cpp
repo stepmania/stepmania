@@ -39,23 +39,23 @@
 
 CachedThemeMetricF GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 CachedThemeMetricF GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
-#define JUDGMENT_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "JudgmentXOffsetBothSides" : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
-#define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
-#define JUDGMENT_Y_REVERSE			THEME->GetMetricF("Player","JudgmentYReverse")
-#define COMBO_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "ComboXOffsetBothSides" : ssprintf("ComboXOffsetOneSideP%d",p+1))
-#define COMBO_Y						THEME->GetMetricF("Player","ComboY")
-#define COMBO_Y_REVERSE				THEME->GetMetricF("Player","ComboYReverse")
-#define ATTACK_DISPLAY_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "AttackDisplayXOffsetBothSides" : ssprintf("AttackDisplayXOffsetOneSideP%d",p+1))
-#define ATTACK_DISPLAY_Y					THEME->GetMetricF("Player","AttackDisplayY")
-#define ATTACK_DISPLAY_Y_REVERSE			THEME->GetMetricF("Player","AttackDisplayYReverse")
+#define JUDGMENT_X( p, both_sides )				THEME->GetMetricF("Player",both_sides ? "JudgmentXOffsetBothSides" : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
+#define JUDGMENT_Y								THEME->GetMetricF("Player","JudgmentY")
+#define JUDGMENT_Y_REVERSE						THEME->GetMetricF("Player","JudgmentYReverse")
+#define COMBO_X( p, both_sides )				THEME->GetMetricF("Player",both_sides ? "ComboXOffsetBothSides" : ssprintf("ComboXOffsetOneSideP%d",p+1))
+#define COMBO_Y									THEME->GetMetricF("Player","ComboY")
+#define COMBO_Y_REVERSE							THEME->GetMetricF("Player","ComboYReverse")
+#define ATTACK_DISPLAY_X( p, both_sides )		THEME->GetMetricF("Player",both_sides ? "AttackDisplayXOffsetBothSides" : ssprintf("AttackDisplayXOffsetOneSideP%d",p+1))
+#define ATTACK_DISPLAY_Y						THEME->GetMetricF("Player","AttackDisplayY")
+#define ATTACK_DISPLAY_Y_REVERSE				THEME->GetMetricF("Player","AttackDisplayYReverse")
 CachedThemeMetricF HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
 CachedThemeMetricF HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
 CachedThemeMetricI	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
 CachedThemeMetricB	TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
 CachedThemeMetricB	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
-#define START_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StartDrawingAtPixels")
-#define STOP_DRAWING_AT_PIXELS		THEME->GetMetricI("Player","StopDrawingAtPixels")
-#define MAX_PRO_TIMING_ERROR		THEME->GetMetricI("Player","MaxProTimingError")
+#define START_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StartDrawingAtPixels")
+#define STOP_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StopDrawingAtPixels")
+#define MAX_PRO_TIMING_ERROR					THEME->GetMetricI("Player","MaxProTimingError")
 
 /* Distance to search for a note in Step(). */
 /* Units? */

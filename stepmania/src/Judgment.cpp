@@ -74,10 +74,10 @@ Judgment::Judgment()
 
 void Judgment::Reset()
 {
-	m_sprJudgment.SetDiffuse( RageColor(1,1,1,0) );
-	m_sprJudgment.StopTweening();
+	m_sprJudgment.FinishTweening();
 	m_sprJudgment.SetXY( 0, 0 );
 	m_sprJudgment.SetEffectNone();
+	m_sprJudgment.SetHidden( true );
 }
 
 void Judgment::SetJudgment( TapNoteScore score )
@@ -85,6 +85,8 @@ void Judgment::SetJudgment( TapNoteScore score )
 	//LOG->Trace( "Judgment::SetJudgment()" );
 
 	Reset();
+
+	m_sprJudgment.SetHidden( false );
 
 	switch( score )
 	{
