@@ -156,6 +156,7 @@ typedef basic_string<longchar> lstring;
 extern const longchar INVALID_CHAR;
 
 lstring CStringToLstring(const CString &str);
+CString LStringToCString(const lstring &str);
 CString LcharToUTF8( longchar c );
 
 // Splits a CString into an CStringArray according the Deliminator.

@@ -924,6 +924,16 @@ lstring CStringToLstring(const CString &str)
 	return ret;
 }
 
+CString LStringToCString(const lstring &str)
+{
+	CString ret;
+
+	for(unsigned i = 0; i < str.size(); ++i)
+		ret.append(LcharToUTF8(str[i]));
+
+	return ret;
+}
+
 int unichar_to_utf8 (longchar c, char *outbuf)
 {
 	unsigned int len = 0;

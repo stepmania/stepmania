@@ -18,6 +18,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
+#include "FontManager.h"
 
 const float QUESTION_X	=	CENTER_X;
 const float QUESTION_Y	=	CENTER_Y - 60;
@@ -27,12 +28,20 @@ const float ANSWER_Y	=	CENTER_Y + 120;
 const float ANSWER_WIDTH	=	440;
 const float ANSWER_HEIGHT	=	30;
 
+/* XXX: Don't let the user use internal-use codepoints (those
+ * that resolve to Unicode codepoints above 0xFFFF); those are
+ * subject to change and shouldn't be written to .SMs.
+ *
+ * Handle UTF-8.  Right now, we need to at least be able to backspace
+ * a whole UTF-8 character.  Better would be to operate in longchars.
+ */
 ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() )
 {
 	m_SMSendWhenDone = SM_SendWhenDone;
 	m_pOnOK = OnOK;
 	m_pOnCancel = OnCancel;
-	m_sAnswer = sInitialAnswer;
+
+	m_sAnswer = CStringToLstring(sInitialAnswer);
 	m_bCancelled = false;
 
 	m_Fade.SetTransitionTime( 0.5f );
@@ -57,7 +66,7 @@ ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuesti
 	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textAnswer.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textAnswer.SetXY( ANSWER_X, ANSWER_Y );
-	m_textAnswer.SetText( m_sAnswer );
+	m_textAnswer.SetText( LStringToCString(m_sAnswer) );
 	this->AddChild( &m_textAnswer );
 
 	SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu prompt") );
@@ -91,8 +100,9 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		MenuStart(PLAYER_1);
 		break;
 	case SDLK_BACKSPACE:
-		m_sAnswer = m_sAnswer.Left( max(0,m_sAnswer.GetLength()-1) );
-		m_textAnswer.SetText( m_sAnswer );
+		if(!m_sAnswer.empty())
+			m_sAnswer = m_sAnswer.erase( m_sAnswer.size()-1 );
+		m_textAnswer.SetText( LStringToCString(m_sAnswer) );
 		break;
 	default:
 		char c;
@@ -137,7 +147,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		if( c != '\0' )
 		{
 			m_sAnswer += c;
-			m_textAnswer.SetText( m_sAnswer );
+			m_textAnswer.SetText( LStringToCString(m_sAnswer) );
 		}
 		break;
 	}
@@ -187,7 +197,12 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 	if( m_bCancelled ) {
 		if( m_pOnCancel ) m_pOnCancel();
 	} else {
-		if( m_pOnOK ) m_pOnOK( m_sAnswer );
+		if( m_pOnOK )
+		{
+			CString ret = LStringToCString(m_sAnswer);
+			FontManager::ReplaceMarkers(ret);
+			m_pOnOK( ret );
+		}
 	}
 }
 

@@ -190,15 +190,17 @@ void BitmapText::DrawChars()
 }
 
 /* sText is UTF-8. */
-void BitmapText::SetText( CString sText )
+void BitmapText::SetText( CString sText, bool DoSubst )
 {
 	ASSERT( m_pFont );
+
+	if(DoSubst)
+		FontManager::ReplaceMarkers(sText);
+
 	if(m_szText == sText)
 		return;
 
 	m_szText = sText;
-
-	FontManager::ReplaceMarkers(sText);
 
 	/* Break the string into lines. */
 	m_szTextLines.clear();
