@@ -723,8 +723,8 @@ void Player::HandleStep( int col, const RageTimer &tm )
 					break;
 				default:
 					{
-						float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.222f );
-						float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.386f );
+						float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.193f );
+						float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.334f );
 						fCals = SCALE( iLbs, 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
 					}
 					break;
