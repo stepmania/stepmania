@@ -378,15 +378,18 @@ Server SMOnline packets:
 	If Room List Update:
     1		Number of rooms
     NT		Room1 Title
-    NT		Room1 Description
-    1		Room1 Status
-			0: Normal
-			1: Passworded
-			2: Ingame			
+    NT		Room1 Description			
     NT		Room2 Title
     NT		Room2 Description
-    1		Room2 Status
 	...
     NT		RoomN Title
     NT		RoomN Description
-    1		RoomN Status
+
+    Room Status appended for reverse compatibility
+    1		Room1 Status
+		0: Normal
+		1: Passworded
+		2: Ingame
+    1		Room2 Status
+	...
+    1		RoomN Status	
