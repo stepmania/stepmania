@@ -359,7 +359,6 @@
 				AA6EFEF504770E7C005F316C,
 				AA6EFEF704770E7C005F316C,
 				AA6EFEF904770E7C005F316C,
-				AA6EFF3604770F63005F316C,
 				AA6EFF3804770F63005F316C,
 				AA6EFF3A04770F63005F316C,
 				AA6EFF3C04770F63005F316C,
@@ -530,6 +529,7 @@
 				AAADA51904E75DD300D02EE9,
 				AAADA51D04E7609A00D02EE9,
 				AAADA52004E77F4400D02EE9,
+				AAADA52504E851EF00D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -633,7 +633,6 @@
 				AA6EFEF404770E7C005F316C,
 				AA6EFEF604770E7C005F316C,
 				AA6EFEF804770E7C005F316C,
-				AA6EFF3504770F63005F316C,
 				AA6EFF3704770F63005F316C,
 				AA6EFF3904770F63005F316C,
 				AA6EFF3B04770F63005F316C,
@@ -785,6 +784,7 @@
 				AAADA51804E75DD300D02EE9,
 				AAADA51C04E7609A00D02EE9,
 				AAADA52104E77F4400D02EE9,
+				AAADA52404E851EF00D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7249,8 +7249,6 @@
 		};
 		AA6EFEFA04770E84005F316C = {
 			children = (
-				AA6EFEFB04770F63005F316C,
-				AA6EFEFC04770F63005F316C,
 				AA6EFEFD04770F63005F316C,
 				AA6EFEFE04770F63005F316C,
 				AA6EFF0104770F63005F316C,
@@ -7305,6 +7303,8 @@
 				AA6EFF2D04770F63005F316C,
 				AA6EFF2E04770F63005F316C,
 				AA6EFF3004770F63005F316C,
+				AAADA52204E851EF00D02EE9,
+				AAADA52304E851EF00D02EE9,
 				AA6EFF3104770F63005F316C,
 				AA6EFF3204770F63005F316C,
 				AAE443F304B0FEB700D02EE9,
@@ -7316,26 +7316,6 @@
 			name = ActorsInGameplay;
 			path = "";
 			refType = 4;
-		};
-		AA6EFEFB04770F63005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ActiveItemList.cpp;
-			path = ../src/ActiveItemList.cpp;
-			refType = 2;
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA6EFEFC04770F63005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			name = ActiveItemList.h;
-			path = ../src/ActiveItemList.h;
-			refType = 2;
-			tabWidth = 4;
-			usesTabs = 1;
 		};
 		AA6EFEFD04770F63005F316C = {
 			fileEncoding = 30;
@@ -7856,18 +7836,6 @@
 			refType = 2;
 			tabWidth = 4;
 			usesTabs = 1;
-		};
-		AA6EFF3504770F63005F316C = {
-			fileRef = AA6EFEFB04770F63005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA6EFF3604770F63005F316C = {
-			fileRef = AA6EFEFC04770F63005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AA6EFF3704770F63005F316C = {
 			fileRef = AA6EFEFD04770F63005F316C;
@@ -8801,6 +8769,32 @@
 		};
 		AAADA52104E77F4400D02EE9 = {
 			fileRef = AAADA51F04E77F4400D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA52204E851EF00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScoreKeeper5th.cpp;
+			path = /Users/steve/stepmania/src/ScoreKeeper5th.cpp;
+			refType = 0;
+		};
+		AAADA52304E851EF00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = ScoreKeeper5th.h;
+			path = /Users/steve/stepmania/src/ScoreKeeper5th.h;
+			refType = 0;
+		};
+		AAADA52404E851EF00D02EE9 = {
+			fileRef = AAADA52204E851EF00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAADA52504E851EF00D02EE9 = {
+			fileRef = AAADA52304E851EF00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
