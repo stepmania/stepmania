@@ -507,8 +507,6 @@ void ScrollingList::DrawPrimitives()
 
 			m_apCSprites[iIndexToDraw1]->SetX( (-i+m_fSelectionLag) * m_iSpacing );
 			m_apCSprites[iIndexToDraw2]->SetX( (+i+m_fSelectionLag) * m_iSpacing );
-			m_apCSprites[iIndexToDraw1]->SetZ( (m_iNumVisible)/2.0f - i);
-			m_apCSprites[iIndexToDraw2]->SetZ( (m_iNumVisible)/2.0f - i);
 			m_apCSprites[iIndexToDraw1]->SetRotationZ(BANNER_ROTATION);
 			m_apCSprites[iIndexToDraw2]->SetRotationZ(BANNER_ROTATION);
 			m_sprBannerMask.SetRotationZ(BANNER_ROTATION);
@@ -519,7 +517,6 @@ void ScrollingList::DrawPrimitives()
 				m_apCSprites[iIndexToDraw1]->SetDiffuse( COLOR_SELECTED + RageColor(0,0,0,(1.0f - (FADE_OFFSET * i))) );
 				m_apCSprites[iIndexToDraw1]->SetZTest( true );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
-				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
 				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw1]->Draw();
@@ -536,8 +533,6 @@ void ScrollingList::DrawPrimitives()
 					}
 					m_apCSprites[iIndexToDraw1]->SetZoom(m_apCSprites[iIndexToDraw1]->GetZoom() + m_iBounceSize );
 					RageColor currentcolor = m_apCSprites[iIndexToDraw1]->GetDiffuse();
-					m_apCSprites[iIndexToDraw1]->SetZ( m_apCSprites[iIndexToDraw1]->GetZ() + 1);
-					m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
 					m_sprBannerMask.SetZoom( m_sprBannerMask.GetZoom() + m_iBounceSize );
 					m_apCSprites[iIndexToDraw1]->SetDiffuse( RageColor( 1, 1, 1, 0.4f ) );
 					m_sprBannerMask.Draw();
@@ -545,7 +540,6 @@ void ScrollingList::DrawPrimitives()
 					m_apCSprites[iIndexToDraw1]->SetZoom(m_apCSprites[iIndexToDraw1]->GetZoom() - m_iBounceSize );
 					m_sprBannerMask.SetZoom( m_sprBannerMask.GetZoom() - m_iBounceSize );
 					m_apCSprites[iIndexToDraw1]->SetDiffuse( currentcolor );
-					m_apCSprites[iIndexToDraw1]->SetZ( m_apCSprites[iIndexToDraw1]->GetZ() - 1);
 				}
 			}
 			else
@@ -556,13 +550,11 @@ void ScrollingList::DrawPrimitives()
 				m_apCSprites[iIndexToDraw2]->SetDiffuse( COLOR_NOT_SELECTED + RageColor(0,0,0,(- (FADE_OFFSET * i))) );
 				m_apCSprites[iIndexToDraw1]->SetZTest( true );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw1]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
-				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw1]->GetZ()+0.05f );
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw1]->GetZoom());
 				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw1]->Draw();
 				m_apCSprites[iIndexToDraw2]->SetZTest( true );	// do have to pass the z test
 				m_sprBannerMask.SetXY(m_apCSprites[iIndexToDraw2]->GetX(), m_apCSprites[iIndexToDraw1]->GetY());
-				m_sprBannerMask.SetZ( m_apCSprites[iIndexToDraw2]->GetZ()+0.05f );
 				m_sprBannerMask.SetZoom( m_apCSprites[iIndexToDraw2]->GetZoom());
 				m_sprBannerMask.Draw();
 				m_apCSprites[iIndexToDraw2]->Draw();
