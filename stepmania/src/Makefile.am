@@ -79,8 +79,7 @@ StepMania = StdString.h \
 		StepMania.cpp StepMania.h \
 		global.cpp global.h
 
-LoadingWindow = arch/LoadingWindow/LoadingWindow_Null.h \
-		arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
+LoadingWindow = arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
@@ -132,6 +131,7 @@ Threads = arch/Threads/Threads.h
 if HAVE_SDL
 InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
 LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
+LoadingWindow += arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
 
 # This isn't really in ArchUtils, but it's used by lots of other SDL-related drivers.
 ArchUtils += SDL_utils.cpp SDL_utils.h
@@ -146,7 +146,8 @@ Threads += arch/Threads/Threads_Pthreads.cpp arch/Threads/Threads_Pthreads.h
 ArchUtils +=    archutils/Unix/AssertionHandler.cpp \
 		archutils/Unix/GetSysInfo.cpp archutils/Unix/GetSysInfo.h \
 		archutils/Unix/SignalHandler.cpp archutils/Unix/SignalHandler.h \
-		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h
+		archutils/Unix/LinuxThreadHelpers.cpp archutils/Unix/LinuxThreadHelpers.h \
+		archutils/Unix/EmergencyShutdown.cpp archutils/Unix/EmergencyShutdown.h
 
 if USE_CRASH_HANDLER
 ArchUtils +=    archutils/Unix/Backtrace.cpp archutils/Unix/Backtrace.h \
