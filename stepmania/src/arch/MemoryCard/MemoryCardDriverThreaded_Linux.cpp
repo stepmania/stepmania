@@ -171,7 +171,10 @@ void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 {
 	if( m_fd == -1 )
+	{
+		usleep( 50000 );
 		return;
+	}
 	
 	if( m_bForceRedetect )
 	{
