@@ -30,6 +30,7 @@ NoteData::NoteData()
 
 void NoteData::Init()
 {
+	ClearAll();
 	m_iNumTracks = 0;
 }
 
