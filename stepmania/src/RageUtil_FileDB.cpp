@@ -324,31 +324,39 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 	} while( begin != end );
 }
 
+/* Remove the given FileSet, and all dirp pointers to it.  This means the cache has
+ * expired, not that the directory is necessarily gone; don't actually delete the file
+ * from the parent. */
+void FilenameDB::DelFileSet( map<CString, FileSet *>::iterator dir )
+{
+	if( dir == dirs.end() )
+		return;
+
+	FileSet *fs = dir->second;
+
+	/* Remove any stale dirp pointers. */
+	for( map<CString, FileSet *>::iterator it = dirs.begin(); it != dirs.end(); ++it )
+	{
+		FileSet *Clean = it->second;
+		for( set<File>::iterator f = Clean->files.begin(); f != Clean->files.end(); ++f )
+		{
+			File &ff = (File &) *f;
+			if( ff.dirp == fs )
+				ff.dirp = NULL;
+		}
+	}
+
+	delete fs;
+	dirs.erase( dir );
+}
+
 void FilenameDB::DelFile( const CString &sPath )
 {
 	CString lower = sPath;
 	lower.MakeLower();
 
 	map<CString, FileSet *>::iterator fsi = dirs.find( lower );
-	if( fsi != dirs.end() )
-	{
-		FileSet *fs = fsi->second;
-
-		/* Remove any stale dirp pointers. */
-		for( map<CString, FileSet *>::iterator it = dirs.begin(); it != dirs.end(); ++it )
-		{
-			FileSet *Clean = it->second;
-			for( set<File>::iterator f = Clean->files.begin(); f != Clean->files.end(); ++f )
-			{
-				File &ff = (File &) *f;
-				if( ff.dirp == fs )
-					ff.dirp = NULL;
-			}
-		}
-
-		delete fs;
-		dirs.erase( fsi );
-	}
+	DelFileSet( fsi );
 
 	/* Delete sPath from its parent. */
 	CString Dir, Name;
