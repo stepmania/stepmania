@@ -31,14 +31,14 @@ void PercentageDisplay::Load( PlayerNumber pn, StageStats* pSource, bool bAutoRe
 	else
 		m_textPercent.SetName( ssprintf("PercentP%i", pn+1) );
 
-	m_textPercent.LoadFromNumbers( THEME->GetPathN(m_sName,"text") );
+	m_textPercent.LoadFromFont( THEME->GetPathN(m_sName,"text") );
 	SET_XY_AND_ON_COMMAND( m_textPercent );
 	this->AddChild( &m_textPercent );
 
 	if( !PREFSMAN->m_bDancePointsForOni && PERCENT_USE_REMAINDER )
 	{
 		m_textPercentRemainder.SetName( ssprintf("PercentRemainderP%d",pn+1) );
-		m_textPercentRemainder.LoadFromNumbers( THEME->GetPathToN(m_sName + " remainder") );
+		m_textPercentRemainder.LoadFromFont( THEME->GetPathToN(m_sName + " remainder") );
 		SET_XY_AND_ON_COMMAND( m_textPercentRemainder );
 		m_textPercentRemainder.SetText( "456" );
 		this->AddChild( &m_textPercentRemainder );

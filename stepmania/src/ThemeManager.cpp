@@ -303,6 +303,9 @@ try_element_again:
 
 	if( asElementPaths.size() == 0 )
 	{
+		// HACK: have Numbers fall back to fonts.  Eventually Numbers will be removed.
+		if( category == Numbers )
+			return GetPathToRaw( sThemeName, Fonts, sClassName, sElement ) ;
 		return "";	// This isn't fatal.
 	}
 

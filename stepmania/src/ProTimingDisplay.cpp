@@ -13,7 +13,7 @@ static CachedThemeMetric	HIT_MINE_COMMAND	("ProTimingDisplay","HitMineCommand");
 
 ProTimingDisplay::ProTimingDisplay()
 {
-	m_Judgment.LoadFromNumbers( THEME->GetPathToN("ProTimingDisplay Judgment") );
+	m_Judgment.LoadFromFont( THEME->GetPathToN("ProTimingDisplay Judgment") );
 	m_Judgment.SetName( "Judgment" );
 	this->AddChild( &m_Judgment );
 

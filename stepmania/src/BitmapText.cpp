@@ -86,14 +86,20 @@ BitmapText::~BitmapText()
 
 bool BitmapText::LoadFromFont( CString sFontFilePath )
 {
-	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFontName(%s)", sFontFilePath.c_str()) );
+	CHECKPOINT_M( ssprintf("BitmapText::LoadFromFont(%s)", sFontFilePath.c_str()) );
+
+	// if we're called with a non-ini file, then we're trying to load a 5x3 numbers graphic
+	bool bIsNumbers = GetExtension(sFontFilePath).CompareNoCase("ini")!=0;
+	if( bIsNumbers )
+	{
+		return LoadFromTextureAndChars( sFontFilePath, "0123456789%. :x" );
+	}
 
 	if( m_pFont ) {
 		FONT->UnloadFont( m_pFont );
 		m_pFont = NULL;
 	}
 
-	// load font
 	m_pFont = FONT->LoadFont( sFontFilePath );
 
 	BuildChars();

@@ -30,7 +30,7 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	this->AddChild( &m_sprFrame );
 
 	// init the text
-	m_text.LoadFromNumbers( THEME->GetPathToN("ScoreDisplayNormal") );
+	m_text.LoadFromFont( THEME->GetPathToN("ScoreDisplayNormal") );
 	m_text.SetShadowLength( 0 );
 
 	m_iScore = 0;

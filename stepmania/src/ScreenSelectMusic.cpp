@@ -206,12 +206,12 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_textSongOptions );
 
 	m_textNumSongs.SetName( "NumSongs" );
-	m_textNumSongs.LoadFromNumbers( THEME->GetPathN(m_sName,"num songs") );
+	m_textNumSongs.LoadFromFont( THEME->GetPathN(m_sName,"num songs") );
 	SET_XY( m_textNumSongs );
 	this->AddChild( &m_textNumSongs );
 
 	m_textTotalTime.SetName( "TotalTime" );
-	m_textTotalTime.LoadFromNumbers( THEME->GetPathN(m_sName,"total time") );
+	m_textTotalTime.LoadFromFont( THEME->GetPathN(m_sName,"total time") );
 	SET_XY( m_textTotalTime );
 	this->AddChild( &m_textTotalTime );
 
@@ -290,7 +290,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
-		m_textHighScore[p].LoadFromNumbers( THEME->GetPathN(m_sName,"score") );
+		m_textHighScore[p].LoadFromFont( THEME->GetPathN(m_sName,"score") );
 		m_textHighScore[p].SetShadowLength( 0 );
 		m_textHighScore[p].SetDiffuse( PlayerToColor(p) );
 		SET_XY( m_textHighScore[p] );

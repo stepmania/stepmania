@@ -83,12 +83,12 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : ScreenWithMenuEle
 	m_sprBannerFrame.SetXY( BANNER_FRAME_X, BANNER_FRAME_Y );
 	this->AddChild( &m_sprBannerFrame );
 
-	m_textNumSongs.LoadFromNumbers( THEME->GetPathToN("ScreenSelectCourse num songs") );
+	m_textNumSongs.LoadFromFont( THEME->GetPathToN("ScreenSelectCourse num songs") );
 	m_textNumSongs.SetShadowLength( 0 );
 	m_textNumSongs.SetXY( STAGES_X, STAGES_Y );
 	this->AddChild( &m_textNumSongs );
 
-	m_textTime.LoadFromNumbers( THEME->GetPathToN("ScreenSelectCourse total time") );
+	m_textTime.LoadFromFont( THEME->GetPathToN("ScreenSelectCourse total time") );
 	m_textTime.SetShadowLength( 0 );
 	m_textTime.SetXY( TIME_X, TIME_Y );
 	this->AddChild( &m_textTime );

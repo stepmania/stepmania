@@ -90,7 +90,7 @@ void DifficultyMeter::Load()
 	if( SHOW_METER )
 	{
 		m_textMeter.SetName( "Meter" );
-		m_textMeter.LoadFromNumbers( THEME->GetPathToN( ssprintf("%s meter", m_sName.c_str())) );
+		m_textMeter.LoadFromFont( THEME->GetPathToN( ssprintf("%s meter", m_sName.c_str())) );
 		SET_XY_AND_ON_COMMAND( m_textMeter );
 		this->AddChild( &m_textMeter );
 	}

@@ -457,7 +457,7 @@ void ScreenGameplay::Init()
 	this->AddChild( &m_meterSongPosition );
 
 
-	m_MaxCombo.LoadFromNumbers( THEME->GetPathToN("ScreenGameplay max combo") );
+	m_MaxCombo.LoadFromFont( THEME->GetPathToN("ScreenGameplay max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
 	SET_XY( m_MaxCombo );
 	m_MaxCombo.SetText( ssprintf("%d", g_CurStageStats.iMaxCombo[GAMESTATE->m_MasterPlayerNumber]) ); // TODO: Make this work for both players
@@ -524,7 +524,7 @@ void ScreenGameplay::Init()
 	
 	FOREACH_EnabledPlayer(p)
 	{
-		m_textCourseSongNumber[p].LoadFromNumbers( THEME->GetPathToN("ScreenGameplay song num") );
+		m_textCourseSongNumber[p].LoadFromFont( THEME->GetPathToN("ScreenGameplay song num") );
 		m_textCourseSongNumber[p].SetShadowLength( 0 );
 		m_textCourseSongNumber[p].SetName( ssprintf("SongNumberP%d%s",p+1,bExtra?"Extra":"") );
 		SET_XY( m_textCourseSongNumber[p] );
