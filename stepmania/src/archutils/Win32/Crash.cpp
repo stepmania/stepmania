@@ -296,15 +296,12 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	DoSave(pExc);
 
 	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
-	int ret;
 	{
 		TCHAR szFullAppPath[MAX_PATH];
 		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
 		HINSTANCE handle = LoadLibrary(szFullAppPath);
 
-		/* Returns TRUE if we want to pop up the standard crash box;
-		 * FALSE if we should just die. */
-		ret = DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL,
+		DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL,
 			CrashDlgProc, (LPARAM)pExc);
 	}
 
@@ -313,8 +310,6 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	InHere = false;
 
 	SetUnhandledExceptionFilter(NULL);
-	if(ret)
-		UnhandledExceptionFilter(pExc);
 
 	return EXCEPTION_EXECUTE_HANDLER;
 }
@@ -439,7 +434,7 @@ static bool IsValidCall(char *buf, int len) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
+/*
 struct ModuleInfo {
 	const char *name;
 	unsigned long base, size;
@@ -458,7 +453,7 @@ typedef BOOL (__stdcall *PGETMODULEINFORMATION)(HANDLE, HMODULE, Win32ModuleInfo
 typedef HANDLE (__stdcall *PCREATETOOLHELP32SNAPSHOT)(DWORD, DWORD);
 typedef BOOL (WINAPI *PMODULE32FIRST)(HANDLE, LPMODULEENTRY32);
 typedef BOOL (WINAPI *PMODULE32NEXT)(HANDLE, LPMODULEENTRY32);
-/*
+
 static ModuleInfo *CrashGetModules(void *&ptr) {
 	void *pMem = VirtualAlloc(NULL, 65536, MEM_COMMIT, PAGE_READWRITE);
 
@@ -603,7 +598,7 @@ static ModuleInfo *CrashGetModules(void *&ptr) {
 
 typedef unsigned short ushort;
 typedef unsigned long ulong;
-
+/*
 struct PEHeader {
 	ulong		signature;
 	ushort		machine;
@@ -717,7 +712,7 @@ struct PE32PlusOptionalHeader {
 	ulong		export_size;			// 116
 };
 
-/*
+
 static const char *CrashLookupExport(HMODULE hmod, unsigned long addr, unsigned long &fnbase) {
 	char *pBase = (char *)hmod;
 
@@ -1054,8 +1049,8 @@ long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int
 }
 
 ///////////////////////////////////////////////////////////////////////////
-#include "dbghelp.h"
-#pragma comment(lib, "dbghelp.lib")
+#include "ddk/dbghelp.h"
+#pragma comment(lib, "ddk/dbghelp.lib")
 
 static bool InitDbghelp()
 {
