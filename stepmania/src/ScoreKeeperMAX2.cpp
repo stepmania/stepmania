@@ -163,7 +163,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 			m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
 			break;
 		case PrefsManager::SCORING_5TH:
-			m_iMaxPossiblePoints = (iMeter + 1) * 5000000 * iLengthMultiplier;
+			m_iMaxPossiblePoints = (iMeter * iLengthMultiplier + 1) * 5000000;
 			break;
 		default:
 			ASSERT(0);
