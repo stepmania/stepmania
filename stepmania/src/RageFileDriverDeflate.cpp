@@ -83,6 +83,12 @@ RageFileObjInflate::~RageFileObjInflate()
 
 int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 {
+	/* Don't read more than m_iUncompressedSize of data.  If we don't do this, it's
+	 * possible for a .gz to contain a header claiming 500k of data, but to actually
+	 * contain much more deflated data. */
+	ASSERT_M( m_iFilePos <= m_iUncompressedSize, ssprintf("%i, %i",m_iFilePos, m_iUncompressedSize) );
+	bytes = min( bytes, size_t(m_iUncompressedSize-m_iFilePos) );
+
 	bool done=false;
 	int ret = 0;
 	while( bytes && !done )
