@@ -129,7 +129,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	const CString sExt = GetExtension(ID.filename);
 
 	RageTexture* pTexture;
-	if( sExt == ".avi" || sExt == ".mpg" || sExt == ".mpeg" )
+	if( sExt == "avi" || sExt == "mpg" || sExt == "mpeg" )
 		pTexture = MakeRageMovieTexture( ID );
 	else
 		pTexture = new RageBitmapTexture( ID );
