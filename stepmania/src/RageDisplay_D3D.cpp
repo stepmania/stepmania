@@ -19,7 +19,13 @@
 #include "PrefsManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+
+#if !defined(XBOX)
 #include "archutils/Win32/GraphicsWindow.h"
+#else
+#include "archutils/Xbox/GraphicsWindow.h"
+#endif
+
 #include "ScreenDimensions.h"
 
 #include "arch/arch.h"
@@ -475,18 +481,19 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
 		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
-
+#if !defined(XBOX)
 	if( g_hWndMain == NULL )
 		GraphicsWindow::CreateGraphicsWindow( p );
-
-#if defined(XBOX)
+#else
 	p.windowed = false;
 #endif
 
 	/* Set up and display the window before setting up D3D.  If we don't do this,
 	 * then setting up a fullscreen window (when we're not coming from windowed)
 	 * causes all other windows on the system to be resized to the new resolution. */
+#if !defined(XBOX)
 	GraphicsWindow::ConfigureGraphicsWindow( p );
+#endif
 
 	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 
@@ -496,7 +503,11 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	g_d3dpp.BackBufferCount			=	1;
 	g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
 	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
+#if !defined(XBOX)
 	g_d3dpp.hDeviceWindow			=	g_hWndMain;
+#else
+	g_d3dpp.hDeviceWindow			=	NULL;
+#endif
 	g_d3dpp.Windowed				=	p.windowed;
 	g_d3dpp.EnableAutoDepthStencil	=	TRUE;
 	g_d3dpp.AutoDepthStencilFormat	=	D3DFMT_D16;
