@@ -32,9 +32,9 @@ public:
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore );
 	virtual void OnDancePointsChange();	// look in GAMESTATE and update the display
-	virtual bool IsInDanger();
-	virtual bool IsHot();
-	virtual bool IsFailing();
+	virtual bool IsInDanger() const;
+	virtual bool IsHot() const;
+	virtual bool IsFailing() const;
 
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) { };
 

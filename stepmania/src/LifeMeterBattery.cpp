@@ -140,17 +140,17 @@ void LifeMeterBattery::OnDancePointsChange()
 }
 
 
-bool LifeMeterBattery::IsInDanger()
+bool LifeMeterBattery::IsInDanger() const
 {
 	return false;
 }
 
-bool LifeMeterBattery::IsHot()
+bool LifeMeterBattery::IsHot() const
 {
 	return false;
 }
 
-bool LifeMeterBattery::IsFailing()
+bool LifeMeterBattery::IsFailing() const
 {
 	return GAMESTATE->m_CurStageStats.bFailedEarlier[m_PlayerNumber];
 }

@@ -31,9 +31,9 @@ public:
 	 * received for the initial tap note. */
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore ) = 0;
 	virtual void OnDancePointsChange() = 0;	// look in GAMESTATE and update the display
-	virtual bool IsInDanger() = 0;
-	virtual bool IsHot() = 0;
-	virtual bool IsFailing() = 0;
+	virtual bool IsInDanger() const = 0;
+	virtual bool IsHot() const = 0;
+	virtual bool IsFailing() const = 0;
 
 	virtual float GetLife() const { return 0; } // for cosmetic use only
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) = 0;

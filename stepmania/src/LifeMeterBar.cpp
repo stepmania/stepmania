@@ -412,17 +412,17 @@ void LifeMeterBar::AfterLifeChanged()
 
 }
 
-bool LifeMeterBar::IsHot() 
+bool LifeMeterBar::IsHot() const
 { 
 	return m_fLifePercentage >= 1; 
 }
 
-bool LifeMeterBar::IsInDanger() 
+bool LifeMeterBar::IsInDanger() const
 { 
 	return m_fLifePercentage < g_fDangerThreshold; 
 }
 
-bool LifeMeterBar::IsFailing() 
+bool LifeMeterBar::IsFailing() const
 { 
 	return m_fLifePercentage <= 0; 
 }

@@ -32,9 +32,9 @@ public:
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore  );
 	virtual void AfterLifeChanged();
 	virtual void OnDancePointsChange() {};	// this life meter doesn't care
-	virtual bool IsInDanger();
-	virtual bool IsHot();
-	virtual bool IsFailing();
+	virtual bool IsInDanger() const;
+	virtual bool IsHot() const;
+	virtual bool IsFailing() const;
 	virtual float GetLife() const { return m_fLifePercentage; }
 
 	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
