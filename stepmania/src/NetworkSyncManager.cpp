@@ -725,11 +725,10 @@ void NetworkSyncManager::SelectUserSong()
 
 void NetworkSyncManager::SendSMOnline( )
 {
-	m_packet.size = m_SMOnlinePacket.size + 1;
-	m_packet.Position = 0;
-	memcpy( (m_packet.Data + 1), m_SMOnlinePacket.Data, m_SMOnlinePacket.size );
+	m_packet.Position = m_SMOnlinePacket.Position + 1;
+	memcpy( (m_packet.Data + 1), m_SMOnlinePacket.Data, m_SMOnlinePacket.Position );
 	m_packet.Data[0] = NSCSMOnline;
-	NetPlayerClient->SendPack( (char*)&m_packet.Data , m_packet.size );
+	NetPlayerClient->SendPack( (char*)&m_packet.Data , m_packet.Position );
 }
 
 //Packet functions
