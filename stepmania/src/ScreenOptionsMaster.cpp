@@ -273,7 +273,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 	ASSERT( (int) OptionRowHandlers.size() == NumRows );
 
-	CHECKPOINT;
 	Init( im, m_OptionRowAlloc, NumRows, Explanations );
 }
 
@@ -313,6 +312,7 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 			}
 		}
 
+		ASSERT( ret != -1 );
 		return ret;
 	}
 	case ROW_STEP:
@@ -361,7 +361,6 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 
 void ScreenOptionsMaster::ImportOptions()
 {
-	CHECKPOINT;
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
