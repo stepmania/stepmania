@@ -575,6 +575,7 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode - 1) % (int)SelectModes);
 	if ( (int) m_SelectMode < 0) 
 		m_SelectMode = (NetScreenSelectModes) (SelectModes - 1);
+	m_rectSelection.FinishTweening( );
 	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
@@ -582,6 +583,7 @@ void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type 
 {
 	m_soundChangeSel.Play();
 	m_SelectMode = (NetScreenSelectModes) ( ( (int)m_SelectMode + 1) % (int)SelectModes);
+	m_rectSelection.FinishTweening( );
 	COMMAND( m_rectSelection,  ssprintf("To%d", m_SelectMode+1 ) );
 }
 
