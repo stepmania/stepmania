@@ -373,7 +373,7 @@ CString SetD3DParams( bool &bNewDeviceOut )
 			D3DADAPTER_DEFAULT, 
 			D3DDEVTYPE_HAL, 
 #if !defined(XBOX)
-			g_hWndMain,
+			GraphicsWindow::GetHwnd(),
 			D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED,
 #else
 			NULL,
@@ -486,7 +486,7 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
 #if !defined(XBOX)
-	if( g_hWndMain == NULL )
+	if( GraphicsWindow::GetHwnd() == NULL )
 		GraphicsWindow::CreateGraphicsWindow( p );
 #else
 	p.windowed = false;
@@ -506,7 +506,7 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
 	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
 #if !defined(XBOX)
-	g_d3dpp.hDeviceWindow			=	g_hWndMain;
+	g_d3dpp.hDeviceWindow			=	GraphicsWindow::GetHwnd();
 #else
 	g_d3dpp.hDeviceWindow			=	NULL;
 #endif
