@@ -79,9 +79,6 @@ static bool HaveAllCharAnimations()
 
 ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 {
-	/* We do this ourself. */
-	SOUND->HandleSongTimer( false );
-
 	m_iPerfects = 0;
 	m_iNumPerfects = NUM_PERFECTS;
 
@@ -295,6 +292,13 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
+	case SM_GainFocus:
+		/* We do this ourself. */
+		SOUND->HandleSongTimer( false );
+		break;
+	case SM_LoseFocus:
+		SOUND->HandleSongTimer( true );
+		break;
 	case SM_GoToNextScreen:
 		GAMESTATE->Reset();
 		break;
