@@ -1492,6 +1492,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		case PLAY_MODE_ARCADE:
 		case PLAY_MODE_BATTLE:
 			SCREENMAN->SetNewScreen( "ScreenEvaluationStage" );
+			break;
 		case PLAY_MODE_NONSTOP:
 		case PLAY_MODE_ONI:
 		case PLAY_MODE_ENDLESS:
