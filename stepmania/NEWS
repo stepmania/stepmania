@@ -21,6 +21,8 @@ BUG FIX:  Super-shuffle fixed (now doesn't add extra notes)
 NEW FEATURE: Added WIDE transform (changes notes on beats to jumps)
 NEW FEATURE: Added BIG transform (strategically inserts 8ths)
 NEW FEATURE: Added QUICK transform (strategically inserts 16ths)
+NEW FEATURE: Added SKIPPY transform
+BUG FIX:  Fixed song seeking in editor at non 1x music rates
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

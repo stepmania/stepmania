@@ -13,10 +13,8 @@
 #include "NoteData.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "ArrowEffects.h"
-#include "PrefsManager.h"
-#include "GameConstantsAndTypes.h"
+#include "GameState.h"
 #include "RageException.h"
 #include "GameState.h"
 #include "math.h"
@@ -881,7 +879,7 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 			iTakeFromTrack[t] = in.GetNumTracks()-t-1;
 		break;
 	case shuffle:
-	case super_shuffle:		// use this code to shuffle the HoldNotes
+	case super_shuffle:		// use shuffle code to mix up HoldNotes without creating impossible patterns
 		{
 			vector<int> aiTracksLeftToMap;
 			for( t=0; t<in.GetNumTracks(); t++ )
@@ -915,7 +913,7 @@ void NoteDataUtil::Turn( NoteData &in, TurnType tt )
 	in.CopyAll( &tempNoteData );		// copy note data from newData back into this
 	in.Convert2sAnd3sToHoldNotes();
 
-	if( tt == PlayerOptions::TURN_SUPER_SHUFFLE )
+	if( tt == super_shuffle )
 		SuperShuffleTaps( in );
 }
 
@@ -982,8 +980,9 @@ void NoteDataUtil::SwapSides( NoteData &in )
 		for( int t=0; t<in.GetNumTracks()/2; t++ )
 		{
 			int iTrackEarlier = t;
-			int iTrackLater = in.GetNumTracks()-1-t;
+			int iTrackLater = t + in.GetNumTracks()/2 + in.GetNumTracks()%2;
 
+			// swap
 			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
 			TapNote tnLater = in.GetTapNote(iTrackLater, r);
 			in.SetTapNote(iTrackEarlier, r, tnLater);
@@ -1177,4 +1176,123 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType n
 	}
 
 	//Convert2sAnd3sToHoldNotes();
+}
+
+
+void NoteDataUtil::CopyLeftToRight( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+	{
+		for( int t=0; t<in.GetNumTracks()/2; t++ )
+		{
+			int iTrackEarlier = t;
+			int iTrackLater = in.GetNumTracks()-1-t;
+
+			// swap
+			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
+			TapNote tnLater = in.GetTapNote(iTrackLater, r);
+//			in.SetTapNote(iTrackEarlier, r, tnLater);
+			in.SetTapNote(iTrackLater, r, tnEarlier);
+		}
+	}
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::CopyRightToLeft( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+	{
+		for( int t=0; t<in.GetNumTracks()/2; t++ )
+		{
+			int iTrackEarlier = t;
+			int iTrackLater = in.GetNumTracks()-1-t;
+
+			// swap
+			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
+			TapNote tnLater = in.GetTapNote(iTrackLater, r);
+			in.SetTapNote(iTrackEarlier, r, tnLater);
+//			in.SetTapNote(iTrackLater, r, tnEarlier);
+		}
+	}
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::ClearLeft( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+		for( int t=0; t<in.GetNumTracks()/2; t++ )
+			in.SetTapNote(t, r, TAP_EMPTY);
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::ClearRight( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+		for( int t=(in.GetNumTracks()+1)/2; t<in.GetNumTracks(); t++ )
+			in.SetTapNote(t, r, TAP_EMPTY);
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::CollapseToOne( NoteData &in )
+{
+	in.ConvertHoldNotesTo2sAnd3s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+		for( int t=0; t<in.GetNumTracks(); t++ )
+			if( in.GetTapNote(t,r) != TAP_EMPTY )
+			{
+				in.SetTapNote(0, r, in.GetTapNote(t,r));
+				in.SetTapNote(t, r, TAP_EMPTY);
+			}
+	in.Convert2sAnd3sToHoldNotes();
+}
+
+void NoteDataUtil::ShiftLeft( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+	{
+		for( int t=0; t<in.GetNumTracks()-1; t++ )	// in.GetNumTracks()-1 times
+		{
+			int iTrackEarlier = t;
+			int iTrackLater = (t+1) % in.GetNumTracks();
+
+			// swap
+			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
+			TapNote tnLater = in.GetTapNote(iTrackLater, r);
+			in.SetTapNote(iTrackEarlier, r, tnLater);
+			in.SetTapNote(iTrackLater, r, tnEarlier);
+		}
+	}
+	in.Convert4sToHoldNotes();
+}
+
+void NoteDataUtil::ShiftRight( NoteData &in )
+{
+	in.ConvertHoldNotesTo4s();
+	int max_row = in.GetLastRow();
+	for( int r=0; r<=max_row; r++ )
+	{
+		for( int t=in.GetNumTracks()-1; t>0; t-- )	// in.GetNumTracks()-1 times
+		{
+			int iTrackEarlier = t;
+			int iTrackLater = (t+1) % in.GetNumTracks();
+
+			// swap
+			TapNote tnEarlier = in.GetTapNote(iTrackEarlier, r);
+			TapNote tnLater = in.GetTapNote(iTrackLater, r);
+			in.SetTapNote(iTrackEarlier, r, tnLater);
+			in.SetTapNote(iTrackLater, r, tnEarlier);
+		}
+	}
+	in.Convert4sToHoldNotes();
 }

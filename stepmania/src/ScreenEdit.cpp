@@ -148,8 +148,9 @@ MiniMenuDefinition g_AreaMenu =
 		{ "Paste at begin marker",	true, 1, 0, {""} },
 		{ "Clear",					true, 1, 0, {""} },
 		{ "Quantize",				true, NUM_NOTE_TYPES, 0, {"4TH","8TH","12TH","16TH","24TH","32ND"} },
-		{ "Turn",					true, ScreenEdit::NUM_TURN_TYPES, 0, {"Left","Right","Mirror","Shuffle","Super Shuffle","Backwards","Swap Sides"} },
+		{ "Turn",					true, ScreenEdit::NUM_TURN_TYPES, 0, {"Left","Right","Mirror","Shuffle","Super Shuffle"} },
 		{ "Transform",				true, ScreenEdit::NUM_TRANSFORM_TYPES, 0, {"Little","Wide","Big","Quick","Skippy"} },
+		{ "Alter",					true, ScreenEdit::NUM_ALTER_TYPES, 0, {"Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Shift Left","Shift Right"} },
 		{ "Play selection",			true, 1, 0, {""} },
 		{ "Record in selection",	true, 1, 0, {""} },
 		{ "Insert blank beat and shift down", true, 1, 0, {""} },
@@ -766,7 +767,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.lines[paste_at_begin_marker].bEnabled = this->m_Clipboard.GetLastBeat() != 0 && m_NoteFieldEdit.m_fBeginMarker!=-1;
 			g_AreaMenu.lines[clear].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[quantize].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[turn].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[transform].bEnabled = bAreaSelected;
+			g_AreaMenu.lines[alter].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[play].bEnabled = bAreaSelected;
 			g_AreaMenu.lines[record].bEnabled = bAreaSelected;
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
@@ -1296,8 +1299,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case mirror:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::mirror );		break;
 				case shuffle:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::shuffle );		break;
 				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::super_shuffle );	break;
-				case backwards:		NoteDataUtil::Backwards( m_Clipboard );							break;
-				case swap_sides:	NoteDataUtil::SwapSides( m_Clipboard );							break;
 				default:		ASSERT(0);
 				}
 
@@ -1316,6 +1317,28 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case big:			NoteDataUtil::Big( m_Clipboard );		break;
 				case quick:			NoteDataUtil::Quick( m_Clipboard );		break;
 				case skippy:		NoteDataUtil::Skippy( m_Clipboard );	break;
+				default:		ASSERT(0);
+				}
+
+				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
+			}
+			break;
+		case alter:
+			{
+				HandleAreaMenuChoice( cut, NULL );
+				
+				AlterType at = (AlterType)iAnswers[c];
+				switch( at )
+				{
+				case backwards:				NoteDataUtil::Backwards( m_Clipboard );			break;
+				case swap_sides:			NoteDataUtil::SwapSides( m_Clipboard );			break;
+				case copy_left_to_right:	NoteDataUtil::CopyLeftToRight( m_Clipboard );	break;
+				case copy_right_to_left:	NoteDataUtil::CopyRightToLeft( m_Clipboard );	break;
+				case clear_left:			NoteDataUtil::ClearLeft( m_Clipboard );			break;
+				case clear_right:			NoteDataUtil::ClearRight( m_Clipboard );		break;
+				case collapse_to_one:		NoteDataUtil::CollapseToOne( m_Clipboard );		break;
+				case shift_left:			NoteDataUtil::ShiftLeft( m_Clipboard );			break;
+				case shift_right:			NoteDataUtil::ShiftRight( m_Clipboard );		break;
 				default:		ASSERT(0);
 				}
 

@@ -165,10 +165,19 @@ namespace NoteDataUtil
 	void Skippy( NoteData &in );
 	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bNewTapSameAsBeginning );
 	void SuperShuffleTaps( NoteData &in );
+
 	void Backwards( NoteData &in );
 	void SwapSides( NoteData &in );
+	void CopyLeftToRight( NoteData &in );
+	void CopyRightToLeft( NoteData &in );
+	void ClearLeft( NoteData &in );
+	void ClearRight( NoteData &in );
+	void CollapseToOne( NoteData &in );
+	void ShiftLeft( NoteData &in );
+	void ShiftRight( NoteData &in );
 
 	void SnapToNearestNoteType( NoteData &in, NoteType nt1, NoteType nt2, float fBeginBeat, float fEndBeat );
+
 	inline void SnapToNearestNoteType( NoteData &in, NoteType nt, float fBeginBeat, float fEndBeat ) { SnapToNearestNoteType( in, nt, (NoteType)-1, fBeginBeat, fEndBeat ); }
 };
 
