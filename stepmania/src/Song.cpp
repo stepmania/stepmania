@@ -28,6 +28,7 @@
 #include "TitleSubstitution.h"
 #include "BannerCache.h"
 #include "Sprite.h"
+#include "PrefsManager.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -148,13 +149,15 @@ void Song::AddLyricSegment( LyricSegment seg )
 float Song::GetMusicStartBeat() const
 {
 	float fBPS = m_BPMSegments[0].m_fBPM / 60.0f; 
-	return -m_fBeat0OffsetInSeconds*fBPS; 
+	return -(PREFSMAN->m_fGlobalOffsetSeconds+m_fBeat0OffsetInSeconds)*fBPS; 
 };
 
 void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const
 {
 //	LOG->Trace( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 	// This function is a nightmare.  Don't even try to understand it. :-)
+
+	fElapsedTime += PREFSMAN->m_fGlobalOffsetSeconds;
 
 	fElapsedTime += m_fBeat0OffsetInSeconds;
 
@@ -225,7 +228,9 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 float Song::GetElapsedTimeFromBeat( float fBeat ) const
 {
-	float fElapsedTime = -m_fBeat0OffsetInSeconds;
+	float fElapsedTime = 0;
+	fElapsedTime -= PREFSMAN->m_fGlobalOffsetSeconds;
+	fElapsedTime -= m_fBeat0OffsetInSeconds;
 
 	for( unsigned j=0; j<m_StopSegments.size(); j++ )	// foreach freeze
 	{

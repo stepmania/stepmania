@@ -97,6 +97,7 @@ PrefsManager::PrefsManager()
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
 	m_bAutoMapJoysticks = true;
+	m_fGlobalOffsetSeconds = 0;
 	
 	/* DDR Extreme-style extra stage support.
 	 * Default off so people used to the current behavior (or those with extra
@@ -213,6 +214,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValue ( "Options", "LastSeenMemory",				m_iLastSeenMemory );
 #endif
 	ini.GetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
+	ini.GetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
 
 	m_asAdditionalSongFolders.clear();
 	CString sAdditionalSongFolders;
@@ -304,6 +306,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValue ( "Options", "LastSeenMemory",				m_iLastSeenMemory );
 #endif
 	ini.SetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
+	ini.SetValueF( "Options", "GlobalOffsetSeconds",		m_fGlobalOffsetSeconds );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who
