@@ -54,7 +54,7 @@ public:
 		bool bExtra = GAMESTATE->IsExtraStage()||GAMESTATE->IsExtraStage2();
 
 		m_quadMask.SetDiffuse( RageColor(0,0,0,0) );
-		m_quadMask.SetZ( -1 );
+		m_quadMask.SetZ( 1 );
 
 		CString sGraphicPath;
 		

@@ -151,7 +151,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_textExplanation1.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textExplanation1.SetDiffuse( RageColor(0,0.7f,0,1) );
 	m_textExplanation1.SetXY( EXPLANATION1_X, EXPLANATION1_Y );
-	m_textExplanation1.SetZ( -1 );
+	m_textExplanation1.SetZ( 1 );
 	m_textExplanation1.SetZoomX( EXPLANATION1_ZOOM_X );
 	m_textExplanation1.SetZoomY( EXPLANATION1_ZOOM_Y );
 	m_textExplanation1.SetHorizAlign( BitmapText::align_left );
@@ -160,7 +160,7 @@ ScreenSelectStyle5th::ScreenSelectStyle5th()
 	m_textExplanation2.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textExplanation2.SetDiffuse( RageColor(0,0.7f,0,1) );
 	m_textExplanation2.SetXY( EXPLANATION2_X, EXPLANATION2_Y );
-	m_textExplanation2.SetZ( -1 );
+	m_textExplanation2.SetZ( 1 );
 	m_textExplanation2.SetZoomX( EXPLANATION2_ZOOM_X );
 	m_textExplanation2.SetZoomY( EXPLANATION2_ZOOM_Y );
 	m_textExplanation2.SetHorizAlign( BitmapText::align_left );

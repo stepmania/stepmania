@@ -129,7 +129,7 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 	m_textHoldForOptions.SetZoom( 1 );
 	m_textHoldForOptions.SetZoomY( 0 );
 	m_textHoldForOptions.SetDiffuse( RageColor(1,1,1,0) );
-	m_textHoldForOptions.SetZ( -2 );
+	m_textHoldForOptions.SetZ( 2 );
 	this->AddChild( &m_textHoldForOptions );
 
 
