@@ -4,7 +4,7 @@
 #include "RageFile.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
-
+#include "IniFile.h" // Added by Ym2413a, needed for code changes.
 
 RageModelGeometry::RageModelGeometry ()
 {
@@ -87,6 +87,24 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 
 	RageVec3ClearBounds( m_vMins, m_vMaxs );
 
+	//Ym2413a Added: Start
+	//Vector scaling loader.
+	float fXScale;	fXScale = 1;
+	float fYScale;	fYScale = 1;
+	float fZScale;	fZScale = 1;
+
+	IniFile ini;
+	if( ini.ReadFile( sDir+"character.ini" ) )
+	{
+		if ( !ini.GetValue( "Attributes", "ScaleX", fXScale ) ) {
+			fXScale = 1; }
+		if ( !ini.GetValue( "Attributes", "ScaleY", fYScale ) ) {
+			fYScale = 1; }
+		if ( !ini.GetValue( "Attributes", "ScaleZ", fZScale ) ) {
+			fZScale = 1; }
+	}
+	//Ym2413a Added: End
+
     while( f.GetLine( sLine ) > 0 )
     {
 		iLineNum++;
@@ -159,6 +177,12 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
                     {
 						THROW
                     }
+				//Ym2413a Added: Start
+				//Perform rescaling of model vectors.
+					v.p[0] = v.p[0]*fXScale;
+					v.p[1] = v.p[1]*fYScale;
+					v.p[2] = v.p[2]*fZScale;
+				//Ym2413a Added: End
 
 //                  vertex.nFlags = nFlags;
                     v.bone = (uint8_t) nIndex;
