@@ -440,7 +440,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
 		{
-			m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Numbers","ScreenGameplay survive time") );
+			m_textSurviveTime.LoadFromFont( THEME->GetPathTo("Fonts","ScreenGameplay survive time") );
 			m_textSurviveTime.EnableShadow( false );
 			m_textSurviveTime.SetXY( SURVIVE_TIME_X, SURVIVE_TIME_Y );
 			m_textSurviveTime.SetText( "" );
@@ -1470,7 +1470,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				if( GAMESTATE->IsPlayerEnabled(p) )
 					fMaxSurviveSeconds = max( fMaxSurviveSeconds, GAMESTATE->m_CurStageStats.fAliveSeconds[p] );
 			ASSERT( fMaxSurviveSeconds > 0 );
-			m_textSurviveTime.SetText( SecondsToTime(fMaxSurviveSeconds) );
+			m_textSurviveTime.SetText( "TIME: " + SecondsToTime(fMaxSurviveSeconds) );
 			m_textSurviveTime.BeginTweening( 0.3f );	// sleep
 			m_textSurviveTime.BeginTweening( 0.3f );	// fade in
 			m_textSurviveTime.SetTweenDiffuse( RageColor(1,1,1,1) );
