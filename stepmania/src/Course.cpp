@@ -77,24 +77,27 @@ Song *Course::FindSong(CString sGroup, CString sSong) const
 	{
 		Song* pSong = apSongs[i];
 
-		if( sGroup.CompareNoCase(pSong->m_sGroupName) == 0)
-		{
-			CString sDir = pSong->GetSongDir();
-			sDir.Replace("\\","/");
-			CStringArray bits;
-			split( sDir, "/", bits );
-			CString sLastBit = bits[bits.size()-1];
-			CString sFullTitle = pSong->GetFullTranslitTitle();
+		if( sGroup.size() && sGroup.CompareNoCase(pSong->m_sGroupName) != 0)
+			continue; /* wrong group */
 
-			if( sSong.CompareNoCase(sLastBit)==0 || sSong.CompareNoCase(sFullTitle)==0 )	// match on song dir or title (ala DWI)
-				return pSong;
-		}
+		CString sDir = pSong->GetSongDir();
+		sDir.Replace("\\","/");
+		CStringArray bits;
+		split( sDir, "/", bits );
+		ASSERT(bits.size() >= 2); /* should always have at least two parts */
+		CString sLastBit = bits[bits.size()-1];
+
+		// match on song dir or title (ala DWI)
+		if( sSong.CompareNoCase(sLastBit)==0 )
+			return pSong;
+		if( sSong.CompareNoCase(pSong->GetFullTranslitTitle())==0 )
+			return pSong;
 	}
 
-	LOG->Trace( "Course file '%s' contains a song '%s/%s' that is not present",
-			    m_sPath.GetString(), sGroup.GetString(), sSong.GetString());
+	LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
+			m_sPath.GetString(), sGroup.GetString(), sGroup.size()? "/":"", sSong.GetString());
 
-	return NULL;
+	return NULL;	
 }
 
 void Course::LoadFromCRSFile( CString sPath )
@@ -189,10 +192,10 @@ void Course::LoadFromCRSFile( CString sPath )
 				sSong.Replace( "\\", "/" );
 				CStringArray bits;
 				split( sSong, "/", bits );
-				if( bits.size() == 2 )
-				{
+				if( bits.size() == 1 )
+					new_entry.pSong = FindSong( "", bits[0] );
+				else if( bits.size() == 2 )
 					new_entry.pSong = FindSong( bits[0], bits[1] );
-				}
 				else
 				{
 					LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that is invalid. "
