@@ -1,31 +1,33 @@
+REQUIREMENTS
+Mac OS X 10.3 or higher is required. The Mac OS X 10.2.7 SDK needs to be
+installed. (See NOTE.)
+XCode is required to build. Even though the stepmania project appears to
+be a ProjectBuilder project, it has been updated by XCode and no longer
+works with ProjectBuilder.
+
 BUILD
 The build process has been revised yet again.
 1. Download StepMania from sourceforge.
-2. Install StepMania and the libraries using the included installer
-3. Install ffmpeg by running the following commands from the terminal:
-cvs -z9 -d:pserver:anonymous@mplayerhq.hu:/cvsroot/ffmpeg login
-cvs -z9 -d:pserver:anonymous@mplayerhq.hu:/cvsroot/ffmpeg co ffmpeg
-cd ffmpeg
-./configure
-make
-make test
-su
-make install
-install -d /usr/local/lib
-install -m 644 libavcodec/libavcodec.a libavformat/libavformat.a /usr/local/lib
-install -d /usr/local/include/ffmpeg
-install -m 644 libavcodec/avcodec.h libavformat/avformat.h libavformat/avio.h \
-libavcodec/common.h libavformat/rtp.h libavformat/rtsp.h \
-libavformat/rtspcodes.h /usr/local/include/ffmpeg
-exit
-4. Cd to the PBProject directory enter: $ touch ver.cpp
-5. Build StepMania by running `xcodebuild -target stepmania' in the PBProject 
+2. Cd to the PBProject directory enter: $ touch ver.cpp
+3. Cd to Frameworks and unpack Frameworks.tgz by: $ tar zxf Frameworks.tgz
+4. Build StepMania by running `xcodebuild -target stepmania' in the PBProject 
 directory.
 
-NOTE to self: I added the symlink:
+INSTALL
+Build the installer, from the PBProject directory, run:
+$ xcodebuild -target BuildInstaller -target Installer
+Now copy the StepMania.app application from build to stepmania via:
+$ cp -r build/StepMania.app ..
+Next cd to the build directory and run the command:
+$ ./BuildInstaller ../scripts/installer.config Installer.app/Contents/Resources
+And at the prompt enter: ../..
+Now Installer.app is ready to be distributed.
+
+NOTE
+I added the symlink:
 ln -s /System/Library/Frameworks/OpenGL/Versions/A/Libraries/ \
 /Developer/SDKs/MacOSX10.2.7.sdk/System/Library/Frameworks/OpenGL/Versions/A/
-because Apple was stupid and screwed up that framework.
+because Apple was stupid and screwed up that framework in all of the SDKs.
 
 Steve Checkoway
 steve@cs.washington.edu
