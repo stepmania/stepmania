@@ -10,7 +10,6 @@
 -----------------------------------------------------------------------------
 */
 #include "ScreenAttract.h"
-#include "Style.h"
 #include "Sprite.h"
 #include "BitmapText.h"
 
@@ -20,11 +19,10 @@ class ScreenUnlock : public ScreenAttract
 {
 public:
 	ScreenUnlock();
+
 protected:
 	BitmapText PointsUntilNextUnlock;
 	vector<Sprite*> Unlocks;
 	vector<BitmapText*> item; // scrolling text
 	vector<Sprite*> ItemIcons;  // icons for scrolling text
-
-	void BreakLine(CString& line);			// used in scrollingtext
 };

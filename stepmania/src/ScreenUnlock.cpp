@@ -19,6 +19,23 @@
 #include "SongManager.h"
 #include "ActorUtil.h"
 #include "song.h"
+#include "Course.h"
+
+#define NUM_UNLOCKS					THEME->GetMetricI("ScreenUnlock", "NumUnlocks")
+#define UNLOCK_TEXT_SCROLL_X		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollX");
+#define UNLOCK_TEXT_SCROLL_START_Y	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollStartY")
+#define UNLOCK_TEXT_SCROLL_END_Y	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollEndY")
+#define UNLOCK_TEXT_SCROLL_ZOOM		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollZoom")
+#define UNLOCK_TEXT_SCROLL_ROWS		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollRows")
+#define UNLOCK_TEXT_SCROLL_MAX_WIDTH THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollMaxWidth")
+#define UNLOCK_TEXT_SCROLL_ICON_X		THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconX")
+#define UNLOCK_TEXT_SCROLL_ICON_SIZE	THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconSize")
+#define DISPLAYED_SONG(i)			THEME->GetMetric ("ScreenUnlock", ssprintf("Unlock%dSong", i))
+#define UNLOCK_TEXT_SCROLL			THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll")
+#define TYPE_TO_DISPLAY				THEME->GetMetric("ScreenUnlock", "TypeOfPointsToDisplay")
+#define ICON_COMMAND				THEME->GetMetric ("ScreenUnlock", "UnlockIconCommand")
+#define TIME_TO_DISPLAY		THEME->GetMetricF("ScreenUnlock", "TimeToDisplay")
+#define POINTS_ZOOM			THEME->GetMetricF("ScreenUnlock","PointsZoom")
 
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
@@ -27,16 +44,13 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
 
 	// get unlock data first
-
 	CString sDP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->DancePointsUntilNextUnlock() );
 	CString sAP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->ArcadePointsUntilNextUnlock() );
 	CString sSP = ssprintf( "%d", (int)GAMESTATE->m_pUnlockingSys->SongPointsUntilNextUnlock() );
-
-	CString PointDisplay = THEME->GetMetric("ScreenUnlock", "TypeOfPointsToDisplay");
 	
-	CString IconCommand = THEME->GetMetric("ScreenUnlock", "UnlockIconCommand");
+	CString IconCommand = ICON_COMMAND;
 
-	for(int i=1; i <= THEME->GetMetricI("ScreenUnlock", "NumUnlocks"); i++)
+	for(int i=1; i <= NUM_UNLOCKS; i++)
 	{
 		Sprite* entry = new Sprite;
 
@@ -48,12 +62,8 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		SET_XY( *entry );
 
 		// get pertaining songentry
-		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong(
-			THEME->GetMetric("ScreenUnlock", 
-			ssprintf("Unlock%dSong", i)) );
-		
-		LOG->Trace("UnlockScreen: Searching for %s", THEME->GetMetric("ScreenUnlock", 
-			ssprintf("Unlock%dSong", i)).c_str() );
+		LOG->Trace("UnlockScreen: Searching for %s", DISPLAYED_SONG(i).c_str());
+		SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong( DISPLAYED_SONG(i) );
 
 		if( pSong == NULL)
 		{
@@ -70,17 +80,18 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	}
 
 	// scrolling text
-	if (THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll") != 0)
+	if (UNLOCK_TEXT_SCROLL != 0)
 	{
-		int NumberUnlocks = THEME->GetMetricI("ScreenUnlock", "NumUnlocks");
-		float ScrollingTextX = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollX");
-		float ScrollingTextStartY = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollStartY");
-		float ScrollingTextEndY = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollEndY");
-		float ScrollingTextZoom = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollZoom");
-		float ScrollingTextRows = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollRows");
-		float MaxWidth = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollMaxWidth");
+		int NumberUnlocks = NUM_UNLOCKS;
+		float ScrollingTextX = UNLOCK_TEXT_SCROLL_X;
+		float ScrollingTextStartY = UNLOCK_TEXT_SCROLL_START_Y;
+		float ScrollingTextEndY = UNLOCK_TEXT_SCROLL_END_Y;
+		float ScrollingTextZoom = UNLOCK_TEXT_SCROLL_ZOOM;
+		float ScrollingTextRows = UNLOCK_TEXT_SCROLL_ROWS;
+		float MaxWidth = UNLOCK_TEXT_SCROLL_MAX_WIDTH;
 
-		float SecondsToScroll = THEME->GetMetricF("ScreenUnlock", "TimeToDisplay");
+		float SecondsToScroll = TIME_TO_DISPLAY;
+		
 		if (SecondsToScroll > 2) SecondsToScroll--;
 
 		const float SECS_PER_CYCLE = (float)SecondsToScroll/(ScrollingTextRows + NumberUnlocks);
@@ -89,33 +100,51 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 		{
 			BitmapText* text = new BitmapText;
 
+			/* XXX: Don't load _shared directly.  Instead, create a redir in the
+			 * Fonts directory, eg. "ScreenUnlock text.redir", that points to it. */
 			text->LoadFromFont( THEME->GetPathToF("_shared2") );
 			text->SetHorizAlign( Actor::align_left );
 
-			CString SongText = THEME->GetMetric("ScreenUnlock", ssprintf("Unlock%dSong", i));
-			SongText.MakeUpper();
-			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong(SongText);
+			CString DisplayedSong = DISPLAYED_SONG(i);
+			DisplayedSong.MakeUpper();
+			SongEntry *pSong = GAMESTATE->m_pUnlockingSys->FindSong(DisplayedSong);
+
+			/* Reset zoom before using SetTextMaxWidth. */
+			text->SetZoom(ScrollingTextZoom);
 
 			if (pSong != NULL && pSong->ActualSong != NULL)
-				SongText = pSong->ActualSong->GetFullDisplayTitle();
+			{
+				CString title = pSong->ActualSong->GetDisplayMainTitle();
+				CString subtitle = pSong->ActualSong->GetDisplayMainTitle();
+				if( subtitle != "" )
+					title = title + "\n" + subtitle;
+				text->SetTextMaxWidth( MaxWidth, title );
+			}
 			else					 // song is missing
 			{
-				if (SONGMAN->FindCourse(SongText) != NULL)
-					text->Command("Diffuse,0,1,0,1");		
+				Course *crs = SONGMAN->FindCourse( DisplayedSong );
+				if (crs != NULL)
+				{
+					text->SetTextMaxWidth( MaxWidth, crs->m_sName );
+					text->Command("Diffuse,0,1,0,1");
+				}
 				else
+				{
+					text->SetText( "" );
 					text->Command("Diffuse,0.5,0,0,1");
+				}
 			}
 
-			BreakLine(SongText);
-			text->SetZoom(ScrollingTextZoom);
-			text->SetTextMaxWidth(MaxWidth, SongText );
-
-			if (pSong != NULL && pSong->isLocked) {
-				text->SetText("???");
-				// text->SetZoom(ScrollingTextZoom * 1.99); 
-			} else if (pSong != NULL) {
-				RageColor color = SONGMAN->GetGroupColor(pSong->ActualSong->m_sGroupName);
-				text->SetGlobalDiffuseColor(color);
+			if (pSong != NULL)
+			{
+				if( pSong->isLocked)
+				{
+					text->SetText("???");
+					// text->SetZoom(ScrollingTextZoom * 1.99); 
+				} else {
+					RageColor color = SONGMAN->GetGroupColor(pSong->ActualSong->m_sGroupName);
+					text->SetGlobalDiffuseColor(color);
+				}
 			}
 
 			text->SetXY(ScrollingTextX, ScrollingTextStartY);
@@ -124,7 +153,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 			item.push_back(text);
 			this->AddChild(item[i-1]);
 
-			if (THEME->GetMetricI("ScreenUnlock", "UnlockTextScroll") == 2)
+			if (UNLOCK_TEXT_SCROLL == 2)
 			{
 				Sprite* IconCount = new Sprite;
 
@@ -132,13 +161,10 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 				IconCount->Load( THEME->GetPathToG(ssprintf("ScreenUnlock %d icon", i)) );
 
 				// set graphic location
-				IconCount->SetXY( THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconX"),
-					ScrollingTextStartY);
+				IconCount->SetXY( UNLOCK_TEXT_SCROLL_ICON_X, ScrollingTextStartY);
 
-				float IconSize = THEME->GetMetricF("ScreenUnlock", "UnlockTextScrollIconSize");
-
-				IconCount->SetHeight(IconSize);
-				IconCount->SetWidth(IconSize);
+				IconCount->SetHeight(UNLOCK_TEXT_SCROLL_ICON_SIZE);
+				IconCount->SetWidth(UNLOCK_TEXT_SCROLL_ICON_SIZE);
 
 				IconCount->Command( ssprintf("diffusealpha,0;sleep,%f;linear,0.5;diffusealpha,1;linear,%f;y,%f;linear,0.5;diffusealpha,0", SECS_PER_CYCLE * (i - 1), SECS_PER_CYCLE * (ScrollingTextRows), ScrollingTextEndY) );
 
@@ -154,6 +180,7 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 
 	PointsUntilNextUnlock.SetName( "PointsDisplay" );
 	
+	CString PointDisplay = TYPE_TO_DISPLAY;
 	if (PointDisplay == "DP" || PointDisplay == "Dance")
 		PointsUntilNextUnlock.SetText( sDP );
 
@@ -163,28 +190,12 @@ ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 	if (PointDisplay == "SP" || PointDisplay == "Song")
 		PointsUntilNextUnlock.SetText( sSP );
 
-	PointsUntilNextUnlock.SetZoom( THEME->GetMetricF("ScreenUnlock","PointsZoom") );
+	PointsUntilNextUnlock.SetZoom( POINTS_ZOOM );
 	SET_XY( PointsUntilNextUnlock );
 	this->AddChild( &PointsUntilNextUnlock );
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 
-	this->PostScreenMessage( SM_BeginFadingOut, 
-		THEME->GetMetricF("ScreenUnlock", "TimeToDisplay") );
+	this->PostScreenMessage( SM_BeginFadingOut, TIME_TO_DISPLAY );
 }
 
-
-void ScreenUnlock::BreakLine(CString& line)
-{
-	for(unsigned i = 1; i < line.size(); i++)
-	{
-		if (line[i] == '~' || line[i] == '(')
-		{
-			if (line[i-1] == ' ')
-			{
-				line[i-1] = '\n';
-				return;
-			}
-		}
-	}
-}
