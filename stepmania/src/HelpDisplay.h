@@ -3,16 +3,19 @@
 #ifndef HELP_DISPLAY_H
 #define HELP_DISPLAY_H
 
-#include "ActorFrame.h"
 #include "BitmapText.h"
 #include "ThemeMetric.h"
+#include "MessageManager.h"
 
 
-class HelpDisplay : public ActorFrame
+class HelpDisplay : public BitmapText
 {
 public:
 	HelpDisplay();
 	void Load();
+
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
+
 	void SetTips( const CStringArray &arrayTips ) { SetTips( arrayTips, arrayTips ); }
 	void SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt );
 
@@ -22,12 +25,18 @@ public:
 protected:
 	ThemeMetric<float> TIP_SHOW_TIME;
 
-	BitmapText m_textTip;
-
 	CStringArray m_arrayTips, m_arrayTipsAlt;
 	int m_iCurTipIndex;
 	
 	float m_fSecsUntilSwitch;
+};
+
+class GenreDisplay : public HelpDisplay
+{
+public:
+	GenreDisplay();
+	~GenreDisplay();
+	void PlayCommand( const CString &sCommandName );
 };
 
 #endif

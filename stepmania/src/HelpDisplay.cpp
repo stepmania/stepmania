@@ -15,17 +15,21 @@ HelpDisplay::HelpDisplay()
 
 void HelpDisplay::Load()
 {
-	m_textTip.SetName( "Tip" );
-	m_textTip.LoadFromFont( THEME->GetPathF(m_sName,"text") );
-	ON_COMMAND( m_textTip );
-	this->AddChild( &m_textTip );
+	RunCommands( THEME->GetMetricA(m_sName,"TipOnCommand") );
 
+	LoadFromFont( THEME->GetPathF(m_sName,"text") );
+	
 	m_fSecsUntilSwitch = TIP_SHOW_TIME;
+}
+
+void HelpDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	BitmapText::LoadFromNode( sDir, pNode );
 }
 
 void HelpDisplay::SetName( const CString &sName, const CString &sID )
 {
-	ActorFrame::SetName( sName, sID );
+	BitmapText::SetName( sName, sID );
 
 	TIP_SHOW_TIME.Load( m_sName, "TipShowTime" );
 }
@@ -37,7 +41,7 @@ void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &ar
 	if( arrayTips == m_arrayTips && arrayTipsAlt == m_arrayTipsAlt )
 		return;
 
-	m_textTip.SetText( "" );
+	SetText( "" );
 
 	m_arrayTips = arrayTips;
 	m_arrayTipsAlt = arrayTipsAlt;
@@ -50,7 +54,7 @@ void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &ar
 
 void HelpDisplay::Update( float fDeltaTime )
 {
-	ActorFrame::Update( fDeltaTime );
+	BitmapText::Update( fDeltaTime );
 
 	if( m_arrayTips.empty() )
 		return;
@@ -61,10 +65,77 @@ void HelpDisplay::Update( float fDeltaTime )
 
 	// time to switch states
 	m_fSecsUntilSwitch = TIP_SHOW_TIME;
-	m_textTip.SetText( m_arrayTips[m_iCurTipIndex], m_arrayTipsAlt[m_iCurTipIndex] );
+	SetText( m_arrayTips[m_iCurTipIndex], m_arrayTipsAlt[m_iCurTipIndex] );
 	m_iCurTipIndex++;
 	m_iCurTipIndex = m_iCurTipIndex % m_arrayTips.size();
 }
+
+
+#include "song.h"
+#include "GameState.h"
+#include "Course.h"
+#include "Style.h"
+#include "Foreach.h"
+
+REGISTER_ACTOR_CLASS( GenreDisplay );
+
+GenreDisplay::GenreDisplay()
+{
+	MESSAGEMAN->Subscribe( this, "OnSongChanged" );
+	MESSAGEMAN->Subscribe( this, "OnCourseChanged" );
+}
+
+GenreDisplay::~GenreDisplay()
+{
+	MESSAGEMAN->Unsubscribe( this, "OnSongChanged" );
+	MESSAGEMAN->Unsubscribe( this, "OnCourseChanged" );
+}
+
+void GenreDisplay::PlayCommand( const CString &sCommandName )
+{
+	if( sCommandName == "OnSongChanged" )
+	{
+		vector<CString> m_Artists, m_AltArtists;
+
+		Song* pSong = GAMESTATE->m_pCurSong;
+		ASSERT( pSong );
+
+		m_Artists.push_back( pSong->GetDisplayArtist() );
+		m_AltArtists.push_back( pSong->GetTranslitArtist() );
+		
+		SetTips( m_Artists, m_AltArtists );
+	}
+	else if( sCommandName == "OnCourseChanged" )
+	{
+		vector<CString> m_Artists, m_AltArtists;
+
+		Course* pCourse = GAMESTATE->m_pCurCourse;
+		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+		Trail *pTrail = pCourse->GetTrail( st );
+		ASSERT( pTrail );
+
+		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+		{
+			if( e->bMystery )
+			{
+				m_Artists.push_back( "???" );
+				m_AltArtists.push_back( "???" );
+			}
+			else 
+			{
+				m_Artists.push_back( e->pSong->GetDisplayArtist() );
+				m_AltArtists.push_back( e->pSong->GetTranslitArtist() );
+			}
+		}
+
+		SetTips( m_Artists, m_AltArtists );
+	}
+	else
+	{
+		Actor::PlayCommand( sCommandName );
+	}
+}
+
 
 /*
  * (c) 2001-2003 Chris Danford, Glenn Maynard
