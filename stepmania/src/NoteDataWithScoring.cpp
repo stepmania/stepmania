@@ -19,22 +19,15 @@ NoteDataWithScoring::NoteDataWithScoring()
 	Init();
 }
 
-void NoteDataWithScoring::Init(int taps, int holds)
+void NoteDataWithScoring::Init()
 {
 	NoteData::Init();
 
 	for( int t=0; t<MAX_NOTE_TRACKS; t++ )
-	{
 		m_TapNoteScores[t].clear();
-		m_TapNoteScores[t].insert(m_TapNoteScores[t].begin(), taps, TNS_NONE);
-	}
 
 	m_HoldNoteScores.clear();
-	m_HoldNoteScores.insert(m_HoldNoteScores.begin(), holds, HNS_NONE);
-
 	m_fHoldNoteLife.clear();
-	// start with full life
-	m_fHoldNoteLife.insert(m_fHoldNoteLife.begin(), holds, 1.0f);
 }
 
 int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, const float fEndBeat )
@@ -177,4 +170,55 @@ float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds )
 	// number of hold steps
 	float fReturn = GetNumHoldNotesWithScore(HNS_OK) / fSongSeconds;
 	return min( fReturn, 1.0f );
+}
+
+template<class T>
+void extend(vector<T> &v, T val, unsigned pos)
+{
+	int needed = pos - v.size() + 1;
+	if(needed > 0)
+	{
+		needed += 100; /* optimization: give it a little more than it needs */
+		v.insert(v.end(), needed, val);
+	}
+}
+
+TapNoteScore NoteDataWithScoring::GetTapNoteScore(unsigned track, unsigned row) const
+{
+	if(row >= m_TapNoteScores[track].size())
+		return TNS_NONE;
+	return m_TapNoteScores[track][row];
+}
+
+void NoteDataWithScoring::SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns)
+{
+	extend(m_TapNoteScores[track], TNS_NONE, row);
+	m_TapNoteScores[track][row] = tns;
+}
+
+HoldNoteScore NoteDataWithScoring::GetHoldNoteScore(unsigned h) const
+{
+	if(h >= m_HoldNoteScores.size())
+		return HNS_NONE;
+	return m_HoldNoteScores[h];
+}
+
+void NoteDataWithScoring::SetHoldNoteScore(unsigned h, HoldNoteScore hns)
+{
+	extend(m_HoldNoteScores, HNS_NONE, h);
+	m_HoldNoteScores[h] = hns;
+}
+
+void NoteDataWithScoring::SetHoldNoteLife(unsigned h, float f)
+{
+	extend(m_fHoldNoteLife, 1.0f, h);
+	m_fHoldNoteLife[h] = f;
+}
+
+float NoteDataWithScoring::GetHoldNoteLife(unsigned h) const
+{
+	// start with full life
+	if(h >= m_fHoldNoteLife.size())
+		return 1.0f;
+	return m_fHoldNoteLife[h];
 }

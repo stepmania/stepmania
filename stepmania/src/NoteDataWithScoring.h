@@ -18,7 +18,6 @@ class NoteDataWithScoring : public NoteData
 {
 	// maintain this extra data in addition to the NoteData
 	vector<TapNoteScore> m_TapNoteScores[MAX_NOTE_TRACKS];
-
 	vector<HoldNoteScore> m_HoldNoteScores;
 
 	/* 1.0 means this HoldNote has full life.
@@ -28,43 +27,20 @@ class NoteDataWithScoring : public NoteData
 	vector<float>	m_fHoldNoteLife;
 
 public:
-
 	NoteDataWithScoring();
-	void Init(int taps=0, int holds=0);
+	void Init();
 
 	// statistics
 	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	int GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 
-	const TapNoteScore &GetTapNoteScore(int track, int row) const
-	{
-		ASSERT(row < int(m_TapNoteScores[track].size()));
-		return m_TapNoteScores[track][row];
-	}
-	TapNoteScore &GetTapNoteScore(int track, int row)
-	{
-		ASSERT(row < int(m_TapNoteScores[track].size()));
-		return m_TapNoteScores[track][row];
-	}
-	const HoldNoteScore &GetHoldNoteScore(int h) const
-	{
-		ASSERT(h < int(m_HoldNoteScores.size()));
-		return m_HoldNoteScores[h];
-	}
-	HoldNoteScore &GetHoldNoteScore(int h)
-	{
-		ASSERT(h < int(m_HoldNoteScores.size()));
-		return m_HoldNoteScores[h];
-	}
-	float &GetHoldNoteLife(int h)
-	{
-		return m_fHoldNoteLife[h];
-	}
-	const float &GetHoldNoteLife(int h) const
-	{
-		return m_fHoldNoteLife[h];
-	}
+	TapNoteScore GetTapNoteScore(unsigned track, unsigned row) const;
+	void SetTapNoteScore(unsigned track, unsigned row, TapNoteScore tns);
+	HoldNoteScore GetHoldNoteScore(unsigned h) const;
+	void SetHoldNoteScore(unsigned h, HoldNoteScore hns);
+	float GetHoldNoteLife(unsigned h) const;
+	void SetHoldNoteLife(unsigned h, float f);
 
 	bool IsRowComplete( int index );
 
