@@ -26,12 +26,12 @@ const CString VISUALIZATIONS_DIR = "Visualizations\\";
 const CString RANDOMMOVIES_DIR = "RandomMovies\\";
 
 // TODO: Move these into theme metrics
-const int BACKGROUND_LEFT	= 0;
-const int BACKGROUND_TOP	= 0;
-const int BACKGROUND_RIGHT	= 640;
-const int BACKGROUND_BOTTOM	= 480;
+#define LEFT_EDGE			THEME->GetMetricI("Background","LeftEdge")
+#define TOP_EDGE			THEME->GetMetricI("Background","TopEdge")
+#define RIGHT_EDGE			THEME->GetMetricI("Background","RightEdge")
+#define BOTTOM_EDGE			THEME->GetMetricI("Background","BottomEdge")
 
-#define RECT_BACKGROUND CRect(BACKGROUND_LEFT,BACKGROUND_TOP,BACKGROUND_RIGHT,BACKGROUND_BOTTOM)
+#define RECT_BACKGROUND CRect(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
 int CompareBGSegments(const void *arg1, const void *arg2)
 {
@@ -75,14 +75,14 @@ Background::Background()
 	m_quadBGBrightness.StretchTo( RECT_BACKGROUND );
 	m_quadBGBrightness.SetDiffuseColor( D3DXCOLOR(0,0,0,1-0.5f) );
 
-	m_quadBorder[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,BACKGROUND_LEFT,SCREEN_BOTTOM) );
-	m_quadBorder[0].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
-	m_quadBorder[1].StretchTo( CRect(BACKGROUND_LEFT,SCREEN_TOP,BACKGROUND_RIGHT,BACKGROUND_TOP) );
-	m_quadBorder[1].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
-	m_quadBorder[2].StretchTo( CRect(BACKGROUND_RIGHT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
-	m_quadBorder[2].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
-	m_quadBorder[3].StretchTo( CRect(BACKGROUND_LEFT,SCREEN_TOP,BACKGROUND_RIGHT,BACKGROUND_TOP) );
-	m_quadBorder[3].SetDiffuseColor( D3DXCOLOR(0,0,0,0) );
+	m_quadBorder[0].StretchTo( CRect(SCREEN_LEFT,SCREEN_TOP,LEFT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[0].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_quadBorder[1].StretchTo( CRect(LEFT_EDGE,SCREEN_TOP,RIGHT_EDGE,TOP_EDGE) );
+	m_quadBorder[1].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_quadBorder[2].StretchTo( CRect(RIGHT_EDGE,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBorder[2].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
+	m_quadBorder[3].StretchTo( CRect(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
+	m_quadBorder[3].SetDiffuseColor( D3DXCOLOR(0,0,0,1) );
 }
 
 Background::~Background()
@@ -95,6 +95,8 @@ void Background::Unload()
     for( int i=0; i<m_BackgroundAnimations.GetSize(); i++ )
 		delete m_BackgroundAnimations[i];
 	m_BackgroundAnimations.RemoveAll();
+	
+	m_aBGSegments.RemoveAll();
 }
 
 void Background::LoadFromSong( Song* pSong )
@@ -103,6 +105,12 @@ void Background::LoadFromSong( Song* pSong )
 	 * fix it this way? -glenn */
 	 /* Correct.  I added the same chage.    -Chris */
 	Unload();
+
+
+	const float fXZoom = RECTWIDTH(RECT_BACKGROUND) / (float)SCREEN_WIDTH;
+	const float fYZoom = RECTHEIGHT(RECT_BACKGROUND) / (float)SCREEN_HEIGHT;
+	const float fZoom = max(fXZoom,fYZoom);
+
 
 	//
 	// figure out what BackgroundMode to use
@@ -242,7 +250,10 @@ void Background::LoadFromSong( Song* pSong )
 			{
 				CStringArray arrayPossibleAnims;
 				GetDirListing( BG_ANIMS_DIR+"*.*", arrayPossibleAnims, true, true );
-				for( int i=0; i<4 && arrayPossibleAnims.GetSize()>0; i++ )
+				for( int i=arrayPossibleAnims.GetSize()-1; i>=0; i-- )
+					if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") )
+						arrayPossibleAnims.RemoveAt(i);
+				for( i=0; i<4 && arrayPossibleAnims.GetSize()>0; i++ )
 				{
 					int index = rand() % arrayPossibleAnims.GetSize();
 					pTempBGA = new BackgroundAnimation;
@@ -327,7 +338,11 @@ void Background::LoadFromSong( Song* pSong )
 
 	}
 
-
+	for( int i=0; i<m_BackgroundAnimations.GetSize(); i++ )
+	{
+		m_BackgroundAnimations[i]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+		m_BackgroundAnimations[i]->SetZoom( fZoom );
+	}
 }
 
 

@@ -340,11 +340,12 @@ void ScreenEz2SelectStyle::MenuStart( PlayerNumber p )
 //	GAMESTATE->m_bPlayersCanJoin = false;
 
 	CString sCurStyleName = GAMESTATE->GetCurrentStyleDef()->m_szName;
-	if(	     0==stricmp(sCurStyleName,"single") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment single") );
-	else if( 0==stricmp(sCurStyleName,"versus") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
-	else if( 0==stricmp(sCurStyleName,"double") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment double") );
-	else if( 0==stricmp(sCurStyleName,"couple") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
-	else if( 0==stricmp(sCurStyleName,"solo") )		SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
+	sCurStyleName.MakeLower();
+	if(	     -1!=sCurStyleName.Find("single") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment single") );
+	else if( -1!=sCurStyleName.Find("versus") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment versus") );
+	else if( -1!=sCurStyleName.Find("double") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment double") );
+	else if( -1!=sCurStyleName.Find("couple") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment couple") );
+	else if( -1!=sCurStyleName.Find("solo") )	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("select style comment solo") );
 
 
 	m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );

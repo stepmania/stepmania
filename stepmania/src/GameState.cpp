@@ -21,6 +21,18 @@
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
 
+#define STAGE_COLOR_DEMO		THEME->GetMetricC("GameState","StageColorDemo")
+#define STAGE_COLOR_NORMAL		THEME->GetMetricC("GameState","StageColorNormal")
+#define STAGE_COLOR_FINAL		THEME->GetMetricC("GameState","StageColorFinal")
+#define STAGE_COLOR_EXTRA1		THEME->GetMetricC("GameState","StageColorExtra1")
+#define STAGE_COLOR_EXTRA2		THEME->GetMetricC("GameState","StageColorExtra2")
+#define STAGE_COLOR_ONI			THEME->GetMetricC("GameState","StageColorOni")
+#define STAGE_TEXT_DEMO			THEME->GetMetric("GameState","StageTextDemo")
+#define STAGE_TEXT_FINAL		THEME->GetMetric("GameState","StageTextFinal")
+#define STAGE_TEXT_EXTRA1		THEME->GetMetric("GameState","StageTextExtra1")
+#define STAGE_TEXT_EXTRA2		THEME->GetMetric("GameState","StageTextExtra2")
+
+
 GameState::GameState()
 {
 	m_CurGame = GAME_DANCE;
@@ -210,14 +222,10 @@ bool GameState::IsExtraStage2()
 
 CString GameState::GetStageText()
 {
-	if( m_bDemonstration )
-		return "Demo";
-	else if( IsFinalStage() )
-		return "Final";
-	else if( IsExtraStage() )
-		return "Extra";
-	else if( IsExtraStage2() )
-		return "Extra 2";
+	if( m_bDemonstration )			return STAGE_TEXT_DEMO;
+	else if( IsFinalStage() )		return STAGE_TEXT_FINAL;
+	else if( IsExtraStage() )		return STAGE_TEXT_EXTRA1;
+	else if( IsExtraStage2() )		return STAGE_TEXT_EXTRA2;
 
 
 	int iStageNo = m_iCurrentStageIndex+1;
@@ -243,12 +251,12 @@ CString GameState::GetStageText()
 
 D3DXCOLOR GameState::GetStageColor()
 {
-	if( IsFinalStage() )
-		return D3DXCOLOR(1,0.1f,0.1f,1);	// red
-	else if( IsExtraStage() || IsExtraStage2() )
-		return D3DXCOLOR(1,1,0.3f,1);		// yellow
-	else
-		return D3DXCOLOR(0.3f,1,0.3f,1);	// green
+	if( m_bDemonstration )		return STAGE_COLOR_DEMO;
+	else if( m_PlayMode==PLAY_MODE_ONI || m_PlayMode==PLAY_MODE_ENDLESS )	return STAGE_COLOR_ONI;
+	else if( IsFinalStage() )	return STAGE_COLOR_FINAL;
+	else if( IsExtraStage() )	return STAGE_COLOR_EXTRA1;
+	else if( IsExtraStage2() )	return STAGE_COLOR_EXTRA2;
+	else						return STAGE_COLOR_NORMAL;
 }
 
 GameDef* GameState::GetCurrentGameDef()

@@ -83,19 +83,19 @@ try_again:
 			"The current announcer is missing the folder '%s'.\n"
 			"It may be that these sounds were never implemented in this announcer,\n"
 			"Or the folder may be misnamed.\n\n"
-			"Click Abort to automatically create the folder.\n"
+			"Click Abort to break.\n"
 			"Click Retry after adding the folder menually.\n"
-			"Click to break.", sFolderName), MB_ABORTRETRYIGNORE );
+			"Click Ignore to to automatically create the folder.\n\n", sFolderName), MB_ABORTRETRYIGNORE );
 		switch( iResult )
 		{
 		case IDABORT:
-			CreateDirectory( sPathToFolderCurrent, NULL );
+			DebugBreak();
 			break;
 		case IDRETRY:
 			goto try_again;
 			break;
 		case IDIGNORE:
-			DebugBreak();
+			CreateDirectory( sPathToFolderCurrent, NULL );
 			break;
 		}
 	}
@@ -105,19 +105,19 @@ try_again:
 			ssprintf(
 			"The empty announcer is missing the folder '%s'.\n"
 			"This announcer should have empty folders for every saying.\n\n"
-			"Click Abort to automatically create the folder.\n"
+			"Click Abort to break.\n"
 			"Click Retry after adding the folder menually.\n"
-			"Click to break.", sFolderName), MB_ABORTRETRYIGNORE );
+			"Click Ignore to to automatically create the folder.\n\n", sFolderName), MB_ABORTRETRYIGNORE );
 		switch( iResult )
 		{
 		case IDABORT:
-			CreateDirectory( sPathToFolderEmpty, NULL );
+			DebugBreak();
 			break;
 		case IDRETRY:
 			goto try_again;
 			break;
 		case IDIGNORE:
-			DebugBreak();
+			CreateDirectory( sPathToFolderEmpty, NULL );
 			break;
 		}
 	}

@@ -161,9 +161,6 @@ void WheelItemDisplay::LoadFromWheelItemData( WheelItemData* pWID )
 		{
 			m_TextBanner.LoadFromSong( m_pSong );
 			D3DXCOLOR color = m_color;
-			color.r += 0.15f;
-			color.g += 0.15f;
-			color.b += 0.15f;
 			m_TextBanner.SetDiffuseColor( color );
 			m_MusicStatusDisplay.SetType( m_IconType );
 			RefreshGrades();
@@ -813,6 +810,21 @@ void MusicWheel::Update( float fDeltaTime )
 						}
 					}
 				}
+
+				// If changed sort to "BEST", put selection on most popular song
+				if( GAMESTATE->m_SongSortOrder == SORT_MOST_PLAYED )
+				{
+					for( i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+					{
+						if( GetCurWheelItemDatas()[i].m_pSong != NULL )
+						{
+							m_iSelection = i;
+							break;
+						}
+					}
+				}
+
+				SCREENMAN->SendMessageToTopScreen( SM_SongChanged, 0 );
 
 				RebuildWheelItemDisplays();
 

@@ -36,15 +36,16 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void TweenOnScreen();
-	void TweenOffScreen();
-
-	void MenuLeft( PlayerNumber p, const InputEventType type );
-	void MenuRight( PlayerNumber p, const InputEventType type );
-	void MenuStart( PlayerNumber p );
-	void MenuBack( PlayerNumber p );
+	virtual void MenuLeft( PlayerNumber p, const InputEventType type );
+	virtual void MenuRight( PlayerNumber p, const InputEventType type );
+	virtual void MenuStart( PlayerNumber p );
+	virtual void MenuBack( PlayerNumber p );
 
 protected:
+	void TweenOnScreen();
+	void TweenOffScreen();
+	void TweenScoreOnAndOffAfterChangeSort();
+
 	void EasierDifficulty( PlayerNumber p );
 	void HarderDifficulty( PlayerNumber p );
 

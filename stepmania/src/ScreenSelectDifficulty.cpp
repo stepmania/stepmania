@@ -50,7 +50,8 @@ const float LOCK_INPUT_TIME = 0.30f;	// lock input while waiting for tweening to
 #define CURSOR_SHADOW_LENGTH_Y	THEME->GetMetricF("ScreenSelectDifficulty","CursorShadowLengthY")
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectDifficulty","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectDifficulty","TimerSeconds")
-#define NEXT_SCREEN				THEME->GetMetric("ScreenSelectDifficulty","NextScreen")
+#define NEXT_SCREEN_ARCADE		THEME->GetMetric("ScreenSelectDifficulty","NextScreenArcade")
+#define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenSelectDifficulty","NextScreenOni")
 
 
 float MORE_X( int iIndex ) {
@@ -277,9 +278,9 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				switch( m_iSelection[p] )
 				{
-				case 0:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_EASY;	break;
+				case 0:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_EASY;		break;
 				case 1:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_MEDIUM;	break;
-				case 2:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_HARD;	break;
+				case 2:	GAMESTATE->m_PreferredDifficultyClass[p] = CLASS_HARD;		break;
 				}
 		}
 
@@ -300,12 +301,18 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT(0);	// bad selection
 		}
 
-		if(GAMESTATE->m_PlayMode == PLAY_MODE_ONI ||
-			GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS)
-			SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
-		else
-			SCREENMAN->SetNewScreen( "ScreenSelectGroup" );
-
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_ARCADE );
+			break;
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );
+			break;
+		default:
+			ASSERT(0);
+		}
 		break;
 	case SM_StartTweeningOffScreen:
 		TweenOffScreen();

@@ -26,11 +26,11 @@ public:
 
 private:
 
-	// Global Elements
+	// Common Elements
 
 	ActorFrame		m_frameStage;
 	Sprite			m_sprNumbers[4];	// up to 3 numbers and suffix
-	Sprite			m_sprStage;			// "Stage"
+	Sprite			m_sprStage;			// "Stage", "Final Stage", etc.
 
 	// Ez2 Elements
 
@@ -50,7 +50,6 @@ private:
 	TransitionFade	m_Fade;
 
 protected:
-	Song* m_pSong;
 
 };
 

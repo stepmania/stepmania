@@ -37,8 +37,7 @@
 #define CONTENTS_Y			THEME->GetMetricF("ScreenSelectGroup","ContentsY")
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectGroup","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectGroup","TimerSeconds")
-#define NEXT_SCREEN_ARCADE	THEME->GetMetric("ScreenSelectGroup","NextScreenArcade")
-#define NEXT_SCREEN_ONI		THEME->GetMetric("ScreenSelectGroup","NextScreenOni")
+#define NEXT_SCREEN			THEME->GetMetric("ScreenSelectGroup","NextScreen")
 
 
 const ScreenMessage SM_GoToPrevScreen		=	ScreenMessage(SM_User + 1);
@@ -206,18 +205,7 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
 		break;
 	case SM_GoToNextScreen:
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_ARCADE:
-			SCREENMAN->SetNewScreen( NEXT_SCREEN_ARCADE );
-			break;
-		case PLAY_MODE_ONI:
-		case PLAY_MODE_ENDLESS:
-			SCREENMAN->SetNewScreen( NEXT_SCREEN_ONI );
-			break;
-		default:
-			ASSERT(0);
-		}
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	case SM_StartFadingOut:
 		m_Menu.TweenOffScreenToMenu( SM_GoToNextScreen );

@@ -196,6 +196,13 @@ ScreenGameplay::ScreenGameplay()
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		m_pLifeMeter[p] = NULL;
+		m_pScoreDisplay[p] = NULL;
+	}
+
+
 	MUSIC->Stop();
 
 	GAMESTATE->ResetStageStatistics();	// clear values
@@ -295,21 +302,7 @@ ScreenGameplay::ScreenGameplay()
 
 		m_pLifeMeter[p]->Load( (PlayerNumber)p );
 		m_pLifeMeter[p]->SetXY( LIFE_X(p), LIFE_Y(p,bExtra) );
-		this->AddSubActor( m_pLifeMeter[p] );
-
-		/*
-		Chris:  EZ2 should change positions via Theme metrics
-
-		if( GAMESTATE->m_CurGame == GAME_EZ2 )
-		{
-			m_pScoreDisplay[p] = new ScoreDisplayNormal;
-			m_pScoreDisplay[p]->SetXY( SCORE_LOCALEZ2_X[p], SCORE_LOCALEZ2_Y[p] );
-			m_pScoreDisplay[p]->SetZoom( 0.5f );
-			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
-			m_frameTop.AddSubActor( m_pScoreDisplay[p] );
-		}
-		*/
-		
+		this->AddSubActor( m_pLifeMeter[p] );		
 	}
 
 	// TopFrame goes above LifeMeter
@@ -330,7 +323,7 @@ ScreenGameplay::ScreenGameplay()
 		m_textCourseSongNumber[p].TurnShadowOff();
 		m_textCourseSongNumber[p].SetXY( SONG_NUMBER_X(p), SONG_NUMBER_Y(p,bExtra) );
 		m_textCourseSongNumber[p].SetText( "" );
-		m_textCourseSongNumber[p].SetDiffuseColor( D3DXCOLOR(0.8f,0.8f,1,1) );	// light blue
+		m_textCourseSongNumber[p].SetDiffuseColor( GAMESTATE->GetStageColor() );	// light blue
 	}
 
 	switch( GAMESTATE->m_PlayMode )
@@ -349,70 +342,36 @@ ScreenGameplay::ScreenGameplay()
 	}
 
 
-	//////////////////////////////////
-	// Add all Actors to m_frameBottom
-	//////////////////////////////////
+	//
+	// Add all Actors in bottom frame
+	//
 	m_sprBottomFrame.Load( THEME->GetPathTo("Graphics",bExtra?"gameplay extra bottom frame":"gameplay bottom frame") );
 	m_sprBottomFrame.SetXY( BOTTOM_FRAME_X, bExtra ? BOTTOM_FRAME_EXTRA_Y : BOTTOM_FRAME_Y );
 	this->AddSubActor( &m_sprBottomFrame );
 
-
-	/*
-	Chris:  Change this position using theme metrics
-
-	if( GAMESTATE->m_CurGame != GAME_EZ2 )
-	{
-		m_sprBottomFrame.Load( THEME->GetPathTo(GRAPHIC_GAMEPLAY_BOTTOM_FRAME) );
-		m_frameBottom.AddSubActor( &m_sprBottomFrame );
-		m_frameBottom.SetXY( CENTER_X, SCREEN_BOTTOM - m_sprBottomFrame.GetZoomedHeight()/2 );
-	}
-	*/
-
-
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
-		/*	Chris: I don't understand why EZ2 wouldn't want this.
-
-		if( GAMESTATE->m_CurGame != GAME_EZ2 )
-		{
-		*/
-			switch( GAMESTATE->m_PlayMode )
-			{
-			case PLAY_MODE_ARCADE:
-				m_pScoreDisplay[p] = new ScoreDisplayNormal;
-				break;
-			case PLAY_MODE_ONI:
-			case PLAY_MODE_ENDLESS:
-				m_pScoreDisplay[p] = new ScoreDisplayOni;
-				break;
-			default:
-				ASSERT(0);
-			}
-
-			m_pScoreDisplay[p]->Init( (PlayerNumber)p );
-			m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
-			m_pScoreDisplay[p]->SetZoom( 0.8f );
-			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
-			this->AddSubActor( m_pScoreDisplay[p] );
-		/*
-		}
-		*/
-
-		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-		/*	Chris:  EZ2 should control this with theme metrics
-			
-		if( GAMESTATE->m_CurGame != GAME_EZ2 )
+		switch( GAMESTATE->m_PlayMode )
 		{
-		*/
-			m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
-			m_pScoreDisplay[p]->SetZoom( 0.8f );
-			m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
-			this->AddSubActor( m_pScoreDisplay[p] );
-	//	}
+		case PLAY_MODE_ARCADE:
+			m_pScoreDisplay[p] = new ScoreDisplayNormal;
+			break;
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			m_pScoreDisplay[p] = new ScoreDisplayOni;
+			break;
+		default:
+			ASSERT(0);
+		}
+
+		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
+		m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
+		m_pScoreDisplay[p]->SetZoom( 0.8f );
+		m_pScoreDisplay[p]->SetDiffuseColor( PlayerToColor(p) );
+		this->AddSubActor( m_pScoreDisplay[p] );
 		
 		m_textPlayerOptions[p].LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 		m_textPlayerOptions[p].TurnShadowOff();
@@ -421,7 +380,6 @@ ScreenGameplay::ScreenGameplay()
 		m_textPlayerOptions[p].SetDiffuseColor( D3DXCOLOR(1,1,1,1) );
 		m_textPlayerOptions[p].SetText( GAMESTATE->m_PlayerOptions[p].GetString() );
 		this->AddSubActor( &m_textPlayerOptions[p] );
-		//}
 	}
 
 	m_textSongOptions.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
@@ -441,30 +399,6 @@ ScreenGameplay::ScreenGameplay()
 		if( !GAMESTATE->IsPlayerEnabled(PlayerNumber(p)) )
 			continue;
 
-// CONFLICT RESOLUTION:
-// BY ANDY
-// <<<<<<< ScreenGameplay.cpp
-// =======
-// YOURS:
-/*
-		float fDifficultyY = DIFFICULTY_Y[p];
-		if( GAMESTATE->m_PlayerOptions[p].m_bReverseScroll )
-			fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p] -10;	// HACK: move difficulty banner up 10 if reverse
-		m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
-		this->AddSubActor( &m_DifficultyBanner[p] );
-*/
-//>>>>>>> 1.32 MINE
-		/*
-		if( GAMESTATE->m_CurGame != GAME_EZ2 )
-		{	
-			float fDifficultyY = DIFFICULTY_Y[p];
-			if( GAMESTATE->m_PlayerOptions[p].m_bReverseScroll )
-				fDifficultyY = SCREEN_HEIGHT - DIFFICULTY_Y[p];
-			m_DifficultyBanner[p].SetXY( DIFFICULTY_X[p], fDifficultyY );
-			this->AddSubActor( &m_DifficultyBanner[p] );
-		}
-*/
-// HOW I THINK IT SHOULD BE FIXED:
 		m_DifficultyBanner[p].SetXY( DIFFICULTY_X(p), DIFFICULTY_Y(p,bReverse[p],bExtra) );
 		this->AddSubActor( &m_DifficultyBanner[p] );
 	}
@@ -540,36 +474,37 @@ ScreenGameplay::ScreenGameplay()
 
 	if( !GAMESTATE->m_bDemonstration )	// don't load sounds if just playing demonstration
 	{
-		m_soundFail.Load(			THEME->GetPathTo("Sounds","gameplay failed") );
-		m_soundOniDie.Load(			THEME->GetPathTo("Sounds","gameplay oni die") );
-		m_announcerReady.Load(		ANNOUNCER->GetPathTo("gameplay ready") );
+		m_soundFail.Load(				THEME->GetPathTo("Sounds","gameplay failed") );
+		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","gameplay oni die") );
+		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
 		else if( GAMESTATE->IsFinalStage() )
 			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final") );
 		else
 			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
-		m_announcerDanger.Load(		ANNOUNCER->GetPathTo("gameplay comment danger") );
-		m_announcerGood.Load(		ANNOUNCER->GetPathTo("gameplay comment goood") );
-		m_announcerHot.Load(		ANNOUNCER->GetPathTo("gameplay comment hot") );
+		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
+		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
+		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
 
-		m_announcer100Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 100 combo") );
-		m_announcer200Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 200 combo") );
-		m_announcer300Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 300 combo") );
-		m_announcer400Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 400 combo") );
-		m_announcer500Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 500 combo") );
-		m_announcer600Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 600 combo") );
-		m_announcer700Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 700 combo") );
-		m_announcer800Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 800 combo") );
-		m_announcer900Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 900 combo") );
-		m_announcer1000Combo.Load(	ANNOUNCER->GetPathTo("gameplay comment 1000 combo") );
-		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay comment combo stopped") );
+		m_announcer100Combo.Load(		ANNOUNCER->GetPathTo("gameplay 100 combo") );
+		m_announcer200Combo.Load(		ANNOUNCER->GetPathTo("gameplay 200 combo") );
+		m_announcer300Combo.Load(		ANNOUNCER->GetPathTo("gameplay 300 combo") );
+		m_announcer400Combo.Load(		ANNOUNCER->GetPathTo("gameplay 400 combo") );
+		m_announcer500Combo.Load(		ANNOUNCER->GetPathTo("gameplay 500 combo") );
+		m_announcer600Combo.Load(		ANNOUNCER->GetPathTo("gameplay 600 combo") );
+		m_announcer700Combo.Load(		ANNOUNCER->GetPathTo("gameplay 700 combo") );
+		m_announcer800Combo.Load(		ANNOUNCER->GetPathTo("gameplay 800 combo") );
+		m_announcer900Combo.Load(		ANNOUNCER->GetPathTo("gameplay 900 combo") );
+		m_announcer1000Combo.Load(		ANNOUNCER->GetPathTo("gameplay 1000 combo") );
+		m_announcerComboStopped.Load(	ANNOUNCER->GetPathTo("gameplay combo stopped") );
 	}
 
 	m_iRowLastCrossed = -1;
 
 	m_soundAssistTick.Load(		THEME->GetPathTo("Sounds","gameplay assist tick") );
 
+	TweenOnScreen();
 
 	LoadNextSong( true );
 
@@ -594,8 +529,8 @@ ScreenGameplay::~ScreenGameplay()
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		delete m_pLifeMeter[p];
-		delete m_pScoreDisplay[p];
+		SAFE_DELETE( m_pLifeMeter[p] );
+		SAFE_DELETE( m_pScoreDisplay[p] );
 	}
 
 	m_soundMusic.Stop();
@@ -784,7 +719,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
 		// Check for end of song
 		//
-		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+4  &&  !m_soundMusic.IsPlaying() )
+		if( fSongBeat > GAMESTATE->m_pCurSong->m_fLastBeat+2  &&  !m_soundMusic.IsPlaying() )
 		{
 			GAMESTATE->m_fSongBeat = 0;
 			m_soundMusic.Stop();
@@ -898,7 +833,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( !GAMESTATE->IsPlayerEnabled( (PlayerNumber)p ) )
 					continue;		// skip
 
-				m_Player[p].CrossedRow( r );
 				bAnyoneHasANote |= m_Player[p].IsThereANoteAtRow( r );
 				break;	// this will only play the tick for the first player that is joined
 			}
@@ -1478,7 +1412,55 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenGameplay::TweenOnScreen()
 {
+	int i, p;
 
+	CArray<Actor*,Actor*> apActorsInTopFrame;
+	apActorsInTopFrame.Add(	&m_sprTopFrame );
+	for( p=0; p<NUM_PLAYERS; p++ )
+		apActorsInTopFrame.Add(	m_pLifeMeter[p] );
+	apActorsInTopFrame.Add(	&m_textStageNumber );
+	for( p=0; p<NUM_PLAYERS; p++ )
+		apActorsInTopFrame.Add(	&m_textCourseSongNumber[p] );
+	for( i=0; i<apActorsInTopFrame.GetSize(); i++ )
+	{
+		float fOriginalY = apActorsInTopFrame[i]->GetY();
+		apActorsInTopFrame[i]->SetY( fOriginalY-100 );
+		if( !GAMESTATE->m_bDemonstration )
+			apActorsInTopFrame[i]->BeginTweeningQueued( 0.5f );	// sleep
+		apActorsInTopFrame[i]->BeginTweeningQueued( 1 );
+		apActorsInTopFrame[i]->SetTweenY( fOriginalY );
+	}
+
+
+	CArray<Actor*,Actor*> apActorsInBottomFrame;
+	apActorsInBottomFrame.Add( &m_sprBottomFrame );
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
+		apActorsInBottomFrame.Add( m_pScoreDisplay[p] );
+		apActorsInBottomFrame.Add( &m_textPlayerOptions[p] );
+	}
+	apActorsInBottomFrame.Add( &m_textSongOptions );
+	for( i=0; i<apActorsInBottomFrame.GetSize(); i++ )
+	{
+		float fOriginalY = apActorsInBottomFrame[i]->GetY();
+		apActorsInBottomFrame[i]->SetY( fOriginalY+100 );
+		if( !GAMESTATE->m_bDemonstration )
+			apActorsInBottomFrame[i]->BeginTweeningQueued( 0.5f );	// sleep
+		apActorsInBottomFrame[i]->BeginTweeningQueued( 1 );
+		apActorsInBottomFrame[i]->SetTweenY( fOriginalY );
+	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
+		float fOriginalX = m_DifficultyBanner[p].GetX();
+		m_DifficultyBanner[p].SetX( (p==PLAYER_1) ? fOriginalX-200 : fOriginalX+200 );
+		if( !GAMESTATE->m_bDemonstration )
+			m_DifficultyBanner[p].BeginTweeningQueued( 0.5f );	// sleep
+		m_DifficultyBanner[p].BeginTweeningQueued( 1 );
+		m_DifficultyBanner[p].SetTweenX( fOriginalX );
+	}
 }
 
 void ScreenGameplay::TweenOffScreen()

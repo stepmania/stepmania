@@ -96,10 +96,12 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	m_textNumStages.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textNumStages.SetXY( STAGES_X, STAGES_Y );
+	m_textNumStages.TurnShadowOff();
 	this->AddSubActor( &m_textNumStages );
 
 	m_textTime.LoadFromFont( THEME->GetPathTo("Fonts","header1") );
 	m_textTime.SetXY( TIME_X, TIME_Y );
+	m_textTime.TurnShadowOff();
 	this->AddSubActor( &m_textTime );
 
 	m_CourseContentsFrame.SetXY( CONTENTS_X, CONTENTS_Y );

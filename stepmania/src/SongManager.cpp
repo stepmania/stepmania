@@ -32,7 +32,7 @@ const CString g_sStatisticsFileName = "statistics.ini";
 #define GROUP_COLOR_5		THEME->GetMetricC("SongManager","GroupColor5")
 #define GROUP_COLOR_6		THEME->GetMetricC("SongManager","GroupColor6")
 #define GROUP_COLOR_7		THEME->GetMetricC("SongManager","GroupColor7")
-#define EXTRA_COLOR			THEME->GetMetricC("SongManager","GroupColor7")
+#define EXTRA_COLOR			THEME->GetMetricC("SongManager","ExtraColor")
 
 const int NUM_GROUP_COLORS = 7;
 D3DXCOLOR GROUP_COLORS[NUM_GROUP_COLORS];

@@ -16,16 +16,24 @@
 #include "GameState.h"
 
 
-const float GRAY_ARROW_POP_UP_TIME	= 0.15f;
+#define STEP_SECONDS		THEME->GetMetricF("GrayArrow","StepSeconds")
+#define STEP_ZOOM			THEME->GetMetricF("GrayArrow","StepZoom")
+
+float g_fStepSeconds, g_fStepZoom;
 
 
 GrayArrow::GrayArrow()
 {
+	g_fStepSeconds = STEP_SECONDS;
+	g_fStepZoom = STEP_ZOOM;
+
 	StopAnimating();
 }
 
 void GrayArrow::Update( float fDeltaTime )
 {
+	ASSERT( Sprite::GetNumStates() > 0 );	// you forgot to call Load()
+
 	Sprite::Update( fDeltaTime );
 
 	float fPercentIntoBeat = fmodf(GAMESTATE->m_fSongBeat,1);
@@ -38,7 +46,7 @@ void GrayArrow::Update( float fDeltaTime )
 
 void GrayArrow::Step()
 {
-	SetZoom( 0.75f );
-	BeginTweening( GRAY_ARROW_POP_UP_TIME );
-	SetTweenZoom( 1.0f );
+	SetZoom( g_fStepZoom );
+	BeginTweening( g_fStepSeconds );
+	SetTweenZoom( 1 );
 }

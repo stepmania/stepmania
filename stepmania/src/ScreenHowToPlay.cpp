@@ -26,7 +26,8 @@
 #define NEXT_SCREEN_ONI			THEME->GetMetric("ScreenHowToPlay","NextScreenOni")
 
 
-const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User + 1);
+const ScreenMessage SM_GoToPrevScreen	=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToNextScreen	=	ScreenMessage(SM_User+2);
 
 
 ScreenHowToPlay::ScreenHowToPlay()
@@ -102,6 +103,9 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_MenuTimer:
 		this->MenuStart(PLAYER_1);
 		break;
+	case SM_GoToPrevScreen:
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );		
+		break;
 	case SM_GoToNextScreen:
 		switch( GAMESTATE->m_PlayMode )
 		{
@@ -121,6 +125,7 @@ void ScreenHowToPlay::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenHowToPlay::MenuBack( PlayerNumber p )
 {
+	m_Menu.TweenOffScreenToBlack( SM_GoToPrevScreen, true );
 }
 
 void ScreenHowToPlay::MenuStart( PlayerNumber p )

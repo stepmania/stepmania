@@ -37,6 +37,8 @@ protected:
 	enum CountingState{ counting_up, holding_up, counting_down, holding_down };
 	CountingState m_CountingState;
 	float m_fTimeLeftInState;
+
+	bool m_bExtraStage;		// cycle BPM through random values if extra stage
 };
 
 #endif

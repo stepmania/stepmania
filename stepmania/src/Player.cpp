@@ -24,6 +24,28 @@
 #include "RageLog.h"
 
 
+#define JUDGE_PERFECT_ZOOM_X		THEME->GetMetricF("Player","JudgePerfectZoomX")
+#define JUDGE_PERFECT_ZOOM_Y		THEME->GetMetricF("Player","JudgePerfectZoomY")
+#define JUDGE_GREAT_ZOOM_X			THEME->GetMetricF("Player","JudgeGreatZoomX")
+#define JUDGE_GREAT_ZOOM_Y			THEME->GetMetricF("Player","JudgeGreatZoomY")
+#define JUDGE_GOOD_ZOOM_X			THEME->GetMetricF("Player","JudgeGoodZoomX")
+#define JUDGE_GOOD_ZOOM_Y			THEME->GetMetricF("Player","JudgeGoodZoomY")
+#define JUDGE_BOO_ZOOM_X			THEME->GetMetricF("Player","JudgeBooZoomX")
+#define JUDGE_BOO_ZOOM_Y			THEME->GetMetricF("Player","JudgeBooZoomY")
+#define COMBO_JUDGE_TWEEN_SECONDS	THEME->GetMetricF("Player","ComboJudgeTweenSeconds")
+
+
+// cache because reading from theme metrics is slow
+float g_fJudgePerfectZoomX,
+	  g_fJudgePerfectZoomY,
+	  g_fJudgeGreatZoomX,
+	  g_fJudgeGreatZoomY,
+	  g_fJudgeGoodZoomX,
+	  g_fJudgeGoodZoomY,
+	  g_fJudgeBooZoomX,
+      g_fJudgeBooZoomY,
+      g_fComboJudgeTweenSeconds;
+
 // these two items are in the
 const float FRAME_JUDGE_AND_COMBO_Y = CENTER_Y;
 const float JUDGEMENT_Y_OFFSET	= -26;
@@ -39,6 +61,18 @@ const float HOLD_ARROW_NG_TIME	=	0.18f;
 
 Player::Player()
 {
+	// Update theme metrics cache
+	g_fJudgePerfectZoomX = JUDGE_PERFECT_ZOOM_X;
+	g_fJudgePerfectZoomY = JUDGE_PERFECT_ZOOM_Y;
+	g_fJudgeGreatZoomX = JUDGE_GREAT_ZOOM_X;
+	g_fJudgeGreatZoomY = JUDGE_GREAT_ZOOM_Y;
+	g_fJudgeGoodZoomX = JUDGE_GOOD_ZOOM_X;
+	g_fJudgeGoodZoomY = JUDGE_GOOD_ZOOM_Y;
+	g_fJudgeBooZoomX = JUDGE_BOO_ZOOM_X;
+    g_fJudgeBooZoomY = JUDGE_BOO_ZOOM_Y;
+	g_fComboJudgeTweenSeconds = COMBO_JUDGE_TWEEN_SECONDS;
+
+
 	m_PlayerNumber = PLAYER_INVALID;
 
 	m_pLifeMeter = NULL;
@@ -352,7 +386,7 @@ void Player::Step( int col )
 		if( GAMESTATE->m_bDemonstration  ||  PREFSMAN->m_bAutoPlay )
 			score = TNS_PERFECT;
 
-		bDestroyedNote = score >= TNS_GOOD;
+		bDestroyedNote = (score >= TNS_GOOD);
 
 
 		bool bRowDestroyed = true;
@@ -418,20 +452,22 @@ void Player::OnRowDestroyed( int col, int iIndexThatWasSteppedOn )
 	m_Judgement.SetJudgement( score );
 
 	// zoom the judgement and combo like a heart beat
-	float fStartZoom;
+	float fStartZoomX, fStartZoomY;
 	switch( score )
 	{
-	case TNS_PERFECT:	fStartZoom = 1.3f;	break;
-	case TNS_GREAT:		fStartZoom = 1.2f;	break;
-	case TNS_GOOD:		fStartZoom = 1.1f;	break;
-	case TNS_BOO:		fStartZoom = 1.0f;	break;
+	case TNS_PERFECT:	fStartZoomX = g_fJudgePerfectZoomX;	fStartZoomY = g_fJudgePerfectZoomY;	break;
+	case TNS_GREAT:		fStartZoomX = g_fJudgeGreatZoomX;	fStartZoomY = g_fJudgeGreatZoomY;	break;
+	case TNS_GOOD:		fStartZoomX = g_fJudgeGoodZoomX;	fStartZoomY = g_fJudgeGoodZoomY;	break;
+	case TNS_BOO:		fStartZoomX = g_fJudgeBooZoomX;		fStartZoomY = g_fJudgeBooZoomY;		break;
 	}
-	m_frameJudgement.SetZoom( fStartZoom );
-	m_frameJudgement.BeginTweening( 0.1f );
+	m_frameJudgement.SetZoomX( fStartZoomX );
+	m_frameJudgement.SetZoomY( fStartZoomY );
+	m_frameJudgement.BeginTweening( g_fComboJudgeTweenSeconds );
 	m_frameJudgement.SetTweenZoom( 1 );
 
-	m_frameCombo.SetZoom( fStartZoom );
-	m_frameCombo.BeginTweening( 0.1f );
+	m_frameCombo.SetZoomX( fStartZoomX );
+	m_frameCombo.SetZoomY( fStartZoomY );
+	m_frameCombo.BeginTweening( g_fComboJudgeTweenSeconds );
 	m_frameCombo.SetTweenZoom( 1 );
 }
 

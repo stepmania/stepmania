@@ -744,24 +744,27 @@ void ScreenEvaluation::TweenOnScreen()
 			apActorsInBonusOrStageInfo[i]->SetTweenX( fOriginalX );
 		}
 
-		m_sprGradeFrame[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprGradeFrame[p].SetTweenZoomY( 0 );
-
-		m_Grades[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_Grades[p].SetTweenZoomY( 0 );
-
-		m_textOniPercentLarge[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textOniPercentLarge[p].SetTweenZoomY( 0 );
-
-		m_textOniPercentSmall[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textOniPercentSmall[p].SetTweenZoomY( 0 );
-
-		m_textNewRecord[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textNewRecord[p].SetTweenZoomY( 0 );
+		CArray<Actor*,Actor*> apActorsInGradeOrPercentFrame;
+		apActorsInGradeOrPercentFrame.Add( &m_sprBonusFrame[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_sprGradeFrame[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_Grades[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_sprPercentFrame[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentLarge[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentSmall[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_textNewRecord[p] );
+		for( i=0; i<apActorsInGradeOrPercentFrame.GetSize(); i++ )
+		{
+			float fOriginalZoomY = apActorsInGradeOrPercentFrame[i]->GetZoomY();
+			apActorsInGradeOrPercentFrame[i]->SetZoomY( 0 );
+			apActorsInGradeOrPercentFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+			apActorsInGradeOrPercentFrame[i]->SetTweenZoomY( fOriginalZoomY );
+		}
 	}
 	
+	float fOriginalZoomY = m_textTryExtraStage.GetZoomY();
+	m_textTryExtraStage.SetZoomY( 0 );
 	m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-	m_textTryExtraStage.SetTweenZoomY( 0 );
+	m_textTryExtraStage.SetTweenZoomY( fOriginalZoomY );
 }
 
 void ScreenEvaluation::TweenOffScreen()
@@ -821,22 +824,21 @@ void ScreenEvaluation::TweenOffScreen()
 			apActorsInBonusOrStageInfo[i]->SetTweenZoomY( 0 );
 		}
 
-		m_sprGradeFrame[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_sprGradeFrame[p].SetTweenZoomY( 0 );
-
-		m_Grades[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_Grades[p].SetTweenZoomY( 0 );
-
-		m_textOniPercentLarge[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textOniPercentLarge[p].SetTweenZoomY( 0 );
-
-		m_textOniPercentSmall[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textOniPercentSmall[p].SetTweenZoomY( 0 );
-
-		m_textNewRecord[p].BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
-		m_textNewRecord[p].SetTweenZoomY( 0 );
+		CArray<Actor*,Actor*> apActorsInGradeOrPercentFrame;
+		apActorsInGradeOrPercentFrame.Add( &m_sprBonusFrame[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_sprGradeFrame[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_Grades[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_sprPercentFrame[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentLarge[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_textOniPercentSmall[p] );
+		apActorsInGradeOrPercentFrame.Add( &m_textNewRecord[p] );
+		for( i=0; i<apActorsInGradeOrPercentFrame.GetSize(); i++ )
+		{
+			apActorsInGradeOrPercentFrame[i]->BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
+			apActorsInGradeOrPercentFrame[i]->SetTweenZoomY( 0 );
+		}
 	}
-
+	
 	m_textTryExtraStage.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_textTryExtraStage.SetTweenZoomY( 0 );
 }

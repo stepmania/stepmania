@@ -624,14 +624,6 @@ SOURCE=.\GrooveRadar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GroupInfoFrame.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GroupInfoFrame.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\GroupList.cpp
 # End Source File
 # Begin Source File

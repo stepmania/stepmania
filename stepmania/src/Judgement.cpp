@@ -82,7 +82,6 @@ void Judgement::SetJudgement( TapNoteScore score )
 	{
 		// falling down
 		m_sprJudgement.SetY( -20 );
-		//m_sprJudgement.SetZoom( 1.0f );
 		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME );
 		m_sprJudgement.SetTweenY( 20 );
 	} 

@@ -69,6 +69,7 @@
 #define SONG_OPTIONS_Y		THEME->GetMetricF("ScreenSelectMusic","SongOptionsY")
 #define HELP_TEXT			THEME->GetMetric("ScreenSelectMusic","HelpText")
 #define TIMER_SECONDS		THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
+#define SCORE_CONNECTED_TO_MUSIC_WHEEL	THEME->GetMetricB("ScreenSelectMusic","ScoreConnectedToMusicWheel")
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -290,16 +291,20 @@ void ScreenSelectMusic::DrawPrimitives()
 void ScreenSelectMusic::TweenOnScreen()
 {
 	float fOriginalZoomY;
-
-	Actor* pActorsInGroupInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_BPMDisplay, &m_textStage, &m_sprCDTitle };
-	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInGroupInfoFrame) / sizeof(Actor*);
 	int i;
-	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
+
+	CArray<Actor*,Actor*> apActorsInGroupInfoFrame;
+	apActorsInGroupInfoFrame.Add( &m_sprBannerFrame );
+	apActorsInGroupInfoFrame.Add( &m_Banner );
+	apActorsInGroupInfoFrame.Add( &m_BPMDisplay );
+	apActorsInGroupInfoFrame.Add( &m_textStage );
+	apActorsInGroupInfoFrame.Add( &m_sprCDTitle );
+	for( i=0; i<apActorsInGroupInfoFrame.GetSize(); i++ )
 	{
-		float fOriginalX = pActorsInGroupInfoFrame[i]->GetX();
-		pActorsInGroupInfoFrame[i]->SetX( fOriginalX-400 );
-		pActorsInGroupInfoFrame[i]->BeginTweening( TWEEN_TIME, TWEEN_BOUNCE_END );
-		pActorsInGroupInfoFrame[i]->SetTweenX( fOriginalX );
+		float fOriginalX = apActorsInGroupInfoFrame[i]->GetX();
+		apActorsInGroupInfoFrame[i]->SetX( fOriginalX-400 );
+		apActorsInGroupInfoFrame[i]->BeginTweening( TWEEN_TIME, TWEEN_BOUNCE_END );
+		apActorsInGroupInfoFrame[i]->SetTweenX( fOriginalX );
 	}
 
 	fOriginalZoomY = m_sprDifficultyFrame.GetZoomY();
@@ -335,14 +340,18 @@ void ScreenSelectMusic::TweenOnScreen()
 	m_MusicSortDisplay.BeginTweening( TWEEN_TIME );
 	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,1) );
 
-	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
-	const int iNumActorsInScore = sizeof(pActorsInScore) / sizeof(Actor*);
-	for( i=0; i<iNumActorsInScore; i++ )
+	CArray<Actor*,Actor*> apActorsInScore;
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		float fOriginalX = pActorsInScore[i]->GetX();
-		pActorsInScore[i]->SetX( fOriginalX+400 );
-		pActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
-		pActorsInScore[i]->SetTweenX( fOriginalX );
+		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
+		apActorsInScore.Add( &m_HighScore[p] );
+	}
+	for( i=0; i<apActorsInScore.GetSize(); i++ )
+	{
+		float fOriginalX = apActorsInScore[i]->GetX();
+		apActorsInScore[i]->SetX( SCORE_CONNECTED_TO_MUSIC_WHEEL ? fOriginalX+400 : fOriginalX-400 );
+		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
+		apActorsInScore[i]->SetTweenX( fOriginalX );
 	}
 
 	m_MusicWheel.TweenOnScreen();
@@ -350,13 +359,18 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	Actor* pActorsInGroupInfoFrame[] = { &m_sprBannerFrame, &m_Banner, &m_BPMDisplay, &m_textStage, &m_sprCDTitle };
-	const int iNumActorsInGroupInfoFrame = sizeof(pActorsInGroupInfoFrame) / sizeof(Actor*);
 	int i;
-	for( i=0; i<iNumActorsInGroupInfoFrame; i++ )
+
+	CArray<Actor*,Actor*> apActorsInGroupInfoFrame;
+	apActorsInGroupInfoFrame.Add( &m_sprBannerFrame );
+	apActorsInGroupInfoFrame.Add( &m_Banner );
+	apActorsInGroupInfoFrame.Add( &m_BPMDisplay );
+	apActorsInGroupInfoFrame.Add( &m_textStage );
+	apActorsInGroupInfoFrame.Add( &m_sprCDTitle );
+	for( i=0; i<apActorsInGroupInfoFrame.GetSize(); i++ )
 	{
-		pActorsInGroupInfoFrame[i]->BeginTweeningQueued( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
-		pActorsInGroupInfoFrame[i]->SetTweenX( pActorsInGroupInfoFrame[i]->GetX()-400 );
+		apActorsInGroupInfoFrame[i]->BeginTweeningQueued( TWEEN_TIME, TWEEN_BOUNCE_BEGIN );
+		apActorsInGroupInfoFrame[i]->SetTweenX( apActorsInGroupInfoFrame[i]->GetX()-400 );
 	}
 
 	m_sprDifficultyFrame.BeginTweening( TWEEN_TIME );
@@ -386,15 +400,43 @@ void ScreenSelectMusic::TweenOffScreen()
 	m_MusicSortDisplay.BeginTweening( TWEEN_TIME );
 	m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
 
-	Actor* pActorsInScore[] = { &m_sprHighScoreFrame[0], &m_sprHighScoreFrame[1], &m_HighScore[0], &m_HighScore[1] };
-	const int iNumActorsInScore = sizeof(pActorsInScore) / sizeof(Actor*);
-	for( i=0; i<iNumActorsInScore; i++ )
+	CArray<Actor*,Actor*> apActorsInScore;
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		pActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_BEGIN );
-		pActorsInScore[i]->SetTweenX( pActorsInScore[i]->GetX()+400 );
+		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
+		apActorsInScore.Add( &m_HighScore[p] );
+	}
+	for( i=0; i<apActorsInScore.GetSize(); i++ )
+	{
+		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );
+		apActorsInScore[i]->SetTweenX( SCORE_CONNECTED_TO_MUSIC_WHEEL ? apActorsInScore[i]->GetX()+400 : apActorsInScore[i]->GetX()-400 );
 	}
 
 	m_MusicWheel.TweenOffScreen();
+}
+
+void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
+{
+	if( !SCORE_CONNECTED_TO_MUSIC_WHEEL )
+		return;	// do nothing
+
+	CArray<Actor*,Actor*> apActorsInScore;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		apActorsInScore.Add( &m_sprHighScoreFrame[p] );
+		apActorsInScore.Add( &m_HighScore[p] );
+	}
+	for( int i=0; i<apActorsInScore.GetSize(); i++ )
+	{
+		float fOriginalX = HIGH_SCORE_X(p);
+		apActorsInScore[i]->BeginTweening( TWEEN_TIME, TWEEN_BIAS_END );		// tween off screen
+		apActorsInScore[i]->SetTweenX( fOriginalX+400 );
+		
+		apActorsInScore[i]->BeginTweeningQueued( 0.6f );		// sleep
+
+		apActorsInScore[i]->BeginTweeningQueued( 1, TWEEN_BIAS_BEGIN );		// tween back on screen
+		apActorsInScore[i]->SetTweenX( fOriginalX );
+	}
 }
 
 void ScreenSelectMusic::Update( float fDeltaTime )
@@ -493,10 +535,11 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType 
 			if( m_MusicWheel.NextSort() )
 			{
 				MUSIC->Stop();
-				// tween music sort off screen
-				//m_MusicSortDisplay.SetEffectNone();
+
 				m_MusicSortDisplay.BeginTweening( 0.3f );
 				m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+				TweenScoreOnAndOffAfterChangeSort();
 			}
 		return;
 	}
@@ -631,10 +674,10 @@ void ScreenSelectMusic::MenuStart( PlayerNumber p )
 			{
 				MUSIC->Stop();
 
-				// tween music sort off screen
-				//m_MusicSortDisplay.SetEffectNone();
 				m_MusicSortDisplay.BeginTweening( 0.3f );
 				m_MusicSortDisplay.SetTweenDiffuseColor( D3DXCOLOR(1,1,1,0) );
+
+				TweenScoreOnAndOffAfterChangeSort();
 			}
 		}
 		return;
