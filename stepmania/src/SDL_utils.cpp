@@ -508,7 +508,7 @@ bool SDL_GetEvent(SDL_Event &event, int mask)
 	default: RageException::Throw("SDL_PeepEvents returned unexpected error: %s", SDL_GetError());
 	}
 }
-#include "RageLog.h"
+
 /* Reads all currently queued SDL events, clearing them from the queue. */
 void mySDL_GetAllEvents(vector<SDL_Event> &events)
 {
@@ -526,7 +526,7 @@ void mySDL_GetAllEvents(vector<SDL_Event> &events)
 void mySDL_PushEvents(vector<SDL_Event> &events)
 {
 	for(unsigned i = 0; i < events.size(); ++i)
-		LOG->Trace("push ev %i: %i", events[i].type, SDL_PushEvent(&events[i]));
+		SDL_PushEvent(&events[i]);
 }
 
 /* For some bizarre reason, SDL_EventState flushes all events.  This is a pain, so

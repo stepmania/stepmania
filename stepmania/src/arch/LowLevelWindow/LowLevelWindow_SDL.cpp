@@ -56,7 +56,6 @@ bool LowLevelWindow_SDL::SetVideoMode( bool windowed, int width, int height, int
 			e.key.type = SDL_KEYUP;
 			e.key.keysym.sym = key;
 			events.push_back(e);
-			LOG->Trace("up %i", key);
 		}
 	}
 
