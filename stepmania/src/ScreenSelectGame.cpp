@@ -42,15 +42,14 @@ ScreenSelectGame::ScreenSelectGame() :
 	vector<Game> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
 	
-	m_OptionRow[SG_GAME].choices.clear();
+	g_SelectGameLines[SG_GAME].choices.clear();
 	for( unsigned i=0; i<aGames.size(); i++ )
 	{
 		Game game = aGames[i];
 		CString sGameName = GAMEMAN->GetGameDefForGame(game)->m_szName;
 		sGameName.MakeUpper();
-		m_OptionRow[SG_GAME].choices.push_back( sGameName );
+		g_SelectGameLines[SG_GAME].choices.push_back( sGameName );
 	}
-
 
 	Init( 
 		INPUTMODE_BOTH, 
