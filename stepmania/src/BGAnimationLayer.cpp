@@ -495,6 +495,8 @@ void BGAnimationLayer::LoadFromNode( const CString& sAniDir_, const XNode& layer
 			for( int i=0; i<iNumParticles; i++ )
 			{
 				Actor* pActor = MakeActor( sPath );
+				if( pActor == NULL )
+					continue;
 				this->AddChild( pActor );
 				pActor->SetXY( randomf(float(FullScreenRectF.left),float(FullScreenRectF.right)),
 							   randomf(float(FullScreenRectF.top),float(FullScreenRectF.bottom)) );

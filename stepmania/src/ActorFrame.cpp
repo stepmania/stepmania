@@ -30,7 +30,8 @@ void ActorFrame::LoadFromNode( const CString &sDir, const XNode* pNode )
 		FOREACH_CONST_Child( pChildren, pChild )
 		{
 			Actor* pChildActor = LoadFromActorFile( sDir, *pChild );
-			AddChild( pChildActor );
+			if( pChildActor )
+				AddChild( pChildActor );
 		}
 	}
 }
@@ -158,7 +159,10 @@ float ActorFrame::GetTweenTimeLeft() const
 	float m = Actor::GetTweenTimeLeft();
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m = max(m, m_fHibernateSecondsLeft + m_SubActors[i]->GetTweenTimeLeft());
+	{
+		const Actor* pActor = m_SubActors[i];
+		m = max(m, m_fHibernateSecondsLeft + pActor->GetTweenTimeLeft());
+	}
 
 	return m;
 
@@ -230,7 +234,10 @@ void ActorFrame::PlayCommand( const CString &sCommandName )
 	Actor::PlayCommand( sCommandName );
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
-		m_SubActors[i]->PlayCommand( sCommandName );
+	{
+		Actor* pActor = m_SubActors[i];
+		pActor->PlayCommand( sCommandName );
+	}
 }
 
 /*

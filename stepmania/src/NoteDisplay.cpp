@@ -128,7 +128,10 @@ static NoteResource *MakeNoteResource( const CString &sPath, bool bSpriteOnly )
 			pRes->m_pActor = pSprite;
 		}
 		else
+		{
 			pRes->m_pActor = MakeActor( sPath );
+			ASSERT( pRes->m_pActor );
+		}
 
 		g_NoteResource[sPath] = pRes;
 		it = g_NoteResource.find( sPath );

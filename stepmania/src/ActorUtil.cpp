@@ -14,12 +14,23 @@
 #include "Course.h"
 #include "XmlFile.h"
 #include "FontCharAliases.h"
+#include "LuaHelpers.h"
 
 #include "arch/Dialog/Dialog.h"
 
 
 Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 {
+	{
+		CString expr;
+		if( layer.GetAttrValue("Condition",expr) )
+		{
+			if( !Lua::RunExpressionB(expr) )
+				return NULL;
+		}
+	}
+
+
 	Actor* pActor = NULL;	// fill this in before we return
 
 	// Element name is the type in XML.
@@ -46,9 +57,15 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 
 	if( sType == "BGAnimation" )
 	{
-		BGAnimation *pBGA = new BGAnimation;
-		pBGA->LoadFromNode( sAniDir, layer );
-		pActor = pBGA;
+		BGAnimation *p = new BGAnimation;
+		p->LoadFromNode( sAniDir, layer );
+		pActor = p;
+	}
+	else if( sType == "ActorFrame" )
+	{
+		ActorFrame *p = new ActorFrame;
+		p->LoadFromNode( sAniDir, &layer );
+		pActor = p;
 	}
 	else if( sType == "BitmapText" )
 	{
@@ -174,6 +191,7 @@ retry:
 		/* XXX: We need to do a theme search, since the file we're loading might
 		 * be overridden by the theme. */
 		CString sNewPath = sAniDir+sFile;
+		CollapsePath( sNewPath );
 
 		// If we know this is an exact match, don't bother with the GetDirListing;
 		// it's causing problems with partial matching BGAnimation directory names.
@@ -227,13 +245,15 @@ retry:
 		sNewPath = DerefRedir( sNewPath );
 
 		pActor = MakeActor( sNewPath );
+		if( pActor == NULL )
+			return NULL;
 	}
 
+	ASSERT( pActor );	// we should have filled this in above
 
 	// TODO: LoadFromNode should be called when we still have a pointer to the derived type.
  	pActor->LoadFromNode( &layer );
 
-	ASSERT( pActor );	// we should have filled this in above
 	return pActor;
 }
 
@@ -287,7 +307,9 @@ Actor* MakeActor( const RageTextureID &ID )
 	/* Do this last, to avoid the IsADirectory in most cases. */
 	else if( IsADirectory(ID.filename)  )
 	{
-		const CString& sDir = ID.filename;
+		CString sDir = ID.filename;
+		if( sDir.Right(1) != "/" )
+			sDir += '/';
 		CString sIni = sDir + "BGAnimation.ini";
 		CString sXml = sDir + "default.xml";
 
