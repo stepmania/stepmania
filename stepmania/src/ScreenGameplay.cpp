@@ -849,8 +849,10 @@ void ScreenGameplay::LoadNextSong()
 	GAMESTATE->m_pCurSong = m_apSongsQueue[iPlaySongIndex];
 	g_CurStageStats.pSong = GAMESTATE->m_pCurSong;
 
+	// No need to do this here.  We do it in SongFinished().
+	//GAMESTATE->RemoveAllActiveAttacks();
+
 	// Restore the player's originally selected options.
-	GAMESTATE->RemoveAllActiveAttacks();
 	GAMESTATE->RestoreSelectedOptions();
 
 	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
@@ -1912,6 +1914,8 @@ void ScreenGameplay::SongFinished()
 	/* Extremely important: if we don't remove attacks before moving on to the next
 	 * screen, they'll still be turned on eventually. */
 	GAMESTATE->RemoveAllActiveAttacks();
+	FOREACH_EnabledPlayer( p )
+		m_ActiveAttackList[p].Refresh();
 }
 
 void ScreenGameplay::StageFinished( bool bBackedOut )
@@ -2049,6 +2053,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			m_DancingState = STATE_OUTRO;
 
 			GAMESTATE->RemoveAllActiveAttacks();
+			FOREACH_EnabledPlayer( p )
+				m_ActiveAttackList[p].Refresh();
 
 			LIGHTSMAN->SetLightsMode( LIGHTSMODE_ALL_CLEARED );
 

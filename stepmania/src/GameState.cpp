@@ -1192,7 +1192,7 @@ void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 		m_ActiveAttacks[pn].erase( m_ActiveAttacks[pn].begin()+s, m_ActiveAttacks[pn].begin()+s+1 );
 		--s;
 	}
-	RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)pn );
+	RebuildPlayerOptionsFromActiveAttacks( pn );
 }
 
 void GameState::RemoveAllInventory()
