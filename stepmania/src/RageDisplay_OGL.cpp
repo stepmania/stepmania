@@ -820,28 +820,26 @@ SDL_Surface* RageDisplay_OGL::CreateScreenshot()
 	int width = wind->GetVideoModeParams().width;
 	int height = wind->GetVideoModeParams().height;
 
-	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[FMT_RGB8];
+	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[FMT_RGBA8];
 	SDL_Surface *image = SDL_CreateRGBSurfaceSane(
 		SDL_SWSURFACE, width, height,
-        desc.bpp, desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
+        desc.bpp, desc.masks[0], desc.masks[1], desc.masks[2], 0 );
 
-	SDL_Surface *temp = SDL_CreateRGBSurfaceSane(
-		SDL_SWSURFACE, width, height,
-        desc.bpp, desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
-
-	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGB,
+	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGBA,
 	             GL_UNSIGNED_BYTE, image->pixels);
 
 	// flip vertically
 	int pitch = image->pitch;
-	for( int y=0; y<wind->GetVideoModeParams().height; y++ )
-		memcpy( 
-			(char *)temp->pixels + pitch * y,
-			(char *)image->pixels + pitch * (height-1-y),
-			3*width );
-	SDL_FreeSurface( image );
-
-	return temp;
+	int bytes_per_row = image->format->BytesPerPixel * width;
+	char *row = new char[bytes_per_row];
+	for( int y=0; y<wind->GetVideoModeParams().height/2; y++ )
+	{
+		memcpy( row, (char *)image->pixels + pitch * y, bytes_per_row );
+		memcpy( (char *)image->pixels + pitch * y, (char *)image->pixels + pitch * (height-1-y), bytes_per_row );
+		memcpy( (char *)image->pixels + pitch * (height-1-y), row, bytes_per_row  );
+	}
+	delete [] row;
+	return image;
 }
 
 RageDisplay::VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
