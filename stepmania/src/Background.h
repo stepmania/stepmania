@@ -27,7 +27,7 @@ public:
 	Background();
 	~Background();
 
-	virtual void LoadFromSong( Song *pSong );
+	virtual void LoadFromSong( const Song *pSong );
 	virtual void Unload();
 
 	virtual void Update( float fDeltaTime );
@@ -39,14 +39,16 @@ public:
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
 protected:
+	const Song *m_pSong;
 	void LoadFromAniDir( CString sAniDir );
 	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing );
+	int FindBPMSegmentForBeat( float fBeat ) const;
 
 	bool IsDangerPlayerVisible( PlayerNumber pn );
 	bool IsDangerAllVisible();
 	bool IsDeadPlayerVisible( PlayerNumber pn );
-	void UpdateCurBGChange();
-		
+	void UpdateCurBGChange( float fCurrentTime );
+	
 	DancingCharacters*	m_pDancingCharacters;
 
 	BGAnimation		m_DangerPlayer[NUM_PLAYERS];
@@ -54,7 +56,7 @@ protected:
 
 	BGAnimation		m_DeadPlayer[NUM_PLAYERS];
 
-	BGAnimation* CreateSongBGA(const Song *pSong, CString sBGName) const;
+	BGAnimation* CreateSongBGA( CString sBGName ) const;
 	CString CreateRandomBGA();
 
 	map<CString,BGAnimation*> m_BGAnimations;
@@ -64,6 +66,7 @@ protected:
 	BGAnimation* m_pCurrentBGA;
 	BGAnimation* m_pFadingBGA;
 	float m_fSecsLeftInFade;
+	float m_fLastMusicSeconds;
 
 	Quad m_quadBGBrightness;
 	Quad m_quadBorder[4];	// l, t, r, b - cover up the edge of animations that might hang outside of the background rectangle

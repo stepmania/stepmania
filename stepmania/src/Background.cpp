@@ -114,8 +114,10 @@ void Background::Unload()
 
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
+	m_pSong = NULL;
 	m_fSecsLeftInFade = 0;
 	m_iCurBGChangeIndex = 0;
+	m_fLastMusicSeconds	= -9999;
 }
 
 void Background::LoadFromAniDir( CString sAniDir )
@@ -132,7 +134,7 @@ void Background::LoadFromAniDir( CString sAniDir )
 	m_aBGChanges.push_back( BackgroundChange(-1000, STATIC_BACKGROUND) );
 }
 
-BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
+BGAnimation *Background::CreateSongBGA( CString sBGName ) const
 {
 	BGAnimation *pTempBGA;
 
@@ -142,7 +144,7 @@ BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 	CStringArray asFiles;
 
 	// Look for BGAnims in the song dir
-	GetDirListing( pSong->GetSongDir()+sBGName, asFiles, true, true );
+	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
@@ -150,7 +152,7 @@ BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 		return pTempBGA;
 	}
 	// Look for BG movies or static graphics in the song dir
-	GetDirListing( pSong->GetSongDir()+sBGName, asFiles, false, true );
+	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
 	{
 		pTempBGA = new BGAnimation;
@@ -307,9 +309,11 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const Timing
 	}
 }
 
-void Background::LoadFromSong( Song* pSong )
+void Background::LoadFromSong( const Song* pSong )
 {
 	Unload();
+
+	m_pSong = pSong;
 
 	if( PREFSMAN->m_fBGBrightness == 0 )
 		return;
@@ -345,7 +349,7 @@ void Background::LoadFromSong( Song* pSong )
 
 			if( !bIsAlreadyLoaded )
 			{
-				BGAnimation *pTempBGA = CreateSongBGA(pSong, sBGName);
+				BGAnimation *pTempBGA = CreateSongBGA( sBGName );
 				if( pTempBGA )
 					m_BGAnimations[sBGName] = pTempBGA;
 				else // the background was not found.  Use a random one instead
@@ -427,49 +431,82 @@ void Background::LoadFromSong( Song* pSong )
 		m_pDancingCharacters->LoadNextSong();
 }
 
-void Background::UpdateCurBGChange()
+int Background::FindBPMSegmentForBeat( float fBeat ) const
 {
-	if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
+	int i;
+	for( i=0; i<(int)(m_aBGChanges.size()) - 1; i++ )
+		if( fBeat < m_aBGChanges[i+1].m_fStartBeat )
+			return i;
+
+	return -1;
+}
+
+/* If the BG segment has changed, move focus to it.  Send Update() calls. */
+void Background::UpdateCurBGChange( float fCurrentTime )
+{
+	if( fCurrentTime == GameState::MUSIC_SECONDS_INVALID )
 		return; /* hasn't been updated yet */
 
 	if( m_aBGChanges.size() == 0 )
 		return;
 
-	/* Only update BGAnimations if we're not in the middle of a stop. */
-	if( GAMESTATE->m_bFreeze )
-		return;
+	float fBeat, fBPS;
+	bool bFreeze;
+	m_pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze );
 
 	// Find the BGSegment we're in
-	int i;
-	int size = (int)(m_aBGChanges.size()) - 1;
-	for( i=0; i<size; i++ )
-		if( GAMESTATE->m_fSongBeat < m_aBGChanges[i+1].m_fStartBeat )
-			break;
+	const int i = FindBPMSegmentForBeat( fBeat );
 
-	if( i == m_iCurBGChangeIndex )
-		return; /* OK */
+	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
+	const float fRate = GAMESTATE->m_SongOptions.m_fMusicRate;
 
-	LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, GAMESTATE->m_fSongBeat );
+	if( i != m_iCurBGChangeIndex )
+	{
+		LOG->Trace( "old bga %d -> new bga %d, %f, %f", i, m_iCurBGChangeIndex, m_aBGChanges[i].m_fStartBeat, fBeat );
 
-	m_iCurBGChangeIndex = i;
+		m_iCurBGChangeIndex = i;
 
-	const BackgroundChange& change = m_aBGChanges[i];
+		const BackgroundChange& change = m_aBGChanges[i];
 
-	BGAnimation* pOld = m_pCurrentBGA;
+		BGAnimation* pOld = m_pCurrentBGA;
 
-	if( change.m_bFadeLast )
-		m_pFadingBGA = m_pCurrentBGA;
+		if( change.m_bFadeLast )
+			m_pFadingBGA = m_pCurrentBGA;
+		else
+			m_pFadingBGA = NULL;
+
+		m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
+
+		if( pOld )
+			pOld->LosingFocus();
+		if( m_pCurrentBGA )
+			m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+
+		m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
+
+		/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
+		const float fStartSecond = m_pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
+
+		/* This is affected by the music rate. */
+		float fDeltaTime = fCurrentTime - fStartSecond;
+		fDeltaTime /= fRate;
+		if( m_pCurrentBGA )
+			m_pCurrentBGA->Update( fDeltaTime );
+	}
 	else
-		m_pFadingBGA = NULL;
+	{
+		/* This is affected by the music rate. */
+		float fDeltaTime = fCurrentTime - m_fLastMusicSeconds;
+		fDeltaTime /= fRate;
+		if( m_pCurrentBGA )
+			m_pCurrentBGA->Update( fDeltaTime );
+	}
 
-	m_pCurrentBGA = m_BGAnimations[ change.m_sBGName ];
-
-	if( pOld )
-		pOld->LosingFocus();
-	if( m_pCurrentBGA )
-		m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
-
-	m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
+	float fDeltaTime = fCurrentTime - m_fLastMusicSeconds;
+	fDeltaTime /= fRate;
+	if( m_pFadingBGA )
+		m_pFadingBGA->Update( fCurrentTime - m_fLastMusicSeconds );
+	m_fLastMusicSeconds = fCurrentTime;
 }
 
 void Background::Update( float fDeltaTime )
@@ -494,10 +531,8 @@ void Background::Update( float fDeltaTime )
 	 * Otherwise, we'll stop updating movies during danger (which may stop them from
 	 * playing), and we won't start clips at the right time, which will throw backgrounds
 	 * off sync. */
-	UpdateCurBGChange();
+	UpdateCurBGChange( GAMESTATE->m_fMusicSeconds );
 	
-	if( m_pCurrentBGA )
-		m_pCurrentBGA->Update( fDeltaTime );
 	if( m_pFadingBGA )
 	{
 		m_pFadingBGA->Update( fDeltaTime );
