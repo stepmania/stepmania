@@ -172,13 +172,18 @@ void ScreenNetEvaluation::TweenOffScreen( )
 
 void ScreenNetEvaluation::UpdateStats()
 {
+	if ( m_iCurrentPlayer >= NSMAN->m_EvalPlayerData.size() )
+		return;
+
 	m_Grades[m_pActivePlayer].SetGrade( (PlayerNumber)m_pActivePlayer, (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
 	m_Grades[m_pActivePlayer].Spin();
 	m_Grades[m_pActivePlayer].SettleImmediately();
 
 	m_textScore[m_pActivePlayer].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score) );
 
-	m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( m_pActivePlayer, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
+	//Values greater than 6 will cause crash
+	if ( NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty < 6 )
+		m_DifficultyIcon[m_pActivePlayer].SetFromDifficulty( m_pActivePlayer, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].difficulty );
 
 	for (int j=0; j<NETNUMTAPSCORES; ++j)
 	{
