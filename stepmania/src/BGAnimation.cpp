@@ -118,6 +118,8 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		if( !ini.GetValue( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
 		{
 			m_fLengthSeconds = 0;
+			/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",
+			 * so at this point GetMaxTweenTimeLeft is probably 0 */
 			for( int i=0; (unsigned)i < m_Layers.size(); i++ )
 				m_fLengthSeconds = max(m_fLengthSeconds, m_Layers[i]->GetMaxTweenTimeLeft());
 		}
@@ -140,8 +142,8 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			m_Scroller.Load( fScrollSecondsPerItem, fSpacingX, fSpacingY );
 			for( unsigned i=0; i<m_Layers.size(); i++ )
 				m_Scroller.AddChild( m_Layers[i] );
-			m_Scroller.SetCurrentAndDestinationItem( -fItemPaddingStart );
-			m_Scroller.SetDestinationItem( m_Layers.size()-1+fItemPaddingEnd );
+			m_Scroller.SetCurrentAndDestinationItem( int(-fItemPaddingStart) );
+			m_Scroller.SetDestinationItem( int(m_Layers.size()-1+fItemPaddingEnd) );
 			this->AddChild( &m_Scroller );
 		}
 
