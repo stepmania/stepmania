@@ -25,7 +25,7 @@ $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && ./configure && make
 
 Screens = \
-Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
+Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h ScreenBookkeeping.h ScreenBookkeeping.cpp \
 ScreenCaution.cpp ScreenCaution.h ScreencenterImage.h ScreenCenterImage.cpp ScreenCredits.cpp ScreenCredits.h ScreenDemonstration.cpp ScreenDemonstration.h \
 ScreenDimensions.h ScreenEdit.cpp ScreenEdit.h ScreenEditCoursesMenu.cpp ScreenEditCoursesMenu.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEndlessBreak.cpp ScreenEndlessBreak.h ScreenEvaluation.cpp ScreenEvaluation.h \
@@ -35,7 +35,7 @@ ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstructions.cpp ScreenInstructions.h ScreenJukebox.cpp ScreenJukebox.h \
 ScreenJukeboxMenu.cpp ScreenJukeboxMenu.h ScreenLogo.cpp ScreenLogo.h \
 ScreenMapControllers.cpp ScreenMapControllers.h ScreenMemoryCard.h ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
-ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h ScreenOptions.cpp ScreenOptions.h \
+ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.h ScreenNameEntryTraditional.cpp ScreenOptions.cpp ScreenOptions.h \
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h \
 ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenPrompt.cpp ScreenPrompt.h \
 ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenRanking.cpp ScreenRanking.h ScreenRaveOptions.cpp ScreenRaveOptions.h \
@@ -174,7 +174,7 @@ ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Milkshape.h Model.cpp Mode
 Quad.h Sprite.cpp Sprite.h mathlib.c mathlib.h 
 
 GlobalSingletons = \
-AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
+AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.h Bookkeeper.cpp FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
 NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h \
 ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
