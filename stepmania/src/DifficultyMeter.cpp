@@ -110,6 +110,40 @@ void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 	SetDifficulty( DifficultyToString( pSteps->GetDifficulty() ) );
 }
 
+void DifficultyMeter::SetFromTrail( const Trail* pTrail )
+{
+	if( pTrail == NULL )
+	{
+		Unset();
+		return;
+	}
+
+	Difficulty FakeDifficulty;
+	switch( pTrail->m_CourseDifficulty )
+	{
+	case COURSE_DIFFICULTY_EASY:		FakeDifficulty = DIFFICULTY_EASY;	break;
+	case COURSE_DIFFICULTY_REGULAR:		FakeDifficulty = DIFFICULTY_MEDIUM;	break;
+	case COURSE_DIFFICULTY_DIFFICULT:	FakeDifficulty = DIFFICULTY_HARD;	break;
+	default:	ASSERT(0);
+	}
+
+
+/*
+	if( pTrail->m_iMeter <= 1 )
+		FakeDifficulty = DIFFICULTY_BEGINNER;
+	else if( pTrail->m_iMeter <= 3 )
+		FakeDifficulty = DIFFICULTY_EASY;
+	else if( pTrail->m_iMeter <= 6 )
+		FakeDifficulty = DIFFICULTY_MEDIUM;
+	else if( pTrail->m_iMeter <= 9 )
+		FakeDifficulty = DIFFICULTY_HARD;
+	else
+		FakeDifficulty = DIFFICULTY_CHALLENGE;
+*/
+	SetFromMeterAndDifficulty( pTrail->m_iMeter, FakeDifficulty );
+	SetDifficulty( DifficultyToString(FakeDifficulty) + "Course" );
+}
+
 void DifficultyMeter::SetFromCourse( const Course* pCourse, PlayerNumber pn )
 {
 	if( pCourse == NULL )

@@ -19,6 +19,7 @@
 
 class Steps;
 class Course;
+class Trail;
 
 
 class DifficultyMeter: public ActorFrame
@@ -30,7 +31,8 @@ public:
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );
 	void SetFromSteps( const Steps* pSteps );
-	void SetFromCourse( const Course* pCourse, PlayerNumber pn );
+	void SetFromCourse( const Course* pCourse, PlayerNumber pn ); /* deprecated */
+	void SetFromTrail( const Trail* pTrail );
 	void Unset();
 
 private:
