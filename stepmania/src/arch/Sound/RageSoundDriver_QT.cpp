@@ -20,6 +20,7 @@ using namespace QT;
 const unsigned channels = 2;
 const unsigned samplesize = channels*16;
 const unsigned samples = 512;
+const unsigned freq = 44100;
 const unsigned buffersize = samples*samplesize/8;
 
 /* Oh boy! dealing with memory at inturupt time. What fun! */
@@ -53,6 +54,7 @@ RageSound_QT::RageSound_QT() {
   TimeRecord	record;
   SoundComponentGetInfo(soundOutput, NULL, siOutputLatency, &record);
   latency = record.value.lo / record.scale;
+  latency += samples / freq; /* double buffer */
 
   OSErr err = SndNewChannel(&channel, sampledSynth, initStereo, callback);
 
@@ -98,9 +100,26 @@ void RageSound_QT::GetData(SndChannel *chan, SndCommand *cmd_passed) {
   static SoundMixBuffer mix;
   RageSound_QT *P = reinterpret_cast<RageSound_QT *>(chan->userInfo);
 
-
   fill_me = cmd_passed->param2;
   UInt32 play_me = !fill_me;
+
+  TimeRecord tr;
+  ClockGetTime(P->clock, &tr);
+  static UInt32 last = 0;
+  static UInt32 curr;
+  UInt64 temp = tr.value.hi;
+  temp <<= 32;
+  temp |= tr.value.lo;
+  double d = static_cast<double>(temp)/tr.scale*freq;
+  curr = static_cast<UInt32>(d);
+  LOG->Trace("last/curr/diff = %U/%U/%U", last, curr, curr-last);
+  ASSERT(curr > last);
+  last = curr;
+
+  if (!P->last_pos)
+    P->last_pos = curr;
+  else
+    P->last_pos += samples;
 
   /* Swap buffers */
   header.samplePtr = reinterpret_cast<Ptr>(buffer[play_me]);
@@ -110,15 +129,8 @@ void RageSound_QT::GetData(SndChannel *chan, SndCommand *cmd_passed) {
   cmd.param2 = reinterpret_cast<long>(&header);
   SndDoCommand(chan, &cmd, 0);
 
-
   /* Clear the fill buffer */
   memset(buffer[fill_me], 0, buffersize);
-
-  if (!P->last_pos) {
-    TimeRecord tr;
-    ClockGetTime(P->clock, &tr);
-    P->last_pos = tr.value.lo;
-  }
     
   for (unsigned i=0; i<P->sounds.size(); ++i) {
     if (P->sounds[i]->stopping)
@@ -133,12 +145,10 @@ void RageSound_QT::GetData(SndChannel *chan, SndCommand *cmd_passed) {
   }
 
   mix.read(reinterpret_cast<SInt16 *>(buffer[fill_me]));
-  P->last_pos += buffersize;
 
   cmd.cmd = callBackCmd;
   cmd.param2 = play_me;
   SndDoCommand(chan, &cmd, 0);
-  
 }
 
 void RageSound_QT::StartMixing(RageSound *snd) {
@@ -184,12 +194,16 @@ int RageSound_QT::GetPosition(const RageSound *snd) const {
 #pragma unused (snd)
   TimeRecord tr;
   ClockGetTime(clock, &tr);
-  return tr.value.lo;
+  UInt64 temp = tr.value.hi;
+  temp <<= 32;
+  temp |= tr.value.lo;
+  /*temp >>= lifetime;
+  return static_cast<UInt32>(temp & 0x00000000FFFFFFFFLL);*/
+  double d = static_cast<double>(temp)/tr.scale*freq;
+  return static_cast<int>(d);
 }
 
 float RageSound_QT::GetPlayLatency() const {
   return latency;
 }
-  
-
   
