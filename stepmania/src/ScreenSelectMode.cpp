@@ -53,9 +53,9 @@ ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassN
 	m_soundConfirm.Load( THEME->GetPathToS("ScreenSelectMode modeconfirm"));
 	m_soundStart.Load( THEME->GetPathToS("ScreenSelectMode menustart"));
 	
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
-		const ModeChoice& mc = m_aModeChoices[i];
+		const GameCommand& mc = m_aGameCommands[i];
 
 		//
 		// Load Sprite
@@ -186,9 +186,9 @@ void ScreenSelectMode::UpdateSelectableChoices()
 	m_iNumChoices = 0;
 	unsigned i=0;
 	unsigned j=0;
-	for( i=0; i<m_aModeChoices.size(); i++ )
+	for( i=0; i<m_aGameCommands.size(); i++ )
 	{
-		const ModeChoice& mc = m_aModeChoices[i];
+		const GameCommand& mc = m_aGameCommands[i];
 		CString modename = mc.m_sName;
 		modename.MakeUpper();
 

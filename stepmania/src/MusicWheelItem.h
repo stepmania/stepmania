@@ -9,7 +9,7 @@
 #include "WheelNotifyIcon.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 class Course;
 class Song;
 
@@ -77,7 +77,7 @@ struct WheelItemData
 
 	// for TYPE_SORT
 	CString			m_sLabel;
-	ModeChoice		m_Action;
+	GameCommand		m_Action;
 	SortOrder	m_SortOrder;
 };
 

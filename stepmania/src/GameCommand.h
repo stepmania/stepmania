@@ -1,7 +1,7 @@
-/* ModeChoice */
+/* GameCommand */
 
-#ifndef MODECHOICE_H
-#define MODECHOICE_H
+#ifndef GameCommand_H
+#define GameCommand_H
 
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
@@ -16,9 +16,9 @@ class Style;
 class Game;
 struct ActorCommands;
 
-struct ModeChoice		// used in SelectMode
+struct GameCommand		// used in SelectMode
 {
-	ModeChoice() { Init(); }
+	GameCommand() { Init(); }
 	void Init();
 
 	void Load( int iIndex, const ActorCommands& acs );

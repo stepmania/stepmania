@@ -11,7 +11,7 @@
 #include "Quad.h"
 #include "ScrollingList.h"
 #include "GameConstantsAndTypes.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "BitmapText.h"
 #include "RandomSample.h"
 #include "Character.h"

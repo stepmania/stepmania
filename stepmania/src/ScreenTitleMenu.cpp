@@ -144,9 +144,9 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	{
 	case COIN_HOME:
 		{
-			for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+			for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 			{
-				ModeChoice &mc = m_aModeChoices[i];
+				GameCommand &mc = m_aGameCommands[i];
 
 				m_textChoice[i].LoadFromFont( THEME->GetPathToF("ScreenTitleMenu choices") );
 				m_textChoice[i].SetHorizAlign( (enum Actor::HorizAlign)MENU_TEXT_ALIGN );
@@ -180,7 +180,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 
 	m_Choice = 0;
 
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 		if( i != m_Choice )
 		{
 			m_textChoice[i].SetZoom( ZOOM_NOT_SELECTED );
@@ -218,7 +218,7 @@ void ScreenTitleMenu::MoveCursor( bool up )
 	TimeToDemonstration.GetDeltaTime();	/* Reset the demonstration timer when a key is pressed. */
 	LoseFocus( m_Choice );
 	m_Choice += (up? -1:+1);
-	wrap( (int&)m_Choice, m_aModeChoices.size() );
+	wrap( (int&)m_Choice, m_aGameCommands.size() );
 	m_soundChange.Play();
 	GainFocus( m_Choice );
 }
@@ -231,7 +231,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		return;
 
 	/* If the CoinMode was changed, we need to reload this screen
-	 * so that the right m_aModeChoices will show */
+	 * so that the right m_aGameCommands will show */
 	if( ScreenAttract::ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI ) )
 	{
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
@@ -261,7 +261,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			break;
 		case MENU_BUTTON_START:
 			/* return if the choice is invalid */
-			const ModeChoice &mc = m_aModeChoices[m_Choice];
+			const GameCommand &mc = m_aGameCommands[m_Choice];
 			CString why;
 			if( !mc.IsPlayable( &why ) )
 			{
@@ -366,7 +366,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 				GAMESTATE->m_PlayerOptions[p].FromString( PREFSMAN->m_sDefaultModifiers );
 			GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 		}
-		m_aModeChoices[m_Choice].ApplyToAllPlayers();
+		m_aGameCommands[m_Choice].ApplyToAllPlayers();
 		break;
 	case SM_GoToAttractLoop:
 		SCREENMAN->SetNewScreen( INITIAL_SCREEN );

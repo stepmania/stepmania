@@ -1,5 +1,5 @@
 #include "global.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "GameManager.h"
@@ -18,7 +18,7 @@
 #include "Style.h"
 #include "Foreach.h"
 
-void ModeChoice::Init()
+void GameCommand::Init()
 {
 	m_sName = "";
 	m_bInvalid = true;
@@ -40,7 +40,7 @@ void ModeChoice::Init()
 
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
 
-bool ModeChoice::DescribesCurrentModeForAllPlayers() const
+bool GameCommand::DescribesCurrentModeForAllPlayers() const
 {
 	FOREACH_HumanPlayer( pn )
 		if( !DescribesCurrentMode(pn) )
@@ -49,7 +49,7 @@ bool ModeChoice::DescribesCurrentModeForAllPlayers() const
 	return true;
 }
 
-bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
+bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 {
 	if( m_pGame != NULL && m_pGame != GAMESTATE->m_pCurGame )
 		return false;
@@ -97,7 +97,7 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 	return true;
 }
 
-void ModeChoice::Load( int iIndex, const ActorCommands& acs )
+void GameCommand::Load( int iIndex, const ActorCommands& acs )
 {
 	m_iIndex = iIndex;
 
@@ -294,7 +294,7 @@ static bool AreStyleAndPlayModeCompatible( const Style *style, PlayMode pm )
 	return true;
 }
 
-bool ModeChoice::IsPlayable( CString *why ) const
+bool GameCommand::IsPlayable( CString *why ) const
 {
 	if( m_bInvalid )
 	{
@@ -401,7 +401,7 @@ bool ModeChoice::IsPlayable( CString *why ) const
 	return true;
 }
 
-void ModeChoice::ApplyToAllPlayers() const
+void GameCommand::ApplyToAllPlayers() const
 {
 	FOREACH_HumanPlayer( pn )
 		Apply( pn);
@@ -410,7 +410,7 @@ void ModeChoice::ApplyToAllPlayers() const
 		SCREENMAN->SetNewScreen( m_sScreen );
 }
 
-void ModeChoice::Apply( PlayerNumber pn ) const
+void GameCommand::Apply( PlayerNumber pn ) const
 {
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
@@ -493,7 +493,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
 }
 
-bool ModeChoice::IsZero() const
+bool GameCommand::IsZero() const
 {
 	if( m_pGame != NULL ||
 		m_pm != PLAY_MODE_INVALID ||

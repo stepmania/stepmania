@@ -7,7 +7,7 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "ActorUtil.h"
 #include "ScreenDimensions.h"
 
@@ -38,18 +38,18 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 	}
 
 	unsigned c; // GCC is bitching again.
-	for( c=0; c<m_aModeChoices.size(); c++ )
+	for( c=0; c<m_aGameCommands.size(); c++ )
 	{
 		if( (int)c < NUM_CHOICES_ON_PAGE_1 )
-			m_ModeChoices[PAGE_1].push_back( m_aModeChoices[c] );
+			m_GameCommands[PAGE_1].push_back( m_aGameCommands[c] );
 		else
-			m_ModeChoices[PAGE_2].push_back( m_aModeChoices[c] );
+			m_GameCommands[PAGE_2].push_back( m_aGameCommands[c] );
 	}
 
 	c = 0;
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-		for( unsigned choice=0; choice<m_ModeChoices[page].size(); choice++, c++ )
+		for( unsigned choice=0; choice<m_GameCommands[page].size(); choice++, c++ )
 		{
 			CString sInfoFile = ssprintf( "%s info%d", m_sName.c_str(), c+1 );
 			CString sPictureFile = ssprintf( "%s picture%d", m_sName.c_str(), c+1 );
@@ -77,7 +77,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 
 	FOREACH_PlayerNumber( p )
 	{
-		CLAMP( m_iChoiceOnPage[p], 0, (int)m_ModeChoices[0].size()-1 );
+		CLAMP( m_iChoiceOnPage[p], 0, (int)m_GameCommands[0].size()-1 );
 		m_bChosen[p] = false;
 
 		if( !GAMESTATE->IsHumanPlayer(p) )
@@ -142,7 +142,7 @@ int ScreenSelectDifficulty::GetSelectionIndex( PlayerNumber pn )
 {
 	int index = 0;
 	for( int page=0; page<m_CurrentPage; page++ )
-		index += m_ModeChoices[page].size();
+		index += m_GameCommands[page].size();
 	index += m_iChoiceOnPage[pn];
 	return index;
 }
@@ -153,11 +153,11 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 	{
 		/* XXX: If a player joins during the tween-in, this diffuse change
 		 * will be undone by the tween.  Hmm. */
-		for( unsigned i=0; i<m_ModeChoices[page].size(); i++ )
+		for( unsigned i=0; i<m_GameCommands[page].size(); i++ )
 		{
 			/* If the icon is text, use a dimmer diffuse, or we won't be
 			 * able to see the glow. */
-			if( m_ModeChoices[page][i].IsPlayable() )
+			if( m_GameCommands[page][i].IsPlayable() )
 			{
 				m_sprInfo[page][i].SetDiffuse( RageColor(1,1,1,1) );
 				m_sprPicture[page][i].SetDiffuse( RageColor(1,1,1,1) );
@@ -180,7 +180,7 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 	//	}
 }
 
-static bool BothPlayersModeChoice( const ModeChoice &mc )
+static bool BothPlayersGameCommand( const GameCommand &mc )
 {
 	switch( mc.m_pm )
 	{
@@ -209,8 +209,8 @@ void ScreenSelectDifficulty::MenuLeft( PlayerNumber pn )
 	int iSwitchToIndex = -1;
 	for( int i=m_iChoiceOnPage[pn]-1; i>=0; i-- )
 	{
-		const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
-		if( AnotherPlayerSelected && BothPlayersModeChoice(mc) )
+		const GameCommand &mc = m_GameCommands[m_CurrentPage][i];
+		if( AnotherPlayerSelected && BothPlayersGameCommand(mc) )
 			continue;
 		if( mc.IsPlayable() )
 		{
@@ -243,10 +243,10 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 			AnotherPlayerSelected = true;
 
 	int iSwitchToIndex = -1;
-	for( int i=m_iChoiceOnPage[pn]+1; i<(int) m_ModeChoices[m_CurrentPage].size(); i++ )
+	for( int i=m_iChoiceOnPage[pn]+1; i<(int) m_GameCommands[m_CurrentPage].size(); i++ )
 	{
-		const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
-		if( AnotherPlayerSelected && BothPlayersModeChoice(mc) )
+		const GameCommand &mc = m_GameCommands[m_CurrentPage][i];
+		if( AnotherPlayerSelected && BothPlayersGameCommand(mc) )
 			continue;
 		if( mc.IsPlayable() )
 		{
@@ -257,7 +257,7 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 
 	if( iSwitchToIndex == -1 )
 	{
-		if( m_ModeChoices[m_CurrentPage+1].size()==0 )	// there is no page 2
+		if( m_GameCommands[m_CurrentPage+1].size()==0 )	// there is no page 2
 			return;
 
 		if( m_CurrentPage < NUM_PAGES-1 )
@@ -290,18 +290,18 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 	int iSwitchToIndex = -1;
 	if( !bPageIncreasing )
 	{
-		for( int i=m_ModeChoices[newPage].size()-1; i>=0; i-- )
+		for( int i=m_GameCommands[newPage].size()-1; i>=0; i-- )
 		{
-			if( m_ModeChoices[newPage][i].IsPlayable() )
+			if( m_GameCommands[newPage][i].IsPlayable() )
 			{
 				iSwitchToIndex = i;
 				break;
 			}
 		}
 	} else {
-		for( unsigned i=0; i<m_ModeChoices[newPage].size(); i++ )
+		for( unsigned i=0; i<m_GameCommands[newPage].size(); i++ )
 		{
-			if( m_ModeChoices[newPage][i].IsPlayable() )
+			if( m_GameCommands[newPage][i].IsPlayable() )
 			{
 				iSwitchToIndex = i;
 				break;
@@ -325,7 +325,7 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 
 bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
 {
-	ASSERT_M( iNewChoice >= 0 && iNewChoice < (int) m_ModeChoices[m_CurrentPage].size(), ssprintf("%i, %i", iNewChoice, (int) m_ModeChoices[m_CurrentPage].size()) );
+	ASSERT_M( iNewChoice >= 0 && iNewChoice < (int) m_GameCommands[m_CurrentPage].size(), ssprintf("%i, %i", iNewChoice, (int) m_GameCommands[m_CurrentPage].size()) );
 
 	bool bAnyChanged = false;
 	FOREACH_HumanPlayer( p )
@@ -369,7 +369,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	for( int page=0; page<NUM_PAGES; page++ )
 		OFF_COMMAND( m_sprMore[page] );
 
-	const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[pn]];
+	const GameCommand& mc = m_GameCommands[m_CurrentPage][m_iChoiceOnPage[pn]];
 
 	/* Don't play sound if we're recursive, since it just played. */
 	static bool bPlaySelect = true;
@@ -380,7 +380,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	}
 
 	// courses should be selected for both players at all times
-	if( BothPlayersModeChoice(mc) )
+	if( BothPlayersGameCommand(mc) )
 	{
 		FOREACH_HumanPlayer( p )
 		{
@@ -401,24 +401,24 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			if( m_bChosen[p] || p == pn )
 				continue;
 
-			if( !BothPlayersModeChoice(m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[p]]) )
+			if( !BothPlayersGameCommand(m_GameCommands[m_CurrentPage][m_iChoiceOnPage[p]]) )
 				continue;
 
 			/* This player is currently on a choice that is no longer available due to
 			 * the selection just made. */
 			int iSwitchToIndex = -1;
-			for( int i=m_iChoiceOnPage[p]+1; iSwitchToIndex == -1 && i < (int) m_ModeChoices[m_CurrentPage].size(); ++i )
+			for( int i=m_iChoiceOnPage[p]+1; iSwitchToIndex == -1 && i < (int) m_GameCommands[m_CurrentPage].size(); ++i )
 			{
-				const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
-				if( mc.IsPlayable() && !BothPlayersModeChoice(mc) )
+				const GameCommand &mc = m_GameCommands[m_CurrentPage][i];
+				if( mc.IsPlayable() && !BothPlayersGameCommand(mc) )
 					iSwitchToIndex = i;
 			}
 			if( iSwitchToIndex == -1 ) /* couldn't find a spot looking up; look down */
 			{
 				for( int i=m_iChoiceOnPage[p]-1; iSwitchToIndex == -1 && i >= 0; --i )
 				{
-					const ModeChoice &mc = m_ModeChoices[m_CurrentPage][i];
-					if( mc.IsPlayable() && !BothPlayersModeChoice(mc) )
+					const GameCommand &mc = m_GameCommands[m_CurrentPage][i];
+					if( mc.IsPlayable() && !BothPlayersGameCommand(mc) )
 						iSwitchToIndex = i;
 				}
 			}
@@ -443,16 +443,16 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 		if( bAnyPlayersLeft )
 		{
-			for( unsigned c=0; c<m_ModeChoices[PAGE_1].size(); c++ )
+			for( unsigned c=0; c<m_GameCommands[PAGE_1].size(); c++ )
 			{
-				if( BothPlayersModeChoice(m_ModeChoices[PAGE_1][c]) )
+				if( BothPlayersGameCommand(m_GameCommands[PAGE_1][c]) )
 				{
 					m_sprPicture[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
 					m_sprInfo[PAGE_1][c].Command( IGNORED_ELEMENT_COMMAND );
 
 				//	IGNORED_ELEMENT_COMMAND
 				}
-			//	m_ModeChoices[PAGE_1].push_back( m_aModeChoices[c] );
+			//	m_GameCommands[PAGE_1].push_back( m_aGameCommands[c] );
 			}
 		}
 	}
@@ -494,7 +494,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		SET_XY_AND_ON_COMMAND( m_sprExplanation[page] );
 		SET_XY_AND_ON_COMMAND( m_sprMore[page] );
 
-		for( unsigned c=0; c<m_ModeChoices[page].size(); c++ )
+		for( unsigned c=0; c<m_GameCommands[page].size(); c++ )
 		{			
 			SET_XY_AND_ON_COMMAND( m_sprInfo[page][c] );
 			SET_XY_AND_ON_COMMAND( m_sprPicture[page][c] );
@@ -528,7 +528,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 		OFF_COMMAND( m_sprShadow[p] );
 	}
 
-	for( unsigned c=0; c<m_ModeChoices[page].size(); c++ )
+	for( unsigned c=0; c<m_GameCommands[page].size(); c++ )
 	{
 		OFF_COMMAND( m_sprInfo[page][c] );
 		OFF_COMMAND( m_sprPicture[page][c] );

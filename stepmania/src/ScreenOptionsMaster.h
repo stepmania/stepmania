@@ -2,7 +2,7 @@
 #define SCREEN_OPTIONS_MASTER_H
 
 #include "ScreenOptions.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 
 struct ConfOption;
 
@@ -30,8 +30,8 @@ private:
 		OptionRowType type;
 
 		/* ROW_LIST: */
-		vector<ModeChoice> ListEntries;
-		ModeChoice Default;
+		vector<GameCommand> ListEntries;
+		GameCommand Default;
 
 		/* ROW_CONFIG: */
 		const ConfOption *opt;

@@ -50,7 +50,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 		{
 			arraySkinNames[skin].MakeUpper();
 
-			ModeChoice mc;
+			GameCommand mc;
 			mc.m_sModifiers = arraySkinNames[skin];
 			hand.ListEntries.push_back( mc );
 			row.choices.push_back( arraySkinNames[skin] );
@@ -78,7 +78,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 
 	for( int col = 0; col < NumCols; ++col )
 	{
-		ModeChoice mc;
+		GameCommand mc;
 		mc.Load( 0, ParseActorCommands(ENTRY_MODE(ListName, col)) );
 		if( mc.m_sName == "" )
 			RageException::Throw( "List \"%s\", col %i has no name", ListName.c_str(), col );
@@ -104,7 +104,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 	if( GAMESTATE->m_bEditing )
 	{
 		row.choices.push_back( "" );
-		hand.ListEntries.push_back( ModeChoice() );
+		hand.ListEntries.push_back( GameCommand() );
 	}
 	else if( GAMESTATE->IsCourseMode() )   // playing a course
 	{
@@ -118,7 +118,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 
 			CString s = CourseDifficultyToThemedString( pTrail->m_CourseDifficulty );
 			row.choices.push_back( s );
-			ModeChoice mc;
+			GameCommand mc;
 			mc.m_pTrail = pTrail;
 			hand.ListEntries.push_back( mc );
 		}
@@ -140,7 +140,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 			s += ssprintf( " (%d)", pSteps->GetMeter() );
 
 			row.choices.push_back( s );
-			ModeChoice mc;
+			GameCommand mc;
 			mc.m_pSteps = pSteps;
 			mc.m_dc = pSteps->GetDifficulty();
 			hand.ListEntries.push_back( mc );
@@ -174,7 +174,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 
 	{
 		row.choices.push_back( ENTRY_NAME("Off") );
-		ModeChoice mc;
+		GameCommand mc;
 		mc.m_pCharacter = GAMESTATE->GetDefaultCharacter();
 		hand.ListEntries.push_back( mc );
 	}
@@ -188,7 +188,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 		s.MakeUpper();
 
 		row.choices.push_back( s ); 
-		ModeChoice mc;
+		GameCommand mc;
 		mc.m_pCharacter = pCharacter;
 		hand.ListEntries.push_back( mc );
 	}
@@ -290,7 +290,7 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		if( m_OptionsNavigation == NAV_TOGGLE_THREE_KEY )
 		{
 			row.choices.insert( row.choices.begin(), ENTRY_NAME("NextRow") );
-			hand.ListEntries.insert( hand.ListEntries.begin(), ModeChoice() );
+			hand.ListEntries.insert( hand.ListEntries.begin(), GameCommand() );
 		}
 
 		OptionRowHandlers.push_back( hand );
@@ -326,7 +326,7 @@ void ScreenOptionsMaster::ImportOption( const OptionRowData &row, const OptionRo
 
 			for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
 			{
-				const ModeChoice &mc = hand.ListEntries[e];
+				const GameCommand &mc = hand.ListEntries[e];
 
 				vbSelectedOut[e] = false;
 
@@ -522,7 +522,7 @@ void ScreenOptionsMaster::ExportOptions()
 		if( hand.type == ROW_LIST )
 		{
 			const int choice = m_Rows[row]->m_iChoiceWithFocus[0];
-			const ModeChoice &mc = hand.ListEntries[choice];
+			const GameCommand &mc = hand.ListEntries[choice];
 			if( mc.m_sScreen != "" )
 				m_NextScreen = mc.m_sScreen;
 		}

@@ -11,7 +11,7 @@
 #include "SongManager.h"
 #include "Steps.h"
 #include "NoteSkinManager.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "NoteFieldPositioning.h"
 #include "Character.h"
 #include "UnlockSystem.h"
@@ -85,7 +85,7 @@ void GameState::ApplyCmdline()
 	CString sMode;
 	for( int i = 0; GetCommandlineArgument( "mode", &sMode, i ); ++i )
 	{
-		ModeChoice m;
+		GameCommand m;
 		m.Load( 0, ParseActorCommands(sMode) );
 		CString why;
 		if( !m.IsPlayable(&why) )
@@ -175,7 +175,7 @@ void GameState::Reset()
 		// one or the other. -Chris
 		// Having default modifiers in prefs is needed for several things.
 		// The theme setting is for eg. BM being reverse by default.  (This
-		// could be done in the title menu ModeChoice, but then it wouldn't
+		// could be done in the title menu GameCommand, but then it wouldn't
 		// affect demo, and other non-gameplay things ...) -glenn
 		ApplyModifiers( p, DEFAULT_MODIFIERS );
 		ApplyModifiers( p, PREFSMAN->m_sDefaultModifiers );
@@ -256,7 +256,7 @@ void GameState::PlayersFinalized()
 			GAMESTATE->m_PlayerOptions[pn].ResetSavedPrefs();
 			GAMESTATE->ApplyModifiers( pn, sModifiers );
 		}
-		// Only set the sort order if it wasn't already set by a ModeChoice (or by an earlier profile)
+		// Only set the sort order if it wasn't already set by a GameCommand (or by an earlier profile)
 		if( m_SortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
 			m_SortOrder = pProfile->m_SortOrder;
 		if( pProfile->m_LastDifficulty != DIFFICULTY_INVALID )
@@ -584,7 +584,7 @@ static int GetNumStagesForCurrentSong()
 	 * stage is the final stage, and we picked a stage that takes two songs, it
 	 * only counts as one stage (so it doesn't bump us all the way to Ex2).
 	 * One case where this happens is a long/marathon extra stage.  Another is
-	 * if a long/marathon song is selected explicitly in the theme with a ModeChoice,
+	 * if a long/marathon song is selected explicitly in the theme with a GameCommand,
 	 * and PREFSMAN->m_iNumArcadeStages is less than the number of stages that
 	 * song takes. */
 	int iNumStagesLeft = PREFSMAN->m_iNumArcadeStages - GAMESTATE->m_iCurrentStageIndex;

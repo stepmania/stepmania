@@ -7,7 +7,7 @@
 #include "GameSoundManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "ActorUtil.h"
 #include "RageLog.h"
 #include <set>
@@ -42,9 +42,9 @@ REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
 	int iDefaultChoice = -1;
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
-		const ModeChoice& mc = m_aModeChoices[c];
+		const GameCommand& mc = m_aGameCommands[c];
 		if( mc.m_sName == DEFAULT_CHOICE )
 		{
 			iDefaultChoice = c;
@@ -99,9 +99,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			m_Scroller[0].SetName( "Scroller" );
 			this->AddChild( &m_Scroller[0] );
 
-			for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+			for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 			{
-				const ModeChoice& mc = m_aModeChoices[c];
+				const GameCommand& mc = m_aGameCommands[c];
 
 				CString sFName = ssprintf("%s Scroll Choice%s", m_sName.c_str(),mc.m_sName.c_str());
 				m_sprScroll[c][0].Load( THEME->GetPathToG(sFName) );
@@ -123,9 +123,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 				m_Scroller[p].SetName( ssprintf("ScrollerP%d",p+1) );
 				this->AddChild( &m_Scroller[p] );
 				
-				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 				{
-					const ModeChoice& mc = m_aModeChoices[c];
+					const GameCommand& mc = m_aGameCommands[c];
 
 					CString sFName = ssprintf("%s Scroll Choice%s P%d", m_sName.c_str(),mc.m_sName.c_str(),p+1);
 					m_sprScroll[c][p].Load( THEME->GetPathToG(sFName) );
@@ -136,9 +136,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		}
 	}
 
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
-		const ModeChoice& mc = m_aModeChoices[c];
+		const GameCommand& mc = m_aGameCommands[c];
 
 		// init icon
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
@@ -190,7 +190,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 
 	FOREACH_PlayerNumber( p )
 	{
-		CLAMP( m_iChoice[p], 0, (int)m_aModeChoices.size()-1 );
+		CLAMP( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
 		m_bChosen[p] = false;
 	}
 	
@@ -201,7 +201,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	for( int dir = 0; dir < NUM_DIRS; ++dir )
 	{
 		/* Reasonable defaults: */
-		for( unsigned c = 0; c < m_aModeChoices.size(); ++c )
+		for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
 		{
 			int add;
 			switch( dir )
@@ -214,9 +214,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			m_Next[dir][c] = c + add;
 			/* By default, only wrap around for DIR_AUTO. */
 			if( dir == DIR_AUTO )
-				wrap( m_Next[dir][c], m_aModeChoices.size() );
+				wrap( m_Next[dir][c], m_aGameCommands.size() );
 			else
-				m_Next[dir][c] = clamp( m_Next[dir][c], 0, (int)m_aModeChoices.size()-1 );
+				m_Next[dir][c] = clamp( m_Next[dir][c], 0, (int)m_aGameCommands.size()-1 );
 		}
 
 		const CString dirname = dirs[dir];
@@ -239,8 +239,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			--from;
 			--to;
 
-			if( from >= m_aModeChoices.size() ||
-				to >= m_aModeChoices.size() )
+			if( from >= m_aGameCommands.size() ||
+				to >= m_aGameCommands.size() )
 			{
 				LOG->Warn( "%s::OptionOrder%s out of range", m_sName.c_str(), dirname.c_str() );
 				continue;
@@ -328,18 +328,18 @@ int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
 
 void ScreenSelectMaster::UpdateSelectableChoices()
 {
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
-			COMMAND( m_sprIcon[i][c], m_aModeChoices[c].IsPlayable()? "Enabled":"Disabled" );
+			COMMAND( m_sprIcon[i][c], m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
 
 	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
-		if( !m_aModeChoices[m_iChoice[p]].IsPlayable() )
+		if( !m_aGameCommands[m_iChoice[p]].IsPlayable() )
 			Move( (PlayerNumber) p, DIR_AUTO );
-		ASSERT( m_aModeChoices[m_iChoice[p]].IsPlayable() );
+		ASSERT( m_aGameCommands[m_iChoice[p]].IsPlayable() );
 	}
 }
 
@@ -356,7 +356,7 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, Dirs dir )
 			return false; // went full circle and none found
 		seen.insert( iSwitchToIndex );
 	}
-	while( !m_aModeChoices[iSwitchToIndex].IsPlayable() );
+	while( !m_aGameCommands[iSwitchToIndex].IsPlayable() );
 
 	return ChangeSelection( pn, iSwitchToIndex );
 }
@@ -417,7 +417,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 	const CString sIconAndExplanationCommand = ssprintf( "SwitchToPage%d", newPage+1 );
 
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 			COMMAND( m_sprIcon[i][c], sIconAndExplanationCommand );
 
@@ -540,10 +540,10 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 				m_Scroller[p].SetDestinationItem( iNewChoice );
 
 			if( SHARED_PREVIEW_AND_CURSOR )
-				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 					COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" );
 			else
-				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 					COMMAND( *m_sprScroll[c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" );
 		}
 	}
@@ -594,7 +594,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	if( m_bChosen[pn] )
 		return;
 
-	ModeChoice &mc = m_aModeChoices[m_iChoice[pn]];
+	GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(), mc.m_sName.c_str())) );
 	SCREENMAN->PlayStartSound();
 
@@ -635,7 +635,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
  */
 void ScreenSelectMaster::TweenOnScreen() 
 {
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 		{
@@ -691,7 +691,7 @@ void ScreenSelectMaster::TweenOnScreen()
 		{
 			m_Scroller[0].SetCurrentAndDestinationItem( m_iChoice[0] );
 			SET_XY_AND_ON_COMMAND( m_Scroller[0] );
-			for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+			for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 				COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" );
 		}
 		else
@@ -699,7 +699,7 @@ void ScreenSelectMaster::TweenOnScreen()
 			{
 				m_Scroller[p].SetCurrentAndDestinationItem( m_iChoice[p] );
 				SET_XY_AND_ON_COMMAND( m_Scroller[p] );
-				for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 					COMMAND( *m_sprScroll[c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" );
 			}
 	}
@@ -733,7 +733,7 @@ void ScreenSelectMaster::TweenOffScreen()
 				OFF_COMMAND( m_sprCursor[i][p] );
 	}
 
-	for( unsigned c=0; c<m_aModeChoices.size(); c++ )
+	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
 		if( GetPage(c) != GetCurrentPage() )
 			continue;	// skip

@@ -684,6 +684,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Game.h">
 			</File>
 			<File
+				RelativePath="GameCommand.cpp">
+			</File>
+			<File
+				RelativePath="GameCommand.h">
+			</File>
+			<File
 				RelativePath="GameConstantsAndTypes.cpp">
 			</File>
 			<File
@@ -730,12 +736,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="MenuInput.h">
-			</File>
-			<File
-				RelativePath="ModeChoice.cpp">
-			</File>
-			<File
-				RelativePath="ModeChoice.h">
 			</File>
 			<File
 				RelativePath="NoteData.cpp">
@@ -2404,16 +2404,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="UnlockSystem.h">
 			</File>
 			<File
-				RelativePath="ezsockets.cpp">
-			</File>
-			<File
-				RelativePath="ezsockets.h">
-			</File>
-			<File
 				RelativePath=".\VirtualKeyboard.cpp">
 			</File>
 			<File
 				RelativePath=".\VirtualKeyboard.h">
+			</File>
+			<File
+				RelativePath="ezsockets.cpp">
+			</File>
+			<File
+				RelativePath="ezsockets.h">
 			</File>
 		</Filter>
 		<Filter

@@ -17,7 +17,7 @@
 #include "Banner.h"
 #include "Steps.h"
 #include "UnlockSystem.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"
 #include "CourseUtil.h"

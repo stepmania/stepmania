@@ -52,7 +52,7 @@ protected:
 	RageSound	m_soundChange;
 	RandomSample m_soundDifficult;
 
-	vector<ModeChoice> m_ModeChoices[NUM_PAGES];
+	vector<GameCommand> m_GameCommands[NUM_PAGES];
 
 	Page m_CurrentPage;
 	int m_iChoiceOnPage[NUM_PLAYERS];

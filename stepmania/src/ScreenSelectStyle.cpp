@@ -25,9 +25,9 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
-		const ModeChoice& mc = m_aModeChoices[i];
+		const GameCommand& mc = m_aGameCommands[i];
 
 		//
 		// Load icon
@@ -92,9 +92,9 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 
 
 	// fix Z ordering of Picture and Info so that they draw on top
-	for( unsigned i=0; i<this->m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<this->m_aGameCommands.size(); i++ )
 		this->MoveToTail( &m_sprPicture[i] );
-	for( unsigned i=0; i<this->m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<this->m_aGameCommands.size(); i++ )
 		this->MoveToTail( &m_sprInfo[i] );
 
 
@@ -121,7 +121,7 @@ ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClas
 	//
 	// TweenOnScreen
 	//
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
 		SET_XY_AND_ON_COMMAND( m_textIcon[i] );
 		SET_XY_AND_ON_COMMAND( m_sprIcon[i] );
@@ -139,7 +139,7 @@ void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
 	int iSwitchToIndex = -1;	// -1 means none found
 	for( int i=m_iSelection-1; i>=0; i-- )
 	{
-		if( m_aModeChoices[i].IsPlayable() )
+		if( m_aGameCommands[i].IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -158,9 +158,9 @@ void ScreenSelectStyle::MenuLeft( PlayerNumber pn )
 void ScreenSelectStyle::MenuRight( PlayerNumber pn )
 {
 	int iSwitchToIndex = -1;	// -1 means none found
-	for( unsigned i=m_iSelection+1; i<m_aModeChoices.size(); i++ )	
+	for( unsigned i=m_iSelection+1; i<m_aGameCommands.size(); i++ )	
 	{
-		if( m_aModeChoices[i].IsPlayable() )
+		if( m_aGameCommands[i].IsPlayable() )
 		{
 			iSwitchToIndex = i;
 			break;
@@ -190,14 +190,14 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	SCREENMAN->PlayStartSound();
 	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing );
 
-	const ModeChoice& mc = m_aModeChoices[GetSelectionIndex(pn)];
+	const GameCommand& mc = m_aGameCommands[GetSelectionIndex(pn)];
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(ssprintf("%s comment %s",m_sName.c_str(),mc.m_sName.c_str())) );
 
 	//
 	// TweenOffScreen
 	//
 
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
 		OFF_COMMAND( m_sprIcon[i] );
 		OFF_COMMAND( m_textIcon[i] );
@@ -216,11 +216,11 @@ int ScreenSelectStyle::GetSelectionIndex( PlayerNumber pn )
 
 void ScreenSelectStyle::UpdateSelectableChoices()
 {
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
 		/* If the icon is text, use a dimmer diffuse, or we won't be
 		 * able to see the glow. */
-		if( m_aModeChoices[i].IsPlayable() )
+		if( m_aGameCommands[i].IsPlayable() )
 		{
 			m_sprIcon[i].SetDiffuse( RageColor(1,1,1,1) );
 			m_textIcon[i].SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );	// gray so glow is visible
@@ -236,9 +236,9 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 	BeforeChange();
 
 	int iSwitchToStyleIndex = -1;	// -1 means none found
-	for( unsigned i=0; i<m_aModeChoices.size(); i++ )
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
-		const ModeChoice& mc = m_aModeChoices[i];
+		const GameCommand& mc = m_aGameCommands[i];
 		if( mc.IsPlayable() )
 		{
 			iSwitchToStyleIndex = i;

@@ -12,7 +12,7 @@
 #include "GameState.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "RageDisplay.h"
 #include "UnlockSystem.h"
 #include "arch/ArchHooks/ArchHooks.h"
@@ -49,10 +49,10 @@ ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClass
 			CString sChoiceName = asChoiceNames[c];
 			CString sChoice = CHOICE(sChoiceName);
 
-			ModeChoice mc;
+			GameCommand mc;
 			mc.m_sName = sChoiceName;
 			mc.Load( c, ParseActorCommands(sChoice) );
-			m_aModeChoices.push_back( mc );
+			m_aGameCommands.push_back( mc );
 		
 			CString sBGAnimationDir = THEME->GetPath(BGAnimations, m_sName, mc.m_sName, true);	// true="optional"
 			if( sBGAnimationDir == "" )
@@ -73,12 +73,12 @@ ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClass
 
 		m_aCodes.push_back( code );
 		m_aCodeActions.push_back( CODE_ACTION(c) );
-		ModeChoice mc;
+		GameCommand mc;
 		mc.Load( c, ParseActorCommands(CODE_ACTION(c)) );
 		m_aCodeChoices.push_back( mc );
 	}
 
-	if( !m_aModeChoices.size() )
+	if( !m_aGameCommands.size() )
 		RageException::Throw( "Screen \"%s\" does not set any choices", m_sName.c_str() );
 
 	// derived classes can override if they want
@@ -176,8 +176,8 @@ void ScreenSelect::FinalizeChoices()
 	FOREACH_HumanPlayer( p )
 	{
 		const int sel = GetSelectionIndex( p );
-		if( m_aModeChoices[sel].m_pStyle )
-			GAMESTATE->m_pCurStyle = m_aModeChoices[sel].m_pStyle;
+		if( m_aGameCommands[sel].m_pStyle )
+			GAMESTATE->m_pCurStyle = m_aGameCommands[sel].m_pStyle;
 	}
 	SCREENMAN->RefreshCreditsMessages();
 }
@@ -203,7 +203,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			 * long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
 			 * off-screen. */
 			FOREACH_HumanPlayer( p )
-				m_aModeChoices[this->GetSelectionIndex(p)].Apply( p );
+				m_aGameCommands[this->GetSelectionIndex(p)].Apply( p );
 
 			//
 			// Finalize players if we set a style on this screen.
@@ -211,7 +211,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			FOREACH_HumanPlayer( p )
 			{
 				const int sel = GetSelectionIndex( p );
-				if( m_aModeChoices[sel].m_pStyle )
+				if( m_aGameCommands[sel].m_pStyle )
 				{
 					GAMESTATE->PlayersFinalized();
 					break;
@@ -219,8 +219,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			}
 
 			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-			if( m_aModeChoices[iSelectionIndex].m_sScreen != "" )
-				SCREENMAN->SetNewScreen( m_aModeChoices[iSelectionIndex ].m_sScreen );
+			if( m_aGameCommands[iSelectionIndex].m_sScreen != "" )
+				SCREENMAN->SetNewScreen( m_aGameCommands[iSelectionIndex ].m_sScreen );
 			else
 				SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
 		}

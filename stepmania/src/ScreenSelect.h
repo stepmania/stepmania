@@ -5,7 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "BGAnimation.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "CodeDetector.h"
 
 // Derived classes must send this when done
@@ -33,10 +33,10 @@ protected:
 	void FinalizeChoices();
 	
 	vector<BGAnimation*> m_vpBGAnimations;
-	vector<ModeChoice>	m_aModeChoices;		// derived classes should look here for what choices are available
+	vector<GameCommand>	m_aGameCommands;		// derived classes should look here for what choices are available
 
 	vector<CodeItem>	m_aCodes;
-	vector<ModeChoice>	m_aCodeChoices;
+	vector<GameCommand>	m_aCodeChoices;
 	vector<CString>		m_aCodeActions;
 };
 

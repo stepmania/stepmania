@@ -4,7 +4,7 @@
 #include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "LuaHelpers.h"
-#include "ModeChoice.h"
+#include "GameCommand.h"
 #include "RageUtil.h"
 
 #define CHOICES						THEME->GetMetric (m_sName,"Choices")
@@ -43,7 +43,7 @@ void ScreenBranch::HandleScreenMessage( const ScreenMessage SM )
 			CString sNextScreen = NEXT_SCREEN(m_sChoice);
 			LOG->Trace( "Branching to '%s'", sNextScreen.c_str() );
 
-			ModeChoice mc;
+			GameCommand mc;
 			mc.Load( 0, ParseActorCommands(sNextScreen) );
 			if( mc.m_sScreen == "" )
 				RageException::Throw("Metric %s::%s must set \"screen\"",
