@@ -160,33 +160,6 @@ void ScreenGameplay::Init()
     FOREACH_PotentialCpuPlayer(p)
         GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		{
-			// cache NoteSkin graphics
-			/* XXX: is this still needed?  We explicitly preload noteskins that can be
-			 * used as attacks (GameState::GetAllUsedNoteSkins). */
-			CStringArray asNames;
-			NOTESKIN->GetNoteSkinNames( asNames );
-			for( unsigned i=0; i<asNames.size(); i++ )
-			{
-				CString sDir = NOTESKIN->GetNoteSkinDir( asNames[i] );
-				CStringArray asGraphicPaths;
-				GetDirListing( sDir+"*.png", asGraphicPaths, false, true ); 
-				GetDirListing( sDir+"*.jpg", asGraphicPaths, false, true ); 
-				GetDirListing( sDir+"*.gif", asGraphicPaths, false, true ); 
-				GetDirListing( sDir+"*.bmp", asGraphicPaths, false, true ); 
-				for( unsigned j=0; j<asGraphicPaths.size(); j++ )
-					TEXTUREMAN->CacheTexture( asGraphicPaths[j] );
-			}
-		}
-		break;
-	}
-
-
-
 	//
 	// fill in m_apSongsQueue, m_vpStepsQueue, m_asModifiersQueue
 	//
