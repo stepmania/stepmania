@@ -111,16 +111,16 @@ StepsType BMSLoader::CheckTracksMagic()
 	case 8:
 		// Could also be couple or 7-key.
 		if (iTracks[7] == 0 && iTracks[8] == 0 && iTracks[1] == 0 && iTracks[3] == 0)
-			// these four tracks are IIDX-related
+			// these four tracks are BM-related
 			return STEPS_TYPE_DANCE_DOUBLE;
 		else
-			return STEPS_TYPE_IIDX_SINGLE7;
+			return STEPS_TYPE_BM_SINGLE7;
 	case 9:
 		return STEPS_TYPE_PNM_NINE;
 	case 12:
-		return STEPS_TYPE_BM_DOUBLE;
+		return STEPS_TYPE_BM_DOUBLE5;
 	case 16:
-		return STEPS_TYPE_IIDX_DOUBLE7;
+		return STEPS_TYPE_BM_DOUBLE7;
 	default:
 		return STEPS_TYPE_INVALID;
 	}
@@ -343,7 +343,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[7] = BMS_P2_TURN;
 		break;
 	case STEPS_TYPE_DANCE_SOLO:
-	case STEPS_TYPE_BM_SINGLE:
+	case STEPS_TYPE_BM_SINGLE5:
 		// Hey! Why the hell are these exactly the same? :-)
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
@@ -372,7 +372,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[7] = BMS_P2_KEY4; // ryellow
 		iTransformNewToOld[8] = BMS_P2_KEY5; // rwhite
 		break;
-	case STEPS_TYPE_BM_DOUBLE:
+	case STEPS_TYPE_BM_DOUBLE5:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
@@ -386,7 +386,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[10] = BMS_P2_KEY5;
 		iTransformNewToOld[11] = BMS_P2_TURN;
 		break;
-	case STEPS_TYPE_IIDX_SINGLE7:
+	case STEPS_TYPE_BM_SINGLE7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
@@ -396,7 +396,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		iTransformNewToOld[6] = BMS_P1_KEY7;
 		iTransformNewToOld[7] = BMS_P1_TURN;
 		break;
-	case STEPS_TYPE_IIDX_DOUBLE7:
+	case STEPS_TYPE_BM_DOUBLE7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
