@@ -377,6 +377,37 @@ int NoteData::GetNumRowsWithTapOrHoldHead( float fStartBeat, float fEndBeat ) co
 	return iNumNotes;
 }
 
+int NoteData::GetNumHands( float fStartBeat, float fEndBeat ) const
+{
+	/* We want to count both three taps at the same time, a tap while two
+	 * hold notes are being held, etc. */
+	NoteData temp;
+	temp.To4s( temp );
+
+	if( fEndBeat == -1 )
+		fEndBeat = temp.GetMaxBeat();
+
+	const int iStartIndex = BeatToNoteRow( fStartBeat );
+	const int iEndIndex = BeatToNoteRow( fEndBeat );
+
+	int iNum = 0;
+	for( int i=iStartIndex; i<=iEndIndex; i++ )
+	{
+		int iNumNotesThisIndex = 0;
+		for( int t=0; t<m_iNumTracks; t++ )
+		{
+			if( temp.GetTapNote(t, i) == TAP_MINE )
+				continue; // mines don't count
+			if( temp.GetTapNote(t, i) != TAP_EMPTY )
+				iNumNotesThisIndex++;
+		}
+		if( iNumNotesThisIndex >= 3 )
+			iNum++;
+	}
+	
+	return iNum;
+}
+
 int NoteData::GetNumN( int MinTaps, float fStartBeat, float fEndBeat ) const
 {
 	if( fEndBeat == -1 )

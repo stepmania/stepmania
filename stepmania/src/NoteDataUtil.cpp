@@ -281,7 +281,7 @@ float NoteDataUtil::GetRadarValue( const NoteData &in, RadarCategory rv, float f
 	case RADAR_NUM_JUMPS: return (float) in.GetNumDoubles(); // should hands also count as a jump?
 	case RADAR_NUM_HOLDS: return (float) in.GetNumHoldNotes();
 	case RADAR_NUM_MINES: return (float) in.GetNumMines();
-	case RADAR_NUM_HANDS: return (float) in.GetNumTriples();
+	case RADAR_NUM_HANDS: return (float) in.GetNumHands();
 	default:	ASSERT(0);  return 0;
 	}
 }
