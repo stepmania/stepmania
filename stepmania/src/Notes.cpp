@@ -46,7 +46,7 @@ Notes::Notes()
 	{
 		m_MemCardScores[m].iNumTimesPlayed = 0;
 		m_MemCardScores[m].grade = GRADE_NO_DATA;
-		m_MemCardScores[m].fScore = 0;
+		m_MemCardScores[m].iScore = 0;
 	}
 }
 
@@ -274,23 +274,23 @@ void Notes::SetRadarValue(int r, float val)
 	m_fRadarValues[r] = val;
 }
 
-void Notes::AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut )
+void Notes::AddScore( PlayerNumber pn, Grade grade, float iScore, bool& bNewRecordOut )
 {
 	bNewRecordOut = false;
 
 	m_MemCardScores[MEMORY_CARD_MACHINE].iNumTimesPlayed++;
 	m_MemCardScores[pn].iNumTimesPlayed++;
 
-	if( fScore > m_MemCardScores[pn].fScore )
+	if( iScore > m_MemCardScores[pn].iScore )
 	{
-		m_MemCardScores[pn].fScore = fScore;
+		m_MemCardScores[pn].iScore = iScore;
 		m_MemCardScores[pn].grade = grade;
 		bNewRecordOut = true;
 	}
 
-	if( fScore > m_MemCardScores[MEMORY_CARD_MACHINE].fScore )
+	if( iScore > m_MemCardScores[MEMORY_CARD_MACHINE].iScore )
 	{
-		m_MemCardScores[MEMORY_CARD_MACHINE].fScore = fScore;
+		m_MemCardScores[MEMORY_CARD_MACHINE].iScore = iScore;
 		m_MemCardScores[MEMORY_CARD_MACHINE].grade = grade;
 	}
 }

@@ -57,10 +57,10 @@ public:
 	{
 		int iNumTimesPlayed;
 		Grade grade;
-		float fScore;
+		int iScore;
 	} m_MemCardScores[NUM_MEMORY_CARDS];
 
-	void AddScore( PlayerNumber pn, Grade grade, float fScore, bool& bNewRecordOut );
+	void AddScore( PlayerNumber pn, Grade grade, float iScore, bool& bNewRecordOut );
 
 
 	void TidyUpData();
