@@ -70,7 +70,7 @@ class SoundMixBuffer
 	Sint32 *mixbuf;
 	unsigned bufsize; /* actual allocated samples */
 	unsigned used; /* used samples */
-	float vol;
+	int vol; /* vol * 256 */
 
 public:
 	void write(const Sint16 *buf, unsigned size);
