@@ -126,10 +126,83 @@ void RageDisplay_Null::EndFrame()
 }
 	
 
+class RageModelVertexArrayNull : public RageModelVertexArray
+{
+public:
+	RageModelVertexArrayNull()
+	{
+		m_sizeVerts = 0;
+		m_sizeTriangles = 0;
+		m_pPosition = NULL;
+		m_pTexture = NULL;
+		m_pNormal = NULL;
+		m_pBone = NULL;
+		m_pTriangles = NULL;
+	}
+
+	~RageModelVertexArrayNull()
+	{
+		m_sizeVerts = 0;
+		m_sizeTriangles = 0;
+		SAFE_DELETE( m_pPosition );
+		SAFE_DELETE( m_pTexture );
+		SAFE_DELETE( m_pNormal );
+		SAFE_DELETE( m_pBone );
+		SAFE_DELETE( m_pTriangles );
+	}
+	
+	size_t sizeVerts() const
+	{
+		return m_sizeVerts;
+	}
+	void resizeVerts( size_t size )
+	{
+		SAFE_DELETE( m_pPosition );
+		SAFE_DELETE( m_pTexture );
+		SAFE_DELETE( m_pNormal );
+		SAFE_DELETE( m_pBone );
+
+		m_sizeVerts = size;
+		m_pPosition = new RageVector3[size];
+		m_pTexture = new RageVector2[size];
+		m_pNormal = new RageVector3[size];
+		m_pBone = new Sint8[size];
+	}
+
+	size_t sizeTriangles() const
+	{
+		return m_sizeTriangles;
+	}
+	void resizeTriangles( size_t size )
+	{
+		SAFE_DELETE( m_pTriangles );
+
+		m_sizeTriangles = size;
+		m_pTriangles = new msTriangle[size];
+	}
+
+	RageVector3&	Position	( int index ) { return m_pPosition[index]; }
+	RageVector2&	TexCoord	( int index ) { return m_pTexture[index]; }
+	RageVector3&	Normal		( int index ) { return m_pNormal[index]; }
+	Sint8&			Bone		( int index ) { return m_pBone[index]; }
+	msTriangle&		Triangle	( int index ) { return m_pTriangles[index]; }
+
+	void OnChanged() const { }
+	void Draw() const { }
+
+protected:
+	size_t		m_sizeVerts;
+	size_t		m_sizeTriangles;
+	RageVector3 *m_pPosition;
+	RageVector2 *m_pTexture;
+	RageVector3 *m_pNormal;
+	Sint8		*m_pBone;
+	msTriangle	*m_pTriangles;
+};
+
 RageModelVertexArray* RageDisplay_Null::CreateRageModelVertexArray()
 {
-	ASSERT( 0 );
-	return NULL;
+	return new RageModelVertexArrayNull;
 }
 
 void RageDisplay_Null::DeleteRageModelVertexArray( RageModelVertexArray* p )
