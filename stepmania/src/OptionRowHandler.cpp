@@ -229,9 +229,9 @@ public:
 				if( vbSel[i] )
 					ListEntries[i].Apply( p );
 			}
-			FOREACH_CONST( CString, m_vsBroadcastOnExport, s )
-				MESSAGEMAN->Broadcast( *s );
 		}
+		FOREACH_CONST( CString, m_vsBroadcastOnExport, s )
+			MESSAGEMAN->Broadcast( *s );
 		return 0;
 	}
 
