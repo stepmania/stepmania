@@ -17,7 +17,6 @@
 
 void NSSendSongs();
 void ArgStartCourse(CString CourseName);
-void ArgSetMode (CString cmdLineMode);
 
 class EzSockets;
 

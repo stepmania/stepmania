@@ -925,8 +925,6 @@ static void ProcessArgsSecond()
 		//"ArgStartCourse", is in the NSManager
 		//bacause Networked StepMania will
 		//use it a lot.
-	if( GetCommandlineArgument( "mode",& Argument ) )
-		ArgSetMode(Argument);
 
 	if( GetCommandlineArgument( "netip" ) )
 		NSMAN->DisplayStartupStatus();	//If we're using networking show what happend

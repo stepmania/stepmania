@@ -315,65 +315,6 @@ void NetworkSyncManager::SendSongs()
 }
 
 
-void ArgSetMode (CString cmdLineMode)
-{
-	CString PlayerModeStr;
-	int loc=0;
-	int loc2=1;
-
-	while (loc2>=0) {
-		loc2=cmdLineMode.Find(",",loc);
-		if (loc2<0)
-			PlayerModeStr = cmdLineMode.substr(loc,loc2-loc);
-		else
-			PlayerModeStr = cmdLineMode.substr(loc,loc2-loc);
-
-		if (PlayerModeStr.CompareNoCase("1")==0) {
-			GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-		} else if (PlayerModeStr.CompareNoCase("2")==0) {
-			GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_2;
-		} else if (PlayerModeStr.CompareNoCase("VERSUS")==0) {
-			GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
-			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
-		} else if (PlayerModeStr.CompareNoCase("VERSUS")==0) {
-			GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
-			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;		
-		} else if (PlayerModeStr.CompareNoCase("DOUBLE")==0) {
-			GAMESTATE->m_CurStyle = STYLE_DANCE_DOUBLE;
-			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
-		} else if (PlayerModeStr.CompareNoCase("COUPLE")==0) {
-			GAMESTATE->m_CurStyle = STYLE_DANCE_COUPLE;
-			GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
-			GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;			
-		} else if (PlayerModeStr.CompareNoCase("FAILOFF")==0) {
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
-		} else if (PlayerModeStr.CompareNoCase("FAILENDOFSONG")==0) {
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_END_OF_SONG;
-		} else if (PlayerModeStr.CompareNoCase("FAILARCADE")==0) {
-			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_ARCADE;
-		} else if (PlayerModeStr.CompareNoCase("ARCADE")==0) {
-			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
-		} else if (PlayerModeStr.CompareNoCase("NONSTOP")==0) {
-			GAMESTATE->m_PlayMode = PLAY_MODE_NONSTOP;
-		} else if (PlayerModeStr.CompareNoCase("ONI")==0) {
-			GAMESTATE->m_PlayMode = PLAY_MODE_ONI;
-		} else if (PlayerModeStr.CompareNoCase("BATTLE")==0) {
-			GAMESTATE->m_PlayMode = PLAY_MODE_BATTLE;
-		} else if (PlayerModeStr.CompareNoCase("RAVE")==0) {
-			GAMESTATE->m_PlayMode = PLAY_MODE_RAVE;
-		} 
-		loc = loc2+1;
-	}
-}
-
-
 //I am adding this for Network support
 //Feel free to change the way --course is used
 //I am not building any part of SMOnline specific to this yet.
