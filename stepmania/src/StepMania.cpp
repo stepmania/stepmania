@@ -143,6 +143,9 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	_set_se_translator( StructuredExceptionHandler );
 
 	g_hInstance = hInstance;
+#ifdef _DEBUG
+	_CrtSetDbgFlag(_CRTDBG_CHECK_ALWAYS_DF);
+#endif
 
 #ifndef _DEBUG
 	try
@@ -343,6 +346,12 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow )
 	UnregisterClass( g_sAppClassName, hInstance );
 	CoUninitialize();			// Uninitialize COM
 	CloseHandle( g_hMutex );
+
+#ifdef _DEBUG
+	_CrtCheckMemory();
+
+	_CrtDumpMemoryLeaks();
+#endif
 
 	return 0L;
 }
