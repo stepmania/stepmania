@@ -1573,6 +1573,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fBeginBeat = m_NoteFieldEdit.m_fBeginMarker;
 				float fEndBeat = m_NoteFieldEdit.m_fEndMarker;
 				TransformType tt = (TransformType)iAnswers[c];
+				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 				switch( tt )
 				{
 				case noholds:	NoteDataUtil::RemoveHoldNotes( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
@@ -1585,7 +1586,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				case mines:		NoteDataUtil::AddMines( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				case echo:		NoteDataUtil::Echo( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				case planted:	NoteDataUtil::Planted( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
-				case stomp:		NoteDataUtil::Stomp( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
+				case stomp:		NoteDataUtil::Stomp( m_NoteFieldEdit, st, fBeginBeat, fEndBeat );	break;
 				case twister:	NoteDataUtil::Twister( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				case nohands:	NoteDataUtil::RemoveHands( m_NoteFieldEdit, fBeginBeat, fEndBeat );	break;
 				default:		ASSERT(0);

@@ -422,18 +422,19 @@ void NoteDataUtil::RemoveMines(NoteData &in, float fStartBeat, float fEndBeat )
 }
 
 
-static void GetTurnMapping( StepsType st, NoteDataUtil::TurnType tt, int NumTracks, int *iTakeFromTrack )
+static void GetTrackMapping( StepsType st, NoteDataUtil::TrackMapping tt, int NumTracks, int *iTakeFromTrack )
 {
 	int t;
+
+	// Identity transform for cases not handled below.
+	for( t = 0; t < MAX_NOTE_TRACKS; ++t )
+		iTakeFromTrack[t] = t;
 
 	switch( tt )
 	{
 	case NoteDataUtil::left:
 	case NoteDataUtil::right:
 		// Is there a way to do this withoutn handling each StepsType? -Chris
-		// Identity transform for ones not handled below.  What should we do here?
-		for( t = 0; t < MAX_NOTE_TRACKS; ++t )
-			iTakeFromTrack[t] = t;
 		switch( st )
 		{
 		case STEPS_TYPE_DANCE_SINGLE:
@@ -526,6 +527,25 @@ static void GetTurnMapping( StepsType st, NoteDataUtil::TurnType tt, int NumTrac
 			}
 		}
 		break;
+	case NoteDataUtil::stomp:
+		switch( st )
+		{
+		case STEPS_TYPE_DANCE_SINGLE:
+		case STEPS_TYPE_DANCE_DOUBLE:
+		case STEPS_TYPE_DANCE_COUPLE:
+			iTakeFromTrack[0] = 3;
+			iTakeFromTrack[1] = 2;
+			iTakeFromTrack[2] = 1;
+			iTakeFromTrack[3] = 0;
+			iTakeFromTrack[4] = 7;
+			iTakeFromTrack[5] = 6;
+			iTakeFromTrack[6] = 5;
+			iTakeFromTrack[7] = 4;
+			break;
+		default: 
+			break;
+		}
+		break;
 	default:
 		ASSERT(0);
 	}
@@ -566,10 +586,10 @@ static void SuperShuffleTaps( NoteData &in, int iStartIndex, int iEndIndex )
 }
 
 
-void NoteDataUtil::Turn( NoteData &in, StepsType st, TurnType tt, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Turn( NoteData &in, StepsType st, TrackMapping tt, float fStartBeat, float fEndBeat )
 {
 	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
-	GetTurnMapping( st, tt, in.GetNumTracks(), iTakeFromTrack );
+	GetTrackMapping( st, tt, in.GetNumTracks(), iTakeFromTrack );
 
 	if( fEndBeat == -1 )
 		fEndBeat = in.GetMaxBeat();
@@ -957,12 +977,15 @@ dont_add_hold:
 	}
 }
 
-void NoteDataUtil::Stomp( NoteData &in, float fStartBeat, float fEndBeat )
+void NoteDataUtil::Stomp( NoteData &in, StepsType st, float fStartBeat, float fEndBeat )
 {
 	// Make all non jumps with ample space around them into jumps.
 
 	const int first_row = BeatToNoteRow( fStartBeat );
 	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
+
+	int iTrackMapping[MAX_NOTE_TRACKS];
+	GetTrackMapping( st, stomp, in.GetNumTracks(), iTrackMapping );
 
 	for( int r=first_row; r<last_row; r++ ) 
 	{
@@ -993,8 +1016,7 @@ void NoteDataUtil::Stomp( NoteData &in, float fStartBeat, float fEndBeat )
 				if( iNumTracksHeld >= 1 )
 					continue;
 
-				// TODO: Make this accurate for StepsTypes other than 4 panel cross.
-				int iOppositeTrack = in.GetNumTracks()-1-t;
+				int iOppositeTrack = iTrackMapping[t];
 				in.SetTapNote( iOppositeTrack, r, TAP_ADDITION );
 			}
 		}
@@ -1312,7 +1334,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_MINES] )		NoteDataUtil::AddMines(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_ECHO]	)		NoteDataUtil::Echo(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_PLANTED] )	NoteDataUtil::Planted(nd, fStartBeat, fEndBeat);
-	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, fStartBeat, fEndBeat);
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_STOMP] )		NoteDataUtil::Stomp(nd, st, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_TWISTER] )	NoteDataUtil::Twister(nd, fStartBeat, fEndBeat);
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands(nd, fStartBeat, fEndBeat);
 }

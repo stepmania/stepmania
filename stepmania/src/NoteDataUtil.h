@@ -42,8 +42,8 @@ namespace NoteDataUtil
 	void RemoveHoldNotes( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveHands( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void RemoveMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
-	void Turn( NoteData &in, StepsType st, TurnType tt, float fStartBeat = 0, float fEndBeat = -1 );
+	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
+	void Turn( NoteData &in, StepsType st, TrackMapping tt, float fStartBeat = 0, float fEndBeat = -1 );
 	void Little( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Wide( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Big( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
@@ -53,7 +53,7 @@ namespace NoteDataUtil
 	void AddMines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Echo( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Planted( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
-	void Stomp( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Stomp( NoteData &in, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );
 	void Twister( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
 	void ConvertTapsToHolds( NoteData &in, int iSimultaneousHolds, float fStartBeat = 0, float fEndBeat = 99999 );
 
