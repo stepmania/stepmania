@@ -1508,14 +1508,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			ShowSavePrompt( SM_GoToScreenAfterFail );
 			break;
 		}
+
 		if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP  ||
 			GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  
-			GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
+			GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS ||
+			GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
 			SCREENMAN->SetNewScreen( "ScreenEvaluation" );
 		else if( PREFSMAN->m_bEventMode )
 			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
-		else if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
-			SCREENMAN->SetNewScreen( "ScreenFinalEvaluation" );
 		else
 			SCREENMAN->SetNewScreen( "ScreenGameOver" );
 		break;

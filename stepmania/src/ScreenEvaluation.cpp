@@ -806,17 +806,20 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 	{
 		if( m_bTryExtraStage )
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
-		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1  )
+		else if( m_ResultMode == RM_ARCADE_STAGE )
 		{
-			/* Tween the screen out, but leave the MenuElements where they are.
-			 * Play the "swoosh" sound manually (would normally be played by the ME
-			 * tween out). */
-			SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu swoosh") );
-			TweenOffScreen();
-			SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
+			if( GAMESTATE->m_iCurrentStageIndex < PREFSMAN->m_iNumArcadeStages-1  )
+				m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+			else
+			{
+				/* Tween the screen out, but leave the MenuElements where they are.
+				 * Play the "swoosh" sound manually (would normally be played by the ME
+				 * tween out). */
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu swoosh") );
+				TweenOffScreen();
+				SCREENMAN->SendMessageToTopScreen( SM_GoToFinalEvaluation, MENU_ELEMENTS_TWEEN_TIME );
+			}
 		}
-		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex < PREFSMAN->m_iNumArcadeStages-1  )
-			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
 		else
 			m_Menu.TweenOffScreenToBlack( SM_GoToGameFinished, false );
 	}
