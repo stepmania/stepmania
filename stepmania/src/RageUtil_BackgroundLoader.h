@@ -25,7 +25,7 @@ public:
 	bool IsCacheFileFinished( const CString &sFile, CString &sActualPath );
 
 	/* Call this when finished with a cached file, to release any resources. */
-	void FinishedWithCachedFile( const CString &sFile );
+	void FinishedWithCachedFile( CString sFile );
 
 	/* Abort all loads. */
 	void Abort();

@@ -206,7 +206,7 @@ bool BackgroundLoader::IsCacheFileFinished( const CString &sFile, CString &sActu
 	return true;
 }
 
-void BackgroundLoader::FinishedWithCachedFile( const CString &sFile )
+void BackgroundLoader::FinishedWithCachedFile( CString sFile )
 {
 	if( !g_bEnableBackgroundLoading )
 		return;
@@ -237,6 +237,10 @@ void BackgroundLoader::Abort()
 	/* Clear any pending requests. */
 	while( !GetRequest().empty() )
 		;
+
+	/* Clear any previously finished requests. */
+	while( m_FinishedRequests.size() )
+		FinishedWithCachedFile( m_FinishedRequests.begin()->first );
 
 	/* Tell the thread to abort any request it's handling now. */
 	if( m_sThreadIsActive )
