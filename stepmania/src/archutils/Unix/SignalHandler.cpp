@@ -4,6 +4,8 @@
 #include "SignalHandler.h"
 
 #include <unistd.h>
+#include <sys/mman.h>
+#include <errno.h>
 
 static vector<SignalHandler::handler> handlers;
 SaveSignals *saved_sigs;
@@ -59,13 +61,28 @@ void SignalHandler::OnClose(handler h)
 	{
 		saved_sigs = new SaveSignals;
 
+		/* Allocate a separate signal stack.  This makes the crash handler work
+		 * if we run out of stack space. */
+		void *p = mmap( NULL, SIGSTKSZ, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0 );
+		if( p == (void *) -1 )
+			p = malloc( SIGSTKSZ );
+
+		if( p != NULL )
+		{
+			stack_t ss;
+			ss.ss_sp = p;
+			ss.ss_size = SIGSTKSZ;
+			ss.ss_flags = 0;
+			sigaltstack( &ss, NULL );
+		}
+		
 		/* Set up our signal handlers. */
 		for(int i = 0; signals[i] != -1; ++i)
 		{
 			struct sigaction sa;
 
 			sa.sa_handler = SigHandler;
-			sa.sa_flags = 0;
+			sa.sa_flags = p != NULL? SA_ONSTACK:0;
 			sigemptyset(&sa.sa_mask);
 
 			sigaction(signals[i], &sa, NULL);
