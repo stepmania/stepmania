@@ -646,7 +646,7 @@ void MusicWheel::UpdateScrollbar()
 	int total_num_items = m_CurWheelItemData.size();
 	float item_at=m_iSelection - m_fPositionOffsetFromSelection;
 
-	if(NUM_WHEEL_ITEMS > total_num_items) {
+	if(NUM_WHEEL_ITEMS >= total_num_items) {
 		m_ScrollBar.SetPercentage( 0, 1 );
 	} else {
 		float size = float(NUM_WHEEL_ITEMS) / total_num_items;
