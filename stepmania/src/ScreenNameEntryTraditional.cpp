@@ -188,7 +188,6 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		vector<GameState::RankingFeat> aFeats;
 		GAMESTATE->GetRankingFeats( (PlayerNumber)p, aFeats );
 		m_bStillEnteringName[p] = aFeats.size()>0;
-		m_NumFeats[p] = g_vPlayedStageStats.size();
 		m_CurFeat[p] = 0;
 	}
 
@@ -300,111 +299,115 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 	//
 	// init feat displays
 	//
+	FOREACH_HumanPlayer( p )
 	{
-		FOREACH_HumanPlayer( p )
+		/* Show feat 0, hide others without tweening.  Run the ON command for
+		 * all actors, even if we're going to hide it anyway, so any style commands
+		 * are run. */
+#define SET_ON( actor ) \
+	SET_XY_AND_ON_COMMAND( actor ); \
+	if( i != 0 ) \
+	{ \
+		COMMAND( actor, "On" ); \
+		actor.FinishTweening(); \
+		COMMAND( actor, "Hide" ); \
+		actor.FinishTweening(); \
+	}
+
+		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
-			/* Show feat 0, hide others without tweening.  Run the ON command for
-			 * all actors, even if we're going to hide it anyway, so any style commands
-			 * are run. */
-	#define SET_ON( actor ) \
-		SET_XY_AND_ON_COMMAND( actor ); \
-		if( i != 0 ) \
-		{ \
-			COMMAND( actor, "On" ); \
-			actor.FinishTweening(); \
-			COMMAND( actor, "Hide" ); \
-			actor.FinishTweening(); \
-		}
+			StageStats &ss = g_vPlayedStageStats[i];
+			Song* pSong = ss.pSong;
+			Steps* pSteps = ss.pSteps[p];
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			int iHighScoreIndex = -1;	// -1 means "out of ranking"
+			Grade grade = ss.GetGrade( p );
+			int iScore = ss.iScore[p];
+			float fPercentDP = ss.GetPercentDancePoints( p);
 
-			m_FeatDisplay[p].resize( m_NumFeats[p] );
-			for( int i = 0; int(i) < m_NumFeats[p]; ++i )
+			// If this is a SHOW_NEVER song, then it's probably a training.
+			// Don't show a high score
+			if( pSong->m_SelectionDisplay == Song::SHOW_NEVER )
+				continue;	// skip
+
+			m_FeatDisplay[p].resize( m_FeatDisplay[p].size()+1 );
+
+			const HighScoreList& hsl = 
+				GAMESTATE->IsCourseMode() ?
+				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredCourseDifficulty[p]) :
+				PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
+
+			for( unsigned h=0; h<hsl.vHighScores.size(); h++ )
 			{
-				StageStats &ss = g_vPlayedStageStats[i];
-				Song* pSong = ss.pSong;
-				Steps* pSteps = ss.pSteps[p];
-				Course* pCourse = GAMESTATE->m_pCurCourse;
-				int iHighScoreIndex = -1;	// -1 means "out of ranking"
-				Grade grade = ss.GetGrade((PlayerNumber)p);
-				int iScore = ss.iScore[p];
-				float fPercentDP = ss.GetPercentDancePoints((PlayerNumber)p);
-
-				const HighScoreList& hsl = 
-					GAMESTATE->IsCourseMode() ?
-					PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse, GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredCourseDifficulty[p]) :
-					PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
-
-				for( unsigned h=0; h<hsl.vHighScores.size(); h++ )
+				const HighScore &hs = hsl.vHighScores[h];
+				if( hs.sName == RANKING_TO_FILL_IN_MARKER[p]  &&
+					hs.fPercentDP == fPercentDP  && 
+					hs.iScore == iScore )
 				{
-					const HighScore &hs = hsl.vHighScores[h];
-					if( hs.sName == RANKING_TO_FILL_IN_MARKER[p]  &&
-						hs.fPercentDP == fPercentDP  && 
-						hs.iScore == iScore )
-					{
-						iHighScoreIndex = h;
-						break;
-					}
+					iHighScoreIndex = h;
+					break;
 				}
-
- 				m_FeatDisplay[p][i].m_Wheel.SetName( ssprintf("WheelP%i",p+1) );
-				m_FeatDisplay[p][i].m_Wheel.Load( hsl, iHighScoreIndex );
-				SET_ON( m_FeatDisplay[p][i].m_Wheel );
-				this->AddChild( &m_FeatDisplay[p][i].m_Wheel );
-
-				CString sBanner;
-				if( GAMESTATE->IsCourseMode() )
-					sBanner = pCourse->m_sBannerPath;
-				else
-					sBanner = pSong->GetBannerPath();
-				if( !sBanner.empty() )
-				{
-					m_FeatDisplay[p][i].m_sprBanner.SetName( ssprintf("BannerP%i",p+1) );
-					m_FeatDisplay[p][i].m_sprBanner.Load( sBanner );
-					SET_ON( m_FeatDisplay[p][i].m_sprBanner );
-					this->AddChild( &m_FeatDisplay[p][i].m_sprBanner );
-				}
-
-				if( grade != GRADE_NO_DATA )
-				{
-					m_FeatDisplay[p][i].m_Grade.SetName( ssprintf("GradeP%i",p+1) );
-					m_FeatDisplay[p][i].m_Grade.Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
-					m_FeatDisplay[p][i].m_Grade.SetGrade( (PlayerNumber)p, grade );
-					SET_ON( m_FeatDisplay[p][i].m_Grade );
-					this->AddChild( &m_FeatDisplay[p][i].m_Grade );
-				}
-
-				m_FeatDisplay[p][i].m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
-				m_FeatDisplay[p][i].m_Difficulty.Load( THEME->GetPathToG("ScreenNameEntryTraditional difficulty icons") );
-				if( GAMESTATE->IsCourseMode() )
-					m_FeatDisplay[p][i].m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
-				else
-					m_FeatDisplay[p][i].m_Difficulty.SetFromNotes( (PlayerNumber)p, pSteps );
-				SET_ON( m_FeatDisplay[p][i].m_Difficulty );
-				this->AddChild( &m_FeatDisplay[p][i].m_Difficulty );
-
-				m_FeatDisplay[p][i].m_textScore.SetName( "ScreenNameEntryTraditional Percent" );
-				m_FeatDisplay[p][i].m_textScore.Load( (PlayerNumber)p, &ss, false );
-				m_FeatDisplay[p][i].m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
-				SET_ON( m_FeatDisplay[p][i].m_textScore );
-				this->AddChild( &m_FeatDisplay[p][i].m_textScore );
-
-	//			if( feat.Feat != "" )
-	//			{
-	//				m_FeatDisplay[p][i].m_textCategory.SetName( ssprintf("CategoryP%i", p+1) );
-	//				m_FeatDisplay[p][i].m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional category") );
-	//				m_FeatDisplay[p][i].m_textCategory.SetText( feat.Feat );
-	//				SET_ON( m_FeatDisplay[p][i].m_textCategory );
-	//				this->AddChild( &m_FeatDisplay[p][i].m_textCategory );
-	//			}
-
-				/* We always show the banner frame (if any), because fading from a graphic to
-				 * itself is ugly. */
-				m_FeatDisplay[p][i].m_sprBannerFrame.SetName( ssprintf("BannerFrameP%i",p+1) );
-				m_FeatDisplay[p][i].m_sprBannerFrame.Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
-				SET_XY_AND_ON_COMMAND( m_FeatDisplay[p][i].m_sprBannerFrame );
-				this->AddChild( &m_FeatDisplay[p][i].m_sprBannerFrame );
 			}
-	#undef SET_ON
+
+ 			m_FeatDisplay[p][i].m_Wheel.SetName( ssprintf("WheelP%i",p+1) );
+			m_FeatDisplay[p][i].m_Wheel.Load( hsl, iHighScoreIndex );
+			SET_ON( m_FeatDisplay[p][i].m_Wheel );
+			this->AddChild( &m_FeatDisplay[p][i].m_Wheel );
+
+			CString sBanner;
+			if( GAMESTATE->IsCourseMode() )
+				sBanner = pCourse->m_sBannerPath;
+			else
+				sBanner = pSong->GetBannerPath();
+			if( !sBanner.empty() )
+			{
+				m_FeatDisplay[p][i].m_sprBanner.SetName( ssprintf("BannerP%i",p+1) );
+				m_FeatDisplay[p][i].m_sprBanner.Load( sBanner );
+				SET_ON( m_FeatDisplay[p][i].m_sprBanner );
+				this->AddChild( &m_FeatDisplay[p][i].m_sprBanner );
+			}
+
+			if( grade != GRADE_NO_DATA )
+			{
+				m_FeatDisplay[p][i].m_Grade.SetName( ssprintf("GradeP%i",p+1) );
+				m_FeatDisplay[p][i].m_Grade.Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
+				m_FeatDisplay[p][i].m_Grade.SetGrade( (PlayerNumber)p, grade );
+				SET_ON( m_FeatDisplay[p][i].m_Grade );
+				this->AddChild( &m_FeatDisplay[p][i].m_Grade );
+			}
+
+			m_FeatDisplay[p][i].m_Difficulty.SetName( ssprintf("DifficultyP%i",p+1) );
+			m_FeatDisplay[p][i].m_Difficulty.Load( THEME->GetPathToG("ScreenNameEntryTraditional difficulty icons") );
+			if( GAMESTATE->IsCourseMode() )
+				m_FeatDisplay[p][i].m_Difficulty.SetFromCourseDifficulty( (PlayerNumber)p, GAMESTATE->m_PreferredCourseDifficulty[p] );
+			else
+				m_FeatDisplay[p][i].m_Difficulty.SetFromNotes( (PlayerNumber)p, pSteps );
+			SET_ON( m_FeatDisplay[p][i].m_Difficulty );
+			this->AddChild( &m_FeatDisplay[p][i].m_Difficulty );
+
+			m_FeatDisplay[p][i].m_textScore.SetName( "ScreenNameEntryTraditional Percent" );
+			m_FeatDisplay[p][i].m_textScore.Load( (PlayerNumber)p, &ss, false );
+			m_FeatDisplay[p][i].m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
+			SET_ON( m_FeatDisplay[p][i].m_textScore );
+			this->AddChild( &m_FeatDisplay[p][i].m_textScore );
+
+//			if( feat.Feat != "" )
+//			{
+//				m_FeatDisplay[p][i].m_textCategory.SetName( ssprintf("CategoryP%i", p+1) );
+//				m_FeatDisplay[p][i].m_textCategory.LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional category") );
+//				m_FeatDisplay[p][i].m_textCategory.SetText( feat.Feat );
+//				SET_ON( m_FeatDisplay[p][i].m_textCategory );
+//				this->AddChild( &m_FeatDisplay[p][i].m_textCategory );
+//			}
+
+			/* We always show the banner frame (if any), because fading from a graphic to
+			 * itself is ugly. */
+			m_FeatDisplay[p][i].m_sprBannerFrame.SetName( ssprintf("BannerFrameP%i",p+1) );
+			m_FeatDisplay[p][i].m_sprBannerFrame.Load( THEME->GetPathToG(ssprintf("ScreenNameEntryTraditional banner frame p%i",p+1)) );
+			SET_XY_AND_ON_COMMAND( m_FeatDisplay[p][i].m_sprBannerFrame );
+			this->AddChild( &m_FeatDisplay[p][i].m_sprBannerFrame );
 		}
+#undef SET_ON
 	}
 
 	this->PostScreenMessage( SM_ChangeDisplayedFeat, FEAT_INTERVAL );
@@ -504,10 +507,10 @@ void ScreenNameEntryTraditional::ChangeDisplayedFeat()
 
 	FOREACH_HumanPlayer( pn )
 	{
-		if( m_NumFeats[pn] < 2 )
+		if( m_FeatDisplay[pn].size() < 2 )
 			continue;
 
-		int NewFeat = (m_CurFeat[pn]+1) % m_NumFeats[pn];
+		int NewFeat = (m_CurFeat[pn]+1) % m_FeatDisplay[pn].size();
 		int OldFeat = m_CurFeat[pn];
 		m_CurFeat[pn] = NewFeat;
 

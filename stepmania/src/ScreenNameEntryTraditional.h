@@ -66,9 +66,6 @@ private:
 	void ChangeDisplayedFeat();
 	void SelectChar( PlayerNumber pn, int c );
 
-	int				m_NumFeats[NUM_PLAYERS];
-	int				m_CurFeat[NUM_PLAYERS];
-
 	BGAnimation		m_Background;
 
 	ActorFrame		m_Keyboard[NUM_PLAYERS];
@@ -93,6 +90,7 @@ private:
 	};
 
 	vector<FeatDisplay>		m_FeatDisplay[NUM_PLAYERS];
+	int				m_CurFeat[NUM_PLAYERS];
 	
 	RageSound		m_soundChange;
 	RageSound		m_soundKey;
