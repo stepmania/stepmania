@@ -103,8 +103,8 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		fPercentThroughEffect += m_fEffectPerfectOffset;
 		fPercentThroughEffect = fmodfp( fPercentThroughEffect, 1 );
 
-		bool bBlinkOn = fPercentThroughEffect > 0.5f;
-		float fPercentBetweenColors = (fPercentThroughEffect==0) ? 0 : (sinf( fPercentThroughEffect * 2 * PI ) / 2 + 0.5f);
+		bool bBlinkOn = fPercentThroughEffect < 0.5f;
+		float fPercentBetweenColors = sinf( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
 		ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
 		float fOriginalAlpha = m_tempState.diffuse[0].a;
 
