@@ -193,10 +193,10 @@ void Player::Load(
 	if( !BackdropName.empty() )
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 
-	float fNoteFieldMidde = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
+	float fNoteFieldMiddle = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	
 	if( m_pNoteField )
-		m_pNoteField->SetY( fNoteFieldMidde );
+		m_pNoteField->SetY( fNoteFieldMiddle );
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	if( m_pNoteField )
 		m_pNoteField->Load( &m_NoteData, m_pPlayerState, iStartDrawingAtPixels, iStopDrawingAtPixels, m_fNoteFieldHeight );
