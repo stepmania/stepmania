@@ -26,6 +26,7 @@
 #include "Course.h"
 #include "ActorUtil.h"
 #include "FontCharAliases.h"
+#include "AnnouncerManager.h"
 #include <math.h>
 
 
@@ -319,6 +320,9 @@ ScreenNameEntryTraditional::~ScreenNameEntryTraditional()
 
 void ScreenNameEntryTraditional::Update( float fDelta )
 {
+	if( m_bFirstUpdate )
+		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("name entry") );
+
 	Screen::Update(fDelta);
 }
 
