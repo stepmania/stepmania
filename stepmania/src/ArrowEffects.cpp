@@ -218,11 +218,12 @@ float ArrowGetRotation( PlayerNumber pn, float fNoteBeat )
 {
 	if( GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY] > 0 )
 	{
-		float fSongBeat = GAMESTATE->m_fSongBeat;
+		const float fSongBeat = GAMESTATE->m_fSongBeat;
 		float fDizzyRotation = fNoteBeat - fSongBeat;
+		fDizzyRotation *= GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY];
 		fDizzyRotation = fmodf( fDizzyRotation, 2*PI );
 		fDizzyRotation *= 180/PI;
-		return fDizzyRotation * GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_DIZZY];
+		return fDizzyRotation;
 	}
 	else
 		return 0;
