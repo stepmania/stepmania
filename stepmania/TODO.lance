@@ -12,56 +12,9 @@ STATUS: In Progress (As Of 11/12/02)
 
 2) Fix OpenGL/SDL based refresh rate changes.
 
-STATUS: Done, and Commited! (As Of 11/12/02)
-
-Explination: Here is what I changed in RageDisplay.cpp
-
-Before....******************************************************
-****************************************************************
-
-#ifdef SDL_HAS_REFRESH_RATE
-	if(rate == REFRESH_DEFAULT)
-		SDL_SM_SetRefreshRate(0);
-	else
-		SDL_SM_SetRefreshRate(rate);
-
-#endif
-
-
-After....*******************************************************
-****************************************************************
-#ifdef SDL_HAS_REFRESH_RATE
-	if(rate == REFRESH_DEFAULT)
-		SDL_SM_SetRefreshRate(0);
-	else
-	// Change Windows Refresh Rate:
-	// This is a modification of a code snippet I found.
-	// It changes the windows desktop refresh rate if
-	// it's on a windows platform.
-	// -=Lance Gilbert=-
-	#if defined(WIN32)
-	::ZeroMemory(&SMGfx, sizeof(SMGfx));
-	SMGfx.dmDisplayFrequency = rate;
-	SMGfx.dmFields = DM_DISPLAYFREQUENCY;
-	SMGfx.dmSize = sizeof(SMGfx);
-	ChangeDisplaySettings(&SMGfx, 0);
-	#endif
-
-#endif
-
-****************************************************************
-
-As you can see, I removed the old SDL_SM_SetRefreshRate function,
-and replaced it with with ChangeDisplaySettings function.
-
-This fixed the problem I was having with setting the refresh rate
-to 80Hz. Whenever I used to set it to 80Hz and ONLY 80Hz it put me
-in some sort of strange window mode... very ugly. Now it changes
-to every refresh rate flawlessly, and restores to the original
-windows desktop refresh rate on exit. My only concern is that it
-may not restore it correctly on a crash. I haven't seen it happen
-yet, but it may be possible.
-
+STATUS: In Progress (As Of 11/12/02)
+Explination: Made some changes... but they didn't seem to work.
+	     I'm still encountering the 80Hz bug.
 
 3) Fix Movie Loading Problems? (May be my machine, I'm looking into it)
 
