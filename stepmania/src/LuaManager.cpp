@@ -119,7 +119,7 @@ bool LuaManager::PopStack( bool &out, lua_State *L )
 	if( L == NULL )
 		L = LUA->L;
 
-	out = lua_toboolean( L, -1 );
+	out = !!lua_toboolean( L, -1 );
 	lua_pop( L, 1 );
 	return true;
 }
@@ -129,7 +129,7 @@ bool LuaManager::PopStack( float &val, lua_State *L )
 	if( L == NULL )
 		L = LUA->L;
 
-	val = lua_tonumber( L, -1 );
+	val = (float)lua_tonumber( L, -1 );
 	lua_pop( L, 1 );
 	return true;
 }

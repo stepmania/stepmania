@@ -838,7 +838,10 @@ public:
 			lua_pushnil( L );
 		}
 		else
+		{
 			pPref->PushValue( L );
+		}
+		return 1;
 	}
 	static int SetPreference( T* p, lua_State *L )
 	{
