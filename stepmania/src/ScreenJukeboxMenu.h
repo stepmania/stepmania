@@ -13,6 +13,7 @@
 #include "JukeboxMenu.h"
 #include "BitmapText.h"
 #include "MenuElements.h"
+#include "RageSound.h"
 
 
 class ScreenJukeboxMenu : public Screen
@@ -39,6 +40,8 @@ private:
 	BitmapText		m_textExplanation;
 
 	MenuElements	m_Menu;
+
+	RageSound		m_soundInvalid;
 };
 
 

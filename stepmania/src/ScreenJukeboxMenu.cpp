@@ -21,6 +21,7 @@
 #include "GameState.h"
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
+#include "ScreenJukebox.h"
 
 
 //
@@ -51,6 +52,8 @@ ScreenJukeboxMenu::ScreenJukeboxMenu()
 	m_textExplanation.SetText( EXPLANATION_TEXT );
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
+
+	m_soundInvalid.Load( THEME->GetPathTo("Sounds","Common invalid") );
 
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","ScreenJukeboxMenu music") );
 }
@@ -123,6 +126,15 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		GAMESTATE->m_PreferredDifficulty[p] = dc;
 	GAMESTATE->m_bJukeboxUsesModifiers = bModifiers;
+
+	if(!ScreenJukebox::SetSong())
+	{
+		/* No songs are available for the selected style, group, and difficulty. */
+
+		m_soundInvalid.Play();
+		SCREENMAN->SystemMessage( "No songs available with these settings" );
+		return;
+	}
 
 
 	SOUNDMAN->StopMusic();
