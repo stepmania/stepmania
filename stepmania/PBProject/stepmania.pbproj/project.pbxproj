@@ -1117,7 +1117,6 @@
 				AA29CC710558741A00961A51,
 				AA29CC720558741A00961A51,
 				AA29CC730558741A00961A51,
-				AA29CC740558741A00961A51,
 				AA29CC750558741A00961A51,
 				AA29CC760558741A00961A51,
 				AA29CC770558741A00961A51,
@@ -1841,12 +1840,6 @@
 		};
 		AA29CC730558741A00961A51 = {
 			fileRef = AA6EFE9704770E7C005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CC740558741A00961A51 = {
-			fileRef = AA6EFE9904770E7C005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3074,7 +3067,6 @@
 				AA29CD850558741A00961A51,
 				AA29CD860558741A00961A51,
 				AA29CD870558741A00961A51,
-				AA29CD880558741A00961A51,
 				AA29CD890558741A00961A51,
 				AA29CD8A0558741A00961A51,
 				AA29CD8B0558741A00961A51,
@@ -3734,12 +3726,6 @@
 		};
 		AA29CD870558741A00961A51 = {
 			fileRef = AA6EFE9604770E7C005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA29CD880558741A00961A51 = {
-			fileRef = AA6EFE9804770E7C005F316C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6872,7 +6858,6 @@
 				AA6E0080047711F3005F316C,
 				AA6E0081047711F3005F316C,
 				AA6E0082047711F3005F316C,
-				AA6E0083047711F3005F316C,
 			);
 			isa = PBXGroup;
 			name = Screens;
@@ -8051,18 +8036,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenUnlock.h;
 			path = ../src/ScreenUnlock.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA6E0083047711F3005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = ScreenWarning.h;
-			path = ../src/ScreenWarning.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -10360,8 +10333,6 @@
 				AA6EFE9704770E7C005F316C,
 				AA729C460599B54D00779F33,
 				AA729C470599B54D00779F33,
-				AA6EFE9804770E7C005F316C,
-				AA6EFE9904770E7C005F316C,
 				AA6EFE9A04770E7C005F316C,
 				AA6EFE9B04770E7C005F316C,
 				AA6EFE9C04770E7C005F316C,
@@ -10756,30 +10727,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = JukeboxMenu.h;
 			path = ../src/JukeboxMenu.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA6EFE9804770E7C005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			name = MenuElements.cpp;
-			path = ../src/MenuElements.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 0;
-		};
-		AA6EFE9904770E7C005F316C = {
-			fileEncoding = 30;
-			indentWidth = 4;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = MenuElements.h;
-			path = ../src/MenuElements.h;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
