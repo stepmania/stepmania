@@ -225,15 +225,17 @@ void ScreenSelectMode::RefreshModeChoices()
 	GAMEMAN->GetModesChoicesForGame( GAMESTATE->m_CurGame, m_aPossibleModeChoices );
 	ASSERT( m_aPossibleModeChoices.GetSize() > 0 );
 
+	int i;
+
 	// remove ModeChoices that won't work with the current number of players
-	for( int i=m_aPossibleModeChoices.GetSize()-1; i>=0; i-- )
+	for( i=m_aPossibleModeChoices.GetSize()-1; i>=0; i-- )
 		if( m_aPossibleModeChoices[i].numSidesJoinedToPlay != iNumSidesJoined )
 			m_aPossibleModeChoices.RemoveAt( i );
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 
 	CStringArray asGraphicPaths;
-	for( int i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
+	for( i=0; i<m_aPossibleModeChoices.GetSize(); i++ )
 	{
 		const ModeChoice& choice = m_aPossibleModeChoices[i];
 		asGraphicPaths.Add( THEME->GetPathTo("Graphics", ssprintf("select mode choice %s %s", sGameName, choice.name) ) );

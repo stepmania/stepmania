@@ -188,25 +188,27 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 	switch( m_ResultMode )
 	{
 	case RM_ARCADE_STAGE:
-		m_BannerWithFrame[0].LoadFromSong( GAMESTATE->m_pCurSong );
-		m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
-		this->AddChild( &m_BannerWithFrame[0] );
-
-		m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","evaluation stage") );
-		m_textStage.TurnShadowOff();
-		m_textStage.SetXY( STAGE_X, STAGE_Y );
-		m_textStage.SetZoom( 0.5f );
-		m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
-		this->AddChild( &m_textStage );
-
-		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;	// skip
-			m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x6") );
-			m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
-			m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
-			this->AddChild( &m_DifficultyIcon[p] );
+			m_BannerWithFrame[0].LoadFromSong( GAMESTATE->m_pCurSong );
+			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
+			this->AddChild( &m_BannerWithFrame[0] );
+
+			m_textStage.LoadFromFont( THEME->GetPathTo("Fonts","evaluation stage") );
+			m_textStage.TurnShadowOff();
+			m_textStage.SetXY( STAGE_X, STAGE_Y );
+			m_textStage.SetZoom( 0.5f );
+			m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
+			this->AddChild( &m_textStage );
+
+			for( int p=0; p<NUM_PLAYERS; p++ )
+			{
+				if( !GAMESTATE->IsPlayerEnabled(p) )
+					continue;	// skip
+				m_DifficultyIcon[p].Load( THEME->GetPathTo("graphics","select music difficulty icons 1x6") );
+				m_DifficultyIcon[p].SetFromNotes( (PlayerNumber)p, GAMESTATE->m_pCurNotes[p] );
+				m_DifficultyIcon[p].SetXY( DIFFICULTY_ICON_X(p), DIFFICULTY_ICON_Y(p) );
+				this->AddChild( &m_DifficultyIcon[p] );
+			}
 		}
 		break;
 	case RM_ARCADE_SUMMARY:
