@@ -241,14 +241,15 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 
 void ScreenManager::PrepNewScreen( CString sClassName )
 {
-	if(!sClassName.GetLength()) {
-		ASSERT( m_ScreenBuffered != NULL);
-		SetNewScreen( m_ScreenBuffered  );
-		m_ScreenBuffered = NULL;
-	} else {
-		ASSERT(m_ScreenBuffered == NULL);
-		m_ScreenBuffered = MakeNewScreen(sClassName);
-	}
+	ASSERT(m_ScreenBuffered == NULL);
+	m_ScreenBuffered = MakeNewScreen(sClassName);
+}
+
+void ScreenManager::LoadPreppedScreen()
+{
+	ASSERT( m_ScreenBuffered != NULL);
+	SetNewScreen( m_ScreenBuffered  );
+	m_ScreenBuffered = NULL;
 }
 
 void ScreenManager::SetNewScreen( Screen *pNewScreen )

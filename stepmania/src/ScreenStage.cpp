@@ -569,7 +569,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->PrepNewScreen( "ScreenGameplay" );
 		break;
 	case SM_GoToNextScreen:
-		SCREENMAN->PrepNewScreen( "" ); /* use prepped */
+		SCREENMAN->LoadPreppedScreen(); /* use prepped */
 		break;
 	}
 }
