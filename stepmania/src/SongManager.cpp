@@ -521,7 +521,32 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	CString sCoursePath = "Songs\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
-	if( !DoesFileExist(sCoursePath) ) return false;
+	if( !DoesFileExist(sCoursePath) ) 
+	{
+		bool bFound = false;
+
+		/* try alternative song folders */
+		for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
+		{
+			sCoursePath = PREFSMAN->m_asAdditionalSongFolders[i] + "\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+			if( DoesFileExist(sCoursePath) ) 
+			{
+				bFound = true;
+				break;
+			}
+		}
+
+		if( !bFound && PREFSMAN->m_DWIPath != "" )
+		{
+			sCoursePath = PREFSMAN->m_DWIPath + "\\Songs\\" + sPreferredGroup + "\\" + (bExtra2 ? "extra2" : "extra1") + ".crs";
+			if( DoesFileExist(sCoursePath) )
+				bFound = true;
+		}
+
+		/*Couldn't find course in DWI path or Alternative Song Folders*/
+		if( !bFound )
+			return false;
+	}	
 
 	Course course;
 	course.LoadFromCRSFile( sCoursePath, m_pSongs );
