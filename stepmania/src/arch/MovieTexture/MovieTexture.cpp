@@ -13,11 +13,6 @@
 #define HAVE_FFMPEG
 #endif
 
-/* I don't like this. It should not be here. */
-#if defined (DARWIN)
-#define HAVE_FFMPEG
-#endif
-
 #ifdef HAVE_FFMPEG
 #include "MovieTexture_FFMpeg.h"
 #endif
@@ -99,7 +94,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 #ifdef _WINDOWS
 			if (!Driver.CompareNoCase("DShow")) ret = new MovieTexture_DShow(ID);
 #endif
-#ifdef HAVE_FFMPEG
+#ifdef SUPPORT_MOVIETEXTURE_FFMPEG
 			if (!Driver.CompareNoCase("FFMpeg")) ret = new MovieTexture_FFMpeg(ID);
 #endif
 			if (!Driver.CompareNoCase("Null")) ret = new MovieTexture_Null(ID);
