@@ -85,10 +85,11 @@ PrefsManager::PrefsManager()
 	m_iPolygonRadar = -1;
 	m_bShowSongOptions = true;
 	m_DefaultFailType = SongOptions::FAIL_ARCADE;
-	
-	/* DDR Extreme-style extra stage support.									*
-	 * Default off so people used to the current behavior (or those with extra  *
-	 * stage CRS files) don't get it changed around on them						*/
+	m_bDDRExtremeDifficultySelect = false;
+
+	/* DDR Extreme-style extra stage support.
+	 * Default off so people used to the current behavior (or those with extra
+	 * stage CRS files) don't get it changed around on them. */
 	m_bPickExtraStage = false;
 
 	m_fLongVerSongSeconds = 60*3;
