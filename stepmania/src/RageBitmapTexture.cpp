@@ -287,9 +287,43 @@ void RageBitmapTexture::Create()
 
 	int pixfmt = desired_rgba_pixfmt;
 
+retry:
+	if(img->format->BitsPerPixel == 8 && DISPLAY->GetSpecs().EXT_paletted_texture)
+		pixfmt = FMT_PAL;
+
+	if(pixfmt != FMT_PAL)
+	{
+		/* It's either not a paletted image, or we can't handle paletted textures.
+		 * Convert to the desired RGBA format, dithering if appropriate. */
+
+		/* Never dither when the target is 32bpp; there's no point. */
+		if( PixFmtMasks[pixfmt].bpp == 32)
+			m_ActualID.bDither = false;
+
+		if( m_ActualID.bDither )
+		{
+			/* Dither down to the destination format. */
+			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[pixfmt].bpp,
+				PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
+				PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
+
+			SM_SDL_OrderedDither(img, dst);
+			SDL_FreeSurface(img);
+			img = dst;
+		}
+	}
+
+	/* Convert the data to the destination format if it's not in it already.  */
+	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, PixFmtMasks[pixfmt].bpp,
+		PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
+		PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
+
+	/* This needs to be done *after* the final resize, since that resize
+	 * may introduce new alpha bits that need to be set.  It needs to be
+	 * done *before* we set up the palette, since it might change it. */
 	FixHiddenAlpha(img);
 
-	if(img->format->BitsPerPixel == 8 && DISPLAY->GetSpecs().EXT_paletted_texture)
+	if(pixfmt == FMT_PAL)
 	{
 		/* The image is currently paletted.  Let's try to set up a paletted texture. */
 		GLubyte palette[256*4];
@@ -314,45 +348,16 @@ void RageBitmapTexture::Create()
 
 		int RealFormat = 0;
 		glGetColorTableParameterivEXT(GL_TEXTURE_2D, GL_COLOR_TABLE_FORMAT_EXT, &RealFormat);
-		if(RealFormat == GL_RGBA8)
+		if(RealFormat != GL_RGBA8)
 		{
-			/* Good, the color table is what we asked for.  Use a paletted texture format. */
-			pixfmt = FMT_PAL;
-		} else {
-			/* This is another case I don't expect to happen; if it does, log,
+			/* This is a case I don't expect to happen; if it does, log,
 			 * turn off PT's permanently and continue as an RGBA texture. */
 			LOG->Info("Expected an RGBA8 palette, got %i instead; disabling paletted textures", RealFormat);
 			DISPLAY->DisablePalettedTexture();
+			pixfmt = desired_rgba_pixfmt;
+			goto retry;
 		}
 	}
-	
-retry:
-	if(pixfmt != FMT_PAL)
-	{
-		/* It's either not a paletted image, or we can't handle paletted images.
-		 * Convert to the desired RGBA format, dithering if appropriate. */
-
-		/* Never dither when the target is 32bpp; there's no point. */
-		if( PixFmtMasks[pixfmt].bpp == 32)
-			m_ActualID.bDither = false;
-
-		if( m_ActualID.bDither )
-		{
-			/* Dither down to the destination format. */
-			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[pixfmt].bpp,
-				PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
-				PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
-
-			SM_SDL_OrderedDither(img, dst);
-			SDL_FreeSurface(img);
-			img = dst;
-		}
-	}
-
-	/* Convert the data to the destination format if it's not in it already.  */
-	ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight, PixFmtMasks[pixfmt].bpp,
-		PixFmtMasks[pixfmt].masks[0], PixFmtMasks[pixfmt].masks[1],
-		PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 	glTexImage2D(GL_TEXTURE_2D, 0, PixFmtMasks[pixfmt].internalfmt, 
