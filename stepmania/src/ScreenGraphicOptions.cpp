@@ -32,6 +32,7 @@ enum {
 	GO_REFRESH_RATE,
 	GO_MOVIEDECODEMS,
 	GO_VSYNC,
+	GO_SHOWSTATS,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
 OptionRow g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
@@ -44,6 +45,7 @@ OptionRow g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	OptionRow( "Refresh\nRate",				true, "DEFAULT","60","70","72","75","80","85","90","100","120","150" ),
 	OptionRow( "Movie\nDecode",				true, "1ms","2ms","3ms","4ms" ),
 	OptionRow( "Wait For\nVsync",			true, "NO", "YES" ),
+	OptionRow( "Show\nStats",				true, "OFF","ON" ),
 };
 
 static const int HorizRes[] = {
@@ -120,8 +122,9 @@ void ScreenGraphicOptions::ImportOptions()
 		}
 	}
 
-	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
-	m_iSelectedOption[0][GO_VSYNC]					= PREFSMAN->m_bVsync ? 1:0;	
+	m_iSelectedOption[0][GO_MOVIEDECODEMS]	= PREFSMAN->m_iMovieDecodeMS-1;
+	m_iSelectedOption[0][GO_VSYNC]			= PREFSMAN->m_bVsync ? 1:0;	
+	m_iSelectedOption[0][GO_SHOWSTATS]		= PREFSMAN->m_bShowStats ? 1:0;
 }
 
 void ScreenGraphicOptions::ExportOptions()
@@ -164,6 +167,7 @@ void ScreenGraphicOptions::ExportOptions()
 
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
 	PREFSMAN->m_bVsync					= m_iSelectedOption[0][GO_VSYNC] == 1;
+	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][GO_SHOWSTATS] == 1;
 }
 
 void ScreenGraphicOptions::GoToPrevState()

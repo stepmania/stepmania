@@ -35,7 +35,6 @@ enum {
 	MO_PROG_STAGE_LIFEBAR,
 	MO_PROG_NONSTOP_LIFEBAR,
 	MO_FAIL,
-	MO_SHOWSTATS,
 	MO_COINS_PER_CREDIT,
 	MO_JOINT_PREMIUM,
 	MO_SHOW_SONG_OPTIONS,
@@ -53,7 +52,6 @@ OptionRow g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	OptionRow( "Progressive\nStage Lifebar",	true, "OFF","1","2","3","4","5","6","7","8","INSANITY"),
 	OptionRow( "Progressive\nNonstop Lifebar",	true, "OFF","1","2","3","4","5","6","7","8","INSANITY"),
 	OptionRow( "Default\nFail Type",			true, "ARCADE","END OF SONG","OFF" ),	
-	OptionRow( "Show\nStats",					true, "OFF","ON" ),
 	OptionRow( "Coins Per\nCredit",				true, "1","2","3","4","5","6","7","8" ),
 	OptionRow( "Joint\nPremium",				true, "OFF","ON" ),
 	OptionRow( "Song\nOptions",					true, "HIDE","SHOW","ASK" ),
@@ -115,7 +113,6 @@ void ScreenMachineOptions::ImportOptions()
 	m_iSelectedOption[0][MO_PROG_NONSTOP_LIFEBAR]	= PREFSMAN->m_iProgressiveNonstopLifebar;
 	m_iSelectedOption[0][MO_PROG_STAGE_LIFEBAR]	= PREFSMAN->m_iProgressiveStageLifebar;
 	m_iSelectedOption[0][MO_FAIL]			= so.m_FailType;
-	m_iSelectedOption[0][MO_SHOWSTATS]		= PREFSMAN->m_bShowStats ? 1:0;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]	= PREFSMAN->m_iCoinsPerCredit - 1;
 	m_iSelectedOption[0][MO_JOINT_PREMIUM]		= PREFSMAN->m_bJointPremium ? 1:0;
 	switch(PREFSMAN->m_ShowSongOptions)
@@ -185,7 +182,6 @@ void ScreenMachineOptions::ExportOptions()
 	if( so.GetString() != "" )
 		as.push_back( so.GetString() );
 	PREFSMAN->m_sDefaultModifiers			= join(", ",as);
-	PREFSMAN->m_bShowStats				= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
 	PREFSMAN->m_iCoinsPerCredit			= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;
 	PREFSMAN->m_bJointPremium			= m_iSelectedOption[0][MO_JOINT_PREMIUM] == 1;
 
