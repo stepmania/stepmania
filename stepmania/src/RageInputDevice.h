@@ -8,7 +8,6 @@ const int NUM_JOYSTICKS = 4;
 const int NUM_JOYSTICK_AXES = 4;	// X, Y, Z, rudder
 const int NUM_JOYSTICK_HATS = 1;
 const int NUM_PUMPS = 2;
-const int NUM_PUMP_PAD_BUTTONS = 11;
 
 const int NUM_DEVICE_BUTTONS = NUM_KEYBOARD_BUTTONS;
 
@@ -37,6 +36,23 @@ enum JoystickButton {
 	NUM_JOYSTICK_BUTTONS	// leave this at the end
 };
 
+enum PumpButton {
+	PUMP_UL,
+	PUMP_UR,
+	PUMP_MID,
+	PUMP_DL,
+	PUMP_DR,
+	PUMP_ESCAPE,
+
+	/* These buttons are for slave pads, attached to the first pad; they don't have
+	 * their own USB device, and they have no escape button. */
+	PUMP_2P_UL,
+	PUMP_2P_UR,
+	PUMP_2P_MID,
+	PUMP_2P_DL,
+	PUMP_2P_DR,
+	NUM_PUMP_PAD_BUTTONS	// leave this at the end
+};
 
 struct DeviceInput
 {
