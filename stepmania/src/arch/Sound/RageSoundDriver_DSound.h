@@ -40,7 +40,6 @@ class RageSound_DSound: public RageSoundDriver
 
 	DSound ds;
 
-	HANDLE m_ThreadWakeupEvent;
 	bool shutdown; /* tells the MixerThread to shut down */
 	static int MixerThread_start(void *p);
 	void MixerThread();
