@@ -3,10 +3,11 @@
 
 #include "RageSoundReader_FileReader.h"
 #include "SDL_utils.h"
+#include "RageFile.h"
 
 class RageSoundReader_WAV: public SoundReader_FileReader
 {
-    FILE *rw;
+    mutable RageFile rw;
 	struct
 	{
 		Sint16 wFormatTag;
@@ -52,11 +53,11 @@ class RageSoundReader_WAV: public SoundReader_FileReader
 	enum { CONV_NONE, CONV_8BIT_TO_16BIT, CONV_16LSB_TO_16SYS } Conversion;
 
 	int read_sample_fmt_normal( char *buf, unsigned len );
-	bool read_le16( FILE *rw, Sint16 *si16 ) const;
-	bool read_le16( FILE *rw, Uint16 *ui16 ) const;
-	bool read_le32( FILE *rw, Sint32 *si32 ) const;
-	bool read_le32( FILE *rw, Uint32 *ui32 ) const;
-	bool read_uint8( FILE *rw, Uint8 *ui8 ) const;
+	bool read_le16( RageFile &f, Sint16 *si16 ) const;
+	bool read_le16( RageFile &f, Uint16 *ui16 ) const;
+	bool read_le32( RageFile &f, Sint32 *si32 ) const;
+	bool read_le32( RageFile &f, Uint32 *ui32 ) const;
+	bool read_uint8( RageFile &f, Uint8 *ui8 ) const;
 
 	bool read_adpcm_block_headers( adpcm_t &out ) const;
 	bool decode_adpcm_sample_frame();

@@ -23,13 +23,11 @@
  * This file written by Ryan C. Gordon. (icculus@clutteredmind.org)
  */
 
-#include <global.h>
+#include "global.h"
 #include "RageSoundReader_WAV.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#include <stdio.h>
-#include <errno.h>
 #include <SDL_endian.h>
 
 #define BAIL_IF_MACRO(c, e, r) if (c) { SetError(e); return r; }
@@ -64,24 +62,24 @@ Uint32 RageSoundReader_WAV::ConvertBytePosToMs(int BytesPerSample, int channels,
 }
 
 /* Better than SDL_ReadLE16, since you can detect i/o errors... */
-bool RageSoundReader_WAV::read_le16(FILE *rw, Sint16 *si16) const
+bool RageSoundReader_WAV::read_le16( RageFile &f, Sint16 *si16 ) const
 {
-    int rc = fread( si16, sizeof (Sint16), 1, rw );
-	if( rc != 1 )
+    const int ret = f.Read( si16, sizeof(Sint16) );
+	if( ret != sizeof(Sint16) )
 	{
-		SetError( feof(rw)? "end of file": strerror(errno) );
+		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
     *si16 = SDL_SwapLE16( *si16 );
     return true;
 }
 
-bool RageSoundReader_WAV::read_le16(FILE *rw, Uint16 *ui16) const
+bool RageSoundReader_WAV::read_le16( RageFile &f, Uint16 *ui16 ) const
 {
-    int rc = fread( ui16, sizeof (Uint16), 1, rw );
-	if( rc != 1 )
+    const int ret = f.Read( ui16, sizeof(Uint16) );
+	if( ret != sizeof(Uint16) )
 	{
-		SetError( feof(rw)? "end of file": strerror(errno) );
+		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
     *ui16 = SDL_SwapLE16(*ui16);
@@ -90,36 +88,36 @@ bool RageSoundReader_WAV::read_le16(FILE *rw, Uint16 *ui16) const
 
 
 /* Better than SDL_ReadLE32, since you can detect i/o errors... */
-bool RageSoundReader_WAV::read_le32(FILE *rw, Sint32 *si32) const
+bool RageSoundReader_WAV::read_le32( RageFile &f, Sint32 *si32 ) const
 {
-    int rc = fread( si32, sizeof (Sint32), 1, rw );
-	if( rc != 1 )
+    const int ret = f.Read( si32, sizeof(Sint32) );
+	if( ret != sizeof(Sint32) )
 	{
-		SetError( feof(rw)? "end of file": strerror(errno) );
+		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
     *si32 = SDL_SwapLE32( *si32 );
     return true;
 }
 
-bool RageSoundReader_WAV::read_le32(FILE *rw, Uint32 *ui32) const
+bool RageSoundReader_WAV::read_le32( RageFile &f, Uint32 *ui32 ) const
 {
-    int rc = fread( ui32, sizeof (Uint32), 1, rw );
-	if( rc != 1 )
+    const int ret = f.Read( ui32, sizeof(Uint32) );
+	if( ret != sizeof(Uint32) )
 	{
-		SetError( feof(rw)? "end of file": strerror(errno) );
+		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
     *ui32 = SDL_SwapLE32( *ui32 );
     return true;
 }
 
-bool RageSoundReader_WAV::read_uint8(FILE *rw, Uint8 *ui8) const
+bool RageSoundReader_WAV::read_uint8( RageFile &f, Uint8 *ui8 ) const
 {
-    int rc = fread( ui8, sizeof (Uint8), 1, rw );
-	if( rc != 1 )
+    const int ret = f.Read( ui8, sizeof(Uint8) );
+	if( ret != sizeof(Uint8) )
 	{
-		SetError( feof(rw)? "end of file": strerror(errno) );
+		SetError( ret >= 0? "end of file": f.GetError().c_str() );
 		return false;
 	}
     return true;
@@ -169,10 +167,10 @@ bool RageSoundReader_WAV::read_fmt_chunk()
 
 int RageSoundReader_WAV::read_sample_fmt_normal(char *buf, unsigned len)
 {
-    int ret = fread( buf, 1, len, this->rw );
-	if (ret == -1)
+    const int ret = this->rw.Read( buf, len );
+	if( ret == -1 )
 	{
-		SetError( strerror(errno) );
+		SetError( ret >= 0? "end of file": rw.GetError().c_str() );
 		return -1;
 	}
 
@@ -185,11 +183,11 @@ int RageSoundReader_WAV::seek_sample_fmt_normal( Uint32 ms )
     const int offset = ConvertMsToBytePos( BytesPerSample, Channels, ms);
     const int pos = (int) (this->fmt.data_starting_offset + offset);
 
-	int rc = fseek( this->rw, pos, SEEK_SET );
-	BAIL_IF_MACRO(rc == -1, strerror(errno), -1);
+	const int ret = this->rw.Seek( pos );
+	BAIL_IF_MACRO( ret == -1, this->rw.GetError(), -1 );
 
 	/* If we seek past end of ifle, leave the cursor there, so subsequent reads will return EOF. */
-	if( pos >= (int) GetFileSizeInBytes( filename ) )
+	if( pos >= this->rw.GetFileSize() )
 		return 0;
 
     return ms;
@@ -197,10 +195,9 @@ int RageSoundReader_WAV::seek_sample_fmt_normal( Uint32 ms )
 
 int RageSoundReader_WAV::get_length_fmt_adpcm() const
 {
-	int ret = fseek(this->rw, 0, SEEK_END);
-    BAIL_IF_MACRO( ret == -1, strerror(errno), -1 );
+	this->rw.Rewind();
 
-	int offset = ftell( this->rw );
+	int offset = this->rw.Tell();
     offset -= fmt.data_starting_offset;
 
 	/* pcm bytes per block */
@@ -209,7 +206,7 @@ int RageSoundReader_WAV::get_length_fmt_adpcm() const
     const int byteno = blockno * bpb;
 
     /* Seek back to the beginning of the last frame and find out how long it really is. */
-	fseek( this->rw, blockno * fmt.wBlockAlign + fmt.data_starting_offset, SEEK_SET );
+	this->rw.Seek( blockno * fmt.wBlockAlign + fmt.data_starting_offset );
 
 	/* Don't mess up this->adpcm; we'll put the cursor back as if nothing happened. */
 	adpcm_t tmp_adpcm(adpcm);
@@ -223,10 +220,7 @@ int RageSoundReader_WAV::get_length_fmt_adpcm() const
 
 int RageSoundReader_WAV::get_length_fmt_normal() const
 {
-    int ret = fseek( this->rw, 0, SEEK_END );
-    BAIL_IF_MACRO( ret == -1, strerror(errno), -1 );
-    int offset = ftell( this->rw );
-
+	const int offset = this->rw.GetFileSize();
     return ConvertBytePosToMs( BytesPerSample, Channels, offset - this->fmt.data_starting_offset);
 }
 
@@ -364,8 +358,8 @@ int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
 	const int skipsize = (offset / bpb) * this->fmt.wBlockAlign;
 
 	const int pos = skipsize + this->fmt.data_starting_offset;
-	int rc = fseek(this->rw, pos, SEEK_SET);
-	BAIL_IF_MACRO(rc == -1, strerror(errno), -1);
+	int rc = this->rw.Seek( pos );
+	BAIL_IF_MACRO(rc == -1, this->rw.GetError(), -1);
 
 	/* The offset we need is in this block, so we need to decode to there. */
 	rc = offset % bpb;  /* bytes into this block we need to decode */
@@ -402,7 +396,7 @@ int RageSoundReader_WAV::seek_sample_fmt_adpcm( Uint32 ms )
 /* Locate a chunk by ID. */
 int RageSoundReader_WAV::find_chunk( Uint32 id, Sint32 &size )
 {
-	Uint32 pos = ftell(rw);
+	Uint32 pos = this->rw.Tell();
 	while (1)
 	{
 		Uint32 id_ = 0;
@@ -418,10 +412,10 @@ int RageSoundReader_WAV::find_chunk( Uint32 id, Sint32 &size )
 			return false;
 
 		pos += (sizeof (Uint32) * 2) + size;
-		int ret = fseek(rw, pos, SEEK_SET);
+		int ret = this->rw.Seek( pos );
 		if( ret == -1 )
 		{
-			SetError( strerror(errno) );
+			SetError( this->rw.GetError() );
 			return false;
 		}
 	}
@@ -449,7 +443,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::WAV_open_internal()
 
 	Sint32 NextChunk;
     BAIL_IF_MACRO(!find_chunk(fmtID, NextChunk), "No format chunk.", OPEN_MATCH_BUT_FAIL);
-	NextChunk += ftell(rw);
+	NextChunk += this->rw.Tell();
     BAIL_IF_MACRO(!read_fmt_chunk(), "Can't read format chunk.", OPEN_MATCH_BUT_FAIL);
 
 	/* I think multi-channel WAVs are possible, but I've never even seen one. */
@@ -493,12 +487,12 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::WAV_open_internal()
 	if( Channels == 1 )
 		Input_Buffer_Ratio *= 2;
 
-	fseek(rw, NextChunk, SEEK_SET );
+	this->rw.Seek( NextChunk );
 
 	Sint32 DataSize;
     BAIL_IF_MACRO(!find_chunk(dataID, DataSize), "No data chunk.", OPEN_MATCH_BUT_FAIL);
 
-    fmt.data_starting_offset = ftell(rw);
+    fmt.data_starting_offset = this->rw.Tell();
     fmt.adpcm_sample_frame_size = BytesPerSample * Channels;
 
     return OPEN_OK;
@@ -510,10 +504,9 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( CString filename_ 
 	Close();
 	Input_Buffer_Ratio = 1;
 	filename = filename_;
-    rw = fopen(filename, "rb");
-	if( !rw )
+	if( !this->rw.Open( filename ) )
 	{
-		SetError( ssprintf("Couldn't open file: %s", strerror(errno)) );
+		SetError( ssprintf("Couldn't open file: %s", this->rw.GetError().c_str()) );
 		return OPEN_NO_MATCH;
 	}
 
@@ -529,9 +522,7 @@ SoundReader_FileReader::OpenResult RageSoundReader_WAV::Open( CString filename_ 
 
 void RageSoundReader_WAV::Close()
 {
-	if( rw )
-		fclose( rw );
-	rw = NULL;
+	this->rw.Close();
 }
 
 
@@ -612,7 +603,7 @@ int RageSoundReader_WAV::SetPosition(int ms)
 
 int RageSoundReader_WAV::GetLength() const
 {
-    const int origpos = ftell( this->rw );
+    const int origpos = this->rw.Tell();
 	
 	int ret = 0;
 	switch (this->fmt.wFormatTag)
@@ -625,15 +616,14 @@ int RageSoundReader_WAV::GetLength() const
 		break;
 	}
 
-	int rc = fseek( this->rw, origpos, SEEK_SET );
-    BAIL_IF_MACRO( rc == -1, strerror(errno), -1 );
+	int rc = this->rw.Seek( origpos );
+    BAIL_IF_MACRO( rc == -1, this->rw.GetError(), -1 );
 
 	return ret;
 }
 
 RageSoundReader_WAV::RageSoundReader_WAV()
 {
-	rw = NULL;
 }
 
 SoundReader *RageSoundReader_WAV::Copy() const
