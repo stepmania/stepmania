@@ -1168,10 +1168,6 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 
 	GAMESTATE->m_pCurNotes[pn] = pSteps;
 
-//	m_BPMDisplay.SetZoomY( 0 );
-//	m_BPMDisplay.BeginTweening( 0.2f );
-//	m_BPMDisplay.SetZoomY( 1.2f );
-
 	if( pSteps )
 	{
 		int iScore = 0;
