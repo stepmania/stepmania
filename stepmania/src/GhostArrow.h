@@ -25,8 +25,6 @@ public:
 	void Load( CString sNoteSkin, CString sButton, CString sFile );
 	virtual void Init( PlayerNumber pn );
 
-	virtual void Update( float fDeltaTime );
-
 	void Step( TapNoteScore score );
 
 protected:
