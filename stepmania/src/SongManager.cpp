@@ -348,19 +348,19 @@ bool FileRead( ifstream& f, float& fOut )
 }
 void FileWrite( ofstream& f, const CString& sWrite )
 {
-	f << sWrite << endl;
+	f << sWrite << "\n";
 }
 void FileWrite( ofstream& f, int iWrite )
 {
-	f << iWrite << endl;
+	f << iWrite << "\n";
 }
 void FileWrite( ofstream& f, size_t uWrite )
 {
-	f << uWrite << endl;
+	f << uWrite << "\n";
 }
 void FileWrite( ofstream& f, float fWrite )
 {
-	f << fWrite << endl;
+	f << fWrite << "\n";
 }
 
 #define WARN_AND_RETURN { LOG->Warn("Error parsing file '%s' at %s:%d",fn.c_str(),__FILE__,__LINE__); return; }
