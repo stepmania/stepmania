@@ -280,7 +280,7 @@ bool ModeChoice::IsPlayable( CString *why ) const
 {
 	if( m_bInvalid )
 	{
-		if( *why )
+		if( why )
 			*why = m_sInvalidReason;
 		return false;
 	}
