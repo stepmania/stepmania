@@ -201,9 +201,9 @@ void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
 {
 	switch (m_SelectMode) {
 	case SelectRooms:
-		if (m_iRoomPlace+1 < m_RoomList.size()) {
-			ShiftRoomsUp();
-			m_iRoomPlace++;
+		if (m_iRoomPlace > 0) {
+			ShiftRoomsDown();
+			m_iRoomPlace--;
 		}
 		ScreenNetSelectBase::MenuUp( pn );
 		break;
@@ -214,9 +214,9 @@ void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 {
 	switch (m_SelectMode) {
 	case SelectRooms:
-		if (m_iRoomPlace > 0) {
-			ShiftRoomsDown();
-			m_iRoomPlace--;
+		if (m_iRoomPlace+1 < m_RoomList.size()) {
+			ShiftRoomsUp();
+			m_iRoomPlace++;
 		}
 		ScreenNetSelectBase::MenuDown( pn );
 		break;
