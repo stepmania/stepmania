@@ -63,7 +63,7 @@ DancingCharacters::DancingCharacters()
 		CString sCharacterDirectory = pChar->m_sCharDir;
 		CString sCurrentAnim;
 		sCurrentAnim = sCharacterDirectory + "2DIdle";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasIdleAnim[p] = m_bHas2DElements[p] = true;
 			m_bgIdle[p].LoadFromAniDir( sCurrentAnim );
@@ -71,7 +71,7 @@ DancingCharacters::DancingCharacters()
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DMiss";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasMissAnim[p] = m_bHas2DElements[p] = true;
 			m_bgMiss[p].LoadFromAniDir( sCurrentAnim );
@@ -79,7 +79,7 @@ DancingCharacters::DancingCharacters()
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DGood";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasGoodAnim[p] = m_bHas2DElements[p] = true;
 			m_bgGood[p].LoadFromAniDir( sCurrentAnim );
@@ -87,7 +87,7 @@ DancingCharacters::DancingCharacters()
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DGreat";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasGreatAnim[p] = m_bHas2DElements[p] = true;
 			m_bgGreat[p].LoadFromAniDir( sCurrentAnim );
@@ -95,7 +95,7 @@ DancingCharacters::DancingCharacters()
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DFever";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasFeverAnim[p] = m_bHas2DElements[p] = true;
 			m_bgFever[p].LoadFromAniDir( sCurrentAnim );
@@ -103,7 +103,7 @@ DancingCharacters::DancingCharacters()
 		}
 
 		sCurrentAnim = sCharacterDirectory + "2DFail";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasFailAnim[p] = m_bHas2DElements[p] = true;
 			m_bgFail[p].LoadFromAniDir( sCurrentAnim );
@@ -111,7 +111,7 @@ DancingCharacters::DancingCharacters()
 		}
 
 		sCurrentAnim = sCharacterDirectory + "2DWin";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasWinAnim[p] = m_bHas2DElements[p] = true;
 			m_bgWin[p].LoadFromAniDir( sCurrentAnim );
@@ -119,7 +119,7 @@ DancingCharacters::DancingCharacters()
 		}
 
 		sCurrentAnim = sCharacterDirectory + "2DWinFever";
-		if( DoesFileExist(sCurrentAnim + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
 			m_bHasWinFeverAnim[p] = m_bHas2DElements[p] = true;
 			m_bgWinFever[p].LoadFromAniDir( sCurrentAnim );

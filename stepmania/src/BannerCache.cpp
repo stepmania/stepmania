@@ -53,7 +53,7 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 {
 	/* Use GetHashForString, not ForFile, since we don't want to spend time
 	 * checking the file size and date. */
-	return ssprintf( CACHE_DIR "Banners" SLASH "%u", GetHashForString(BannerPath) );
+	return ssprintf( CACHE_DIR "Banners/%u", GetHashForString(BannerPath) );
 }
 
 void BannerCache::LoadBanner( CString BannerPath )

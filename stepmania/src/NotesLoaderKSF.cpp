@@ -319,7 +319,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 	/* Try to fill in missing bits of information from the pathname. */
 	{
 		CStringArray asBits;
-		split( sPath, SLASH, asBits, true);
+		split( sPath, "/", asBits, true);
 
 		ASSERT(asBits.size() > 1);
 		LoadTags(asBits[asBits.size()-2], out);

@@ -42,7 +42,7 @@ ScreenSandbox::ScreenSandbox( CString sClassName ) : Screen( sClassName )
 
 	//m_model.LoadMilkshapeAscii( "C:\\stepmania\\stepmania\\Themes\\groove\\BGAnimations\\ScreenCaution background\\2 platforms and backbar.txt" );
 
-	m_model.LoadMilkshapeAscii( "Characters" SLASH "DancePads-DDR.txt" );
+	m_model.LoadMilkshapeAscii( "Characters/DancePads-DDR.txt" );
 	m_model.SetXY(CENTER_X, CENTER_Y);
 	m_model.SetRotationX( 15 );
 	m_model.SetZoom(5);

@@ -20,8 +20,8 @@
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
 #include "RageFile.h"
 
-#define STEPMANIA_INI_PATH BASE_PATH "Data" SLASH "StepMania.ini"
-#define STATIC_INI_PATH BASE_PATH "Data" SLASH "Static.ini"
+#define STEPMANIA_INI_PATH "Data/StepMania.ini"
+#define STATIC_INI_PATH "Data/Static.ini"
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 

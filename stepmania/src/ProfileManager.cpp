@@ -58,8 +58,8 @@ const int COURSE_SCORES_VERSION = 7;
 static const char *MemCardDirs[NUM_PLAYERS] =
 {
 	/* @ is important; see RageFileManager LoadedDriver::GetPath */
-	"@mc1" SLASH,
-	"@mc2" SLASH,
+	"@mc1/",
+	"@mc2/",
 };
 
 ProfileManager::ProfileManager()
@@ -94,7 +94,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut )
 		CString sProfileID = vsProfileIDs[i];
 
 		Profile pro;
-		pro.LoadFromIni( USER_PROFILES_DIR + sProfileID + SLASH + PROFILE_FILE );
+		pro.LoadFromIni( USER_PROFILES_DIR + sProfileID + "/" + PROFILE_FILE );
 		asNamesOut.push_back( pro.m_sName );
 	}
 }
@@ -103,7 +103,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut )
 bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
 	ASSERT( !sProfileDir.empty() );
-	ASSERT( sProfileDir.Right(1) == SLASH );
+	ASSERT( sProfileDir.Right(1) == "/" );
 
 	m_sProfileDir[pn] = sProfileDir;
 	m_bUsingMemoryCard[pn] = bIsMemCard;
@@ -155,7 +155,7 @@ bool ProfileManager::LoadDefaultProfileFromMachine( PlayerNumber pn )
 		return false;
 	}
 
-	CString sDir = USER_PROFILES_DIR + sProfileID + SLASH;
+	CString sDir = USER_PROFILES_DIR + sProfileID + "/";
 
 	return LoadProfile( pn, sDir, false );
 }
@@ -237,7 +237,7 @@ bool Profile::LoadFromIni( CString sIniPath )
 	Init();
 
 	CStringArray asBits;
-	split( Dirname(sIniPath), SLASH, asBits, true );
+	split( Dirname(sIniPath), "/", asBits, true );
 	CString sLastDir = asBits.back();	// this is a number name, e.g. "0000001"
 
 	// Fill in a default value in case ini doesn't have it.
@@ -317,7 +317,7 @@ bool ProfileManager::CreateLocalProfile( CString sName )
 	}
 	if( i == MAX_TRIES )
 		return false;
-	sProfileDir += SLASH;
+	sProfileDir += "/";
 
 	Profile pro;
 	pro.m_sName = sName;
@@ -336,7 +336,7 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 	ASSERT( !sProfileID.empty() );
 
 	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
-	CString sProfileFile = sProfileDir + SLASH PROFILE_FILE;
+	CString sProfileFile = sProfileDir + "/" + PROFILE_FILE;
 
 	Profile pro;
 	bool bResult;
@@ -356,7 +356,7 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 	// delete all files in profile dir
 	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
 	CStringArray asFilesToDelete;
-	GetDirListing( sProfileDir + SLASH "*", asFilesToDelete, false, true );
+	GetDirListing( sProfileDir + "/*", asFilesToDelete, false, true );
 	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
 		remove( asFilesToDelete[i] );
 

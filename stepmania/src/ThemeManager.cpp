@@ -35,7 +35,7 @@ const CString BASE_THEME_NAME = "default";
 const CString FALLBACK_THEME_NAME = "fallback";
 const CString LANGUAGES_SUBDIR = "Languages" SLASH;
 const CString BASE_LANGUAGE = "english";
-const CString THEMES_DIR  = BASE_PATH "Themes" SLASH;
+const CString THEMES_DIR  = "Themes/";
 const CString METRICS_FILE = "metrics.ini";
 const CString ELEMENT_CATEGORY_STRING[NUM_ELEMENT_CATEGORIES] =
 {

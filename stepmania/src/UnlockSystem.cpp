@@ -22,11 +22,9 @@
 #include "IniFile.h"
 #include "MsdFile.h"
 
-using namespace std;
-
-#include "stdio.h"
-
 UnlockSystem*	UNLOCKSYS = NULL;	// global and accessable from anywhere in our program
+
+#define MEMCARD_PATH "Data/MemCard.ini"
 
 UnlockSystem::UnlockSystem()
 {
@@ -41,9 +39,9 @@ UnlockSystem::UnlockSystem()
 	StagesCleared = 0;
 	RouletteSeeds = "1";
 
-	ReadValues("Data" SLASH "MemCard.ini"); // in case its ever accessed, 
+	ReadValues( MEMCARD_PATH ); // in case its ever accessed, 
 									// we want the values to be available
-	WriteValues("Data" SLASH "MemCard.ini");  // create if it does not exist
+	WriteValues( MEMCARD_PATH );  // create if it does not exist
 }
 
 void UnlockSystem::RouletteUnlock( const Song *song )
@@ -60,7 +58,7 @@ void UnlockSystem::RouletteUnlock( const Song *song )
 
 	ASSERT( p->m_iRouletteSeed < (int) RouletteSeeds.size() );
 	RouletteSeeds[p->m_iRouletteSeed] = '1';
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 }
 
 bool UnlockSystem::CourseIsLocked( const Course *course )
@@ -420,88 +418,88 @@ bool UnlockSystem::WriteValues( CString filename)
 
 float UnlockSystem::UnlockAddAP(float credit)
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	ArcadePoints += credit;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return ArcadePoints;
 }
 
 float UnlockSystem::UnlockAddAP(Grade credit)
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	if (credit != GRADE_E && credit != GRADE_D)
 	ArcadePoints += 1;
 	if (credit == GRADE_AAA)
 		ArcadePoints += 9;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return ArcadePoints;
 }
 
 float UnlockSystem::UnlockAddDP(float credit)
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 
 	// we don't want to ever take away dance points
 	if (credit > 0) DancePoints += credit;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return DancePoints;
 }
 
 float UnlockSystem::UnlockAddSP(float credit)
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	SongPoints += credit;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return SongPoints;
 }
 
 float UnlockSystem::UnlockAddSP(Grade credit)
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	const float SongPointsVals[NUM_GRADES] = { -1 /* unused */, 0, 1, 2, 3, 4, 5, 10, 20 };
 
 	SongPoints += SongPointsVals[credit];
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return SongPoints;
 }
 
 float UnlockSystem::UnlockClearExtraStage()
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	ExtraClearPoints++;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return ExtraClearPoints;
 }
 
 float UnlockSystem::UnlockFailExtraStage()
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	ExtraFailPoints++;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return ExtraFailPoints;
 }
 
 float UnlockSystem::UnlockClearStage()
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	StagesCleared++;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return StagesCleared;
 }
 
 float UnlockSystem::UnlockToasty()
 {
-	ReadValues("Data" SLASH "MemCard.ini");
+	ReadValues( MEMCARD_PATH );
 	ToastyPoints++;
-	WriteValues("Data" SLASH "MemCard.ini");
+	WriteValues( MEMCARD_PATH );
 
 	return ToastyPoints;
 }

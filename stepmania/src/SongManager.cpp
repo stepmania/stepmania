@@ -34,8 +34,8 @@
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
-#define SONGS_DIR				BASE_PATH "Songs" SLASH
-#define COURSES_DIR				BASE_PATH "Courses" SLASH
+#define SONGS_DIR				"Songs/"
+#define COURSES_DIR				"Courses/"
 
 
 #define NUM_GROUP_COLORS	THEME->GetMetricI("SongManager","NumGroupColors")

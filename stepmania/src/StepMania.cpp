@@ -773,7 +773,7 @@ static void MountTreeOfZips( const CString &dir )
 	}
 }
 
-#define UNLOCKS_PATH BASE_PATH "Data/Unlocks.dat"
+#define UNLOCKS_PATH "Data/Unlocks.dat"
 
 #ifdef _XBOX
 char *xboxargv[] = { "d:\\default.xbe" };

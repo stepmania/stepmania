@@ -319,7 +319,7 @@ float Song::GetElapsedTimeFromBeat( float fBeat ) const
 
 CString Song::GetCacheFilePath() const
 {
-	return ssprintf( CACHE_DIR "Songs" SLASH "%u", GetHashForString(m_sSongDir) );
+	return ssprintf( CACHE_DIR "Songs/%u", GetHashForString(m_sSongDir) );
 }
 
 /* Get a path to the SM containing data for this song.  It might
@@ -366,15 +366,15 @@ bool Song::LoadFromSongDir( CString sDir, bool bAllowCache )
 	ASSERT( sDir != "" );
 
 	// make sure there is a trailing slash at the end of sDir
-	if( sDir.Right(1) != SLASH )
-		sDir += SLASH;
+	if( sDir.Right(1) != "/" )
+		sDir += "/";
 
 	// save song dir
 	m_sSongDir = sDir;
 
 	// save group name
 	CStringArray sDirectoryParts;
-	split( m_sSongDir, SLASH, sDirectoryParts, false );
+	split( m_sSongDir, "/", sDirectoryParts, false );
 	ASSERT( sDirectoryParts.size() >= 4 ); /* Songs/Slow/Taps/ */
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
 	ASSERT( m_sGroupName != "" );
@@ -660,7 +660,7 @@ void Song::TidyUpData()
 		/* Use the song directory name. */
 		CString SongDir = this->GetSongDir();
 		vector<CString> parts;
-		split(SongDir, SLASH, parts);
+		split(SongDir, "/", parts);
 		ASSERT(parts.size() > 0);
 
 		NotesLoader::GetMainAndSubTitlesFromFullTitle( parts[parts.size()-1], m_sMainTitle, m_sSubTitle );
@@ -1651,7 +1651,7 @@ CString Song::GetMusicPath() const
 {
 	/* If there's no path in the music file, the file is in the same directory
 	 * as the song.  (This is the preferred configuration.) */
-	if( m_sMusicFile.Find(SLASH[0]) == -1)
+	if( m_sMusicFile.Find('/') == -1)
 		return m_sSongDir+m_sMusicFile;
 
 	/* Otherwise, it's relative to the top of the SM directory (the CWD), so
@@ -1675,7 +1675,7 @@ CString Song::GetLyricsPath() const
 
 CString Song::GetCDTitlePath() const
 {
-	if( m_sCDTitleFile.Find(SLASH[0]) != -1 )
+	if( m_sCDTitleFile.Find('/') != -1 )
 		return m_sSongDir+m_sCDTitleFile;
 	return m_sCDTitleFile;
 }

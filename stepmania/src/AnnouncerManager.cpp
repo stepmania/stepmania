@@ -57,7 +57,7 @@ bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
 
 CString AnnouncerManager::GetAnnouncerDirFromName( CString sAnnouncerName )
 {
-	return ANNOUNCERS_DIR + sAnnouncerName + SLASH;
+	return ANNOUNCERS_DIR + sAnnouncerName + "/";
 }
 
 void AnnouncerManager::SwitchAnnouncer( CString sNewAnnouncerName )
@@ -103,8 +103,8 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 
 	const CString AnnouncerPath = GetAnnouncerDirFromName(sAnnouncerName);
 
-	if( !DirectoryIsEmpty(AnnouncerPath+sFolderName+SLASH) )
-		return AnnouncerPath+sFolderName+SLASH;
+	if( !DirectoryIsEmpty(AnnouncerPath+sFolderName+"/") )
+		return AnnouncerPath+sFolderName+"/";
 
 	/* Search for the announcer folder in the list of aliases. */
 	int i;
@@ -113,8 +113,8 @@ CString AnnouncerManager::GetPathTo( CString sAnnouncerName, CString sFolderName
 		if(sFolderName.CompareNoCase(aliases[i][0]))
 			continue; /* no match */
 
-		if( !DirectoryIsEmpty(AnnouncerPath+aliases[i][1]+SLASH) )
-			return AnnouncerPath+aliases[i][1]+SLASH;
+		if( !DirectoryIsEmpty(AnnouncerPath+aliases[i][1]+"/") )
+			return AnnouncerPath+aliases[i][1]+"/";
 	}
 
 	/* No announcer directory matched.  In debug, create the directory by

@@ -70,7 +70,7 @@ float Course::GetMeter( int Difficult ) const
 		return float(m_iMeter + (IsDifficult(Difficult)? DifficultMeterRamp:0));
 
 	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
-			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? SLASH:"", sSong.c_str());*/
+			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? "/":"", sSong.c_str());*/
 	vector<Info> ci;
 	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, Difficult );
 
@@ -351,7 +351,7 @@ void Course::Save()
 			{
 				// strip off everything but the group name and song dir
 				CStringArray as;
-				split( entry.pSong->GetSongDir(), SLASH, as );
+				split( entry.pSong->GetSongDir(), "/", as );
 				ASSERT( !as.empty() );
 				CString sGroup = as[ as.size()-2 ];
 				CString sSong = as[ as.size()-1 ];

@@ -65,7 +65,7 @@ static const char *anims[NUM_ANIMATIONS] =
 
 static CString GetAnimPath( Animation a )
 {
-	return ssprintf("Characters%s%s", SLASH, anims[a]);
+	return CString("Characters/") + anims[a];
 }
 
 static bool HaveAllCharAnimations()

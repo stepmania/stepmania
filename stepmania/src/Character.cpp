@@ -19,13 +19,13 @@
 bool Character::Load( CString sCharDir )
 {
 	// Save character directory
-	if( sCharDir.Right(1)!=SLASH )
-		sCharDir += SLASH;
+	if( sCharDir.Right(1) != "/" )
+		sCharDir += "/";
 	m_sCharDir = sCharDir;
 
 	// Save character name
 	vector<CString> as;
-	split( sCharDir, SLASH, as );
+	split( sCharDir, "/", as );
 	m_sName = as.back();
 
 	// Save attacks
@@ -61,9 +61,9 @@ CString Character::GetModelPath() const
 		return "";
 }
 
-CString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest" SLASH)); }
-CString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp" SLASH)); }
-CString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance" SLASH)); }
+CString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
+CString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "WarmUp/")); }
+CString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
 CString Character::GetTakingABreakPath() const
 {
 	CStringArray as;
@@ -144,21 +144,21 @@ CString Character::GetHeadPath() const
 
 bool Character::Has2DElems()
 {
-	if( DoesFileExist(m_sCharDir + SLASH + "2DFail" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DFail/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
-	if( DoesFileExist(m_sCharDir + SLASH + "2DFever" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DFever/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
-	if( DoesFileExist(m_sCharDir + SLASH + "2DGood" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DGood/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;	
-	if( DoesFileExist(m_sCharDir + SLASH + "2DMiss" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DMiss/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
-	if( DoesFileExist(m_sCharDir + SLASH + "2DWin" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DWin/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
-	if( DoesFileExist(m_sCharDir + SLASH + "2DWinFever" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DWinFever/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
-	if( DoesFileExist(m_sCharDir + SLASH + "2DGreat" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DGreat/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
-	if( DoesFileExist(m_sCharDir + SLASH + "2DIdle" + SLASH + "BGAnimation.ini") ) // check 2D Idle BGAnim exists
+	if( DoesFileExist(m_sCharDir + "2DIdle/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
 	return false;
 }

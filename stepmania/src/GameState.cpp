@@ -40,8 +40,8 @@
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
-#define CHARACTERS_DIR BASE_PATH "Characters" SLASH
-#define NAMES_BLACKLIST_FILE BASE_PATH "Data" SLASH "NamesBlacklist.dat"
+#define CHARACTERS_DIR "Characters/"
+#define NAMES_BLACKLIST_FILE "Data/NamesBlacklist.dat"
 
 GameState::GameState()
 {

@@ -27,9 +27,9 @@
 NoteSkinManager*	NOTESKIN = NULL;	// global object accessable from anywhere in the program
 
 
-const CString NOTESKINS_DIR = BASE_PATH "NoteSkins" SLASH;
+const CString NOTESKINS_DIR = "NoteSkins/";
 const CString GAME_BASE_NOTESKIN_NAME = "default";
-const CString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common" SLASH "default" SLASH;
+const CString GLOBAL_BASE_NOTESKIN_DIR = NOTESKINS_DIR + "common/default/";
 
 NoteSkinManager::NoteSkinManager()
 {
