@@ -200,6 +200,9 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 		
 		for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 		{
+			if( m )
+				sRet.append( 1, ',' );
+
 			NoteType nt = GetSmallestNoteTypeForMeasure( in, m );
 			int iRowSpacing;
 			if( nt == NOTE_TYPE_INVALID )
@@ -242,8 +245,6 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out,
 				
 				sRet.append(1, '\n');
 			}
-
-			sRet.append(1, ',');
 		}
 	}
 
