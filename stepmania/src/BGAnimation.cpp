@@ -121,6 +121,15 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 			for( int i=0; (unsigned)i < m_Layers.size(); i++ )
 				m_fLengthSeconds = max(m_fLengthSeconds, m_Layers[i]->GetMaxTweenTimeLeft());
 		}
+
+		CString InitCommand;
+		if( ini.GetValue( "BGAnimation", "InitCommand", InitCommand ) )
+		{
+			/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
+			 * modify draw order between BGAs in a Foreground.  Most things should be done
+			 * in metrics.ini commands, not here. */
+			this->Command( InitCommand );
+		}
 	}
 	else
 	{
