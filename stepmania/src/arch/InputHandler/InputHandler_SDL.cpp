@@ -130,7 +130,7 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		}
 	}
 
-	InputHandler::Update( fDeltaTime );
+	InputHandler::UpdateTimer();
 }
 
 

@@ -186,7 +186,7 @@ void InputHandler_Linux_tty::Update(float fDeltaTime)
 		}
 	}
 
-	InputHandler::Update( fDeltaTime );
+	InputHandler::UpdateTimer();
 }
 
 void InputHandler_Linux_tty::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
