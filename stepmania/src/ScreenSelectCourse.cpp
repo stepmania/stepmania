@@ -167,7 +167,7 @@ void ScreenSelectCourse::Update( float fDelta )
 
 void ScreenSelectCourse::TweenOnScreen()
 {
-	m_sprExplanation.Command(	"Sleep,0.5;AddX,-640;BounceEnd,0.5;AddX,640" );
+	m_sprExplanation.Command(	"AddX,-640;Sleep,0.5;BounceEnd,0.5;AddX,640" );
 	m_sprBannerFrame.Command(	"AddX,-640;BounceEnd,0.5;AddX,640" );
 	m_Banner.Command(			"AddX,-640;BounceEnd,0.5;AddX,640" );
 	m_textNumSongs.Command(		"AddX,-640;BounceEnd,0.5;AddX,640" );
