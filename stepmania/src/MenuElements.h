@@ -43,9 +43,6 @@ public:
 	void StopTimer();
 
 public:	// let owner tinker with these objects
-
-	CString				m_sName;
-
 	BGAnimation			m_Background;
 
 	AutoActor			m_autoHeader;

@@ -42,7 +42,7 @@ void MenuElements::Load( CString sClassName )
 
 	ASSERT( this->m_SubActors.empty() );	// don't call Load twice!
 
-	m_sName = sClassName;
+	this->SetName( sClassName );
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName+" background") );
 	this->AddChild( &m_Background );
@@ -155,6 +155,7 @@ void MenuElements::DrawPrimitives()
 
 void MenuElements::DrawTopLayer()
 {
+	ASSERT( !this->m_SubActors.empty() );	// Load first
 	BeginDraw();
 
 	m_autoHeader->Draw();
