@@ -122,14 +122,11 @@ void RageSoundManager::Update(float delta)
 }
 
 /* Register the given sound, and return a unique ID. */
-int RageSoundManager::RegisterSound( RageSound *p )
+void RageSoundManager::RegisterSound( RageSound *p )
 {
-	LockMut(g_SoundManMutex); /* lock for access to all_sounds and iID */
-
+	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
 	all_sounds.insert( p );
-
-	static int iID = 0;
-	return ++iID;
+	g_SoundManMutex.Unlock(); /* finished with all_sounds */
 }
 
 void RageSoundManager::UnregisterSound( RageSound *p )
@@ -137,6 +134,14 @@ void RageSoundManager::UnregisterSound( RageSound *p )
 	g_SoundManMutex.Lock(); /* lock for access to all_sounds */
 	all_sounds.erase( p );
 	g_SoundManMutex.Unlock(); /* finished with all_sounds */
+}
+
+/* Return a unique ID. */
+int RageSoundManager::GetUniqueID()
+{
+	LockMut(g_SoundManMutex); /* serialize iID */
+	static int iID = 0;
+	return ++iID;
 }
 
 void RageSoundManager::RegisterPlayingSound( RageSound *p )

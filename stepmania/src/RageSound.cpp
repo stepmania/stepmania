@@ -72,7 +72,9 @@ RageSound::RageSound():
 	databuf.reserve(internal_buffer_size);
 
 	/* Register ourself. */
-	ID = SOUNDMAN->RegisterSound( this );
+	SOUNDMAN->RegisterSound( this );
+
+	ID = SOUNDMAN->GetUniqueID();
 }
 
 RageSound::~RageSound()
@@ -98,8 +100,11 @@ RageSound::RageSound(const RageSound &cpy):
 
 	*this = cpy;
 
-	/* Register ourself.  We have a different ID than our parent. */
-	ID = SOUNDMAN->RegisterSound( this );
+	/* Register ourself. */
+	SOUNDMAN->RegisterSound( this );
+
+	/* We have a different ID than our parent. */
+	ID = SOUNDMAN->GetUniqueID();
 }
 
 RageSound &RageSound::operator=( const RageSound &cpy )
@@ -605,6 +610,12 @@ void RageSound::StopPlaying()
 	
 	max_driver_frame = 0;
 	pos_map.Clear();
+
+	/* We may still have positions queued up in RageSoundManager.  We need to make sure
+	 * that we don't accept those; otherwise, if we start playing again quickly, they'll
+	 * confuse GetPositionSeconds().  Do this by changing our ID. */
+	ID = SOUNDMAN->GetUniqueID();
+
 //	LOG->Trace("StopPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 
 	m_Mutex.Unlock();

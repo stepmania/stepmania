@@ -44,8 +44,9 @@ public:
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );	/* used by RageSound */
 	int64_t GetPosition( const RageSoundBase *snd ) const;	/* used by RageSound */
-	int RegisterSound( RageSound *p );		/* used by RageSound */
+	void RegisterSound( RageSound *p );		/* used by RageSound */
 	void UnregisterSound( RageSound *p );	/* used by RageSound */
+	int GetUniqueID();						/* used by RageSound */
 	void RegisterPlayingSound( RageSound *p );	/* used by RageSound */
 	void UnregisterPlayingSound( RageSound *p );	/* used by RageSound */
 	void CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_bytes );	/* used by drivers */
