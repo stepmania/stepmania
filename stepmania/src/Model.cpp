@@ -406,12 +406,14 @@ bool Model::LoadMilkshapeAscii( CString sPath )
 
 				if( strcmp(Material.szDiffuseTexture, "")!=0 )
 				{
-					CString sFile = Material.szDiffuseTexture;
-					FixSlashesInPlace( sFile );
-					CString sPath = sDir + Material.szDiffuseTexture;
-					CollapsePath( sPath );
-					if( IsAFile(sPath) )
-						Material.aniTexture.Load( sPath );
+					CString sTexturePath = sDir + Material.szDiffuseTexture;
+					FixSlashesInPlace( sTexturePath );
+					CollapsePath( sTexturePath );
+					if( IsAFile(sTexturePath) )
+						Material.aniTexture.Load( sTexturePath );
+					else
+						LOG->Warn( "\"%s\" references a texture \"%s\" that does not exist",
+							sPath.c_str(), sTexturePath.c_str() );
 				}
 
                 // alpha texture
