@@ -397,19 +397,19 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		 */
 		lowersum = achv[indx].value;
 		halfsum = sm / 2;
-		int i;
-		for ( i = 1; i < clrs - 1; ++i )
+		int j;
+		for ( j = 1; j < clrs - 1; ++j )
 		{
 			if ( lowersum >= halfsum )
 				break;
-			lowersum += achv[indx + i].value;
+			lowersum += achv[indx + j].value;
 		}
 
 		/* Split the box, and sort to bring the biggest boxes to the top. */
-		bv[bi].colors = i;
+		bv[bi].colors = j;
 		bv[bi].sum = lowersum;
-		bv[boxes].ind = indx + i;
-		bv[boxes].colors = clrs - i;
+		bv[boxes].ind = indx + j;
+		bv[boxes].colors = clrs - j;
 		bv[boxes].sum = sm - lowersum;
 		++boxes;
 		sort( &bv[0], &bv[boxes], CompareBySumDescending );
