@@ -430,9 +430,10 @@ void GameState::Update( float fDelta )
 			// converted into the current music time.  
 			ASSERT( attack.fStartSecond != -1 );
 
-			const bool bCurrentlyEnabled =
-				attack.fStartSecond < this->m_fMusicSeconds &&
-				m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining;
+			bool bCurrentlyEnabled =
+				attack.bGlobal ||
+				( attack.fStartSecond < this->m_fMusicSeconds &&
+				m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
 
 			if( m_ActiveAttacks[p][s].bOn == bCurrentlyEnabled )
 				continue; /* OK */

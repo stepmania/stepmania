@@ -24,6 +24,7 @@ void TrailEntry::GetAttackArray( AttackArray &out ) const
 		a.fSecsRemaining = 10000; /* whole song */
 		a.level = ATTACK_LEVEL_1;
 		a.sModifier = Modifiers;
+		a.bGlobal = true;
 
 		out.push_back( a );
 	}

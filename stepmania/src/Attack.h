@@ -12,11 +12,12 @@ struct Attack
 	float fSecsRemaining;
 	CString sModifier;
 	bool bOn; // for GAMESTATE
+	bool bGlobal; // true for song-wide course mods
 
 	void GetAttackBeats( const Song *song, PlayerNumber pn, float &fStartBeat, float &fEndBeat ) const;
 	bool IsBlank() { return sModifier.empty(); }
 	void MakeBlank() { sModifier=""; }
-	Attack() { fStartSecond = -1; bOn = false; }
+	Attack() { fStartSecond = -1; bOn = false; bGlobal = false; }
 };
 typedef vector<Attack> AttackArray;
 

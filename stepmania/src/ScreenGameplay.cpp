@@ -801,7 +801,6 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	GAMESTATE->m_ModsToApply[p].clear();
 	for( unsigned i=0; i<m_asModifiersQueue[p][iSongIndex].size(); ++i )
 	{
-		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
 		Attack a = m_asModifiersQueue[p][iSongIndex][i];
 		if( a.fStartSecond == 0 )
 			a.fStartSecond = -1;	// now
@@ -813,7 +812,8 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 	/* Update attack bOn flags. */
 	GAMESTATE->Update(0);
 	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( (PlayerNumber)p );
-	/* Snap. */
+
+	/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
 	GAMESTATE->m_CurrentPlayerOptions[p] = GAMESTATE->m_PlayerOptions[p];
 
 	NoteData pOriginalNoteData;
