@@ -182,7 +182,7 @@ void PrintInstructions( RageFile &f, const Profile *pProfile, CString sTitle )
 		PRINT_OPEN(f,"Overview",true);
 		{
 			BEGIN_TABLE(1);
-			TABLE_LINE1("<p>This directory contains all your game profile data.  Please read these instructions before modifying or moving any of these files.  Modifying files may result in irreversible loss of your data.</p>\n");
+			TABLE_LINE1("<p>This directory contains all your game profile data.  Please read these instructions before modifying or moving any files on your memory card.  Modifying files may result in irreversible loss of your data.</p>\n");
 			END_TABLE;
 		}
 		PRINT_CLOSE(f);
@@ -650,13 +650,11 @@ bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsTyp
 				if( pSteps && !pSteps->IsAutogen() )
 				{
 					f.PutLine("<td>");
-					f.PutLine("<table class='meterAndGrade'><tr>");
-					f.PutLine( ssprintf("<td class='meter'><p class='meter'>%d</p></td>",pSteps->GetMeter()) );
+					f.PutLine( ssprintf("<font class='meter'>%d</font>",pSteps->GetMeter()) );
 					HighScore hs = pProfile->GetStepsHighScoreList( pSteps ).GetTopScore();
 					Grade grade = hs.grade;
 					if( grade != GRADE_NO_DATA )
-						f.PutLine( ssprintf("<td class='grade'><p class='grade'>%s</p></td>",GradeToThemedString(grade).c_str()) );
-					f.PutLine("</tr></table>");
+						f.PutLine( ssprintf("<font class='grade'>%s</font>",GradeToThemedString(grade).c_str()) );
 					f.PutLine("</td>");
 				}
 				else
