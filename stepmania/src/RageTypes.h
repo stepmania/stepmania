@@ -158,7 +158,7 @@ class RageVColor
 public:
 	unsigned char b,g,r,a;	// specific ordering required by Direct3D
 
-	RageVColor() { }
+	RageVColor(): b(0), g(0), r(0), a(0) { }
 	RageVColor(const RageColor &rc) { *this = rc; }
 	RageVColor &operator= (const RageColor &rc) {
 		r = FTOC(rc.r); g = FTOC(rc.g); b = FTOC(rc.b); a = FTOC(rc.a);
@@ -188,6 +188,12 @@ typedef Rect<float> RectF;
 // A structure for our custom vertex type.  Note that these data structes have the same layout that D3D expects.
 struct RageVertex
 {
+	/* Zero out by default. */
+	RageVertex():
+		p(0,0,0),
+		n(0,0,0),
+		t(0,0)
+		{ }
     RageVector3		p;	// position
     RageVector3		n;	// normal
     RageVColor		c;	// diffuse color
