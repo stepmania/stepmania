@@ -10,7 +10,7 @@
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
 
-const SPECIAL_KEY_WIDTH = 3;	// special keys are 3x as wide as normal keys
+const int SPECIAL_KEY_WIDTH = 3;	// special keys are 3x as wide as normal keys
 
 
 const int MAX_KEYS_PER_ROW = 13;
