@@ -12,9 +12,6 @@
 */
 
 #include "RageUtil.h"
-#if 0
-#include "fnmatch.h"
-#endif
 
 ULONG		randseed = time(NULL);
 
@@ -202,37 +199,24 @@ void splitpath( const bool UsingDirsOnly, const CString &Path, CString& Drive, C
 //-----------------------------------------------------------------------------
 void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& Ext )
 {
-	// need to split on both forward slashes and back slashes
-	CStringArray sPathBits;
+	/* Find the last slash or backslash. */
+	int Last = max(Path.ReverseFind('/'), Path.ReverseFind('\\')); 
 
-	CStringArray sBackShashPathBits;
-	split( Path, "\\", sBackShashPathBits, true );
+	/* Set 'Last' to the first character of the filename.  If we have
+	 * no directory separators, this is the entire string, so set it
+	 * to 0. */
+	if(Last == -1) Last = 0;
+	else Last++;
 
-	for( int i=0; i<sBackShashPathBits.GetSize(); i++ )	// foreach backslash bit
-	{
-		CStringArray sForwardShashPathBits;
-		split( sBackShashPathBits[i], "/", sForwardShashPathBits, true );
-
-		sPathBits.Append( sForwardShashPathBits );
-	}
-
-
-	if( sPathBits.GetSize() == 0 )
-	{
-		Dir = FName = Ext = "";
-		return;
-	}
-
-	CString sFNameAndExt = sPathBits[ sPathBits.GetSize()-1 ];
-
+	CString sFNameAndExt = Path.Right(Path.GetLength()-Last);
+	
 	// subtract the FNameAndExt from Path
 	Dir = Path.Left( Path.GetLength()-sFNameAndExt.GetLength() );	// don't subtract out the trailing slash
-
 
 	CStringArray sFNameAndExtBits;
 	split( sFNameAndExt, ".", sFNameAndExtBits, false );
 
-	if( sFNameAndExtBits.GetSize() == 0 )	// no file at the end of this path
+	if( sFNameAndExt.GetLength() == 0 )	// no file at the end of this path
 	{
 		FName = "";
 		Ext = "";
@@ -316,11 +300,108 @@ void GetCwd(CString &s)
 	s = buf;
 }
 
-/* Get files in a directory that match any number of masks, without
- * having to scan the whole directory multiple times.
+/* This is a little big; I'm undecided whether it deserves its own file.
+ * For now, I'll leave it here, since the interface is extremely simple.
+ * If it gets more interfaces, I'll move them to members of DirCache and
+ * give it its own file. -glenn */
+
+/* Keep a cache of read directories, with attributes and the extension
+ * split off, so we don't have to request this from the system every
+ * time, and so we can do searches by extension quickly. */
+class DirCache {
+public:
+	struct CacheEntry {
+		CArray<CString> files;
+		CArray<CString> exts;
+		CArray<int> Attributes;
+
+		CString dir;
+	};
+
+	const CacheEntry *SearchDirCache( const CString &sPath );
+
+	void FlushCache();
+	~DirCache() { FlushCache(); }
+private:
+	CacheEntry *LoadDirCache( const CString &sPath );
+
+	/* We don't have too many directories ... XXX - glenn */
+	CArray<CacheEntry *> directory_cache;
+} static DirectoryCache;
+
+void DirCache::FlushCache()
+{
+	for(int i = 0; i < directory_cache.GetSize(); ++i)
+		delete directory_cache[i];
+	directory_cache.RemoveAll();
+}
+
+void FlushDirCache() { DirectoryCache.FlushCache(); }
+
+/* Read a directory and return a CacheEntry object for it. */
+DirCache::CacheEntry *DirCache::LoadDirCache( const CString &sPath )
+{
+	CString sFile, sDir, sThrowAway;
+	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
+
+	CString oldpath;
+	GetCwd(oldpath);
+	if(chdir(sDir) == -1) return NULL;
+
+	WIN32_FIND_DATA fd;
+	HANDLE hFind = ::FindFirstFile( "*", &fd );
+
+	if( hFind == INVALID_HANDLE_VALUE )
+	{
+		chdir(oldpath);
+		return NULL;
+	}
+
+	DirCache::CacheEntry *dir = new DirCache::CacheEntry;
+	dir->dir = sPath;
+
+	do {
+		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
+			continue;
+
+		CString sExt, sThrowAway;
+		splitrelpath( fd.cFileName, sThrowAway, sThrowAway, sExt );
+
+		dir->files.Add(fd.cFileName);
+		dir->exts.Add(sExt);
+		dir->Attributes.Add(fd.dwFileAttributes);
+	} while( ::FindNextFile( hFind, &fd ) );
+	directory_cache.Add(dir);
+
+	chdir(oldpath);
+	return dir;
+}
+
+/* Return a CacheEntry object for a directory, reading it if necessary. */
+const DirCache::CacheEntry *DirCache::SearchDirCache( const CString &sPath )
+{
+	int i;
+	for(i = 0; i < directory_cache.GetSize(); ++i)
+		if(directory_cache[i]->dir == sPath) break;
+
+	if(i == directory_cache.GetSize())
+		/* Didn't find it. */
+		return LoadDirCache( sPath );
+
+	return directory_cache[i];
+}
+
+/* GetExtDirListing(V):
+ * sPath is a path, which may include a filename.  If a filename
+ * portion is included, return only files which have that as a
+ * prefix.  (If you don't use this, make sure the path ends in a
+ * backslash, to prevent the last element of the directory from
+ * looking like a filename.)
+ *
+ * Each argument (or each element in the array) is an extension to
+ * return.  If no arguments are provided, return all files.
  */
-#if 0
-bool GetFnmDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... )
+bool GetExtDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, ... )
 {
 	const char *masks[32];
 	int nmasks = 0;
@@ -328,44 +409,50 @@ bool GetFnmDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs
 	
     va_start(va, bReturnPathToo);
 	while(const char *next = va_arg(va, const char *))
-		masks[nmasks++] = next;
-    va_end(va);
-
-	CString oldpath;
-	GetCwd(oldpath);
-	if(chdir(sPath) == -1) return false;
-
-	WIN32_FIND_DATA fd;
-	HANDLE hFind = ::FindFirstFile( ".", &fd );
-
-	if( hFind != INVALID_HANDLE_VALUE )
-	do
 	{
-		if( bOnlyDirs  &&  !(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
+		masks[nmasks++] = next;
+		ASSERT(nmasks+1 < sizeof(masks)/sizeof(*masks));
+	}
+    va_end(va);
+	masks[nmasks++] = NULL;
+
+	return GetExtDirListingV(sPath, AddTo, bOnlyDirs, bReturnPathToo, masks );
+}
+
+bool GetExtDirListingV( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo, const char *masks[] )
+{
+	CString sFile, sDir, sThrowAway;
+	splitrelpath( sPath, sDir, sFile, sThrowAway );
+
+	const DirCache::CacheEntry *cache = DirectoryCache.SearchDirCache(sDir);
+	if(!cache) return false;
+
+	for(int i = 0; i < cache->files.GetSize(); ++i)
+	{
+		if( bOnlyDirs && !(cache->Attributes[i] & FILE_ATTRIBUTE_DIRECTORY) )
 			continue;	// skip
 
-		if(!strcmp(fd.cFileName, ".") || 
-		   !strcmp(fd.cFileName, ".."))
+		if(strnicmp(sFile, cache->files[i], sFile.GetLength()))
 			continue;
 
 		bool matched = false;
-		for(int i = 0; !matched && i < nmasks; ++i)
-			if(!fnmatch(masks[i], fd.cFileName, FNM_CASEFOLD))
-				matched = true;
+		for(int j = 0; !matched && masks[j]; ++j)
+		{
+			if(stricmp(masks[j], cache->exts[i]))
+				continue;
+			matched = true;
+		}
 		
 		if(!matched) continue;
 
 		if( bReturnPathToo )
-			AddTo.Add( sPath + fd.cFileName );
+			AddTo.Add( sDir + cache->files[i] );
 		else
-			AddTo.Add( fd.cFileName );
-	} while( ::FindNextFile( hFind, &fd ) );
-	::FindClose( hFind );
+			AddTo.Add( cache->files[i] );
+	}
 
-	chdir(oldpath);
 	return true;
 }
-#endif
 
 //-----------------------------------------------------------------------------
 // Name: GetHashForString( CString s )
