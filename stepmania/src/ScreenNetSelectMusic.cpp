@@ -71,7 +71,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	m_textChatInput.SetVertAlign( align_top );
 	m_textChatInput.SetShadowLength( 0 );
 	m_textChatInput.SetName( "ChatInput" );
-	m_textChatInput.SetWrapWidthPixels( CHATINPUT_WIDTH * 2 );
+	m_textChatInput.SetWrapWidthPixels( (int)(CHATINPUT_WIDTH * 2) );
 	SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
@@ -80,7 +80,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	m_textChatOutput.SetVertAlign( align_top );
 	m_textChatOutput.SetShadowLength( 0 );
 	m_textChatOutput.SetName( "ChatOutput" );
-	m_textChatOutput.SetWrapWidthPixels( CHATOUTPUT_WIDTH * 2 );
+	m_textChatOutput.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
 	SET_XY_AND_ON_COMMAND( m_textChatOutput );
 	this->AddChild( &m_textChatOutput );
 
@@ -166,12 +166,12 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	m_iShowSongs = NUM_SONGS_SHOW;
 	m_iGroupNum=m_vGroups.size()-1;	//Alphabetical
 	
-	int i;
+	int i = 0;
 
 	if (GAMESTATE->m_pCurSong == NULL)
 		i=0;
 	else
-		for ( int i=0;i<m_vSongs.size(); i++ )
+		for ( int i=0;i<(int)m_vSongs.size(); i++ )
 			if (m_vSongs[i] == GAMESTATE->m_pCurSong)
 				break;
 
@@ -180,6 +180,7 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( CString sName ) : ScreenWithMenuElem
 	UpdateGroupsListPos();
 	UpdateSongsList();
 	UpdateSongsListPos();
+	return;
 }
 
 void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -254,7 +255,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		{
 			c = (char)toupper(c);
 			int i;
-			for (i=0;i<m_vSongs.size();i++)
+			for (i=0;i<(int)m_vSongs.size();i++)
 				if ( (char) toupper(m_vSongs[i]->GetTranslitMainTitle().c_str()[0]) == (char) c )
 				{
 					m_iSongNum = i;
@@ -319,11 +320,11 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
 		{
-			for ( i=0; i<MultiSteps.size(); i++ )
+			for ( i=0; i<(int)MultiSteps.size(); i++ )
 				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 					break;
 
-			if ( i == MultiSteps.size() )
+			if ( i == (int)MultiSteps.size() )
 				m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
 			else
 				if (i > 0)	//If we are at the easiest difficulty, do nothign
@@ -356,14 +357,14 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
 		{
-			for ( i=0; i<MultiSteps.size(); i++ )
+			for ( i=0; i<(int)MultiSteps.size(); i++ )
 				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 					break;
 
-			if ( i == MultiSteps.size() )
+			if ( i == (int)MultiSteps.size() )
 				m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
 			else
-				if (i < MultiSteps.size() - 1 )	//If we are at the hardest difficulty, do nothign
+				if (i < (int)MultiSteps.size() - 1 )	//If we are at the hardest difficulty, do nothign
 					m_DC[pn] = MultiSteps[i+1]->GetDifficulty();
 		}
 		m_DifficultyIcon[pn].SetFromDifficulty( pn, m_DC[pn] );
@@ -476,11 +477,11 @@ void ScreenNetSelectMusic::UpdateSongsListPos()
 			m_DC[pn] = NUM_DIFFICULTIES;
 		else
 		{
-			for ( i=0; i<MultiSteps.size(); i++ )
+			for ( i=0; i<(int)MultiSteps.size(); i++ )
 				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
 					break;
 
-			if ( i == MultiSteps.size() )
+			if ( i == (int)MultiSteps.size() )
 				m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
 			else
 				m_DC[pn] = MultiSteps[i]->GetDifficulty();
