@@ -12,9 +12,11 @@
 
 static const char chXMLTagOpen		= '<';
 static const char chXMLTagClose		= '>';
-static const char chXMLTagQuestion		= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
+static const char chXMLQuestion		= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
 static const char chXMLTagPre		= '/';
 static const char chXMLEscape		= '\\';	// for value field escape
+static const char chXMLExclamation	= '!';
+static const char chXMLDash			= '-';
 
 
 static const XENTITY x_EntityTable[] = {
@@ -185,7 +187,7 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 			continue;
 
 		// close tag
-		if( *xml == chXMLTagClose || *xml == chXMLTagPre || *xml == chXMLTagQuestion )
+		if( *xml == chXMLTagClose || *xml == chXMLTagPre || *xml == chXMLQuestion || *xml == chXMLDash )
 			// wel-formed tag
 			return xml;
 
@@ -254,7 +256,7 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 		}
 	}
 
-	// not wel-formed tag
+	// not well-formed tag
 	return NULL;
 }
 
@@ -291,16 +293,24 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 	xml++;
 	char* pTagEnd = strpbrk( xml, " \t\r\n/>" );
 	SetString( xml, pTagEnd, &m_sName );
+
 	xml = pTagEnd;
 	// Generate XML Attributte List
 	xml = LoadAttributes( xml, pi );
 	if( xml == NULL )
 		return NULL;
 
-	// alone tag <TAG ... /> or <?TAG ... ?>
-	if( *xml == chXMLTagPre || *xml == chXMLTagQuestion )
+	// alone tag <TAG ... /> or <?TAG ... ?> or <!-- ... --> 
+	// current pointer:   ^               ^              ^
+
+	if( *xml == chXMLTagPre || *xml == chXMLQuestion || *xml == chXMLDash )
 	{
 		xml++;
+
+		// skip over 2nd dash
+		if( *xml == chXMLDash )
+			xml++;
+
 		if( *xml == chXMLTagClose )
 		{
 			// well-formed tag
@@ -309,7 +319,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
 			// just loaded is a meta tag, then Load ourself again using the rest 
 			// of the file until we reach a non-meta tag.
-			if( !m_sName.empty() && m_sName[0] == chXMLTagQuestion )
+			if( !m_sName.empty() && (m_sName[0] == chXMLQuestion || m_sName[0] == chXMLExclamation) )
 				xml = Load( xml, pi );
 
 			return xml;
