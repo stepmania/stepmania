@@ -252,7 +252,7 @@ void GetDirListing( CString sPath, CStringArray &AddTo, BOOL bOnlyDirs )
 	}
 }
 
-BOOL DoesFileExist( CString sPath )
+bool DoesFileExist( CString sPath )
 {
 	RageLog( "DoesFileExist(%s)", sPath );
 

@@ -21,18 +21,14 @@
 // RageTexture constructor
 //-----------------------------------------------------------------------------
 RageTexture::RageTexture( LPRageScreen pScreen, CString sFilePath ) :
-  m_uImageWidth( 0 ),
-  m_uImageHeight( 0 ),
+  m_uSourceWidth( 0 ),
+  m_uSourceHeight( 0 ),
   m_uTextureWidth( 0 ),
   m_uTextureHeight( 0 ),
   m_uFramesWide( 1 ),
   m_uFramesHigh( 1 ),
-  m_uImageFrameWidth( 0 ),
-  m_uImageFrameHeight( 0 ),
-  m_uTextureFrameWidth( 0 ),
-  m_uTextureFrameHeight( 0 ),
-  m_fWidthCorrectionRatio( 1 ),
-  m_fHeightCorrectionRatio( 1 )
+  m_uSourceFrameWidth( 0 ),
+  m_uSourceFrameHeight( 0 )
 {
 //	RageLog( "RageTexture::RageTexture()" );
 
@@ -56,48 +52,31 @@ RageTexture::~RageTexture()
 
 VOID RageTexture::CreateFrameRects()
 {
-	GetFrameDimensionsFromFileName( m_sFilePath, m_uFramesWide, m_uFramesHigh );
+	GetFrameDimensionsFromFileName( m_sFilePath, &m_uFramesWide, &m_uFramesHigh );
+
+	m_uSourceFrameWidth		= GetSourceWidth() / m_uFramesWide;
+	m_uSourceFrameHeight	= GetSourceHeight() / m_uFramesHigh;
 
 	///////////////////////////////////
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
 	///////////////////////////////////
-
-	bool bTextureWasScaled = GetImageWidth() > GetTextureWidth() ||
-							 GetImageHeight() > GetTextureHeight();
-
-	// calculate the width and height of the frames
-	if( bTextureWasScaled ) {
-		m_uTextureFrameWidth = GetTextureWidth() / m_uFramesWide;
-		m_uTextureFrameHeight= GetTextureHeight() / m_uFramesHigh;
-		m_fWidthCorrectionRatio = GetImageWidth()/(float)GetTextureWidth();
-		m_fHeightCorrectionRatio = GetImageHeight()/(float)GetTextureHeight();
-	} else {
-		m_uTextureFrameWidth = GetImageWidth() / m_uFramesWide;
-		m_uTextureFrameHeight= GetImageHeight() / m_uFramesHigh;
-		m_fWidthCorrectionRatio = 1;
-		m_fHeightCorrectionRatio = 1;
-	}
-
-	m_uImageFrameWidth = GetImageWidth() / m_uFramesWide;
-	m_uImageFrameHeight= GetImageHeight() / m_uFramesHigh;
-
-
-	for( UINT j=0; j<m_uFramesHigh; j++ )
+	for( UINT j=0; j<m_uFramesHigh; j++ )		// traverse along Y
 	{
-		for( UINT i=0; i<m_uFramesWide; i++ )
+		for( UINT i=0; i<m_uFramesWide; i++ )	// traverse along X (important that this is the inner loop)
 		{
-			RECT rectCurFrame;
-			::SetRect( &rectCurFrame, (i+0)*m_uTextureFrameWidth, (j+0)*m_uTextureFrameHeight, 
-									  (i+1)*m_uTextureFrameWidth, (j+1)*m_uTextureFrameHeight );
-			m_FrameRects.Add( rectCurFrame );	// the index of this array element will be (i + j*m_uFramesWide)
+			FRECT frect( (i+0)/(float)m_uFramesWide,	// these will all be between 0.0 and 1.0
+						 (j+0)/(float)m_uFramesHigh, 
+						 (i+1)/(float)m_uFramesWide, 
+						 (j+1)/(float)m_uFramesHigh );
+			m_TextureCoordRects.Add( frect );	// the index of this array element will be (i + j*m_uFramesWide)
 			
-			RageLog( "!!!! Adding frame#%d: %d %d %d %d", (i + j*m_uFramesWide), rectCurFrame.left, rectCurFrame.top, rectCurFrame.right, rectCurFrame.bottom );
+			//RageLog( "Adding frect%d %f %f %f %f", (i + j*m_uFramesWide), frect.left, frect.top, frect.right, frect.bottom );
 		}
 	}
 }
 
 #include "string.h"
-VOID RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT &uFramesWide, UINT &uFramesHigh ) const
+VOID RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT* puFramesWide, UINT* puFramesHigh ) const
 {
 	//////////////////////////////////////////////////
 	// Parse m_sFilePath for the frame dimensions
@@ -110,7 +89,7 @@ VOID RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT &uFramesWi
 	int index_of_last_period = sDimensionsString.ReverseFind( '.' );
 	if( index_of_last_period == -1 )	// this file name has no extension, but it the texture was loaded.  I doubt this code will ever execute :-)
 	{
-		uFramesWide = uFramesHigh = 1;  
+		*puFramesWide = *puFramesHigh = 1;  
 		return;
 	}
 	sDimensionsString = sDimensionsString.Left(index_of_last_period);
@@ -119,7 +98,7 @@ VOID RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT &uFramesWi
 	int index_of_last_space = sDimensionsString.ReverseFind( ' ' );
 	if( index_of_last_space == -1 )	// this file name has space, so the dimensions tag cannot be read
 	{
-		uFramesWide = uFramesHigh = 1;  
+		*puFramesWide = *puFramesHigh = 1;  
 		return;
 	}
 	sDimensionsString.Delete( 0, index_of_last_space+1 );
@@ -128,15 +107,15 @@ VOID RageTexture::GetFrameDimensionsFromFileName( CString sPath, UINT &uFramesWi
 	int index_of_x = sDimensionsString.Find( 'x' );
 	if( index_of_x == -1 )	// this file name doesn't have an x in the last token.  So, this probably isn't a dimension tag.
 	{
-		uFramesWide = uFramesHigh = 1;  
+		*puFramesWide = *puFramesHigh = 1;  
 		return;
 	}
-	uFramesWide = (UINT) atoi( sDimensionsString.Left( index_of_x ) );
+	*puFramesWide = (UINT) atoi( sDimensionsString.Left( index_of_x ) );
 
 	// chop off the frames wide part and read in the frames high
 	sDimensionsString.Delete( 0, index_of_x+1 );
-	uFramesHigh = (UINT) atoi( sDimensionsString );
+	*puFramesHigh = (UINT) atoi( sDimensionsString );
 	
-	if( uFramesWide == 0 )	uFramesWide = 1;
-	if( uFramesHigh == 0 )	uFramesHigh = 1;
+	if( *puFramesWide == 0 )	*puFramesWide = 1;
+	if( *puFramesHigh == 0 )	*puFramesHigh = 1;
 }

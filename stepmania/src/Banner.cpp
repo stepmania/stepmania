@@ -15,53 +15,51 @@
 
 
 
-BOOL Banner::LoadFromSong( Song &song )
+bool Banner::LoadFromSong( Song &song )
 {
-	BOOL bResult = Sprite::LoadFromTexture( song.GetBannerPath() );
-	if( bResult )
+	Sprite::LoadFromTexture( song.GetBannerPath() );
+
+	float fSourceWidth		= (float)m_pTexture->GetSourceWidth();
+	float fSourceHeight		= (float)m_pTexture->GetSourceHeight();
+
+	// first find the correct zoom
+	Sprite::ScaleToCover( CRect(0, 0,
+			                    BANNER_WIDTH,
+								BANNER_HEIGHT )
+						 );
+	float fFinalZoom = this->GetZoom();
+	
+	// find which dimension is larger
+	bool bXDimNeedsToBeCropped = GetZoomedWidth() > BANNER_WIDTH;
+	
+	if( bXDimNeedsToBeCropped )	// crop X
 	{
-		int iImageWidth = this->GetZoomedWidth();
-		int iImageHeight = this->GetZoomedHeight();
-
-		int iCorrectedBannerWidth = BANNER_WIDTH / m_pTexture->GetWidthCorrectionRatio();
-		int iCorrectedBannerHeight = BANNER_HEIGHT / m_pTexture->GetHeightCorrectionRatio();
-
-		// first find the correct zoom
-		Sprite::ScaleToCover( CRect(0, 0,
-			                        iCorrectedBannerWidth,
-									iCorrectedBannerHeight )
-							 );
+		float fPercentageToCutOff = (this->GetZoomedWidth() - BANNER_WIDTH) / this->GetZoomedWidth();
+		float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 		
-		FLOAT fFinalZoom = this->GetZoom();
-		
-		// find which dimension is larger
-		BOOL bYDimIsLarger = this->GetZoomedHeight() > iCorrectedBannerHeight;
-//		BOOL bYDimIsLarger = this->GetZoomedHeight() > BANNER_HEIGHT;
-		
-		// now crop it
-		if( !bYDimIsLarger )	// crop X
-		{
-			int iScreenPixelsToCrop = (this->GetZoomedWidth() - iCorrectedBannerWidth) / 2;
-			int iImagePixelsToCrop  = roundf( iScreenPixelsToCrop / fFinalZoom );
-			RECT rectNewSrc;
-			::SetRect( &rectNewSrc, iImagePixelsToCrop, 
-									0, 
-									iImageWidth - iImagePixelsToCrop, 
-									iImageHeight );
-			Sprite::SetCustomSrcRect( rectNewSrc );
-		}
-		else		// crop Y
-		{
-			int iScreenPixelsToCrop = (this->GetZoomedHeight() - iCorrectedBannerHeight) / 2;
-			int iImagePixelsToCrop  = roundf( iScreenPixelsToCrop / fFinalZoom );
-			RECT rectNewSrc;
-			::SetRect( &rectNewSrc, 0, 
-									iImagePixelsToCrop, 
-									iImageWidth, 
-									iImageHeight - iImagePixelsToCrop );
-			Sprite::SetCustomSrcRect( rectNewSrc );
-		}
+		// generate a rectangle with new texture coordinates
+		FRECT frectNewSrc( fPercentageToCutOffEachSide, 
+						   0, 
+						   1 - fPercentageToCutOffEachSide, 
+						   1 );
+		Sprite::SetCustomSrcRect( frectNewSrc );
 	}
+	else		// crop Y
+	{
+		float fPercentageToCutOff = (this->GetZoomedHeight() - BANNER_HEIGHT) / this->GetZoomedHeight();
+		float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
+		
+		// generate a rectangle with new texture coordinates
+		FRECT frectNewSrc( 0, 
+						   fPercentageToCutOffEachSide,
+						   1, 
+						   1 - fPercentageToCutOffEachSide );
+		Sprite::SetCustomSrcRect( frectNewSrc );
+	}
+	SetWidth(  BANNER_WIDTH );
+	SetHeight( BANNER_HEIGHT );
+	SetZoom( 1 );
 
-	return TRUE;
+
+	return true;
 }

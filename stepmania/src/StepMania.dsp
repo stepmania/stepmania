@@ -284,6 +284,14 @@ SOURCE=.\Banner.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BitmapFont.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BitmapFont.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\BitmapText.cpp
 # End Source File
 # Begin Source File
@@ -297,14 +305,6 @@ SOURCE=.\BlurredTitle.cpp
 # Begin Source File
 
 SOURCE=.\BlurredTitle.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\Button.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\button.h
 # End Source File
 # Begin Source File
 

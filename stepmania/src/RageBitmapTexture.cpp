@@ -61,26 +61,6 @@ VOID RageBitmapTexture::Create()
 
 	D3DXIMAGE_INFO ddii;
 
-	// get image information
-	D3DXIMAGE_INFO info;
-	if( FAILED( hr = D3DXGetImageInfoFromFile(m_sFilePath,&info) ) ) {
-        RageErrorHr( ssprintf("D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath), hr );
-	}
-
-	D3DCAPS8 devCaps;
-	m_pd3dDevice->GetDeviceCaps( &devCaps );
-
-	// check to see if the image will fit or if it needs to be scaled to 256
-	DWORD filterType = D3DX_FILTER_NONE;
-	RageLog( "info.Width = %d, info.Height = %d, devCaps.MaxTextureWidth = %d, devCaps.MaxTextureHeight = %d",
-		info.Width, info.Height, devCaps.MaxTextureWidth, devCaps.MaxTextureHeight );
-
-	if( info.Width > devCaps.MaxTextureWidth ||
-		info.Height > devCaps.MaxTextureHeight )
-	{
-		filterType = D3DX_DEFAULT;
-	}
-
 	// load texture
 	if (FAILED (hr = D3DXCreateTextureFromFileEx( 
 						m_pd3dDevice,
@@ -88,34 +68,32 @@ VOID RageBitmapTexture::Create()
 						D3DX_DEFAULT, D3DX_DEFAULT, 
 						D3DX_DEFAULT, 
 						0, 
-						D3DFMT_A4R4G4B4, //D3DFMT_UNKNOWN, // get format from source
+						D3DFMT_A4R4G4B4, // this is our preferred format
 						D3DPOOL_MANAGED, 
-						filterType, // don't blow up the image to the texure size
-						filterType,
+						D3DX_DEFAULT,
+						D3DX_DEFAULT,
 						0,		// no color key
 						&ddii, 
 						NULL, // no palette
 						&m_pd3dTexture ) ) )
         RageErrorHr( ssprintf("D3DXCreateTextureFromFileEx() failed for file '%s'.", m_sFilePath), hr );
 
+	// save the source image's width and height
+	m_uSourceWidth = ddii.Width;
+	m_uSourceHeight= ddii.Height;
 
-	m_uImageWidth = ddii.Width;
-	m_uImageHeight= ddii.Height;
+	
+	//RageLog( "info.Width = %d, info.Height = %d, devCaps.MaxTextureWidth = %d, devCaps.MaxTextureHeight = %d",
+	//	info.Width, info.Height, devCaps.MaxTextureWidth, devCaps.MaxTextureHeight );
 
 
-    // D3DXCreateTexture can silently change the parameters on us
     D3DSURFACE_DESC ddsd;
     if ( FAILED( hr = m_pd3dTexture->GetLevelDesc( 0, &ddsd ) ) ) 
         RageErrorHr( "Could not get level Description of D3DX texture!", hr );
 
-	m_uTextureWidth = ddsd.Width;
-	m_uTextureHeight = ddsd.Height;
-    m_TextureFormat = ddsd.Format;
-//    if (m_TextureFormat != D3DFMT_A8R8G8B8 &&
-//        m_TextureFormat != D3DFMT_A1R5G5B5) {
-//        DXTRACE_ERR(TEXT("Texture is format we can't handle! Format = 0x%x"), m_TextureFormat);
-//        return E_FAIL;
-//    }
-	
+    // save information about the texture
+	m_uTextureWidth		= ddsd.Width;
+	m_uTextureHeight	= ddsd.Height;
+    m_TextureFormat		= ddsd.Format;	
 }
 

@@ -20,7 +20,7 @@
 #include "RageUtil.h"
 
 
-#define NUM_JOYSTICKS 4
+const int NUM_JOYSTICKS = 4;
 
 // button byte codes for directional pad
 #define JOY_LEFT	101
@@ -35,11 +35,11 @@
 #define DEVICE_JOYSTICK	2
 
 
-class RageRawInput
+class DeviceInput
 {
 public:
-	RageRawInput() { device = device_no = button = just_pressed = 0; };
-	RageRawInput( BYTE device, 
+	DeviceInput() { device = device_no = button = just_pressed = 0; };
+	DeviceInput( BYTE device, 
 				  BYTE device_no,
 				  BYTE button,
 				  BYTE just_pressed )
@@ -49,20 +49,22 @@ public:
 		this->button = button;
 		this->just_pressed = just_pressed;
 	};
-	RageRawInput( CString sEncoding )
+
+	CString GetEncoding() const { return ssprintf("%u-%u-%u", device, device_no, button); };
+	void FillFromEncoding( CString sEncoding )
 	{ 
 		CStringArray a;
 		split( sEncoding, "-", a);
+		ASSERT( a.GetSize() == 3 );
 		this->device    = atoi( a[0] );
 		this->device_no = atoi( a[1] );
 		this->button    = atoi( a[2] );
 	};
-	CString Encode() { return ssprintf("%u-%u-%u", device, device_no, button); };
 
 	BOOL LookupChar( TCHAR &char_out ) const;
 	CString GetDescription() const;
 
-	BOOL IsBlank() { return device == DEVICE_NONE; };
+	bool IsBlank() const { return device == DEVICE_NONE; };
 
 	BYTE device;
 	BYTE device_no;
@@ -72,7 +74,7 @@ public:
 
 
 
-typedef CList<RageRawInput, RageRawInput&> RageRawInputList;
+typedef CArray<DeviceInput, DeviceInput&> DeviceInputArray;
 
 
 class RageInput
@@ -118,7 +120,7 @@ public:
 	// Release all DirectInput Resources
 	VOID Release();
 	// Get our Devices State
-	HRESULT GetRawInput( RageRawInputList &listRawInput );
+	HRESULT GetDeviceInputs( DeviceInputArray &listDeviceInputs );
 
 	LPDIRECTINPUT8		 GetDirectInput() { return m_pDI; }
 	LPDIRECTINPUTDEVICE8 GetMouseDevice() { return m_pMouse; }

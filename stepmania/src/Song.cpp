@@ -165,7 +165,7 @@ bool Song::LoadSongInfoFromBMSFile( CString sPath )
 		}
 	}
 
-	FillEmptyValuesWithDefaults();
+	TidyUpData();
 
 	return TRUE;
 }
@@ -281,7 +281,7 @@ bool Song::LoadSongInfoFromMSDFile( CString sPath )
 }
 
 
-void Song::FillEmptyValuesWithDefaults()
+void Song::TidyUpData()
 {
 	if( m_sTitle == "" )	m_sTitle = "Untitled song";
 	if( m_sArtist == "" )	m_sArtist = "Unknown artist";
@@ -292,52 +292,49 @@ void Song::FillEmptyValuesWithDefaults()
 	if( m_fBeatOffset == 0.0 )	
 		RageLog( "WARNING: #OFFSET or #GAP in '%s' is either 0.0, or was missing.", GetSongFilePath() );
 
-	if( m_sMusic == "" )
+	if( m_sMusic == "" || !DoesFileExist(GetMusicPath()) )
 	{
-		m_sMusic = "music.mp3";
-		if( !DoesFileExist( m_sSongDir + m_sMusic ) )
-		{
-			// music.mp3 didn't exist, so search for any mp3 in the same dir
-			CStringArray arrayMP3Files;
-			GetDirListing( m_sSongDir + CString("*.mp3"), arrayMP3Files );
+		CStringArray arrayPossibleMusic;
+		GetDirListing( m_sSongDir + CString("*.wma"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
+		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
 
-			if( arrayMP3Files.GetSize() != 0 )		// we found a .mp3 file!
-				m_sMusic = arrayMP3Files.GetAt( 0 );
-			else
-				RageError( ssprintf("Music could not be found.  In Song file '%s' no #MUSIC was specified, music.mp3 doesn't exist, and no other MP3s could be found.", GetSongFilePath()) );
-		}
+		if( arrayPossibleMusic.GetSize() != 0 )		// we found a match
+			m_sMusic = arrayPossibleMusic.GetAt( 0 );
+		else
+			RageError( ssprintf("Music could not be found.  Please check the Song file '%s' and verify the specified #MUSIC exists.", GetSongFilePath()) );
 	}
-	if( m_sSample == "" )
+	if( m_sBanner == "" || !DoesFileExist(GetBannerPath()) )
 	{
-		m_sSample = "sample.mp3";
-		if( !DoesFileExist( m_sSongDir + m_sSample ) )
-			m_sSample = m_sMusic;	// we assured above that the m_sMusic file exists
-	}
-	if( m_sBanner == "" )
-	{
-		m_sBanner = "banner.bmp";
-		if( !DoesFileExist( m_sSongDir + m_sBanner ) )
-		{
-			m_sBanner = "banner.png";
-			if( !DoesFileExist( m_sSongDir + m_sBanner ) )
-			{
-				// couldn't find a true banner, so search for any bmp in the same dir
-				CStringArray arrayBMPFiles;
-				GetDirListing( m_sSongDir + CString("*.bmp"), arrayBMPFiles );
-				GetDirListing( m_sSongDir + CString("*.png"), arrayBMPFiles );
+		CStringArray arrayPossibleBanners;
+		GetDirListing( m_sSongDir + CString("*banner*.*"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBanners );
 
-				if( arrayBMPFiles.GetSize() != 0 )		// we found a .bmp file!
-					m_sBanner = arrayBMPFiles.GetAt( 0 );
-				else
-					RageError( ssprintf("Banner could not be found.  In Song file '%s' no #BANNER was specified, banner.bmp doesn't exist, and no other BMPs could be found.", GetSongFilePath()) );
-			}
-		}
+		if( arrayPossibleBanners.GetSize() != 0 )		// we found a match
+			m_sBanner = arrayPossibleBanners.GetAt( 0 );
+		else
+			RageError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
-	if( m_sBackground == "" ) 
+	if( m_sBackground == "" || !DoesFileExist(GetBackgroundPath()) ) 
 	{
-		m_sBackground = "background.bmp";
-		if( !DoesFileExist( m_sSongDir + m_sBackground ) )
-			m_sBackground = m_sBanner;	// we assured above that the m_sBanner file exists
+		CStringArray arrayPossibleBanners;
+		GetDirListing( m_sSongDir + CString("*b*g*.*"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*640*.*"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*.png"), arrayPossibleBanners );
+		GetDirListing( m_sSongDir + CString("*.bmp"), arrayPossibleBanners );
+
+		if( arrayPossibleBanners.GetSize() != 0 )		// we found a match
+			m_sBackground = arrayPossibleBanners.GetAt( 0 );
+		else
+			RageError( ssprintf("Banner could not be found.  Please check the Song file '%s' and verify the specified #BANNER exists.", GetSongFilePath()) );
 	}
 }
 
+/*
+	D3DXIMAGE_INFO ddii;
+
+	if( FAILED( hr = D3DXGetImageInfoFromFile(m_sFilePath,&ddii) ) ) {
+        RageErrorHr( ssprintf("D3DXGetImageInfoFromFile() failed for file '%s'.", m_sFilePath), hr );
+	}
+*/

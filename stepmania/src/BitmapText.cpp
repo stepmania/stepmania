@@ -17,97 +17,68 @@
 
 BitmapText::BitmapText()
 {
+	m_pFont = NULL;
+	m_colorTop = D3DXCOLOR(1,1,1,1);
+	m_colorBottom = D3DXCOLOR(1,1,1,1);
 
 }
 
-
-
-BOOL BitmapText::LoadFromFontFile( CString sFontFilePath )
+BitmapText::~BitmapText()
 {
-	RageLog( "BitmapText::LoadFromFontFile(%s)", sFontFilePath );
+	delete m_pFont;
+}
 
-	m_sFontFilePath = sFontFilePath;
+bool BitmapText::LoadFromFontName( CString sFontName )
+{
+	RageLog( "BitmapText::LoadFromFontName(%s)", sFontName );
+	
+	SAFE_DELETE( m_pFont );	// delete old font (if any)
 
-	// read font file
-	IniFile ini;
-	ini.SetPath( m_sFontFilePath );
-	if( !ini.ReadFile() )
-		RageError( ssprintf("Error opening Font file: %s.", m_sFontFilePath) );
+	m_sFontName = sFontName;	// save font name
 
-	CString sTexturePath = ini.GetValue( "Font", "Texture" );
-	if( sTexturePath == "" )
-		RageError( ssprintf("Error reading value 'Texture' from %s.", m_sFontFilePath) );
-
-	this->LoadFromTexture( sTexturePath );
-
-	// fill in our map from characters to frame no
-	CString sCharacters = ini.GetValue( "Font", "Characters" );
-	if( sCharacters == "" )
-		RageError( ssprintf("Error reading value 'Characters' from %s.", m_sFontFilePath) );
-
-	for( int i=0; i<sCharacters.GetLength(); i++ )
-	{
-		TCHAR c = sCharacters[i];
-		m_mapCharToFrameNo[c] = i;
-	}
-
-	// Validate that the number of characters we read in is the same as 
-	// the number of frames in the texture.
-	if( sCharacters.GetLength() != (int)this->GetNumStates() )
-		RageError( ssprintf("The Font %s specifies %d characters, but the Texture has %d frames.",
-						   m_sFontFilePath, sCharacters.GetLength(), (int)this->GetNumStates()) );
-
-	ResetWidthAndHeight();
+	m_pFont= new CBitmapFont( SCREEN->GetD3D(), SCREEN->GetDevice() );
+	m_pFont->Load( BL_BITMAP, ssprintf("Fonts/%s.png",sFontName) );
+	m_pFont->Load( BL_SIZES,  ssprintf("Fonts/%s.dat",sFontName) );
 
 	return TRUE;
 }
 
-
-void BitmapText::SetText( CString sText )
-{
-	m_sText = sText;
-
-	ResetWidthAndHeight();
-}
-
-
 void BitmapText::Draw()
 {
-	//RageLog( "BitmapText::Draw()" );
-	// UGLY!!!!
+	RECT rect = m_pFont->GetTextRect(m_sText, 0, 0);
+	float text_width	= RECTWIDTH( rect );
+	float text_height	= RECTHEIGHT( rect );
 
-	TCHAR c;
-	UINT uFrameNo;
-	int iNumChars = m_sText.GetLength();
-	int iLeftEdge = this->GetLeftEdge();
-	int iOriginalCenterX = (int)this->GetX();
-	FLOAT fOriginalWidth = m_size.x;
 
-	int iFrameWidth = (int)( m_pTexture->GetImageFrameWidth() * this->GetZoom() );
-	m_size.x = (FLOAT)iFrameWidth;
-	
-	// draw each character in the string
-	for( int i=0; i<iNumChars; i++ )
-	{
-		c = m_sText[i];
+	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
 
-		// Get what frame in the animation this character is.
-		if( !m_mapCharToFrameNo.Lookup(c, uFrameNo) )
-			uFrameNo = 0;
-		
-		this->SetState( uFrameNo );
-		this->SetX( (int)(iLeftEdge + iFrameWidth*(i+0.5f)) );
+	// calculate transforms
+	D3DXMATRIX matWorld, matTemp;
+	D3DXMatrixIdentity( &matWorld );		// initialize world
+	//D3DXMatrixScaling( &matTemp, m_size.x, m_size.y, 1 );	// scale to the native height and width
+	//matWorld *= matTemp;
+	D3DXMatrixScaling( &matTemp, m_scale.x, m_scale.y, 1 );	// add in the zoom
+	matWorld *= matTemp;
+	D3DXMatrixRotationYawPitchRoll( &matTemp, m_rotation.y, m_rotation.x, m_rotation.z );	// add in the rotation
+	matWorld *= matTemp;
+	D3DXMatrixTranslation( &matTemp, m_pos.x, m_pos.y, 0 );	// add in the translation
+	matWorld *= matTemp;
+    pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
 
-		Sprite::Draw();
- 	}
+	D3DXMATRIX matView;
+    D3DXMatrixIdentity( &matView );
+	pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
 
-	this->SetX( iOriginalCenterX );
-	m_size.x = fOriginalWidth;
+	D3DXMATRIX matProj;
+    D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -100, 100 );
+	pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
+
+	m_pFont->BeginDraw();
+	m_pFont->DrawTextEx(m_sText, -text_width/2, -text_height/2, m_colorTop, m_colorBottom, 1.0f);
+	//m_pFont->DrawTextEx("Cool Effects!", 50, 80, 0xffffff00, 0xffff0000, 2.0f);
+	//m_pFont->DrawTextEx("Cool Effects!", 50, 120, 0x1100ffff, 0x8800ffff, 2.0f);
+	m_pFont->EndDraw();
+	///////////////////////////////////////////////////////////////////////////////
+
 }
 
-
-void BitmapText::ResetWidthAndHeight()
-{
-	m_size.x = (FLOAT)m_pTexture->GetImageFrameWidth() * m_sText.GetLength();
-	m_size.y = (FLOAT)m_pTexture->GetImageFrameHeight();
-}

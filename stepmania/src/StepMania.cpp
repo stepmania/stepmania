@@ -397,19 +397,19 @@ void Update()
 	WM->Update( fDeltaTime );
 
 
-	static RageRawInputList listRawInput;
-	listRawInput.RemoveAll();
-	INPUT->GetRawInput( listRawInput );
+	static DeviceInputArray diArray;
+	diArray.RemoveAll();
+	INPUT->GetDeviceInputs( diArray );
 
-	RageRawInput ri;
+	DeviceInput di;
 	PadInput pi;
-	POSITION pos = listRawInput.GetHeadPosition();
-	while( pos != NULL )
+	for( int i=0; i<diArray.GetSize(); i++ )
 	{
-		ri = listRawInput.GetNext( pos );
-		pi = GAMEINFO->RawToPad( ri );
-
-		WM->Input( ri, pi );
+		di = diArray[i];
+		if( GAMEINFO->DeviceToPad( di, pi ) )
+			WM->Input( di, &pi );		// this di maps to a pi
+		else
+			WM->Input( di, NULL );		// this di doesn't map to a pi, so pass NULL
 	}
 
 }

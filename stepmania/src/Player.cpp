@@ -201,7 +201,7 @@ Player::Player()
 	// combo
 	m_bComboVisible = FALSE;
 	m_sprCombo.LoadFromSpriteFile( COMBO_SPRITE );
-	m_textComboNum.LoadFromFontFile( FONT_COMBO );
+	m_textComboNum.LoadFromFontName( "Arial Bold" );
 	m_textComboNum.SetText( "" );
 
 	// life meter
@@ -210,7 +210,7 @@ Player::Player()
 
 	// score
 	m_sprScoreFrame.LoadFromTexture( SCORE_FRAME_TEXTURE );
-	m_textScoreNum.LoadFromFontFile( FONT_SCORE );
+	m_textScoreNum.LoadFromFontName( "Arial Bold" );
 	m_textScoreNum.SetText( "         " );
 
 

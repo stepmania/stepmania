@@ -79,8 +79,8 @@ public:
 	//returns number of keys currently in the ini
 	int GetNumKeys();
 
-	//returns a refernce to the key for direct modification
-	CMapStringToString& GetKeyRef( CString keyname );
+	//returns a pointer to the key for direct modification
+	CMapStringToString* GetKeyPointer( CString keyname );
 
 	//returns number of values stored for specified key
 	int GetNumValues( CString keyname );

@@ -31,7 +31,7 @@ void Sprite::Init()
 	m_uCurState = 0;
 	m_bIsAnimating = TRUE;
 	m_fSecsIntoState = 0.0;
-	m_bUsingCustomSrcRect = FALSE ;
+	m_bUsingCustomTexCoordRect = FALSE ;
 	m_Effect =  no_effect ;
 	m_fPercentBetweenColors = 0.0f ;
 	m_bTweeningTowardEndColor = TRUE ;
@@ -42,7 +42,6 @@ void Sprite::Init()
 	m_fSpinSpeed =  2.0f ;
 	m_fVibrationDistance =  5.0f ;
 	m_bVisibleThisFrame =  FALSE;
-	m_bBlendAdd = FALSE;
 }
 
 Sprite::~Sprite()
@@ -130,8 +129,10 @@ BOOL Sprite::LoadTexture( CString sTexturePath )
 
 	m_pTexture = TM->LoadTexture( m_sTexturePath );
 	assert( m_pTexture != NULL );
-	SetWidth( (FLOAT)m_pTexture->GetImageFrameWidth() );
-	SetHeight( (FLOAT)m_pTexture->GetImageFrameHeight() );
+
+	// the size of the sprite is the size of the image before it was scaled
+	SetWidth( (FLOAT)m_pTexture->GetSourceFrameWidth() );
+	SetHeight( (FLOAT)m_pTexture->GetSourceFrameHeight() );		
 
 	// Assume the frames of this animation play in sequential order with 0.2 second delay.
 	for( UINT i=0; i<m_pTexture->GetNumFrames(); i++ )
@@ -228,35 +229,22 @@ void Sprite::Draw()
 {
 	if( m_pTexture == NULL )
 		return;
-
-	UINT uFrameNo = m_uFrame[m_uCurState];
 	
-	LPRECT pRectSrc;
-	if( m_bUsingCustomSrcRect )
-		pRectSrc = &m_rectCustomSrcRect;
-	else
-		pRectSrc = m_pTexture->GetFrameRect( uFrameNo );
+	FRECT* pTexCoordRect;	// the texture coordinates of the frame we're going to use
+	if( m_bUsingCustomTexCoordRect ) {
+		pTexCoordRect = &m_CustomTexCoordRect;
+	} else {
+		UINT uFrameNo = m_uFrame[m_uCurState];
+		pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
+	}
 
-	//::SetRect( &rectSrc, 0, 0, m_pTexture->GetImageWidth(), m_pTexture->GetImageHeight() );
-
-	D3DXVECTOR2 scaling;
-	scaling.x = GetZoom() * m_pTexture->GetWidthCorrectionRatio();
-	scaling.y = GetZoom() * m_pTexture->GetHeightCorrectionRatio();
-	
-	D3DXVECTOR2 translation;
-	translation.x = (float)GetLeftEdge();
-	translation.y = (float)GetTopEdge();
-	
+	D3DXCOLOR	color	= m_color;
+	D3DXVECTOR2 pos		= m_pos;
 	D3DXVECTOR3 rotation = m_rotation;
+	D3DXVECTOR2 scale	= m_scale;
+	bool bBlendAdd		= false;
 
-	D3DXVECTOR2 rot_center;
-	rot_center.x = GetZoomedWidth()/2.0f;
-	rot_center.y = GetZoomedHeight()/2.0f;
-
-	D3DXCOLOR color = m_color;
-
-
-	// update SpriteEffect
+	// update properties based on SpriteEffects 
 	switch( m_Effect )
 	{
 	case no_effect:
@@ -265,8 +253,11 @@ void Sprite::Draw()
 		color = m_bTweeningTowardEndColor ? m_start_color : m_end_color;
 		break;
 	case camelion:
+		color = m_start_color*m_fPercentBetweenColors + m_end_color*(1.0f-m_fPercentBetweenColors);
+		break;
 	case glowing:
 		color = m_start_color*m_fPercentBetweenColors + m_end_color*(1.0f-m_fPercentBetweenColors);
+		bBlendAdd = true;
 		break;
 	case wagging:
 		rotation.z = m_fWagRadians * (FLOAT)sin( 
@@ -277,8 +268,8 @@ void Sprite::Draw()
 		// nothing special needed
 		break;
 	case vibrating:
-		translation.x += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
-		translation.y += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
+		pos.x += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
+		pos.y += m_fVibrationDistance * randomf(-1.0f, 1.0f) * GetZoom();
 		break;
 	case flickering:
 		m_bVisibleThisFrame = !m_bVisibleThisFrame;
@@ -287,15 +278,167 @@ void Sprite::Draw()
 		break;
 	}
 
-  	SCREEN->DrawQuad( m_pTexture,
-					  pRectSrc,
-					  &scaling,		// scaling
-					  &rot_center,	// rotation center
-					  &rotation,	// rotation
-					  &translation,	// translation
-					  color,
-					  m_Effect == glowing ? op_add : op_modulate,
-					  m_bBlendAdd );
+
+	// make a 1x1 rect centered at the origin
+	LPDIRECT3DVERTEXBUFFER8 pVB = SCREEN->GetVertexBuffer();
+	CUSTOMVERTEX* v;
+	pVB->Lock( 0, 0, (BYTE**)&v, 0 );
+
+	v[0].p = D3DXVECTOR3( -0.5f,	 0.5f,		0 );	// bottom left
+	v[1].p = D3DXVECTOR3( -0.5f,	-0.5f,		0 );	// top left
+	v[2].p = D3DXVECTOR3(  0.5f,	 0.5f,		0 );	// bottom right
+	v[3].p = D3DXVECTOR3(  0.5f,	-0.5f,		0 );	// top right
+
+	v[0].tu = pTexCoordRect->left;		v[0].tv = pTexCoordRect->bottom;	// bottom left
+	v[1].tu = pTexCoordRect->left;		v[1].tv = pTexCoordRect->top;		// top left
+	v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
+	v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
+
+	v[0].color = v[1].color = v[2].color = v[3].color = color;
+	
+	pVB->Unlock();
+
+
+	// set texture and alpha properties
+	LPDIRECT3DDEVICE8 pd3dDevice = SCREEN->GetDevice();
+    pd3dDevice->SetTexture( 0, m_pTexture->GetD3DTexture() );
+
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_COLOROP,   bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAOP,   bBlendAdd ? D3DTOP_ADD : D3DTOP_MODULATE );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_MINFILTER, D3DTEXF_LINEAR );
+	pd3dDevice->SetTextureStageState( 0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR );
+	//pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  bBlendAdd ? D3DBLEND_ONE : D3DBLEND_SRCALPHA );
+	//pd3dDevice->SetRenderState( D3DRS_DESTBLEND, bBlendAdd ? D3DBLEND_ONE : D3DBLEND_INVSRCALPHA );
+	pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_SRCALPHA );
+	pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
+
+
+	// calculate transforms
+	D3DXMATRIX matWorld, matTemp;
+	D3DXMatrixIdentity( &matWorld );		// initialize world
+	D3DXMatrixScaling( &matTemp, m_size.x, m_size.y, 1 );	// scale to the native height and width
+	matWorld *= matTemp;
+	D3DXMatrixScaling( &matTemp, scale.x, scale.y, 1 );	// add in the zoom
+	matWorld *= matTemp;
+	D3DXMatrixRotationYawPitchRoll( &matTemp, rotation.y, rotation.x, rotation.z );	// add in the rotation
+	matWorld *= matTemp;
+	D3DXMatrixTranslation( &matTemp, pos.x, pos.y, 0 );	// add in the translation
+	matWorld *= matTemp;
+	D3DXMatrixTranslation( &matTemp, -0.5f, -0.5f, 0 );		// shift to align texels with pixels
+	matWorld *= matTemp;
+    pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
+
+	D3DXMATRIX matView;
+    D3DXMatrixIdentity( &matView );
+	pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
+
+	D3DXMATRIX matProj;
+    D3DXMatrixOrthoOffCenterLH( &matProj, 0, 640, 480, 0, -100, 100 );
+	pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
+
+
+	// finally!  Pump those triangles!	
+	pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
+	pd3dDevice->SetStreamSource( 0, pVB, sizeof(CUSTOMVERTEX) );
+	pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 );
+
+
+
+
+/*  WORKS!
+
+	LPDIRECT3DVERTEXBUFFER8 pVB2        = NULL; // Buffer to hold vertices
+
+	// A structure for our custom vertex type
+	struct CUSTOMVERTEX
+	{
+		FLOAT x, y, z;      // The untransformed, 3D position for the vertex
+		DWORD color;        // The vertex color
+	};
+
+	// Our custom FVF, which describes our custom vertex structure
+	#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_DIFFUSE)
+
+    // Initialize three vertices for rendering a triangle
+    CUSTOMVERTEX g_Vertices[] =
+    {
+        { -15.0f,-15.0f, 0.0f, 0xffff0000, },
+        {  15.0f,-15.0f, 0.0f, 0xff0000ff, },
+        {  00.0f, 15.0f, 0.0f, 0xffffffff, },
+    };
+
+    // Create the vertex buffer.
+    if( FAILED( pd3dDevice->CreateVertexBuffer( 3*sizeof(CUSTOMVERTEX),
+                                                  0, D3DFVF_CUSTOMVERTEX,
+                                                  D3DPOOL_DEFAULT, &pVB2 ) ) )
+    {
+        return;
+    }
+
+    // Turn off culling, so we see the front and back of the triangle
+    pd3dDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
+
+    // Turn off D3D lighting, since we are providing our own vertex colors
+    pd3dDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
+
+
+    // Fill the vertex buffer.
+    void* pVertices;
+    if( FAILED( pVB2->Lock( 0, sizeof(g_Vertices), (BYTE**)&pVertices, 0 ) ) )
+        return;
+    memcpy( pVertices, g_Vertices, sizeof(g_Vertices) );
+    pVB2->Unlock();
+
+
+    // For our world matrix, we will just rotate the object about the y-axis.
+    //D3DXMATRIX matWorld;
+    D3DXMatrixRotationY( &matWorld, GetTickCount()/150.0f );
+    pd3dDevice->SetTransform( D3DTS_WORLD, &matWorld );
+
+    // Set up our view matrix. A view matrix can be defined given an eye point,
+    // a point to lookat, and a direction for which way is up. Here, we set the
+    // eye five units back along the z-axis and up three units, look at the
+    // origin, and define "up" to be in the y-direction.
+    //D3DXMATRIX matView;
+    //D3DXMatrixLookAtLH( &matView, &D3DXVECTOR3( 0.0f, 3.0f,-5.0f ),
+    //                              &D3DXVECTOR3( 0.0f, 0.0f, 0.0f ),
+    //                              &D3DXVECTOR3( 0.0f, 1.0f, 0.0f ) );
+    D3DXMatrixIdentity( &matView );
+	pd3dDevice->SetTransform( D3DTS_VIEW, &matView );
+
+    // For the projection matrix, we set up a perspective transform (which
+    // transforms geometry from 3D view space to 2D viewport space, with
+    // a perspective divide making objects smaller in the distance). To build
+    // a perpsective transform, we need the field of view (1/4 pi is common),
+    // the aspect ratio, and the near and far clipping planes (which define at
+    // what distances geometry should be no longer be rendered).
+    //D3DXMATRIX matProj;
+    //D3DXMatrixPerspectiveFovLH( &matProj, D3DX_PI/4, 1.0f, 1.0f, 100.0f );
+    //D3DXMatrixOrthoLH( &matProj, 640, -480, -100, 100 );
+    D3DXMatrixOrthoOffCenterLH( &matProj, 0, 320, 480, 0, -100, 100 );
+//    D3DXMatrixOrthoOffCenterLH( &matProj, -20, 20, 20, -20, -100, 100 );
+   
+	pd3dDevice->SetTransform( D3DTS_PROJECTION, &matProj );
+
+    // Render the vertex buffer contents
+    pd3dDevice->SetStreamSource( 0, pVB2, sizeof(CUSTOMVERTEX) );
+    pd3dDevice->SetVertexShader( D3DFVF_CUSTOMVERTEX );
+    pd3dDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 1 );
+
+
+
+
+    if( pVB2 != NULL )
+        pVB2->Release();
+*/
+
+
+
+
 
 }
 
@@ -307,23 +450,19 @@ void Sprite::SetState( UINT uNewState )
 	m_fSecsIntoState = 0.0; 
 }
 
-void Sprite::SetCustomSrcRect( RECT newRect ) 
+void Sprite::SetCustomSrcRect(	FRECT new_texcoord_frect ) 
 { 
-	m_bUsingCustomSrcRect = TRUE;
-	m_rectCustomSrcRect = newRect; 
+	m_bUsingCustomTexCoordRect = true;
+	m_CustomTexCoordRect = new_texcoord_frect; 
+}
 
-	SetWidth( (FLOAT) RECTWIDTH(newRect) );
-	SetHeight( (FLOAT) RECTHEIGHT(newRect) );
-
-};
-
-VOID Sprite::SetEffectNone()
+void Sprite::SetEffectNone()
 {
 	m_Effect = no_effect;
 	//m_color = D3DXCOLOR( 1.0,1.0,1.0,1.0 );
 }
 
-VOID Sprite::SetEffectBlinking( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
+void Sprite::SetEffectBlinking( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = blinking;
 	m_start_color = Color;
@@ -333,7 +472,7 @@ VOID Sprite::SetEffectBlinking( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
-VOID Sprite::SetEffectCamelion( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
+void Sprite::SetEffectCamelion( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = camelion;
 	m_start_color = Color;
@@ -343,7 +482,7 @@ VOID Sprite::SetEffectCamelion( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
-VOID Sprite::SetEffectGlowing( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
+void Sprite::SetEffectGlowing( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = glowing;
 	m_start_color = Color;
@@ -353,26 +492,26 @@ VOID Sprite::SetEffectGlowing( FLOAT fDeltaPercentPerSecond, D3DXCOLOR Color, D3
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
 }
 
-VOID Sprite::SetEffectWagging(	FLOAT fWagRadians, FLOAT fWagPeriod )
+void Sprite::SetEffectWagging(	FLOAT fWagRadians, FLOAT fWagPeriod )
 {
 	m_Effect = wagging;
 	m_fWagRadians = fWagRadians;
 	m_fWagPeriod = fWagPeriod;
 }
 
-VOID Sprite::SetEffectSpinning(	FLOAT fSpinSpeed /*radians per second*/ )
+void Sprite::SetEffectSpinning(	FLOAT fSpinSpeed /*radians per second*/ )
 {
 	m_Effect = spinning;
 	m_fSpinSpeed = fSpinSpeed;
 }
 
-VOID Sprite::SetEffectVibrating( FLOAT fVibrationDistance )
+void Sprite::SetEffectVibrating( FLOAT fVibrationDistance )
 {
 	m_Effect = vibrating;
 	m_fVibrationDistance = fVibrationDistance;
 }
 
-VOID Sprite::SetEffectFlickering()
+void Sprite::SetEffectFlickering()
 {
 	m_Effect = flickering;
 }

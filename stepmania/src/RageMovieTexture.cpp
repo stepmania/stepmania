@@ -344,9 +344,10 @@ HRESULT RageMovieTexture::InitDShowTextureRenderer()
     m_pGB.QueryInterface(&m_pMP);
     m_pGB.QueryInterface(&m_pME);
 
-    // The graph is built, now get the set the output video width and height
-	m_uImageWidth  = m_pCTR->GetVidWidth();
-	m_uImageHeight = m_pCTR->GetVidHeight();
+    // The graph is built, now get the set the output video width and height.
+	// The source and image width will always be the same since we can't scale the video
+	m_uSourceWidth  = m_pCTR->GetVidWidth();
+	m_uSourceHeight = m_pCTR->GetVidHeight();
 
 	
     return S_OK;
@@ -360,7 +361,7 @@ HRESULT RageMovieTexture::CreateD3DTexture()
     // Create the texture that maps to this media type
 	//////////////////////////////////////////////////
     if( FAILED( hr = D3DXCreateTexture(m_pd3dDevice,
-                    m_uImageWidth, m_uImageHeight,
+                    m_uSourceHeight, m_uSourceHeight,
                     1, 0, 
                     D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pd3dTexture ) ) )
         RageErrorHr( "Could not create the D3DX texture!", hr );

@@ -21,15 +21,15 @@
 // Includes
 //-----------------------------------------------------------------------------
 #include <windows.h>
-#include <dinput.h>
 #include "RageInput.h"
+#include <dinput.h>
 #include "RageUtil.h"
 
 
 LPRageInput				INPUT	= NULL;
 
 
-BOOL RageRawInput::LookupChar( TCHAR &char_out ) const
+BOOL DeviceInput::LookupChar( TCHAR &char_out ) const
 {
 	switch( button )
 	{
@@ -103,7 +103,7 @@ BOOL RageRawInput::LookupChar( TCHAR &char_out ) const
 }
 
 
-CString RageRawInput::GetDescription() const
+CString DeviceInput::GetDescription() const
 {
 	CString sReturn;
 
@@ -486,7 +486,7 @@ VOID RageInput::Release()
 }
 
 
-HRESULT RageInput::GetRawInput( RageRawInputList &listRawInput )
+HRESULT RageInput::GetDeviceInputs( DeviceInputArray &listDeviceInputs )
 {
 // macros for reading DI state structures
 #define IS_PRESSED(b)	(b & 0x80) 
@@ -536,7 +536,7 @@ HRESULT RageInput::GetRawInput( RageRawInputList &listRawInput )
 	{
 		// check if key is depressed this update and was not depressed last update
 		if( IS_PRESSED( m_keys[k] )  &&  !IS_PRESSED( m_oldKeys[k] ) ) 
-			listRawInput.AddTail( RageRawInput( DEVICE_KEYBOARD, 1, k, FALSE ) );
+			listDeviceInputs.Add( DeviceInput( DEVICE_KEYBOARD, 1, k, FALSE ) );
 	}
 
 
@@ -618,25 +618,25 @@ HRESULT RageInput::GetRawInput( RageRawInputList &listRawInput )
 				// check if key is depressed this update and was not depressed last update
 				if(  IS_LEFT( m_joyState[i].lX )  &&
 					!IS_LEFT( m_oldJoyState[i].lX )  )
-					listRawInput.AddTail( RageRawInput( DEVICE_JOYSTICK, i+1, JOY_LEFT, FALSE ) );
+					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_LEFT, FALSE ) );
 
 				if(  IS_RIGHT( m_joyState[i].lX )  &&  
 					!IS_RIGHT( m_oldJoyState[i].lX )  )
-					listRawInput.AddTail( RageRawInput( DEVICE_JOYSTICK, i+1, JOY_RIGHT, FALSE ) );
+					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_RIGHT, FALSE ) );
 				
 				if(  IS_UP( m_joyState[i].lY ) &&  
 					!IS_UP( m_oldJoyState[i].lY )  )
-					listRawInput.AddTail( RageRawInput( DEVICE_JOYSTICK, i+1, JOY_UP, FALSE ) );
+					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_UP, FALSE ) );
 				
 				if(	 IS_DOWN(  m_joyState[i].lY ) &&  
 					!IS_DOWN(  m_oldJoyState[i].lY )  )
-					listRawInput.AddTail( RageRawInput( DEVICE_JOYSTICK, i+1, JOY_DOWN, FALSE ) );
+					listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, JOY_DOWN, FALSE ) );
 
 
 				for( BYTE b=0; b<10; b++ )
 				{
 					if( IS_PRESSED(m_joyState[i].rgbButtons[b]) && !IS_PRESSED(m_oldJoyState[i].rgbButtons[b]) )
-						listRawInput.AddTail( RageRawInput( DEVICE_JOYSTICK, i+1, b+1, FALSE ) );
+						listDeviceInputs.Add( DeviceInput( DEVICE_JOYSTICK, i+1, b+1, FALSE ) );
 				}
 			}
 		}

@@ -126,17 +126,17 @@ int IniFile::GetNumKeys()
 	return keys.GetSize();
 }
 
-//returns a refernce to the key for direct modification
-CMapStringToString& IniFile::GetKeyRef( CString keyname )
+//returns a pointer to the key for direct modification
+CMapStringToString* IniFile::GetKeyPointer( CString keyname )
 {
 	int keynum = FindKey(keyname);
 	if (keynum == -1)
-		return keys[0];
+		return NULL;
 	else
-		return keys[keynum];
+		return &keys[keynum];
 }
 
-//returns number of values stored for specified key, or -1 if key found
+//returns number of values stored for specified key, or -1 if key not found
 int IniFile::GetNumValues(CString keyname)
 {
 	int keynum = FindKey(keyname);

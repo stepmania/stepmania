@@ -125,21 +125,21 @@ void Actor::SetTweenColor( D3DXCOLOR c )	{ m_end_color = c; }
 void Actor::ScaleTo( LPRECT pRect, StretchType st )
 {
 	// width and height of rectangle
-	int rect_width = RECTWIDTH(*pRect);
-	int rect_height = RECTHEIGHT(*pRect);
+	float rect_width = RECTWIDTH(*pRect);
+	float rect_height = RECTHEIGHT(*pRect);
 
 	// center of the rectangle
-	int rect_cx = pRect->left + rect_width/2;
-	int rect_cy = pRect->top  + rect_height/2;
+	float rect_cx = pRect->left + rect_width/2;
+	float rect_cy = pRect->top  + rect_height/2;
 
 	// zoom factor needed to scale the Actor to fill the rectangle
-	FLOAT fNewZoomX = (FLOAT)fabs(rect_width  / m_size.x);
-	FLOAT fNewZoomY = (FLOAT)fabs(rect_height / m_size.y);
+	float fNewZoomX = (float)fabs(rect_width  / m_size.x);
+	float fNewZoomY = (float)fabs(rect_height / m_size.y);
 
 	if( rect_width < 0 )	SetRotationY( D3DX_PI );
 	if( rect_height < 0 )	SetRotationX( D3DX_PI );
 
-	FLOAT fNewZoom;
+	float fNewZoom;
 	switch( st )
 	{
 	case cover:
@@ -150,7 +150,7 @@ void Actor::ScaleTo( LPRECT pRect, StretchType st )
 		break;
 	}
 
-	SetXY( (FLOAT)rect_cx, (FLOAT)rect_cy );
+	SetXY( rect_cx, rect_cy );
 	SetZoom( fNewZoom );
 }
 

@@ -35,13 +35,12 @@ private:
 	bool LoadSongInfoFromBMSFile( CString sPath );
 	bool LoadSongInfoFromMSDFile( CString sPath );
 
-	void FillEmptyValuesWithDefaults();
+	void TidyUpData();
 
 public:
 	CString GetSongFilePath()	{return m_sSongDir + m_sSongFile; };
 	CString GetSongFileDir()	{return m_sSongDir; };
 	CString GetMusicPath()		{return m_sSongDir + m_sMusic; };
-	CString GetSamplePath()		{return m_sSongDir + m_sSample; };
 	CString GetBannerPath()		{return m_sSongDir + m_sBanner; };
 	CString GetBackgroundPath()	{return m_sSongDir + m_sBackground; };
 //	Steps&  GetStepsAt( int iIndex )  {return arraySteps[iIndex]; };
@@ -67,7 +66,6 @@ private:
 	float	m_fBeatOffset;
 
 	CString	m_sMusic;
-	CString	m_sSample;
 	CString	m_sBanner;
 	CString	m_sBackground;
 

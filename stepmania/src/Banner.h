@@ -16,18 +16,15 @@
 #include "Song.h"
 
 
-#define COMMON_BANNER_TEXTURE_WIDTH		384
-#define COMMON_BANNER_TEXTURE_HEIGHT	110
-
-#define BANNER_WIDTH	(COMMON_BANNER_TEXTURE_WIDTH/2)
-#define BANNER_HEIGHT	(COMMON_BANNER_TEXTURE_HEIGHT / 2)
+const float BANNER_WIDTH	= 192;		// from the source art of DDR
+const float BANNER_HEIGHT	= 55;
 
 
 class Banner : public Sprite
 {
 public:
 
-	BOOL LoadFromSong( Song &song);
+	bool LoadFromSong( Song &song);
 
 };
 

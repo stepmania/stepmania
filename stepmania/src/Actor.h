@@ -31,56 +31,56 @@ public:
 	virtual void Invalidate() {};
 
 	virtual void Draw() PURE;
-	virtual void Update( const FLOAT &fDeltaTime );
+	virtual void Update( const float &fDeltaTime );
 
-	virtual FLOAT GetX()					{ return m_pos.x; };
-	virtual FLOAT GetY()					{ return m_pos.y; };
-	virtual void  SetX( FLOAT x )			{ m_pos.x = x;					m_TweenType = no_tween; };
-	virtual void  SetY( FLOAT y )			{				m_pos.y = y;	m_TweenType = no_tween; };
-	virtual void  SetXY( FLOAT x, FLOAT y )	{ m_pos.x = x;	m_pos.y = y;	m_TweenType = no_tween; };
+	virtual float GetX()					{ return m_pos.x; };
+	virtual float GetY()					{ return m_pos.y; };
+	virtual void  SetX( float x )			{ m_pos.x = x;					m_TweenType = no_tween; };
+	virtual void  SetY( float y )			{				m_pos.y = y;	m_TweenType = no_tween; };
+	virtual void  SetXY( float x, float y )	{ m_pos.x = x;	m_pos.y = y;	m_TweenType = no_tween; };
 
 	// height and width vary depending on zoom
-	virtual FLOAT  GetZoomedWidth()			{ return m_size.x * m_scale.x; }
-	virtual FLOAT  GetZoomedHeight()		{ return m_size.y * m_scale.y; }
-	virtual void   SetWidth( FLOAT width ){ m_size.x = width; }
-	virtual void   SetHeight( FLOAT height ){ m_size.y = height; }
+	virtual float  GetZoomedWidth()			{ return m_size.x * m_scale.x; }
+	virtual float  GetZoomedHeight()		{ return m_size.y * m_scale.y; }
+	virtual void   SetWidth( float width ){ m_size.x = width; }
+	virtual void   SetHeight( float height ){ m_size.y = height; }
 
-	virtual FLOAT GetZoom()				{ return m_scale.x; }
-	virtual void SetZoom( FLOAT zoom )	{ m_scale.x = zoom;	m_scale.y = zoom; }
+	virtual float GetZoom()				{ return m_scale.x; }
+	virtual void SetZoom( float zoom )	{ m_scale.x = zoom;	m_scale.y = zoom; }
 
-	virtual FLOAT GetRotation()				{ return m_rotation.z; }
-	virtual void  SetRotation( FLOAT rot )	{ m_rotation.z = rot; }
-	virtual FLOAT GetRotationX()			{ return m_rotation.x; }
-	virtual void  SetRotationX( FLOAT rot )	{ m_rotation.x = rot; }
-	virtual FLOAT GetRotationY()			{ return m_rotation.y; }
-	virtual void  SetRotationY( FLOAT rot )	{ m_rotation.y = rot; }
+	virtual float GetRotation()				{ return m_rotation.z; }
+	virtual void  SetRotation( float rot )	{ m_rotation.z = rot; }
+	virtual float GetRotationX()			{ return m_rotation.x; }
+	virtual void  SetRotationX( float rot )	{ m_rotation.x = rot; }
+	virtual float GetRotationY()			{ return m_rotation.y; }
+	virtual void  SetRotationY( float rot )	{ m_rotation.y = rot; }
 
 	virtual void SetColor( D3DXCOLOR newColor ) { m_color = newColor; };
 	virtual D3DXCOLOR GetColor()				{ return m_color; };
 
-	virtual void TweenTo( FLOAT time, 
-						  FLOAT x, FLOAT y, 
-						  FLOAT zoom = 1.0, 
-						  FLOAT rot = 0.0, 
+	virtual void TweenTo( float time, 
+						  float x, float y, 
+						  float zoom = 1.0, 
+						  float rot = 0.0, 
 						  D3DXCOLOR col = D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ),
 						  TweenType tt = tween_linear );
 
-	virtual void BeginTweening( FLOAT time, TweenType tt = tween_linear );
-	virtual void SetTweenX( FLOAT x );
-	virtual void SetTweenY( FLOAT y );
-	virtual void SetTweenXY( FLOAT x, FLOAT y );
-	virtual void SetTweenZoom( FLOAT zoom );
-	virtual void SetTweenRotationX( FLOAT r );
-	virtual void SetTweenRotationY( FLOAT r );
-	virtual void SetTweenRotationZ( FLOAT r );
+	virtual void BeginTweening( float time, TweenType tt = tween_linear );
+	virtual void SetTweenX( float x );
+	virtual void SetTweenY( float y );
+	virtual void SetTweenXY( float x, float y );
+	virtual void SetTweenZoom( float zoom );
+	virtual void SetTweenRotationX( float r );
+	virtual void SetTweenRotationY( float r );
+	virtual void SetTweenRotationZ( float r );
 	virtual void SetTweenColor( D3DXCOLOR c );
 
 
 	// NOTE: GetEdge functions don't consider rotation
-	virtual FLOAT GetLeftEdge()		{ return m_pos.x - GetZoomedWidth()/2.0f; };
-	virtual FLOAT GetRightEdge()	{ return m_pos.x + GetZoomedWidth()/2.0f; };
-	virtual FLOAT GetTopEdge()		{ return m_pos.y - GetZoomedHeight()/2.0f; };
-	virtual FLOAT GetBottomEdge()	{ return m_pos.y + GetZoomedHeight()/2.0f; };
+	virtual float GetLeftEdge()		{ return m_pos.x - GetZoomedWidth()/2.0f; };
+	virtual float GetRightEdge()	{ return m_pos.x + GetZoomedWidth()/2.0f; };
+	virtual float GetTopEdge()		{ return m_pos.y - GetZoomedHeight()/2.0f; };
+	virtual float GetBottomEdge()	{ return m_pos.y + GetZoomedHeight()/2.0f; };
 	
 	enum StretchType { fit_inside, cover };
 
@@ -108,8 +108,8 @@ protected:
 
 	// counters for tweening
 	TweenType	m_TweenType;
-	FLOAT		m_fTweenTime;		// seconds between Start and End positions/zooms
-	FLOAT		m_fTimeIntoTween;	// how long we have been tweening for
+	float		m_fTweenTime;		// seconds between Start and End positions/zooms
+	float		m_fTimeIntoTween;	// how long we have been tweening for
 
 };
 

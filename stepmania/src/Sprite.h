@@ -39,7 +39,7 @@ public:
 	BOOL LoadFromTexture( CString sTexturePath );
 	BOOL LoadFromSpriteFile( CString sSpritePath );
 
-	VOID PrintDebugInfo();
+	void PrintDebugInfo();
 
 	virtual void Draw();
 	virtual void Update( const FLOAT &fDeltaTime );
@@ -52,27 +52,25 @@ public:
 	CString	GetTexturePath()	{ return m_sTexturePath; };
 
 
-	VOID SetCustomSrcRect( RECT newRect );	// for cropping or flipping
+	void SetCustomSrcRect( FRECT new_texcoord_frect );	// for cropping
 
 
-	VOID SetEffectNone();
-	VOID SetEffectBlinking( FLOAT fDeltaPercentPerSecond = 2.5,
+	void SetEffectNone();
+	void SetEffectBlinking( FLOAT fDeltaPercentPerSecond = 2.5,
 						    D3DXCOLOR Color  = D3DXCOLOR(0.5f,0.5f,0.5f,1), 
 						    D3DXCOLOR Color2 = D3DXCOLOR(1,1,1,1) );
-	VOID SetEffectCamelion( FLOAT fDeltaPercentPerSecond = 2.5,
+	void SetEffectCamelion( FLOAT fDeltaPercentPerSecond = 2.5,
 						    D3DXCOLOR Color  = D3DXCOLOR(0,0,0,1), 
 						    D3DXCOLOR Color2 = D3DXCOLOR(1,1,1,1) );
-	VOID SetEffectGlowing( FLOAT fDeltaPercentPerSecond = 2.5,
+	void SetEffectGlowing( FLOAT fDeltaPercentPerSecond = 2.5,
 						   D3DXCOLOR Color  = D3DXCOLOR(0.4f,0.4f,0.4f,0),
 						   D3DXCOLOR Color2 = D3DXCOLOR(1.0f,1.0f,1.0f,0) );
-	VOID SetEffectWagging( FLOAT fWagRadians =  0.2,
+	void SetEffectWagging( FLOAT fWagRadians =  0.2,
 						   FLOAT fWagPeriod = 2.0 );
-	VOID SetEffectSpinning( FLOAT fRadsPerSpeed = 2.0 );
-	VOID SetEffectVibrating( FLOAT fVibrationDistance = 5.0 );
-	VOID SetEffectFlickering();
+	void SetEffectSpinning( FLOAT fRadsPerSpeed = 2.0 );
+	void SetEffectVibrating( FLOAT fVibrationDistance = 5.0 );
+	void SetEffectFlickering();
 	SpriteEffect GetEffect() { return m_Effect; };
-
-	VOID SetBlendMode( BOOL bBlendAdd ) { m_bBlendAdd = bBlendAdd; };
 
 protected:
 	void Init();
@@ -90,10 +88,8 @@ protected:
 	BOOL	m_bIsAnimating;
 	FLOAT	m_fSecsIntoState;	// number of seconds that have elapsed since we switched to this frame
 
-	BOOL m_bBlendAdd;
-
-	BOOL m_bUsingCustomSrcRect;
-	RECT m_rectCustomSrcRect;
+	BOOL m_bUsingCustomTexCoordRect;
+	FRECT m_CustomTexCoordRect;
 
 	SpriteEffect m_Effect;
 

@@ -16,28 +16,32 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 
+#include "BitmapFont.h"
 
 
 
-class BitmapText : public Sprite
+class BitmapText : public Actor
 {
 public:
 	BitmapText();
-//	virtual ~BitmapText();
+	~BitmapText();
 
-	BOOL LoadFromFontFile( CString sFontFilePath );
-	void SetText( CString sText );
+	bool LoadFromFontName( CString sFontName );
+	void SetText( CString sText ) { m_sText = sText; };
 	CString GetText() { return m_sText; };
+
+	void SetTopColor( D3DXCOLOR new_color ) { m_colorTop = new_color; };
+	void SetBottomColor( D3DXCOLOR new_color ) { m_colorBottom = new_color; };
+	void SetColor( D3DXCOLOR new_color ) { SetTopColor(new_color); SetBottomColor(new_color); };
 
 	virtual void Draw();
 
 protected:
-	void ResetWidthAndHeight();
-
-	CString m_sFontFilePath;
+	CString m_sFontName;
+	CBitmapFont*	m_pFont;
 	CString	m_sText;	// the string that the font is displaying
-	//Sprite	m_Sprite;	// holder for the graphic
-	CMap<TCHAR, TCHAR&, UINT, UINT&> m_mapCharToFrameNo;
+	D3DXCOLOR	m_colorTop;
+	D3DXCOLOR	m_colorBottom;
 };
 
 

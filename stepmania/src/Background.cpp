@@ -30,7 +30,7 @@ void Background::LoadFromSong( Song& song )
 
 		m_sprVis.LoadFromTexture( sVisDir + sVisualizationPaths[iIndexRandom] );
 		m_sprVis.StretchTo( CRect(0,0,640,480) );
-		m_sprVis.SetBlendMode( TRUE );
+//		m_sprVis.SetBlendMode( TRUE );
 		//m_sprVis.SetColor( D3DXCOLOR(1,1,1,0.5f) );
 	}
 }
