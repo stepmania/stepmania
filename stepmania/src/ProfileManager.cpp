@@ -20,6 +20,10 @@
 #include "SongManager.h"
 #include "GameState.h"
 
+#ifdef _WINDOWS
+#include "windows.h"
+#endif
+
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
 
 

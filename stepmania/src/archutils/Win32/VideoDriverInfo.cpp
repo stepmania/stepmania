@@ -2,6 +2,7 @@
 #include "VideoDriverInfo.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "windows.h"
 
 static void GetRegSubKeys( HKEY hKey, vector<CString> &lst )
 {

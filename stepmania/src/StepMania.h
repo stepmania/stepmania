@@ -22,6 +22,7 @@ void SaveGamePrefsToDisk();
 void ChangeCurrentGame( Game g );
 
 #if defined(WIN32)
+#include "windows.h"
 extern HWND g_hWndMain;
 #endif
 

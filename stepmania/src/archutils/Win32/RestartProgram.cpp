@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RestartProgram.h"
+#include "windows.h"
 
 void Win32RestartProgram()
 {

@@ -9,10 +9,7 @@
 extern "C" {
 #include "ddk/setupapi.h"
 /* Quiet header warning: */
-#pragma warning( push )
-#pragma warning (disable : 4201)
 #include "ddk/hidsdi.h"
-#pragma warning( pop )
 }
 
 static CString GetUSBDevicePath (int num)

@@ -15,6 +15,8 @@
 #if !defined(WIN32)
 #include <dirent.h>
 #include <fcntl.h>
+#else
+#include "windows.h"
 #endif
 
 

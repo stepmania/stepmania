@@ -3,6 +3,8 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "VideoDriverInfo.h"
+#include "windows.h"
+#include <mmsystem.h>
 
 
 void LogVideoDriverInfo( VideoDriverInfo info )

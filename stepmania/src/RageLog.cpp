@@ -19,6 +19,9 @@
 #include "RageFile.h"
 #include <time.h>
 #include "ProductInfo.h"
+#if defined(WIN32) && !defined(_XBOX)
+#include "windows.h"
+#endif
 
 RageLog* LOG;		// global and accessable from anywhere in the program
 

@@ -1,5 +1,7 @@
 #include "global.h"
 #include "GotoURL.h"
+#include "windows.h"
+#include "shellapi.h"
 
 LONG GetRegKey(HKEY key, CString subkey, LPTSTR retdata)
 {
@@ -37,11 +39,11 @@ bool GotoURL(CString url)
 	if (GetRegKey(HKEY_CLASSES_ROOT,key,key) != ERROR_SUCCESS)
 		return false;
 
-	char *pos = _tcsstr(key, "\"%1\"");
+	char *pos = strstr( key, "\"%1\"" );
 	if (pos == NULL)
 	{
 		// No quotes found.  Check for %1 without quotes
-		pos = strstr(key, _T("%1"));
+		pos = strstr( key, "%1" );
 		if (pos == NULL)                   
 			pos = key+lstrlen(key)-1; // No parameter.
 		else

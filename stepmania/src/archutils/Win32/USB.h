@@ -2,6 +2,7 @@
 #define WIN32_USB_H
 
 #include <vector>
+#include "windows.h"
 
 /* The API for Windows device I/O is obscenely horrible, so encapsulate it. */
 class WindowsFileIO
