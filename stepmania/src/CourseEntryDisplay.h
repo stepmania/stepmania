@@ -28,7 +28,7 @@ class CourseEntryDisplay : public ActorFrame
 public:
 	void Load();
 
-	void LoadFromCourseInfo( int iNum, const Course *pCourse, const Course::Info ci[NUM_PLAYERS] );
+	void LoadFromTrailEntry( int iNum, const Course *pCourse, TrailEntry *te[NUM_PLAYERS] );
 
 private:
 	void SetDifficulty( PlayerNumber pn, const CString &text, RageColor c );

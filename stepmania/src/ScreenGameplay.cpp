@@ -49,6 +49,7 @@
 #include "StageStats.h"
 #include "PlayerAI.h"	// for NUM_SKILL_LEVELS
 #include "NetworkSyncManager.h"
+#include "Foreach.h"
 
 //
 // Defines
@@ -182,37 +183,36 @@ void ScreenGameplay::Init()
 	//
 	if( GAMESTATE->IsCourseMode() )
 	{
+		Course* pCourse = GAMESTATE->m_pCurCourse;
 		const StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
 		/* Increment the play count. */
 		if( !m_bDemonstration )
 			FOREACH_EnabledPlayer(p)
-                PROFILEMAN->IncrementCoursePlayCount( GAMESTATE->m_pCurCourse, st, GAMESTATE->m_PreferredCourseDifficulty[p], (PlayerNumber)p );
+                PROFILEMAN->IncrementCoursePlayCount( pCourse, st, GAMESTATE->m_PreferredCourseDifficulty[p], (PlayerNumber)p );
+
+		m_apSongsQueue.clear();
+		PlayerNumber pnMaster = GAMESTATE->m_MasterPlayerNumber;
+		Trail *pTrail = pCourse->GetTrail( st, GAMESTATE->m_PreferredCourseDifficulty[pnMaster] );
+		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
+		{
+			m_apSongsQueue.push_back( e->pSong );
+		}
 
         FOREACH_PlayerNumber(p)
 		{
-			vector<Course::Info> ci;
-			GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, GAMESTATE->m_PreferredCourseDifficulty[p] );
+			Trail *pTrail = pCourse->GetTrail( st, GAMESTATE->m_PreferredCourseDifficulty[p] );
 
 			m_apNotesQueue[p].clear();
 			m_asModifiersQueue[p].clear();
-			for( unsigned c=0; c<ci.size(); ++c )
+			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 			{
-				m_apNotesQueue[p].push_back( ci[c].pNotes );
+				m_apNotesQueue[p].push_back( e->pNotes );
 				AttackArray a;
-				ci[c].GetAttackArray( a );
+				e->GetAttackArray( a );
 				m_asModifiersQueue[p].push_back( a );
-
-				const CString path = THEME->GetPathToG( ssprintf("ScreenGameplay course song %i", c+1), true );
-				if( path != "" )
-					TEXTUREMAN->CacheTexture( path );
 			}
 
-			if( p == 0 )
-			{
-				m_apSongsQueue.clear();
-				for( unsigned c=0; c<ci.size(); ++c )
-					m_apSongsQueue.push_back( ci[c].pSong );
-			}
 		}
 	}
 	else

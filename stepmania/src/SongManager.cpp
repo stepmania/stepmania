@@ -665,18 +665,17 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	course.LoadFromCRSFile( sCoursePath );
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
-	vector<Course::Info> ci;
-	course.GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
-	if( ci.empty() )
+	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, COURSE_DIFFICULTY_REGULAR );
+	if( pTrail->m_vEntries.empty() )
 		return false;
 
 	po_out.Init();
-	po_out.FromString( ci[0].Modifiers );
+	po_out.FromString( pTrail->m_vEntries[0].Modifiers );
 	so_out.Init();
-	so_out.FromString( ci[0].Modifiers );
+	so_out.FromString( pTrail->m_vEntries[0].Modifiers );
 
-	pSongOut = ci[0].pSong;
-	pNotesOut = ci[0].pNotes;
+	pSongOut = pTrail->m_vEntries[0].pSong;
+	pNotesOut = pTrail->m_vEntries[0].pNotes;
 	return true;
 }
 
@@ -949,13 +948,13 @@ void SongManager::UpdateRankingCourses()
 	for(unsigned i=0; i < m_pCourses.size(); i++)
 	{
 		if (m_pCourses[i]->GetEstimatedNumStages() > 7)
-			m_pCourses[i]->SortOrder_Ranking = 3;
+			m_pCourses[i]->m_SortOrder_Ranking = 3;
 		else
-			m_pCourses[i]->SortOrder_Ranking = 2;
+			m_pCourses[i]->m_SortOrder_Ranking = 2;
 		
 		for(unsigned j = 0; j < RankingCourses.size(); j++)
 			if (!RankingCourses[j].CompareNoCase(m_pCourses[i]->m_sPath))
-				m_pCourses[i]->SortOrder_Ranking = 1;
+				m_pCourses[i]->m_SortOrder_Ranking = 1;
 	}
 }
 

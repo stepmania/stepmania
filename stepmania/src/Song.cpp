@@ -132,16 +132,19 @@ void Song::AddLyricSegment( LyricSegment seg )
 	m_LyricSegments.push_back( seg );
 }
 
-void Song::GetDisplayBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
+void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
 	if( m_DisplayBPMType == DISPLAY_SPECIFIED )
 	{
-		fMinBPMOut = m_fSpecifiedBPMMin;
-		fMaxBPMOut = m_fSpecifiedBPMMax;
+		AddTo.Add( m_fSpecifiedBPMMin );
+		AddTo.Add( m_fSpecifiedBPMMax );
 	}
 	else
 	{
-		m_Timing.GetActualBPM( fMinBPMOut, fMaxBPMOut );
+		float fMinBPM, fMaxBPM;
+		m_Timing.GetActualBPM( fMinBPM, fMaxBPM );
+		AddTo.Add( fMinBPM );
+		AddTo.Add( fMaxBPM );
 	}
 }
 

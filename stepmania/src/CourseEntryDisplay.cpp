@@ -87,24 +87,24 @@ void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, Ra
 	m_textFoot[pn].SetDiffuse( c );
 }
 
-void CourseEntryDisplay::LoadFromCourseInfo( int iNum, const Course *pCourse, const Course::Info pci[NUM_PLAYERS] )
+void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const Course *pCourse, TrailEntry *tes[NUM_PLAYERS] )
 {
-	const Course::Info &ci = pci[GAMESTATE->m_MasterPlayerNumber];
-
-	if( ci.Mystery )
+	TrailEntry *te = tes[GAMESTATE->m_MasterPlayerNumber];
+	bool bMystery = te->bMystery;
+	if( bMystery )
 	{
-		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		FOREACH_EnabledPlayer(pn)
 		{
-			Difficulty dc = pCourse->GetDifficulty( pci[pn] );
+			TrailEntry *te = tes[pn];
+			Difficulty dc = te->pNotes->GetDifficulty();
 			if( dc == DIFFICULTY_INVALID )
 			{
-				int iLow, iHigh;
-				pCourse->GetMeterRange(pci[pn], iLow, iHigh);
-
-				SetDifficulty( (PlayerNumber)pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh), RageColor(1,1,1,1) );
+				int iLow = te->iLowMeter;
+				int iHigh = te->iHighMeter;
+				SetDifficulty( pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh), RageColor(1,1,1,1) );
 			}
 			else
-				SetDifficulty( (PlayerNumber)pn, "?", SONGMAN->GetDifficultyColor( dc ) );
+				SetDifficulty( pn, "?", SONGMAN->GetDifficultyColor( dc ) );
 		}
 
 		m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
@@ -112,17 +112,18 @@ void CourseEntryDisplay::LoadFromCourseInfo( int iNum, const Course *pCourse, co
 	}
 	else
 	{
-		for( int pn = 0; pn < NUM_PLAYERS; ++pn )
+		FOREACH_EnabledPlayer(pn)
 		{
-			RageColor colorNotes = SONGMAN->GetDifficultyColor( pci[pn].pNotes->GetDifficulty() );
-			SetDifficulty( (PlayerNumber)pn, ssprintf("%d", pci[pn].pNotes->GetMeter()), colorNotes );
+			TrailEntry *te = tes[pn];
+			RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pNotes->GetDifficulty() );
+			SetDifficulty( pn, ssprintf("%d", te->pNotes->GetMeter()), colorNotes );
 		}
 
-		m_TextBanner.LoadFromSong( ci.pSong );
-		m_TextBanner.SetDiffuse( SONGMAN->GetSongColor( ci.pSong ) );
+		m_TextBanner.LoadFromSong( te->pSong );
+		m_TextBanner.SetDiffuse( SONGMAN->GetSongColor( te->pSong ) );
 	}
 
 	m_textNumber.SetText( ssprintf("%d", iNum) );
 
-	m_textModifiers.SetText( ci.Modifiers );
+	m_textModifiers.SetText( te->Modifiers );
 }

@@ -385,11 +385,11 @@ void ScreenSelectCourse::AfterCourseChange()
 	case TYPE_COURSE:
 		{
 			Course* pCourse = m_MusicWheel.GetSelectedCourse();
-			const StepsType &st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
 			m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
 			float fTotalSeconds;
-			if( pCourse->GetTotalSeconds(fTotalSeconds) )
+			if( pCourse->GetTotalSeconds(st, fTotalSeconds) )
 				m_textTime.SetText( SecondsToMMSSMsMs(fTotalSeconds) );
 			else
 				m_textTime.SetText( "xx:xx.xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?

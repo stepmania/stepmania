@@ -894,7 +894,8 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 						 * style is set. */
 						if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 							GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-						TranslatedWrite(f, ssprintf("(%.2f)",pCourse->GetMeter(cd)) );
+						float fMeter = pCourse->GetMeter(st,cd);
+						TranslatedWrite(f, ssprintf("(%.2f)",fMeter) );
 						HighScore hs = pProfile->GetCourseHighScoreList(pCourse, st, cd).GetTopScore();
 						Grade grade = hs.grade;
 						if( grade != GRADE_NO_DATA )
@@ -1011,9 +1012,9 @@ bool PrintCatalogForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 		BEGIN_TABLE(2);
 		TABLE_LINE2( "Artist", pSong->GetDisplayArtist() );
 		TABLE_LINE2( "GroupName", pSong->m_sGroupName );
-		float fMinBPM, fMaxBPM;
-		pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
-		CString sBPM = (fMinBPM==fMaxBPM) ? ssprintf("%.1f",fMinBPM) : ssprintf("%.1f - %.1f",fMinBPM,fMaxBPM);
+		DisplayBpms bpms;
+		pSong->GetDisplayBpms( bpms );
+		CString sBPM = (bpms.BpmIsConstant()) ? ssprintf("%.1f",bpms.GetMin()) : ssprintf("%.1f - %.1f",bpms.GetMin(),bpms.GetMax());
 		TABLE_LINE2( "BPM", sBPM );
 		TABLE_LINE2( "Credit", pSong->m_sCredit );
 		TABLE_LINE2( "MusicLength", SecondsToMMSSMsMs(pSong->m_fMusicLengthSeconds) );

@@ -91,9 +91,11 @@ void BPMDisplay::Update( float fDeltaTime )
 }
 
 
-void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
+void BPMDisplay::SetBPMRange( const DisplayBpms &bpms )
 {
-	ASSERT( BPMS.size() );
+	ASSERT( !bpms.vfBpms.empty() );
+
+	const vector<float> &BPMS = bpms.vfBpms;
 
 	unsigned i;
 	bool AllIdentical = true;
@@ -159,9 +161,9 @@ void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 
 void BPMDisplay::CycleRandomly()
 {
-	vector<float> BPMS;
-	BPMS.push_back(-1);
-	SetBPMRange( BPMS );
+	DisplayBpms bpms;
+	bpms.Add(-1);
+	SetBPMRange( bpms );
 
 	m_fCycleTime = 0.2f;
 }
@@ -183,12 +185,9 @@ void BPMDisplay::SetBPM( const Song* pSong )
 	case Song::DISPLAY_ACTUAL:
 	case Song::DISPLAY_SPECIFIED:
 		{
-			float fMinBPM, fMaxBPM;
-			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
-			vector<float> BPMS;
-			BPMS.push_back(fMinBPM);
-			BPMS.push_back(fMaxBPM);
-			SetBPMRange( BPMS );
+			DisplayBpms bpms;
+			pSong->GetDisplayBpms( bpms );
+			SetBPMRange( bpms );
 			m_fCycleTime = 1.0f;
 		}
 		break;
@@ -204,43 +203,14 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 {
 	ASSERT( pCourse );
 
-	vector<Course::Info> ci;
-	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
+	Trail *pTrail = pCourse->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, COURSE_DIFFICULTY_REGULAR );
 
-	ASSERT( ci.size() );
+	ASSERT( pTrail->m_vEntries.size() );
 
-	vector<float> BPMS;
-	for( unsigned i = 0; i < ci.size(); ++i )
-	{
-		if( ci[i].Mystery )
-		{
-			BPMS.push_back( -1 );
-			continue;
-		}
-
-		Song *pSong = ci[i].pSong;
-		ASSERT( pSong );
-		switch( pSong->m_DisplayBPMType )
-		{
-		case Song::DISPLAY_ACTUAL:
-		case Song::DISPLAY_SPECIFIED:
-			{
-				float fMinBPM, fMaxBPM;
-				pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
-				BPMS.push_back( fMinBPM );
-				if( fMinBPM != fMaxBPM )
-					BPMS.push_back( fMaxBPM );
-			}
-			break;
-		case Song::DISPLAY_RANDOM:
-			BPMS.push_back( -1 );
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
+	DisplayBpms bpms;
+	pTrail->GetDisplayBpms( bpms );
 	
-	SetBPMRange( BPMS );
+	SetBPMRange( bpms );
 	m_fCycleTime = 0.2f;
 }
 

@@ -535,57 +535,26 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 	{
 		if( SHOW_BPM_IN_SPEED_TITLE )
 		{
+			DisplayBpms bpms;
 			if( GAMESTATE->m_pCurSong )
 			{
-				float fMinBpm, fMaxBpm;
-				GAMESTATE->m_pCurSong->GetDisplayBPM( fMinBpm, fMaxBpm );
-				if( fMinBpm == fMaxBpm )
-					sTitle += ssprintf( " (%.0f)", fMinBpm );
-				else
-					sTitle += ssprintf( " (%.0f-%.0f)", fMinBpm, fMaxBpm );
+				Song* pSong = GAMESTATE->m_pCurSong;
+				pSong->GetDisplayBpms( bpms );
 			}
 			else if( GAMESTATE->m_pCurCourse )
 			{
-				float fTotalMinBpm = -1, fTotalMaxBpm = -1;	// -1 == no marker
-				vector<Course::Info> ci;
-				GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
-
-				ASSERT( ci.size() );
-
-				for( unsigned i = 0; i < ci.size(); ++i )
-				{
-					if( ci[i].Mystery )
-						continue;
-
-					Song *pSong = ci[i].pSong;
-					ASSERT( pSong );
-					switch( pSong->m_DisplayBPMType )
-					{
-					case Song::DISPLAY_ACTUAL:
-					case Song::DISPLAY_SPECIFIED:
-						{
-							float fMinBpm, fMaxBpm;
-							pSong->GetDisplayBPM( fMinBpm, fMaxBpm );
-							if( fTotalMinBpm == -1 )	fTotalMinBpm = fMinBpm;
-							else						fTotalMinBpm = min( fTotalMinBpm, fMinBpm );
-							if( fTotalMaxBpm == -1 )	fTotalMaxBpm = fMaxBpm;
-							else						fTotalMaxBpm = max( fTotalMaxBpm, fMaxBpm );
-						}
-						break;
-					case Song::DISPLAY_RANDOM:
-						break;
-					default:
-						ASSERT(0);
-					}
-				}
-
-				if( fTotalMinBpm == -1 || fTotalMaxBpm == -1 )
-					sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
-				else if( fTotalMinBpm == fTotalMaxBpm )
-					sTitle += ssprintf( " (%.0f)", fTotalMinBpm );
-				else
-					sTitle += ssprintf( " (%.0f-%.0f)", fTotalMinBpm, fTotalMaxBpm );
+				Course *pCourse = GAMESTATE->m_pCurCourse;
+				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+				Trail* pTrail = pCourse->GetTrail(st,COURSE_DIFFICULTY_REGULAR);
+				pTrail->GetDisplayBpms( bpms );
 			}
+
+			if( bpms.IsMystery() )
+				sTitle += ssprintf( " (??" "?)" ); /* split so gcc doesn't think this is a trigraph */
+			else if( bpms.BpmIsConstant() )
+				sTitle += ssprintf( " (%.0f)", bpms.GetMin() );
+			else
+				sTitle += ssprintf( " (%.0f-%.0f)", bpms.GetMin(), bpms.GetMax() );
 		}
 	}
 

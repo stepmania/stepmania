@@ -118,13 +118,13 @@ void SongUtil::SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointer
 
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 {
-	float fMinBPM1, fMaxBPM1, fMinBPM2, fMaxBPM2;
-	pSong1->GetDisplayBPM( fMinBPM1, fMaxBPM1 );
-	pSong2->GetDisplayBPM( fMinBPM2, fMaxBPM2 );
+	DisplayBpms bpms1, bpms2;
+	pSong1->GetDisplayBpms( bpms1 );
+	pSong2->GetDisplayBpms( bpms2 );
 
-	if( fMaxBPM1 < fMaxBPM2 )
+	if( bpms1.GetMax() < bpms2.GetMax() )
 		return true;
-	if( fMaxBPM1 > fMaxBPM2 )
+	if( bpms1.GetMax() > bpms2.GetMax() )
 		return false;
 	
 	return CompareCStringsAsc( pSong1->GetSongFilePath(), pSong2->GetSongFilePath() );
@@ -267,9 +267,9 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	case SORT_BPM:
 		{
 			const int iBPMGroupSize = 20;
-			float fMinBPM, fMaxBPM;
-			pSong->GetDisplayBPM( fMinBPM, fMaxBPM );
-			int iMaxBPM = (int)fMaxBPM;
+			DisplayBpms bpms;
+			pSong->GetDisplayBpms( bpms );
+			int iMaxBPM = (int)bpms.GetMax();
 			iMaxBPM += iBPMGroupSize - (iMaxBPM%iBPMGroupSize) - 1;
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}

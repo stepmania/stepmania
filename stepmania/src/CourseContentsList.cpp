@@ -56,17 +56,25 @@ void CourseContentsList::SetFromCourse( const Course* pCourse )
 		return;
 	}
 
-	vector<Course::Info> ci[NUM_PLAYERS];
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
-		pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci[pn], GAMESTATE->m_PreferredCourseDifficulty[pn] );
+	Trail* pTrail[NUM_PLAYERS];
+	FOREACH_PlayerNumber(pn)
+	{
+		pTrail[pn] = pCourse->GetTrail( GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredCourseDifficulty[pn] );
+	}
 
-	m_iNumContents = 0; 
-	for( int i=0; i<min((int)ci[0].size(), MAX_TOTAL_CONTENTS); i++ )
+	// FIXME: Is there a better way to handle when players don't have 
+	// the same number of TrailEntries?
+
+	m_iNumContents = 0;
+	
+	for( int i=0; i<min((int)pTrail[0]->m_vEntries.size(), MAX_TOTAL_CONTENTS); i++ )
 	{
 		CourseEntryDisplay& display = m_CourseContentDisplays[m_iNumContents];
 	
-		const Course::Info pci[NUM_PLAYERS] = { ci[0][i], ci[1][i] };
-		display.LoadFromCourseInfo( m_iNumContents+1, pCourse, pci );
+		TrailEntry* pte[NUM_PLAYERS];
+		FOREACH_EnabledPlayer(pn)
+			pte[pn] = &pTrail[0]->m_vEntries[i];
+		display.LoadFromTrailEntry( m_iNumContents+1, pCourse, pte );
 		
 		m_iNumContents++;
 	}

@@ -15,6 +15,7 @@
 #include "RageUtil.h"
 #include "ThemeManager.h"
 #include "EnumHelper.h"
+#include "Foreach.h"
 
 
 static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
@@ -170,3 +171,49 @@ LuaFunction_Str( StringTo##X, LuaStringTo##X(str) ); /* register it */
 
 LuaXToString( Difficulty );
 LuaStringToX( Difficulty );
+
+
+void DisplayBpms::Add( float f )
+{
+	vfBpms.push_back( f );
+}
+
+float DisplayBpms::GetMin()
+{
+	float fMin = 99999;
+	FOREACH_CONST( float, vfBpms, f )
+	{
+		if( *f != -1 )
+			fMin = min( fMin, *f );
+	}
+	if( fMin == 99999 )
+		return 0;
+	else
+		return fMin;
+}
+
+float DisplayBpms::GetMax()
+{
+	float fMax = 0;
+	FOREACH_CONST( float, vfBpms, f )
+	{
+		if( *f != -1 )
+			fMax = max( fMax, *f );
+	}
+	return fMax;
+}
+
+bool DisplayBpms::BpmIsConstant()
+{
+	return GetMin() == GetMax();
+}
+
+bool DisplayBpms::IsMystery()
+{
+	FOREACH_CONST( float, vfBpms, f )
+	{
+		if( *f == -1 )
+			return true;
+	}
+	return false;
+}

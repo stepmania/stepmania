@@ -157,10 +157,9 @@ void PaneDisplay::SetContent( PaneContents c )
 		rv = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetRadarValues();
 	else if( g_Contents[c].req&NEED_COURSE )
 	{
-		vector<Course::Info> ci;
 		CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[m_PlayerNumber];
 		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
-		rv = GAMESTATE->m_pCurCourse->GetRadarValues( st, cd );
+		rv = GAMESTATE->m_pCurCourse->GetTrail(st,cd)->GetRadarValues();
 	}
 
 	const Song *pSong = GAMESTATE->m_pCurSong;

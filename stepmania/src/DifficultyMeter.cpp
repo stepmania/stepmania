@@ -20,6 +20,7 @@
 #include "Course.h"
 #include "SongManager.h"
 #include "ActorUtil.h"
+#include "StyleDef.h"
 
 
 #define NUM_FEET_IN_METER						THEME->GetMetricI(m_sName,"NumFeetInMeter")
@@ -117,7 +118,9 @@ void DifficultyMeter::SetFromCourse( const Course* pCourse, PlayerNumber pn )
 		return;
 	}
 
-	const int meter = (int) roundf(pCourse->GetMeterForPlayer( pn ));
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+	CourseDifficulty cd = GAMESTATE->m_PreferredCourseDifficulty[pn];
+	const int meter = (int) roundf( pCourse->GetMeter(st,cd) );
 	
 	// XXX metrics
 	Difficulty FakeDifficulty;

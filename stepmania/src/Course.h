@@ -15,6 +15,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Attack.h"
 #include <map>
+#include "Trail.h"
 
 struct PlayerOptions;
 struct SongOptions;
@@ -93,28 +94,14 @@ public:
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bRandomize;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
-	int			m_iMeter[NUM_COURSE_DIFFICULTIES];	// -1 autogens
+	int			m_iCustomMeter[NUM_COURSE_DIFFICULTIES];	// -1 = no meter specified
 
 	vector<CourseEntry> m_entries;
 
-	struct Info
-	{
-		Info(): pSong(NULL), pNotes(NULL), Random(false), Difficulty(COURSE_DIFFICULTY_INVALID) { }
-		void GetAttackArray( AttackArray &out ) const;
-
-		Song*	pSong;
-		Steps*	pNotes;
-		CString	Modifiers;
-		AttackArray Attacks;
-		bool	Random;
-		bool	Mystery;
-		CourseDifficulty	Difficulty;
-		/* Corresponding entry in m_entries: */
-		int		CourseIndex;
-	};
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
-	void GetCourseInfo( StepsType nt, vector<Info> &ci, CourseDifficulty cd = COURSE_DIFFICULTY_REGULAR ) const;
+	Trail* GetTrail( StepsType nt, CourseDifficulty cd ) const;
+	float GetMeter( StepsType nt, CourseDifficulty cd ) const;
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
 
@@ -123,33 +110,27 @@ public:
 	bool IsPlayableIn( StepsType nt ) const;
 	bool CourseHasBestOrWorst() const;
 	RageColor GetColor() const;
-	Difficulty GetDifficulty( const Info &stage ) const;
-	void GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const;
-	bool GetTotalSeconds( float& fSecondsOut ) const;
+	bool GetTotalSeconds( StepsType st, float& fSecondsOut ) const;
 
 	bool IsNonstop() const { return GetPlayMode() == PLAY_MODE_NONSTOP; }
 	bool IsOni() const { return GetPlayMode() == PLAY_MODE_ONI; }
 	bool IsEndless() const { return GetPlayMode() == PLAY_MODE_ENDLESS; }
 	PlayMode GetPlayMode() const;
-	float GetMeter( CourseDifficulty cd = COURSE_DIFFICULTY_REGULAR ) const;
-	float GetMeterForPlayer( PlayerNumber pn ) const;
 
 	bool IsFixed() const;
 
 	void LoadFromCRSFile( CString sPath );
-	void Unload();
+	void Init();
 	void Save();
 	void AutogenEndlessFromGroup( CString sGroupName, Difficulty diff );
 	void AutogenNonstopFromGroup( CString sGroupName, Difficulty diff );
 
-	RadarValues GetRadarValues( StepsType st, CourseDifficulty cd ) const;
-
 	// sorting values
-	int		SortOrder_TotalDifficulty;
-	int		SortOrder_Ranking;
+	int		m_SortOrder_TotalDifficulty;
+	int		m_SortOrder_Ranking;
 	bool	IsRanking() const;
 
-	void UpdateCourseStats();
+	void UpdateCourseStats( StepsType st );
 
 	/* Call per-screen, and if song or notes pointers change: */
 	void ClearCache();
@@ -158,10 +139,9 @@ private:
 	CString GetAutogenDifficultySuffix( Difficulty diff ) const;
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const;
 
-	typedef pair<StepsType,CourseDifficulty> InfoParams;
-	typedef vector<Info> InfoData;
-	typedef map<InfoParams, InfoData> InfoCache;
-	mutable InfoCache m_InfoCache;
+	typedef pair<StepsType,CourseDifficulty> TrailParams;
+	typedef map<TrailParams, Trail> TrailCache;
+	mutable TrailCache m_TrailCache;
 };
 
 #endif

@@ -21,6 +21,7 @@
 #include "Course.h"
 #include "Steps.h"
 #include "ThemeManager.h"
+#include "Foreach.h"
 
 #define ONE( arr ) { for( unsigned Z = 0; Z < ARRAYSIZE(arr); ++Z ) arr[Z]=1.0f; }
 
@@ -573,13 +574,11 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 
 bool PlayerOptions::IsEasierForCourse( Course* pCourse, StepsType st, CourseDifficulty cd )
 {
-	vector<Course::Info> ci;
-	pCourse->GetCourseInfo( st, ci, cd );
+	Trail *pTrail = pCourse->GetTrail( st, cd );
 
-	for( unsigned i=0; i<ci.size(); i++ )
+	FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 	{
-		const Course::Info& info = ci[i];
-		if( info.pSong && IsEasierForSongAndSteps(info.pSong, info.pNotes) )
+		if( e->pSong && IsEasierForSongAndSteps(e->pSong, e->pNotes) )
 			return true;
 	}
 	return false;

@@ -363,4 +363,14 @@ CString PeakComboAwardToThemedString( PeakComboAward pma );
 PeakComboAward StringToPeakComboAward( const CString& pma );
 
 
+struct DisplayBpms
+{
+	void Add( float f );
+	float GetMin();
+	float GetMax();
+	bool BpmIsConstant();
+	bool IsMystery();
+	vector<float> vfBpms;
+};
+
 #endif

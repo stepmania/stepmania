@@ -34,7 +34,7 @@ public:
 
 protected:
 	float GetActiveBPM() const;
-	void SetBPMRange( const vector<float> &m_BPMS );
+	void SetBPMRange( const DisplayBpms &bpms );
 
 	BitmapText m_textBPM;
 	AutoActor m_sprLabel;

@@ -34,6 +34,7 @@
 #include "LightsManager.h"
 #include "StageStats.h"
 #include "StepsUtil.h"
+#include "Foreach.h"
 
 
 const int NUM_SCORE_DIGITS	=	9;
@@ -1479,6 +1480,8 @@ void ScreenSelectMusic::AfterMusicChange()
 	case TYPE_COURSE:
 	{
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
+		StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+		Trail *pTrail = pCourse->GetTrail( st, COURSE_DIFFICULTY_REGULAR );
 
 		SampleMusicToPlay = THEME->GetPathS(m_sName,"course music");
 		m_fSampleStartSeconds = 0;
@@ -1486,7 +1489,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		m_textNumSongs.SetText( ssprintf("%d", pCourse->GetEstimatedNumStages()) );
 		float fTotalSeconds;
-		if( pCourse->GetTotalSeconds(fTotalSeconds) )
+		if( pCourse->GetTotalSeconds(st,fTotalSeconds) )
 			m_textTotalTime.SetText( SecondsToMMSSMsMs(fTotalSeconds) );
 		else
 			m_textTotalTime.SetText( "xx:xx.xx" );	// The numbers format doesn't have a '?'.  Is there a better solution?
@@ -1498,18 +1501,15 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_CourseContentsFrame.TweenInAfterChangedCourse();
 		m_DifficultyDisplay.UnsetDifficulties();
 
-		vector<Course::Info> ci;
-		pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
-
-		for( unsigned i = 0; i < ci.size(); ++i )
+		FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 		{
-			if( ci[i].Mystery )
+			if( e->bMystery )
 			{
 				m_Artists.push_back( "???" );
 				m_AltArtists.push_back( "???" );
 			} else {
-				m_Artists.push_back( ci[i].pSong->GetDisplayArtist() );
-				m_AltArtists.push_back( ci[i].pSong->GetTranslitArtist() );
+				m_Artists.push_back( e->pSong->GetDisplayArtist() );
+				m_AltArtists.push_back( e->pSong->GetTranslitArtist() );
 			}
 		}
 
@@ -1556,9 +1556,9 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Artist.SetTips( m_Artists, m_AltArtists );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
-		AfterNotesChange( (PlayerNumber)p );
+		AfterNotesChange( p );
 	}
 
 	/* Make sure we never start the sample when moving fast. */

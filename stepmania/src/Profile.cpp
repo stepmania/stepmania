@@ -307,7 +307,7 @@ int Profile::GetPossibleCourseDancePointsForStepsType( StepsType st ) const
 				if( !pCourse->HasCourseDifficulty(st,cd) )
 					continue;
 
-				const RadarValues& fRadars = pCourse->GetRadarValues(st,cd);
+				const RadarValues& fRadars = pCourse->GetTrail(st,cd)->GetRadarValues();
 				iTotal += ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 			}
 		}
@@ -342,7 +342,7 @@ int Profile::GetActualCourseDancePointsForStepsType( StepsType st ) const
 			FOREACH_ShownCourseDifficulty( cd )
 			{
 				const HighScoreList& hs = h.hs[st][cd];
-				const RadarValues& fRadars = pCourse->GetRadarValues(st,cd);
+				const RadarValues& fRadars = pCourse->GetTrail(st,cd)->GetRadarValues();
 				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
 				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
 			}

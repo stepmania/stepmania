@@ -16,6 +16,8 @@
 #include "ProfileManager.h"
 #include "SongManager.h"
 #include "XmlFile.h"
+#include "GameState.h"
+#include "StyleDef.h"
 
 
 //
@@ -64,8 +66,8 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 
 static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	int iNum1 = pCourse1->SortOrder_TotalDifficulty;
-	int iNum2 = pCourse2->SortOrder_TotalDifficulty;
+	int iNum1 = pCourse1->m_SortOrder_TotalDifficulty;
+	int iNum2 = pCourse2->m_SortOrder_TotalDifficulty;
 
 	if( iNum1 == iNum2 )
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
@@ -93,8 +95,8 @@ static bool CompareRandom( const Course* pCourse1, const Course* pCourse2 )
 
 static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
 {
-	int iNum1 = pCourse1->SortOrder_Ranking;
-	int iNum2 = pCourse2->SortOrder_Ranking;
+	int iNum1 = pCourse1->m_SortOrder_Ranking;
+	int iNum2 = pCourse2->m_SortOrder_Ranking;
 
 	if( iNum1 == iNum2 )
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
@@ -109,14 +111,14 @@ void CourseUtil::SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses 
 void CourseUtil::SortCoursePointerArrayByRanking( vector<Course*> &apCourses )
 {
 	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats();
+		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByRanking );
 }
 
 void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &apCourses )
 {
 	for(unsigned i=0; i<apCourses.size(); i++)
-		apCourses[i]->UpdateCourseStats();
+		apCourses[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTotalDifficulty );
 }
 
@@ -157,7 +159,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &apCours
 	RageTimer foo;
 	course_sort_val.clear();
 	for(unsigned i = 0; i < apCourses.size(); ++i)
-		course_sort_val[apCourses[i]] = apCourses[i]->GetMeter();
+		course_sort_val[apCourses[i]] = apCourses[i]->GetMeter( GAMESTATE->GetCurrentStyleDef()->m_StepsType, COURSE_DIFFICULTY_REGULAR );
 	sort( apCourses.begin(), apCourses.end(), CompareCoursePointersByTitle );
 	stable_sort( apCourses.begin(), apCourses.end(), CompareCoursePointersBySortValueAscending );
 

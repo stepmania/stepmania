@@ -15,6 +15,7 @@
 #include "song.h"
 #include "GameManager.h"
 #include "SongManager.h"
+#include "GameState.h"
 #include "RageException.h"
 #include "RageLog.h"
 #include "MsdFile.h"
@@ -23,7 +24,6 @@
 #include "RageUtil.h"
 #include "TitleSubstitution.h"
 #include "Steps.h"
-#include "GameState.h"
 #include "BannerCache.h"
 #include "RageFile.h"
 #include "arch/arch.h"
@@ -40,7 +40,7 @@ const int MAX_BOTTOM_RANGE = 10;
 
 Course::Course()
 {
-	Unload();
+	Init();
 }
 
 PlayMode Course::GetPlayMode() const
@@ -50,60 +50,11 @@ PlayMode Course::GetPlayMode() const
 	return m_iLives > 0? PLAY_MODE_ONI:PLAY_MODE_NONSTOP;
 }
 
-float Course::GetMeterForPlayer( PlayerNumber pn ) const
-{
-	return GetMeter( GAMESTATE->m_PreferredCourseDifficulty[pn] );
-}
-
-float Course::GetMeter( CourseDifficulty cd ) const
-{
-	/* If we have a meter for this difficulty, use it. */
-	if( m_iMeter[cd] != -1 )
-		return float( m_iMeter[cd] );
-
-	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
-			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? "/":"", sSong.c_str());*/
-	vector<Info> ci;
-	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, cd );
-
-	if( ci.size() == 0 )
-		return 0;
-
-	/* Take the average meter. */
-	float fTotalMeter = 0;
-	for( unsigned c = 0; c < ci.size(); ++c )
-	{
-		if( ci[c].Mystery )
-		{
-			switch( GetDifficulty(ci[c]) )
-			{
-			case DIFFICULTY_INVALID:
-			{
-				int iMeterLow, iMeterHigh;
-				GetMeterRange(ci[c], iMeterLow, iMeterHigh );
-				fTotalMeter += (iMeterLow + iMeterHigh) / 2.0f;
-				break;
-			}
-			/* XXX? */
-			case DIFFICULTY_BEGINNER:	fTotalMeter += 1; break;
-			case DIFFICULTY_EASY:		fTotalMeter += 2; break;
-			case DIFFICULTY_MEDIUM:		fTotalMeter += 5; break;
-			case DIFFICULTY_HARD:		fTotalMeter += 7; break;
-			case DIFFICULTY_CHALLENGE:	fTotalMeter += 9; break;
-			}
-		}
-		else
-			fTotalMeter += ci[c].pNotes->GetMeter();
-	}
-//	LOG->Trace("Course '%s': %f", m_sName.c_str(), fTotalMeter/ci.size() );
-	return fTotalMeter / ci.size();
-}
-
 void Course::LoadFromCRSFile( CString sPath )
 {
 	LOG->Trace( "Course::LoadFromCRSFile( '%s' )", sPath.c_str() );
 
-	Unload();
+	Init();
 
 	m_sPath = sPath;	// save path
 
@@ -152,7 +103,7 @@ void Course::LoadFromCRSFile( CString sPath )
 		else if( 0 == stricmp(sValueName, "METER") )
 		{
 			if( sParams.params.size() == 2 )
-				m_iMeter[COURSE_DIFFICULTY_REGULAR] = atoi( sParams[1] ); /* compat */
+				m_iCustomMeter[COURSE_DIFFICULTY_REGULAR] = atoi( sParams[1] ); /* compat */
 			else if( sParams.params.size() == 3 )
 			{
 				const CourseDifficulty cd = StringToCourseDifficulty( sParams[1] );
@@ -162,7 +113,7 @@ void Course::LoadFromCRSFile( CString sPath )
 								m_sPath.c_str(), sParams[1].c_str() );
 					continue;
 				}
-				m_iMeter[cd] = atoi( sParams[2] );
+				m_iCustomMeter[cd] = atoi( sParams[2] );
 			}
 		}
 
@@ -314,13 +265,13 @@ void Course::LoadFromCRSFile( CString sPath )
 				ignore, ignore, ignore);
 }
 
-void Course::Unload()
+void Course::Init()
 {
 	m_bIsAutogen = false;
 	m_bRepeat = false;
 	m_bRandomize = false;
 	m_iLives = -1;
-	m_iMeter[0] = m_iMeter[1] = -1;
+	ZERO( m_iCustomMeter );
 	m_entries.clear();
 	m_sPath = m_sName = m_sTranslitName = m_sBannerPath = m_sCDTitlePath = "";
 }
@@ -343,9 +294,9 @@ void Course::Save()
 		f.PutLine( ssprintf("#LIVES:%i;", m_iLives) );
 	FOREACH_CourseDifficulty( cd )
 	{
-		if( m_iMeter[cd] == -1 )
+		if( m_iCustomMeter[cd] == -1 )
 			continue;
-		f.PutLine( ssprintf("#METER:%s:%i;", CourseDifficultyToString(cd).c_str(), m_iMeter[cd]) );
+		f.PutLine( ssprintf("#METER:%s:%i;", CourseDifficultyToString(cd).c_str(), m_iCustomMeter[cd]) );
 	}
 
 	for( unsigned i=0; i<m_entries.size(); i++ )
@@ -435,7 +386,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 	m_bRepeat = true;
 	m_bRandomize = true;
 	m_iLives = -1;
-	m_iMeter[0] = m_iMeter[1] = -1;
+	m_iCustomMeter[0] = m_iCustomMeter[1] = -1;
 
 	if( sGroupName == "" )
 	{
@@ -502,58 +453,20 @@ bool Course::HasCourseDifficulty( StepsType nt, CourseDifficulty cd ) const
 {
 	/* Check to see if any songs would change if difficult. */
 
-	/* COURSE_DIFFICULTY_REGULAR is always available (provided IsPlayableIn). */
+	/* COURSE_DIFFICULTY_REGULAR is always available (if IsPlayableIn == true). */
 	if( cd == COURSE_DIFFICULTY_REGULAR )
 		return true;
 
-	vector<Info> Normal, Hard;
-	GetCourseInfo( nt, Normal, COURSE_DIFFICULTY_REGULAR );
-	GetCourseInfo( nt, Hard, cd );
+	Trail *Regular = GetTrail( nt, COURSE_DIFFICULTY_REGULAR ); 
+	Trail *Other = GetTrail( nt, cd ); 
 
-	if( Normal.size() != Hard.size() )
-		return true; /* it changed */
-
-	for( unsigned i=0; i<Normal.size(); i++ )
-	{
-		if( Normal[i].CourseIndex != Hard[i].CourseIndex )
-			return true; /* it changed */
-
-		if( Normal[i].Mystery )
-		{
-			const CourseEntry &e = m_entries[ Normal[i].CourseIndex ];
-			
-			if( e.difficulty != DIFFICULTY_INVALID )
-			{
-				/* Check if the song's difficulty class will actually change. */
-				Difficulty dc = (Difficulty) (e.difficulty + COURSE_DIFFICULTY_CLASS_CHANGE[cd]);
-				dc = clamp( dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
-				if( dc != e.difficulty )
-					return true;
-			}
-
-			/* Meters under MAX_BOTTOM_RANGE..MAX_BOTTOM_RANGE change by getting harder. */
-			if( e.difficulty == DIFFICULTY_INVALID )
-			{
-				/* Check if the meter will actually change. */
-				int iNewLowMeter = clamp( 1, e.low_meter + COURSE_DIFFICULTY_METER_CHANGE[cd], MAX_BOTTOM_RANGE );
-				int iNewHighMeter = clamp( 1, e.high_meter + COURSE_DIFFICULTY_METER_CHANGE[cd], MAX_BOTTOM_RANGE );
-				if( iNewLowMeter != e.low_meter || iNewHighMeter != e.high_meter )
-					return true;
-			}
-			continue;
-		}
-		
-		if( Normal[i].pSong != Hard[i].pSong || Normal[i].pNotes != Hard[i].pNotes )
-			return true;
-	}
-	return false;
+	return Regular != Other;
 }
 
 bool Course::IsPlayableIn( StepsType nt ) const
 {
-	vector<Info> ci;
-	GetCourseInfo( nt, ci );
-	return ci.size() > 0;
+	Trail* pTrail = GetTrail( nt, COURSE_DIFFICULTY_REGULAR );
+	return !pTrail->m_vEntries.empty();
 }
 
 static vector<Song*> GetFilteredBestSongs( StepsType nt )
@@ -597,16 +510,22 @@ static vector<Song*> GetFilteredBestSongs( StepsType nt )
 /* This is called by many simple functions, like Course::GetTotalSeconds, and may
  * be called on all songs to sort.  It can take time to execute, so we cache the
  * results. */
-void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDifficulty cd ) const
+Trail* Course::GetTrail( StepsType nt, CourseDifficulty cd ) const
 {
-	const InfoParams params( nt, cd );
-	InfoCache::const_iterator it = m_InfoCache.find( params );
-	if( it != m_InfoCache.end() )
+	//
+	// Look in the Trail cache
+	//
+	const TrailParams params( nt, cd );
+	TrailCache::iterator it = m_TrailCache.find( params );
+	if( it != m_TrailCache.end() )
 	{
-		ci = it->second;
-		return;
+		return &it->second;
 	}
 
+
+	//
+	// Construct a new Trail, add it to the cache, then return it.
+	//
 	/* Different seed for each course, but the same for the whole round: */
 	RandomGen rnd( GAMESTATE->m_iRoundSeed + GetHashForString(m_sName) );
 
@@ -630,7 +549,8 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 	vector<Song*> AllSongsShuffled;
 
 	int CurSong = 0; /* Current offset into AllSongsShuffled */
-	ci.clear(); 
+	
+	Trail trail;
 
 	for( unsigned i=0; i<entries.size(); i++ )
 	{
@@ -754,20 +674,20 @@ void Course::GetCourseInfo( StepsType nt, vector<Course::Info> &ci, CourseDiffic
 			}
 		}
 
-		Info cinfo;
-		cinfo.pSong = pSong;
-		cinfo.pNotes = pNotes;
-		cinfo.Modifiers = e.modifiers;
-		cinfo.Attacks = e.attacks;
-		cinfo.Random = ( e.type == COURSE_ENTRY_RANDOM || e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP );
-		cinfo.Mystery = e.mystery;
-		cinfo.CourseIndex = i;
-		cinfo.Difficulty = entry_difficulty;
-		ci.push_back( cinfo ); 
+		TrailEntry te;
+		te.pSong = pSong;
+		te.pNotes = pNotes;
+		te.Modifiers = e.modifiers;
+		te.Attacks = e.attacks;
+		te.bMystery = e.mystery;
+		te.iLowMeter = low_meter;
+		te.iHighMeter = high_meter;
+		trail.m_vEntries.push_back( te ); 
 	}
 
 	/* Cache results. */
-	m_InfoCache[params] = ci;
+	m_TrailCache[params] = trail;
+	return &m_TrailCache[params];
 }
 
 bool Course::HasMods() const
@@ -793,11 +713,14 @@ bool Course::AllSongsAreFixed() const
 
 void Course::ClearCache()
 {
-	m_InfoCache.clear();
+	m_TrailCache.clear();
 }
 
 RageColor Course::GetColor() const
 {
+	// FIXME: These colors shouldn't be hard-coded
+	int iMeter = 5;
+	
 	switch (PREFSMAN->m_iCourseSortOrder)
 	{
 	case PrefsManager::COURSE_SORT_SONGS:	
@@ -813,31 +736,31 @@ RageColor Course::GetColor() const
 	case PrefsManager::COURSE_SORT_METER:
 		if ( !IsFixed() )
 			return RageColor(0,0,1,1);  // blue
-		if (GetMeter() > 8.5)
+		if (iMeter > 8.5)
 			return RageColor(1,0,0,1);  // red
-		if (GetMeter() >= 7)
+		if (iMeter >= 7)
 			return RageColor(1,0.5f,0,1); // orange
-		if (GetMeter() >= 5)
+		if (iMeter >= 5)
 			return RageColor(1,1,0,1);  // yellow
 		return RageColor(0,1,0,1); // green
 
 	case PrefsManager::COURSE_SORT_METER_SUM:
 		if ( !IsFixed() )
 			return RageColor(0,0,1,1);  // blue
-		if (SortOrder_TotalDifficulty >= 40)
+		if (m_SortOrder_TotalDifficulty >= 40)
 			return RageColor(1,0,0,1);  // red
-		if (SortOrder_TotalDifficulty >= 30)
+		if (m_SortOrder_TotalDifficulty >= 30)
 			return RageColor(1,0.5f,0,1); // orange
-		if (SortOrder_TotalDifficulty >= 20)
+		if (m_SortOrder_TotalDifficulty >= 20)
 			return RageColor(1,1,0,1);  // yellow
 		return RageColor(0,1,0,1); // green
 
 	case PrefsManager::COURSE_SORT_RANK:
-		if (SortOrder_Ranking == 3)
+		if (m_SortOrder_Ranking == 3)
 			return RageColor(0,0,1,1);  // blue
-		if (SortOrder_Ranking == 2)
+		if (m_SortOrder_Ranking == 2)
 			return RageColor(1,0.5f,0,1); // orange
-		if (SortOrder_Ranking == 1)
+		if (m_SortOrder_Ranking == 1)
 			return RageColor(0,1,0,1); // green
 		return RageColor(1,1,0,1); // yellow, never should get here
 	default:
@@ -859,14 +782,6 @@ bool Course::IsFixed() const
 	return true;
 }
 
-Difficulty Course::GetDifficulty( const Info &stage ) const
-{
-	Difficulty dc = m_entries[stage.CourseIndex].difficulty;
-	Difficulty new_dc = Difficulty( dc + COURSE_DIFFICULTY_CLASS_CHANGE[stage.Difficulty] );
-	new_dc = clamp( new_dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
-	return new_dc;
-}
-
 void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const
 {
 	iMeterLowOut = m_entries[stage].low_meter;
@@ -878,23 +793,14 @@ void Course::GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, Co
 }
 
 
-void Course::GetMeterRange( const Info &stage, int& iMeterLowOut, int& iMeterHighOut ) const
+bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 {
-	GetMeterRange( stage.CourseIndex, iMeterLowOut, iMeterHighOut, stage.Difficulty );
-}
+	if( !IsFixed() )
+		return false;
 
-bool Course::GetTotalSeconds( float& fSecondsOut ) const
-{
-	vector<Info> ci;
-	GetCourseInfo( STEPS_TYPE_DANCE_SINGLE, ci );
+	Trail* pTrail = GetTrail( st, COURSE_DIFFICULTY_REGULAR );
 
-	fSecondsOut = 0;
-	for( unsigned i=0; i<ci.size(); i++ )
-	{
-		if( ci[i].Mystery )
-			return false;
-		fSecondsOut += ci[i].pSong->m_fMusicLengthSeconds;
-	}
+	fSecondsOut = pTrail->GetLengthSeconds();
 	return true;
 }
 
@@ -918,9 +824,9 @@ bool Course::HasBanner() const
 	return m_sBannerPath != ""  &&  IsAFile(m_sBannerPath);
 }
 
-void Course::UpdateCourseStats()
+void Course::UpdateCourseStats( StepsType st )
 {
-	SortOrder_TotalDifficulty = 0;
+	m_SortOrder_TotalDifficulty = 0;
 
 	unsigned i;
 
@@ -930,17 +836,15 @@ void Course::UpdateCourseStats()
 		if ( m_entries[i].type == COURSE_ENTRY_FIXED )
 			continue;
 
-		if ( SortOrder_Ranking == 2 )
-			SortOrder_Ranking = 3;
-		SortOrder_TotalDifficulty = 999999;     // large number
+		if ( m_SortOrder_Ranking == 2 )
+			m_SortOrder_Ranking = 3;
+		m_SortOrder_TotalDifficulty = 999999;     // large number
 		return;
 	}
 
-	vector<Info> ci;
-	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
+	Trail* pTrail = GetTrail( st, COURSE_DIFFICULTY_REGULAR );
 
-	for( i = 0; i < ci.size(); i++ )
-		SortOrder_TotalDifficulty += ci[i].pNotes->GetMeter();
+	m_SortOrder_TotalDifficulty += pTrail->GetTotalMeter();
 
 	// OPTIMIZATION: Ranking info isn't dependant on style, so
 	// call it sparingly.  Its handled on startup and when
@@ -948,23 +852,7 @@ void Course::UpdateCourseStats()
 	
 	LOG->Trace("%s: Total feet: %d",
 		this->m_sName.c_str(),
-		SortOrder_TotalDifficulty );
-}
-
-void Course::Info::GetAttackArray( AttackArray &out ) const
-{
-	if( !Modifiers.empty() )
-	{
-		Attack a;
-		a.fStartSecond = 0;
-		a.fSecsRemaining = 10000; /* whole song */
-		a.level = ATTACK_LEVEL_1;
-		a.sModifier = Modifiers;
-
-		out.push_back( a );
-	}
-
-	out.insert( out.end(), Attacks.begin(), Attacks.end() );
+		m_SortOrder_TotalDifficulty );
 }
 
 bool Course::IsRanking() const
@@ -980,20 +868,11 @@ bool Course::IsRanking() const
 	return false;
 }
 
-
-RadarValues Course::GetRadarValues( StepsType st, CourseDifficulty cd ) const
+float Course::GetMeter( StepsType nt, CourseDifficulty cd ) const
 {
-	RadarValues rv;
+	/* If we have a manually-entered meter for this difficulty, use it. */
+	if( m_iCustomMeter[cd] != -1 )
+		return m_iCustomMeter[cd];
 
-	vector<Course::Info> ci;
-	this->GetCourseInfo( st, ci, cd );
-	for( unsigned i = 0; i < ci.size(); ++i )
-	{
-		const Steps *pNotes = ci[i].pNotes;
-		ASSERT( pNotes );
-		rv += pNotes->GetRadarValues();
-	}
-
-	return rv;
+	return roundf( GetTrail(nt,cd)->GetAverageMeter() );
 }
-
