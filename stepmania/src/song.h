@@ -114,6 +114,8 @@ public:
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;
 	float	m_fLastBeat;
+	float   GetFirstBeat() const;
+	float   GetLastBeat() const;
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 
@@ -148,7 +150,7 @@ public:
 	{
 		fMaxBPM = 0;
 		fMinBPM = 100000;	// inf
-		for( int i=0; i<m_BPMSegments.GetSize(); i++ ) 
+		for( unsigned i=0; i<m_BPMSegments.size(); i++ ) 
 		{
 			const BPMSegment &seg = m_BPMSegments[i];
 			fMaxBPM = max( seg.m_fBPM, fMaxBPM );
@@ -157,21 +159,21 @@ public:
 	};
 	float GetBPMAtBeat( float fBeat ) const
 	{
-		for( int i=0; i<m_BPMSegments.GetSize()-1; i++ )
+		for( unsigned i=0; i<m_BPMSegments.size()-1; i++ )
 			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BPMSegments[i].m_fBPM;
 	};
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat )
 	{
-		for( int i=0; i<m_BPMSegments.GetSize()-1; i++ )
+		for( unsigned i=0; i<m_BPMSegments.size()-1; i++ )
 			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BPMSegments[i];
 	};
 	CString GetBackgroundAtBeat( float fBeat )
 	{
-		for( int i=0; i<m_BackgroundChanges.GetSize()-1; i++ )
+		for( unsigned i=0; i<m_BackgroundChanges.size()-1; i++ )
 			if( m_BackgroundChanges[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BackgroundChanges[i].m_sBGName;

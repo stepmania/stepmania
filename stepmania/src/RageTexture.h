@@ -85,7 +85,7 @@ public:
 	int GetImageFrameHeight() const		{return GetImageHeight()	/	GetFramesHigh();}
 	
 	FRECT* GetTextureCoordRect( int uFrameNo ) {return &m_TextureCoordRects[uFrameNo];}
-	int   GetNumFrames() const {return m_TextureCoordRects.GetSize();}
+	int   GetNumFrames() const {return m_TextureCoordRects.size();}
 	CString GetFilePath() const {return m_sFilePath;}
 
 	int					m_iRefCount;
