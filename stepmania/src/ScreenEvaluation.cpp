@@ -261,28 +261,31 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		if( !GAMESTATE->IsPlayerEnabled(p)  ||  GAMESTATE->m_fSecondsBeforeFail[p] != -1 )
 		{
 			grade[p] = GRADE_E;
+			continue;
 		}
-		else
-		{
-//Based on the percentage of your total "Dance Points" to the maximum possible number, the following rank is assigned: 
-//
-//100% - AAA
-//93 % - AA
-//80 % - A
-//65 % - B
-//45 % - C
-//Less - D
-//Fail - E
-			float fPercentDancePoints = iActualDancePoints[p] / (float)iPossibleDancePoints[p];
-			fPercentDancePoints = max( fPercentDancePoints, 0 );
+		/* Based on the percentage of your total "Dance Points" to the maximum
+		 * possible number, the following rank is assigned: 
+		 *
+		 * 100% - AAA
+		 *  93% - AA
+		 *  80% - A
+		 *  65% - B
+		 *  45% - C
+		 * Less - D
+		 * Fail - E
+		 */
+		float fPercentDancePoints = iActualDancePoints[p] / (float)iPossibleDancePoints[p];
+		fPercentDancePoints = max( fPercentDancePoints, 0 );
+		LOG->Trace( "iActualDancePoints: %i", iActualDancePoints[p] );
+		LOG->Trace( "iPossibleDancePoints: %i", iPossibleDancePoints[p] );
+		LOG->Trace( "fPercentDancePoints: %f", fPercentDancePoints  );
 
-			if     ( fPercentDancePoints >= 1.00 )	grade[p] = GRADE_AAA;
-			else if( fPercentDancePoints >= 0.93 )	grade[p] = GRADE_AA;
-			else if( fPercentDancePoints >= 0.80 )	grade[p] = GRADE_A;
-			else if( fPercentDancePoints >= 0.65 )	grade[p] = GRADE_B;
-			else if( fPercentDancePoints >= 0.45 )	grade[p] = GRADE_C;
-			else									grade[p] = GRADE_D;
-		}
+		if     ( fPercentDancePoints >= 1.00 )	grade[p] = GRADE_AAA;
+		else if( fPercentDancePoints >= 0.93 )	grade[p] = GRADE_AA;
+		else if( fPercentDancePoints >= 0.80 )	grade[p] = GRADE_A;
+		else if( fPercentDancePoints >= 0.65 )	grade[p] = GRADE_B;
+		else if( fPercentDancePoints >= 0.45 )	grade[p] = GRADE_C;
+		else									grade[p] = GRADE_D;
 	}
 
 	Grade max_grade = GRADE_NO_DATA;
@@ -778,7 +781,7 @@ void ScreenEvaluation::DrawPrimitives()
 
 void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	LOG->Trace( "ScreenEvaluation::Input()" );
+//	LOG->Trace( "ScreenEvaluation::Input()" );
 
 	if( m_Menu.IsClosing() )
 		return;
