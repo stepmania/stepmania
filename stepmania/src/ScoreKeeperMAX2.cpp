@@ -183,7 +183,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, c
 
 	ASSERT( m_iPointBonus >= 0 );
 
-	m_iTapStepsHit = 0;
+	m_iTapNotesHit = 0;
 }
 
 static int GetScore(int p, int B, int S, int n)
@@ -267,7 +267,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	default:			p = 0;		break;
 	}
 
-	m_iTapStepsHit++;
+	m_iTapNotesHit++;
 
 	const int N = m_iNumTapsAndHolds;
 	const int sum = (N * (N + 1)) / 2;
@@ -286,15 +286,15 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 	}
 	else
 	{
-		iScore += GetScore(p, B, sum, m_iTapStepsHit);
+		iScore += GetScore(p, B, sum, m_iTapNotesHit);
 		const int &iCurrentCombo = g_CurStageStats.iCurCombo[m_PlayerNumber];
 		g_CurStageStats.iBonus[m_PlayerNumber] += m_ComboBonusFactor[score] * iCurrentCombo;
 	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
-	m_iPointBonus -= GetScore(10, B, sum, m_iTapStepsHit);
+	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);
 
-	if ( m_iTapStepsHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
+	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
 		if (!g_CurStageStats.bFailedEarlier[m_PlayerNumber])
 			iScore += m_iPointBonus;

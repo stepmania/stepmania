@@ -148,6 +148,8 @@ void GameState::Reset()
 	FOREACH_PlayerNumber( p )
 		m_pCurNotes[p] = NULL;
 	m_pCurCourse = NULL;
+	FOREACH_PlayerNumber( p )
+		m_pCurTrail[p] = NULL;
 
 	SAFE_DELETE( m_pPosition );
 	m_pPosition = new NoteFieldPositioning("Positioning.ini");

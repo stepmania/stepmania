@@ -142,6 +142,7 @@ public:
 	Song*		m_pCurSong;
 	Steps*		m_pCurNotes[NUM_PLAYERS];
 	Course*		m_pCurCourse;
+	Course*		m_pCurTrail[NUM_PLAYERS];
 
 
 	//

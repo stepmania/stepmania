@@ -321,7 +321,7 @@ float NoteDataUtil::GetStreamRadarValue( const NoteData &in, float fSongSeconds 
 	if( !fSongSeconds )
 		return 0.0f;
 	// density of steps
-	int iNumNotes = in.GetNumTapSteps() + in.GetNumHoldNotes();
+	int iNumNotes = in.GetNumTapNotes() + in.GetNumHoldNotes();
 	float fNotesPerSecond = iNumNotes/fSongSeconds;
 	float fReturn = fNotesPerSecond / 7;
 	return min( fReturn, 1.0f );
@@ -342,7 +342,7 @@ float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds
 
 	for( int i=0; i<=int(fLastBeat); i+=BEAT_WINDOW )
 	{
-		int iNumNotesThisWindow = in.GetNumTapSteps((float)i,(float)i+BEAT_WINDOW) + in.GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
+		int iNumNotesThisWindow = in.GetNumTapNotes((float)i,(float)i+BEAT_WINDOW) + in.GetNumHoldNotes((float)i,(float)i+BEAT_WINDOW);
 		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
 		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}

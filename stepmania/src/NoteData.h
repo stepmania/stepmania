@@ -23,15 +23,15 @@
 class NoteData
 {
 	/* Keep this aligned, so that they all have the same size. */
-	vector<TapNote> m_TapSteps[MAX_NOTE_TRACKS];
+	vector<TapNote> m_TapNotes[MAX_NOTE_TRACKS];
 	int m_iNumTracks;
 
 	vector<HoldNote>	m_HoldNotes;
 
 	map<TapNote,Attack>	m_AttackMap;
 
-	/* Pad m_TapSteps so it includes the row "rows". */
-	void PadTapSteps(int rows);
+	/* Pad m_TapNotes so it includes the row "rows". */
+	void PadTapNotes(int rows);
 
 	void LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks );
 
@@ -56,8 +56,8 @@ public:
 	 * range; pretend the song goes on with TAP_EMPTYs indefinitely. */
 	inline TapNote GetTapNote(unsigned track, int row) const
 	{
-		if(row < 0 || row >= (int) m_TapSteps[track].size()) return TapNote(TAP_EMPTY);
-		return m_TapSteps[track][row];
+		if(row < 0 || row >= (int) m_TapNotes[track].size()) return TapNote(TAP_EMPTY);
+		return m_TapNotes[track][row];
 	}
 	void ReserveRows( int row );
 
@@ -65,7 +65,7 @@ public:
 	 * which is much faster.  Be sure that 0 <= row < GetMaxRow(). */
 	inline TapNote GetTapNoteX(unsigned track, int row) const
 	{
-		return m_TapSteps[track][row];
+		return m_TapNotes[track][row];
 	}
 	void MoveTapNoteTrack(int dest, int src);
 	void SetTapNote(int track, int row, TapNote t);
@@ -116,13 +116,13 @@ public:
 	/* Return the highest beat/row that might contain notes.  (Use GetLastBeat if you need
 	 * accuracy.) */
 	float GetMaxBeat() const { return NoteRowToBeat(GetMaxRow()); }
-	int GetMaxRow() const { return int(m_TapSteps[0].size()); }
+	int GetMaxRow() const { return int(m_TapNotes[0].size()); }
 
 	float GetFirstBeat() const;	// return the beat number of the first note
 	int GetFirstRow() const;
 	float GetLastBeat() const;	// return the beat number of the last note
 	int GetLastRow() const;
-	int GetNumTapSteps( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
+	int GetNumTapNotes( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumMines( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumHands( const float fStartBeat = 0, const float fEndBeat = -1 ) const;
 	int GetNumRowsWithTap( const float fStartBeat = 0, const float fEndBeat = -1 ) const;

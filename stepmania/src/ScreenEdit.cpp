@@ -554,7 +554,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 void ScreenEdit::UpdateTextInfo()
 {
-	int iNumTapSteps = m_NoteFieldEdit.GetNumTapSteps();
+	int iNumTapNotes = m_NoteFieldEdit.GetNumTapNotes();
 	int iNumHoldNotes = m_NoteFieldEdit.GetNumHoldNotes();
 
 	CString sNoteType;
@@ -588,7 +588,7 @@ void ScreenEdit::UpdateTextInfo()
 	sText += ssprintf( "Description:\n     %s\n",			GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->GetDescription().c_str() : "no description" );
 	sText += ssprintf( "Main title:\n     %s\n",			m_pSong->m_sMainTitle.c_str() );
 	sText += ssprintf( "Sub title:\n     %s\n",				m_pSong->m_sSubTitle.c_str() );
-	sText += ssprintf( "Tap Steps:\n     %d\n",				iNumTapSteps );
+	sText += ssprintf( "Tap Steps:\n     %d\n",				iNumTapNotes );
 	sText += ssprintf( "Hold Steps:\n     %d\n",			iNumHoldNotes );
 	sText += ssprintf( "Beat 0 Offset:\n     %.3f secs\n",	m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
 	sText += ssprintf( "Preview Start:\n     %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
@@ -1561,7 +1561,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 				g_EditNotesStatistics.rows[meter].defaultChoice = pSteps->GetMeter()-1;
 				g_EditNotesStatistics.rows[predict_meter].choices.resize(1);g_EditNotesStatistics.rows[predict_meter].choices[0] = ssprintf("%f",pSteps->PredictMeter());
 				g_EditNotesStatistics.rows[description].choices.resize(1);	g_EditNotesStatistics.rows[description].choices[0] = pSteps->GetDescription();
-				g_EditNotesStatistics.rows[tap_notes].choices.resize(1);	g_EditNotesStatistics.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumTapSteps());
+				g_EditNotesStatistics.rows[tap_notes].choices.resize(1);	g_EditNotesStatistics.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumTapNotes());
 				g_EditNotesStatistics.rows[hold_notes].choices.resize(1);	g_EditNotesStatistics.rows[hold_notes].choices[0] = ssprintf("%d", m_NoteFieldEdit.GetNumHoldNotes());
 				g_EditNotesStatistics.rows[stream].choices.resize(1);		g_EditNotesStatistics.rows[stream].choices[0] = ssprintf("%f", NoteDataUtil::GetStreamRadarValue(m_NoteFieldEdit,fMusicSeconds));
 				g_EditNotesStatistics.rows[voltage].choices.resize(1);		g_EditNotesStatistics.rows[voltage].choices[0] = ssprintf("%f", NoteDataUtil::GetVoltageRadarValue(m_NoteFieldEdit,fMusicSeconds));
