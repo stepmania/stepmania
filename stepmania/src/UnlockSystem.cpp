@@ -56,6 +56,7 @@ void UnlockSystem::RouletteUnlock( const Song *song )
 	if (p->m_iRouletteSeed == 0)
 		return;  // already unlocked
 
+	ASSERT( p->m_iRouletteSeed < (int) RouletteSeeds.size() );
 	RouletteSeeds[p->m_iRouletteSeed] = '1';
 	WriteValues("Data" SLASH "MemCard.ini");
 }
@@ -364,25 +365,15 @@ void UnlockSystem::UpdateSongs()
 // This is mainly to streamline the INI for unnecessary values.
 void UnlockSystem::InitRouletteSeeds(int MaxRouletteSlot)
 {
-	CString seeds = RouletteSeeds;
 	MaxRouletteSlot++; // we actually need one more
 
-	// have exactly the needed number of slots
-	if (seeds.GetLength() == MaxRouletteSlot) return;
+	// Truncate the value if we have too many seeds:
+	if ( (int)RouletteSeeds.size() > MaxRouletteSlot )
+		RouletteSeeds = RouletteSeeds.Left( MaxRouletteSlot );
 
-	if (seeds.GetLength() > MaxRouletteSlot)  // truncate value
-	{
-		// too many seeds
-		seeds = seeds.Left(MaxRouletteSlot);
-		RouletteSeeds = seeds;
-		return;
-	}
-
-	// if we get here, the value isn't long enough
-	while (seeds.GetLength() != MaxRouletteSlot)
-		seeds += "0";
-
-	RouletteSeeds = seeds;
+	// Lengthen the value if we have too few seeds:
+	while ( (int)RouletteSeeds.size() < MaxRouletteSlot )
+		RouletteSeeds += "0";
 }
 
 bool UnlockSystem::ReadValues( CString filename)
