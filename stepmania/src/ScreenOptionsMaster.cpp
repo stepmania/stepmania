@@ -34,11 +34,11 @@
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 
 /* Add the list named "ListName" to the given row/handler. */
-void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, CString ListName, CString &TitleOut )
+void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, CString ListName )
 {
 	hand.type = ROW_LIST;
 
-	TitleOut = ListName;
+	row.name = ListName;
 	if( !ListName.CompareNoCase("noteskins") )
 	{
 		hand.Default.Init(); /* none */
@@ -100,6 +100,7 @@ void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, C
 void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_STEP;
+	row.name = "Steps";
 	row.bOneChoiceForAllPlayers = false;
 
 	// fill in difficulty names
@@ -152,7 +153,7 @@ void ScreenOptionsMaster::SetStep( OptionRowData &row, OptionRowHandler &hand )
 
 
 /* Add the given configuration value to the given row/handler. */
-void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut )
+void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, CString param )
 {
 	/* Configuration values are never per-player. */
 	row.bOneChoiceForAllPlayers = true;
@@ -164,7 +165,7 @@ void ScreenOptionsMaster::SetConf( OptionRowData &row, OptionRowHandler &hand, C
 
 	hand.opt->MakeOptionsList( row.choices );
 
-	TitleOut = hand.opt->name;
+	row.name = hand.opt->name;
 }
 
 /* Add a list of available characters to the given row/handler. */
@@ -172,6 +173,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 {
 	hand.type = ROW_CHARACTER;
 	row.bOneChoiceForAllPlayers = false;
+	row.name = "Characters";
 	hand.Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
 
 	{
@@ -265,23 +267,13 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			const CString &name = command.GetName();
 
 			if( !name.CompareNoCase("list") )
-			{
-				SetList( row, hand, sArg(1), row.name );
-			}
+				SetList( row, hand, sArg(1) );
 			else if( !name.CompareNoCase("steps") )
-			{
 				SetStep( row, hand );
-				row.name = "Steps";
-			}
 			else if( !name.CompareNoCase("conf") )
-			{
-				SetConf( row, hand, sArg(1), row.name );
-			}
+				SetConf( row, hand, sArg(1) );
 			else if( !name.CompareNoCase("characters") )
-			{
 				SetCharacter( row, hand );
-				row.name = "Characters";
-			}
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
 

@@ -44,9 +44,9 @@ private:
 
 	int ExportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, const vector<bool> &vbSelected );
 	void ImportOption( const OptionRowData &row, const OptionRowHandler &hand, PlayerNumber pn, int rowno, vector<bool> &vbSelectedOut );
-	void SetList( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut );
+	void SetList( OptionRowData &row, OptionRowHandler &hand, CString param );
 	void SetStep( OptionRowData &row, OptionRowHandler &hand );
-	void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param, CString &TitleOut );
+	void SetConf( OptionRowData &row, OptionRowHandler &hand, CString param );
 	void SetCharacter( OptionRowData &row, OptionRowHandler &hand );
 
 protected:
