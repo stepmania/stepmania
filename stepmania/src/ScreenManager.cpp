@@ -235,8 +235,13 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 
 	/* Give a null update to the new screen.  This bumps everything into its
 	 * initial tween state, if any, so we don't show stuff at an incorrect
-	 * position for a frame. */
-	ret->Update(0);
+	 * position for a frame. 
+	 *
+	 * XXX: Can't do this here, since this update might cause another screen
+	 * to be loaded; that'll land back here, and the screen list gets messed
+	 * up.  We need to make sure Update(0) is called some time before the
+	 * first Draw(). */
+//	ret->Update(0);
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
 	 * from displaying an unnaturally low FPS value, and the next FPS value we
