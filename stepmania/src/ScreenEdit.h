@@ -3,7 +3,7 @@
 #ifndef SCREEN_EDIT_H
 #define SCREEN_EDIT_H
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "Transition.h"
 #include "BitmapText.h"
@@ -122,7 +122,7 @@ struct MapEditToDI
 	}
 };
 
-class ScreenEdit : public Screen
+class ScreenEdit : public ScreenWithMenuElements
 {
 public:
 	ScreenEdit( CString sName );
@@ -160,7 +160,6 @@ protected:
 	NoteData		m_NoteDataEdit;
 	SnapDisplay		m_SnapDisplay;
 
-	AutoActor		m_sprOverlay;
 	BitmapText		m_textHelp;
 	BitmapText		m_textInfo;		// status information that changes
 
@@ -175,9 +174,6 @@ protected:
 	RageSound			m_soundChangeLine;
 	RageSound			m_soundChangeSnap;
 	RageSound			m_soundMarker;
-
-	Transition		m_In;
-	Transition		m_Out;
 
 	// used for reverting
 	void CopyToLastSave();
@@ -201,7 +197,6 @@ protected:
 
 // for MODE_RECORD and MODE_PLAY
 
-	Quad			m_rectRecordBack;
 	RageSound		m_soundMusic;
 
 	RageSound		m_soundAssistTick;

@@ -490,7 +490,7 @@ int g_iLastInsertAttackTrack = -1;
 float g_fLastInsertAttackDurationSeconds = -1;
 
 REGISTER_SCREEN_CLASS( ScreenEdit );
-ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
+ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
 
@@ -502,7 +502,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 void ScreenEdit::Init()
 {
-	Screen::Init();
+	ScreenWithMenuElements::Init();
 
 	InitEditMappings();
 
@@ -558,9 +558,6 @@ void ScreenEdit::Init()
 	m_NoteFieldEdit.Init( GAMESTATE->m_pPlayerState[PLAYER_1], PLAYER_HEIGHT*2 );
 	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 800 );
 
-	m_rectRecordBack.StretchTo( RectF(SCREEN_LEFT, SCREEN_TOP, SCREEN_RIGHT, SCREEN_BOTTOM) );
-	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
-
 	m_NoteFieldRecord.SetXY( EDIT_X, PLAYER_Y );
 	m_NoteDataRecord.CopyAll( noteData );
 	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 350 );
@@ -580,14 +577,6 @@ void ScreenEdit::Init()
 	m_Player.Load( noteData );
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
-
-	m_In.Load( THEME->GetPathB("ScreenEdit","in") );
-	m_In.StartTransitioning();
-
-	m_Out.Load( THEME->GetPathB("ScreenEdit","out") );
-
-	m_sprOverlay.LoadAndSetName( m_sName, "Overlay" );
-	SET_XY_AND_ON_COMMAND( m_sprOverlay );
 
 	m_textHelp.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textHelp.SetXY( HELP_TEXT_X, HELP_TEXT_Y );
@@ -737,13 +726,9 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	m_SnapDisplay.Update( fDeltaTime );
 	m_NoteFieldEdit.Update( fDeltaTime );
-	m_In.Update( fDeltaTime );
-	m_Out.Update( fDeltaTime );
-	m_sprOverlay->Update( fDeltaTime );
 	m_textHelp.Update( fDeltaTime );
 	m_textInfo.Update( fDeltaTime );
 
-	m_rectRecordBack.Update( fDeltaTime );
 
 	if( m_EditMode == MODE_RECORDING )
 		m_NoteFieldRecord.Update( fDeltaTime );
@@ -754,7 +739,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	}
 
 	//LOG->Trace( "ScreenEdit::Update(%f)", fDeltaTime );
-	Screen::Update( fDeltaTime );
+	ScreenWithMenuElements::Update( fDeltaTime );
 
 
 	// Update trailing beat
@@ -800,8 +785,6 @@ void ScreenEdit::UpdateTextInfo()
 
 void ScreenEdit::DrawPrimitives()
 {
-//	m_rectRecordBack.Draw();
-
 	switch( m_EditMode )
 	{
 	case MODE_EDITING:
@@ -842,10 +825,7 @@ void ScreenEdit::DrawPrimitives()
 		ASSERT(0);
 	}
 
-	m_In.Draw();
-	m_Out.Draw();
-
-	Screen::DrawPrimitives();
+	ScreenWithMenuElements::DrawPrimitives();
 }
 
 void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -1477,10 +1457,7 @@ void ScreenEdit::TransitionToEdit()
 	GAMESTATE->m_bPastHereWeGo = false;
 	m_soundMusic.StopPlaying();
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
-	m_rectRecordBack.StopTweening();
-	m_rectRecordBack.BeginTweening( 0.5f );
-	m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0) );
-
+	
 	/* Make sure we're snapped. */
 	GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
@@ -2191,9 +2168,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_Player.Load( m_NoteDataEdit );
 				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 
-				m_rectRecordBack.StopTweening();
-				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 			
@@ -2238,10 +2212,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 				m_NoteDataRecord.CopyAll( m_NoteDataEdit );
 				m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
-
-				m_rectRecordBack.StopTweening();
-				m_rectRecordBack.BeginTweening( 0.5f );
-				m_rectRecordBack.SetDiffuse( RageColor(0,0,0,0.8f) );
 
 				GAMESTATE->m_fSongBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker - ROWS_PER_MEASURE );	// give a 1 measure lead-in
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
