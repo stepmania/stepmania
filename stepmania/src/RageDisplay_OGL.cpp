@@ -392,9 +392,9 @@ static void SetupVertices( const RageVertex v[], int iNumVerts )
 		Color[i*4+3]   = v[i].c.a;
 		Texture[i*2+0] = v[i].t[0];
 		Texture[i*2+1] = v[i].t[1];
-		Normal[i*2+0] = v[i].n[0];
-		Normal[i*2+1] = v[i].n[1];
-		Normal[i*2+2] = v[i].n[2];
+		Normal[i*3+0] = v[i].n[0];
+		Normal[i*3+1] = v[i].n[1];
+		Normal[i*3+2] = v[i].n[2];
 	}
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, Vertex);
