@@ -34,6 +34,7 @@ public:
 	ScoreKeeperMAX2( 
 		PlayerState* pPlayerState,
 		PlayerStageStats* pPlayerStageStats );
+	virtual ~ScoreKeeperMAX2() { }
 
 	void Load(
 		const vector<Song*>& apSongs,

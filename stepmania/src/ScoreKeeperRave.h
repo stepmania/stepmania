@@ -10,8 +10,8 @@
 class ScoreKeeperRave : public ScoreKeeper
 {
 public:
-	// Overrides
 	ScoreKeeperRave( PlayerState* pPlayerState, PlayerStageStats* pPlayerStageStats );
+	virtual ~ScoreKeeperRave() { }
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );	// before a song plays (called multiple times if course)
 	void HandleTapScore( TapNoteScore score );
 	void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
