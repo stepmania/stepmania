@@ -139,7 +139,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		if( !bShowCreditsMessage )
 		{
 			MemoryCardState mcs = MEMCARDMAN->GetCardState( p );
-			Profile* pProfile = PROFILEMAN->GetProfile( p );
+			const Profile* pProfile = PROFILEMAN->GetProfile( p );
 			switch( mcs )
 			{
 			case MEMORY_CARD_STATE_NO_CARD:
