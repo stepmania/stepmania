@@ -553,7 +553,7 @@ public:
 		if( PROFILEMAN )
 		{
 			lua_pushstring(L, "PROFILEMAN");
-			THEME->PushSelf( LUA->L );
+			PROFILEMAN->PushSelf( LUA->L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}
