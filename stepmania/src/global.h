@@ -65,20 +65,6 @@ namespace Checkpoints
 #define CHECKPOINT (Checkpoints::SetCheckpoint(__FILE__, __LINE__, NULL))
 #define CHECKPOINT_M(m) (Checkpoints::SetCheckpoint(__FILE__, __LINE__, m))
 
-/* Assertion that sets an optional message and brings up the crash handler, so
- * we get a backtrace.  This should probably be used instead of throwing an
- * exception in most cases we expect never to happen (but not in cases that
- * we do expect, such as DSound init failure.) */
-#define RAGE_ASSERT_M(COND, MESSAGE) { if(!(COND)) { CHECKPOINT_M(MESSAGE); *(char*)0=0; } }
-#define RAGE_ASSERT(COND) RAGE_ASSERT_M((COND), "Assertion '" #COND "' failed")
-#define ASSERT RAGE_ASSERT
-
-#ifdef DEBUG
-#define DEBUG_ASSERT(x)	ASSERT(x)
-#else
-#define DEBUG_ASSERT(x)
-#endif
-
 
 /* Define a macro to tell the compiler that a function doesn't return.  This just
  * improves compiler warnings.  This should be placed near the beginning of the
@@ -90,6 +76,25 @@ namespace Checkpoints
 #define NORETURN __attribute__ ((__noreturn__))
 #else
 #define NORETURN
+#endif
+
+static inline void NORETURN crash() { *(char*)0=0; }
+
+/* Assertion that sets an optional message and brings up the crash handler, so
+ * we get a backtrace.  This should probably be used instead of throwing an
+ * exception in most cases we expect never to happen (but not in cases that
+ * we do expect, such as DSound init failure.) */
+#define FAIL_M(MESSAGE) { CHECKPOINT_M(MESSAGE); crash(); }
+#define ASSERT_M(COND, MESSAGE) { if(!(COND)) { FAIL_M(MESSAGE); } }
+#define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
+
+#define RAGE_ASSERT ASSERT /* compat */
+#define RAGE_ASSERT_M ASSERT_M /* compat */
+
+#ifdef DEBUG
+#define DEBUG_ASSERT(x)	ASSERT(x)
+#else
+#define DEBUG_ASSERT(x)
 #endif
 
 /* Define a macro to tell the compiler that a function has printf() semantics, to
