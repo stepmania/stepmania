@@ -349,6 +349,19 @@ void ScreenOptions::RefreshIcons()
 			OptionIcon &icon = m_OptionIcons[p][i];
 
 			int iSelection = m_iSelectedOption[p][i];
+			if( iSelection >= (int)m_OptionRow[i].choices.size() )
+			{
+				/* Invalid selection.  Send debug output, to aid debugging. */
+				CString error = ssprintf("Option row with name \"%s\" selects item %i, but there are only %i items:\n",
+					m_OptionRow[i].name.c_str(),
+					iSelection, m_OptionRow[i].choices.size() );
+
+				for( unsigned j = 0; j < m_OptionRow[i].choices.size(); ++j )
+					error += ssprintf("    %s\n", m_OptionRow[i].choices[j].c_str());
+
+				RageException::Throw(error);
+			}
+
 			CString sSelection = m_OptionRow[i].choices[iSelection];
 			if( sSelection == "ON" )
 				sSelection = m_OptionRow[i].name;
