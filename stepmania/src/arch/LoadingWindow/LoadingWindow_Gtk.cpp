@@ -1,4 +1,6 @@
 #include "global.h"
+#include "LoadingWindow_Gtk.h"
+
 #include "StepMania.h"
 #include <gtk/gtk.h>
 #include "loading.xpm"
@@ -6,7 +8,7 @@
 static GtkWidget *label;
 static GtkWidget *window;
 
-void CreateGtkLoadingWindow()
+LoadingWindow_Gtk::LoadingWindow_Gtk()
 {
 	GdkPixmap *loadmap;
 	GtkWidget *vbox;
@@ -30,13 +32,13 @@ void CreateGtkLoadingWindow()
 	gtk_main_iteration_do(FALSE);
 }
 
-void DestroyGtkLoadingWindow()
+LoadingWindow_Gtk::~LoadingWindow_Gtk()
 {
 }
 
-void SetGtkLoadingWindowText(const char *s)
+void LoadingWindow_Gtk::SetText( CString s )
 {
-	gtk_label_set_text(GTK_LABEL(label),s);
+	gtk_label_set_text(GTK_LABEL(label), s);
 	gtk_widget_show(label);
 	gtk_main_iteration_do(FALSE);
 }

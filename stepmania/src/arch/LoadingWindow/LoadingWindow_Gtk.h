@@ -3,16 +3,12 @@
 
 #include "LoadingWindow.h"
 
-void CreateGtkLoadingWindow();
-void DestroyGtkLoadingWindow();
-void SetGtkLoadingWindowText(const char *s);
-
 class LoadingWindow_Gtk : public LoadingWindow {
 public:
-	LoadingWindow_Gtk() { CreateGtkLoadingWindow(); }
-	~LoadingWindow_Gtk() { DestroyGtkLoadingWindow(); }
+	LoadingWindow_Gtk();
+	~LoadingWindow_Gtk();
 
-	void SetText(CString str) { SetGtkLoadingWindowText(str.c_str()); }
+	void SetText(CString str);
 	void Paint() { }
 };
 
