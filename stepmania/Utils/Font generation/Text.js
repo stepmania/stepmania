@@ -26,18 +26,21 @@ function Integer(i) { this.val = i; }
 var TemplateDir = "c:/temp/stepmania/utils/Font generation/Templates/";
 var OutputDir = "c:/temp/stepmania/utils/Font generation/Output/";
 
-var Fonts = new Array(
-	/* name                       font         frame sz  font sz  AA                border   bold */
-	new FontDef("_japanese 16px", "MS-Gothic", 32,       20,      AntiAlias.STRONG, 2,       true),
-	new FontDef("_japanese 24px", "MS-Gothic", 32,       28,      AntiAlias.SMOOTH, 2,       true)
-		);
-	
-
 /* We can't send Unicode into the font ourself for some reason.  So, we have to
  * store prototypes for each font page.  These should just be PSD files that contain
  * a single text layer with the characters we want.  The orientation, font, etc.
  * don't matter; they'll be overridden. */
-var FontPages = Array("main", "kanji 1", "kanji 2","kanji 3");
+var JAFontPages = Array("main", "kanji 1", "kanji 2","kanji 3");
+var KRFontPages = Array("jamo 1");
+
+var Fonts = new Array(
+	/* name                       font         pages        frame sz  font sz  AA                border   bold */
+	//new FontDef("_japanese 16px", "MS-Gothic", JAFontPages, 32,       20,      AntiAlias.STRONG, 2,       true),
+	//new FontDef("_japanese 24px", "MS-Gothic", JAFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
+	new FontDef("_korean 16px",     "ArialUnicodeMS",     KRFontPages, 32,       20,      AntiAlias.SMOOTH, 2,       true),
+	new FontDef("_korean 24px",     "ArialUnicodeMS",     KRFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
+		);
+	
 
 var sel, doc;
 
@@ -54,6 +57,7 @@ preferences.typeUnits = strtTypeUnits;
 
 function FontDef(Name, /* filename prefix */
 	      Font, /* actual font name */
+	      Pages, /* list of font pages */
 	      FrameSize, /* frame size in pixels */
 	      FontSize, /* font character size in pixels (horiz) */
 	      AAMethod, /* antialiasing */
@@ -63,6 +67,7 @@ function FontDef(Name, /* filename prefix */
 {
 	this.Name = Name;
 	this.Font = Font;
+	this.Pages = Pages;
 
 	this.FrameSize = FrameSize;
 	/* This is the width of each character, as output by the font renderer.
@@ -81,10 +86,10 @@ function go()
 {
 	for(var f = 0; f < Fonts.length; ++f)
 	{
-		for(var i = 0; i < FontPages.length; ++i)
+		for(var i = 0; i < Fonts[f].Pages.length; ++i)
 		{
-			MakeFontPage(TemplateDir + FontPages[i] + " template.psd",
-					OutputDir + Fonts[f].Name + " [" + FontPages[i] + "]",
+			MakeFontPage(TemplateDir + Fonts[f].Pages[i] + " template.psd",
+					OutputDir + Fonts[f].Name + " [" + Fonts[f].Pages[i] + "]",
 					Fonts[f]);
 		}
 	}
