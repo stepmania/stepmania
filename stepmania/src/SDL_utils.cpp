@@ -488,3 +488,19 @@ int FindSurfaceTraits(const SDL_Surface *img)
 //	if(WhiteOnly) ret |= TRAIT_WHITE_ONLY;
 	return ret;
 }
+
+bool SDL_GetEvent(SDL_Event &event, int mask)
+{
+	/* SDL_PeepEvents returns error if video isn't initialized. */
+	if(!SDL_WasInit(SDL_INIT_VIDEO))
+		return false;
+
+	switch(SDL_PeepEvents(&event, 1, SDL_GETEVENT, mask))
+	{
+	case 1: return true;
+	case 0: return false;
+	case -1: RageException::Throw("SDL_PeepEvents returned unexpected error: %s", SDL_GetError());
+	}
+}
+
+
