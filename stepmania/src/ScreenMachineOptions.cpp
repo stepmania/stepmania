@@ -76,10 +76,9 @@ ScreenMachineOptions::ScreenMachineOptions() :
 
 void ScreenMachineOptions::ImportOptions()
 {
-	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_iCoinMode;
-	m_iSelectedOption[0][MO_MENU_TIMER]				= PREFSMAN->m_bMenuTimer ? 1:0;
+	m_iSelectedOption[0][MO_COIN_MODE]			= PREFSMAN->m_iCoinMode;
+	m_iSelectedOption[0][MO_MENU_TIMER]			= PREFSMAN->m_bMenuTimer ? 1:0;
 	m_iSelectedOption[0][MO_NUM_ARCADE_STAGES]		= PREFSMAN->m_bEventMode ? 7 : PREFSMAN->m_iNumArcadeStages - 1;
-
 	m_iSelectedOption[0][MO_SCORING_TYPE]			= PREFSMAN->m_iScoringType;
 
 	/* .02 difficulty is beyond our timing right now; even autoplay
@@ -99,7 +98,7 @@ void ScreenMachineOptions::ImportOptions()
 	else if( PREFSMAN->m_fJudgeWindowScale == 0.50f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 6;
 	else if( PREFSMAN->m_fJudgeWindowScale == 0.33f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 7;
 	else if( PREFSMAN->m_fJudgeWindowScale == 0.20f )	m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 8;
-	else												m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
+	else							m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] = 3;
 
 	if(      PREFSMAN->m_fLifeDifficultyScale == 1.60f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 0;
 	else if( PREFSMAN->m_fLifeDifficultyScale == 1.40f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 1;
@@ -108,7 +107,7 @@ void ScreenMachineOptions::ImportOptions()
 	else if( PREFSMAN->m_fLifeDifficultyScale == 0.80f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 4;
 	else if( PREFSMAN->m_fLifeDifficultyScale == 0.60f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 5;
 	else if( PREFSMAN->m_fLifeDifficultyScale == 0.40f )	m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 6;
-	else													m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 3;
+	else							m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 3;
 
 	SongOptions so;
 	so.FromString( PREFSMAN->m_sDefaultModifiers );
@@ -122,7 +121,7 @@ void ScreenMachineOptions::ImportOptions()
 	switch(PREFSMAN->m_ShowSongOptions)
 	{
 	case PrefsManager::YES: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 1; break;
-	case PrefsManager::NO: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 0; break;
+	case PrefsManager::NO: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 0;  break;
 	case PrefsManager::ASK: m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS] = 2; break;
 	default:	ASSERT(0);
 	}
@@ -141,27 +140,27 @@ void ScreenMachineOptions::ExportOptions()
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{
-	case 0:	PREFSMAN->m_fJudgeWindowScale = 1.50f;	break;
-	case 1:	PREFSMAN->m_fJudgeWindowScale = 1.33f;	break;
-	case 2:	PREFSMAN->m_fJudgeWindowScale = 1.16f;	break;
-	case 3:	PREFSMAN->m_fJudgeWindowScale = 1.00f;	break;
-	case 4:	PREFSMAN->m_fJudgeWindowScale = 0.84f;	break;
-	case 5:	PREFSMAN->m_fJudgeWindowScale = 0.66f;	break;
-	case 6:	PREFSMAN->m_fJudgeWindowScale = 0.50f;	break;
-	case 7:	PREFSMAN->m_fJudgeWindowScale = 0.33f;	break;
-	case 8:	PREFSMAN->m_fJudgeWindowScale = 0.20f;	break;
+	case 0:	PREFSMAN->m_fJudgeWindowScale = 1.50f;			break;
+	case 1:	PREFSMAN->m_fJudgeWindowScale = 1.33f;			break;
+	case 2:	PREFSMAN->m_fJudgeWindowScale = 1.16f;			break;
+	case 3:	PREFSMAN->m_fJudgeWindowScale = 1.00f;			break;
+	case 4:	PREFSMAN->m_fJudgeWindowScale = 0.84f;			break;
+	case 5:	PREFSMAN->m_fJudgeWindowScale = 0.66f;			break;
+	case 6:	PREFSMAN->m_fJudgeWindowScale = 0.50f;			break;
+	case 7:	PREFSMAN->m_fJudgeWindowScale = 0.33f;			break;
+	case 8:	PREFSMAN->m_fJudgeWindowScale = 0.20f;			break;
 	default:	ASSERT(0);
 	}
 
 	switch( m_iSelectedOption[0][MO_LIFE_DIFFICULTY] )
 	{
-	case 0:	PREFSMAN->m_fLifeDifficultyScale = 1.60f;	break;
-	case 1:	PREFSMAN->m_fLifeDifficultyScale = 1.40f;	break;
-	case 2:	PREFSMAN->m_fLifeDifficultyScale = 1.20f;	break;
-	case 3:	PREFSMAN->m_fLifeDifficultyScale = 1.00f;	break;
-	case 4:	PREFSMAN->m_fLifeDifficultyScale = 0.80f;	break;
-	case 5:	PREFSMAN->m_fLifeDifficultyScale = 0.60f;	break;
-	case 6:	PREFSMAN->m_fLifeDifficultyScale = 0.40f;	break;
+	case 0:	PREFSMAN->m_fLifeDifficultyScale = 1.60f;		break;
+	case 1:	PREFSMAN->m_fLifeDifficultyScale = 1.40f;		break;
+	case 2:	PREFSMAN->m_fLifeDifficultyScale = 1.20f;		break;
+	case 3:	PREFSMAN->m_fLifeDifficultyScale = 1.00f;		break;
+	case 4:	PREFSMAN->m_fLifeDifficultyScale = 0.80f;		break;
+	case 5:	PREFSMAN->m_fLifeDifficultyScale = 0.60f;		break;
+	case 6:	PREFSMAN->m_fLifeDifficultyScale = 0.40f;		break;
 	default:	ASSERT(0);
 	}
 
@@ -175,7 +174,7 @@ void ScreenMachineOptions::ExportOptions()
 	switch( m_iSelectedOption[0][MO_FAIL] )
 	{
 	case 0:	so.m_FailType = SongOptions::FAIL_ARCADE;		break;
-	case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;	break;
+	case 1:	so.m_FailType = SongOptions::FAIL_END_OF_SONG;		break;
 	case 2:	so.m_FailType = SongOptions::FAIL_OFF;			break;
 	default:
 		ASSERT(0);
@@ -192,9 +191,9 @@ void ScreenMachineOptions::ExportOptions()
 
 	switch(m_iSelectedOption[0][MO_SHOW_SONG_OPTIONS])
 	{
-	case 0: PREFSMAN->m_ShowSongOptions = PrefsManager::NO; break;
-	case 1: PREFSMAN->m_ShowSongOptions = PrefsManager::YES; break;
-	case 2: PREFSMAN->m_ShowSongOptions = PrefsManager::ASK; break;
+	case 0: PREFSMAN->m_ShowSongOptions = PrefsManager::NO;		break;
+	case 1: PREFSMAN->m_ShowSongOptions = PrefsManager::YES;	break;
+	case 2: PREFSMAN->m_ShowSongOptions = PrefsManager::ASK;	break;
 	default:	ASSERT(0);
 	}
 }
