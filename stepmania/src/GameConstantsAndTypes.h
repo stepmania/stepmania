@@ -123,6 +123,7 @@ enum SongSortOrder {
 const SongSortOrder MAX_SELECTABLE_SORT = (SongSortOrder)(SORT_ROULETTE-1);
 
 CString SongSortOrderToString( SongSortOrder so );
+SongSortOrder StringToSongSortOrder( CString str );
 
 
 //

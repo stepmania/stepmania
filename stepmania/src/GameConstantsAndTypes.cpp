@@ -108,26 +108,34 @@ CString CoinModeToString( CoinMode cm )
 	}
 }
 
+static const char *SongSortOrderNames[NUM_SORT_ORDERS] = {
+	"PREFERRED",
+	"GROUP",
+	"TITLE",
+	"BPM",
+	"PLAYERS BEST",
+	"TOP GRADE",
+	"ARTIST",
+	"EASY METER",
+	"MEDIUM METER",
+	"HARD METER",
+	"SORT",
+	"COURSES",
+	"ROULETTE"
+};
 
 CString SongSortOrderToString( SongSortOrder so )
 {
-	switch( so )
-	{
-	case SORT_PREFERRED:	return "PREFERRED";
-	case SORT_GROUP:		return "GROUP";
-	case SORT_TITLE:		return "TITLE";
-	case SORT_BPM:			return "BPM";
-	case SORT_MOST_PLAYED:	return "PLAYERS BEST";
-	case SORT_GRADE:		return "TOP GRADE";
-	case SORT_ARTIST:		return "ARTIST";
-	case SORT_EASY_METER:	return "EASY METER";
-	case SORT_MEDIUM_METER:	return "MEDIUM METER";
-	case SORT_HARD_METER:	return "HARD METER";
-	case SORT_SORT:			return "SORT";
-	case SORT_COURSES:		return "COURSES";
-	case SORT_ROULETTE:		return "ROULETTE";
-	default:
-		ASSERT(0);
-		return "";
-	}
+	ASSERT(so < NUM_SORT_ORDERS);
+	return SongSortOrderNames[so];
+}
+
+SongSortOrder StringToSongSortOrder( CString str )
+{
+	for( unsigned i = 0; i < NUM_SORT_ORDERS; ++i)
+		if( !str.CompareNoCase(SongSortOrderNames[i]) )
+			return (SongSortOrder)i;
+
+	ASSERT(0);
+	return SORT_PREFERRED;
 }
