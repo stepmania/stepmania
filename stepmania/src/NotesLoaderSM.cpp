@@ -147,6 +147,22 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
 			out.m_fMusicSampleLengthSeconds = TimeToSeconds( sParams[1] );
 
+		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
+		{
+			// #DISPLAYBPM:[xxx,xxx]|[xxx]|[*]; 
+			if( sParams[1] == "*" )
+				out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
+			else 
+			{
+				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+				out.m_fDisplayBPMMin = (float)atof( sParams[1] );
+				if( sParams[2].empty() )
+					out.m_fDisplayBPMMax = out.m_fDisplayBPMMin;
+				else
+					out.m_fDisplayBPMMax = (float)atof( sParams[2] );
+			}
+		}
+
 		else if( 0==stricmp(sValueName,"OFFSET") )
 			out.m_fBeat0OffsetInSeconds = (float)atof( sParams[1] );
 

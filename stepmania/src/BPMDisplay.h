@@ -16,7 +16,7 @@
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "Quad.h"
-
+class Song;
 
 class BPMDisplay : public ActorFrame
 {
@@ -24,6 +24,7 @@ public:
 	BPMDisplay();
 	virtual void Update( float fDeltaTime ); 
 	void SetBPMRange( float fLowBPM, float fHighBPM );
+	void SetBPM( const Song* pSong );
 	void CycleRandomly();
 	void NoBPM();
 

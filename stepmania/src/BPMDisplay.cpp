@@ -167,3 +167,25 @@ void BPMDisplay::NoBPM()
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
 	m_sprLabel.SetDiffuse( NORMAL_COLOR );
 }
+
+void BPMDisplay::SetBPM( const Song* pSong )
+{
+	ASSERT( pSong );
+	switch( pSong->m_DisplayBPMType )
+	{
+	case Song::DISPLAY_ACTUAL:
+		{
+			float fMinBPM, fMaxBPM;
+			pSong->GetActualBPM( fMinBPM, fMaxBPM );
+			SetBPMRange( fMinBPM, fMaxBPM );
+		}
+		break;
+	case Song::DISPLAY_SPECIFIED:
+		SetBPMRange( pSong->m_fDisplayBPMMin, pSong->m_fDisplayBPMMax );
+		break;
+	case Song::DISPLAY_RANDOM:
+		break;
+	default:
+		ASSERT(0);
+	}
+}

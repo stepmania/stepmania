@@ -824,9 +824,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			}
 			else
 			{
-				float fMinBPM, fMaxBPM;
-				pSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
-				m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
+				m_BPMDisplay.SetBPM( pSong );
 			}
 
 			const CString CDTitlePath = pSong->HasCDTitle()? pSong->GetCDTitlePath():THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");

@@ -229,6 +229,21 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", out.m_fMusicSampleLengthSeconds );
 	if( out.m_sCDTitleFile.size() )
 		fprintf( fp, "#CDTITLE:%s;\n", out.m_sCDTitleFile.c_str() );
+	switch( out.m_DisplayBPMType )
+	{
+	case Song::DISPLAY_ACTUAL:
+		// write nothing
+		break;
+	case Song::DISPLAY_SPECIFIED:
+		if( out.m_fDisplayBPMMin == out.m_fDisplayBPMMax )
+			fprintf( fp, "#DISPLAYBPM:%.3f", out.m_fDisplayBPMMin );
+		else
+			fprintf( fp, "#DISPLAYBPM:%.3f..%.3f", out.m_fDisplayBPMMin, out.m_fDisplayBPMMax );
+		break;
+	case Song::DISPLAY_RANDOM:
+		fprintf( fp, "#DISPLAYBPM:*" );
+		break;
+	}
 
 	if( !out.m_StopSegments.empty() )
 	{

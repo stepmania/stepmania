@@ -91,6 +91,9 @@ Song::Song()
 	m_fFirstBeat = -1;
 	m_fLastBeat = -1;
 	m_SelectionDisplay = SHOW_ALWAYS;
+	m_DisplayBPMType = DISPLAY_ACTUAL;
+	m_fDisplayBPMMin = 0;
+	m_fDisplayBPMMax = 0;
 }
 
 Song::~Song()
@@ -1070,8 +1073,8 @@ void SortSongPointerArrayByDifficulty( vector<Song*> &arraySongPointers )
 bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
 {
 	float fMinBPM1, fMaxBPM1, fMinBPM2, fMaxBPM2;
-	pSong1->GetMinMaxBPM( fMinBPM1, fMaxBPM1 );
-	pSong2->GetMinMaxBPM( fMinBPM2, fMaxBPM2 );
+	pSong1->GetActualBPM( fMinBPM1, fMaxBPM1 );
+	pSong2->GetActualBPM( fMinBPM2, fMaxBPM2 );
 
 	if( fMaxBPM1 < fMaxBPM2 )
 		return true;

@@ -675,9 +675,8 @@ void ScreenGameplay::LoadNextSong()
 	m_textSongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
 
 	/* XXX: set it to the current BPM, not the range */
-	float fMinBPM, fMaxBPM;
-	GAMESTATE->m_pCurSong->GetMinMaxBPM( fMinBPM, fMaxBPM );
-	m_BPMDisplay.SetBPMRange( fMinBPM, fMaxBPM );
+	/* What does this comment mean?  -Chris */
+	m_BPMDisplay.SetBPM( GAMESTATE->m_pCurSong );
 
 	const bool bExtra = GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2();
 	const bool bReverse[NUM_PLAYERS] = { 

@@ -141,6 +141,9 @@ public:
 	float   GetLastBeat() const;
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
+	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;
+	int		m_fDisplayBPMMin;
+	int		m_fDisplayBPMMax;	// if a range, then Min != Max
 
 	float GetMusicStartBeat() const;
 
@@ -175,17 +178,17 @@ public:
 	void AddBackgroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
 
-	void GetMinMaxBPM( float &fMinBPM, float &fMaxBPM ) const
+	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const
 	{
-		fMaxBPM = 0;
-		fMinBPM = 100000;	// inf
+		fMaxBPMOut = 0;
+		fMinBPMOut = 100000;	// inf
 		for( unsigned i=0; i<m_BPMSegments.size(); i++ ) 
 		{
 			const BPMSegment &seg = m_BPMSegments[i];
-			fMaxBPM = max( seg.m_fBPM, fMaxBPM );
-			fMinBPM = min( seg.m_fBPM, fMinBPM );
+			fMaxBPMOut = max( seg.m_fBPM, fMaxBPMOut );
+			fMinBPMOut = min( seg.m_fBPM, fMinBPMOut );
 		}
-	};
+	}
 	float GetBPMAtBeat( float fBeat ) const
 	{
 		unsigned i;
@@ -193,7 +196,7 @@ public:
 			if( m_BPMSegments[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BPMSegments[i].m_fBPM;
-	};
+	}
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat )
 	{
 		unsigned i;
@@ -209,7 +212,7 @@ public:
 			if( m_BackgroundChanges[i+1].m_fStartBeat > fBeat )
 				break;
 		return m_BackgroundChanges[i].m_sBGName;
-	};
+	}
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
 	float GetBeatFromElapsedTime( float fElapsedTime ) const	// shortcut for places that care only about the beat
 	{

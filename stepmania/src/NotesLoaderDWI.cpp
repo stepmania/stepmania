@@ -311,6 +311,24 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 		else if( 0==stricmp(sValueName,"BPM") )
 			out.AddBPMSegment( BPMSegment(0, (float)atof(sParams[1])) );		
 
+		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
+		{
+			// #DISPLAYBPM:[xxx..xxx]|[xxx]|[*]; 
+			if( sscanf( sParams[1], "%f..%f", &out.m_fDisplayBPMMin, &out.m_fDisplayBPMMax ) == 2 )
+			{
+				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+			}
+			else if( sscanf( sParams[1], "%f", &out.m_fDisplayBPMMin ) != 1 )
+			{
+				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
+				out.m_fDisplayBPMMax = out.m_fDisplayBPMMin;
+			}
+			else
+			{
+				out.m_DisplayBPMType = Song::DISPLAY_RANDOM;
+			}
+		}
+
 		else if( 0==stricmp(sValueName,"GAP") )
 			// the units of GAP is 1/1000 second
 			out.m_fBeat0OffsetInSeconds = -atoi( sParams[1] ) / 1000.0f;
