@@ -21,6 +21,8 @@ struct ModeChoice		// used in SelectMode
 	Style		style;
 	PlayMode	pm;
 	Difficulty	dc;
+	CString		sAnnouncer;
+
 	char		name[64];
 	int			numSidesJoinedToPlay;
 };

@@ -33,6 +33,10 @@
 #define TIMER_SECONDS			THEME->GetMetricI(m_sName,"TimerSeconds")
 #define NEXT_SCREEN( choice )	THEME->GetMetric (m_sName,ssprintf("NextScreen%d",choice+1))
 
+// Temporary hack: specify announcer in selection
+#define SPECIFY_ANNOUNCER		THEME->HasMetric(m_sName,"Announcer1")
+#define ANNOUNCER( choice )		THEME->GetMetric (m_sName,ssprintf("Announcer%d",choice+1))
+
 
 ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 {
@@ -51,13 +55,14 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 	{
 		CString sChoice = asChoices[c];
 
-		ModeChoice mc = {	// fill this in below
-			GAME_INVALID,
-			STYLE_INVALID,
-			PLAY_MODE_INVALID,
-			DIFFICULTY_INVALID,
-			"",
-			1 };
+		ModeChoice mc;
+		mc.game = GAME_INVALID;
+		mc.style = STYLE_INVALID;
+		mc.pm = PLAY_MODE_INVALID;
+		mc.dc = DIFFICULTY_INVALID;
+		mc.sAnnouncer = "";
+		strcpy( mc.name, "" );
+		mc.numSidesJoinedToPlay = 1;
 
 		strncpy( mc.name, sChoice, sizeof(mc.name) );
 
@@ -105,6 +110,9 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 				HOOKS->MessageBoxOK( sError );
 			bChoiceIsInvalid |= true;
 		}
+
+		if( SPECIFY_ANNOUNCER )
+			mc.sAnnouncer = ANNOUNCER( c );
 
 		if( mc.style != STYLE_INVALID )
 		{

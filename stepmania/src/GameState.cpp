@@ -26,6 +26,7 @@
 #include "NoteFieldPositioning.h"
 #include "Character.h"
 #include "UnlockSystem.h"
+#include "AnnouncerManager.h"
 
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
@@ -288,6 +289,8 @@ void GameState::ApplyModeChoice( const ModeChoice& mc, PlayerNumber pn )
 		m_CurStyle = mc.style;
 	if( mc.dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
 		m_PreferredDifficulty[pn] = mc.dc;
+	if( mc.sAnnouncer != "" )
+		ANNOUNCER->SwitchAnnouncer( mc.sAnnouncer );	
 }
 
 bool GameState::IsPlayable( const ModeChoice& mc )
@@ -401,7 +404,7 @@ bool GameState::HasEarnedExtraStage()
 	return false;
 }
 
-PlayerNumber GameState::GetWinner()
+PlayerNumber GameState::GetBestPlayer()
 {
 	PlayerNumber winner = PLAYER_1;
 	for( int p=PLAYER_1+1; p<NUM_PLAYERS; p++ )
@@ -418,9 +421,11 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 {
 	switch( GAMESTATE->m_PlayMode )
 	{
-	case PLAY_MODE_HUMAN_BATTLE:
 	case PLAY_MODE_CPU_BATTLE:
-		return (m_fOpponentHealthPercent==0)?RESULT_WIN:RESULT_LOSE;
+		if( IsHumanPlayer(pn) )
+			return (m_fOpponentHealthPercent==0)?RESULT_WIN:RESULT_LOSE;
+		else
+			return (m_fOpponentHealthPercent==0)?RESULT_LOSE:RESULT_WIN;
 	case PLAY_MODE_RAVE:
 		switch( pn )
 		{
@@ -428,8 +433,9 @@ StageResult GameState::GetStageResult( PlayerNumber pn )
 		case PLAYER_2:	return (m_fTugLifePercentP1<0.5f)?RESULT_WIN:RESULT_LOSE;
 		default:	ASSERT(0); return RESULT_LOSE;
 		}
+	case PLAY_MODE_HUMAN_BATTLE:
 	default:
-		return (GetWinner()==pn)?RESULT_WIN:RESULT_LOSE;
+		return (GetBestPlayer()==pn)?RESULT_WIN:RESULT_LOSE;
 	}
 }
 

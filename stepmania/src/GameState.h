@@ -177,7 +177,7 @@ public:
 	void RemoveAllActiveAttacks();	// called on end of song
 	void RemoveAllInventory();
 	int GetSumOfActiveAttackLevels( PlayerNumber pn );
-	PlayerNumber GetWinner();
+	PlayerNumber GetBestPlayer();
 	StageResult GetStageResult( PlayerNumber pn );
 
 	void ResetStageStatistics();	// Call this when it's time to play a new stage.
