@@ -17,10 +17,10 @@
 #include "Window.h"
 #include "WindowManager.h"
 #include "Actor.h"
-#include "SoundSet.h"
+#include "RandomSample.h"
 
 
-const float DEFAULT_TRANSITION_TIME		=	0.75f;
+const float DEFAULT_TRANSITION_TIME		=	0.40f;
 
 
 class Transition : public Actor

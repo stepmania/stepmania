@@ -485,11 +485,6 @@ HRESULT CreateObjects( HWND hWnd )
 
 	// switch the screen resolution according to user's prefs
 	SwitchDisplayMode(); 
-//		go.m_bWindowed, 
-//		go.m_iResolution,
-//		go.m_iResolution==640 ? 480 : 240,
-//		go.m_iDisplayColor
-//	);
 
 	TM		= new RageTextureManager( SCREEN );
 	THEME	= new ThemeManager;
@@ -498,11 +493,6 @@ HRESULT CreateObjects( HWND hWnd )
 	
 	// Ugly...  Switch the screen resolution again so that the system message will display
 	SwitchDisplayMode(); 
-//		go.m_bWindowed, 
-//		go.m_iResolution,
-//		go.m_iResolution==640 ? 480 : 240,
-//		go.m_iDisplayColor
-//	);
 
 	WM->SystemMessage( ssprintf("Found %d songs.", SONGS->m_pSongs.GetSize()) );
 
@@ -717,7 +707,19 @@ BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 	GameOptions &go = PREFS->m_GameOptions;
 	bool bWindowed	=	go.m_bWindowed;
 	DWORD dwWidth	=	go.m_iResolution;
-	DWORD dwHeight	=	go.m_iResolution==640 ? 480 : 240;
+	DWORD dwHeight;
+	// fill in dwHeight
+	switch( dwWidth )
+	{
+	case 320:	dwHeight = 240;		break;
+	case 400:	dwHeight = 300;		break;
+	case 512:	dwHeight = 384;		break;
+	case 640:	dwHeight = 480;		break;
+	case 800:	dwHeight = 600;		break;
+	case 1024:	dwHeight = 768;		break;
+	case 1280:	dwHeight = 1024;	break;
+	default:	dwHeight = 480;		break;
+	}
 	DWORD dwBPP		=	go.m_iDisplayColor;
 
 
@@ -738,7 +740,7 @@ BOOL SwitchDisplayMode()//( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD
 				dwHeight = 480;
 				if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )
 				{
-					// Failed again.  Try 640x480
+					// Failed again.  Try 320x240
 					dwWidth = 320;
 					dwHeight = 240;
 					if( !SCREEN->SwitchDisplayMode( bWindowed, dwWidth, dwHeight, dwBPP ) )

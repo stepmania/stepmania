@@ -424,6 +424,22 @@ SOURCE=.\PrefsManager.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RandomSample.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RandomSample.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RandomStream.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RandomStream.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\Song.cpp
 # End Source File
 # Begin Source File
@@ -437,14 +453,6 @@ SOURCE=.\SongManager.cpp
 # Begin Source File
 
 SOURCE=.\SongManager.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\SoundSet.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SoundSet.h
 # End Source File
 # Begin Source File
 

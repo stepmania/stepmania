@@ -19,7 +19,7 @@
 #include "BitmapText.h"
 #include "Rectangle.h"
 #include "TextBanner.h"
-#include "SoundSet.h"
+#include "RandomSample.h"
 #include "GradeDisplay.h"
 #include "RageSoundStream.h"
 #include "GameTypes.h"
@@ -147,9 +147,9 @@ protected:
 
 
 	// having sounds here causes a crash in Bass.  What the heck!?!?!
-	SoundSet m_soundChangeMusic;
-	SoundSet m_soundChangeSort;
-	SoundSet m_soundExpand;
+	RandomSample m_soundChangeMusic;
+	RandomSample m_soundChangeSort;
+	RandomSample m_soundExpand;
 
 
 

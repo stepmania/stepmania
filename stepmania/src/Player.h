@@ -24,7 +24,7 @@
 #include "HoldGhostArrow.h"
 #include "Player.h"
 #include "ActorFrame.h"
-#include "SoundSet.h"
+#include "RandomSample.h"
 #include "ScoreDisplayRollingWithFrame.h"
 #include "LifeMeterPills.h"
 #include "Judgement.h"

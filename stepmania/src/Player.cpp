@@ -249,7 +249,16 @@ void Player::RenderPrimitives()
 
 bool Player::IsThereANoteAtIndex( int iIndex )
 {
-	return m_TapStepsOriginal[iIndex] != STEP_NONE;
+	if( m_TapStepsOriginal[iIndex] != STEP_NONE )
+		return true;
+
+	for( int i=0; i<m_iNumHoldSteps; i++ )	// for each HoldStep
+	{
+		if( m_HoldSteps[i].m_iStartIndex == iIndex )
+			return true;
+	}
+
+	return false;
 }
 
 

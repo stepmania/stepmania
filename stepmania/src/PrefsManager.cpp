@@ -88,10 +88,10 @@ void PrefsManager::ReadPrefsFromDisk()
 			if( name_string == "TextureColor" )			m_GameOptions.m_iTextureColor	= atoi( value_string );
 			if( name_string == "FilterTextures" )		m_GameOptions.m_bFilterTextures	= ( value_string == "1" );
 			if( name_string == "Shadows" )				m_GameOptions.m_bShadows		= ( value_string == "1" );
-			if( name_string == "IgnoreJoyDirs" )		m_GameOptions.m_bIgnoreJoyDirs	= ( value_string == "1" );
+			if( name_string == "IgnoreJoyAxes" )		m_GameOptions.m_bIgnoreJoyAxes	= ( value_string == "1" );
 			if( name_string == "ShowFPS" )				m_GameOptions.m_bShowFPS		= ( value_string == "1" );
 			if( name_string == "UseRandomVis" )			m_GameOptions.m_bUseRandomVis	= ( value_string == "1" );
-			if( name_string == "ShowCaution" )			m_GameOptions.m_bShowCaution	= ( value_string == "1" );
+			if( name_string == "SkipCaution" )			m_GameOptions.m_bSkipCaution	= ( value_string == "1" );
 			if( name_string == "Announcer" )			m_GameOptions.m_bAnnouncer		= ( value_string == "1" );
 		}
 	}
@@ -129,10 +129,10 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValue( "GameOptions", "TextureColor",	ssprintf("%d", m_GameOptions.m_iTextureColor) );
 	ini.SetValue( "GameOptions", "FilterTextures",	m_GameOptions.m_bFilterTextures ? "1":"0" );
 	ini.SetValue( "GameOptions", "Shadows",			m_GameOptions.m_bShadows ? "1":"0" );
-	ini.SetValue( "GameOptions", "IgnoreJoyDirs",	m_GameOptions.m_bIgnoreJoyDirs ? "1":"0" );
+	ini.SetValue( "GameOptions", "IgnoreJoyAxes",	m_GameOptions.m_bIgnoreJoyAxes ? "1":"0" );
 	ini.SetValue( "GameOptions", "ShowFPS",			m_GameOptions.m_bShowFPS ? "1":"0" );
 	ini.SetValue( "GameOptions", "UseRandomVis",	m_GameOptions.m_bUseRandomVis ? "1":"0" );
-	ini.SetValue( "GameOptions", "ShowCaution",		m_GameOptions.m_bShowCaution ? "1":"0" );
+	ini.SetValue( "GameOptions", "SkipCaution",		m_GameOptions.m_bSkipCaution ? "1":"0" );
 	ini.SetValue( "GameOptions", "Announcer",		m_GameOptions.m_bAnnouncer ? "1":"0" );
 
 
