@@ -109,8 +109,12 @@ MiniMenuDefinition g_KeyboardShortcuts =
 		{ "F7/F8: Decrease/increase BPM at cur beat",		false, 1, 0, {""} },
 		{ "F9/F10: Decrease/increase stop at cur beat",		false, 1, 0, {""} },
 		{ "F11/F12: Decrease/increase music offset",		false, 1, 0, {""} },
+		/* XXX: This would be better as a single submenu, to let people tweak
+		 * and play the sample several times (without having to re-enter the
+		 * menu each time), so it doesn't use a whole bunch of hotkeys. */
 		{ "[ and ]: Decrease/increase sample music start",	false, 1, 0, {""} },
 		{ "{ and }: Decrease/increase sample music length",	false, 1, 0, {""} },
+		{ "M: Play sample music",							false, 1, 0, {""} },
 	}
 };
 
@@ -326,6 +330,15 @@ bool ScreenEdit::PlayTicks() const
 	iRowLastCrossed = iRowNow;
 
 	return bAnyoneHasANote;
+}
+
+void ScreenEdit::PlayPreviewMusic()
+{
+	SOUNDMAN->PlayMusic("");
+	SOUNDMAN->PlayMusic( m_pSong->GetMusicPath(), false,
+		m_pSong->m_fMusicSampleStartSeconds,
+		m_pSong->m_fMusicSampleLengthSeconds,
+		1.5f );
 }
 
 void ScreenEdit::Update( float fDeltaTime )
@@ -889,6 +902,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
+	case SDLK_m:
+		PlayPreviewMusic();
+		break;
 	case SDLK_p:
 		{
 			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,SDLK_LCTRL)) ||
@@ -1208,11 +1224,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			}
 			break;
 		case play_preview_music:
-			SOUNDMAN->PlayMusic("");
-			SOUNDMAN->PlayMusic( m_pSong->GetMusicPath(), false,
-				m_pSong->m_fMusicSampleStartSeconds,
-				m_pSong->m_fMusicSampleLengthSeconds,
-				1.5f );
+			PlayPreviewMusic();
 			break;
 		case exit:
 			SCREENMAN->SetNewScreen( "ScreenEditMenu" );
