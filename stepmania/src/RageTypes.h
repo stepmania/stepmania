@@ -166,8 +166,31 @@ public:
 	float r, g, b, a;
 };
 
-/* Convert floating-point 0..1 value to integer 0..255 value. */
-inline unsigned char FTOC(float a) { if(a<0) a=0; if(a>1) a=1; return (unsigned char)(a*255.f); }	// need clamping to handle values <0.0 and > 1.0
+/* Convert floating-point 0..1 value to integer 0..255 value. *
+ *
+ * As a test case,
+ *
+ * int cnts[1000]; memset(cnts, 0, sizeof(cnts));
+ * for( float n = 0; n <= 1.0; n += 0.0001 ) cnts[FTOC(n)]++;
+ * for( int i = 0; i < 256; ++i ) printf("%i ", cnts[i]);
+ *
+ * should output the same value (+-1) 256 times.  If this function is
+ * incorrect, the first and/or last values may be biased. */
+inline unsigned char FTOC(float a)
+{
+        /* lfintf is much faster than C casts.  We don't care which way negative values
+         * are rounded, since we'll clamp them to zero below.  Be sure to truncate (not
+         * round) positive values.  The highest value that should be converted to 1 is
+         * roughly (1/256 - 0.00001); if we don't truncate, values up to (1/256 + 0.5)
+         * will be converted to 1, which is wrong. */
+        int ret = lrintf(a*256.f - 0.5f);
+
+        /* Benchmarking shows that clamping here, as integers, is much faster than clamping
+         * before the conversion, as floats. */
+        if( ret<0 ) return 0;
+        else if( ret>255 ) return 255;
+        else return (unsigned char) ret;
+}
 
 /* Color type used only in vertex lists.  OpenGL expects colors in
  * r, g, b, a order, independent of endianness, so storing them this
