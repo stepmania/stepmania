@@ -11,7 +11,7 @@ NetworkSyncManager::~NetworkSyncManager () { }
 void NetworkSyncManager::CloseConnection() { }
 void NetworkSyncManager::PostStartUp(const CString& ServerIP ) { }
 bool NetworkSyncManager::Connect(const CString& addy, unsigned short port) { return false; }
-CString NetworkSyncManager::GetServerName() { }
+CString NetworkSyncManager::GetServerName() { return ""; }
 void NetworkSyncManager::ReportNSSOnOff(int i) { }
 void NetworkSyncManager::ReportTiming(float offset, int PlayerNumber) { }
 void NetworkSyncManager::ReportScore(int playerID, int step, int score, int combo) { }
@@ -23,9 +23,6 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 void NetworkSyncManager::SendChat(const CString& message) { }
 void NetworkSyncManager::SelectUserSong() { }
-
-void NetworkSyncManager::SendSMOnline( PacketFunctions &PackData ) { }
-
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
