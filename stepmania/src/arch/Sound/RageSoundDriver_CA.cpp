@@ -109,15 +109,7 @@ RageSound_CA::RageSound_CA()
     {
         const Desc& f = physicalFormats[i];
         
-        LOG->Info("Format %u:\n"
-                  "Sample rate:        %f\n"
-                  "Format ID:          %lu\n"
-                  "Format flags:       0x%lx\n"
-                  "Bytes per packet:   %lu\n"
-                  "Frames per packet:  %lu\n"
-                  "Bytes per frame:    %lu\n"
-                  "Channels per frame: %lu\n"
-                  "Bits per channel:   %lu",
+        LOG->Info("Format %u:  Rate: %f  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
                   i, f.mSampleRate, f.mFormatID, f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
@@ -127,20 +119,12 @@ RageSound_CA::RageSound_CA()
 
     vector<Desc> procFormats;
     GetIOProcFormats( sID, procFormats );
-    LOG->Info("---------------------------\nAvailable I/O procedure formats:");
+    LOG->Info("Available I/O procedure formats:");
     for (i = 0; i < procFormats.size(); ++i)
     {
         const Desc& f = procFormats[i];
         
-        LOG->Info("Format %u:\n"
-                  "Sample rate:        %f\n"
-                  "Format ID:          %lu\n"
-                  "Format flags:       0x%lx\n"
-                  "Bytes per packet:   %lu\n"
-                  "Frames per packet:  %lu\n"
-                  "Bytes per frame:    %lu\n"
-                  "Channels per frame: %lu\n"
-                  "Bits per channel:   %lu",
+        LOG->Info("Format %u:  Rate: %f  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
                   i, f.mSampleRate, f.mFormatID, f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
