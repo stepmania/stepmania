@@ -130,7 +130,7 @@ AC_ARG_WITH(jpeg, AC_HELP_STRING([--without-jpeg], [Disable JPEG support]), with
 
 if test "$with_jpeg" = "yes"; then
 	have_libjpeg=yes
-	AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [x=y], have_libjpeg=no) # x=y to stop autoconf from messing with LIBS
+	AC_CHECK_LIB(jpeg, jpeg_read_scanlines, [x=y], have_libjpeg=no, [-lz -lm]) # x=y to stop autoconf from messing with LIBS
 	AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
 
 	if test "$have_libjpeg" = "no"; then
