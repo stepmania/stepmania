@@ -1875,8 +1875,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		
 		// Feels hackish. Feel free to make cleaner.
+                // MD 10/27/03 - I felt free. :-)  And now it's arcade-accurate as well.
 		if(GAMESTATE->IsCourseMode())
-			if(GAMESTATE->GetCourseSongIndex() > (int(m_apSongsQueue.size() / 2) - 1 ) && GAMESTATE->GetCourseSongIndex() < (int(m_apSongsQueue.size() / 2) + 1))
+                        if(GAMESTATE->GetCourseSongIndex() > (int(m_apSongsQueue.size() / 2) - 1 ))
 				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed halfway" ) );
 			else
 				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo( "gameplay oni failed" ) );
