@@ -1097,8 +1097,6 @@ bool Song::SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const
 
 void Song::SaveToCacheFile()
 {
-	LOG->Trace( "Song::SaveToCacheFile()" );
-
 	SONGINDEX->AddCacheIndex(m_sSongDir, GetHashForDirectory(m_sSongDir));
 	SaveToSMFile( GetCacheFilePath(), true );
 }
