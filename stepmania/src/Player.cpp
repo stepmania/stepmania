@@ -847,6 +847,9 @@ void Player::Step( int col, const RageTimer &tm )
 				m_pNoteField->DidTapNote( col, score, false );
 		}
 
+		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_GREAT ) 
+			HandleAutosync( fNoteOffset );
+
 		// Do game-specific score mapping.
 		score = GAMESTATE->GetCurrentGame()->MapTapNoteScore( score );
 
@@ -858,9 +861,6 @@ void Player::Step( int col, const RageTimer &tm )
 			if( m_pPlayerStageStats )
 				m_pPlayerStageStats->iTotalError += ms_error;
 		}
-
-		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_GREAT ) 
-			HandleAutosync( fNoteOffset );
 
 		if( score == TNS_MARVELOUS && !GAMESTATE->ShowMarvelous() )
 			score = TNS_PERFECT;
