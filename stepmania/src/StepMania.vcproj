@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="$(intdir)\verstub.obj"
 				OutputFile="../StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -63,7 +64,8 @@
 				CommandLine="mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="verinc"/>
+				CommandLine="verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -115,6 +117,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="$(intdir)\verstub.obj"
 				OutputFile=".\../StepMania.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -135,7 +138,8 @@
 				CommandLine="mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="verinc"/>
+				CommandLine="verinc
+cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -1082,9 +1086,6 @@
 			</File>
 			<File
 				RelativePath="Tls.h">
-			</File>
-			<File
-				RelativePath="verstub.cpp">
 			</File>
 		</Filter>
 		<File
