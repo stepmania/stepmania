@@ -1307,7 +1307,8 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
 		if( pSteps && pSteps->IsAutogen() )
 		{
-			m_AutoGenIcon[pn].SetEffectDiffuseShift();
+			m_AutoGenIcon[pn].SetEffectNone();
+			m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,1) );
 		}
 		else
 		{
