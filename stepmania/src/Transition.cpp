@@ -26,20 +26,23 @@ void Transition::Load( CString sBGAniDir )
 	m_State = waiting;
 
 	// load sound from file specified by ini, or use the first sound in the directory
-	IniFile ini;
-	ini.ReadFile( sBGAniDir+"BGAnimation.ini" );
+	if( IsADirectory(sBGAniDir) )
+	{
+		IniFile ini;
+		ini.ReadFile( sBGAniDir+"/BGAnimation.ini" );
 
-	CString sSoundFileName;
-	if( ini.GetValue("BGAnimation","Sound",sSoundFileName) )
-	{
-		FixSlashesInPlace( sSoundFileName );
-		CString sPath = sBGAniDir+sSoundFileName;
-		CollapsePath( sPath );
-		m_sound.Load( sPath );
-	}
-	else
-	{
-		m_sound.Load( sBGAniDir );
+		CString sSoundFileName;
+		if( ini.GetValue("BGAnimation","Sound",sSoundFileName) )
+		{
+			FixSlashesInPlace( sSoundFileName );
+			CString sPath = sBGAniDir+sSoundFileName;
+			CollapsePath( sPath );
+			m_sound.Load( sPath );
+		}
+		else
+		{
+			m_sound.Load( sBGAniDir );
+		}
 	}
 }
 
