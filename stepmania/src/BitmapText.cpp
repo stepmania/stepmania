@@ -93,6 +93,11 @@ bool BitmapText::LoadFromTextureAndChars( CString sTexturePath, CString sChars )
 {
 	LOG->Trace( "BitmapText::LoadFromTextureAndChars(%s)", sTexturePath );
 
+	if( m_pFont ) {
+		FONT->UnloadFont( m_pFont->m_sTexturePath );
+		m_pFont = NULL;
+	}
+
 	// load font
 	m_pFont = FONT->LoadFont( sTexturePath, sChars );
 
