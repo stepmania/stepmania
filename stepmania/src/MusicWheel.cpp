@@ -27,7 +27,6 @@
 #include "PlayerState.h"
 
 
-#define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
 ThemeMetric<float>	SWITCH_SECONDS	("MusicWheel","SwitchSeconds");
 #define ROULETTE_SWITCH_SECONDS		THEME->GetMetricF("MusicWheel","RouletteSwitchSeconds")
 #define ROULETTE_SLOW_DOWN_SWITCHES	THEME->GetMetricI("MusicWheel","RouletteSlowDownSwitches")
