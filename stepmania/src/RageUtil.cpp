@@ -302,6 +302,16 @@ static int DelimitorLength( const S &Delimitor )
 	return Delimitor.size();
 }
 
+static int DelimitorLength( char Delimitor )
+{
+	return 1;
+}
+
+static int DelimitorLength( wchar_t Delimitor )
+{
+	return 1;
+}
+
 template <class S, class C>
 void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool bIgnoreEmpty )
 {
@@ -331,14 +341,20 @@ void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool 
 }
 
 
-void split( const CString &Source, const CString &Deliminator, CStringArray &AddIt, const bool bIgnoreEmpty )
+void split( const CString &Source, const CString &Delimitor, CStringArray &AddIt, const bool bIgnoreEmpty )
 {
-	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
+	if( Delimitor.size() == 1 )
+		do_split( Source, Delimitor[0], AddIt, bIgnoreEmpty );
+	else
+		do_split( Source, Delimitor, AddIt, bIgnoreEmpty );
 }
 
-void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &AddIt, const bool bIgnoreEmpty )
+void split( const wstring &Source, const wstring &Delimitor, vector<wstring> &AddIt, const bool bIgnoreEmpty )
 {
-	do_split(Source, Deliminator, AddIt, bIgnoreEmpty );
+	if( Delimitor.size() == 1 )
+		do_split( Source, Delimitor[0], AddIt, bIgnoreEmpty );
+	else
+		do_split( Source, Delimitor, AddIt, bIgnoreEmpty );
 }
 
 /* Use:
