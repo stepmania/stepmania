@@ -2,11 +2,11 @@
 
 #include "SDL.h"
 #include "SDL_utils.h"
-#include "SDL_endian.h"
 #include "SDL_rotozoom.h"	// for setting icon
 #include "RageSurface_Load.h"
 #include "RageFile.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 
 /* Pull in all of our SDL libraries here. */
 #ifdef _XBOX
@@ -22,12 +22,6 @@
 	#pragma comment(lib, "SDL-1.2.6/lib/SDL.lib")
 	#endif
 #endif
-
-
-Uint32 mySDL_Swap24(Uint32 x)
-{
-	return SDL_Swap32(x) >> 8; // xx223344 -> 443322xx -> 00443322
-}
 
 /* These conditionals in the inner loop are slow.  Templates? */
 inline Uint32 decodepixel(const Uint8 *p, int bpp)
