@@ -29,6 +29,8 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"Harder2",
 	"NextSort1",
 	"NextSort2",
+	"NextSort3",
+	"NextSort4",
 	"Menu1",
 	"Menu2",
 	"Mirror",
@@ -206,7 +208,10 @@ bool CodeDetector::EnteredHarderDifficulty( GameController controller )
 
 bool CodeDetector::EnteredNextSort( GameController controller )
 {
-	return EnteredCode(controller,CODE_NEXT_SORT1) || EnteredCode(controller,CODE_NEXT_SORT2);
+	return EnteredCode(controller,CODE_NEXT_SORT1) ||
+		   EnteredCode(controller,CODE_NEXT_SORT2) ||
+		   EnteredCode(controller,CODE_NEXT_SORT3) ||
+		   EnteredCode(controller,CODE_NEXT_SORT4);
 }
 
 bool CodeDetector::EnteredMenu( GameController controller )
