@@ -906,13 +906,15 @@ static void ProcessArgsSecond()
 }
 
 #ifdef _XBOX
-void __cdecl main(char* argv[])
+void __cdecl main()
 #else
 int main(int argc, char* argv[])
 #endif
 {
 #ifdef _XBOX
 	int argc = 1;
+	char *argv[] = {"default.xbe"};
+	XGetCustomLaunchData();
 #endif
 
 	g_argc = argc;
