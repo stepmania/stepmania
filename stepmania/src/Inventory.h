@@ -12,32 +12,33 @@
 */
 
 #include "GameConstantsAndTypes.h"
+#include "RageSound.h"
 
-const int ITEM_NONE			= -1;
-const int NUM_ITEM_SLOTS	= 3;
 const int MAX_ITEM_TYPES	= 20;
 
-struct ItemDef
-{
-	int comboLevel;
-	CString effect;
 
-	bool operator<( const ItemDef& other );
-	void Sort( vector<ItemDef>& items );
-};
-
-class Inventory 
+class Inventory
 {
 public:
 	Inventory();
 	void Reset();
 	void RefreshPossibleItems();
 
-	void OnComboBroken( int iCombo );
+	bool OnComboBroken( PlayerNumber pn, int iCombo );
 	void UseItem( PlayerNumber pn, int iSlot );
 
+	struct ItemDef
+	{
+		int comboLevel;
+		CString effect;
+
+		bool operator<( const ItemDef& other ) { return comboLevel < other.comboLevel; }
+		void Sort( vector<ItemDef>& items ) { sort( items.begin(), items.end() ); }
+	};
 	vector<ItemDef>	m_ItemDefs;
-	int m_iItems[NUM_ITEM_SLOTS];
+
+	RageSound m_soundAcquireItem;
+	RageSound m_soundUseItem;
 };
 
 #endif

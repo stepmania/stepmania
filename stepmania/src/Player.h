@@ -22,8 +22,6 @@
 #include "HoldGhostArrow.h"
 #include "ActorFrame.h"
 #include "RandomSample.h"
-#include "ScoreDisplay.h"
-#include "LifeMeterBar.h"
 #include "Judgment.h"
 #include "HoldJudgment.h"
 #include "Combo.h"
@@ -31,7 +29,10 @@
 #include "GrayArrowRow.h"
 #include "GhostArrowRow.h"
 #include "NoteDataWithScoring.h"
-#include "ScoreKeeper.h"
+class ScoreDisplay;
+class LifeMeter;
+class ScoreKeeper;
+class Inventory;
 
 #define	SAMPLE_COUNT	16
 
@@ -44,7 +45,7 @@ public:
 	virtual void DrawPrimitives();
 	~Player();
 
-	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore );
+	void Load( PlayerNumber player_no, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory );
 	void CrossedRow( int iNoteRow );
 	void Step( int col );
 	int GetPlayersMaxCombo();
@@ -79,7 +80,8 @@ protected:
 
 	LifeMeter*		m_pLifeMeter;
 	ScoreDisplay*	m_pScore;
-	ScoreKeeper*	m_ScoreKeeper;
+	ScoreKeeper*	m_pScoreKeeper;
+	Inventory*		m_pInventory;
 };
 
 #endif

@@ -22,26 +22,12 @@
 #define ITEM_EFFECT( i )			THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
 
 
-bool ItemDef::operator<( const ItemDef& other )
-{
-	return comboLevel < other.comboLevel;
-}
-
-void ItemDef::Sort( vector<ItemDef>& items )
-{
-	sort( items.begin(), items.end() );
-}
-
-
 Inventory::Inventory()
 {
-	Reset();
-}
-
-void Inventory::Reset()
-{
-	for( int i=0; i<NUM_ITEM_SLOTS; i++ )
-		m_iItems[i] = ITEM_NONE;
+	RefreshPossibleItems();
+	
+	m_soundAcquireItem.Load( THEME->GetPathTo("Sounds","gameplay battle aquire item") );
+	m_soundUseItem.Load( THEME->GetPathTo("Sounds","gameplay battle use item") );
 }
 
 void Inventory::RefreshPossibleItems()
@@ -57,8 +43,10 @@ void Inventory::RefreshPossibleItems()
 	}
 }
 
-void Inventory::OnComboBroken( int iCombo )
+bool Inventory::OnComboBroken( PlayerNumber pn, int iCombo )
 {
+	int* iItems = GAMESTATE->m_iItems[pn];
+
 	// search for the item acquired
 	for( int item=0; item<(int)m_ItemDefs.size(); item++ )
 		if( m_ItemDefs[item].comboLevel > iCombo )
@@ -67,7 +55,7 @@ void Inventory::OnComboBroken( int iCombo )
 	item--;	// back up because we went one too far
 
 	if( item == -1 )	// no item acquired
-		return;
+		return false;
 	else
 	{
 		// give them an item
@@ -75,12 +63,12 @@ void Inventory::OnComboBroken( int iCombo )
 		// search for the first open slot
 		int iOpenSlot = -1;
 
-		if( m_iItems[NUM_ITEM_SLOTS/2] == ITEM_NONE )
+		if( iItems[NUM_ITEM_SLOTS/2] == ITEM_NONE )
 			iOpenSlot = NUM_ITEM_SLOTS/2;
 		else
 		{
 			for( int s=0; s<NUM_ITEM_SLOTS; s++ )
-				if( m_iItems[s] == ITEM_NONE )
+				if( iItems[s] == ITEM_NONE )
 				{
 					iOpenSlot = s;
 					break;
@@ -88,18 +76,26 @@ void Inventory::OnComboBroken( int iCombo )
 		}
 
 		if( iOpenSlot != -1 )
-			m_iItems[iOpenSlot] = item;
-		else
-			; // not enough room to insert item
+		{
+			iItems[iOpenSlot] = item;
+			m_soundAcquireItem.Play();
+		}
+		// else not enough room to insert item
 	}
+
+	return true;
 }
 
 void Inventory::UseItem( PlayerNumber pn, int iSlot )
 {
-	if( m_iItems[iSlot] == ITEM_NONE )
+	int* iItems = GAMESTATE->m_iItems[pn];
+
+	if( iItems[iSlot] == ITEM_NONE )
 		return;
 
-	const ItemDef& def = m_ItemDefs[iSlot];
+	int iItemIndex = iItems[iSlot];
+
+	const ItemDef& def = m_ItemDefs[iItemIndex];
 
     PlayerNumber pnToAttack;
 	switch( pn )
@@ -112,6 +108,8 @@ void Inventory::UseItem( PlayerNumber pn, int iSlot )
 	GAMESTATE->m_PlayerOptions[pnToAttack].FromString( def.effect );
 
 	// remove the item
-	m_iItems[iSlot] = ITEM_NONE;
+	iItems[iSlot] = ITEM_NONE;
+
+	m_soundUseItem.Play();
 }
 

@@ -77,7 +77,7 @@ void Combo::Reset()
 	m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 }
 
-void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow )
+void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow, Inventory* pInventory )
 {
 #ifndef DEBUG
 	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstration )	// cheaters never prosper
@@ -158,16 +158,18 @@ void Combo::SetScore( TapNoteScore score, int iNumNotesInThisRow )
 	case TNS_GOOD:
 	case TNS_BOO:
 	case TNS_MISS:
-		// end combo
-		if( m_iCurCombo > 50 )
-			SCREENMAN->SendMessageToTopScreen( SM_ComboStopped, 0 );
+		{
+			// end combo
+			bool bItemAcquired = pInventory->OnComboBroken( m_PlayerNumber, m_iCurCombo );
 
-		GAMESTATE->m_Inventory[m_PlayerNumber].OnComboBroken( m_iCurCombo );
+			if( !bItemAcquired  && m_iCurCombo>50 )		// don't play "combo stopped" if we got an item
+				SCREENMAN->SendMessageToTopScreen( SM_ComboStopped, 0 );
 
-		m_iCurCombo = 0;
+			m_iCurCombo = 0;
 
-		m_textComboNumber.SetDiffuse( RageColor(1,1,1,0) );	// invisible
-		m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
+			m_textComboNumber.SetDiffuse( RageColor(1,1,1,0) );	// invisible
+			m_sprCombo.SetDiffuse( RageColor(1,1,1,0) );	// invisible
+		}
 		break;
 	default:
 		ASSERT(0);

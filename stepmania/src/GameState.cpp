@@ -115,7 +115,8 @@ void GameState::ResetMusicStatistics()
 	m_bPastHereWeGo = false;
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		m_Inventory[p].Reset();
+		for( int s=0; s<NUM_ITEM_SLOTS; s++ )
+			m_iItems[p][s] = ITEM_NONE;
 }
 
 void GameState::UpdateSongPosition(float fPositionSeconds)

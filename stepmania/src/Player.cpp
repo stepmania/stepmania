@@ -27,6 +27,8 @@
 #include "RageDisplay.h"
 #include "ThemeManager.h"
 #include "Combo.h"
+#include "ScoreDisplay.h"
+#include "LifeMeter.h"
 
 #define GRAY_ARROWS_Y				THEME->GetMetricF("Player","GrayArrowsY")
 #define JUDGMENT_Y					THEME->GetMetricF("Player","JudgmentY")
@@ -45,7 +47,8 @@ Player::Player()
 
 	m_pLifeMeter = NULL;
 	m_pScore = NULL;
-	m_ScoreKeeper = NULL;
+	m_pScoreKeeper = NULL;
+	m_pInventory = NULL;
 	
 	m_iOffsetSample = 0;
 
@@ -65,16 +68,17 @@ int Player::GetPlayersMaxCombo()
 
 Player::~Player()
 {
-	delete m_ScoreKeeper;
+	delete m_pScoreKeeper;
 }
 
-void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore )
+void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDisplay* pScore, Inventory* pInventory )
 {
 	//LOG->Trace( "Player::Load()", );
 
 	m_PlayerNumber = pn;
 	m_pLifeMeter = pLM;
 	m_pScore = pScore;
+	m_pInventory = pInventory;
 
 	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
 
@@ -94,8 +98,8 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	m_Combo.Init( pn );
 	m_Judgment.Reset();
 
-	if(m_ScoreKeeper) delete m_ScoreKeeper;
-	m_ScoreKeeper = new ScoreKeeperMAX2(GAMESTATE->m_pCurNotes[m_PlayerNumber], *this, pn);
+	if(m_pScoreKeeper) delete m_pScoreKeeper;
+	m_pScoreKeeper = new ScoreKeeperMAX2(GAMESTATE->m_pCurNotes[m_PlayerNumber], *this, pn);
 
 	if( m_pScore )
 		m_pScore->Init( pn );
@@ -489,7 +493,7 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 	if( iNumNotesInThisRow > 0 )
 	{
 		HandleNoteScore( score, iNumNotesInThisRow );	// update score
-		m_Combo.SetScore( score, iNumNotesInThisRow );
+		m_Combo.SetScore( score, iNumNotesInThisRow, m_pInventory );
 		GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max( GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], m_Combo.GetCurrentCombo() );
 	}
 
@@ -531,7 +535,7 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 		if( iNumMissesThisRow > 0 )
 		{
 			HandleNoteScore( TNS_MISS, iNumMissesThisRow );
-			m_Combo.SetScore( TNS_MISS, iNumMissesThisRow );
+			m_Combo.SetScore( TNS_MISS, iNumMissesThisRow, m_pInventory );
 		}
 	}
 
@@ -568,8 +572,8 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 		return;
 #endif //DEBUG
 
-	if(m_ScoreKeeper)
-		m_ScoreKeeper->HandleNoteScore(score, iNumTapsInRow);
+	if(m_pScoreKeeper)
+		m_pScoreKeeper->HandleNoteScore(score, iNumTapsInRow);
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
@@ -589,8 +593,8 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 		return;
 #endif //DEBUG
 
-	if(m_ScoreKeeper) {
-		m_ScoreKeeper->HandleHoldNoteScore(score, TapNoteScore);
+	if(m_pScoreKeeper) {
+		m_pScoreKeeper->HandleHoldNoteScore(score, TapNoteScore);
 	}
 
 	if (m_pScore)

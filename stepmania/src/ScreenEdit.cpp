@@ -252,7 +252,7 @@ ScreenEdit::ScreenEdit()
 
 	NOTESKIN->SwitchNoteSkin( PLAYER_1, "default" );	// change noteskin back to default before loading player
 
-	m_Player.Load( PLAYER_1, &noteData, NULL, NULL );
+	m_Player.Load( PLAYER_1, &noteData, NULL, NULL, NULL );
 	m_Player.SetXY( PLAYER_X, PLAYER_Y );
 
 	m_Fade.SetClosed();
@@ -1312,7 +1312,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_EditMode = MODE_PLAYING;
 
-				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
+				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL );
 
 				m_rectRecordBack.StopTweening();
 				m_rectRecordBack.BeginTweening( 0.5f );

@@ -15,7 +15,7 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
-
+class Inventory;
 
 
 class Combo : public ActorFrame
@@ -25,7 +25,7 @@ public:
 
 	void Init( PlayerNumber pn ) { m_PlayerNumber = pn; }
 
-	void SetScore( TapNoteScore score, int iNumNotesInThisRow );
+	void SetScore( TapNoteScore score, int iNumNotesInThisRow, Inventory* pInventory );
 
 	int GetCurrentCombo() const { return m_iCurCombo; }
 	int GetMaxCombo() const { return m_iMaxCombo; }

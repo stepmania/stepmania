@@ -218,4 +218,11 @@ const int MAX_RANKING_NAME_LENGTH	= 4;
 const CString GROUP_ALL_MUSIC = "";
 
 
+//
+// Battle stuff
+//
+const int ITEM_NONE			= -1;
+const int NUM_ITEM_SLOTS	= 3;
+
+
 #endif

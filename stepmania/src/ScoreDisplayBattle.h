@@ -27,6 +27,8 @@ public:
 protected:
 	Sprite m_sprFrames[NUM_ITEM_SLOTS];
 	Sprite m_sprItems[NUM_ITEM_SLOTS];
+
+	int m_iLastSeenItems[NUM_ITEM_SLOTS];
 };
 
 #endif

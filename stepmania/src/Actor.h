@@ -14,8 +14,6 @@
 #include "RageTypes.h"
 
 
-const int MAX_TWEEN_STATES = 10;
-
 class Actor
 {
 public:
@@ -251,10 +249,9 @@ protected:
 	RageVector2	m_size;
 	TweenState	m_current;
 	TweenState	m_start;
-	TweenState	m_TweenStates[MAX_TWEEN_STATES];
-	TweenInfo	m_TweenInfo[MAX_TWEEN_STATES];
-	int			m_iNumTweenStates;
-	TweenState& LatestTween() { ASSERT(m_iNumTweenStates>0 && m_iNumTweenStates<MAX_TWEEN_STATES);	return m_TweenStates[m_iNumTweenStates-1]; };
+	vector<TweenState>	m_TweenStates;
+	vector<TweenInfo>	m_TweenInfo;
+	TweenState& LatestTween() { ASSERT(m_TweenStates.size()>0);	return m_TweenStates.back(); };
 
 	//
 	// Temporary variables that are filled just before drawing

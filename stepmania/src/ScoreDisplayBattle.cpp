@@ -45,15 +45,54 @@ void ScoreDisplayBattle::Update( float fDelta )
 {
 	ScoreDisplay::Update( fDelta );
 
-	for( int i=0; i<NUM_ITEM_SLOTS; i++ )
+	for( int s=0; s<NUM_ITEM_SLOTS; s++ )
 	{
-		int item = GAMESTATE->m_Inventory[m_PlayerNumber].m_iItems[i];
-		if( item == ITEM_NONE )
-			m_sprItems[i].SetDiffuse( RageColor(1,1,1,0) );
-		else
+		int iNewItem = GAMESTATE->m_iItems[m_PlayerNumber][s];
+		int iOldItem = m_iLastSeenItems[s];
+
+		m_iLastSeenItems[s] = iNewItem;
+
+		if( iNewItem != iOldItem )	// there was a change of items
 		{
-			m_sprItems[i].SetDiffuse( RageColor(1,1,1,1) );
-			m_sprItems[i].SetState( item );
+			if( iNewItem == ITEM_NONE )
+			{
+				m_sprItems[s].StopTweening();
+				m_sprItems[s].SetDiffuse( RageColor(1,1,1,0) );
+			}
+			else
+			{
+				m_sprItems[s].SetDiffuse( RageColor(1,1,1,1) );
+				m_sprItems[s].SetState( iNewItem );
+				
+				// blink
+				m_sprItems[s].StopTweening();
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,1) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,0) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,1) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,0) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,1) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,0) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,1) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,0) );
+				m_sprItems[s].BeginTweening( 0.1f );	// sleep
+				m_sprItems[s].BeginTweening( 0.001f );	// snap
+				m_sprItems[s].SetTweenDiffuse( RageColor(1,1,1,1) );
+			}
 		}
 	}	
 }

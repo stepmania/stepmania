@@ -18,7 +18,6 @@
 #include "Style.h"
 #include "Grade.h"
 #include "StageStats.h"
-#include "Inventory.h"
 
 
 class Song;
@@ -124,7 +123,7 @@ public:
 													 // courses separately from the active options.
 	SongOptions		m_SongOptions;
 
-	Inventory		m_Inventory[NUM_PLAYERS];
+	int				m_iItems[NUM_PLAYERS][NUM_ITEM_SLOTS];
 
 	bool HasEarnedExtraStage();
 	bool m_bAllow2ndExtraStage; //only used when "Allow Selection of Extra Stage is on"

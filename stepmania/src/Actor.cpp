@@ -22,8 +22,6 @@ Actor::Actor()
 {
 	m_bFirstUpdate = true;
 
-	m_iNumTweenStates = 0;
-
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
 	m_size = RageVector2( 1, 1 );
@@ -166,7 +164,7 @@ void Actor::EndDraw()
 void Actor::UpdateTweening( float fDeltaTime )
 {
 	// update tweening
-	if( m_iNumTweenStates == 0 )
+	if( m_TweenStates.empty() )
 		return;
 
 	// we are performing a tween
@@ -186,12 +184,8 @@ void Actor::UpdateTweening( float fDeltaTime )
 		m_current = TS;
 		
 		// delete the head tween
-		for( int i=0; i<m_iNumTweenStates-1; i++ )
-		{
-			m_TweenStates[i] = m_TweenStates[i+1];
-            m_TweenInfo[i] = m_TweenInfo[i+1];
-		}
-		m_iNumTweenStates--;
+		m_TweenStates.erase( m_TweenStates.begin() );
+		m_TweenInfo.erase( m_TweenInfo.begin() );
 	}
 	else		// in the middle of tweening.  Recalcute the current position.
 	{
@@ -266,25 +260,21 @@ void Actor::BeginTweening( float time, TweenType tt )
 {
 	ASSERT( time >= 0 );
 
-	// HACK to keep from out of bounds access..
-	if( m_iNumTweenStates == MAX_TWEEN_STATES )
-	{
-		for( int i=0; i<m_iNumTweenStates-1; i++ )
-		{
-			m_TweenStates[i] = m_TweenStates[i+1];
-			m_TweenInfo[i] = m_TweenInfo[i+1];
-		}
-	}
+	ASSERT( m_TweenStates.size() < 50 );	// there's no reason for the number of tweens to ever go this large
 
 	// add a new TweenState to the tail, and initialize it
-	m_iNumTweenStates++;
-	TweenState &TS = m_TweenStates[m_iNumTweenStates-1];	// latest
-	TweenInfo  &TI = m_TweenInfo[m_iNumTweenStates-1];		// latest
+	m_TweenStates.resize( m_TweenStates.size()+1 );
+	m_TweenInfo.resize( m_TweenInfo.size()+1 );
 
-	if( m_iNumTweenStates >= 2 )		// if there was already a TS on the stack
+	ASSERT( m_TweenStates.size() == m_TweenInfo.size() )
+
+	TweenState &TS = m_TweenStates.back();	// latest
+	TweenInfo  &TI = m_TweenInfo.back();	// latest
+
+	if( m_TweenStates.size() >= 2 )		// if there was already a TS on the stack
 	{
 		// initialize the new TS from the last TS in the list
-		TS = m_TweenStates[m_iNumTweenStates-2];
+		TS = m_TweenStates[m_TweenStates.size()-2];
 	}
 	else
 	{
@@ -300,7 +290,8 @@ void Actor::BeginTweening( float time, TweenType tt )
 
 void Actor::StopTweening()
 {
-	m_iNumTweenStates = 0;
+	m_TweenStates.clear();
+	m_TweenInfo.clear();
 }
 
 
@@ -329,8 +320,10 @@ void Actor::SetTweenGlow( RageColor c )					{ LatestTween().glow = c; };
 
 Actor::TweenState Actor::GetDestTweenState()
 {
-	if(!m_iNumTweenStates) return m_current;
-	return LatestTween();
+	if( m_TweenStates.empty() )	// not tweening
+		return m_current;
+	else
+		return LatestTween();
 }
 
 void Actor::SetTweenState( const Actor::TweenState &ts )
@@ -571,7 +564,7 @@ float Actor::TweenTime() const
 {
 	float tot = 0;
 
-	for(int i = 0; i < m_iNumTweenStates; ++i)
+	for( unsigned i=0; i<m_TweenInfo.size(); ++i )
 		tot += m_TweenInfo[i].m_fTimeLeftInTween;
 
 	return tot;

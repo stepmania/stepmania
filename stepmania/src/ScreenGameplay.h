@@ -29,6 +29,8 @@
 #include "DifficultyIcon.h"
 #include "BPMDisplay.h"
 #include "FocusingSprite.h"
+#include "Inventory.h"
+
 
 // messages sent by Combo
 const ScreenMessage SM_BeginToasty			= ScreenMessage(SM_User+104);
@@ -125,6 +127,8 @@ protected:
 	BitmapText			m_StageName;
 
 	Player				m_Player[NUM_PLAYERS];
+
+	Inventory			m_Inventory;
 
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 

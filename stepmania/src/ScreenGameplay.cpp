@@ -330,8 +330,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 			ASSERT(0);
 		}
 
-		GAMESTATE->m_Inventory[p].RefreshPossibleItems();
-
 		m_pScoreDisplay[p]->Init( (PlayerNumber)p );
 		m_pScoreDisplay[p]->SetXY( SCORE_X(p), SCORE_Y(p,bExtra) );
 		m_pScoreDisplay[p]->SetZoom( SCORE_ZOOM );
@@ -475,6 +473,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		StartPlayingSong( 0, 0 );
 	}
 
+	m_Inventory.RefreshPossibleItems();
+
 
 	m_iRowLastCrossed = -1;
 
@@ -589,7 +589,7 @@ void ScreenGameplay::LoadNextSong()
 		NoteData pNewNoteData;
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
-		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p] );
+		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory );
 	}
 
 	/* Set up song-specific graphics. */
@@ -1027,7 +1027,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		
 		if( iItemSlot != -1 )
-			GAMESTATE->m_Inventory[MenuI.player].UseItem( MenuI.player, iItemSlot );
+			m_Inventory.UseItem( MenuI.player, iItemSlot );
 	}
 
 }
