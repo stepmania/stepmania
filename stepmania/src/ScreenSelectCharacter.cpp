@@ -66,7 +66,7 @@ ScreenSelectCharacter::ScreenSelectCharacter()
 
 	CStringArray asCharacterPaths;
 	GetDirListing( "Characters/*.ini", asCharacterPaths, false, true );
-	for( int i=0; i<asCharacterPaths.size(); i++ )
+	for( unsigned i=0; i<asCharacterPaths.size(); i++ )
 	{
 		m_vCharacters.resize( m_vCharacters.size()+1 );
 		m_vCharacters[i].Load( asCharacterPaths[i] );
