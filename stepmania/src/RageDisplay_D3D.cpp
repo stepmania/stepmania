@@ -680,7 +680,7 @@ void RageDisplay_D3D::DrawIndexedTriangles( const RageVertex v[], int iNumVerts,
 	g_pd3dDevice->DrawIndexedPrimitiveUP(
 		D3DPT_TRIANGLELIST, // PrimitiveType
 		0, // MinIndex
-		iNumIndices, // NumVertices
+		iNumVerts, // NumVertices
 		iNumIndices/3, // PrimitiveCount,
 		pIndices, // pIndexData,
 		D3DFMT_INDEX16, // IndexDataFormat,
