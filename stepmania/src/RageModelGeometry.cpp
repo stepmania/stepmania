@@ -85,23 +85,14 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
 
 	RageVec3ClearBounds( m_vMins, m_vMaxs );
 
-	//Ym2413a Added: Start
-	//Vector scaling loader.
-	float fXScale;	fXScale = 1;
-	float fYScale;	fYScale = 1;
-	float fZScale;	fZScale = 1;
-
+	float fXScale = 1, fYScale = 1, fZScale = 1;
 	IniFile ini;
 	if( ini.ReadFile( sDir+"character.ini" ) )
 	{
-		if ( !ini.GetValue( "Attributes", "ScaleX", fXScale ) ) {
-			fXScale = 1; }
-		if ( !ini.GetValue( "Attributes", "ScaleY", fYScale ) ) {
-			fYScale = 1; }
-		if ( !ini.GetValue( "Attributes", "ScaleZ", fZScale ) ) {
-			fZScale = 1; }
+		ini.GetValue( "Attributes", "ScaleX", fXScale );
+		ini.GetValue( "Attributes", "ScaleY", fYScale );
+		ini.GetValue( "Attributes", "ScaleZ", fZScale );
 	}
-	//Ym2413a Added: End
 
     while( f.GetLine( sLine ) > 0 )
     {
@@ -175,12 +166,11 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
                     {
 						THROW
                     }
-				//Ym2413a Added: Start
-				//Perform rescaling of model vectors.
+
+					// Scale vectors:
 					v.p[0] = v.p[0]*fXScale;
 					v.p[1] = v.p[1]*fYScale;
 					v.p[2] = v.p[2]*fZScale;
-				//Ym2413a Added: End
 
 //                  vertex.nFlags = nFlags;
 					if( nFlags & 1 )
