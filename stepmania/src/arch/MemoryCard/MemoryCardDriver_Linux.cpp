@@ -5,6 +5,7 @@
 #include "RageFileManager.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -40,7 +41,7 @@ bool MemoryCardDriver_Linux::StorageDevicesChanged()
 	struct stat st;
 	if( fstat(m_fds, &st) == -1 )
 	{
-		LOG->Warn( "stat of '%s' failed.", USB_DEVICE_LIST_FILE );
+		LOG->Warn( "stat '%s' failed: %s", USB_DEVICE_LIST_FILE, strerror(errno) );
 		return false;
 	}
 
@@ -191,16 +192,15 @@ void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevic
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
 
 		CString fn = "/etc/fstab";
-		ifstream f;
-		f.open(fn);
-		if( !f.is_open() )
+		RageFile f;
+		if( !f.Open(fn) )
 		{
-			LOG->Warn( "can't open '%s'", fn.c_str() );
+			LOG->Warn( "can't open '%s': %s", fn.c_str(), f.GetError().c_str() );
 			return;
 		}
 
 		CString sLine;
-		while( getline(f, sLine) )
+		while( f.GetLine(sLine) )
 		{
 			// /dev/sda1               /mnt/flash1             auto    noauto,owner 0 0
 			char cScsiDev;
