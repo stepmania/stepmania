@@ -155,7 +155,7 @@ void Steps::TidyUpData()
 	if( GetMeter() < 1) // meter is invalid
 	{
 		// Why not just use PredictMeter()
-		SetMeter(PredictMeter());
+		SetMeter( int(PredictMeter()) );
 		/*
 		// guess meter from difficulty class
 		switch( GetDifficulty() )
