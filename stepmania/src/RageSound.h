@@ -2,7 +2,6 @@
 #define RAGE_SOUND_OBJ_H
 
 #include "RageThreads.h"
-#include "RageSoundManager.h"
 
 #include <deque>
 

@@ -13,7 +13,6 @@
  */
 
 #include "RageSound.h"
-#include <time.h>
 #include "RageSoundDriver.h"
 #include "RageThreads.h"
 
