@@ -3,6 +3,7 @@
 
 #include "RageFileManager.h"
 #include "RageLog.h"
+#include "arch/arch.h"
 #include "arch/ArchHooks/ArchHooks.h"
 void ExitGame() { }
 
@@ -11,6 +12,11 @@ CString g_Driver = "dir", g_Root = ".";
 CString argv0;
 int g_argc = 0;
 char **g_argv = NULL;
+
+void HandleException( CString sErr )
+{
+
+}
 
 void test_handle_args( int argc, char *argv[] )
 {
@@ -49,6 +55,7 @@ void test_init()
 	HOOKS = MakeArchHooks();
 
 	FILEMAN = new RageFileManager( argv0 );
+	FILEMAN->Mount( "dir", ".", "" );
 	FILEMAN->Mount( g_Driver, g_Root, "" );
 
 	LOG = new RageLog();
