@@ -594,10 +594,16 @@ void ScreenPackages::HTTPUpdate()
 	{
 		m_sStatus = "Waiting for header.";
 		//We don't know if we are using unix-style or dos-style
-		int HeaderEnd = m_sBUFFER.find("\n\n");
-		if( HeaderEnd == m_sBUFFER.npos )
-			HeaderEnd = m_sBUFFER.find("\r\n\r\n");
-		if( HeaderEnd == m_sBUFFER.npos )
+		size_t iHeaderEnd = m_sBUFFER.find("\n\n");
+		if( iHeaderEnd != m_sBUFFER.npos )
+			iHeaderEnd += 2;
+		else
+		{
+			iHeaderEnd = m_sBUFFER.find("\r\n\r\n");
+			if( iHeaderEnd != m_sBUFFER.npos )
+				iHeaderEnd += 4;
+		}
+		if( iHeaderEnd == m_sBUFFER.npos )
 			return;
 
 		// "HTTP/1.1 200 OK"
@@ -622,49 +628,47 @@ void ScreenPackages::HTTPUpdate()
 			m_iTotalBytes = -1;	//We don't know, so go until disconnect
 
 		m_bGotHeader = true;
-		m_sBUFFER = m_sBUFFER.substr( HeaderEnd + 4 );
+		m_sBUFFER = m_sBUFFER.erase( 0, iHeaderEnd );
+	}
+
+	if( m_bIsPackage )
+	{
+		m_iDownloaded += m_sBUFFER.length();
+		m_fOutputFile.Write( m_sBUFFER );
+		m_sBUFFER = "";
 	}
 	else
 	{
-		if( m_bIsPackage )
+		m_iDownloaded = m_sBUFFER.length();
+	}
+	if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
+					//We have the full doc. (And we knew how big it was)
+		( m_iTotalBytes == -1 && 
+			( m_wSocket.state == 8 || m_wSocket.state == 0 ) ) )
+				//XXX: Work around;  these should use enumerated types.
+				//We didn't know how big it was, and were disconnected
+				//So that means we have it all.
+	{
+		m_wSocket.close();
+		m_bIsDownloading = false;
+		m_bGotHeader=false;
+		m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
+
+		if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
 		{
-			m_iDownloaded += m_sBUFFER.length();
-			m_fOutputFile.Write( m_sBUFFER );
-			m_sBUFFER = "";
+			m_sStatus = ssprintf( "%d", m_iResponseCode ) + m_sResponseName;
 		}
 		else
 		{
-			m_iDownloaded = m_sBUFFER.length();
-		}
-		if ( ( m_iTotalBytes <= m_iDownloaded && m_iTotalBytes != -1 ) ||
-						//We have the full doc. (And we knew how big it was)
-			( m_iTotalBytes == -1 && 
-				( m_wSocket.state == 8 || m_wSocket.state == 0 ) ) )
-					//XXX: Work around;  these should use enumerated types.
-					//We didn't know how big it was, and were disconnected
-					//So that means we have it all.
-		{
-			m_wSocket.close();
-			m_bIsDownloading = false;
-			m_bGotHeader=false;
-			m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
-
-			if( m_iResponseCode < 200 || m_iResponseCode >= 400 )
+			if( m_bIsPackage && m_iResponseCode < 300 )
 			{
-				m_sStatus = ssprintf( "%d", m_iResponseCode ) + m_sResponseName;
+				m_fOutputFile.Close();
+				FlushDirCache();
+				RefreshPackages();
+				m_iDownloaded = 0;
 			}
 			else
-			{
-				if( m_bIsPackage && m_iResponseCode < 300 )
-				{
-					m_fOutputFile.Close();
-					FlushDirCache();
-					RefreshPackages();
-					m_iDownloaded = 0;
-				}
-				else
-					HTMLParse();
-			}
+				HTMLParse();
 		}
 	}
 }
