@@ -41,6 +41,8 @@ const int MAX_STYLES_PER_GAME = 10;
 
 class StyleDef;
 
+#define NO_DEFAULT_KEY -1
+
 class GameDef
 {
 public:

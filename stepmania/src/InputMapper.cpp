@@ -58,7 +58,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 		for( int b=0; b<pGameDef->m_iButtonsPerController; b++ )
 		{
 			int key = pGameDef->m_iDefaultKeyboardKey[c][b];
-			if( key == -1 )	// "no key" marker"
+			if( key == NO_DEFAULT_KEY )
 				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
 			GameInput GameI( (GameController)c, (GameButton)b );
@@ -73,7 +73,9 @@ struct AutoJoyMapping
 	Game game;
 	const char *szDriverRegex;	// reported by InputHandler
 	const char *szControllerName;	// the product name of the controller
-	struct {
+	struct Mapping {
+		bool IsEndMarker() const { return iSlotIndex==-1; }
+
 		int iSlotIndex;	// -1 == end marker
 		int deviceButton;
 		GameButton gb;
@@ -88,6 +90,7 @@ struct AutoJoyMapping
 		bool SecondController;
 	} maps[32];
 };
+#define END_MARKER	{-1, -1, -1, false },	// end marker
 const AutoJoyMapping g_AutoJoyMappings[] = 
 {
 	{
@@ -99,7 +102,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_14,		DANCE_BUTTON_RIGHT,		false },
 			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
 			{ 0, JOY_15,		DANCE_BUTTON_DOWN,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -111,7 +114,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_14,		DANCE_BUTTON_RIGHT,		false },
 			{ 0, JOY_13,		DANCE_BUTTON_UP,		false },
 			{ 0, JOY_15,		DANCE_BUTTON_DOWN,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -131,7 +134,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_6,			DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_9,			DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_10,		DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -151,7 +154,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_9,			DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_10,		DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -173,7 +176,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -195,7 +198,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -217,7 +220,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_8,		DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_9,		DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_10,	DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -239,7 +242,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_6,		DANCE_BUTTON_UPRIGHT,	false },
 			{ 0, JOY_10,	DANCE_BUTTON_BACK,		false },
 			{ 0, JOY_9,		DANCE_BUTTON_START,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -259,7 +262,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT,	false },	// R shoulder
 			{ 0, JOY_9,			DANCE_BUTTON_START,		false },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK,		false },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -284,7 +287,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_18,		DANCE_BUTTON_UPRIGHT,	true },
 			{ 0, JOY_19,		DANCE_BUTTON_UPLEFT,	true },
 			{ 0, JOY_26,		DANCE_BUTTON_START,		true },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 	{
@@ -303,7 +306,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
 			{ 0, PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
 			{ 0, PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
-			{-1, -1, -1, false },	// end marker
+			END_MARKER
 		}
 	},
 };
@@ -338,7 +341,7 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 				LOG->Info( "Applying default joystick mapping #%d for device '%s' (%s)",
 					iNumJoysticksMapped+1, mapping.szDriverRegex, mapping.szControllerName );
 
-				for( int k=0; mapping.maps[k].iSlotIndex != -1; k++ )
+				for( int k=0; !mapping.maps[k].IsEndMarker(); k++ )
 				{
 					if( mapping.maps[k].SecondController )
 					{
