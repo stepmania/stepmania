@@ -47,12 +47,15 @@ public:
 
 	void SetCustomTextureRect( const RectF &new_texcoord_frect );
 	void SetCustomTextureCoords( float fTexCoords[8] );
-	void GetCustomTextureCoords( float fTexCoordsOut[8] );
+	void GetCustomTextureCoords( float fTexCoordsOut[8] ) const;
 	void SetCustomSourceRect( const RectF &rectSourceCoords );	// in source pixel space
 	void SetCustomImageRect( RectF rectImageCoords );	// in image pixel space
 	void SetCustomImageCoords( float fImageCoords[8] );
 	const RectF *GetCurrentTextureCoordRect() const;
 	void StopUsingCustomCoords();
+
+	void GetActiveTexCoords(float fImageCoords[8]) const;
+	void GetCurrentTextureCoords(float fImageCoords[8]) const;
 
 protected:
 	virtual bool LoadFromTexture( RageTextureID ID );
