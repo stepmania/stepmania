@@ -21,17 +21,12 @@ RageSoundReader_Resample_Good::RageSoundReader_Resample_Good()
 }
 
 /* Call this if the input position is changed or reset. */
-void RageSoundReader_Resample_Good::Reset() const
+void RageSoundReader_Resample_Good::Reset()
 {
 	BufSamples = 0;
 	eof = false;
-	FlushResampler();
-}
 
-
-/* Call this if the input position is changed or reset. */
-void RageSoundReader_Resample_Good::FlushResampler() const
-{
+	/* Flush the resampler. */
 	for( int i = 0; i < 2; ++i )
 	{
 		if( resamp[i] )
@@ -41,8 +36,9 @@ void RageSoundReader_Resample_Good::FlushResampler() const
 	}
 }
 
+
 /* Call this if the sample factor changes. */
-void RageSoundReader_Resample_Good::ReopenResampler() const
+void RageSoundReader_Resample_Good::ReopenResampler()
 {
 	for( int i = 0; i < 2; ++i )
 	{
@@ -89,13 +85,11 @@ void RageSoundReader_Resample_Good::SetSampleRate(int hz)
 
 int RageSoundReader_Resample_Good::GetLength() const
 {
-	Reset();
 	return source->GetLength();
 }
 
 int RageSoundReader_Resample_Good::GetLength_Fast() const
 {
-	Reset();
 	return source->GetLength_Fast();
 }
 

@@ -20,9 +20,8 @@ class RageSoundReader_Resample_Good: public RageSoundReader_Resample
 	mutable	int BufSamples;
 	mutable	bool eof;
 
-	void Reset() const;
-	void FlushResampler() const;
-	void ReopenResampler() const;
+	void Reset();
+	void ReopenResampler();
 	float GetFactor() const;
 	bool FillBuf();
 
