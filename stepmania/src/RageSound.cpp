@@ -65,7 +65,7 @@ const int pos_map_backlog_samples = samplerate;
 RageSound::RageSound()
 {
 	ASSERT(SOUNDMAN);
-	LockMutex L(SOUNDMAN->lock);
+	LockMut(SOUNDMAN->lock);
 
 	static bool initialized = false;
 	if(!initialized)
@@ -100,7 +100,7 @@ RageSound::~RageSound()
 RageSound::RageSound(const RageSound &cpy)
 {
 	ASSERT(SOUNDMAN);
-	LockMutex L(SOUNDMAN->lock);
+	LockMut(SOUNDMAN->lock);
 
 	stream.Sample = NULL;
 
@@ -235,7 +235,7 @@ void RageSound::SetLengthSeconds(float secs)
  * playing, Stop is called. */
 void RageSound::Play()
 {
-	LockMutex L(SOUNDMAN->lock);
+	LockMut(SOUNDMAN->lock);
 
 	if(playing) Stop();
 	playing = true;
@@ -254,6 +254,8 @@ void RageSound::Update(float delta)
  * over, and we won't overflow our buffer.) */
 int RageSound::stream_t::FillBuf(int bytes)
 {
+	LockMut(SOUNDMAN->lock);
+
 	ASSERT(Sample);
 
 	bool got_something = false;
@@ -295,7 +297,7 @@ int RageSound::stream_t::FillBuf(int bytes)
  * Be careful; this is called in a separate thread. */
 int RageSound::GetPCM(char *buffer, int size, int sampleno)
 {
-	LockMutex L(SOUNDMAN->lock);
+	LockMut(SOUNDMAN->lock);
 
 	/* If the sound is paused, just fill the buffer with silence. 
 	 * Hmm.  Pausing is annoying, since we'll get startup latency if
@@ -498,7 +500,7 @@ float RageSound::GetLengthSeconds()
 
 float RageSound::GetPositionSeconds() const
 {
-	LockMutex L(SOUNDMAN->lock);
+	LockMut(SOUNDMAN->lock);
 
 	/* If we're not playing, just report the static position. */
 	if( !IsPlaying() )
@@ -562,7 +564,10 @@ float RageSound::GetPositionSeconds() const
 
 void RageSound::SetPositionSeconds( float fSeconds )
 {
-	LockMutex L(SOUNDMAN->lock);
+	/* This can take a while.  Only lock the sound buffer if we're actually playing. */
+	SOUNDMAN->lock.Lock();
+	if(!playing)
+		SOUNDMAN->lock.Unlock();
 
 	position = int(fSeconds * samplerate);
 	if( fSeconds < 0 )
@@ -570,17 +575,22 @@ void RageSound::SetPositionSeconds( float fSeconds )
 
 	if(big) {
 		ASSERT(stream.Sample);
-		if(AccurateSync)
+		if(fSeconds == 0)
+			Sound_Rewind(stream.Sample);
+		else if(AccurateSync)
 			Sound_AccurateSeek(stream.Sample, int(fSeconds * 1000));
 		else
 			Sound_FastSeek(stream.Sample, int(fSeconds * 1000));
 		stream.buf.clear();
 	}
+
+	if(playing)
+		SOUNDMAN->lock.Unlock();
 }
 
 void RageSound::SetPlaybackRate( float fScale )
 {
-	LockMutex L(SOUNDMAN->lock);
+	LockMut(SOUNDMAN->lock);
 
 	speed = fScale;
 }
@@ -588,7 +598,7 @@ void RageSound::SetPlaybackRate( float fScale )
 /* This is used to start music.  It probably belongs in RageSoundManager. */
 void RageSound::LoadAndPlayIfNotAlready( CString sSoundFilePath )
 {
-	LockMutex L(SOUNDMAN->lock);
+	LockMut(SOUNDMAN->lock);
 	if( GetLoadedFilePath() == sSoundFilePath && IsPlaying() )
 		return;		// do nothing
 
