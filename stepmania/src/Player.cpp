@@ -40,22 +40,22 @@
 ThemeMetric<float> GRAY_ARROWS_Y_STANDARD		("Player","ReceptorArrowsYStandard");
 ThemeMetric<float> GRAY_ARROWS_Y_REVERSE		("Player","ReceptorArrowsYReverse");
 #define JUDGMENT_X( p, both_sides )				THEME->GetMetricF("Player",both_sides ? CString("JudgmentXOffsetBothSides") : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
-#define JUDGMENT_Y								THEME->GetMetricF("Player","JudgmentY")
-#define JUDGMENT_Y_REVERSE						THEME->GetMetricF("Player","JudgmentYReverse")
+ThemeMetric<float> JUDGMENT_Y				("Player","JudgmentY");
+ThemeMetric<float> JUDGMENT_Y_REVERSE			("Player","JudgmentYReverse");
 #define COMBO_X( p, both_sides )				THEME->GetMetricF("Player",both_sides ? CString("ComboXOffsetBothSides") : ssprintf("ComboXOffsetOneSideP%d",p+1))
-#define COMBO_Y									THEME->GetMetricF("Player","ComboY")
-#define COMBO_Y_REVERSE							THEME->GetMetricF("Player","ComboYReverse")
+ThemeMetric<float> COMBO_Y				("Player","ComboY");
+ThemeMetric<float> COMBO_Y_REVERSE			("Player","ComboYReverse");
 #define ATTACK_DISPLAY_X( p, both_sides )		THEME->GetMetricF("Player",both_sides ? CString("AttackDisplayXOffsetBothSides") : ssprintf("AttackDisplayXOffsetOneSideP%d",p+1))
-#define ATTACK_DISPLAY_Y						THEME->GetMetricF("Player","AttackDisplayY")
-#define ATTACK_DISPLAY_Y_REVERSE				THEME->GetMetricF("Player","AttackDisplayYReverse")
+ThemeMetric<float> ATTACK_DISPLAY_Y			("Player","AttackDisplayY");
+ThemeMetric<float> ATTACK_DISPLAY_Y_REVERSE		("Player","AttackDisplayYReverse");
 ThemeMetric<float> HOLD_JUDGMENT_Y_STANDARD		("Player","HoldJudgmentYStandard");
 ThemeMetric<float> HOLD_JUDGMENT_Y_REVERSE		("Player","HoldJudgmentYReverse");
 ThemeMetric<int>	BRIGHT_GHOST_COMBO_THRESHOLD("Player","BrightGhostComboThreshold");
 ThemeMetric<bool>	TAP_JUDGMENTS_UNDER_FIELD	("Player","TapJudgmentsUnderField");
 ThemeMetric<bool>	HOLD_JUDGMENTS_UNDER_FIELD	("Player","HoldJudgmentsUnderField");
-#define START_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StartDrawingAtPixels")
-#define STOP_DRAWING_AT_PIXELS					THEME->GetMetricI("Player","StopDrawingAtPixels")
-#define MAX_PRO_TIMING_ERROR					THEME->GetMetricI("Player","MaxProTimingError")
+ThemeMetric<int> START_DRAWING_AT_PIXELS		("Player","StartDrawingAtPixels");
+ThemeMetric<int> STOP_DRAWING_AT_PIXELS			("Player","StopDrawingAtPixels");
+ThemeMetric<int> MAX_PRO_TIMING_ERROR			("Player","MaxProTimingError");
 
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
@@ -905,7 +905,7 @@ void Player::Step( int col, const RageTimer &tm )
 		if( score != TNS_NONE && score != TNS_MISS )
 		{
 			int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
-			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR );
+			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
 
 			if( m_pPlayerStageStats )
 				m_pPlayerStageStats->iTotalError += ms_error;
