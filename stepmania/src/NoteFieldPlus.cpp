@@ -95,7 +95,7 @@ void NoteFieldPlus::Update( float fDelta )
 		m_GhostMine[c].SetY( fY );
 		m_HoldGhost[c].SetY( fY );
 
-		m_GrayArrow[c].SetZ( fY );
+		m_GrayArrow[c].SetZ( fZ );
 		m_GhostDim[c].SetZ( fZ );
 		m_GhostBright[c].SetZ( fZ );
 		m_GhostMine[c].SetZ( fZ );
