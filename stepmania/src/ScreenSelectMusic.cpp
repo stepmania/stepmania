@@ -50,6 +50,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SAMPLE_MUSIC_DELAY					THEME->GetMetricF("ScreenSelectMusic","SampleMusicDelay")
 #define SHOW_RADAR							THEME->GetMetricB("ScreenSelectMusic","ShowRadar")
 #define SHOW_GRAPH							THEME->GetMetricB("ScreenSelectMusic","ShowGraph")
+#define SHOW_PANES							THEME->GetMetricB("ScreenSelectMusic","ShowPanes")
 #define SHOW_DIFFICULTY_LIST				THEME->GetMetricB("ScreenSelectMusic","ShowDifficultyList")
 #define CDTITLE_SPIN_SECONDS				THEME->GetMetricF("ScreenSelectMusic","CDTitleSpinSeconds")
 #define PREV_SCREEN( play_mode )			THEME->GetMetric ("ScreenSelectMusic","PrevScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -239,6 +240,13 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 			m_DifficultyList.Load();
 			SET_XY_AND_ON_COMMAND( m_DifficultyList );
 			this->AddChild( &m_DifficultyList );
+		}
+
+		if( SHOW_PANES )
+		{
+			m_PaneDisplay[p].SetName( "PaneDisplay", ssprintf("PaneDisplayP%d",p+1) );
+			m_PaneDisplay[p].Load( (PlayerNumber) p );
+			this->AddChild( &m_PaneDisplay[p] );
 		}
 
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
@@ -452,6 +460,8 @@ void ScreenSelectMusic::TweenOnScreen()
 		ON_COMMAND( m_OptionIconRow[p] );
 		ON_COMMAND( m_sprHighScoreFrame[p] );
 		ON_COMMAND( m_textHighScore[p] );
+		if( SHOW_PANES )
+			ON_COMMAND( m_PaneDisplay[p] );
 	}
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -499,6 +509,8 @@ void ScreenSelectMusic::TweenOffScreen()
 		OFF_COMMAND( m_OptionIconRow[p] );
 		OFF_COMMAND( m_sprHighScoreFrame[p] );
 		OFF_COMMAND( m_textHighScore[p] );
+		if( SHOW_PANES )
+			OFF_COMMAND( m_PaneDisplay[p] );
 	}
 }
 
@@ -986,6 +998,8 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 		m_DifficultyList.SetFromGameState();
 	m_GrooveRadar.SetFromNotes( pn, pNotes );
 	m_MusicWheel.NotesChanged( pn );
+	if( SHOW_PANES )
+		m_PaneDisplay[pn].SetFromGameState();
 }
 
 void ScreenSelectMusic::SwitchToPreferredDifficulty()

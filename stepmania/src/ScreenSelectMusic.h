@@ -27,6 +27,7 @@
 #include "DifficultyList.h"
 #include "CourseContentsList.h"
 #include "HelpDisplay.h"
+#include "PaneDisplay.h"
 
 
 class ScreenSelectMusic : public Screen
@@ -98,6 +99,7 @@ protected:
 	CourseContentsList	m_CourseContentsFrame;
 	HelpDisplay			m_Artist;
 	BitmapText			m_MachineRank;
+	PaneDisplay			m_PaneDisplay[NUM_PLAYERS];
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
