@@ -307,6 +307,11 @@ typedef char			TCHAR;
 	#endif
 #endif // #ifndef SS_ANSI
 
+// VC++ needs this for va_*. -cdanford
+#ifndef SS_ANSI
+	#include <stdarg.h>
+#endif
+
 
 // a very shorthand way of applying the fix for KB problem Q172398
 // (basic_string assignment bug)
