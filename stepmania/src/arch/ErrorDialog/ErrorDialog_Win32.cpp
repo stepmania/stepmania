@@ -104,3 +104,4 @@ void ErrorDialog_Win32::ShowError()
  * Chris Danford
  * Glenn Maynard
  */
+
