@@ -375,7 +375,6 @@ void RageSoundReader_WAV::OpenInternal()
 			if( bGotFormatChunk )
 				LOG->Warn( "File %s has more than one fmt chunk", m_File.GetPath().c_str() );
 
-			int32_t iBytesPerSec;
 			iFormatTag = FileReading::read_16_le( m_File );
 			m_WavData.m_iChannels = FileReading::read_16_le( m_File );
 			m_WavData.m_iSampleRate = FileReading::read_32_le( m_File );
