@@ -232,40 +232,46 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		LOG->Info( "ALSA device overridden to \"%s\"", PREFSMAN->m_iSoundDevice.c_str() );
 }
 
-Alsa9Buf::Alsa9Buf( hw hardware, int channels_ )
+Alsa9Buf::Alsa9Buf()
 {
-	GetSoundCardDebugInfo();
-		
-	InitializeErrorHandler();
-	
-	channels = channels_;
 	samplerate = 44100;
 	samplebits = 16;
 	last_cursor_pos = 0;
 	samplerate_set_explicitly = false;
 	preferred_writeahead = 8192;
 	preferred_chunksize = 1024;
+	pcm = NULL;
+}
 
+CString Alsa9Buf::Init( hw hardware, int channels_ )
+{
+	channels = channels_;
+
+	GetSoundCardDebugInfo();
+		
+	InitializeErrorHandler();
+	
 	/* Open the device. */
 	int err;
 	err = dsnd_pcm_open( &pcm, DeviceName(), SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
-	if (err < 0)
-		RageException::ThrowNonfatal("dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err));
+	if( err < 0 )
+		return ssprintf( "dsnd_pcm_open(%s): %s", DeviceName().c_str(), dsnd_strerror(err) );
 
 	if( !SetHWParams() )
 	{
 		CHECKPOINT;
-		dsnd_pcm_close(pcm);
-		CHECKPOINT;
-		RageException::ThrowNonfatal( "SetHWParams failed" );
+		return "SetHWParams failed";
 	}
 
 	SetSWParams();
+
+	return "";
 }
 
 Alsa9Buf::~Alsa9Buf()
 {
-	dsnd_pcm_close(pcm);
+	if( pcm != NULL )
+		dsnd_pcm_close( pcm );
 }
 
 

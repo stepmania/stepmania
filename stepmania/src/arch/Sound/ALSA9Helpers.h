@@ -34,9 +34,10 @@ public:
 	enum hw { HW_HARDWARE, HW_SOFTWARE, HW_DONT_CARE };
 
 	/* Call SetSampleRate before you use the sample. */
-	Alsa9Buf( hw hardware, int channels );
+	Alsa9Buf();
+	CString Init( hw hardware, int channels );
 	~Alsa9Buf();
-
+	
 	int GetNumFramesToFill();
 	bool WaitUntilFramesCanBeFilled( int timeout_ms );
 	void Write( const int16_t *buffer, int frames );

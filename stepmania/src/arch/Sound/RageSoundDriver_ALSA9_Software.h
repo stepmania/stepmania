@@ -30,6 +30,7 @@ public:
 		
 
 	RageSound_ALSA9_Software();
+	CString Init();
 	~RageSound_ALSA9_Software();
 };
 

@@ -268,7 +268,7 @@ int RageSound_ALSA9::GetSampleRate( int rate ) const
 	return str->pcm->FindSampleRate( rate );
 }
 	
-static void CheckMixingBlacklist()
+static CString CheckMixingBlacklist()
 {
 	CString sID = Alsa9Buf::GetHardwareID();
 	const CString blacklist[] = {
@@ -278,41 +278,46 @@ static void CheckMixingBlacklist()
 	}, *blacklist_end = blacklist+ARRAYSIZE(blacklist);
 	
 	if( find( &blacklist[0], blacklist_end, sID ) != blacklist_end )
-		RageException::ThrowNonfatal( "ALSA driver \"%s\" not using hardware mixing", sID.c_str() );
+		return ssprintf( "ALSA driver \"%s\" not using hardware mixing", sID.c_str() );
+	return "";
 }
 
 RageSound_ALSA9::RageSound_ALSA9():
 	m_Mutex("ALSAMutex"),
 	m_InactiveSoundMutex("InactiveSoundMutex")
 {
-	CString err = LoadALSA();
-	if( err != "" )
-		RageException::ThrowNonfatal("Driver unusable: %s", err.c_str());
-try {
-	CheckMixingBlacklist();
-	
 	shutdown = false;
+}
 
+CString RageSound_ALSA9::Init()
+{
+	CString sError = LoadALSA();
+	if( sError != "" )
+		return ssprintf( "Driver unusable: %s", sError.c_str() );
+
+	sError = CheckMixingBlacklist();
+	if( sError != "" )
+		return sError;
+	
 	/* Create a bunch of streams and put them into the stream pool. */
 	for( int i = 0; i < 32; ++i )
 	{
-		Alsa9Buf *newbuf;
-		try {
-			newbuf = new Alsa9Buf( Alsa9Buf::HW_HARDWARE, channels );
-		} catch(const RageException &e) {
+		Alsa9Buf *newbuf = new Alsa9Buf;
+		sError = newbuf->Init( Alsa9Buf::HW_HARDWARE, channels );
+		if( sError != "" )
+		{
+			delete newbuf;
+
 			/* If we didn't get at least 8, fail. */
-			if(i >= 8) break; /* OK */
+			if( i >= 8 )
+				break; /* OK */
 
-			/* Clean up; the dtor won't be called. */
-			for(int n = 0; n < i; ++n)
-				delete stream_pool[n];
-
-			if( !i )
-				RageException::ThrowNonfatal( "%s", e.what() );
+			if( i == 0 )
+				return sError;
 
 			/* We created at least one hardware buffer. */
-			LOG->Trace("Could only create %i buffers; need at least 8 (failed with %s).  Hardware ALSA driver can't be used.", i, e.what());
-			RageException::ThrowNonfatal("Not enough substreams for hardware mixing, using software mixing");
+			LOG->Trace( "Could only create %i buffers; need at least 8 (failed with %s).  Hardware ALSA driver can't be used.", i, sError.c_str() );
+			return "Not enough substreams for hardware mixing, using software mixing";
 		}
 
 		stream *s = new stream;
@@ -320,23 +325,24 @@ try {
 		stream_pool.push_back(s);
 	}
 
-	LOG->Info("ALSA: Got %i hardware buffers", stream_pool.size());
+	LOG->Info( "ALSA: Got %i hardware buffers", stream_pool.size() );
 
 	MixingThread.SetName( "RageSound_ALSA9" );
 	MixingThread.Create( MixerThread_start, this );
-} catch(...) {
-	UnloadALSA();
-	throw;
-}
+
+	return "";
 }
 
 RageSound_ALSA9::~RageSound_ALSA9()
 {
-	/* Signal the mixing thread to quit. */
-	shutdown = true;
-	LOG->Trace("Shutting down mixer thread ...");
-	MixingThread.Wait();
-	LOG->Trace("Mixer thread shut down.");
+	if( MixingThread.IsCreated() )
+	{
+		/* Signal the mixing thread to quit. */
+		shutdown = true;
+		LOG->Trace("Shutting down mixer thread ...");
+		MixingThread.Wait();
+		LOG->Trace("Mixer thread shut down.");
+	}
  
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		delete stream_pool[i];

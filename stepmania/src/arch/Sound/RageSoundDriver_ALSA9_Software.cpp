@@ -80,11 +80,15 @@ void RageSound_ALSA9_Software::SetupDecodingThread()
 
 RageSound_ALSA9_Software::RageSound_ALSA9_Software()
 {
-	CString err = LoadALSA();
-	if( err != "" )
-		RageException::ThrowNonfatal("Driver unusable: %s", err.c_str());
-try {
+	pcm = NULL;
 	shutdown = false;
+}
+
+CString RageSound_ALSA9_Software::Init()
+{
+	CString sError = LoadALSA();
+	if( sError != "" )
+		return ssprintf( "Driver unusable: %s", sError.c_str() );
 
 	max_writeahead = safe_writeahead;
 	CString sys;
@@ -97,7 +101,10 @@ try {
 	if( PREFSMAN->m_iSoundWriteAhead )
 		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
 
-	pcm = new Alsa9Buf( Alsa9Buf::HW_DONT_CARE, channels );
+	pcm = new Alsa9Buf();
+	sError = pcm->Init( Alsa9Buf::HW_DONT_CARE, channels );
+	if( sError != "" )
+		return sError;
 
 	samplerate = pcm->FindSampleRate( samplerate );
 	pcm->SetSampleRate( samplerate );
@@ -111,20 +118,20 @@ try {
 	
 	MixingThread.SetName( "RageSound_ALSA9_Software" );
 	MixingThread.Create( MixerThread_start, this );
-} catch(...) {
-	UnloadALSA();
-	throw;
-}
 
+	return "";
 }
 
 RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
 {
-	/* Signal the mixing thread to quit. */
-	shutdown = true;
-	LOG->Trace("Shutting down mixer thread ...");
-	MixingThread.Wait();
-	LOG->Trace("Mixer thread shut down.");
+	if( MixingThread.IsCreated() )
+	{
+		/* Signal the mixing thread to quit. */
+		shutdown = true;
+		LOG->Trace("Shutting down mixer thread ...");
+		MixingThread.Wait();
+		LOG->Trace("Mixer thread shut down.");
+	}
  
 	delete pcm;
 
