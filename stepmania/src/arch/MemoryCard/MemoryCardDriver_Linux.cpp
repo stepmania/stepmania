@@ -16,7 +16,7 @@ MemoryCardDriver_Linux::MemoryCardDriver_Linux()
 	m_lastModTime = 0;
 	m_fds = open(USB_DEVICE_LIST_FILE, O_RDONLY);
 	if( m_fds == -1 )
-		LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
+		LOG->Trace( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
 }
 
 MemoryCardDriver_Linux::~MemoryCardDriver_Linux()
@@ -49,6 +49,11 @@ bool MemoryCardDriver_Linux::StorageDevicesChanged()
 
 void MemoryCardDriver_Linux::GetStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
+	/* If we couldn't open it before, we probably can't open it now; don't
+	 * output more errors. */
+	if( m_fds == -1 )
+		return;
+
 	vDevicesOut.clear();
 
 	{
