@@ -140,13 +140,12 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 			case ']':	c='}';	break;
 			case '\\':	c='|';	break;
 			case ';':	c=':';	break;
+			case '\'':	c='"';	break;
 			case ',':	c='<';	break;
 			case '.':	c='>';	break;
 			case '/':	c='?';	break;
 			}
 		}
-		if ( !bHoldingShift && (c == '\"') )
-			c = '\'';
 
 		if( c >= ' ' )
 		{
