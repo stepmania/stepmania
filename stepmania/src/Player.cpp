@@ -1087,10 +1087,18 @@ void PlayerMinus::CrossedMineRow( int iNoteRow )
 		{
 			const StyleInput StyleI( m_PlayerNumber, t );
 			const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
-			float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
-
-			if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
-				Step( t, now+(-PREFSMAN->m_fPadStickSeconds) );
+			if( PREFSMAN->m_fPadStickSeconds > 0 )
+			{
+				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+				if( fSecsHeld >= PREFSMAN->m_fPadStickSeconds )
+					Step( t, now+(-PREFSMAN->m_fPadStickSeconds) );
+			}
+			else
+			{
+				bool bIsDown = INPUTMAPPER->IsButtonDown( GameI );
+				if( bIsDown )
+					Step( t, now );
+			}
 		}
 	}
 }
