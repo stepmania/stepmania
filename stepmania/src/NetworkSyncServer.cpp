@@ -338,7 +338,7 @@ void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, LanPlayer *playe
 void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers)
 {
 	for( int x = 0; x < numPlayers; x++ )
-		data.Write2( (uint8_t) playersPtr[x]->combo);
+		data.Write2( (uint16_t) playersPtr[x]->combo);
 }
 
 void StepManiaLanServer::StatsProjgradeColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers)
