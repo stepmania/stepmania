@@ -131,8 +131,8 @@ CString LuaData::Serialize() const
 	lua_pushstring( LUA->L, "Serialize" );
 	lua_gettable( LUA->L, LUA_GLOBALSINDEX );
 
-	if( lua_isnil(LUA->L, -1) )
-		FAIL_M( "Serialize() missing" );
+	ASSERT_M( !lua_isnil(LUA->L, -1), "Serialize() missing" );
+	ASSERT_M( lua_isfunction(LUA->L, -1), "Serialize() not a function" );
 
 	/* Arg 1 (t): */
 	this->PushSelf( LUA->L );
