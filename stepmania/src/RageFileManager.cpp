@@ -49,7 +49,7 @@ public:
 	RageFileDriverMountpoints(): RageFileDriver( new FilenameDB ) { }
 	RageFileObj *Open( const CString &path, int mode, RageFile &p, int &err )
 	{
-		err = (mode == RageFile::WRITE)? EINVAL:ENOENT;
+		err = (mode == RageFile::WRITE)? ERROR_WRITING_NOT_SUPPORTED:ENOENT;
 		return NULL;
 	}
 	/* Never flush FDB, except in LoadFromDrivers. */
@@ -592,15 +592,9 @@ RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, Ra
 		Values.push_back( pair<int,int>( i, value ) );
 	}
 
-	if( !Values.size() )
-	{
-		err = EEXIST;
-		return NULL;
-	}
-
 	stable_sort( Values.begin(), Values.end(), SortBySecond );
 
-	int error = 0;
+	err = 0;
 	for( i = 0; i < Values.size(); ++i )
 	{
 		const int driver = Values[i].first;
@@ -608,14 +602,23 @@ RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, Ra
 		const CString path = ld.GetPath( sPath );
 		ASSERT( path.size() );
 
+		int error;
 		RageFileObj *ret = ld.driver->Open( path, mode, p, error );
 		if( ret )
 		{
 			AddReference( ret, ld.driver );
 			return ret;
 		}
+
+		/* The drivers are in order of priority; if they all return error, return the
+		 * first.  Never return ERROR_WRITING_NOT_SUPPORTED. */
+		if( !err && error != RageFileDriver::ERROR_WRITING_NOT_SUPPORTED )
+			err = error;
 	}
-	err = error;
+
+	if( !err )
+		err = EEXIST; /* no driver could write */
+
 	return NULL;
 }
 
