@@ -1152,15 +1152,14 @@ public:
 	//		AssertNoGLError();
 			glNormalPointer(GL_FLOAT, 0, NULL);
 	//		AssertNoGLError();
-
-			GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
-	//		AssertNoGLError();
 		}
 		else
 		{
 			glDisableClientState(GL_NORMAL_ARRAY);
 		}
 
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+//		AssertNoGLError();
 
 #define BUFFER_OFFSET(o) ((char*)(o))
 
