@@ -907,7 +907,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 			if( sTag.find('l') != sTag.npos )
 			{
 				unsigned lPos = sTag.find('l');
-				if( sTag.substr(lPos-2,4) == "solo" )
+				if( lPos > 2 && sTag.substr(lPos-2,4) == "solo" )
 				{
 					// (solo) -- an edit, apparently (Thanks Glenn!)
 					pSteps->SetDifficulty( DIFFICULTY_EDIT );
