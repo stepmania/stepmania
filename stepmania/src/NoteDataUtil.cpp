@@ -21,7 +21,8 @@ NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMe
 		int iRowSpacing = int(roundf( fBeatSpacing * ROWS_PER_BEAT ));
 
 		bool bFoundSmallerNote = false;
-		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure
+		// for each index in this measure
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( n, i, iMeasureStartIndex, iMeasureLastIndex )
 		{
 			if( i % iRowSpacing == 0 )
 				continue;	// skip
@@ -209,7 +210,8 @@ void NoteDataUtil::GetSMNoteDataString( const NoteData &in_, CString &notes_out 
 			iRowSpacing = 1;
 		else
 			iRowSpacing = int(roundf( NoteTypeToBeat(nt) * ROWS_PER_BEAT ));
-
+			// (verify first)
+			// iRowSpacing = BeatToNoteRow( NoteTypeToBeat(nt) );
 		sRet += ssprintf("  // measure %d\n", m+1);
 
 		const int iMeasureStartRow = m * ROWS_PER_MEASURE;
@@ -274,10 +276,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 	int iTrackOffsetMax = abs( iNewNumTracks - Original.GetNumTracks() );
 	int bOffsetIncreasing = true;
 
-	int iLastRow = Original.GetLastRow();
-
 	int iLastMeasure = 0;
-	for( int r=0; r<=iLastRow; )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( Original, r )
 	{
 		// copy notes in this measure
 		for( int t=0; t<Original.GetNumTracks(); t++ )
@@ -287,9 +287,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 			const TapNote &tn = Original.GetTapNote( iOldTrack, r );
 			out.SetTapNote( iNewTrack, r, tn );
 		}
-		r++;
 
-		const int iMeasure = r / ROWS_PER_MEASURE;
+		const int iMeasure = (r+1) / ROWS_PER_MEASURE;
 		if( iMeasure / 4 != iLastMeasure / 4 ) // adjust sliding window every 4 measures
 		{
 			// See if there is a hold crossing the beginning of this measure

@@ -332,7 +332,7 @@ int NoteData::GetLastRow() const
 	
 	for( int t=0; t < GetNumTracks(); t++ )
 	{
-		int iRow = 999999999;
+		int iRow = MAX_NOTE_ROW;
 		if( !GetPrevTapNoteRowForTrack( t, iRow ) )
 			continue;
 		iOldestRowFoundSoFar = max( iOldestRowFoundSoFar, iRow );
@@ -349,9 +349,6 @@ int NoteData::GetLastRow() const
 
 int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 {
-	if( iEndIndex == -1 )
-		iEndIndex = 999999;
-
 	int iNumNotes = 0;
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
@@ -368,9 +365,6 @@ int NoteData::GetNumTapNotes( int iStartIndex, int iEndIndex ) const
 
 int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 {
-	if( iEndIndex == -1 )
-		iEndIndex = 999999;
-
 	int iNumNotes = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 		if( IsThereATapAtRow(r) )
@@ -381,9 +375,6 @@ int NoteData::GetNumRowsWithTap( int iStartIndex, int iEndIndex ) const
 
 int NoteData::GetNumMines( int iStartIndex, int iEndIndex ) const
 {
-	if( iEndIndex == -1 )
-		iEndIndex = 999999;
-
 	int iNumMines = 0;
 
 	for( int t=0; t<GetNumTracks(); t++ )
@@ -398,9 +389,6 @@ int NoteData::GetNumMines( int iStartIndex, int iEndIndex ) const
 
 int NoteData::GetNumRowsWithTapOrHoldHead( int iStartIndex, int iEndIndex ) const
 {
-	if( iEndIndex == -1 )
-		iEndIndex = 999999;
-
 	int iNumNotes = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 		if( IsThereATapOrHoldHeadAtRow(r) )
@@ -450,9 +438,6 @@ int NoteData::GetNumHands( int iStartIndex, int iEndIndex ) const
 	 * etc.  Only count rows that have at least one tap note (hold heads count).
 	 * Otherwise, every row of hold notes counts, so three simultaneous hold
 	 * notes will count as hundreds of "hands". */
-	if( iEndIndex == -1 )
-		iEndIndex = 999999;
-
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
@@ -467,9 +452,6 @@ int NoteData::GetNumHands( int iStartIndex, int iEndIndex ) const
 
 int NoteData::GetNumN( int iMinTaps, int iStartIndex, int iEndIndex ) const
 {
-	if( iEndIndex == -1 )
-		iEndIndex = 999999;
-
 	int iNum = 0;
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( *this, r, iStartIndex, iEndIndex )
 	{
@@ -489,9 +471,6 @@ int NoteData::GetNumN( int iMinTaps, int iStartIndex, int iEndIndex ) const
 
 int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 {
-	if( iEndIndex == -1 )
-		iEndIndex = GetLastRow();
-
 	int iNumHolds = 0;
 	for( int i=0; i<GetNumHoldNotes(); i++ )
 	{
@@ -517,7 +496,7 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 			SetTapNote(t, r, TAP_EMPTY);	// clear the hold head marker
 
 			// search for end of HoldNote
-			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, j, r+1, 999999 )
+			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *this, t, j, r+1, MAX_NOTE_ROW )
 			{
 				// End hold on the next note we see.  This should be a hold_tail if the 
 				// data is in a consistent state, but doesn't have to be.
@@ -749,7 +728,7 @@ void NoteData::GetTapNoteRange( int iTrack, int iStartRow, int iEndRow, TrackMap
 
 bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 {
-	int iClosestNextRow = 999999;
+	int iClosestNextRow = MAX_NOTE_ROW;
 	bool bAnyHaveNextNote = false;
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
@@ -757,6 +736,7 @@ bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 		if( GetNextTapNoteRowForTrack( t, iNewRowThisTrack ) )
 		{
 			bAnyHaveNextNote = true;
+			ASSERT( iNewRowThisTrack < MAX_NOTE_ROW );
 			iClosestNextRow = min( iClosestNextRow, iNewRowThisTrack );
 		}
 	}

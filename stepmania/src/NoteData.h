@@ -115,16 +115,16 @@ public:
 	float GetFirstBeat() const { return NoteRowToBeat( GetFirstRow() ); }
 	int GetLastRow() const;	// return the beat number of the last note
 	float GetLastBeat() const { return NoteRowToBeat( GetLastRow() ); }
-	int GetNumTapNotes( int iStartIndex = 0, int iEndIndex = -1 ) const;
-	int GetNumMines( int iStartIndex = 0, int iEndIndex = -1 ) const;
-	int GetNumHands( int iStartIndex = 0, int iEndIndex = -1 ) const;
-	int GetNumRowsWithTap( int iStartIndex = 0, int iEndIndex = -1 ) const;
-	int GetNumRowsWithTapOrHoldHead( int iStartIndex = 0, int iEndIndex = -1 ) const;
-	int GetNumN( int iMinTaps, int iStartIndex = 0, int iEndIndex = -1 ) const;
+	int GetNumTapNotes( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumMines( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumHands( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumRowsWithTap( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumRowsWithTapOrHoldHead( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
+	int GetNumN( int iMinTaps, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const;
 	// should hands also count as a jump?
-	int GetNumDoubles( int iStartIndex = 0, int iEndIndex = -1 ) const { return GetNumN( 2, iStartIndex, iEndIndex ); }
+	int GetNumDoubles( int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW ) const { return GetNumN( 2, iStartIndex, iEndIndex ); }
 	/* optimization: for the default of start to end, use the second (faster) */
-	int GetNumHoldNotes( const int iStartIndex, const int iEndIndex = -1 ) const;
+	int GetNumHoldNotes( const int iStartIndex, const int iEndIndex = MAX_NOTE_ROW ) const;
 	int GetNumHoldNotes() const { return m_HoldNotes.size(); }
 	int RowNeedsHands( int row ) const;
 
