@@ -35,6 +35,8 @@ private:
 	CString path; /* for Copy */
 
 	CString write_buf;
+	
+	bool FinalFlush();
 
 public:
 	RageFileObjDirect( const CString &path, int fd_, RageFile &p );
@@ -177,26 +179,53 @@ RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p
 		write_buf.reserve( BUFSIZE );
 }
 
-RageFileObjDirect::~RageFileObjDirect()
+bool RageFileObjDirect::FinalFlush()
 {
-	bool failed = false;
-	if( parent.GetOpenMode() & RageFile::WRITE )
-	{
-		/* Flush the output buffer. */
-		Flush();
+	if( !(parent.GetOpenMode() & RageFile::WRITE) )
+		return true;
 
- 		if( parent.GetOpenMode() & RageFile::SLOW_FLUSH )
-		{
-			/* Force a kernel buffer flush. */
-			if( fsync( fd ) == -1 )
-			{
-				LOG->Warn("Error synchronizing %s: %s", this->path.c_str(), strerror(errno) );
-				SetError( strerror(errno) );
-				failed = true;
-			}
-		}
+	/* Flush the output buffer. */
+	if( Flush() == -1 )
+		return false;
+
+	/* Only do the rest of the flushes if SLOW_FLUSH is enabled. */
+	if( !(parent.GetOpenMode() & RageFile::SLOW_FLUSH) )
+		return true;
+	
+	/* Force a kernel buffer flush. */
+	if( fsync( fd ) == -1 )
+	{
+		LOG->Warn( "Error synchronizing %s: %s", this->path.c_str(), strerror(errno) );
+		SetError( strerror(errno) );
+		return false;
 	}
 
+	/* Wait for the directory to be flushed. */
+	int dirfd = open( Dirname(path), O_RDONLY );
+	if( dirfd == -1 )
+	{
+		LOG->Warn( "Error synchronizing open(%s dir): %s", this->path.c_str(), strerror(errno) );
+		SetError( strerror(errno) );
+		return false;
+	}
+
+	if( fsync( dirfd ) == -1 )
+	{
+		LOG->Warn( "Error synchronizing fsync(%s dir): %s", this->path.c_str(), strerror(errno) );
+		SetError( strerror(errno) );
+		close( dirfd );
+		return false;
+	}
+
+	close( dirfd );
+
+	return true;
+}
+
+RageFileObjDirect::~RageFileObjDirect()
+{
+	bool failed = !FinalFlush();
+	
 	if( fd != -1 )
 	{
 		if( close( fd ) == -1 )
