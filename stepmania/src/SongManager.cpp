@@ -919,15 +919,15 @@ bool CompareNotesPointersForExtra(const Notes *n1, const Notes *n2)
 void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd, 
 								   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	CString Group = GAMESTATE->m_sPreferredGroup;
-	if(Group == GROUP_ALL_MUSIC)
+	CString sGroup = GAMESTATE->m_sPreferredGroup;
+	if(sGroup == GROUP_ALL_MUSIC)
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
-		Group = GAMESTATE->m_pCurSong->m_sGroupName;
+		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 	}
-	ASSERT(Group != "");
+	ASSERT(sGroup != "");
 
-	if(GetExtraStageInfoFromCourse(bExtra2, Group, pSongOut, pNotesOut, po_out, so_out))
+	if(GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pNotesOut, po_out, so_out))
 		return;
 	
 	// Choose a hard song for the extra stage
@@ -937,7 +937,6 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 	Notes*	pExtra2Notes = NULL;
 	
 	vector<Song*> apSongs;
-	CString sGroup = GAMESTATE->m_sPreferredGroup==GROUP_ALL_MUSIC ? GAMESTATE->m_pCurSong->m_sGroupName : GAMESTATE->m_sPreferredGroup;
 	SONGMAN->GetSongs( apSongs, sGroup );
 	for( unsigned s=0; s<apSongs.size(); s++ )	// foreach song
 	{
