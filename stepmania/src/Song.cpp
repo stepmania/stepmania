@@ -1210,37 +1210,24 @@ bool Song::IsNew() const
 
 bool Song::IsEasy( StepsType nt ) const
 {
-	Steps* pBeginnerNotes = GetStepsByDifficulty( nt, DIFFICULTY_BEGINNER );
-	Steps* pEasyNotes = GetStepsByDifficulty( nt, DIFFICULTY_EASY );
-	Steps* pHardNotes = GetStepsByDifficulty( nt, DIFFICULTY_HARD );
+	const Steps* pHardNotes = GetStepsByDifficulty( nt, DIFFICULTY_HARD );
 
 	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
 	if( pHardNotes && pHardNotes->GetMeter() > 9 )
 		return false;
 
-	/* Originally, there was only Easy.  Beginners found easy steps by
-	 * going to the top of the default sort, since the default sort was
-	 * by Easy meter.
-	 *
-	 * Now, there's Beginner.  We can't very well sort by it; the meter is
-	 * almost always 1 or 2.  So, let's mark "easy" songs as those with any
-	 * beginner steps, so beginners (playing on beginner) can be told to look
-	 * for the easy icon, and other beginners (playing on light) can go by the
-	 * sort like they have been.  Don't make IsEasy some kind of mixture of
-	 * beginner and easy, since that's too confusing and makes it useless to
-	 * beginners. 
-	 *
-	 * Hmm.  I guess it does make sense to show as easy if it has 1-foot light
-	 * steps, too: if the user selected Beginner, then 1-foot light is probably
-	 * fine, and if the song has no beginner steps that's what he'll get. */
-//	return pBeginnerNotes != NULL;
-
+	/* The easy marker indicates which songs a beginner, having selected "beginner",
+	 * can play and actually get a very easy song: if there are actual beginner
+	 * steps, or if the light steps are 1- or 2-foot. */
+	const Steps* pBeginnerNotes = GetStepsByDifficulty( nt, DIFFICULTY_BEGINNER );
 	if( pBeginnerNotes )
 		return true;
-	else if( pEasyNotes && pEasyNotes->GetMeter()==1 )
+	
+	const Steps* pEasyNotes = GetStepsByDifficulty( nt, DIFFICULTY_EASY );
+	if( pEasyNotes && pEasyNotes->GetMeter() == 1 )
 		return true;
-	else
-		return false;
+
+	return false;
 }
 
 bool Song::HasEdits( StepsType nt ) const
@@ -1259,13 +1246,12 @@ CString MakeSortString( CString s )
 	s.MakeUpper();
 
 	// Make sure that non-alphanumeric characters are placed at the very end
-	if( s.size()>0 )
+	if( s.size() > 0 )
 	{
 		if( s[0] == '.' )	// ".59"
 			s.erase(s.begin());
-		if( s[0] < 'A' || s[0] > 'Z' )
-			if( s[0] < '0' && s[0] > '9' )
-				s = char(126) + s;	// prepend with a high ASCII character
+		if( (s[0] < 'A' || s[0] > 'Z') && (s[0] < '0' || s[0] > '9') )
+			s = char(126) + s;
 	}
 
 	return s;
