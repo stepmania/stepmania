@@ -13,7 +13,8 @@ public:
 	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint ) {}
 	virtual void Flush( UsbStorageDevice* pDevice ) {}
 	virtual void ResetUsbStorage() {}
-
+	virtual void PauseMountingThread() {}
+	virtual void UnPauseMountingThread() {}
 };
 
 #endif

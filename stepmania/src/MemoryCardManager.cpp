@@ -295,6 +295,15 @@ CString MemoryCardManager::GetName( PlayerNumber pn ) const
 	return m_Device[pn].sName;
 }
 
+void MemoryCardManager::PauseMountingThread()
+{
+	m_pDriver->PauseMountingThread();
+}
+
+void MemoryCardManager::UnPauseMountingThread()
+{
+	m_pDriver->UnPauseMountingThread();
+}
 
 bool IsAnyPlayerUsingMemoryCard()
 {

@@ -7,14 +7,13 @@
 #include "RageLog.h"
 #include "Profile.h"
 #include "PrefsManager.h"
-#include <windows.h>
 
 const CString TEMP_MOUNT_POINT = "@mctemp/";
 
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
-	m_bReset = false;
+	m_dwLastLogicalDrives = 0;
 
 	StartThread();
 }
@@ -55,65 +54,59 @@ static bool TestWrite( CCStringRef sDrive )
 	return true;
 }
 
-void MemoryCardDriverThreaded_Windows::MountThreadMain()
+void MemoryCardDriverThreaded_Windows::MountThreadReset()
 {
-	DWORD dwLastLogicalDrives = 0;
-	
-	while( !m_bShutdown )
+	m_dwLastLogicalDrives = 0;
+}
+
+void MemoryCardDriverThreaded_Windows::MountThreadDoOneUpdate()
+{
+	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
+	if( dwNewLogicalDrives != m_dwLastLogicalDrives )
 	{
-		if( m_bReset )
+		vector<UsbStorageDeviceEx> vNewStorageDevices;
+
+		const int MAX_DRIVES = 26;
+		for( int i=2; i<MAX_DRIVES; i++ )	// skip 'a:" and "b:"
 		{
-			dwLastLogicalDrives = 0;
-			m_bReset = false;
+			DWORD mask = (1 << i);
+			if( dwNewLogicalDrives & mask ) // drive letter is valid
+			{
+				CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
+
+				LOG->Trace( "Found drive %s", sDrive.c_str() );
+
+				if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
+					continue;
+
+				if( !TestReady(sDrive) )
+					continue;
+
+				UsbStorageDeviceEx usbd;
+				usbd.sOsMountDir = sDrive;
+				usbd.bWriteTestSucceeded = TestWrite( sDrive );
+
+				// read name
+				this->Mount( &usbd, TEMP_MOUNT_POINT );
+				FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
+				Profile profile;
+				CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
+				profile.LoadEditableDataFromDir( sProfileDir );
+				usbd.sName = profile.GetDisplayName();
+
+				vNewStorageDevices.push_back( usbd );
+			}
 		}
 
-		DWORD dwNewLogicalDrives = ::GetLogicalDrives();
-		if( dwNewLogicalDrives != dwLastLogicalDrives )
 		{
-			vector<UsbStorageDeviceEx> vNewStorageDevices;
-
-			const int MAX_DRIVES = 26;
-			for( int i=2; i<MAX_DRIVES; i++ )	// skip 'a:" and "b:"
-			{
-				DWORD mask = (1 << i);
-				if( dwNewLogicalDrives & mask ) // drive letter is valid
-				{
-					CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
-
-					LOG->Trace( "Found drive %s", sDrive.c_str() );
-
-					if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
-						continue;
-
-					if( !TestReady(sDrive) )
-						continue;
-
-					UsbStorageDeviceEx usbd;
-					usbd.sOsMountDir = sDrive;
-					usbd.bWriteTestSucceeded = TestWrite( sDrive );
-
-					// read name
-					this->Mount( &usbd, TEMP_MOUNT_POINT );
-					FILEMAN->FlushDirCache( TEMP_MOUNT_POINT );
-					Profile profile;
-					CString sProfileDir = TEMP_MOUNT_POINT + PREFSMAN->m_sMemoryCardProfileSubdir + '/'; 
-					profile.LoadEditableDataFromDir( sProfileDir );
-					usbd.sName = profile.GetDisplayName();
-
-					vNewStorageDevices.push_back( usbd );
-				}
-			}
-
-			{
-				LockMut( m_mutexStorageDevices );
-				m_bStorageDevicesChanged = true;
-				m_vStorageDevices = vNewStorageDevices;
-			}
-	    }
-		dwLastLogicalDrives = dwNewLogicalDrives;
-
-		::Sleep( 100 );
+			LockMut( m_mutexStorageDevices );
+			m_bStorageDevicesChanged = true;
+			m_vStorageDevices = vNewStorageDevices;
+		}
 	}
+	m_dwLastLogicalDrives = dwNewLogicalDrives;
+
+	::Sleep( 100 );
 }
 
 void MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice, CString sMountPoint )
@@ -147,11 +140,6 @@ void MemoryCardDriverThreaded_Windows::Flush( UsbStorageDevice* pDevice )
 	// Do we need anything here?  I don't lose data if ejecting 
 	// soon after a write.  From the activity LED, it looks like 
 	// Windows flushes automatically every ~2 seconds. -Chris
-}
-
-void MemoryCardDriverThreaded_Windows::ResetUsbStorage()
-{
-	m_bReset = true;
 }
 
 /*

@@ -84,6 +84,9 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 	ASSERT( !sProfileDir.empty() );
 	ASSERT( sProfileDir.Right(1) == "/" );
 
+	if( bIsMemCard )
+		MEMCARDMAN->PauseMountingThread();
+
 	m_sProfileDir[pn] = sProfileDir;
 	m_bWasLoadedFromMemoryCard[pn] = bIsMemCard;
 
@@ -91,6 +94,8 @@ bool ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIs
 		m_Profile[pn].LoadEditableDataFromDir( m_sProfileDir[pn] );
 	else
 		m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+
+	MEMCARDMAN->UnPauseMountingThread();
 
 	LOG->Trace( "Done loading profile." );
 
@@ -200,7 +205,15 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	if( m_sProfileDir[pn].empty() )
 		return false;
 
-	return m_Profile[pn].SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	if( ProfileWasLoadedFromMemoryCard(pn) )
+		MEMCARDMAN->PauseMountingThread();
+
+	bool b = m_Profile[pn].SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+
+	if( ProfileWasLoadedFromMemoryCard(pn) )
+		MEMCARDMAN->UnPauseMountingThread();
+	
+	return b;
 }
 
 void ProfileManager::UnloadProfile( PlayerNumber pn )

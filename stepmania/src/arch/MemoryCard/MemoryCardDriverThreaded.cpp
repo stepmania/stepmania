@@ -5,12 +5,6 @@
 #include "RageFileManager.h"
 
 
-int MemoryCardDriverThreaded::MountThread_Start( void *p )
-{
-	((MemoryCardDriverThreaded*)p)->MountThreadMain();
-	return 0;
-}
-
 template<class T>
 bool VectorsAreEqual( const T &a, const T &b )
 {
@@ -27,9 +21,11 @@ bool VectorsAreEqual( const T &a, const T &b )
 }
 
 MemoryCardDriverThreaded::MemoryCardDriverThreaded() :
-m_mutexStorageDevices("StorageDevices")
+	m_mutexPause("Pause"),
+	m_mutexStorageDevices("StorageDevices")
 {
-	m_bShutdown = false;
+	m_bShutdownNextUpdate = false;
+	m_bResetNextUpdate = false;
 	m_bStorageDevicesChanged = false;
 }
 
@@ -41,10 +37,40 @@ void MemoryCardDriverThreaded::StartThread()
 
 MemoryCardDriverThreaded::~MemoryCardDriverThreaded()
 {
-	m_bShutdown = true;
+	m_bShutdownNextUpdate = true;
 	LOG->Trace( "Shutting down Mount thread..." );
 	m_threadMemoryCardMount.Wait();
 	LOG->Trace( "Mount thread shut down." );
+}
+
+void MemoryCardDriverThreaded::PauseMountingThread()
+{
+	m_mutexPause.Lock();
+}
+
+void MemoryCardDriverThreaded::UnPauseMountingThread()
+{
+	m_mutexPause.Unlock();
+}
+
+int MemoryCardDriverThreaded::MountThread_Start( void *p )
+{
+	((MemoryCardDriverThreaded*)p)->MountThreadMain();
+	return 0;
+}
+
+void MemoryCardDriverThreaded::MountThreadMain()
+{
+	while( !m_bShutdownNextUpdate )
+	{      
+		LockMut( m_mutexPause );	// wait until we're unpaused
+		if( m_bResetNextUpdate )
+		{
+			this->MountThreadReset();
+			m_bResetNextUpdate = false;
+		}
+		this->MountThreadDoOneUpdate();
+	}
 }
 
 bool MemoryCardDriverThreaded::StorageDevicesChanged()
@@ -84,6 +110,11 @@ bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 
 	this->Mount( pDevice, sMountPoint );
 	return true;
+}
+
+void MemoryCardDriverThreaded::ResetUsbStorage()
+{
+	m_bResetNextUpdate = true;
 }
 
 /*

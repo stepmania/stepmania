@@ -2,6 +2,7 @@
 #define MemoryCardDriverThreaded_Windows_H 1
 
 #include "MemoryCardDriverThreaded.h"
+#include <windows.h>
 
 class MemoryCardDriverThreaded_Windows : public MemoryCardDriverThreaded
 {
@@ -10,12 +11,12 @@ public:
 
 	virtual void Unmount( UsbStorageDevice* pDevice, CString sMountPoint );
 	virtual void Flush( UsbStorageDevice* pDevice );
-	virtual void ResetUsbStorage();
 protected:
-	virtual void MountThreadMain();
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint );
+	virtual void MountThreadReset();
+	virtual void MountThreadDoOneUpdate();
 
-	bool m_bReset;
+	DWORD m_dwLastLogicalDrives;
 };
 
 #endif

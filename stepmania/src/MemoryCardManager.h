@@ -37,6 +37,9 @@ public:
 
 	void LockCards( bool bLock );	// prevent removing or changing of memory cards
 	
+	void PauseMountingThread();	// call this before reading or writing to memory card
+	void UnPauseMountingThread();	// call this when done reading or writing to memory card
+	
 	void FlushAndReset();	// force all files to be written to mounted memory cards
 
 	bool PathIsMemCard( CString sDir ) const;

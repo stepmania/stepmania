@@ -124,41 +124,56 @@ static bool ExecuteCommand( CCStringRef sCommand )
   return ret == 0;
 }
 
-void MemoryCardDriverThreaded_Linux::MountThreadMain()
+MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 {
-  int fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
-  if( fd == -1 )
+  m_fd = open(USB_DEVICE_LIST_FILE, O_RDONLY);
+  if( m_fd == -1 )
     {
       LOG->Warn( "Failed to open \"%s\": %s", USB_DEVICE_LIST_FILE, strerror(errno) );
-      return;
+    }
+  this->StartThread();
+}
+
+void MemoryCardDriverThreaded_Linux::MountThreadReset()
+{
+  //
+  // if usb-storage gets in a bad state, resetting usb-storage will sometimes fix it.
+  //
+
+  LockMut( m_mutexStorageDevices );
+
+  // unmount all devices before trying to remove the module
+  for( unsigned i=0; i<m_vStorageDevices.size(); i++ )
+    {
+      UsbStorageDeviceEx &d = m_vStorageDevices[i];
+      CString sCommand = "umount " + d.sOsMountDir;
+      ExecuteCommand( sCommand );
     }
 
-  vector<UsbStorageDeviceEx> vDevicesLastSeen;
-  
-  while( !m_bShutdown )
-    {      
-      if( m_bReset )
+  ExecuteCommand( "rmmod usb-storage" );
+  ExecuteCommand( "modprobe usb-storage" );
+
+  m_vDevicesLastSeen.clear();	// redetect all devices
+}
+
+void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
+{
+	if( m_fd == -1 )
+		return;
+
+	pollfd pfd = { m_fd, POLLIN, 0 };
+	int ret = poll( &pfd, 1, 100 );
+	switch( ret )
 	{
-	  // force all to be re-detected
-	  vDevicesLastSeen.clear();
-	  m_bReset = false;
-	}
-      else
-	{
-	  pollfd pfd = { fd, POLLIN, 0 };
-	  int ret = poll( &pfd, 1, 100 );
-	  switch( ret )
-	    {
-	    case 1:
-	      // file changed.  Fall through.
-	      break;
-	    case 0: // no change.  Poll again.
-	      continue;
-	    case -1:
-	      if( errno != EINTR )
-	        LOG->Warn( "Error polling: %s", strerror(errno) );
-	      continue;
-	    }
+	case 1:
+		// file changed.  Fall through.
+		break;
+	case 0: // no change.  Poll again.
+		return;
+	case -1:
+		if( errno != EINTR )
+		LOG->Warn( "Error polling: %s", strerror(errno) );
+		return;
 	}
 
       // TRICKY: We're waiting for a change in the USB device list, but 
@@ -172,7 +187,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
       GetNewStorageDevices( vDevicesNow );
       
       vector<UsbStorageDeviceEx> &vNew = vDevicesNow;
-      vector<UsbStorageDeviceEx> &vOld = vDevicesLastSeen;
+      vector<UsbStorageDeviceEx> &vOld = m_vDevicesLastSeen;
       
       // check for disconnects
       vector<UsbStorageDeviceEx*> vDisconnects;
@@ -246,16 +261,9 @@ void MemoryCardDriverThreaded_Linux::MountThreadMain()
 	    }
 	}
       
-      vDevicesLastSeen = vDevicesNow;
-    }
+      m_vDevicesLastSeen = vDevicesNow;
 
   CHECKPOINT;
-}
-
-MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
-{
-  m_bReset = false;
-  this->StartThread();
 }
 
 bool ReadUsbStorageDescriptor( CString fn, int iScsiIndex, vector<UsbStorageDeviceEx>& vDevicesOut )
@@ -629,30 +637,6 @@ void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 	// with the flag "-o sync", which forces synchronous access (but that's probably
 	// very slow.) -glenn
 	ExecuteCommand( "mount -o remount " + pDevice->sOsMountDir );
-}
-
-void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
-{
-  //
-  // if usb-storage gets in a bad state, resetting usb-storage will sometimes fix it.
-  //
-
-  LockMut( m_mutexStorageDevices );
- 
-  // unmount all devices before trying to remove the module
-  for( unsigned i=0; i<m_vStorageDevices.size(); i++ )
-    {
-      UsbStorageDeviceEx &d = m_vStorageDevices[i];
-      CString sCommand = "umount " + d.sOsMountDir;
-      ExecuteCommand( sCommand );
-    }
-
-  ExecuteCommand( "rmmod usb-storage" );
-  ExecuteCommand( "modprobe usb-storage" );
-
-  m_bReset = true;
-
-  // let the mounting thread re-mount everything
 }
 
 /*
