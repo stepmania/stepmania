@@ -576,7 +576,21 @@ void Model::DrawPrimitives()
 				DISPLAY->ClearAllTextures();
 			}
 
+			// apply mesh-specific bone (if any)
+			if( pMesh->nBoneIndex != -1 )
+			{
+				DISPLAY->PushMatrix();
+
+				RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
+				DISPLAY->PreMultMatrix( mat );
+			}
+
 			DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
+
+			if( pMesh->nBoneIndex != -1 )
+			{
+				DISPLAY->PopMatrix();
+			}
 		}
 	}
 }
