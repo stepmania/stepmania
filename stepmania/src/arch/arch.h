@@ -49,11 +49,11 @@ LightsDriver *MakeLightsDriver(CString driver);
 
 /* Hack for Xbox: All paths must be absolute. */
 #if defined(_XBOX)
-	#define BASE_PATH "D:\\"
+	#define SYS_BASE_PATH "D:\\"
 #else
-	#define BASE_PATH ""
+	#define SYS_BASE_PATH ""
 #endif
-
+#define BASE_PATH "" /* XXX remove */
 
 #endif
 
