@@ -16,11 +16,6 @@ using namespace std;
 
 static void ZoomSurface( RageSurface * src, RageSurface * dst )
 {
-	// The original code here didn't handle the magnification case correctly.
-	// the sample centers sax and say aren't being calculated correctly.
-	// The coordinate system here is a bit confusing.  This might be 
-	// easier to follow if the 
-
     /* Ratio from source to dest. */
     const float sx = float(src->w) / dst->w;
     const float sy = float(src->h) / dst->h;
