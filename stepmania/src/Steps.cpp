@@ -116,13 +116,17 @@ float Steps::PredictMeter() const
 	float pMeter = 0.775f;
 	
 	const float RadarCoeffs[NUM_RADAR_CATEGORIES] =
-	{	10.1f, 5.27f,-0.905f, -1.10f, 2.86f,
-		0,0,0,0,0 };
+	{
+		10.1f, 5.27f,-0.905f, -1.10f, 2.86f,
+		0,0,0,0,0
+	};
 	for( int r = 0; r < NUM_RADAR_CATEGORIES; ++r )
 		pMeter += this->GetRadarValues()[r] * RadarCoeffs[r];
 	
 	const float DifficultyCoeffs[NUM_DIFFICULTIES] =
-	{	-0.877f, -0.877f, 0, 0.722f, 0.722f	};
+	{
+		-0.877f, -0.877f, 0, 0.722f, 0.722f
+	};
 	pMeter += DifficultyCoeffs[this->GetDifficulty()];
 	
 	// Init non-radar values
