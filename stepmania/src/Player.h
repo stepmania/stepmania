@@ -9,7 +9,6 @@
 #include "Combo.h"
 #include "NoteDataWithScoring.h"
 #include "RageTimer.h"
-#include "ProTimingDisplay.h"
 #include "RageSound.h"
 #include "AttackDisplay.h"
 #include "NoteField.h"
@@ -82,7 +81,6 @@ protected:
 	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
 
 	Judgment		m_Judgment;
-	ProTimingDisplay m_ProTimingDisplay;
 	
 	Combo			m_Combo;
 

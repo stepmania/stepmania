@@ -124,7 +124,6 @@ struct PlayerOptions
 	
 	bool		m_bTurns[NUM_TURNS];
 	bool		m_bTransforms[NUM_TRANSFORMS];
-	bool		m_bProTiming;
 	ScoreDisplay m_ScoreDisplay;
 
 	CString		m_sNoteSkin;

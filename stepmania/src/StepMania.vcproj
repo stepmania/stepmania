@@ -1745,12 +1745,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Player.h">
 			</File>
 			<File
-				RelativePath="ProTimingDisplay.cpp">
-			</File>
-			<File
-				RelativePath="ProTimingDisplay.h">
-			</File>
-			<File
 				RelativePath=".\ReceptorArrow.cpp">
 			</File>
 			<File

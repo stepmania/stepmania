@@ -78,7 +78,6 @@ Player::Player()
 	m_iOffsetSample = 0;
 
 	this->AddChild( &m_Judgment );
-	this->AddChild( &m_ProTimingDisplay );
 	this->AddChild( &m_Combo );
 	this->AddChild( &m_AttackDisplay );
 	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
@@ -231,8 +230,6 @@ void Player::Load( const NoteData& noteData )
 	m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
 	m_Judgment.SetX( JUDGMENT_X(pn,bPlayerUsingBothSides) );
 	m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
-	m_ProTimingDisplay.SetX( JUDGMENT_X(pn,bPlayerUsingBothSides) );
-	m_ProTimingDisplay.SetY( bReverse ? SCREEN_BOTTOM-JUDGMENT_Y : SCREEN_TOP+JUDGMENT_Y );
 
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
@@ -437,8 +434,6 @@ void Player::Update( float fDeltaTime )
 
 				if( m_pPlayerStageStats )
 					m_pPlayerStageStats->iTotalError += ms_error;
-				if( hns == HNS_NG ) /* don't show a 0 for an OK */
-					m_ProTimingDisplay.SetJudgment( ms_error, TNS_MISS );
 			}
 
 			tn.HoldResult.fLife = fLife;
@@ -590,10 +585,7 @@ void Player::DrawTapJudgments()
 	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
 		return;
 
-	if( m_pPlayerState->m_PlayerOptions.m_bProTiming )
-		m_ProTimingDisplay.Draw();
-	else
-		m_Judgment.Draw();
+	m_Judgment.Draw();
 }
 
 void Player::DrawHoldJudgments()
@@ -915,8 +907,6 @@ void Player::Step( int col, RageTimer tm )
 
 			if( m_pPlayerStageStats )
 				m_pPlayerStageStats->iTotalError += ms_error;
-			if (!m_pPlayerState->m_PlayerOptions.m_fBlind)
-				m_ProTimingDisplay.SetJudgment( ms_error, score );
 		}
 
 		if( score==TNS_MARVELOUS  &&  !GAMESTATE->ShowMarvelous())
@@ -1133,10 +1123,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			m_NoteData.SetTapNote( t, r, tn );
 
 			if( m_pPlayerStageStats )
-			{
 				m_pPlayerStageStats->iTotalError += MAX_PRO_TIMING_ERROR;
-				m_ProTimingDisplay.SetJudgment( MAX_PRO_TIMING_ERROR, TNS_MISS );
-			}
 		}
 
 		if( MissedNoteOnThisRow )

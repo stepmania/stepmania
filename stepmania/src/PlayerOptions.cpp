@@ -32,7 +32,6 @@ void PlayerOptions::Init()
 	m_fRandomSpeed = 0;			m_SpeedfRandomSpeed = 1.0f;
 	ZERO( m_bTurns );
 	ZERO( m_bTransforms );
-	m_bProTiming = false;
 	m_ScoreDisplay = SCORING_ADD;
 	m_sNoteSkin = "default";
 }
@@ -157,8 +156,6 @@ CString PlayerOptions::GetString() const
 	if( m_bTransforms[TRANSFORM_NOJUMPS] )	sReturn += "NoJumps, ";
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	sReturn += "NoHands, ";
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	sReturn += "NoQuads, ";
-
-	if( m_bProTiming )		sReturn += "ProTiming, ";
 
 	if( m_fSkew==1 && m_fPerspectiveTilt==-1 )
 		sReturn += "Incoming, ";
@@ -295,7 +292,6 @@ void PlayerOptions::FromString( CString sOptions )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
 		else if( sBit == "cover" )		SET_FLOAT( fCover )
 		else if( sBit == "passmark" )	SET_FLOAT( fPassmark )
-		else if( sBit == "protiming")	m_bProTiming = on;
 		else if( sBit == "overhead" )	{ m_fSkew = 0; m_fPerspectiveTilt = 0;				m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "incoming" )	{ m_fSkew = level; m_fPerspectiveTilt = -level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
 		else if( sBit == "space" )		{ m_fSkew = level; m_fPerspectiveTilt = +level;		m_SpeedfSkew = m_SpeedfPerspectiveTilt = speed; }
@@ -518,7 +514,6 @@ bool PlayerOptions::operator==( const PlayerOptions &other ) const
 	COMPARE(m_fDark);
 	COMPARE(m_fBlind);
 	COMPARE(m_fCover);
-	COMPARE(m_bProTiming);
 	COMPARE(m_fPerspectiveTilt);
 	COMPARE(m_fSkew);
 	COMPARE(m_sNoteSkin);
