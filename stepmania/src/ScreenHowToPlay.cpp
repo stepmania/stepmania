@@ -304,7 +304,13 @@ void ScreenHowToPlay::DrawPrimitives()
 
 	if( m_pmDancePad || m_pmCharacter )
 	{
-		if(!PREFSMAN->m_bCelShadeModels) {
+		if(PREFSMAN->m_bCelShadeModels)
+		{
+			if( m_pmDancePad ) m_pmDancePad->DrawCelShaded();
+			if( m_pmCharacter ) m_pmCharacter->DrawCelShaded();
+		}
+		else
+		{
 			DISPLAY->SetLighting( true );
 			DISPLAY->SetLightDirectional( 
 				0, 
@@ -313,17 +319,13 @@ void ScreenHowToPlay::DrawPrimitives()
 				RageColor(0,0,0,1),
 				RageVector3(0, 0, 1) );
 			
-			if( m_pmCharacter ) {m_pmCharacter->Draw();}
-			if( m_pmDancePad ) {m_pmDancePad->Draw();}
-		}
-		else {
-			if( m_pmDancePad ) {m_pmDancePad->DrawCelShaded();}
-			if( m_pmCharacter ) {m_pmCharacter->DrawCelShaded();}
+			if( m_pmCharacter ) m_pmCharacter->Draw();
+			if( m_pmDancePad ) m_pmDancePad->Draw();
+
+			DISPLAY->SetLightOff( 0 );
+			DISPLAY->SetLighting( false );
 		}
 		
-		DISPLAY->SetLightOff( 0 );
-		DISPLAY->SetLighting( false );
-
 		m_Overlay.DrawPrimitives();
 		m_In.DrawPrimitives();
 		m_Out.DrawPrimitives();
