@@ -1274,7 +1274,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	// HACK:  OpenGL 1.2 types aren't available in GLU 1.3.  Don't call GLU for mip
 	// mapping if we're using an OGL 1.2 type and don't have >= GLU 1.3.
 	// http://pyopengl.sourceforge.net/documentation/manual/gluBuild2DMipmaps.3G.html
-	if( g_gluVersion < 13 )
+	if( bGenerateMipMaps && g_gluVersion < 13 )
 	{
 		switch( pixfmt )
 		{
