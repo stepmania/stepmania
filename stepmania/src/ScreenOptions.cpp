@@ -587,7 +587,7 @@ void ScreenOptions::PositionItems()
 		else if( i <= first_end )
 			ItemPosition = float(i - first_start);
 		else if( i < second_start )
-			ItemPosition = first_end + 0.5f;
+			ItemPosition = halfsize - 0.5f;
 		else if( i <= second_end )
 			ItemPosition = float(halfsize + i - second_start);
 		else
