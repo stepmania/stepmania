@@ -86,7 +86,7 @@ void ScreenSongOptions::ImportOptions()
 	m_iSelectedOption[0][SO_RATE] = 7;	// in case we don't match below
 	for( unsigned i=0; i<g_SongOptionsLines[SO_RATE].choices.size(); i++ )
 	{
-		float fThisRate = atof(g_SongOptionsLines[SO_RATE].choices[i]);
+		float fThisRate = (float) atof(g_SongOptionsLines[SO_RATE].choices[i]);
 		if( fThisRate == so.m_fMusicRate )
 			m_iSelectedOption[0][SO_RATE] = i;
 	}
@@ -109,7 +109,7 @@ void ScreenSongOptions::ExportOptions()
 	so.m_bAutoSync = !!m_iSelectedOption[0][SO_AUTOSYNC];
 
 	int iSel = m_iSelectedOption[0][SO_RATE];
-	so.m_fMusicRate = atof( g_SongOptionsLines[SO_RATE].choices[iSel] );
+	so.m_fMusicRate = (float) atof( g_SongOptionsLines[SO_RATE].choices[iSel] );
 }
 
 void ScreenSongOptions::GoToPrevState()

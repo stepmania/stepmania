@@ -276,7 +276,7 @@ void EditCoursesMenu::Start()
 
 			m_soundStart.Play();
 			GetSelectedCourse()->m_entries.erase( GetSelectedCourse()->m_entries.begin()+m_iSelection[ROW_ENTRY] );
-			CLAMP( m_iSelection[ROW_ENTRY], 0, GetSelectedCourse()->m_entries.size()-1 );
+			CLAMP( m_iSelection[ROW_ENTRY], 0, (int) GetSelectedCourse()->m_entries.size()-1 );
 			OnRowValueChanged( ROW_ENTRY );
 			break;
 		default:
@@ -328,7 +328,7 @@ void EditCoursesMenu::Start()
 			{
 				CString sDifficulty = (i==NUM_DIFFICULTIES) ? "Don't care" : DifficultyToString((Difficulty)i);
 				g_CourseEntryMenu.rows[difficulty].choices.push_back( sDifficulty );
-				if( GetSelectedEntry()->difficulty == i )
+				if( GetSelectedEntry()->difficulty == (int) i )
 					g_CourseEntryMenu.rows[difficulty].defaultChoice = i;
 			}
 
@@ -345,9 +345,9 @@ void EditCoursesMenu::Start()
 				CString sMeter = (i==0) ? "Don't care" : ssprintf("%d", i);
 				g_CourseEntryMenu.rows[low_meter].choices.push_back( sMeter );
 				g_CourseEntryMenu.rows[high_meter].choices.push_back( sMeter );
-				if( GetSelectedEntry()->low_meter == i )
+				if( GetSelectedEntry()->low_meter == (int) i )
 					g_CourseEntryMenu.rows[low_meter].defaultChoice = i;
-				if( GetSelectedEntry()->high_meter == i )
+				if( GetSelectedEntry()->high_meter == (int) i )
 					g_CourseEntryMenu.rows[high_meter].defaultChoice = i;
 			}
 
@@ -361,7 +361,7 @@ void EditCoursesMenu::Start()
 			{
 				CString sNum = ssprintf("%d", i);
 				g_CourseEntryMenu.rows[high_meter].choices.push_back( sNum );
-				if( GetSelectedEntry()->players_index == i-1 )
+				if( GetSelectedEntry()->players_index == (int) i-1 )
 					g_CourseEntryMenu.rows[best_worst_value].defaultChoice = i;
 			}
 
