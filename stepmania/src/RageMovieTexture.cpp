@@ -192,11 +192,6 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 
     // Get the video bitmap buffer
     pSample->GetPointer( &pBmpBuffer );
-
-	/* m_pTexture is getting NULLed out somewhere.  I'd like to put a bunch
-	 * of traces in here, but this is called 20 times per frame and I don't
-	 * want to send some 200 traces/sec during gameplay, so let's just try
-	 * to narrow it down.  */
 	 
 	// Find which texture we should render to.  We want to copy to the "back buffer"
 	LPDIRECT3DTEXTURE8 pD3DTextureCopyTo = m_pTexture->GetBackBuffer();
@@ -215,10 +210,6 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
    
 	ASSERT( pTxtBuffer != NULL );
 
-	/* I had the crash occur down at the flip, meaning m_pTexture is valid when
-	 * we got the backbuffer.  Let's get some data here, in the middle. */
-	LOG->Trace("movie: %p, %p, pit %i, %ix%i, %i, %i", m_pTexture, pTxtBuffer, lTxtPitch,
-		m_lVidHeight, m_lVidWidth, m_TextureFormat, m_lVidPitch);
     // Copy the bits    
     // OPTIMIZATION OPPORTUNITY: Use a video and texture
     // format that allows a simpler copy than this one.
