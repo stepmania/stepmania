@@ -227,10 +227,13 @@ RageFileObjDeflate::~RageFileObjDeflate()
 
 int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 {
+	if( iBytes == 0 )
+		return 0;
+
 	m_pDeflate->next_in  = (Bytef*) pBuffer;
 	m_pDeflate->avail_in = iBytes;
 
-	while( m_pDeflate->avail_in > 0 )
+	while( 1 )
 	{
 		char buf[1024*4];
 		m_pDeflate->next_out = (Bytef *) buf;
@@ -243,13 +246,22 @@ int RageFileObjDeflate::WriteInternal( const void *pBuffer, size_t iBytes )
 			
 		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
-			int iRet = m_pFile->Write( buf, sizeof(buf)-m_pDeflate->avail_out );
+			int iBytes = sizeof(buf)-m_pDeflate->avail_out;
+			int iRet = m_pFile->Write( buf, iBytes );
 			if( iRet == -1 )
 			{
 				SetError( m_pFile->GetError() );
 				return -1;
 			}
+			if( iRet < iBytes )
+			{
+				SetError( "Partial write" );
+				return -1;
+			}
 		}
+
+		if( m_pDeflate->avail_in == 0 && m_pDeflate->avail_out != 0 )
+			break;
 	}
 
 	return iBytes;
@@ -272,17 +284,24 @@ int RageFileObjDeflate::FlushInternal()
 		if( err != Z_OK && err != Z_STREAM_END )
 			FAIL_M( ssprintf("deflate: err %i", err) );
 
-		if( m_pDeflate->avail_out > 0 )
+		if( m_pDeflate->avail_out < sizeof(buf) )
 		{
-			int iRet = m_pFile->Write( buf, sizeof(buf)-m_pDeflate->avail_out );
+			int iBytes = sizeof(buf)-m_pDeflate->avail_out;
+			int iRet = m_pFile->Write( buf, iBytes );
 			if( iRet == -1 )
 			{
 				SetError( m_pFile->GetError() );
 				return -1;
 			}
+			LOG->Trace("FlushInternal: wrote %i/%i", iRet, iBytes);
+			if( iRet < iBytes )
+			{
+				SetError( "Partial write" );
+				return -1;
+			}
 		}
 
-		if( err == Z_STREAM_END )
+		if( err == Z_STREAM_END && m_pDeflate->avail_out != 0 )
 			return m_pFile->Flush();
 	}
 }
@@ -484,7 +503,8 @@ int RageFileObjGzip::Finish()
 		return -1;
 	}
 	
-	return this->Flush();
+	/* Flush the CRC and wize that we just wrote directly to the file. */
+	return m_pFile->Flush();
 }
 
 #include "RageFileDriverMemory.h"
