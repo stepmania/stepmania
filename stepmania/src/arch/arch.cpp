@@ -153,7 +153,7 @@ MemoryCardDriver *MakeMemoryCardDriver()
 	MemoryCardDriver *ret = NULL;
 
 #ifdef LINUX
-//	ret = new MemoryCardDriverThreaded_Linux;
+	ret = new MemoryCardDriverThreaded_Linux;
 #elif _WINDOWS
 	ret = new MemoryCardDriverThreaded_Windows;
 #endif
