@@ -262,6 +262,16 @@ void RageSoundManager::SetPrefs(float MixVol)
 	driver->VolumeChanged();
 }
 
+void RageSoundManager::AttenuateBuf( Sint16 *buf, int samples, float vol )
+{
+	while( samples-- )
+	{
+		*buf = Sint16( (*buf) * vol );
+		++buf;
+	}
+}
+
+	
 SoundMixBuffer::SoundMixBuffer()
 {
 	bufsize = used = 0;
