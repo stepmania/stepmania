@@ -325,12 +325,12 @@ RageDisplay *CreateDisplay()
     CString sVideoDriver = "OpenGL";
 #endif
 	
-	LOG->Log( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver );
+	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver );
 
 	if( PREFSMAN->m_sVideoRenderers == "" || 
 		PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver )
 	{
-		LOG->Log( "Video card has changed.  Applying new defaults." );
+		LOG->Trace( "Video card has changed.  Applying new defaults." );
 
 		IniFile ini;
 		ini.SetPath( VIDEOCARDS_INI_PATH );
@@ -349,7 +349,7 @@ RageDisplay *CreateDisplay()
 			if( !regex.Compare(sVideoDriver) )
 				continue;	// skip
 
-			LOG->Log( "Using default graphics settings for '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
+			LOG->Trace( "Using default graphics settings for '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
 
 			ini.GetValue( sKey, "Renderers", PREFSMAN->m_sVideoRenderers );
 			ini.GetValueI( sKey, "Width", PREFSMAN->m_iDisplayWidth );
