@@ -1,16 +1,18 @@
+#include "global.h"
 #include "X11Helper.h"
 
-#include <list>
+#include <vector>
 
 #include <X11/Xlib.h>		// Display, Window
 
 #include "RageDisplay.h"	// RageDisplay
 
-list<long>		pMasks;		// Currently open masks
-Display			*pDpy	= NULL;	// Running X connection
-Window			*pWin	= NULL;	// Current window
-unsigned short int	pCt	= 0;	// Number of subsystems using
-					// the X connection
+vector<long>		pMasks;				// Currently open masks
+Display			*pDpy		= NULL;		// Running X connection
+bool			pHaveWin	= false;	// Do we have a window?
+Window			pWin;				// Current window
+unsigned short int	pCt		= 0;		// Number of subsystems
+							// using the X connection
 
 bool X11Helper::Go()
 {
@@ -36,7 +38,7 @@ Window& X11Helper::Win()
 
 static bool pApplyMasks()
 {
-	int i;
+	unsigned int i;
 	long finalMask;
 
 	i = 0;
@@ -54,60 +56,71 @@ static bool pApplyMasks()
 bool X11Helper::OpenMask(long mask)
 {
 	pMasks.push_back(mask);
-	if(pWin != NULL)
-		{ return pApplyMasks(); }
+	if(pHaveWin)
+	{
+		return pApplyMasks();
+	}
 	else
-		{ return true; }
+	{
+		return true;
+	}
 }
 
 bool X11Helper::CloseMask(long mask)
 {
-	int i;
+	vector<long>::iterator i;
 	
-	i = 0;
+	i = pMasks.begin();
 	while(true)
 	{
-		if(pMasks[i] == mask)
+		if(*i == mask)
 		{
 			pMasks.erase(i);
 			break;
 		}
 		i++;
-		if(i > pMasks.size()-1) { return false; }
+		if(i-1 == pMasks.end() ) { return false; }
 	}
 
-	if(pWin != NULL)
-		{ return pApplyMasks(); }
+	if(pHaveWin)
+	{
+		return pApplyMasks();
+	}
 	else
-		{ return true; }
+	{
+		return true;
+	}
 }
 
-bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual int width=64, int height=64)
+bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual, int width, int height)
 {
-	int i;
+	vector<long>::iterator i;
 	
 	if(pDpy == NULL) { return false; }
 
-	if(pWin != NULL) { XDestroyWindow(pDpy, pWin); pWin = NULL; }
+	if(pHaveWin) { XDestroyWindow(pDpy, pWin); pHaveWin = false; }
 
 	XSetWindowAttributes winAttribs;
 
 	winAttribs.border_pixel = 0;
 	winAttribs.event_mask = 0;
-	i = 0;
-	while(i < pMasks.size() )
+	i = pMasks.begin();
+	while(i != pMasks.end() )
 	{
-		winAttribs.event_mask |= pMasks[i];
+		winAttribs.event_mask |= *i;
+		i++;
 	}
 
 	// XXX: Error catching/handling?
 
-	winAttribs.colormap = XCreateColorMap(pDpy, RootWindow(pDpy, screenNum),
+	winAttribs.colormap = XCreateColormap(pDpy, RootWindow(pDpy, screenNum),
 							visual, AllocNone);
 
 	pWin = XCreateWindow(pDpy, RootWindow(pDpy, screenNum), 0, 0, width,
 		height, 0, depth, InputOutput, visual,
-		CWBorderPixel | CWColorMap | CWEventMask, &winAttribs);
+		CWBorderPixel | CWColormap | CWEventMask, &winAttribs);
+
+	pHaveWin = true;
 
 	return true;
 }
@@ -121,8 +134,6 @@ void X11Helper::Stop()
 		XCloseDisplay(pDpy);
 		pMasks.clear();
 	}
-
-	return true;
 }
 
 /*
