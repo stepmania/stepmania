@@ -248,6 +248,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenEvaluation.h">
 			</File>
 			<File
+				RelativePath="ScreenExit.cpp">
+			</File>
+			<File
+				RelativePath="ScreenExit.h">
+			</File>
+			<File
 				RelativePath="ScreenEz2SelectMusic.cpp">
 			</File>
 			<File
