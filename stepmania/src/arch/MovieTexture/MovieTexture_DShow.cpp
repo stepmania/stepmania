@@ -23,6 +23,9 @@
 #include "MovieTexture_DShowHelper.h"
 #include "MovieTexture_DShow.h"
 
+/* for TEXTUREMAN->GetTextureColorDepth() */
+#include "RageTextureManager.h"
+
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageException.h"
@@ -233,7 +236,23 @@ void MovieTexture_DShow::CreateTexture()
 
 	/* Initialize the texture and set it to black. */
 	string buf(m_iTextureWidth*m_iTextureHeight*3, 0);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8,
+
+	/* My test clip (a high-res, MPEG1 video) goes from 12 fps to 14 fps
+	 * if I use a 16-bit internalformat instead of a 32-bit one; that's a
+	 * 16% jump, which is significant.  (Simply decoding this video is probably
+	 * taking 30-40% CPU.)  It means much less bus traffic (sending textures to
+	 * the card is slow).
+	 *
+	 * So, it *might* make sense to make this separately configurable.  However,
+	 * that's getting pretty detailed; well beyond what most users will tweak.  
+	 * Some way to figure this out dynamically would be nice, but it's probably
+	 * impossible.  (For example, 24-bit textures may even be cheaper on pure
+	 * AGP cards; 16-bit requires a conversion.) */
+	int internalformat = GL_RGB8;
+	if(TEXTUREMAN->GetTextureColorDepth() == 16)
+		internalformat = GL_RGB5;
+
+	glTexImage2D(GL_TEXTURE_2D, 0, internalformat,
 		m_iTextureWidth, m_iTextureHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, buf.data());
 }
 
