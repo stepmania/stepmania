@@ -363,7 +363,7 @@ int RageSound::GetData(char *buffer, int size)
  *
  * If the data returned is at the end of the stream, return false.
  *
- * size is in samples
+ * size is in frames
  * sound_frame is in frames (abstract)
  */
 bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int &frames_stored )
@@ -382,10 +382,10 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 		/* If we don't have any data left buffered, fill the buffer by
 		 * up to as much as we need. */
 		if( !Bytes_Available() )
-			FillBuf( size*sizeof(Sint16) );
+			FillBuf( size*framesize );
 
 		/* Get a block of data. */
-		int got = GetData( (char *) buffer, size*sizeof(Sint16) );
+		int got = GetData( (char *) buffer, size*framesize );
 		if( !got )
 		{
 			/* We're at the end of the data.  If we're looping, rewind and restart. */
@@ -411,8 +411,8 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 				/* Make sure we can get some data.  If we can't, then we'll have
 				 * nothing to send and we'll just end up coming back here. */
 				if( !Bytes_Available() )
-					FillBuf( size*sizeof(Sint16) );
-				if( GetData(NULL, size*sizeof(Sint16)) == 0 )
+					FillBuf( size*framesize );
+				if( GetData(NULL, size*framesize) == 0 )
 				{
 					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
 						GetLoadedFilePath().c_str(), m_Param.m_StartSecond );
@@ -430,8 +430,8 @@ bool RageSound::GetDataToPlay( int16_t *buffer, int size, int &sound_frame, int 
 
 			/* We're out of data, but we're not going to stop, so fill in the
 			 * rest with silence. */
-			memset( buffer, 0, size*sizeof(Sint16) );
-			got = size*sizeof(Sint16);
+			memset( buffer, 0, size*framesize );
+			got = size*framesize;
 		}
 
 		/* This block goes from position to position+got_frames. */
@@ -544,7 +544,7 @@ int RageSound::GetPCM( char *buffer, int size, int64_t frameno )
 	while( bytes_stored < size )
 	{
 		int pos, got_frames;
-		bool eof = !GetDataToPlay( (int16_t *)(buffer+bytes_stored), (size-bytes_stored)/2, pos, got_frames );
+		bool eof = !GetDataToPlay( (int16_t *)(buffer+bytes_stored), (size-bytes_stored)/framesize, pos, got_frames );
 
 		/* Save this frameno/position map. */
 		SOUNDMAN->CommitPlayingPosition( GetID(), frameno, pos, got_frames );
