@@ -55,6 +55,7 @@ void BPMDisplay::Update( float fDeltaTime )
 		m_fTimeLeftInState -= fDeltaTime;
 		if( m_fTimeLeftInState < 0 )
 		{
+			// XXX: the numbers font doesn't have "?".
 			m_textBPM.SetText( (RandomFloat(0,1)>0.90) ? "???" : ssprintf("%03.0f",RandomFloat(0,600)) ); 
 			m_fTimeLeftInState = 0.2f;		// reset timer
 		}
