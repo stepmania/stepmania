@@ -142,6 +142,9 @@ AC_TRY_COMPILE(	[#include <stdlib.h>
 AC_CHECK_LIB( pthread, pthread_create, AC_DEFINE([HAVE_LIBPTHREAD],1,[libpthread is available]) )
 AC_CHECK_LIB( pthread, pthread_mutex_timedlock, AC_DEFINE([HAVE_PTHREAD_MUTEX_TIMEDLOCK],1,[pthreads has pthread_mutex_timedlock()]) )
 
+# Always:
+AC_DEFINE(_GNU_SOURCE, 1, [Use GNU extensions])
+
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
