@@ -57,7 +57,6 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 
 	// Reset the current PlayMode
 	GAMESTATE->m_PlayMode = PLAY_MODE_INVALID;
-	unsigned p;
 	
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","select difficulty"), 
@@ -74,7 +73,9 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 		if( asBits.size() > MAX_CHOICES_PER_PAGE )
 			RageException::Throw( "Choices exceed max number of choices per page." );
 
-		for( unsigned choice=0; choice<asBits.size(); choice++ )
+		unsigned choice;
+
+		for( choice=0; choice<asBits.size(); choice++ )
 		{
 			Difficulty dc = StringToDifficulty(asBits[choice]);
 			PlayMode pm = StringToPlayMode(asBits[choice]);
@@ -106,11 +107,9 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 			else
 				RageException::Throw( "Invalid Page%dChoice%d value '%s'.", page+1, choice+1, asBits[choice].GetString() );
 		}
-	}
 
-	for( int page=0; page<NUM_PAGES; page++ )
-	{
-		for( unsigned choice=0; choice<m_ModeChoices[page].size(); choice++ )
+
+		for( choice=0; choice<m_ModeChoices[page].size(); choice++ )
 		{
 			CString sHeaderFile = ssprintf( "select difficulty header %s", m_ModeChoices[page][choice].name );
 			CString sPictureFile = ssprintf( "select difficulty picture %s", m_ModeChoices[page][choice].name );
@@ -128,24 +127,23 @@ ScreenSelectDifficulty::ScreenSelectDifficulty()
 			m_sprHeader[page][choice].SetVertAlign( align_bottom );
 			m_framePages.AddChild( &m_sprHeader[page][choice] );
 		}
+
+		
+		m_sprMoreArrows[page].Load( THEME->GetPathTo("Graphics", ssprintf("select difficulty more page%d",page+1) ) );
+		m_sprMoreArrows[page].SetXY( MORE_X(page), MORE_Y(page) );
+		m_framePages.AddChild( &m_sprMoreArrows[page] );
+
+		m_sprExplanation[page].Load( THEME->GetPathTo("Graphics", "select difficulty explanation") );
+		m_sprExplanation[page].SetXY( EXPLANATION_X(page), EXPLANATION_Y(page) );
+		m_sprExplanation[page].StopAnimating();
+		m_sprExplanation[page].SetState( page );
+		m_framePages.AddChild( &m_sprExplanation[page] );
 	}
 
-	for( p=0; p<NUM_PAGES; p++ )
-	{
-		m_sprMoreArrows[p].Load( THEME->GetPathTo("Graphics", p==0 ? "select difficulty more page1" : "select difficulty more page2" ) );
-		m_sprMoreArrows[p].SetXY( MORE_X(p), MORE_Y(p) );
-		m_framePages.AddChild( &m_sprMoreArrows[p] );
-
-		m_sprExplanation[p].Load( THEME->GetPathTo("Graphics", "select difficulty explanation") );
-		m_sprExplanation[p].SetXY( EXPLANATION_X(p), EXPLANATION_Y(p) );
-		m_sprExplanation[p].StopAnimating();
-		m_sprExplanation[p].SetState( p );
-		m_framePages.AddChild( &m_sprExplanation[p] );
-	}
 
 	m_iCurrentPage = PAGE_1;
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		m_iChoiceOnPage[p] = (INITIAL_CHOICE-1);
 		CLAMP( m_iChoiceOnPage[p], 0, (int)m_ModeChoices[0].size()-1 );
@@ -296,8 +294,10 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 
 void ScreenSelectDifficulty::ChangePage( int iNewPage )
 {
+	int p;
+
 	// If anyone has already chosen, don't allow changing of pages
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) && m_bChosen[p] )
 			return;
 
@@ -312,7 +312,7 @@ void ScreenSelectDifficulty::ChangePage( int iNewPage )
 
 	// change both players
 	int iNewChoice = bPageIncreasing ? 0 : m_ModeChoices[m_iCurrentPage].size()-1;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 		ChangeWithinPage( (PlayerNumber)p, iNewChoice, true );
 
 	// move frame with choices
@@ -407,7 +407,9 @@ void ScreenSelectDifficulty::MenuBack( PlayerNumber pn )
 
 void ScreenSelectDifficulty::TweenOffScreen()
 {
-	for( unsigned p=0; p < m_SubActors.size(); p++ )
+	unsigned p;
+
+	for( p=0; p < m_SubActors.size(); p++ )
 		m_SubActors[p]->StopTweening();
 	
 
@@ -421,7 +423,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 	m_sprMoreArrows[page].SetTweenDiffuse( RageColor(1,1,1,0) );
 
 
-	for( unsigned p=0; p<NUM_PLAYERS; p++ )
+	for( p=0; p<NUM_PLAYERS; p++ )
 	{
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) )
 			continue;
