@@ -19,7 +19,7 @@ public:
 
 	/* Get the current position of a given buffer, in the same units and time base
 	 * as passed to RageSound::GetPCM. */
-	virtual int GetPosition( const RageSoundBase *snd ) const = 0;
+	virtual int64_t GetPosition( const RageSoundBase *snd ) const = 0;
 
 	/* When a sound is finished playing (GetPCM returns less than requested) and
 	 * the sound has been completely flushed (so GetPosition is no longer meaningful),
