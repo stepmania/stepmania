@@ -18,7 +18,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
-#include "FontManager.h"
+#include "FontCharAliases.h"
 
 const float QUESTION_X	=	CENTER_X;
 const float QUESTION_Y	=	CENTER_Y - 60;
@@ -199,7 +199,7 @@ void ScreenTextEntry::MenuStart( PlayerNumber pn )
 		if( m_pOnOK )
 		{
 			CString ret = LStringToCString(m_sAnswer);
-			FontManager::ReplaceMarkers(ret);
+			FontCharAliases::ReplaceMarkers(ret);
 			m_pOnOK( ret );
 		}
 	}

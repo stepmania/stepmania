@@ -22,6 +22,8 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "GameManager.h"
+#include "FontCharmaps.h"
+#include "FontCharAliases.h"
 
 const longchar Font::DEFAULT_GLYPH = 0xFFFFFF;
 
@@ -45,6 +47,11 @@ void FontPage::Load( const FontPageSettings &cfg )
 	// load character widths
 	vector<int> FrameWidths;
 	int i;
+
+	int default_width = m_pTexture->GetSourceFrameWidth();
+	if(cfg.DefaultWidth != -1)
+		default_width = cfg.DefaultWidth;
+
 	// Assume each character is the width of the frame by default.
 	for( i=0; i<m_pTexture->GetNumFrames(); i++ )
 	{
@@ -53,19 +60,19 @@ void FontPage::Load( const FontPageSettings &cfg )
 		{
 			FrameWidths.push_back(it->second);
 		} else {
-			FrameWidths.push_back(m_pTexture->GetSourceFrameWidth());
+			FrameWidths.push_back(default_width);
 		}
 	}
 
 	if( cfg.AddToAllWidths )
 	{
-		for( int i=0; i<256; i++ )
+		for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
 			FrameWidths[i] += cfg.AddToAllWidths;
 	}
 
 	if( cfg.ScaleAllWidthsBy != 1 )
 	{
-		for( int i=0; i<256; i++ )
+		for( int i=0; i<m_pTexture->GetNumFrames(); i++ )
 			FrameWidths[i] = int(roundf( FrameWidths[i] * cfg.ScaleAllWidthsBy ));
 	}
 
@@ -411,21 +418,6 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 		cfg.CharToGlyphNo[c] = n;
 	}
 	int NumFrames = RageTexture::GetFrameCountFromFileName(TexturePath);
-	if(NumFrames == 128 || NumFrames == 256)
-	{
-		/* If it's 128 or 256 frames, default to ASCII or ISO-8859-1,
-		 * respectively.  If it's anything else, we don't know what it
-		 * is, so don't make any default mappings (the INI needs to do
-		 * it itself). */
-		/*
-		if(NumFrames == 128)
-			cfg.MapRange("ASCII", 0, 127, 0);
-		else if(NumFrames == 256)
-			cfg.MapRange("ISO-8859-1", 0, 255, 0);
-		*/
-		for( longchar i=0; i<NumFrames; i++ )
-			cfg.CharToGlyphNo[i] = i;
-	}
 	
 	ini.RenameKey("Char Widths", "main");
 
@@ -439,6 +431,7 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 	ini.GetValueI( PageName, "LineSpacing", cfg.LineSpacing );
 	ini.GetValueI( PageName, "Top", cfg.Top );
 	ini.GetValueI( PageName, "Baseline", cfg.Baseline );
+	ini.GetValueI( PageName, "DefaultWidth", cfg.DefaultWidth );
 
 	/* Iterate over all keys. */
 	const IniFile::key *k = ini.GetKey(PageName);
@@ -472,7 +465,6 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			 */
 			CString codepoint = val.substr(4); /* "XXXX" */
 		
-			longchar c;
 			Game game = GAME_INVALID;
 
 			if(codepoint.find_first_of(' ') != codepoint.npos)
@@ -489,11 +481,13 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 						ini.GetPath().GetString(), gamename.GetString() );
 			}
 
+			longchar c=-1;
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
-			else if(FontManager::CharAliases.find(codepoint) != FontManager::CharAliases.end())
-				c = FontManager::CharAliases[codepoint];
 			else
+				c = FontCharAliases::GetChar(codepoint);
+
+			if(c == -1)
 				RageException::Throw( "Font definition '%s' has an invalid value '%s'.",
 					ini.GetPath().GetString(), val.GetString() );
 
@@ -502,17 +496,13 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			cfg.CharToGlyphNo[c] = atoi(data);
 			continue;
 		}
-#if 0
-		/* not implemented yet */
+
 		if(val.substr(0, 6) == "RANGE ")
 		{
-			/* range RANGE=first_frame
-			 *
-			 * RANGE is:
-			 * CODESET               or
-			 * CODESET #start-end
+			/* range CODESET=first_frame or
+			 * range CODESET #start-end=first_frame
 			 * eg
-			 * range ISO-8859-1=0   (default for 256-frame fonts)
+			 * range CP1252=0       (default for 256-frame fonts)
 			 * range ASCII=0        (default for 128-frame fonts)
 			 *
 			 * (Start and end are in hex.)
@@ -524,20 +514,101 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 			 * Map hiragana to 0-84:
 			 * range Unicode #3041-3094=0
 			 */
-			CString range = val.substr(6);
-			unsigned first = 0, last = 0xFFFF; /* all */
-			unsigned space = range.find_first_of(' ');
-			if(space != val.npos)
-			{
+			vector<CString> matches;
+			bool match = regex("^RANGE ([A-Z\\-]+)( ?#([0-9A-F]+)-([0-9A-F]+))?$" , val, matches);
+			
+			ASSERT(matches.size() == 4); /* 4 parens */
 
+			if(!match || matches[0].empty())
+				RageException::Throw("Font definition '%s' has an invalid range '%s': parse error",
+					ini.GetPath().GetString(), val.GetString() );
+			
+			/* We must have either 1 match (just the codeset) or 4 (the whole thing). */
+
+			int cnt = -1;
+			int first = 0;
+			if(!matches[2].empty())
+			{
+				sscanf(matches[2].GetString(), "%x", &first);
+				int last;
+				sscanf(matches[3].GetString(), "%x", &last);
+				if(last < first)
+					RageException::Throw("Font definition '%s' has an invalid range '%s': %i < %i.",
+						ini.GetPath().GetString(), val.GetString(), last < first );
+
+				cnt = last-first+1;
 			}
 
-
+			CString ret = cfg.MapRange(matches[0], first, atoi(data), cnt);
+			if(!ret.empty())
+				RageException::Throw("Font definition '%s' has an invalid range '%s': %s.",
+					ini.GetPath().GetString(), val.GetString(), ret.GetString() );
 
 			continue;
 		}
-#endif
 	}
+
+	/* If it's 128 or 256 frames, default to ASCII or CP1252,
+	 * respectively.  If it's anything else, we don't know what it
+	 * is, so don't make any default mappings (the INI needs to do
+	 * it itself). */
+	if(cfg.CharToGlyphNo.empty() && NumFrames == 128)
+		cfg.MapRange("ascii", 0, 0, -1);
+	else if(cfg.CharToGlyphNo.empty() && NumFrames == 256)
+		cfg.MapRange("cp1252", 0, 0, -1);
+}
+
+CString FontPageSettings::MapRange(CString Mapping, int map_offset, int glyphno, int cnt)
+{
+	if(!Mapping.CompareNoCase("Unicode"))
+	{
+		/* Special case. */
+		if(cnt == -1)
+			return "Can't map all of Unicode to one font page"; /* don't do that */
+
+		/* What's a practical limit?  A 2048x2048 texture could contain 16x16 characters,
+		 * which is 16384 glyphs.  (Use a grayscale map and that's only 4 megs.)  Let's use
+		 * that as a cap.  (We don't want to go crazy if someone says "range Unicode
+		 * #0-FFFFFFFF".) */
+		if(cnt > 16384)
+			return ssprintf("Can't map %i glyphs to one font page", cnt);
+
+		while(cnt)
+		{
+			CharToGlyphNo[map_offset] = glyphno;
+			map_offset++;
+			glyphno++;
+			cnt--;
+		}
+
+		return "";
+	}
+
+	const wchar_t *mapping = FontCharmaps::get_char_map(Mapping);
+	if(mapping == NULL)
+		return "Unknown mapping";
+
+	while(*mapping != 0 && map_offset) { mapping++; map_offset--; }
+	if(map_offset)
+		return "Map overflow"; /* there aren't enough characters in the map */
+
+	/* If cnt is -1, set it to the number of characters in the map. */
+	if(cnt == -1)
+		for(cnt = 0; mapping[cnt] != 0; ++cnt) ;
+
+	while(*mapping != 0)
+	{
+		if(*mapping != FontCharmaps::M_SKIP)
+			CharToGlyphNo[*mapping] = glyphno;
+		mapping++;
+		glyphno++;
+		cnt--;
+	}
+
+	if(cnt)
+		return "Map overflow"; /* there aren't enough characters in the map */
+
+	return "";
 }
 
 static CStringArray LoadStack;

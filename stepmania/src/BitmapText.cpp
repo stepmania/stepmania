@@ -21,6 +21,7 @@
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
 #include "Font.h"
+#include "FontCharAliases.h"
 
 /* XXX:
  * We need some kind of font modifier string for metrics.  For example,
@@ -214,7 +215,7 @@ void BitmapText::SetText( CString sText, bool DoSubst )
 	ASSERT( m_pFont );
 
 	if(DoSubst)
-		FontManager::ReplaceMarkers(sText);
+		FontCharAliases::ReplaceMarkers(sText);
 
 	if(m_szText == sText)
 		return;

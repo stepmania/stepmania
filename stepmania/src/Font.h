@@ -43,7 +43,8 @@ struct FontPageSettings
 		AddToAllWidths,
 		LineSpacing,
 		Top,
-		Baseline;
+		Baseline,
+		DefaultWidth;
 	float ScaleAllWidthsBy;
 	
 	map<longchar,int> CharToGlyphNo;
@@ -56,8 +57,13 @@ struct FontPageSettings
 		LineSpacing(-1),
 		ScaleAllWidthsBy(1),
 		Top(-1),
-		Baseline(-1)
+		Baseline(-1),
+		DefaultWidth(-1)
 	{ }
+
+	/* Map a range from a character map to glyphs.  If cnt is -1, map the
+	 * whole map. Returns "" or an error message. */
+	CString MapRange(CString Mapping, int map_offset, int glyph_offset, int cnt);
 };
 
 class FontPage

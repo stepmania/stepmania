@@ -42,16 +42,9 @@ public:
 	static longchar MakeGameGlyph(longchar c, Game g);
 	static bool ExtractGameGlyph(longchar ch, int &c, Game &g);
 
-	typedef map<CString, longchar, StdStringLessNoCase> aliasmap;
-	static aliasmap CharAliases;
-	static map<CString,CString> CharAliasRepl;
-
-	static void ReplaceMarkers( CString &sText );
-
 protected:
 	// map from file name to a texture holder
 	map<CString, Font*> m_mapPathToFont;
-	static void InitCharAliases();
 };
 
 extern FontManager*	FONT;	// global and accessable from anywhere in our program
