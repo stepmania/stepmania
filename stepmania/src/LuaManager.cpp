@@ -199,6 +199,18 @@ LuaManager::~LuaManager()
 	lua_close( L );
 }
 
+void LuaManager::RegisterTypes()
+{
+	if( g_vRegisterActorTypes )
+	{
+		for( unsigned i=0; i<g_vRegisterActorTypes->size(); i++ )
+		{
+			RegisterActorFn fn = (*g_vRegisterActorTypes)[i];
+			fn( L );
+		}
+	}
+}
+
 void LuaManager::ResetState()
 {
 	if( L != NULL )
@@ -221,15 +233,8 @@ void LuaManager::ResetState()
 
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
 		lua_register( L, p->name, p->func );
-
-	if( g_vRegisterActorTypes )
-	{
-		for( unsigned i=0; i<g_vRegisterActorTypes->size(); i++ )
-		{
-			RegisterActorFn fn = (*g_vRegisterActorTypes)[i];
-			fn( L );
-		}
-	}
+	
+	RegisterTypes();
 
 	LuaReference::AfterResetAll();
 }

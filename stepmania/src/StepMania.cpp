@@ -1092,9 +1092,9 @@ int main(int argc, char* argv[])
 	MESSAGEMAN	= new MessageManager;
 	STATSMAN	= new StatsManager;
 
-	// UGLY: Reload the current theme now that all global singletons are
-	// constructed so that they can be registered with Lua.
-	THEME->UpdateLuaGlobals();
+	// UGLY: Now that all global singletons are constructed so that they, let them
+	// all register with Lua.
+	LUA->RegisterTypes();
 
 	SAFE_DELETE( loading_window );		// destroy this before init'ing Display
     

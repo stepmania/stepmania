@@ -18,6 +18,9 @@ public:
 
 	bool RunScriptFile( const CString &sFile );
 
+	/* Register all subscribing types.  There's no harm in registering when already registered. */
+	void RegisterTypes();
+
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
 	void ResetState();
 
