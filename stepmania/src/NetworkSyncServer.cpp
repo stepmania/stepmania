@@ -18,6 +18,7 @@ LanPlayer::LanPlayer() {
 StepManiaLanServer::StepManiaLanServer() {
 	stop = true;
 	SecondSameSelect = false;
+	AssignPlayerIDs();
 }
 
 StepManiaLanServer::~StepManiaLanServer() {
@@ -118,6 +119,7 @@ void StepManiaLanServer::ParseData(PacketFunctions &Packet, int clientNum) {
 	case 6:
 		/* Style Update */
 		Client[clientNum].StyleUpdate(Packet);
+		SendUserList();
 		break;
 	case 7:
 	// Chat message
@@ -215,6 +217,15 @@ void StepManiaLanServer::CheckReady() {
 void GameClient::GameOver(PacketFunctions &Packet) {
 	Ready = false;
 	InGame= false;
+}
+
+void StepManiaLanServer::AssignPlayerIDs() {
+	int counter = 0;
+	//Future: Figure out how to do dynamic numbering.
+	for (int x = 0; x < NUMBERCLIENTS; x++) {
+		Client[x].Player[0].PlayerID = counter++;
+		Client[x].Player[1].PlayerID = counter++;
+	}
 }
 
 int StepManiaLanServer::SortStats(LanPlayer *playersPtr[]) {
@@ -319,15 +330,9 @@ void StepManiaLanServer::SendNetPacket(int client, char *data, int size) {
 }
 
 void StepManiaLanServer::StatsNameColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers) {
-	char number[9];
 	CString numname;
-	for (int x = 0; x < numPlayers; x++) {
-		sprintf(number, "%d", x+1);
-		numname = number;
-		numname += ". ";
-		numname += playersPtr[x]->name;
-		data.WriteNT(numname);
-	}
+	for (int x = 0; x < numPlayers; x++)
+		data.Write1(playersPtr[x]->PlayerID);
 }
 
 void StepManiaLanServer::StatsComboColumn(PacketFunctions &data, LanPlayer *playersPtr[], int numPlayers)
@@ -534,7 +539,7 @@ void GameClient::CheckConnection() {
 	/* If there is an error close the socket. */
 	if (clientSocket.IsError()) {
 		clientSocket.close();
-		Used = false;
+		Used = Ready = hasSong = InGame = false;
 		Player[0].name = Player[1].name = "";
 	}
 }
@@ -546,6 +551,28 @@ void StepManiaLanServer::MoveClientToHost() {
 				ClientHost = x;
 				x = 17;
 			}
+}
+
+void StepManiaLanServer::SendUserList() {
+	Reply.ClearPacket();
+	Reply.Write1(137);
+	Reply.Write1(NUMBERCLIENTS*2);
+	Reply.Write1(NUMBERCLIENTS*2);
+	for (int x = 0; x < NUMBERCLIENTS; x++) {
+		if (Client[x].Player[0].name.length() == 0) {
+			Reply.Write1(0);
+		} else {
+			Reply.Write1(1);
+		}
+		Reply.WriteNT(Client[x].Player[0].name);
+		if (Client[x].Player[1].name.length() == 0) {
+			Reply.Write1(0);
+		} else {
+			Reply.Write1(1);
+		}
+		Reply.WriteNT(Client[x].Player[1].name);
+	}
+	SendToAllClients(Reply);
 }
 
 /*

@@ -28,6 +28,7 @@ class LanPlayer {
 		int maxCombo;
 		int Grade;
 		int offset;
+		int PlayerID;
 		LanPlayer();
 	private:
 };
@@ -110,6 +111,8 @@ class StepManiaLanServer {
 		void SendToAllClients(PacketFunctions &Packet);
 		bool CheckHasSongState();
 		void ClearHasSong();
+		void AssignPlayerIDs();
+		void SendUserList();
 };
 
 #endif
