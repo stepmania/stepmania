@@ -53,29 +53,53 @@ const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
 	return ret;
 }
 
-void LuaManager::PushStack( int out )
+void LuaManager::PushStackNil()
 {
+	lua_pushnil( L );
+}
+
+void LuaManager::PushStack( int out, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
 	/* XXX: stack bounds */
 	lua_pushnumber( L, out );
 }
 
-void LuaManager::PushStack( bool out )
+void LuaManager::PushStack( bool out, lua_State *L )
 {
+	if( L == NULL )
+		L = LUA->L;
+
 	/* XXX: stack bounds */
 	lua_pushboolean( L, out );
 }
 
-
-void LuaManager::PushStack( void *out )
+void LuaManager::PushStack( float val, lua_State *L )
 {
+	if( L == NULL )
+		L = LUA->L;
+
+	/* XXX: stack bounds */
+	lua_pushnumber( L, val );
+}
+
+void LuaManager::PushStack( void *out, lua_State *L )
+{
+	if( L == NULL )
+		L = LUA->L;
+
 	if( out )
 		lua_pushlightuserdata( L, out );
 	else
 		lua_pushnil( L );
 }
 
-void LuaManager::PushStack( const CString &out )
+void LuaManager::PushStack( const CString &out, lua_State *L )
 {
+	if( L == NULL )
+		L = LUA->L;
 	lua_pushstring( L, out );
 }
 

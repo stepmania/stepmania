@@ -1897,7 +1897,7 @@ int LuaFunc_UsingModifier( lua_State *L )
 
 	const PlayerNumber pn = (PlayerNumber) (int(lua_tonumber( L, 1 ))-1);
 	const CString modifier = lua_tostring( L, 2 );
-	LUA_RETURN( PlayerIsUsingModifier( pn, modifier ) );
+	LUA_RETURN( PlayerIsUsingModifier( pn, modifier ), L );
 }
 LuaFunction( UsingModifier );
 

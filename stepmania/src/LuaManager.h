@@ -35,14 +35,19 @@ public:
 	void Fail( const CString &err );
 
 	void SetGlobal( const CString &sName, int val ) { PushStack(val); SetGlobal( sName ); }
+	void SetGlobal( const CString &sName, bool val ) { PushStack(val); SetGlobal( sName ); }
+	void UnsetGlobal( const CString &sName ) { PushStackNil(); SetGlobal( sName ); }
 
-	void PushStack( bool val );
-	void PushStack( int val );
-	void PushStack( void *val );
-	void PushStack( const CString &val );
+	void PushStackNil();
+	static void PushStack( bool val, lua_State *L = NULL );
+	static void PushStack( float val, lua_State *L = NULL );
+	static void PushStack( int val, lua_State *L = NULL );
+	static void PushStack( void *val, lua_State *L = NULL );
+	static void PushStack( const CString &val, lua_State *L = NULL );
 	void PopStack( CString &out );
 	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
+
 
 	/* Run an expression.  The result is left on the Lua stack. */
 	bool RunExpression( const CString &str );

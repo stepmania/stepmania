@@ -1245,7 +1245,7 @@ int LuaFunc_##func( lua_State *L ) { \
 	REQ_ARG( #func, 1, lightuserdata ); \
 	const Song *p = (const Song *) (lua_touserdata( L, -1 )); \
 	LUA_ASSERT( CheckPointer(p), ssprintf("%p is not a valid song", p) ); \
-	LUA_RETURN( call ); \
+	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
 
@@ -1272,7 +1272,7 @@ int LuaFunc_##func( lua_State *L ) { \
 	REQ_ARG( #func, 1, lightuserdata ); \
 	const Steps *p = (const Steps *) (lua_touserdata( L, -1 )); \
 	LUA_ASSERT( CheckPointer(p), ssprintf("%p is not a valid steps", p) ); \
-	LUA_RETURN( call ); \
+	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
 LuaFunction_Steps( StepsMeter, p->GetMeter() );
