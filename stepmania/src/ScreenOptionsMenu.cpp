@@ -27,7 +27,6 @@
 
 enum {
 	OM_APPEARANCE,
-	OM_AUTO_GRAPHIC,
 	OM_AUTOGEN,
 	OM_BACKGROUND,
 	OM_CONFIG_KEY_JOY,
@@ -41,7 +40,6 @@ enum {
 
 OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 	OptionRow( "",	"Appearance Options" ),
-	OptionRow( "",	"Auto Adjust Graphic Detail" ),
 	OptionRow( "",	"Autogen Options" ),
 	OptionRow( "",	"Background Options" ),
 	OptionRow( "",	"Config Key/Joy Mappings" ),
@@ -97,7 +95,6 @@ void ScreenOptionsMenu::GoToNextState()
 	switch( this->GetCurrentRow() )
 	{
 		case OM_APPEARANCE:		SCREENMAN->SetNewScreen("ScreenAppearanceOptions");	break;
-		case OM_AUTO_GRAPHIC:	SCREENMAN->SetNewScreen("ScreenAutoGraphicDetail");	break;
 		case OM_AUTOGEN:		SCREENMAN->SetNewScreen("ScreenAutogenOptions");	break;
 		case OM_BACKGROUND:		SCREENMAN->SetNewScreen("ScreenBackgroundOptions");	break;
 		case OM_CONFIG_KEY_JOY:	SCREENMAN->SetNewScreen("ScreenMapControllers");	break;

@@ -160,10 +160,7 @@ void ResetGame()
 	}
 	PREFSMAN->SaveGamePrefsToDisk();
 
-	if( PREFSMAN->m_bFirstRun )
-		SCREENMAN->SetNewScreen( "ScreenAutoGraphicDetail" );
-	else
-		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+	SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
 	PREFSMAN->m_bFirstRun = false;
 
 	if( PREFSMAN->m_bAutoMapJoysticks )
