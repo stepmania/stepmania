@@ -279,7 +279,7 @@ void NoteData::SetTapAttackNote( int track, int row, Attack attack )
 				TapNote::attack, 
 				TapNote::original, 
 				true,
-				i, 
+				(uint8_t)i, 
 				false,
 				0 );
 			SetTapNote( track, row, tn );
