@@ -92,8 +92,6 @@ PlayerMinus::~PlayerMinus()
 
 void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* pLM, CombinedLifeMeter* pCombinedLM, ScoreDisplay* pScore, Inventory* pInventory, ScoreKeeper* pPrimaryScoreKeeper, ScoreKeeper* pSecondaryScoreKeeper, NoteFieldPlus* pNoteField )
 {
-	GAMESTATE->ResetNoteSkins();
-
 	//LOG->Trace( "PlayerMinus::Load()", );
 
 	m_PlayerNumber = pn;
@@ -149,29 +147,6 @@ void PlayerMinus::Load( PlayerNumber pn, const NoteData* pNoteData, LifeMeter* p
 	float fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	m_pNoteField->Load( this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, fNoteFieldHeight );
 	m_ArrowBackdrop.SetPlayer( pn );
-
-	/* Cache note skins that are used as attacks. */
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
-			{
-				Character *ch = GAMESTATE->m_pCurCharacters[p];
-				ASSERT( ch );
-				CString* asAttacks = ch->m_sAttacks[al];
-				for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
-				{
-					PlayerOptions po;
-					po.FromString( asAttacks[att] );
-					if( po.m_sNoteSkin != "" )
-						m_pNoteField->CacheNoteSkin( po.m_sNoteSkin );
-				}
-			}
-		}
-	}	
 
 	const bool bReverse = GAMESTATE->m_PlayerOptions[pn].GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyleDef()->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS;

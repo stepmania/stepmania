@@ -88,10 +88,11 @@ void NoteField::Load( const NoteData* pNoteData, PlayerNumber pn, int iFirstPixe
 	this->CopyAll( pNoteData );
 	ASSERT( GetNumTracks() == GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer );
 
-	/* Cache the default note skin.  It's up to other code to cache any other skins
-	 * that might be used, such as ones assigned as attacks in battle modes. */
-	LOG->Trace("cache '%s'", GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin.c_str());
-	CacheNoteSkin( GAMESTATE->m_PlayerOptions[pn].m_sNoteSkin );
+	/* Cache note skins. */
+	vector<CString> skins;
+	GAMESTATE->GetAllUsedNoteSkins( skins );
+	for( unsigned i=0; i < skins.size(); ++i )
+		CacheNoteSkin( skins[i] );
 
 	RefreshBeatToNoteSkin();
 }
