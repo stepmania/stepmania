@@ -163,7 +163,8 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 
 		// calculate the number of seconds in this segment
 		float fSecondsInThisSegment =  fBeatsInThisSegment / fBPS;
-		for( int j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
+		int j;
+		for( j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
 		{
 			if( fStartBeatThisSegment <= m_StopSegments[j].m_fStartBeat  &&  m_StopSegments[j].m_fStartBeat < fStartBeatNextSegment )	
 			{
@@ -177,43 +178,40 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 		{
 			// this BPMSegement is NOT the current segment
 			fElapsedTime -= fSecondsInThisSegment;
+			continue;
 		}
-		else 
+
+		// this BPMSegment IS the current segment
+
+		float fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
+
+		for( j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
 		{
-			// this BPMSegment IS the current segment
+			if( fStartBeatThisSegment > m_StopSegments[j].m_fStartBeat  ||
+				m_StopSegments[j].m_fStartBeat > fStartBeatNextSegment )	
+				continue;
 
-			float fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
+			// this freeze lies within this BPMSegment
 
-			for( int j=0; j<m_StopSegments.GetSize(); j++ )	// foreach freeze
+			if( m_StopSegments[j].m_fStartBeat > fBeatEstimate )
+				break;
+
+			fElapsedTime -= m_StopSegments[j].m_fStopSeconds;
+			// re-estimate
+			fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
+			if( fBeatEstimate < m_StopSegments[j].m_fStartBeat )
 			{
-				if( fStartBeatThisSegment <= m_StopSegments[j].m_fStartBeat  &&  m_StopSegments[j].m_fStartBeat <= fStartBeatNextSegment )	
-				{
-					// this freeze lies within this BPMSegment
-
-					if( m_StopSegments[j].m_fStartBeat <= fBeatEstimate )
-					{
-						fElapsedTime -= m_StopSegments[j].m_fStopSeconds;
-						// re-estimate
-						fBeatEstimate = fStartBeatThisSegment + fElapsedTime*fBPS;
-						if( fBeatEstimate < m_StopSegments[j].m_fStartBeat )
-						{
-							fBeatOut = m_StopSegments[j].m_fStartBeat;
-							fBPSOut = fBPS;
-							bFreezeOut = true;
-							return;
-						}
-					}
-					else
-						break;
-				}
+				fBeatOut = m_StopSegments[j].m_fStartBeat;
+				fBPSOut = fBPS;
+				bFreezeOut = true;
+				return;
 			}
-
-			fBeatOut = fBeatEstimate;
-			fBPSOut = fBPS;
-			bFreezeOut = false;
-			return;
 		}
 
+		fBeatOut = fBeatEstimate;
+		fBPSOut = fBPS;
+		bFreezeOut = false;
+		return;
 	}
 }
 
