@@ -153,10 +153,10 @@ public:
 
 
 		// set size of streams
-		rect.left	= LONG(-g_iMeterWidth/2 + g_iMeterWidth*max(0,fCorrectedLeftEdgePercent));
-		rect.top	= LONG(-g_iMeterHeight/2);
-		rect.right	= LONG(-g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent));
-		rect.bottom	= LONG(+g_iMeterHeight/2);
+		rect.left	= int(-g_iMeterWidth/2 + g_iMeterWidth*max(0,fCorrectedLeftEdgePercent));
+		rect.top	= int(-g_iMeterHeight/2);
+		rect.right	= int(-g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent));
+		rect.bottom	= int(+g_iMeterHeight/2);
 
 		ASSERT( rect.left <= g_iMeterWidth/2  &&  rect.right <= g_iMeterWidth/2 );  
 
@@ -199,10 +199,10 @@ public:
 		float fChamberRightPercent = GetChamberRightPercent( iChamber );
 
 		// draw mask for vertical chambers
-		rect.left	= LONG(-g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth-1);
-		rect.top	= LONG(-g_iMeterHeight/2);
-		rect.right	= LONG(-g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth+1);
-		rect.bottom	= LONG(-g_iMeterHeight/2 + fHeightPercent*g_iMeterHeight);
+		rect.left	= int(-g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth-1);
+		rect.top	= int(-g_iMeterHeight/2);
+		rect.right	= int(-g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth+1);
+		rect.bottom	= int(-g_iMeterHeight/2 + fHeightPercent*g_iMeterHeight);
 
 		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
 		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
