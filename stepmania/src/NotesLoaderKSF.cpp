@@ -258,7 +258,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 	if( !arrayPossibleMusic.empty() )		// we found a match
 		out.m_sMusicFile = arrayPossibleMusic[0];
 
-	return TRUE;
+	return true;
 }
 
 

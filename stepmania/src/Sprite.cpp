@@ -29,7 +29,7 @@ Sprite::Sprite()
 	m_bDrawIfTextureNull = false;
 	m_iNumStates = 0;
 	m_iCurState = 0;
-	m_bIsAnimating = TRUE;
+	m_bIsAnimating = true;
 	m_fSecsIntoState = 0.0;
 	m_bUsingCustomTexCoords = false;
 }
@@ -101,7 +101,7 @@ bool Sprite::LoadFromSpriteFile( CString sSpritePath, RageTexturePrefs prefs )
 			break;
 		if( m_iStateToFrame[i] >= m_pTexture->GetNumFrames() )
 			throw RageException( "In '%s', %s is %d, but the texture %s only has %d frames.",
-				m_sSpritePath.GetString(), sFrameKey.GetString(), m_iStateToFrame[i], sTexturePath, m_pTexture->GetNumFrames() );
+				m_sSpritePath.GetString(), sFrameKey.GetString(), m_iStateToFrame[i], sTexturePath.GetString(), m_pTexture->GetNumFrames() );
 		m_fDelay[i] = 0.2f;
 		if( !ini.GetValueF( "Sprite", sDelayKey, m_fDelay[i] ) )
 			break;
@@ -239,7 +239,7 @@ void Sprite::DrawPrimitives()
 		} 
 		else 
 		{
-			UINT uFrameNo = m_iStateToFrame[m_iCurState];
+			unsigned int uFrameNo = m_iStateToFrame[m_iCurState];
 			const RectF *pTexCoordRect = m_pTexture->GetTextureCoordRect( uFrameNo );
 
 			v[0].t = RageVector2( pTexCoordRect->left,	pTexCoordRect->top );		// top left
