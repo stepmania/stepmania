@@ -194,13 +194,13 @@ void ScreenGraphicOptions::ExportOptions()
 
 void ScreenGraphicOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-	PREFSMAN->SaveGlobalPrefsToDisk();
-	ApplyGraphicOptions();
+	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
 void ScreenGraphicOptions::GoToNextState()
 {
+	PREFSMAN->SaveGlobalPrefsToDisk();
+	ApplyGraphicOptions();
 	GoToPrevState();
 }
 

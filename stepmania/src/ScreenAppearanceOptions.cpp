@@ -190,13 +190,13 @@ void ScreenAppearanceOptions::ExportOptions()
 
 void ScreenAppearanceOptions::GoToPrevState()
 {
-	GoToNextState();
+	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
 void ScreenAppearanceOptions::GoToNextState()
 {
 	PREFSMAN->SaveGamePrefsToDisk();
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+	GoToPrevState();
 }
 
 

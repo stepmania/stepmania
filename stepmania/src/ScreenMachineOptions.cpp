@@ -168,12 +168,12 @@ void ScreenMachineOptions::ExportOptions()
 
 void ScreenMachineOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-	PREFSMAN->SaveGlobalPrefsToDisk();
+	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
 void ScreenMachineOptions::GoToNextState()
 {
+	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
 

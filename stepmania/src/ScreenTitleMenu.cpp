@@ -207,11 +207,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			{
 			case CHOICE_GAME_START:
 			case CHOICE_SELECT_GAME:
-			case CHOICE_MAP_INSTRUMENTS:
-			case CHOICE_INPUT_OPTIONS:
-			case CHOICE_MACHINE_OPTIONS:
-			case CHOICE_GRAPHIC_OPTIONS:
-			case CHOICE_APPEARANCE_OPTIONS:
+			case CHOICE_MAP_KEY_JOY:
+			case CHOICE_OPTIONS:
 			case CHOICE_JUKEBOX:
 			#ifdef _DEBUG
 			case CHOICE_SANDBOX:
@@ -277,20 +274,11 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		case CHOICE_SELECT_GAME:
 			SCREENMAN->SetNewScreen( "ScreenSelectGame" );
 			break;
-		case CHOICE_MAP_INSTRUMENTS:
+		case CHOICE_MAP_KEY_JOY:
 			SCREENMAN->SetNewScreen( "ScreenMapControllers" );
 			break;
-		case CHOICE_INPUT_OPTIONS:
-			SCREENMAN->SetNewScreen( "ScreenInputOptions" );
-			break;
-		case CHOICE_MACHINE_OPTIONS:
-			SCREENMAN->SetNewScreen( "ScreenMachineOptions" );
-			break;
-		case CHOICE_GRAPHIC_OPTIONS:
-			SCREENMAN->SetNewScreen( "ScreenGraphicOptions" );
-			break;
-		case CHOICE_APPEARANCE_OPTIONS:
-			SCREENMAN->SetNewScreen( "ScreenAppearanceOptions" );
+		case CHOICE_OPTIONS:
+			SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 			break;
 		case CHOICE_JUKEBOX:
 			SCREENMAN->SetNewScreen( "ScreenJukebox" );

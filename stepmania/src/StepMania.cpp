@@ -452,8 +452,8 @@ static void HandleInputEvents(float fDeltaTime)
 
 		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
 		{
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-				INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+			if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+				INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 			{
 				if(type != IET_FIRST_PRESS) continue;
 				/* alt-enter */

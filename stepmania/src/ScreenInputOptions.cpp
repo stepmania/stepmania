@@ -104,12 +104,12 @@ void ScreenInputOptions::ExportOptions()
 
 void ScreenInputOptions::GoToPrevState()
 {
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-	PREFSMAN->SaveGlobalPrefsToDisk();
+	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 }
 
 void ScreenInputOptions::GoToNextState()
 {
+	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
 
