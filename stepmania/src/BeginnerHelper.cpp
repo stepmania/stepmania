@@ -91,6 +91,12 @@ bool BeginnerHelper::CanUse()
 		return false;
 	if( GAMESTATE->m_CurGame != GAME_DANCE )
 		return false;
+	if( GAMESTATE->m_CurStyle == STYLE_DANCE_SOLO )
+		return false;
+	// not sure how this could happen, since double steps should be
+	// basic/light or higher, but lets check for it anyway.
+	if( GAMESTATE->m_CurStyle == STYLE_DANCE_DOUBLE )
+		return false;
 	if( GAMESTATE->m_pCharacters.size() == 0 )
 		return false;
 
