@@ -29,7 +29,7 @@ RandomSample::~RandomSample()
 }
 
 
-bool RandomSample::LoadSoundDir( CString sDir )
+bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 {
 	if( sDir == "" )
 		return true;
@@ -54,6 +54,8 @@ bool RandomSample::LoadSoundDir( CString sDir )
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 	GetDirListing( sDir + "*.wav", arraySoundFiles );
+
+	arraySoundFiles.resize( min( arraySoundFiles.size(), (unsigned)iMaxToLoad ) );
 
 	for( unsigned i=0; i<arraySoundFiles.size(); i++ )
 		LoadSound( sDir + arraySoundFiles[i] );

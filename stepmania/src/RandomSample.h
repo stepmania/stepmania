@@ -20,14 +20,14 @@ public:
 	RandomSample();
 	virtual ~RandomSample();
 
-	virtual bool Load( CString sFilePath )
+	virtual bool Load( CString sFilePath, int iMaxToLoad = 1000 /*load all*/ )
 	{
 		CString sDir, sFName, sExt;
 		splitrelpath( sFilePath, sDir, sFName, sExt );
 
 		sExt.MakeLower();
 
-		if( sExt == "" )	return LoadSoundDir( sFilePath );
+		if( sExt == "" )	return LoadSoundDir( sFilePath, iMaxToLoad );
 		else				return LoadSound( sFilePath );
 	};
 
@@ -35,7 +35,7 @@ public:
 	void Stop();
 
 private:
-	bool LoadSoundDir( CString sDir );
+	bool LoadSoundDir( CString sDir, int iMaxToLoad  );
 	bool LoadSound( CString sSoundFilePath );
 
 

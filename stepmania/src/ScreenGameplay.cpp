@@ -469,13 +469,13 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	if( !bDemonstration )	// only load if we're going to use it
 	{
 		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","ScreenGameplay oni die") );
-		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
+		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready"), 1 );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go extra"), 1 );
 		else if( GAMESTATE->IsFinalStage() )
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go final"), 1 );
 		else
-			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal") );
+			m_announcerHereWeGo.Load(	ANNOUNCER->GetPathTo("gameplay here we go normal"), 1 );
 		m_announcerDanger.Load(			ANNOUNCER->GetPathTo("gameplay comment danger") );
 		m_announcerGood.Load(			ANNOUNCER->GetPathTo("gameplay comment good") );
 		m_announcerHot.Load(			ANNOUNCER->GetPathTo("gameplay comment hot") );
