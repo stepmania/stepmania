@@ -232,10 +232,7 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 	RageTimer t;
 	LOG->Trace( "Loading screen name '%s'", sScreenName.c_str() );
 
-	CString sClassName = sScreenName;
-	// Look up the class in the metrics group sName
-	if( THEME->HasMetric(sClassName,"Class") )
-		sClassName = THEME->GetMetric(sClassName,"Class");
+	CString sClassName = THEME->GetMetric(sScreenName,"Class");
 	
 	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
 	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sScreenName.c_str(),sClassName.c_str()) )
