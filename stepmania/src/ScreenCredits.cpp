@@ -132,6 +132,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"NMR"},
 	{0,"Random Hajile"},
 	{0,"Chocobo Ghost"},
+	{0,"Tyma"},
 	{0,"Lagged"},
 	{0,"The Melting Pot"},
 	{0,"DDRJamz Global BBS"},

@@ -21,6 +21,7 @@ enum Game
 	GAME_BM,		// Beatmania
 	GAME_MANIAX,	// DanceManiax
 	GAME_TECHNO,	// TechnoMotion
+	GAME_PNM,   // pop n music
 	NUM_GAMES,		// leave this at the end
 	GAME_INVALID,
 };
