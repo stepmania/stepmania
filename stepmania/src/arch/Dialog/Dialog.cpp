@@ -35,21 +35,24 @@ void Dialog::Init()
 	CString Driver;
 	for( unsigned i = 0; g_pImpl == NULL && i < DriversToTry.size(); ++i )
 	{
-		try {
-			Driver = DriversToTry[i];
+		Driver = DriversToTry[i];
 
 #if defined(HAVE_DIALOG_WIN32)
-			if( !DriversToTry[i].CompareNoCase("Win32") ) g_pImpl = new DialogDriver_Win32;
+		if( !DriversToTry[i].CompareNoCase("Win32") ) g_pImpl = new DialogDriver_Win32;
 #endif
 #if defined(HAVE_DIALOG_COCOA)
-			if( !DriversToTry[i].CompareNoCase("Cocoa") ) g_pImpl = new DialogDriver_Cocoa;
+		if( !DriversToTry[i].CompareNoCase("Cocoa") ) g_pImpl = new DialogDriver_Cocoa;
 #endif
-			if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriver_Null;
-		}
-		catch( const RageException &e )
+		if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriver_Null;
+
+		if( g_pImpl == NULL )
+			continue;
+		CString sError = g_pImpl->Init();
+		if( sError != "" )
 		{
 			if( LOG )
-				LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), e.what());
+				LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
+			SAFE_DELETE( g_pImpl );
 		}
 	}
 
