@@ -1100,7 +1100,7 @@ void Song::AddAutoGenNotes()
 			continue;
 
 		// missing Steps of this type
-		int iNumTracksOfMissing = GAMEMAN->NotesTypeToNumTracks(stMissing);
+		int iNumTracksOfMissing = GAMEMAN->StepsTypeToNumTracks(stMissing);
 
 		// look for closest match
 		StepsType	stBestMatch = (StepsType)-1;
@@ -1112,7 +1112,7 @@ void Song::AddAutoGenNotes()
 				continue;
 
 			/* has (non-autogen) Steps of this type */
-			const int iNumTracks = GAMEMAN->NotesTypeToNumTracks(st);
+			const int iNumTracks = GAMEMAN->StepsTypeToNumTracks(st);
 			const int iTrackDifference = abs(iNumTracks-iNumTracksOfMissing);
 			if( iTrackDifference < iBestTrackDifference )
 			{
@@ -1128,7 +1128,7 @@ void Song::AddAutoGenNotes()
 
 void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 {
-//	int iNumTracksOfTo = GAMEMAN->NotesTypeToNumTracks(ntTo);
+//	int iNumTracksOfTo = GAMEMAN->StepsTypeToNumTracks(ntTo);
 
 	for( unsigned int j=0; j<m_vpSteps.size(); j++ )
 	{

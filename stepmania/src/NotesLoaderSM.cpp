@@ -11,7 +11,7 @@
 #define MAX_EDIT_SIZE_BYTES  20*1024	// 20 KB
 
 void SMLoader::LoadFromSMTokens( 
-	CString sNotesType, 
+	CString sStepsType, 
 	CString sDescription,
 	CString sDifficulty,
 	CString sMeter,
@@ -21,8 +21,8 @@ void SMLoader::LoadFromSMTokens(
 	Steps &out
 )
 {
-	TrimLeft(sNotesType); 
-	TrimRight(sNotesType); 
+	TrimLeft(sStepsType); 
+	TrimRight(sStepsType); 
 	TrimLeft(sDescription); 
 	TrimRight(sDescription); 
 	TrimLeft(sDifficulty); 
@@ -31,7 +31,7 @@ void SMLoader::LoadFromSMTokens(
 
 //	LOG->Trace( "Steps::LoadFromSMTokens()" );
 
-	out.m_StepsType = GameManager::StringToNotesType(sNotesType);
+	out.m_StepsType = GameManager::StringToStepsType(sStepsType);
 	out.SetDescription(sDescription);
 	out.SetDifficulty(StringToDifficulty( sDifficulty ));
 

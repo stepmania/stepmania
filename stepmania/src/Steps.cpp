@@ -35,7 +35,7 @@ Steps::~Steps()
 
 void Steps::SetNoteData( const NoteData* pNewNoteData )
 {
-	ASSERT( pNewNoteData->GetNumTracks() == GameManager::NotesTypeToNumTracks(m_StepsType) );
+	ASSERT( pNewNoteData->GetNumTracks() == GameManager::StepsTypeToNumTracks(m_StepsType) );
 
 	DeAutogen();
 
@@ -60,7 +60,7 @@ void Steps::GetNoteData( NoteData* pNoteDataOut ) const
 	else
 	{
 		pNoteDataOut->ClearAll();
-		pNoteDataOut->SetNumTracks( GameManager::NotesTypeToNumTracks(m_StepsType) );
+		pNoteDataOut->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
 	}
 }
 
@@ -173,7 +173,7 @@ void Steps::Decompress() const
 
 		notes = new NoteData;
 
-		int iNewTracks = GameManager::NotesTypeToNumTracks(m_StepsType);
+		int iNewTracks = GameManager::StepsTypeToNumTracks(m_StepsType);
 
 		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 		{
@@ -192,7 +192,7 @@ void Steps::Decompress() const
 	{
 		// load from compressed
 		notes = new NoteData;
-		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_StepsType) );
+		notes->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
 
 		NoteDataUtil::LoadFromSMNoteDataString(*notes, notes_comp->notes, notes_comp->attacks );
 	}
@@ -241,7 +241,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have 
 	m_StepsType = ntTo;
 	NoteData noteData;
 	pSource->GetNoteData( &noteData );
-	noteData.SetNumTracks( GameManager::NotesTypeToNumTracks(ntTo) ); 
+	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) ); 
 	this->SetNoteData( &noteData );
 	this->SetDescription( "Copied from "+pSource->GetDescription() );
 	this->SetDifficulty( pSource->GetDifficulty() );
@@ -253,7 +253,7 @@ void Steps::CreateBlank( StepsType ntTo )
 {
 	m_StepsType = ntTo;
 	NoteData noteData;
-	noteData.SetNumTracks( GameManager::NotesTypeToNumTracks(ntTo) );
+	noteData.SetNumTracks( GameManager::StepsTypeToNumTracks(ntTo) );
 	this->SetNoteData( &noteData );
 }
 

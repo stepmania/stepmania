@@ -265,7 +265,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	// calculate which StepsTypes to show
 	vector<StepsType> aStepsTypesToShow;
 	{
-		GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, aStepsTypesToShow );
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, aStepsTypesToShow );
 
 		// subtract hidden StepsTypes
 		{
@@ -273,7 +273,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 			split( STEPS_TYPES_TO_HIDE, ",", asStepsTypesToHide, true );
 			for( unsigned i=0; i<asStepsTypesToHide.size(); i++ )
 			{
-				StepsType st = GameManager::StringToNotesType(asStepsTypesToHide[i]);
+				StepsType st = GameManager::StringToStepsType(asStepsTypesToHide[i]);
 				if( st != STEPS_TYPE_INVALID )
 				{
 					const vector<StepsType>::iterator iter = find( aStepsTypesToShow.begin(), aStepsTypesToShow.end(), st );
@@ -673,7 +673,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	case PAGE_TYPE_CATEGORY:
 		{
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
-			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
@@ -713,7 +713,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		{
 			m_textCourseTitle.SetText( pts.pCourse->GetFullDisplayTitle() );
 			m_Banner.LoadFromCourse( pts.pCourse );
-			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
 
 			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.pTrail );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -762,7 +762,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return SECONDS_PER_PAGE;
 	case PAGE_TYPE_ALL_STEPS:
 		{
-			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
 
 			for( unsigned s=0; s<m_vpStepsScoreRowItem.size(); s++ )
 			{
@@ -807,7 +807,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
 	case PAGE_TYPE_ALL_COURSES:
 		{
-			m_textStepsType.SetText( GameManager::NotesTypeToThemedString(pts.nt) );
+			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.nt) );
 
 			for( unsigned c=0; c<m_vpCourseScoreRowItem.size(); c++ )
 			{

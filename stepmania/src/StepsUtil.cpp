@@ -172,7 +172,7 @@ XNode* StepsID::CreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "Steps";
 
-	pNode->AppendAttr( "StepsType", GameManager::NotesTypeToString(st) );
+	pNode->AppendAttr( "StepsType", GameManager::StepsTypeToString(st) );
 	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );
 	if( dc == DIFFICULTY_EDIT )
 	{
@@ -196,7 +196,7 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	CString sTemp;
 
 	pNode->GetAttrValue("StepsType", sTemp);
-	st = GameManager::StringToNotesType( sTemp );
+	st = GameManager::StringToStepsType( sTemp );
 
 	pNode->GetAttrValue("Difficulty", sTemp);
 	dc = StringToDifficulty( sTemp );
@@ -213,7 +213,7 @@ void StepsID::LoadFromNode( const XNode* pNode )
 
 CString StepsID::ToString() const
 {
-	CString s = GameManager::NotesTypeToString(st);
+	CString s = GameManager::StepsTypeToString(st);
 	s += " " + DifficultyToString(dc);
 	if( dc == DIFFICULTY_EDIT )
 	{

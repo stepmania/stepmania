@@ -98,7 +98,7 @@ EditMenu::EditMenu()
 
 	// fill in data structures
 	SONGMAN->GetGroupNames( m_sGroups );
-	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_StepsTypes );
+	GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, m_StepsTypes );
 	
 	ChangeToRow( (Row)0 );
 	OnRowValueChanged( (Row)0 );
@@ -125,8 +125,8 @@ EditMenu::EditMenu()
 			{
 				if( m_StepsTypes[i] == GAMESTATE->m_pCurSteps[PLAYER_1]->m_StepsType )
 				{
-					m_iSelection[ROW_NOTES_TYPE] = i;
-					OnRowValueChanged( ROW_NOTES_TYPE );
+					m_iSelection[ROW_STEPS_TYPE] = i;
+					OnRowValueChanged( ROW_STEPS_TYPE );
 					m_iSelection[ROW_DIFFICULTY] = GAMESTATE->m_pCurSteps[PLAYER_1]->GetDifficulty();
 					OnRowValueChanged( ROW_DIFFICULTY );
 					break;
@@ -263,17 +263,17 @@ void EditMenu::OnRowValueChanged( Row row )
 		m_SongBanner.ScaleToClipped( SONG_BANNER_WIDTH, SONG_BANNER_HEIGHT );
 		m_SongTextBanner.LoadFromSong( GetSelectedSong() );
 		// fall through
-	case ROW_NOTES_TYPE:
-		m_textValue[ROW_NOTES_TYPE].SetText( GAMEMAN->NotesTypeToString(GetSelectedNotesType()) );
+	case ROW_STEPS_TYPE:
+		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToString(GetSelectedStepsType()) );
 		// fall through
 	case ROW_DIFFICULTY:
 		m_textValue[ROW_DIFFICULTY].SetText( DifficultyToString(GetSelectedDifficulty()) );
 		m_Meter.SetFromSteps( GetSelectedNotes() );
 		// fall through
-	case ROW_SOURCE_NOTES_TYPE:
-		m_textLabel[ROW_SOURCE_NOTES_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
-		m_textValue[ROW_SOURCE_NOTES_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
-		m_textValue[ROW_SOURCE_NOTES_TYPE].SetText( GAMEMAN->NotesTypeToString(GetSelectedSourceNotesType()) );
+	case ROW_SOURCE_STEPS_TYPE:
+		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
+		m_textValue[ROW_SOURCE_STEPS_TYPE].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
+		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToString(GetSelectedSourceStepsType()) );
 		// fall through
 	case ROW_SOURCE_DIFFICULTY:
 		m_textLabel[ROW_SOURCE_DIFFICULTY].SetDiffuse( GetSelectedNotes()?RageColor(1,1,1,0):RageColor(1,1,1,1) );
@@ -310,12 +310,12 @@ void EditMenu::OnRowValueChanged( Row row )
 
 Steps* EditMenu::GetSelectedNotes()
 {
-	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedNotesType(),GetSelectedDifficulty(), false);
+	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedStepsType(),GetSelectedDifficulty(), false);
 }
 
 Steps* EditMenu::GetSelectedSourceNotes()
 {
-	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedSourceNotesType(),GetSelectedSourceDifficulty(), false);
+	return GetSelectedSong()->GetStepsByDifficulty(GetSelectedSourceStepsType(),GetSelectedSourceDifficulty(), false);
 }
 
 /*

@@ -33,7 +33,7 @@ const int PNM9_COL_SPACING = 32;
 struct {
 	char *name;
 	int NumTracks;
-} const NotesTypes[NUM_STEPS_TYPES] = {
+} const StepsTypes[NUM_STEPS_TYPES] = {
 	{ "dance-single",	4 },
 	{ "dance-double",	8 },
 	{ "dance-couple",	8 },
@@ -2827,7 +2827,7 @@ void GameManager::GetStylesForGame( Game game, vector<const Style*>& aStylesAddT
 	}
 }
 
-const Style* GameManager::GetEditorStyleForNotesType( StepsType st )
+const Style* GameManager::GetEditorStyleForStepsType( StepsType st )
 {
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
@@ -2841,7 +2841,7 @@ const Style* GameManager::GetEditorStyleForNotesType( StepsType st )
 }
 
 
-void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo )
+void GameManager::GetStepsTypesForGame( Game game, vector<StepsType>& aStepsTypeAddTo )
 {
 	FOREACH_StepsType( st )
 	{
@@ -2855,7 +2855,7 @@ void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesType
 			found = true;
 		}
 		if( found )
-			aNotesTypeAddTo.push_back( st );
+			aStepsTypeAddTo.push_back( st );
 	}
 }
 
@@ -2905,42 +2905,42 @@ bool GameManager::IsGameEnabled( Game game )
 	return find( aGames.begin(), aGames.end(), game ) != aGames.end();
 }
 
-int GameManager::NotesTypeToNumTracks( StepsType st )
+int GameManager::StepsTypeToNumTracks( StepsType st )
 {
 	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
-	return NotesTypes[st].NumTracks;
+	return StepsTypes[st].NumTracks;
 }
 
-StepsType GameManager::StringToNotesType( CString sNotesType )
+StepsType GameManager::StringToStepsType( CString sStepsType )
 {
-	sNotesType.MakeLower();
+	sStepsType.MakeLower();
 
 	// HACK!  We elminitated "ez2-single-hard", but we should still handle it.
-	if( sNotesType == "ez2-single-hard" )
-		sNotesType = "ez2-single";
+	if( sStepsType == "ez2-single-hard" )
+		sStepsType = "ez2-single";
 
 	// HACK!  "para-single" used to be called just "para"
-	if( sNotesType == "para" )
-		sNotesType = "para-single";
+	if( sStepsType == "para" )
+		sStepsType = "para-single";
 
 	for( int i=0; i<NUM_STEPS_TYPES; i++ )
-		if( NotesTypes[i].name == sNotesType )
+		if( StepsTypes[i].name == sStepsType )
 			return StepsType(i);
 	
 	// invalid StepsType
-	LOG->Warn( "Invalid StepsType string '%s' encountered.  Assuming this is 'dance-single'.", sNotesType.c_str() );
+	LOG->Warn( "Invalid StepsType string '%s' encountered.  Assuming this is 'dance-single'.", sStepsType.c_str() );
 	return STEPS_TYPE_DANCE_SINGLE;
 }
 
-CString GameManager::NotesTypeToString( StepsType st )
+CString GameManager::StepsTypeToString( StepsType st )
 {
 	ASSERT_M( st < NUM_STEPS_TYPES, ssprintf("%i", st) );
-	return NotesTypes[st].name;
+	return StepsTypes[st].name;
 }
 
-CString GameManager::NotesTypeToThemedString( StepsType st )
+CString GameManager::StepsTypeToThemedString( StepsType st )
 {
-	CString s = NotesTypeToString( st );
+	CString s = StepsTypeToString( st );
 	if( THEME->HasMetric( "StepsType", s ) )
 		return THEME->GetMetric( "StepsType", s );
 	else

@@ -39,7 +39,7 @@ XNode* TrailID::CreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "Trail";
 
-	pNode->AppendAttr( "StepsType", GameManager::NotesTypeToString(st) );
+	pNode->AppendAttr( "StepsType", GameManager::StepsTypeToString(st) );
 	pNode->AppendAttr( "CourseDifficulty", CourseDifficultyToString(cd) );
 
 	return pNode;
@@ -52,7 +52,7 @@ void TrailID::LoadFromNode( const XNode* pNode )
 	CString sTemp;
 
 	pNode->GetAttrValue("StepsType", sTemp);
-	st = GameManager::StringToNotesType( sTemp );
+	st = GameManager::StringToStepsType( sTemp );
 
 	pNode->GetAttrValue("CourseDifficulty", sTemp);
 	cd = StringToCourseDifficulty( sTemp );
@@ -60,7 +60,7 @@ void TrailID::LoadFromNode( const XNode* pNode )
 
 CString TrailID::ToString() const
 {
-	CString s = GameManager::NotesTypeToString(st);
+	CString s = GameManager::StepsTypeToString(st);
 	s += " " + CourseDifficultyToString(cd);
 	return s;
 }

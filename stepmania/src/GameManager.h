@@ -19,18 +19,18 @@ public:
 	
 	void	GetStylesForGame( Game game, vector<const Style*>& aStylesAddTo, bool editor=false );
 	void	GetAllStyles( vector<const Style*>& aStylesAddTo, bool editor=false );
-	void	GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo );
-	const Style*	GetEditorStyleForNotesType( StepsType st );
+	void	GetStepsTypesForGame( Game game, vector<StepsType>& aStepsTypeAddTo );
+	const Style*	GetEditorStyleForStepsType( StepsType st );
 	const Style*	GetDemonstrationStyleForGame( Game game );
 	const Style*	GetHowToPlayStyleForGame( Game game );
 
 	void GetEnabledGames( vector<Game>& aGamesOut );
 	bool IsGameEnabled( Game game );
 
-	static int NotesTypeToNumTracks( StepsType st );
-	static StepsType StringToNotesType( CString sNotesType );
-	static CString NotesTypeToString( StepsType st );
-	static CString NotesTypeToThemedString( StepsType st );
+	static int StepsTypeToNumTracks( StepsType st );
+	static StepsType StringToStepsType( CString sStepsType );
+	static CString StepsTypeToString( StepsType st );
+	static CString StepsTypeToThemedString( StepsType st );
 	static Game StringToGameType( CString sGameType );
 	const Style* GameAndStringToStyle( Game game, CString sStyle );
 	static CString StyleToThemedString( const Style* s );

@@ -12,7 +12,7 @@ class MsdFile;
 class SMLoader: public NotesLoader
 {
 	static void LoadFromSMTokens( 
-		CString sNotesType, 
+		CString sStepsType, 
 		CString sDescription,
 		CString sDifficulty,
 		CString sMeter,

@@ -37,7 +37,7 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 		// Ugly...
 		{
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-			CString sStepsType = GAMEMAN->NotesTypeToThemedString(st);
+			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
 			if( GAMESTATE->IsCourseMode() )
 			{
 				CourseDifficulty cd = (CourseDifficulty)line;
@@ -73,7 +73,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 		// Ugly...
 		{
 			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-			CString sStepsType = GAMEMAN->NotesTypeToThemedString(st);
+			CString sStepsType = GAMEMAN->StepsTypeToThemedString(st);
 			if( GAMESTATE->IsCourseMode() )
 			{
 				CourseDifficulty cd = (CourseDifficulty)line;

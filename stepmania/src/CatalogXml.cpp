@@ -125,10 +125,10 @@ void SaveCatalogXml()
 		XNode* pNode = xml.AppendChild( "StepsTypesToShow" );
 
 		vector<StepsType> vStepsTypes;
-		GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, vStepsTypes );
+		GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_CurGame, vStepsTypes );
 		for( vector<StepsType>::const_iterator iter = vStepsTypes.begin(); iter != vStepsTypes.end(); iter++ )
 		{
-			pNode->AppendChild( "StepsType", GAMEMAN->NotesTypeToString(*iter) );
+			pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
 		}
 	}
 

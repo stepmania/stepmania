@@ -1178,7 +1178,7 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 			continue;
 
 		XNode* pStepsTypeNode = pNode->AppendChild( "StepsType" );
-		pStepsTypeNode->AppendAttr( "Type", GameManager::NotesTypeToString(st) );
+		pStepsTypeNode->AppendAttr( "Type", GameManager::StepsTypeToString(st) );
 
 		FOREACH_RankingCategory( rc )
 		{
@@ -1214,7 +1214,7 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 		CString str;
 		if( !(*stepsType)->GetAttrValue( "Type", str ) )
 			WARN_AND_CONTINUE;
-		StepsType st = GameManager::StringToNotesType( str );
+		StepsType st = GameManager::StringToStepsType( str );
 		if( st == STEPS_TYPE_INVALID )
 			WARN_AND_CONTINUE;
 
@@ -1393,7 +1393,7 @@ void Profile::LoadAwardsFromNode( const XNode* pNode )
 			CString sStepsType;
 			if( !(*pAward)->GetAttrValue( "StepsType", sStepsType ) )
 				WARN_AND_CONTINUE;
-			StepsType st = GameManager::StringToNotesType( sStepsType );
+			StepsType st = GameManager::StringToStepsType( sStepsType );
 			if( st == STEPS_TYPE_INVALID )
 				WARN_AND_CONTINUE;
 
@@ -1463,7 +1463,7 @@ XNode* Profile::SaveAwardsCreateNode() const
 
 				XNode* pAward = pNode->AppendChild( "PerDifficultyAward" );
 
-				pAward->AppendAttr( "StepsType", GameManager::NotesTypeToString(st) );
+				pAward->AppendAttr( "StepsType", GameManager::StepsTypeToString(st) );
 				pAward->AppendAttr( "Difficulty", DifficultyToString(dc) );
 				pAward->AppendAttr( "PerDifficultyAward", PerDifficultyAwardToString(pda) );
 				

@@ -32,9 +32,9 @@ public:
 	{ 
 		ROW_GROUP, 
 		ROW_SONG, 
-		ROW_NOTES_TYPE, 
+		ROW_STEPS_TYPE, 
 		ROW_DIFFICULTY,
-		ROW_SOURCE_NOTES_TYPE, 
+		ROW_SOURCE_STEPS_TYPE, 
 		ROW_SOURCE_DIFFICULTY, 
 		ROW_ACTION, 
 		NUM_ROWS 
@@ -81,9 +81,9 @@ public:
 
 	CString		GetSelectedGroup() const			{ ASSERT(m_iSelection[ROW_GROUP] < (int)m_sGroups.size()); return m_sGroups[m_iSelection[ROW_GROUP]]; }
 	Song*		GetSelectedSong() const				{ ASSERT(m_iSelection[ROW_SONG] < (int)m_pSongs.size()); return m_pSongs[m_iSelection[ROW_SONG]]; }
-	StepsType	GetSelectedNotesType() const		{ ASSERT(m_iSelection[ROW_NOTES_TYPE] < (int)m_StepsTypes.size()); return m_StepsTypes[m_iSelection[ROW_NOTES_TYPE]]; }
+	StepsType	GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE] < (int)m_StepsTypes.size()); return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
 	Difficulty	GetSelectedDifficulty() const		{ return (Difficulty)m_iSelection[ROW_DIFFICULTY]; }
-	StepsType	GetSelectedSourceNotesType() const	{ ASSERT(m_iSelection[ROW_SOURCE_NOTES_TYPE] < (int)m_StepsTypes.size()); return m_StepsTypes[m_iSelection[ROW_SOURCE_NOTES_TYPE]]; }
+	StepsType	GetSelectedSourceStepsType() const	{ ASSERT(m_iSelection[ROW_SOURCE_STEPS_TYPE] < (int)m_StepsTypes.size()); return m_StepsTypes[m_iSelection[ROW_SOURCE_STEPS_TYPE]]; }
 	Difficulty	GetSelectedSourceDifficulty() const { return (Difficulty)m_iSelection[ROW_SOURCE_DIFFICULTY]; }
 	Action		GetSelectedAction() const			{ ASSERT(m_iSelection[ROW_ACTION] < (int)m_Actions.size()); return m_Actions[m_iSelection[ROW_ACTION]]; }
 

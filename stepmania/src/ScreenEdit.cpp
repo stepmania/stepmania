@@ -975,7 +975,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			pSteps->GetNoteData( &m_NoteFieldEdit );
 			SCREENMAN->SystemMessage( ssprintf(
 				"Switched to %s %s '%s'",
-				GAMEMAN->NotesTypeToString( pSteps->m_StepsType ).c_str(),
+				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetDescription().c_str() ) );
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit switch") );

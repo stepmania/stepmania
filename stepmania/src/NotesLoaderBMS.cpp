@@ -319,7 +319,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		return false;
 	}
 
-	int iNumNewTracks = GameManager::NotesTypeToNumTracks( out.m_StepsType );
+	int iNumNewTracks = GameManager::StepsTypeToNumTracks( out.m_StepsType );
 	int iTransformNewToOld[MAX_NOTE_TRACKS];
 
 	int i;

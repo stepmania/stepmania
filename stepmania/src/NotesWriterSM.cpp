@@ -128,9 +128,9 @@ void NotesWriterSM::WriteSMNotesTag( const Steps &in, RageFile &f, bool bSavingC
 {
 	f.PutLine( "" );
 	f.PutLine( ssprintf( "//---------------%s - %s----------------",
-		GameManager::NotesTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() ) );
+		GameManager::StepsTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() ) );
 	f.PutLine( "#NOTES:" );
-	f.PutLine( ssprintf( "     %s:", GameManager::NotesTypeToString(in.m_StepsType).c_str() ) );
+	f.PutLine( ssprintf( "     %s:", GameManager::StepsTypeToString(in.m_StepsType).c_str() ) );
 	f.PutLine( ssprintf( "     %s:", in.GetDescription().c_str() ) );
 	f.PutLine( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	f.PutLine( ssprintf( "     %d:", in.GetMeter() ) );

@@ -87,7 +87,7 @@ PlayerNumber Style::ControllerToPlayerNumber( GameController controller ) const
 	}
 }
 
-bool Style::MatchesNotesType( StepsType type ) const
+bool Style::MatchesStepsType( StepsType type ) const
 {
 	if(type == m_StepsType) return true;
 
