@@ -316,8 +316,8 @@ public:
 	//
 	// BGAnimation stuff
 	//
-	virtual void GainingFocus( float fRate, bool bRewindMovie, bool bLoop ) {}
-	virtual void LosingFocus() {}
+	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop ) {}
+	virtual void LoseFocus() {}
 	virtual void PlayCommand( const CString &sCommandName ) {}
 	virtual void PlayOffCommand( const CString &sCommandName ) {}
 

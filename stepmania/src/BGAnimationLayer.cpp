@@ -973,7 +973,7 @@ void BGAnimationLayer::DrawPrimitives()
 	}
 }
 
-void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
+void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
 	m_fUpdateRate = fRate;
 
@@ -982,10 +982,12 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 
 	//
 	// The order of these actions is important.
-	// At this point, the movie is probably paused (by LosingFocus()).
+	// At this point, the movie is probably paused (by LoseFocus()).
 	// Play the movie, then set the playback rate (which can 
 	// potentially pause the movie again).
 	//
+	// TODO: Don't special case subActor[0].  The movie layer should be set up with
+	// a LoseFocusCommand that pauses, and a GainFocusCommand that plays.
 	if( bRewindMovie )
 		m_SubActors[0]->Command( "position,0" );
 	m_SubActors[0]->Command( ssprintf("loop,%i",bLoop) );
@@ -996,7 +998,7 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	{
 		/* Yuck.  We send OnCommand on load, since that's what's wanted for
 		 * most backgrounds.  However, gameplay backgrounds (loaded from Background)
-		 * should run OnCommand when they're actually displayed, when GainingFocus
+		 * should run OnCommand when they're actually displayed, when GainFocus
 		 * gets called.  We've already run OnCommand; abort it so we don't run tweens
 		 * twice. */
 		RunCommandOnChildren( "stoptweening" );
@@ -1006,7 +1008,7 @@ void BGAnimationLayer::GainingFocus( float fRate, bool bRewindMovie, bool bLoop 
 	PlayCommand( "GainFocus" );
 }
 
-void BGAnimationLayer::LosingFocus()
+void BGAnimationLayer::LoseFocus()
 {
 	if( !m_SubActors.size() )
 		return;

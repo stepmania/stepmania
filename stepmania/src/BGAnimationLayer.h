@@ -26,8 +26,8 @@ public:
 	bool EarlyAbortDraw();
 
 	float GetMaxTweenTimeLeft() const;
-	void GainingFocus( float fRate, bool bRewindMovie, bool bLoop );
-	void LosingFocus();
+	void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
+	void LoseFocus();
 
 	void PlayCommand( const CString &sCommandName );
 	void PlayOffCommand() { PlayCommand( "Off" ); }
@@ -84,7 +84,7 @@ protected:
 	map<CString, CString> m_asCommands;
 	float m_fRepeatCommandEverySeconds;	// -1 = no repeat
 	float m_fSecondsUntilNextCommand;
-	float m_fUpdateRate;	// set by GainingFocus
+	float m_fUpdateRate;	// set by GainFocus
 	float m_fFOV;	// -1 = no change
 	bool m_bLighting;
 

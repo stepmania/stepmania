@@ -745,7 +745,7 @@ void Actor::HandleCommand( const ParsedCommand &command )
 
 	/* These are commands intended for a Sprite commands, but they will get 
 	 * sent to all sub-actors (which aren't necessarily Sprites) on 
-	 * GainingFocus and LosingFocus.  So, don't run CheckHandledParams 
+	 * GainFocus and LoseFocus.  So, don't run CheckHandledParams 
 	 * on these commands. */
 	else if( sName=="customtexturerect" || sName=="texcoordvelocity" || sName=="scaletoclipped" ||
 		 sName=="stretchtexcoords" || sName=="position" || sName=="loop" || sName=="play" ||

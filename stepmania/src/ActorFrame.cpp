@@ -151,20 +151,20 @@ void ActorFrame::HandleCommand( const ParsedCommand &command )
 	// don't propograte most commands to children
 }
 
-void ActorFrame::GainingFocus( float fRate, bool bRewindMovie, bool bLoop )
+void ActorFrame::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
 {
-	Actor::GainingFocus( fRate, bRewindMovie, bLoop );
+	Actor::GainFocus( fRate, bRewindMovie, bLoop );
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->GainingFocus( fRate, bRewindMovie, bLoop );
+		m_SubActors[i]->GainFocus( fRate, bRewindMovie, bLoop );
 }
 
-void ActorFrame::LosingFocus()
+void ActorFrame::LoseFocus()
 {
-	Actor::LosingFocus();
+	Actor::LoseFocus();
 
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->LosingFocus();
+		m_SubActors[i]->LoseFocus();
 }
 
 void ActorFrame::PlayCommand( const CString &sCommandName )
