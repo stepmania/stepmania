@@ -27,7 +27,11 @@ Trail *TrailID::ToTrail( const Course *p, bool bAllowNull ) const
 	if( st == STEPS_TYPE_INVALID || cd == COURSE_DIFFICULTY_INVALID )
 		return NULL;
 
-	return p->GetTrail( st, cd );
+	Trail *ret = p->GetTrail( st, cd );
+	if( !bAllowNull && ret == NULL )
+		RageException::Throw( "%i, %i, \"%s\"", st, cd, p->m_sName.c_str() );	
+
+	return ret;
 }
 
 XNode* TrailID::CreateNode() const
