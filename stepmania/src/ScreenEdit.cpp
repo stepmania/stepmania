@@ -32,6 +32,7 @@
 #include <utility>
 #include "NoteFieldPositioning.h"
 #include "arch/arch.h"
+#include "NoteDataUtil.h"
 
 
 const float RECORD_HOLD_SECONDS = 0.3f;
@@ -1401,14 +1402,15 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			{
 				HandleAreaMenuChoice( cut, NULL );
 				
+				StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 				TurnType tt = (TurnType)iAnswers[c];
 				switch( tt )
 				{
-				case left:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::left );			break;
-				case right:			NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::right );			break;
-				case mirror:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::mirror );		break;
-				case shuffle:		NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::shuffle );		break;
-				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, NoteDataUtil::super_shuffle );	break;
+				case left:			NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::left );			break;
+				case right:			NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::right );			break;
+				case mirror:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::mirror );		break;
+				case shuffle:		NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::shuffle );		break;
+				case super_shuffle:	NoteDataUtil::Turn( m_Clipboard, st, NoteDataUtil::super_shuffle );	break;
 				default:		ASSERT(0);
 				}
 

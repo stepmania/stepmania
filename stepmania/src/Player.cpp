@@ -31,6 +31,7 @@
 #include "LifeMeter.h"
 #include "PlayerAI.h"
 #include "NoteFieldPositioning.h"
+#include "NoteDataUtil.h"
 
 #define GRAY_ARROWS_Y				THEME->GetMetricF("Player","GrayArrowsY")
 #define JUDGMENT_X( p, both_sides )	THEME->GetMetricF("Player",both_sides ? "JudgmentXOffsetBothSides" : ssprintf("JudgmentXOffsetOneSideP%d",p+1))
@@ -124,14 +125,16 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Combine
 	if( !GAMESTATE->m_PlayerOptions[pn].m_bHoldNotes )
 		NoteDataUtil::RemoveHoldNotes(*this);
 
+	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+
 	switch( GAMESTATE->m_PlayerOptions[pn].m_Turn )
 	{
-	case PlayerOptions::TURN_NONE:																		break;
-	case PlayerOptions::TURN_MIRROR:		NoteDataUtil::Turn( *this, NoteDataUtil::mirror );			break;
-	case PlayerOptions::TURN_LEFT:			NoteDataUtil::Turn( *this, NoteDataUtil::left );			break;
-	case PlayerOptions::TURN_RIGHT:			NoteDataUtil::Turn( *this, NoteDataUtil::right );			break;
-	case PlayerOptions::TURN_SHUFFLE:		NoteDataUtil::Turn( *this, NoteDataUtil::shuffle );			break;
-	case PlayerOptions::TURN_SUPER_SHUFFLE:	NoteDataUtil::Turn( *this, NoteDataUtil::super_shuffle );	break;
+	case PlayerOptions::TURN_NONE:																			break;
+	case PlayerOptions::TURN_MIRROR:		NoteDataUtil::Turn( *this, st, NoteDataUtil::mirror );			break;
+	case PlayerOptions::TURN_LEFT:			NoteDataUtil::Turn( *this, st, NoteDataUtil::left );			break;
+	case PlayerOptions::TURN_RIGHT:			NoteDataUtil::Turn( *this, st, NoteDataUtil::right );			break;
+	case PlayerOptions::TURN_SHUFFLE:		NoteDataUtil::Turn( *this, st, NoteDataUtil::shuffle );			break;
+	case PlayerOptions::TURN_SUPER_SHUFFLE:	NoteDataUtil::Turn( *this, st, NoteDataUtil::super_shuffle );	break;
 	default:		ASSERT(0);
 	}
 

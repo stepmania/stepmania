@@ -43,6 +43,7 @@
 #include "CombinedLifeMeterTug.h"
 #include "Inventory.h"
 #include "Course.h"
+#include "NoteDataUtil.h"
 
 //
 // Defines
@@ -146,7 +147,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	if( GAMESTATE->IsCourseMode() )
 	{
 		vector<Course::Info> ci;
-		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+		GAMESTATE->m_pCurCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
 			m_apNotesQueue[p].clear();

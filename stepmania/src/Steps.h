@@ -44,7 +44,8 @@ public:
 	void SetRadarValue(int r, float val);
 	bool IsAutogen() const;	// Was created by autogen?
 
-	StepsType		m_NotesType;
+
+	StepsType		m_StepsType;
 
 	void			GetNoteData( NoteData* pNoteDataOut ) const;
 	void			SetNoteData( NoteData* pNewNoteData );

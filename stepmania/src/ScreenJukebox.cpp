@@ -49,11 +49,11 @@ bool ScreenJukebox::SetSong()
 		Difficulty dc = GAMESTATE->m_PreferredDifficulty[PLAYER_1];
 		Steps* pNotes = NULL;
 		if( dc != DIFFICULTY_INVALID )
-			pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
+			pNotes = pSong->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_StepsType, GAMESTATE->m_PreferredDifficulty[PLAYER_1] );
 		else	// "all difficulties"
 		{
 			vector<Steps*> vNotes;
-			pSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			pSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 			if( vNotes.size() > 0 )
 				pNotes = vNotes[rand()%vNotes.size()];
 		}

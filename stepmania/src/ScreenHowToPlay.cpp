@@ -36,7 +36,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 		default: ASSERT(0); // we should cover all gametypes....
 	}
 
-	StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+	StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	int iNumOfTracks = GAMEMAN->NotesTypeToNumTracks( nt );
 
 	ASSERT(iNumOfTracks > 0); // crazy to have less than 1 track....

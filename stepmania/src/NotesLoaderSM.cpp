@@ -27,7 +27,7 @@ void SMLoader::LoadFromSMTokens(
 
 //	LOG->Trace( "Steps::LoadFromSMTokens()" );
 
-	out.m_NotesType = GameManager::StringToNotesType(sNotesType);
+	out.m_StepsType = GameManager::StringToNotesType(sNotesType);
 	out.SetDescription(sDescription);
 	out.SetDifficulty(StringToDifficulty( sDifficulty ));
 

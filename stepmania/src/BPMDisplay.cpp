@@ -180,7 +180,7 @@ void BPMDisplay::SetBPM( const Course* pCourse )
 	ASSERT( pCourse );
 
 	vector<Course::Info> ci;
-	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
 
 	ASSERT( ci.size() );
 

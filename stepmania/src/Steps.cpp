@@ -23,7 +23,7 @@
 #include "RageException.h"
 #include "MsdFile.h"
 #include "GameManager.h"
-
+#include "NoteDataUtil.h"
 
 
 Steps::Steps()
@@ -32,7 +32,7 @@ Steps::Steps()
 	 * I have a feeling that it's the right thing to do but that
 	 * it'd trip obscure asserts all over the place, so I'll wait
 	 * until after b6 to do this. -glenn */
-	m_NotesType = STEPS_TYPE_DANCE_SINGLE;
+	m_StepsType = STEPS_TYPE_DANCE_SINGLE;
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 	for(int i = 0; i < NUM_RADAR_CATEGORIES; ++i)
@@ -58,7 +58,7 @@ Steps::~Steps()
 
 void Steps::SetNoteData( NoteData* pNewNoteData )
 {
-	ASSERT( pNewNoteData->GetNumTracks() == GameManager::NotesTypeToNumTracks(m_NotesType) );
+	ASSERT( pNewNoteData->GetNumTracks() == GameManager::NotesTypeToNumTracks(m_StepsType) );
 
 	DeAutogen();
 
@@ -81,7 +81,7 @@ void Steps::GetNoteData( NoteData* pNoteDataOut ) const
 	else
 	{
 		pNoteDataOut->ClearAll();
-		pNoteDataOut->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
+		pNoteDataOut->SetNumTracks( GameManager::NotesTypeToNumTracks(m_StepsType) );
 	}
 }
 
@@ -160,11 +160,16 @@ void Steps::Decompress() const
 		parent->GetNoteData(&pdata);
 
 		notes = new NoteData;
-		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
+		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_StepsType) );
 		if(pdata.GetNumTracks() == notes->GetNumTracks())
+		{
 			notes->CopyRange( &pdata, 0, pdata.GetLastRow(), 0 );
+		}
 		else
+		{
 			notes->LoadTransformedSlidingWindow( &pdata, notes->GetNumTracks() );
+			NoteDataUtil::FixImpossibleRows( pdata, m_StepsType );
+		}
 	}
 	else if(!notes_comp)
 	{
@@ -174,7 +179,7 @@ void Steps::Decompress() const
 	{
 		// load from compressed
 		notes = new NoteData;
-		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_NotesType) );
+		notes->SetNumTracks( GameManager::NotesTypeToNumTracks(m_StepsType) );
 
 		NoteDataUtil::LoadFromSMNoteDataString(*notes, *notes_comp);
 	}
@@ -215,12 +220,12 @@ void Steps::DeAutogen()
 void Steps::AutogenFrom( Steps *parent_, StepsType ntTo )
 {
 	parent = parent_;
-	m_NotesType = ntTo;
+	m_StepsType = ntTo;
 }
 
 void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have to be of the same StepsType!
 {
-	m_NotesType = ntTo;
+	m_StepsType = ntTo;
 	NoteData noteData;
 	pSource->GetNoteData( &noteData );
 	noteData.SetNumTracks( GameManager::NotesTypeToNumTracks(ntTo) ); 
@@ -236,7 +241,7 @@ void Steps::CopyFrom( Steps* pSource, StepsType ntTo )	// pSource does not have 
 
 void Steps::CreateBlank( StepsType ntTo )
 {
-	m_NotesType = ntTo;
+	m_StepsType = ntTo;
 	NoteData noteData;
 	noteData.SetNumTracks( GameManager::NotesTypeToNumTracks(ntTo) );
 	this->SetNoteData( &noteData );
@@ -278,6 +283,7 @@ void Steps::SetRadarValue(int r, float val)
 	ASSERT(r < NUM_RADAR_CATEGORIES);
 	m_fRadarValues[r] = val;
 }
+
 
 /* Make sure we treat AAAA as higher than AAA, even though the score
  * is the same. 

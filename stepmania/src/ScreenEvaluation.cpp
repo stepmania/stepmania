@@ -168,7 +168,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		break;
 	case summary:
 		{
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			bool bIsHumanPlayer[NUM_PLAYERS];
 			for( p=0; p<NUM_PLAYERS; p++ )
 				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);
@@ -196,7 +196,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		break;
 	case course:
 		{
-			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 			bool bIsHumanPlayer[NUM_PLAYERS];
 			for( p=0; p<NUM_PLAYERS; p++ )
 				bIsHumanPlayer[p] = GAMESTATE->IsHumanPlayer(p);

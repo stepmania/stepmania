@@ -55,7 +55,7 @@ void CourseContentsList::SetFromCourse( Course* pCourse )
 	m_iNumContents = 0; 
 
 	vector<Course::Info> ci;
-	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+	pCourse->GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
 
 	for( int i=0; i<min((int)ci.size(), MAX_TOTAL_CONTENTS); i++ )
 	{

@@ -31,6 +31,7 @@
 #include "PrefsManager.h"
 #include "arch/arch.h"
 #include "RageFile.h"
+#include "NoteDataUtil.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -833,7 +834,7 @@ void Song::GetNotes( vector<Steps*>& arrayAddTo, StepsType nt, Difficulty dc, in
 {
 	for( unsigned i=0; i<m_apNotes.size(); i++ )	// for each of the Song's Steps
 	{
-		if( m_apNotes[i]->m_NotesType != nt ) continue;
+		if( m_apNotes[i]->m_StepsType != nt ) continue;
 		if( dc != DIFFICULTY_INVALID && dc != m_apNotes[i]->GetDifficulty() )
 			continue;
 		if( iMeterLow != -1 && iMeterLow > m_apNotes[i]->GetMeter() )
@@ -915,7 +916,7 @@ void Song::GetEdits( vector<Steps*>& arrayAddTo, StepsType nt, bool bIncludeAuto
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const StyleDef *st ) const
 {
-	if(!SongHasNotesType(st->m_NotesType))
+	if(!SongHasNotesType(st->m_StepsType))
 		return false;
 	return true;
 }
@@ -923,7 +924,7 @@ bool Song::SongCompleteForStyle( const StyleDef *st ) const
 bool Song::SongHasNotesType( StepsType nt ) const
 {
 	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
-		if( m_apNotes[i]->m_NotesType == nt )
+		if( m_apNotes[i]->m_StepsType == nt )
 			return true;
 	return false;
 }
@@ -931,7 +932,7 @@ bool Song::SongHasNotesType( StepsType nt ) const
 bool Song::SongHasNotesTypeAndDifficulty( StepsType nt, Difficulty dc ) const
 {
 	for( unsigned i=0; i < m_apNotes.size(); i++ ) // foreach Steps
-		if( m_apNotes[i]->m_NotesType == nt  &&  m_apNotes[i]->GetDifficulty() == dc )
+		if( m_apNotes[i]->m_StepsType == nt  &&  m_apNotes[i]->GetDifficulty() == dc )
 			return true;
 	return false;
 }
@@ -1042,7 +1043,7 @@ void Song::AutoGen( StepsType ntTo, StepsType ntFrom )
 	for( unsigned int j=0; j<m_apNotes.size(); j++ )
 	{
 		Steps* pOriginalNotes = m_apNotes[j];
-		if( pOriginalNotes->m_NotesType == ntFrom )
+		if( pOriginalNotes->m_StepsType == ntFrom )
 		{
 			Steps* pNewNotes = new Steps;
 			pNewNotes->AutogenFrom(pOriginalNotes, ntTo);
@@ -1068,7 +1069,7 @@ Grade Song::GetGradeForDifficulty( const StyleDef *st, PlayerNumber pn, Difficul
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
-	this->GetNotes( aNotes, st->m_NotesType );
+	this->GetNotes( aNotes, st->m_StepsType );
 	SortNotesArrayByDifficulty( aNotes );
 
 	Grade grade = GRADE_NO_DATA;
@@ -1182,7 +1183,7 @@ void SortSongPointerArrayByTitle( vector<Song*> &arraySongPointers )
 static int GetSongSortDifficulty(const Song *pSong)
 {
 	vector<Steps*> aNotes;
-	pSong->GetNotes( aNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+	pSong->GetNotes( aNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
 	// sort by anything but beginner
 	/* This makes the sort a little odd; songs can end up in unintuitive places because,
@@ -1390,8 +1391,8 @@ struct CompareSongByMeter
 	CompareSongByMeter(Difficulty d): dc(d) { }
 	bool operator() (const Song* pSong1, const Song* pSong2)
 	{
-		Steps* pNotes1 = pSong1->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
-		Steps* pNotes2 = pSong2->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
+		Steps* pNotes1 = pSong1->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
+		Steps* pNotes2 = pSong2->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_StepsType, dc );
 
 		const int iMeter1 = pNotes1 ? pNotes1->GetMeter() : 0;
 		const int iMeter2 = pNotes2 ? pNotes2->GetMeter() : 0;
@@ -1578,7 +1579,7 @@ int	Song::GetNumNotesWithGrade( Grade g ) const
 {
 	int iCount = 0;
 	vector<Steps*> vNotes;
-	this->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+	this->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 	for( unsigned j=0; j<vNotes.size(); j++ )
 		if( vNotes[j]->m_MemCardScores[MEMORY_CARD_MACHINE].grade == g )
 			iCount++;

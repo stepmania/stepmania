@@ -5,6 +5,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
+#include "NoteDataUtil.h"
 
 /* Output is an angle bracket expression without angle brackets, eg. "468". */
 CString NotesWriterDWI::NotesToDWIString( const TapNote cNoteCols[6] )
@@ -227,7 +228,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			int row = BeatToNoteRow( (float)b );
 
 			CString str;
-			switch( out.m_NotesType )
+			switch( out.m_StepsType )
 			{
 			case STEPS_TYPE_DANCE_SINGLE:
 			case STEPS_TYPE_DANCE_COUPLE:
@@ -297,7 +298,7 @@ bool NotesWriterDWI::WriteDWINotesTag( FILE* fp, const Steps &out )
 {
 	LOG->Trace( "Steps::WriteDWINotesTag" );
 
-	switch( out.m_NotesType )
+	switch( out.m_StepsType )
 	{
 	case STEPS_TYPE_DANCE_SINGLE:	fprintf( fp, "#SINGLE:" );	break;
 	case STEPS_TYPE_DANCE_COUPLE:	fprintf( fp, "#COUPLE:" );	break;
@@ -389,8 +390,8 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 			continue;
 
 		WriteDWINotesField( fp, *out.m_apNotes[i], 0 );
-		if(out.m_apNotes[i]->m_NotesType==STEPS_TYPE_DANCE_DOUBLE ||
-		   out.m_apNotes[i]->m_NotesType==STEPS_TYPE_DANCE_COUPLE)
+		if(out.m_apNotes[i]->m_StepsType==STEPS_TYPE_DANCE_DOUBLE ||
+		   out.m_apNotes[i]->m_StepsType==STEPS_TYPE_DANCE_COUPLE)
 		{
 			fprintf( fp, ":\n" );
 			WriteDWINotesField( fp, *out.m_apNotes[i], 4 );

@@ -360,7 +360,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		//Song* pSong;
 		//Steps* pNotes;
 		//CString sModifiers;
-		//pCourse->GetFirstStageInfo( pSong, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+		//pCourse->GetFirstStageInfo( pSong, pNotes, sModifiers, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 		//for( int p=0; p<NUM_PLAYERS; p++ )
 		//	GAMESTATE->m_PlayerOptions[p].FromString( sModifiers );
 		//GAMESTATE->m_SongOptions.FromString( sModifiers );

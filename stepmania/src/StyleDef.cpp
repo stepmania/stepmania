@@ -84,7 +84,7 @@ PlayerNumber StyleDef::ControllerToPlayerNumber( GameController controller ) con
 
 bool StyleDef::MatchesNotesType( StepsType type ) const
 {
-	if(type == m_NotesType) return true;
+	if(type == m_StepsType) return true;
 
 	return false;
 }

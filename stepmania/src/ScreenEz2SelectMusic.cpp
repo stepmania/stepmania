@@ -610,7 +610,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 
 	for( pn = 0; pn < NUM_PLAYERS; ++pn)
 	{
-		pSong->GetNotes( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+		pSong->GetNotes( m_arrayNotes[pn], GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 		SortNotesArrayByDifficulty( m_arrayNotes[pn] );
 	}
 

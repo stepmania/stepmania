@@ -45,7 +45,7 @@ public:
 	
 	/* Steps format used for each player.  For example, "dance versus" reads
 	 * the Steps with the tag "dance-single". */
-	StepsType	m_NotesType;
+	StepsType	m_StepsType;
 									
 	enum StyleType
 	{

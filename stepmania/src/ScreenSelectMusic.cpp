@@ -975,7 +975,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_fSampleStartSeconds = pSong->m_fMusicSampleStartSeconds;
 			m_fSampleLengthSeconds = pSong->m_fMusicSampleLengthSeconds;
 
-			pSong->GetNotes( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			pSong->GetNotes( m_arrayNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 			SortNotesArrayByDifficulty( m_arrayNotes );
 
 			m_Banner.LoadFromSong( pSong );
@@ -996,7 +996,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			TEXTUREMAN->EnableOddDimensionWarning();
 			FlipSpriteHorizontally(m_sprCDTitleBack);
 
-			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 
 			SwitchToPreferredDifficulty();
 

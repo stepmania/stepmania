@@ -557,7 +557,7 @@ void SongManager::SaveNoteScoresToFile( CString fn, int c )
 					ASSERT(pNotes);
 
 					fprintf(fp, "%d %d\n%s\n", 
-						pNotes->m_NotesType,
+						pNotes->m_StepsType,
 						pNotes->GetDifficulty(),
 						pNotes->GetDescription().c_str() );
 
@@ -661,14 +661,14 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	 * set up, which is too restrictive.  How to handle this?
 	 *
 	 * XXX: Once we support edits, ignore them, too. */
-//	const StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_NotesType;
+//	const StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	for( unsigned i=0; i<pSong->m_apNotes.size(); i++ )
 	{
 		const Steps* pNotes = pSong->m_apNotes[i];
 		if( pNotes->GetDifficulty() == DIFFICULTY_CHALLENGE )
 			continue;
 
-//		if(pNotes->m_NotesType != nt)
+//		if(pNotes->m_StepsType != nt)
 //			continue;
 
 		if( pNotes->GetMeter() >= 10 && PREFSMAN->m_bTenFooterInRed )
@@ -925,7 +925,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
 	vector<Course::Info> ci;
-	course.GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+	course.GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
 	if( ci.empty() )
 		return false;
 
@@ -990,7 +990,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const StyleDef *sd,
 		Song* pSong = apSongs[s];
 
 		vector<Steps*> apNotes;
-		pSong->GetNotes( apNotes, sd->m_NotesType );
+		pSong->GetNotes( apNotes, sd->m_StepsType );
 		for( unsigned n=0; n<apNotes.size(); n++ )	// foreach Steps
 		{
 			Steps* pNotes = apNotes[n];

@@ -62,7 +62,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 {
 	LOG->Trace( "Steps::LoadFromBMSFile( '%s' )", sPath.c_str() );
 
-	out.m_NotesType = STEPS_TYPE_INVALID;
+	out.m_StepsType = STEPS_TYPE_INVALID;
 
 	NoteData* pNoteData = new NoteData;
 	pNoteData->SetNumTracks( MAX_NOTE_TRACKS );
@@ -107,14 +107,14 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 			switch( atoi(value_data) )
 			{
 			case 1:		// 4 or 6 single
-				out.m_NotesType = STEPS_TYPE_DANCE_SINGLE;
+				out.m_StepsType = STEPS_TYPE_DANCE_SINGLE;
 				// if the mode should be solo, then we'll update m_DanceStyle below when we read in step data
 				break;
 			case 2:		// couple/battle
-				out.m_NotesType = STEPS_TYPE_DANCE_COUPLE;
+				out.m_StepsType = STEPS_TYPE_DANCE_COUPLE;
 				break;
 			case 3:		// double
-				out.m_NotesType = STEPS_TYPE_DANCE_DOUBLE;
+				out.m_StepsType = STEPS_TYPE_DANCE_DOUBLE;
 				break;
 			default:
 				LOG->Warn( "Invalid value '%d' for '#player'", atoi(value_data) );
@@ -142,7 +142,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 
 			// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
 			if( value_data.Find("6") != -1 )
-				out.m_NotesType = STEPS_TYPE_DANCE_SOLO;
+				out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
 		}
 		if( -1 != value_name.Find("#playlevel") ) 
 		{
@@ -186,29 +186,29 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
 		}
 	}
 	
-	if( out.m_NotesType == STEPS_TYPE_DANCE_SINGLE  || 
-		out.m_NotesType == STEPS_TYPE_DANCE_DOUBLE  || 
-		out.m_NotesType == STEPS_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
+	if( out.m_StepsType == STEPS_TYPE_DANCE_SINGLE  || 
+		out.m_StepsType == STEPS_TYPE_DANCE_DOUBLE  || 
+		out.m_StepsType == STEPS_TYPE_DANCE_COUPLE)	// if there are 4 panels, then the Up+Right track really contains the notes for Up
 	{
 		pNoteData->MoveTapNoteTrack(DANCE_NOTE_PAD1_UP, DANCE_NOTE_PAD1_UPRIGHT);
 	}
 
 	// we're done reading in all of the BMS values
-	if( out.m_NotesType == STEPS_TYPE_INVALID )
+	if( out.m_StepsType == STEPS_TYPE_INVALID )
 	{
 		LOG->Warn("Couldn't determine note types of file '%s'", sPath.c_str() );
 		delete pNoteData;
 		return false;
 	}
 
-	int iNumNewTracks = GameManager::NotesTypeToNumTracks( out.m_NotesType );
+	int iNumNewTracks = GameManager::NotesTypeToNumTracks( out.m_StepsType );
 	int iTransformNewToOld[MAX_NOTE_TRACKS];
 
 	int i;
 	for( i = 0; i < MAX_NOTE_TRACKS; ++i)
 		iTransformNewToOld[i] = -1;
 
-	switch( out.m_NotesType )
+	switch( out.m_StepsType )
 	{
 	case STEPS_TYPE_DANCE_SINGLE:
 		iTransformNewToOld[0] = DANCE_NOTE_PAD1_LEFT;

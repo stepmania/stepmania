@@ -104,7 +104,7 @@ EditMenu::EditMenu()
 
 	// fill in data structures
 	SONGMAN->GetGroupNames( m_sGroups );
-	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_NotesTypes );
+	GAMEMAN->GetNotesTypesForGame( GAMESTATE->m_CurGame, m_StepsTypes );
 	
 	ChangeToRow( (Row)0 );
 	OnRowValueChanged( (Row)0 );
@@ -127,8 +127,8 @@ EditMenu::EditMenu()
 		// Select the current StepsType and difficulty if any
 		if( GAMESTATE->m_pCurNotes )
 		{
-			for( i=0; i<m_NotesTypes.size(); i++ )
-				if( m_NotesTypes[i] == GAMESTATE->m_pCurNotes[PLAYER_1]->m_NotesType )
+			for( i=0; i<m_StepsTypes.size(); i++ )
+				if( m_StepsTypes[i] == GAMESTATE->m_pCurNotes[PLAYER_1]->m_StepsType )
 				{
 					m_iSelection[ROW_NOTES_TYPE] = i;
 					OnRowValueChanged( ROW_NOTES_TYPE );
@@ -177,9 +177,9 @@ bool EditMenu::CanGoRight()
 	{
 		m_sGroups.size(),
 		m_pSongs.size(),
-		m_NotesTypes.size(),
+		m_StepsTypes.size(),
 		NUM_DIFFICULTIES,
-		m_NotesTypes.size(),
+		m_StepsTypes.size(),
 		NUM_DIFFICULTIES,
 		m_Actions.size()
 	};

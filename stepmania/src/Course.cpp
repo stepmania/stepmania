@@ -95,7 +95,7 @@ int Course::GetMeter( int Difficult ) const
 	/*LOG->Trace( "Course file '%s' contains a song '%s%s%s' that is not present",
 			m_sPath.c_str(), sGroup.c_str(), sGroup.size()? SLASH:"", sSong.c_str());*/
 	vector<Info> ci;
-	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci, Difficult );
+	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci, Difficult );
 
 	/* Take the average meter. */
 	float fTotalMeter = 0;
@@ -942,7 +942,7 @@ void Course::UpdateCourseStats()
 	}
 
 	vector<Info> ci;
-	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_NotesType, ci );
+	GetCourseInfo( GAMESTATE->GetCurrentStyleDef()->m_StepsType, ci );
 
 	for( i = 0; i < ci.size(); i++ )
 		SortOrder_TotalDifficulty += ci[i].pNotes->GetMeter();

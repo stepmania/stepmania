@@ -95,9 +95,9 @@ void NotesWriterSM::WriteGlobalTags(FILE *fp, const Song &out)
 void NotesWriterSM::WriteSMNotesTag( const Steps &in, FILE* fp )
 {
 	fprintf( fp, "\n//---------------%s - %s----------------\n",
-		GameManager::NotesTypeToString(in.m_NotesType).c_str(), in.GetDescription().c_str() );
+		GameManager::NotesTypeToString(in.m_StepsType).c_str(), in.GetDescription().c_str() );
 	fprintf( fp, "#NOTES:\n" );
-	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(in.m_NotesType).c_str() );
+	fprintf( fp, "     %s:\n", GameManager::NotesTypeToString(in.m_StepsType).c_str() );
 	fprintf( fp, "     %s:\n", in.GetDescription().c_str() );
 	fprintf( fp, "     %s:\n", DifficultyToString(in.GetDifficulty()).c_str() );
 	fprintf( fp, "     %d:\n", in.GetMeter() );

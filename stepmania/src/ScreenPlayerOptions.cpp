@@ -109,13 +109,13 @@ void ScreenPlayerOptions::ImportOptions()
 	if( GAMESTATE->m_pCurCourse )   // playing a course
 	{
 		m_OptionRow[PO_STEP].choices.push_back( "REGULAR" );
-		if( GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
+		if( GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
 			m_OptionRow[PO_STEP].choices.push_back( "DIFFICULT" );
 	}
 	else
 	{
 		vector<Steps*> vNotes;
-		GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+		GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 		SortNotesArrayByDifficulty( vNotes );
 		for( unsigned i=0; i<vNotes.size(); i++ )
 		{
@@ -218,7 +218,7 @@ void ScreenPlayerOptions::ImportOptions()
 		if( GAMESTATE->m_pCurCourse )   // playing a course
 		{
 			if( GAMESTATE->m_bDifficultCourses &&
-				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_NotesType ) )
+				GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
 				m_iSelectedOption[p][PO_STEP] = 1;
 			else
 				m_iSelectedOption[p][PO_STEP] = 0;
@@ -226,7 +226,7 @@ void ScreenPlayerOptions::ImportOptions()
 		else
 		{
 			vector<Steps*> vNotes;
-			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 			SortNotesArrayByDifficulty( vNotes );
 			for( unsigned i=0; i<vNotes.size(); i++ )
 			{
@@ -338,7 +338,7 @@ void ScreenPlayerOptions::ExportOptions()
 		else
 		{
 			vector<Steps*> vNotes;
-			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
+			GAMESTATE->m_pCurSong->GetNotes( vNotes, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 			SortNotesArrayByDifficulty( vNotes );
 			GAMESTATE->m_pCurNotes[p] = vNotes[ m_iSelectedOption[p][PO_STEP] ];
 		}

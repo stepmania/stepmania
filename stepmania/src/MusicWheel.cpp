@@ -328,7 +328,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CStrin
 			continue;
 
 		vector<Steps*> arraySteps;
-		pSong->GetNotes( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_NotesType, DIFFICULTY_INVALID, -1, -1, "", PREFSMAN->m_bAutogenMissingTypes );
+		pSong->GetNotes( arraySteps, GAMESTATE->GetCurrentStyleDef()->m_StepsType, DIFFICULTY_INVALID, -1, -1, "", PREFSMAN->m_bAutogenMissingTypes );
 
 		if( !arraySteps.empty() )
 			arraySongs.push_back( pSong );
@@ -608,7 +608,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			}
 
 			// check that this course has at least one song playable in the current style
-			if( !pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_NotesType) )
+			if( !pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_StepsType) )
 				continue;
 
 			if( sThisSection != sLastSection )	// new section, make a section item
@@ -1418,21 +1418,21 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 		}
 	case SORT_EASY_METER:
 		{
-			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_EASY);
+			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_EASY);
 			if( pNotes )	
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";
 		}
 	case SORT_MEDIUM_METER:
 		{
-			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_MEDIUM);
+			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_MEDIUM);
 			if( pNotes )	
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";
 		}
 	case SORT_HARD_METER:
 		{
-			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_HARD);
+			Steps* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_StepsType,DIFFICULTY_HARD);
 			if( pNotes )	
 				return ssprintf("%02d", pNotes->GetMeter() );
 			return "N/A";
