@@ -155,7 +155,7 @@ bool IniFile::GetValue(const CString &keyname, const CString &valuename, float& 
 	CString sValue;
 	if( !GetValue(keyname,valuename,sValue) )
 		return false;
-	sscanf( sValue.c_str(), "%f", &value );
+	value = strtof( sValue, NULL );
 	return true;
 }
 

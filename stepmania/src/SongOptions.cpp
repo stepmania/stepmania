@@ -78,8 +78,9 @@ void SongOptions::FromString( CString sOptions )
 		vector<CString> matches;
 		if( mult.Compare(sBit, matches) )
 		{
-			int ret = sscanf( matches[0], "%f", &m_fMusicRate );
-			ASSERT( ret == 1 );
+			char *p = NULL;
+			m_fMusicRate = strtof( matches[0], &p );
+			ASSERT( p != matches[0] );
 		}
 
 		matches.clear();

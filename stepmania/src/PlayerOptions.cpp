@@ -198,8 +198,9 @@ void PlayerOptions::FromString( CString sOptions )
 		if( mult.Compare(sBit, matches) )
 		{
 			m_fTimeSpacing = 0.0f;
-			int ret = sscanf( matches[0], "%f", &m_fScrollSpeed );
-			ASSERT( ret == 1 );
+			char *p = NULL;
+			m_fScrollSpeed = strtof( matches[0], &p );
+			ASSERT( p != matches[0] );
 			continue;
 		}
 
@@ -231,8 +232,7 @@ void PlayerOptions::FromString( CString sOptions )
 				if( asParts[j].Right(1) == "*" )
 					RageException::Throw("Invalid player options '%i*'; did you mean '*%i'?", 
 						atoi(asParts[j]), atoi(asParts[j]) );
-				sscanf( asParts[j], "%f", &level );
-				level /= 100.0f;
+				level = strtof( asParts[j], NULL ) / 100.0f;
 			}
 			else if( asParts[j][0]=='*' )
 				sscanf( asParts[j], "*%f", &speed );
