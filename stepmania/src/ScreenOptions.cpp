@@ -1109,7 +1109,7 @@ void ScreenOptions::MenuUp( PlayerNumber pn, const InputEventType type )
 
 void ScreenOptions::MenuDown( PlayerNumber pn, const InputEventType type )
 {
-	int r;
+	unsigned r;
 	bool bFoundDest = false;
 	for( r=m_iCurrentRow[pn]+1; r<m_Rows.size(); r++ )
 	{
