@@ -24,10 +24,6 @@ public:
 
 protected:
 	RageMutex *TimeCritMutex;
-
-    void MessageBoxErrorPrivate(CString sError, CString ID);
-	void MessageBoxOKPrivate(CString sMessage, CString ID);
-    MessageBoxResult MessageBoxAbortRetryIgnorePrivate(CString sMessage, CString ID);
 };
 
 #undef ARCH_HOOKS

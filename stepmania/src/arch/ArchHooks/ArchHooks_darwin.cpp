@@ -255,52 +255,6 @@ void ArchHooks_darwin::DumpDebugInfo()
     LOG->Info("Memory: %ld MB total, %ld MB swap", ram, vRam);
 }
 
-void ArchHooks_darwin::MessageBoxOKPrivate(CString sMessage, CString ID)
-{
-    bool allowHush = ID != "";
-    
-    if (allowHush && MessageIsIgnored(ID))
-        return;
-
-    CFStringRef message = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
-    SInt16 result = ShowAlert(kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again"));
-
-    CFRelease(message);
-    if (result == kAlertStdAlertCancelButton && allowHush)
-        IgnoreMessage(ID);
-}
-
-void ArchHooks_darwin::MessageBoxErrorPrivate(CString sError, CString ID)
-{
-    CFStringRef error = CFStringCreateWithCString(NULL, sError, kCFStringEncodingASCII);
-    ShowAlert(kAlertStopAlert, error, CFSTR("OK"));
-
-    CFRelease(error);
-}
-
-ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnorePrivate(CString sMessage, CString ID)
-{
-    CFStringRef error = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
-    SInt16 result = ShowAlert(kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore"));
-    ArchHooks::MessageBoxResult ret;
-
-    CFRelease(error);
-    switch (result)
-    {
-        case kAlertStdAlertOKButton:
-            ret = retry;
-            break;
-        case kAlertStdAlertCancelButton:
-            ret = ignore;
-            break;
-        default:
-            ASSERT(0);
-            ret = ignore;
-    }
-    
-    return ret;
-}
-
 void ArchHooks_darwin::EnterTimeCriticalSection()
 {
 	TimeCritMutex->Lock();
