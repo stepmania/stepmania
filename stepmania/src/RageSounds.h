@@ -23,6 +23,7 @@ public:
 
 	void PlayOnce( CString sPath );
 	void PlayOnceFromDir( CString sDir );
+	void PlayOnceFromAnnouncer( CString sFolderName );
 
 	float GetPlayLatency() const;
 	void HandleSongTimer( bool on=true );

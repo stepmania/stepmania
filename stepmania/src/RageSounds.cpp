@@ -9,6 +9,7 @@
 #include "NotesLoaderSM.h"
 #include "PrefsManager.h"
 #include "RageDisplay.h"
+#include "AnnouncerManager.h"
 
 RageSounds *SOUND = NULL;
 
@@ -64,6 +65,7 @@ static RageThread MusicThread;
 #include "RageUtil_CircularBuffer.h"
 CircBuf<CString *> g_SoundsToPlayOnce;
 CircBuf<CString *> g_SoundsToPlayOnceFromDir;
+CircBuf<CString *> g_SoundsToPlayOnceFromAnnouncer;
 
 struct MusicToPlay
 {
@@ -199,6 +201,27 @@ static void StartMusic( MusicToPlay &ToPlay )
 	g_Playing = NewMusic;
 }
 
+static void DoPlayOnceFromDir( CString sPath )
+{
+	if( sPath == "" )
+		return;
+
+	// make sure there's a slash at the end of this path
+	if( sPath.Right(1) != "/" )
+		sPath += "/";
+
+	CStringArray arraySoundFiles;
+	GetDirListing( sPath + "*.mp3", arraySoundFiles );
+	GetDirListing( sPath + "*.wav", arraySoundFiles );
+	GetDirListing( sPath + "*.ogg", arraySoundFiles );
+
+	if( arraySoundFiles.empty() )
+		return;
+
+	int index = rand() % arraySoundFiles.size();
+	SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
+}
+
 static void StartQueuedSounds()
 {
 	CString *p;
@@ -212,24 +235,16 @@ static void StartQueuedSounds()
 	while( g_SoundsToPlayOnceFromDir.read( &p, 1 ) )
 	{
 		CString sPath( *p );
+		DoPlayOnceFromDir( sPath );
+		delete p;
+	}
+
+	while( g_SoundsToPlayOnceFromAnnouncer.read( &p, 1 ) )
+	{
+		CString sPath( *p );
 		if( sPath != "" )
-		{
-			// make sure there's a slash at the end of this path
-			if( sPath.Right(1) != "/" )
-				sPath += "/";
-
-			CStringArray arraySoundFiles;
-			GetDirListing( sPath + "*.mp3", arraySoundFiles );
-			GetDirListing( sPath + "*.wav", arraySoundFiles );
-			GetDirListing( sPath + "*.ogg", arraySoundFiles );
-
-			if( arraySoundFiles.empty() )
-				return;
-
-			int index = rand() % arraySoundFiles.size();
-			SOUNDMAN->PlayOnce( sPath + arraySoundFiles[index] );
-		}
-
+			sPath = ANNOUNCER->GetPathTo( sPath );
+		DoPlayOnceFromDir( sPath );
 		delete p;
 	}
 
@@ -264,6 +279,7 @@ RageSounds::RageSounds()
 
 	g_SoundsToPlayOnce.reserve( 16 );
 	g_SoundsToPlayOnceFromDir.reserve( 16 );
+	g_SoundsToPlayOnceFromAnnouncer.reserve( 16 );
 	g_MusicsToPlay.reserve( 16 );
 
 	g_Mutex = new RageMutex("RageSounds");
@@ -298,6 +314,9 @@ RageSounds::~RageSounds()
 		delete p;
 
 	while( g_SoundsToPlayOnceFromDir.read( &p, 1 ) )
+		delete p;
+
+	while( g_SoundsToPlayOnceFromAnnouncer.read( &p, 1 ) )
 		delete p;
 
 	MusicToPlay *pMusic;
@@ -459,6 +478,17 @@ void RageSounds::PlayOnceFromDir( CString PlayOnceFromDir )
 	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
 	CString *p = new CString( PlayOnceFromDir );
 	if( !g_SoundsToPlayOnceFromDir.write( &p, 1 ) )
+		delete p;
+
+	if( !g_ThreadedMusicStart )
+		StartQueuedSounds();
+}
+
+void RageSounds::PlayOnceFromAnnouncer( CString sFolderName )
+{
+	/* Add the path to the g_SoundsToPlayOnceFromDir queue. */
+	CString *p = new CString( sFolderName );
+	if( !g_SoundsToPlayOnceFromAnnouncer.write( &p, 1 ) )
 		delete p;
 
 	if( !g_ThreadedMusicStart )
