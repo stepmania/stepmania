@@ -41,7 +41,7 @@ AH_VERBATIM([ALSA],
 AM_CONDITIONAL(ALSA, test x$alsa = xtrue )
 
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
-AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf])
+AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf roundf])
 AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 [#if !defined(HAVE_POWF)
 #define NEED_POWF
