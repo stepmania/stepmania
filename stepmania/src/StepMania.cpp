@@ -819,7 +819,8 @@ int main(int argc, char* argv[])
 	CString  g_sErrorString = "";
 
 #ifndef DEBUG
-	try{
+	try { /* RageException */
+	try { /* exception */
 #endif
 
 	ChangeToDirOfExecutable(argv[0]);
@@ -977,16 +978,8 @@ int main(int argc, char* argv[])
 	}
 	catch( const RageException &e )
 	{
+		/* Gracefully shut down. */
 		g_sErrorString = e.what();
-	}
-	catch( const exception &e )
-	{
-		if( LOG )
-			LOG->Warn("Unhandled exception: \"%s\"", e.what() );
-
-		/* Re-throw, so we get an unhandled exception crash and get a backtrace (at least
-		 * in Windows). */
-		throw;
 	}
 #endif
 
@@ -1017,6 +1010,18 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( DISPLAY );
 	SAFE_DELETE( FILEMAN );
 	SAFE_DELETE( LOG );
+
+#ifndef DEBUG
+	}
+	catch( const exception &e )
+	{
+		/* This can be things like calling std::string::reserve(-1), or out of memory.
+		 * This can happen even as we're shutting things down above, and we make no
+		 * attempt to gracefully shut down if it happens--get a crash dump. */
+		CHECKPOINT_M( e.what() );
+		*(char*)0=0; /* crash */
+	}
+#endif
 	
 	if( g_sErrorString != "" )
 	{
