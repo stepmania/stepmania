@@ -77,8 +77,8 @@ void LightsManager::Update( float fDeltaTime )
 	{
 	case LIGHTSMODE_JOINING:
 		{
-			int iBeat = (int)(GAMESTATE->m_fSongBeat);
-			bool bBlinkOn = (iBeat%2)==0;
+//			int iBeat = (int)(GAMESTATE->m_fSongBeat);
+//			bool bBlinkOn = (iBeat%2)==0;
 
 			FOREACH_PlayerNumber( pn )
 			{
