@@ -9,6 +9,19 @@
 
 class RageSound_ALSA9: public RageSoundDriver
 {
+public:
+	/* virtuals: */
+	void StartMixing(RageSoundBase *snd);
+	void StopMixing(RageSoundBase *snd);
+	int64_t GetPosition( const RageSoundBase *snd ) const;
+	int GetSampleRate( int rate ) const;
+
+	void Update(float delta);
+
+	RageSound_ALSA9();
+	CString Init();
+	~RageSound_ALSA9();
+
 private:
 	/* This mutex serializes the decode thread and StopMixing. */
 	RageMutex m_Mutex;
@@ -55,19 +68,6 @@ private:
 	RageThread MixingThread;
 
 	void GetData();
-
-public:
-	/* virtuals: */
-	void StartMixing(RageSoundBase *snd);
-	void StopMixing(RageSoundBase *snd);
-	int64_t GetPosition( const RageSoundBase *snd ) const;
-	int GetSampleRate( int rate ) const;
-
-	void Update(float delta);
-
-	RageSound_ALSA9();
-	CString Init();
-	~RageSound_ALSA9();
 };
 
 #endif
