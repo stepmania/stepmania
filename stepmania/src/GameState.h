@@ -102,7 +102,7 @@ public:
 	bool ShowMarvelous() const;
 
 	CString			m_sLoadingMessage;	// used in loading screen
-	CString			m_sPreferredGroup;	// GROUP_ALL_MUSIC denotes no preferred group
+	CString			m_sPreferredSongGroup;	// GROUP_ALL_MUSIC denotes no preferred group
 	bool			m_bChangedFailType;	// true if FailType was changed in the song options screen
 	Difficulty		m_PreferredDifficulty[NUM_PLAYERS];
 	SortOrder	m_SortOrder;			// used by MusicWheel

@@ -129,8 +129,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 				m_bInvalid |= true;
 		}
 
-
-		if( sName == "style" )
+		else if( sName == "style" )
 		{
 			const Style* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_pCurGame, sValue );
 			if( style )
@@ -139,7 +138,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 				m_bInvalid |= true;
 		}
 
-		if( sName == "playmode" )
+		else if( sName == "playmode" )
 		{
 			PlayMode pm = StringToPlayMode( sValue );
 			if( pm != PLAY_MODE_INVALID )
@@ -148,7 +147,7 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 				m_bInvalid |= true;
 		}
 
-		if( sName == "difficulty" )
+		else if( sName == "difficulty" )
 		{
 			Difficulty dc = StringToDifficulty( sValue );
 			if( dc != DIFFICULTY_INVALID )
@@ -157,20 +156,24 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 				m_bInvalid |= true;
 		}
 
-		if( sName == "announcer" )
+		else if( sName == "announcer" )
+		{
 			m_sAnnouncer = sValue;
-
-		if( sName == "name" )
+		}
+		
+		else if( sName == "name" )
+		{
 			m_sName = sValue;
+		}
 
-		if( sName == "mod" )
+		else if( sName == "mod" )
 		{
 			if( m_sModifiers != "" )
 				m_sModifiers += ",";
 			m_sModifiers += sValue;
 		}
 		
-		if( sName == "song" )
+		else if( sName == "song" )
 		{
 			m_pSong = SONGMAN->FindSong( sValue );
 			if( m_pSong == NULL )
@@ -180,14 +183,14 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 			}
 		}
 
-		if( sName == "steps" )
+		else if( sName == "steps" )
 		{
 			/* Save the name of the steps, and set this later, since we want to process
 			 * any "song" and "style" commands first. */
 			sSteps = sValue;
 		}
 
-		if( sName == "course" )
+		else if( sName == "course" )
 		{
 			m_pCourse = SONGMAN->FindCourse( sValue );
 			if( m_pCourse == NULL )
@@ -197,13 +200,19 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 			}
 		}
 		
-		if( sName == "screen" )
-			m_sScreen = sValue;
-
-		if( sName == "setenv" )
+		else if( sName == "screen" )
 		{
-			ASSERT( asBits.size() == 2 );
-			m_SetEnv[ asBits[0] ] = asBits[1];
+			m_sScreen = sValue;
+		}
+		
+		else if( sName == "setenv" )
+		{
+			m_SetEnv[ asBits[0] ] = sValue;
+		}
+		
+		else if( sName == "songgroup" )
+		{
+			m_sSongGroup = sValue;
 		}
 	}
 
@@ -472,6 +481,8 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
 	for( map<CString,CString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
 		GAMESTATE->m_mapEnv[ i->first ] = i->second;
+	if( !m_sSongGroup.empty() )
+		GAMESTATE->m_sPreferredSongGroup = m_sSongGroup;
 
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.

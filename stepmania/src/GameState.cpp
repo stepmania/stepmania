@@ -111,7 +111,7 @@ void GameState::Reset()
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_mapEnv.clear();
-	m_sPreferredGroup	= GROUP_ALL_MUSIC;
+	m_sPreferredSongGroup	= GROUP_ALL_MUSIC;
 	m_bChangedFailType = false;
 	FOREACH_PlayerNumber( p )
 	{

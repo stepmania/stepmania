@@ -46,6 +46,7 @@ struct ModeChoice		// used in SelectMode
 	Trail*		m_pTrail;
 	Character*	m_pCharacter;
 	std::map<CString,CString> m_SetEnv;
+	CString		m_sSongGroup;
 };
 
 #endif

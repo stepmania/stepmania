@@ -211,7 +211,7 @@ const int NUM_RANKING_LINES	= 5;
 //
 // Group stuff
 //
-#define GROUP_ALL_MUSIC	CString("")
+#define GROUP_ALL_MUSIC	CString("--ALL MUSIC--")
 
 
 //

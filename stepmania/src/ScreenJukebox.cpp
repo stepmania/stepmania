@@ -35,10 +35,10 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 			vSongs.push_back( tCourse->m_entries[i].pSong );
 
 	if ( vSongs.size() == 0 )
-		if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
+		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC )
 			SONGMAN->GetSongs( vSongs );
 		else
-			SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredGroup );
+			SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredSongGroup );
 
 	//
 	// Calculate what difficulties to show

@@ -29,7 +29,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 
 	if( !PREFSMAN->m_bShowSelectGroup )
 	{
-		GAMESTATE->m_sPreferredGroup = GROUP_ALL_MUSIC;
+		GAMESTATE->m_sPreferredSongGroup = GROUP_ALL_MUSIC;
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
@@ -220,9 +220,9 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong = NULL;
-	GAMESTATE->m_sPreferredGroup = (m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL_MUSIC : m_GroupList.GetSelectionName() );
+	GAMESTATE->m_sPreferredSongGroup = (m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL_MUSIC : m_GroupList.GetSelectionName() );
 
-	if( GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC )
+	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC )
        	SOUND->PlayOnceFromAnnouncer( "select group comment all music" );
 	else
         SOUND->PlayOnceFromAnnouncer( "select group comment general" );

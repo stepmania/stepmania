@@ -910,7 +910,7 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, 
 								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
 {
-	CString sGroup = GAMESTATE->m_sPreferredGroup;
+	CString sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL_MUSIC )
 	{
 		if( GAMESTATE->m_pCurSong == NULL )

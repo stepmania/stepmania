@@ -125,10 +125,10 @@ void MusicWheel::Load()
 	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
-		if( GAMESTATE->m_sPreferredGroup==GROUP_ALL_MUSIC && !PREFSMAN->m_bPickExtraStage )
+		if( GAMESTATE->m_sPreferredSongGroup==GROUP_ALL_MUSIC && !PREFSMAN->m_bPickExtraStage )
 		{
 			ASSERT(GAMESTATE->m_pCurSong);
-			GAMESTATE->m_sPreferredGroup = GAMESTATE->m_pCurSong->m_sGroupName;
+			GAMESTATE->m_sPreferredSongGroup = GAMESTATE->m_pCurSong->m_sGroupName;
 		}
 
 		Song* pSong;
@@ -354,9 +354,9 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 //	else
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
 	if( so == SORT_MOST_PLAYED )
-		SONGMAN->GetBestSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );
+		SONGMAN->GetBestSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );
 	else
-		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
+		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );	
 
 	// copy only songs that have at least one Steps for the current GameMode
 	for( unsigned i=0; i<apAllSongs.size(); i++ )
@@ -475,7 +475,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		///////////////////////////////////
 		vector<Song*> arraySongs;
 		
-		GetSongList(arraySongs, so, GAMESTATE->m_sPreferredGroup );
+		GetSongList(arraySongs, so, GAMESTATE->m_sPreferredSongGroup );
 
 		bool bUseSections = true;
 
@@ -489,7 +489,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			break;
 		case SORT_GROUP:
 			SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
-			bUseSections = GAMESTATE->m_sPreferredGroup == GROUP_ALL_MUSIC;
+			bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC;
 			break;
 		case SORT_TITLE:
 			SongUtil::SortSongPointerArrayByTitle( arraySongs );

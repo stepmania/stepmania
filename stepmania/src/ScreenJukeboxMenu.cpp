@@ -91,7 +91,7 @@ void ScreenJukeboxMenu::MenuStart( PlayerNumber pn )
 	bool bModifiers			= m_Selector.GetSelectedModifiers();
 
 	GAMESTATE->m_pCurStyle = style;
-	GAMESTATE->m_sPreferredGroup = (sGroup=="ALL MUSIC") ? GROUP_ALL_MUSIC : sGroup;
+	GAMESTATE->m_sPreferredSongGroup = (sGroup=="ALL MUSIC") ? GROUP_ALL_MUSIC : sGroup;
 	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_PreferredDifficulty[p] = dc;
 	GAMESTATE->m_bJukeboxUsesModifiers = bModifiers;
