@@ -38,7 +38,6 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
-CString g_sFallbackCDTitlePath;
 
 static CString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -82,8 +81,17 @@ void ScreenSelectMusic::Init()
 	m_DisplayMode = GAMESTATE->IsCourseMode() ? DISPLAY_COURSES : DISPLAY_SONGS;
 
 	/* Cache: */
-	g_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");
-	TEXTUREMAN->CacheTexture( g_sFallbackCDTitlePath );
+	m_sSectionMusicPath = THEME->GetPathS(m_sName,"section music");
+	m_sSortMusicPath = THEME->GetPathS(m_sName,"sort music");
+	m_sRouletteMusicPath = THEME->GetPathS(m_sName,"roulette music");
+	m_sRandomMusicPath = THEME->GetPathS(m_sName,"random music");
+	m_sCourseMusicPath = THEME->GetPathS(m_sName,"course music");
+	m_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");
+	m_sBalloonMarathonPath = THEME->GetPathG(m_sName,"balloon marathon");
+	m_sBalloonLongPath = THEME->GetPathG(m_sName,"balloon long");
+
+
+	TEXTUREMAN->CacheTexture( m_sFallbackCDTitlePath );
 
 	if( GAMESTATE->m_pCurStyle == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
@@ -662,7 +670,7 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 			CString sCDTitlePath = sPath;
 
 			if( sCDTitlePath.empty() || !IsAFile(sCDTitlePath) )
-				sCDTitlePath = g_bWantFallbackCdTitle? g_sFallbackCDTitlePath:CString("");
+				sCDTitlePath = g_bWantFallbackCdTitle? m_sFallbackCDTitlePath:CString("");
 
 			if( !sCDTitlePath.empty() )
 			{
@@ -1453,7 +1461,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			{
 			case TYPE_SECTION:
 				g_sBannerPath = SONGMAN->GetGroupBannerPath( sGroup );
-				m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"section music");
+				m_sSampleMusicToPlay = m_sSectionMusicPath;
 				break;
 			case TYPE_SORT:
 				bWantBanner = false; /* we load it ourself */
@@ -1463,7 +1471,7 @@ void ScreenSelectMusic::AfterMusicChange()
 					m_Banner.LoadMode();
 					break;
 				}
-				m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"sort music");
+				m_sSampleMusicToPlay = m_sSortMusicPath;
 				break;
 			default:
 				ASSERT(0);
@@ -1537,14 +1545,14 @@ void ScreenSelectMusic::AfterMusicChange()
 			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 			{
 				m_sprBalloon.StopTweening();
-				m_sprBalloon.Load( THEME->GetPathG(m_sName,"balloon marathon") );
+				m_sprBalloon.Load( m_sBalloonMarathonPath );
 				SET_XY( m_sprBalloon );
 				COMMAND( m_sprBalloon, "Show" );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
 				m_sprBalloon.StopTweening();
-				m_sprBalloon.Load( THEME->GetPathG(m_sName,"balloon long") );
+				m_sprBalloon.Load( m_sBalloonLongPath );
 				SET_XY( m_sprBalloon );
 				COMMAND( m_sprBalloon, "Show" );
 			}
@@ -1585,10 +1593,10 @@ void ScreenSelectMusic::AfterMusicChange()
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_ROULETTE:
-			m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"roulette music");
+			m_sSampleMusicToPlay = m_sRouletteMusicPath;
 			break;
 		case TYPE_RANDOM:
-			m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"random music");
+			m_sSampleMusicToPlay = m_sRandomMusicPath;
 			break;
 		default:
 			ASSERT(0);
@@ -1610,7 +1618,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		pCourse->GetTrails( m_vpTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
 
-		m_sSampleMusicToPlay = THEME->GetPathS(m_sName,"course music");
+		m_sSampleMusicToPlay = m_sCourseMusicPath;
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 

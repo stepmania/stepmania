@@ -85,6 +85,14 @@ protected:
 	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
 	ThemeMetric<CString> CODES;
 
+	CString m_sSectionMusicPath;
+	CString m_sSortMusicPath;
+	CString m_sRouletteMusicPath;
+	CString m_sRandomMusicPath;
+	CString m_sCourseMusicPath;
+	CString m_sFallbackCDTitlePath;
+	CString m_sBalloonMarathonPath;
+	CString m_sBalloonLongPath;
 
 	Sprite				m_sprCharacterIcon[NUM_PLAYERS];
 	Sprite				m_sprBannerMask;
