@@ -707,3 +707,15 @@ void LifeStream::DrawPrimitives()
 
 }
 */
+
+void LifeMeterBar::FillForHowToPlay(int NumPerfects, int NumMisses)
+{
+	m_iProgressiveLifebar = 0;  // disable progressive lifebar
+
+	float AmountForPerfect	= NumPerfects * m_fLifeDifficulty * 0.008f;
+	float AmountForMiss		= NumMisses / m_fLifeDifficulty * 0.08f;
+
+	m_fLifePercentage = AmountForMiss - AmountForPerfect;
+	CLAMP( m_fLifePercentage, 0.0f, 1.0f );
+	AfterLifeChanged();
+}

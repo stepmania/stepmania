@@ -46,7 +46,9 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	m_LifeMeterBar.SetXY( 480, 40 );
 	// we need to be a little lower than half if we want to hit
 	// zero with the actual miss steps. cheat.
-	m_LifeMeterBar.ChangeLife(TNS_MISS);
+//	m_LifeMeterBar.ChangeLife(TNS_MISS);
+	// nicer fix :P  it depends on difficulty
+	m_LifeMeterBar.FillForHowToPlay(4, 6);
 
 	// Display random character+pad
 	if( GAMESTATE->m_pCharacters.size() )

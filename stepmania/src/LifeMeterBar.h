@@ -38,6 +38,8 @@ public:
 	virtual bool FailedEarlier();
 
 	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
+	void FillForHowToPlay(int NumPerfects, int NumMisses);
+	// this function is solely for HowToPlay
 
 private:
 	void ResetBarVelocity();
