@@ -280,6 +280,7 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
             break;
         default:
             ASSERT(0);
+            ret = ignore;
     }
     
     return ret;
