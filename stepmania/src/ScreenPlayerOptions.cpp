@@ -120,7 +120,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 
 	PlayerNumber pn = StyleI.player;
 
-	if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
+	if( GAMESTATE->IsHumanPlayer(StyleI.player) && CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		SOUND->PlayOnce( THEME->GetPathToS("ScreenPlayerOptions cancel all") );
 		
