@@ -74,10 +74,14 @@ void ActiveAttackList::Update( float fDelta )
 				// Capitalize all tokens
 				CStringArray asTokens;
 				split( sMod, " ", asTokens );
-				sMod.erase( sMod.begin(), sMod.end() );
 				for( unsigned i=0; i<asTokens.size(); i++ )
-					sMod += Capitalize( asTokens[i] ) + " ";
-				
+					asTokens[i] = Capitalize( asTokens[i] );
+
+				// Theme the mod name (the last string)
+				asTokens.back() = THEME->GetMetric( "OptionNames", asTokens.back() );
+			
+				sMod = join( " ", asTokens );
+
 				if( s.empty() )
 					s = sMod;
 				else
