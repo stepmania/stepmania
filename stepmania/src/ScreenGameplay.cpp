@@ -629,7 +629,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToStart)
 	m_soundMusic.StartPlaying();
 
 	/* Return the amount of time until the first beat. */
-	return fFirstSecond + fStartSecond;
+	return fFirstSecond - fStartSecond;
 }
 
 bool ScreenGameplay::OneIsHot()
