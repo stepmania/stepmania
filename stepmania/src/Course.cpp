@@ -845,12 +845,9 @@ static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const
 	int iNum1 = pCourse1->SortOrder_TotalDifficulty;
 	int iNum2 = pCourse2->SortOrder_TotalDifficulty;
 
-	if( iNum1 < iNum2 )
-		return true;
-	else if( iNum1 > iNum2 )
-		return false;
-	else // iNum1 == iNum2
+	if( iNum1 == iNum2 )
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
+	return iNum1 < iNum2;
 }
 
 bool Course::CourseHasBestOrWorst() const
@@ -863,7 +860,6 @@ bool Course::CourseHasBestOrWorst() const
 		case COURSE_ENTRY_WORST:
 			return true;
 		}
-
 	}
 
 	return false;
@@ -885,17 +881,7 @@ static bool MovePlayersBestToEnd( const Course* pCourse1, const Course* pCourse2
 
 static bool CompareRandom( const Course* pCourse1, const Course* pCourse2 )
 {
-	bool C1Fixed = pCourse1->IsFixed();
-	bool C2Fixed = pCourse2->IsFixed();
-	if( !C1Fixed && !C2Fixed )
-		return false;
-	if( C1Fixed && !C2Fixed )
-		return true;
-	if( !C1Fixed && C2Fixed )
-		return false;
-
-	return false;
-//	return pCourse1->m_sName < pCourse2->m_sName;
+	return ( pCourse1->IsFixed() && !pCourse2->IsFixed() );
 }
 
 static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
@@ -903,12 +889,9 @@ static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course*
 	int iNum1 = pCourse1->SortOrder_Ranking;
 	int iNum2 = pCourse2->SortOrder_Ranking;
 
-	if( iNum1 < iNum2 )
-		return true;
-	else if( iNum1 > iNum2 )
-		return false;
-	else // iNum1 == iNum2
+	if( iNum1 == iNum2 )
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
+	return iNum1 < iNum2;
 }
 
 void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )
