@@ -2061,6 +2061,7 @@ void ScreenGameplay::TweenOnScreen()
 	ON_COMMAND( m_sprStage );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
+	ON_COMMAND( m_textSongTitle );
 	if( m_pCombinedLifeMeter )
 		ON_COMMAND( *m_pCombinedLifeMeter );
 	for( int p=0; p<NUM_PLAYERS; p++ )
@@ -2083,6 +2084,7 @@ void ScreenGameplay::TweenOffScreen()
 	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );
+	OFF_COMMAND( m_textSongTitle );
 	if( m_pCombinedLifeMeter )
 		OFF_COMMAND( *m_pCombinedLifeMeter );
 	for( int p=0; p<NUM_PLAYERS; p++ )
