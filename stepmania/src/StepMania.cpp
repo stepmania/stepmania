@@ -1081,7 +1081,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 				break;
 		}
 		DISPLAY->SaveScreenshot( sPath );
-		SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit save") );	// FIXME
+		SOUND->PlayOnce( THEME->GetPathToS("Common screenshot") );
 		return true;
 	}
 
