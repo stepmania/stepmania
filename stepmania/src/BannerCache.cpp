@@ -61,9 +61,22 @@ struct BannerTexture: public RageTexture
 {
 	unsigned m_uTexHandle;
 	unsigned GetTexHandle() { return m_uTexHandle; };	// accessed by RageDisplay
+	/* This is a reference to a pointer in m_BannerPathToImage. */
+	SDL_Surface *&img;
+	int width, height;
 
-	BannerTexture( RageTextureID name, SDL_Surface *&img, int width, int height ):
-		RageTexture(name)
+	BannerTexture( RageTextureID name, SDL_Surface *&img_, int width_, int height_ ):
+		RageTexture(name), img(img_), width(width_), height(height_)
+	{
+		Create();
+	}
+
+	~BannerTexture()
+	{ 
+		Destroy();
+	}
+	
+	void Create()
 	{
 		/* The image is preprocessed; do as little work as possible. */
 
@@ -81,7 +94,7 @@ struct BannerTexture: public RageTexture
 		if( img->w > DISPLAY->GetMaxTextureSize() || 
 			img->h > DISPLAY->GetMaxTextureSize() )
 		{
-			LOG->Warn("Converted %s at runtime", name.filename.c_str() );
+			LOG->Warn("Converted %s at runtime", GetID().filename.c_str() );
 			ConvertSDLSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 			zoomSurface(img, width, height);
 		}
@@ -108,9 +121,20 @@ struct BannerTexture: public RageTexture
 		CreateFrameRects();
 	}
 
-	~BannerTexture()
-	{ 
+	void Destroy()
+	{
 		DISPLAY->DeleteTexture( m_uTexHandle );
+	}
+
+	void Reload()
+	{
+		Destroy();
+		Create();
+	}
+
+	void Invalidate()
+	{
+		m_uTexHandle = 0; /* don't Destroy() */
 	}
 };
 
