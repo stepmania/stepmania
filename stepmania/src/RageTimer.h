@@ -26,8 +26,4 @@ private:
 	int m_iLastDeltaTime;
 };
 
-
-
-extern RageTimer*		TIMER;	// global and accessable from anywhere in our program
-
 #endif

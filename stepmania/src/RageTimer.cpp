@@ -17,8 +17,6 @@
 #include "SDL-1.2.5/include/SDL.h"
 #include "SDL-1.2.5/include/SDL_timer.h"
  
-RageTimer*		TIMER	= NULL;
-
 const float SECS_IN_DAY	=	60*60*24;
 
 /* XXX: SDL_GetTicks() wraps every month or so.  Handle it. */

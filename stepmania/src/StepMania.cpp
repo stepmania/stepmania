@@ -211,7 +211,6 @@ int main(int argc, char* argv[])
 #ifdef _DEBUG
 	LOG->ShowConsole();
 #endif
-	TIMER		= new RageTimer;
 	GAMESTATE	= new GameState;
 	PREFSMAN	= new PrefsManager;
 	GAMEMAN		= new GameManager;
@@ -316,7 +315,6 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( MUSIC );
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( SOUNDMAN );
-	SAFE_DELETE( TIMER );
 	SAFE_DELETE( FONT );
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
@@ -417,6 +415,7 @@ static void HandleInputEvents(float fDeltaTime)
 
 void GameLoop()
 {
+	RageTimer timer;
 	while(1)
 	{
 		// process all queued events
@@ -438,7 +437,7 @@ void GameLoop()
 		/*
 		 * Update
 		 */
-		float fDeltaTime = TIMER->GetDeltaTime();
+		float fDeltaTime = timer.GetDeltaTime();
 		
 		// This was a hack to fix timing issues with the old ScreenSelectSong
 		// See ScreenManager::Update comments for why we shouldn't do this. -glenn
