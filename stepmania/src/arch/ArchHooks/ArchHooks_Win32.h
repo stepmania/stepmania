@@ -17,6 +17,7 @@ public:
 	void EnterTimeCriticalSection();
 	void ExitTimeCriticalSection();
 	void SetTime( tm newtime );
+	int64_t GetMicrosecondsSinceStart();
 
 private:
 	void CheckVideoDriver();

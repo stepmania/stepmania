@@ -13,6 +13,9 @@
 #include "archutils/win32/VideoDriverInfo.h"
 #include "archutils/win32/WindowsResources.h"
 
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib") // for GetMicrosecondsSinceStart
+
 ArchHooks_Win32::ArchHooks_Win32()
 {
 	SetUnhandledExceptionFilter(CrashHandler);
@@ -180,6 +183,20 @@ void ArchHooks_Win32::SetTime( tm newtime )
     st.wSecond = (WORD)newtime.tm_sec;
     st.wMilliseconds = 0;
 	SetLocalTime( &st ); 
+}
+
+int64_t ArchHooks_Win32::GetMicrosecondsSinceStart()
+{
+	static bool bInitialized;
+	static DWORD iStartTime;
+	if( !bInitialized )
+	{
+		timeBeginPeriod( 1 );
+		bInitialized = true;
+		iStartTime = timeGetTime();
+	}
+
+	return (timeGetTime() - iStartTime) * 1000;
 }
 
 /*
