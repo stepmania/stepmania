@@ -34,6 +34,7 @@
 #include "ActorUtil.h"
 #include "SongUtil.h"
 #include "CourseUtil.h"
+#include "Foreach.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -1507,12 +1508,32 @@ Song* MusicWheel::GetSelectedSong()
 	switch( m_CurWheelItemData[m_iSelection]->m_Type )
 	{
 	case TYPE_PORTAL:
-		// probe to find a song
-		for( int i=0; i<1000; i++ )
 		{
-			int iSelection = rand() % m_CurWheelItemData.size();
-			if( m_CurWheelItemData[iSelection]->m_Type == TYPE_SONG )
-				return m_CurWheelItemData[iSelection]->m_pSong;
+			// probe to find a song that has the preferred 
+			// difficulties of each player
+			vector<Difficulty> vDifficultiesToRequire;
+			FOREACH_HumanPlayer(p)
+				if( GAMESTATE->m_PreferredDifficulty[p] != DIFFICULTY_INVALID )
+					vDifficultiesToRequire.push_back( GAMESTATE->m_PreferredDifficulty[p] );
+
+			StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+#define NUM_PROBES 1000
+			for( int i=0; i<NUM_PROBES; i++ )
+			{
+				if( i == NUM_PROBES/2 )
+					vDifficultiesToRequire.clear();
+				int iSelection = rand() % m_CurWheelItemData.size();
+				if( m_CurWheelItemData[iSelection]->m_Type == TYPE_SONG )
+				{
+					Song* pSong = m_CurWheelItemData[iSelection]->m_pSong;
+					FOREACH( Difficulty, vDifficultiesToRequire, d )
+						if( !pSong->SongHasNotesTypeAndDifficulty(st,*d) )
+							goto skip_song;
+					return pSong;
+				}
+skip_song:
+				;
+			}
 		}
 		return NULL;
 	}
