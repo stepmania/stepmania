@@ -101,17 +101,7 @@ public:
 	CString	m_sCredit;
 
 	CString GetFullTitle() const { return m_sMainTitle + (m_sSubTitle.GetLength()? (" " + m_sSubTitle):""); }
-	CString GetSortTitle() const { return
-										(m_sMainTitleTranslit.empty()?
-											m_sMainTitle:
-											m_sMainTitleTranslit)
-										+
-											(m_sSubTitleTranslit.empty()?
-												(m_sSubTitle.empty()?
-													"":
-													" " + m_sSubTitle):
-												" " + m_sSubTitleTranslit);
-								}
+	CString GetSortTitle() const;
 												
 	CString	m_sMusicFile;
 	unsigned m_iMusicBytes;

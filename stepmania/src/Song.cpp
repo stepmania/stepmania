@@ -1041,6 +1041,22 @@ CString Song::GetBackgroundPath() const
 	return m_sSongDir+m_sBackgroundFile;
 }
 
+CString Song::GetSortTitle() const
+{
+	CString Title = m_sMainTitleTranslit.empty()?
+			m_sMainTitle: m_sMainTitleTranslit;
+
+	CString SubTitle = m_sSubTitleTranslit.empty()?
+		m_sSubTitle:m_sSubTitleTranslit;
+
+	if(!SubTitle.empty())
+	{
+		Title += " " + SubTitle;
+	}
+
+	return Title;
+}
+
 /* Get the first/last beat of any currently active note pattern.  If two
  * players are active, they often have the same start beat, but they don't
  * have to. 
