@@ -47,15 +47,16 @@ ScreenJukeboxMenu.cpp ScreenJukeboxMenu.h ScreenLogo.cpp ScreenLogo.h ScreenMach
 ScreenMapControllers.cpp ScreenMapControllers.h ScreenMemoryCard.h ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h \
 ScreenMusicScroll.cpp ScreenMusicScroll.h ScreenNameEntry.cpp ScreenNameEntry.h ScreenOptions.cpp ScreenOptions.h \
 ScreenOptionsMenu.cpp ScreenOptionsMenu.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenPrompt.cpp ScreenPrompt.h \
-ScreenRanking.cpp ScreenRanking.h ScreenRaveOptions.cpp ScreenRaveOptions.h ScreenSandbox.cpp ScreenSandbox.h \
-ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h ScreenSelectCourse.cpp ScreenSelectCourse.h \
-ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h \
-ScreenSelectGame.cpp ScreenSelectGame.h ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMaster.cpp ScreenSelectMaster.h \
-ScreenSelectMode.cpp ScreenSelectMode.h ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h \
-ScreenSelectStyle5th.cpp ScreenSelectStyle5th.h ScreenSongOptions.cpp ScreenSongOptions.h \
-ScreenSoundOptions.cpp ScreenSoundOptions.h ScreenStage.cpp ScreenStage.h ScreenStyleSplash.cpp ScreenStyleSplash.h \
-ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h ScreenTestSound.cpp ScreenTestSound.h \
-ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h
+ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenRanking.cpp ScreenRanking.h ScreenRaveOptions.cpp ScreenRaveOptions.h \
+ScreenSandbox.cpp ScreenSandbox.h ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
+ScreenSelectCourse.cpp ScreenSelectCourse.h ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h \
+ScreenSelectDifficultyEX.cpp ScreenSelectDifficultyEX.h ScreenSelectGame.cpp ScreenSelectGame.h \
+ScreenSelectGroup.cpp ScreenSelectGroup.h ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
+ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h ScreenSelectStyle5th.cpp ScreenSelectStyle5th.h \
+ScreenSongOptions.cpp ScreenSongOptions.h ScreenSoundOptions.cpp ScreenSoundOptions.h ScreenStage.cpp ScreenStage.h \
+ScreenStyleSplash.cpp ScreenStyleSplash.h ScreenTest.cpp ScreenTest.h ScreenTestFonts.cpp ScreenTestFonts.h \
+ScreenTestSound.cpp ScreenTestSound.h ScreenTextEntry.cpp ScreenTextEntry.h ScreenTitleMenu.cpp ScreenTitleMenu.h \
+ScreenUnlock.cpp ScreenUnlock.h
 
 DataStructures = \
 BannerCache.cpp BannerCache.h Character.cpp Character.h CodeDetector.cpp CodeDetector.h Course.cpp Course.h \
@@ -79,22 +80,18 @@ LoadingWindow = arch/LoadingWindow/LoadingWindow_Null.h \
 		arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
 
 if HAVE_GTK
-bin_PROGRAMS += GtkModule.so
-GtkModule_so_LDFLAGS = -rdynamic -shared
-GtkModule_so_CPPFLAGS = $(GTK_CFLAGS)
-GtkModule_so_LDADD = $(GTK_LIBS)
-GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
 endif
 
 Sound = arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h
 
-if HAVE_ALSA
-Sound += arch/Sound/RageSoundDriver_ALSA9.cpp arch/Sound/RageSoundDriver_ALSA9.h
-endif
 
 if HAVE_OSS
 Sound += arch/Sound/RageSoundDriver_OSS.cpp arch/Sound/RageSoundDriver_OSS.h
+endif
+
+if HAVE_ALSA
+Sound += arch/Sound/RageSoundDriver_ALSA9.cpp arch/Sound/RageSoundDriver_ALSA9.h
 endif
 
 ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
@@ -181,8 +178,9 @@ Quad.h Sprite.cpp Sprite.h mathlib.c mathlib.h
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
-NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h ScreenManager.cpp ScreenManager.h \
-SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h
+NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h \
+ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
+UnlockSystem.cpp UnlockSystem.h
 
 stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
 		    $(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
@@ -201,3 +199,11 @@ stepmania_LDADD = \
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
+
+if HAVE_GTK
+bin_PROGRAMS += GtkModule.so
+GtkModule_so_LDFLAGS = -rdynamic -shared
+GtkModule_so_CPPFLAGS = $(GTK_CFLAGS)
+GtkModule_so_LDADD = $(GTK_LIBS)
+GtkModule_so_SOURCES = arch/LoadingWindow/LoadingWindow_GtkModule.cpp
+endif
