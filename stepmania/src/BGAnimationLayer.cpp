@@ -40,6 +40,9 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 #define MAX_TILES_HIGH (SCREEN_HEIGHT/32+2)
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
+static const RectI FullScreenRectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
+// static const RectI FullScreenRectI(-SCREEN_WIDTH/2,-SCREEN_HEIGHT/2,+SCREEN_WIDTH/2,+SCREEN_HEIGHT/2);
+
 
 BGAnimationLayer::BGAnimationLayer()
 {
@@ -76,8 +79,8 @@ void BGAnimationLayer::Init()
 
 	m_Type = TYPE_SPRITE;
 
-	m_fStretchTexCoordVelocityX = 0;
-	m_fStretchTexCoordVelocityY = 0;
+	m_fTexCoordVelocityX = 0;
+	m_fTexCoordVelocityY = 0;
 	m_fZoomMin = 1;
 	m_fZoomMax = 1;
 	m_fVelocityXMin = 10;
@@ -111,8 +114,6 @@ void BGAnimationLayer::Init()
 	m_TweenPassedX = m_TweenPassedY = 0;
 	*/
 }
-
-static const RectI FullScreenRectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM);
 
 /* Static background layers are simple, uncomposited background images with nothing
  * behind them.  Since they have nothing behind them, they have no need for alpha,
@@ -222,7 +223,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	case EFFECT_STRETCH_BUBBLE:
 	case EFFECT_STRETCH_TWIST:
 		{
-			m_Type = TYPE_STRETCH;
+			m_Type = TYPE_SPRITE;
 			Sprite* pSprite = new Sprite;
 			m_pActors.push_back( pSprite );
 			RageTextureID ID(sPath);
@@ -233,17 +234,17 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 
 			switch( effect )
 			{
-			case EFFECT_STRETCH_SCROLL_LEFT:	m_fStretchTexCoordVelocityX = +0.5f; m_fStretchTexCoordVelocityY = 0;	break;
-			case EFFECT_STRETCH_SCROLL_RIGHT:	m_fStretchTexCoordVelocityX = -0.5f; m_fStretchTexCoordVelocityY = 0;	break;
-			case EFFECT_STRETCH_SCROLL_UP:		m_fStretchTexCoordVelocityX = 0; m_fStretchTexCoordVelocityY = +0.5f;	break;
-			case EFFECT_STRETCH_SCROLL_DOWN:	m_fStretchTexCoordVelocityX = 0; m_fStretchTexCoordVelocityY = -0.5f;	break;
+			case EFFECT_STRETCH_SCROLL_LEFT:	m_fTexCoordVelocityX = +0.5f; m_fTexCoordVelocityY = 0;	break;
+			case EFFECT_STRETCH_SCROLL_RIGHT:	m_fTexCoordVelocityX = -0.5f; m_fTexCoordVelocityY = 0;	break;
+			case EFFECT_STRETCH_SCROLL_UP:		m_fTexCoordVelocityX = 0; m_fTexCoordVelocityY = +0.5f;	break;
+			case EFFECT_STRETCH_SCROLL_DOWN:	m_fTexCoordVelocityX = 0; m_fTexCoordVelocityY = -0.5f;	break;
 				break;
 			}
 		}
 		break;
 	case EFFECT_STRETCH_SPIN:
 		{
-			m_Type = TYPE_STRETCH;
+			m_Type = TYPE_SPRITE;
 			Sprite* pSprite = new Sprite;
 			m_pActors.push_back( pSprite );
 			pSprite->LoadBG( sPath );
@@ -259,22 +260,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 		break;
 	case EFFECT_PARTICLES_SPIRAL_OUT:
 	case EFFECT_PARTICLES_SPIRAL_IN:
-/*		{
-			m_Type = TYPE_PARTICLES;
-			pSprite->Load( sPath );
-			int iSpriteArea = int( pSprite->GetUnzoomedWidth()*pSprite->GetUnzoomedHeight() );
-			int iMaxArea = SCREEN_WIDTH*SCREEN_HEIGHT;
-			m_iNumSprites = m_iNumParticles = iMaxArea / iSpriteArea;
-			m_iNumSprites = m_iNumParticles = min( m_iNumSprites, MAX_SPRITES );
-			for( unsigned i=0; i<m_iNumSprites; i++ )
-			{
-				m_pActors[i].Load( sPath );
-				m_pActors[i].SetZoom( randomf(0.2f,2) );
-				m_pActors[i].SetRotationZ( randomf(0,360) );
-			}
-		}
-		break;
-*/	case EFFECT_PARTICLES_FLOAT_UP:
+	case EFFECT_PARTICLES_FLOAT_UP:
 	case EFFECT_PARTICLES_FLOAT_DOWN:
 	case EFFECT_PARTICLES_FLOAT_LEFT:
 	case EFFECT_PARTICLES_FLOAT_RIGHT:
@@ -347,8 +333,6 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			m_fTilesStartY = s.GetUnzoomedHeight() / 2;
 			m_fTilesSpacingX = s.GetUnzoomedWidth();
 			m_fTilesSpacingY = s.GetUnzoomedHeight();
-//			m_fTilesSpacingX -= 1;	// HACK:  Fix textures with transparence have gaps
-//			m_fTilesSpacingY -= 1;	// HACK:  Fix textures with transparence have gaps
 			for( int x=0; x<m_iNumTilesWide; x++ )
 			{
 				for( int y=0; y<m_iNumTilesHigh; y++ )
@@ -416,52 +400,6 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 	if( sPath.Find("add") != -1 )
 		for( unsigned i=0; i<m_pActors.size(); i++ )
 			m_pActors[i]->SetBlendMode( BLEND_ADD );
-
-	/*
-	CString sDir, sFName, sExt;
-	splitrelpath( sPath, sDir, sFName, sExt );
-	CString sIniPath = sDir+SLASH+sFName+".ini";
-	IniFile ini;
-	ini.SetPath( sIniPath );
-	if( ini.ReadFile() )
-	{
-		ini.GetValue( "BGAnimationLayer", "SetXpos", m_PosX );
-		ini.GetValue( "BGAnimationLayer", "SetYpos", m_PosY );
-		ini.GetValue( "BGAnimationLayer", "SetZoom", m_Zoom );
-		ini.GetValue( "BGAnimationLayer", "SetRot", m_Rot );
-		ini.GetValue( "BGAnimationLayer", "TweenStartTime", m_TweenStartTime );
-		ini.GetValue( "BGAnimationLayer", "TweenX", m_TweenX );
-		ini.GetValue( "BGAnimationLayer", "TweenY", m_TweenY );
-		ini.GetValue( "BGAnimationLayer", "TweenSpeed", m_TweenSpeed );
-		ini.GetValue( "BGAnimationLayer", "ShowTime", m_ShowTime );
-		ini.GetValue( "BGAnimationLayer", "HideTime", m_HideTime );
-		ini.GetValue( "BGAnimationLayer", "TexCoordVelocityX", m_vTexCoordVelocity.x );
-		ini.GetValue( "BGAnimationLayer", "TexCoordVelocityY", m_vTexCoordVelocity.y );
-		ini.GetValue( "BGAnimationLayer", "RotationalVelocity", m_fRotationalVelocity );
-		ini.GetValue( "BGAnimationLayer", "SetY", m_fStretchScrollH_Y );
-	}
-
-	if(m_ShowTime != 0) // they don't want to show until a certain point... hide it all
-	{
-		m_pActors[0].SetDiffuse(RageColor(0,0,0,0));
-	}
-	if(m_PosX != 0)
-	{
-		m_pActors[0].SetX(m_PosX);
-	}
-	if(m_PosY != 0)
-	{
-		m_pActors[0].SetY(m_PosY);
-	}
-	if(m_Zoom != 0)
-	{
-		m_pActors[0].SetZoom(m_Zoom);
-	}
-	if(m_Rot != 0)
-	{
-		m_pActors[0].SetRotationZ(m_Rot);
-	}
-	*/
 }
 
 
@@ -539,16 +477,36 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 		sPath = asElementPaths[0];
 	}
 
-	ini.GetValue( sLayer, "Type", (int&)m_Type );
-	CLAMP( m_Type, (Type)0, TYPE_INVALID );
+	bool Stretch = false;
+	{
+		CString type;
+		ini.GetValue( sLayer, "Type", type );
+		type.MakeLower();
+
+		/* The preferred way of stretching a sprite to fit the screen is "Type=sprite"
+		 * and "stretch=1".  "type=1" is for backwards-compatibility. */
+		ini.GetValue( sLayer, "Stretch", Stretch );
+
+			 if( atoi(type) == 0 || type == "sprite" ) m_Type = TYPE_SPRITE;
+		else if( atoi(type) == 1 ) { TYPE_SPRITE; Stretch = true; }
+		else if( atoi(type) == 2 || type == "particles" ) m_Type = TYPE_PARTICLES;
+		else if( atoi(type) == 3 || type == "tiles" ) m_Type = TYPE_TILES;
+		else
+			RageException::Throw("Unknown %s::type in %s: \"%s\"",
+				sLayer.c_str(), sAniDir.c_str(), type.c_str() );
+	}
+
 	ini.GetValue( sLayer, "Command", m_sOnCommand );
 	ini.GetValue( sLayer, "CommandRepeatSeconds", m_fRepeatCommandEverySeconds );
 	m_fSecondsUntilNextCommand = m_fRepeatCommandEverySeconds;
 	ini.GetValue( sLayer, "OffCommand", m_sOffCommand );
 	ini.GetValue( sLayer, "FOV", m_fFOV );
 	ini.GetValue( sLayer, "Lighting", m_bLighting );
-	ini.GetValue( sLayer, "StretchTexCoordVelocityX", m_fStretchTexCoordVelocityX );
-	ini.GetValue( sLayer, "StretchTexCoordVelocityY", m_fStretchTexCoordVelocityY );
+	ini.GetValue( sLayer, "TexCoordVelocityX", m_fTexCoordVelocityX );
+	ini.GetValue( sLayer, "TexCoordVelocityY", m_fTexCoordVelocityY );
+	// compat:
+	ini.GetValue( sLayer, "StretchTexCoordVelocityX", m_fTexCoordVelocityX );
+	ini.GetValue( sLayer, "StretchTexCoordVelocityY", m_fTexCoordVelocityY );
 	ini.GetValue( sLayer, "ZoomMin", m_fZoomMin );
 	ini.GetValue( sLayer, "ZoomMax", m_fZoomMax );
 	ini.GetValue( sLayer, "VelocityXMin", m_fVelocityXMin );
@@ -567,6 +525,11 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	ini.GetValue( sLayer, "TileVelocityX", m_fTileVelocityX );
 	ini.GetValue( sLayer, "TileVelocityY", m_fTileVelocityY );
 
+
+	bool NeedTextureStretch = false;
+	if( m_fTexCoordVelocityX != 0 ||
+		m_fTexCoordVelocityY != 0 )
+		NeedTextureStretch = true;
 	if( IsBanner )
 		TEXTUREMAN->DisableOddDimensionWarning();
 
@@ -574,22 +537,16 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 	{
 	case TYPE_SPRITE:
 		{
-			Actor* pActor = MakeActor( sPath );
-			m_pActors.push_back( pActor );
-			pActor->SetXY( CENTER_X, CENTER_Y );
-		}
-		break;
-	case TYPE_STRETCH:
-		{
-			Sprite* pSprite = new Sprite;
-			m_pActors.push_back( pSprite );
 			RageTextureID ID(sPath);
-			/* Don't stretch.  It takes a lot of time to resize the image, we don't support
-			 * it at all for movie textures, and it lowers the quality of the image slightly. */
-//			ID.bStretch = true;
-			pSprite->LoadBG( ID );
-			pSprite->StretchTo( FullScreenRectI );
-//			pSprite->SetCustomTextureRect( RectF(0,0,1,1) );
+			if( NeedTextureStretch )
+				ID.bStretch = true;
+
+			Actor* pActor = MakeActor( ID );
+			m_pActors.push_back( pActor );
+			if( Stretch )
+				pActor->StretchTo( FullScreenRectI );
+			else
+				pActor->SetXY( CENTER_X, CENTER_Y );
 		}
 		break;
 	case TYPE_PARTICLES:
@@ -681,22 +638,14 @@ void BGAnimationLayer::Update( float fDeltaTime )
 	switch( m_Type )
 	{
 	case TYPE_SPRITE:
-		break;
-	case TYPE_STRETCH:
 		for( i=0; i<m_pActors.size(); i++ )
 		{
-			float fTexCoords[8];
-			// FIXME:  Very dangerous.  How could we handle this better?
-			Sprite* pSprite = (Sprite*)m_pActors[i];
-			pSprite->GetActiveTextureCoords( fTexCoords );
-
-			for( int j=0; j<8; j+=2 )
+			if( m_fTexCoordVelocityX || m_fTexCoordVelocityY )
 			{
-				fTexCoords[j  ] += fDeltaTime*m_fStretchTexCoordVelocityX;
-				fTexCoords[j+1] += fDeltaTime*m_fStretchTexCoordVelocityY;
+				m_pActors[i]->Command( ssprintf("StretchTexCoords,%f,%f",
+					fDeltaTime*m_fTexCoordVelocityX,
+					fDeltaTime*m_fTexCoordVelocityY) );
 			}
- 
-			pSprite->SetCustomTextureCoords( fTexCoords );
 		}
 		break;
 /*	case EFFECT_PARTICLES_SPIRAL_OUT:

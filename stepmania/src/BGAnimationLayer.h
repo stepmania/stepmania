@@ -78,11 +78,9 @@ protected:
 	enum Type
 	{
 		TYPE_SPRITE,
-		TYPE_STRETCH,
 		TYPE_PARTICLES,
 		TYPE_TILES,
 		NUM_TYPES,
-		TYPE_INVALID
 	} m_Type;
 
 
@@ -101,8 +99,8 @@ protected:
 	bool m_bLighting;
 
 	// stretch stuff
-	float m_fStretchTexCoordVelocityX;
-	float m_fStretchTexCoordVelocityY;
+	float m_fTexCoordVelocityX;
+	float m_fTexCoordVelocityY;
 
 	// particle and tile stuff
 	float m_fZoomMin, m_fZoomMax;
