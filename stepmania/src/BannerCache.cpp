@@ -148,15 +148,13 @@ struct BannerTexture: public RageTexture
 	
 	void Create()
 	{
+		ASSERT( img );
+
 		/* The image is preprocessed; do as little work as possible. */
 
 		/* The source width is the width of the original file. */
 		m_iSourceWidth = width;
 		m_iSourceHeight = height;
-
-		/* We did this when we cached it. */
-		ASSERT( img->w == power_of_two(img->w) );
-		ASSERT( img->h == power_of_two(img->h) );
 
 		/* The image width (within the texture) is always the entire texture. 
 		 * Only resize if the max texture size requires it; since these images
@@ -166,8 +164,13 @@ struct BannerTexture: public RageTexture
 		{
 			LOG->Warn("Converted %s at runtime", GetID().filename.c_str() );
 			ConvertSDLSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
-			zoomSurface(img, width, height);
+			zoomSurface(img, min( img->w, DISPLAY->GetMaxTextureSize() ),
+				min( img->h, DISPLAY->GetMaxTextureSize() ));
 		}
+
+		/* We did this when we cached it. */
+		ASSERT( img->w == power_of_two(img->w) );
+		ASSERT( img->h == power_of_two(img->h) );
 
 		m_iTextureWidth = m_iImageWidth = img->w;
 		m_iTextureHeight = m_iImageHeight = img->h;
@@ -254,6 +257,8 @@ RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 	if( TEXTUREMAN->IsTextureRegistered(ID) )
 		return ID; /* It's all set. */
 
+	LOG->Trace("Loading banner texture %s; src %ix%i; image %ix%i",
+		ID.filename.c_str(), src_width, src_height, img->w, img->h );
 	RageTexture *pTexture = new BannerTexture( ID, img, src_width, src_height );
 
 	TEXTUREMAN->RegisterTexture( ID, pTexture );
