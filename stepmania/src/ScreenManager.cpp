@@ -335,15 +335,7 @@ void ScreenSystemLayer::Update( float fDeltaTime )
 	if( PREFSMAN  &&  PREFSMAN->m_bShowStats )
 	{
 		m_textStats.SetDiffuse( RageColor(1,1,1,0.7f) );
-
-		/* If FPS == 0, we don't have stats yet. */
-		if(DISPLAY->GetFPS())
-			m_textStats.SetText( ssprintf(
-				"%i FPS\n%i av FPS\n%i VPF",
-				DISPLAY->GetFPS(), DISPLAY->GetCumFPS(), 
-				DISPLAY->GetVPF()) );
-		else
-			m_textStats.SetText( "-- FPS\n-- av FPS\n-- VPF" );
+		m_textStats.SetText( DISPLAY->GetStats() );
 	} else
 		m_textStats.SetDiffuse( RageColor(1,1,1,0) ); /* hide */
 

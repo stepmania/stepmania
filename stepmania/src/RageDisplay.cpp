@@ -98,6 +98,15 @@ void RageDisplay::ResetStats()
 	g_LastCheckTimer.GetDeltaTime();
 }
 
+CString RageDisplay::GetStats() const
+{
+	/* If FPS == 0, we don't have stats yet. */
+	if( !GetFPS() )
+		return "-- FPS\n-- av FPS\n-- VPF";
+
+	return ssprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
+}
+
 void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSinceLastCheck += iNumVertsRendered; }
 
 /* Draw a line as a quad.  GL_LINES with SmoothLines off can draw line

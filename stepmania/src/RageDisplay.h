@@ -277,6 +277,7 @@ public:
 	int GetCumFPS() const; /* average FPS since last reset */
 	void ResetStats();
 	void ProcessStatsOnFlip();
+	virtual CString GetStats() const;
 	void StatsAddVerts( int iNumVertsRendered );
 
 	/* World matrix stack functions. */
