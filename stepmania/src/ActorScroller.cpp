@@ -39,11 +39,11 @@ void ActorScroller::Load(
 	m_bLoaded = true;
 }
 
-void ActorScroller::LoadFromIni( const IniFile &ini, const CString &sKey )
+void ActorScroller::LoadFromNode( const CString &sFile, const XNode *pNode )
 {
 #define REQUIRED_GET_VALUE( szName, valueOut ) \
-	if( !ini.GetValue( sKey, szName, valueOut ) ) \
-		Dialog::OK( ssprintf("File '%s' is missing the value Scroller::%s", ini.GetPath().c_str(), szName) );
+	if( !pNode->GetAttrValue( szName, valueOut ) ) \
+		Dialog::OK( ssprintf("File '%s' is missing the value Scroller::%s", sFile.c_str(), szName) );
 
 	float fSecondsPerItem = 1;
 	float fNumItemsToDraw = 7;

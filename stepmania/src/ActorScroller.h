@@ -5,8 +5,7 @@
 
 #include "ActorFrame.h"
 
-class IniFile;
-
+struct XNode;
 class ActorScroller : public ActorFrame
 {
 public:
@@ -23,7 +22,7 @@ public:
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();	// DOES draw
 
-	void LoadFromIni( const IniFile &ini, const CString &sKey );
+	void LoadFromNode( const CString &sFile, const XNode *pNode );
 	void SetDestinationItem( int iItem ) { m_fDestinationItem = float(iItem); }
 	void SetCurrentAndDestinationItem( int iItem ) { m_fCurrentItem = m_fDestinationItem = float(iItem); }
 

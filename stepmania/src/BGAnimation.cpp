@@ -149,11 +149,9 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 			pBGAnimation = &dummy;
 		LoadFromNode( sAniDir, *pBGAnimation );
 
-		bool bUseScroller;
-		if( ini.GetValue( "BGAnimation", "UseScroller", bUseScroller ) && bUseScroller )
-		{
-			ActorScroller::LoadFromIni( ini, "Scroller" );
-		}
+		const XNode* pScrollerNode = ini.GetChild( "Scroller" );
+		if( pScrollerNode != NULL )
+			ActorScroller::LoadFromNode( ini.GetPath(), pScrollerNode );
 	}
 	else
 	{
