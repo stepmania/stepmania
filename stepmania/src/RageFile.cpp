@@ -103,7 +103,7 @@ void RageFile::EnableCRC32( bool on )
 	m_File->EnableCRC32( on );
 }
 
-bool RageFile::GetCRC32( unsigned *iRet )
+bool RageFile::GetCRC32( uint32_t *iRet )
 {
 	ASSERT_OPEN;
 	return m_File->GetCRC32( iRet );
