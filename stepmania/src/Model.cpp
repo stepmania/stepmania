@@ -344,18 +344,43 @@ void Model::DrawPrimitives()
 					DISPLAY->TextureTranslate( fScrollX, fScrollY, 0 );
 				}
 
-				// render the first pass with texture 1
-				DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
-				DISPLAY->SetSphereEnironmentMapping( mat.diffuse.m_bSphereMapped );
-				
-				// render the second pass with texture 2
-				if( mat.alpha.GetCurrentTexture() )
+				/* There's some common code that could be folded out here, but it seems
+				 * clearer to keep it separate. */
+				if( DISPLAY->GetNumTextureUnits() < 2 )
 				{
-					DISPLAY->SetTexture( 1, mat.alpha.GetCurrentTexture() );
-					DISPLAY->SetSphereEnironmentMapping( mat.alpha.m_bSphereMapped );
-					// UGLY:  This overrides the Actor's BlendMode
-					DISPLAY->SetTextureModeAdd();
-					DISPLAY->SetTextureFiltering( true );
+					// render the diffuse texture
+					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+					DISPLAY->SetSphereEnironmentMapping( mat.diffuse.m_bSphereMapped );
+					DrawMesh( i );
+				
+					// render the additive texture
+					if( mat.alpha.GetCurrentTexture() )
+					{
+						DISPLAY->SetTexture( 0, mat.alpha.GetCurrentTexture() );
+						DISPLAY->SetSphereEnironmentMapping( mat.alpha.m_bSphereMapped );
+						// UGLY:  This overrides the Actor's BlendMode
+						DISPLAY->SetBlendMode( BLEND_ADD );
+						DISPLAY->SetTextureFiltering( true );
+						DrawMesh( i );
+					}
+				}
+				else
+				{
+					// render the diffuse texture with texture unit 1
+					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+					DISPLAY->SetSphereEnironmentMapping( mat.diffuse.m_bSphereMapped );
+					
+					// render the additive texture with texture unit 2
+					if( mat.alpha.GetCurrentTexture() )
+					{
+						DISPLAY->SetTexture( 1, mat.alpha.GetCurrentTexture() );
+						DISPLAY->SetSphereEnironmentMapping( mat.alpha.m_bSphereMapped );
+						DISPLAY->SetTextureModeAdd();
+						DISPLAY->SetTextureFiltering( true );
+					}
+
+					/* go */
+					DrawMesh( i );
 				}
 			}
 			else
@@ -368,11 +393,11 @@ void Model::DrawPrimitives()
 				DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
 				DISPLAY->ClearAllTextures();
 				DISPLAY->SetSphereEnironmentMapping( false );
+				DrawMesh( i );
 			}
-			
-			DrawMesh( i );
 
 			DISPLAY->SetSphereEnironmentMapping( false );
+			DISPLAY->SetBlendMode( BLEND_NORMAL );
 			DISPLAY->TexturePopMatrix();
 		}
 	}
