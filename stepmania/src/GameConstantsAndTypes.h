@@ -154,6 +154,18 @@ inline CString DifficultyClassToString( DifficultyClass dc )
 	}
 }
 
+inline DifficultyClass StringToDifficultyClass( CString sDC )
+{
+	for( int i=0; i<NUM_DIFFICULTY_CLASSES; i++ )
+	{
+		DifficultyClass dc = (DifficultyClass)i;
+		if( sDC == DifficultyClassToString(dc) )
+			return dc;
+	}
+	return CLASS_INVALID;
+}
+
+
 enum NotesType
 {
 	NOTES_TYPE_DANCE_SINGLE = 0,
@@ -169,7 +181,7 @@ enum NotesType
 	NOTES_TYPE_INVALID,
 };
 
-inline int NotesTypeToNumColumns( NotesType nt )
+inline int NotesTypeToNumTracks( NotesType nt )
 {
 	switch( nt )
 	{
@@ -188,6 +200,7 @@ inline int NotesTypeToNumColumns( NotesType nt )
 
 inline NotesType StringToNotesType( CString sNotesType )
 {
+	sNotesType.MakeLower();
 	if     ( sNotesType == "dance-single" )	return NOTES_TYPE_DANCE_SINGLE;
 	else if( sNotesType == "dance-double" )	return NOTES_TYPE_DANCE_DOUBLE;
 	else if( sNotesType == "dance-couple" )	return NOTES_TYPE_DANCE_COUPLE;

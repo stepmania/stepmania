@@ -97,9 +97,9 @@ CString join(
 );
 
 void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
-ULONG GetHashForString( CString s );
-ULONG GetHashForFile( CString sPath );
-ULONG GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
+int GetHashForString( CString s );
+int GetHashForFile( CString sPath );
+int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 
 bool DoesFileExist( const CString &sPath );
 DWORD GetFileSizeInBytes( const CString &sFilePath );

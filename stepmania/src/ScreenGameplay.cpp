@@ -348,13 +348,13 @@ void ScreenGameplay::Update( float fDeltaTime )
 		return;
 
 
-	float fSongBeat, fBPS;
 	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
-	
-	m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
+	float fSongBeat, fBPS;
+	bool bFreeze;	
+	m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 	
-	m_Background.SetSongBeat( fSongBeat );
+	m_Background.SetSongBeat( fSongBeat, bFreeze );
 
 	
 	//LOG->WriteLine( "m_fOffsetInBeats = %f, m_fBeatsPerSecond = %f, m_Music.GetPositionSeconds = %f", m_fOffsetInBeats, m_fBeatsPerSecond, m_Music.GetPositionSeconds() );
@@ -477,7 +477,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	if( PREFSMAN->m_SongOptions.m_AssistType == SongOptions::ASSIST_TICK )
 	{
 		fPositionSeconds += (SOUND->GetPlayLatency()+0.06f) * m_soundMusic.GetPlaybackRate();	// HACK:  Add 0.06 seconds to make them play a tiny bit earlier
-		m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
+		m_pCurSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		static int iRowLastCrossed = 0;
@@ -539,7 +539,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	//LOG->WriteLine( "ScreenGameplay::Input()" );
 
 	float fSongBeat, fBPS;
-	m_pCurSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS );
+	bool bFreeze;
+	m_pCurSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS, bFreeze );
 
 
 	// Handle special keys to adjust the offset

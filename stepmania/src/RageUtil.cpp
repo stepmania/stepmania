@@ -285,20 +285,20 @@ void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bRe
 	::FindClose( hFind );
 }
 
-ULONG GetHashForString( CString s )
+int GetHashForString( CString s )
 {
-	ULONG hash = 0;
+	int hash = 0;
 	for( int i=0; i<s.GetLength(); i++ )
 	{
 		hash *= 10;
 		hash += (DWORD)s[i];
 	}
-	return hash;
+	return abs(hash);
 }
 
-ULONG GetHashForFile( CString sPath )
+int GetHashForFile( CString sPath )
 {
-	ULONG hash = 0;
+	int hash = 0;
 
 	hash += GetHashForString( sPath );
 
@@ -308,12 +308,12 @@ ULONG GetHashForFile( CString sPath )
 	if( CFile::GetStatus(sPath, status) )
 		hash += status.m_mtime.GetHour() * 3600 + status.m_mtime.GetMinute() * 60 + status.m_mtime.GetSecond();
 
-	return hash;
+	return abs(hash);
 }
 
-ULONG GetHashForDirectory( CString sDir )
+int GetHashForDirectory( CString sDir )
 {
-	ULONG hash = 0;
+	int hash = 0;
 
 	hash += GetHashForFile( sDir );
 
@@ -325,7 +325,7 @@ ULONG GetHashForDirectory( CString sDir )
 		hash += GetHashForFile( sFilePath );
 	}
 
-	return hash; 
+	return abs(hash); 
 }
 
 DWORD GetFileSizeInBytes( const CString &sFilePath )

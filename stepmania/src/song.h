@@ -3,20 +3,17 @@
 -----------------------------------------------------------------------------
  Class: Song
 
- Desc: Holds data about a piece of music that can be played by one or more
-	Games.
+ Desc: Holds data about a song that is common to several Notes.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
 	Chris Danford
 -----------------------------------------------------------------------------
 */
 
-
 #include "Notes.h"
 
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
-//enum DanceStyle;	// why is this needed?
 
 
 struct BPMSegment 
@@ -43,21 +40,17 @@ public:
 	~Song();
 
 	bool LoadFromSongDir( CString sDir );	// calls one of the loads below
-	void Save()			{ SaveToSMDir(); SaveToCacheFile(); }; 
-	void SetChangedSinceLastSave()	{ m_bChangedSinceSave = true;	}
 
-	bool LoadFromCacheFile( bool bLoadNoteData );
-
-protected:
 	bool LoadFromDWIFile( CString sPath );
 	bool LoadFromBMSDir( CString sDir );
-	bool LoadFromSMDir( CString sDir );
+	bool LoadFromSMFile( CString sPath, bool bLoadNoteData );
+
 	void TidyUpData();	// call after loading to clean up invalid data
 
-	void SaveToSMDir();	// saves to StepMania song and notes files
-	void SaveToCacheFile();	// saves to cache file
+	void SaveToSMFile( CString sPath = "" );	// no path means save in Song dir
 
-	void DeleteCacheFile();
+	CString GetCacheFilePath();
+	void SaveToCacheFile();
 
 public:
 
@@ -66,7 +59,6 @@ public:
 	CString m_sGroupName;
 
 	CString GetSongFilePath()	{return m_sSongDir+m_sSongFile; };
-	CString GetCacheFilePath();
 
 	bool	m_bChangedSinceSave;
 
@@ -127,7 +119,7 @@ public:
 				break;
 		return m_BPMSegments[i].m_fBPM;
 	};
-	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut );
+	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut );
 	float GetElapsedTimeFromBeat( float fBeat );
 	
 	

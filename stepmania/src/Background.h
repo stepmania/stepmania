@@ -29,7 +29,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
-	void SetSongBeat( const float fSongBeat ) { m_fSongBeat = fSongBeat; };
+	void SetSongBeat( const float fSongBeat, const bool bFreeze ) { m_fSongBeat = fSongBeat; m_bFreeze = bFreeze; };
 
 	virtual void SetDiffuseColor( D3DXCOLOR c )
 	{
@@ -60,5 +60,6 @@ protected:
 	bool m_bShowDanger;
 
 	float m_fSongBeat;
+	bool m_bFreeze;
 };
 

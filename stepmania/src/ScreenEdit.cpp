@@ -172,9 +172,10 @@ ScreenEdit::~ScreenEdit()
 
 void ScreenEdit::Update( float fDeltaTime )
 {
-	float fSongBeat, fBPS;
 	float fPositionSeconds = m_soundMusic.GetPositionSeconds();
-	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS );
+	float fSongBeat, fBPS;
+	bool bFreeze;
+	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
 	if( m_Mode == MODE_RECORD  ||  m_Mode == MODE_PLAY )
 	{
@@ -409,7 +410,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 
 				pNotes->SetNoteData( (NoteData*)&m_NoteFieldEdit );
-				SONGMAN->GetCurrentSong()->Save();
+				SONGMAN->GetCurrentSong()->SaveToSMFile();
 			}
 			break;
 		case DIK_UP:
@@ -762,8 +763,9 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - TIME_BEFORE_SLOW_REPEATS * m_soundMusic.GetPlaybackRate();
 
 				float fStartBeat, fEndBeat, fThrowAway;
-				m_pSong->GetBeatAndBPSFromElapsedTime( fHoldStartSeconds, fStartBeat, fThrowAway );
-				m_pSong->GetBeatAndBPSFromElapsedTime( fHoldEndSeconds, fEndBeat, fThrowAway );
+				bool bFreeze;
+				m_pSong->GetBeatAndBPSFromElapsedTime( fHoldStartSeconds, fStartBeat, fThrowAway, bFreeze );
+				m_pSong->GetBeatAndBPSFromElapsedTime( fHoldEndSeconds, fEndBeat, fThrowAway, bFreeze );
 
 				const int iStartIndex = BeatToNoteRow(fStartBeat) - 1;
 				const int iEndIndex = BeatToNoteRow(fEndBeat);

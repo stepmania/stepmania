@@ -26,22 +26,31 @@ public:
 	// Loading
 	bool LoadFromNotesFile( const CString &sPath );
 	bool LoadFromBMSFile( const CString &sPath );
-	bool LoadFromDWITokens( const CString &sMode, const CString &sDescription,
-							const int &iNumFeet,
-							const CString &sStepData1, const CString &sStepData2 );
-	void ReadFromCacheFile( FILE* file, bool bReadNoteData );
-
-	// for saving
-	void SaveToSMDir( CString sSongDir );
-	void WriteToCacheFile( FILE* file );
-
-	//
+	bool LoadFromDWITokens( 
+		const CString &sMode,
+		const CString &sDescription,
+		const int &iNumFeet,
+		const CString &sStepData1, const CString &sStepData2 
+		);
+	void LoadFromSMTokens( 
+		const CString &sNotesType, 
+		const CString &sDescription,
+		const CString &sCredit,
+		const CString &sDifficultyClass,
+		const CString &sMeter,
+		const CString &sRadarValues,
+		const CString &sNoteDataOut,
+		const bool bLoadNoteData
+		);
+	void WriteSMNotesTag( FILE* fp );
 
 public:
 	NotesType		m_NotesType;
 	CString			m_sDescription;			// This text is displayed next to thte number of feet when a song is selected
 	CString			m_sCredit;				// name of the person who created these Notes
 	DifficultyClass m_DifficultyClass;		// this is inferred from m_sDescription
+	int				m_iMeter;				// difficulty from 1-10
+	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
 
 	// Color is a function of DifficultyClass and Intended Style
 	D3DXCOLOR GetColor()
@@ -57,8 +66,6 @@ public:
 			return DifficultyClassToColor( m_DifficultyClass ); 
 	}
 
-	int				m_iMeter;				// difficulty from 1-10
-	float			m_fRadarValues[NUM_RADAR_VALUES];	// between 0.0-1.2 starting from 12-o'clock rotating clockwise
 	
 	// Statistics
 	Grade m_TopGrade;
@@ -72,8 +79,7 @@ public:
 	void		DeleteNoteData();
 
 protected:
-	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDifficulty, int iMeter );
-	
+	static DifficultyClass DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter );
 	
 	NoteData*	m_pNoteData;
 };

@@ -47,17 +47,6 @@ public:
 	void Init();
 	~NoteData();
 
-	// used for loading
-	void SetFromMeasureStrings( CStringArray &arrayMeasureStrings );	// for loading from a .notes file
-	void SetFromDWIInfo();	// for loading from a .dwi file
-	void SetFromBMSInfo();	// for loading from a .bms file
-	void ReadFromCacheFile( FILE* file );
-	static void SkipOverDataInCacheFile( FILE* file );
-
-	// used for saving
-	void GetMeasureStrings( CStringArray &arrayMeasureStrings );		// for saving to a .notes file
-	void WriteToCacheFile( FILE* file );
-
 	int			m_iNumTracks;
 	TapNote		m_TapNotes[MAX_NOTE_TRACKS][MAX_TAP_NOTE_ROWS];
 	HoldNote	m_HoldNotes[MAX_HOLD_NOTE_ELEMENTS];

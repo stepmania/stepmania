@@ -329,22 +329,21 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	case SM_PlaySongSample:
 		PlayMusicSample();
 		break;
+	case SM_SongChanged:
+		AfterMusicChange();
+		break;
 	}
 }
 
 void ScreenSelectMusic::MenuLeft( const PlayerNumber p, const InputEventType type )
 {
 	m_MusicWheel.PrevMusic();
-	
-	AfterMusicChange();
 }
 
 
 void ScreenSelectMusic::MenuRight( const PlayerNumber p, const InputEventType type )
 {
 	m_MusicWheel.NextMusic();
-
-	AfterMusicChange();
 }
 
 void ScreenSelectMusic::MenuStart( const PlayerNumber p )
@@ -471,6 +470,10 @@ void ScreenSelectMusic::AfterMusicChange()
 			{
 				if( !GAMEMAN->IsPlayerEnabled( PlayerNumber(p) ) )
 					continue;
+				for( int i=0; i<m_arrayNotes.GetSize(); i++ )
+					if( m_arrayNotes[i]->m_DifficultyClass == PREFSMAN->m_PreferredDifficultyClass[p] )
+						m_iSelection[p] = i;
+
 				m_iSelection[p] = clamp( m_iSelection[p], 0, m_arrayNotes.GetSize() ) ;
 			}
 		}

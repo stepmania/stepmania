@@ -38,8 +38,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	float fDeltaLife;
 	switch( score )
 	{
-	case TNS_PERFECT:	fDeltaLife = +0.015f;	break;
-	case TNS_GREAT:		fDeltaLife = +0.008f;	break;
+	case TNS_PERFECT:	fDeltaLife = +0.008f;	break;
+	case TNS_GREAT:		fDeltaLife = +0.004f;	break;
 	case TNS_GOOD:		fDeltaLife = +0.000f;	break;
 	case TNS_BOO:		fDeltaLife = -0.040f;	break;
 	case TNS_MISS:		fDeltaLife = -0.080f;	break;

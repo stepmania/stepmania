@@ -42,8 +42,12 @@ enum {
 
 Notes::Notes()
 {
+	m_NotesType = NOTES_TYPE_DANCE_SINGLE;
 	m_DifficultyClass = CLASS_EASY;
 	m_iMeter = 0;
+	for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		m_fRadarValues[r] = 0;
+
 	m_iNumTimesPlayed = 0;
 	m_iMaxCombo = 0;
 	m_iTopScore = 0;
@@ -57,54 +61,6 @@ Notes::~Notes()
 	DeleteNoteData();
 }
 
-void Notes::WriteToCacheFile( FILE* file )
-{
-	LOG->WriteLine( "Notes::WriteToCacheFile()" );
-
-	fprintf( file, "%d\n", m_NotesType );
-	WriteStringToFile( file, m_sDescription );
-	WriteStringToFile( file, m_sCredit );
-	fprintf( file, "%d\n", m_DifficultyClass );
-	fprintf( file, "%d\n", m_iMeter );
-	for( int i=0; i<NUM_RADAR_VALUES; i++ )
-		fprintf( file, "%f\n", m_fRadarValues[i] );
-
-	fprintf( file, "%d\n", m_TopGrade );
-	fprintf( file, "%d\n", m_iTopScore );
-	fprintf( file, "%d\n", m_iMaxCombo );
-	fprintf( file, "%d\n", m_iNumTimesPlayed );
-
-	ASSERT( m_pNoteData != NULL );
-	m_pNoteData->WriteToCacheFile( file );
-}
-
-void Notes::ReadFromCacheFile( FILE* file, bool bLoadNoteData )
-{
-	LOG->WriteLine( "Notes::ReadFromCacheFile( %d )", bLoadNoteData );
-
-	fscanf( file, "%d\n", &m_NotesType );
-	ReadStringFromFile( file, m_sDescription );
-	ReadStringFromFile( file, m_sCredit );
-	fscanf( file, "%d\n", &m_DifficultyClass );
-	fscanf( file, "%d\n", &m_iMeter );
-	for( int i=0; i<NUM_RADAR_VALUES; i++ )
-		fscanf( file, "%f\n", &m_fRadarValues[i] );
-
-	fscanf( file, "%d\n", &m_TopGrade );
-	fscanf( file, "%d\n", &m_iTopScore );
-	fscanf( file, "%d\n", &m_iMaxCombo );
-	fscanf( file, "%d\n", &m_iNumTimesPlayed );
-
-	if( bLoadNoteData )
-	{
-		GetNoteData()->ReadFromCacheFile( file );
-	}
-	else
-	{
-		DeleteNoteData();
-		NoteData::SkipOverDataInCacheFile( file );
-	}
-}
 
 
 // BMS encoding:     tap-hold
@@ -655,116 +611,163 @@ bool Notes::LoadFromDWITokens(
 	return true;
 }
 
-bool Notes::LoadFromNotesFile( const CString &sPath )
+void Notes::LoadFromSMTokens( 
+	const CString &sNotesType, 
+	const CString &sDescription,
+	const CString &sCredit,
+	const CString &sDifficultyClass,
+	const CString &sMeter,
+	const CString &sRadarValues,
+	const CString &sNoteDataOut,
+	const bool bLoadNoteData
+)
 {
-	LOG->WriteLine( "Notes::LoadFromNotesFile( '%s' )", sPath );
+	LOG->WriteLine( "Notes::LoadFromSMTokens( %d )", bLoadNoteData );
 
-	CStdioFile file;	
-	if( !file.Open( sPath, CFile::modeRead|CFile::shareDenyNone ) )
-		throw RageException( "Error opening DWI file '%s'.", sPath );
+	m_NotesType = StringToNotesType(sNotesType);
+	m_sDescription = sDescription;
+	m_sCredit = sCredit;
+	m_DifficultyClass = StringToDifficultyClass( sDifficultyClass );
+	m_iMeter = atoi(sMeter);
+	CStringArray saValues;
+	split( sRadarValues, ",", saValues, true );
+	if( saValues.GetSize() == NUM_RADAR_VALUES )
+		for( int r=0; r<NUM_RADAR_VALUES; r++ )
+			m_fRadarValues[r] = (float)atof(saValues[r]);
 
-	// read the whole file into a sFileText
-	CString sFileText;
-	CString buffer;
-	while( file.ReadString(buffer) )
-		sFileText += buffer + "\n";
-	file.Close();
+	if( m_iMeter < 1 || m_iMeter > 10 ) 
+		m_iMeter = 4;
+	if( m_DifficultyClass == CLASS_INVALID )
+		m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( sDescription, m_iMeter );
+    
 
-	// strip comments out of sFileText
-	while( sFileText.Find("//") != -1 )
+	//
+	// Load NoteData
+	//
+	NoteData *pND = GetNoteData();
+
+	pND->m_iNumTracks = NotesTypeToNumTracks( m_NotesType );
+
+	CStringArray asNoteData;
+	split( sNoteDataOut, ",", asNoteData, true );
+	for( int i=0; i<asNoteData.GetSize(); i+=2 )
 	{
-		int iIndexCommentStart = sFileText.Find("//");
-		int iIndexCommentEnd = sFileText.Find("\n", iIndexCommentStart);
-		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
-			sFileText.Delete( iIndexCommentStart, 2 );
-		else
-			sFileText.Delete( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
+		int iNumRowsInMeasure = atoi( asNoteData[i] );
+
+		CString sMeasureString = asNoteData[i+1];
+		sMeasureString.TrimLeft();
+		sMeasureString.TrimRight();
+
+		CStringArray arrayNoteLines;
+		split( sMeasureString, "\n", arrayNoteLines );
+
+		if( arrayNoteLines.GetSize() != iNumRowsInMeasure )
+			throw RageException( "Actual number of note rows (%d) doesn't match what tag says (%d).", arrayNoteLines.GetSize(), iNumRowsInMeasure );
+
+		for( int l=0; l<iNumRowsInMeasure; l++ )
+		{
+			const float fPercentIntoMeasure = l/(float)arrayNoteLines.GetSize();
+			const float fBeat = (i + fPercentIntoMeasure) * BEATS_PER_MEASURE;
+			const int iIndex = BeatToNoteRow( fBeat );
+
+			CString sNoteLine = arrayNoteLines[l];
+			sNoteLine.TrimRight();
+
+			if( pND->m_iNumTracks != sNoteLine.GetLength() )
+				throw RageException( "Actual number of note columns (%d) is different from the NotesType (%d).", pND->m_iNumTracks, sNoteLine.GetLength() );
+
+			for( int c=0; c<sNoteLine.GetLength(); c++ )
+				pND->m_TapNotes[c][iIndex] = sNoteLine[c];
+		}
 	}
 
-	// split sFileText into strings containing each value expression
-	CStringArray arrayValueStrings;
-	split( sFileText, ";", arrayValueStrings );
+
+}
+
+void Notes::WriteSMNotesTag( FILE* fp )
+{
+	fprintf( fp, "#NOTES:\n" );
+	fprintf( fp, "     %s:\n", NotesTypeToString(m_NotesType) );
+	fprintf( fp, "     %s:\n", m_sDescription );
+	fprintf( fp, "     %s:\n", m_sCredit );
+	fprintf( fp, "     %s:\n", DifficultyClassToString(m_DifficultyClass) );
+	fprintf( fp, "     %d:\n", m_iMeter );
+	
+	CStringArray asRadarValues;
+	for( int r=0; r<NUM_RADAR_VALUES; r++ )
+		asRadarValues.Add( ssprintf("%.1f", m_fRadarValues[r]) );
+	fprintf( fp, "     %s:\n", join(",",asRadarValues) );
 
 
-	// for each value expression string, parse it into a value name and data
-	for( int i=0; i < arrayValueStrings.GetSize(); i++ )
+	//
+	// fill in sNoteDataOut 
+	//
+	NoteData* pND = GetNoteData();
+
+	pND->ConvertHoldNotesTo2sAnd3s();
+
+	float fLastBeat = pND->GetLastBeat();
+	int iLastMeasure = int( fLastBeat/BEATS_PER_MEASURE );
+
+	for( int m=0; m<=iLastMeasure; m++ )	// foreach measure
 	{
-		CString sValueString = arrayValueStrings[i];
+		int iMeasureStartIndex = m * ELEMENTS_PER_MEASURE;
+		int iMeasureLastIndex = (m+1) * ELEMENTS_PER_MEASURE - 1;
 
-		// split the value string into tokens
-		CStringArray arrayValueTokens;
-		split( sValueString, ":", arrayValueTokens, false );
-
-		if( arrayValueTokens.GetSize() == 0 )
-			continue;
-
-		CString sValueName = arrayValueTokens.GetAt( 0 );
-		sValueName.TrimLeft();
-		sValueName.TrimRight();
-
-		// handle the data
-		if( sValueName == "#TYPE" )
-			m_NotesType = StringToNotesType( arrayValueTokens[1] );
-
-		else if( sValueName == "#DESCRIPTION" )
-			m_sDescription = arrayValueTokens[1];
-
-		else if( sValueName == "#CREDIT" )
-			m_sCredit = arrayValueTokens[1];
-
-		else if( sValueName == "#METER" )
-			m_iMeter = atoi( arrayValueTokens[1] );
-
-		else if( sValueName == "#NOTES" )
+		// probe to find the smallest note type
+		NoteType nt;
+		int iNoteIndexSpacing;
+		for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )
 		{
-			arrayValueTokens.RemoveAt( 0 );
+			float fBeatSpacing = NoteTypeToBeat( nt );
+			iNoteIndexSpacing = roundf( fBeatSpacing * ELEMENTS_PER_BEAT );
 
-			ASSERT( m_pNoteData == NULL );	// if not, then we're loading this NoteData twice
-			m_pNoteData = new NoteData;
-
-			m_pNoteData->SetFromMeasureStrings( arrayValueTokens );
+			bool bFoundSmallerNote = false;
+			for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i++ )	// for each index in this measure
+			{
+				if( i % iNoteIndexSpacing == 0 )
+					continue;	// skip
+				
+				if( !pND->IsRowEmpty(i) )
+				{
+					bFoundSmallerNote = true;
+					break;
+				}
+				
+			}
+			if( bFoundSmallerNote )
+				continue;	// keep searching
+			else
+				break;	// stop searching
 		}
 
-		else
-			LOG->WriteLine( "Unexpected value named '%s'", sValueName );
+		if( nt == NUM_NOTE_TYPES )	// we didn't find one
+			iNoteIndexSpacing = 1;
+
+		fprintf( fp, "%d, // measure %d\n", ELEMENTS_PER_MEASURE/iNoteIndexSpacing, m+1 );
+
+		for( int i=iMeasureStartIndex; i<=iMeasureLastIndex; i+=iNoteIndexSpacing )
+		{
+			CString sLineString;
+			for( int c=0; c<pND->m_iNumTracks; c++ )
+				sLineString += pND->m_TapNotes[c][i];
+			fprintf( fp, "%s", sLineString );
+			if( i == iMeasureLastIndex )
+				fprintf( fp, ",\n" );
+			else
+				fprintf( fp, "\n" );
+		}
 	}
-	
-	m_DifficultyClass = DifficultyClassFromDescriptionAndMeter( m_sDescription, m_iMeter );
 
-	return true;
+	fprintf( fp, ";\n" );
+
+	pND->Convert2sAnd3sToHoldNotes();
 }
 
 
-
-void Notes::SaveToSMDir( CString sSongDir )
+DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDescription, int iMeter )
 {
-	LOG->WriteLine( "Notes::Save( '%s' )", sSongDir );
-
-	CString sNewNotesFilePath = sSongDir + ssprintf("%s-%s.notes", NotesTypeToString(m_NotesType), m_sDescription);
-
-	CStdioFile file;	
-	if( !file.Open( sNewNotesFilePath, CFile::modeWrite | CFile::modeCreate ) )
-		throw RageException( "Error opening Notes file '%s' for writing.", sNewNotesFilePath );
-
-	file.WriteString( ssprintf("#TYPE:%s;\n", NotesTypeToString(m_NotesType)) );
-	file.WriteString( ssprintf("#DESCRIPTION:%s;\n", m_sDescription) );
-	file.WriteString( ssprintf("#METER:%d;\n", m_iMeter) );
-	file.WriteString( ssprintf("#CREDIT:%s;\n", m_sCredit) );
-
-
-	file.WriteString( "#NOTES:\n" );
-	CStringArray sMeasureStrings;
-	GetNoteData()->GetMeasureStrings( sMeasureStrings );
-	file.WriteString( join(":\n", sMeasureStrings) );
-	file.WriteString( ";" );
-
-	
-	file.Close();
-}
-
-DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDifficulty, int iMeter )
-{
-	sDifficulty.MakeLower();
+	sDescription.MakeLower();
 
 	const CString sDescriptionParts[NUM_DIFFICULTY_CLASSES][3] = {
 		{
@@ -786,7 +789,7 @@ DifficultyClass Notes::DifficultyClassFromDescriptionAndMeter( CString sDifficul
 
 	for( int i=0; i<NUM_DIFFICULTY_CLASSES; i++ )
 		for( int j=0; j<3; j++ )
-			if( sDifficulty.Find(sDescriptionParts[i][j]) != -1 )
+			if( sDescription.Find(sDescriptionParts[i][j]) != -1 )
 				return DifficultyClass(i);
 	
 	// guess difficulty class from meter

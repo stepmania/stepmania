@@ -68,6 +68,8 @@ public:
 	void LoadFromWheelItemData( WheelItemData* pWID );
 	void RefreshGrades();
 
+	float				m_fPercentGray;
+
 	// for TYPE_SECTION and TYPE_ROULETTE
 	Sprite				m_sprSectionBar;
 	// for TYPE_SECTION
@@ -100,8 +102,8 @@ public:
 	virtual void TweenOnScreen();		
 	virtual void TweenOffScreen();
 
-	void PrevMusic();
-	void NextMusic();
+	void PrevMusic( bool bSendSongChangedMessage = true );
+	void NextMusic( bool bSendSongChangedMessage = true );
 	void PrevSort();
 	void NextSort();
 	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
@@ -119,7 +121,7 @@ public:
 
 
 protected:
-	void BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItems, SongSortOrder so );
+	void BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arrayWheelItems, SongSortOrder so, bool bRoulette = false );
 	void RebuildWheelItemDisplays();
 	void SwitchSortOrder();
 

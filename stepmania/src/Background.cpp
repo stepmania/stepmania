@@ -125,7 +125,7 @@ void Background::Update( float fDeltaTime )
 		switch( PREFSMAN->m_visMode )
 		{
 		case VIS_MODE_ANIMATION:
-			if( m_pCurBackgroundAnimation )
+			if( m_pCurBackgroundAnimation  &&  !m_bFreeze )
 				m_pCurBackgroundAnimation->Update( fDeltaTime, m_fSongBeat );
 			else
 				m_sprSongBackground.Update( fDeltaTime );
