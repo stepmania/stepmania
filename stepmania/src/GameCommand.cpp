@@ -139,7 +139,7 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		{
 			if( i > 1 )
 				sValue += ",";
-			sValue += command->GetArg(i);
+			sValue += (CString) command->GetArg(i);
 		}
 
 		if( sName == "game" )
