@@ -304,33 +304,42 @@ const StyleDef* GameState::GetCurrentStyleDef()
 
 bool GameState::IsPlayable( const ModeChoice& mc )
 {
-	// Mode doesn't interest the caller, presumably because
-	// a style has not been chosen yet.
-	if ( mc.pm == PLAY_MODE_INVALID )
-		return mc.numSidesJoinedToPlay == GAMESTATE->GetNumSidesJoined(); 
+	//
+	// If the ModeChoice doesn't specify something, we'll take that
+	// value from the current game state
+	//
+	const PlayMode &rPlayMode = (mc.pm != PLAY_MODE_INVALID)
+			? mc.pm : m_PlayMode;
+	const Style &rStyle = (mc.style != STYLE_INVALID)
+			? mc.style : m_CurStyle;
+	// ModeChoice code sets numSidesJoinedToPlay properly iff style is set
+	const int numSidesJoined = (mc.style != STYLE_INVALID)
+			? mc.numSidesJoinedToPlay : GAMESTATE->GetNumSidesJoined();
 
-	// A style has been chosen, so now consider modes
-	const Style &style = (mc.style != STYLE_INVALID) ? mc.style : m_CurStyle;
-	ASSERT(style != STYLE_INVALID);
+	if ( numSidesJoined != GAMESTATE->GetNumSidesJoined() )
+		return false;
 
-	if( mc.pm == PLAY_MODE_RAVE )
+	if( rPlayMode == PLAY_MODE_RAVE || rPlayMode == PLAY_MODE_BATTLE )
 	{
 		// Can't play Rave without characters for attack definitions.
-		//X ... but we'll let ScreenSelectDifficulty give that message
-		//X (since that will give the user an explanation)
-		//X
-		//Xif( m_pCharacters.empty() )
-		//X	return false;
+		if( m_pCharacters.empty() )
+			return false;
+
+		// If there is no current style ... well, we have no reasonable
+		// grounds to disallow
+		if (rStyle == STYLE_INVALID)
+			return true;
 
 		// Can't play rave if there isn't enough room for two players.
 		// This is correct for dance (ie, no rave for solo and doubles),
 		// and should be okay for pump .. not sure about other game types.
-		if( GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 )
+		if( GAMEMAN->GetStyleDefForStyle(rStyle)->m_iColsPerPlayer >= 6 )
 			return false;
 
+		return true;
 	}
 
-	return true;    // why not?
+	return true;    // no grounds to deny the request
 }
 
 bool GameState::IsPlayerEnabled( PlayerNumber pn )
