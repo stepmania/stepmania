@@ -354,6 +354,17 @@ HRESULT CreateObjects( HWND hWnd )
 	THEME	= new ThemeManager;
 	WM		= new WindowManager;
 
+	
+	// Ugly...  Switch the screen resolution again so that the system message will display
+	SwitchDisplayMode( 
+		go.m_bWindowed, 
+		go.m_iResolution,
+		go.m_iResolution==640 ? 480 : 240,
+		go.m_iDisplayColor
+	);
+
+	WM->SystemMessage( ssprintf("Found %d songs.", GAMEINFO->m_pSongs.GetSize()) );
+
 
 	//WM->SetNewWindow( new WindowLoading );
 	//WM->SetNewWindow( new WindowSandbox );
@@ -606,7 +617,7 @@ BOOL SwitchDisplayMode( BOOL bWindowed, DWORD dwWidth, DWORD dwHeight, DWORD dwB
 
 	if( WM )
 	{
-		WM->SetSystemMessage( ssprintf("%s - %ux%u - %u bits", bWindowed ? "Windowed" : "FullScreen", dwWidth, dwHeight, dwBPP) );
+		WM->SystemMessage( ssprintf("%s - %ux%u - %u bits", bWindowed ? "Windowed" : "FullScreen", dwWidth, dwHeight, dwBPP) );
 	}
 
 	return true;

@@ -67,13 +67,13 @@ void RageBitmapTexture::Create()
 	///////////////////////
 	D3DFORMAT fmtTexture;
 
-	// look in the file name for a hint
+	// look in the file name for a format hint
 	m_sFilePath.MakeLower();
-	if( -1 != m_sFilePath.Find("(no alpha)") )
+	if( -1 != m_sFilePath.Find("no alpha") )
 	{
 		fmtTexture = D3DFMT_R5G6B5;
 	}
-	else if( -1 != m_sFilePath.Find("(1 alpha)") )
+	else if( -1 != m_sFilePath.Find("1 alpha") )
 	{
 		fmtTexture = D3DFMT_A1R5G5B5;
 	}
@@ -82,6 +82,11 @@ void RageBitmapTexture::Create()
 		fmtTexture = D3DFMT_A4R4G4B4;
 	}
 
+
+	// look in the file name for a dither hint
+	bool bDither = false;//-1 == m_sFilePath.Find("no dither");
+
+	
 	// if the user has requested high color textures, use the higher color
 	if( GAMEINFO != NULL
 	 && GAMEINFO->m_GameOptions.m_iDisplayColor == 32 
@@ -119,8 +124,8 @@ void RageBitmapTexture::Create()
 		0,							// usage (is a render target?)
 		fmtTexture,					// our preferred texture format
 		D3DPOOL_MANAGED,			// which memory pool
-		bScaleImageToTextureSize ? D3DX_FILTER_BOX : D3DX_FILTER_NONE,		// filter
-		D3DX_DEFAULT,				// mip filter
+		(bScaleImageToTextureSize ? D3DX_FILTER_BOX : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
+		D3DX_DEFAULT | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
 		0,							// no color key
 		&ddii,						// struct to fill with source image info
 		NULL,						// no palette

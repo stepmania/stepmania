@@ -16,15 +16,15 @@
 #include "Song.h"
 
 
-const float BANNER_WIDTH	= 192;		// from the source art of DDR
-const float BANNER_HEIGHT	= 55;
+const float BANNER_WIDTH	= 264;
+const float BANNER_HEIGHT	= 86;
 
 
 class Banner : public Sprite
 {
 public:
 
-	bool LoadFromSong( Song &song);
+	bool LoadFromSong( Song* pSong );	// NULL means no Song
 
 };
 

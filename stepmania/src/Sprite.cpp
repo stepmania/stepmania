@@ -404,7 +404,7 @@ void Sprite::SetState( UINT uNewState )
 	m_fSecsIntoState = 0.0; 
 }
 
-void Sprite::SetCustomSrcRect( FRECT new_texcoord_frect ) 
+void Sprite::SetCustomTextureRect( FRECT new_texcoord_frect ) 
 { 
 	m_bUsingCustomTexCoords = true;
 	m_CustomTexCoords[0] = new_texcoord_frect.left;		m_CustomTexCoords[1] = new_texcoord_frect.bottom;	// bottom left
@@ -414,10 +414,34 @@ void Sprite::SetCustomSrcRect( FRECT new_texcoord_frect )
 
 }
 
-void Sprite::SetCustomTexCoords( float fTexCoords[8] ) // order: bottom left, top left, bottom right, top right
+void Sprite::SetCustomTextureCoords( float fTexCoords[8] ) // order: bottom left, top left, bottom right, top right
 { 
 	m_bUsingCustomTexCoords = true;
 	for( int i=0; i<8; i++ )
 		m_CustomTexCoords[i] = fTexCoords[i]; 
+}
+
+
+void Sprite::SetCustomImageRect( FRECT rectImageCoords )
+{
+	// Convert to a rectangle in texture coordinate space.
+	rectImageCoords.left	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
+	rectImageCoords.right	*= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth();
+	rectImageCoords.top		*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
+	rectImageCoords.bottom	*= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
+
+	SetCustomTextureRect( rectImageCoords );
+}
+
+void Sprite::SetCustomImageCoords( float fImageCoords[8] )	// order: bottom left, top left, bottom right, top right
+{
+	// convert image coords to texture coords in place
+	for( int i=0; i<8; i+=2 )
+	{
+		fImageCoords[i+0] *= m_pTexture->GetImageWidth()	/ (float)m_pTexture->GetTextureWidth(); 
+		fImageCoords[i+1] *= m_pTexture->GetImageHeight()	/ (float)m_pTexture->GetTextureHeight(); 
+	}
+
+	SetCustomTextureCoords( fImageCoords );
 }
 

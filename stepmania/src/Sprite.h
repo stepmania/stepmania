@@ -47,8 +47,11 @@ public:
 	CString	GetTexturePath()	{ return m_sTexturePath; };
 
 
-	void SetCustomSrcRect( FRECT new_texcoord_frect );	// for cropping
-	void SetCustomTexCoords( float fTexCoords[8] );
+	void SetCustomTextureRect( FRECT new_texcoord_frect );
+	void SetCustomTextureCoords( float fTexCoords[8] );
+	void SetCustomSourceRect( FRECT rectSourceCoords );	// in source pixel space
+	void SetCustomImageRect( FRECT rectImageCoords );	// in image pixel space
+	void SetCustomImageCoords( float fImageCoords[8] );
 
 	void TurnShadowOn()		{ m_bHasShadow = true; };
 	void TurnShadowOff()	{ m_bHasShadow = false; };

@@ -17,34 +17,39 @@
 
 
 
-bool Banner::LoadFromSong( Song &song )
+bool Banner::LoadFromSong( Song* pSong )		// NULL means no song
 {
-	if( song.HasBanner() )
-		Sprite::LoadFromTexture( song.GetBannerPath() );
-	else if( song.HasBackground() )
-		Sprite::LoadFromTexture( song.GetBackgroundPath() );
+	if( pSong == NULL )
+		Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+	if( pSong->HasBanner() )
+		Sprite::Load( pSong->GetBannerPath() );
+	else if( pSong->HasBackground() )
+		Sprite::Load( pSong->GetBackgroundPath() );
 	else
-		Sprite::LoadFromTexture( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
+		Sprite::Load( THEME->GetPathTo(GRAPHIC_FALLBACK_BANNER) );
 
-	//Sprite::TurnShadowOff();
+	Sprite::TurnShadowOff();
 
-	int iSourceWidth	= m_pTexture->GetSourceWidth();
-	int iSourceHeight	= m_pTexture->GetSourceHeight();
+	int iImageWidth		= m_pTexture->GetImageWidth();
+	int iImageHeight	= m_pTexture->GetImageHeight();
 
+	// save the original X&Y.  We're going to resore them later.
+	float fOriginalX = GetX();
+	float fOriginalY = GetY();
 
-	if( iSourceWidth == iSourceHeight )	// this is a SSR/DWI style banner
+	if( iImageWidth == iImageHeight )		// this is a SSR/DWI style banner
 	{
-		float fCustomTexCoords[8] = {
+		float fCustomImageCoords[8] = {
 			0.22f,	0.98f,	// bottom left
 			0.02f,	0.78f,	// top left
 			0.98f,	0.22f,	// bottom right
 			0.78f,	0.02f,	// top right
 		};
-		Sprite::SetCustomTexCoords( fCustomTexCoords );
+		SetCustomImageCoords( fCustomImageCoords );
 		
 		SetWidth(  BANNER_WIDTH );
 		SetHeight( BANNER_HEIGHT );
-
+		SetZoom( 1 );
 	}
 	else	// this is a normal sized banner
 	{
@@ -65,11 +70,12 @@ bool Banner::LoadFromSong( Song &song )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 			
 			// generate a rectangle with new texture coordinates
-			FRECT frectNewSrc( fPercentageToCutOffEachSide, 
-							   0, 
-							   1 - fPercentageToCutOffEachSide, 
-							   1 );
-			Sprite::SetCustomSrcRect( frectNewSrc );
+			FRECT fCustomImageCoords( 
+				fPercentageToCutOffEachSide, 
+				0, 
+				1 - fPercentageToCutOffEachSide, 
+				1 );
+			SetCustomImageRect( fCustomImageCoords );
 		}
 		else		// crop Y
 		{
@@ -77,16 +83,21 @@ bool Banner::LoadFromSong( Song &song )
 			float fPercentageToCutOffEachSide = fPercentageToCutOff / 2;
 			
 			// generate a rectangle with new texture coordinates
-			FRECT frectNewSrc( 0, 
-							   fPercentageToCutOffEachSide,
-							   1, 
-							   1 - fPercentageToCutOffEachSide );
-			Sprite::SetCustomSrcRect( frectNewSrc );
+			FRECT fCustomImageCoords( 
+				0, 
+				fPercentageToCutOffEachSide,
+				1, 
+				1 - fPercentageToCutOffEachSide );
+			SetCustomImageRect( fCustomImageCoords );
 		}
 		SetWidth(  BANNER_WIDTH );
 		SetHeight( BANNER_HEIGHT );
 		SetZoom( 1 );
 	}
+
+	// restore original XY
+	SetXY( fOriginalX, fOriginalY );
+
 
 	return true;
 }
