@@ -822,8 +822,10 @@ void Song::TranslateTitles()
 {
 	static TitleSubst tsub("songs");
 
-	tsub.Subst(m_sMainTitle, m_sSubTitle, m_sArtist,
-				m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit);
+	TitleFields title;
+	title.LoadFromStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
+	tsub.Subst( title );
+	title.SaveToStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );
 }
 
 void Song::ReCalculateRadarValuesAndLastBeat()

@@ -259,9 +259,12 @@ void Course::LoadFromCRSFile( CString sPath )
 	}
 	static TitleSubst tsub("courses");
 
-	CString ignore;
-	tsub.Subst( m_sName, ignore, ignore,
-				m_sNameTranslit, ignore, ignore );
+	TitleFields title;
+	title.Title = m_sName;
+	title.TitleTranslit = m_sNameTranslit;
+	tsub.Subst( title );
+	m_sName = title.Title;
+	m_sNameTranslit = title.TitleTranslit;
 }
 
 void Course::Init()

@@ -13,28 +13,28 @@
 struct TitleTrans
 {
 	Regex TitleFrom, SubFrom, ArtistFrom;
-	CString TitleTo, SubTo, ArtistTo;					/* plain text */
-	CString TitleTransTo, SubTransTo, ArtistTransTo;	/* plain text */
+	TitleFields Dest;
 
 	/* If this is true, no translit fields will be generated automatically. */
 	bool translit;
 	TitleTrans() { translit = true; }
 
-	TitleTrans(CString tf, CString sf, CString af, CString tt, CString st, CString at,
-			   bool translit_):
-		TitleFrom(tf), SubFrom(sf), ArtistFrom(af),
-			TitleTo(tt), SubTo(st), ArtistTo(at), translit(translit_) { }
+	TitleTrans( const TitleFields &tf, bool translit_):
+		Dest(tf), translit(translit_) { }
 
-	bool Matches(CString title, CString sub, CString artist);
+	bool Matches( const TitleFields &tf );
 };
 
 vector<TitleTrans> ttab;
 
-bool TitleTrans::Matches(CString title, CString sub, CString artist)
+bool TitleTrans::Matches( const TitleFields &tf )
 {
-	if(!TitleFrom.Compare(title)) return false; /* no match */
-	if(!SubFrom.Compare(sub)) return false; /* no match */
-	if(!ArtistFrom.Compare(artist)) return false; /* no match */
+	if( !TitleFrom.Compare(tf.Title) )
+		return false; /* no match */
+	if( !SubFrom.Compare(tf.Subtitle) )
+		return false; /* no match */
+	if( !ArtistFrom.Compare(tf.Artist) )
+		return false; /* no match */
 
 	return true;
 }
@@ -44,51 +44,52 @@ void TitleSubst::AddTrans(const TitleTrans &tr)
 	ttab.push_back(new TitleTrans(tr));
 }
 
-void TitleSubst::Subst(CString &title, CString &subtitle, CString &artist,
-					   CString &ttitle, CString &tsubtitle, CString &tartist)
+void TitleSubst::Subst( TitleFields &tf )
 {
 	for(unsigned i = 0; i < ttab.size(); ++i)
 	{
-		if(!ttab[i]->Matches(title, subtitle, artist))
+		if(!ttab[i]->Matches(tf))
 			continue;
 
 		/* The song matches.  Replace whichever strings aren't empty. */
-		if(!ttab[i]->TitleTo.empty())
+		if( !ttab[i]->Dest.Title.empty() && tf.Title != ttab[i]->Dest.Title )
 		{
-			if(ttab[i]->translit && title != ttab[i]->TitleTo) ttitle = title;
-			title = ttab[i]->TitleTo;
-			FontCharAliases::ReplaceMarkers( title );
+			if( ttab[i]->translit )
+				tf.TitleTranslit = tf.Title;
+			tf.Title = ttab[i]->Dest.Title;
+			FontCharAliases::ReplaceMarkers( tf.Title );
 		}
-		if(!ttab[i]->SubTo.empty())
+		if( !ttab[i]->Dest.Subtitle.empty() && tf.Subtitle != ttab[i]->Dest.Subtitle )
 		{
-			if(ttab[i]->translit && subtitle != ttab[i]->SubTo) tsubtitle = subtitle;
-			subtitle = ttab[i]->SubTo;
-			FontCharAliases::ReplaceMarkers( subtitle );
+			if( ttab[i]->translit )
+				tf.SubtitleTranslit = tf.Subtitle;
+			tf.Subtitle = ttab[i]->Dest.Subtitle;
+			FontCharAliases::ReplaceMarkers( tf.Subtitle );
 		}
-
-		if(!ttab[i]->ArtistTo.empty() && artist != ttab[i]->ArtistTo)
+		if( !ttab[i]->Dest.Artist.empty() && tf.Artist != ttab[i]->Dest.Artist )
 		{
-			if(ttab[i]->translit) tartist = artist;
-			artist = ttab[i]->ArtistTo;
-			FontCharAliases::ReplaceMarkers( artist );
+			if( ttab[i]->translit )
+				tf.ArtistTranslit = tf.Artist;
+			tf.Artist = ttab[i]->Dest.Artist;
+			FontCharAliases::ReplaceMarkers( tf.Artist );
 		}
 
 		/* These are used when applying kanji to a field that doesn't have the
 		 * correct data.  Should be used sparingly. */
-		if(!ttab[i]->TitleTransTo.empty())
+		if( !ttab[i]->Dest.TitleTranslit.empty() )
 		{
-			ttitle = ttab[i]->TitleTransTo;
-			FontCharAliases::ReplaceMarkers( ttitle );
+			tf.TitleTranslit = ttab[i]->Dest.TitleTranslit;
+			FontCharAliases::ReplaceMarkers( tf.TitleTranslit );
 		}
-		if(!ttab[i]->SubTransTo.empty())
+		if( !ttab[i]->Dest.SubtitleTranslit.empty() )
 		{
-			tsubtitle = ttab[i]->SubTransTo;
-			FontCharAliases::ReplaceMarkers( tsubtitle );
+			tf.SubtitleTranslit = ttab[i]->Dest.SubtitleTranslit;
+			FontCharAliases::ReplaceMarkers( tf.SubtitleTranslit );
 		}
-		if(!ttab[i]->ArtistTransTo.empty())
+		if( !ttab[i]->Dest.ArtistTranslit.empty() )
 		{
-			tartist = ttab[i]->ArtistTransTo;
-			FontCharAliases::ReplaceMarkers( tartist );
+			tf.ArtistTranslit = ttab[i]->Dest.ArtistTranslit;
+			FontCharAliases::ReplaceMarkers( tf.ArtistTranslit );
 		}
 	}
 }
@@ -155,12 +156,12 @@ void TitleSubst::Load(const CString &filename, const CString &section)
 			if(!id.CompareNoCase("TitleFrom")) tr.TitleFrom = "^(" + txt + ")$";
 			else if(!id.CompareNoCase("ArtistFrom")) tr.ArtistFrom = "^(" + txt + ")$";
 			else if(!id.CompareNoCase("SubtitleFrom")) tr.SubFrom = "^(" + txt + ")$";
-			else if(!id.CompareNoCase("TitleTo")) tr.TitleTo = txt;
-			else if(!id.CompareNoCase("ArtistTo")) tr.ArtistTo = txt;
-			else if(!id.CompareNoCase("SubtitleTo")) tr.SubTo = txt;
-			else if(!id.CompareNoCase("TitleTransTo")) tr.TitleTransTo = txt;
-			else if(!id.CompareNoCase("ArtistTransTo")) tr.ArtistTransTo = txt;
-			else if(!id.CompareNoCase("SubtitleTransTo")) tr.SubTransTo = txt;
+			else if(!id.CompareNoCase("TitleTo")) tr.Dest.Title = txt;
+			else if(!id.CompareNoCase("ArtistTo")) tr.Dest.Artist = txt;
+			else if(!id.CompareNoCase("SubtitleTo")) tr.Dest.Subtitle = txt;
+			else if(!id.CompareNoCase("TitleTransTo")) tr.Dest.TitleTranslit = txt;
+			else if(!id.CompareNoCase("ArtistTransTo")) tr.Dest.ArtistTranslit = txt;
+			else if(!id.CompareNoCase("SubtitleTransTo")) tr.Dest.SubtitleTranslit = txt;
 			else
 				LOG->Warn( "Unknown TitleSubst tag: \"%s\"", id.c_str() );
 		}
@@ -190,7 +191,26 @@ TitleSubst::~TitleSubst()
 }
 
 /*
- * Copyright (c) 2003 by the person(s) listed below.  All rights reserved.
- *
- * Glenn Maynard
+ * (c) 2003-2004 Glenn Maynard
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
  */
