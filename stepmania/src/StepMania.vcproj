@@ -335,9 +335,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenMapControllers.h">
 			</File>
 			<File
-				RelativePath="ScreenMemoryCard.h">
-			</File>
-			<File
 				RelativePath="ScreenMessage.h">
 			</File>
 			<File
