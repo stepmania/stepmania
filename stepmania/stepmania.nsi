@@ -245,6 +245,17 @@ CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIR
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninst.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
 
+# We want to delete a few old desktop icons, since they weren't being
+# uninstalled correctly during alpha 2 and 3.  They were installed in
+# the 'all' context.  Try to delete them in both contexts.
+SetShellVarContext all
+Delete "$DESKTOP\Play StepMania 3.9 alpha 2.lnk"
+Delete "$DESKTOP\Play StepMania 3.9 alpha 3.lnk"
+
+SetShellVarContext current
+Delete "$DESKTOP\Play StepMania 3.9 alpha 2.lnk"
+Delete "$DESKTOP\Play StepMania 3.9 alpha 3.lnk"
+
 Exec '$WINDIR\explorer.exe "$SMPROGRAMS\${PRODUCT_ID}\"'
 
 SectionEnd ; end of default section
@@ -346,12 +357,8 @@ Delete "$INSTDIR\crashinfo.txt"
 
 RMDir "$INSTDIR"	; will delete only if empty
 
-SetShellVarContext all	; delete from "All Users" if NT
-# These versions didn't uninstall their desktop icon correctly.
-# Let's do this until, say, alpha 5 or so.
+SetShellVarContext current
 Delete "$DESKTOP\Play StepMania CVS.lnk"
-Delete "$DESKTOP\Play StepMania 3.9 alpha 2.lnk"
-Delete "$DESKTOP\Play StepMania 3.9 alpha 3.lnk"
 Delete "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk"
 ; I'm being paranoid here:
 Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
