@@ -252,10 +252,10 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 		
 		struct timeval zero = {0,0};
 		if ( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
-			return;
+			return false;
 
 		if( !FD_ISSET(fds_kmsg, &fdset) )
-			continue;
+			return false;
 
 		static char buffer[1024];	// large enough to read all messages in one call
 		int ret = read(fds_kmsg, &buffer, sizeof(buffer));
@@ -264,12 +264,12 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 			LOG->Warn("Read only %d bytes from '%s'", ret, PROC_KMSG);
 			close(fds_kmsg);
 			fds_kmsg = -1;
-			return;
+			return false;
 		}
-		else if( buffer == sizeof(buffer) )
+		else if( ret == sizeof(buffer) )
 		{
 			LOG->Warn("We could have more than %d bytes from '%s'", sizeof(buffer), PROC_KMSG);
-			buffer[sizeof(buffer)-1] = \0; 
+			buffer[sizeof(buffer)-1] = '\0'; 
 		}
 
 		bool bLogAboutUsb = strstr(buffer,"usb") || strstr(buffer,"USB");
