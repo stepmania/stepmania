@@ -30,7 +30,7 @@ void ComboGraph::Load( CString Path, const StageStats &s, PlayerNumber pn )
 		LOG->Trace("combo %i is %f+%f", i, combo.fStartSecond, combo.fSizeSeconds);
 		Sprite *sprite = new Sprite;
 		sprite->SetName( "ComboBar" );
-		sprite->Load( THEME->GetPathToG(Path + IsMax?"max":"normal") );
+		sprite->Load( THEME->GetPathToG(Path + (IsMax?"max":"normal")) );
 
 		const float start = SCALE( combo.fStartSecond, s.m_player[pn].fFirstSecond, s.m_player[pn].fLastSecond, 0.0f, 1.0f );
 		const float size = SCALE( combo.fSizeSeconds, 0, s.m_player[pn].fLastSecond-s.m_player[pn].fFirstSecond, 0.0f, 1.0f );
