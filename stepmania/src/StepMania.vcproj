@@ -2480,6 +2480,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</Filter>
 		</Filter>
 		<File
+			RelativePath="archutils\Win32\DialogCrashHeader.bmp">
+		</File>
+		<File
+			RelativePath="archutils\Win32\DialogErrorHeader.bmp">
+		</File>
+		<File
 			RelativePath="StepMania.xpm">
 		</File>
 	</Files>
