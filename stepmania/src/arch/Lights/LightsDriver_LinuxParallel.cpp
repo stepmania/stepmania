@@ -1,8 +1,6 @@
 //
 //    LightsDriver_LinuxParallel - Parallel Port Based Lights Driver for Linux
 //
-//    Author: Hugo Hromic M. <hhromic@udec.cl>
-//
 //    This requires root permissions to work! (run as root or suid)
 //    This code was written using SystemMessage Driver as template.
 //
@@ -74,7 +72,8 @@ void LightsDriver_LinuxParallel::Set( const LightsState *ls )
 }
 
 /*
- * (c) 2002-2004 Glenn Maynard
+ * (c) 2004 Hugo Hromic M. <hhromic@udec.cl>
+ *
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
