@@ -134,7 +134,7 @@ void SHA_Bytes(SHA_State * s, const void *p, int len)
 					(((uint32_t) s->block[i * 4 + 2]) << 8) |
 					(((uint32_t) s->block[i * 4 + 3]) << 0);
 			}
-			SHATransform(s->h, wordblock);
+			SHATransform((unsigned int *)s->h, (unsigned int *)wordblock);
 			s->blkused = 0;
 		}
 		memcpy(s->block, q, len);
