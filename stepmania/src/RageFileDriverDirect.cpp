@@ -135,10 +135,10 @@ bool RageFileDriverDirect::Ready()
 #else
 
 	// Try to create directory before writing a temp file.
-	CreateDirectories( sDir ); // XXX
+	CreateDirectories( root ); // XXX
 	
 	// Try to write a file.
-	CString sFile = sDir + "temp";
+	CString sFile = root + "temp";
 	RageFile f;
 	if( !f.Open( sFile, RageFile::WRITE ) )
 		return false;
