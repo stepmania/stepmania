@@ -28,6 +28,21 @@ const int EZ2_COL_SPACING = 46;
 const int EZ2_DOUBLE_ADJUST = 150;
 
 
+struct {
+	char *name;
+	int NumTracks;
+} const NotesTypes[NUM_NOTES_TYPES] = {
+	{ "dance-single", 4 },
+	{ "dance-double", 8 },
+	{ "dance-couple", 8 },
+	{ "dance-solo", 6 },
+	{ "pump-single", 5 },
+	{ "pump-double", 5 },
+	{ "ez2-single", 5 },		// Single: TL,LHH,D,RHH,TR
+	{ "ez2-single-hard", 5 },	// Single: TL,LHH,D,RHH,TR
+	{ "ez2-double", 10 },		// Double: Single x2
+	{ "ez2-real", 7 }			// Real: TL,LHH,LHL,D,RHL,RHH,TR
+};
 
 //
 // Important:  Every game must define the buttons: "Start", "Back", "MenuLeft", and "MenuRight"
@@ -972,21 +987,22 @@ void GameManager::GetEnabledGames( CArray<Game,Game>& aGamesOut )
 
 int GameManager::NotesTypeToNumTracks( NotesType nt )
 {
-	for( int i=0; i<NUM_STYLES; i++ )
-		if( g_StyleDefs[i].m_NotesType == nt  )
-			return g_StyleDefs[i].m_iColsPerPlayer;
-	
-	// invalid NotesType
-	ASSERT(0);
-	return -1;
+	if(nt >= NUM_NOTES_TYPES)
+	{
+		// invalid NotesType
+		ASSERT(0);
+		return -1;
+	}
+
+	return NotesTypes[nt].NumTracks;
 }
 
 NotesType GameManager::StringToNotesType( CString sNotesType )
 {
 	sNotesType.MakeLower();
-	for( int i=0; i<NUM_STYLES; i++ )
-		if( g_StyleDefs[i].m_szStyleName == sNotesType )
-			return g_StyleDefs[i].m_NotesType;
+	for( int i=0; i<NUM_NOTES_TYPES; i++ )
+		if( NotesTypes[i].name == sNotesType )
+			return NotesType(i);
 	
 	// invalid NotesType
 	ASSERT(0);
@@ -995,13 +1011,14 @@ NotesType GameManager::StringToNotesType( CString sNotesType )
 
 CString GameManager::NotesTypeToString( NotesType nt )
 {
-	for( int i=0; i<NUM_STYLES; i++ )
-		if( g_StyleDefs[i].m_NotesType == nt  )
-			return g_StyleDefs[i].m_szStyleName ;
+	if(nt >= NUM_NOTES_TYPES)
+	{
+		// invalid NotesType
+		ASSERT(0);
+		return "";
+	}
 
-	// invalid NotesType
-	ASSERT(0);
-	return "";
+	return NotesTypes[nt].name;
 }
 
 /* once we're sure the above lookups works, nuke this */
