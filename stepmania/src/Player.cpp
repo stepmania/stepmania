@@ -178,6 +178,7 @@ void Player::Load( const NoteData& noteData )
 	 * then we could just this->StopTweening()? -glenn */
 	m_Judgment.StopTweening();
 //	m_Combo.Reset();				// don't reset combos between songs in a course!
+	m_Combo.SetName( "Combo" );
 	m_Combo.Init( pn );
 	if( m_pPlayerStageStats )
 		m_Combo.SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );	// combo can persist between songs and games
