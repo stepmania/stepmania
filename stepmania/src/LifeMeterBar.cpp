@@ -110,17 +110,23 @@ public:
 	{
 		DISPLAY->EnableZBuffer();
 
-		DrawMask( m_fPercent );
-		
-		const float fPercentBetweenStrips = 1.0f/g_iNumStrips;
-
-		const float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
-		ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
-
-		for( float f=fPercentOffset+1; f>=fPercentOffset; f-=fPercentBetweenStrips )
+		if( GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
 		{
-			DrawMask( f );
-			DrawStrip( f );
+
+
+			DrawMask( m_fPercent );
+			
+			const float fPercentBetweenStrips = 1.0f/g_iNumStrips;
+
+			const float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
+			ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
+
+			for( float f=fPercentOffset+1; f>=fPercentOffset; f-=fPercentBetweenStrips )
+			{
+				DrawMask( f );
+				DrawStrip( f );
+			}
+
 		}
 
 		DISPLAY->DisableZBuffer();
@@ -131,9 +137,6 @@ public:
 
 	void DrawStrip( float fRightEdgePercent )
 	{
-		if( !GAMESTATE->IsPlayerEnabled(m_PlayerNumber) )
-			return;
-
 		RECT rect;
 
 		const float fChamberWidthInPercent = 1.0f/g_iNumChambers;
@@ -150,6 +153,9 @@ public:
 		rect.right	= -g_iMeterWidth/2 + g_iMeterWidth*min(1,fCorrectedRightEdgePercent);
 		rect.bottom	= +g_iMeterHeight/2;
 
+		ASSERT( rect.left <= g_iMeterWidth/2  &&  rect.right <= g_iMeterWidth/2 );  
+
+		float fPercentCroppedFromLeft = max( 0, -fCorrectedLeftEdgePercent );
 		float fPercentCroppedFromRight = max( 0, fCorrectedRightEdgePercent-1 );
 
 
@@ -161,7 +167,7 @@ public:
 		float fPrecentOffset = fRightEdgePercent;
 
 		FRECT frectCustomTexCoords(
-			0,
+			fPercentCroppedFromLeft,
 			0,
 			1-fPercentCroppedFromRight,
 			1);
@@ -188,10 +194,14 @@ public:
 		float fChamberRightPercent = GetChamberRightPercent( iChamber );
 
 		// draw mask for vertical chambers
-		rect.left	= -g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth; 
+		rect.left	= -g_iMeterWidth/2 + fChamberLeftPercent*g_iMeterWidth-1; 
 		rect.top	= -g_iMeterHeight/2;
-		rect.right	= -g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth;
+		rect.right	= -g_iMeterWidth/2 + fChamberRightPercent*g_iMeterWidth+1;
 		rect.bottom	= -g_iMeterHeight/2 + fHeightPercent*g_iMeterHeight;
+
+		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
+		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
+
 		m_quadMask.StretchTo( &rect );
 		m_quadMask.Draw();
 
@@ -200,6 +210,10 @@ public:
 		rect.top	= -g_iMeterHeight/2;
 		rect.right	= +g_iMeterWidth/2;
 		rect.bottom	= +g_iMeterHeight/2;
+
+		rect.left  = MIN( rect.left,  + g_iMeterWidth/2 );
+		rect.right = MIN( rect.right, + g_iMeterWidth/2 );
+
 		m_quadMask.StretchTo( &rect );
 		m_quadMask.Draw();
 	}
@@ -226,8 +240,8 @@ LifeMeterBar::LifeMeterBar()
 	m_quadBlackBackground.SetDiffuse( D3DXCOLOR(0,0,0,1) );
 	m_quadBlackBackground.SetZoomX( (float)g_iMeterWidth );
 	m_quadBlackBackground.SetZoomY( (float)g_iMeterHeight );
-	m_frame.AddChild( &m_quadBlackBackground );
 
+	this->AddChild( &m_quadBlackBackground );
 	this->AddChild( m_pStream );
 
 	AfterLifeChanged();
@@ -245,7 +259,7 @@ void LifeMeterBar::Load( PlayerNumber pn )
 	m_pStream->m_PlayerNumber = pn;
 
 	if( pn == PLAYER_2 )
-		m_frame.SetZoomX( -1 );
+		m_pStream->SetZoomX( -1 );
 }
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
@@ -355,7 +369,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 		const float fViscousForce = -m_fLifeVelocity * 0.2f;
 		m_fLifeVelocity += fViscousForce * fDeltaTime;
 
-		CLAMP( m_fLifeVelocity, -.02f, +.02f );
+		CLAMP( m_fLifeVelocity, -.06f, +.02f );
 
 		m_fTrailingLifePercentage += m_fLifeVelocity * fDeltaTime;
 	}

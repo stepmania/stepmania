@@ -31,9 +31,9 @@ struct NoteDataWithScoring : public NoteData
 
 
 	// statistics
-	int GetNumSuccessfulTapNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
-	int GetNumSuccessfulDoubles( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
-	int GetNumSuccessfulHoldNotes( const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	int GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	int GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
+	int GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat = 0, const float fEndBeat = MAX_BEATS );
 
 	inline bool IsRowComplete( int index )
 	{

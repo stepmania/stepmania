@@ -39,8 +39,6 @@ public:
 private:
 	void ResetBarVelocity();
 
-	ActorFrame	m_frame;	// hold everything and mirror this for PLAYER_2 instead of mirroring all the individual Actors 
-
 	Quad		m_quadBlackBackground;
 	LifeMeterStream*	m_pStream;
 

@@ -38,7 +38,7 @@ void NoteDataWithScoring::InitScoringData()
 	}
 }
 
-int NoteDataWithScoring::GetNumSuccessfulTapNotes( const float fStartBeat, const float fEndBeat )			
+int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, const float fEndBeat )			
 { 
 	int iNumSuccessfulTapNotes = 0;
 
@@ -49,7 +49,7 @@ int NoteDataWithScoring::GetNumSuccessfulTapNotes( const float fStartBeat, const
 	{
 		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( m_TapNotes[t][i] != '0'  &&  m_TapNoteScores[t][i] >= TNS_GREAT )
+			if( m_TapNotes[t][i] != '0'  &&  m_TapNoteScores[t][i] == tns )
 				iNumSuccessfulTapNotes++;
 		}
 	}
@@ -57,7 +57,7 @@ int NoteDataWithScoring::GetNumSuccessfulTapNotes( const float fStartBeat, const
 	return iNumSuccessfulTapNotes;
 }
 
-int NoteDataWithScoring::GetNumSuccessfulDoubles( const float fStartBeat, const float fEndBeat )			
+int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float fStartBeat, const float fEndBeat )			
 {
 	int iNumSuccessfulDoubles = 0;
 
@@ -76,21 +76,21 @@ int NoteDataWithScoring::GetNumSuccessfulDoubles( const float fStartBeat, const 
 				minTapNoteScore = min( minTapNoteScore, m_TapNoteScores[t][i] );
 			}
 		}
-		if( iNumNotesThisIndex >= 2  &&  minTapNoteScore >= TNS_GREAT )
+		if( iNumNotesThisIndex >= 2  &&  minTapNoteScore == tns )
 			iNumSuccessfulDoubles++;
 	}
 	
 	return iNumSuccessfulDoubles;
 }
 
-int NoteDataWithScoring::GetNumSuccessfulHoldNotes( const float fStartBeat, const float fEndBeat )			
+int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const float fStartBeat, const float fEndBeat )			
 {
 	int iNumSuccessfulHolds = 0;
 
 	for( int i=0; i<m_iNumHoldNotes; i++ )
 	{
 		HoldNote &hn = m_HoldNotes[i];
-		if( fStartBeat <= hn.m_fStartBeat  &&  hn.m_fEndBeat <= fEndBeat  &&  m_HoldNoteScores[i] == HNS_OK )
+		if( fStartBeat <= hn.m_fStartBeat  &&  hn.m_fEndBeat <= fEndBeat  &&  m_HoldNoteScores[i] == hns )
 			iNumSuccessfulHolds++;
 	}
 	return iNumSuccessfulHolds;
@@ -100,7 +100,10 @@ int NoteDataWithScoring::GetNumSuccessfulHoldNotes( const float fStartBeat, cons
 float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds )
 {
 	// density of steps
-	int iNumSuccessfulNotes = GetNumSuccessfulTapNotes() + GetNumSuccessfulHoldNotes();
+	int iNumSuccessfulNotes = 
+		GetNumTapNotesWithScore(TNS_PERFECT) + 
+		GetNumTapNotesWithScore(TNS_GREAT)/2 + 
+		GetNumHoldNotesWithScore(HNS_OK);
 	float fNotesPerSecond = iNumSuccessfulNotes/fSongSeconds;
 	float fReturn = fNotesPerSecond / 7;
 	return min( fReturn, 1.0f );
@@ -117,7 +120,7 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 
 	for( int i=0; i<MAX_BEATS; i+=BEAT_WINDOW )
 	{
-		int iNumNotesThisWindow = GetNumSuccessfulTapNotes((float)i,(float)i+BEAT_WINDOW) + GetNumSuccessfulHoldNotes((float)i,(float)i+BEAT_WINDOW);
+		int iNumNotesThisWindow = GetNumTapNotesWithScore(TNS_PERFECT,(float)i,(float)i+BEAT_WINDOW) + GetNumHoldNotesWithScore(HNS_OK,(float)i,(float)i+BEAT_WINDOW);
 		float fDensityThisWindow = iNumNotesThisWindow/(float)BEAT_WINDOW;
 		fMaxDensitySoFar = max( fMaxDensitySoFar, fDensityThisWindow );
 	}
@@ -129,7 +132,9 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds )
 float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds )
 {
 	// number of doubles
-	int iNumDoubles = GetNumSuccessfulDoubles();
+	int iNumDoubles = 
+		GetNumDoublesWithScore(TNS_PERFECT) + 
+		GetNumDoublesWithScore(TNS_GREAT)/2;
 	float fReturn = iNumDoubles / fSongSeconds;
 	return min( fReturn, 1.0f );
 }
@@ -151,6 +156,6 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds )
 float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds )
 {
 	// number of hold steps
-	float fReturn = GetNumSuccessfulHoldNotes() / fSongSeconds;
+	float fReturn = GetNumHoldNotesWithScore(HNS_OK) / fSongSeconds;
 	return min( fReturn, 1.0f );
 }
