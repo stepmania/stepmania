@@ -23,7 +23,6 @@ static const int NUM_MIX_TIMES = 16;
 static float g_fLastMixTimes[NUM_MIX_TIMES];
 static int g_fLastMixTimePos = 0;
 static int g_iNumIOProcCalls = 0;
-static int g_iNumMixCallsForLastIOProc = 0;
 
 static CString FormatToString( int fmt )
 {
@@ -252,8 +251,6 @@ void RageSound_CA::FillConverter( void *data, UInt32 frames )
 	g_fLastMixTimes[g_fLastMixTimePos] = tm.GetDeltaTime();
 	++g_fLastMixTimePos;
 	wrap( g_fLastMixTimePos, NUM_MIX_TIMES );
-
-	++g_iNumMixCallsForLastIOProc;
 }
 
 OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
@@ -265,7 +262,6 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
 							   void *inClientData)
 {
 	RageTimer tm;
-	g_iNumMixCallsForLastIOProc = 0;
 
 	RageSound_CA *This = (RageSound_CA *)inClientData;
 	UInt32 dataPackets = outOutputData->mBuffers[0].mDataByteSize;
@@ -295,8 +291,8 @@ OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
 		Output += ssprintf( "%.3f ", g_fLastMixTimes[pos] );
 	}
 
-	LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i (%s) %i",
-			   g_fLastIOProcTime, g_iNumIOProcCalls, Output.c_str(), g_iNumMixCallsForLastIOProc );
+	LOG->Warn( "Audio overload.  Last IOProc time: %f IOProc calls: %i (%s)",
+			   g_fLastIOProcTime, g_iNumIOProcCalls, Output.c_str() );
 	g_iNumIOProcCalls = 0;
 	return noErr;
 }
