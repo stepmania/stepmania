@@ -39,7 +39,7 @@ public:
     void Close();
     
     bool IsOpen() { return (mFP == NULL); }
-    bool AtEOF() { return feof(mFP); }
+    bool AtEOF() { return !!feof(mFP); }
     int GetError() { return ferror(mFP); }
     FILE *GetFilePointer() { return mFP; }
     
