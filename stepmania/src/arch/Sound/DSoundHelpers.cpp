@@ -182,8 +182,7 @@ void DSoundBuf::SetVolume(float vol)
 
 	/* Volume is a multiplier; SetVolume wants attenuation in thousands of a
 	 * decibel. */
-	if(vol != 1)
-		buf->SetVolume(max(int(1000 * vl2), DSBVOLUME_MIN));
+	buf->SetVolume(max(int(1000 * vl2), DSBVOLUME_MIN));
 }
 
 /* Determine if "pos" is between "start" and "end", for a circular buffer. */
@@ -313,7 +312,8 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 
 	buffer_bytes_filled += num_bytes_empty;
 
-	*play_pos = last_cursor_pos;
+	if( play_pos )
+		*play_pos = last_cursor_pos;
 	
 	/* Increment last_cursor_pos to point at where the data we're about to
 	 * ask for will actually be played. */
