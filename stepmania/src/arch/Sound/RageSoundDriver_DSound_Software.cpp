@@ -7,18 +7,17 @@
 #include "RageSound.h"
 #include "RageUtil.h"
 #include "RageSoundManager.h"
-
+#include "PrefsManager.h"
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
 static const int samplerate = 44100;
-static const int buffersize = 1024*4;	/* in frames */
+static const int safe_writeahead = 1024*4; /* in frames */
+static int max_writeahead;
 
-/* We'll fill the buffer in chunks this big.  This should evenly divide the
- * buffer size. */
+/* We'll fill the buffer in chunks this big. */
 static const int num_chunks = 8;
-static const int chunksize = buffersize / num_chunks;
-
+static int chunksize() { return max_writeahead / num_chunks; }
 int RageSound_DSound_Software::MixerThread_start(void *p)
 {
 	((RageSound_DSound_Software *) p)->MixerThread();
@@ -43,7 +42,7 @@ void RageSound_DSound_Software::MixerThread()
 	pcm->Play();
 
 	while(!shutdown) {
-		Sleep(10);
+		Sleep( chunksize()*1000 / samplerate );
 		while(GetData())
 			;
 	}
@@ -62,13 +61,13 @@ bool RageSound_DSound_Software::GetData()
 	const int64_t play_pos = pcm->GetOutputPosition();
     int64_t cur_play_pos = -1;
 
-	if(!pcm->get_output_buf(&locked_buf, &len, chunksize))
+	if( !pcm->get_output_buf(&locked_buf, &len, chunksize()) )
 		return false;
 	/* Silence the buffer. */
 	memset(locked_buf, 0, len);
 
 	static Sint16 *buf = NULL;
-	int bufsize = buffersize * channels;
+	int bufsize = max_writeahead * channels;
 	if(!buf)
 	{
 		buf = new Sint16[bufsize];
@@ -190,10 +189,14 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 	if(ds.IsEmulated())
 		RageException::ThrowNonfatal("Driver unusable (emulated device)");
 
+	max_writeahead = safe_writeahead;
+	if( PREFSMAN->m_iSoundWriteAhead )
+		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
+
 	/* Create a DirectSound stream, but don't force it into hardware. */
 	pcm = new DSoundBuf(ds, 
 		DSoundBuf::HW_DONT_CARE, 
-		channels, samplerate, 16, buffersize);
+		channels, samplerate, 16, max_writeahead);
 
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
@@ -214,7 +217,7 @@ RageSound_DSound_Software::~RageSound_DSound_Software()
 
 float RageSound_DSound_Software::GetPlayLatency() const
 {
-	return (1.0f / samplerate) * buffersize;
+	return (1.0f / samplerate) * max_writeahead;
 }
 
 int RageSound_DSound_Software::GetSampleRate( int rate ) const
