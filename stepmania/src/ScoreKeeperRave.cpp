@@ -114,9 +114,19 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 			GAMESTATE->m_fSuperMeter[m_PlayerNumber] -= 1.f;
 	}
 
-	// mercy: remove attacks on life drain
+	// mercy: if losing remove attacks on life drain
 	if( fUnscaledPercentChange < 0 )
-		GAMESTATE->RemoveActiveAttacksForPlayer( m_PlayerNumber );
+	{
+		bool bWinning;
+		switch( m_PlayerNumber )
+		{
+		case PLAYER_1:	bWinning = GAMESTATE->m_fTugLifePercentP1 > 0.5f;	break;
+		case PLAYER_2:	bWinning = GAMESTATE->m_fTugLifePercentP1 < 0.5f;	break;
+		default:	ASSERT(0);
+		}
+		if( !bWinning )
+			GAMESTATE->RemoveActiveAttacksForPlayer( m_PlayerNumber );
+	}
 }
 
 
