@@ -359,19 +359,20 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 		PRINT_OPEN(f,"Num Songs Played by Style");
 		{
 			BEGIN_TABLE(4);
-			for( Style style = (Style)0; style<NUM_STYLES; ((int&)style)++ )
+
+			for( map<const StyleDef*,int>::const_iterator iter = pProfile->m_iNumSongsPlayedByStyle.begin();
+				iter != pProfile->m_iNumSongsPlayedByStyle.end();
+				iter++ )
 			{
-				const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(style);
+				const StyleDef* pStyleDef = iter->first;
+				int iNumTimesPlayed = iter->second;
 				StepsType st = pStyleDef->m_StepsType;
-				if( !pStyleDef->m_bUsedForGameplay )
-					continue;	// skip
 				// only show if this style plays a StepsType that we're showing
 				if( find(vStepsTypesToShow.begin(),vStepsTypesToShow.end(),st) == vStepsTypesToShow.end() )
 					continue;	// skip
 				if( StylesToShow.find(pStyleDef->m_szName) == StylesToShow.end() )
 					continue;
-				CString s = GAMEMAN->StyleToThemedString(style);
-				TABLE_LINE2( s, pProfile->m_iNumSongsPlayedByStyle[style] );
+				TABLE_LINE2( GAMEMAN->StyleToThemedString(pStyleDef), iNumTimesPlayed );
 			}
 			END_TABLE;
 		}

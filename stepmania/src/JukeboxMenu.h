@@ -7,9 +7,9 @@
 #include "Banner.h"
 #include "GameConstantsAndTypes.h"
 #include "RandomSample.h"
-#include "Style.h"
 #include "BitmapText.h"
 
+class StyleDef;
 
 class JukeboxMenu: public ActorFrame 
 {
@@ -49,11 +49,11 @@ public:
 	}
 
 
-	Style		GetSelectedStyle()				{ return m_Styles[m_iSelection[ROW_STYLE]]; }
-	CString		GetSelectedGroup()				{ return m_sGroups[m_iSelection[ROW_GROUP]]; }
-	CString		GetSelectedDifficultyString()	{ return m_sDifficulties[m_iSelection[ROW_DIFFICULTY]]; }
-	Difficulty	GetSelectedDifficulty()			{ return StringToDifficulty( GetSelectedDifficultyString() ); }
-	bool		GetSelectedModifiers()			{ return m_iSelection[ROW_MODIFIERS] != 0; }
+	const StyleDef*	GetSelectedStyle()				{ return m_Styles[m_iSelection[ROW_STYLE]]; }
+	CString			GetSelectedGroup()				{ return m_sGroups[m_iSelection[ROW_GROUP]]; }
+	CString			GetSelectedDifficultyString()	{ return m_sDifficulties[m_iSelection[ROW_DIFFICULTY]]; }
+	Difficulty		GetSelectedDifficulty()			{ return StringToDifficulty( GetSelectedDifficultyString() ); }
+	bool			GetSelectedModifiers()			{ return m_iSelection[ROW_MODIFIERS] != 0; }
 
 private:
 	Sprite	m_sprArrows[2];
@@ -62,10 +62,10 @@ private:
 	BitmapText	m_textLabel[NUM_ROWS];
 	BitmapText	m_textValue[NUM_ROWS];
 
-	vector<Style>		m_Styles;
-	CStringArray		m_sGroups;
-	vector<string>		m_sDifficulties;
-	CStringArray		m_sModifiers;
+	vector<const StyleDef*>	m_Styles;
+	CStringArray			m_sGroups;
+	vector<string>			m_sDifficulties;
+	CStringArray			m_sModifiers;
 
 	void OnRowValueChanged( Row row );
 	void ChangeToRow( Row newRow );

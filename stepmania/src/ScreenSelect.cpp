@@ -178,8 +178,8 @@ void ScreenSelect::FinalizeChoices()
 		{
 			const int sel = GetSelectionIndex( (PlayerNumber)p );
 			
-			if( m_aModeChoices[sel].m_style != STYLE_INVALID )
-				GAMESTATE->m_CurStyle = m_aModeChoices[sel].m_style;
+			if( m_aModeChoices[sel].m_pStyleDef )
+				GAMESTATE->m_pCurStyleDef = m_aModeChoices[sel].m_pStyleDef;
 		}
 	SCREENMAN->RefreshCreditsMessages();
 }

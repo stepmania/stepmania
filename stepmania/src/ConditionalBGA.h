@@ -1,7 +1,6 @@
 #ifndef CONDITIONALBGA_H
 #define CONDITIONALBGA_H
 
-#include "Style.h"
 #include "PlayerOptions.h"
 #include "GameConstantsAndTypes.h"
 #include "BGAnimation.h"
@@ -31,7 +30,7 @@ struct BgaCondInfo
 	vector<int> songdows;
 	vector<int> songmonths;
 	vector<int> grades;
-	vector<Style> styles;
+	vector<const StyleDef*> styles;
 	PlayerOptions disallowedpo;
 	bool dpoused; // indicate if disallowed po has been set
 };

@@ -65,7 +65,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	/* Cache: */
 	g_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");
 
-	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
+	if( GAMESTATE->m_pCurStyleDef == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
 
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )

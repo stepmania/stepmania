@@ -6,11 +6,10 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-#include "Style.h"
 #include <map>
 class Song;
 class Steps;
-
+class StyleDef;
 
 struct StageStats
 {
@@ -24,7 +23,7 @@ struct StageStats
 	float GetPercentDancePoints( PlayerNumber pn ) const;
 
 	PlayMode	playMode;
-	Style		style;
+	const StyleDef*	pStyleDef;
 	Song*	pSong;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
 	Steps*  pSteps[NUM_PLAYERS];

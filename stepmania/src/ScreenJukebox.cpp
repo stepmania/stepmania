@@ -96,7 +96,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 bool ScreenJukebox::PrepareForJukebox( bool bDemonstration )		// always return true.
 {
 	// ScreeJukeboxMenu must set this
-	ASSERT( GAMESTATE->m_CurStyle != STYLE_INVALID );
+	ASSERT( GAMESTATE->m_pCurStyleDef );
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
 	SetSong( bDemonstration );

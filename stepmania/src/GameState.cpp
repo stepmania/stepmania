@@ -101,7 +101,7 @@ void GameState::Reset()
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
-	m_CurStyle = STYLE_INVALID;
+	m_pCurStyleDef = NULL;
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
 	m_bPlayersFinalized = false;
@@ -228,7 +228,7 @@ void CheckStageStats( const StageStats &ss, int p )
 		CHECKPOINT_M( ss.pSong->GetFullTranslitTitle() );
 	ASSERT( ss.pSteps[p] );
 	ASSERT_M( ss.playMode < NUM_PLAY_MODES, ssprintf("playmode %i", ss.playMode) );
-	ASSERT_M( ss.style < NUM_STYLES, ssprintf("style %i", ss.style) );
+	ASSERT_M( ss.pStyleDef != NULL, ssprintf("style (game %d, %s)", ss.pStyleDef->m_Game, ss.pStyleDef->m_szName) );
 	ASSERT_M( ss.pSteps[p]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", ss.pSteps[p]->GetDifficulty()) );
 	/* Meter values can exceed MAX_METER; MAX_METER is just the highest meter value we
 	 * display/track. */
@@ -287,7 +287,7 @@ void AddPlayerStatsToProfile( Profile *pProfile, const StageStats &ss, PlayerNum
 	const int iMeter = clamp( ss.iMeter[p], 0, MAX_METER );
 
 	pProfile->m_iNumSongsPlayedByPlayMode[ss.playMode]++;
-	pProfile->m_iNumSongsPlayedByStyle[ss.style]++;
+	pProfile->m_iNumSongsPlayedByStyle[ss.pStyleDef]++;
 	pProfile->m_iNumSongsPlayedByDifficulty[ss.pSteps[p]->GetDifficulty()]++;
 	pProfile->m_iNumSongsPlayedByMeter[iMeter]++;
 	pProfile->m_iTotalDancePoints += ss.iActualDancePoints[p];
@@ -744,7 +744,7 @@ CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 
 bool GameState::PlayersCanJoin() const
 {
-	return GetNumSidesJoined() == 0 || this->m_CurStyle == STYLE_INVALID;	// selecting a style finalizes the players
+	return GetNumSidesJoined() == 0 || this->m_pCurStyleDef == NULL;	// selecting a style finalizes the players
 }
 
 bool GameState::EnoughCreditsToJoin() const
@@ -779,15 +779,16 @@ GameDef* GameState::GetCurrentGameDef()
 
 const StyleDef* GameState::GetCurrentStyleDef() const
 {
-	ASSERT( m_CurStyle != STYLE_INVALID );	// the style must be set before calling this
-
+	/*
 	// HACK: if we're in TM doing PLAY_MODE_BATTLE or PLAY_MODE_RAVE,
 	// pretend that we're doing STYLE_TECHNO_VERSUS8 instead.
+	// What is the problem that this is fixing? -Chris
 	if( m_CurGame == GAME_TECHNO &&
 		( m_PlayMode == PLAY_MODE_BATTLE || m_PlayMode == PLAY_MODE_RAVE ) )
 		return GAMEMAN->GetStyleDefForStyle( STYLE_TECHNO_VERSUS8 );
+	*/
 
-	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
+	return m_pCurStyleDef;
 }
 
 
@@ -820,11 +821,13 @@ bool GameState::PlayerUsingBothSides() const
 
 bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 {
-	if( m_CurStyle == STYLE_INVALID )	// no style chosen
+	if( m_pCurStyleDef == NULL )	// no style chosen
+	{
 		if( this->PlayersCanJoin() )	
 			return m_bSideIsJoined[pn];	// only allow input from sides that have already joined
 		else
 			return true;	// if we can't join, then we're on a screen like MusicScroll or GameOver
+	}
 
 	switch( GetCurrentStyleDef()->m_StyleType )
 	{
@@ -852,7 +855,7 @@ PlayerNumber GameState::GetFirstHumanPlayer() const
 {
 	FOREACH_PlayerNumber( p )
 		if( IsHumanPlayer(p) )
-			return (PlayerNumber)p;
+			return p;
 	ASSERT(0);	// there must be at least 1 human player
 	return PLAYER_INVALID;
 }
@@ -1800,9 +1803,8 @@ LuaFunction_NoArgs( IsFinalStage,			GAMESTATE->IsFinalStage() )
 LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
 LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
 LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
-LuaFunction_NoArgs( CurStyle,				GAMESTATE->m_CurStyle )
 LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
-LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_CurStyle == STYLE_INVALID? "none": GAMESTATE->GetCurrentStyleDef()->m_szName ) )
+LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyleDef == NULL ? "none": GAMESTATE->GetCurrentStyleDef()->m_szName ) )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestNotesDifficulty() )

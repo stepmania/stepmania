@@ -19,8 +19,7 @@ class ModeSwitcher : public ActorFrame
 public:
 	ModeSwitcher();
 	~ModeSwitcher();
-	void NextMode(int pn);
-	void PrevMode(int pn);
+	void ChangeMode(PlayerNumber pn, int dir);
 
 private:
 	BitmapText	m_Stylename;

@@ -101,7 +101,7 @@ void ScreenEvaluation::Init()
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2, false);
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
-		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+		GAMESTATE->m_pCurStyleDef = GAMEMAN->GameAndStringToStyle( GAME_DANCE, "versus" );
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;

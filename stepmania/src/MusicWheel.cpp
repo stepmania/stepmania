@@ -98,9 +98,12 @@ void MusicWheel::Load()
 		CIRCLE_PERCENT.Refresh();
 	}
 
-	// for debugging
-	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
-		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
+	/*
+	// for debugging.
+	// Whatever Screen uses MusicWheel should set the Style if it needs to be set.
+	if( GAMESTATE->m_CurStyle == NULL )
+		GAMESTATE->m_CurStyle = GAMEMAN->STYLE_DANCE_SINGLE;
+	*/
 
 	m_sprSelectionOverlay.SetName( "Highlight" );
 	m_sprSelectionOverlay.Load( THEME->GetPathToG("MusicWheel highlight") );

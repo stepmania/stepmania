@@ -5,7 +5,6 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
-#include "Style.h"
 #include "Profile.h"
 
 class Song;

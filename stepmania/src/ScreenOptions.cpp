@@ -379,7 +379,7 @@ void ScreenOptions::Init( InputMode im, OptionRowData OptionRows[], int iNumOpti
 
 	/* Hack: if m_CurStyle is set, we're probably in the player or song options menu, so
 	 * the player name is meaningful.  Otherwise, we're probably in the system menu. */
-	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
+	if( GAMESTATE->m_pCurStyleDef != NULL )
 	{
 		FOREACH_HumanPlayer( p )
 		{

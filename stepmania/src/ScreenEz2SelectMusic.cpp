@@ -511,7 +511,7 @@ void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 {
 	if(USE_MODE_SWITCHER == 1)
 	{
-		m_ModeSwitcher.PrevMode(pn);
+		m_ModeSwitcher.ChangeMode(pn,-1);
 		MusicChanged();
 		m_MusicBannerWheel.StopBouncing();
 		SOUND->StopMusic();
@@ -548,7 +548,7 @@ void ScreenEz2SelectMusic::HarderDifficulty( PlayerNumber pn )
 {
 	if(USE_MODE_SWITCHER == 1)
 	{
-		m_ModeSwitcher.NextMode(pn);
+		m_ModeSwitcher.ChangeMode(pn,+1);
 		MusicChanged();
 		m_MusicBannerWheel.StopBouncing();
 		SOUND->StopMusic();

@@ -4,7 +4,6 @@
 #include "PlayerNumber.h"
 #include "StyleDef.h"
 #include "PlayerNumber.h"
-#include "Style.h"
 #include "Actor.h"
 
 #include <set>
@@ -27,7 +26,7 @@ struct NoteFieldMode
 	CString m_Id;
 
 	/* Styles that this is valid for; empty means all. */
-	set<Style> Styles;
+	set<const StyleDef*> Styles;
 
 	Actor m_Center;
 	Actor m_CenterTrack[MAX_NOTE_TRACKS];

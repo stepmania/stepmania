@@ -8,6 +8,7 @@
 #include "StyleDef.h"
 #include "song.h"
 #include "ActorUtil.h"
+#include "GameManager.h"
 
 #define PREVMODE_X		THEME->GetMetricF("ModeSwitcher","PrevModeX")
 #define PREVMODE_Y		THEME->GetMetricF("ModeSwitcher","PrevModeY")
@@ -60,20 +61,14 @@ ModeSwitcher::~ModeSwitcher()
 CString ModeSwitcher::GetStyleName()
 {
 	CString sStyleName;
-	CString sDiff[2];
+	CString sDiff[NUM_PLAYERS];
 
+	sStyleName = GAMESTATE->m_pCurStyleDef->m_szName;
+	sStyleName.MakeUpper();
 
-	switch(GAMESTATE->m_CurStyle)
+	FOREACH_PlayerNumber(i)
 	{
-		case STYLE_PUMP_SINGLE: sStyleName = "SINGLE\n"; break;
-		case STYLE_PUMP_DOUBLE: sStyleName = "FULL-DOUBLE\n"; break;
-		case STYLE_PUMP_HALFDOUBLE: sStyleName = "HALFDOUBLE\n"; break;
-		default: sStyleName = ""; break;
-	}
-
-	for(int i=0; i<2; i++)
-	{
-		if(GAMESTATE->IsPlayerEnabled(i))
+		if( GAMESTATE->IsPlayerEnabled(i) )
 		{
 			switch(GAMESTATE->m_PreferredDifficulty[i])
 			{
@@ -127,22 +122,17 @@ CString ModeSwitcher::GetStyleName()
 
 CString ModeSwitcher::GetNextStyleName()
 {
-	CString sStyleName[2];
-	CString sDiff[2];
+	CString sStyleName[NUM_PLAYERS];
+	CString sDiff[NUM_PLAYERS];
 	
-	for(int i=0; i<2; i++)
+	FOREACH_PlayerNumber(i)
 	{
 		if(GAMESTATE->IsPlayerEnabled(i))
 		{
 			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_CHALLENGE)
 			{
-				switch(GAMESTATE->m_CurStyle)
-				{
-					case STYLE_PUMP_SINGLE: sStyleName[i] = "SINGLE\n"; break;
-					case STYLE_PUMP_DOUBLE: sStyleName[i] = "FULL-DOUBLE\n"; break;
-					case STYLE_PUMP_HALFDOUBLE: sStyleName[i] = "HALFDOUBLE\n"; break;
-					default: sStyleName[i] = ""; break;
-				}
+				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
 				{
@@ -186,13 +176,9 @@ CString ModeSwitcher::GetNextStyleName()
 			}
 			else
 			{
-				switch(GAMESTATE->m_CurStyle)
-				{
-					case STYLE_PUMP_SINGLE: sStyleName[i] = "HALFDOUBLE\n"; break;
-					case STYLE_PUMP_DOUBLE: sStyleName[i] = "SINGLE\n"; break;
-					case STYLE_PUMP_HALFDOUBLE: sStyleName[i] = "FULL-DOUBLE\n"; break;
-					default: sStyleName[i] = ""; break;
-				}
+				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i].MakeUpper();
+
 				sDiff[i] = "Beginner\n";
 			}
 		}
@@ -209,22 +195,17 @@ CString ModeSwitcher::GetNextStyleName()
 
 CString ModeSwitcher::GetPrevStyleName()
 {
-	CString sStyleName[2];
-	CString sDiff[2];
+	CString sStyleName[NUM_PLAYERS];
+	CString sDiff[NUM_PLAYERS];
 	
-	for(int i=0; i<2; i++)
+	FOREACH_PlayerNumber(i)
 	{
 		if(GAMESTATE->IsPlayerEnabled(i))
 		{
 			if(GAMESTATE->m_PreferredDifficulty[i] != DIFFICULTY_BEGINNER)
 			{
-				switch(GAMESTATE->m_CurStyle)
-				{
-					case STYLE_PUMP_SINGLE: sStyleName[i] = "SINGLE\n"; break;
-					case STYLE_PUMP_DOUBLE: sStyleName[i] = "FULL-DOUBLE\n"; break;
-					case STYLE_PUMP_HALFDOUBLE: sStyleName[i] = "HALFDOUBLE\n"; break;
-					default: sStyleName[i] = ""; break;
-				}
+				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i].MakeUpper();
 
 				switch(GAMESTATE->m_PreferredDifficulty[i])
 				{
@@ -268,13 +249,9 @@ CString ModeSwitcher::GetPrevStyleName()
 			}
 			else
 			{
-				switch(GAMESTATE->m_CurStyle)
-				{
-					case STYLE_PUMP_SINGLE: sStyleName[i] = "FULL-DOUBLE\n"; break;
-					case STYLE_PUMP_DOUBLE: sStyleName[i] = "HALFDOUBLE\n"; break;
-					case STYLE_PUMP_HALFDOUBLE: sStyleName[i] = "SINGLE\n"; break;
-					default: sStyleName[i] = ""; break;
-				}
+				sStyleName[i] = GAMESTATE->m_pCurStyleDef->m_szName;
+				sStyleName[i].MakeUpper();
+
 				sDiff[i] = "Challenge\n";
 			}
 		}
@@ -289,7 +266,7 @@ CString ModeSwitcher::GetPrevStyleName()
 	return returnval;
 }
 
-void ModeSwitcher::NextMode(int pn)
+void ModeSwitcher::ChangeMode(PlayerNumber pn, int dir)
 {
 	if(GAMESTATE->m_CurGame == GAME_PUMP)
 	{
@@ -312,87 +289,33 @@ void ModeSwitcher::NextMode(int pn)
 			else
 			{
 				if(GAMESTATE->IsPlayerEnabled(PLAYER_1))
-					GAMESTATE->m_PreferredDifficulty[PLAYER_1] = DIFFICULTY_BEGINNER;
+					GAMESTATE->m_PreferredDifficulty[PLAYER_1] = DIFFICULTY_CHALLENGE;
 				if(GAMESTATE->IsPlayerEnabled(PLAYER_2))
-					GAMESTATE->m_PreferredDifficulty[PLAYER_2] = DIFFICULTY_BEGINNER;
+					GAMESTATE->m_PreferredDifficulty[PLAYER_2] = DIFFICULTY_CHALLENGE;
 			}
 		}
 
-		int iStyle = GAMESTATE->m_CurStyle;
-		switch(iStyle)
+		// Make a list of all styles for the current Game.
+		vector<const StyleDef*> vPossibleStyles;
+		GAMEMAN->GetStylesForGame( GAMESTATE->m_CurGame, vPossibleStyles );
+		ASSERT( !vPossibleStyles.empty() );
+
+		int index = 0;
+		vector<const StyleDef*>::const_iterator iter = find(vPossibleStyles.begin(), vPossibleStyles.end(), GAMESTATE->m_pCurStyleDef );
+		if( iter != vPossibleStyles.end() )
 		{
-			case STYLE_PUMP_SINGLE:
-			{
-				GAMESTATE->m_CurStyle = STYLE_PUMP_HALFDOUBLE;
-			}
-			break;
-			case STYLE_PUMP_HALFDOUBLE:
-			{
-				GAMESTATE->m_CurStyle = STYLE_PUMP_DOUBLE;
-			}
-			break;
-			case STYLE_PUMP_DOUBLE:
-			{
-				GAMESTATE->m_CurStyle = STYLE_PUMP_SINGLE;
-			}
-			break;
+			index = iter - vPossibleStyles.begin();
+			index += dir;
+			wrap( index, vPossibleStyles.size() );
 		}
+
+		GAMESTATE->m_pCurStyleDef = vPossibleStyles[index];
 	}
 	m_Stylename.SetText(GetStyleName());
 	m_Nextmode.SetText(GetNextStyleName());
 	m_Prevmode.SetText(GetPrevStyleName());
 }
 
-void ModeSwitcher::PrevMode(int pn)
-{
-	if(GAMESTATE->IsPlayerEnabled(pn))
-	{
-		if(GAMESTATE->m_PreferredDifficulty[pn] != 	DIFFICULTY_BEGINNER)
-		{
-			switch(GAMESTATE->m_PreferredDifficulty[pn])
-			{
-				case DIFFICULTY_CHALLENGE: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_HARD; break;
-				case DIFFICULTY_EASY: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_BEGINNER; break;
-				case DIFFICULTY_MEDIUM: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_EASY; break;
-				case DIFFICULTY_HARD: GAMESTATE->m_PreferredDifficulty[pn] = DIFFICULTY_MEDIUM; break;
-			}
-			m_Stylename.SetText(GetStyleName());
-			m_Nextmode.SetText(GetNextStyleName());
-			m_Prevmode.SetText(GetPrevStyleName());
-			return;
-		}
-		else
-		{
-			if(GAMESTATE->IsPlayerEnabled(PLAYER_1))
-				GAMESTATE->m_PreferredDifficulty[PLAYER_1] = DIFFICULTY_CHALLENGE;
-			if(GAMESTATE->IsPlayerEnabled(PLAYER_2))
-				GAMESTATE->m_PreferredDifficulty[PLAYER_2] = DIFFICULTY_CHALLENGE;
-		}
-	}
-
-	int iStyle = GAMESTATE->m_CurStyle;
-	switch(iStyle)
-	{
-		case STYLE_PUMP_SINGLE:
-		{
-			GAMESTATE->m_CurStyle = STYLE_PUMP_DOUBLE;
-		}
-		break;
-		case STYLE_PUMP_HALFDOUBLE:
-		{
-			GAMESTATE->m_CurStyle = STYLE_PUMP_SINGLE;
-		}
-		break;
-		case STYLE_PUMP_DOUBLE:
-		{
-			GAMESTATE->m_CurStyle = STYLE_PUMP_HALFDOUBLE;
-		}
-		break;
-	}
-	m_Stylename.SetText(GetStyleName());
-	m_Nextmode.SetText(GetNextStyleName());
-	m_Prevmode.SetText(GetPrevStyleName());
-}
 
 /*
  * (c) 2003 "Frieza"

@@ -3,7 +3,6 @@
 #ifndef Bookkeeper_H
 #define Bookkeeper_H
 
-#include "Style.h"
 #include "TimeConstants.h"
 
 

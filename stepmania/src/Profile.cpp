@@ -98,8 +98,7 @@ void Profile::InitGeneralData()
 	int i;
 	for( i=0; i<NUM_PLAY_MODES; i++ )
 		m_iNumSongsPlayedByPlayMode[i] = 0;
-	for( i=0; i<NUM_STYLES; i++ )
-		m_iNumSongsPlayedByStyle[i] = 0;
+	m_iNumSongsPlayedByStyle.clear();
 	for( i=0; i<NUM_DIFFICULTIES; i++ )
 		m_iNumSongsPlayedByDifficulty[i] = 0;
 	for( i=0; i<MAX_METER+1; i++ )
@@ -763,6 +762,10 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "TotalMines",					m_iTotalMines );
 	pGeneralDataNode->AppendChild( "TotalHands",					m_iTotalHands );
 
+	// Keep declared variables in a very local scope so they aren't 
+	// accidentally used where they're not intended.  There's a lot of
+	// copying and pasting in this code.
+
 	{
 		XNode* pUnlockedSongs = pGeneralDataNode->AppendChild("UnlockedSongs");
 		for( set<int>::const_iterator it = m_UnlockedSongs.begin(); it != m_UnlockedSongs.end(); ++it )
@@ -782,19 +785,18 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 
 	{
 		XNode* pNumSongsPlayedByStyle = pGeneralDataNode->AppendChild("NumSongsPlayedByStyle");
-		for( int i=0; i<NUM_STYLES; i++ )
+		for( map<const StyleDef*,int>::const_iterator iter = m_iNumSongsPlayedByStyle.begin();
+			iter != m_iNumSongsPlayedByStyle.end();
+			iter++ )
 		{
-			/* Don't save unplayed styles. */
-			if( !m_iNumSongsPlayedByStyle[i] )
-				continue;
-			
-			XNode *pStyleNode = pNumSongsPlayedByStyle->AppendChild( "Style", m_iNumSongsPlayedByStyle[i] );
-
-			const StyleDef *pStyle = GAMEMAN->GetStyleDefForStyle((Style)i);
-			const GameDef *g = GAMEMAN->GetGameDefForGame( pStyle->m_Game );
+			const StyleDef *s = iter->first;
+			const GameDef *g = GAMEMAN->GetGameDefForGame( s->m_Game );
 			ASSERT( g );
+			int iNumPlays = iter->second;
+			XNode *pStyleNode = pNumSongsPlayedByStyle->AppendChild( "Style", iNumPlays );
+
 			pStyleNode->AppendAttr( "Game", g->m_szName );
-			pStyleNode->AppendAttr( "Style", pStyle->m_szName );
+			pStyleNode->AppendAttr( "Style", s->m_szName );
 		}
 	}
 
@@ -943,8 +945,8 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 				CString sStyle;
 				if( !style->GetAttrValue( "Style", sStyle ) )
 					WARN_AND_CONTINUE;
-				Style s = GAMEMAN->GameAndStringToStyle( g, sStyle );
-				if( s == STYLE_INVALID )
+				const StyleDef* s = GAMEMAN->GameAndStringToStyle( g, sStyle );
+				if( s == NULL )
 					WARN_AND_CONTINUE;
 
 				style->GetValue( m_iNumSongsPlayedByStyle[s] );

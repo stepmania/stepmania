@@ -51,6 +51,8 @@ public:
 	};
 	ColumnInfo	m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];	// maps each players' column to a track in the NoteData
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
+	bool		m_bNeedsZoomOutWith2Players;
+	bool		m_bCanUseBeginnerHelper;
 
 	GameInput StyleInputToGameInput( const StyleInput& StyleI ) const;
 	StyleInput GameInputToStyleInput( const GameInput &GameI ) const;

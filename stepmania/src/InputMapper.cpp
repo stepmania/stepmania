@@ -522,14 +522,13 @@ bool InputMapper::GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& Devi
 
 void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 {
-	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
+	if( GAMESTATE->m_pCurStyleDef == NULL )
 	{
 		StyleI.MakeInvalid();
 		return;
 	}
 
-	const StyleDef* pStyleDef = GAMESTATE->GetCurrentStyleDef();
-	StyleI = pStyleDef->GameInputToStyleInput( GameI );
+	StyleI = GAMESTATE->m_pCurStyleDef->GameInputToStyleInput( GameI );
 }
 
 void InputMapper::GameToMenu( GameInput GameI, MenuInput &MenuI )

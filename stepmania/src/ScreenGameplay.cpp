@@ -222,7 +222,7 @@ void ScreenGameplay::Init()
 
 	g_CurStageStats.pSong = NULL; // set in LoadNextSong
 	g_CurStageStats.playMode = GAMESTATE->m_PlayMode;
-	g_CurStageStats.style = GAMESTATE->m_CurStyle;
+	g_CurStageStats.pStyleDef = GAMESTATE->m_pCurStyleDef;
 
     FOREACH_EnabledPlayer(p)
 	{

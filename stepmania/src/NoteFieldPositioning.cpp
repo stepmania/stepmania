@@ -10,7 +10,6 @@
 #include "GameManager.h"
 #include "IniFile.h"
 #include "Game.h"
-#include "Style.h"
 #include "GameDef.h"
 
 /* Copies of the current mode.  Update this by calling Load. */
@@ -98,8 +97,8 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 			const Game game = GAMEMAN->StringToGameType( bits[0] );
 			ASSERT(game != GAME_INVALID);
 
-			const Style style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
-			ASSERT(style != STYLE_INVALID);
+			const StyleDef *style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
+			ASSERT(style != NULL);
 			Styles.insert(style);
 		}
 	}
@@ -162,7 +161,7 @@ bool NoteFieldMode::MatchesCurrentGame() const
 	if(Styles.empty())
 		return true;
 
-	if(Styles.find(GAMESTATE->m_CurStyle) == Styles.end())
+	if(Styles.find(GAMESTATE->m_pCurStyleDef) == Styles.end())
 		return false;
 
 	return true;

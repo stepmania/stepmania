@@ -165,7 +165,7 @@ void JukeboxMenu::OnRowValueChanged( Row row )
 	switch( row )
 	{
 	case ROW_STYLE:
-		m_textValue[ROW_STYLE].SetText( GAMEMAN->GetStyleDefForStyle(GetSelectedStyle())->m_szName );
+		m_textValue[ROW_STYLE].SetText( GetSelectedStyle()->m_szName );
 		// fall through
 	case ROW_GROUP:
 		m_textValue[ROW_GROUP].SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );

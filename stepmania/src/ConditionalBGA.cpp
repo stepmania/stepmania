@@ -248,7 +248,7 @@ void ConditionalBGA::Load(CString szScreenName)
 					split( asSplitLine[1], ",", asStyles );
 					for( unsigned d=0; d<asStyles.size(); d++ )
 					{
-						LOG->Info("Style:%s (%d) (current: %d)",asStyles[d].c_str(),GAMEMAN->GameAndStringToStyle(GAMESTATE->m_CurGame,asStyles[d]),GAMESTATE->m_CurStyle);
+						LOG->Info( "Style:%s", asStyles[d].c_str() );
 
 						m_bgainfo[bgano].styles.push_back(GAMEMAN->GameAndStringToStyle(GAMESTATE->m_CurGame,asStyles[d]));
 					}
@@ -489,8 +489,8 @@ void ConditionalBGA::CheckBgaRequirements(BgaCondInfo info)
 		bool foundmatchingstyle=false;
 		for(unsigned d=0;d<info.styles.size();d++)
 		{
-			LOG->Info("info.styles = %d m_CurStyle = %d",info.styles[d],GAMESTATE->m_CurStyle);
-			if(info.styles[d] == GAMESTATE->m_CurStyle)
+			//LOG->Info("info.styles = %d m_CurStyle = %d",info.styles[d],GAMESTATE->m_pCurStyleDef);
+			if(info.styles[d] == GAMESTATE->m_pCurStyleDef)
 			{
 				foundmatchingstyle = true;
 				LOG->Info("Found Valid Style");

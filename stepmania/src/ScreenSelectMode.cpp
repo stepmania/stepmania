@@ -194,7 +194,7 @@ void ScreenSelectMode::UpdateSelectableChoices()
 
 		// FIXME for new premium prefs
 		const int SidesJoinedToPlay = 
-			(mc.m_style == STYLE_INVALID) ?
+			(mc.m_pStyleDef == NULL) ?
 			1 :
 			1;
 			if( PREFSMAN->GetPremium()!=PrefsManager::JOINT_PREMIUM ||

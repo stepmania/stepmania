@@ -21,7 +21,7 @@ void ModeChoice::Init()
 	m_bInvalid = true;
 	m_iIndex = -1;
 	m_game = GAME_INVALID;
-	m_style = STYLE_INVALID;
+	m_pStyleDef = NULL;
 	m_pm = PLAY_MODE_INVALID;
 	m_dc = DIFFICULTY_INVALID;
 	m_CourseDifficulty = DIFFICULTY_INVALID;
@@ -52,7 +52,7 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != m_pm )
 		return false;
-	if( m_style != STYLE_INVALID && GAMESTATE->m_CurStyle != m_style )
+	if( m_pStyleDef && GAMESTATE->m_pCurStyleDef != m_pStyleDef )
 		return false;
 	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
 	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
@@ -130,9 +130,9 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 
 		if( sName == "style" )
 		{
-			Style style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sValue );
-			if( style != STYLE_INVALID )
-				m_style = style;
+			const StyleDef* style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sValue );
+			if( style )
+				m_pStyleDef = style;
 			else
 				m_bInvalid |= true;
 		}
@@ -208,15 +208,15 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 	if( !m_bInvalid && sSteps != "" )
 	{
 		Song *pSong = (m_pSong != NULL)? m_pSong:GAMESTATE->m_pCurSong;
-		Style style = (m_style != STYLE_INVALID)? m_style:GAMESTATE->m_CurStyle;
-		if( pSong == NULL || style == STYLE_INVALID )
+		const StyleDef *style = m_pStyleDef ? m_pStyleDef : GAMESTATE->m_pCurStyleDef;
+		if( pSong == NULL || style == NULL )
 			RageException::Throw( "Must set Song and Style to set Steps" );
 
 		Difficulty dc = StringToDifficulty( sSteps );
 		if( dc != DIFFICULTY_EDIT )
-			m_pSteps = pSong->GetStepsByDifficulty( GAMEMAN->GetStyleDefForStyle(style)->m_StepsType, dc );
+			m_pSteps = pSong->GetStepsByDifficulty( m_pStyleDef->m_StepsType, dc );
 		else
-			m_pSteps = pSong->GetStepsByDescription( GAMEMAN->GetStyleDefForStyle(style)->m_StepsType, sSteps );
+			m_pSteps = pSong->GetStepsByDescription( m_pStyleDef->m_StepsType, sSteps );
 		if( m_pSteps == NULL )
 		{
 			m_sInvalidReason = "steps not found";
@@ -237,12 +237,12 @@ int GetNumCreditsPaid()
 }
 
 
-int GetCreditsRequiredToPlayStyle( Style style )
+int GetCreditsRequiredToPlayStyle( const StyleDef *style )
 {
 	if( PREFSMAN->GetPremium() == PrefsManager::JOINT_PREMIUM )
 		return 1;
 
-	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
+	switch( style->m_StyleType )
 	{
 	case StyleDef::ONE_PLAYER_ONE_CREDIT:
 		return 1;
@@ -256,9 +256,9 @@ int GetCreditsRequiredToPlayStyle( Style style )
 	}
 }
 
-static bool AreStyleAndPlayModeCompatible( Style style, PlayMode pm )
+static bool AreStyleAndPlayModeCompatible( const StyleDef *style, PlayMode pm )
 {
-	if( style == STYLE_INVALID || pm == PLAY_MODE_INVALID )
+	if( style == NULL || pm == PLAY_MODE_INVALID )
 		return true;
 
 	switch( pm )
@@ -269,12 +269,11 @@ static bool AreStyleAndPlayModeCompatible( Style style, PlayMode pm )
 		// This is correct for dance (ie, no rave for solo and doubles),
 		// and should be okay for pump .. not sure about other game types.
 		// Techno Motion scales down versus arrows, though, so allow this.
-		if( GAMEMAN->GetStyleDefForStyle(style)->m_iColsPerPlayer >= 6 && GAMESTATE->m_CurGame != GAME_TECHNO )
+		if( style->m_iColsPerPlayer >= 6 && GAMESTATE->m_CurGame != GAME_TECHNO )
 			return false;
 		
 		/* Don't allow battle modes if the style takes both sides. */
-		const StyleDef *sd = GAMEMAN->GetStyleDefForStyle( style );
-		if( sd->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS )
+		if( style->m_StyleType==StyleDef::ONE_PLAYER_TWO_CREDITS )
 			return false;
 	}
 
@@ -290,11 +289,11 @@ bool ModeChoice::IsPlayable( CString *why ) const
 		return false;
 	}
 
-	if ( m_style != STYLE_INVALID )
+	if ( m_pStyleDef )
 	{
 		int iCredits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 		const int iNumCreditsPaid = GetNumCreditsPaid();
-		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
+		const int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyleDef);
 		
 		switch( PREFSMAN->GetCoinMode() )
 		{
@@ -335,7 +334,7 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 		/* If both sides are joined, disallow singles modes, since easy to select them
 		 * accidentally, instead of versus mode. */
-		if( GAMEMAN->GetStyleDefForStyle(m_style)->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT &&
+		if( m_pStyleDef->m_StyleType == StyleDef::ONE_PLAYER_ONE_CREDIT &&
 			GAMESTATE->GetNumSidesJoined() > 1 )
 		{
 			if( why )
@@ -346,15 +345,15 @@ bool ModeChoice::IsPlayable( CString *why ) const
 
 	/* Don't allow a PlayMode that's incompatible with our current Style (if set),
 	 * and vice versa. */
-	if( m_pm != PLAY_MODE_INVALID || m_style != STYLE_INVALID )
+	if( m_pm != PLAY_MODE_INVALID || m_pStyleDef != NULL )
 	{
 		const PlayMode pm = (m_pm != PLAY_MODE_INVALID) ? m_pm : GAMESTATE->m_PlayMode;
-		const Style style = (m_style != STYLE_INVALID)? m_style: GAMESTATE->m_CurStyle;
+		const StyleDef *style = (m_pStyleDef != NULL)? m_pStyleDef: GAMESTATE->m_pCurStyleDef;
 		if( !AreStyleAndPlayModeCompatible( style, pm ) )
 		{
 			if( why )
 				*why = ssprintf("mode %s is incompatible with style %s",
-					PlayModeToString(pm).c_str(), GAMEMAN->GetStyleDefForStyle(style)->m_szName );
+					PlayModeToString(pm).c_str(), style->m_szName );
 
 			return false;
 		}
@@ -409,15 +408,15 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	if( m_pm != PLAY_MODE_INVALID )
 		GAMESTATE->m_PlayMode = m_pm;
 
-	if( m_style != STYLE_INVALID )
+	if( m_pStyleDef != NULL )
 	{
-		GAMESTATE->m_CurStyle = m_style;
+		GAMESTATE->m_pCurStyleDef = m_pStyleDef;
 
 		// It's possible to choose a style that didn't have enough 
 		// players joined.  If enough players aren't joined, then 
 		// we need to subtract credits for the sides that will be
 		// joined as a result of applying this option.
-		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
+		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyleDef);
 		int iNumCreditsPaid = GetNumCreditsPaid();
 		
 		int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
@@ -426,7 +425,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 
 		// If only one side is joined and we picked a style
 		// that requires both sides, join the other side.
-		switch( GAMEMAN->GetStyleDefForStyle(m_style)->m_StyleType )
+		switch( m_pStyleDef->m_StyleType )
 		{
 		case StyleDef::ONE_PLAYER_ONE_CREDIT:
 			break;
@@ -477,7 +476,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 	//
 	// We know what players are joined at the time we set the Style
 	//
-	if( m_style != STYLE_INVALID )
+	if( m_pStyleDef != NULL )
 	{
 		GAMESTATE->PlayersFinalized();
 	}
@@ -487,7 +486,7 @@ bool ModeChoice::IsZero() const
 {
 	if( m_game != GAME_INVALID ||
 		m_pm != PLAY_MODE_INVALID ||
-		m_style != STYLE_INVALID ||
+		m_pStyleDef != NULL ||
 		m_dc != DIFFICULTY_INVALID ||
 		m_sAnnouncer != "" ||
 		m_sModifiers != "" ||

@@ -131,7 +131,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
-		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+		GAMESTATE->m_pCurStyleDef = GAMEMAN->GameAndStringToStyle( GAME_DANCE, "versus" );
 		StageStats ss;
 		for( int z = 0; z < 3; ++z )
 		{

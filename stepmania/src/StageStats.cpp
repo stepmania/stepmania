@@ -12,7 +12,7 @@ vector<StageStats>	g_vPlayedStageStats;
 void StageStats::Init()
 {
 	playMode = PLAY_MODE_INVALID;
-	style = STYLE_INVALID;
+	pStyleDef = NULL;
 	pSong = NULL;
 	StageType = STAGE_INVALID;
 	fGameplaySeconds = 0;

@@ -7,7 +7,6 @@
 #include "PlayerOptions.h"
 #include "SongOptions.h"
 #include "Game.h"
-#include "Style.h"
 #include "Grade.h"
 #include "Attack.h"
 #include "RageTimer.h"
@@ -25,6 +24,7 @@ class NoteFieldPositioning;
 class Character;
 class TimingData;
 struct StageStats;
+class StyleDef;
 
 class GameState
 {
@@ -46,7 +46,7 @@ public:
 	// Main state info
 	//
 	Game				m_CurGame;
-	Style				m_CurStyle;
+	const StyleDef*		m_pCurStyleDef;
 	bool				m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	bool				m_bPlayersFinalized;
 	PlayMode			m_PlayMode;			// many screens display different info depending on this value

@@ -4,7 +4,6 @@
 #define MODECHOICE_H
 
 #include "Game.h"
-#include "Style.h"
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include <map>
@@ -14,6 +13,7 @@ class Steps;
 class Course;
 class Trail;
 class Character;
+class StyleDef;
 
 struct ModeChoice		// used in SelectMode
 {
@@ -33,7 +33,7 @@ struct ModeChoice		// used in SelectMode
 	CString		m_sInvalidReason;
 	int			m_iIndex;
 	Game		m_game;
-	Style		m_style;
+	const StyleDef*	m_pStyleDef;
 	PlayMode	m_pm;
 	Difficulty	m_dc;
 	CourseDifficulty	m_CourseDifficulty;

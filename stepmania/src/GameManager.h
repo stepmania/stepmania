@@ -5,7 +5,6 @@
 
 #include "GameDef.h"
 #include "StyleDef.h"
-#include "Style.h"
 #include "Game.h"
 class IniFile;
 
@@ -17,13 +16,13 @@ public:
 	~GameManager();
 
 	GameDef*	GetGameDefForGame( Game g );
-	static const StyleDef*	GetStyleDefForStyle( Style s );
-
-	void	GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
+	
+	void	GetStylesForGame( Game game, vector<const StyleDef*>& aStylesAddTo, bool editor=false );
+	void	GetAllStyles( vector<const StyleDef*>& aStylesAddTo, bool editor=false );
 	void	GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo );
-	Style	GetEditorStyleForNotesType( StepsType st );
-	Style	GetDemonstrationStyleForGame( Game game );
-	Style	GetHowToPlayStyleForGame( Game game );
+	const StyleDef*	GetEditorStyleForNotesType( StepsType st );
+	const StyleDef*	GetDemonstrationStyleForGame( Game game );
+	const StyleDef*	GetHowToPlayStyleForGame( Game game );
 
 	void GetEnabledGames( vector<Game>& aGamesOut );
 	bool IsGameEnabled( Game game );
@@ -33,8 +32,8 @@ public:
 	static CString NotesTypeToString( StepsType st );
 	static CString NotesTypeToThemedString( StepsType st );
 	static Game StringToGameType( CString sGameType );
-	Style GameAndStringToStyle( Game game, CString sStyle );
-	static CString StyleToThemedString( Style s );
+	const StyleDef* GameAndStringToStyle( Game game, CString sStyle );
+	static CString StyleToThemedString( const StyleDef* s );
 };
 
 extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program

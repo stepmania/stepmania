@@ -30,7 +30,7 @@ MenuInput GameDef::GameInputToMenuInput( GameInput GameI ) const
 	PlayerNumber pn;
 
 	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_TWO_CREDITS;
-	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
+	if( GAMESTATE->GetCurrentStyleDef() )
 		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
 	switch( type )
 	{
@@ -71,7 +71,7 @@ void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) con
 
 	GameController controller[2];
 	StyleDef::StyleType type = StyleDef::TWO_PLAYERS_TWO_CREDITS;
-	if( GAMESTATE->m_CurStyle != STYLE_INVALID )
+	if( GAMESTATE->GetCurrentStyleDef() )
 		type = GAMESTATE->GetCurrentStyleDef()->m_StyleType;
 
 	int iNumSidesUsing = 1;

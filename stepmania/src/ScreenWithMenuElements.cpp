@@ -36,7 +36,7 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	UtilOnCommand( m_autoHeader, m_sName );
 	this->AddChild( m_autoHeader );
 
-	if( STYLE_ICON && GAMESTATE->m_CurStyle != STYLE_INVALID )
+	if( STYLE_ICON && GAMESTATE->m_pCurStyleDef )
 	{
 		CString sIconFileName = ssprintf("MenuElements icon %s", GAMESTATE->GetCurrentStyleDef()->m_szName );
 		m_sprStyleIcon.SetName( "StyleIcon" );
