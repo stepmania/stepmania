@@ -71,7 +71,7 @@ struct oglspecs_t {
 	bool EXT_texture_env_combine;
 } g_oglspecs;
 
-int					g_CurrentHeight, g_CurrentWidth;
+int					g_CurrentHeight, g_CurrentWidth, g_CurrentBPP;
 
 int RageDisplay::GetFPS() const { return g_iFPS; }
 int RageDisplay::GetVPF() const { return g_iVPF; }
@@ -214,16 +214,19 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	bool need_reload = false;
 
 #ifndef SDL_HAS_CHANGEVIDEOMODE
-	/* We can't change the video mode without nuking the GL context.  If we have
-	 * a screen, NULL it out, and signal the caller to reload all textures. */
-	if(g_screen) {
-		g_screen = NULL;
-		need_reload = true;
-		TEXTUREMAN->InvalidateTextures();
-	}
+	/* We can't change the video mode without nuking the GL context. */
+	need_reload = true;
 #endif
 
-	if(!g_screen) {
+	if( bpp != g_CurrentBPP )
+		need_reload = true; /* can't do this with SDL_SM_ChangeVideoMode_OpenGL */
+
+	if(need_reload) {
+		if(TEXTUREMAN)
+			TEXTUREMAN->InvalidateTextures();
+	}
+
+	if(!g_screen || need_reload) {
 		g_screen = SDL_SetVideoMode(width, height, bpp, g_flags);
 		if(!g_screen)
 			throw RageException("SDL_SetVideoMode failed: %s", SDL_GetError());
@@ -254,6 +257,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	
 	g_CurrentWidth = g_screen->w;
 	g_CurrentHeight = g_screen->h;
+	g_CurrentBPP = bpp;
 
 	SetViewport(0,0);
 
