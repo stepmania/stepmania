@@ -1,6 +1,6 @@
 REQUIREMENTS
-Mac OS X 10.3 or higher is required. The Mac OS X 10.2.7 SDK needs to be
-installed. (See NOTE.)
+Mac OS X 10.3 or higher is required. The Mac OS X 10.2.8 SDK needs to be
+installed.
 XCode is required to build. Even though the stepmania project appears to
 be a ProjectBuilder project, it has been updated by XCode and no longer
 works with ProjectBuilder.
@@ -22,12 +22,6 @@ Next cd to the build directory and run the command:
 $ ./BuildInstaller ../scripts/installer.config Installer.app/Contents/Resources
 And at the prompt enter: ../..
 Now Installer.app is ready to be distributed.
-
-NOTE
-I added the symlink:
-ln -s /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries \
-/Developer/SDKs/MacOSX10.2.7.sdk/System/Library/Frameworks/OpenGL.framework/Versions/A
-because Apple was stupid and screwed up that framework in all of the SDKs.
 
 Steve Checkoway
 steve@cs.washington.edu
