@@ -7,28 +7,15 @@
 /* This class changes the sampling rate of a sound. */
 class RageSoundReader_Resample: public SoundReader
 {
-	int samplerate;
-
-	SoundReader *source;
-
-	mutable RageSoundResampler resamp;
-
 public:
 	/* We own source. */
-	void Open(SoundReader *source);
-	int GetLength() const;
-	int GetLength_Fast() const;
-	int SetPosition_Accurate(int ms);
-	int SetPosition_Fast(int ms);
-	int Read(char *buf, unsigned len);
-	RageSoundReader_Resample();
-	virtual ~RageSoundReader_Resample();
-	SoundReader *Copy() const;
+	virtual void Open(SoundReader *source) = 0;
 
 	/* Change the actual sample rate of a sound. */
-	void SetSampleRate(int hz);
+	virtual void SetSampleRate(int hz) = 0;
 
-	int GetSampleRate() const { return samplerate; }
+	enum ResampleQuality { RESAMP_FAST, RESAMP_NORMAL, RESAMP_HIGHQUALITY };
+	static RageSoundReader_Resample *MakeResampler( ResampleQuality q );
 };
 
 #endif
