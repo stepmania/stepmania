@@ -245,7 +245,8 @@ float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 	if( iActualDancePoints[pn] == iPossibleDancePoints[pn] )
 		return 1;	// correct for rounding error
 
-	ASSERT( iActualDancePoints[pn] <= iPossibleDancePoints[pn] );
+	/* This can happen in battle, with transform attacks. */
+	//RAGE_ASSERT_M( iActualDancePoints[pn] <= iPossibleDancePoints[pn], ssprintf("%i/%i", iActualDancePoints[pn], iPossibleDancePoints[pn]) );
 
 	float fPercentDancePoints =  iActualDancePoints[pn] / (float)iPossibleDancePoints[pn];
 	
