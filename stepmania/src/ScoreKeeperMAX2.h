@@ -49,8 +49,8 @@ public:
 
 	// This must be calculated using only cached radar values so that we can 
 	// do it quickly.
-	static int	GetPossibleDancePoints( const float* fRadars );
-	static int	GetPossibleDancePoints( const float* fOriginalRadars, const float* fPostRadars );
+	static int	GetPossibleDancePoints( const RadarValues& fRadars );
+	static int	GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
 
 private:
 	static int TapNoteScoreToDancePoints( TapNoteScore tns );

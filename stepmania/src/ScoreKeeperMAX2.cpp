@@ -71,11 +71,11 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Song*>& apSongs, const vector<Ste
 			NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, po, GAMESTATE->GetCurrentStyleDef()->m_StepsType, fStartBeat, fEndBeat );
 		}
 
-		float fRadarValuesPostModifiers[NUM_RADAR_CATEGORIES];
+		RadarValues radarValuesPostModifiers;
 		FOREACH_RadarCategory( rc )
-			fRadarValuesPostModifiers[rc] += NoteDataUtil::GetRadarValue( playerNoteDataPostModifiers, rc, pSong->m_fMusicLengthSeconds );
+			radarValuesPostModifiers[rc] += NoteDataUtil::GetRadarValue( playerNoteDataPostModifiers, rc, pSong->m_fMusicLengthSeconds );
 		 
-		iTotalPossibleDancePoints += this->GetPossibleDancePoints( pSteps->GetRadarValues(), fRadarValuesPostModifiers );
+		iTotalPossibleDancePoints += this->GetPossibleDancePoints( pSteps->GetRadarValues(), radarValuesPostModifiers );
 	}
 	g_CurStageStats.iPossibleDancePoints[pn_] = iTotalPossibleDancePoints;
 
@@ -429,7 +429,7 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 }
 
 
-int ScoreKeeperMAX2::GetPossibleDancePoints( const float* fRadars )
+int ScoreKeeperMAX2::GetPossibleDancePoints( const RadarValues& fRadars )
 {
 	/* Note that, if Marvelous timing is disabled or not active (not course mode),
 	 * PERFECT will be used instead. */
@@ -440,7 +440,7 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const float* fRadars )
 	   NumHolds*HoldNoteScoreToDancePoints(HNS_OK);
 }
 
-int ScoreKeeperMAX2::GetPossibleDancePoints( const float* fOriginalRadars, const float* fPostRadars )
+int ScoreKeeperMAX2::GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
 {
 	/*
 	 * The logic here is that if you use a modifier that adds notes, you should have to
