@@ -1514,7 +1514,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					{
 						RadarCategory rc = (RadarCategory)r;
 						GAMESTATE->m_CurStageStats.fRadarPossible[p][r] = NoteDataUtil::GetRadarValue( m_Player[p], rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
-						GAMESTATE->m_CurStageStats.fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
+						GAMESTATE->m_CurStageStats.fRadarActual[p][r] = m_Player[p].GetActualRadarValue( rc, (PlayerNumber)p, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds );
 					}
 				}
 			}

@@ -13,6 +13,7 @@
 
 #include "GameConstantsAndTypes.h"
 #include "NoteData.h"
+#include "PlayerNumber.h"
 
 class NoteDataWithScoring : public NoteData
 {
@@ -54,14 +55,14 @@ public:
 	int LastTapNoteScoreTrack(unsigned row) const;
 	TapNoteScore LastTapNoteScore(unsigned row) const;
 
-	float GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const;
-	float GetActualStreamRadarValue( float fSongSeconds ) const;
-	float GetActualVoltageRadarValue( float fSongSeconds ) const;
-	float GetActualAirRadarValue( float fSongSeconds ) const;
-	float GetActualFreezeRadarValue( float fSongSeconds ) const;
-	float GetActualChaosRadarValue( float fSongSeconds ) const;
+	float GetActualRadarValue( RadarCategory rv, PlayerNumber pn, float fSongSeconds ) const;
 
-	int GetMaxCombo() const; // used for groove radar calculations
+private:
+	float GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const;
+	float GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const;
+	float GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const;
+	float GetActualFreezeRadarValue( float fSongSeconds, PlayerNumber pn ) const;
+	float GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const;
 };
 
 #endif

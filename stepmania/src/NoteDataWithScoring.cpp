@@ -11,6 +11,7 @@
 */
 
 #include "NoteDataWithScoring.h"
+#include "GameState.h"
 
 NoteDataWithScoring::NoteDataWithScoring()
 {
@@ -26,35 +27,6 @@ void NoteDataWithScoring::Init()
 
 	m_HoldNoteScores.clear();
 	m_fHoldNoteLife.clear();
-}
-
-int NoteDataWithScoring::GetMaxCombo() const
-{
-	int iNumSuccessfulTapNotes = 0;
-	int fEndBeat = GetMaxBeat()+1;
-
-	unsigned iStartIndex = BeatToNoteRow( (float)0 );
-	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
-
-	int combo = 0;
-	int maxcombo = 0;
-
-	for( unsigned i=iStartIndex; i<min(float(iEndIndex), float(m_TapNoteScores[0].size())); i++ )
-	{
-		for( int t=0; t<GetNumTracks(); t++ )
-		{
-			if( this->GetTapNote(t, i) != TAP_EMPTY )
-				if (GetTapNoteScore(t, i) >= TNS_GREAT)
-					combo++;
-				else
-				{
-					if (combo > maxcombo) maxcombo = combo;
-					combo = 0;
-				}
-		}
-	}
-	
-	return max(combo, maxcombo);
 }
 
 int NoteDataWithScoring::GetNumTapNotesWithScore( TapNoteScore tns, const float fStartBeat, float fEndBeat ) const
@@ -89,7 +61,7 @@ int NoteDataWithScoring::GetNumDoublesWithScore( TapNoteScore tns, const float f
 	unsigned iStartIndex = BeatToNoteRow( fStartBeat );
 	unsigned iEndIndex = BeatToNoteRow( fEndBeat );
 
-	for( unsigned i=iStartIndex; i<min(static_cast<float>(iEndIndex), static_cast<float>(m_TapNoteScores[0].size())); i++ )
+	for( unsigned i=iStartIndex; i<min(float(iEndIndex), float(m_TapNoteScores[0].size())); i++ )
 	{
 		int iNumNotesThisIndex = 0;
 		TapNoteScore	minTapNoteScore = TNS_MARVELOUS;
@@ -178,20 +150,20 @@ TapNoteScore NoteDataWithScoring::LastTapNoteScore(unsigned row) const
 }
 
 
-float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const
+float NoteDataWithScoring::GetActualRadarValue( RadarCategory rv, PlayerNumber pn, float fSongSeconds ) const
 {
 	switch( rv )
 	{
-	case RADAR_STREAM:	return GetActualStreamRadarValue( fSongSeconds );	break;
-	case RADAR_VOLTAGE:	return GetActualVoltageRadarValue( fSongSeconds );	break;
-	case RADAR_AIR:		return GetActualAirRadarValue( fSongSeconds );		break;
-	case RADAR_FREEZE:	return GetActualFreezeRadarValue( fSongSeconds );	break;
-	case RADAR_CHAOS:	return GetActualChaosRadarValue( fSongSeconds );	break;
+	case RADAR_STREAM:	return GetActualStreamRadarValue( fSongSeconds, pn );	break;
+	case RADAR_VOLTAGE:	return GetActualVoltageRadarValue( fSongSeconds, pn );	break;
+	case RADAR_AIR:		return GetActualAirRadarValue( fSongSeconds, pn );		break;
+	case RADAR_FREEZE:	return GetActualFreezeRadarValue( fSongSeconds, pn );	break;
+	case RADAR_CHAOS:	return GetActualChaosRadarValue( fSongSeconds, pn );	break;
 	default:	ASSERT(0);  return 0;
 	}
 }
 
-float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds ) const
+float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 /*	// density of steps
 	int iNumSuccessfulNotes = 
@@ -204,19 +176,19 @@ float NoteDataWithScoring::GetActualStreamRadarValue( float fSongSeconds ) const
 	return min( fReturn, 1.0f );
 	*/
 
-	int MaxCombo = GetMaxCombo();
-	float TotalSteps = GetNumTapNotes();
+	int MaxCombo = GAMESTATE->m_CurStageStats.iMaxCombo[pn];
+	int TotalSteps = GetNumTapNotes();
 
 	return min( (float)MaxCombo/TotalSteps, 1.0f);
 }
 
-float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds ) const
+float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 	// voltage is essentialy perfects divided by # of steps
-	float totalnotes = GetNumTapNotes();
-	float perfects = GetNumTapNotesWithScore(TNS_PERFECT) + GetNumTapNotesWithScore(TNS_MARVELOUS);
+	int totalnotes = GetNumTapNotes();
+	int perfects = GetNumTapNotesWithScore(TNS_PERFECT) + GetNumTapNotesWithScore(TNS_MARVELOUS);
 
-	float result = perfects/totalnotes;
+	float result = float(perfects)/totalnotes;
 	return result;
 
 /*	float fAvgBPS = GetLastBeat() / fSongSeconds;
@@ -243,7 +215,7 @@ float NoteDataWithScoring::GetActualVoltageRadarValue( float fSongSeconds ) cons
 	*/
 }
 
-float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds ) const
+float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 	// number of doubles
 	int iNumDoubles = 
@@ -258,7 +230,7 @@ float NoteDataWithScoring::GetActualAirRadarValue( float fSongSeconds ) const
 	return min( fReturn, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds ) const
+float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 /*	// count number of triplets
 	int iNumChaosNotesCompleted = 0;
@@ -272,32 +244,15 @@ float NoteDataWithScoring::GetActualChaosRadarValue( float fSongSeconds ) const
 	return min( fReturn, 1.0f );
 	*/
 
-	float marvelous = GetNumTapNotesWithScore(TNS_MARVELOUS);
-	float perfect = GetNumTapNotesWithScore(TNS_PERFECT);
-	float great = GetNumTapNotesWithScore(TNS_GREAT);
-	float good = GetNumTapNotesWithScore(TNS_GOOD);
-	float boo = GetNumTapNotesWithScore(TNS_BOO);
-	float miss = GetNumTapNotesWithScore(TNS_MISS);
+	int PossibleDP = GAMESTATE->m_CurStageStats.iPossibleDancePoints[pn];
+	int ActualDP = GAMESTATE->m_CurStageStats.iActualDancePoints[pn];
 
-	float ok = GetNumHoldNotesWithScore(HNS_OK);
-	float holdnotes = GetNumHoldNotes();
+	float fResult = float(ActualDP)/PossibleDP;
 
-	float DPEarned =  2 * (marvelous + perfect)
-					+     (great)
-					- 4 * (boo)
-					- 8 * (miss)
-					+ 6 * (ok);
-
-	float TotalDP =	2 * (marvelous + perfect + great
-						+ good + boo + miss)
-						+ 6 * holdnotes;
-
-	float fResult = DPEarned/TotalDP;
-
-	return min( fResult, 1.0f);
+	return min( fResult, 1.0f );
 }
 
-float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds ) const
+float NoteDataWithScoring::GetActualFreezeRadarValue( float fSongSeconds, PlayerNumber pn ) const
 {
 	// number of hold steps
 	float totalsteps = (float)GetNumHoldNotes();
