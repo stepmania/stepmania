@@ -1050,7 +1050,7 @@ RadarValues Course::GetRadarValues( StepsType st, CourseDifficulty cd ) const
 	RadarValues rv;
 
 	vector<Course::Info> ci;
-	GAMESTATE->m_pCurCourse->GetCourseInfo( st, ci, cd );
+	this->GetCourseInfo( st, ci, cd );
 	for( unsigned i = 0; i < ci.size(); ++i )
 	{
 		const Steps *pNotes = ci[i].pNotes;
