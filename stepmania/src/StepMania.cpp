@@ -215,8 +215,6 @@ void ResetGame( bool ReturnToFirstScreen )
 	}
 	SaveGamePrefsToDisk();
 
-	PREFSMAN->m_bFirstRun = false;
-
 
 	//
 	// update last seen joysticks
@@ -241,7 +239,14 @@ void ResetGame( bool ReturnToFirstScreen )
 
 
 	if( ReturnToFirstScreen )
-		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+	{
+		if( PREFSMAN->m_bFirstRun )
+			SCREENMAN->SetNewScreen( THEME->GetMetric("Common","FirstRunInitialScreen") );
+		else
+			SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+	}
+
+	PREFSMAN->m_bFirstRun = false;
 }
 
 static void GameLoop();
