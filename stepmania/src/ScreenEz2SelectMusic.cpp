@@ -58,6 +58,14 @@
 #define INFOFRAME_X		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameX")
 #define INFOFRAME_Y		THEME->GetMetricF("ScreenEz2SelectMusic","InfoFrameY")
 
+#define ARTIST_X				THEME->GetMetricF("ScreenEz2SelectMusic","ArtistX")
+#define ARTIST_Y				THEME->GetMetricF("ScreenEz2SelectMusic","ArtistY")
+#define TITLE_X				THEME->GetMetricF("ScreenEz2SelectMusic","TitleX")
+#define TITLE_Y				THEME->GetMetricF("ScreenEz2SelectMusic","TitleY")
+#define SUBTITLE_X				THEME->GetMetricF("ScreenEz2SelectMusic","SubTitleX")
+#define SUBTITLE_Y				THEME->GetMetricF("ScreenEz2SelectMusic","SubTitleY")
+
+
 #define USE_MODE_SWITCHER THEME->GetMetricI("ScreenEz2SelectMusic","UseModeSwitcher")
 
 const float TWEEN_TIME		= 0.5f;
@@ -175,6 +183,19 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic() : Screen("ScreenEz2SelectMusic")
 		m_CurrentGroup.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
 		m_CurrentGroup.SetXY( GROUPNAME_X, GROUPNAME_Y );
 		this->AddChild(&m_CurrentGroup );
+
+		m_CurrentTitle.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentTitle.SetXY( TITLE_X, TITLE_Y );
+		this->AddChild(&m_CurrentTitle );
+
+		m_CurrentSubTitle.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentSubTitle.SetXY( SUBTITLE_X, SUBTITLE_Y );
+		m_CurrentSubTitle.SetZoom(0.8f);
+		this->AddChild(&m_CurrentTitle );
+
+		m_CurrentArtist.LoadFromFont( THEME->GetPathToF("ScreenEz2SelectMusic GroupName") );
+		m_CurrentArtist.SetXY( ARTIST_X, ARTIST_Y );
+		this->AddChild(&m_CurrentArtist );
 
 		m_DifficultyRating.SetOrientation(DIFFICULTYRATING_ORIENTATION);
 		m_DifficultyRating.SetX(DIFFICULTYRATING_X);
@@ -582,6 +603,10 @@ void ScreenEz2SelectMusic::MusicChanged()
 
 	m_CurrentGroup.SetText( SONGMAN->ShortenGroupName( pSong->m_sGroupName ) , "");
 	m_CurrentGroup.SetDiffuse( SONGMAN->GetGroupColor(pSong->m_sGroupName) );
+
+	m_CurrentTitle.SetText( pSong->m_sMainTitle, "");
+	m_CurrentSubTitle.SetText( pSong->m_sSubTitle, "");
+	m_CurrentArtist.SetText( pSong->m_sArtist, "");
 
 	if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 	{

@@ -65,6 +65,10 @@ protected:
 	Sprite				m_sprBalloon;
 	BitmapText	m_PumpDifficultyRating;
 	BitmapText  m_CurrentGroup;
+	BitmapText  m_CurrentTitle;
+	BitmapText  m_CurrentSubTitle;
+	BitmapText  m_CurrentArtist;
+
 
 	RageSound			m_soundOptionsChange;
 	RageSound			m_soundMusicChange;
