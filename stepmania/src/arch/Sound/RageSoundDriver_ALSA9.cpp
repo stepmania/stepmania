@@ -11,14 +11,11 @@
 
 const int channels = 2;
 const int samplerate = 44100;
-const int bytes_per_sample = 2;  /* 16-bit */
 
 const int samples_per_frame = channels;
-const int bytes_per_frame = bytes_per_sample * samples_per_frame;
+const int bytes_per_frame = sizeof(Sint16) * samples_per_frame;
 
-const int buffersize_frames = 1024*2;
-const int buffersize_samples = buffersize_frames * samples_per_frame;
-const int buffersize_bytes = buffersize_frames * bytes_per_frame;
+const unsigned max_writeahead = 1024*8;
 
 
 /* int err; must be defined before using this macro */
@@ -43,54 +40,54 @@ void RageSound_ALSA9::MixerThread()
 	 * assigns it; we might get here before that happens, though. */
 	while(!SOUNDMAN && !shutdown) SDL_Delay(10);
 
-	RageTimer Speaker;
-
-	float delay_ms, passed_ms;
-	unsigned int frames_read;
-
-	while(!shutdown) {
-		frames_read = GetData();
-		delay_ms = 1000 * float(frames_read) / samplerate;
-
-		passed_ms = Speaker.GetDeltaTime();
-
-		//LOG->Trace("@@@@@ DELAY %f - %f = %f ms", delay_ms, passed_ms, delay_ms - passed_ms);
-		
-		if (delay_ms > passed_ms)
-			/* If we sleep for the full delay, we will just
-			 * miss the deadline, the ALSA pipe will underrun,
-			 * we will have to recover, lots of bad things to
-			 * make the sound start skipping.
-			 * Instead, just sleep for half the time
-			 * so we wake up with time to spare
-			 */
-			SDL_Delay(int(delay_ms-passed_ms) / 2);
-		else
-			LOG->Trace("RageSound_ALSA9: Missed deadline by %f ms", (delay_ms - passed_ms) );
-
+	while(!shutdown)
+	{
+		unsigned int frames_read = GetData();
+		const float delay_ms = 1000 * float(max_writeahead) / samplerate;
+		SDL_Delay( int(delay_ms) / 2);
 	}
 }
 
 /* Returns the number of frames processed */
-unsigned int RageSound_ALSA9::GetData()
+int RageSound_ALSA9::GetData()
 {
 	LockMutex L(SOUNDMAN->lock);
 
-    int err;
+	snd_pcm_sframes_t avail_frames = snd_pcm_avail_update(pcm);
+	if( avail_frames == -EPIPE )
+	{
+		LOG->Trace("underrun");
+		int err = snd_pcm_prepare(pcm);
+		ALSA_ASSERT("snd_pcm_prepare (Recover)");
+		avail_frames = snd_pcm_avail_update(pcm);
+	}
+	if( avail_frames < 0 )
+	{
+		LOG->Trace( "RageSoundDriver_ALSA9::GetData: snd_pcm_avail_update: %s", snd_strerror(avail_frames) );
+		return 0;
+	}
+
+	const snd_pcm_sframes_t filled_frames = total_frames - avail_frames;
+	const snd_pcm_sframes_t frames_to_fill = (max_writeahead - filled_frames) & ~3;
+	ASSERT( frames_to_fill >= 0 );
+	ASSERT( frames_to_fill <= (int)max_writeahead );
+
+	LOG->Trace("%li avail, %li filled, %li to", avail_frames, filled_frames, frames_to_fill);
+	if( frames_to_fill <= 0 )
+	{
+		LOG->Trace("skip");
+		return 0;
+	}
 
 	/* Sint16 represents a single sample
 	 * each frame contains one sample per channel
 	 */
-    static Sint16 *buf = NULL, *buf2 = NULL;
-
+    static Sint16 *buf = NULL;
 	if (!buf)
-	{
-		buf = new Sint16[buffersize_samples];
-		buf2 = new Sint16[buffersize_samples];
-	}
-    memset(buf, 0, buffersize_bytes);
-    memset(buf2, 0, buffersize_bytes);
+		buf = new Sint16[max_writeahead*samples_per_frame*4];
+
     SoundMixBuffer mix;
+	mix.SetVolume( SOUNDMAN->GetMixVolume() );
 
 	for(unsigned i = 0; i < sounds.size(); ++i)
 	{
@@ -101,45 +98,39 @@ unsigned int RageSound_ALSA9::GetData()
 		 * Get the units straight,
 		 * <bytes> = GetPCM(<bytes*>, <bytes>, <frames>)
 		 */
-		unsigned got = sounds[i]->snd->GetPCM((char *) buf, buffersize_bytes, last_cursor_pos);  
+		unsigned got = sounds[i]->snd->GetPCM( (char *) buf, frames_to_fill*bytes_per_frame, last_cursor_pos ) / sizeof(Sint16);
+		mix.write((Sint16 *) buf, got);
 
-		mix.write((Sint16 *) buf, got/bytes_per_sample);
-
-		if(got < buffersize_bytes)
+		if( int(got) < frames_to_fill )
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
 		}
     }
 
-	mix.read((Sint16*)buf2);
-	int r;
-	Sint16 *start = buf2;
-	int new_cursor = last_cursor_pos;
+    memset( buf, 0, sizeof(Sint16) * frames_to_fill * samples_per_frame );
+	mix.read((Sint16*)buf);
 
-	snd_pcm_uframes_t remaining = buffersize_frames;
-	while (remaining > 0)
+	/* We should be able to write it all.  If we don't, treat it as an error. */
+	int wrote = snd_pcm_mmap_writei( pcm, buf, frames_to_fill );
+	if( wrote == -EPIPE )
 	{
-		r = snd_pcm_mmap_writei(pcm, start, remaining);
-		if (r == -EAGAIN)
-			continue;
-
-		if (r <= 0)
-		{
-			LOG->Trace("RageSoundDriver_ALSA9::GetData: snd_pcm_mmap_writei: %s", snd_strerror(r));
-			Recover(r);
-			break;
-		}
-
-		start += r*samples_per_frame;
-		remaining -= r;
-		new_cursor += r;
+		int err = snd_pcm_prepare(pcm);
+		ALSA_ASSERT("snd_pcm_prepare (Recover)");
+		wrote = snd_pcm_mmap_writei( pcm, buf, frames_to_fill );
 	}
 
-	last_cursor_pos = new_cursor;
-	//last_cursor_pos += buffersize_frames;
+	if( wrote <= 0 )
+	{
+		LOG->Trace( "RageSoundDriver_ALSA9::GetData: snd_pcm_mmap_writei: %s", snd_strerror(wrote) );
+		return -1;
+	}
 
-	return buffersize_frames;
+	last_cursor_pos += wrote;
+	if( wrote < frames_to_fill )
+		LOG->Trace("Couldn't write whole buffer? (%i < %li)\n", wrote, frames_to_fill );
+
+	return frames_to_fill;
 }
 
 /**
@@ -220,20 +211,20 @@ int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 {
 	LockMutex L(SOUNDMAN->lock);
 
-	int err;
 	snd_pcm_status_t *status;
-	snd_pcm_sframes_t delay;
-
 	snd_pcm_status_alloca(&status);
-	err = snd_pcm_status(pcm, status);
+
+	int err = snd_pcm_status( pcm, status );
 	
 	ALSA_ASSERT("snd_pcm_status");
 
-	snd_pcm_state_t state = snd_pcm_status_get_state(status);
-	if (state == SND_PCM_STATE_PREPARED) return 0;
+	snd_pcm_state_t state = snd_pcm_status_get_state( status );
+	if ( state == SND_PCM_STATE_PREPARED )
+		return 0;
 
+	/* XXX snd_pcm_hwsync */
 	/* delay is returned in frames */
-	delay = snd_pcm_status_get_delay(status);
+	snd_pcm_sframes_t delay = snd_pcm_status_get_delay(status);
 
 	return last_cursor_pos - delay;
 }       
@@ -242,20 +233,17 @@ int RageSound_ALSA9::GetPosition(const RageSound *snd) const
 RageSound_ALSA9::RageSound_ALSA9()
 {
 	shutdown = false;
-	int err;
-
 	last_cursor_pos = 0;
-
-	snd_pcm_hw_params_t *hwparams;
-	snd_pcm_sw_params_t *swparams;
 
 	/* open the device */
 	// if we instead use plughw: then our requested format WILL be provided
-	err = snd_pcm_open(&pcm, "hw:0,0", SND_PCM_STREAM_PLAYBACK, 0);  
+	int err;
+	err = snd_pcm_open( &pcm, "hw:0,0", SND_PCM_STREAM_PLAYBACK, SND_PCM_NONBLOCK );
 	if (err < 0)
 		RageException::ThrowNonfatal("snd_pcm_open: %s", snd_strerror(err));
 
 	/* allocate the hardware parameters structure */
+	snd_pcm_hw_params_t *hwparams;
 	err = snd_pcm_hw_params_malloc(&hwparams);
 	ALSA_ASSERT("snd_pcm_hw_params_malloc");
 
@@ -293,13 +281,17 @@ RageSound_ALSA9::RageSound_ALSA9()
 
 
 	/* prepare a snd_output_t for use with LOG->Trace */
-	errout = NULL;
+	snd_output_t *errout = NULL;
 	snd_output_buffer_open(&errout);
 	snd_pcm_dump(pcm, errout);
+	snd_output_flush(errout);
+
 	char *errstring;
 	snd_output_buffer_string(errout, &errstring);
 	LOG->Trace("%s", errstring);
-	snd_output_flush(errout);
+	snd_output_close( errout );
+
+	total_frames = snd_pcm_avail_update(pcm);
 
 	MixingThread.SetName( "RageSound_ALSA9" );
 	MixingThread.Create( MixerThread_start, this );
@@ -318,25 +310,7 @@ RageSound_ALSA9::~RageSound_ALSA9()
 
 float RageSound_ALSA9::GetPlayLatency() const
 {
-	int err;
-	snd_pcm_status_t *status;
-	snd_pcm_sframes_t delay;
-
-	snd_pcm_status_alloca(&status);
-	err = snd_pcm_status(pcm, status);
-	ALSA_ASSERT("snd_pcm_status");
-
-	delay = snd_pcm_status_get_delay(status);
-	/*XXX not sure if delay is the thing to use for 
-	 * calculating latency
-	 *
-	 * delay is the number of frames between where
-	 * the next write will begin and what is being
-	 * played now
-	 */
-
-	/* this returns seconds */
-	return ((float)delay)/samplerate;
+	return float(max_writeahead)/samplerate;
 }
 
 /*

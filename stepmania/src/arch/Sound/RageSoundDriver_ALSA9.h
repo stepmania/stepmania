@@ -35,20 +35,18 @@ public:
 	/* List of currently playing sounds: */
 	vector<sound *> sounds;
 
+	snd_pcm_sframes_t total_frames;
+
 	bool shutdown;
         int last_cursor_pos;
 
 	snd_pcm_t *pcm;
 
-	/* this is messy since it avoids LOG->Trace, but for now the
-	 * quickest way to get snd_pcm_dump() info */
-	snd_output_t *errout;
-
 	static int MixerThread_start(void *p);
 	void MixerThread();
 	RageThread MixingThread;
 
-	unsigned int GetData();
+	int GetData();
 	void Recover(int r);
 
 	/* virtuals: */
