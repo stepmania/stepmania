@@ -695,8 +695,8 @@ void Song::ReCalulateRadarValuesAndLastBeat()
 		ttab.push_back(TitleTrans("^Aoi Shoudou$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
 		ttab.push_back(TitleTrans("^Blue Impulse$", "", "", "&aoi;&hi;&shoudou1;&shoudou2;", "", "") );
 
-		/* XXX 大見解 verify this title (Night Line or Nightline or am I completely wrong?) */
-		ttab.push_back(TitleTrans("^Night ?Line$", "", "", "&ookii;&kenkai1;&kenkai2;", "", "") );
+		/* 大見解 */
+		ttab.push_back(TitleTrans("^Daikenkai$", "", "", "&ookii;&kenkai1;&kenkai2;", "", "") );
 
 		/* ♡LOVE²シュガ→♡ */
 		ttab.push_back(TitleTrans("^Love Love Sugar$", "", "", "&whiteheart;LOVE&squared; &ksi;&kyus;&kga;&rightarrow;&whiteheart;", "", "") );
