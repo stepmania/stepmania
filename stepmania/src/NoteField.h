@@ -34,7 +34,7 @@ public:
 	void	Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBehind, int iPixelsToDrawAhead );
 	void	RemoveTapNoteRow( int iIndex );
 
-	bool	m_bIsHoldingHoldNote[MAX_HOLD_NOTES];	// hack:  Need this to know when to "light up" the center of hold notes
+	vector<bool> m_bIsHoldingHoldNote;	// hack:  Need this to know when to "light up" the center of hold notes
 
 	float	m_fBeginMarker, m_fEndMarker;	// only used with MODE_EDIT
 

@@ -53,8 +53,8 @@ void NoteField::Load( NoteData* pNoteData, PlayerNumber pn, int iPixelsToDrawBeh
 
 	NoteDataWithScoring::Init(pNoteData->GetNumTapNotes(), pNoteData->GetNumHoldNotes());
 
-	for( int i=0; i<MAX_HOLD_NOTES; i++ )
-		m_bIsHoldingHoldNote[i] = false;
+	m_bIsHoldingHoldNote.clear();
+	m_bIsHoldingHoldNote.insert(m_bIsHoldingHoldNote.end(), pNoteData->GetNumTapNotes(), false);
 
 	this->CopyAll( pNoteData );
 
