@@ -1,0 +1,329 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource2.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource2.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\smlobby.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\smlobby.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About smlobby"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "smlobby Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2002",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_SMLOBBY_DIALOG DIALOGEX 0, 0, 464, 330
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "StepMania Lobby"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_ENTRY,105,281,347,12,ES_AUTOHSCROLL
+    GROUPBOX        "Chat",IDC_STATIC,5,140,453,160
+    GROUPBOX        "Waiting Games",IDC_STATIC,5,5,117,130
+    LISTBOX         IDC_LIST_GAMES,15,20,100,105,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Game Information",IDC_STATIC,143,5,107,130
+    EDITTEXT        IDC_EDIT_GAME_INFO,153,20,90,105,ES_MULTILINE
+    GROUPBOX        "Create New Game",IDC_STATIC,271,5,185,130
+    COMBOBOX        IDC_COMBO_MUSIC,278,35,170,15,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Select Music:",IDC_STATIC,278,25,44,10
+    PUSHBUTTON      "Create Game",IDC_BUTTON_CREATE_GAME,338,100,56,20
+    LISTBOX         IDC_LIST_USERS,10,155,85,140,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_GAME_NAME,277,70,171,15,ES_AUTOHSCROLL
+    LTEXT           "Game Name:",IDC_STATIC,278,60,87,10
+    PUSHBUTTON      "Begin Game",IDC_BUTTON_BEGIN_GAME,213,305,49,20
+    EDITTEXT        IDC_EDIT_CHAT_MESSAGES,105,155,347,120,ES_MULTILINE | 
+                    ES_AUTOVSCROLL | WS_VSCROLL
+END
+
+IDD_FILEXFER DIALOG DISCARDABLE  0, 0, 186, 173
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "File Transfer"
+FONT 8, "MS Sans Serif"
+BEGIN
+    PUSHBUTTON      "Cancel",IDCANCEL,129,152,50,14
+    LTEXT           "Sending File",IDC_STATIC,7,7,41,9
+    LTEXT           "File:",IDC_STATIC,7,21,33,8
+    LTEXT           "Size:",IDC_STATIC,7,30,33,8
+    LTEXT           "Folder:",IDC_STATIC,7,40,33,8
+    LTEXT           "To:",IDC_TOFROM,7,49,33,8
+    CONTROL         "Progress1",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,
+                    7,70,172,13
+    LTEXT           "Sent:",IDC_SENTRECVD,7,89,21,9
+    LTEXT           "Time left:",IDC_STATIC,7,98,33,8
+    LTEXT           "Rate:",IDC_STATIC,7,107,33,8
+    LTEXT           "Status:",IDC_STATIC,7,117,33,8
+    LTEXT           "",IDC_FILENAME,43,21,136,8
+    LTEXT           "",IDC_FILESIZE,43,30,136,8
+    LTEXT           "",IDC_FOLDERNAME,43,40,136,8
+    LTEXT           "",IDC_RECVRNAME,43,49,136,8
+    LTEXT           "",IDC_BYTESSENT,43,89,39,8
+    LTEXT           "",IDC_TIMELEFT,43,98,80,8
+    LTEXT           "",IDC_XFERRATE,43,107,71,8
+    LTEXT           "",IDC_XFERSTATUS,43,117,77,36
+END
+
+IDD_DIRECTORY DIALOG DISCARDABLE  109, 35, 165, 134
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Open"
+FONT 8, "Helv"
+BEGIN
+    LTEXT           "File &Name:",1090,168,0,76,10
+    EDITTEXT        1152,168,10,90,12,ES_AUTOHSCROLL | ES_OEMCONVERT
+    LISTBOX         1120,168,26,90,68,LBS_SORT | LBS_OWNERDRAWFIXED | 
+                    LBS_HASSTRINGS | LBS_DISABLENOSCROLL | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "&Directories:",-1,7,6,92,9
+    LTEXT           "",1088,7,18,92,9,SS_NOPREFIX
+    LISTBOX         1121,7,32,92,68,LBS_SORT | LBS_OWNERDRAWFIXED | 
+                    LBS_HASSTRINGS | LBS_DISABLENOSCROLL | WS_VSCROLL | 
+                    WS_TABSTOP
+    LTEXT           "List Files of &Type:",1089,168,98,90,9
+    COMBOBOX        1136,168,108,90,36,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | 
+                    WS_BORDER | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Dri&ves:",1091,7,104,92,9
+    COMBOBOX        1137,7,114,92,68,CBS_DROPDOWNLIST | CBS_OWNERDRAWFIXED | 
+                    CBS_AUTOHSCROLL | CBS_SORT | CBS_HASSTRINGS | WS_BORDER | 
+                    WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,105,6,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,105,24,50,14,WS_GROUP
+    PUSHBUTTON      "&Help",1038,105,46,50,14,WS_GROUP
+    CONTROL         "&Read Only",1040,"Button",BS_AUTOCHECKBOX | WS_GROUP | 
+                    WS_TABSTOP,105,68,50,12
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "smlobby MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "smlobby\0"
+            VALUE "LegalCopyright", "Copyright (C) 2002\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "smlobby.EXE\0"
+            VALUE "ProductName", "smlobby Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_FILEXFER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 166
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About smlobby..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Unknown language: 0xD, 0x1 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HEB)
+#ifdef _WIN32
+LANGUAGE 0xD, 0x1
+#pragma code_page(1255)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CONNECT DIALOG DISCARDABLE  0, 0, 185, 161
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Connect"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&Server",IDC_STATIC,7,9,22,8
+    EDITTEXT        IDC_SERVER,67,7,92,14,ES_AUTOHSCROLL
+    LTEXT           "&Port",IDC_STATIC,7,26,14,8
+    EDITTEXT        IDC_PORT,67,24,54,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,46,171,1
+    LTEXT           "&Nick",IDC_STATIC,7,55,16,8
+    EDITTEXT        IDC_NICK,67,53,92,14,ES_AUTOHSCROLL
+    LTEXT           "User &ID",IDC_STATIC,7,74,25,8
+    EDITTEXT        IDC_USERID,67,72,92,14,ES_AUTOHSCROLL
+    LTEXT           "&Full Name",IDC_STATIC,7,92,32,8
+    EDITTEXT        IDC_FULLNAME,67,90,92,14,ES_AUTOHSCROLL
+    LTEXT           "Pass&word",IDC_STATIC,7,111,32,8
+    EDITTEXT        IDC_PASSWORD,67,108,92,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,7,131,171,1
+    DEFPUSHBUTTON   "Connect",IDOK,26,140,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,109,140,50,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CONNECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 178
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 154
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Unknown language: 0xD, 0x1 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\smlobby.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
