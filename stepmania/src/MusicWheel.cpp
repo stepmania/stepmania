@@ -528,6 +528,8 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 		fX_out = 0;
 		fY_out = -radius*sinf(fRotationX_out);
 		fZ_out = -100+radius*cosf(fRotationX_out);	// getting werid results with acosf()
+
+		fRotationX_out *= 180.f/PI;	// to degrees
 	}
 	else
 	{
@@ -586,60 +588,70 @@ void MusicWheel::DrawPrimitives()
 {
 	if( USE_3D )
 	{
-		DISPLAY->PushMatrix();
-		DISPLAY->EnterPerspective(45, false);
+//		DISPLAY->PushMatrix();
+//		DISPLAY->EnterPerspective(45, false);
 
 		// construct view and project matrix
-		RageVector3 Up( 0.0f, 1.0f, 0.0f );
-		RageVector3 Eye( CENTER_X, CENTER_Y, 550 );
-		RageVector3 At( CENTER_X, CENTER_Y, 0 );
+//		RageVector3 Up( 0.0f, 1.0f, 0.0f );
+//		RageVector3 Eye( CENTER_X, CENTER_Y, 550 );
+//		RageVector3 At( CENTER_X, CENTER_Y, 0 );
 
-		DISPLAY->LookAt(Eye, At, Up);
+//		DISPLAY->LookAt(Eye, At, Up);
 	}
 
-	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-	{
-		MusicWheelItem& display = m_MusicWheelItems[i];
+	// draw outside->inside
+	int i;
+	for( i=0; i<NUM_WHEEL_ITEMS/2; i++ )
+		DrawItem( i );
+	for( i=NUM_WHEEL_ITEMS-1; i>=NUM_WHEEL_ITEMS/2; i-- )
+		DrawItem( i );
 
-		switch( m_WheelState )
-		{
-		case STATE_SELECTING_MUSIC:
-		case STATE_ROULETTE_SPINNING:
-		case STATE_ROULETTE_SLOWING_DOWN:
-		case STATE_RANDOM_SPINNING:
-		case STATE_LOCKED:
-			{
-				float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-
-				float fX, fY, fZ, fRotationX;
-				GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
-
-				if( fY < -SCREEN_HEIGHT/2  ||  fY > SCREEN_HEIGHT/2 )
-					continue; // skip
-
-				display.SetXY( fX, fY );
-				display.SetZ( fZ );
-				display.SetRotationX( fRotationX );
-			}
-			break;
-		}
-
-		if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
-			display.m_fPercentGray = 0.5f;
-		else
-			display.m_fPercentGray = 0;
-
-		display.Draw();
-	}
 
 	ActorFrame::DrawPrimitives();
 	
 	if( USE_3D )
 	{
-		DISPLAY->ExitPerspective();
-		DISPLAY->PopMatrix();
+//		DISPLAY->ExitPerspective();
+//		DISPLAY->PopMatrix();
 	}
 }
+
+
+void MusicWheel::DrawItem( int i )
+{
+	MusicWheelItem& display = m_MusicWheelItems[i];
+
+	switch( m_WheelState )
+	{
+	case STATE_SELECTING_MUSIC:
+	case STATE_ROULETTE_SPINNING:
+	case STATE_ROULETTE_SLOWING_DOWN:
+	case STATE_RANDOM_SPINNING:
+	case STATE_LOCKED:
+		{
+			float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
+
+			float fX, fY, fZ, fRotationX;
+			GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
+
+//				if( fY < -SCREEN_HEIGHT/2  ||  fY > SCREEN_HEIGHT/2 )
+//					continue; // skip
+
+			display.SetXY( fX, fY );
+			display.SetZ( fZ );
+			display.SetRotationX( fRotationX );
+		}
+		break;
+	}
+
+	if( m_WheelState == STATE_LOCKED  &&  i != NUM_WHEEL_ITEMS/2 )
+		display.m_fPercentGray = 0.5f;
+	else
+		display.m_fPercentGray = 0;
+
+	display.Draw();
+}
+
 
 void MusicWheel::UpdateScrollbar()
 {

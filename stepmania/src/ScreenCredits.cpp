@@ -69,6 +69,7 @@ const CreditLine CREDIT_LINES[] =
 	{0,"Redcrusher (Michael Curry)"},
 	{0,"Steve 'healing_vision' Klise"},
 	{0,"Mauro Panichella"},
+	{0,"Griever (Julian)"},
 	{0,""},
 	{0,""},
 	{0,""},

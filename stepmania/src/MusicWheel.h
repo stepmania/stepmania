@@ -44,6 +44,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	void DrawItem( int index );
 
 	virtual void TweenOnScreen(bool changing_sort);
 	virtual void TweenOffScreen(bool changing_sort);

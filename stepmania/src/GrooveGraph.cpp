@@ -30,7 +30,7 @@ const float GRAPH_EDGE_WIDTH	= 2;
 #define DIFFICULTY_COLORS(dc)	THEME->GetMetricC("GrooveGraph",Capitalize(DifficultyToString(dc))+"Color")
 #define SHOW_CATEGORY(cat)		THEME->GetMetricB("GrooveGraph","Show"+Capitalize(CategoryToString(cat)))
 #define CATEGORY_X(cat)			THEME->GetMetricF("GrooveGraph",Capitalize(CategoryToString(cat))+"X")
-#define MOUNTAINS_Y				THEME->GetMetricF("GrooveGraph","MountainsY")
+#define MOUNTAINS_BASE_Y		THEME->GetMetricF("GrooveGraph","MountainsBaseY")
 CachedThemeMetricF MOUNTAIN_WIDTH	("GrooveGraph","MountainWidth");
 CachedThemeMetricF MOUNTAIN_HEIGHT	("GrooveGraph","MountainHeight");
 
@@ -51,7 +51,7 @@ GrooveGraph::GrooveGraph()
 		if( !SHOW_CATEGORY((RadarCategory)c) )
 			continue;
 
-		m_Mountains[c].SetXY( CATEGORY_X((RadarCategory)c), MOUNTAINS_Y );
+		m_Mountains[c].SetXY( CATEGORY_X((RadarCategory)c), MOUNTAINS_BASE_Y );
 		this->AddChild( &m_Mountains[c] );
 	}
 }
@@ -126,9 +126,9 @@ void GrooveGraph::Mountain::DrawPrimitives()
 	{
 		float fValue = SCALE(m_fPercentTowardNew, 0.f, 1.f, m_fValuesOld[i], m_fValuesNew[i] );
 		float fHeight = MOUNTAIN_HEIGHT*fValue;
-		v[0].p = RageVector3( -MOUNTAIN_WIDTH/2, MOUNTAIN_HEIGHT/2,	0 );
-		v[1].p = RageVector3( MOUNTAIN_WIDTH/2, MOUNTAIN_HEIGHT/2,	0 );
-		v[2].p = RageVector3( 0, (MOUNTAIN_HEIGHT/2)-fHeight, 0 );
+		v[0].p = RageVector3( -MOUNTAIN_WIDTH/2, 0,	0 );
+		v[1].p = RageVector3( MOUNTAIN_WIDTH/2, 0,	0 );
+		v[2].p = RageVector3( 0, -fHeight, 0 );
 		v[0].c = v[1].c = v[2].c = g_DifficultyColorsCache[i];
 		DISPLAY->DrawFan( v, 3 );
 	}

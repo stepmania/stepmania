@@ -360,7 +360,6 @@ RageColor ThemeManager::GetMetricC( CString sClassName, CString sValueName )
 	if( result != 4 )
 	{
 		LOG->Warn( "The color value '%s' for NoteSkin metric '%s : %s' is invalid.", GetMetricRaw(sClassName,sValueName).GetString(), sClassName.GetString(), sValueName.GetString() );
-		ASSERT(0);
 	}
 
 	return RageColor(r,g,b,a);
