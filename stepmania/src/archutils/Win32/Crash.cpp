@@ -1507,7 +1507,6 @@ void crash() {
 
 static void ReportCrashLog(HWND hwnd, HANDLE hFile)
 {
-	Report(NULL, hFile, "");
 	Report(NULL, hFile, "Partial log:");
 
 	int i = 0;
