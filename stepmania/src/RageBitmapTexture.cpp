@@ -292,6 +292,21 @@ void RageBitmapTexture::Create()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
+	/* This is an experiment: some people are seeing skips when the danger
+	 * background comes in.  One hypothesis: we're loading the danger background,
+	 * keeping it in memory without displaying it for several games, it gets
+	 * swapped out of texture memory, and then we skip swapping it in.
+	 *
+	 * It's rather small, so I'm not entirely convinced this is what's happening.
+	 * Let's try boosting the texture priority for the danger background and
+	 * see if it goes away.  If it does, I'll make texture pris a texture hint
+	 * (or find another way to do this; perhaps we should do a dummy render of
+	 * a texture when it's reused from our texture cache if it hasn't been used
+	 * in a long time). */
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 0.5f);
+	if(GetFilePath().Find("danger"))
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
+
 	int pixfmt = desired_rgba_pixfmt;
 
 retry:
