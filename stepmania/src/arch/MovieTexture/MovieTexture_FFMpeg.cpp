@@ -882,8 +882,10 @@ void MovieTexture_FFMpeg::DecoderThread()
 			ConvertFrame();
 
 			/* We just went into FRAME_WAITING.  Don't actually check; the main thread
-			 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished. */
-			m_BufferFinished.Wait();
+			 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished.
+			 * Don't time out on this; if a new screen has started loading, this might not
+			 * return for a while. */
+			m_BufferFinished.Wait( false );
 
 			/* If the frame wasn't used, then we must be shutting down. */
 			ASSERT_M( m_ImageWaiting == FRAME_NONE || m_State == DECODER_QUIT, ssprintf("%i, %i", m_ImageWaiting, m_State) );
