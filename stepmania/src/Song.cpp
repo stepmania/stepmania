@@ -437,7 +437,17 @@ void Song::TidyUpData()
 	ReCalculateRadarValuesAndLastBeat();
 
 	TrimRight(m_sMainTitle);
-	if( m_sMainTitle == "" )	m_sMainTitle = "Untitled song";
+	if( m_sMainTitle == "" )
+	{
+		/* Use the song directory name. */
+		CString SongDir = this->GetSongDir();
+		SongDir.Replace("\\", "/");
+		vector<CString> parts;
+		split(SongDir, "/", parts);
+		ASSERT(parts.size() > 0);
+
+		NotesLoader::GetMainAndSubTitlesFromFullTitle( parts[parts.size()-1], m_sMainTitle, m_sSubTitle );
+	}
 	TrimRight(m_sSubTitle);
 	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
 	TranslateTitles();
