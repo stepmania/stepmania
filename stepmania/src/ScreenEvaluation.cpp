@@ -424,7 +424,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 			{
 				m_textDancePoints[p].LoadFromNumbers( THEME->GetPathToN("ScreenEvaluation percent") );
 				m_textDancePoints[p].EnableShadow( false );
-				m_textDancePoints[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
+				/* We don't have a hyphen. */
+				if( stageStats.iActualDancePoints[p] < 0 )
+					m_textDancePoints[p].SetText( ssprintf("0") );
+				else
+					m_textDancePoints[p].SetText( ssprintf("%d", stageStats.iActualDancePoints[p]) );
 				m_textDancePoints[p].SetName( ssprintf("DancePointsP%d",p+1) );
 				UtilSetXYAndOnCommand( m_textDancePoints[p], "ScreenEvaluation" );
 				this->AddChild( &m_textDancePoints[p] );
