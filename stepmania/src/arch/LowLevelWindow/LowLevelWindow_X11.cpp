@@ -50,13 +50,13 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 	hints.min_width = hints.max_width = hints.base_width = p.width;
 	hints.min_height = hints.max_height = hints.base_height = p.height;
 
-	X11Helper::OpenMask(StructureNotifyMask);
-
 	if(!windowIsOpen || p.bpp != CurrentParams.bpp)
 	{
 		int visAttribs[32];
 		XVisualInfo *xvi;
 		GLXContext ctxt;
+
+		X11Helper::OpenMask(StructureNotifyMask);
 
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
@@ -90,9 +90,7 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 			return "No visual available for that depth.";
 		}
 
-		// Taking a hint from SDL. 
-
-		if(!X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual) )
+		if(!X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height) )
 		{
 			return "Failed to create the window.";
 		}
@@ -102,47 +100,51 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 
 		glXMakeCurrent(X11Helper::Dpy, X11Helper::Win, ctxt);
 
+		XMapWindow(X11Helper::Dpy, X11Helper::Win);
+
+		// HACK: Wait for the MapNotify event, without spinning and
+		// eating CPU unnecessarily, and without smothering other
+		// events. Do this by grabbing all events, remembering
+		// uninteresting events, and putting them back on the queue
+		// after MapNotify arrives.
+		while(true)
+		{
+			XNextEvent(X11Helper::Dpy, &ev);
+			if(ev.type == MapNotify)
+			{
+				break;
+			}
+			else
+			{
+				otherEvs.push(ev);
+			}
+		}
+		while(!otherEvs.empty() )
+		{
+			XPutBackEvent(X11Helper::Dpy, &otherEvs.top() );
+			otherEvs.pop();
+		}
+
+		X11Helper::CloseMask(StructureNotifyMask);
+
 	}
 	else
 	{
 		// We're remodeling the existing window, and not touching the
 		// context.
 		bNewDeviceOut = false;
-		// Remap the window to work around possible buggy WMs and/or
-		// X servers
-		XUnmapWindow(X11Helper::Dpy, X11Helper::Win);
+		
 	}
 
+	// Do this before resizing the window so that pane-style WMs (Ion,
+	// ratpoison) don't resize us back inappropriately.
 	XSetWMNormalHints(X11Helper::Dpy, X11Helper::Win, &hints);
 
-	XMapWindow(X11Helper::Dpy, X11Helper::Win);
-
-	// HACK: Wait for the MapNotify event, without spinning and
-	// eating CPU unnecessarily, and without smothering other
-	// events. Do this by grabbing all events, remembering
-	// uninteresting events, and putting them back on the queue
-	// after MapNotify arrives.
-	while(true)
-	{
-		XNextEvent(X11Helper::Dpy, &ev);
-		if(ev.type == MapNotify)
-		{
-			break;
-		}
-		else
-		{
-			otherEvs.push(ev);
-		}
-	}
-	while(!otherEvs.empty() )
-	{
-		XPutBackEvent(X11Helper::Dpy, &otherEvs.top() );
-		otherEvs.pop();
-	}
+	// Do this even if we just created the window -- works around Ion2 not
+	// catching WM normal hints changes in mapped windows.
+	XResizeWindow(X11Helper::Dpy, X11Helper::Win, p.width, p.height);
 
 	CurrentParams = p;
-
-	X11Helper::CloseMask(StructureNotifyMask);
 
 	return ""; // Success
 }
