@@ -180,13 +180,8 @@ struct BannerTexture: public RageTexture
 			pf = FMT_RGBA4;
 		ASSERT( DISPLAY->SupportsTextureFormat(pf) );
 
-		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pf);
-		ASSERT(pfd);
 		ASSERT(img);
-		ConvertSDLSurface(img, m_iTextureWidth, m_iTextureHeight,
-				pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
-	
-		m_uTexHandle = DISPLAY->CreateTexture( FMT_RGB5A1, img );
+		m_uTexHandle = DISPLAY->CreateTexture( pf, img );
 
 		CreateFrameRects();
 	}
@@ -374,14 +369,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 		ConvertSDLSurface(img, img->w, img->h, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
 		zoomSurface(img, width, height);
 
-		/* XXX: Query DISPLAY to find out if we should use FMT_RGB5A1 or FMT_RGBA4. 
-		 * But then we'd have to recache if the display changes, and this gets called
-		 * during the song cache phase, before we even have a display ... */
-/*		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(FMT_RGB5A1);
-		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h,
-					pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]); */
-
-		/* Dither: */
+		/* Dither to the final format. */
 		SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h,
 					16, 0xF800, 0x07C0, 0x003E, 0x0001 );
 
