@@ -75,12 +75,12 @@ void InputMapper::ReadMappingsFromDisk()
 	if( !ini.ReadFile() )
 		LOG->Warn( "could not input mapping file '%s'.", sPath.GetString() );
 
-	IniFile::const_iterator Key = ini.GetKey( "Input" );
+	const IniFile::key *Key = ini.GetKey( "Input" );
 
-	if( Key != ini.end() )
+	if( Key  )
 	{
-		for( IniFile::key::const_iterator i = Key->second.begin(); 
-			i != Key->second.end(); ++i )
+		for( IniFile::key::const_iterator i = Key->begin(); 
+			i != Key->end(); ++i )
 		{
 			CString name = i->first;
 			CString value = i->second;

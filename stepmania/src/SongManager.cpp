@@ -265,11 +265,11 @@ void SongManager::ReadStatisticsFromDisk()
 
 
 	// load song statistics
-	IniFile::const_iterator Key = ini.GetKey( "Statistics" );
-	if( Key != ini.end() )
+	const IniFile::key *Key = ini.GetKey( "Statistics" );
+	if( Key )
 	{
-		for( IniFile::key::const_iterator i = Key->second.begin(); 
-			i != Key->second.end(); ++i )
+		for( IniFile::key::const_iterator i = Key->begin(); 
+			i != Key->end(); ++i )
 		{
 			CString name = i->first;
 			CString value = i->second;

@@ -246,7 +246,20 @@ bool IniFile::DeleteKey(const CString &keyname)
 	return true;
 }
 
-IniFile::const_iterator IniFile::GetKey(const CString &keyname) const
+const IniFile::key *IniFile::GetKey(const CString &keyname) const
 {
-	return keys.find(keyname);
+	keymap::const_iterator i = keys.find(keyname);
+	if(i == keys.end()) return NULL;
+	return &i->second;
+}
+
+void IniFile::RenameKey(const CString &from, const CString &to)
+{
+	if(keys.find(from) == keys.end())
+		return;
+	if(keys.find(to) != keys.end())
+		return;
+
+	keys[to] = keys[from];
+	keys.erase(from);
 }

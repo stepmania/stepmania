@@ -90,7 +90,12 @@ public:
 	//returns true if key existed and deleted, false otherwise
 	bool DeleteKey(const CString &keyname);
 
-	const_iterator GetKey(const CString &keyname) const;
+	const key *GetKey(const CString &keyname) const;
+
+	/* Rename a key. For example, call RenameKey("foo", "main") after
+	 * reading an INI where [foo] is an alias to [main].  If to already
+	 * exists, nothing happens. */
+	void RenameKey(const CString &from, const CString &to);
 };
 
 #endif
