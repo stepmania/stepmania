@@ -466,14 +466,16 @@ void Song::TidyUpData()
 	{
 		CString error;
 		SoundReader *Sample = SoundReader_FileReader::OpenFile( GetMusicPath(), error );
-		if( Sample == NULL )
+		/* XXX: Checking if the music file exists eliminates a warning originating from BMS files
+		 * (which have no music file, per se) but it's something of a hack. */
+		if( Sample == NULL && m_sMusicFile != "" )
 		{
 			LOG->Warn( "Error opening sound \"%s\": %s", GetMusicPath().c_str(), error.c_str() );
 
 			/* Don't use this file. */
 			m_sMusicFile = "";
 		}
-		else
+		else if ( Sample != NULL )
 		{
 			m_fMusicLengthSeconds = Sample->GetLength() / 1000.0f;
 			delete Sample;
