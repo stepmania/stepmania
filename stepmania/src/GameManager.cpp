@@ -2934,9 +2934,9 @@ const Game* GameManager::GetGameFromIndex( int index )
 bool GameManager::IsGameEnabled( const Game *pGame )
 {
 	CStringArray asNoteSkins;
-	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins );
+	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins, false ); /* don't omit default */
 	for( unsigned i = 0; i < asNoteSkins.size(); ++i )
-		if( asNoteSkins[i].CompareNoCase("default") )
+		if( !asNoteSkins[i].CompareNoCase("default") )
 			return true;
 
 	return false;
