@@ -26,6 +26,8 @@ public:
 		CString sDisplayArtist, CString sTranslitArtist );
 
 private:
+	bool m_bInitted;
+	void Init();
 
 	BitmapText	m_textTitle, m_textSubTitle, m_textArtist;
 };

@@ -20,7 +20,7 @@
 #include "ActorUtil.h"
 
 
-CachedThemeMetric  ARTIST_PREPEND_STRING		("TextBanner","ArtistPrependString");
+CachedThemeMetric ARTIST_PREPEND_STRING			("TextBanner","ArtistPrependString");
 CachedThemeMetric TWO_LINES_TITLE_COMMAND		("TextBanner","TwoLinesTitleCommand");
 CachedThemeMetric TWO_LINES_SUBTITLE_COMMAND	("TextBanner","TwoLinesSubtitleCommand");
 CachedThemeMetric TWO_LINES_ARTIST_COMMAND		("TextBanner","TwoLinesArtistCommand");
@@ -28,30 +28,40 @@ CachedThemeMetric THREE_LINES_TITLE_COMMAND		("TextBanner","ThreeLinesTitleComma
 CachedThemeMetric THREE_LINES_SUBTITLE_COMMAND	("TextBanner","ThreeLinesSubtitleCommand");
 CachedThemeMetric THREE_LINES_ARTIST_COMMAND	("TextBanner","ThreeLinesArtistCommand");
 
-TextBanner::TextBanner()
+void TextBanner::Init()
 {
-	ARTIST_PREPEND_STRING.Refresh();
-	TWO_LINES_TITLE_COMMAND.Refresh();
-	TWO_LINES_SUBTITLE_COMMAND.Refresh();
-	TWO_LINES_ARTIST_COMMAND.Refresh();
-	THREE_LINES_TITLE_COMMAND.Refresh();
-	THREE_LINES_SUBTITLE_COMMAND.Refresh();
-	THREE_LINES_ARTIST_COMMAND.Refresh();
+	if( m_bInitted )
+		return;
+	m_bInitted = true;
+
+	ASSERT( m_sName != "" );
+	ARTIST_PREPEND_STRING.Refresh( m_sName );
+	TWO_LINES_TITLE_COMMAND.Refresh( m_sName );
+	TWO_LINES_SUBTITLE_COMMAND.Refresh( m_sName );
+	TWO_LINES_ARTIST_COMMAND.Refresh( m_sName );
+	THREE_LINES_TITLE_COMMAND.Refresh( m_sName );
+	THREE_LINES_SUBTITLE_COMMAND.Refresh( m_sName );
+	THREE_LINES_ARTIST_COMMAND.Refresh( m_sName );
 
 	m_textTitle.SetName( "Title" );
 	m_textTitle.LoadFromFont( THEME->GetPathToF("TextBanner") );
-	UtilSetXYAndOnCommand( m_textTitle, "TextBanner" );
+	SET_XY_AND_ON_COMMAND( m_textTitle );
 	this->AddChild( &m_textTitle );
 
 	m_textSubTitle.SetName( "Subtitle" );
 	m_textSubTitle.LoadFromFont( THEME->GetPathToF("TextBanner") );
-	UtilSetXYAndOnCommand( m_textSubTitle, "TextBanner" );
+	SET_XY_AND_ON_COMMAND( m_textSubTitle );
 	this->AddChild( &m_textSubTitle );
 
 	m_textArtist.SetName( "Artist" );
 	m_textArtist.LoadFromFont( THEME->GetPathToF("TextBanner") );
-	UtilSetXYAndOnCommand( m_textArtist, "TextBanner" );
+	SET_XY_AND_ON_COMMAND( m_textArtist );
 	this->AddChild( &m_textArtist );
+}
+
+TextBanner::TextBanner()
+{
+	m_bInitted = false;
 }
 
 
@@ -60,6 +70,8 @@ void TextBanner::LoadFromString(
 	CString sDisplaySubTitle, CString sTranslitSubTitle, 
 	CString sDisplayArtist, CString sTranslitArtist )
 {
+	Init();
+
 	bool bTwoLines = sDisplaySubTitle.size() == 0;
 
 	if( bTwoLines )
@@ -82,6 +94,8 @@ void TextBanner::LoadFromString(
 
 void TextBanner::LoadFromSong( const Song* pSong )
 {
+	Init();
+
 	CString sDisplayTitle = pSong ? pSong->GetDisplayMainTitle() : "";
 	CString sTranslitTitle = pSong ? pSong->GetTranslitMainTitle() : "";
 	CString sDisplaySubTitle = pSong ? pSong->GetDisplaySubTitle() : "";
