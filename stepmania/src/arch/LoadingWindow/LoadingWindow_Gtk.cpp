@@ -7,15 +7,18 @@ void CreateGtkLoadingWindow() {
   GtkWidget *vbox;
   GtkWidget *loadimage;
   char **argv;
+  gchar *filename;
   int argc;
 
   argc = 1;
   argv[0] = "stepmania";
   gtk_init(&argc,&argv);
-  loadimage = gtk_image_new_from_file("loading.xpm");
+  filename = g_build_filename(DATADIR,"pixmaps","stepmania","loading.xpm",NULL);
+  loadimage = gtk_image_new_from_file(filename);
+  g_free(filename);
   label = gtk_label_new(NULL);
   gtk_label_set_justify(GTK_LABEL(label),GTK_JUSTIFY_CENTER);
-  vbox = gtk_vbox_new(FALSE,0);
+  vbox = gtk_vbox_new(FALSE,5);
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_container_add(GTK_CONTAINER(window),vbox);
   gtk_box_pack_start(GTK_BOX(vbox),loadimage,FALSE,FALSE,0);
@@ -28,7 +31,6 @@ void CreateGtkLoadingWindow() {
 }
 
 void DestroyGtkLoadingWindow() {
-  gtk_main_quit();
 }
 
 void SetGtkLoadingWindowText(const char *s) {

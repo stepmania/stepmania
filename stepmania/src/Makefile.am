@@ -7,7 +7,7 @@ AM_CFLAGS =
 if DARWIN
 AM_LDFLAGS += -framework Cocoa -framework Quicktime -framework Carbon -framework OpenGL -framework IOKit
 else
-AM_CXXFLAGS += -DLINUX
+AM_CXXFLAGS += -DLINUX -DDATADIR=\"$(datadir)\"
 endif
 
 AM_CXXFLAGS += -O2 -ISDL-1.2.5/include -ISDL_sound-1.0.0
@@ -214,3 +214,6 @@ stepmania_LDADD = \
 
 INCLUDES = $(SDL_CFLAGS)
 # -O0 -g
+
+smpixmapdir = $(datadir)/pixmaps/stepmania
+smpixmap_DATA = arch/LoadingWindow/loading.xpm
