@@ -41,13 +41,13 @@ private:
 	int m_iMode;
 
 public:
-	RageFileObjDirect( const CString &path, int fd_, int mode_, RageFile &p );
+	RageFileObjDirect( const CString &path, int fd_, int mode_ );
 	virtual ~RageFileObjDirect();
 	virtual int Read(void *buffer, size_t bytes);
 	virtual int Write(const void *buffer, size_t bytes);
 	virtual int Flush();
 	virtual int Seek( int offset );
-	virtual RageFileObj *Copy( RageFile &p ) const;
+	virtual RageFileObj *Copy() const;
 	virtual CString GetDisplayPath() const { return path; }
 	virtual int GetFileSize();
 };
@@ -74,7 +74,7 @@ static CString MakeTempFilename( const CString &sPath )
 	return Dirname(sPath) + "new." + Basename(sPath) + ".new";
 }
 
-RageFileObj *MakeFileObjDirect( CString sPath, int mode, RageFile &p, int &err )
+RageFileObj *MakeFileObjDirect( CString sPath, int mode, int &err )
 {
 	int fd;
 	if( mode & RageFile::READ )
@@ -103,10 +103,10 @@ RageFileObj *MakeFileObjDirect( CString sPath, int mode, RageFile &p, int &err )
 		return NULL;
 	}
 
-	return new RageFileObjDirect( sPath, fd, mode, p );
+	return new RageFileObjDirect( sPath, fd, mode );
 }
 
-RageFileObj *RageFileDriverDirect::Open( const CString &path, int mode, RageFile &p, int &err )
+RageFileObj *RageFileDriverDirect::Open( const CString &path, int mode, int &err )
 {
 	CString sPath = path;
 
@@ -122,7 +122,7 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, int mode, RageFile
 			CreateDirectories( root + dir );
 	}
 
-	return MakeFileObjDirect( root + sPath, mode, p, err );
+	return MakeFileObjDirect( root + sPath, mode, err );
 }
 
 bool RageFileDriverDirect::Remove( const CString &path )
@@ -158,10 +158,10 @@ bool RageFileDriverDirect::Remove( const CString &path )
 	}
 }
 
-RageFileObj *RageFileObjDirect::Copy( RageFile &p ) const
+RageFileObj *RageFileObjDirect::Copy() const
 {
 	int err;
-	RageFileObj *ret = MakeFileObjDirect( path, m_iMode, p, err );
+	RageFileObj *ret = MakeFileObjDirect( path, m_iMode, err );
 
 	if( ret == NULL )
 		RageException::Throw("Couldn't reopen \"%s\": %s", path.c_str(), strerror(err) );
@@ -177,8 +177,7 @@ bool RageFileDriverDirect::Ready()
 }
 
 static const unsigned int BUFSIZE = 1024*64;
-RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, int mode_, RageFile &p ):
-	RageFileObj( p )
+RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, int mode_ )
 {
 	path = path_;
 	fd = fd_;

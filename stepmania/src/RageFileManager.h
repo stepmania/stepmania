@@ -50,7 +50,7 @@ public:
 	RageFileObj *CopyFileObj( const RageFileObj *cpy, RageFile &p );
 
 private:
-	RageFileObj *OpenForWriting( CString sPath, int mode, RageFile &p, int &err );
+	RageFileObj *OpenForWriting( CString sPath, int mode, int &err );
 };
 
 extern RageFileManager *FILEMAN;

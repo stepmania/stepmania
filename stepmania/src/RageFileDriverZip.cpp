@@ -78,14 +78,14 @@ private:
 	int decomp_buf_avail;
 
 public:
-	RageFileObjZipDeflated( const RageFile &f, const FileInfo &info, RageFile &p );
-	RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy, RageFile &p );
+	RageFileObjZipDeflated( const RageFile &f, const FileInfo &info );
+	RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy );
 	~RageFileObjZipDeflated();
 	int Read(void *buffer, size_t bytes);
 	int Write(const void *buffer, size_t bytes) { SetError( "Not implemented" ); return -1; }
 	int Seek( int offset );
 	int GetFileSize() { return info.uncompr_size; }
-	RageFileObj *Copy( RageFile &p ) const
+	RageFileObj *Copy() const
 	{
 		RageException::Throw( "Loading ZIPs from deflated ZIPs is currently disabled; see RageFileObjZipDeflated" );
 
@@ -101,16 +101,16 @@ private:
 	int FilePos;
 
 public:
-	RageFileObjZipStored( const RageFile &f, const FileInfo &info, RageFile &p );
+	RageFileObjZipStored( const RageFile &f, const FileInfo &info );
 	int Read(void *buffer, size_t bytes);
 	int Write(const void *buffer, size_t bytes) { SetError( "Not implemented" ); return -1; }
 
 	int Seek( int offset );
 	int GetFileSize() { return info.uncompr_size; }
 
-	RageFileObj *Copy( RageFile &p ) const
+	RageFileObj *Copy() const
 	{
-		RageFileObjZipStored *pRet = new RageFileObjZipStored( zip, info, p );
+		RageFileObjZipStored *pRet = new RageFileObjZipStored( zip, info );
 		pRet->FilePos = FilePos;
 		return pRet;
 	}
@@ -383,7 +383,7 @@ RageFileDriverZip::~RageFileDriverZip()
 		delete Files[i];
 }
 
-RageFileObj *RageFileDriverZip::Open( const CString &path, int mode, RageFile &p, int &err )
+RageFileObj *RageFileDriverZip::Open( const CString &path, int mode, int &err )
 {
 	if( mode == RageFile::WRITE )
 	{
@@ -434,9 +434,9 @@ RageFileObj *RageFileDriverZip::Open( const CString &path, int mode, RageFile &p
 	switch( info->compression_method )
 	{
 	case STORED:
-		return new RageFileObjZipStored( zip, *info, p );
+		return new RageFileObjZipStored( zip, *info );
 	case DEFLATED:
-		return new RageFileObjZipDeflated( zip, *info, p );
+		return new RageFileObjZipDeflated( zip, *info );
 	default:
 		/* unknown compression method */
 		ASSERT( 0 );
@@ -453,8 +453,7 @@ void RageFileDriverZip::FlushDirCache( const CString &sPath )
 
 /* We make a copy of the RageFile: multiple files may read from the same ZIP at once;
  * this way, we don't have to keep seeking around. */
-RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInfo &info_, RageFile &p ):
-	RageFileObj( p ),
+RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInfo &info_ ):
 	info(info_),
 	zip( f )
 {
@@ -473,8 +472,8 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInf
 	CFilePos = UFilePos = 0;
 }
 
-RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy, RageFile &p ):
-	RageFileObj( p ),
+RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy ):
+	RageFileObj( cpy ),
 	info( cpy.info ),
 	zip( cpy.zip )
 {
@@ -606,8 +605,7 @@ int RageFileObjZipDeflated::Seek( int iPos )
 	return UFilePos;
 }
 
-RageFileObjZipStored::RageFileObjZipStored( const RageFile &f, const FileInfo &info_, RageFile &p ):
-	RageFileObj( p ),
+RageFileObjZipStored::RageFileObjZipStored( const RageFile &f, const FileInfo &info_ ):
 	info(info_),
 	zip( f )
 {

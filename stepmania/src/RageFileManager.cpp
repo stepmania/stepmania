@@ -102,7 +102,7 @@ class RageFileDriverMountpoints: public RageFileDriver
 {
 public:
 	RageFileDriverMountpoints(): RageFileDriver( new FilenameDB ) { }
-	RageFileObj *Open( const CString &path, int mode, RageFile &p, int &err )
+	RageFileObj *Open( const CString &path, int mode, int &err )
 	{
 		err = (mode == RageFile::WRITE)? ERROR_WRITING_NOT_SUPPORTED:ENOENT;
 		return NULL;
@@ -648,7 +648,7 @@ RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &e
 	/* If writing, we need to do a heuristic to figure out which driver to write with--there
 	 * may be several that will work. */
 	if( mode & RageFile::WRITE )
-		return OpenForWriting( sPath, mode, p, err );
+		return OpenForWriting( sPath, mode, err );
 
 	NormalizePath( sPath );
 
@@ -662,7 +662,7 @@ RageFileObj *RageFileManager::Open( CString sPath, int mode, RageFile &p, int &e
 		if( path.size() == 0 )
 			continue;
 		int error;
-		RageFileObj *ret = ld.driver->Open( path, mode, p, error );
+		RageFileObj *ret = ld.driver->Open( path, mode, error );
 		if( ret )
 		{
 			AddReference( ret, ld.driver );
@@ -688,7 +688,7 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 	FileReferences::const_iterator it = g_Refs.find( cpy );
 	ASSERT_M( it != g_Refs.end(), ssprintf( "CopyFileObj: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
 
-	RageFileObj *ret = cpy->Copy( p );
+	RageFileObj *ret = cpy->Copy();
 
 	/* It's from the same driver as the original. */
 	AddReference( ret, it->second );
@@ -696,7 +696,7 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 	return ret;	
 }
 
-RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile &p, int &err )
+RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, int &err )
 {
 	/*
 	 * The value for a driver to open a file is the number of directories and/or files
@@ -748,7 +748,7 @@ RageFileObj *RageFileManager::OpenForWriting( CString sPath, int mode, RageFile 
 		ASSERT( path.size() );
 
 		int error;
-		RageFileObj *ret = ld.driver->Open( path, mode, p, error );
+		RageFileObj *ret = ld.driver->Open( path, mode, error );
 		if( ret )
 		{
 			AddReference( ret, ld.driver );

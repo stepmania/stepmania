@@ -23,8 +23,7 @@ private:
 	int m_iFilePos;
 
 public:
-	RageFileObjMem( RageFileObjMemFile *pFile, RageFile &p ):
-		RageFileObj(p)
+	RageFileObjMem( RageFileObjMemFile *pFile )
 	{
 		m_pFile = pFile;
 		m_iFilePos = 0;
@@ -80,13 +79,13 @@ public:
 		return m_pFile->m_sBuf.size();
 	}
 
-	RageFileObj *Copy( RageFile &p ) const
+	RageFileObj *Copy() const
 	{
 		m_pFile->m_Mutex.Unlock();
 		++m_pFile->m_iRefs;
 		m_pFile->m_Mutex.Lock();
 
-		RageFileObjMem *pRet = new RageFileObjMem( m_pFile, p );
+		RageFileObjMem *pRet = new RageFileObjMem( m_pFile );
 		pRet->m_iFilePos = m_iFilePos;
 
 		return pRet;
@@ -111,7 +110,7 @@ RageFileDriverMem::~RageFileDriverMem()
 	}
 }
 
-RageFileObj *RageFileDriverMem::Open( const CString &sPath, int mode, RageFile &p, int &err )
+RageFileObj *RageFileDriverMem::Open( const CString &sPath, int mode, int &err )
 {
 	LockMut(m_Mutex);
 
@@ -125,7 +124,7 @@ RageFileObj *RageFileDriverMem::Open( const CString &sPath, int mode, RageFile &
 		m_Files.push_back( pFile );
 		FDB->AddFile( sPath, 0, 0, pFile );
 
-		return new RageFileObjMem( pFile, p );
+		return new RageFileObjMem( pFile );
 	}
 
 	RageFileObjMemFile *pFile = (RageFileObjMemFile *) FDB->GetFilePriv( sPath );
@@ -135,7 +134,7 @@ RageFileObj *RageFileDriverMem::Open( const CString &sPath, int mode, RageFile &
 		return NULL;
 	}
 
-	return new RageFileObjMem( pFile, p );
+	return new RageFileObjMem( pFile );
 }
 
 bool RageFileDriverMem::Remove( const CString &sPath )

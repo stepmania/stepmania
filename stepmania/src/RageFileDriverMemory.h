@@ -13,7 +13,7 @@ public:
 	RageFileDriverMem();
 	~RageFileDriverMem();
 
-	RageFileObj *Open( const CString &sPath, int mode, RageFile &p, int &err );
+	RageFileObj *Open( const CString &sPath, int mode, int &err );
 	void FlushDirCache( const CString &sPath ) { }
 
 	bool Remove( const CString &sPath );
