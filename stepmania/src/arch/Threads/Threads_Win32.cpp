@@ -116,7 +116,6 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 	thread->m_pFunc = pFunc;
 	thread->m_pData = pData;
 
-	/* XXX: does ThreadHandle need to be dup'd? */
 	thread->ThreadHandle = CreateThread( NULL, 0, &StartThread, thread, 0, &thread->ThreadId );
 	*piThreadID = (uint64_t) thread->ThreadId;
 
