@@ -1455,6 +1455,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			{
 				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
 
+				SOUNDMAN->PlayMusic("");
+
 				m_EditMode = MODE_PLAYING;
 
 				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL, NULL, NULL );
@@ -1475,6 +1477,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 		case record:
 			{
 				ASSERT( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 );
+
+				SOUNDMAN->PlayMusic("");
 
 				m_EditMode = MODE_RECORDING;
 
