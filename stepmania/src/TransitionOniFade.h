@@ -13,8 +13,6 @@
 
 
 #include "Transition.h"
-#include "RageDisplay.h"
-#include "RageSound.h"
 #include "Sprite.h"
 #include "Quad.h"
 #include "TransitionFade.h"

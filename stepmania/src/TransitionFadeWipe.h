@@ -8,13 +8,11 @@
 -----------------------------------------------------------------------------
 */
 
-#ifndef _TransitionFadeWipe_H_
-#define _TransitionFadeWipe_H_
+#ifndef TRANSITION_FADE_WIPE_H
+#define TRANSITION_FADE_WIPE_H
 
 
 #include "Transition.h"
-#include "RageDisplay.h"
-#include "RageSound.h"
 #include "Sprite.h"
 #include "Quad.h"
 
