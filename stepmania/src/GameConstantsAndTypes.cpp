@@ -119,6 +119,11 @@ CString SongSortOrderToString( SongSortOrder so )
 	case SORT_MOST_PLAYED:	return "PLAYERS BEST";
 	case SORT_GRADE:		return "TOP GRADE";
 	case SORT_ARTIST:		return "ARTIST";
+	case SORT_EASY_METER:	return "EASY METER";
+	case SORT_MEDIUM_METER:	return "MEDIUM METER";
+	case SORT_HARD_METER:	return "HARD METER";
+	case SORT_SORT:			return "SORT";
+	case SORT_ROULETTE:		return "ROULETTE";
 	default:
 		ASSERT(0);
 		return "";

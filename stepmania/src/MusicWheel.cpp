@@ -29,6 +29,7 @@
 #include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "Banner.h"
+#include "Notes.h"
 
 
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, THEME->GetMetricI("MusicWheel","NumWheelItems") )
@@ -393,6 +394,15 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			case SORT_ARTIST:
 				SortSongPointerArrayByArtist( arraySongs );
 				break;
+			case SORT_EASY_METER:
+				SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
+				break;
+			case SORT_MEDIUM_METER:
+				SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_MEDIUM );
+				break;
+			case SORT_HARD_METER:
+				SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_HARD );
+				break;
 			default:
 				ASSERT(0);	// unhandled SortOrder
 			}
@@ -413,6 +423,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			case SORT_MOST_PLAYED:	bUseSections = false;	break;
 			case SORT_GRADE:		bUseSections = true;	break;
 			case SORT_ARTIST:		bUseSections = true;	break;
+			case SORT_EASY_METER:	bUseSections = true;	break;
+			case SORT_MEDIUM_METER:	bUseSections = true;	break;
+			case SORT_HARD_METER:	bUseSections = true;	break;
 			case SORT_ROULETTE:		bUseSections = false;	break;
 			default:		ASSERT( 0 );
 			}
@@ -761,6 +774,9 @@ void MusicWheel::Update( float fDeltaTime )
 				case SORT_ARTIST:
 				case SORT_MOST_PLAYED:
 				case SORT_ROULETTE:
+				case SORT_EASY_METER:
+				case SORT_MEDIUM_METER:
+				case SORT_HARD_METER:
 					// Look for the last selected song or course
 					if( GAMESTATE->m_pCurCourse )
 						SelectCourse( GAMESTATE->m_pCurCourse );
@@ -772,6 +788,32 @@ void MusicWheel::Update( float fDeltaTime )
 					break;
 				default:
 					ASSERT(0);
+				}
+
+				// Change difficulty for sorts by meter
+				switch( GAMESTATE->m_SongSortOrder )
+				{
+				case SORT_EASY_METER:
+					{
+						for( int p=0; p<NUM_PLAYERS; p++ )
+							if( GAMESTATE->IsPlayerEnabled(p) )
+								GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_EASY;
+					}
+					break;
+				case SORT_MEDIUM_METER:
+					{
+						for( int p=0; p<NUM_PLAYERS; p++ )
+							if( GAMESTATE->IsPlayerEnabled(p) )
+								GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_MEDIUM;
+					}
+					break;
+				case SORT_HARD_METER:
+					{
+						for( int p=0; p<NUM_PLAYERS; p++ )
+							if( GAMESTATE->IsPlayerEnabled(p) )
+								GAMESTATE->m_PreferredDifficulty[p] = DIFFICULTY_HARD;
+					}
+					break;
 				}
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
@@ -1283,6 +1325,27 @@ CString MusicWheel::GetSectionNameFromSongAndSort( const Song* pSong, SongSortOr
 					return ssprintf( "%4s x %d", GradeToString(g).c_str(), iCount );
 			}
 			return "NO DATA";
+		}
+	case SORT_EASY_METER:
+		{
+			Notes* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_EASY);
+			if( pNotes )	
+				return ssprintf("%02d", pNotes->GetMeter() );
+			return "N/A";
+		}
+	case SORT_MEDIUM_METER:
+		{
+			Notes* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_MEDIUM);
+			if( pNotes )	
+				return ssprintf("%02d", pNotes->GetMeter() );
+			return "N/A";
+		}
+	case SORT_HARD_METER:
+		{
+			Notes* pNotes = pSong->GetNotes(GAMESTATE->GetCurrentStyleDef()->m_NotesType,DIFFICULTY_HARD);
+			if( pNotes )	
+				return ssprintf("%02d", pNotes->GetMeter() );
+			return "N/A";
 		}
 	case SORT_SORT:
 		return "";

@@ -36,7 +36,7 @@ OptionRow g_BackgroundOptionsLines[NUM_BACKGROUND_OPTIONS_LINES] = {
 	OptionRow( "Mode",					"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ),
 	OptionRow( "Brightness",			"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ),
 	OptionRow( "Danger",				"HIDE","SHOW" ),
-	OptionRow( "Dancing\nCharacters",	"HIDE","SHOW" ),
+	OptionRow( "Dancing\nCharacters",	"DEFAULT TO OFF","DEFAULT TO RANDOM" ),
 	OptionRow( "Random\nBackgrounds",   "5","10","15","20" ),
 };
 

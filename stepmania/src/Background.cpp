@@ -22,6 +22,7 @@
 #include "PrefsManager.h"
 #include "NoteTypes.h"
 #include <math.h>	// for fmodf
+#include "DancingCharacters.h"
 
 
 const float FADE_SECONDS = 1.0f;
@@ -60,6 +61,14 @@ Background::Background()
 	m_quadBorder[2].SetDiffuse( RageColor(0,0,0,1) );
 	m_quadBorder[3].StretchTo( RectI(LEFT_EDGE,BOTTOM_EDGE,RIGHT_EDGE,SCREEN_BOTTOM) );
 	m_quadBorder[3].SetDiffuse( RageColor(0,0,0,1) );
+
+	bool bOneOrMoreChars = false;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		bOneOrMoreChars = true;
+	if( bOneOrMoreChars )
+		m_pDancingCharacters = new DancingCharacters;
+	else
+		m_pDancingCharacters = NULL;
 }
 
 Background::~Background()
@@ -416,8 +425,8 @@ void Background::Update( float fDeltaTime )
 		}
 	}
 	
-	if( PREFSMAN->m_bShowDancingCharacters )
-		m_DancingCharacters.Update( fDeltaTime );
+	if( m_pDancingCharacters )
+		m_pDancingCharacters->Update( fDeltaTime );
 
 	m_quadBGBrightness.Update( fDeltaTime );
 }
@@ -438,8 +447,8 @@ void Background::DrawPrimitives()
 			m_pFadingBGA->Draw();
 	}
 
-	if( PREFSMAN->m_bShowDancingCharacters )
-		m_DancingCharacters.Draw();
+	if( m_pDancingCharacters )
+		m_pDancingCharacters->Draw();
 
 	m_quadBGBrightness.Draw();
 	for( int i=0; i<4; i++ )

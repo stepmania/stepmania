@@ -88,17 +88,26 @@ void GameState::Reset()
 		m_StoredPlayerOptions[p].Init();
 	}
 	m_SongOptions.Init();
-	SAFE_DELETE( m_pPosition );
-	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 	
 	for( p=0; p<NUM_PLAYERS; p++ )
 		ApplyModifiers( (PlayerNumber)p, PREFSMAN->m_sDefaultModifiers );
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		if( PREFSMAN->m_bShowDancingCharacters )
+			m_pCurCharacters[p] = m_pCharacters[rand()%m_pCharacters.size()];
+		else
+			m_pCurCharacters[p] = NULL;
+	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+	{
 		m_fSuperMeterGrowth[p] = 1;
 		m_iCpuSkill[p] = 5;
 	}
+
+	SAFE_DELETE( m_pPosition );
+	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 }
 
 void GameState::Update( float fDelta )

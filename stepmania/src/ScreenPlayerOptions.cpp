@@ -147,7 +147,7 @@ void ScreenPlayerOptions::ImportOptions()
 	// fill in character names
 	//
 	m_OptionRow[PO_CHARACTER].choices.clear();
-	m_OptionRow[PO_CHARACTER].choices.push_back( "OFF" ); 
+	m_OptionRow[PO_CHARACTER].choices.push_back( "OFF" );
 	for( i=0; i<GAMESTATE->m_pCharacters.size(); i++ )
 	{
 		CString s = GAMESTATE->m_pCharacters[i]->m_sName;
@@ -312,13 +312,13 @@ void ScreenPlayerOptions::ExportOptions()
 			GAMESTATE->m_pCurNotes[p] = vNotes[ m_iSelectedOption[p][PO_STEP] ];
 		}
 
-		if( m_iSelectedOption[p][PO_CHARACTER] > 0 )
+		if( m_iSelectedOption[p][PO_CHARACTER] == 0 )
+			GAMESTATE->m_pCurCharacters[p] = NULL;
+		else
 		{
 			int choice = m_iSelectedOption[p][PO_CHARACTER] - 1;
 			GAMESTATE->m_pCurCharacters[p] = GAMESTATE->m_pCharacters[choice];
 		}
-		else
-			GAMESTATE->m_pCurCharacters[p] = NULL;
 	}
 }
 

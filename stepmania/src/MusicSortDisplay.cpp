@@ -21,11 +21,9 @@
 
 MusicSortDisplay::MusicSortDisplay()
 {
-	Load( THEME->GetPathToG(ssprintf("MusicSortDisplay icons 1x%d",NUM_SORT_ORDERS)) );
-	StopAnimating();
 }
 
 void MusicSortDisplay::Set( SongSortOrder so ) 
 { 
-	SetState( so );
+	Load( THEME->GetPathToG(ssprintf("MusicSortDisplay %s",SongSortOrderToString(so).c_str())) );
 }

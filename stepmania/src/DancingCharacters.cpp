@@ -43,27 +43,25 @@ const float MODEL_X_TWO_PLAYERS[NUM_PLAYERS] = { -8, 8 };
 
 DancingCharacters::DancingCharacters()
 {
-	if( PREFSMAN->m_bShowDancingCharacters )
+	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-		{
-			if( !GAMESTATE->IsPlayerEnabled(p) )
-				continue;
+		if( !GAMESTATE->IsPlayerEnabled(p) )
+			continue;
 
-			Character* pChar = GAMESTATE->m_pCurCharacters[p];
-			if( !pChar )
-				continue;
-			if( GAMESTATE->GetNumPlayersEnabled()==2 )
-				m_Character[p].SetX( MODEL_X_TWO_PLAYERS[p] );
-			else
-				m_Character[p].SetX( MODEL_X_ONE_PLAYER );
-			m_Character[p].LoadMilkshapeAscii( pChar->GetModelPath() );
-			m_Character[p].LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
-			m_Character[p].LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
-			m_Character[p].LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
-			m_Character[p].PlayAnimation( "rest" );
-			this->AddChild( &m_Character[p] );
-		}
+		Character* pChar = GAMESTATE->m_pCurCharacters[p];
+		if( !pChar )
+			continue;
+		
+		if( GAMESTATE->GetNumPlayersEnabled()==2 )
+			m_Character[p].SetX( MODEL_X_TWO_PLAYERS[p] );
+		else
+			m_Character[p].SetX( MODEL_X_ONE_PLAYER );
+		m_Character[p].LoadMilkshapeAscii( pChar->GetModelPath() );
+		m_Character[p].LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
+		m_Character[p].LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
+		m_Character[p].LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
+		m_Character[p].PlayAnimation( "rest" );
+		this->AddChild( &m_Character[p] );
 	}
 
 	// initial camera sweep is still
