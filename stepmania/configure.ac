@@ -40,7 +40,7 @@ AM_CONDITIONAL(ALSA, test x$alsa = xtrue )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
 
 # We could do this more cleanly with an AC_CHECK_FUNCS wrapper.
-AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf roundf])
+AC_CHECK_FUNCS([powf sqrtf sinf tanf cosf acosf roundf truncf])
 AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 [#if !defined(HAVE_POWF)
 #define NEED_POWF
@@ -59,6 +59,12 @@ AH_VERBATIM([VA_ZZZ_NEEDED_FUNCS],
 #endif
 #if !defined(HAVE_ACOSF)
 #define NEED_ACOSF
+#endif
+#if !defined(HAVE_ROUNDF)
+#define NEED_ROUNDF
+#endif
+#if !defined(HAVE_TRUNCF)
+#define NEED_TRUNCF
 #endif
 ])
 
