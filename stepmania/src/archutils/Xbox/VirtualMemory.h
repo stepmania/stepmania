@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "RageThreads.h"
+
 struct vm_page
 {
 	DWORD startAddress; // start address for this page
@@ -49,6 +51,9 @@ protected:
 
 	bool inited;
 	bool logging;
+
+	// mutex to make sure pages aren't allocated/deallocated concurrently
+	RageMutex vmemMutex;
 };
 
 void *valloc(size_t size);

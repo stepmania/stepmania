@@ -5,7 +5,8 @@
 
 VirtualMemoryManager vmem_Manager;
 
-VirtualMemoryManager::VirtualMemoryManager()
+VirtualMemoryManager::VirtualMemoryManager():
+	vmemMutex("VirtualMemory")
 {
 	pages = 0;
 	pageLRU = -1;
@@ -90,6 +91,8 @@ void* VirtualMemoryManager::Allocate(size_t size)
 	if(!inited)
 		return NULL;
 
+	LockMut(vmemMutex);
+
 	unsigned long startPage = -1;
 	unsigned long freeSegments = 0;
 	unsigned long sizeInPages = (size / pageSize) + 1;
@@ -164,6 +167,8 @@ bool VirtualMemoryManager::Free(void *ptr)
 	if(!inited)
 		return false;
 
+	LockMut(vmemMutex);
+
 	// check that the address is within the virtual address bounds
 	if((DWORD)ptr < baseAddress || (DWORD)ptr >= baseAddress + (totalPages * pageSize))
 	{
@@ -213,6 +218,8 @@ bool VirtualMemoryManager::PageFault(void *ptr)
 {
 	if(!inited)
 		return false;
+
+	LockMut(vmemMutex);
 
 	// check that the address is within the virtual address bounds
 	if((DWORD)ptr < baseAddress || (DWORD)ptr >= baseAddress + (totalPages * pageSize))
@@ -279,6 +286,8 @@ bool VirtualMemoryManager::DecommitLRU()
 	if(!inited)
 		return false;
 
+	LockMut(vmemMutex);
+
 	// choose random LRU
 	pageLRU = rand() % totalPages;
 
@@ -335,6 +344,8 @@ bool VirtualMemoryManager::EnsureFreeMemory(size_t size)
 	if(!inited)
 		return false;
 
+	LockMut(vmemMutex);
+
 	MEMORYSTATUS ms;
 	GlobalMemoryStatus(&ms);
 
@@ -358,6 +369,8 @@ void VirtualMemoryManager::Lock(void *ptr)
 {
 	if(!inited)
 		return;
+
+	LockMut(vmemMutex);
 
 	// check that the address is within the virtual address bounds
 	if((DWORD)ptr < baseAddress || (DWORD)ptr >= baseAddress + (totalPages * pageSize))
@@ -393,6 +406,8 @@ void VirtualMemoryManager::Unlock(void *ptr)
 {
 	if(!inited)
 		return;
+
+	LockMut(vmemMutex);
 
 	// check that the address is within the virtual address bounds
 	if((DWORD)ptr < baseAddress || (DWORD)ptr >= baseAddress + (totalPages * pageSize))
