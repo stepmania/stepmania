@@ -107,39 +107,10 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 {
 	LOG->Trace( "ScreenGameplay::ScreenGameplay()" );
 
- m_bDemonstration = bDemonstration;
+	m_bDemonstration = bDemonstration;
 
 	SECONDS_BETWEEN_COMMENTS.Refresh();
 	G_TICK_EARLY_SECONDS.Refresh();
-
-
-
-
-
-// Lyrics loader
-
-	LyricsLoader	LL;
-	if( GAMESTATE->m_pCurSong->GetLyricsPath() != "NULL" )
-	{
-		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
-		
-		m_textLyrics.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
-		m_textLyrics.SetXY( LYRICS_X,LYRICS_Y );
-		m_textLyrics.SetDiffuse( RageColor(1,1,1,1) );
-		// We need to use the Color Tag that's in m_pCurSong->m_LyricSegments[?].m_sColor
-		// But since the value there is in Hex, need to convert to RageColor I guess.
-		// Until that gets done, this will default to white (&HFFFFFF)
-
-		m_bHasLyrics = true;
-	}
-	else
-	{
-		m_bHasLyrics = false;
-	}
-
-// ~~
-
-
 
 
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
@@ -431,7 +402,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 
-	this->AddChild( &m_textLyrics );// -- THIS IS NOT DONE YET!! (Miryokuteki)
+	m_LyricDisplay.SetXY( LYRICS_X,LYRICS_Y );
+	this->AddChild(&m_LyricDisplay);
 	
 
 	m_textAutoPlay.LoadFromFont( THEME->GetPathTo("Fonts","header2") );
@@ -680,6 +652,14 @@ void ScreenGameplay::LoadNextSong()
 	}
 
 	m_soundMusic.Load( GAMESTATE->m_pCurSong->GetMusicPath() );
+
+	// Load lyrics
+	// XXX: don't load this here
+	LyricsLoader	LL;
+	if( GAMESTATE->m_pCurSong->HasLyrics()  )
+	{
+		LL.LoadFromLRCFile(GAMESTATE->m_pCurSong->GetLyricsPath(), *GAMESTATE->m_pCurSong);
+	}
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
@@ -774,58 +754,6 @@ bool ScreenGameplay::IsTimeToPlayTicks() const
 	return bAnyoneHasANote;
 }
 
-void ScreenGameplay::UpdateLyrics( float fDeltaTime )
-{
-	//
-	// Check if we should show lyrics now
-	//
-	if( !m_bHasLyrics )
-		return;
-
-//	m_fLyricsTime += fDeltaTime;
-	float	fStartTime = (GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_fStartTime);
-
-	// Make sure we don't go over the array's boundry
-	if( m_iCurLyricNumber <= GAMESTATE->m_pCurSong->m_LyricSegments.size() )
-	{
-		// Check if it's time to animate the old lyrics to off-screen
-		if( (fStartTime - GAMESTATE->m_fMusicSeconds) <= .30 || (fStartTime - GAMESTATE->m_fMusicSeconds) <= -.30f)
-		{
-			m_textLyrics.FadeOff( 0, "foldy", .20f);
-		}
-
-		if( GAMESTATE->m_fMusicSeconds >= fStartTime )
-		{
-			/*I figure for longer lines of text, the Lyric display object should
-				be scaled down, if needed, by the .ScaleTo() function. But somehow
-				it jus ain't working for me at all.. anyone able to do this
-				properly?? We prolly should also add detection of where to put
-				the Lyric object, if the arrows are on reverse? Jus an idea, 
-				but it kinda defeats the purpose of the Lyric object X/Y being a
-				theme element :)
-			
-				BTW: Once the function is done, this will also be where the color
-						of this lyric block will be set -- Miryokuteki */
-			//m_textLyrics.SetDiffuse(COLOR HERE);
-			
-			/*if( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric == "" || GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric == " " )
-			{
-				For some reason, once this fades off, it never comes back when 
-				it's called! -- Miryokuteki
-
-				m_textLyrics.FadeOff( 0, "fade", .10f );
-				m_iCurLyricNumber++;
-			}
-			else
-			{
-			*/
-				m_textLyrics.FadeOn( 0, "foldy", .20f );
-				m_textLyrics.SetText( GAMESTATE->m_pCurSong->m_LyricSegments[m_iCurLyricNumber].m_sLyric );
-				m_iCurLyricNumber++;
-			//}
-		}
-	}
-}
 
 void ScreenGameplay::Update( float fDeltaTime )
 {
@@ -893,8 +821,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 	switch( m_DancingState )
 	{
 	case STATE_DANCING:
-		UpdateLyrics(fDeltaTime);
-		
 		//
 		// Update players' alive time
 		//

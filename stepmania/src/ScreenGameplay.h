@@ -29,6 +29,7 @@
 #include "Inventory.h"
 #include "ActiveItemList.h"
 //#include "BeginnerHelper.h"	// uncomment once it's checked in
+#include "LyricDisplay.h"
 
 
 // messages sent by Combo
@@ -88,12 +89,9 @@ protected:
 	CStringArray		m_asCourseModifiers;	// used only in a GameModes with courses
 
 	bool				m_bChangedOffsetOrBPM;
-
 	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
-	float				m_fLyricsTime;
-	int					m_iCurLyricNumber;
-	bool				m_bHasLyrics;
 
+	LyricDisplay		m_LyricDisplay;
 
 	Background			m_Background;
 
@@ -113,7 +111,6 @@ protected:
 	BitmapText			m_textSongOptions;
 
 	BitmapText			m_textDebug;
-	BitmapText			m_textLyrics;
 
 	BitmapText			m_textAutoPlay;	// for AutoPlay, AutoAdjust
 	void	UpdateAutoPlayText();
