@@ -983,13 +983,13 @@ D8 E8-EF:				"fsubr st, " $2[0-2]rf
 D8 F0-F7:				"fdiv st, " $2[0-2]rf
 D8 F8-FF:				"fdivr st, " $2[0-2]rf
 
-D9 00-87 !modrm32:		"fld " $3s
-D9 10-97 !modrm32:		"fst " $3s
-D9 18-9F !modrm32:		"fstp " $3s
-D9 20-A7 !modrm:		"fldenv " $3s
-D9 28-AF !modrm16:		"fldcw " $3s
-D9 30-B7 !modrm:		"fstenv " $3s
-D9 38-BF !modrm32:		"fstcw " $3s
+D9 00-87 !modrm32:		"fld " $4s
+D9 10-97 !modrm32:		"fst " $4s
+D9 18-9F !modrm32:		"fstp " $4s
+D9 20-A7 !modrm:		"fldenv " $4s
+D9 28-AF !modrm16:		"fldcw " $4s
+D9 30-B7 !modrm:		"fstenv " $4s
+D9 38-BF !modrm32:		"fstcw " $4s
 D9 C0-C7:				"fld " $2[0-2]rf
 D9 C8-CF:				"fxch " $2[0-2]rf
 D9 D0:					"fnop"
