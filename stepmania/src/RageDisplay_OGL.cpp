@@ -324,12 +324,7 @@ static void TurnOffHardwareVBO()
 	}
 }
 
-
-#if defined(__unix__) && !defined(unix)
-#define unix
-#endif
-
-#if defined(unix)
+#if defined(UNIX)
 #define Font X11___Font
 #define Screen X11___Screen
 #include "GL/glx.h"
@@ -337,13 +332,13 @@ static void TurnOffHardwareVBO()
 #undef Screen
 #endif
 
-#if defined(unix)
+#if defined(UNIX)
 Display *g_X11Display = NULL;
 #endif
 
 static void LogGLXDebugInformation()
 {
-#if defined(unix)
+#if defined(UNIX)
 	ASSERT( g_X11Display );
 
 	const int scr = DefaultScreen( g_X11Display );
@@ -415,7 +410,7 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	}
 #endif
 
-#if defined(unix)
+#if defined(UNIX)
 	if( !glXIsDirect( g_X11Display, glXGetCurrentContext() ) )
 	{
 		if( !bAllowUnacceleratedRenderer )
@@ -437,7 +432,7 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_point_granularity);
 }
 
-#if defined(unix) && defined(HAVE_LIBXTST)
+#if defined(UNIX) && defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
 #endif
 
@@ -448,7 +443,7 @@ void RageDisplay_OGL::Update(float fDeltaTime)
 	if( PREFSMAN->m_bDisableScreenSaver )
 	{
 		/* Disable the screensaver. */
-#if defined(unix) && defined(HAVE_LIBXTST)
+#if defined(UNIX) && defined(HAVE_LIBXTST)
 		ASSERT( g_X11Display );
 
 		/* This causes flicker. */
