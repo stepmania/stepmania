@@ -3156,11 +3156,11 @@ SOURCE=.\ThemeManager.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\UnlockSystem.cpp
+SOURCE=.\UnlockManager.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\UnlockSystem.h
+SOURCE=.\UnlockManager.h
 # End Source File
 # Begin Source File
 
