@@ -321,9 +321,11 @@ RageDisplay_D3D::RageDisplay_D3D( VideoModeParams p )
 
 void RageDisplay_D3D::Update(float fDeltaTime)
 {
+	HandleSDLEvents();
+
 #if defined _WINDOWS
 	SDL_Event event;
-	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK))
+	while(SDL_GetEvent(event, SDL_VIDEORESIZEMASK|SDL_ACTIVEEVENTMASK))
 	{
 		switch(event.type)
 		{
@@ -333,6 +335,16 @@ void RageDisplay_D3D::Update(float fDeltaTime)
 
 			/* Let DISPLAY know that our resolution has changed. */
 			ResolutionChanged();
+			break;
+		case SDL_ACTIVEEVENT:
+			{
+				/* We don't care about mouse focus. */
+				if(event.active.state == SDL_APPMOUSEFOCUS)
+					break;
+
+				uint8_t i = SDL_GetAppState();
+				FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
+			}
 			break;
 		}
 	}
