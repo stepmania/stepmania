@@ -72,13 +72,13 @@ public:
 
 	CString m_sName, m_sID;
 
-	CString GetName() const		{ return m_sName; };
-	CString GetID() const		{ return m_sID; };
 	/* m_sName is the name actors use to look up internal metrics for themselves, and for
 	 * filenames.  m_sID is the name parents use to look up their own metrics for an actor
 	 * (usually via ActorUtil).  (This is experimental; see DifficultyMeter.cpp for more
 	 * information.) */
-	void SetName( const CString &sName, const CString &sID = "" ) { m_sName = sName; m_sID = (sID.size()? sID:sName);  };
+	const CString &GetName() const		{ return m_sName; }
+	const CString &GetID() const		{ return m_sID.empty() ? m_sName : m_sID; }
+	void SetName( const CString &sName, const CString &sID = "" ) { m_sName = sName; m_sID = sID; }
 
 
 
@@ -212,11 +212,11 @@ public:
 	//
 	enum HorizAlign { align_left, align_center, align_right };
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
-	virtual void SetHorizAlign( CString s );
+	virtual void SetHorizAlign( const CString &s );
 
 	enum VertAlign { align_top, align_middle, align_bottom };
 	virtual void SetVertAlign( VertAlign va ) { m_VertAlign = va; }
-	virtual void SetVertAlign( CString s );
+	virtual void SetVertAlign( const CString &s );
 
 
 	//
@@ -230,7 +230,7 @@ public:
 	void SetEffectDelay( float fTime )			{ m_fEffectDelay = fTime; }
 	void SetEffectOffset( float fPercent )		{ m_fEffectOffset = fPercent; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
-	void SetEffectClock( CString s );
+	void SetEffectClock( const CString &s );
 
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
 
@@ -289,22 +289,22 @@ public:
 	// render states
 	//
 	void SetBlendMode( BlendMode mode )			{ m_BlendMode = mode; } 
-	void SetBlendMode( CString );
+	void SetBlendMode( const CString &s );
 	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
 	void SetClearZBuffer( bool b ) 				{ m_bClearZBuffer = b; } 
 	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
 	virtual void SetZTestMode( ZTestMode mode ) { m_ZTestMode = mode; } 
-	virtual void SetZTestMode( CString );
+	virtual void SetZTestMode( const CString &s );
 	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
-	virtual void SetCullMode( CString );
+	virtual void SetCullMode( const CString &s );
 
 	//
 	// Commands
 	//
-	void Command( CString sCommands );	// return length in seconds to execute command
+	void Command( const CString &sCommands );
 	virtual void HandleCommand( const ParsedCommand &command );	// derivable
-	static float GetCommandLength( CString command );
+	static float GetCommandLengthSeconds( const CString &sCommands );
 
 	//
 	// Animation

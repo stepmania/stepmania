@@ -20,7 +20,7 @@
 #include "arch/Dialog/Dialog.h"
 
 
-Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
+Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer )
 {
 	// TODO: Check for recursive loading
 	IniFile ini;
@@ -234,7 +234,7 @@ retry:
 	return pActor;
 }
 
-Actor* MakeActor( RageTextureID ID )
+Actor* MakeActor( const RageTextureID &ID )
 {
 	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
@@ -275,13 +275,13 @@ Actor* MakeActor( RageTextureID ID )
 		ID.filename.c_str(), sExt.c_str() );
 }
 
-void UtilSetXY( Actor& actor, CString sClassName )
+void UtilSetXY( Actor& actor, const CString &sClassName )
 {
 	ASSERT( !actor.GetID().empty() );
 	actor.SetXY( THEME->GetMetricF(sClassName,actor.GetID()+"X"), THEME->GetMetricF(sClassName,actor.GetID()+"Y") );
 }
 
-void UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
+void UtilCommand( Actor& actor, const CString &sClassName, const CString &sCommandName )
 {
 	// If Actor is hidden, it won't get updated or drawn, so don't bother tweening.
 	/* ... but we might be unhiding it, or setting state for when we unhide it later */
@@ -305,13 +305,13 @@ void UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 	actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") );
 }
 
-void AutoActor::Load( CString sPath )
+void AutoActor::Load( const CString &sPath )
 {
 	Unload();
 	m_pActor = MakeActor( sPath );
 }
 
-void AutoActor::LoadAndSetName( CString sScreenName, CString sActorName )
+void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActorName )
 {
 	Load( THEME->GetPathG(sScreenName,sActorName) );
 	m_pActor->SetName( sActorName );

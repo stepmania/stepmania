@@ -444,31 +444,28 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
-void Actor::SetHorizAlign( CString s )
+void Actor::SetHorizAlign( const CString &s )
 {
-	s.MakeLower();
-	if     (s=="left")		SetHorizAlign( align_left ); /* call derived */
-	else if(s=="center")	SetHorizAlign( align_center );
-	else if(s=="right")		SetHorizAlign( align_right );
+	if     (s.CompareNoCase("left")==0)		SetHorizAlign( align_left ); /* call derived */
+	else if(s.CompareNoCase("center")==0)	SetHorizAlign( align_center );
+	else if(s.CompareNoCase("right")==0)	SetHorizAlign( align_right );
 	else	ASSERT(0);
 }
 
-void Actor::SetVertAlign( CString s )
+void Actor::SetVertAlign( const CString &s )
 {
-	s.MakeLower();
-	if     (s=="top")		SetVertAlign( align_top ); /* call derived */
-	else if(s=="middle")	SetVertAlign( align_middle );
-	else if(s=="bottom")	SetVertAlign( align_bottom );
+	if     (s.CompareNoCase("top")==0)		SetVertAlign( align_top ); /* call derived */
+	else if(s.CompareNoCase("middle")==0)	SetVertAlign( align_middle );
+	else if(s.CompareNoCase("bottom")==0)	SetVertAlign( align_bottom );
 	else	ASSERT(0);
 }
 
-void Actor::SetEffectClock( CString s )
+void Actor::SetEffectClock( const CString &s )
 {
-	s.MakeLower();
-	if     (s=="timer")		SetEffectClock( CLOCK_TIMER );
-	else if(s=="beat")		SetEffectClock( CLOCK_BGM_BEAT );
-	else if(s=="music")		SetEffectClock( CLOCK_BGM_TIME );
-	else if(s=="bgm")		SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
+	if     (s.CompareNoCase("timer")==0)	SetEffectClock( CLOCK_TIMER );
+	else if(s.CompareNoCase("beat")==0)		SetEffectClock( CLOCK_BGM_BEAT );
+	else if(s.CompareNoCase("music")==0)	SetEffectClock( CLOCK_BGM_TIME );
+	else if(s.CompareNoCase("bgm")==0)		SetEffectClock( CLOCK_BGM_BEAT ); // compat, deprecated
 	else	ASSERT(0);
 }
 
@@ -619,12 +616,15 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::Command( CString sCommands )
+void Actor::Command( const CString &sCommands )
 {
-	sCommands.MakeLower();
+	// Convert to lower so we can do case insensitive compared later.
+	// TODO: Is this the best place to convert?
+	CString sCommandsLower = sCommands;
+	sCommandsLower.MakeLower();
 
 	vector<ParsedCommand> vCommands;
- 	ParseCommands( sCommands, vCommands );
+ 	ParseCommands( sCommandsLower, vCommands );
 
 	for( unsigned i=0; i<vCommands.size(); i++ )
 		this->HandleCommand( vCommands[i] );
@@ -760,10 +760,10 @@ void Actor::HandleCommand( const ParsedCommand &command )
 	CheckHandledParams;
 }
 
-float Actor::GetCommandLength( CString command )
+float Actor::GetCommandLengthSeconds( const CString &sCommands )
 {
 	Actor temp;
-	temp.Command(command);
+	temp.Command(sCommands);
 
 	return temp.GetTweenTimeLeft();
 }
@@ -862,32 +862,28 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;
 }
 
-void Actor::SetBlendMode( CString s )
+void Actor::SetBlendMode( const CString &s )
 {
-	s.MakeLower();
-	if     (s=="normal")	SetBlendMode( BLEND_NORMAL );
-	else if(s=="add")		SetBlendMode( BLEND_ADD );
-	else if(s=="noeffect")	SetBlendMode( BLEND_NO_EFFECT );
+	if     (s.CompareNoCase("normal")==0)	SetBlendMode( BLEND_NORMAL );
+	else if(s.CompareNoCase("add")==0)	SetBlendMode( BLEND_ADD );
+	else if(s.CompareNoCase("noeffect")==0)	SetBlendMode( BLEND_NO_EFFECT );
 	else	ASSERT(0);
 }
 
-void Actor::SetCullMode( CString s )
+void Actor::SetCullMode( const CString &s )
 {
-	s.MakeLower();
-	if     (s=="back")	SetCullMode( CULL_BACK );
-	else if(s=="front")	SetCullMode( CULL_FRONT );
-	else if(s=="none")	SetCullMode( CULL_NONE );
+	if     (s.CompareNoCase("back")==0)	SetCullMode( CULL_BACK );
+	else if(s.CompareNoCase("front")==0)	SetCullMode( CULL_FRONT );
+	else if(s.CompareNoCase("none")==0)	SetCullMode( CULL_NONE );
 	else	ASSERT(0);
 }
 
-void Actor::SetZTestMode( CString s )
+void Actor::SetZTestMode( const CString &s )
 {
-	s.MakeLower();
-	
 	// for metrics backward compatibility
-	if(s=="off")			SetZTestMode( ZTEST_OFF );
-	else if(s=="writeonpass")	SetZTestMode( ZTEST_WRITE_ON_PASS );
-	else if(s=="writeonfail")	SetZTestMode( ZTEST_WRITE_ON_FAIL );
+	if(s.CompareNoCase("off")==0)			SetZTestMode( ZTEST_OFF );
+	else if(s.CompareNoCase("writeonpass")==0)	SetZTestMode( ZTEST_WRITE_ON_PASS );
+	else if(s.CompareNoCase("writeonfail")==0)	SetZTestMode( ZTEST_WRITE_ON_FAIL );
 	else	ASSERT(0);
 }
 

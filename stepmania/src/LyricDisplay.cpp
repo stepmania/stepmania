@@ -30,8 +30,8 @@ void LyricDisplay::Init()
 	m_iCurLyricNumber = 0;
 
 	/* Update global cache: */
-	g_TweenInTime = Actor::GetCommandLength(IN_COMMAND);
-	g_TweenOutTime = Actor::GetCommandLength(OUT_COMMAND);
+	g_TweenInTime = Actor::GetCommandLengthSeconds(IN_COMMAND);
+	g_TweenOutTime = Actor::GetCommandLengthSeconds(OUT_COMMAND);
 	m_fLastSecond = -500;
 }
 

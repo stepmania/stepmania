@@ -12,29 +12,29 @@
 #define COMMAND( actor, command_name )		UtilCommand( actor, m_sName, command_name )
 
 
-void UtilSetXY( Actor& actor, CString sClassName );
-inline void UtilSetXY( Actor* pActor, CString sClassName ) { UtilSetXY( *pActor, sClassName ); }
+void UtilSetXY( Actor& actor, const CString &sClassName );
+inline void UtilSetXY( Actor* pActor, const CString &sClassName ) { UtilSetXY( *pActor, sClassName ); }
 
 
-void UtilCommand( Actor& actor, CString sClassName, CString sCommandName );
+void UtilCommand( Actor& actor, const CString &sClassName, const CString &sCommandName );
 
-inline void UtilOnCommand( Actor& actor, CString sClassName ) { UtilCommand( actor, sClassName, "On" ); }
-inline void UtilOffCommand( Actor& actor, CString sClassName ) { UtilCommand( actor, sClassName, "Off" ); }
-inline void UtilSetXYAndOnCommand( Actor& actor, CString sClassName )
+inline void UtilOnCommand( Actor& actor, const CString &sClassName ) { UtilCommand( actor, sClassName, "On" ); }
+inline void UtilOffCommand( Actor& actor, const CString &sClassName ) { UtilCommand( actor, sClassName, "Off" ); }
+inline void UtilSetXYAndOnCommand( Actor& actor, const CString &sClassName )
 {
 	UtilSetXY( actor, sClassName );
 	UtilOnCommand( actor, sClassName );
 }
 
 /* convenience */
-inline void UtilCommand( Actor* pActor, CString sClassName, CString sCommandName ) { if(pActor) UtilCommand( *pActor, sClassName, sCommandName ); }
-inline void UtilOnCommand( Actor* pActor, CString sClassName ) { if(pActor) UtilOnCommand( *pActor, sClassName ); }
-inline void UtilOffCommand( Actor* pActor, CString sClassName ) { if(pActor) UtilOffCommand( *pActor, sClassName ); }
-inline void UtilSetXYAndOnCommand( Actor* pActor, CString sClassName ) { if(pActor) UtilSetXYAndOnCommand( *pActor, sClassName ); }
+inline void UtilCommand( Actor* pActor, const CString &sClassName, const CString &sCommandName ) { if(pActor) UtilCommand( *pActor, sClassName, sCommandName ); }
+inline void UtilOnCommand( Actor* pActor, const CString &sClassName ) { if(pActor) UtilOnCommand( *pActor, sClassName ); }
+inline void UtilOffCommand( Actor* pActor, const CString &sClassName ) { if(pActor) UtilOffCommand( *pActor, sClassName ); }
+inline void UtilSetXYAndOnCommand( Actor* pActor, const CString &sClassName ) { if(pActor) UtilSetXYAndOnCommand( *pActor, sClassName ); }
 
 // Return a Sprite, BitmapText, or Model depending on the file type
-Actor* LoadFromActorFile( CString sIniPath, CString sLayer = "Actor" );
-Actor* MakeActor( RageTextureID ID );
+Actor* LoadFromActorFile( const CString &sIniPath, const CString &sLayer = "Actor" );
+Actor* MakeActor( const RageTextureID &ID );
 
 
 // creates the appropriate Actor derivitive on load and
@@ -50,8 +50,8 @@ public:
 	Actor *operator->()				{ return m_pActor; }
 	void Unload()					{ if(m_pActor) { delete m_pActor; m_pActor=NULL; } }
 	bool IsLoaded() const			{ return m_pActor != NULL; }
-	void Load( CString sPath );
-	void LoadAndSetName( CString sScreenName, CString sActorName );
+	void Load( const CString &sPath );
+	void LoadAndSetName( const CString &sScreenName, const CString &sActorName );
 
 protected:
 	Actor* m_pActor;

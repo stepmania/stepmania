@@ -16,11 +16,11 @@ struct ParsedCommandToken
 	// and the next 3 params are the other components.
 	bool bColorIsValid;
 
-	operator const CString () const		{ return s; };
+	operator const CString &() const		{ return s; };
 	operator const float () const		{ return f; };
 	operator const int () const			{ return (int)f; };
 	operator const bool () const		{ return ((int)f)!=0; };
-	operator const RageColor () const	{ return c; };
+	operator const RageColor &() const	{ return c; };
 };
 
 struct ParsedCommand
