@@ -8,6 +8,7 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "NoteFieldPositioning.h"
+#include "Game.h"
 
 
 GhostArrowRow::GhostArrowRow()
@@ -31,8 +32,8 @@ void GhostArrowRow::Load( PlayerNumber pn, CString NoteSkin, float fYReverseOffs
 	{
 		NoteFieldMode &mode = g_NoteFieldMode[pn];
 		CString Button = mode.GhostButtonNames[c];
-		if(Button == "")
-			Button = NoteSkinManager::ColToButtonName(c);
+		if( Button == "" )
+			Button = GAMESTATE->GetCurrentGame()->ColToButtonName( c );
 
 		m_GhostDim.push_back( new GhostArrow );
 		m_GhostBright.push_back( new GhostArrow );

@@ -12,6 +12,7 @@
 #include "NoteFieldPositioning.h"
 #include "ActorUtil.h"
 #include "NoteDataWithScoring.h"
+#include "Game.h"
 
 enum part
 {
@@ -231,8 +232,8 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn, CString NoteSkin, float fY
 	/* Normally, this is empty and we use the style table entry via ColToButtonName. */
 	NoteFieldMode &mode = g_NoteFieldMode[pn];
 	CString Button = mode.NoteButtonNames[iColNum];
-	if(Button == "")
-		Button = NoteSkinManager::ColToButtonName(iColNum);
+	if( Button == "" )
+		Button = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNum );
 
 	cache->Load( NoteSkin, Button );
 

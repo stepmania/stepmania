@@ -104,6 +104,16 @@ void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 	}
 }
 
+CString Game::ColToButtonName( int col ) const
+{
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+
+	StyleInput SI( PLAYER_1, col );
+	GameInput GI = pStyle->StyleInputToGameInput( SI );
+
+	return m_szButtonNames[GI.button];
+}
+
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.

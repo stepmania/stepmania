@@ -28,8 +28,6 @@ public:
 	bool		GetMetricB( CString sNoteSkinName, CString sButtonName, CString sValueName );
 	RageColor	GetMetricC( CString sNoteSkinName, CString sButtonName, CString sValueName );
 
-	static CString ColToButtonName(int col);
-
 	CString GetNoteSkinDir( const CString &sSkinName );
 
 protected:

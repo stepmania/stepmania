@@ -7,6 +7,7 @@
 #include "NoteSkinManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "Game.h"
 
 
 ReceptorArrow::ReceptorArrow()
@@ -23,7 +24,7 @@ bool ReceptorArrow::Load( CString NoteSkin, PlayerNumber pn, int iColNo )
     NoteFieldMode &mode = g_NoteFieldMode[pn];
 	CString sButton = mode.GrayButtonNames[iColNo];
 	if( sButton == "" )
-		sButton = NoteSkinManager::ColToButtonName( iColNo );
+		sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
 
 	CString sPath;
 	m_pReceptorWaiting.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"receptor waiting") );

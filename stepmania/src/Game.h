@@ -53,6 +53,7 @@ public:
 	GameButton ButtonNameToIndex( const CString &sButtonName ) const;
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;
 	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;
+	CString ColToButtonName( int col ) const;
 
 	TapNoteScore m_mapMarvelousTo;
 	TapNoteScore m_mapPerfectTo;

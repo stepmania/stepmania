@@ -206,16 +206,6 @@ RageColor NoteSkinManager::GetMetricC( CString sNoteSkinName, CString sButtonNam
 }
 
 
-CString NoteSkinManager::ColToButtonName(int col)
-{
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
-	const Game* pGame = GAMESTATE->GetCurrentGame();
-
-	StyleInput SI( PLAYER_1, col );
-	GameInput GI = pStyle->StyleInputToGameInput( SI );
-	return pGame->m_szButtonNames[GI.button];
-}
-
 CString NoteSkinManager::GetPathToFromNoteSkinAndButton( CString NoteSkin, CString sButtonName, CString sElement, bool bOptional )
 {
 try_again:
