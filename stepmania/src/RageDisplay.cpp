@@ -223,7 +223,7 @@ bool RageDisplay::SetVideoMode( bool windowed, int width, int height, int bpp, i
 	}
 
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, TRUE);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, true);
 
 #ifdef SDL_HAS_REFRESH_RATE
 	if(rate == REFRESH_DEFAULT)
