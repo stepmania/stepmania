@@ -149,7 +149,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 		CStringArray asLines;
 		split( sSMAttackData, ",", asLines, true );
 
-		for( int i=0; i<asLines.size(); i++ )
+		for( unsigned i=0; i<asLines.size(); i++ )
 		{
 			CString& sLine = asLines[i];
 			TrimLeft( sLine );
@@ -173,7 +173,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 			attack.level = ATTACK_LEVEL_1;
 			attack.sModifier = asBits[1];
 			attack.sModifier.Replace( '.', ',' );	// we couldn't use comma here because the map item separator is a comma
-			attack.fSecsRemaining = atof( asBits[2] );
+			attack.fSecsRemaining = (float) atof( asBits[2] );
 			
 			out.GetAttackMap()[tn] = attack;
 		}
