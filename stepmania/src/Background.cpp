@@ -484,12 +484,7 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		if( pOld )
 			pOld->LosingFocus();
 		if( m_pCurrentBGA )
-		{
-			/* We might have faded this background out in the past.  Make sure its diffuse
-			 * color is reset. */
-			m_pCurrentBGA->SetDiffuse( RageColor(1,1,1,1) );
 			m_pCurrentBGA->GainingFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
-		}
 
 		m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
 
@@ -549,7 +544,11 @@ void Background::Update( float fDeltaTime )
 		float fPercentOpaque = m_fSecsLeftInFade / FADE_SECONDS;
 		m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
 		if( fPercentOpaque <= 0 )
+		{
+			/* Reset its diffuse color, in case we reuse it. */
+			m_pFadingBGA->SetDiffuse( RageColor(1,1,1,1) );
 			m_pFadingBGA = NULL;
+		}
 	}
 
 	if( m_pDancingCharacters )
