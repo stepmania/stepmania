@@ -29,25 +29,14 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-#define FOV									THEME->GetMetricF(m_sName,"FOV")
-#define FOV_CENTER_X						THEME->GetMetricF(m_sName,"FOVCenterX")
-#define FOV_CENTER_Y						THEME->GetMetricF(m_sName,"FOVCenterY")
-#define BANNER_WIDTH						THEME->GetMetricF(m_sName,"BannerWidth")
-#define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
-#define SONG_OPTIONS_EXTRA_COMMAND			THEME->GetMetricA(m_sName,"SongOptionsExtraCommand")
-#define SAMPLE_MUSIC_DELAY					THEME->GetMetricF(m_sName,"SampleMusicDelay")
-#define SHOW_RADAR							THEME->GetMetricB(m_sName,"ShowRadar")
-#define SHOW_GRAPH							THEME->GetMetricB(m_sName,"ShowGraph")
-#define SHOW_PANES							THEME->GetMetricB(m_sName,"ShowPanes")
-#define SHOW_DIFFICULTY_LIST				THEME->GetMetricB(m_sName,"ShowDifficultyList")
-#define PREV_SCREEN							THEME->GetMetric (m_sName,"PrevScreen")
+/* These commands should be evaluated when they're used, so any Lua expressions
+ * in them are evaluated after we're finished selecting, not when we first load
+ * the screen. */
 #define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
+#define PREV_SCREEN							THEME->GetMetric (m_sName,"PrevScreen")
 #define NEXT_OPTIONS_SCREEN					THEME->GetMetric (m_sName,"NextOptionsScreen")
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA(m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
-#define DO_ROULETTE_ON_MENU_TIMER			THEME->GetMetricB(m_sName,"DoRouletteOnMenuTimer")
-#define ALIGN_MUSIC_BEATS					THEME->GetMetricB(m_sName,"AlignMusicBeat")
-#define CODES								THEME->GetMetric (m_sName,"Codes")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -61,7 +50,21 @@ static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
 
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
-ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName )
+ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName ),
+	FOV( m_sName, "FOV" ),
+	FOV_CENTER_X( m_sName, "FOVCenterX" ),
+	FOV_CENTER_Y( m_sName, "FOVCenterY" ),
+	BANNER_WIDTH( m_sName, "BannerWidth" ),
+	BANNER_HEIGHT( m_sName, "BannerHeight" ),
+	SONG_OPTIONS_EXTRA_COMMAND( m_sName, "SongOptionsExtraCommand" ),
+	SAMPLE_MUSIC_DELAY( m_sName, "SampleMusicDelay" ),
+	SHOW_RADAR( m_sName, "ShowRadar" ),
+	SHOW_GRAPH( m_sName, "ShowGraph" ),
+	SHOW_PANES( m_sName, "ShowPanes" ),
+	SHOW_DIFFICULTY_LIST( m_sName, "ShowDifficultyList" ),
+	DO_ROULETTE_ON_MENU_TIMER( m_sName, "DoRouletteOnMenuTimer" ),
+	ALIGN_MUSIC_BEATS( m_sName, "AlignMusicBeat" ),
+	CODES( m_sName, "Codes" )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
 

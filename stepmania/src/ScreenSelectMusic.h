@@ -23,6 +23,8 @@
 #include "PaneDisplay.h"
 #include "Character.h"
 #include "RageUtil_BackgroundLoader.h"
+#include "ThemeMetric.h"
+#include "ActorCommands.h"
 
 class ScreenSelectMusic : public ScreenWithMenuElements
 {
@@ -66,6 +68,22 @@ protected:
 	vector<Steps*>		m_vpSteps;
 	vector<Trail*>		m_vpTrails;
 	int					m_iSelection[NUM_PLAYERS];
+
+	ThemeMetric<float> FOV;
+	ThemeMetric<float> FOV_CENTER_X;
+	ThemeMetric<float> FOV_CENTER_Y;
+	ThemeMetric<float> BANNER_WIDTH;
+	ThemeMetric<float> BANNER_HEIGHT;
+	ThemeMetric<apActorCommands> SONG_OPTIONS_EXTRA_COMMAND;
+	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
+	ThemeMetric<bool> SHOW_RADAR;
+	ThemeMetric<bool> SHOW_GRAPH;
+	ThemeMetric<bool> SHOW_PANES;
+	ThemeMetric<bool> SHOW_DIFFICULTY_LIST;
+	ThemeMetric<bool> DO_ROULETTE_ON_MENU_TIMER;
+	ThemeMetric<bool> ALIGN_MUSIC_BEATS;
+	ThemeMetric<CString> CODES;
+
 
 	Sprite				m_sprCharacterIcon[NUM_PLAYERS];
 	Sprite				m_sprBannerMask;
