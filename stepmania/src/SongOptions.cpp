@@ -91,6 +91,14 @@ void SongOptions::FromString( CString sOptions )
 			ASSERT( ret == 1 );
 		}
 
+		matches.clear();
+		Regex lives("^([0-9]+) ?(lives|life)$");
+		if( lives.Compare(sBit, matches) )
+		{
+			int ret = sscanf( matches[0], "%i", &m_iBatteryLives );
+			ASSERT( ret == 1 );
+		}
+
 		CStringArray asParts;
 		split( sBit, " ", asParts, true );
 		bool on = true;
@@ -106,12 +114,15 @@ void SongOptions::FromString( CString sOptions )
 		else if( sBit == "suddendeath" )	m_DrainType = DRAIN_SUDDEN_DEATH;
 		else if( sBit == "power-drop" )		m_DrainType = DRAIN_NO_RECOVER;
 		else if( sBit == "death" )			m_DrainType = DRAIN_SUDDEN_DEATH;
+		else if( sBit == "normal-drain" )	m_DrainType = DRAIN_NORMAL;
 		else if( sBit == "failarcade" )		m_FailType = FAIL_ARCADE;
 		else if( sBit == "failendofsong" )	m_FailType = FAIL_END_OF_SONG;
 		else if( sBit == "failoff" )		m_FailType = FAIL_OFF;
 		else if( sBit == "assisttick" )		m_bAssistTick = on;
 		else if( sBit == "autosync" )		m_bAutoSync = on;
 		else if( sBit == "savescore" )		m_bSaveScore = on;
+		else if( sBit == "bar" )			m_LifeType = LIFE_BAR;
+		else if( sBit == "battery" )		m_LifeType = LIFE_BATTERY;
 	}
 }
 
