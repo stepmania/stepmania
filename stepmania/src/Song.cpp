@@ -25,7 +25,7 @@
 #include "PrefsManager.h"
 
 
-const int FILE_CACHE_VERSION = 64;	// increment this when Song or Notes changes to invalidate cache
+const int FILE_CACHE_VERSION = 65;	// increment this when Song or Notes changes to invalidate cache
 
 
 int CompareBPMSegments(const void *arg1, const void *arg2)
