@@ -601,7 +601,7 @@ void Actor::Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, 
 	}
 }
 
-CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
+static CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
 {
 	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
 	if( iIndex < int(sParams.size()) )
