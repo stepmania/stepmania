@@ -121,7 +121,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
 
-	if( m_fLifePercentage < FAIL_THRESHOLD )
+	if( m_fLifePercentage <= FAIL_THRESHOLD )
 		m_bFailedEarlier = true;
 
 	ResetBarVelocity();

@@ -23,6 +23,7 @@
 #include "AnnouncerManager.h"
 #include "ScreenMusicScroll.h"
 #include "GameState.h"
+#include "ScreenSelectCourse.h"
 
 
 const float BANNER_X					= CENTER_X;
@@ -52,7 +53,8 @@ const float TRY_EXTRA_STAGE_X			= CENTER_X;
 const float TRY_EXTRA_STAGE_Y			= SCREEN_BOTTOM - 60;
 
 
-const ScreenMessage SM_GoToSelectMusic		=	ScreenMessage(SM_User+2);
+const ScreenMessage SM_GoToSelectMusic		=	ScreenMessage(SM_User+1);
+const ScreenMessage SM_GoToSelectCourse		=	ScreenMessage(SM_User+2);
 const ScreenMessage SM_GoToFinalEvaluation	=	ScreenMessage(SM_User+3);
 const ScreenMessage SM_GoToMusicScroll		=	ScreenMessage(SM_User+4);
 
@@ -289,6 +291,7 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 //Less - D
 //Fail - E
 			float fPercentDancePoints = iActualDancePoints[p] / (float)iPossibleDancePoints[p];
+			fPercentDancePoints = min( fPercentDancePoints, 0 );
 
 			if     ( fPercentDancePoints >= 1.00 )	grade[p] = GRADE_AAA;
 			else if( fPercentDancePoints >= 0.93 )	grade[p] = GRADE_AA;
@@ -724,6 +727,9 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	case SM_GoToSelectMusic:
 		SCREENMAN->SetNewScreen( new ScreenSelectMusic );
 		break;
+	case SM_GoToSelectCourse:
+		SCREENMAN->SetNewScreen( new ScreenSelectCourse );
+		break;
 	case SM_GoToMusicScroll:
 		SCREENMAN->SetNewScreen( new ScreenMusicScroll );
 		break;
@@ -744,42 +750,32 @@ void ScreenEvaluation::MenuStart( const PlayerNumber p )
 
 	if( PREFSMAN->m_bEventMode )
 	{
-//		GAMESTATE->m_iCurrentStageIndex++;
-		m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
-		return;
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_ARCADE:
+			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
+			break;
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			m_Menu.TweenOffScreenToMenu( SM_GoToSelectCourse );
+			break;
+		default:
+			ASSERT(0);
+		}
 	}
-
-	switch( m_ResultMode )
+	else	// not event mode
 	{
-	case RM_ARCADE_SUMMARY:
-		m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
-		return;
-	case RM_ARCADE_STAGE:
 		if( m_bTryExtraStage )
-		{
-//			GAMESTATE->m_iCurrentStageIndex++;
 			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
-		}
-		else if( 
-			GAMESTATE->m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages-1 ||
-			GAMESTATE->IsExtraStage() || 
-			GAMESTATE->IsExtraStage2() )
-		{
+		else if( m_ResultMode == RM_ARCADE_STAGE  &&  GAMESTATE->m_iCurrentStageIndex >= PREFSMAN->m_iNumArcadeStages-1  )
 			m_Menu.TweenOffScreenToMenu( SM_GoToFinalEvaluation );
-		}
 		else
-		{
-//			GAMESTATE->m_iCurrentStageIndex++;
-			m_Menu.TweenOffScreenToMenu( SM_GoToSelectMusic );
-		}
-
-		return;
-	case RM_ONI:
-		m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
-		return;
-	default:
-		ASSERT(0);
+			m_Menu.TweenOffScreenToBlack( SM_GoToMusicScroll, false );
 	}
 
+	//
+	// Increment the stage counter.
+	//
+	GAMESTATE->m_iCurrentStageIndex++;
 }
 

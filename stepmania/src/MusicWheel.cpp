@@ -396,7 +396,7 @@ MusicWheel::MusicWheel()
 		}
 	}
 
-	// select a song if none are selected
+	// Select a song in case we can't find the last selected song below.
 	if( GAMESTATE->m_pCurSong == NULL && 	// if there is no currently selected song
 		SONGMAN->m_pSongs.GetSize() > 0 )		// and there is at least one song
 	{
@@ -409,12 +409,26 @@ MusicWheel::MusicWheel()
 	}
 
 
+	// Select the the previously selected song (if any)
 	if( GAMESTATE->m_pCurSong != NULL )
 	{
-		// find the previously selected song (if any)
 		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
 		{
 			if( GetCurWheelItemDatas()[i].m_pSong == GAMESTATE->m_pCurSong )
+			{
+				m_iSelection = i;		// select it
+				m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group
+				break;
+			}
+		}
+	}
+
+	// Select the the previously selected course (if any)
+	if( GAMESTATE->m_pCurCourse != NULL )
+	{
+		for( int i=0; i<GetCurWheelItemDatas().GetSize(); i++ )
+		{
+			if( GetCurWheelItemDatas()[i].m_pCourse == GAMESTATE->m_pCurCourse )
 			{
 				m_iSelection = i;		// select it
 				m_sExpandedSectionName = GetCurWheelItemDatas()[m_iSelection].m_sSectionName;	// make its group the currently expanded group

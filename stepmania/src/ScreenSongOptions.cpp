@@ -23,18 +23,6 @@
 #include "GameState.h"
 
 
-
-OptionLineData g_SongOptionsLines[] = {
-	{ "Life Type",	2, {"BAR","BATTERY"} },	
-	{ "Bar Drain",	3, {"NORMAL","NO RECOVER","SUDDEN DEATH"} },	
-	{ "Bat.Lives",	10, {"1","2","3","4","5","6","7","8","9","10"} },	
-	{ "Fail",		3, {"ARCADE","END OF SONG","OFF"} },	
-	{ "Assist",		2, {"OFF","TICK"} },	
-	{ "Rate",		9, {"x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5"} },	
-	{ "Bars",		2, {"OFF","ON"} },	
-};
-const int NUM_SONG_OPTIONS_LINES = sizeof(g_SongOptionsLines)/sizeof(OptionLineData);
-
 enum {
 	SO_LIFE = 0,
 	SO_DRAIN,
@@ -42,9 +30,17 @@ enum {
 	SO_FAIL,
 	SO_ASSIST,
 	SO_RATE,
-	SO_BARS
+	NUM_SONG_OPTIONS_LINES
 };
 
+OptionLineData g_SongOptionsLines[NUM_SONG_OPTIONS_LINES] = {
+	{ "Life Type",	2, {"BAR","BATTERY"} },	
+	{ "Bar Drain",	3, {"NORMAL","NO RECOVER","SUDDEN DEATH"} },	
+	{ "Bat.Lives",	10, {"1","2","3","4","5","6","7","8","9","10"} },	
+	{ "Fail",		3, {"ARCADE","END OF SONG","OFF"} },	
+	{ "Assist",		2, {"OFF","TICK"} },	
+	{ "Rate",		9, {"x0.7","x0.8","x0.9","x1.0","x1.1","x1.2","x1.3","x1.4","x1.5"} },	
+};
 
 
 ScreenSongOptions::ScreenSongOptions() :

@@ -42,7 +42,7 @@ const float STAGE_NUMBER_LOCAL_X = 0;
 const float STAGE_NUMBER_LOCAL_Y = +20;
 const float STAGE_NUMBER_LOCALEZ2_Y = -30;
 
-const float SONG_NUMBER_LOCAL_X[NUM_PLAYERS] = { STAGE_NUMBER_LOCAL_X-16, STAGE_NUMBER_LOCAL_X+16 };
+const float SONG_NUMBER_LOCAL_X[NUM_PLAYERS] = { STAGE_NUMBER_LOCAL_X-20, STAGE_NUMBER_LOCAL_X+20 };
 const float SONG_NUMBER_LOCAL_Y[NUM_PLAYERS] = { STAGE_NUMBER_LOCAL_Y, STAGE_NUMBER_LOCAL_Y };
 
 
@@ -73,8 +73,9 @@ const ScreenMessage	SM_LastNotesEnded		= ScreenMessage(SM_User+103);
 // received while STATE_OUTRO
 const ScreenMessage	SM_ShowCleared			= ScreenMessage(SM_User+111);
 const ScreenMessage	SM_HideCleared			= ScreenMessage(SM_User+112);
-const ScreenMessage	SM_GoToScreenAfterBack	= ScreenMessage(SM_User+113);
-const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+114);
+const ScreenMessage	SM_SaveChangedBeforeGoingBack	= ScreenMessage(SM_User+113);
+const ScreenMessage	SM_GoToScreenAfterBack	= ScreenMessage(SM_User+114);
+const ScreenMessage	SM_GoToStateAfterCleared= ScreenMessage(SM_User+115);
 
 const ScreenMessage	SM_BeginFailed			= ScreenMessage(SM_User+121);
 const ScreenMessage	SM_ShowFailed			= ScreenMessage(SM_User+122);
@@ -451,6 +452,9 @@ void ScreenGameplay::LoadNextSong( bool bFirstLoad )
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
 		{
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				m_textCourseSongNumber[p].SetText( ssprintf("%d", GAMESTATE->m_iSongsBeforeFail[p]+1) );
+
 			Course* pCourse = GAMESTATE->m_pCurCourse;
 			CArray<Song*,Song*> apSongs;
 			CArray<Notes*,Notes*> apNotes[NUM_PLAYERS];
@@ -780,7 +784,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		SOUND->PlayOnceStreamed( THEME->GetPathTo(SOUND_MENU_BACK) );
 		m_soundMusic.Stop();
 		this->ClearMessageQueue();
-		m_Fade.CloseWipingLeft( SM_GoToScreenAfterBack );
+		m_Fade.CloseWipingLeft( SM_SaveChangedBeforeGoingBack );
 	}
 
 	//
@@ -874,13 +878,7 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 
 	SCREENMAN->AddScreenToTop( new ScreenPrompt(
 		SM_SendWhenDone,
-		ssprintf( 
-			"You have changed the offset or BPM of\n"
-			"%s.\n"
-			"Would you like to save these changes back\n"
-			"to the song file?\n"
-			"Choosing NO will disgard your changes.",
-			GAMESTATE->m_pCurSong->GetFullTitle() ),
+		sMessage,
 		PROMPT_YES_NO,
 		true,
 		SaveChanges,
@@ -1075,6 +1073,14 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	case SM_HideCleared:
 		m_sprCleared.StartBlurring();
 		SCREENMAN->SendMessageToTopScreen( SM_GoToStateAfterCleared, 1 );
+		break;
+	case SM_SaveChangedBeforeGoingBack:
+		if( m_bChangedOffsetOrBPM )
+		{
+			m_bChangedOffsetOrBPM = false;
+			ShowSavePrompt( SM_GoToScreenAfterBack );
+			break;
+		}
 		break;
 	case SM_GoToScreenAfterBack:
 		switch( GAMESTATE->m_PlayMode )

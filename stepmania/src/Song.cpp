@@ -282,8 +282,8 @@ bool Song::LoadFromSongDir( CString sDir )
 
 	// save group name
 	CStringArray sDirectoryParts;
-	split( m_sSongDir, "\\", sDirectoryParts, true );
-	m_sGroupName = sDirectoryParts[1];
+	split( m_sSongDir, "\\", sDirectoryParts, false );
+	m_sGroupName = sDirectoryParts[sDirectoryParts.GetSize()-3];	// second from last item
 
 
 	//
@@ -789,12 +789,6 @@ bool Song::LoadFromSMFile( CString sPath )
 
 	int i;
 
-	// get group name
-	CStringArray sDirectoryParts;
-	split( m_sSongDir, "\\", sDirectoryParts, true );
-	m_sGroupName = sDirectoryParts[1];
-
-
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );
 	if( !bResult )
@@ -960,12 +954,6 @@ bool Song::LoadFromKSFDir( CString sDir )
 	}
 
 	CString sPath = m_sSongDir + arrayKSFFileNames[0];
-
-	// get group name
-	CStringArray sDirectoryParts;
-	split( m_sSongDir, "\\", sDirectoryParts, true );
-	m_sGroupName = sDirectoryParts[1];
-
 
 	MsdFile msd;
 	bool bResult = msd.ReadFile( sPath );

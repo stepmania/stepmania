@@ -146,9 +146,14 @@ void GameState::AccumulateStageStatistics()
 
 void GameState::ResetStageStatistics()
 {
+	m_iSongsIntoCourse = 0;
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
 		int s;
+
+		m_iSongsBeforeFail[p] = 0;
+		m_fSecondsBeforeFail[p] = -1;
 
 		m_iPossibleDancePoints[p] = 0;
 		m_iActualDancePoints[p] = 0;
@@ -276,8 +281,8 @@ float GameState::GetElapsedSeconds()
 
 float GameState::GetPlayerSurviveTime( PlayerNumber p )
 {
-	if( m_fSecondsBeforeFail[p] != -1 )
-		return m_fSecondsBeforeFail[p];
-	else
+	if( m_fSecondsBeforeFail[p] == -1 )	// haven't failed yet
 		return GetElapsedSeconds();
+	else
+		return m_fSecondsBeforeFail[p];
 }

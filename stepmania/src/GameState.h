@@ -66,32 +66,19 @@ public:
 
 
 	//
-	// Let a lot of classes access this info here so the don't have to keep their own copies
+	// Music statistic:  Arcade: the current stage (one song).  Oni/Endles: a single song in a course
+	//
+	// Let a lot of classes access this info here so the don't have to keep their own copies.
+	//
 	float		m_fMusicSeconds;	// time into the current song
 	float		m_fSongBeat;
 	float		m_fCurBPS;
 	bool		m_bFreeze;	// in the middle of a freeze
 
-	void ResetMusicStatistics();		// Clear the values above
+	void ResetMusicStatistics();		// Call this when it's time to play a new song.  Clears the values above.
 	
-	CArray<Song*,Song*>	m_apSongsPlayed;	// an array of completed songs.  
-											// This is useful for the final evaluation screen,
-											// and used to calculate the time into a course
-	float	GetElapsedSeconds();			// Arcade: time into current song.  Oni/Endless: time into current course
-
-	int	m_iSongsIntoCourse;					// In Arcade, this value is meaningless.
-											// In Oni and Endless, this is the number of songs played in the current course.
-	int	m_iSongsBeforeFail[NUM_PLAYERS];	// In Arcade, this value is meaningless.
-											// In Oni and Endless, this is the number of songs played before failing.
-	float m_fSecondsBeforeFail[NUM_PLAYERS];// -1 means not yet failed
-											// In Arcade, is the time into the current stage before failing.
-											// In Oni and Endless this is the time into the current course before failing
-	bool m_bUsedAutoPlayer;					// Used autoplayer at any time during any stage/course/song
-
-	float	GetPlayerSurviveTime( PlayerNumber p );
-
 	//
-	// Statistics for: Arcade: for the current stage.  Oni/Endless: for current course 
+	// Stage Statistics: Arcade: for the current stage (one song).  Oni/Endless: for current course (multiple songs)
 	//
 	int		m_iPossibleDancePoints[NUM_PLAYERS];
 	int		m_iActualDancePoints[NUM_PLAYERS];
@@ -102,8 +89,29 @@ public:
 	float	m_fRadarPossible[NUM_PLAYERS][NUM_RADAR_VALUES];	// filled in by ScreenGameplay on end of notes
 	float	m_fRadarActual[NUM_PLAYERS][NUM_RADAR_VALUES];		// filled in by ScreenGameplay on end of notes
 	
-	void ResetStageStatistics();		// Clear the values above
-	void AccumulateStageStatistics();			// Accumulate values above into the values below 
+	float	GetElapsedSeconds();			// Arcade: time into current song.  Oni/Endless: time into current course
+
+	int	m_iSongsIntoCourse;					// In Arcade, this value is meaningless.
+											// In Oni and Endless, this is the number of songs played in the current course.
+	int	m_iSongsBeforeFail[NUM_PLAYERS];	// In Arcade, this value is meaningless.
+											// In Oni and Endless, this is the number of songs played before failing.
+	float m_fSecondsBeforeFail[NUM_PLAYERS];// -1 means not yet failed
+											// In Arcade, is the time into the current stage before failing.
+											// In Oni and Endless this is the time into the current course before failing
+
+	float	GetPlayerSurviveTime( PlayerNumber p );	// Returns time player has survived
+
+	void AccumulateStageStatistics();		// Call this before clearing values.  Accumulate values above into the Session values below.
+	void ResetStageStatistics();			// Clears the values above
+
+
+	//
+	// Session Statistics: Arcade: 3 songs.  Oni/Endless: one course.
+	//
+	CArray<Song*,Song*>	m_apSongsPlayed;	// an array of completed songs.  
+											// This is useful for the final evaluation screen,
+											// and used to calculate the time into a course
+	bool m_bUsedAutoPlayer;					// Used autoplayer at any time during any stage/course/song
 
 	// Only used in final evaluation screen in play mode Arcade.
 	// Before being displayed, these values should be normalized by dividing by number of stages
@@ -116,6 +124,8 @@ public:
 	float	m_fAccumRadarPossible[NUM_PLAYERS][NUM_RADAR_VALUES];
 	float	m_fAccumRadarActual[NUM_PLAYERS][NUM_RADAR_VALUES];
 
+
+	// Session statistics are cleared by calling Reset()
 
 
 	PlayerOptions	m_PlayerOptions[NUM_PLAYERS];

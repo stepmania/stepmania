@@ -160,12 +160,12 @@ ScreenMusicScroll::ScreenMusicScroll()
 	{
 		m_textLines[i].SetZoom( 0.7f );
 		m_textLines[i].SetXY( CENTER_X, SCREEN_BOTTOM + 40 );
-		m_textLines[i].BeginTweeningQueued( 0.30f * i );
-		m_textLines[i].BeginTweeningQueued( 3.0f );
+		m_textLines[i].BeginTweeningQueued( 0.20f * i );
+		m_textLines[i].BeginTweeningQueued( 2.0f );
 		m_textLines[i].SetTweenXY( CENTER_X, SCREEN_TOP - 40 );	
 	}
 	
-	this->SendScreenMessage( SM_StartFadingOut, 0.3f * i + 3.0f );
+	this->SendScreenMessage( SM_StartFadingOut, 0.2f * i + 3.0f );
 
 	this->AddSubActor( &m_Fade );
 

@@ -23,6 +23,7 @@
 #include "RageLog.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "RageSound.h"
 
 
 enum {
@@ -63,6 +64,8 @@ ScreenPlayerOptions::ScreenPlayerOptions() :
 		g_PlayerOptionsLines, 
 		NUM_PLAYER_OPTIONS_LINES
 		);
+
+	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo(ANNOUNCER_PLAYER_OPTIONS_INTRO) );
 }
 
 

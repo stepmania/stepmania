@@ -131,6 +131,7 @@ CString AnnouncerManager::GetPathTo( AnnouncerElement ae, CString sAnnouncerName
 		case ANNOUNCER_EVALUATION_C:					sAssetDir = "evaluation c";						break;
 		case ANNOUNCER_EVALUATION_D:					sAssetDir = "evaluation d";						break;
 		case ANNOUNCER_EVALUATION_E:					sAssetDir = "evaluation e";						break;
+		case ANNOUNCER_PLAYER_OPTIONS_INTRO:			sAssetDir = "player options intro";				break;
 		case ANNOUNCER_SELECT_COURSE_INTRO:				sAssetDir = "select course intro";				break;
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_EASY:	sAssetDir = "select difficulty comment easy";	break;
 		case ANNOUNCER_SELECT_DIFFICULTY_COMMENT_HARD:	sAssetDir = "select difficulty comment hard";	break;

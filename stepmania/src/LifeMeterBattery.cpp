@@ -122,6 +122,7 @@ void LifeMeterBattery::OnDancePointsChange()
 {
 	int iActualDancePoints = GAMESTATE->m_iActualDancePoints[m_PlayerNumber];
 	int iPossibleDancePoints = GAMESTATE->m_iPossibleDancePoints[m_PlayerNumber];
+	iPossibleDancePoints = max( 1, iPossibleDancePoints );
 	float fPercentDancePoints =  iActualDancePoints / (float)iPossibleDancePoints + 0.00001f;	// correct for rounding errors
 
 	printf( "Actual %d, Possible %d, Percent %f\n", iActualDancePoints, iPossibleDancePoints, fPercentDancePoints );
