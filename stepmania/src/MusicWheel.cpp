@@ -190,6 +190,11 @@ void MusicWheel::Load()
 
 	m_SortOrder = ForceAppropriateSort( GAMESTATE->m_PlayMode, m_SortOrder );
 
+	/* Only save the sort order if the player didn't already have one.  If he did, don't
+	 * overwrite it. */
+	if( GAMESTATE->m_PreferredSortOrder == SORT_INVALID )
+		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
+
 	/* Update for SORT_MOST_PLAYED. */
 	SONGMAN->UpdateBest();
 
@@ -973,7 +978,7 @@ void MusicWheel::Update( float fDeltaTime )
 				}
 
 				//
-				// Change difficulty for sorts by meter - XXX: with GameCommand?
+				// Change difficulty for sorts by meter - XXX: do this with GameCommand?
 				//
 				Difficulty dc = DIFFICULTY_INVALID;
 				switch( m_SortOrder )
@@ -1311,8 +1316,8 @@ void MusicWheel::StartRandom()
 
 void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 {
-	if( so == SORT_INVALID)
-		so = m_SortOrder;
+	if( so != SORT_INVALID )
+		m_SortOrder = so;
 
 	m_sExpandedSectionName = group;
 
@@ -1321,7 +1326,7 @@ void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 		old = m_CurWheelItemData[m_iSelection];
 
 	m_CurWheelItemData.clear();
-	vector<WheelItemData> &from = m_WheelItemDatas[so];
+	vector<WheelItemData> &from = m_WheelItemDatas[m_SortOrder];
 	for( unsigned i = 0; i < from.size(); ++i )
 	{
 		WheelItemData &d = from[i];
