@@ -77,14 +77,14 @@ private:
 
 	EzSockets m_wSocket;
 
-	bool	m_bGotHeadder;
+	bool	m_bGotHeader;
 
 	RageFile	m_fOutputFile;
 	CString	m_sEndName;
 	bool	m_bIsPackage;
 
 	CString m_sBaseAddress;
-	//HTTP Headder information responce
+	//HTTP Header information responce
 	long	m_iTotalBytes;
 	long	m_iDownloaded;
 

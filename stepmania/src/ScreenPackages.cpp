@@ -3,6 +3,7 @@
 #if !defined(WITHOUT_NETWORKING)
 #include "ScreenPackages.h"
 #include "GameConstantsAndTypes.h"
+#include "GameState.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "RageLog.h"
@@ -36,6 +37,9 @@ ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( s
 	m_fLastUpdate = 0;
 	m_iTotalBytes = 0;
 	m_iDownloaded = 0;
+
+	FOREACH_PlayerNumber( pn )
+		GAMESTATE->m_bSideIsJoined[pn] = true;
 
 	m_sprExistingBG.SetName( "PackagesBG" );
 	m_sprExistingBG.Load( THEME->GetPathG( m_sName, "PackagesBG" ) );
@@ -143,7 +147,7 @@ void ScreenPackages::Update( float fDeltaTime )
 	m_fLastUpdate += fDeltaTime;
 	if ( m_fLastUpdate >= 1.0 )
 	{
-		if ( m_bIsDownloading && m_bGotHeadder )
+		if ( m_bIsDownloading && m_bGotHeader )
 			m_sStatus = ssprintf( "DL @ %d KB/s", int((m_iDownloaded-m_bytesLastUpdate)/1024) );
 
 		m_bytesLastUpdate = m_iDownloaded;
@@ -458,7 +462,7 @@ void ScreenPackages::CancelDownload( )
 	m_wSocket.close();
 	m_bIsDownloading = false;
 	m_iDownloaded = 0;
-	m_bGotHeadder = false;
+	m_bGotHeader = false;
 	m_fOutputFile.Close();
 	m_sStatus = "Failed.";
 	m_sBUFFER = "";
@@ -549,20 +553,20 @@ void ScreenPackages::EnterURL( const CString & sURL )
 		return;
 	}
 	
-	//Produce HTTP headder
+	//Produce HTTP header
 
-	CString Headder="";
+	CString Header="";
 
-	Headder = "GET "+Addy+" HTTP/1.0\r\n";
-	Headder+= "Host: " + Server + "\r\n";
-	Headder+= "Connection: closed\r\n\r\n";
+	Header = "GET "+Addy+" HTTP/1.0\r\n";
+	Header+= "Host: " + Server + "\r\n";
+	Header+= "Connection: closed\r\n\r\n";
 
-	m_wSocket.SendData( Headder.c_str(), Headder.length() );
-	m_sStatus = "Headder Sent.";
+	m_wSocket.SendData( Header.c_str(), Header.length() );
+	m_sStatus = "Header Sent.";
 	m_wSocket.blocking = false;
 	m_bIsDownloading = true;
 	m_sBUFFER = "";
-	m_bGotHeadder = false;
+	m_bGotHeader = false;
 	UpdateProgress();
 	return;
 }
@@ -582,14 +586,14 @@ void ScreenPackages::HTTPUpdate()
 				m_sBUFFER.append( Buffer, Size );
 				BytesGot += Size;
 			}
-			if (!m_bGotHeadder)
+			if (!m_bGotHeader)
 			{
-				m_sStatus = "Waiting for headder.";
+				m_sStatus = "Waiting for header.";
 				//We don't know if we are using unix-style or dos-style
-				int HeadderEnd = m_sBUFFER.find("\n\n");
-				if ( HeadderEnd < 0 )
-					HeadderEnd = m_sBUFFER.find("\r\n\r\n");
-				if ( HeadderEnd >= 0 )
+				int HeaderEnd = m_sBUFFER.find("\n\n");
+				if ( HeaderEnd < 0 )
+					HeaderEnd = m_sBUFFER.find("\r\n\r\n");
+				if ( HeaderEnd >= 0 )
 				{
 					int i = m_sBUFFER.find(" ");
 					int j = m_sBUFFER.find(" ",i+1);
@@ -610,8 +614,8 @@ void ScreenPackages::HTTPUpdate()
 					else
 						m_iTotalBytes = -1;	//We don't know, so go until disconnect
 
-					m_bGotHeadder = true;
-					m_sBUFFER = m_sBUFFER.substr( HeadderEnd + 4 );
+					m_bGotHeader = true;
+					m_sBUFFER = m_sBUFFER.substr( HeaderEnd + 4 );
 				}
 			}
 			else
@@ -637,7 +641,7 @@ void ScreenPackages::HTTPUpdate()
 				{
 					m_wSocket.close();
 					m_bIsDownloading = false;
-					m_bGotHeadder=false;
+					m_bGotHeader=false;
 					m_sStatus = ssprintf( "Done;%dB", int(m_iDownloaded) );
 
 					if ( ( m_iResponceCode < 200 ) || ( m_iResponceCode >= 400 ) )
