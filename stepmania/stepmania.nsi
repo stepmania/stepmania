@@ -233,8 +233,8 @@ Section Uninstall
 
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
 Delete "$INSTDIR\uninst.exe"
-DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\StepMania"
-DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\StepMania"
+DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}"
+DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
 
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile"
