@@ -455,7 +455,7 @@ CString ThemeManager::GetMetricsIniPath( CString sThemeName )
 bool ThemeManager::HasMetric( CString sClassName, CString sValueName )
 {
 	CString sThrowAway;
-	return m_pIniMetrics->GetValue(sClassName,sValueName,sThrowAway);
+	return GetMetricRaw( sClassName, sValueName, sThrowAway );
 }
 
 void ThemeManager::ReloadMetricsIfNecessary()
@@ -487,20 +487,25 @@ void ThemeManager::ReloadMetrics()
 }
 
 
+bool ThemeManager::GetMetricRaw( CString sClassName, CString sValueName, CString &ret )
+{
+	if( m_pIniMetrics->GetValue(sClassName,sValueName,ret) )
+		return true;
+
+	CString sFallback;
+	if( m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
+		return GetMetricRaw( sFallback, sValueName, ret );
+	return false;
+}
+
 CString ThemeManager::GetMetricRaw( CString sClassName, CString sValueName )
 {
 try_metric_again:
 
-	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
-	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
+	CString ret;
+	if( ThemeManager::GetMetricRaw( sClassName, sValueName, ret ) )
+		return ret;
 
-	CString sValue;
-	if( m_pIniMetrics->GetValue(sClassName,sValueName,sValue) )
-		return sValue;
-
-	CString sFallback;
-	if( m_pIniMetrics->GetValue(sClassName,"Fallback",sFallback) )
-		return GetMetricRaw( sFallback, sValueName );
 
 	CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
 	switch( HOOKS->MessageBoxAbortRetryIgnore(sMessage) )
@@ -516,6 +521,9 @@ try_metric_again:
 	default:
 		ASSERT(0);
 	}
+
+	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
+	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
 
 	RageException::Throw( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
 		sClassName.c_str(),
