@@ -36,9 +36,9 @@ bool ReceptorArrow::Load( CString NoteSkin, const PlayerState* pPlayerState, int
 
 	m_pPressBlock.Load( NOTESKIN->GetPathToFromNoteSkinAndButton(NoteSkin,sButton,"KeypressBlock") );
 
-	m_pReceptorWaiting->RunCommands(	ParseCommands("effectclock,beat") );
-	m_pReceptorGo->RunCommands(			ParseCommands("effectclock,beat") );
-	m_pPressBlock->RunCommands(			ParseCommands("effectclock,beat") );
+	m_pReceptorWaiting->SetEffectClock( Actor::EffectClock::CLOCK_BGM_BEAT );
+	m_pReceptorGo->SetEffectClock( Actor::EffectClock::CLOCK_BGM_BEAT );
+	m_pPressBlock->SetEffectClock( Actor::EffectClock::CLOCK_BGM_BEAT );
 
 	// draw pressblock before receptors
 	this->AddChild( m_pPressBlock );

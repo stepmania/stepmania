@@ -442,7 +442,7 @@ void ScreenNameEntryTraditional::PositionCharsAndCursor( int pn )
 		const bool hidden = ( Pos < First || Pos > Last );
 		const int ActualPos = clamp( Pos, First-1, Last+1 );
 
-		bt->RunCommands( ParseCommands("stoptweening;decelerate,.12") );
+		bt->RunCommands( ActorCommands(ParseCommands("stoptweening;decelerate,.12")) );
 		bt->SetX( ActualPos * ALPHABET_GAP_X );
 		bt->SetDiffuseAlpha( hidden? 0.0f:1.0f );
 	}
