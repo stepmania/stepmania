@@ -8,12 +8,14 @@ if ! test -d src; then
 fi
 
 source Utils/GetProductVer.sh src/ProductInfo.h
+PRODUCTVER="$PRODUCTVER-src"
 
 if test -e $PRODUCTVER; then
 	echo "\"$PRODUCTVER\" already exists."
 	exit 1
 fi
 echo Copying...
+
 mkdir $PRODUCTVER
 cp -a autoconf $PRODUCTVER/
 cp -a Utils $PRODUCTVER/
