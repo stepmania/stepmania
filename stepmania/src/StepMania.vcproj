@@ -43,7 +43,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 $(intdir)\verstub.obj"
-				ShowProgress="2"
 				OutputFile="../StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -581,8 +580,50 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\StepMania.h">
 			</File>
 			<File
+				RelativePath="StepMania.xpm">
+			</File>
+			<File
 				RelativePath=".\resource.h">
 			</File>
+			<Filter
+				Name="default"
+				Filter="">
+				<File
+					RelativePath="arch\default\LoadingWindow_SDL.cpp">
+				</File>
+				<File
+					RelativePath="arch\default\LoadingWindow_SDL.h">
+				</File>
+				<File
+					RelativePath="arch\default\arch.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="Win32"
+				Filter="">
+				<File
+					RelativePath="arch\Win32\LoadingWindow_Win32.cpp">
+				</File>
+				<File
+					RelativePath="arch\Win32\LoadingWindow_Win32.h">
+				</File>
+				<File
+					RelativePath="arch\Win32\arch.h">
+				</File>
+			</Filter>
+			<Filter
+				Name="arch"
+				Filter="">
+				<File
+					RelativePath="arch\LoadingWindow.h">
+				</File>
+				<File
+					RelativePath="arch\arch.cpp">
+				</File>
+				<File
+					RelativePath="arch\arch.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Transitions"
@@ -764,6 +805,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="OptionsCursor.h">
+			</File>
+			<File
+				RelativePath="Sample3dObject.cpp">
+			</File>
+			<File
+				RelativePath="Sample3dObject.h">
 			</File>
 			<File
 				RelativePath="ScrollBar.cpp">
@@ -1082,6 +1129,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath="SDL_utils.h">
 				</File>
+				<File
+					RelativePath="glext.h">
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1104,9 +1154,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\BitmapText.h">
-			</File>
-			<File
-				RelativePath="Quad.cpp">
 			</File>
 			<File
 				RelativePath="Quad.h">
