@@ -487,11 +487,12 @@ bool GameCommand::IsPlayable( CString *why ) const
 
 void GameCommand::ApplyToAllPlayers() const
 {
-	FOREACH_HumanPlayer( pn )
-		Apply( pn);
+	vector<PlayerNumber> vpns;
 
-	if( m_sScreen != "" )
-		SCREENMAN->SetNewScreen( m_sScreen );
+	FOREACH_HumanPlayer( pn )
+		vpns.push_back( pn );
+
+	Apply( vpns );
 }
 
 void GameCommand::Apply( PlayerNumber pn ) const
@@ -499,6 +500,13 @@ void GameCommand::Apply( PlayerNumber pn ) const
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
+	vector<PlayerNumber> vpns;
+	vpns.push_back( pn );
+	Apply( vpns );
+}
+
+void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
+{
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 
 	if( m_pGame != NULL )
@@ -542,30 +550,38 @@ void GameCommand::Apply( PlayerNumber pn ) const
 			ASSERT(0);
 		}
 	}
-	if( m_dc != DIFFICULTY_INVALID  &&  pn != PLAYER_INVALID )
-		GAMESTATE->ChangePreferredDifficulty( pn, m_dc );
+	if( m_dc != DIFFICULTY_INVALID  )
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			GAMESTATE->ChangePreferredDifficulty( *pn, m_dc );
 	if( m_sAnnouncer != "" )
 		ANNOUNCER->SwitchAnnouncer( m_sAnnouncer );
 	if( m_sModifiers != "" )
-		GAMESTATE->ApplyModifiers( pn, m_sModifiers );
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			GAMESTATE->ApplyModifiers( *pn, m_sModifiers );
+	if( m_sScreen != "" )
+		SCREENMAN->SetNewScreen( m_sScreen );
 	if( m_pSong )
 	{
 		GAMESTATE->m_pCurSong = m_pSong;
 		GAMESTATE->m_pPreferredSong = m_pSong;
 	}
 	if( m_pSteps )
-		GAMESTATE->m_pCurSteps[pn] = m_pSteps;
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			GAMESTATE->m_pCurSteps[*pn] = m_pSteps;
 	if( m_pCourse )
 	{
 		GAMESTATE->m_pCurCourse = m_pCourse;
 		GAMESTATE->m_pPreferredCourse = m_pCourse;
 	}
 	if( m_pTrail )
-		GAMESTATE->m_pCurTrail[pn] = m_pTrail;
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			GAMESTATE->m_pCurTrail[*pn] = m_pTrail;
 	if( m_CourseDifficulty != DIFFICULTY_INVALID )
-		GAMESTATE->ChangePreferredCourseDifficulty( pn, m_CourseDifficulty );
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			GAMESTATE->ChangePreferredCourseDifficulty( *pn, m_CourseDifficulty );
 	if( m_pCharacter )
-		GAMESTATE->m_pCurCharacters[pn] = m_pCharacter;
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			GAMESTATE->m_pCurCharacters[*pn] = m_pCharacter;
 	for( map<CString,CString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
 		GAMESTATE->m_mapEnv[ i->first ] = i->second;
 	if( !m_sSongGroup.empty() )

@@ -22,8 +22,13 @@ struct GameCommand		// used in SelectMode
 	void Init();
 
 	void Load( int iIndex, const Commands& acs );
+	
 	void ApplyToAllPlayers() const;
 	void Apply( PlayerNumber pn ) const;
+private:
+	void Apply( const vector<PlayerNumber> &vpns ) const;
+public:
+
 	bool DescribesCurrentMode( PlayerNumber pn ) const;
 	bool DescribesCurrentModeForAllPlayers() const;
 	bool IsPlayable( CString *why = NULL ) const;
