@@ -5,24 +5,28 @@
 #include "Sprite.h"
 #include "BitmapText.h"
 
-const unsigned MAX_GROUPS_ONSCREEN = 7;
-
 class GroupList: public ActorFrame {
-	Sprite			m_sprButton[MAX_GROUPS_ONSCREEN];
-	BitmapText		m_screenLabels[MAX_GROUPS_ONSCREEN];
+	ActorFrame			 m_Frame;
+	vector<Actor *>		 m_Frames;
+	vector<Sprite *>	 m_sprButtons;
+	vector<BitmapText *> m_screenLabels;
 	vector<CString> m_asLabels;
 
+	vector<bool>		 m_bHidden;
+
 	/* Currently selected label. */
-	unsigned m_iSelection;
+	int m_iSelection;
 	/* Label that's currently at the top of the screen. */
-	unsigned m_iTop;
+	int m_iTop;
 
 	void BeforeChange();
 	void AfterChange();
-	void SetLabels();
+	bool ItemIsOnScreen( int n ) const;
+	void ResetTextSize( int item );
 
 public:
 	GroupList();
+	~GroupList();
 
 	void SetSelection(unsigned sel);
 	int GetSelection() const { return m_iSelection; }
