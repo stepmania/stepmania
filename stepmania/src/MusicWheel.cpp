@@ -462,11 +462,21 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			SortSongPointerArrayByBPM( arraySongs );
 			break;
 		case SORT_MOST_PLAYED:
-			arraySongs = SONGMAN->GetBestSongs();
+			{
+			arraySongs.clear();
+
+			vector<Song*> arrayAllSongs = SONGMAN->GetBestSongs();
+
+			// weed out songs that require more songs than are available
+			for (i=0; i<arrayAllSongs.size(); i++)
+				if ( SONGMAN->GetNumStagesForSong(arrayAllSongs[i]) <= GAMESTATE->GetNumStagesLeft() )
+					arraySongs.push_back(arrayAllSongs[i]);
+
 			if( arraySongs.size() > 30 )
 				arraySongs.erase(arraySongs.begin()+30, arraySongs.end());
 			bUseSections = false;
 			break;
+			}
 		case SORT_GRADE:
 			SortSongPointerArrayByGrade( arraySongs );
 			break;
