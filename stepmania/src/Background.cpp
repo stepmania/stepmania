@@ -36,6 +36,7 @@ const float FADE_SECONDS = 1.0f;
 #define RIGHT_EDGE			THEME->GetMetricI("Background","RightEdge")
 #define BOTTOM_EDGE			THEME->GetMetricI("Background","BottomEdge")
 CachedThemeMetricB BLINK_DANGER_ALL("Background","BlinkDangerAll");
+CachedThemeMetricB DANGER_ALL_IS_OPAQUE("Background","DangerAllIsOpaque");
 
 #define RECT_BACKGROUND RectI(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
 
@@ -47,6 +48,7 @@ CString RandomBackground(int num) { return ssprintf("__random%i", num); }
 Background::Background()
 {
 	BLINK_DANGER_ALL.Refresh();
+	DANGER_ALL_IS_OPAQUE.Refresh();
 
 	int p;
 
@@ -503,7 +505,8 @@ void Background::DrawPrimitives()
 			m_pDancingCharacters->m_bDrawDangerLight = true;
 		m_DangerAll.Draw();
 	}
-	else
+	
+	if( !IsDangerAllVisible() || !DANGER_ALL_IS_OPAQUE ) 
 	{	
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = false;
