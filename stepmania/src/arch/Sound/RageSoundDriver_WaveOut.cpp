@@ -259,7 +259,7 @@ float RageSound_WaveOut::GetPlayLatency() const
 }
 
 /*
- * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2004 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  */
