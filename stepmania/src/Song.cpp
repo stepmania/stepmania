@@ -566,6 +566,9 @@ void Song::TidyUpData()
 			}
 		}
 	}
+
+	for( i=0; i<m_apNotes.size(); i++ )
+		m_apNotes[i]->Compress();
 }
 
 void Song::ReCalulateRadarValuesAndLastBeat()
@@ -713,6 +716,8 @@ next_notes_type:
 		unsigned j;
 
 		// look for previously autogen'd data with the same number of tracks
+		// XXX Why do this?  Notes with the same number of tracks will be preferred
+		// below anyway; why prefer autogen'd data? -glenn
 		for( j=0; j<m_apNotes.size(); j++ )
 		{
 			Notes* pOriginalNotes = m_apNotes[j];
@@ -772,7 +777,11 @@ void Song::AutoGen( NotesType ntTo, NotesType ntFrom )
 			NoteData originalNoteData;
 			NoteData newNoteData;
 			pOriginalNotes->GetNoteData( &originalNoteData );
-			newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfTo );
+			newNoteData.m_iNumTracks = iNumTracksOfTo;
+			if(originalNoteData.m_iNumTracks == iNumTracksOfTo)
+				newNoteData.CopyRange( &originalNoteData, 0, originalNoteData.GetLastRow(), 0 );
+			else
+				newNoteData.LoadTransformedSlidingWindow( &originalNoteData, iNumTracksOfTo );
 			pNewNotes->SetNoteData( &newNoteData );
 			this->m_apNotes.push_back( pNewNotes );
 		}
