@@ -561,7 +561,8 @@ bool Course::IsMysterySong( int stage ) const
 Difficulty Course::GetDifficulty( int stage ) const
 {
 	Difficulty dc = m_entries[stage].difficulty;
-	if(GAMESTATE->m_bDifficultCourses)
+
+	if(GAMESTATE->m_bDifficultCourses && dc < DIFFICULTY_CHALLENGE)
 		dc  = Difficulty(dc + 1);
 
 	return dc;
