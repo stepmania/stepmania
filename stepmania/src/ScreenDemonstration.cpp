@@ -22,7 +22,6 @@
 #include "RageSounds.h"
 
 
-#define SHOW_RANDOM_MODIFIERS	THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
 #define NEXT_SCREEN				THEME->GetMetric("ScreenDemonstration","NextScreen")
 
