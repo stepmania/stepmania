@@ -158,50 +158,90 @@ const char *SignalCodeName( int signo, int code )
 }
 #endif
 
+bool child_read( int fd, void *p, int size )
+{
+	char *buf = (char *) p;
+	int got = 0;
+	while( got < size )
+	{
+		int ret = read( fd, buf+got, size-got );
+		if( ret == -1 )
+		{
+			if( errno == EINTR )
+				continue;
+			fprintf( stderr, "Crash handler: error communicating with parent: %s\n", strerror(errno) );
+			return false;
+		}
+
+		if( ret == 0 )
+		{
+			fprintf( stderr, "Crash handler: EOF communicating with parent\n", strerror(errno) );
+			return false;
+		}
+
+		got += ret;
+	}
+
+	return true;
+}
+
 /* Once we get here, we should be * safe to do whatever we want;
 * heavyweights like malloc and CString are OK. (Don't crash!) */
 static void child_process()
 {
-    int ret;
-
     /* 1. Read the CrashData. */
     CrashData crash;
-    ret = read(3, &crash, sizeof(CrashData));
+    if( !child_read(3, &crash, sizeof(CrashData)) )
+	return;
 
     /* 2. Read info. */
     int size;
-    ret = read(3, &size, sizeof(size));
+    if( !child_read(3, &size, sizeof(size)) )
+	return;
     char *Info = new char [size];
-    ret = read(3, Info, size);
+    if( !child_read(3, Info, size) )
+	return;
 
     /* 3. Read AdditionalLog. */
-    ret = read(3, &size, sizeof(size));
+    if( !child_read(3, &size, sizeof(size)) )
+	return;
+
     char *AdditionalLog = new char [size];
-    ret = read(3, AdditionalLog, size);
+    if( !child_read(3, AdditionalLog, size) )
+	return;
 
     /* 4. Read RecentLogs. */
     int cnt = 0;
-    ret = read(3, &cnt, sizeof(cnt));
+    if( !child_read(3, &cnt, sizeof(cnt)) )
+	return;
     char *Recent[1024];
     for( int i = 0; i < cnt; ++i )
     {
-        ret = read(3, &size, sizeof(size));
+        if( !child_read(3, &size, sizeof(size)) )
+		return;
         Recent[i] = new char [size];
-        ret = read(3, Recent[i], size);
+        if( !child_read(3, Recent[i], size) )
+		return;
     }
 
     /* 5. Read CHECKPOINTs. */
-    ret = read(3, &size, sizeof(size));
+    if( !child_read(3, &size, sizeof(size)) )
+	return;
+
     char *temp = new char [size];
-    ret = read(3, temp, size);
+    if( !child_read(3, temp, size) )
+	return;
+
     CStringArray Checkpoints;
     split(temp, "$$", Checkpoints);
     delete [] temp;
 
     /* 6. Read the crashed thread's name. */
-    ret = read(3, &size, sizeof(size));
+    if( !child_read(3, &size, sizeof(size)) )
+	return;
     temp = new char [size];
-    ret = read(3, temp, size);
+    if( !child_read(3, temp, size) )
+	return;
     const CString CrashedThread(temp);
     delete[] temp;
 
@@ -209,8 +249,12 @@ static void child_process()
         * This should time out, in case something deadlocks. */
 
     char x;
-    ret = read(3, &x, sizeof(x));
-    if( (ret == -1 && errno != EPIPE) || ret != 0 )
+    int ret = read(3, &x, sizeof(x));
+    if( ret > 0 )
+    {
+        fprintf( stderr, "Unexpected child read() result: %i\n", ret );
+        /* keep going */
+    } else if( (ret == -1 && errno != EPIPE) || ret != 0 )
     {
         /* We expect an EOF or EPIPE.  What happened? */
         fprintf(stderr, "Unexpected child read() result: %i (%s)\n", ret, strerror(errno));
