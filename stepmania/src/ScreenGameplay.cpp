@@ -504,7 +504,14 @@ bool ScreenGameplay::IsLastSong()
 			CStringArray asModifiers;
 			pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers, true );
 
-			return unsigned(GAMESTATE->m_CurStageStats.iSongsPassed) >= apSongs.size();	// there are no more songs left
+			/* XXX: Should we really be using iSongsPassed to figure out what song we're
+			 * on?  Wouldn't m_iCurrentStageIndex be better for that? -glenn */
+			int iPlaySongIndex = 0;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsPlayerEnabled(p) )
+					iPlaySongIndex = max( iPlaySongIndex, GAMESTATE->m_CurStageStats.iSongsPassed[p] );
+
+			return unsigned(iPlaySongIndex) >= apSongs.size();	// there are no more songs left
 		}
 		break;
 	default:
@@ -1265,7 +1272,9 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginLoadingNextSong:
 		LoadNextSong();
-		StartPlayingSong( 0, 0 );
+		/* We're fading in, so don't hit any notes for a few seconds; they'll be
+		 * obscured by the fade. */
+		StartPlayingSong( 3, 0 );
 		m_OniFade.OpenWipingRight( SM_None );
 		break;
 
