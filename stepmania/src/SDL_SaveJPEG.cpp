@@ -4,7 +4,10 @@
 #undef FAR /* fix for VC */
 namespace jpeg
 {
+	extern "C"
+	{
 #include <jpeglib.h>
+	}
 }
 
 #include "SDL_SaveJPEG.h"
