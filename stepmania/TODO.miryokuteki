@@ -2,11 +2,25 @@
 // Miryokuteki's Todo/Done Record //
 ////////////////////////////////////
 
-// Last Updated February 27th, 2003
+// Last Updated May 1st, 2003
 
 Todo List:
   ** Find a way to get the length of a movie being played, so ScreenIntroMovie does not have to have a pre-determined length (I.e: exits when the movie is finished playing)
   ** Adding support for "BEGINNER HELP".. The thing that has a character showing where to step during the song, only on beginner mode. IE: Replaces the BG with this dynamic image sequence, showing what arrow to hit as it comes up on screen. You can see this in the BG of a DDRExtreme song if you pick "beginner" difficulty.
+
+Done as of 05/01/03:
+    ** Re-coded my ScreenSelectDifficultyEX, to support the icon bar like the arcade does, and added scripting support and much more configuration. Will add even more later tonight.
+
+
+
+
+
+
+Done as of 04/09/03:
+    ** Completely recoded my DDRExtreme-style difficulty select screen to correctly use vector like SSDifficulty does. Runs much nicer now. Also cleaned up redir's needed for this.
+
+
+
 
 
 Done as of 03/08/03:
