@@ -1,4 +1,6 @@
-#pragma once 
+#ifndef RAGEUTIL_H
+#define RAGEUTIL_H
+
 /*
 -----------------------------------------------------------------------------
  File: RageUtil
@@ -187,3 +189,4 @@ void ReadFloatFromFile( FILE* file, float& f );
 void WriteUlongToFile( FILE* file, ULONG u );
 void ReadUlongFromFile( FILE* file, ULONG& u );
 
+#endif
