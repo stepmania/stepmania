@@ -200,7 +200,9 @@ void Sprite::Draw()
 	}
 
 
-	D3DXCOLOR	colorDiffuse	= m_colorDiffuse;
+	D3DXCOLOR	colorDiffuse[4];
+	for(int i=0; i<4; i++)
+		colorDiffuse[i] = m_colorDiffuse[i];
 	D3DXCOLOR	colorAdd		= m_colorAdd;
 
 	// update properties based on SpriteEffects 
@@ -209,10 +211,16 @@ void Sprite::Draw()
 	case no_effect:
 		break;
 	case blinking:
-		colorDiffuse = m_bTweeningTowardEndColor ? m_start_colorDiffuse : m_end_colorDiffuse;
+		{
+		for(int i=0; i<4; i++)
+			colorDiffuse[i] = m_bTweeningTowardEndColor ? m_start_colorDiffuse[i] : m_end_colorDiffuse[i];
+		}
 		break;
 	case camelion:
-		colorDiffuse = m_start_colorDiffuse*m_fPercentBetweenColors + m_end_colorDiffuse*(1.0f-m_fPercentBetweenColors);
+		{
+		for(int i=0; i<4; i++)
+			colorDiffuse[i] = m_start_colorDiffuse[i]*m_fPercentBetweenColors + m_end_colorDiffuse[i]*(1.0f-m_fPercentBetweenColors);
+		}
 		break;
 	case glowing:
 		colorAdd = m_start_colorAdd*m_fPercentBetweenColors + m_end_colorAdd*(1.0f-m_fPercentBetweenColors);
@@ -227,7 +235,8 @@ void Sprite::Draw()
 	case flickering:
 		m_bVisibleThisFrame = !m_bVisibleThisFrame;
 		if( !m_bVisibleThisFrame )
-			colorDiffuse = D3DXCOLOR(0,0,0,0);		// don't draw the frame
+			for(int i=0; i<4; i++)
+				colorDiffuse[i] = D3DXCOLOR(0,0,0,0);		// don't draw the frame
 		break;
 	}
 
@@ -250,7 +259,10 @@ void Sprite::Draw()
 	v[2].tu = pTexCoordRect->right;		v[2].tv = pTexCoordRect->bottom;	// bottom right
 	v[3].tu = pTexCoordRect->right;		v[3].tv = pTexCoordRect->top;		// top right
 
-	v[0].color = v[1].color = v[2].color = v[3].color = colorDiffuse;
+	v[0].color = colorDiffuse[2];	// bottom left
+	v[1].color = colorDiffuse[0];	// top left
+	v[2].color = colorDiffuse[3];	// bottom right
+	v[3].color = colorDiffuse[1];	// top right
 	
 	pVB->Unlock();
 

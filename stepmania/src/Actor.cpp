@@ -25,7 +25,7 @@ void Actor::Init()
 	m_pos			= m_start_pos			= m_end_pos			= D3DXVECTOR2( 0, 0 );
 	m_rotation		= m_start_rotation		= m_end_rotation	= D3DXVECTOR3( 0, 0, 0 );
 	m_scale			= m_start_scale			= m_end_scale		= D3DXVECTOR2( 1, 1 );
-	m_colorDiffuse	= m_start_colorDiffuse	= m_end_colorDiffuse= D3DXCOLOR( 1, 1, 1, 1 );
+	for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]	= m_end_colorDiffuse[i]= D3DXCOLOR( 1, 1, 1, 1 );
 	m_colorAdd		= m_start_colorAdd		= m_end_colorAdd	= D3DXCOLOR( 0, 0, 0, 0 );
 
 	m_TweenType	= no_tween;
@@ -147,7 +147,7 @@ void Actor::Update( const float &fDeltaTime )
 			m_pos = m_end_pos;
 			m_scale = m_end_scale;
 			m_rotation = m_end_rotation;
-			m_colorDiffuse = m_end_colorDiffuse;
+			for(int i=0; i<4; i++) m_colorDiffuse[i] = m_end_colorDiffuse[i];
 			m_colorAdd = m_end_colorAdd;
 			m_TweenType = no_tween;
 		}
@@ -165,7 +165,7 @@ void Actor::Update( const float &fDeltaTime )
 			m_pos			= m_start_pos	  + (m_end_pos		- m_start_pos	  )*fPercentThroughTween;
 			m_scale			= m_start_scale	  + (m_end_scale	- m_start_scale	  )*fPercentThroughTween;
 			m_rotation		= m_start_rotation+ (m_end_rotation - m_start_rotation)*fPercentThroughTween;
-			m_colorDiffuse	= m_start_colorDiffuse*(1.0f-fPercentThroughTween) + m_end_colorDiffuse*(fPercentThroughTween);
+			for(int i=0; i<4; i++) m_colorDiffuse[i]	= m_start_colorDiffuse[i]*(1.0f-fPercentThroughTween) + m_end_colorDiffuse[i]*(fPercentThroughTween);
 			m_colorAdd		= m_start_colorAdd    *(1.0f-fPercentThroughTween) + m_end_colorAdd    *(fPercentThroughTween);
 		}
 	
@@ -180,7 +180,7 @@ void Actor::TweenTo( float time, float x, float y, float zoom, float rot, D3DXCO
 	m_start_pos			= m_pos;
 	m_start_scale		= m_scale;
 	m_start_rotation	= m_rotation;
-	m_start_colorDiffuse		= m_colorDiffuse;
+	for(int i=0; i<4; i++) m_start_colorDiffuse[i]		= m_colorDiffuse[i];
 
 	// set the ending tweening position to what the user asked for
 	m_end_pos.x = (float)x;
@@ -188,7 +188,7 @@ void Actor::TweenTo( float time, float x, float y, float zoom, float rot, D3DXCO
 	m_end_scale.x = zoom;
 	m_end_scale.y = zoom;
 	m_end_rotation.z = rot;
-	m_end_colorDiffuse = col;
+	for(i=0; i<4; i++) m_end_colorDiffuse[i] = col;
 	m_TweenType = tt;
 	m_fTweenTime = time;
 	m_fTimeIntoTween = 0;
@@ -202,7 +202,7 @@ void Actor::BeginTweening( float time, TweenType tt )
 	m_start_pos				= m_end_pos				= m_pos;
 	m_start_scale			= m_end_scale			= m_scale;
 	m_start_rotation		= m_end_rotation		= m_rotation;
-	m_start_colorDiffuse	= m_end_colorDiffuse	= m_colorDiffuse;
+	for(int i=0; i<4; i++)m_start_colorDiffuse[i]	= m_end_colorDiffuse[i]	= m_colorDiffuse[i];
 	m_start_colorAdd		= m_end_colorAdd		= m_colorAdd;
 
 	m_TweenType = tt;
@@ -217,7 +217,7 @@ void Actor::SetTweenZoom( float zoom )		{ m_end_scale.x = zoom;  m_end_scale.y =
 void Actor::SetTweenRotationX( float r )	{ m_end_rotation.x = r; }
 void Actor::SetTweenRotationY( float r )	{ m_end_rotation.y = r; }
 void Actor::SetTweenRotationZ( float r )	{ m_end_rotation.z = r; }
-void Actor::SetTweenDiffuseColor( D3DXCOLOR c )	{ m_end_colorDiffuse = c; }
+void Actor::SetTweenDiffuseColor( D3DXCOLOR c )	{ for(int i=0; i<4; i++) m_end_colorDiffuse[i] = c; }
 void Actor::SetTweenAddColor( D3DXCOLOR c )	{ m_end_colorAdd = c; }
 
 
@@ -290,8 +290,10 @@ void Actor::SetEffectNone()
 void Actor::SetEffectBlinking( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = blinking;
-	m_start_colorDiffuse = Color;
-	m_end_colorDiffuse = Color2;
+	for(int i=0; i<4; i++) {
+		m_start_colorDiffuse[i] = Color;
+		m_end_colorDiffuse[i] = Color2;
+	}
 	//m_fPercentBetweenColors = 0.0;
 	//m_bTweeningTowardEndColor = TRUE;
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;
@@ -300,8 +302,10 @@ void Actor::SetEffectBlinking( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3
 void Actor::SetEffectCamelion( float fDeltaPercentPerSecond, D3DXCOLOR Color, D3DXCOLOR Color2 )
 {
 	m_Effect = camelion;
-	m_start_colorDiffuse = Color;
-	m_end_colorDiffuse = Color2;
+	for(int i=0; i<4; i++) {
+		m_start_colorDiffuse[i] = Color;
+		m_end_colorDiffuse[i] = Color2;
+	}
 	//m_fPercentBetweenColors = 0.0;
 	//m_bTweeningTowardEndColor = TRUE;
 	m_fDeltaPercentPerSecond = fDeltaPercentPerSecond;

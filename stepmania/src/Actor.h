@@ -60,8 +60,16 @@ public:
 	virtual float GetRotationY()			{ return m_rotation.y; }
 	virtual void  SetRotationY( float rot )	{ m_rotation.y = rot; }
 
-	virtual void SetDiffuseColor( D3DXCOLOR colorDiffuse ) { m_colorDiffuse = colorDiffuse; };
-	virtual D3DXCOLOR GetDiffuseColor()				{ return m_colorDiffuse; };
+	virtual void SetDiffuseColor( D3DXCOLOR colorDiffuse ) { for(int i=0; i<4; i++) m_colorDiffuse[i] = colorDiffuse; };
+	virtual void SetDiffuseColorUpperLeft( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[0] = colorDiffuse; };
+	virtual void SetDiffuseColorUpperRight( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[1] = colorDiffuse; };
+	virtual void SetDiffuseColorLowerLeft( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[2] = colorDiffuse; };
+	virtual void SetDiffuseColorLowerRight( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[3] = colorDiffuse; };
+	virtual void SetDiffuseColorTopEdge( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[0] = m_colorDiffuse[1] = colorDiffuse; };
+	virtual void SetDiffuseColorRightEdge( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[1] = m_colorDiffuse[3] = colorDiffuse; };
+	virtual void SetDiffuseColorBottomEdge( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[2] = m_colorDiffuse[3] = colorDiffuse; };
+	virtual void SetDiffuseColorLeftEdge( D3DXCOLOR colorDiffuse ) { m_colorDiffuse[0] = m_colorDiffuse[2] = colorDiffuse; };
+	virtual D3DXCOLOR GetDiffuseColor()				{ return m_colorDiffuse[0]; };
 	virtual void SetAddColor( D3DXCOLOR colorAdd ) { m_colorAdd = colorAdd; };
 	virtual D3DXCOLOR GetAddColor()				{ return m_colorAdd; };
 
@@ -126,14 +134,14 @@ protected:
 	D3DXVECTOR2 m_pos;		// X-Y coordinate of where the center point will appear on screen
 	D3DXVECTOR3 m_rotation;	// X, Y, and Z m_rotation
 	D3DXVECTOR2 m_scale;	// X and Y zooming
-	D3DXCOLOR   m_colorDiffuse;
+	D3DXCOLOR   m_colorDiffuse[4];	// 4 corner colors - left to right, top to bottom
 	D3DXCOLOR   m_colorAdd;
 
 	// start and end position for tweening
 	D3DXVECTOR2 m_start_pos,			m_end_pos;
 	D3DXVECTOR3 m_start_rotation,		m_end_rotation;
 	D3DXVECTOR2 m_start_scale,			m_end_scale;
-	D3DXCOLOR   m_start_colorDiffuse,	m_end_colorDiffuse;
+	D3DXCOLOR   m_start_colorDiffuse[4],m_end_colorDiffuse[4];
 	D3DXCOLOR   m_start_colorAdd,		m_end_colorAdd;
 
 	// counters for tweening

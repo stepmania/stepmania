@@ -23,6 +23,7 @@
 
 
 
+
 const int MAX_NUM_COLUMNS = 8;
 
 
@@ -49,8 +50,6 @@ protected:
 	int		m_iMaxCombo;
 	float	m_fSongBeat;
 
-	enum StepScore{ none, perfect, great, good, boo, miss };
-	enum StepTiming{ no_timing, early, late };
 	// index is quarter beat number (e.g. beat 30 is index 30*4)
 	Step		m_OriginalStep[MAX_STEP_ELEMENTS];
 	Step		m_LeftToStepOn[MAX_STEP_ELEMENTS];
@@ -72,21 +71,21 @@ protected:
 	void UpdateColorArrows( const float& fDeltaTime );
 	float GetColorArrowYPos( int iStepIndex, float fSongBeat );
 	void DrawColorArrows();
-//	Sprite		m_sprColorArrow[MAX_NUM_COLUMNS];
 	int			m_iColorArrowFrameOffset[MAX_STEP_ELEMENTS];
 	ColorArrow	m_ColorArrow[MAX_NUM_COLUMNS];
 
-
 	// gray arrows
 	void SetGrayArrowsX( int iX );
-	void SetGhostArrowsX( int iX );
 	void UpdateGrayArrows( const float& fDeltaTime );
 	void DrawGrayArrows();
-	void GrayArrowStep( int index );
-	void GrayArrowGhostStep( int index );
-//	Sprite		m_sprGrayArrow[MAX_NUM_COLUMNS];
-//	Sprite		m_sprGrayArrowGhost[MAX_NUM_COLUMNS];
+	void GrayArrowStep( int index, StepScore score );
 	GrayArrow	m_GrayArrow[MAX_NUM_COLUMNS];
+
+	// ghost arrows
+	void SetGhostArrowsX( int iX );
+	void UpdateGhostArrows( const float& fDeltaTime );
+	void DrawGhostArrows();
+	void GhostArrowStep( int index, StepScore score );
 	GhostArrow	m_GhostArrow[MAX_NUM_COLUMNS];
 
 

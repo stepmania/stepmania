@@ -167,13 +167,10 @@ Player::Player()
 	}
 
 
+	// init arrow rotations
 	for( int c=0; c < MAX_NUM_COLUMNS; c++ ) {
-		// gray arrows
 		m_GrayArrow[c].SetRotation( m_ColumnToRotation[c] );
-
 		m_GhostArrow[c].SetRotation( m_ColumnToRotation[c] );
-
-		// color arrows
 		m_ColorArrow[c].SetRotation( m_ColumnToRotation[c] );
 	}
 
@@ -261,6 +258,7 @@ void Player::Update( const float &fDeltaTime, float fSongBeat, float fMaxBeatDif
 
 	UpdateGrayArrows( fDeltaTime ); 
 	UpdateColorArrows( fDeltaTime );
+	UpdateGhostArrows( fDeltaTime );
 	UpdateJudgement( fDeltaTime );
 	UpdateCombo( fDeltaTime );
 	UpdateScore( fDeltaTime );
@@ -271,6 +269,7 @@ void Player::Draw()
 {
 	DrawGrayArrows(); 
 	DrawColorArrows();
+	DrawGhostArrows();
 	DrawJudgement();
 	DrawCombo();
 	DrawScore();
@@ -284,7 +283,7 @@ void Player::HandlePlayerStep( float fSongBeat, Step player_step, float fMaxBeat
 
 	// update gray arrows
 	int iColumnNum = m_StepToColumnNumber[player_step];
-	GrayArrowStep( iColumnNum );
+	GrayArrowStep( iColumnNum, perfect );
 
 	CheckForCompleteStep( fSongBeat, player_step, fMaxBeatDiff );
 }
@@ -342,12 +341,6 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 {
 	float fStepBeat = StepIndexToBeat( iIndexThatWasSteppedOn );
 
-	// show the gray arrow ghost
-	for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
-		if( m_OriginalStep[iIndexThatWasSteppedOn] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
-			GrayArrowGhostStep( c );
-		}
-	}
  
 	float fBeatsUntilStep = fStepBeat - fSongBeat;
 	float fPercentFromPerfect = (float)fabs( fBeatsUntilStep / fMaxBeatDiff );
@@ -367,6 +360,13 @@ void Player::OnCompleteStep( float fSongBeat, Step player_step, float fMaxBeatDi
 	SetJudgement( stepscore );
 	ChangeScore( stepscore, m_iCurCombo );
 	ChangeLife( stepscore );
+
+	// show the gray arrow ghost
+	for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
+		if( m_OriginalStep[iIndexThatWasSteppedOn] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
+			GhostArrowStep( c, stepscore );
+		}
+	}
 
 	// update the combo display
 	switch( stepscore )
@@ -443,6 +443,12 @@ void Player::UpdateGrayArrows( const float &fDeltaTime )
 {
 	for( int i=0; i < m_iNumColumns; i++ ) {
 		m_GrayArrow[i].Update( fDeltaTime );
+	}
+}
+
+void Player::UpdateGhostArrows( const float &fDeltaTime )
+{
+	for( int i=0; i < m_iNumColumns; i++ ) {
 		m_GhostArrow[i].Update( fDeltaTime );
 	}
 }
@@ -451,8 +457,17 @@ void Player::DrawGrayArrows()
 {
 	for( int i=0; i<m_iNumColumns; i++ )
 	{
-		m_GrayArrow[i].CalculateColor( m_fSongBeat );
+		m_GrayArrow[i].SetBeat( m_fSongBeat );
 		m_GrayArrow[i].Draw();
+	}
+}
+
+void Player::DrawGhostArrows()
+{
+	for( int i=0; i<m_iNumColumns; i++ )
+	{
+		m_GhostArrow[i].SetBeat( m_fSongBeat );
+		m_GhostArrow[i].Draw();
 	}
 }
 
@@ -474,14 +489,14 @@ void Player::SetColorArrowsX( int iNewX )
 		m_ColorArrow[i].SetX( GetArrowColumnX(i) );
 }
 
-void Player::GrayArrowStep( int index )
+void Player::GrayArrowStep( int index, StepScore score )
 {
-	m_GrayArrow[index].Step();
+	m_GrayArrow[index].Step( perfect );
 }
 
-void Player::GrayArrowGhostStep( int index )
+void Player::GhostArrowStep( int index, StepScore score )
 {
-	m_GhostArrow[index].Step();
+	m_GhostArrow[index].Step( score );		
 }
 
 void Player::UpdateColorArrows( const float &fDeltaTime )
@@ -525,7 +540,7 @@ void Player::DrawColorArrows()
 			for( int c=0; c < m_iNumColumns; c++ ) {	// for each arrow column
 				if( m_OriginalStep[i] & m_ColumnNumberToStep[c] ) {	// this column is still unstepped on?
 					m_ColorArrow[c].SetY( fYPos );
-					m_ColorArrow[c].CalculateColor( fBeatsTilStep );
+					m_ColorArrow[c].SetIndexAndBeat( i, m_fSongBeat );
 					m_ColorArrow[c].Draw();
 				}
 			}
@@ -533,10 +548,6 @@ void Player::DrawColorArrows()
 
 		}	// end if there is a step
 	}	// end foreach arrow to draw
-
-	for( i=0; i<m_iNumColumns; i++ ) {
-		m_GhostArrow[i].Draw();
-	}
 }
 
 
@@ -554,7 +565,7 @@ float Player::GetColorArrowYPos( int iStepIndex, float fSongBeat )
 
 void Player::SetJudgementX( int iNewX )
 {
-	m_sprJudgement.SetXY(  iNewX,  CENTER_Y );
+	m_sprJudgement.SetXY(  iNewX,  JUDGEMENT_Y );
 }
 
 void Player::UpdateJudgement( const float &fDeltaTime )
@@ -585,10 +596,17 @@ void Player::SetJudgement( StepScore score )
 
 	m_fJudgementDisplayCountdown = JUDGEMENT_DISPLAY_TIME;
 
-	m_sprJudgement.SetZoom( 1.5f );
-	m_sprJudgement.TweenTo( JUDGEMENT_DISPLAY_TIME/3.0,
-							m_sprJudgement.GetX(), 
-							m_sprJudgement.GetY()  );
+	if( score == miss ) {	// falling down
+		m_sprJudgement.SetY( JUDGEMENT_Y - 30 );
+		m_sprJudgement.SetZoom( 1.0f );
+		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME );
+		m_sprJudgement.SetTweenY( JUDGEMENT_Y + 30 );
+	} else {		// zooming out
+		m_sprJudgement.SetY( JUDGEMENT_Y );
+		m_sprJudgement.SetZoom( 1.5f );
+		m_sprJudgement.BeginTweening( JUDGEMENT_DISPLAY_TIME/3.0 );
+		m_sprJudgement.SetTweenZoom( 1.0f );
+	}
 }
 
 void Player::SetComboX( int iNewX )
@@ -756,7 +774,7 @@ void Player::ChangeScore( StepScore score, int iCurCombo )
 	case perfect:	fScoreToAdd = M * M * 300 + 500;	break;
 	}
 	m_fScore += fScoreToAdd;
-	ASSERT( m_fScore > 0 );
+	ASSERT( m_fScore >= 0 );
 
 	
 	m_ScoreNumber.SetSequence( ssprintf( "%9.0f", m_fScore ) );
