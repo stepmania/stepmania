@@ -56,17 +56,21 @@ public:
 	float DancePointsUntilNextUnlock();
 	float ArcadePointsUntilNextUnlock();
 	float SongPointsUntilNextUnlock();
+	// returns # of points till next unlock - used for ScreenUnlock
 
 	SongEntry *FindSong( CString songname );
-	// used for screen unlock
+	// retrieves a corresponding SongEntry, or NULL if none exists
 
 	bool SongIsLocked( const Song *song );
-	bool CourseIsLocked( const Course *course );
-
 	bool SongIsRoulette( const Song *song );
-	bool LoadFromDATFile( CString sPath );
+	bool CourseIsLocked( const Course *course );
+	// used on select screens
 
-	vector<SongEntry>	m_SongEntries;	// All locked songs are stored here
+	bool LoadFromDATFile( CString sPath );
+	// executed when program is first executed
+
+	vector<SongEntry>	m_SongEntries;	
+	// All locked songs are stored here
 
 	// functions that add to values
 	float UnlockAddAP(Grade credit);
@@ -78,9 +82,11 @@ public:
 	float UnlockFailExtraStage();
 	float UnlockClearStage();
 	float UnlockToasty();
-	bool RouletteUnlock( const Song *song );
 
-	// read and write unlock functions
+	bool RouletteUnlock( const Song *song );
+	// unlocks given song in roulette
+
+	// read and write unlock in values
 	bool ReadValues( CString filename);
 	bool WriteValues( CString filename);
 	
@@ -94,14 +100,13 @@ public:
 	float StagesCleared;
 	CString RouletteSeeds;
 
-	void DebugPrint();
-
 private:
 	void SortSongEntriesArray();  // sorts unlocks
-	bool ParseRow(CString text, CString &type, float &qty, CString &songname);
 	SongEntry *FindSong( const Song *pSong );
 	SongEntry *FindCourse( const Course *pCourse );
-	void InitRouletteSeeds(int MaxRouletteSlot);
+
+	void InitRouletteSeeds(int MaxRouletteSlot);  
+	// makes RouletteSeeds more efficient
 };
 
 

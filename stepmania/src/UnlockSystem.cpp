@@ -183,52 +183,6 @@ static bool CompareSongEntries(const SongEntry &se1, const SongEntry &se2)
 	return se1.m_sSongName < se2.m_sSongName;
 }
 
-/*
- * Why not just use one of the established, well-understood file formats?
- * MsdFile should work fine, eg.
- * #LOCK:song name:DP=50,SP=3;
- * #LOCK...;
- * and people don't have to learn a new file format.
- */
-bool UnlockSystem::ParseRow(CString text, CString &type, float &qty,
-							CString &songname)
-{
-	int end = 0;  // sets a value in case | does not exist
-	char unlock_type[4];
-	char qty_text[20];
-
-	for(unsigned pos = 0; pos < text.size(); pos++ )
-	{
-		if (text[pos] == '[') text[pos] = ' ';
-		if (text[pos] == ']') text[pos] = ' ';
-		if (text[pos] == '|') 
-		{
-			end = pos;
-			text[pos] = ' ';
-		}
-	}
-	// this will bypass the last character, but it can't be |
-	// since then it would be end of string
-	
-	if (end == 0) // handle lines lacking content
-		return false;
-
-	songname = text.Right(text.size() - 1 - end);
-	
-	sscanf(text, "%s %s|", unlock_type, qty_text);
-
-	type = unlock_type;
-	qty = (float) atof(qty_text);
-
-	LOG->Trace( "UnlockSystem Entry %s", text.c_str() );
-	LOG->Trace( "             Title %s", songname.c_str() );
-	LOG->Trace( "              Type %s", type.c_str() );
-	LOG->Trace( "             Value %s", qty_text );
-
-
-	return true;
-}
-
 bool SongEntry::updateLocked()
 {
 	if (!(isLocked)) return true;  // if its already true
@@ -422,18 +376,6 @@ float UnlockSystem::SongPointsUntilNextUnlock()
 Song *SongEntry::GetSong() const
 {
 	return SONGMAN->FindSong( "", m_sSongName );
-}
-
-void UnlockSystem::DebugPrint()
-{
-	for(unsigned i=0; i < m_SongEntries.size(); i++)
-	{
-		CString tmp = "  ";
-		if (!m_SongEntries[i].isLocked) tmp = "un";
-		LOG->Trace( "UnlockSystem entry %d: %s",i, m_SongEntries[i].m_sSongName.c_str() );
-		LOG->Trace( "Status:%slocked", tmp.c_str() );
-	}
-
 }
 
 // This is mainly to streamline the INI for unnecessary values.
