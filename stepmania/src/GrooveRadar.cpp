@@ -29,16 +29,16 @@
 #define LABEL_ON_COMMAND_POST_DELAY THEME->GetMetric ("GrooveRadar","LabelOnCommandPostDelay")
 #define DISABLE_RADAR				THEME->GetMetricI("GrooveRadar","DisableRadar")
 
-
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
 const float RADAR_EDGE_WIDTH	= 2;
+static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 GrooveRadar::GrooveRadar()
 {
 	this->AddChild( &m_GrooveRadarValueMap );
 
-	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
 		m_sprRadarLabels[c].Load( THEME->GetPathToG("GrooveRadar labels 1x5") );
 		m_sprRadarLabels[c].StopAnimating();
@@ -50,7 +50,7 @@ GrooveRadar::GrooveRadar()
 
 void GrooveRadar::TweenOnScreen()
 {
-	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
 		m_sprRadarLabels[c].SetX( LABEL_OFFSET_X(c) );
 		m_sprRadarLabels[c].Command( LABEL_ON_COMMAND );
@@ -62,7 +62,7 @@ void GrooveRadar::TweenOnScreen()
 
 void GrooveRadar::TweenOffScreen()
 {
-	for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+	for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 	{
 		m_sprRadarLabels[c].StopTweening();
 		m_sprRadarLabels[c].BeginTweening( 0.2f );
@@ -85,7 +85,7 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 		m_bValuesVisible[p] = false;
 		m_PercentTowardNew[p] = 0;
 
-		for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+		for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 		{
 			m_fValuesNew[p][c] = 0;
 			m_fValuesOld[p][c] = 0;
@@ -99,7 +99,7 @@ void GrooveRadar::GrooveRadarValueMap::SetFromNotes( PlayerNumber pn, Steps* pNo
 		return;
 	if( pNotes != NULL )
 	{
-		for( int c=0; c<NUM_RADAR_CATEGORIES; c++ )
+		for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
 		{
 			const float fValueCurrent = m_fValuesOld[pn][c] * (1-m_PercentTowardNew[pn]) + m_fValuesNew[pn][c] * m_PercentTowardNew[pn];
 			m_fValuesOld[pn][c] = fValueCurrent;
@@ -160,9 +160,9 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 
 		int i;
 
-		for( i=0; i<NUM_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
+		for( i=0; i<NUM_SHOWN_RADAR_CATEGORIES+1; i++ )	// do one extra to close the fan
 		{
-			const int c = i%NUM_RADAR_CATEGORIES;
+			const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
@@ -173,14 +173,14 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			v[1+i].c = v[0].c;
 		}
 
-		DISPLAY->DrawFan( v, NUM_RADAR_CATEGORIES+2 );
+		DISPLAY->DrawFan( v, NUM_SHOWN_RADAR_CATEGORIES+2 );
 
 		//
 		// use a line loop to draw the thick line
 		//
-		for( i=0; i<=NUM_RADAR_CATEGORIES; i++ )
+		for( i=0; i<=NUM_SHOWN_RADAR_CATEGORIES; i++ )
 		{
-			const int c = i%NUM_RADAR_CATEGORIES;
+			const int c = i%NUM_SHOWN_RADAR_CATEGORIES;
 			const float fDistFromCenter = 
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
@@ -194,11 +194,11 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		// TODO: Add this back in.  -Chris
 //		switch( PREFSMAN->m_iPolygonRadar )
 //		{
-//		case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;
-//		case 1:		DISPLAY->DrawLoop_Polys( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );			break;
+//		case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_SHOWN_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;
+//		case 1:		DISPLAY->DrawLoop_Polys( v, NUM_SHOWN_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );			break;
 //		default:
 //		case -1:
-		DISPLAY->DrawLineStrip( v, NUM_RADAR_CATEGORIES+1, RADAR_EDGE_WIDTH );
+		DISPLAY->DrawLineStrip( v, NUM_SHOWN_RADAR_CATEGORIES+1, RADAR_EDGE_WIDTH );
 //		break;
 //		}
 	}

@@ -64,6 +64,7 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 #define GRAPH_START_HEIGHT					THEME->GetMetricF(m_sName,"GraphStartHeight")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 
+static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 const ScreenMessage SM_GoToSelectCourse			=	ScreenMessage(SM_User+3);
 //const ScreenMessage SM_GoToEvaluationSummary	=	ScreenMessage(SM_User+4);
@@ -551,7 +552,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			UtilSetXYAndOnCommand( m_sprBonusFrame[p], "ScreenEvaluation" );
 			this->AddChild( &m_sprBonusFrame[p] );
 
-			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
+			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
 				m_sprPossibleBar[p][r].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation bar possible p%d",p+1)) );
 				m_sprPossibleBar[p][r].SetWidth( m_sprPossibleBar[p][r].GetUnzoomedWidth() * stageStats.fRadarPossible[p][r] );
@@ -933,7 +934,7 @@ void ScreenEvaluation::TweenOffScreen()
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
 			UtilOffCommand( m_sprBonusFrame[p], "ScreenEvaluation" );
-			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
+			for( int r=0; r<NUM_SHOWN_RADAR_CATEGORIES; r++ )	// foreach line
 			{
 				UtilOffCommand( m_sprPossibleBar[p][r], "ScreenEvaluation" );
 				UtilOffCommand( m_sprActualBar[p][r], "ScreenEvaluation" );
