@@ -15,13 +15,13 @@ PKG_NAME="stepmania"
 
 # Actually, there's a chance we'll work with later versions, too, but it's
 # not worth bending over backward to try to detect it right now.
-ACLOCAL=/sw/bin/aclocal-1.7
-AUTOHEADER=/sw/bin/autoheader
-AUTOMAKE=/sw/bin/automake-1.7
+ACLOCAL=aclocal-1.7
+AUTOHEADER=autoheader
+AUTOMAKE=automake-1.7
 ACLOCAL_OPTIONS="-I autoconf/m4/"
 AUTOMAKE_OPTIONS=-a
 
-AUTOCONF=/sw/bin/autoconf
+AUTOCONF=autoconf
 
 (test -f $srcdir/configure.ac \
   && test -d $srcdir/src) || {
