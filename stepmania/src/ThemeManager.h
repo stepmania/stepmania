@@ -78,32 +78,27 @@ extern ThemeManager*	THEME;	// global and accessable from anywhere in our progra
 class CachedThemeMetric
 {
 protected:
-	CString m_sName;
+	CString m_sClassName;
 	CString m_sValueName;
 	bool	m_bInited;
 
 	CString		m_sValue;
-	int			m_iValue;
-	float		m_fValue;
-	bool		m_bValue;
-	RageColor	m_cValue;
+
+	virtual void Update() { }
 
 public:
-	CachedThemeMetric( CString sClassName, CString sValueName )
+	CachedThemeMetric( CString sClassName, CString sValueName ):
+		m_sClassName( sClassName ),
+		m_sValueName( sValueName ),
+		m_bInited( false )
 	{
-		m_sName = sClassName;
-		m_sValueName = sValueName;
-		m_bInited = false;
 	}
+	virtual ~CachedThemeMetric() { }
 
-	void Refresh()
+	void Refresh( CString sClassName = "" )
 	{
-		m_sValue = THEME->GetMetric(m_sName,m_sValueName);
-		m_iValue = atoi( m_sValue );
-		m_fValue = (float)atof( m_sValue );
-		m_bValue = atoi( m_sValue ) != 0;
-		m_cValue = RageColor(1,1,1,1);
-		sscanf( m_sValue, "%f,%f,%f,%f", &m_cValue.r, &m_cValue.g, &m_cValue.b, &m_cValue.a );
+		m_sValue = THEME->GetMetric(sClassName==""? m_sClassName:sClassName,m_sValueName);
+		Update();
 		m_bInited = true;
 	}
 
@@ -112,28 +107,42 @@ public:
 
 class CachedThemeMetricF : public CachedThemeMetric
 {
+	float		m_fValue;
 public:
+	void Update() { m_fValue = (float)atof( m_sValue ); }
 	CachedThemeMetricF( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const float () const		{ ASSERT(m_bInited);	return m_fValue; };
 };
 
 class CachedThemeMetricI : public CachedThemeMetric
 {
+	int			m_iValue;
 public:
+	void Update() { m_iValue = atoi( m_sValue ); }
 	CachedThemeMetricI( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
 	operator const int () const			{ ASSERT(m_bInited);	return m_iValue; };
 };
 
 class CachedThemeMetricB : public CachedThemeMetric
 {
+	bool		m_bValue;
 public:
+	void Update() { m_bValue = atoi( m_sValue ) != 0; }
 	CachedThemeMetricB( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const bool () const		{ ASSERT(m_bInited);	return m_bValue; };
 };
 
+		
+		
 class CachedThemeMetricC : public CachedThemeMetric
 {
+	RageColor	m_cValue;
 public:
+	void Update()
+	{
+		m_cValue = RageColor(1,1,1,1);
+		sscanf( m_sValue, "%f,%f,%f,%f", &m_cValue.r, &m_cValue.g, &m_cValue.b, &m_cValue.a );
+	}
 	CachedThemeMetricC( CString sClassName, CString sValueName ) : CachedThemeMetric( sClassName, sValueName ) {}
     operator const RageColor () const	{ ASSERT(m_bInited);	return m_cValue; };
 };
