@@ -88,5 +88,7 @@ SDL_RWops *OpenRWops( const CString &sPath, bool Write=false );
 SDL_RWops *OpenRWops( CString &sBuf );
 SDL_Surface *mySDL_MakeDummySurface( int height, int width );
 
+CString mySDL_GetError();
+
 #endif
 

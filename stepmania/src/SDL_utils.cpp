@@ -1269,3 +1269,15 @@ SDL_Surface *mySDL_MakeDummySurface( int height, int width )
 
 	return ret_image;
 }
+
+/* SDL sometimes fails to set an error, in which case we get the null string.  We
+ * sometimes use that as a sentinel return value.  This function returns "(none)"
+ * if no error is set. */
+CString mySDL_GetError()
+{
+	CString error = SDL_GetError();
+	if( error == "" )
+		return "(none)"; /* SDL sometimes fails to set an error */
+	return error;
+}
+
