@@ -269,25 +269,26 @@ TitleFrom: Ureshii! Tanoshii! Daisuki!
 TitleTo: うれしい! たのしい! 大好き!
 *
 # OHA:
-ArtistFrom: Warijiennu
+ArtistFrom: War[ui]jiennu
 ArtistTo: わるじぇんぬ
 *
-ArtistFrom: Yamachan with Jimusasuhikaru
+ArtistFrom: Yama-?chan (with|&) Jimusasu ?hikaru
 ArtistTo: やまちゃん with ジムナスひかる
 *
 TitleFrom: OHA OHA Sutaataa
 TitleTo: OHA OHA スターター
 *
-ArtistFrom: Yamachan & Reimondo
+ArtistFrom: Yama-?chan (with|&) (Reimondo|Raymond)
 ArtistTo: やまちゃん&レイモンド
 *
-ArtistFrom: Oha Kids with Imakuni
+# Optional question mark at the end:
+ArtistFrom: Oha Kids with Imakuni\??
 ArtistTo: おはおはキッズ with イマクニ
 *
 TitleFrom: Sayonara no Kawari Ni
 TitleTo: サヨナラのかわりに
 *
-ArtistFrom: Ohhagumi
+ArtistFrom: Oh?ha ?gumi
 ArtistTo: おはぐみ
 *
 ArtistFrom: Morikubo Shoutarou
