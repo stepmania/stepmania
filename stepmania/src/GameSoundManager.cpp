@@ -93,12 +93,9 @@ CHECKPOINT;
 CHECKPOINT;
 	if( ToPlay.file.empty() )
 	{
-		/* StopPlaying() can take a while, so don't hold the lock while we stop. */
-		MusicPlaying *pOldPlaying = g_Playing;
-		g_Playing = new MusicPlaying( new RageSound );
-		L.Unlock();
-
-		delete pOldPlaying;
+		if( g_Playing->m_Music->IsPlaying() )
+			g_Playing->m_Music->StopPlaying();
+		g_Playing->m_Music->Unload();
 		return;
 	}
 CHECKPOINT;
@@ -108,7 +105,6 @@ CHECKPOINT;
 CHECKPOINT;
 
 	/* See if we can find timing data, if it's not already loaded. */
-	/* XXX: don't IsAFile while holding g_Mutex */
 	if( !ToPlay.HasTiming && IsAFile(ToPlay.timing_file) )
 	{
 		LOG->Trace("Found '%s'", ToPlay.timing_file.c_str());
@@ -286,13 +282,10 @@ static void StartQueuedSounds()
 		else
 		{
 			CHECKPOINT;
-			/* StopPlaying() can take a while, so don't hold the lock while we stop. */
-			g_Mutex->Lock();
-			MusicPlaying *pOldPlaying = g_Playing;
-			g_Playing = new MusicPlaying( new RageSound );
-			g_Mutex->Unlock();
-
-			delete pOldPlaying;
+			LockMutex L( *g_Mutex );
+			if( g_Playing->m_Music->IsPlaying() )
+				g_Playing->m_Music->StopPlaying();
+			g_Playing->m_Music->Unload();
 		}
 		delete pMusic;
 	}
