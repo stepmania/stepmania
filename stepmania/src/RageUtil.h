@@ -233,6 +233,8 @@ void Replace_Unicode_Markers( CString &Text );
 void ReplaceText( CString &Text, const map<CString,CString> &m );
 CString WcharDisplayText(wchar_t c);
 
+CString Basename(CString dir);
+
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif
