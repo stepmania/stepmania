@@ -24,8 +24,8 @@
 RageTexture::RageTexture(
 	RageDisplay* pScreen, 
 	const CString &sFilePath, 
-	DWORD dwMaxSize, 
-	DWORD dwTextureColorDepth,
+	int dwMaxSize, 
+	int dwTextureColorDepth,
 	int iMipMaps,
 	int iAlphaBits,
 	bool bDither,

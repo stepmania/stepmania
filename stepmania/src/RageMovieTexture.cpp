@@ -294,8 +294,8 @@ HRESULT CTextureRenderer::DoRenderSample( IMediaSample * pSample )
 RageMovieTexture::RageMovieTexture( 
 	RageDisplay* pScreen, 
 	const CString &sFilePath, 
-	DWORD dwMaxSize, 
-	DWORD dwTextureColorDepth,
+	int dwMaxSize, 
+	int dwTextureColorDepth,
 	int iMipMaps,
 	int iAlphaBits,
 	bool bDither,
@@ -337,8 +337,8 @@ RageMovieTexture::~RageMovieTexture()
 }
 
 void RageMovieTexture::Reload( 
-	DWORD dwMaxSize, 
-	DWORD dwTextureColorDepth,
+	int dwMaxSize, 
+	int dwTextureColorDepth,
 	int iMipMaps,
 	int iAlphaBits,
 	bool bDither,

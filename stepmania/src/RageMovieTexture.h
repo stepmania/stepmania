@@ -27,8 +27,8 @@ public:
 	RageMovieTexture( 
 		RageDisplay* pScreen, 
 		const CString &sFilePath, 
-		DWORD dwMaxSize = 2048, 
-		DWORD dwTextureColorDepth = 16, 
+		int dwMaxSize = 2048, 
+		int dwTextureColorDepth = 16, 
 		int iMipMaps = 4,
 		int iAlphaBits = 4,
 		bool bDither = false,
@@ -37,8 +37,8 @@ public:
 	virtual ~RageMovieTexture();
 
 	virtual void Reload( 
-		DWORD dwMaxSize, 
-		DWORD dwTextureColorDepth,
+		int dwMaxSize, 
+		int dwTextureColorDepth,
 		int iMipMaps = 4,
 		int iAlphaBits = 4,
 		bool bDither = false,

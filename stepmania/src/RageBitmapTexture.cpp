@@ -35,8 +35,8 @@
 RageBitmapTexture::RageBitmapTexture( 
 	RageDisplay* pScreen, 
 	const CString &sFilePath, 
-	DWORD dwMaxSize, 
-	DWORD dwTextureColorDepth,
+	int dwMaxSize, 
+	int dwTextureColorDepth,
 	int iMipMaps,
 	int iAlphaBits,
 	bool bDither,
@@ -62,8 +62,8 @@ RageBitmapTexture::~RageBitmapTexture()
 }
 
 void RageBitmapTexture::Reload( 	
-	DWORD dwMaxSize, 
-	DWORD dwTextureColorDepth,
+	int dwMaxSize, 
+	int dwTextureColorDepth,
 	int iMipMaps,
 	int iAlphaBits,
 	bool bDither,
@@ -86,8 +86,8 @@ LPDIRECT3DTEXTURE8 RageBitmapTexture::GetD3DTexture()
 
 
 void RageBitmapTexture::Create( 
-	DWORD dwMaxSize, 
-	DWORD dwTextureColorDepth, 
+	int dwMaxSize, 
+	int dwTextureColorDepth, 
 	int iMipMaps,
 	int iAlphaBits,
 	bool bDither,
@@ -155,9 +155,9 @@ void RageBitmapTexture::Create(
 
 
 	// find out what the min texture size is
-	dwMaxSize = min( dwMaxSize, DISPLAY->GetDeviceCaps().MaxTextureWidth );
+	dwMaxSize = min( dwMaxSize, int(DISPLAY->GetDeviceCaps().MaxTextureWidth) );
 
-	bStretch |= ddii.Width > dwMaxSize || ddii.Height > dwMaxSize;
+	bStretch |= int(ddii.Width) > dwMaxSize || int(ddii.Height) > dwMaxSize;
 	
 	// HACK:  On a Voodoo3 and Win98, D3DXCreateTextureFromFileEx fail randomly on rare occasions.
 	// So, we'll try the call 2x in a row in case the first one fails.
