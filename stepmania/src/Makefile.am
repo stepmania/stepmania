@@ -333,6 +333,7 @@ all_test_SOURCES = \
 		tests/test_misc.cpp tests/test_misc.h \
 		IniFile.cpp IniFile.h \
 		PrefsManager.cpp PrefsManager.h \
+		Preference.cpp Preference.h \
 		RageException.cpp \
 		RageLog.cpp \
 		RageThreads.cpp \
