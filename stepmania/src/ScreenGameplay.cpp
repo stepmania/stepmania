@@ -1459,7 +1459,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 				// Somehow, step data was getting majorly corrupted, therefor causing light
 				// signals to be sent at incorrect times where notes were not even present.
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ) != TAP_EMPTY);
-				bBlinkCabinetLight[cl] |= bBlink;	// Why are we OR'ing a boolean??
+				bBlinkCabinetLight[cl] |= bBlink;
 				//bBlinkCabinetLight[cl] = m_CabinetLightsNoteData.IsThereATapAtRow(iRowNow); //(m_CabinetLightsNoteData.GetTapNote(cl,r) != TAP_EMPTY);
 			}
 			FOREACH_EnabledPlayer( pn )
