@@ -34,6 +34,11 @@
 #define ALPHABET_GAP_X				THEME->GetMetricF(m_sName,"AlphabetGapX")
 #define NUM_ALPHABET_DISPLAYED		THEME->GetMetricI(m_sName,"NumAlphabetDisplayed")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
+#define FEAT_INTERVAL				THEME->GetMetricF(m_sName,"FeatInterval")
+
+#define COMMAND_OPTIONAL( actor, command_name ) \
+	if( !actor.GetName().empty() ) \
+		COMMAND( actor, command_name );
 
 
 static const wchar_t NAME_CHARS[] =
@@ -42,6 +47,8 @@ static const wchar_t NAME_CHARS[] =
 };
 
 
+
+const ScreenMessage	SM_ChangeDisplayedFeat			= ScreenMessage(SM_User+0);
 
 static const int CHAR_OK = -1;
 
@@ -53,7 +60,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 
 		// DEBUGGING STUFF
-	if(0)
+	if(1)
 	{
 	GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 	GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
@@ -61,6 +68,8 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 	GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
 	StageStats st;
+	for( int z = 0; z < 3; ++z )
+	{
 	st.pSong = SONGMAN->GetRandomSong();
 	ASSERT( st.pSong );
 	ASSERT( st.pSong->m_apNotes.size() );
@@ -75,10 +84,18 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		hs.fScore = 42;
 		int a, b;
 		GAMESTATE->m_pCurNotes[i]->AddHighScore( (PlayerNumber)i, hs, a,b );
+
+		if( i == 0 )
+		{
+			SongManager::CategoryData::HighScore hs;
+			hs.iScore = 1234567;
+			StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
+			SONGMAN->AddHighScore( nt, RANKING_A, (PlayerNumber)i, hs, a );
+		}
 	}
 
 	GAMESTATE->m_vPlayedStageStats.push_back( st );
-
+	}
 
 	}
 
@@ -105,6 +122,9 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		m_NumFeats[p] = aFeats[p].size();
+		m_CurFeat[p] = 0;
+
 		if( !m_bStillEnteringName[p] )
 			continue;	// skip
 
@@ -124,6 +144,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		for( int ch = 0; NAME_CHARS[ch]; ++ch )
 		{
 			BitmapText *Letter = new BitmapText;
+			Letter->SetName( ssprintf("LetterP%i",p+1) );
 			Letter->LoadFromFont( fontpath );
 			Letter->SetText( ssprintf("%lc", NAME_CHARS[ch]) );
 			m_textAlphabet[p].push_back( Letter );
@@ -136,6 +157,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		/* Add "OK". */
 		{
 			BitmapText *Letter = new BitmapText;
+			Letter->SetName( ssprintf("LetterP%i",p+1) );
 			Letter->LoadFromFont( fontpath );
 			Letter->SetText( "!" ); // XXX: assign a glyph to "OK"
 			m_textAlphabet[p].push_back( Letter );
@@ -158,23 +180,68 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		m_SelectedChar[p] = 0;
 
 		PositionCharsAndCursor( p );
-		for( unsigned i = 0; i < m_textAlphabet[p].size(); ++i )
+		unsigned i;
+		for( i = 0; i < m_textAlphabet[p].size(); ++i )
 			m_textAlphabet[p][i]->FinishTweening();
 
-		m_Grade[p].SetName( ssprintf("GradeP%i",p+1) );
-		m_Grade[p].Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
-		m_Grade[p].SetGrade( (PlayerNumber)p, GRADE_A/*grade[p]*/ );
-		SET_XY_AND_ON_COMMAND( m_Grade[p] );
-		this->AddChild( &m_Grade[p] );
 
-		m_textCategory[p].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional category") );
-		m_textCategory[p].SetName( ssprintf("Category", p+1) );
-		SET_XY_AND_ON_COMMAND( m_textCategory[p] );
-//		m_textCategory[p].SetText( join("\n", asFeats[p]) );
-		this->AddChild( &m_textCategory[p] );
+		/* Show feat 0, hide others without tweening.  Run the ON command for
+		 * all actors, even if we're going to hide it anyway, so any style commands
+		 * are run. */
+#define SET_ON( actor ) \
+	SET_XY_AND_ON_COMMAND( actor ); \
+	if( i != 0 ) \
+	{ \
+		COMMAND( actor, "Hide" ); \
+		actor.FinishTweening(); \
 	}
 
+		for( i = 0; i < aFeats[p].size(); ++i )
+		{
+			const GameState::RankingFeats &feat = aFeats[p][i];
+			if( feat.Banner != "" )
+			{
+				m_sprBanner[p][i].SetName( ssprintf("BannerP%i",p+1) );
+				m_sprBanner[p][i].Load( feat.Banner );
+				SET_ON( m_sprBanner[p][i] );
+				this->AddChild( &m_sprBanner[p][i] );
+			}
+
+			if( feat.g != GRADE_NO_DATA )
+			{
+				m_Grade[p][i].SetName( ssprintf("GradeP%i",p+1) );
+				m_Grade[p][i].Load( THEME->GetPathToG("ScreenNameEntryTraditional grades") );
+				m_Grade[p][i].SetGrade( (PlayerNumber)p, feat.g );
+				SET_ON( m_Grade[p][i] );
+				this->AddChild( &m_Grade[p][i] );
+			}
+
+			if( feat.Score != 0 )
+			{
+				m_textScore[p][i].SetName( ssprintf("ScoreP%i",p+1) );
+				m_textScore[p][i].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional score") );
+				m_textScore[p][i].SetText( ssprintf("%.2f%%", feat.Score) );
+				SET_ON( m_textScore[p][i] );
+				this->AddChild( &m_textScore[p][i] );
+			}
+
+			if( feat.Feat != "" )
+			{
+				m_textCategory[p][i].SetName( ssprintf("CategoryP%i", p+1) );
+				m_textCategory[p][i].LoadFromFont( THEME->GetPathToF("ScreenNameEntryTraditional category") );
+				m_textCategory[p][i].SetText( feat.Feat );
+				SET_ON( m_textCategory[p][i] );
+				this->AddChild( &m_textCategory[p][i] );
+			}
+		}
+
+#undef SET_ON
+	}
+
+	this->PostScreenMessage( SM_ChangeDisplayedFeat, FEAT_INTERVAL );
+
 	m_soundKey.Load( THEME->GetPathToS("ScreenNameEntryTraditional key") );
+	m_soundChange.Load( THEME->GetPathToS("ScreenNameEntryTraditional change",true) );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenNameEntryTraditional music") );
 }
@@ -243,6 +310,30 @@ void ScreenNameEntryTraditional::DrawPrimitives()
 	m_Menu.DrawTopLayer();
 }
 
+void ScreenNameEntryTraditional::ChangeDisplayedFeat()
+{
+	for( int pn=0; pn<NUM_PLAYERS; ++pn )
+	{
+		if( !GAMESTATE->IsHumanPlayer(pn) )
+			continue;
+		if( m_NumFeats[pn] < 2 )
+			continue;
+
+		int NewFeat = (m_CurFeat[pn]+1) % m_NumFeats[pn];
+		int OldFeat = m_CurFeat[pn];
+		m_CurFeat[pn] = NewFeat;
+
+		COMMAND_OPTIONAL( m_Grade[pn][OldFeat], "Hide" );
+		COMMAND_OPTIONAL( m_Grade[pn][NewFeat], "Unhide" );
+		COMMAND_OPTIONAL( m_sprBanner[pn][OldFeat], "Hide" );
+		COMMAND_OPTIONAL( m_sprBanner[pn][NewFeat], "Unhide" );
+		COMMAND_OPTIONAL( m_textScore[pn][OldFeat], "Hide" );
+		COMMAND_OPTIONAL( m_textScore[pn][NewFeat], "Unhide" );
+		COMMAND_OPTIONAL( m_textCategory[pn][OldFeat], "Hide" );
+		COMMAND_OPTIONAL( m_textCategory[pn][NewFeat], "Unhide" );
+	}
+}
+
 void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
@@ -254,6 +345,11 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 				Finish( (PlayerNumber)p );
 		}
 		break;
+	case SM_ChangeDisplayedFeat:
+		ChangeDisplayedFeat();
+		this->PostScreenMessage( SM_ChangeDisplayedFeat, FEAT_INTERVAL );
+		break;
+
 	case SM_GoToNextScreen:
 		{
 			/* Hack: go back to the select course screen in event mode. */
@@ -296,6 +392,11 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 		selection = DEFAULT_RANKING_NAME;
 
 	GAMESTATE->StoreRankingName( pn, selection );
+
+	OFF_COMMAND( m_Keyboard[pn] );
+	for( int i = 0; i < (int)m_textAlphabet[pn].size(); ++i )
+		OFF_COMMAND( m_textAlphabet[pn][i] );
+	OFF_COMMAND( m_sprCursor[pn] );
 
 	if( !AnyStillEntering() && !m_Menu.m_Out.IsTransitioning() )
 		m_Menu.StartTransitioning( SM_GoToNextScreen );
@@ -359,6 +460,7 @@ void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType
 	--m_SelectedChar[pn];
 	wrap( m_SelectedChar[pn], m_textAlphabet[pn].size() );
 	PositionCharsAndCursor( pn );
+	m_soundChange.Play();
 }
 
 void ScreenNameEntryTraditional::MenuRight( PlayerNumber pn, const InputEventType type )
@@ -371,4 +473,5 @@ void ScreenNameEntryTraditional::MenuRight( PlayerNumber pn, const InputEventTyp
 	++m_SelectedChar[pn];
 	wrap( m_SelectedChar[pn], m_textAlphabet[pn].size() );
 	PositionCharsAndCursor( pn );
+	m_soundChange.Play();
 }

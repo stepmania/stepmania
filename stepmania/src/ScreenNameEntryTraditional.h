@@ -15,6 +15,7 @@
 #include "BGAnimation.h"
 #include "MenuElements.h"
 #include "GradeDisplay.h"
+#include "Banner.h"
 
 class ScreenNameEntryTraditional : public Screen
 {
@@ -30,16 +31,18 @@ public:
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
 
+	enum { MAX_DISPLAYED_FEATS=16 };
 private:
 	bool AnyStillEntering() const;
 	void PositionCharsAndCursor( int pn );
 	void Finish( PlayerNumber pn );
 	void UpdateSelectionText( int pn );
+	void ChangeDisplayedFeat();
+
+	int				m_NumFeats[NUM_PLAYERS], m_CurFeat[NUM_PLAYERS];
 
 	BGAnimation		m_Background;
 	MenuElements	m_Menu;
-// PercentDisplay m_Percent;
-	GradeDisplay	m_Grade[NUM_PLAYERS];
 
 	ActorFrame		m_Keyboard[NUM_PLAYERS];
 	Sprite			m_sprCursor[NUM_PLAYERS];
@@ -47,10 +50,16 @@ private:
 	vector<int>		m_AlphabetLetter[NUM_PLAYERS];
 	int				m_SelectedChar[NUM_PLAYERS];
 
+	/* Feat display: */
+	GradeDisplay	m_Grade[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
+	BitmapText		m_textCategory[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
+	BitmapText		m_textScore[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
+	Banner			m_sprBanner[NUM_PLAYERS][MAX_DISPLAYED_FEATS];
+	
 	Sprite			m_sprNameFrame[NUM_PLAYERS];
 
-	BitmapText		m_textCategory[NUM_PLAYERS];
 
+	RageSound		m_soundChange;
 	RageSound		m_soundKey;
 
 	BitmapText		m_textSelection[NUM_PLAYERS];
