@@ -52,20 +52,7 @@ public:
 	void SaveMachineProfile();
 
 	bool IsUsingProfile( PlayerNumber pn ) const { return !m_sProfileDir[pn].empty(); }
-	bool IsUsingProfile( ProfileSlot slot ) const
-	{
-		switch( slot )
-		{
-		case PROFILE_SLOT_PLAYER_1:
-		case PROFILE_SLOT_PLAYER_2:
-			return !m_sProfileDir[slot].empty(); 
-		case PROFILE_SLOT_MACHINE:
-			return true;
-		default:
-			ASSERT(0);
-			return false;
-		}
-	}
+	bool IsUsingProfile( ProfileSlot slot ) const;
 	const Profile* GetProfile( PlayerNumber pn ) const;
 	Profile* GetProfile( PlayerNumber pn ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(pn); }
 	const Profile* GetProfile( ProfileSlot slot ) const;

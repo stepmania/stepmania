@@ -523,3 +523,18 @@ void ProfileManager::IncrementCategoryPlayCount( StepsType st, RankingCategory r
 	PROFILEMAN->GetMachineProfile()->IncrementCategoryPlayCount( st, rc );
 }
 
+bool ProfileManager::IsUsingProfile( ProfileSlot slot ) const
+{
+	switch( slot )
+	{
+	case PROFILE_SLOT_PLAYER_1:
+	case PROFILE_SLOT_PLAYER_2:
+		return GAMESTATE->IsHumanPlayer((PlayerNumber)slot) && !m_sProfileDir[slot].empty(); 
+	case PROFILE_SLOT_MACHINE:
+		return true;
+	default:
+		ASSERT(0);
+		return false;
+	}
+}
+
