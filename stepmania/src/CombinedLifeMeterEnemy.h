@@ -14,7 +14,6 @@
 
 #include "LifeMeter.h"
 #include "Sprite.h"
-#include "MeterDisplay.h"
 
 
 class CombinedLifeMeterEnemy : public CombinedLifeMeter
@@ -33,8 +32,11 @@ public:
 	virtual bool IsHot( PlayerNumber pn ) { return false; };
 	virtual bool IsFailing( PlayerNumber pn ) { return false; };
 	virtual bool FailedEarlier( PlayerNumber pn ) { return false; };
+	virtual void OnTaunt();
 
 protected:
+	void SetFace( Face face );
+
 	Sprite m_sprHealthStream;
 	Sprite	m_sprHealthBackground;
 	float m_fLastSeenHealthPercent;

@@ -22,6 +22,8 @@
 #include "CombinedLifeMeterEnemy.h"
 #include "ThemeManager.h"
 #include "GameState.h"
+#include "ScreenManager.h"
+#include "ScreenGameplay.h"
 
 
 const float SECONDS_TO_SHOW_FACE = 1.5f;
@@ -88,8 +90,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 		m_sprHealthStream.SetGlow( RageColor(1,1,1,0) );
 		m_fLastSeenHealthPercent = GAMESTATE->m_fOpponentHealthPercent;
 
-		m_sprFace.SetState( damage );
-		m_fSecondsUntilReturnToNormalFace = SECONDS_TO_SHOW_FACE;
+		SetFace( damage );
 
 		if( GAMESTATE->m_fOpponentHealthPercent == 0 )
 		{
@@ -97,8 +98,95 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 			m_sprFrame.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
 		}
 	}
+
+
+
+	//
+	// launch enemy attacks to human players
+	//
+
+	// Don't apply any attacks if the enemy is already defeated
+	if( GAMESTATE->m_fOpponentHealthPercent>0 )
+	{
+
+		static const CString sPossibleModifiers[NUM_ATTACK_LEVELS][3] = 
+		{
+			{
+				"1.5x",
+				"dizzy",
+				"drunk"
+			},
+			{
+				"sudden",
+				"hidden",
+				"wave",
+			},
+			{
+				"expand",
+				"tornado",
+				"flip"
+			}
+		};
+
+	#define CROSSED_SONG_SECONDS( s ) ((GAMESTATE->m_fMusicSeconds-fDelta) < s  &&  (GAMESTATE->m_fMusicSeconds) >= s )
+
+		if( CROSSED_SONG_SECONDS(10) || 
+			CROSSED_SONG_SECONDS(30) ||
+			CROSSED_SONG_SECONDS(50) ||
+			CROSSED_SONG_SECONDS(70) ||
+			CROSSED_SONG_SECONDS(90) ||
+			CROSSED_SONG_SECONDS(110) )
+		{
+			SetFace( attack );
+		}
+
+		if( CROSSED_SONG_SECONDS(20) || CROSSED_SONG_SECONDS(40) )
+		{
+			GameState::Attack a;
+			a.fSecsRemaining = 10;
+			a.level = ATTACK_LEVEL_1;
+			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsHumanPlayer(p) )
+					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+			SCREENMAN->SendMessageToTopScreen( SM_BattleTrickLevel1 );
+			SetFace( attack );
+		}
+		if( CROSSED_SONG_SECONDS(60) || CROSSED_SONG_SECONDS(80) )
+		{
+			GameState::Attack a;
+			a.fSecsRemaining = 10;
+			a.level = ATTACK_LEVEL_2;
+			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsHumanPlayer(p) )
+					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+			SCREENMAN->SendMessageToTopScreen( SM_BattleTrickLevel2 );
+			SetFace( attack );
+		}
+		if( CROSSED_SONG_SECONDS(100) )
+		{
+			GameState::Attack a;
+			a.fSecsRemaining = 10;
+			a.level = ATTACK_LEVEL_3;
+			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				if( GAMESTATE->IsHumanPlayer(p) )
+					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
+			SCREENMAN->SendMessageToTopScreen( SM_BattleTrickLevel3 );
+			SetFace( attack );
+		}
+	}
+}
+
+void CombinedLifeMeterEnemy::SetFace( Face face )
+{
+	m_sprFace.SetState( face );
+	m_fSecondsUntilReturnToNormalFace = SECONDS_TO_SHOW_FACE;
 }
 
 
-
-
+void CombinedLifeMeterEnemy::OnTaunt()
+{
+	SetFace( taunt );
+}

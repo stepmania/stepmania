@@ -45,12 +45,12 @@ const ScreenMessage	SM_900Combo					= ScreenMessage(SM_User+208);
 const ScreenMessage	SM_1000Combo				= ScreenMessage(SM_User+209);
 const ScreenMessage	SM_ComboStopped				= ScreenMessage(SM_User+210);
 
-const ScreenMessage SM_BattleTrickLevel1		= ScreenMessage(SM_User+300);
-const ScreenMessage SM_BattleTrickLevel2		= ScreenMessage(SM_User+301);
-const ScreenMessage SM_BattleTrickLevel3		= ScreenMessage(SM_User+302);
-const ScreenMessage SM_BattleDamageLevel1		= ScreenMessage(SM_User+303);
-const ScreenMessage SM_BattleDamageLevel2		= ScreenMessage(SM_User+304);
-const ScreenMessage SM_BattleDamageLevel3		= ScreenMessage(SM_User+305);
+const ScreenMessage SM_BattleTrickLevel1		= ScreenMessage(SM_User+301);
+const ScreenMessage SM_BattleTrickLevel2		= ScreenMessage(SM_User+302);
+const ScreenMessage SM_BattleTrickLevel3		= ScreenMessage(SM_User+303);
+const ScreenMessage SM_BattleDamageLevel1		= ScreenMessage(SM_User+304);
+const ScreenMessage SM_BattleDamageLevel2		= ScreenMessage(SM_User+305);
+const ScreenMessage SM_BattleDamageLevel3		= ScreenMessage(SM_User+306);
 
 class LyricsLoader;
 class ScreenGameplay : public Screen

@@ -58,6 +58,7 @@ public:
 	virtual bool IsHot( PlayerNumber pn ) = 0;
 	virtual bool IsFailing( PlayerNumber pn ) = 0;
 	virtual bool FailedEarlier( PlayerNumber pn ) = 0;
+	virtual void OnTaunt() {};
 };
 
 

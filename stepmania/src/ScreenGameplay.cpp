@@ -1130,6 +1130,8 @@ void ScreenGameplay::Update( float fDeltaTime )
 				if( OneIsHot() )			m_announcerHot.PlayRandom();
 				else if( AllAreInDanger() )	m_announcerDanger.PlayRandom();
 				else						m_announcerGood.PlayRandom();
+				if( m_pCombinedLifeMeter )
+					m_pCombinedLifeMeter->OnTaunt();
 				break;
 			case PLAY_MODE_NONSTOP:
 			case PLAY_MODE_ONI:
@@ -1146,75 +1148,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 	if( GAMESTATE->m_SongOptions.m_bAssistTick && IsTimeToPlayTicks())
 		m_soundAssistTick.Play();
-
-
-	//
-	// launch enemy attacks to human players
-	//
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_CPU_BATTLE:
-
-		// Don't apply any attacks if the enemy is already defeated
-		if( GAMESTATE->m_fOpponentHealthPercent==0 )
-			break;
-
-		static const CString sPossibleModifiers[NUM_ATTACK_LEVELS][3] = 
-		{
-			{
-				"1.5x",
-				"dizzy",
-				"drunk"
-			},
-			{
-				"sudden",
-				"hidden",
-				"wave",
-			},
-			{
-				"expand",
-				"tornado",
-				"flip"
-			}
-		};
-
-#define CROSSED_SONG_SECONDS( s ) ((GAMESTATE->m_fMusicSeconds-fDeltaTime) < s  &&  (GAMESTATE->m_fMusicSeconds) >= s )
-
-		if( CROSSED_SONG_SECONDS(20) || CROSSED_SONG_SECONDS(40) )
-		{
-			GameState::Attack a;
-			a.fSecsRemaining = 10;
-			a.level = ATTACK_LEVEL_1;
-			a.sModifier = sPossibleModifiers[a.level][rand()%3];
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
-			this->HandleScreenMessage( SM_BattleTrickLevel1 );
-		}
-		if( CROSSED_SONG_SECONDS(60) || CROSSED_SONG_SECONDS(80) )
-		{
-			GameState::Attack a;
-			a.fSecsRemaining = 10;
-			a.level = ATTACK_LEVEL_2;
-			a.sModifier = sPossibleModifiers[a.level][rand()%3];
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
-			this->HandleScreenMessage( SM_BattleTrickLevel2 );
-		}
-		if( CROSSED_SONG_SECONDS(100) )
-		{
-			GameState::Attack a;
-			a.fSecsRemaining = 10;
-			a.level = ATTACK_LEVEL_3;
-			a.sModifier = sPossibleModifiers[a.level][rand()%3];
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				if( GAMESTATE->IsHumanPlayer(p) )
-					GAMESTATE->LaunchAttack( (PlayerNumber)p, a );
-			this->HandleScreenMessage( SM_BattleTrickLevel3 );
-		}
-		break;
-	}
 }
 
 
