@@ -93,14 +93,31 @@ CHECKPOINT;
 CHECKPOINT;
 	if( ToPlay.file.empty() )
 	{
-		if( g_Playing->m_Music->IsPlaying() )
-			g_Playing->m_Music->StopPlaying();
-		g_Playing->m_Music->Unload();
+		/* StopPlaying() can take a while, so don't hold the lock while we stop the sound.
+		 * Be sure to leave the rest of g_Playing in place. */
+		RageSound *pOldSound = g_Playing->m_Music;
+		g_Playing->m_Music = new RageSound;
+		L.Unlock();
+
+		/* We're not allowed to delete the sound in a separate thread, because
+		 * RageSoundManager::FlushPosMapQueue might be running.  Stop the sound,
+		 * and give it to RageSoundManager to delete. */
+		SOUNDMAN->DeleteSound( pOldSound );
 		return;
 	}
 CHECKPOINT;
+	/* Unlock, load the sound here, and relock.  Loading may take a while if we're
+	 * reading from CD and we have to seek far, which can throw off the timing below. */
+	MusicPlaying *NewMusic;
+	{
+		g_Mutex->Unlock();
+		RageSound *pSound = new RageSound;
+		pSound->Load( ToPlay.file, false );
+		g_Mutex->Lock();
 
-	MusicPlaying *NewMusic = new MusicPlaying( new RageSound );
+		NewMusic = new MusicPlaying( pSound );
+	}
+
 	NewMusic->m_Timing = g_Playing->m_Timing;
 CHECKPOINT;
 
@@ -199,7 +216,7 @@ CHECKPOINT;
 		if( ToPlay.HasTiming )
 			NewMusic->m_NewTiming = ToPlay.timing_data;
 		NewMusic->m_TimingDelayed = true;
-		NewMusic->m_Music->Load( ToPlay.file, false );
+//		NewMusic->m_Music->Load( ToPlay.file, false );
 
 		RageSoundParams p;
 		p.m_StartSecond = ToPlay.start_sec;
@@ -282,10 +299,13 @@ static void StartQueuedSounds()
 		else
 		{
 			CHECKPOINT;
-			LockMutex L( *g_Mutex );
-			if( g_Playing->m_Music->IsPlaying() )
-				g_Playing->m_Music->StopPlaying();
-			g_Playing->m_Music->Unload();
+			/* StopPlaying() can take a while, so don't hold the lock while we stop the sound. */
+			g_Mutex->Lock();
+			RageSound *pOldSound = g_Playing->m_Music;
+			g_Playing->m_Music = new RageSound;
+			g_Mutex->Unlock();
+
+			SOUNDMAN->DeleteSound( pOldSound );
 		}
 		delete pMusic;
 	}
