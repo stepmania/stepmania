@@ -10,8 +10,18 @@
 #include <map>
 #include "RageModelGeometry.h"
 
-struct msModel;
+/* This is a static class that holds and renders model data; it can be shared among
+ * multiple Models.  (Note that geometry data is stored and refcounted separately;
+ * that can */
+/* XXX: dumb name */
+/* class ModelHolder : public Actor
+{
+public:
 
+private:
+    RageModelGeometry	*m_pGeometry;
+
+} */
 
 class Model : public Actor
 {
@@ -19,7 +29,6 @@ public:
 	Model ();
 	virtual ~Model ();
 
-public:
 	void	Clear ();
 	void	Load( CString sFile );
 
@@ -63,6 +72,8 @@ private:
 	vector<msMesh>	m_vTempMeshes;
 	RageCompiledGeometry* m_pTempGeometry;
 	
+	void DrawMesh( int i ) const;
+
 	float		m_fCurFrame;
 	CString		m_sDefaultAnimation;
 	float		m_fDefaultAnimationRate;

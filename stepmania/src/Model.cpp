@@ -438,25 +438,15 @@ void Model::DrawPrimitives()
 	{
 		DISPLAY->SetTextureModeModulate();
 
-		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 		{
-			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pGeometry;
+			const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 
-			// apply mesh-specific bone (if any)
-			if( pMesh->nBoneIndex != -1 )
-			{
-				DISPLAY->PushMatrix();
-
-				RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
-				DISPLAY->PreMultMatrix( mat );
-			}
-		
 			DISPLAY->TexturePushMatrix();
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
-			// apply material
+				// apply material
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
 				
 				RageColor Emissive = mat.Emissive;
@@ -469,15 +459,13 @@ void Model::DrawPrimitives()
 
 				DISPLAY->SetMaterial( Emissive, Ambient, Diffuse, mat.Specular, mat.fShininess );
 
-				float fScrollX = 0;
-				float fScrollY = 0;
 				if( mat.diffuse.m_fTexVelocityX != 0  ||  mat.diffuse.m_fTexVelocityY != 0 )
 				{
-					fScrollX = mat.diffuse.m_fTexVelocityX * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
-					fScrollY = mat.diffuse.m_fTexVelocityY * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
+					float fScrollX = mat.diffuse.m_fTexVelocityX * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
+					float fScrollY = mat.diffuse.m_fTexVelocityY * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
 					DISPLAY->SetTextureWrapping( true );
+					DISPLAY->TextureTranslate( fScrollX, fScrollY, 0 );
 				}
-				DISPLAY->TextureTranslate( fScrollX, fScrollY, 0 );
 
 				// render the first pass with texture 1
 				DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
@@ -505,16 +493,10 @@ void Model::DrawPrimitives()
 				DISPLAY->SetSphereEnironmentMapping( false );
 			}
 			
-			// Draw it
-			DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
+			DrawMesh( i );
+
 			DISPLAY->SetSphereEnironmentMapping( false );
-
 			DISPLAY->TexturePopMatrix();
-
-			if( pMesh->nBoneIndex != -1 )
-			{
-				DISPLAY->PopMatrix();
-			}
 		}
 	}
 
@@ -525,10 +507,9 @@ void Model::DrawPrimitives()
 	{
 		DISPLAY->SetTextureModeGlow();
 
-		for (int i = 0; i < (int)m_pGeometry->m_Meshes.size(); i++)
+		for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 		{
-			msMesh *pMesh = &m_pGeometry->m_Meshes[i];
-			const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pGeometry;
+			const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 
 			// apply material
 			RageColor emissive = RageColor(0,0,0,0);
@@ -537,12 +518,7 @@ void Model::DrawPrimitives()
 			RageColor specular = RageColor(0,0,0,0);
 			float shininess = 1;
 
-			DISPLAY->SetMaterial( 
-				emissive,
-				ambient,
-				diffuse,
-				specular,
-				shininess );
+			DISPLAY->SetMaterial( emissive, ambient, diffuse, specular, shininess );
 			DISPLAY->ClearAllTextures();
 
 			if( pMesh->nMaterialIndex != -1 )
@@ -554,23 +530,30 @@ void Model::DrawPrimitives()
 			{
 			}
 
-			// apply mesh-specific bone (if any)
-			if( pMesh->nBoneIndex != -1 )
-			{
-				DISPLAY->PushMatrix();
-
-				RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
-				DISPLAY->PreMultMatrix( mat );
-			}
-
-			DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
-
-			if( pMesh->nBoneIndex != -1 )
-			{
-				DISPLAY->PopMatrix();
-			}
+			DrawMesh( i );
 		}
 	}
+}
+
+void Model::DrawMesh( int i ) const
+{
+	const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
+
+	// apply mesh-specific bone (if any)
+	if( pMesh->nBoneIndex != -1 )
+	{
+		DISPLAY->PushMatrix();
+
+		const RageMatrix &mat = m_vpBones[pMesh->nBoneIndex].mFinal;
+		DISPLAY->PreMultMatrix( mat );
+	}
+
+	// Draw it
+	const RageCompiledGeometry* TempGeometry = m_pTempGeometry ? m_pTempGeometry : m_pGeometry->m_pGeometry;
+	DISPLAY->DrawCompiledGeometry( TempGeometry, i, m_pGeometry->m_Meshes );
+
+	if( pMesh->nBoneIndex != -1 )
+		DISPLAY->PopMatrix();
 }
 
 void Model::SetDefaultAnimation( CString sAnimation, float fPlayRate )
