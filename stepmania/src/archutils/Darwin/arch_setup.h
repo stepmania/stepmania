@@ -12,6 +12,7 @@ typedef unsigned long long UInt64;
 #define NEED_COSF
 #define NEED_TANF
 #define NEED_ACOSF
+#define NEED_STRTOF
 #define BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD
 #define BACKTRACE_METHOD_POWERPC_DARWIN
 #define HAVE_VERSION_INFO
