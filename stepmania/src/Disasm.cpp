@@ -17,7 +17,6 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <math.h>
 
 #include <windows.h>
 
@@ -289,6 +288,13 @@ static void VDDisasmExpandRule(VDDisassemblyContext *pContext, char *s, const un
 					s += sprintf(s, "%08lx", symoffset);
 					break;
 				case kTarget_s:
+					if(arg_s < (const char *) 0x100) {
+						/* Oops--somehow we got a character value on the stack where
+						 * we expected a string.  This is probably an error in the
+						 * disassembly rules. */
+						s = strtack(s, "(DISASSEMBLY ERROR: STRING EXPECTED)");
+						break;
+					}
 					s = strtack(s, arg_s);
 					break;
 				}
