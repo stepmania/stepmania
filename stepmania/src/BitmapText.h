@@ -44,7 +44,7 @@ public:
 	/* Return true if the string 's' will use an alternate string, if available. */
 	bool StringWillUseAlternate(CString sText, CString sAlternateText) const;
 
-	virtual void HandleCommand( const CStringArray &asTokens );
+	virtual void HandleCommand( const ParsedCommand &command );
 
 public:
 	Font* m_pFont;

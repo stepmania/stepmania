@@ -196,7 +196,7 @@ $(RageSoundFileReaders) \
 $(RageFile)
 
 Actors = \
-Actor.cpp Actor.h ActorCollision.h ActorFrame.cpp ActorFrame.h ActorScroller.cpp ActorScroller.h \
+Actor.cpp Actor.h ActorCollision.h ActorCommands.cpp ActorCommands.h ActorFrame.cpp ActorFrame.h ActorScroller.cpp ActorScroller.h \
 ActorUtil.cpp ActorUtil.h BitmapText.cpp BitmapText.h Milkshape.h Model.cpp Model.h ModelTypes.cpp ModelTypes.h \
 Quad.h Sprite.cpp Sprite.h 
 

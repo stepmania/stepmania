@@ -12,6 +12,7 @@
 */
 
 #include "RageTypes.h"
+#include "ActorCommands.h"	// for ParsedCommand
 
 class Actor
 {
@@ -291,8 +292,8 @@ public:
 	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
 	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
 
-	float Command( CString sCommandString );	// return length in seconds to execute command
-	virtual void HandleCommand( const CStringArray &asTokens );	// derivable
+	float Command( CString sCommands );	// return length in seconds to execute command
+	virtual void HandleCommand( const ParsedCommand &command );	// derivable
 	static float GetCommandLength( CString command );
 
 	virtual void SetState( int iNewState ) {};

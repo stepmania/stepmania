@@ -51,7 +51,7 @@ public:
 	void		SetDefaultAnimation( CString sAnimation, float fPlayRate = 1 );
 	bool		m_bRevertToDefaultAnimation;
 
-	virtual void HandleCommand( const CStringArray &asTokens );
+	virtual void HandleCommand( const ParsedCommand &command );
 
 private:
     vector<msMesh>				m_Meshes;

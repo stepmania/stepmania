@@ -700,71 +700,24 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-float Actor::Command( CString sCommandString )
+float Actor::Command( CString sCommands )
 {
-	// OPTIMIZATION OPPORTUNITY:  sCommandString could be parsed more efficiently.
+	sCommands.MakeLower();
 
-	sCommandString.MakeLower();
+	vector<ParsedCommand> vCommands;
+	ParseCommands( sCommands, vCommands );
 
-	CStringArray asCommands;
-	split( sCommandString, ";", asCommands, true );
-	
-	for( unsigned c=0; c<asCommands.size(); c++ )
-	{
-		CStringArray asTokens;
-		split( asCommands[c], ",", asTokens, true );
-
-		for(unsigned d=0; d < asTokens.size(); d++)
-		{
-			TrimLeft(asTokens[d]); 
-			TrimRight(asTokens[d]);
-		}
-
-		if( asTokens[0].size() == 0 )
-			continue;
-
-		this->HandleCommand( asTokens );
-	}
+	for( int i=0; i<vCommands.size(); i++ )
+		this->HandleCommand( vCommands[i] );
 
 	return GetTweenTimeLeft();
 }
 
-#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
-#define fParam(i) ((float)atof(sParam(i)))
-#define iParam(i) (atoi(sParam(i)))
-#define bParam(i) (iParam(i)!=0)
-#define cParam(i) (ColorParam(asTokens,i,iMaxIndexAccessed))
-
-inline CString GetParam( const CStringArray& asTokens, int iIndex, int& iMaxIndexAccessed )
+void Actor::HandleCommand( const ParsedCommand &command )
 {
-	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
-	if( iIndex < int(asTokens.size()) )
-		return asTokens[iIndex];
-	else
-		return "";
-}
+	HandleParams;
 
-inline RageColor ColorParam( const CStringArray& asTokens, int iIndex, int& iMaxIndexAccessed )
-{
-	const CString first = GetParam( asTokens, iIndex, iMaxIndexAccessed );
-	if( first == "" )
-		return RageColor( 1,1,1,1 );
-
-	if( (first[0] >= '0' && first[0] <= '9') || first[0] == '.' )
-		return RageColor( fParam(iIndex+0),fParam(iIndex+1),fParam(iIndex+2),fParam(iIndex+3) );
-
-	RageColor ret;
-	if( !ret.FromString( first ) )
-		return RageColor( 1,1,1,1 );
-
-	return ret;
-}
-
-void Actor::HandleCommand( const CStringArray &asTokens )
-{
-	int iMaxIndexAccessed = 0;
-
-	const CString& sName = asTokens[0];
+	const CString& sName = sParam(0);
 
 	// Commands that go in the tweening queue:
 	if     ( sName=="sleep" )			{ BeginTweening( fParam(1), TWEEN_LINEAR ); BeginTweening( 0, TWEEN_LINEAR ); }
@@ -862,12 +815,7 @@ void Actor::HandleCommand( const CStringArray &asTokens )
 		HOOKS->MessageBoxOK( sError );
 	}
 
-	if( iMaxIndexAccessed != (int)asTokens.size()-1 )
-	{
-		CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %d.", join(",",asTokens).c_str(), iMaxIndexAccessed+1, (int)asTokens.size() );
-		LOG->Warn( sError );
-		HOOKS->MessageBoxOK( sError );
-	}
+	CheckHandledParams;
 }
 
 float Actor::GetCommandLength( CString command )

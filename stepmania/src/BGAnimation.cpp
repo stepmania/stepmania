@@ -245,16 +245,14 @@ void BGAnimation::PlayCommand( const CString &cmd )
 		m_Layers[i]->PlayCommand( cmd );
 }
 
-void BGAnimation::HandleCommand( const CStringArray &asTokens )
+void BGAnimation::HandleCommand( const ParsedCommand &command )
 {
 	HandleParams;
 
-	const CString& sName = asTokens[0];
-
-	if( sName=="playcommand" )	PlayCommand( sParam(1) );
+	if( sParam(0)=="playcommand" )	PlayCommand( sParam(1) );
 	else
 	{
-		Actor::HandleCommand( asTokens );
+		Actor::HandleCommand( command );
 		return;
 	}
 

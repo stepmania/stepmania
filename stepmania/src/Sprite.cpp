@@ -789,11 +789,11 @@ void Sprite::StretchTexCoords( float fX, float fY )
 	SetCustomTextureCoords( fTexCoords );
 }
 
-void Sprite::HandleCommand( const CStringArray &asTokens )
+void Sprite::HandleCommand( const ParsedCommand &command )
 {
 	HandleParams;
 
-	const CString& sName = asTokens[0];
+	const CString& sName = sParam(0);
 
 	// Commands that go in the tweening queue:
 	// Commands that take effect immediately (ignoring the tweening queue):
@@ -813,7 +813,7 @@ void Sprite::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="rate" )			GetTexture()->SetPlaybackRate( fParam(1) );
 	else
 	{
-		Actor::HandleCommand( asTokens );
+		Actor::HandleCommand( command );
 		return;
 	}
 

@@ -41,7 +41,7 @@ public:
 
 	float GetLengthSeconds() const { return m_fLengthSeconds; }
 
-	virtual void HandleCommand( const CStringArray &asTokens );
+	virtual void HandleCommand( const ParsedCommand &command );
 	void PlayOffCommand() { PlayCommand("Off"); }
 	void PlayCommand( const CString &cmd );
 

@@ -980,7 +980,7 @@ int Model::GetNumStates()
 	return iMaxStates;
 }
 
-void Model::HandleCommand( const CStringArray &asTokens )
+void Model::HandleCommand( const ParsedCommand &command )
 {
 	HandleParams;
 
@@ -1004,12 +1004,12 @@ void Model::HandleCommand( const CStringArray &asTokens )
 	 * tween queue.
 	 */
 
-	const CString& sName = asTokens[0];
+	const CString& sName = sParam(0);
 	if( sName=="play" )
 		PlayAnimation( sParam(1),fParam(2) );
 	else
 	{
-		Actor::HandleCommand( asTokens );
+		Actor::HandleCommand( command );
 		return;
 	}
 

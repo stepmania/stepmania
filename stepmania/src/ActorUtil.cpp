@@ -133,14 +133,6 @@ Actor* MakeActor( RageTextureID ID )
 		ID.filename.c_str(), sExt.c_str() );
 }
 
-void IncorrectActorParametersWarning( const CStringArray &asTokens, int iMaxIndexAccessed, int size )
-{
-	const CString sError = ssprintf( "Actor::HandleCommand: Wrong number of parameters in command '%s'.  Expected %d but there are %d.",
-		join(",",asTokens).c_str(), iMaxIndexAccessed+1, size );
-	LOG->Warn( sError );
-	HOOKS->MessageBoxOK( sError );
-}
-
 void UtilSetXY( Actor& actor, CString sClassName )
 {
 	ASSERT( !actor.GetID().empty() );
@@ -169,3 +161,4 @@ float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 
 	return max( ret, actor.Command( THEME->GetMetric(sClassName,actor.GetID()+sCommandName+"Command") ) );
 }
+

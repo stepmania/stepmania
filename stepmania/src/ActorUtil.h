@@ -70,23 +70,4 @@ protected:
 	Actor* m_pActor;
 };
 
-
-/* Actor command parsing helpers. */
-#define HandleParams int iMaxIndexAccessed = 0;
-#define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
-#define fParam(i) ((float)atof(sParam(i)))
-#define iParam(i) (atoi(sParam(i)))
-#define bParam(i) (iParam(i)!=0)
-#define CheckHandledParams if( iMaxIndexAccessed != (int)asTokens.size()-1 ) { IncorrectActorParametersWarning( asTokens, iMaxIndexAccessed, asTokens.size() ); }
-void IncorrectActorParametersWarning( const CStringArray &asTokens, int iMaxIndexAccessed, int size );
-inline CString GetParam( const CStringArray& sParams, int iIndex, int& iMaxIndexAccessed )
-{
-	iMaxIndexAccessed = max( iIndex, iMaxIndexAccessed );
-	if( iIndex < int(sParams.size()) )
-		return sParams[iIndex];
-	else
-		return "";
-}
-
-
 #endif

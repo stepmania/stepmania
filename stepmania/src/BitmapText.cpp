@@ -448,11 +448,11 @@ void BitmapText::SetVertAlign( VertAlign va )
 	BuildChars();
 }
 
-void BitmapText::HandleCommand( const CStringArray &asTokens )
+void BitmapText::HandleCommand( const ParsedCommand &command )
 {
 	HandleParams;
 
-	const CString& sName = asTokens[0];
+	const CString& sName = sParam(0);
 
 	// Commands that go in the tweening queue:
 	// Commands that take effect immediately (ignoring the tweening queue):
@@ -460,7 +460,7 @@ void BitmapText::HandleCommand( const CStringArray &asTokens )
 	else if( sName=="maxwidth" )		SetMaxWidth( fParam(1) );
 	else
 	{
-		Actor::HandleCommand( asTokens );
+		Actor::HandleCommand( command );
 		return;
 	}
 
