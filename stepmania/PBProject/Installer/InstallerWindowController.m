@@ -28,11 +28,14 @@
 
 - (void)postMessage:(NSString *)message
 {
-    NSTextStorage *storage = [textView textStorage];
-    NSAttributedString *temp = [[[NSAttributedString alloc] initWithString:
-        [NSString stringWithFormat:@"%@\n", message]] autorelease];
-
-    [storage appendAttributedString:temp];
+	NSRange range;
+	NSString *s = [message stringByAppendingString:@"\n"];
+	
+	range.location = [[textView textStorage] length];
+	range.length = 0;
+	[textView replaceCharactersInRange:range withString:s];
+	range.length = [s length];
+	[textView scrollRangeToVisible:range];
 }
 
 - (void)finishedInstalling:(BOOL)success
