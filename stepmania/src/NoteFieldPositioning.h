@@ -32,6 +32,10 @@ struct NoteFieldMode
 	Actor m_Center;
 	Actor m_CenterTrack[MAX_NOTE_TRACKS];
 
+	CString GrayButtonNames[MAX_NOTE_TRACKS];
+	CString NoteButtonNames[MAX_NOTE_TRACKS];
+	CString GhostButtonNames[MAX_NOTE_TRACKS];
+
 	/* 0 = no perspective */
 	float m_fFov, m_fNear, m_fFar;
 	Actor m_Position;

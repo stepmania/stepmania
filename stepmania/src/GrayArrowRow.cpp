@@ -36,7 +36,11 @@ void GrayArrowRow::Load( PlayerNumber pn )
 
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		CString sPath = NOTESKIN->GetPathTo(pn, c, "receptor");
+		CString Button = g_NoteFieldMode[m_PlayerNumber].GrayButtonNames[c];
+		if(Button == "")
+			Button = NoteSkinManager::ColToButtonName(c);
+
+		CString sPath = NOTESKIN->GetPathTo(pn, Button, "receptor");
 		m_GrayArrow[c].Load( sPath );
 		// XXX
 		if( m_GrayArrow[c].GetNumStates() != 2 &&

@@ -96,6 +96,15 @@ void NoteFieldMode::Load(IniFile &ini, CString id)
 	{
 		GetValueCmd( ini, id, ssprintf("Center%i", t+1), m_CenterTrack[t] );
 		GetValueCmd( ini, id, ssprintf("Position%i", t+1), m_PositionTrack[t] );
+
+		ini.GetValue( id, ssprintf("GrayButton", t+1), GrayButtonNames[t] );
+		ini.GetValue( id, ssprintf("GrayButton%i", t+1), GrayButtonNames[t] );
+
+		ini.GetValue( id, ssprintf("NoteButton", t+1), NoteButtonNames[t] );
+		ini.GetValue( id, ssprintf("NoteButton%i", t+1), NoteButtonNames[t] );
+
+		ini.GetValue( id, ssprintf("GhostButton", t+1), GhostButtonNames[t] );
+		ini.GetValue( id, ssprintf("GhostButton%i", t+1), GhostButtonNames[t] );
 	}
 
 	CString sGames;

@@ -24,6 +24,7 @@
 #include <math.h>
 #include "RageDisplay.h"
 #include "NoteTypes.h"
+#include "NoteFieldPositioning.h"
 
 
 #define DRAW_HOLD_HEAD_FOR_TAPS_ON_SAME_ROW			NOTESKIN->GetMetricB(pn,name,"DrawHoldHeadForTapsOnSameRow")
@@ -117,7 +118,11 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	cache->Load( pn, NoteSkinManager::ColToButtonName(iColNum) );
+	CString Button = g_NoteFieldMode[m_PlayerNumber].NoteButtonNames[iColNum];
+	if(Button == "")
+		Button = NoteSkinManager::ColToButtonName(iColNum);
+
+	cache->Load( pn, Button );
 
 	// Look up note names once and store them here.
 	CString sNoteType[ NOTE_COLOR_IMAGES ];
@@ -128,81 +133,81 @@ void NoteDisplay::Load( int iColNum, PlayerNumber pn )
 	if( cache->m_bTapNoteAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_sprTapNote[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "tap note "+sNoteType[i]) );
+			m_sprTapNote[i].Load( NOTESKIN->GetPathTo(pn, Button, "tap note "+sNoteType[i]) );
 	}
 	else
 	{
-		m_sprTapNote[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "tap note") );
+		m_sprTapNote[0].Load( NOTESKIN->GetPathTo(pn, Button, "tap note") );
 	}
 
 	if( cache->m_bHoldHeadAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldHeadActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head active "+sNoteType[i]) );
-			m_sprHoldHeadInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head inactive "+sNoteType[i]) );
+			m_sprHoldHeadActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold head active "+sNoteType[i]) );
+			m_sprHoldHeadInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold head inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldHeadActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head active") );
-		m_sprHoldHeadInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold head inactive") );
+		m_sprHoldHeadActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold head active") );
+		m_sprHoldHeadInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold head inactive") );
 	}
 
 	if( cache->m_bHoldTopCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap active "+sNoteType[i]) );
-			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap inactive "+sNoteType[i]) );
+			m_sprHoldTopCapActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap active "+sNoteType[i]) );
+			m_sprHoldTopCapInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap active") );
-		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold topcap inactive") );
+		m_sprHoldTopCapActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap active") );
+		m_sprHoldTopCapInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold topcap inactive") );
 	}
 
 	if( cache->m_bHoldBodyAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body active "+sNoteType[i]) );
-			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body inactive "+sNoteType[i]) );
+			m_sprHoldBodyActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold body active "+sNoteType[i]) );
+			m_sprHoldBodyInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold body inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body active") );
-		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold body inactive") );
+		m_sprHoldBodyActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold body active") );
+		m_sprHoldBodyInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold body inactive") );
 	}
 
 	if( cache->m_bHoldBottomCapAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap active "+sNoteType[i]) );
-			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap inactive "+sNoteType[i]) );
+			m_sprHoldBottomCapActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap active "+sNoteType[i]) );
+			m_sprHoldBottomCapInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap active") );
-		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold bottomcap inactive") );
+		m_sprHoldBottomCapActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap active") );
+		m_sprHoldBottomCapInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold bottomcap inactive") );
 	}
 
 	if( cache->m_bHoldTailAnimationIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
 		{
-			m_sprHoldTailActive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail active "+sNoteType[i]) );
-			m_sprHoldTailInactive[i].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail inactive "+sNoteType[i]) );
+			m_sprHoldTailActive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail active "+sNoteType[i]) );
+			m_sprHoldTailInactive[i].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive "+sNoteType[i]) );
 		}
 	}
 	else
 	{
-		m_sprHoldTailActive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail active") );
-		m_sprHoldTailInactive[0].Load( NOTESKIN->GetPathTo(pn, iColNum, "hold tail inactive") );
+		m_sprHoldTailActive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail active") );
+		m_sprHoldTailInactive[0].Load( NOTESKIN->GetPathTo(pn, Button, "hold tail inactive") );
 	}
 }
 

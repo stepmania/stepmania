@@ -161,10 +161,15 @@ CString NoteSkinManager::ColToButtonName(int col)
 	return pGameDef->m_szButtonNames[GI.button];
 }
 
-CString NoteSkinManager::GetPathTo( PlayerNumber pn, int col, CString sFileName )	// looks in GAMESTATE for the current Style
+CString NoteSkinManager::GetPathTo( PlayerNumber pn, int col, CString sFileName )
 {
 	CString sButtonName = ColToButtonName(col);
 
+	return GetPathTo( pn, sButtonName, sFileName );
+}
+
+CString NoteSkinManager::GetPathTo( PlayerNumber pn, CString sButtonName, CString sFileName )	// looks in GAMESTATE for the current Style
+{
 	CString sCurNoteSkinName = m_sCurNoteSkinName[pn];
 
 	CString ret = GetPathTo( sCurNoteSkinName, sButtonName, sFileName );

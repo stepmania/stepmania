@@ -37,9 +37,13 @@ void GhostArrowRow::Load( PlayerNumber pn )
 	// init arrows
 	for( int c=0; c<m_iNumCols; c++ ) 
 	{
-		m_GhostArrowRow[c].Load( NOTESKIN->GetPathTo(pn, c, "tap explosion dim") );
-		m_GhostArrowRowBright[c].Load( NOTESKIN->GetPathTo(pn, c, "tap explosion bright") );
-		m_HoldGhostArrowRow[c].Load( NOTESKIN->GetPathTo(pn, c, "hold explosion") );
+		CString Button = g_NoteFieldMode[m_PlayerNumber].GhostButtonNames[c];
+		if(Button == "")
+			Button = NoteSkinManager::ColToButtonName(c);
+
+		m_GhostArrowRow[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion dim") );
+		m_GhostArrowRowBright[c].Load( NOTESKIN->GetPathTo(pn, Button, "tap explosion bright") );
+		m_HoldGhostArrowRow[c].Load( NOTESKIN->GetPathTo(pn, Button, "hold explosion") );
 
 		m_GhostArrowRow[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
 		m_GhostArrowRowBright[c].SetX( pStyleDef->m_ColumnInfo[pn][c].fXOffset );
