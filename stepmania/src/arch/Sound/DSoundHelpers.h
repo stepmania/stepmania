@@ -3,16 +3,16 @@
 
 #include "SDL.h"
 
-struct IDirectSound8;
-struct IDirectSoundBuffer8;
+struct IDirectSound;
+struct IDirectSoundBuffer;
 
 class DSound
 {
-	IDirectSound8 *ds8;
+	IDirectSound *ds;
 	static BOOL CALLBACK EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR  lpcstrModule, LPVOID lpContext);
 
 public:
-	IDirectSound8 *GetDS8() const { return ds8; }
+	IDirectSound *GetDS() const { return ds; }
 	bool IsEmulated() const;
 
 	DSound();
@@ -21,7 +21,7 @@ public:
 
 class DSoundBuf
 {
-	IDirectSoundBuffer8 *buf;
+	IDirectSoundBuffer *buf;
 
 	int channels, samplerate, samplebits, writeahead;
 

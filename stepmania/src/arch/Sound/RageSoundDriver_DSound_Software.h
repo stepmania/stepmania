@@ -5,8 +5,8 @@
 #include "SDL_Thread.h"
 #include "DSoundHelpers.h"
 
-struct IDirectSound8;
-struct IDirectSoundBuffer8;
+struct IDirectSound;
+struct IDirectSoundBuffer;
 
 class RageSound_DSound_Software: public RageSoundDriver
 {

@@ -26,18 +26,24 @@ DSound::DSound()
 {
 	HRESULT hr;
 
-	if(FAILED(hr=DirectSoundCreate8(NULL, &ds8, NULL)))
-		RageException::ThrowNonfatal(hr_ssprintf(hr, "DirectSoundCreate8"));
-	
+    // Initialize COM
+    if( hr = CoInitialize( NULL ) )
+		RageException::ThrowNonfatal(hr_ssprintf(hr, "CoInitialize"));
+
+    // Create IDirectSound using the primary sound device
+    if( FAILED( hr = DirectSoundCreate( NULL, &ds, NULL ) ) )
+		RageException::ThrowNonfatal(hr_ssprintf(hr, "DirectSoundCreate"));
+
 	DirectSoundEnumerate(EnumCallback, 0);
 	
 	/* Try to set primary mixing privileges */
-	hr = ds8->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
+	hr = ds->SetCooperativeLevel(GetDesktopWindow(), DSSCL_PRIORITY);
 }
 
 DSound::~DSound()
 {
-	ds8->Release();
+	ds->Release();
+    CoUninitialize();
 }
 
 bool DSound::IsEmulated() const
@@ -47,9 +53,9 @@ bool DSound::IsEmulated() const
 	DSCAPS Caps;
 	Caps.dwSize = sizeof(Caps);
 	HRESULT hr;
-	if(FAILED(hr = ds8->GetCaps(&Caps)))
+	if(FAILED(hr = ds->GetCaps(&Caps)))
 	{
-		LOG->Warn(hr_ssprintf(hr, "ds8->GetCaps failed"));
+		LOG->Warn(hr_ssprintf(hr, "ds->GetCaps failed"));
 		/* This is strange, so let's be conservative. */
 		return true;
 	}
@@ -100,11 +106,11 @@ DSoundBuf::DSoundBuf(DSound &ds, DSoundBuf::hw hardware,
 	format.lpwfxFormat = &waveformat;
 
 	IDirectSoundBuffer *sndbuf_buf;
-	HRESULT hr = ds.GetDS8()->CreateSoundBuffer(&format, &sndbuf_buf, NULL);
+	HRESULT hr = ds.GetDS()->CreateSoundBuffer(&format, &sndbuf_buf, NULL);
 	if (FAILED(hr))
 		RageException::ThrowNonfatal(hr_ssprintf(hr, "CreateSoundBuffer failed"));
 
-	sndbuf_buf->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*) &buf);
+	sndbuf_buf->QueryInterface(IID_IDirectSoundBuffer, (LPVOID*) &buf);
 	ASSERT(buf);
 
 	/* I'm not sure this should ever be needed, but ... */
