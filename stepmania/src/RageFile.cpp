@@ -37,7 +37,7 @@ void CollapsePath( CString &sPath )
 
 	for( unsigned i=0; i<as.size(); i++ )
 	{
-		if( as[i] == ".." )
+		if( as[i] == ".." && i != 0 )
 		{
 			as.erase( as.begin()+i-1 );
 			as.erase( as.begin()+i-1 );
