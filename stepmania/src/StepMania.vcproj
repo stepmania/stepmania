@@ -1581,6 +1581,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CharacterHead.h">
 			</File>
 			<File
+				RelativePath="CombinedLifeMeter.h">
+			</File>
+			<File
 				RelativePath="CombinedLifeMeterTug.cpp">
 			</File>
 			<File
@@ -2151,9 +2154,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Bookkeeper.h">
-			</File>
-			<File
-				RelativePath="CombinedLifeMeter.h">
 			</File>
 			<File
 				RelativePath="CryptManager.cpp">
