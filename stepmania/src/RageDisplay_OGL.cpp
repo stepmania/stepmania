@@ -1677,7 +1677,19 @@ unsigned RageDisplay_OGL::CreateTexture(
 	
 	glBindTexture( GL_TEXTURE_2D, uTexHandle );
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, bGenerateMipMaps ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR);
+	GLint minFilter;
+	if( bGenerateMipMaps )
+	{
+		if( wind->GetVideoModeParams().bTrilinearFiltering )
+			minFilter = GL_LINEAR_MIPMAP_LINEAR;
+		else
+			minFilter = GL_LINEAR_MIPMAP_NEAREST;
+	}
+	else
+	{
+		minFilter = GL_LINEAR;
+	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 
 	if( wind->GetVideoModeParams().bAnisotropicFiltering &&
 		HasExtension("GL_EXT_texture_filter_anisotropic") )

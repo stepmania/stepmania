@@ -115,6 +115,7 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			PREFSMAN->m_bVsync,
 			PREFSMAN->m_bInterlaced,
 			PREFSMAN->m_bSmoothLines,
+			PREFSMAN->m_bTrilinearFiltering,
 			PREFSMAN->m_bAnisotropicFiltering,
 			THEME->GetMetric("Common","WindowTitle"),
 			THEME->GetPathToG("Common window icon")
