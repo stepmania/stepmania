@@ -573,15 +573,16 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 	UpdateSelectionText( pn ); /* hide NAME_ cursor */
 
 	CString selection = WStringToCString( m_sSelection[pn] );
-	TrimRight( selection, " " );
-	TrimLeft( selection, " " );
-
-	GAMESTATE->StoreRankingName( pn, selection );
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 	if( pProfile )
 		pProfile->m_sLastUsedHighScoreName = selection;
+
+	TrimRight( selection, " " );
+	TrimLeft( selection, " " );
+
+	GAMESTATE->StoreRankingName( pn, selection );
 
 	OFF_COMMAND( m_Keyboard[pn] );
 	for( int i = 0; i < (int)m_textAlphabet[pn].size(); ++i )
