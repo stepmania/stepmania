@@ -20,7 +20,6 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
-#include "ScreenSandbox.h"
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
 #include "GameConstantsAndTypes.h"
