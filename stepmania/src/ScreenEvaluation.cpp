@@ -221,7 +221,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				hs.grade = grade[p];
 				hs.iScore = stageStats.iScore[p] + stageStats.iBonus[p];
 				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
-				GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+					GAMESTATE->m_pCurNotes[p]->AddHighScore( (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 					
 				// update unlock data if unlocks are on
 				if ( PREFSMAN->m_bUseUnlockSystem )
@@ -253,7 +254,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 				ProfileManager::CategoryData::HighScore hs;
 				hs.iScore = stageStats.iScore[p];
-				PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
+				hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
+				if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+					PROFILEMAN->AddHighScore( nt, rc[p], (PlayerNumber)p, hs, iMachineHighScoreIndex[p] );
 
 				// If unlocking is enabled, save the dance points
 				if( PREFSMAN->m_bUseUnlockSystem )
@@ -270,17 +273,13 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 					// DO save scores for a failed Oni/Endless
 					if( m_bFailed && pCourse->IsNonstop() ) continue;
 
-					int score;
-					if( pCourse->IsOni() )
-						score = stageStats.iActualDancePoints[p];
-					else
-						score = stageStats.iScore[p];
-
 					StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 					Course::MemCardData::HighScore hs;
-					hs.iScore = score;
+					hs.iScore = stageStats.iScore[p];
+					hs.fPercentDP = stageStats.GetPercentDancePoints( (PlayerNumber)p );
 					hs.fSurviveTime = stageStats.fAliveSeconds[p];
-					pCourse->AddHighScore( nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
+					if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForHighScore )
+						pCourse->AddHighScore( nt, (PlayerNumber)p, hs, iPersonalHighScoreIndex[p], iMachineHighScoreIndex[p] );
 				}
 
 				// If unlocking is enabled, save the dance points

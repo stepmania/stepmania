@@ -106,6 +106,7 @@ PrefsManager::PrefsManager()
 	m_ShowSongOptions = YES;
 	m_bDancePointsForOni = false;
 	m_bPercentageScoring = false;
+	m_fMinPercentageForHighScore = 0.5f;
 	m_bShowLyrics = true;
 	m_bAutogenMissingTypes = true;
 	m_bAutogenGroupCourses = true;
@@ -315,6 +316,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "SoloSingle",						m_bSoloSingle );
 	ini.GetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
 	ini.GetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
+	ini.GetValue( "Options", "MinPercentageForHighScore",		m_fMinPercentageForHighScore );
 	ini.GetValue( "Options", "ShowLyrics",						m_bShowLyrics );
 	ini.GetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.GetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
@@ -473,6 +475,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "SoloSingle",						m_bSoloSingle );
 	ini.SetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
 	ini.SetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
+	ini.SetValue( "Options", "MinPercentageForHighScore",		m_fMinPercentageForHighScore );
 	ini.SetValue( "Options", "ShowLyrics",						m_bShowLyrics );
 	ini.SetValue( "Options", "AutogenMissingTypes",				m_bAutogenMissingTypes );
 	ini.SetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
