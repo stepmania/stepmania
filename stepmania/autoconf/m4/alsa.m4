@@ -7,10 +7,6 @@ dnl AM_PATH_ALSA([MINIMUM-VERSION [, ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
 dnl Test for libasound, and define ALSA_CFLAGS and ALSA_LIBS as appropriate.
 dnl enables arguments --with-alsa-prefix=
 dnl                   --with-alsa-enc-prefix=
-dnl                   --disable-alsatest  (this has no effect, as yet)
-dnl
-dnl For backwards compatibility, if ACTION_IF_NOT_FOUND is not specified,
-dnl and the alsa libraries are not found, a fatal AC_MSG_ERROR() will result.
 dnl
 AC_DEFUN(AM_PATH_ALSA,
 [dnl Save the original CFLAGS, LDFLAGS, and LIBS
@@ -29,12 +25,6 @@ AC_ARG_WITH(alsa-prefix,
 AC_ARG_WITH(alsa-inc-prefix,
 [  --with-alsa-inc-prefix=PFX  Prefix where include libraries are (optional)],
 [alsa_inc_prefix="$withval"], [alsa_inc_prefix=""])
-
-dnl FIXME: this is not yet implemented
-AC_ARG_ENABLE(alsatest,
-[  --disable-alsatest      Do not try to compile and run a test Alsa program],
-[enable_alsatest=no],
-[enable_alsatest=yes])
 
 dnl Add any special include directories
 AC_MSG_CHECKING(for ALSA CFLAGS)
@@ -123,18 +113,21 @@ AC_CHECK_LIB([asound], [snd_ctl_open],,
 
 if test "x$alsa_found" = "xyes" ; then
    ifelse([$2], , :, [$2])
-   LIBS=`echo $LIBS | sed 's/-lasound//g'`
-   LIBS=`echo $LIBS | sed 's/  //'`
-   LIBS="-lasound $LIBS"
+# No, this defeats the prupose of ALSA_LIBS.
+#   LIBS=`echo $LIBS | sed 's/-lasound//g'`
+#   LIBS=`echo $LIBS | sed 's/  //'`
+#   LIBS="-lasound $LIBS"
 fi
+
 if test "x$alsa_found" = "xno" ; then
    ifelse([$3], , :, [$3])
-   CFLAGS="$alsa_save_CFLAGS"
-   LDFLAGS="$alsa_save_LDFLAGS"
-   LIBS="$alsa_save_LIBS"
    ALSA_CFLAGS=""
    ALSA_LIBS=""
 fi
+
+CFLAGS="$alsa_save_CFLAGS"
+LDFLAGS="$alsa_save_LDFLAGS"
+LIBS="$alsa_save_LIBS"
 
 dnl That should be it.  Now just export out symbols:
 AC_SUBST(ALSA_CFLAGS)
