@@ -171,6 +171,8 @@ private:
 
 	CString write_buf;
 
+	int FlushWrites();
+
 public:
 	RageFileObjDirect( const CString &path, int fd_, RageFile &p );
 	virtual ~RageFileObjDirect();
@@ -337,7 +339,7 @@ bool RageFileDriverDirect::Ready()
 #endif
 }
 
-
+static const int BUFSIZE = 1024*64;
 RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p ):
 	RageFileObj( p )
 {
@@ -346,20 +348,12 @@ RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p
 	ASSERT( fd != -1 );
 
 	if( parent.GetOpenMode() == RageFile::WRITE )
-		write_buf.reserve( 1024*64 );
+		write_buf.reserve( BUFSIZE );
 }
 
 RageFileObjDirect::~RageFileObjDirect()
 {
-	if( write_buf.size() )
-	{
-		int ret = write( fd, write_buf.data(), write_buf.size() );
-		if( ret == -1 )
-		{
-			LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
-			SetError( strerror(errno) );
-		}
-	}
+	FlushWrites();
 
 	if( fd != -1 )
 		close( fd );
@@ -377,9 +371,32 @@ int RageFileObjDirect::Read( void *buf, size_t bytes )
 	return ret;
 }
 
+int RageFileObjDirect::FlushWrites()
+{
+	if( !write_buf.size() )
+		return 0;
+
+	int ret = write( fd, write_buf.data(), write_buf.size() );
+	if( ret == -1 )
+	{
+		LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
+		SetError( strerror(errno) );
+	}
+
+	write_buf.erase();
+	return ret;
+}
+
 int RageFileObjDirect::Write( const void *buf, size_t bytes )
 {
+	if( write_buf.size()+bytes > BUFSIZE )
+	{
+		if( FlushWrites() == -1 )
+			return -1;
+	}
+
 	write_buf.append( (const char *)buf, (const char *)buf+bytes );
+
 	return bytes;
 }
 
