@@ -19,12 +19,31 @@
 
 StageStats::StageStats()
 {
-	memset( this, 0, sizeof(StageStats) );
+	playMode = PLAY_MODE_INVALID;
+	style = STYLE_INVALID;
+	pSong = NULL;
+	StageType = STAGE_INVALID;
+	fGameplaySeconds = 0;
+
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		for( int i = 0; i < LIFE_RECORD_RESOLUTION; ++i )
-			fLifeRecord[p][i] = -1;
-		fFirstPos[p] = 1;
+		pSteps[p] = NULL;
+		iMeter[p] = 0;
+		fAliveSeconds[p] = 0;
+		bFailed[p] = bFailedEarlier[p] = false;
+		iPossibleDancePoints[p] = iActualDancePoints[p] = 0;
+		iCurCombo[p] = iMaxCombo[p] = iCurMissCombo[p] = iScore[p] = iBonus[p] = 0;
+		fSecondsBeforeFail[p] = 0;
+		iSongsPassed[p] = iSongsPlayed[p] = 0;
+		iTotalError[p] = 0;
+		fFirstPos[p] = fLastPos[p] = 0;
+
+		memset( iTapNoteScores[p], 0, sizeof(iTapNoteScores[p]) );
+		memset( iHoldNoteScores[p], 0, sizeof(iHoldNoteScores[p]) );
+		memset( fRadarPossible[p], 0, sizeof(fRadarPossible[p]) );
+		memset( fRadarActual[p], 0, sizeof(fRadarActual[p]) );
+
+		fFirstPos[p] = 999999;
 		fLastPos[p] = 0;
 	}
 }
@@ -69,8 +88,46 @@ void StageStats::AddStats( const StageStats& other )
 		iSongsPlayed[p] += other.iSongsPlayed[p];
 		iTotalError[p] += other.iTotalError[p];
 
-		for( int i = 0; i < LIFE_RECORD_RESOLUTION; ++i )
-			fLifeRecord[p][i] = -1;
+		const float fOtherFirst = other.fFirstPos[p] + fLastPos[p];
+		const float fOtherLast = other.fLastPos[p] + fLastPos[p];
+
+		map<float,float>::const_iterator it;
+		for( it = other.fLifeRecord[p].begin(); it != other.fLifeRecord[p].end(); ++it )
+		{
+			const float pos = it->first;
+			const float life = it->second;
+			fLifeRecord[p][fOtherFirst+pos] = life;
+		}
+
+		unsigned i;
+		for( i=0; i<other.ComboList[p].size(); ++i )
+		{
+			const Combo_t &combo = other.ComboList[p][i];
+
+			Combo_t newcombo(combo);
+			newcombo.start += fOtherFirst;
+			ComboList[p].push_back( newcombo );
+		}
+
+		/* Merge identical combos.  This normally only happens in course mode, when a combo
+		 * continues between songs. */
+		for( i=1; i<ComboList[p].size(); ++i )
+		{
+			Combo_t &prevcombo = ComboList[p][i-1];
+			Combo_t &combo = ComboList[p][i];
+			const float PrevComboEnd = prevcombo.start + prevcombo.size;
+			const float ThisComboStart = combo.start;
+			if( fabsf(PrevComboEnd - ThisComboStart) > 0.001 )
+				continue;
+
+			/* These are really the same combo. */
+			prevcombo.size += combo.size;
+			prevcombo.cnt += combo.cnt;
+			ComboList[p].erase( ComboList[p].begin()+i );
+			--i;
+		}
+		
+		fLastPos[p] = fOtherLast;
 	}
 }
 
@@ -178,26 +235,68 @@ float StageStats::GetPercentDancePoints( PlayerNumber pn ) const
 
 void StageStats::SetLifeRecord( PlayerNumber pn, float life, float pos )
 {
-	pos = clamp( pos, 0, 1 );
+	if( pos < 0 )
+		return;
 
-	int offset = (int) roundf( pos * LIFE_RECORD_RESOLUTION );
-	for( int i = 0; i <= offset; ++i )
-		if( fLifeRecord[pn][i] < 0 )
-			fLifeRecord[pn][i] = life;
+	fFirstPos[pn] = min( pos, fFirstPos[pn] );
+	fLastPos[pn] = max( pos, fLastPos[pn] );
+
+	if( !fLifeRecord[pn].empty() )
+	{
+		const float old = GetLifeRecordAt( pn, pos );
+		if( fabsf(old-pos) < 0.001f )
+			return; /* no change */
+	}
+
+	fLifeRecord[pn][pos] = life;
 }
+
+float	StageStats::GetLifeRecordAt( PlayerNumber pn, float pos ) const
+{
+	/* Find the first element whose key is not less than k. */
+	map<float,float>::const_iterator it = fLifeRecord[pn].lower_bound( pos );
+
+	/* Find the first element whose key is less than k. */
+	if( it != fLifeRecord[pn].begin() )
+		--it;
+
+	return it->second;
+
+}
+
+float StageStats::GetLifeRecordLerpAt( PlayerNumber pn, float pos ) const
+{
+	/* Find the first element whose key is not less than k. */
+	map<float,float>::const_iterator later = fLifeRecord[pn].lower_bound( pos );
+
+	/* Find the first element whose key is less than k. */
+	map<float,float>::const_iterator earlier = later;
+	if( earlier != fLifeRecord[pn].begin() )
+		--earlier;
+
+	if( earlier->first == later->first )
+		return earlier->second;
+
+	/* earlier <= pos <= later */
+	const float f = SCALE( pos, earlier->first, later->first, 1, 0 );
+	return earlier->second * f + later->second * (1-f);
+}
+
 
 void StageStats::GetLifeRecord( PlayerNumber pn, float *life, int nout ) const
 {
 	for( int i = 0; i < nout; ++i )
 	{
-		int from = i * (LIFE_RECORD_RESOLUTION-1) / nout;
-		life[i] = fLifeRecord[pn][from];
+		float from = SCALE( i, 0, (float)nout, fFirstPos[pn], fLastPos[pn] );
+		LOG->Trace("get %i from %f", i, from);
+		life[i] = GetLifeRecordLerpAt( (PlayerNumber)pn, from );
 	}
 }
 
 void StageStats::UpdateComboList( PlayerNumber pn, float pos )
 {
-	pos = clamp( pos, 0, 1 );
+	if( pos < 0 )
+		return;
 
 	fFirstPos[pn] = min( pos, fFirstPos[pn] );
 	fLastPos[pn] = max( pos, fLastPos[pn] );
@@ -243,44 +342,6 @@ StageStats::Combo_t StageStats::GetMaxCombo( PlayerNumber pn ) const
 	}
 
 	return ComboList[pn][m];
-}
-
-/* SetLifeRecord and UpdateComboList take a percentage (0..1) in pos, but the values
- * will actually be somewhat off as they're based on Song::m_fFirstBeat and m_fLastBeat,
- * which are per-song, not per-Steps.  Scale and shift our records so that they're
- * really 0..1. */
-void StageStats::Finish()
-{
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn )
-	{
-		if( ComboList[pn].size() == 0 )
-			continue;
-
-		const float First = fFirstPos[pn];
-		const float Last = fLastPos[pn];
-
-		if( fabsf(First-Last) < 0.0001f )
-			continue;
-
-		unsigned i;
-		for( i = 0; i < ComboList[pn].size(); ++i )
-		{
-			ComboList[pn][i].start = SCALE( ComboList[pn][i].start, First, Last, 0.0f, 1.0f );
-			ComboList[pn][i].size /= Last - First;
-		}
-
-		float NewLifeRecord[LIFE_RECORD_RESOLUTION];
-		for( i = 0; i < LIFE_RECORD_RESOLUTION; ++i )
-		{
-			int from = (int) roundf( SCALE( i, 0.0f, 1.0f, First, Last ) );
-			from = clamp( from, 0, LIFE_RECORD_RESOLUTION-1 );
-			NewLifeRecord[i] = fLifeRecord[pn][from];
-		}
-		memcpy( fLifeRecord[pn], NewLifeRecord, sizeof(fLifeRecord[pn]) );
-
-		fFirstPos[pn] = 0;
-		fLastPos[pn] = 1;
-	}
 }
 
 bool StageStats::FullCombo( PlayerNumber pn ) const

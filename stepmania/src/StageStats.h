@@ -16,6 +16,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
 #include "Style.h"
+#include <map>
 class Song;
 class Steps;
 
@@ -63,10 +64,11 @@ struct StageStats
 	int		iSongsPlayed[NUM_PLAYERS];
 	int		iTotalError[NUM_PLAYERS];
 
-	enum { LIFE_RECORD_RESOLUTION=1000 };
-	float	fLifeRecord[NUM_PLAYERS][LIFE_RECORD_RESOLUTION];
+	map<float,float>	fLifeRecord[NUM_PLAYERS];
 	void	SetLifeRecord( PlayerNumber pn, float life, float pos );
 	void	GetLifeRecord( PlayerNumber pn, float *life, int nout ) const;
+	float	GetLifeRecordAt( PlayerNumber pn, float pos ) const;
+	float	GetLifeRecordLerpAt( PlayerNumber pn, float pos ) const;
 
 	/* pos,combo */
 	struct Combo_t
@@ -84,14 +86,12 @@ struct StageStats
 		Combo_t(): start(0), size(0), cnt(0), rollover(0) { }
 		bool IsZero() const { return start < 0; }
 	};
+	vector<Combo_t> ComboList[NUM_PLAYERS];
 	float fFirstPos[NUM_PLAYERS], fLastPos[NUM_PLAYERS];
 
 	bool	FullCombo( PlayerNumber pn ) const;
 	void	UpdateComboList( PlayerNumber pn, float pos );
 	Combo_t GetMaxCombo( PlayerNumber pn ) const;
-
-	void	Finish();
-	vector<Combo_t> ComboList[NUM_PLAYERS];
 };
 
 

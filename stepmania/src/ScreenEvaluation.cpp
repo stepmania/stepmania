@@ -95,6 +95,8 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	{
 		GAMESTATE->m_PlayMode = PLAY_MODE_RAVE;
 		GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;
+		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
+		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		GAMESTATE->m_pCurSong = SONGMAN->GetAllSongs()[0];
 //		GAMESTATE->m_pCurCourse = SONGMAN->m_pCourses[0];
@@ -103,12 +105,22 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		GAMESTATE->m_PlayerOptions[PLAYER_1].m_fScrollSpeed = 2;
 		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 2;
-		for( float f = 0; f < 1.0f; f += .005f )
+
+		for( float f = 0; f < 100.0f; f += 1.0f )
 		{
-			float fP1 = fmodf(f*4+.3f,1);
+			float fP1 = fmodf(f/100*4+.3f,1);
 			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_1, fP1, f );
 			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_2, 1-fP1, f );
 		}
+	
+		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 0;
+		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 0 );
+		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 1;
+		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 1 );
+		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 50;
+		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 25 );
+		GAMESTATE->m_CurStageStats.iCurCombo[PLAYER_1] = 250;
+		GAMESTATE->m_CurStageStats.UpdateComboList( PLAYER_1, 100 );
 	}
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
@@ -146,13 +158,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		break;
 	case stage:
 	case course:
-		LOG->Trace("We made it to stage");
 		stageStats = GAMESTATE->m_CurStageStats;
 		break;
 	default:
 		ASSERT(0);
 	}
-	stageStats.Finish();
 
 	LOG->Trace( "total error: %i, %i", stageStats.iTotalError[0], stageStats.iTotalError[1] );
 
@@ -745,6 +755,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 		if( SHOW_FULL_COMBO && stageStats.FullCombo( (PlayerNumber) p ) )
 		{
+			LOG->Trace( "Full combo for P%i", p+1 );
 			m_FullCombo[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation full combo P%i",p+1)) );
 			m_FullCombo[p]->SetName( ssprintf("FullComboP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_FullCombo[p] );

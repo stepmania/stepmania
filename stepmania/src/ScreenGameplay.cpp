@@ -1670,9 +1670,6 @@ void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 
 void ScreenGameplay::SongFinished()
 {
-	/* Need to Finish before calling GetActualRadarValue, for GetMaxCombo. */
-	GAMESTATE->m_CurStageStats.Finish();
-
 	// save any statistics
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )

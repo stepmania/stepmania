@@ -15,8 +15,6 @@ public:
 	void Unload();
 
 	void LoadFromStageStats( const StageStats &s, PlayerNumber pn );
-	void SetValues( const float *values, int cnt );
-	void SetValue( float value, int cnt ) { SetValues( &value, 1 ); }
 	void Update( float fDeltaTime );
 	void DrawPrimitives();
 
