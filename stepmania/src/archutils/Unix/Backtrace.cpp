@@ -115,8 +115,15 @@ static int get_readable_ranges( const void **starts, const void **ends, int size
 				if( strlen(space) < 4 || space[3] != 'x' )
 					continue;
 
-			*starts++ = (const void *) xtoi( line );
-			*ends++ = (const void *) xtoi( hyphen+1 );
+			/* If, for some reason, either end is NULL, skip it; that's our terminator. */
+			const void *start = (const void *) xtoi( line );
+			const void *end = (const void *) xtoi( hyphen+1 );
+			if( start != NULL && end != NULL )
+			{
+				*starts++ = start;
+				*ends++ = end;
+			}
+
 			++got;
 		}
 
