@@ -48,6 +48,7 @@ namespace RageSurfaceUtils
 					const float fCoords[8] /* TL, BR, BL, TR */ );
 
 	void Blit( const RageSurface *src, RageSurface *dst, int width = -1, int height = -1 );
+	void CorrectBorderPixels( RageSurface *img, int width, int height );
 
 	bool SaveSurface( const RageSurface *img, CString file );
 	RageSurface *LoadSurface( CString file );

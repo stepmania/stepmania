@@ -698,27 +698,43 @@ void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width
 	 * Copy the last column (200x... -> 201x...), then the last row (...x200 -> ...x201).
 	 */
 
-	if( width < dst->w )
+	CorrectBorderPixels( dst, width, height );
+}
+
+/*
+ * If only width x height of img is actually going to be used, and there's extra
+ * space on the surface, duplicate the last row and column to ensure that we don't
+ * pull in unexpected data when rendering with bilinear filtering.
+ *
+ * We do this if there's memory available, even if that space extends outside
+ * of the image (in the per-line padding or after the end).  This way, surfaces
+ * can be padded to power-of-two dimensions by the image loaders, and if no other
+ * adjustments are needed, they can be passed directly to the renderer without
+ * doing any extra copies.
+ */
+void RageSurfaceUtils::CorrectBorderPixels( RageSurface *img, int width, int height )
+{
+	if( width*img->fmt.BytesPerPixel < img->pitch )
 	{
 		/* Duplicate the last column. */
-		int offset = dst->format->BytesPerPixel * (width-1);
-		uint8_t *p = (uint8_t *) dst->pixels + offset;
+		int offset = img->format->BytesPerPixel * (width-1);
+		uint8_t *p = (uint8_t *) img->pixels + offset;
 
 		for( int y = 0; y < height; ++y )
 		{
-			uint32_t pixel = decodepixel( p, dst->format->BytesPerPixel );
-			encodepixel( p+dst->format->BytesPerPixel, dst->format->BytesPerPixel, pixel );
+			uint32_t pixel = decodepixel( p, img->format->BytesPerPixel );
+			encodepixel( p+img->format->BytesPerPixel, img->format->BytesPerPixel, pixel );
 
-			p += dst->pitch;
+			p += img->pitch;
 		}
 	}
 
-	if( height < dst->h )
+	if( height < img->h )
 	{
 		/* Duplicate the last row. */
-		uint8_t *srcp = dst->pixels;
-		srcp += dst->pitch * (height-1);
-		memcpy( srcp + dst->pitch, srcp, dst->pitch );
+		uint8_t *srcp = img->pixels;
+		srcp += img->pitch * (height-1);
+		memcpy( srcp + img->pitch, srcp, img->pitch );
 	}
 }
 
