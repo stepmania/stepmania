@@ -321,8 +321,8 @@ void Actor::ScaleTo( const RectI &rect, StretchType st )
 	float rect_width = (float) rect.GetWidth();
 	float rect_height = (float) rect.GetHeight();
 
-	if( rect_width < 0 )	SetRotationY( PI );
-	if( rect_height < 0 )	SetRotationX( PI );
+	if( rect_width < 0 )	SetRotationY( 180 );
+	if( rect_height < 0 )	SetRotationX( 180 );
 
 	// center of the rectangle
 	float rect_cx = rect.left + rect_width/2;

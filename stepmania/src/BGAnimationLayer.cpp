@@ -266,7 +266,7 @@ void BGAnimationLayer::LoadFromAniLayerFile( CString sPath )
 			{
 				m_Sprites[i].Load( sPath );
 				m_Sprites[i].SetZoom( randomf(0.2f,2) );
-				m_Sprites[i].SetRotationZ( randomf(0,PI*2) );
+				m_Sprites[i].SetRotationZ( randomf(0,360) );
 			}
 		}
 		break;

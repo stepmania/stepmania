@@ -321,10 +321,10 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 		}
 	}
 
-	float fNewRotation = m_sprCDTitle.GetRotationY()+PI*fDeltaTime/2;
-	fNewRotation = fmodf( fNewRotation, PI*2 );
+	float fNewRotation = m_sprCDTitle.GetRotationY()+180*fDeltaTime;
+	fNewRotation = fmodf( fNewRotation, 360 );
 	m_sprCDTitle.SetRotationY( fNewRotation );
-	if( fNewRotation > PI/2  &&  fNewRotation <= PI*3.0f/2 )
+	if( fNewRotation > 90  &&  fNewRotation <= 270 )
 		m_sprCDTitle.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
 	else
 		m_sprCDTitle.SetDiffuse( RageColor(1,1,1,1) );

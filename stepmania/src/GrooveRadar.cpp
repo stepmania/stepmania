@@ -204,7 +204,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 void GrooveRadar::GrooveRadarValueMap::TweenOnScreen()
 {
 	SetZoom( 0.5f );
-	SetRotationZ( PI*4 );
+	SetRotationZ( 720 );
 	BeginTweening( 0.6f );
 	SetTweenZoom( 1 );
 	SetTweenRotationZ( 0 );
