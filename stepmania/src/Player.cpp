@@ -570,7 +570,7 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 		bGrayArrowStep = score < TNS_GOOD;
 
-		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
+//		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
 		
 		SetTapNoteScore(col, iIndexOverlappingNote, score);
 
@@ -613,7 +613,7 @@ void PlayerMinus::HandleAutosync(float fNoteOffset)
 
 void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 {
-	LOG->Trace( "PlayerMinus::OnRowCompletelyJudged" );
+//	LOG->Trace( "PlayerMinus::OnRowCompletelyJudged" );
 	
 	/* Find the minimum score of the row.  This will never be TNS_NONE, since this
 	 * function is only called when a row is completed. */
