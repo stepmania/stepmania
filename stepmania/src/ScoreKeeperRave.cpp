@@ -36,7 +36,7 @@ void ScoreKeeperRave::OnNextSong( int iSongInCourseIndex, const Steps* pNotes, c
 
 void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
 {
-	float fPercentToMove;
+	float fPercentToMove = 0;
 	switch( score )
 	{
 	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterHitMinePercentChange;	break;
@@ -65,7 +65,7 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 
 void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
-	float fPercentToMove;
+	float fPercentToMove = 0;
 	switch( tapScore )
 	{
 	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fSuperMeterHitMinePercentChange;	break;
@@ -84,7 +84,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 	// more mercy: Grow super meter slower or faster depending on life.
 	if( PREFSMAN->m_bMercifulSuperMeter )
 	{
-		float fLifePercentage;
+		float fLifePercentage = 0;
 		switch( m_PlayerNumber )
 		{
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;

@@ -109,7 +109,7 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, float fPercentToMove )
 {
 	if( PREFSMAN->m_bMercifulDrain  &&  fPercentToMove < 0 )
 	{
-		float fLifePercentage;
+		float fLifePercentage = 0;
 		switch( pn )
 		{
 		case PLAYER_1:	fLifePercentage = GAMESTATE->m_fTugLifePercentP1;		break;
