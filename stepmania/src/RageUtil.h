@@ -147,19 +147,7 @@ CString werr_ssprintf( int err, const char *fmt, ...);
 // Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
 /* If Path is a directory (eg. c:\games\stepmania"), append a slash so the last
  * element will end up in Dir, not FName: "c:\games\stepmania\". */
-void splitpath( 
-	CString Path, 
-	CString &Dir,
-	CString &Filename,
-	CString &Ext
-);
-
-void splitrelpath( 
-	const CString &Path, 
-	CString& Dir, 
-	CString& FName, 
-	CString& Ext 
-);
+void splitpath( const CString &Path, CString &Dir, CString &Filename, CString &Ext );
 
 CString SetExtension( const CString &path, const CString &ext );
 CString GetExtension( CString sPath );

@@ -249,7 +249,7 @@ void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &
  * c:\foo\bar.txt    -> "c:\foo\", "bar", ".txt"
  * \\foo\fum         -> "\\foo\", "fum", ""
  */
-void splitpath( CString Path, CString& Dir, CString& Filename, CString& Ext )
+void splitpath( const CString &Path, CString& Dir, CString& Filename, CString& Ext )
 {
 	Dir = Filename = Ext = "";
 
@@ -263,55 +263,18 @@ void splitpath( CString Path, CString& Dir, CString& Filename, CString& Ext )
 	ASSERT(check);
 
 	Dir = mat[0];
-	Path = mat[1];
+	const CString Base = mat[1];
 
 	/* ^(.*)(\.[^\.]+)$ */
 	static Regex SplitExt("^(.*)(\\.[^\\.]+)$");
-	if(SplitExt.Compare(Path, mat))
+	if( SplitExt.Compare(Base, mat) )
 	{
 		Filename = mat[0];
 		Ext = mat[1];
 	} else
-		Filename = Path;
+		Filename = Base;
 }
 
-void splitrelpath( const CString &Path, CString& Dir, CString& FName, CString& Ext )
-{
-	/* Find the last slash or backslash. */
-	int Last = max(Path.ReverseFind('/'), Path.ReverseFind('\\')); 
-
-	/* Set 'Last' to the first character of the filename.  If we have
-	 * no directory separators, this is the entire string, so set it
-	 * to 0. */
-	if(Last == -1) Last = 0;
-	else Last++;
-
-	CString sFNameAndExt = Path.Right(Path.GetLength()-Last);
-	
-	// subtract the FNameAndExt from Path
-	Dir = Path.Left( Path.GetLength()-sFNameAndExt.GetLength() );	// don't subtract out the trailing slash
-
-	CStringArray sFNameAndExtBits;
-	split( sFNameAndExt, ".", sFNameAndExtBits, false );
-
-	if( sFNameAndExt.GetLength() == 0 )	// no file at the end of this path
-	{
-		FName = "";
-		Ext = "";
-	}
-	else if( sFNameAndExtBits.size() == 1 )	// file doesn't have extension
-	{
-		FName = sFNameAndExtBits[0];
-		Ext = "";
-	}
-	else if( sFNameAndExtBits.size() > 1 )	// file has extension and possibly multiple periods
-	{
-		Ext = sFNameAndExtBits[ sFNameAndExtBits.size()-1 ];
-
-		// subtract the Ext and last period from FNameAndExt
-		FName = sFNameAndExt.Left( sFNameAndExt.GetLength()-Ext.GetLength()-1 );
-	}
-}
 
 /* "foo.bar", "baz" -> "foo.baz"
  * "foo", "baz" -> "foo.baz"
