@@ -50,8 +50,12 @@ bool ModeChoice::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_style != STYLE_INVALID && GAMESTATE->m_CurStyle != m_style )
 		return false;
-	if( m_dc != DIFFICULTY_INVALID )
+	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
+	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
+	// doesn't match the difficulty of m_pCurSteps.
+	if( m_pSteps == NULL  &&  m_dc != DIFFICULTY_INVALID )
 	{
+		// Why is this checking for all players?
 		for( int pn=0; pn<NUM_PLAYERS; pn++ )
 			if( GAMESTATE->IsHumanPlayer(pn) && GAMESTATE->m_PreferredDifficulty[pn] != m_dc )
 				return false;
@@ -309,7 +313,10 @@ bool ModeChoice::IsZero() const
 		m_style != STYLE_INVALID ||
 		m_dc != DIFFICULTY_INVALID ||
 		m_sAnnouncer != "" ||
-		m_sModifiers != "" )
+		m_sModifiers != "" ||
+		m_pSteps != NULL || 
+		m_pCharacter != NULL || 
+		m_CourseDifficulty != COURSE_DIFFICULTY_INVALID )
 		return false;
 
 	return true;
