@@ -139,7 +139,7 @@ void Player::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, ScoreDi
 	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
 
 	m_ArrowBackdrop.Unload();
-	CString BackdropName = g_NoteFieldMode[pn].Backdrop;
+	CString BackdropName = g_NoteFieldMode[pn].m_Backdrop;
 	if( !BackdropName.empty() )
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 	m_NoteField.Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels );

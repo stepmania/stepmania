@@ -19,6 +19,8 @@ NoteFieldMode g_NoteFieldMode[NUM_PLAYERS];
 NoteFieldMode::NoteFieldMode()
 {
 	m_fFov = 0;
+	m_fNear = 5;
+	m_fFar = 1000;
 	m_fFirstPixelToDrawScale = m_fLastPixelToDrawScale = 1.0f;
 }
 
@@ -34,7 +36,7 @@ void NoteFieldMode::BeginDrawTrack(int tn)
 		m_CenterTrack[tn].BeginDraw();
 
 	if(m_fFov) 
-		DISPLAY->EnterPerspective(m_fFov);
+		DISPLAY->EnterPerspective(m_fFov, true, m_fNear, m_fFar);
 	
 	m_Position.BeginDraw();
 	if(tn == -1)
@@ -61,8 +63,65 @@ void NoteFieldMode::EndDrawTrack(int tn)
 	DISPLAY->PopMatrix();
 }
 
+static bool GetValueCmd(IniFile &ini,
+				   const CString &key, const CString &valuename, Actor &value )
+{
+	CString str;
+	if(!ini.GetValue(key, valuename, str))
+		return false;
+
+	value.Command(str);
+	return true;
+}
+
+void NoteFieldMode::Load(IniFile &ini, CString id)
+{
+	m_Id = id;
+
+	/* Required: */
+	ASSERT( ini.GetValue ( id, "Name",			m_Name ) );
+
+	ini.GetValue ( id, "Backdrop",				m_Backdrop );
+	ini.GetValueF( id, "FOV",					m_fFov );
+	ini.GetValueF( id, "NearClipDistance",		m_fNear );
+	ini.GetValueF( id, "FarClipDistance",		m_fFar );
+	ini.GetValueF( id, "PixelsDrawAheadScale",	m_fFirstPixelToDrawScale );
+	ini.GetValueF( id, "PixelsDrawBehindScale",	m_fLastPixelToDrawScale );
+
+	GetValueCmd( ini, id, "Center", m_Center );
+	GetValueCmd( ini, id, "Position", m_Position );
+	GetValueCmd( ini, id, "BackdropPosition", m_PositionBackdrop );
+
+	for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
+	{
+		GetValueCmd( ini, id, ssprintf("Center%i", t+1), m_CenterTrack[t] );
+		GetValueCmd( ini, id, ssprintf("Position%i", t+1), m_PositionTrack[t] );
+	}
+
+	CString sGames;
+	if(ini.GetValue( id, "Games", sGames ))
+	{
+		vector<CString> games;
+		split(sGames, ",", games);
+		for(unsigned n = 0; n < games.size(); ++n)
+		{
+			vector<CString> bits;
+			split(games[n], "-", bits);
+			ASSERT(bits.size() == 2);
+
+			const Game game = GAMEMAN->StringToGameType( bits[0] );
+			ASSERT(game != GAME_INVALID);
+
+			const Style style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
+			ASSERT(style != STYLE_INVALID);
+			Styles.insert(style);
+		}
+	}
+}
+
 NoteFieldPositioning::NoteFieldPositioning(CString fn)
 {
+	m_Filename = fn;
 	IniFile ini(fn);
 	if(!ini.ReadFile())
 		return;
@@ -70,64 +129,7 @@ NoteFieldPositioning::NoteFieldPositioning(CString fn)
 	for(IniFile::const_iterator i = ini.begin(); i != ini.end(); ++i)
 	{
 		NoteFieldMode m;
-
-		const IniFile::key &k = i->second;
-		IniFile::key::const_iterator val;
-
-		val = k.find("Name");
-		ASSERT(val != k.end()); /* required */
-		m.name = val->second;
-
-		val = k.find("Backdrop");
-		if(val != k.end())
-			m.Backdrop = val->second;
-		
-		val = k.find("Center");
-		if(val != k.end())
-			m.m_Center.Command(val->second);
-
-		val = k.find("FOV");
-		if(val != k.end())
-			m.m_fFov = float(atof(val->second.c_str()));
-
-		val = k.find("Position");
-		if(val != k.end())
-			m.m_Position.Command(val->second);
-
-		val = k.find("BackdropPosition");
-		if(val != k.end())
-			m.m_PositionBackdrop.Command(val->second);
-		
-		for(int t = 0; t < MAX_NOTE_TRACKS; ++t)
-		{
-			val = k.find(ssprintf("Center%i", t+1));
-			if(val != k.end())
-				m.m_CenterTrack[t].Command(val->second);
-			val = k.find(ssprintf("Position%i", t+1));
-			if(val != k.end())
-				m.m_PositionTrack[t].Command(val->second);
-
-			CString sGames;
-			val = k.find("Games");
-			if(val != k.end())
-			{
-				vector<CString> games;
-				split(val->second, ",", games);
-				for(unsigned n = 0; n < games.size(); ++n)
-				{
-					vector<CString> bits;
-					split(games[n], "-", bits);
-					ASSERT(bits.size() == 2);
-
-					const Game game = GAMEMAN->StringToGameType( bits[0] );
-					ASSERT(game != GAME_INVALID);
-
-					const Style style = GAMEMAN->GameAndStringToStyle( game, bits[1] );
-					ASSERT(style != STYLE_INVALID);
-					m.Styles.insert(style );
-				}
-			}
-		}
+		m.Load(ini, i->first);
 
 		Modes.push_back(m);
 	}
@@ -147,26 +149,30 @@ bool NoteFieldMode::MatchesCurrentGame() const
 void NoteFieldPositioning::Load(PlayerNumber pn)
 {
 	NoteFieldMode &mode = g_NoteFieldMode[pn];
-	const int ModeNum = GetID(GAMESTATE->m_PlayerOptions[pn].m_sPositioning);
-	if(ModeNum != -1)
-	{
-		/* We have a custom mode; copy it. */
-		mode = Modes[ModeNum];
-		return;
-	}
 
-	/* No transformation is enabled, so use the one defined in the style
-		* table. */
 	mode = NoteFieldMode(); /* reset */
 
 	const StyleDef *s = GAMESTATE->GetCurrentStyleDef();
 
-	/* Set the m_PositionTrack[] value for each track. */
+	/* Load the settings in the style table by default. */
 	for(int tn = 0; tn < MAX_NOTE_TRACKS; ++tn)
 	{
 		const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][tn].fXOffset;
 		mode.m_PositionTrack[tn].SetX(fPixelXOffsetFromCenter);
 	}
+
+	/* Is there a custom mode with the current name that fits the current game? */
+	const int ModeNum = GetID(GAMESTATE->m_PlayerOptions[pn].m_sPositioning);
+	if(ModeNum == -1)
+		return; /* No, only use the style table settings. */
+
+	/* We have a custom mode.  Reload the mode on top of the default style
+	 * table settings. */
+	IniFile ini(m_Filename);
+	if(!ini.ReadFile())
+		return;
+
+	mode.Load(ini, Modes[ModeNum].m_Id);
 }
 
 
@@ -176,7 +182,7 @@ int NoteFieldPositioning::GetID(const CString &name) const
 {
 	for(unsigned i = 0; i < Modes.size(); ++i)
 	{
-		if(Modes[i].name.CompareNoCase(name))
+		if(Modes[i].m_Name.CompareNoCase(name))
 			continue;
 
 		if(!Modes[i].MatchesCurrentGame())
@@ -198,6 +204,6 @@ void NoteFieldPositioning::GetNamesForCurrentGame(vector<CString> &IDs)
 		if(!Modes[i].MatchesCurrentGame())
 			continue;
 		
-		IDs.push_back(Modes[i].name);
+		IDs.push_back(Modes[i].m_Name);
 	}
 }
