@@ -85,6 +85,7 @@ protected:
 	GradeDisplay		m_Grades[NUM_PLAYERS];
 
 	// graph area
+	Sprite				m_sprGraphFrame[NUM_PLAYERS];
 	GraphDisplay		m_Graph[NUM_PLAYERS];
 
 	// combo area

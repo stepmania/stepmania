@@ -104,7 +104,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 		GAMESTATE->m_PlayerOptions[PLAYER_2].m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 2;
 		for( float f = 0; f < 1.0f; f += .005f )
-			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_1, fmodf(f*4+.3f,1), f );
+		{
+			float fP1 = fmodf(f*4+.3f,1);
+			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_1, fP1, f );
+			GAMESTATE->m_CurStageStats.SetLifeRecord( PLAYER_2, 1-fP1, f );
+		}
 	}
 
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
@@ -375,11 +379,15 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;	// skip
 
+			m_sprGraphFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenEvaluation graph frame p%d",p+1)) );
+			m_sprGraphFrame[p].SetName( ssprintf("GraphFrameP%d",p+1) );
+			SET_XY_AND_ON_COMMAND( m_sprGraphFrame[p] );
+			this->AddChild( &m_sprGraphFrame[p] );
+
 			m_Graph[p].SetName( ssprintf("GraphP%i",p+1) );
 			m_Graph[p].Load( THEME->GetPathToG(ssprintf("%s graph p%i",m_sName.c_str(), p+1)), GRAPH_START_HEIGHT );
 			m_Graph[p].LoadFromStageStats( stageStats, (PlayerNumber)p );
 			SET_XY_AND_ON_COMMAND( m_Graph[p] );
-
 			this->AddChild( &m_Graph[p] );
 		}
 	}
@@ -598,7 +606,6 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 		m_sprStatsLabel[l].Load( THEME->GetPathToG( ssprintf("ScreenEvaluation label %s", STATS_STRING[l]) ) );
 		m_sprStatsLabel[l]->StopAnimating();
-		m_sprStatsLabel[l]->SetState( l );
 		m_sprStatsLabel[l]->SetName( ssprintf("%sLabel",STATS_STRING[l]) );
 		SET_XY_AND_ON_COMMAND( m_sprStatsLabel[l] );
 		this->AddChild( m_sprStatsLabel[l] );
@@ -631,7 +638,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 	//
 	if( SHOW_SCORE_AREA )
 	{
-		m_sprScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation score labels 1x2") );
+		m_sprScoreLabel.Load( THEME->GetPathToG("ScreenEvaluation score label") );
 		m_sprScoreLabel.SetState( 0 );
 		m_sprScoreLabel.StopAnimating();
 		m_sprScoreLabel.SetName( "ScoreLabel" );
@@ -981,6 +988,7 @@ void ScreenEvaluation::TweenOffScreen()
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;	// skip
 
+			OFF_COMMAND( m_sprGraphFrame[p] );
 			OFF_COMMAND( m_Graph[p] );
 		}
 	}
