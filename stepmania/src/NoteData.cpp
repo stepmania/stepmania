@@ -314,9 +314,11 @@ int NoteData::GetNumTapNotes( const float fStartBeat, const float fEndBeat )
 	int iEndIndex = BeatToNoteRow( fEndBeat );
 
 	for( int i=iStartIndex; i<min(iEndIndex, MAX_TAP_NOTE_ROWS); i++ )
+	{
 		for( int t=0; t<m_iNumTracks; t++ )
 			if( m_TapNotes[t][i] != '0' )
 				iNumNotes++;
+	}
 	
 	return iNumNotes;
 }
@@ -631,17 +633,18 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 	{
 		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
 		{
-			if( m_TapNotes[col][i] == '2' )	// this is a HoldNote begin marker
+			if( m_TapNotes[col][i] != '2' )	// this is a HoldNote begin marker
+				continue;
+
+			for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
 			{
-				for( int j=i+1; j<MAX_TAP_NOTE_ROWS; j++ )	// search for end of HoldNote
-				{
-					if( m_TapNotes[col][j] != '0' )	// end hold on the next note we see
-					{
-						HoldNote hn = { col, NoteRowToBeat(i), NoteRowToBeat(j) };
-						AddHoldNote( hn );
-						break;
-					}
-				}
+				// end hold on the next note we see
+				if( m_TapNotes[col][j] == '0' )
+					continue;
+
+				HoldNote hn = { col, NoteRowToBeat(i), NoteRowToBeat(j) };
+				AddHoldNote( hn );
+				break;
 			}
 		}
 	}
@@ -839,6 +842,7 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 	}
 
 	pOriginal->Convert4sToHoldNotes();
+	Convert4sToHoldNotes();
 }
 
 NoteType NoteData::GetSmallestNoteTypeForMeasure( int iMeasureIndex )
