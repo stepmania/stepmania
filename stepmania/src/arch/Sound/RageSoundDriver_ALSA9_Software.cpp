@@ -43,7 +43,7 @@ void RageSound_ALSA9_Software::MixerThread()
 //	RageTimer UnderrunTest;
 	while(!shutdown)
 	{
-		while( GetData() )
+		while( !shutdown && GetData() )
 			;
 		const float delay_ms = 1000 * float(max_writeahead) / samplerate;
 		SDL_Delay( int(delay_ms) / 4 );
