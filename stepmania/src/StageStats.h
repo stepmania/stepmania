@@ -37,7 +37,9 @@ struct StageStats
 	float	fRadarPossible[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
 	float	fRadarActual[NUM_PLAYERS][NUM_RADAR_CATEGORIES];	// filled in by ScreenGameplay on start of notes
 	float	fSecondsBeforeFail[NUM_PLAYERS];				// -1 means didn't/hasn't failed
-	int		iSongsPassed[NUM_PLAYERS];						// For course, this is the number of songs that the player has passed
+	/* The number of songs played and passed, respectively. */
+	int		iSongsPassed[NUM_PLAYERS];
+	int		iSongsPlayed[NUM_PLAYERS];
 };
 
 

@@ -45,6 +45,7 @@ void StageStats::operator+=( const StageStats& other )
 			fRadarActual[p][r] += other.fRadarActual[p][r];
 		}
 		fSecondsBeforeFail[p] += other.fSecondsBeforeFail[p];
+		iSongsPlayed[p] += other.iSongsPlayed[p];
 		iSongsPassed[p] += other.iSongsPassed[p];
 	}
 }
