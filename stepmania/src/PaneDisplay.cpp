@@ -34,10 +34,11 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "DifficultyVoltage",		NUM_PANES,					NEED_NOTES },
 	{ "DifficultyHands",		NUM_PANES,					NEED_NOTES },
 	{ "DifficultyMines",		NUM_PANES,					NEED_NOTES },
-	{ "MachineHighScore",		PANE_SONG_MACHINE_SCORES,	NEED_NOTES },
+	{ "MachineHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "MachineNumPlays",		PANE_SONG_MACHINE_SCORES,	NEED_NOTES },
 	{ "MachineRank",			PANE_SONG_MACHINE_SCORES,	NEED_NOTES },
-	{ "ProfileHighScore",		PANE_SONG_PROFILE_SCORES,	NEED_NOTES|NEED_PROFILE },
+	{ "MachineHighName",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
+	{ "ProfileHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES|NEED_PROFILE },
 	{ "ProfileNumPlays",		PANE_SONG_PROFILE_SCORES,	NEED_NOTES|NEED_PROFILE },
 	{ "ProfileRank",			PANE_SONG_PROFILE_SCORES,	NEED_NOTES|NEED_PROFILE },
 	{ "CourseMachineHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
@@ -164,6 +165,9 @@ void PaneDisplay::SetContent( PaneContents c )
 		val = (float) GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetNumTimesPlayed( PlayerMemCard(m_PlayerNumber) );
 		break;
 
+	case SONG_MACHINE_HIGH_SCORE:
+		val = 100.0f * GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( MEMORY_CARD_MACHINE ).fPercentDP;
+		break;
 
 	case SONG_MACHINE_RANK:
 		{
@@ -229,6 +233,9 @@ void PaneDisplay::SetContent( PaneContents c )
 
 	switch( c )
 	{
+	case SONG_MACHINE_HIGH_NAME:
+		str = GAMESTATE->m_pCurNotes[m_PlayerNumber]->GetTopScore( MEMORY_CARD_MACHINE ).sName;
+		break;
 	case SONG_MACHINE_HIGH_SCORE:
 	case COURSE_MACHINE_HIGH_SCORE:
 	case SONG_PROFILE_HIGH_SCORE:
