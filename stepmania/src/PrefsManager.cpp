@@ -256,6 +256,7 @@ PrefsManager::PrefsManager()
 
 	m_bAllowUnacceleratedRenderer = false;
 	m_bThreadedInput = true;
+	m_bThreadedMovieDecode = true;
 	m_bScreenTestMode = false;
 	m_sMachineName = "NoName";
 	m_sIgnoredMessageWindows = "";
@@ -435,6 +436,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "ShowSongOptions",					(int&)m_ShowSongOptions );
 	ini.GetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.GetValue( "Options", "ThreadedInput",					m_bThreadedInput );
+	ini.GetValue( "Options", "ThreadedMovieDecode",				m_bThreadedMovieDecode );
 	ini.GetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
 	ini.GetValue( "Options", "MachineName",						m_sMachineName );
 	ini.GetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
@@ -654,6 +656,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "ShowSongOptions",					m_ShowSongOptions );
 	ini.SetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
 	ini.SetValue( "Options", "ThreadedInput",					m_bThreadedInput );
+	ini.SetValue( "Options", "ThreadedMovieDecode",				m_bThreadedMovieDecode );
 	ini.SetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
 	ini.SetValue( "Options", "MachineName",						m_sMachineName );
 	ini.SetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );

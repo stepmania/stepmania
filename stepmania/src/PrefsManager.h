@@ -235,6 +235,7 @@ public:
 	CString			m_sLightsDriver;
 	bool			m_bAllowUnacceleratedRenderer;
 	bool			m_bThreadedInput;
+	bool			m_bThreadedMovieDecode;
 	bool			m_bScreenTestMode;
 	CString			m_sMachineName;
 
