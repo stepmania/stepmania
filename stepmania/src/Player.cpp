@@ -654,7 +654,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			{
 				// A mine.  Reward for not stepping on it.
 				MissedMineOnThisRow = true;
-				SetTapNoteScore(t, r, TNS_MARVELOUS);
+				SetTapNoteScore(t, r, GAMESTATE->ShowMarvelous()? TNS_MARVELOUS:TNS_PERFECT);
 			}
 			else
 			{
@@ -683,7 +683,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	if( iNumMissesFound > 0 )
 		m_Judgment.SetJudgment( TNS_MISS );
 	else if( iNumMinesMissed > 0 )
-		m_Judgment.SetJudgment( TNS_MARVELOUS );
+		m_Judgment.SetJudgment( GAMESTATE->ShowMarvelous()? TNS_MARVELOUS:TNS_PERFECT );
 }
 
 
