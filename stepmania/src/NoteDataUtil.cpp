@@ -510,14 +510,9 @@ void NoteDataUtil::Wide( NoteData &in, float fStartBeat, float fEndBeat )
 	/* Start on an even beat. */
 	fStartBeat = froundf( fStartBeat, 2 );
 
-	int first_row = 0;
-	if( fStartBeat != -1 )
-		first_row = BeatToNoteRow(fStartBeat);
+	const int first_row = BeatToNoteRow( fStartBeat );
+	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
 
-	int last_row = in.GetLastRow();
-	if( fEndBeat != -1 )
-		last_row = BeatToNoteRow(fEndBeat);
-	
 	for( int i=first_row; i<last_row; i+=ROWS_PER_BEAT*2 ) // every even beat
 	{
 		if( in.GetNumTapNonEmptyTracks(i) != 1 )
@@ -580,21 +575,16 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 
 	in.ConvertHoldNotesTo4s();
 
-	/* Start on an integral beat. */
-	fStartBeat = roundf( fStartBeat );
+	/* Start on a multiple of fBeatInterval. */
+	fStartBeat = froundf( fStartBeat, fBeatInterval );
 
 	// Insert a beat in the middle of every fBeatInterval.
+	const int first_row = BeatToNoteRow( fStartBeat );
+	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
 
-	int first_row = 0;
-	if( fStartBeat != -1 )
-		first_row = BeatToNoteRow(fStartBeat);
+	const int rows_per_interval = BeatToNoteRow( fBeatInterval );
+	const int insert_row_offset = BeatToNoteRow( fInsertBeatOffset );
 
-	int last_row = in.GetLastRow();
-	if( fEndBeat != -1 )
-		last_row = BeatToNoteRow(fEndBeat);
-
-	int rows_per_interval = BeatToNoteRow( fBeatInterval );
-	int insert_row_offset = BeatToNoteRow( fInsertBeatOffset );
 	for( int i=first_row; i<last_row; i+=rows_per_interval ) 
 	{
 		int iRowEarlier = i;
@@ -651,13 +641,8 @@ void NoteDataUtil::InsertIntelligentTaps( NoteData &in, float fBeatInterval, flo
 
 void NoteDataUtil::Mines( NoteData &in, float fStartBeat, float fEndBeat )
 {
-	int first_row = 0;
-	if( fStartBeat != -1 )
-		first_row = BeatToNoteRow(fStartBeat);
-
-	int last_row = in.GetLastRow();
-	if( fEndBeat != -1 )
-		last_row = BeatToNoteRow(fEndBeat);
+	const int first_row = BeatToNoteRow( fStartBeat );
+	const int last_row = min( BeatToNoteRow(fEndBeat), in.GetLastRow() );
 
 	//
 	// Change whole rows at a time to be tap notes.  Otherwise, it causes

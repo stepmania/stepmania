@@ -42,13 +42,13 @@ namespace NoteDataUtil
 	void RemoveHoldNotes( NoteData &in );
 	enum TurnType { left, right, mirror, shuffle, super_shuffle, NUM_TURN_TYPES };
 	void Turn( NoteData &in, StepsType st, TurnType tt );
-	void Little( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
-	void Wide( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
-	void Big( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
-	void Quick( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
-	void Skippy( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
-	void Mines( NoteData &in, float fStartBeat = -1, float fEndBeat = -1 );
-	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bSkippy, float fStartBeat = -1, float fEndBeat = -1 );
+	void Little( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Wide( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Big( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Quick( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Skippy( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void Mines( NoteData &in, float fStartBeat = 0, float fEndBeat = 99999 );
+	void InsertIntelligentTaps( NoteData &in, float fBeatInterval, float fInsertBeatOffset, bool bSkippy, float fStartBeat = 0, float fEndBeat = 99999 );
 	void SuperShuffleTaps( NoteData &in );
 
 	// change all TAP_ADDITIONs to TAP_TAPs
@@ -73,7 +73,7 @@ namespace NoteDataUtil
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( NoteData &in, int row, const bool bValidMask[] );
 
-	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat = -1, float fEndBeat = -1 );
+	void TransformNoteData( NoteData &nd, const PlayerOptions &po, StepsType st, float fStartBeat = 0, float fEndBeat = 99999 );
 
 	void Scale( NoteData &nd, float fScale );
 
