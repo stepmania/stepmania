@@ -21,10 +21,6 @@ uint8_t mySDL_EventState(uint8_t type, int state);
 void mySDL_GetAllEvents(vector<SDL_Event> &events);
 void mySDL_PushEvents(vector<SDL_Event> &events);
 
-class RageFile;
-void OpenRWops( SDL_RWops *rw, RageFile *f );
-void OpenRWops( SDL_RWops *rw, CString *sBuf );
-
 CString mySDL_GetError();
 
 void mySDL_WM_SetIcon( CString sIconFile );
