@@ -958,9 +958,14 @@ ArtistTo: 타샤니
 ArtistFrom: Hans Band
 ArtistTo: 한스밴드
 *
-
+# In the Groove:
+ArtistFrom: Smiley
+ArtistTo: ☺
+*
+ArtistFrom: KaW feat. Smiley
+ArtistTo: KaW feat. ☺
 # Misc:
-
+*
 TitleFrom: Pokemon
 TitleTo: Pokémon
 DontTransliterate
