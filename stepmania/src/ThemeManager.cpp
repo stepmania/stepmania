@@ -326,13 +326,7 @@ try_element_again:
 		goto try_element_again;
 		break;
 	case IDABORT:
-#endif
-		RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
-			sAssetCategory.GetString(),
-			sFileName.GetString(), 
-			GetThemeDirFromName(m_sCurThemeName).GetString(), 
-			GetThemeDirFromName(BASE_THEME_NAME).GetString() );
-#ifdef _DEBUG
+		goto abort;
 	case IDIGNORE:
 		LOG->Warn( 
 			"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
@@ -343,6 +337,15 @@ try_element_again:
 		return GetPathTo( sAssetCategory, "_missing" );
 	}
 #endif
+
+abort:
+	RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
+		sAssetCategory.GetString(),
+		sFileName.GetString(), 
+		GetThemeDirFromName(m_sCurThemeName).GetString(), 
+		GetThemeDirFromName(BASE_THEME_NAME).GetString() );
+
+	return "";
 }
 
 

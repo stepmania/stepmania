@@ -207,8 +207,6 @@ static void BoostAppPri()
 	if(version.dwMajorVersion >= 5)
 		pri = ABOVE_NORMAL_PRIORITY_CLASS;
 
-#include <winbase.h>
-
 	/* Be sure to boost the app, not the thread, to make sure the
 	 * sound thread stays higher priority than the main thread. */
 	SetPriorityClass(GetCurrentProcess(), pri);
