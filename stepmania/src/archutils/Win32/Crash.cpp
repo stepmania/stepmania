@@ -31,6 +31,8 @@
 
 #include "RageLog.h" /* for RageLog::GetAdditionalLog and Flush */
 #include "RageThreads.h" /* for GetCheckpointLogs */
+#include "PrefsManager.h" /* for g_bAutoRestart */
+#include "RestartProgram.h"
 
 #include "GotoURL.h"
 
@@ -208,6 +210,9 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	/* In case something goes amiss before the user can view the crash
 	 * dump, save it now. */
 	DoSave(pExc);
+
+	if( g_bAutoRestart )
+		Win32RestartProgram();
 
 	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
 	{
