@@ -897,7 +897,7 @@
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "/usr/include \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\"";
+				HEADER_SEARCH_PATHS = "/usr/include \"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers\" ../src \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL_image.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers\" \"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers\"";
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = /usr/lib;
@@ -3168,6 +3168,7 @@
 				AA4E8F7805E609100091C1A8,
 				AA4E8F7A05E609100091C1A8,
 				AA996D9805E9ED34008CA159,
+				AAA71EA105EE154E00D2E8FF,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9928,6 +9929,7 @@
 		};
 		AA6EFE6A04770D01005F316C = {
 			children = (
+				AAA71EA005EE154E00D2E8FF,
 				AA1DCB6004A4872700D02EE9,
 				AA6EFE6004770CF7005F316C,
 				AA272BFB04CB779F00D02EE9,
@@ -12242,6 +12244,20 @@
 			path = /System/Library/Frameworks/QuickTime.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
+		};
+		AAA71EA005EE154E00D2E8FF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = global.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAA71EA105EE154E00D2E8FF = {
+			fileRef = AAA71EA005EE154E00D2E8FF;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAA983CA04B9060A00D02EE9 = {
 			fileEncoding = 30;
