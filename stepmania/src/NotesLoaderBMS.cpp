@@ -74,6 +74,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, Notes &out )
 	CString line;
 	while( getline(file, line) )	// foreach line
 	{
+		StripCrnl(line);
 		CString value_name;		// fill these in
 		CString value_data;	
 
@@ -281,6 +282,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	CString line;
 	while( getline(file, line) )	// foreach line
 	{
+		StripCrnl(line);
+
 		CString value_name;		// fill these in
 		CString value_data;	
 
@@ -418,6 +421,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					CString line;
 					while( getline(file, line) )	// foreach line
 					{
+						StripCrnl(line);
 						CString value_name;		// fill these in
 						CString value_data;	
 
@@ -479,6 +483,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					CString line;
 					while( getline(file, line) )	// foreach line
 					{
+						StripCrnl(line);
 						CString value_name;		// fill these in
 						CString value_data;	
 
