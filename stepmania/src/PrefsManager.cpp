@@ -196,7 +196,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "Vsync",						m_bVsync );
 	ini.GetValueB( "Options", "HowToPlay",					m_bInstructions );
 	ini.GetValueB( "Options", "Caution",					m_bShowDontDie );
-	ini.GetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
+	ini.GetValueB( "Options", "ShowSelectGroup",			m_bShowSelectGroup );
 	ini.GetValueB( "Options", "ShowNative",					m_bShowNative );
 	ini.GetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.GetValue ( "Options", "DWIPath",					m_DWIPath );
@@ -305,7 +305,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 #endif
 	ini.SetValueB( "Options", "HowToPlay",					m_bInstructions );
 	ini.SetValueB( "Options", "Caution",					m_bShowDontDie );
-	ini.SetValueB( "Options", "SelectGroup",				m_bShowSelectGroup );
+	ini.SetValueB( "Options", "ShowSelectGroup",			m_bShowSelectGroup );
 	ini.SetValueB( "Options", "ShowNative",					m_bShowNative );
 	ini.SetValueB( "Options", "ArcadeOptionsNavigation",	m_bArcadeOptionsNavigation );
 	ini.SetValue ( "Options", "DWIPath",					m_DWIPath );
