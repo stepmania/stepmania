@@ -169,6 +169,7 @@ void ScreenNetRoom::UpdateRoomsList()
 		if ( ( i >= 0 ) && ( i < m_Rooms.size() ) )
 			TempText += m_Rooms[i] + '\n';
 	}
+	m_textRooms.SetText( TempText );
 }
 
 #endif
