@@ -742,11 +742,12 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 
 	if( bSwitchToLastPlayedGame )
 	{
-		Game game;
-		if( ini.GetValue("Options", "Game", (int&)game) )
+		CString sGame;
+		if( ini.GetValue("Options", "Game", sGame) )
 		{
-			CLAMP( (int&)game, 0, NUM_GAMES-1 );
-			GAMESTATE->m_CurGame = game;
+			GAMESTATE->m_CurGame = GAMEMAN->StringToGameType( sGame );
+			if( GAMESTATE->m_CurGame == GAME_INVALID )
+				GAMESTATE->m_CurGame = (Game)0;
 		}
 	}
 }
@@ -765,7 +766,7 @@ void SaveGamePrefsToDisk()
 	ini.SetValue( sGameName, "Announcer",			ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",				THEME->GetCurThemeName() );
 	ini.SetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
-	ini.SetValue( "Options", "Game",				GAMESTATE->m_CurGame );
+	ini.SetValue( "Options", "Game",				(CString)GAMESTATE->GetCurrentGameDef()->m_szName );
 
 	ini.WriteFile();
 }
