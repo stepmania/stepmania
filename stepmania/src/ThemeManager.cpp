@@ -85,6 +85,7 @@ CString ThemeManager::GetPathTo( ThemeElement te, CString sThemeName )
 		case SOUND_MENU_SWOOSH:				sAssetPath = "Sounds\\menu swoosh";						break;
 		case SOUND_MENU_BACK:				sAssetPath = "Sounds\\menu back";						break;
 		case SOUND_TRAINING_MUSIC:			sAssetPath = "Sounds\\training music";					break;
+		case SOUND_INVALID:					sAssetPath = "Sounds\\invalid";							break;
 
 		case FONT_OUTLINE:					sAssetPath = "Fonts\\Outline";							break;
 		case FONT_NORMAL:					sAssetPath = "Fonts\\Normal";							break;

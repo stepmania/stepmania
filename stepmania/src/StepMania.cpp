@@ -309,9 +309,6 @@ HRESULT CreateObjects( HWND hWnd )
 	WM		= new WindowManager;
 
 	// throw something up on the screen while the game resources are loading
-	// super hack!  Why do we crash unless we have rendered one frame before drawing anything?
-	Render();
-	ShowFrame();
 	WM->SetNewWindow( new WindowLoading );
 	Render();
 	ShowFrame();
@@ -338,8 +335,6 @@ HRESULT CreateObjects( HWND hWnd )
 	//WM->SetNewWindow( new WindowMenuResults );
 	//WM->SetNewWindow( new WindowPlayerOptions );
 	WM->SetNewWindow( new WindowTitleMenu );
-
-	//Sleep(2000);	// let the disk operations catch up
 
 
     DXUtil_Timer( TIMER_START );    // Start the accurate timer
