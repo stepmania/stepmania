@@ -115,7 +115,7 @@ protected:
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprStage;
 	Sprite				m_sprCourseSongNumber;
-	Sprite				m_sprStageFrame;
+	AutoActor			m_sprStageFrame;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 	BitmapText			m_textPlayerName[NUM_PLAYERS];
 	BitmapText			m_textStepsDescription[NUM_PLAYERS];

@@ -563,12 +563,10 @@ ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen("S
 	}
 
 
-	m_sprStageFrame.SetName( "StageFrame" );
 	m_sprStageFrame.Load( THEME->GetPathToG("ScreenGameplay stage frame") );
+	m_sprStageFrame->SetName( "StageFrame" );
 	SET_XY( m_sprStageFrame );
-	/* Show in course mode and regular play, but not demo.  (This will go away eventually.) */
-	if( !bDemonstration )
-		this->AddChild( &m_sprStageFrame );
+	this->AddChild( m_sprStageFrame );
 
 	//
 	// Player/Song options
