@@ -175,7 +175,8 @@ public:
 		bool IsBlank() { return sModifier.empty(); }
 		void MakeBlank() { sModifier=""; }
 	};
-	Attack	m_ActiveAttacks[NUM_PLAYERS][NUM_INVENTORY_SLOTS];
+	enum { MAX_SIMULTANEOUS_ATTACKS=16 };
+	Attack	m_ActiveAttacks[NUM_PLAYERS][MAX_SIMULTANEOUS_ATTACKS];
 	vector<PlayerOptions::Transform>	m_TransformsToApply[NUM_PLAYERS];
 
 	// used in PLAY_MODE_BATTLE

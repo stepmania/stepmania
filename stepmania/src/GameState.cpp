@@ -147,7 +147,7 @@ void GameState::Update( float fDelta )
 
 		m_bActiveAttackEndedThisUpdate[p] = false;
 
-		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+		for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		{
 			if( m_ActiveAttacks[p][s].fSecsRemaining > 0 )
 			{
@@ -624,18 +624,21 @@ void GameState::LaunchAttack( PlayerNumber target, Attack a )
 	}
 
 	// search for an open slot
-	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		if( m_ActiveAttacks[target][s].fSecsRemaining <= 0 )
 		{
 			m_ActiveAttacks[target][s] = a;
 			GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( target );
 			return;
 		}
+
+	LOG->Warn("Couldn't launch attack '%s' against p%i: no empty attack slots",
+		a.sModifier.c_str(), target );
 }
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn )
 {
-	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 	{
 		m_ActiveAttacks[pn][s].fSecsRemaining = 0;
 		m_ActiveAttacks[pn][s].sModifier = "";
@@ -657,7 +660,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 {
 	// rebuild player options
 	PlayerOptions po = m_StoredPlayerOptions[pn];
-	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		po.FromString( m_ActiveAttacks[pn][s].sModifier );
 	m_PlayerOptions[pn] = po;
 }
@@ -666,7 +669,7 @@ int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )
 {
 	int iSum = 0;
 
-	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	for( int s=0; s<MAX_SIMULTANEOUS_ATTACKS; s++ )
 		if( m_ActiveAttacks[pn][s].fSecsRemaining > 0 )
 			iSum += m_ActiveAttacks[pn][s].level;
 
