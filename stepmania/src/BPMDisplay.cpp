@@ -89,7 +89,7 @@ void BPMDisplay::Update( float fDeltaTime )
 
 void BPMDisplay::SetBPMRange( const vector<float> &BPMS )
 {
-	ASSERT( m_BPMS.size() );
+	ASSERT( BPMS.size() );
 
 	m_BPMS.clear();
 	unsigned i;
@@ -164,6 +164,7 @@ void BPMDisplay::SetBPM( const Song* pSong )
 			BPMS.push_back(fMinBPM);
 			BPMS.push_back(fMaxBPM);
 			SetBPMRange( BPMS );
+			m_fCycleTime = 1.0f;
 		}
 		break;
 	case Song::DISPLAY_RANDOM:
@@ -172,8 +173,6 @@ void BPMDisplay::SetBPM( const Song* pSong )
 	default:
 		ASSERT(0);
 	}
-
-	m_fCycleTime = 1.0f;
 }
 
 void BPMDisplay::SetBPM( const Course* pCourse )
