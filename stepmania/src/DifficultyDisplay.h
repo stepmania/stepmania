@@ -23,6 +23,7 @@ class DifficultyDisplay : public ActorFrame
 public:
 	DifficultyDisplay();
 	void SetDifficulties( const Song* pSong, NotesType curType );
+	void UnsetDifficulties();
 
 protected:
 	Sprite m_difficulty[NUM_DIFFICULTIES];

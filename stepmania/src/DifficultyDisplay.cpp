@@ -42,6 +42,12 @@ void DifficultyDisplay::SetDifficulties( const Song* pSong, NotesType curType )
 	}
 }
 
+void DifficultyDisplay::UnsetDifficulties()
+{
+	for( int diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
+		m_difficulty[diff].Command( ICONOFFCOMMAND );
+}
+
 /*
    Copyright (c) 2003 by the person(s) listed below. All rights reserved.
      Steven Towle
