@@ -33,7 +33,7 @@ FontManager::~FontManager()
 	{
 		Font* pFont = i->second;
 		LOG->Trace( "FONT LEAK: '%s', RefCount = %d.", i->first.GetString(), pFont->m_iRefCount );
-		SAFE_DELETE( pFont );
+		delete pFont;
 	}
 }
 
@@ -52,8 +52,8 @@ Font* FontManager::LoadFont( CString sFontOrTextureFilePath, CString sChars )
 
 	map<CString, Font*>::iterator p = m_mapPathToFont.find(sFontOrTextureFilePath);
 	if(p != m_mapPathToFont.end()) {
-//		LOG->Trace( ssprintf("FontManager: The Font '%s' now has %d references.", sFontFilePath.GetString(), pFont->m_iRefCount) );
 		Font *pFont=p->second;
+//		LOG->Trace( ssprintf("FontManager: The Font '%s' now has %d references.", sFontOrTextureFilePath.GetString(), pFont->m_iRefCount) );
 		pFont->m_iRefCount++;
 		return pFont;
 	}

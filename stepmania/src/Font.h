@@ -63,6 +63,7 @@ public:
 	map<int,glyph*> m_iCharToGlyph;
 
 	Font();
+	~Font();
 
 	RageTexture *GetGlyphTexture( int c );
 	const glyph &GetGlyph( int c ) const;
