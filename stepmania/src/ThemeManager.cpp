@@ -456,7 +456,9 @@ try_element_again:
 		CString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
 
 		if( !sNewPath.empty() )
+		{
 			return sNewPath;
+		}
 		else
 		{
 			CString message = ssprintf(
