@@ -50,12 +50,10 @@ bool UnlockSystem::SongIsLocked( const Song *song )
 		p->updateLocked();
 
 		if (!p->isLocked) tmp = "un";
-
-		LOG->Trace( "UnlockSystem entry: %s", (p->m_sSongName).c_str() );
 		LOG->Trace( "current status: %slocked", tmp.c_str() );
 	}
 	
-	return p && p->isLocked;
+	return (p != NULL) && (p->isLocked);
 }
 
 bool UnlockSystem::SongIsRoulette( const Song *song )
@@ -74,10 +72,37 @@ bool UnlockSystem::SongIsRoulette( const Song *song )
 
 SongEntry *UnlockSystem::FindSong( const Song *pSong )
 {
+	int left = 0;
+	int right = m_SongEntries.size() - 1;
+	CString songtitle = pSong->GetFullTranslitTitle();
+
+	songtitle.MakeUpper();
+
+	while (left != right)
+	{
+		int mid = (left + right)/2;
+		
+		if (songtitle <= m_SongEntries[mid].m_sSongName )
+			right = mid;
+		else
+			left = mid + 1;
+	}
+
+
+	if (m_SongEntries[left].GetSong() == pSong)
+	{
+		LOG->Trace("UnlockSystem: Retrieved: %s", pSong->GetFullTranslitTitle().c_str());
+		return &m_SongEntries[left];
+	}
+
+/*	
 	for(unsigned i = 0; i < m_SongEntries.size(); i++)
 		if (m_SongEntries[i].GetSong() == pSong )
 			return &m_SongEntries[i];
-		
+*/		
+	LOG->Trace("UnlockSystem: Failed to find %s", pSong->GetFullTranslitTitle().c_str());
+	LOG->Trace("            (landed on %s)", m_SongEntries[left].m_sSongName.c_str() );
+
 	return NULL;
 }
 
@@ -326,4 +351,16 @@ float UnlockSystem::SongPointsUntilNextUnlock()
 Song *SongEntry::GetSong() const
 {
 	return SONGMAN->FindSong( "", m_sSongName );
+}
+
+void UnlockSystem::DebugPrint()
+{
+	for(unsigned i=0; i < m_SongEntries.size(); i++)
+	{
+		CString tmp = "  ";
+		if (!m_SongEntries[i].isLocked) tmp = "un";
+		LOG->Trace( "UnlockSystem entry %d: %s",i, m_SongEntries[i].m_sSongName.c_str() );
+		LOG->Trace( "Status:%slocked", tmp.c_str() );
+	}
+
 }

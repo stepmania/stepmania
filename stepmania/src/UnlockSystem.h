@@ -69,6 +69,8 @@ public:
 	float UnlockToasty();
 	bool RouletteUnlock( const Song *song );
 
+	void DebugPrint();
+
 private:
 	void SortSongEntriesArray();  // sorts unlocks
 	bool ParseRow(CString text, CString &type, float &qty, CString &songname);
