@@ -908,13 +908,13 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 void NoteDataUtil::Big( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	// add 8ths between 4ths
-	InsertIntelligentTaps( inout,1.0f,0.5f,1.0f,false,iStartIndex,iEndIndex );
+	InsertIntelligentTaps( inout,BeatToNoteRow(1.0f), BeatToNoteRow(0.5f), BeatToNoteRow(1.0f), false,iStartIndex,iEndIndex );
 }
 
 void NoteDataUtil::Quick( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	// add 16ths between 8ths
-	InsertIntelligentTaps( inout,0.5f,0.25f,1.0f,false,iStartIndex,iEndIndex );
+	InsertIntelligentTaps( inout, BeatToNoteRow(0.5f), BeatToNoteRow(0.25f), BeatToNoteRow(1.0f), false,iStartIndex,iEndIndex );
 }
 
 // Due to popular request by people annoyed with the "new" implementation of Quick, we now have
@@ -928,20 +928,20 @@ void NoteDataUtil::BMRize( NoteData &inout, int iStartIndex, int iEndIndex )
 void NoteDataUtil::Skippy( NoteData &inout, int iStartIndex, int iEndIndex )
 {
 	// add 16ths between 4ths
-	InsertIntelligentTaps( inout,1.0f,0.75f,1.0f,true,iStartIndex,iEndIndex );
+	InsertIntelligentTaps( inout, BeatToNoteRow(1.0f), BeatToNoteRow(0.75f),BeatToNoteRow(1.0f), true,iStartIndex,iEndIndex );
 }
 
 void NoteDataUtil::InsertIntelligentTaps( 
 	NoteData &inout, 
-	float fWindowSizeBeats, 
-	float fInsertOffsetBeats, 
-	float fWindowStrideBeats, 
+	int iWindowSizeRows, 
+	int iInsertOffsetRows, 
+	int iWindowStrideRows, 
 	bool bSkippy, 
 	int iStartIndex,
 	int iEndIndex )
 {
-	ASSERT( fInsertOffsetBeats <= fWindowSizeBeats );
-	ASSERT( fWindowSizeBeats <= fWindowStrideBeats );
+	ASSERT( iInsertOffsetRows <= iWindowSizeRows );
+	ASSERT( iWindowSizeRows <= iWindowStrideRows );
 
 	inout.ConvertHoldNotesTo4s();
 
@@ -949,18 +949,14 @@ void NoteDataUtil::InsertIntelligentTaps(
 	bool bRequireNoteAtEndOfWindow = true;
 
 	/* Start on a multiple of fBeatInterval. */
-	iStartIndex = Quantize( iStartIndex, BeatToNoteRow(fWindowStrideBeats) );
+	iStartIndex = Quantize( iStartIndex, iWindowStrideRows );
 
 	// Insert a beat in the middle of every fBeatInterval.
-	const int rows_per_window = BeatToNoteRow( fWindowSizeBeats );
-	const int rows_per_stride = BeatToNoteRow( fWindowStrideBeats );
-	const int insert_row_offset = BeatToNoteRow( fInsertOffsetBeats );
-
-	for( int i=iStartIndex; i<iEndIndex; i+=rows_per_stride ) 
+	for( int i=iStartIndex; i<iEndIndex; i+=iWindowStrideRows ) 
 	{
 		int iRowEarlier = i;
-		int iRowLater = i + rows_per_window;
-		int iRowToAdd = i + insert_row_offset;
+		int iRowLater = i + iWindowSizeRows;
+		int iRowToAdd = i + iInsertOffsetRows;
 		// following two lines have been changed because the behavior of treating hold-heads
 		// as different from taps doesn't feel right, and because we need to check
 		// against TAP_ADDITION with the BMRize mod.
@@ -1057,16 +1053,15 @@ void NoteDataUtil::AddMines( NoteData &inout, int iStartIndex, int iEndIndex )
 	for( int i=0; i<inout.GetNumHoldNotes(); i++ )
 	{
 		HoldNote &hn = inout.GetHoldNote(i);
-		float fHoldEndBeat = hn.GetEndBeat();
-		float fMineBeat = fHoldEndBeat+0.5f;
-		int iMineRow = BeatToNoteRow( fMineBeat );
+		int iHoldEndRow = hn.iEndRow;
+		int iMineRow = iHoldEndRow+BeatToNoteRow(0.5f);
 
 		if( iMineRow < iStartIndex || iMineRow > iEndIndex )
 			continue;
 
 		// Only place a mines if there's not another step nearby
-		int iMineRangeBegin = BeatToNoteRow( fMineBeat-0.5f ) + 1;
-		int iMineRangeEnd = BeatToNoteRow( fMineBeat+0.5f ) - 1;
+		int iMineRangeBegin = iMineRow - BeatToNoteRow( 0.5f ) + 1;
+		int iMineRangeEnd = iMineRow + BeatToNoteRow( 0.5f ) - 1;
 		if( !inout.IsRangeEmpty(hn.iTrack, iMineRangeBegin, iMineRangeEnd) )
 			continue;
 	
@@ -1179,15 +1174,13 @@ void NoteDataUtil::ConvertTapsToHolds( NoteData &inout, int iSimultaneousHolds, 
 					else if( iTapsLeft < 0 )
 						goto dont_add_hold;
 				}
-				float fStartBeat = NoteRowToBeat(r);
-				float fEndBeat = NoteRowToBeat(r2);
 
 				// If the steps end in a tap, convert that tap
 				// to a hold that lasts for at least one beat.
-				if( r2==r+1 )
-					fEndBeat = fStartBeat+1;
+				if( r2 == r+1 )
+					r2 = r+BeatToNoteRow(1);
 
-				inout.AddHoldNote( HoldNote(t,BeatToNoteRow(fStartBeat),BeatToNoteRow(fEndBeat)) );
+				inout.AddHoldNote( HoldNote(t,r,r2) );
 				iTrackAddedThisRow++;
 			}
 dont_add_hold:
@@ -1604,24 +1597,24 @@ void NoteDataUtil::Scale( NoteData &nd, float fScale )
 
 // added to fix things in the editor - make sure that you're working off data that is 
 // either in 4s or in 2s and 3s.
-void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, float fEndBeat)
+void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int iEndIndex )
 {
 	ASSERT( fScale > 0 );
-	ASSERT( fStartBeat < fEndBeat );
-	ASSERT( fStartBeat >= 0 );
+	ASSERT( iStartIndex < iEndIndex );
+	ASSERT( iStartIndex >= 0 );
 
 	NoteData temp1, temp2;
 	temp1.Config( nd );
 	temp2.Config( nd );
 
-	const int iFirstRowAtEndOfRegion = min( nd.GetLastRow(), BeatToNoteRowNotRounded(fEndBeat) );
-	const int iScaledFirstRowAfterRegion = (int)((fStartBeat + (fEndBeat - fStartBeat) * fScale) * ROWS_PER_BEAT);
+	const int iFirstRowAtEndOfRegion = min( nd.GetLastRow(), iEndIndex );
+	const int iScaledFirstRowAfterRegion = int(iStartIndex + (iEndIndex - iStartIndex) * fScale);
 
-	if( fStartBeat != 0 )
-		temp1.CopyRange( nd, 0, BeatToNoteRowNotRounded(fStartBeat) );
+	if( iStartIndex != 0 )
+		temp1.CopyRange( nd, 0, iStartIndex );
 	if( nd.GetLastRow() > iFirstRowAtEndOfRegion )
 		temp1.CopyRange( nd, iFirstRowAtEndOfRegion, nd.GetLastRow(), iScaledFirstRowAfterRegion);
-	temp2.CopyRange( nd, BeatToNoteRowNotRounded(fStartBeat), iFirstRowAtEndOfRegion );
+	temp2.CopyRange( nd, iStartIndex, iFirstRowAtEndOfRegion );
 	nd.ClearAll();
 
 	for( int r=0; r<=temp2.GetLastRow(); r++ )
@@ -1633,7 +1626,7 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, fl
 			{
 				temp2.SetTapNote( t, r, TAP_EMPTY );
 
-				int new_row = int(r*fScale + fStartBeat*ROWS_PER_BEAT);
+				int new_row = int(r*fScale + iStartIndex);
 				temp1.SetTapNote( t, new_row, tn );
 			}
 		}
@@ -1642,20 +1635,17 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, float fStartBeat, fl
 	nd.CopyAll( temp1 );
 }
 
-void NoteDataUtil::ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShift )
+void NoteDataUtil::ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift )
 {
 	NoteData temp;
 	temp.SetNumTracks( nd.GetNumTracks() );
-	int iTakeFromRow=0;
-	int iPasteAtRow;
+	int iTakeFromRow = iStartIndex;
+	int iPasteAtRow = iStartIndex;
 
-	iTakeFromRow = BeatToNoteRow( fStartBeat );
-	iPasteAtRow = BeatToNoteRow( fStartBeat );
-
-	if( fBeatsToShift > 0 )	// add blank rows
-		iPasteAtRow += BeatToNoteRow( fBeatsToShift );
+	if( iRowsToShift > 0 )	// add blank rows
+		iPasteAtRow += iRowsToShift;
 	else	// delete rows
-		iTakeFromRow += BeatToNoteRow( -fBeatsToShift );
+		iTakeFromRow -= iRowsToShift;
 
 	temp.CopyRange( nd, iTakeFromRow, nd.GetLastRow() );
 	nd.ClearRange( min(iTakeFromRow,iPasteAtRow), nd.GetLastRow()  );

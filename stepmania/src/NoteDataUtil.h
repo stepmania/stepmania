@@ -49,9 +49,9 @@ namespace NoteDataUtil
 	void Skippy( NoteData &inout, int iStartIndex = 0, int iEndIndex = 999999 );
 	void InsertIntelligentTaps( 
 		NoteData &in, 
-		float fWindowSizeBeats, 
-		float fInsertOffsetBeats, 
-		float fWindowStrideBeats, 
+		int iWindowSizeRows,
+		int iInsertOffsetRows,
+		int iWindowStrideRows,
 		bool bSkippy, 
 		int iStartIndex = 0,
 		int iEndIndex = 999999 );
@@ -94,11 +94,11 @@ namespace NoteDataUtil
 	void AddTapAttacks( NoteData &nd, Song* pSong );
 
 	// void Scale( NoteData &nd, float fScale );
-	void ScaleRegion( NoteData &nd, float fScale, float fStartBeat = 0, float fEndBeat = 99999);
+	void ScaleRegion( NoteData &nd, float fScale, int iStartIndex = 0, int iEndIndex = 999999 );
 	inline void Scale( NoteData &nd, float fScale ) { NoteDataUtil::ScaleRegion(nd, fScale); }
 
-	// If fBeatsToShift>0, add blank rows.  If fBeatsToShift<0, delete rows
-	void ShiftRows( NoteData &nd, float fStartBeat, float fBeatsToShift );
+	// If iRowsToShift > 0, add blank rows.  If iRowsToShift < 0, delete rows
+	void ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift );
 
 	void RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove );
 	void RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep );

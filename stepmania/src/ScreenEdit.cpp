@@ -2064,7 +2064,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				float fNewClipboardBeats = fOldClipboardBeats * fScale;
 				float fDeltaBeats = fNewClipboardBeats - fOldClipboardBeats;
 				float fNewClipboardEndBeat = m_NoteFieldEdit.m_fBeginMarker + fNewClipboardBeats;
-				NoteDataUtil::ShiftRows( m_NoteDataEdit, m_NoteFieldEdit.m_fBeginMarker, fDeltaBeats );
+				NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(fDeltaBeats) );
 				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
 
 				HandleAreaMenuChoice( paste_at_begin_marker, NULL );
@@ -2084,7 +2084,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 					sIter[i]->GetNoteData( ndTemp );
 					ndTemp.ConvertHoldNotesTo2sAnd3s();
-					NoteDataUtil::ScaleRegion( ndTemp, fScale, m_NoteFieldEdit.m_fBeginMarker, m_NoteFieldEdit.m_fEndMarker );
+					NoteDataUtil::ScaleRegion( ndTemp, fScale, BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker), BeatToNoteRow(m_NoteFieldEdit.m_fEndMarker) );
 					ndTemp.Convert2sAnd3sToHoldNotes();
 					sIter[i]->SetNoteData( ndTemp );
 				}
@@ -2187,10 +2187,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 			}
 			break;
 		case insert_and_shift:
-			NoteDataUtil::ShiftRows( m_NoteDataEdit, GAMESTATE->m_fSongBeat, 1 );
+			NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
 			break;
 		case delete_and_shift:
-			NoteDataUtil::ShiftRows( m_NoteDataEdit, GAMESTATE->m_fSongBeat, -1 );
+			NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(-1) );
 			break;
 		case shift_pauses_forward:
 			m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat, 1 );
@@ -2209,8 +2209,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				// be sure not to clobber the row at the start - a row at the end
 				// can be dropped safely, though
 				NoteDataUtil::ShiftRows( m_NoteDataEdit, 
-										 m_NoteFieldEdit.m_fBeginMarker + 0.003f,
-										 (-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
+										 BeatToNoteRow(m_NoteFieldEdit.m_fBeginMarker) + 1,
+										 BeatToNoteRow(-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
 									   );
 				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_fBeginMarker + 0.003f,
 										     (-m_NoteFieldEdit.m_fEndMarker+m_NoteFieldEdit.m_fBeginMarker)
@@ -2264,7 +2264,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 					fStopLength /= 60;
 					// don't move the step from where it is, just move everything later
 					m_NoteDataEdit.ConvertHoldNotesTo2sAnd3s();
-					NoteDataUtil::ShiftRows( m_NoteDataEdit, GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
+					NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
 					m_pSong->m_Timing.ShiftRows( GAMESTATE->m_fSongBeat + 0.003f, fStopLength );
 					m_NoteDataEdit.Convert2sAnd3sToHoldNotes();
 
