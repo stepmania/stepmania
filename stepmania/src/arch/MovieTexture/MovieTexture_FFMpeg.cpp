@@ -615,7 +615,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 		/* If we're ahead, we're decoding too fast; delay. */
 		if( Offset > 0 )
 		{
-			SDL_Delay( int(1000*(decoder->CurrentTimestamp - Clock)) );
+			SDL_Delay( int(1000*Offset) );
 			if( FrameSkipMode )
 			{
 				/* We're caught up; stop skipping frames. */
@@ -653,7 +653,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 			if( -Offset >= FrameSkipThreshold && !FrameSkipMode )
 			{
 				LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
-					GetID().filename.c_str(), decoder->CurrentTimestamp, Clock );
+					GetID().filename.c_str(), Clock, decoder->CurrentTimestamp);
 				FrameSkipMode = true;
 			}
 		}
@@ -690,9 +690,9 @@ MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
 
 void MovieTexture_FFMpeg::Update(float fDeltaTime)
 {
-	if( m_State != PLAYING )
-		return;
-
+	/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
+	 * the decoder thread may sit around waiting for it, even though Pause and Play
+	 * calls, causing the clock to keep running. */
 	if( !m_ImageWaiting )
 		return;
 
@@ -723,9 +723,6 @@ void MovieTexture_FFMpeg::Reload()
 
 void MovieTexture_FFMpeg::StartThread()
 {
-	/* If we had a frame waiting from a previous thread start, clear it. */
-	m_ImageWaiting = false;
-
 	ASSERT( m_State == DECODER_QUIT );
 	m_State = PAUSE_DECODER;
 	m_DecoderThread.SetName( ssprintf("MovieTexture_FFMpeg(%s)", GetID().filename.c_str()) );
@@ -747,6 +744,8 @@ void MovieTexture_FFMpeg::StopThread()
 	m_DecoderThread.Wait();
 	CHECKPOINT;
 	
+	m_ImageWaiting = false;
+
 	/* Clear the above post, if the thread didn't. */
 	SDL_SemTryWait(m_BufferFinished);
 
