@@ -88,7 +88,7 @@ Grade StageStats::GetGrade( PlayerNumber pn )
 
 	float Possible = 0, Actual = 0;
 	int i;
-	for( i = TNS_MISS; i < NUM_TAP_NOTE_SCORES; ++i )
+	for( i = 0; i < NUM_TAP_NOTE_SCORES; ++i )
 	{
 		Actual += iTapNoteScores[pn][i] * TapScoreValues[i];
 		Possible += iTapNoteScores[pn][i] * TapScoreValues[TNS_MARVELOUS];

@@ -292,12 +292,12 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case TNS_MARVELOUS:	fDeltaLife = +0.008f;	break;
-		case TNS_PERFECT:	fDeltaLife = +0.008f;	break;
-		case TNS_GREAT:		fDeltaLife = +0.004f;	break;
-		case TNS_GOOD:		fDeltaLife = +0.000f;	break;
-		case TNS_BOO:		fDeltaLife = -0.040f;	break;
-		case TNS_MISS:		fDeltaLife = -0.080f;	break;
+		case TNS_MARVELOUS:	fDeltaLife = PREFSMAN->m_fLifeDeltaMarvelousPercentChange;	break;
+		case TNS_PERFECT:	fDeltaLife = PREFSMAN->m_fLifeDeltaPerfectPercentChange;	break;
+		case TNS_GREAT:		fDeltaLife = PREFSMAN->m_fLifeDeltaGreatPercentChange;		break;
+		case TNS_GOOD:		fDeltaLife = PREFSMAN->m_fLifeDeltaGoodPercentChange;		break;
+		case TNS_BOO:		fDeltaLife = PREFSMAN->m_fLifeDeltaBooPercentChange;		break;
+		case TNS_MISS:		fDeltaLife = PREFSMAN->m_fLifeDeltaMissPercentChange;		break;
 		default:
 			ASSERT(0);
 		}
@@ -311,8 +311,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		case TNS_PERFECT:	fDeltaLife = +0.000f;	break;
 		case TNS_GREAT:		fDeltaLife = +0.000f;	break;
 		case TNS_GOOD:		fDeltaLife = +0.000f;	break;
-		case TNS_BOO:		fDeltaLife = -0.040f;	break;
-		case TNS_MISS:		fDeltaLife = -0.080f;	break;
+		case TNS_BOO:		fDeltaLife = PREFSMAN->m_fLifeDeltaBooPercentChange;	break;
+		case TNS_MISS:		fDeltaLife = PREFSMAN->m_fLifeDeltaMissPercentChange;	break;
 		default:
 			ASSERT(0);
 		}
@@ -334,20 +334,67 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		ASSERT(0);
 	}
 
-	// handle progressiveness and ComboToRegainLife here
-	switch( score )
+	ChangeLife( fDeltaLife );
+}
+
+void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
+{
+	/* The initial tap note score (which we happen to have in have in
+	 * tscore) has already been reported to the above function.  If the
+	 * hold end result was an NG, count it as a miss; if the end result
+	 * was an OK, count a perfect.  (Remember, this is just life meter
+	 * computation, not scoring.) */
+	float fDeltaLife=0.f;
+	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
-	case TNS_MARVELOUS:
-	case TNS_PERFECT:
-	case TNS_GREAT:
-	case TNS_GOOD:
+	case SongOptions::DRAIN_NORMAL:
+		switch( score )
+		{
+		case HNS_OK:	fDeltaLife = PREFSMAN->m_fLifeDeltaOKPercentChange;	break;
+		case HNS_NG:	fDeltaLife = PREFSMAN->m_fLifeDeltaNGPercentChange;	break;
+		default:
+			ASSERT(0);
+		}
+		if( IsHot()  &&  score == HNS_NG )
+			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
+		break;
+	case SongOptions::DRAIN_NO_RECOVER:
+		switch( score )
+		{
+		case HNS_OK:	fDeltaLife = +0.000f;	break;
+		case HNS_NG:	fDeltaLife = PREFSMAN->m_fLifeDeltaNGPercentChange;	break;
+		default:
+			ASSERT(0);
+		}
+		break;
+	case SongOptions::DRAIN_SUDDEN_DEATH:
+		switch( score )
+		{
+		case HNS_OK:		fDeltaLife = +0;	break;
+		case HNS_NG:		fDeltaLife = -1.0;	break;
+		default:
+			ASSERT(0);
+		}
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	ChangeLife( fDeltaLife );
+}
+
+void LifeMeterBar::ChangeLife( float fDeltaLife )
+{
+	// handle progressiveness and ComboToRegainLife here
+	if( fDeltaLife >= 0 )
+	{
 		m_iMissCombo = 0;
 		m_iComboToRegainLife = max( m_iComboToRegainLife-1, 0 );
 		if ( m_iComboToRegainLife > 0 )
 			fDeltaLife = 0.0f;
-		break;
-	case TNS_BOO:
-	case TNS_MISS:
+	}
+	else
+	{
 		fDeltaLife *= 1 + (float)m_iProgressiveLifebar/8 * m_iMissCombo;
 		// do this after; only successive boo/miss will
 		// increase the amount of life lost.
@@ -394,17 +441,27 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	m_fLifeVelocity += fDeltaLife;
 }
 
-void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
+void LifeMeterBar::ChangeLifeMine()
 {
-	/* The initial tap note score (which we happen to have in have in
-	 * tscore) has already been reported to the above function.  If the
-	 * hold end result was an NG, count it as a miss; if the end result
-	 * was an OK, count a perfect.  (Remember, this is just life meter
-	 * computation, not scoring.) */
-	if(score == HNS_NG)
-		ChangeLife(TNS_MISS);
-	else if(score == HNS_OK)
-		ChangeLife(TNS_PERFECT);
+	float fDeltaLife=0.f;
+	switch( GAMESTATE->m_SongOptions.m_DrainType )
+	{
+	case SongOptions::DRAIN_NORMAL:
+		fDeltaLife = PREFSMAN->m_fLifeDeltaMinePercentChange;
+		if( IsHot() )
+			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
+		break;
+	case SongOptions::DRAIN_NO_RECOVER:
+		fDeltaLife = PREFSMAN->m_fLifeDeltaMinePercentChange;
+		break;
+	case SongOptions::DRAIN_SUDDEN_DEATH:
+		fDeltaLife = -1.0;
+		break;
+	default:
+		ASSERT(0);
+	}
+
+	ChangeLife( fDeltaLife );
 }
 
 void LifeMeterBar::AfterLifeChanged()

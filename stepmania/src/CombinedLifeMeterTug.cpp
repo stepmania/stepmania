@@ -12,6 +12,7 @@
 #include "CombinedLifeMeterTug.h"
 #include "ThemeManager.h"
 #include "GameState.h"
+#include "PrefsManager.h"
 
 
 const float METER_WIDTH = 550;
@@ -55,16 +56,16 @@ void CombinedLifeMeterTug::Update( float fDelta )
 
 void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 {
-	float fPercentToMove;
+	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_MARVELOUS:		fPercentToMove = +0.010f;	break;
-	case TNS_PERFECT:		fPercentToMove = +0.010f;	break;
-	case TNS_GREAT:			fPercentToMove = +0.005f;	break;
-	case TNS_GOOD:			fPercentToMove = +0.000f;	break;
-	case TNS_BOO:			fPercentToMove = -0.010f;	break;
-	case TNS_MISS:			fPercentToMove = -0.020f;	break;
-	default:	ASSERT(0);	fPercentToMove = +0.000f;	break;
+	case TNS_MARVELOUS:		fPercentToMove = PREFSMAN->m_fLifeDeltaMarvelousPercentChange;	break;
+	case TNS_PERFECT:		fPercentToMove = PREFSMAN->m_fLifeDeltaPerfectPercentChange;	break;
+	case TNS_GREAT:			fPercentToMove = PREFSMAN->m_fLifeDeltaGreatPercentChange;		break;
+	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fLifeDeltaGoodPercentChange;		break;
+	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fLifeDeltaBooPercentChange;		break;
+	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fLifeDeltaMissPercentChange;		break;
+	default:	ASSERT(0);	break;
 	}
 
 	switch( pn )
@@ -79,5 +80,39 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 
 void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore )
 {
+	/* The initial tap note score (which we happen to have in have in
+	 * tscore) has already been reported to the above function.  If the
+	 * hold end result was an NG, count it as a miss; if the end result
+	 * was an OK, count a perfect.  (Remember, this is just life meter
+	 * computation, not scoring.) */
+	float fPercentToMove = 0;
+	switch( score )
+	{
+	case HNS_OK:			fPercentToMove = PREFSMAN->m_fLifeDeltaOKPercentChange;	break;
+	case HNS_NG:			fPercentToMove = PREFSMAN->m_fLifeDeltaNGPercentChange;	break;
+	default:	ASSERT(0);	break;
+	}
 
+	switch( pn )
+	{
+	case PLAYER_1:	GAMESTATE->m_fTugLifePercentP1 += fPercentToMove;	break;
+	case PLAYER_2:	GAMESTATE->m_fTugLifePercentP1 -= fPercentToMove;	break;
+	default:	ASSERT(0);
+	}
+
+	CLAMP( GAMESTATE->m_fTugLifePercentP1, 0, 1 );
+}
+
+void CombinedLifeMeterTug::ChangeLifeMine( PlayerNumber pn )
+{
+	float fPercentToMove = PREFSMAN->m_fLifeDeltaMinePercentChange;
+	switch( pn )
+	{
+	case PLAYER_1:	GAMESTATE->m_fTugLifePercentP1 += fPercentToMove;	break;
+	case PLAYER_2:	GAMESTATE->m_fTugLifePercentP1 -= fPercentToMove;	break;
+	default:	ASSERT(0);
+	}
+
+	CLAMP( GAMESTATE->m_fTugLifePercentP1, 0, 1 );
+	
 }

@@ -28,6 +28,7 @@
 #include "Combo.h"
 #include "ScoreDisplay.h"
 #include "LifeMeter.h"
+#include "CombinedLifeMeter.h"
 #include "PlayerAI.h"
 #include "NoteFieldPositioning.h"
 #include "NoteDataUtil.h"
@@ -557,14 +558,18 @@ void PlayerMinus::Step( int col, RageTimer tm )
 
 
 			if( tn == TAP_MINE )
-
 			{
 				// stepped too close to mine?
 				if( fScaledSecondsFromPerfect <= PREFSMAN->m_fJudgeWindowMineSeconds )
 				{
 					m_soundMineExplosion.Play();
 					score = TNS_MISS;
-					m_pNoteField->TapMine( col, TNS_MISS );
+					m_pNoteField->TapMine( col, score );
+
+					if( m_pLifeMeter )
+						m_pLifeMeter->ChangeLifeMine();
+					if( m_pCombinedLifeMeter )
+						m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
 				}
 				else
 				{
@@ -632,7 +637,11 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			{
 				m_soundMineExplosion.Play();
 				score = TNS_MISS;
-				m_pNoteField->TapMine( col, TNS_MISS );
+				m_pNoteField->TapMine( col, score );
+				if( m_pLifeMeter )
+					m_pLifeMeter->ChangeLifeMine();
+				if( m_pCombinedLifeMeter )
+					m_pCombinedLifeMeter->ChangeLifeMine(m_PlayerNumber);
 			}
 			break;
 		case PC_AUTOPLAY:
@@ -681,8 +690,12 @@ void PlayerMinus::Step( int col, RageTimer tm )
 			score >= TNS_GREAT ) 
 			HandleAutosync(fNoteOffset);
 
-		if( IsRowCompletelyJudged(iIndexOverlappingNote) )
-			OnRowCompletelyJudged( iIndexOverlappingNote );
+
+		if( IsThereATapOrHoldHeadAtRow(iIndexOverlappingNote) ) // don't judge rows that are only mines
+		{
+			if( IsRowCompletelyJudged(iIndexOverlappingNote) )
+				OnRowCompletelyJudged( iIndexOverlappingNote );
+		}
 
 		if( score == TNS_MISS || score == TNS_BOO )
 		{
@@ -813,23 +826,15 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	//LOG->Trace( "iStartCheckingAt: %d   iMissIfOlderThanThisIndex:  %d", iStartCheckingAt, iMissIfOlderThanThisIndex );
 
 	int iNumMissesFound = 0;
-	int iNumMinesMissed = 0;
 	for( int r=iStartCheckingAt; r<iMissIfOlderThanThisIndex; r++ )
 	{
 		bool MissedNoteOnThisRow = false;
-		bool MissedMineOnThisRow = false;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
 			if( GetTapNote(t, r) == TAP_EMPTY) continue; /* no note here */
 			if( GetTapNoteScore(t, r) != TNS_NONE ) continue; /* note here is already hit */
 			
-			if( GetTapNote(t, r) == TAP_MINE )
-			{
-				// A mine.  Reward for not stepping on it.
-				MissedMineOnThisRow = true;
-				SetTapNoteScore(t, r, GAMESTATE->ShowMarvelous()? TNS_MARVELOUS:TNS_PERFECT);
-			}
-			else
+			if( GetTapNote(t, r) != TAP_MINE )
 			{
 				// A normal note.  Penalize for not stepping on it.
 				MissedNoteOnThisRow = true;
@@ -844,17 +849,10 @@ void PlayerMinus::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			iNumMissesFound++;
 			HandleTapRowScore( r );
 		}
-		else if( MissedMineOnThisRow )
-		{
-			iNumMinesMissed++;
-			HandleTapRowScore( r );
-		}
 	}
 
 	if( iNumMissesFound > 0 )
 		m_Judgment.SetJudgment( TNS_MISS );
-	else if( iNumMinesMissed > 0 )
-		m_Judgment.SetJudgment( GAMESTATE->ShowMarvelous()? TNS_MARVELOUS:TNS_PERFECT );
 }
 
 

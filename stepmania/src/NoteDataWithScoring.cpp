@@ -104,8 +104,10 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
 	TapNoteScore score = TNS_MARVELOUS;
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		/* If there's no tap note on this row, skip it, or else the score will always be TNS_NONE. */
-		if(GetTapNote(t, row) == TAP_EMPTY) 
+		/* Don't coun, or else the score 
+		 * will always be TNS_NONE. */
+		TapNote tn = GetTapNote(t, row);
+		if( tn == TAP_EMPTY || tn == TAP_MINE ) 
 			continue;
 		score = min( score, GetTapNoteScore(t, row) );
 	}
@@ -127,8 +129,10 @@ int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
 	int best_track = -1;
 	for( int t=0; t<GetNumTracks(); t++ )
 	{
-		/* If there's no tap note on this track, skip it (the score will always be TNS_NONE) */
-		if(GetTapNote(t, row) == TAP_EMPTY) continue;
+		/* Skip empty tracks and mines */
+		TapNote tn = GetTapNote(t, row);
+		if( tn == TAP_EMPTY || tn == TAP_MINE ) 
+			continue;
 
 		TapNoteScore tns = GetTapNoteScore(t, row);
 		

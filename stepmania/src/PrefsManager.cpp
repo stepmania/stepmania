@@ -58,6 +58,7 @@ PrefsManager::PrefsManager()
 	m_bEventMode = false;
 	m_bAutoPlay = false;
 	m_fJudgeWindowScale = 1.0f;
+	m_fLifeDifficultyScale = 1.0f;
 	m_fJudgeWindowMarvelousSeconds = 0.0225f;
 	m_fJudgeWindowPerfectSeconds = 0.045f;
 	m_fJudgeWindowGreatSeconds = 0.090f;
@@ -65,7 +66,15 @@ PrefsManager::PrefsManager()
 	m_fJudgeWindowBooSeconds = 0.180f;
 	m_fJudgeWindowOKSeconds = 0.250f;	// allow enough time to take foot off and put back on
 	m_fJudgeWindowMineSeconds = 0.135f;
-	m_fLifeDifficultyScale = 1.0f;
+	m_fLifeDeltaMarvelousPercentChange = +0.008f;
+	m_fLifeDeltaPerfectPercentChange = +0.008f;
+	m_fLifeDeltaGreatPercentChange = +0.004f;
+	m_fLifeDeltaGoodPercentChange = +0.000f;
+	m_fLifeDeltaBooPercentChange = -0.040f;
+	m_fLifeDeltaMissPercentChange = -0.080f;
+	m_fLifeDeltaOKPercentChange = +0.008f;
+	m_fLifeDeltaNGPercentChange = -0.080f;
+	m_fLifeDeltaMinePercentChange = -0.160f;
 	m_iRegenComboAfterFail = 10; // cumulative
 	m_iRegenComboAfterMiss = 5; // cumulative
 	m_iMaxRegenComboAfterFail = 10;
@@ -224,6 +233,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "EventMode",						m_bEventMode );
 	ini.GetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.GetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
+	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
 	ini.GetValue( "Options", "JudgeWindowMarvelousSeconds",		m_fJudgeWindowMarvelousSeconds );
 	ini.GetValue( "Options", "JudgeWindowPerfectSeconds",		m_fJudgeWindowPerfectSeconds );
 	ini.GetValue( "Options", "JudgeWindowGreatSeconds",			m_fJudgeWindowGreatSeconds );
@@ -231,7 +241,15 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.GetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
 	ini.GetValue( "Options", "JudgeWindowMineSeconds",			m_fJudgeWindowMineSeconds );
-	ini.GetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
+	ini.GetValue( "Options", "LifeDeltaMarvelousPercentChange",	m_fLifeDeltaMarvelousPercentChange );
+	ini.GetValue( "Options", "LifeDeltaPerfectPercentChange",	m_fLifeDeltaPerfectPercentChange );
+	ini.GetValue( "Options", "LifeDeltaGreatPercentChange",		m_fLifeDeltaGreatPercentChange );
+	ini.GetValue( "Options", "LifeDeltaGoodPercentChange",		m_fLifeDeltaGoodPercentChange );
+	ini.GetValue( "Options", "LifeDeltaBooPercentChange",		m_fLifeDeltaBooPercentChange );
+	ini.GetValue( "Options", "LifeDeltaMissPercentChange",		m_fLifeDeltaMissPercentChange );
+	ini.GetValue( "Options", "LifeDeltaOKPercentChange",		m_fLifeDeltaOKPercentChange );
+	ini.GetValue( "Options", "LifeDeltaNGPercentChange",		m_fLifeDeltaNGPercentChange );
+	ini.GetValue( "Options", "LifeDeltaMinePercentChange",		m_fLifeDeltaMinePercentChange );
 	ini.GetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
 	ini.GetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
 	ini.GetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
@@ -364,6 +382,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "EventMode",						m_bEventMode );
 	ini.SetValue( "Options", "AutoPlay",						m_bAutoPlay );
 	ini.SetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
+	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
 	ini.SetValue( "Options", "JudgeWindowMarvelousSeconds",		m_fJudgeWindowMarvelousSeconds );
 	ini.SetValue( "Options", "JudgeWindowPerfectSeconds",		m_fJudgeWindowPerfectSeconds );
 	ini.SetValue( "Options", "JudgeWindowGreatSeconds",			m_fJudgeWindowGreatSeconds );
@@ -371,7 +390,15 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "JudgeWindowBooSeconds",			m_fJudgeWindowBooSeconds );
 	ini.SetValue( "Options", "JudgeWindowOKSeconds",			m_fJudgeWindowOKSeconds );
 	ini.SetValue( "Options", "JudgeWindowMineSeconds",			m_fJudgeWindowMineSeconds );
-	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
+	ini.SetValue( "Options", "LifeDeltaMarvelousPercentChange",	m_fLifeDeltaMarvelousPercentChange );
+	ini.SetValue( "Options", "LifeDeltaPerfectPercentChange",	m_fLifeDeltaPerfectPercentChange );
+	ini.SetValue( "Options", "LifeDeltaGreatPercentChange",		m_fLifeDeltaGreatPercentChange );
+	ini.SetValue( "Options", "LifeDeltaGoodPercentChange",		m_fLifeDeltaGoodPercentChange );
+	ini.SetValue( "Options", "LifeDeltaBooPercentChange",		m_fLifeDeltaBooPercentChange );
+	ini.SetValue( "Options", "LifeDeltaMissPercentChange",		m_fLifeDeltaMissPercentChange );
+	ini.SetValue( "Options", "LifeDeltaOKPercentChange",		m_fLifeDeltaOKPercentChange );
+	ini.SetValue( "Options", "LifeDeltaNGPercentChange",		m_fLifeDeltaNGPercentChange );
+	ini.SetValue( "Options", "LifeDeltaMinePercentChange",		m_fLifeDeltaMinePercentChange );
 	ini.SetValue( "Options", "RegenComboAfterFail",				m_iRegenComboAfterFail );
 	ini.SetValue( "Options", "RegenComboAfterMiss",				m_iRegenComboAfterMiss );
 	ini.SetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );

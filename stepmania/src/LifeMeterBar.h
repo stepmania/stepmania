@@ -30,6 +30,8 @@ public:
 
 	virtual void ChangeLife( TapNoteScore score );
 	virtual void ChangeLife( HoldNoteScore score, TapNoteScore tscore  );
+	virtual void ChangeLife( float fDeltaLifePercent );
+	virtual void ChangeLifeMine();
 	virtual void AfterLifeChanged();
 	virtual void OnDancePointsChange() {};	// this life meter doesn't care
 	virtual bool IsInDanger() const;

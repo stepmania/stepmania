@@ -135,6 +135,15 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	}
 }
 
+void LifeMeterBattery::ChangeLife( float fDeltaLifePercent )
+{
+}
+
+void LifeMeterBattery::ChangeLifeMine()
+{
+	ChangeLife( TNS_MISS );		// same as a miss
+}
+
 void LifeMeterBattery::OnDancePointsChange()
 {
 }

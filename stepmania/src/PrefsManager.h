@@ -57,6 +57,15 @@ public:
 	float			m_fJudgeWindowBooSeconds;
 	float			m_fJudgeWindowOKSeconds;
 	float			m_fJudgeWindowMineSeconds;
+	float			m_fLifeDeltaMarvelousPercentChange;
+	float			m_fLifeDeltaPerfectPercentChange;
+	float			m_fLifeDeltaGreatPercentChange;
+	float			m_fLifeDeltaGoodPercentChange;
+	float			m_fLifeDeltaBooPercentChange;
+	float			m_fLifeDeltaMissPercentChange;
+	float			m_fLifeDeltaOKPercentChange;
+	float			m_fLifeDeltaNGPercentChange;
+	float			m_fLifeDeltaMinePercentChange;
 	int				m_iRegenComboAfterFail;
 	int				m_iRegenComboAfterMiss;
 	int				m_iMaxRegenComboAfterFail;
