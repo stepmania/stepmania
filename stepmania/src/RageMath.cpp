@@ -87,14 +87,3 @@ void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 	pOut->m[0][1] = sinf(theta);
 	pOut->m[1][0] = -pOut->m[0][1];
 }
-
-void RageMatrixOrthoOffCenterLH( RageMatrix* pOut, float l, float r, float b, float t, float zn, float zf )
-{
-	RageMatrixIdentity(pOut);
-	pOut->m[0][0] = 2 / (r-l);
-	pOut->m[1][1] = 2 / (t-b);
-	pOut->m[2][2] = -2 / (zn-zf);
-	pOut->m[3][0] = -(r+l)/(r-l);
-	pOut->m[3][1] = -(t+b)/(t-b);
-	pOut->m[3][2] = -(zf+zn)/(zn-zf);
-}

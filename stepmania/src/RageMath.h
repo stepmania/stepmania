@@ -26,6 +26,5 @@ void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z );
 void RageMatrixRotationX( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationY( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationZ( RageMatrix* pOut, float fTheta );
-void RageMatrixOrthoOffCenterLH( RageMatrix* pOut, float l, float r, float b, float t, float zn, float zf );
 
 #endif
