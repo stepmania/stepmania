@@ -350,14 +350,15 @@ void FontCharAliases::ReplaceMarkers( CString &sText )
 }
 
 /* Replace all &markers; and &#NNNN;s with UTF-8. */
-wchar_t FontCharAliases::GetChar( CString &codepoint )
+bool FontCharAliases::GetChar( CString &codepoint, wchar_t &ch )
 {
 	InitCharAliases();
 	aliasmap::const_iterator i = CharAliases.find(codepoint);
 	if(i == CharAliases.end())
-		return INVALID_CHAR;
+		return false;
 	
-	return i->second;
+	ch = i->second;
+	return true;
 }
 
 /*

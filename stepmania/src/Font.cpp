@@ -520,24 +520,24 @@ void Font::LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CStri
 				}
 			}
 
-			longchar c=-1;
+			wchar_t c;
 			if(codepoint.substr(0, 2) == "U+" && IsHexVal(codepoint.substr(2)))
 				sscanf(codepoint.substr(2).c_str(), "%x", &c);
-			else
+			else if(!FontCharAliases::GetChar(codepoint, c))
 			{
-				c = FontCharAliases::GetChar(codepoint);
-
-				if(c == INVALID_CHAR)
-				{
-					LOG->Warn("Font definition '%s' has an invalid value '%s'.",
-						ini.GetPath().GetString(), val.GetString() );
-					continue;
-				}
+				LOG->Warn("Font definition '%s' has an invalid value '%s'.",
+					ini.GetPath().GetString(), val.GetString() );
+				continue;
 			}
 
-			if(game != GAME_INVALID) c = FontManager::MakeGameGlyph(wchar_t(c), game);
+			if(game != GAME_INVALID)
+			{
+				longchar lc = FontManager::MakeGameGlyph(c, game);
+				cfg.CharToGlyphNo[lc] = atoi(data);
+			} else {
+				cfg.CharToGlyphNo[c] = atoi(data);
+			}
 
-			cfg.CharToGlyphNo[c] = atoi(data);
 			continue;
 		}
 

@@ -5,7 +5,7 @@
 
 namespace FontCharAliases {
 	void ReplaceMarkers( CString &sText );
-	wchar_t GetChar( CString &codepoint );
+	bool GetChar( CString &codepoint, wchar_t &ch );
 };
 
 #endif
