@@ -494,11 +494,14 @@ void NoteDisplay::DrawHoldTopCap( const HoldNote& hn, const bool bIsBeingHeld, f
 
 	bool bAllAreTransparent = true;
 	bool bLast = false;
-	for( float fY=fYCapTop; !bLast; fY+=fYStep )
+	// don't draw any part of the head that is after the middle of the tail
+	float fY = fYCapTop;
+	float fYStop = min(fYTail,fYCapBottom);
+	for( ; !bLast; fY+=fYStep )
 	{
-		if( fY >= fYCapBottom )
+		if( fY >= fYStop )
 		{
-			fY = fYCapBottom;
+			fY = fYStop;
 			bLast = true;
 		}
 
@@ -625,9 +628,9 @@ void NoteDisplay::DrawHoldBottomCap( const HoldNote& hn, const bool bIsBeingHeld
 	if( bGlow )
 		fColorScale = 1;
 
-	// don't draw any part of the tail that is before the middle of the head
 	bool bAllAreTransparent = true;
 	bool bLast = false;
+	// don't draw any part of the tail that is before the middle of the head
 	float fY=max( fYCapTop, fYHead );
 	for( ; !bLast; fY += fYStep )
 	{
