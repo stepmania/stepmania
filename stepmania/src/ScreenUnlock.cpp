@@ -40,6 +40,15 @@
 
 ScreenUnlock::ScreenUnlock() : ScreenAttract("ScreenUnlock")
 {
+	// DIRTY HACK: bypass unlocks screen if unlocks are off
+	// (theres probably a more efficient way but i've yet to figure what it is)
+	if (!PREFSMAN->m_bUseUnlockSystem)
+	{
+		this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
+		this->PostScreenMessage( SM_BeginFadingOut, 0 );
+		return;
+	}
+	
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 	PointsUntilNextUnlock.LoadFromFont( THEME->GetPathToF("Common normal") );
 	PointsUntilNextUnlock.SetHorizAlign( Actor::align_left );
