@@ -34,7 +34,6 @@ void GetCurrentBacktraceContext( BacktraceContext *ctx );
 void GetSignalBacktraceContext( BacktraceContext *ctx, const ucontext_t *uc );
 
 #define BACKTRACE_METHOD_NOT_AVAILABLE ((void*) -1)
-#define BACKTRACE_SIGNAL_TRAMPOLINE ((void*) -2)
 
 #endif
 
