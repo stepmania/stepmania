@@ -119,10 +119,16 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
-		m_MusicWheel.SetOpenGroup( ssprintf("%c", c ), SORT_TITLE );
+		SortOrder so = GAMESTATE->m_SortOrder;
+		
+		if ( ( so != SORT_TITLE ) && ( so != SORT_ARTIST ) )
+			so = SORT_TITLE;
+
+		GAMESTATE->m_SortOrder = so;
+		m_MusicWheel.SetOpenGroup( ssprintf("%c", c ), so );
 		m_MusicWheel.SelectSection( ssprintf("%c", c ) );
 		m_MusicWheel.Move( +1 );
-		m_MusicWheel.Move( -1 );
+		//m_MusicWheel.Move( -1 );
 	}
 
 	ScreenNetSelectBase::Input( DeviceI, type, GameI, MenuI, StyleI );
