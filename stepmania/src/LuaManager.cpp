@@ -301,7 +301,7 @@ bool LuaManager::RunScript( const CString &sScript, int iReturnValues )
 }
 
 
-bool LuaManager::RunExpression( const CString &str )
+bool LuaManager::RunExpression( const CString &str, int iReturnValues )
 {
 	// load string
 	{
@@ -324,7 +324,7 @@ bool LuaManager::RunExpression( const CString &str )
 
 	// evaluate
 	{
-		int ret = lua_pcall(L, 0, 1, 0);
+		int ret = lua_pcall( L, 0, iReturnValues, 0 );
 		if( ret )
 		{
 			CString err;

@@ -56,7 +56,7 @@ public:
 	static void ReadArrayFromTable( vector<bool> &aOut, lua_State *L = NULL );
 
 	/* Run an expression.  The result is left on the Lua stack. */
-	bool RunExpression( const CString &str );
+	bool RunExpression( const CString &str, int iReturnValues = 1 );
 	lua_State *L;
 };
 
