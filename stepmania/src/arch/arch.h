@@ -28,7 +28,7 @@ MemoryCardDriver *MakeMemoryCardDriver();
 #if defined(LINUX)
 	#define DEFAULT_SOUND_DRIVER_LIST "ALSA,ALSA-sw,OSS"
 #elif defined(DARWIN)
-	#define DEFAULT_SOUND_DRIVER_LIST "CoreAudio,QT,QT1"
+	#define DEFAULT_SOUND_DRIVER_LIST "CoreAudio,QT1"
 #elif defined(_WINDOWS)
 	#define DEFAULT_SOUND_DRIVER_LIST "DirectSound,DirectSound-sw,WaveOut"
 #elif defined(_XBOX)
