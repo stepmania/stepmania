@@ -606,6 +606,44 @@ void RageDisplay::PopMatrix()
 	ASSERT(g_ModelMatrixCnt-->0);
 }
 
+static RageMatrix rgluLookAt(GLfloat eyex, GLfloat eyey, GLfloat eyez,
+							 GLfloat centerx, GLfloat centery, GLfloat centerz,
+							 GLfloat upx, GLfloat upy, GLfloat upz)
+{
+	RageVector3 Z(eyex - centerx, eyey - centery, eyez - centerz);
+	RageVec3Normalize(&Z, &Z);
+
+	RageVector3 Y(upx, upy, upz);
+
+	RageVector3 X(
+		 Y[1] * Z[2] - Y[2] * Z[1],
+		-Y[0] * Z[2] + Y[2] * Z[0],
+		 Y[0] * Z[1] - Y[1] * Z[0]);
+
+	Y = RageVector3(
+		 Z[1] * X[2] - Z[2] * X[1],
+        -Z[0] * X[2] + Z[2] * X[0],
+         Z[0] * X[1] - Z[1] * X[0] );
+
+	RageVec3Normalize(&X, &X);
+	RageVec3Normalize(&Y, &Y);
+
+	RageMatrix mat(
+		X[0], Y[0], Z[0], 0,
+		X[1], Y[1], Z[1], 0,
+		X[2], Y[2], Z[2], 0,
+		   0,    0,    0, 1 );
+
+	RageMatrix mat2;
+	RageMatrixTranslation(&mat2, -eyex, -eyey, -eyez);
+
+	RageMatrix ret;
+	RageMatrixMultiply(&ret, &mat, &mat2);
+
+	return ret;
+}
+
+
 void RageDisplay::LoadMenuPerspective(float fovDegrees)
 {
 	/* fovDegrees == 0 looks the same as an ortho projection.  However,
@@ -661,7 +699,7 @@ void RageDisplay::LoadMenuPerspective(float fovDegrees)
 		RageVector3 Eye( CENTER_X, CENTER_Y, fDistCameraFromImage );
 		RageVector3 At( CENTER_X, CENTER_Y, 0 );
 		glLoadIdentity();
-		gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
+		PostMultMatrix(rgluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z));
 
 		/* GLDirect incorrectly uses Direct3D's device coordinate system
 		 * instead of OpenGL's, so we need to compensate. */
@@ -783,16 +821,7 @@ void RageDisplay::ExitPerspective()
  * post-multiplied. */
 void RageDisplay::LookAt(const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up)
 {
-	glMatrixMode(GL_MODELVIEW);
-
-	glPushMatrix();
-	glLoadIdentity();
-	gluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z);
-	RageMatrix view;
-	glGetFloatv( GL_MODELVIEW_MATRIX, (float*)view ); /* cheesy :) */
-	glPopMatrix();
-
-	PreMultMatrix(view);
+	PreMultMatrix(rgluLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z));
 }
 
 void RageDisplay::Translate( float x, float y, float z )
