@@ -30,6 +30,12 @@ function TableMetricLookup( t, group )
 	return ret
 end
 
+-- Scales x so that l1 corresponds to l2 and h1 corresponds to h2.
+function scale( x, l1, h1, l2, h2 )
+	return (((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
+end
+
+
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
 -- 
