@@ -113,6 +113,9 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		switch( m_Effect )
 		{
 		case diffuse_blink:
+			/* XXX: Should diffuse_blink and diffuse_shift multiply the tempState color? 
+			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
+			 * while blinking and shifting.) */
 			for(i=0; i<4; i++)
 				m_tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
 			break;
@@ -138,7 +141,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 				m_tempState.diffuse[i] = m_tempState.diffuse[0];
 			break;
 		case wag:
-			m_tempState.rotation = m_vEffectMagnitude * sinf( fPercentThroughEffect * 2.0f * PI );
+			m_tempState.rotation += m_vEffectMagnitude * sinf( fPercentThroughEffect * 2.0f * PI );
 			break;
 		case spin:
 			// nothing needs to be here
@@ -172,7 +175,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 				float fMaxZoom = m_vEffectMagnitude[1];
 				float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
-				m_tempState.scale = RageVector3( fZoom, fZoom, fZoom );
+				m_tempState.scale *= fZoom;
 			}
 			break;
 		default:
