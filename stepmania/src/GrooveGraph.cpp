@@ -134,6 +134,7 @@ void GrooveGraph::Mountain::DrawPrimitives()
 	}
 
 	// TODO: Add this back in
+	// This shouldn't be needed anymore. -glenn
 //	switch( PREFSMAN->m_iPolygonRadar )
 //	{
 //	case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, 3, 2 );	break;
