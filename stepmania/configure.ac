@@ -19,7 +19,7 @@ test "$DEFAULT_CFLAGS" = "yes" && CFLAGS=""
 test "$DEFAULT_CXXFLAGS" = "yes" && CXXFLAGS=""
 test "$DEFAULT_LDFLAGS" = "yes" && LDFLAGS=""
 
-MDL_HAVE_OPENGL
+SM_OPENGL
 
 AM_PATH_SDL(1.2.6,enable_sdl=yes,enable_sdl=no)
 AM_CONDITIONAL(NHAVE_SDL, test x$enable_sdl = xno )
