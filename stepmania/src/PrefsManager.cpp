@@ -196,6 +196,6 @@ int PrefsManager::GetDisplayHeight()
 	case 512:	return 384;	break;
 	case 400:	return 300;	break;
 	case 320:	return 240;	break;
-	default:	throw RageException( "Invalid DisplayWidth '%d'", m_iDisplayResolution );	return 480;
+	default:	throw RageException( "Invalid DisplayWidth '%d'", m_iDisplayResolution );
 	}
 }
