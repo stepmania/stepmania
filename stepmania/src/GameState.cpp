@@ -26,14 +26,11 @@
 #include "StageStats.h"
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
+#include "CommonMetrics.h"
 
 #include <ctime>
 #include <set>
 
-#define DEFAULT_MODIFIERS		THEME->GetMetric( "Common","DefaultModifiers" )
-#define DEFAULT_CPU_MODIFIERS	THEME->GetMetric( "Common","DefaultCpuModifiers" )
-#define DIFFICULTIES_TO_SHOW	THEME->GetMetric( "Common","DifficultiesToShow" )
-#define COURSE_DIFFICULTIES_TO_SHOW	THEME->GetMetric( "Common","CourseDifficultiesToShow" )
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 

@@ -28,6 +28,7 @@
 
 #include "Screen.h"
 #include "CodeDetector.h"
+#include "CommonMetrics.h"
 
 //
 // StepMania global classes
@@ -98,7 +99,7 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			PREFSMAN->m_bSmoothLines,
 			PREFSMAN->m_bTrilinearFiltering,
 			PREFSMAN->m_bAnisotropicFiltering,
-			THEME->GetMetric("Common","WindowTitle"),
+			WINDOW_TITLE,
 			THEME->GetPathToG("Common window icon"),
 			PREFSMAN->m_bPAL
 	);
@@ -238,9 +239,9 @@ void ResetGame( bool ReturnToFirstScreen )
 	if( ReturnToFirstScreen )
 	{
 		if( PREFSMAN->m_bFirstRun )
-			SCREENMAN->SetNewScreen( THEME->GetMetric("Common","FirstRunInitialScreen") );
+			SCREENMAN->SetNewScreen( FIRST_RUN_INITIAL_SCREEN );
 		else
-			SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 	}
 
 	PREFSMAN->m_bFirstRun = false;

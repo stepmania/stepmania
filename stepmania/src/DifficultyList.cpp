@@ -10,12 +10,12 @@
 #include "SongManager.h"
 #include "ThemeManager.h"
 #include "StepsUtil.h"
+#include "CommonMetrics.h"
 
 #define ITEMS_SPACING_Y				THEME->GetMetricF(m_sName,"ItemsSpacingY")
 #define DESCRIPTION_MAX_WIDTH		THEME->GetMetricF(m_sName,"DescriptionMaxWidth")
 #define NUM_SHOWN_ITEMS				THEME->GetMetricI(m_sName,"NumShownItems")
 #define MOVE_COMMAND				THEME->GetMetric (m_sName,"MoveCommand")
-#define DIFFICULTIES_TO_SHOW		THEME->GetMetric( "Common","DifficultiesToShow" )
 #define CAPITALIZE_DIFFICULTY_NAMES	THEME->GetMetric( m_sName,"CapitalizeDifficultyNames" )
 
 #define MAX_METERS NUM_DIFFICULTIES + MAX_EDITS_PER_SONG

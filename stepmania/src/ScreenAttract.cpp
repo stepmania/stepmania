@@ -14,10 +14,9 @@
 #include "InputMapper.h"
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
+#include "CommonMetrics.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
-#define INITIAL_SCREEN			THEME->GetMetric ("Common","InitialScreen")
-#define JOIN_PAUSE_SECONDS		THEME->GetMetricF("Common","JoinPauseSeconds")
 
 
 ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sName )

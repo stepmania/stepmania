@@ -9,6 +9,7 @@
 #include "AnnouncerManager.h"
 #include "ActorUtil.h"
 #include "LightsManager.h"
+#include "CommonMetrics.h"
 
 
 #define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric (m_sName,"IconGainFocusCommand")
@@ -244,7 +245,7 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 	{
 		DEBUG_ASSERT(0);
 		SCREENMAN->SystemMessage( "No Styles are selectable." );
-		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+		SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 		return;
 	}
 	

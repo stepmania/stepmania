@@ -20,6 +20,7 @@
 #include "ProductInfo.h"
 #include "LightsManager.h"
 #include "CodeDetector.h"
+#include "CommonMetrics.h"
 
 
 #define LOGO_ON_COMMAND				THEME->GetMetric("ScreenTitleMenu","LogoOnCommand")
@@ -59,7 +60,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassNam
 	if( PREFSMAN->GetCoinMode() == COIN_PAY  &&
 		GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 	{
-		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+		SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 		return;
 	}
 
@@ -349,7 +350,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 		m_aModeChoices[m_Choice].ApplyToAllPlayers();
 		break;
 	case SM_GoToAttractLoop:
-		SCREENMAN->SetNewScreen( THEME->GetMetric("Common","InitialScreen") );
+		SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 		break;
 	}
 }

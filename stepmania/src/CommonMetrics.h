@@ -1,67 +1,24 @@
-#include "global.h"
-#include "PlayerNumber.h"
-#include "ThemeManager.h"
-#include "GameState.h"
-#include "CommonMetrics.h"
+/* Definitions of metrics that are in the "Common" group */
 
+#ifndef COMMON_METRICS_H
+#define COMMON_METRICS_H
 
-RageColor PlayerToColor( PlayerNumber pn ) 
-{
-	switch( pn )
-	{
-		case PLAYER_1:	return COLOR_P1;
-		case PLAYER_2:	return COLOR_P2;
-		default: ASSERT(0); return RageColor(0.5f,0.5f,0.5f,1);
-	}
-};
+#define DIFFICULTIES_TO_SHOW		THEME->GetMetric ("Common","DifficultiesToShow")
+#define INITIAL_SCREEN				THEME->GetMetric ("Common","InitialScreen")
+#define FIRST_RUN_INITIAL_SCREEN	THEME->GetMetric ("Common","FirstRunInitialScreen")
+#define DEFAULT_MODIFIERS			THEME->GetMetric ("Common","DefaultModifiers" )
+#define DEFAULT_CPU_MODIFIERS		THEME->GetMetric ("Common","DefaultCpuModifiers" )
+#define COURSE_DIFFICULTIES_TO_SHOW	THEME->GetMetric ("Common","CourseDifficultiesToShow")
+#define COLOR_P1					THEME->GetMetricC("Common","ColorP1")
+#define COLOR_P2					THEME->GetMetricC("Common","ColorP2")
+#define INITIAL_SCREEN				THEME->GetMetric ("Common","InitialScreen")
+#define JOIN_PAUSE_SECONDS			THEME->GetMetricF("Common","JoinPauseSeconds")
+#define WINDOW_TITLE				THEME->GetMetric ("Common","WindowTitle")
 
-RageColor PlayerToColor( int p ) 
-{ 
-	return PlayerToColor( (PlayerNumber)p ); 
-}
-
-PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
-{
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-			return p;
-	}
-	return PLAYER_INVALID;
-}
-
-PlayerNumber GetNextEnabledPlayer( PlayerNumber pn )
-{
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( GAMESTATE->IsPlayerEnabled(p) )
-			return p;
-	}
-	return PLAYER_INVALID;
-}
-
-PlayerNumber GetNextCpuPlayer( PlayerNumber pn )
-{
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( GAMESTATE->IsCpuPlayer(p) )
-			return p;
-	}
-	return PLAYER_INVALID;
-}
-
-PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn )
-{
-	for( PlayerNumber p=(PlayerNumber)(pn+1); p<NUM_PLAYERS; ((int&)p)++ )
-	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			return p;
-	}
-	return PLAYER_INVALID;
-}
+#endif
 
 /*
- * (c) 2001-2004 Chris Danford, Chris Gomez
+ * (c) 2003-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
