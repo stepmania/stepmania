@@ -64,12 +64,6 @@ EditMenu::EditMenu()
 
 	ZERO( m_iSelection );
 
-	
-	// start out on easy, not beginner
-	m_iSelection[ROW_STEPS] = DIFFICULTY_EASY;
-	m_iSelection[ROW_SOURCE_STEPS] = DIFFICULTY_EASY;
-
-
 
 	FOREACH_EditMenuRow( r )
 	{
@@ -145,7 +139,24 @@ EditMenu::EditMenu()
 	FOREACH_Difficulty( dc )
 		m_vSourceDifficulties.push_back( dc );
 
-	
+
+	// start out on easy if available, or "blank"
+	{
+		vector<Difficulty>::const_iterator it = find( m_vDifficulties.begin(), m_vDifficulties.end(), DIFFICULTY_EASY );
+		if( it != m_vDifficulties.end() )
+			m_iSelection[ROW_STEPS] = it - m_vDifficulties.begin();
+		else
+			m_iSelection[ROW_STEPS] = 0;
+	}
+
+	// start out on easy
+	{
+		vector<Difficulty>::const_iterator it = find( m_vSourceDifficulties.begin(), m_vSourceDifficulties.end(), DIFFICULTY_EASY );
+		ASSERT( it != m_vDifficulties.end() );
+		m_iSelection[ROW_SOURCE_STEPS] = it - m_vSourceDifficulties.begin();
+	}
+
+
 	RefreshAll();
 }
 
