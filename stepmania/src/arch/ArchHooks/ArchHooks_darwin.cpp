@@ -255,7 +255,7 @@ void ArchHooks_darwin::MessageBoxOKPrivate(CString sMessage, CString ID)
         IgnoreMessage(ID);
 }
 
-void ArchHooks_darwin::MessageBoxError(CString sError)
+void ArchHooks_darwin::MessageBoxErrorPrivate(CString sError)
 {
     CFStringRef error = CFStringCreateWithCString(NULL, sError, kCFStringEncodingASCII);
     ShowAlert(kAlertStopAlert, error, CFSTR("OK"));

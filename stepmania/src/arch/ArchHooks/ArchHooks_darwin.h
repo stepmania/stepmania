@@ -14,13 +14,14 @@
 #include <SDL_thread.h>
 #include <queue>
 
-class ArchHooks_darwin : public ArchHooks {
+class ArchHooks_darwin : public ArchHooks
+{
 public:
     ArchHooks_darwin();
     ~ArchHooks_darwin() { }
     void DumpDebugInfo();
-    void MessageBoxError(CString sError);
 protected:
+    void MessageBoxErrorPrivate(CString sError);
 	void MessageBoxOKPrivate(CString sMessage, CString ID = "");
     MessageBoxResult MessageBoxAbortRetryIgnorePrivate(CString sMessage, CString ID = "");
 };
