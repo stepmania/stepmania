@@ -22,6 +22,7 @@
 #include "SongManager.h"
 #include "GameState.h"
 #include "song.h"
+#include "Steps.h"
 #include "Course.h"
 #include "GameManager.h"
 #include "ProductInfo.h"

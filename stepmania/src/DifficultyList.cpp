@@ -2,6 +2,7 @@
 #include "DifficultyList.h"
 #include "GameState.h"
 #include "song.h"
+#include "Steps.h"
 #include "StyleDef.h"
 #include "DifficultyMeter.h"
 #include "RageLog.h"

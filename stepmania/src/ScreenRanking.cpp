@@ -17,6 +17,7 @@
 #include "GameManager.h"
 #include "Course.h"
 #include "song.h"
+#include "Steps.h"
 #include "PrefsManager.h"
 #include "NoteData.h"
 #include "NoteDataUtil.h"

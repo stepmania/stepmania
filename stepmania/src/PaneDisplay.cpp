@@ -3,6 +3,7 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "song.h"
+#include "Steps.h"
 #include "RageLog.h"
 #include "ProfileManager.h"
 #include "SongManager.h"
