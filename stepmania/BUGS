@@ -31,5 +31,3 @@ have nothing to do with the current tween (eg. here, changing the dim
 while we're tweening X,Y) is tricky right now; I'm not sure how to handle
 this cleanly ...
 
-Doubles is misaligned if the second player side is selected first.
-

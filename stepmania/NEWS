@@ -1,6 +1,11 @@
 ------------------------CVS after 3.00 beta 6rc2----------------
+BUG FIX:  Fixed choosing song filenames when saving.
+BUG FIX:  Fix Endless crash when a song folder has over 99 minutes of songs.
+BUG FIX:  Can no longer keep a hold lit if it's missed completely.
+BUG FIX:  No NG or NG penalty in Oni if a hold is missed completely.
 CHANGE:  Name changed to "beta 7" to avoid confusion with the numerous beta 6
 	release candidates.
+BUG FIX:  Courses now work with AdditionalSongFolders and DWIPath.
 BUG FIX:  Fixed writing solo patterns to DWI file.
 CHANGE:  Group names: Pump It Up (PiU), ParaParaParadise (PPP), Dancing Stage 
 	(DS) are now shortened.

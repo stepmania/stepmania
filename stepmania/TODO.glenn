@@ -4,6 +4,134 @@ is better held on the list than in a CVS document. :)
 
 Some of this is stuff I'm not quite sure how to deal with, but too
 low-pri to bother bringing up on the list.
+********
+
+Abstract NoteData completely, and then make the arrays vectors, so they
+don't have arbitrary limits and don't take lots of extra memory.
+ 
+1: add real accessors: GetTapNote(row, track), SetTapNote(row, track, char),
+        GetHoldNote(num), SetHoldNote(num, Hold), etc.  Inline them.
+2: Make everything use them.  (Including derived classes.)
+3: Make m_TapNotes and m_HoldNotes private.  (Not protected!  A base
+   class implementation should almost always be hidden even from its
+   derived classes; they can use the same above accessors as everyone
+   else.)
+4: Change them to vector<>s. Make sure GetTapNote returns a '0' when
+   the parameters are out of range (since we generally assume we can
+   do that).
+Step 2 is straightforward but will take time and a lot of changes, so
+I don't want to do that before the release. 
+
+Then, make class Notes store a NoteData instead of SMNoteData, so we'd
+only have to convert on initial load and when saving; faster and simpler.
+
+ 
+Even better: do away with m_HoldNotes completely, and change the default
+storage scheme to 4s.  Make every place that accesses holds either use
+them in 4s, or specifically request a hold list, when needed (such as
+when rendering).  If we can do this, we can do away with most of the
+2sand3s and 4s conversions, which will aid const-correctness a *lot*
+(which has been bothering me), and simplify the code further.
+
+One problem: The renderer (NoteField::DrawPrimitives) wants HoldNotes.
+That's not a problem (we can still create an array of HoldNotes when
+requested, and it can be cached); the problem is that it'd need to be
+recreated whenever the data changed, which would make editor recording
+slow, at least.
+
+Maybe even the NoteField::DrawPrimitives could deal with 4s, generating
+HoldNotes as needed.  I'm not sure if that'd be too slow, I'll have to
+try it and see.
+
+********
+
+Thinking ahead: BM support in .SM's and internally.
+
+Background: allow an arbitrary number of keyed notes; any tap can
+be keyed to any effect.  BM doesn't have hold notes, but I'd like to
+support them anyway.
+
+Right now, a '0' indicates nothing, a '1' indicates a tap note, a '2'
+indicates the beginning of a hold note (which is duplicated in the hold
+note list). We want more than 255 keyed sounds, so make this a short, 
+with -1 indicating nothing and 1+ indicating a tap note for a given key.
+Put autoplay sounds on 0 (keyed sounds to always play).
+
+DDR can be stored the same way; just put every key on 1 and don't attach
+a sound to it.
+
+Hold notes are tricky.  Any note should be able to be held, even keyed
+ones, and we need some equivalent to "4s mode".  We could make TapNote a
+struct { short key; bool hold; }.
+
+How to handle playing keyed hold notes with regular sound effects? (We
+aren't using MIDI ...)
+
+Make sure hold notes work together with autoplay sounds.  (Lots of songs
+have hard versions with a lot of sounds being played by the player, and
+easier ones with many of those sounds on autoplay; it should sound the
+same.)
+
+Hmm.  So, tentative steps:
+1: Make TapNote a short, and change '0' '1' and '2' to integers, leaving
+the meanings alone.  Change hardcoded '0', '1', '2' to constants
+TAPNOTE_NOTHING, TAPNOTE_TAP, TAPNOTE_HOLD_HEAD, so we can search for
+them more easily.  This step should be straightforward.
+2: Make TapNote a struct, adding 'enum type', with values "TN_NONE",
+indicating nothing (the short should always be 0 here), TN_TAP, indicating
+a tap note, TN_HOLD, indicating a hold note head, TN_AUTOPLAY, indicating
+an autoplay note.
+3: Remove TAPNOTE_HOLD_HEAD, using TN_HOLD instead.  At first, only the tap
+head of the hold note will have a TapNote entry (like it is now).  
+
+This will make NoteData larger.  It's already too large, so this should
+all be done after abstracting it (so we don't have to overallocate
+everything).
+
+
+
+---
+
+And the other part: how to store this in .SMs?  We need to be backwards-
+compatible, of course, so perhaps we should add an #SMVERSION tag; this
+would be #SMVERSION:2.
+
+Currently, we do
+
+10000
+
+to indicate one tap.  We can't use single digits, since we might have any
+number of keyed notes, so
+
+1 0 0 0 0
+
+which would allow higher numbers; but how to represent holds?  Perhaps
+
++1 0 0 0 0
+ 0 0 0 0 0
+ 0 0 0 0 0
+-1 0 0 0 0
+
+which would be the equivalent of
+
+20000
+00000
+00000
+30000
+
+except indicating that the hold is keyed to key 1.
+
+This would make .sm's more than twice as large.  I don't think that
+should be a consideration; if it becomes a problem, we can add gzip
+support.  Better to do it cleanly and have readable data files than
+to go to lengths to "compress" manually, like DWI's do, and have data
+that's impossible to read and almost impossible to parse.
+
+Where to put autoplay notes?  They can't go in their own tag, since
+they're specific to notes, not songs.  They also need all of the
+data that regular notes need (hold length, if any, and what they're
+keyed to), so it'd be cumbersome and ugly to put them out-of-line;
+having them inline with the rest of the notes would be nice.  Hmm ...
 
 ********
 
