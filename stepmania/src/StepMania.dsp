@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                              	cl                                                                               /Zl                                                                               /nologo                                                                               /c                                                                               verstub.cpp                                                                               /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                               	cl                                                                                /Zl                                                                                /nologo                                                                                /c                                                                                verstub.cpp                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                              	cl                                                                               /Zl                                                                               /nologo                                                                               /c                                                                               verstub.cpp                                                                               /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                               	cl                                                                                /Zl                                                                                /nologo                                                                                /c                                                                                verstub.cpp                                                                                /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -1797,14 +1797,6 @@ SOURCE=.\ScreenSelectCourse.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenSelectDifficultyEX.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectDifficultyEX.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenSelectGame.cpp
 # End Source File
 # Begin Source File
@@ -1834,6 +1826,14 @@ SOURCE=.\ScreenSelectMaxType2.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelectMaxType2.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMaxType2EX.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectMaxType2EX.h
 # End Source File
 # Begin Source File
 

@@ -146,7 +146,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenPlayerOptions.h"
 #include "ScreenSelectCourse.h"
 #include "ScreenSelectMaxType2.h"
-#include "ScreenSelectDifficultyEX.h"
+#include "ScreenSelectMaxType2EX.h"
 #include "ScreenSelectGame.h"
 #include "ScreenSelectGroup.h"
 #include "ScreenSelectMusic.h"
@@ -201,7 +201,7 @@ Screen* Screen::Create( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )		ret = new ScreenPlayerOptions;
 	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )			ret = new ScreenSelectCourse;
 	else if( 0==stricmp(sClassName, "ScreenSelectMaxType2") )		ret = new ScreenSelectMaxType2;
-	else if( 0==stricmp(sClassName, "ScreenSelectDifficultyEX") )	ret = new ScreenSelectDifficultyEX;
+	else if( 0==stricmp(sClassName, "ScreenSelectMaxType2EX") )		ret = new ScreenSelectMaxType2EX;
 	else if( 0==stricmp(sClassName, "ScreenSelectGame") )			ret = new ScreenSelectGame;
 	else if( 0==stricmp(sClassName, "ScreenSelectGroup") )			ret = new ScreenSelectGroup;
 	else if( 0==stricmp(sClassName, "ScreenSelectMusic") )			ret = new ScreenSelectMusic;
