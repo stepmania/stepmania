@@ -394,7 +394,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 		m_sName = "All Songs";
 		// m_sBannerPath = ""; // XXX
 	} else {
-		m_sName = SONGMAN->ShortenGroupName( sGroupName ) + GetAutogenDifficultySuffix( diff );
+		m_sName = SONGMAN->ShortenGroupName( sGroupName );
 		m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
 	}
 
@@ -430,13 +430,6 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, Difficulty diff )
 		m_entries.push_back( m_entries[0] );
 	while( m_entries.size() > 4 )
 		m_entries.pop_back();
-}
-
-CString Course::GetAutogenDifficultySuffix( Difficulty diff ) const
-{
-	if ( diff == DIFFICULTY_MEDIUM )
-		return "";
-	return " " + DifficultyToThemedString( diff );
 }
 
 /*

@@ -136,7 +136,6 @@ public:
 	void ClearCache();
 
 private:
-	CString GetAutogenDifficultySuffix( Difficulty diff ) const;
 	void GetMeterRange( int stage, int& iMeterLowOut, int& iMeterHighOut, CourseDifficulty cd ) const;
 
 	typedef pair<StepsType,CourseDifficulty> TrailParams;
