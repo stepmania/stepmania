@@ -621,7 +621,6 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 		/* Only one player has to pick.  Choose this for all the other players, too. */
 		FOREACH_HumanPlayer( p )
 		{
-			ASSERT( !m_bChosen[p] );
 			fSecs = max( fSecs, DoMenuStart(p) );
 		}
 	}
