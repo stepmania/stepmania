@@ -65,6 +65,7 @@
  * in player options menus, but it should in the options menu.
  */
 
+CString ROW_Y_NAME( size_t r )					{ return ssprintf("Row%dY",r+1); }
 CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",p+1); }
 CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",p+1); }
 CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",p+1); }
@@ -78,14 +79,14 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	LABELS_X						(m_sName,"LabelsX"),
 	LABELS_ZOOM						(m_sName,"LabelsZoom"),
 	LABELS_H_ALIGN					(m_sName,"LabelsHAlign"),
+	NUM_ROWS_SHOWN					(m_sName,"NumRowsShown"),
+	ROW_Y							(m_sName,ROW_Y_NAME,NUM_ROWS_SHOWN),
 	ITEMS_ZOOM						(m_sName,"ItemsZoom"),
 	ITEMS_START_X					(m_sName,"ItemsStartX"),
 	ITEMS_END_X						(m_sName,"ItemsEndX"),
 	ITEMS_GAP_X						(m_sName,"ItemsGapX"),
 	ITEMS_LONG_ROW_X				(m_sName,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS),
 	ITEMS_LONG_ROW_SHARED_X			(m_sName,"ItemsLongRowSharedX"),
-	ITEMS_START_Y					(m_sName,"ItemsStartY"),
-	ITEMS_SPACING_Y					(m_sName,"ItemsSpacingY"),
 	ICONS_X							(m_sName,ICONS_X_NAME,NUM_PLAYERS),
 	EXPLANATION_X					(m_sName,EXPLANATION_X_NAME,NUM_PLAYERS),
 	EXPLANATION_Y					(m_sName,EXPLANATION_Y_NAME,NUM_PLAYERS),
@@ -99,7 +100,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
 	COLOR_SELECTED					(m_sName,"ColorSelected"),
 	COLOR_NOT_SELECTED				(m_sName,"ColorNotSelected"),
-	NUM_SHOWN_ITEMS					(m_sName,"NumShownItems"),
 	SHOW_BPM_IN_SPEED_TITLE			(m_sName,"ShowBpmInSpeedTitle"),
 	FRAME_ON_COMMAND				(m_sName,"FrameOnCommand"),
 	FRAME_OFF_COMMAND				(m_sName,"FrameOffCommand"),
@@ -611,7 +611,7 @@ void ScreenOptions::InitOptionsText()
 		if( row.Type == OptionRow::ROW_EXIT )
 			continue;
 
-		const float fY = ITEMS_START_Y + ITEMS_SPACING_Y*i;
+		const float fY = ROW_Y.GetValue( i );
 
 		BitmapText &title = row.m_textTitle;
 
@@ -942,7 +942,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenOptions::PositionItems()
 {
-	const int total = NUM_SHOWN_ITEMS;
+	const int total = NUM_ROWS_SHOWN;
 	const int halfsize = total / 2;
 
 	int first_start, first_end, second_start, second_end;
@@ -1032,7 +1032,7 @@ void ScreenOptions::PositionItems()
 			
 		OptionRow &row = *Rows[i];
 
-		float fY = ITEMS_START_Y + ITEMS_SPACING_Y*ItemPosition;
+		float fY = ROW_Y.GetValue( ItemPosition );
 		row.m_fY = fY;
 		row.m_bHidden = i < first_start ||
 							(i >= first_end && i < second_start) ||

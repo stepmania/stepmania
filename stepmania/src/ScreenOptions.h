@@ -117,14 +117,14 @@ protected:
 	ThemeMetric<float>				LABELS_X;
 	ThemeMetric<float>				LABELS_ZOOM;
 	ThemeMetric<int>				LABELS_H_ALIGN;
+	ThemeMetric<int>				NUM_ROWS_SHOWN;
+	ThemeMetric1D<float>			ROW_Y;
 	ThemeMetric<float>				ITEMS_ZOOM;
 	ThemeMetric<float>				ITEMS_START_X;
 	ThemeMetric<float>				ITEMS_END_X;
 	ThemeMetric<float>				ITEMS_GAP_X;
 	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
 	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
-	ThemeMetric<float>				ITEMS_START_Y;
-	ThemeMetric<float>				ITEMS_SPACING_Y;
 	ThemeMetric1D<float>			ICONS_X;
 	ThemeMetric1D<float>			EXPLANATION_X;
 	ThemeMetric1D<float>			EXPLANATION_Y;
@@ -138,7 +138,6 @@ protected:
 	ThemeMetric<float>				EXPLANATION_ZOOM;
 	ThemeMetric<RageColor>			COLOR_SELECTED;
 	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
-	ThemeMetric<int>				NUM_SHOWN_ITEMS;
 	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<apActorCommands>	FRAME_ON_COMMAND;
 	ThemeMetric<apActorCommands>	FRAME_OFF_COMMAND;
