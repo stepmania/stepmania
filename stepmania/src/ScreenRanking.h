@@ -45,6 +45,7 @@ protected:
 	BitmapText m_textCategory;
 	Sprite m_sprType;
 	Sprite m_sprBullets[NUM_RANKING_LINES];
+	Sprite m_sprDiffHeaders[NUM_DIFFICULTIES];
 	BitmapText m_textNames[NUM_RANKING_LINES];
 	BitmapText m_textScores[NUM_RANKING_LINES];	// for category
 	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
@@ -52,6 +53,11 @@ protected:
 	BitmapText m_textPercent[NUM_RANKING_LINES][NUM_DIFFICULTIES];	// for song
 
 	vector<PageToShow>	m_vPagesToShow;
+
+	vector<Difficulty>  m_vDiffsToShow;
+
+	typedef vector<Difficulty>::iterator		DiffVectorIter;
+	typedef vector<Difficulty>::const_iterator	DiffVectorCIter;
 };
 
 

@@ -29,6 +29,7 @@
 #define BULLETS_START_X			THEME->GetMetricF("ScreenRanking","BulletsStartX")
 #define BULLETS_START_Y			THEME->GetMetricF("ScreenRanking","BulletsStartY")
 #define TEXT_ZOOM				THEME->GetMetricF("ScreenRanking","TextZoom")
+#define TEXT_SONGZOOM			THEME->GetMetricF("ScreenRanking","TextSongZoom")
 #define TEXT_COLOR( i )			THEME->GetMetricC("ScreenRanking",ssprintf("TextColor%d",i+1))
 #define NAMES_START_X			THEME->GetMetricF("ScreenRanking","NamesStartX")
 #define NAMES_START_Y			THEME->GetMetricF("ScreenRanking","NamesStartY")
@@ -51,6 +52,7 @@
 #define EMPTY_COURSE_SCORE		THEME->GetMetricI("ScreenRanking","EmptyCourseScore")
 #define EMPTY_COURSE_TIME		THEME->GetMetricF("ScreenRanking","EmptyCourseTime")
 #define EMPTY_SONG_PERCENT		THEME->GetMetricF("ScreenRanking","EmptySongPercent")
+#define SHOW_DIFF_COLS			THEME->GetMetric ("ScreenRanking","ShowDiffCol")
 
 #define COURSES_TO_SHOW			PREFSMAN->m_sCoursesToShowRanking
 
@@ -70,6 +72,17 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 	m_sprType.SetXY( TYPE_X, TYPE_Y );
 	this->AddChild( &m_sprType );
+
+
+	// make the list of difficulties to show
+	vector<CString> sShowDiffs;
+	split( SHOW_DIFF_COLS, ",", sShowDiffs, true );
+
+	for( vector<CString>::const_iterator iter = sShowDiffs.begin(); iter != sShowDiffs.end(); iter++ )
+	{
+		m_vDiffsToShow.push_back( StringToDifficulty( *iter ) );
+	}
+	
 
 	for( int i=0; i<NUM_RANKING_LINES; i++ )
 	{
@@ -108,20 +121,50 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 		m_textTime[i].SetHorizAlign( Actor::align_right );
 		this->AddChild( &m_textTime[i] );
 
-		for( int j=0; j<NUM_DIFFICULTIES; j++ )
-		{
-			m_textPercent[i][j].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
-			m_textPercent[i][j].EnableShadow( false );
-			m_textPercent[i][j].SetX( PERCENT_START_X+LINE_SPACING_X*i+PERCENT_COL_SPACING_X*j );
-			m_textPercent[i][j].SetY( PERCENT_START_Y+LINE_SPACING_Y*i+PERCENT_COL_SPACING_Y*j );
-			m_textPercent[i][j].SetZoom( TEXT_ZOOM );
-			m_textPercent[i][j].SetHorizAlign( Actor::align_right );
-			this->AddChild( &m_textPercent[i][j] );
-		}
+
 
 		if( PREFSMAN->m_sCoursesToShowRanking == "" )
 			PREFSMAN->m_sCoursesToShowRanking = THEME->GetMetric("ScreenRanking","CoursesToShow");
 	}
+
+
+	// init all the difficulty graphics
+	for( int d=0; d<NUM_DIFFICULTIES; d++ )
+	{
+		m_sprDiffHeaders[d].Load( THEME->GetPathToG(("ScreenRanking difficulty 1x5")) );
+		m_sprDiffHeaders[d].SetDiffuse( RageColor(1,1,1,0) );
+		m_sprDiffHeaders[d].StopAnimating();
+		m_sprDiffHeaders[d].SetState(d);
+		m_sprDiffHeaders[d].SetHorizAlign( Actor::align_right );
+
+		for( int i=0; i<NUM_RANKING_LINES; i++ )
+		{
+			m_textPercent[i][d].LoadFromFont( THEME->GetPathToF("ScreenRanking letters") );
+			m_textPercent[i][d].EnableShadow( false );
+			m_textPercent[i][d].SetZoom( TEXT_SONGZOOM );
+			m_textPercent[i][d].SetHorizAlign( Actor::align_right );
+		}
+	}
+
+	// enable the difficulty graphics that we care about	
+	DiffVectorCIter pDiff = m_vDiffsToShow.begin();
+	for( int j=0; pDiff != m_vDiffsToShow.end() && j<NUM_DIFFICULTIES; pDiff++, j++ )
+	{
+		int d = (int)*pDiff;
+
+		m_sprDiffHeaders[d].SetX( PERCENT_START_X+PERCENT_COL_SPACING_X*j );
+		m_sprDiffHeaders[d].SetY( PERCENT_START_Y-LINE_SPACING_Y );
+		this->AddChild( &m_sprDiffHeaders[d] );
+
+
+		for( int i=0; i<NUM_RANKING_LINES; i++ )
+		{
+			m_textPercent[i][d].SetX( PERCENT_START_X+LINE_SPACING_X*i+PERCENT_COL_SPACING_X*j );
+			m_textPercent[i][d].SetY( PERCENT_START_Y+LINE_SPACING_Y*i+PERCENT_COL_SPACING_Y*j );
+			this->AddChild( &m_textPercent[i][d] );
+		}
+	}
+
 
 
 	vector<StepsType> aNotesTypesToShow;
@@ -242,8 +285,12 @@ void ScreenRanking::SetPage( PageToShow pts )
 		m_textScores[l].SetText( "" );
 		m_textPoints[l].SetText( "" );
 		m_textTime[l].SetText( "" );
-		for( int j=0; j<NUM_DIFFICULTIES; j++ )
-			m_textPercent[l][j].SetText( "" );
+		for( DiffVectorCIter j=m_vDiffsToShow.begin(); j<m_vDiffsToShow.end(); j++ )
+			m_textPercent[l][*j].SetText( "" );
+	}
+	for( int d=0; d<NUM_DIFFICULTIES; d++ )
+	{
+		m_sprDiffHeaders[d].SetDiffuseAlpha(0);
 	}
 
 	switch( pts.type )
@@ -378,27 +425,42 @@ void ScreenRanking::SetPage( PageToShow pts )
 		
 			m_sprType.SetDiffuse( RageColor(1,1,1,1) );
 			m_sprType.Load( THEME->GetPathToG("ScreenRanking type "+GameManager::NotesTypeToString(pts.nt)) );
-			for( int l=0; l<NUM_RANKING_LINES; l++ )
-			{
-				m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
 
-				for( int d=0; d<NUM_DIFFICULTIES; d++ )
+			for( DiffVectorCIter dIter = m_vDiffsToShow.begin(); dIter != m_vDiffsToShow.end(); dIter++ )
+			{
+				int d = (int)*dIter;
+
+				Difficulty dc = (Difficulty)d;
+				Steps* pSteps = pts.pSong->GetStepsByDifficulty( pts.nt, dc );
+
+									
+				if( pSteps == NULL )
 				{
-					Difficulty dc = (Difficulty)d;
-					Steps* pSteps = pts.pSong->GetStepsByDifficulty( pts.nt, dc );
-					
+					// set alpha to 0.0 and continue
+					m_sprDiffHeaders[d].SetDiffuse( RageColor(1,1,1,0) );	
+					continue;
+				}
+
+				// set the header visible
+				m_sprDiffHeaders[d].SetDiffuse( RageColor(1,1,1,1) );	
+
+				for( int l=0; l<NUM_RANKING_LINES; l++ )
+				{
+					m_sprBullets[l].SetDiffuse( RageColor(1,1,1,1) );
+
 					Steps::MemCardData::HighScore hs;
+
 					if( l < (int)pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores.size() )
 					{
 						hs = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores[l];
+
+						m_textPercent[l][d].SetText( ssprintf("%s %f%", hs.sName.c_str(), hs.fScore) );
 					}
 					else
 					{
-						hs.sName = EMPTY_SCORE_NAME;
-						hs.fScore = EMPTY_SONG_PERCENT;
+						m_textPercent[l][d].SetText( ssprintf("%s", EMPTY_SCORE_NAME.c_str()) );
 					}
 
-					m_textPercent[l][d].SetText( ssprintf("%s %f%", hs.sName.c_str(), hs.fScore) );
 				}
 			}
 		}
@@ -422,6 +484,9 @@ void ScreenRanking::TweenPageOnScreen()
 		m_textPoints[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
 		m_textTime[l].FadeOn(0.2f+l*0.1f,"bounce right far",1.f);
 	}
+	for( int d=0; d<NUM_DIFFICULTIES; d++ )
+		m_sprDiffHeaders[d].FadeOn(0.2f,"bounce right far",1.f);
+
 }
 
 void ScreenRanking::TweenPageOffScreen()
@@ -438,4 +503,7 @@ void ScreenRanking::TweenPageOffScreen()
 		m_textPoints[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
 		m_textTime[l].FadeOff(0.2f+l*0.1f,"fade",0.25f);
 	}
+	for( int d=0; d<NUM_DIFFICULTIES; d++ )
+		m_sprDiffHeaders[d].FadeOff(0.2f+d*0.1f,"fade",0.25f);
+
 }
