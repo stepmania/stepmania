@@ -27,7 +27,8 @@
 
 /* What is this file, and why is it needed?  Seems to compile on 
  * Win32 w/o it. -Chris */
-//#include <sys/errno.h>
+/* Standard header to get access to "errno", or we won't compile on modern compilers. */
+#include <errno.h>
 
 
 const int channels = 2;
