@@ -1200,9 +1200,9 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	GLboolean bLighting;
 	glGetBooleanv( GL_LIGHTING, &bLighting );
 	GLboolean bTextureGenS;
-	glGetBooleanv( GL_TEXTURE_GEN_S, &bLighting );
+	glGetBooleanv( GL_TEXTURE_GEN_S, &bTextureGenS );
 	GLboolean bTextureGenT;
-	glGetBooleanv( GL_TEXTURE_GEN_T, &bLighting );
+	glGetBooleanv( GL_TEXTURE_GEN_T, &bTextureGenT );
 	if( bLighting || bTextureGenS || bTextureGenT )
 	{
 		glEnableClientState(GL_NORMAL_ARRAY);
