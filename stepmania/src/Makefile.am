@@ -133,6 +133,10 @@ GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMap
 NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h SongManager.cpp SongManager.h \
 ThemeManager.cpp ThemeManager.h 
 
+Sound_OSS = \
+	arch/Sound/RageSoundDriver_OSS.cpp \
+	arch/Sound/RageSoundDriver_OSS.h
+
 Sound_ALSA9 = \
 	arch/Sound/RageSoundDriver_ALSA9.cpp \
 	arch/Sound/RageSoundDriver_ALSA9.h
