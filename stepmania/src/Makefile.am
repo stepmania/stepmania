@@ -142,7 +142,7 @@ MusicBannerWheel.cpp MusicBannerWheel.h MusicList.cpp MusicList.h MusicSortDispl
 MusicWheel.cpp MusicWheel.h MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h \
 OptionIconRow.cpp OptionIconRow.h OptionsCursor.cpp OptionsCursor.h ScrollBar.cpp ScrollBar.h \
 ScrollingList.cpp ScrollingList.h SnapDisplay.cpp SnapDisplay.h TextBanner.cpp TextBanner.h \
-WheelNotifyIcon.cpp WheelNotifyIcon.h
+WheelNotifyIcon.cpp WheelNotifyIcon.h GraphDisplay.cpp GraphDisplay.h
 
 ActorsInGameplay = \
 ArrowBackdrop.cpp ArrowBackdrop.h ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h \
