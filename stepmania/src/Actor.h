@@ -364,11 +364,15 @@ protected:
 	// Stuff for effects
 	//
 	Effect m_Effect;
-	float m_fSecsIntoEffect;
+	float m_fSecsIntoEffect, m_fEffectDelta;
 	float m_fEffectPeriodSeconds;
 	float m_fEffectDelay;
 	float m_fEffectOffset;
 	EffectClock m_EffectClock;
+
+	/* This can be used in lieu of the fDeltaTime parameter to Update() to
+	 * follow the effect clock.  Actor::Update must be called first. */
+	float GetEffectDeltaTime() const { return m_fEffectDelta; }
 
 	RageColor   m_effectColor1;
 	RageColor   m_effectColor2;

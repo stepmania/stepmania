@@ -30,6 +30,7 @@ void Actor::Reset()
 
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
+	m_fEffectDelta = 0;
 	m_fEffectPeriodSeconds = 1;
 	m_fEffectDelay = 0;
 	m_fEffectOffset = 0;
@@ -305,6 +306,25 @@ void Actor::Update( float fDeltaTime )
 	if( m_fHibernateSecondsLeft > 0 )
 		return;
 
+	switch( m_EffectClock )
+	{
+	case CLOCK_TIMER:
+		m_fSecsIntoEffect += fDeltaTime;
+		m_fEffectDelta = fDeltaTime;
+		m_fSecsIntoEffect = fmodfp( m_fSecsIntoEffect, m_fEffectPeriodSeconds + m_fEffectDelay );
+		break;
+
+	case CLOCK_BGM_BEAT:
+		m_fEffectDelta = g_fCurrentBGMBeat - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_fCurrentBGMBeat;
+		break;
+
+	case CLOCK_BGM_TIME:
+		m_fEffectDelta = g_fCurrentBGMTime - m_fSecsIntoEffect;
+		m_fSecsIntoEffect = g_fCurrentBGMTime;
+		break;
+	}
+
 	// update effect
 	switch( m_Effect )
 	{
@@ -319,22 +339,6 @@ void Actor::Update( float fDeltaTime )
 	case bounce:
 	case bob:
 	case pulse:
-		switch( m_EffectClock )
-		{
-		case CLOCK_TIMER:
-			m_fSecsIntoEffect += fDeltaTime;
-			m_fSecsIntoEffect = fmodfp( m_fSecsIntoEffect, m_fEffectPeriodSeconds + m_fEffectDelay );
-			break;
-
-		case CLOCK_BGM_BEAT:
-			m_fSecsIntoEffect = g_fCurrentBGMBeat;
-			break;
-
-		case CLOCK_BGM_TIME:
-			m_fSecsIntoEffect = g_fCurrentBGMTime;
-			break;
-		}
-
 		break;
 	case spin:
 		m_current.rotation += fDeltaTime*m_vEffectMagnitude;
