@@ -651,6 +651,10 @@ void Actor::Command( CString sCommandString )
 		CStringArray asTokens;
 		split( asCommands[c], ",", asTokens, true );
 
+		for(unsigned d=0; d < asTokens.size(); d++)
+		{
+			TrimLeft(asTokens[d]); TrimRight(asTokens[d]);
+		}
 		int iMaxIndexAccessed = 0;
 
 #define sParam(i) (GetParam(asTokens,i,iMaxIndexAccessed))
