@@ -103,9 +103,7 @@ ScreenSelectCourse::ScreenSelectCourse() : Screen("ScreenSelectCourse")
 		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
 			continue;	// skip
 
-		m_sprHighScoreFrame[p].Load( THEME->GetPathToG("ScreenSelectCourse score frame") );
-		m_sprHighScoreFrame[p].StopAnimating();
-		m_sprHighScoreFrame[p].SetState( p );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectCourse score frame p%d",p+1)) );
 		m_sprHighScoreFrame[p].SetXY( SCORE_X(p), SCORE_Y(p) );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
