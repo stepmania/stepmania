@@ -749,12 +749,19 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 #endif
 
 #ifndef DARWIN
-	/* XXX: Er, this doesn't work; Windows traps this key and takes a screenshot
-	 * into the clipboard.  I don't want to disable that, though; it's useful. */
-	if( DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_PAUSE) &&
-		( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-		  INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT))) )
+	/* The default Windows message handler will capture the desktop window upon
+	 * pressing PrntScrn, or will capture the foregroud with focus upon pressing
+	 * Alt+PrntScrn.  Windows will do this whether or not we save a screenshot 
+	 * ourself by dumping the frame buffer.  */
+	// "if pressing PrintScreen and not pressing Alt"
+	if( DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_SYSREQ) &&
+		!INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) &&
+		!INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 #else
+	/* Using F12 seems like a bad idea because this key already has a function
+	 * in ScreenGameplay and in the editor (and those users don't care whether 
+	 * Alt is being held.  Is there another key on the standard Mac keyboard 
+	 * that could be used for this purpose?  -Chris */ 
 	if( DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F12) &&
 	    ( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RMETA)) ||
 	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LMETA))) )
