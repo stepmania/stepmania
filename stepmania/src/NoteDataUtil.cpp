@@ -147,7 +147,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData,
 						// skip past the ']'
 						while( *p )
 						{
-							if( *p == '[]' )
+							if( *p == ']' )
 							{
 								p++;
 								break;
