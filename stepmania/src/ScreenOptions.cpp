@@ -853,10 +853,14 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 
 	// if we are in dedicated menubutton input and arcade navigation
 	// check to see if MENU_BUTTON_LEFT and MENU_BUTTON_RIGHT are being held
+	/* This was left or right, instead of left and right.  Require both.  When
+	 * running through a menu quickly in three key mode with lots of right and
+	 * start taps, it's very easy to tap start before actually releasing the right
+	 * tap, causing the menu to move up when you wanted it to go down. */
 	const bool bHoldingLeftOrRight = MenuI.IsValid() && MenuI.button == MENU_BUTTON_START &&
 		m_OptionsNavigation == NAV_THREE_KEY &&
-		(INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) || 
-		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) ) );
+		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) ) &&
+		INPUTMAPPER->IsButtonDown( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
 
 	if( type != IET_RELEASE && bHoldingLeftOrRight )
 	{
@@ -1167,13 +1171,6 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	const int iCurRow = m_iCurrentRow[pn];
 	Row &row = *m_Rows[iCurRow];
 	OptionRowData &optrow = m_Rows[iCurRow]->m_RowDef;
-
-	/* If START is being pressed, and in NAV_THREE_KEY, then we're holding left/right
-	 * and start to move backwards.  Don't move left and right, too. */
-	/* DO move so that when we press Left then Right, we move back to the option 
-	 * that was selected before we started the combination to go Up.  -Chris */
-//	if( m_OptionsNavigation == NAV_THREE_KEY && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_START) ) )
-//		return;
 
 	const int iNumOptions = (row.Type == Row::ROW_EXIT)? 1: optrow.choices.size();
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
