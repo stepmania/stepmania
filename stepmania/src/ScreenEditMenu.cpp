@@ -199,32 +199,29 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
-			Steps* pNewSteps = new Steps;
+			pSteps = new Steps;
 			switch( action )
 			{
 				case EDIT_MENU_ACTION_COPY:
-					pNewSteps->CopyFrom( pSourceSteps, st );
+					pSteps->CopyFrom( pSourceSteps, st );
 					break;
 				case EDIT_MENU_ACTION_AUTOGEN:
-					pNewSteps->AutogenFrom( pSourceSteps, st );
-					pNewSteps->DeAutogen();
+					pSteps->AutogenFrom( pSourceSteps, st );
+					pSteps->DeAutogen();
 					break;
 				default:
 					ASSERT(0);
 			}
-			pNewSteps->SetDifficulty( dc );	// override difficulty with the user's choice
+			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice
 			CString sEditName = GetCopyDescription(pSourceSteps);
 			pSong->MakeUniqueEditDescription( st, sEditName ); 
-			pNewSteps->SetDescription( sEditName );
-			pSong->AddSteps( pNewSteps );
+			pSteps->SetDescription( sEditName );
+			pSong->AddSteps( pSteps );
 				
-			SCREENMAN->SystemMessage( "Steps created from AutoGen." );
-			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
+			SCREENMAN->PlayStartSound();
 
 			GAMESTATE->m_pCurSong.Set( pSong );
-			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
-
-			m_Selector.RefreshAll();
+			GAMESTATE->m_pCurSteps[0].Set( pSteps );
 		}
 		break;
 	case EDIT_MENU_ACTION_BLANK:
@@ -232,23 +229,19 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
-			Steps* pNewSteps = new Steps;
-			pNewSteps->CreateBlank( st );
-			pNewSteps->SetDifficulty( dc );
-			pNewSteps->SetMeter( 1 );
+			pSteps = new Steps;
+			pSteps->CreateBlank( st );
+			pSteps->SetDifficulty( dc );
+			pSteps->SetMeter( 1 );
 			CString sEditName = "Blank";
 			pSong->MakeUniqueEditDescription( st, sEditName ); 
-			pNewSteps->SetDescription( sEditName );
-			pSong->AddSteps( pNewSteps );
+			pSteps->SetDescription( sEditName );
+			pSong->AddSteps( pSteps );
 		
-			SCREENMAN->SystemMessage( "Blank Steps created." );
-			SOUND->PlayOnce( THEME->GetPathS(m_sName,"create") );
-			m_Selector.RefreshAll();
+			SCREENMAN->PlayStartSound();
 
 			GAMESTATE->m_pCurSong.Set( pSong );
-			GAMESTATE->m_pCurSteps[0].Set( pNewSteps );
-
-			m_Selector.RefreshAll();
+			GAMESTATE->m_pCurSteps[0].Set( pSteps );
 		}
 		break;
 	default:
@@ -256,9 +249,6 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	}
 
 	
-	pSteps = m_Selector.GetSelectedSteps();
-
-
 	//
 	// Go to the next screen.
 	//
