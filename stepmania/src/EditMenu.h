@@ -4,7 +4,7 @@
 #define EDIT_MENU_H
 
 #include "ActorFrame.h"
-#include "Banner.h"
+#include "FadingBanner.h"
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
 #include "DifficultyMeter.h"
@@ -97,9 +97,9 @@ private:
 	BitmapText	m_textLabel[NUM_ROWS];
 	BitmapText	m_textValue[NUM_ROWS];
 
-	Banner		m_GroupBanner;
-	Banner		m_SongBanner;
-	TextBanner  m_SongTextBanner;
+	FadingBanner	m_GroupBanner;
+	FadingBanner	m_SongBanner;
+	TextBanner		m_SongTextBanner;
 	DifficultyMeter	m_Meter;
 	DifficultyMeter	m_SourceMeter;
 
