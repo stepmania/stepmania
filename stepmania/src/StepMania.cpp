@@ -73,6 +73,7 @@
 #define ZIPS_DIR "Packages/"
 
 #ifdef _WINDOWS
+/* The renderer is responsible for setting this, and updating it when it changes. */
 HWND g_hWndMain = NULL;
 #endif
 
@@ -81,19 +82,6 @@ char **g_argv = NULL;
 
 static bool g_bHasFocus = true;
 static bool g_bQuitting = false;
-
-void UpdateHWnd()
-{
-#ifdef _WINDOWS
-	/* Grab the window manager specific information */
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if ( SDL_GetWMInfo(&info) < 0 ) 
-		RageException::Throw( "SDL_GetWMInfo failed" );
-
-	g_hWndMain = info.window;
-#endif
-}
 
 static RageDisplay::VideoModeParams GetCurVideoModeParams()
 {
@@ -172,9 +160,6 @@ void ApplyGraphicOptions()
 		TEXTUREMAN->ReloadAll();
 
 	StoreActualGraphicOptions( false );
-
-	/* Recreating the window changes the hwnd. */
-	UpdateHWnd();
 
 	/* Give the input handlers a chance to re-open devices as necessary. */
 	INPUTMAN->WindowReset();
@@ -1094,12 +1079,6 @@ int main(int argc, char* argv[])
 		);
 
 	StoreActualGraphicOptions( true );
-
-	/* Now that we've started DISPLAY, we can set up event masks. */
-	mySDL_EventState(SDL_QUIT, SDL_ENABLE);
-	mySDL_EventState(SDL_ACTIVEEVENT, SDL_ENABLE);
-
-	UpdateHWnd();
 
 	SONGMAN->PreloadSongImages();
 
