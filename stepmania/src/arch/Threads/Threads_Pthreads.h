@@ -1,5 +1,5 @@
-#ifndef THREADS_WIN32_H
-#define THREADS_WIN32_H
+#ifndef THREADS_PTHREADS_H
+#define THREADS_PTHREADS_H
 
 #include "Threads.h"
 
@@ -23,7 +23,7 @@ public:
 #endif
 
 #if defined(DARWIN)
-	thread_act_t MachThreadHandle;
+	uint64_t MachThreadHandle;
 #endif
 
 	/* These are only used during initialization. */

@@ -15,8 +15,7 @@
 #endif
 
 #if defined(DARWIN)
-#include <mach/mach_init.h>
-#include <mach/thread_act.h>
+#include "archutils/Darwin/DarwinThreadHelpers.h"
 #endif
 
 void ThreadImpl_Pthreads::Halt( bool Kill )
@@ -32,7 +31,7 @@ void ThreadImpl_Pthreads::Halt( bool Kill )
 	 */
 	SuspendThread( pid );
 #elif defined(DARWIN)
-	thread_suspend( MachThreadHandle );
+	SuspendThread( MachThreadHandle );
 #endif
 }
 
@@ -42,7 +41,7 @@ void ThreadImpl_Pthreads::Resume()
 	/* Send a SIGCONT to the thread. */
 	ResumeThread( pid );
 #elif defined(DARWIN)
-	thread_resume( MachThreadHandle );
+	ResumeThread( MachThreadHandle );
 #endif
 }
 
@@ -76,7 +75,7 @@ ThreadImpl *MakeThisThread()
 #endif
 
 #if defined(DARWIN)
-	thread->MachThreadHandle = mach_thread_self();
+	thread->MachThreadHandle = GetCurrentThreadId();
 #endif
 
 	return thread;
@@ -91,7 +90,7 @@ static void *StartThread( void *pData )
 #endif
 
 #if defined(DARWIN)
-	pThis->MachThreadHandle = mach_thread_self();
+	pThis->MachThreadHandle = GetCurrentThreadId();
 #endif
 
 	*pThis->m_piThreadID = pThis->GetThreadId();
@@ -222,11 +221,7 @@ void MutexImpl_Pthreads::Unlock()
 
 uint64_t GetThisThreadId()
 {
-#if defined(PID_BASED_THREADS)
 	return GetCurrentThreadId();
-#elif defined(DARWIN)
-	return (int) mach_thread_self();
-#endif
 }
 
 uint64_t GetInvalidThreadId()
