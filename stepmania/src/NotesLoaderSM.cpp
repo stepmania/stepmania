@@ -237,6 +237,11 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			LOG->Trace( "Unexpected value named '%s'", sValueName.GetString() );
 	}
 
+	out.m_sBannerFile.Replace("\\", "/");
+	out.m_sBackgroundFile.Replace("\\", "/");
+	out.m_sCDTitleFile.Replace("\\", "/");
+	out.m_sMusicFile.Replace("\\", "/");
+
 	return true;
 }
 
