@@ -235,10 +235,19 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 		if( m_Choice == CHOICE_EDIT_COURSES )
 		{
-			if( SONGMAN->GetNumCourses() == 0 )
+			vector<Course*> vCourses;
+			SONGMAN->GetAllCourses( vCourses, false );
+
+			if( vCourses.size() == 0 )
 			{
 				m_soundInvalid.Play();
 				SCREENMAN->SystemMessage( "No courses are installed" );
+				return;
+			}
+			if( SONGMAN->GetNumSongs() == 0 )
+			{
+				m_soundInvalid.Play();
+				SCREENMAN->SystemMessage( "No songs are installed" );
 				return;
 			}
 		}
