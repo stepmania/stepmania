@@ -91,6 +91,9 @@ int RageFile::FillBuf()
 	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pBuf, m_Buffer, (int) sizeof(m_Buffer) ) );
 	const int size = m_File->Read( m_pBuf+m_BufAvail, iBufAvail );
 
+	if( size == -1 )
+		SetError( m_File->GetError() );
+
 	if( size > 0 )
 		m_BufAvail += size;
 
@@ -245,8 +248,11 @@ int RageFile::Read( void *buffer, size_t bytes )
 			/* We have a lot more to read, so don't waste time copying it into the
 			 * buffer. */
 			int FromFile = m_File->Read( buffer, bytes );
-			if( FromFile < 0 )
-				return FromFile;
+			if( FromFile == -1 )
+			{
+				SetError( m_File->GetError() );
+				return -1;
+			}
 			if( FromFile == 0 )
 				m_EOF = true;
 			ret += FromFile;
@@ -279,7 +285,10 @@ int RageFile::Seek( int offset )
 	
 	int pos = m_File->Seek( offset );
 	if( pos == -1 )
+	{
+		SetError( m_File->GetError() );
 		return -1;
+	}
 
 	m_FilePos = pos;
 	return pos;
@@ -335,7 +344,13 @@ int RageFile::Write( const void *buffer, size_t bytes )
 	if( !(m_Mode&WRITE) )
 		RageException::Throw("\"%s\" is not open for writing", GetPath().c_str());
 
-	return m_File->Write( buffer, bytes );
+	int iRet = m_File->Write( buffer, bytes );
+	if( iRet == -1 )
+	{
+		SetError( m_File->GetError() );
+		return -1;
+	}
+	return iRet;
 }
 
 
@@ -344,7 +359,10 @@ int RageFile::Write( const void *buffer, size_t bytes, int nmemb )
 	/* Simple write.  We never return partial writes. */
 	int ret = Write( buffer, bytes*nmemb ) / bytes;
 	if( ret == -1 )
+	{
+		SetError( m_File->GetError() );
 		return -1;
+	}
 	return ret / bytes;
 }
 
@@ -356,7 +374,13 @@ int RageFile::Flush()
 		return -1;
 	}
 
-	return m_File->Flush();
+	int iRet = m_File->Flush();
+	if( iRet == -1 )
+	{
+		SetError( m_File->GetError() );
+		return -1;
+	}
+	return iRet;
 }
 
 int RageFile::Read( void *buffer, size_t bytes, int nmemb )

@@ -8,11 +8,6 @@ RageFileDriver::~RageFileDriver()
 	delete FDB;
 }
 
-void RageFileObj::SetError( const CString &err )
-{
-	parent.SetError( err );
-}
-
 int RageFileDriver::GetPathValue( const CString &path )
 {
 	vector<CString> parts;

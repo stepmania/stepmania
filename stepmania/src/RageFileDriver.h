@@ -35,12 +35,14 @@ class RageFileObj
 {
 protected:
 	RageFile &parent;
-	void SetError( const CString &err );
+	void SetError( const CString &sErr ) { m_sError = sErr; }
+	CString m_sError;
 
 public:
 	RageFileObj( RageFile &p ): parent(p) { }
 	virtual ~RageFileObj() { }
 
+	CString GetError() const { return m_sError; }
 //	virtual CString RealPath() const { return parent->GetPath(); }
 	
 	virtual int Seek( int offset ) = 0;
