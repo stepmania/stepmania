@@ -126,10 +126,8 @@ void RageSurfaceUtils::SetRGBAV( uint8_t *p, const RageSurface *src, const uint8
 void RageSurfaceUtils::GetBitsPerChannel( const RageSurfaceFormat *fmt, uint32_t bits[4] )
 {
 	/* The actual bits stored in each color is 8-loss.  */
-	bits[0] = 8 - fmt->Rloss;
-	bits[1] = 8 - fmt->Gloss;
-	bits[2] = 8 - fmt->Bloss;
-	bits[3] = 8 - fmt->Aloss;
+	for( int c = 0; c < 4; ++c )
+		bits[c] = 8 - fmt->Loss[c];
 }
 
 void RageSurfaceUtils::CopySurface( const RageSurface *src, RageSurface *dest )
@@ -523,10 +521,6 @@ static bool blit_rgba_to_rgba( const RageSurface *src_surf, const RageSurface *d
 	/* Bytes to skip at the end of a line. */
 	const int srcskip = src_surf->pitch - width*src_surf->format->BytesPerPixel;
 	const int dstskip = dst_surf->pitch - width*dst_surf->format->BytesPerPixel;
-
-	uint32_t src_bits[4], dst_bits[4];
-	RageSurfaceUtils::GetBitsPerChannel(src_surf->format, src_bits);
-	RageSurfaceUtils::GetBitsPerChannel(dst_surf->format, dst_bits);
 
 	const uint32_t *src_shifts = src_surf->format->Shift;
 	const uint32_t *dst_shifts = dst_surf->format->Shift;
