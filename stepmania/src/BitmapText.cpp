@@ -241,6 +241,19 @@ void BitmapText::SetText( CString sText, CString sAlternateText )
 	BuildChars();
 }
 
+void BitmapText::SetTextMaxWidth( float MaxWidth, const CString &text, const CString &alttext )
+{
+	this->SetText(text, alttext);
+
+	/* Avoid division by zero. */
+	const int Width = GetWidestLineWidthInSourcePixels()+1;
+
+	/* Never decrease the zoom.  Important: make sure you reset zoom before
+	 * changing text with this function. */
+	const float Zoom = min( GetZoom(), MaxWidth/Width );
+	this->SetZoomX( Zoom );
+}
+
 bool BitmapText::StringWillUseAlternate(CString sText, CString sAlternateText) const
 {
 	ASSERT( m_pFont );
