@@ -352,6 +352,7 @@ retry:
 				PixFmtMasks[pixfmt].masks[2], PixFmtMasks[pixfmt].masks[3]);
 
 			SM_SDL_OrderedDither(img, dst);
+			//SM_SDL_ErrorDiffusionDither(img, dst);
 			SDL_FreeSurface(img);
 			img = dst;
 		}

@@ -107,6 +107,27 @@ void mySDL_GetRawRGBAV(const Uint8 *p, const SDL_Surface *src, Uint8 *v)
 	mySDL_GetRawRGBAV(pixel, src, v);	
 }
 
+void mySDL_GetRGBAV(Uint32 pixel, const SDL_Surface *src, Uint8 *v)
+{
+	mySDL_GetRawRGBAV(pixel, src, v);
+	const SDL_PixelFormat *fmt = src->format;
+	v[0] = v[0] << fmt->Rloss;
+	v[1] = v[1] << fmt->Gloss;
+	v[2] = v[2] << fmt->Bloss;
+	// Correct for surfaces that don't have an alpha channel.
+	if( fmt->Aloss == 8)
+		v[3] = 255;
+	else
+		v[3] = v[3] << fmt->Aloss;
+}
+
+void mySDL_GetRGBAV(const Uint8 *p, const SDL_Surface *src, Uint8 *v)
+{
+	Uint32 pixel = decodepixel(p, src->format->BytesPerPixel);
+	mySDL_GetRGBAV(pixel, src, v);	
+}
+
+
 /* Inverse of mySDL_GetRawRGBAV. */
 Uint32 mySDL_SetRawRGBAV(const SDL_PixelFormat *fmt, const Uint8 *v)
 {
@@ -121,6 +142,22 @@ void mySDL_SetRawRGBAV(Uint8 *p, const SDL_Surface *src, const Uint8 *v)
 	Uint32 pixel = mySDL_SetRawRGBAV(src->format, v);
 	encodepixel(p, src->format->BytesPerPixel, pixel);
 }
+
+/* Inverse of mySDL_GetRGBAV. */
+Uint32 mySDL_SetRGBAV(const SDL_PixelFormat *fmt, const Uint8 *v)
+{
+	return 	(v[0] >> fmt->Rloss) << fmt->Rshift |
+			(v[1] >> fmt->Gloss) << fmt->Gshift |
+			(v[2] >> fmt->Bloss) << fmt->Bshift |
+			(v[3] >> fmt->Aloss) << fmt->Ashift;
+}
+
+void mySDL_SetRGBAV(Uint8 *p, const SDL_Surface *src, const Uint8 *v)
+{
+	Uint32 pixel = mySDL_SetRGBAV(src->format, v);
+	encodepixel(p, src->format->BytesPerPixel, pixel);
+}
+
 
 /* Get the number of bits representing each color channel in fmt. */
 void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4])

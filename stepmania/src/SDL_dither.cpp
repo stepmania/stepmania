@@ -6,6 +6,13 @@
 
 #define DitherMatDim 4
 
+
+/*
+ Added error-diffusion algorithm. (SM_SDL_ErrorDiffusionDither)
+ Error distributed per-row, left to right.
+ http://www.gamasutra.com/features/19990521/pixel_conversion_03.htm
+ */
+
 /* Fractions, 0/16 to 15/16:  */
 static const int DitherMat[DitherMatDim][DitherMatDim] =
 {
@@ -116,6 +123,74 @@ void SM_SDL_OrderedDither(const SDL_Surface *src, SDL_Surface *dst)
 
 			/* Raw value -> int -> pixel */
 			mySDL_SetRawRGBAV(dstp, dst, colors);
+
+			srcp += src->format->BytesPerPixel;
+			dstp += dst->format->BytesPerPixel;
+		}
+	}
+}
+
+
+#define CLAMP(x, l, h)	{if (x > h) x = h; else if (x < l) x = l;}
+
+void SM_SDL_ErrorDiffusionDither(const SDL_Surface *src, SDL_Surface *dst)
+{
+	/* We can't dither to paletted surfaces. */
+	ASSERT(dst->format->BytesPerPixel > 1);
+
+	/* For each row: */
+	for(int row = 0; row < src->h; ++row) 
+	{
+		Sint32 accumError[4] = { 0, 0, 0, 0 }; // accum error values are reset every row
+
+		const Uint8 *srcp = (const Uint8 *)src->pixels + row * src->pitch;
+		Uint8 *dstp = (Uint8 *)dst->pixels + row * dst->pitch;
+
+		/* For each pixel in row: */
+		for(int col = 0; col < src->w; ++col)
+		{
+			Uint8 originalColors[4];
+			mySDL_GetRGBAV(srcp, src, originalColors);
+
+			Uint8 colorsPlusError[4];
+			int c;
+			for(c = 0; c < 4; ++c) 
+			{
+				// move some error to the new pixel (without overflowing)
+				Sint32 errorToAdd;
+				if( accumError[c] >= 0 )
+					errorToAdd = min( accumError[c], (Sint32)255 - originalColors[c] );
+				else
+					errorToAdd = max( accumError[c], (Sint32)-originalColors[c] );
+
+				colorsPlusError[c] = (Uint8)(originalColors[c] + errorToAdd);
+				accumError[c] -= errorToAdd;
+				
+				// make sure we didn't overflow
+				ASSERT( (Uint8)(originalColors[c] + errorToAdd) == (Sint32)(originalColors[c] + errorToAdd) );
+				
+			}
+			mySDL_SetRGBAV(dstp, dst, colorsPlusError);
+
+
+			Uint8 ditheredColors[4];
+			mySDL_GetRGBAV(dstp, dst, ditheredColors);
+
+			for(c = 0; c < 4; ++c) 
+				accumError[c] += originalColors[c] - ditheredColors[c];
+
+			/* Blank the alpha accumulated error.  
+			 * This has the effect of not dithering the alpha channel. */
+			accumError[3] = 0;
+
+			for(c = 0; c < 4; ++c)
+			{
+				// Reduce funky streaks in low-bit channels by clamping error.
+				CLAMP( accumError[c], -128, +128 );
+
+				// Keep only a fraction of the error to make the effect more subtle.
+				accumError[c] /= 4;
+			}
 
 			srcp += src->format->BytesPerPixel;
 			dstp += dst->format->BytesPerPixel;

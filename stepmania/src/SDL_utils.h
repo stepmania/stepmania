@@ -14,9 +14,13 @@ void encodepixel(Uint8 *p, int bpp, Uint32 pixel);
 
 void mySDL_GetRawRGBAV(Uint32 pixel, const SDL_Surface *src, Uint8 *v);
 void mySDL_GetRawRGBAV(const Uint8 *p, const SDL_Surface *src, Uint8 *v);
+void mySDL_GetRGBAV(Uint32 pixel, const SDL_Surface *src, Uint8 *v);
+void mySDL_GetRGBAV(const Uint8 *p, const SDL_Surface *src, Uint8 *v);
 
 Uint32 mySDL_SetRawRGBAV(const SDL_PixelFormat *fmt, const Uint8 *v);
 void mySDL_SetRawRGBAV(Uint8 *p, const SDL_Surface *src, const Uint8 *v);
+Uint32 mySDL_SetRGBAV(const SDL_PixelFormat *fmt, const Uint8 *v);
+void mySDL_SetRGBAV(Uint8 *p, const SDL_Surface *src, const Uint8 *v);
 
 void mySDL_GetBitsPerChannel(const SDL_PixelFormat *fmt, Uint32 bits[4]);
 void ConvertSDLSurface(SDL_Surface *&image,
