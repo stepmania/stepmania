@@ -2524,11 +2524,11 @@ SOURCE=.\ScreenGameplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenGameplayMassivelyMultiplayer.cpp
+SOURCE=.\ScreenGameplayMultiplayer.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenGameplayMassivelyMultiplayer.h
+SOURCE=.\ScreenGameplayMultiplayer.h
 # End Source File
 # Begin Source File
 
