@@ -254,6 +254,7 @@ void SaveCatalogXml()
 
 	DISP_OPT opts = optDefault;
 	opts.stylesheet = CATALOG_XSL;
+	opts.write_tabs = false;
 	xml.SaveToFile(fn, &opts);
 
 	LOG->Trace( "Done." );

@@ -670,6 +670,7 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 
 	DISP_OPT opts = optDefault;
 	opts.stylesheet = STATS_XSL;
+	opts.write_tabs = false;
 	bool bSaved = xml.SaveToFile(fn, &opts);
 	
 	// Update file cache, or else IsAFile in CryptManager won't see this new file.

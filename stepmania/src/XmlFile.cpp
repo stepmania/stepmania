@@ -511,9 +511,10 @@ bool XNode::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
 		if( opt && opt->newline )
 			if( f.Write("\r\n") == -1 )
 				return false;
-		for( int i = 0 ; i < opt->tab_base ; i++)
-			if( f.Write("\t") == -1 )
-				return false;
+		if( opt->write_tabs )
+			for( int i = 0 ; i < opt->tab_base ; i++)
+				if( f.Write("\t") == -1 )
+					return false;
 	}
 
 	// <TAG
@@ -557,9 +558,10 @@ bool XNode::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
 				if( opt && opt->newline )
 					if( f.Write("\r\n") == -1 )
 						return false;
-				for( int i = 0 ; i < opt->tab_base ; i++)
-					if( f.Write("\t") == -1 )
-						return false;
+				if( opt->write_tabs )
+					for( int i = 0 ; i < opt->tab_base ; i++)
+						if( f.Write("\t") == -1 )
+							return false;
 			}
 			if( f.Write((opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(value):value)) == -1 )
 				return false;
@@ -570,9 +572,10 @@ bool XNode::GetXML( RageFile &f, DISP_OPT *opt /*= &optDefault*/ )
 		{
 			if( f.Write("\r\n") == -1 )
 				return false;
-			for( int i = 0 ; i < opt->tab_base-1 ; i++)
-				if( f.Write("\t") == -1 )
-					return false;
+			if( opt->write_tabs )
+				for( int i = 0 ; i < opt->tab_base-1 ; i++)
+					if( f.Write("\t") == -1 )
+						return false;
 		}
 		if( f.Write("</" + name + ">") == -1 )
 			return false;
