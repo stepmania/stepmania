@@ -679,7 +679,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
 	}
 
-    m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_img );
+    m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_img, false );
 }
 
 
