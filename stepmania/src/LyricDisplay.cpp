@@ -108,9 +108,10 @@ void LyricDisplay::Update( float fDeltaTime )
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(1);
 		m_textLyrics[i].Command(IN_COMMAND);
-		m_textLyrics[i].BeginTweening( fShowLength ); /* sleep */
+		m_textLyrics[i].BeginTweening( fShowLength * 0.75f ); /* sleep */
 		if( i==1 )
 			m_textLyrics[i].SetCropRight(0);
+		m_textLyrics[i].BeginTweening( fShowLength * 0.25f ); /* sleep */
 		m_textLyrics[i].Command(OUT_COMMAND);
 	}
 
