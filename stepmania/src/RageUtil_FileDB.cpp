@@ -132,8 +132,8 @@ int FilenameDB::GetFileHash( const CString &sPath )
 
 bool FilenameDB::ResolvePath(CString &path)
 {
-	if(path == ".") return true;
-	if(path == "") return true;
+	if( path == "." || path == "" )
+		return true;
 
 	/* Split path into components. */
 	int begin = 0, size = -1;
