@@ -54,7 +54,7 @@ XNode* HighScore::CreateNode() const
 			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
 	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
 	FOREACH_HoldNoteScore( hns )
-		if( hns != TNS_NONE )	// HACK: don't save meaningless "none" count
+		if( hns != HNS_NONE )	// HACK: don't save meaningless "none" count
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode() );
 
