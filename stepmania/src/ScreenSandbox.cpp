@@ -15,8 +15,8 @@
 -----------------------------------------------------------------------------
 */
 
-#include "global.h"
 #include "ScreenSandbox.h"
+#include "GameConstantsAndTypes.h"
 
 
 ScreenSandbox::ScreenSandbox()

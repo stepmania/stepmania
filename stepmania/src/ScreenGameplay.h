@@ -30,6 +30,7 @@
 #include "BPMDisplay.h"
 #include "FocusingSprite.h"
 #include "Inventory.h"
+#include "ActiveItemList.h"
 
 
 // messages sent by Combo
@@ -129,6 +130,7 @@ protected:
 	Player				m_Player[NUM_PLAYERS];
 
 	Inventory			m_Inventory;
+	ActiveItemList		m_ActiveItemList[NUM_PLAYERS];
 
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 

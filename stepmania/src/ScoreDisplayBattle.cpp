@@ -37,7 +37,10 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		m_sprItems[i].SetX( fX );
 		m_sprItems[i].Load( THEME->GetPathTo("Graphics","gameplay battle item icons") );
 		m_sprItems[i].StopAnimating();
+		m_sprItems[i].SetZoom( 0 );
 		this->AddChild( &m_sprItems[i] );
+
+        m_iLastSeenItems[i] = ITEM_NONE;
 	}
 }
 
@@ -57,12 +60,14 @@ void ScoreDisplayBattle::Update( float fDelta )
 			if( iNewItem == ITEM_NONE )
 			{
 				m_sprItems[s].StopTweening();
-				m_sprItems[s].SetDiffuse( RageColor(1,1,1,0) );
+				m_sprItems[s].BeginTweening( 0.25f, Actor::TWEEN_BOUNCE_BEGIN );
+				m_sprItems[s].SetTweenZoom( 0 );
 			}
 			else
 			{
 				m_sprItems[s].SetDiffuse( RageColor(1,1,1,1) );
 				m_sprItems[s].SetState( iNewItem );
+				m_sprItems[s].SetZoom( 1 );
 				
 				// blink
 				m_sprItems[s].StopTweening();

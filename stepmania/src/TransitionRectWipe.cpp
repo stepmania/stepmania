@@ -12,6 +12,7 @@
 #include "RageUtil.h"
 
 #include "TransitionRectWipe.h"
+#include "GameConstantsAndTypes.h"
 
 
 #define RECTANGLE_WIDTH	20

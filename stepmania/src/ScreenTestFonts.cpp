@@ -4,6 +4,8 @@
 #include "FontManager.h"
 #include "RageTextureManager.h"
 #include "ScreenManager.h"
+#include "GameConstantsAndTypes.h"
+
 
 static const float LineWidth = 400;
 static const float LineHeight = 50;

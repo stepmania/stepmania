@@ -14,6 +14,7 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "BitmapText.h"
+#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 class Inventory;
 

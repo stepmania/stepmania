@@ -17,7 +17,7 @@
 
 
 #define NUM_ITEM_TYPES				THEME->GetMetricF("Inventory","NumItemTypes")
-#define ITEM_DURATION_SECONDS		THEME->GetMetricF("Inventory","ItemDuration")
+#define ITEM_DURATION_SECONDS		THEME->GetMetricF("Inventory","ItemDurationSeconds")
 #define ITEM_COMBO( i )				THEME->GetMetricI("Inventory",ssprintf("Item%dCombo",i+1))
 #define ITEM_EFFECT( i )			THEME->GetMetric ("Inventory",ssprintf("Item%dEffect",i+1))
 
@@ -28,6 +28,7 @@ Inventory::Inventory()
 	
 	m_soundAcquireItem.Load( THEME->GetPathTo("Sounds","gameplay battle aquire item") );
 	m_soundUseItem.Load( THEME->GetPathTo("Sounds","gameplay battle use item") );
+	m_soundItemEnding.Load( THEME->GetPathTo("Sounds","gameplay battle item ending") );
 }
 
 void Inventory::RefreshPossibleItems()
@@ -42,6 +43,32 @@ void Inventory::RefreshPossibleItems()
 		m_ItemDefs.push_back( def );
 	}
 }
+
+
+void Inventory::Update( float fDelta )
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+	{
+		bool bActiveItemsChanged = false;
+		for( int i=m_ActiveItems[p].size()-1; i>=0; i-- )
+		{
+			ActiveItem& active_item = m_ActiveItems[p][i];
+			active_item.fSecondsLeft -= fDelta;
+			if( active_item.fSecondsLeft < 0 )
+			{
+				m_ActiveItems[p].erase( m_ActiveItems[p].begin()+i );
+				bActiveItemsChanged = true;
+			}
+		}
+
+		if( bActiveItemsChanged )
+		{
+			RebuildPlayerOptions( (PlayerNumber)p );
+			m_soundItemEnding.Play();
+		}
+	}
+}
+
 
 bool Inventory::OnComboBroken( PlayerNumber pn, int iCombo )
 {
@@ -95,17 +122,18 @@ void Inventory::UseItem( PlayerNumber pn, int iSlot )
 
 	int iItemIndex = iItems[iSlot];
 
-	const ItemDef& def = m_ItemDefs[iItemIndex];
-
     PlayerNumber pnToAttack;
 	switch( pn )
 	{
 	case PLAYER_1:	pnToAttack = PLAYER_2;	break;
 	case PLAYER_2:	pnToAttack = PLAYER_1;	break;
-	default:	ASSERT(0);	pnToAttack = PLAYER_INVALID;	break;
+	default:	ASSERT(0);	pnToAttack = PLAYER_1;	break;
 	}
 
-	GAMESTATE->m_PlayerOptions[pnToAttack].FromString( def.effect );
+	ActiveItem ai = { ITEM_DURATION_SECONDS, iItemIndex };
+	m_ActiveItems[pnToAttack].push_back( ai );
+
+	RebuildPlayerOptions( pnToAttack );
 
 	// remove the item
 	iItems[iSlot] = ITEM_NONE;
@@ -113,3 +141,21 @@ void Inventory::UseItem( PlayerNumber pn, int iSlot )
 	m_soundUseItem.Play();
 }
 
+void Inventory::RebuildPlayerOptions( PlayerNumber pn )
+{
+	// rebuild player options
+	PlayerOptions po = GAMESTATE->m_SelectedOptions[pn];
+	for( int i=0; i<(int)m_ActiveItems[pn].size(); i++ )
+	{
+		int iItemDefIndex = m_ActiveItems[pn][i].iItemDefIndex;
+		po.FromString( m_ItemDefs[iItemDefIndex].effect );
+	}
+	GAMESTATE->m_PlayerOptions[pn] = po;
+}
+
+
+void Inventory::RemoveAllActiveItems()
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_ActiveItems[p].clear();
+}

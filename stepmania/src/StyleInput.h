@@ -10,7 +10,9 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-#include "GameConstantsAndTypes.h"
+
+#include "PlayerNumber.h"
+
 
 struct StyleInput
 {

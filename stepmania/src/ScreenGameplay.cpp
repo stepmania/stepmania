@@ -66,6 +66,8 @@
 #define SONG_OPTIONS_Y( e )				THEME->GetMetricF("ScreenGameplay",ssprintf("SongOptions%sY",e?"Extra":""))
 #define DIFFICULTY_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%dX",p+1))
 #define DIFFICULTY_Y( p, e, r )			THEME->GetMetricF("ScreenGameplay",ssprintf("DifficultyP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
+#define ACTIVE_ITEMS_X( p )				THEME->GetMetricF("ScreenGameplay",ssprintf("ActiveItemsP%dX",p+1))
+#define ACTIVE_ITEMS_Y( p, e, r )		THEME->GetMetricF("ScreenGameplay",ssprintf("ActiveItemsP%d%s%sY",p+1,e?"Extra":"",r?"Reverse":""))
 #define DEBUG_X							THEME->GetMetricF("ScreenGameplay","DebugX")
 #define DEBUG_Y							THEME->GetMetricF("ScreenGameplay","DebugY")
 #define STATUS_ICONS_X					THEME->GetMetricF("ScreenGameplay","StatusIconsX")
@@ -201,6 +203,10 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_Player[p].SetX( fPlayerX );
 		this->AddChild( &m_Player[p] );
 	
+		m_ActiveItemList[p].SetXY( ACTIVE_ITEMS_X(p), ACTIVE_ITEMS_Y(p,bExtra,bReverse[p]) );
+		m_ActiveItemList[p].Init( (PlayerNumber)p, &m_Inventory );
+		this->AddChild( &m_ActiveItemList[p] );
+
 		m_sprOniGameOver[p].Load( THEME->GetPathTo("Graphics","gameplay oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
@@ -474,6 +480,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 	}
 
 	m_Inventory.RefreshPossibleItems();
+	this->AddChild( &m_Inventory );
 
 
 	m_iRowLastCrossed = -1;
@@ -1258,6 +1265,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 					}
 				}
 			}
+
+			m_Inventory.RemoveAllActiveItems();
 
 			for( p=0; p<NUM_PLAYERS; p++ )
 			{

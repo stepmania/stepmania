@@ -13,7 +13,7 @@
 
 #include "Sprite.h"
 #include "ActorFrame.h"
-#include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 
 
 class OptionsCursor : public ActorFrame

@@ -11,6 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
+#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
 

@@ -573,7 +573,7 @@ void Player::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 #endif //DEBUG
 
 	if(m_pScoreKeeper)
-		m_pScoreKeeper->HandleNoteScore(score, iNumTapsInRow);
+		m_pScoreKeeper->HandleTapScore(score, iNumTapsInRow);
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.fScore[m_PlayerNumber]);
@@ -594,7 +594,7 @@ void Player::HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore
 #endif //DEBUG
 
 	if(m_pScoreKeeper) {
-		m_pScoreKeeper->HandleHoldNoteScore(score, TapNoteScore);
+		m_pScoreKeeper->HandleHoldScore(score, TapNoteScore);
 	}
 
 	if (m_pScore)

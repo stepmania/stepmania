@@ -14,6 +14,7 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
+#include "GameConstantsAndTypes.h"
 
 
 #define RECTANGLE_WIDTH	20

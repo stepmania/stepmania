@@ -19,9 +19,11 @@
 */
 
 #include "Actor.h"
+#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 
-class ScoreKeeper: public Actor {
+class ScoreKeeper: public Actor 
+{
 protected:
 	PlayerNumber m_PlayerNumber;
 
@@ -35,8 +37,8 @@ public:
 	ScoreKeeper(PlayerNumber pn) { m_PlayerNumber=pn; }
 	virtual void DrawPrimitives() { }
 
-	virtual void HandleNoteScore( TapNoteScore score, int iNumTapsInRow ) { }
-	virtual void HandleHoldNoteScore( HoldNoteScore score, TapNoteScore TapNoteScore ) { }
+	virtual void HandleTapScore( TapNoteScore score, int iNumTapsInRow ) { }
+	virtual void HandleHoldScore( HoldNoteScore score, TapNoteScore TapNoteScore ) { }
 };
 
 #endif

@@ -13,7 +13,7 @@
 
 #include "ScoreDisplay.h"
 #include "Sprite.h"
-#include "Inventory.h"
+#include "GameConstantsAndTypes.h"
 
 
 

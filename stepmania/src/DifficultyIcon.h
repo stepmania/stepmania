@@ -12,8 +12,9 @@
 */
 
 #include "Sprite.h"
-#include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 struct Notes;
+
 
 class DifficultyIcon : public Sprite
 {

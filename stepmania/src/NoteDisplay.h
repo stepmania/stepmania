@@ -15,6 +15,7 @@
 
 #include "Sprite.h"
 #include "NoteTypes.h"
+#include "PlayerNumber.h"
 
 
 struct NoteMetricCache_t;

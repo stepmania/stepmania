@@ -14,7 +14,7 @@
 -----------------------------------------------------------------------------
 */
 
-//#include "GameConstantsAndTypes.h"
+#include "GameConstantsAndTypes.h"
 #include "NoteTypes.h"
 
 // '1' = tap note

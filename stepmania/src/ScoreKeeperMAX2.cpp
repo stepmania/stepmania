@@ -48,7 +48,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 
 void ScoreKeeperMAX2::HandleNoteScore( TapNoteScore score, int iNumTapsInRow )
 {
-	ScoreKeeper::HandleNoteScore(score, iNumTapsInRow);
+	ScoreKeeper::HandleTapScore(score, iNumTapsInRow);
 
 	ASSERT( iNumTapsInRow >= 1 );
 

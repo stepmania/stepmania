@@ -26,15 +26,12 @@ SnapDisplay::SnapDisplay()
 	for( i=0; i<2; i++ )
 	{
 		m_sprIndicators[i].Load( THEME->GetPathTo("Graphics","edit snap indicator") );
+		ASSERT( m_sprIndicators[i].GetNumStates() == NUM_NOTE_TYPES );
 		this->AddChild( &m_sprIndicators[i] );
 	}
 
 	m_NoteType = NOTE_TYPE_4TH;
-	RageColor color = NoteTypeToColor( m_NoteType );
 	
-	for( i=0; i<2; i++ )
-		m_sprIndicators[i].SetDiffuse( color );
-
 	m_iNumCols = 0;
 }
 
@@ -71,12 +68,6 @@ bool SnapDisplay::NextSnapMode()
 
 void SnapDisplay::SnapModeChanged()
 {
-	RageColor color = NoteTypeToColor( m_NoteType );
-	
 	for( int i=0; i<2; i++ )
-	{
-		m_sprIndicators[i].StopTweening();
-		m_sprIndicators[i].BeginTweening( 0.3f );
-		m_sprIndicators[i].SetTweenDiffuse( color );
-	}
+		m_sprIndicators[i].SetState( m_NoteType );
 }

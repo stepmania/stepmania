@@ -12,22 +12,6 @@
 #include "NoteTypes.h"
 
 
-RageColor NoteTypeToColor( NoteType nt )
-{
-	switch( nt )
-	{
-	case NOTE_TYPE_4TH:		return RageColor(1,0,0,1);	// red
-	case NOTE_TYPE_8TH:		return RageColor(0,0,1,1);	// blue
-	case NOTE_TYPE_12TH:	return RageColor(1,0,1,1);	// purple
-	case NOTE_TYPE_16TH:	return RageColor(1,1,0,1);	// yellow
-	case NOTE_TYPE_24TH:	return RageColor(0,1,1,1);	// light blue
-	default:
-		ASSERT(0);
-	case NOTE_TYPE_32ND:	// fall through
-		return RageColor(0.5f,0.5f,0.5f,1);	// gray
-	}		
-};
-
 float NoteTypeToBeat( NoteType nt )
 {
 	switch( nt )
@@ -75,15 +59,5 @@ NoteType BeatToNoteType( float fBeat )
 bool IsNoteOfType( int iNoteIndex, NoteType t )
 { 
 	return GetNoteType(iNoteIndex) == t;
-}
-
-RageColor GetNoteColorFromIndex( int iIndex )
-{ 
-	return NoteTypeToColor( GetNoteType(iIndex) );
-}
-
-RageColor GetNoteColorFromBeat( float fBeat )
-{ 
-	return GetNoteColorFromIndex( BeatToNoteRow(fBeat) );
 }
 

@@ -12,7 +12,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 
 enum MenuButton
 {

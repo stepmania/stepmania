@@ -14,6 +14,7 @@
 */
 
 #include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 #include "Grade.h"
 class NoteData;
 

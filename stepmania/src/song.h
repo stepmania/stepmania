@@ -11,14 +11,16 @@
 -----------------------------------------------------------------------------
 */
 
+#include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"
-
 struct Notes;
 class StyleDef;
 class NotesLoader;
 
+
 extern const int FILE_CACHE_VERSION;
+
 
 struct BPMSegment 
 {

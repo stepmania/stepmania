@@ -13,8 +13,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "RageTypes.h"	// for RageColor
-
 
 //
 // Screen Dimensions
@@ -99,18 +97,6 @@ CString PlayModeToString( PlayMode pm );
 PlayMode StringToPlayMode( CString s );
 
 
-//
-// Player number stuff
-//
-enum PlayerNumber {
-	PLAYER_1 = 0,
-	PLAYER_2,
-	NUM_PLAYERS,	// leave this at the end
-	PLAYER_INVALID
-};
-
-RageColor PlayerToColor( PlayerNumber pn );
-RageColor PlayerToColor( int p );
 
 
 enum SongSortOrder {

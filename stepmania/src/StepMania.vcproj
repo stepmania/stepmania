@@ -632,6 +632,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="NotesWriterSM.h">
 			</File>
 			<File
+				RelativePath="PlayerNumber.cpp">
+			</File>
+			<File
+				RelativePath="PlayerNumber.h">
+			</File>
+			<File
 				RelativePath="PlayerOptions.cpp">
 			</File>
 			<File
@@ -1194,6 +1200,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 		<Filter
 			Name="Actors used in Gameplay"
 			Filter="">
+			<File
+				RelativePath="ActiveItemList.cpp">
+			</File>
+			<File
+				RelativePath="ActiveItemList.h">
+			</File>
 			<File
 				RelativePath=".\ArrowEffects.cpp">
 			</File>

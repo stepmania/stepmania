@@ -12,9 +12,9 @@
 */
 
 
-#include "GameConstantsAndTypes.h"	// for NUM_PLAYERS
+#include "PlayerNumber.h"
+#include "GameConstantsAndTypes.h"
 #include "Grade.h"
-
 class Song;
 
 

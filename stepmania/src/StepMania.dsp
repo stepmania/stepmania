@@ -57,10 +57,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                       	cl                                                                        /Zl                                                                        /nologo                                                                        /c                                                                        verstub.cpp                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                        	cl                                                                         /Zl                                                                         /nologo                                                                         /c                                                                         verstub.cpp                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania
+TargetDir=\stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                                       	cl                                                                        /Zl                                                                        /nologo                                                                        /c                                                                        verstub.cpp                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                                        	cl                                                                         /Zl                                                                         /nologo                                                                         /c                                                                         verstub.cpp                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -363,6 +363,14 @@ SOURCE=.\Grade.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Inventory.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Inventory.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\NoteData.cpp
 # End Source File
 # Begin Source File
@@ -451,11 +459,11 @@ SOURCE=.\NoteTypes.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Player.cpp
+SOURCE=.\PlayerNumber.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Player.h
+SOURCE=.\PlayerNumber.h
 # End Source File
 # Begin Source File
 
@@ -1228,6 +1236,14 @@ SOURCE=.\TipDisplay.h
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\ActiveItemList.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ActiveItemList.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ArrowEffects.cpp
 # End Source File
 # Begin Source File
@@ -1388,11 +1404,27 @@ SOURCE=.\NoteField.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\Player.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\Player.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScoreDisplay.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ScoreDisplay.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayBattle.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScoreDisplayBattle.h
 # End Source File
 # Begin Source File
 

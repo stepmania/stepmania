@@ -14,7 +14,7 @@
 
 #include "RageTypes.h"
 #include "Game.h"
-#include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 
 class IniFile;
 

@@ -11,21 +11,24 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
+#include "Actor.h"
+#include "PlayerNumber.h"
 #include "RageSound.h"
 
-const int MAX_ITEM_TYPES	= 20;
 
-
-class Inventory
+class Inventory : public Actor
 {
 public:
 	Inventory();
 	void Reset();
 	void RefreshPossibleItems();
 
+	virtual void Update( float fDelta );
+	virtual void DrawPrimitives() {};
+
 	bool OnComboBroken( PlayerNumber pn, int iCombo );
 	void UseItem( PlayerNumber pn, int iSlot );
+	void RemoveAllActiveItems();	// called on end of song
 
 	struct ItemDef
 	{
@@ -37,8 +40,19 @@ public:
 	};
 	vector<ItemDef>	m_ItemDefs;
 
+	struct ActiveItem
+	{
+		float fSecondsLeft;
+		int iItemDefIndex;
+	};
+	vector<ActiveItem>	m_ActiveItems[NUM_PLAYERS];
+
+protected:
+	void RebuildPlayerOptions( PlayerNumber pn );
+
 	RageSound m_soundAcquireItem;
 	RageSound m_soundUseItem;
+	RageSound m_soundItemEnding;
 };
 
 #endif

@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 #include "ActorFrame.h"
 
 class ScoreDisplay : public ActorFrame

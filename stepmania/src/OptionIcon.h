@@ -14,7 +14,7 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "BitmapText.h"
-#include "GameConstantsAndTypes.h"
+#include "PlayerNumber.h"
 
 
 class OptionIcon : public ActorFrame

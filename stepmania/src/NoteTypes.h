@@ -11,7 +11,6 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameConstantsAndTypes.h"
 #include "PlayerOptions.h"
 
 // '1' = tap note
@@ -68,13 +67,10 @@ enum NoteType
 	NOTE_TYPE_INVALID
 };
 
-RageColor NoteTypeToColor( NoteType nt );
 float NoteTypeToBeat( NoteType nt );
 NoteType GetNoteType( int iNoteIndex );
 NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int iNoteIndex, NoteType t );
-RageColor GetNoteColorFromIndex( int iNoteIndex );
-RageColor GetNoteColorFromBeat( float fBeat );
 CString NoteTypeToString( NoteType nt );
 
 
