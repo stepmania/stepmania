@@ -52,6 +52,7 @@
 #define HELP_TEXT( coin_mode )		THEME->GetMetric("ScreenTitleMenu","HelpText"+Capitalize(CoinModeToString(coin_mode)))
 #define NEXT_SCREEN					THEME->GetMetric("ScreenTitleMenu","NextScreen")
 #define MENU_ITEM_CREATE			THEME->GetMetric("ScreenTitleMenu","MenuCommandOnCreate")
+#define MENU_ITEM_SELECT_DELAY		THEME->GetMetricF("ScreenTitleMenu","MenuCommandSelectDelay")
 
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
@@ -119,7 +120,6 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
 			m_textChoice[i].EnableShadow( true );
-//			m_textChoice[i].Command( MENU_ITEM_CREATE );
 			this->AddChild( &m_textChoice[i] );
 		}	
 		break;
@@ -153,8 +153,10 @@ ScreenTitleMenu::ScreenTitleMenu() : Screen("ScreenTitleMenu")
 	m_Choice = CHOICE_GAME_START;
 
 	for( int i=0; i<NUM_CHOICES; i++ )
-		LoseFocus( i );
-	GainFocus( m_Choice );
+		if (i != m_Choice)
+			m_textChoice[i].Command( MENU_ITEM_CREATE );
+		else
+			GainFocus( m_Choice );
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenTitleMenu music") );
 
