@@ -215,6 +215,43 @@ static void BoostAppPri()
 #endif
 }
 
+static void CheckSettings()
+{
+#if defined(WIN32)
+	/* Has the amount of memory changed? */
+	MEMORYSTATUS mem;
+	GlobalMemoryStatus(&mem);
+
+	const int Memory = mem.dwTotalPhys / 1048576;
+
+	if( PREFSMAN->m_iLastSeenMemory == Memory )
+		return;
+	
+	LOG->Trace( "Memory changed from %i to %i; settings changed", PREFSMAN->m_iLastSeenMemory, Memory );
+	PREFSMAN->m_iLastSeenMemory = Memory;
+
+	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
+	 * Cut off at 192.  This is somewhat conservative; many 128-meg systems can
+	 * deal with higher memory profile settings, but some can't. 
+	 *
+	 * Actually, Windows lops off a meg or two; cut off a little lower to treat
+	 * 192-meg systems as high-memory. */
+	const bool HighMemory = (Memory >= 190);
+
+	/* Two memory-consuming features that we can disable are texture caching and
+	 * preloaded banners.  Texture caching can use a lot of memory; disable it for
+	 * low-memory systems. */
+	PREFSMAN->m_bDelayedTextureDelete = HighMemory;
+
+	/* Preloaded banners takes about 9k per song. That adds up with a lot of songs,
+	 * though it's smaller than the actual song data that we preload anyway.  Maybe
+	 * we should disable it for 64-meg systems? */
+	// PREFSMAN->m_bPreloadBanners = !LowMemory;
+
+	PREFSMAN->SaveGlobalPrefsToDisk();
+#endif
+}
+
 #if defined(WIN32)
 #include "RageDisplay_D3D.h"
 #endif
@@ -438,8 +475,11 @@ int main(int argc, char* argv[])
 	SONGMAN		= new SongManager( loading_window );		// this takes a long time to load
 	delete loading_window;		// destroy this before init'ing Display
 
+	/* XXX: Why do we reload global prefs?  PREFSMAN loads them in the ctor. -glenn */
 	PREFSMAN->ReadGlobalPrefsFromDisk( true );
 	PREFSMAN->ReadGamePrefsFromDisk();
+
+	CheckSettings();
 
 	DISPLAY = CreateDisplay();
 	TEXTUREMAN	= new RageTextureManager();

@@ -112,8 +112,12 @@ PrefsManager::PrefsManager()
 	m_bHiddenSongs = false;
 	m_bVsync = true;
 	
-	m_sVideoRenderers = "";	// StepMania.cpp sets this on first run
-	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
+	// StepMania.cpp sets these on first run:
+	m_sVideoRenderers = "";
+#if defined(WIN32)
+	m_iLastSeenMemory = 0;
+#endif
+
 	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
 	/* This is experimental: let's see if preloading helps people's skipping.
 	 * If it doesn't do anything useful, it'll be removed. */
@@ -207,8 +211,11 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "UseUnlockSystem",			m_bUseUnlockSystem );
 	ini.GetValueB( "Options", "FirstRun",					m_bFirstRun );
 	ini.GetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
-	ini.GetValue ( "Options", "LastSeenVideoDriver",		m_sLastSeenVideoDriver );
 	ini.GetValue ( "Options", "VideoRenderers",				m_sVideoRenderers );
+	ini.GetValue ( "Options", "LastSeenVideoDriver",		m_sLastSeenVideoDriver );
+#if defined(WIN32)
+	ini.GetValue ( "Options", "LastSeenMemory",				m_iLastSeenMemory );
+#endif
 	ini.GetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 
 	m_asAdditionalSongFolders.clear();
@@ -299,6 +306,9 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "AutoMapJoysticks",			m_bAutoMapJoysticks );
 	ini.SetValue ( "Options", "VideoRenderers",				m_sVideoRenderers );
 	ini.SetValue ( "Options", "LastSeenVideoDriver",		m_sLastSeenVideoDriver );
+#if defined(WIN32)
+	ini.SetValue ( "Options", "LastSeenMemory",				m_iLastSeenMemory );
+#endif
 	ini.SetValueB( "Options", "AntiAliasing",				m_bAntiAliasing );
 
 	/* Only write these if they aren't the default.  This ensures that we can change

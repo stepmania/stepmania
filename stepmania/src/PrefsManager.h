@@ -89,6 +89,9 @@ public:
 	CString			m_DWIPath;
 
 	CString			m_sLastSeenVideoDriver;
+#if defined(WIN32)
+	int				m_iLastSeenMemory;
+#endif
 	CString			m_sVideoRenderers;
 	bool			m_bAntiAliasing;
 	CString			m_sSoundDrivers;
