@@ -829,6 +829,8 @@ void ScreenEdit::DrawPrimitives()
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )
 			m_Background.Draw();
 
+		m_sprOverlay->Draw();
+
 		m_NoteFieldRecord.Draw();
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )
 			m_Foreground.Draw();
@@ -836,6 +838,8 @@ void ScreenEdit::DrawPrimitives()
 	case MODE_PLAYING:
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )
 			m_Background.Draw();
+
+		m_sprOverlay->Draw();
 
 		m_Player.Draw();
 		if( PREFSMAN->m_bEditorShowBGChangesPlay )
@@ -1477,7 +1481,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 void ScreenEdit::TransitionToEdit()
 {
 	g_pCurrentMap = &g_EditMappings;
-
+	m_sprOverlay->PlayCommand( "Edit" );
 
 	/* Important: people will stop playing, change the BG and start again; make sure we reload */
 	m_Background.Unload();
@@ -1932,6 +1936,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, int* iAnswers )
 			break;
 		case exit:
 			m_Out.StartTransitioning( SM_GoToNextScreen );
+			this->PlayCommand( "Off" );
 			break;
 		default:
 			ASSERT(0);
@@ -2146,6 +2151,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_EditMode = MODE_PLAYING;
 				g_pCurrentMap = &g_PlayMappings;
+				m_sprOverlay->PlayCommand( "Play" );
+
 				GAMESTATE->m_bPastHereWeGo = true;
 
 				/* Reset the note skin, in case preferences have changed. */
@@ -2200,6 +2207,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 
 				m_EditMode = MODE_RECORDING;
 				g_pCurrentMap = &g_RecordMappings;
+				m_sprOverlay->PlayCommand( "Record" );
 				GAMESTATE->m_bPastHereWeGo = true;
 
 				/* Reset the note skin, in case preferences have changed. */
