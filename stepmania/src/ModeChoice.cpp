@@ -219,6 +219,18 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 	}
 }
 
+int GetNumCreditsPaid()
+{
+	int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
+
+	// players other than the first joined for free
+	if( PREFSMAN->m_Premium == PrefsManager::JOINT_PREMIUM )
+		iNumCreditsPaid = min( iNumCreditsPaid, 1 );
+
+	return iNumCreditsPaid;
+}
+
+
 int GetSidesRequiredToPlayStyle( Style style )
 {
 	switch( GAMEMAN->GetStyleDefForStyle(style)->m_StyleType )
@@ -303,6 +315,9 @@ bool ModeChoice::IsPlayable( CString *why ) const
 		int iNumSidesRequired = GetSidesRequiredToPlayStyle(m_style);
 		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
 		
+		/* With PREFSMAN->m_bDelayedCreditsReconcile disabled, enough players must be
+		 * joined.  With it enabled, simply having enough credits lying in the machine
+		 * is sufficient. */
 		bool bPlayable = iNumSidesJoined == iNumSidesRequired;
 		if( PREFSMAN->m_bDelayedCreditsReconcile )
 			bPlayable |= iNumSidesJoined < iNumSidesRequired && iNumSidesPlusCredits >= iNumCreditsRequired;
@@ -389,11 +404,7 @@ void ModeChoice::Apply( PlayerNumber pn ) const
 		// we need to subtract credits for the sides that will be
 		// joined as a result of applying this option.
 		int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_style);
-		int iNumCreditsPaid = GAMESTATE->GetNumSidesJoined();
-		
-		// players other than the first joined for free
-		if( PREFSMAN->m_Premium == PrefsManager::JOINT_PREMIUM )
-			iNumCreditsPaid = 1;
+		int iNumCreditsPaid = GetNumCreditsPaid();
 		
 		int iNumCreditsOwed = iNumCreditsRequired - iNumCreditsPaid;
 		GAMESTATE->m_iCoins -= iNumCreditsOwed * PREFSMAN->m_iCoinsPerCredit;
