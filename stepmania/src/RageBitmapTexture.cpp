@@ -91,6 +91,10 @@ void RageBitmapTexture::Create()
 			actualID.iAlphaBits = 1;
 	}
 
+	// let texture hints override the global setting
+	if( PREFSMAN->m_bForceMipMaps )
+		actualID.bMipMaps = true;
+
 	// look in the file name for a format hints
 	CString HintString = GetID().filename + actualID.AdditionalTextureHints;
 	HintString.MakeLower();
@@ -100,6 +104,7 @@ void RageBitmapTexture::Create()
 	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
 	if( HintString.Find("stretch") != -1 )			actualID.bStretch = true;
 	if( HintString.Find("nomipmaps") != -1 )		actualID.bMipMaps = false;
+	if( HintString.Find("mipmaps") != -1 )			actualID.bMipMaps = true;
 
 	/* If the image is marked grayscale, then use all bits not used for alpha
 	 * for the intensity.  This way, if an image has no alpha, you get an 8-bit
@@ -115,9 +120,6 @@ void RageBitmapTexture::Create()
 	 * it's not intended to change a color image into a grayscale image. */
 	if( actualID.iGrayscaleBits != -1 && img->format->BitsPerPixel == 8 )
 		actualID.iGrayscaleBits = -1;
-
-	if( PREFSMAN->m_bForceMipMaps )
-		actualID.bMipMaps = true;
 
 	/* Cap the max texture size to the hardware max. */
 	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
