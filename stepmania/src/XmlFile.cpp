@@ -32,7 +32,7 @@ XENTITYS entityDefault((XENTITY*)x_EntityTable, sizeof(x_EntityTable)/sizeof(x_E
 // skip spaces
 char* tcsskip( const char* psz )
 {
-	while( psz && *psz == ' ' ) psz++;
+	while( psz && isspace(*psz) ) psz++;
 		
 	return (char*)psz;
 }
@@ -291,7 +291,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 
 	// XML Node Tag Name Open
 	xml++;
-	char* pTagEnd = strpbrk( xml, " \t\n/>" );
+	char* pTagEnd = strpbrk( xml, " \t\r\n/>" );
 	SetString( xml, pTagEnd, &m_sName );
 	xml = pTagEnd;
 	// Generate XML Attributte List
