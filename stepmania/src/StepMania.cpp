@@ -254,23 +254,13 @@ RageDisplay *CreateDisplay() { return CreateDisplay_OGL(); }
 #include "archutils/Win32/VideoDriverInfo.h"
 #include "Regex.h"
 
-static CString GetCardName()
-{
-	/* We can't too reliably get driver information before we set up the window. Ask
-	 * VideoDriverInfo; it'll usually give us a name we can match.  XXX: If we're on
-	 * an old system with more than one card, we won't know which to match. */
-	VideoDriverInfo info;
-	GetPrimaryVideoDriverInfo(info);
-	return info.sDescription;
-}
-
 static bool CardRequiresD3D()
 {
 	vector<Regex> Cards;
 	Cards.push_back(Regex(".*Voodoo.*"));
 //	Cards.push_back(Regex(".*nVidia.*")); // testing
 
-	const CString desc = GetCardName();
+	const CString desc = GetPrimaryVideoDriverName();
 	for(unsigned i = 0; i < Cards.size(); ++i)
 		if(Cards[i].Compare(desc)) return true;
 
@@ -329,7 +319,7 @@ RageDisplay *CreateDisplay()
 	if( NeedsD3D )
 	{
 		/* We require D3D.  Try to start it.  */
-		error += "Your display adapter, \"" + GetCardName() + "\", requires Direct3D 8 (or "
+		error += "Your display adapter, \"" + GetPrimaryVideoDriverName() + "\", requires Direct3D 8 (or "
 			"higher), but ";
 
 		try {
