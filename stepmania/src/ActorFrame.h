@@ -26,6 +26,7 @@ public:
 	void DeleteAllChildren();
 
 	virtual void RunCommandOnChildren( const CString &cmd ); /* but not on self */
+	virtual void HandleCommand( const ParsedCommand &command );	// derivable
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();

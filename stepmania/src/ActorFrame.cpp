@@ -136,3 +136,16 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
+void ActorFrame::HandleCommand( const ParsedCommand &command )
+{
+	// pass "PlayCommand" on to children
+	if( command.vTokens[0].s=="playcommand" )
+	{
+		for( unsigned i=0; i<m_SubActors.size(); i++ )
+			m_SubActors[i]->HandleCommand( command );
+		return;	// handled
+	}
+
+	// base class handles the rest...
+	Actor::HandleCommand( command );
+}
