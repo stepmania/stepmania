@@ -35,6 +35,8 @@ public:
 	void ReloadMetrics();
 	void GetModifierNames( set<CString>& AddTo );
 
+	static void EvaluateString( CString &sText );
+
 	/* I renamed these for two reasons.  The overload conflicts with the ones below:
 	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also
 	 * easier to search for uses of obsolete functions if they have a different name. */

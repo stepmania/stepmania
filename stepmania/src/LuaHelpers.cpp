@@ -241,6 +241,22 @@ float Lua::RunExpressionF( const CString &str )
 	return result;
 }
 
+bool Lua::RunExpressionS( const CString &str, CString &sOut )
+{
+	if( L == NULL )
+		OpenLua();
+
+	if( !RunExpression( str ) )
+		return false;
+
+	ASSERT( lua_gettop(L) > 0 );
+
+	sOut = lua_tostring( L, -1 );
+	lua_pop( L, -1 );
+
+	return true;
+}
+
 void Lua::Fail( lua_State *L, const CString &err )
 {
 	lua_pushstring( L, err );

@@ -7,6 +7,7 @@ namespace Lua
 	void PrepareExpression( CString &sInOut );	// strip "//" comments and "+"
 	bool RunExpressionB( const CString &str );
 	float RunExpressionF( const CString &str );
+	bool RunExpressionS( const CString &str, CString &sOut );
 
 	void Fail( lua_State *L, const CString &err );
 

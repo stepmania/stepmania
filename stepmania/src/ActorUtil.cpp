@@ -6,10 +6,7 @@
 #include "BGAnimation.h"
 #include "IniFile.h"
 #include "ThemeManager.h"
-#include "RageDisplay.h"
 #include "RageLog.h"
-#include "arch/ArchHooks/ArchHooks.h"
-#include "RageFileManager.h"
 #include "SongCreditDisplay.h"
 #include "song.h"
 #include "GameState.h"
@@ -76,13 +73,8 @@ Actor* LoadFromActorFile( const CString& sAniDir, const XNode& layer )
 		CString sAlttext;
 		layer.GetAttrValue("AltText", sAlttext );
 
-		// Keep the special treatment of text string sync'd with the same treatments
-		// in ThemeManager.
-		sText.Replace( "::", "\n" );
-		sAlttext.Replace( "::", "\n" );
-
-		FontCharAliases::ReplaceMarkers( sText );
-		FontCharAliases::ReplaceMarkers( sAlttext );
+		ThemeManager::EvaluateString( sText );
+		ThemeManager::EvaluateString( sAlttext );
 
 		BitmapText* pBitmapText = new BitmapText;
 

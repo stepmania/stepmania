@@ -650,14 +650,32 @@ CString ThemeManager::GetMetric( const CString &sClassName, const CString &sValu
 {
 	CString sValue = GetMetricRaw(sClassName,sValueName);
 
-	// "::" means newline since you can't use line breaks in an ini file.
-	sValue.Replace("::","\n");
-
-	/* XXX: add a parameter to turn this off if there are some metrics where
-	 * we don't want markers */
-	FontCharAliases::ReplaceMarkers(sValue);
+	EvaluateString( sValue );
 
 	return sValue;
+}
+
+void ThemeManager::EvaluateString( CString &sText )
+{
+	/* If the string begins with an @, treat it as a raw Lua expression, and don't do any
+	 * other filtering.  (XXX: maybe we should still do font aliases) */
+	if( sText.size() >= 1 && sText[0] == '@' )
+	{
+		/* Erase "@". */
+		sText.erase( 0, 1 );
+
+		CString sOut;
+		Lua::RunExpressionS( sText, sOut );
+		LOG->Trace("ran '%s', got '%s'", sText.c_str(), sOut.c_str());
+		sText = sOut;
+		return;
+	}
+
+	// "::" means newline since you can't use line breaks in an ini file.
+	// XXX: this makes it impossible to put a colon at the end of a line, eg: "Color:\nRed"
+	sText.Replace("::","\n");
+
+	FontCharAliases::ReplaceMarkers( sText );
 }
 
 int ThemeManager::GetMetricI( const CString &sClassName, const CString &sValueName )
