@@ -4,11 +4,9 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PrefsManager.h"
+#include "ActorUtil.h"
 
 #include "RageLog.h"
-
-const float PERCENT_X[NUM_PLAYERS]	=	{ +20, -20 };
-const float PERCENT_Y				=	0;
 
 const int NUM_DANCE_POINT_DIGITS	=	5;
 
@@ -22,11 +20,9 @@ void PercentageDisplay::Load( PlayerNumber pn )
 	m_PlayerNumber = pn;
 	m_Last = 0;
 
-	m_textPercent.LoadFromNumbers( THEME->GetPathToN(m_sName + " percent") );
-	m_textPercent.EnableShadow( false );
-	m_textPercent.SetZoom( 0.7f );
-	m_textPercent.SetXY( PERCENT_X[pn], PERCENT_Y );
-	m_textPercent.SetDiffuse( PlayerToColor(pn) );	// light blue
+	m_textPercent.SetName( ssprintf("PercentP%i", pn+1) );
+	m_textPercent.LoadFromNumbers( THEME->GetPathToN(m_sName + " text") );
+	SET_XY_AND_ON_COMMAND( m_textPercent );
 
 	if( PREFSMAN->m_bDancePointsForOni )
 		m_textPercent.SetText( "     " );
