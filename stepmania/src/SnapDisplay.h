@@ -20,7 +20,7 @@ public:
 	bool PrevSnapMode();
 	bool NextSnapMode();
 
-	NoteType GetNoteType() const { return m_NoteType; };
+	NoteType GetNoteType() const { return m_NoteType; }
 
 protected:
 	int m_iNumCols;

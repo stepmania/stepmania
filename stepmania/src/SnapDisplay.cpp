@@ -1,6 +1,5 @@
 #include "global.h"
 #include "SnapDisplay.h"
-#include "GameManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "Style.h"
@@ -12,9 +11,6 @@ SnapDisplay::SnapDisplay()
 	for( int i=0; i<2; i++ )
 	{
 		m_sprIndicators[i].Load( THEME->GetPathToG("SnapDisplay icon 8x1") );
-		// MD 11/12/03 - this assert doesn't allow us to set the editor's maximum
-		// resolution to less than the maximum one we have available.  Meh.
-		// ASSERT( m_sprIndicators[i].GetNumStates() == NUM_NOTE_TYPES );
 		m_sprIndicators[i].StopAnimating();
 		this->AddChild( &m_sprIndicators[i] );
 	}
