@@ -139,7 +139,7 @@ CString Profile::GetDisplayTotalCaloriesBurned() const
 	if( m_fWeightPounds == 0 )	// weight not entered
 		return "N/A";
 	else 
-		return ssprintf("%0.3f Cal",m_fTotalCaloriesBurned);
+		return Commify(m_fTotalCaloriesBurned) + " Cal";
 }
 
 int Profile::GetTotalNumSongsPlayed() const
@@ -742,9 +742,8 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 			SCALE( m_fWeightPounds, 100.f, 200.f, 0.222f, 0.386f ) * iTotalHands;
 		m_fTotalCaloriesBurned += fCals;
 
-		time_t cur_time = time(NULL);
-		tm *cur_tm = localtime( &cur_time );
-		Day day = { cur_tm->tm_yday, cur_tm->tm_year+1900 };
+		tm cur_tm = GetLocalTime();
+		Day day = { cur_tm.tm_yday, cur_tm.tm_year+1900 };
 		m_mapDayToCaloriesBurned[day] += fCals;
 	}
 }

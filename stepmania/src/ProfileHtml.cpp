@@ -654,6 +654,8 @@ bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 
 bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCourse )
 {
+	bool bPrintedAny = false;
+
 	for( StepsType st=(StepsType)0; st<NUM_STEPS_TYPES; st=(StepsType)(st+1) )
 	{
 		FOREACH_CourseDifficulty( cd )
@@ -661,6 +663,8 @@ bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCo
 			const HighScoreList &hsl = pProfile->GetCourseHighScoreList( pCourse, st, cd );
 			if( hsl.vHighScores.empty() )
 				continue;
+
+			bPrintedAny = true;
 
 			PRINT_OPEN(f, GAMEMAN->NotesTypeToString(st)+" - "+CourseDifficultyToString(cd) );
 			{
@@ -670,7 +674,7 @@ bool PrintHighScoresForCourse( RageFile &f, const Profile *pProfile, Course* pCo
 		}
 	}
 
-	return true;
+	return bPrintedAny;
 }
 
 bool PrintHighScoresForGroup(RageFile &f, const Profile *pProfile, CString sGroup )
@@ -936,9 +940,10 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 		for( int i = (int)pProfile->m_vScreenshots.size()-1; i >= 0; i-- )
 		{
 			Profile::Screenshot ss = pProfile->m_vScreenshots[i];
-			tm* new_time = localtime( &ss.time );
-			int iYear = new_time->tm_year+1900;
-			int iMonth = new_time->tm_mon+1;
+			tm new_time;
+			localtime_r( &ss.time, &new_time );
+			int iYear = new_time.tm_year+1900;
+			int iMonth = new_time.tm_mon+1;
 			CString sNewMonth = ssprintf("%02d/%d", iMonth, iYear );
 			
 			if( sNewMonth != sCurrentMonth )
@@ -971,21 +976,20 @@ void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, 
 {
 	PRINT_OPEN(f, sTitle );
 	{
-		f.Write("<table>\n");
+		f.Write("<table class='calories'>\n");
 
 		// header row
 		f.Write("<tr>");
 		f.Write("<td></td>");
 		{
 			for( int i=0; i<DAYS_IN_WEEK; i++ )
-				f.Write("<td>"+DayOfWeekToString(i)+"</td>");
+				f.Write("<td>"+DayOfWeekToShortString(i)+"</td>");
 		}
 		f.Write("<td>Total</td>");
 		f.Write("</tr>");
 		
 		// row for each week
-		time_t now = time( NULL );
-		tm when = *localtime( &now );
+		tm when = GetLocalTime();
 		when = GetNextSunday( when );
 		when = AddDays( when, -DAYS_IN_WEEK );
 		{
@@ -999,10 +1003,10 @@ void PrintCaloriesBurned( RageFile &f, const Profile *pProfile, CString sTitle, 
 					Profile::Day day = { when.tm_yday, when.tm_year+1900 };
 					float fDayCals = pProfile->GetCaloriesBurnedForDay( day );
 					fWeekCals += fDayCals;
-					f.Write("<td>"+ssprintf("%0.3f",fDayCals)+"</td>");
+					f.Write("<td class='daycalories'><font class='daycalories'>"+((fDayCals==0)?"":Commify(fDayCals))+"</font></td>");
 					when = AddDays( when, +1 );
 				}
-				f.Write("<td>"+ssprintf("%0.3f",fWeekCals)+"</td>");
+				f.Write("<td class='weekcalories'><font class='weekcalories'>"+Commify(fWeekCals)+"</font></td>");
 				f.Write("</tr>");
 				when = AddDays( when, -DAYS_IN_WEEK*2 );
 			}
@@ -1167,7 +1171,8 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 		PrintCaloriesBurned(	f, pProfile,	"My Calories Burned",		sDir );
 		PrintGradeTable(		f, pProfile,	"My Grade Table",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		PrintPopularity(		f, pProfile,	"Last Machine Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintSongHighScores(	f, pProfile,	"Last Machine High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintSongHighScores(	f, pProfile,	"Last Machine Song High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintCourseHighScores(	f, pProfile,	"Last Machine Course High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		break;
 	case HTML_TYPE_MACHINE:
 		PrintStatistics(		f, pProfile,	"Statistics",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
