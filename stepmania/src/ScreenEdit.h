@@ -19,6 +19,86 @@
 const int NUM_ACTION_MENU_ITEMS = 23;
 const int NUM_NAMING_MENU_ITEMS = 6;
 
+enum EditButton
+{
+	EDIT_BUTTON_COLUMN_0,
+	EDIT_BUTTON_COLUMN_1,
+	EDIT_BUTTON_COLUMN_2,
+	EDIT_BUTTON_COLUMN_3,
+	EDIT_BUTTON_COLUMN_4,
+	EDIT_BUTTON_COLUMN_5,
+	EDIT_BUTTON_COLUMN_6,
+	EDIT_BUTTON_COLUMN_7,
+	EDIT_BUTTON_COLUMN_8,
+	EDIT_BUTTON_COLUMN_9,
+
+	/* These are modifiers to EDIT_BUTTON_COLUMN_*. */
+	EDIT_BUTTON_RIGHT_SIDE,
+	EDIT_BUTTON_LAY_MINE,
+	EDIT_BUTTON_LAY_ATTACK,
+
+	EDIT_BUTTON_SCROLL_UP_LINE,
+	EDIT_BUTTON_SCROLL_UP_PAGE,
+	EDIT_BUTTON_SCROLL_DOWN_LINE,
+	EDIT_BUTTON_SCROLL_DOWN_PAGE,
+	EDIT_BUTTON_SCROLL_HOME,
+	EDIT_BUTTON_SCROLL_END,
+
+	/* These are modifiers to EDIT_BUTTON_SCROLL_*. */
+	EDIT_BUTTON_SCROLL_SELECT,
+
+	EDIT_BUTTON_LAY_SELECT,
+
+	EDIT_BUTTON_SCROLL_SPEED_UP,
+	EDIT_BUTTON_SCROLL_SPEED_DOWN,
+
+	EDIT_BUTTON_SNAP_NEXT,
+	EDIT_BUTTON_SNAP_PREV,
+
+	EDIT_BUTTON_OPEN_EDIT_MENU,
+	EDIT_BUTTON_OPEN_AREA_MENU,
+	EDIT_BUTTON_OPEN_BGA_MENU,
+	EDIT_BUTTON_OPEN_COURSE_MENU,
+	EDIT_BUTTON_OPEN_INPUT_HELP,
+
+	EDIT_BUTTON_PLAY_FROM_START,
+	EDIT_BUTTON_PLAY_FROM_CURSOR,
+	EDIT_BUTTON_PLAY_SELECTION,
+	EDIT_BUTTON_RECORD,
+
+	EDIT_BUTTON_RETURN_TO_EDIT,
+
+	EDIT_BUTTON_INSERT,
+	EDIT_BUTTON_DELETE,
+	EDIT_BUTTON_INSERT_SHIFT_PAUSES,
+	EDIT_BUTTON_DELETE_SHIFT_PAUSES,
+
+	EDIT_BUTTON_OPEN_NEXT_STEPS,
+	EDIT_BUTTON_OPEN_PREV_STEPS,
+	EDIT_BUTTON_TOGGLE_ASSIST_TICK,
+	EDIT_BUTTON_TOGGLE_AUTOPLAY,
+	EDIT_BUTTON_PLAY_SAMPLE_MUSIC,
+
+	EDIT_BUTTON_BPM_UP,
+	EDIT_BUTTON_BPM_DOWN,
+	EDIT_BUTTON_STOP_UP,
+	EDIT_BUTTON_STOP_DOWN,
+	EDIT_BUTTON_OFFSET_UP,
+	EDIT_BUTTON_OFFSET_DOWN,
+	EDIT_BUTTON_SAMPLE_START_UP,
+	EDIT_BUTTON_SAMPLE_START_DOWN,
+	EDIT_BUTTON_SAMPLE_LENGTH_UP,
+	EDIT_BUTTON_SAMPLE_LENGTH_DOWN,
+
+	/* This modifies offset, BPM, and stop segment changes. */
+	EDIT_BUTTON_ADJUST_FINE,
+
+	NUM_EDIT_BUTTONS,		// leave this at the end
+	EDIT_BUTTON_INVALID
+};
+#define FOREACH_EditButton( e ) FOREACH_ENUM( EditButton, NUM_EDIT_BUTTONS, e )
+#define NUM_EDIT_TO_DEVICE_SLOTS 2
+
 
 class ScreenEdit : public Screen
 {
@@ -28,9 +108,9 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	void InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	void InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
+	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
+	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:

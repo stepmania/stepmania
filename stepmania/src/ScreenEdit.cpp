@@ -114,6 +114,205 @@ const CString HELP_TEXT =
 	"Black:\n     Show\n     shortcuts\n";
 #endif
 
+/*
+ * g_MapEditToDI is a simple mapping: edit functions map to DeviceInputs.
+ * If g_MapEditToDIHold for a given edit function is valid, then at least one
+ * input in g_MapEditToDIHold must be held when pressing any key in g_MapEditToDI
+ * for the input to occur.
+ */
+struct MapEditToDI
+{
+	DeviceInput button[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
+	DeviceInput hold[NUM_EDIT_BUTTONS][NUM_EDIT_TO_DEVICE_SLOTS];
+	void Clear()
+	{
+		FOREACH_EditButton(e)
+			for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
+			{
+				button[e][slot].MakeInvalid();
+				hold[e][slot].MakeInvalid();
+			}
+	}
+};
+static MapEditToDI g_EditMappings, g_PlayMappings, g_RecordMappings;
+static MapEditToDI *g_pCurrentMap = &g_EditMappings;
+#if defined(XBOX)
+static void InitEditMappings()
+{
+	/* XXX: fill this in */
+}
+#else
+static void InitEditMappings()
+{
+	g_EditMappings.Clear();
+
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_0][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_1][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_2][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_3][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C4);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_4][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C5);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_5][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C6);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_6][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C7);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_7][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_8][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
+	g_EditMappings.button[EDIT_BUTTON_COLUMN_9][0] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
+
+	g_EditMappings.button[EDIT_BUTTON_RIGHT_SIDE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
+	g_EditMappings.button[EDIT_BUTTON_RIGHT_SIDE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
+	g_EditMappings.button[EDIT_BUTTON_LAY_MINE][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.button[EDIT_BUTTON_LAY_ATTACK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+
+
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_UP_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_UP_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGUP);
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_DOWN_LINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGDN);
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_HOME][0] = DeviceInput(DEVICE_KEYBOARD, KEY_HOME);
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_END][0] = DeviceInput(DEVICE_KEYBOARD, KEY_END);
+
+	g_EditMappings.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+	g_EditMappings.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_SCROLL_SPEED_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+
+	g_EditMappings.button    [EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+	g_EditMappings.hold[EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_SCROLL_SPEED_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.button[EDIT_BUTTON_SCROLL_SELECT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+
+	g_EditMappings.button[EDIT_BUTTON_LAY_SELECT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_SPACE);
+
+	g_EditMappings.button[EDIT_BUTTON_SNAP_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
+	g_EditMappings.button[EDIT_BUTTON_SNAP_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
+
+	g_EditMappings.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_AREA_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_KP_ENTER);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_BGA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
+
+	g_EditMappings.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+	g_EditMappings.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_PLAY_FROM_START][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	g_EditMappings.button[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+	g_EditMappings.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.hold[EDIT_BUTTON_PLAY_FROM_CURSOR][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	g_EditMappings.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+	g_EditMappings.button[EDIT_BUTTON_RECORD][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
+	g_EditMappings.hold[EDIT_BUTTON_RECORD][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_RECORD][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+
+	g_EditMappings.button[EDIT_BUTTON_INSERT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
+	g_EditMappings.button[EDIT_BUTTON_DELETE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
+
+	g_EditMappings.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
+	g_EditMappings.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_INSERT_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	g_EditMappings.button[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
+	g_EditMappings.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_DELETE_SHIFT_PAUSES][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+
+	g_EditMappings.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
+	g_EditMappings.button[EDIT_BUTTON_PLAY_SAMPLE_MUSIC][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cm);
+	
+	g_EditMappings.button[EDIT_BUTTON_OPEN_NEXT_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F6);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_PREV_STEPS][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F5);
+
+	g_EditMappings.button[EDIT_BUTTON_BPM_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
+	g_EditMappings.button[EDIT_BUTTON_BPM_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F7);
+	g_EditMappings.button[EDIT_BUTTON_STOP_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F10);
+	g_EditMappings.button[EDIT_BUTTON_STOP_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F9);
+	g_EditMappings.button[EDIT_BUTTON_OFFSET_UP][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
+	g_EditMappings.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
+	g_EditMappings.button[EDIT_BUTTON_SAMPLE_START_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
+	g_EditMappings.button[EDIT_BUTTON_SAMPLE_START_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
+	g_EditMappings.button[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
+	g_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_UP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	g_EditMappings.button[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
+	g_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.hold[EDIT_BUTTON_SAMPLE_LENGTH_DOWN][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+
+	g_EditMappings.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
+	g_EditMappings.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
+	
+	g_PlayMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+	g_PlayMappings.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
+	g_PlayMappings.button[EDIT_BUTTON_TOGGLE_AUTOPLAY][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
+	g_PlayMappings.button[EDIT_BUTTON_OFFSET_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
+	g_PlayMappings.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
+
+	g_RecordMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+}
+
+#endif
+
+/* Given a DeviceInput that was just depressed, return an active edit function. */
+static bool DeviceToEdit( DeviceInput DeviceI, EditButton &button )
+{
+	ASSERT( DeviceI.IsValid() );
+
+	/* First, search to see if a key that requires a modifier is pressed. */
+	FOREACH_EditButton(e)
+	{
+		for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
+		{
+			if( g_pCurrentMap->button[e][slot] == DeviceI && g_pCurrentMap->hold[e][0].IsValid() )
+			{
+				/* The button maps to this function. */
+				button = e;
+
+				/* This function has one or more shift modifier attached. */
+				for( int holdslot = 0; holdslot < NUM_EDIT_TO_DEVICE_SLOTS; ++holdslot )
+				{
+					DeviceInput hDI = g_pCurrentMap->hold[e][holdslot];
+					if( INPUTFILTER->IsBeingPressed(hDI) )
+						return true;
+				}
+			}
+		}
+	}
+
+	/* No shifted keys matched.  See if any unshifted inputs are bound to this key. */  
+	FOREACH_EditButton(e)
+	{
+		for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
+		{
+			if( g_pCurrentMap->button[e][slot] == DeviceI && !g_pCurrentMap->hold[e][0].IsValid() )
+			{
+				/* The button maps to this function. */
+				button = e;
+				return true;
+			}
+		}
+	}
+
+	e = EDIT_BUTTON_INVALID;
+
+	return false;
+}
+
+static bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI )
+{
+	ASSERT( iSlotNum < NUM_EDIT_TO_DEVICE_SLOTS );
+	DeviceI = g_pCurrentMap->button[button][iSlotNum];
+	return DeviceI.IsValid();
+}
+
+static bool EditIsBeingPressed( EditButton button )
+{
+	for( int slot = 0; slot < NUM_EDIT_TO_DEVICE_SLOTS; ++slot )
+	{
+		DeviceInput DeviceI;
+		if( EditToDevice( button, slot, DeviceI ) && INPUTFILTER->IsBeingPressed(DeviceI) )
+			return true;
+	}
+
+	return false;
+}
+
 
 static const MenuRow g_KeyboardShortcutsItems[] =
 {
@@ -284,107 +483,12 @@ static Menu g_CourseMode( "Course Display", g_CourseModeItems );
 int g_iLastInsertAttackTrack = -1;
 float g_fLastInsertAttackDurationSeconds = -1;
 
-#if defined(XBOX)
-bool lIsHeld = false; // true if L (Ctrl) is being held
-bool rIsHeld = false; // true if R (Shift) is being held
-bool buttonHeld[4] = {false};
-
-DeviceInput TranslateInput(const DeviceInput& DeviceI, const InputEventType type)
-{
-	DeviceInput ret;
-	ret.device = DEVICE_KEYBOARD;
-	ret.button = 0;
-
-    int i = -1;
-	switch(DeviceI.button)
-	{
-	case JOY_HAT_LEFT:
-		ret.button = KEY_LEFT;
-		break;
-	case JOY_HAT_RIGHT:
-		ret.button = KEY_RIGHT;
-		break;
-	case JOY_HAT_UP:
-		ret.button = KEY_UP;
-		break;
-	case JOY_HAT_DOWN:
-		ret.button = KEY_DOWN;
-		break;
-	case JOY_AUX_1: // start
-		if(!lIsHeld)
-			ret.button = KEY_ENTER;
-		else
-			ret.button = KEY_CP;
-		break;
-	case JOY_AUX_2: // select
-		if(rIsHeld)
-			ret.button = KEY_Cr;
-		else if(lIsHeld)
-			ret.button = KEY_Cp;
-		else
-			ret.button = KEY_ESC;
-		break;
-	case JOY_1:
-		i = 1;
-		ret.button = KEY_C2;
-		break;
-	case JOY_2:
-		i = 3;
-		ret.button = KEY_C4;
-		break;
-	case JOY_3:
-		i = 0;
-		ret.button = KEY_C1;
-		break;
-	case JOY_4:
-		i = 2;
-		ret.button = KEY_C3;
-		break;
-	case JOY_5: // Black
-		if(lIsHeld)
-			ret.button = KEY_F4;
-		else if(rIsHeld)
-			ret.button = KEY_DEL;			
-		else
-			ret.button = KEY_F1;
-		break;
-	case JOY_6: // White
-		if(rIsHeld)
-			ret.button = KEY_INSERT;
-		else
-			ret.button = KEY_SPACE;
-		break;
-	case JOY_7: // L
-		if(type == IET_FIRST_PRESS)
-			lIsHeld = true;
-		else if(type == IET_RELEASE)
-			lIsHeld = false;
-		break;
-	case JOY_8: // R
-		if(type == IET_FIRST_PRESS)
-			rIsHeld = true;
-		else if(type == IET_RELEASE)
-			rIsHeld = false;
-		ret.button = KEY_LSHIFT;
-		break;
-	}
-
-	if(i != -1)
-	{
-		if(type == IET_FIRST_PRESS)
-			buttonHeld[i] = true;
-		else if(type == IET_RELEASE)
-			buttonHeld[i] = false;
-	}
-
-	return ret;
-}
-#endif
-
 REGISTER_SCREEN_CLASS( ScreenEdit );
 ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
+
+	InitEditMappings();
 
 	/* We do this ourself. */
 	SOUND->HandleSongTimer( false );
@@ -772,18 +876,15 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	const DeviceInput& di =
-#if defined(XBOX)
-		TranslateInput(DeviceI, type);
-#else
-		DeviceI;
-#endif
+	const DeviceInput& di = DeviceI;
 
+	EditButton EditB;
+	DeviceToEdit( di, EditB );
 	switch( m_EditMode )
 	{
-	case MODE_EDITING:		InputEdit( di, type, GameI, MenuI, StyleI );	break;
-	case MODE_RECORDING:	InputRecord( di, type, GameI, MenuI, StyleI );	break;
-	case MODE_PLAYING:		InputPlay( di, type, GameI, MenuI, StyleI );	break;
+	case MODE_EDITING:		InputEdit( di, type, GameI, MenuI, StyleI, EditB );	break;
+	case MODE_RECORDING:	InputRecord( di, type, GameI, MenuI, StyleI, EditB );	break;
+	case MODE_PLAYING:		InputPlay( di, type, GameI, MenuI, StyleI, EditB );	break;
 	default:	ASSERT(0);
 	}
 
@@ -793,7 +894,7 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 }
 
 
-void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
 {
 	if( DeviceI.device != DEVICE_KEYBOARD )
 		return;
@@ -812,35 +913,27 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		return;
 	}
 
-	switch( DeviceI.button )
+	switch( EditB )
 	{
-	case KEY_C1:
-	case KEY_C2:
-	case KEY_C3:
-	case KEY_C4:
-	case KEY_C5:
-	case KEY_C6:
-	case KEY_C7:
-	case KEY_C8:
-	case KEY_C9:
-	case KEY_C0:
+	case EDIT_BUTTON_COLUMN_0:
+	case EDIT_BUTTON_COLUMN_1:
+	case EDIT_BUTTON_COLUMN_2:
+	case EDIT_BUTTON_COLUMN_3:
+	case EDIT_BUTTON_COLUMN_4:
+	case EDIT_BUTTON_COLUMN_5:
+	case EDIT_BUTTON_COLUMN_6:
+	case EDIT_BUTTON_COLUMN_7:
+	case EDIT_BUTTON_COLUMN_8:
+	case EDIT_BUTTON_COLUMN_9:
 		{
 			if( type != IET_FIRST_PRESS )
 				break;	// We only care about first presses
 
-			/* Why was this changed back to just "DeviceI.button - KEY_1"?  That causes
-			 * crashes when 0 is pressed (0 - 1 = -1). -glenn */
-//			int iCol = DeviceI.button - KEY_1;
-			int iCol = DeviceI.button == KEY_C0? 9: DeviceI.button - KEY_C1;
+			int iCol = EditB - EDIT_BUTTON_COLUMN_0;
 
 
 			// Alt + number = input to right half
-#if !defined(XBOX)
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)))
-#else
-			if(lIsHeld)
-#endif
+			if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
 				iCol += m_NoteFieldEdit.GetNumTracks()/2;
 
 
@@ -869,15 +962,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			// Hold LShift to lay mine, hold RShift to lay an attack
-#if !defined(XBOX)
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) )
-#else
-			if(rIsHeld)
-#endif
+			if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE) )
 			{
 				m_NoteFieldEdit.SetTapNote(iCol, iSongIndex, TAP_ORIGINAL_MINE );
 			}
-			else if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) )
+			if( EditIsBeingPressed(EDIT_BUTTON_LAY_ATTACK) )
 			{
 				g_iLastInsertAttackTrack = iCol;
 				SCREENMAN->MiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
@@ -888,59 +977,65 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case KEY_UP:
-	case KEY_DOWN:
-	case KEY_PGUP:
-	case KEY_PGDN:
+	case EDIT_BUTTON_SCROLL_SPEED_UP:
+	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
-#if !defined(XBOX)
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
-#else
-			if(lIsHeld)
-#endif
+			float& fScrollSpeed = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed;
+			float fNewScrollSpeed = fScrollSpeed;
+
+			if( DeviceI.button == KEY_UP )
 			{
-				float& fScrollSpeed = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed;
-				float fNewScrollSpeed = fScrollSpeed;
-
-				if( DeviceI.button == KEY_UP )
-				{
-					if( fScrollSpeed == 4 )
-						fNewScrollSpeed = 2;
-					else if( fScrollSpeed == 2 )
-						fNewScrollSpeed = 1;
-				}
-				else if( DeviceI.button == KEY_DOWN )
-				{
-					if( fScrollSpeed == 2 )
-						fNewScrollSpeed = 4;
-					else if( fScrollSpeed == 1 )
-						fNewScrollSpeed = 2;
-				}
-
-				if( fNewScrollSpeed != fScrollSpeed )
-				{
-					fScrollSpeed = fNewScrollSpeed;
-					m_soundMarker.Play();
-					GAMESTATE->StoreSelectedOptions();
-				}
-				break;
+				if( fScrollSpeed == 4 )
+					fNewScrollSpeed = 2;
+				else if( fScrollSpeed == 2 )
+					fNewScrollSpeed = 1;
+			}
+			else if( DeviceI.button == KEY_DOWN )
+			{
+				if( fScrollSpeed == 2 )
+					fNewScrollSpeed = 4;
+				else if( fScrollSpeed == 1 )
+					fNewScrollSpeed = 2;
 			}
 
-			float fBeatsToMove=0.f;
-			switch( DeviceI.button )
+			if( fNewScrollSpeed != fScrollSpeed )
 			{
-			case KEY_UP:
-			case KEY_DOWN:
-				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetNoteType() );
-				if( DeviceI.button == KEY_UP )	
-					fBeatsToMove *= -1;
+				fScrollSpeed = fNewScrollSpeed;
+				m_soundMarker.Play();
+				GAMESTATE->StoreSelectedOptions();
+			}
 			break;
-			case KEY_PGUP:
-			case KEY_PGDN:
-				fBeatsToMove = BEATS_PER_MEASURE;
-				if( DeviceI.button == KEY_PGUP )	
+		}
+
+		break;
+	case EDIT_BUTTON_SCROLL_UP_LINE:
+	case EDIT_BUTTON_SCROLL_UP_PAGE:
+	case EDIT_BUTTON_SCROLL_DOWN_LINE:
+	case EDIT_BUTTON_SCROLL_DOWN_PAGE:
+	case EDIT_BUTTON_SCROLL_HOME:
+	case EDIT_BUTTON_SCROLL_END:
+		{
+			float fBeatsToMove=0.f;
+			switch( EditB )
+			{
+			case EDIT_BUTTON_SCROLL_UP_LINE:
+			case EDIT_BUTTON_SCROLL_DOWN_LINE:
+				fBeatsToMove = NoteTypeToBeat( m_SnapDisplay.GetNoteType() );
+				if( EditB == EDIT_BUTTON_SCROLL_UP_LINE )	
 					fBeatsToMove *= -1;
+				break;
+			case EDIT_BUTTON_SCROLL_UP_PAGE:
+			case EDIT_BUTTON_SCROLL_DOWN_PAGE:
+				fBeatsToMove = BEATS_PER_MEASURE;
+				if( EditB == EDIT_BUTTON_SCROLL_UP_PAGE )	
+					fBeatsToMove *= -1;
+				break;
+			case EDIT_BUTTON_SCROLL_HOME:
+				fBeatsToMove = -GAMESTATE->m_fSongBeat;
+				break;
+			case EDIT_BUTTON_SCROLL_END:
+				fBeatsToMove = m_NoteFieldEdit.GetLastBeat() - GAMESTATE->m_fSongBeat;
+				break;
 			}
 
 			const float fStartBeat = GAMESTATE->m_fSongBeat;
@@ -952,28 +1047,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				int iCol = n;
 
 				// Ctrl + number = input to right half
-#if !defined(XBOX)
-				if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) ||
-					INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)))
-#else
-				if(lIsHeld)
-#endif
+				if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
 					iCol += m_NoteFieldEdit.GetNumTracks()/2;
 
 				if( iCol >= m_NoteFieldEdit.GetNumTracks() )
 					continue;	// skip
 
-#if !defined(XBOX)
-				int b = n < 9? KEY_C1+n: KEY_C0;
-				const DeviceInput di(DEVICE_KEYBOARD, b);
-
-				if( !INPUTFILTER->IsBeingPressed(di) )
-#else
-				if(n > 3)
-					continue;
-
-				if(!buttonHeld[n])
-#endif
+				EditButton b = EditButton(EDIT_BUTTON_COLUMN_0+n);
+				if( !EditIsBeingPressed(b) )
 					continue;
 
 				// create a new hold note
@@ -985,12 +1066,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_NoteFieldEdit.AddHoldNote( newHN );
 			}
 
-#if !defined(XBOX)
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)))
-#else
-			if(rIsHeld)
-#endif
+			if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
 			{
 				/* Shift is being held. 
 				 *
@@ -1020,23 +1096,15 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_soundChangeLine.Play();
 		}
 		break;
-	case KEY_HOME:
-		GAMESTATE->m_fSongBeat = 0;
-		m_soundChangeLine.Play();
-		break;
-	case KEY_END:
-		GAMESTATE->m_fSongBeat = m_NoteFieldEdit.GetLastBeat();
-		m_soundChangeLine.Play();
-		break;
-	case KEY_LEFT:
+	case EDIT_BUTTON_SNAP_NEXT:
 		if( m_SnapDisplay.PrevSnapMode() )
 			OnSnapModeChange();
 		break;
-	case KEY_RIGHT:
+	case EDIT_BUTTON_SNAP_PREV:
 		if( m_SnapDisplay.NextSnapMode() )
 			OnSnapModeChange();
 		break;
-	case KEY_SPACE:
+	case EDIT_BUTTON_LAY_SELECT:
 		if( m_NoteFieldEdit.m_fBeginMarker==-1 && m_NoteFieldEdit.m_fEndMarker==-1 )
 		{
 			// lay begin marker
@@ -1061,8 +1129,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		m_soundMarker.Play();
 		break;
-	case KEY_ENTER:
-	case KEY_KP_ENTER:
+	case EDIT_BUTTON_OPEN_AREA_MENU:
 		{
 			// update enabled/disabled in g_AreaMenu
 			bool bAreaSelected = m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1;
@@ -1082,18 +1149,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			SCREENMAN->MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
-	case KEY_ESC:
+	case EDIT_BUTTON_OPEN_EDIT_MENU:
 		SCREENMAN->MiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
-
-	case KEY_F1:
+	case EDIT_BUTTON_OPEN_INPUT_HELP:
 		SCREENMAN->MiniMenu( &g_KeyboardShortcuts, SM_None );
 		break;
-	case KEY_F4:
+	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
 		break;
-	case KEY_F5:
-	case KEY_F6:
+	case EDIT_BUTTON_OPEN_NEXT_STEPS:
+	case EDIT_BUTTON_OPEN_PREV_STEPS:
 		{
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -1112,9 +1178,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			vector<Steps*>::iterator it = find( vSteps.begin(), vSteps.end(), pSteps );
 			ASSERT( it != vSteps.end() );
 
-			switch( DeviceI.button )
+			switch( EditB )
 			{
-			case KEY_F5:	
+			case EDIT_BUTTON_OPEN_PREV_STEPS:	
 				if( it==vSteps.begin() )
 				{
 					SCREENMAN->PlayInvalidSound();
@@ -1122,7 +1188,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 				it--;
 				break;
-			case KEY_F6:
+			case EDIT_BUTTON_OPEN_NEXT_STEPS:
 				it++;
 				if( it==vSteps.end() )
 				{
@@ -1144,22 +1210,19 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			SOUND->PlayOnce( THEME->GetPathToS("ScreenEdit switch") );
 		}
 		break;
-	case KEY_F7:
-	case KEY_F8:
+	case EDIT_BUTTON_BPM_UP:
+	case EDIT_BUTTON_BPM_DOWN:
 		{
-			// MD 11/02/03 - start referring to Editor.ini entries
-			// entries here: BPMDelta, BPMDeltaFine
 			float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
 			float fDeltaBPM;
-			switch( DeviceI.button )
+			switch( EditB )
 			{
-			case KEY_F7:	fDeltaBPM = - 0.020f;		break;
-			case KEY_F8:	fDeltaBPM = + 0.020f;		break;
+			case EDIT_BUTTON_BPM_UP:		fDeltaBPM = +0.020f;		break;
+			case EDIT_BUTTON_BPM_DOWN:		fDeltaBPM = -0.020f;		break;
 			default:	ASSERT(0);						return;
 			}
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
-				fDeltaBPM /= 2; /* .010 */
+			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
+				fDeltaBPM /= 2;
 			else switch( type )
 			{
 			case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
@@ -1170,22 +1233,18 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_pSong->SetBPMAtBeat( GAMESTATE->m_fSongBeat, fNewBPM );
 		}
 		break;
-	case KEY_F9:
-	case KEY_F10:
+	case EDIT_BUTTON_STOP_UP:
+	case EDIT_BUTTON_STOP_DOWN:
 		{
-			// MD 11/02/03 - start referring to Editor.ini entries
-			// entries here: StopDelta, StopDeltaFine
 			float fStopDelta;
-			switch( DeviceI.button )
+			switch( EditB )
 			{
-			case KEY_F9:	fStopDelta = -0.02f;		break;
-			case KEY_F10:	fStopDelta = +0.02f;		break;
+			case EDIT_BUTTON_STOP_UP:		fStopDelta = +0.020f;		break;
+			case EDIT_BUTTON_STOP_DOWN:		fStopDelta = -0.020f;		break;
 			default:	ASSERT(0);						return;
 			}
-			// MD 11/02/03 - requested: fine adjust for stops as well
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
-				fStopDelta /= 4; /* .005 */
+			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
+				fStopDelta /= 20; /* 1ms */
 			else switch( type )
 			{
 			case IET_SLOW_REPEAT:	fStopDelta *= 10;	break;
@@ -1214,20 +1273,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case KEY_F11:
-	case KEY_F12:
+	case EDIT_BUTTON_OFFSET_UP:
+	case EDIT_BUTTON_OFFSET_DOWN:
 		{
-			// MD 11/02/03 - start referring to Editor.ini entries
-			// entries here: OffsetDelta, OffsetDeltaFine
 			float fOffsetDelta;
-			switch( DeviceI.button )
+			switch( EditB )
 			{
-			case KEY_F11:	fOffsetDelta = -0.02f;		break;
-			case KEY_F12:	fOffsetDelta = +0.02f;		break;
+			case EDIT_BUTTON_OFFSET_DOWN:	fOffsetDelta = -0.02f;		break;
+			case EDIT_BUTTON_OFFSET_UP:		fOffsetDelta = +0.02f;		break;
 			default:	ASSERT(0);						return;
 			}
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
+			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
 				fOffsetDelta /= 20; /* 1ms */
 			else switch( type )
 			{
@@ -1238,17 +1294,16 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 		break;
-	case KEY_LBRACKET:
-	case KEY_RBRACKET:
+	case EDIT_BUTTON_SAMPLE_START_UP:
+	case EDIT_BUTTON_SAMPLE_START_DOWN:
 		{
-			// MD 11/02/03 - start referring to Editor.ini entries
-			// entries here: SampleLengthDelta, SampleLengthDeltaFine
-			//				 SampleStartDelta, SampleStartDeltaFine
 			float fDelta;
-			switch( DeviceI.button )
+			switch( EditB )
 			{
-			case KEY_LBRACKET:		fDelta = -0.02f;	break;
-			case KEY_RBRACKET:		fDelta = +0.02f;	break;
+			case EDIT_BUTTON_SAMPLE_START_DOWN:		fDelta = -0.02f;	break;
+			case EDIT_BUTTON_SAMPLE_START_UP:			fDelta = +0.02f;	break;
+			case EDIT_BUTTON_SAMPLE_LENGTH_DOWN:		fDelta = -0.02f;	break;
+			case EDIT_BUTTON_SAMPLE_LENGTH_UP:			fDelta = +0.02f;	break;
 			default:	ASSERT(0);						return;
 			}
 			switch( type )
@@ -1257,8 +1312,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case IET_FAST_REPEAT:	fDelta *= 40;	break;
 			}
 
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)))
+			if( EditB == EDIT_BUTTON_SAMPLE_LENGTH_DOWN || EditB == EDIT_BUTTON_SAMPLE_LENGTH_UP )
 			{
 				m_pSong->m_fMusicSampleLengthSeconds += fDelta;
 				m_pSong->m_fMusicSampleLengthSeconds = max(m_pSong->m_fMusicSampleLengthSeconds,0);
@@ -1268,13 +1322,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			}
 		}
 		break;
-	case KEY_Cm:
+	case EDIT_BUTTON_PLAY_SAMPLE_MUSIC:
 		PlayPreviewMusic();
 		break;
-	case KEY_Cb:
+	case EDIT_BUTTON_OPEN_BGA_MENU:
 		HandleMainMenuChoice( edit_bg_change, NULL );
 		break;
-	case KEY_Cc:
+	case EDIT_BUTTON_OPEN_COURSE_MENU:
 	{
 		g_CourseMode.rows[0].choices.clear();
 		g_CourseMode.rows[0].choices.push_back( "OFF" );
@@ -1307,62 +1361,49 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SCREENMAN->MiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
 		break;
 	}
-	case KEY_Cp:
-		{
-#if !defined(XBOX)
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
-				HandleMainMenuChoice( play_whole_song, NULL );
-			else if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT)) ||
-					 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RSHIFT)) )
-				HandleMainMenuChoice( play_current_beat_to_end, NULL );
-			else
-				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
-					HandleAreaMenuChoice( play, NULL );
-#else
-			if(rIsHeld)
-				HandleMainMenuChoice( play_whole_song, NULL );
-			else
-				HandleAreaMenuChoice( play, NULL );
-#endif
-		}
+	case EDIT_BUTTON_PLAY_FROM_START:
+		HandleMainMenuChoice( play_whole_song, NULL );
 		break;
-	case KEY_Cr:
-		{
-#if !defined(XBOX)
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
-#endif
-				if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
-					HandleAreaMenuChoice( record, NULL );
-		}
+
+	case EDIT_BUTTON_PLAY_FROM_CURSOR:
+		HandleMainMenuChoice( play_current_beat_to_end, NULL );
 		break;
-	case KEY_INSERT:
-#if !defined(XBOX)
-		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
-				HandleAreaMenuChoice( shift_pauses_forward, NULL );
-			else
-#endif
-				HandleAreaMenuChoice( insert_and_shift, NULL );
-			SCREENMAN->PlayInvalidSound();
+
+	case EDIT_BUTTON_PLAY_SELECTION:
+		if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
+			HandleAreaMenuChoice( play, NULL );
+		else
+			HandleMainMenuChoice( play_current_beat_to_end, NULL );
 		break;
-	case KEY_DEL:
-#if !defined(XBOX)
-			if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL)) ||
-				INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RCTRL)) )
-				HandleAreaMenuChoice( shift_pauses_backward, NULL );
-			else
-#endif
-				HandleAreaMenuChoice( delete_and_shift, NULL );
-			SCREENMAN->PlayInvalidSound();
+	case EDIT_BUTTON_RECORD:
+		if( m_NoteFieldEdit.m_fBeginMarker!=-1 && m_NoteFieldEdit.m_fEndMarker!=-1 )
+			HandleAreaMenuChoice( record, NULL );
+		break;
+	case EDIT_BUTTON_INSERT:
+		HandleAreaMenuChoice( insert_and_shift, NULL );
+		SCREENMAN->PlayInvalidSound();
+		break;
+
+	case EDIT_BUTTON_INSERT_SHIFT_PAUSES:
+		HandleAreaMenuChoice( shift_pauses_forward, NULL );
+		SCREENMAN->PlayInvalidSound();
+		break;
+
+	case EDIT_BUTTON_DELETE:
+		HandleAreaMenuChoice( delete_and_shift, NULL );
+		SCREENMAN->PlayInvalidSound();
+		break;
+
+	case EDIT_BUTTON_DELETE_SHIFT_PAUSES:
+		HandleAreaMenuChoice( shift_pauses_backward, NULL );
+		SCREENMAN->PlayInvalidSound();
 		break;
 	}
 }
 
-void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
 {
-	if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == KEY_ESC )
+	if( EditB == EDIT_BUTTON_RETURN_TO_EDIT )
 	{
 		TransitionFromRecordToEdit();
 		return;
@@ -1398,52 +1439,48 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	}
 }
 
-void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
 {
 	if( type != IET_FIRST_PRESS )
 		return;
 
-	if( DeviceI.device == DEVICE_KEYBOARD )
+	switch( EditB )
 	{
-		switch( DeviceI.button )
-		{
-		case KEY_ESC:
-			TransitionToEdit();
-			break;
-		case KEY_F4:
-			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
-			break;
-		case KEY_F8:
-			{
-				PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
-				FOREACH_HumanPlayer( p )
-					GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
-			}
-			break;
-		case KEY_F11:
-		case KEY_F12:
-			{
-				float fOffsetDelta;
-				switch( DeviceI.button )
-				{
-				case KEY_F11:	fOffsetDelta = -0.020f;		break;
-				case KEY_F12:	fOffsetDelta = +0.020f;		break;
-				default:	ASSERT(0);						return;
-				}
-
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
-					fOffsetDelta /= 20; /* 1ms */
-				else switch( type )
-				{
-				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
-				}
-
-				m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
-			}
+	case EDIT_BUTTON_RETURN_TO_EDIT:
+		TransitionToEdit();
 		break;
+	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
+		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
+		break;
+	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
+		{
+			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
+			FOREACH_HumanPlayer( p )
+				GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 		}
+		break;
+	case EDIT_BUTTON_OFFSET_UP:
+	case EDIT_BUTTON_OFFSET_DOWN:
+		{
+			float fOffsetDelta;
+			switch( EditB )
+			{
+			case EDIT_BUTTON_OFFSET_DOWN:	fOffsetDelta = -0.020f;		break;
+			case EDIT_BUTTON_OFFSET_UP:	fOffsetDelta = +0.020f;		break;
+			default:	ASSERT(0);						return;
+			}
+
+			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
+				fOffsetDelta /= 20; /* 1ms */
+			else switch( type )
+			{
+			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+			}
+
+			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
+		}
+		break;
 	}
 
 	switch( StyleI.player )
@@ -1460,6 +1497,9 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 /* Switch to editing. */
 void ScreenEdit::TransitionToEdit()
 {
+	g_pCurrentMap = &g_EditMappings;
+
+
 	/* Important: people will stop playing, change the BG and start again; make sure we reload */
 	m_Background.Unload();
 	m_Foreground.Unload();
@@ -2126,6 +2166,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_PLAYING;
+				g_pCurrentMap = &g_PlayMappings;
 				GAMESTATE->m_bPastHereWeGo = true;
 
 				/* Reset the note skin, in case preferences have changed. */
@@ -2178,6 +2219,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_RECORDING;
+				g_pCurrentMap = &g_RecordMappings;
 				GAMESTATE->m_bPastHereWeGo = true;
 
 				/* Reset the note skin, in case preferences have changed. */
