@@ -50,9 +50,10 @@ void MusicList::AddSongsToGroup(const CArray<Song*,Song*> &Songs)
 			if( iIndex >= Songs.GetSize() )
 				continue;
 
-			if( c == TITLES_COLUMNS-1  &&  r == TITLES_ROWS-1 )
+			int iSongsLen = Songs.GetSize();
+			if( (c == TITLES_COLUMNS-1)  &&  (r == TITLES_ROWS-1) && (iSongsLen != TITLES_COLUMNS*TITLES_ROWS) )
 			{
-				sText += ssprintf( "%d more.....", Songs.GetSize() - TITLES_COLUMNS * TITLES_ROWS - 1 );
+				sText += ssprintf( "%d more.....", iSongsLen - TITLES_COLUMNS * TITLES_ROWS + 1 );
 				continue;
 			}
 
