@@ -522,7 +522,6 @@
 				AADB4F5B04D9220700D02EE9,
 				AA0E393604DA8EE700D02EE9,
 				AAF4310004DC98BC00D02EE9,
-				AAF4310204DD288800D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -776,7 +775,6 @@
 				AA0E393504DA8EE700D02EE9,
 				AA52E9BE04DBBCF400D02EE9,
 				AAF430FF04DC98BC00D02EE9,
-				AAF4310304DD288800D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9555,18 +9553,6 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = scripts/make_dist.sh;
-		};
-		AAF4310204DD288800D02EE9 = {
-			fileRef = AADB4E8C04D50FB900D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AAF4310304DD288800D02EE9 = {
-			fileRef = AADB4E8B04D50FB900D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		AAF580A004B26FE200D02EE9 = {
 			fileRef = AA8B6C7904AFD87300D02EE9;
