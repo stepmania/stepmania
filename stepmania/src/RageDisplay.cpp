@@ -422,37 +422,6 @@ void RageDisplay::LoadIdentity()
 	g_WorldStack.LoadIdentity();
 }
 
-/*
-void RageDisplay::LoadPerspectiveOffCenter(
-	float fovDegrees,
-	float fCenterX,    
-	float fCenterY )
-{
-	CLAMP( fovDegrees, 0.1f, 179.9f );
-	float fovRadians = fovDegrees / 180.f * PI;
-	float theta = fovRadians/2;
-	float fDistCameraFromImage = SCREEN_WIDTH/2 / tanf( theta );
-
-	// It's the caller's responsibility to push first.
-	g_ProjectionStack.LoadMatrix(
-		GetFrustrumMatrix(
-		  (-fCenterX)/fDistCameraFromImage,
-		  (-fCenterX+SCREEN_WIDTH)/fDistCameraFromImage,
-		  (-fCenterY+SCREEN_HEIGHT)/fDistCameraFromImage,
-		  (-fCenterY)/fDistCameraFromImage,
-		  1,
-		  fDistCameraFromImage+1000	) );
-
-//	g_ProjectionStack.TranslateLocal( -fCenterX, -fCenterY, 0 );
-
-	g_WorldStack.LoadMatrix( 
-		RageLookAt(
-			0, 0, fDistCameraFromImage,
-			0, 0, 0,
-			0.0f, 1.0f, 0.0f) );
-}
-*/
-
 void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY )
 {
 	/* fovDegrees == 0 looks the same as an ortho projection.  However,
@@ -484,7 +453,7 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, fl
 
 		/* It's the caller's responsibility to push first. */
 		g_ProjectionStack.LoadMatrix(
-			GetFrustrumMatrix(
+			GetFrustumMatrix(
 			  (fVanishPointX-SCREEN_WIDTH/2)/fDistCameraFromImage,
 			  (fVanishPointX+SCREEN_WIDTH/2)/fDistCameraFromImage,
 			  (fVanishPointY+SCREEN_HEIGHT/2)/fDistCameraFromImage,
@@ -594,25 +563,6 @@ void RageDisplay::LoadLookAt(float fov, const RageVector3 &Eye, const RageVector
 	g_ViewStack.LoadMatrix(RageLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z));
 }
 
-RageMatrix RageDisplay::GetFrustrumMatrix( 
-	float left,    
-	float right,   
-	float bottom,  
-	float top,     
-	float znear,   
-	float zfar )	// see glFrustrum docs
-{
-	float A = (right+left) / (right-left);
-	float B = (top+bottom) / (top-bottom);
-	float C = -1 * (zfar+znear) / (zfar-znear);
-	float D = -1 * (2*zfar*znear) / (zfar-znear);
-	RageMatrix m(
-		2*znear/(right-left), 0,                   0,  0,
-		0,                   2*znear/(top-bottom), 0,  0,
-		A,                   B,                    C,  -1,
-		0,                   0,                    D,  0 );
-	return m;
-}
 
 RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar)
 {
@@ -621,7 +571,7 @@ RageMatrix RageDisplay::GetPerspectiveMatrix(float fovy, float aspect, float zNe
    float xmin = ymin * aspect;
    float xmax = ymax * aspect;
 
-   return GetFrustrumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
+   return GetFrustumMatrix(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
 SDL_Surface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
@@ -653,4 +603,19 @@ PixelFormat RageDisplay::FindPixelFormat(
 	}
 
 	return NUM_PIX_FORMATS;
+}
+	
+RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf )
+{
+	// glFrustrum
+	float A = (r+l) / (r-l);
+	float B = (t+b) / (t-b);
+	float C = -1 * (zf+zn) / (zf-zn);
+	float D = -1 * (2*zf*zn) / (zf-zn);
+	RageMatrix m(
+		2*zn/(r-l), 0,          0,  0,
+		0,          2*zn/(t-b), 0,  0,
+		A,          B,          C,  -1,
+		0,          0,          D,  0 );
+	return m;
 }

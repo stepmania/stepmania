@@ -384,14 +384,14 @@ void ScreenPlayerOptions::ExportOptions()
 		switch(m_iSelectedOption[p][PO_PERSPECTIVE])
 		{
 		case 0: po.m_fSkew = 1;	po.m_fPerspectiveTilt = -1; break;
-		case 1:	po.m_fSkew = 1;	po.m_fPerspectiveTilt =  0; break;
-		case 2: po.m_fSkew = 0;	po.m_fPerspectiveTilt =  1; break;
+		case 1:	po.m_fSkew = 0;	po.m_fPerspectiveTilt =  0; break;
+		case 2: po.m_fSkew = 1;	po.m_fPerspectiveTilt =  1; break;
 		case 3:	po.m_fSkew = 0;	po.m_fPerspectiveTilt = -1; break;
 		case 4: po.m_fSkew = 0;	po.m_fPerspectiveTilt =  1; break;
 		default:
 			ASSERT(0);
 		}
-		if(m_iSelectedOption[p][PO_PERSPECTIVE] > 2)
+		if(m_iSelectedOption[p][PO_PERSPECTIVE] > 4)
 		{
 			const int choice = m_iSelectedOption[p][PO_PERSPECTIVE];
 			GAMESTATE->m_PlayerOptions[p].m_sPositioning = m_OptionRow[PO_PERSPECTIVE].choices[choice];

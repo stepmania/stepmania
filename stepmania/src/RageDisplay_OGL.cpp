@@ -1227,6 +1227,7 @@ RageMatrix RageDisplay_OGL::GetOrthoMatrix( float l, float r, float b, float t, 
 	return m;
 }
 
+
 /*
  * Although we pair texture formats (eg. GL_RGB8) and surface formats
  * (pairs of eg. GL_RGB8,GL_UNSIGNED_SHORT_5_5_5_1), it's possible for

@@ -68,6 +68,8 @@ const OptionColumnEntry g_OptionColumnEntries[] =
 	{"Alternate",	5},
 	{"Incoming",	6},
 	{"Space",		6},
+	{"Hallway",		6},
+	{"Distant",		6},
 
 	{"TimingAssist",-1},
 };

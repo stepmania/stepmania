@@ -140,8 +140,10 @@ void PlayerMinus::Load( PlayerNumber pn, NoteData* pNoteData, LifeMeter* pLM, Co
 	if( !BackdropName.empty() )
 		m_ArrowBackdrop.LoadFromAniDir( THEME->GetPathToB( BackdropName ) );
 
-	m_pNoteField->SetY( GRAY_ARROWS_Y_STANDARD );
-	m_pNoteField->Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD );
+	float fNoteFieldMidde = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
+	m_pNoteField->SetY( fNoteFieldMidde );
+	float fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
+	m_pNoteField->Load( (NoteData*)this, pn, iStartDrawingAtPixels, iStopDrawingAtPixels, fNoteFieldHeight );
 	m_ArrowBackdrop.SetPlayer( pn );
 
 	/* Cache note skins that are used as attacks. */
@@ -400,22 +402,43 @@ void PlayerMinus::DrawPrimitives()
 	float fTilt = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fPerspectiveTilt;
 	float fSkew = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fSkew;
 	bool bReverse = GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].GetReversePercentForColumn(0)>0.5;
-	fTilt *= bReverse ? 1.0f : -1.0f;
+
 
 	DISPLAY->CameraPushMatrix();
+	DISPLAY->PushMatrix();
 
-	DISPLAY->LoadMenuPerspective( 45, SCALE(fSkew,0.f,1.f,this->GetX(),CENTER_X), CENTER_Y );
+	float fCenterY = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
+	float fHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
+
+	DISPLAY->LoadMenuPerspective( 45, SCALE(fSkew,0.f,1.f,this->GetX(),CENTER_X), fCenterY );
 
 	float fOriginalY = 	m_pNoteField->GetY();
 
-	m_pNoteField->SetY( fOriginalY + SCALE(fTilt,-1.f,+1.f,0,bReverse?+30:-40) );
-	m_pNoteField->SetZ( SCALE(fTilt,-1.f,+1.f,-50,+50) );
-	m_pNoteField->SetRotationX( SCALE(fTilt,-1.f,+1.f,-30,+30) );
+	float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
+
+
+	float fZoom = SCALE( GAMESTATE->m_CurrentPlayerOptions[m_PlayerNumber].m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
+	if( fTilt > 0 )
+		fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
+	else
+		fZoom *= SCALE( fTilt, 0.f, -1.f, 1.f, 0.9f );
+
+	float fYOffset;
+	if( fTilt > 0 )
+		fYOffset = SCALE( fTilt, 0.f, 1.f, 0.f, -45.f ) * (bReverse?-1:1);
+	else
+		fYOffset = SCALE( fTilt, 0.f, -1.f, 0.f, -20.f ) * (bReverse?-1:1);
+
+	m_pNoteField->SetY( fOriginalY + fYOffset );
+	m_pNoteField->SetZoom( fZoom );
+	m_pNoteField->SetRotationX( fTiltDegrees );
 	m_pNoteField->Draw();
 
 	m_pNoteField->SetY( fOriginalY );
 
 	DISPLAY->CameraPopMatrix();
+	DISPLAY->PopMatrix();
+
 
 	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_fBlind == 0 )
 	{

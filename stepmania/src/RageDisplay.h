@@ -243,17 +243,11 @@ public:
 	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask );
 
 protected:
-	RageMatrix GetFrustrumMatrix(
-		float left,    
-		float right,   
-		float bottom,  
-		float top,     
-		float znear,   
-		float zfar );
 	RageMatrix GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar);
 
 	// Different for D3D and OpenGL.  Not sure why they're not compatible. -Chris
 	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ) = 0; 
+	virtual RageMatrix GetFrustumMatrix( float l, float r, float b, float t, float zn, float zf ); 
 
 	// Called by the RageDisplay derivitives
 	const RageMatrix* GetProjectionTop();

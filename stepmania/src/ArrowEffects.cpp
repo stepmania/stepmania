@@ -191,7 +191,7 @@ float ArrowGetYPos( PlayerNumber pn, int iCol, float fYOffset, float fYReverseOf
 	float fMiniPercent = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fZoom = 1 - fMiniPercent*0.5f;
 
-	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, 0.f, fYReverseOffsetPixels/fZoom );
+	f += SCALE( GAMESTATE->m_CurrentPlayerOptions[pn].GetReversePercentForColumn(iCol), 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
 
 	const float* fEffects = GAMESTATE->m_CurrentPlayerOptions[pn].m_fEffects;
 
