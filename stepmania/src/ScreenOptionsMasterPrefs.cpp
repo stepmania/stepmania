@@ -254,7 +254,7 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *map, unsigned cnt )
 		for( unsigned i = 0; i < cnt; ++i )
 		{
 			const T val = map[i];
-			T dist = opt < val? (T)(opt-val): (T)(val-opt);
+			T dist = opt > val? (T)(opt-val): (T)(val-opt);
 			if( have_best && dist > best_dist )
 				continue;
 
