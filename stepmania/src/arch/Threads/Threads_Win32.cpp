@@ -105,16 +105,7 @@ ThreadImpl *MakeThisThread()
 	thread->ThreadId = GetCurrentThreadId();
 
 	int slot = GetOpenSlot( GetCurrentThreadId() );
-	ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc, 
-		&g_ThreadHandles[slot], 0, false, DUPLICATE_SAME_ACCESS );
-
-	if( !ret )
-	{
-//		LOG->Warn( werr_ssprintf( GetLastError(), "DuplicateHandle(%p, %p) failed",
-//			CurProc, GetCurrentThread() ) );
-
-		g_ThreadHandles[slot] = NULL;
-	}
+	g_ThreadHandles[slot] = thread->ThreadHandle;
 
 	return thread;
 }
@@ -133,8 +124,6 @@ ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThre
 
 	int slot = GetOpenSlot( thread->ThreadId );
 	g_ThreadHandles[slot] = thread->ThreadHandle;
-
-	/* XXX: pause the thread until we assign the above */
 
 	return thread;
 }
