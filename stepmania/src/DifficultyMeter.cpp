@@ -98,6 +98,26 @@ void DifficultyMeter::Load()
 	Unset();
 }
 
+void DifficultyMeter::SetFromGameState( PlayerNumber pn )
+{
+	if( GAMESTATE->IsCourseMode() )
+	{
+		const Trail* pTrail = GAMESTATE->m_pCurTrail[pn];
+		if( pTrail )
+			SetFromTrail( pTrail );
+		else
+			SetFromCourseDifficulty( GAMESTATE->m_PreferredCourseDifficulty[pn] );
+	}
+	else
+	{
+		const Steps* pSteps = GAMESTATE->m_pCurSteps[pn];
+		if( pSteps )
+			SetFromSteps( pSteps );
+		else
+			SetFromDifficulty( GAMESTATE->m_PreferredDifficulty[pn] );
+	}
+}
+
 void DifficultyMeter::SetFromSteps( const Steps* pSteps )
 {
 	if( pSteps == NULL )
@@ -149,24 +169,13 @@ void DifficultyMeter::SetFromDifficulty( Difficulty dc )
 	SetDifficulty( DifficultyToString( dc ) );
 }
 
-void DifficultyMeter::SetFromGameState( PlayerNumber pn )
+void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
 {
-	if( GAMESTATE->IsCourseMode() )
-	{
-		Trail* pTrail = GAMESTATE->m_pCurTrail[pn];
-		if( pTrail )
-			SetFromTrail( pTrail );
-		else
-			SetFromCourseDifficulty( GAMESTATE->m_PreferredCourseDifficulty[pn] );
-	}
-	else
-	{
-		Steps* pSteps = GAMESTATE->m_pCurSteps[pn];
-		if( pSteps )
-			SetFromSteps( pSteps );
-		else
-			SetFromDifficulty( GAMESTATE->m_PreferredDifficulty[pn] );
-	}
+	m_textFeet.SetEffectNone();
+	if( FEET_IS_DIFFICULTY_COLOR )
+		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
+	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
+	SetDifficulty( CourseDifficultyToString( cd ) );
 }
 
 void DifficultyMeter::SetFromMeterAndDifficulty( int iMeter, Difficulty dc )
@@ -220,13 +229,4 @@ void DifficultyMeter::SetDifficulty( CString diff )
 		COMMAND( m_Difficulty, "Set" + Capitalize(diff) );
 	if( SHOW_METER )
 		COMMAND( m_textMeter, "Set" + Capitalize(diff) );
-}
-
-void DifficultyMeter::SetFromCourseDifficulty( CourseDifficulty cd )
-{
-	m_textFeet.SetEffectNone();
-	if( FEET_IS_DIFFICULTY_COLOR )
-		m_textFeet.SetDiffuse( RageColor(0.8f,0.8f,0.8f,1) );
-	SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER );
-	SetDifficulty( CourseDifficultyToString( cd ) );
 }
