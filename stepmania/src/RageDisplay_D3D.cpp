@@ -783,7 +783,11 @@ public:
 	Sint8&			Bone		( int index ) { return m_pVertex[index].bone; }
 	msTriangle&		Triangle	( int index ) { return m_pTriangles[index]; }
 
-	void SendVertices() const
+	void OnChanged() const
+	{
+		// nothing to do.  We send all of the vertices every time we draw.
+	}
+	void Draw() const
 	{
 		g_pd3dDevice->SetVertexShader( D3DFVF_RageModelVertex );
 		g_pd3dDevice->DrawIndexedPrimitiveUP(
@@ -912,7 +916,7 @@ void RageDisplay_D3D::DrawIndexedTriangles( const RageModelVertexArray *p )
 {
 	SEND_CURRENT_MATRICES;
 
-	p->SendVertices();
+	p->Draw();
 		
 	StatsAddVerts( p->sizeTriangles()*3 );
 }

@@ -864,6 +864,8 @@ void Model::Update( float fDelta )
 					RageVec3TransformCoord( &tempPos, &originalPos, &m_vpBones[bone].mFinal );
 				}
 			}
+
+			pTempVertices->OnChanged();	// send the new vertices to the graphics card
 		}
 	}
 }

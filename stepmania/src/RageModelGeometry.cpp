@@ -240,6 +240,16 @@ void RageModelGeometry::LoadMilkshapeAscii( CString sPath )
 
 	OptimizeBones();
 
+	// send the finalized vertices to the graphics card
+	{
+		for( unsigned i = 0; i < m_Meshes.size(); i++ )
+		{
+			msMesh& mesh = m_Meshes[i];
+			RageModelVertexArray *&pVertices = mesh.Vertices;
+			pVertices->OnChanged();
+		}
+	}
+
 	f.Close();
 }
 

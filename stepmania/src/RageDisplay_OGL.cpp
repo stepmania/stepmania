@@ -47,6 +47,10 @@ namespace GLExt {
 	extern PFNGLCOLORTABLEPROC glColorTableEXT;
 	extern PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
 	extern PFNGLACTIVETEXTUREARBPROC glActiveTextureARB;
+	extern PFNGLGENBUFFERSARBPROC glGenBuffersARB;
+	extern PFNGLBINDBUFFERARBPROC glBindBufferARB;
+	extern PFNGLBUFFERDATAARBPROC glBufferDataARB;
+	extern PFNGLDELETEBUFFERSARBPROC glDeleteBuffersARB;
 };
 
 #if defined(DARWIN)
@@ -84,6 +88,10 @@ PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT = NULL;
 PFNGLCOLORTABLEPROC GLExt::glColorTableEXT = NULL;
 PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT = NULL;
 PFNGLACTIVETEXTUREARBPROC GLExt::glActiveTextureARB = NULL;
+PFNGLGENBUFFERSARBPROC GLExt::glGenBuffersARB = NULL;
+PFNGLBINDBUFFERARBPROC GLExt::glBindBufferARB = NULL;
+PFNGLBUFFERDATAARBPROC GLExt::glBufferDataARB = NULL;
+PFNGLDELETEBUFFERSARBPROC GLExt::glDeleteBuffersARB = NULL;
 static bool g_bEXT_texture_env_combine = true;
 static bool g_bGL_EXT_bgra = true;
 
@@ -307,6 +315,17 @@ static void FlushGLErrors()
 	while( glGetError() != GL_NO_ERROR )
 		;
 }
+
+static AssertNoGLError()
+{
+	GLenum error = glGetError();
+	if( error != GL_NO_ERROR )
+	{
+		LOG->Trace( GLToString(error) );
+		ASSERT(0);
+	}
+}
+
 
 #if defined(__unix__) && !defined(unix)
 #define unix
@@ -636,6 +655,10 @@ void SetupExtensions()
 	GLExt::glColorTableEXT = (PFNGLCOLORTABLEPROC) wind->GetProcAddress("glColorTableEXT");
 	GLExt::glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) wind->GetProcAddress("glGetColorTableParameterivEXT");
 	GLExt::glActiveTextureARB = (PFNGLACTIVETEXTUREARBPROC) wind->GetProcAddress("glActiveTextureARB");
+	GLExt::glGenBuffersARB = (PFNGLGENBUFFERSARBPROC) wind->GetProcAddress("glGenBuffersARB");
+	GLExt::glBindBufferARB = (PFNGLBINDBUFFERARBPROC) wind->GetProcAddress("glBindBufferARB");
+	GLExt::glBufferDataARB = (PFNGLBUFFERDATAARBPROC) wind->GetProcAddress("glBufferDataARB");
+	GLExt::glDeleteBuffersARB = (PFNGLDELETEBUFFERSARBPROC) wind->GetProcAddress("glDeleteBuffersARB");
 	g_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	g_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
 	CheckPalettedTextures( false );
@@ -955,7 +978,11 @@ public:
 	Sint8&			Bone		( int index ) { return m_pBone[index]; }
 	msTriangle&		Triangle	( int index ) { return m_pTriangles[index]; }
 
-	void SendVertices() const
+	void OnChanged() const
+	{
+		// nothing to do.  We send all of the vertices every time we draw.
+	}
+	void Draw() const
 	{
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glVertexPointer(3, GL_FLOAT, 0, m_pPosition);
@@ -980,9 +1007,127 @@ protected:
 	msTriangle	*m_pTriangles;
 };
 
+class RageModelVertexArrayHWOGL : public RageModelVertexArraySWOGL
+{
+protected:
+	// vertex buffer object names
+	GLuint m_nPositions;
+	GLuint m_nTextureCoords;
+	GLuint m_nNormals;
+	GLuint m_nTriangles;
+public:
+	RageModelVertexArrayHWOGL()
+	{
+		m_nPositions = 0;
+		m_nTextureCoords = 0;
+		m_nNormals = 0;
+		m_nTriangles = 0;
+
+		FlushGLErrors();
+
+		GLExt::glGenBuffersARB( 1, &m_nPositions );
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+		AssertNoGLError();
+
+		GLExt::glGenBuffersARB( 1, &m_nTextureCoords );
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+		AssertNoGLError();
+
+		GLExt::glGenBuffersARB( 1, &m_nNormals );
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+		AssertNoGLError();
+
+		GLExt::glGenBuffersARB( 1, &m_nTriangles );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, NULL );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, NULL );
+	}
+
+	~RageModelVertexArrayHWOGL()
+	{
+		FlushGLErrors();
+
+		GLExt::glDeleteBuffersARB( 1, &m_nPositions );
+		AssertNoGLError();
+		GLExt::glDeleteBuffersARB( 1, &m_nTextureCoords );
+		AssertNoGLError();
+		GLExt::glDeleteBuffersARB( 1, &m_nNormals );
+		AssertNoGLError();
+		GLExt::glDeleteBuffersARB( 1, &m_nTriangles );
+		AssertNoGLError();
+	}
+	
+	void OnChanged() const
+	{
+		// some implementations don't handle buffers of size 0.
+		if( m_sizeVerts == 0  ||  m_nTriangles == 0 )
+			return;
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector3), m_pPosition, GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector2), m_pTexture, GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+		GLExt::glBufferDataARB( GL_ARRAY_BUFFER_ARB, m_sizeVerts*sizeof(RageVector3), m_pNormal, GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+		GLExt::glBufferDataARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_sizeTriangles*sizeof(msTriangle), m_pTriangles, GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, NULL );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, NULL );
+	}
+	void Draw() const
+	{
+		if( m_sizeVerts == 0  ||  m_nTriangles == 0 )
+			return;
+
+		FlushGLErrors();
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+		AssertNoGLError();
+		glVertexPointer(3, GL_FLOAT, 0, NULL );
+		AssertNoGLError();
+
+		glDisableClientState(GL_COLOR_ARRAY);
+
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+		AssertNoGLError();
+		glTexCoordPointer(2, GL_FLOAT, 0, NULL);
+		AssertNoGLError();
+
+		glEnableClientState(GL_NORMAL_ARRAY);
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+		AssertNoGLError();
+		glNormalPointer(GL_FLOAT, 0, NULL);
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+		AssertNoGLError();
+
+		glDrawElements( GL_TRIANGLES, m_sizeTriangles*3, GL_UNSIGNED_SHORT, 0 );  //last 0 is offset in element-array
+		AssertNoGLError();
+
+		GLExt::glBindBufferARB( GL_ARRAY_BUFFER_ARB, NULL );
+		GLExt::glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, NULL );
+	}
+};
+
 RageModelVertexArray* RageDisplay_OGL::CreateRageModelVertexArray()
 {
-	return new RageModelVertexArraySWOGL;
+	if( GLExt::glGenBuffersARB )
+		return new RageModelVertexArraySWOGL;
+	else
+		return new RageModelVertexArraySWOGL;
 }
 
 void RageDisplay_OGL::DeleteRageModelVertexArray( RageModelVertexArray* p )
@@ -1045,7 +1190,7 @@ void RageDisplay_OGL::DrawIndexedTriangles( const RageModelVertexArray *p )
 {
 	SendCurrentMatrices();
 
-	p->SendVertices();
+	p->Draw();
 
 	StatsAddVerts( p->sizeTriangles()*3 );
 }
@@ -1345,7 +1490,6 @@ const RageDisplay::PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFor
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
-
 void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 {
 	unsigned int uTexID = uTexHandle;
@@ -1353,14 +1497,7 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 	FlushGLErrors();
 	glDeleteTextures(1,reinterpret_cast<GLuint*>(&uTexID));
 
-	GLenum error = glGetError();
-	if( error != GL_NO_ERROR )
-	{
-		ostringstream s;
-		s << "glDeleteTextures(): " << GLToString(error);
-		LOG->Trace( s.str().c_str() );
-		ASSERT(0);
-	}
+	AssertNoGLError();
 }
 
 

@@ -39,7 +39,8 @@ public:
 
 	virtual msTriangle&		Triangle( int index ) = 0;
 
-	virtual void SendVertices() const = 0;
+	virtual void OnChanged() const = 0;	// call this to re-send data to the video card
+	virtual void Draw() const = 0;	// call this to make the video card draw the vertices
 };
 
 
