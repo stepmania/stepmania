@@ -1,6 +1,4 @@
-/* AutoActor - An Actor wrapper that creates the appropriate type of Actor. *
- * from the supplied file name and automatically frees the Actor on 
- * destruction. */
+/* AutoActor - Smart pointer for Actor. */
 
 #ifndef AutoActor_H
 #define AutoActor_H
