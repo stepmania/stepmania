@@ -39,6 +39,7 @@ public:
 	void	PlayAnimation( CString sAniName, float fPlayRate = 1 );
 
 	virtual void	Update( float fDelta );
+	virtual bool	EarlyAbortDraw();
 	virtual void	DrawPrimitives();
 
 	void	AdvanceFrame (float dt);

@@ -145,7 +145,7 @@ void MenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 	UtilOffCommand( m_autoFooter, "MenuElements" );
 	UtilOffCommand( m_textHelp, "MenuElements" );
 
-	m_Background.PlayOffCommand();
+	m_Background.PlayCommand("Off");
 
 	m_Out.StartTransitioning(smSendWhenDone);
 

@@ -78,8 +78,8 @@ void Actor::Draw()
 		return;	// early abort
 	if( m_fHibernateSecondsLeft > 0 )
 		return;	// early abort
-//	if( this->EarlyAbortDraw() )
-//		return;
+	if( this->EarlyAbortDraw() )
+		return;
 
 	// call the most-derived versions
 	this->BeginDraw();	

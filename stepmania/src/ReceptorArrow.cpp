@@ -69,14 +69,14 @@ void ReceptorArrow::Update( float fDeltaTime )
 	m_pPressBlock->SetVertAlign( bReverse ? Actor::align_bottom : Actor::align_top );
 }
 
-void ReceptorArrow::Draw()
+void ReceptorArrow::DrawPrimitives()
 {
 	m_pReceptorGo->SetHidden( !GAMESTATE->m_bPastHereWeGo );
 	m_pReceptorWaiting->SetHidden( GAMESTATE->m_bPastHereWeGo );
 	m_pPressBlock->SetHidden( !m_bIsPressed );
 	m_bIsPressed = false;	// it may get turned back on next update
 
-	ActorFrame::Draw();
+	ActorFrame::DrawPrimitives();
 }
 
 void ReceptorArrow::Step()

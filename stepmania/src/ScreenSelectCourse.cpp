@@ -173,32 +173,32 @@ void ScreenSelectCourse::Update( float fDelta )
 
 void ScreenSelectCourse::TweenOnScreen()
 {
-	m_sprExplanation.FadeOn( 0.5f, "left bounce", TWEEN_TIME );
-	m_sprBannerFrame.FadeOn( 0, "left bounce", TWEEN_TIME );
-	m_Banner.FadeOn( 0, "left bounce", TWEEN_TIME );
-	m_textNumSongs.FadeOn( 0, "left bounce", TWEEN_TIME );
-	m_textTime.FadeOn( 0, "left bounce", TWEEN_TIME );
-	m_CourseContentsFrame.FadeOn( 0, "foldy", TWEEN_TIME );
+	m_sprExplanation.Command(	"Sleep,0.5;AddX,-640;BounceEnd,0.5;AddX,640" );
+	m_sprBannerFrame.Command(	"AddX,-640;BounceEnd,0.5;AddX,640" );
+	m_Banner.Command(			"AddX,-640;BounceEnd,0.5;AddX,640" );
+	m_textNumSongs.Command(		"AddX,-640;BounceEnd,0.5;AddX,640" );
+	m_textTime.Command(			"AddX,-640;BounceEnd,0.5;AddX,640" );
+	m_CourseContentsFrame.Command( "ZoomY,0;BounceEnd,0.5;ZoomY,1" );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprHighScoreFrame[p].FadeOn( 0, "right bounce", TWEEN_TIME );
-		m_HighScore[p].FadeOn( 0, "right bounce", TWEEN_TIME );
+		m_sprHighScoreFrame[p].Command( "AddX,640;BounceEnd,0.5;AddX,-640" );
+		m_HighScore[p].Command( "AddX,640;BounceEnd,0.5;AddX,-640" );
 	}
 	m_MusicWheel.TweenOnScreen();
 }
 
 void ScreenSelectCourse::TweenOffScreen()
 {
-	m_sprExplanation.FadeOff( 0, "left bounce", TWEEN_TIME );
-	m_sprBannerFrame.FadeOff( 0, "left bounce", TWEEN_TIME );
-	m_Banner.FadeOff( 0, "left bounce", TWEEN_TIME );
-	m_textNumSongs.FadeOff( 0, "left bounce", TWEEN_TIME );
-	m_textTime.FadeOff( 0, "left bounce", TWEEN_TIME );
-	m_CourseContentsFrame.FadeOff( 0, "foldy", TWEEN_TIME );
+	m_sprExplanation.Command( "BounceBegin,0.5;AddX,-640" );
+	m_sprBannerFrame.Command( "BounceBegin,0.5;AddX,-640" );
+	m_Banner.Command( "BounceBegin,0.5;AddX,-640" );
+	m_textNumSongs.Command( "BounceBegin,0.5;AddX,-640" );
+	m_textTime.Command( "BounceBegin,0.5;AddX,-640" );
+	m_CourseContentsFrame.Command( "Linear,0.5;ZoomY,0" );
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
-		m_sprHighScoreFrame[p].FadeOff( 0, "right bounce", TWEEN_TIME );
-		m_HighScore[p].FadeOff( 0, "right bounce", TWEEN_TIME );
+		m_sprHighScoreFrame[p].Command( "BounceBegin,0.5;AddX,640" );
+		m_HighScore[p].Command( "BounceBegin,0.5;AddX,640" );
 	}
 	m_MusicWheel.TweenOffScreen();
 }

@@ -425,21 +425,21 @@ void ScreenEz2SelectMusic::MenuBack( PlayerNumber pn )
 
 void ScreenEz2SelectMusic::TweenOffScreen()
 {
-	m_MusicBannerWheel.FadeOff( 0, "foldy", TWEEN_TIME );
-	m_PumpDifficultyCircle.FadeOff( 0, "fade", TWEEN_TIME*2 );
-	m_Guide.FadeOff( 0, "fade", TWEEN_TIME*2 );
-	m_PumpDifficultyRating.FadeOff( 0, "fade", TWEEN_TIME*2 );
-	m_Guide.FadeOff( 0, "fade", TWEEN_TIME*2 );
-	m_ChoiceListFrame.FadeOff( 0, "fade", TWEEN_TIME*2 );
-	m_ChoiceListHighlight.FadeOff( 0, "fade", TWEEN_TIME*2 );
-	m_CurrentGroup.FadeOff( 0, "fade", TWEEN_TIME*2 );
+	m_MusicBannerWheel.Command(		"linear,0.5;zoomy,0" );
+	m_PumpDifficultyCircle.Command( "Linear,1;DiffuseAlpha,0" );
+	m_Guide.Command(				"Linear,1;DiffuseAlpha,0" );
+	m_PumpDifficultyRating.Command( "Linear,1;DiffuseAlpha,0" );
+	m_Guide.Command(				"Linear,1;DiffuseAlpha,0" );
+	m_ChoiceListFrame.Command(		"Linear,1;DiffuseAlpha,0" );
+	m_ChoiceListHighlight.Command(	"Linear,1;DiffuseAlpha,0" );
+	m_CurrentGroup.Command(			"Linear,1;DiffuseAlpha,0" );
 	for(int i=0; i<NUM_PLAYERS; i++)
 	{
-		m_SpeedIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
-		m_MirrorIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
-		m_ShuffleIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
-		m_HiddenIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
-		m_VanishIcon[i].FadeOff( 0, "fade", TWEEN_TIME*2 );
+		m_SpeedIcon[i].Command(		"Linear,1;DiffuseAlpha,0" );
+		m_MirrorIcon[i].Command(	"Linear,1;DiffuseAlpha,0" );
+		m_ShuffleIcon[i].Command(	"Linear,1;DiffuseAlpha,0" );
+		m_HiddenIcon[i].Command(	"Linear,1;DiffuseAlpha,0" );
+		m_VanishIcon[i].Command(	"Linear,1;DiffuseAlpha,0" );
 	}
 }
 

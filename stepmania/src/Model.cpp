@@ -409,14 +409,13 @@ void Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 	}
 }
 
+bool Model::EarlyAbortDraw()
+{
+	return m_pGeometry == NULL || m_pGeometry->m_Meshes.empty();
+}
+
 void Model::DrawPrimitives()
 {
-	if( m_pGeometry == NULL || 
-		m_pGeometry->m_Meshes.empty() )
-	{
-		return;	// bail early
-	}
-
 	/* Don't if we're fully transparent */
 	if( m_pTempState->diffuse[0].a < 0.001f && m_pTempState->glow.a < 0.001f )
 		return;

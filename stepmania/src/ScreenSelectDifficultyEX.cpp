@@ -412,8 +412,8 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 	m_sprOK[pn].SetX( GetCursorX(pn) );
 	m_sprOK[pn].SetY( GetCursorY(pn) );
 	
-	m_sprCursor[pn].FadeOn( 0.0, "foldy bounce", 0.3f );
-	m_sprOK[pn].FadeOn( 0.0, "foldy bounce", 0.3f );
+	m_sprCursor[pn].Command( "ZoomY,0;BounceEnd,0.3;ZoomY,1" );
+	m_sprOK[pn].Command( "ZoomY,0;BounceEnd,0.3;ZoomY,1" );
 
 
 	// check to see if everyone has chosen

@@ -23,7 +23,7 @@ public:
 	ReceptorArrow();
 	bool Load( CString NoteSkin, PlayerNumber pn, int iColNo );
 
-	virtual void Draw();
+	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 	void Step();
 	void SetPressed() { m_bIsPressed = true; };

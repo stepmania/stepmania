@@ -438,7 +438,7 @@ void ScreenSelectMusic::TweenCoursePartsOnScreen( bool Initial )
 	m_CourseContentsFrame.SetZoomY( 1 );
 	if( Initial )
 	{
-		m_CourseContentsFrame.FadeOn( 0, "foldy", 0.3f );
+		m_CourseContentsFrame.Command( "ZoomY,0;BounceEnd,0.3;Zoom,1" );
 		COMMAND( m_CourseContentsFrame, "On" );
 	}
 	else
@@ -454,7 +454,7 @@ void ScreenSelectMusic::TweenCoursePartsOffScreen( bool Final )
 	if( Final )
 	{
 		m_CourseContentsFrame.SetZoomY( 1 );
-		m_CourseContentsFrame.FadeOff( 0, "foldy", 0.3f );
+		m_CourseContentsFrame.Command( "BounceBegin,0.3;ZoomY,0" );
 		OFF_COMMAND( m_CourseContentsFrame );
 	}
 	else

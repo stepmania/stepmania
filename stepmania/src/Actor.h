@@ -19,8 +19,8 @@ class Actor
 {
 public:
 	Actor();
-	virtual ~Actor() { }
-	void Reset();
+	virtual ~Actor() {}
+	virtual void Reset();
 
 	enum TweenType { 
 		TWEEN_LINEAR, 
@@ -58,16 +58,17 @@ public:
 
 	enum EffectClock { CLOCK_TIMER, CLOCK_BGM };
 
-	// let subclasses override
-	virtual void Draw();		// calls, BeginDraw, DrawPrimitives, EndDraw
-	virtual void BeginDraw();	// pushes transform onto world matrix stack
-	virtual void SetRenderStates();	// Actor should call at beginning of their DrawPrimitives()
+	void Draw();						// calls, NeedsDraw, BeginDraw, DrawPrimitives, EndDraw
+	virtual bool EarlyAbortDraw() { return false; }	// return true to early abort drawing of this Actor
+	virtual void BeginDraw();			// pushes transform onto world matrix stack
+	virtual void SetRenderStates();		// Actor should call at beginning of their DrawPrimitives() after setting textures
 	virtual void DrawPrimitives() {};	// Derivitives should override
-	virtual void EndDraw();		// pops transform from world matrix stack
+	virtual void EndDraw();				// pops transform from world matrix stack
+	
 	bool IsFirstUpdate();
 	virtual void Update( float fDeltaTime );
-	virtual void UpdateTweening( float fDeltaTime );
-	virtual void CopyTweening( const Actor &from );
+	void UpdateTweening( float fDeltaTime );
+	void CopyTweening( const Actor &from );
 
 
 	CString m_sName, m_sID;
@@ -93,104 +94,105 @@ public:
 	 * is somewhat abstracted.  Hmmm. -glenn */
 	/* Things like the cursor on ScreenSelectDifficutly need to know the dest coordinates.
 	 * -Chris */
-	virtual float GetX() const				{ return m_current.pos.x; };
-	virtual float GetY() const				{ return m_current.pos.y; };
-	virtual float GetZ() const				{ return m_current.pos.z; };
-	virtual float GetDestX()				{ return DestTweenState().pos.x; };
-	virtual float GetDestY()				{ return DestTweenState().pos.y; };
-	virtual float GetDestZ()				{ return DestTweenState().pos.z; };
-	virtual void  SetX( float x )			{ DestTweenState().pos.x = x; };
-	virtual void  SetY( float y )			{ DestTweenState().pos.y = y; };
-	virtual void  SetZ( float z )			{ DestTweenState().pos.z = z; };
-	virtual void  SetXY( float x, float y )	{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
+	float GetX() const				{ return m_current.pos.x; };
+	float GetY() const				{ return m_current.pos.y; };
+	float GetZ() const				{ return m_current.pos.z; };
+	float GetDestX()				{ return DestTweenState().pos.x; };
+	float GetDestY()				{ return DestTweenState().pos.y; };
+	float GetDestZ()				{ return DestTweenState().pos.z; };
+	void  SetX( float x )			{ DestTweenState().pos.x = x; };
+	void  SetY( float y )			{ DestTweenState().pos.y = y; };
+	void  SetZ( float z )			{ DestTweenState().pos.z = z; };
+	void  SetXY( float x, float y )	{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
 
 	// height and width vary depending on zoom
-	virtual float GetUnzoomedWidth()		{ return m_size.x; }
-	virtual float GetUnzoomedHeight()		{ return m_size.y; }
-	virtual float GetZoomedWidth()			{ return m_size.x * DestTweenState().scale.x; }
-	virtual float GetZoomedHeight()			{ return m_size.y * DestTweenState().scale.y; }
-	virtual void  SetWidth( float width )	{ m_size.x = width; }
-	virtual void  SetHeight( float height )	{ m_size.y = height; }
+	float GetUnzoomedWidth()		{ return m_size.x; }
+	float GetUnzoomedHeight()		{ return m_size.y; }
+	float GetZoomedWidth()			{ return m_size.x * DestTweenState().scale.x; }
+	float GetZoomedHeight()			{ return m_size.y * DestTweenState().scale.y; }
+	void  SetWidth( float width )	{ m_size.x = width; }
+	void  SetHeight( float height )	{ m_size.y = height; }
 
 	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
 	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
 	void  SetBaseZoomZ( float zoom )	{ m_baseScale.z = zoom; }
-	virtual void  SetBaseRotationX( float rot )	{ m_baseRotation.x = rot; }
-	virtual void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
-	virtual void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
+	void  SetBaseRotationX( float rot )	{ m_baseRotation.x = rot; }
+	void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
+	void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
 
-	virtual float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
-	virtual float GetZoomX()				{ return DestTweenState().scale.x; }
-	virtual float GetZoomY()				{ return DestTweenState().scale.y; }
-	virtual float GetZoomZ()				{ return DestTweenState().scale.z; }
-	virtual void  SetZoom( float zoom )		{ DestTweenState().scale.x = zoom;	DestTweenState().scale.y = zoom; }
-	virtual void  SetZoomX( float zoom )	{ DestTweenState().scale.x = zoom;	}
-	virtual void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
-	virtual void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
-	virtual void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
-	virtual void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
+	float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
+	float GetZoomX()				{ return DestTweenState().scale.x; }
+	float GetZoomY()				{ return DestTweenState().scale.y; }
+	float GetZoomZ()				{ return DestTweenState().scale.z; }
+	void  SetZoom( float zoom )		{ DestTweenState().scale.x = zoom;	DestTweenState().scale.y = zoom; }
+	void  SetZoomX( float zoom )	{ DestTweenState().scale.x = zoom;	}
+	void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
+	void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
+	void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
+	void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
 
-	virtual float GetRotationX()			{ return DestTweenState().rotation.x; }
-	virtual float GetRotationY()			{ return DestTweenState().rotation.y; }
-	virtual float GetRotationZ()			{ return DestTweenState().rotation.z; }
-	virtual void  SetRotationX( float rot )	{ DestTweenState().rotation.x = rot; }
-	virtual void  SetRotationY( float rot )	{ DestTweenState().rotation.y = rot; }
-	virtual void  SetRotationZ( float rot )	{ DestTweenState().rotation.z = rot; }
-	virtual void  AddRotationH( float rot );
-	virtual void  AddRotationP( float rot );
-	virtual void  AddRotationR( float rot );
+	float GetRotationX()			{ return DestTweenState().rotation.x; }
+	float GetRotationY()			{ return DestTweenState().rotation.y; }
+	float GetRotationZ()			{ return DestTweenState().rotation.z; }
+	void  SetRotationX( float rot )	{ DestTweenState().rotation.x = rot; }
+	void  SetRotationY( float rot )	{ DestTweenState().rotation.y = rot; }
+	void  SetRotationZ( float rot )	{ DestTweenState().rotation.z = rot; }
+	void  AddRotationH( float rot );
+	void  AddRotationP( float rot );
+	void  AddRotationR( float rot );
 
-	virtual float GetCropLeft()					{ return DestTweenState().crop.left; }
-	virtual float GetCropTop()					{ return DestTweenState().crop.top;	}
-	virtual float GetCropRight()				{ return DestTweenState().crop.right;}
-	virtual float GetCropBottom()				{ return DestTweenState().crop.bottom;}
-	virtual void  SetCropLeft( float percent )	{ DestTweenState().crop.left = percent; }
-	virtual void  SetCropTop( float percent )	{ DestTweenState().crop.top = percent;	}
-	virtual void  SetCropRight( float percent )	{ DestTweenState().crop.right = percent;}
-	virtual void  SetCropBottom( float percent ){ DestTweenState().crop.bottom = percent;}
+	float GetCropLeft()					{ return DestTweenState().crop.left; }
+	float GetCropTop()					{ return DestTweenState().crop.top;	}
+	float GetCropRight()				{ return DestTweenState().crop.right;}
+	float GetCropBottom()				{ return DestTweenState().crop.bottom;}
+	void  SetCropLeft( float percent )	{ DestTweenState().crop.left = percent; }
+	void  SetCropTop( float percent )	{ DestTweenState().crop.top = percent;	}
+	void  SetCropRight( float percent )	{ DestTweenState().crop.right = percent;}
+	void  SetCropBottom( float percent ){ DestTweenState().crop.bottom = percent;}
 
-	virtual void  SetFadeLeft( float percent )	{ DestTweenState().fade.left = percent; }
-	virtual void  SetFadeTop( float percent )	{ DestTweenState().fade.top = percent;	}
-	virtual void  SetFadeRight( float percent )	{ DestTweenState().fade.right = percent;}
-	virtual void  SetFadeBottom( float percent ){ DestTweenState().fade.bottom = percent;}
-	virtual void  SetFadeDiffuseColor( const RageColor &c ) { DestTweenState().fadecolor = c; }
+	void  SetFadeLeft( float percent )	{ DestTweenState().fade.left = percent; }
+	void  SetFadeTop( float percent )	{ DestTweenState().fade.top = percent;	}
+	void  SetFadeRight( float percent )	{ DestTweenState().fade.right = percent;}
+	void  SetFadeBottom( float percent ){ DestTweenState().fade.bottom = percent;}
+	void  SetFadeDiffuseColor( const RageColor &c ) { DestTweenState().fadecolor = c; }
 
-	virtual void SetGlobalDiffuseColor( RageColor c );
-	virtual void SetGlobalX( float x );
+	void SetGlobalDiffuseColor( RageColor c );
+	void SetGlobalX( float x );
 
-	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
-	virtual void SetDiffuseAlpha( float f ) { for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
-	virtual void SetDiffuseColor( RageColor c );
-	virtual void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
-	virtual void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
-	virtual void SetDiffuseUpperRight( RageColor c )	{ DestTweenState().diffuse[1] = c; };
-	virtual void SetDiffuseLowerLeft( RageColor c )		{ DestTweenState().diffuse[2] = c; };
-	virtual void SetDiffuseLowerRight( RageColor c )	{ DestTweenState().diffuse[3] = c; };
-	virtual void SetDiffuseTopEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[1] = c; };
-	virtual void SetDiffuseRightEdge( RageColor c )		{ DestTweenState().diffuse[1] = DestTweenState().diffuse[3] = c; };
-	virtual void SetDiffuseBottomEdge( RageColor c )	{ DestTweenState().diffuse[2] = DestTweenState().diffuse[3] = c; };
-	virtual void SetDiffuseLeftEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[2] = c; };
-	virtual RageColor GetDiffuse()						{ return DestTweenState().diffuse[0]; };
-	virtual RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
-	virtual void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
-	virtual RageColor GetGlow()							{ return DestTweenState().glow; };
-	virtual void SetGlowMode( GlowMode m )				{ DestTweenState().glowmode = m; };
-	virtual GlowMode GetGlowMode()						{ return DestTweenState().glowmode; };
+	void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
+	void SetDiffuseAlpha( float f ) { for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
+	void SetDiffuseColor( RageColor c );
+	void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
+	void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
+	void SetDiffuseUpperRight( RageColor c )	{ DestTweenState().diffuse[1] = c; };
+	void SetDiffuseLowerLeft( RageColor c )		{ DestTweenState().diffuse[2] = c; };
+	void SetDiffuseLowerRight( RageColor c )	{ DestTweenState().diffuse[3] = c; };
+	void SetDiffuseTopEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[1] = c; };
+	void SetDiffuseRightEdge( RageColor c )		{ DestTweenState().diffuse[1] = DestTweenState().diffuse[3] = c; };
+	void SetDiffuseBottomEdge( RageColor c )	{ DestTweenState().diffuse[2] = DestTweenState().diffuse[3] = c; };
+	void SetDiffuseLeftEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[2] = c; };
+	RageColor GetDiffuse()						{ return DestTweenState().diffuse[0]; };
+	RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
+	void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
+	RageColor GetGlow()							{ return DestTweenState().glow; };
+	void SetGlowMode( GlowMode m )				{ DestTweenState().glowmode = m; };
+	GlowMode GetGlowMode()						{ return DestTweenState().glowmode; };
 
 
-	virtual void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
-	virtual void StopTweening();
-	virtual void FinishTweening();
-	virtual void HurryTweening( float factor );
+	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
+	void StopTweening();
+	void FinishTweening();
+	void HurryTweening( float factor );
+	// Let ActorFrame and BGAnimation override
 	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
-	virtual TweenState& DestTweenState()	// where Actor will end when its tween finish
+	TweenState& DestTweenState()	// where Actor will end when its tween finish
 	{
 		if( m_TweenStates.empty() )	// not tweening
 			return m_current;
 		else
 			return LatestTween();
 	}
-	virtual void SetLatestTween( TweenState ts )	{ LatestTween() = ts; }
+	void SetLatestTween( TweenState ts )	{ LatestTween() = ts; }
 
 	
 	enum StretchType { fit_inside, cover };
@@ -203,8 +205,9 @@ public:
 	void StretchTo( const RectF &rect );
 
 
-
-
+	//
+	// Alignment settings.  These need to be virtual for BitmapText
+	//
 	enum HorizAlign { align_left, align_center, align_right };
 	virtual void SetHorizAlign( HorizAlign ha ) { m_HorizAlign = ha; }
 	virtual void SetHorizAlign( CString s );
@@ -214,7 +217,9 @@ public:
 	virtual void SetVertAlign( CString s );
 
 
+	//
 	// effects
+	//
 	void SetEffectNone()						{ m_Effect = no_effect; }
 	Effect GetEffect()							{ return m_Effect; }
 	void SetEffectColor1( RageColor c )			{ m_effectColor1 = c; }
@@ -272,31 +277,27 @@ public:
 	// TODO: Implement hibernate as a tween type?
 	void SetHibernate( float fSecs )	{ m_fHibernateSecondsLeft = fSecs; }
 
-	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }
-	virtual void StartAnimating()		{ this->EnableAnimation(true); };
-	virtual void StopAnimating()		{ this->EnableAnimation(false); };
+	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }	// Sprite needs to overload this
+	void StartAnimating()		{ this->EnableAnimation(true); };
+	void StopAnimating()		{ this->EnableAnimation(false); };
 
 
 	//
 	// render states
 	//
-	virtual void SetBlendMode( BlendMode mode ) { m_BlendMode = mode; } 
-	virtual void SetBlendMode( CString );
-	virtual void SetTextureWrapping( bool b ) 	{ m_bTextureWrapping = b; } 
-	virtual void SetClearZBuffer( bool b ) 		{ m_bClearZBuffer = b; } 
-	virtual void SetUseZBuffer( bool b ) 		{ SetZTest(b); SetZWrite(b); } 
-	virtual void SetZTest( bool b ) 			{ m_bZTest = b; } 
-	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
-	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
-	virtual void SetCullMode( CString );
+	void SetBlendMode( BlendMode mode ) { m_BlendMode = mode; } 
+	void SetBlendMode( CString );
+	void SetTextureWrapping( bool b ) 	{ m_bTextureWrapping = b; } 
+	void SetClearZBuffer( bool b ) 		{ m_bClearZBuffer = b; } 
+	void SetUseZBuffer( bool b ) 		{ SetZTest(b); SetZWrite(b); } 
+	void SetZTest( bool b ) 			{ m_bZTest = b; } 
+	void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
+	void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
+	void SetCullMode( CString );
 
 	//
-	// fade command
+	// Commands
 	//
-	void Fade( float fSleepSeconds, CString sFadeString, float fFadeSeconds, bool bFadingOff );
-	void FadeOn( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,false); };
-	void FadeOff( float fSleepSeconds, CString sFadeString, float fFadeSeconds )	{ Fade(fSleepSeconds,sFadeString,fFadeSeconds,true); };
-
 	void Command( CString sCommands );	// return length in seconds to execute command
 	virtual void HandleCommand( const ParsedCommand &command );	// derivable
 	static float GetCommandLength( CString command );
@@ -310,8 +311,8 @@ public:
 	//
 	virtual void GainingFocus( float fRate, bool bRewindMovie, bool bLoop ) {}
 	virtual void LosingFocus() {}
-	virtual void PlayOffCommand() { this->PlayCommand("Off"); }
 	virtual void PlayCommand( const CString &sCommandName ) {}
+	virtual void PlayOffCommand( const CString &sCommandName ) {}
 
 protected:
 

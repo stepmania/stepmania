@@ -365,11 +365,14 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 	BuildChars();
 }
 
+bool BitmapText::EarlyAbortDraw()
+{
+	return m_wTextLines.empty();
+}
+
 // draw text at x, y using colorTop blended down to colorBottom, with size multiplied by scale
 void BitmapText::DrawPrimitives()
 {
-	if( m_wTextLines.empty() )
-		return;
 
 	Actor::SetRenderStates();	// set Actor-specified render states
 	DISPLAY->SetTextureModeModulate();

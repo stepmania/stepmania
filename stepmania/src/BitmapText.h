@@ -32,6 +32,7 @@ public:
 
 	void CropToWidth( int iWidthInSourcePixels );
 
+	virtual bool EarlyAbortDraw();
 	virtual void DrawPrimitives();
 
 	void TurnRainbowOn()	{ m_bRainbow = true; };
