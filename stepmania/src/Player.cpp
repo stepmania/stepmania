@@ -275,7 +275,8 @@ void PlayerMinus::Update( float fDeltaTime )
 		const StyleInput StyleI( m_PlayerNumber, bar );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
-		if(bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox)
+		// TODO: Make this work for non-human-controlled players
+		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && GAMESTATE->m_PlayerController[m_PlayerNumber]==PC_HUMAN )
 			m_pNoteField->SetPressed(bar);
 	}
 
