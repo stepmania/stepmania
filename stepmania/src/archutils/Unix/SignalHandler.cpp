@@ -10,6 +10,11 @@
 #include <sys/mman.h>
 #include <cerrno>
 
+#if defined(DARWIN)
+extern "C" int sigaltstack( const struct sigaltstack *ss, struct sigaltstack *oss );
+#define MAP_ANONYMOUS MAP_ANON
+#endif
+
 static vector<SignalHandler::handler> handlers;
 SaveSignals *saved_sigs;
 
@@ -65,11 +70,10 @@ static int find_stack_direction()
 	return find_stack_direction2( &c );
 }
 
-#if defined(LINUX)
 /* Create a stack with a barrier page at the end to guard against stack overflow. */
 static void *CreateStack( int size )
 {
-	const long PageSize = sysconf(_SC_PAGESIZE);
+	const long PageSize = getpagesize();
 
 	/* Round size up to the nearest PageSize. */
 	size += PageSize-1;
@@ -101,7 +105,6 @@ static void *CreateStack( int size )
 
 	return p;
 }
-#endif
 
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
 void SignalHandler::OnClose(handler h)
@@ -110,7 +113,7 @@ void SignalHandler::OnClose(handler h)
 	{
 		saved_sigs = new SaveSignals;
 
-		void *p = NULL;
+		bool bUseAltSigStack = true;
 
 #if defined(LINUX)
 		/* Ugh.  Signal stack + pthreads + Linux 2.4 = crash or hang. */
@@ -120,14 +123,19 @@ void SignalHandler::OnClose(handler h)
 
 		/* Allocate a separate signal stack.  This makes the crash handler work
 		 * if we run out of stack space. */
+		if( version < 20500 )
+			bUseAltSigStack = false;
+#endif
+
 		const int AltStackSize = 1024*64;
-		if( version > 20500 )
+		void *p = NULL;
+		if( bUseAltSigStack )
 			p = CreateStack( AltStackSize );
 
 		if( p != NULL )
 		{
 			stack_t ss;
-			ss.ss_sp = p;
+			ss.ss_sp = (char*)p; /* cast for Darwin */
 			ss.ss_size = AltStackSize;
 			ss.ss_flags = 0;
 			if( sigaltstack( &ss, NULL ) == -1 )
@@ -136,7 +144,6 @@ void SignalHandler::OnClose(handler h)
 				p = NULL; /* no SA_ONSTACK */
 			}
 		}
-#endif
 		
 		struct sigaction sa;
 
