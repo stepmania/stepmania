@@ -43,7 +43,7 @@ void ConditionalBGA::Load(CString szScreenName)
 //	fp = fopen(filepath,"r");
 	if(!loaded)
 	{
-		LOG->Warn("ConditionalBGA File Not Found");
+		LOG->Trace("ConditionalBGA File Not Found");
 		return;
 	}
 	else
