@@ -40,14 +40,16 @@ void RageSound_DSound::MixerThread()
 	VDCHECKPOINT;
 	
 	while(!shutdown) {
+		VDCHECKPOINT;
 		Sleep(10);
 
 		/* SOUNDMAN will be set once RageSoundManager's ctor returns and
 		 * assigns it; we might get here before that happens, though. */
 		if(!SOUNDMAN) continue;
 
+		VDCHECKPOINT;
 		LockMutex L(SOUNDMAN->lock);
-		for(unsigned i = 0; i < stream_pool.size(); ++i)
+ 		for(unsigned i = 0; i < stream_pool.size(); ++i)
 		{
 			if(stream_pool[i]->state == stream_pool[i]->INACTIVE)
 				continue; /* inactive */
@@ -88,6 +90,7 @@ void RageSound_DSound::Update(float delta)
  * it in the opposite buffer. */
 void RageSound_DSound::stream::GetPCM(bool init)
 {
+	VDCHECKPOINT;
 	DWORD cursor, junk;
 
 	HRESULT result;
@@ -239,6 +242,8 @@ RageSound_DSound::~RageSound_DSound()
 
 void RageSound_DSound::StartMixing(RageSound *snd)
 {
+	LockMutex L(SOUNDMAN->lock);
+
 	/* Find an unused buffer. */
 	unsigned i;
 	for(i = 0; i < stream_pool.size(); ++i) {
