@@ -79,6 +79,8 @@ protected:
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	ScoreDisplayNormal	m_HighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;
+	Sprite				m_sprMarathonBalloon;
+	Sprite				m_sprLongBalloon;
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;

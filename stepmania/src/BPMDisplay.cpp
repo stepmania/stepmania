@@ -33,7 +33,7 @@ BPMDisplay::BPMDisplay()
 	m_textBPM.TurnShadowOff();
 	m_textBPM.SetHorizAlign( Actor::align_right );
 	m_textBPM.SetDiffuse( NORMAL_COLOR );
-	m_sprLabel.SetXY( 0, 0 );
+	m_textBPM.SetXY( 0, 0 );
 
 	m_sprLabel.Load( THEME->GetPathTo("Graphics","select music bpm label") );
 	m_sprLabel.TurnShadowOff();
@@ -104,18 +104,18 @@ void BPMDisplay::SetBPMRange( float fLowBPM, float fHighBPM )
 
 	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 	{
-		m_textBPM.SetTweenDiffuseTopEdge( EXTRA_COLOR );
-		m_sprLabel.SetTweenDiffuseBottomEdge( EXTRA_COLOR );		
+		m_textBPM.SetTweenDiffuse( EXTRA_COLOR );
+		m_sprLabel.SetTweenDiffuse( EXTRA_COLOR );		
 	}
 	else if( m_fLowBPM != m_fHighBPM )
 	{
-		m_textBPM.SetTweenDiffuseTopEdge( CHANGE_COLOR );
-		m_sprLabel.SetTweenDiffuseBottomEdge( CHANGE_COLOR );
+		m_textBPM.SetTweenDiffuse( CHANGE_COLOR );
+		m_sprLabel.SetTweenDiffuse( CHANGE_COLOR );
 	}
 	else
 	{
-		m_textBPM.SetTweenDiffuseTopEdge( NORMAL_COLOR );
-		m_sprLabel.SetTweenDiffuseBottomEdge( NORMAL_COLOR );
+		m_textBPM.SetTweenDiffuse( NORMAL_COLOR );
+		m_sprLabel.SetTweenDiffuse( NORMAL_COLOR );
 	}
 
 }

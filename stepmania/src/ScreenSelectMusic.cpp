@@ -71,6 +71,8 @@
 #define SONG_OPTIONS_Y			THEME->GetMetricF("ScreenSelectMusic","SongOptionsY")
 #define OPTION_ICONS_X( p )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("OptionIconsP%dX",p+1))
 #define OPTION_ICONS_Y( p )		THEME->GetMetricF("ScreenSelectMusic",ssprintf("OptionIconsP%dY",p+1))
+#define BALLOON_X				THEME->GetMetricF("ScreenSelectMusic","BalloonX")
+#define BALLOON_Y				THEME->GetMetricF("ScreenSelectMusic","BalloonY")
 #define HELP_TEXT				THEME->GetMetric("ScreenSelectMusic","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
 #define SCORE_CONNECTED_TO_MUSIC_WHEEL	THEME->GetMetricB("ScreenSelectMusic","ScoreConnectedToMusicWheel")
@@ -201,6 +203,21 @@ ScreenSelectMusic::ScreenSelectMusic()
 	m_MusicSortDisplay.Set( GAMESTATE->m_SongSortOrder );
 	this->AddChild( &m_MusicSortDisplay );
 
+	m_sprMarathonBalloon.Load( THEME->GetPathTo("Graphics","select music marathon balloon") );
+	m_sprMarathonBalloon.StopAnimating();
+	m_sprMarathonBalloon.SetXY( BALLOON_X, BALLOON_Y );
+	m_sprMarathonBalloon.SetZoom( 1 );
+	m_sprMarathonBalloon.SetDiffuse( RageColor(1,1,1,1) );
+	m_sprMarathonBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
+	this->AddChild( &m_sprMarathonBalloon );
+
+	m_sprLongBalloon.Load( THEME->GetPathTo("Graphics","select music long balloon") );
+	m_sprLongBalloon.StopAnimating();
+	m_sprLongBalloon.SetXY( BALLOON_X, BALLOON_Y );
+	m_sprLongBalloon.SetZoom( 1 );
+	m_sprLongBalloon.SetDiffuse( RageColor(1,1,1,1) );
+	m_sprLongBalloon.SetEffectBobbing( RageVector3(0,10,0), 2 );
+	this->AddChild( &m_sprLongBalloon );
 
 	m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message") );
 	m_sprOptionsMessage.StopAnimating();
@@ -867,6 +884,25 @@ void ScreenSelectMusic::AfterMusicChange()
 				}
 
 				m_iSelection[p] = clamp( m_iSelection[p], 0, int(m_arrayNotes[p].size()) ) ;
+			}
+
+			m_sprMarathonBalloon.StopTweening();
+			m_sprMarathonBalloon.BeginTweening( 0.2f );
+			m_sprMarathonBalloon.SetTweenZoomY( 0 );
+			m_sprLongBalloon.StopTweening();
+			m_sprLongBalloon.BeginTweening( 0.2f );
+			m_sprLongBalloon.SetTweenZoomY( 0 );
+			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
+			{
+				m_sprMarathonBalloon.StopTweening();
+				m_sprMarathonBalloon.BeginTweening( 0.2f );
+				m_sprMarathonBalloon.SetTweenZoomY( 1 );
+			}
+			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
+			{
+				m_sprLongBalloon.StopTweening();
+				m_sprLongBalloon.BeginTweening( 0.2f );
+				m_sprLongBalloon.SetTweenZoomY( 1 );
 			}
 		}
 		break;
