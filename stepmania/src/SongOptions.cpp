@@ -22,6 +22,7 @@ void SongOptions::Init()
 	m_bAssistTick = false;
 	m_fMusicRate = 1.0f;
 	m_bAutoSync = false;
+	m_bSaveScore = true;
 }
 
 CString SongOptions::GetString()

@@ -167,7 +167,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( GAMESTATE->IsHumanPlayer(p) )
+				if( GAMESTATE->IsHumanPlayer(p) && GAMESTATE->m_SongOptions.m_bSaveScore )
 				{
 					GAMESTATE->m_pCurNotes[p]->AddScore( (PlayerNumber)p, grade[p], stageStats.iScore[p] + stageStats.iBonus[p], bNewRecord[p] );
 					

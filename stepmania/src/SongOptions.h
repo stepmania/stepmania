@@ -23,7 +23,7 @@ struct SongOptions
 	enum FailType { FAIL_ARCADE=0, FAIL_END_OF_SONG, FAIL_OFF };
 	FailType m_FailType;
 	float m_fMusicRate;
-	bool m_bAssistTick, m_bAutoSync;
+	bool m_bAssistTick, m_bAutoSync, m_bSaveScore;
 
 	SongOptions() { Init(); };
 	void Init();

@@ -49,6 +49,7 @@ enum {
 	SO_ASSIST,
 	SO_RATE,
 	SO_AUTOSYNC,
+	SO_SAVE,
 	NUM_PLAYER_OPTIONS_LINES
 };
 OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
@@ -71,7 +72,8 @@ OptionRow g_PlayerOptionsLines[NUM_PLAYER_OPTIONS_LINES] = {
 	OptionRow( "Fail",			true, "ARCADE","END OF SONG","OFF" ),	
 	OptionRow( "Assist\nTick",	true, "OFF", "ON" ),
 	OptionRow( "Rate",			true, "0.3x","0.4x","0.5x","0.6x","0.7x","0.8x","0.9x","1.0x","1.1x","1.2x","1.3x","1.4x","1.5x","1.6x","1.7x","1.8x","1.9x","2.0x" ),	
-	OptionRow( "Auto\nAdjust",	true, "OFF", "ON" ),	
+	OptionRow( "Auto\nAdjust",	true, "OFF", "ON" ),
+	OptionRow( "Save\nScores",  true, "OFF", "ON" ),
 };
 
 static const PlayerOptions::Effect ChoosableEffects[] = 
@@ -302,6 +304,7 @@ void ScreenPlayerOptions::ImportOptions()
 	m_iSelectedOption[0][SO_FAIL] = so.m_FailType;
 	m_iSelectedOption[0][SO_ASSIST] = so.m_bAssistTick;
 	m_iSelectedOption[0][SO_AUTOSYNC] = so.m_bAutoSync;
+	m_iSelectedOption[0][SO_SAVE] = so.m_bSaveScore;
 
 	m_iSelectedOption[0][SO_RATE] = 7;	// in case we don't match below
 	for( i=0; i<g_PlayerOptionsLines[SO_RATE].choices.size(); i++ )
@@ -439,6 +442,7 @@ void ScreenPlayerOptions::ExportOptions()
 	}
 	so.m_bAssistTick = !!m_iSelectedOption[0][SO_ASSIST];
 	so.m_bAutoSync = !!m_iSelectedOption[0][SO_AUTOSYNC];
+	so.m_bSaveScore = !!m_iSelectedOption[0][SO_SAVE];
 
 	int iSel = m_iSelectedOption[0][SO_RATE];
 	so.m_fMusicRate = (float) atof( g_PlayerOptionsLines[SO_RATE].choices[iSel] );
