@@ -18,6 +18,7 @@ using namespace std;
 #include <stack>
 #include <map>
 #include <sys/errno.h>
+#include <assert.h>
 #include "StdString.h"
 #include "InstallerFile.h"
 #include "Processor.h"
@@ -74,7 +75,7 @@ const CString GetPath(const CString& ID)
             if (path[temp - 1] == '\n')
                 path[temp - 1] = '\000';
         }
-        ASSERT(ptr);
+        assert(ptr);
         while (*ptr != '\000' && (*ptr == ' ' || *ptr == '\t'))
             ++ptr;
         if (*ptr == '/')
