@@ -1488,15 +1488,25 @@ void ShowSavePrompt( ScreenMessage SM_SendWhenDone )
 	case PLAY_MODE_RAVE:
 		sMessage = ssprintf( 
 			"You have changed the offset or BPM of\n"
-			"%s\n"
-			"from %.3f to %.3f (a change of %.3f).\n"
+			"%s\n", 
+			GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str() );
+
+		if( fabs(GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - g_fOldOffset) > 0.001 )
+		{
+			sMessage += ssprintf( 
+				"\n"
+				"Offset was changed from %.3f to %.3f (%.3f).\n",
+				g_fOldOffset, 
+				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds,
+				GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - g_fOldOffset );
+		}
+
+		sMessage +=
+			"\n"
 			"Would you like to save these changes back\n"
 			"to the song file?\n"
-			"Choosing NO will discard your changes.",
-			GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str(),
-			g_fOldOffset, 
-			GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds,
-			GAMESTATE->m_pCurSong->m_fBeat0OffsetInSeconds - g_fOldOffset );
+			"Choosing NO will discard your changes.";
+			
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
