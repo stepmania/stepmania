@@ -130,14 +130,17 @@ void FileSet::LoadFromDir(const CString &dir)
 /* Search for "beginning*containing*ending". */
 void FileSet::GetFilesMatching(const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs) const
 {
+	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
+	 * out where to start. */
 	set<File>::const_iterator i = files.lower_bound(File(beginning.c_str()));
 	for( ; i != files.end(); ++i)
 	{
 		if(bOnlyDirs && !i->dir) continue;
 
-		/* Check beginning. */
-		if(beginning.size() > i->name.size()) continue; /* can't start with it */
-		if(strnicmp(i->name.c_str(), beginning.c_str(), beginning.size())) continue; /* doesn't start with it */
+		/* Check beginning. Once we hit a filename that no longer matches beginning,
+		 * we're past all possible matches in the sort, so stop. */
+		if(beginning.size() > i->name.size()) break; /* can't start with it */
+		if(strnicmp(i->name.c_str(), beginning.c_str(), beginning.size())) break; /* doesn't start with it */
 
 		/* Position the end starts on: */
 		int end_pos = int(i->name.size())-int(ending.size());
