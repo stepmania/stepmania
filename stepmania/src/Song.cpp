@@ -1309,7 +1309,7 @@ bool Song::Matches(CString sGroup, CString sSong) const
 
 void Song::FreeAllLoadedFromProfiles()
 {
-	for( unsigned s=0; s<m_vpSteps.size(); s++ )
+	for( int s=m_vpSteps.size()-1; s>=0; s-- )
 	{
 		Steps* pSteps = m_vpSteps[s];
 		if( pSteps->WasLoadedFromProfile() )
