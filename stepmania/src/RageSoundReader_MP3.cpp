@@ -10,15 +10,15 @@
 #include <errno.h>
 
 #ifdef _WIN32
-#include "mad-0.15.0b/mad.h"
+#include "mad-0.15.1b/mad.h"
 #ifdef _XBOX
 #ifdef _DEBUG
-#pragma comment(lib, "mad-0.15.0b/xboxmad/debug/xboxmad.lib")
+#pragma comment(lib, "mad-0.15.1b/xboxmad/debug/xboxmad.lib")
 #else
-#pragma comment(lib, "mad-0.15.0b/xboxmad/Release/xboxmad.lib")
+#pragma comment(lib, "mad-0.15.1b/xboxmad/Release/xboxmad.lib")
 #endif
 #else
-#pragma comment(lib, "mad-0.15.0b/msvc++/Release/libmad.lib")
+#pragma comment(lib, "mad-0.15.1b/msvc++/Release/libmad.lib")
 #endif
 #else
 #include <mad.h>
