@@ -868,7 +868,7 @@ static void WriteLogHeader()
 
 			// surround all params with some marker, as they might have whitespace.
 			// using [[ and ]], as they are not likely to be in the params.
-			args += "[[" + g_argv[i] + "]]";
+			args += ssprintf( "[[%s]]", g_argv[i] );
 		}
 		LOG->Info( "Command line args (count=%d): %s", (g_argc - 1), args.c_str());
 	}
