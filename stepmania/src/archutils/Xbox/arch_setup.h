@@ -5,4 +5,8 @@
 #include <xgraphics.h>
 #include <stdio.h>
 
+/* Stubs: */
+HRESULT CoInitialize() { return S_OK; }
+void CoUninitialize() { }
+
 #endif
