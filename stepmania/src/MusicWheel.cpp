@@ -58,7 +58,10 @@ CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
 #define MENU_NAMES					THEME->GetMetric ("MusicWheel","MenuNames")
 #define MENU_ACTIONS				THEME->GetMetric ("MusicWheel","MenuActions")
-
+#define WHEEL_ITEM_ON_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOnDelayCenter")
+#define WHEEL_ITEM_ON_DELAY_OFFSET	THEME->GetMetricF("MusicWheel","WheelItemOnDelayOffset")
+#define WHEEL_ITEM_OFF_DELAY_CENTER	THEME->GetMetricF("MusicWheel","WheelItemOffDelayCenter")
+#define WHEEL_ITEM_OFF_DELAY_OFFSET	THEME->GetMetricF("MusicWheel","WheelItemOffDelayOffset")
 // leaving this one under ScreenSelectMusic because that is the only place it takes effect anyway.
 #define DEFAULT_SORT				THEME->GetMetric ("ScreenSelectMusic","DefaultSort")
 
@@ -1334,25 +1337,25 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 	}
 	m_sprSelectionOverlay.Command( "addx,-320" );
 
-	m_ScrollBar.SetX( SCROLL_BAR_X+30 );
+	m_ScrollBar.SetX( SCROLL_BAR_X );
+	m_ScrollBar.Command( "addx,+30" );
 	if(changing_sort)
 		m_ScrollBar.BeginTweening( 0.2f );	// sleep
 	else
 		m_ScrollBar.BeginTweening( 0.7f );	// sleep
 	m_ScrollBar.BeginTweening( 0.2f , Actor::TWEEN_ACCELERATE );
-	m_ScrollBar.SetX( SCROLL_BAR_X );	
+	m_ScrollBar.Command( "addx,-30" );
 
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-
 		SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
 
-		display.Command( "addx,320" );
-		display.BeginTweening( 0.04f*i );	// sleep
-		display.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
-		display.Command( "addx,-320" );
+		COMMAND( display, "StartOn");
+		const float delay = fabsf(i-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
+		display.BeginTweening( delay ); //0.04f*i /*atof(delays[i])*/ );	// sleep
+		COMMAND( display, "FinishOn"); // accelerate,0.2
 		if( changing_sort )
 			display.HurryTweening( 0.25f );
 	}
@@ -1388,11 +1391,12 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 	{
 		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-
 		SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
-		display.BeginTweening( 0.04f*i );	// sleep
-		display.BeginTweening( 0.2f, Actor::TWEEN_DECELERATE );
-		display.Command( "addx,320" );
+
+		COMMAND( display, "StartOff");
+		const float delay = fabsf(i-WHEEL_ITEM_OFF_DELAY_CENTER) * WHEEL_ITEM_OFF_DELAY_OFFSET;
+		display.BeginTweening( delay );	// sleep
+		COMMAND( display, "FinishOff");
 		if( changing_sort )
 			display.HurryTweening( 0.25f );
 	}
