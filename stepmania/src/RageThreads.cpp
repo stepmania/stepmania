@@ -30,7 +30,7 @@
 
 #define MAX_THREADS 128
 
-static const int UnknownThreadID = 0xFFFFFFFF;
+static const unsigned int UnknownThreadID = 0xFFFFFFFF;
 struct ThreadSlot
 {
 	char name[1024];
@@ -202,7 +202,7 @@ void ThreadSlot::SetupUnknownThread()
 {
 	threadid = UnknownThreadID;
 
-	sprintf(ThreadFormattedOutput, "Unknown thread", threadid, name);
+	sprintf(ThreadFormattedOutput, "Unknown thread");
 }
 
 void ThreadSlot::ShutdownThisThread()
