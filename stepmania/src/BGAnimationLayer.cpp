@@ -16,6 +16,7 @@
 #include "GameState.h"
 #include "IniFile.h"
 #include "RageMath.h"
+#include "SDL_utils.h"
 #include <math.h>
 
 
@@ -88,7 +89,7 @@ void BGAnimationLayer::LoadFromMovie( CString sMoviePath, bool bLoop, bool bRewi
 	m_Sprites[0].LoadBG( sMoviePath );
 	m_Sprites[0].StretchTo( RectI(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_Sprites[0].GetTexture()->Play();
-	::Sleep( 50 );	// decode a frame so we don't see a black flash at the beginning
+	SDL_Delay( 50 );	// decode a frame so we don't see a black flash at the beginning
 	m_Sprites[0].GetTexture()->Pause();
 	m_bRewindMovie = bRewind;
 	if( !bLoop )
