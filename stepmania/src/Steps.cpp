@@ -134,7 +134,7 @@ float Steps::PredictMeter() const
 	const float ChaosSquare = this->GetRadarValues()[RADAR_CHAOS] * this->GetRadarValues()[RADAR_CHAOS];
 	pMeter += -6.35f * SV;
 	pMeter += -2.58f * ChaosSquare;
-	if (pMeter > 1) pMeter = 1;	
+	if (pMeter < 1) pMeter = 1;	
 	return pMeter;
 }
 
