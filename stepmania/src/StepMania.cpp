@@ -17,6 +17,7 @@
 #include "RageThreads.h"
 
 #include "arch/arch.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
 #include <ctime>
@@ -55,7 +56,6 @@
 #include "SongCacheIndex.h"
 #include "BannerCache.h"
 #include "UnlockSystem.h"
-#include "arch/ArchHooks/ArchHooks.h"
 #include "RageFileManager.h"
 #include "Bookkeeper.h"
 #include "LightsManager.h"
