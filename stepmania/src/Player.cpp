@@ -962,9 +962,20 @@ void PlayerMinus::HandleTapRowScore( unsigned row )
 	// new max combo
 	GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber] = max(GAMESTATE->m_CurStageStats.iMaxCombo[m_PlayerNumber], iCurCombo);
 
-	const float beat = NoteRowToBeat(int(row));
+	/* Use the real current beat, not the beat we've been passed.  That's because we
+	 * want to record the current life/combo to the current time; eg. if it's a MISS,
+	 * the beat we're registering is in the past, but the life is changing now. */
+	const float beat = GAMESTATE->m_fSongBeat;
 	GAMESTATE->m_CurStageStats.UpdateComboList( m_PlayerNumber, GAMESTATE->GetSongPercent(beat) );
-	GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, m_pLifeMeter->GetLife(), GAMESTATE->GetSongPercent(beat) );
+
+	float life=0;
+	if( m_pLifeMeter )
+		life = m_pLifeMeter->GetLife();
+	else if( m_pCombinedLifeMeter )
+		life = .5f; // TODO m_pCombinedLifeMeter->GetLife();
+	else
+		ASSERT( 0 );
+	GAMESTATE->m_CurStageStats.SetLifeRecord( m_PlayerNumber, life, GAMESTATE->GetSongPercent(beat) );
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
