@@ -202,6 +202,9 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 
 bool GameState::HasEarnedExtraStage()
 {
+	if( PREFSMAN->m_bEventMode )
+		return false;
+
 	if( (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage()) )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
@@ -209,7 +212,11 @@ bool GameState::HasEarnedExtraStage()
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;	// skip
 
-			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty()==DIFFICULTY_HARD && m_CurStageStats.GetGrade((PlayerNumber)p)==GRADE_AA )
+			if( GAMESTATE->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_HARD && 
+				GAMESTATE->m_pCurNotes[p]->GetDifficulty() != DIFFICULTY_CHALLENGE )
+				continue; /* not hard enough! */
+
+			if( m_CurStageStats.GetGrade((PlayerNumber)p) >= GRADE_AA )
 				return true;
 		}
 	}
