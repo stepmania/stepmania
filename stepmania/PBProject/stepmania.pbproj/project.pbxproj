@@ -6004,9 +6004,9 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = Preference.h;
-			path = "/Users/steve/programming/sm-v390/src/Preference.h";
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/Preference.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA3D9D8006F5CAB2000294FA = {
 			fileRef = AA3D9D7F06F5CAB2000294FA;
