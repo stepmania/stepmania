@@ -116,6 +116,8 @@ try {
 	pcm->SetSampleRate( samplerate );
 	LOG->Info( "ALSA: Software mixing at %ihz", samplerate );
 	
+	StartDecodeThread();
+	
 	MixingThread.SetName( "RageSound_ALSA9_Software" );
 	MixingThread.Create( MixerThread_start, this );
 } catch(...) {

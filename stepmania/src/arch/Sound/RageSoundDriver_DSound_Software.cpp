@@ -94,6 +94,8 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 		pcm->release_output_buf(locked_buf, len);
 	}
 
+	StartDecodeThread();
+
 	/* Start playing. */
 	pcm->Play();
 

@@ -110,6 +110,8 @@ RageSound_CA::RageSound_CA()
     const Desc& physicalFormat = FindClosestFormat( physicalFormats );
     stream.SetCurrentPhysicalFormat( physicalFormat );
 
+	StartDecodeThread();
+
     gConverter = new AudioConverter( this, procFormat );
     
     try

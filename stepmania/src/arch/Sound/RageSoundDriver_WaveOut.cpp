@@ -135,6 +135,8 @@ RageSound_WaveOut::RageSound_WaveOut()
 		buffers[b].dwFlags |= WHDR_DONE;
 	}
 
+	StartDecodeThread();
+
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
 }
