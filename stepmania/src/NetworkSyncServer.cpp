@@ -558,7 +558,7 @@ void StepManiaLanServer::SendValue(uint8_t value, const unsigned int clientNum)
 void StepManiaLanServer::AnalizeChat(PacketFunctions &Packet, const unsigned int clientNum)
 {
 	CString message = Packet.ReadNT();
-	char firstc = message.at(0);
+	/* char firstc = */ message.at(0);
 	if (message.at(0) == '/')
 	{
 		CString command = message.substr(1, message.find(" ")-1);
@@ -791,8 +791,8 @@ void StepManiaLanServer::SendUserList()
 {
 	Reply.ClearPacket();
 	Reply.Write1(NSCUUL + NSServerOffset);
-	Reply.Write1(Client.size()*2);
-	Reply.Write1(Client.size()*2);
+	Reply.Write1( (uint8_t) Client.size()*2 );
+	Reply.Write1( (uint8_t) Client.size()*2 );
 
 	for (unsigned int x = 0; x < Client.size(); ++x)
 	{
