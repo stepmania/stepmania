@@ -892,7 +892,7 @@ void Player::HandleStep( int col, const RageTimer &tm )
 
 		if( score == TNS_HIT_MINE )
 		{
-			if( tn.bKeysound )
+			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
 			else
 				m_soundMine.Play();
@@ -974,7 +974,7 @@ void Player::HandleStep( int col, const RageTimer &tm )
 	if( iIndexOverlappingNote != -1 )
 	{
 		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
-		if( tn.bKeysound )
+		if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 			m_vKeysounds[tn.iKeysoundIndex].Play();
 	}
 }
