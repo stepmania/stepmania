@@ -508,10 +508,7 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFile &f, const FileInf
 	info(info_),
 	zip( f )
 {
-	/* inflateInit2 isn't widespread yet */
-	ASSERT( 0 );
-/*
-decomp_buf_avail = 0;
+	decomp_buf_avail = 0;
 
     dstrm.zalloc = Z_NULL;
     dstrm.zfree = Z_NULL;
@@ -524,7 +521,6 @@ decomp_buf_avail = 0;
 
 	decomp_buf_ptr = decomp_buf;
 	CFilePos = UFilePos = 0;
-	*/
 }
 
 RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cpy, RageFile &p ):
@@ -534,12 +530,16 @@ RageFileObjZipDeflated::RageFileObjZipDeflated( const RageFileObjZipDeflated &cp
 {
 	/* XXX completely untested */
 	/* Copy the entire decode state. */
+	/* inflateInit2 isn't widespread yet */
+	ASSERT( 0 );
+/*
 	inflateCopy( &dstrm, const_cast<z_streamp>(&cpy.dstrm) );
 
 	decomp_buf_ptr = decomp_buf + (cpy.decomp_buf_ptr - cpy.decomp_buf);
 	decomp_buf_avail = cpy.decomp_buf_avail;
 	CFilePos = cpy.CFilePos;
 	UFilePos = cpy.UFilePos;
+	*/
 }
 
 
