@@ -241,7 +241,6 @@ void PlayerOptions::FromString( CString sOptions )
 			}
 			else if( asParts[j][0]=='*' )
 				sscanf( asParts[j], "*%f", &speed );
-	LOG->Trace("'%s' %f %f", asParts[j].c_str(), level, speed);
 		}
 		sBit = asParts[asParts.size()-1];
 
