@@ -26,6 +26,8 @@ private:
 
 	struct OptionRowHandler
 	{
+		OptionRowHandler() { opt = NULL; }
+
 		OptionRowType type;
 
 		/* ROW_LIST: */
