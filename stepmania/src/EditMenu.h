@@ -38,6 +38,7 @@ enum EditMenuAction
 const CString& EditMenuActionToString( EditMenuAction ema );
 const CString& EditMenuActionToThemedString( EditMenuAction ema );
 
+const int NUM_ARROWS = 2;
 
 class EditMenu: public ActorFrame 
 {
@@ -72,7 +73,8 @@ public:
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
 private:
-	Sprite	m_sprArrows[2];
+	void UpdateArrows();
+	Sprite	m_sprArrows[NUM_ARROWS];
 
 	EditMenuRow m_SelectedRow;
 	int			m_iSelection[NUM_EDIT_MENU_ROWS];

@@ -35,17 +35,22 @@ XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 StringToX( EditMenuAction );
 
+static CString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",i+1); }
+static CString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",i+1); }
+static CString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",i+1); }
 
-#define ARROWS_X( i )			THEME->GetMetricF("EditMenu",ssprintf("Arrows%dX",i+1))
-#define SONG_BANNER_WIDTH		THEME->GetMetricF("EditMenu","SongBannerWidth")
-#define SONG_BANNER_HEIGHT		THEME->GetMetricF("EditMenu","SongBannerHeight")
-#define GROUP_BANNER_WIDTH		THEME->GetMetricF("EditMenu","GroupBannerWidth")
-#define GROUP_BANNER_HEIGHT		THEME->GetMetricF("EditMenu","GroupBannerHeight")
-#define ROW_LABELS_X			THEME->GetMetricF("EditMenu","RowLabelsX")
-#define ROW_LABEL_ON_COMMAND	THEME->GetMetricA("EditMenu","RowLabelOnCommand")
-#define ROW_VALUE_X( i )		THEME->GetMetricF("EditMenu",ssprintf("RowValue%dX",i+1))
-#define ROW_VALUE_ON_COMMAND	THEME->GetMetricA("EditMenu","RowValueOnCommand")
-#define ROW_Y( i )				THEME->GetMetricF("EditMenu",ssprintf("Row%dY",i+1))
+static ThemeMetric1D<float> ARROWS_X					("EditMenu",ARROWS_X_NAME,NUM_ARROWS);
+static ThemeMetric<RageColor> ARROWS_ENABLED_COLOR		("EditMenu","ArrowsEnabledColor");
+static ThemeMetric<RageColor> ARROWS_DISABLED_COLOR		("EditMenu","ArrowsDisabledColor");
+static ThemeMetric<float> SONG_BANNER_WIDTH				("EditMenu","SongBannerWidth");
+static ThemeMetric<float> SONG_BANNER_HEIGHT			("EditMenu","SongBannerHeight");
+static ThemeMetric<float> GROUP_BANNER_WIDTH			("EditMenu","GroupBannerWidth");
+static ThemeMetric<float> GROUP_BANNER_HEIGHT			("EditMenu","GroupBannerHeight");
+static ThemeMetric<float> ROW_LABELS_X					("EditMenu","RowLabelsX");
+static ThemeMetric<apActorCommands> ROW_LABEL_ON_COMMAND("EditMenu","RowLabelOnCommand");
+static ThemeMetric1D<float> ROW_VALUE_X					("EditMenu",ROW_VALUE_X_NAME,NUM_EDIT_MENU_ROWS);
+static ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND("EditMenu","RowValueOnCommand");
+static ThemeMetric1D<float> ROW_Y						("EditMenu",ROW_Y_NAME,NUM_EDIT_MENU_ROWS);
 
 
 static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut )
@@ -86,7 +91,7 @@ EditMenu::EditMenu()
 	for( int i=0; i<2; i++ )
 	{
 		m_sprArrows[i].Load( THEME->GetPathG("EditMenu",i==0?"left":"right") );
-		m_sprArrows[i].SetX( ARROWS_X(i) );
+		m_sprArrows[i].SetX( ARROWS_X.GetValue(i) );
 		this->AddChild( &m_sprArrows[i] );
 	}
 
@@ -98,14 +103,14 @@ EditMenu::EditMenu()
 	FOREACH_EditMenuRow( r )
 	{
 		m_textLabel[r].LoadFromFont( THEME->GetPathF("EditMenu","title") );
-		m_textLabel[r].SetXY( ROW_LABELS_X, ROW_Y(r) );
+		m_textLabel[r].SetXY( ROW_LABELS_X, ROW_Y.GetValue(r) );
 		m_textLabel[r].SetText( EditMenuRowToThemedString(r) );
 		m_textLabel[r].RunCommands( ROW_LABEL_ON_COMMAND );
 		m_textLabel[r].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textLabel[r] );
 
 		m_textValue[r].LoadFromFont( THEME->GetPathF("EditMenu","value") );
-		m_textValue[r].SetXY( ROW_VALUE_X(r), ROW_Y(r) );
+		m_textValue[r].SetXY( ROW_VALUE_X.GetValue(r), ROW_Y.GetValue(r) );
 		m_textValue[r].SetText( "blah" );
 		m_textValue[r].RunCommands( ROW_VALUE_ON_COMMAND );
 		this->AddChild( &m_textValue[r] );
@@ -326,19 +331,21 @@ void EditMenu::ChangeToRow( EditMenuRow newRow )
 	m_SelectedRow = newRow;
 
 	for( int i=0; i<2; i++ )
-		m_sprArrows[i].SetY( ROW_Y(newRow) );
-	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
-	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
+		m_sprArrows[i].SetY( ROW_Y.GetValue(newRow) );
+	UpdateArrows();
+}
+
+void EditMenu::UpdateArrows()
+{
+	m_sprArrows[0].SetDiffuse( CanGoLeft() ? ARROWS_ENABLED_COLOR : ARROWS_DISABLED_COLOR );
+	m_sprArrows[1].SetDiffuse( CanGoRight()? ARROWS_ENABLED_COLOR : ARROWS_DISABLED_COLOR );
 	m_sprArrows[0].EnableAnimation( CanGoLeft() );
 	m_sprArrows[1].EnableAnimation( CanGoRight() );
 }
 
 void EditMenu::OnRowValueChanged( EditMenuRow row )
 {
-	m_sprArrows[0].SetDiffuse( CanGoLeft()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
-	m_sprArrows[1].SetDiffuse( CanGoRight()?RageColor(1,1,1,1):RageColor(0.2f,0.2f,0.2f,1) );
-	m_sprArrows[0].EnableAnimation( CanGoLeft() );
-	m_sprArrows[1].EnableAnimation( CanGoRight() );
+	UpdateArrows();
 
 	switch( row )
 	{
