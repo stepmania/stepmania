@@ -7,7 +7,7 @@
 #include "RageDisplay.h"	// RageDisplay
 
 list<long>		pMasks;		// Currently open masks
-Display			*pDpy;		// Running X connection
+Display			*pDpy	= NULL;	// Running X connection
 Window			*pWin	= NULL;	// Current window
 unsigned short int	pCt	= 0;	// Number of subsystems using
 					// the X connection
@@ -88,9 +88,17 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual int width=64
 	
 	if(pDpy == NULL) { return false; }
 
+	if(pWin != NULL) { XDestroyWindow(pDpy, pWin); pWin = NULL; }
+
 	XSetWindowAttributes winAttribs;
 
 	winAttribs.border_pixel = 0;
+	winAttribs.event_mask = 0;
+	i = 0;
+	while(i < pMasks.size() )
+	{
+		winAttribs.event_mask |= pMasks[i];
+	}
 
 	// XXX: Error catching/handling?
 
@@ -101,7 +109,7 @@ bool X11Helper::MakeWindow(int screenNum, int depth, Visual *visual int width=64
 		height, 0, depth, InputOutput, visual,
 		CWBorderPixel | CWColorMap | CWEventMask, &winAttribs);
 
-	return pApplyMasks();	
+	return true;
 }
 
 void X11Helper::Stop()
