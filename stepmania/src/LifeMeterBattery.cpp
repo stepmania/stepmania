@@ -53,9 +53,8 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	if( bPlayerEnabled )
 		this->AddChild( &m_sprBattery );
 
-	m_textNumLives.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay battery life numbers 7x2"), "01234 :56789%." );
-	m_textNumLives.SetDiffuse( D3DXCOLOR(1,1,1,1) );		// pink
-	m_textNumLives.SetZoom( 1.1f );
+	m_textNumLives.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","gameplay battery life numbers 5x3"), "0123456789x    " );
+	m_textNumLives.SetDiffuse( D3DXCOLOR(1,1,1,1) );
 	m_textNumLives.TurnShadowOff();
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
@@ -115,7 +114,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 
 		m_textNumLives.SetZoom( 1.5f );
 		m_textNumLives.BeginTweening( 0.15f );
-		m_textNumLives.SetTweenZoom( 1.1f );
+		m_textNumLives.SetTweenZoom( 1.0f );
 
 		Refresh();
 		m_fBatteryBlinkTime = BATTERY_BLINK_TIME;
