@@ -36,6 +36,7 @@ public:
 	void FreeSongs();
 	void Cleanup();
 	void RegenRandomTrailEntries();
+	void SetPreferences();
 
 	void LoadAllFromProfiles();	// song, edits
 	void FreeAllLoadedFromProfiles();
