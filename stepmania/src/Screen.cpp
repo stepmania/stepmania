@@ -37,10 +37,24 @@ void Screen::AddChild( Actor* pActor )
 		ActorFrame::AddChild( pActor );
 }
 
+bool Screen::SortMessagesByDelayRemaining(const Screen::QueuedScreenMessage &m1,
+										 const Screen::QueuedScreenMessage &m2)
+{
+	return m1.fDelayRemaining < m2.fDelayRemaining;
+}
+
 void Screen::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
+	/* We need to ensure two things:
+	 * 1. Messages must be sent in the order of delay.  If two messages are sent
+	 *    simultaneously, one with a .001 delay and another with a .002 delay, the
+	 *    .001 delay message must be sent first.
+	 * 2. Messages to be delivered simultaneously must be sent in the order queued.
+	 * 
+	 * Stable sort by time to ensure #2. */
+	stable_sort(m_QueuedMessages.begin(), m_QueuedMessages.end(), SortMessagesByDelayRemaining);
 
 	// update the times of queued ScreenMessages and send if timer has expired
 	// The order you remove messages in must be very careful!  Sending a message can 

@@ -52,6 +52,7 @@ protected:
 		float fDelayRemaining;
 	};
 	vector<QueuedScreenMessage>	m_QueuedMessages;
+	static bool SortMessagesByDelayRemaining(const QueuedScreenMessage &m1, const QueuedScreenMessage &m2);
 
 	bool m_bIsTransparent;	// screens below us need to be drawn first
 
