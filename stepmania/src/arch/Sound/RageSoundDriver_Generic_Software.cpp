@@ -10,9 +10,10 @@ static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
 
 /* When a sound has fewer than min_fill_frames buffered, buffer at maximum speed.
- * Once beyond that */
+ * Once beyond that, fill at a limited rate. */
 static const int min_fill_frames = 1024*4;
 static int frames_to_buffer;
+static int min_streaming_buffer_size = 1024*32;
 
 /* 512 is about 10ms, which is big enough for the tolerance of most schedulers. */
 static int chunksize() { return 512; }
@@ -322,7 +323,13 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 	s.buffer.clear();
 
 	/* Initialize the sound buffer. */
-	s.Allocate( frames_to_buffer );
+	int BufferSize = frames_to_buffer;
+
+	/* If a sound is streaming from disk, use a bigger buffer, so we don't underrun
+	 * if a drive seek takes too long. */
+	if( s.snd->IsStreamingFromDisk() )
+		BufferSize = max( BufferSize, min_streaming_buffer_size );
+	s.Allocate( BufferSize );
 
 //	LOG->Trace("StartMixing(%s) (%p)", s.snd->GetLoadedFilePath().c_str(), s.snd );
 
