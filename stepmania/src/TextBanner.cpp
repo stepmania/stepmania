@@ -94,32 +94,23 @@ void TextBanner::LoadFromString(
 	CString sDisplaySubTitle, CString sTranslitSubTitle, 
 	CString sDisplayArtist, CString sTranslitArtist )
 {
-	m_textTitle.SetText( sDisplayTitle, sTranslitTitle );
-	m_textSubTitle.SetText( sDisplaySubTitle, sTranslitSubTitle );
-	m_textArtist.SetText( sDisplayArtist, sTranslitArtist );
+	bool bTwoLines = sDisplaySubTitle.size() == 0;
 
-	bool bTwoLines = m_textSubTitle.GetText().size() == 0;
-
-	float fTitleZoom	= bTwoLines ? g_fTwoLinesTitleZoom	: g_fThreeLinesTitleZoom;
-	float fSubTitleZoom = bTwoLines ? 0						: g_fThreeLinesSubTitleZoom;
-	float fArtistZoom	= bTwoLines ? g_fTwoLinesArtistZoom : g_fThreeLinesArtistZoom;
+	const float fTitleZoom	= bTwoLines ? g_fTwoLinesTitleZoom	: g_fThreeLinesTitleZoom;
+	const float fSubTitleZoom = bTwoLines ? 0						: g_fThreeLinesSubTitleZoom;
+	const float fArtistZoom	= bTwoLines ? g_fTwoLinesArtistZoom : g_fThreeLinesArtistZoom;
 	
-	m_textTitle.SetZoomY( fTitleZoom );
-	m_textSubTitle.SetZoomY( fSubTitleZoom );
-	m_textArtist.SetZoomY( fArtistZoom );
+	m_textTitle.SetZoom( fTitleZoom );
+	m_textSubTitle.SetZoom( fSubTitleZoom );
+	m_textArtist.SetZoom( fArtistZoom );
 
-	/* Avoid division by zero. */
-	fTitleZoom		= min( fTitleZoom,		g_fWidth/(m_textTitle.GetWidestLineWidthInSourcePixels()+1) );
-	fSubTitleZoom	= min( fSubTitleZoom,	g_fWidth/(m_textSubTitle.GetWidestLineWidthInSourcePixels()+1) );
-	fArtistZoom		= min( fArtistZoom,		g_fWidth/(m_textArtist.GetWidestLineWidthInSourcePixels()+1) );
+	m_textTitle.SetTextMaxWidth( g_fWidth, sDisplayTitle, sTranslitTitle );
+	m_textSubTitle.SetTextMaxWidth( g_fWidth, sDisplaySubTitle, sTranslitSubTitle );
+	m_textArtist.SetTextMaxWidth( g_fWidth, sDisplayArtist, sTranslitArtist );
 
-	m_textTitle.SetZoomX( fTitleZoom );
-	m_textSubTitle.SetZoomX( fSubTitleZoom );
-	m_textArtist.SetZoomX( fArtistZoom );
-
-	float fTitleY		= bTwoLines ? g_fTwoLinesTitleY		: g_fThreeLinesTitleY;
-	float fSubTitleY	= bTwoLines ? 0						: g_fThreeLinesSubTitleY;
-	float fArtistY		= bTwoLines ? g_fTwoLinesArtistY	: g_fThreeLinesArtistY;
+	const float fTitleY		= bTwoLines ? g_fTwoLinesTitleY		: g_fThreeLinesTitleY;
+	const float fSubTitleY	= bTwoLines ? 0						: g_fThreeLinesSubTitleY;
+	const float fArtistY		= bTwoLines ? g_fTwoLinesArtistY	: g_fThreeLinesArtistY;
 
 	m_textTitle.SetY( fTitleY );
 	m_textSubTitle.SetY( fSubTitleY );
