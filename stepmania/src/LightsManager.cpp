@@ -228,6 +228,10 @@ void LightsManager::Update( float fDeltaTime )
 		{
 			FOREACH_GameController( gc )
 			{
+				// don't blink unjoined sides
+				if( !GAMESTATE->m_bSideIsJoined[gc] )
+					continue;
+
 				FOREACH_GameButton( gb )
 				{
 					bool bOn = INPUTMAPPER->IsButtonDown( GameInput(gc,gb) );
