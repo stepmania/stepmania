@@ -42,9 +42,9 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 	ASSERT(iNumOfTracks > 0); // crazy to have less than 1 track....
 
-	m_LifeMeter.Load( PLAYER_1 );
-	m_LifeMeter.SetXY( 480, 40 );
-	this->AddChild( &m_LifeMeter );
+	m_LifeMeterBar.Load( PLAYER_1 );
+	m_LifeMeterBar.SetXY( 480, 40 );
+	this->AddChild( &m_LifeMeterBar );
 	
 
 
@@ -52,7 +52,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 
 
-	// Display character+pad
+	// Display random character+pad
 	if( GAMESTATE->m_pCharacters.size() )
 	{
 		int iRnd;
@@ -65,7 +65,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 			
 			m_mCharacter.SetRotationX( 40 );
 			m_mDancePad.SetRotationX( 35 );
-			m_mCharacter.Command("X,150;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,120;Y,400");
+			m_mCharacter.Command("X,120;Y,300;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,120;Y,400");
 			m_mDancePad.Command("X,40;Y,310;Zoom,15;RotationY,180;sleep,4.7;linear,1.0;RotationY,360;Zoom,20;X,230;Y,390");
 			this->AddChild(&m_mCharacter);		
 			this->AddChild(&m_mDancePad);
@@ -105,6 +105,13 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	pND->SetTapNote( 0, ROWS_PER_BEAT*20, TAP_TAP );
 	pND->SetTapNote( 0, ROWS_PER_BEAT*22, TAP_TAP );
 	pND->SetTapNote( 3, ROWS_PER_BEAT*22, TAP_TAP );
+	//Misses
+	pND->SetTapNote( 0, (int)(ROWS_PER_BEAT*24.0f), TAP_TAP );
+	pND->SetTapNote( 1, (int)(ROWS_PER_BEAT*24.1f), TAP_TAP );
+	pND->SetTapNote( 3, (int)(ROWS_PER_BEAT*24.2f), TAP_TAP );
+	pND->SetTapNote( 1, (int)(ROWS_PER_BEAT*24.3f), TAP_TAP );
+	pND->SetTapNote( 2, (int)(ROWS_PER_BEAT*24.4f), TAP_TAP );
+	pND->SetTapNote( 0, (int)(ROWS_PER_BEAT*24.5f), TAP_TAP );
 
 	m_pSong = new Song;
 	float fSongBPM = SONG_BPM;	// need this on a separate line, otherwise VC6 release build screws up and returns 0
@@ -124,14 +131,16 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	GAMESTATE->m_pCurSong = m_pSong;
 	GAMESTATE->m_bPastHereWeGo = true;
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
-	m_Player.Load( PLAYER_1, pND, &m_LifeMeter, NULL, NULL, NULL, NULL, NULL );
+	m_Player.Load( PLAYER_1, pND, &m_LifeMeterBar, NULL, NULL, NULL, NULL, NULL );
 	
-	/* We need a nice way to fill up the LifeMeter half-way. -- Miryo */
-
 	m_Player.SetX( 480 );
 	m_Player.DontShowJudgement();
 	this->AddChild( &m_Player );
 	delete pND;
+
+	// Try filling LifeMeterBar..
+		// DAMN IT! Nothing makes this work right.
+	// ------------------------
 
 	m_fFakeSecondsIntoSong = 0;
 	this->ClearMessageQueue();

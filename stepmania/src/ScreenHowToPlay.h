@@ -27,7 +27,7 @@ public:
 	virtual void DrawPrimitives();
 
 protected:
-	LifeMeterBar	m_LifeMeter;
+	LifeMeterBar	m_LifeMeterBar;
 	Player			m_Player;
 	Model			m_mCharacter;
 	Model			m_mDancePad;
