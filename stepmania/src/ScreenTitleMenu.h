@@ -28,7 +28,8 @@ public:
 	virtual void Update( float fDelta );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	enum Choice {
+	enum Choice 
+	{
 		CHOICE_GAME_START = 0,
 		CHOICE_SELECT_GAME,
 		CHOICE_MAP_INSTRUMENTS,
@@ -37,12 +38,33 @@ public:
 		CHOICE_GRAPHIC_OPTIONS,
 		CHOICE_APPEARANCE_OPTIONS,
 		CHOICE_EDIT,
+		CHOICE_JUKEBOX,
 		#ifdef _DEBUG
 		CHOICE_SANDBOX,
 		#endif
 		CHOICE_EXIT,
 		NUM_CHOICES	// leave this at the end!
 	};
+
+	CString ChoiceToString( Choice c )
+	{
+		const CString s[NUM_CHOICES] = {
+			"GAME START",
+			"SWITCH GAME",
+			"CONFIG KEY/JOY",
+			"INPUT OPTIONS",
+			"MACHINE OPTIONS",
+			"GRAPHIC OPTIONS",
+			"APPEARANCE OPTIONS",
+			"EDIT/SYNCHRONIZE",
+			"JUKEBOX",
+			#ifdef _DEBUG
+			"SANDBOX",
+			#endif
+			"EXIT"
+		};
+		return s[c];
+	}
 
 
 private:

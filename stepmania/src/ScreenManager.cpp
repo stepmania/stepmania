@@ -201,6 +201,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenDemonstration.h"
 #include "ScreenInstructions.h"
 #include "ScreenNameEntry.h"
+#include "ScreenJukebox.h"
 
 #include "ScreenPrompt.h"
 #include "ScreenTextEntry.h"
@@ -243,7 +244,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenTitleMenu") )		ret = new ScreenTitleMenu;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectMusic") )	ret = new ScreenEz2SelectMusic;
 	else if( 0==stricmp(sClassName, "ScreenWarning") )			ret = new ScreenWarning;
-	else if( 0==stricmp(sClassName, "ScreenRanking") )		ret = new ScreenRanking;
+	else if( 0==stricmp(sClassName, "ScreenRanking") )			ret = new ScreenRanking;
 	else if( 0==stricmp(sClassName, "ScreenMemoryCard") )		ret = new ScreenMemoryCard;
 	else if( 0==stricmp(sClassName, "ScreenCompany") )			ret = new ScreenCompany;
 	else if( 0==stricmp(sClassName, "ScreenAlbums") )			ret = new ScreenAlbums;
@@ -252,6 +253,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenDemonstration") )	ret = (ScreenGameplay*)new ScreenDemonstration;
 	else if( 0==stricmp(sClassName, "ScreenInstructions") )		ret = new ScreenInstructions;
 	else if( 0==stricmp(sClassName, "ScreenNameEntry") )		ret = new ScreenNameEntry;
+	else if( 0==stricmp(sClassName, "ScreenJukebox") )			ret = new ScreenJukebox;
 	else
 		RageException::Throw( "Invalid Screen class name '%s'", sClassName.GetString() );
 

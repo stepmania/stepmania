@@ -499,11 +499,16 @@ void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTra
 
 void NoteData::PadTapNotes(int rows)
 {
-	int needed = rows - m_TapNotes[0].size() + 1;
-	if(needed < 0) return;
-	needed += 100; /* optimization: give it a little more than it needs */
+	// Need to resize each track individually.  It could be the case that
+	// m_iNumTracks has changed, and the vectors are different sizes.  -Chris
 	for(int track = 0; track < m_iNumTracks; ++track)
+	{
+		int needed = rows - m_TapNotes[track].size() + 1;
+		if(needed < 0) 
+			continue;
+		needed += 100; /* optimization: give it a little more than it needs */
 		m_TapNotes[track].insert(m_TapNotes[track].end(), needed, TAP_EMPTY);
+	}
 }
 
 void NoteData::MoveTapNoteTrack(int dest, int src)

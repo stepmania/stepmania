@@ -247,7 +247,7 @@ ScreenEdit::ScreenEdit()
 
 	m_NoteFieldRecord.SetXY( EDIT_X, EDIT_GRAY_Y );
 	m_NoteFieldRecord.SetZoom( 1.0f );
-	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -100, 300 );
+	m_NoteFieldRecord.Load( &noteData, PLAYER_1, -150, 350 );
 
 	m_Clipboard.m_iNumTracks = m_NoteFieldEdit.m_iNumTracks;
 

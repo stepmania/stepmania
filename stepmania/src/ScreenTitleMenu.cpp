@@ -47,20 +47,6 @@
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 
-const CString CHOICE_TEXT[ScreenTitleMenu::NUM_CHOICES]= {
-	"GAME START",
-	"SWITCH GAME",
-	"CONFIG KEY/JOY",
-	"INPUT OPTIONS",
-	"MACHINE OPTIONS",
-	"GRAPHIC OPTIONS",
-	"APPEARANCE OPTIONS",
-	"EDIT/RECORD/SYNCH",
-	#ifdef _DEBUG
-	"SANDBOX",
-	#endif
-	"EXIT",
-};
 
 ScreenTitleMenu::ScreenTitleMenu()
 {
@@ -91,7 +77,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 		for( i=0; i<NUM_CHOICES; i++ )
 		{
 			m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","titlemenu") );
-			m_textChoice[i].SetText( CHOICE_TEXT[i] );
+			m_textChoice[i].SetText( ChoiceToString((Choice)i) );
 			m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
 			m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
 			m_textChoice[i].TurnShadowOn();
@@ -226,6 +212,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			case CHOICE_MACHINE_OPTIONS:
 			case CHOICE_GRAPHIC_OPTIONS:
 			case CHOICE_APPEARANCE_OPTIONS:
+			case CHOICE_JUKEBOX:
 			#ifdef _DEBUG
 			case CHOICE_SANDBOX:
 			#endif
@@ -304,6 +291,9 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		case CHOICE_APPEARANCE_OPTIONS:
 			SCREENMAN->SetNewScreen( "ScreenAppearanceOptions" );
+			break;
+		case CHOICE_JUKEBOX:
+			SCREENMAN->SetNewScreen( "ScreenJukebox" );
 			break;
 		#ifdef _DEBUG
 		case CHOICE_SANDBOX:
