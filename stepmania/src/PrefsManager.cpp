@@ -23,6 +23,7 @@
 #include "ThemeManager.h"
 #include "GameConstantsAndTypes.h"
 #include "arch/arch.h" /* for default driver specs */
+#include "RageSoundReader_Resample.h" /* for ResampleQuality */
 
 #define STEPMANIA_INI_PATH BASE_PATH "Data" SLASH "StepMania.ini"
 #define GAMEPREFS_INI_PATH BASE_PATH "Data" SLASH "GamePrefs.ini"
@@ -158,6 +159,7 @@ PrefsManager::PrefsManager()
 	/* This is experimental: let's see if preloading helps people's skipping.
 	 * If it doesn't do anything useful, it'll be removed. */
 	m_bSoundPreloadAll = false;
+	m_iSoundResampleQuality = RageSoundReader_Resample::RESAMP_NORMAL;
 
 	m_bAllowUnacceleratedRenderer = false;
 	m_bThreadedInput = true;
@@ -230,6 +232,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "MarvelousTiming",				(int&)m_iMarvelousTiming );
 	ini.GetValueF( "Options", "SoundVolume",					m_fSoundVolume );
 	ini.GetValueB( "Options", "SoundPreloadAll",				m_bSoundPreloadAll );
+	ini.GetValueI( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.GetValueI( "Options", "CoinMode",						m_iCoinMode );
 	ini.GetValueI( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
 	ini.GetValueB( "Options", "JointPremium",					m_bJointPremium );
@@ -352,6 +355,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueB( "Options", "EasterEggs",						m_bEasterEggs );
 	ini.SetValueI( "Options", "MarvelousTiming",				m_iMarvelousTiming );
 	ini.SetValueB( "Options", "SoundPreloadAll",				m_bSoundPreloadAll );
+	ini.SetValueI( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	ini.SetValueI( "Options", "CoinMode",						m_iCoinMode );
 	ini.SetValueI( "Options", "CoinsPerCredit",					m_iCoinsPerCredit );
 	ini.SetValueB( "Options", "JointPremium",					m_bJointPremium );

@@ -124,6 +124,7 @@ public:
 	CString			m_sMovieDrivers;
 	float			m_fSoundVolume;
 	bool			m_bSoundPreloadAll;
+	int				m_iSoundResampleQuality;
 	bool			m_bAllowUnacceleratedRenderer;
 	bool			m_bThreadedInput;
 
