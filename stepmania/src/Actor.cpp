@@ -453,25 +453,11 @@ void Actor::Update( float fDeltaTime )
 	// update effect
 	switch( m_Effect )
 	{
-	case no_effect:
-		break;
-	case diffuse_blink:
-	case diffuse_shift:
-	case glow_blink:
-	case glow_shift:
-	case rainbow:
-	case wag:
-	case bounce:
-	case bob:
-	case pulse:
-		break;
 	case spin:
 		m_current.rotation += fDeltaTime*m_vEffectMagnitude;
 		wrap( m_current.rotation.x, 360 );
 		wrap( m_current.rotation.y, 360 );
 		wrap( m_current.rotation.z, 360 );
-		break;
-	case vibrate:
 		break;
 	}
 
