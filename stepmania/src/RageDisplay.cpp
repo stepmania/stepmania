@@ -457,6 +457,8 @@ void RageDisplay::SaveScreenshot( CString sPath )
 			3*g_CurrentWidth );
 
 	SDL_SaveBMP( temp, sPath );
+
+	SDL_FreeSurface( image );
 	SDL_FreeSurface( temp );
 }
 

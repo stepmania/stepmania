@@ -103,7 +103,7 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 			this->MenuLeft( StyleI.player );
 			return;
 		case SDLK_RIGHT:
-			this->MenuLeft( StyleI.player );
+			this->MenuRight( StyleI.player );
 			return;
 		}
 	}

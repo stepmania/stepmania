@@ -270,6 +270,11 @@ void ScreenOptions::PositionUnderlines()
 //			Quad &underline = m_OptionUnderline[p][i];
 			OptionsCursor &underline = m_Underline[p][i];
 
+			// If there's only one choice (ScreenOptionsMenu), don't show underlines.  
+			// It looks silly.
+			bool bOnlyOneChoice = m_OptionRowData[i].iNumOptions == 1;
+			underline.SetDiffuse( bOnlyOneChoice ? RageColor(1,1,1,0) : RageColor(1,1,1,1) );
+
 			int iWidth, iX, iY;
 			GetWidthXY( (PlayerNumber)p, i, iWidth, iX, iY );
 			underline.SetBarWidth( iWidth );
@@ -487,17 +492,10 @@ void ScreenOptions::MenuLeft( PlayerNumber pn )
 			return;		// don't allow a move
 
 		const int iNumOptions = m_OptionRowData[iCurRow].iNumOptions;
+		if( iNumOptions == 1 )
+			continue;
+
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]-1+iNumOptions) % iNumOptions;
-// Chris:  I commented this out because it made wrapping a pain.  Is it used anyway?  If so, please
-// let me know and I'll fix it.
-//		do {
-//			new_opt--;
-//		} while(new_opt >= 0 && m_OptionDim[iCurRow][new_opt]);
-//		
-//		if( new_opt < 0 )	// can't go left any more
-//			return;
-//
-//		m_iSelectedOption[p][iCurRow] = new_opt;
 		
 		TweenCursor( (PlayerNumber)p );
 	}
@@ -518,19 +516,10 @@ void ScreenOptions::MenuRight( PlayerNumber pn )
 			return;		// don't allow a move
 
 		const int iNumOptions = m_OptionRowData[iCurRow].iNumOptions;
+		if( iNumOptions == 1 )
+			continue;
+
 		m_iSelectedOption[p][iCurRow] = (m_iSelectedOption[p][iCurRow]+1) % iNumOptions;
-// Chris:  I commented this out because it made wrapping a pain.  Is it used anyway?  If so, please
-// let me know and I'll fix it.
-//		int new_opt = m_iSelectedOption[p][iCurRow];
-//		do {
-//			new_opt++;
-//		} while(new_opt < m_OptionRowData[iCurRow].iNumOptions && 
-//			    m_OptionDim[iCurRow][new_opt]);
-//		
-//		if( new_opt == m_OptionRowData[iCurRow].iNumOptions )	// can't go right any more
-//			return;
-//		
-//		m_iSelectedOption[p][iCurRow] = new_opt;
 		
 		TweenCursor( (PlayerNumber)p );
 	}
@@ -549,17 +538,6 @@ void ScreenOptions::MenuUp( PlayerNumber pn )
 			return;	// can't go up any more
 
 		m_iCurrentRow[p]--;
-
-
-//	Chris:  Will add back in later
-//		/* Find the prev row with any un-dimmed entries. */
-//		int new_row = m_iCurrentRow[p];
-//		do {
-///			if(--new_row < 0)
-//				new_row = m_iNumOptionRows-1; // wrap around
-//			if(!RowCompletelyDimmed(new_row)) break;
-//		} while(new_row != m_iCurrentRow[p]);
-//		m_iCurrentRow[p] = new_row;
 
 		TweenCursor( (PlayerNumber)p );
 	}

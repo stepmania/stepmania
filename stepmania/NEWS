@@ -13,6 +13,7 @@ NEW FEATURE:  Jukebox mode.  Like demonstration, but plays entire songs
 	and loops.
 NEW FEATURE:  F6 to save screenshot.  Saved in StepMania program directory
 	as "screenshotXXXX.bmp".
+CHANGE:  Reorganization of options screens.
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

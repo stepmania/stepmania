@@ -25,14 +25,10 @@
 
 enum {
 	MO_MENU_TIMER,
-	MO_SHOW_DANGER,
 	MO_NUM_ARCADE_STAGES,
 	MO_JUDGE_DIFFICULTY,
 	MO_LIFE_DIFFICULTY,
-	MO_HIDDEN_SONGS,
 	MO_SHOWSTATS,
-	MO_EASTER_EGGS,
-	MO_MARVELOUS,
 	MO_COIN_MODE,
 	MO_COINS_PER_CREDIT,
 	MO_JOINT_PREMIUM,
@@ -42,14 +38,10 @@ enum {
  * preferably alongside button configuration. */
 OptionRowData g_MachineOptionsLines[NUM_MACHINE_OPTIONS_LINES] = {
 	{ "Menu\nTimer",		2, {"OFF","ON"} },
-	{ "Show\nDanger",		2, {"OFF","ON"} },
 	{ "Arcade\nStages",		8, {"1","2","3","4","5","6","7","UNLIMITED"} },
 	{ "Judge\nDifficulty",	8, {"1","2","3","4","5","6","7","8"} },
 	{ "Life\nDifficulty",	7, {"1","2","3","4","5","6","7"} },
-	{ "Hidden\nSongs",		2, {"OFF","ON"} },
 	{ "Show\nStats",		2, {"OFF","ON"} },
-	{ "Easter\nEggs",		2, {"OFF","ON"} },
-	{ "Marvelous\nTiming",	2, {"OFF","ON"} },
 	{ "Coin\nMode",			3, {"HOME","PAY","FREE PLAY"} },
 	{ "Coins Per\nCredit",	8, {"1","2","3","4","5","6","7","8"} },
 	{ "Joint\nPremium",		2, {"OFF","ON"} },
@@ -86,9 +78,7 @@ ScreenMachineOptions::ScreenMachineOptions() :
 void ScreenMachineOptions::ImportOptions()
 {
 	m_iSelectedOption[0][MO_MENU_TIMER]				= PREFSMAN->m_bMenuTimer ? 1:0;
-	m_iSelectedOption[0][MO_SHOW_DANGER]			= PREFSMAN->m_bShowDanger ? 1:0;
 	m_iSelectedOption[0][MO_NUM_ARCADE_STAGES]		= PREFSMAN->m_bEventMode ? 7 : PREFSMAN->m_iNumArcadeStages - 1;
-	m_iSelectedOption[0][MO_HIDDEN_SONGS]			= PREFSMAN->m_bHiddenSongs ? 1:0;
 
 	/* .02 difficulty is beyond our timing right now; even autoplay
 	 * misses!  At least fix autoplay before enabling this, or we'll
@@ -118,8 +108,6 @@ void ScreenMachineOptions::ImportOptions()
 	else													m_iSelectedOption[0][MO_LIFE_DIFFICULTY] = 3;
 
 	m_iSelectedOption[0][MO_SHOWSTATS]				= PREFSMAN->m_bShowStats ? 1:0;
-	m_iSelectedOption[0][MO_EASTER_EGGS]			= PREFSMAN->m_bEasterEggs ? 1:0;
-	m_iSelectedOption[0][MO_MARVELOUS]				= PREFSMAN->m_bMarvelousTiming ? 1:0;
 	m_iSelectedOption[0][MO_COIN_MODE]				= PREFSMAN->m_CoinMode;
 	m_iSelectedOption[0][MO_COINS_PER_CREDIT]		= PREFSMAN->m_iCoinsPerCredit - 1;
 	m_iSelectedOption[0][MO_JOINT_PREMIUM]			= PREFSMAN->m_bJointPremium ? 1:0;
@@ -128,10 +116,8 @@ void ScreenMachineOptions::ImportOptions()
 void ScreenMachineOptions::ExportOptions()
 {
 	PREFSMAN->m_bMenuTimer				= m_iSelectedOption[0][MO_MENU_TIMER] == 1;
-	PREFSMAN->m_bShowDanger				= m_iSelectedOption[0][MO_SHOW_DANGER] == 1;
 	PREFSMAN->m_bEventMode				= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] == 7;
 	PREFSMAN->m_iNumArcadeStages		= m_iSelectedOption[0][MO_NUM_ARCADE_STAGES] + 1;
-	PREFSMAN->m_bHiddenSongs			= m_iSelectedOption[0][MO_HIDDEN_SONGS]	== 1;
 
 	switch( m_iSelectedOption[0][MO_JUDGE_DIFFICULTY] )
 	{
@@ -159,8 +145,6 @@ void ScreenMachineOptions::ExportOptions()
 	}
 	
 	PREFSMAN->m_bShowStats			= m_iSelectedOption[0][MO_SHOWSTATS] == 1;
-	PREFSMAN->m_bEasterEggs			= m_iSelectedOption[0][MO_EASTER_EGGS] == 1;
-	PREFSMAN->m_bMarvelousTiming	= m_iSelectedOption[0][MO_MARVELOUS] == 1;
 	(int&)PREFSMAN->m_CoinMode		= m_iSelectedOption[0][MO_COIN_MODE];
 	PREFSMAN->m_iCoinsPerCredit		= m_iSelectedOption[0][MO_COINS_PER_CREDIT] + 1;
 	PREFSMAN->m_bJointPremium		= m_iSelectedOption[0][MO_JOINT_PREMIUM] == 1;

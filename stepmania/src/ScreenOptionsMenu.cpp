@@ -30,6 +30,7 @@ enum {
 	OM_INPUT = 0,
 	OM_MACHINE,
 	OM_GRAPHIC,
+	OM_GAMEPLAY,
 	OM_APPEARANCE,
 	NUM_OPTIONS_MENU_LINES
 };
@@ -38,6 +39,7 @@ OptionRowData g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 	{ "",	1, {"Input Options"} },
 	{ "",	1, {"Machine Options"} },
 	{ "",	1, {"Graphic Options"} },
+	{ "",	1, {"Gameplay Options"} },
 	{ "",	1, {"Appearance Options"} },
 };
 
@@ -91,6 +93,7 @@ void ScreenOptionsMenu::GoToNextState()
 	case OM_INPUT:		SCREENMAN->SetNewScreen("ScreenInputOptions");		break;
 	case OM_MACHINE:	SCREENMAN->SetNewScreen("ScreenMachineOptions");	break;
 	case OM_GRAPHIC:	SCREENMAN->SetNewScreen("ScreenGraphicOptions");	break;
+	case OM_GAMEPLAY:	SCREENMAN->SetNewScreen("ScreenGameplayOptions");	break;
 	case OM_APPEARANCE:	SCREENMAN->SetNewScreen("ScreenAppearanceOptions");	break;
 	default:	// Exit
 		SCREENMAN->SetNewScreen("ScreenTitleMenu");

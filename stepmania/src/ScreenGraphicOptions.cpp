@@ -31,10 +31,7 @@ enum {
 	GO_TEXTURE_COLOR_DEPTH,
 	GO_KEEP_TEXTURES_IN_MEM,
 	GO_REFRESH_RATE,
-	GO_BGMODE,
-	GO_BGBRIGHTNESS,
 	GO_MOVIEDECODEMS,
-	GO_BGIFNOBANNER,
 	GO_VSYNC,
 	NUM_GRAPHIC_OPTIONS_LINES
 };
@@ -46,10 +43,7 @@ OptionRowData g_GraphicOptionsLines[NUM_GRAPHIC_OPTIONS_LINES] = {
 	{ "Texture\nColor",			2,  {"16BIT","32BIT"} },
 	{ "Keep Textures\nIn Memory",2,  {"NO","YES"} },
 	{ "Refresh\nRate",			11, {"DEFAULT","60","70","72","75","80","85","90","100","120","150"} },
-	{ "Background\nMode",		4,  {"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES"} },
-	{ "Background\nBrightness",	11, {"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%"} },
 	{ "Movie\nDecode",			4,  {"1ms","2ms","3ms","4ms"} },
-	{ "BG For\nBanner",			2,  {"NO", "YES (slow)"} },
 	{ "Wait For\nVsync",		2,  {"NO", "YES"} },
 };
 
@@ -140,10 +134,7 @@ void ScreenGraphicOptions::ImportOptions()
 		}
 	}
 
-	m_iSelectedOption[0][GO_BGMODE]					= PREFSMAN->m_BackgroundMode;
-	m_iSelectedOption[0][GO_BGBRIGHTNESS]			= (int)( PREFSMAN->m_fBGBrightness*10+0.5f ); 
 	m_iSelectedOption[0][GO_MOVIEDECODEMS]			= PREFSMAN->m_iMovieDecodeMS-1;
-	m_iSelectedOption[0][GO_BGIFNOBANNER]			= PREFSMAN->m_bUseBGIfNoBanner ? 1:0;
 	m_iSelectedOption[0][GO_VSYNC]					= PREFSMAN->m_bVsync ? 1:0;	
 }
 
@@ -185,10 +176,7 @@ void ScreenGraphicOptions::ExportOptions()
 		PREFSMAN->m_iRefreshRate = atoi(g_GraphicOptionsLines[GO_REFRESH_RATE].szOptionsText[n]);
 	}
 
-	(int&)PREFSMAN->m_BackgroundMode	= m_iSelectedOption[0][GO_BGMODE];
-	PREFSMAN->m_fBGBrightness			= m_iSelectedOption[0][GO_BGBRIGHTNESS] / 10.0f;
 	PREFSMAN->m_iMovieDecodeMS			= m_iSelectedOption[0][GO_MOVIEDECODEMS]+1;
-	PREFSMAN->m_bUseBGIfNoBanner		= m_iSelectedOption[0][GO_BGIFNOBANNER] == 1;
 	PREFSMAN->m_bVsync					= m_iSelectedOption[0][GO_VSYNC] == 1;
 }
 
