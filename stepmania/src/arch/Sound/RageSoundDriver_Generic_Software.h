@@ -86,6 +86,10 @@ class RageSound_Generic_Software: public RageSoundDriver
 	bool GetDataForSound( sound &s );
 
 protected:
+	/* Start the decoding.  This should be called once the hardware is set up and
+	 * GetSampleRate will return the correct value. */
+	void StartDecodeThread();
+	
 	/* Override this to set the priority of the decoding thread, which should be above
 	 * normal priority but not realtime. */
 	virtual void SetupDecodingThread() { }

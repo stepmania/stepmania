@@ -288,12 +288,17 @@ void RageSound_Generic_Software::StopMixing( RageSoundBase *snd )
 }
 
 
+void RageSound_Generic_Software::StartDecodeThread()
+{
+	ASSERT( !m_DecodeThread.IsCreated() );
+	m_DecodeThread.Create( DecodeThread_start, this );
+}
+
 RageSound_Generic_Software::RageSound_Generic_Software()
 {
 	shutdown_decode_thread = false;
 
 	m_DecodeThread.SetName("Decode thread");
-	m_DecodeThread.Create( DecodeThread_start, this );
 }
 
 RageSound_Generic_Software::~RageSound_Generic_Software()
