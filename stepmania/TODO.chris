@@ -2,6 +2,12 @@
 Fix
 /////////////////////////
 
+remove 4x diffuse colors
+
+change noteskin format (get rid of .colors)
+
+write sdl renderer
+
 Add machine difficulty display on results
 
 When you play Pump songs in DDR mode, sometimes it gives you three arrows in one line o_O
