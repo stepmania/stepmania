@@ -21,9 +21,17 @@ class RageFile
 	friend class RageFileObj;
 
 public:
-	enum OpenMode { READ, WRITE };
+	enum
+	{
+		READ			= 0x1,
+		WRITE			= 0x2,
+
+		/* Always write directly to the destination file; don't do a safe write. (for logs) */
+		STREAMED		= 0x4
+	};
+
     RageFile();
-    RageFile( const CString& path, OpenMode mode = READ );
+    RageFile( const CString& path, int mode = READ );
     ~RageFile() { Close(); }
 	RageFile( const RageFile &cpy );
 
@@ -36,11 +44,11 @@ public:
 	const CString &GetRealPath() const { return m_Path; }
 	CString GetPath() const;
     
-    bool Open( const CString& path, OpenMode mode = READ );
+    bool Open( const CString& path, int mode = READ );
     void Close();
     
 	bool IsOpen() const { return m_File != NULL; }
-	OpenMode GetOpenMode() const { return m_Mode; }
+	int GetOpenMode() const { return m_Mode; }
 	bool AtEOF() const { return m_EOF; }
 	CString GetError() const { return m_Error; }
 	void ClearError() { m_Error = ""; }
@@ -76,7 +84,7 @@ private:
 
 	RageFileObj *m_File;
 	CString	m_Path;
-	OpenMode m_Mode;
+	int		m_Mode;
 	
 	CString	m_Error;
 	bool	m_EOF;

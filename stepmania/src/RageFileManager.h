@@ -30,12 +30,12 @@ public:
 	void FlushDirCache( const CString &sPath );
 
 	/* Used only by RageFile: */
-	RageFileObj *Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );
+	RageFileObj *Open( const CString &sPath, int mode, RageFile &p, int &err );
 	void Close( RageFileObj *obj );
 	RageFileObj *CopyFileObj( const RageFileObj *cpy, RageFile &p );
 
 private:
-	RageFileObj *OpenForWriting( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err );
+	RageFileObj *OpenForWriting( const CString &sPath, int mode, RageFile &p, int &err );
 };
 
 extern RageFileManager *FILEMAN;

@@ -25,7 +25,7 @@ RageFile::RageFile()
 	m_FilePos = 0;
 }
 	
-RageFile::RageFile( const CString& path, RageFile::OpenMode mode )
+RageFile::RageFile( const CString& path, int mode )
 {
     m_File = NULL;
 	m_BufUsed = 0;
@@ -57,10 +57,9 @@ CString RageFile::GetPath() const
 	return m_File->GetDisplayPath();
 }
 
-bool RageFile::Open( const CString& path, RageFile::OpenMode mode )
+bool RageFile::Open( const CString& path, int mode )
 {
 	ASSERT( FILEMAN );
-
 	Close();
 
 	m_Path = path;
@@ -70,6 +69,18 @@ bool RageFile::Open( const CString& path, RageFile::OpenMode mode )
 	m_EOF = false;
 	m_FilePos = 0;
 	ResetBuf();
+
+	if( (m_Mode&READ) && (m_Mode&WRITE) )
+	{
+		SetError( "Reading and writing are mutually exclusive" );
+		return false;
+	}
+
+	if( !(m_Mode&READ) && !(m_Mode&WRITE) )
+	{
+		SetError( "Neither reading nor writing specified" );
+		return false;
+	}
 
 	int error;
 	m_File = FILEMAN->Open( path, mode, *this, error );
@@ -104,7 +115,7 @@ int RageFile::GetLine( CString &out )
     if ( !IsOpen() )
         RageException::Throw("\"%s\" is not open.", m_Path.c_str());
 
-	if( m_Mode != READ )
+	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading", GetPath().c_str());
 
 	bool GotData = false;
@@ -209,7 +220,7 @@ int RageFile::Read( void *buffer, size_t bytes )
 	if( !IsOpen() )
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
 
-	if( m_Mode != READ )
+	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading", GetPath().c_str());
 
 	int ret = 0;
@@ -244,7 +255,7 @@ int RageFile::Seek( int offset )
 	if( !IsOpen() )
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
 
-	if( m_Mode != READ )
+	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading; can't seek", GetPath().c_str());
 
 	m_EOF = false;
@@ -284,7 +295,7 @@ int RageFile::SeekCur( int offset )
 	if( !IsOpen() )
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
 
-	if( m_Mode != READ )
+	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading; can't seek", GetPath().c_str());
 
 	if( !offset || m_EOF )
@@ -312,7 +323,7 @@ int RageFile::GetFileSize()
 	if( !IsOpen() )
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
 
-	if( m_Mode != READ )
+	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading; can't GetFileSize", GetPath().c_str());
 
 	return m_File->GetFileSize();
@@ -323,7 +334,7 @@ void RageFile::Rewind()
 	if( !IsOpen() )
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
 
-	if( m_Mode != READ )
+	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading; can't GetFileSize", GetPath().c_str());
 
 	m_EOF = false;
@@ -347,7 +358,7 @@ int RageFile::Write( const void *buffer, size_t bytes )
 	if( !IsOpen() )
 		RageException::Throw("\"%s\" is not open.", GetPath().c_str());
 
-	if( m_Mode != WRITE )
+	if( !(m_Mode&WRITE) )
 		RageException::Throw("\"%s\" is not open for writing", GetPath().c_str());
 
 	return m_File->Write( buffer, bytes );
@@ -365,6 +376,12 @@ int RageFile::Write( const void *buffer, size_t bytes, int nmemb )
 
 int RageFile::Flush()
 {
+	if( !m_File )
+	{
+		SetError( "Not open" );
+		return -1;
+	}
+
 	return m_File->Flush();
 }
 

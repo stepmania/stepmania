@@ -21,7 +21,7 @@ class RageFileDriverMountpoints: public RageFileDriver
 {
 public:
 	RageFileDriverMountpoints(): RageFileDriver( new FilenameDB ) { }
-	RageFileObj *Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err )
+	RageFileObj *Open( const CString &path, int mode, RageFile &p, int &err )
 	{
 		err = (mode == RageFile::WRITE)? EINVAL:ENOENT;
 		return NULL;
@@ -343,7 +343,7 @@ void RemoveReference( const RageFileObj *obj )
 }
 
 /* Used only by RageFile: */
-RageFileObj *RageFileManager::Open( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
+RageFileObj *RageFileManager::Open( const CString &sPath, int mode, RageFile &p, int &err )
 {
 	err = ENOENT;
 
@@ -389,7 +389,7 @@ RageFileObj *RageFileManager::CopyFileObj( const RageFileObj *cpy, RageFile &p )
 	return ret;	
 }
 
-RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
+RageFileObj *RageFileManager::OpenForWriting( const CString &sPath, int mode, RageFile &p, int &err )
 {
 	/*
 	 * The value for a driver to open a file is the number of directories and/or files
