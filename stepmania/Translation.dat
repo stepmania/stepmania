@@ -15,9 +15,13 @@
 #
 # Courses are matched by title only.
 #
+# Changed titles are placed in TRANSLIT fields by default.  Specify
+# "DontTransliterate" to disable this.
+#
 # Note that changes to this file are only applied to songs when they are
 # first loaded.  Delete the files in the "Cache" directory after making
 # changes.
+
 TitleFrom: Candy
 ArtistFrom: Luv.*
 TitleTo: CANDY ☆
@@ -89,6 +93,9 @@ TitleTo: そばかす
 TitleFrom: Sobakasu
 TitleTo: そばかす
 *
+TitleFrom: Sobakasu Freckles
+TitleTo: そばかす
+*
 TitleFrom: Hypnotic Crisis
 TitleTo: HYPNØTIC CRISIS
 *
@@ -138,18 +145,23 @@ TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
 ArtistTo: スペース☆マコのテーマ
 * 
+# No need to write transliterations for these.
 TitleFrom: Senorita
 TitleTo: Señorita
+DontTransliterate
 * 
 TitleFrom: Senorita\(Speedy Mix\)
 TitleTo: Señorita
 ArtistTo: Speedy Mix
+DontTransliterate
 *
 TitleFrom: La Senorita
 TitleTo: La Señorita
+DontTransliterate
 *
 TitleFrom: La Senorita Virtual
 TitleTo: La Señorita Virtual
+DontTransliterate
 *
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
