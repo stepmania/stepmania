@@ -129,16 +129,17 @@ class RageFileObjDirect: public RageFileObj
 {
 private:
 	int fd;
+	CString path; /* for Copy */
 
 public:
-	RageFileObjDirect( int fd, RageFile &p );
+	RageFileObjDirect( const CString &path, int fd_, RageFile &p );
 	virtual ~RageFileObjDirect();
 	virtual int Read(void *buffer, size_t bytes);
 	virtual int Write(const void *buffer, size_t bytes);
 	virtual void Rewind();
 	virtual int Seek( int offset );
-	virtual int SeekCur( int offset );
 	virtual int GetFileSize();
+	virtual RageFileObj *Copy( RageFile &p ) const;
 };
 
 
@@ -192,23 +193,13 @@ static bool CreateDirectories( CString Path )
 	return true;
 }
 
-RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err )
+RageFileObj *MakeFileObjDirect( const CString &sPath, RageFile::OpenMode mode, RageFile &p, int &err )
 {
-	CString sPath = root + path;
-
-	/* XXX: make sure this will partially resolve.  eg. if "abc/def" exists,
-	 * and we're opening "ABC/DEF/GHI/jkl/mno", make sure this will resolve
-	 * to "abc/def/GHI/jkl/mno"; we'll create the missing ones later. */
-	FDB->ResolvePath( sPath );
-
 	int flags = O_BINARY;
 	if( mode == RageFile::READ )
 		flags |= O_RDONLY;
 	else
 	{
-		CString dir = Dirname(sPath);
-		if( this->GetFileType(dir) != RageFileManager::TYPE_DIR )
-			CreateDirectories( dir );
 		flags |= O_WRONLY|O_CREAT|O_TRUNC;
 	}
 
@@ -222,8 +213,40 @@ RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode
 		err = errno;
 		return NULL;
 	}
-		
-	return new RageFileObjDirect( fd, p );
+
+	return new RageFileObjDirect( sPath, fd, p );
+}
+
+RageFileObj *RageFileDriverDirect::Open( const CString &path, RageFile::OpenMode mode, RageFile &p, int &err )
+{
+	CString sPath = root + path;
+
+	/* XXX: make sure this will partially resolve.  eg. if "abc/def" exists,
+	 * and we're opening "ABC/DEF/GHI/jkl/mno", make sure this will resolve
+	 * to "abc/def/GHI/jkl/mno"; we'll create the missing ones later. */
+	FDB->ResolvePath( sPath );
+
+	if( mode == RageFile::WRITE )
+	{
+		const CString dir = Dirname(sPath);
+		if( this->GetFileType(dir) != RageFileManager::TYPE_DIR )
+		{
+			CreateDirectories( dir );
+		}
+	}
+
+	return MakeFileObjDirect( sPath, mode, p, err );
+}
+
+RageFileObj *RageFileObjDirect::Copy( RageFile &p ) const
+{
+	int err;
+	RageFileObj *ret = MakeFileObjDirect( path, parent.GetOpenMode(), p, err );
+
+	if( ret == NULL )
+		RageException::Throw("Couldn't reopen \"%s\": %s", path.c_str(), strerror(err) );
+
+	return ret;
 }
 
 #ifdef _WINDOWS
@@ -277,9 +300,10 @@ bool RageFileDriverDirect::Ready()
 }
 
 
-RageFileObjDirect::RageFileObjDirect( int fd_, RageFile &p ):
+RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, RageFile &p ):
 	RageFileObj( p )
 {
+	path = path_;
 	fd = fd_;
 	ASSERT( fd != -1 );
 }
@@ -322,11 +346,6 @@ void RageFileObjDirect::Rewind()
 int RageFileObjDirect::Seek( int offset )
 {
 	return lseek( fd, offset, SEEK_SET );
-}
-
-int RageFileObjDirect::SeekCur( int offset )
-{
-	return lseek( fd, offset, SEEK_CUR );
 }
 
 int RageFileObjDirect::GetFileSize()
