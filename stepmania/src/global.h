@@ -23,7 +23,7 @@
 #pragma once
 #endif // _MSC_VER >= 1000
 
-// HACK: Get correct for scoping rules for VC6.
+// HACK: Fake correct scoping rules in VC6.
 #if _MSC_VER == 1200 
 #define for if(0); else for
 #endif // _MSC_VER == 1200
