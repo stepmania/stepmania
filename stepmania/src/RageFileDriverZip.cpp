@@ -579,11 +579,11 @@ void RageFileObjZipDeflated::Rewind()
 	UFilePos = 0;
 }
 
-int RageFileObjZipDeflated::Seek( int offset )
+int RageFileObjZipDeflated::Seek( int iPos )
 {
 	/* Optimization: if offset is the end of the file, it's a lseek(0,SEEK_END).  Don't
 	 * decode anything. */
-	if( offset == (int) info.uncompr_size )
+	if( iPos >= (int) info.uncompr_size )
 	{
 		UFilePos = info.uncompr_size;
 		CFilePos = info.compr_size;
@@ -591,11 +591,37 @@ int RageFileObjZipDeflated::Seek( int offset )
 		decomp_buf_ptr = decomp_buf;
 		decomp_buf_avail = 0;
 		inflateReset( &dstrm );
-		return offset;
+		return info.uncompr_size;
 	}
 
+	if( iPos < UFilePos )
+	{
+		inflateReset( &dstrm );
+		decomp_buf_ptr = decomp_buf;
+		decomp_buf_avail = 0;
+
+		zip.Seek( info.data_offset );
+		CFilePos = 0;
+		UFilePos = 0;
+	}
+
+	int iOffset = iPos - UFilePos;
+
 	/* Can this be optimized? */
-	return RageFileObj::Seek( offset );
+	char buf[1024*4];
+	while( iOffset )
+	{
+		/* Must call parent.Read: */
+		int got = Read( buf, min( (int) sizeof(buf), iOffset ) );
+		if( got == -1 )
+			return -1;
+
+		if( got == 0 )
+			break;
+		iOffset -= got;
+	}
+
+	return UFilePos;
 }
 
 RageFileObjZipStored::RageFileObjZipStored( const RageFile &f, const FileInfo &info_, RageFile &p ):
