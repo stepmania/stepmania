@@ -472,6 +472,9 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 
 void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 {
+	// ??? Something is not right here - either we're not being called,
+	// or we're not working correctly at all. :-/
+
 	SetNumTracks( iNewNumTracks );
 
 	NoteData in;
@@ -489,6 +492,14 @@ void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
 
 			/* Hold notes always take precedence: don't split holds. */
 			if( GetTapNote(iTrackTo, row) == TAP_HOLD )
+				continue;
+
+			// Whoever rewrote the function:
+			// This transfers EMPTY steps over as well...
+			// ...so it's been fixed.  Should I define operator| for
+			// TapNote so that it combines tracks? :-P
+
+			if( iStepFrom == TAP_EMPTY )
 				continue;
 
 			SetTapNote( iTrackTo, row, iStepFrom );

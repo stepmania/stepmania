@@ -23,7 +23,7 @@ typedef unsigned char TapNote;
 
 static const TapNote TAP_EMPTY		= '0';
 static const TapNote TAP_TAP		= '1'; /* impatient? */
-static const TapNote TAP_HOLD_HEAD	= '2';	// graded liuke a TA_TAP
+static const TapNote TAP_HOLD_HEAD	= '2';	// graded like a TAP_TAP
 
 /* In 2sand3s mode, holds are deleted and TAP_HOLD_END is added: */
 static const TapNote TAP_HOLD_TAIL	= '3';
@@ -36,6 +36,38 @@ static const TapNote TAP_ADDITION	= '5';
 
 // mine note - don't step!
 static const TapNote TAP_MINE		= '6';
+
+// MD 11/12/03 - for future modifiers
+// TAP_ADD_HOLD is to TAP_HOLD what TAP_ADDITION is to TAP_TAP.
+// There is no equivalent for TAP_MINE.
+static const TapNote TAP_ADD_HOLD	= '7';
+
+// BM-specific
+// Removed taps, e.g. in Little - play keysounds here as if
+// judged Perfect, but don't bother rendering or judging this
+// step.  Also used for when we implement auto-scratch in BM,
+// and for if/when we do a "reduce" modifier that cancels out
+// all but N keys on a line [useful for BM->DDR autogen, too].
+static const TapNote TAP_REMOVED	= '8';
+
+// KM-specific
+// Removed hold body (...why?) - acts as follows:
+// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
+//     we've already hit the start of the sound (?? we put Holds Off on?)
+//     then this is triggered automatically to keep the sound going
+// 2 - if we're NOT [anything else], we ignore this.
+// Equivalent to all 4s aside from the first one.
+static const TapNote TAP_REMOVED_HOLD_BODY	= ':';
+
+// KM-specific
+// A hold removed by Little, I guess.
+static const TapNote TAP_REMOVED_HOLD_HEAD	= '.';
+
+// KM-specific
+// Kills an auto-sound from a hold.
+static const TapNote TAP_REMOVED_HOLD_TAIL	= '\'';
+
+// MD 11/12/03 end
 
 // attack note start.  Use lowercase letters a-z.
 // Don't use uppercase letters - 'M' it taken for mine.
@@ -81,8 +113,8 @@ enum NoteType
 	// MD 11/02/03 - added finer divisions
 	NOTE_TYPE_48TH, // forty-eighth note
 	NOTE_TYPE_64TH,	// sixty-fourth note
-	// 96ths and 192nds have no place here - if you're using them,
-	// you have already failed as a stepmaker.  :-)
+	// Not having this triggers asserts all over the place.  Go figure.
+	NOTE_TYPE_192ND,
 	NUM_NOTE_TYPES,
 	NOTE_TYPE_INVALID
 };

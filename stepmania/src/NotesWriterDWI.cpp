@@ -223,6 +223,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			ASSERT(0);
 			// fall though
 		case NOTE_TYPE_48TH:
+		case NOTE_TYPE_192ND:
 		case NOTE_TYPE_INVALID:
 			// since, for whatever reason, the only way to do
 			// 48ths is through a block of 192nds...
@@ -296,6 +297,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Steps &out, int start )
 			fprintf( fp, "}" );
 			break;
 		case NOTE_TYPE_48TH:
+		case NOTE_TYPE_192ND:
 		case NOTE_TYPE_INVALID:
 			fprintf( fp, "'" );
 			break;
