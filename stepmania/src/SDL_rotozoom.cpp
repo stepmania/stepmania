@@ -1,3 +1,4 @@
+#include "stdafx.h"
 /*  
  * SDL_rotozoom.c - rotozoomer for 32bit or 8bit surfaces
  *
