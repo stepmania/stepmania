@@ -43,7 +43,7 @@ void WriteString( char* sz, int len )
 
 LightsDriver_LinuxSerial::LightsDriver_LinuxSerial()
 {
-    fd = open("/dev/ttyS1", O_RDWR | O_NOCTTY | O_NDELAY);
+    fd = open("/dev/ttyS0", O_RDWR | O_NOCTTY | O_NDELAY);	// COM1
     if (fd < 0)
 		RageException::Throw( "open error %d %s\n", errno, strerror(errno) );
 
@@ -74,12 +74,14 @@ LightsDriver_LinuxSerial::~LightsDriver_LinuxSerial()
 		close(fd);
 }
 
+#define NUM_DATA_BYTES 2
 
-char g_data[2] = { 0, 0 };
+char g_data[NUM_DATA_BYTES] = { 0, 0 };
 
 void LightsDriver_LinuxSerial::SetLight( Light light, bool bOn )
 {
 	int byte_index = light / 8;
+	ASSERT( byte_index <= NUM_DATA_BYTES );
 	int bit_index = light % 8;
 	char &data = g_data[byte_index];
 	char mask = 0x01 << bit_index;
@@ -91,12 +93,28 @@ void LightsDriver_LinuxSerial::SetLight( Light light, bool bOn )
 
 void LightsDriver_LinuxSerial::Flush()
 {
-    WriteString( "Yo", strlen("Yo") );
+	// temp HACK: only write once every 30 times
+	static int counter = 0;
+	if( counter < 30 )
+	{
+		counter++;
+		return;
+	}
+	else
+	{
+		counter = 0;
+		// fall through and write
+	}
 
-	// flip bits so that 0=on, 1=off.
-  char temp_data[2];
-  for( int i=0; i<2; i++ )
-    temp_data[i] = ~g_data[i];
+	LOG->Trace( "Entering LightsDriver_LinuxSerial::Flush()" );
+
+	char temp_data_to_write[2+NUM_DATA_BYTES] = "";
+	temp_data_to_write[0] = 'Y';
+	temp_data_to_write[1] = 'o';
+	for( int i=0; i<NUM_DATA_BYTES; i++ )
+		temp_data[2+i] = ~g_data[i];	// flip bits so that 0=on, 1=off.
 
 	WriteString( temp_data, sizeof(temp_data) );
+
+	LOG->Trace( "Leaving LightsDriver_LinuxSerial::Flush()" );
 }
