@@ -52,6 +52,10 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 
 
 	m_vIconsToShow.resize( min(m_vIconsToShow.size(),2u) );	// crop to most important 2
+
+	/* Make sure the right icon is selected, since we might be drawn before
+	 * we get another update. */
+	Update(0);
 }
 
 bool WheelNotifyIcon::EarlyAbortDraw()
