@@ -356,6 +356,10 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend, int chunksize )
 	if( buffer_bytes_filled >= buffersize )
 		return;
 
+	/* If nothing is expected to be filled, we can't underrun. */
+	if( cursorstart == cursorend )
+		return;
+
 	/* If there's no data in the buffer at all, then we've completely underrun.  Our
 	 * write cursor is irrelevant; we might be unrelated to the play position completely.
 	 * Realign. */
