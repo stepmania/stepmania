@@ -170,6 +170,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 #include "ScreenMachineOptions.h"
 #include "ScreenMapControllers.h"
 #include "ScreenMusicScroll.h"
+#include "ScreenNetworkWaiting.h"
 #include "ScreenPlayerOptions.h"
 #include "ScreenSandbox.h"
 #include "ScreenSelectCourse.h"
@@ -198,7 +199,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenEvaluation") )		return new ScreenEvaluation;
 	else if( 0==stricmp(sClassName, "ScreenFinalEvaluation") )	return new ScreenFinalEvaluation;
 	else if( 0==stricmp(sClassName, "ScreenEz2SelectPlayer") )	return new ScreenEz2SelectPlayer;
-	else if( 0==stricmp(sClassName, "ScreenSelectMode") )	return new ScreenSelectMode;
+	else if( 0==stricmp(sClassName, "ScreenSelectMode") )		return new ScreenSelectMode;
 	else if( 0==stricmp(sClassName, "ScreenGameOver") )			return new ScreenGameOver;
 	else if( 0==stricmp(sClassName, "ScreenGameplay") )			return new ScreenGameplay;
 	else if( 0==stricmp(sClassName, "ScreenGraphicOptions") )	return new ScreenGraphicOptions;
@@ -208,6 +209,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	else if( 0==stricmp(sClassName, "ScreenMapControllers") )	return new ScreenMapControllers;
 	else if( 0==stricmp(sClassName, "ScreenInputOptions") )		return new ScreenInputOptions;
 	else if( 0==stricmp(sClassName, "ScreenMusicScroll") )		return new ScreenMusicScroll;
+	else if( 0==stricmp(sClassName, "ScreenNetworkWaiting") )	return new ScreenNetworkWaiting;
 	else if( 0==stricmp(sClassName, "ScreenPlayerOptions") )	return new ScreenPlayerOptions;
 	else if( 0==stricmp(sClassName, "ScreenSandbox") )			return new ScreenSandbox;
 	else if( 0==stricmp(sClassName, "ScreenSelectCourse") )		return new ScreenSelectCourse;

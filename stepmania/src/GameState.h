@@ -148,6 +148,9 @@ public:
 	PlayerOptions   m_SelectedOptions[NUM_PLAYERS];  // Keep track of player-selected options for
 													 // courses separately from the active options.
 	SongOptions		m_SongOptions;
+
+
+	vector<CString> m_asNetworkNames;
 };
 
 

@@ -28,7 +28,6 @@
 #include "PrefsManager.h"
 #include "Quad.h"
 #include "ThemeManager.h"
-#include "RageNetwork.h"
 
 
 ScreenSandbox::ScreenSandbox()

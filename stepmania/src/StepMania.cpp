@@ -27,7 +27,7 @@
 #include "RageInput.h"
 #include "RageTimer.h"
 #include "RageException.h"
-#include "RageNetwork.h"
+#include "RageNetworkClient.h"
 #include "RageMath.h"
 
 #include "arch/arch.h"
@@ -78,12 +78,9 @@
 
 // command line arguments
 CString		g_sSongPath = "";
-bool		g_bBeClient = false;
-bool		g_bBeServer = false;
 CString		g_sServerIP = "";
-int			g_iNumClients = 0;
 
-const int SM_PORT = 26573;	// Quake port + "Ko" + "na" + "mitsu"
+const int SM_PORT = 573;	// "Ko" + "na" + "mitsu"
 
 /*------------------------------------------------
 	Common stuff
@@ -265,24 +262,14 @@ int main(int argc, char* argv[])
     atexit(SDL_Quit);   /* Clean up on exit */
 
 	/*
-	 * Handle command line args
+	 * Handle command line args.
+	 * Only allow one command line arg so we can validate the number of 
+	 * parameters easier.
 	 */
-	for(int i=0; i<argc; i++)
-	{
-		if(!strcmp(argv[i], "--fsck"))
-			;//crash(); 
-		else if(!strcmp(argv[i], "--song"))
-			g_sSongPath = argv[++i];
-		else if(!strcmp(argv[i], "--client"))
-			g_bBeClient = true;
-		else if(!strcmp(argv[i], "--server"))
-			g_bBeServer = true;
-		else if(!strcmp(argv[i], "--ip"))
-			g_sServerIP = argv[++i];
-		else if(!strcmp(argv[i], "--numclients"))
-			g_iNumClients = atoi(argv[++i]);
-	}
-
+	if( argc > 1 )
+		g_sSongPath = argv[1];
+	if( argc > 2 )
+		g_sServerIP = argv[2];
 
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF|_CRTDBG_LEAK_CHECK_DF);
@@ -327,7 +314,7 @@ int main(int argc, char* argv[])
 	ANNOUNCER	= new AnnouncerManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
-	NETWORK		= new RageNetwork;
+	CLIENT		= new RageNetworkClient;
 	INPUTQUEUE	= new InputQueue;
 	SONGINDEX	= new SongCacheIndex;
 	/* depends on SONGINDEX: */
@@ -363,33 +350,19 @@ int main(int argc, char* argv[])
 	/*
 	 * Load initial screen depending on network mode
 	 */
-	if( g_bBeClient )
+	if( g_sServerIP != "" )
 	{
 		// immediately try to connect to server
-		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromPath( g_sSongPath );
+		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromDir( g_sSongPath );
 		if( GAMESTATE->m_pCurSong == NULL )
 			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath.GetString() );
-		NETWORK->Init( false );
-		if( !NETWORK->Connect( (const char*)g_sServerIP, SM_PORT ) )
-			throw RageException( "Could not connect to server '%s'", g_sServerIP.GetString() );
-		SCREENMAN->SetNewScreen( "ScreenSandbox" );
-	}
-	else if( g_bBeServer )
-	{
-		// wait for clients to connect
-		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromPath( g_sSongPath );
-		if( GAMESTATE->m_pCurSong == NULL )
-			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath.GetString() );
-		NETWORK->Init( true );
-		if( !NETWORK->Listen( SM_PORT ) )
-			throw RageException( "Could not connect to server '%s'", g_sServerIP.GetString() );
-	//	SCREENMAN->SetNewScreen( "ScreenSandbox" );
+		CLIENT->Connect( (const char*)g_sServerIP, SM_PORT );
+		SCREENMAN->SetNewScreen( "ScreenNetworkWaiting" );
 	}
 	else
 	{
 		// normal game
 		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-	//	SCREENMAN->SetNewScreen( "ScreenSandbox" );
 	}
 
 	/* Run the main loop. */
@@ -415,7 +388,7 @@ int main(int argc, char* argv[])
 #endif
 
 	SAFE_DELETE( SCREENMAN );
-	SAFE_DELETE( NETWORK );
+	SAFE_DELETE( CLIENT );
 	SAFE_DELETE( INPUTQUEUE );
 	SAFE_DELETE( INPUTMAPPER );
 	SAFE_DELETE( INPUTFILTER );
@@ -494,7 +467,7 @@ void GameLoop()
 		TEXTUREMAN->Update( fDeltaTime );
 		MUSIC->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
-		NETWORK->Update( fDeltaTime );
+		CLIENT->Update( fDeltaTime );
 
 		static InputEventArray ieArray;
 		ieArray.clear();	// empty the array

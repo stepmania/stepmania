@@ -168,7 +168,8 @@ try_element_again:
 	if( asPossibleElementFilePaths.empty() )
 	{
 #ifdef _DEBUG
-		switch( MessageBox(NULL,"ThemeManager",ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString()), MB_ABORTRETRYIGNORE ) )
+		CString sMessage = ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString());
+		switch( MessageBox(NULL, sMessage, "ThemeManager", MB_ABORTRETRYIGNORE ) )
 		{
 		case IDRETRY:
 			goto try_element_again;

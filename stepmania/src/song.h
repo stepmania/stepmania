@@ -77,6 +77,7 @@ public:
 	void AutoGen( NotesType ntTo, NotesType ntFrom );	// create Notes of type ntTo from Notes of type ntFrom
 
 	/* Directory this song data came from: */
+	const CString &GetSongDir() const;
 	CString m_sSongDir;
 
 	/* Filename associated with this file.  This will always have

@@ -643,10 +643,13 @@ bool SongManager::ChooseRandomSong()
 	return false;
 }
 
-Song* SongManager::GetSongFromPath( const CString &sSongPath )
+Song* SongManager::GetSongFromDir( CString sDir )
 {
+	if( sDir[sDir.GetLength()-1] != '\\' )
+		sDir += '\\';
+
 	for( unsigned int i=0; i<m_pSongs.size(); i++ )
-		if( sSongPath.CompareNoCase(m_pSongs[i]->GetSongFilePath()) == 0 )
+		if( sDir.CompareNoCase(m_pSongs[i]->GetSongDir()) == 0 )
 			return m_pSongs[i];
 
 	return NULL;

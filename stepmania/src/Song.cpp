@@ -1087,6 +1087,11 @@ CString Song::GetBackgroundPath() const
 	return m_sSongDir+m_sBackgroundFile;
 }
 
+const CString& Song::GetSongDir() const 
+{
+	return m_sSongDir; 
+}
+
 /* Get the first/last beat of any currently active note pattern.  If two
  * players are active, they often have the same start beat, but they don't
  * have to. 
