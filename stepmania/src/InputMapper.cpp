@@ -99,7 +99,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
 			{ 0, JOY_13, DANCE_BUTTON_UP },
 			{ 0, JOY_15, DANCE_BUTTON_DOWN },
-			{-1, NULL,		NULL },
+			{-1, -1, -1 },
 		}
 	},
 	{
@@ -111,7 +111,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_14, DANCE_BUTTON_RIGHT },
 			{ 0, JOY_13, DANCE_BUTTON_UP },
 			{ 0, JOY_15, DANCE_BUTTON_DOWN },
-			{-1, NULL,		NULL },
+			{-1, -1, -1 },
 		}
 	},
 	{
@@ -131,7 +131,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_6,		DANCE_BUTTON_UPRIGHT },
 			{ 0, JOY_9,		DANCE_BUTTON_BACK },
 			{ 0, JOY_10,	DANCE_BUTTON_START },
-			{-1, NULL,		NULL },
+			{-1, -1, -1 },
 		}
 	},
 	{
@@ -153,7 +153,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK },
 			{ 0, JOY_9,			DANCE_BUTTON_START },
-			{-1, NULL,			NULL },
+			{-1, -1, -1 },
 		}
 	},
 	{
@@ -175,7 +175,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 1, JOY_8,			DANCE_BUTTON_UPRIGHT },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK },
 			{ 0, JOY_9,			DANCE_BUTTON_START },
-			{-1, NULL,			NULL },
+			{-1, -1, -1 },
 		}
 	},
 	{
@@ -195,7 +195,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, JOY_8,			DANCE_BUTTON_UPRIGHT },	// R shoulder
 			{ 0, JOY_9,			DANCE_BUTTON_START },
 			{ 0, JOY_10,		DANCE_BUTTON_BACK },
-			{-1, NULL,			NULL },
+			{-1, -1, -1 },
 		}
 	},
         {
@@ -219,7 +219,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	                { 0, JOY_18, DANCE_BUTTON_UPRIGHT, true },
 	                { 0, JOY_19, DANCE_BUTTON_UPLEFT,  true },
 	                { 0, JOY_26, DANCE_BUTTON_START,   true },
-	                {-1, NULL,   NULL },
+			{-1, -1, -1 },
 		}
 	},
 	{
@@ -238,7 +238,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 			{ 0, PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
 			{ 0, PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
 			{ 0, PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
-			{-1, NULL,			NULL },
+			{-1, -1, -1 },
 		}
 	},
 };
