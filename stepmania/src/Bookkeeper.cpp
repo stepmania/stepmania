@@ -25,7 +25,6 @@
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
 
 static const CString COINS_DAT = BASE_PATH "Data" SLASH "Coins.dat";
-static const CString COINS_HTML = BASE_PATH "Data" SLASH "Coins.html";
 
 const int COINS_DAT_VERSION = 1;
 
@@ -185,14 +184,14 @@ int Bookkeeper::GetCoinsForDay( int iDayOfYear )
 }
 
 
-void Bookkeeper::GetCoinsLast7Days( int coins[7] )
+void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] )
 {
 	UpdateLastSeenTime();
 
 	long lOldTime = m_iLastSeenTime;
     tm time = *localtime( &lOldTime );
 
-	for( int i=0; i<7; i++ )
+	for( int i=0; i<NUM_LAST_DAYS; i++ )
 	{
 		time = GetYesterday( time );
 		coins[i] = GetCoinsForDay( time.tm_yday );
@@ -200,7 +199,7 @@ void Bookkeeper::GetCoinsLast7Days( int coins[7] )
 }
 
 
-void Bookkeeper::GetCoinsLast52Weeks( int coins[52] )
+void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] )
 {
 	UpdateLastSeenTime();
 
@@ -209,7 +208,7 @@ void Bookkeeper::GetCoinsLast52Weeks( int coins[52] )
 
 	time = GetLastSunday( time );
 
-	for( int w=0; w<52; w++ )
+	for( int w=0; w<NUM_LAST_WEEKS; w++ )
 	{
 		coins[w] = 0;
 
@@ -249,4 +248,9 @@ void Bookkeeper::GetCoinsByHour( int coins[HOURS_PER_DAY] )
 		for( int d=0; d<DAYS_PER_YEAR; d++ )
 			coins[h] += m_iCoinsByHourForYear[d][h];
 	}
+}
+
+CString HourToString( int iHourIndex )
+{
+	return ssprintf("%02d:00", iHourIndex);
 }

@@ -24,33 +24,6 @@
 #include "RageDisplay.h"
 #include "Bookkeeper.h"
 
-const CString LAST_7_DAYS_NAME[7] =
-{
-	"Yesterday",
-	"2 Days Ago",
-	"3 Days Ago",
-	"4 Days Ago",
-	"5 Days Ago",
-	"6 Days Ago",
-	"7 Days Ago",
-};
-
-const CString DAY_TO_NAME[DAYS_IN_WEEK] =
-{
-	"Sunday",
-	"Monday",
-	"Tuesday",
-	"Wednesday",
-	"Thursday",
-	"Friday",
-	"Saturday",
-};
-
-CString HourToString( int iHourIndex )
-{
-	return ssprintf("%02d:00", iHourIndex);
-}
-
 
 ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : Screen( sClassName )
 {
@@ -152,27 +125,27 @@ void ScreenBookkeeping::ChangeView( View newView )
 
 	switch( m_View )
 	{
-	case LAST_7_DAYS:
+	case VIEW_LAST_DAYS:
 		{
-			m_textTitle.SetText( "Coin Data of Last 7 days" );
+			m_textTitle.SetText( ssprintf("Coin Data of Last %d days", NUM_LAST_DAYS) );
 
-			int coins[7];
-			BOOKKEEPER->GetCoinsLast7Days( coins );
-			int iTotalLast7 = 0;
+			int coins[NUM_LAST_DAYS];
+			BOOKKEEPER->GetCoinsLastDays( coins );
+			int iTotalLast = 0;
 
 			CString sTitle, sData;
-			for( int i=0; i<7; i++ )
+			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
-				sTitle += LAST_7_DAYS_NAME[i] + "\n";
+				sTitle += LAST_DAYS_NAME[i] + "\n";
 				sData += ssprintf("%d",coins[i]) + "\n";
-				iTotalLast7 += coins[i];
+				iTotalLast += coins[i];
 			}
 
 			sTitle += "\n";
 			sData += "\n";
 
 			sTitle += "Average\n";
-			sData += ssprintf("%d\n",iTotalLast7/7);
+			sData += ssprintf("%d\n",iTotalLast/NUM_LAST_DAYS);
 			
 			m_textCols[0].SetHorizAlign( Actor::align_left );
 			m_textCols[0].SetText( sTitle );
@@ -182,12 +155,12 @@ void ScreenBookkeeping::ChangeView( View newView )
 			m_textCols[3].SetText( sData );
 		}
 		break;
-	case LAST_52_WEEKS:
+	case VIEW_LAST_WEEKS:
 		{
-			m_textTitle.SetText( "Last 52 weeks" );
+			m_textTitle.SetText( ssprintf("Last %d weeks", NUM_LAST_WEEKS) );
 
-			int coins[52];
-			BOOKKEEPER->GetCoinsLast52Weeks( coins );
+			int coins[NUM_LAST_WEEKS];
+			BOOKKEEPER->GetCoinsLastWeeks( coins );
 
 			CString sTitle, sData;
 			for( int col=0; col<4; col++ )
@@ -204,7 +177,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			}
 		}
 		break;
-	case DAY_OF_WEEK:
+	case VIEW_DAY_OF_WEEK:
 		{
 			m_textTitle.SetText( "Day of week" );
 
@@ -226,7 +199,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			m_textCols[3].SetText( sData );
 		}
 		break;
-	case HOUR_OF_DAY:
+	case VIEW_HOUR_OF_DAY:
 		{
 			m_textTitle.SetText( "Hour of day" );
 

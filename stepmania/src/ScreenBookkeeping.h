@@ -35,7 +35,7 @@ public:
 	virtual void MenuBack( PlayerNumber pn );
 
 private:
-	enum View { LAST_7_DAYS, LAST_52_WEEKS, DAY_OF_WEEK, HOUR_OF_DAY, NUM_VIEWS };
+	enum View { VIEW_LAST_DAYS, VIEW_LAST_WEEKS, VIEW_DAY_OF_WEEK, VIEW_HOUR_OF_DAY, NUM_VIEWS };
 	
 	void ChangeView( View newView );
 

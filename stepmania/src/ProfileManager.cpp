@@ -27,6 +27,8 @@
 #include "ProductInfo.h"
 #include "RageUtil.h"
 #include "ThemeManager.h"
+#include "Bookkeeper.h"
+#include <time.h>
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -51,6 +53,7 @@ const int CATEGORY_RANKING_VERSION = 4;
 const int STEPS_SCORES_VERSION = 8;
 const int COURSE_SCORES_VERSION = 6;
 
+#define STATS_TITLE				THEME->GetMetric("ProfileManager","StatsTitle")
 
 static const char *MemCardDirs[NUM_PLAYERS] =
 {
@@ -948,8 +951,8 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		f.PutLine( "<html>" );
 		f.PutLine( "<head>" );
 		f.PutLine( "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" );
-		f.PutLine( ssprintf("<title>%s</title>", PRODUCT_NAME_VER) );
-		f.PutLine( "<link rel='stylesheet' type='text/css' href='style.css'>" );
+		f.PutLine( ssprintf("<title>%s</title>", STATS_TITLE.c_str() ) );
+		f.PutLine( ssprintf("<link rel='stylesheet' type='text/css' href='%s'>",STYLE_CSS_FILE) );
 		f.PutLine( "</head>" );
 		f.PutLine( "<body>" );
 	}
@@ -972,13 +975,20 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 	// Print table of contents
 	//
 	{
-		f.Write( "<h1><a name='top'>" PRODUCT_NAME_VER "</a></h1>\n" );
-		PRINT_SECTION_START( "Table of Contents" );
+		CString sName = 
+			pProfile->m_sLastUsedHighScoreName.empty() ? 
+			pProfile->m_sName :
+			pProfile->m_sLastUsedHighScoreName;
+	    time_t ltime = time( NULL );
+		CString sTime = ctime( &ltime );
+
+		f.Write( ssprintf("<h1><a name='top'>%s for %s - %s</a></h1>\n",STATS_TITLE.c_str(), sName.c_str(), sTime.c_str()) );
 		PRINT_DIV_START("Table of Contents");
 		PRINT_LINK( "Statistics", "#Statistics" );
 		PRINT_LINK( "Popularity Lists", "#Popularity Lists" );
 		PRINT_LINK( "Difficulty Table", "#Difficulty Table" );
 		PRINT_LINK( "Song/Steps List", "#Song/Steps List" );
+		PRINT_LINK( "Bookkeeping", "#Bookkeeping" );
 		PRINT_DIV_END;
 	}
 
@@ -990,7 +1000,7 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 
 		// Memory card stats
 		{
-			PRINT_DIV_START( "Memory Card" );
+			PRINT_DIV_START( "This Profile" );
 			PRINT_LINE_S( "Name", pProfile->m_sName );
 			PRINT_LINE_S( "LastUsedHighScoreName", pProfile->m_sLastUsedHighScoreName );
 			PRINT_LINE_B( "UsingProfileDefaultModifiers", pProfile->m_bUsingProfileDefaultModifiers );
@@ -1199,7 +1209,6 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 				Steps* pSteps = vpSteps[j];
 				if( pSteps->IsAutogen() )
 					continue;	// skip autogen
-				f.PutLine( "<div class='section2'>\n" );
 				CString s = 
 					GAMEMAN->NotesTypeToString(pSteps->m_StepsType) + 
 					" - " +
@@ -1213,13 +1222,65 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 		PRINT_SECTION_END;
 	}
 
+	//
+	// Print Bookkeeping
+	//
+	{
+		PRINT_SECTION_START( "Bookkeeping" );
+
+		// GetCoinsLastDays
+		{
+			int coins[NUM_LAST_DAYS];
+			BOOKKEEPER->GetCoinsLastDays( coins );
+			PRINT_DIV_START( ssprintf("Coins for Last %d Days",NUM_LAST_DAYS).c_str() );
+			for( int i=0; i<NUM_LAST_DAYS; i++ )
+			{
+				CString sDay = (i==0) ? "Today" : ssprintf("%d day(s) ago",i);
+				PRINT_LINE_I( sDay.c_str(), coins[i] );
+			}
+			PRINT_DIV_END;
+		}
+
+		// GetCoinsLastWeeks
+		{
+			int coins[NUM_LAST_WEEKS];
+			BOOKKEEPER->GetCoinsLastWeeks( coins );
+			PRINT_DIV_START( ssprintf("Coins for Last %d Weeks",NUM_LAST_WEEKS).c_str() );
+			for( int i=0; i<NUM_LAST_WEEKS; i++ )
+			{
+				CString sWeek = (i==0) ? "This week" : ssprintf("%d week(s) ago",i);
+				PRINT_LINE_I( sWeek.c_str(), coins[i] );
+			}
+			PRINT_DIV_END;
+		}
+
+		// GetCoinsByHour
+		{
+			int coins[HOURS_PER_DAY];
+			BOOKKEEPER->GetCoinsByHour( coins );
+			PRINT_DIV_START( ssprintf("Coins for Last %d Weeks",HOURS_PER_DAY).c_str() );
+			for( int i=0; i<HOURS_PER_DAY; i++ )
+			{
+				CString sHour = ssprintf("hour %d",i);
+				PRINT_LINE_I( sHour.c_str(), coins[i] );
+			}
+			PRINT_DIV_END;
+		}
+
+
+		PRINT_SECTION_END;
+	}
+	
+	PRINT_SECTION_START( "End of File" );
+	PRINT_SECTION_END;
+
 	f.PutLine( "</body>" );
 	f.PutLine( "</html>" );
 
 	//
 	// Copy CSS file from theme.  If the copy fails, oh well...
 	// 
-	CString sStyleFile = THEME->GetPathToO(STYLE_CSS_FILE);
+	CString sStyleFile = THEME->GetPathToO("ProfileManager style.css");
 	CopyFile2( sStyleFile, sDir+STYLE_CSS_FILE );
 		
 }
