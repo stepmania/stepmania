@@ -255,7 +255,8 @@ void PlayerMinus::Update( float fDeltaTime )
 	//
 	UpdateTapNotesMissedOlderThan( GetMaxStepDistanceSeconds() );
 
-	for(int bar=0; bar < m_pNoteField->GetNumCols(); bar++)
+	int iNumCols = GAMESTATE->GetCurrentStyleDef()->m_iColsPerPlayer;
+	for( int bar=0; bar < iNumCols; bar++ )
 	{
 		const StyleInput StyleI( m_PlayerNumber, bar );
 		const GameInput GameI = GAMESTATE->GetCurrentStyleDef()->StyleInputToGameInput( StyleI );
