@@ -39,6 +39,9 @@ public:
 	void	LoadMilkshapeAscii( CString sFile );
 	void 	LoadMaterialsFromMilkshapeAscii( CString sPath );
 	bool	LoadMilkshapeAsciiBones( CString sAniName, CString sPath );
+
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
+
 	void	PlayAnimation( CString sAniName, float fPlayRate = 1 );
 
 	virtual void	Update( float fDelta );

@@ -18,6 +18,8 @@
 LUA_REGISTER_CLASS( Model )
 // lua end
 
+REGISTER_ACTOR_CLASS( Model )
+
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
 
@@ -138,6 +140,22 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 		m_pTempGeometry->Set( m_vTempMeshes, this->MaterialsNeedNormals() );
 	}
 }
+
+void Model::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	Actor::LoadFromNode( sDir, pNode );
+
+	CString s1, s2, s3;
+	pNode->GetAttrValue( "Meshes", s1 );
+	pNode->GetAttrValue( "Materials", s2 );
+	pNode->GetAttrValue( "Bones", s3 );
+	if( !s1.empty() || !s2.empty() || !s3.empty() )
+	{
+		ASSERT( !s1.empty() && !s2.empty() && !s3.empty() );
+		LoadPieces( sDir+s1, sDir+s2, sDir+s3 );
+	}
+}
+
 
 void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 {
