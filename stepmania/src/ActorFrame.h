@@ -19,7 +19,7 @@ public:
 	virtual void AddChild( Actor* pActor );
 	virtual void MoveToTail( Actor* pActor );
 	virtual void MoveToHead( Actor* pActor );
-	virtual void MoveToFront( Actor* pActor ) { MoveToHead( pActor ); } // hack! so many things call this... when they really mean move to head.
+
 	virtual ~ActorFrame() { }
 
 	virtual void Update( float fDeltaTime );
