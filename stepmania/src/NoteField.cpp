@@ -76,7 +76,7 @@ void NoteField::Update( float fDeltaTime )
 	m_rectMarkerBar.Update( fDeltaTime );
 
 	if( m_fPercentFadeToFail >= 0 )
-		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5, 1 );	// take 1.5 seconds to totally fade
+		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
 }
 
 void NoteField::DrawMeasureBar( int iMeasureIndex )
