@@ -1,10 +1,8 @@
 #include "global.h"
 #include "BGAnimationLayer.h"
-#include "PrefsManager.h"
 #include "GameState.h"
 #include "IniFile.h"
 #include "RageMath.h"
-#include "RageTimer.h"
 #include "RageLog.h"
 #include "song.h"
 #include "ActorCollision.h"
@@ -12,8 +10,6 @@
 #include "RageDisplay.h"
 #include "ActorUtil.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include "RageTextureManager.h"
-#include "RageFile.h"
 #include "LuaHelpers.h"
 
 
@@ -646,11 +642,6 @@ void BGAnimationLayer::Update( float fDeltaTime )
 				}
 			}
 		}
-		break;
-	case EFFECT_TILE_PULSE:
-		for( unsigned i=0; i<m_SubActors.size(); i++ )
-			m_SubActors[i]->SetZoom( sinf( fSongBeat*PI/2 ) );
-
 		break;
 	default:
 		ASSERT(0);
