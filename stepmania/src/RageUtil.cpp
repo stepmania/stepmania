@@ -386,41 +386,6 @@ bool Rename( const char *oldname, const char *newname )
 	return 0 == rename( oldname, newname );
 }
 
-#if 0
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
-{
-	CString sDir, sThrowAway;
-	splitrelpath( sPath, sDir, sThrowAway, sThrowAway );
-
-	/* XXX: We should use Find* to get a file list only, and handle
-	 * wildcard matching ourself.  Windows matching is braindead.  For
-	 * example, *.dwi matches "foo.dwi~". */
-	WIN32_FIND_DATA fd;
-	HANDLE hFind = ::FindFirstFile( sPath, &fd );
-
-	if( INVALID_HANDLE_VALUE == hFind )		// no files found
-		return;
-
-	do
-	{
-		if( bOnlyDirs  &&  !(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
-			continue;	// skip
-
-		CString sDirName( fd.cFileName );
-
-		if( sDirName == "."  ||  sDirName == ".." )
-			continue;
-
-		if( bReturnPathToo )
-			AddTo.push_back( sDir + sDirName );
-		else
-			AddTo.push_back( sDirName );
-
-
-	} while( ::FindNextFile( hFind, &fd ) );
-	::FindClose( hFind );
-}
-#endif
 
 /* Reference: http://www.theorem.com/java/CRC32.java, rewritten by Glenn Maynard.
  * Public domain. */
