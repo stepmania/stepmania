@@ -109,6 +109,7 @@ protected:
 	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprStage;
+	Sprite				m_sprCourseSongNumber;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 	BitmapText			m_textPlayerName[NUM_PLAYERS];
 
