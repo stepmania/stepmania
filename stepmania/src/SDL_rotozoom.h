@@ -1,13 +1,26 @@
-#ifndef _SDL_rotozoom_h
-#define _SDL_rotozoom_h
+
+/*
+
+ SDL_rotozoom - rotozoomer
+
+ LGPL (c) A. Schiffler
+
+*/
+
+#ifndef SDL_rotozoom_h
+#define SDL_rotozoom_h
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
+#include <math.h>
+#ifndef M_PI
+#define M_PI	3.141592654
+#endif
 #include "SDL.h"
+
 
 /* ---- Defines */
 
@@ -15,6 +28,16 @@ extern "C"
 #define SMOOTHING_ON		1
 
 /* ---- Prototypes */
+
+/* #ifdef WIN32
+#ifdef BUILD_DLL
+#define DLLINTERFACE __declspec(dllexport)
+#else
+#define DLLINTERFACE __declspec(dllimport)
+#endif
+#else */
+#define DLLINTERFACE
+/* #endif */
 
 /* 
  
@@ -27,9 +50,13 @@ extern "C"
 
 */
 
-  SDL_Surface *rotozoomSurface (const SDL_Surface * src, double angle, double zoom,
-				int smooth);
+    DLLINTERFACE SDL_Surface *rotozoomSurface(SDL_Surface * src, double angle, double zoom, int smooth);
 
+
+/* Returns the size of the target surface for a rotozoomSurface() call */
+
+    DLLINTERFACE void rotozoomSurfaceSize(int width, int height, double angle, double zoom, int *dstwidth,
+					  int *dstheight);
 
 /* 
  
@@ -42,8 +69,11 @@ extern "C"
 
 */
 
-  SDL_Surface *zoomSurface (const SDL_Surface * src, double zoomx, double zoomy,
-			    int smooth);
+    DLLINTERFACE SDL_Surface *zoomSurface(SDL_Surface * src, double zoomx, double zoomy, int smooth);
+
+/* Returns the size of the target surface for a zoomSurface() call */
+
+    DLLINTERFACE void zoomSurfaceSize(int width, int height, double zoomx, double zoomy, int *dstwidth, int *dstheight);
 
 
 /* Ends C function definitions when using C++ */
@@ -51,4 +81,4 @@ extern "C"
 };
 #endif
 
-#endif /* _SDL_rotozoom_h */
+#endif				/* _SDL_rotozoom_h */

@@ -272,6 +272,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenMusicScroll.h">
 			</File>
 			<File
+				RelativePath="ScreenNetworkGame.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetworkGame.h">
+			</File>
+			<File
 				RelativePath="ScreenOptions.cpp">
 			</File>
 			<File
@@ -1002,6 +1008,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageMusic.h">
 			</File>
 			<File
+				RelativePath="RageNetwork.cpp">
+			</File>
+			<File
+				RelativePath="RageNetwork.h">
+			</File>
+			<File
 				RelativePath=".\RageSound.cpp">
 			</File>
 			<File
@@ -1056,7 +1068,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="SDL_dither.h">
 				</File>
 				<File
-					RelativePath="SDL_rotozoom.c">
+					RelativePath="SDL_rotozoom.cpp">
 				</File>
 				<File
 					RelativePath="SDL_rotozoom.h">

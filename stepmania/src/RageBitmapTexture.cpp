@@ -281,13 +281,13 @@ void RageBitmapTexture::Create(
 		
 		/* If zoomSurface is having problems with some pixel formats, this will
 		 * sanitize it: */
-/*		if(img->format->BitsPerPixel == 8 || img->format->colorkey) {
+		if(img->format->BitsPerPixel == 8 || img->format->colorkey) {
 			int mask = 0;
-			SDL_Surface *dst = SDL_CreateRGBSurfaceSane(SDL_SWSURFACE, img->w, img->h, PixFmtMasks[target][4],
-				PixFmtMasks[target][0], PixFmtMasks[target][1], PixFmtMasks[target][2], PixFmtMasks[target][3]);
-			SDL_FreeSurface(img);
-			img = dst;
-		} */
+			/* resize currently doesn't do paletted */
+			if(img->format->BytesPerPixel == 1)
+			    ConvertSDLSurface(img, img->w, img->h, PixFmtMasks[mask][4],
+				PixFmtMasks[mask][0], PixFmtMasks[mask][1], PixFmtMasks[mask][2], PixFmtMasks[mask][3]);
+		}
 		SDL_Surface *dst;
 		dst = zoomSurface(img, float(m_iTextureWidth)/m_iImageWidth,
 			float(m_iTextureHeight) / m_iImageHeight, SMOOTHING_ON);
