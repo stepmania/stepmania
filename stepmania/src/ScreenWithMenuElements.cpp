@@ -76,10 +76,7 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 		m_MenuTimer->SetName( "Timer" );
 		UtilSetXY( m_MenuTimer, m_sName );
 		UtilOnCommand( m_MenuTimer, m_sName );
-		if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
-			m_MenuTimer->SetSeconds( TIMER_SECONDS );
-		else
-			m_MenuTimer->Disable();
+		ResetTimer();
 		this->AddChild( m_MenuTimer );
 	}
 
@@ -118,6 +115,17 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 {
 	SAFE_DELETE( m_MenuTimer );
 	SAFE_DELETE( m_textHelp );
+}
+
+void ScreenWithMenuElements::ResetTimer()
+{
+	if( TIMER_SECONDS > 0 && PREFSMAN->m_bMenuTimer  &&  !GAMESTATE->m_bEditing )
+	{
+		m_MenuTimer->SetSeconds( TIMER_SECONDS );
+		m_MenuTimer->Start();
+	}
+	else
+		m_MenuTimer->Disable();
 }
 
 void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )

@@ -48,6 +48,7 @@ private:
 	void AfterRowChange( PlayerNumber pn );
 	void AfterValueChange( PlayerNumber pn );
 	void Move( PlayerNumber pn, int deltaValue );
+	bool AllAreFinishedChoosing() const;
 
 	int	m_iSelectedCharacter[NUM_PLAYERS];
 	enum { 

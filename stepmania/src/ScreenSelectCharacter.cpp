@@ -200,17 +200,14 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_BeginFadingOut:
 		StartTransitioning( SM_GoToNextScreen );
-		break;
+		return;
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
-		break;
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-		break;
-	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		break;
+		if( !AllAreFinishedChoosing() )
+			ResetTimer();
+		return;
 	}
+	Screen::HandleScreenMessage( SM );
 }
 
 PlayerNumber ScreenSelectCharacter::GetAffectedPlayerNumber( PlayerNumber pn )
@@ -336,6 +333,14 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 	}
 }
 
+bool ScreenSelectCharacter::AllAreFinishedChoosing() const
+{
+	FOREACH_HumanPlayer( p )
+		if( m_SelectionRow[p] != FINISHED_CHOOSING )
+			return false;
+	return true;
+}
+
 void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 {
 	if( m_SelectionRow[pn] == FINISHED_CHOOSING )
@@ -357,12 +362,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 	AfterValueChange(pn);
 	SCREENMAN->PlayStartSound();
 
-	bool bAllAreFinished = true;
-	for( int p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer(p) )
-			bAllAreFinished &= (m_SelectionRow[p] == FINISHED_CHOOSING);
-
-	if( bAllAreFinished )
+	if( AllAreFinishedChoosing() )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{

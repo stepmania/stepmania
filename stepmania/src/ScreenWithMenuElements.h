@@ -34,6 +34,7 @@ public:
 	bool m_bTimerEnabled;
 
 	void StopTimer();
+	void ResetTimer();
 
 protected:
 	BGAnimation			m_Background;
