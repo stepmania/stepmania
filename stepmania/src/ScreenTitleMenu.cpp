@@ -79,6 +79,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	PREFSMAN->ReadGamePrefsFromDisk();
 	INPUTMAPPER->ReadMappingsFromDisk();
 	GAMESTATE->m_bPlayersCanJoin = true;
+
 	if( !GAMEMAN->DoesNoteSkinExist( GAMEMAN->GetCurNoteSkin() ) )
 	{
 		CStringArray asNoteSkinNames;
@@ -119,7 +120,6 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textHelp.SetShadowLength( 2 );
 	this->AddChild( &m_textHelp );
 
-	
 	m_textVersion.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textVersion.SetText( "v3.0 final" );
 	m_textVersion.SetDiffuse( RageColor(0.6f,0.6f,0.6f,1) );	// light gray

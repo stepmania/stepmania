@@ -177,7 +177,6 @@ public:
 typedef Rect<int> RectI;
 typedef Rect<float> RectF;
 
-
 // A structure for our custom vertex type.  Note that these data structes have the same layout that D3D expects.
 struct RageVertex
 {
