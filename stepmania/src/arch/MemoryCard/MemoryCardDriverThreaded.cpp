@@ -74,7 +74,7 @@ bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 	vector<UsbStorageDeviceEx>::const_iterator iter = find( m_vStorageDevices.begin(), m_vStorageDevices.end(), *pDevice );
 	if( iter == m_vStorageDevices.end() )
 	{
-		LOG->Warn( "Tried to mount a memory card that is no longer connected" );
+		LOG->Warn( "Trying to mount a memory card that is no longer connected. bus %d port %d device %d path %s", pDevice->iBus, pDevice->iPort, pDevice->iLevel, pDevice->sOsMountDir.c_str() );
 		return false;
 	}
 
