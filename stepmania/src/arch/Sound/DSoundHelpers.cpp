@@ -176,6 +176,7 @@ DSoundBuf::DSoundBuf( DSound &ds, DSoundBuf::hw hardware,
 	extra_writeahead = 0;
 	LastPosition = 0;
 	playing = false;
+	ZERO( last_cursors );
 
 	/* The size of the actual DSound buffer.  This can be large; we generally
 	 * won't fill it completely. */
@@ -426,6 +427,10 @@ void DSoundBuf::CheckUnderrun( int cursorstart, int cursorend )
 	if( extra_writeahead )
 		s += ssprintf( "; extended writeahead by %i to %i", extra_writeahead, writeahead );
 
+	s += "; last: ";
+	for( int i = 0; i < 4; ++i )
+		s += ssprintf( "%i, %i; ", last_cursors[i][0], last_cursors[i][1] );
+
 	LOG->Trace( "%s", s.c_str() );
 }
 
@@ -454,6 +459,10 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 		return false;
 	}
 #endif
+
+	memmove( &last_cursors[0][0], &last_cursors[1][0], sizeof(int)*6 );
+	last_cursors[3][0] = cursorstart;
+	last_cursors[3][1] = cursorend;
 
 	/* Some cards (Creative AudioPCI) have a no-write area even when not playing.  I'm not
 	 * sure what that means, but it breaks the assumption that we can fill the whole writeahead
@@ -505,7 +514,11 @@ bool DSoundBuf::get_output_buf( char **buffer, unsigned *bufsiz, int chunksize )
 		if( extra_writeahead )
 		{
 			int used = min( extra_writeahead, bytes_played );
-			LOG->Trace("used %i of %i", used, extra_writeahead);
+			CString s = ssprintf("used %i of %i (%i..%i)", used, extra_writeahead, cursorstart, cursorend );
+			s += "; last: ";
+			for( int i = 0; i < 4; ++i )
+				s += ssprintf( "%i, %i; ", last_cursors[i][0], last_cursors[i][1] );
+			LOG->Trace("%s", s.c_str());
 			writeahead -= used;
 			extra_writeahead -= used;
 		}

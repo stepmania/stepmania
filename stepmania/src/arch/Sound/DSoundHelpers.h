@@ -73,6 +73,8 @@ private:
 	char *locked_buf1, *locked_buf2;
 	int locked_size1, locked_size2;
 	char *temp_buffer;
+
+	int last_cursors[4][2];
 };
 
 #endif
