@@ -98,6 +98,7 @@ ScreenSelectCourse::ScreenSelectCourse( CString sClassName ) : Screen( sClassNam
 	SET_XY( m_CourseContentsFrame );
 	this->AddChild( &m_CourseContentsFrame );
 
+	m_MusicWheel.SetName( "MusicWheel", "Wheel" );
 	m_MusicWheel.SetXY( WHEEL_X, WHEEL_Y );
 	this->AddChild( &m_MusicWheel );
 

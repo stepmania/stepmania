@@ -101,7 +101,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : Screen( sClassName 
 	m_Menu.Load( "ScreenSelectMusic" );
 	this->AddChild( &m_Menu );
 
-	m_MusicWheel.SetName( "Wheel" );
+	m_MusicWheel.SetName( "MusicWheel", "Wheel" );
 	SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
