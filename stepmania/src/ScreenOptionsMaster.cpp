@@ -288,9 +288,20 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 	{
 	case ROW_LIST:
 	{
+		int ret = -1;
 		for( unsigned e = 0; e < hand.ListEntries.size(); ++e )
 		{
 			const ModeChoice &mc = hand.ListEntries[e];
+
+			if( mc.IsZero() )
+			{
+				/* The entry has no effect.  This is usually a default "none of the
+				 * above" entry.  It will always return true for DescribesCurrentMode().
+				 * It's only the selected choice if nothing else matches. */
+				ret = e;
+				continue;
+			}
+
 			if( row.bOneChoiceForAllPlayers )
 			{
 				if( mc.DescribesCurrentModeForAllPlayers() )
@@ -301,7 +312,7 @@ int ScreenOptionsMaster::ImportOption( const OptionRow &row, const OptionRowHand
 			}
 		}
 
-		return 0;
+		return ret;
 	}
 	case ROW_STEP:
 		if( GAMESTATE->m_bEditing )
