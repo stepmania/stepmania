@@ -68,45 +68,32 @@ Course::Course()
  * songs in "Songs"; we don't want that.
  */
 
-Song *Course::FindSong(CString sSongDir) const
+Song *Course::FindSong(CString sGroup, CString sSong) const
 {
 	const vector<Song*> &apSongs = SONGMAN->GetAllSongs();
-
-	CStringArray split_SongDir;
-	sSongDir.Replace("\\", "/");
-	split( sSongDir, "/", split_SongDir, true );
-
-	if( split_SongDir.size() > 2 )
-	{
-		LOG->Warn( "Course file \"%s\" path \"%s\" should contain "
-					"at most one backslash; ignored.",
-				    m_sPath.GetString(), sSongDir.GetString());
-		return NULL;
-	}
 
 	// foreach song
 	for( unsigned i = 0; i < apSongs.size(); i++ )
 	{
-		CString dir = apSongs[i]->GetSongDir();
-		dir.Replace("\\", "/");
-		CStringArray splitted; /* splat! */
-		split( dir, "/", splitted, true );
-		bool matches = true;
-		
-		int split_no = splitted.size()-1;
-		int SongDir_no = split_SongDir.size()-1;
+		Song* pSong = apSongs[i];
 
-		while( split_no >= 0 && SongDir_no >= 0 ) {
-			if( stricmp(splitted[split_no--], split_SongDir[SongDir_no--] ) )
-				matches=false;
+		if( sGroup.CompareNoCase(pSong->m_sGroupName) == 0)
+		{
+			CString sDir = pSong->GetSongDir();
+			sDir.Replace("\\","/");
+			CStringArray bits;
+			split( sDir, "/", bits );
+			CString sLastBit = bits[bits.size()-1];
+			CString sFullTitle = pSong->GetFullTranslitTitle();
+
+			if( sSong.CompareNoCase(sLastBit)==0 || sSong.CompareNoCase(sFullTitle)==0 )	// match on song dir or title (ala DWI)
+				return pSong;
 		}
-
-		if(matches)
-			return apSongs[i];
 	}
 
-	LOG->Trace( "Course \"%s\": couldn't match song \"%s\"",
-			    m_sPath.GetString(), sSongDir.GetString());
+	LOG->Trace( "Course file '%s' contains a song '%s/%s' that is not present",
+			    m_sPath.GetString(), sGroup.GetString(), sSong.GetString());
+
 	return NULL;
 }
 
@@ -154,9 +141,9 @@ void Course::LoadFromCRSFile( CString sPath )
 
 		else if( 0 == stricmp(sValueName, "SONG") )
 		{
-			// infer entry::Type from the first param
 			Entry new_entry;
 
+			// infer entry::Type from the first param
 			if( sParams[1].Left(strlen("PlayersBest")) == "PlayersBest" )
 			{
 				new_entry.type = Entry::players_best;
@@ -176,15 +163,50 @@ void Course::LoadFromCRSFile( CString sPath )
 			else if( sParams[1].Right(1) == "*" )
 			{
 				new_entry.type = Entry::random_within_group;
-				CString sThrowAway;
-				splitrelpath( sParams[1], new_entry.group_name, sThrowAway, sThrowAway );
-				new_entry.group_name.resize( new_entry.group_name.size()-1 );		// chomp triling slash
+				CString sSong = sParams[1];
+				sSong.Replace( "\\", "/" );
+				CStringArray bits;
+				split( sSong, "/", bits );
+				if( bits.size() == 2 )
+					new_entry.group_name = bits[0];
+				else
+					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
+								"Song should be in the format '<group>/*'.",
+								m_sPath.GetString(), sSong.GetString());
+				if( !SONGMAN->DoesGroupExist(new_entry.group_name) )
+				{
+					LOG->Warn( "Course file '%s' random_within_group entry '%s' specifies a group that doesn't exist. "
+								"This entry will be ignored.",
+								m_sPath.GetString(), sSong.GetString());
+					continue;	// skip this #SONG
+				}
 			}
 			else
 			{
 				new_entry.type = Entry::fixed;
-				CString sThrowAway;
-				splitrelpath( sParams[1], new_entry.group_name, new_entry.song_name, sThrowAway );
+
+				CString sSong = sParams[1];
+				sSong.Replace( "\\", "/" );
+				CStringArray bits;
+				split( sSong, "/", bits );
+				if( bits.size() == 2 )
+				{
+					new_entry.pSong = FindSong( bits[0], bits[1] );
+				}
+				else
+				{
+					LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that is invalid. "
+								"Song should be in the format '<group>/<song>'.",
+								m_sPath.GetString(), sSong.GetString());
+					continue;	// skip this #SONG
+				}
+				if( !new_entry.pSong )
+				{
+					LOG->Warn( "Course file '%s' contains a fixed song entry '%s' that does not exist. "
+								"This entry will be ignored.",
+								m_sPath.GetString(), sSong.GetString());
+					continue;	// skip this #SONG
+				}
 			}
 
 			new_entry.difficulty = StringToDifficulty( sParams[2] );
@@ -289,12 +311,26 @@ void Course::GetStageInfo(
 
 		vector<Song*> vSongsByMostPlayed = SONGMAN->GetAllSongs();
 		SortSongPointerArrayByMostPlayed( vSongsByMostPlayed );
-
+		
+		// filter out songs that don't have both medium and hard steps
+		for( int j=vSongsByMostPlayed.size()-1; j>=0; j-- )
+		{
+			Song* pSong = vSongsByMostPlayed[j];
+			if( !pSong->GetNotes(nt, DIFFICULTY_MEDIUM) || !pSong->GetNotes(nt, DIFFICULTY_HARD) )
+				vSongsByMostPlayed.erase( vSongsByMostPlayed.begin()+j );
+		}
 
 		switch( e.type )
 		{
 		case Entry::fixed:
-			pSong = SONGMAN->GetSongFromDir( e.group_name + "/" + e.song_name );
+			pSong = e.pSong;
+			if( pSong )
+			{
+				if( e.difficulty == DIFFICULTY_INVALID )
+					pNotes = pSong->GetNotes( nt, e.low_meter, e.high_meter );
+				else
+					pNotes = pSong->GetNotes( nt, e.difficulty );
+			}
 			break;
 		case Entry::random:
 		case Entry::random_within_group:
@@ -541,7 +577,25 @@ void Course::AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], int iDan
 //
 static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	return pCourse1->GetEstimatedNumStages() < pCourse2->GetEstimatedNumStages();
+	int iNum1 = pCourse1->GetEstimatedNumStages();
+	int iNum2 = pCourse2->GetEstimatedNumStages();
+	if( iNum1 < iNum2 )
+		return true;
+	else if( iNum1 > iNum2 )
+		return false;
+	else // iNum1 == iNum2
+	{
+		// HACK:  strcmp and other string comparators appear to eat whitespace.
+		// For example, the string "Players Best 13-16" is sorted between 
+		// "Players Best  1-4" and "Players Best  5-8".  Replace the string "  "
+		// with " 0" for comparison only.
+
+		CString sName1 = pCourse1->m_sName;
+		CString sName2 = pCourse2->m_sName;
+		sName1.Replace( "  " , " 0" );
+		sName2.Replace( "  " , " 0" );
+		return sName1.CompareNoCase( sName2 ) == -1;
+	}
 }
 
 void SortCoursePointerArrayByDifficulty( vector<Course*> &apCourses )

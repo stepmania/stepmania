@@ -195,10 +195,6 @@ SOURCE=.\RageInput.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageInput.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\RageInputDevice.cpp
 # End Source File
 # Begin Source File
@@ -799,7 +795,7 @@ SOURCE=.\ScreenDimensions.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\globla.cpp
+SOURCE=.\global.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Release"
 

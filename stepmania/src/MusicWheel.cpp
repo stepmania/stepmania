@@ -442,6 +442,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			default:	ASSERT(0);
 			}
 
+			SortCoursePointerArrayByDifficulty( apCourses );
+
 			for( unsigned c=0; c<apCourses.size(); c++ )	// foreach course
 			{
 				Course* pCourse = apCourses[c];
@@ -450,6 +452,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				if( pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyleDef()->m_NotesType) )
                     arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
 			}
+
 		}
 		break;
 	default:

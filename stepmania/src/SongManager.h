@@ -33,6 +33,8 @@ public:
 
 	CString GetGroupBannerPath( CString sGroupName );
 	void GetGroupNames( CStringArray &AddTo );
+	bool DoesGroupExist( CString sGroupName );
+
 	RageColor GetGroupColor( const CString &sGroupName );
 	RageColor GetSongColor( const Song* pSong );
 	RageColor GetDifficultyColor( Difficulty dc );

@@ -519,6 +519,11 @@ void SongManager::GetGroupNames( CStringArray &AddTo )
 	AddTo.insert(AddTo.end(), m_arrayGroupNames.begin(), m_arrayGroupNames.end() );
 }
 
+bool SongManager::DoesGroupExist( CString sGroupName )
+{
+	return find( m_arrayGroupNames.begin(), m_arrayGroupNames.end(), sGroupName ) != m_arrayGroupNames.end();
+}
+
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
 {
 	// search for the group index
