@@ -87,10 +87,9 @@ void DancingCharacters::LoadNextSong()
 	m_fLookAtHeight = CAMERA_REST_LOOK_AT_HEIGHT;
 	m_fThisCameraStartBeat = 0;
 	m_fThisCameraEndBeat = 0;
-	/* XXX: This is being initialized before m_pCurSong is set by ScreenGameplay
-	 * in course mode.  Init in first update? */
-	if( GAMESTATE->m_pCurSong )
-		m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
+
+	ASSERT( GAMESTATE->m_pCurSong );
+	m_fThisCameraEndBeat = GAMESTATE->m_pCurSong->m_fFirstBeat;
 	
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( GAMESTATE->IsPlayerEnabled(p) )
