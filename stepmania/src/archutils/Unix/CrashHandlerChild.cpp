@@ -285,12 +285,15 @@ static void child_process()
     CString reason;
     switch( crash.type )
     {
-#if !defined(DARWIN)
     case CrashData::SIGNAL:
     {
 	CString Signal = SignalName( crash.signal );
 
+#if !defined(DARWIN)
 	reason = ssprintf( "%s - %s", Signal.c_str(), SignalCodeName(crash.signal, crash.si.si_code) );
+#else
+	reason = Signal;
+#endif
 	switch( crash.signal )
 	{
 	case SIGILL:
@@ -301,7 +304,6 @@ static void child_process()
 	}
 	break;
     }
-#endif
 
 #if defined(DARWIN)
     case CrashData::OSX_EXCEPTION:
