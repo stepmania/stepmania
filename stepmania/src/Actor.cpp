@@ -619,7 +619,7 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="diffusetopedge" )		SetDiffuseTopEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="diffusebottomedge" )	SetDiffuseBottomEdge( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		/* Add left/right/top/bottom for alpha if needed. */
-		else if( sName=="diffusealpha" )	{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = fParam(0); SetDiffuses( i, c ); } }
+		else if( sName=="diffusealpha" )	{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = fParam(1); SetDiffuses( i, c ); } }
 		else if( sName=="glow" )			SetGlow( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="rotationx" )		SetRotationX( fParam(1) );
 		else if( sName=="rotationy" )		SetRotationY( fParam(1) );
