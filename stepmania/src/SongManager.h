@@ -9,6 +9,7 @@ class Style;
 class Course;
 class Steps;
 struct PlayerOptions;
+struct lua_State;
 
 #include "RageTypes.h"
 #include "GameConstantsAndTypes.h"
@@ -94,6 +95,9 @@ public:
 	void SortSongs();				// sort m_pSongs
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
