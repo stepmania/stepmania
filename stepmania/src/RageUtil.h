@@ -224,7 +224,9 @@ class FilenameDB
 	map<CString, FileSet *> dirs;
 
 	void GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
-	void GetFilesStartingAndEndingWith(const CString &dir, const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs);
+	void GetFilesMatching(const CString &dir, 
+		const CString &beginning, const CString &containing, const CString &ending, 
+		vector<CString> &out, bool bOnlyDirs);
 
 public:
 	/* This handles at most one * wildcard.  If we need anything more complicated,

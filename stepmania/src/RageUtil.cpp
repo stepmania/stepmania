@@ -963,22 +963,6 @@ struct File {
 	bool operator== (const File &rhs) const { return name==rhs.name; }
 	bool operator< (const File &rhs) const { return name<rhs.name; }
 
-	bool FilenameBeginsWith(const CString &txt) const
-	{
-		if(txt.empty()) return true;
-		if(txt.size() > name.size()) return false;
-		return !strnicmp(name.c_str(), txt.c_str(), txt.size());
-	}
-
-	bool FilenameEndsWith(const CString &ext) const
-	{
-		if(ext.empty()) return true;
-		int ignore = int(name.size())-int(ext.size());
-		if(ignore < 0) return false;
-
-		return !stricmp(name.c_str()+ignore, ext.c_str());
-	}
-
 	bool equal(const File &rhs) const { return name == rhs.name; }
 	bool equal(const CString &rhs) const {
 		return !stricmp(name.c_str(), rhs.c_str());
@@ -993,7 +977,9 @@ struct FileSet
 	set<File> files;
 	RageTimer age;
 	void LoadFromDir(const CString &dir);
-	void GetFilesStartingAndEndingWith(const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs) const;
+	void GetFilesMatching(
+		const CString &beginning, const CString &containing, const CString &ending,
+		vector<CString> &out, bool bOnlyDirs) const;
 	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
 };
 
@@ -1048,15 +1034,33 @@ void FileSet::LoadFromDir(const CString &dir)
 	chdir(oldpath);
 }
 
-void FileSet::GetFilesStartingAndEndingWith(const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs) const
+/* Search for "beginning*containing*ending". */
+void FileSet::GetFilesMatching(const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs) const
 {
 	set<File>::const_iterator i = files.lower_bound(File(beginning.c_str()));
-//	set<File>::const_iterator end = files.upper_bound(File(beginning.c_str()));
 	for( ; i != files.end(); ++i)
 	{
 		if(bOnlyDirs && !i->dir) continue;
-		if(!i->FilenameBeginsWith(beginning)) return;
-		if(!i->FilenameEndsWith(ending)) continue;
+
+		/* Check beginning. */
+		if(beginning.size() > i->name.size()) continue; /* can't start with it */
+		if(strnicmp(i->name.c_str(), beginning.c_str(), beginning.size())) continue; /* doesn't start with it */
+
+		/* Position the end starts on: */
+		int end_pos = int(i->name.size())-int(ending.size());
+
+		/* Check end. */
+		if(end_pos < 0) continue; /* can't end with it */
+		if(stricmp(i->name.c_str()+end_pos, ending.c_str())) continue; /* doesn't end with it */
+
+		/* Check containing.  Do this last, since it's the slowest (substring
+		 * search instead of string match). */
+		if(containing.size())
+		{
+			unsigned pos = i->name.find(containing, beginning.size());
+			if(pos == i->name.npos) continue; /* doesn't contain it */
+			if(pos + containing.size() > unsigned(end_pos)) continue; /* found it but it overlaps with the end */
+		}
 
 		out.push_back(i->name.c_str());
 	}
@@ -1113,10 +1117,10 @@ bool FilenameDB::ResolvePath(CString &path)
 	return true;
 }
 
-void FilenameDB::GetFilesStartingAndEndingWith(const CString &dir, const CString &beginning, const CString &ending, vector<CString> &out, bool bOnlyDirs)
+void FilenameDB::GetFilesMatching(const CString &dir, const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs)
 {
 	FileSet &fs = GetFileSet(dir);
-	fs.GetFilesStartingAndEndingWith(beginning, ending, out, bOnlyDirs);
+	fs.GetFilesMatching(beginning, containing, ending, out, bOnlyDirs);
 }
 
 void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
@@ -1129,16 +1133,24 @@ void FilenameDB::GetFilesEqualTo(const CString &dir, const CString &fn, vector<C
 void FilenameDB::GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs)
 {
 	/* Does this contain a wildcard? */
-	unsigned pos = fn.find_first_of('*');
-	if(pos == fn.npos)
+	unsigned first_pos = fn.find_first_of('*');
+	if(first_pos == fn.npos)
 	{
 		/* No; just do a regular search. */
 		GetFilesEqualTo(dir, fn, out, bOnlyDirs);
 	} else {
-		/* Only one *! */
-		if(pos)
-			ASSERT(fn.find_first_of('*', pos+1) == fn.npos);
-		GetFilesStartingAndEndingWith(dir, fn.substr(0, pos), fn.substr(pos+1), out, bOnlyDirs);
+		unsigned second_pos = fn.find_first_of('*', first_pos+1);
+		if(second_pos == fn.npos)
+		{
+			/* Only one *: "A*B". */
+			GetFilesMatching(dir, fn.substr(0, first_pos), "", fn.substr(first_pos+1), out, bOnlyDirs);
+		} else {
+			/* Two *s: "A*B*C". */
+			GetFilesMatching(dir, 
+				fn.substr(0, first_pos),
+				fn.substr(first_pos+1, second_pos-first_pos-1),
+				fn.substr(second_pos+1), out, bOnlyDirs);
+		}
 	}
 }
 
