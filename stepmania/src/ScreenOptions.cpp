@@ -17,37 +17,37 @@
 
 const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
 
-#define ICONS_X( p )					THEME->GetMetricF("ScreenOptions",ssprintf("IconsP%dX",p+1))
-#define ARROWS_X						THEME->GetMetricF("ScreenOptions","ArrowsX")
-#define LABELS_X						THEME->GetMetricF("ScreenOptions","LabelsX")
-#define LABELS_ZOOM						THEME->GetMetricF("ScreenOptions","LabelsZoom")
-#define LABELS_H_ALIGN					THEME->GetMetricI("ScreenOptions","LabelsHAlign")
-#define ITEMS_ZOOM						THEME->GetMetricF("ScreenOptions","ItemsZoom")
-#define ITEMS_START_X					THEME->GetMetricF("ScreenOptions","ItemsStartX")
-#define ITEMS_END_X						THEME->GetMetricF("ScreenOptions","ItemsEndX")
-#define ITEMS_GAP_X						THEME->GetMetricF("ScreenOptions","ItemsGapX")
-#define ITEMS_START_Y					THEME->GetMetricF("ScreenOptions","ItemsStartY")
-#define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
-#define EXPLANATION_X(p)				THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dX",p+1))
-#define EXPLANATION_Y(p)				THEME->GetMetricF("ScreenOptions",ssprintf("ExplanationP%dY",p+1))
-#define EXPLANATION_ON_COMMAND(p)		THEME->GetMetricA("ScreenOptions",ssprintf("ExplanationP%dOnCommand",p+1))
-#define EXPLANATION_TOGETHER_X			THEME->GetMetricF("ScreenOptions","ExplanationTogetherX")
-#define EXPLANATION_TOGETHER_Y			THEME->GetMetricF("ScreenOptions","ExplanationTogetherY")
-#define EXPLANATION_TOGETHER_ON_COMMAND	THEME->GetMetricA("ScreenOptions","ExplanationTogetherOnCommand")
-#define SHOW_SCROLL_BAR					THEME->GetMetricB("ScreenOptions","ShowScrollBar")
+#define ICONS_X( p )					THEME->GetMetricF(m_sName,ssprintf("IconsP%dX",p+1))
+#define ARROWS_X						THEME->GetMetricF(m_sName,"ArrowsX")
+#define LABELS_X						THEME->GetMetricF(m_sName,"LabelsX")
+#define LABELS_ZOOM						THEME->GetMetricF(m_sName,"LabelsZoom")
+#define LABELS_H_ALIGN					THEME->GetMetricI(m_sName,"LabelsHAlign")
+#define ITEMS_ZOOM						THEME->GetMetricF(m_sName,"ItemsZoom")
+#define ITEMS_START_X					THEME->GetMetricF(m_sName,"ItemsStartX")
+#define ITEMS_END_X						THEME->GetMetricF(m_sName,"ItemsEndX")
+#define ITEMS_GAP_X						THEME->GetMetricF(m_sName,"ItemsGapX")
+#define ITEMS_START_Y					THEME->GetMetricF(m_sName,"ItemsStartY")
+#define ITEMS_SPACING_Y					THEME->GetMetricF(m_sName,"ItemsSpacingY")
+#define EXPLANATION_X(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dX",p+1))
+#define EXPLANATION_Y(p)				THEME->GetMetricF(m_sName,ssprintf("ExplanationP%dY",p+1))
+#define EXPLANATION_ON_COMMAND(p)		THEME->GetMetricA(m_sName,ssprintf("ExplanationP%dOnCommand",p+1))
+#define EXPLANATION_TOGETHER_X			THEME->GetMetricF(m_sName,"ExplanationTogetherX")
+#define EXPLANATION_TOGETHER_Y			THEME->GetMetricF(m_sName,"ExplanationTogetherY")
+#define EXPLANATION_TOGETHER_ON_COMMAND	THEME->GetMetricA(m_sName,"ExplanationTogetherOnCommand")
+#define SHOW_SCROLL_BAR					THEME->GetMetricB(m_sName,"ShowScrollBar")
 /* Extra parens needed to work around stupid VC6 compiler crash: */
-#define SCROLL_BAR_HEIGHT				(THEME->GetMetricF("ScreenOptions","ScrollBarHeight"))
-#define SCROLL_BAR_TIME					(THEME->GetMetricF("ScreenOptions","ScrollBarTime"))
-#define ITEMS_SPACING_Y					THEME->GetMetricF("ScreenOptions","ItemsSpacingY")
-#define EXPLANATION_ZOOM				THEME->GetMetricF("ScreenOptions","ExplanationZoom")
-#define COLOR_SELECTED					THEME->GetMetricC("ScreenOptions","ColorSelected")
-#define COLOR_NOT_SELECTED				THEME->GetMetricC("ScreenOptions","ColorNotSelected")
-#define NUM_SHOWN_ITEMS					THEME->GetMetricI("ScreenOptions","NumShownItems")
-#define SHOW_BPM_IN_SPEED_TITLE			THEME->GetMetricB("ScreenOptions","ShowBpmInSpeedTitle")
-#define FRAME_ON_COMMAND				THEME->GetMetricA("ScreenOptions","FrameOnCommand")
-#define FRAME_OFF_COMMAND				THEME->GetMetricA("ScreenOptions","FrameOffCommand")
-#define SEPARATE_EXIT_ROW				THEME->GetMetricB("ScreenOptions","SeparateExitRow")
-#define SEPARATE_EXIT_ROW_Y				THEME->GetMetricF("ScreenOptions","SeparateExitRowY")
+#define SCROLL_BAR_HEIGHT				(THEME->GetMetricF(m_sName,"ScrollBarHeight"))
+#define SCROLL_BAR_TIME					(THEME->GetMetricF(m_sName,"ScrollBarTime"))
+#define ITEMS_SPACING_Y					THEME->GetMetricF(m_sName,"ItemsSpacingY")
+#define EXPLANATION_ZOOM				THEME->GetMetricF(m_sName,"ExplanationZoom")
+#define COLOR_SELECTED					THEME->GetMetricC(m_sName,"ColorSelected")
+#define COLOR_NOT_SELECTED				THEME->GetMetricC(m_sName,"ColorNotSelected")
+#define NUM_SHOWN_ITEMS					THEME->GetMetricI(m_sName,"NumShownItems")
+#define SHOW_BPM_IN_SPEED_TITLE			THEME->GetMetricB(m_sName,"ShowBpmInSpeedTitle")
+#define FRAME_ON_COMMAND				THEME->GetMetricA(m_sName,"FrameOnCommand")
+#define FRAME_OFF_COMMAND				THEME->GetMetricA(m_sName,"FrameOffCommand")
+#define SEPARATE_EXIT_ROW				THEME->GetMetricB(m_sName,"SeparateExitRow")
+#define SEPARATE_EXIT_ROW_Y				THEME->GetMetricF(m_sName,"SeparateExitRowY")
 #define CAPITALIZE_ALL_OPTION_NAMES		THEME->GetMetricB(m_sName,"CapitalizeAllOptionNames")
 
 /*
@@ -210,7 +210,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 
 	m_sprPage.Load( THEME->GetPathToG(m_sName+" page") );
 	m_sprPage->SetName( "Page" );
-	UtilSetXYAndOnCommand( m_sprPage, "ScreenOptions" );
+	SET_XY_AND_ON_COMMAND( m_sprPage );
 	m_framePage.AddChild( m_sprPage );
 
 	// init line highlights
@@ -220,7 +220,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
 		m_sprLineHighlight[p].SetX( SCREEN_CENTER_X );
 		m_framePage.AddChild( &m_sprLineHighlight[p] );
-		UtilOnCommand( m_sprLineHighlight[p], "ScreenOptions" );
+		ON_COMMAND( m_sprLineHighlight[p] );
 	}
 	
 	// init highlights
@@ -387,7 +387,7 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 			m_textPlayerName[p].LoadFromFont( THEME->GetPathToF( "ScreenOptions player") );
 			m_textPlayerName[p].SetName( ssprintf("PlayerNameP%i",p+1) );
 			m_textPlayerName[p].SetText( GAMESTATE->GetPlayerDisplayName((PlayerNumber)p) );
-			UtilSetXYAndOnCommand( m_textPlayerName[p], "ScreenOptions" );
+			SET_XY_AND_ON_COMMAND( m_textPlayerName[p] );
 			m_framePage.AddChild( &m_textPlayerName[p] );
 		}
 	}
@@ -400,14 +400,14 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 		FOREACH_PlayerNumber( p )
 			m_ScrollBar.EnablePlayer( (PlayerNumber)p, GAMESTATE->IsHumanPlayer(p) );
 		m_ScrollBar.Load();
-		UtilSetXY( m_ScrollBar, "ScreenOptions" );
+		SET_XY( m_ScrollBar );
 		m_framePage.AddChild( &m_ScrollBar );
 	}
 
 	m_sprMore.Load( THEME->GetPathToG( "ScreenOptions more") );
 	m_sprMore->SetName( "ScreenOptions", "More" );
-	UtilSetXYAndOnCommand( m_sprMore, "ScreenOptions" );
-	UtilCommand( m_sprMore, "ScreenOptions", m_bMoreShown? "ShowMore":"HideMore" );
+	SET_XY_AND_ON_COMMAND( m_sprMore );
+	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
 	m_framePage.AddChild( m_sprMore );
 
 	switch( m_InputMode )
@@ -427,9 +427,9 @@ void ScreenOptions::InitMenu( InputMode im, OptionRowData OptionRows[], int iNum
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprDisqualify[p].Load( THEME->GetPathToG( "ScreenOptions disqualify") );
+		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
 		m_sprDisqualify[p]->SetName( "ScreenOptions", ssprintf("DisqualifyP%i",p+1) );
-		UtilSetXYAndOnCommand( m_sprDisqualify[p], "ScreenOptions" );
+		SET_XY_AND_ON_COMMAND( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
 		m_framePage.AddChild( m_sprDisqualify[p] );
 	}
@@ -592,7 +592,7 @@ void ScreenOptions::InitOptionsText()
 
 		BitmapText &title = row.m_textTitle;
 
-		title.LoadFromFont( THEME->GetPathToF("ScreenOptions title") );
+		title.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 
 		const CString sText = GetExplanationTitle( i );
 		title.SetText( sText );
@@ -603,7 +603,7 @@ void ScreenOptions::InitOptionsText()
 		title.SetShadowLength( 0 );		
 
 		Sprite &bullet = row.m_sprBullet;
-		bullet.Load( THEME->GetPathToG("ScreenOptions bullet") );
+		bullet.Load( THEME->GetPathG(m_sName,"bullet") );
 		bullet.SetXY( ARROWS_X, fY );
 		
 		// set the Y position of each item in the line
@@ -744,9 +744,9 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
-		UtilCommand( m_sprLineHighlight[pn], "ScreenOptions", "Change" );
+		COMMAND( m_sprLineHighlight[pn], "Change" );
 		if( m_Rows[iRow]->Type == Row::ROW_EXIT )
-			UtilCommand( m_sprLineHighlight[pn], "ScreenOptions", "ChangeToExit" );
+			COMMAND( m_sprLineHighlight[pn], "ChangeToExit" );
 		m_sprLineHighlight[pn].SetY( (float)iY );
 	}
 }
@@ -1050,7 +1050,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	if( m_bMoreShown != ShowMore )
 	{
 		m_bMoreShown = ShowMore;
-		UtilCommand( m_sprMore, "ScreenOptions", m_bMoreShown? "ShowMore":"HideMore" );
+		COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
 	}
 
 	/* Update all players, since changing one player can move both cursors. */
@@ -1065,7 +1065,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 			if( m_bWasOnExit[p] != ExitSelected )
 			{
 				m_bWasOnExit[p] = ExitSelected;
-				UtilCommand( m_sprMore, "ScreenOptions", ssprintf("Exit%sP%i", ExitSelected? "Selected":"Unselected", p+1) );
+				COMMAND( m_sprMore, ssprintf("Exit%sP%i", ExitSelected? "Selected":"Unselected", p+1) );
 			}
 		}
 	}
