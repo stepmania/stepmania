@@ -78,19 +78,22 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM
 	const TrailEntry *te = tes[GAMESTATE->m_MasterPlayerNumber];
 	if( te == NULL )
 		return;
-	bool bMystery = te->bMystery;
-	if( bMystery )
+
+	if( te->bMystery )
 	{
 		FOREACH_EnabledPlayer(pn)
 		{
 			const TrailEntry *te = tes[pn];
+			if( te == NULL )
+				continue;
+
 			Difficulty dc = te->dc;
 			if( dc == DIFFICULTY_INVALID )
 			{
 				int iLow = te->iLowMeter;
 				int iHigh = te->iHighMeter;
-				SetDifficulty( pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh),
-					SONGMAN->GetDifficultyColor(te->pSteps->GetDifficulty()) );
+				RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pSteps->GetDifficulty() );
+				SetDifficulty( pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh), colorNotes );
 			}
 			else
 				SetDifficulty( pn, "?", SONGMAN->GetDifficultyColor( dc ) );
