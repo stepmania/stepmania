@@ -31,7 +31,7 @@ inline Uint32 decodepixel(const Uint8 *p, int bpp)
     case 1: return *p;
     case 2: return *(Uint16 *)p;
 	case 3:
-        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+        if( BYTE_ORDER == BIG_ENDIAN )
             return p[0] << 16 | p[1] << 8 | p[2];
         else
             return p[0] | p[1] << 8 | p[2] << 16;
@@ -48,7 +48,8 @@ void encodepixel(Uint8 *p, int bpp, Uint32 pixel)
     case 1: *p = Uint8(pixel); break;
     case 2: *(Uint16 *)p = Uint16(pixel); break;
     case 3:
-        if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+        if( BYTE_ORDER == BIG_ENDIAN )
+		{
             p[0] = Uint8((pixel >> 16) & 0xff);
             p[1] = Uint8((pixel >> 8) & 0xff);
             p[2] = Uint8(pixel & 0xff);
