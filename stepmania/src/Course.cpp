@@ -815,8 +815,8 @@ static bool CompareCoursePointersByAvgDifficulty(const Course* pCourse1, const C
 
 static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const Course* pCourse2)
 {
-	float iNum1 = pCourse1->SortOrder_TotalDifficulty;
-	float iNum2 = pCourse2->SortOrder_TotalDifficulty;
+	int iNum1 = pCourse1->SortOrder_TotalDifficulty;
+	int iNum2 = pCourse2->SortOrder_TotalDifficulty;
 
 	if( iNum1 < iNum2 )
 		return true;
@@ -828,8 +828,8 @@ static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const
 
 static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
 {
-	float iNum1 = pCourse1->SortOrder_Ranking;
-	float iNum2 = pCourse2->SortOrder_Ranking;
+	int iNum1 = pCourse1->SortOrder_Ranking;
+	int iNum2 = pCourse2->SortOrder_Ranking;
 
 	if( iNum1 < iNum2 )
 		return true;
@@ -880,7 +880,6 @@ void Course::UpdateCourseStats()
 	LOG->Trace("Updating course stats for %s", this->m_sName.c_str() );
 
 	SortOrder_AvgDifficulty = 0;
-	SortOrder_NumStages = 0;
 	SortOrder_Ranking = 2;
 	SortOrder_TotalDifficulty = 0;
 
@@ -895,18 +894,16 @@ void Course::UpdateCourseStats()
 		if (m_entries[i].type != Entry::fixed)
 		{
 			SortOrder_AvgDifficulty = 9999999; // large number
-			SortOrder_NumStages = ci.size();
 			SortOrder_Ranking = 3;
 			SortOrder_TotalDifficulty = 999999;     // large number
 			return;
 		}
 
-		SortOrder_NumStages++;
 		SortOrder_TotalDifficulty += ci[i].pNotes->GetMeter();
 	}
 
-	SortOrder_AvgDifficulty = (float)SortOrder_TotalDifficulty/SortOrder_NumStages;
-	if (SortOrder_NumStages > 7) SortOrder_Ranking = 3;
+	SortOrder_AvgDifficulty = (float)SortOrder_TotalDifficulty/GetEstimatedNumStages();
+	if (GetEstimatedNumStages() > 7) SortOrder_Ranking = 3;
 
 	CStringArray RankingCourses;
 
