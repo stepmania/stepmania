@@ -29,7 +29,9 @@ void RageTimer::Touch()
 float RageTimer::Ago() const
 {
 	const RageTimer Now;
-	return Now - *this;
+
+	/* If the system clock has moved backwards (for example, ntpd), don't return negative values. */
+	return max( 0.0f, Now - *this );
 }
 
 float RageTimer::GetDeltaTime()
@@ -37,7 +39,9 @@ float RageTimer::GetDeltaTime()
 	const RageTimer Now;
 	const float diff = Difference( Now, *this );
 	*this = Now;
-	return diff;
+
+	/* If the system clock has moved backwards (for example, ntpd), don't return negative values. */
+	return max( 0.0f, diff );
 }
 
 /* Get a timer representing half of the time ago as this one.  This is
