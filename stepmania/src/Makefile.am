@@ -10,7 +10,9 @@ else
 AM_CXXFLAGS += -DLINUX
 endif
 
-AM_CXXFLAGS = -ISDL-1.2.5/include -ISDL_sound-1.0.0
+AM_CXXFLAGS += -O2 -ISDL-1.2.5/include -ISDL_sound-1.0.0
+AM_CFLAGS   += -O2
+
 
 # This is a little hacky; we use our own version of SDL and SDL_sound, and I don't
 # want to have to integrate their entire build systems.
@@ -144,10 +146,9 @@ Sound_Null = \
 	arch/Sound/RageSoundDriver_Null.cpp \
 	arch/Sound/RageSoundDriver_Null.h
 
-if ALSA
-Sound = $(Sound_Null) $(Sound_ALSA9)
-else
 Sound = $(Sound_Null)
+if ALSA
+Sound += $(Sound_ALSA9)
 endif
 
 stepmania_SOURCES = $(Rage) $(DataStructures) $(FileTypes) $(StepMania) $(Transitions) \
