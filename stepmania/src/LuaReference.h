@@ -29,13 +29,17 @@ public:
 	/* Return the referenced type, or LUA_TNONE if not set. */
 	int GetLuaType() const;
 
-	static void ReRegisterAll();	// call this after resetting Lua
+	static void BeforeResetAll();	// call this before resetting Lua
+	static void AfterResetAll();	// call this after resetting Lua
 
 protected:
+	/* If this object needs to store state to recreate itself, overload this. */
+	virtual void BeforeReset() { }
+
 	/* If this object is able to recreate itself, overload this, and ReRegisterAll
 	 * will work; the reference will still exist after a theme change.  If not
 	 * implemented, the reference will be unset after ReRegister. */
-	virtual void Register();
+	virtual void Register() { }
 
 private:
 	void Unregister();
@@ -55,6 +59,17 @@ protected:
 
 private:
 	CString m_sExpression;
+};
+
+/* Reference a trivially restorable Lua object (any object that Serialize can handle).
+ * The object will be saved and restored across Lua resets. */
+class LuaData: public LuaReference
+{
+protected:
+	virtual void BeforeReset();
+	virtual void Register();
+
+	CString m_sSerializedData;
 };
 
 #endif

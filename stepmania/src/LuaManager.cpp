@@ -202,7 +202,11 @@ LuaManager::~LuaManager()
 void LuaManager::ResetState()
 {
 	if( L != NULL )
+	{
+		LuaReference::BeforeResetAll();
+
 		lua_close( L );
+	}
 
 	L = lua_open();
 	ASSERT( L );
@@ -212,6 +216,7 @@ void LuaManager::ResetState()
 	luaopen_base( L );
 	luaopen_math( L );
 	luaopen_string( L );
+	luaopen_table( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
 	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
@@ -226,7 +231,7 @@ void LuaManager::ResetState()
 		}
 	}
 
-	LuaReference::ReRegisterAll();
+	LuaReference::AfterResetAll();
 }
 
 void LuaManager::PrepareExpression( CString &sInOut )

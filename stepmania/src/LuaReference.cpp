@@ -3,6 +3,7 @@
 #include "LuaManager.h"
 #include "LuaBinding.h"
 #include "Foreach.h"
+#include "RageLog.h"
 #include "SubscriptionManager.h"
 
 template<>
@@ -74,10 +75,6 @@ int LuaReference::GetLuaType() const
 	return iRet;
 }
 
-void LuaReference::Register()
-{
-}
-
 void LuaReference::Unregister()
 {
 	if( LUA == NULL )
@@ -87,7 +84,15 @@ void LuaReference::Unregister()
 	m_iReference = LUA_NOREF;
 }
 
-void LuaReference::ReRegisterAll()
+void LuaReference::BeforeResetAll()
+{
+	if( SubscriptionManager<LuaReference>::s_pSubscribers == NULL )
+		return;
+	FOREACHS( LuaReference*, *SubscriptionManager<LuaReference>::s_pSubscribers, p )
+		(*p)->BeforeReset();
+}
+
+void LuaReference::AfterResetAll()
 {
 	if( SubscriptionManager<LuaReference>::s_pSubscribers == NULL )
 		return;
@@ -118,6 +123,44 @@ void LuaExpression::Register()
 
 	/* Store the result. */
 	this->SetFromStack();
+}
+
+void LuaData::BeforeReset()
+{
+	/* Call Serialize(t), where t is our referenced object. */
+	this->PushSelf( LUA->L );
+
+	lua_pushstring( LUA->L, "Serialize" );
+	lua_gettable( LUA->L, LUA_GLOBALSINDEX );
+
+	if( lua_isnil(LUA->L, -1) )
+		FAIL_M( "Serialize() missing" );
+
+	lua_call( LUA->L, 0, 1 );
+
+	/* The return value is a string, which we store in m_sSerializedData. */
+	const char *pString = lua_tostring( LUA->L, -1 );
+	if( pString == NULL )
+		FAIL_M( "Serialize() didn't return a string" );
+
+	m_sSerializedData = pString;
+}
+
+void LuaData::Register()
+{
+	/* Restore the serialized data by evaluating the serialized data. */
+	CString sError;
+	if( !LUA->RunScript( m_sSerializedData, "serialization", sError, 1 ) )
+	{
+		/* Serialize() should never return an invalid script.  Drop the failed
+		 * script into the log (it may be too big to pass to FAIL_M) and fail. */
+		LOG->Warn( "Unserialization of \"%s\" failed: %s", m_sSerializedData.c_str(), sError.c_str() );
+		FAIL_M( "Unserialization failed" );
+	}
+
+	this->SetFromStack();
+
+	m_sSerializedData.clear();
 }
 
 /*
