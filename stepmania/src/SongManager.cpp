@@ -38,7 +38,6 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define SONGS_DIR				BASE_PATH "Songs" SLASH
 #define COURSES_DIR				BASE_PATH "Courses" SLASH
 #define STATS_PATH				BASE_PATH "stats.html"
-#define GROUP_SORT_COLOR_FILE	BASE_PATH "Data" SLASH "GroupSortColor.ini"
 const CString CATEGORY_RANKING_FILE =			BASE_PATH "Data" SLASH "CategoryRanking.dat";
 const CString MACHINE_STEPS_MEM_CARD_DATA =		BASE_PATH "Data" SLASH "MachineStepsMemCardData.dat";
 const CString MACHINE_COURSE_MEM_CARD_DATA =	BASE_PATH "Data" SLASH "MachineCourseMemCardData.dat";
@@ -89,36 +88,6 @@ SongManager::SongManager( LoadingWindow *ld )
 	
 	g_LastMetricUpdate.SetZero();
 	UpdateMetrics();
-
-	IniFile gsc(GROUP_SORT_COLOR_FILE);
-	const CString sortKey("Sort");
-	const CString colorsKey("Colors");
-    const IniFile::key *key;
-	int i = 0;
-	CString value;
-	
-	if (!gsc.ReadFile())
-		return;
-
-	gsc.GetValue(sortKey, "UnsortedAtEnd", m_bUnsortedAtEnd);
-	while (gsc.GetValue(sortKey, ssprintf("Group%d", ++i), value))
-		m_sSortedGroupNames.push_back(value);
-
-	key = gsc.GetKey(colorsKey);
-
-	if (!key)
-		return;
-
-	IniFile::key::const_iterator iter = key->begin();
-
-	while (iter != key->end())
-	{
-		RageColor c(1,1,1,1);
-		sscanf((*iter).second, "%f,%f,%f,%f", &c.r, &c.g, &c.b, &c.a);
-		m_mMappedGroupColors[(*iter).first] = c;
-		LOG->Trace("Found color: %f.%f.%f.%f", c.r, c.g, c.b, c.a);
-		++iter;
-	}
 }
 
 SongManager::~SongManager()
@@ -885,11 +854,6 @@ bool SongManager::DoesGroupExist( CString sGroupName )
 
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
 {
-	const map<CString, RageColor>::const_iterator iter = m_mMappedGroupColors.find(sGroupName);
-
-	if (iter != m_mMappedGroupColors.end())
-		return (*iter).second;
-	
 	UpdateMetrics();
 
 	// search for the group index
