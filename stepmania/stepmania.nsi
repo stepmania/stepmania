@@ -122,6 +122,7 @@ Section ""
 
 ; write out uninstaller
 SetOutPath "$INSTDIR"
+AllowSkipFiles off
 SetOverwrite on
 WriteUninstaller "$INSTDIR\uninstall.exe"
 
@@ -137,8 +138,6 @@ WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "
 WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 
 ; Begin copying files
-SetOverwrite ifnewer
-
 CreateDirectory "$INSTDIR\Announcers"
 SetOutPath "$INSTDIR\Announcers"
 File "Announcers\instructions.txt"
