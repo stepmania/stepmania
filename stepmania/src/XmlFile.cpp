@@ -72,23 +72,22 @@ char* _tcsechr( const char* psz, int ch, int escape )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-int _tcselen( int escape, const char *srt, const char *end )
+int _tcselen( int escape, const char *start, const char *end )
 {
 	int len = 0;
-	const char *pch = srt;
-	if( end==NULL )
+	if( end == NULL )
 		end = (char*) sizeof(long);
 	const char *prev_escape = NULL;
-	while( pch && *pch && pch<end )
+	while( start && *start && start<end )
 	{
-		if( *pch == escape && prev_escape == NULL )
-			prev_escape = pch;
+		if( *start == escape && prev_escape == NULL )
+			prev_escape = start;
 		else
 		{
 			prev_escape = NULL;
 			len++;
 		}
-		pch++;
+		++start;
 	}
 	return len;
 }
@@ -102,11 +101,11 @@ int _tcselen( int escape, const char *srt, const char *end )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-void strlen( char* psz, int escape, char* srt, char* end = NULL )
+void unescape( char *psz, int escape, char* srt, char* end = NULL )
 {
-	char* pch = srt;
+	const char* pch = srt;
 	if( end==NULL ) end = (char*)sizeof(long);
-	char* prev_escape = NULL;
+	const char* prev_escape = NULL;
 	while( pch && *pch && pch<end )
 	{
 		if( *pch == escape && prev_escape == NULL )
@@ -175,7 +174,7 @@ void _SetString( char* psz, char* end, CString* ps, bool trim = false, int escap
 		len = _tcselen( escape, psz, end );
 //		char* pss = ps->GetBufferSetLength( len );
 		char* szTemp = new char[len];
-		strlen( szTemp, escape, psz, end );
+		unescape( szTemp, escape, psz, end );
 		*ps = szTemp;
 		delete [] szTemp;
 	}
