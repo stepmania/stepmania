@@ -715,6 +715,7 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="effectcolor2" )	SetEffectColor2( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
 		else if( sName=="effectperiod" )	SetEffectPeriod( fParam(1) );
 		else if( sName=="effectmagnitude" )	SetEffectMagnitude( RageVector3(fParam(1),fParam(2),fParam(3)) );
+		else if( sName=="scaletocover" )	{ RectI R(iParam(1), iParam(2), iParam(3), iParam(4));  ScaleToCover(R); }
 		// Commands that take effect immediately (ignoring the tweening queue):
 		else if( sName=="animate" )			EnableAnimation( bParam(1) );
 		else if( sName=="texturewrapping" )	EnableTextureWrapping( bParam(1) );
