@@ -28,6 +28,7 @@ InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our p
 
 InputMapper::InputMapper()
 {
+	ReadMappingsFromDisk();
 }
 
 
