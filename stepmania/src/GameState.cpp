@@ -177,6 +177,13 @@ void GameState::ReloadCharacters()
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	for( i=0; i<as.size(); i++ )
 	{
+		CString sCharName, sDummy;
+		splitpath(as[i], sDummy, sCharName, sDummy);
+		sCharName.MakeLower();
+
+		if( sCharName == "cvs" )	// the directory called "CVS"
+			continue;		// ignore it
+
 		Character* pChar = new Character;
 		if( pChar->Load( as[i] ) )
 			m_pCharacters.push_back( pChar );
