@@ -24,12 +24,17 @@ const float SECS_IN_DAY	=	60*60*24;
 /* XXX: SDL_GetTicks() wraps every month or so.  Handle it. */
 RageTimer::RageTimer()
 {
+	Init();
+	GetDeltaTime(); /* so the next call to GetDeltaTime is from the construction of this object */
+}
+
+void RageTimer::Init()
+{
 	static bool SDL_Initialized = false;
 	if(!SDL_Initialized) {
 		SDL_InitSubSystem(SDL_INIT_TIMER);
 		SDL_Initialized = true;
 	}
-	GetDeltaTime(); /* so the next call to GetDeltaTime is from the construction of this object */
 }
 
 float RageTimer::GetDeltaTime()
@@ -46,7 +51,7 @@ float RageTimer::PeekDeltaTime() const
 	return (SDL_GetTicks() - m_iLastDeltaTime) / 1000.f;
 }
 
-float RageTimer::GetTimeSinceStart() const
+float RageTimer::GetTimeSinceStart()
 {
 	return SDL_GetTicks() / 1000.f;
 }

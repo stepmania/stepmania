@@ -19,9 +19,10 @@ public:
 	unsigned int GetTicks();
 	float GetDeltaTime();	// time between last call to GetDeltaTime()
 	float PeekDeltaTime() const;
-	float GetTimeSinceStart() const;	// seconds since the program was started
+	static float GetTimeSinceStart();	// seconds since the program was started
 
 private:
+	static void Init();
 	int m_iLastDeltaTime;
 };
 
