@@ -420,21 +420,21 @@ float GameState::GetSongPercent( float beat ) const
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
 }
 
-int GameState::GetStageIndex()
+int GameState::GetStageIndex() const
 {
 	return m_iCurrentStageIndex;
 }
 
-int GameState::GetNumStagesLeft()
+int GameState::GetNumStagesLeft() const
 {
-	if(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2())
+	if( IsExtraStage() || IsExtraStage2() )
 		return 1;
 	if( PREFSMAN->m_bEventMode )
 		return 999;
 	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
 }
 
-bool GameState::IsFinalStage()
+bool GameState::IsFinalStage() const
 {
 	if( PREFSMAN->m_bEventMode )
 		return false;
@@ -445,21 +445,21 @@ bool GameState::IsFinalStage()
 	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iNumArcadeStages;
 }
 
-bool GameState::IsExtraStage()
+bool GameState::IsExtraStage() const
 {
 	if( PREFSMAN->m_bEventMode )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages;
 }
 
-bool GameState::IsExtraStage2()
+bool GameState::IsExtraStage2() const
 {
 	if( PREFSMAN->m_bEventMode )
 		return false;
 	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages+1;
 }
 
-CString GameState::GetStageText()
+CString GameState::GetStageText() const
 {
 	if( m_bDemonstrationOrJukebox )				return "demo";
 	else if( m_PlayMode == PLAY_MODE_ONI )		return "oni";
@@ -472,7 +472,7 @@ CString GameState::GetStageText()
 	else										return ssprintf("%d",m_iCurrentStageIndex+1);
 }
 
-void GameState::GetAllStageTexts( CStringArray &out )
+void GameState::GetAllStageTexts( CStringArray &out ) const
 {
 	out.clear();
 	out.push_back( "demo" );
@@ -487,7 +487,7 @@ void GameState::GetAllStageTexts( CStringArray &out )
 		out.push_back( ssprintf("%d",stage+1) );
 }
 
-int GameState::GetCourseSongIndex()
+int GameState::GetCourseSongIndex() const
 {
 	int iSongIndex = 0;
 	/* iSongsPlayed includes the current song, so it's 1-based; subtract one. */
@@ -517,15 +517,14 @@ GameDef* GameState::GetCurrentGameDef()
 	return GAMEMAN->GetGameDefForGame( m_CurGame );
 }
 
-const StyleDef* GameState::GetCurrentStyleDef()
+const StyleDef* GameState::GetCurrentStyleDef() const
 {
-
 	ASSERT( m_CurStyle != STYLE_INVALID );	// the style must be set before calling this
 	return GAMEMAN->GetStyleDefForStyle( m_CurStyle );
 }
 
 
-bool GameState::IsPlayerEnabled( PlayerNumber pn )
+bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 {
 	// In rave, all players are present.  Non-human players are CPU controlled.
 	switch( m_PlayMode )
@@ -538,7 +537,16 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn )
 	return IsHumanPlayer( pn );
 }
 
-bool GameState::IsHumanPlayer( PlayerNumber pn )
+int	GameState::GetNumPlayersEnabled() const
+{
+	int count = 0;
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( IsPlayerEnabled(p) )
+			count++;
+	return count;
+}
+
+bool GameState::IsHumanPlayer( PlayerNumber pn ) const
 {
 	if( m_CurStyle == STYLE_INVALID )	// no style chosen
 		if( this->PlayersCanJoin() )	
@@ -559,7 +567,7 @@ bool GameState::IsHumanPlayer( PlayerNumber pn )
 	}
 }
 
-PlayerNumber GameState::GetFirstHumanPlayer()
+PlayerNumber GameState::GetFirstHumanPlayer() const
 {
 	for( int p=0; p<NUM_PLAYERS; p++ )
 		if( IsHumanPlayer(p) )
@@ -568,9 +576,17 @@ PlayerNumber GameState::GetFirstHumanPlayer()
 	return PLAYER_INVALID;
 }
 
-bool GameState::IsCpuPlayer( PlayerNumber pn )
+bool GameState::IsCpuPlayer( PlayerNumber pn ) const
 {
 	return IsPlayerEnabled(pn) && !IsHumanPlayer(pn);
+}
+
+bool GameState::AnyPlayersAreCpu() const
+{ 
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		if( IsCpuPlayer(p) )
+			return true;
+	return false;
 }
 
 
@@ -895,6 +911,12 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 		// don't change!  m_iLastPositiveSumOfAttackLevels[p] = iSumOfAttackLevels;
 		m_fSecondsUntilAttacksPhasedOut[pn] = 2;	// 2 seconds to phase out
 	}
+}
+
+void GameState::RemoveAllActiveAttacks()	// called on end of song
+{
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		RemoveActiveAttacksForPlayer( (PlayerNumber)p );
 }
 
 int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn )

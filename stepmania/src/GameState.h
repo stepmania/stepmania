@@ -67,31 +67,20 @@ public:
 	int				GetNumSidesJoined() const;
 
 	GameDef*	GetCurrentGameDef();
-	const StyleDef*	GetCurrentStyleDef();
+	const StyleDef*	GetCurrentStyleDef() const;
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
-	bool IsPlayerEnabled( PlayerNumber pn );
-	bool IsPlayerEnabled( int p ) { return IsPlayerEnabled( (PlayerNumber)p ); };
-	int	GetNumPlayersEnabled()
-	{ 
-		int count = 0;
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( IsPlayerEnabled(p) )
-				count++;
-		return count;
-	};
-	bool IsHumanPlayer( PlayerNumber pn );
-	bool IsHumanPlayer( int p ) { return IsHumanPlayer( (PlayerNumber)p ); };
-	PlayerNumber GetFirstHumanPlayer();
-	bool IsCpuPlayer( PlayerNumber pn );
-	bool IsCpuPlayer( int p ) { return IsCpuPlayer( (PlayerNumber)p ); };
-	bool AnyPlayersAreCpu()
-	{ 
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			if( IsCpuPlayer(p) )
-				return true;
-		return false;
-	}
+	bool IsPlayerEnabled( PlayerNumber pn ) const;
+	bool IsPlayerEnabled( int p ) const { return IsPlayerEnabled( (PlayerNumber)p ); };
+	int	GetNumPlayersEnabled() const;
+
+	bool IsHumanPlayer( PlayerNumber pn ) const;
+	bool IsHumanPlayer( int p ) const { return IsHumanPlayer( (PlayerNumber)p ); };
+	PlayerNumber GetFirstHumanPlayer() const;
+	bool IsCpuPlayer( PlayerNumber pn ) const;
+	bool IsCpuPlayer( int p ) const { return IsCpuPlayer( (PlayerNumber)p ); };
+	bool AnyPlayersAreCpu() const;
+
 	void GetCharacters( vector<Character*> &apCharactersOut );
 	Character* GameState::GetRandomCharacter();
 	Character* GameState::GetDefaultCharacter();
@@ -119,14 +108,14 @@ public:
 	bool			m_bJukeboxUsesModifiers;
 	int				m_iCurrentStageIndex;	// incremented on Eval screen.  For a Course, this is always 0
 
-	int				GetStageIndex();
-	int				GetNumStagesLeft();
-	bool			IsFinalStage();
-	bool			IsExtraStage();
-	bool			IsExtraStage2();
-	CString			GetStageText();
-	void			GetAllStageTexts( CStringArray &out );
-	int				GetCourseSongIndex();
+	int				GetStageIndex() const;
+	int				GetNumStagesLeft() const;
+	bool			IsFinalStage() const;
+	bool			IsExtraStage() const;
+	bool			IsExtraStage2() const;
+	CString			GetStageText() const;
+	void			GetAllStageTexts( CStringArray &out ) const;
+	int				GetCourseSongIndex() const;
 
 
 	//
@@ -193,11 +182,7 @@ public:
 	void GetUndisplayedBeats( PlayerNumber pn, float TotalSeconds, float &StartBeat, float &EndBeat ); // only meaningful when a NoteField is in use
 	void LaunchAttack( PlayerNumber target, Attack aa );
 	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
-	void RemoveAllActiveAttacks()	// called on end of song
-	{
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			RemoveActiveAttacksForPlayer( (PlayerNumber)p );
-	}
+	void RemoveAllActiveAttacks();	// called on end of song
 	void RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
 	void RemoveAllInventory();
 	int GetSumOfActiveAttackLevels( PlayerNumber pn );
