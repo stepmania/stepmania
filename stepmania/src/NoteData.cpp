@@ -86,7 +86,7 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 	// copy recorded TapNotes
 	int f = iFromIndexBegin, t = iToIndexBegin;
 	
-	while( f<iFromIndexEnd )
+	while( f<=iFromIndexEnd )
 	{
 		for( int c=0; c<m_iNumTracks; c++ )
 			SetTapNote(c, t, pFrom->GetTapNote(c, f));

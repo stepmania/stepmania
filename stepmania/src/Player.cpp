@@ -363,7 +363,7 @@ void Player::Update( float fDeltaTime )
 			ASSERT(0);
 		}
 
-		m_NoteField.CopyRange( this, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat) );
+		m_NoteField.CopyRange( this, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), BeatToNoteRow(fStartBeat)-1 );
 	}
 	GAMESTATE->m_TransformsToApply[m_PlayerNumber].clear();
 
