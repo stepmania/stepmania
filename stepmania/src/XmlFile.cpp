@@ -285,7 +285,7 @@ LPTSTR _tagXMLNode::LoadAttributes( LPCTSTR pszAttrs , LPPARSEINFO pi /*= &piDef
 				pi->erorr_occur = true;
 				pi->error_pointer = xml;
 				pi->error_code = PIE_ATTR_NO_VALUE;
-				pi->error_string.Format( ("<%s> attribute has error "), name );
+				pi->error_string.Format( ("<%s> attribute has error "), name.c_str() );
 			}
 			return NULL;
 		}
@@ -420,7 +420,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 					pi->erorr_occur = true;
 					pi->error_pointer = xml;
 					pi->error_code = PIE_NOT_CLOSED;
-					pi->error_string.Format(("%s must be closed with </%s>"), name );
+					pi->error_string.Format(("%s must be closed with </%s>"), name.c_str() );
 				}
 				// error cos not exist CloseTag </TAG>
 				return NULL;
@@ -474,7 +474,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_CLOSED;
-						pi->error_string.Format(("it must be closed with </%s>"), name );
+						pi->error_string.Format(("it must be closed with </%s>"), name.c_str() );
 					}
 					// error
 					return NULL;
@@ -496,7 +496,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 						pi->erorr_occur = true;
 						pi->error_pointer = xml;
 						pi->error_code = PIE_NOT_NESTED;
-						pi->error_string.Format(("'<%s> ... </%s>' is not wel-formed."), name, closename );
+						pi->error_string.Format(("'<%s> ... </%s>' is not well-formed."), name.c_str(), closename.c_str() );
 
 					}
 					return NULL;
@@ -519,7 +519,7 @@ LPTSTR _tagXMLNode::Load( LPCTSTR pszXml, LPPARSEINFO pi /*= &piDefault*/ )
 							pi->erorr_occur = true;
 							pi->error_pointer = xml;
 							pi->error_code = PIE_NOT_CLOSED;
-							pi->error_string.Format(("it must be closed with </%s>"), name );
+							pi->error_string.Format(("it must be closed with </%s>"), name.c_str() );
 						}
 						return NULL;
 					}
@@ -829,7 +829,7 @@ XNodes::iterator _tagXMLNode::GetChildIterator( LPXNode node )
 		if( *it == node )
 			return it;
 	}
-	return NULL;
+	return childs.end();
 }
 
 //========================================================
@@ -884,7 +884,7 @@ LPXNode _tagXMLNode::AppendChild( LPXNode node )
 bool _tagXMLNode::RemoveChild( LPXNode node )
 {
 	XNodes::iterator it = GetChildIterator( node );
-	if( it != NULL )
+	if( it != childs.end() )
 	{
 		delete *it;
 		childs.erase( it );
@@ -926,7 +926,7 @@ XAttrs::iterator _tagXMLNode::GetAttrIterator( LPXAttr attr )
 		if( *it == attr )
 			return it;
 	}
-	return NULL;
+	return attrs.end();
 }
 
 //========================================================
@@ -957,7 +957,7 @@ LPXAttr _tagXMLNode::AppendAttr( LPXAttr attr )
 bool _tagXMLNode::RemoveAttr( LPXAttr attr )
 {
 	XAttrs::iterator it = GetAttrIterator( attr );
-	if( it != NULL )
+	if( it != attrs.end() )
 	{
 		delete *it;
 		attrs.erase( it );
@@ -1026,7 +1026,7 @@ LPXAttr _tagXMLNode::AppendAttr( LPCTSTR name /*= NULL*/, LPCTSTR value /*= NULL
 LPXNode _tagXMLNode::DetachChild( LPXNode node )
 {
 	XNodes::iterator it = GetChildIterator( node );
-	if( it != NULL )
+	if( it != childs.end() )
 	{
 		childs.erase( it );
 		return node;
@@ -1046,7 +1046,7 @@ LPXNode _tagXMLNode::DetachChild( LPXNode node )
 LPXAttr _tagXMLNode::DetachAttr( LPXAttr attr )
 {
 	XAttrs::iterator it = GetAttrIterator( attr );
-	if( it != NULL )
+	if( it != attrs.end() )
 	{
 		attrs.erase( it );
 		return attr;
