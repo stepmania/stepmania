@@ -928,7 +928,7 @@ void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 		return;
 
 	// each row must pass at least one valid mask
-	for( int r=0; r<=in.GetLastRow(); r++ )
+	for( int r=0; r<=in.GetMaxRow(); r++ )
 	{
 		// only check rows with jumps
 		if( in.GetNumTapNonEmptyTracks(r) < 2 )
