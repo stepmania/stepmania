@@ -1146,6 +1146,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		break;
 	case SDLK_m:
+		SOUNDMAN->PlayMusic("");
 		SOUNDMAN->PlayMusic( m_pSong->GetMusicPath(), false,
 			m_pSong->m_fMusicSampleStartSeconds,
 			m_pSong->m_fMusicSampleLengthSeconds );
