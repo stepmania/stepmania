@@ -568,6 +568,8 @@ void NoteField::DrawPrimitives()
 			}
 
 			const bool bIsActive = m_ActiveHoldNotes[hn];
+			const bool bIsHoldingNote = m_HeldHoldNotes[hn];
+			const float fLife = GetHoldNoteLife( hn );
 			if( bIsActive )
 				SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( hn.iTrack );
 			
@@ -576,16 +578,9 @@ void NoteField::DrawPrimitives()
 
 			bool bIsInSelectionRange = false;
 			if( m_fBeginMarker!=-1 && m_fEndMarker!=-1 )
-				bIsInSelectionRange =
-					m_fBeginMarker <= hn.GetStartBeat() &&
-					hn.GetStartBeat() <= m_fEndMarker &&
-					m_fBeginMarker <= hn.GetEndBeat() && 
-					hn.GetEndBeat() <= m_fEndMarker;
+				bIsInSelectionRange = hn.ContainedByRange( BeatToNoteRow( m_fBeginMarker ), BeatToNoteRow( m_fEndMarker ) );
 
 			NoteDisplayCols *nd = CurDisplay->second;
-
-			const bool bIsHoldingNote = m_HeldHoldNotes[hn];
-			const float fLife = GetHoldNoteLife( hn );
 			nd->display[c].DrawHold( hn, bIsHoldingNote, bIsActive, fLife, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels );
 		}
 		

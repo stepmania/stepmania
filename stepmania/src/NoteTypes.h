@@ -145,20 +145,22 @@ struct HoldNote
 	bool RowIsInRange( int row ) const { return iStartRow <= row && row <= iEndRow; }
 	bool RangeOverlaps( int start, int end ) const
 	{
-		return
-			( iStartRow >= start && end >= iEndRow ) ||		// other consumes us
-			( iStartRow <= start && end <= iEndRow ) ||		// other inside us
-			( iStartRow <= start && start <= iEndRow ) ||	// other overlaps us
-			( iStartRow <= end   && end <= iEndRow );			// other overlaps us
+		/* If the range doesn't overlap us, then start and end are either both before
+		 * us or both after us. */
+		return !( (start < iStartRow && end < iStartRow) ||
+				  (start > iEndRow && end > iEndRow) );
 	}
 	bool RangeOverlaps( const HoldNote &hn ) const { return RangeOverlaps(hn.iStartRow, hn.iEndRow); }
 	bool RangeInside( int start, int end ) const { return iStartRow <= start && end <= iEndRow; }
+	bool ContainedByRange( int start, int end ) const { return start <= iStartRow && iEndRow <= end; }
 
 	float GetStartBeat() const { return NoteRowToBeat( iStartRow ); }
 	float GetEndBeat() const { return NoteRowToBeat( iEndRow ); }
-	int		iTrack;	
+
+	/* Invariant: iStartRow <= iEndRow */
 	int		iStartRow;
 	int		iEndRow;
+	int		iTrack;	
 };
 
 
