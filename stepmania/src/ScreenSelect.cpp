@@ -53,85 +53,12 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 
 	for( unsigned c=0; c<asChoices.size(); c++ )
 	{
-		CString sChoice = asChoices[c];
-
 		ModeChoice mc;
-		mc.game = GAME_INVALID;
-		mc.style = STYLE_INVALID;
-		mc.pm = PLAY_MODE_INVALID;
-		mc.dc = DIFFICULTY_INVALID;
-		mc.sAnnouncer = "";
-		strcpy( mc.name, "" );
-		mc.numSidesJoinedToPlay = 1;
-
-		strncpy( mc.name, sChoice, sizeof(mc.name) );
-
-		bool bChoiceIsInvalid = false;
-
-		CStringArray asBits;
-		split( sChoice, "-", asBits );
-		for( unsigned b=0; b<asBits.size(); b++ )
-		{
-			CString sBit = asBits[b];
-
-			Game game = GAMEMAN->StringToGameType( sBit );
-			if( game != GAME_INVALID )
-			{
-				mc.game = game;
-				continue;
-			}
-
-			Style style = GAMEMAN->GameAndStringToStyle( GAMESTATE->m_CurGame, sBit );
-			if( style != STYLE_INVALID )
-			{
-				mc.style = style;
-				// There is a choices that allows players to choose a style.  Allow joining.
-				GAMESTATE->m_bPlayersCanJoin = true;
-				continue;
-			}
-
-			PlayMode pm = StringToPlayMode( sBit );
-			if( pm != PLAY_MODE_INVALID )
-			{
-				mc.pm = pm;
-				continue;
-			}
-
-			Difficulty dc = StringToDifficulty( sBit );
-			if( dc != DIFFICULTY_INVALID )
-			{
-				mc.dc = dc;
-				continue;
-			}
-
-			CString sError = ssprintf( "The choice token '%s' is not recognized as a Game, Style, PlayMode, or Difficulty.  The choice containing this token will be ignored.", sBit.c_str() );
-			LOG->Warn( sError );
-			if( DISPLAY->IsWindowed() )
-				HOOKS->MessageBoxOK( sError );
-			bChoiceIsInvalid |= true;
-		}
 
 		if( SPECIFY_ANNOUNCER )
 			mc.sAnnouncer = ANNOUNCER( c );
 
-		if( mc.style != STYLE_INVALID )
-		{
-			const StyleDef* pStyleDef = GAMEMAN->GetStyleDefForStyle(mc.style);
-			switch( pStyleDef->m_StyleType )
-			{
-			case StyleDef::ONE_PLAYER_ONE_CREDIT:
-				mc.numSidesJoinedToPlay = 1;
-				break;
-			case StyleDef::TWO_PLAYERS_TWO_CREDITS:
-			case StyleDef::ONE_PLAYER_TWO_CREDITS:
-				mc.numSidesJoinedToPlay = 2;
-				break;
-			default:
-				ASSERT(0);
-			}
-		}
-
-		if( ! bChoiceIsInvalid )
+		if( mc.FromString(asChoices[c]) )
 			m_aModeChoices.push_back( mc );
 		
 		
@@ -249,7 +176,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		{
 			for( int p=0; p<NUM_PLAYERS; p++ )
 				if( GAMESTATE->IsHumanPlayer(p) )
-					GAMESTATE->ApplyModeChoice( m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)], (PlayerNumber)p );
+					m_aModeChoices[this->GetSelectionIndex((PlayerNumber)p)].Apply( (PlayerNumber)p );
 
 			GAMESTATE->m_bPlayersCanJoin = false;
 			SCREENMAN->RefreshCreditsMessages();
