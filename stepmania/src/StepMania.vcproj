@@ -182,6 +182,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCaution.h">
 			</File>
 			<File
+				RelativePath="ScreenCenterImage.cpp">
+			</File>
+			<File
+				RelativePath="ScreenCenterImage.h">
+			</File>
+			<File
 				RelativePath="ScreenCredits.cpp">
 			</File>
 			<File
@@ -459,6 +465,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenTestFonts.h">
+			</File>
+			<File
+				RelativePath="ScreenTestInput.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTestInput.h">
 			</File>
 			<File
 				RelativePath="ScreenTestSound.cpp">
