@@ -20,7 +20,6 @@ public:
 
 private:
 
-	void OnChange();
 	void ImportOptions();
 	void ExportOptions();
 

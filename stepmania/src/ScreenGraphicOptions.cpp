@@ -91,11 +91,6 @@ ScreenGraphicOptions::ScreenGraphicOptions() :
 	SOUNDMAN->PlayMusic( THEME->GetPathTo("Sounds","graphic options music") );
 }
 
-void ScreenGraphicOptions::OnChange()
-{
-	ScreenOptions::OnChange();
-}
-
 void ScreenGraphicOptions::ImportOptions()
 {
 	m_iSelectedOption[0][GO_WINDOWED]				= PREFSMAN->m_bWindowed ? 1:0;
