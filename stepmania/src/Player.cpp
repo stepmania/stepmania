@@ -156,6 +156,8 @@ void Player::Init(
 
 	m_Combo.SetName( "Combo" );
 	m_Combo.Load( pn );
+
+	ActorUtil::OnCommand( m_Combo, sType );
 }
 
 void Player::Load( const NoteData& noteData )
