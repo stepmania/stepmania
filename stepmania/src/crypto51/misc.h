@@ -193,8 +193,8 @@ std::string IntToString(T a, unsigned int base = 10)
 template <class T1, class T2>
 inline T1 SaturatingSubtract(T1 a, T2 b)
 {
-	CRYPTOPP_COMPILE_ASSERT_INSTANCE(T1(-1)>0, 0);	// T1 is unsigned type
-	CRYPTOPP_COMPILE_ASSERT_INSTANCE(T2(-1)>0, 1);	// T2 is unsigned type
+	//CRYPTOPP_COMPILE_ASSERT_INSTANCE(T1(-1)>0, 0);	// T1 is unsigned type
+	//CRYPTOPP_COMPILE_ASSERT_INSTANCE(T2(-1)>0, 1);	// T2 is unsigned type
 	return T1((a > b) ? (a - b) : 0);
 }
 

@@ -7,9 +7,10 @@
 NAMESPACE_BEGIN(CryptoPP)
 
 template <class T, class BASE>
-IteratedHashBase<T, BASE>::IteratedHashBase(unsigned int blockSize, unsigned int digestSize)
-	: m_data(blockSize/sizeof(T)), m_digest(digestSize/sizeof(T))
-	, m_countHi(0), m_countLo(0)
+IteratedHashBase<T, BASE>::IteratedHashBase(unsigned int blockSize,
+					    unsigned int digestSize)
+    : m_data(blockSize/sizeof(T)), m_digest(digestSize/sizeof(T)),
+      m_countLo(0), m_countHi(0)
 {
 }
 

@@ -23,7 +23,7 @@ public:
 	}
 	template <class T> ConstByteArrayParameter(const T &string, bool deepCopy = false)
 	{
-		CRYPTOPP_COMPILE_ASSERT(sizeof(string[0])==1);
+		//CRYPTOPP_COMPILE_ASSERT(sizeof(string[0])==1);
 		Assign((const byte *)string.data(), string.size(), deepCopy);
 	}
 

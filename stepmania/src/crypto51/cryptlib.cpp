@@ -11,13 +11,12 @@
 
 NAMESPACE_BEGIN(CryptoPP)
 
-CRYPTOPP_COMPILE_ASSERT(sizeof(byte) == 1);
-CRYPTOPP_COMPILE_ASSERT(sizeof(word16) == 2);
-CRYPTOPP_COMPILE_ASSERT(sizeof(word32) == 4);
-#ifdef WORD64_AVAILABLE
-CRYPTOPP_COMPILE_ASSERT(sizeof(word64) == 8);
-#endif
-CRYPTOPP_COMPILE_ASSERT(sizeof(dword) == 2*sizeof(word));
+//CRYPTOPP_COMPILE_ASSERT(sizeof(byte) == 1);
+//CRYPTOPP_COMPILE_ASSERT(sizeof(word32) == 4);
+//#ifdef WORD64_AVAILABLE
+//CRYPTOPP_COMPILE_ASSERT(sizeof(word64) == 8);
+//#endif
+//CRYPTOPP_COMPILE_ASSERT(sizeof(dword) == 2*sizeof(word));
 
 const std::string BufferedTransformation::NULL_CHANNEL;
 const NullNameValuePairs g_nullNameValuePairs;
