@@ -19,8 +19,8 @@ void MeterDisplay::Load( CString sStreamPath, float fStreamWidth, CString sTipPa
 	m_fStreamWidth = fStreamWidth;
 
 	m_sprStream.Load( sStreamPath );
-	m_sprStream.SetZoomX( fStreamWidth / m_sprStream.GetUnzoomedWidth() );
-	this->AddChild( &m_sprStream );
+	m_sprStream->SetZoomX( fStreamWidth / m_sprStream->GetUnzoomedWidth() );
+	this->AddChild( m_sprStream );
 
 	m_sprTip.Load( sTipPath );
 	this->AddChild( m_sprTip );
@@ -44,8 +44,8 @@ void MeterDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
 		ActorUtil::ResolvePath( sStreamPath, sDir );
 
 		m_sprStream.Load( sStreamPath );
-		m_sprStream.SetZoomX( m_fStreamWidth / m_sprStream.GetUnzoomedWidth() );
-		this->AddChild( &m_sprStream );
+		m_sprStream->SetZoomX( m_fStreamWidth / m_sprStream->GetUnzoomedWidth() );
+		this->AddChild( m_sprStream );
 	}
 
 	const XNode* pChild = pNode->GetChild( "Tip" );
@@ -64,7 +64,7 @@ void MeterDisplay::SetPercent( float fPercent )
 {
 	ASSERT( fPercent >= 0 && fPercent <= 1 );
 
-	m_sprStream.SetCropRight( 1-fPercent );
+	m_sprStream->SetCropRight( 1-fPercent );
 
 	m_sprTip->SetX( SCALE(fPercent, 0.f, 1.f, -m_fStreamWidth/2, m_fStreamWidth/2) );
 }

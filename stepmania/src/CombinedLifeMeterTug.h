@@ -26,8 +26,8 @@ protected:
 	void ChangeLife( PlayerNumber pn, float fPercentToMove );
 
 	MeterDisplay	m_Stream[NUM_PLAYERS];
-	Sprite	m_sprSeparator;
-	Sprite	m_sprFrame;
+	AutoActor	m_sprSeparator;
+	AutoActor	m_sprFrame;
 
 	CharacterHead	m_Head[NUM_PLAYERS];
 };

@@ -31,7 +31,6 @@ ScoreDisplayRave::ScoreDisplayRave()
 
 	m_textLevel.LoadFromFont( THEME->GetPathF("ScoreDisplayRave","level") );
 	m_textLevel.SetText( "1" );
-	m_textLevel.SetShadowLength( 0 );
 	this->AddChild( &m_textLevel );
 }
 

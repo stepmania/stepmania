@@ -18,7 +18,7 @@ public:
 private:
 	float	m_fStreamWidth;
 	float	m_fPercent;
-	Sprite  m_sprStream;
+	AutoActor  m_sprStream;
 	AutoActor  m_sprTip;
 };
 
