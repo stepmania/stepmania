@@ -557,6 +557,7 @@
 				AADBE36B053DA38C00D02EE9,
 				AAFF55200549F39700D02EE9,
 				AAFF55240549F43A00D02EE9,
+				AAFF5544054E736D00D02EE9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -824,6 +825,7 @@
 				AADBE36A053DA38C00D02EE9,
 				AAFF551F0549F39700D02EE9,
 				AAFF55230549F43A00D02EE9,
+				AAFF5543054E736D00D02EE9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5672,6 +5674,8 @@
 			children = (
 				AA6EFDC904770C79005F316C,
 				AA6EFDCA04770C79005F316C,
+				AAFF5541054E736D00D02EE9,
+				AAFF5542054E736D00D02EE9,
 				AABE35EB04967E25005F316C,
 				AABE35EC04967E26005F316C,
 				AA6EFDCB04770C79005F316C,
@@ -11386,6 +11390,32 @@
 		};
 		AAFF55240549F43A00D02EE9 = {
 			fileRef = AAFF55220549F43A00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFF5541054E736D00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = Attack.cpp;
+			path = ../src/Attack.cpp;
+			refType = 4;
+		};
+		AAFF5542054E736D00D02EE9 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = Attack.h;
+			path = ../src/Attack.h;
+			refType = 4;
+		};
+		AAFF5543054E736D00D02EE9 = {
+			fileRef = AAFF5541054E736D00D02EE9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAFF5544054E736D00D02EE9 = {
+			fileRef = AAFF5542054E736D00D02EE9;
 			isa = PBXBuildFile;
 			settings = {
 			};
