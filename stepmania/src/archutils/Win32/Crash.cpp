@@ -624,39 +624,28 @@ static bool PointsToValidCall( unsigned long ptr )
 	return IsValidCall(buf+7, len);
 }
 
-static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
+static void do_backtrace( const void **buf, size_t size, 
+						 HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext )
 {
-	if (!g_debugInfo.pRVAHeap) {
-		Report(hwnd, hFile, "Could not open debug resource file (StepMania.vdi).");
-		return false;
-	}
-
-	if (g_debugInfo.nBuildNumber != int(version_num)) {
-		Report(hwnd, hFile, "Incorrect StepMania.vdi file (build %d, expected %d) for this version of StepMania -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
-		return false;
-	}
-
 	// Retrieve stack pointers.
-	// Not sure if NtCurrentTeb() is available on Win95....
-
-	NT_TIB *pTib;
-
-	__asm {
-		mov	eax, fs:[0]_NT_TIB.Self
-		mov pTib, eax
+	const char *pStackBase;
+	{
+		LDT_ENTRY sel;
+		GetThreadSelectorEntry( hThread, pContext->SegFs, &sel );
+		const NT_TIB *tib = (NT_TIB *) ((sel.HighWord.Bits.BaseHi<<24)+(sel.HighWord.Bits.BaseMid<<16)+sel.BaseLow);
+		const NT_TIB *pTib = tib->Self;
+		pStackBase = (char *)pTib->StackBase;
 	}
 
-	char *pStackBase = (char *)pTib->StackBase;
-
-	const CONTEXT *const pContext = (const CONTEXT *)pExc->ContextRecord;
-	const HANDLE hprMe = GetCurrentProcess();
+	// Walk up the stack.
 	const char *lpAddr = (const char *)pContext->Esp;
-	int limit = 100;
 
-	// Walk up the stack.  Hopefully it wasn't fscked.
-
-	unsigned long data = pContext->Eip;
+	const void *data = (void *) pContext->Eip;
+	size_t i = 0;
 	do {
+		if( i+1 >= size )
+			break;
+
 		bool fValid = true;
 		MEMORY_BASIC_INFORMATION meminfo;
 
@@ -665,43 +654,71 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 		if (!IsExecutableProtection(meminfo.Protect) || meminfo.State!=MEM_COMMIT)
 			fValid = false;
 
-		if ( data != pContext->Eip && !PointsToValidCall(data) )
+		if ( data != (void *) pContext->Eip && !PointsToValidCall((unsigned long)data) )
 			fValid = false;
 		
-		if (fValid) {
-			char buf[512];
-			if (VDDebugInfoLookupRVA(&g_debugInfo, data, buf, sizeof buf) >= 0) {
-				Report(hwnd, hFile, "%08lx: %s", data, Demangle(buf));
-				--limit;
-			} else {
-				char szName[MAX_PATH];
-				if( !CrashGetModuleBaseName((HMODULE)meminfo.AllocationBase, szName) )
-					strcpy( szName, "???" );
-
-				DWORD64 disp;
-				SYMBOL_INFO *pSymbol = GetSym( data, disp );
-
-				if( pSymbol )
-				{
-					Report(hwnd, hFile, "%08lx: %s!%s [%08lx+%lx+%lx]",
-						(unsigned long) data, szName, pSymbol->Name,
-						(unsigned long) meminfo.AllocationBase,
-						(unsigned long) (pSymbol->Address) - (unsigned long) (meminfo.AllocationBase),
-						(unsigned long) disp);
-				} else {
-					Report(hwnd, hFile, "%08lx: %s!%08lx",
-						(unsigned long) data, szName, 
-						(unsigned long) meminfo.AllocationBase );
-				}
-				--limit;
-			}
-		}
+		if( fValid )
+			buf[i++] = data;
 
 		if (lpAddr >= pStackBase)
 			break;
 
 		lpAddr += 4;
-	} while(limit > 0 && ReadProcessMemory(hprMe, lpAddr-4, &data, 4, NULL));
+	} while( ReadProcessMemory(hProcess, lpAddr-4, &data, 4, NULL));
+
+	buf[i++] = NULL;
+}
+
+
+static bool ReportCrashCallStack( HWND hwnd, HANDLE hFile, const CONTEXT *pContext )
+{
+	if( !g_debugInfo.pRVAHeap )
+	{
+		Report(hwnd, hFile, "Could not open debug resource file (StepMania.vdi).");
+		return false;
+	}
+
+	if( g_debugInfo.nBuildNumber != int(version_num) )
+	{
+		Report(hwnd, hFile, "Incorrect StepMania.vdi file (build %d, expected %d) for this version of StepMania -- call stack unavailable.", g_debugInfo.nBuildNumber, int(version_num));
+		return false;
+	}
+
+#define BACKTRACE_MAX_SIZE 100
+	static const void *BacktracePointers[BACKTRACE_MAX_SIZE];
+	do_backtrace( BacktracePointers, BACKTRACE_MAX_SIZE, GetCurrentProcess(),  GetCurrentThread(), pContext );
+
+	for( int i = 0; BacktracePointers[i]; ++i )
+	{
+		MEMORY_BASIC_INFORMATION meminfo;
+		VirtualQuery( BacktracePointers[i], &meminfo, sizeof meminfo );
+
+		char buf[512];
+		if( VDDebugInfoLookupRVA(&g_debugInfo, (unsigned int)BacktracePointers[i], buf, sizeof(buf)) >= 0 )
+		{
+			Report(hwnd, hFile, "%08p: %s", BacktracePointers[i], Demangle(buf));
+		} else {
+			char szName[MAX_PATH];
+			if( !CrashGetModuleBaseName((HMODULE)meminfo.AllocationBase, szName) )
+				strcpy( szName, "???" );
+
+			DWORD64 disp;
+			SYMBOL_INFO *pSymbol = GetSym( (unsigned int)BacktracePointers[i], disp );
+
+			if( pSymbol )
+			{
+				Report(hwnd, hFile, "%08lx: %s!%s [%08lx+%lx+%lx]",
+					(unsigned long) BacktracePointers[i], szName, pSymbol->Name,
+					(unsigned long) meminfo.AllocationBase,
+					(unsigned long) (pSymbol->Address) - (unsigned long) (meminfo.AllocationBase),
+					(unsigned long) disp);
+			} else {
+				Report(hwnd, hFile, "%08lx: %s!%08lx",
+					(unsigned long) BacktracePointers[i], szName, 
+					(unsigned long) meminfo.AllocationBase );
+			}
+		}
+	}
 
 	return true;
 }
@@ -734,7 +751,7 @@ static void DoSave(const EXCEPTION_POINTERS *pExc)
 	WriteBuf( hFile, Checkpoints::GetLogs("\r\n") );
 	Report(NULL, hFile, "");
 
-	ReportCrashCallStack(NULL, hFile, pExc);
+	ReportCrashCallStack( NULL, hFile, pExc->ContextRecord );
 	Report(NULL, hFile, "");
 
 	Report(NULL, hFile, "Static log:");
@@ -797,7 +814,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 					SendMessage(hwndList, WM_SETFONT, (WPARAM)hFontMono, MAKELPARAM(TRUE, 0));
 
 				ReportReason(hwndReason, NULL, pExc);
-				s_bHaveCallstack = ReportCrashCallStack(hwndList, NULL, pExc);
+				s_bHaveCallstack = ReportCrashCallStack( hwndList, NULL, pExc->ContextRecord );
 			}
 			return TRUE;
 
