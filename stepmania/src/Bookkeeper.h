@@ -31,7 +31,7 @@ const CString LAST_DAYS_NAME[NUM_LAST_DAYS] =
 	"7 Days Ago",
 };
 
-const CString DAY_TO_NAME[DAYS_IN_WEEK] =
+const CString DAY_OF_WEEK_TO_NAME[DAYS_IN_WEEK] =
 {
 	"Sunday",
 	"Monday",

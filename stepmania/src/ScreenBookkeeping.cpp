@@ -187,7 +187,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			CString sTitle, sData;
 			for( int i=0; i<DAYS_IN_WEEK; i++ )
 			{
-				sTitle += DAY_TO_NAME[i] + "\n";
+				sTitle += DAY_OF_WEEK_TO_NAME[i] + "\n";
 				sData += ssprintf("%d",coins[i]) + "\n";
 			}
 			

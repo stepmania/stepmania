@@ -28,9 +28,9 @@ static const CString COINS_DAT = "Data/Coins.dat";
 
 const int COINS_DAT_VERSION = 1;
 
-tm GetDaysAgo( tm start, int iDaysAgo )
+tm AddDays( tm start, int iDaysToMove )
 {
-	start.tm_mday -= iDaysAgo;
+	start.tm_mday += iDaysToMove;
 	time_t seconds = mktime( &start );
 	ASSERT( seconds != (time_t)-1 );
 	tm time = *localtime( &seconds );
@@ -39,17 +39,19 @@ tm GetDaysAgo( tm start, int iDaysAgo )
 
 tm GetYesterday( tm start )
 {
-	return GetDaysAgo( start, -1 );
+	return AddDays( start, -1 );
 }
 
 int GetDayOfWeek( tm time )
 {
-	return time.tm_wday;
+	int iDayOfWeek = time.tm_wday;
+	ASSERT( iDayOfWeek < DAYS_IN_WEEK );
+	return iDayOfWeek;
 }
 
-tm GetLastSunday( tm start )
+tm GetNextSunday( tm start )
 {
-	return GetDaysAgo( start, -GetDayOfWeek(start) );
+	return AddDays( start, DAYS_IN_WEEK-GetDayOfWeek(start) );
 }
 
 
@@ -163,16 +165,18 @@ void Bookkeeper::UpdateLastSeenTime()
 
 		m_iCoinsByHourForYear[tOld.tm_yday][tOld.tm_hour] = 0;
 	}
+
+	m_iLastSeenTime = lNewTime;
 }
 
 void Bookkeeper::CoinInserted()
 {
 	UpdateLastSeenTime();
 
-	long lOldTime = m_iLastSeenTime;
-    tm *pNewTime = localtime( &lOldTime );
+	long lTime = m_iLastSeenTime;
+    tm *pTime = localtime( &lTime );
 
-	m_iCoinsByHourForYear[pNewTime->tm_yday][pNewTime->tm_hour]++;
+	m_iCoinsByHourForYear[pTime->tm_yday][pTime->tm_hour]++;
 }
 
 int Bookkeeper::GetCoinsForDay( int iDayOfYear )
@@ -193,8 +197,8 @@ void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] )
 
 	for( int i=0; i<NUM_LAST_DAYS; i++ )
 	{
-		time = GetYesterday( time );
 		coins[i] = GetCoinsForDay( time.tm_yday );
+		time = GetYesterday( time );
 	}
 }
 
@@ -206,7 +210,8 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] )
 	long lOldTime = m_iLastSeenTime;
     tm time = *localtime( &lOldTime );
 
-	time = GetLastSunday( time );
+	time = GetNextSunday( time );
+	time = GetYesterday( time );
 
 	for( int w=0; w<NUM_LAST_WEEKS; w++ )
 	{
@@ -214,8 +219,8 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] )
 
 		for( int d=0; d<DAYS_IN_WEEK; d++ )
 		{
-			time = GetYesterday( time );
 			coins[w] += GetCoinsForDay( time.tm_yday );
+			time = GetYesterday( time );
 		}
 	}
 }
@@ -232,8 +237,8 @@ void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] )
 
 	for( int d=0; d<DAYS_PER_YEAR; d++ )
 	{
-		time = GetYesterday( time );
 		coins[GetDayOfWeek(time)] += GetCoinsForDay( time.tm_yday );
+		time = GetYesterday( time );
 	}
 }
 

@@ -1290,11 +1290,24 @@ void ProfileManager::SaveStatsWebPageToDir( CString sDir, MemoryCard mc )
 			PRINT_DIV_END;
 		}
 
+		// GetCoinsByDayOfWeek
+		{
+			int coins[DAYS_IN_WEEK];
+			BOOKKEEPER->GetCoinsByDayOfWeek( coins );
+			PRINT_DIV_START( "Coins by Day of Week" );
+			for( int i=0; i<DAYS_IN_WEEK; i++ )
+			{
+				CString sDay = DAY_OF_WEEK_TO_NAME[i];
+				PRINT_LINE_I( sDay.c_str(), coins[i] );
+			}
+			PRINT_DIV_END;
+		}
+
 		// GetCoinsByHour
 		{
 			int coins[HOURS_PER_DAY];
 			BOOKKEEPER->GetCoinsByHour( coins );
-			PRINT_DIV_START( ssprintf("Coins for Last %d Weeks",HOURS_PER_DAY).c_str() );
+			PRINT_DIV_START( ssprintf("Coins for Last %d Hours",HOURS_PER_DAY).c_str() );
 			for( int i=0; i<HOURS_PER_DAY; i++ )
 			{
 				CString sHour = ssprintf("hour %d",i);
