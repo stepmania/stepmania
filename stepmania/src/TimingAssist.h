@@ -18,9 +18,10 @@ public:
 
 private:
 	void DoTimingAssist(PlayerNumber pn);
+	void Announce(TapNoteScore tns, bool early);
 
 	RandomSample Timing[NUM_TAP_NOTE_SCORES][2];
-	RandomSample Miss;
+	RandomSample Miss, Exact;
 
 	NoteDataWithScoring *data[NUM_PLAYERS];
 	int LastRow;

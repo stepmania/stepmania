@@ -111,7 +111,8 @@ TapNoteScore NoteDataWithScoring::MinTapNoteScore(unsigned row) const
 }
 
 /* Return the last tap score of a row: the grade of the tap that completed
- * the row.  If the row isn't complete (not all taps have been hit), return -1. */
+ * the row.  If the row has no tap notes, return -1.  If any tap notes aren't
+ * graded (any tap is TNS_NONE) or are missed (TNS_MISS), return it. */
 int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
 {
 	float scoretime = -9999;
@@ -122,7 +123,7 @@ int NoteDataWithScoring::LastTapNoteScoreTrack(unsigned row) const
 		if(GetTapNote(t, row) == TAP_EMPTY) continue;
 
 		TapNoteScore tns = GetTapNoteScore(t, row);
-		if(tns == TNS_MISS) return t;
+		if(tns == TNS_NONE || tns == TNS_MISS) return t;
 
 		float tm = GetTapNoteOffset(t, row);
 		if(tm < scoretime) continue;

@@ -29,6 +29,7 @@ TimingAssist::TimingAssist()
 	}
 
 	Miss.Load(ANNOUNCER->GetPathTo("gameplay assist miss"));
+	Exact.Load(ANNOUNCER->GetPathTo("gameplay assist exact"));
 	memset(data, 0, sizeof(data));
 }
 
@@ -55,6 +56,20 @@ void TimingAssist::Update(float fDeltaTime)
 	}
 }
 
+void TimingAssist::Announce(TapNoteScore tns, bool early)
+{
+	/* Only one miss and perfect/marv sound.  We could have early/late
+	 * sounds for perfect and marvelous, but let's just have one "exact"
+	 * sound.  We should have something else for advanced players who
+	 * actually do want to know if they're late or early for a marvelous. */
+	if(tns == TNS_MISS)
+		Miss.PlayRandom();
+	else if(tns == TNS_PERFECT || tns == TNS_MARVELOUS)
+		Exact.PlayRandom();
+	else
+		Timing[tns][early].PlayRandom();
+}
+
 void TimingAssist::DoTimingAssist(PlayerNumber pn)
 {
 	ASSERT(data[pn]);
@@ -65,33 +80,19 @@ void TimingAssist::DoTimingAssist(PlayerNumber pn)
 	const int maxrow = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 	for( ; LastRow <= maxrow; LastRow++)
 	{
-		TapNoteScore mintns = data[pn]->MinTapNoteScore(LastRow);
-
-		/* If the minimum score is TNS_NONE, then not all notes on this row have
-		 * been graded, so stop. */
-		if(mintns == TNS_NONE) return;
-
-		/* Don't announce if the score is the maximum. */
-		if(mintns == TNS_MARVELOUS) continue;
-		if(mintns == TNS_PERFECT && !PREFSMAN->m_bMarvelousTiming) continue;
-
-		if(mintns == TNS_MISS)
-		{
-			Miss.PlayRandom();
-			continue;
-		}
-
 		const int last_tns_track = data[pn]->LastTapNoteScoreTrack(LastRow);
 
-		/* We shouldn't get here if there're no notes on this row, since MinTNS
-		 * above should have returned TNS_NONE. */
-		ASSERT(last_tns_track != -1);
+		/* -1 means the row has no tap notes; it's irrelevant. */
+		if(last_tns_track == -1) continue;
 
 		const TapNoteScore last_tns = data[pn]->GetTapNoteScore(last_tns_track, LastRow);
+		/* TNS_NONE means the row is incomplete--it hasn't been graded yet. */
+		if(last_tns == TNS_NONE) return;
+
 		const float offset = data[pn]->GetTapNoteOffset(last_tns_track, LastRow);
 		const bool early = offset < 0;
 
-		Timing[last_tns][early].PlayRandom();
+		Announce(last_tns, early);
 	}
 }
 /*
