@@ -1113,17 +1113,9 @@ void GameState::SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CStrin
 	map<float,CString> &BeatToNoteSkin = pPlayerState->m_BeatToNoteSkin;
 
 	/* Erase any other note skin settings in this range. */
-	map<float,CString>::iterator it = BeatToNoteSkin.lower_bound( StartBeat );
+	map<float,CString>::iterator begin = BeatToNoteSkin.lower_bound( StartBeat );
 	map<float,CString>::iterator end = BeatToNoteSkin.upper_bound( EndBeat );
-	while( it != end )
-	{
-		map<float,CString>::iterator next = it;
-		++next;
-
-		BeatToNoteSkin.erase( it );
-
-		it = next;
-	}
+	BeatToNoteSkin.erase( begin, end );
 
 	/* Add the skin to m_BeatToNoteSkin.  */
 	BeatToNoteSkin[StartBeat] = sNoteSkin;
