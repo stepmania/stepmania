@@ -16,7 +16,12 @@
 #include <ctype.h>
 
 #if defined(_XBOX)
-#include <WinSockX.h>
+// Summary : WinsockX is bad, XTL is good.
+// Explained : WinsockX may rely on some declares 
+//			   that are present in XTL. Also, using
+//			   XTL includes some files maybe needed
+//			   for other operations on Xbox.
+#include <xtl.h>
 #elif defined(_WINDOWS)
 #include <winsock2.h>
 #else
