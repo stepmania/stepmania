@@ -5,10 +5,12 @@
 class ErrorDialog;
 class LoadingWindow;
 class RageSoundDriver;
+class ArchHooks;
 
 ErrorDialog *MakeErrorDialog();
 LoadingWindow *MakeLoadingWindow();
 RageSoundDriver *MakeRageSoundDriver(CString drivers);
+ArchHooks *MakeArchHooks();
 
 /* Define the default list of sound drivers for each arch. */
 #if defined(WIN32)
@@ -18,7 +20,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers);
 #endif
 
 /*
- * Copyright (c) 2002 by the person(s) listed below.  All rights reserved.
+ * Copyright (c) 2002-2003 by the person(s) listed below.  All rights reserved.
  *
  * Glenn Maynard
  */

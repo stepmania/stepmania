@@ -742,8 +742,20 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 				</Filter>
 				<Filter
-					Name="DebugInfo"
+					Name="ArchHooks"
 					Filter="">
+					<File
+						RelativePath="arch\ArchHooks\ArchHooks.h">
+					</File>
+					<File
+						RelativePath="arch\ArchHooks\ArchHooks_Win32.cpp">
+					</File>
+					<File
+						RelativePath="arch\ArchHooks\ArchHooks_Win32.h">
+					</File>
+					<File
+						RelativePath="arch\ArchHooks\ArchHooks_none.h">
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

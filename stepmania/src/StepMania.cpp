@@ -10,6 +10,8 @@
 -----------------------------------------------------------------------------
 */
 
+#include "StepMania.h"
+
 //
 // Rage global classes
 //
@@ -46,13 +48,8 @@
 #include "InputQueue.h"
 #include "SongCacheIndex.h"
 
-
-#include "archutils/win32/tls.h"
-#include "archutils/win32/crash.h"
-
-
-#include "SDL.h"
-#include "SDL_opengl.h"
+/* This is also a global class; we own it. */
+ArchHooks *HOOKS = NULL;
 
 
 #ifdef DEBUG
@@ -217,13 +214,12 @@ static void RestoreAppPri()
 
 int main(int argc, char* argv[])
 {
+	/* Set up arch hooks first.  This may set up crash handling. */
+	HOOKS = MakeArchHooks();
+
 	ChangeToDirOfExecutable(argv[0]);
 
     atexit(SDL_Quit);   /* Clean up on exit */
-
-	SetUnhandledExceptionFilter(CrashHandler);
-	InitThreadData("Main thread");
-	VDCHECKPOINT;
 
 	/* Fire up the SDL, but don't actually start any subsystems. */
 	int SDL_flags = 0;
@@ -365,8 +361,8 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( TEXTUREMAN );
 	SAFE_DELETE( DISPLAY );
 	SAFE_DELETE( LOG );
-
-
+	SAFE_DELETE( HOOKS );
+	
 	if( g_sErrorString != "" )
 	{
 		// throw up a pretty error dialog

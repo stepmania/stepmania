@@ -7,6 +7,7 @@
 /* Load default fallback drivers; some of these may be overridden by arch-specific drivers. */
 #include "LoadingWindow/LoadingWindow_SDL.h"
 #include "ErrorDialog/ErrorDialog_stdout.h"
+#include "ArchHooks/ArchHooks_none.h"
 
 /* no default sound driver */
 

@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                               	cl                                                /Zl                                                /nologo                                                /c                                                verstub.cpp                                                /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                	cl                                                 /Zl                                                 /nologo                                                 /c                                                 verstub.cpp                                                 /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                               	cl                                                /Zl                                                /nologo                                                /c                                                verstub.cpp                                                /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                	cl                                                 /Zl                                                 /nologo                                                 /c                                                 verstub.cpp                                                 /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -642,6 +642,26 @@ SOURCE=.\arch\ErrorDialog\ErrorDialog_Win32.cpp
 # Begin Source File
 
 SOURCE=.\arch\ErrorDialog\ErrorDialog_Win32.h
+# End Source File
+# End Group
+# Begin Group "ArchHooks"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\ArchHooks\ArchHooks.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ArchHooks\ArchHooks_none.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ArchHooks\ArchHooks_Win32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ArchHooks\ArchHooks_Win32.h
 # End Source File
 # End Group
 # Begin Source File

@@ -13,10 +13,10 @@
 
 
 void ApplyGraphicOptions();
-
 void ExitGame();
-
 void ResetGame();
 
+#include "arch/ArchHooks/ArchHooks.h"
+extern ArchHooks *HOOKS;	// global and accessable from anywhere in our program
 
 #endif
