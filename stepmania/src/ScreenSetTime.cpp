@@ -57,6 +57,9 @@ ScreenSetTime::ScreenSetTime( CString sClassName ) : ScreenWithMenuElements( sCl
 	
 	m_Selection = hour;
 
+	FOREACH_PlayerNumber( pn )
+		GAMESTATE->m_bSideIsJoined[pn] = true;
+
 	FOREACH_SetTimeSelection( s )
 	{
 		BitmapText &title = m_textTitle[s];
@@ -78,6 +81,8 @@ ScreenSetTime::ScreenSetTime( CString sClassName ) : ScreenWithMenuElements( sCl
 	ChangeSelection( 0 );
 
 	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
+
+	this->SortByDrawOrder();
 }
 
 void ScreenSetTime::Update( float fDelta )
@@ -141,16 +146,15 @@ void ScreenSetTime::ChangeValue( int iDirection )
 
 void ScreenSetTime::ChangeSelection( int iDirection )
 {
-	if( iDirection == -1 && m_Selection == 0 )	// top row
-		return;	// can't go up any more
-
-	// turn off old effect
-	m_textValue[m_Selection].SetEffectNone();
-
 	// set new value of m_Selection
-	((int&)m_Selection) += iDirection;
-	CLAMP( (int&)m_Selection, 0, NUM_SET_TIME_SELECTIONS-1 );
+	SetTimeSelection OldSelection = m_Selection;
+	enum_add( m_Selection, iDirection );
 
+	CLAMP( (int&)m_Selection, 0, NUM_SET_TIME_SELECTIONS-1 );
+	if( iDirection != 0 && m_Selection == OldSelection )
+		return; // can't move any more
+
+	m_textValue[OldSelection].SetEffectNone();
 	m_textValue[m_Selection].SetEffectDiffuseShift();
 
 	SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
