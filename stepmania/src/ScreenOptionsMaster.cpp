@@ -16,9 +16,7 @@
 #include "Character.h"
 #include "ScreenOptionsMasterPrefs.h"
 
-#define NUM_ROWS				THEME->GetMetricI(m_sName,"NumRows")
-#define TOGETHER				THEME->GetMetricI(m_sName,"Together")
-#define EXPLANATIONS			THEME->GetMetricB(m_sName,"Explanations")
+#define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
 
 #define ENTRY(s)				THEME->GetMetric ("ScreenOptionsMasterEntries",s)
@@ -26,6 +24,7 @@
 #define ENTRY_NAME(s,i)			THEME->GetMetric ("ScreenOptionsMasterEntries",ssprintf("%sName,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)		THEME->GetMetric ("ScreenOptionsMasterEntries",(s) + "Default")
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
+
 // #define NEXT_SCREEN( play_mode )		THEME->GetMetric (m_sName,"NextScreen"+Capitalize(PlayModeToString(play_mode)))
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 // #define PREV_SCREEN( play_mode )		THEME->GetMetric (m_sName,"PrevScreen"+Capitalize(PlayModeToString(play_mode)))
@@ -176,8 +175,38 @@ void ScreenOptionsMaster::SetCharacter( OptionRow &row, OptionRowHandler &hand )
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {
-	m_OptionRowAlloc = new OptionRow[NUM_ROWS];
-	for( int i = 0; i < NUM_ROWS; ++i )
+
+	CStringArray Flags;
+	split( OPTION_MENU_FLAGS, ";", Flags, true );
+	InputMode im = INPUTMODE_INDIVIDUAL;
+	bool Explanations = false;
+	int NumRows = -1;
+
+	unsigned i;
+	for( i = 0; i < Flags.size(); ++i )
+	{
+		Flags[i].MakeLower();
+
+		if( sscanf( Flags[i], "rows,%i", &NumRows ) == 1 )
+			continue;
+		if( Flags[i] == "together" )
+			im = INPUTMODE_TOGETHER;
+		if( Flags[i] == "explanations" )
+			Explanations = true;
+		if( Flags[i] == "forceallplayers" )
+		{
+			for( int pn=0; pn<NUM_PLAYERS; pn++ )
+				GAMESTATE->m_bSideIsJoined[pn] = true;
+			GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
+		}
+	}
+
+	if( NumRows == -1 )
+		RageException::Throw( "%s::OptionMenuFlags is missing \"rows\" field", m_sName.c_str() );
+
+	bool TitleSetExplicitly = false;
+	m_OptionRowAlloc = new OptionRow[NumRows];
+	for( i = 0; (int) i < NumRows; ++i )
 	{
 		OptionRow &row = m_OptionRowAlloc[i];
 		
@@ -197,8 +226,10 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 			CString Title = "";
 			if( !name.CompareNoCase("title") )
+			{
+				TitleSetExplicitly = true;
 				row.name = param;
-
+			}
 			else if( !name.CompareNoCase("list") )
 			{
 				SetList( row, hand, param, Title );
@@ -219,17 +250,16 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			}
 			else
 				RageException::Throw( "Unexpected type '%s' in %s::Line%i", name.c_str(), m_sName.c_str(), i );
-			if( row.name == "" )
+
+			if( !TitleSetExplicitly )
 				row.name = Title;
-			
 		}
 		OptionRowHandlers.push_back( hand );
 	}
 
-	ASSERT( (int) OptionRowHandlers.size() == NUM_ROWS );
+	ASSERT( (int) OptionRowHandlers.size() == NumRows );
 
-	InputMode im = (InputMode) TOGETHER;
-	Init( im, m_OptionRowAlloc, NUM_ROWS, EXPLANATIONS );
+	Init( im, m_OptionRowAlloc, NumRows, Explanations );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
@@ -333,14 +363,8 @@ void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHan
 	switch( hand.type )
 	{
 	case ROW_LIST:
-	{
-		const ModeChoice &mc = hand.ListEntries[sel];
-
 		hand.Default.Apply( (PlayerNumber)pn );
-		mc.Apply( (PlayerNumber)pn );
-		if( mc.m_sScreen != "" )
-			m_NextScreen = mc.m_sScreen;
-	}
+		hand.ListEntries[sel].Apply( (PlayerNumber)pn );
 		break;
 
 	case ROW_CONFIG:
@@ -393,8 +417,6 @@ void ScreenOptionsMaster::ExportOption( const OptionRow &row, const OptionRowHan
 
 void ScreenOptionsMaster::ExportOptions()
 {
-	m_NextScreen = "";
-
 	for( unsigned i = 0; i < OptionRowHandlers.size(); ++i )
 	{
 		const OptionRowHandler &hand = OptionRowHandlers[i];
@@ -412,6 +434,20 @@ void ScreenOptionsMaster::ExportOptions()
 
 				ExportOption( row, hand, pn, m_iSelectedOption[pn][i] );
 			}
+	}
+
+	/* If the selection is on a LIST, and the selected LIST option sets the screen,
+	 * honor it. */
+	m_NextScreen = "";
+
+	const int row = this->GetCurrentRow();
+	const OptionRowHandler &hand = OptionRowHandlers[row];
+	if( hand.type == ROW_LIST )
+	{
+		const int sel = m_iSelectedOption[0][i];
+		const ModeChoice &mc = hand.ListEntries[sel];
+		if( mc.m_sScreen != "" )
+			m_NextScreen = mc.m_sScreen;
 	}
 
 	// NEXT_SCREEN(GAMESTATE->m_PlayMode) );
