@@ -20,6 +20,8 @@
 #include "XmlFile.h"
 #include "HighScore.h"
 #include "TimeConstants.h"
+#include "SongUtil.h"	// for SongID
+#include "StepsUtil.h"	// for StepsID
 
 
 //
@@ -73,6 +75,7 @@ public:
 	int GetTotalHighScoreDancePointsForStepsType( StepsType st ) const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
+	int GetSongNumTimesPlayed( const SongID& songID ) const;
 	
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
 
@@ -117,19 +120,23 @@ public:
 	int m_iNumSongsPassedByGrade[NUM_GRADES];
 
 	//
-	// Steps high scores
+	// Song high scores
 	//
 	struct HighScoresForASteps
 	{
 		HighScoreList hs;
 	};
-	std::map<const Steps*,HighScoresForASteps>	m_StepsHighScores;
+	struct HighScoresForASong
+	{
+		std::map<StepsID,HighScoresForASteps>	m_StepsHighScores;
+	};
+	std::map<SongID,HighScoresForASong>	m_SongHighScores;
 
-	void AddStepsHighScore( const Steps* pSteps, HighScore hs, int &iIndexOut );
-	HighScoreList& GetStepsHighScoreList( const Steps* pSteps );
-	const HighScoreList& GetStepsHighScoreList( const Steps* pSteps ) const;
-	int GetStepsNumTimesPlayed( const Steps* pSteps ) const;
-	void IncrementStepsPlayCount( const Steps* pSteps );
+	void AddStepsHighScore( const Song* pSong, const Steps* pSteps, HighScore hs, int &iIndexOut );
+	const HighScoreList& GetStepsHighScoreList( const Song* pSong, const Steps* pSteps ) const;
+	HighScoreList& GetStepsHighScoreList( const Song* pSong, const Steps* pSteps );
+	int GetStepsNumTimesPlayed( const Song* pSong, const Steps* pSteps ) const;
+	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps );
 
 
 	//

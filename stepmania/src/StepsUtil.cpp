@@ -16,6 +16,8 @@
 #include "Steps.h"
 #include "ProfileManager.h"
 #include "song.h"
+#include "SongManager.h"
+#include "GameManager.h"
 
 //
 // Sorting stuff
@@ -42,9 +44,34 @@ void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers,
 
 void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, const Profile* pProfile, bool bDecending )
 {
+	// ugly...
+	vector<Song*> vpSongs = SONGMAN->GetAllSongs();
+	vector<Steps*> vpAllSteps;
+	map<Steps*,Song*> mapStepsToSong;
+	{
+		for( unsigned i=0; i<vpSongs.size(); i++ )
+		{
+			Song* pSong = vpSongs[i];
+			vector<Steps*> vpSteps = pSong->GetAllSteps();
+			for( unsigned j=0; j<vpSteps.size(); j++ )
+			{
+				Steps* pSteps = vpSteps[j];
+				if( pSteps->IsAutogen() )
+					continue;	// skip
+				vpAllSteps.push_back( pSteps );
+				mapStepsToSong[pSteps] = pSong;
+			}
+		}
+	}
+
+
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < vStepsPointers.size(); ++i)
-		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", pProfile->GetStepsNumTimesPlayed(vStepsPointers[i]));
+	{
+		Steps* pSteps = vStepsPointers[i];
+		Song* pSong = mapStepsToSong[pSteps];
+		steps_sort_val[vStepsPointers[i]] = ssprintf("%9i", pProfile->GetStepsNumTimesPlayed(pSong,pSteps));
+	}
 	stable_sort( vStepsPointers.begin(), vStepsPointers.end(), bDecending ? CompareStepsPointersBySortValueDescending : CompareStepsPointersBySortValueAscending );
 	steps_sort_val.clear();
 }
@@ -133,4 +160,37 @@ Steps *StepsID::ToSteps( const Song *p, bool bAllowNull ) const
 	RageException::Throw( "%i, %i, \"%s\"", st, dc, sDescription.c_str() );	
 }
 
+XNode* StepsID::CreateNode() const
+{
+	XNode* pNode = new XNode;
+	pNode->name = "Steps";
+
+	pNode->AppendAttr( "StepsType", GameManager::NotesTypeToString(st) );
+	pNode->AppendAttr( "Difficulty", DifficultyToString(dc) );
+	if( dc == DIFFICULTY_EDIT )
+		pNode->AppendAttr( "Description", sDescription );
+
+	return pNode;
+}
+
+void StepsID::LoadFromNode( const XNode* pNode ) 
+{
+	ASSERT( pNode->name == "Steps" );
+
+	CString sTemp;
+
+	pNode->GetAttrValue("StepsType", sTemp);
+	st = GameManager::StringToNotesType( sTemp );
+
+	pNode->GetAttrValue("Difficulty", sTemp);
+	dc = StringToDifficulty( sTemp );
+
+	if( dc == DIFFICULTY_EDIT )
+		pNode->GetChildValue("Description", sDescription);
+}
+
+bool StepsID::IsValid() const
+{
+	return st != STEPS_TYPE_INVALID && dc != DIFFICULTY_INVALID;
+}
 

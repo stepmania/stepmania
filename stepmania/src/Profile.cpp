@@ -116,7 +116,7 @@ void Profile::InitGeneralData()
 
 void Profile::InitSongScores()
 {
-	m_StepsHighScores.clear();
+	m_SongHighScores.clear();
 }
 
 void Profile::InitCourseScores()
@@ -195,19 +195,40 @@ int Profile::GetTotalHighScoreDancePointsForStepsType( StepsType st ) const
 	
 	// add steps high scores
 	{
-		for( std::map<const Steps*,HighScoresForASteps>::const_iterator iter = m_StepsHighScores.begin();
-			iter != m_StepsHighScores.end();
-			iter++ )
+		for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
+			i != m_SongHighScores.end();
+			i++ )
 		{
-			const Steps* pSteps = iter->first;
-			ASSERT( pSteps );
-			const HighScoresForASteps& h = iter->second;
-			const HighScoreList& hs = h.hs;
-			if( pSteps->m_StepsType == st )
+			SongID id = i->first;
+			Song* pSong = id.ToSong();
+			
+			// If the Song isn't loaded on the current machine, then we can't 
+			// get radar values to compute dance points.
+			if( pSong == NULL )
+				continue;
+
+			const HighScoresForASong &hsfas = i->second;
+
+			for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsfas.m_StepsHighScores.begin();
+				j != hsfas.m_StepsHighScores.end();
+				j++ )
 			{
-				const RadarValues& fRadars = pSteps->GetRadarValues();
-				int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
-				iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
+				StepsID id = j->first;
+				Steps* pSteps = id.ToSteps( pSong, true );
+				
+				// If the Steps isn't loaded on the current machine, then we can't 
+				// get radar values to compute dance points.
+				if( pSteps == NULL )
+					continue;
+
+				const HighScoresForASteps& h = j->second;
+				const HighScoreList& hs = h.hs;
+				if( pSteps->m_StepsType == st )
+				{
+					const RadarValues& fRadars = pSteps->GetRadarValues();
+					int iPossibleDP = ScoreKeeperMAX2::GetPossibleDancePoints( fRadars );
+					iTotal += (int)truncf( hs.GetTopScore().fPercentDP * iPossibleDP );
+				}
 			}
 		}
 	}
@@ -249,13 +270,25 @@ CString Profile::GetProfileDisplayNameFromDir( CString sDir )
 
 int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 {
+	SongID songID;
+	songID.FromSong( pSong );
+	return GetSongNumTimesPlayed( songID );
+}
+
+int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
+{
 	int iTotalNumTimesPlayed = 0;
-	vector<Steps*> vpSteps;
-	pSong->GetSteps( vpSteps );
-	for( unsigned i=0; i<vpSteps.size(); i++ )
+
+	std::map<SongID,HighScoresForASong> &songHighScores = ((Profile*)(this))->m_SongHighScores;
+	const HighScoresForASong& hsSong = songHighScores[songID];
+
+	for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
+		j != hsSong.m_StepsHighScores.end();
+		j++ )
 	{
-		const Steps* pSteps = vpSteps[i];
-		iTotalNumTimesPlayed += ((Profile*) this)->GetStepsHighScoreList(pSteps).iNumTimesPlayed;
+		const HighScoresForASteps &hsSteps = j->second;
+
+		iTotalNumTimesPlayed += hsSteps.hs.iNumTimesPlayed;
 	}
 	return iTotalNumTimesPlayed;
 }
@@ -263,46 +296,38 @@ int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 //
 // Steps high scores
 //
-void Profile::AddStepsHighScore( const Steps* pSteps, HighScore hs, int &iIndexOut )
+void Profile::AddStepsHighScore( const Song* pSong, const Steps* pSteps, HighScore hs, int &iIndexOut )
 {
-	ASSERT(pSteps);
-	std::map<const Steps*,HighScoresForASteps>::iterator iter = m_StepsHighScores.find( pSteps );
-	if( iter == m_StepsHighScores.end() )
-		m_StepsHighScores[pSteps].hs.AddHighScore( hs, iIndexOut );	// operator[] inserts into map
-	else
-		iter->second.hs.AddHighScore( hs, iIndexOut );
+	GetStepsHighScoreList(pSong,pSteps).AddHighScore( hs, iIndexOut );
 }
 
-const HighScoreList& Profile::GetStepsHighScoreList( const Steps* pSteps ) const
+const HighScoreList& Profile::GetStepsHighScoreList( const Song* pSong, const Steps* pSteps ) const
 {
-	ASSERT(pSteps);
-	/* We're const, but insert a blank entry anyway if the requested pointer doesn't exist. */
-	return ((Profile *) this)->m_StepsHighScores[pSteps].hs;
+	return ((Profile*)this)->GetStepsHighScoreList(pSong,pSteps);
 }
 
-HighScoreList& Profile::GetStepsHighScoreList( const Steps* pSteps )
+HighScoreList& Profile::GetStepsHighScoreList( const Song* pSong, const Steps* pSteps )
 {
-	ASSERT(pSteps);
-	std::map<const Steps*,HighScoresForASteps>::iterator iter = m_StepsHighScores.find( pSteps );
-	if( iter == m_StepsHighScores.end() )
-		return m_StepsHighScores[pSteps].hs;	// operator[] inserts into map
-	else
-		return iter->second.hs;
+	SongID songID;
+	songID.FromSong( pSong );
+	
+	StepsID stepsID;
+	stepsID.FromSteps( pSteps );
+	
+	HighScoresForASong &hsSong = m_SongHighScores[songID];	// operator[] inserts into map
+	HighScoresForASteps &hsSteps = hsSong.m_StepsHighScores[stepsID];	// operator[] inserts into map
+
+	return hsSteps.hs;
 }
 
-int Profile::GetStepsNumTimesPlayed( const Steps* pSteps ) const
+int Profile::GetStepsNumTimesPlayed( const Song* pSong, const Steps* pSteps ) const
 {
-	ASSERT(pSteps);
-	std::map<const Steps*,HighScoresForASteps>::const_iterator iter = m_StepsHighScores.find( pSteps );
-	if( iter == m_StepsHighScores.end() )
-		return 0;
-	else
-		return iter->second.hs.iNumTimesPlayed;
+	return GetStepsHighScoreList(pSong,pSteps).iNumTimesPlayed;
 }
 
-void Profile::IncrementStepsPlayCount( const Steps* pSteps )
+void Profile::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps )
 {
-	GetStepsHighScoreList(pSteps).iNumTimesPlayed++;
+	GetStepsHighScoreList(pSong,pSteps).iNumTimesPlayed++;
 }
 
 
@@ -862,38 +887,34 @@ XNode* Profile::SaveSongScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->name = "SongScores";
 
-	const vector<Song*> &vpSongs = SONGMAN->GetAllSongs();
-	
-	for( unsigned s=0; s<vpSongs.size(); s++ )	// foreach song
-	{
-		Song* pSong = vpSongs[s];
-		ASSERT(pSong);
+	for( std::map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
+		i != m_SongHighScores.end();
+		i++ )
+	{	
+		const SongID &songID = i->first;
+		const HighScoresForASong &hsSong = i->second;
 
 		// skip songs that have never been played
-		if( pProfile->GetSongNumTimesPlayed(pSong) == 0 )
+		if( pProfile->GetSongNumTimesPlayed(songID) == 0 )
 			continue;
 
-		LPXNode pSongNode = pNode->AppendChild( "Song" );
-		pSongNode->AppendAttr( "Dir", pSong->GetSongDir() );
 
-		const vector<Steps*> vSteps = pSong->GetAllSteps();
+		LPXNode pSongNode = pNode->AppendChild( songID.CreateNode() );
 
-		for( unsigned n=0; n<vSteps.size(); n++ )
-		{
-			Steps* pSteps = vSteps[n];
+		for( std::map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
+			j != hsSong.m_StepsHighScores.end();
+			j++ )
+		{	
+			const StepsID &stepsID = j->first;
+			const HighScoresForASteps &hsSteps = j->second;
+
+			const HighScoreList &hsl = hsSteps.hs;
 
 			// skip steps that have never been played
-			if( pProfile->GetStepsHighScoreList(pSteps).iNumTimesPlayed == 0 )
+			if( hsl.iNumTimesPlayed == 0 )
 				continue;
 
-			LPXNode pStepsNode = pSongNode->AppendChild( "Steps" );
-
-			const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
-			
-			pStepsNode->AppendAttr( "StepsType", GameManager::NotesTypeToString(pSteps->m_StepsType) );
-			pStepsNode->AppendAttr( "Difficulty", DifficultyToString(pSteps->GetDifficulty()) );
-			if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
-				pStepsNode->AppendChild( "Description", pSteps->GetDescription() );
+			LPXNode pStepsNode = pSongNode->AppendChild( stepsID.CreateNode() );
 
 			pStepsNode->AppendChild( hsl.CreateNode() );
 		}
@@ -913,16 +934,10 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 		if( (*song)->name != "Song" )
 			continue;
 
-		CString sSongDir;
-		if( !(*song)->GetAttrValue( "Dir", sSongDir ) )
+		SongID songID;
+		songID.LoadFromNode( *song );
+		if( !songID.IsValid() )
 			WARN_AND_CONTINUE;
-
-		Song* pSong = SONGMAN->GetSongFromDir( sSongDir );
-		if( pSong == NULL )
-		{
-			LOG->Trace("Couldn't find song \"%s\"; scoring data will be lost", sSongDir.c_str() );
-			continue;
-		}
 
 		for( XNodes::iterator steps = (*song)->childs.begin(); 
 			steps != (*song)->childs.end(); 
@@ -931,48 +946,16 @@ void Profile::LoadSongScoresFromNode( const XNode* pNode )
 			if( (*steps)->name != "Steps" )
 				continue;
 
-			CString str;
-			if( !(*steps)->GetAttrValue("StepsType", str) )
+			StepsID stepsID;
+			stepsID.LoadFromNode( *steps );
+			if( !stepsID.IsValid() )
 				WARN_AND_CONTINUE;
-			const StepsType st = GameManager::StringToNotesType( str );
-			if( st == STEPS_TYPE_INVALID )
-				WARN_AND_CONTINUE;
-
-			if( !(*steps)->GetAttrValue("Difficulty", str) )
-				WARN_AND_CONTINUE;
-			const Difficulty dc = StringToDifficulty( str );
-			if( dc == DIFFICULTY_INVALID )
-				WARN_AND_CONTINUE;
-		
-			Steps* pSteps = NULL;
-			if( dc == DIFFICULTY_EDIT )
-			{
-				CString sDescription;
-				if( !(*steps)->GetChildValue("Description", sDescription) )
-					WARN_AND_CONTINUE;
-
-				pSteps = pSong->GetStepsByDescription( st, sDescription );				
-				if( pSteps == NULL )
-				{
-					LOG->Trace("Edit steps \"%s\" missing in song \"%s\"; scoring data will be lost", sDescription.c_str(), sSongDir.c_str() );
-					continue;
-				}
-			}
-			else
-			{
-				pSteps = pSong->GetStepsByDifficulty( st, dc );
-				if( pSteps == NULL )
-				{
-					LOG->Trace("\"%s\" steps missing in song \"%s\"; scoring data will be lost", DifficultyToString(dc).c_str(), sSongDir.c_str() );
-					continue;
-				}
-			}
 
 			XNode *pHighScoreListNode = (*steps)->GetChild("HighScoreList");
 			if( pHighScoreListNode == NULL )
 				WARN_AND_CONTINUE;
 			
-			HighScoreList &hsl = this->GetStepsHighScoreList( pSteps );
+			HighScoreList &hsl = m_SongHighScores[songID].m_StepsHighScores[stepsID].hs;
 			hsl.LoadFromNode( pHighScoreListNode );
 		}
 	}
@@ -1069,7 +1052,7 @@ void Profile::LoadSongScoresFromDirSM390a12( CString sDir )
 			if( !FileRead(f, iNumTimesPlayed) )
 				WARN_AND_RETURN;
 
-			HighScoreList &hsl = pProfile->GetStepsHighScoreList(pSteps);
+			HighScoreList &hsl = pProfile->GetStepsHighScoreList(pSong,pSteps);
 			
 			if( pSteps )
 				hsl.iNumTimesPlayed = iNumTimesPlayed;

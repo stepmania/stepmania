@@ -18,6 +18,7 @@
 class Steps;
 class Song;
 class Profile;
+struct XNode;
 
 namespace StepsUtil
 {
@@ -41,6 +42,15 @@ public:
 	StepsID() { FromSteps(NULL); }
 	void FromSteps( const Steps *p );
 	Steps *ToSteps( const Song *p, bool bAllowNull ) const;
+	bool operator<( const StepsID &other ) const
+	{
+		return st < other.st || dc < other.dc || sDescription < other.sDescription;
+	}
+
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
+
+	bool IsValid() const;
 };
 
 #endif

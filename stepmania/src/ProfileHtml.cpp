@@ -347,17 +347,24 @@ void PrintStatistics( RageFile &f, const Profile *pProfile, CString sTitle, vect
 			int iGradeCount[NUM_GRADES];
 			ZERO( iGradeCount );
 
-			for( unsigned i=0; i<vpAllSteps.size(); i++ )
+			for( unsigned i=0; i<vpSongs.size(); i++ )
 			{
-				Steps* pSteps = vpAllSteps[i];
-				const HighScoreList &hsl = pProfile->GetStepsHighScoreList(pSteps);
-				if( hsl.vHighScores.empty() )
-					continue;	// no data, skip this one
-				Grade g = hsl.GetTopScore().grade;
-				ASSERT( g != GRADE_NO_DATA );
-				ASSERT( g < NUM_GRADES );
-				ASSERT( g >= 0 );
-				iGradeCount[g] ++;
+				Song* pSong = vpSongs[i];
+				const vector<Steps*> vpSteps = pSong->GetAllSteps();
+
+				for( unsigned j=0; j<vpSteps.size(); j++ )
+				{
+					const Steps* pSteps = vpSteps[j];
+
+					const HighScoreList &hsl = pProfile->GetStepsHighScoreList(pSong,pSteps);
+					if( hsl.vHighScores.empty() )
+						continue;	// no data, skip this one
+					Grade g = hsl.GetTopScore().grade;
+					ASSERT( g != GRADE_NO_DATA );
+					ASSERT( g < NUM_GRADES );
+					ASSERT( g >= 0 );
+					iGradeCount[g] ++;
+				}
 			}
 
 			BEGIN_TABLE(6);
@@ -445,10 +452,10 @@ void PrintPopularity( RageFile &f, const Profile *pProfile, CString sTitle, vect
 				for( i=0; i<uNumToShow; i++ )
 				{
 					Steps* pSteps = vpAllSteps[i];
-					int iNumTimesPlayed = pProfile->GetStepsNumTimesPlayed(pSteps);
+					Song* pSong = mapStepsToSong[pSteps];
+					int iNumTimesPlayed = pProfile->GetStepsNumTimesPlayed(pSong,pSteps);
 					if( iNumTimesPlayed==0 )
 						continue;	// skip
-					Song* pSong = mapStepsToSong[pSteps];
 					CString s;
 					s += GAMEMAN->NotesTypeToString(pSteps->m_StepsType);
 					s += " ";
@@ -633,10 +640,10 @@ bool PrintHighScoresForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 			Steps* pSteps = vpSteps[j];
 			if( pSteps->IsAutogen() )
 				continue;	// skip autogen
-			if( pProfile->GetStepsNumTimesPlayed(pSteps)==0 )
+			if( pProfile->GetStepsNumTimesPlayed(pSong,pSteps)==0 )
 				continue;	// skip
 
-			const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSteps );
+			const HighScoreList &hsl = pProfile->GetStepsHighScoreList( pSong,pSteps );
 			if( hsl.vHighScores.empty() )
 				continue;
 
@@ -737,7 +744,7 @@ bool PrintGradeTableForStepsType( RageFile &f, const Profile *pProfile, StepsTyp
 				{
 					f.PutLine("<td>");
 					f.PutLine( ssprintf("<font class='meter'>%d</font>",pSteps->GetMeter()) );
-					HighScore hs = pProfile->GetStepsHighScoreList( pSteps ).GetTopScore();
+					HighScore hs = pProfile->GetStepsHighScoreList( pSong,pSteps ).GetTopScore();
 					Grade grade = hs.grade;
 					if( grade != GRADE_NO_DATA )
 						f.PutLine( ssprintf("<font class='grade'>%s</font>",GradeToThemedString(grade).c_str()) );
@@ -803,7 +810,7 @@ bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
 				BEGIN_TABLE(3);
 				TABLE_LINE2( "Meter", pSteps->GetMeter() );
 				TABLE_LINE2( "Description", pSteps->GetDescription() );
-				TABLE_LINE2( "NumTimesPlayed", pProfile->GetStepsNumTimesPlayed(pSteps) );
+				TABLE_LINE2( "NumTimesPlayed", pProfile->GetStepsNumTimesPlayed(pSong,pSteps) );
 				END_TABLE;
 
 				BEGIN_TABLE(2);

@@ -1262,7 +1262,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 				// Find Machine Records
 				{
-					HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps);
+					HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
 					for( j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];
@@ -1290,7 +1290,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				// Find Personal Records
 				if( pProf )
 				{
-					HighScoreList &hsl = pProf->GetStepsHighScoreList(pSteps);
+					HighScoreList &hsl = pProf->GetStepsHighScoreList(pSong,pSteps);
 					for( j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];

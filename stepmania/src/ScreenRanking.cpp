@@ -775,7 +775,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 					}
 					else
 					{
-						HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps);
+						HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
 						HighScore hs = hsl.GetTopScore();
 						bool bRecentHighScore = false;
 						if( !hsl.vHighScores.empty() )

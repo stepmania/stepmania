@@ -83,8 +83,8 @@ public:
 	//
 	int GetSongNumTimesPlayed( const Song* pSong, ProfileSlot card ) const;
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
-	void AddStepsHighScore( const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
-	void IncrementStepsPlayCount( const Steps* pSteps, PlayerNumber pn );
+	void AddStepsHighScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
 	HighScore GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc ) const;
 
 	//

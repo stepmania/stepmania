@@ -432,21 +432,21 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 	return GetProfile(slot)->GetSongNumTimesPlayed( pSong );
 }
 
-void ProfileManager::AddStepsHighScore( const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddStepsHighScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSteps, hs, iPersonalIndexOut );
+		PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
 	else
 		iPersonalIndexOut = -1;
-	PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSteps, hs, iMachineIndexOut );
+	PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
 }
 
-void ProfileManager::IncrementStepsPlayCount( const Steps* pSteps, PlayerNumber pn )
+void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn )
 {
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->IncrementStepsPlayCount( pSteps );
-	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSteps );
+		PROFILEMAN->GetProfile(pn)->IncrementStepsPlayCount( pSong, pSteps );
+	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
 HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleDef *st, ProfileSlot slot, Difficulty dc ) const
@@ -459,7 +459,7 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const StyleD
 	const Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
 
 	if( pSteps && PROFILEMAN->IsUsingProfile(slot) )
-		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(pSteps).GetTopScore();
+		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(s,pSteps).GetTopScore();
 	else
 		return HighScore();
 }

@@ -1164,6 +1164,7 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	
 	m_iSelection[pn] = clamp( m_iSelection[pn], 0, int(m_arrayNotes.size()-1) );	// bounds clamping
 
+	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pSteps = m_arrayNotes.empty()? NULL: m_arrayNotes[m_iSelection[pn]];
 
 	GAMESTATE->m_pCurNotes[pn] = pSteps;
@@ -1176,9 +1177,9 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 	{
 		int iScore = 0;
 		if( PROFILEMAN->IsUsingProfile(pn) )
-			iScore = PROFILEMAN->GetProfile(pn)->GetStepsHighScoreList(pSteps).GetTopScore().iScore;
+			iScore = PROFILEMAN->GetProfile(pn)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
 		else
-			iScore = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().iScore;
+			iScore = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
 		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
 	}
 	else

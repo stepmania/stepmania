@@ -1278,7 +1278,7 @@ int	Song::GetNumNotesWithGrade( Grade g ) const
 	{
 		Steps* pSteps = vNotes[j];
 		
-		if( PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().grade == g )
+		if( PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(this,pSteps).GetTopScore().grade == g )
 			iCount++;
 	}
 	return iCount;

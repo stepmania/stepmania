@@ -189,16 +189,16 @@ void PaneDisplay::SetContent( PaneContents c )
 	case SONG_DIFFICULTY_RADAR_FREEZE:	val = rv[RADAR_FREEZE]; break;
 	case SONG_DIFFICULTY_RADAR_CHAOS:	val = rv[RADAR_CHAOS]; break;
 	case SONG_PROFILE_HIGH_SCORE:
-		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSteps).GetTopScore().fPercentDP;
+		val = 100.0f * PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
 		break;
 	case SONG_PROFILE_NUM_PLAYS:
-		val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsNumTimesPlayed(pSteps);
+		val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsNumTimesPlayed(pSong,pSteps);
 		break;
 
 	case SONG_MACHINE_HIGH_NAME: /* set val for color */
 	case SONG_MACHINE_HIGH_SCORE:
 		CHECKPOINT;
-		val = 100.0f * PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().fPercentDP;
+		val = 100.0f * PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
 		break;
 
 	case SONG_MACHINE_RANK:
@@ -265,7 +265,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	switch( c )
 	{
 	case SONG_MACHINE_HIGH_NAME:
-		str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSteps).GetTopScore().sName;
+		str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().sName;
 		break;
 	case COURSE_MACHINE_HIGH_NAME:
 		str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,st,cd).GetTopScore().sName;

@@ -15,6 +15,7 @@
 
 class Song;
 class Profile;
+struct XNode;
 
 namespace SongUtil
 {
@@ -41,6 +42,15 @@ public:
 	SongID() { FromSong(NULL); }
 	void FromSong( const Song *p );
 	Song *ToSong() const;
+	bool operator<( const SongID &other ) const
+	{
+		return sDir < other.sDir;
+	}
+
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
+
+	bool IsValid() const;
 };
 
 

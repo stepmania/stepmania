@@ -368,3 +368,26 @@ Song *SongID::ToSong() const
 {
 	return SONGMAN->GetSongFromDir( sDir );
 }
+
+
+XNode* SongID::CreateNode() const
+{
+	XNode* pNode = new XNode;
+	pNode->name = "Song";
+
+	pNode->AppendAttr( "Dir", sDir );
+
+	return pNode;
+}
+
+void SongID::LoadFromNode( const XNode* pNode ) 
+{
+	ASSERT( pNode->name == "Song" );
+	pNode->GetAttrValue("Dir", sDir);
+}
+
+bool SongID::IsValid() const
+{
+	return !sDir.empty();
+}
+

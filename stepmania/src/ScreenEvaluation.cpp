@@ -919,6 +919,9 @@ void ScreenEvaluation::CommitScores(
 			if( GAMESTATE->IsDisqualified((PlayerNumber)p) )
 				continue;
 
+			Song* pSong = GAMESTATE->m_pCurSong;
+			Steps* pSteps = GAMESTATE->m_pCurNotes[p];
+
 			//
 			// Add step totals
 			//
@@ -952,10 +955,10 @@ void ScreenEvaluation::CommitScores(
 					if( stageStats.bFailed[p] )
 						continue;
 
-					ASSERT( GAMESTATE->m_pCurNotes[p] );
+					ASSERT( pSteps );
 
 					if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForHighScore )
-						PROFILEMAN->AddStepsHighScore( GAMESTATE->m_pCurNotes[p], (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+						PROFILEMAN->AddStepsHighScore( pSong, pSteps, (PlayerNumber)p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
 				}
 				break;
 
