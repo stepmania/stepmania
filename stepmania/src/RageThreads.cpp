@@ -517,7 +517,7 @@ void RageMutex::Lock()
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
 		ForceCrashHandlerDeadlock( sReason, OtherSlot? OtherSlot->pImpl->GetCrashHandle():0 );
 #else
-		RageException::Throw( "%s", sReason );
+		RageException::Throw( "%s", sReason.c_str() );
 #endif
 	}
 
