@@ -52,6 +52,7 @@
 
 const float TWEEN_TIME		= 0.5f;
 
+static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 
 
 
@@ -63,7 +64,8 @@ ScreenSelectCourse::ScreenSelectCourse()
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
-
+	m_bAllowOptionsMenuRepeat = false;
+	
 	m_Menu.Load(
 		THEME->GetPathTo("BGAnimations","select course"), 
 		THEME->GetPathTo("Graphics","select course top edge"),
@@ -206,18 +208,24 @@ void ScreenSelectCourse::Input( const DeviceInput& DeviceI, InputEventType type,
 
 	if( type == IET_RELEASE )	return;		// don't care
 
-	if( m_Menu.IsClosing() )	return;		// ignore
-
 	if( !GameI.IsValid() )		return;		// don't care
 
-	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
+	if( m_bMadeChoice  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START  &&  !GAMESTATE->IsExtraStage()  &&  !GAMESTATE->IsExtraStage2() )
 	{
+		if(m_bGoToOptions) return; /* got it already */
+
+		if( !m_bAllowOptionsMenuRepeat &&
+			(type == IET_SLOW_REPEAT || type == IET_FAST_REPEAT ))
+			return; /* not allowed yet */
+
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
 		SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","menu start") );
 		return;
 	}
 	
+	if( m_Menu.IsClosing() )	return;		// ignore
+
 	if( m_bMadeChoice )
 		return;
 
@@ -238,6 +246,9 @@ void ScreenSelectCourse::HandleScreenMessage( const ScreenMessage SM )
 
 	switch( SM )
 	{
+	case SM_AllowOptionsMenuRepeat:
+		m_bAllowOptionsMenuRepeat = true;
+		break;
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);
 		break;
@@ -294,6 +305,7 @@ void ScreenSelectCourse::MenuStart( PlayerNumber pn )
 		m_sprOptionsMessage.BeginTweening( 0.25f );	// fade out
 		m_sprOptionsMessage.SetTweenDiffuse( RageColor(1,1,1,0) );
 		m_sprOptionsMessage.SetTweenZoomY( 0 );
+		this->SendScreenMessage( SM_AllowOptionsMenuRepeat, 0.75f );
 
 		m_Menu.TweenOffScreenToBlack( SM_None, false );
 

@@ -57,7 +57,7 @@ protected:
 	MusicWheel			m_MusicWheel;
 
 	bool				m_bMadeChoice;
-	bool				m_bGoToOptions;
+	bool				m_bGoToOptions, m_bAllowOptionsMenuRepeat;
 	Sprite				m_sprOptionsMessage;
 
 	RageSound			m_soundSelect;
