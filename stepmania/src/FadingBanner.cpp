@@ -126,6 +126,8 @@ void FadingBanner::LoadFromCachedBanner( const CString &path )
 
 void FadingBanner::LoadFromSong( Song* pSong )
 {
+	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
+	 * to skip. */
 	LoadFromCachedBanner( pSong->GetBannerPath() );
 }
 
