@@ -1110,7 +1110,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature )
+CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
 {
 	//
 	// Find a file name for the screenshot
@@ -1123,23 +1123,25 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature 
 
 	/* Files should be of the form "screen######.xxx".  Ignore the extension; find
 	 * the last file of this form, and use the next number.  This way, we don't
-	 * write the same screenshot number for different formats (screen0011.bmp,
-	 * screen0011.jpg), and we always increase from the end, so if screen0003.jpg
+	 * write the same screenshot number for different formats (screen00011.bmp,
+	 * screen00011.jpg), and we always increase from the end, so if screen00003.jpg
 	 * is deleted, we won't fill in the hole (which makes screenshots hard to find). */
-	int fileno = -1;
-	for( int i = files.size()-1; i >= 0; --i )
-		if( sscanf( files[i], "screen%d.%*s", &fileno ) == 1 )
-			break;
+	if( iIndex == -1 ) 
+	{
+		for( int i = files.size()-1; i >= 0; --i )
+			if( sscanf( files[i], "screen%d.%*s", &iIndex ) == 1 )
+				break;
 
-	if( fileno == -1 )
-		fileno = 0;
-	else
-		++fileno;
+		if( iIndex == -1 )
+			iIndex = 0;
+		else
+			++iIndex;
+	}
 
 	//
 	// Save the screenshot
 	//
-	CString sFileName = ssprintf( "screen%04d.%s",fileno,bSaveCompressed ? "jpg" : "bmp" );
+	CString sFileName = ssprintf( "screen%05d.%s",iIndex,bSaveCompressed ? "jpg" : "bmp" );
 	CString sPath = sDir+sFileName;
 	bool bResult = DISPLAY->SaveScreenshot( sPath, bSaveCompressed ? RageDisplay::jpg : RageDisplay::bmp );
 	if( !bResult )

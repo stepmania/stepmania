@@ -828,15 +828,26 @@ void PrintBookkeeping( RageFile &f, const Profile *pProfile, CString sTitle, vec
 
 void PrintScreenshot( RageFile &f, const Profile::Screenshot &ss )
 {
-	CString sHtmlPath = "Screenshots/"+ss.sFileName;
-	CString sImgTag = ssprintf("<a href='%s' target='_new'><img class='screenshot' src='%s' width='160' height='120'></a>", sHtmlPath.c_str(), sHtmlPath.c_str() );
-	CString sDetails = "<p>This is a screenshot</p>\n<p>We have no idea where it came from</p>";
+	CString sImagePath = SCREENSHOTS_SUBDIR+ss.sFileName;
+	CString sImgHtml = ssprintf("<a href='%s' target='_new'><img class='screenshot' src='%s' width='160' height='120'></a>", sImagePath.c_str(), sImagePath.c_str() );
+	
+	
+	f.Write("<table>\n");
+	f.Write("<tr>\n");
+	f.Write("<td>"+sImgHtml+"</td>\n");
+	f.Write("<td>\n");
 
 	BEGIN_TABLE(1);
 
-	TABLE_LINE2( sImgTag, sDetails );
+	TABLE_LINE2( "File", ss.sFileName );
+	TABLE_LINE2( "MD5", ss.sMD5 );
+	TABLE_LINE2( "Time", (CString)ctime(&ss.time) );
 
 	END_TABLE;
+
+	f.Write("</td>\n");
+
+	f.Write("</table>\n");
 }
 
 void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CString sProfileDir )

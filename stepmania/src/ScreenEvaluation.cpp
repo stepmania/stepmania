@@ -37,6 +37,7 @@
 #include "RageDisplay.h"
 #include "StepMania.h"
 #include "CryptManager.h"
+#include <time.h>
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -1298,17 +1299,18 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
 				PROFILEMAN->IsUsingProfile(pn) )
 			{
+				Profile* pProfile = PROFILEMAN->GetProfile(pn);
 				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
-				CString sFileName = SaveScreenshot( sDir, true, true );
+				int iScreenshotIndex = pProfile->GetNextScreenshotIndex();
+				CString sFileName = SaveScreenshot( sDir, true, true, iScreenshotIndex );
 				CString sPath = sDir+sFileName;
 				
 				if( !sFileName.empty() )
 				{
-					Profile* pProfile = PROFILEMAN->GetProfile(pn);
 					Profile::Screenshot screenshot;
 					screenshot.sFileName = sFileName;
 					screenshot.sMD5 = CRYPTMAN->GetMD5( sPath );
-					screenshot.highScore = m_HighScore[pn];
+					screenshot.time = time(NULL);
 					pProfile->AddScreenshot( screenshot );
 				}
 

@@ -1253,12 +1253,8 @@ void Profile::LoadScreenshotDataFromNode( const XNode* pNode )
 		if( !(*screenshot)->GetChildValue("MD5",ss.sMD5) )
 			WARN_AND_CONTINUE;
 
-		XNode *pHighScoreNode = (*screenshot)->GetChild("HighScore");
-		if( pHighScoreNode == NULL )
+		if( !(*screenshot)->GetChildValue("Time",(int&)ss.time) )	// time_t is a signed long on Win32.  Is this ok on other platforms?
 			WARN_AND_CONTINUE;
-		
-		HighScore &hs = ss.highScore;
-		hs.LoadFromNode( pHighScoreNode );
 
 		m_vScreenshots.push_back( ss );
 	}	
@@ -1282,7 +1278,7 @@ XNode* Profile::SaveScreenshotDataCreateNode() const
 
 		pScreenshotNode->AppendChild( "FileName", ss.sFileName );
 		pScreenshotNode->AppendChild( "MD5", ss.sMD5);
-		pScreenshotNode->AppendChild( ss.highScore.CreateNode() );
+		pScreenshotNode->AppendChild( "Time", ss.time);
 	}
 
 	return pNode;
