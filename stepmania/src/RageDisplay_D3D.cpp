@@ -1270,10 +1270,6 @@ void RageDisplay_D3D::UpdateTexture(
 
 	RageSurface *Texture = CreateSurfaceFromPixfmt(PixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
 	ASSERT( Texture );
-	SDL_Rect area;
-	area.x = area.y = 0;
-	area.w = (uint16_t) width;
-	area.h = (uint16_t) height;
 	RageSurfaceUtils::Blit( img, Texture, width, height );
 
 	delete Texture;
