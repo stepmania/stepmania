@@ -86,6 +86,9 @@ int InputHandler_Win32_Pump::InputThread_Start( void *p )
 
 void InputHandler_Win32_Pump::InputThreadMain()
 {
+	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
+		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set Pump thread priority"));
+
 	vector<WindowsFileIO *> sources;
 	int i;
 	for(i = 0; i < NUM_PUMPS; ++i)
