@@ -16,7 +16,8 @@
 #include <signal.h>
 
 /* You would think that these would be defined somewhere. */
-enum {
+enum
+{
     kMacOSX_10_2 = 0x1020,
     kMacOSX_10_3 = 0x1030
 };
