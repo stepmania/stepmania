@@ -407,7 +407,7 @@ retry:
 	/* If we're paletted, and didn't get the 8-bit palette we asked for ...*/
 	if(img->format->BitsPerPixel == 8)
 	{
-		int size;
+		int size = 0;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
 		if(size != 8)
 		{
