@@ -118,7 +118,7 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 
 CString ThemeManager::GetPathTo( CString sThemeName, CString sAssetCategory, CString sFileName ) 
 {
-try_element_again:
+// try_element_again:
 	sAssetCategory.MakeLower();
 	sFileName.MakeLower();
 
@@ -163,7 +163,12 @@ try_element_again:
 		sFileName = sNewFilePath;
 
 		/* XXX check for loops */
-		goto try_element_again;
+		/* Important: We need to do a full search.  For example, BG redirs in
+		 * the default theme point to "_shared background", and themes override
+		 * just "_shared background"; the redirs in the default theme should end
+		 * up resolving to the overridden background. */
+		return GetPathTo(sAssetCategory, sFileName);
+//		goto try_element_again;
 	}
 
 	static const char *graphic_masks[] = {
