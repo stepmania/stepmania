@@ -661,9 +661,9 @@ XAttr *XNode::GetAttr( const char* attrname )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-vector<XAttr*> XNode::GetAttrs( const char* name )
+XAttrs XNode::GetAttrs( const char* name )
 {
-	vector<XAttr*> attrs;
+	XAttrs attrs;
 	for( unsigned i = 0 ; i < attrs.size(); i++ )
 	{
 		XAttr *attr = attrs[i];
@@ -691,7 +691,7 @@ const char*	XNode::GetAttrValue( const char* attrname )
 	return attr ? (const char*)attr->value : NULL;
 }
 
-vector<XNode*> XNode::GetChilds()
+XNodes XNode::GetChilds()
 {
 	return childs;
 }
@@ -705,9 +705,9 @@ vector<XNode*> XNode::GetChilds()
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-vector<XNode*> XNode::GetChilds( const char* name )
+XNodes XNode::GetChilds( const char* name )
 {
-	vector<XNode*> nodes;
+	XNodes nodes;
 	for( unsigned i = 0 ; i < childs.size(); i++ )
 	{
 		XNode *node = childs[i];
@@ -824,9 +824,9 @@ const char* XNode::GetChildAttrValue( const char* name, const char* attrname )
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-vector<XNode*>::iterator XNode::GetChildIterator( XNode *node )
+XNodes::iterator XNode::GetChildIterator( XNode *node )
 {
-	vector<XNode*>::iterator it = childs.begin();
+	XNodes::iterator it = childs.begin();
 	for( ; it != childs.end() ; ++(it) )
 	{
 		if( *it == node )
@@ -877,7 +877,7 @@ XNode *XNode::AppendChild( XNode *node )
 //========================================================
 bool XNode::RemoveChild( XNode *node )
 {
-	vector<XNode*>::iterator it = GetChildIterator( node );
+	XNodes::iterator it = GetChildIterator( node );
 	if( it != childs.end() )
 	{
 		delete *it;
@@ -907,14 +907,14 @@ XAttr *XNode::GetAttr( int i )
 // Name   : GetAttrIterator
 // Desc   : get attribute iterator
 // Param  : 
-// Return : vector<XAttr*>::iterator
+// Return : XAttrs::iterator
 //--------------------------------------------------------
 // Coder    Date                      Desc
 // bro      2002-10-29
 //========================================================
-vector<XAttr*>::iterator XNode::GetAttrIterator( XAttr *attr )
+XAttrs::iterator XNode::GetAttrIterator( XAttr *attr )
 {
-	vector<XAttr*>::iterator it = attrs.begin();
+	XAttrs::iterator it = attrs.begin();
 	for( ; it != attrs.end() ; ++(it) )
 	{
 		if( *it == attr )
@@ -950,7 +950,7 @@ XAttr *XNode::AppendAttr( XAttr *attr )
 //========================================================
 bool XNode::RemoveAttr( XAttr *attr )
 {
-	vector<XAttr*>::iterator it = GetAttrIterator( attr );
+	XAttrs::iterator it = GetAttrIterator( attr );
 	if( it != attrs.end() )
 	{
 		delete *it;
@@ -1023,7 +1023,7 @@ XAttr *XNode::AppendAttr( const char* name, unsigned value )	{ return AppendAttr
 //========================================================
 XNode *XNode::DetachChild( XNode *node )
 {
-	vector<XNode*>::iterator it = GetChildIterator( node );
+	XNodes::iterator it = GetChildIterator( node );
 	if( it != childs.end() )
 	{
 		childs.erase( it );
@@ -1043,7 +1043,7 @@ XNode *XNode::DetachChild( XNode *node )
 //========================================================
 XAttr *XNode::DetachAttr( XAttr *attr )
 {
-	vector<XAttr*>::iterator it = GetAttrIterator( attr );
+	XAttrs::iterator it = GetAttrIterator( attr );
 	if( it != attrs.end() )
 	{
 		attrs.erase( it );

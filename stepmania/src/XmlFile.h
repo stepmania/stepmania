@@ -24,7 +24,9 @@ struct DateTime;
 class RageFileBasic;
 
 struct XAttr;
+typedef vector<XAttr*> XAttrs;
 struct XNode;
+typedef vector<XNode*> XNodes;
 
 // Entity Encode/Decode Support
 struct XENTITY
@@ -138,8 +140,8 @@ struct XNode
 
 	// internal variables
 	XNode	*parent;		// parent node
-	vector<XNode*>	childs;		// child node
-	vector<XAttr*>	attrs;		// attributes
+	XNodes	childs;		// child node
+	XAttrs	attrs;		// attributes
 
 	// Load/Save XML
 	char*	Load( const char* pszXml, PARSEINFO *pi = &piDefault );
@@ -160,7 +162,7 @@ struct XNode
 	bool GetAttrValue(const char* name,bool &out) const		{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,unsigned &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 	bool GetAttrValue(const char* name,DateTime &out) const	{ const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	vector<XAttr*>	GetAttrs( const char* name ); 
+	XAttrs	GetAttrs( const char* name ); 
 
 	// in one level child nodes
 	const XNode *GetChild( const char* name ) const; 
@@ -172,8 +174,8 @@ struct XNode
 	bool GetChildValue(const char* name,bool &out) const	{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,unsigned &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue(const char* name,DateTime &out) const{ const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	vector<XNode*>	GetChilds( const char* name ); 
-	vector<XNode*>	GetChilds(); 
+	XNodes	GetChilds( const char* name ); 
+	XNodes	GetChilds(); 
 
 	XAttr *GetChildAttr( const char* name, const char* attrname );
 	const char* GetChildAttrValue( const char* name, const char* attrname );
@@ -181,7 +183,7 @@ struct XNode
 	// modify DOM 
 	int		GetChildCount();
 	XNode *GetChild( int i );
-	vector<XNode*>::iterator GetChildIterator( XNode *node );
+	XNodes::iterator GetChildIterator( XNode *node );
 	XNode *CreateNode( const char* name = NULL, const char* value = NULL );
 	XNode	*AppendChild( const char* name = NULL, const char* value = NULL );
 	XNode	*AppendChild( const char* name, float value );
@@ -194,7 +196,7 @@ struct XNode
 
 
 	XAttr *GetAttr( int i );
-	vector<XAttr*>::iterator GetAttrIterator( XAttr *node );
+	XAttrs::iterator GetAttrIterator( XAttr *node );
 	XAttr *CreateAttr( const char* anem = NULL, const char* value = NULL );
 	XAttr *AppendAttr( const char* name = NULL, const char* value = NULL );
 	XAttr *AppendAttr( const char* name, float value );
