@@ -27,6 +27,7 @@ inline CString PrefsGroupToString( PrefsGroup pg )
 class IPreference
 {
 public:
+	virtual ~IPreference() { }
 	virtual void LoadDefault() = 0;
 	virtual void ReadFrom( const IniFile &ini ) = 0;
 	virtual void WriteTo( IniFile &ini ) const = 0;
@@ -38,11 +39,11 @@ class Preference : public IPreference
 private:
 	PrefsGroup	m_PrefsGroup;
 	CString		m_sName;
-	T			m_currentValue;
 	T			m_defaultValue;
+	T			m_currentValue;
 
 public:
-	Preference( PrefsGroup PrefsGroup, CString sName, T defaultValue ):
+	Preference( PrefsGroup PrefsGroup, CString sName, const T& defaultValue ):
 		m_PrefsGroup( PrefsGroup ),
 		m_sName( sName ),
 		m_defaultValue( defaultValue ),
@@ -66,7 +67,12 @@ public:
 		ini.SetValue( PrefsGroupToString(m_PrefsGroup), m_sName, m_currentValue );
 	}
 
-	T GetValue() const
+	const T& GetValue() const
+	{
+		return m_currentValue;
+	}
+	
+	operator const T& () const
 	{
 		return m_currentValue;
 	}
