@@ -143,7 +143,8 @@ CombinedLifeMeterEnemy.h CombinedLifeMeterEnemy.cpp CombinedLifeMeterTug.h Combi
 DancingCharacters.cpp DancingCharacters.h GhostArrow.cpp GhostArrow.h GhostArrowRow.cpp GhostArrowRow.h \
 GrayArrow.cpp GrayArrow.h GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h \
 HoldJudgment.cpp HoldJudgment.h Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h \
-LifeMeterBattery.cpp LifeMeterBattery.h LyricDisplay.cpp LyricDisplay.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp \
+LifeMeterBattery.cpp LifeMeterBattery.h LyricDisplay.cpp LyricDisplay.h \
+NoteDisplay.cpp NoteDisplay.h NoteField.cpp NoteFieldPlus.h NoteFieldPlus.cpp \
 NoteField.h Player.cpp Player.h ProTimingDisplay.cpp ProTimingDisplay.h ScoreDisplay.cpp ScoreDisplay.h \
 ScoreDisplayBattle.cpp ScoreDisplayBattle.h ScoreDisplayNormal.cpp ScoreDisplayNormal.h \
 ScoreDisplayOni.cpp ScoreDisplayOni.h ScoreDisplayRave.cpp ScoreDisplayRave.h TimingAssist.cpp TimingAssist.h
