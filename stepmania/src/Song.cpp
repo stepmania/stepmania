@@ -41,7 +41,7 @@
 
 #define CACHE_DIR "Cache/"
 
-const int FILE_CACHE_VERSION = 139;	// increment this to invalidate cache
+const int FILE_CACHE_VERSION = 140;	// increment this to invalidate cache
 
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
