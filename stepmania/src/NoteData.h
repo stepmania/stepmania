@@ -104,5 +104,7 @@ public:
 	void Convert2sAnd3sToHoldNotes();
 	void ConvertHoldNotesTo2sAnd3s();
 
+	void Convert4sToHoldNotes();
+	void ConvertHoldNotesTo4s();
 };
 

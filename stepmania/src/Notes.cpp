@@ -525,7 +525,8 @@ bool Notes::LoadFromDWITokens(
 		}
 	}
 
-	pNoteData->Convert2sAnd3sToHoldNotes();	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
+	// this will expand the HoldNote begin markers we wrote into actual HoldNotes
+	pNoteData->Convert2sAnd3sToHoldNotes();
 
 	ASSERT( pNoteData->m_iNumTracks > 0 );
 

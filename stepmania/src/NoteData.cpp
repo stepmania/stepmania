@@ -133,39 +133,19 @@ CString NoteData::GetSMNoteDataString()
 	return join( "\n,", asMeasureStrings );
 }
 
-
 void NoteData::ClearRange( int iNoteIndexBegin, int iNoteIndexEnd )
 {
-	// delete old TapNotes in the range
-	for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
+	this->ConvertHoldNotesTo4s();
+	for( int c=0; c<m_iNumTracks; c++ )
 	{
-		for( int c=0; c<m_iNumTracks; c++ )
+		for( int i=iNoteIndexBegin; i<=iNoteIndexEnd; i++ )
 			m_TapNotes[c][i] = '0';
 	}
-
-	// delete old HoldNotes in the range
-	int iIndexRead, iIndexWrite = 0;
-	const int iOrigNumHoldNotes = m_iNumHoldNotes;
-	for( iIndexRead = 0; iIndexRead < iOrigNumHoldNotes; iIndexRead++ )
-	{
-		HoldNote &hn = m_HoldNotes[iIndexRead];
-		int iHoldStartIndex = BeatToNoteRow( hn.m_fStartBeat );
-		int iHoldEndIndex = BeatToNoteRow( hn.m_fEndBeat );
-		if( (iHoldStartIndex >= iNoteIndexBegin  &&  iHoldStartIndex <= iNoteIndexEnd)  || 
-			(iHoldEndIndex   >= iNoteIndexBegin  &&  iHoldEndIndex   <= iNoteIndexEnd) )		// overlap (kinda)
-		{
-			;	// do nothing
-		}
-		else	// ! overlap
-		{
-			m_HoldNotes[iIndexWrite] = m_HoldNotes[iIndexRead];
-			iIndexWrite++;
-		}
-	}
-	m_iNumHoldNotes = iIndexWrite;
-
+	this->Convert4sToHoldNotes();
 }
-	
+
+/* Copy a range from pFrom to this.  (Note that this does *not* overlay;
+ * all data in the range is overwritten.) */
 void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEnd, int iToIndexBegin )
 {
 	ASSERT( pFrom->m_iNumTracks == m_iNumTracks );
@@ -173,13 +153,11 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 	if( iToIndexBegin == -1 )
 		iToIndexBegin = 0;
 
-	pFrom->ConvertHoldNotesTo2sAnd3s();
-
-	int f, t;
+	pFrom->ConvertHoldNotesTo4s();
+	this->ConvertHoldNotesTo4s();
 
 	// copy recorded TapNotes
-	f = iFromIndexBegin;
-	t = iToIndexBegin;
+	int f = iFromIndexBegin, t = iToIndexBegin;
 	
 	while( f<=iFromIndexEnd )
 	{
@@ -189,8 +167,8 @@ void NoteData::CopyRange( NoteData* pFrom, int iFromIndexBegin, int iFromIndexEn
 		t++;
 	}
 
-	pFrom->Convert2sAnd3sToHoldNotes();
-	this->Convert2sAnd3sToHoldNotes();
+	pFrom->Convert4sToHoldNotes();
+	this->Convert4sToHoldNotes();
 }
 
 void NoteData::AddHoldNote( HoldNote add )
@@ -596,6 +574,10 @@ void NoteData::MakeLittle()
 	// leave HoldNotes unchanged (what should be do with them?)
 }
 
+/* ConvertHoldNotesTo2sAnd3s also clears m_iNumHoldNotes;
+ * shouldn't this do likewise and set all 2/3's to 0? 
+ * -glenn
+ */
 void NoteData::Convert2sAnd3sToHoldNotes()
 {
 	// Any note will end a hold (not just a '3').  This makes parsing DWIs much easier, 
@@ -621,6 +603,8 @@ void NoteData::Convert2sAnd3sToHoldNotes()
 	}
 }
 
+/* "102000301" ==
+ * "104444001" */
 void NoteData::ConvertHoldNotesTo2sAnd3s()
 {
 	// copy HoldNotes into the new structure, but expand them into 2s and 3s
@@ -631,6 +615,49 @@ void NoteData::ConvertHoldNotesTo2sAnd3s()
 		int iHoldEndIndex   = BeatToNoteRow(hn.m_fEndBeat);
 		m_TapNotes[hn.m_iTrack][iHoldStartIndex] = '2';
 		m_TapNotes[hn.m_iTrack][iHoldEndIndex]   = '3';
+	}
+	m_iNumHoldNotes = 0;
+}
+
+/* "104444001" ==
+ * "102000301"
+ *
+ * "4441" basically means "hold for three rows then hold for another tap";
+ * since taps don't really have a length, it's equivalent to "4440".
+ * So, make sure the character after a 4 is always a 0. */
+void NoteData::Convert4sToHoldNotes()
+{
+	for( int col=0; col<m_iNumTracks; col++ )	// foreach column
+	{
+		for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ )	// foreach TapNote element
+		{
+			if( m_TapNotes[col][i] != '4' )	// this is a HoldNote begin marker
+				continue;
+
+			HoldNote hn = { col, NoteRowToBeat(i), 0 };
+			// search for end of HoldNote
+			do {
+				m_TapNotes[col][i] = '0';
+				i++;
+			} while( i<MAX_TAP_NOTE_ROWS && m_TapNotes[col][i] == '4');
+			m_TapNotes[col][i] = '0';
+
+			hn.m_fEndBeat = NoteRowToBeat(i);
+			AddHoldNote( hn );
+		}
+	}
+}
+
+void NoteData::ConvertHoldNotesTo4s()
+{
+	// copy HoldNotes into the new structure, but expand them into 4s
+	for( int i=0; i<m_iNumHoldNotes; i++ ) 
+	{
+		HoldNote &hn = m_HoldNotes[i];
+		int iHoldStartIndex = BeatToNoteRow(hn.m_fStartBeat);
+		int iHoldEndIndex   = BeatToNoteRow(hn.m_fEndBeat);
+		for( int j = iHoldStartIndex; j < iHoldEndIndex; ++j)
+			m_TapNotes[hn.m_iTrack][j] = '4';
 	}
 	m_iNumHoldNotes = 0;
 }
