@@ -768,12 +768,12 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 				vector<Steps::MemCardData::HighScore> &vHighScores = pSteps->m_MemCardDatas[MEMORY_CARD_MACHINE].vHighScores;
 				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
-					if( vHighScores[j].sName == RANKING_TO_FILL_IN_MARKER[pn] )
-					{
-						CString s = ssprintf("No. %d in %s", j+1, pSong->GetFullTranslitTitle().c_str() );
-						asFeatsOut.push_back( s );
-						vpStringsToFillOut.push_back( &vHighScores[j].sName );
-					}
+					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						continue;
+
+					CString s = ssprintf("No. %d in %s", j+1, pSong->GetFullTranslitTitle().c_str() );
+					asFeatsOut.push_back( s );
+					vpStringsToFillOut.push_back( &vHighScores[j].sName );
 				}
 			}
 
@@ -787,6 +787,9 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 				vector<SongManager::CategoryData::HighScore> &vHighScores = SONGMAN->m_CategoryDatas[nt][i].vHighScores;
 				for( unsigned j=0; j<vHighScores.size(); j++ )
 				{
+					if( vHighScores[j].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						continue;
+
 					CString s = ssprintf("No. %d in Type %c (%d)", j+1, 'A'+i, stats.iMeter[pn] );
 					vpStringsToFillOut.push_back( &vHighScores[j].sName );
 				}
@@ -805,12 +808,12 @@ void GameState::GetRankingFeats( PlayerNumber pn, CStringArray &asFeatsOut, vect
 			vector<Course::MemCardData::HighScore> &vHighScores = pCourse->m_MemCardDatas[nt][MEMORY_CARD_MACHINE].vHighScores;
 			for( unsigned i=0; i<vHighScores.size(); i++ )
 			{
-				if( vHighScores[i].sName == RANKING_TO_FILL_IN_MARKER[pn] )
-				{
-					CString s = ssprintf("No. %d in %s", i+1, pCourse->m_sName.c_str() );
-					asFeatsOut.push_back( s );
-					vpStringsToFillOut.push_back( &vHighScores[i].sName );
-				}
+				if( vHighScores[i].sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						continue;
+
+				CString s = ssprintf("No. %d in %s", i+1, pCourse->m_sName.c_str() );
+				asFeatsOut.push_back( s );
+				vpStringsToFillOut.push_back( &vHighScores[i].sName );
 			}
 		}
 		break;
