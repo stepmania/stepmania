@@ -44,6 +44,7 @@ private:
 	int scrlistPos;
 	
 	int SongsExist;
+	int SingleLoad;
 
 	CArray<Song*, Song*> arraySongs;
 };

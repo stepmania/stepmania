@@ -28,6 +28,7 @@ MusicBannerWheel::MusicBannerWheel()
 	currentPos=0;
 	scrlistPos=0;
 	SongsExist=0;
+	SingleLoad=0;
 
 	m_ScrollingList.UseSpriteType(BANNERTYPE);
 	m_ScrollingList.SetXY( 0, 0 );
@@ -97,54 +98,81 @@ void MusicBannerWheel::LoadSongData()
 {
 	Song* pSong;
 	CStringArray asGraphicPaths;
-	for(int count=0; count<MAXSONGSINBUFFER; count++)
-	{
-		/* In essence, this element is the central one so we want the scrolling list
-		to load in the song as specified by currentPos */
-		if(count == scrlistPos)
-		{	
-			pSong = arraySongs[currentPos];
-		}
-		/* if it's the next element
-		*/
-		else if(count == scrlistPos+2 || (scrlistPos == MAXSONGSINBUFFER-2 && count == 0))
-		{
-			if(currentPos+2 <= arraySongs.size()-1)
-				pSong = arraySongs[currentPos+2];
-			else
-				pSong = arraySongs[0+2];
-		}
-		else if(count == scrlistPos-2 || (scrlistPos == 0 && count == MAXSONGSINBUFFER-2))
-		{
-			if(currentPos-2 >= 0)
-				pSong = arraySongs[currentPos-2];
-			else
-				pSong = arraySongs[arraySongs.size()-2];			
-		}
-		else if(count == scrlistPos+1 || (scrlistPos == MAXSONGSINBUFFER-1 && count == 0))
-		{
-			if(currentPos+1 <= arraySongs.size()-1)
-				pSong = arraySongs[currentPos+1];
-			else
-				pSong = arraySongs[0];
-		}
-		/* if it's the previous element OR if we're at element 0..the 5th element (which will wrap to before element 0)
-		will actually appear as 5 songs along and not the one immediately before it,, so pull a sneaky and make the 
-		final element actually be the song before... */
-		else if(count == scrlistPos-1 || (scrlistPos == 0 && count == MAXSONGSINBUFFER-1))
-		{
-			if(currentPos-1 >= 0)
-				pSong = arraySongs[currentPos-1];
-			else
-				pSong = arraySongs[arraySongs.size()-1];
-		}
 
-		if( pSong == NULL ) asGraphicPaths.push_back(THEME->GetPathTo("Graphics","fallback banner"));
-		else if (pSong->HasBanner()) asGraphicPaths.push_back(pSong->GetBannerPath());
-		else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) asGraphicPaths.push_back(pSong->GetBannerPath());
-		else asGraphicPaths.push_back(THEME->GetPathTo("Graphics","fallback banner"));
+	if(MAXSONGSINBUFFER >= arraySongs.size() && SingleLoad != 1)  // less than the MAXSONGSINBUFFER means we can get away with loading the lot in one go
+	{
+		SingleLoad=2;
+		int difference=0;
+		// find out just how short of a full buffer we are =)
+		difference = MAXSONGSINBUFFER - arraySongs.size();
+		for(int i=0; i<=difference; i++)
+		{
+			for(int c=0; c<arraySongs.size(); c++)
+			{
+				pSong = arraySongs[c];
+
+				if( pSong == NULL ) asGraphicPaths.push_back(THEME->GetPathTo("Graphics","fallback banner"));
+				else if (pSong->HasBanner()) asGraphicPaths.push_back(pSong->GetBannerPath());
+				else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) asGraphicPaths.push_back(pSong->GetBannerPath());
+				else asGraphicPaths.push_back(THEME->GetPathTo("Graphics","fallback banner"));	
+			}
+		}
 	}
-	m_ScrollingList.Load( asGraphicPaths );
+	
+	if(SingleLoad==0)
+	{
+		for(int count=0; count<MAXSONGSINBUFFER; count++)
+		{
+			/* In essence, this element is the central one so we want the scrolling list
+			to load in the song as specified by currentPos */
+			if(count == scrlistPos)
+			{	
+				pSong = arraySongs[currentPos];
+			}
+			/* if it's the next element
+			*/
+			else if(count == scrlistPos+2 || (scrlistPos == MAXSONGSINBUFFER-2 && count == 0))
+			{
+				if(currentPos+2 <= arraySongs.size()-1)
+					pSong = arraySongs[currentPos+2];
+				else
+					pSong = arraySongs[0+2];
+			}
+			else if(count == scrlistPos-2 || (scrlistPos == 0 && count == MAXSONGSINBUFFER-2))
+			{
+				if(currentPos-2 >= 0)
+					pSong = arraySongs[currentPos-2];
+				else
+					pSong = arraySongs[arraySongs.size()-2];			
+			}
+			else if(count == scrlistPos+1 || (scrlistPos == MAXSONGSINBUFFER-1 && count == 0))
+			{
+				if(currentPos+1 <= arraySongs.size()-1)
+					pSong = arraySongs[currentPos+1];
+				else
+					pSong = arraySongs[0];
+			}
+			/* if it's the previous element OR if we're at element 0..the 5th element (which will wrap to before element 0)
+			will actually appear as 5 songs along and not the one immediately before it,, so pull a sneaky and make the 
+			final element actually be the song before... */
+			else if(count == scrlistPos-1 || (scrlistPos == 0 && count == MAXSONGSINBUFFER-1))
+			{
+				if(currentPos-1 >= 0)
+					pSong = arraySongs[currentPos-1];
+				else
+					pSong = arraySongs[arraySongs.size()-1];
+			}
+
+			if( pSong == NULL ) asGraphicPaths.push_back(THEME->GetPathTo("Graphics","fallback banner"));
+			else if (pSong->HasBanner()) asGraphicPaths.push_back(pSong->GetBannerPath());
+			else if (PREFSMAN->m_bUseBGIfNoBanner && pSong->HasBackground() ) asGraphicPaths.push_back(pSong->GetBannerPath());
+			else asGraphicPaths.push_back(THEME->GetPathTo("Graphics","fallback banner"));
+		}
+	}
+	if(SingleLoad != 1)
+		m_ScrollingList.Load( asGraphicPaths );
+	if(SingleLoad == 2)
+		SingleLoad = 1;
 	PlayMusicSample();
 }
 
@@ -175,11 +203,15 @@ void MusicBannerWheel::BannersLeft()
 		currentPos--;
 
 	if(scrlistPos==0)
-		scrlistPos = MAXSONGSINBUFFER-1;
+		if(SingleLoad == 0)
+			scrlistPos = MAXSONGSINBUFFER-1;
+		else
+			scrlistPos = arraySongs.size()-1;
 	else
 		scrlistPos--;
 
-	m_ScrollingList.Unload();
+	if(SingleLoad == 0)
+		m_ScrollingList.Unload();
 	LoadSongData();
 	m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
 	m_ScrollingList.Left();
@@ -198,7 +230,8 @@ void MusicBannerWheel::BannersRight()
 	else
 		scrlistPos++;
 
-	m_ScrollingList.Unload();
+	if(SingleLoad == 0)
+		m_ScrollingList.Unload();
 	LoadSongData();
 	m_debugtext.SetText(ssprintf("currentPos: %d scrlistPos: %d",currentPos,scrlistPos));
 	m_ScrollingList.Right();
