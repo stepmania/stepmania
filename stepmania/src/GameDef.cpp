@@ -20,7 +20,7 @@
 #include "InputMapper.h"
 #include "PrefsManager.h"
 
-GameButton GameDef::ButtonNameToIndex( const CString &sButtonName )
+GameButton GameDef::ButtonNameToIndex( const CString &sButtonName ) const
 {
 	for( int i=0; i<m_iButtonsPerController; i++ ) 
 		if( stricmp(m_szButtonNames[i], sButtonName) == 0 )

@@ -54,7 +54,7 @@ public:
 	GameButton	m_SecondaryMenuButton[NUM_MENU_BUTTONS];
 	int		m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
 
-	GameButton ButtonNameToIndex( const CString &sButtonName );
+	GameButton ButtonNameToIndex( const CString &sButtonName ) const;
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;
 	void MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const;
 };
