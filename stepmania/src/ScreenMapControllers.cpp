@@ -137,6 +137,9 @@ void ScreenMapControllers::DrawPrimitives()
 	Screen::DrawPrimitives();
 }
 
+/* Note that this isn't necessarily correct.  For example, JOY_LEFT might actually be
+ * a D-pad and not an axis.  All this is actually doing is giving priority to some
+ * inputs over others; this function is unsuitable for other use. */
 static bool IsAxis( const DeviceInput& DeviceI )
 {
 	if( !DeviceI.IsJoystick() )
@@ -145,6 +148,7 @@ static bool IsAxis( const DeviceInput& DeviceI )
 	static int axes[] = 
 	{
 		JOY_LEFT, JOY_RIGHT, JOY_UP, JOY_DOWN,
+		JOY_LEFT_2, JOY_RIGHT_2, JOY_UP_2, JOY_DOWN_2,
 		JOY_Z_UP, JOY_Z_DOWN,
 		JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
 		JOY_HAT_LEFT, JOY_HAT_RIGHT, JOY_HAT_UP, JOY_HAT_DOWN, 
