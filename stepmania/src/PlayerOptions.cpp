@@ -88,7 +88,7 @@ CString PlayerOptions::GetString() const
 					s.erase(s.GetLength()-2);	// delete last 2 chars
 				}
 			}
-			sReturn += s + "X, ";
+			sReturn += s + "x, ";
 		}
 	}
 	else
