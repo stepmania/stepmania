@@ -126,8 +126,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 
 	case SM_BeginFadingOut:
 		m_Out.StartTransitioning();
-		int p;
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			OFF_COMMAND( m_sprCharacterIcon[p] );
 		OFF_COMMAND( m_SongTitle );
 		OFF_COMMAND( m_Artist );

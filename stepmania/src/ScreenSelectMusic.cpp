@@ -101,10 +101,8 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	m_MusicWheel.Load();
 
-	int p;
-
 	// pop'n music has this under the songwheel...
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		Character* pChar = GAMESTATE->m_pCurCharacters[p];
 		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
@@ -239,7 +237,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_DifficultyList );
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip

@@ -56,8 +56,8 @@
 ScreenSelectDifficultyEX::ScreenSelectDifficultyEX( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_CurrentPage = PAGE_1;
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+
+	FOREACH_PlayerNumber( p )
 	{
 		m_iChoice[p] = 0;
 		m_bChosen[p] = false;
@@ -98,7 +98,7 @@ ScreenSelectDifficultyEX::ScreenSelectDifficultyEX( CString sClassName ) : Scree
 	}
 	SetDifficultyIconText( false );	// Make sure we show the names!
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsPlayerEnabled(p) ) // Only show their cursor, if they're enabled
 		{
@@ -374,8 +374,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 	const ModeChoice& mc = m_ModeChoices[m_iChoice[pn]];
 	bool AnotherPlayerSelected = false;
 
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if(p != pn && m_bChosen[p]) { AnotherPlayerSelected = true; }
 	}
@@ -398,7 +397,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 	if( IsACourse( m_iChoice[pn] ) )
 	{	
 		// If this is course/mode, choose this for all the other players too
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( m_bChosen[p] ) { continue; }
 			MenuStart( (PlayerNumber)p );
@@ -416,7 +415,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 
 
 	// check to see if everyone has chosen
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsPlayerEnabled((PlayerNumber)p)  &&  m_bChosen[p] == false )
 		{ 
@@ -428,9 +427,7 @@ void ScreenSelectDifficultyEX::MenuStart( PlayerNumber pn )
 
 void ScreenSelectDifficultyEX::TweenOnScreen() 
 {
-	unsigned p;
-
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsPlayerEnabled((PlayerNumber)p) ) { continue; }
 

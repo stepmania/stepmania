@@ -50,8 +50,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 {
 	// Unjoin the players, then let them join back in on this screen
 //	GAMESTATE->m_bPlayersCanJoin = true;
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_bSideIsJoined[p] = false;
 
 	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
@@ -59,7 +58,7 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenEz2SelectPlayer background") );
 	this->AddChild( &m_Background ); // animated background =)
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_sprJoinFrame[p].Load( THEME->GetPathToG("ScreenEz2SelectPlayer join frame 1x2") );
 		m_sprJoinFrame[p].StopAnimating();

@@ -134,12 +134,10 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		GAMESTATE->m_SongOptions = SongOptions();
 	}
 
-	int p;
-
 	vector<GameState::RankingFeat> aFeats[NUM_PLAYERS];
 
 	// Find out if players deserve to enter their name
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		GAMESTATE->GetRankingFeats( (PlayerNumber)p, aFeats[p] );
 		m_bStillEnteringName[p] = aFeats[p].size()>0;
@@ -169,7 +167,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenNameEntry background") );
 	this->AddChild( &m_Background );
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		// load last used ranking name if any
 		Profile* pProfile = PROFILEMAN->GetProfile((PlayerNumber)p);

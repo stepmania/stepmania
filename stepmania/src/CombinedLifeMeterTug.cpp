@@ -25,8 +25,7 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 {
 	METER_WIDTH.Refresh();
 
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		CString sStreamPath = THEME->GetPathToG(ssprintf("CombinedLifeMeterTug stream p%d",p+1));
 		CString sTipPath = THEME->GetPathToG(ssprintf("CombinedLifeMeterTug tip p%d",p+1));
@@ -42,7 +41,7 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 	this->AddChild( &m_sprFrame );
 	
 	
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		Character* pCharacter = GAMESTATE->m_pCurCharacters[p];
 		ASSERT( pCharacter );

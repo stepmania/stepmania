@@ -1123,13 +1123,11 @@ void ScreenEvaluation::CommitScores(
 
 void ScreenEvaluation::TweenOffScreen()
 {
-	int p;
-
 	// large banner area
 	OFF_COMMAND( m_LargeBanner );
 	OFF_COMMAND( m_sprLargeBannerFrame );
 	OFF_COMMAND( m_sprStage );
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
@@ -1148,7 +1146,7 @@ void ScreenEvaluation::TweenOffScreen()
 	// grade area
 	if( SHOW_GRADE_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_PlayerNumber( p ) 
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;
@@ -1160,7 +1158,7 @@ void ScreenEvaluation::TweenOffScreen()
 
 	if( SHOW_GRAPH_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_PlayerNumber( p ) 
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;	// skip
@@ -1172,7 +1170,7 @@ void ScreenEvaluation::TweenOffScreen()
 
 	if( SHOW_COMBO_AREA )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ ) 
+		FOREACH_PlayerNumber( p ) 
 		{
 			if( !GAMESTATE->IsPlayerEnabled(p) )
 				continue;	// skip

@@ -291,8 +291,7 @@ void MusicWheelItem::DrawPrimitives()
 	case TYPE_SONG:		
 		m_TextBanner.Draw();
 		m_WheelNotifyIcon.Draw();
-		int p;
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 			m_GradeDisplay[p].Draw();
 		break;
 	case TYPE_COURSE:

@@ -50,22 +50,20 @@ Background::Background()
 	BLINK_DANGER_ALL.Refresh();
 	DANGER_ALL_IS_OPAQUE.Refresh();
 
-	int p;
-
 	m_iCurBGChangeIndex = -1;
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
 
 	m_DangerAll.LoadFromAniDir( THEME->GetPathToB("ScreenGameplay danger all") );
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_DangerPlayer[p].LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenGameplay danger p%d",p+1)) );
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_DeadPlayer[p].LoadFromAniDir( THEME->GetPathToB(ssprintf("ScreenGameplay dead p%d",p+1)) );
 
 	bool bOneOrMoreChars = false;
 	bool bShowingBeginnerHelper = false;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;

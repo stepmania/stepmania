@@ -39,8 +39,8 @@
 ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_CurrentPage = PAGE_1;
-	int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+
+	FOREACH_PlayerNumber( p )
 	{
 		m_iChoiceOnPage[p] = 0;
 		m_bChosen[p] = false;
@@ -84,7 +84,7 @@ ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSel
 	}
 
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		CLAMP( m_iChoiceOnPage[p], 0, (int)m_ModeChoices[0].size()-1 );
 		m_bChosen[p] = false;
@@ -182,11 +182,10 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 	// I'm not sure why this was here -- but there seem no ill effects
 	// of it's removal.
 	//
-	//FOREACH_PlayerNumber( p )
-	//	if( GAMESTATE->IsHumanPlayer(p) )
+	//FOREACH_HumanPlayer( p )
 	//	{
-	//		MenuRight( (PlayerNumber)p );
-	//		MenuLeft( (PlayerNumber)p );
+	//		MenuRight( p );
+	//		MenuLeft( p );
 	//	}
 }
 
@@ -281,11 +280,9 @@ void ScreenSelectDifficulty::MenuRight( PlayerNumber pn )
 
 void ScreenSelectDifficulty::ChangePage( Page newPage )
 {
-	int p;
-
 	// If anyone has already chosen, don't allow changing of pages
-	for( p=0; p<NUM_PLAYERS; p++ )
-		if( GAMESTATE->IsHumanPlayer(p) && m_bChosen[p] )
+	FOREACH_HumanPlayer( p )
+		if( m_bChosen[p] )
 			return;
 
 	bool bPageIncreasing = newPage > m_CurrentPage;
@@ -321,8 +318,8 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 	}
 
 	// change both players
-	for( p=0; p<NUM_PLAYERS; p++ )
-		ChangeWithinPage( (PlayerNumber)p, iSwitchToIndex, true );
+	FOREACH_PlayerNumber( p )
+		ChangeWithinPage( p, iSwitchToIndex, true );
 
 	m_soundChange.Play();
 
@@ -335,11 +332,8 @@ void ScreenSelectDifficulty::ChangePage( Page newPage )
 bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, bool bChangingPages )
 {
 	bool bAnyChanged = false;
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
 		if( p!=pn && m_CurrentPage==PAGE_1 )
 			continue;	// skip
 		if( m_iChoiceOnPage[p] == iNewChoice )
@@ -348,8 +342,8 @@ bool ScreenSelectDifficulty::ChangeWithinPage( PlayerNumber pn, int iNewChoice, 
 		bAnyChanged = true;
 		m_iChoiceOnPage[p] = iNewChoice;
 
-		float fCursorX = GetCursorX( (PlayerNumber)p );
-		float fCursorY = GetCursorY( (PlayerNumber)p );
+		float fCursorX = GetCursorX( p );
+		float fCursorY = GetCursorY( p );
 
 		m_sprCursor[p].StopTweening();
 		m_sprCursor[p].BeginTweening( 0.2f, bChangingPages ? TWEEN_LINEAR : TWEEN_DECELERATE );
@@ -386,28 +380,26 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		SCREENMAN->PlayStartSound();
 	}
 
-	int p;
-
 	// courses should be selected for both players at all times
 	if( BothPlayersModeChoice(mc) )
 	{
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_HumanPlayer( p )
 		{
-			if( m_bChosen[p] || !GAMESTATE->IsHumanPlayer((PlayerNumber)p) || p == pn )
+			if( m_bChosen[p] || p == pn )
 				continue;
 	
 			// move all cursors to the oni/nonstop selection so it graphically looks as if all players selected the same option.
-			ChangeWithinPage( (PlayerNumber)p, m_iChoiceOnPage[pn], false );
+			ChangeWithinPage( p, m_iChoiceOnPage[pn], false );
 			bPlaySelect = false;
-			MenuStart( (PlayerNumber)p ); // agree everyone
+			MenuStart( p ); // agree everyone
 			bPlaySelect = true;
 		}
 	}
 	else // someone must have chosen arcade style play so oni/nonstop/endless must be disabled
 	{
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_HumanPlayer( p )
 		{
-			if( m_bChosen[p] || !GAMESTATE->IsHumanPlayer((PlayerNumber)p) || p == pn )
+			if( m_bChosen[p] || p == pn )
 				continue;
 
 			if( !BothPlayersModeChoice(m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[p]]) )
@@ -437,16 +429,16 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			ASSERT( iSwitchToIndex != -1 );
 
 			// move the cursor
-			ChangeWithinPage( (PlayerNumber) p, iSwitchToIndex, false );
+			ChangeWithinPage( p, iSwitchToIndex, false );
 		}
 
 		/* If the other player is active and hasn't yet chosen, gray out unselectable options.
 		 * Otherwise, don't do this, so we don't gray out stuff when nothing else can be selected
 		 * anyway. */
 		bool bAnyPlayersLeft = false;
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_HumanPlayer( p )
 		{
-			if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) || m_bChosen[p] || p == pn )
+			if( m_bChosen[p] || p == pn )
 				continue;
 			bAnyPlayersLeft = true;
 		}
@@ -470,13 +462,13 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	if( m_CurrentPage == PAGE_2 )
 	{
 		// choose this for all the other players too
-		for( p=0; p<NUM_PLAYERS; p++ )
+		FOREACH_PlayerNumber( p )
 		{
 			if( m_bChosen[p] )
 				continue;
 		
 			bPlaySelect = false;
-			MenuStart( (PlayerNumber)p );
+			MenuStart( p );
 			bPlaySelect = true;
 		}
 	}
@@ -489,9 +481,9 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 
 	// check to see if everyone has chosen
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_HumanPlayer( p )
 	{
-		if( GAMESTATE->IsHumanPlayer((PlayerNumber)p)  &&  m_bChosen[p] == false )
+		if( m_bChosen[p] == false )
 			return;
 	}
 	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
@@ -499,8 +491,6 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 
 void ScreenSelectDifficulty::TweenOnScreen() 
 {
-	unsigned p;
-
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
 		SET_XY_AND_ON_COMMAND( m_sprExplanation[page] );
@@ -513,13 +503,10 @@ void ScreenSelectDifficulty::TweenOnScreen()
 		}
 	}
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer((PlayerNumber)p) )
-			continue;
-
-		float fCursorX = GetCursorX( (PlayerNumber)p );
-		float fCursorY = GetCursorY( (PlayerNumber)p );
+		float fCursorX = GetCursorX( p );
+		float fCursorY = GetCursorY( p );
 
 		m_sprCursor[p].SetXY( fCursorX, fCursorY );
 		ON_COMMAND( m_sprCursor[p] );
@@ -536,11 +523,8 @@ void ScreenSelectDifficulty::TweenOffScreen()
 	OFF_COMMAND( m_sprExplanation[page] );
 	OFF_COMMAND( m_sprMore[page] );
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;
-
 		OFF_COMMAND( m_sprCursor[p] );
 		OFF_COMMAND( m_sprOK[p] );
 		OFF_COMMAND( m_sprShadow[p] );

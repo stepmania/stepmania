@@ -113,18 +113,16 @@ void GameState::Reset()
 	
 	ASSERT( THEME );
 
-	int p;
-
 	m_timeGameStarted.SetZero();
 	m_CurStyle = STYLE_INVALID;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
 	m_bPlayersFinalized = false;
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_sPreferredGroup	= GROUP_ALL_MUSIC;
 	m_bChangedFailType = false;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_PreferredDifficulty[p] = DIFFICULTY_INVALID;
 		m_PreferredCourseDifficulty[p] = COURSE_DIFFICULTY_REGULAR;
@@ -154,7 +152,7 @@ void GameState::Reset()
 	SAFE_DELETE( m_pPosition );
 	m_pPosition = new NoteFieldPositioning("Positioning.ini");
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 		m_bAttackBeganThisUpdate[p] = false;
 
 	ResetMusicStatistics();
@@ -165,7 +163,7 @@ void GameState::Reset()
 
 	g_vPlayedStageStats.clear();
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{	
 		m_CurrentPlayerOptions[p].Init();
 		m_PlayerOptions[p].Init();

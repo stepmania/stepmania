@@ -337,37 +337,33 @@ void DancingCharacters::DrawPrimitives()
 		m_LookAt,
 		RageVector3(0,1,0) );
 
-    int p;
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_EnabledPlayer( p )
 	{
-		if( GAMESTATE->IsPlayerEnabled(p) )
-		{
-			bool bFailed = g_CurStageStats.bFailed[p];
-			bool bDanger = m_bDrawDangerLight;
+		bool bFailed = g_CurStageStats.bFailed[p];
+		bool bDanger = m_bDrawDangerLight;
 
-			DISPLAY->SetLighting( true );
-			RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
-			RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(0.8f,0.8f,0.8f,1));
-			RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
+		DISPLAY->SetLighting( true );
+		RageColor ambient  = bFailed ? RageColor(0.2f,0.1f,0.1f,1) : (bDanger ? RageColor(0.4f,0.1f,0.1f,1) : RageColor(0.4f,0.4f,0.4f,1));
+		RageColor diffuse  = bFailed ? RageColor(0.4f,0.1f,0.1f,1) : (bDanger ? RageColor(0.8f,0.1f,0.1f,1) : RageColor(0.8f,0.8f,0.8f,1));
+		RageColor specular = RageColor(0.8f,0.8f,0.8f,1);
 
-			DISPLAY->SetLightDirectional( 
-				0, 
-				ambient, 
-				diffuse,
-				specular,
-				RageVector3(+1, 0, +1) );
+		DISPLAY->SetLightDirectional( 
+			0, 
+			ambient, 
+			diffuse,
+			specular,
+			RageVector3(+1, 0, +1) );
 
-			m_Character[p].Draw();
+		m_Character[p].Draw();
 
-			DISPLAY->SetLightOff( 0 );
-			DISPLAY->SetLighting( false );
-		}
+		DISPLAY->SetLightOff( 0 );
+		DISPLAY->SetLighting( false );
 	}
 
 
 	DISPLAY->CameraPopMatrix();
 	// now draw any potential 2D stuff
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if(m_bHasIdleAnim[p] && m_i2DAnimState[p] == AS2D_IDLE)
 			m_bgIdle[p].Draw();

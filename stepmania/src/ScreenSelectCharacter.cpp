@@ -91,7 +91,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 	
 	int p;
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_iSelectedCharacter[p] = 0;
 		if( GAMESTATE->IsHumanPlayer(p) )
@@ -99,7 +99,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 	}
 
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
@@ -155,7 +155,7 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenSelectCharacter music") );
 
-	for( p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )
 		{
