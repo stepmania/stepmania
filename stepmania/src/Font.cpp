@@ -21,10 +21,8 @@
 #include <stdio.h>
 #include <assert.h>
 
-Font::Font( const CString &sASCIITexturePath )
+void Font::Init()
 {
-	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.GetString() );
-
 	int i;
 
 	for( i=0; i<MAX_FONT_CHARS; i++ )
@@ -33,7 +31,16 @@ Font::Font( const CString &sASCIITexturePath )
 		m_iFrameNoToWidth[i] = -1;
 	}
 
+	m_bCapitalsOnly = false;
+
 	m_iRefCount = 1;
+}
+
+Font::Font( const CString &sASCIITexturePath )
+{
+	//LOG->Trace( "Font::LoadFromFontName(%s)", sASCIITexturePath.GetString() );
+
+	Init();
 
 	// load texture
 	m_sTexturePath = sASCIITexturePath;
@@ -43,6 +50,7 @@ Font::Font( const CString &sASCIITexturePath )
 	if( m_pTexture->GetNumFrames() != 16*16 )
 		RageException::Throw( "The font '%s' has only %d frames.  All fonts must have 16*16 frames.", m_sTexturePath.GetString() );
 
+	int i;
 	for( i=0; i<256; i++ )
 		m_iCharToFrameNo[i] = i;
 
@@ -59,14 +67,11 @@ Font::Font( const CString &sASCIITexturePath )
 		if( !ini.GetValueI( "Char Widths", ssprintf("%d",i), m_iFrameNoToWidth[i] ) )
 			RageException::Throw( "Error reading width value '%d' from '%s'.", i, sIniPath.GetString() );
 
-	m_bCapitalsOnly = false;
 	ini.GetValueB( "Char Widths", "CapitalsOnly", m_bCapitalsOnly );
+	int DrawExtraPixelsLeft = 0, DrawExtraPixelsRight = 0;
 
-	m_iDrawExtraPixelsLeft = 0;
-	ini.GetValueI( "Char Widths", "DrawExtraPixelsLeft", m_iDrawExtraPixelsLeft );
-
-	m_iDrawExtraPixelsRight = 0;
-	ini.GetValueI( "Char Widths", "DrawExtraPixelsRight", m_iDrawExtraPixelsRight );
+	ini.GetValueI( "Char Widths", "DrawExtraPixelsLeft", DrawExtraPixelsLeft );
+	ini.GetValueI( "Char Widths", "DrawExtraPixelsRight", DrawExtraPixelsRight );
 
 	int iAddToAllWidths = 0;
 	if( ini.GetValueI( "Char Widths", "AddToAllWidths", iAddToAllWidths ) )
@@ -85,28 +90,16 @@ Font::Font( const CString &sASCIITexturePath )
 	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
 	ini.GetValueI( "Char Widths", "LineSpacing", m_iLineSpacing );
 
-	// force widths to even number
-	for( i=0; i<256; i++ )
-		if( m_iFrameNoToWidth[i]%2 == 1 )
-			m_iFrameNoToWidth[i]++;
+	SetTextureCoords();
+	SetExtraPixels(DrawExtraPixelsLeft, DrawExtraPixelsRight);
 }
 
 
 Font::Font( const CString &sTexturePath, const CString& sCharacters )
 {
 	//LOG->Trace( "Font::LoadFromFontName(%s)", sFontFilePath.GetString() );
-	int i;
-	for( i=0; i<MAX_FONT_CHARS; i++ )
-	{
-		m_iCharToFrameNo[i] = -1;
-		m_iFrameNoToWidth[i] = -1;
-	}
 
-	m_bCapitalsOnly = false;
-	m_iDrawExtraPixelsLeft = 0;
-	m_iDrawExtraPixelsRight = 0;
-
-	m_iRefCount = 1;
+	Init();
 
 	//
 	// load texture
@@ -114,11 +107,9 @@ Font::Font( const CString &sTexturePath, const CString& sCharacters )
 	m_sTexturePath = sTexturePath;	// save
 	m_sTexturePath.MakeLower();
 
-
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 	m_iLineSpacing = m_pTexture->GetSourceFrameHeight();
-
 
 	//
 	// find out what characters are in this font
@@ -129,6 +120,7 @@ Font::Font( const CString &sTexturePath, const CString& sCharacters )
 					m_sTexturePath.GetString(), m_pTexture->GetNumFrames(), sCharacters.GetLength() );
 
 	// set the char to frame number map
+	int i;
 	for( i=0; i<sCharacters.GetLength(); i++ )
 	{
 		char c = sCharacters[i];
@@ -140,8 +132,58 @@ Font::Font( const CString &sTexturePath, const CString& sCharacters )
 	// Assume each character is the width of the frame.
 	for( i=0; i<(int)m_pTexture->GetNumFrames(); i++ )
 		m_iFrameNoToWidth[i] = m_pTexture->GetSourceFrameWidth();
+
+	SetTextureCoords();
 }
 
+void Font::SetTextureCoords()
+{
+	// force widths to even number
+	// Why do this?  It seems to just artificially widen some characters a little and
+	// make it look a little worse in 640x480 ...
+/*	for( i=0; i<256; i++ )
+		if( m_iFrameNoToWidth[i]%2 == 1 )
+			m_iFrameNoToWidth[i]++;
+*/
+
+	for(int i = 0; i < m_pTexture->GetNumFrames(); ++i)
+	{
+		/* Make a copy of each texture rect, reducing each to the actual dimensions
+		 * of the character (most characters don't take a full block). */
+		RectF r = *m_pTexture->GetTextureCoordRect(i);;
+
+		float fPixelsToChopOff = m_pTexture->GetSourceFrameWidth() - (float)m_iFrameNoToWidth[i];
+		float fTexCoordsToChopOff = fPixelsToChopOff / m_pTexture->GetSourceWidth();
+		
+		r.left  += fTexCoordsToChopOff/2;
+		r.right -= fTexCoordsToChopOff/2;
+		m_TextureCoordRects.push_back(r);
+
+		/* Add normal widths. */
+		m_Left.push_back(0);
+		m_Right.push_back(m_iFrameNoToWidth[i]);
+	}
+}
+
+void Font::SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight)
+{
+	/* Adjust for DrawExtraPixelsLeft and DrawExtraPixelsRight. */
+	for(unsigned i = 0; i < m_TextureCoordRects.size(); ++i)
+	{
+		int iFrameWidth = m_pTexture->GetSourceFrameWidth();
+		int iCharWidth = m_iFrameNoToWidth[i];
+
+		/* Extra pixels to draw to the left and right. */
+		int ExtraLeft = min( DrawExtraPixelsLeft, (iFrameWidth-iCharWidth)/2 );
+		int ExtraRight = min( DrawExtraPixelsRight, (iFrameWidth-iCharWidth)/2 ) + ExtraLeft;
+
+		/* Move left and expand right. */
+		m_TextureCoordRects[i].left -= float(ExtraLeft) / m_pTexture->GetSourceWidth();
+		m_TextureCoordRects[i].right += float(ExtraRight) / m_pTexture->GetSourceWidth();
+		m_Left[i] += ExtraLeft;
+		m_Right[i] += ExtraRight;
+	}
+}
 
 Font::~Font()
 {

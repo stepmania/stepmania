@@ -160,7 +160,6 @@ void BitmapText::DrawPrimitives()
 	// make the object in logical units centered at the origin
 	const int iHeight = pTexture->GetSourceFrameHeight();	// height of a character
 	const int iLineSpacing = m_pFont->m_iLineSpacing;			// spacing between lines
-	const int iFrameWidth = pTexture->GetSourceFrameWidth();	// width of a character frame in logical units
 
 	int iY;	//	 the center position of the first row of characters
 	switch( m_VertAlign )
@@ -191,44 +190,25 @@ void BitmapText::DrawPrimitives()
 			const int iFrameNo = m_pFont->m_iCharToFrameNo[ (unsigned char)c ];
 			if( iFrameNo == -1 )	// this font doesn't impelemnt this character
 				RageException::Throw( "The font '%s' does not implement the character '%c'", m_sFontFilePath.GetString(), c );
-			const int iCharWidth = m_pFont->m_iFrameNoToWidth[iFrameNo];
 
-			// The right side of any italic letter is being cropped.  So, we're going to draw a little bit
-			// to the right of the normal character.
-			const int iDrawExtraPixelsLeft = min( m_pFont->m_iDrawExtraPixelsLeft, (iFrameWidth-iCharWidth)/2 );
-			const int iDrawExtraPixelsRight = min( m_pFont->m_iDrawExtraPixelsRight, (iFrameWidth-iCharWidth)/2 );
+			/* set vertex positions */
+			v[iNumV++].p = RageVector3( (float)iX-m_pFont->m_Left[iFrameNo],	iY-iHeight/2.0f, 0 );	// top left
+			v[iNumV++].p = RageVector3( (float)iX-m_pFont->m_Left[iFrameNo],	iY+iHeight/2.0f, 0 );	// bottom left
+			v[iNumV++].p = RageVector3( (float)iX+m_pFont->m_Right[iFrameNo],	iY+iHeight/2.0f, 0 );	// bottom right
+			v[iNumV++].p = RageVector3( (float)iX+m_pFont->m_Right[iFrameNo],	iY-iHeight/2.0f, 0 );	// top right
 
-			//
-			// set vertex positions
-			//
-			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft,										iY-iHeight/2.0f, 0 );	// top left
-			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft,										iY+iHeight/2.0f, 0 );	// bottom left
-			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY+iHeight/2.0f, 0 );	// bottom right
-			v[iNumV++].p = RageVector3( (float)iX-iDrawExtraPixelsLeft+iCharWidth+iDrawExtraPixelsRight,	iY-iHeight/2.0f, 0 );	// top right
+			/* Advance the cursor. */
+			iX += m_pFont->m_iFrameNoToWidth[iFrameNo];
 
-			iX += iCharWidth;
-
-			//
-			// set texture coordinates
-			//
+			/* set texture coordinates */
 			iNumV -= 4;
 
-			RectF frectTexCoords = *pTexture->GetTextureCoordRect( iFrameNo );
+			RectF frectTexCoords = m_pFont->GetTextureCoordRect( iFrameNo );
 
-			// Tweak the textures frame rectangles so we don't draw extra 
-			// to the left and right of the character, saving us fill rate.
-			float fPixelsToChopOff = pTexture->GetSourceFrameWidth() - (float)iCharWidth;
-			float fTexCoordsToChopOff = fPixelsToChopOff / pTexture->GetSourceWidth();
-			frectTexCoords.left  += fTexCoordsToChopOff/2;
-			frectTexCoords.right -= fTexCoordsToChopOff/2;
-
-			const float fExtraTexCoordsLeft = iDrawExtraPixelsLeft / (float)pTexture->GetSourceWidth();
-			const float fExtraTexCoordsRight = iDrawExtraPixelsRight / (float)pTexture->GetSourceWidth();
-
-			v[iNumV++].t = RageVector2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.top );		// top left
-			v[iNumV++].t = RageVector2( frectTexCoords.left  - fExtraTexCoordsLeft,	 frectTexCoords.bottom );	// bottom left
-			v[iNumV++].t = RageVector2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.bottom );	// bottom right
-			v[iNumV++].t = RageVector2( frectTexCoords.right + fExtraTexCoordsRight, frectTexCoords.top );		// top right
+			v[iNumV++].t = RageVector2( frectTexCoords.left,	frectTexCoords.top );		// top left
+			v[iNumV++].t = RageVector2( frectTexCoords.left,	frectTexCoords.bottom );	// bottom left
+			v[iNumV++].t = RageVector2( frectTexCoords.right,	frectTexCoords.bottom );	// bottom right
+			v[iNumV++].t = RageVector2( frectTexCoords.right,	frectTexCoords.top );		// top right
 		}
 
 		iY += iLineSpacing;

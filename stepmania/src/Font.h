@@ -22,6 +22,7 @@ public:
 	Font( const CString &sASCIITexturePath );
 	Font( const CString &sTexturePath, const CString& sChars );
 	~Font();
+	void Init();
 
 	int GetLineWidthInSourcePixels( const CString &szLine );
 
@@ -31,13 +32,21 @@ public:
 
 	RageTexture* m_pTexture;
 	bool m_bCapitalsOnly;
-	int m_iDrawExtraPixelsLeft, m_iDrawExtraPixelsRight;	// for italic fonts
 	int m_iLineSpacing;
 
 	int m_iCharToFrameNo[MAX_FONT_CHARS];
 	int	m_iFrameNoToWidth[MAX_FONT_CHARS];	// in soure coordinate space
 
-protected:
+	const RectF &GetTextureCoordRect( int frameNo ) const { return m_TextureCoordRects[frameNo]; }
+
+	/* Source pixels to print to the left and right of each character. 
+	 * m_Left[] is usually 0. */
+	vector<int> m_Left, m_Right;
+
+private:
+	vector<RectF>	m_TextureCoordRects;
+	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
+	void SetTextureCoords();
 
 };
 
