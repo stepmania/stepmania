@@ -315,29 +315,24 @@ static void FlushGLErrors()
 #undef Screen
 #endif
 
+#if defined(unix)
+static Display *g_X11Display = NULL;
+#endif
+
 static void LogGLXDebugInformation()
 {
 #if defined(unix)
-	CHECKPOINT;
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if ( SDL_GetWMInfo(&info) < 0 )
-	{
-		LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
-		return;
-	}
+	ASSERT( g_X11Display );
 
-	Display *disp = info.info.x11.display;
-	ASSERT( disp );
+	const int scr = DefaultScreen( g_X11Display );
 
-	const int scr = DefaultScreen( disp );
-
-	LOG->Info( "Display: %s", DisplayString(disp) );
+	LOG->Info( "Display: %s", DisplayString(g_X11Display) );
 	LOG->Info( "Screen: %i", scr );
-	LOG->Info( "Server GLX vendor: %s", glXQueryServerString( disp, scr, GLX_VENDOR ) );
-	LOG->Info( "Server GLX version: %s", glXQueryServerString( disp, scr, GLX_VERSION ) );
-	LOG->Info( "Client GLX vendor: %s", glXGetClientString( disp, GLX_VENDOR ) );
-	LOG->Info( "Client GLX version: %s", glXGetClientString( disp, GLX_VERSION ) );
+	LOG->Info( "Direct rendering: %s", glXIsDirect( g_X11Display, glXGetCurrentContext() )? "yes":"no" );
+	LOG->Info( "Server GLX vendor: %s", glXQueryServerString( g_X11Display, scr, GLX_VENDOR ) );
+	LOG->Info( "Server GLX version: %s", glXQueryServerString( g_X11Display, scr, GLX_VERSION ) );
+	LOG->Info( "Client GLX vendor: %s", glXGetClientString( g_X11Display, GLX_VENDOR ) );
+	LOG->Info( "Client GLX version: %s", glXGetClientString( g_X11Display, GLX_VERSION ) );
 #endif
 }
 
@@ -358,6 +353,20 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 		delete wind;
 		throw;
 	}
+
+#if defined(unix)
+	{
+		SDL_SysWMinfo info;
+		SDL_VERSION(&info.version);
+		if ( SDL_GetWMInfo(&info) < 0 )
+		{
+			LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
+			return;
+		}
+		g_X11Display = info.info.x11.display;
+	}
+#endif
+
 
 	// Log driver details
 	LOG->Info("OGL Vendor: %s", glGetString(GL_VENDOR));
@@ -380,6 +389,19 @@ RageDisplay_OGL::RageDisplay_OGL( VideoModeParams p, bool bAllowUnacceleratedRen
 		LOG->Warn("This is a software renderer!");
 	}
 
+#if defined(unix)
+	if( !glXIsDirect( g_X11Display, glXGetCurrentContext() ) )
+	{
+		if( !bAllowUnacceleratedRenderer )
+		{
+			delete wind;
+			RageException::ThrowNonfatal(
+				"Your system is reporting that direct rendering is not available.  "
+				"Please obtain an updated driver from your video card manufacturer." );
+		}
+		LOG->Warn("Direct rendering is not enabled!");
+	}
+#endif
 
 	/* Log this, so if people complain that the radar looks bad on their
 	 * system we can compare them: */
@@ -399,9 +421,13 @@ void RageDisplay_OGL::Update(float fDeltaTime)
 
 bool RageDisplay_OGL::IsSoftwareRenderer()
 {
+#if defined(WIN32)
 	return 
 		( strcmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation")==0 ) &&
 		( strcmp((const char*)glGetString(GL_RENDERER),"GDI Generic")==0 );
+#else
+	return false;
+#endif
 }
 
 RageDisplay_OGL::~RageDisplay_OGL()
