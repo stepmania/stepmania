@@ -751,10 +751,8 @@ void ScreenSelectMusic::AfterNotesChange( PlayerNumber pn )
 //	m_BPMDisplay.BeginTweening( 0.2f );
 //	m_BPMDisplay.SetZoomY( 1.2f );
 
-	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
-	
-	if( m_pNotes && SONGMAN->IsUsingMemoryCard(pn) )
-		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, m_pNotes->m_MemCardScores[pn].iScore) );
+	if( pNotes && SONGMAN->IsUsingMemoryCard(pn) )
+		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, pNotes->m_MemCardScores[pn].iScore) );
 
 	m_DifficultyIcon[pn].SetFromNotes( pn, pNotes );
 	if( pNotes && pNotes->IsAutogen() )
@@ -777,6 +775,14 @@ void ScreenSelectMusic::SwitchToPreferredDifficulty()
 	{
 		if( !GAMESTATE->IsHumanPlayer( PlayerNumber(p) ) )
 			continue;
+
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+		{
+			/* Extra stage; just keep the difficulty selected by
+			 * SongManager::GetExtraStageInfo. */
+			m_iSelection[p] = GAMESTATE->m_pCurNotes[p]->GetDifficulty();
+			continue;
+		}
 
 		/* Find the closest match to the user's preferred difficulty. */
 		int CurDifference = -1;
@@ -875,8 +881,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			m_DifficultyDisplay.SetDifficulties( pSong, GAMESTATE->GetCurrentStyleDef()->m_NotesType );
 
-			if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
-				SwitchToPreferredDifficulty();
+			SwitchToPreferredDifficulty();
 
 			/* Short delay before actually showing these, so they don't show
 			 * up when scrolling fast.  It'll still show up in "slow" scrolling,
