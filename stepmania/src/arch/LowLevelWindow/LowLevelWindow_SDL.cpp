@@ -72,24 +72,6 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
-#if defined(LINUX)
-	static bool bSetVideoDriver = false;
-	if( !bSetVideoDriver )
-	{
-		bSetVideoDriver = true;
-
-		/* Most people don't have this set.  SDL has a habit of trying to
-		 * fall back on other drivers (svgalib, aalib), so set it to "x11". */
-		const char *sVideoDriver = getenv("SDL_VIDEODRIVER");
-		if( sVideoDriver == NULL )
-		{
-			static char env[] = "SDL_VIDEODRIVER=x11";
-			putenv( env );
-		} else if( strcmp( sVideoDriver, "x11" ) )
-			LOG->Info( "SDL_VIDEODRIVER has been set to %s", sVideoDriver );
-	}
-#endif
-
 	if( SDL_InitSubSystem(SDL_INIT_VIDEO) == -1 )
 	{
 		const CString err = mySDL_GetError();
