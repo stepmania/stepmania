@@ -15,7 +15,9 @@
 #endif
 
 /* Load this even if we have GTK, since we can fall back if GTK is missing. */
+#ifdef HAVE_SDL
 #include "LoadingWindow/LoadingWindow_SDL.h"
+#endif
 
 #include "ArchHooks/ArchHooks_Unix.h"
 
