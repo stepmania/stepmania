@@ -11,6 +11,8 @@ NEW FEATURE:  New Edit menus with ability to delete Notes patterns and new
 	options	for importing existing patterns into a new Notes pattern.
 NEW FEATURE:  Jukebox mode.  Like demonstration, but plays entire songs 
 	and loops.
+NEW FEATURE:  F6 to save screenshot.  Saved in StepMania program directory
+	as "screenshotXXXX.bmp".
 
 ----------------------- Version 3.01 ---------------------------
 CHANGE:  Simplified NoteSkin tap graphic format.  Old NoteSkins will need to 

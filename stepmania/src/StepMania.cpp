@@ -433,6 +433,22 @@ static void HandleInputEvents(float fDeltaTime)
 			}			
 			ApplyGraphicOptions();
 		}
+		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F6))
+		{
+			if(type != IET_FIRST_PRESS) continue;
+
+			// pressed F6.  Save Screenshot.
+			int i=0;
+			CString sPath;
+			for( i=0; i<1000; i++ )
+			{
+				sPath = ssprintf("screen%04d.bmp",i);
+				if( !DoesFileExist(sPath) )
+					break;
+			}
+			DISPLAY->SaveScreenshot( sPath );
+			SCREENMAN->SystemMessage( "Saved screenshot: " + sPath );
+		}
 
 		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
 		{

@@ -87,6 +87,8 @@ public:
 	const oglspecs_t &GetSpecs() const { return *m_oglspecs; }
 	void DisablePalettedTexture();
 
+	void SaveScreenshot( CString sPath );
+
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );
 	void SetBlendMode(int src, int dst);

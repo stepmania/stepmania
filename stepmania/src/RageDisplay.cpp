@@ -435,6 +435,32 @@ void RageDisplay::DisablePalettedTexture()
 	m_oglspecs->EXT_paletted_texture = false;
 }
 
+void RageDisplay::SaveScreenshot( CString sPath )
+{
+	ASSERT( sPath.Right(3).CompareNoCase("bmp") == 0 );	// we can only save bitmaps
+
+	SDL_Surface *image = SDL_CreateRGBSurface(
+		SDL_SWSURFACE, g_CurrentWidth, g_CurrentHeight,
+        24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
+	SDL_Surface *temp = SDL_CreateRGBSurface(
+		SDL_SWSURFACE, g_CurrentWidth, g_CurrentHeight,
+		24, 0x0000FF, 0x00FF00, 0xFF0000, 0x000000);
+
+	glReadPixels(0, 0, g_CurrentWidth, g_CurrentHeight, GL_RGB,
+	             GL_UNSIGNED_BYTE, image->pixels);
+
+	// flip vertically
+	for( int y=0; y<g_CurrentHeight; y++ )
+		memcpy( 
+			(char *)temp->pixels + 3 * g_CurrentWidth * y,
+			(char *)image->pixels + 3 * g_CurrentWidth * (g_CurrentHeight-y),
+			3*g_CurrentWidth );
+
+	SDL_SaveBMP( temp, sPath );
+	SDL_FreeSurface( temp );
+}
+
+
 bool RageDisplay::IsWindowed() const 
 {
 	return true; // FIXME
