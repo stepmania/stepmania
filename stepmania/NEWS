@@ -21,6 +21,7 @@ BUG FIX:  DWI reader now reads fractional BPM and FREEZE index values (e.g.
 BUG FIX:  Fixed ez2 real style spacing
 CHANGE:  #SAMPLESTART tag now written in DWI files
 CHANGE:  Editor now snaps while recording
+OPTIMIZATION:  More efficient texture memory usage
 	
 ------------------------CVS after 3.00 beta 6----------------
 CHANGE:  Missing a jump with the Oni life meter now subtracts only 1 life.

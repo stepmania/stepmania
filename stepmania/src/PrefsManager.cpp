@@ -55,7 +55,7 @@ PrefsManager::PrefsManager()
 	m_bDelayedEscape = true;
 	m_bHowToPlay = true;
 	m_bArcadeOptionsNavigation = false;
-	m_iUnloadTextureDelaySeconds = 60*30;	// 30 mins
+	m_iUnloadTextureDelaySeconds = 0; // disabled 60*30;	// 30 mins
 	m_bCoinOpMode = false;
 
 	/* I'd rather get occasional people asking for support for this even though it's

@@ -870,11 +870,11 @@ float NoteData::GetFreezeRadarValue( float fSongSeconds )
 // -1 for iOriginalTracksToTakeFrom means no track
 void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] )
 {
-	pOriginal->ConvertHoldNotesTo4s();
-
 	// reset all notes
 	Init();
 	
+	pOriginal->ConvertHoldNotesTo4s();
+
 	m_iNumTracks = iNewNumTracks;
 
 	// copy tracks
@@ -893,6 +893,9 @@ void NoteData::LoadTransformed( NoteData* pOriginal, int iNewNumTracks, const in
 
 void NoteData::LoadTransformedSlidingWindow( NoteData* pOriginal, int iNewNumTracks )
 {
+	// reset all notes
+	Init();
+
 	pOriginal->ConvertHoldNotesTo4s();
 	m_iNumTracks = iNewNumTracks;
 
