@@ -467,6 +467,7 @@ static Grade GetWorstGrade()
 }
 
 #include "LuaFunctions.h"
+LuaFunction_NoArgs( GetStagesPlayed,		(int) g_vPlayedStageStats.size() );
 LuaFunction_NoArgs( GetBestGrade,			GetBestGrade() );
 LuaFunction_NoArgs( GetWorstGrade,			GetWorstGrade() );
 LuaFunction_NoArgs( OnePassed,				g_CurStageStats.OnePassed() );
@@ -475,22 +476,31 @@ LuaFunction_PlayerNumber( MaxCombo,			g_CurStageStats.GetMaxCombo(pn).cnt )
 LuaFunction_PlayerNumber( GetGrade,			g_CurStageStats.GetGrade(pn) )
 LuaFunction_Str( Grade,						StringToGrade(str) );
 
-/* PrevGrade(0) returns the last grade; PrevGrade(1) returns the one before that,
- * and so on.  If you go back beyond the first song played, return GRADE_NO_DATA. */
-Grade GetPrevGrade( int n, PlayerNumber pn )
+const StageStats *GetStageStatsN( int n )
 {
-	int stage = int(g_vPlayedStageStats.size()) - n - 1;
-	if( stage < 0 || stage >= (int) g_vPlayedStageStats.size() )
+	if( n == (int) g_vPlayedStageStats.size() )
+		return &g_CurStageStats;
+	if( n > (int) g_vPlayedStageStats.size() )
+		return NULL;
+	return &g_vPlayedStageStats[n];
+}
+
+/* GetGrade(0) returns the first grade; GetGrade(1) returns the second grade, and
+ * and so on.  GetGrade(GetStagesPlayed()) returns the current grade (from g_CurStageStats).
+ * If beyond the current song played, return GRADE_NO_DATA. */
+Grade GetGrade( int n, PlayerNumber pn )
+{
+	const StageStats *pStats = GetStageStatsN( n );
+	if( pStats == NULL )
 		return GRADE_NO_DATA;
-	return g_vPlayedStageStats[stage].GetGrade( pn );
+	return pStats->GetGrade( pn );
 }
 
 bool OneGotGrade( int n, Grade g )
 {
-	for( unsigned pn=0; pn<NUM_PLAYERS; pn++ )
-		if( GAMESTATE->IsHumanPlayer((PlayerNumber)pn) )
-			if( GetPrevGrade( n, (PlayerNumber)pn ) == g )
-				return true;
+	FOREACH_HumanPlayer( pn )
+		if( GetGrade( n, (PlayerNumber)pn ) == g )
+			return true;
 
 	return false;
 }
