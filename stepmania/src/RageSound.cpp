@@ -393,9 +393,9 @@ int RageSound::GetPCM(char *buffer, int size, int sampleno)
 	LockMut(SOUNDMAN->lock);
 
 	ASSERT(playing);
+
 	/* Erase old pos_map data. */
-	while(pos_map.size() > 1 && pos_map.back().sampleno - pos_map.front().sampleno > pos_map_backlog_samples)
-		pos_map.pop_front();
+	CleanPosMap( pos_map );
 
 	/*
 	 * "sampleno" is the audio driver's conception of time.  "position"
@@ -619,6 +619,22 @@ int RageSound::SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bo
 	if( approximate )
 		*approximate = true;
 	return closest_position;
+}
+
+void RageSound::CleanPosMap( deque<pos_map_t> &pos_map )
+{
+	/* Determine the number of frames of data we have. */
+	int total_frames = 0;
+	for( unsigned i = 0; i < pos_map.size(); ++i )
+		total_frames += pos_map[i].samples;
+
+	/* Remove the oldest entry so long we'll stil have enough data.  Don't delete every
+	 * sample, so we'll always have some data to extrapolate from. */
+	while( pos_map.size() > 1 && total_frames - pos_map.front().samples > pos_map_backlog_samples )
+	{
+		total_frames -= pos_map.front().samples;
+		pos_map.pop_front();
+	}
 }
 
 /* Get the position in frames (ignoring GetOffsetFix). */

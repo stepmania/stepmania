@@ -106,6 +106,7 @@ private:
 	};
 	deque<pos_map_t> pos_map;
 	static int SearchPosMap( const deque<pos_map_t> &pos_map, int cur_sample, bool *approximate );
+	static void CleanPosMap( deque<pos_map_t> &pos_map );
 	
 	CString m_sFilePath;
 
