@@ -28,7 +28,7 @@ class RageSound_DSound_Software: public RageSoundDriver
 	bool shutdown;
 
 	DSound ds;
-	DSoundBuf *str_ds;
+	DSoundBuf *pcm;
 
 	bool GetData();
 	void Update(float delta);

@@ -13,7 +13,7 @@ class RageSound_DSound: public RageSoundDriver
 {
 	struct stream {
 	    /* Actual audio stream: */
-		DSoundBuf *str_ds;
+		DSoundBuf *pcm;
 
 	    /* Sound object that's playing on this stream, or NULL if this
 	     * channel is available: */
@@ -30,7 +30,7 @@ class RageSound_DSound: public RageSoundDriver
 		RageTimer start_time;
 		bool GetData(bool init);
 
-	    stream() { str_ds = NULL; snd = NULL; state=INACTIVE; }
+	    stream() { pcm = NULL; snd = NULL; state=INACTIVE; }
 		~stream();
 	};
 	friend struct stream;

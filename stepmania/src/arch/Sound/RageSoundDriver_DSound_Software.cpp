@@ -44,7 +44,7 @@ void RageSound_DSound_Software::MixerThread()
 		;
 
 	/* Start playing. */
-	str_ds->Play();
+	pcm->Play();
 
 	while(!shutdown) {
 		Sleep(10);
@@ -54,7 +54,7 @@ void RageSound_DSound_Software::MixerThread()
 
 	/* I'm not sure why, but if we don't stop the stream now, then the thread will take
 	 * 90ms (our buffer size) longer to close. */
-	str_ds->Stop();
+	pcm->Stop();
 }
 
 bool RageSound_DSound_Software::GetData()
@@ -63,10 +63,10 @@ bool RageSound_DSound_Software::GetData()
 
 	char *locked_buf;
 	unsigned len;
-	const int play_pos = str_ds->GetOutputPosition();
-    const int cur_play_pos = str_ds->GetPosition();
+	const int play_pos = pcm->GetOutputPosition();
+    const int cur_play_pos = pcm->GetPosition();
 
-	if(!str_ds->get_output_buf(&locked_buf, &len, chunksize))
+	if(!pcm->get_output_buf(&locked_buf, &len, chunksize))
 		return false;
 
 	/* Silence the buffer. */
@@ -119,13 +119,13 @@ bool RageSound_DSound_Software::GetData()
 		{
 			/* This sound is finishing. */
 			sounds[i]->stopping = true;
-			sounds[i]->flush_pos = str_ds->GetOutputPosition();
+			sounds[i]->flush_pos = pcm->GetOutputPosition();
 		}
 	}
 
 	mix.read((Sint16 *) locked_buf);
 
-	str_ds->release_output_buf(locked_buf, len);
+	pcm->release_output_buf(locked_buf, len);
 
 	return true;
 }
@@ -181,13 +181,13 @@ void RageSound_DSound_Software::StopMixing(RageSound *snd)
 	/* If nothing is playing, reset the frame count; this is just to
      * prevent eventual overflow. */
 	if(sounds.empty())
-		str_ds->Reset();
+		pcm->Reset();
 }
 
 int RageSound_DSound_Software::GetPosition(const RageSound *snd) const
 {
 	LockMut(SOUNDMAN->lock);
-	return str_ds->GetPosition();
+	return pcm->GetPosition();
 }
 
 RageSound_DSound_Software::RageSound_DSound_Software()
@@ -200,7 +200,7 @@ RageSound_DSound_Software::RageSound_DSound_Software()
 		RageException::ThrowNonfatal("Driver unusable (emulated device)");
 
 	/* Create a DirectSound stream, but don't force it into hardware. */
-	str_ds = new DSoundBuf(ds, 
+	pcm = new DSoundBuf(ds, 
 		DSoundBuf::HW_DONT_CARE, 
 		channels, samplerate, 16, buffersize);
 
@@ -218,7 +218,7 @@ RageSound_DSound_Software::~RageSound_DSound_Software()
 	LOG->Trace("Mixer thread shut down.");
 	LOG->Flush();
 
-	delete str_ds;
+	delete pcm;
 }
 
 float RageSound_DSound_Software::GetPlayLatency() const

@@ -67,7 +67,7 @@ void RageSound_DSound::MixerThread()
 	 * 90ms (our buffer size) longer to close. */
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 		if(stream_pool[i]->state != stream_pool[i]->INACTIVE)
-			stream_pool[i]->str_ds->Stop();
+			stream_pool[i]->pcm->Stop();
 }
 
 void RageSound_DSound::Update(float delta)
@@ -82,7 +82,7 @@ void RageSound_DSound::Update(float delta)
 	{
 		if(str[i]->state != str[i]->STOPPING) continue;
 
-		int ps = str[i]->str_ds->GetPosition();
+		int ps = str[i]->pcm->GetPosition();
 		if(ps < str[i]->flush_pos)
 			continue; /* stopping but still flushing */
 
@@ -91,7 +91,7 @@ void RageSound_DSound::Update(float delta)
 			str[i]->snd->StopPlaying();
 		str[i]->snd = NULL;
 
-		str[i]->str_ds->Stop();
+		str[i]->pcm->Stop();
 		str[i]->state = str[i]->INACTIVE;
 	}
 }
@@ -105,17 +105,17 @@ bool RageSound_DSound::stream::GetData(bool init)
 
 	char *locked_buf;
 	unsigned len;
-	const int play_pos = str_ds->GetOutputPosition();
-	const int cur_play_pos = str_ds->GetPosition();
+	const int play_pos = pcm->GetOutputPosition();
+	const int cur_play_pos = pcm->GetPosition();
 
 	if(init) {
 		/* We're initializing; fill the entire buffer. The buffer is supposed to
 		 * be empty, so this should never fail. */
-		if(!str_ds->get_output_buf(&locked_buf, &len, buffersize))
+		if(!pcm->get_output_buf(&locked_buf, &len, buffersize))
 			ASSERT(0);
 	} else {
 		/* Just fill one chunk. */
-		if(!str_ds->get_output_buf(&locked_buf, &len, chunksize))
+		if(!pcm->get_output_buf(&locked_buf, &len, chunksize))
 			return false;
 	}
 
@@ -132,7 +132,7 @@ bool RageSound_DSound::stream::GetData(bool init)
 			/* If the sound is supposed to start at a time past this buffer, insert silence. */
 			const int iFramesUntilThisBuffer = play_pos - cur_play_pos;
 			const float fSecondsBeforeStart = -start_time.Ago();
-			const int iFramesBeforeStart = int(fSecondsBeforeStart * str_ds->GetSampleRate());
+			const int iFramesBeforeStart = int(fSecondsBeforeStart * pcm->GetSampleRate());
 			const int iSilentFramesInThisBuffer = iFramesBeforeStart-iFramesUntilThisBuffer;
 			const int iSilentBytesInThisBuffer = clamp( iSilentFramesInThisBuffer * bytes_per_frame, 0, bytes_left );
 
@@ -157,21 +157,21 @@ bool RageSound_DSound::stream::GetData(bool init)
 			state = STOPPING;
 
 			/* Keep playing until the data we currently have locked has played. */
-			flush_pos = str_ds->GetOutputPosition();
+			flush_pos = pcm->GetOutputPosition();
 		}
 	} else {
 		/* Silence the buffer. */
 		memset(locked_buf, 0, len);
 	}
 
-	str_ds->release_output_buf(locked_buf, len);
+	pcm->release_output_buf(locked_buf, len);
 
 	return true;
 }
 
 RageSound_DSound::stream::~stream()
 {
-	delete str_ds;
+	delete pcm;
 }
 
 RageSound_DSound::RageSound_DSound()
@@ -208,7 +208,7 @@ RageSound_DSound::RageSound_DSound()
 		}
 
 		stream *s = new stream;
-		s->str_ds = newbuf;
+		s->pcm = newbuf;
 		stream_pool.push_back(s);
 	}
 
@@ -242,7 +242,7 @@ void RageSound_DSound::VolumeChanged()
 {
 	for(unsigned i = 0; i < stream_pool.size(); ++i)
 	{
-		stream_pool[i]->str_ds->SetVolume(SOUNDMAN->GetMixVolume());
+		stream_pool[i]->pcm->SetVolume(SOUNDMAN->GetMixVolume());
 	}
 }
 
@@ -265,14 +265,14 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 
 	/* Give the stream to the playing sound and remove it from the pool. */
 	stream_pool[i]->snd = snd;
-	stream_pool[i]->str_ds->SetSampleRate(snd->GetSampleRate());
+	stream_pool[i]->pcm->SetSampleRate(snd->GetSampleRate());
 	stream_pool[i]->start_time = snd->GetStartTime();
 
 	/* Pre-buffer the stream. */
 	/* There are two buffers of data; fill them both ahead of time so the
 	 * sound can start almost immediately. */
 	stream_pool[i]->GetData(true);
-	stream_pool[i]->str_ds->Play();
+	stream_pool[i]->pcm->Play();
 
 	/* Normally, at this point we should still be INACTIVE, in which case,
 	 * tell the mixer thread to start mixing this channel.  However, if it's
@@ -312,7 +312,7 @@ void RageSound_DSound::StopMixing(RageSound *snd)
 	stream_pool[i]->state = stream_pool[i]->STOPPING;
 
 	/* Flush two buffers worth of data. */
-	stream_pool[i]->flush_pos = stream_pool[i]->str_ds->GetOutputPosition();
+	stream_pool[i]->flush_pos = stream_pool[i]->pcm->GetOutputPosition();
 
 	/* This function is called externally (by RageSound) to stop immediately.
 	 * We need to prevent SoundStopped from being called; it should only be
@@ -333,7 +333,7 @@ int RageSound_DSound::GetPosition(const RageSound *snd) const
 
 	ASSERT(i != stream_pool.size());
 
-	return stream_pool[i]->str_ds->GetPosition();
+	return stream_pool[i]->pcm->GetPosition();
 }
 
 /*
