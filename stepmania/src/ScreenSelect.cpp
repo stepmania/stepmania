@@ -128,7 +128,7 @@ ScreenSelect::ScreenSelect( CString sClassName )
 		m_BGAnimations[c].LoadFromAniDir( sBGAnimationDir );
 	}
 
-	m_Menu.Load( sClassName, true, false );	// don't load any BGAnimation.  We have our own.
+	m_Menu.Load( sClassName );
 	this->AddChild( &m_Menu );
 
 	SOUNDMAN->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sClassName+" intro") );

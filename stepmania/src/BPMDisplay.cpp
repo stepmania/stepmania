@@ -148,10 +148,16 @@ void BPMDisplay::CycleRandomly()
 {
 	m_CountingState = cycle_randomly;
 	m_fTimeLeftInState = 0;
+
+	m_textBPM.SetTweenDiffuse( NORMAL_COLOR );
+	m_sprLabel.SetTweenDiffuse( NORMAL_COLOR );
 }
 
 void BPMDisplay::NoBPM()
 {
 	m_CountingState = no_bpm;
 	m_textBPM.SetText( "..." ); 
+
+	m_textBPM.SetTweenDiffuse( NORMAL_COLOR );
+	m_sprLabel.SetTweenDiffuse( NORMAL_COLOR );
 }

@@ -293,8 +293,8 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 		return;
 	m_bChosen[pn] = true;
 
-	for( unsigned page=0; page<NUM_PAGES; page++ )
-		m_sprMore[page].FadeOff( 0, "fade", 0.5f );
+	for( int page=0; page<NUM_PAGES; page++ )
+		m_sprMore[page].Command( MORE_OFF_COMMAND(page) );
 
 	const ModeChoice& mc = m_ModeChoices[m_CurrentPage][m_iChoiceOnPage[pn]];
 	/* Don't play sound if we're on the second page and another player
@@ -339,30 +339,18 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
 }
 
-// Err, this breaks back ...
-//void ScreenSelectDifficulty::MenuBack( PlayerNumber pn )
-//{
-//}
-
 void ScreenSelectDifficulty::TweenOnScreen() 
 {
 	unsigned p;
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
-//		m_sprExplanation[PAGE_1].Command( "x,-300;y,70;sleep,0.7;bounceend,0.5f;x,170" );
-//		m_sprMore[PAGE_1].Command( "x,580;y,90;diffuse,1,1,1,0;linear,0.5;diffuse,1,1,1,1" );
 		m_sprExplanation[page].Command( EXPLANATION_ON_COMMAND(page) );
 		m_sprMore[page].Command( MORE_ON_COMMAND(page) );
 
 		for( unsigned c=0; c<m_ModeChoices[page].size(); c++ )
 		{
-			// fly on
-//			m_sprInfo[p][c].FadeOn( fPause, "left far accelerate", 0.4f );
 			m_sprInfo[page][c].Command( INFO_ON_COMMAND(page,c) );
-
-			// roll down
-//			m_sprPicture[p][c].FadeOn( fPause+0.4f, "foldy bounce", 0.3f );
 			m_sprPicture[page][c].Command( PICTURE_ON_COMMAND(page,c) );
 		}
 	}
@@ -387,9 +375,8 @@ void ScreenSelectDifficulty::TweenOffScreen()
 {	
 	const int page = m_CurrentPage;
 
-	m_sprExplanation[page].Command( "sleep,0.7;bouncebegin,0.5f;x,-300" );
-	m_sprMore[page].FadeOff( 0.7f, "fade", 0.5f );
-
+	m_sprExplanation[page].Command( EXPLANATION_OFF_COMMAND(page) );
+	m_sprMore[page].Command( MORE_OFF_COMMAND(page) );
 
 	for( int p=0; p<NUM_PLAYERS; p++ )
 	{
@@ -403,14 +390,7 @@ void ScreenSelectDifficulty::TweenOffScreen()
 
 	for( unsigned c=0; c<m_ModeChoices[page].size(); c++ )
 	{
-//		const float fPause = c*0.2f;
-
-		// roll up
-		//m_sprPicture[page][c].FadeOff( fPause, "foldy bounce", 0.3f );
 		m_sprPicture[page][c].Command( PICTURE_OFF_COMMAND(page,c) );
-
-		// fly off
-		//m_sprInfo[page][c].FadeOff( fPause+0.3f, "left far accelerate", 0.4f );
 		m_sprInfo[page][c].Command( INFO_OFF_COMMAND(page,c) );
 	}
 }
