@@ -1,6 +1,4 @@
-/*
- * RageFileDriver, RageFileObj: Low-level file access driver classes.
- */
+/* RageFileDriver, RageFileObj: Low-level file access driver classes. */
 
 #ifndef RAGE_FILE_DRIVER_H
 #define RAGE_FILE_DRIVER_H
@@ -27,7 +25,7 @@ public:
 
 	/* Possible error returns from Open, in addition to standard errno.h values: */
 	enum { ERROR_WRITING_NOT_SUPPORTED = -1 };
-protected:
+// protected:
 	FilenameDB *FDB;
 };
 
