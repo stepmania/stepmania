@@ -512,6 +512,25 @@ void Song::TidyUpData()
 
 	LOG->Trace("Looking for images...");
 
+	/* Replace backslashes with slashes in all paths. */	
+	m_sMusicFile.Replace("\\", "/");
+	m_sBannerFile.Replace("\\", "/");
+	m_sBackgroundFile.Replace("\\", "/");
+	m_sCDTitleFile.Replace("\\", "/");
+	m_sLyricsFile.Replace("\\", "/");
+
+	/* Many imported files contain erroneous whitespace before or after
+	 * filenames.  Paths usually don't actually start or end with spaces,
+	 * so let's just remove it. */
+	TrimLeft(m_sBannerFile);
+	TrimRight(m_sBannerFile);
+	TrimLeft(m_sBackgroundFile);
+	TrimRight(m_sBackgroundFile);
+	TrimLeft(m_sCDTitleFile);
+	TrimRight(m_sCDTitleFile);
+	TrimLeft(m_sLyricsFile);
+	TrimRight(m_sLyricsFile);
+
 	//
 	// First, check the file name for hints.
 	//
