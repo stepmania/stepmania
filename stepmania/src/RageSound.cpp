@@ -207,7 +207,7 @@ void RageSound::SetStartSeconds( float secs )
 
 void RageSound::SetLengthSeconds(float secs)
 {
-	ASSERT(secs == -1 || secs >= 0);
+	RAGE_ASSERT_M( secs == -1 || secs >= 0, ssprintf("%f",secs) );
 	ASSERT(!playing);
 	
 	if(secs == -1)
