@@ -40,6 +40,7 @@ void ArchHooks_Unix::DumpDebugInfo()
 #if defined(CRASH_HANDLER)
 	LOG->Info( "Crash backtrace component: %s", BACKTRACE_METHOD_TEXT );
 	LOG->Info( "Crash lookup component: %s", BACKTRACE_LOOKUP_METHOD_TEXT );
+	LOG->Info( "Crash demangle component: %s", BACKTRACE_DEMANGLE_METHOD_TEXT );
 #endif
 }
 
