@@ -116,9 +116,9 @@ RageLog::RageLog()
 
 	this->Trace( "Log starting %.4d-%.2d-%.2d %.2d:%.2d:%.2d", 
 		1900+now->tm_year, now->tm_mon, now->tm_mday, now->tm_hour, now->tm_min, now->tm_sec );
-	this->Trace( "" );
+	this->Trace( " " );
 #if defined(HAVE_VERSION_INFO)
-	this->Info("Compiled %s (build %i)", version_time, version_num);
+	this->Info("Compiled %s (build %lu)", version_time, version_num);
 #endif
 }
 
