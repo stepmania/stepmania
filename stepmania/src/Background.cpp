@@ -170,7 +170,9 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 		if( sExt.CompareNoCase("avi")==0 ||
 			sExt.CompareNoCase("mpg")==0 ||
 			sExt.CompareNoCase("mpeg")==0 )
+		{
 			return MakeMovie( asFiles[0] );
+		}
 		else
 		{
 			Sprite *pSprite = new Sprite;
@@ -429,15 +431,6 @@ void Background::LoadFromSong( const Song* pSong )
 	// Re-sort.
 	SortBackgroundChangesArray( m_aBGChanges );
 
-    for( map<CString,Actor*>::iterator iter = m_BGAnimations.begin();
-		 iter != m_BGAnimations.end();
-		 iter++ )
-	{
-		iter->second->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-		iter->second->SetZoomX( fXZoom );
-		iter->second->SetZoomY( fYZoom );
-	}
-		
 	m_DangerAll.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 	m_DangerAll.SetZoomX( fXZoom );
 	m_DangerAll.SetZoomY( fYZoom );	
