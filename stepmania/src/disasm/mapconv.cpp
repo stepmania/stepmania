@@ -22,8 +22,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_CNAMBUF		(0x100000)
-#define MAX_FNAMBUF		(0x20000)
+#define MAX_CNAMBUF		(0x20000)
+#define MAX_FNAMBUF		(0x100000)
 #define MAX_SEGMENTS	(64)
 #define MAX_GROUPS		(64)
 
