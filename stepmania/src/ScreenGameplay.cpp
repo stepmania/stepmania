@@ -314,9 +314,11 @@ void ScreenGameplay::Init()
 			GAMESTATE->GetCurrentStyle()->m_StyleType == Style::ONE_PLAYER_ONE_CREDIT )
 			fPlayerX = SCREEN_WIDTH/2;
 
+		m_Player[p].SetName( ssprintf("Player%i", p+1) );
 		m_Player[p].SetX( fPlayerX );
 		this->AddChild( &m_Player[p] );
 	
+		m_sprOniGameOver[p].SetName( ssprintf("OniGameOver%i", p+1) );
 		m_sprOniGameOver[p].Load( THEME->GetPathG(m_sName,"oni gameover") );
 		m_sprOniGameOver[p].SetX( fPlayerX );
 		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
