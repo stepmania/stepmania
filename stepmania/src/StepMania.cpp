@@ -389,6 +389,99 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+/* Returns true if the key has been handled and should be discarded, false if
+ * the key should be sent on to screens. */
+bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput GameI, MenuInput MenuI, StyleInput StyleI )
+{
+	switch( MenuI.button )
+	{
+	case MENU_BUTTON_OPERATOR:
+		if( type == IET_FIRST_PRESS ) return true;
+
+		/* Global operator key, to get quick access to the options menu. Don't
+		 * do this if we're on a "system menu", which includes the editor
+		 * (to prevent quitting without storing changes). */
+		if( !GAMESTATE->m_bIsOnSystemMenu )
+		{
+			SCREENMAN->SystemMessage( "OPERATOR" );
+			SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		}
+		return true;
+
+	case MENU_BUTTON_COIN:
+		/* Handle a coin insertion. */
+		if( type == IET_FIRST_PRESS ) return true;
+
+		switch( PREFSMAN->m_CoinMode )
+		{
+			case PrefsManager::COIN_FREE: // fall through
+			case PrefsManager::COIN_HOME: // fall through
+			case PrefsManager::COIN_PAY:
+				GAMESTATE->m_iCoins++;
+				SCREENMAN->RefreshCreditsMessages();
+				SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
+				return true;
+			default:
+				ASSERT(0);
+				return true;
+		}
+	}
+
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
+	{
+		if(type != IET_FIRST_PRESS) return true;
+		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+			INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+		{
+			// pressed Alt+F4
+			SDL_Event *event;
+			event = (SDL_Event *) malloc(sizeof(SDL_Event));
+			event->type = SDL_QUIT;
+			SDL_PushEvent(event);
+			return true;
+		}
+		else
+		{
+			// pressed just F4
+			PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
+			ApplyGraphicOptions();
+			return true;
+		}
+	}
+	
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F5 conflicts with editor and AutoSync
+	{
+		if(type != IET_FIRST_PRESS) return true;
+
+		// pressed F6.  Save Screenshot.
+		CString sPath;
+		for( int i=0; i<1000; i++ )
+		{
+			sPath = ssprintf("screen%04d.bmp",i);
+			if( !DoesFileExist(sPath) )
+				break;
+		}
+		DISPLAY->SaveScreenshot( sPath );
+		SCREENMAN->SystemMessage( "Saved screenshot: " + sPath );
+		return true;
+	}
+
+	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
+	{
+		if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
+			INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
+		{
+			if(type != IET_FIRST_PRESS) return true;
+			/* alt-enter */
+			PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
+			ApplyGraphicOptions();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static void HandleInputEvents(float fDeltaTime)
 {
 	static InputEventArray ieArray;
@@ -398,121 +491,6 @@ static void HandleInputEvents(float fDeltaTime)
 	{
 		DeviceInput DeviceI = (DeviceInput)ieArray[i];
 		InputEventType type = ieArray[i].type;
-
-		// HACK:  Numlock is read is being pressed if the NumLock light is on.
-		// Filter out all NumLock repeat messages
-		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_NUMLOCK && type != IET_FIRST_PRESS )
-			continue;	// skip
-
-
-
-
-		
-		/* Begin Global Key Support.. Any of these keys are configurable thru the normal
-			key/joy configuration screens */
-
-		if( type == IET_FIRST_PRESS ) // This only takes effect if the key is pressed once.
-		{
-			MenuInput	MenuII; /* These are temporary holders to turn the device    */
-			GameInput	GameII; /* input into a menu button for certain keys         */
-			INPUTMAPPER->DeviceToGame(DeviceI,GameII);
-			INPUTMAPPER->GameToMenu(GameII,MenuII);							
-		
-			switch( MenuII.button )
-			{
-				case MENU_BUTTON_OPERATOR:
-					/* Global operator key.. like arcade, allows quick immediate access
-						to the adminstrative options panel. A global boolean has been
-						added to not allow this to function on system option screens,
-						or in the step editor. This will save the hassle of an "accidental
-						keystroke, and your edit is gone".  -- Miryokuteki
-					*/
-					if( !GAMESTATE->m_bIsOnSystemMenu )
-					{
-						SCREENMAN->SystemMessage( "OPERATOR" );
-						SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-						//continue;
-						return;
-					}
-					else
-					{
-						return;
-					}
-
-			
-			
-					
-				/* Global credit.. accepts anywhere, like the arcade -- Mirykouteki */
-				case MENU_BUTTON_COIN:
-					switch( PREFSMAN->m_CoinMode )
-					{
-						case PrefsManager::COIN_FREE: //fall thru
-						case PrefsManager::COIN_HOME: //fall thru
-						case PrefsManager::COIN_PAY:
-							GAMESTATE->m_iCoins++;
-							SCREENMAN->RefreshCreditsMessages();
-							SOUNDMAN->PlayOnce( THEME->GetPathTo("Sounds","insert coin") );
-							//continue;
-							return;
-						default:
-							ASSERT(0);
-					}
-			}
-		}/* end GKSD */
-	
-		
-		
-		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
-		{
-			if(type != IET_FIRST_PRESS) continue;
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-				INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
-			{
-				// pressed Alt+F4
-				SDL_Event *event;
-				event = (SDL_Event *) malloc(sizeof(SDL_Event));
-				event->type = SDL_QUIT;
-				SDL_PushEvent(event);
-				continue;
-			}
-			else
-			{
-				// pressed just F4
-				PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
-				ApplyGraphicOptions();
-				continue;
-			}
-		}
-		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))	// F5 conflicts with editor and AutoSync
-		{
-			if(type != IET_FIRST_PRESS) continue;
-
-			// pressed F6.  Save Screenshot.
-			int i=0;
-			CString sPath;
-			for( i=0; i<1000; i++ )
-			{
-				sPath = ssprintf("screen%04d.bmp",i);
-				if( !DoesFileExist(sPath) )
-					break;
-			}
-			DISPLAY->SaveScreenshot( sPath );
-			SCREENMAN->SystemMessage( "Saved screenshot: " + sPath );
-		}
-
-		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
-		{
-			if( INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
-				INPUTMAN->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
-			{
-				if(type != IET_FIRST_PRESS) continue;
-				/* alt-enter */
-				PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
-				ApplyGraphicOptions();
-				continue;
-			}
-		}
-
 		GameInput GameI;
 		MenuInput MenuI;
 		StyleInput StyleI;
@@ -526,6 +504,19 @@ static void HandleInputEvents(float fDeltaTime)
 			INPUTMAPPER->GameToMenu( GameI, MenuI );
 			INPUTMAPPER->GameToStyle( GameI, StyleI );
 		}
+
+		// HACK:  Numlock is read is being pressed if the NumLock light is on.
+		// Filter out all NumLock repeat messages
+		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_NUMLOCK && type != IET_FIRST_PRESS )
+			continue;	// skip
+
+		if( HandleGlobalInputs(DeviceI, type, GameI, MenuI, StyleI ) )
+			continue;	// skip
+
+
+
+
+
 		
 		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
 	}
