@@ -55,7 +55,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 
 	if( PREFSMAN->m_bJointPremium )
 	{
-		m_sprJointPremiumMsg.Load( THEME->GetPathTo("Graphics","title joint premium scroll message") );
+		m_sprJointPremiumMsg.Load( THEME->GetPathTo("Graphics","title menu joint premium") );
 		this->AddChild( &m_sprJointPremiumMsg );
 		m_sprJointPremiumMsg.SetX( SCREEN_RIGHT+m_sprJointPremiumMsg.GetUnzoomedWidth()/2 );
 		m_sprJointPremiumMsg.SetY( SCREEN_BOTTOM/2 );
