@@ -281,7 +281,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	}
 
 	/* Load the cached banners, if it's not loaded already. */
-	if( m_bHasBanner )
+	if( PREFSMAN->m_iBannerCache == PrefsManager::BNCACHE_LOW_RES_PRELOAD && m_bHasBanner )
 		BANNERCACHE->LoadBanner( GetBannerPath() );
 
 	/* Add AutoGen pointers.  (These aren't cached.) */
