@@ -88,6 +88,15 @@ void ActorFrame::SetUseZBuffer( bool b )
 		m_SubActors[i]->SetUseZBuffer( b );
 }
 
+void ActorFrame::FinishTweening()
+{
+	Actor::FinishTweening();
+
+	// set all sub-Actors
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->FinishTweening();
+}
+
 float ActorFrame::GetTweenTimeLeft() const
 {
 	float m = Actor::GetTweenTimeLeft();
