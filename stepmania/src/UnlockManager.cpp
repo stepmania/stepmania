@@ -385,6 +385,35 @@ int UnlockManager::GetNumUnlocks() const
 	return m_SongEntries.size();
 }
 
+#include "LuaBinding.h"
+
+template<class T>
+class LunaUnlockManager: public Luna<T>
+{
+public:
+	LunaUnlockManager() { LUA->Register( Register ); }
+
+	static int UnlockCode( T* p, lua_State *L )			{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( UnlockCode )
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( UNLOCKMAN )
+		{
+			lua_pushstring(L, "UNLOCKMAN");
+			UNLOCKMAN->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( UnlockManager )
+
 /*
  * (c) 2001-2004 Kevin Slaughter, Andrew Wong, Glenn Maynard
  * All rights reserved.

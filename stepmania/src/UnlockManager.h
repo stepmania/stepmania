@@ -8,6 +8,7 @@
 
 class Song;
 class Profile;
+struct lua_State;
 
 enum UnlockType
 {
@@ -67,9 +68,10 @@ public:
 
 	void GetPoints( const Profile *pProfile, float fScores[NUM_UNLOCK_TYPES] ) const;
 
+	// Unlock an entry by code.
 	void UnlockCode( int num );
 
-	// unlocks the song's code
+	// Unlocks a song.
 	void UnlockSong( const Song *song );
 
 	// All locked songs are stored here
@@ -77,6 +79,9 @@ public:
 
 	// If global song or course points change, call to update
 	void UpdateSongs();
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	// read unlocks
