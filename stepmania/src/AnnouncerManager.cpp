@@ -30,12 +30,13 @@ AnnouncerManager::AnnouncerManager()
 	for( int i=0; i<arrayAnnouncerNames.GetSize(); i++ )
 		AssertAnnouncerIsComplete( arrayAnnouncerNames[i] );
 
-	SwitchAnnouncer( DEFAULT_ANNOUNCER_NAME );
+	//SwitchAnnouncer( DEFAULT_ANNOUNCER_NAME );
+	SwitchAnnouncer( arrayAnnouncerNames[0] );
 }
 
 void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
 {
-	GetDirListing( DEFAULT_ANNOUNCER_NAME+"\\*", AddTo, true );
+	GetDirListing( ANNOUNER_BASE_DIR+"*", AddTo, true );
 	
 	// strip out the folder called "CVS"
 	for( int i=AddTo.GetSize()-1; i>=0; i-- )

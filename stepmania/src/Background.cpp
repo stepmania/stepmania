@@ -35,10 +35,7 @@ Background::Background()
 	m_sprDangerBackground.StretchTo( CRect((int)SCREEN_LEFT, (int)SCREEN_TOP, (int)SCREEN_RIGHT, (int)SCREEN_BOTTOM) );
 
 	// Load background animations
-	for( int i=0; i<NUM_BACKGROUND_ANIMATION_TYPES; i++ )
-	{
-		m_BackgroundAnimations.Add( new BackgroundAnimation( (BackgroundAnimationType)i ) );
-	}
+	m_BackgroundAnimations.Add( new BackgroundAnimation(NULL) );
 
 	m_pCurBackgroundAnimation = NULL;
 }

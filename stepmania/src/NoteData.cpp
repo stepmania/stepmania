@@ -710,10 +710,7 @@ void NoteData::SetFromMeasureStrings( CStringArray &arrayMeasureStrings )
 			CString sNoteLine = arrayNoteLines[l];
 			sNoteLine.TrimRight();
 
-			if( m_iNumTracks == 0 )
-				m_iNumTracks = sNoteLine.GetLength();
-			if( m_iNumTracks != sNoteLine.GetLength() )
-				throw RageException( "Line doesn't have right number of notes." );
+			m_iNumTracks = max( m_iNumTracks, sNoteLine.GetLength() );
 
 			for( int c=0; c<sNoteLine.GetLength(); c++ )
 			{

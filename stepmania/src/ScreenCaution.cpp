@@ -50,7 +50,8 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_StartClosing:
-		m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
+		if( !m_Wipe.IsClosing() )
+			m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
 		break;
 	case SM_DoneOpening:
 		if( PREFSMAN->m_bAnnouncer )
@@ -64,5 +65,6 @@ void ScreenCaution::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenCaution::MenuStart( const PlayerNumber p )
 {
-	m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
+	if( !m_Wipe.IsClosing() )
+		m_Wipe.CloseWipingRight( SM_GoToSelectMusic );
 }
