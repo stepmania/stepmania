@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageSoundReader.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 
 #ifndef NO_WAV_SUPPORT
 #include "RageSoundReader_WAV.h"
@@ -10,16 +11,12 @@
 #include "RageSoundReader_MP3.h"
 #endif
 
-#if defined(OGG_ONLY)
+#ifndef NO_VORBIS_SUPPORT
 #include "RageSoundReader_Vorbisfile.h"
-#define RageSoundReader_LowLevel RageSoundReader_Vorbisfile
-#else
-#include "RageSoundReader_SDL_Sound.h"
-#define RageSoundReader_LowLevel SoundReader_SDL_Sound
 #endif
 
 
-SoundReader *SoundReader::OpenFile( CString filename, CString error )
+SoundReader *SoundReader::OpenFile( CString filename, CString &error )
 {
     SoundReader_FileReader *NewSample = NULL;
 
@@ -36,11 +33,13 @@ SoundReader *SoundReader::OpenFile( CString filename, CString error )
 		NewSample = new RageSoundReader_MP3;
 #endif
 
-	if( !GetExtension(filename).CompareNoCase("mp3") )
-		NewSample = new SoundReader_SDL_Sound;
+#ifndef NO_VORBIS_SUPPORT
+	if( !GetExtension(filename).CompareNoCase("ogg") )
+		NewSample = new RageSoundReader_Vorbisfile;
+#endif
 
-	if( NewSample == NULL )
-		NewSample = new RageSoundReader_LowLevel;
+	ASSERT( NewSample );
+
 	if( !NewSample->Open(filename) )
 	{
 		error = NewSample->GetError();
