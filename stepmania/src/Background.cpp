@@ -369,6 +369,10 @@ void Background::Update( float fDeltaTime )
 	}
 	else
 	{			
+		if( GAMESTATE->m_fMusicSeconds == GameState::MUSIC_SECONDS_INVALID )
+			return; /* hasn't been updated yet */
+
+		/* If we're in a freeze, hold all animations (don't animate by calling Update). */
 		if( GAMESTATE->m_bFreeze )
 			return;
 
