@@ -447,7 +447,7 @@ static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void AspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 3/4.f,1,4/3.0f,16/10.0f,16/9.f, 8/3.f };
-	MoveMap( sel, PREFSMAN->m_fAspectRatio.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fDisplayAspectRatio.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Sound options */

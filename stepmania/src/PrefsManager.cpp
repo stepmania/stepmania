@@ -74,7 +74,7 @@ PrefsManager::PrefsManager() :
 	m_iMovieColorDepth		( Options, "MovieColorDepth",		16 ),
 	m_iMaxTextureResolution	( Options, "MaxTextureResolution",	2048 ),
 	m_iRefreshRate			( Options, "RefreshRate",			REFRESH_DEFAULT ),
-	m_fAspectRatio			( Options, "AspectRatio",			4/3.0f ),
+	m_fDisplayAspectRatio	( Options, "DisplayAspectRatio",	4/3.0f ),
 	m_bShowStats			( Options, "ShowStats",				
 #ifdef DEBUG
 	true

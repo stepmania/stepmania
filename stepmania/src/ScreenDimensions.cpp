@@ -23,8 +23,8 @@ ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 float ScreenWidth()
 {
 	float fScale = 1;
-	if( PREFSMAN->m_fAspectRatio > ASPECT_4_TO_3 )
-		fScale = PREFSMAN->m_fAspectRatio / ASPECT_4_TO_3;
+	if( PREFSMAN->m_fDisplayAspectRatio > ASPECT_4_TO_3 )
+		fScale = PREFSMAN->m_fDisplayAspectRatio / ASPECT_4_TO_3;
 	ASSERT( fScale >= 1 );
 	return THEME_SCREEN_WIDTH * fScale;
 }
@@ -32,8 +32,8 @@ float ScreenWidth()
 float ScreenHeight()
 {
 	float fScale = 1;
-	if( PREFSMAN->m_fAspectRatio < ASPECT_4_TO_3 )
-		fScale = ASPECT_4_TO_3 / PREFSMAN->m_fAspectRatio;
+	if( PREFSMAN->m_fDisplayAspectRatio < ASPECT_4_TO_3 )
+		fScale = ASPECT_4_TO_3 / PREFSMAN->m_fDisplayAspectRatio;
 	ASSERT( fScale >= 1 );
 	return THEME_SCREEN_HEIGHT * fScale;
 }

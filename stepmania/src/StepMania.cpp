@@ -93,7 +93,7 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			WINDOW_TITLE,
 			THEME->GetPathToG("Common window icon"),
 			PREFSMAN->m_bPAL,
-			PREFSMAN->m_fAspectRatio
+			PREFSMAN->m_fDisplayAspectRatio
 	);
 }
 
