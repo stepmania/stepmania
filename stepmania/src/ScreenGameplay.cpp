@@ -219,6 +219,8 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		m_Player[p].SetX( fPlayerX );
 		this->AddChild( &m_Player[p] );
 	
+		m_TimingAssist.Load((PlayerNumber)p, &m_Player[p]);
+
 		m_ActiveItemList[p].Init( (PlayerNumber)p, &m_Inventory );
 		/* Position it in LoadNextSong. */
 		this->AddChild( &m_ActiveItemList[p] );
@@ -230,6 +232,7 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 		this->AddChild( &m_sprOniGameOver[p] );
 	}
 
+	this->AddChild(&m_TimingAssist);
 
 	m_OniFade.SetOpened();
 	this->AddChild( &m_OniFade );
@@ -566,6 +569,8 @@ void ScreenGameplay::LoadNextSong()
 		pStyleDef->GetTransformedNoteDataForStyle( (PlayerNumber)p, &pOriginalNoteData, &pNewNoteData );
 
 		m_Player[p].Load( (PlayerNumber)p, &pNewNoteData, m_pLifeMeter[p], m_pScoreDisplay[p], &m_Inventory, m_pScoreKeeper[p] );
+
+		m_TimingAssist.Reset();
 	}
 
 	/* Set up song-specific graphics. */

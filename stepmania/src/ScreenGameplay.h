@@ -30,6 +30,7 @@
 #include "ActiveItemList.h"
 //#include "BeginnerHelper.h"	// uncomment once it's checked in
 #include "LyricDisplay.h"
+#include "TimingAssist.h"
 
 
 // messages sent by Combo
@@ -92,6 +93,8 @@ protected:
 	float				m_fTimeLeftBeforeDancingComment;	// this counter is only running while STATE_DANCING
 
 	LyricDisplay		m_LyricDisplay;
+
+	TimingAssist		m_TimingAssist;
 
 	Background			m_Background;
 
