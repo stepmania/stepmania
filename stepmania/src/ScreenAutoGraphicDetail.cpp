@@ -32,6 +32,15 @@ struct DetailSettings
 {
 	int width, height, displaybpp, texturebpp;
 };
+
+/* XXX: It'd be nice to set 800x600 or 1024x768 (instead of increasing the framebuffer
+ * bit depth), and to increase the refresh rate to 70 or so; it makes a huge difference,
+ * and many people I see playing games play them at the default resolution and refresh,
+ * never changing anything.
+ *
+ * However, on some systems the change will succeed but the monitor won't actually
+ * be able to handle it.  Should we do the "press a key in 15 seconds" deal like
+ * Windows does? */
 const DetailSettings g_DetailSettings[NUM_DETAIL_SETTINGS] = {
 	{ 320, 240, 16, 16 },
 	{ 640, 480, 16, 16 },
