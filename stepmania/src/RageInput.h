@@ -143,7 +143,7 @@ private:
 
 		pump_t();
 		~pump_t();
-		void init(int devno);		/* added a return type because it generates a warning in VC7  -Chris */
+		bool init(int devno, bool share=true);
 		int GetPadEvent();
 	} *m_Pumps;
 
@@ -182,7 +182,7 @@ public:
 
 namespace USB {
 	char *GetUSBDevicePath (int num);
-	HANDLE OpenUSB (int VID, int PID, int num);
+	HANDLE OpenUSB (int VID, int PID, int num, bool share=true);
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

@@ -462,16 +462,33 @@ HRESULT RageInput::Initialize()
 		m_AbsPosition_x = 640/2;
 		m_AbsPosition_y = 480/2;
 	}	
-	//////////////////////////////
-	// Create the joystick devices
-	//////////////////////////////
-	// Look for joysticks
-	// TODO:  Why is this function so slow to return?  Is it just my machine?
-    if( FAILED( hr = m_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL, 
-                                         EnumJoysticksCallback,
-                                         (VOID*)this, 
-										 DIEDFL_ATTACHEDONLY ) ) )
-		throw RageException( hr, "m_pDI->EnumDevices failed." );
+
+	{
+		/* Nasty hack to work around a bug in DirectInput8: Pump pads
+		 * crash EnumDevices.  Prevent this by opening the pad with
+		 * exclusive access while we enumerate, then closing it when
+		 * we finish.  We don't do anything with this; we open it
+		 * for real down below, since we don't *really* want to open
+		 * the pad with exclusive access.  (I also don't want to introduce
+		 * dependencies, such as "pump must be initialized before joysticks",
+		 * so this doesn't bite us again down the road.) */
+		pump_t m_TempPumps[NUM_PUMPS];
+		for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
+			m_TempPumps[pumpNo].init(pumpNo, false);
+
+		//////////////////////////////
+		// Create the joystick devices
+		//////////////////////////////
+		// Look for joysticks
+		// TODO:  Why is this function so slow to return?  Is it just my machine?
+		if( FAILED( hr = m_pDI->EnumDevices( DI8DEVCLASS_GAMECTRL, 
+											 EnumJoysticksCallback,
+											 (VOID*)this, 
+											 DIEDFL_ATTACHEDONLY ) ) )
+			throw RageException( hr, "m_pDI->EnumDevices failed." );
+	}
+//	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
+//		m_Pumps[pumpNo].init(pumpNo);
 
 	for( int i=0; i<NUM_JOYSTICKS; i++ )
 	{
@@ -516,7 +533,10 @@ HRESULT RageInput::Initialize()
 	}
 
 	for(int pumpNo = 0; pumpNo < NUM_PUMPS; ++pumpNo)
-		m_Pumps[pumpNo].init(pumpNo);
+	{
+		if(m_Pumps[pumpNo].init(pumpNo))
+			LOG->Trace("Found Pump pad %i\n", pumpNo);
+	}
 
 	return S_OK;
 }
@@ -847,7 +867,7 @@ err:
 #endif
 }
 
-HANDLE USB::OpenUSB (int VID, int PID, int num)
+HANDLE USB::OpenUSB (int VID, int PID, int num, bool share)
 {
 #ifndef HAVE_DDK
 	LOG->Trace( "Can't open USB device %-4.4x:%-4.4x#%i: DDK not available.", 
@@ -864,9 +884,10 @@ HANDLE USB::OpenUSB (int VID, int PID, int num)
 		if(h != INVALID_HANDLE_VALUE)
 			CloseHandle (h);
 
+		int ShareMode = 0;
+		if(share) ShareMode |= FILE_SHARE_READ | FILE_SHARE_WRITE;
 		h = CreateFile (path, GENERIC_READ,
-			   FILE_SHARE_READ | FILE_SHARE_WRITE,
-			   NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+			   ShareMode, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
 
 		free(path);
 
@@ -905,12 +926,11 @@ RageInput::pump_t::~pump_t()
 		CloseHandle(h);
 }
 
-void RageInput::pump_t::init(int devno)
+bool RageInput::pump_t::init(int devno, bool share)
 {
 	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
-	h = USB::OpenUSB (pump_usb_vid, pump_usb_pid, devno);
-	if(h != INVALID_HANDLE_VALUE)
-		LOG->Trace("Found Pump pad %i\n", devno);
+	h = USB::OpenUSB (pump_usb_vid, pump_usb_pid, devno, share);
+	return h != INVALID_HANDLE_VALUE;
 }
 
 int RageInput::pump_t::GetPadEvent()
