@@ -1034,6 +1034,8 @@ CString FixSlashes( CString sPath )
  * foo///bar/// -> foo/bar/
  * foo/bar/./baz -> foo/bar/baz
  * foo/bar/../baz -> foo/baz
+ * ../foo -> ../foo
+ * ../../foo -> ../../foo
  * ./foo -> foo (if bRemoveLeadingDot), ./foo (if !bRemoveLeadingDot)
  * ./ -> .
  * ./// -> .
@@ -1049,9 +1051,15 @@ void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 	{
 		if( as[i] == ".." && i != 0 )
 		{
-			as.erase( as.begin()+i-1 );
-			as.erase( as.begin()+i-1 );
-			i -= 2;
+			/* If the previous element is also "..", then we have a path beginning
+			 * with multiple "../"--one .. can't eat another .., since that would
+			 * cause "../../foo" to become "foo". */
+			if( as[i-1] != ".." )
+			{
+				as.erase( as.begin()+i-1 );
+				as.erase( as.begin()+i-1 );
+				i -= 2;
+			}
 		}
 		else if( as[i] == "" && i != 0 && i+1 < as.size() )
 		{
