@@ -302,8 +302,7 @@ void Sprite::DrawPrimitives()
 void Sprite::SetState( int iNewState )
 {
 	ASSERT( iNewState >= 0  &&  iNewState < m_iNumStates );
-	if( iNewState < 0 )						iNewState = 0;
-	else if( iNewState >= m_iNumStates )	iNewState = m_iNumStates-1;
+	CLAMP(iNewState, 0, m_iNumStates-1);
 	m_iCurState = iNewState;
 	m_fSecsIntoState = 0.0; 
 }
