@@ -502,7 +502,7 @@ void RageDisplay::DrawLoop_Polys( const RageVertex v[], int iNumVerts, float Lin
 
 	/* Join the lines with circles so we get rounded corners. */
 	GLUquadricObj *q =  gluNewQuadric();
-	for(int i = 0; i < iNumVerts; ++i)
+	for(i = 0; i < iNumVerts; ++i)
 	{
 		glPushMatrix();
 		glColor4fv(v[i].c);

@@ -47,6 +47,9 @@
 #define SHUFFLEICON_X( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("ShuffleIconP%dX",p+1))
 #define SHUFFLEICON_Y( p )		THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("ShuffleIconP%dY",p+1))
 #define PREVIEWMUSICMODE		THEME->GetMetricI("ScreenEz2SelectMusic","PreviewMusicMode")
+#define DIFFICULTYRATING_X		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingX")
+#define DIFFICULTYRATING_Y		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingY")
+#define DIFFICULTYRATING_ORIENTATION		THEME->GetMetricF("ScreenEz2SelectMusic","DifficultyRatingOrientation")
 
 const float TWEEN_TIME		= 0.5f;
 
@@ -106,9 +109,9 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 
 		for(int p=0; p<NUM_PLAYERS; p++ )
 		{
-			m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
-			m_FootMeter[p].SetShadowLength( 2 );
-			this->AddChild( &m_FootMeter[p] );
+		//	m_FootMeter[p].SetXY( METER_X(p), METER_Y(p) );
+		//	m_FootMeter[p].SetShadowLength( 2 );
+		//	this->AddChild( &m_FootMeter[p] );
 
 			m_SpeedIcon[p].Load( THEME->GetPathTo("Graphics","select music speedicon"));
 			m_SpeedIcon[p].SetXY( SPEEDICON_X(p), SPEEDICON_Y(p) );
@@ -138,6 +141,10 @@ ScreenEz2SelectMusic::ScreenEz2SelectMusic()
 		m_PumpDifficultyRating.SetXY( PUMP_DIFF_X, PUMP_DIFF_Y );
 		this->AddChild(&m_PumpDifficultyRating);
 
+		m_DifficultyRating.SetOrientation(DIFFICULTYRATING_ORIENTATION);
+		m_DifficultyRating.SetX(DIFFICULTYRATING_X);
+		m_DifficultyRating.SetY(DIFFICULTYRATING_Y);
+		this->AddChild(&m_DifficultyRating);
 
 		m_sprOptionsMessage.Load( THEME->GetPathTo("Graphics","select music options message") );
 		m_sprOptionsMessage.StopAnimating();
@@ -498,12 +505,15 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 
 
 	if( pNotes != NULL && pn == GAMESTATE->m_MasterPlayerNumber )
+	{
 		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pNotes->GetMeter()));
+		m_DifficultyRating.SetDifficulty(pNotes->GetMeter());
+	}
 
 //	GAMESTATE->m_pCurNotes[pn] = pNotes;
 
 //	Notes* m_pNotes = GAMESTATE->m_pCurNotes[pn];
 
-	m_FootMeter[pn].SetFromNotes( pNotes );
+//	m_FootMeter[pn].SetFromNotes( pNotes );
 }
 

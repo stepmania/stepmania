@@ -57,10 +57,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\temp\stepmania
+TargetDir=\Stepmania\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                 	cl                                                  /Zl                                                  /nologo                                                  /c                                                  verstub.cpp                                                  /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                  	cl                                                   /Zl                                                   /nologo                                                   /c                                                   verstub.cpp                                                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -92,10 +92,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\temp\stepmania
+TargetDir=\Stepmania\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                                 	cl                                                  /Zl                                                  /nologo                                                  /c                                                  verstub.cpp                                                  /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                                  	cl                                                   /Zl                                                   /nologo                                                   /c                                                   verstub.cpp                                                   /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -953,6 +953,14 @@ SOURCE=.\DifficultyIcon.cpp
 # Begin Source File
 
 SOURCE=.\DifficultyIcon.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyRating.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\DifficultyRating.h
 # End Source File
 # Begin Source File
 
