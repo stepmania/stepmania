@@ -66,7 +66,7 @@ void Notes::WriteSMNotesTag( FILE* fp )
 	
 	CStringArray asRadarValues;
 	for( int r=0; r<NUM_RADAR_VALUES; r++ )
-		asRadarValues.Add( ssprintf("%.2f", m_fRadarValues[r]) );
+		asRadarValues.Add( ssprintf("%.3f", m_fRadarValues[r]) );
 	fprintf( fp, "     %s:\n", join(",",asRadarValues) );
 
 	fprintf( fp, "%s;\n", m_sSMNoteData );

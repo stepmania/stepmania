@@ -697,14 +697,14 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	fprintf( fp, "#CDTITLE:%s;\n", m_sCDTitleFile );
 	fprintf( fp, "#MUSIC:%s;\n", m_sMusicFile );
 	fprintf( fp, "#MUSICBYTES:%u;\n", m_iMusicBytes );
-	fprintf( fp, "#MUSICLENGTH:%.2f;\n", m_fMusicLengthSeconds );
+	fprintf( fp, "#MUSICLENGTH:%.3f;\n", m_fMusicLengthSeconds );
 	if(bSavingCache) {
-		fprintf( fp, "#FIRSTBEAT:%.2f;\n", m_fFirstBeat );
-		fprintf( fp, "#LASTBEAT:%.2f;\n", m_fLastBeat );
+		fprintf( fp, "#FIRSTBEAT:%.3f;\n", m_fFirstBeat );
+		fprintf( fp, "#LASTBEAT:%.3f;\n", m_fLastBeat );
 	}
-	fprintf( fp, "#OFFSET:%.2f;\n", m_fBeat0OffsetInSeconds );
-	fprintf( fp, "#SAMPLESTART:%.2f;\n", m_fMusicSampleStartSeconds );
-	fprintf( fp, "#SAMPLELENGTH:%.2f;\n", m_fMusicSampleLengthSeconds );
+	fprintf( fp, "#OFFSET:%.3f;\n", m_fBeat0OffsetInSeconds );
+	fprintf( fp, "#SAMPLESTART:%.3f;\n", m_fMusicSampleStartSeconds );
+	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", m_fMusicSampleLengthSeconds );
 	fprintf( fp, "#SELECTABLE:" );
 	switch(m_SelectionDisplay) {
 	default: ASSERT(0);  /* fallthrough */
@@ -722,7 +722,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	{
 		BPMSegment &bs = m_BPMSegments[i];
 
-		fprintf( fp, "%.2f=%.2f", bs.m_fStartBeat, bs.m_fBPM );
+		fprintf( fp, "%.3f=%.3f", bs.m_fStartBeat, bs.m_fBPM );
 		if( i != m_BPMSegments.GetSize()-1 )
 			fprintf( fp, "," );
 	}
@@ -733,7 +733,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	{
 		StopSegment &fs = m_StopSegments[i];
 
-		fprintf( fp, "%.2f=%.2f", fs.m_fStartBeat, fs.m_fStopSeconds );
+		fprintf( fp, "%.3f=%.3f", fs.m_fStartBeat, fs.m_fStopSeconds );
 		if( i != m_StopSegments.GetSize()-1 )
 			fprintf( fp, "," );
 	}
@@ -744,7 +744,7 @@ void Song::SaveToSMFile( CString sPath, bool bSavingCache )
 	{
 		BackgroundChange &seg = m_BackgroundChanges[i];
 
-		fprintf( fp, "%.2f=%s", seg.m_fStartBeat, seg.m_sBGName );
+		fprintf( fp, "%.3f=%s", seg.m_fStartBeat, seg.m_sBGName );
 		if( i != m_BackgroundChanges.GetSize()-1 )
 			fprintf( fp, "," );
 	}

@@ -223,8 +223,10 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 	if(out.m_sArtist.GetLength() != 0)
 		fprintf( fp, "#ARTIST:%s;\n", out.m_sArtist );
 	ASSERT( out.m_BPMSegments[0].m_fStartBeat == 0 );
-	fprintf( fp, "#BPM:%.2f;\n", out.m_BPMSegments[0].m_fBPM );
+	fprintf( fp, "#BPM:%.3f;\n", out.m_BPMSegments[0].m_fBPM );
 	fprintf( fp, "#GAP:%d;\n", int(-roundf( out.m_fBeat0OffsetInSeconds*1000 )) );
+	fprintf( fp, "#SAMPLESTART:%.3f;\n", out.m_fMusicSampleStartSeconds );
+	fprintf( fp, "#SAMPLELENGTH:%.3f;\n", out.m_fMusicSampleLengthSeconds );
 
 	if( out.m_StopSegments.GetSize() )
 	{
@@ -233,7 +235,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		for( int i=0; i<out.m_StopSegments.GetSize(); i++ )
 		{
 			const StopSegment &fs = out.m_StopSegments[i];
-			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( fs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT,
+			fprintf( fp, "%.3f=%.3f", BeatToNoteRow( fs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT,
 				roundf(fs.m_fStopSeconds*1000) );
 			if( i != out.m_StopSegments.GetSize()-1 )
 				fprintf( fp, "," );
@@ -247,7 +249,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		for( int i=1; i<out.m_BPMSegments.GetSize(); i++ )
 		{
 			const BPMSegment &bs = out.m_BPMSegments[i];
-			fprintf( fp, "%.2f=%.2f", BeatToNoteRow( bs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT, bs.m_fBPM );
+			fprintf( fp, "%.3f=%.3f", BeatToNoteRow( bs.m_fStartBeat ) * 4.0f / ROWS_PER_BEAT, bs.m_fBPM );
 			if( i != out.m_BPMSegments.GetSize()-1 )
 				fprintf( fp, "," );
 		}

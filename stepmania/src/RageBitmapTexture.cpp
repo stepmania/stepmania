@@ -125,32 +125,19 @@ void RageBitmapTexture::Create(
 	// Figure out which texture format to use
 	///////////////////////
 	D3DFORMAT fmtTexture;
-	switch( dwTextureColorDepth )
+	if( dwTextureColorDepth == 32 )
+		fmtTexture = D3DFMT_A8R8G8B8;
+	else if( ddii.Format == D3DFMT_P8 )
+		fmtTexture = D3DFMT_A1R5G5B5;
+	else // dwTextureColorDepth == 16
 	{
-	case 16:
 		switch( iAlphaBits )
 		{
-		case 0:		fmtTexture = D3DFMT_R5G6B5;		break;
-		case 1:		fmtTexture = D3DFMT_A1R5G5B5;	break;
-		case 4:
-			// Ignore dwTextureColorDepth, and infer based on image format
-			switch( ddii.Format )
-			{
-			case D3DFMT_P8:		fmtTexture = D3DFMT_A1R5G5B5;	break;
-			default:			fmtTexture = D3DFMT_A4R4G4B4;	break;
-			}
-			break;
-		default:
-			ASSERT(0);	// invalid iAlphaBits value
-			fmtTexture = D3DFMT_A4R4G4B4;	break;
+		case 0:	fmtTexture = D3DFMT_R5G6B5;		break;
+		case 1:	fmtTexture = D3DFMT_A1R5G5B5;	break;
+		case 4:	fmtTexture = D3DFMT_A4R4G4B4;	break;
+		default:	ASSERT(0);	fmtTexture = D3DFMT_A4R4G4B4;	break;
 		}
-
-		break;
-	case 32:
-		fmtTexture = D3DFMT_A8R8G8B8;
-		break;
-	default:
-		throw RageException( "Invalid color depth: %d bits", dwTextureColorDepth );
 	}
 
 
@@ -166,12 +153,12 @@ void RageBitmapTexture::Create(
 		if( FAILED( hr = D3DXCreateTextureFromFileEx( 
 			m_pd3dDevice,				// device
 			m_sFilePath,				// soure file
-			bStretch ? dwMaxSize : D3DX_DEFAULT,	// width 
-			bStretch ? dwMaxSize : D3DX_DEFAULT,	// height 
+			D3DX_DEFAULT,				// width 
+			D3DX_DEFAULT,				// height 
 			iMipMaps,					// mip map levels
 			0,							// usage (is a render target?)
 			fmtTexture,					// our preferred texture format
-			D3DPOOL_MANAGED,			// which memory pool
+			D3DPOOL_DEFAULT,			// which memory pool
 			(bStretch ? D3DX_FILTER_LINEAR : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
 			D3DX_FILTER_BOX | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
 			D3DCOLOR_ARGB(255,255,0,255), // pink color key
