@@ -26,7 +26,7 @@ void LightsDriver_SystemMessage::Set( const LightsState *ls )
 	}
 	s += "\n";
 
-	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGameDef()->GetNumGameplayButtons();
+	int iNumGameButtonsToShow = GAMESTATE->m_pCurGame->GetNumGameplayButtons();
 	
 	FOREACH_GameController( gc )
 	{
