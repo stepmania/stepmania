@@ -51,7 +51,7 @@ CString BannerCache::GetBannerCachePath( CString BannerPath )
 
 void BannerCache::LoadBanner( CString BannerPath )
 {
-	if( !PREFSMAN->m_bBannerCache )
+	if( !PREFSMAN->m_bBannerCache || BannerPath == "" )
 		return;
 
 	/* Load it. */
@@ -210,6 +210,9 @@ struct BannerTexture: public RageTexture
 RageTextureID BannerCache::LoadCachedBanner( CString BannerPath )
 {
 	RageTextureID ID( GetBannerCachePath(BannerPath) );
+
+	if( BannerPath == "" )
+		return ID;
 
 	LOG->Trace("BannerCache::LoadCachedBanner(%s): %s", BannerPath.c_str(), ID.filename.c_str() );
 
