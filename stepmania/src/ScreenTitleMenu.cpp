@@ -133,21 +133,22 @@ ScreenTitleMenu::ScreenTitleMenu()
 	m_textSongs.SetShadowLength( 2 );
 	this->AddChild( &m_textSongs );
 
-
-	for( int i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
+	int i;
+	for( i=0; i< NUM_TITLE_MENU_CHOICES; i++ )
 	{
 		m_textChoice[i].LoadFromFont( THEME->GetPathTo("Fonts","titlemenu") );
 		m_textChoice[i].SetText( CHOICE_TEXT[i] );
 		m_textChoice[i].SetXY( CHOICES_X, CHOICES_START_Y + i*CHOICES_SPACING_Y );
-		m_textChoice[i].SetShadowLength( CHOICES_SHADOW_LENGTH );
+		float fShadowLength = CHOICES_SHADOW_LENGTH;
+		m_textChoice[i].SetShadowLength( fShadowLength );
 		this->AddChild( &m_textChoice[i] );
 	}	
+
 	
 	m_Fade.SetClosed();
 	m_Fade.OpenWipingRight( SM_None );
 
 	this->AddChild( &m_Fade );
-
 
 	SOUND->PlayOnceStreamedFromDir( ANNOUNCER->GetPathTo("title menu game name") );
 
@@ -369,19 +370,6 @@ void ScreenTitleMenu::MenuStart( PlayerNumber pn )
 			m_Fade.CloseWipingRight( SM_GoToNextScreen );
 		}
 		break;
-/*	case CHOICE_HELP:
-		m_soundSelect.PlayRandom();
-		PREFSMAN->m_bWindowed = false;
-		ApplyGraphicOptions();
-		GotoURL( "Docs/index.htm" );
-		return;
-	case CHOICE_CHECK_FOR_UPDATE:
-		m_soundSelect.PlayRandom();
-		PREFSMAN->m_bWindowed = false;
-		ApplyGraphicOptions();
-		GotoURL( "http://www.stepmania.com" );
-		return;
-		*/
 	case CHOICE_EXIT:
 		m_soundSelect.PlayRandom();
 		PostQuitMessage(0);
