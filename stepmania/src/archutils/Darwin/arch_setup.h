@@ -10,6 +10,9 @@
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
 #define _BSD_WCHAR_T_DEFINED_
+#ifndef __MACOSX__
+# define __MACOSX__
+#endif
 extern "C"
 {
     extern long long llabs(long long i);
