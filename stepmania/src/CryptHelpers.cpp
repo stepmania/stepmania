@@ -109,7 +109,6 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 		return 0;	// don't try to seek beyond the end of file
 	}
 	m_file.Seek(newPosition);
-	unsigned long total = 0;
 	try
 	{
 		assert(!m_waiting);
@@ -139,6 +138,7 @@ void RageFileSink::IsolatedInitialize(const NameValuePairs &parameters)
 	const char *fileName;
 	if (parameters.GetValue("OutputFileName", fileName))
 	{
+        // does this do anything other than cause g++ to emit a warning?
 		ios::openmode binary = parameters.GetValueWithDefault("OutputBinaryMode", true) ? ios::binary : ios::openmode(0);
 		if( !m_file.Open( fileName, RageFile::WRITE ) )	// trucates existing data
 			throw OpenErr(fileName);
