@@ -17,7 +17,7 @@
 #endif
 
 static DialogDriver *g_pImpl = NULL;
-static DialogDriverNull g_pNullDriver;
+static DialogDriver_Null g_pNullDriver;
 static bool g_bWindowed = false;
 static bool g_bIsShowingDialog = false;
 
@@ -44,7 +44,7 @@ void Dialog::Init()
 #if defined(HAVE_DIALOG_COCOA)
 			if( !DriversToTry[i].CompareNoCase("Cocoa") ) g_pImpl = new DialogDriver_Cocoa;
 #endif
-			if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriverNull;
+			if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriver_Null;
 		}
 		catch( const RageException &e )
 		{
@@ -53,7 +53,7 @@ void Dialog::Init()
 		}
 	}
 
-	/* DialogDriverNull should have worked, at least. */
+	/* DialogDriver_Null should have worked, at least. */
 	ASSERT( g_pImpl != NULL );
 }
 

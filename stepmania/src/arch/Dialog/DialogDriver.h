@@ -14,7 +14,7 @@ public:
 	virtual ~DialogDriver() { }
 };
 
-class DialogDriverNull: public DialogDriver { };
+class DialogDriver_Null: public DialogDriver { };
 
 #endif
 
