@@ -21,62 +21,44 @@
 #define O_BINARY 0
 #endif
 
+#if defined(XBOX)
 /* Wrappers for low-level file functions, to work around Xbox issues: */
 static int DoMkdir( const CString &sPath, int perm )
 {
-#if defined(XBOX)
 	CString TempPath = sPath;
 	TempPath.Replace( "/", "\\" );
-	return mkdir( TempPath, perm );
-#else
-	return mkdir( sPath, perm );
-#endif
+	return mkdir( TempPath );
 }
 
 static int DoOpen( const CString &sPath, int flags, int perm )
 {
-#if defined(XBOX)
 	CString TempPath = sPath;
 	TempPath.Replace( "/", "\\" );
 	return open( TempPath, flags, perm );
-#else
-	return open( sPath, flags, perm );
-#endif
 }
 
 static int DoStat( const CString &sPath, struct stat *st )
 {
-#if defined(XBOX)
 	CString TempPath = sPath;
 	TempPath.Replace( "/", "\\" );
 	return stat( sPath, st );
-#else
-	return stat( sPath, st );
-#endif
 }
 
-#if defined(WIN32)
 static HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
 {
-#if defined(XBOX)
 	CString TempPath = sPath;
 	TempPath.Replace( "/", "\\" );
 	return FindFirstFile( TempPath, fd );
-#else
-	return FindFirstFile( sPath, fd );
-#endif
 }
 
-static bool WinCallNotSupported( int err  )
-{
-	switch( err )
-	{
-	case ERROR_NOT_SUPPORTED:
-	case ERROR_CALL_NOT_IMPLEMENTED:
-		return true;
-	}
-	return false;
-}
+#else
+#define DoOpen open
+#define DoStat stat
+#define DoMkdir mkdir
+#define DoFindFirstFile FindFirstFile
+#endif
+
+#if defined(WIN32)
 
 static int WinMoveFile( const CString sOldPath, const CString sNewPath )
 {
@@ -87,7 +69,7 @@ static int WinMoveFile( const CString sOldPath, const CString sNewPath )
 		if( MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING ) )
 			return 1;
 
-		if( !WinCallNotSupported(GetLastError()) )
+		if( GetLastError() == ERROR_NOT_SUPPORTED || GetLastError() == ERROR_CALL_NOT_IMPLEMENTED )
 			return 0;
 
 		Win9x = true;
@@ -184,7 +166,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	} while( FindNextFile( hFind, &fd ) );
 	FindClose(hFind);
 #else
-	int OldDir = open(".", O_RDONLY);
+	int OldDir = DoOpen(".", O_RDONLY);
 	if( OldDir == -1 )
 		RageException::Throw( "Couldn't open(.): %s", strerror(errno) );
 
@@ -207,7 +189,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		f.SetName( ent->d_name );
 		
 		struct stat st;
-		if( stat(ent->d_name, &st) == -1 )
+		if( DoStat(ent->d_name, &st) == -1 )
 		{
 			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
 			if( lstat(ent->d_name, &st) == 0 )
@@ -452,7 +434,7 @@ bool RageFileDriverDirect::Ready()
 	
 	// Try to write a file.
 	const CString sFile = root + "temp";
-	int fd = open( sFile, O_WRONLY|O_CREAT|O_TRUNC );
+	int fd = DoOpen( sFile, O_WRONLY|O_CREAT|O_TRUNC );
 	if( fd == -1 )
 		return false;
 
