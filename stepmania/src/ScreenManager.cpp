@@ -355,7 +355,7 @@ retry:
 	}
 	
 	// Load shared BGAnimation
-	if( m_ScreenStack.back()->UsesBackground() )
+	if( pNewScreen->UsesBackground() )
 	{
 		CString sNewBGA = THEME->GetPathToB(sScreenName+" background");
 		if( m_sLastLoadedBackground != sNewBGA )
