@@ -151,7 +151,7 @@ void ConvertThemeDlg::OnButtonConvert()
 	RecursiveRename( sThemeDir, "top edge", "header" );
 	RecursiveRename( sThemeDir, "\\edit menu", "\\ScreenEditMenu" );
 	RecursiveRename( sThemeDir, "\\evaluation", "\\ScreenEvaluation" );
-	RecursiveRename( sThemeDir, "fallback banner", "Banner fallback" );
+	RecursiveRename( sThemeDir, "fallback banner", "Common fallback banner" );
 	RecursiveRename( sThemeDir, "Fonts\\music scroll", "Fonts\\ScreenMusicScroll titles" );
 	RecursiveRename( sThemeDir, "fallback background", "Common fallback background" );
 	RecursiveRename( sThemeDir, "all music banner", "Banner all" );

@@ -83,20 +83,34 @@ void GradeDisplay::DrawPrimitives()
 int GradeDisplay::GetFrameNo( PlayerNumber pn, Grade g )
 {
 	// either 8, or 16 states
-	int iNumCols = Sprite::GetNumStates()==8 ? 1 : 2;
+	int iNumCols;
+	switch( Sprite::GetNumStates() )
+	{
+	default:
+		ASSERT(0);
+	case 8:		iNumCols=1;	break;
+	case 16:	iNumCols=2;	break;
+	}
+
+	int iFrame;
 	switch( g )
 	{
-	case GRADE_AAAA:	return 0*iNumCols+pn;	break;
-	case GRADE_AAA:		return 1*iNumCols+pn;	break;
-	case GRADE_AA:		return 2*iNumCols+pn;	break;
-	case GRADE_A:		return 3*iNumCols+pn;	break;
-	case GRADE_B:		return 4*iNumCols+pn;	break;
-	case GRADE_C:		return 5*iNumCols+pn;	break;
-	case GRADE_D:		return 6*iNumCols+pn;	break;
-	case GRADE_E:		return 7*iNumCols+pn;	break;
-	case GRADE_NO_DATA:	return 0;				break;
-	default:			ASSERT(0);	return 0;
+	case GRADE_AAAA:	iFrame = 0;	break;
+	case GRADE_AAA:		iFrame = 1;	break;
+	case GRADE_AA:		iFrame = 2;	break;
+	case GRADE_A:		iFrame = 3;	break;
+	case GRADE_B:		iFrame = 4;	break;
+	case GRADE_C:		iFrame = 5;	break;
+	case GRADE_D:		iFrame = 6;	break;
+	case GRADE_E:		iFrame = 7;	break;
+	default:
+		ASSERT(0);
+	case GRADE_NO_DATA:	iFrame = 0;	break;
 	}
+	iFrame *= iNumCols;
+	if( iNumCols==2 )
+		iFrame += pn;
+	return iFrame;
 }
 
 void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
