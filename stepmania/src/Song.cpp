@@ -280,39 +280,6 @@ bool Song::LoadFromSongDir( CString sDir )
 }
 
 
-class StepsID
-{
-	StepsType st;
-	CString id;
-
-public:
-	StepsID() { SetFrom(NULL); }
-	void SetFrom( const Steps *p )
-	{
-		if( p == NULL )
-		{
-			st = STEPS_TYPE_INVALID;
-			id = "";
-		}
-		else
-		{
-			st = p->m_StepsType;
-			id = p->GetID();
-		}
-	}
-	Steps *GetSteps( const Song *p, bool bAllowNull ) const
-	{
-		if( st == STEPS_TYPE_INVALID || id == "" )
-			return NULL;
-		Steps *ret = p->GetStepsByID( st, id, true );
-		if( !bAllowNull )
-		{
-			RAGE_ASSERT_M( ret, ssprintf("%i, \"%s\"", st, id.c_str()) );	// we had something selected before reloading, so it better still be there after!
-		}
-		return ret;
-	}
-};
-
 /* If bAllowNotesLoss is true, any global notes pointers which no longer exist
  * (or exist but couldn't be matched) will be set to NULL.  This is used when
  * reverting out of the editor.  If false, this is unexpected and will assert.
@@ -329,12 +296,12 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 	vector<StepsID> OldPlayedStageStats[NUM_PLAYERS];
 	for( int p = 0; p < NUM_PLAYERS; ++p )
 	{
-		OldCurNotes[p].SetFrom( GAMESTATE->m_pCurNotes[p] );
-		OldCurStageStats[p].SetFrom( g_CurStageStats.pSteps[p] );
+		OldCurNotes[p].FromSteps( GAMESTATE->m_pCurNotes[p] );
+		OldCurStageStats[p].FromSteps( g_CurStageStats.pSteps[p] );
 		for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 		{
 			OldPlayedStageStats[p].push_back( StepsID() );
-			OldPlayedStageStats[p][i].SetFrom( g_vPlayedStageStats[i].pSteps[p] );
+			OldPlayedStageStats[p][i].FromSteps( g_vPlayedStageStats[i].pSteps[p] );
 		}
 	}
 
@@ -358,16 +325,16 @@ void Song::RevertFromDisk( bool bAllowNotesLoss )
 		{
 			CHECKPOINT;
 			if( GAMESTATE->m_pCurSong == this )
-				GAMESTATE->m_pCurNotes[p] = OldCurNotes[p].GetSteps( this, bAllowNotesLoss );
+				GAMESTATE->m_pCurNotes[p] = OldCurNotes[p].ToSteps( this, bAllowNotesLoss );
 			CHECKPOINT;
 			if( g_CurStageStats.pSong == this )
-				g_CurStageStats.pSteps[p] = OldCurStageStats[p].GetSteps( this, bAllowNotesLoss );
+				g_CurStageStats.pSteps[p] = OldCurStageStats[p].ToSteps( this, bAllowNotesLoss );
 			CHECKPOINT;
 			for( unsigned i = 0; i < g_vPlayedStageStats.size(); ++i )
 			{
 			CHECKPOINT_M(ssprintf("%i", i));
 				if( g_vPlayedStageStats[i].pSong == this )
-					g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].GetSteps( this, bAllowNotesLoss );
+					g_vPlayedStageStats[i].pSteps[p] = OldPlayedStageStats[p][i].ToSteps( this, bAllowNotesLoss );
 			}
 		}
 	}
@@ -934,31 +901,6 @@ Steps* Song::GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh ) cons
 {
 	vector<Steps*> vNotes;
 	GetSteps( vNotes, nt, DIFFICULTY_INVALID, iMeterLow, iMeterHigh, "", true, 1 );
-	if( vNotes.size() == 0 )
-		return NULL;
-	else 
-		return vNotes[0];
-}
-
-/* sID is a difficulty name (for non-edits) or a description (for edits).  This allows
- * specifying a specific notes by a single string.
- *
- * XXX: Don't allow duplicate edit descriptions, and don't allow edit descriptions
- * to be difficulty names (eg. "Hard").  If we do that, this will be completely unambiguous.
- *
- * XXX: Unless two memcards are inserted and there's overlap in the names.  In that
- * case, maybe both edits should be renamed to "Pn: foo"; as long as we don't write
- * them back out (which we don't do except in the editor), it won't be permanent. 
- * We could do this during the actual Steps::GetID() call, instead, but then it'd have
- * to have access to Song::m_LoadedFromProfile. */
-Steps* Song::GetStepsByID( StepsType nt, CString sID, bool bIncludeAutoGen ) const
-{
-	vector<Steps*> vNotes;
-	Difficulty dc = StringToDifficulty(sID);
-	if( dc != DIFFICULTY_INVALID && DIFFICULTY_EDIT )
-		GetSteps( vNotes, nt, dc, -1, -1, "", bIncludeAutoGen );
-	else
-		GetSteps( vNotes, nt, DIFFICULTY_EDIT, -1, -1, sID, bIncludeAutoGen );
 	if( vNotes.size() == 0 )
 		return NULL;
 	else 

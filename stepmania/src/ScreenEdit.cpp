@@ -1416,13 +1416,14 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			return;
 
 		const StepsType st = m_pNotes->m_StepsType;
-		const CString id = m_pNotes->GetID();
+		StepsID id;
+		id.FromSteps( m_pNotes );
 
 		GAMESTATE->m_pCurNotes[PLAYER_1] = NULL; /* make RevertFromDisk not try to reset it */
 		GAMESTATE->m_pCurSong->RevertFromDisk();
 
 		CString sMessage = "Reloaded from disk.";
-		Steps *pSteps = GAMESTATE->m_pCurSong->GetStepsByID( st, id, false );
+		Steps *pSteps = id.ToSteps( GAMESTATE->m_pCurSong, false );
 
 		/* If we couldn't find the steps we were on before, warn and use the first available. */
 		if( pSteps == NULL )
@@ -1430,8 +1431,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, DIFFICULTY_INVALID, false );
 
 			if( pSteps )
-				sMessage = ssprintf( "%s steps not found; changed to %s.",
-					Capitalize(id).c_str(),
+				sMessage = ssprintf( "old steps not found; changed to %s.",
 					DifficultyToString(pSteps->GetDifficulty()).c_str() );
 		}
 

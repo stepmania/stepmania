@@ -21,6 +21,7 @@ class StyleDef;
 class NotesLoader;
 class LyricsLoader;
 class Profile;
+class StepsID;
 
 
 extern const int FILE_CACHE_VERSION;
@@ -187,7 +188,6 @@ public:
 	Steps* GetStepsByDifficulty( StepsType nt, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType nt, int iMeterLow, int iMeterHigh ) const;
 	Steps* GetStepsByDescription( StepsType nt, CString sDescription ) const;
-	Steps* GetStepsByID( StepsType nt, CString sID, bool bIncludeAutoGen = true ) const;
 	Steps* GetClosestNotes( StepsType nt, Difficulty dc ) const;
 	void GetEdits( vector<Steps*>& arrayAddTo, StepsType nt ) const;
 	bool IsEasy( StepsType nt ) const;
