@@ -56,6 +56,8 @@
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
+#include "arch/arch.h"
+
 #ifdef WIN32
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")

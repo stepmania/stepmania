@@ -34,7 +34,7 @@
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
 
-#include "arch/arch_platform.h"
+#include "arch/arch.h"
 
 //
 // StepMania global classes

@@ -26,8 +26,6 @@ public:
 	virtual RageDisplay::VideoModeParams GetVideoModeParams() const = 0;
 };
 
-LowLevelWindow *MakeLowLevelWindow();
-
 #endif
 
 /*

@@ -11,6 +11,8 @@
 
 #include "arch/Sound/RageSoundDriver.h"
 
+#include "arch/arch.h"
+
 /*
  * The lock ordering requirements are:
  * RageSound::Lock before g_SoundManMutex

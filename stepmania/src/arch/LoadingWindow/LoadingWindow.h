@@ -17,8 +17,6 @@ public:
 	virtual void SetIcon( const RageSurface *pIcon ) { }
 };
 
-LoadingWindow *MakeLoadingWindow();
-
 #endif
 
 /*

@@ -50,8 +50,6 @@ public:
 	virtual ~RageSoundDriver() { }
 };
 
-RageSoundDriver *MakeRageSoundDriver(CString drivers);
-
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.

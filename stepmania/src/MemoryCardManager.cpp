@@ -13,6 +13,8 @@
 #include "Foreach.h"
 #include "RageUtil_WorkerThread.h"
 
+#include "arch/arch.h"
+
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
 const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =

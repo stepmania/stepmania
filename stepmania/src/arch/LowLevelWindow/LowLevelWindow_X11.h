@@ -4,8 +4,6 @@
 /* A nice, simple OpenGL window direct to X11 through Xlib. */
 #include "LowLevelWindow.h"
 
-#include <X11/Xlib.h>	// XVisualInfo
-
 class LowLevelWindow_X11 : public LowLevelWindow
 {
 private:

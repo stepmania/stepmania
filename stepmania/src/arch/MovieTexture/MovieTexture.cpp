@@ -6,8 +6,6 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 
-#include "Selector_MovieTexture.h"
-
 void ForceToAscii( CString &str )
 {
 	for( unsigned i=0; i<str.size(); ++i )
@@ -54,61 +52,6 @@ bool RageMovieTexture::GetFourCC( CString fn, CString &handler, CString &type )
 
 	return true;
 #undef HANDLE_ERROR
-}
-
-static void DumpAVIDebugInfo( CString fn )
-{
-	CString type, handler;
-	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
-		return;
-
-	LOG->Trace("Movie %s has handler '%s', type '%s'", fn.c_str(), handler.c_str(), type.c_str());
-}
-
-/* Try drivers in order of preference until we find one that works. */
-RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
-{
-	DumpAVIDebugInfo( ID.filename );
-
-	CStringArray DriversToTry;
-	split(PREFSMAN->m_sMovieDrivers, ",", DriversToTry, true);
-	ASSERT(DriversToTry.size() != 0);
-
-	CString Driver;
-	RageMovieTexture *ret = NULL;
-
-	for( unsigned i=0; ret==NULL && i<DriversToTry.size(); ++i )
-	{
-		Driver = DriversToTry[i];
-		LOG->Trace("Initializing driver: %s", Driver.c_str());
-#ifdef USE_MOVIE_TEXTURE_DSHOW
-		if( !Driver.CompareNoCase("DShow") ) ret = new MovieTexture_DShow(ID);
-#endif
-#ifdef USE_MOVIE_TEXTURE_FFMPEG
-		if( !Driver.CompareNoCase("FFMpeg") ) ret = new MovieTexture_FFMpeg(ID);
-#endif
-#ifdef USE_MOVIE_TEXTURE_NULL
-		if( !Driver.CompareNoCase("Null") ) ret = new MovieTexture_Null(ID);
-#endif
-		if( ret == NULL )
-		{
-			LOG->Warn( "Unknown movie driver name: %s", Driver.c_str() );
-			continue;
-		}
-
-		CString sError = ret->Init();
-		if( sError != "" )
-		{
-			LOG->Info( "Couldn't load driver %s: %s", Driver.c_str(), sError.c_str() );
-			SAFE_DELETE( ret );
-		}
-	}
-	if (!ret)
-        RageException::Throw("Couldn't create a movie texture");
-
-	LOG->Trace("Created movie texture \"%s\" with driver \"%s\"",
-		ID.filename.c_str(), Driver.c_str() );
-	return ret;
 }
 
 /*

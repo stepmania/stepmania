@@ -59,8 +59,6 @@ private:
 	static uint64_t FixupTimeIfBackwards( uint64_t usecs );
 };
 
-ArchHooks *MakeArchHooks();
-
 #endif
 
 extern ArchHooks *HOOKS;	// global and accessable from anywhere in our program

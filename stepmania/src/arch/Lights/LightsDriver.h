@@ -16,8 +16,6 @@ public:
 	virtual void Set( const LightsState *ls ) = 0;
 };
 
-LightsDriver *MakeLightsDriver( CString driver );
-
 #endif
 
 /*

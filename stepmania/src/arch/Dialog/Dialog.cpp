@@ -5,7 +5,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#include "Selector_Dialog.h"
+#include "arch/arch.h"
 
 static DialogDriver *g_pImpl = NULL;
 static DialogDriver_Null g_NullDriver;
@@ -17,37 +17,7 @@ void Dialog::Init()
 	if( g_pImpl != NULL )
 		return;
 
-	CString drivers = "win32,cocoa,null";
-	CStringArray DriversToTry;
-	split(drivers, ",", DriversToTry, true);
-
-	ASSERT( DriversToTry.size() != 0 );
-
-	CString Driver;
-	for( unsigned i = 0; g_pImpl == NULL && i < DriversToTry.size(); ++i )
-	{
-		Driver = DriversToTry[i];
-
-#if defined(USE_DIALOG_DRIVER_WIN32)
-		if( !DriversToTry[i].CompareNoCase("Win32") ) g_pImpl = new DialogDriver_Win32;
-#endif
-#if defined(USE_DIALOG_DRIVER_COCOA)
-		if( !DriversToTry[i].CompareNoCase("Cocoa") ) g_pImpl = new DialogDriver_Cocoa;
-#endif
-#if defined(USE_DIALOG_DRIVER_NULL)
-		if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriver_Null;
-#endif
-
-		if( g_pImpl == NULL )
-			continue;
-		CString sError = g_pImpl->Init();
-		if( sError != "" )
-		{
-			if( LOG )
-				LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
-			SAFE_DELETE( g_pImpl );
-		}
-	}
+	g_pImpl = MakeDialogDriver();
 
 	/* DialogDriver_Null should have worked, at least. */
 	ASSERT( g_pImpl != NULL );

@@ -78,8 +78,6 @@ public:
 	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut ) = 0;
 };
 
-MemoryCardDriver *MakeMemoryCardDriver();
-
 #endif
 
 /*

@@ -4,7 +4,7 @@
 // In here, you define which APIs are guaranteed to be available on which OSes.
 // Don't ever actually #include anything here -- that's for */Selector_*.h.
 #if defined(UNIX) || !defined(DARWIN) // Darwin isn't POSIX enough for us.
-#define HAVE_POSIX
+#define HAVE_POSIX				// (is Darwin POSIX at all?)
 #endif
 #if defined(DARWIN)
 #define HAVE_DARWIN
@@ -23,17 +23,6 @@
 #if defined(LINUX)
 #define HAVE_POSIX	// Here just to be explicit.
 #define HAVE_LINUXKERNEL
-#endif
-
-/* I'm also putting the renderer master switch in here, since there's really no
- * better place to put it. */
-#if defined(_WINDOWS)
-#define SUPPORT_OPENGL
-#define SUPPORT_D3D
-#elif defined(_XBOX)
-#define SUPPORT_D3D
-#else
-#define SUPPORT_OPENGL
 #endif
 
 #endif

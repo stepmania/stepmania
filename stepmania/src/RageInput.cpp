@@ -4,6 +4,8 @@
 #include "RageException.h"
 #include "arch/InputHandler/InputHandler.h"
 
+#include "arch/arch.h"
+
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
 RageInput::RageInput( CString drivers )

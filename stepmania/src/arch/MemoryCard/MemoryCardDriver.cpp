@@ -25,23 +25,6 @@ void UsbStorageDevice::SetOsMountDir( const CString &s )
 	FixSlashesInPlace( sOsMountDir );
 }
 
-MemoryCardDriver *MakeMemoryCardDriver()
-{
-	if( !PREFSMAN->m_bMemoryCards )
-		return new MemoryCardDriver_Null;
-
-	MemoryCardDriver *ret = NULL;
-
-#ifdef ARCH_MEMORY_CARD_DRIVER
-	ret = new ARCH_MEMORY_CARD_DRIVER;
-#endif
-
-	if( !ret )
-		ret = new MemoryCardDriver_Null;
-	
-	return ret;
-}
-
 /*
  * (c) 2002-2004 Glenn Maynard
  * All rights reserved.

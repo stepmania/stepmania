@@ -22,8 +22,6 @@ public:
 	static bool GetFourCC( CString fn, CString &handler, CString &type );
 };
 
-RageMovieTexture *MakeRageMovieTexture(RageTextureID ID);
-
 #endif
 
 /*

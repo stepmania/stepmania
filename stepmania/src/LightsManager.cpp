@@ -9,6 +9,7 @@
 #include "Game.h"
 #include "PrefsManager.h"
 
+#include "arch/arch.h"
 
 static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
 	"MarqueeUpLeft",
