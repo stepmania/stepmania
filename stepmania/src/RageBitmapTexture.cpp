@@ -119,14 +119,16 @@ void RageBitmapTexture::Create( DWORD dwHints )
 	bScaleImageToTextureSize = ddii.Width > caps.MaxTextureWidth 
 						    || ddii.Height > caps.MaxTextureHeight;
 	
+
 	// HACK:  The stupid Savage card will report that it can hold the entire texture, 
 	//   then allocate something smaller than the dimensions we need!
 	//   after allocating the texture, make sure it's the size we expect.  If not,
 	//   load it again with scaling turned on.
-	DWORD dwExpectedWidth = ddii.Width;
-	DWORD dwExpectedHeight = ddii.Height;
-	while( 1 )
+	for( int i=0; i<2; i++ )	// only try twice
 	{
+		DWORD dwExpectedWidth = bScaleImageToTextureSize ? caps.MaxTextureWidth : ddii.Width;
+		DWORD dwExpectedHeight = bScaleImageToTextureSize ? caps.MaxTextureHeight : ddii.Height;
+
 		if( FAILED( hr = D3DXCreateTextureFromFileEx( 
 			m_pd3dDevice,				// device
 			m_sFilePath,				// soure file
@@ -163,6 +165,8 @@ void RageBitmapTexture::Create( DWORD dwHints )
 		if( dwExpectedWidth == ddsd.Width  &&
 			dwExpectedHeight == ddsd.Height )
 			break;	// done trying to load
+		else
+			bScaleImageToTextureSize = true;
 	}
 
 
