@@ -21,8 +21,10 @@
 #include "NoteFieldPositioning.h"
 #include "GameManager.h"
 
-#define SONG_BPM				THEME->GetMetricF("ScreenHowToPlay","SongBPM")
+#define SONG_BPM			THEME->GetMetricF("ScreenHowToPlay","SongBPM")
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenHowToPlay","SecondsToShow")
+#define NUM_PERFECTS			4
+#define NUM_MISSES			6
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
@@ -44,7 +46,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 
 	m_LifeMeterBar.Load( PLAYER_1 );
 	m_LifeMeterBar.SetXY( 480, 40 );
-	m_LifeMeterBar.FillForHowToPlay(4, 6);
+	m_LifeMeterBar.FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 
 	// Display random character+pad
 	if( GAMESTATE->m_pCharacters.size() )
