@@ -560,37 +560,37 @@ static bool IsValidCall(char *buf, int len) {
 	// Minimum sequence is 2 bytes (call eax).
 	// Maximum sequence is 7 bytes (call dword ptr [eax+disp32]).
 
-	if (len >= 5 && buf[-5] == (char)0xE8)
+	if (len >= 5 && buf[-5] == '\xe8')
 		return true;
 
 	// FF 14 xx					CALL [reg32+reg32*scale]
 
-	if (len >= 3 && buf[-3] == (char)0xFF && buf[-2]==0x14)
+	if (len >= 3 && buf[-3] == '\xff' && buf[-2]=='\x14')
 		return true;
 
 	// FF 15 xx xx xx xx		CALL disp32
 
-	if (len >= 6 && buf[-6] == (char)0xFF && buf[-5]==0x15)
+	if (len >= 6 && buf[-6] == '\xff' && buf[-5]=='\x15')
 		return true;
 
 	// FF 00-3F(!14/15)			CALL [reg32]
 
-	if (len >= 2 && buf[-2] == (char)0xFF && (unsigned char)buf[-1] < 0x40)
+	if (len >= 2 && buf[-2] == '\xff' && (unsigned char)buf[-1] < '\x40')
 		return true;
 
 	// FF D0-D7					CALL reg32
 
-	if (len >= 2 && buf[-2] == (char)0xFF && (buf[-1]&0xF8) == 0xD0)
+	if (len >= 2 && buf[-2] == '\xff' && (buf[-1]&0xF8) == '\xd0')
 		return true;
 
 	// FF 50-57 xx				CALL [reg32+reg32*scale+disp8]
 
-	if (len >= 3 && buf[-3] == (char)0xFF && (buf[-2]&0xF8) == 0x50)
+	if (len >= 3 && buf[-3] == '\xff' && (buf[-2]&0xF8) == '\x50')
 		return true;
 
 	// FF 90-97 xx xx xx xx xx	CALL [reg32+reg32*scale+disp32]
 
-	if (len >= 7 && buf[-7] == (char)0xFF && (buf[-6]&0xF8) == 0x90)
+	if (len >= 7 && buf[-7] == '\xff' && (buf[-6]&0xF8) == '\x90')
 		return true;
 
 	return false;
@@ -955,7 +955,7 @@ static const char *CrashLookupExport(HMODULE hmod, unsigned long addr, unsigned 
 
 	addr -= (ulong)pBase;
 
-	for(i=0; i<pExportDir->nametbl_cnt; i++) {
+	for(i=0; i<(int) pExportDir->nametbl_cnt; i++) {
 		ulong fnaddr;
 		int idx;
 
@@ -1329,6 +1329,7 @@ static bool ReportCrashCallStack(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTE
 	return true;
 }
 
+/*
 static void ReportDisasm(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *const pExc)
 {
 	char tbuf[2048];
@@ -1341,7 +1342,7 @@ static void ReportDisasm(HWND hwnd, HANDLE hFile, const EXCEPTION_POINTERS *cons
 	}
 	FlushFileBuffers(hFile);
 }
-
+*/
 static void DoSave(const EXCEPTION_POINTERS *pExc) {
 	HANDLE hFile;
 	char szModName2[MAX_PATH];
