@@ -244,10 +244,6 @@ bool RageSoundReader_Vorbisfile::FillBuf()
 	}
 
 	read_offset += ret / bytes_per_frame;
-
-	/* If we have a different number of channels, we need to convert. */
-	ASSERT( vi->channels == 1 || vi->channels == 2 );
-
 	avail = ret;
 	return true;
 }
