@@ -38,25 +38,25 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-#define FOV									THEME->GetMetricF("ScreenSelectMusic","FOV")
-#define FOV_CENTER_X						THEME->GetMetricF("ScreenSelectMusic","FOVCenterX")
-#define FOV_CENTER_Y						THEME->GetMetricF("ScreenSelectMusic","FOVCenterY")
-#define BANNER_WIDTH						THEME->GetMetricF("ScreenSelectMusic","BannerWidth")
-#define BANNER_HEIGHT						THEME->GetMetricF("ScreenSelectMusic","BannerHeight")
-#define SONG_OPTIONS_EXTRA_COMMAND			THEME->GetMetric ("ScreenSelectMusic","SongOptionsExtraCommand")
-#define SAMPLE_MUSIC_DELAY					THEME->GetMetricF("ScreenSelectMusic","SampleMusicDelay")
-#define SHOW_RADAR							THEME->GetMetricB("ScreenSelectMusic","ShowRadar")
-#define SHOW_GRAPH							THEME->GetMetricB("ScreenSelectMusic","ShowGraph")
-#define SHOW_PANES							THEME->GetMetricB("ScreenSelectMusic","ShowPanes")
-#define SHOW_DIFFICULTY_LIST				THEME->GetMetricB("ScreenSelectMusic","ShowDifficultyList")
-#define CDTITLE_SPIN_SECONDS				THEME->GetMetricF("ScreenSelectMusic","CDTitleSpinSeconds")
-#define PREV_SCREEN							THEME->GetMetric ("ScreenSelectMusic","PrevScreen")
-#define NEXT_SCREEN							THEME->GetMetric ("ScreenSelectMusic","NextScreen")
-#define NEXT_OPTIONS_SCREEN					THEME->GetMetric ("ScreenSelectMusic","NextOptionsScreen")
-#define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreP%iSortChangeCommand", i+1))
-#define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric ("ScreenSelectMusic",ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
-#define DO_ROULETTE_ON_MENU_TIMER			THEME->GetMetricB("ScreenSelectMusic","DoRouletteOnMenuTimer")
-#define ALIGN_MUSIC_BEATS					THEME->GetMetricB("ScreenSelectMusic","AlignMusicBeat")
+#define FOV									THEME->GetMetricF(m_sName,"FOV")
+#define FOV_CENTER_X						THEME->GetMetricF(m_sName,"FOVCenterX")
+#define FOV_CENTER_Y						THEME->GetMetricF(m_sName,"FOVCenterY")
+#define BANNER_WIDTH						THEME->GetMetricF(m_sName,"BannerWidth")
+#define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
+#define SONG_OPTIONS_EXTRA_COMMAND			THEME->GetMetric (m_sName,"SongOptionsExtraCommand")
+#define SAMPLE_MUSIC_DELAY					THEME->GetMetricF(m_sName,"SampleMusicDelay")
+#define SHOW_RADAR							THEME->GetMetricB(m_sName,"ShowRadar")
+#define SHOW_GRAPH							THEME->GetMetricB(m_sName,"ShowGraph")
+#define SHOW_PANES							THEME->GetMetricB(m_sName,"ShowPanes")
+#define SHOW_DIFFICULTY_LIST				THEME->GetMetricB(m_sName,"ShowDifficultyList")
+#define CDTITLE_SPIN_SECONDS				THEME->GetMetricF(m_sName,"CDTitleSpinSeconds")
+#define PREV_SCREEN							THEME->GetMetric (m_sName,"PrevScreen")
+#define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
+#define NEXT_OPTIONS_SCREEN					THEME->GetMetric (m_sName,"NextOptionsScreen")
+#define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetric (m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
+#define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetric (m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
+#define DO_ROULETTE_ON_MENU_TIMER			THEME->GetMetricB(m_sName,"DoRouletteOnMenuTimer")
+#define ALIGN_MUSIC_BEATS					THEME->GetMetricB(m_sName,"AlignMusicBeat")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
 CString g_sFallbackCDTitlePath;
@@ -89,7 +89,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	GAMESTATE->FinishStage();
 
 	/* Cache: */
-	g_sFallbackCDTitlePath = THEME->GetPathToG("ScreenSelectMusic fallback cdtitle");
+	g_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");
 
 	if( GAMESTATE->m_CurStyle == STYLE_INVALID )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );
@@ -113,7 +113,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 
 
-	m_MusicWheelUnder.Load( THEME->GetPathToG("ScreenSelectMusic wheel under") );
+	m_MusicWheelUnder.Load( THEME->GetPathG(m_sName,"wheel under") );
 	m_MusicWheelUnder->SetName( "WheelUnder" );
 	SET_XY( m_MusicWheelUnder );
 	this->AddChild( m_MusicWheelUnder );
@@ -123,7 +123,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_MusicWheel );
 
 	m_sprBannerMask.SetName( "Banner" );	// use the same metrics and animation as Banner
-	m_sprBannerMask.Load( THEME->GetPathToG("ScreenSelectMusic banner mask") );
+	m_sprBannerMask.Load( THEME->GetPathG(m_sName,"banner mask") );
 	m_sprBannerMask.SetBlendMode( BLEND_NO_EFFECT );	// don't draw to color buffer
 	m_sprBannerMask.SetZWrite( true );	// do draw to the zbuffer
 	SET_XY( m_sprBannerMask );
@@ -136,7 +136,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SET_XY( m_Banner );
 	this->AddChild( &m_Banner );
 
-	m_sprBannerFrame.Load( THEME->GetPathToG("ScreenSelectMusic banner frame") );
+	m_sprBannerFrame.Load( THEME->GetPathG(m_sName,"banner frame") );
 	m_sprBannerFrame->SetName( "BannerFrame" );
 	SET_XY( m_sprBannerFrame );
 	this->AddChild( m_sprBannerFrame );
@@ -156,7 +156,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		GAMESTATE->GetAllStageTexts( StageTexts );
 		for( unsigned i = 0; i < StageTexts.size(); ++i )
 		{
-			CString path = THEME->GetPathToG( "ScreenSelectMusic stage "+StageTexts[i], true );
+			CString path = THEME->GetPathG( m_sName, "stage "+StageTexts[i], true );
 			if( path != "" )
 				TEXTUREMAN->CacheTexture( path );
 		}
@@ -168,7 +168,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_sprStage );
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
-	m_sprCDTitleFront.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
+	m_sprCDTitleFront.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
 	m_sprCDTitleFront.SetCullMode( CULL_BACK );
 	m_sprCDTitleFront.SetDiffuse( RageColor(1,1,1,1) );
 	m_sprCDTitleFront.SetEffectSpin( RageVector3(0, 360/CDTITLE_SPIN_SECONDS, 0) );
@@ -176,7 +176,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_sprCDTitleFront );
 
 	m_sprCDTitleBack.SetName( "CDTitle" );
-	m_sprCDTitleBack.Load( THEME->GetPathToG("ScreenSelectMusic fallback cdtitle") );
+	m_sprCDTitleBack.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
 	FlipSpriteHorizontally(m_sprCDTitleBack);
 	m_sprCDTitleBack.SetCullMode( CULL_BACK );
 	m_sprCDTitleBack.SetDiffuse( RageColor(0.2f,0.2f,0.2f,1) );
@@ -210,7 +210,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_Artist );
 		
 	m_MachineRank.SetName( "MachineRank" );
-	m_MachineRank.LoadFromFont( THEME->GetPathToF("ScreenSelectMusic rank") );
+	m_MachineRank.LoadFromFont( THEME->GetPathF(m_sName,"rank") );
 	SET_XY( m_MachineRank );
 	this->AddChild( &m_MachineRank );
 
@@ -228,18 +228,18 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 			continue;	// skip
 
 		m_sprDifficultyFrame[p].SetName( ssprintf("DifficultyFrameP%d",p+1) );
-		m_sprDifficultyFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic difficulty frame p%d",p+1)) );
+		m_sprDifficultyFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty frame p%d",p+1)) );
 		m_sprDifficultyFrame[p].StopAnimating();
 		SET_XY( m_sprDifficultyFrame[p] );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-		m_DifficultyIcon[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic difficulty icons 1x%d",NUM_DIFFICULTIES)) );
+		m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons 1x%d",NUM_DIFFICULTIES)) );
 		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 
 		m_AutoGenIcon[p].SetName( ssprintf("AutogenIconP%d",p+1) );
-		m_AutoGenIcon[p].Load( THEME->GetPathToG("ScreenSelectMusic autogen") );
+		m_AutoGenIcon[p].Load( THEME->GetPathG(m_sName,"autogen") );
 		SET_XY( m_AutoGenIcon[p] );
 		this->AddChild( &m_AutoGenIcon[p] );
 
@@ -250,7 +250,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		this->AddChild( &m_OptionIconRow[p] );
 
 		m_sprMeterFrame[p].SetName( ssprintf("MeterFrameP%d",p+1) );
-		m_sprMeterFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic meter frame p%d",p+1)) );
+		m_sprMeterFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("meter frame p%d",p+1)) );
 		SET_XY( m_sprMeterFrame[p] );
 		this->AddChild( &m_sprMeterFrame[p] );
 
@@ -270,12 +270,12 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		// character they're using.
 
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
-		m_sprHighScoreFrame[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic score frame p%d",p+1)) );
+		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
 		SET_XY( m_sprHighScoreFrame[p] );
 		this->AddChild( &m_sprHighScoreFrame[p] );
 
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
-		m_textHighScore[p].LoadFromNumbers( THEME->GetPathToN("ScreenSelectMusic score") );
+		m_textHighScore[p].LoadFromNumbers( THEME->GetPathN(m_sName,"score") );
 		m_textHighScore[p].SetShadowLength( 0 );
 		m_textHighScore[p].SetDiffuse( PlayerToColor(p) );
 		SET_XY( m_textHighScore[p] );
@@ -288,15 +288,15 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	this->AddChild( &m_MusicSortDisplay );
 
 	m_sprBalloon.SetName( "Balloon" );
-	TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon long") );
-	TEXTUREMAN->CacheTexture( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+	TEXTUREMAN->CacheTexture( THEME->GetPathG(m_sName,"balloon long") );
+	TEXTUREMAN->CacheTexture( THEME->GetPathG(m_sName,"balloon marathon") );
 	this->AddChild( &m_sprBalloon );
 
 	m_sprCourseHasMods.LoadAndSetName( m_sName, "CourseHasMods" );
 	this->AddChild( m_sprCourseHasMods );
 
 	m_sprOptionsMessage.SetName( "OptionsMessage" );
-	m_sprOptionsMessage.Load( THEME->GetPathToG("ScreenSelectMusic options message 1x2") );
+	m_sprOptionsMessage.Load( THEME->GetPathG(m_sName,"options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );	// invisible
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
@@ -305,7 +305,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		FOREACH_PlayerNumber( p )
 		{
 			m_sprNonPresence[p].SetName( ssprintf("NonPresenceP%d",p+1) );
-			m_sprNonPresence[p].Load( THEME->GetPathToG(ssprintf("ScreenSelectMusic nonpresence p%d",p+1)) );
+			m_sprNonPresence[p].Load( THEME->GetPathG(m_sName,ssprintf("nonpresence p%d",p+1)) );
 			SET_XY( m_sprNonPresence[p] );
 			this->AddChild( &m_sprNonPresence[p] );
 		}
@@ -320,10 +320,10 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	m_bgNoOptionsOut.Load( THEME->GetPathToB(m_sName+" no options out") );
 //	this->AddChild( &m_bgNoOptionsOut ); // drawn on top
 
-	m_soundDifficultyEasier.Load( THEME->GetPathToS("ScreenSelectMusic difficulty easier") );
-	m_soundDifficultyHarder.Load( THEME->GetPathToS("ScreenSelectMusic difficulty harder") );
-	m_soundOptionsChange.Load( THEME->GetPathToS("ScreenSelectMusic options") );
-	m_soundLocked.Load( THEME->GetPathToS("ScreenSelectMusic locked") );
+	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
+	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
+	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
+	m_soundLocked.Load( THEME->GetPathS(m_sName,"locked") );
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
 
@@ -1307,7 +1307,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			{
 			case TYPE_SECTION:
 				m_Banner.LoadFromGroup( sGroup );	// if this isn't a group, it'll default to the fallback banner
-				SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic section music");
+				SampleMusicToPlay = THEME->GetPathS(m_sName,"section music");
 				break;
 			case TYPE_SORT:
 				switch( GAMESTATE->m_SortOrder )
@@ -1319,7 +1319,7 @@ void ScreenSelectMusic::AfterMusicChange()
 					m_Banner.LoadMode();
 					break;
 				}
-				SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic sort music");
+				SampleMusicToPlay = THEME->GetPathS(m_sName,"sort music");
 				break;
 			default:
 				ASSERT(0);
@@ -1379,13 +1379,13 @@ void ScreenSelectMusic::AfterMusicChange()
 			if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fMarathonVerSongSeconds )
 			{
 				m_sprBalloon.StopTweening();
-				m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon marathon") );
+				m_sprBalloon.Load( THEME->GetPathG(m_sName,"balloon marathon") );
 				SET_XY_AND_ON_COMMAND( m_sprBalloon );
 			}
 			else if( pSong->m_fMusicLengthSeconds > PREFSMAN->m_fLongVerSongSeconds )
 			{
 				m_sprBalloon.StopTweening();
-				m_sprBalloon.Load( THEME->GetPathToG("ScreenSelectMusic balloon long") );
+				m_sprBalloon.Load( THEME->GetPathG(m_sName,"balloon long") );
 				SET_XY_AND_ON_COMMAND( m_sprBalloon );
 			}
 			else
@@ -1422,13 +1422,13 @@ void ScreenSelectMusic::AfterMusicChange()
 		switch( m_MusicWheel.GetSelectedType() )
 		{
 		case TYPE_ROULETTE:
-			SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic roulette music");
+			SampleMusicToPlay = THEME->GetPathS(m_sName,"roulette music");
 			break;
 		case TYPE_RANDOM:
-			SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic random music");
+			SampleMusicToPlay = THEME->GetPathS(m_sName,"random music");
 			break;
 		case TYPE_LEAP:
-			SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic leap music");
+			SampleMusicToPlay = THEME->GetPathS(m_sName,"leap music");
 			break;
 		default:
 			ASSERT(0);
@@ -1445,7 +1445,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	{
 		Course* pCourse = m_MusicWheel.GetSelectedCourse();
 
-		SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic course music");
+		SampleMusicToPlay = THEME->GetPathS(m_sName,"course music");
 		m_fSampleStartSeconds = 0;
 		m_fSampleLengthSeconds = -1;
 
@@ -1506,7 +1506,7 @@ void ScreenSelectMusic::AfterMusicChange()
 	}
 
 	// update stage counter display (long versions/marathons)
-	m_sprStage.Load( THEME->GetPathToG("ScreenSelectMusic stage "+GAMESTATE->GetStageText()) );
+	m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
 
 	// Don't stop music if it's already playing the right file.
 	if( SampleMusicToPlay == "" )
