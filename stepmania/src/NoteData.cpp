@@ -929,14 +929,14 @@ void NoteDataUtil::SuperShuffleTaps( NoteData &in )
 		for( int t1=0; t1<in.GetNumTracks(); t1++ )
 		{
 			TapNote tn1 = in.GetTapNote(t1, r);
-			if( tn1!='4' )	// a tap that is not part of a hold
+			if( tn1!=TAP_HOLD )	// a tap that is not part of a hold
 			{
 				// probe for a spot to swap with
 				while( 1 )
 				{
 					int t2 = rand() % in.GetNumTracks();
 					TapNote tn2 = in.GetTapNote(t2, r);
-					if( tn2!='4' )	// a tap that is not part of a hold
+					if( tn2!=TAP_HOLD )	// a tap that is not part of a hold
 					{
 						// swap
 						in.SetTapNote(t1, r, tn2);
