@@ -40,6 +40,7 @@
 void ScreenOptionsMaster::SetList( OptionRowData &row, OptionRowHandler &hand, CString ListName )
 {
 	hand.type = ROW_LIST;
+	hand.m_bUseModNameForIcon = true;
 
 	row.name = ListName;
 	if( !ListName.CompareNoCase("noteskins") )
@@ -716,7 +717,9 @@ void ScreenOptionsMaster::RefreshIcons()
 				switch( handler.type )
 				{
 				case ROW_LIST:
-					sIcon = data.choices[iFirstSelection];
+					sIcon = handler.m_bUseModNameForIcon ?
+						handler.ListEntries[iFirstSelection].m_sModifiers :
+						data.choices[iFirstSelection];
 					break;
 				case ROW_CONFIG:
 					break;

@@ -23,13 +23,14 @@ private:
 
 	struct OptionRowHandler
 	{
-		OptionRowHandler() { opt = NULL; }
+		OptionRowHandler() { opt = NULL; m_bUseModNameForIcon = false; }
 
 		OptionRowType type;
 
 		/* ROW_LIST: */
 		vector<GameCommand> ListEntries;
 		GameCommand Default;
+		bool m_bUseModNameForIcon;
 
 		/* ROW_CONFIG: */
 		const ConfOption *opt;
