@@ -4,11 +4,18 @@
 
 RageFileObj::RageFileObj()
 {
+	m_pBuffer = NULL;
+
 	ResetBuf();
 
 	m_iBufAvail = 0;
 	m_bEOF = false;
 	m_iFilePos = 0;
+}
+
+RageFileObj::~RageFileObj()
+{
+	delete [] m_pBuffer;
 }
 
 int RageFileObj::Seek( int iOffset )
@@ -41,26 +48,29 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 	while( !m_bEOF && iBytes > 0 )
 	{
-		/* Copy data out of the buffer first. */
-		int FromBuffer = min( (int) iBytes, m_iBufAvail );
-		memcpy( pBuffer, m_pBuf, FromBuffer );
+		if( m_pBuffer != NULL && m_iBufAvail )
+		{
+			/* Copy data out of the buffer first. */
+			int iFromBuffer = min( (int) iBytes, m_iBufAvail );
+			memcpy( pBuffer, m_pBuf, iFromBuffer );
 
-		ret += FromBuffer;
-		m_iFilePos += FromBuffer;
-		iBytes -= FromBuffer;
-		m_iBufAvail -= FromBuffer;
-		m_pBuf += FromBuffer;
+			ret += iFromBuffer;
+			m_iFilePos += iFromBuffer;
+			iBytes -= iFromBuffer;
+			m_iBufAvail -= iFromBuffer;
+			m_pBuf += iFromBuffer;
 
-		pBuffer = (char *) pBuffer + FromBuffer;
+			pBuffer = (char *) pBuffer + iFromBuffer;
+		}
 
 		if( !iBytes )
 			break;
 
 		ASSERT( m_iBufAvail == 0 );
 
-		/* We need more; either fill the buffer and keep going, or just read directly
-		 * into the destination buffer. */
-		if( iBytes >= sizeof(m_Buffer) )
+		/* If buffering is disabled, or the block is bigger than the buffer,
+		 * read the remainder of the data directly into the desteination buffer. */
+		if( m_pBuffer == NULL || iBytes >= BSIZE )
 		{
 			/* We have a lot more to read, so don't waste time copying it into the
 			 * buffer. */
@@ -75,9 +85,10 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 			return ret;
 		}
 
-		m_pBuf = m_Buffer;
+		/* If buffering is enabled, and we need more data, fill the buffer. */
+		m_pBuf = m_pBuffer;
 		int got = FillBuf();
-		if( got < 0 )
+		if( got == -1 )
 			return got;
 		if( got == 0 )
 			m_bEOF = true;
@@ -147,6 +158,12 @@ int RageFileObj::Flush()
 }
 
 
+void RageFileObj::EnableBuffering()
+{
+	if( m_pBuffer == NULL )
+		m_pBuffer = new char[BSIZE];
+}
+
 /* Read up to the next \n, and return it in out.  Strip the \n.  If the \n is
  * preceded by a \r (DOS newline), strip that, too. */
 int RageFileObj::GetLine( CString &out )
@@ -155,6 +172,8 @@ int RageFileObj::GetLine( CString &out )
 
 	if( m_bEOF )
 		return 0;
+
+	EnableBuffering();
 
 	bool GotData = false;
 	while( 1 )
@@ -203,8 +222,8 @@ int RageFileObj::GetLine( CString &out )
 		if( ReAddCR )
 		{
 			ASSERT( m_iBufAvail == 0 );
-			m_pBuf = m_Buffer;
-			m_Buffer[m_iBufAvail] = '\r';
+			m_pBuf = m_pBuffer;
+			m_pBuffer[m_iBufAvail] = '\r';
 			++m_iBufAvail;
 		}
 
@@ -212,7 +231,7 @@ int RageFileObj::GetLine( CString &out )
 			break;
 
 		/* We need more data. */
-		m_pBuf = m_Buffer;
+		m_pBuf = m_pBuffer;
 
 		const int size = FillBuf();
 
@@ -251,11 +270,14 @@ int RageFileObj::PutLine( const CString &str )
  * shouldn't cause the results of AtEOF to change.) */
 int RageFileObj::FillBuf()
 {
+	/* Don't call this unless buffering is enabled. */
+	ASSERT( m_pBuffer != NULL );
+
 	/* The buffer starts at m_Buffer; any data in it starts at m_pBuf; space between
 	 * the two is old data that we've read.  (Don't mangle that data; we can use it
 	 * for seeking backwards.) */
-	const int iBufAvail = sizeof(m_Buffer) - (m_pBuf-m_Buffer) - m_iBufAvail;
-	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pBuf, m_Buffer, (int) sizeof(m_Buffer) ) );
+	const int iBufAvail = BSIZE - (m_pBuf-m_pBuffer) - m_iBufAvail;
+	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pBuf, m_pBuffer, (int) BSIZE ) );
 	const int size = this->ReadInternal( m_pBuf+m_iBufAvail, iBufAvail );
 
 	if( size > 0 )
@@ -267,6 +289,31 @@ int RageFileObj::FillBuf()
 void RageFileObj::ResetBuf()
 {
 	m_iBufAvail = 0;
-	m_pBuf = m_Buffer;
+	m_pBuf = m_pBuffer;
 }
+
+/*
+ * Copyright (c) 2003-2004 Glenn Maynard
+ * All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
 

@@ -1,3 +1,5 @@
+/* RageFileBasic - simple file interface. */
+
 #ifndef RAGE_FILE_BASIC_H
 #define RAGE_FILE_BASIC_H
 
@@ -54,7 +56,7 @@ class RageFileObj: public RageFileBasic
 {
 public:
 	RageFileObj();
-	virtual ~RageFileObj() { }
+	virtual ~RageFileObj();
 
 	virtual CString GetError() const { return m_sError; }
 	virtual void ClearError() { SetError(""); }
@@ -88,6 +90,8 @@ protected:
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes ) = 0;
 	virtual int FlushInternal() { return 0; }
 
+	void EnableBuffering();
+
 	void SetError( const CString &sError ) { m_sError = sError; }
 	CString m_sError;
 
@@ -98,11 +102,53 @@ private:
 	bool m_bEOF;
 	int m_iFilePos;
 
+	/*
+	 * If buffering is enabled, m_pBuffer is the buffer, m_pBuf is the current read
+	 * position in the buffer and m_iBufAvail is the number of bytes at m_pBuf.  Note
+	 * that buffering is only enabled if:
+	 *
+	 *  - GetLine() is called (which requires buffering to efficiently search for newlines);
+	 *  - or EnableBuffering() is called
+	 *
+	 * Currently, once buffering is enabled, it stays enabled for the life of the
+	 * object.
+	 *
+	 * If buffering is not enabled, this buffer will not be allocated, keeping the
+	 * size overhead of each file down.  Layered RageFileBasic implementations, which
+	 * read from other RageFileBasics, should generally not use buffering, in order
+	 * to avoid reads being passed through several buffers, which is only a waste of
+	 * memory.
+	 */
 	enum { BSIZE = 1024 };
-	char m_Buffer[BSIZE];
+	char *m_pBuffer;
 	char *m_pBuf;
 	int  m_iBufAvail;
 };
 
 #endif
+
+/*
+ * Copyright (c) 2003-2004 Glenn Maynard, Chris Danford, Steve Checkoway
+ * All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */
 
