@@ -8,23 +8,27 @@ using namespace std;
 
 #include "RageSoundDriver.h"
 #include "SDL_thread.h"
+#include "global.h"
 #include <alsa/asoundlib.h>
 
 
 /* A lot of this is from Glenn's RageSoundDriver_WaveOut */
 
-class RageSound_Linux : public RageSoundDriver {
-	public:
-
-	struct sound {	
+struct sound {	
 		RageSound *snd;
 		bool stopping;
 		int flush_pos; /* state == STOPPING only */
 		sound() { snd = NULL; stopping = false; }
-	};
+};
+
+typedef struct sound sound_t;
+
+class RageSound_Linux : public RageSoundDriver {
+	public:
+	
 
 	/* Currently Playing Sounds */
-	vector<sound *> sounds;
+	vector<sound_t *> sounds;
 	SDL_Thread *MixerThreadPtr;
 	snd_pcm_uframes_t buffer_size;
 	Sint16 *sbuffer;	/* Sound Buffer */

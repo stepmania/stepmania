@@ -20,6 +20,10 @@
 #include "RageException.h"
 #include "SDL.h"
 #include "SDL/SDL_thread.h"
+#include "global.h"
+
+#include <vector>
+using namespace std;
 
 /* Get the chunk size */
 #define CHUNKSIZE(x,y) y = x / 8;
@@ -28,7 +32,7 @@
 #define BUFSIZE_F(x,y) y = x / 2;
 
 /* Minimum Buffer Size (bytes) */
-#define BUFSIZE(x) if (x < 1024*16) x = 1024*16;
+#define BUFSIZE(x) x ? 1024 : 1024*16;
 
 void RageSound_Linux::OpenAudio() {
 	/* Open Device [default hardware sound device] (non-blocking) */
@@ -63,7 +67,8 @@ void RageSound_Linux::OpenAudio() {
 	 * is larger 
 	 */
 	snd_pcm_hw_params_get_buffer_size(hw_params, &buffer_size);
-	sbuffer = (Sint16 *)malloc(BUFSIZE(buffer_size)); /* snd_pcm_sframes_t = long */
+	BUFSIZE(buffer_size);
+	sbuffer = (Sint16 *)malloc(buffer_size); /* snd_pcm_sframes_t = long */
 
 	/* Apply the settings to the device */
 	snd_pcm_hw_params(playback_handle,hw_params);
@@ -177,7 +182,7 @@ bool RageSound_Linux::GetData() {
 	  snd_pcm_prepare(playback_handle); /* Prepare for write */
 	
 	  /* Non-Interleaved Write */
-	  long ret = snd_pcm_writen(playback_handle,&chunks[b],sizeof(chunks[b]));   
+	  long ret = snd_pcm_writen(playback_handle,(void **)&chunks[b],sizeof(chunks[b]));   
 	  RecoverState(ret); /* Check for an error and recover */
 	  last_pos += cs;
 	}
@@ -191,7 +196,7 @@ void RageSound_Linux::Update(float delta) {
 
 	/* SoundStopped might erase sounds out from under us, so make a copy
 	 * of the sound list. */
-	vector<sound *> snds = sounds;
+	vector<sound_t *> snds = sounds;
 	for(unsigned i = 0; i < snds.size(); ++i)
 	{
 		if(!sounds[i]->stopping) continue;
