@@ -6,6 +6,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 #include "Difficulty.h"
+#include "LuaReference.h"
 #include <map>
 
 class Song;
@@ -47,7 +48,7 @@ public:
 	CString		m_sAnnouncer;
 	CString		m_sModifiers;
 	CString		m_sScreen;
-	CString		m_sLuaFunction;
+	LuaExpression	m_LuaFunction;
 	Song*		m_pSong;
 	Steps*		m_pSteps;
 	Course*		m_pCourse;

@@ -39,7 +39,7 @@ void GameCommand::Init()
 	m_sModifiers = "";
 	m_sAnnouncer = "";
 	m_sScreen = "";
-	m_sLuaFunction = "";
+	m_LuaFunction.Unset();
 	m_pSong = NULL;
 	m_pSteps = NULL;
 	m_pCourse = NULL;
@@ -213,7 +213,7 @@ void GameCommand::Load( int iIndex, const Commands& cmds )
 		
 		else if( sName == "lua" )
 		{
-			m_sLuaFunction = sValue;
+			m_LuaFunction.SetFromExpression( sValue );
 		}
 		
 		else if( sName == "screen" )
@@ -628,8 +628,17 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	if( m_sModifiers != "" )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->ApplyModifiers( *pn, m_sModifiers );
-	if( m_sLuaFunction != "" )
-		LUA->RunScript( m_sLuaFunction, "in", 0 );
+	if( m_LuaFunction.IsSet() )
+	{
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			m_LuaFunction.PushSelf( LUA->L );
+			ASSERT( !lua_isnil(LUA->L, -1) );
+
+			lua_pushnumber( LUA->L, *pn ); // 1st parameter
+			lua_call( LUA->L, 1, 0 ); // call function with 1 argument and 0 results
+		}
+	}
 	if( m_sScreen != "" )
 		SCREENMAN->SetNewScreen( m_sScreen );
 	if( m_pSong )
