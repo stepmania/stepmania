@@ -486,8 +486,9 @@ void RageDisplay::SaveScreenshot( CString sPath )
 
 bool RageDisplay::IsWindowed() const 
 {
-	return true; // FIXME
+	return !(g_flags & SDL_FULLSCREEN);
 }
+
 void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, lower-right, lower-left
 {
 	DrawQuads( v, 4 );
