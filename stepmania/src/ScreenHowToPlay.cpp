@@ -29,7 +29,7 @@
 #define USECHARACTER						THEME->GetMetricB("ScreenHowToPlay","UseCharacter")
 #define CHARACTERONCOMMAND					THEME->GetMetric ("ScreenHowToPlay","CharacterOnCommand")
 #define PADONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PadOnCommand")
-#define PLAYERONCOMMAND						THEME->GetMetric ("ScreenHowToPlay","PlayerOnCommand")
+#define PLAYERX								THEME->GetMetricI("ScreenHowToPlay","PlayerX")
 
 ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 {
@@ -131,7 +131,7 @@ ScreenHowToPlay::ScreenHowToPlay() : ScreenAttract("ScreenHowToPlay")
 	GAMESTATE->m_PlayerController[PLAYER_1] = PC_AUTOPLAY;
 
 	m_Player.Load( PLAYER_1, pND, &m_LifeMeterBar, NULL, NULL, NULL, NULL, NULL );
-	m_Player.Command( PLAYERONCOMMAND );
+	m_Player.SetX( PLAYERX );
 
 	// Don't show judgement
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fBlind = 1;
