@@ -262,8 +262,6 @@
 #ifndef STDSTRING_H
 #define STDSTRING_H
 
-#define SS_NO_CONVERSION
-
 //#define SS_NOLOCALE	// prevents use/inclusion of <locale> header
 //#define SS_UNSIGNED	// add CString ctor/assign op. for usigned characters
 
@@ -400,8 +398,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 
 #if 0 && defined (_MSC_VER) && (_MSC_VER >= 1100)
 	#include <comdef.h>
-	#define SS_INC_COMDEF		// signal that we #included MS comdef.h file
-	#define STDSTRING_INC_COMDEF
 	#define SS_NOTHROW __declspec(nothrow)
 #else
 	#define SS_NOTHROW
@@ -623,168 +619,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 	{
 		return (PUSTR)StdCodeCvt((PSTR)pA, pW, nChars, acp);
 	}
-
-	// Define our conversion macros to look exactly like Microsoft's to
-	// facilitate using this stuff both with and without MFC/ATL
-
-	#ifdef _CONVERSION_USES_THREAD_LOCALE
-		#ifndef _DEBUG
-			#define SSCVT int _cvt; _cvt; UINT _acp=GetACP(); \
-				_acp; PCWSTR _pw; _pw; PCSTR _pa; _pa
-		#else
-			#define SSCVT int _cvt = 0; _cvt; UINT _acp=GetACP();\
-				 _acp; PCWSTR _pw=0; _pw; PCSTR _pa=0; _pa
-		#endif
-	#else
-		#ifndef _DEBUG
-			#define SSCVT int _cvt; _cvt; UINT _acp=CP_ACP; _acp;\
-				 PCWSTR _pw; _pw; PCSTR _pa; _pa
-		#else
-			#define SSCVT int _cvt = 0; _cvt; UINT _acp=CP_ACP; \
-				_acp; PCWSTR _pw=0; _pw; PCSTR _pa=0; _pa
-		#endif
-	#endif
-
-	#ifdef _CONVERSION_USES_THREAD_LOCALE
-		#define SSA2W(pa) (\
-			((_pa = pa) == 0) ? 0 : (\
-				_cvt = (strlen(_pa)+1),\
-				StdCodeCvt((PWSTR) _alloca(_cvt*2), _pa, _cvt, _acp)))
-		#define SSW2A(pw) (\
-			((_pw = pw) == 0) ? 0 : (\
-				_cvt = (wcslen(_pw)+1)*2,\
-				StdW2AHelper((LPSTR) _alloca(_cvt), _pw, _cvt, _acp)))
-	#else
-		#define SSA2W(pa) (\
-			((_pa = pa) == 0) ? 0 : (\
-				_cvt = (strlen(_pa)+1),\
-				StdCodeCvt((PWSTR) _alloca(_cvt*2), _pa, _cvt)))
-		#define SSW2A(pw) (\
-			((_pw = pw) == 0) ? 0 : (\
-				_cvt = (wcslen(_pw)+1)*2,\
-				StdCodeCvt((LPSTR) _alloca(_cvt), _pw, _cvt)))
-	#endif
-
-	#define SSA2CW(pa) ((PCWSTR)SSA2W((pa)))
-	#define SSW2CA(pw) ((PCSTR)SSW2A((pw)))
-
-	#ifdef UNICODE
-		#define SST2A	SSW2A
-		#define SSA2T	SSA2W
-		#define SST2CA	SSW2CA
-		#define SSA2CT	SSA2CW
-		inline PWSTR	SST2W(PTSTR p)			{ return p; }
-		inline PTSTR	SSW2T(PWSTR p)			{ return p; }
-		inline PCWSTR	SST2CW(PCTSTR p)		{ return p; }
-		inline PCTSTR	SSW2CT(PCWSTR p)		{ return p; }
-	#else
-		#define SST2W	SSA2W
-		#define SSW2T	SSW2A
-		#define SST2CW	SSA2CW
-		#define SSW2CT	SSW2CA
-		inline PSTR		SST2A(PTSTR p)			{ return p; }
-		inline PTSTR	SSA2T(PSTR p)			{ return p; }
-		inline PCSTR	SST2CA(PCTSTR p)		{ return p; }
-		inline PCTSTR	SSA2CT(PCSTR p)			{ return p; }
-	#endif // #ifdef UNICODE
-
-	#if defined(UNICODE)
-	// in these cases the default (TCHAR) is the same as OLECHAR
-		inline PCOLESTR	SST2COLE(PCTSTR p)		{ return p; }
-		inline PCTSTR	SSOLE2CT(PCOLESTR p)	{ return p; }
-		inline POLESTR	SST2OLE(PTSTR p)		{ return p; }
-		inline PTSTR	SSOLE2T(POLESTR p)		{ return p; }
-	#elif defined(OLE2ANSI)
-	// in these cases the default (TCHAR) is the same as OLECHAR
-		inline PCOLESTR	SST2COLE(PCTSTR p)		{ return p; }
-		inline PCTSTR	SSOLE2CT(PCOLESTR p)	{ return p; }
-		inline POLESTR	SST2OLE(PTSTR p)		{ return p; }
-		inline PTSTR	SSOLE2T(POLESTR p)		{ return p; }
-	#else
-		//CharNextW doesn't work on Win95 so we use this
-		#define SST2COLE(pa)	SSA2CW((pa))
-		#define SST2OLE(pa)		SSA2W((pa))
-		#define SSOLE2CT(po)	SSW2CA((po))
-		#define SSOLE2T(po)		SSW2A((po))
-	#endif
-
-	#ifdef OLE2ANSI
-		#define SSW2OLE		SSW2A
-		#define SSOLE2W		SSA2W
-		#define SSW2COLE	SSW2CA
-		#define SSOLE2CW	SSA2CW
-		inline POLESTR		SSA2OLE(PSTR p)		{ return p; }
-		inline PSTR			SSOLE2A(POLESTR p)	{ return p; }
-		inline PCOLESTR		SSA2COLE(PCSTR p)	{ return p; }
-		inline PCSTR		SSOLE2CA(PCOLESTR p){ return p; }
-	#else
-		#define SSA2OLE		SSA2W
-		#define SSOLE2A		SSW2A
-		#define SSA2COLE	SSA2CW
-		#define SSOLE2CA	SSW2CA
-		inline POLESTR		SSW2OLE(PWSTR p)	{ return p; }
-		inline PWSTR		SSOLE2W(POLESTR p)	{ return p; }
-		inline PCOLESTR		SSW2COLE(PCWSTR p)	{ return p; }
-		inline PCWSTR		SSOLE2CW(PCOLESTR p){ return p; }
-	#endif
-
-	// Above we've defined macros that look like MS' but all have
-	// an 'SS' prefix.  Now we need the real macros.  We'll either
-	// get them from the macros above or from MFC/ATL.  If
-	// SS_NO_CONVERSION is #defined, we'll forgo them
-
-	#ifndef SS_NO_CONVERSION
-
-		#if defined (USES_CONVERSION)
-
-			#define _NO_STDCONVERSION	// just to be consistent
-
-		#else
-
-			#ifdef _MFC_VER
-
-				#include <afxconv.h>
-				#define _NO_STDCONVERSION // just to be consistent
-
-			#else
-
-				#define USES_CONVERSION SSCVT
-				#define A2CW			SSA2CW
-				#define W2CA			SSW2CA
-				#define T2A				SST2A
-				#define A2T				SSA2T
-				#define T2W				SST2W
-				#define W2T				SSW2T
-				#define T2CA			SST2CA
-				#define A2CT			SSA2CT
-				#define T2CW			SST2CW
-				#define W2CT			SSW2CT
-				#define ocslen			sslen
-				#define ocscpy			sscpy
-				#define T2COLE			SST2COLE
-				#define OLE2CT			SSOLE2CT
-				#define T2OLE			SST2COLE
-				#define OLE2T			SSOLE2CT
-				#define A2OLE			SSA2OLE
-				#define OLE2A			SSOLE2A
-				#define W2OLE			SSW2OLE
-				#define OLE2W			SSOLE2W
-				#define A2COLE			SSA2COLE
-				#define OLE2CA			SSOLE2CA
-				#define W2COLE			SSW2COLE
-				#define OLE2CW			SSOLE2CW
-		
-			#endif // #ifdef _MFC_VER
-		#endif // #ifndef USES_CONVERSION
-	#endif // #ifndef SS_NO_CONVERSION
-
-	// Define ostring - generic name for std::basic_string<OLECHAR>
-
-	#if !defined(ostring) && !defined(OSTRING_DEFINED)
-		typedef std::basic_string<OLECHAR> ostring;
-		#define OSTRING_DEFINED
-	#endif
-
 #endif // #ifndef SS_ANSI
 
 // StdCodeCvt when there's no conversion to be done
@@ -1497,21 +1331,6 @@ inline int sscpy(CT1* pDst, const std::basic_string<CT2>& sSrc)
 	return sscpycvt(pDst, sSrc.c_str(), (int)sSrc.length());
 }
 
-#ifdef SS_INC_COMDEF
-	template<typename CT1>
-	inline int sscpy(CT1* pDst, const _bstr_t& bs, int nMax)
-	{
-		return sscpycvt(pDst, static_cast<PCOLESTR>(bs),
-            SSMIN(nMax, static_cast<int>(bs.length())));
-	}
-	template<typename CT1>
-	inline int sscpy(CT1* pDst, const _bstr_t& bs)
-	{
-		return sscpy(pDst, bs, static_cast<int>(bs.length()));
-	}
-#endif
-
-
 // -----------------------------------------------------------------------------
 // Functional objects for changing case.  They also let you pass locales
 // -----------------------------------------------------------------------------
@@ -1553,42 +1372,6 @@ inline int sscpy(CT1* pDst, const std::basic_string<CT2>& sSrc)
 		};
 	#endif
 #endif
-
-// This struct is used for TrimRight() and TrimLeft() function implementations.
-//template<typename CT>
-//struct NotSpace : public std::unary_function<CT, bool>
-//{
-//	const std::locale& loc;
-//	inline NotSpace(const std::locale& locArg) : loc(locArg) {}
-//	inline bool operator() (CT t) { return !std::isspace(t, loc); }
-//};
-template<typename CT>
-struct NotSpace : public std::unary_function<CT, bool>
-{
-
-	// DINKUMWARE BUG:
-	// Note -- using std::isspace in a COM DLL gives us access violations
-	// because it causes the dynamic addition of a function to be called
-	// when the library shuts down.  Unfortunately the list is maintained
-	// in DLL memory but the function is in static memory.  So the COM DLL
-	// goes away along with the function that was supposed to be called,
-	// and then later when the DLL CRT shuts down it unloads the list and
-	// tries to call the long-gone function.
-	// This is DinkumWare's implementation problem.  Until then, we will
-	// use good old isspace and iswspace from the CRT unless they
-	// specify SS_ANSI
-#if defined(SS_ANSI) && !defined(SS_NOLOCALE)
-	const std::locale loc;
-	NotSpace(const std::locale& locArg=std::locale()) : loc(locArg) {}
-	bool operator() (CT t) const { return !std::isspace(t, loc); }
-#else
-	bool ssisp(char c) const { return FALSE != ::isspace((int) c); }
-	bool ssisp(wchar_t c) const { return FALSE != ::iswspace((wint_t) c); }
-	bool operator()(CT t) const  { return !ssisp(t); }
-#endif
-};
-
-
 
 
 //			Now we can define the template (finally!)
@@ -1682,14 +1465,6 @@ public:
 	{
 	}
 
-	#ifdef SS_INC_COMDEF
-		CStdStr(const _bstr_t& bstr)
-		{
-			if ( bstr.length() > 0 )
-				this->append(static_cast<PCMYSTR>(bstr), bstr.length());
-		}
-	#endif
-
 	// CStdStr inline assignment operators -- the ssasn function now takes care
 	// of fixing  the MSVC assignment bug (see knowledge base article Q172398).
 	MYTYPE& operator=(const MYTYPE& str)
@@ -1736,23 +1511,6 @@ public:
 		this->assign(1, t);
 		return *this;
 	}
-
-	#ifdef SS_INC_COMDEF
-		MYTYPE& operator=(const _bstr_t& bstr)
-		{
-			if ( bstr.length() > 0 )
-			{
-				this->assign(static_cast<PCMYSTR>(bstr), bstr.length());
-				return *this;
-			}
-			else
-			{
-				this->erase();
-				return *this;
-			}
-		}
-	#endif
-
 
 	// Overloads  also needed to fix the MSVC assignment bug (KB: Q172398)
 	//  *** Thanks to Pete The Plumber for catching this one ***
@@ -1901,12 +1659,6 @@ public:
 		this->append(1, t);
 		return *this;
 	}
-	#ifdef SS_INC_COMDEF	// if we have _bstr_t, define a += for it too.
-		MYTYPE& operator+=(const _bstr_t& bstr)
-		{
-			return this->operator+=(static_cast<PCMYSTR>(bstr));
-		}
-	#endif
 
 
 	// addition operators -- global friend functions.
@@ -1923,10 +1675,6 @@ public:
 	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	PCWSTR sz);
 	friend	MYTYPE	operator+ EMP_TEMP(PCSTR pA,				const MYTYPE& str);
 	friend	MYTYPE	operator+ EMP_TEMP(PCWSTR pW,			const MYTYPE& str);
-#ifdef SS_INC_COMDEF
-	friend	MYTYPE	operator+ EMP_TEMP(const _bstr_t& bstr,	const MYTYPE& str);
-	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	const _bstr_t& bstr);
-#endif
 
 	// -------------------------------------------------------------------------
 	// Case changing functions
@@ -2496,64 +2244,6 @@ public:
 	#endif
 	
 
-	// -------------------------------------------------------------------------
-	// Trim and its variants
-	// -------------------------------------------------------------------------
-	MYTYPE& Trim()
-	{
-		return TrimLeft().TrimRight();
-	}
-
-	MYTYPE& TrimLeft()
-	{
-		this->erase(this->begin(),
-			std::find_if(this->begin(), this->end(), NotSpace<CT>()));
-
-		return *this;
-	}
-
-	MYTYPE&  TrimLeft(CT tTrim)
-	{
-		this->erase(0, this->find_first_not_of(tTrim));
-		return *this;
-	}
-
-	MYTYPE&  TrimLeft(PCMYSTR szTrimChars)
-	{
-		this->erase(0, this->find_first_not_of(szTrimChars));
-		return *this;
-	}
-
-	MYTYPE& TrimRight()
-	{
-		// NOTE:  When comparing reverse_iterators here (MYRITER), I avoid using
-		// operator!=.  This is because namespace rel_ops also has a template
-		// operator!= which conflicts with the global operator!= already defined
-		// for reverse_iterator in the header <utility>.
-		// Thanks to John James for alerting me to this.
-
-		MYRITER it = std::find_if(this->rbegin(), this->rend(), NotSpace<CT>());
-		if ( !(this->rend() == it) )
-			this->erase(this->rend() - it);
-
-		this->erase(!(it == this->rend()) ? this->find_last_of(*it) + 1 : 0);
-		return *this;
-	}
-
-	MYTYPE&  TrimRight(CT tTrim)
-	{
-		MYSIZE nIdx	= this->find_last_not_of(tTrim);
-		this->erase(MYBASE::npos == nIdx ? 0 : ++nIdx);
-		return *this;
-	}
-
-	MYTYPE&  TrimRight(PCMYSTR szTrimChars)
-	{
-		MYSIZE nIdx	= this->find_last_not_of(szTrimChars);
-		this->erase(MYBASE::npos == nIdx ? 0 : ++nIdx);
-		return *this;
-	}
-
 	void			FreeExtra()
 	{
 		MYTYPE mt;
@@ -2599,127 +2289,6 @@ public:
 		return this->c_str();
 	}
 #endif
-
-	// IStream related functions.  Useful in IPersistStream implementations
-
-#ifdef SS_INC_COMDEF
-
-	// struct SSSHDR - useful for non Std C++ persistence schemes.
-	typedef struct SSSHDR
-	{
-		BYTE	byCtrl;
-		ULONG	nChars;
-	} SSSHDR;	// as in "Standard String Stream Header"
-
-	#define SSSO_UNICODE	0x01	// the string is a wide string
-	#define SSSO_COMPRESS	0x02	// the string is compressed
-
-	// -------------------------------------------------------------------------
-	// FUNCTION: StreamSize
-	// REMARKS:
-	//		Returns how many bytes it will take to StreamSave() this CStdString
-	//		object to an IStream.
-	// -------------------------------------------------------------------------
-	ULONG StreamSize() const
-	{
-		// Control header plus string
-		ASSERT(this->size()*sizeof(CT) < 0xffffffffUL - sizeof(SSSHDR));
-		return (this->size() * sizeof(CT)) + sizeof(SSSHDR);
-	}
-
-	// -------------------------------------------------------------------------
-	// FUNCTION: StreamSave
-	// REMARKS:
-	//		Saves this CStdString object to a COM IStream.
-	// -------------------------------------------------------------------------
-	HRESULT StreamSave(IStream* pStream) const
-	{
-		ASSERT(size()*sizeof(CT) < 0xffffffffUL - sizeof(SSSHDR));
-		HRESULT hr		= E_FAIL;
-		ASSERT(pStream != 0);
-		SSSHDR hdr;
-		hdr.byCtrl		= sizeof(CT) == 2 ? SSSO_UNICODE : 0;
-		hdr.nChars		= this->size();
-
-
-		if ( FAILED(hr=pStream->Write(&hdr, sizeof(SSSHDR), 0)) )
-			TRACE(_T("StreamSave: Cannot write control header, ERR=0x%X\n"),hr);
-		else if ( empty() )
-			;		// nothing to write
-		else if ( FAILED(hr=pStream->Write(this->c_str(), this->size()*sizeof(CT), 0)) )
-			TRACE(_T("StreamSave: Cannot write string to stream 0x%X\n"), hr);
-
-		return hr;
-	}
-
-
-	// -------------------------------------------------------------------------
-	// FUNCTION: StreamLoad
-	// REMARKS:
-	//		This method loads the object from an IStream.
-	// -------------------------------------------------------------------------
-	HRESULT StreamLoad(IStream* pStream)
-	{
-		ASSERT(pStream != 0);
-		SSSHDR hdr;
-		HRESULT hr			= E_FAIL;
-
-		if ( FAILED(hr=pStream->Read(&hdr, sizeof(SSSHDR), 0)) )
-		{
-			TRACE(_T("StreamLoad: Cant read control header, ERR=0x%X\n"), hr);
-		}
-		else if ( hdr.nChars > 0 )
-		{
-			ULONG nRead		= 0;
-			PMYSTR pMyBuf	= BufferSet(hdr.nChars);
-
-			// If our character size matches the character size of the string
-			// we're trying to read, then we can read it directly into our
-			// buffer. Otherwise, we have to read into an intermediate buffer
-			// and convert.
-			
-			if ( (hdr.byCtrl & SSSO_UNICODE) != 0 )
-			{
-				ULONG nBytes	= hdr.nChars * sizeof(wchar_t);
-				if ( sizeof(CT) == sizeof(wchar_t) )
-				{
-					if ( FAILED(hr=pStream->Read(pMyBuf, nBytes, &nRead)) )
-						TRACE(_T("StreamLoad: Cannot read string: 0x%X\n"), hr);
-				}
-				else
-				{	
-					PWSTR pBufW = reinterpret_cast<PWSTR>(_alloca((nBytes)+1));
-					if ( FAILED(hr=pStream->Read(pBufW, nBytes, &nRead)) )
-						TRACE(_T("StreamLoad: Cannot read string: 0x%X\n"), hr);
-					else
-						sscpy(pMyBuf, pBufW, hdr.nChars);
-				}
-			}
-			else
-			{
-				ULONG nBytes	= hdr.nChars * sizeof(char);
-				if ( sizeof(CT) == sizeof(char) )
-				{
-					if ( FAILED(hr=pStream->Read(pMyBuf, nBytes, &nRead)) )
-						TRACE(_T("StreamLoad: Cannot read string: 0x%X\n"), hr);
-				}
-				else
-				{
-					PSTR pBufA = reinterpret_cast<PSTR>(_alloca(nBytes));
-					if ( FAILED(hr=pStream->Read(pBufA, hdr.nChars, &nRead)) )
-						TRACE(_T("StreamLoad: Cannot read string: 0x%X\n"), hr);
-					else
-						sscpy(pMyBuf, pBufA, hdr.nChars);
-				}
-			}
-		}
-		else
-		{
-			this->erase();
-		}
-		return hr;
-	}
-#endif // #ifdef SS_INC_COMDEF
 
 #ifndef SS_ANSI
 
@@ -2810,22 +2379,6 @@ CStdStr<CT> operator+(PCWSTR pW, const CStdStr<CT>& str)
 	strRet.append(str);
 	return strRet;
 }
-
-#ifdef SS_INC_COMDEF
-	template<typename CT>
-	inline
-	CStdStr<CT> operator+(const _bstr_t& bstr, const CStdStr<CT>& str)
-	{
-		return static_cast<const CT*>(bstr) + str;
-	}
-
-	template<typename CT>
-	inline
-	CStdStr<CT> operator+(const CStdStr<CT>& str, const _bstr_t& bstr)
-	{
-		return str + static_cast<const CT*>(bstr);
-	}
-#endif
 
 
 
