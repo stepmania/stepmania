@@ -246,10 +246,15 @@ void GameState::PlayersFinalized()
 
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
-		if( pProfile->m_bUsingProfileDefaultModifiers )
+		CString sModifiers;
+		if( pProfile->GetDefaultModifiers( this->m_pCurGame, sModifiers ) )
 		{
-			GAMESTATE->m_PlayerOptions[pn].Init();
-			GAMESTATE->ApplyModifiers( pn, pProfile->m_sDefaultModifiers );
+			/* We don't save negative preferences (eg. "no reverse").  If the theme
+			 * sets a default of "reverse", and the player turns it off, we should
+			 * set it off.  However, don't reset modifiers that aren't saved by the
+			 * profile, so we don't ignore unsaved modifiers when a profile is in use. */
+			GAMESTATE->m_PlayerOptions[pn].ResetSavedPrefs();
+			GAMESTATE->ApplyModifiers( pn, sModifiers );
 		}
 		// Only set the sort order if it wasn't already set by a ModeChoice (or by an earlier profile)
 		if( m_SortOrder == SORT_INVALID && pProfile->m_SortOrder != SORT_INVALID )
@@ -386,8 +391,7 @@ void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
 
-	pProfile->m_bUsingProfileDefaultModifiers = true;
-	pProfile->m_sDefaultModifiers = m_PlayerOptions[pn].GetSavedPrefsString();
+	pProfile->SetDefaultModifiers( this->m_pCurGame, m_PlayerOptions[pn].GetSavedPrefsString() );
 	if( IsSongSort(m_SortOrder) )
 		pProfile->m_SortOrder = m_SortOrder;
 	if( m_PreferredDifficulty[pn] != DIFFICULTY_INVALID )

@@ -22,6 +22,7 @@
 #include "Foreach.h"
 #include "CatalogXml.h"
 #include "Bookkeeper.h"
+#include "Game.h"
 
 //
 // Old file versions for backward compatibility
@@ -72,8 +73,6 @@ void Profile::InitGeneralData()
 	}
 
 
-	m_bUsingProfileDefaultModifiers = false;
-	m_sDefaultModifiers = "";
 	m_SortOrder = SORT_INVALID;
 	m_LastDifficulty = DIFFICULTY_INVALID;
 	m_LastCourseDifficulty = DIFFICULTY_INVALID;
@@ -391,6 +390,33 @@ int Profile::GetSongNumTimesPlayed( const SongID& songID ) const
 		iTotalNumTimesPlayed += hsSteps.hs.iNumTimesPlayed;
 	}
 	return iTotalNumTimesPlayed;
+}
+
+/*
+ * Get the profile default modifiers.  Return true if set, in which case sModifiersOut
+ * will be set.  Return false if no modifier string is set, in which case the theme
+ * defaults should be used.  Note that the null string means "no modifiers are active",
+ * which is distinct from no modifier string being set at all.
+ *
+ * In practice, we get the default modifiers from the theme the first time a game
+ * is played, and from the profile every time thereafter.
+ */
+bool Profile::GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const
+{
+	map<CString,CString>::const_iterator it;
+	it = m_sDefaultModifiers.find( pGameType->m_szName );
+	if( it == m_sDefaultModifiers.end() )
+		return false;
+	sModifiersOut = it->second;
+	return true;
+}
+
+void Profile::SetDefaultModifiers( const Game* pGameType, const CString &sModifiers )
+{
+	if( sModifiers == "" )
+		m_sDefaultModifiers.erase( pGameType->m_szName );
+	else
+		m_sDefaultModifiers[pGameType->m_szName] = sModifiers;
 }
 
 //
@@ -733,8 +759,6 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	pGeneralDataNode->AppendChild( "IsMachine",						IsMachine() );
 
 	pGeneralDataNode->AppendChild( "Guid",							m_sGuid );
-	pGeneralDataNode->AppendChild( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
-	pGeneralDataNode->AppendChild( "DefaultModifiers",				m_sDefaultModifiers );
 	pGeneralDataNode->AppendChild( "SortOrder",						SortOrderToString(m_SortOrder) );
 	pGeneralDataNode->AppendChild( "LastDifficulty",				DifficultyToString(m_LastDifficulty) );
 	pGeneralDataNode->AppendChild( "LastCourseDifficulty",			CourseDifficultyToString(m_LastCourseDifficulty) );
@@ -760,6 +784,12 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	// Keep declared variables in a very local scope so they aren't 
 	// accidentally used where they're not intended.  There's a lot of
 	// copying and pasting in this code.
+
+	{
+		XNode* pDefaultModifiers = pGeneralDataNode->AppendChild("DefaultModifiers");
+		for( map<CString,CString>::const_iterator it = m_sDefaultModifiers.begin(); it != m_sDefaultModifiers.end(); ++it )
+			pDefaultModifiers->AppendChild( it->first, it->second );
+	}
 
 	{
 		XNode* pUnlockedSongs = pGeneralDataNode->AppendChild("UnlockedSongs");
@@ -878,8 +908,6 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	const XNode* pTemp;
 
 	pNode->GetChildValue( "Guid",							m_sGuid );
-	pNode->GetChildValue( "UsingProfileDefaultModifiers",	m_bUsingProfileDefaultModifiers );
-	pNode->GetChildValue( "DefaultModifiers",				m_sDefaultModifiers );
 	pNode->GetChildValue( "SortOrder",						s );	m_SortOrder = StringToSortOrder( s );
 	pNode->GetChildValue( "LastDifficulty",					s );	m_LastDifficulty = StringToDifficulty( s );
 	pNode->GetChildValue( "LastCourseDifficulty",			s );	m_LastCourseDifficulty = StringToCourseDifficulty( s );
@@ -901,6 +929,17 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	pNode->GetChildValue( "TotalHolds",						m_iTotalHolds );
 	pNode->GetChildValue( "TotalMines",						m_iTotalMines );
 	pNode->GetChildValue( "TotalHands",						m_iTotalHands );
+
+	{
+		const XNode* pDefaultModifiers = pNode->GetChild("DefaultModifiers");
+		if( pDefaultModifiers )
+		{
+			FOREACH_Node( pDefaultModifiers, game_type )
+			{
+				m_sDefaultModifiers[game_type->name] = game_type->value;
+			}
+		}
+	}
 
 	{
 		const XNode* pUnlockedSongs = pNode->GetChild("UnlockedSongs");

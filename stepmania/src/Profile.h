@@ -46,6 +46,7 @@ class Style;
 class Song;
 class Steps;
 class Course;
+class Game;
 
 class Profile
 {
@@ -72,6 +73,8 @@ public:
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	int GetSongNumTimesPlayed( const SongID& songID ) const;
+	bool GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const;
+	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
 	
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumMines, int iNumHands );
 
@@ -88,8 +91,7 @@ public:
 	// General data
 	//
 	CString m_sGuid;
-	bool m_bUsingProfileDefaultModifiers;
-	CString m_sDefaultModifiers;
+	map<CString,CString> m_sDefaultModifiers;
 	SortOrder m_SortOrder;
 	Difficulty m_LastDifficulty;
 	CourseDifficulty m_LastCourseDifficulty;
