@@ -53,6 +53,7 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] = { "Marvelous", "Perfect", "Great", "
 #define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,ssprintf("Show%s",JUDGE_STRING[l]))
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
+#define TYPE								THEME->GetMetric (m_sName,"Type")
 
 
 const ScreenMessage SM_GoToSelectCourse			=	ScreenMessage(SM_User+3);
@@ -61,7 +62,7 @@ const ScreenMessage SM_GoToEndScreen			=	ScreenMessage(SM_User+5);
 const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
 
-ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sClassName)
+ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 {
 	//
 	// debugging
@@ -83,8 +84,15 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName, Type type ) : Screen(sCl
 	LOG->Trace( "ScreenEvaluation::ScreenEvaluation()" );
 
 	m_sName = sClassName;
-	m_Type = type;
-
+	if( !TYPE.CompareNoCase("stage") )
+		m_Type = stage;
+	else if( !TYPE.CompareNoCase("summary") )
+		m_Type = summary;
+	else if( !TYPE.CompareNoCase("course") )
+		m_Type = course;
+	else
+		RageException::Throw("Unknown evaluation type \"%s\"", TYPE.c_str() );
+		
 	int p;
 
 	//

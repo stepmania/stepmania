@@ -309,6 +309,23 @@ Screen* Screen::Create( CString sClassName )
 	if( !sClassName.CompareNoCase("ScreenWarning") )
 		sClassName = "ScreenAttract@ScreenWarning";
 
+	if( !sClassName.CompareNoCase("ScreenEvaluationStage") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationStage";
+	if( !sClassName.CompareNoCase("ScreenEvaluationSummary") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationSummary";
+	if( !sClassName.CompareNoCase("ScreenEvaluationNonstop") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationNonstop";
+	if( !sClassName.CompareNoCase("ScreenEvaluationOni") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationOni";
+	if( !sClassName.CompareNoCase("ScreenEvaluationEndless") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationEndless";
+	if( !sClassName.CompareNoCase("ScreenEvaluationEndless") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationEndless";
+	if( !sClassName.CompareNoCase("ScreenEvaluationBattle") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationBattle";
+	if( !sClassName.CompareNoCase("ScreenEvaluationRave") )
+		sClassName = "ScreenEvaluation@ScreenEvaluationRave";
+
 	/* "ScreenCompany@ScreenOtherCompany" loads ScreenCompany with the
 	 * asset "ScreenOtherCompany", so (if it supports it) it'll use
 	 * metric, graphic, etc. names starting with "ScreenOtherCompany". */
@@ -331,13 +348,7 @@ Screen* Screen::Create( CString sClassName )
 	IF_RETURN( ScreenCaution );
 	IF_RETURN( ScreenEdit );
 	IF_RETURN( ScreenEditMenu );
-	IF_RETURN( ScreenEvaluationStage );
-	IF_RETURN( ScreenEvaluationSummary );
-	IF_RETURN( ScreenEvaluationNonstop );
-	IF_RETURN( ScreenEvaluationOni );
-	IF_RETURN( ScreenEvaluationEndless );
-	IF_RETURN( ScreenEvaluationBattle );
-	IF_RETURN( ScreenEvaluationRave );
+	IF_RETURN( ScreenEvaluation );
 	IF_RETURN( ScreenEz2SelectPlayer );
 	IF_RETURN( ScreenGameOver );
 	IF_RETURN( ScreenGameplay );

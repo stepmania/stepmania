@@ -1,3 +1,6 @@
+#ifndef SCREEN_EVALUATION_H
+#define SCREEN_EVALUATION_H
+
 /*
 -----------------------------------------------------------------------------
  Class: ScreenEvaluation
@@ -30,7 +33,7 @@ class ScreenEvaluation : public Screen
 {
 public:
 	enum Type	{ stage, summary, course };
-	ScreenEvaluation( CString sClassName, Type type );
+	ScreenEvaluation( CString sClassName );
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -103,46 +106,4 @@ protected:
 	Sprite				m_sprTryExtraStage;
 };
 
-class ScreenEvaluationStage : public ScreenEvaluation
-{
-public:
-	ScreenEvaluationStage( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::stage) {};
-};
-
-class ScreenEvaluationSummary : public ScreenEvaluation
-{
-public:
-	ScreenEvaluationSummary( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::summary) {};
-};
-
-class ScreenEvaluationNonstop : public ScreenEvaluation
-{
-public:
-	ScreenEvaluationNonstop( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::course) {};
-};
-
-class ScreenEvaluationOni : public ScreenEvaluation
-{
-public:
-	ScreenEvaluationOni( CString sClassName ) : ScreenEvaluation(sClassName, ScreenEvaluation::course) {};
-};
-
-class ScreenEvaluationEndless : public ScreenEvaluation
-{
-public:
-	ScreenEvaluationEndless( CString sClassName ) : ScreenEvaluation(sClassName, ScreenEvaluation::course) {};
-};
-
-class ScreenEvaluationBattle : public ScreenEvaluation
-{
-public:
-	ScreenEvaluationBattle( CString sClassName ) : ScreenEvaluation(sClassName, ScreenEvaluation::stage) {};
-};
-
-class ScreenEvaluationRave : public ScreenEvaluation
-{
-public:
-	ScreenEvaluationRave( CString sClassName ) : ScreenEvaluation(sClassName,ScreenEvaluation::stage) {};
-};
-
-
+#endif
