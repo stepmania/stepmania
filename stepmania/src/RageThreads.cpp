@@ -293,11 +293,40 @@ void RageThread::HaltAllThreads( bool Kill )
 			continue;
 		if( ThisThreadID == (int) g_ThreadSlots[entry].threadid )
 			continue;
-#ifdef _XBOX
-		SuspendThread( g_ThreadSlots[entry].ThreadHandle );
-#else
-		TerminateThread( g_ThreadSlots[entry].ThreadHandle, 0 );
+#ifndef _XBOX
+		if( Kill )
+			TerminateThread( g_ThreadSlots[entry].ThreadHandle, 0 );
+		else
 #endif
+			SuspendThread( g_ThreadSlots[entry].ThreadHandle );
+	}
+#endif
+}
+
+void RageThread::ResumeAllThreads()
+{
+#if defined(PID_BASED_THREADS)
+	/* Send a SIGCONT to all other threads. */
+	int ThisThread = getpid();
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		const int pid = g_ThreadSlots[entry].pid;
+		if( pid <= 0 || pid == ThisThread )
+			continue;
+		kill( pid, SIGCONT );
+	}
+#elif defined(WIN32)
+	const int ThisThreadID = GetCurrentThreadId();
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		if( ThisThreadID == (int) g_ThreadSlots[entry].threadid )
+			continue;
+
+		ResumeThread( g_ThreadSlots[entry].ThreadHandle );
 	}
 #endif
 }

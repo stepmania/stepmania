@@ -21,6 +21,10 @@ public:
 	/* For crash handlers: kill or suspend all threads (except for
 	 * the running one) immediately. */ 
 	static void HaltAllThreads( bool Kill=false );
+
+	/* If HaltAllThreads was called (with Kill==false), resume. */
+	static void ResumeAllThreads();
+
 	static const char *GetCurThreadName();
 
 	int Wait();
