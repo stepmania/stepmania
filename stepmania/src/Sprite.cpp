@@ -277,18 +277,9 @@ void Sprite::DrawPrimitives()
 		return;
 
 	// bail if cropped all the way 
-    if( m_temp.crop.left + m_temp.crop.right > 1  || 
-		m_temp.crop.top + m_temp.crop.bottom > 1 ) 
+    if( m_pTempState->crop.left + m_pTempState->crop.right > 1  || 
+		m_pTempState->crop.top + m_pTempState->crop.bottom > 1 ) 
 		return; 
-
-
-	// This is causing terrible movie performance on an Athlon 1.3+Voodoo3.
-	// With the default delay of 2ms, the frame rate of demonstration dives
-	// from 110fps to 84. SDL_Delay must behave differently than Win32's
-	// Sleep(). Leave this commented for now, and uncomment if we hear
-	// about problems with dropped movie frames. -Chris
-//	if( m_pTexture && m_pTexture->IsAMovie() && m_pTexture->IsPlaying() )
-//		SDL_Delay( PREFSMAN->m_iMovieDecodeMS );         // let the movie decode a frame
 
 	// use m_temp_* variables to draw the object
 	RectF quadVerticies;
@@ -313,7 +304,7 @@ void Sprite::DrawPrimitives()
 
 
 	RectF croppedQuadVerticies = quadVerticies; 
-#define IF_CROP_POS(side,opp_side) if(m_temp.crop.side>0) croppedQuadVerticies.side = SCALE( m_temp.crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side ); 
+#define IF_CROP_POS(side,opp_side) if(m_pTempState->crop.side>0) croppedQuadVerticies.side = SCALE( m_pTempState->crop.side, 0.f, 1.f, quadVerticies.side, quadVerticies.opp_side ); 
 	IF_CROP_POS( left, right ); 
 	IF_CROP_POS( top, bottom ); 
 	IF_CROP_POS( right, left ); 
@@ -348,35 +339,35 @@ void Sprite::DrawPrimitives()
 		};
 	
 
-		if( m_temp.crop.left>0 )
+		if( m_pTempState->crop.left>0 )
 		{
-			v[0].t.x = SCALE( m_temp.crop.left, 0.f, 1.f, texCoords[0].x, texCoords[3].x );
-			v[1].t.x = SCALE( m_temp.crop.left, 0.f, 1.f, texCoords[1].x, texCoords[2].x );
+			v[0].t.x = SCALE( m_pTempState->crop.left, 0.f, 1.f, texCoords[0].x, texCoords[3].x );
+			v[1].t.x = SCALE( m_pTempState->crop.left, 0.f, 1.f, texCoords[1].x, texCoords[2].x );
 		}
-		if( m_temp.crop.right>0 )
+		if( m_pTempState->crop.right>0 )
 		{
-			v[2].t.x = SCALE( m_temp.crop.right, 0.f, 1.f, texCoords[2].x, texCoords[1].x );
-			v[3].t.x = SCALE( m_temp.crop.right, 0.f, 1.f, texCoords[3].x, texCoords[0].x );
+			v[2].t.x = SCALE( m_pTempState->crop.right, 0.f, 1.f, texCoords[2].x, texCoords[1].x );
+			v[3].t.x = SCALE( m_pTempState->crop.right, 0.f, 1.f, texCoords[3].x, texCoords[0].x );
 		}
-		if( m_temp.crop.top>0 )
+		if( m_pTempState->crop.top>0 )
 		{
-			v[0].t.y = SCALE( m_temp.crop.top, 0.f, 1.f, texCoords[0].y, texCoords[1].y );
-			v[3].t.y = SCALE( m_temp.crop.top, 0.f, 1.f, texCoords[3].y, texCoords[2].y );
+			v[0].t.y = SCALE( m_pTempState->crop.top, 0.f, 1.f, texCoords[0].y, texCoords[1].y );
+			v[3].t.y = SCALE( m_pTempState->crop.top, 0.f, 1.f, texCoords[3].y, texCoords[2].y );
 		}
-		if( m_temp.crop.bottom>0 )
+		if( m_pTempState->crop.bottom>0 )
 		{
-			v[1].t.y = SCALE( m_temp.crop.bottom, 0.f, 1.f, texCoords[1].y, texCoords[0].y );
-			v[2].t.y = SCALE( m_temp.crop.bottom, 0.f, 1.f, texCoords[2].y, texCoords[3].y );
+			v[1].t.y = SCALE( m_pTempState->crop.bottom, 0.f, 1.f, texCoords[1].y, texCoords[0].y );
+			v[2].t.y = SCALE( m_pTempState->crop.bottom, 0.f, 1.f, texCoords[2].y, texCoords[3].y );
 		}
 	}
 
 	DISPLAY->SetTextureModeModulate();
 
 	/* Draw if we're not fully transparent */
-	if( m_temp.diffuse[0].a > 0 || 
-		m_temp.diffuse[1].a > 0 ||
-		m_temp.diffuse[2].a > 0 ||
-		m_temp.diffuse[3].a > 0 )
+	if( m_pTempState->diffuse[0].a > 0 || 
+		m_pTempState->diffuse[1].a > 0 ||
+		m_pTempState->diffuse[2].a > 0 ||
+		m_pTempState->diffuse[3].a > 0 )
 	{
 		//////////////////////
 		// render the shadow
@@ -385,7 +376,7 @@ void Sprite::DrawPrimitives()
 		{
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
-			v[0].c = v[1].c = v[2].c = v[3].c = RageColor(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
+			v[0].c = v[1].c = v[2].c = v[3].c = RageColor(0,0,0,0.5f*m_pTempState->diffuse[0].a);	// semi-transparent black
 			DISPLAY->DrawQuad( v );
 			DISPLAY->PopMatrix();
 		}
@@ -393,10 +384,10 @@ void Sprite::DrawPrimitives()
 		//////////////////////
 		// render the diffuse pass
 		//////////////////////
-		v[0].c = m_temp.diffuse[0];	// top left
-		v[1].c = m_temp.diffuse[2];	// bottom left
-		v[2].c = m_temp.diffuse[3];	// bottom right
-		v[3].c = m_temp.diffuse[1];	// top right
+		v[0].c = m_pTempState->diffuse[0];	// top left
+		v[1].c = m_pTempState->diffuse[2];	// bottom left
+		v[2].c = m_pTempState->diffuse[3];	// bottom right
+		v[3].c = m_pTempState->diffuse[1];	// top right
 		DISPLAY->DrawQuad( v );
 //		glEnable(GL_BLEND);
 	}
@@ -404,10 +395,10 @@ void Sprite::DrawPrimitives()
 	//////////////////////
 	// render the glow pass
 	//////////////////////
-	if( m_temp.glow.a > 0.0001f )
+	if( m_pTempState->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureModeGlow(m_temp.glowmode);
-		v[0].c = v[1].c = v[2].c = v[3].c = m_temp.glow;
+		DISPLAY->SetTextureModeGlow(m_pTempState->glowmode);
+		v[0].c = v[1].c = v[2].c = v[3].c = m_pTempState->glow;
 		DISPLAY->DrawQuad( v );
 	}
 }

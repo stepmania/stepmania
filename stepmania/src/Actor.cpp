@@ -28,6 +28,8 @@ void Actor::Reset()
 	m_TweenStates.clear();
 	m_TweenInfo.clear();
 
+	m_pTempState = NULL;
+
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
 	m_size = RageVector2( 1, 1 );
@@ -74,117 +76,120 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 {
 	DISPLAY->PushMatrix();	// we're actually going to do some drawing in this function	
 
-	int i;
-
-	m_temp = m_current;
 
 
-	/* XXX: recheck rotations in here (all in degrees?) */
 	//
 	// set temporary drawing properties based on Effects 
 	//
-	float fPercentThroughEffect = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
-	bool bBlinkOn = fPercentThroughEffect > 0.5f;
-	float fPercentBetweenColors = sinf( fPercentThroughEffect * 2 * PI ) / 2 + 0.5f;
-	ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
-	float fOriginalAlpha = m_temp.diffuse[0].a;
-
-	switch( m_Effect )
+	if( m_Effect == no_effect )
 	{
-	case no_effect:
-		break;
-	case diffuse_blink:
-		for(i=0; i<4; i++)
-			m_temp.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
-		break;
-	case diffuse_shift:
-		for(i=0; i<4; i++)
-			m_temp.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
-		break;
-	case glow_blink:
-		m_temp.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
-		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
-		break;
-	case glow_shift:
-		m_temp.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
-		m_temp.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
-		break;
-	case rainbow:
-		m_temp.diffuse[0] = RageColor(
-			cosf( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
-			cosf( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
-			cosf( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
-			fOriginalAlpha );
-		for( i=1; i<4; i++ )
-			m_temp.diffuse[i] = m_temp.diffuse[0];
-		break;
-	case wag:
-		m_temp.rotation = m_vEffectMagnitude * sinf( fPercentThroughEffect * 2.0f * PI );
-		break;
-	case spin:
-		// nothing needs to be here
-		break;
-	case vibrate:
-		m_temp.pos.x += m_vEffectMagnitude.x * randomf(-1.0f, 1.0f) * GetZoom();
-		m_temp.pos.y += m_vEffectMagnitude.y * randomf(-1.0f, 1.0f) * GetZoom();
-		m_temp.pos.z += m_vEffectMagnitude.z * randomf(-1.0f, 1.0f) * GetZoom();
-		break;
-	case bounce:
+		m_pTempState = &m_current;
+	}
+	else
+	{
+		m_pTempState = &m_tempState;
+		m_tempState = m_current;
+
+		float fPercentThroughEffect = m_fSecsIntoEffect / m_fEffectPeriodSeconds;
+		bool bBlinkOn = fPercentThroughEffect > 0.5f;
+		float fPercentBetweenColors = (fPercentThroughEffect==0) ? 0 : (sinf( fPercentThroughEffect * 2 * PI ) / 2 + 0.5f);
+		ASSERT( fPercentBetweenColors >= 0  &&  fPercentBetweenColors <= 1 );
+		float fOriginalAlpha = m_tempState.diffuse[0].a;
+
+		int i;
+
+		switch( m_Effect )
 		{
-			float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
-			m_temp.pos += m_vEffectMagnitude * fPercentOffset;
-			m_temp.pos.x = roundf( m_temp.pos.x );
-			m_temp.pos.y = roundf( m_temp.pos.y );
-			m_temp.pos.z = roundf( m_temp.pos.z );
+		case diffuse_blink:
+			for(i=0; i<4; i++)
+				m_tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
+			break;
+		case diffuse_shift:
+			for(i=0; i<4; i++)
+				m_tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+			break;
+		case glow_blink:
+			m_tempState.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
+			m_tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			break;
+		case glow_shift:
+			m_tempState.glow = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+			m_tempState.glow.a *= fOriginalAlpha;	// don't glow if the Actor is transparent!
+			break;
+		case rainbow:
+			m_tempState.diffuse[0] = RageColor(
+				cosf( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
+				cosf( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
+				cosf( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
+				fOriginalAlpha );
+			for( i=1; i<4; i++ )
+				m_tempState.diffuse[i] = m_tempState.diffuse[0];
+			break;
+		case wag:
+			m_tempState.rotation = m_vEffectMagnitude * sinf( fPercentThroughEffect * 2.0f * PI );
+			break;
+		case spin:
+			// nothing needs to be here
+			break;
+		case vibrate:
+			m_tempState.pos.x += m_vEffectMagnitude.x * randomf(-1.0f, 1.0f) * GetZoom();
+			m_tempState.pos.y += m_vEffectMagnitude.y * randomf(-1.0f, 1.0f) * GetZoom();
+			m_tempState.pos.z += m_vEffectMagnitude.z * randomf(-1.0f, 1.0f) * GetZoom();
+			break;
+		case bounce:
+			{
+				float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
+				m_tempState.pos += m_vEffectMagnitude * fPercentOffset;
+				m_tempState.pos.x = roundf( m_tempState.pos.x );
+				m_tempState.pos.y = roundf( m_tempState.pos.y );
+				m_tempState.pos.z = roundf( m_tempState.pos.z );
+			}
+			break;
+		case bob:
+			{
+				float fPercentOffset = sinf( fPercentThroughEffect*PI*2 ); 
+				m_tempState.pos += m_vEffectMagnitude * fPercentOffset;
+				m_tempState.pos.x = roundf( m_tempState.pos.x );
+				m_tempState.pos.y = roundf( m_tempState.pos.y );
+				m_tempState.pos.z = roundf( m_tempState.pos.z );
+			}
+			break;
+		case pulse:
+			{
+				float fMinZoom = m_vEffectMagnitude[0];
+				float fMaxZoom = m_vEffectMagnitude[1];
+				float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
+				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
+				m_tempState.scale = RageVector3( fZoom, fZoom, fZoom );
+			}
+			break;
+		default:
+			ASSERT(0);	// invalid Effect
 		}
-		break;
-	case bob:
-		{
-			float fPercentOffset = sinf( fPercentThroughEffect*PI*2 ); 
-			m_temp.pos += m_vEffectMagnitude * fPercentOffset;
-			m_temp.pos.x = roundf( m_temp.pos.x );
-			m_temp.pos.y = roundf( m_temp.pos.y );
-			m_temp.pos.z = roundf( m_temp.pos.z );
-		}
-		break;
-	case pulse:
-		{
-			float fMinZoom = m_vEffectMagnitude[0];
-			float fMaxZoom = m_vEffectMagnitude[1];
-			float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
-			float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
-			m_temp.scale = RageVector3( fZoom, fZoom, fZoom );
-		}
-		break;
-	default:
-		ASSERT(0);	// invalid Effect
 	}
 
-
-	m_temp.scale.x *= m_baseScale.x;
-	m_temp.scale.y *= m_baseScale.y;
-	m_temp.scale.z *= m_baseScale.z;
-	m_temp.rotation.x += m_baseRotation.x;
-	m_temp.rotation.y += m_baseRotation.y;
-	m_temp.rotation.z += m_baseRotation.z;
-	
-
-	DISPLAY->Translate( m_temp.pos.x, m_temp.pos.y, m_temp.pos.z );
-	DISPLAY->Scale( m_temp.scale.x, m_temp.scale.y, m_temp.scale.z );
+	DISPLAY->Translate(
+		m_pTempState->pos.x,
+		m_pTempState->pos.y,
+		m_pTempState->pos.z );
+	DISPLAY->Scale( 
+		m_pTempState->scale.x * m_baseScale.x,
+		m_pTempState->scale.y * m_baseScale.y,
+		m_pTempState->scale.z * m_baseScale.z );
 
 	/* The only time rotation and quat should normally be used simultaneously
 	 * is for m_baseRotation. */
-	if( m_temp.rotation.x != 0 )	
-		DISPLAY->RotateX( m_temp.rotation.x );
-	if( m_temp.rotation.y != 0 )	
-		DISPLAY->RotateY( m_temp.rotation.y );
-	if( m_temp.rotation.z != 0 )	
-		DISPLAY->RotateZ( m_temp.rotation.z );
+	if( m_pTempState->rotation.x + m_baseRotation.x != 0 )	
+		DISPLAY->RotateX( m_pTempState->rotation.x + m_baseRotation.x );
+	if( m_pTempState->rotation.y + m_baseRotation.y != 0 )	
+		DISPLAY->RotateY( m_pTempState->rotation.y + m_baseRotation.y );
+	if( m_pTempState->rotation.z + m_baseRotation.z != 0 )	
+		DISPLAY->RotateZ( m_pTempState->rotation.z + m_baseRotation.z );
 
-	if( m_temp.quat.x != 0 ||  m_temp.quat.y != 0 ||  m_temp.quat.z != 0 || m_temp.quat.w != 1 )
+	if( m_pTempState->quat.x != 0 ||  m_pTempState->quat.y != 0 ||  m_pTempState->quat.z != 0 || m_pTempState->quat.w != 1 )
 	{
 		RageMatrix mat;
-		RageMatrixFromQuat( &mat, m_temp.quat );
+		RageMatrixFromQuat( &mat, m_pTempState->quat );
 
 		DISPLAY->MultMatrix(mat);
 	}

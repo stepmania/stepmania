@@ -208,8 +208,8 @@ void BitmapText::BuildChars()
 void BitmapText::DrawChars()
 {
 	unsigned uNumGlyphs = tex.size();
-	unsigned uStartGlyph = (unsigned) SCALE( m_temp.crop.left, 0.f, 1.f, 0, (float) uNumGlyphs );
-	unsigned uEndGlyph = (unsigned) SCALE( m_temp.crop.right, 0.f, 1.f, (float) uNumGlyphs, 0 );
+	unsigned uStartGlyph = (unsigned) SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) uNumGlyphs );
+	unsigned uEndGlyph = (unsigned) SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) uNumGlyphs, 0 );
 
 	ASSERT( uStartGlyph <= uNumGlyphs );
 	ASSERT( uEndGlyph <= uNumGlyphs );
@@ -304,7 +304,7 @@ void BitmapText::DrawPrimitives()
 	DISPLAY->SetTextureModeModulate();
 
 	/* Draw if we're not fully transparent or the zbuffer is enabled */
-	if( m_temp.diffuse[0].a != 0 )
+	if( m_pTempState->diffuse[0].a != 0 )
 	{
 		//////////////////////
 		// render the shadow
@@ -314,7 +314,7 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->PushMatrix();
 			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
 
-			RageColor dim(0,0,0,0.5f*m_temp.diffuse[0].a);	// semi-transparent black
+			RageColor dim(0,0,0,0.5f*m_pTempState->diffuse[0].a);	// semi-transparent black
 
 			for( unsigned i=0; i<verts.size(); i++ )
 				verts[i].c = dim;
@@ -342,10 +342,10 @@ void BitmapText::DrawPrimitives()
 		{
 			for( unsigned i=0; i<verts.size(); i+=4 )
 			{
-				verts[i+0].c = m_temp.diffuse[0];	// top left
-				verts[i+1].c = m_temp.diffuse[2];	// bottom left
-				verts[i+2].c = m_temp.diffuse[3];	// bottom right
-				verts[i+3].c = m_temp.diffuse[1];	// top right
+				verts[i+0].c = m_pTempState->diffuse[0];	// top left
+				verts[i+1].c = m_pTempState->diffuse[2];	// bottom left
+				verts[i+2].c = m_pTempState->diffuse[3];	// bottom right
+				verts[i+3].c = m_pTempState->diffuse[1];	// top right
 			}
 		}
 
@@ -353,12 +353,12 @@ void BitmapText::DrawPrimitives()
 	}
 
 	/* render the glow pass */
-	if( m_temp.glow.a > 0.0001f )
+	if( m_pTempState->glow.a > 0.0001f )
 	{
-		DISPLAY->SetTextureModeGlow(m_temp.glowmode);
+		DISPLAY->SetTextureModeGlow(m_pTempState->glowmode);
 
 		for( unsigned i=0; i<verts.size(); i++ )
-			verts[i].c = m_temp.glow;
+			verts[i].c = m_pTempState->glow;
 		DrawChars();
 	}
 }

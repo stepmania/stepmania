@@ -591,7 +591,7 @@ void Model::DrawPrimitives()
 		return;	// bail early
 
 	/* Don't if we're fully transparent */
-	if( m_temp.diffuse[0].a <= 0.001f )
+	if( m_pTempState->diffuse[0].a <= 0.001f )
 		return;
 
 	Actor::SetRenderStates();	// set Actor-specified render states
@@ -671,7 +671,7 @@ void Model::DrawPrimitives()
 	//////////////////////
 	// render the glow pass
 	//////////////////////
-	if( m_temp.glow.a > 0.0001f )
+	if( m_pTempState->glow.a > 0.0001f )
 	{
 		// TODO: Support glow.
 	}
