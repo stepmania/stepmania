@@ -323,8 +323,8 @@ float FindLastDisplayedBeat( PlayerNumber pn, int iLastPixelToDraw )
 
 	/* With a song that starts with a negative offset, fSearchDistance here can put
 	 * the result out of range.  XXX: 0 does, too; try setting an #OFFSET to -100. */
-	if( GAMESTATE->m_fSongBeat < 0 )
-		fLastBeatToDraw = 0; //fSearchDistance;
+//	if( GAMESTATE->m_fSongBeat < 0 )
+//		fLastBeatToDraw = 0; //fSearchDistance;
 
 	const int NUM_ITERATIONS = 15;
 
