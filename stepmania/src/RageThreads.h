@@ -7,6 +7,8 @@ class RageThread
 	ThreadSlot *m_pSlot;
 	CString name;
 
+	static bool m_bSystemSupportsTLS;
+
 public:
 	RageThread();
 	~RageThread();
@@ -28,6 +30,13 @@ public:
 	static bool EnumThreadIDs( int n, uint64_t &iID );
 	int Wait();
 	bool IsCreated() const { return m_pSlot != NULL; }
+
+	/* A system can define HAVE_TLS, indicating that it can compile thread_local
+	 * code, but an individual environment may not actually have functional TLS.
+	 * If this returns false, thread_local variables are considered undefined. */
+	static bool GetSupportsTLS() { return m_bSystemSupportsTLS; }
+	
+	static void SetSupportsTLS( bool b ) { m_bSystemSupportsTLS = b; }
 };
 
 namespace Checkpoints

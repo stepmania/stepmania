@@ -30,6 +30,9 @@
 #endif
 #endif
 
+/* Assume TLS doesn't work until told otherwise.  It's ArchHooks's job to set this. */
+bool RageThread::m_bSystemSupportsTLS = false;
+
 #define MAX_THREADS 128
 //static vector<RageMutex*> *g_MutexList = NULL; /* watch out for static initialization order problems */
 
