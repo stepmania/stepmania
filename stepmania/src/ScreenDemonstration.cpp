@@ -98,14 +98,14 @@ void ScreenDemonstration::Input( const DeviceInput& DeviceI, const InputEventTyp
 		case MENU_BUTTON_COIN:
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
+			if( PREFSMAN->m_iCoinMode == COIN_PAY )
+				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
+					break;	// don't fall through
 
 			m_soundMusic.Stop();
 			if( !PREFSMAN->m_bAttractSound )
 				SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
 
-			if( PREFSMAN->m_iCoinMode == COIN_PAY )
-				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
-					break;	// don't fall through
 			break;
 		}
 	}
