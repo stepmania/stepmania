@@ -111,8 +111,8 @@ RageSound_CA::RageSound_CA()
     {
         const Desc& f = physicalFormats[i];
         
-        LOG->Info("Format %u:  Rate: %f  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
-                  i, f.mSampleRate, f.mFormatID, f.mFormatFlags,
+        LOG->Info("Format %u:  Rate: %i  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
+                  i, (int) f.mSampleRate, f.mFormatID, f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
     }
@@ -126,8 +126,8 @@ RageSound_CA::RageSound_CA()
     {
         const Desc& f = procFormats[i];
         
-        LOG->Info("Format %u:  Rate: %f  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
-                  i, f.mSampleRate, f.mFormatID, f.mFormatFlags,
+        LOG->Info("Format %u:  Rate: %i  ID: %lu  Flags 0x%lx  bpp %lu  fpp %lu  bpf %lu  channels %lu  bits %lu",
+                  i, (int) f.mSampleRate, f.mFormatID, f.mFormatFlags,
                   f.mBytesPerPacket, f.mFramesPerPacket, f.mBytesPerFrame,
                   f.mChannelsPerFrame, f.mBitsPerChannel);
     }
