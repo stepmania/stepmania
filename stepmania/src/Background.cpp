@@ -64,7 +64,8 @@ Background::Background()
 
 	bool bOneOrMoreChars = false;
 	for( int p=0; p<NUM_PLAYERS; p++ )
-		bOneOrMoreChars = true;
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			bOneOrMoreChars = true;
 	if( bOneOrMoreChars )
 		m_pDancingCharacters = new DancingCharacters;
 	else
