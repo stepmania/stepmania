@@ -92,7 +92,7 @@ void ScreenCaution::MenuStart( PlayerNumber pn )
 
 void ScreenCaution::MenuBack( PlayerNumber pn )
 {
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning() )
 		return;
 	this->ClearMessageQueue();
 	m_Back.StartTransitioning( SM_GoToPrevScreen );

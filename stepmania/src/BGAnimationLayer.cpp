@@ -81,12 +81,12 @@ void BGAnimationLayer::Init()
 	m_fOverrideSpeed = 0;
 	m_iNumParticles = 10;
 	m_bParticlesBounce = false;
-	m_iNumTilesWide = 10;
-	m_iNumTilesHigh = 8;
+	m_iNumTilesWide = -1;
+	m_iNumTilesHigh = -1;
 	m_fTilesStartX = 0;
 	m_fTilesStartY = 0;
-	m_fTilesSpacingX = 64;
-	m_fTilesSpacingY = 64;
+	m_fTilesSpacingX = -1;
+	m_fTilesSpacingY = -1;
 	m_fTileVelocityX = 0;
 	m_fTileVelocityY = 0;
 
@@ -482,8 +482,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer, CString sSo
 	ini.GetValueF( sLayer, "OverrideSpeed", m_fOverrideSpeed );
 	ini.GetValueI( sLayer, "NumParticles", m_iNumParticles );
 	ini.GetValueB( sLayer, "ParticlesBounce", m_bParticlesBounce );
-	ini.GetValueI( sLayer, "NumTilesWide", m_iNumTilesWide );
-	ini.GetValueI( sLayer, "NumTilesHigh", m_iNumTilesHigh );
+//	ini.GetValueI( sLayer, "NumTilesWide", m_iNumTilesWide );	// infer from spacing (or else the Update logic breaks)
+//	ini.GetValueI( sLayer, "NumTilesHigh", m_iNumTilesHigh );	// infer from spacing (or else the Update logic breaks)
 	ini.GetValueF( sLayer, "TilesStartX", m_fTilesStartX );
 	ini.GetValueF( sLayer, "TilesStartY", m_fTilesStartY );
 	ini.GetValueF( sLayer, "TilesSpacingX", m_fTilesSpacingX );
@@ -531,6 +531,17 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer, CString sSo
 		break;
 	case TYPE_TILES:
 		{
+			m_Sprites[0].Load( sPath );
+			if( m_fTilesSpacingX == -1 )
+			{
+				m_fTilesSpacingX = m_Sprites[0].GetUnzoomedWidth();
+				m_fTilesSpacingX -= 1;
+			}
+			if( m_fTilesSpacingY == -1 )
+			{
+				m_fTilesSpacingY = m_Sprites[0].GetUnzoomedHeight();
+				m_fTilesSpacingY -= 1;
+			}
 			m_iNumTilesWide = 2+(int)(SCREEN_WIDTH /m_fTilesSpacingX);
 			m_iNumTilesHigh = 2+(int)(SCREEN_HEIGHT/m_fTilesSpacingY);
 			m_iNumSprites = m_iNumTilesWide * m_iNumTilesHigh;
