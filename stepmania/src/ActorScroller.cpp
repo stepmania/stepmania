@@ -8,6 +8,10 @@
 #include "RageLog.h"
 #include "ActorUtil.h"
 
+// lua start
+LUA_REGISTER_CLASS( ActorScroller )
+// lua end
+
 /* Tricky: We need ActorFrames created in XML to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
  * children.  The name "ActorFrame" is widely used in XML, so we'll have
@@ -100,8 +104,8 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		vTranslateTerm0,
 		vTranslateTerm1,
 		vTranslateTerm2 );
-	SetCurrentAndDestinationItem( int(-fItemPaddingStart) );
-	SetDestinationItem( int(m_SubActors.size()-1+fItemPaddingEnd) );
+	SetCurrentAndDestinationItem( -fItemPaddingStart );
+	SetDestinationItem( m_SubActors.size()-1+fItemPaddingEnd );
 }
 
 void ActorScroller::Update( float fDeltaTime )

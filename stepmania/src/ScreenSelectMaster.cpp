@@ -560,9 +560,9 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 		if( SHOW_SCROLLER )
 		{
 			if( SHARED_PREVIEW_AND_CURSOR )
-				m_Scroller[0].SetDestinationItem( iNewChoice );
+				m_Scroller[0].SetDestinationItem( (float)iNewChoice );
 			else
-				m_Scroller[p].SetDestinationItem( iNewChoice );
+				m_Scroller[p].SetDestinationItem( (float)iNewChoice );
 
 			if( SHARED_PREVIEW_AND_CURSOR )
 				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
@@ -748,7 +748,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	{
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
-			m_Scroller[0].SetCurrentAndDestinationItem( m_iChoice[0] );
+			m_Scroller[0].SetCurrentAndDestinationItem( (float)m_iChoice[0] );
 			SET_XY_AND_ON_COMMAND( m_Scroller[0] );
 			for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 				COMMAND( *m_sprScroll[c][0], int(c) == m_iChoice[0]? "GainFocus":"LoseFocus" );
@@ -756,7 +756,7 @@ void ScreenSelectMaster::TweenOnScreen()
 		else
 			FOREACH_HumanPlayer( p )
 			{
-				m_Scroller[p].SetCurrentAndDestinationItem( m_iChoice[p] );
+				m_Scroller[p].SetCurrentAndDestinationItem( (float)m_iChoice[p] );
 				SET_XY_AND_ON_COMMAND( m_Scroller[p] );
 				for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 					COMMAND( *m_sprScroll[c][p], int(c) == m_iChoice[p]? "GainFocus":"LoseFocus" );

@@ -4,8 +4,23 @@
 #define ActorScroller_H
 
 #include "ActorFrame.h"
-
 struct XNode;
+
+template<class T>
+class LunaActorScroller : public LunaActorFrame<T>
+{
+public:
+	LunaActorScroller() { LUA->Register( Register ); }
+
+	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetCurrentAndDestinationItem )
+		LunaActor<T>::Register( L );
+	}
+};
+
 class ActorScroller : public ActorFrame
 {
 public:
@@ -23,8 +38,13 @@ public:
 	virtual void DrawPrimitives();	// DOES draw
 
 	void LoadFromNode( const CString &sDir, const XNode *pNode );
-	void SetDestinationItem( int iItem ) { m_fDestinationItem = float(iItem); }
-	void SetCurrentAndDestinationItem( int iItem ) { m_fCurrentItem = m_fDestinationItem = float(iItem); }
+	void SetDestinationItem( float fItemIndex ) { m_fDestinationItem = fItemIndex; }
+	void SetCurrentAndDestinationItem( float fItemIndex ) { m_fCurrentItem = m_fDestinationItem = fItemIndex; }
+
+	//
+	// Commands
+	//
+	void PushSelf( lua_State *L );
 
 protected:
 	bool		m_bLoaded;

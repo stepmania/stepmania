@@ -22,12 +22,14 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	static int GetNumChildren( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( propagate )
 		ADD_METHOD( SetUpdateRate )
 		ADD_METHOD( GetChild )
+		ADD_METHOD( GetNumChildren )
 		LunaActor<T>::Register( L );
 	}
 };
@@ -44,6 +46,7 @@ public:
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
 	Actor* GetChild( const CString &sName );
+	int GetNumChildren() const { return m_SubActors.size(); }
 
 	void RemoveAllChildren();
 	void MoveToTail( Actor* pActor );

@@ -207,14 +207,15 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 			pFrame->Load( THEME->GetPathG("ScreenCredits","background frame") );
 			m_ScrollerFrames.AddChild( pFrame );
 		}
-		const int iFirst = -2, iLast = NUM_BACKGROUNDS+2;
-		m_ScrollerBackgrounds.SetCurrentAndDestinationItem( iFirst );
-		m_ScrollerBackgrounds.SetDestinationItem( iLast );
+		float fFirst = -2;
+		float fLast = NUM_BACKGROUNDS+2;
+		m_ScrollerBackgrounds.SetCurrentAndDestinationItem( fFirst );
+		m_ScrollerBackgrounds.SetDestinationItem( fLast );
 
-		m_ScrollerFrames.SetCurrentAndDestinationItem( iFirst );
-		m_ScrollerFrames.SetDestinationItem( iLast );
+		m_ScrollerFrames.SetCurrentAndDestinationItem( fFirst );
+		m_ScrollerFrames.SetDestinationItem( fLast );
 
-		fTime = max( fTime, BACKGROUNDS_SCROLL_SECONDS_PER_ITEM*(iLast-iFirst) );
+		fTime = max( fTime, BACKGROUNDS_SCROLL_SECONDS_PER_ITEM*(fLast-fFirst) );
 	}
 	
 	m_ScrollerTexts.SetName( "Texts" );
@@ -245,10 +246,11 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 			m_ScrollerTexts.AddChild( pText );
 		}
 
-		const int iFirst = -10, iLast = ARRAYSIZE(CREDIT_LINES)+10;
-		m_ScrollerTexts.SetCurrentAndDestinationItem( iFirst );
-		m_ScrollerTexts.SetDestinationItem( iLast );
-		fTime = max( fTime, TEXTS_SCROLL_SECONDS_PER_ITEM*(iLast-iFirst) );
+		float fFirst = -10;
+		float fLast = ARRAYSIZE(CREDIT_LINES)+10;
+		m_ScrollerTexts.SetCurrentAndDestinationItem( fFirst );
+		m_ScrollerTexts.SetDestinationItem( fLast );
+		fTime = max( fTime, TEXTS_SCROLL_SECONDS_PER_ITEM*(fLast-fFirst) );
 	}
 
 	m_Overlay.LoadFromAniDir( THEME->GetPathB("ScreenCredits","overlay") );

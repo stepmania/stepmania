@@ -114,9 +114,9 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 
 float HighScoreWheel::Scroll()
 {
-	SetCurrentAndDestinationItem( m_SubActors.size()+5 );
+	SetCurrentAndDestinationItem( m_SubActors.size()+5.0f );
 	int iIndexToFocus = max( m_iIndexToFocus, 3 );
-	SetDestinationItem( iIndexToFocus );
+	SetDestinationItem( (float)iIndexToFocus );
 	return GetTweenTimeLeft();
 }
 
