@@ -97,10 +97,10 @@ int NoteDataWithScoring::GetNumHoldNotesWithScore( HoldNoteScore hns, const floa
 	return iNumSuccessfulHolds;
 }
 
-bool NoteDataWithScoring::IsRowComplete( int index ) const
+bool NoteDataWithScoring::IsRowComplete( int index, TapNoteScore minGrade ) const
 {
 	for( int t=0; t<GetNumTracks(); t++ )
-		if( GetTapNote(t, index) != TAP_EMPTY && GetTapNoteScore(t, index) < TNS_GREAT )
+		if( GetTapNote(t, index) != TAP_EMPTY && GetTapNoteScore(t, index) < minGrade )
 			return false;
 	return true;
 }

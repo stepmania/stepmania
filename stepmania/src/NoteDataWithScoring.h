@@ -42,7 +42,7 @@ public:
 	float GetHoldNoteLife(unsigned h) const;
 	void SetHoldNoteLife(unsigned h, float f);
 
-	bool IsRowComplete( int index ) const;
+	bool IsRowComplete( int index, TapNoteScore minGrade = TNS_GREAT ) const;
 
 	float GetActualRadarValue( RadarCategory rv, float fSongSeconds ) const;
 	float GetActualStreamRadarValue( float fSongSeconds ) const;
