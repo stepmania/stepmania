@@ -36,7 +36,7 @@ var KRFontPages = Array("jamo 1", "jamo 2");
 var Fonts = new Array(
 	/* name                       font         pages        frame sz  font sz  AA                border   bold */
 	new FontDef("_japanese 16px", "MS-Gothic", JAFontPages, 32,       20,      AntiAlias.STRONG, 2,       true),
-	new FontDef("_japanese 24px", "MS-Gothic", JAFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
+	new FontDef("_japanese 24px", "MS-Gothic", JAFontPages, 32,       26,      AntiAlias.SMOOTH, 2,       true)
 	//new FontDef("_korean 16px",   "ArialUnicodeMS", KRFontPages, 32,       20,      AntiAlias.SMOOTH, 2,       true),
 	//new FontDef("_korean 24px",   "ArialUnicodeMS", KRFontPages, 32,       28,      AntiAlias.SMOOTH, 2,       true)
 		);
@@ -183,9 +183,11 @@ function ConvertCurrentDocument( frameX, frameY, Font )
 	{
 		/* Using HorizSize as the vertical origin seems to align the text so that
 		 * it's centered in the top VertSize pixels.  Adjust from there to being centered
-		 * in the frame. */
+		 * in the frame. 
+		 *
+		 * Add half of a pixel.  This seems to help alignment a lot. */
 		var Dist = Font.FrameSize/2-Font.VertSize/2;
-		TextLayer.textItem.position = Array(0, Font.HorizSize+Dist);
+		TextLayer.textItem.position = Array(0, Font.HorizSize+Dist+.5);
 	}
 
 	TextLayer.textItem.font = Font.Font;
@@ -209,7 +211,7 @@ function ConvertCurrentDocument( frameX, frameY, Font )
 	TextLayer.rasterize(RasterizeType.ENTIRELAYER);
 
 	var CurrentSpacing = Font.HorizSize;
-	/* Faux bold adds half a pixel to the widht of each character. */
+	/* Faux bold adds half a pixel to the width of each character. */
 	if(Font.Bold)
 		CurrentSpacing += 0.5;
 
