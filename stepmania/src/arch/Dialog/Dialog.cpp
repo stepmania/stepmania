@@ -46,12 +46,15 @@ void Dialog::Init()
 #endif
 			if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriverNull;
 		}
-		catch(...)//const RageException &e)
+		catch( const RageException &e )
 		{
-//			if( LOG )
-//				LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), e.what());
+			if( LOG )
+				LOG->Info("Couldn't load driver %s: %s", DriversToTry[i].c_str(), e.what());
 		}
 	}
+
+	/* DialogDriverNull should have worked, at least. */
+	ASSERT( g_pImpl != NULL );
 }
 
 void Dialog::Shutdown()
