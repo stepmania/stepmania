@@ -463,11 +463,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		switch( so )
 		{
 		case SORT_PREFERRED:
-			SongUtil::SortSongPointerArrayByGroupAndDifficulty( arraySongs );
-			bUseSections = false;
-			break;
 		case SORT_ROULETTE:
-			// don't sort.  We shuffle once this is chosen.
+			SongUtil::SortSongPointerArrayByGroupAndDifficulty( arraySongs );
 			bUseSections = false;
 			break;
 		case SORT_GROUP:
