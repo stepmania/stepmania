@@ -105,7 +105,7 @@ Delete "$INSTDIR\StepMania.vdi"
 ; support issues could be annoying.  Let's prompt the user to uninstall the CVS
 ; snapshot, so moving the rest over should be harmless.
 ; Are we installing non-CVS?
-StrCmp ${PRODUCT_ID} "StepMania" +1 cvs_not_present
+StrCmp "${PRODUCT_ID}" "StepMania" +1 cvs_not_present
 
 ; Read the CVS directory.
 ReadRegStr $R0 HKEY_LOCAL_MACHINE "Software\StepMania\StepMania CVS" ""
