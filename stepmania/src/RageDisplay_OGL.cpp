@@ -54,7 +54,6 @@
 #include "StepMania.h"
 #include "RageUtil.h"
 
-#include "arch/arch.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
 #ifdef WIN32

@@ -16,6 +16,7 @@ public:
 private:
 	int fds[NUM_JOYSTICKS];
 };
+#define USE_INPUT_HANDLER_LINUX_JOYSTICK
 
 #endif
 

@@ -1,26 +1,45 @@
 #ifndef ARCH_PLATFORM_H
 #define ARCH_PLATFORM_H
 
-#include "arch.h"
-
-/* Load default drivers. */
-#include "arch_default.h"
-
-/* Override them with arch-specific drivers, as available. */
+// In here, you define which APIs are guaranteed to be available on which OSes.
+// Don't ever actually #include anything here -- that's for */Selector_*.h.
+#if defined(UNIX) || !defined(DARWIN) // Darwin isn't POSIX enough for us.
+#define HAVE_POSIX
+#endif
+#if defined(DARWIN)
+#define HAVE_DARWIN
+#define HAVE_COCOA
+#define HAVE_COREAUDIO
+#define HAVE_QUICKTIME1
+#endif
+#if defined(_WINDOWS)
+#define HAVE_DIRECTX
+#define HAVE_WIN32 // XXX: Better name for this API?
+#endif
+#if defined(_XBOX)
+#define HAVE_DIRECTX
+#define HAVE_XBOX // XXX: Better name for this API?
+#endif
 #if defined(LINUX)
-#include "arch_linux.h"
-#elif defined(DARWIN)
-#include "arch_darwin.h"
+#define HAVE_POSIX	// Here just to be explicit.
+#define HAVE_LINUXKERNEL
+#endif
+
+/* I'm also putting the renderer master switch in here, since there's really no
+ * better place to put it. */
+#if defined(_WINDOWS)
+#define SUPPORT_OPENGL
+#define SUPPORT_D3D
 #elif defined(_XBOX)
-#include "arch_xbox.h"
-#elif defined(_WINDOWS)
-#include "arch_Win32.h"
+#define SUPPORT_D3D
+#else
+#define SUPPORT_OPENGL
 #endif
 
 #endif
 
 /*
- * (c) 2002-2004 Glenn Maynard
+ * (c) 2002-2005 Glenn Maynard, Ben Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

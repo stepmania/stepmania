@@ -8,7 +8,6 @@
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "RageInput.h"
-#include "arch/arch.h"
 #include "Game.h"
 #include "Style.h"
 

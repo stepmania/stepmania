@@ -1,38 +1,21 @@
-#ifndef ARCH_HOOKS_WIN32_H
-#define ARCH_HOOKS_WIN32_H
+#ifndef SELECTOR_LOW_LEVEL_WINDOW_H
+#define SELECTOR_LOW_LEVEL_WINDOW_H
 
-#include "ArchHooks.h"
-class RageMutex;
-
-class ArchHooks_Win32: public ArchHooks
-{
-public:
-    ArchHooks_Win32();
-    ~ArchHooks_Win32();
-    void DumpDebugInfo();
-	void RestartProgram();
-
-	int OldThreadPriority;
-	RageMutex *TimeCritMutex;
-	void EnterTimeCriticalSection();
-	void ExitTimeCriticalSection();
-	void SetTime( tm newtime );
-
-	void BoostPriority();
-	void UnBoostPriority();
-
-private:
-	void CheckVideoDriver();
-};
-
-#ifdef ARCH_HOOKS
-#error "More than one ArchHooks selected!"
+/* LowLevelWindow selector. */
+#if defined(HAVE_WIN32)
+#include "LowLevelWindow_Win32.h"
+#elif defined(HAVE_X11) // Prefer LLW_X11 over LLW_SDL
+#include "LowLevelWindow_X11.h"
+#elif defined(HAVE_SDL)
+#include "LowLevelWindow_SDL.h"
+#else
+#error "No suitable LowLevelWindow available."
 #endif
-#define ARCH_HOOKS ArchHooks_Win32
 
 #endif
+
 /*
- * (c) 2002-2004 Glenn Maynard, Chris Danford
+ * (c) 2005 Ben Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -27,6 +27,7 @@ public:
 	void Update(float fDeltaTime);
 	void WindowReset();
 };
+#define USE_INPUT_HANDLER_DIRECTINPUT
 
 #endif
 

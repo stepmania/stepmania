@@ -15,8 +15,9 @@ public:
 
 	RageDisplay::VideoModeParams GetVideoModeParams() const;
 };
-
-#undef ARCH_LOW_LEVEL_WINDOW
+#ifdef ARCH_LOW_LEVEL_WINDOW
+#error "More than one LowLevelWindow selected!"
+#endif
 #define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_Win32
 
 #endif

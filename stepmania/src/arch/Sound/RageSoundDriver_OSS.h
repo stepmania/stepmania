@@ -32,6 +32,7 @@ public:
 	CString Init();
 	~RageSound_OSS();
 };
+#define USE_RAGE_SOUND_OSS
 
 #endif
 

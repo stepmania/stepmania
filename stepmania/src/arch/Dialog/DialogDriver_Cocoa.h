@@ -10,8 +10,7 @@ public:
 	void OK(CString sMessage, CString ID);
     Dialog::Result AbortRetryIgnore(CString sMessage, CString ID);
 };
-
-#define HAVE_DIALOG_COCOA
+#define USE_DIALOG_DRIVER_COCOA
     
 #endif /* ARCH_HOOKS_DARWIN_H */
 

@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
-#include "arch/arch.h"
 
 #include <numeric>
 #include <ctime>

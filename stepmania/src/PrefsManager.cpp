@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
-#include "arch/arch.h" /* for default driver specs */
+#include "arch/arch_default.h"
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
 #include "RageFile.h"
 #include "ProductInfo.h"

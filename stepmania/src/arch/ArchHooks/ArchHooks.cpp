@@ -3,7 +3,7 @@
 
 ArchHooks *HOOKS = NULL;
 
-#include "../arch_platform.h"
+#include "Selector_ArchHooks.h"
 ArchHooks *MakeArchHooks() { return new ARCH_HOOKS; }
 
 /*

@@ -1,31 +1,23 @@
-#ifndef WIN32_ARCH_H
-#define WIN32_ARCH_H
+#ifndef SELECTOR_LIGHTS_DRIVER_H
+#define SELECTOR_LIGHTS_DRIVER_H
 
-/* Load drivers for Win32. */
-#include "LoadingWindow/LoadingWindow_Win32.h"
-#include "ArchHooks/ArchHooks_Win32.h"
+#include "arch/arch_platform.h"
 
-#include "InputHandler/InputHandler_DirectInput.h"
-#include "InputHandler/InputHandler_Win32_Pump.h"
-#include "InputHandler/InputHandler_Win32_Para.h"
-
-#include "Sound/RageSoundDriver_DSound.h"
-#include "Sound/RageSoundDriver_DSound_Software.h"
-#include "Sound/RageSoundDriver_WaveOut.h"
-
-#include "Lights/LightsDriver_Win32Parallel.h"
-
-#include "MemoryCard/MemoryCardDriverThreaded_Windows.h"
-
-#include "LowLevelWindow/LowLevelWindow_Win32.h"
-
-#define HAVE_FFMPEG
-#undef SUPPORT_SDL_INPUT
+/* LightsDriver selector. */
+#ifdef HAVE_WIN32
+#include "LightsDriver_Win32Parallel.h"
+#endif
+#ifdef HAVE_LINUXKERNEL
+#include "LightsDriver_LinuxParallel.h"
+#include "LightsDriver_LinuxWeedTech.h"
+#endif
+#include "LightsDriver_SystemMessage.h"
+#include "LightsDriver_Null.h"
 
 #endif
 
 /*
- * (c) 2002-2004 Glenn Maynard
+ * (c) 2005 Ben Anderson.
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -17,7 +17,6 @@
 #include "UnlockManager.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
-#include "arch/arch.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"
 #include "RageFile.h"

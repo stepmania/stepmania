@@ -18,7 +18,6 @@
 #include "Steps.h"
 #include <utility>
 #include "NoteFieldPositioning.h"
-#include "arch/arch.h"
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"

@@ -100,14 +100,16 @@ StepMania = StdString.h \
 		StepMania.cpp StepMania.h \
 		global.cpp global.h
 
-LoadingWindow = arch/LoadingWindow/LoadingWindow_Null.h
+LoadingWindow = arch/LoadingWindow/LoadingWindow.h arch/LoadingWindow/LoadingWindow.cpp \
+		arch/LoadingWindow/LoadingWindow_Null.h
 
 if HAVE_GTK
 LoadingWindow += arch/LoadingWindow/LoadingWindow_Gtk.cpp arch/LoadingWindow/LoadingWindow_Gtk.h
 endif
 
-Sound = arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h \
-		arch/Sound/RageSoundDriver_Generic_Software.cpp arch/Sound/RageSoundDriver_Generic_Software.h
+Sound = arch/Sound/RageSoundDriver.h arch/Sound/RageSoundDriver.cpp \
+	arch/Sound/RageSoundDriver_Null.cpp arch/Sound/RageSoundDriver_Null.h \
+	arch/Sound/RageSoundDriver_Generic_Software.cpp arch/Sound/RageSoundDriver_Generic_Software.h
 
 
 if HAVE_OSS
@@ -141,7 +143,7 @@ Lights = arch/Lights/LightsDriver.cpp arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
 MemoryCard = arch/MemoryCard/MemoryCardDriver.cpp arch/MemoryCard/MemoryCardDriver.h
-LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h
+LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h arch/LowLevelWindow/LowLevelWindow.cpp
 
 ArchUtils =
 
@@ -150,16 +152,18 @@ Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h
 Threads = arch/Threads/Threads.h
 
 if HAVE_X11
+# InputHandler_X11 depends on LowLevelWindow_X11
 InputHandler += arch/InputHandler/InputHandler_X11.cpp arch/InputHandler/InputHandler_X11.h
 LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_X11.cpp arch/LowLevelWindow/LowLevelWindow_X11.h
 ArchUtils += archutils/Unix/X11Helper.cpp archutils/Unix/X11Helper.h
-endif
-
+else
 if HAVE_SDL
+# InputHandler_SDL depends on LowLevelWindow_SDL
 InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
 LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
 LoadingWindow += arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
 StepMania += SDL_utils.cpp SDL_utils.h
+endif
 endif
 
 # Platform-specific drivers:
@@ -188,11 +192,17 @@ endif
 
 if LINUX
 MemoryCard += arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h
+InputHandler +=	arch/InputHandler/InputHandler_Linux_Joystick.h arch/InputHandler/InputHandler_Linux_Joystick.cpp
+
+# XXX: WTF? InputHandler_Linux_tty depends on SDL!
+if HAVE_SDL
+InputHandler +=	arch/InputHandler/InputHandler_Linux_tty.h arch/InputHandler/InputHandler_Linux_tty.cpp
+endif
 endif
 
 Arch = $(LoadingWindow) $(Sound) $(ArchHooks) $(InputHandler) $(MovieTexture) \
 	   $(Lights) $(MemoryCard) $(LowLevelWindow) $(ArchUtils) $(Dialog) $(Threads) \
-	   arch/arch.cpp arch/arch.h arch/arch_default.h arch/arch_linux.h arch/arch_platform.h
+	   arch/arch_default.h arch/arch_platform.h
 
 RageSoundFileReaders = RageSoundReader_WAV.cpp RageSoundReader_WAV.h 
 

@@ -32,6 +32,7 @@ public:
 	~RageSound_WaveOut();
 	CString Init();
 };
+#define USE_RAGE_SOUND_WAVE_OUT
 
 #endif
 

@@ -1,49 +1,38 @@
-#ifndef SDL_ARCH_H
-#define SDL_ARCH_H
+#ifndef ARCH_DEFAULT_H
+#define ARCH_DEFAULT_H
 
-/* All driver types should have a default, portable implementation, provided
- * here. */
-/* None of these SDL implementations run on Xbox, so I've commented 
- * out use of this header and added the #includes to each arch_*.h */
-/* 
- * The basic design principle of arch is that a new platform can be up and running
- * quickly using only arch_default, with OpenGL graphics and SDL input, and things can
- * be overloaded later.  That way, people don't have to learn how arch works
- * until after they have the basic stuff running.
- *
- * For Xbox, let's leave this file alone, and special case stuff in arch_xbox.h.
- *
- * For LowLevelWindow, just undefine SUPPORT_OPENGL and don't link any LLW at
- * all.
+/* Define the default driver sets. It's okay to have in the sets drivers that
+ * might not be available, just as long as you don't mind if they're used when
+ * they are available. (For example, if we're using X11, we don't want
+ * InputHandler_SDL to be used.) */
 
- * For InputHandler, undef SUPPORT_SDL_INPUT and we won't create the SDL input
- * handler.  (We'll still include the header here, but it'll never be used.)
- */
-
-/* We can have any number of input drivers.  By default, use SDL for keyboards
- * and joysticks.  If you write your own handler for these devices types, or if
- * SDL input doesn't work on your platform, undef SUPPORT_SDL_INPUT in your platform
- * header. */
-#define SUPPORT_SDL_INPUT
-#include "InputHandler/InputHandler_SDL.h"
-#include "InputHandler/InputHandler_MonkeyKeyboard.h"
-
-/* Load default fallback drivers; some of these may be overridden by arch-specific
- * drivers.  These are all singleton drivers--we never use more than one. */
-#include "LoadingWindow/LoadingWindow_Null.h"
-#include "Sound/RageSoundDriver_Null.h"
-#include "Lights/LightsDriver_Null.h"
-#include "Lights/LightsDriver_SystemMessage.h"
-#include "MemoryCard/MemoryCardDriver_Null.h"
-
-#if defined(SUPPORT_OPENGL)
-#include "LowLevelWindow/LowLevelWindow_SDL.h"
+/* InputHandler drivers */
+#if defined (HAVE_XBOX)
+ #define DEFAULT_INPUT_DRIVER_LIST "Xbox"
+#elif defined(HAVE_DIRECTX)
+#define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
+#elif defined(HAVE_X11) // Prefer X11 over SDL
+ #define DEFAULT_INPUT_DRIVER_LIST "X11,Linux_joystick"
+#elif defined(HAVE_SDL)
+ #define DEFAULT_INPUT_DRIVER_LIST "SDL"
+#else
+ #if defined(LINUX)
+  #define DEFAULT_INPUT_DRIVER_LIST "Linux_joystick,Linux_tty"
+ #else
+  #define DEFAULT_INPUT_DRIVER_LIST "MonkeyKeyboard"
+ #endif
 #endif
+
+/* MovieTexture drivers */
+#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
+
+/* RageSoundDrivers */
+#define DEFAULT_SOUND_DRIVER_LIST "ALSA,DirectSound,ALSA-sw,DirectSound-sw,CoreAudio,OSS,QT1,WaveOut,Null"
 
 #endif
 
 /*
- * (c) 2002-2004 Glenn Maynard
+ * (c) 2002-2005 Glenn Maynard, Ben Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

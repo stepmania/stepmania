@@ -1,8 +1,8 @@
 #include "global.h"
 #include "LightsDriver.h"
 #include "RageLog.h"
-#include "arch/arch.h"
-#include "arch/arch_platform.h"
+
+#include "Selector_LightsDriver.h"
 
 LightsDriver *MakeLightsDriver(CString driver)
 {
@@ -10,17 +10,23 @@ LightsDriver *MakeLightsDriver(CString driver)
 
 	LightsDriver *ret = NULL;
 
-#ifdef _WINDOWS
-//	if( !driver.CompareNoCase("Parallel") ) ret = new LightsDriver_Win32Parallel;
+#ifdef USE_LIGHTS_DRIVER_LINUX_PARALLEL
+	if( !driver.CompareNoCase("LinuxParallel") )	ret = new LightsDriver_LinuxParallel;
 #endif
-	if( !driver.CompareNoCase("SystemMessage") ) ret = new LightsDriver_SystemMessage;
-
-#ifdef LINUX
-	if( !driver.CompareNoCase("WeedTech") ) ret = new LightsDriver_LinuxWeedTech;
-	if( !driver.CompareNoCase("LinuxParallel") ) ret = new LightsDriver_LinuxParallel;
+#ifdef USE_LIGHTS_DRIVER_LINUX_WEEDTECH
+	if( !driver.CompareNoCase("WeedTech") )		ret = new LightsDriver_LinuxWeedTech;
+#endif
+#ifdef USE_LIGHTS_DRIVER_NULL
+	if( !driver.CompareNoCase("Null") )		ret = new LightsDriver_Null;
+#endif
+#ifdef USE_LIGHTS_DRIVER_SYSTEM_MESSAGE
+	if( !driver.CompareNoCase("SystemMessage") )	ret = new LightsDriver_SystemMessage;
+#endif
+#ifdef USE_LIGHTS_DRIVER_WIN32_PARALLEL
+	if( !driver.CompareNoCase("Parallel") )		ret = new LightsDriver_Win32Parallel;
 #endif
 
-	if( ret == NULL && driver.CompareNoCase("Null") )
+	if( ret == NULL )
 		LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
 	
 	return ret;

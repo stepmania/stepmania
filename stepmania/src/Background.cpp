@@ -11,7 +11,6 @@
 #include "NoteTypes.h"
 #include "Steps.h"
 #include "DancingCharacters.h"
-#include "arch/arch.h"
 #include "BeginnerHelper.h"
 #include "StatsManager.h"
 #include "ScreenDimensions.h"

@@ -1,5 +1,5 @@
-#ifndef MOVIE_TEXTURE_NULL
-#define MOVIE_TEXTURE_NULL
+#ifndef MOVIE_TEXTURE_NULL_H
+#define MOVIE_TEXTURE_NULL_H
 /*
  *  MovieTexture_null.h
  *  stepmania
@@ -29,8 +29,9 @@ public:
     void SetPlaybackRate(float rate) { }
     void SetLooping(bool looping=true) { loop = looping; }
 };
+#define USE_MOVIE_TEXTURE_NULL
 
-#endif /* MOVIE_TEXTURE_NULL */
+#endif
 
 /*
  * (c) 2003 Steve Checkoway

@@ -1,6 +1,8 @@
 #ifndef RAGE_SOUND_DRIVER
 #define RAGE_SOUND_DRIVER
 
+#include "global.h"
+
 class RageSoundBase;
 class RageSoundDriver
 {
@@ -47,6 +49,8 @@ public:
 
 	virtual ~RageSoundDriver() { }
 };
+
+RageSoundDriver *MakeRageSoundDriver(CString drivers);
 
 /*
  * (c) 2002-2004 Glenn Maynard

@@ -21,7 +21,7 @@ public:
 private:
 	void getHandles();
 };
-
+#define USE_INPUT_HANDLER_XBOX
 
 #endif
 

@@ -39,7 +39,9 @@ inline void WRITEMSRREG( UINT32 reg, LARGE_INTEGER val )
 	};
 }
 
-#undef ARCH_HOOKS
+#ifdef ARCH_HOOKS
+#error "More than one ArchHooks selected!"
+#endif
 #define ARCH_HOOKS ArchHooks_Xbox
 
 #endif

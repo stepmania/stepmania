@@ -6,17 +6,7 @@
 #include "PrefsManager.h"
 #include "RageFile.h"
 
-#include "arch/arch_platform.h"
-
-/* _WINDOWS is Windows only, where _WIN32 is Windows and Xbox, I think. Does this
- * work on the Xbox? -glenn */
-#if defined(_WINDOWS)
-#include "MovieTexture_DShow.h"
-#endif
-
-#ifdef HAVE_FFMPEG
-#include "MovieTexture_FFMpeg.h"
-#endif
+#include "Selector_MovieTexture.h"
 
 void ForceToAscii( CString &str )
 {
@@ -91,13 +81,15 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 	{
 		Driver = DriversToTry[i];
 		LOG->Trace("Initializing driver: %s", Driver.c_str());
-#ifdef _WINDOWS
+#ifdef USE_MOVIE_TEXTURE_DSHOW
 		if( !Driver.CompareNoCase("DShow") ) ret = new MovieTexture_DShow(ID);
 #endif
-#ifdef HAVE_FFMPEG
+#ifdef USE_MOVIE_TEXTURE_FFMPEG
 		if( !Driver.CompareNoCase("FFMpeg") ) ret = new MovieTexture_FFMpeg(ID);
 #endif
+#ifdef USE_MOVIE_TEXTURE_NULL
 		if( !Driver.CompareNoCase("Null") ) ret = new MovieTexture_Null(ID);
+#endif
 		if( ret == NULL )
 		{
 			LOG->Warn( "Unknown movie driver name: %s", Driver.c_str() );

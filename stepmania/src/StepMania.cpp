@@ -16,7 +16,6 @@
 #include "RageDisplay.h"
 #include "RageThreads.h"
 
-#include "arch/arch.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 #include "arch/Dialog/Dialog.h"
@@ -34,6 +33,8 @@
 #include "Game.h"
 #include "RageSurface.h"
 #include "RageSurface_Load.h"
+
+#include "arch/arch_platform.h"
 
 //
 // StepMania global classes
@@ -1358,7 +1359,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT))) ||
 	    (DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) &&
 		 (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) ||
-	      INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)))))
+             INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)))))
 	{
 		// If holding LShift save uncompressed, else save compressed
 		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );

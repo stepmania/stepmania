@@ -1,6 +1,5 @@
 #include "global.h"
 
-#include "arch/arch.h"
 #include "Foreach.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"

@@ -1,23 +1,41 @@
-#ifndef XBOX_ARCH_H
-#define XBOX_ARCH_H
+#ifndef SELECTOR_RAGE_SOUND_DRIVER_H
+#define SELECTOR_RAGE_SOUND_DRIVER_H
 
-/* Load drivers for Xbox. */
+#include "arch/arch_platform.h"
 
-#include "LoadingWindow/LoadingWindow_Xbox.h"
+/* RageSoundDriver selector. */
+#ifdef HAVE_ALSA
+#include "RageSoundDriver_ALSA9.h"
+#include "RageSoundDriver_ALSA9_Software.h"
+#endif
 
-#include "ArchHooks/ArchHooks_Xbox.h"
+#ifdef HAVE_COREAUDIO
+#include "RageSoundDriver_CA.h"
+#endif
 
-#include "InputHandler/InputHandler_Xbox.h"
+#ifdef HAVE_DIRECTX
+#include "RageSoundDriver_DSound.h"
+#include "RageSoundDriver_DSound_Software.h"
+#endif
 
-#include "Sound/RageSoundDriver_DSound.h"
+#include "RageSoundDriver_Null.h"
 
-/* Undef this if you need no SDL input. */
-#undef SUPPORT_SDL_INPUT
+#ifdef HAVE_OSS
+#include "RageSoundDriver_OSS.h"
+#endif
+
+#ifdef HAVE_QUICKTIME1
+#include "RageSoundDriver_QT1.h"
+#endif
+
+#ifdef HAVE_WIN32
+#include "RageSoundDriver_WaveOut.h"
+#endif
 
 #endif
 
 /*
- * (c) 2002 Glenn Maynard, Chris Danford
+ * (c) 2005 Ben Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -40,4 +58,3 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-

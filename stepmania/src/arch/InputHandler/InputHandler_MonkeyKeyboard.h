@@ -16,6 +16,7 @@ public:
 	~InputHandler_MonkeyKeyboard();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 };
+#define USE_INPUT_HANDLER_MONKEY_KEYBOARD
 
 #endif
 

@@ -20,6 +20,11 @@ private:
 	DWORD m_dwLastLogicalDrives;
 };
 
+#ifdef ARCH_MEMORY_CARD_DRIVER
+#error "More than one MemoryCardDriver included!"
+#endif
+#define ARCH_MEMORY_CARD_DRIVER MemoryCardDriverThreaded_Windows
+
 #endif
 
 /*

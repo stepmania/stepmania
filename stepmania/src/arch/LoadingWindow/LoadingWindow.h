@@ -3,6 +3,8 @@
 #ifndef LOADING_WINDOW_H
 #define LOADING_WINDOW_H
 
+#include "global.h"
+
 struct RageSurface;
 class LoadingWindow
 {
@@ -14,6 +16,8 @@ public:
 	virtual void SetText(CString str) { }
 	virtual void SetIcon( const RageSurface *pIcon ) { }
 };
+
+LoadingWindow *MakeLoadingWindow();
 
 #endif
 

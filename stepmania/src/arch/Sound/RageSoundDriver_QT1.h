@@ -1,5 +1,5 @@
-#ifndef RAGE_SOUND_QT1
-#define RAGE_SOUND_QT1
+#ifndef RAGE_SOUND_QT1_H
+#define RAGE_SOUND_QT1_H
 /*
  *  RageSoundDriver_QT1.h
  *  stepmania
@@ -37,8 +37,9 @@ public:
     virtual ~RageSound_QT1();
     static void GetData(QT::SndChannel *chan, QT::SndCommand *cmd_passed);
 };
+#define USE_RAGE_SOUND_QT1
 
-#endif /* RAGE_SOUND_QT1 */
+#endif
 
 /*
  * (c) 2003-2004 Steve Checkoway

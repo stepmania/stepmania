@@ -1,35 +1,19 @@
-#ifndef LINUX_ARCH_H
-#define LINUX_ARCH_H
+#ifndef SELECTOR_MEMORY_CARD_DRIVER_H
+#define SELECTOR_MEMORY_CARD_DRIVER_H
 
-#ifdef HAVE_ALSA
-#include "Sound/RageSoundDriver_ALSA9.h"
-#include "Sound/RageSoundDriver_ALSA9_Software.h"
+#include "arch/arch_platform.h"
+
+/* MemoryCardDriver selector. */
+#if defined(HAVE_LINUXKERNEL)
+#include "MemoryCardDriverThreaded_Linux.h"
+#elif defined(HAVE_WIN32)
+#include "MemoryCardDriverThreaded_Win32.h"
 #endif
-
-#ifdef HAVE_OSS
-#include "Sound/RageSoundDriver_OSS.h"
-#endif
-
-#ifdef HAVE_GTK
-#include "LoadingWindow/LoadingWindow_Gtk.h"
-#endif
-
-/* Load this even if we have GTK, since we can fall back if GTK is missing. */
-#ifdef HAVE_SDL
-#include "LoadingWindow/LoadingWindow_SDL.h"
-#endif
-
-#include "ArchHooks/ArchHooks_Unix.h"
-
-#include "Lights/LightsDriver_LinuxWeedTech.h"
-#include "Lights/LightsDriver_LinuxParallel.h"
-
-#include "MemoryCard/MemoryCardDriverThreaded_Linux.h"
 
 #endif
 
 /*
- * (c) 2002-2003 Glenn Maynard
+ * (c) 2005 Ben Anderson
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -52,4 +36,3 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-

@@ -29,8 +29,6 @@
 
 #include "ScreenDimensions.h"
 
-#include "arch/arch.h"
-
 // Static libraries
 // load Windows D3D8 dynamically
 #if defined(_WINDOWS)

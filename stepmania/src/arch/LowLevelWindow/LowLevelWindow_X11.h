@@ -22,8 +22,9 @@ public:
 
 	RageDisplay::VideoModeParams GetVideoModeParams() const { return CurrentParams; }
 };
-// XXX: Shouldn't we try multiple LowLevelWindows and use whichever works?
-#undef ARCH_LOW_LEVEL_WINDOW
+#ifdef ARCH_LOW_LEVEL_WINDOW
+#error "More than one LowLevelWindow selected!"
+#endif
 #define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_X11
 
 

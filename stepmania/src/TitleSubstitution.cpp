@@ -1,6 +1,5 @@
 #include "global.h"
 #include "TitleSubstitution.h"
-#include "arch/arch.h"
 
 #include "RageUtil.h"
 #include "RageLog.h"

@@ -1,6 +1,5 @@
 #include "global.h"
 #include "arch/ArchHooks/ArchHooks.h"
-#include "arch/arch.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"

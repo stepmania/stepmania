@@ -1,8 +1,9 @@
 #include "global.h"
 #include "MemoryCardDriver.h"
 #include "PrefsManager.h"
+#include "MemoryCardDriver_Null.h"
 
-#include "arch/arch_platform.h"
+#include "Selector_MemoryCardDriver.h"
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
@@ -31,11 +32,10 @@ MemoryCardDriver *MakeMemoryCardDriver()
 
 	MemoryCardDriver *ret = NULL;
 
-#ifdef LINUX
-	ret = new MemoryCardDriverThreaded_Linux;
-#elif _WINDOWS
-	ret = new MemoryCardDriverThreaded_Windows;
+#ifdef ARCH_MEMORY_CARD_DRIVER
+	ret = new ARCH_MEMORY_CARD_DRIVER;
 #endif
+
 	if( !ret )
 		ret = new MemoryCardDriver_Null;
 	

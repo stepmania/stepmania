@@ -1,38 +1,29 @@
-#ifndef ARCH_HOOKS_WIN32_H
-#define ARCH_HOOKS_WIN32_H
+#ifndef SELECTOR_ARCH_HOOKS_H
+#define SELECTOR_ARCH_HOOKS_H
 
-#include "ArchHooks.h"
-class RageMutex;
+#include "arch/arch_platform.h"
 
-class ArchHooks_Win32: public ArchHooks
-{
-public:
-    ArchHooks_Win32();
-    ~ArchHooks_Win32();
-    void DumpDebugInfo();
-	void RestartProgram();
+/* ArchHooks driver selector. */
+#if   defined(HAVE_DARWIN)
+#include "ArchHooks_darwin.h"
 
-	int OldThreadPriority;
-	RageMutex *TimeCritMutex;
-	void EnterTimeCriticalSection();
-	void ExitTimeCriticalSection();
-	void SetTime( tm newtime );
+#elif defined(HAVE_POSIX)
+#include "ArchHooks_Unix.h"
 
-	void BoostPriority();
-	void UnBoostPriority();
+#elif defined(HAVE_WIN32) // XXX: Better name for this API?
+#include "ArchHooks_Win32.h"
 
-private:
-	void CheckVideoDriver();
-};
+#elif defined(HAVE_XBOX) // XXX: Better name for this API?
+#include "ArchHooks_Xbox.h"
 
-#ifdef ARCH_HOOKS
-#error "More than one ArchHooks selected!"
+#else
+#error "No suitable ArchHooks available."
 #endif
-#define ARCH_HOOKS ArchHooks_Win32
 
 #endif
+
 /*
- * (c) 2002-2004 Glenn Maynard, Chris Danford
+ * (c) 2005 Ben Anderson.
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

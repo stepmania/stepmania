@@ -25,8 +25,7 @@ private:
 
 	static BOOL CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 };
-
-#define HAVE_LOADING_WINDOW_WIN32
+#define USE_LOADING_WINDOW_WIN32
 
 #endif
 

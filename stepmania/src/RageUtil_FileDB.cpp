@@ -3,7 +3,6 @@
 #include "RageUtil_FileDB.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "arch/arch.h"
 
 /* Search for "beginning*containing*ending". */
 void FileSet::GetFilesMatching(const CString &beginning, const CString &containing, const CString &ending, vector<CString> &out, bool bOnlyDirs) const

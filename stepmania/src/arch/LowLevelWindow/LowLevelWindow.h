@@ -5,6 +5,7 @@
  * we use SDL.  Note that not all SDL operations go here; however, nothing
  * outside of this can assume that SDL has VIDEO initialized. */
 
+#include "global.h"
 #include "RageDisplay.h" // for RageDisplay::VideoModeParams
 
 class LowLevelWindow
@@ -24,6 +25,8 @@ public:
 
 	virtual RageDisplay::VideoModeParams GetVideoModeParams() const = 0;
 };
+
+LowLevelWindow *MakeLowLevelWindow();
 
 #endif
 

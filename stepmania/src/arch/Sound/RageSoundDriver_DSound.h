@@ -69,6 +69,7 @@ private:
 
 	int GetSampleRate( int rate ) const { return rate; }
 };
+#define USE_RAGE_SOUND_DSOUND
 
 #endif
 

@@ -7,7 +7,6 @@
 #include "StyleInput.h"
 #include "Style.h"
 #include "RageUtil.h"
-#include "arch/arch.h"
 #include "RageDisplay.h"
 #include "arch/Dialog/Dialog.h"
 #include "PrefsManager.h"

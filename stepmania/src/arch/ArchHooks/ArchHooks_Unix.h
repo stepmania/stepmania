@@ -12,7 +12,9 @@ public:
 	int64_t GetMicrosecondsSinceStart();
 };
 
-#undef ARCH_HOOKS
+#ifdef ARCH_HOOKS
+#error "More than one ArchHooks selected!"
+#endif
 #define ARCH_HOOKS ArchHooks_Unix
 
 #endif

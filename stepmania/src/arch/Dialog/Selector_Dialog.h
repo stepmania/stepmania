@@ -1,38 +1,23 @@
-#ifndef ARCH_HOOKS_WIN32_H
-#define ARCH_HOOKS_WIN32_H
+#ifndef SELECTOR_DIALOG
+#define SELECTOR_DIALOG
 
-#include "ArchHooks.h"
-class RageMutex;
+#include "arch/arch_platform.h"
 
-class ArchHooks_Win32: public ArchHooks
-{
-public:
-    ArchHooks_Win32();
-    ~ArchHooks_Win32();
-    void DumpDebugInfo();
-	void RestartProgram();
-
-	int OldThreadPriority;
-	RageMutex *TimeCritMutex;
-	void EnterTimeCriticalSection();
-	void ExitTimeCriticalSection();
-	void SetTime( tm newtime );
-
-	void BoostPriority();
-	void UnBoostPriority();
-
-private:
-	void CheckVideoDriver();
-};
-
-#ifdef ARCH_HOOKS
-#error "More than one ArchHooks selected!"
+/* Dialog drivers selector. */
+#ifdef HAVE_WIN32
+#include "DialogDriver_Win32.h"
 #endif
-#define ARCH_HOOKS ArchHooks_Win32
+
+#ifdef HAVE_COCOA
+#include "DialogDriver_Cocoa.h"
+#endif
+
+#include "DialogDriver.h" // DialogDriver_Null is in here
 
 #endif
+
 /*
- * (c) 2002-2004 Glenn Maynard, Chris Danford
+ * (c) 2005 Ben Anderson.
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

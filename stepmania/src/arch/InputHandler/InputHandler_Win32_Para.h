@@ -22,6 +22,7 @@ public:
 	~InputHandler_Win32_Para();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 };
+#define USE_INPUT_HANDLER_WIN32_PARA
 
 #endif
 

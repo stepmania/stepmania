@@ -5,16 +5,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-/* Hmm.  I don't want this to depend on other arch drivers--we should be able to test
- * this without linking to them.  We probably don't actually have to do that just by
- * #including the headers in arch_Win32.h, etc., but it's still messy ... */
-#if defined(_WINDOWS)
-#include "DialogDriver_Win32.h"
-#endif
-
-#if defined(DARWIN)
-#include "DialogDriver_Cocoa.h"
-#endif
+#include "Selector_Dialog.h"
 
 static DialogDriver *g_pImpl = NULL;
 static DialogDriver_Null g_NullDriver;
@@ -37,13 +28,15 @@ void Dialog::Init()
 	{
 		Driver = DriversToTry[i];
 
-#if defined(HAVE_DIALOG_WIN32)
+#if defined(USE_DIALOG_DRIVER_WIN32)
 		if( !DriversToTry[i].CompareNoCase("Win32") ) g_pImpl = new DialogDriver_Win32;
 #endif
-#if defined(HAVE_DIALOG_COCOA)
+#if defined(USE_DIALOG_DRIVER_COCOA)
 		if( !DriversToTry[i].CompareNoCase("Cocoa") ) g_pImpl = new DialogDriver_Cocoa;
 #endif
+#if defined(USE_DIALOG_DRIVER_NULL)
 		if( !DriversToTry[i].CompareNoCase("Null") ) g_pImpl = new DialogDriver_Null;
+#endif
 
 		if( g_pImpl == NULL )
 			continue;

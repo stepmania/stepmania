@@ -26,7 +26,9 @@ protected:
 	RageMutex *TimeCritMutex;
 };
 
-#undef ARCH_HOOKS
+#ifdef ARCH_HOOKS
+#error "More than one ArchHooks selected!"
+#endif
 #define ARCH_HOOKS ArchHooks_darwin
     
 #endif /* ARCH_HOOKS_DARWIN_H */

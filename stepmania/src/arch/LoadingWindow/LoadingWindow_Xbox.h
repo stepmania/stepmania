@@ -21,6 +21,7 @@ protected:
 	XFONT* font;
 	bool useImage;
 };
+#define USE_LOADING_WINDOW_XBOX
 
 #endif
 

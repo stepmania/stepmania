@@ -97,7 +97,8 @@ CString LowLevelWindow_X11::TryVideoMode(RageDisplay::VideoModeParams p, bool &b
 		// We're remodeling the existing window, and not touching the
 		// context.
 		bNewDeviceOut = false;
-		// Remap the window to work around possible buggy WMs and/or X servers
+		// Remap the window to work around possible buggy WMs and/or
+		// X servers
 		XUnmapWindow(X11Helper::Dpy(), X11Helper::Win() );
 	}
 

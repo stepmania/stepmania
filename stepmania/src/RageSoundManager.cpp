@@ -9,7 +9,6 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 
-#include "arch/arch.h"
 #include "arch/Sound/RageSoundDriver.h"
 
 /*

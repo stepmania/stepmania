@@ -1,7 +1,7 @@
 /* LoadingWindow_Cocoa - Loading window for OSX */
 
-#ifndef LOADING_WINDOW_COCOA
-#define LOADING_WINDOW_COCOA
+#ifndef LOADING_WINDOW_COCOA_H
+#define LOADING_WINDOW_COCOA_H
 
 #include "LoadingWindow.h"
 
@@ -17,10 +17,9 @@ public:
 	void Paint() {} /* Not needed */
 	void SetText( CString str ) { SetCocoaWindowText( str ); }
 };
+#define USE_LOADING_WINDOW_COCOA
 
-#define HAVE_LOADING_WINDOW_COCOA
-
-#endif /* LOADING_WINDOW_COCOA */
+#endif
 
 /*
  * (c) 2003-2004 Steve Checkoway

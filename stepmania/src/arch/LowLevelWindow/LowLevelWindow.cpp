@@ -1,15 +1,11 @@
-#ifndef ARCH_DARWIN_H
-#define ARCH_DARWIN_H
+#include "LowLevelWindow.h"
 
-#include "Sound/RageSoundDriver_CA.h"
-#include "Sound/RageSoundDriver_QT1.h"
-#include "LoadingWindow/LoadingWindow_Cocoa.h"
-#include "ArchHooks/ArchHooks_darwin.h"
+#include "Selector_LowLevelWindow.h"
 
-#endif
+LowLevelWindow *MakeLowLevelWindow() { return new ARCH_LOW_LEVEL_WINDOW; }
 
 /*
- * (c) 2003 Steve Checkoway
+ * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -32,4 +28,3 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-

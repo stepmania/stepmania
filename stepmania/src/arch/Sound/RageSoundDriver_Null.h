@@ -16,6 +16,7 @@ protected:
 public:
     RageSound_Null();
 };
+#define USE_RAGE_SOUND_NULL
 
 #endif
 

@@ -15,8 +15,7 @@ public:
 	void SetText(CString str);
 	void Paint() { }
 };
-
-#define HAVE_LOADING_WINDOW_GTK
+#define USE_LOADING_WINDOW_GTK
 
 #endif
 

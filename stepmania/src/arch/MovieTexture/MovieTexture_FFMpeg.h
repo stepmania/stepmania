@@ -92,6 +92,7 @@ private:
 	float CheckFrameTime();
 	void DiscardFrame();
 };
+#define USE_MOVIE_TEXTURE_FFMPEG
 
 #endif
 

@@ -16,6 +16,7 @@ public:
 };
 
 class DialogDriver_Null: public DialogDriver { };
+#define USE_DIALOG_DRIVER_NULL
 
 #endif
 

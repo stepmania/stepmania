@@ -28,6 +28,7 @@ public:
 	virtual ~RageSound_DSound_Software();
 	CString Init();
 };
+#define USE_RAGE_SOUND_DSOUND_SOFTWARE
 
 #endif
 

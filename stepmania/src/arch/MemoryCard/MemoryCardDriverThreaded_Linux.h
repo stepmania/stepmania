@@ -21,6 +21,11 @@ protected:
 	vector<UsbStorageDevice> m_vDevicesLastSeen;
 };
 
+#ifdef ARCH_MEMORY_CARD_DRIVER
+#error "More than one MemoryCardDriver selected!"
+#endif
+#define ARCH_MEMORY_CARD_DRIVER MemoryCardDriverThreaded_Linux
+
 #endif
 
 /*

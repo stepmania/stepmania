@@ -45,8 +45,7 @@ public:
     int64_t GetPosition(const RageSoundBase *sound) const;
     void SetupDecodingThread();
 };
-
-#define RAGE_SOUND_CA
+#define USE_RAGE_SOUND_CA
 
 #endif
 

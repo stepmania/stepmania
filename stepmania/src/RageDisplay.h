@@ -3,6 +3,7 @@
 #ifndef RAGEDISPLAY_H
 #define RAGEDISPLAY_H
 
+#include "global.h"
 #include "RageTypes.h"
 #include "ModelTypes.h"
 

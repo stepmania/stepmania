@@ -16,7 +16,6 @@
 #include "Steps.h"
 #include "BannerCache.h"
 #include "RageFile.h"
-#include "arch/arch.h"
 #include "ThemeManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"

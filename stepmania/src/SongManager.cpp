@@ -5,7 +5,6 @@
 #include "MsdFile.h"
 #include "NotesLoaderDWI.h"
 #include "BannerCache.h"
-#include "arch/arch.h"
 
 #include "GameState.h"
 #include "PrefsManager.h"

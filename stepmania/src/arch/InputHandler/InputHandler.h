@@ -55,6 +55,8 @@ protected:
 	void UpdateTimer();
 };
 
+void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add);
+
 #endif
 
 /*
