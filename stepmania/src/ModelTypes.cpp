@@ -200,26 +200,6 @@ bool msAnimation::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 
 	msAnimation &Animation = *this;
 
-	//Ym2413a Added: Start
-	//Bone scaling loader.
-	static float fXScale = 1;
-	static float fYScale = 1;
-	static float fZScale = 1;
-
-	if( sAniName == "default" ){
-		IniFile ini;
-		if( ini.ReadFile( sDir+"character.ini" ) )
-		{
-			if ( !ini.GetValue( "Attributes", "ScaleX", fXScale ) ) {
-				fXScale = 1; }
-			if ( !ini.GetValue( "Attributes", "ScaleY", fYScale ) ) {
-				fYScale = 1; }
-			if ( !ini.GetValue( "Attributes", "ScaleZ", fZScale ) ) {
-				fZScale = 1; }
-		}
-	}
-	//Ym2413a Added: End
-
 	bool bLoaded = false;
     while( f.GetLine( sLine ) > 0 )
     {
@@ -294,13 +274,6 @@ bool msAnimation::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 				float fTime;
                 if (sscanf (sLine, "%f %f %f %f", &fTime, &Position[0], &Position[1], &Position[2]) != 4)
 					THROW;
-
-				//Ym2413a Added: Start
-				//Perform rescaling of bone vectors.
-					Position[0] = Position[0]*fXScale;
-					Position[1] = Position[1]*fYScale;
-					Position[2] = Position[2]*fZScale;
-				//Ym2413a Added: End
 
 				msPositionKey key;
 				key.fTime = fTime;
