@@ -5,6 +5,7 @@
 #include "ThemeManager.h"
 #include "EnumHelper.h"
 #include "Foreach.h"
+#include "PrefsManager.h"
 
 
 static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
@@ -234,6 +235,10 @@ static const CString StyleTypeNames[NUM_STYLE_TYPES] = {
 };
 XToString( StyleType );
 StringToX( StyleType );
+
+#include "LuaFunctions.h"
+LuaFunction_NoArgs( CoinMode,   CoinModeToString(PREFSMAN->m_CoinMode) )
+LuaFunction_NoArgs( Premium,    PremiumToString(PREFSMAN->m_Premium) )
 
 /*
  * (c) 2001-2004 Chris Danford

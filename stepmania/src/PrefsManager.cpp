@@ -8,7 +8,6 @@
 #include "RageSoundReader_Resample.h" /* for ResampleQuality */
 #include "RageFile.h"
 #include "ProductInfo.h"
-#include "GameConstantsAndTypes.h"
 #include "Foreach.h"
 #include "Preference.h"
 
@@ -846,11 +845,6 @@ Premium	PrefsManager::GetPremium()
 	else 
 		return m_Premium; 
 }
-
-
-#include "LuaFunctions.h"
-LuaFunction_NoArgs( CoinMode,	CoinModeToString(PREFSMAN->m_CoinMode) )
-LuaFunction_NoArgs( Premium,	PremiumToString(PREFSMAN->m_Premium) )
 
 
 /*
