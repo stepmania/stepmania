@@ -59,7 +59,8 @@ void RageTextureManager::Update( float fDeltaTime )
 //-----------------------------------------------------------------------------
 RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 {
-	ID.filename.MakeLower();
+	/* Don't do this; just get case right to begin with. */
+//	ID.filename.MakeLower();
 
 	LOG->Trace( "RageTextureManager::LoadTexture(%s).", ID.filename.GetString() );
 
