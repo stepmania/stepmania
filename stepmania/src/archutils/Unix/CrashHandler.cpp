@@ -168,6 +168,63 @@ static const char *itoa(unsigned n)
 	return p;
 }
 
+const char *SignalName( int signo )
+{
+#if !defined(DARWIN)
+#define X(a) case a: return #a;
+	switch( signo )
+	{
+	case SIGALRM: return "Alarm";
+	case SIGBUS: return "Bus error";
+	case SIGFPE: return "Floating point exception";
+	X(SIGHUP)
+	case SIGILL: return "Illegal instruction";
+	X(SIGINT)
+	case SIGPIPE: return "Broken pipe";
+	case SIGABRT: return "Aborted";
+	X(SIGQUIT)
+	case SIGSEGV: return "Segmentation fault";
+	X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
+#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
+	X(SIGPWR)
+#endif
+	default:
+	{
+		static char buf[128];
+		strcpy( buf, "Unknown signal " );
+		strcat( buf, itoa(signo) );
+		return buf;
+	}
+	}
+#else
+#define X(code) case k##code: return #code;
+	switch( signo )
+	{
+	X(UnknownException)
+	X(IllegalInstructionException)
+	X(TrapException)
+	X(AccessException)
+	X(UnmappedMemoryException)
+	X(ExcludedMemoryException)
+	X(ReadOnlyMemoryException)
+	X(UnresolvablePageFaultException)
+	X(PrivilegeViolationException)
+	X(TraceException)
+	X(InstructionBreakpointException)
+	X(DataBreakpointException)
+	X(FloatingPointException)
+	X(StackOverflowException)
+	default:
+	{
+		static char buf[128];
+		strcpy( buf, "Unknown exception " );
+		strcat( buf, itoa(signo) );
+		return buf;
+	}
+	}
+#endif
+}
+
 void CrashSignalHandler( int signal )
 {
 	if( g_pCrashHandlerArgv0 == NULL )
@@ -186,12 +243,11 @@ void CrashSignalHandler( int signal )
 		 * crashed. */
 		const char *str;
 		if( received == getpid() )
-			str = "Oops! Fatal signal received while still in the crash handler\n";
+			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(signal), ") received while still in the crash handler\n", NULL);
 		else if( childpid == getpid() )
-			str = "Oops! Fatal signal received while in the crash handler child\n";
+			safe_print( fileno(stderr), "Oops! Fatal signal (", SignalName(signal), ") received while in the crash handler child\n", NULL);
 		else
-			str = "Extra fatal signal received\n"; // probably another thread crashing
-		write( fileno(stderr), str, strlen(str) );
+			safe_print( fileno(stderr), "Extra fatal signal (", SignalName(signal), ") received\n", NULL);
 		_exit(1);
 	}
 	received = getpid();

@@ -4,5 +4,7 @@
 #define BACKTRACE_MAX_SIZE 1024
 #define CHILD_MAGIC_PARAMETER "--private-do-crash-handler"
 
+const char *SignalName( int signo );
+
 #endif
 

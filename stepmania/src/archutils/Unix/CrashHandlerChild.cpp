@@ -142,48 +142,7 @@ static void child_process()
     fprintf(CrashDump, "--------------------------------------\n");
     fprintf(CrashDump, "\n");
 
-    CString Signal;
-#if !defined(DARWIN)
-#define X(a) case a: Signal = #a; break;
-    switch(SignalReceived)
-    {
-        case SIGALRM: Signal = "Alarm"; break;
-        case SIGBUS: Signal = "Bus error"; break;
-        case SIGFPE: Signal = "Floating point exception"; break;
-        X(SIGHUP)
-        case SIGILL: Signal = "Illegal instruction"; break;
-        X(SIGINT)
-        case SIGPIPE: Signal = "Broken pipe"; break;
-        case SIGABRT: Signal = "Aborted"; break;
-        X(SIGQUIT)
-        case SIGSEGV: Signal = "Segmentation fault"; break;
-        X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
-#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
-        X(SIGPWR)
-#endif
-        default: Signal = ssprintf("Unknown signal %i", SignalReceived); break;
-    }
-#else
-#define X(code) case k##code: Signal = #code; break;
-    switch (SignalReceived)
-    {
-        X(UnknownException)
-        X(IllegalInstructionException)
-        X(TrapException)
-        X(AccessException)
-        X(UnmappedMemoryException)
-        X(ExcludedMemoryException)
-        X(ReadOnlyMemoryException)
-        X(UnresolvablePageFaultException)
-        X(PrivilegeViolationException)
-        X(TraceException)
-        X(InstructionBreakpointException)
-        X(DataBreakpointException)
-        X(FloatingPointException)
-        X(StackOverflowException)
-        default: Signal = ssprintf("Unknown Exception %i", SignalReceived); break;
-    }
-#endif
+    CString Signal = SignalName( SignalReceived );
     
     fprintf( CrashDump, "Crash reason: %s\n", Signal.c_str() );
     fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
