@@ -1237,7 +1237,7 @@ void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 {
 	SOUND->StopMusic();
 
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 void ScreenSelectMusic::AfterStepsChange( PlayerNumber pn )

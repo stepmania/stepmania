@@ -70,7 +70,7 @@ void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType
 
 void ScreenInstructions::MenuBack( PlayerNumber pn )
 {
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 void ScreenInstructions::MenuStart( PlayerNumber pn )

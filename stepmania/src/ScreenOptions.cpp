@@ -508,7 +508,7 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType sele
 {
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
-	if( m_Back.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )
+	if( m_Cancel.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )
 		return;
 
 	if( selectType == IET_RELEASE )
@@ -755,7 +755,7 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 {
 	Screen::MenuBack( pn );
 
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 bool ScreenOptions::IsOnLastRow( PlayerNumber pn ) const

@@ -370,7 +370,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 
 void ScreenSelectCharacter::MenuBack( PlayerNumber pn )
 {
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 void ScreenSelectCharacter::TweenOffScreen()

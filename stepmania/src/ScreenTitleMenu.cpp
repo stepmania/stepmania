@@ -123,7 +123,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		return;
 	}
 
-	if( m_In.IsTransitioning() || m_Back.IsTransitioning() ) /* not m_Out */
+	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
 		return;
 	
 	//

@@ -238,7 +238,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 
 void ScreenSelectGroup::MenuBack( PlayerNumber pn )
 {
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 void ScreenSelectGroup::TweenOffScreen()

@@ -262,7 +262,7 @@ void ScreenSelect::MenuBack( PlayerNumber pn )
 {
 	SOUND->StopMusic();
 
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 /*

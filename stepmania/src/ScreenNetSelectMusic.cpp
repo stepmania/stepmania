@@ -409,7 +409,7 @@ void ScreenNetSelectMusic::MenuBack( PlayerNumber pn )
 	SOUND->StopMusic();
 	TweenOffScreen();
 
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 

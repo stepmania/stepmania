@@ -86,7 +86,7 @@ void ScreenEditCoursesMenu::MenuStart( PlayerNumber pn )
 
 void ScreenEditCoursesMenu::MenuBack( PlayerNumber pn )
 {	
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 
 	SOUND->StopMusic();
 }

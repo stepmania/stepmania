@@ -279,7 +279,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 void ScreenEditMenu::MenuBack( PlayerNumber pn )
 {	
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 
 	SOUND->StopMusic();
 }

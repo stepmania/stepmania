@@ -60,7 +60,7 @@ void ScreenSplash::MenuBack( PlayerNumber pn )
 {
 	if( IsTransitioning() )
 		return;
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 }
 
 void ScreenSplash::MenuStart( PlayerNumber pn )

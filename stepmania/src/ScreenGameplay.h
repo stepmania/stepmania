@@ -139,7 +139,7 @@ protected:
 	Transition	m_Win[NUM_PLAYERS];
 	Transition	m_Draw;
 	Transition	m_In;
-	Transition	m_Back;
+	Transition	m_Cancel;
 	AutoActor	m_Overlay;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage

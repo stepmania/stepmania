@@ -202,7 +202,7 @@ void ScreenNetRoom::MenuBack( PlayerNumber pn )
 {
 	TweenOffScreen();
 
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 
 	ScreenNetSelectBase::MenuBack( pn );
 }

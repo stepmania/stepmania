@@ -267,7 +267,7 @@ void ScreenPackages::MenuBack( PlayerNumber pn )
 	}
 
 	TweenOffScreen();
-	Back( SM_GoToPrevScreen );
+	Cancel( SM_GoToPrevScreen );
 	ScreenWithMenuElements::MenuBack( pn );
 }
 

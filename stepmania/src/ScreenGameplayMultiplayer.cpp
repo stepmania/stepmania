@@ -239,9 +239,9 @@ void ScreenGameplayMultiplayer::Init()
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathB("Common","back") );
-	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS ); // on top of everything else
-	this->AddChild( &m_Back );
+	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
+	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS ); // on top of everything else
+	this->AddChild( &m_Cancel );
 
 
 
@@ -509,8 +509,7 @@ void ScreenGameplayMultiplayer::Input( const DeviceInput& DeviceI, const InputEv
 	if( type == IET_LEVEL_CHANGED )
 		return;
 
-	if( MenuI.IsValid()  &&  
-		!m_Back.IsTransitioning() )
+	if( MenuI.IsValid()  &&  !m_Cancel.IsTransitioning() )
 	{
 		if( MenuI.button == MENU_BUTTON_BACK && 
 			((!PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS) ||
@@ -520,7 +519,7 @@ void ScreenGameplayMultiplayer::Input( const DeviceInput& DeviceI, const InputEv
 			/* I had battle mode back out on me mysteriously once. -glenn */
 			LOG->Trace("Player %i went back", MenuI.player+1);
 
-			SCREENMAN->PlayBackSound();
+			SCREENMAN->PlayCancelSound();
 			/* Hmm.  There are a bunch of subtly different ways we can
 			 * tween out: 
 			 *   1. Keep rendering the song, and keep it moving.  This might
@@ -536,7 +535,7 @@ void ScreenGameplayMultiplayer::Input( const DeviceInput& DeviceI, const InputEv
 			m_pSoundMusic->StopPlaying();
 
 			this->ClearMessageQueue();
-			m_Back.StartTransitioning( SM_GoToScreenAfterBack );
+			m_Cancel.StartTransitioning( SM_GoToScreenAfterBack );
 			return;
 		}
 	}

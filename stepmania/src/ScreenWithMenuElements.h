@@ -21,7 +21,7 @@ public:
 
 	void Update( float fDeltaTime );
 	void StartTransitioning( ScreenMessage smSendWhenDone );
-	void Back( ScreenMessage smSendWhenDone );
+	void Cancel( ScreenMessage smSendWhenDone );
 	bool IsTransitioning();
 	bool m_bTimerEnabled;
 
@@ -41,7 +41,7 @@ protected:
 
 	Transition	m_In;
 	Transition	m_Out;
-	Transition	m_Back;
+	Transition	m_Cancel;
 };
 
 #endif

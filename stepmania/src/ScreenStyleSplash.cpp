@@ -89,8 +89,8 @@ void ScreenStyleSplash::MenuBack( PlayerNumber pn )
 	if(IsTransitioning())
 		return;
 	this->ClearMessageQueue();
-	Back( SM_GoToPrevScreen );
-	SOUND->PlayOnce( THEME->GetPathS("menu","back") );
+	Cancel( SM_GoToPrevScreen );
+	SOUND->PlayOnce( THEME->GetPathS("menu","cancel") );
 }
 
 void ScreenStyleSplash::DrawPrimitives()

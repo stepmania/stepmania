@@ -52,9 +52,9 @@ void ScreenStage::Init()
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathB("Common","back") );
-	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
-	this->AddChild( &m_Back );
+	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
+	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+	this->AddChild( &m_Cancel );
 
 	/* Prep the new screen once m_In is complete. */ 	 
 	this->PostScreenMessage( SM_PrepScreen, m_Overlay->GetTweenTimeLeft() );
@@ -147,15 +147,15 @@ void ScreenStage::Update( float fDeltaTime )
 
 void ScreenStage::MenuBack( PlayerNumber pn )
 {
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning() )
+	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;
 
 	if( !ALLOW_BACK )
 		return;
 	
 	this->ClearMessageQueue();
-	m_Back.StartTransitioning( SM_GoToPrevScreen );
-	SOUND->PlayOnce( THEME->GetPathS("Common","back") );
+	m_Cancel.StartTransitioning( SM_GoToPrevScreen );
+	SCREENMAN->PlayCancelSound();
 
 	/* If a Back is buffered while we're prepping the screen (very common), we'll
 	 * get it right after the prep finishes.  However, the next update will contain

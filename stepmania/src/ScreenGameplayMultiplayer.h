@@ -78,7 +78,7 @@ protected:
 
 	Transition		m_In;
 	Transition		m_Out;
-	Transition		m_Back;
+	Transition		m_Cancel;
 
 	Player				m_AutoPlayer;
 	PlayerState			m_PlayerState[NUM_MULTI_PLAYERS];

@@ -24,7 +24,7 @@ public:
 private:
 	ThemeMetric<bool>	ALLOW_BACK;
 
-	Transition		m_In, m_Out, m_Back;
+	Transition		m_In, m_Out, m_Cancel;
 	AutoActor		m_Overlay; // overlays all elements except bitmaptexts
 	BitmapText		m_SongTitle;
 	BitmapText		m_Artist;

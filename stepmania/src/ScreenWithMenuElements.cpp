@@ -106,9 +106,9 @@ void ScreenWithMenuElements::Init()
 	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Out );
 
-	m_Back.Load( THEME->GetPathB("Common","back") );
-	m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
-	this->AddChild( &m_Back );
+	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
+	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+	this->AddChild( &m_Cancel );
 
 	m_In.StartTransitioning();
 }
@@ -187,22 +187,22 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 //	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
 }
 
-void ScreenWithMenuElements::Back( ScreenMessage smSendWhenDone )
+void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 {
-	if( m_Back.IsTransitioning() )
+	if( m_Cancel.IsTransitioning() )
 		return;	// ignore
 
 	if( STOP_MUSIC_ON_BACK )
 		SOUND->StopMusic();
 
 	m_MenuTimer->Stop();
-	m_Back.StartTransitioning( smSendWhenDone );
-	SCREENMAN->PlayBackSound();
+	m_Cancel.StartTransitioning( smSendWhenDone );
+	SCREENMAN->PlayCancelSound();
 }
 
 bool ScreenWithMenuElements::IsTransitioning()
 {
-	return m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Back.IsTransitioning();
+	return m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning();
 }
 
 void ScreenWithMenuElements::StopTimer()

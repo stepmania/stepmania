@@ -623,9 +623,9 @@ void ScreenGameplay::Init()
 		m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 		this->AddChild( &m_In );
 
-		m_Back.Load( THEME->GetPathB("Common","back") );
-		m_Back.SetDrawOrder( DRAW_ORDER_TRANSITIONS ); // on top of everything else
-		this->AddChild( &m_Back );
+		m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
+		m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS ); // on top of everything else
+		this->AddChild( &m_Cancel );
 
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
@@ -1694,13 +1694,13 @@ void ScreenGameplay::BackOutFromGameplay()
 {
 	m_DancingState = STATE_OUTRO;
 	AbortGiveUp( false );
-	SCREENMAN->PlayBackSound();
+	SCREENMAN->PlayCancelSound();
 	
 	m_pSoundMusic->StopPlaying();
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 	this->ClearMessageQueue();
-	m_Back.StartTransitioning( SM_SaveChangedBeforeGoingBack );
+	m_Cancel.StartTransitioning( SM_SaveChangedBeforeGoingBack );
 }
 
 void ScreenGameplay::AbortGiveUp( bool bShowText )
@@ -1737,7 +1737,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	if( MenuI.IsValid()  &&  
 		m_DancingState != STATE_OUTRO  &&
 		GAMESTATE->IsHumanPlayer(MenuI.player) &&
-		!m_Back.IsTransitioning() )
+		!m_Cancel.IsTransitioning() )
 	{
 		/* Allow bailing out by holding the START button of all active players.  This
 		 * gives a way to "give up" when a back button isn't available.  Doing this is
