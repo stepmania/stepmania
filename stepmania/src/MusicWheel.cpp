@@ -1527,7 +1527,7 @@ Song* MusicWheel::GetSelectedSong()
 				{
 					Song* pSong = m_CurWheelItemData[iSelection]->m_pSong;
 					FOREACH( Difficulty, vDifficultiesToRequire, d )
-						if( !pSong->SongHasNotesTypeAndDifficulty(st,*d) )
+						if( !pSong->HasStepsTypeAndDifficulty(st,*d) )
 							goto skip_song;
 					return pSong;
 				}

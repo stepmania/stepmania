@@ -35,7 +35,7 @@ void DifficultyDisplay::SetDifficulties( const Song* pSong, StepsType curType )
 {
 	for( int diff = DIFFICULTY_BEGINNER; diff <= DIFFICULTY_CHALLENGE; ++diff )
 	{
-		if( pSong->SongHasNotesTypeAndDifficulty( curType, Difficulty(diff) ) )
+		if( pSong->HasStepsTypeAndDifficulty( curType, Difficulty(diff) ) )
 			m_difficulty[diff].Command( ICONONCOMMAND );
 		else
 			m_difficulty[diff].Command( ICONOFFCOMMAND );

@@ -960,17 +960,17 @@ Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 /* Return whether the song is playable in the given style. */
 bool Song::SongCompleteForStyle( const StyleDef *st ) const
 {
-	return SongHasNotesType( st->m_StepsType );
+	return HasStepsType( st->m_StepsType );
 }
 
-bool Song::SongHasNotesType( StepsType st ) const
+bool Song::HasStepsType( StepsType st ) const
 {
 	vector<Steps*> add;
 	GetSteps( add, st, DIFFICULTY_INVALID, -1, -1, "", true, 1 );
 	return !add.empty();
 }
 
-bool Song::SongHasNotesTypeAndDifficulty( StepsType st, Difficulty dc ) const
+bool Song::HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const
 {
 	vector<Steps*> add;
 	GetSteps( add, st, dc, -1, -1, "", true, 1 );

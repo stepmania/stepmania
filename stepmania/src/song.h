@@ -175,8 +175,8 @@ public:
 	vector<Steps*> m_vpSteps;
 
 	bool SongCompleteForStyle( const StyleDef *st ) const;
-	bool SongHasNotesType( StepsType st ) const;
-	bool SongHasNotesTypeAndDifficulty( StepsType st, Difficulty dc ) const;
+	bool HasStepsType( StepsType st ) const;
+	bool HasStepsTypeAndDifficulty( StepsType st, Difficulty dc ) const;
 	const vector<Steps*>& GetAllSteps() const { return m_vpSteps; }
 	void GetSteps( vector<Steps*>& arrayAddTo, StepsType st = STEPS_TYPE_INVALID, Difficulty dc = DIFFICULTY_INVALID, int iMeterLow = -1, int iMeterHigh = -1, const CString &sDescription = "", bool bIncludeAutoGen = true, int Max = -1 ) const;
 	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
