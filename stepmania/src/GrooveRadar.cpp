@@ -191,7 +191,13 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			v[i].c = PlayerToColor( (PlayerNumber)p );
 		}
 
-		DISPLAY->DrawLoop( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );
+		switch( PREFSMAN->m_iPolygonRadar )
+		{
+		case 0:		DISPLAY->DrawLoop_LinesAndPoints( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );	break;
+		case 1:		DISPLAY->DrawLoop_Polys( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );			break;
+		default:
+		case -1:	DISPLAY->DrawLoop( v, NUM_RADAR_CATEGORIES, RADAR_EDGE_WIDTH );					break;
+		}
 	}
 }
 

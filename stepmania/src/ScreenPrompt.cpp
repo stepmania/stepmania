@@ -28,6 +28,8 @@ const float PROMPT_Y	=	CENTER_Y + 120;
 
 ScreenPrompt::ScreenPrompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(), void(*OnNo)() )
 {
+	m_bIsTransparent = true;	// draw screens below us
+
 	m_SMSendWhenDone = SM_SendWhenDone;
 	m_bYesNoPrompt = bYesNoPrompt;
 	m_bAnswer = bDefaultAnswer;

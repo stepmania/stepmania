@@ -113,7 +113,7 @@ void ScreenManager::Update( float fDeltaTime )
 
 void ScreenManager::Restore()
 {
-	// Draw all CurrentScreens (back to front)
+	// Restore all CurrentScreens (back to front)
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		m_ScreenStack[i]->Restore();
 }
@@ -126,9 +126,12 @@ void ScreenManager::Invalidate()
 
 void ScreenManager::Draw()
 {
-	// Draw all CurrentScreens (back to front)
-	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-		m_ScreenStack[i]->Draw();
+	if( !m_ScreenStack.empty() && !m_ScreenStack.back()->IsTransparent() )	// top screen isn't transparent
+		m_ScreenStack.back()->Draw();
+	else
+		for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
+			m_ScreenStack[i]->Draw();
+
 	
 	if( m_textSystemMessage.GetDiffuse().a != 0 )
 		m_textSystemMessage.Draw();

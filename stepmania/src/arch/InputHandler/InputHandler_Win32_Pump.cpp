@@ -172,7 +172,8 @@ int InputHandler_Win32_Pump::dev_t::GetPadEvent()
 		return -1;
 
     if(ret == 0) {
-		LOG->Warn(werr_ssprintf(GetLastError(), "Error reading Pump pad"));
+		// this prints too much info in Win98
+//		LOG->Warn(werr_ssprintf(GetLastError(), "Error reading Pump pad"));
 	    return -1;
     }
 

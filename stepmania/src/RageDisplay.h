@@ -71,6 +71,8 @@ public:
 	void DrawFan( const RageVertex v[], int iNumVerts );
 	void DrawStrip( const RageVertex v[], int iNumVerts );
 	void DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth );
+	void DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, float LineWidth );
+	void DrawLoop_Polys( const RageVertex v[], int iNumVerts, float LineWidth );
 	void FlushQueue();
 
 	int GetMaxTextureSize() const;
@@ -102,8 +104,6 @@ protected:
 	void RageDisplay::DumpOpenGLDebugInfo();
 
 	void DrawPolyLine(const RageVertex &p1, const RageVertex &p2, float LineWidth );
-	void DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, float LineWidth );
-	void DrawLoop_Polys( const RageVertex v[], int iNumVerts, float LineWidth );
 };
 
 

@@ -23,8 +23,6 @@
 #include "RageTypes.h"
 #include "GameConstantsAndTypes.h"
 #include "StepMania.h"
-/* XXX: remove this once we add oglspecs_t::DisableAALines */
-#include "PrefsManager.h"
 
 #include <math.h>
 
@@ -102,13 +100,17 @@ RageDisplay::RageDisplay( bool windowed, int width, int height, int bpp, int rat
 	glGetFloatv(GL_POINT_SIZE_RANGE, m_oglspecs->point_range);
 	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &m_oglspecs->point_granularity);
 	LOG->Info("Point size range: %f-%f +%f", m_oglspecs->point_range[0], m_oglspecs->point_range[1], m_oglspecs->point_granularity);
+
+	m_oglspecs->bAALinesCauseProblems = strncmp((const char*)glGetString(GL_RENDERER),"3Dfx/Voodoo3 (tm)/2 TMUs/16 MB SDRAM/ICD (Nov  2 2000)",sizeof("3Dfx/Voodoo3"))==0;
+	if( m_oglspecs->bAALinesCauseProblems )
+		LOG->Info("Anti-aliased lines are known to cause problems with this driver.");
 }
 
 bool RageDisplay::IsSoftwareRenderer()
 {
 	return 
-		( stricmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation")==0 ) &&
-		( stricmp((const char*)glGetString(GL_RENDERER),"GDI Generic")==0 );
+		( strcmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation")==0 ) &&
+		( strcmp((const char*)glGetString(GL_RENDERER),"GDI Generic")==0 );
 }
 
 void RageDisplay::SetupOpenGL()
@@ -469,7 +471,7 @@ bool RageDisplay::IsWindowed() const
 {
 	return true; // FIXME
 }
-void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, lower-left, lower-right
+void RageDisplay::DrawQuad( const RageVertex v[4] )	// upper-left, upper-right, lower-right, lower-left
 {
 	DrawQuads( v, 4 );
 }
@@ -618,8 +620,7 @@ void RageDisplay::DrawLoop_LinesAndPoints( const RageVertex v[], int iNumVerts, 
 
 void RageDisplay::DrawLoop( const RageVertex v[], int iNumVerts, float LineWidth )
 {
-	/* XXX: -1, 0, 1 */
-	if(PREFSMAN->m_iPolygonRadar == 1)
+	if( m_oglspecs->bAALinesCauseProblems )
 		DrawLoop_Polys(v, iNumVerts, LineWidth);
 	else
 		DrawLoop_LinesAndPoints(v, iNumVerts, LineWidth);

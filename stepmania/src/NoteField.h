@@ -60,7 +60,6 @@ protected:
 	NoteDisplay		m_NoteDisplay[MAX_NOTE_TRACKS];
 	
 	// used in MODE_EDIT
-	Quad			m_rectMeasureBar;
 	BitmapText		m_textMeasureNumber;
 	Quad			m_rectMarkerBar;
 	Quad			m_rectAreaHighlight;

@@ -40,6 +40,8 @@ int	ScreenMiniMenu::s_iLastAnswers[MAX_MINI_MENU_LINES];
 
 ScreenMiniMenu::ScreenMiniMenu( MiniMenuDefinition* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
+	m_bIsTransparent = true;	// draw screens below us
+
 	m_SMSendOnOK = SM_SendOnOK;
 	m_SMSendOnCancel = SM_SendOnCancel;
 	m_Def = *pDef;

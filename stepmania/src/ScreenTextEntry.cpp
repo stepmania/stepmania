@@ -37,6 +37,8 @@ const float ANSWER_HEIGHT	=	30;
  */
 ScreenTextEntry::ScreenTextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() )
 {
+	m_bIsTransparent = true;	// draw screens below us
+
 	m_SMSendWhenDone = SM_SendWhenDone;
 	m_pOnOK = OnOK;
 	m_pOnCancel = OnCancel;

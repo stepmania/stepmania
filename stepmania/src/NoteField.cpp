@@ -23,6 +23,7 @@
 #include "RageLog.h"
 #include <math.h>
 #include "ThemeManager.h"
+#include "RageDisplay.h"
 
 
 const float HOLD_NOTE_BITS_PER_BEAT	= 6;
@@ -31,8 +32,6 @@ const float ROWS_BETWEEN_HOLD_BITS	= 1 / HOLD_NOTE_BITS_PER_ROW;
 
 NoteField::NoteField()
 {
-	m_rectMeasureBar.TurnShadowOff();
-
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 
@@ -96,6 +95,10 @@ void NoteField::DrawBeatBar( const float fBeat )
 	const float fYPos		= ArrowGetYPos(	m_PlayerNumber, fYOffset );
 
 
+	RageVertex v[4];	// upper-left, upper-right, lower-right, lower-left
+	memset( v, 0, sizeof(v) );
+
+
 	int iSegWidth;
 	int iSpaceWidth;
 	float fBrightness;
@@ -109,14 +112,24 @@ void NoteField::DrawBeatBar( const float fBeat )
 	}
 	CLAMP( fBrightness, 0, 1 );
 
+	DISPLAY->SetTexture( NULL );
+	DISPLAY->SetTextureModeModulate();
+	DISPLAY->SetBlendModeNormal();
+
 	float fWidth = GetWidth();
 	for( float f=-fWidth/2; f<+fWidth/2; )
 	{
-		m_rectMeasureBar.StretchTo( RectF(f,0,f+iSegWidth,0) );
-		m_rectMeasureBar.SetY( fYPos );
-		m_rectMeasureBar.SetZoomY( bIsMeasure ? 6.f : 3.f );
-		m_rectMeasureBar.SetDiffuse( RageColor(1,1,1,0.5f*fBrightness) );
-		m_rectMeasureBar.Draw();
+		v[0].c = v[1].c = v[2].c = v[3].c = RageColor(1,1,1,0.5f*fBrightness);
+
+		float fLeft = f;
+		float fRight = f+iSegWidth;
+		float fHeight = bIsMeasure ? 6.f : 3.f;
+		v[0].p = RageVector3( fLeft, fYPos-fHeight/2, 0 );	// upper-left
+		v[1].p = RageVector3( fRight, fYPos-fHeight/2, 0 );	// upper-right
+		v[2].p = RageVector3( fRight, fYPos+fHeight/2, 0 );	// lower-right
+		v[3].p = RageVector3( fLeft, fYPos+fHeight/2, 0 );	// lower-left
+
+		DISPLAY->DrawQuad( v );
 
 		f += iSegWidth + iSpaceWidth;
 	}

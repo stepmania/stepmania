@@ -44,6 +44,9 @@ struct oglspecs_t {
 	bool EXT_texture_env_combine,
 		 WGL_EXT_swap_control,
 		 EXT_paletted_texture;
+
+	/* Is AA known to cause problems in this driver? (Voodoo3) */
+	bool bAALinesCauseProblems;
 };
 
 /* Extension functions we use.  Put these in a namespace instead of in oglspecs_t,

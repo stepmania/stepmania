@@ -39,14 +39,18 @@ public:
 	void SendScreenMessage( const ScreenMessage SM, const float fDelay );
 	void ClearMessageQueue();
 	void ClearMessageQueue( const ScreenMessage SM );	// clear of a specific SM
-protected:
 
+	bool IsTransparent() { return m_bIsTransparent; }
+
+protected:
 	// structure for holding messages sent to a Screen
 	struct QueuedScreenMessage {
 		ScreenMessage SM;  
 		float fDelayRemaining;
 	};
 	vector<QueuedScreenMessage>	m_QueuedMessages;
+
+	bool m_bIsTransparent;	// screens below us need to be drawn first
 
 public:
 

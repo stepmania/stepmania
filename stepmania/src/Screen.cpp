@@ -20,6 +20,7 @@
 
 Screen::Screen()
 {
+	m_bIsTransparent = false;
 }
 
 Screen::~Screen()
