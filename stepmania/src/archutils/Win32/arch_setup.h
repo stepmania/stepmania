@@ -12,9 +12,10 @@
 #define chdir _chdir
 #define wchdir _wchdir
 #define alloca _alloca
-
 #define stat _stat
 #define lstat _stat
+/* mkdir is missing the mode arg */
+#define mkdir(p,m) mkdir(p)
 
 #endif
 

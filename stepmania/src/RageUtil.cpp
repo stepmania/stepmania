@@ -245,7 +245,7 @@ bool CreateDirectories( CString Path )
 	for(unsigned i = 0; i < parts.size(); ++i)
 	{
 		curpath += parts[i] + "/";
-		if(mkdir( curpath ))
+		if(mkdir( curpath, 0755 ))
 			continue;
 
 		if(errno != EEXIST)

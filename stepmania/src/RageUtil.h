@@ -170,6 +170,7 @@ unsigned int GetHashForString( CString s );
 unsigned int GetHashForFile( CString sPath );
 unsigned int GetHashForDirectory( CString sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 
+bool DoStat(CString sPath, struct stat *st);
 bool DoesFileExist( const CString &sPath );
 bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );
@@ -186,16 +187,7 @@ float calc_stddev(const float *start, const float *end);
 void TrimLeft(CString &str, const char *s = "\r\n\t ");
 void TrimRight(CString &str, const char *s = "\r\n\t ");
 
-/* Fix Windows breakage ... */
-#ifdef WIN32
-#include <direct.h> /* has stuff that should be in unistd.h */
-#define getcwd _getcwd
-#define wgetcwd _wgetcwd
-#define chdir _chdir
-#define wchdir _wchdir
-#define alloca _alloca
-#define stat _stat
-#else
+#ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
 #endif
 
