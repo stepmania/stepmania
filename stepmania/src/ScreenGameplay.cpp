@@ -569,7 +569,7 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_ENDLESS:
 		this->AddChild( &m_sprCourseSongNumber );
 
-		for( p=0; p<NUM_PLAYERS; p++ )
+        FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsPlayerEnabled(p) )
 			{
 				this->AddChild( &m_textCourseSongNumber[p] );
@@ -588,7 +588,7 @@ void ScreenGameplay::Init()
 	//
 	// Player/Song options
 	//
-	for( p=0; p<NUM_PLAYERS; p++ )
+    FOREACH_PlayerNumber(p)
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
@@ -620,8 +620,7 @@ void ScreenGameplay::Init()
 
 
 
-
-	for( p=0; p<NUM_PLAYERS; p++ )
+    FOREACH_PlayerNumber(p)
 	{
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
@@ -651,7 +650,7 @@ void ScreenGameplay::Init()
 	this->AddChild( &m_BPMDisplay );
 
 	ZERO( m_pInventory );
-	for( p=0; p<NUM_PLAYERS; p++ )
+    FOREACH_PlayerNumber(p)
 	{
 //		switch( GAMESTATE->m_PlayMode )
 //		{
@@ -691,7 +690,7 @@ void ScreenGameplay::Init()
 		{
 		case PLAY_MODE_BATTLE:
 		case PLAY_MODE_RAVE:
-			for( p=0; p<NUM_PLAYERS; p++ )
+            FOREACH_PlayerNumber(p)
 			{
 				m_Win[p].Load( THEME->GetPathToB(ssprintf("ScreenGameplay win p%d",p+1)) );
 				this->AddChild( &m_Win[p] );
@@ -773,7 +772,7 @@ ScreenGameplay::~ScreenGameplay()
 
 	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
 	
-	for( int p=0; p<NUM_PLAYERS; p++ )
+    FOREACH_PlayerNumber(p)
 	{
 		SAFE_DELETE( m_pLifeMeter[p] );
 		SAFE_DELETE( m_pPrimaryScoreDisplay[p] );
@@ -835,7 +834,7 @@ void ScreenGameplay::SetupSong( int p, int iSongIndex )
 static int GetMaxSongsPlayed()
 {
 	int SongNumber = 0;
-	for( int p=0; p<NUM_PLAYERS; p++ )
+    FOREACH_PlayerNumber(p)
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			SongNumber = max( SongNumber, g_CurStageStats.iSongsPlayed[p] );
 	return SongNumber;
@@ -1388,7 +1387,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		{
 		case SongOptions::FAIL_ARCADE:
 		case SongOptions::FAIL_END_OF_SONG:
-			for ( pn=0; pn<NUM_PLAYERS; pn++ )
+            FOREACH(pn)
 				g_CurStageStats.bFailed[pn] = true;	// fail
 		}
 
