@@ -643,11 +643,14 @@ void Actor::Command( CString sCommandString )
 		else if( sName=="stoptweening" )	{ StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }
 		else if( sName=="x" )				SetX( fParam(1) );
 		else if( sName=="y" )				SetY( fParam(1) );
+		else if( sName=="z" )				SetZ( fParam(1) );
 		else if( sName=="xoffset" )			SetX( GetX()+fParam(1) );
 		else if( sName=="yoffset" )			SetY( GetY()+fParam(1) );
+		else if( sName=="zoffset" )			SetY( GetZ()+fParam(1) );
 		else if( sName=="zoom" )			SetZoom( fParam(1) );
 		else if( sName=="zoomx" )			SetZoomX( fParam(1) );
 		else if( sName=="zoomy" )			SetZoomY( fParam(1) );
+//		else if( sName=="zoomz" )			SetZoomZ( fParam(1) );
 		else if( sName=="zoomtowidth" )		ZoomToWidth( fParam(1) );
 		else if( sName=="zoomtoheight" )	ZoomToHeight( fParam(1) );
 		else if( sName=="diffuse" )			SetDiffuse( RageColor(fParam(1),fParam(2),fParam(3),fParam(4)) );
