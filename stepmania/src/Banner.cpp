@@ -21,28 +21,20 @@
 #include "Character.h"
 
 
-RageTextureID Banner::BannerTex( RageTextureID ID )
-{
-	/* Song banners often have HOT PINK color keys. */
-	ID.bHotPinkColorKey = true;
-	ID.bDither = true;
-	return ID;
-}
-
 Banner::Banner()
 {
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
 
-	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Banner all music")) );
-	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Common fallback banner")) );
-	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Banner roulette")) );
-	TEXTUREMAN->CacheTexture( BannerTex(THEME->GetPathToG("Banner random")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Banner all music")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Common fallback banner")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Banner roulette")) );
+	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathToG("Banner random")) );
 }
 
 bool Banner::Load( RageTextureID ID )
 {
-	ID = BannerTex(ID);
+	ID = SongBannerTexture(ID);
 
 	m_fPercentScrolling = 0;
 	m_bScrolling = false;
