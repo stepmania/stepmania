@@ -84,6 +84,29 @@ PrefsManager::PrefsManager()
 	m_iMaxRegenComboAfterFail = 10;
 	m_iMaxRegenComboAfterMiss = 10;
 	m_bTwoPlayerRecovery = true;
+	
+	m_iPercentScoreMarvelousWeight = 3;
+	m_iPercentScorePerfectWeight = 2;
+	m_iPercentScoreGreatWeight = 1;
+	m_iPercentScoreGoodWeight = 0;
+	m_iPercentScoreBooWeight = 0;
+	m_iPercentScoreMissWeight = 0;
+	m_iPercentScoreOKWeight = 3;
+	m_iPercentScoreNGWeight = 0;
+	m_iGradeMarvelousWeight = 2;
+	m_iGradePerfectWeight = 2;
+	m_iGradeGreatWeight = 1;
+	m_iGradeGoodWeight = 0;
+	m_iGradeBooWeight = -4;
+	m_iGradeMissWeight = -8;
+	m_iGradeOKWeight = 6;
+	m_iGradeNGWeight = 0;
+	m_fGradePercentAA = 0.93f;
+	m_fGradePercentA = 0.80f;
+	m_fGradePercentB = 0.65f;
+	m_fGradePercentC = 0.45f;
+	m_fGradePercentD = 0;
+
 	m_bDelayedEscape = true;
 	m_bInstructions = true;
 	m_bShowDontDie = true;
@@ -286,6 +309,29 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.GetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.GetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
+
+	ini.GetValue( "Options", "PercentScoreMarvelousWeight",		m_iPercentScoreMarvelousWeight );
+	ini.GetValue( "Options", "PercentScorePerfectWeight",		m_iPercentScorePerfectWeight );
+	ini.GetValue( "Options", "PercentScoreGreatWeight",			m_iPercentScoreGreatWeight );
+	ini.GetValue( "Options", "PercentScoreGoodWeight",			m_iPercentScoreGoodWeight );
+	ini.GetValue( "Options", "PercentScoreBooWeight",			m_iPercentScoreBooWeight );
+	ini.GetValue( "Options", "PercentScoreMissWeight",			m_iPercentScoreMissWeight );
+	ini.GetValue( "Options", "PercentScoreOKWeight",			m_iPercentScoreOKWeight );
+	ini.GetValue( "Options", "PercentScoreNGWeight",			m_iPercentScoreNGWeight );
+	ini.GetValue( "Options", "GradeMarvelousWeight",			m_iGradeMarvelousWeight );
+	ini.GetValue( "Options", "GradePerfectWeight",				m_iGradePerfectWeight );
+	ini.GetValue( "Options", "GradeGreatWeight",				m_iGradeGreatWeight );
+	ini.GetValue( "Options", "GradeGoodWeight",					m_iGradeGoodWeight );
+	ini.GetValue( "Options", "GradeBooWeight",					m_iGradeBooWeight );
+	ini.GetValue( "Options", "GradeMissWeight",					m_iGradeMissWeight );
+	ini.GetValue( "Options", "GradeOKWeight",					m_iGradeOKWeight );
+	ini.GetValue( "Options", "GradeNGWeight",					m_iGradeNGWeight );
+	ini.GetValue( "Options", "GradePercentAA",					m_fGradePercentAA );
+	ini.GetValue( "Options", "GradePercentA",					m_fGradePercentA );
+	ini.GetValue( "Options", "GradePercentB",					m_fGradePercentB );
+	ini.GetValue( "Options", "GradePercentC",					m_fGradePercentC );
+	ini.GetValue( "Options", "GradePercentD",					m_fGradePercentD );
+
 	ini.GetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.GetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.GetValue( "Options", "Vsync",							m_bVsync );
@@ -444,6 +490,29 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "MaxRegenComboAfterFail",			m_iMaxRegenComboAfterFail );
 	ini.SetValue( "Options", "MaxRegenComboAfterMiss",			m_iMaxRegenComboAfterMiss );
 	ini.SetValue( "Options", "TwoPlayerRecovery",				m_bTwoPlayerRecovery );
+
+	ini.SetValue( "Options", "PercentScoreMarvelousWeight",		m_iPercentScoreMarvelousWeight );
+	ini.SetValue( "Options", "PercentScorePerfectWeight",		m_iPercentScorePerfectWeight );
+	ini.SetValue( "Options", "PercentScoreGreatWeight",			m_iPercentScoreGreatWeight );
+	ini.SetValue( "Options", "PercentScoreGoodWeight",			m_iPercentScoreGoodWeight );
+	ini.SetValue( "Options", "PercentScoreBooWeight",			m_iPercentScoreBooWeight );
+	ini.SetValue( "Options", "PercentScoreMissWeight",			m_iPercentScoreMissWeight );
+	ini.SetValue( "Options", "PercentScoreOKWeight",			m_iPercentScoreOKWeight );
+	ini.SetValue( "Options", "PercentScoreNGWeight",			m_iPercentScoreNGWeight );
+	ini.SetValue( "Options", "GradeMarvelousWeight",			m_iGradeMarvelousWeight );
+	ini.SetValue( "Options", "GradePerfectWeight",				m_iGradePerfectWeight );
+	ini.SetValue( "Options", "GradeGreatWeight",				m_iGradeGreatWeight );
+	ini.SetValue( "Options", "GradeGoodWeight",					m_iGradeGoodWeight );
+	ini.SetValue( "Options", "GradeBooWeight",					m_iGradeBooWeight );
+	ini.SetValue( "Options", "GradeMissWeight",					m_iGradeMissWeight );
+	ini.SetValue( "Options", "GradeOKWeight",					m_iGradeOKWeight );
+	ini.SetValue( "Options", "GradeNGWeight",					m_iGradeNGWeight );
+	ini.SetValue( "Options", "GradePercentAA",					m_fGradePercentAA );
+	ini.SetValue( "Options", "GradePercentA",					m_fGradePercentA );
+	ini.SetValue( "Options", "GradePercentB",					m_fGradePercentB );
+	ini.SetValue( "Options", "GradePercentC",					m_fGradePercentC );
+	ini.SetValue( "Options", "GradePercentD",					m_fGradePercentD );
+
 	ini.SetValue( "Options", "DelayedEscape",					m_bDelayedEscape );
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );

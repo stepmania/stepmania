@@ -449,11 +449,26 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 
 	/* This is used for Oni percentage displays.  Grading values are currently in
 	 * StageStats::GetGrade. */
-	const int TapScoreValues[NUM_TAP_NOTE_SCORES] = { 0, 0, 0, 0, +1, +2, +3 };
+	int TapScoreValues[NUM_TAP_NOTE_SCORES] =
+	{
+		0,
+		PREFSMAN->m_iPercentScoreMissWeight,
+		PREFSMAN->m_iPercentScoreBooWeight,
+		PREFSMAN->m_iPercentScoreGoodWeight,
+		PREFSMAN->m_iPercentScoreGreatWeight,
+		PREFSMAN->m_iPercentScorePerfectWeight,
+		PREFSMAN->m_iPercentScoreMarvelousWeight,
+	};
 	return TapScoreValues[tns];
 }
 
 int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 {
-	return TapNoteScoreToDancePoints(TNS_MARVELOUS);
+	int HoldScoreValues[NUM_TAP_NOTE_SCORES] =
+	{
+		0,
+		PREFSMAN->m_iPercentScoreNGWeight,
+		PREFSMAN->m_iPercentScoreOKWeight,
+	};
+	return HoldScoreValues[hns];
 }

@@ -16,6 +16,7 @@
 #include "RageLog.h"
 #include "SongManager.h"
 #include "RageUtil.h"
+#include "PrefsManager.h"
 
 StageStats	g_CurStageStats;
 vector<StageStats>	g_vPlayedStageStats;
@@ -145,8 +146,22 @@ Grade StageStats::GetGrade( PlayerNumber pn ) const
 	 * is tricky since at that point the ScoreKeepers no longer exist. 
 	 *
 	 * See http://www.aaroninjapan.com/ddr2.html ("Regular play scoring") */
-	const float TapScoreValues[NUM_TAP_NOTE_SCORES] = { 0, -8, -4, 0, +1, +2, +2 };
-	const float HoldScoreValues[NUM_HOLD_NOTE_SCORES] = { 0, 0, +6 };
+	const float TapScoreValues[NUM_TAP_NOTE_SCORES] = 
+	{ 
+		0,
+		PREFSMAN->m_iGradeMissWeight,
+		PREFSMAN->m_iGradeBooWeight,
+		PREFSMAN->m_iGradeGoodWeight,
+		PREFSMAN->m_iGradeGreatWeight,
+		PREFSMAN->m_iGradePerfectWeight,
+		PREFSMAN->m_iGradeMarvelousWeight,
+	};
+	const float HoldScoreValues[NUM_HOLD_NOTE_SCORES] =
+	{
+		0,
+		PREFSMAN->m_iGradeNGWeight,
+		PREFSMAN->m_iGradeOKWeight,
+	};
 
 	float Possible = 0, Actual = 0;
 	int i;
