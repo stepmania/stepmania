@@ -21,7 +21,7 @@ class ScoreKeeperMAX2: public ScoreKeeper
  	int		m_iCurToastyCombo;
 	bool	m_bIsLastSongInCourse;
 
-	const vector<Steps*>& apSteps;
+	vector<Steps*> m_apSteps;
 
 	void AddScore( TapNoteScore score );
 
@@ -32,11 +32,13 @@ class ScoreKeeperMAX2: public ScoreKeeper
 
 public:
 	ScoreKeeperMAX2( 
-		const vector<Song*>& apSongs, 
-		const vector<Steps*>& apSteps, 
-		const vector<AttackArray> &asModifiers, 
 		PlayerState* pPlayerState,
 		PlayerStageStats* pPlayerStageStats );
+
+	void Load(
+		const vector<Song*>& apSongs,
+		const vector<Steps*>& apSteps,
+		const vector<AttackArray> &asModifiers );
 
 	// before a song plays (called multiple times if course)
 	void OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData );

@@ -12,9 +12,11 @@
  */
 
 #include "Actor.h"
+#include "Attack.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore and HoldNoteScore
 class NoteData;
 class Inventory;
+class Song;
 class Steps;
 struct PlayerState;
 struct PlayerStageStats;
@@ -34,6 +36,11 @@ protected:
 
 public:
 	ScoreKeeper(PlayerState* pPlayerState,PlayerStageStats* pPlayerStageStats) { m_pPlayerState=pPlayerState; m_pPlayerStageStats=pPlayerStageStats; }
+	virtual void Load(
+		const vector<Song*>& apSongs,
+		const vector<Steps*>& apSteps,
+		const vector<AttackArray> &asModifiers ) { }
+
 	virtual void DrawPrimitives() { }
 	virtual void Update( float fDelta ) { }
 

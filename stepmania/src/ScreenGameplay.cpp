@@ -199,9 +199,6 @@ void ScreenGameplay::Init()
 		case PrefsManager::SCORING_MAX2:
 		case PrefsManager::SCORING_5TH:
 			m_pPrimaryScoreKeeper[p] = new ScoreKeeperMAX2( 
-				m_apSongsQueue, 
-				m_vpStepsQueue[p], 
-				m_asModifiersQueue[p], 
 				GAMESTATE->m_pPlayerState[p], 
 				&STATSMAN->m_CurStageStats.m_player[p] );
 			break;
@@ -216,6 +213,14 @@ void ScreenGameplay::Init()
 				&STATSMAN->m_CurStageStats.m_player[p] );
 			break;
 		}
+	}
+
+	FOREACH_EnabledPlayer(pn)
+	{
+		if( m_pPrimaryScoreKeeper[pn] )
+			m_pPrimaryScoreKeeper[pn]->Load( m_apSongsQueue, m_vpStepsQueue[pn], m_asModifiersQueue[pn] );
+		if( m_pSecondaryScoreKeeper[pn] )
+			m_pSecondaryScoreKeeper[pn]->Load( m_apSongsQueue, m_vpStepsQueue[pn], m_asModifiersQueue[pn] );
 	}
 
 	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_bAutoSync;

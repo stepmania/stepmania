@@ -19,15 +19,21 @@
 #include "song.h"
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( 
-		const vector<Song*>& apSongs, 
-		const vector<Steps*>& apSteps_, 
-		const vector<AttackArray> &asModifiers, 
 		PlayerState* pPlayerState,
 		PlayerStageStats* pPlayerStageStats ):
-	ScoreKeeper(pPlayerState,pPlayerStageStats), apSteps(apSteps_)
+	ScoreKeeper(pPlayerState,pPlayerStageStats)
 {
-	ASSERT( apSongs.size() == apSteps_.size() );
+}
+
+void ScoreKeeperMAX2::Load(
+		const vector<Song*>& apSongs,
+		const vector<Steps*>& apSteps,
+		const vector<AttackArray> &asModifiers )
+{
+	m_apSteps = apSteps;
+	ASSERT( apSongs.size() == apSteps.size() );
 	ASSERT( apSongs.size() == asModifiers.size() );
+
 	//
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	//
@@ -47,7 +53,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2(
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();
 		NoteData nd;
-		pStyle->GetTransformedNoteDataForStyle( pPlayerState->m_PlayerNumber, ndTemp, nd );
+		pStyle->GetTransformedNoteDataForStyle( m_pPlayerState->m_PlayerNumber, ndTemp, nd );
 
 		/* Compute RadarValues before applying any user-selected mods.  Apply
 		 * Course mods and count them in the "pre" RadarValues because they're
@@ -64,7 +70,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2(
 		 * have eg. GAMESTATE->GetOptionsForCourse(po,so,pn) to get options based on
 		 * the last call to StoreSelectedOptions and the modifiers list, but that'd
 		 * mean moving the queues in ScreenGameplay to GameState ... */
-		NoteDataUtil::TransformNoteData( nd, pPlayerState->m_PlayerOptions, pSteps->m_StepsType );
+		NoteDataUtil::TransformNoteData( nd, m_pPlayerState->m_PlayerOptions, pSteps->m_StepsType );
 		RadarValues rvPost;
 		NoteDataUtil::GetRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
 		 
@@ -126,7 +132,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, c
 	m_iMaxPossiblePoints = 0;
 	if( GAMESTATE->IsCourseMode() )
 	{
-		const int numSongsInCourse = apSteps.size();
+		const int numSongsInCourse = m_apSteps.size();
 		ASSERT( numSongsInCourse != 0 );
 
 		const int iIndex = iSongInCourseIndex % numSongsInCourse;
