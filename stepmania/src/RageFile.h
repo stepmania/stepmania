@@ -75,6 +75,7 @@ protected:
 	void SetError( const CString &err ) { m_Error = err; } /* called by RageFileObj::SetError */
 	
 private:
+	int FillBuf();
 	void ResetBuf();
 
 	RageFileObj *m_File;
@@ -88,7 +89,7 @@ private:
 	enum { BSIZE = 1024*16 };
 	char	m_Buffer[BSIZE];
 	char	*m_pBuf;
-	int		m_BufUsed;
+	int		m_BufAvail;
 };
 
 #endif

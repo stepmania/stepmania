@@ -6,7 +6,7 @@
 RageFile::RageFile()
 {
     m_File = NULL;
-	m_BufUsed = 0;
+	m_BufAvail = 0;
 	m_EOF = false;
 	m_FilePos = 0;
 }
@@ -14,7 +14,7 @@ RageFile::RageFile()
 RageFile::RageFile( const CString& path, int mode )
 {
     m_File = NULL;
-	m_BufUsed = 0;
+	m_BufAvail = 0;
 	m_EOF = false;
 	m_FilePos = 0;
 	Open(path, mode);
@@ -31,8 +31,8 @@ RageFile::RageFile( const RageFile &cpy )
 	m_Error = cpy.m_Error;
 	m_EOF = cpy.m_EOF;
 	m_FilePos = cpy.m_FilePos;
-	memcpy( this->m_Buffer, cpy.m_Buffer, cpy.m_BufUsed );
-	m_BufUsed = cpy.m_BufUsed;
+	memcpy( this->m_Buffer, cpy.m_Buffer, cpy.m_BufAvail );
+	m_BufAvail = cpy.m_BufAvail;
 }
 
 CString RageFile::GetPath() const
@@ -86,9 +86,27 @@ void RageFile::Close()
 	m_File = NULL;
 }
 
+/* Fill the internal buffer.  This never marks EOF, since this is an internal, hidden
+ * read; EOF should only be set as a result of a real read.  (That is, disabling buffering
+ * shouldn't cause the results of AtEOF to change.) */
+int RageFile::FillBuf()
+{
+	/* The buffer starts at m_Buffer; any data in it starts at m_pBuf; space between
+	 * the two is old data that we've read.  (Don't mangle that data; we can use it
+	 * for seeking backwards.) */
+	const int iBufAvail = sizeof(m_Buffer) - (m_pBuf-m_Buffer);
+	ASSERT_M( iBufAvail >= 0, ssprintf("%p, %p, %i", m_pBuf, m_Buffer, (int) sizeof(m_Buffer) ) );
+	const int size = m_File->Read( m_pBuf+m_BufAvail, iBufAvail );
+
+	if( size > 0 )
+		m_BufAvail += size;
+
+	return size;
+}
+
 void RageFile::ResetBuf()
 {
-	m_BufUsed = 0;
+	m_BufAvail = 0;
 	m_pBuf = m_Buffer;
 }
 
@@ -104,26 +122,29 @@ int RageFile::GetLine( CString &out )
 	if( !(m_Mode&READ) )
 		RageException::Throw("\"%s\" is not open for reading", GetPath().c_str());
 
+	if( m_EOF )
+		return 0;
+
 	bool GotData = false;
 	while( 1 )
 	{
 		bool done = false;
 
 		/* Find the end of the block we'll move to out. */
-		char *p = (char *) memchr( m_pBuf, '\n', m_BufUsed );
+		char *p = (char *) memchr( m_pBuf, '\n', m_BufAvail );
 		bool ReAddCR = false;
 		if( p == NULL )
 		{
 			/* Hack: If the last character of the buffer is \r, then it's likely that an
 			 * \r\n has been split across buffers.  Move everything else, then move the
 			 * \r to the beginning of the buffer and handle it the next time around the loop. */
-			if( m_pBuf[m_BufUsed-1] == '\r' )
+			if( m_pBuf[m_BufAvail-1] == '\r' )
 			{
 				ReAddCR = true;
-				--m_BufUsed;
+				--m_BufAvail;
 			}
 
-			p = m_pBuf+m_BufUsed; /* everything */
+			p = m_pBuf+m_BufAvail; /* everything */
 		}
 		else
 			done = true;
@@ -141,7 +162,7 @@ int RageFile::GetLine( CString &out )
 			const int used = p-m_pBuf;
 			if( used )
 			{
-				m_BufUsed -= used;
+				m_BufAvail -= used;
 				m_FilePos += used;
 				GotData = true;
 				m_pBuf = p;
@@ -150,10 +171,10 @@ int RageFile::GetLine( CString &out )
 
 		if( ReAddCR )
 		{
-			ASSERT( m_BufUsed == 0 );
+			ASSERT( m_BufAvail == 0 );
 			m_pBuf = m_Buffer;
-			m_Buffer[m_BufUsed] = '\r';
-			++m_BufUsed;
+			m_Buffer[m_BufAvail] = '\r';
+			++m_BufAvail;
 		}
 
 		if( done )
@@ -162,7 +183,7 @@ int RageFile::GetLine( CString &out )
 		/* We need more data. */
 		m_pBuf = m_Buffer;
 
-		const int size = m_File->Read( m_pBuf+m_BufUsed, sizeof(m_Buffer)-m_BufUsed );
+		const int size = FillBuf();
 
 		/* If we've read data already, then don't mark EOF yet.  Wait until the
 		 * next time we're called. */
@@ -171,11 +192,10 @@ int RageFile::GetLine( CString &out )
 			m_EOF = true;
 			return 0;
 		}
-		if( size < 0 )
+		if( size == -1 )
 			return -1; // error
 		if( size == 0 )
 			break; // EOF or error
-		m_BufUsed += size;
 	}
 	return GotData? 1:0;
 }
@@ -206,26 +226,45 @@ int RageFile::Read( void *buffer, size_t bytes )
 
 	int ret = 0;
 
-	int FromBuffer = min( (int) bytes, m_BufUsed );
-	memcpy( buffer, m_pBuf, FromBuffer );
-
-	ret += FromBuffer;
-	m_FilePos += FromBuffer;
-	bytes -= FromBuffer;
-	m_BufUsed -= FromBuffer;
-	m_pBuf += FromBuffer;
-	
-	buffer = (char *) buffer + FromBuffer;
-	
-	if( bytes )
+	while( !m_EOF && bytes > 0 )
 	{
-		int FromFile = m_File->Read( buffer, bytes );
-		if( FromFile < 0 )
-			return -1;
-		if( FromFile == 0 )
+		/* Copy data out of the buffer first. */
+		int FromBuffer = min( (int) bytes, m_BufAvail );
+		memcpy( buffer, m_pBuf, FromBuffer );
+
+		ret += FromBuffer;
+		m_FilePos += FromBuffer;
+		bytes -= FromBuffer;
+		m_BufAvail -= FromBuffer;
+		m_pBuf += FromBuffer;
+		
+		buffer = (char *) buffer + FromBuffer;
+	
+		if( !bytes )
+			break;
+
+		/* We need more; either fill the buffer and keep going, or just read directly
+		 * into the destination buffer. */
+		if( bytes >= sizeof(m_Buffer) )
+		{
+			/* We have a lot more to read, so don't waste time copying it into the
+			 * buffer. */
+			int FromFile = m_File->Read( buffer, bytes );
+			if( FromFile < 0 )
+				return FromFile;
+			if( FromFile == 0 )
+				m_EOF = true;
+			ret += FromFile;
+			m_FilePos += FromFile;
+			return ret;
+		}
+
+		m_pBuf = m_Buffer;
+		int got = FillBuf();
+		if( got < 0 )
+			return got;
+		if( got == 0 )
 			m_EOF = true;
-		ret += FromFile;
-		m_FilePos += FromFile;
 	}
 
 	return ret;
@@ -243,10 +282,10 @@ int RageFile::Seek( int offset )
 
 	/* If the new position is within the buffer, just eat the buffered data. */
 	int FromBuffer = offset - m_FilePos;
-	if( 0 <= FromBuffer && FromBuffer <= m_BufUsed )
+	if( 0 <= FromBuffer && FromBuffer <= m_BufAvail )
 	{
 		m_FilePos += FromBuffer;
-		m_BufUsed -= FromBuffer;
+		m_BufAvail -= FromBuffer;
 		m_pBuf += FromBuffer;
 
 		return m_FilePos;
@@ -283,10 +322,10 @@ int RageFile::SeekCur( int offset )
 	if( !offset || m_EOF )
 		return m_FilePos;
 
-	int FromBuffer = min( offset, m_BufUsed );
+	int FromBuffer = min( offset, m_BufAvail );
 	m_FilePos += FromBuffer;
 	offset -= FromBuffer;
-	m_BufUsed -= FromBuffer;
+	m_BufAvail -= FromBuffer;
 	m_pBuf += FromBuffer;
 	
 	if( offset )
