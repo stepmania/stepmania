@@ -2,8 +2,10 @@
 #define DSOUND_HELPERS 1
 
 #include "SDL.h"
+#if defined(_WINDOWS)
 #include "windows.h"
 #include "wtypes.h"
+#endif
 
 struct IDirectSound;
 struct IDirectSoundBuffer;

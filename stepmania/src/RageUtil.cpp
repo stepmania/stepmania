@@ -146,10 +146,10 @@ CString vssprintf( const char *fmt, va_list argList)
 }
 
 #ifdef WIN32
-#include "windows.h"
 #ifdef _XBOX
 #include "D3DX8Core.h"
 #else
+#include "windows.h"
 #include "Dxerr8.h"
 #pragma comment(lib, "Dxerr8.lib")
 #endif

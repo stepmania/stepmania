@@ -11,7 +11,7 @@
 #if defined(INTEGER_OGG)
 #include "tremor/ivorbisfile.h"
 #else
-#include "vorbis/vorbisfile.h"
+#include "vorbis/vorbis/vorbisfile.h"
 #endif
 
 #if defined(_XBOX)

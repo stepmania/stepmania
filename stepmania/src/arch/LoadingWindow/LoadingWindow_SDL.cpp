@@ -2,6 +2,7 @@
 
 #include "SDL_utils.h"
 #include "SDL_image.h"
+#include "SDL_video.h"
 #include "SDL_rotozoom.h"
 #include "LoadingWindow_SDL.h"
 #include "loading.xpm"

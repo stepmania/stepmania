@@ -14,7 +14,9 @@
 #include <dirent.h>
 #include <fcntl.h>
 #else
+#if !defined(_XBOX)
 #include <windows.h>
+#endif
 #include <io.h>
 #endif
 

@@ -63,7 +63,7 @@ freely, subject to the following restrictions:
 
 #include <errno.h>
 
-#if defined(_WINDOWS)
+#if defined(_WINDOWS) || defined(_XBOX)
 	#include "zlib/zlib.h"
 	#pragma comment(lib, "zlib/zdll.lib")
 #else

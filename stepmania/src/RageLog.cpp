@@ -20,7 +20,7 @@
 #include "RageThreads.h"
 #include <time.h>
 #include "ProductInfo.h"
-#if defined(WIN32) && !defined(_XBOX)
+#if defined(_WINDOWS)
 #include "windows.h"
 #endif
 #include <map>

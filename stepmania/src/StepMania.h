@@ -21,7 +21,7 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame=true );
 void SaveGamePrefsToDisk();
 void ChangeCurrentGame( Game g );
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
 #include "windows.h"
 extern HWND g_hWndMain;
 #endif
