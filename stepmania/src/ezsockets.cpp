@@ -10,7 +10,6 @@
 
 #include "global.h" // StepMania only includes
 
-
 #if defined(_XBOX)
 #elif defined(_WINDOWS) // We need the WinSock32 Library on Windows
 #pragma comment(lib,"wsock32.lib")
@@ -159,6 +158,8 @@ bool EzSockets::connect(const std::string& host,unsigned short port)
 #elif defined(_WINDOWS)
 	struct hostent* phe;
 	phe = gethostbyname(host.c_str());
+	if (phe == NULL)
+		return false;
     addr.sin_addr = *((LPIN_ADDR)* phe->h_addr_list);
 #else
 	inet_pton(AF_INET,host.c_str(), &addr.sin_addr);
