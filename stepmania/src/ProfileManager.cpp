@@ -71,7 +71,10 @@ void ProfileManager::TryLoadProfile( PlayerNumber pn )
 {
 	CString sProfile = PREFSMAN->m_sDefaultProfile[pn];
 	if( sProfile.empty() )
+	{
+		m_sProfileDir[pn] = "";
 		return;
+	}
 
 	if( !DoesProfileExist(sProfile) )
 	{
