@@ -139,8 +139,6 @@ public:
 	float	m_fMusicLengthSeconds;
 	float	m_fFirstBeat;
 	float	m_fLastBeat;
-	float   GetFirstBeat() const;
-	float   GetLastBeat() const;
 	float	m_fMusicSampleStartSeconds;
 	float	m_fMusicSampleLengthSeconds;
 	enum { DISPLAY_ACTUAL, DISPLAY_SPECIFIED, DISPLAY_RANDOM } m_DisplayBPMType;

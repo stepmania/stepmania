@@ -193,7 +193,9 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_bAutoSync;
 
 	m_DancingState = STATE_INTRO;
-	m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
+
+	// Set this in LoadNextSong()
+	//m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 	
 	m_bZeroDeltaOnNextUpdate = false;
 
@@ -825,6 +827,10 @@ void ScreenGameplay::LoadNextSong()
 	m_Background.SetDiffuse( RageColor(0.5f,0.5f,0.5f,1) );
 	m_Background.BeginTweening( 2 );
 	m_Background.SetDiffuse( RageColor(1,1,1,1) );
+
+
+
+	m_fTimeLeftBeforeDancingComment = GAMESTATE->m_pCurSong->m_fFirstBeat + SECONDS_BETWEEN_COMMENTS;
 
 
 	/* m_soundMusic and m_Background take a very long time to load,
