@@ -10,12 +10,12 @@
 bool GetFileVersion( CString fn, CString &out )
 {
 	DWORD ignore;
-	DWORD iSize = GetFileVersionInfoSize( fn, &ignore );
+	DWORD iSize = GetFileVersionInfoSize( (char *) fn.c_str(), &ignore );
 	if( !iSize )
 		return false;
 
 	CString VersionBuffer( iSize, ' ' );
-	if( !GetFileVersionInfo( fn, NULL, iSize, (char *) VersionBuffer.c_str() ) )
+	if( !GetFileVersionInfo( (char *) fn.c_str(), NULL, iSize, (char *) VersionBuffer.c_str() ) )
 		return false;
 
 	WORD *iTrans;
