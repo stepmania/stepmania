@@ -274,6 +274,7 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 #include "ScreenTestSound.h"
 #include "ScreenTitleMenu.h"
 #include "ScreenNetSelectMusic.h"
+#include "ScreenNetRoom.h"
 #include "ScreenNetEvaluation.h"
 #include "ScreenEz2SelectMusic.h"
 #include "ScreenRanking.h"
@@ -379,6 +380,7 @@ Screen* Screen::Create( CString sClassName )
 #if !defined(WITHOUT_NETWORKING)
 	IF_RETURN( ScreenNetworkOptions );
 	IF_RETURN( ScreenNetSelectMusic );
+	IF_RETURN( ScreenNetRoom );
 	IF_RETURN( ScreenNetEvaluation );
 #endif
 

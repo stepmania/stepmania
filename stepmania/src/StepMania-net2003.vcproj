@@ -385,6 +385,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenNetSelectMusic.cpp">
 			</File>
 			<File
+				RelativePath="ScreenNetSelectBase.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetSelectBase.h">
+			</File>
+			<File
+				RelativePath="ScreenNetRoom.cpp">
+			</File>
+			<File
+				RelativePath="ScreenNetRoom.h">
+			</File>
+			<File
 				RelativePath="ScreenNetSelectMusic.h">
 			</File>
 			<File
