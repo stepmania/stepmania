@@ -320,7 +320,7 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
 			}
-			else if( sscanf( sParams[1], "%f", &out.m_fDisplayBPMMin ) != 1 )
+			else if( sscanf( sParams[1], "%f", &out.m_fDisplayBPMMin ) == 1 )
 			{
 				out.m_DisplayBPMType = Song::DISPLAY_SPECIFIED;
 				out.m_fDisplayBPMMax = out.m_fDisplayBPMMin;
