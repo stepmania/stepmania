@@ -29,9 +29,8 @@ class InputHandler
 	RageTimer m_LastUpdate;
 
 public:
-	/* It's vital that this be called at the *end* of any overloads. */
-	virtual void Update(float fDeltaTime);
 	virtual ~InputHandler() { }
+	virtual void Update(float fDeltaTime) { }
 	virtual void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut) = 0;
 
 	/* In Windows, some devices need to be recreated if we recreate our main window.
@@ -53,6 +52,9 @@ protected:
 	 *
 	 * If the timestamp is set, it'll be left alone. */
 	void ButtonPressed( DeviceInput di, bool Down );
+
+	/* Call this at the end of polling input. */
+	void UpdateTimer();
 };
 
 #endif

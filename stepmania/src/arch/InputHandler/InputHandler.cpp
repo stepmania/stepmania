@@ -2,7 +2,7 @@
 #include "InputFilter.h"
 #include "InputHandler.h"
 
-void InputHandler::Update(float fDeltaTime)
+void InputHandler::UpdateTimer()
 {
 	m_LastUpdate.Touch();
 }
