@@ -75,6 +75,9 @@ void ScreenJukeboxMenu::Input( const DeviceInput& DeviceI, const InputEventType 
 {
 	LOG->Trace( "ScreenJukeboxMenu::Input()" );
 
+	if( m_Menu.IsTransitioning() )
+		return;
+
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
