@@ -352,7 +352,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				this->AddChild( &m_LargeBanner );
 
 				m_sprLargeBannerFrame.Load( THEME->GetPathToG("ScreenEvaluation banner frame") );
-				m_sprLargeBannerFrame.SetName( "LargeBanner" );
+				m_sprLargeBannerFrame.SetName( "LargeBannerFrame" );
 				UtilSetXYAndOnCommand( m_sprLargeBannerFrame, "ScreenEvaluation" );
 				this->AddChild( &m_sprLargeBannerFrame );
 			}
@@ -665,9 +665,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				continue;	// skip
 
 			int iTotalScore=0;
-
-			int i=0;
-			for(i=0; i<GAMESTATE->m_vPlayedStageStats.size();i++)
+			for( unsigned i=0; i<GAMESTATE->m_vPlayedStageStats.size(); i++ )
 				iTotalScore += GAMESTATE->m_vPlayedStageStats[i].iScore[p];
 
 			iTotalScore += stageStats.iScore[p];
