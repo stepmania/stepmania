@@ -103,9 +103,7 @@ Grade PlayerStageStats::GetGrade() const
 		return GRADE_FAILED;
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
-	 * is tricky since at that point the ScoreKeepers no longer exist. 
-	 *
-	 * See http://www.aaroninjapan.com/ddr2.html ("Regular play scoring") */
+	 * is tricky since at that point the ScoreKeepers no longer exist. */
 	float Possible = 0, Actual = 0;
 	FOREACH_TapNoteScore( tns )
 	{
