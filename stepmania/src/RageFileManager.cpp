@@ -288,6 +288,9 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );
 
+	FixSlashesInPlace( Root );
+	FixSlashesInPlace( MountPoint );
+
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
 	ASSERT( Root != "" );
@@ -326,6 +329,9 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )
 {
 	LockMut( *g_Mutex );
+
+	FixSlashesInPlace( Root );
+	FixSlashesInPlace( MountPoint );
 
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
