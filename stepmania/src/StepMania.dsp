@@ -60,7 +60,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                     	cl                                      /Zl                                      /nologo                                      /c                                      verstub.cpp                                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                       	cl                                        /Zl                                        /nologo                                        /c                                        verstub.cpp                                        /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -95,7 +95,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                     	cl                                      /Zl                                      /nologo                                      /c                                      verstub.cpp                                      /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                       	cl                                        /Zl                                        /nologo                                        /c                                        verstub.cpp                                        /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -542,29 +542,12 @@ SOURCE=.\MsdFile.cpp
 SOURCE=.\MsdFile.h
 # End Source File
 # End Group
-# Begin Group "System"
+# Begin Group "StepMania"
 
 # PROP Default_Filter ""
 # Begin Group "arch"
 
 # PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\arch\arch.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\arch.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\arch_default.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\arch\arch_Win32.h
-# End Source File
-# End Group
 # Begin Group "LoadingWindow"
 
 # PROP Default_Filter ""
@@ -621,10 +604,71 @@ SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.cpp
 SOURCE=.\arch\Sound\RageSoundDriver_DSound_Software.h
 # End Source File
 # End Group
+# Begin Group "ErrorDialog"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\arch\ErrorDialog\ErrorDialog.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ErrorDialog\ErrorDialog_stdout.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ErrorDialog\ErrorDialog_stdout.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ErrorDialog\ErrorDialog_Win32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ErrorDialog\ErrorDialog_Win32.h
+# End Source File
+# End Group
+# Begin Source File
+
+SOURCE=.\arch\arch.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\arch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\arch_default.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\arch_Win32.h
+# End Source File
+# End Group
+# Begin Group "system"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\archutils\Win32\AppInstance.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\AppInstance.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\resource.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\StepMania.ICO
+# End Source File
+# Begin Source File
+
+SOURCE=.\StepMania.RC
+# End Source File
+# End Group
 # Begin Source File
 
 SOURCE=.\ScreenDimensions.h
@@ -657,18 +701,6 @@ SOURCE=.\StepMania.cpp
 # Begin Source File
 
 SOURCE=.\StepMania.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\StepMania.ICO
-# End Source File
-# Begin Source File
-
-SOURCE=.\StepMania.RC
-# End Source File
-# Begin Source File
-
-SOURCE=.\StepMania.xpm
 # End Source File
 # End Group
 # Begin Group "Transitions"
@@ -1635,6 +1667,10 @@ SOURCE=.\error.bmp
 # Begin Source File
 
 SOURCE=.\error2.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\StepMania.xpm
 # End Source File
 # End Target
 # End Project

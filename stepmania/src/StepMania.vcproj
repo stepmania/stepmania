@@ -569,7 +569,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 		</Filter>
 		<Filter
-			Name="System"
+			Name="StepMania"
 			Filter="">
 			<File
 				RelativePath=".\StdAfx.cpp">
@@ -581,19 +581,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="StdString.h">
 			</File>
 			<File
-				RelativePath=".\StepMania.ICO">
-			</File>
-			<File
-				RelativePath=".\StepMania.RC">
-			</File>
-			<File
 				RelativePath=".\StepMania.cpp">
 			</File>
 			<File
 				RelativePath=".\StepMania.h">
-			</File>
-			<File
-				RelativePath=".\resource.h">
 			</File>
 			<Filter
 				Name="arch"
@@ -610,49 +601,87 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath="arch\arch_default.h">
 				</File>
+				<Filter
+					Name="LoadingWindow"
+					Filter="">
+					<File
+						RelativePath="arch\LoadingWindow\LoadingWindow.h">
+					</File>
+					<File
+						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
+					</File>
+					<File
+						RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
+					</File>
+					<File
+						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.cpp">
+					</File>
+					<File
+						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="ErrorDialog"
+					Filter="">
+					<File
+						RelativePath="arch\ErrorDialog\ErrorDialog.h">
+					</File>
+					<File
+						RelativePath="arch\ErrorDialog\ErrorDialog_Win32.cpp">
+					</File>
+					<File
+						RelativePath="arch\ErrorDialog\ErrorDialog_Win32.h">
+					</File>
+					<File
+						RelativePath="arch\ErrorDialog\ErrorDialog_stdout.cpp">
+					</File>
+					<File
+						RelativePath="arch\ErrorDialog\ErrorDialog_stdout.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="Sound"
+					Filter="">
+					<File
+						RelativePath="arch\Sound\DSoundHelpers.cpp">
+					</File>
+					<File
+						RelativePath="arch\Sound\DSoundHelpers.h">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver.h">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_DSound.cpp">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_DSound.h">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp">
+					</File>
+					<File
+						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="LoadingWindow"
+				Name="system"
 				Filter="">
 				<File
-					RelativePath="arch\LoadingWindow\LoadingWindow.h">
+					RelativePath="archutils\Win32\AppInstance.cpp">
 				</File>
 				<File
-					RelativePath="arch\LoadingWindow\LoadingWindow_SDL.cpp">
+					RelativePath="archutils\Win32\AppInstance.h">
 				</File>
 				<File
-					RelativePath="arch\LoadingWindow\LoadingWindow_SDL.h">
+					RelativePath=".\StepMania.ICO">
 				</File>
 				<File
-					RelativePath="arch\LoadingWindow\LoadingWindow_Win32.cpp">
+					RelativePath=".\StepMania.RC">
 				</File>
 				<File
-					RelativePath="arch\LoadingWindow\LoadingWindow_Win32.h">
-				</File>
-			</Filter>
-			<Filter
-				Name="Sound"
-				Filter="">
-				<File
-					RelativePath="arch\Sound\DSoundHelpers.cpp">
-				</File>
-				<File
-					RelativePath="arch\Sound\DSoundHelpers.h">
-				</File>
-				<File
-					RelativePath="arch\Sound\RageSoundDriver.h">
-				</File>
-				<File
-					RelativePath="arch\Sound\RageSoundDriver_DSound.cpp">
-				</File>
-				<File
-					RelativePath="arch\Sound\RageSoundDriver_DSound.h">
-				</File>
-				<File
-					RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp">
-				</File>
-				<File
-					RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
+					RelativePath=".\resource.h">
 				</File>
 			</Filter>
 		</Filter>
