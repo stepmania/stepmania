@@ -19,6 +19,11 @@ InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our p
 
 InputFilter::InputFilter()
 {
+	Reset();
+}
+
+void InputFilter::Reset()
+{
 	memset(m_BeingHeld, 0, sizeof(m_BeingHeld));
 
 	for( int i=0; i<NUM_INPUT_DEVICES; i++ )

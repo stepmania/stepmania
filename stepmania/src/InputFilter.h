@@ -47,6 +47,7 @@ public:
 	void ResetDevice( InputDevice dev );
 
 	InputFilter();
+	void Reset();
 	void Update(float fDeltaTime);
 
 	bool IsBeingPressed( DeviceInput di );

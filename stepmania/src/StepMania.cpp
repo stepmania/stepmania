@@ -126,6 +126,15 @@ void ApplyGraphicOptions()
 
 	/* Give the input handlers a chance to re-open devices as necessary. */
 	INPUTMAN->WindowReset();
+
+	// Input events are lost while the graphics window is 
+	// destroyed and re-created.  Reset all held keys so that
+	// keys don't appear to be stuck down - particularly
+	// Alt after Alt+Enter.  This would make more sense in
+	// InputHandler::WindowReset(), but I figure that it's 
+	// something that every InputHandler would need to do 
+	// anyway.  -Chris
+	INPUTFILTER->Reset();
 }
 
 void ExitGame()
@@ -396,9 +405,6 @@ RageDisplay *CreateDisplay()
 			} catch(exception e) {
 				error += e.what();
 				error += "\n\n";
-			} catch(RageException_D3DNoAcceleration e) {
-				error += "Your system is reporting that Direct3D hardware acceleration is not available.  "
-					"Please obtain an updated driver from your video card manufacturer.\n\n";
 			};
 #endif
 		}
