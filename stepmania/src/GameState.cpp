@@ -1572,6 +1572,18 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 	}
 }
 
+bool GameState::AnyPlayerHasRankingFeats() const
+{
+	vector<RankingFeat> vFeats;
+	FOREACH_PlayerNumber( p )
+	{
+		GetRankingFeats( p, vFeats );
+		if( !vFeats.empty() )
+			return true;
+	}
+	return false;
+}
+
 /*bool GameState::IsNameBlacklisted( CString name )
 {
 
@@ -1855,6 +1867,7 @@ public:
 		return 1;
 	}
 	static int GetPreferredDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
+	static int AnyPlayerHasRankingFeats( T* p, lua_State *L )	{ lua_pushboolean(L, p->AnyPlayerHasRankingFeats() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1875,6 +1888,7 @@ public:
 		ADD_METHOD( GetEnv )
 		ADD_METHOD( GetEditSourceSteps )
 		ADD_METHOD( GetPreferredDifficulty )
+		ADD_METHOD( AnyPlayerHasRankingFeats )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

@@ -244,6 +244,7 @@ public:
 	};
 
 	void GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &vFeatsOut ) const;
+	bool AnyPlayerHasRankingFeats() const;
 	void StoreRankingName( PlayerNumber pn, CString name );	// Called by name entry screens
 	vector<CString*> m_vpsNamesThatWereFilled;	// filled on StoreRankingName, 
 
