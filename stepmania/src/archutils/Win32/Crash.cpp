@@ -1191,8 +1191,7 @@ static void DoSave(const EXCEPTION_POINTERS *pExc)
 	Report(NULL, hFile, "");
 
 	// Dump thread stacks
-	const char *checkpoints = GetCheckpointLogs("\r\n");
-	Report(NULL, hFile, "%s", checkpoints );
+	WriteBuf( hFile, GetCheckpointLogs("\r\n") );
 	Report(NULL, hFile, "");
 
 	ReportCrashCallStack(NULL, hFile, pExc);
