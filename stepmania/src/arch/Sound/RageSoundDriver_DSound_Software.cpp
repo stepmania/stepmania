@@ -181,7 +181,7 @@ void RageSound_DSound_Software::StopMixing(RageSound *snd)
 	{
 		/* Nothing is playing.  Reset the sample count; this is just to
 		 * prevent eventual overflow. */
-		last_cursor_pos = 0;
+		last_cursor_pos = LastPosition = 0;
 	}
 }
 
