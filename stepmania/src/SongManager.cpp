@@ -538,3 +538,33 @@ load_from_course_failed:
 	default:	ASSERT(0);
 	}
 }
+
+/* Pick a random song (for the demonstration). */
+bool SongManager::ChooseRandomSong()
+{
+	if( SONGMAN->m_pSongs.GetSize() == 0 )
+		return false;
+
+	int i;
+	for( i=0; i<600; i++ )	// try 600 times
+	{
+		Song* pSong = m_pSongs[ rand()%m_pSongs.GetSize() ];
+		for( int j=0; j<3; j++ )	// try 3 times
+		{
+			if( pSong->m_apNotes.GetSize() == 0 )
+				continue;
+
+			Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];
+			if( pNotes->m_NotesType != GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+				continue;
+
+			// found something we can use!
+			GAMESTATE->m_pCurSong = pSong;
+			for( int p=0; p<NUM_PLAYERS; p++ )
+				GAMESTATE->m_pCurNotes[p] = pNotes;
+			return true;
+		}
+	}
+
+	return false;
+}

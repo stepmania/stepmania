@@ -58,6 +58,10 @@ public:
 	void GetExtraStageInfo( bool bExtra2, CString sPreferredGroup, NotesType nt, 
 		Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
+	/* Choose a random song from the current style.  Return true
+	 * if successful, false if no song could be found. */
+	bool ChooseRandomSong();
+
 protected:
 	void LoadStepManiaSongDir( CString sDir, void(*callback)() );
 	void LoadDWISongDir( CString sDir );

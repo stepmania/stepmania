@@ -176,8 +176,7 @@ ScreenTitleMenu::ScreenTitleMenu()
 	
 	MUSIC->Stop();
 
-	for( float f=SECONDS_BETWEEN_ATTRACT; f<SECONDS_BEFORE_DEMONSTRATION; f+=SECONDS_BETWEEN_ATTRACT )
-		this->SendScreenMessage( SM_PlayAttract, f );
+	this->SendScreenMessage( SM_PlayAttract, SECONDS_BETWEEN_ATTRACT );
 	this->SendScreenMessage( SM_FadeToDemonstration, SECONDS_BEFORE_DEMONSTRATION );
 }
 
@@ -204,6 +203,7 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 	{
 	case SM_PlayAttract:
 		m_soundAttract.PlayRandom();
+		this->SendScreenMessage( SM_PlayAttract, SECONDS_BETWEEN_ATTRACT );
 		break;
 	case SM_GoToNextScreen:
 		switch( m_TitleMenuChoice )
@@ -251,60 +251,33 @@ void ScreenTitleMenu::HandleScreenMessage( const ScreenMessage SM )
 
 			GAMESTATE->m_PlayMode = PLAY_MODE_ARCADE;
 
-			if( SONGMAN->m_pSongs.GetSize() == 0 )
-				goto abort_demonstration;
-
-			// choose a Song and Notes
-			Song* pSongToPlay;
-			Notes* pNotesToPlay;
-			int i;
-			for( i=0; i<600; i++ )	// try 600 times
+			if(!SONGMAN->ChooseRandomSong())
 			{
-				Song* pSong = SONGMAN->m_pSongs[ rand()%SONGMAN->m_pSongs.GetSize() ];
-				for( int j=0; j<3; j++ )	// try 3 times
-				{
-					if( pSong->m_apNotes.GetSize() == 0 )
-						continue;
-
-					Notes* pNotes = pSong->m_apNotes[ rand()%pSong->m_apNotes.GetSize() ];
-					if( pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
-					{
-						// found something we can use!
-						pSongToPlay = pSong;
-						pNotesToPlay = pNotes;
-						goto found_song_and_notes;
-					}
-				}
+				// Couldn't find Song/Notes to play.  Abort demonstration!
+				GAMESTATE->Reset();
+				return;
 			}
-abort_demonstration:
-			// Couldn't find Song/Notes to play.  Abort demonstration!
-			GAMESTATE->Reset();
-			return;
 
-found_song_and_notes:
-			ASSERT( pSongToPlay );
-
-			GAMESTATE->m_pCurSong = pSongToPlay;
-			for( int p=0; p<NUM_PLAYERS; p++ )
-				GAMESTATE->m_pCurNotes[p] = pNotesToPlay;
+			ASSERT( GAMESTATE->m_pCurSong );
 
 			// choose some cool options
-			for( p=0; p<NUM_PLAYERS; p++ )
+			for( int p=0; p<NUM_PLAYERS; p++ )
 			{
-				if( GAMESTATE->IsPlayerEnabled(p) )
-				{
-					if( RandomFloat(0,1)>0.8f )
-						GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
-					GAMESTATE->m_PlayerOptions[p].m_EffectType = PlayerOptions::EffectType(rand()%PlayerOptions::NUM_EFFECT_TYPES);
-					if( RandomFloat(0,1)>0.9f )
-						GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
-					if( RandomFloat(0,1)>0.9f )
-						GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
-					if( RandomFloat(0,1)>0.7f )
-						GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
-					if( RandomFloat(0,1)>0.9f )
-						GAMESTATE->m_PlayerOptions[p].m_bDark = true;
-				}
+				if( !GAMESTATE->IsPlayerEnabled(p) )
+					continue;
+
+				if( RandomFloat(0,1)>0.8f )
+					GAMESTATE->m_PlayerOptions[p].m_fArrowScrollSpeed = 1.5f;
+				GAMESTATE->m_PlayerOptions[p].m_EffectType = 
+					PlayerOptions::EffectType(rand()%PlayerOptions::NUM_EFFECT_TYPES);
+				if( RandomFloat(0,1)>0.9f )
+					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_HIDDEN;
+				if( RandomFloat(0,1)>0.9f )
+					GAMESTATE->m_PlayerOptions[p].m_AppearanceType = PlayerOptions::APPEARANCE_SUDDEN;
+				if( RandomFloat(0,1)>0.7f )
+					GAMESTATE->m_PlayerOptions[p].m_bReverseScroll = true;
+				if( RandomFloat(0,1)>0.9f )
+					GAMESTATE->m_PlayerOptions[p].m_bDark = true;
 			}
 			GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LifeType(rand()%SongOptions::NUM_LIFE_TYPES);
 			GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
