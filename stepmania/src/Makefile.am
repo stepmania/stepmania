@@ -113,7 +113,7 @@ Lights = arch/Lights/LightsDriver.h \
 		arch/Lights/LightsDriver_SystemMessage.cpp arch/Lights/LightsDriver_SystemMessage.h
 
 MemoryCard = arch/MemoryCard/MemoryCardDriver.h \
-		arch/MemoryCard/MemoryCardDriver_Linux.cpp arch/MemoryCard/MemoryCardDriver_Linux.h 
+		arch/MemoryCard/MemoryCardDriverThreaded_Linux.cpp arch/MemoryCard/MemoryCardDriverThreaded_Linux.h 
 
 LowLevelWindow = arch/LowLevelWindow/LowLevelWindow.h \
 		arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
