@@ -343,7 +343,7 @@ Delete "$INSTDIR\crashinfo.txt"
 RMDir "$INSTDIR"	; will delete only if empty
 
 SetShellVarContext all	; delete from "All Users" if NT
-Delete "$DESKTOP\Play {PRODUCT_NAME_VER}.lnk"
+Delete "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk"
 ; I'm being paranoid here:
 Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 RMDir "$SMPROGRAMS\${PRODUCT_ID}"
