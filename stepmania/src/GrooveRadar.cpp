@@ -14,7 +14,6 @@
 static const ThemeMetric<Commands>	LABEL_ON_COMMAND			("GrooveRadar","LabelOnCommand");
 static const ThemeMetric<float>			LABEL_ON_DELAY				("GrooveRadar","LabelOnDelay");
 static const ThemeMetric<Commands>	LABEL_ON_COMMAND_POST_DELAY ("GrooveRadar","LabelOnCommandPostDelay");
-static const ThemeMetric<bool>			DISABLE_RADAR				("GrooveRadar","DisableRadar");
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return PI/2 + PI*2 / 5.0f * iValueIndex; }
 
@@ -82,8 +81,6 @@ GrooveRadar::GrooveRadarValueMap::GrooveRadarValueMap()
 
 void GrooveRadar::GrooveRadarValueMap::SetFromSteps( PlayerNumber pn, Steps* pSteps )		// NULL means no song
 {
-	if( (bool)DISABLE_RADAR ) // if the theme says not to disable it
-		return;
 	if( pSteps != NULL )
 	{
 		for( int c=0; c<NUM_SHOWN_RADAR_CATEGORIES; c++ )
@@ -110,12 +107,9 @@ void GrooveRadar::GrooveRadarValueMap::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	if(DISABLE_RADAR != 1)
+	FOREACH_PlayerNumber( p )
 	{
-		FOREACH_PlayerNumber( p )
-		{
-			m_PercentTowardNew[p] = min( m_PercentTowardNew[p]+4.0f*fDeltaTime, 1 );
-		}
+		m_PercentTowardNew[p] = min( m_PercentTowardNew[p]+4.0f*fDeltaTime, 1 );
 	}
 }
 
@@ -123,8 +117,6 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
-	if(DISABLE_RADAR == 1) // if they disabled the radar
-		return; // get out of here...
 	// draw radar filling
 	const float fRadius = m_sprRadarBase.GetZoomedHeight()/2.0f*1.1f;
 
