@@ -360,7 +360,16 @@ const Attack& NoteData::GetAttackAt( int track, int row )
 	TapNote tn = GetTapNote(track, row);
 	ASSERT( tn.type == TapNote::attack );	// don't call this if the TapNote here isn't an attack
 	map<unsigned,Attack>::iterator iter = m_AttackMap.find( tn.attackIndex );
-	ASSERT( iter != m_AttackMap.end() );
+
+	/* Hack: if referencing an attack that doesn't exist, add it.  This is just
+	 * to prevent crashes.  This hack isn't needed in newer versions, since this
+	 * interface is gone. */
+	if( iter == m_AttackMap.end() )
+	{
+		m_AttackMap[tn.attackIndex] = Attack();
+		iter = m_AttackMap.find( tn.attackIndex );
+		ASSERT( iter != m_AttackMap.end() );
+	}
 	return iter->second;
 }
 
