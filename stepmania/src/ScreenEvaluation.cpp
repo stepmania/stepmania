@@ -192,17 +192,25 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 
 	for( p=0; p<NUM_PLAYERS; p++ )
 	{
+		// only save scores for human players ;)
 		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
+			continue;
+
+		// don't save scores if the player chose not to
 		if( !GAMESTATE->m_SongOptions.m_bSaveScore )
-			continue;	// skip
-		if( m_bFailed )
-			continue; // skip
+			continue;
+
+		// whether or not to save scores when the stage was failed
+		// depends on if this is a course or not ... it's handled
+		// below in the switch
 
 		switch( m_Type )
 		{
 		case stage:
 			{
+				// don't save scores for a failed song
+				if( m_bFailed ) continue;
+
 				ASSERT( GAMESTATE->m_pCurNotes[p] );
 				Steps::MemCardData::HighScore hs;
 				hs.grade = grade[p];
@@ -228,6 +236,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 			break;
 		case summary:
 			{
+				// don't save scores for a failed game
+				// (I'm not sure if this is a case that can actally
+				// happen -avh4)
+				if( m_bFailed ) continue;
+
 				StepsType nt = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 
 				float fAverageMeter = stageStats.iMeter[p] / (float)PREFSMAN->m_iNumArcadeStages;
@@ -247,6 +260,11 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : Screen(sClassName)
 				Course* pCourse = GAMESTATE->m_pCurCourse;
 				if( pCourse )
 				{
+					// don't save scores for a failed Nonstop (is this
+					// correct? -avh4)
+					// DO save scores for a failed Oni/Endless
+					if( m_bFailed && pCourse->IsNonstop() ) continue;
+
 					int score;
 					if( pCourse->IsOni() )
 						score = stageStats.iActualDancePoints[p];
