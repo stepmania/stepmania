@@ -731,8 +731,8 @@ void Profile::LoadProfileDataFromDirSM390a12( CString sDir )
 	//
 	// read ini
 	//
-	IniFile ini( fn );
-	if( !ini.ReadFile() )
+	IniFile ini;
+	if( !ini.ReadFile( fn ) )
 		return;
 
 	ini.GetValue( "Profile", "DisplayName",						m_sDisplayName );
@@ -761,14 +761,12 @@ void Profile::LoadProfileDataFromDirSM390a12( CString sDir )
 void Profile::SaveEditableDataToDir( CString sDir ) const
 {
 	IniFile ini;
-	CString fn = sDir + EDITABLE_INI;
-	ini.SetPath( fn );
 
 	ini.SetValue( "Editable", "DisplayName",			m_sDisplayName );
 	ini.SetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
 	ini.SetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
-	ini.WriteFile();
+	ini.WriteFile( sDir + EDITABLE_INI );
 }
 
 XNode* Profile::SaveGeneralDataCreateNode() const
@@ -899,8 +897,7 @@ void Profile::LoadEditableDataFromDir( CString sDir )
 
 
 	IniFile ini;
-	ini.SetPath( fn );
-	ini.ReadFile();
+	ini.ReadFile( fn );
 
 	ini.GetValue("Editable","DisplayName",				m_sDisplayName);
 	ini.GetValue("Editable","LastUsedHighScoreName",	m_sLastUsedHighScoreName);

@@ -181,24 +181,15 @@ void ThemeManager::SwitchThemeAndLanguage( CString sThemeName, CString sLanguage
 	// read new metrics.  First read base metrics, then read cur theme's metrics, overriding base theme
 	m_pIniCurMetrics->Reset();
 	m_pIniBaseMetrics->Reset();
-	m_pIniBaseMetrics->SetPath( GetMetricsIniPath(FALLBACK_THEME_NAME) );
-	m_pIniBaseMetrics->ReadFile();
-	m_pIniBaseMetrics->SetPath( GetMetricsIniPath(BASE_THEME_NAME) );
-	m_pIniBaseMetrics->ReadFile();
-	m_pIniCurMetrics->SetPath( GetMetricsIniPath(m_sCurThemeName) );
-	m_pIniCurMetrics->ReadFile();
-	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniBaseMetrics->ReadFile();
-	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
-	m_pIniBaseMetrics->ReadFile();
-	m_pIniCurMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
-	m_pIniCurMetrics->ReadFile();
-	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
-	m_pIniBaseMetrics->ReadFile();
-	m_pIniBaseMetrics->SetPath( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
-	m_pIniBaseMetrics->ReadFile();
-	m_pIniCurMetrics->SetPath( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
-	m_pIniCurMetrics->ReadFile();
+	m_pIniBaseMetrics->ReadFile( GetMetricsIniPath(FALLBACK_THEME_NAME) );
+	m_pIniBaseMetrics->ReadFile( GetMetricsIniPath(BASE_THEME_NAME) );
+	m_pIniCurMetrics->ReadFile( GetMetricsIniPath(m_sCurThemeName) );
+	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,BASE_LANGUAGE) );
+	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,BASE_LANGUAGE) );
+	m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,BASE_LANGUAGE) );
+	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(FALLBACK_THEME_NAME,m_sCurLanguage) );
+	m_pIniBaseMetrics->ReadFile( GetLanguageIniPath(BASE_THEME_NAME,m_sCurLanguage) );
+	m_pIniCurMetrics->ReadFile( GetLanguageIniPath(m_sCurThemeName,m_sCurLanguage) );
 
 	CString sMetric;
 	for( i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
@@ -597,8 +588,15 @@ float ThemeManager::GetMetricF( CString sClassName, CString sValueName )
 	return (float)atof( GetMetricRaw(sClassName,sValueName) );
 }
 
+// #include "LuaHelpers.h"
 bool ThemeManager::GetMetricB( CString sClassName, CString sValueName )
 {
+//	const CString str = GetMetricRaw( sClassName,sValueName );
+//	if( str == "0" )
+//		return false; /* optimization */
+//	if( str == "1" )
+//		return true; /* optimization */
+//	return Lua::RunExpression( str );
 	return atoi( GetMetricRaw(sClassName,sValueName) ) != 0;
 }
 

@@ -35,8 +35,7 @@ void Transition::Load( CString sBGAniDir )
 
 	// load sound from file specified by ini, or use the first sound in the directory
 	IniFile ini;
-	ini.SetPath( sBGAniDir+"BGAnimation.ini" );
-	ini.ReadFile();
+	ini.ReadFile( sBGAniDir+"BGAnimation.ini" );
 
 	CString sSoundFileName;
 	if( ini.GetValue("BGAnimation","Sound",sSoundFileName) )

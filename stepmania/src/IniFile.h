@@ -1,16 +1,7 @@
+/* IniFile - Reading and writing .INI files. */
+
 #ifndef INIFILE_H
 #define INIFILE_H
-/*
------------------------------------------------------------------------------
- Class: IniFile
-
- Desc: Wrapper for reading and writing an .ini file.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Adam Clauss
-	Chris Danford
------------------------------------------------------------------------------
-*/
 
 #include <map>
 using namespace std;
@@ -28,77 +19,72 @@ public:
 	const_iterator end() const { return keys.end(); }
 
 private:
-	//stores pathname of ini file to read/write
-	CString path;
+	CString m_sPath;
 
-	// keys in ini
 	keymap keys;
 
+	mutable CString m_sError;
 
 public:
+	/* Retrieve the filename of the last file loaded. */
+	CString GetPath() const { return m_sPath; }
+	const CString &GetError() const { return m_sError; }
 
-	//will contain error info if one occurs
-	//ended up not using much, just in ReadFile and GetValue
-	mutable CString error;
-
-	//constructor, can specify pathname here instead of using SetPath later
-	IniFile(CString inipath = "");
-
-	//default destructor
-	virtual ~IniFile();
-
-	//sets path of ini file to read and write from
-	void SetPath(CString newpath);
-	CString GetPath() const { return path; }
-
-	//reads ini file specified using IniFile::SetPath()
-	//returns true if successful, false otherwise
-	bool ReadFile();
-
-	//writes data stored in class to ini file
-	bool WriteFile(); 
-
-	//deletes all stored ini data
+	bool ReadFile( const CString &sPath );
+	bool WriteFile( const CString &sPath );
 	void Reset();
 
-	//returns number of keys currently in the ini
 	int GetNumKeys() const;
+	int GetNumValues( const CString &keyname ) const;
 
-	//returns number of values stored for specified key
-	int GetNumValues(const CString &keyname) const;
+	bool GetValue( const CString &key, const CString &valuename, CString& value ) const;
+	bool GetValue( const CString &key, const CString &valuename, int& value ) const;
+	bool GetValue( const CString &key, const CString &valuename, unsigned& value ) const;
+	bool GetValue( const CString &key, const CString &valuename, float& value ) const;
+	bool GetValue( const CString &key, const CString &valuename, bool& value ) const;
 
-	//gets value of [keyname] valuename = 
-	//returns "", or 0 if key/value not found.  Sets error member to show problem
-	bool GetValue(const CString &key, const CString &valuename, CString& value) const;
-	bool GetValue(const CString &key, const CString &valuename, int& value) const;
-	bool GetValue(const CString &key, const CString &valuename, unsigned& value) const;
-	bool GetValue(const CString &key, const CString &valuename, float& value) const;
-	bool GetValue(const CString &key, const CString &valuename, bool& value) const;
+	bool SetValue( const CString &key, const CString &valuename, const CString &value );
+	bool SetValue( const CString &key, const CString &valuename, int value );
+	bool SetValue( const CString &key, const CString &valuename, unsigned value );
+	bool SetValue( const CString &key, const CString &valuename, float value );
+	bool SetValue( const CString &key, const CString &valuename, bool value );
 
-	//sets value of [keyname] valuename =.
-	//specify the optional paramter as false (0) if you do not want it to create
-	//the key if it doesn't exist. Returns true if data entered, false otherwise
-	bool SetValue(const CString &key, const CString &valuename, const CString &value, bool create = 1);
-	bool SetValue(const CString &key, const CString &valuename, int value, bool create = 1);
-	bool SetValue(const CString &key, const CString &valuename, unsigned value, bool create = 1);
-	bool SetValue(const CString &key, const CString &valuename, float value, bool create = 1);
-	bool SetValue(const CString &key, const CString &valuename, bool value, bool create = 1);
+	bool DeleteKey( const CString &keyname );
+	bool DeleteValue( const CString &keyname, const CString &valuename );
 
-	//deletes specified value
-	//returns true if value existed and deleted, false otherwise
-	bool DeleteValue(const CString &keyname, const CString &valuename);
-
-	//deletes specified key and all values contained within
-	//returns true if key existed and deleted, false otherwise
-	bool DeleteKey(const CString &keyname);
-
-	const key *GetKey(const CString &keyname) const;
-	void SetValue(const CString &keyname, const key &key);
+	const key *GetKey( const CString &keyname ) const;
+	void SetValue( const CString &keyname, const key &key );
 
 	/* Rename a key. For example, call RenameKey("foo", "main") after
 	 * reading an INI where [foo] is an alias to [main].  If to already
 	 * exists, nothing happens. */
-	void RenameKey(const CString &from, const CString &to);
+	void RenameKey( const CString &from, const CString &to );
 };
 
 #endif
+
+/*
+ * (c) 2001-2004 Adam Clauss, Chris Danford
+ *
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */

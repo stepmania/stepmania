@@ -36,9 +36,8 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 	if( GetExtension(sTexOrIniPath).CompareNoCase("ini")==0 )
 	{
 		IniFile ini;
-		ini.SetPath( sTexOrIniPath );
-		if( !ini.ReadFile() )
-			RageException::Throw( "Error reading %s: %s", sTexOrIniPath.c_str(), ini.error.c_str() );
+		if( !ini.ReadFile( sTexOrIniPath ) )
+			RageException::Throw( "Error reading %s: %s", sTexOrIniPath.c_str(), ini.GetError().c_str() );
 
 		if( !ini.GetKey("AnimatedTexture") )
 			RageException::Throw( "The animated texture file '%s' doesn't contain a section called 'AnimatedTexture'.", sTexOrIniPath.c_str() );

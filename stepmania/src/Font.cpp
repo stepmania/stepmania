@@ -783,8 +783,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 	IniFile ini;
 	if( !IniPath.empty() )
 	{
-		ini.SetPath( IniPath );
-		ini.ReadFile();
+		ini.ReadFile( IniPath );
 		ini.RenameKey("Char Widths", "main");
 		ini.GetValue( "main", "CapitalsOnly", CapitalsOnly );
 	}

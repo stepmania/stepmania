@@ -30,8 +30,7 @@ bool Character::Load( CString sCharDir )
 
 	// Save attacks
 	IniFile ini;
-	ini.SetPath( sCharDir+"character.ini" );
-	if( !ini.ReadFile() )
+	if( !ini.ReadFile( sCharDir+"character.ini" ) )
 		return false;
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
 		for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )

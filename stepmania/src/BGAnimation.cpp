@@ -64,8 +64,8 @@ void AddLayersFromAniDir( CString sAniDir, vector<Actor*> &layersAddTo, bool Gen
 
 	CString sPathToIni = sAniDir + "BGAnimation.ini";
 
-	IniFile ini(sPathToIni);
-	ini.ReadFile();
+	IniFile ini;
+	ini.ReadFile( sPathToIni );
 
 	{
 		CString expr;
@@ -129,8 +129,8 @@ void BGAnimation::LoadFromAniDir( CString sAniDir )
 		// This is a new style BGAnimation (using .ini)
 		AddLayersFromAniDir( sAniDir, m_SubActors, m_bGeneric );	// TODO: Check for circular load
 
-		IniFile ini(sPathToIni);
-		ini.ReadFile();
+		IniFile ini;
+		ini.ReadFile( sPathToIni );
 		if( !ini.GetValue( "BGAnimation", "LengthSeconds", m_fLengthSeconds ) )
 		{
 			/* XXX: if m_bGeneric, simply constructing the BG layer won't run "On",

@@ -79,8 +79,7 @@ void Model::LoadFromModelFile( CString sPath )
 	Clear();
 
 	IniFile ini;
-	ini.SetPath( sPath );
-	ini.ReadFile();
+	ini.ReadFile( sPath );
 
 	CString sDir = Dirname( sPath );
 

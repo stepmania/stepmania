@@ -440,8 +440,8 @@ void BGAnimationLayer::LoadFromIni( CString sAniDir, CString sLayer )
 
 	CString sPathToIni = sAniDir + "BGAnimation.ini";
 
-	IniFile ini(sPathToIni);
-	ini.ReadFile();
+	IniFile ini;
+	ini.ReadFile( sPathToIni );
 	{
 		//
 		// Can we ditch this?  It's the same as "Condition=IsPlayerEnabled(p)". -Chris

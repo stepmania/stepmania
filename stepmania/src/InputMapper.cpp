@@ -373,9 +373,8 @@ void InputMapper::ReadMappingsFromDisk()
 	ClearAllMappings();
 
 	IniFile ini;
-	ini.SetPath( KEYMAPS_PATH );
-	if( !ini.ReadFile() )
-		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH, ini.error.c_str() );
+	if( !ini.ReadFile( KEYMAPS_PATH ) )
+		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH, ini.GetError().c_str() );
 
 	const IniFile::key *Key = ini.GetKey( GAMESTATE->GetCurrentGameDef()->m_szName );
 
@@ -410,8 +409,7 @@ void InputMapper::ReadMappingsFromDisk()
 void InputMapper::SaveMappingsToDisk()
 {
 	IniFile ini;
-	ini.SetPath( KEYMAPS_PATH );
-	ini.ReadFile();
+	ini.ReadFile( KEYMAPS_PATH );
 	
 	// erase the key so that we overwrite everything for this game
 	ini.DeleteKey( GAMESTATE->GetCurrentGameDef()->m_szName );
@@ -432,7 +430,7 @@ void InputMapper::SaveMappingsToDisk()
 		}
 	}
 
-	ini.WriteFile();
+	ini.WriteFile( KEYMAPS_PATH );
 }
 
 

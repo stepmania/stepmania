@@ -24,12 +24,13 @@
  * in order to find the cache file.
  */
 #define CACHE_DIR "Cache/"
+#define CACHE_INDEX CACHE_DIR "index.cache"
+
 
 SongCacheIndex *SONGINDEX;
 
 SongCacheIndex::SongCacheIndex()
 {
-	CacheIndex.SetPath( CACHE_DIR "index.cache" );
 	ReadCacheIndex();
 }
 
@@ -53,7 +54,7 @@ static void EmptyDir( CString dir )
 
 void SongCacheIndex::ReadCacheIndex()
 {
-	CacheIndex.ReadFile();	// don't care if this fails
+	CacheIndex.ReadFile( CACHE_INDEX );	// don't care if this fails
 
 	int iCacheVersion = -1;
 	CacheIndex.GetValue( "Cache", "CacheVersion", iCacheVersion );
@@ -74,7 +75,7 @@ void SongCacheIndex::AddCacheIndex(const CString &path, unsigned hash)
 		++hash; /* no 0 hash values */
 	CacheIndex.SetValue( "Cache", "CacheVersion", FILE_CACHE_VERSION );
 	CacheIndex.SetValue( "Cache", MangleName(path), hash );
-	CacheIndex.WriteFile();
+	CacheIndex.WriteFile( CACHE_INDEX );
 }
 
 unsigned SongCacheIndex::GetCacheHash( const CString &path ) const

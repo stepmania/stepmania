@@ -144,8 +144,8 @@ void NoteFieldMode::Load(IniFile &ini, CString id, int pn)
 NoteFieldPositioning::NoteFieldPositioning(CString fn)
 {
 	m_Filename = fn;
-	IniFile ini(fn);
-	if(!ini.ReadFile())
+	IniFile ini;
+	if( !ini.ReadFile(fn) )
 		return;
 
 	for(IniFile::const_iterator i = ini.begin(); i != ini.end(); ++i)
@@ -190,8 +190,8 @@ void NoteFieldPositioning::Load(PlayerNumber pn)
 
 	/* We have a custom mode.  Reload the mode on top of the default style
 	 * table settings. */
-	IniFile ini(m_Filename);
-	if(!ini.ReadFile())
+	IniFile ini;
+	if( !ini.ReadFile(m_Filename) )
 		return;
 
 	mode.Load(ini, Modes[ModeNum].m_Id, pn);

@@ -319,8 +319,7 @@ void PrefsManager::ReadStaticPrefsFromDisk()
 void PrefsManager::ReadPrefsFromFile( CString sIni )
 {
 	IniFile ini;
-	ini.SetPath( sIni );
-	ini.ReadFile();
+	ini.ReadFile( sIni );
 
 	ini.GetValue( "Options", "Windowed",						m_bWindowed );
 	ini.GetValue( "Options", "Interlaced",						m_bInterlaced );
@@ -554,7 +553,6 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 void PrefsManager::SaveGlobalPrefsToDisk() const
 {
 	IniFile ini;
-	ini.SetPath( STEPMANIA_INI_PATH );
 
 	ini.SetValue( "Options", "Windowed",						m_bWindowed );
 	ini.SetValue( "Options", "CelShadeDancers",					m_bCelShadeDancers );
@@ -788,7 +786,7 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
 	ini.SetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
 
-	ini.WriteFile();
+	ini.WriteFile( STEPMANIA_INI_PATH );
 }
 
 void PrefsManager::ResetToFactoryDefaults()

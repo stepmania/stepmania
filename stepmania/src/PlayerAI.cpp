@@ -45,8 +45,7 @@ TapScoreDistribution g_Distributions[NUM_SKILL_LEVELS];
 void PlayerAI::InitFromDisk()
 {
 	IniFile ini;
-	ini.SetPath( AI_PATH );
-	ini.ReadFile();
+	ini.ReadFile( AI_PATH );
 
 	for( int i=0; i<NUM_SKILL_LEVELS; i++ )
 	{

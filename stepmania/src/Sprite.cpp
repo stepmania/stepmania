@@ -116,8 +116,7 @@ retry:
 
 	// read sprite file
 	IniFile ini;
-	ini.SetPath( m_sSpritePath );
-	if( !ini.ReadFile() )
+	if( !ini.ReadFile( m_sSpritePath ) )
 		RageException::Throw( "Error opening Sprite file '%s'.", m_sSpritePath.c_str() );
 
 	CString sTextureFile;

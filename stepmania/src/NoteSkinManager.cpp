@@ -78,16 +78,13 @@ void NoteSkinManager::LoadNoteSkinData( CString sNoteSkinName, NoteSkinData& dat
 	data_out.metrics.Reset();
 
 	/* Load global NoteSkin defaults */
-	data_out.metrics.SetPath( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
-	data_out.metrics.ReadFile();
+	data_out.metrics.ReadFile( GLOBAL_BASE_NOTESKIN_DIR+"metrics.ini" );
 
 	/* Load game NoteSkin defaults */
-	data_out.metrics.SetPath( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME)+"metrics.ini" );
-	data_out.metrics.ReadFile();
+	data_out.metrics.ReadFile( GetNoteSkinDir(GAME_BASE_NOTESKIN_NAME)+"metrics.ini" );
 
 	/* Read the active NoteSkin */
-	data_out.metrics.SetPath( GetNoteSkinDir(sNoteSkinName)+"metrics.ini" );
-	data_out.metrics.ReadFile();	
+	data_out.metrics.ReadFile( GetNoteSkinDir(sNoteSkinName)+"metrics.ini" );	
 }
 
 

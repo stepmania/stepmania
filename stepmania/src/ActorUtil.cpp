@@ -34,9 +34,8 @@ Actor* LoadFromActorFile( CString sIniPath, CString sLayer )
 {
 	// TODO: Check for recursive loading
 	IniFile ini;
-	ini.SetPath( sIniPath );
-	if( !ini.ReadFile() )
-		RageException::Throw( "%s", ini.error.c_str() );
+	if( !ini.ReadFile( sIniPath ) )
+		RageException::Throw( "%s", ini.GetError().c_str() );
 	
 	if( !ini.GetKey(sLayer) )
 		RageException::Throw( "The file '%s' doesn't have layer '%s'.", sIniPath.c_str(), sLayer.c_str() );

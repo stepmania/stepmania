@@ -25,6 +25,8 @@
 #include "Banner.h"
 
 #define CACHE_DIR "Cache/"
+#define BANNER_CACHE_INDEX CACHE_DIR "banners.cache"
+
 
 /* Call CacheBanner to cache a banner by path.  If the banner is already
  * cached, it'll be recreated.  This is efficient if the banner hasn't changed,
@@ -119,8 +121,7 @@ void BannerCache::UnloadAllBanners()
 
 BannerCache::BannerCache()
 {
-	BannerData.SetPath( CACHE_DIR "banners.cache" );
-	BannerData.ReadFile();	// don't care if this fails
+	BannerData.ReadFile( BANNER_CACHE_INDEX );	// don't care if this fails
 }
 
 BannerCache::~BannerCache()
@@ -416,7 +417,7 @@ void BannerCache::CacheBannerInternal( CString BannerPath )
 	BannerData.SetValue( BannerPath, "FullHash", GetHashForFile( BannerPath ) );
 	/* Remember this, so we can hint Sprite. */
 	BannerData.SetValue( BannerPath, "Rotated", WasRotatedBanner );
-	BannerData.WriteFile();
+	BannerData.WriteFile( BANNER_CACHE_INDEX );
 }
 
 /*

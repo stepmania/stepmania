@@ -1,47 +1,19 @@
 #include "global.h"
-/*
------------------------------------------------------------------------------
- Class: IniFile
-
- Desc: See header.
-
- Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
-	Adam Clauss
-	Chris Danford
------------------------------------------------------------------------------
-*/
-
 #include "IniFile.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
 
-IniFile::IniFile(CString inipath)
+bool IniFile::ReadFile( const CString &sPath )
 {
-	path = inipath;
-}
-
-IniFile::~IniFile()
-{
-
-}
-
-void IniFile::SetPath(CString newpath)
-{
-	path = newpath;
-}
-
-// reads ini file specified using IniFile::SetPath()
-// returns true if successful, false otherwise
-bool IniFile::ReadFile()
-{
-	CHECKPOINT_M( ssprintf("Reading '%s'",path.c_str()) );
+	m_sPath = sPath;
+	CHECKPOINT_M( ssprintf("Reading '%s'",m_sPath.c_str()) );
 
 	RageFile f;
-	if( !f.Open( path ) )
+	if( !f.Open( m_sPath ) )
 	{
-		LOG->Trace( "Reading '%s' failed: %s", path.c_str(), f.GetError().c_str() );
-		error = f.GetError();
+		LOG->Trace( "Reading '%s' failed: %s", m_sPath.c_str(), f.GetError().c_str() );
+		m_sError = f.GetError();
 		return 0;
 	}
 
@@ -52,13 +24,13 @@ bool IniFile::ReadFile()
 		switch( f.GetLine(line) )
 		{
 		case -1:
-			error = f.GetError();
+			m_sError = f.GetError();
 			return false;
 		case 0:
 			return true; /* eof */
 		}
 
-		if(line.size() >= 3 &&
+		if( line.size() >= 3 &&
 			line[0] == '\xef' &&
 			line[1] == '\xbb' &&
 			line[2] == '\xbf'
@@ -68,14 +40,15 @@ bool IniFile::ReadFile()
 			line.erase(0, 3);
 		}
 
-		if (line == "")
+		if( line == "" )
 			continue;
 
-		if (line.substr(0, 2) == "//" || line.substr(0) == "#")
+		if( line.substr(0, 2) == "//" || line.substr(0) == "#" )
 			continue; /* comment */
 
-		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading
+		if( line[0] == '[' && line[line.GetLength()-1] == ']'  )
 		{
+			/* New section. */
 			keyname = line.substr(1, line.size()-2);
 		}
 		else //if a value
@@ -91,25 +64,24 @@ bool IniFile::ReadFile()
 	}
 }
 
-// writes data stored in class to ini file
-bool IniFile::WriteFile()
+bool IniFile::WriteFile( const CString &sPath )
 {
 	RageFile f;
-	if( !f.Open( path, RageFile::WRITE ) )
+	if( !f.Open( sPath, RageFile::WRITE ) )
 	{
-		LOG->Trace( "Writing '%s' failed: %s", path.c_str(), f.GetError().c_str() );
-		error = f.GetError();
+		LOG->Trace( "Writing '%s' failed: %s", sPath.c_str(), f.GetError().c_str() );
+		m_sError = f.GetError();
 		return false;
 	}
 
-	for (keymap::const_iterator k = keys.begin(); k != keys.end(); ++k)
+	for( keymap::const_iterator k = keys.begin(); k != keys.end(); ++k )
 	{
 		if (k->second.empty())
 			continue;
 
 		f.PutLine( ssprintf("[%s]", k->first.c_str()) );
 
-		for (key::const_iterator i = k->second.begin(); i != k->second.end(); ++i)
+		for( key::const_iterator i = k->second.begin(); i != k->second.end(); ++i )
 			f.PutLine( ssprintf("%s=%s", i->first.c_str(), i->second.c_str()) );
 
 		f.PutLine( "" );
@@ -117,51 +89,40 @@ bool IniFile::WriteFile()
 	return true;
 }
 
-// deletes all stored ini data
 void IniFile::Reset()
 {
 	keys.clear();
 }
 
-// returns number of keys currently in the ini
 int IniFile::GetNumKeys() const
 {
 	return keys.size();
 }
 
-// returns number of values stored for specified key, or -1 if key not found
-int IniFile::GetNumValues(const CString &keyname) const
+int IniFile::GetNumValues( const CString &keyname ) const
 {
 	keymap::const_iterator k = keys.find(keyname);
-	if (k == keys.end())
+	if( k == keys.end() )
 		return -1;
 
 	return k->second.size();
 }
 
-// gets value of [keyname] valuename = 
-bool IniFile::GetValue(const CString &keyname, const CString &valuename, CString& value) const
+bool IniFile::GetValue( const CString &keyname, const CString &valuename, CString& value ) const
 {
 	keymap::const_iterator k = keys.find(keyname);
 	if (k == keys.end())
-	{
-		error = "Unable to locate specified key.";
 		return false;
-	}
 
 	key::const_iterator i = k->second.find(valuename);
 
-	if (i == k->second.end())
-	{
-		error = "Unable to locate specified value.";
+	if( i == k->second.end() )
 		return false;
-	}
 
 	value = i->second;
 	return true;
 }
 
-// gets value of [keyname] valuename = 
 bool IniFile::GetValue(const CString &keyname, const CString &valuename, int& value) const
 {
 	CString sValue;
@@ -180,7 +141,6 @@ bool IniFile::GetValue(const CString &keyname, const CString &valuename, unsigne
 	return true;
 }
 
-// gets value of [keyname] valuename = 
 bool IniFile::GetValue(const CString &keyname, const CString &valuename, float& value) const
 {
 	CString sValue;
@@ -190,8 +150,7 @@ bool IniFile::GetValue(const CString &keyname, const CString &valuename, float& 
 	return true;
 }
 
-// gets value of [keyname] valuename = 
-bool IniFile::GetValue(const CString &keyname, const CString &valuename, bool& value) const
+bool IniFile::GetValue( const CString &keyname, const CString &valuename, bool& value ) const
 {
 	CString sValue;
 	if( !GetValue(keyname,valuename,sValue) )
@@ -200,67 +159,50 @@ bool IniFile::GetValue(const CString &keyname, const CString &valuename, bool& v
 	return true;
 }
 
-// sets value of [keyname] valuename =.
-// specify the optional paramter as false (0) if you do not want it to create
-// the key if it doesn't exist. Returns true if data entered, false otherwise
-bool IniFile::SetValue(const CString &keyname, const CString &valuename, const CString &value, bool create)
+bool IniFile::SetValue( const CString &keyname, const CString &valuename, const CString &value )
 {
-	if (!create && keys.find(keyname) == keys.end()) //if key doesn't exist
-		return false; // stop entering this key
-
-	// find value
-	if (!create && keys[keyname].find(valuename) == keys[keyname].end())
-		return false;
-
 	keys[keyname][valuename] = value;
 	return true;
 }
 
-// sets value of [keyname] valuename =.
-// specify the optional paramter as false (0) if you do not want it to create
-// the key if it doesn't exist. Returns true if data entered, false otherwise
-bool IniFile::SetValue(const CString &keyname, const CString &valuename, int value, bool create)
+bool IniFile::SetValue( const CString &keyname, const CString &valuename, int value )
 {
-	return SetValue(keyname, valuename, ssprintf("%d",value), create);
+	return SetValue( keyname, valuename, ssprintf("%d",value) );
 }
 
-bool IniFile::SetValue(const CString &keyname, const CString &valuename, unsigned value, bool create)
+bool IniFile::SetValue( const CString &keyname, const CString &valuename, unsigned value )
 {
-	return SetValue(keyname, valuename, ssprintf("%u",value), create);
+	return SetValue( keyname, valuename, ssprintf("%u",value) );
 }
 
-bool IniFile::SetValue(const CString &keyname, const CString &valuename, float value, bool create)
+bool IniFile::SetValue( const CString &keyname, const CString &valuename, float value )
 {
-	return SetValue(keyname, valuename, ssprintf("%f",value), create);
+	return SetValue( keyname, valuename, ssprintf("%f",value) );
 }
 
-bool IniFile::SetValue(const CString &keyname, const CString &valuename, bool value, bool create)
+bool IniFile::SetValue( const CString &keyname, const CString &valuename, bool value )
 {
-	return SetValue(keyname, valuename, ssprintf("%d",value), create);
+	return SetValue( keyname, valuename, ssprintf("%d",value) );
 }
 
-// deletes specified value
-// returns true if value existed and deleted, false otherwise
 bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 {
 	keymap::iterator k = keys.find(keyname);
-	if (k == keys.end())
+	if( k == keys.end() )
 		return false;
 
 	key::iterator i = k->second.find(valuename);
-	if(i == k->second.end())
+	if( i == k->second.end() )
 		return false;
 
 	k->second.erase(i);
 	return true;
 }
 
-// deletes specified key and all values contained within
-// returns true if key existed and deleted, false otherwise
 bool IniFile::DeleteKey(const CString &keyname)
 {
 	keymap::iterator k = keys.find(keyname);
-	if (k == keys.end())
+	if( k == keys.end() )
 		return false;
 
 	keys.erase(k);
@@ -270,22 +212,49 @@ bool IniFile::DeleteKey(const CString &keyname)
 const IniFile::key *IniFile::GetKey(const CString &keyname) const
 {
 	keymap::const_iterator i = keys.find(keyname);
-	if(i == keys.end()) return NULL;
+	if( i == keys.end() )
+		return NULL;
 	return &i->second;
 }
 
 void IniFile::SetValue(const CString &keyname, const key &key)
 {
-	keys[keyname]=key;
+	keys[keyname] = key;
 }
 
 void IniFile::RenameKey(const CString &from, const CString &to)
 {
-	if(keys.find(from) == keys.end())
+	if( keys.find(from) == keys.end() )
 		return;
-	if(keys.find(to) != keys.end())
+	if( keys.find(to) != keys.end() )
 		return;
 
 	keys[to] = keys[from];
 	keys.erase(from);
 }
+
+/*
+ * (c) 2001-2004 Adam Clauss, Chris Danford
+ *
+ * All rights reserved.
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
+ */

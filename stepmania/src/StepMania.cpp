@@ -731,11 +731,8 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( GAMEPREFS_INI_PATH );
-	ini.ReadFile();	// it's OK if this fails
-
-	ini.SetPath( STATIC_INI_PATH );
-	ini.ReadFile();	// it's OK if this fails, too
+	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
+	ini.ReadFile( STATIC_INI_PATH );	// it's OK if this fails, too
 
 	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
 
@@ -770,15 +767,14 @@ void SaveGamePrefsToDisk()
 
 	CString sGameName = GAMESTATE->GetCurrentGameDef()->m_szName;
 	IniFile ini;
-	ini.SetPath( GAMEPREFS_INI_PATH );
-	ini.ReadFile();	// it's OK if this fails
+	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
 
 	ini.SetValue( sGameName, "Announcer",			ANNOUNCER->GetCurAnnouncerName() );
 	ini.SetValue( sGameName, "Theme",				THEME->GetCurThemeName() );
 	ini.SetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
 	ini.SetValue( "Options", "Game",				(CString)GAMESTATE->GetCurrentGameDef()->m_szName );
 
-	ini.WriteFile();
+	ini.WriteFile( GAMEPREFS_INI_PATH );
 }
 
 static void OnFirstRun()
@@ -1563,12 +1559,12 @@ static void GameLoop()
 
 		/* If we don't have focus, give up lots of CPU. */
 		if( !g_bHasFocus )
-			SDL_Delay( 10 );// give some time to other processes and threads
+			usleep( 10000 );// give some time to other processes and threads
 #if defined(_WINDOWS)
 		/* In Windows, we want to give up some CPU for other threads.  Most OS's do
 		 * this more intelligently. */
 		else
-			SDL_Delay( 1 );	// give some time to other processes and threads
+			usleep( 1000 );	// give some time to other processes and threads
 #endif
 	}
 }
