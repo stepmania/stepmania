@@ -1018,19 +1018,32 @@ bool Song::IsNew() const
 bool Song::IsEasy( NotesType nt ) const
 {
 	Notes* pBeginnerNotes = GetNotes( nt, DIFFICULTY_BEGINNER );
-	Notes* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
+//	Notes* pEasyNotes = GetNotes( nt, DIFFICULTY_EASY );
 	Notes* pHardNotes = GetNotes( nt, DIFFICULTY_HARD );
 
 	// HACK:  Looks bizarre to see the easy mark by Legend of MAX.
 	if( pHardNotes && pHardNotes->GetMeter() > 9 )
 		return false;
 
-	if( pBeginnerNotes && pBeginnerNotes->GetMeter()==1 )
+	/* Originally, there was only Easy.  Beginners found easy steps by
+	 * going to the top of the default sort, since the default sort was
+	 * by Easy meter.
+	 *
+	 * Now, there's Beginner.  We can't very well sort by it; the meter is
+	 * almost always 1 or 2.  So, let's mark "easy" songs as those with any
+	 * beginner steps, so beginners (playing on beginner) can be told to look
+	 * for the easy icon, and other beginners (playing on light) can go by the
+	 * sort like they have been.  Don't make IsEasy some kind of mixture of
+	 * beginner and easy, since that's too confusing and makes it useless to
+	 * beginners. */
+	return pBeginnerNotes != NULL;
+
+/*	if( pBeginnerNotes && pBeginnerNotes->GetMeter()==1 )
 		return true;
 	else if( pEasyNotes && pEasyNotes->GetMeter()==1 )
 		return true;
 	else
-		return false;
+		return false; */
 }
 
 bool Song::HasEdits( NotesType nt ) const
