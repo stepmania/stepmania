@@ -1,3 +1,26 @@
+* Alpha 19
+Unknown audio types in songs is no longer a fatal error.
+Incorrect DifficultyIcon state count is no longer a fatal error.
+Fixed DifficultyIcon staying hidden when no song is selected.
+Fixed "volume not ready" dialogs.
+Fixed song scores not being found.
+Fixed music wheel speed regression.
+Fixed some fading banners.
+Fixed machine high score index when players both get the same high score.
+Fixed floating tails in reverse boomerang.
+Fixed hold heads cycling through all note types while held.
+Fixed timer on character selection.
+Fixed character rendering in How To Play.
+Fixed profile deletion not deleting edits.
+Fixed character model rendering artifacts when a freeze segment lies on beat 0.
+Fixed BPM/offset changing during gameplay.
+Added "Save Stats" option (available under "Other Options").
+Added "easy" course mode (opposite to difficult courses).
+Stomp is easier in dance-double.
+Improvements to planted and twister transforms.
+Latency improvements in ALSA for Linux 2.4 kernels.
+Removed SaveToProfile option; it hasn't done anything for a while (options are always saved to profile).
+
 * Alpha 18
 Fixed "FilenameDB::AddFile()" crash.
 Fixed evaluation grade announcer not playing.
