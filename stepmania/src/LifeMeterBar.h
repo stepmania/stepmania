@@ -59,6 +59,8 @@ private:
 
 	int			m_iProgressiveLifebar;	// cached from prefs
 	int			m_iMissCombo;			// current number of progressive boo/miss
+
+	int			m_iComboToRegainLife;	// combo needed before lifebar starts filling up after fail
 };
 
 #endif

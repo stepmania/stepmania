@@ -262,6 +262,9 @@ LifeMeterBar::LifeMeterBar()
 	m_iProgressiveLifebar = PREFSMAN->m_iProgressiveLifebar;
 	m_iMissCombo = 0;
 
+	// set up combotoregainlife
+	m_iComboToRegainLife = 0;
+
 	AfterLifeChanged();
 }
 
@@ -330,7 +333,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		ASSERT(0);
 	}
 
-	// handle progressiveness here
+	// handle progressiveness and ComboToRegainLife here
 	switch( score )
 	{
 	case TNS_MARVELOUS:
@@ -338,6 +341,10 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case TNS_GREAT:
 	case TNS_GOOD:
 		m_iMissCombo = 0;
+		m_iComboToRegainLife--;
+		CLAMP( m_iComboToRegainLife, 0, 10);
+		if ( m_iComboToRegainLife )
+			fDeltaLife = 0.0f;
 		break;
 	case TNS_BOO:
 	case TNS_MISS:
@@ -345,6 +352,8 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		// do this after; only successive boo/miss will
 		// increase the amount of life lost.
 		m_iMissCombo++;
+		m_iComboToRegainLife += 5;
+		CLAMP( m_iComboToRegainLife, 0, 10);
 	}
 
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
@@ -358,6 +367,11 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 		break;
 	}
 
+	// check if this step would cause a fail
+	if( m_fLifePercentage + fDeltaLife <= FAIL_THRESHOLD 
+		&& m_fLifePercentage > FAIL_THRESHOLD )
+		m_iComboToRegainLife = 10;
+	
 	m_fLifePercentage += fDeltaLife;
 	CLAMP( m_fLifePercentage, 0, 1 );
 
