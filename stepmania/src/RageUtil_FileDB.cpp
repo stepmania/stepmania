@@ -75,7 +75,12 @@ void FileSet::LoadFromDir(const CString &dir)
 	char buf[PATH_MAX];
 	bool ret = getcwd(buf, PATH_MAX) != NULL;
 	ASSERT(ret);
-	chdir(dir.c_str());
+	if( chdir(dir.c_str()) == -1 )
+	{
+		/* Only log once per dir. */
+		LOG->MapLog("chdir " + dir, "Couldn't chdir(%s): %s", dir.c_str(), strerror(errno) );
+		return;
+	}
 	DIR *d = opendir(".");
 
 	while(struct dirent *ent = readdir(d))
