@@ -98,6 +98,7 @@ void SongManager::InitAll( LoadingWindow *ld )
 	if( ld )
 		ld->SetText( "Saving Catalog.xml ..." );
 	SaveCatalogXml();
+	SaveCatalogXml();
 }
 
 void SongManager::Reload( LoadingWindow *ld )
@@ -748,6 +749,10 @@ void SongManager::Invalidate( Song *pStaleSong )
  * etc. which may cause hard-to-trace crashes down the line if we set them to NULL. */
 void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 {
+	/* Reverting from disk is brittle, and touches a lot of tricky and rarely-
+	 * used code paths.  If it's ever used during a game, log it. */
+	LOG->MapLog( "RevertFromDisk", "Reverted \"%s\" from disk", pSong->GetTranslitMainTitle().c_str() );
+
 	// Ugly:  When we re-load the song, the Steps* will change.
 	// Fix GAMESTATE->m_CurSteps, g_CurStageStats, g_vPlayedStageStats[] after reloading.
 	/* XXX: This is very brittle.  However, we must know about all globals uses of Steps*,
