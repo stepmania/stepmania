@@ -906,11 +906,11 @@ void RageDisplay_D3D::SetLightDirectional(
 	ZERO( light );
 	light.Type = D3DLIGHT_DIRECTIONAL;
 
-	/* Without this, characters are lit from behind, so the directional light can
-	 * barely be seen.  I'm not sure that this is generally correct, since I don't
-	 * know how the coordinate systems are different, but it works for
-	 * DancingCharacters::DrawPrimitives.  XXX: figure out exactly why this is needed */
-	float position[] = { -dir.x, -dir.y, -dir.z };
+	/* Z for lighting is flipped for D3D compared to OpenGL.
+	 * XXX: figure out exactly why this is needed.  Our transforms 
+	 * are probably goofed up, but the Z test is the same for both
+	 * API's, so I'm not sure why we don't see other weirdness. -Chris */
+	float position[] = { dir.x, dir.y, -dir.z };
 	memcpy( &light.Direction, position, sizeof(position) );
 	memcpy( &light.Diffuse, diffuse, sizeof(diffuse) );
 	memcpy( &light.Ambient, ambient, sizeof(ambient) );
