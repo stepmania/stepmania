@@ -19,9 +19,12 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void MenuBack( PlayerNumber pn );
 
+	virtual bool UsesBackground() const { return false; }
+
 private:
-	Transition	m_In, m_Out, m_Back;
-	BGAnimation				m_Overlay; // overlays all elements except bitmaptexts
+	Transition		m_In, m_Out, m_Back;
+	BGAnimation		m_Background;
+	BGAnimation		m_Overlay; // overlays all elements except bitmaptexts
 	Banner			m_Banner;
 	BitmapText		m_SongTitle;
 	BitmapText		m_Artist;
