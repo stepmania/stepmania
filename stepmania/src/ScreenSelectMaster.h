@@ -51,7 +51,7 @@ protected:
 	float GetCursorX( PlayerNumber pn, int iPartIndex );
 	float GetCursorY( PlayerNumber pn, int iPartIndex );
 
-	Sprite	m_sprExplanation[NUM_PAGES];
+	AutoActor	m_sprExplanation[NUM_PAGES];
 	Sprite	m_sprMore[NUM_PAGES];
 #define MAX_ICON_PARTS 3
 	AutoActor m_sprIcon[MAX_ICON_PARTS][MAX_CHOICES];

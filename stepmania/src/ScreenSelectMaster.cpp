@@ -116,9 +116,9 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		m_sprMore[page].Load( THEME->GetPathToG( ssprintf("%s more page%d",m_sName.c_str(), page+1) ) );
 		this->AddChild( &m_sprMore[page] );
 
-		m_sprExplanation[page].SetName( ssprintf("ExplanationPage%d",page+1) );
 		m_sprExplanation[page].Load( THEME->GetPathToG( ssprintf("%s explanation page%d",m_sName.c_str(), page+1) ) );
-		this->AddChild( &m_sprExplanation[page] );
+		m_sprExplanation[page]->SetName( ssprintf("ExplanationPage%d",page+1) );
+		this->AddChild( m_sprExplanation[page] );
 	}
 
 
