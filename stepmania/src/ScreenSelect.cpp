@@ -44,7 +44,7 @@ ScreenSelect::ScreenSelect( CString sClassName ) : Screen(sClassName)
 	// Set this true later if we discover a choice that chooses the Style
 
 
-	for( unsigned c=0; c<NUM_CHOICES; c++ )
+	for( int c=0; c<NUM_CHOICES; c++ )
 	{
 		CString sChoice = CHOICE(c);
 
