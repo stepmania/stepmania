@@ -95,7 +95,7 @@ void NotesWriterDWI::WriteDWINotesField( FILE* fp, const Notes &out, int start )
 		{
 		case NOTE_TYPE_4TH:
 		case NOTE_TYPE_8TH:	
-			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE * ROWS_PER_BEAT;
+			fCurrentIncrementer = 1.0/8 * BEATS_PER_MEASURE;
 			break;
 		case NOTE_TYPE_12TH:
 		case NOTE_TYPE_24TH:
