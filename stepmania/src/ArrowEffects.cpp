@@ -87,8 +87,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 	{
 		int seed = GAMESTATE->m_iRoundSeed + ( BeatToNoteRow( fNoteBeat ) << 8 ) + (iCol * 100);
 		float soRandom = RandomFloat( seed );
-
-		fScrollSpeed = GAMESTATE->m_CurrentPlayerOptions[pn].m_fScrollSpeed * 
+		fScrollSpeed *=
 							SCALE( soRandom,
 								   0.0f, 1.0f,
 								   1.0f, GAMESTATE->m_CurrentPlayerOptions[pn].m_fRandomSpeed ); // min. scale shold be defined as a constatnt somewhere
