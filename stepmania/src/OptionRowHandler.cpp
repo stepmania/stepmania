@@ -952,8 +952,11 @@ public:
 			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst, DIFFICULTY_EDIT );
 			m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
 
-			m_vSteps.push_back( NULL );
-			m_vDifficulties.push_back( DIFFICULTY_EDIT );
+			if( m_sName == "EditSteps" )
+			{
+				m_vSteps.push_back( NULL );
+				m_vDifficulties.push_back( DIFFICULTY_EDIT );
+			}
 
 			for( unsigned i=0; i<m_vSteps.size(); i++ )
 			{
@@ -1101,19 +1104,23 @@ public:
 	}
 	virtual int ExportOption( const OptionRowDefinition &def, PlayerNumber pn, const vector<bool> &vbSelected ) const
 	{
+		return 0;
+	}
+	virtual CString GetAndEraseScreen( int iChoice )
+	{
 		Song* pSong = GAMESTATE->m_pCurSong;
 		Steps *pSteps = GAMESTATE->m_pCurSteps[0];
 		Difficulty dc = GAMESTATE->m_PreferredDifficulty[0];
 		StepsType st = GAMESTATE->m_stEdit;
 		Steps *pSourceNotes = GAMESTATE->m_pEditSourceSteps;
 
-		int iSel = GetOneSelection(vbSelected);
-		EditMenuAction ema = m_vEditMenuActions[ iSel ];
+		EditMenuAction ema = m_vEditMenuActions[iChoice];
 		switch( ema )
 		{
 		case EDIT_MENU_ACTION_EDIT:
 			// Prepare prepare for ScreenEdit
 			ASSERT( pSteps );
+			return "ScreenEdit";
 			break;
 		case EDIT_MENU_ACTION_DELETE:
 			ASSERT( pSteps );
@@ -1172,17 +1179,9 @@ public:
 			ASSERT(0);
 		}
 		
-		// refresh the list
+		// refresh the screen since we deleted or added steps
 		MESSAGEMAN->Broadcast( MESSAGE_CURRENT_SONG_CHANGED );
-
-		return 0;
-	}
-	virtual CString GetAndEraseScreen( int iChoice )
-	{
-		if( m_vEditMenuActions[iChoice] == EDIT_MENU_ACTION_EDIT )
-			return "ScreenEdit";
-		else
-			return "";
+		return "";
 	}
 };
 

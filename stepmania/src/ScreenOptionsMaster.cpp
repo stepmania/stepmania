@@ -259,8 +259,6 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 			for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
 			{
-				const OptionRow &row = *m_Rows[r];
-
 				CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
 			
 				ExportOptions( r );
