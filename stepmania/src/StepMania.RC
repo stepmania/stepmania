@@ -89,6 +89,19 @@ BEGIN
                     WS_VSCROLL
 END
 
+IDD_DRIVER DIALOGEX 0, 0, 286, 125
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "Outdated Drivers"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Download new drivers",IDOK,37,104,82,14
+    PUSHBUTTON      "Play anyway",IDCANCEL,125,104,50,14
+    CTEXT           "Static",IDC_MESSAGE,7,34,272,29
+    CONTROL         "&Don't display this message",IDC_HUSH,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,183,108,96,10
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -120,6 +133,14 @@ BEGIN
         RIGHTMARGIN, 311
         TOPMARGIN, 7
         BOTTOMMARGIN, 80
+    END
+
+    IDD_DRIVER, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 279
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 118
     END
 END
 #endif    // APSTUDIO_INVOKED
