@@ -143,7 +143,11 @@ void ScreenHowToPlay::Update( float fDelta )
 	{
 		GAMESTATE->UpdateSongPosition( m_fFakeSecondsIntoSong );
 		m_fFakeSecondsIntoSong += fDelta;
-		LOG->ShowConsole();
+		
+		// XXX: really, the prefs manager would take care of
+		// showing the console at the beginning of the program.
+		// (namely DebugMode in stepmania.ini)
+		//	LOG->ShowConsole();
 
 		if( GAMESTATE->m_bFreeze )
 		{
