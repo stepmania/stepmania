@@ -1,7 +1,13 @@
 #ifndef SM_SDL_UTILS
 #define SM_SDL_UTILS 1
 
+/* Hack to prevent X includes from messing with our namespace: */
+#define Font X11___Font
+#define Screen X11___Screen
 #include "SDL.h"
+#include "SDL_syswm.h"          // for SDL_SysWMinfo
+#undef Font
+#undef Screen
 
 Uint32 decodepixel(const Uint8 *p, int bpp);
 void encodepixel(Uint8 *p, int bpp, Uint32 pixel);
