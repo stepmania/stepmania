@@ -823,7 +823,7 @@ void NoteDataUtil::ShiftRight( NoteData &in )
 }
 
 
-NUM_STEPS_TYPES
+//NUM_STEPS_TYPES
 
 void NoteDataUtil::FixImpossibleRows( NoteData &in, StepsType st )
 {
