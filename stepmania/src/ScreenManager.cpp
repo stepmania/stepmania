@@ -31,13 +31,18 @@
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
 
-#define STATS_X					THEME->GetMetricF("ScreenManager","StatsX")
-#define STATS_Y					THEME->GetMetricF("ScreenManager","StatsY")
-#define CREDITS_X( p )			THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dX",p+1))
-#define CREDITS_Y( p )			THEME->GetMetricF("ScreenManager",ssprintf("CreditsP%dY",p+1))
-#define CREDITS_COLOR			THEME->GetMetricC("ScreenManager","CreditsColor")
-#define CREDITS_SHADOW_LENGTH	THEME->GetMetricF("ScreenManager","CreditsShadowLength")
-#define CREDITS_ZOOM			THEME->GetMetricF("ScreenManager","CreditsZoom")
+#define STATS_X							THEME->GetMetricF("ScreenSystemLayer","StatsX")
+#define STATS_Y							THEME->GetMetricF("ScreenSystemLayer","StatsY")
+#define CREDITS_X( p )					THEME->GetMetricF("ScreenSystemLayer",ssprintf("CreditsP%dX",p+1))
+#define CREDITS_Y( p )					THEME->GetMetricF("ScreenSystemLayer",ssprintf("CreditsP%dY",p+1))
+#define CREDITS_COLOR					THEME->GetMetricC("ScreenSystemLayer","CreditsColor")
+#define CREDITS_SHADOW_LENGTH			THEME->GetMetricF("ScreenSystemLayer","CreditsShadowLength")
+#define CREDITS_ZOOM					THEME->GetMetricF("ScreenSystemLayer","CreditsZoom")
+#define CREDITS_TEXT_HOME_JOIN			THEME->GetMetric ("ScreenSystemLayer","CreditsTextHomeJoin")
+#define CREDITS_TEXT_HOME_JOINED		THEME->GetMetric ("ScreenSystemLayer","CreditsTextHomeJoined")
+#define CREDITS_TEXT_HOME_TOO_LATE		THEME->GetMetric ("ScreenSystemLayer","CreditsTextHomeTooLate")
+#define CREDITS_TEXT_PAY				THEME->GetMetric ("ScreenSystemLayer","CreditsTextPay")
+#define CREDITS_TEXT_FREE				THEME->GetMetric ("ScreenSystemLayer","CreditsTextFree")
 
 const int NUM_SKIPS = 5;
 
@@ -154,23 +159,23 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 		{
 		case COIN_HOME:
 			if( GAMESTATE->m_bSideIsJoined[p] )
-				sText = "";
+				sText = CREDITS_TEXT_HOME_JOINED;
 			else if( GAMESTATE->m_bPlayersCanJoin )		// would  (GAMESTATE->m_CurStyle!=STYLE_INVALID) do the same thing?
-				sText = "PRESS START";
+				sText = CREDITS_TEXT_HOME_JOIN;
 			else
-				sText = "NOT PRESENT";
+				sText = CREDITS_TEXT_HOME_TOO_LATE;
 			break;
 		case COIN_PAY:
 			{
 				int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-				CString txt = ssprintf("CREDIT(S) %d", GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
+				CString txt = ssprintf("%s %d", CREDITS_TEXT_PAY.c_str(), GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
 				if (Coins)
 					txt += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
 				sText = txt;
 			}
 			break;
 		case COIN_FREE:
-			sText = "FREE PLAY";
+			sText = CREDITS_TEXT_FREE;
 			break;
 		default:
 			ASSERT(0);
