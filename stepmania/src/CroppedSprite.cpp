@@ -51,8 +51,8 @@ void CroppedSprite::CropToSize( float fWidth, float fHeight )
 	if( iSourceWidth == iSourceHeight )		// this is a SSR/DWI CroppedSprite
 	{
 		float fCustomImageCoords[8] = {
-			0.22f,	0.98f,	// bottom left
 			0.02f,	0.78f,	// top left
+			0.22f,	0.98f,	// bottom left
 			0.98f,	0.22f,	// bottom right
 			0.78f,	0.02f,	// top right
 		};
