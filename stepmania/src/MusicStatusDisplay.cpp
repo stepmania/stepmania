@@ -11,7 +11,7 @@
 
 #include "MusicStatusDisplay.h"
 #include "RageUtil.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "MusicWheel.h"
 #include "MusicStatusDisplay.h"
 

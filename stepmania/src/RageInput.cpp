@@ -24,7 +24,7 @@
 #include "RageInput.h"
 #include <dinput.h>
 #include "RageUtil.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
@@ -244,6 +244,7 @@ BOOL CALLBACK	EnumJoysticksCallback( const DIDEVICEINSTANCE* pdidInstance,
 	HRESULT hr = pDI->CreateDevice( pdidInstance->guidInstance, 
 									&pInput->m_pJoystick[i++], 
 									NULL );
+	if( FAILED( hr ) )
 		FatalErrorHr( hr, "Error in CreateDevice() for joystick %d.", i );
 
 	return DIENUM_CONTINUE;

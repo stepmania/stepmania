@@ -30,6 +30,10 @@ TextBanner::TextBanner()
 	m_textSubTitle.SetHorizAlign( align_left );
 	m_textArtist.SetHorizAlign( align_left );
 
+	m_textTitle.TurnShadowOff();
+	m_textSubTitle.TurnShadowOff();
+	m_textArtist.TurnShadowOff();
+
 	this->AddActor( &m_textTitle );
 	this->AddActor( &m_textSubTitle );
 	this->AddActor( &m_textArtist );

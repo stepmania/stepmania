@@ -84,10 +84,35 @@ StyleDef* GameManager::GetStyleDef( CString sGame, CString sStyle )
 	return NULL;
 }
 
+void GameManager::SwitchGame( CString sGame )
+{
+	m_sCurrentGame = sGame;
+	m_pCurrentGameDef = GetGameDef( sGame );
+	if( m_pCurrentGameDef == NULL )
+		FatalError( "SwitchGame failed.  The game '%s' is not present.", sGame );
+
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		m_sCurrentSkin[p] = m_pCurrentGameDef->m_sSkinFolders[0];
+};
+
+void GameManager::SwitchStyle( CString sStyle )
+{
+	m_sCurrentStyle = sStyle;
+	m_pCurrentStyleDef = GetStyleDef( m_sCurrentGame, sStyle );
+	ASSERT( m_pCurrentStyleDef != NULL );
+};
+
+void GameManager::SwitchSkin( PlayerNumber p, CString sSkin )
+{
+	if( !m_pCurrentGameDef->HasASkinNamed( sSkin ) )
+		FatalError( "The current game doesn't have a skin named '%s'.", sSkin );
+		
+	m_sCurrentSkin[p] = sSkin;
+}
 
 void GameManager::GetGameNames( CStringArray &arrayGameNames )
 {
-	for( int i=0; i<MAX_GAME_DEFS; i++ )
+	for( int i=0; i<m_iNumGameDefs; i++ )
 		arrayGameNames.Add( m_pGameDefs[i]->m_sName );
 }
 
@@ -110,15 +135,6 @@ void GameManager::GetSkinNames( CString sGameName, CStringArray &arraySkinNames 
 	for( int i=0; i<pGameDef->m_iNumSkinFolders; i++ )
 		arraySkinNames.Add( pGameDef->m_sSkinFolders[i] );
 }
-
-void GameManager::SwitchSkin( PlayerNumber p, CString sSkin )
-{
-	if( !m_pCurrentGameDef->HasASkinNamed( sSkin ) )
-		FatalError( "The current game doesn't have a skin named '%s'.", sSkin );
-		
-	m_sCurrentSkin[p] = sSkin;
-}
-
 
 bool GameManager::IsPlayerEnabled( PlayerNumber PlayerNo )
 {

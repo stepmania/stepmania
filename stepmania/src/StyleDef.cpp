@@ -10,7 +10,7 @@
 */
 
 #include "StyleDef.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 #include "GameDef.h"
@@ -19,7 +19,7 @@
 
 StyleDef::StyleDef( GameDef* pGameDef, CString sStyleFilePath )
 {
-	HELPER.Log( "StyleDef::StyleDef( '%s )", sStyleFilePath );
+	LOG->WriteLine( "StyleDef::StyleDef( '%s )", sStyleFilePath );
 
 	// extract the game name
 	CString sThrowAway;
@@ -140,4 +140,18 @@ StyleDef::StyleDef( GameDef* pGameDef, CString sStyleFilePath )
 
 	for( int c=0; c<m_iColsPerPlayer; c++ )
 		m_iColumnDrawOrder[c] = atoi( arrayColDrawOrder[c] );
+}
+
+void StyleDef::GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData &newNoteData )
+{
+	TrackNumber iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
+	for( int col=0; col<m_iColsPerPlayer; col++ )
+	{
+		ColumnInfo colInfo = m_ColumnInfo[p][col];
+		TrackNumber originalTrack = colInfo.track;
+		
+		iNewToOriginalTrack[col] = originalTrack;
+	}
+	
+	newNoteData.LoadTransformed( pOriginal, m_iColsPerPlayer, iNewToOriginalTrack );
 }

@@ -1,17 +1,14 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
- File: MusicWheel.h
+ Class: MusicWheel
 
- Desc: A graphic displayed in the MusicWheel during Dancing.
+ Desc: A wheel with song names used in the Select Music screen.
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _MusicWheel_H_
-#define _MusicWheel_H_
-
 
 #include "Sprite.h"
 #include "Song.h"
@@ -22,14 +19,15 @@
 #include "RandomSample.h"
 #include "GradeDisplay.h"
 #include "RageSoundStream.h"
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 #include "MusicSortDisplay.h"
 #include "MusicStatusDisplay.h"
 #include "Window.h"	// for WindowMessage
-#include "ScoreDisplayRolling.h"	// for WindowMessage
+#include "ScoreDisplayRolling.h"
+#include "ScrollBar.h"
 
 
-const int NUM_WHEEL_ITEMS_TO_DRAW	=	11;
+const int NUM_WHEEL_ITEMS_TO_DRAW	=	13;
 
 const float FADE_TIME	=	0.7f;
 
@@ -49,7 +47,6 @@ public:
 	void LoadFromSong( Song* pSong );
 
 	WheelItemType	m_WheelItemType;
-	D3DXCOLOR		m_colorTint;
 	CString			m_sSectionName;
 	Song*			m_pSong;
 	MusicStatusDisplayType m_MusicStatusDisplayType;
@@ -65,7 +62,6 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 
-
 	CString GetSectionName()
 	{
 		return m_sSectionName;
@@ -73,7 +69,6 @@ public:
 
 	void LoadFromWheelItemData( WheelItemData* pWID );
 	void RefreshGrades();
-	void SetDiffuseColor( D3DXCOLOR c );
 
 	// for a section
 	Sprite			m_sprSectionBar;
@@ -121,6 +116,8 @@ protected:
 	void RebuildWheelItemDisplays();
 	void SwitchSortOrder();
 
+
+	ScrollBar	m_ScrollBar;
 
 	Sprite		m_sprSelectionOverlay;
 
@@ -193,11 +190,5 @@ protected:
 		}
 	};
 
-
-	CTypedPtrMap<CMapStringToPtr, CString, D3DXCOLOR*> m_mapGroupNameToColorPtr;
-
-
 };
 
-
-#endif

@@ -15,7 +15,7 @@
 #include "GrooveRadar.h"
 #include "ThemeManager.h"
 #include "RageBitmapTexture.h"
-#include "GameConstants.h"
+#include "GameConstantsAndTypes.h"
 
 
 float RADAR_VALUE_ROTATION( int iValueIndex ) {	return D3DX_PI/2 + D3DX_PI*2 / 5.0f * iValueIndex; }
@@ -127,7 +127,7 @@ void GrooveRadar::RenderPrimitives()
 		//
 		pVB->Lock( 0, 0, (BYTE**)&v, 0 );
 
-		D3DXCOLOR color = PLAYER_COLOR[p];
+		D3DXCOLOR color = PlayerToColor( (PlayerNumber)p );
 		color.a = 0.5f;
 		v[0].p = D3DXVECTOR3( 0, 0, 0 );
 		v[0].color = color;
@@ -172,8 +172,8 @@ void GrooveRadar::RenderPrimitives()
 
 			v[i*2+0].p = D3DXVECTOR3( fXInner, fYInner, 0 );
 			v[i*2+1].p = D3DXVECTOR3( fXOutter, fYOutter,	0 );
-			v[i*2+0].color = PLAYER_COLOR[p];
-			v[i*2+1].color = PLAYER_COLOR[p];
+			v[i*2+0].color = PlayerToColor( (PlayerNumber)p );
+			v[i*2+1].color = PlayerToColor( (PlayerNumber)p );
 		}
 
 		pVB->Unlock();

@@ -31,7 +31,7 @@
 #include "dxerr8.h"
 #include "DXUtil.h"
 #include "RageUtil.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 #include <stdio.h>
@@ -250,7 +250,7 @@ RageMovieTexture::RageMovieTexture(
 	const DWORD dwHints ) :
   RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, dwHints )
 {
-	HELPER.Log( "RageBitmapTexture::RageBitmapTexture()" );
+	LOG->WriteLine( "RageBitmapTexture::RageBitmapTexture()" );
 
 	m_pd3dTexture[0] = m_pd3dTexture[1] = NULL;
 	m_iIndexActiveTexture = 0;
@@ -292,7 +292,7 @@ LPDIRECT3DTEXTURE8 RageMovieTexture::GetD3DTexture()
 	// time for it to catch up and copy all the frames it fell behind on.
 //	while( m_pCTR->IsLocked() ) {
 //		::Sleep(1);
-//		HELPER.Log( "Sleeping waiting for unlock..." );
+//		LOG->WriteLine( "Sleeping waiting for unlock..." );
 //	}
 
 	// restart the movie if we reach the end

@@ -11,7 +11,7 @@
 
 #include "Judgement.h"
 #include "RageUtil.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 
 
@@ -46,7 +46,7 @@ void Judgement::RenderPrimitives()
 
 void Judgement::SetJudgement( TapNoteScore score )
 {
-	//HELPER.Log( "Judgement::SetJudgement()" );
+	//LOG->WriteLine( "Judgement::SetJudgement()" );
 
 	switch( score )
 	{

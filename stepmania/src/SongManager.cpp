@@ -13,7 +13,7 @@
 //#include <d3dxmath.h>
 #include "SongManager.h"
 #include "IniFile.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 SongManager*	SONG = NULL;	// global and accessable from anywhere in our program
@@ -71,7 +71,7 @@ void SongManager::InitSongArrayFromDisk()
 			m_arrayGroupNames.Add( sGroupName );
 	}
 
-	HELPER.Log( "Found %d Songs.", m_pSongs.GetSize() );
+	LOG->WriteLine( "Found %d Songs.", m_pSongs.GetSize() );
 }
 
 void SongManager::LoadStepManiaSongDir( CString sDir )
@@ -111,7 +111,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir )
 		if( arrayGroupBanners.GetSize() > 0 )
 		{
 			m_mapGroupToBannerPath[sGroupDirName] = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
-			HELPER.Log( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
+			LOG->WriteLine( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
 		}
 
 		// Find all Song folders in this group directory
@@ -213,7 +213,7 @@ void SongManager::ReadStatisticsFromDisk()
 	IniFile ini;
 	ini.SetPath( g_sStatisticsFileName );
 	if( !ini.ReadFile() ) {
-		HELPER.Log( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
+		LOG->WriteLine( "WARNING: Could not read config file '%s'.", g_sStatisticsFileName );
 		return;		// load nothing
 	}
 

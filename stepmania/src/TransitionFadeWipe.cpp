@@ -12,7 +12,7 @@
 #include "RageUtil.h"
 
 #include "TransitionFadeWipe.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 
 //#define RECTANGLE_WIDTH	20

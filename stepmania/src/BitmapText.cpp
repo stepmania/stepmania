@@ -13,9 +13,8 @@
 #include "BitmapText.h"
 #include "IniFile.h"
 #include "FontManager.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
-#include "PrefsManager.h"
 
 
 D3DXCOLOR RAINBOW_COLORS[] = { 
@@ -35,9 +34,6 @@ BitmapText::BitmapText()
 	m_HorizAlign = align_center;
 	m_VertAlign = align_middle;
 
-	m_fShadowLength = 2;
-
-
 	m_pFont = NULL;
 
 	m_iNumLines = 0;
@@ -51,6 +47,8 @@ BitmapText::BitmapText()
 		m_iLineWidths[i] = 1;
 	}
 
+	m_bShadow = true;
+
 	m_bRainbow = false;
 }
 
@@ -62,7 +60,7 @@ BitmapText::~BitmapText()
 
 bool BitmapText::Load( const CString &sFontFilePath )
 {
-	HELPER.Log( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
+	LOG->WriteLine( "BitmapText::LoadFromFontName(%s)", sFontFilePath );
 
 	// load font
 	m_pFont = FONT->LoadFont( sFontFilePath );
@@ -75,7 +73,7 @@ bool BitmapText::Load( const CString &sFontFilePath )
 
 void BitmapText::SetText( CString sText )
 {
-	//HELPER.Log( "BitmapText::SetText()" );
+	//LOG->WriteLine( "BitmapText::SetText()" );
 
 	if( m_pFont->m_bCapitalsOnly )
 		sText.MakeUpper();
@@ -134,7 +132,7 @@ void BitmapText::SetText( CString sText )
 
 void BitmapText::RebuildVertexBuffer()
 {
-	//HELPER.Log( "BitmapText::RebuildVertexBuffer()" );
+	//LOG->WriteLine( "BitmapText::RebuildVertexBuffer()" );
 
 
 
@@ -287,7 +285,7 @@ void BitmapText::RenderPrimitives()
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_bShadow  &&  PREFS  &&  PREFS->GetCurrentGraphicProfileOptions()->m_bShadows )
+		if( m_bShadow )
 		{
 			SCREEN->PushMatrix();
 			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units

@@ -11,7 +11,7 @@
 
 #include "BPMDisplay.h"
 #include "RageUtil.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 
 

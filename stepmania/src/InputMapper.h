@@ -16,7 +16,7 @@
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "StyleInput.h"
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 
 
 

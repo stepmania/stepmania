@@ -14,7 +14,7 @@
 #include "GhostArrow.h"
 #include "GhostArrowBright.h"
 #include "HoldGhostArrow.h"
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 #include "StyleDef.h"
 
 

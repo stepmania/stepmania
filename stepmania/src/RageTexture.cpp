@@ -27,7 +27,7 @@ RageTexture::RageTexture(
 	const DWORD dwTextureColorDepth,
 	const DWORD dwHints )
 {
-//	HELPER.Log( "RageTexture::RageTexture()" );
+//	LOG->WriteLine( "RageTexture::RageTexture()" );
 
 	// save a pointer to the D3D device
 	m_pd3dDevice = pScreen->GetDevice();
@@ -68,7 +68,7 @@ void RageTexture::CreateFrameRects()
 						 (j+1)/(float)m_iFramesHigh*m_iImageHeight/(float)m_iTextureHeight );
 			m_TextureCoordRects.Add( frect );	// the index of this array element will be (i + j*m_iFramesWide)
 			
-			//HELPER.Log( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
+			//LOG->WriteLine( "Adding frect%d %f %f %f %f", (i + j*m_iFramesWide), frect.left, frect.top, frect.right, frect.bottom );
 		}
 	}
 }

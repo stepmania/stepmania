@@ -12,10 +12,9 @@
 
 #include "Sprite.h"
 #include "RageTextureManager.h"
-#include "PrefsManager.h"
 #include "IniFile.h"
 #include <math.h>
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
@@ -32,7 +31,7 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
-//	HELPER.Log( "Sprite Destructor" );
+//	LOG->WriteLine( "Sprite Destructor" );
 
 	TEXTURE->UnloadTexture( m_sTexturePath ); 
 }
@@ -40,7 +39,7 @@ Sprite::~Sprite()
 
 bool Sprite::LoadFromTexture( CString sTexturePath, DWORD dwHints, bool bForceReload )
 {
-	HELPER.Log( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
+	LOG->WriteLine( ssprintf("Sprite::LoadFromTexture(%s)", sTexturePath) );
 
 	//Init();
 	return LoadTexture( sTexturePath, dwHints, bForceReload );
@@ -56,7 +55,7 @@ bool Sprite::LoadFromTexture( CString sTexturePath, DWORD dwHints, bool bForceRe
 // Delay0000=2.0
 bool Sprite::LoadFromSpriteFile( CString sSpritePath, DWORD dwHints, bool bForceReload )
 {
-	HELPER.Log( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
+	LOG->WriteLine( ssprintf("Sprite::LoadFromSpriteFile(%s)", sSpritePath) );
 
 	//Init();
 
@@ -269,7 +268,7 @@ void Sprite::RenderPrimitives()
 		//////////////////////
 		// render the shadow
 		//////////////////////
-		if( m_bShadow  &&  PREFS  &&  PREFS->GetCurrentGraphicProfileOptions()->m_bShadows )
+		if( m_bShadow )
 		{
 			SCREEN->PushMatrix();
 			SCREEN->TranslateLocal( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units

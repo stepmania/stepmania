@@ -11,7 +11,7 @@
 
 #include "GhostArrowRow.h"
 #include "RageUtil.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "ColorNote.h"
 #include "ArrowEffects.h"

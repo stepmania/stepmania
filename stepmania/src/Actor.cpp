@@ -38,7 +38,7 @@ Actor::Actor()
 	m_fVibrationDistance =  5.0f;
 	m_bVisibleThisFrame =  FALSE;
 
-	m_bShadow = true;
+	m_bShadow = false;
 	m_fShadowLength = 4;
 
 	m_bBlendAdd = false;
@@ -140,7 +140,7 @@ void Actor::Draw()		// set the world matrix and calculate actor properties, the 
 
 void Actor::Update( float fDeltaTime )
 {
-//	HELPER.Log( "Actor::Update( %f )", fDeltaTime );
+//	LOG->WriteLine( "Actor::Update( %f )", fDeltaTime );
 
 	// update effect
 	switch( m_Effect )
@@ -165,7 +165,7 @@ void Actor::Update( float fDeltaTime )
 				m_bTweeningTowardEndColor = TRUE;
 			}
 		}
-		//HELPER.Log( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
+		//LOG->WriteLine( "Actor::m_fPercentBetweenColors %f", m_fPercentBetweenColors );
 		break;
 	case wagging:
 		m_fWagTimer += fDeltaTime;

@@ -13,7 +13,7 @@
 #include "NoteMetadata.h"
 #include "NoteData.h"
 #include "GameInput.h"
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 #include "MenuInput.h"
 
 

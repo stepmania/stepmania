@@ -14,7 +14,7 @@
 
 #include "NoteMetadata.h"
 
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 //enum DanceStyle;	// why is this needed?
 
@@ -72,25 +72,8 @@ public:
 
 	CString GetMainTitle()		{return m_sMainTitle; };
 	CString GetSubTitle()		{return m_sSubTitle; };
-	void GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
-	{
-		char szSeps[] = { '-', '~' };
-		for( int i=0; i<sizeof(szSeps); i++ )
-		{
-			const char c = szSeps[i];
-			int iBeginIndex = sFullTitle.Find( c );
-			if( iBeginIndex == -1 )
-				continue;
-			int iEndIndex = sFullTitle.Find( c, iBeginIndex+1 );	
-			if( iEndIndex == -1 )
-				continue;
-			sMainTitleOut = sFullTitle.Left( iBeginIndex-1 );
-			sSubTitleOut = sFullTitle.Mid( iBeginIndex, iEndIndex-iBeginIndex+1 );
-			return;
-		}
-		sMainTitleOut = sFullTitle; 
-		sSubTitleOut = ""; 
-	};	
+	CString GetFullTitle()		{return m_sMainTitle + " " + m_sSubTitle; };
+	void GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut );
 
 	CString GetArtist()				{return m_sArtist; };
 	CString GetCredit()				{return m_sCredit; };

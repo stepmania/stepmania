@@ -15,9 +15,9 @@
 #include "RageMusic.h"
 #include "WindowManager.h"
 #include "WindowDancing.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 
 
 const float HELP_X		=	CENTER_X;
@@ -34,7 +34,7 @@ MenuElements::MenuElements()
 
 void MenuElements::Load( CString sBackgroundPath, CString sTopEdgePath, CString sHelpText )
 {
-	HELPER.Log( "MenuElements::MenuElements()" );
+	LOG->WriteLine( "MenuElements::MenuElements()" );
 
 
 	m_sprBG.Load( sBackgroundPath );
@@ -85,8 +85,6 @@ void MenuElements::TweenTopEdgeOnScreen()
 
 void MenuElements::TweenTopEdgeOffScreen()
 {
-	SetTopEdgeOnScreen();
-
 	m_sprTopEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME*2, TWEEN_BIAS_END );
 	m_sprTopEdge.SetTweenX( SCREEN_WIDTH*1.5f );
 
@@ -113,8 +111,6 @@ void MenuElements::TweenBackgroundOnScreen()
 
 void MenuElements::TweenBackgroundOffScreen()
 {
-	SetBackgroundOnScreen();
-
 	m_sprBottomEdge.BeginTweening( MENU_ELEMENTS_TWEEN_TIME );
 	m_sprBottomEdge.SetTweenY( SCREEN_HEIGHT + m_sprTopEdge.GetZoomedHeight() );
 

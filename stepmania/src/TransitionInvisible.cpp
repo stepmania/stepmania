@@ -13,7 +13,7 @@
 #include "RageUtil.h"
 
 #include "TransitionInvisible.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 
 
 

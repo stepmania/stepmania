@@ -12,7 +12,7 @@
 
 #include "NoteField.h"
 #include "RageUtil.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "ArrowEffects.h"
 #include "PrefsManager.h"
@@ -151,7 +151,7 @@ void NoteField::DrawMarkerBar( const int iIndex )
 
 void NoteField::RenderPrimitives()
 {
-	//HELPER.Log( "NoteField::RenderPrimitives()" );
+	//LOG->WriteLine( "NoteField::RenderPrimitives()" );
 
 	if( m_fSongBeat < 0 )
 		m_fSongBeat = 0;
@@ -162,7 +162,7 @@ void NoteField::RenderPrimitives()
 	if( iIndexFirstArrowToDraw < 0 ) iIndexFirstArrowToDraw = 0;
 	int iIndexLastArrowToDraw  = BeatToNoteIndex( m_fSongBeat + m_fNumBeatsToDrawAhead );	// 7 beats later
 
-	//HELPER.Log( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
+	//LOG->WriteLine( "Drawing elements %d through %d", iIndexFirstArrowToDraw, iIndexLastArrowToDraw );
 
 	//
 	// Draw measure bars

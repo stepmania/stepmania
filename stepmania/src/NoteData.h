@@ -13,7 +13,8 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
+#include "GameConstantsAndTypes.h"
 
 // '1' = tap note
 // '2' = hold note begin
@@ -71,45 +72,12 @@ struct HoldNoteScore
 };
 
 
-const int MAX_NOTE_TRACKS	=	16;
-
-
-const int MAX_MEASURES		= 200;	// this should be long enough to hold 10:00 minute songs (
-const int BEATS_PER_MEASURE = 4;
-const int MAX_BEATS			= MAX_MEASURES * BEATS_PER_MEASURE;
-
-const int ELEMENTS_PER_BEAT	= 12;	// It is important that this number is evenly divisible by 2, 3, 4, and 8
-const int ELEMENTS_PER_MEASURE = ELEMENTS_PER_BEAT * BEATS_PER_MEASURE;
-const int MAX_TAP_NOTE_ELEMENTS = MAX_BEATS*ELEMENTS_PER_BEAT;
-
-const int MAX_HOLD_NOTE_ELEMENTS = 200;
 
 inline int   BeatToNoteIndex( float fBeatNum )			{ return int( fBeatNum * ELEMENTS_PER_BEAT + 0.5f); };	// round
 inline int   BeatToNoteIndexNotRounded( float fBeatNum ){ return (int)( fBeatNum * ELEMENTS_PER_BEAT ); };
 inline float NoteIndexToBeat( float fNoteIndex )		{ return fNoteIndex / (float)ELEMENTS_PER_BEAT;	 };
 inline float NoteIndexToBeat( int iNoteIndex )			{ return NoteIndexToBeat( (float)iNoteIndex );	 };
 
-
-enum NoteType 
-{ 
-	NOTE_4TH,	// quarter notes
-	NOTE_8TH,	// eighth notes
-	NOTE_12TH,	// triplets
-	NOTE_16TH,	// sixteenth notes
-	NUM_NOTE_TYPES
-};
-
-inline bool IsNoteOfType( int iNoteIndex, NoteType t )
-{ 
-	switch( t )
-	{
-	case NOTE_4TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/4) == 0;
-	case NOTE_8TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/8) == 0;
-	case NOTE_12TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/12) == 0;
-	case NOTE_16TH:	return iNoteIndex % (ELEMENTS_PER_MEASURE/16) == 0;
-	default:		ASSERT( false );	return false;
-	}
-};
 
 
 

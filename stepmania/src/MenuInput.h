@@ -11,7 +11,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 
 enum MenuButton
 {

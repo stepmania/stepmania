@@ -59,7 +59,7 @@ public:
 		return GameInput( n, b );
 	};
 
-	inline StyleInput GameInputToStyleInput( const GameInput GameI )
+	inline StyleInput StyleDef::GameInputToStyleInput( const GameInput &GameI )
 	{
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -72,22 +72,10 @@ public:
 				}
 			}
 		}
-		return StyleInput();	// didn't find a StyleInput
-	};
-
-	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData &newNoteData )
-	{
-		TrackNumber iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
-		for( int col=0; col<m_iColsPerPlayer; col++ )
-		{
-			ColumnInfo colInfo = m_ColumnInfo[p][col];
-			TrackNumber originalTrack = colInfo.track;
-			
-			iNewToOriginalTrack[col] = originalTrack;
-		}
-		
-		newNoteData.LoadTransformed( pOriginal, m_iColsPerPlayer, iNewToOriginalTrack );
+		return StyleInput();	// Didn't find a match.  Return blank.
 	}
+
+	void GetTransformedNoteDataForStyle( PlayerNumber p, NoteData* pOriginal, NoteData &newNoteData );
 
 };
 

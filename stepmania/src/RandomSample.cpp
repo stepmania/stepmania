@@ -13,7 +13,7 @@
 
 #include "RandomSample.h"
 #include "RageUtil.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
@@ -47,7 +47,7 @@ bool RandomSample::LoadSoundDir( CString sDir )
 	
 bool RandomSample::LoadSound( CString sSoundFilePath )
 {
-	HELPER.Log( "RandomSample::LoadSound( %s )", sSoundFilePath );
+	LOG->WriteLine( "RandomSample::LoadSound( %s )", sSoundFilePath );
 
 	RageSoundSample* pSS = new RageSoundSample;
 	pSS->Load( sSoundFilePath );
@@ -63,7 +63,7 @@ void RandomSample::PlayRandom()
 	// play one of the samples
 	if( m_pSamples.GetSize() == 0 )
 	{
-		HELPER.Log( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
+		LOG->WriteLine( "WARNING:  Tried to play a RandomSample that has 0 sounds loaded." );
 	}
 	else
 	{

@@ -17,7 +17,7 @@
 #include "RageBitmapTexture.h"
 #include "RageMovieTexture.h"
 #include "RageUtil.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 RageTextureManager*		TEXTURE		= NULL;
@@ -43,7 +43,7 @@ RageTextureManager::~RageTextureManager()
 	while( pos != NULL )  // iterate over all k/v pairs in map
 	{
 		m_mapPathToTexture.GetNextAssoc( pos, sPath, pTexture );
-		HELPER.Log( "TEXTURE LEAK: '%s', RefCount = %d.", sPath, pTexture->m_iRefCount );
+		LOG->WriteLine( "TEXTURE LEAK: '%s', RefCount = %d.", sPath, pTexture->m_iRefCount );
 		SAFE_DELETE( pTexture );
 	}
 
@@ -58,7 +58,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD 
 {
 	sTexturePath.MakeLower();
 
-//	HELPER.Log( "RageTextureManager::LoadTexture(%s).", sTexturePath );
+//	LOG->WriteLine( "RageTextureManager::LoadTexture(%s).", sTexturePath );
 
 	// holder for the new texture
 	RageTexture* pTexture;
@@ -74,7 +74,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD 
 		if( bForceReload )
 			pTexture->Reload( m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
 
-		HELPER.Log( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
+		LOG->WriteLine( "RageTextureManager: '%s' now has %d references.", sTexturePath, pTexture->m_iRefCount );
 	}
 	else	// the texture is not already loaded
 	{
@@ -87,7 +87,7 @@ RageTexture* RageTextureManager::LoadTexture( CString sTexturePath, const DWORD 
 			pTexture = (RageTexture*) new RageBitmapTexture( m_pScreen, sTexturePath, m_dwMaxTextureSize, m_dwTextureColorDepth, dwHints );
 
 
-		HELPER.Log( "RageTextureManager: Finished loading '%s' - %d references.", sTexturePath );
+		LOG->WriteLine( "RageTextureManager: Finished loading '%s' - %d references.", sTexturePath );
 
 
 		m_mapPathToTexture.SetAt( sTexturePath, pTexture );
@@ -113,11 +113,11 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 {
 	sTexturePath.MakeLower();
 
-//	HELPER.Log( "RageTextureManager::UnloadTexture(%s).", sTexturePath );
+//	LOG->WriteLine( "RageTextureManager::UnloadTexture(%s).", sTexturePath );
 
 	if( sTexturePath == "" )
 	{
-		HELPER.Log( "RageTextureManager::UnloadTexture(): tried to Unload a blank texture." );
+		LOG->WriteLine( "RageTextureManager::UnloadTexture(): tried to Unload a blank texture." );
 		return;
 	}
 	
@@ -128,13 +128,13 @@ void RageTextureManager::UnloadTexture( CString sTexturePath )
 		pTexture->m_iRefCount--;
 		if( pTexture->m_iRefCount == 0 )		// there are no more references to this texture
 		{
-			HELPER.Log( ssprintf("RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount) );
+			LOG->WriteLine( ssprintf("RageTextureManager: '%s' will be deleted.  It has %d references.", sTexturePath, pTexture->m_iRefCount) );
 			SAFE_DELETE( pTexture );		// free the texture
 			m_mapPathToTexture.RemoveKey( sTexturePath );	// and remove the key in the map
 		}
 		else
 		{
-			HELPER.Log( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
+			LOG->WriteLine( "RageTextureManager: '%s' will not be deleted.  It still has %d references.", sTexturePath, pTexture->m_iRefCount );
 		}
 	}
 	else // texture not found

@@ -23,7 +23,7 @@ void ActorFrame::RenderPrimitives()
 
 void ActorFrame::Update( float fDeltaTime )
 {
-//	HELPER.Log( "ActorFrame::Update( %f )", fDeltaTime );
+//	LOG->WriteLine( "ActorFrame::Update( %f )", fDeltaTime );
 
 	Actor::Update( fDeltaTime );
 

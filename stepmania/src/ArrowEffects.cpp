@@ -12,7 +12,7 @@
 #include "ArrowEffects.h"
 #include "NoteMetadata.h"
 #include "ColorNote.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "GameManager.h"
 
 

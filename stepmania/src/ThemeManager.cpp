@@ -11,7 +11,7 @@
 */
 
 #include "ThemeManager.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
@@ -25,7 +25,7 @@ ThemeManager::ThemeManager()
 	for( int i=0; i<arrayThemeNames.GetSize(); i++ )
 		AssertThemeIsComplete( arrayThemeNames[i] );
 
-	SetTheme( DEFAULT_THEME_NAME );
+	SwitchTheme( DEFAULT_THEME_NAME );
 }
 
 void ThemeManager::GetThemeNames( CStringArray& AddTo )
@@ -43,7 +43,7 @@ void ThemeManager::GetThemeNames( CStringArray& AddTo )
 	}
 }
 
-bool ThemeManager::SetTheme( CString sThemeName )		// return false if theme doesn't exist
+bool ThemeManager::SwitchTheme( CString sThemeName )		// return false if theme doesn't exist
 {
 	sThemeName.MakeLower();
 	m_sCurThemeName = sThemeName;
@@ -103,6 +103,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_RESULTS_GRADE_FRAME:			sAssetPath = "Graphics\\results grade frame 1x2";	break;
 		case GRAPHIC_RESULTS_JUDGE_LABELS:			sAssetPath = "Graphics\\results judge labels 1x6";	break;
 		case GRAPHIC_RESULTS_SCORE_LABELS:			sAssetPath = "Graphics\\results score labels 1x2";	break;
+		case GRAPHIC_RESULTS_GRADES:				sAssetPath = "Graphics\\results grades 1x7";		break;
 		case GRAPHIC_FALLBACK_BANNER:				sAssetPath = "Graphics\\Fallback Banner";			break;
 		case GRAPHIC_FALLBACK_BACKGROUND:			sAssetPath = "Graphics\\Fallback Background";		break;
 		case GRAPHIC_FALLBACK_CD_TITLE:				sAssetPath = "Graphics\\Fallback CD Title";			break;
@@ -112,6 +113,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_LIFEMETER_FRAME:				sAssetPath = "Graphics\\Life Meter Frame";			break;
 		case GRAPHIC_LIFEMETER_PILLS:				sAssetPath = "Graphics\\life meter pills 17x1";		break;
 		case GRAPHIC_COMBO:							sAssetPath = "Graphics\\combo";						break;
+		case GRAPHIC_SCROLLBAR_PARTS:				sAssetPath = "Graphics\\scrollbar parts";			break;
 		case GRAPHIC_CLOSING_STAR:					sAssetPath = "Graphics\\closing star";				break;
 		case GRAPHIC_OPENING_STAR:					sAssetPath = "Graphics\\opening star";				break;
 		case GRAPHIC_CAUTION:						sAssetPath = "Graphics\\Caution";					break;
@@ -119,7 +121,6 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_HERE_WE_GO:					sAssetPath = "Graphics\\here we go";				break;
 		case GRAPHIC_CLEARED:						sAssetPath = "Graphics\\cleared";					break;
 		case GRAPHIC_FAILED:						sAssetPath = "Graphics\\failed";					break;
-		case GRAPHIC_GRADES:						sAssetPath = "Graphics\\grades 1x8";				break;
 		case GRAPHIC_KEEP_ALIVE:					sAssetPath = "Graphics\\keep alive";				break;
 		case GRAPHIC_DANCER_P1:						sAssetPath = "Graphics\\dancer p1";					break;
 		case GRAPHIC_DANCER_P2:						sAssetPath = "Graphics\\dancer p2";					break;
@@ -145,6 +146,8 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_SONG_OPTIONS_BACKGROUND:			sAssetPath = "Graphics\\song options background";			break;	
 		case GRAPHIC_SYNCHRONIZE_BACKGROUND:			sAssetPath = "Graphics\\synchronize background";			break;
 		case GRAPHIC_SYNCHRONIZE_TOP_EDGE:				sAssetPath = "Graphics\\synchronize top edge";				break;
+		case GRAPHIC_SELECT_GAME_BACKGROUND:			sAssetPath = "Graphics\\select game background";			break;
+		case GRAPHIC_SELECT_GAME_TOP_EDGE:				sAssetPath = "Graphics\\select game top edge";				break;
 		case GRAPHIC_TITLE_MENU_LOGO:					sAssetPath = "Graphics\\title menu logo";					break;
 		case GRAPHIC_SELECT_DIFFICULTY_BACKGROUND:		sAssetPath = "Graphics\\select difficulty background";		break;
 		case GRAPHIC_SELECT_DIFFICULTY_TOP_EDGE:		sAssetPath = "Graphics\\select difficulty top edge";		break;
@@ -173,6 +176,7 @@ CString ThemeManager::ElementToAssetPath( ThemeElement te )
 		case GRAPHIC_SELECT_MUSIC_RADAR_BASE:			sAssetPath = "Graphics\\select music radar base";			break;
 		case GRAPHIC_SELECT_MUSIC_RADAR_WORDS:			sAssetPath = "Graphics\\select music radar words 1x5";		break;
 		case GRAPHIC_SELECT_MUSIC_SCORE_FRAME:			sAssetPath = "Graphics\\select music score frame";			break;
+		case GRAPHIC_SELECT_MUSIC_SMALL_GRADES:			sAssetPath = "Graphics\\select music small grades 1x7";		break;
 		case GRAPHIC_SELECT_GROUP_EXPLANATION:			sAssetPath = "Graphics\\select group explanation";			break;
 		case GRAPHIC_SELECT_GROUP_INFO_FRAME:			sAssetPath = "Graphics\\select group info frame";			break;
 		case GRAPHIC_SELECT_GROUP_BUTTON:				sAssetPath = "Graphics\\select group button";				break;

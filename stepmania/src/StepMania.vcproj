@@ -159,12 +159,6 @@
 				RelativePath=".\WindowConfigurePads.h">
 			</File>
 			<File
-				RelativePath="WindowCustomGraphicOptions.cpp">
-			</File>
-			<File
-				RelativePath="WindowCustomGraphicOptions.h">
-			</File>
-			<File
 				RelativePath=".\WindowDancing.cpp">
 			</File>
 			<File
@@ -322,7 +316,7 @@
 				RelativePath=".\FontManager.h">
 			</File>
 			<File
-				RelativePath=".\GameConstants.h">
+				RelativePath="GameConstantsAndTypes.h">
 			</File>
 			<File
 				RelativePath="GameDef.cpp">
@@ -440,9 +434,6 @@
 		<Filter
 			Name="System"
 			Filter="">
-			<File
-				RelativePath=".\ScreenDimensions.h">
-			</File>
 			<File
 				RelativePath=".\StdAfx.cpp">
 			</File>
@@ -570,6 +561,18 @@
 				RelativePath=".\Banner.h">
 			</File>
 			<File
+				RelativePath="BannerWithFrame.cpp">
+			</File>
+			<File
+				RelativePath="BannerWithFrame.h">
+			</File>
+			<File
+				RelativePath="BonusInfoFrame.cpp">
+			</File>
+			<File
+				RelativePath="BonusInfoFrame.h">
+			</File>
+			<File
 				RelativePath="CroppedSprite.cpp">
 			</File>
 			<File
@@ -634,6 +637,12 @@
 			</File>
 			<File
 				RelativePath=".\MusicWheel.h">
+			</File>
+			<File
+				RelativePath="ScrollBar.cpp">
+			</File>
+			<File
+				RelativePath="ScrollBar.h">
 			</File>
 			<File
 				RelativePath="SongInfoFrame.cpp">
@@ -782,16 +791,16 @@
 				RelativePath=".\RageBitmapTexture.h">
 			</File>
 			<File
-				RelativePath="RageHelper.cpp">
-			</File>
-			<File
-				RelativePath="RageHelper.h">
-			</File>
-			<File
 				RelativePath=".\RageInput.cpp">
 			</File>
 			<File
 				RelativePath=".\RageInput.h">
+			</File>
+			<File
+				RelativePath="RageLog.cpp">
+			</File>
+			<File
+				RelativePath="RageLog.h">
 			</File>
 			<File
 				RelativePath=".\RageMovieTexture.cpp">

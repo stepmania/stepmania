@@ -24,21 +24,8 @@ public:
 	~GameManager();
 
 	void ReadGamesAndStylesFromDir( CString sDir );
-	void SwitchGame( CString sGame )
-	{
-		m_sCurrentGame = sGame;
-		m_pCurrentGameDef = GetGameDef( sGame );
-		ASSERT( m_pCurrentGameDef != NULL );
-
-		for( int p=0; p<NUM_PLAYERS; p++ )
-			m_sCurrentSkin[p] = m_pCurrentGameDef->m_sSkinFolders[0];
-	};
-	void SwitchStyle( CString sStyle )
-	{
-		m_sCurrentStyle = sStyle;
-		m_pCurrentStyleDef = GetStyleDef( m_sCurrentGame, sStyle );
-		ASSERT( m_pCurrentStyleDef != NULL );
-	};
+	void SwitchGame( CString sGame );
+	void SwitchStyle( CString sStyle );
 	void SwitchSkin( PlayerNumber p, CString sSkin );
 
 	CString				m_sCurrentGame;		// currently only "dance"
@@ -50,6 +37,7 @@ public:
 	void GetGameNames( CStringArray &arrayGameNames );
 	void GetStyleNames( CString sGameName, CStringArray &arrayStyleNames );
 	void GetSkinNames( CString sGameName, CStringArray &arraySkinNames );
+	void GetSkinNames( CStringArray &arraySkinNames ) { GetSkinNames( m_sCurrentGame, arraySkinNames ); };
 
 	bool IsPlayerEnabled( PlayerNumber PlayerNo );
 

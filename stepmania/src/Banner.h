@@ -6,6 +6,7 @@
  Desc: The song's banner displayed in SelectSong.
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 

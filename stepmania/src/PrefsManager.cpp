@@ -27,7 +27,6 @@ GraphicProfileOptions GRAPHIC_OPTIONS[NUM_GRAPHIC_PROFILES] =
 		16,
 		16,
 		false,
-		false,
 	},
 	{	// PROFILE_LOW
 		"Low",
@@ -36,7 +35,6 @@ GraphicProfileOptions GRAPHIC_OPTIONS[NUM_GRAPHIC_PROFILES] =
 		256,
 		16,
 		16,
-		false,
 		true,
 	},
 	{	// PROFILE_MEDIUM
@@ -46,7 +44,6 @@ GraphicProfileOptions GRAPHIC_OPTIONS[NUM_GRAPHIC_PROFILES] =
 		512,
 		16,
 		16,
-		false,
 		true,
 	},
 	{	// PROFILE_HIGH
@@ -57,7 +54,6 @@ GraphicProfileOptions GRAPHIC_OPTIONS[NUM_GRAPHIC_PROFILES] =
 		16,
 		32,
 		true,
-		true,
 	},
 	{	// PROFILE_CUSTOM
 		"Custom",
@@ -66,7 +62,6 @@ GraphicProfileOptions GRAPHIC_OPTIONS[NUM_GRAPHIC_PROFILES] =
 		512,
 		16,
 		16,
-		false,
 		true,
 	},
 };
@@ -131,6 +126,8 @@ void PrefsManager::ReadPrefsFromDisk()
 			if( name_string == "UseRandomVis" )			m_GameOptions.m_bUseRandomVis	= ( value_string == "1" );
 			if( name_string == "SkipCaution" )			m_GameOptions.m_bSkipCaution	= ( value_string == "1" );
 			if( name_string == "Announcer" )			m_GameOptions.m_bAnnouncer		= ( value_string == "1" );
+			if( name_string == "NumArcadeStages" )		m_GameOptions.m_iNumArcadeStages= atoi( value_string );
+			if( name_string == "JudgementDifficulty" )	m_GameOptions.m_JudgementDifficulty= (GameOptions::JudgementDifficulty) atoi( value_string );
 		}
 	}
 
@@ -158,8 +155,6 @@ void PrefsManager::ReadPrefsFromDisk()
 			if( name_string == "MaxTextureSize" )	pGPO->m_dwMaxTextureSize	= atoi( value_string );
 			if( name_string == "DisplayColor" )		pGPO->m_dwDisplayColor		= atoi( value_string );
 			if( name_string == "TextureColor" )		pGPO->m_dwTextureColor		= atoi( value_string );
-			if( name_string == "Shadows" )			pGPO->m_bShadows			= ( value_string == "1" );
-			if( name_string == "Backgrounds" )		pGPO->m_bBackgrounds		= ( value_string == "1" );
 		}
 	}
 
@@ -193,8 +188,6 @@ void PrefsManager::SavePrefsToDisk()
 	ini.SetValue( "GraphicOptions", "MaxTextureSize",	ssprintf("%d", pGPO->m_dwMaxTextureSize) );
 	ini.SetValue( "GraphicOptions", "DisplayColor",		ssprintf("%d", pGPO->m_dwDisplayColor) );
 	ini.SetValue( "GraphicOptions", "TextureColor",		ssprintf("%d", pGPO->m_dwTextureColor) );
-	ini.SetValue( "GraphicOptions", "Shadows",			pGPO->m_bShadows ? "1":"0" );
-	ini.SetValue( "GraphicOptions", "Backgrounds",		pGPO->m_bBackgrounds ? "1":"0" );
 
 
 	ini.SetValue( "GameOptions", "IgnoreJoyAxes",		m_GameOptions.m_bIgnoreJoyAxes ? "1":"0" );

@@ -12,7 +12,7 @@
 -----------------------------------------------------------------------------
 */
 
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 
 
 const int NUM_PAD_TO_DEVICE_SLOTS	= 3;	// three device inputs may map to one pad input

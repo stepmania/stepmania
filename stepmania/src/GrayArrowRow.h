@@ -17,7 +17,7 @@
 #include "GrayArrow.h"
 #include "ActorFrame.h"
 #include "StyleDef.h"
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 
 
 

@@ -12,7 +12,7 @@
 #include "RageUtil.h"
 
 #include "TransitionStarWipe.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 
 

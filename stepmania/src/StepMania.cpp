@@ -30,8 +30,8 @@
 // StepMania common classes
 //
 #include "Font.h"
-#include "GameConstants.h"
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
+#include "GameConstantsAndTypes.h"
 #include "GameInput.h"
 #include "StyleInput.h"
 #include "Song.h"
@@ -46,7 +46,7 @@
 #include "WindowPlayerOptions.h"
 #include "WindowMusicScroll.h"
 
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 
 // error catcher stuff
 #include "ErrorCatcher/ErrorCatcher.h"
@@ -254,10 +254,8 @@ void MainLoop()
 		{
 			Update();
 			Render();
-			//if( !g_bFullscreen )
-#ifdef DEBUG
-			::Sleep(1 );	// give some time for the movie decoding thread
-#endif
+			if( SCREEN  &&  SCREEN->IsWindowed() )
+				::Sleep( 0 );	// give some time to other processes
 		}
 	}	// end  while( WM_QUIT != msg.message  )
 
@@ -312,7 +310,7 @@ BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 			}
 			break;
 		case IDC_BUTTON_REPORT:
-			GotoURL( "Docs/report.htm" );
+			GotoURL( "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366" );
 			break;
 		case IDC_BUTTON_RESTART:
 			{
@@ -417,7 +415,10 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 					ApplyGraphicOptions();
 					return 0;
 				case IDM_CHANGEDETAIL:
-					PREFS->m_GraphicProfile = GraphicProfile( (PREFS->m_GraphicProfile+1)%NUM_GRAPHIC_PROFILES );
+					if( PREFS->m_GraphicProfile == PROFILE_LOW )
+						PREFS->m_GraphicProfile = PROFILE_MEDIUM;
+					else
+						PREFS->m_GraphicProfile  = PROFILE_LOW;
 					ApplyGraphicOptions();
 					return 0;
                case IDM_EXIT:
@@ -487,6 +488,7 @@ HRESULT CreateObjects( HWND hWnd )
 	//
 	srand( (unsigned)time(NULL) );	// seed number generator
 	
+	LOG		= new RageLog();
 	SOUND	= new RageSound( hWnd );
 	MUSIC	= new RageSoundStream;
 	INPUTM	= new RageInput( hWnd );
@@ -555,6 +557,7 @@ void DestroyObjects()
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( TEXTURE );
 	SAFE_DELETE( SCREEN );
+	SAFE_DELETE( LOG );
 }
 
 

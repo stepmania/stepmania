@@ -15,7 +15,7 @@
 
 #include "Song.h"
 #include <math.h>	// for fmod
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
@@ -79,7 +79,7 @@ Song::Song()
 
 void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut )
 {
-//	HELPER.Log( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
+//	LOG->WriteLine( "GetBeatAndBPSFromElapsedTime( fElapsedTime = %f )", fElapsedTime );
 	// This function is a nightmare.  Don't even try to understand it. :-)
 
 	fElapsedTime += m_fOffsetInSeconds;
@@ -174,10 +174,29 @@ float Song::GetElapsedTimeFromBeat( float fBeat )
 	return fElapsedTimeBestGuess;
 }
 
+void Song::GetMainAndSubTitlesFromFullTitle( CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
+{
+	char szSeps[] = { '-', '~' };
+	for( int i=0; i<sizeof(szSeps); i++ )
+	{
+		const char c = szSeps[i];
+		int iBeginIndex = sFullTitle.Find( c );
+		if( iBeginIndex == -1 )
+			continue;
+		int iEndIndex = sFullTitle.Find( c, iBeginIndex+1 );	
+		if( iEndIndex == -1 )
+			continue;
+		sMainTitleOut = sFullTitle.Left( iBeginIndex-1 );
+		sSubTitleOut = sFullTitle.Mid( iBeginIndex, iEndIndex-iBeginIndex+1 );
+		return;
+	}
+	sMainTitleOut = sFullTitle; 
+	sSubTitleOut = ""; 
+};	
 
 bool Song::LoadFromSongDir( CString sDir )
 {
-	HELPER.Log( "Song::LoadFromSongDir(%s)", sDir );
+	LOG->WriteLine( "Song::LoadFromSongDir(%s)", sDir );
 
 	// make sure there is a trailing '\\' at the end of sDir
 	if( sDir.Right(1) != "\\" )
@@ -222,7 +241,7 @@ bool Song::LoadFromSongDir( CString sDir )
 
 bool Song::LoadFromBMSDir( CString sDir )
 {
-	HELPER.Log( "Song::LoadFromBMSDir(%s)", sDir );
+	LOG->WriteLine( "Song::LoadFromBMSDir(%s)", sDir );
 
 	// make sure there is a trailing '\\' at the end of sDir
 	if( sDir.Right(1) != "\\" )
@@ -323,7 +342,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 			// add, then sort
 			m_BPMSegments.Add( new_seg );
 			SortBPMSegmentsArray( m_BPMSegments );
-			HELPER.Log( "Inserting new BPM change at beat %f, BPM %f", new_seg.m_fStartBeat, new_seg.m_fBPM );
+			LOG->WriteLine( "Inserting new BPM change at beat %f, BPM %f", new_seg.m_fStartBeat, new_seg.m_fBPM );
 		}
 		else if( -1 != value_name.Find("#backbmp") ) 
 		{
@@ -352,7 +371,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 			}
 
 			const int iNumNotesInThisMeasure = arrayNotes.GetSize();
-			//HELPER.Log( "%s:%s: iMeasureNo = %d, iTrackNum = %d, iNumNotesInThisMeasure = %d", 
+			//LOG->WriteLine( "%s:%s: iMeasureNo = %d, iTrackNum = %d, iNumNotesInThisMeasure = %d", 
 			//	valuename, sNoteData, iMeasureNo, iTrackNum, iNumNotesInThisMeasure );
 			for( int j=0; j<iNumNotesInThisMeasure; j++ )
 			{
@@ -372,7 +391,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 						float fBPS;
 						fBPS = m_BPMSegments[0].m_fBPM/60.0f;
 						m_fOffsetInSeconds = fBeatOffset / fBPS;
-						//HELPER.Log( "Found offset to be index %d, beat %f", iStepIndex, NoteIndexToBeat(iStepIndex) );
+						//LOG->WriteLine( "Found offset to be index %d, beat %f", iStepIndex, NoteIndexToBeat(iStepIndex) );
 						break;
 					case 03:	// bpm
 						BPMSegment new_seg;
@@ -389,7 +408,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 	}
 
 	for( i=0; i<m_BPMSegments.GetSize(); i++ )
-		HELPER.Log( "There is a BPM change at beat %f, BPM %f, index %d", 
+		LOG->WriteLine( "There is a BPM change at beat %f, BPM %f, index %d", 
 					m_BPMSegments[i].m_fStartBeat, m_BPMSegments[i].m_fBPM, i );
 
 
@@ -402,7 +421,7 @@ bool Song::LoadFromBMSDir( CString sDir )
 
 bool Song::LoadFromDWIFile( CString sPath )
 {
-	HELPER.Log( "Song::LoadFromDWIFile(%s)", sPath );
+	LOG->WriteLine( "Song::LoadFromDWIFile(%s)", sPath );
 	
 	// save song file path
 	m_sSongFilePath = sPath;
@@ -523,7 +542,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 				new_seg.m_fStartBeat = fFreezeBeat;
 				new_seg.m_fFreezeSeconds = fFreezeSeconds;
 
-				HELPER.Log( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
+				LOG->WriteLine( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
 
 				m_FreezeSegments.Add( new_seg );	// add to back for now (we'll sort later)
 				SortFreezeSegmentsArray( m_FreezeSegments );
@@ -580,7 +599,7 @@ bool Song::LoadFromDWIFile( CString sPath )
 
 bool Song::LoadFromSMDir( CString sDir )
 {
-	HELPER.Log( "Song::LoadFromSMDir(%s)", sDir );
+	LOG->WriteLine( "Song::LoadFromSMDir(%s)", sDir );
 
 	int i;
 
@@ -716,7 +735,7 @@ bool Song::LoadFromSMDir( CString sDir )
 				new_seg.m_fStartBeat = fFreezeBeat;
 				new_seg.m_fFreezeSeconds = fFreezeSeconds;
 
-				HELPER.Log( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
+				LOG->WriteLine( "Adding a freeze segment: beat: %f, seconds = %f", new_seg.m_fStartBeat, new_seg.m_fFreezeSeconds );
 
 				m_FreezeSegments.Add( new_seg );	// add to back for now (we'll sort later)
 				SortFreezeSegmentsArray( m_FreezeSegments );
@@ -746,7 +765,7 @@ bool Song::LoadFromSMDir( CString sDir )
 		}
 
 		else
-			HELPER.Log( "Unexpected value named '%s'", sValueName );
+			LOG->WriteLine( "Unexpected value named '%s'", sValueName );
 	}
 
 	TidyUpData();
@@ -986,13 +1005,13 @@ void Song::SaveOffsetChangeToDisk()
 */
 void Song::Save()
 {
-	HELPER.Log( "Song::Save()" );
+	LOG->WriteLine( "Song::Save()" );
 
 	int i;
 
 	if( -1 != m_sSongDir.Find("DWI Support") )
 	{
-		HELPER.Log("WARNING:  Can't save to DWI support folder!");
+		LOG->WriteLine("WARNING:  Can't save to DWI support folder!");
 		return;
 	}
 

@@ -14,9 +14,6 @@
 #include "TransitionRectWipe.h"
 
 
-#define SCREEN_WIDTH	640
-#define SCREEN_HEIGHT	480
-
 #define RECTANGLE_WIDTH	20
 #define NUM_RECTANGLES	(SCREEN_WIDTH/RECTANGLE_WIDTH)
 #define FADE_RECTS_WIDE	(NUM_RECTANGLES/4)	// number of rects from fade start to fade end

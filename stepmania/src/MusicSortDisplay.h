@@ -16,7 +16,7 @@ class MusicSortDisplay;
 
 
 #include "Sprite.h"
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 
 
 

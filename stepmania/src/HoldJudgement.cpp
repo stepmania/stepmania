@@ -11,7 +11,7 @@
 
 #include "HoldJudgement.h"
 #include "RageUtil.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 
 
@@ -45,7 +45,7 @@ void HoldJudgement::RenderPrimitives()
 
 void HoldJudgement::SetHoldJudgement( HoldNoteResult result )
 {
-	//HELPER.Log( "Judgement::SetJudgement()" );
+	//LOG->WriteLine( "Judgement::SetJudgement()" );
 
 	switch( result )
 	{

@@ -12,11 +12,11 @@
 
 #include "NoteData.h"
 #include "RageUtil.h"
-#include "ScreenDimensions.h"
+#include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "ArrowEffects.h"
 #include "PrefsManager.h"
-#include "GameConstants.h"
+#include "GameConstantsAndTypes.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
@@ -527,7 +527,7 @@ void NoteData::GetMeasureStrings( CStringArray &arrayMeasureStrings )
 		int iNoteIndexSpacing;
 		for( nt=(NoteType)0; nt<NUM_NOTE_TYPES; nt=NoteType(nt+1) )
 		{
-			float fBeatSpacing = NOTE_TYPE_TO_BEAT[nt];
+			float fBeatSpacing = NoteTypeToBeat( nt );
 			iNoteIndexSpacing = roundf( fBeatSpacing * ELEMENTS_PER_BEAT );
 
 			bool bFoundSmallerNote = false;

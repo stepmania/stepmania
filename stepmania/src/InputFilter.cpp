@@ -12,7 +12,7 @@
 
 #include <math.h>	// for fmod
 #include "InputFilter.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "RageInput.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 

@@ -13,7 +13,7 @@
 #define _ArrowEffects_H_
 
 
-#include "GameTypes.h"
+#include "GameConstantsAndTypes.h"
 #include "StyleDef.h"
 
 

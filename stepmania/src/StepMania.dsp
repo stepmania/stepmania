@@ -100,19 +100,19 @@ SOURCE=.\RageBitmapTexture.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\RageHelper.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RageHelper.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\RageInput.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\RageInput.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageLog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageLog.h
 # End Source File
 # Begin Source File
 
@@ -213,14 +213,6 @@ SOURCE=.\WindowConfigurePads.cpp
 # Begin Source File
 
 SOURCE=.\WindowConfigurePads.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowCustomGraphicOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\WindowCustomGraphicOptions.h
 # End Source File
 # Begin Source File
 
@@ -744,6 +736,22 @@ SOURCE=.\Banner.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BannerWithFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BannerWithFrame.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\BonusInfoFrame.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\BonusInfoFrame.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\BPMDisplay.cpp
 # End Source File
 # Begin Source File
@@ -837,6 +845,14 @@ SOURCE=.\MusicWheel.cpp
 # Begin Source File
 
 SOURCE=.\MusicWheel.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScrollBar.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScrollBar.h
 # End Source File
 # Begin Source File
 

@@ -1,10 +1,10 @@
 log.txt: last compiled on Sun Apr  7 14:19:25 2002.
-Log starting 2002-04-28 12:00:05
+Log starting 2002-04-30 13:16:42
 
 
 RageSound::RageSound()
 Sound card info:
- - play latency is 2 ms
+ - play latency is 3 ms
  - total device hardware memory is 0 bytes
  - free device hardware memory is 0 bytes
  - number of free sample slots in the hardware is 94
@@ -149,18 +149,10 @@ Present Parameters: 640, 480, 22, 1, 0, 1, 0, 1, 1, 80, 0, 0, 0
 Mode change was successful.
 BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
 RageBitmapTexture: Loaded 'themes\default\fonts\normal 16x16.png' (512x512) from disk.  bScaleImageToTextureSize = 0, source 512,512;  image 512,512.
-RageTextureManager: Finished loading 'themes\default\fonts\normal 16x16.png' - 1237280 references.
+RageTextureManager: Finished loading 'themes\default\fonts\normal 16x16.png' - 1237292 references.
 FontManager: Loading 'themes\default\fonts\normal.font' from disk.
 BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
 FontManager: The Font 'themes\default\fonts\normal.font' now has 1 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
-FontManager: The Font 'themes\default\fonts\normal.font' now has 2 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
-FontManager: The Font 'themes\default\fonts\normal.font' now has 3 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
-FontManager: The Font 'themes\default\fonts\normal.font' now has 4 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
-FontManager: The Font 'themes\default\fonts\normal.font' now has 5 references.
 RageScreen::SwitchDisplayModes( 1, 640, 480, 16 )
 Testing format: display 22, back buffer 23, windowed 1...
 This won't work.  Keep searching.
@@ -174,96 +166,9 @@ Testing format: display 22, back buffer 22, windowed 1...
 This will work.
 Present Parameters: 640, 480, 22, 1, 0, 1, 0, 1, 1, 80, 0, 0, 0
 Mode change was successful.
-FPS: 2
 RageBitmapTexture: Loaded 'themes\default\fonts\normal 16x16.png' (512x512) from disk.  bScaleImageToTextureSize = 0, source 512,512;  image 512,512.
-WindowTitleMenu::WindowTitleMenu()
-Sprite::LoadFromTexture(Themes\default\Graphics\title menu background (no alpha).png)
-RageBitmapTexture: Loaded 'themes\default\graphics\title menu background (no alpha).png' (512x512) from disk.  bScaleImageToTextureSize = 1, source 640,480;  image 512,512.
-RageTextureManager: Finished loading 'themes\default\graphics\title menu background (no alpha).png' - 1236964 references.
-Sprite::LoadFromTexture(Themes\default\Graphics\title menu logo (1 alpha).png)
-RageBitmapTexture: Loaded 'themes\default\graphics\title menu logo (1 alpha).png' (512x512) from disk.  bScaleImageToTextureSize = 0, source 512,315;  image 512,315.
-RageTextureManager: Finished loading 'themes\default\graphics\title menu logo (1 alpha).png' - 1236964 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
-FontManager: The Font 'themes\default\fonts\normal.font' now has 6 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Normal.font)
-FontManager: The Font 'themes\default\fonts\normal.font' now has 7 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-RageBitmapTexture: Loaded 'themes\default\fonts\bold 8x8.png' (256x256) from disk.  bScaleImageToTextureSize = 0, source 256,256;  image 256,256.
-RageTextureManager: Finished loading 'themes\default\fonts\bold 8x8.png' - 1236968 references.
-FontManager: Loading 'themes\default\fonts\bold.font' from disk.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 1 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 2 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 3 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 4 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 5 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 6 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 7 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 8 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 9 references.
-BitmapText::LoadFromFontName(Themes\default\Fonts\Bold.font)
-FontManager: The Font 'themes\default\fonts\bold.font' now has 10 references.
-RandomStream::LoadSound( Themes\default\Announcer\title\Dance Dance Revolution.mp3 )
-RandomSample::LoadSound( Themes\default\Sounds\title change.mp3 )
-RageSoundSample::Load( Themes\default\Sounds\title change.mp3 )
-RandomSample::LoadSound( Themes\default\Sounds\select.mp3 )
-RageSoundSample::Load( Themes\default\Sounds\select.mp3 )
-RandomSample::LoadSound( Themes\default\Sounds\invalid.mp3 )
-RageSoundSample::Load( Themes\default\Sounds\invalid.mp3 )
-FPS: 1
-FPS: 63
-FPS: 188
-FPS: 248
-FPS: 159
-FPS: 32
-FPS: 219
-FPS: 278
-FPS: 235
-FPS: 30
-FPS: 150
-FPS: 290
-FPS: 148
-FPS: 48
-FPS: 78
-FPS: 70
-FPS: 51
-FPS: 83
-FPS: 137
-FPS: 32
-FPS: 92
-FPS: 44
-FPS: 82
-FPS: 58
-WindowManager::~WindowManager()
-WindowTitleMenu::~WindowTitleMenu()
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 10 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 9 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 8 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 7 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 6 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 5 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 4 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 3 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 2 references.
-FontManager: 'themes\default\fonts\bold.font' will not be deleted.  It still has 1 references.
-FontManager: 'themes\default\fonts\bold.font' will be deleted.  It has 0 references.
-RageTextureManager: 'themes\default\fonts\bold 8x8.png' will be deleted.  It has 0 references.
-FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 7 references.
-FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 6 references.
-RageTextureManager: 'themes\default\graphics\title menu logo (1 alpha).png' will be deleted.  It has 0 references.
-RageTextureManager: 'themes\default\graphics\title menu background (no alpha).png' will be deleted.  It has 0 references.
-FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 5 references.
-FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 4 references.
-FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 3 references.
-FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 2 references.
-FontManager: 'themes\default\fonts\normal.font' will not be deleted.  It still has 1 references.
-FontManager: 'themes\default\fonts\normal.font' will be deleted.  It has 0 references.
-RageTextureManager: 'themes\default\fonts\normal 16x16.png' will be deleted.  It has 0 references.
+WARNING:  Didn't find an empty system messages slot.
+WARNING:  Didn't find an empty system messages slot.
+Sprite::LoadFromTexture(Themes\default\Graphics\results banner frame.png)
+RageBitmapTexture: Loaded 'themes\default\graphics\results banner frame.png' (256x128) from disk.  bScaleImageToTextureSize = 0, source 256,100;  image 256,100.
+RageTextureManager: Finished loading 'themes\default\graphics\results banner frame.png' - 1236440 references.

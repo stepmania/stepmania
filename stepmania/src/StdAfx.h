@@ -28,7 +28,7 @@
 //
 // Rage global classes
 //
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "RageScreen.h"
 #include "RageTextureManager.h"
 #include "RageSound.h"

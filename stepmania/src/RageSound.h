@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  File: RageSound.h
@@ -5,12 +6,9 @@
  Desc: Sound effects library (currently a wrapper around Bass Sound Library).
 
  Copyright (c) 2001-2002 by the persons listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-
-#ifndef _RAGESOUND_H_
-#define _RAGESOUND_H_
 
 
 #include "bass/bass.h"
@@ -37,6 +35,3 @@ private:
 
 
 extern RageSound*		SOUND;	// global and accessable from anywhere in our program
-
-
-#endif

@@ -23,7 +23,7 @@
 #include "dxerr8.h"
 #include "DXUtil.h"
 #include "RageUtil.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
@@ -38,7 +38,7 @@ RageBitmapTexture::RageBitmapTexture(
 	const DWORD dwHints ) :
 	RageTexture( pScreen, sFilePath, dwMaxSize, dwTextureColorDepth, dwHints )
 {
-//	HELPER.Log( "RageBitmapTexture::RageBitmapTexture()" );
+//	LOG->WriteLine( "RageBitmapTexture::RageBitmapTexture()" );
 
 	m_pd3dTexture = NULL;
 
@@ -146,7 +146,7 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
 		fmtTexture,					// our preferred texture format
 		D3DPOOL_MANAGED,			// which memory pool
 		(bScaleImageToTextureSize ? D3DX_FILTER_BOX : D3DX_FILTER_NONE) | (bDither ? D3DX_FILTER_DITHER : 0),		// filter
-		D3DX_DEFAULT | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
+		D3DX_FILTER_BOX | (bDither ? D3DX_FILTER_DITHER : 0),				// mip filter
 		0,							// no color key
 		&ddii,						// struct to fill with source image info
 		NULL,						// no palette
@@ -182,7 +182,7 @@ void RageBitmapTexture::Create( DWORD dwMaxSize, DWORD dwTextureColorDepth, DWOR
 		m_iImageHeight	= m_iSourceHeight;
 	}
 
-	HELPER.Log( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bScaleImageToTextureSize = %d, source %d,%d;  image %d,%d.", 
+	LOG->WriteLine( "RageBitmapTexture: Loaded '%s' (%ux%u) from disk.  bScaleImageToTextureSize = %d, source %d,%d;  image %d,%d.", 
 		m_sFilePath, 
 		GetTextureWidth(), 
 		GetTextureHeight(),

@@ -24,8 +24,14 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void RenderPrimitives();
 
+	virtual void OpenWipingRight( WindowMessage send_when_done = SM_None );
+	virtual void OpenWipingLeft(  WindowMessage send_when_done = SM_None );
+	virtual void CloseWipingRight(WindowMessage send_when_done = SM_None );
+	virtual void CloseWipingLeft( WindowMessage send_when_done = SM_None );
+
 protected:
 	Sprite m_sprLogo;
+	RectangleActor m_rect;
 };
 
 

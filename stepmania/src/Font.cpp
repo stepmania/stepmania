@@ -15,13 +15,13 @@
 #include <stdio.h>
 #include "RageTextureManager.h"
 #include "RageUtil.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 
 Font::Font( const CString &sFontFilePath )
 {
-	//HELPER.Log( "Font::LoadFromFontName(%s)", sFontFilePath );
+	//LOG->WriteLine( "Font::LoadFromFontName(%s)", sFontFilePath );
 	for( int i=0; i<MAX_FONT_CHARS; i++ )
 	{
 		m_iCharToFrameNo[i] = -1;

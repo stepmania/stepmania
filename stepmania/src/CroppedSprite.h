@@ -32,9 +32,15 @@ public:
 		return true;
 	}
 
-	void CropToSize( float fHeight, float fWidth );
+	void SetCroppedSize( float fWidth, float fHeight )
+	{
+		m_fCropWidth = fWidth;
+		m_fCropHeight = fHeight;
+	}
 
 protected:
+	void CropToSize( float fWidth, float fHeight );
+
 	float m_fCropWidth, m_fCropHeight;
 };
 

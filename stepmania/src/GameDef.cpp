@@ -11,7 +11,7 @@
 */
 
 #include "GameDef.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "RageUtil.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 #include "IniFile.h"
@@ -20,7 +20,7 @@
 
 GameDef::GameDef( CString sGameDir )
 {
-	HELPER.Log( "GameDef::GameDef( '%s )", sGameDir );
+	LOG->WriteLine( "GameDef::GameDef( '%s )", sGameDir );
 
 	sGameDir.TrimRight( "/\\" );	// trim off the trailing slash if any
 	m_sGameDir = sGameDir + "\\";

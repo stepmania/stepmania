@@ -293,7 +293,7 @@ DWORD GetFileSizeInBytes( const CString &sFilePath )
 
 bool DoesFileExist( const CString &sPath )
 {
-	//HELPER.Log( "DoesFileExist(%s)", sPath );
+	//LOG->WriteLine( "DoesFileExist(%s)", sPath );
 
     DWORD dwAttr = GetFileAttributes( sPath );
     if( dwAttr == (DWORD)-1 )

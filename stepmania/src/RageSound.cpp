@@ -12,26 +12,26 @@
 
 #include "RageSound.h"
 #include "RageUtil.h"
-#include "RageHelper.h"
+#include "RageLog.h"
 #include "ErrorCatcher/ErrorCatcher.h"
 
 #include "bass/bass.h"
 #pragma comment(lib, "bass/bass.lib") 
-
+ 
 
 RageSound*		SOUND	= NULL;
 
 
 RageSound::RageSound( HWND hWnd )
 {
-	HELPER.Log( "RageSound::RageSound()" );
+	LOG->WriteLine( "RageSound::RageSound()" );
 	// save the HWND
 	if( !hWnd )
 		FatalError( "RageSound called with NULL hWnd." );
 	m_hWndApp = hWnd;
 
-	if( BASS_GetVersion() != MAKELONG(1,3) )
-		FatalError( "BASS version 1.3 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
+	if( BASS_GetVersion() != MAKELONG(1,5) )
+		FatalError( "BASS version 1.5 DLL could not be loaded.  Verify that Bass.dll exists in the program directory.");
 
 	if( !BASS_Init( -1, 44100, BASS_DEVICE_LEAVEVOL|BASS_DEVICE_LATENCY, m_hWndApp ) )
 	{
@@ -51,7 +51,7 @@ RageSound::RageSound( HWND hWnd )
 	BASS_GetInfo( &m_info );
 
 
-	HELPER.Log( 
+	LOG->WriteLine( 
 		"Sound card info:\n"
 		" - play latency is %u ms\n"
 		" - total device hardware memory is %u bytes\n"

@@ -1,3 +1,4 @@
+#pragma once
 /*
 -----------------------------------------------------------------------------
  Class: ThemeManager
@@ -9,10 +10,6 @@
 	Chris Danford
 -----------------------------------------------------------------------------
 */
-
-#ifndef _ThemeManager_H_
-#define _ThemeManager_H_
-
 
 #include "RageUtil.h"
 
@@ -28,6 +25,7 @@ enum ThemeElement {
 	GRAPHIC_CLEARED,
 	GRAPHIC_CLOSING_STAR,
 	GRAPHIC_COMBO,		
+	GRAPHIC_SCROLLBAR_PARTS,		
 	GRAPHIC_DANCER_P1,
 	GRAPHIC_DANCER_P2,
 	GRAPHIC_DANGER_BACKGROUND,
@@ -38,11 +36,14 @@ enum ThemeElement {
 	GRAPHIC_FALLBACK_BACKGROUND,
 	GRAPHIC_FALLBACK_BANNER,
 	GRAPHIC_FALLBACK_CD_TITLE,
-	GRAPHIC_GAME_OPTIONS_BACKGROUND,
-	GRAPHIC_GAME_OPTIONS_TOP_EDGE,
-	GRAPHIC_GRADES,	
+	GRAPHIC_SELECT_GAME_BACKGROUND,
+	GRAPHIC_SELECT_GAME_TOP_EDGE,
+	GRAPHIC_RESULTS_GRADES,	
+	GRAPHIC_SELECT_MUSIC_SMALL_GRADES,	
 	GRAPHIC_GRAPHIC_OPTIONS_BACKGROUND,
 	GRAPHIC_GRAPHIC_OPTIONS_TOP_EDGE,
+	GRAPHIC_GAME_OPTIONS_BACKGROUND,
+	GRAPHIC_GAME_OPTIONS_TOP_EDGE,
 	GRAPHIC_HERE_WE_GO,	
 	GRAPHIC_JUDGEMENT,	
 	GRAPHIC_KEEP_ALIVE,	
@@ -184,7 +185,7 @@ public:
 	ThemeManager();
 
 	void GetThemeNames( CStringArray& AddTo );
-	bool SetTheme( CString sThemeName );		// return false if theme doesn't exist
+	bool SwitchTheme( CString sThemeName );		// return false if theme doesn't exist
 	void AssertThemeIsComplete( CString sThemeName );		// return false if theme doesn't exist
 	CString ElementToAssetPath( ThemeElement te );
 	CString GetPathTo( ThemeElement te );
@@ -198,8 +199,4 @@ protected:
 
 
 
-
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
-
-
-#endif
