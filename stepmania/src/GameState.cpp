@@ -185,7 +185,7 @@ void GameState::ReloadCharacters()
 		if( sCharName == "cvs" )	// the directory called "CVS"
 			continue;		// ignore it
 
-		if( sCharName.CompareNoCase("default")!=0 )
+		if( sCharName.CompareNoCase("default")==0 )
 			FoundDefault = true;
 
 		Character* pChar = new Character;
