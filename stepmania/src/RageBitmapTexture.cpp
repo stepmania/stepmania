@@ -82,12 +82,13 @@ void RageBitmapTexture::Create()
 
 	/* Create (and return) a surface ready to be loaded to OpenGL */
 	/* Load the image into an SDL surface. */
-	SDL_Surface *img = IMG_Load( GetID().filename );
+	ResolvePath( actualID.filename );
+	SDL_Surface *img = IMG_Load( actualID.filename );
 
 	/* XXX: Wait, we don't want to throw for all images; in particular, we
 	 * want to tolerate corrupt/unknown background images. */
 	if(img == NULL)
-		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", GetID().filename.c_str(), SDL_GetError() );
+		RageException::Throw( "RageBitmapTexture: Couldn't load %s: %s", actualID.filename.c_str(), SDL_GetError() );
 
 	if(actualID.bHotPinkColorKey)
 	{
