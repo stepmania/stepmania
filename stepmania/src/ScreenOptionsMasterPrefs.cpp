@@ -214,60 +214,60 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 }
 
 /* Appearance options */
-MOVE( Instructions,			(bool&)PREFSMAN->m_bShowInstructions );
-MOVE( Caution,				(bool&)PREFSMAN->m_bShowCaution );
-MOVE( OniScoreDisplay,		(bool&)PREFSMAN->m_bDancePointsForOni );
-MOVE( SongGroup,			(bool&)PREFSMAN->m_bShowSelectGroup );
+MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
+MOVE( Caution,				PREFSMAN->m_bShowCaution );
+MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
+MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 MOVE( WheelSections,		PREFSMAN->m_MusicWheelUsesSections );
 MOVE( CourseSort,			PREFSMAN->m_iCourseSortOrder );
-MOVE( RandomAtEnd,			(bool&)PREFSMAN->m_bMoveRandomToEnd );
-MOVE( Translations,			(bool&)PREFSMAN->m_bShowNativeLanguage );
-MOVE( Lyrics,				(bool&)PREFSMAN->m_bShowLyrics );
+MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
+MOVE( Translations,			PREFSMAN->m_bShowNativeLanguage );
+MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
 
 /* Misc. options */
-MOVE( AutogenSteps,			(bool&)PREFSMAN->m_bAutogenSteps );
-MOVE( AutogenGroupCourses,	(bool&)PREFSMAN->m_bAutogenGroupCourses );
-MOVE( FastLoad,				(bool&)PREFSMAN->m_bFastLoad );
+MOVE( AutogenSteps,			PREFSMAN->m_bAutogenSteps );
+MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
+MOVE( FastLoad,				PREFSMAN->m_bFastLoad.Value() );
 
 /* Background options */
-MOVE( BackgroundMode,		(int&)PREFSMAN->m_iBackgroundMode );
-MOVE( ShowDanger,			(bool&)PREFSMAN->m_bShowDanger );
+MOVE( BackgroundMode,		PREFSMAN->m_iBackgroundMode.Value() );
+MOVE( ShowDanger,			PREFSMAN->m_bShowDanger.Value() );
 MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
-MOVE( BeginnerHelper,		(bool&)PREFSMAN->m_bShowBeginnerHelper );
+MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
 
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, (float&)PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fBGBrightness.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5,10,15,20 };
-	MoveMap( sel, (int&)PREFSMAN->m_iNumBackgrounds, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iNumBackgrounds.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Input options */
-MOVE( AutoMapOnJoyChange,	(bool&)PREFSMAN->m_bAutoMapOnJoyChange );
-MOVE( MenuButtons,			(bool&)PREFSMAN->m_bOnlyDedicatedMenuButtons );
-MOVE( AutoPlay,				(bool&)PREFSMAN->m_bAutoPlay );
-MOVE( BackDelayed,			(bool&)PREFSMAN->m_bDelayedBack );
-MOVE( OptionsNavigation,	(bool&)PREFSMAN->m_bArcadeOptionsNavigation );
+MOVE( AutoMapOnJoyChange,	PREFSMAN->m_bAutoMapOnJoyChange );
+MOVE( MenuButtons,			PREFSMAN->m_bOnlyDedicatedMenuButtons.Value() );
+MOVE( AutoPlay,				PREFSMAN->m_bAutoPlay );
+MOVE( BackDelayed,			PREFSMAN->m_bDelayedBack );
+MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
 
 static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5, 10, 15, 25 };
-	MoveMap( sel, (int&)PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Gameplay options */
-MOVE( SoloSingles,			(bool&)PREFSMAN->m_bSoloSingle );
-MOVE( HiddenSongs,			(bool&)PREFSMAN->m_bHiddenSongs );
-MOVE( EasterEggs,			(bool&)PREFSMAN->m_bEasterEggs );
+MOVE( SoloSingles,			PREFSMAN->m_bSoloSingle );
+MOVE( HiddenSongs,			PREFSMAN->m_bHiddenSongs.Value() );
+MOVE( EasterEggs,			PREFSMAN->m_bEasterEggs );
 MOVE( MarvelousTiming,		PREFSMAN->m_iMarvelousTiming );
-MOVE( AllowExtraStage,		(bool&)PREFSMAN->m_bAllowExtraStage );
-MOVE( PickExtraStage,		(bool&)PREFSMAN->m_bPickExtraStage );
-MOVE( UnlockSystem,			(bool&)PREFSMAN->m_bUseUnlockSystem );
+MOVE( AllowExtraStage,		PREFSMAN->m_bAllowExtraStage );
+MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
+MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
 /* Coin options */
 MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
@@ -275,13 +275,13 @@ MOVE( CoinMode,			PREFSMAN->m_iCoinMode );
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2 };
-	MoveMap( sel, (int&)PREFSMAN->m_iCoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iCoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7,8 };
-	MoveMap( sel, (int&)PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void Premium( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -293,24 +293,24 @@ static void Premium( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7 };
-	MoveMap( sel, (int&)PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
 }
-MOVE( EventMode,			(bool&)PREFSMAN->m_bEventMode );
+MOVE( EventMode,			PREFSMAN->m_bEventMode );
 
 /* Machine options */
-MOVE( MenuTimer,			(bool&)PREFSMAN->m_bMenuTimer );
+MOVE( MenuTimer,			PREFSMAN->m_bMenuTimer.Value() );
 MOVE( ScoringType,			PREFSMAN->m_iScoringType );
 
 static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
-	MoveMap( sel, (float&)PREFSMAN->m_fJudgeWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
-	MoveMap( sel, (float&)PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -356,13 +356,13 @@ MOVE( ProgressiveStageLifebar,		PREFSMAN->m_iProgressiveStageLifebar );
 MOVE( ProgressiveNonstopLifebar,	PREFSMAN->m_iProgressiveNonstopLifebar );
 
 /* Graphic options */
-MOVE( DisplayMode,			(bool&)PREFSMAN->m_bWindowed );
-MOVE( WaitForVsync,			(bool&)PREFSMAN->m_bVsync );
-MOVE( ShowStats,			(bool&)PREFSMAN->m_bShowStats );
-MOVE( ShowBanners,			(bool&)PREFSMAN->m_bShowBanners );
-MOVE( KeepTexturesInMemory,	(bool&)PREFSMAN->m_bDelayedTextureDelete );
-MOVE( CelShadeModels,			(bool&)PREFSMAN->m_bCelShadeModels );
-MOVE( SmoothLines,			(bool&)PREFSMAN->m_bSmoothLines );
+MOVE( DisplayMode,			PREFSMAN->m_bWindowed.Value() );
+MOVE( WaitForVsync,			PREFSMAN->m_bVsync.Value() );
+MOVE( ShowBanners,			PREFSMAN->m_bShowBanners.Value() );
+MOVE( ShowStats,			PREFSMAN->m_bShowStats.Value() );
+MOVE( KeepTexturesInMemory,	PREFSMAN->m_bDelayedTextureDelete.Value() );
+MOVE( CelShadeModels,		PREFSMAN->m_bCelShadeModels );
+MOVE( SmoothLines,			PREFSMAN->m_bSmoothLines );
 
 struct res_t
 {
@@ -407,31 +407,31 @@ static void DisplayResolution( int &sel, bool ToSel, const ConfOption *pConfOpti
 static void DisplayColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, (int&)PREFSMAN->m_iDisplayColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iDisplayColorDepth.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void TextureResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 256,512,1024,2048 };
-	MoveMap( sel, (int&)PREFSMAN->m_iMaxTextureResolution, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iMaxTextureResolution.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void TextureColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, (int&)PREFSMAN->m_iTextureColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iTextureColorDepth.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void MovieColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, (int&)PREFSMAN->m_iMovieColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iMovieColorDepth.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
-	MoveMap( sel, (int&)PREFSMAN->m_iRefreshRate, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iRefreshRate.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Sound options */
@@ -441,7 +441,7 @@ MOVE( AttractSoundFrequency,PREFSMAN->m_iAttractSoundFrequency );
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, (float&)PREFSMAN->m_fSoundVolume, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fSoundVolume, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 
