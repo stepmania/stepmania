@@ -761,7 +761,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SONG: {
-		bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
+		const bool bIsNew = m_MusicWheel.GetSelectedSong()->IsNew();
 		bool bIsHard = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
 		{
@@ -771,7 +771,22 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 				bIsHard = true;
 		}
 
-		if( bIsNew )
+		/* See if this song is a repeat.  If we're in event mode, only check the last five songs. */
+		bool bIsRepeat = false;
+		int i = 0;
+		if( PREFSMAN->m_bEventMode )
+			i = max( 0, int(GAMESTATE->m_vPlayedStageStats.size())-5 );
+		for( ; i < (int)GAMESTATE->m_vPlayedStageStats.size(); ++i )
+			if( GAMESTATE->m_vPlayedStageStats[i].pSong == m_MusicWheel.GetSelectedSong() )
+				bIsRepeat = true;
+
+		/* Don't complain about repeats if the user didn't get to pick. */
+		if( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage )
+			bIsRepeat = false;
+
+		if( bIsRepeat )
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment repeat") );
+		else if( bIsNew )
 			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment new") );
 		else if( bIsHard )
 			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music comment hard") );
