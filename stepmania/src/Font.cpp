@@ -36,6 +36,9 @@ void FontPage::Load( const FontPageSettings &cfg )
 
 	// load texture
 	m_sTexturePath.MakeLower();
+	RageTextureID ID(m_sTexturePath);
+	ID.bStretch = true;
+
 	m_pTexture = TEXTUREMAN->LoadTexture( m_sTexturePath );
 	ASSERT( m_pTexture != NULL );
 
@@ -138,7 +141,7 @@ void FontPage::SetTextureCoords(const vector<int> &widths)
 				iPixelsToChopOff--;
 				g.width++;
 			}
-			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetTextureWidth();
+			float fTexCoordsToChopOff = float(iPixelsToChopOff) / m_pTexture->GetSourceWidth();
 
 			g.rect.left  += fTexCoordsToChopOff/2;
 			g.rect.right -= fTexCoordsToChopOff/2;
