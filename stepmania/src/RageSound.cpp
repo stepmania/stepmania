@@ -655,7 +655,7 @@ void RageSound::CleanPosMap( deque<pos_map_t> &pos_map )
 	}
 }
 
-/* Get the position in frames (ignoring GetOffsetFix). */
+/* Get the position in frames. */
 int64_t RageSound::GetPositionSecondsInternal( bool *approximate ) const
 {
 	LockMut(SOUNDMAN->lock);
@@ -711,8 +711,7 @@ float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) c
 	if( Timestamp )
 		HOOKS->ExitTimeCriticalSection();
 
-	const float fixed_pos = pos + Sample->GetOffsetFix();
-	return GetPlaybackRate() * fixed_pos;
+	return GetPlaybackRate() * pos;
 }
 
 

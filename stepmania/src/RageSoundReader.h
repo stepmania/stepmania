@@ -3,15 +3,14 @@
 
 /* A sound reader is a source for a RageSound.  It's usually just a convenience
  * wrapper around SDL_Sound. */
-class SoundReader {
+class SoundReader
+{
 	mutable string error;
 
 protected:
 	void SetError(string e) const { error = e; }
 
 public:
-	virtual float GetOffsetFix() const { return 0; }
-	
 	virtual int GetLength() const = 0; /* ms */
 	virtual int GetLength_Fast() const { return GetLength(); } /* ms */
 	virtual int SetPosition_Accurate(int ms) = 0;

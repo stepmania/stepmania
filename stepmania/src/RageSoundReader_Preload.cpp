@@ -17,7 +17,6 @@ bool SoundReader_Preload::Open(SoundReader *source)
 {
 	ASSERT(source);
 	samplerate = source->GetSampleRate();
-	OffsetFix = source->GetOffsetFix(); // propagate upwards
 
 	/* Check the length, and see if we think it'll fit in the buffer. */
 	int len = source->GetLength_Fast();

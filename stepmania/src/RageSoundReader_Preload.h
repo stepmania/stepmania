@@ -42,7 +42,6 @@ public:
 	int SetPosition_Fast(int ms);
 	int Read(char *buf, unsigned len);
 	int GetSampleRate() const { return samplerate; }
-	float GetOffsetFix() const { return OffsetFix; }
 
 	SoundReader *Copy() const;
 	~SoundReader_Preload() { }
