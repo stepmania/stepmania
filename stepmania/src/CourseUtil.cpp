@@ -233,6 +233,15 @@ void CourseID::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue("Name", sName);
 }
 
+CString CourseID::ToString() const
+{
+	if( !sPath.empty() )
+		return sPath;
+	if( !sName.empty() )
+		return sName;
+	return "";
+}
+
 bool CourseID::IsValid() const
 {
 	return !sPath.empty() || !sName.empty();

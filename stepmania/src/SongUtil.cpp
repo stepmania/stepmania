@@ -387,6 +387,11 @@ void SongID::LoadFromNode( const XNode* pNode )
 	pNode->GetAttrValue("Dir", sDir);
 }
 
+CString SongID::ToString() const
+{
+	return sDir;
+}
+
 bool SongID::IsValid() const
 {
 	return !sDir.empty();

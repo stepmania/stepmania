@@ -47,6 +47,7 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+	CString ToString() const;
 	bool IsValid() const;
 };
 

@@ -209,6 +209,18 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	}
 }
 
+CString StepsID::ToString() const
+{
+	CString s = GameManager::NotesTypeToString(st);
+	s += " " + DifficultyToString(dc);
+	if( dc == DIFFICULTY_EDIT )
+	{
+		s += " " + sDescription;
+		s += ssprintf(" %u", uHash );
+	}
+	return s;
+}
+
 bool StepsID::IsValid() const
 {
 	return st != STEPS_TYPE_INVALID && dc != DIFFICULTY_INVALID;

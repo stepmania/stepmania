@@ -464,8 +464,8 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	}
 
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddStepsLastScore( pSong, pSteps, hs );
-	PROFILEMAN->GetMachineProfile()->AddStepsLastScore( pSong, pSteps, hs );
+		PROFILEMAN->GetProfile(pn)->AddStepsRecentScore( pSong, pSteps, hs );
+	PROFILEMAN->GetMachineProfile()->AddStepsRecentScore( pSong, pSteps, hs );
 }
 
 void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn )
@@ -507,8 +507,8 @@ void ProfileManager::AddCourseScore( const Course* pCourse, StepsType st, Course
 	}
 
 	if( PROFILEMAN->IsUsingProfile(pn) )
-		PROFILEMAN->GetProfile(pn)->AddCourseLastScore( pCourse, st, cd, hs );
-	PROFILEMAN->GetMachineProfile()->AddCourseLastScore( pCourse, st, cd, hs );
+		PROFILEMAN->GetProfile(pn)->AddCourseRecentScore( pCourse, st, cd, hs );
+	PROFILEMAN->GetMachineProfile()->AddCourseRecentScore( pCourse, st, cd, hs );
 }
 
 void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, StepsType st, CourseDifficulty cd, PlayerNumber pn )

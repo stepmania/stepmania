@@ -47,7 +47,7 @@ const int SM_390A12_COURSE_SCORES_VERSION = 8;
 
 #define GUID_SIZE_BYTES 8
 
-#define MAX_LAST_SCORES_TO_SAVE 100
+#define MAX_RECENT_SCORES_TO_SAVE 100
 
 #if defined(WIN32)
 #pragma warning (disable : 4706) // assignment within conditional expression
@@ -158,14 +158,14 @@ void Profile::InitAwards()
 	}
 }
 
-void Profile::InitLastSongScores()
+void Profile::InitRecentSongScores()
 {
-	m_vLastStepsScores.clear();
+	m_vRecentStepsScores.clear();
 }
 
-void Profile::InitLastCourseScores()
+void Profile::InitRecentCourseScores()
 {
-	m_vLastCourseScores.clear();
+	m_vRecentCourseScores.clear();
 }
 
 CString Profile::GetDisplayName() const
@@ -643,8 +643,8 @@ bool Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 		LOAD_NODE( ScreenshotData );
 		LOAD_NODE( CalorieData );
 		LOAD_NODE( Awards );
-		LOAD_NODE( LastSongScores );
-		LOAD_NODE( LastCourseScores );
+		LOAD_NODE( RecentSongScores );
+		LOAD_NODE( RecentCourseScores );
 	}
 		
 	return true;	// FIXME?  Investigate what happens if we always return true.
@@ -670,8 +670,8 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 		xml.AppendChild( SaveScreenshotDataCreateNode() );
 		xml.AppendChild( SaveCalorieDataCreateNode() );
 		xml.AppendChild( SaveAwardsCreateNode() );
-		xml.AppendChild( SaveLastSongScoresCreateNode() );
-		xml.AppendChild( SaveLastCourseScoresCreateNode() );
+		xml.AppendChild( SaveRecentSongScoresCreateNode() );
+		xml.AppendChild( SaveRecentCourseScoresCreateNode() );
 		bool bSaved = xml.SaveToFile(fn);
 		
 		// Update file cache, or else IsAFile in CryptManager won't see this new file.
@@ -1960,11 +1960,11 @@ void Profile::HighScoreForASongAndSteps::LoadFromNode( const XNode* pNode )
 		hs.LoadFromNode( p );
 }
 
-void Profile::LoadLastSongScoresFromNode( const XNode* pNode )
+void Profile::LoadRecentSongScoresFromNode( const XNode* pNode )
 {
 	CHECKPOINT;
 
-	ASSERT( pNode->name == "LastSongScores" );
+	ASSERT( pNode->name == "RecentSongScores" );
 	for( XNodes::const_iterator p = pNode->childs.begin(); 
 		p != pNode->childs.end(); 
 		p++ )
@@ -1974,14 +1974,14 @@ void Profile::LoadLastSongScoresFromNode( const XNode* pNode )
 			HighScoreForASongAndSteps h;
 			h.LoadFromNode( *p );
 
-			m_vLastStepsScores.push_back( h );
+			m_vRecentStepsScores.push_back( h );
 		}
 		else
 			WARN_AND_CONTINUE;
 	}	
 }
 
-XNode* Profile::SaveLastSongScoresCreateNode() const
+XNode* Profile::SaveRecentSongScoresCreateNode() const
 {
 	CHECKPOINT;
 
@@ -1989,25 +1989,25 @@ XNode* Profile::SaveLastSongScoresCreateNode() const
 	ASSERT( pProfile );
 
 	XNode* pNode = new XNode;
-	pNode->name = "LastSongScores";
+	pNode->name = "RecentSongScores";
 
-	unsigned uNumToSave = min( m_vLastStepsScores.size(), (unsigned)MAX_LAST_SCORES_TO_SAVE );
+	unsigned uNumToSave = min( m_vRecentStepsScores.size(), (unsigned)MAX_RECENT_SCORES_TO_SAVE );
 
 	for( unsigned i=0; i<uNumToSave; i++ )
 	{
-		pNode->AppendChild( m_vLastStepsScores[i].CreateNode() );
+		pNode->AppendChild( m_vRecentStepsScores[i].CreateNode() );
 	}
 
 	return pNode;
 }
 
-void Profile::AddStepsLastScore( const Song* pSong, const Steps* pSteps, HighScore hs )
+void Profile::AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs )
 {
 	HighScoreForASongAndSteps h;
 	h.songID.FromSong( pSong );
 	h.stepsID.FromSteps( pSteps );
 	h.hs = hs;
-	m_vLastStepsScores.push_back( h );
+	m_vRecentStepsScores.push_back( h );
 }
 
 
@@ -2034,11 +2034,11 @@ void Profile::HighScoreForACourse::LoadFromNode( const XNode* pNode )
 		hs.LoadFromNode( p );
 }
 
-void Profile::LoadLastCourseScoresFromNode( const XNode* pNode )
+void Profile::LoadRecentCourseScoresFromNode( const XNode* pNode )
 {
 	CHECKPOINT;
 
-	ASSERT( pNode->name == "LastCourseScores" );
+	ASSERT( pNode->name == "RecentCourseScores" );
 	for( XNodes::const_iterator p = pNode->childs.begin(); 
 		p != pNode->childs.end(); 
 		p++ )
@@ -2048,14 +2048,14 @@ void Profile::LoadLastCourseScoresFromNode( const XNode* pNode )
 			HighScoreForACourse h;
 			h.LoadFromNode( *p );
 
-			m_vLastCourseScores.push_back( h );
+			m_vRecentCourseScores.push_back( h );
 		}
 		else
 			WARN_AND_CONTINUE;
 	}	
 }
 
-XNode* Profile::SaveLastCourseScoresCreateNode() const
+XNode* Profile::SaveRecentCourseScoresCreateNode() const
 {
 	CHECKPOINT;
 
@@ -2063,24 +2063,24 @@ XNode* Profile::SaveLastCourseScoresCreateNode() const
 	ASSERT( pProfile );
 
 	XNode* pNode = new XNode;
-	pNode->name = "LastCourseScores";
+	pNode->name = "RecentCourseScores";
 
-	unsigned uNumToSave = min( m_vLastCourseScores.size(), (unsigned)MAX_LAST_SCORES_TO_SAVE );
+	unsigned uNumToSave = min( m_vRecentCourseScores.size(), (unsigned)MAX_RECENT_SCORES_TO_SAVE );
 
 	for( unsigned i=0; i<uNumToSave; i++ )
 	{
-		pNode->AppendChild( m_vLastCourseScores[i].CreateNode() );
+		pNode->AppendChild( m_vRecentCourseScores[i].CreateNode() );
 	}
 
 	return pNode;
 }
 
-void Profile::AddCourseLastScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs )
+void Profile::AddCourseRecentScore( const Course* pCourse, StepsType st, CourseDifficulty cd, HighScore hs )
 {
 	HighScoreForACourse h;
 	h.courseID.FromCourse( pCourse );
 	h.hs = hs;
-	m_vLastCourseScores.push_back( h );
+	m_vRecentCourseScores.push_back( h );
 }
 
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const

@@ -47,6 +47,20 @@ const CString STYLE_CSS		= "Style.css";
 
 #define NEWLINE "\r\n"
 
+CString HighScoreToString( const HighScore& hs )
+{
+	CStringArray asTokens;
+	asTokens.push_back( hs.sName.empty() ? "????" : hs.sName );
+	if( SHOW_HIGH_SCORE_GRADE )
+		asTokens.push_back( GradeToThemedString(hs.grade) );
+	if( SHOW_HIGH_SCORE_SCORE )
+		asTokens.push_back( ssprintf("%i", hs.iScore) );
+	if( SHOW_HIGH_SCORE_PERCENT )
+		asTokens.push_back( ssprintf("%05.2f%%", hs.fPercentDP*100) );
+	
+	return join(", ",asTokens);
+}
+
 void TranslatedWrite( RageFile &f, CString s )
 {
 	s.Replace("\n",NEWLINE);
@@ -197,6 +211,13 @@ inline void PrintTable(RageFile &f,Table &table)
 	}
 	TranslatedWrite(f,"</tr>\n</table>\n");
 } 
+
+void PrintEmptyTable( RageFile &f )
+{
+	BEGIN_TABLE(1);
+	TABLE_LINE1("empty");
+	END_TABLE;
+}
 
 #define STRING_AS_LINK(s) CString("<a href='"+s+"'>"+s+"</a>")
 
@@ -552,11 +573,7 @@ bool PrintSongsInGroup( RageFile &f, const Profile *pProfile, CString sGroup, Fn
 		}
 
 		if( !bPrintedAny )
-		{
-			BEGIN_TABLE(1);
-			TABLE_LINE1("empty");
-			END_TABLE;
-		}
+			PrintEmptyTable(f);
 	}
 	PRINT_CLOSE(f);
 
@@ -582,11 +599,7 @@ bool PrintGroups( RageFile &f, const Profile *pProfile, CString sTitle, FnPrintG
 		}
 
 		if( !bPrintedAny )
-		{
-			BEGIN_TABLE(1);
-			TABLE_LINE1("empty");
-			END_TABLE;
-		}
+			PrintEmptyTable(f);
 	}
 	PRINT_CLOSE(f);
 
@@ -612,11 +625,7 @@ bool PrintCourses( RageFile &f, const Profile *pProfile, CString sTitle, FnPrint
 		}
 
 		if( !bPrintedAny )
-		{
-			BEGIN_TABLE(1);
-			TABLE_LINE1("empty");
-			END_TABLE;
-		}
+			PrintEmptyTable(f);
 	}
 	PRINT_CLOSE(f);
 
@@ -649,14 +658,8 @@ void PrintHighScoreListTable( RageFile &f, const HighScoreList& hsl )
 
 		CStringArray asTokens;
 		asTokens.push_back( hs.sName.empty() ? "????" : hs.sName );
-		if( SHOW_HIGH_SCORE_GRADE )
-			asTokens.push_back( GradeToThemedString(hs.grade) );
-		if( SHOW_HIGH_SCORE_SCORE )
-			asTokens.push_back( ssprintf("%i", hs.iScore) );
-		if( SHOW_HIGH_SCORE_PERCENT )
-			asTokens.push_back( ssprintf("%05.2f%%", hs.fPercentDP*100) );
 		
-		TABLE_LINE2( sName, join(", ",asTokens) );
+		TABLE_LINE2( sName, HighScoreToString(hs) );
 	}
 	END_TABLE;
 }
@@ -766,7 +769,6 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 		TABLE_LINE2( "Actual Course Points", pProfile->GetActualCourseDancePointsForStepsType(st) );
 		TABLE_LINE2( "Possible Song Points", pProfile->GetPossibleSongDancePointsForStepsType(st) );
 		TABLE_LINE2( "Possible Course Points", pProfile->GetPossibleCourseDancePointsForStepsType(st) );
-		// FIXME
 		END_TABLE;
 	
 		PRINT_OPEN(f, "Songs" );
@@ -895,6 +897,48 @@ bool PrintPercentCompleteForStepsType( RageFile &f, const Profile *pProfile, Ste
 void PrintPercentComplete( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
 {
 	PrintStepsTypes( f, pProfile, sTitle, vStepsTypesToShow, PrintPercentCompleteForStepsType );
+}
+
+bool PrintRecentScores( RageFile &f, const Profile *pProfile, CString sTitle, vector<Song*> &vpSongs, vector<Steps*> &vpAllSteps, vector<StepsType> &vStepsTypesToShow, map<Steps*,Song*> mapStepsToSong, vector<Course*> vpCourses )
+{
+	PRINT_OPEN(f, sTitle );
+	{
+		PRINT_OPEN(f, "Songs" );
+		{
+			for( unsigned i=0; i<pProfile->m_vRecentStepsScores.size(); i++ )
+			{
+				const Profile::HighScoreForASongAndSteps hsfas = pProfile->m_vRecentStepsScores[i];
+
+				BEGIN_TABLE(1);
+				TABLE_LINE2( "Song", hsfas.songID.ToString() );
+				TABLE_LINE2( "Steps", hsfas.stepsID.ToString() );
+				TABLE_LINE2( "Results", HighScoreToString(hsfas.hs) );
+				END_TABLE;
+			}
+			if( pProfile->m_vRecentStepsScores.empty() )
+				PrintEmptyTable(f);
+		}
+		PRINT_CLOSE(f);
+
+		PRINT_OPEN(f, "Courses" );
+		{
+			for( unsigned i=0; i<pProfile->m_vRecentCourseScores.size(); i++ )
+			{
+				const Profile::HighScoreForACourse hsfac = pProfile->m_vRecentCourseScores[i];
+
+				BEGIN_TABLE(1);
+				TABLE_LINE2( "Course", hsfac.courseID.ToString() );
+				TABLE_LINE2( "Results", HighScoreToString(hsfac.hs) );
+				END_TABLE;
+			}
+			if( pProfile->m_vRecentCourseScores.empty() )
+				PrintEmptyTable(f);
+		}
+		PRINT_CLOSE(f);
+	}
+	PRINT_CLOSE(f);
+
+	return true;
 }
 
 bool PrintInventoryForSong( RageFile &f, const Profile *pProfile, Song* pSong )
@@ -1109,9 +1153,7 @@ void PrintScreenshots( RageFile &f, const Profile *pProfile, CString sTitle, CSt
 
 		if( pProfile->m_vScreenshots.empty() )
 		{
-			BEGIN_TABLE(1);
-			TABLE_LINE1("empty");
-			END_TABLE;
+			PrintEmptyTable(f);
 		}
 		else
 		{
@@ -1351,27 +1393,29 @@ TITLE.c_str(), STYLE_CSS.c_str() ) );
 	{
 	case HTML_TYPE_PLAYER:
 		PrintInstructions(		f, pProfile,	"Instructions" );
-		PrintStatistics(		f, pProfile,	"My Statistics",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintPopularity(		f, pProfile,	"My Popularity",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintSongHighScores(	f, pProfile,	"My Song High Scores",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintCourseHighScores(	f, pProfile,	"My Course High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintScreenshots(		f, pProfile,	"My Screenshots",			sDir );
-		PrintCaloriesBurned(	f, pProfile,	"My Calories Burned",		sDir );
-		PrintPercentComplete(	f, pProfile,	"My Percent Complete",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintPopularity(		f, pProfile,	"Last Machine Popularity",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintSongHighScores(	f, pProfile,	"Last Machine Song High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintCourseHighScores(	f, pProfile,	"Last Machine Course High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintStatistics(		f, pProfile,	"My Statistics",					vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(		f, pProfile,	"My Popularity",					vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintSongHighScores(	f, pProfile,	"My Song High Scores",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintCourseHighScores(	f, pProfile,	"My Course High Scores",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintScreenshots(		f, pProfile,	"My Screenshots",					sDir );
+		PrintCaloriesBurned(	f, pProfile,	"My Calories Burned",				sDir );
+		PrintPercentComplete(	f, pProfile,	"My Percent Complete",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintRecentScores(		f, pProfile,	"My Recent Scores",					vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(		f, pProfile,	"Last Machine's Popularity",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintSongHighScores(	f, pProfile,	"Last Machine's Song High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintCourseHighScores(	f, pProfile,	"Last Machine's Course High Scores",vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
 		break;
 	case HTML_TYPE_MACHINE:
-		PrintStatistics(		f, pProfile,	"Statistics",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintPopularity(		f, pProfile,	"Popularity",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintSongHighScores(	f, pProfile,	"Song High Scores",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintCourseHighScores(	f, pProfile,	"Course High Scores",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintScreenshots(		f, pProfile,	"Screenshots",				sDir );
-		PrintCaloriesBurned(	f, pProfile,	"Calories Burned",			sDir );
-		PrintPercentComplete(	f, pProfile,	"Percent Complete",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintInventoryList(		f, pProfile,	"Song Information",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
-		PrintBookkeeping(		f, pProfile,	"Bookkeeping",				vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );	
+		PrintStatistics(		f, pProfile,	"Statistics",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintPopularity(		f, pProfile,	"Popularity",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintSongHighScores(	f, pProfile,	"Song High Scores",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintCourseHighScores(	f, pProfile,	"Course High Scores",	vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintScreenshots(		f, pProfile,	"Screenshots",			sDir );
+		PrintCaloriesBurned(	f, pProfile,	"Calories Burned",		sDir );
+		PrintPercentComplete(	f, pProfile,	"Percent Complete",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintRecentScores(		f, pProfile,	"Most Scores",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintInventoryList(		f, pProfile,	"Song Information",		vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );
+		PrintBookkeeping(		f, pProfile,	"Bookkeeping",			vpSongs, vpAllSteps, vStepsTypesToShow, mapStepsToSong, vpCourses );	
 		break;
 	default:
 		ASSERT(0);
