@@ -176,7 +176,7 @@ void RefreshCacheItem( int iIndex )
 		item.fMaxSecondsBack = -1.f;	// not applicable
 		break;
 	case CodeCacheItem::tap:
-		item.fMaxSecondsBack = 0.03f;	// simultaneous
+		item.fMaxSecondsBack = 0.05f;	// simultaneous
 		break;
 	default:
 		ASSERT(0);
