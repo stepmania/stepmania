@@ -14,7 +14,7 @@ public:
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
-	void BeginFrame();	
+	bool BeginFrame();	
 	void EndFrame();
 	VideoModeParams GetVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );

@@ -620,16 +620,23 @@ int RageDisplay_D3D::GetMaxTextureSize() const
 	return g_DeviceCaps.MaxTextureWidth;
 }
 
-void RageDisplay_D3D::BeginFrame()
+bool RageDisplay_D3D::BeginFrame()
 {
-#ifndef _XBOX
-	if( g_pd3dDevice->TestCooperativeLevel() == D3DERR_DEVICENOTRESET )
+#if !defined(XBOX)
+	switch( g_pd3dDevice->TestCooperativeLevel() )
+	{
+	case D3DERR_DEVICELOST:
+		return false;
+	case D3DERR_DEVICENOTRESET:
 		SetVideoMode( g_CurrentParams );
+		break;
+	}
 #endif
 
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 	g_pd3dDevice->BeginScene();
+	return true;
 }
 
 void RageDisplay_D3D::EndFrame()

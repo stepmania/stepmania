@@ -743,8 +743,8 @@ void RageDisplay_OGL::ResolutionChanged()
  	SetViewport(0,0);
 
 	/* Clear any junk that's in the framebuffer. */
-	BeginFrame();
-	EndFrame();
+	if( BeginFrame() )
+		EndFrame();
 }
 
 // Return true if mode change was successful.
@@ -803,11 +803,12 @@ int RageDisplay_OGL::GetMaxTextureSize() const
 	return size;
 }
 
-void RageDisplay_OGL::BeginFrame()
+bool RageDisplay_OGL::BeginFrame()
 {
 	glClearColor( 0,0,0,1 );
 	SetZWrite( true );
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	return true;
 }
 
 void RageDisplay_OGL::EndFrame()
