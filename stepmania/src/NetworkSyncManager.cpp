@@ -96,15 +96,18 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 	Write1(m_packet, (uint8_t) ctr);
 
 	vector<CString> profileNames;
+	profileNames.push_back("[No Prof]"); //Make a no profile option
 	PROFILEMAN->GetLocalProfileNames(profileNames);
 
 	FOREACH_PlayerNumber(pn)
 	{
-		int localID = atoi(PREFSMAN->m_sDefaultLocalProfileID[pn])-1;
-		if (localID >= 0 && localID < int(profileNames.size()))
-			WriteNT(m_packet, profileNames[localID]);
-		else
-			WriteNT(m_packet, "[No Prof]");
+			int localID = atoi(PREFSMAN->m_sDefaultLocalProfileID[pn]);
+			/* If the length of the m_sDefaultLocalProfileID[pn] is greater than 0
+			there must be a profile there. */
+			if (PREFSMAN->m_sDefaultLocalProfileID[pn].length() > 0)
+				WriteNT(m_packet, profileNames[localID+1]);
+			else
+				WriteNT(m_packet, profileNames[localID]);
 	}
 
 	NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
