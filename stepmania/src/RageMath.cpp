@@ -196,10 +196,10 @@ void RageMatrixRotationX( RageMatrix* pOut, float theta )
 	theta *= PI/180;
 
 	RageMatrixIdentity(pOut);
-	pOut->m[1][1] = cosf(theta);
+	pOut->m[1][1] = RageFastCos(theta);
 	pOut->m[2][2] = pOut->m[1][1];
 
-	pOut->m[2][1] = sinf(theta);
+	pOut->m[2][1] = RageFastSin(theta);
 	pOut->m[1][2] = -pOut->m[2][1];
 }
 
@@ -208,10 +208,10 @@ void RageMatrixRotationY( RageMatrix* pOut, float theta )
 	theta *= PI/180;
 
 	RageMatrixIdentity(pOut);
-	pOut->m[0][0] = cosf(theta);
+	pOut->m[0][0] = RageFastCos(theta);
 	pOut->m[2][2] = pOut->m[0][0];
 
-	pOut->m[0][2] = sinf(theta);
+	pOut->m[0][2] = RageFastSin(theta);
 	pOut->m[2][0] = -pOut->m[0][2];
 }
 
@@ -220,10 +220,10 @@ void RageMatrixRotationZ( RageMatrix* pOut, float theta )
 	theta *= PI/180;
 
 	RageMatrixIdentity(pOut);
-	pOut->m[0][0] = cosf(theta);
+	pOut->m[0][0] = RageFastCos(theta);
 	pOut->m[1][1] = pOut->m[0][0];
 
-	pOut->m[0][1] = sinf(theta);
+	pOut->m[0][1] = RageFastSin(theta);
 	pOut->m[1][0] = -pOut->m[0][1];
 }
 
@@ -236,12 +236,12 @@ void RageMatrixRotationXYZ( RageMatrix* pOut, float rX, float rY, float rZ )
 	rY *= PI/180;
 	rZ *= PI/180;
 
-	const float cX = cosf(rX);
-	const float sX = sinf(rX);
-	const float cY = cosf(rY);
-	const float sY = sinf(rY);
-	const float cZ = cosf(rZ);
-	const float sZ = sinf(rZ);
+	const float cX = RageFastCos(rX);
+	const float sX = RageFastSin(rX);
+	const float cY = RageFastCos(rY);
+	const float sY = RageFastSin(rY);
+	const float cZ = RageFastCos(rZ);
+	const float sZ = RageFastSin(rZ);
 
 	/*
 	 * X*Y:
@@ -309,8 +309,8 @@ RageVector4 RageQuatFromH(float theta )
 	theta *= PI/180.0f;
 	theta /= 2.0f;
 	theta *= -1;
-	const float c = cosf(theta);
-	const float s = sinf(theta);
+	const float c = RageFastCos(theta);
+	const float s = RageFastSin(theta);
 
 	return RageVector4(0, s, 0, c);
 }
@@ -320,8 +320,8 @@ RageVector4 RageQuatFromP(float theta )
 	theta *= PI/180.0f;
 	theta /= 2.0f;
 	theta *= -1;
-	const float c = cosf(theta);
-	const float s = sinf(theta);
+	const float c = RageFastCos(theta);
+	const float s = RageFastSin(theta);
 
 	return RageVector4(s, 0, 0, c);
 }
@@ -331,8 +331,8 @@ RageVector4 RageQuatFromR(float theta )
 	theta *= PI/180.0f;
 	theta /= 2.0f;
 	theta *= -1;
-	const float c = cosf(theta);
-	const float s = sinf(theta);
+	const float c = RageFastCos(theta);
+	const float s = RageFastSin(theta);
 
 	return RageVector4(0, 0, s, c);
 }
@@ -347,12 +347,12 @@ void RageQuatFromHPR(RageVector4* pOut, RageVector3 hpr )
 	hpr /= 180.0f;
 	hpr /= 2.0f;
 
-	const float sX = sinf(hpr.x);
-	const float cX = cosf(hpr.x);
-	const float sY = sinf(hpr.y);
-	const float cY = cosf(hpr.y);
-	const float sZ = sinf(hpr.z);
-	const float cZ = cosf(hpr.z);
+	const float sX = RageFastSin(hpr.x);
+	const float cX = RageFastCos(hpr.x);
+	const float sY = RageFastSin(hpr.y);
+	const float cY = RageFastCos(hpr.y);
+	const float sZ = RageFastSin(hpr.z);
+	const float cZ = RageFastCos(hpr.z);
 
 	pOut->w = cX * cY * cZ + sX * sY * sZ;
 	pOut->x = sX * cY * cZ - cX * sY * sZ;
@@ -375,12 +375,12 @@ void RageQuatFromPRH(RageVector4* pOut, RageVector3 prh )
 	/* Set cX to the cosine of the angle we want to rotate on the X axis,
 	 * and so on.  Here, hpr.z (roll) rotates on the Z axis, hpr.x (heading)
 	 * on Y, and hpr.y (pitch) on X. */
-	const float sX = sinf(prh.y);
-	const float cX = cosf(prh.y);
-	const float sY = sinf(prh.x);
-	const float cY = cosf(prh.x);
-	const float sZ = sinf(prh.z);
-	const float cZ = cosf(prh.z);
+	const float sX = RageFastSin(prh.y);
+	const float cX = RageFastCos(prh.y);
+	const float sY = RageFastSin(prh.x);
+	const float cY = RageFastCos(prh.x);
+	const float sZ = RageFastSin(prh.z);
+	const float cZ = RageFastCos(prh.z);
 
 	pOut->w = cX * cY * cZ + sX * sY * sZ;
 	pOut->x = sX * cY * cZ - cX * sY * sZ;
@@ -439,9 +439,9 @@ void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4
 	{
 		// standard case (slerp)
 		float omega = acosf(cosom);
-		float sinom = sinf(omega);
-		scale0 = sinf((1.0f - t) * omega) / sinom;
-		scale1 = sinf(t * omega) / sinom;
+		float sinom = RageFastSin(omega);
+		scale0 = RageFastSin((1.0f - t) * omega) / sinom;
+		scale1 = RageFastSin(t * omega) / sinom;
 	} else {        
 		// "from" and "to" quaternions are very close 
 		//  ... so we can do a linear interpolation
@@ -497,12 +497,12 @@ void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles )
 {
 	const RageVector3 angles_radians( angles * 2*PI / 360 );
 	
-	const float sy = sinf( angles_radians[2] );
-	const float cy = cosf( angles_radians[2] );
-	const float sp = sinf( angles_radians[1] );
-	const float cp = cosf( angles_radians[1] );
-	const float sr = sinf( angles_radians[0] );
-	const float cr = cosf( angles_radians[0] );
+	const float sy = RageFastSin( angles_radians[2] );
+	const float cy = RageFastCos( angles_radians[2] );
+	const float sp = RageFastSin( angles_radians[1] );
+	const float cp = RageFastCos( angles_radians[1] );
+	const float sr = RageFastSin( angles_radians[0] );
+	const float cr = RageFastCos( angles_radians[0] );
 
 	RageMatrixIdentity( pOut );
 
@@ -524,6 +524,49 @@ void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn )
 	for( int i=0; i<4; i++)
 		for( int j=0; j<4; j++)
 			pOut->m[j][i] = pIn->m[i][j];
+}
+
+float RageFastSin( float x )
+{
+	// from 0 to PI
+	// sizeof(table) == 4096 == one page of memory in Windows
+	static float table[1024];
+
+	static bool bInited = false;
+	if( !bInited )
+	{
+		bInited = true;
+		for( int i=0; i<ARRAYSIZE(table); i++ )
+		{
+			float x = SCALE(i,0,ARRAYSIZE(table),0.0f,PI);
+			table[i] = sinf(x);
+		}
+	}
+
+	int i = (int)SCALE( x, 0.0f, PI*2, 0, ARRAYSIZE(table)*2 );
+	i %= ARRAYSIZE(table) * 2;
+
+	DEBUG_ASSERT( i>=0 && i<ARRAYSIZE(table)*2 );
+
+	float fRet;
+	if( i >= ARRAYSIZE(table) )	// PI <= i < 2*PI
+	{
+		// sin(x) == -sin(2*PI-x)
+		i = ARRAYSIZE(table)*2 - 1 - i;	// mirror about ARRAYSIZE(table)
+		DEBUG_ASSERT( i>=0 && i<ARRAYSIZE(table) );
+		fRet = -table[i];
+	}
+	else
+	{
+		fRet = table[i];
+	}
+
+	return fRet;
+}
+
+float RageFastCos( float x )
+{
+	return RageFastSin( x + 0.5f*PI );
 }
 
 /*

@@ -45,6 +45,9 @@ RageMatrix RageLookAt(
 void RageMatrixAngles( RageMatrix* pOut, const RageVector3 &angles );
 void RageMatrixTranspose( RageMatrix* pOut, const RageMatrix* pIn );
 
+float RageFastSin( float x );
+float RageFastCos( float x );
+
 #endif
 
 /*

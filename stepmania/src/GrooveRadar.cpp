@@ -144,8 +144,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fDistFromCenter = 
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
-			const float fX = cosf(fRotation) * fDistFromCenter;
-			const float fY = -sinf(fRotation) * fDistFromCenter;
+			const float fX = RageFastCos(fRotation) * fDistFromCenter;
+			const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
 			v[1+i].p = RageVector3( fX, fY,	0 );
 			v[1+i].c = v[0].c;
@@ -162,8 +162,8 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fDistFromCenter = 
 				( m_fValuesOld[p][c] * (1-m_PercentTowardNew[p]) + m_fValuesNew[p][c] * m_PercentTowardNew[p] + 0.07f ) * fRadius;
 			const float fRotation = RADAR_VALUE_ROTATION(i);
-			const float fX = cosf(fRotation) * fDistFromCenter;
-			const float fY = -sinf(fRotation) * fDistFromCenter;
+			const float fX = RageFastCos(fRotation) * fDistFromCenter;
+			const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
 			v[i].p = RageVector3( fX, fY, 0 );
 			v[i].c = PLAYER_COLOR.GetValue( p );

@@ -79,7 +79,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 		fYAdjust += fBrakeYAdjust;
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] > 0 )
-		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*sinf( fYOffset/38.0f );
+		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*RageFastSin( fYOffset/38.0f );
 
 	fYOffset += fYAdjust;
 
@@ -113,7 +113,7 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 			g_fExpandSeconds += timerExpand.GetDeltaTime();
 		else
 			timerExpand.GetDeltaTime();	// throw away
-		float fExpandMultiplier = SCALE( cosf(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f );
+		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*3), -1, 1, 0.5f, 1.5f );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 0.f, 1.f, 1.f, fExpandMultiplier );
 	}
 
@@ -153,7 +153,7 @@ float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fY
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
-		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
+		f += fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*1.8f) * ARROW_SIZE*0.4f );
 	return f;
 }
 
@@ -163,7 +163,7 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 	if( fEffects[PlayerOptions::EFFECT_TIPSY] > 0 )
-		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( cosf( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
+		f -= fEffects[PlayerOptions::EFFECT_TIPSY] * ( RageFastCos( RageTimer::GetTimeSinceStartFast()*1.2f + iCol*2.f) * ARROW_SIZE*0.4f );
 
 	float fShift, fScale;
 	ArrowGetReverseShiftAndScale( pPlayerState, iCol, fYReverseOffsetPixels, fShift, fScale );
@@ -212,13 +212,13 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		float fRads = acosf( fPositionBetween );
 		fRads += fYOffset * 6 / SCREEN_HEIGHT;
 		
-		const float fAdjustedPixelOffset = SCALE( cosf(fRads), -1, 1, fMinX, fMaxX );
+		const float fAdjustedPixelOffset = SCALE( RageFastCos(fRads), -1, 1, fMinX, fMaxX );
 
 		fPixelOffsetFromCenter += (fAdjustedPixelOffset - fRealPixelOffset) * fEffects[PlayerOptions::EFFECT_TORNADO];
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_DRUNK] > 0 )
-		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( cosf( RageTimer::GetTimeSinceStartFast() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
+		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] > 0 )
 	{
 		// TODO: Don't index by PlayerNumber.
@@ -270,7 +270,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		if( bEvenBeat )
 			fAmount *= -1;
 
-		const float fShift = 20.0f*fAmount*sinf( fYOffset / 15.0f + PI/2.0f );
+		const float fShift = 20.0f*fAmount*RageFastSin( fYOffset / 15.0f + PI/2.0f );
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_BEAT] * fShift;
 	} while(0);
 
@@ -377,7 +377,7 @@ float ArrowGetPercentVisible( const PlayerState* pPlayerState, int iCol, float f
 		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] > 0 )
 	{
-		float f = sinf(RageTimer::GetTimeSinceStartFast()*10);
+		float f = RageFastSin(RageTimer::GetTimeSinceStartFast()*10);
 		f = Quantize( f, 0.3333f );
 		fVisibleAdjust += SCALE( f, 0, 1, -1, 0 );
 	}
@@ -432,7 +432,7 @@ float ArrowEffects::GetZPos( const PlayerState* pPlayerState, int iCol, float fY
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_BUMPY] > 0 )
-		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*sinf( fYOffset/16.0f );
+		fZPos += fEffects[PlayerOptions::EFFECT_BUMPY] * 40*RageFastSin( fYOffset/16.0f );
 
 	return fZPos;
 }

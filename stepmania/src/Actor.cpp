@@ -193,7 +193,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			ssprintf("%f", fPercentThroughEffect) );
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
-		float fPercentBetweenColors = sinf( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
+		float fPercentBetweenColors = RageFastSin( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
 		ASSERT_M( fPercentBetweenColors >= 0 && fPercentBetweenColors <= 1,
 			ssprintf("%f, %f", fPercentBetweenColors, fPercentThroughEffect) );
 		float fOriginalAlpha = m_tempState.diffuse[0].a;
@@ -225,15 +225,15 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			break;
 		case rainbow:
 			m_tempState.diffuse[0] = RageColor(
-				cosf( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
-				cosf( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
-				cosf( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
+				RageFastCos( fPercentBetweenColors*2*PI ) * 0.5f + 0.5f,
+				RageFastCos( fPercentBetweenColors*2*PI + PI * 2.0f / 3.0f ) * 0.5f + 0.5f,
+				RageFastCos( fPercentBetweenColors*2*PI + PI * 4.0f / 3.0f) * 0.5f + 0.5f,
 				fOriginalAlpha );
 			for( int i=1; i<4; i++ )
 				m_tempState.diffuse[i] = m_tempState.diffuse[0];
 			break;
 		case wag:
-			m_tempState.rotation += m_vEffectMagnitude * sinf( fPercentThroughEffect * 2.0f * PI );
+			m_tempState.rotation += m_vEffectMagnitude * RageFastSin( fPercentThroughEffect * 2.0f * PI );
 			break;
 		case spin:
 			// nothing needs to be here
@@ -245,7 +245,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			break;
 		case bounce:
 			{
-				float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
 				m_tempState.pos += m_vEffectMagnitude * fPercentOffset;
 				m_tempState.pos.x = roundf( m_tempState.pos.x );
 				m_tempState.pos.y = roundf( m_tempState.pos.y );
@@ -254,7 +254,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			break;
 		case bob:
 			{
-				float fPercentOffset = sinf( fPercentThroughEffect*PI*2 ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI*2 ); 
 				m_tempState.pos += m_vEffectMagnitude * fPercentOffset;
 				m_tempState.pos.x = roundf( m_tempState.pos.x );
 				m_tempState.pos.y = roundf( m_tempState.pos.y );
@@ -265,7 +265,7 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			{
 				float fMinZoom = m_vEffectMagnitude[0];
 				float fMaxZoom = m_vEffectMagnitude[1];
-				float fPercentOffset = sinf( fPercentThroughEffect*PI ); 
+				float fPercentOffset = RageFastSin( fPercentThroughEffect*PI ); 
 				float fZoom = SCALE( fPercentOffset, 0.f, 1.f, fMinZoom, fMaxZoom );
 				m_tempState.scale *= fZoom;
 				
@@ -392,9 +392,9 @@ void Actor::UpdateTweening( float fDeltaTime )
 			case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;													break;
 			case TWEEN_ACCELERATE:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;							break;
 			case TWEEN_DECELERATE:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);				break;
-			case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - sinf( 1.1f + fPercentThroughTween*(PI-1.1f) ) / 0.89f;				break;
-			case TWEEN_BOUNCE_END:	fPercentAlongPath = sinf( 1.1f + (1-fPercentThroughTween)*(PI-1.1f) ) / 0.89f;				break;
-			case TWEEN_SPRING:		fPercentAlongPath = 1 - cosf( fPercentThroughTween*PI*2.5f )/(1+fPercentThroughTween*3);	break;
+			case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - RageFastSin( 1.1f + fPercentThroughTween*(PI-1.1f) ) / 0.89f;				break;
+			case TWEEN_BOUNCE_END:	fPercentAlongPath = RageFastSin( 1.1f + (1-fPercentThroughTween)*(PI-1.1f) ) / 0.89f;				break;
+			case TWEEN_SPRING:		fPercentAlongPath = 1 - RageFastCos( fPercentThroughTween*PI*2.5f )/(1+fPercentThroughTween*3);	break;
 			default:	ASSERT(0);
 			}
 

@@ -785,16 +785,16 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 	{
 		const float curve = CIRCLE_PERCENT*2*PI;
 		fRotationX_out = SCALE(fPosOffsetsFromMiddle,-NUM_WHEEL_ITEMS/2.0f,+NUM_WHEEL_ITEMS/2.0f,-curve/2.f,+curve/2.f);
-		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
-		fY_out = WHEEL_3D_RADIUS*sinf(fRotationX_out);
-		fZ_out = -100+WHEEL_3D_RADIUS*cosf(fRotationX_out);
+		fX_out = (1-RageFastCos(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
+		fY_out = WHEEL_3D_RADIUS*RageFastSin(fRotationX_out);
+		fZ_out = -100+WHEEL_3D_RADIUS*RageFastCos(fRotationX_out);
 		fRotationX_out *= 180.f/PI;	// to degrees
 
 //		printf( "fRotationX_out = %f\n", fRotationX_out );
 	}
 	else if(!USE_LINEAR_WHEEL)
 	{
-		fX_out = (1-cosf(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
+		fX_out = (1-RageFastCos(fPosOffsetsFromMiddle/PI))*ITEM_CURVE_X;
 		fY_out = fPosOffsetsFromMiddle*ITEM_SPACING_Y;
 		fZ_out = 0;
 		fRotationX_out = 0;
