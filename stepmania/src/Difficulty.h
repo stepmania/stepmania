@@ -19,7 +19,7 @@ enum Difficulty
 };
 #define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, NUM_DIFFICULTIES, dc )
 const CString& DifficultyToString( Difficulty dc );
-CString DifficultyToThemedString( Difficulty dc );
+const CString& DifficultyToThemedString( Difficulty dc );
 Difficulty StringToDifficulty( const CString& sDC );
 
 
@@ -29,7 +29,7 @@ typedef Difficulty CourseDifficulty;
 #define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=DIFFICULTY_INVALID; cd=GetNextShownCourseDifficulty(cd) )
 
 const CString& CourseDifficultyToString( Difficulty dc );
-CString CourseDifficultyToThemedString( Difficulty dc );
+const CString& CourseDifficultyToThemedString( Difficulty dc );
 Difficulty StringToCourseDifficulty( const CString& sDC );
 
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );

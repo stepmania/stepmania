@@ -48,7 +48,7 @@ static const CString EMPTY_STRING;
 
 #define XToThemedString(X, CNT)      \
 	static ThemeMetric<CString> g_##X##Name[CNT]; \
-	CString X##ToThemedString( X x ) \
+	const CString &X##ToThemedString( X x ) \
 	{       \
 		static bool bInitted = false; \
 		if( !bInitted ) { \

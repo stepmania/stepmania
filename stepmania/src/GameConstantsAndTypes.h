@@ -32,7 +32,7 @@ enum RadarCategory
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
 const CString& RadarCategoryToString( RadarCategory cat );
-CString RadarCategoryToThemedString( RadarCategory cat );
+const CString& RadarCategoryToThemedString( RadarCategory cat );
 
 
 
@@ -87,7 +87,7 @@ enum PlayMode
 };
 #define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PLAY_MODES, pm )
 const CString& PlayModeToString( PlayMode pm );
-CString PlayModeToThemedString( PlayMode pm );
+const CString& PlayModeToThemedString( PlayMode pm );
 PlayMode StringToPlayMode( const CString& s );
 
 
@@ -138,7 +138,7 @@ enum TapNoteScore {
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
 const CString& TapNoteScoreToString( TapNoteScore tns );
-CString TapNoteScoreToThemedString( TapNoteScore tns );
+const CString& TapNoteScoreToThemedString( TapNoteScore tns );
 TapNoteScore StringToTapNoteScore( const CString& str );
 
 
@@ -151,7 +151,8 @@ enum HoldNoteScore
 };
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HOLD_NOTE_SCORES, hns )
 const CString& HoldNoteScoreToString( HoldNoteScore hns );
-CString HoldNoteScoreToThemedString( HoldNoteScore hns );
+const CString& HoldNoteScoreToThemedString( HoldNoteScore hns );
+
 HoldNoteScore StringToHoldNoteScore( const CString& str );
 
 
@@ -294,7 +295,7 @@ enum PerDifficultyAward
 };
 #define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS, pma )
 const CString& PerDifficultyAwardToString( PerDifficultyAward pma );
-CString PerDifficultyAwardToThemedString( PerDifficultyAward pma );
+const CString& PerDifficultyAwardToThemedString( PerDifficultyAward pma );
 PerDifficultyAward StringToPerDifficultyAward( const CString& pma );
 
 
@@ -315,7 +316,7 @@ enum PeakComboAward
 };
 #define FOREACH_PeakComboAward( pca ) FOREACH_ENUM( PeakComboAward, NUM_PEAK_COMBO_AWARDS, pca )
 const CString& PeakComboAwardToString( PeakComboAward pma );
-CString PeakComboAwardToThemedString( PeakComboAward pma );
+const CString& PeakComboAwardToThemedString( PeakComboAward pma );
 PeakComboAward StringToPeakComboAward( const CString& pma );
 
 
