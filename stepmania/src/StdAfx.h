@@ -81,43 +81,9 @@ using namespace std;
 #define NORETURN
 #endif
 
-#if 1
-
-#include "StdString.h"
-
 /* Use CStdString: */
+#include "StdString.h"
 #define CString CStdString
-#else
-
-/* Wrapper to use getline() on MFC strings. */
-template<class _E, class _Tr> inline
-basic_istream<_E, _Tr>& getline(basic_istream<_E, _Tr> &I,
-	CString &X) {
-	string str;
-
-	basic_istream<_E, _Tr> &ret = getline(I, str);
-	X = str.c_str();
-	return ret;
-}
-
-/* Arg.  VC7's CString has GetString(), an equivalent of c_str().
- * VC6 doesn't have that.  We need it to transition to std::string
- * sanely.  So, sneakily add it.  This goes away when we finish
- * transitioning. */
-#if _MSC_VER < 1300 /* VC6, not VC7 */
-class CStringTemp: public CString {
-public:
-	CStringTemp() {}
-	CStringTemp(const char *s): CString(s) { }
-	CStringTemp(const CString &s): CString(s) {}
-
-	const char *GetString() const { return (const char *) *this; }
-};
-#define CString CStringTemp
-
-#endif
-
-#endif
 
 #if defined(_MSC_VER) && _MSC_VER  < 1300 /* VC6, not VC7 */
 

@@ -308,7 +308,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 
 			typedef const char*		PCSTR;
 			typedef char*			PSTR;
-			typedef const wchar_t*	PCWSTR;
 			#ifdef UNICODE
 				typedef wchar_t		TCHAR;
 			#else
@@ -394,7 +393,7 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 	#define TRACE
 #endif
 
-// Microsoft defines PCSTR, PCWSTR, etc, but no PCTSTR.  I hate to use the
+// Microsoft defines PCSTR, etc, but no PCTSTR.  I hate to use the
 // versions with the "L" in front of them because that's a leftover from Win 16
 // days, even though it evaluates to the same thing.  Therefore, Define a PCSTR
 // as an LPCTSTR.
@@ -456,9 +455,9 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 	#endif
 #endif
 
-// =============================================================================
-// UNICODE/MBCS conversion macros.  Made to work just like the MFC/ATL ones.
-// =============================================================================
+#ifndef SS_ANSI
+#include <malloc.h>
+#endif
 
 // First define the conversion helper functions.  We define these regardless of
 // any preprocessor macro settings since their names won't collide. 
@@ -482,69 +481,6 @@ inline const Type& SSMAX(const Type& arg1, const Type& arg2)
 	// locale header (and thus the codecvt facet) can use good old mbstowcs and
 	// wcstombs instead by #defining SS_NOLOCALE
 
-	#ifdef SS_NOLOCALE
-
-		inline PSTR StdCodeCvt(PSTR pA, PCWSTR pW, int nChars)
-		{
-			ASSERT(0 != pA);
-			ASSERT(0 != pW);
-			pA[0] = '\0';
-			int nCvt	= wcstombs(pA, pW, nChars);
-			ASSERT(nCvt >=0);
-			return pA;
-		}
-		inline PUSTR StdCodeCvt(PUSTR pA, PCWSTR pW, int nChars)
-		{
-			return (PUSTR)StdCodeCvt((PSTR)pA, pW, nChars);
-		}
-
-	#else
-
-		typedef std::codecvt<wchar_t, char, mbstate_t> SSCodeCvt;
-
-		// StdCodeCvt - made to look like Win32 functions WideCharToMultiByte
-		//				and MultiByteToWideChar but uses locales in SS_ANSI
-		//				builds
-		inline PSTR StdCodeCvt(PSTR pA, PCWSTR pW, int nChars,
-			const std::locale& loc=std::locale())
-		{
-			ASSERT(0 != pA);
-			ASSERT(0 != pW);
-			pA[0] = '\0';
-			PSTR pBadA				= 0;
-			PCWSTR pBadW			= 0;
-			SSCodeCvt::result res	= SSCodeCvt::ok;
-			const SSCodeCvt& conv	= SS_USE_FACET(loc, SSCodeCvt);
-			SSCodeCvt::state_type st= { 0 };
-			res						= conv.out(st,
-											   pW, pW + nChars, pBadW,
-											   pA, pA + nChars, pBadA);
-			ASSERT(SSCodeCvt::ok == res);
-			return pA;
-		}
-		inline PUSTR StdCodeCvt(PUSTR pA, PCWSTR pW, int nChars,
-			const std::locale& loc=std::locale())
-		{
-			return (PUSTR)StdCodeCvt((PSTR)pA, pW, nChars, loc);
-		}
-	#endif
-
-#else   // ...or are we doing things assuming win32 and Visual C++?
-
-	#include <malloc.h>	// needed for _alloca
-
-	inline PSTR StdCodeCvt(PSTR pA, PCWSTR pW, int nChars, UINT acp=CP_ACP)
-	{
-		ASSERT(0 != pA);
-		ASSERT(0 != pW);
-		pA[0] = '\0';
-		WideCharToMultiByte(acp, 0, pW, -1, pA, nChars, 0, 0);
-		return pA;
-	}
-	inline PUSTR StdCodeCvt(PUSTR pA, PCWSTR pW, int nChars, UINT acp=CP_ACP)
-	{
-		return (PUSTR)StdCodeCvt((PSTR)pA, pW, nChars, acp);
-	}
 #endif // #ifndef SS_ANSI
 
 // StdCodeCvt when there's no conversion to be done
@@ -684,13 +620,6 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 		sDst.assign(pA);
 	}
 }
-inline void	ssasn(std::string& sDst, PCWSTR pW)
-{
-	int nLen	= sslen(pW);
-	sDst.resize(nLen * 2 + 1);
-	StdCodeCvt(const_cast<SS_PTRTYPE>(sDst.data()), pW, nLen);
-	sDst.resize(nLen);
-}
 inline void ssasn(std::string& sDst, const int nNull)
 {
 	UNUSED(nNull);
@@ -709,15 +638,6 @@ inline void	ssadd(std::string& sDst, const std::string& sSrc)
 		sDst.reserve(2*sDst.size());
 
 	sDst.append(sSrc.c_str());
-}
-inline void	ssadd(std::string& sDst, PCWSTR pW)
-{
-	int nSrcLen	= sslen(pW);
-	int nDstLen	= sDst.size();
-	int nEndLen	= nSrcLen + nDstLen;
-	sDst.resize(nEndLen + 1);
-	StdCodeCvt(const_cast<SS_PTRTYPE>(sDst.data()+nDstLen), pW, nSrcLen+1);
-	sDst.resize(nEndLen);
 }
 inline void	ssadd(std::string& sDst, PCSTR pA)
 {
@@ -799,14 +719,6 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 			return _stricmp(pA1, pA2);
 		}
 	#endif
-	inline long sscmp(PCWSTR pW1, PCWSTR pW2)
-	{
-		return wcscmp(pW1, pW2);
-	}
-	inline long ssicmp(PCWSTR pW1, PCWSTR pW2)
-	{
-		return _wcsicmp(pW1, pW2);
-	}
 #endif
 
 // -----------------------------------------------------------------------------
@@ -897,7 +809,6 @@ inline void	ssadd(std::string& sDst, PCSTR pA)
 // FUNCTION:  sscpy
 //		inline int sscpy(PSTR pDst, PCSTR pSrc, int nMax=-1);
 //		inline int sscpy(PUSTR pDst,  PCSTR pSrc, int nMax=-1)
-//		inline int sscpy(PSTR pDst, PCWSTR pSrc, int nMax=-1);
 //
 // DESCRIPTION:
 //		This function is very much (but not exactly) like strcpy.  These
@@ -1031,7 +942,7 @@ class CStdStr : public std::basic_string<CT>
 
 	typedef typename std::basic_string<CT>		MYBASE;	 // my base class
 	typedef CStdStr<CT>							MYTYPE;	 // myself
-	typedef typename MYBASE::const_pointer		PCMYSTR; // PCSTR or PCWSTR 
+	typedef typename MYBASE::const_pointer		PCMYSTR; // PCSTR 
 	typedef typename MYBASE::pointer			PMYSTR;	 // PSTR
 	typedef typename MYBASE::iterator			MYITER;  // my iterator type
 	typedef typename MYBASE::const_iterator		MYCITER; // you get the idea...
@@ -1041,9 +952,6 @@ class CStdStr : public std::basic_string<CT>
 	typedef typename MYBASE::allocator_type		MYALLOC;
 	
 public:
-
-	// shorthand conversion from PCTSTR to string resource ID
-	#define _TRES(pctstr) (LOWORD((DWORD)(pctstr)))	
 
 	// CStdStr inline constructors
 	CStdStr()
@@ -1075,12 +983,6 @@ public:
 		*this = pA;
 	}
 
-	const CT *GetString() const { return c_str(); }
-	CStdStr(PCWSTR pW)
-	{
-		*this = pW;
-	}
-
 	CStdStr(MYCITER first, MYCITER last)
 		: MYBASE(first, last)
 	{
@@ -1090,6 +992,8 @@ public:
 		: MYBASE(nSize, ch, al)
 	{
 	}
+
+	const CT *GetString() const { return c_str(); }
 
 	// CStdStr inline assignment operators -- the ssasn function now takes care
 	// of fixing  the MSVC assignment bug (see knowledge base article Q172398).
@@ -1108,12 +1012,6 @@ public:
 	MYTYPE& operator=(PCSTR pA)
 	{
 		ssasn(*this, pA);
-		return *this;
-	}
-
-	MYTYPE& operator=(PCWSTR pW)
-	{
-		ssasn(*this, pW);
 		return *this;
 	}
 
@@ -1262,12 +1160,6 @@ public:
 		return *this;
 	}
 
-	MYTYPE& operator+=(PCWSTR pW)
-	{
-		ssadd(*this, pW);
-		return *this;
-	}
-
 	MYTYPE& operator+=(CT t)
 	{
 		this->append(1, t);
@@ -1286,9 +1178,7 @@ public:
 	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str1,	const MYTYPE& str2);
 	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	CT t);
 	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	PCSTR sz);
-	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	PCWSTR sz);
 	friend	MYTYPE	operator+ EMP_TEMP(PCSTR pA,				const MYTYPE& str);
-	friend	MYTYPE	operator+ EMP_TEMP(PCWSTR pW,			const MYTYPE& str);
 
 	// -------------------------------------------------------------------------
 	// Case changing functions
@@ -1793,22 +1683,6 @@ CStdStr<CT> operator+(PCSTR pA, const  CStdStr<CT>& str)
 	return strRet;
 }
 
-template<typename CT>
-inline
-CStdStr<CT> operator+(const CStdStr<CT>& str, PCWSTR pW)
-{ 
-	return CStdStr<CT>(str) + CStdStr<CT>(pW);
-}
-
-template<typename CT>
-inline
-CStdStr<CT> operator+(PCWSTR pW, const CStdStr<CT>& str)
-{
-	CStdStr<CT> strRet(pW);
-	strRet.append(str);
-	return strRet;
-}
-
 
 
 
@@ -1838,20 +1712,6 @@ CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str, wchar_t t)
 
 	CStdStr<wchar_t> strRet(str);	// 1
 	strRet.append(1, t);					// 2
-	return strRet;
-}
-
-inline
-CStdStr<wchar_t> operator+(const CStdStr<wchar_t>& str, PCWSTR pW)
-{
-	return CStdStr<wchar_t>(str) + CStdStr<wchar_t>(pW);
-}
-
-inline
-CStdStr<wchar_t> operator+(PCWSTR pA, const  CStdStr<wchar_t>& str)
-{
-	CStdStr<wchar_t> strRet(pA);
-	strRet.append(str);
 	return strRet;
 }
 
@@ -1901,21 +1761,6 @@ CStdStr<char> operator+(PCSTR pA, const  CStdStr<char>& str)
 	strRet.append(str);
 	return strRet;
 }
-
-inline
-CStdStr<char> operator+(const CStdStr<char>& str, PCWSTR pW)
-{ 
-	return CStdStr<char>(str) + CStdStr<char>(pW);
-}
-
-inline
-CStdStr<char> operator+(PCWSTR pW, const CStdStr<char>& str)
-{
-	CStdStr<char> strRet(pW);
-	strRet.append(str);
-	return strRet;
-}
-
 
 #endif // defined(__SUNPRO_CC_COMPAT) || defined(__SUNPRO_CC)
 
