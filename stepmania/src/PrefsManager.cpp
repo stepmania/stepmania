@@ -226,7 +226,8 @@ void PrefsManager::Init()
 	m_bHideDefaultNoteSkin = false;
 	m_iMaxHighScoresPerList = 10;
 	m_fPadStickSeconds = 0;
-	m_bHalveTextureHeight = false;
+	m_bForceMipMaps = false;
+	m_bAnisotropicFiltering = false;
 	g_bAutoRestart = false;
 	m_bSignProfileData = false;
 
@@ -521,7 +522,8 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.GetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
-	ini.GetValue( "Options", "HalveTextureHeight",				m_bHalveTextureHeight );
+	ini.GetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
+	ini.GetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
 	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
 
@@ -742,7 +744,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.SetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
-	ini.SetValue( "Options", "HalveTextureHeight",				m_bHalveTextureHeight );
+	ini.SetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
+	ini.SetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
 	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
 	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
 

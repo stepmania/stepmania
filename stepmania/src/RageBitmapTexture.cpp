@@ -119,6 +119,9 @@ void RageBitmapTexture::Create()
 	if( actualID.iGrayscaleBits != -1 && img->format->BitsPerPixel == 8 )
 		actualID.iGrayscaleBits = -1;
 
+	if( PREFSMAN->m_bForceMipMaps )
+		actualID.bMipMaps = true;
+
 	/* Cap the max texture size to the hardware max. */
 	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
 
@@ -129,9 +132,6 @@ void RageBitmapTexture::Create()
 	/* image size cannot exceed max size */
 	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
 	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
-
-	if( PREFSMAN->m_bHalveTextureHeight )
-		m_iImageHeight /= 2;
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two(m_iImageWidth);

@@ -108,6 +108,7 @@ public:
 			bool vsync_,
 			bool interlaced_,
 			bool bSmoothLines_,
+			bool bAnisotropicFiltering_,
 			CString sWindowTitle_,
 			CString sIconFile_
 #ifdef _XBOX
@@ -123,6 +124,7 @@ public:
 			vsync = vsync_;
 			interlaced = interlaced_;
 			bSmoothLines = bSmoothLines_;
+			bAnisotropicFiltering = bAnisotropicFiltering_;
 			sWindowTitle = sWindowTitle_;
 			sIconFile = sIconFile_;
 #ifdef _XBOX
@@ -138,6 +140,7 @@ public:
 		int rate;
 		bool vsync;
 		bool bSmoothLines;
+		bool bAnisotropicFiltering;
 		bool interlaced;
 #ifdef _XBOX
 		bool PAL;

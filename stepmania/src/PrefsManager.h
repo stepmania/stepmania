@@ -201,10 +201,10 @@ public:
 	// after pressed.
 	float			m_fPadStickSeconds;
 
-	// For 8:3 displays (640x240 arcade monitors), every odd line of texels
-	// doesn't get drawn.  This makes text look really ugly.  So, squash all
-	// textures to half height to match the aspect ratio of the display.
-	bool			m_bHalveTextureHeight;
+	// Useful for non 4:3 displays and resolutions < 640x480 where texels don't
+	// map directly to pixels.
+	bool			m_bForceMipMaps;
+	bool			m_bAnisotropicFiltering;	// has no effect without mipmaps on
 
 	// If true, then signatures created when writing profile data 
 	// and verified when reading profile data.  Leave this false if 
