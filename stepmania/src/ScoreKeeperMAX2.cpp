@@ -22,6 +22,7 @@
 #include "SDL_utils.h"
 #include "SongManager.h"
 #include "NoteDataUtil.h"
+#include "RageLog.h"
 
 
 ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, const CStringArray &asModifiers, PlayerNumber pn_ ):
@@ -55,7 +56,7 @@ ScoreKeeperMAX2::ScoreKeeperMAX2( const vector<Steps*>& apNotes_, const CStringA
 		ModsForThisSong.FromString( asModifiers[i] );
 
 		NoteData playerNoteDataPostModifiers(playerNoteData);
-		NoteDataUtil::TransformNoteData( playerNoteData, ModsForThisSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
+		NoteDataUtil::TransformNoteData( playerNoteDataPostModifiers, ModsForThisSong, GAMESTATE->GetCurrentStyleDef()->m_StepsType );
 		 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( playerNoteData, playerNoteDataPostModifiers );
 	}
