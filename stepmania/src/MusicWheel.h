@@ -71,12 +71,14 @@ public:
 
 	Song *GetPreferredSelectionForRandomOrPortal();
 
+	bool SelectSong( Song *p );
+	bool SelectSection( const CString & SectionName );
+	void SetOpenGroup(CString group, SortOrder so = SORT_INVALID);
+
 protected:
 	void GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SortOrder so );
-	void SetOpenGroup(CString group, SortOrder so = SORT_INVALID);
 	bool SelectSongOrCourse();
-	bool SelectSong( Song *p );
 	bool SelectCourse( Course *p );
 	bool SelectSort( SortOrder so );
 	void ChangeMusic(int dist); /* +1 or -1 */

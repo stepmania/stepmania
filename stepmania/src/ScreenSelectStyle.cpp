@@ -183,10 +183,6 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->StopTweening();
 
-	//Report All Stlye-dependant info
-	NSMAN->ReportStyle();
-
-
 	SCREENMAN->PlayStartSound();
 	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing );
 

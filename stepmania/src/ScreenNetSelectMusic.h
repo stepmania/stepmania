@@ -8,12 +8,15 @@
 #include "Sprite.h"
 #include "Quad.h"
 #include "BitmapText.h"
-#include "MusicBannerWheel.h"
+//#include "MusicBannerWheel.h"
 #include "DifficultyRating.h"
 #include "ModeSwitcher.h"
 #include "DifficultyIcon.h"
 #include "Difficulty.h"
 #include "DifficultyMeter.h"
+#include "MusicWheel.h"
+#include "OptionIconRow.h"
+#include "BPMDisplay.h"
 
 class ScreenNetSelectMusic : public ScreenNetSelectBase
 {
@@ -57,36 +60,19 @@ protected:
 	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
 	virtual void MenuBack( PlayerNumber pn );
 
+	virtual void Update( float fDeltaTime );
+
 	void MusicChanged();
 
 	void TweenOffScreen();
 private:
-	//Selection
-	Sprite			m_sprSelection;
+	MusicWheel		m_MusicWheel;
 
-	//Groups
-	BitmapText		m_textGroups;
-	Quad			m_rectGroupsBackground;
-	vector <CString>	m_vGroups;
-
-	//Songs
-	BitmapText		m_textSongs;
-	Quad			m_rectSongsBackground;
-	vector <Song *>		m_vSongs;
-
-	Quad			m_rectExInfo;
 	Quad			m_rectDiff;
-
-	BitmapText		m_textArtist;
-	BitmapText		m_textSubtitle;
-	BitmapText		m_textGroup;
 
 	//Difficulty Icon(s)
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	Difficulty			m_DC[NUM_PLAYERS];
-
-	//Select Options
-	Sprite			m_sprSelOptions;
 
 	void UpdateDifficulties( PlayerNumber pn );
 	DifficultyMeter		m_DifficultyMeters[NUM_PLAYERS];
@@ -94,16 +80,20 @@ private:
 	RageSound m_soundChangeOpt;
 	RageSound m_soundChangeSel;
 
+	BPMDisplay			m_BPMDisplay;
+	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];
+
+	Song *				m_cSong;
+
+	bool				m_bInitialSelect;
 };
 
 #endif
 
 /*
- * (c) 2004 Charles Lohr
+ * (c) 2004-2005 Charles Lohr
  * All rights reserved.
  *
- *     based off of ScreenEz2SelectMusic by "Frieza"
- * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including

@@ -249,6 +249,22 @@ bool MusicWheel::SelectSongOrCourse()
 	return false;
 }
 
+bool MusicWheel::SelectSection( const CString & SectionName )
+{
+	unsigned int i;
+	for( i=0; i<m_CurWheelItemData.size(); i++ )
+	{
+		if( m_CurWheelItemData[i]->m_sSectionName == SectionName )
+		{
+			m_iSelection = i;		// select it
+			break;
+		}
+	}
+	if ( i == m_CurWheelItemData.size() )
+		return false; 
+	return true;
+}
+
 bool MusicWheel::SelectSong( Song *p )
 {
 	if(p == NULL)
@@ -344,7 +360,21 @@ bool MusicWheel::SelectSort( SortOrder so )
 
 	return true;
 }
+/*
+bool MusicWheel::ScrollToItem( CString Item )
+{
+	for ( int i=0;i<m_CurWheelItemData.length();i++ )
+		if ( m_CurWheelItemData[i].m_sSectionName == Item )
+		{
+			
+		}
 
+	if ( i == m_CurWheelItemData.length() )
+		return false;
+	else
+		return true;
+}
+*/
 void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
