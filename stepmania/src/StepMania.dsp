@@ -65,7 +65,7 @@ IntDir=.\../Debug6
 TargetDir=\temp\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                        	cl                                        /Zl                                        /nologo                                        /c                                        verstub.cpp                                        /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                       	cl                                       /Zl                                       /nologo                                       /c                                       verstub.cpp                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -98,8 +98,12 @@ XBCP=xbecopy.exe
 # ADD BASE XBCP /NOLOGO
 # ADD XBCP /NOLOGO
 # Begin Special Build Tool
-PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                     	cl                                                                                                                                                                                                                                                      /Zl                                                                                                                                                                                                                                                      /nologo                                                                                                                                                                                                                                                      /c \
-                                                                                                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                                                                                                                              /Fo$(IntDir)\ 
+IntDir=.\Debug
+TargetDir=\stepmania\stepmania
+TargetName=default
+SOURCE="$(InputPath)"
+PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                    	cl                                                                                                                                                                                                                                                     /Zl                                                                                                                                                                                                                                                     /nologo                                                                                                                                                                                                                                                     /c \
+                                                                                                                                                                                                                                                                  verstub.cpp                                                                                                                                                                                                                                                                                             /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -139,7 +143,7 @@ IntDir=.\../Release6
 TargetDir=\temp\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=disasm\verinc                                         	cl                                          /Zl                                          /nologo                                          /c                                          verstub.cpp                                          /Fo$(IntDir)\ 
+PreLink_Cmds=disasm\verinc                                        	cl                                         /Zl                                         /nologo                                         /c                                         verstub.cpp                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -176,8 +180,12 @@ XBCP=xbecopy.exe
 # ADD BASE XBCP /NOLOGO
 # ADD XBCP /NOLOGO
 # Begin Special Build Tool
-PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                      	cl                                                                                                                                                                                                                                                       /Zl                                                                                                                                                                                                                                                       /nologo                                                                                                                                                                                                                                                       /c \
-                                                                                                                                                                                                                                                                      verstub.cpp                                                                                                                                                                                                                                                                                               /Fo$(IntDir)\ 
+IntDir=.\StepMania___Xbox_Release
+TargetDir=\stepmania\stepmania
+TargetName=default
+SOURCE="$(InputPath)"
+PreLink_Cmds=disasm\verinc                                                                                                                                                                                                                                                     	cl                                                                                                                                                                                                                                                      /Zl                                                                                                                                                                                                                                                      /nologo                                                                                                                                                                                                                                                      /c \
+                                                                                                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                                                                                                                              /Fo$(IntDir)\ 
 PostBuild_Cmds=disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi ia32.vdi
 # End Special Build Tool
 
@@ -4592,6 +4600,25 @@ SOURCE=.\ScreenEditMenu.cpp
 # Begin Source File
 
 SOURCE=.\ScreenEditMenu.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEnding.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "StepMania - Xbox Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEnding.h
 # End Source File
 # Begin Source File
 

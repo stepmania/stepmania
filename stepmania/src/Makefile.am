@@ -31,7 +31,7 @@ Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h ScreenBookkeeping.h ScreenBookkeeping.cpp \
 ScreenBranch.cpp ScreenBranch.h ScreenCaution.cpp ScreenCaution.h ScreencenterImage.h ScreenCenterImage.cpp ScreenCredits.cpp ScreenCredits.h ScreenDemonstration.cpp ScreenDemonstration.h \
 ScreenDimensions.h ScreenEdit.cpp ScreenEdit.h ScreenEditCoursesMenu.cpp ScreenEditCoursesMenu.h \
-ScreenEditMenu.cpp ScreenEditMenu.h ScreenEndlessBreak.cpp ScreenEndlessBreak.h ScreenEvaluation.cpp ScreenEvaluation.h \
+ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h ScreenEndlessBreak.cpp ScreenEndlessBreak.h ScreenEvaluation.cpp ScreenEvaluation.h \
 ScreenExit.cpp ScreenExit.h ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameOver.cpp ScreenGameOver.h ScreenGameplay.cpp ScreenGameplay.h \
 ScreenHowToPlay.cpp ScreenHowToPlay.h \
