@@ -375,9 +375,26 @@ could be used to run a demo and exit, for benchmarking and profiling.
 
 ********
 
-life penalty for NG
+Defaulting to the default refresh rate sucks; it gives 60Hz on
+most systems.
 
-********
+The reason we do this instead of using the max is that Windows often
+doesn't really know the max refresh rate, but it always thinks it
+does, so on some systems the max refresh rate will just desync the
+monitor.
 
-no tap explosion for goods/bads
+One thing we might be able to do is figure out the best *known*
+refresh rate.  Look in the registry (or something) and find
+the highest refresh rate set for any resolution >= to the one
+we're setting, in a <= bit depth. (If we can do 72Hz in 1024x768,
+we should be able to do it in 640x480, too, as long as it's not a
+higher bit depth.)
+
+If this gives anything above 60 at all, it's a big win for sensible
+defaults.
+
+I don't want to change the default refresh right now (until things
+settle down a bit more--don't want to introduce new problems), but
+I might try to code the autodetection bit and perhaps make it an
+option ...
 
