@@ -280,18 +280,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ScreenSetTime.cpp;
-			path = /Users/steve/programming/stepmania/src/ScreenSetTime.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenSetTime.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA0A3DE7060513A00044E6B1 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenSetTime.h;
-			path = /Users/steve/programming/stepmania/src/ScreenSetTime.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenSetTime.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA0A3DE8060513A00044E6B1 = {
 			fileRef = AA0A3DE6060513A00044E6B1;
@@ -5680,18 +5680,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ScreenAward.cpp;
-			path = /Users/steve/programming/stepmania/src/ScreenAward.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenAward.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA56E5B905FBF36E006B24C7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenAward.h;
-			path = /Users/steve/programming/stepmania/src/ScreenAward.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenAward.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AA56E5BA05FBF36E006B24C7 = {
 			fileRef = AA56E5B805FBF36E006B24C7;
@@ -14647,18 +14647,18 @@
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = ScreenDownloadMachineStats.cpp;
-			path = /Users/steve/programming/stepmania/src/ScreenDownloadMachineStats.cpp;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenDownloadMachineStats.cpp;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD64AA40604079E00EF8CDE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = ScreenDownloadMachineStats.h;
-			path = /Users/steve/programming/stepmania/src/ScreenDownloadMachineStats.h;
-			refType = 0;
-			sourceTree = "<absolute>";
+			path = ../src/ScreenDownloadMachineStats.h;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		AAD64AA50604079E00EF8CDE = {
 			fileRef = AAD64AA30604079E00EF8CDE;
