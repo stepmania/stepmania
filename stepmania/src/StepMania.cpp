@@ -920,7 +920,11 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( LOG );
 	
 	if( g_sErrorString != "" )
+	{
+		if( g_bAutoRestart )
+			HOOKS->RestartProgram();
 		HOOKS->MessageBoxError( g_sErrorString ); // throw up a pretty error dialog
+	}
 
 	SAFE_DELETE( HOOKS );
 
