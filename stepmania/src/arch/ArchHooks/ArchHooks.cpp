@@ -41,7 +41,7 @@ void ArchHooks::MessageBoxOK( CString sMessage, CString ID )
 		return;
 
 	// don't show MessageBox if windowed
-	if( !DISPLAY->IsWindowed() )
+	if( DISPLAY && !DISPLAY->IsWindowed() )
 		ArchHooks::MessageBoxOKPrivate( sMessage, ID );
 	else
 		this->MessageBoxOKPrivate( sMessage, ID );	// call derived version
@@ -65,7 +65,7 @@ ArchHooks::MessageBoxResult ArchHooks::MessageBoxRetryCancel( CString sMessage, 
 		return ArchHooks::MessageBoxRetryCancelPrivate( sMessage, ID );
 
 	// don't show MessageBox if windowed
-	if( !DISPLAY->IsWindowed() )
+	if( DISPLAY && !DISPLAY->IsWindowed() )
 		return ArchHooks::MessageBoxRetryCancelPrivate( sMessage, ID );
 	else
 		return this->MessageBoxRetryCancelPrivate( sMessage, ID );	// call derived version
