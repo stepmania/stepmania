@@ -32,6 +32,7 @@
 #include "Steps.h"
 #include "UnlockSystem.h"
 #include "ModeChoice.h"
+#include "ActorUtil.h"
 
 
 #define FADE_SECONDS				THEME->GetMetricF("MusicWheel","FadeSeconds")
@@ -733,6 +734,15 @@ void MusicWheel::GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, fl
 	}
 }
 
+void MusicWheel::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
+{
+	float fX, fY, fZ, fRotationX;
+	GetItemPosition( fPosOffsetsFromMiddle, fX, fY, fZ, fRotationX );
+	item.SetXY( fX, fY );
+	item.SetZ( fZ );
+	item.SetRotationX( fRotationX );
+}
+
 void MusicWheel::RebuildMusicWheelItems()
 {
 	// rewind to first index that will be displayed;
@@ -818,17 +828,8 @@ void MusicWheel::DrawItem( int i )
 	case STATE_RANDOM_SPINNING:
 	case STATE_LOCKED:
 		{
-			float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
-
-			float fX, fY, fZ, fRotationX;
-			GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
-
-//				if( fY < -SCREEN_HEIGHT/2  ||  fY > SCREEN_HEIGHT/2 )
-//					continue; // skip
-
-			display.SetXY( fX, fY );
-			display.SetZ( fZ );
-			display.SetRotationX( fRotationX );
+			const float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
+			SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
 		}
 		break;
 	}
@@ -1321,13 +1322,9 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 {
 	m_WheelState = STATE_TWEENING_ON_SCREEN;
 
-	float fX, fY, fZ, fRotationX;
-	GetItemPosition( 0, fX, fY, fZ, fRotationX );
-	
-	m_sprSelectionOverlay.SetXY( fX+320, fY );
-	m_sprSelectionOverlay.SetZ( fZ );
-	m_sprSelectionOverlay.SetRotationX( fRotationX );
+	SetItemPosition( m_sprSelectionOverlay, 0 );
 
+	m_sprSelectionOverlay.Command( "addx,320" );
 	if(changing_sort) {
 		m_sprSelectionOverlay.BeginTweening( 0.04f * NUM_WHEEL_ITEMS/2 );	// sleep
 		m_sprSelectionOverlay.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
@@ -1335,7 +1332,7 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 		m_sprSelectionOverlay.BeginTweening( 0.05f );	// sleep
 		m_sprSelectionOverlay.BeginTweening( 0.4f, Actor::TWEEN_ACCELERATE );
 	}
-	m_sprSelectionOverlay.SetX( fX );
+	m_sprSelectionOverlay.Command( "addx,-320" );
 
 	m_ScrollBar.SetX( SCROLL_BAR_X+30 );
 	if(changing_sort)
@@ -1350,15 +1347,12 @@ void MusicWheel::TweenOnScreen(bool changing_sort)
 		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
-		float fX, fY, fZ, fRotationX;
-		GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
-		display.SetXY( fX+320, fY );
-		display.SetZ( fZ );
-		display.SetRotationX( fRotationX );
+		SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
 
+		display.Command( "addx,320" );
 		display.BeginTweening( 0.04f*i );	// sleep
 		display.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
-		display.SetX( fX );
+		display.Command( "addx,-320" );
 		if( changing_sort )
 			display.HurryTweening( 0.25f );
 	}
@@ -1373,11 +1367,7 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 {
 	m_WheelState = STATE_TWEENING_OFF_SCREEN;
 
-	float fX, fY, fZ, fRotationX;
-	GetItemPosition( 0, fX, fY, fZ, fRotationX );
-	m_sprSelectionOverlay.SetXY( fX, fY );
-	m_sprSelectionOverlay.SetZ( fZ );
-	m_sprSelectionOverlay.SetRotationX( fRotationX );
+	SetItemPosition( m_sprSelectionOverlay, 0 );
 
 	if(changing_sort) {
 		/* When changing sort, tween the overlay with the item in the center;
@@ -1388,7 +1378,7 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 		m_sprSelectionOverlay.BeginTweening( 0 );	// sleep
 		m_sprSelectionOverlay.BeginTweening( 0.2f, Actor::TWEEN_DECELERATE );
 	}
-	m_sprSelectionOverlay.SetX( fX+320 );
+	m_sprSelectionOverlay.Command( "addx,320" );
 
 	m_ScrollBar.BeginTweening( 0 );
 	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
@@ -1399,14 +1389,10 @@ void MusicWheel::TweenOffScreen(bool changing_sort)
 		MusicWheelItem& display = m_MusicWheelItems[i];
 		float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 
-		float fX, fY, fZ, fRotationX;
-		GetItemPosition( fThisBannerPositionOffsetFromSelection, fX, fY, fZ, fRotationX );
-		display.SetXY( fX, fY );
-		display.SetZ( fZ );
-		display.SetRotationX( fRotationX );
+		SetItemPosition( display, fThisBannerPositionOffsetFromSelection );
 		display.BeginTweening( 0.04f*i );	// sleep
 		display.BeginTweening( 0.2f, Actor::TWEEN_DECELERATE );
-		display.SetX( fX+320 );
+		display.Command( "addx,320" );
 		if( changing_sort )
 			display.HurryTweening( 0.25f );
 	}

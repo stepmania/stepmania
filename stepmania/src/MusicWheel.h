@@ -64,6 +64,7 @@ public:
 	void NotesChanged( PlayerNumber pn );	// update grade graphics and top score
 
 	void GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out );
+	void SetItemPosition( Actor &item, float fPosOffsetsFromMiddle );
 
 	bool Select();	// return true if this selection ends the screen
 	WheelItemType	GetSelectedType()	{ return m_CurWheelItemData[m_iSelection]->m_Type; };
