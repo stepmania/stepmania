@@ -179,6 +179,11 @@ void ScreenOptions::InitOptionsText()
 		title.LoadFromFont( THEME->GetPathTo("Fonts","option title") );
 		CString sText = optline.szTitle;
 		sText.Replace( " ", "\n" );
+		/* A bit of a hack: menus can put ^ to indicate a non-breaking space.  This
+		 * can go away if tihs gets smarter.  (FOr example, there's no reason to break
+		 * "how to play" into three lines. */
+		sText.Replace( "^", " " );
+
 		title.SetText( sText );
 		title.SetXY( LABELS_X, fY );
 		title.SetZoom( LABELS_ZOOM );
