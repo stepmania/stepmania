@@ -50,7 +50,7 @@ SaveSignals::~SaveSignals()
 static void SigHandler( int signal, siginfo_t *si, void *ucp )
 {
 	for(unsigned i = 0; i < handlers.size(); ++i)
-		handlers[i]( signal );
+		handlers[i]( signal, si, (const ucontext_t *) ucp );
 }
 
 static int find_stack_direction2( char *p )

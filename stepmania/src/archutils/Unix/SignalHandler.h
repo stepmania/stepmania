@@ -2,6 +2,7 @@
 #define SIGNAL_HANDLER_H
 
 #include <signal.h>
+#include <ucontext.h>
        
 class SaveSignals
 {
@@ -14,7 +15,7 @@ public:
 
 namespace SignalHandler
 {
-	typedef void (*handler)(int);
+	typedef void (*handler)( int, siginfo_t *si, const ucontext_t *uc );
 
 	void OnClose(handler);
 };
