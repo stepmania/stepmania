@@ -408,8 +408,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 	RageColor colorNotSelected = COLOR_NOT_SELECTED;
 
 	// init text
-	int i; // We use it outside for loop; doing that without declaring it outside it violates ISO C++
-	for( i=0; i<m_iNumOptionRows; i++ )		// foreach line
+	for( int i=0; i<m_iNumOptionRows; i++ )		// foreach line
 	{
 		bool bThisRowIsSelected = false;
 		for( int p=0; p<NUM_PLAYERS; p++ )
@@ -482,7 +481,7 @@ void ScreenOptions::UpdateEnabledDisabled()
 	{
 		m_textItems[m_iNumOptionRows][0].StopTweening();
 		m_textItems[m_iNumOptionRows][0].BeginTweening( 0.3f );
-		m_textItems[m_iNumOptionRows][0].SetDiffuseAlpha( m_bRowIsHidden[i]? 0.0f:1.0f );
+		m_textItems[m_iNumOptionRows][0].SetDiffuseAlpha( m_bRowIsHidden[m_iNumOptionRows]? 0.0f:1.0f );
 		m_textItems[m_iNumOptionRows][0].SetY( m_fRowY[m_iNumOptionRows] );
 	}
 
