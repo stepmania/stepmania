@@ -231,7 +231,7 @@ void Song::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, fl
 // so do a binary search to get close to the correct elapsed time.
 float Song::GetElapsedTimeFromBeat( float fBeat ) const
 {
-	float fElapsedTimeBestGuess = 100;	//  seconds
+	float fElapsedTimeBestGuess = this->m_fMusicLengthSeconds/2;	//  seconds
 	float fSecondsToMove = fElapsedTimeBestGuess;	//  seconds
 	float fBeatOut, fBPSOut;
 	bool bFreezeOut;
