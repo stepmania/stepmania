@@ -71,6 +71,8 @@
 	#endif	
 #endif
 
+#define ZIPS_DIR "Packages/"
+
 #ifdef _WINDOWS
 HWND g_hWndMain = NULL;
 #endif
@@ -741,7 +743,35 @@ void SaveGamePrefsToDisk()
 	ini.WriteFile();
 }
 
+static void MountTreeOfZips( const CString &dir )
+{
+	vector<CString> dirs;
+	dirs.push_back( dir );
 
+	while( dirs.size() )
+	{
+		CString path = dirs.back();
+		dirs.pop_back();
+
+		if( !IsADirectory(path) )
+			continue;
+
+		vector<CString> zips;
+		GetDirListing( path + "/*.zip", zips, false, true );
+		GetDirListing( path + "/*.smzip", zips, false, true );
+
+		for( unsigned i = 0; i < zips.size(); ++i )
+		{
+			if( !IsAFile(zips[i]) )
+				continue;
+
+			LOG->Trace( "VFS: found %s", zips[i].c_str() );
+			FILEMAN->Mount( "zip", zips[i], "" );
+		}
+
+		GetDirListing( path + "/*", dirs, true, true );
+	}
+}
 
 #define UNLOCKS_PATH BASE_PATH "Data" SLASH "Unlocks.dat"
 
@@ -780,6 +810,8 @@ int main(int argc, char* argv[])
 
 	/* Everything except LOG uses this to read and write files.  Load this early. */
 	FILEMAN = new RageFileManager;
+
+	MountTreeOfZips( ZIPS_DIR );
 
 	atexit(SDL_Quit);   /* Clean up on exit */
 
