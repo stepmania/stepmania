@@ -921,27 +921,48 @@ int Song::GetNumTimesPlayed() const
 	return iTotalNumTimesPlayed;
 }
 
-/* Music paths and CDTitle paths for DWIs loaded fro ma DWI tree are
- * relative to the top of the tree.  
+/* Search semantics for all song files:
  *
- * Files not loaded from a DWI tree may still have a path; if they
- * do, they're relative to the top SM directory (the cwd), so leave
- * them alone.
+ * If the path doesn't have any directory separators, it's a filename in the
+ * song directory.
  *
- * (Actually, I'm not sure if any files ever have a relative path--
- * one not beginning with .\--so only prepend the song path if it's
- * relative.)
+ * If it does, it's relative to the top directory of the tree it was loaded
+ * from, eg ".\music\stuff\song.ogg".  Most of the time, that's the SM tree,
+ * and that's the PWD, so just return it directly.  If the file was originally
+ * loaded from the DWIPath, it's relative to that, so prepend it.
  *
- * We can't do this stuff at load time, since these paths may
- * contain colons, and we can't store colons in our cache.
+ * Some DWI's do have relative paths that don't start with ".\".
  */
+
+/* We only follow this for song files and cdtitles; it's for compatibility
+ * with DWI.  We prefer paths relative to the song directory; only support
+ * that for all other paths. */
+
+/* Note: Prepending the dwipath is ugly.  The first impression might be to
+ * add a Song::TopFilePath, but don't do that--we have too much stuff in there
+ * already.  We don't really need it; this is the only place it'd be used.  What
+ * we *should* be doing is prepending this path when we first load the song.
+ * However, dwipaths are usually like "c:\games\dwi", and we can't store colons
+ * in SM's; they'll get interpreted as delimiters.  So:
+ * XXX: Add some kind of escape character to SM's.
+ *
+ * -glenn */
  
 CString Song::GetMusicPath() const
 {
+	/* If there's no path in the music file, the file is in the same directory
+	 * as the song.  (This is the preferred configuration.) */
+	if( m_sMusicFile.Find('\\') == -1)
+		return m_sSongDir+m_sMusicFile;
+
+	/* The file has a path.  If it was loaded from the m_DWIPath, it's relative
+	 * to that. */
 	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
 		return PREFSMAN->m_DWIPath+"\\"+m_sMusicFile;
 
-	return m_sMusicFile.Left(2) == ".\\"? m_sMusicFile : m_sSongDir+m_sMusicFile;
+	/* Otherwise, it's relative to the top of the SM directory (the CWD), so
+	 * return it directly. */
+	return m_sMusicFile;
 }
 
 CString Song::GetBannerPath() const
@@ -955,11 +976,15 @@ CString Song::GetBackgroundPath() const
 }
 CString Song::GetCDTitlePath() const
 {
+	if( m_sCDTitleFile.Find('\\') == -1)
+		return m_sSongDir+m_sCDTitleFile;
+
 	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
 		return PREFSMAN->m_DWIPath+"\\"+m_sCDTitleFile;
 
-	return m_sMusicFile.Left(2) == ".\\" ? m_sCDTitleFile : m_sSongDir+m_sCDTitleFile;
+	return m_sCDTitleFile;
 }
+
 CString Song::GetMovieBackgroundPath() const
 {
 	return m_sSongDir+m_sMovieBackgroundFile;

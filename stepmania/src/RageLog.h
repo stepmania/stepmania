@@ -30,6 +30,10 @@ public:
 
 protected:
 	FILE* m_fileLog;
+	/* Let's keep a list of all warnings, so we can display them later.
+	 * We could write this to a file, instead, but for now let's not
+	 * clutter the top dir ... */
+	CStringArray warnings;
 };
 
 extern RageLog*	LOG;	// global and accessable from anywhere in our program
