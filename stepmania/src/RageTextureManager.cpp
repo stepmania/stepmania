@@ -319,10 +319,11 @@ void RageTextureManager::InvalidateTextures()
 	}
 }
 
-bool RageTextureManager::SetPrefs( int iTextureColorDepth, bool bDelayedDelete, int iMaxTextureResolution )
+bool RageTextureManager::SetPrefs( int iTextureColorDepth, int iMovieColorDepth, bool bDelayedDelete, int iMaxTextureResolution )
 {
 	bool need_reload = false;
 	if( m_bDelayedDelete != bDelayedDelete ||
+		m_iMovieColorDepth != iMovieColorDepth ||
 		m_iTextureColorDepth != iTextureColorDepth ||
 		m_iMaxTextureResolution != iMaxTextureResolution )
 		need_reload = true;
@@ -330,8 +331,10 @@ bool RageTextureManager::SetPrefs( int iTextureColorDepth, bool bDelayedDelete, 
 	m_bDelayedDelete = bDelayedDelete;
 	m_iTextureColorDepth = iTextureColorDepth;
 	m_iMaxTextureResolution = iMaxTextureResolution;
+	m_iMovieColorDepth = iMovieColorDepth;
 	
 	ASSERT( m_iTextureColorDepth==16 || m_iTextureColorDepth==32 );
+	ASSERT( m_iMovieColorDepth==16 || m_iMovieColorDepth==32 );
 	return need_reload;
 }
 

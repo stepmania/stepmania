@@ -106,6 +106,7 @@ void ApplyGraphicOptions()
 			THEME->GetPathToG("Common window icon") ) );
 	bNeedReload |= TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
+		PREFSMAN->m_iMovieColorDepth,
 		PREFSMAN->m_bDelayedTextureDelete, 
 		PREFSMAN->m_iMaxTextureResolution );
 
@@ -337,6 +338,7 @@ RageDisplay *CreateDisplay()
 			ini.GetValueI( sKey, "Height", PREFSMAN->m_iDisplayHeight );
 			ini.GetValueI( sKey, "DisplayColor", PREFSMAN->m_iDisplayColorDepth );
 			ini.GetValueI( sKey, "TextureColor", PREFSMAN->m_iTextureColorDepth );
+			ini.GetValueI( sKey, "MovieColor", PREFSMAN->m_iMovieColorDepth );
 			ini.GetValueB( sKey, "AntiAliasing", PREFSMAN->m_bAntiAliasing );
 
 			// Update last seen video card
@@ -501,6 +503,7 @@ int main(int argc, char* argv[])
 	TEXTUREMAN	= new RageTextureManager();
 	TEXTUREMAN->SetPrefs( 
 		PREFSMAN->m_iTextureColorDepth, 
+		PREFSMAN->m_iMovieColorDepth,
 		PREFSMAN->m_bDelayedTextureDelete, 
 		PREFSMAN->m_iMaxTextureResolution );
 

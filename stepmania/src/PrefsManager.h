@@ -24,6 +24,7 @@ public:
 	int				m_iDisplayHeight;
 	int				m_iDisplayColorDepth;
 	int				m_iTextureColorDepth;
+	int				m_iMovieColorDepth;
 	int				m_iMaxTextureResolution;
 	int				m_iRefreshRate;
 	bool			m_bShowStats;

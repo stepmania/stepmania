@@ -40,6 +40,7 @@ PrefsManager::PrefsManager()
 	m_iDisplayHeight = 480;
 	m_iDisplayColorDepth = 16;
 	m_iTextureColorDepth = 16;		// default to 16 for better preformance on slower cards
+	m_iMovieColorDepth = 16;
 	m_iMaxTextureResolution = 2048;
 	m_iRefreshRate = REFRESH_DEFAULT;
 	m_bIgnoreJoyAxes = true;		// ON by default because all USB convertors that are compatible with pads map to buttons
@@ -156,6 +157,7 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueI( "Options", "DisplayHeight",				m_iDisplayHeight );
 	ini.GetValueI( "Options", "DisplayColorDepth",			m_iDisplayColorDepth );
 	ini.GetValueI( "Options", "TextureColorDepth",			m_iTextureColorDepth );
+	ini.GetValueI( "Options", "MovieColorDepth",			m_iMovieColorDepth );
 	ini.GetValueI( "Options", "MaxTextureResolution",		m_iMaxTextureResolution );
 	ini.GetValueI( "Options", "RefreshRate",				m_iRefreshRate );
 	ini.GetValueB( "Options", "IgnoreJoyAxes",				m_bIgnoreJoyAxes );
@@ -260,6 +262,7 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "DisplayHeight",				m_iDisplayHeight );
 	ini.SetValueI( "Options", "DisplayColorDepth",			m_iDisplayColorDepth );
 	ini.SetValueI( "Options", "TextureColorDepth",			m_iTextureColorDepth );
+	ini.SetValueI( "Options", "MovieColorDepth",			m_iMovieColorDepth );
 	ini.SetValueI( "Options", "MaxTextureResolution",		m_iMaxTextureResolution );
 	ini.SetValueI( "Options", "RefreshRate",				m_iRefreshRate );
 	ini.SetValueB( "Options", "IgnoreJoyAxes",				m_bIgnoreJoyAxes );

@@ -30,8 +30,9 @@ public:
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();
 
-	bool SetPrefs( int iTextureColorDepth, bool bDelayedDelete, int iMaxTextureResolution );
+	bool SetPrefs( int iTextureColorDepth, int iMovieColorDepth, bool bDelayedDelete, int iMaxTextureResolution );
 	int GetTextureColorDepth() { return m_iTextureColorDepth; };
+	int GetMovieColorDepth() { return m_iMovieColorDepth; };
 	bool GetDelayedDelete() { return m_bDelayedDelete; };
 	int GetMaxTextureResolution() { return m_iMaxTextureResolution; };
 
@@ -52,6 +53,7 @@ protected:
 	void GarbageCollect( GCType type );
 
 	int m_iTextureColorDepth;
+	int m_iMovieColorDepth;
 	bool m_bDelayedDelete;
 	int m_iMaxTextureResolution;
 
