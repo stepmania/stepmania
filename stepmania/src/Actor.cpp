@@ -707,7 +707,7 @@ float Actor::Command( CString sCommands )
 	vector<ParsedCommand> vCommands;
 	ParseCommands( sCommands, vCommands );
 
-	for( int i=0; i<vCommands.size(); i++ )
+	for( unsigned i=0; i<vCommands.size(); i++ )
 		this->HandleCommand( vCommands[i] );
 
 	return GetTweenTimeLeft();

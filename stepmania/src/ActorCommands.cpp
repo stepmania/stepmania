@@ -27,7 +27,7 @@ void IncorrectActorParametersWarning( const ParsedCommand &command, int iMaxInde
 void ParsedCommandToken::Set( const CString &sToken )
 {
 	s = sToken;
-	f = atof( sToken );
+	f = (float) atof( sToken );
 	i = atoi( sToken );
 	b = i != 0;
 	bColorIsValid = c.FromString( sToken );
@@ -40,7 +40,7 @@ void ParsedCommand::Set( const CString &sCommand )
 
 	vTokens.resize( vsTokens.size() );
 
-	for( int j=0; j<vsTokens.size(); j++ )
+	for( unsigned j=0; j<vsTokens.size(); j++ )
 	{
 		const CString &sToken = vsTokens[j];
 		vTokens[j].Set( sToken );
@@ -50,7 +50,7 @@ void ParsedCommand::Set( const CString &sCommand )
 CString ParsedCommand::GetOriginalCommandString() const
 {
 	CStringArray asTokens;
-	for( int i=0; i<vTokens.size(); i++ )
+	for( unsigned i=0; i<vTokens.size(); i++ )
 		asTokens.push_back( vTokens[i].s );
 	return join( ",", asTokens );
 }
@@ -63,7 +63,7 @@ void ParseCommands( const CString &sCommands, vector<ParsedCommand> &vCommandsOu
 	
 	vCommandsOut.resize( vsCommands.size() );
 	
-	for( int i=0; i<vsCommands.size(); i++ )
+	for( unsigned i=0; i<vsCommands.size(); i++ )
 	{
 		const CString &sCommand = vsCommands[i];
 		ParsedCommand &pc = vCommandsOut[i];
