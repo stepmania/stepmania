@@ -100,7 +100,8 @@ void ModeChoice::Load( int iIndex, CString sChoice )
 		split( sCommand, ",", asBits );
 		
 		CString sName = asBits[0];
-		CString sValue = (asBits.size()>1) ? asBits[1] : "";
+		asBits.erase(asBits.begin(), asBits.begin()+1);
+		CString sValue = join( ",", asBits );
 
 		sName.MakeLower();
 		sValue.MakeLower();
