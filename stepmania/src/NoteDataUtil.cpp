@@ -14,7 +14,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "PlayerOptions.h"
-#include "Song.h"
+#include "song.h"
 
 NoteType NoteDataUtil::GetSmallestNoteTypeForMeasure( const NoteData &n, int iMeasureIndex )
 {
