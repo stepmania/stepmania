@@ -321,8 +321,9 @@ static void HandleInputEvents(float fDeltaTime)
 		DeviceInput DeviceI = (DeviceInput)ieArray[i];
 		InputEventType type = ieArray[i].type;
 
-		if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
+		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F4))
 		{
+			if(type != IET_FIRST_PRESS) continue;
 			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
 				INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 			{
@@ -339,34 +340,32 @@ static void HandleInputEvents(float fDeltaTime)
 				PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
 				ApplyGraphicOptions();
 				continue;
-				/* why fall through? other code shouldn't be using 
-				 * globally-bound keys -glenn */
-				/* you're right.  -Chris */
 			}
 		}
-		else if( type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
+		else if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_F5))
 		{
+			if(type != IET_FIRST_PRESS) continue;
+
 			// pressed F5.  Toggle detail.
 			if(PREFSMAN->m_iDisplayWidth != 640)
 			{
 				PREFSMAN->m_iDisplayWidth = 640;
 				PREFSMAN->m_iDisplayHeight = 480;
-				ApplyGraphicOptions();
 			}			
 			else
 			{
 				PREFSMAN->m_iDisplayWidth = 320;
 				PREFSMAN->m_iDisplayHeight = 240;
-				ApplyGraphicOptions();
 			}			
-
+			ApplyGraphicOptions();
 		}
 
-		if(type == IET_FIRST_PRESS && DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
+		if(DeviceI == DeviceInput(DEVICE_KEYBOARD, SDLK_RETURN))
 		{
 			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RALT)) ||
 				INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LALT)) )
 			{
+				if(type != IET_FIRST_PRESS) continue;
 				/* alt-enter */
 				PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
 				ApplyGraphicOptions();
