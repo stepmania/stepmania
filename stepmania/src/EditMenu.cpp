@@ -139,7 +139,7 @@ EditMenu::EditMenu()
 
 EditMenu::~EditMenu()
 {
-
+	BANNERCACHE->Undemand();
 }
 
 void EditMenu::RefreshAll()
