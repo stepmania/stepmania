@@ -443,11 +443,18 @@ static bool ImageIsLoadable( const CString &sPath )
 }
 */
 /* Fix up song paths.  If there's a leading "./", be sure to keep it: it's
- * a signal that the path is from the root directory, not the song directory. */
-void FixupPath( CString &path )
+ * a signal that the path is from the root directory, not the song directory.
+ * Other than a leading "./", song paths must never contain "." or "..". */
+void FixupPath( CString &path, const CString &sSongPath )
 {
 	/* Replace backslashes with slashes in all paths. */	
 	FixSlashesInPlace( path );
+
+	if( path.Left(3) == "../" )
+	{
+		/* The path begins with "../".  Resolve it wrt. the song directory. */
+		path = sSongPath + "/" + path;
+	}
 
 	CollapsePath( path );
 
@@ -586,12 +593,13 @@ void Song::TidyUpData()
 
 	CHECKPOINT_M( "Looking for images..." );
 
-	FixupPath( m_sSongDir  );
-	FixupPath( m_sMusicFile  );
-	FixupPath( m_sBannerFile );
-	FixupPath( m_sLyricsFile );
-	FixupPath( m_sBackgroundFile );
-	FixupPath( m_sCDTitleFile );
+	ASSERT_M( m_sSongDir.Left(3) != "../", m_sSongDir ); /* meaningless */
+	FixupPath( m_sSongDir, "" );
+	FixupPath( m_sMusicFile, m_sSongDir );
+	FixupPath( m_sBannerFile, m_sSongDir );
+	FixupPath( m_sLyricsFile, m_sSongDir );
+	FixupPath( m_sBackgroundFile, m_sSongDir );
+	FixupPath( m_sCDTitleFile, m_sSongDir );
 
 	//
 	// First, check the file name for hints.
