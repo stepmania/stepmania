@@ -45,12 +45,20 @@ RageInput::RageInput()
 	for( int i=0; i<iNumJoySticks; i++ )
 	{
 		SDL_Joystick *pJoystick = SDL_JoystickOpen( i );
+
+		if(pJoystick == NULL) {
+			LOG->Info("   %d: '%s' Error opening: %s",
+				i, SDL_JoystickName(i), SDL_GetError());
+			continue;
+		}
+
 		LOG->Info( "   %d: '%s' axes: %d, hats: %d, buttons: %d",
 			i,
 			SDL_JoystickName(i),
 			SDL_JoystickNumAxes(pJoystick),
 			SDL_JoystickNumHats(pJoystick),
 			SDL_JoystickNumButtons(pJoystick) );
+
 		/* For some weird reason, we won't get any joystick events at all
 		 * if we don't keep the joystick open.  (Why?  The joystick event
 		 * API is completely separate from the SDL_Joystick polling API ...) */
