@@ -56,7 +56,7 @@ FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h
 StepMania = global.h ScreenDimensions.h StdString.h StepMania.cpp StepMania.h
 
 Transitions = \
-Transition.cpp Transition.h TransitionFade.cpp TransitionFade.h TransitionFadeWipe.cpp TransitionFadeWipe.h \
+Transition.cpp Transition.h TransitionFade.cpp TransitionFade.h \
 TransitionOniFade.cpp TransitionOniFade.h \
 TransitionStarWipe.cpp TransitionStarWipe.h TransitionBGAnimation.cpp TransitionBGAnimation.h
 

@@ -904,14 +904,6 @@ SOURCE=.\TransitionFade.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\TransitionFadeWipe.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TransitionFadeWipe.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\TransitionOniFade.cpp
 # End Source File
 # Begin Source File
