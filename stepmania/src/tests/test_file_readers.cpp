@@ -19,13 +19,21 @@ void CreateBinaryTestFile( FILE *out, int size )
 	}
 }
 
+extern CString g_Root;
+
 void CreateBinaryTestFile( CString fn, int size )
 {
-	FILE *out = fopen( fn, "w+b" );
+	FILE *out = fopen( g_Root + "/" + fn, "w+b" );
 	CreateBinaryTestFile( out, size );
 	fclose( out );
 
 	RageFile f(fn);
+	if( !f.Open(fn) )
+	{
+		LOG->Warn("CreateBinaryTestFile: error reopening %s: %s", fn.c_str(), f.GetError().c_str() );
+		return;
+	}
+
 	int test = f.GetFileSize();
 	if( test != size )
 		LOG->Warn("CreateBinaryTestFile: f.GetFileSize ret %i, exp %i", test, size );
@@ -95,7 +103,7 @@ void TestText( int LineSize, bool DOS )
 	filename += ssprintf( ".%i", LineSize );
 	if( CreateTestFiles )
 	{
-		FILE *out = fopen( filename, "w+b" );
+		FILE *out = fopen( g_Root + "/" + filename, "w+b" );
 
 		for( unsigned line = 0; line < NumLines; ++line )
 		{
@@ -196,7 +204,7 @@ void TestSeek( bool relative )
 	{
 		/* Output a line of text, followed by some junk, followed by binary
 		 * test data. */
-		FILE *out = fopen( "test.seek", "w+b" );
+		FILE *out = fopen( g_Root + "/" + "test.seek", "w+b" );
 		fprintf( out, "%s", TestLine.c_str() );
 		fprintf( out, "%s", junk.c_str() );
 		CreateBinaryTestFile( out, 1024 );

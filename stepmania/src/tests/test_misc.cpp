@@ -4,8 +4,8 @@
 #include "RageFileManager.h"
 #include "RageLog.h"
 
-static CString g_Driver = "dir", g_Root = ".";
-static CString argv0;
+CString g_Driver = "dir", g_Root = ".";
+CString argv0;
 
 void test_handle_args( int argc, char *argv[] )
 {
