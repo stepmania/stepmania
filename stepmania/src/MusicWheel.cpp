@@ -184,10 +184,16 @@ MusicWheel::MusicWheel()
 	/* Update for SORT_MOST_PLAYED. */
 	SONGMAN->UpdateBest();
 
-	/* Build all of the wheel item data.  Do tihs after selecting
+	RageTimer timer;
+	CString times;
+	/* Build all of the wheel item data.  Do this after selecting
 	 * the extra stage, so it knows to always display it. */
 	for( int so=0; so<NUM_SORT_ORDERS; so++ )
+	{
 		BuildWheelItemDatas( m_WheelItemDatas[so], SongSortOrder(so) );
+		times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
+	}
+	LOG->Trace( "took: %s", times.c_str() );
 
 	// HACK: invalidate currently selected song in the case that it
 	// cannot be played due to lack of stages remaining
