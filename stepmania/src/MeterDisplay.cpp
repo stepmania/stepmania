@@ -1,5 +1,6 @@
 #include "global.h"
 #include "MeterDisplay.h"
+#include "RageUtil.h"
 
 
 MeterDisplay::MeterDisplay()
