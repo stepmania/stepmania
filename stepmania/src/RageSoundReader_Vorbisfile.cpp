@@ -7,7 +7,9 @@
 #include "RageSoundReader_Vorbisfile.h"
 #include "RageLog.h"
 
-#if defined(_XBOX) || defined(_WINDOWS)
+#if defined(INTEGER_OGG)
+#include "tremor/ivorbisfile.h"
+#else
 #include "vorbis/vorbisfile.h"
 #endif
 
