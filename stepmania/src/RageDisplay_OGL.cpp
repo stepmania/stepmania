@@ -31,7 +31,7 @@ typedef bool (APIENTRY * PWSWAPINTERVALEXTPROC) (int interval);
 
 /* Extension functions we use.  Put these in a namespace instead of in oglspecs_t,
  * so they can be called like regular functions. */
-static struct
+static struct GLExt_s
 {
 	PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 	PFNGLCOLORTABLEPROC glColorTableEXT;
