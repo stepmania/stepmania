@@ -139,10 +139,8 @@ extern TapNote TAP_ADDITION_MINE;
 const int MAX_NOTE_TRACKS = 16;
 
 /* This is a divisor for our "fixed-point" time/beat representation.  It must be evenly divisible
- * by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes.  It must be divisible by 1000, to
- * exactly represent 0.001.  It must leave enough precision before the decimal place to store
- * numbers into the tens of thousands, so we don't have any attainable maximum tap note row. */
-const int ROWS_PER_BEAT	= 48*1000;
+ * by 2, 3, and 4, to exactly represent 8th, 12th and 16th notes. */
+const int ROWS_PER_BEAT	= 48;
 
 const int BEATS_PER_MEASURE = 4;
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
@@ -176,6 +174,17 @@ NoteType BeatToNoteType( float fBeat );
 bool IsNoteOfType( int row, NoteType t );
 CString NoteTypeToString( NoteType nt );
 
+/* This is more accurate: by computing the integer and fractional parts separately, we
+ * can avoid storing very large numbers in a float and possibly losing precision.  It's
+ * slower; use this once less stuff uses BeatToNoteRow. */
+/*
+inline int   BeatToNoteRow( float fBeatNum )
+{
+	float fraction = fBeatNum - truncf(fBeatNum);
+	int integer = int(fBeatNum) * ROWS_PER_BEAT;
+	return integer + lrintf(fraction * ROWS_PER_BEAT);
+}
+*/
 inline int   BeatToNoteRow( float fBeatNum )			{ return lrintf( fBeatNum * ROWS_PER_BEAT ); }	// round
 inline int   BeatToNoteRowNotRounded( float fBeatNum )	{ return (int)( fBeatNum * ROWS_PER_BEAT ); }
 inline float NoteRowToBeat( int iRow )					{ return iRow / (float)ROWS_PER_BEAT; }
