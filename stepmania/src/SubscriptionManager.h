@@ -19,6 +19,10 @@ public:
 	{
 		if( s_pSubscribers == NULL )
 			s_pSubscribers = new set<T*>;
+#if _DEBUG
+		typename set<T*>::iterator iter = s_pSubscribers->find( p );
+		ASSERT_M( iter == s_pSubscribers->end(), "already subscribed" );
+#endif
 		s_pSubscribers->insert( p );
 	}
 
