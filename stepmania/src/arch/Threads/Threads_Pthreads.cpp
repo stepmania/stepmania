@@ -232,7 +232,6 @@ bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 	return iRet != ETIMEDOUT;
 }
 #else
-sdf
 bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 {
 	pthread_cond_wait( &m_Cond, &m_pParent->mutex );
