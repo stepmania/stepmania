@@ -324,9 +324,8 @@ try_element_again:
 	{
 	case IDRETRY:
 		goto try_element_again;
-		break;
 	case IDABORT:
-		goto abort;
+		break;
 	case IDIGNORE:
 		LOG->Warn( 
 			"Theme element '%s/%s' could not be found in '%s' or '%s'.", 
@@ -338,7 +337,6 @@ try_element_again:
 	}
 #endif
 
-abort:
 	RageException::Throw( "Theme element '%s/%s' could not be found in '%s' or '%s'.", 
 		sAssetCategory.GetString(),
 		sFileName.GetString(), 
