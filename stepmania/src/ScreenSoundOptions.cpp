@@ -83,3 +83,4 @@ void ScreenSoundOptions::GoToNextState()
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	GoToPrevState();
 }
+
