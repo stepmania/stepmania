@@ -324,6 +324,7 @@ static CString GetMatchingVideocardDefaults( IniFile &ini, const CString &sVideo
 	}
 
 	ASSERT(0);
+	return "";
 }
 
 static CString GetVideoDriverName()
