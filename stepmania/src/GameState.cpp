@@ -723,10 +723,11 @@ bool GameState::IsExtraStage2() const
 CString GameState::GetStageText() const
 {
 	if( m_bDemonstrationOrJukebox )				return "demo";
+	// "event" has precedence
+	else if( GAMESTATE->GetEventMode() )		return "event";
 	else if( m_PlayMode == PLAY_MODE_ONI )		return "oni";
 	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return "nonstop";
 	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return "endless";
-	else if( GAMESTATE->GetEventMode() )		return "event";
 	else if( IsFinalStage() )					return "final";
 	else if( IsExtraStage() )					return "extra1";
 	else if( IsExtraStage2() )					return "extra2";
