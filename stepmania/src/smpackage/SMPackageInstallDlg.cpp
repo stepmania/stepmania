@@ -184,7 +184,7 @@ void CSMPackageInstallDlg::OnOK()
 		}
 		catch (CException* e)
 		{
-			AfxMessageBox( "Error extracting files", MB_ICONSTOP );
+			e->ReportError();
 			e->Delete();
 			exit( 1 );
 		}

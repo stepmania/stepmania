@@ -88,6 +88,12 @@ BOOL CSmpackageApp::InitInstance()
 		// test to see if this is a smzip file
 		if( sPathLower.Right(3) == "zip" )
 		{
+			if( !DoesFileExist(sPath) )
+			{
+				AfxMessageBox( ssprintf("The file '%s' does not exist.  Aborting installation.",sPath), MB_ICONERROR );
+				exit(0);
+			}
+
 			// We found a zip package.  Prompt the user to install it!
 			CSMPackageInstallDlg dlg( sPath );
 			int nResponse = dlg.DoModal();

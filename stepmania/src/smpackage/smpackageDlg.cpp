@@ -274,9 +274,9 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 			// don't export "thumbs.db" files or "CVS" folders
 			CString sDir, sFName, sExt;
 			splitrelpath( sFilePath, sDir, sFName, sExt );
-			if( 0==stricmp(sFName,"thumbs.db") )
+			if( sFName.CompareNoCase("thumbs.db")==0 )
 				continue;	// skip
-			if( 0==stricmp(sFName,"CVS") )
+			if( sFName.CompareNoCase("thumbs.db")==0 )
 				continue;	// skip
 
 			try
