@@ -139,8 +139,8 @@ RageFileManager::RageFileManager( CString argv0 )
 void RageFileManager::MountInitialFilesystems()
 {
 	/* Add file search paths, higher priority first. */
-#if defined(_XBOX)
-	RageFileManager::Mount( "dir", "D:\\", "" ); //Forced - must be absolute, and SYS_BASE_PATH was not detected
+#if defined(XBOX)
+	RageFileManager::Mount( "dir", "D:\\", "" );
 #elif defined(LINUX)
 	/* Absolute paths.  This is rarely used, eg. by Alsa9Buf::GetSoundCardDebugInfo(). 
 	 * All paths that start with a slash (eg. "/proc") should use this, so put it
