@@ -339,14 +339,14 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	m_BufferFinished = SDL_CreateSemaphore(0);
 
 	CreateDecoder();
+	CreateTexture();
 
 	LOG->Trace("Resolution: %ix%i (%ix%i, %ix%i)",
 			m_iSourceWidth, m_iSourceHeight,
 			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight);
 	LOG->Trace("Bitrate: %i", decoder->m_stream->codec.bit_rate );
-	LOG->Trace("Codec pixel format: %i", decoder->m_stream->codec.pix_fmt );
+	LOG->Trace("Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(decoder->m_stream->codec.pix_fmt) );
 
-	CreateTexture();
 	CreateFrameRects();
 
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
