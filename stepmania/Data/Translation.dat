@@ -134,6 +134,9 @@ TitleTo: 三毛猫ロック
 TitleFrom: Sakura
 TitleTo: 桜
 *
+TitleFrom: Waltz of the Flowers
+TitleTo: 花のワルツ
+*
 # Handle Door and Doors
 TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
 TitleTo: 魔法の扉
@@ -410,6 +413,38 @@ ArtistTo: 金月 真美
 TitleFrom: Pokemon
 TitleTo: Pokémon
 *
+# Korean:
+TitleFrom: Ba Kkwo
+TitleTo: 바꿔
+*
+TitleFrom: Wa
+TitleTo: 와
+*
+TitleFrom: Bu Dam
+TitleTo: 부담
+*
+TitleFrom: Byul
+TitleTo: 별
+*
+ArtistFrom: Gunchuri Kko Kko
+ArtistTo: 컨츄리꼬꼬
+*
+ArtistFrom: Back Ji Young
+ArtistTo: 벡지영
+*
+TitleFrom: Hogisim
+TitleTo: 호기심
+*
+TitleFrom: Aromdaon 21C
+TitleTo: 아름다운21C
+ArtistTo: 2000 대한민국
+*
+TitleFrom: Gyoung Go
+TitleTo: 경고
+*
+TitleFrom: Sung Suk
+TitleTo: 성숙
+*
 # Fanboy bonus:
 
 ArtistFrom: (Megumi Hayashibara)|(Hayashibara Megumi)
@@ -512,5 +547,11 @@ TitleTo: 真鬼道
 *
 TitleFrom: (DDR HOME VERSION)
 TitleTo: 家庭用DDRコース
+*
+TitleFrom: Four Seasons
+TitleTo: 春夏秋冬
+*
+TitleFrom: DanceMania Nonstop
+TitleTo: DanceMania 連
 *
 
