@@ -334,7 +334,7 @@ Actor* MakeActor( const RageTextureID &ID )
 	/* Do this last, to avoid the IsADirectory in most cases. */
 	else if( IsADirectory(ID.filename)  )
 	{
-		BGAnimation *pBGA = new BGAnimation( true );
+		BGAnimation *pBGA = new BGAnimation;
 		pBGA->LoadFromAniDir( ID.filename );
 		return pBGA;
 	}
