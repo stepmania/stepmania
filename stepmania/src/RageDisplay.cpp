@@ -49,6 +49,8 @@ static int			g_iFramesRenderedSinceLastCheck,
 					g_iNumChecksSinceLastReset;
 
 PWSWAPINTERVALEXTPROC GLExt::wglSwapIntervalEXT;
+PFNGLCOLORTABLEPROC GLExt::glColorTableEXT;
+PFNGLCOLORTABLEPARAMETERIVPROC GLExt::glGetColorTableParameterivEXT;
 
 /* We don't actually use normals (we don't tunr on lighting), there's just
  * no GL_T2F_C4F_V3F. */
@@ -155,16 +157,22 @@ void RageDisplay::SetupExtensions()
 
 	/* Check for extensions: */
 	m_oglspecs->EXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
-	m_oglspecs->ARB_texture_compression = HasExtension("GL_ARB_texture_compression");
-	m_oglspecs->EXT_texture_compression_s3tc = HasExtension("GL_EXT_texture_compression_s3tc");
 	m_oglspecs->WGL_EXT_swap_control = HasExtension("WGL_EXT_swap_control");
+	m_oglspecs->EXT_paletted_texture = HasExtension("GL_EXT_paletted_texture");
 
 	/* Find extension functions. */
 	wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) SDL_GL_GetProcAddress("wglSwapIntervalEXT");
-	
+	glColorTableEXT = (PFNGLCOLORTABLEPROC) SDL_GL_GetProcAddress("glColorTableEXT");
+	glGetColorTableParameterivEXT = (PFNGLCOLORTABLEPARAMETERIVPROC) SDL_GL_GetProcAddress("glGetColorTableParameterivEXT");
+
 	/* Make sure we have all components for detected extensions. */
 	if(m_oglspecs->WGL_EXT_swap_control)
 		ASSERT(wglSwapIntervalEXT);
+	if(m_oglspecs->EXT_paletted_texture)
+	{
+		ASSERT(glColorTableEXT);
+		ASSERT(glGetColorTableParameterivEXT);
+	}
 }
 
 /* Set the video mode.  In some cases, changing the video mode will reset
@@ -336,6 +344,11 @@ void RageDisplay::ResetStats()
 	g_iNumChecksSinceLastReset = 0;
 	g_iVertsRenderedSinceLastCheck = 0;
 	g_LastCheckTimer.GetDeltaTime();
+}
+
+void RageDisplay::DisablePalettedTexture()
+{
+	m_oglspecs->EXT_paletted_texture = false;
 }
 
 bool RageDisplay::IsWindowed() const 

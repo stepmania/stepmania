@@ -85,6 +85,7 @@ public:
 	void ResetStats();
 
 	const oglspecs_t &GetSpecs() const { return *m_oglspecs; }
+	void DisablePalettedTexture();
 
 protected:
 	void AddVerts( const RageVertex v[], int iNumVerts );

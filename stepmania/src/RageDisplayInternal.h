@@ -15,6 +15,10 @@
 
 #include "glext.h"
 
+/* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
+#ifndef GL_TEXTURE_INDEX_SIZE_EXT
+#define GL_TEXTURE_INDEX_SIZE_EXT         0x80ED
+#endif
 #include <set>
 
 /* Not in glext.h: */
@@ -38,14 +42,15 @@ struct oglspecs_t {
 	/* Which extensions we actually use are supported: */
 	bool EXT_texture_env_combine,
 		 WGL_EXT_swap_control,
-		 ARB_texture_compression,
-		 EXT_texture_compression_s3tc;
+		 EXT_paletted_texture;
 };
 
 /* Extension functions we use.  Put these in a namespace instead of in oglspecs_t,
  * so they can be called like regular functions. */
 namespace GLExt {
 	extern PWSWAPINTERVALEXTPROC wglSwapIntervalEXT;
+	extern PFNGLCOLORTABLEPROC glColorTableEXT;
+	extern PFNGLCOLORTABLEPARAMETERIVPROC glGetColorTableParameterivEXT;
 };
 using namespace GLExt;
 
