@@ -30,10 +30,10 @@ public:
 	bool DoesLanguageExist( const CString &sLanguage );
 	void SwitchThemeAndLanguage( const CString &sThemeName, const CString &sLanguage );
 	void UpdateLuaGlobals();
-	CString GetCurThemeName() { return m_sCurThemeName; };
-	bool IsThemeLoaded()	{ return !m_sCurThemeName.empty(); };
-	CString GetCurLanguage() { return m_sCurLanguage; };
-	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };
+	CString GetCurThemeName() const { return m_sCurThemeName; };
+	bool IsThemeLoaded() const { return !m_sCurThemeName.empty(); };
+	CString GetCurLanguage() const { return m_sCurLanguage; };
+	CString GetCurThemeDir() const { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
 	void ReloadMetrics();
 	void GetModifierNames( set<CString>& AddTo );
@@ -83,7 +83,7 @@ public:
 	static void Unsubscribe( IThemeMetric *p );
 
 	// Lua
-	virtual void PushSelf( lua_State *L );
+	void PushSelf( lua_State *L );
 
 protected:
 	void LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName );
