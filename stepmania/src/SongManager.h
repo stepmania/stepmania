@@ -69,8 +69,8 @@ protected:
 	bool GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 					   Song*& pSongOut, Notes*& pNotesOut, PlayerOptions& po_out, SongOptions& so_out );
 
-	CMapStringToString	m_mapGroupToBannerPath;		// each song group has a banner associated with it
 	CStringArray		m_arrayGroupNames;
+	CStringArray		m_GroupBannerPaths;		// each song group has a banner associated with it
 };
 
 

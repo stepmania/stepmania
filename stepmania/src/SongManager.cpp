@@ -113,11 +113,25 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 		GetDirListing( ssprintf("%s\\%s\\*.jpg", sDir, sGroupDirName), arrayGroupBanners );
 		GetDirListing( ssprintf("%s\\%s\\*.gif", sDir, sGroupDirName), arrayGroupBanners );
 		GetDirListing( ssprintf("%s\\%s\\*.bmp", sDir, sGroupDirName), arrayGroupBanners );
+		CString sBannerPath;
+
 		if( arrayGroupBanners.GetSize() > 0 )
 		{
-			m_mapGroupToBannerPath[sGroupDirName] = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
-			LOG->Trace( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, m_mapGroupToBannerPath[sGroupDirName]) );
+			sBannerPath = ssprintf("%s\\%s\\%s", sDir, sGroupDirName, arrayGroupBanners[0] );
+			LOG->Trace( ssprintf("Group banner for '%s' is '%s'.", sGroupDirName, sBannerPath) );
 		}
+
+		/* Add this group to the group array. */
+		int j;
+		for(j = 0; j < m_arrayGroupNames.GetSize(); ++j)
+			if( sGroupDirName == m_arrayGroupNames[j] ) break;
+
+		if( j == m_arrayGroupNames.GetSize() )
+		{
+			m_arrayGroupNames.Add( sGroupDirName );
+			m_GroupBannerPaths.Add(sBannerPath);
+		}
+
 
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
@@ -206,7 +220,7 @@ void SongManager::FreeSongArray()
 		SAFE_DELETE( m_pSongs[i] );
 	m_pSongs.RemoveAll();
 
-	m_mapGroupToBannerPath.RemoveAll();
+	m_GroupBannerPaths.RemoveAll();
 }
 
 
@@ -334,12 +348,14 @@ void SongManager::SaveStatisticsToDisk()
 
 CString SongManager::GetGroupBannerPath( CString sGroupName )
 {
-	CString sPath;
+	int i;
+	for(i = 0; i < m_arrayGroupNames.GetSize(); ++i)
+		if( sGroupName == m_arrayGroupNames[i] ) break;
 
-	if( m_mapGroupToBannerPath.Lookup( sGroupName, sPath ) )
-		return sPath;
-	else
+	if( i == m_arrayGroupNames.GetSize() )
 		return "";
+
+	return m_GroupBannerPaths[i];
 }
 
 void SongManager::GetGroupNames( CStringArray &AddTo )
