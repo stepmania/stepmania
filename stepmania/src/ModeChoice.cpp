@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
+#include "ProfileManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
 void ModeChoice::Init()
@@ -137,8 +138,11 @@ void ModeChoice::Apply( PlayerNumber pn )
 	if( sAnnouncer != "" )
 		ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 
-	// HACK:  Set life type to BATTERY just once here so we don't 
-	// override the user's changes if they back out.
+	// HACK:  Set life type to BATTERY just once here so it happens once and 
+	// we don't override the user's changes if they back out.
 	if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI )
 		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
+
+
+	PROFILEMAN->TryLoadProfile( pn );
 }

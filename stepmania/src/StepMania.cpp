@@ -41,6 +41,7 @@
 #include "SongManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
+#include "ProfileManager.h"
 #include "ScreenManager.h"
 #include "GameManager.h"
 #include "FontManager.h"
@@ -549,6 +550,7 @@ int main(int argc, char* argv[])
 	SOUNDMAN->SetPrefs(PREFSMAN->m_fSoundVolume);
 	SOUND		= new RageSounds;
 	ANNOUNCER	= new AnnouncerManager;
+	PROFILEMAN	= new ProfileManager;
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
@@ -668,6 +670,7 @@ int main(int argc, char* argv[])
 	SAFE_DELETE( NOTESKIN );
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( ANNOUNCER );
+	SAFE_DELETE( PROFILEMAN );
 	SAFE_DELETE( SOUND );
 	SAFE_DELETE( SOUNDMAN );
 	SAFE_DELETE( FONT );

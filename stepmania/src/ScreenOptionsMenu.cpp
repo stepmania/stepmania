@@ -37,6 +37,7 @@ enum {
 	OM_GRAPHIC,
 	OM_MACHINE,
 //	OM_SOUND,
+	OM_PROFILE,
 	OM_RELOAD,
 	NUM_OPTIONS_MENU_LINES
 };
@@ -50,6 +51,7 @@ OptionRow g_OptionsMenuLines[NUM_OPTIONS_MENU_LINES] = {
 	OptionRow( "",	true, "Gameplay Options" ),
 	OptionRow( "",	true, "Graphic Options" ),
 	OptionRow( "",	true, "Machine Options" ),
+	OptionRow( "",	true, "Profile Options" ),
 //	OptionRow( "",	true, "Sound Options" ),
 	OptionRow( "",	true, "Reload Songs/Courses" ),
 };
@@ -106,6 +108,7 @@ void ScreenOptionsMenu::GoToNextState()
 		case OM_GRAPHIC:		SCREENMAN->SetNewScreen("ScreenGraphicOptions");	break;
 		case OM_INPUT:			SCREENMAN->SetNewScreen("ScreenInputOptions");		break;
 		case OM_MACHINE:		SCREENMAN->SetNewScreen("ScreenMachineOptions");	break;
+		case OM_PROFILE:		SCREENMAN->SetNewScreen("ScreenProfileOptions");	break;
 //		case OM_SOUND:			SCREENMAN->SetNewScreen("ScreenSoundOptions");		break;
 		case OM_RELOAD:
 			SONGMAN->Reload();

@@ -11,6 +11,7 @@
 	Chris Gomez
 -----------------------------------------------------------------------------
 */
+#include "PlayerNumber.h"
 
 class PrefsManager
 {
@@ -96,6 +97,7 @@ public:
 	int				m_iProgressiveNonstopLifebar;
 	bool			m_bShowBeginnerHelper;
 	CString			m_sLanguage;
+	CString			m_sDefaultProfile[NUM_PLAYERS];	// directory name of profile on HD
 
 	// course ranking
 	enum { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;

@@ -136,6 +136,7 @@ PrefsManager::PrefsManager()
 	m_bVsync = true;
 	m_sLanguage = "";	// ThemeManager will deal with this invalid language
 
+
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 #ifdef _XBOX
 	m_bInterlaced = true;
@@ -274,6 +275,8 @@ void PrefsManager::ReadGlobalPrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ini.GetValueB( "Options", "ShowLogWindow",			m_bShowLogWindow );
 	ini.GetValueB( "Options", "ShowBeginnerHelper",			m_bShowBeginnerHelper );
 	ini.GetValue ( "Options", "Language",				m_sLanguage );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		ini.GetValue ( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
 
 
 	m_asAdditionalSongFolders.clear();
@@ -389,6 +392,8 @@ void PrefsManager::SaveGlobalPrefsToDisk()
 	ini.SetValueI( "Options", "ProgressiveNonstopLifebar",		m_iProgressiveNonstopLifebar );
 	ini.SetValueB( "Options", "ShowBeginnerHelper",			m_bShowBeginnerHelper );
 	ini.SetValue ( "Options", "Language",				m_sLanguage );
+	for( int p=0; p<NUM_PLAYERS; p++ )
+		ini.SetValue ( "Options", ssprintf("DefaultProfileP%d",p+1),	m_sDefaultProfile[p] );
 
 	/* Only write these if they aren't the default.  This ensures that we can change
 	 * the default and have it take effect for everyone (except people who

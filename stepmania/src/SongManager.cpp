@@ -468,7 +468,6 @@ void SongManager::ReadCourseRankingsFromFile( CString fn )
 
 void SongManager::InitMachineScoresFromDisk()
 {
-	
 	// Init category ranking
 	{
 		for( int i=0; i<NUM_STEPS_TYPES; i++ )

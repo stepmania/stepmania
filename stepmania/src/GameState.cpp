@@ -27,6 +27,7 @@
 #include "Character.h"
 #include "UnlockSystem.h"
 #include "AnnouncerManager.h"
+#include "ProfileManager.h"
 #include "arch/arch.h"
 
 
@@ -118,6 +119,9 @@ void GameState::Reset()
 		m_fSuperMeterGrowthScale[p] = 1;
 		m_iCpuSkill[p] = 5;
 	}
+
+	for( p=0; p<NUM_PLAYERS; p++ )
+		PROFILEMAN->UnloadProfile( (PlayerNumber)p );
 }
 
 void GameState::Update( float fDelta )
