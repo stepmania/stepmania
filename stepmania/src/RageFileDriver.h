@@ -41,8 +41,6 @@ public:
 	RageFileObj( RageFile &p ): parent(p) { }
 	virtual ~RageFileObj() { }
 
-	void ClearError();
-
 //	virtual CString RealPath() const { return parent->GetPath(); }
 	
 	virtual int Seek( int offset );
