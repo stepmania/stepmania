@@ -461,6 +461,14 @@ struct VideoCardDefaults
 		false
 	},
 	{
+		"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
+		"d3d,opengl",	// bad movie texture performance in opengl
+		640,480,
+		16,16,16,
+		1024,
+		false
+	},
+	{
 		"Intel.*82810|Intel.*82815",
 		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
 		512,384,	// lower resolution for 60fps
@@ -504,14 +512,6 @@ struct VideoCardDefaults
 		16,16,16,
 		2048,
 		true		// Right now, they've got to have NVidia or ATi Cards anyway..
-	},
-	{
-		"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
-		"d3d,opengl",	// movietexture performance is horrid in opengl, but fine in d3d.
-		640,480,
-		16,16,16,
-		1024,
-		false
 	},
 	{
 		// Default graphics settings used for all cards that don't match above.
