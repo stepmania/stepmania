@@ -670,16 +670,18 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 					// (note-defining) line, where each non-0 hex pair is a BPM
 					// change at that point.
 					int totalPairs = value_data.GetLength() / 2;
-					for (int i = 0; i < (totalPairs*2); i+=2)
+					for( int i = 0; i < totalPairs*2; i+=2 )
 					{
-					    if( value_data.substr(i,2) != "00" )
+						CString sPair = value_data.substr(i,2);
+						int iBPM = 0;
+						
+					    if( sscanf( sPair, "%x", &iBPM ) == 1 && iBPM != 0 )
 					    {
-						CString thisPair = value_data.substr(i,2);
-						int thisBPM;
-						sscanf( thisPair, "%x", &thisBPM ); // data is in hexadecimal
-						BPMSegment newSeg( NoteRowToBeat(iStepIndex+(1/(totalPairs*ROWS_PER_MEASURE))), (float) thisBPM );
-						out.AddBPMSegment( newSeg );
-						LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
+							int iRow = iStepIndex+(1/(totalPairs*ROWS_PER_MEASURE));
+							float fBeat = NoteRowToBeat( iRow );
+							BPMSegment newSeg( fBeat, (float) iBPM );
+							out.AddBPMSegment( newSeg );
+							LOG->Trace( "Inserting new BPM change at beat %f, BPM %f", newSeg.m_fStartBeat, newSeg.m_fBPM );
 					    }
 					}
 					break;
