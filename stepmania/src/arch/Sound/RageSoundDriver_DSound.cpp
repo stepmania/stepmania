@@ -259,7 +259,8 @@ void RageSound_DSound::StartMixing(RageSound *snd)
 
 	if(i == stream_pool.size()) {
 		/* We don't have a free sound buffer. Fake it. */
-		SOUNDMAN->AddFakeSound(snd);
+		/* XXX: too big of a hack for too rare of a case */
+		// SOUNDMAN->AddFakeSound(snd);
 		return;
 	}
 
