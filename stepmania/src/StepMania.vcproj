@@ -1306,12 +1306,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="CharacterHead.h">
 			</File>
 			<File
-				RelativePath="CombinedLifeMeterEnemy.cpp">
-			</File>
-			<File
-				RelativePath="CombinedLifeMeterEnemy.h">
-			</File>
-			<File
 				RelativePath="CombinedLifeMeterTug.cpp">
 			</File>
 			<File

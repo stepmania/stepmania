@@ -152,7 +152,7 @@ WheelNotifyIcon.cpp WheelNotifyIcon.h GraphDisplay.cpp GraphDisplay.h ComboGraph
 
 ActorsInGameplay = \
 ArrowBackdrop.cpp ArrowBackdrop.h ArrowEffects.cpp ArrowEffects.h Background.cpp Background.h \
-BeginnerHelper.cpp BeginnerHelper.h CombinedLifeMeterEnemy.h CombinedLifeMeterEnemy.cpp \
+BeginnerHelper.cpp BeginnerHelper.h \
 CombinedLifeMeterTug.h CombinedLifeMeterTug.cpp Combo.cpp Combo.h DancingCharacters.cpp DancingCharacters.h \
 GhostArrow.cpp GhostArrow.h GhostArrowRow.cpp GhostArrowRow.h GrayArrow.cpp GrayArrow.h \
 GrayArrowRow.cpp GrayArrowRow.h HoldGhostArrow.cpp HoldGhostArrow.h HoldJudgment.cpp HoldJudgment.h \
