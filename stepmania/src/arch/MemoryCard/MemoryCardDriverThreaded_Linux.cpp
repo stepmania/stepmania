@@ -119,7 +119,6 @@ static void GetFileList( const CString &sPath, vector<CString> &out )
 
 static bool BlockDevicesChanged()
 {
-	LOG->Trace("StorageDevicesChanged");
 	static CString sLastDevices = "";
 	CString sThisDevices;
 
