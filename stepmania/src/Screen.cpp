@@ -112,7 +112,7 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	if(type == IET_RELEASE) return; // don't care
 
 	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-	if( MenuI.button == MENU_BUTTON_BACK && DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == SDLK_ESCAPE )
+	if( MenuI.button == MENU_BUTTON_BACK && DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == KEY_ESC )
 	{
 		this->MenuBack( MenuI.player );
 		return;
@@ -158,7 +158,7 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 {
 	if( type != IET_FIRST_PRESS )
 		return false;
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == SDLK_F3 )
+	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_F3 )
 	{
 		PREFSMAN->m_iCoinMode++;
 		wrap( PREFSMAN->m_iCoinMode, NUM_COIN_MODES );

@@ -92,10 +92,10 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 	{
 		switch( DeviceI.button )
 		{
-		case SDLK_LEFT:
+		case KEY_LEFT:
 			this->MenuLeft( StyleI.player );
 			return;
-		case SDLK_RIGHT:
+		case KEY_RIGHT:
 			this->MenuRight( StyleI.player );
 			return;
 		}

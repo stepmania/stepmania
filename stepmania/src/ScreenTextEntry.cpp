@@ -94,15 +94,15 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	switch( DeviceI.button )
 	{
-	case SDLK_ESCAPE:
+	case KEY_ESC:
 		m_bCancelled = true;
 		MenuStart(PLAYER_1);
 		break;
-	case SDLK_RETURN:
-	case SDLK_KP_ENTER:
+	case KEY_ENTER:
+	case KEY_KP_ENTER:
 		MenuStart(PLAYER_1);
 		break;
-	case SDLK_BACKSPACE:
+	case KEY_BACK:
 		if(!m_sAnswer.empty())
 			m_sAnswer = m_sAnswer.erase( m_sAnswer.size()-1 );
 		UpdateText();

@@ -43,13 +43,13 @@ void ScreenTest::Input( const DeviceInput& DeviceI, const InputEventType type, c
 {
 	if(DeviceI.device == DEVICE_KEYBOARD)
 	{
-		if(DeviceI.button >= SDLK_F9 && DeviceI.button <= SDLK_F12)
+		if( DeviceI.button >= KEY_F9 && DeviceI.button <= KEY_F12 )
 		{
 			if( type != IET_FIRST_PRESS ) return;
-			SetScreen(DeviceI.button - SDLK_F9);
+			SetScreen( DeviceI.button - KEY_F9 );
 			return;
 		}
-		if(DeviceI.button == SDLK_ESCAPE)
+		if( DeviceI.button == KEY_ESC )
 		{
 			if( type != IET_FIRST_PRESS ) return;
 			SCREENMAN->SetNewScreen( "ScreenTitleMenu" );

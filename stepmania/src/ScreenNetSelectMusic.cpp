@@ -247,18 +247,18 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 
 
 	bool bHoldingShift = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT));
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT));
 
 	bool bHoldingCtrl = 
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_LCTRL)) ||
-		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, SDLK_RCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL)) ||
+		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
 	switch( DeviceI.button )
 	{
-	case SDLK_RETURN:
-	case SDLK_KP_ENTER:
+	case KEY_ENTER:
+	case KEY_KP_ENTER:
 		if (!bHoldingCtrl)
 		{
 			NSMAN->SendChat( m_sTextInput );
@@ -267,7 +267,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 			return;
 		}
 		break;
-	case SDLK_BACKSPACE:
+	case KEY_BACK:
 		if(!m_sTextInput.empty())
 			m_sTextInput = m_sTextInput.erase( m_sTextInput.size()-1 );
 		UpdateTextInput();

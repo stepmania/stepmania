@@ -60,8 +60,8 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 		return;
 
 	bool bHoldingShift = 
-		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_RSHIFT)) ||
-		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_LSHIFT));
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
+		INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
 
 	int iScale;
 	switch( type )
@@ -94,31 +94,31 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 
 	switch( DeviceI.button )
 	{
-	case SDLK_SPACE:
+	case KEY_SPACE:
 		PREFSMAN->m_iCenterImageTranslateX = 0;
 		PREFSMAN->m_iCenterImageTranslateY = 0;
 		PREFSMAN->m_fCenterImageScaleX = 1;
 		PREFSMAN->m_fCenterImageScaleY = 1;
 		break;
-	case SDLK_LEFT:
+	case KEY_LEFT:
 		if( bHoldingShift )
 			PREFSMAN->m_fCenterImageScaleX -= 0.001f * iScale;
 		else
 			PREFSMAN->m_iCenterImageTranslateX -= 1 * iScale;
 		break;
-	case SDLK_RIGHT:
+	case KEY_RIGHT:
 		if( bHoldingShift )
 			PREFSMAN->m_fCenterImageScaleX += 0.001f * iScale;
 		else
 			PREFSMAN->m_iCenterImageTranslateX += 1 * iScale;
 		break;
-	case SDLK_UP:
+	case KEY_UP:
 		if( bHoldingShift )
 			PREFSMAN->m_fCenterImageScaleY -= 0.001f * iScale;
 		else
 			PREFSMAN->m_iCenterImageTranslateY -= 1 * iScale;
 		break;
-	case SDLK_DOWN:
+	case KEY_DOWN:
 		if( bHoldingShift )
 			PREFSMAN->m_fCenterImageScaleY += 0.001f * iScale;
 		else
@@ -128,11 +128,11 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 
 	switch( DeviceI.button )
 	{
-	case SDLK_SPACE:
-	case SDLK_LEFT:
-	case SDLK_RIGHT:
-	case SDLK_UP:
-	case SDLK_DOWN:
+	case KEY_SPACE:
+	case KEY_LEFT:
+	case KEY_RIGHT:
+	case KEY_UP:
+	case KEY_DOWN:
 		DISPLAY->ChangeCentering(
 			PREFSMAN->m_iCenterImageTranslateX, 
 			PREFSMAN->m_iCenterImageTranslateY,
@@ -143,14 +143,14 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 
 	switch( DeviceI.button )
 	{
-	case SDLK_ESCAPE:
+	case KEY_ESC:
 		if(!IsTransitioning())
 		{
 			SCREENMAN->PlayBackSound();
 			StartTransitioning( SM_GoToPrevScreen );		
 		}
-	case SDLK_RETURN:
-	case SDLK_KP_ENTER:
+	case KEY_ENTER:
+	case KEY_KP_ENTER:
 		if(!IsTransitioning())
 		{
 			SCREENMAN->PlayStartSound();

@@ -140,16 +140,16 @@ void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType ty
 			}
 			break;
 
-/*		case SDLK_LEFT:
+/*		case KEY_LEFT:
 			obj.SetX(obj.GetX() - 10);
 			break;
-		case SDLK_RIGHT:
+		case KEY_RIGHT:
 			obj.SetX(obj.GetX() + 10);
 			break;
-		case SDLK_UP:
+		case KEY_UP:
 			obj.SetY(obj.GetY() - 10);
 			break;
-		case SDLK_DOWN:
+		case KEY_DOWN:
 			obj.SetY(obj.GetY() + 10);
 			break;
 */
