@@ -101,6 +101,9 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 	}
 	if (!ret)
         RageException::Throw("Couldn't create a movie texture");
+
+	LOG->Trace("Created movie texture \"%s\" with driver \"%s\"",
+		ID.filename.c_str(), Driver.c_str() );
 	return ret;
 }
 
