@@ -1207,42 +1207,6 @@ CString Song::GetFullTranslitTitle() const
 	return Title;
 }
 
-/* Get the first/last beat of any currently active note pattern.  If two
- * players are active, they often have the same start beat, but they don't
- * have to. 
- *
- * This is currently slow (notedata can't cache the return, and getnotedata
- * is slow). */
-#if 0 /* XXX not finished/tested/used yet -glenn */
-float Song::GetFirstBeat() const
-{
-	float first = MAX_BEATS;
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
-		if(!GAMESTATE->IsPlayerEnabled(pn)) continue;
-
-		NoteData tempNoteData;
-		GAMESTATE->m_pCurNotes[pn]->GetNoteData( &tempNoteData );
-
-		first = min(first, tempNoteData.GetFirstBeat());
-	}
-	return first;
-}
-
-float Song::GetLastBeat() const
-{
-	float last = MAX_BEATS;
-	for( int pn = 0; pn < NUM_PLAYERS; ++pn) {
-		if(!GAMESTATE->IsPlayerEnabled(pn)) continue;
-
-		NoteData tempNoteData;
-		GAMESTATE->m_pCurNotes[pn]->GetNoteData( &tempNoteData );
-
-		last = max(last, tempNoteData.GetLastBeat());
-	}
-	return last;
-}
-#endif
-
 void Song::AddNotes( Notes* pNotes )
 {
 	m_apNotes.push_back( pNotes );
