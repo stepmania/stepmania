@@ -156,8 +156,6 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, CString sThemeName )
 	if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
 		t.iniMetrics.ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
 
-	LOG->Trace("load '%s', %i",
-		sThemeName.c_str(), loaded_base);
 	/* Read the fallback theme.  If no fallback theme is specified, and we havn't
 	 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
 	 * fallbacks can be disabled with "FallbackTheme=". */
@@ -166,7 +164,6 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, CString sThemeName )
 	{
 		if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !loaded_base )
 			sFallback = BASE_THEME_NAME;
-		LOG->Trace("no fallback, '%s'", sFallback.c_str());
 	}
 	if( !sFallback.empty() )
 		LoadThemeRecursive( theme, sFallback );

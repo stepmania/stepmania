@@ -12,6 +12,9 @@
 #include "GameState.h"
 #include "Game.h"
 
+static const int PORT_ADDRESS = 0x378;
+static const bool SCREEN_DEBUG = false;
+
 LightsDriver_LinuxParallel::LightsDriver_LinuxParallel()
 {
 	// Give port's permissions and reset all bits to zero

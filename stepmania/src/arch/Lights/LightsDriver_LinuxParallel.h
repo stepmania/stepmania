@@ -10,12 +10,9 @@
 
 #include "LightsDriver.h"
 
-const int PORT_ADDRESS = 0x378;
-const bool SCREEN_DEBUG = false;
-
 class LightsDriver_LinuxParallel : public LightsDriver
 {
-	public:
+public:
 	LightsDriver_LinuxParallel();
 
 	virtual ~LightsDriver_LinuxParallel();
