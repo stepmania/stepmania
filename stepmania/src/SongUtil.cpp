@@ -335,6 +335,10 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Di
 		const Steps* pSteps = arraySongPointers[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
 		CString &s = song_sort_val[arraySongPointers[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
+
+		/* Hack: always put tutorial songs first. */
+		s += ssprintf( "%c", arraySongPointers[i]->IsTutorial()? '0':'1' );
+
 		if( PREFSMAN->m_bSubSortByNumSteps )
 			s += ssprintf("%06.0f",pSteps ? pSteps->GetRadarValues()[RADAR_NUM_TAPS_AND_HOLDS] : 0);
 	}
