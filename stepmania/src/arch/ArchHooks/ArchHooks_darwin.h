@@ -10,13 +10,18 @@
  */
 
 #include "ArchHooks.h"
+#include <SDL.h>
+#include <SDL_thread.h>
 #include <queue>
 
 class ArchHooks_darwin : public ArchHooks {
+private:
+#if 0
+    SDL_Thread *thread;
+#endif
 public:
     ArchHooks_darwin();
-    void Log(CString str, bool important);
-    void AdditionalLog(CString str);
+    ~ArchHooks_darwin();
     void DumpDebugInfo();
     void MessageBoxOK(CString sMessage, CString ID = "");
     MessageBoxResult MessageBoxAbortRetryIgnore(CString sMessage, CString ID = "");

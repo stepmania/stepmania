@@ -11,9 +11,15 @@
 #include "PrefsManager.h"
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
-#include "archutils/Unix/SignalHandler.h"
 #include <Carbon/Carbon.h>
+#if 0
+#include <QuickTime/QuickTime.h>
+#endif
 #include <sys/param.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <unistd.h>
 
 /* You would think that these would be defined somewhere. */
 enum {
@@ -22,12 +28,8 @@ enum {
 };
 
 OSStatus HandleException(ExceptionInformation *theException);
-
-const unsigned maxLogMessages = 10; /* Follow the windows example */
-
-static queue<CString> crashLog;
-static vector<CString> staticLog;
-static CString additionalLog;
+static int TaskMovies(void *data);
+static bool shutdown;
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
@@ -46,22 +48,16 @@ ArchHooks_darwin::ArchHooks_darwin()
         exit(0);
     }
     InstallExceptionHandler(HandleException);
+#if 0
+    thread = SDL_CreateThread(TaskMovies, NULL);
+#endif
 }
 
-void ArchHooks_darwin::Log(CString str, bool important)
-{
-    if (important)
-        staticLog.push_back(str);
-    
-    /* Keep the crashLog to maxLogMessages */
-    if (crashLog.size() == maxLogMessages)
-        crashLog.pop();
-    crashLog.push(str);
-}
-
-void ArchHooks_darwin::AdditionalLog(CString str)
-{
-    additionalLog = str;
+ArchHooks_darwin::~ArchHooks_darwin() {
+#if 0
+    shutdown = true;
+    SDL_WaitThread(thread, NULL);
+#endif
 }
 
 #define CASE_GESTALT_M(str,code,result) case gestalt##code: str = result; break
@@ -309,9 +305,13 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
 OSStatus HandleException(ExceptionInformation *theException)
 {
     InstallExceptionHandler(NULL); /* Remove this handler */
+
+#if 0
     
-    FILE *fp = fopen("crashinfo.txt", "w");
-    char code[31];
+    //FILE *fp = fopen("crashinfo.txt", "w");
+    int fd = open("crashinfo.txt", O_WRONLY | O_CREAT | O_TRUNC, 0x777);
+    ASSERT(fd != -1);
+    char code[32];
 
     switch (theException->theKind)
 	{
@@ -331,7 +331,7 @@ OSStatus HandleException(ExceptionInformation *theException)
         CASE_CODE(StackOverflowException, code);
     }
  /* ***FIXME*** we need to track build number somehow */
-    fprintf(fp,
+    /*fprintf(fp,
             "StepMania crash report -- build unknown\n"
             "---------------------------------------\n\n"
             "Crash reason: %s\n\n"
@@ -340,7 +340,13 @@ OSStatus HandleException(ExceptionInformation *theException)
             "Please enable crash reporting (if you haven't done so already) in Console.app. "
             "Preferences->Crashes->Enable crash reporting.\n"
             "************************\n\n"
-            "Static log:\n", code);
+            "Static log:\n", code);*/
+    const char *buf1 = "StepMania crash report -- build unknown\n"
+        "---------------------------------------\n\n"
+        "Crash reason: ";
+    const char *buf2 = "";
+    write(fd, buf1, strlen(buf1));
+    write(fd, code, strlen(code));
 
 	unsigned size = staticLog.size();
     for (unsigned i=0; i<size; ++i)
@@ -371,5 +377,19 @@ OSStatus HandleException(ExceptionInformation *theException)
         system(cmd);
         free(cmd);
     }
+#endif
     return -1;
-}    
+}
+
+#if 0
+int TaskMovies(void *data) {
+#pragma unused(data)
+    while (!shutdown) {
+        MoviesTask(NULL, 0); /* Task all movies one frame */
+        OSErr err = GetMoviesError();
+        if (err != noErr)
+            RageException::Throw("MoviesTask failed with error: %d", err);
+    }
+    return 0;
+}
+#endif
