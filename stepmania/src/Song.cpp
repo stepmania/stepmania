@@ -1349,43 +1349,30 @@ void SortSongPointerArrayByMostPlayed( vector<Song*> &arraySongPointers )
 	song_sort_val.clear();
 }
 
-template <Difficulty dc>
-int CompareSongByMeter(const Song* pSong1, const Song* pSong2)
+struct CompareSongByMeter
 {
-	Notes* pNotes1 = pSong1->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
-	Notes* pNotes2 = pSong2->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
+	Difficulty dc;
 
-	int iMeter1 = pNotes1 ? pNotes1->GetMeter() : 0;
-	int iMeter2 = pNotes2 ? pNotes2->GetMeter() : 0;
+	CompareSongByMeter(Difficulty d): dc(d) { }
+	bool operator() (const Song* pSong1, const Song* pSong2)
+	{
+		Notes* pNotes1 = pSong1->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
+		Notes* pNotes2 = pSong2->GetNotes( GAMESTATE->GetCurrentStyleDef()->m_NotesType, dc );
 
-	if( iMeter1 < iMeter2 )
-		return true;
-	if( iMeter1 > iMeter2 )
-		return false;
-	return CompareSongPointersByTitle( pSong1, pSong2 );
-}
+		const int iMeter1 = pNotes1 ? pNotes1->GetMeter() : 0;
+		const int iMeter2 = pNotes2 ? pNotes2->GetMeter() : 0;
 
-// Hack for VC6: There's no other way I could get this to work.  Types of templated functions
-// are totally hosed if a templated function is used on the RHS or as a parameter a function
-// (e.g. to sort()).
-int CompareSongByEasyMeter(const Song* pSong1, const Song* pSong2) 
-{ return CompareSongByMeter<DIFFICULTY_EASY>(pSong1,pSong2); };
-
-int CompareSongByMediumMeter(const Song* pSong1, const Song* pSong2) 
-{ return CompareSongByMeter<DIFFICULTY_MEDIUM>(pSong1,pSong2); };
-
-int CompareSongByHardMeter(const Song* pSong1, const Song* pSong2) 
-{ return CompareSongByMeter<DIFFICULTY_HARD>(pSong1,pSong2); };
+		if( iMeter1 < iMeter2 )
+			return true;
+		if( iMeter1 > iMeter2 )
+			return false;
+		return CompareSongPointersByTitle( pSong1, pSong2 );
+	}
+};
 
 void SortSongPointerArrayByMeter( vector<Song*> &arraySongPointers, Difficulty dc )
 {
-	switch( dc )
-	{
-	case DIFFICULTY_EASY:	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongByEasyMeter );		break;
-	case DIFFICULTY_MEDIUM:	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongByMediumMeter );	break;
-	case DIFFICULTY_HARD:	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongByHardMeter );		break;
-	default:	ASSERT(0);
-	}
+	sort( arraySongPointers.begin(), arraySongPointers.end(), CompareSongByMeter(dc) );
 }
 
 bool Song::NormallyDisplayed() const 
