@@ -35,28 +35,24 @@ bool GetFileVersion( CString fn, CString &out )
 		CString sRes = ssprintf( "\\StringFileInfo\\%04x%04x\\FileVersion",
 			iTrans[0], iTrans[1] );
 		if( !VerQueryValue( (void *) VersionBuffer.c_str(), (char *) sRes.c_str(),
-				(void **) &str,  &len ) )
+				(void **) &str,  &len ) || len < 1)
 			break;
 
-		out = CString( str, len );
-		return true;
+		out = CString( str, len-1 );
 	} while(0);
 
-	/* If we can't get the file version, let's at least try to get the
-	 * size and date. */
-	do {
-		struct stat st;
-		if( stat( fn, &st ) == -1 )
-			break;
-
+	/* Get the size and date. */
+	struct stat st;
+	if( stat( fn, &st ) != -1 )
+	{
 		struct tm t;
 		gmtime_r( &st.st_mtime, &t );
-		out = ssprintf( "%ib, %02i-%02i-%04i", st.st_size, t.tm_mon, t.tm_mday, t.tm_year+1900 );
+		if( !out.empty() )
+			out += " ";
+		out += ssprintf( "[%ib, %02i-%02i-%04i]", st.st_size, t.tm_mon, t.tm_mday, t.tm_year+1900 );
+	}
 
-		return true;
-	} while(0);
-
-	return false;
+	return true;
 }
 
 CString FindSystemFile( CString fn )
