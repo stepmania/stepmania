@@ -35,7 +35,9 @@ ScoreKeeperMAX2::ScoreKeeperMAX2(
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
+		ASSERT( pSong );
 		Steps* pSteps = apSteps[i];
+		ASSERT( pSteps );
 		const AttackArray &aa = asModifiers[i];
 		NoteData ndTemp;
 		pSteps->GetNoteData( ndTemp );
