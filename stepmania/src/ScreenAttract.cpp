@@ -57,6 +57,13 @@ ScreenAttract::ScreenAttract( CString sClassName ) : Screen( sClassName )
 
 
 	float fTimeUntilBeginFadingOut = m_Background.GetLengthSeconds() - m_Out.GetLengthSeconds();
+	if( fTimeUntilBeginFadingOut < 0 )
+	{
+		LOG->Warn( "Screen '%s' Out BGAnimation (%f seconds) is longer than Background BGAnimation (%f seconds); background BGA will be truncated",
+			m_sName.c_str(), m_Out.GetLengthSeconds(), m_Background.GetLengthSeconds() );
+		fTimeUntilBeginFadingOut = 0;
+	}
+
 	this->PostScreenMessage( SM_BeginFadingOut, fTimeUntilBeginFadingOut );
 }
 
