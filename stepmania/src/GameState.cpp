@@ -40,10 +40,12 @@
 #include "StepMania.h"
 
 #include <ctime>
+#include <set>
 
 #define DEFAULT_MODIFIERS		THEME->GetMetric( "Common","DefaultModifiers" )
 #define DEFAULT_CPU_MODIFIERS	THEME->GetMetric( "Common","DefaultCpuModifiers" )
 #define DIFFICULTIES_TO_SHOW	THEME->GetMetric( "Common","DifficultiesToShow" )
+#define COURSE_DIFFICULTIES_TO_SHOW	THEME->GetMetric( "Common","CourseDifficultiesToShow" )
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
@@ -1646,18 +1648,47 @@ bool GameState::ChangeDifficulty( PlayerNumber pn, int dir )
 	return ChangeDifficulty( pn, diff );
 }
 
+static set<CourseDifficulty> GetCourseDifficultiesToShow()
+{
+	CStringArray asDiff;
+	split( COURSE_DIFFICULTIES_TO_SHOW, ",", asDiff );
+	ASSERT( asDiff.size() > 0 );
+
+	set<CourseDifficulty> ret;
+	for( unsigned i = 0; i < asDiff.size(); ++i )
+	{
+		CourseDifficulty cd = StringToCourseDifficulty(asDiff[i]);
+		if( cd == NUM_COURSE_DIFFICULTIES )
+			RageException::Throw( "Unknown difficulty \"%s\" in CourseDifficultiesToShow", asDiff[i].c_str() );
+		ret.insert( cd );
+	}
+	return ret;
+}
+
 bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )
 {
-	CourseDifficulty diff = (CourseDifficulty)(m_PreferredCourseDifficulty[pn]+dir);
-	if( diff < 0 || diff >= NUM_COURSE_DIFFICULTIES )
-		return false;
+	const set<CourseDifficulty> asDiff = GetCourseDifficultiesToShow();
 
-	this->m_PreferredCourseDifficulty[pn] = diff;
+	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
+	do {
+		cd = (CourseDifficulty)(cd+dir);
+		if( cd < 0 || cd >= NUM_COURSE_DIFFICULTIES )
+			return false;
+	} while( asDiff.find(cd) == asDiff.end() );
+
+	this->m_PreferredCourseDifficulty[pn] = cd;
+
 	if( PREFSMAN->m_bLockCourseDifficulties )
 		for( int p = 0; p < NUM_PLAYERS; ++p )
 			m_PreferredCourseDifficulty[p] = m_PreferredCourseDifficulty[pn];
 
 	return true;
+}
+
+bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
+{
+	const set<CourseDifficulty> asDiff = GetCourseDifficultiesToShow();
+	return asDiff.find(cd) != asDiff.end();
 }
 
 Difficulty GameState::GetEasiestNotesDifficulty() const

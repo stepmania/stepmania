@@ -65,6 +65,7 @@ public:
 	bool ChangeDifficulty( PlayerNumber pn, Difficulty dc );
 	bool ChangeDifficulty( PlayerNumber pn, int dir );
 	bool ChangeCourseDifficulty( PlayerNumber pn, int dir );
+	bool IsCourseDifficultyShown( CourseDifficulty cd );
 	Difficulty GetEasiestNotesDifficulty() const;
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start
 
