@@ -190,7 +190,6 @@ public:
 	float			m_fCenterImageScaleY;
 	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
 	bool			m_bAllowExtraStage;
-	bool			m_bLockWheelAfterRandom;
 	bool			m_bHideDefaultNoteSkin;
 	int				m_iMaxHighScoresPerList;
 

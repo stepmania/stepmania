@@ -58,6 +58,7 @@ public:
 	bool NextSort();		// return true if change successful
 	void StartRoulette();
 	void StartRandom();
+	void StartLeap();
 	bool IsRouletting() const;
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;

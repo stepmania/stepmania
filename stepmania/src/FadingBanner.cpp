@@ -200,6 +200,12 @@ void FadingBanner::LoadRandom()
 	m_Banner[GetBackIndex()].LoadRandom();
 }
 
+void FadingBanner::LoadLeap()
+{
+	BeforeChange();
+	m_Banner[GetBackIndex()].LoadLeap();
+}
+
 void FadingBanner::LoadFallback()
 {
 	BeforeChange();

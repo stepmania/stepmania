@@ -1393,10 +1393,12 @@ void ScreenSelectMusic::AfterMusicChange()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_LEAP:
 		switch(m_MusicWheel.GetSelectedType())
 		{
 		case TYPE_ROULETTE:	m_Banner.LoadRoulette();	break;
 		case TYPE_RANDOM: 	m_Banner.LoadRandom();		break;
+		case TYPE_LEAP: 	m_Banner.LoadLeap();		break;
 		default: ASSERT(0);
 		}
 
@@ -1414,6 +1416,9 @@ void ScreenSelectMusic::AfterMusicChange()
 			break;
 		case TYPE_RANDOM:
 			SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic random music");
+			break;
+		case TYPE_LEAP:
+			SampleMusicToPlay = THEME->GetPathToS("ScreenSelectMusic leap music");
 			break;
 		default:
 			ASSERT(0);

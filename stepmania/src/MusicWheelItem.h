@@ -60,7 +60,7 @@ public:
 	ActorFrame m_All;
 };
 
-enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_COURSE, TYPE_SORT };
+enum WheelItemType { TYPE_SECTION, TYPE_SONG, TYPE_ROULETTE, TYPE_RANDOM, TYPE_LEAP, TYPE_COURSE, TYPE_SORT };
 
 struct WheelItemData
 {

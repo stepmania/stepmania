@@ -214,7 +214,6 @@ PrefsManager::PrefsManager()
 
 	m_iAttractSoundFrequency = 1;
 	m_bAllowExtraStage = true;
-	m_bLockWheelAfterRandom = true;
 	m_bHideDefaultNoteSkin = false;
 	m_iMaxHighScoresPerList = 10;
 	m_fPadStickSeconds = 0;
@@ -503,7 +502,6 @@ void PrefsManager::ReadGlobalPrefsFromDisk()
 	ini.GetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
-	ini.GetValue( "Options", "LockWheelAfterRandom",			m_bLockWheelAfterRandom );
 	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.GetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
@@ -723,7 +721,6 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	ini.SetValue( "Options", "CenterImageScaleY",				m_fCenterImageScaleY );
 	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
 	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
-	ini.SetValue( "Options", "LockWheelAfterRandom",			m_bLockWheelAfterRandom );
 	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
 	ini.SetValue( "Options", "MaxHighScoresPerList",			m_iMaxHighScoresPerList );
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );

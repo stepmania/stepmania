@@ -20,13 +20,15 @@
 #include "Course.h"
 #include "Character.h"
 
-CachedThemeMetricB SCROLL_RANDOM			("Banner","ScrollRandom");
-CachedThemeMetricB SCROLL_ROULETTE			("Banner","ScrollRoulette");
+CachedThemeMetricB SCROLL_RANDOM		("Banner","ScrollRandom");
+CachedThemeMetricB SCROLL_ROULETTE		("Banner","ScrollRoulette");
+CachedThemeMetricB SCROLL_LEAP			("Banner","ScrollLeap");
 
 Banner::Banner()
 {
 	SCROLL_RANDOM.Refresh();
 	SCROLL_ROULETTE.Refresh();
+	SCROLL_LEAP.Refresh();
 
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
@@ -175,4 +177,10 @@ void Banner::LoadRandom()
 {
 	Load( THEME->GetPathToG("Banner random") );
 	m_bScrolling = (bool)SCROLL_ROULETTE;
+}
+
+void Banner::LoadLeap()
+{
+	Load( THEME->GetPathToG("Banner leap") );
+	m_bScrolling = (bool)SCROLL_LEAP;
 }

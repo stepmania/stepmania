@@ -174,11 +174,15 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 		}
 		break;
 	case TYPE_ROULETTE:
-		m_textRoulette.SetText( "ROULETTE" );
+		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Roulette") );
 		break;
 
 	case TYPE_RANDOM:
-		m_textRoulette.SetText( "RANDOM" );
+		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Random") );
+		break;
+
+	case TYPE_LEAP:
+		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Leap") );
 		break;
 
 	default:
@@ -227,6 +231,7 @@ void MusicWheelItem::Update( float fDeltaTime )
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_LEAP:
 		m_sprSectionBar.Update( fDeltaTime );
 		m_textRoulette.Update( fDeltaTime );
 		break;
@@ -260,6 +265,7 @@ void MusicWheelItem::DrawPrimitives()
 	case TYPE_SECTION: 
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_LEAP:
 	case TYPE_SORT:
 		bar = &m_sprSectionBar; 
 		break;
@@ -279,6 +285,7 @@ void MusicWheelItem::DrawPrimitives()
 		break;
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_LEAP:
 		m_textRoulette.Draw();
 		break;
 	case TYPE_SONG:		
@@ -338,6 +345,7 @@ bool WheelItemData::HasBanner() const
 	/* XXX: These are special cases. */
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
+	case TYPE_LEAP:
 	case TYPE_SORT:
 		return false;
 		
@@ -361,6 +369,9 @@ CString WheelItemData::GetBanner() const
 
 	case TYPE_RANDOM:
 		return THEME->GetPathToG("Banner roulette");
+		
+	case TYPE_LEAP:
+		return THEME->GetPathToG("Banner leap");
 		
 	default: ASSERT(0); return "";
 	}

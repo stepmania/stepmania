@@ -54,6 +54,7 @@ CachedThemeMetricF CIRCLE_PERCENT	("MusicWheel","CirclePercent");
 #define SORT_MENU_COLOR				THEME->GetMetricC("MusicWheel","SortMenuColor")
 #define SHOW_ROULETTE				THEME->GetMetricB("MusicWheel","ShowRoulette")
 #define SHOW_RANDOM					THEME->GetMetricB("MusicWheel","ShowRandom")
+#define SHOW_LEAP					THEME->GetMetricB("MusicWheel","ShowLeap")
 CachedThemeMetricB	USE_3D			("MusicWheel","Use3D");
 CachedThemeMetricI  NUM_WHEEL_ITEMS_METRIC	("MusicWheel","NumWheelItems");
 #define NUM_WHEEL_ITEMS				min( MAX_WHEEL_ITEMS, (int) NUM_WHEEL_ITEMS_METRIC )
@@ -579,10 +580,15 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			}
 		}
 
-		if( so != SORT_ROULETTE && SHOW_ROULETTE )
-			arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
-		if( so != SORT_ROULETTE && SHOW_RANDOM )
-			arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+		if( so != SORT_ROULETTE )
+		{
+			if( SHOW_ROULETTE )
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+			if( SHOW_RANDOM )
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+			if( SHOW_LEAP )
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_LEAP, NULL, "", NULL, RageColor(1,0,0,1), SORT_INVALID) );
+		}
 
 		// HACK:  Add extra stage item if it isn't already present on the music wheel
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -1257,6 +1263,9 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 	case TYPE_RANDOM:
 		StartRandom();
 		return false;
+	case TYPE_LEAP:
+		StartLeap();
+		return false;
 	case TYPE_SONG:
 		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
 			UNLOCKMAN->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
@@ -1285,41 +1294,39 @@ void MusicWheel::StartRoulette()
 
 void MusicWheel::StartRandom()
 {
-	if( PREFSMAN->m_bLockWheelAfterRandom )
+	/* Shuffle the roulette wheel. */
+	RandomGen rnd;
+	random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
+
+	SetOpenGroup("", SortOrder(SORT_ROULETTE));
+
+	m_Moving = -1;
+	m_TimeBeforeMovingBegins = 0;
+	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
+	m_SpinSpeed *= 20.0f; /* faster! */
+	m_WheelState = STATE_RANDOM_SPINNING;
+
+	this->Select();
+	RebuildMusicWheelItems();
+}
+
+void MusicWheel::StartLeap()
+{
+	/* If we're in SORT_SORT_MENU or SORT_MODE_MENU, then the timer probably ran
+	 * out.  Make sure we're in a sort with actual selections. */
+	switch( GAMESTATE->m_SortOrder )
 	{
-		/* Shuffle the roulette wheel. */
-		RandomGen rnd;
-		random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
-
-		SetOpenGroup("", SortOrder(SORT_ROULETTE));
-
-		m_Moving = -1;
-		m_TimeBeforeMovingBegins = 0;
-		m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-		m_SpinSpeed *= 20.0f; /* faster! */
-		m_WheelState = STATE_RANDOM_SPINNING;
-
-		this->Select();
-		RebuildMusicWheelItems();
+	case SORT_SORT_MENU:
+	case SORT_MODE_MENU:
+		SetOpenGroup("", SortOrder(m_LastSortOrder));
 	}
-	else
-	{
-		/* If we're in SORT_SORT_MENU or SORT_MODE_MENU, then the timer probably ran
-		 * out.  Make sure we're in a sort with actual selections. */
-		switch( GAMESTATE->m_SortOrder )
-		{
-		case SORT_SORT_MENU:
-		case SORT_MODE_MENU:
-			SetOpenGroup("", SortOrder(m_LastSortOrder));
-		}
 
-		m_iSelection = rand() % m_CurWheelItemData.size();
-		m_fPositionOffsetFromSelection = 0;
-		m_WheelState = STATE_SELECTING_MUSIC;
-		m_soundStart.Play();
-		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
-		RebuildMusicWheelItems();
-	}
+	m_iSelection = rand() % m_CurWheelItemData.size();
+	m_fPositionOffsetFromSelection = 0;
+	m_WheelState = STATE_SELECTING_MUSIC;
+	m_soundStart.Play();
+	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+	RebuildMusicWheelItems();
 }
 
 void MusicWheel::SetOpenGroup(CString group, SortOrder so)
