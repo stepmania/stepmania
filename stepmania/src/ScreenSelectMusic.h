@@ -57,8 +57,8 @@ protected:
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
 
-	void AfterStepsChange( PlayerNumber pn );
-	void AfterTrailChange( PlayerNumber pn );
+	void AfterStepsChange( const vector<PlayerNumber> &vpns );
+	void AfterTrailChange( const vector<PlayerNumber> &vpns );
 	void SwitchToPreferredDifficulty();
 	void AfterMusicChange();
 	void SortOrderChanged();

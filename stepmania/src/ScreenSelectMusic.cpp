@@ -959,14 +959,16 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 			else
 				m_soundDifficultyHarder.Play();
 
+			vector<PlayerNumber> vpns;
 			FOREACH_HumanPlayer( p )
 			{
 				if( pn == p || GAMESTATE->DifficultiesLocked() )
 				{
 					m_iSelection[p] = m_iSelection[pn];
-					AfterStepsChange( p );
+					vpns.push_back( p );
 				}
 			}
+			AfterStepsChange( vpns );
 		}
 		break;
 
@@ -984,14 +986,16 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 			else
 				m_soundDifficultyHarder.Play();
 
+			vector<PlayerNumber> vpns;
 			FOREACH_HumanPlayer( p )
 			{
 				if( pn == p || GAMESTATE->DifficultiesLocked() )
 				{
 					m_iSelection[p] = m_iSelection[pn];
-					AfterTrailChange( p );
+					vpns.push_back( p );
 				}
 			}
+			AfterTrailChange( vpns );
 		}
 		break;
 
@@ -1008,14 +1012,16 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 				m_soundDifficultyHarder.Play();
 			AfterMusicChange();
 
+			vector<PlayerNumber> vpns;
 			FOREACH_HumanPlayer( p )
 			{
 				if( pn == p || GAMESTATE->DifficultiesLocked() )
 				{
 					m_iSelection[p] = m_iSelection[pn];
-					AfterStepsChange( p );
+					vpns.push_back( p );
 				}
 			}
+			AfterStepsChange( vpns );
 		}
 		break;
 	}
@@ -1253,88 +1259,98 @@ void ScreenSelectMusic::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 }
 
-void ScreenSelectMusic::AfterStepsChange( PlayerNumber pn )
+void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 {
-	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
-	
-	CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
-
-	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
-
-	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
-
-	int iScore = 0;
-	if( pSteps )
+	FOREACH_CONST( PlayerNumber, vpns, p )
 	{
-		Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
-		iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
+		PlayerNumber pn = *p;
+		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+		
+		CLAMP( m_iSelection[pn], 0, m_vpSteps.size()-1 );
+
+		Song* pSong = GAMESTATE->m_pCurSong;
+		Steps* pSteps = m_vpSteps.empty()? NULL: m_vpSteps[m_iSelection[pn]];
+
+		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
+
+		int iScore = 0;
+		if( pSteps )
+		{
+			Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+			iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
+		}
+
+		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+		
+		m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
+		if( pSteps && pSteps->IsAutogen() )
+		{
+			m_AutoGenIcon[pn].SetEffectDiffuseShift();
+		}
+		else
+		{
+			m_AutoGenIcon[pn].SetEffectNone();
+			m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
+		}
+		m_DifficultyMeter[pn].SetFromGameState( pn );
+		m_GrooveRadar.SetFromSteps( pn, pSteps );
+		m_MusicWheel.NotesOrTrailChanged( pn );
+		if( SHOW_PANES )
+			m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
 	}
 
-	m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
-	
-	m_DifficultyIcon[pn].SetFromSteps( pn, pSteps );
-	if( pSteps && pSteps->IsAutogen() )
-	{
-		m_AutoGenIcon[pn].SetEffectDiffuseShift();
-	}
-	else
-	{
-		m_AutoGenIcon[pn].SetEffectNone();
-		m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
-	}
-	m_DifficultyMeter[pn].SetFromGameState( pn );
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.SetFromGameState();
-	m_GrooveRadar.SetFromSteps( pn, pSteps );
-	m_MusicWheel.NotesOrTrailChanged( pn );
-	if( SHOW_PANES )
-		m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
 }
 
-void ScreenSelectMusic::AfterTrailChange( PlayerNumber pn )
+void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 {
-	ASSERT( GAMESTATE->IsHumanPlayer(pn) );
-	
-	CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
-
-	Course* pCourse = GAMESTATE->m_pCurCourse;
-	Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
-
-	GAMESTATE->m_pCurTrail[pn] = pTrail;
-
-	int iScore = 0;
-	if( pTrail )
+	FOREACH_CONST( PlayerNumber, vpns, p )
 	{
-		Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
-		iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().iScore;
+		PlayerNumber pn = *p;
+		ASSERT( GAMESTATE->IsHumanPlayer(pn) );
+		
+		CLAMP( m_iSelection[pn], 0, m_vpTrails.size()-1 );
+
+		Course* pCourse = GAMESTATE->m_pCurCourse;
+		Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
+
+		GAMESTATE->m_pCurTrail[pn] = pTrail;
+
+		int iScore = 0;
+		if( pTrail )
+		{
+			Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+			iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().iScore;
+		}
+
+		m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
+		
+		m_DifficultyIcon[pn].SetFromTrail( pn, pTrail );
+		//if( pTrail && pTrail->IsAutogen() )
+		//{
+		//	m_AutoGenIcon[pn].SetEffectDiffuseShift();
+		//}
+		//else
+		//{
+		//	m_AutoGenIcon[pn].SetEffectNone();
+		//	m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
+		//}
+
+		/* Update the trail list, but don't actually start the tween; only do that when
+		* the actual course changes (AfterMusicChange). */
+		m_CourseContentsFrame.SetFromGameState();
+		// m_CourseContentsFrame.TweenInAfterChangedCourse();
+
+		m_DifficultyMeter[pn].SetFromGameState( pn );
+		m_GrooveRadar.SetEmpty( pn );
+		m_MusicWheel.NotesOrTrailChanged( pn );
+		if( SHOW_PANES )
+			m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
 	}
 
-	m_textHighScore[pn].SetText( ssprintf("%*i", NUM_SCORE_DIGITS, iScore) );
-	
-	m_DifficultyIcon[pn].SetFromTrail( pn, pTrail );
-	//if( pTrail && pTrail->IsAutogen() )
-	//{
-	//	m_AutoGenIcon[pn].SetEffectDiffuseShift();
-	//}
-	//else
-	//{
-	//	m_AutoGenIcon[pn].SetEffectNone();
-	//	m_AutoGenIcon[pn].SetDiffuse( RageColor(1,1,1,0) );
-	//}
-
-	/* Update the trail list, but don't actually start the tween; only do that when
-	 * the actual course changes (AfterMusicChange). */
-	m_CourseContentsFrame.SetFromGameState();
-	// m_CourseContentsFrame.TweenInAfterChangedCourse();
-
-	m_DifficultyMeter[pn].SetFromGameState( pn );
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.SetFromGameState();
-	m_GrooveRadar.SetEmpty( pn );
-	m_MusicWheel.NotesOrTrailChanged( pn );
-	if( SHOW_PANES )
-		m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
 }
 
 void ScreenSelectMusic::SwitchToPreferredDifficulty()
@@ -1755,13 +1771,14 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	m_Artist.SetTips( m_Artists, m_AltArtists );
 
+	vector<PlayerNumber> vpns;
 	FOREACH_HumanPlayer( p )
-	{
-		if( GAMESTATE->m_pCurCourse )
-			AfterTrailChange( p );
-		else
-			AfterStepsChange( p );
-	}
+		vpns.push_back( p );
+
+	if( GAMESTATE->m_pCurCourse )
+		AfterTrailChange( vpns );
+	else
+		AfterStepsChange( vpns );
 
 	switch( m_MusicWheel.GetSelectedType() )
 	{
