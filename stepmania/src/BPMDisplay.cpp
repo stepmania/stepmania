@@ -184,6 +184,7 @@ void BPMDisplay::SetBPM( const Song* pSong )
 		SetBPMRange( pSong->m_fDisplayBPMMin, pSong->m_fDisplayBPMMax );
 		break;
 	case Song::DISPLAY_RANDOM:
+		CycleRandomly();
 		break;
 	default:
 		ASSERT(0);
