@@ -1,4 +1,7 @@
 ----------------------- Version 3.01 ---------------------------
+NEW FEATURE: Caution and group select screens can now be disabled.
+CHANGE:  Input, renderer and sound subsystems rewritten.
+BUG FIX: Music scrollbar fixed.
 CHANGE:  Faster music wheel sort changing and scrolling.
 CHANGE:  Ignore invalid KSFs.
 NEW FEATURE: DWI SAMPLESTART and SAMPLELENGTH in milliseconds is now
