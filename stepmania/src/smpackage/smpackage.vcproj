@@ -3,7 +3,6 @@
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="smpackage"
-	ProjectGUID="{73DC9F74-4013-4608-85A3-6D3EEA25E064}"
 	SccProjectName=""
 	SccLocalPath=""
 	Keyword="MFCProj">
@@ -14,7 +13,7 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\.."
+			OutputDirectory=".\../.."
 			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
 			UseOfMFC="2"
@@ -41,10 +40,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				OutputFile=".\../smpackage.exe"
+				AdditionalDependencies="ZipArchive\Release\ZipArchive.lib"
+				OutputFile=".\../../smpackage.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				ProgramDatabaseFile=".\../smpackage.pdb"
+				ProgramDatabaseFile=".\../../smpackage.pdb"
 				SubSystem="2"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -52,7 +52,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../smpackage.tlb"/>
+				TypeLibraryName=".\../../smpackage.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -70,7 +70,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\.."
+			OutputDirectory=".\../.."
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
 			UseOfMFC="2"
@@ -88,6 +88,7 @@
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
+				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				DebugInformationFormat="4"/>
@@ -100,7 +101,7 @@
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\../smpackage-debug.pdb"
+				ProgramDatabaseFile=".\../../smpackage-debug.pdb"
 				SubSystem="2"/>
 			<Tool
 				Name="VCMIDLTool"
@@ -108,7 +109,7 @@
 				MkTypLibCompatible="TRUE"
 				SuppressStartupBanner="TRUE"
 				TargetEnvironment="1"
-				TypeLibraryName=".\../smpackage.tlb"/>
+				TypeLibraryName=".\../../smpackage.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -126,74 +127,164 @@
 		</Configuration>
 	</Configurations>
 	<Files>
+		<Filter
+			Name="Source"
+			Filter="">
+			<File
+				RelativePath=".\EditInsallations.cpp">
+			</File>
+			<File
+				RelativePath=".\EditInsallations.h">
+			</File>
+			<File
+				RelativePath=".\EditMetricsDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\EditMetricsDlg.h">
+			</File>
+			<File
+				RelativePath=".\EnterComment.cpp">
+			</File>
+			<File
+				RelativePath=".\EnterComment.h">
+			</File>
+			<File
+				RelativePath=".\EnterName.cpp">
+			</File>
+			<File
+				RelativePath=".\EnterName.h">
+			</File>
+			<File
+				RelativePath=".\IniFile.cpp">
+			</File>
+			<File
+				RelativePath=".\IniFile.h">
+			</File>
+			<File
+				RelativePath=".\MainMenuDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\MainMenuDlg.h">
+			</File>
+			<File
+				RelativePath=".\RageUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil.h">
+			</File>
+			<File
+				RelativePath=".\Registry.cpp">
+			</File>
+			<File
+				RelativePath=".\Registry.h">
+			</File>
+			<File
+				RelativePath=".\Resource.h">
+			</File>
+			<File
+				RelativePath=".\SMPackageInstallDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\SMPackageInstallDlg.h">
+			</File>
+			<File
+				RelativePath="SMPackageUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\ShowComment.cpp">
+			</File>
+			<File
+				RelativePath=".\ShowComment.h">
+			</File>
+			<File
+				RelativePath=".\SmpackageExportDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\SmpackageExportDlg.h">
+			</File>
+			<File
+				RelativePath=".\StdAfx.cpp">
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\StdAfx.h">
+			</File>
+			<File
+				RelativePath=".\TreeCtrlEx.cpp">
+			</File>
+			<File
+				RelativePath=".\TreeCtrlEx.h">
+			</File>
+			<File
+				RelativePath=".\onvertThemeDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\onvertThemeDlg.h">
+			</File>
+			<File
+				RelativePath=".\smpackage.cpp">
+			</File>
+			<File
+				RelativePath=".\smpackageUtil.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Resources"
+			Filter="">
+			<File
+				RelativePath=".\res\StepMania.ICO">
+			</File>
+			<File
+				RelativePath=".\converttheme.bmp">
+			</File>
+			<File
+				RelativePath=".\editmetrics.bmp">
+			</File>
+			<File
+				RelativePath=".\install.bmp">
+			</File>
+			<File
+				RelativePath=".\manage.bmp">
+			</File>
+			<File
+				RelativePath=".\menu.bmp">
+			</File>
+			<File
+				RelativePath=".\smpackage.ICO">
+			</File>
+			<File
+				RelativePath=".\smpackage.h">
+			</File>
+			<File
+				RelativePath=".\res\smpackage.ico">
+			</File>
+			<File
+				RelativePath=".\smpackage.rc">
+			</File>
+			<File
+				RelativePath=".\res\smpackage.rc2">
+			</File>
+		</Filter>
 		<File
-			RelativePath="..\RageUtil.cpp">
+			RelativePath="UninstallOld.cpp">
 		</File>
 		<File
-			RelativePath="..\RageUtil.h">
+			RelativePath="UninstallOld.h">
 		</File>
 		<File
-			RelativePath=".\ReadMe.txt">
-		</File>
-		<File
-			RelativePath=".\Resource.h">
-		</File>
-		<File
-			RelativePath=".\SMPackageInstallDlg.cpp">
-		</File>
-		<File
-			RelativePath=".\SMPackageInstallDlg.h">
-		</File>
-		<File
-			RelativePath=".\StdAfx.cpp">
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath=".\StdAfx.h">
-		</File>
-		<File
-			RelativePath=".\res\StepMania.ICO">
-		</File>
-		<File
-			RelativePath=".\install.bmp">
-		</File>
-		<File
-			RelativePath=".\manage.bmp">
-		</File>
-		<File
-			RelativePath=".\smpackage.ICO">
-		</File>
-		<File
-			RelativePath=".\smpackage.cpp">
-		</File>
-		<File
-			RelativePath=".\smpackage.h">
-		</File>
-		<File
-			RelativePath=".\res\smpackage.ico">
-		</File>
-		<File
-			RelativePath=".\smpackage.rc">
-		</File>
-		<File
-			RelativePath=".\res\smpackage.rc2">
-		</File>
-		<File
-			RelativePath=".\smpackageDlg.cpp">
-		</File>
-		<File
-			RelativePath=".\smpackageDlg.h">
+			RelativePath="UninstallOld.htm"
+			DeploymentContent="TRUE">
 		</File>
 	</Files>
 	<Globals>

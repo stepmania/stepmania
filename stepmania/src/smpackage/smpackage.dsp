@@ -223,6 +223,14 @@ SOURCE=.\TreeCtrlEx.cpp
 
 SOURCE=.\TreeCtrlEx.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\UninstallOld.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\UninstallOld.h
+# End Source File
 # End Group
 # Begin Group "Resources"
 
