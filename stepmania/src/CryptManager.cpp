@@ -5,12 +5,12 @@
 #include "RageLog.h"
 
 // crypt headers
-#include "sha.h"
-#include "hex.h"
-#include "channels.h"
-#include "rsa.h"
-#include "md5.h"
-#include "osrng.h"
+#include "crypto51/sha.h"
+#include "crypto51/hex.h"
+#include "crypto51/channels.h"
+#include "crypto51/rsa.h"
+#include "crypto51/md5.h"
+#include "crypto51/osrng.h"
 #include <memory>
 
 using namespace CryptoPP;
