@@ -210,30 +210,9 @@ void MusicWheel::Load()
 		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
 			GAMESTATE->m_pCurSong = NULL;
 
-	// If there is no currently selected song, select one.
-	if( GAMESTATE->m_pCurSong == NULL )
-	{
-		//Select the first selectable song based on the sort order...
-		vector<WheelItemData> &wiWheelItems = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
-		for( unsigned i = 0; i < wiWheelItems.size(); i++ )
-		{
-			if( wiWheelItems[i].m_pSong != NULL )
-			{
-				GAMESTATE->m_pCurSong = wiWheelItems[i].m_pSong;
-				break;
-			}
-		}
-	
-		if( GAMESTATE->m_pCurSong == NULL )
-			LOG->Trace("MusicWheel::MusicWheel() - No selectable songs found in WheelData");
-	}
-
-
 	// Select the the previously selected song (if any)
-	bool selected = SelectSong(GAMESTATE->m_pCurSong);
-	// Select the the previously selected course (if any)
-	if(!selected) selected = SelectCourse(GAMESTATE->m_pCurCourse);
-	if(!selected) SetOpenGroup("");
+	if( !SelectSongOrCourse() )
+		SetOpenGroup("");
 
 	// rebuild the WheelItems that appear on screen
 	RebuildMusicWheelItems();
@@ -243,10 +222,36 @@ MusicWheel::~MusicWheel()
 {
 }
 
-bool MusicWheel::SelectSong( const Song *p )
+/* If a song or course is set in GAMESTATE and avaialble, select it.  Otherwise, choose the
+ * first available song or course.  Return true if an item was set, false if no items are
+ * available. */
+bool MusicWheel::SelectSongOrCourse()
+{
+	if( GAMESTATE->m_pCurSong && SelectSong( GAMESTATE->m_pCurSong ) )
+		return true;
+	if( GAMESTATE->m_pCurCourse && SelectCourse( GAMESTATE->m_pCurCourse ) )
+		return true;
+
+	// Select the first selectable song based on the sort order...
+	vector<WheelItemData> &wiWheelItems = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
+	for( unsigned i = 0; i < wiWheelItems.size(); i++ )
+	{
+		if( wiWheelItems[i].m_pSong )
+			return SelectSong( wiWheelItems[i].m_pSong );
+		else if ( wiWheelItems[i].m_pCourse )
+			return SelectCourse( wiWheelItems[i].m_pCourse );
+	}
+
+	LOG->Trace( "MusicWheel::MusicWheel() - No selectable songs or courses found in WheelData" );
+	return false;
+}
+
+bool MusicWheel::SelectSong( Song *p )
 {
 	if(p == NULL)
 		return false;
+
+	GAMESTATE->m_pCurSong = p;
 
 	unsigned i;
 	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
@@ -271,10 +276,12 @@ bool MusicWheel::SelectSong( const Song *p )
 	return true;
 }
 
-bool MusicWheel::SelectCourse( const Course *p )
+bool MusicWheel::SelectCourse( Course *p )
 {
 	if(p == NULL)
 		return false;
+
+	GAMESTATE->m_pCurCourse = p;
 
 	unsigned i;
 	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SongSortOrder];
@@ -904,34 +911,14 @@ void MusicWheel::Update( float fDeltaTime )
 				//
 				switch( GAMESTATE->m_SongSortOrder )
 				{
-				case SORT_PREFERRED:
-				case SORT_GROUP:
-				case SORT_TITLE:
-				case SORT_BPM:
-				case SORT_GRADE:
-				case SORT_ARTIST:
-				case SORT_MOST_PLAYED:
-				case SORT_ROULETTE:
-				case SORT_EASY_METER:
-				case SORT_MEDIUM_METER:
-				case SORT_HARD_METER:
-				case SORT_CHALLENGE_METER:
-				case SORT_ALL_COURSES:
-				case SORT_NONSTOP_COURSES:
-				case SORT_ONI_COURSES:
-				case SORT_ENDLESS_COURSES:
+				default:
 					// Look for the last selected song or course
-					if( GAMESTATE->m_pCurCourse )
-						SelectCourse( GAMESTATE->m_pCurCourse );
-					if( GAMESTATE->m_pCurSong )
-						SelectSong( GAMESTATE->m_pCurSong );
+					SelectSongOrCourse();
 					break;
 				case SORT_SORT_MENU:
 				case SORT_MODE_MENU:
 					SelectSort( m_LastSongSortOrder );
 					break;
-				default:
-					ASSERT(0);
 				}
 
 				//
@@ -956,7 +943,11 @@ void MusicWheel::Update( float fDeltaTime )
 				// Unselect the current song if this is a course mode.
 				// Unselect the current course if this is a song sort.
 				//
-				switch( GAMESTATE->m_SongSortOrder )
+				/* If we do this, then switching to course mode and back will put you
+				 * back on the default song.  From the CVS commit, this looks like it
+				 * was originally to fix ScreenOptionsMaster difficulty display, and
+				 * isn't needed anymore ... -glenn */
+/*				switch( GAMESTATE->m_SongSortOrder )
 				{
 				case SORT_PREFERRED:
 				case SORT_GROUP:
@@ -979,7 +970,7 @@ void MusicWheel::Update( float fDeltaTime )
 					GAMESTATE->m_pCurSong = NULL;
 					break;
 				}
-
+*/
 
 				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 				RebuildMusicWheelItems();

@@ -80,8 +80,9 @@ protected:
 	void GetSongList(vector<Song*> &arraySongs, SongSortOrder so, CString sPreferredGroup );
 	void BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItems, SongSortOrder so );
 	void SetOpenGroup(CString group, SongSortOrder so = SORT_INVALID);
-	bool SelectSong(const Song *p);
-	bool SelectCourse(const Course *p);
+	bool SelectSongOrCourse();
+	bool SelectSong( Song *p );
+	bool SelectCourse( Course *p );
 	bool SelectSort( SongSortOrder so );
 	void ChangeMusic(int dist); /* +1 or -1 */
 
