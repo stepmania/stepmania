@@ -37,7 +37,7 @@
 CString GetStatsLineTitle( PlayerNumber pn, int iLine )
 {
 	static const CString s[NUM_ENDING_STATS_LINES] = {
-		"Total %s Points",
+		"%s Percent Complete",
 		"Total Calories",
 		"Total Songs Played",
 		"Current Combo",
@@ -54,10 +54,14 @@ CString GetStatsLineValue( PlayerNumber pn, int iLine )
 	StepsType st = GAMESTATE->GetCurrentStyleDef()->m_StepsType;
 	switch( iLine )
 	{
-	case 0:		return Commify( pProfile->GetTotalHighScoreDancePointsForStepsType(st) );	
-	case 1:		return pProfile->GetDisplayTotalCaloriesBurned();
-	case 2:		return Commify( pProfile->GetTotalNumSongsPlayed() );
-	case 3:		return Commify( pProfile->m_iCurrentCombo );
+	case PERCENT_COMPLETE:
+		{
+			double fPercent = 100.0 * pProfile->GetTotalHighScoreDancePointsForStepsType(st) / (double)pProfile->GetTotalPossibleDancePointsForStepsType(st);
+			return ssprintf( "%02.4f%%", fPercent );	
+		}
+	case TOTAL_CALORIES:		return pProfile->GetDisplayTotalCaloriesBurned();
+	case TOTAL_SONGS_PLAYED:	return Commify( pProfile->GetTotalNumSongsPlayed() );
+	case CURRENT_COMBO:			return Commify( pProfile->m_iCurrentCombo );
 	default:	ASSERT(0);	return "";
 	}
 }
@@ -69,14 +73,14 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 
-	for( int p=0; p<NUM_PLAYERS; p++ )
+	FOREACH_PlayerNumber( p )
 	{
 		m_bWaitingForRemoveCard[p] = false;
 
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;	// skip
 
-		Profile* pProfile = PROFILEMAN->GetProfile( (PlayerNumber)p );
+		Profile* pProfile = PROFILEMAN->GetProfile( p );
 
 		m_textPlayerName[p].LoadFromFont( THEME->GetPathToF("ScreenEnding player name") );
 		m_textPlayerName[p].SetText( pProfile ? pProfile->GetDisplayName() : "NO CARD" );

@@ -73,6 +73,7 @@ public:
 	int GetTotalNumSongsPlayed() const;
 	int GetTotalNumSongsPassed() const;
 	int GetTotalHighScoreDancePointsForStepsType( StepsType st ) const;
+	int GetTotalPossibleDancePointsForStepsType( StepsType st ) const;
 	static CString GetProfileDisplayNameFromDir( CString sDir );
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	int GetSongNumTimesPlayed( const SongID& songID ) const;
