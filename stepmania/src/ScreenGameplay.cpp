@@ -513,8 +513,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration ) : Screen("ScreenGameplay")
 		m_soundAssistTick.Load(			THEME->GetPathTo("Sounds","ScreenGameplay assist tick") );
 	}
 
-	m_iRowLastCrossed = -1;
-
 	// Get the transitions rolling on the first update.
 	// We can't do this in the constructor because ScreenGameplay is constructed 
 	// in the middle of ScreenStage.
@@ -544,6 +542,8 @@ bool ScreenGameplay::IsLastSong()
 
 void ScreenGameplay::LoadNextSong()
 {
+	m_iRowLastCrossed = -1;
+
 	GAMESTATE->ResetMusicStatistics();
 	int p;
 	for( p=0; p<NUM_PLAYERS; p++ )
