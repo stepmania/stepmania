@@ -26,6 +26,7 @@
 #define OPTION_ORDER( dir )						THEME->GetMetric (m_sName,"OptionOrder"+CString(dir))
 #define SHOW_SCROLLER							THEME->GetMetricB(m_sName,"ShowScroller")
 #define SCROLLER_SECONDS_PER_ITEM				THEME->GetMetricF(m_sName,"ScrollerSecondsPerItem")
+#define SCROLLER_NUM_ITEMS_TO_DRAW				THEME->GetMetricF(m_sName,"ScrollerNumItemsToDraw")
 #define SCROLLER_SPACING_X						THEME->GetMetricF(m_sName,"ScrollerSpacingX")
 #define SCROLLER_SPACING_Y						THEME->GetMetricF(m_sName,"ScrollerSpacingY")
 #define DEFAULT_CHOICE							THEME->GetMetric (m_sName,"DefaultChoice")
@@ -93,7 +94,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 		{
 			m_Scroller[0].Load( 
 				SCROLLER_SECONDS_PER_ITEM, 
-				7,
+				SCROLLER_NUM_ITEMS_TO_DRAW,
 				RageVector3( 0, 0, 0 ),
 				RageVector3( 0, 0, 0 ),
 				RageVector3( SCROLLER_SPACING_X, SCROLLER_SPACING_Y, 0 ),
@@ -117,7 +118,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 			{
 				m_Scroller[p].Load(
 					SCROLLER_SECONDS_PER_ITEM, 
-					7,
+					SCROLLER_NUM_ITEMS_TO_DRAW,
 					RageVector3( 0, 0, 0 ),
 					RageVector3( 0, 0, 0 ),
 					RageVector3( SCROLLER_SPACING_X, SCROLLER_SPACING_Y, 0 ),
