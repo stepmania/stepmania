@@ -392,7 +392,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		256,
-		0	// broken, causes black screen
+		false	// broken, causes black screen
 	},
 	{
 		"Radeon 7|ArcadeVGA",	// Radeon 7xxx
@@ -400,7 +400,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		2048,
-		1	// accelerated
+		true	// accelerated
 	},
 	{
 		"GeForce|Radeon",
@@ -408,7 +408,7 @@ struct VideoCardDefaults
 		640,480,
 		32,32,32,	// 32 bit textures are faster to load
 		2048,
-		1	// hardware accelerated
+		true	// hardware accelerated
 	},
 	{
 		"TNT|Vanta|M64",
@@ -416,7 +416,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
 		2048,
-		1	// hardware accelerated
+		true	// hardware accelerated
 	},
 	{
 		"G200|G250|G400",
@@ -424,7 +424,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		2048,
-		0	// broken, causes black screen
+		false	// broken, causes black screen
 	},
 	{
 		"Savage",
@@ -447,7 +447,7 @@ struct VideoCardDefaults
 		320,240,	// lower resolution for 60fps.  In-box WinXP driver doesn't support 400x300.
 		16,16,16,
 		256,
-		0
+		false
 	},
 	{
 		"RAGE MOBILITY-M1",
@@ -455,7 +455,7 @@ struct VideoCardDefaults
 		400,300,	// lower resolution for 60fps
 		16,16,16,
 		256,
-		0
+		false
 	},
 	{
 		"Intel.*82810|Intel.*82815",
@@ -463,7 +463,7 @@ struct VideoCardDefaults
 		512,384,	// lower resolution for 60fps
 		16,16,16,
 		512,
-		0
+		false
 	},
 	{
 		"Intel*Extreme Graphics",
@@ -471,7 +471,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,	// slow at 32bpp
 		1024,
-		0
+		false
 	},
 	{
 		// Cards that have problems with OpenGL:
@@ -484,7 +484,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		2048,
-		0
+		false
 	},
 	{
 		"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
@@ -492,7 +492,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		2048,
-		1		// Right now, they've got to have NVidia or ATi Cards anyway..
+		true		// Right now, they've got to have NVidia or ATi Cards anyway..
 	},
 	{
 		// Default graphics settings used for all cards that don't match above.
@@ -502,7 +502,7 @@ struct VideoCardDefaults
 		640,480,
 		16,16,16,
 		2048,
-		0  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
+		false  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
 	},
 };
 
