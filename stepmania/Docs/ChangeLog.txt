@@ -27,6 +27,7 @@ Added TournaMix 5 transliterations.
 Theme changes:
   file "ScreenGameplay extra life frame" -> "ScreenGameplayExtra life frame"
   file "ScreenGameplay score score frame" -> "ScreenGameplayExtra score frame"
+  all "arcade" files and metrics -> "regular"
   metrics "ScreenGameplay::LifeFrameExtra*" are now "ScreenGameplayExtra::LifeFrame"; same for all gameplay extra stage metrics
   metric "CDTitleSpinSeconds" -> "CDTitleFrontCommand" and "CDTitleBackCommand".
 
