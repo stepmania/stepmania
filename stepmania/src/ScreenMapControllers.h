@@ -45,7 +45,7 @@ private:
 	int m_iCurButton;
 	int m_iCurSlot;
 
-	bool m_bWaitingForPress;
+	int m_iWaitingForPress;
 	DeviceInput m_DeviceIToMap;
 
 	BitmapText	m_textError;

@@ -29,6 +29,7 @@
 #define ODD_LINE_IN			THEME->GetMetric("ScreenMapControllers","OddLineIn")
 #define ODD_LINE_OUT		THEME->GetMetric("ScreenMapControllers","OddLineOut")
 
+const int FramesToWaitForInput = 2;
 
 // reserve the 3rd slot for hard-coded keys
 const int NUM_CHANGABLE_SLOTS = NUM_GAME_TO_DEVICE_SLOTS-1;
@@ -97,7 +98,7 @@ ScreenMapControllers::ScreenMapControllers() : Screen("ScreenMapControllers")
 	m_iCurButton = 0;
 	m_iCurSlot = 0;
 
-	m_bWaitingForPress = false;
+	m_iWaitingForPress = 0;
 
 	m_Menu.Load( "ScreenMapControllers", false );	// no timer
 	this->AddChild( &m_Menu );
@@ -120,9 +121,12 @@ void ScreenMapControllers::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 
 	
-	if( m_bWaitingForPress  &&  m_DeviceIToMap.IsValid() )	// we're going to map an input
+	if( m_iWaitingForPress  &&  m_DeviceIToMap.IsValid() )	// we're going to map an input
 	{	
-		LOG->Trace("K");
+		--m_iWaitingForPress;
+		if( m_iWaitingForPress )
+			return; /* keep waiting */
+
 		GameInput curGameI( (GameController)m_iCurController,
 							(GameButton)m_iCurButton );
 
@@ -131,7 +135,6 @@ void ScreenMapControllers::Update( float fDeltaTime )
 		// commit to disk so we don't lose the changes!
 		INPUTMAPPER->SaveMappingsToDisk();
 
-		m_bWaitingForPress = false;
 		Refresh();
 	}
 }
@@ -166,7 +169,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 	// Update so that a button presses are favored for mapping over axis presses.
 	//
 
-	if( m_bWaitingForPress )
+	if( m_iWaitingForPress )
 	{
 		/* Don't allow function keys to be mapped. */
 		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= SDLK_F1 && DeviceI.button <= SDLK_F12) )
@@ -181,7 +184,6 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		}
 		else
 		{
-			LOG->Trace("set");
 			m_DeviceIToMap = DeviceI;
 		}
 	}
@@ -244,7 +246,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			break;
 		case SDLK_RETURN: /* Change the selection. */
 		case SDLK_KP_ENTER:
-			m_bWaitingForPress = true;
+			m_iWaitingForPress = FramesToWaitForInput;
 			m_DeviceIToMap.MakeInvalid();
 			break;
 		}
@@ -291,7 +293,7 @@ void ScreenMapControllers::Refresh()
 				bool bPulse;
 				if( bSelected ) 
 				{
-					if( m_bWaitingForPress )
+					if( m_iWaitingForPress )
 					{
 						color = RageColor(1,0.5,0.5,1);	// red
 						bPulse = true;
