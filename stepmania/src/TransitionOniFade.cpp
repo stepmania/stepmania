@@ -18,6 +18,10 @@
 #include "GameState.h"
 
 
+#define BANNER_WIDTH		THEME->GetMetricF("TransitionOniFade","BannerWidth")
+#define BANNER_HEIGHT		THEME->GetMetricF("TransitionOniFade","BannerHeight")
+
+
 TransitionOniFade::TransitionOniFade()
 {
 	SetDiffuse( D3DXCOLOR(1,1,1,1) );	// white
@@ -30,6 +34,9 @@ TransitionOniFade::TransitionOniFade()
 	m_textSongInfo.TurnShadowOff();
 	m_textSongInfo.SetZoom( 0.5f );
 	m_textSongInfo.SetXY( CENTER_X, CENTER_Y );
+
+	m_Banner.SetCroppedSize( BANNER_WIDTH, BANNER_HEIGHT );
+	m_Banner.SetXY( CENTER_X, CENTER_Y );
 }
 
 TransitionOniFade::~TransitionOniFade()
@@ -53,10 +60,13 @@ void TransitionOniFade::DrawPrimitives()
 	if( m_TransitionState == closed  ||  m_TransitionState == opening_right )
 	{
 		m_quadStrip.SetDiffuse( D3DXCOLOR(0,0,0,SCALE(GetPercentageClosed(),0,1,0,2)) );
-		m_quadStrip.Draw();
+//		m_quadStrip.Draw();
 
 		m_textSongInfo.SetDiffuse( D3DXCOLOR(1,1,1,SCALE(GetPercentageClosed(),0,1,0,2)) );
-		m_textSongInfo.Draw();
+//		m_textSongInfo.Draw();
+
+		m_Banner.SetDiffuse( D3DXCOLOR(1,1,1,SCALE(GetPercentageClosed(),0,1,0,2)) );
+		m_Banner.Draw();
 	}
 }
 
@@ -94,4 +104,5 @@ void TransitionOniFade::UpdateSongText()
 	Song* pSong = GAMESTATE->m_pCurSong;
 	ASSERT( pSong );
 	m_textSongInfo.SetText( pSong->GetFullTitle() + "\n" + pSong->m_sArtist + "\n");
+	m_Banner.LoadFromSong( pSong );
 }

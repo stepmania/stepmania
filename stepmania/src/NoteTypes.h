@@ -33,13 +33,10 @@ enum
 	TRACK_8,
 	TRACK_9,
 	TRACK_10,
-	TRACK_11,
-	TRACK_12,
-	TRACK_13,
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 
-const int MAX_BEATS			= 1500;	// BMR's Pulse has about 1300
+const int MAX_BEATS			= 3000;	// J-Paradise has about 2120
 const int BEATS_PER_MEASURE = 4;
 const int MAX_MEASURES		= MAX_BEATS / BEATS_PER_MEASURE;
 
@@ -47,7 +44,7 @@ const int ROWS_PER_BEAT	= 12;	// It is important that this number is evenly divi
 const int ROWS_PER_MEASURE = ROWS_PER_BEAT * BEATS_PER_MEASURE;
 const int MAX_TAP_NOTE_ROWS = MAX_BEATS*ROWS_PER_BEAT;
 
-const int MAX_HOLD_NOTES = 400;	// BMR's Connected has about 300
+const int MAX_HOLD_NOTES = 800;	// BMR's Connected has about 300
 
 enum NoteType 
 { 

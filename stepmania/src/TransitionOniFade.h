@@ -17,6 +17,7 @@
 #include "Sprite.h"
 #include "Quad.h"
 #include "TransitionFade.h"
+#include "Banner.h"
 
 
 class TransitionOniFade : public Transition
@@ -39,6 +40,7 @@ protected:
 	Quad		m_quadBackground;
 	Quad		m_quadStrip;		// background for song text
 	BitmapText	m_textSongInfo;
+	Banner		m_Banner;
 };
 
 

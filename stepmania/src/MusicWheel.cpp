@@ -534,6 +534,24 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 				}
 			}
 		}
+
+
+		if( !bRoulette )
+		{
+			arrayWheelItemDatas.Add( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, D3DXCOLOR(1,0,0,1)) );
+		}
+
+		// HACK:  Add extra stage item since it's not necessarily in the same group
+		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+		{
+			Song* pSong;
+			Notes* pNotes;
+			PlayerOptions po;
+			SongOptions so;
+			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->m_pCurSong->m_sGroupName, GAMESTATE->GetCurrentStyleDef(), pSong, pNotes, po, so );
+			arrayWheelItemDatas.Add( WheelItemData(TYPE_SONG, pSong, "", NULL, GAMESTATE->GetStageColor()) );
+		}
+
 		break;
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
@@ -600,10 +618,6 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 	if( arrayWheelItemDatas.GetSize() == 0 )
 	{
 		arrayWheelItemDatas.Add( WheelItemData(TYPE_SECTION, NULL, "- EMPTY -", NULL, D3DXCOLOR(1,0,0,1)) );
-	}
-	else if( GAMESTATE->m_PlayMode == PLAY_MODE_ARCADE  &&  !bRoulette )
-	{
-		arrayWheelItemDatas.Add( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, D3DXCOLOR(1,0,0,1)) );
 	}
 }
 
