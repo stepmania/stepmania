@@ -4,7 +4,7 @@
 #define TRANSITION_H
 
 #include "Actor.h"
-#include "BGAnimation.h"
+#include "ActorUtil.h"
 #include "ScreenMessage.h"
 #include "RandomSample.h"
 
@@ -35,7 +35,7 @@ protected:
 		finished 
 	} m_State;
 
-	BGAnimation	m_BGAnimation;
+	AutoActor m_sprTransition;
 	float	m_fLengthSeconds;
 	RandomSample	m_sound;
 

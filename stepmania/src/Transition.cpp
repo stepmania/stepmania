@@ -16,9 +16,9 @@ void Transition::Load( CString sBGAniDir )
 	if( !sBGAniDir.empty() && sBGAniDir.Right(1) != "/" )
 		sBGAniDir += "/";
 
-	m_BGAnimation.LoadFromAniDir( sBGAniDir );
-	m_BGAnimation.PlayCommand( "On" );
-	m_fLengthSeconds = m_BGAnimation.GetTweenTimeLeft();
+	m_sprTransition.Load( sBGAniDir );
+	m_sprTransition->PlayCommand( "On" );
+	m_fLengthSeconds = m_sprTransition->GetTweenTimeLeft();
 
 	m_State = waiting;
 
@@ -53,13 +53,13 @@ void Transition::Update( float fDeltaTime )
 
 	Actor::Update( fDeltaTime );
 
-	if( m_BGAnimation.GetTweenTimeLeft() == 0 )	// over
+	if( m_sprTransition->GetTweenTimeLeft() == 0 )	// over
 	{
 		SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
 		m_State = finished;
 	}
 
-	m_BGAnimation.Update( fDeltaTime );
+	m_sprTransition->Update( fDeltaTime );
 }
 
 bool Transition::EarlyAbortDraw()
@@ -69,7 +69,7 @@ bool Transition::EarlyAbortDraw()
 
 void Transition::DrawPrimitives()
 {
-	m_BGAnimation.Draw();
+	m_sprTransition->Draw();
 }
 
 void Transition::StartTransitioning( ScreenMessage send_when_done )
@@ -91,7 +91,7 @@ float Transition::GetTweenTimeLeft() const
 	if( m_State != transitioning )
 		return 0;
 
-	return m_BGAnimation.GetTweenTimeLeft();
+	return m_sprTransition->GetTweenTimeLeft();
 }
 
 /*
