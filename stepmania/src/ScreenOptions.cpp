@@ -130,7 +130,7 @@ void ScreenOptions::Init( InputMode im, OptionRow OptionRow[], int iNumOptionLin
 		m_framePage.AddChild( &m_textTitles[r] );		
 
 		int iNumChoices = min( m_OptionRow[r].choices.size(), MAX_VISIBLE_VALUES_PER_LINE );
-		for( unsigned c=0; c<iNumChoices; c++ )
+		for( int c=0; c<iNumChoices; c++ )
 		{
 			m_framePage.AddChild( &m_textItems[r][c] );
 		}

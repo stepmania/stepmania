@@ -1396,14 +1396,14 @@ void ScreenGameplay::UpdateAutoPlayText()
 void SaveChanges( void* papSongsQueue )
 {
 	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
-	for( int i=0; i<apSongsQueue.size(); i++ )
+	for( unsigned i=0; i<apSongsQueue.size(); i++ )
 		apSongsQueue[i]->Save();
 }
 
 void RevertChanges( void* papSongsQueue )
 {
 	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
-	for( int i=0; i<apSongsQueue.size(); i++ )
+	for( unsigned i=0; i<apSongsQueue.size(); i++ )
 		apSongsQueue[i]->RevertFromDisk();
 }
 
