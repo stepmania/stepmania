@@ -34,8 +34,6 @@ void HandleFile(const CString& file, const CString& dir, const CString& archiveP
     command += archivePath + "' '" + dir +"' '" + file + "'";
     
     system(command);
-    
-    printf("%s\n", file.c_str());
 }
 
 const CString GetPath(const CString& ID)
@@ -126,6 +124,8 @@ int main(int argc, char *argv[])
     while (nextLine < config.GetNumLines())
         p.ProcessLine(config.GetLine(nextLine), nextLine);
 
+    printf("Compressing the archive.\n");
+    
     /* Compress the archive after it is created */
     command = "gzip '" + archivePath + "'";
     system(command);
