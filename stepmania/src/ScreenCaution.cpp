@@ -45,7 +45,7 @@ ScreenCaution::ScreenCaution()
 	m_FadeWipe.SetOpened();
 	this->AddSubActor( &m_FadeWipe );
 
-	this->SendScreenMessage( SM_StartClosing, 3 );
+	this->SendScreenMessage( SM_StartClosing, 1 );
 }
 
 
@@ -97,6 +97,8 @@ void ScreenCaution::MenuStart( const PlayerNumber p )
 
 void ScreenCaution::MenuBack( const PlayerNumber p )
 {
+	if(m_FadeWipe.IsClosing())
+		return;
 	this->ClearMessageQueue();
 	m_FadeWipe.CloseWipingLeft( SM_GoToPrevState );
 	SOUND->PlayOnceStreamed( THEME->GetPathTo("Sounds","menu back") );
