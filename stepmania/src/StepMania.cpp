@@ -878,6 +878,15 @@ int main(int argc, char* argv[])
 	//
 	PREFSMAN	= new PrefsManager;
 
+	LOG->SetShowLogOutput( PREFSMAN->m_bShowLogOutput );
+	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
+	LOG->SetInfoToDisk( true );
+	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
+	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
+	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
+
+	WriteLogHeader();
+
 	/* Set up alternative filesystem trees. */
 	if( PREFSMAN->m_sAdditionalFolders != "" )
 	{
@@ -905,15 +914,6 @@ int main(int argc, char* argv[])
 	// Create game objects
 	//
 	GAMESTATE	= new GameState;
-
-	LOG->SetShowLogOutput( PREFSMAN->m_bShowLogOutput );
-	LOG->SetLogToDisk( PREFSMAN->m_bLogToDisk );
-	LOG->SetInfoToDisk( true );
-	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
-	LOG->SetTimestamping( PREFSMAN->m_bTimestamping );
-	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
-
-	WriteLogHeader();
 
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
 	LoadingWindow *loading_window = MakeLoadingWindow();
