@@ -37,6 +37,7 @@ void RageSoundResampler::reset()
 	memset(prev, 0, sizeof(prev));
 	memset(t, 0, sizeof(t));
 	ipos = 0;
+	InputChannels = OutputChannels = 2;
 }
 
 
