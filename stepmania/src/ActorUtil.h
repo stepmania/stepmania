@@ -52,14 +52,14 @@ Actor* MakeActor( RageTextureID ID );
 class AutoActor
 {
 public:
-	AutoActor() { m_pActor = NULL; }
-	~AutoActor() { Unload(); }
-	operator const Actor* () const { ASSERT(m_pActor); return m_pActor; }
-	operator Actor* () { ASSERT(m_pActor); return m_pActor; }
-	const Actor *operator->() const { ASSERT(m_pActor); return m_pActor; }
-	Actor *operator->() { ASSERT(m_pActor); return m_pActor; }
-	void Unload() { if(m_pActor) { delete m_pActor; m_pActor=NULL; } }
-	bool IsLoaded() const { return m_pActor != NULL; }
+	AutoActor()						{ m_pActor = NULL; }
+	~AutoActor()					{ Unload(); }
+	operator const Actor* () const	{ return m_pActor; }
+	operator Actor* ()				{ return m_pActor; }
+	const Actor *operator->() const { return m_pActor; }
+	Actor *operator->()				{ return m_pActor; }
+	void Unload()					{ if(m_pActor) { delete m_pActor; m_pActor=NULL; } }
+	bool IsLoaded() const			{ return m_pActor != NULL; }
 	void Load( CString sPath )
 	{
 		Unload();
