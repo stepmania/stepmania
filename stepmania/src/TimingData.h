@@ -27,6 +27,7 @@ public:
 	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const;
 	float GetBPMAtBeat( float fBeat ) const;
 	void SetBPMAtBeat( float fBeat, float fBPM );
+	void SetStopAtBeat( float fBeat, float fSeconds );
 	void MultiplyBPMInBeatRange( float fStartBeat, float fEndBeat, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );

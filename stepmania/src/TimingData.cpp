@@ -80,6 +80,28 @@ void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
 	}
 }
 
+void TimingData::SetStopAtBeat( float fBeat, float fSeconds )
+{
+	unsigned i;
+	for( i=0; i<m_StopSegments.size(); i++ )
+		if( m_StopSegments[i].m_fStartBeat == fBeat )
+			break;
+
+	if( i == m_StopSegments.size() )	// there is no BPMSegment at the current beat
+	{
+		// create a new StopSegment
+		if( fSeconds > 0 )
+			AddStopSegment( StopSegment(fBeat, fSeconds) );
+	}
+	else	// StopSegment being modified is m_StopSegments[i]
+	{
+		if( fSeconds > 0 )
+			m_StopSegments[i].m_fStopSeconds = fSeconds;
+		else
+			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
+	}
+}
+
 /* Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor. */
 void TimingData::MultiplyBPMInBeatRange( float fStartBeat, float fEndBeat, float fFactor )
 {
