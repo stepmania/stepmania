@@ -33,11 +33,11 @@ public:
 	void NextTheme();
 
 	CString GetPathTo( ElementCategory category, CString sFileName, bool bOptional=false );
-	CString GetPathToB( CString sFileName ) { return GetPathTo(BGAnimations,sFileName); };
-	CString GetPathToF( CString sFileName ) { return GetPathTo(Fonts,sFileName); };
-	CString GetPathToG( CString sFileName ) { return GetPathTo(Graphics,sFileName); };
-	CString GetPathToN( CString sFileName ) { return GetPathTo(Numbers,sFileName); };
-	CString GetPathToS( CString sFileName ) { return GetPathTo(Sounds,sFileName); };
+	CString GetPathToB( CString sFileName, bool bOptional=false ) { return GetPathTo(BGAnimations,sFileName,bOptional); };
+	CString GetPathToF( CString sFileName, bool bOptional=false ) { return GetPathTo(Fonts,sFileName,bOptional); };
+	CString GetPathToG( CString sFileName, bool bOptional=false ) { return GetPathTo(Graphics,sFileName,bOptional); };
+	CString GetPathToN( CString sFileName, bool bOptional=false ) { return GetPathTo(Numbers,sFileName,bOptional); };
+	CString GetPathToS( CString sFileName, bool bOptional=false ) { return GetPathTo(Sounds,sFileName,bOptional); };
 
 	bool		HasMetric( CString sClassName, CString sValueName );
 	CString		GetMetricRaw( CString sClassName, CString sValueName );
