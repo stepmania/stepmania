@@ -56,6 +56,7 @@ ActorCommands::ActorCommands( const CString &sCommands )
 
 				if( i==1 && bFirstParamIsString ) // string literal
 				{
+					sArg.Replace( "'", "\\'" );	// escape quote
 					s << "'" << sArg << "'";
 				}
 				else if( sArg[0] == '#' )	// HTML color
