@@ -155,6 +155,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
 	{
 		FILEMAN->Mount( "dir", MEMCARDMAN->GetOsMountDir(pn), MEM_CARD_DIR[pn] );
+		LOG->Trace( "mount %s %s", MEMCARDMAN->GetOsMountDir(pn).c_str(), MEM_CARD_DIR[pn] );
 
 		CString sDir = MEM_CARD_DIR[pn];
 
