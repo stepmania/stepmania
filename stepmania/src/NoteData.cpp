@@ -309,7 +309,7 @@ void NoteData::SetTapAttackNote( int track, int row, Attack attack )
 	PruneUnusedAttacksFromMap();
 
 	// find first unused attack index
-	for( int i=0; i<MAX_NUM_ATTACKS; i++ )
+	for( unsigned i=0; i<MAX_NUM_ATTACKS; i++ )
 	{
 		if( m_AttackMap.find(i) == m_AttackMap.end() )	// this index is free to use
 		{
