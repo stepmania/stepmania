@@ -448,13 +448,10 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 		break;
 	}
 
-	int iNumNotesInThisRow = 0;
 	for( int c=0; c<GetNumTracks(); c++ )	// for each column
 	{
 		if( GetTapNote(c, iIndexThatWasSteppedOn) == TAP_EMPTY )
 			continue; /* no note in this col */
-
-		iNumNotesInThisRow++;
 
 		// show the ghost arrow for this column
 		switch( score )
@@ -470,17 +467,14 @@ void Player::OnRowDestroyed( int iIndexThatWasSteppedOn )
 		}
 	}
 		
-	if( iNumNotesInThisRow > 0 )
-	{
-		HandleTapRowScore( score, iNumNotesInThisRow );	// update score
-		m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
-	}
+	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
+	m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 
 	m_Judgment.SetJudgment( score );
 }
 
 
-int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
+void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 {
 	//LOG->Trace( "Notes::UpdateTapNotesMissedOlderThan(%f)", fMissIfOlderThanThisBeat );
 	const float fEarliestTime = GAMESTATE->m_fMusicSeconds - fMissIfOlderThanSeconds;
@@ -501,29 +495,26 @@ int Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	int iNumMissesFound = 0;
 	for( int r=iStartCheckingAt; r<=iMissIfOlderThanThisIndex; r++ )
 	{
-		int iNumMissesThisRow = 0;
+		bool MissedNoteOnThisRow = false;
 		for( int t=0; t<GetNumTracks(); t++ )
 		{
-			if( GetTapNote(t, r) != TAP_EMPTY  &&  GetTapNoteScore(t, r) == TNS_NONE )
-			{
-				SetTapNoteScore(t, r, TNS_MISS);
-				iNumMissesFound++;
-				iNumMissesThisRow++;
-			}
+			if( GetTapNote(t, r) == TAP_EMPTY) continue; /* no note here */
+			if( GetTapNoteScore(t, r) != TNS_NONE ) continue; /* note here is hit */
+
+			MissedNoteOnThisRow = true;
+			SetTapNoteScore(t, r, TNS_MISS);
 		}
-		if( iNumMissesThisRow > 0 )
-		{
-			HandleTapRowScore( TNS_MISS, iNumMissesThisRow );
-			m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
-		}
+
+		if(!MissedNoteOnThisRow) continue;
+
+		HandleTapRowScore( r );
+		m_Combo.SetCombo( GAMESTATE->m_CurStageStats.iCurCombo[m_PlayerNumber] );
 	}
 
 	if( iNumMissesFound > 0 )
 	{
 		m_Judgment.SetJudgment( TNS_MISS );
 	}
-
-	return iNumMissesFound;
 }
 
 
@@ -542,9 +533,16 @@ void Player::CrossedRow( int iNoteRow )
 }
 
 
-void Player::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
+void Player::HandleTapRowScore( unsigned row )
 {
-	ASSERT( iNumTapsInRow >= 1 );
+	TapNoteScore scoreOfLastTap = LastTapNoteScore(row);
+
+	int iNumTapsInRow = 0;
+	for( int c=0; c<GetNumTracks(); c++ )	// for each column
+		if( GetTapNote(c, row) != TAP_EMPTY )
+			iNumTapsInRow++;
+
+	ASSERT(iNumTapsInRow > 0);
 
 #ifndef DEBUG
 	// don't accumulate points if AutoPlay is on.
