@@ -97,6 +97,7 @@ const ScreenMessage SM_BackFromInsertAttackModifiers= (ScreenMessage)(SM_User+10
 const ScreenMessage SM_BackFromPrefs				= (ScreenMessage)(SM_User+11);
 const ScreenMessage SM_BackFromCourseModeMenu		= (ScreenMessage)(SM_User+12);
 const ScreenMessage SM_DoReloadFromDisk				= (ScreenMessage)(SM_User+13);
+const ScreenMessage SM_DoUpdateTextInfo				= (ScreenMessage)(SM_User+14);
 
 const CString HELP_TEXT = 
 	"Up/Down:\n     change beat\n"
@@ -377,6 +378,8 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 	m_soundMusic.Load(m_pSong->GetMusicPath());
 
 	m_soundAssistTick.Load(		THEME->GetPathToS("ScreenEdit assist tick") );
+
+	this->HandleScreenMessage( SM_DoUpdateTextInfo );
 }
 
 ScreenEdit::~ScreenEdit()
@@ -540,14 +543,6 @@ void ScreenEdit::Update( float fDeltaTime )
 	m_NoteFieldEdit.Update( fDeltaTime );
 
 	PlayTicks();
-
-	static float fUpdateCounter = 0;
-	fUpdateCounter -= fDeltaTime;
-	if( fUpdateCounter < 0 )
-	{
-		fUpdateCounter = 0.5;
-		UpdateTextInfo();
-	}
 }
 
 void ScreenEdit::UpdateTextInfo()
@@ -661,6 +656,8 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 	case MODE_PLAYING:		InputPlay( DeviceI, type, GameI, MenuI, StyleI );	break;
 	default:	ASSERT(0);
 	}
+
+	UpdateTextInfo();
 }
 
 
@@ -1455,6 +1452,11 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 
 		break;
 	}
+	case SM_DoUpdateTextInfo:
+		this->PostScreenMessage( SM_DoUpdateTextInfo, 0.5f );
+		UpdateTextInfo();
+		break;
+
 	case SM_GainFocus:
 		/* We do this ourself. */
 		SOUND->HandleSongTimer( false );
