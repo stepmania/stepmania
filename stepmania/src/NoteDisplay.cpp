@@ -87,23 +87,6 @@ int NoteDisplay::GetTapFrameNo( const float fNoteBeat )
 	return iFrameNo;
 }
 
-//	if( ct == PlayerOptions::COLOR_NOTE )
-//	{
-//		RageColor color = GetNoteColorFromBeat( fNoteBeat );
-//		colorLeadingOut = color;
-//		colorTrailingOut = color;
-//
-//		// add a little bit of white so the note doesn't look so plain
-//		colorLeadingOut.r += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-//		colorLeadingOut.g += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-//		colorLeadingOut.b += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
-//		colorTrailingOut.r += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-//		colorTrailingOut.g += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-//		colorTrailingOut.b += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
-//		return;
-//	}
-
-
 void NoteDisplay::DrawHold( const HoldNote& hn, const bool bActive, const float fLife, const float fPercentFadeToFail, bool bDrawGlowOnly )
 {
 	// bDrawGlowOnly is a little hacky.  We need to draw the diffuse part and the glow part one pass at a time to minimize state changes
@@ -342,7 +325,18 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	const float fGlow			= ArrowGetGlow(		m_PlayerNumber, fYPos, fPercentFadeToFail );
 	const int iTapFrameNo		= GetTapFrameNo( fBeat );
 	const float fColorScale		= SCALE(fLife,0,1,0.2f,1);
-	RageColor color = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	RageColor diffuse = RageColor(fColorScale,fColorScale,fColorScale,fAlpha);
+	RageColor glow = RageColor(1,1,1,fGlow);
+
+	if( GAMESTATE->m_PlayerOptions[m_PlayerNumber].m_ColorType == PlayerOptions::COLOR_NOTE )
+	{
+		RageColor noteColor = GetNoteColorFromBeat(fBeat);
+		diffuse.r *= noteColor.r;
+		diffuse.g *= noteColor.g;
+		diffuse.b *= noteColor.b;
+
+		glow = RageColor(1,1,1,1)*fGlow + noteColor*(1-fGlow)*0.5f;
+	}
 
 	if( bOnSameRowAsHoldStart  &&  g_bDrawHoldHeadForTapsOnSameRow )
 	{
@@ -350,8 +344,8 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 		// draw hold head
 		//
 		m_sprHoldParts.SetXY( fXPos, fYPos );
-		m_sprHoldParts.SetDiffuse( color );
-		m_sprHoldParts.SetGlow( RageColor(1,1,1,fGlow) );
+		m_sprHoldParts.SetDiffuse( diffuse );
+		m_sprHoldParts.SetGlow( glow );
 		m_sprHoldParts.StopUsingCustomCoords();
 		m_sprHoldParts.SetState( 0 );
 		m_sprHoldParts.Draw();
@@ -360,9 +354,26 @@ void NoteDisplay::DrawTap( const int iCol, const float fBeat, const bool bOnSame
 	{
 		m_sprTap.SetXY( fXPos, fYPos );
 		m_sprTap.SetRotation( fRotation );
-		m_sprTap.SetGlow( RageColor(1,1,1,fGlow) );
-		m_sprTap.SetDiffuse( color );
+		m_sprTap.SetGlow( glow );
+		m_sprTap.SetDiffuse( diffuse );
 		m_sprTap.SetState( iTapFrameNo );
 		m_sprTap.Draw();
 	}
 }
+
+
+//	if( ct == PlayerOptions::COLOR_NOTE )
+//	{
+//		RageColor color = GetNoteColorFromBeat( fNoteBeat );
+//		colorLeadingOut = color;
+//		colorTrailingOut = color;
+//
+//		// add a little bit of white so the note doesn't look so plain
+//		colorLeadingOut.r += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
+//		colorLeadingOut.g += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
+//		colorLeadingOut.b += 0.3f * fabsf( fPercentThroughColorsLeading - 0.5f );
+//		colorTrailingOut.r += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
+//		colorTrailingOut.g += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
+//		colorTrailingOut.b += 0.3f * fabsf( fPercentThroughColorsTrailing - 0.5f );
+//		return;
+//	}
