@@ -147,7 +147,7 @@ ScreenGameplay::ScreenGameplay()
 	}
 
 
-	m_bChangedOffsetOrBPM = false;
+	m_bChangedOffsetOrBPM = (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON);
 
 
 	m_DancingState = STATE_INTRO;
@@ -817,9 +817,22 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
-//		case DIK_F6:
-//			this->SendScreenMessage( SM_BeginToasty, 0 );
-//			break;
+		case DIK_F6:
+			m_bChangedOffsetOrBPM = true;
+
+			if (GAMESTATE->m_SongOptions.m_AutoAdjust == SongOptions::ADJUST_ON) {
+				GAMESTATE->m_SongOptions.m_AutoAdjust = SongOptions::ADJUST_OFF;
+				m_textDebug.SetText( "AutoAdjust is OFF" );
+			} else {
+				GAMESTATE->m_SongOptions.m_AutoAdjust = SongOptions::ADJUST_ON;
+				m_textDebug.SetText( "AutoAdjust is ON" );
+			}
+			m_textDebug.SetDiffuse( D3DXCOLOR(1,1,1,1) );
+			m_textDebug.StopTweening();
+			m_textDebug.BeginTweening( 3 );		// sleep
+			m_textDebug.BeginTweening( 0.5f );	// fade out
+			m_textDebug.SetTweenDiffuse( D3DXCOLOR(1,1,1,0) );
+			break;
 		case DIK_F7:
 			if( GAMESTATE->m_SongOptions.m_AssistType == SongOptions::ASSIST_NONE )
 				GAMESTATE->m_SongOptions.m_AssistType = SongOptions::ASSIST_TICK;
