@@ -35,6 +35,7 @@ public:
 private:
 #if !defined(WITHOUT_NETWORKING)
 
+	void ProcessInput();
 
 	void StartUp();
 

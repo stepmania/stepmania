@@ -1513,6 +1513,7 @@ static void GameLoop()
 		GAMESTATE->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		MEMCARDMAN->Update( fDeltaTime );
+		NSMAN->Update( fDeltaTime );
 
 		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );

@@ -29,6 +29,7 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 NetworkSyncManager::NetworkSyncManager()
 {
     NetPlayerClient = new EzSockets;
+	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;
     
 	useSMserver = false;
@@ -103,7 +104,13 @@ void NetworkSyncManager::PostStartUp(CString ServerIP)
 
 	ClearPacket(m_packet);
 
+	//Block until responce is received
+	//Move mode to blocking in order to give CPU back to the 
+	//system, and not wait.
+	
+	NetPlayerClient->blocking=true;
 	NetPlayerClient->ReadPack((char*)m_packet.Data,NETMAXBUFFERSIZE);
+	NetPlayerClient->blocking=false;
 
 	//int command = Read1(m_packet);
 	Read1(m_packet);
@@ -252,9 +259,12 @@ void NetworkSyncManager::StartRequest()
 
 	ClearPacket(m_packet);
 	//Block until go is recieved.
-	NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE);	
+	//Switch to blocking mode (this is the only
+	//way I know how to get precievably instantanious results
+	NetPlayerClient->blocking=true;
+	NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE);
+	NetPlayerClient->blocking=false;
 
-	//Ignore this packet for now
 }
 	
 void NetworkSyncManager::DisplayStartupStatus()
@@ -278,6 +288,50 @@ void NetworkSyncManager::DisplayStartupStatus()
 
 void NetworkSyncManager::Update(float fDeltaTime)
 {
+	ProcessInput();
+}
+
+void NetworkSyncManager::ProcessInput()
+{
+	//If we're disconnected, just exit
+	if (NetPlayerClient->state!=NetPlayerClient->skCONNECTED)
+		return;
+
+	//load new data into buffer
+
+	NetPlayerClient->update();
+
+	ClearPacket(m_packet);
+
+	while (NetPlayerClient->ReadPack((char *)&m_packet, NETMAXBUFFERSIZE)>0)
+	{
+		int command = Read1(m_packet);
+		LOG->Trace("Received command from server:%d",command-128);
+
+		//Check to make sure command is valid from server
+		if (command<128)
+			break;
+
+		command+=-128;
+
+		switch (command) {
+		case 0: //Ping packet responce
+			ClearPacket(m_packet);
+			Write1(m_packet,0);
+			NetPlayerClient->SendPack((char*)m_packet.Data,m_packet.Position);
+			break;
+		case 1:	//These are in responce to when/if we send packet 0's
+		case 2: //This is already taken care of by the blocking code earlier on
+		case 3: //This is taken care of by the blocking start code
+		case 4: //Undefined
+		case 5: //Undefined
+			break;
+		case 6:	//System message from server
+			CString SysMSG = ReadNT(m_packet);
+			SCREENMAN->SystemMessage(SysMSG);
+			break;
+		}
+	}
 }
 
 
