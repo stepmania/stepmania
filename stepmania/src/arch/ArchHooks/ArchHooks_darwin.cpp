@@ -73,14 +73,18 @@ void ArchHooks_darwin::DumpDebugInfo()
 
     /* Get system version */
     err = Gestalt(gestaltSystemVersion, &code);
-    if (err == noErr) {
+    if (err == noErr)
+    {
         systemVersion = "Mac OS X ";
-        if (code >= kMacOSX_10_2 && code < kMacOSX_10_3) {
+        if (code >= kMacOSX_10_2 && code < kMacOSX_10_3)
+        {
             systemVersion += "10.2.";
             asprintf(&temp, "%d", code - kMacOSX_10_2);
             systemVersion += temp;
             free(temp);
-        } else {
+        }
+        else
+        {
             systemVersion += "10.3";
             int ssv = code - kMacOSX_10_3;
             if (ssv > 9)
@@ -91,7 +95,8 @@ void ArchHooks_darwin::DumpDebugInfo()
                 free(temp);
             }
         }
-    } else
+    }
+    else
         systemVersion = "Unknown system version";
             
     /* Get memory */
@@ -99,13 +104,16 @@ void ArchHooks_darwin::DumpDebugInfo()
     if (err != noErr)
         vRam = 0;
     err = Gestalt(gestaltPhysicalRAMSize, &ram);
-    if (err == noErr) {
+    if (err == noErr)
+    {
         vRam -= ram;
         if (vRam < 0)
             vRam = 0;
         ram /= 1048576; /* 1048576 = 1024*1024 */
         vRam /= 1048576;
-    } else {
+    }
+    else
+    {
         ram = 0;
         vRam = 0;
     }
@@ -113,8 +121,10 @@ void ArchHooks_darwin::DumpDebugInfo()
     /* Get processor */
     numProcessors = MPProcessorsScheduled();
     err = Gestalt(gestaltNativeCPUtype, &code);
-    if (err == noErr) {
-        switch (code) {
+    if (err == noErr)
+    {
+        switch (code)
+        {
             CASE_GESTALT_M(processor, CPU601, "601");
             CASE_GESTALT_M(processor, CPU603, "603");
             CASE_GESTALT_M(processor, CPU603e, "603e");
@@ -132,15 +142,18 @@ void ArchHooks_darwin::DumpDebugInfo()
                 processor = temp;
                 free(temp);
         }
-    } else
+    }
+    else
         processor = "unknown";
     err = Gestalt(gestaltProcClkSpeed, &processorSpeed);
     if (err != noErr)
         processorSpeed = 0;
     /* Get machine */
     err = Gestalt(gestaltMachineType, &code);
-    if (err == noErr) {
-        switch (code) {
+    if (err == noErr)
+    {
+        switch (code)
+        {
             /* PowerMacs */
             CASE_GESTALT(machine, PowerMac4400);
             CASE_GESTALT(machine, PowerMac4400_160);
@@ -190,10 +203,12 @@ void ArchHooks_darwin::DumpDebugInfo()
                 machine = temp;
                 free(temp);
         }
-    } else if (err == gestaltUndefSelectorErr ) {
+    }
+    else if (err == gestaltUndefSelectorErr ) {
         machine = "PowerMac";
         machine += processor;
-    } else
+    }
+    else
         machine = "unknown machine";
     
     /* Get primary display driver */
@@ -232,7 +247,8 @@ void ArchHooks_darwin::MessageBoxOK(CString sMessage, CString ID)
     ControlRef box;
     SInt16 unused;
     
-    if (allowHush) {
+    if (allowHush)
+    {
         Rect boxBounds = {20, 40, 300, 25}; /* again, whatever */
         CreateCheckBoxControl(GetDialogWindow(dialog), &boxBounds, boxName, 0, true, &box);
         GetBestControlRect(box, &boxBounds, &unused);
@@ -270,7 +286,8 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     ASSERT(err == noErr);
     RunStandardAlert(dialog, NULL, &button);
     
-    switch (button) {
+    switch (button)
+    {
     case kAlertStdAlertOKButton:
         result =  retry;
         break;
@@ -286,7 +303,8 @@ ArchHooks::MessageBoxResult ArchHooks_darwin::MessageBoxAbortRetryIgnore(CString
     return result;
 }
 
-inline void ArchHooks_darwin::Update(float delta) {
+inline void ArchHooks_darwin::Update(float delta)
+{
 #pragma unused(delta)
     MoviesTask(NULL, 0);
     OSErr err = GetMoviesError();
