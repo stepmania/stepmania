@@ -349,7 +349,6 @@ void ScreenEdit::Update( float fDeltaTime )
 			{
 				TransitionToEdit();
 			}
-			/* XXX: EndMarker may be -1! */
 			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fEndMarker;
 		}
 	}
@@ -1355,8 +1354,6 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		{
 		case DIK_ESCAPE:
 			TransitionToEdit();
-
-			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
 			break;
 		case DIK_F11:
 		case DIK_F12:
@@ -1398,6 +1395,9 @@ void ScreenEdit::TransitionToEdit()
 	m_rectRecordBack.StopTweening();
 	m_rectRecordBack.BeginTweening( 0.5f );
 	m_rectRecordBack.SetTweenDiffuse( D3DXCOLOR(0,0,0,0) );
+
+	/* Make sure we're snapped. */
+	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
 }
 
 void ScreenEdit::TransitionFromRecordToEdit()
@@ -1411,8 +1411,6 @@ void ScreenEdit::TransitionFromRecordToEdit()
 	m_NoteFieldEdit.ClearRange( iNoteIndexBegin, iNoteIndexEnd );
 
 	m_NoteFieldEdit.CopyRange( (NoteData*)&m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd, iNoteIndexBegin );
-
-	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetSnapMode()) );
 }
 
 
