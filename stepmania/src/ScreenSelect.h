@@ -37,7 +37,6 @@ protected:
 
 	vector<CodeItem>	m_aCodes;
 	vector<GameCommand>	m_aCodeChoices;
-	vector<CString>		m_aCodeActions;
 };
 
 #endif

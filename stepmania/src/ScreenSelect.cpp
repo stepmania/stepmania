@@ -14,7 +14,6 @@
 #include "ThemeManager.h"
 #include "GameCommand.h"
 #include "RageDisplay.h"
-#include "UnlockSystem.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LightsManager.h"
 
@@ -23,7 +22,7 @@
 #define CHOICE( sChoiceName )	THEME->GetMetricA(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
 #define NUM_CODES				THEME->GetMetricI(m_sName,"NumCodes")
 #define CODE( c )				THEME->GetMetric (m_sName,ssprintf("Code%d",c+1))
-#define CODE_ACTION( c )		THEME->GetMetric (m_sName,ssprintf("Code%dAction",c+1))
+#define CODE_ACTION( c )		THEME->GetMetricA(m_sName,ssprintf("Code%dAction",c+1))
 #define HELP_TEXT				THEME->GetMetric (m_sName,"HelpText")
 #define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
 
@@ -71,9 +70,8 @@ ScreenSelect::ScreenSelect( CString sClassName ) : ScreenWithMenuElements(sClass
 			continue;
 
 		m_aCodes.push_back( code );
-		m_aCodeActions.push_back( CODE_ACTION(c) );
 		GameCommand mc;
-		mc.Load( c, ParseCommands(CODE_ACTION(c)) );
+		mc.Load( c, CODE_ACTION(c) );
 		m_aCodeChoices.push_back( mc );
 	}
 
@@ -145,20 +143,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 		if( !m_aCodes[i].EnteredCode( GameI.controller ) )
 			continue;
 
-		const CString &action = m_aCodeActions[i];
-		LOG->Trace("entered code for '%s'", action.c_str());
-		vector<CString> parts;
-		split( action, ";", parts, true );
-		for( unsigned j = 0; j < parts.size(); ++j )
-		{
-			vector<CString> asBits;
-			split( parts[j], ",", asBits, true );
-			if( !asBits[0].CompareNoCase("unlock") )
-				UNLOCKMAN->UnlockCode( atoi(asBits[1]) );
-			if( !asBits[0].CompareNoCase("sound") )
-				SOUND->PlayOnce( THEME->GetPathToS( asBits[1] ) );
-		}
-
+		LOG->Trace("entered code for index %d", i);
 		m_aCodeChoices[i].Apply( MenuI.player );
 	}
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
