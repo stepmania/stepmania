@@ -182,28 +182,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 			case '/':	c='?';	break;
 			}
 		}
-
-		//In the event we are using the numpad...
-		switch ( DeviceI.button )
-		{
-			case KEY_KP_C0:		c='0'; break;
-			case KEY_KP_C1:		c='1'; break;
-			case KEY_KP_C2:		c='2'; break;
-			case KEY_KP_C3:		c='3'; break;
-			case KEY_KP_C4:		c='4'; break;
-			case KEY_KP_C5:		c='5'; break;
-			case KEY_KP_C6:		c='6'; break;
-			case KEY_KP_C7:		c='7'; break;
-			case KEY_KP_C8:		c='8'; break;
-			case KEY_KP_C9:		c='9'; break;
-			case KEY_KP_SLASH:	c='/'; break;
-			case KEY_KP_ASTERISK: c='*'; break;
-			case KEY_KP_HYPHEN: c='-'; break;
-			case KEY_KP_PLUS:	c='+'; break;
-			case KEY_KP_PERIOD: c='.'; break;
-			case KEY_KP_EQUAL:	c='='; break;
-		}
-		
+	
 		if( c >= ' ' )
 		{
 			m_sAnswer += c;
