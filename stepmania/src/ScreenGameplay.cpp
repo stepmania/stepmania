@@ -1293,9 +1293,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		}
 		
 		if( MenuI.button == MENU_BUTTON_BACK && 
-			(!PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS) ||
+			((!PREFSMAN->m_bDelayedEscape && type==IET_FIRST_PRESS) ||
 			(DeviceI.device==DEVICE_KEYBOARD && type==IET_SLOW_REPEAT)  ||
-			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT) )
+			(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT)) )
 		{
 			m_DancingState = STATE_OUTRO;
 			SOUND->PlayOnce( THEME->GetPathToS("Common back") );
