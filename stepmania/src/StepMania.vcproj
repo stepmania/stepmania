@@ -192,6 +192,12 @@
 				RelativePath="ScreenEz2SelectStyle.h">
 			</File>
 			<File
+				RelativePath="ScreenEz2Stage.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEz2Stage.h">
+			</File>
+			<File
 				RelativePath="ScreenGameOptions.cpp">
 			</File>
 			<File

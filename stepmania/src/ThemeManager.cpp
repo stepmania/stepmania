@@ -31,8 +31,9 @@ ThemeManager::ThemeManager()
 	CStringArray arrayThemeNames;
 	GetAllThemeNames( arrayThemeNames );
 
-	for( int i=0; i<arrayThemeNames.GetSize(); i++ )
-		AssertThemeIsComplete( arrayThemeNames[i] );
+	// Disabled for now... it takes ages here to run - bbf
+//	for( int i=0; i<arrayThemeNames.GetSize(); i++ )
+//		AssertThemeIsComplete( arrayThemeNames[i] );
 }
 
 void ThemeManager::GetAllThemeNames( CStringArray& AddTo )
