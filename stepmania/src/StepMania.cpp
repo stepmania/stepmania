@@ -463,18 +463,19 @@ void GameLoop()
 		//if( fDeltaTime > 0.050f )	// we dropped a bunch of frames
 		// 	fDeltaTime = 0.050f;
 		if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_TAB) ) ) {
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_QUOTEDBL) ) )
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime = 0; /* both; stop time */
 			else
 				fDeltaTime *= 4;
 		} else
-			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_QUOTEDBL) ) )
+			if( INPUTMAN->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, SDLK_BACKQUOTE) ) )
 				fDeltaTime /= 4;
 
 		TEXTUREMAN->Update( fDeltaTime );
 		MUSIC->Update( fDeltaTime );
 		SCREENMAN->Update( fDeltaTime );
 		CLIENT->Update( fDeltaTime );
+//		SOUNDMAN->Update( fDeltaTime );
 
 		static InputEventArray ieArray;
 		ieArray.clear();	// empty the array
