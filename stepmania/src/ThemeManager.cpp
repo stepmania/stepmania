@@ -285,9 +285,9 @@ try_element_again:
 
 	if( asElementPaths.size() == 0 )
 	{
-		// HACK: have Numbers fall back to fonts.  Eventually Numbers will be removed.
-		if( category == Numbers )
-			return GetPathToRaw( sThemeName, Fonts, sClassName, sElement ) ;
+		// HACK: have Fonts fall back to Numbers.  Eventually Numbers will be removed.
+		if( category == Fonts )
+			return GetPathToRaw( sThemeName, Numbers, sClassName, sElement ) ;
 		return "";	// This isn't fatal.
 	}
 
@@ -625,7 +625,6 @@ CString ThemeManager::GetLanguageIniPath( CString sThemeName, CString sLanguage 
 CString ThemeManager::GetPathToB( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathB(sClassName,sElement,bOptional); }
 CString ThemeManager::GetPathToF( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathF(sClassName,sElement,bOptional); }
 CString ThemeManager::GetPathToG( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathG(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToN( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathN(sClassName,sElement,bOptional); }
 CString ThemeManager::GetPathToS( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathS(sClassName,sElement,bOptional); }
 CString ThemeManager::GetPathToO( CString sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathO(sClassName,sElement,bOptional); }
 

@@ -36,7 +36,6 @@ public:
 	CString GetPathB( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(BGAnimations,sClassName,sElement,bOptional); };
 	CString GetPathF( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Fonts,sClassName,sElement,bOptional); };
 	CString GetPathG( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Graphics,sClassName,sElement,bOptional); };
-	CString GetPathN( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Numbers,sClassName,sElement,bOptional); };
 	CString GetPathS( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Sounds,sClassName,sElement,bOptional); };
 	CString GetPathO( CString sClassName, CString sElement, bool bOptional=false ) { return GetPath(Other,sClassName,sElement,bOptional); };
 
@@ -44,7 +43,6 @@ public:
 	CString GetPathToB( CString sFileName, bool bOptional=false );
 	CString GetPathToF( CString sFileName, bool bOptional=false );
 	CString GetPathToG( CString sFileName, bool bOptional=false );
-	CString GetPathToN( CString sFileName, bool bOptional=false );
 	CString GetPathToS( CString sFileName, bool bOptional=false );
 	CString GetPathToO( CString sFileName, bool bOptional=false );
 
