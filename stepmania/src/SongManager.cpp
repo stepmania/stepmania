@@ -58,19 +58,6 @@ void SongManager::InitSongArrayFromDisk( void(*callback)() )
 
 	for( int i=0; i<PREFSMAN->m_asAdditionalSongFolders.GetSize(); i++ )
         LoadStepManiaSongDir( PREFSMAN->m_asAdditionalSongFolders[i], callback );
-	
-	// compute group names
-	CArray<Song*, Song*> arraySongs;
-	arraySongs.Copy( m_pSongs );
-	SortSongPointerArrayByGroup( arraySongs );
-
-	for( i=0; i<m_pSongs.GetSize(); i++ )
-	{
-		const CString sGroupName = m_pSongs[i]->m_sGroupName;
-
-		if( m_arrayGroupNames.GetSize() == 0  ||  m_arrayGroupNames[m_arrayGroupNames.GetSize()-1] != sGroupName )
-			m_arrayGroupNames.Add( sGroupName );
-	}
 
 	LOG->Trace( "Found %d Songs.", m_pSongs.GetSize() );
 }
@@ -153,6 +140,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, void(*callback)() )
 			m_pSongs.Add( pNewSong );
 		}
 	}
+
 	GAMESTATE->m_sLoadingMessage = "Done loading songs.";
 	if( callback )
 		callback();
