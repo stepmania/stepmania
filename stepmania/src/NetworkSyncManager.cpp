@@ -327,7 +327,8 @@ void NetworkSyncManager::DisplayStartupStatus()
 
 void NetworkSyncManager::Update(float fDeltaTime)
 {
-	ProcessInput();
+	if (useSMserver)
+		ProcessInput();
 }
 
 void NetworkSyncManager::ProcessInput()
@@ -335,7 +336,11 @@ void NetworkSyncManager::ProcessInput()
 	//If we're disconnected, just exit
 	if ((NetPlayerClient->state!=NetPlayerClient->skCONNECTED) || 
 			NetPlayerClient->IsError())
+	{
+		SCREENMAN->SystemMessageNoAnimate("Connection to server dropped.");
+		useSMserver=false;
 		return;
+	}
 
 	//load new data into buffer
 
