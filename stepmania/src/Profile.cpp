@@ -1069,7 +1069,8 @@ XNode* Profile::SaveCategoryScoresCreateNode() const
 			if( pProfile->GetCategoryHighScoreList(st,rc).iNumTimesPlayed == 0 )
 				continue;
 
-			XNode* pRankingCategoryNode = pStepsTypeNode->AppendChild( "RankingCategory", rc );
+			XNode* pRankingCategoryNode = pStepsTypeNode->AppendChild( "RankingCategory" );
+			pRankingCategoryNode->AppendAttr( "Type", RankingCategoryToString(rc) );
 
 			const HighScoreList &hsl = pProfile->GetCategoryHighScoreList( (StepsType)st, (RankingCategory)rc );
 
@@ -1107,8 +1108,12 @@ void Profile::LoadCategoryScoresFromNode( const XNode* pNode )
 			if( (*radarCategory)->name != "RankingCategory" )
 				continue;
 
-			RankingCategory rc;
-			(*radarCategory)->GetValue( (int&)rc );
+			const LPXAttr TypeAttr = (*radarCategory)->GetAttr( "Type" );
+			if( TypeAttr == NULL )
+				WARN_AND_CONTINUE;
+			RankingCategory rc = StringToRankingCategory( TypeAttr->value );
+			if( rc == RANKING_INVALID )
+				WARN_AND_CONTINUE;
 
 			XNode *pHighScoreListNode = (*radarCategory)->GetChild("HighScoreList");
 			if( pHighScoreListNode == NULL )
