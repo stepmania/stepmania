@@ -12,14 +12,7 @@
 #if defined(WIN32)
 #include <winsock2.h>
 #else
-#include <sys/socket.h>
 #include <netinet/in.h>
-#include <netinet/in_systm.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <netdb.h>
 #endif
 
 using namespace std;
