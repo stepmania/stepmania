@@ -1098,3 +1098,10 @@ Course *SongManager::FindCourse( CString sName )
 
 	return NULL;
 }
+
+void SongManager::UpdateBest()
+{
+	m_pBestSongs = m_pSongs;
+	SortSongPointerArrayByMostPlayed( m_pBestSongs );
+}
+

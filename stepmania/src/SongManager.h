@@ -63,6 +63,7 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
+	const vector<Song*> &GetBestSongs() const { return m_pBestSongs; }
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = 100000 /*inf*/ ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,"",iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,"",100000 /*inf*/ ); }
@@ -105,6 +106,7 @@ public:
 		CString	sName;
 	} m_MachineScores[NUM_NOTES_TYPES][NUM_RANKING_CATEGORIES][NUM_RANKING_LINES];
 	void AddScores( NotesType nt, bool bPlayerEnabled[NUM_PLAYERS], RankingCategory hsc[NUM_PLAYERS], int iScore[NUM_PLAYERS], int iNewRecordIndexOut[NUM_PLAYERS] );	// set iNewRecordIndex = -1 if not a new record
+	void UpdateBest();
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
@@ -120,6 +122,7 @@ protected:
 	void ReadCourseRankingsFromFile( CString fn );
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
+	vector<Song*>		m_pBestSongs;
 	CStringArray		m_arrayGroupNames;
 	CStringArray		m_GroupBannerPaths;		// each song group has a banner associated with it
 };
