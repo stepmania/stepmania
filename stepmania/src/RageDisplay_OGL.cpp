@@ -412,9 +412,12 @@ void RageDisplay_OGL::Update(float fDeltaTime)
 	wind->Update(fDeltaTime);
 
 #if defined(unix)
-	/* Disable the screensaver. */
-	ASSERT( g_X11Display );
-	XForceScreenSaver( g_X11Display, ScreenSaverReset );
+	if( PREFSMAN->m_bDisableScreenSaver )
+	{
+		/* Disable the screensaver. */
+		ASSERT( g_X11Display );
+		ForceScreenSaver( g_X11Display, ScreenSaverReset );
+	}
 #endif
 }
 
