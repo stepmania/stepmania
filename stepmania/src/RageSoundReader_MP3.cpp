@@ -4,6 +4,7 @@
 
 /* MAD is available from: http://www.mars.org/home/rob/proj/mpeg/ */
 
+#include <errno.h>
 #include <stdio.h>
 #include "RageLog.h"
 

@@ -162,10 +162,11 @@ RageException.cpp RageException.h RageFile.cpp RageFile.h RageInput.cpp RageInpu
 RageInputDevice.cpp RageInputDevice.h RageLog.cpp RageLog.h RageMath.cpp RageMath.h RageSound.cpp RageSound.h \
 RageSoundManager.cpp RageSoundManager.h RageSoundReader.cpp RageSoundReader.h RageSoundReader_FileReader.h \
 RageSoundReader_Preload.cpp RageSoundReader_Preload.h RageSoundReader_Resample.cpp RageSoundReader_Resample.h \
-RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h RageSoundReader_WAV.cpp RageSoundReader_WAV.h \
-RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h RageTexture.cpp RageTexture.h \
-RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h RageTimer.cpp RageTimer.h RageTypes.h \
-RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h RageUtil_FileDB.cpp RageUtil_FileDB.h
+RageSoundReader_SDL_Sound.cpp RageSoundReader_SDL_Sound.h RageSoundReader_MP3.cpp RageSoundReader_MP3.h \
+RageSoundReader_WAV.cpp RageSoundReader_WAV.h RageSoundResampler.cpp RageSoundResampler.h RageSounds.cpp RageSounds.h \
+RageTexture.cpp RageTexture.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h \
+RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
+RageUtil_FileDB.cpp RageUtil_FileDB.h
 
 Actors = \
 Actor.cpp Actor.h ActorCollision.h ActorFrame.cpp ActorFrame.h ActorScroller.cpp ActorScroller.h \
@@ -175,9 +176,9 @@ Quad.h Sprite.cpp Sprite.h mathlib.c mathlib.h
 GlobalSingletons = \
 AnnouncerManager.cpp AnnouncerManager.h FontManager.cpp FontManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
-NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h \
-ProfileManager.cpp ProfileManager.h ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h \
-ThemeManager.cpp ThemeManager.h UnlockSystem.cpp UnlockSystem.h
+NoteSkinManager.cpp NoteSkinManager.h PrefsManager.cpp PrefsManager.h ProfileManager.cpp ProfileManager.h \
+ScreenManager.cpp ScreenManager.h SongManager.cpp SongManager.h ThemeManager.cpp ThemeManager.h \
+UnlockSystem.cpp UnlockSystem.h
 
 stepmania_SOURCES = $(Screens) $(DataStructures) $(FileTypes) $(StepMania) $(Arch) \
 		    $(ActorsInGameplayAndMenus) $(ActorsInMenus) $(ActorsInGameplay) \
