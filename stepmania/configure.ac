@@ -77,16 +77,27 @@ if test "$have_libpng" = "no"; then
   echo "*** libpng is required to build StepMania; please make sure that"
   echo "*** it is installed to continue the build process."
   exit 1
+else
+  LIBS="$LIBS -lpng"
 fi
+
+AC_ARG_WITH(jpeg, AC_HELP_STRING([--without-jpeg], [Disable JPEG support]), with_jpeg=$withval, with_jpeg=yes)
 
 have_libjpeg=yes
 AC_SEARCH_LIBS(jpeg_read_scanlines, [jpeg], ,  have_libjpeg=no)
 AC_CHECK_HEADER(jpeglib.h, , have_libjpeg=no)
 if test "$have_libjpeg" = "no"; then
-  echo
-  echo "*** libjpeg is required to build StepMania; please make sure that"
-  echo "*** it is installed to continue the build process."
-  exit 1
+        # Require JPEG by default, so people don't compile without it
+	# by accident and then come asking us why files won't load.
+	if test "$with_jpeg" = "yes"; then
+		AC_MSG_ERROR(
+[libjpeg is required to build StepMania; please make sure that it is installed
+to continue the build process.  If you really want to compile without JPEG
+support, pass the "--without-jpeg" flag to configure.])
+	fi
+	AC_DEFINE(NO_JPEG_SUPPORT, 1, [JPEG support not available])
+else
+	LIBS="$LIBS -ljpeg"
 fi
 
 SM_LUA
