@@ -205,15 +205,24 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 			 * (That would have the same effect with 1,1,1,1, and allow tweening the diffuse
 			 * while blinking and shifting.) */
 			for(int i=0; i<4; i++)
+			{
 				m_tempState.diffuse[i] = bBlinkOn ? m_effectColor1 : m_effectColor2;
+				m_tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+			}
 			break;
 		case diffuse_shift:
 			for(int i=0; i<4; i++)
+			{
 				m_tempState.diffuse[i] = m_effectColor1*fPercentBetweenColors + m_effectColor2*(1.0f-fPercentBetweenColors);
+				m_tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+			}
 			break;
 		case diffuse_ramp:
 			for(int i=0; i<4; i++)
+			{
 				m_tempState.diffuse[i] = m_effectColor1*fPercentThroughEffect + m_effectColor2*(1.0f-fPercentThroughEffect);
+				m_tempState.diffuse[i].a *= fOriginalAlpha;	// multiply the alphas so we can fade even while an effect is playing
+			}
 			break;
 		case glow_blink:
 			m_tempState.glow = bBlinkOn ? m_effectColor1 : m_effectColor2;
