@@ -54,6 +54,7 @@
 const ScreenMessage SM_NoSongs		= ScreenMessage(SM_User+3);
 const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
+const ScreenMessage SM_BackFromOpts	= ScreenMessage(SM_User+6);
 
 const CString AllGroups			= "[ALL MUSIC]";
 
@@ -158,6 +159,11 @@ ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenWithM
 	SET_XY_AND_ON_COMMAND( m_textSubtitle );
 	this->AddChild( &m_textSubtitle );
 
+	//SelectOptions Sprite
+	m_sprSelOptions.Load( THEME->GetPathG( m_sName, "options" ) );
+	m_sprSelOptions.SetName( "options" );
+	SET_XY_AND_ON_COMMAND( m_sprSelOptions );
+	this->AddChild( &m_sprSelOptions );
 
 	//Diff Icon background
 	m_rectDiff.SetDiffuse( DIFFBG_COLOR );
@@ -288,12 +294,13 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 			case ']':	c='}';	break;
 			case '\\':	c='|';	break;
 			case ';':	c=':';	break;
-			case '\'':	c='"';	break;
 			case ',':	c='<';	break;
 			case '.':	c='>';	break;
 			case '/':	c='?';	break;
 			}
 		}
+		if ( !bHoldingShift && (c == '\"') )
+			c = '\'';
 
 		//Search list for given letter (to aide in searching)
 		if( bHoldingCtrl )
@@ -392,6 +399,11 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 		break;
+	case SM_BackFromOpts:
+		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
+		GAMESTATE->m_bEditing = false;
+		NSMAN->ReportPlayerOptions();
+		break;
 	}
 
 }
@@ -413,25 +425,33 @@ void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type 
 		UpdateSongsListPos();
 		break;
 	case SelectDifficulty:
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-		vector <Steps *> MultiSteps;
-		MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
-		if (MultiSteps.size() == 0)
-			m_DC[pn] = NUM_DIFFICULTIES;
-		else
 		{
-			for ( i=0; i<(int)MultiSteps.size(); i++ )
-				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
-					break;
-
-			if ( i == (int)MultiSteps.size() )
-				m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			vector <Steps *> MultiSteps;
+			MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
+			if (MultiSteps.size() == 0)
+				m_DC[pn] = NUM_DIFFICULTIES;
 			else
-				if (i > 0)	//If we are at the easiest difficulty, do nothign
+			{
+				for ( i=0; i<(int)MultiSteps.size(); i++ )
+					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
+						break;
+
+				if ( i == (int)MultiSteps.size() )
 					m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+				else
+					if (i > 0)	//If we are at the easiest difficulty, do nothign
+						m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+			}
+			UpdateDifficulties( pn );
+			GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
 		}
-		UpdateDifficulties( pn );
-		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
+		break;
+	case SelectOptions:
+		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
+		GAMESTATE->m_bEditing = true;
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
+		break;
 	}
 }
 
@@ -452,25 +472,33 @@ void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type
 		UpdateSongsListPos();
 		break;
 	case SelectDifficulty:
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-		vector <Steps *> MultiSteps;
-		MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
-		if (MultiSteps.size() == 0)
-			m_DC[pn] = NUM_DIFFICULTIES;
-		else
 		{
-			for ( i=0; i<(int)MultiSteps.size(); i++ )
-				if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
-					break;
-
-			if ( i == (int)MultiSteps.size() )
-				m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+			StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+			vector <Steps *> MultiSteps;
+			MultiSteps = GAMESTATE->m_pCurSong->GetAllSteps( st );
+			if (MultiSteps.size() == 0)
+				m_DC[pn] = NUM_DIFFICULTIES;
 			else
-				if (i < (int)MultiSteps.size() - 1 )	//If we are at the hardest difficulty, do nothign
-					m_DC[pn] = MultiSteps[i+1]->GetDifficulty();
+			{
+				for ( i=0; i<(int)MultiSteps.size(); i++ )
+					if ( MultiSteps[i]->GetDifficulty() >= m_DC[pn] )
+						break;
+
+				if ( i == (int)MultiSteps.size() )
+					m_DC[pn] = MultiSteps[i-1]->GetDifficulty();
+				else
+					if (i < (int)MultiSteps.size() - 1 )	//If we are at the hardest difficulty, do nothign
+						m_DC[pn] = MultiSteps[i+1]->GetDifficulty();
+			}
+			UpdateDifficulties( pn );
+			GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
 		}
-		UpdateDifficulties( pn );
-		GAMESTATE->m_PreferredDifficulty[pn] = m_DC[pn];
+		break;
+	case SelectOptions:
+		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
+		GAMESTATE->m_bEditing = true;
+		SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromOpts );
+		break;
 	}
 }
 
@@ -532,6 +560,8 @@ void ScreenNetSelectMusic::TweenOffScreen()
 
 	OFF_COMMAND( m_rectExInfo );
 	OFF_COMMAND( m_rectDiff );
+
+	OFF_COMMAND( m_sprSelOptions );
 
 	FOREACH_EnabledPlayer (pn)
 	{

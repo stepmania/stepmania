@@ -660,6 +660,14 @@ void NetworkSyncManager::SendChat( CString message )
 	NetPlayerClient->SendPack((char*)&m_packet.Data, m_packet.Position); 
 }
 
+void NetworkSyncManager::ReportPlayerOptions()
+{
+	m_packet.ClearPacket();
+	m_packet.Write1( 11 );
+	FOREACH_PlayerNumber (pn)
+		m_packet.WriteNT( GAMESTATE->m_PlayerOptions[pn].GetString() );
+}
+
 void NetworkSyncManager::SelectUserSong()
 {
 	m_packet.ClearPacket();

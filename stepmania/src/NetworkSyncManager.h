@@ -97,6 +97,9 @@ public:
 	void SendChat( CString message );
 	CString m_WaitingChat;
 
+	//Used for options
+	void ReportPlayerOptions();
+
 	//Used for song checking/changing
 	CString m_sMainTitle;
 	CString m_sArtist;

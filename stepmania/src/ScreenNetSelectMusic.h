@@ -42,6 +42,7 @@ private:
 		SelectGroup = 0,
 		SelectSong,
 		SelectDifficulty,
+		SelectOptions,
 		SelectModes,
 	};
 
@@ -92,6 +93,9 @@ private:
 	//Difficulty Icon(s)
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	Difficulty			m_DC[NUM_PLAYERS];
+
+	//Select Options
+	Sprite			m_sprSelOptions;
 
 	void UpdateDifficulties( PlayerNumber pn );
 	DifficultyMeter		m_DifficultyMeters[NUM_PLAYERS];
