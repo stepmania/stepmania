@@ -64,7 +64,7 @@ float ArrowGetYOffset( PlayerNumber pn, int iCol, float fNoteBeat )
 	{
 		float fScale = SCALE( fYOffset, 0.f, SCREEN_HEIGHT, 0, 1.f );
 		float fNewYOffset = fYOffset * fScale; 
-		fYAdjust += (fNewYOffset - fYOffset);
+		fYAdjust += fAccels[PlayerOptions::ACCEL_BRAKE] * (fNewYOffset - fYOffset);
 	}
 	if( fAccels[PlayerOptions::ACCEL_WAVE] > 0 )
 		fYAdjust +=	fAccels[PlayerOptions::ACCEL_WAVE] * 20.0f*sinf( fYOffset/38.0f );
