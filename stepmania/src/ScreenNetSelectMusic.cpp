@@ -35,6 +35,7 @@ const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but sh
 
 const CString AllGroups			= "[ALL MUSIC]";
 
+REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
 ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSelectBase( sName )
 {
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */

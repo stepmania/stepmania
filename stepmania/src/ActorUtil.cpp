@@ -271,8 +271,10 @@ Actor* MakeActor( const RageTextureID &ID )
 		return pBGA;
 	}
 	else 
-	RageException::Throw("File \"%s\" has unknown type, \"%s\"",
-		ID.filename.c_str(), sExt.c_str() );
+	{
+		RageException::Throw("File \"%s\" has unknown type, \"%s\"",
+			ID.filename.c_str(), sExt.c_str() );
+	}
 }
 
 void UtilSetXY( Actor& actor, const CString &sClassName )

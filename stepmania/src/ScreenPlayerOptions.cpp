@@ -15,6 +15,7 @@
 #define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
 #define NEXT_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","NextScreen")
 
+REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
 {

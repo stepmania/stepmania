@@ -6,6 +6,7 @@
 
 #define NEXT_SCREEN			THEME->GetMetric(m_sName,"NextScreen")
 
+REGISTER_SCREEN_CLASS( ScreenClearMachineStats );
 ScreenClearMachineStats::ScreenClearMachineStats( CString sName ): Screen( sName )
 {
 	Profile* pProfile = PROFILEMAN->GetMachineProfile();

@@ -11,6 +11,7 @@
 #include "ScreenDimensions.h"
 
 
+REGISTER_SCREEN_CLASS( ScreenInstructions );
 ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );

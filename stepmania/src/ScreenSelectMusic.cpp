@@ -59,6 +59,7 @@ static bool g_bBannerWaiting = false;
 static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
 
+REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );

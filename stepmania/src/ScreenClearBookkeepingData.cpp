@@ -6,6 +6,7 @@
 
 #define NEXT_SCREEN			THEME->GetMetric(m_sName,"NextScreen")
 
+REGISTER_SCREEN_CLASS( ScreenClearBookkeepingData );
 ScreenClearBookkeepingData::ScreenClearBookkeepingData( CString sName ): Screen( sName )
 {
 	BOOKKEEPER->ClearAll();

@@ -24,6 +24,7 @@
 
 const ScreenMessage	SM_BackFromURL			= ScreenMessage(SM_User+2);
 
+REGISTER_SCREEN_CLASS( ScreenPackages );
 ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	m_iPackagesPos = 0;

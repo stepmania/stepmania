@@ -16,6 +16,7 @@
 
 bool ScreenPrompt::s_bLastAnswer = false;
 
+//REGISTER_SCREEN_CLASS( ScreenPrompt );
 ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData ) :
   Screen("ScreenPrompt")
 {

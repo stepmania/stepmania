@@ -18,6 +18,7 @@
 #define DISABLED_COLOR				THEME->GetMetricC(m_sName,"DisabledColor")
 
 
+REGISTER_SCREEN_CLASS( ScreenSelectStyle );
 ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_iSelection = 0;

@@ -87,6 +87,7 @@ const ScreenMessage SM_ShowNextPage		=	(ScreenMessage)(SM_User+67);
 const ScreenMessage SM_HidePage			=	(ScreenMessage)(SM_User+68);
 
 
+REGISTER_SCREEN_CLASS( ScreenRanking );
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 {
 	// init Actors for category and course

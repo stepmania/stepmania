@@ -25,6 +25,7 @@ void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 		SetText(CustomText);
 }
 
+REGISTER_SCREEN_CLASS( ScreenTestFonts );
 ScreenTestFonts::ScreenTestFonts( CString sClassName ) : Screen( sClassName )
 {
 	Hline.SetXY(SCREEN_CENTER_X, SCREEN_CENTER_Y);

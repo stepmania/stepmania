@@ -83,6 +83,7 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 const ScreenMessage SM_PlayCheer				=	ScreenMessage(SM_User+6);
 
 
+REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
   LOG->Trace( "ScreenEvaluation::ScreenEvaluation" );

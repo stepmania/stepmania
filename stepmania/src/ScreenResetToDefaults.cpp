@@ -7,6 +7,7 @@
 
 #define NEXT_SCREEN			THEME->GetMetric(m_sName,"NextScreen")
 
+REGISTER_SCREEN_CLASS( ScreenResetToDefaults );
 ScreenResetToDefaults::ScreenResetToDefaults( CString sName ): Screen( sName )
 {
 	PREFSMAN->ResetToFactoryDefaults();

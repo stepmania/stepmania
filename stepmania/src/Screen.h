@@ -9,7 +9,16 @@
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "StyleInput.h"
+#include "ScreenManager.h"
 
+// Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
+#define REGISTER_SCREEN_CLASS( className ) \
+	Screen* Create##className( const CString &sName ) { return new className( sName ); } \
+	class Register##className { \
+	public: \
+		Register##className() { SCREENMAN->Register(#className,Create##className); } \
+	}; \
+	static Register##className registera;
 
 class Screen : public ActorFrame
 {
@@ -21,13 +30,12 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	void PostScreenMessage( const ScreenMessage SM, const float fDelay );
+	void PostScreenMessage( const ScreenMessage SM, float fDelay );
 	void ClearMessageQueue();
 	void ClearMessageQueue( const ScreenMessage SM );	// clear of a specific SM
 
 	bool IsTransparent() const { return m_bIsTransparent; }
 
-	static Screen* Create( CString sClassName );
 	static bool ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if CoinMode changed
 	static bool JoinInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if a player joined
 

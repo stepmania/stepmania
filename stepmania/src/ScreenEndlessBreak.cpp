@@ -6,6 +6,7 @@
 
 //TODO:: Add scripting support
 
+REGISTER_SCREEN_CLASS( ScreenEndlessBreak );
 ScreenEndlessBreak::ScreenEndlessBreak( CString sName ) : Screen( sName )
 {
 	LOG->Trace("ScreenEndlessBreak()");

@@ -65,6 +65,7 @@ static bool HaveAllCharAnimations()
 	return true;
 }
 
+REGISTER_SCREEN_CLASS( ScreenHowToPlay );
 ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 {
 	m_iPerfects = 0;

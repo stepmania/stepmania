@@ -32,6 +32,22 @@
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
+
+// Screen registration
+static map<CString,CreateScreenFn>	*g_pmapRegistrees = NULL;
+
+void ScreenManager::Register( const CString& sClassName, CreateScreenFn pfn )
+{
+	if( g_pmapRegistrees == NULL )
+		g_pmapRegistrees = new map<CString,CreateScreenFn>;
+
+	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	ASSERT_M( iter == g_pmapRegistrees->end(), ssprintf("Screen class '%s' already registered.") );
+
+	(*g_pmapRegistrees)[sClassName] = pfn;
+}
+
+
 ScreenManager::ScreenManager()
 {
 	m_SystemLayer = NULL;
@@ -186,7 +202,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 }
 
 
-Screen* ScreenManager::MakeNewScreen( CString sClassName )
+Screen* ScreenManager::MakeNewScreen( const CString &sName )
 {
 	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
 	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). 
@@ -198,9 +214,20 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	SONGMAN->Cleanup();
 
 	RageTimer t;
-	LOG->Trace( "Loading screen %s", sClassName.c_str() );
-	Screen *ret = Screen::Create( sClassName );
-	LOG->Trace( "Loaded %s in %f", sClassName.c_str(), t.GetDeltaTime());
+	LOG->Trace( "Loading screen name '%s'", sName.c_str() );
+
+	CString sClassName = sName;
+	// Look up the class in the metrics group sName
+	if( THEME->HasMetric(sClassName,"Class") )
+		sClassName = THEME->GetMetric(sClassName,"Class");
+	
+	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
+	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sName.c_str(),sClassName.c_str()) )
+
+	CreateScreenFn pfn = iter->second;
+	Screen* ret = pfn( sName );
+
+	LOG->Trace( "Loaded '%s' ('%s') in %f", sName.c_str(), sClassName.c_str(), t.GetDeltaTime());
 
 	/* Loading probably took a little while.  Let's reset stats.  This prevents us
 	 * from displaying an unnaturally low FPS value, and the next FPS value we
@@ -211,7 +238,7 @@ Screen* ScreenManager::MakeNewScreen( CString sClassName )
 	return ret;
 }
 
-void ScreenManager::PrepNewScreen( CString sClassName )
+void ScreenManager::PrepNewScreen( const CString &sClassName )
 {
 	ASSERT(m_ScreenBuffered == NULL);
 	m_ScreenBuffered = MakeNewScreen(sClassName);
@@ -258,7 +285,7 @@ void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 	PostMessageToTopScreen( SM_GainFocus, 0 );
 }
 
-void ScreenManager::SetNewScreen( CString sClassName )
+void ScreenManager::SetNewScreen( const CString &sClassName )
 {
 	m_DelayedScreen = sClassName;
 
@@ -328,7 +355,7 @@ retry:
 	SetFromNewScreen( pNewScreen, false );
 }
 
-void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage messageSendOnPop )
+void ScreenManager::AddNewScreenToTop( const CString &sClassName, ScreenMessage messageSendOnPop )
 {	
 	/* Send this before making the new screen, since it might set things that will be re-set
 	 * in the new screen's ctor. */
@@ -344,7 +371,7 @@ void ScreenManager::AddNewScreenToTop( CString sClassName, ScreenMessage message
 #include "ScreenTextEntry.h"
 #include "ScreenMiniMenu.h"
 
-void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenManager::Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, bool bYesNo, bool bDefaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
@@ -410,13 +437,13 @@ void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
 }
 
 
-void ScreenManager::SystemMessage( CString sMessage )
+void ScreenManager::SystemMessage( const CString &sMessage )
 {
 	LOG->Trace( "%s", sMessage.c_str() );
 	m_SystemLayer->SystemMessage( sMessage );
 }
 
-void ScreenManager::SystemMessageNoAnimate( CString sMessage )
+void ScreenManager::SystemMessageNoAnimate( const CString &sMessage )
 {
 //	LOG->Trace( "%s", sMessage.c_str() );	// don't log because the caller is likely calling us every frame
 	m_SystemLayer->SystemMessageNoAnimate( sMessage );

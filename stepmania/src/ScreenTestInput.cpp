@@ -10,6 +10,7 @@
 #include "ScreenDimensions.h"
 
 
+REGISTER_SCREEN_CLASS( ScreenTestInput );
 ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenTestInput::ScreenTestInput()" );

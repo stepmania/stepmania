@@ -14,6 +14,7 @@ static void SaveMachineStatsToFirstMemCard()
 	InsertCredit();
 }
 
+REGISTER_SCREEN_CLASS( ScreenInsertCredit );
 ScreenInsertCredit::ScreenInsertCredit( CString sName ): Screen( sName )
 {
 	SaveMachineStatsToFirstMemCard();

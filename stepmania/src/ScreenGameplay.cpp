@@ -84,6 +84,7 @@ const ScreenMessage	SM_StartHereWeGo		= ScreenMessage(SM_User+40);
 const ScreenMessage	SM_StopHereWeGo			= ScreenMessage(SM_User+41);
 
 
+REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName, bool bDemonstration ) : Screen(sName)
 {
 	m_bDemonstration = bDemonstration;

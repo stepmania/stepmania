@@ -62,6 +62,7 @@ const float TWEEN_TIME		= 0.5f;
 
 const ScreenMessage SM_NoSongs	= ScreenMessage(SM_User+3);
 
+REGISTER_SCREEN_CLASS( ScreenEz2SelectMusic );
 ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElements( sName )
 {
 	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */

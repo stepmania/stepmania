@@ -26,6 +26,7 @@
 
 #define IGNORED_ELEMENT_COMMAND				THEME->GetMetricA(m_sName,"IgnoredElementOnCommand")
 
+REGISTER_SCREEN_CLASS( ScreenSelectDifficulty );
 ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_CurrentPage = PAGE_1;

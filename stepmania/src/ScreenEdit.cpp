@@ -26,7 +26,6 @@
 #include "ScreenDimensions.h"
 #include "ThemeMetric.h"
 
-
 const float RECORD_HOLD_SECONDS = 0.3f;
 
 
@@ -376,6 +375,7 @@ DeviceInput TranslateInput(const DeviceInput& DeviceI, const InputEventType type
 }
 #endif
 
+REGISTER_SCREEN_CLASS( ScreenEdit );
 ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );

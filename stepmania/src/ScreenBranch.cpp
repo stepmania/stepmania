@@ -11,6 +11,7 @@
 #define CONDITION(choice)			THEME->GetMetric (m_sName,"Condition"+choice)
 #define NEXT_SCREEN(choice)			THEME->GetMetric (m_sName,"NextScreen"+choice)
 
+REGISTER_SCREEN_CLASS( ScreenBranch );
 ScreenBranch::ScreenBranch( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenBranch::ScreenBranch()" );

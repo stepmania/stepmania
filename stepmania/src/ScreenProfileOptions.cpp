@@ -39,6 +39,7 @@ const ScreenMessage	SM_DoneCreating		= ScreenMessage(SM_User+1);
 const ScreenMessage	SM_DoneRenaming		= ScreenMessage(SM_User+2);
 const ScreenMessage	SM_DoneDeleting		= ScreenMessage(SM_User+3);
 
+REGISTER_SCREEN_CLASS( ScreenProfileOptions );
 ScreenProfileOptions::ScreenProfileOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenProfileOptions::ScreenProfileOptions()" );

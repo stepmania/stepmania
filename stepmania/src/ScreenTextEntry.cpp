@@ -34,6 +34,7 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  * Handle UTF-8.  Right now, we need to at least be able to backspace
  * a whole UTF-8 character.  Better would be to operate in longchars.
  */
+//REGISTER_SCREEN_CLASS( ScreenTextEntry );
 ScreenTextEntry::ScreenTextEntry( CString sClassName, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer), void(*OnCancel)() ) :
   Screen( sClassName )
 {

@@ -11,7 +11,7 @@
 class ScreenAttract : public Screen
 {
 public:
-	ScreenAttract( CString sClassName, bool bResetGameState=true );
+	ScreenAttract( CString sName, bool bResetGameState=true );
 	virtual ~ScreenAttract();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -20,7 +20,6 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-
 	BGAnimation		m_Background;
 	Transition		m_In;
 	Transition		m_Out;

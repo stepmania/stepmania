@@ -6,6 +6,7 @@
 #include "ThemeManager.h"
 #include "RageUtil.h"
 
+REGISTER_SCREEN_CLASS( ScreenTestSound );
 ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
 {	
 	this->AddChild(&HEEEEEEEEELP);

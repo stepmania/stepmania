@@ -38,6 +38,7 @@ const char *ScreenSelectMaster::dirs[NUM_DIRS] =
 
 const ScreenMessage SM_PlayPostSwitchPage = (ScreenMessage)(SM_User+1);
 
+REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
 	int iDefaultChoice = -1;

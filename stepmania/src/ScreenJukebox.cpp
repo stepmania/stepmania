@@ -21,6 +21,7 @@
 const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be same as in ScreenGameplay
 
 
+REGISTER_SCREEN_CLASS( ScreenJukebox );
 bool ScreenJukebox::SetSong( bool bDemonstration )
 {
 	vector<Song*> vSongs;

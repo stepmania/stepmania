@@ -34,6 +34,7 @@ static void SaveMachineStatsToFirstMemCard()
 	SCREENMAN->SystemMessage( "Stats not saved - No memory cards ready." );
 }
 
+REGISTER_SCREEN_CLASS( ScreenDownloadMachineStats );
 ScreenDownloadMachineStats::ScreenDownloadMachineStats( CString sName ): Screen( sName )
 {
 	SaveMachineStatsToFirstMemCard();

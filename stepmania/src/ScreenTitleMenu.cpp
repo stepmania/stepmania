@@ -54,6 +54,7 @@
 const ScreenMessage SM_PlayComment			=	ScreenMessage(SM_User+1);
 const ScreenMessage SM_GoToAttractLoop		=	ScreenMessage(SM_User+13);
 
+REGISTER_SCREEN_CLASS( ScreenTitleMenu );
 ScreenTitleMenu::ScreenTitleMenu( CString sClassName ) : ScreenSelect( sClassName )
 {
 	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );

@@ -31,6 +31,7 @@ ScreenSelectMode (Constructor)
 Desc: Sets up the screen display
 ************************************/
 
+REGISTER_SCREEN_CLASS( ScreenSelectMode );
 ScreenSelectMode::ScreenSelectMode( CString sClassName ) : ScreenSelect( sClassName )
 {
 	m_b2DAvailable = m_bCharsAvailable = false;

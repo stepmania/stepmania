@@ -18,6 +18,7 @@
 #define EXPLANATION_TEXT			THEME->GetMetric("ScreenJukeboxMenu","ExplanationText")
 
 
+REGISTER_SCREEN_CLASS( ScreenJukeboxMenu );
 ScreenJukeboxMenu::ScreenJukeboxMenu( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenJukeboxMenu::ScreenJukeboxMenu()" );

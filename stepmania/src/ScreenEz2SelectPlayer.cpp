@@ -16,9 +16,6 @@
 #include "ScreenDimensions.h"
 
 /* Constants */
-
-
-
 #define JOIN_FRAME_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinFrameP%dX",p+1))
 #define JOIN_FRAME_Y( i )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinFrameP%dY",i+1))
 #define JOIN_MESSAGE_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinMessageP%dX",p+1))
@@ -38,6 +35,7 @@ ScreenEz2SelectPlayer (Constructor)
 Desc: Sets up the screen display
 ************************************/
 
+REGISTER_SCREEN_CLASS( ScreenEz2SelectPlayer );
 ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuElements( sName )
 {
 	// Unjoin the players, then let them join back in on this screen

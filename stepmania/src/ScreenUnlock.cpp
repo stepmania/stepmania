@@ -27,6 +27,7 @@
 #define POINTS_ZOOM						THEME->GetMetricF("ScreenUnlock","PointsZoom")
 #define USE_UNLOCKS_DAT					THEME->GetMetricI("ScreenUnlock","UseUnlocksDat")
 
+REGISTER_SCREEN_CLASS( ScreenUnlock );
 ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");

@@ -10,6 +10,7 @@
 #include "HelpDisplay.h"
 #include "ScreenDimensions.h"
 
+REGISTER_SCREEN_CLASS( ScreenCenterImage );
 ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenCenterImage::ScreenCenterImage()" );

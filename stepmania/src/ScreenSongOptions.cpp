@@ -16,6 +16,7 @@ CString ScreenSongOptions::GetNextScreen()
 }
 
 
+REGISTER_SCREEN_CLASS( ScreenSongOptions );
 ScreenSongOptions::ScreenSongOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
 {

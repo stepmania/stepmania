@@ -18,6 +18,7 @@ const int NUM_SCORE_DIGITS	=	9;
 
 const ScreenMessage SM_GotEval		= ScreenMessage(SM_User+6);
 
+REGISTER_SCREEN_CLASS( ScreenNetEvaluation );
 ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEvaluation( sClassName )
 {
 	m_bHasStats = false;

@@ -124,6 +124,7 @@ float HighScoreWheel::Scroll()
 	return GetTweenTimeLeft();
 }
 
+REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	LOG->Trace( "ScreenNameEntryTraditional::ScreenNameEntryTraditional()" );

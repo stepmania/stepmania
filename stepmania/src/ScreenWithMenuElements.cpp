@@ -13,6 +13,7 @@
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
 
+//REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
 {
 	LOG->Trace( "ScreenWithMenuElements::ScreenWithMenuElements()" );

@@ -19,6 +19,7 @@
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 
 
+REGISTER_SCREEN_CLASS( ScreenAttract );
 ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : Screen( sName )
 {
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", m_sName.c_str() );

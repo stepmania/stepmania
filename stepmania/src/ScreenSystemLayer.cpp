@@ -25,6 +25,7 @@
 #define CREDITS_JOIN_ONLY						THEME->GetMetricB("ScreenSystemLayer","CreditsJoinOnly")
 
 
+//REGISTER_SCREEN_CLASS( ScreenSystemLayer );
 ScreenSystemLayer::ScreenSystemLayer() : Screen("ScreenSystemLayer")
 {
 	this->AddChild(&m_textMessage);
@@ -93,14 +94,14 @@ void ScreenSystemLayer::ReloadCreditsText()
 	}
 }
 
-void ScreenSystemLayer::SystemMessage( CString sMessage )
+void ScreenSystemLayer::SystemMessage( const CString &sMessage )
 {
 	m_textMessage.SetText( sMessage );
 	static const ActorCommands cmds = ParseActorCommands("finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0");
 	m_textMessage.Command( cmds );
 }
 
-void ScreenSystemLayer::SystemMessageNoAnimate( CString sMessage )
+void ScreenSystemLayer::SystemMessageNoAnimate( const CString &sMessage )
 {
 	m_textMessage.FinishTweening();
 	m_textMessage.SetText( sMessage );
@@ -209,7 +210,7 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 	}
 }
 
-void ScreenSystemLayer::AddTimestampLine( const CString &txt, RageColor color )
+void ScreenSystemLayer::AddTimestampLine( const CString &txt, const RageColor &color )
 {
 	m_textSkips[m_LastSkip].SetText( txt );
 	m_textSkips[m_LastSkip].StopTweening();

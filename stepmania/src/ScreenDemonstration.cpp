@@ -33,6 +33,7 @@ bool PrepareForDemonstration()		// always return true.
 	return true;
 }
 
+REGISTER_SCREEN_CLASS( ScreenDemonstration );
 ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName, PrepareForDemonstration() )	// this is a hack to get some code to execute before the ScreenGameplay constructor
 {
 	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );

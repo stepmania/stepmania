@@ -194,6 +194,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRowData &row, OptionRowHandler &ha
 	}
 }
 
+REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {

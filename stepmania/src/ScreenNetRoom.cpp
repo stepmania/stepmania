@@ -15,6 +15,7 @@
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
 
+REGISTER_SCREEN_CLASS( ScreenNetRoom );
 ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sName )
 {
 	GAMESTATE->FinishStage();

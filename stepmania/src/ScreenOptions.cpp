@@ -96,6 +96,7 @@ const float ITEM_X[NUM_PLAYERS] = { 260, 420 };
  * in player options menus, but it should in the options menu.
  */
 
+//REGISTER_SCREEN_CLASS( ScreenOptions );
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );

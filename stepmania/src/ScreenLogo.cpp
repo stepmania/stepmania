@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "Game.h"
 
+REGISTER_SCREEN_CLASS( ScreenLogo );
 ScreenLogo::ScreenLogo( CString sName ) : ScreenAttract( sName )
 {
 	m_sprLogo.SetName( "Logo" );

@@ -35,6 +35,7 @@ OptionRowData g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 const ScreenMessage	SM_DoneConnecting		= ScreenMessage(SM_User+1);
 const ScreenMessage	SM_ServerNameEnter		= ScreenMessage(SM_User+2);
 
+REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenNetworkOptions::ScreenNetworkOptions()" );

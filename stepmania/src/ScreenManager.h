@@ -1,7 +1,7 @@
 /* ScreenManager - Manager/container for Screens. */
 
-#ifndef SCREENMANAGER_H
-#define SCREENMANAGER_H
+#ifndef ScreenManager_H
+#define ScreenManager_H
 
 #include "RageInputDevice.h"
 #include "ScreenMessage.h"
@@ -17,9 +17,15 @@ struct Menu;
 class ScreenSystemLayer;
 
 
+typedef Screen* (*CreateScreenFn)(const CString&);
+
 class ScreenManager
 {
 public:
+	// Every screen should register its class at program initialization.
+	static void Register( const CString& sClassName, CreateScreenFn pfn );
+
+	
 	ScreenManager();
 	~ScreenManager();
 
@@ -28,17 +34,17 @@ public:
 	void Draw();
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
-	void PrepNewScreen( CString sClassName );
+	void PrepNewScreen( const CString &sName );
 	void LoadPreppedScreen();
 	void DeletePreppedScreen();
-	void SetNewScreen( CString sClassName );
-	void AddNewScreenToTop( CString sClassName, ScreenMessage messageSendOnPop );
-	void Prompt( ScreenMessage SM_SendWhenDone, CString sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
+	void SetNewScreen( const CString &sName );
+	void AddNewScreenToTop( const CString &sName, ScreenMessage messageSendOnPop );
+	void Prompt( ScreenMessage SM_SendWhenDone, const CString &sText, bool bYesNo = false, bool bDefaultAnswer = false, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 	void TextEntry( ScreenMessage SM_SendWhenDone, CString sQuestion, CString sInitialAnswer, void(*OnOK)(CString sAnswer) = NULL, void(*OnCanel)() = NULL );
 	void MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel = SM_None );
 	void PopTopScreen( ScreenMessage SM = SM_None );
-	void SystemMessage( CString sMessage );
-	void SystemMessageNoAnimate( CString sMessage );
+	void SystemMessage( const CString &sMessage );
+	void SystemMessageNoAnimate( const CString &sMessage );
 
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
 	void SendMessageToTopScreen( ScreenMessage SM );
@@ -54,13 +60,13 @@ public:
 	Screen *GetTopScreen();
 
 private:
-	vector<Screen*> m_ScreenStack;	// bottommost to topmost
-	ScreenMessage m_MessageSendOnPop;
-	vector<Screen*> m_ScreensToDelete;
-	Screen *m_ScreenBuffered;
-	ScreenSystemLayer *m_SystemLayer;
+	vector<Screen*>		m_ScreenStack;	// bottommost to topmost
+	ScreenMessage		m_MessageSendOnPop;
+	vector<Screen*>		m_ScreensToDelete;
+	Screen				*m_ScreenBuffered;
+	ScreenSystemLayer	*m_SystemLayer;
 
-	Screen* MakeNewScreen( CString sClassName );
+	Screen* MakeNewScreen( const CString &sName );
 	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
 	CString m_DelayedScreen;
 	void ClearScreenStack();
@@ -73,6 +79,7 @@ public:
 	void PlayInvalidSound();
 	void PlayScreenshotSound();
 	void PlayBackSound();
+
 private:
 	RageSound	m_soundStart;
 	RageSound	m_soundCoin;

@@ -7,7 +7,6 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 
-
 #define NEXT_SCREEN				THEME->GetMetric(m_sName,"NextScreen")
 
 
@@ -15,6 +14,7 @@ const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 
+REGISTER_SCREEN_CLASS( ScreenCaution );
 ScreenCaution::ScreenCaution( CString sName ) : Screen( sName )
 {
 	if(!PREFSMAN->m_bShowDontDie)

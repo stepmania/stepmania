@@ -22,6 +22,7 @@
 #define SLEEP_AFTER_TWEEN_OFF_SECONDS	THEME->GetMetricF("ScreenSelectGroup","SleepAfterTweenOffSeconds")
 
 
+REGISTER_SCREEN_CLASS( ScreenSelectGroup );
 ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {	
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	

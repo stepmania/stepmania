@@ -23,13 +23,13 @@ class ScreenSystemLayer : public Screen
 	Quad m_SkipBackground;
 
 	RageTimer SkipTimer;
-	void AddTimestampLine( const CString &txt, RageColor color );
+	void AddTimestampLine( const CString &txt, const RageColor &color );
 	void UpdateTimestampAndSkips();
 
 public:
 	ScreenSystemLayer();
-	void SystemMessage( CString sMessage );
-	void SystemMessageNoAnimate( CString sMessage );
+	void SystemMessage( const CString &sMessage );
+	void SystemMessageNoAnimate( const CString &sMessage );
 	void ReloadCreditsText();
 	void RefreshCreditsMessages();
 	void Update( float fDeltaTime );

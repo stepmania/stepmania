@@ -29,6 +29,7 @@ const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
 const ScreenMessage SM_UsersUpdate	= ScreenMessage(SM_User+7);
 const ScreenMessage SM_SMOnlinePack	= ScreenMessage(SM_User+8);	//Unused, but should be known
 
+REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
 ScreenNetSelectBase::ScreenNetSelectBase( const CString& sName ) : ScreenWithMenuElements( sName )
 {
 	//ChatBox

@@ -5,7 +5,6 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 
-
 const ScreenMessage SM_StartFadingOut	=	ScreenMessage(SM_User + 1);
 const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 
@@ -13,6 +12,7 @@ const ScreenMessage SM_PlayAnnouncer	=	ScreenMessage(SM_User + 3);
 #define NEXT_SCREEN		THEME->GetMetric("ScreenGameOver","NextScreen")
 
 
+REGISTER_SCREEN_CLASS( ScreenGameOver );
 ScreenGameOver::ScreenGameOver( CString sName ) : Screen( sName )
 {
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenGameOver background") );

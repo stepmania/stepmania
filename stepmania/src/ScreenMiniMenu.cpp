@@ -28,6 +28,7 @@ int	ScreenMiniMenu::s_iLastLine;
 int	ScreenMiniMenu::s_iLastAnswers[MAX_MENU_ROWS];
 
 
+//REGISTER_SCREEN_CLASS( ScreenMiniMenu );
 ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel ) :
   Screen("ScreenMiniMenu")
 {

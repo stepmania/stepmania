@@ -156,6 +156,7 @@ static const CreditLine CREDIT_LINES[] =
 	{1,"and help us out!"},
 };
 
+REGISTER_SCREEN_CLASS( ScreenCredits );
 ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 {
 	vector<Song*> arraySongs;

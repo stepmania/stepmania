@@ -19,6 +19,7 @@ const ScreenMessage SM_DoneOpening		= ScreenMessage(SM_User-7);
 const ScreenMessage SM_StartClosing		= ScreenMessage(SM_User-8);
 
 
+REGISTER_SCREEN_CLASS( ScreenStyleSplash );
 ScreenStyleSplash::ScreenStyleSplash( CString sName ) : ScreenWithMenuElements( sName )
 {
 	SOUND->StopMusic();
