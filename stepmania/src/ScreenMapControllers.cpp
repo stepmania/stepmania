@@ -248,6 +248,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 			}
 			break;
 		case SDLK_RETURN: /* Change the selection. */
+		case SDLK_KP_ENTER:
 			m_bWaitingForPress = true;	
 			break;
 		}

@@ -108,6 +108,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		MenuStart(PLAYER_1);
 		break;
 	case SDLK_RETURN:
+	case SDLK_KP_ENTER:
 		MenuStart(PLAYER_1);
 		break;
 	case SDLK_BACKSPACE:
