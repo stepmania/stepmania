@@ -19,6 +19,8 @@
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
 
+ThemeMetric<bool>	BACK_GOES_TO_START_SCREEN( "ScreenAttract", "BackGoesToStartScreen" );
+
 REGISTER_SCREEN_CLASS( ScreenAttract );
 ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWithMenuElements( sName )
 {
@@ -62,8 +64,11 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 	{
 		switch( MenuI.button )
 		{
-		case MENU_BUTTON_START:
 		case MENU_BUTTON_BACK:
+			if( !(bool)BACK_GOES_TO_START_SCREEN )
+				break;
+			// fall through
+		case MENU_BUTTON_START:
 		case MENU_BUTTON_COIN:
 			switch( GAMESTATE->GetCoinMode() )
 			{
