@@ -156,7 +156,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, WINDOW_TITLE, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
+	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, WINDOW_TITLE.GetValue(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
@@ -171,7 +171,7 @@ Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString ID )
 	SDL_PumpEvents();
 #endif
 
-	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, WINDOW_TITLE, MB_RETRYCANCEL ) )
+	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, WINDOW_TITLE.GetValue(), MB_RETRYCANCEL ) )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);
