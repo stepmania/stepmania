@@ -22,5 +22,10 @@ exit
 5. Build StepMania by running `xcodebuild -target stepmania' in the PBProject 
 directory.
 
+NOTE to self: I added the symlink:
+ln -s /System/Library/Frameworks/OpenGL/Versions/A/Libraries/ \
+/Developer/SDKs/MacOSX10.2.7.sdk/System/Library/Frameworks/OpenGL/Versions/A/
+because Apple was stupid and screwed up that framework.
+
 Steve Checkoway
 steve@cs.washington.edu
