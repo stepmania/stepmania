@@ -321,8 +321,9 @@ static void PortableSignalObjectAndWait( HANDLE hObjectToSignal, HANDLE hObjectT
 	WaitForSingleObject( hObjectToWaitOn, INFINITE );
 }
 
-/* Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html. */
-void EventImpl_Win32::Wait()
+/* Event logic from http://www.cs.wustl.edu/~schmidt/win32-cv-1.html.
+ * pTimeout is not currently implemented. */
+bool EventImpl_Win32::Wait( RageTimer *pTimeout )
 {
 	EnterCriticalSection( &m_iNumWaitingLock );
 	++m_iNumWaiting;
@@ -342,6 +343,8 @@ void EventImpl_Win32::Wait()
 		PortableSignalObjectAndWait( m_WaitersDone, m_pParent->mutex, false );
 	else
 		WaitForSingleObject( m_pParent->mutex, INFINITE );
+
+	return true;
 }
 
 void EventImpl_Win32::Signal()

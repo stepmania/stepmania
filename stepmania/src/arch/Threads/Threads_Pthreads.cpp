@@ -215,9 +215,19 @@ EventImpl_Pthreads::~EventImpl_Pthreads()
 	pthread_cond_destroy( &m_Cond );
 }
 
-void EventImpl_Pthreads::Wait()
+bool EventImpl_Pthreads::Wait( RageTimer *pTimeout )
 {
-	pthread_cond_wait( &m_Cond, &m_pParent->mutex );
+	if( pTimeout == NULL )
+	{
+		pthread_cond_wait( &m_Cond, &m_pParent->mutex );
+		return true;
+	}
+
+	timespec abstime;
+	timeout.tv_sec = pTimeout->m_secs;
+	timeout.tv_nsec = pTimeout->m_us * 1000;
+	int iRet = pthread_cond_timedwait( &m_Cond, &m_pParent->mutex );
+	return iRet != ETIMEDOUT;
 }
 
 void EventImpl_Pthreads::Signal()

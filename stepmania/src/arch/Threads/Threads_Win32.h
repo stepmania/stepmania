@@ -46,7 +46,7 @@ public:
 	EventImpl_Win32( MutexImpl_Win32 *pParent );
 	~EventImpl_Win32();
 
-	void Wait();
+	bool Wait( RageTimer *pTimeout );
 	void Signal();
 	void Broadcast();
 

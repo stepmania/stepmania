@@ -666,14 +666,18 @@ RageEvent::~RageEvent()
 }
 
 /* For each of these calls, the mutex must be locked, and must not be locked recursively. */
-void RageEvent::Wait()
+bool RageEvent::Wait( RageTimer *pTimeout )
 {
 	ASSERT( IsLockedByThisThread() );
 	ASSERT( m_LockCnt == 0 );
 
-	m_pEvent->Wait();
+	/* A zero RageTimer also means no timeout. */
+	if( pTimeout != NULL && pTimeout->IsZero() )
+		pTimeout = NULL;
+	bool bRet = m_pEvent->Wait( pTimeout );
 
 	m_LockedBy = GetThisThreadId();
+	return bRet;
 }
 
 void RageEvent::Signal()

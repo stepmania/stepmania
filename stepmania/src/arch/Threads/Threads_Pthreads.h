@@ -52,7 +52,7 @@ public:
 	EventImpl_Pthreads( MutexImpl_Pthreads *pParent );
 	~EventImpl_Pthreads();
 
-	void Wait();
+	bool Wait( RageTimer *pTimeout );
 	void Signal();
 	void Broadcast();
 

@@ -2,6 +2,7 @@
 #define RAGE_THREADS_H
 
 struct ThreadSlot;
+class RageTimer;
 class RageThread
 {
 	ThreadSlot *m_pSlot;
@@ -137,7 +138,13 @@ public:
 	RageEvent( CString name );
 	~RageEvent();
 
-	void Wait();
+	/*
+	 * If pTimeout is non-NULL, the event will be automatically signalled at the given
+	 * time.  Note that implementing this timeout is optional; not all archs support it. 
+	 * If false is returned, the wait timed out (and the mutex is locked, as if the
+	 * event had been signalled).
+	 */
+	bool Wait( RageTimer *pTimeout = NULL );
 	void Signal();
 	void Broadcast();
 

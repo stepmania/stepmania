@@ -3,7 +3,7 @@
 
 /* This is the low-level implementation; you probably want RageThreads. */
 class RageMutex;
-
+class RageTimer;
 
 class ThreadImpl
 {
@@ -46,7 +46,7 @@ class EventImpl
 {
 public:
 	virtual ~EventImpl() { }
-	virtual void Wait() = 0;
+	virtual bool Wait( RageTimer *pTimeout ) = 0;
 	virtual void Signal() = 0;
 	virtual void Broadcast() = 0;
 };
