@@ -17,11 +17,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "SDL_thread.h"
-
-#ifdef _WINDOWS
-#include "archutils/win32/tls.h"
-#endif
-
 #include "SDL_utils.h"
 
 #include <signal.h>
@@ -50,6 +45,10 @@ struct ThreadSlot
 	 * added bonus: if this is corrupted, we'll just send signals and they'll
 	 * fail; we won't blow up (unless we're root). */
 	int pid;
+#endif
+
+#if defined(WIN32)
+	HANDLE ThreadHandle;
 #endif
 
 	#undef CHECKPOINT_COUNT
@@ -171,7 +170,12 @@ void ThreadSlot::SetupThisThread()
 #endif
 
 #ifdef _WINDOWS
-	InitThreadData();
+	const HANDLE CurProc = GetCurrentProcess();
+	int ret = DuplicateHandle( CurProc, GetCurrentThread(), CurProc, 
+		&ThreadHandle, 0, false, DUPLICATE_SAME_ACCESS );
+	if( !ret )
+		LOG->Warn( werr_ssprintf( GetLastError(), "DuplicateHandle(%p, %p) failed",
+			CurProc, GetCurrentThread() ) );
 #endif
 
 	threadid = SDL_ThreadID();
@@ -183,7 +187,7 @@ void ThreadSlot::SetupThisThread()
 void ThreadSlot::ShutdownThisThread()
 {
 #ifdef _WINDOWS
-	DeinitThreadData();
+	CloseHandle( ThreadHandle );
 #endif
 
 	Init();
@@ -280,6 +284,17 @@ void RageThread::HaltAllThreads( bool Kill )
 		if( pid <= 0 || pid == ThisThread )
 			continue;
 		kill( pid, Kill? SIGKILL:SIGSTOP );
+	}
+#elif defined(WIN32)
+	const int ThisThreadID = GetCurrentThreadId();
+	for( int entry = 0; entry < MAX_THREADS; ++entry )
+	{
+		if( !g_ThreadSlots[entry].used )
+			continue;
+		if( ThisThreadID == (int) g_ThreadSlots[entry].threadid )
+			continue;
+//		SuspendThread( g_ThreadSlots[entry].ThreadHandle );
+		TerminateThread( g_ThreadSlots[entry].ThreadHandle, 0 );
 	}
 #endif
 }
