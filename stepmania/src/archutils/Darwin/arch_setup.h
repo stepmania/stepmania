@@ -1,5 +1,10 @@
+typedef unsigned char 	   UInt8;
+typedef unsigned short 	   UInt16;
+typedef unsigned long 	   UInt32;
+typedef unsigned long long UInt64;
+#define __TYPES__
 #include <libkern/OSByteOrder.h>
-
+#undef __TYPES__
 #define DARWIN 1
 #define NEED_POWF
 #define NEED_SQRTF
