@@ -1456,12 +1456,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 		//
         FOREACH_EnabledPlayer(p)
 		{
-			if(m_Background.GetDancingCharacters() != NULL)
-			{
-				if(m_Player[p].GetDancingCharacterState() != AS2D_IGNORE) // grab the state of play from player and update the character
-					m_Background.GetDancingCharacters()->Change2DAnimState(p,m_Player[p].GetDancingCharacterState());
-				m_Player[p].SetCharacterState(AS2D_IGNORE); // set to ignore as we've already grabbed the latest change
-			}
+			DancingCharacters *pCharacter = m_Background.GetDancingCharacters();
+			if( pCharacter != NULL )
+				pCharacter->Change2DAnimState( p, m_Player[p].GetDancingCharacterState() );
 		}
 
 		//
