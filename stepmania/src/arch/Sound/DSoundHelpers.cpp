@@ -151,7 +151,7 @@ bool DSoundBuf::get_output_buf(char **buffer, unsigned *bufsiz, int *play_pos, i
 	
 	/* Increment last_cursor_pos to point at where the data we're about to
 	 * ask for will actually be played. */
-	last_cursor_pos += buffersize_frames();
+	last_cursor_pos += num_bytes_empty / samplesize();
 
 	buffer_locked = true;
 
@@ -169,9 +169,10 @@ int DSoundBuf::GetPosition() const
 {
 	DWORD cursor, junk;
 	buf->GetCurrentPosition(&cursor, &junk);
-	int last_fill = write_cursor;
+	int cursor_frames = int(cursor) / samplesize();
+	int write_cursor_frames = write_cursor  / samplesize();
 
-	int frames_behind = (last_fill - int(cursor)) / samplesize();
+	int frames_behind = write_cursor_frames - cursor_frames;
 	if(frames_behind <= 0)
 		frames_behind += buffersize_frames(); /* unwrap */
 
@@ -187,7 +188,7 @@ int DSoundBuf::GetPosition() const
 
 void DSoundBuf::Play()
 {
-	HRESULT hr = buf->Play(0, 0, DSBPLAY_LOOPING);
+	buf->Play(0, 0, DSBPLAY_LOOPING);
 }
 
 void DSoundBuf::Stop()
