@@ -488,6 +488,8 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 #ifndef _XBOX
 	g_d3dpp.Flags					=	0;
 	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	if( !p.windowed && p.rate != REFRESH_DEFAULT )
+		g_d3dpp.FullScreen_RefreshRateInHz = p.rate;
 #else
 	if(XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I)
 	{
