@@ -1356,18 +1356,6 @@ SOURCE=.\Tls.cpp
 SOURCE=.\Tls.h
 # End Source File
 # End Group
-# Begin Group "Utils"
-
-# PROP Default_Filter ""
-# Begin Source File
-
-SOURCE=.\fnmatch.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\fnmatch.h
-# End Source File
-# End Group
 # Begin Source File
 
 SOURCE=.\error.bmp
