@@ -21,6 +21,8 @@ public:
 	Game		m_Game;				// Which Game is this Style used with?
 	bool		m_bUsedForGameplay;	// Can be used only for gameplay?
 	bool		m_bUsedForEdit;		// Can be used for editing?
+	bool		m_bUsedForDemonstration;		// Can be used for editing?
+	bool		m_bUsedForHowToPlay;		// Can be used for editing?
 	
 	/* The name of the style.  (This is currently unused.) */
 	char		m_szName[60];

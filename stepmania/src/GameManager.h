@@ -22,6 +22,8 @@ public:
 	void	GetStylesForGame( Game game, vector<Style>& aStylesAddTo, bool editor=false );
 	void	GetNotesTypesForGame( Game game, vector<StepsType>& aNotesTypeAddTo );
 	Style	GetEditorStyleForNotesType( StepsType st );
+	Style	GetDemonstrationStyleForGame( Game game );
+	Style	GetHowToPlayStyleForGame( Game game );
 
 	void GetEnabledGames( vector<Game>& aGamesOut );
 	bool IsGameEnabled( Game game );

@@ -1190,6 +1190,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_DANCE_SINGLE,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1217,6 +1219,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_DANCE_SINGLE,				// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -1244,6 +1248,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_DANCE_DOUBLE,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -1279,6 +1285,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		false,								// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"couple",							// m_szName
 		STEPS_TYPE_DANCE_COUPLE,	// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,	// m_StyleType
@@ -1306,6 +1314,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,							// m_Game
 		true,								// m_bUsedForGameplay
 		true,								// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"solo",								// m_szName
 		STEPS_TYPE_DANCE_SOLO,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,	// m_StyleType
@@ -1337,6 +1347,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_DANCE,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"couple-edit",						// m_szName
 		STEPS_TYPE_DANCE_COUPLE,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1396,10 +1408,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,5,1,4,2,3		// outside in
 		},
 	},	*/
-	{	// PUMP_STYLE_SINGLE
+	{	// STYLE_PUMP_SINGLE
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_PUMP_SINGLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1425,10 +1439,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,2,4,1,3
 		},
 	},
-	{	// PUMP_STYLE_VERSUS
+	{	// STYLE_PUMP_VERSUS
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_PUMP_SINGLE,					// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -1454,10 +1470,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,2,4,1,3
 		},
 	},
-	{	// PUMP_STYLE_HALFDOUBLE
+	{	// STYLE_PUMP_HALFDOUBLE
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"halfdouble",								// m_szName
 		STEPS_TYPE_PUMP_HALFDOUBLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -1485,10 +1503,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,5,2,4,3,1
 		},
 	},
-	{	// PUMP_STYLE_DOUBLE
+	{	// STYLE_PUMP_DOUBLE
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_PUMP_DOUBLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -1528,6 +1548,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"couple",								// m_szName
 		STEPS_TYPE_PUMP_COUPLE,					// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -1557,6 +1579,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PUMP,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"couple-edit",						// m_szName
 		STEPS_TYPE_PUMP_COUPLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1587,10 +1611,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			0,2,4,1,3
 		},
 	},
-	{	// EZ2_STYLE_SINGLE
+	{	// STYLE_EZ2_SINGLE
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_EZ2_SINGLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1616,10 +1642,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
 		},
 	},
-	{	// EZ2_STYLE_REAL
+	{	// STYLE_EZ2_REAL
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"real",									// m_szName
 		STEPS_TYPE_EZ2_REAL,					// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1649,10 +1677,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
 		},
 	},
-	{	// EZ2_STYLE_SINGLE_VERSUS
+	{	// STYLE_EZ2_SINGLE_VERSUS
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_EZ2_SINGLE,					// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -1678,10 +1708,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
 		},
 	},
-	{	// EZ2_STYLE_REAL_VERSUS
+	{	// STYLE_EZ2_REAL_VERSUS
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versusReal",							// m_szName
 		STEPS_TYPE_EZ2_REAL,					// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -1711,10 +1743,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			3,0,6,2,4,1,5 // This should be from back to front: Down, UpLeft, UpRight, Lower Left Hand, Lower Right Hand, Upper Left Hand, Upper Right Hand 
 		},
 	},
-	{	// EZ2_STYLE_DOUBLE
+	{	// STYLE_EZ2_DOUBLE
 		GAME_EZ2,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_EZ2_DOUBLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1750,10 +1784,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3,7,5,9,6,8 // This should be from back to front: Down, UpLeft, UpRight, Upper Left Hand, Upper Right Hand 
 		},
 	},
-	{	// PARA_SINGLE
+	{	// STYLE_PARA_SINGLE
 		GAME_PARA,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_PARA_SINGLE,						// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1779,10 +1815,12 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 			2,0,4,1,3 
 		},
 	},
-	{	// DS3DDX_SINGLE
+	{	// STYLE_DS3DDX_SINGLE
 		GAME_DS3DDX,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_DS3DDX_SINGLE,						// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1818,6 +1856,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_BM,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_BM_SINGLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1849,6 +1889,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_BM,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_BM_DOUBLE,					// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -1892,6 +1934,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"single7",								// m_szName
 		STEPS_TYPE_IIDX_SINGLE7,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -1927,6 +1971,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double7",								// m_szName
 		STEPS_TYPE_IIDX_DOUBLE7,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -1978,6 +2024,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"single5",								// m_szName
 		STEPS_TYPE_IIDX_SINGLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2013,6 +2061,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double5",								// m_szName
 		STEPS_TYPE_IIDX_DOUBLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -2064,6 +2114,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"single5-edit",						// m_szName
 		STEPS_TYPE_IIDX_SINGLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2099,6 +2151,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_IIDX,								// m_Game
 		false,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double5-edit",						// m_szName
 		STEPS_TYPE_IIDX_DOUBLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -2150,6 +2204,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_MANIAX,								// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_MANIAX_SINGLE,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2177,6 +2233,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_MANIAX,							// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versus",								// m_szName
 		STEPS_TYPE_MANIAX_SINGLE,				// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -2204,6 +2262,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_MANIAX,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_MANIAX_DOUBLE,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -2239,6 +2299,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"single4",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE4,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2266,6 +2328,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"single5",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2295,6 +2359,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"single8",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE8,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2330,6 +2396,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versus4",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE4,				// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -2357,6 +2425,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versus5",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE5,				// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -2386,6 +2456,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		false,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"versus8",								// m_szName
 		STEPS_TYPE_TECHNO_SINGLE8,				// m_StepsType
 		StyleDef::TWO_PLAYERS_TWO_CREDITS,		// m_StyleType
@@ -2421,6 +2493,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double4",								// m_szName
 		STEPS_TYPE_TECHNO_DOUBLE4,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -2456,6 +2530,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_TECHNO,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"double5",								// m_szName
 		STEPS_TYPE_TECHNO_DOUBLE5,				// m_StepsType
 		StyleDef::ONE_PLAYER_TWO_CREDITS,		// m_StyleType
@@ -2495,6 +2571,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PNM,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"pnm-five",								// m_szName
 		STEPS_TYPE_PNM_FIVE,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2524,6 +2602,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_PNM,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		true,									// m_bUsedForDemonstration
+		true,									// m_bUsedForHowToPlay
 		"pnm-nine",								// m_szName
 		STEPS_TYPE_PNM_NINE,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2561,6 +2641,8 @@ StyleDef g_StyleDefs[NUM_STYLES] =
 		GAME_LIGHTS,							// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
+		false,									// m_bUsedForDemonstration
+		false,									// m_bUsedForHowToPlay
 		"cabinet",								// m_szName
 		STEPS_TYPE_LIGHTS_CABINET,				// m_StepsType
 		StyleDef::ONE_PLAYER_ONE_CREDIT,		// m_StyleType
@@ -2636,7 +2718,7 @@ Style GameManager::GetEditorStyleForNotesType( StepsType st )
 		if( g_StyleDefs[s].m_StepsType == st && g_StyleDefs[s].m_bUsedForEdit )
 			return (Style)s;
 
-	ASSERT(0);	// this style doesn't have a StyleDef that can be used with the editor!
+	ASSERT(0);	// this Game is missing a StyleDef that can be used with the editor
 	return STYLE_INVALID;
 }
 
@@ -2663,6 +2745,26 @@ void GameManager::GetNotesTypesForGame( Game game, vector<StepsType>& aNotesType
 	}
 }
 
+Style GameManager::GetDemonstrationStyleForGame( Game game )
+{
+	for( int s=0; s<NUM_STYLES; s++ )
+		if( g_StyleDefs[s].m_Game == game && g_StyleDefs[s].m_bUsedForDemonstration )
+			return (Style)s;
+
+	ASSERT(0);	// this Game is missing a StyleDef that can be used with the demonstration
+	return STYLE_INVALID;
+}
+
+Style GameManager::GetHowToPlayStyleForGame( Game game )
+{
+	for( int s=0; s<NUM_STYLES; s++ )
+		if( g_StyleDefs[s].m_Game == game && g_StyleDefs[s].m_bUsedForHowToPlay )
+			return (Style)s;
+
+	ASSERT(0);	// this Game is missing a StyleDef that can be used with HowToPlay
+	return STYLE_INVALID;
+}
+
 void GameManager::GetEnabledGames( vector<Game>& aGamesOut )
 {
 	for( int g=0; g<NUM_GAMES; g++ )
@@ -2674,6 +2776,7 @@ void GameManager::GetEnabledGames( vector<Game>& aGamesOut )
 			aGamesOut.push_back( game );
 	}
 }
+
 
 bool GameManager::IsGameEnabled( Game game )
 {

@@ -9,6 +9,7 @@
 #include "ScreenManager.h"
 #include "RageSoundManager.h"
 #include "RageSounds.h"
+#include "GameManager.h"
 
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
@@ -19,19 +20,7 @@ const ScreenMessage	SM_NotesEnded				= ScreenMessage(SM_User+10);	// MUST be sam
 
 bool PrepareForDemonstration()		// always return true.
 {
-	switch( GAMESTATE->m_CurGame )
-	{
-	case GAME_DANCE:	GAMESTATE->m_CurStyle = STYLE_DANCE_VERSUS;			break; 
-	case GAME_PUMP:		GAMESTATE->m_CurStyle = STYLE_PUMP_VERSUS;			break; 
-	case GAME_EZ2:		GAMESTATE->m_CurStyle = STYLE_EZ2_SINGLE_VERSUS;	break; 
-	case GAME_PARA:		GAMESTATE->m_CurStyle = STYLE_PARA_SINGLE;			break; 
-	case GAME_DS3DDX:	GAMESTATE->m_CurStyle = STYLE_DS3DDX_SINGLE;		break;
-	case GAME_BM:		GAMESTATE->m_CurStyle = STYLE_BM_SINGLE;			break;
-	case GAME_MANIAX:	GAMESTATE->m_CurStyle = STYLE_MANIAX_SINGLE;		break;
-	case GAME_TECHNO:	GAMESTATE->m_CurStyle = STYLE_TECHNO_VERSUS8;		break;
-	case GAME_PNM:		GAMESTATE->m_CurStyle = STYLE_PNM_NINE;				break;
-	default:	ASSERT(0);
-	}
+	GAMESTATE->m_CurStyle = GAMEMAN->GetDemonstrationStyleForGame(GAMESTATE->m_CurGame);
 
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
