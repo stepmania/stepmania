@@ -29,6 +29,8 @@
 #include "BeginnerHelper.h"
 #include "StageStats.h"
 
+#include <set>
+
 
 const float FADE_SECONDS = 1.0f;
 
@@ -43,8 +45,6 @@ CachedThemeMetricB DANGER_ALL_IS_OPAQUE("Background","DangerAllIsOpaque");
 
 
 const CString STATIC_BACKGROUND = "static background";
-
-CString RandomBackground(int num) { return ssprintf("__random%i", num); }
 
 Background::Background()
 {
@@ -192,64 +192,84 @@ BGAnimation *Background::CreateSongBGA(const Song *pSong, CString sBGName) const
 	return NULL;
 }
 
-BGAnimation* Background::CreateRandomBGA() const
+CString Background::CreateRandomBGA()
 {
+	if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
+		return "";
+
+	/* If we already have enough random BGAs loaded, use them round-robin. */
+	if( (int) m_RandomBGAnimations.size() >= PREFSMAN->m_iNumBackgrounds )
+	{
+		/* XXX: every time we fully loop, shuffle, so we don't play the same sequence
+		 * over and over; and nudge the shuffle so the next one won't be a repeat */
+		const CString first = m_RandomBGAnimations.front();
+		m_RandomBGAnimations.push_back( m_RandomBGAnimations.front() );
+		m_RandomBGAnimations.pop_front();
+		return first;
+	}
+
+	CStringArray arrayPaths;
 	switch( PREFSMAN->m_BackgroundMode )
 	{
 	default:
-		ASSERT(0);
-		// fall through
-	case PrefsManager::BGMODE_OFF:
-		return NULL;
+		FAIL_M( ssprintf("Invalid BackgroundMode: %i", PREFSMAN->m_BackgroundMode) );
+		break;
 	case PrefsManager::BGMODE_ANIMATIONS:
 		{
-			CStringArray arrayPossibleAnims;
-			GetDirListing( BG_ANIMS_DIR+"*", arrayPossibleAnims, true, true );
+			GetDirListing( BG_ANIMS_DIR+"*", arrayPaths, true, true );
 			// strip out "cvs" and "danger
 			int i;
-			for( i=arrayPossibleAnims.size()-1; i>=0; i-- )
-				if( 0==stricmp(arrayPossibleAnims[i].Right(3),"cvs") || 0==stricmp(arrayPossibleAnims[i].Right(3),"danger") )
-					arrayPossibleAnims.erase(arrayPossibleAnims.begin()+i,
-												arrayPossibleAnims.begin()+i+1);
-
-			if( arrayPossibleAnims.empty() )
-				return NULL;
-			unsigned index = rand() % arrayPossibleAnims.size();
-			BGAnimation *pTempBGA = new BGAnimation;
-			pTempBGA->LoadFromAniDir( arrayPossibleAnims[index] );
-			return pTempBGA;
+			for( i=arrayPaths.size()-1; i>=0; i-- )
+				if( 0==stricmp(arrayPaths[i].Right(3),"cvs") || 0==stricmp(arrayPaths[i].Right(3),"danger") )
+					arrayPaths.erase(arrayPaths.begin()+i,
+												arrayPaths.begin()+i+1);
 		}
 	case PrefsManager::BGMODE_MOVIEVIS:
-		{
-			CStringArray arrayPossibleMovies;
-			GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPossibleMovies, false, true );
-			GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPossibleMovies, false, true );
-			GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPossibleMovies, false, true );
-
-			if( arrayPossibleMovies.empty() )
-				return NULL;
-			unsigned index = rand() % arrayPossibleMovies.size();
-			BGAnimation* pTempBGA = new BGAnimation;
-			pTempBGA->LoadFromVisualization( arrayPossibleMovies[index] );
-			return pTempBGA;
-		}
+		GetDirListing( VISUALIZATIONS_DIR + "*.avi", arrayPaths, false, true );
+		GetDirListing( VISUALIZATIONS_DIR + "*.mpg", arrayPaths, false, true );
+		GetDirListing( VISUALIZATIONS_DIR + "*.mpeg", arrayPaths, false, true );
 		break;
-	case PrefsManager::BGMODE_RANDOMMOVIES:
-		{
-			CStringArray arrayPossibleMovies;
-			GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPossibleMovies, false, true );
-			GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPossibleMovies, false, true );
-			GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPossibleMovies, false, true );
 
-			if( arrayPossibleMovies.empty() )
-				return NULL;
-			unsigned index = rand() % arrayPossibleMovies.size();
-			BGAnimation *pTempBGA = new BGAnimation;
-			pTempBGA->LoadFromMovie( arrayPossibleMovies[index] );
-			return pTempBGA;
-		}
+	case PrefsManager::BGMODE_RANDOMMOVIES:
+		GetDirListing( RANDOMMOVIES_DIR + "*.avi", arrayPaths, false, true );
+		GetDirListing( RANDOMMOVIES_DIR + "*.mpg", arrayPaths, false, true );
+		GetDirListing( RANDOMMOVIES_DIR + "*.mpeg", arrayPaths, false, true );
 		break;
 	}
+
+	if( arrayPaths.empty() )
+		return "";
+
+	random_shuffle( arrayPaths.begin(), arrayPaths.end() );
+
+	/* Find the first file in arrayPaths we havn't already loaded. */
+	CString file;
+	{
+		set<CString> loaded;
+		unsigned i;
+		for( i = 0; i < m_RandomBGAnimations.size(); ++i )
+			loaded.insert( m_RandomBGAnimations[i] );
+
+		i = 0;
+		while( i < arrayPaths.size() && loaded.find( arrayPaths[i] ) != loaded.end() )
+			++i;
+		if( i == arrayPaths.size() )
+			return "";
+
+		file = arrayPaths[i];
+	}
+
+	BGAnimation *ret = new BGAnimation;
+	switch( PREFSMAN->m_BackgroundMode )
+	{
+	case PrefsManager::BGMODE_ANIMATIONS:	ret->LoadFromAniDir( file ); break;
+	case PrefsManager::BGMODE_MOVIEVIS:		ret->LoadFromVisualization( file ); break;
+	case PrefsManager::BGMODE_RANDOMMOVIES:	ret->LoadFromMovie( file ); break;
+	}
+
+	m_BGAnimations[file] = ret;
+	m_RandomBGAnimations.push_back( file );
+	return file;
 }
 
 void Background::LoadFromSong( Song* pSong )
@@ -274,21 +294,6 @@ void Background::LoadFromSong( Song* pSong )
 	}
 
 
-	// Load random backgrounds
-	bool bLoadedAnyRandomBackgrounds = false;
-	{
-		for( int i=0; i<PREFSMAN->m_iNumBackgrounds; i++ )
-		{
-			CString sBGName = RandomBackground(i);
-			BGAnimation *pTempBGA = CreateRandomBGA();
-			if( pTempBGA )
-			{
-				m_BGAnimations[sBGName] = pTempBGA;
-				bLoadedAnyRandomBackgrounds = true;
-			}
-		}
-	}
-
 	// start off showing the static song background
 	m_aBGChanges.push_back( BackgroundChange(-10000,STATIC_BACKGROUND) );
 
@@ -299,7 +304,7 @@ void Background::LoadFromSong( Song* pSong )
 		for( unsigned i=0; i<pSong->m_BackgroundChanges.size(); i++ )
 		{
 			BackgroundChange change = pSong->m_BackgroundChanges[i];
-			CString sBGName = change.m_sBGName;
+			CString &sBGName = change.m_sBGName;
 			
 			bool bIsAlreadyLoaded = m_BGAnimations.find(sBGName) != m_BGAnimations.end();
 
@@ -309,10 +314,11 @@ void Background::LoadFromSong( Song* pSong )
 				if( pTempBGA )
 					m_BGAnimations[sBGName] = pTempBGA;
 				else // the background was not found.  Use a random one instead
-					if( bLoadedAnyRandomBackgrounds )
-						sBGName = RandomBackground( rand()%PREFSMAN->m_iNumBackgrounds );
-					else
+				{
+					sBGName = CreateRandomBGA();
+					if( sBGName == "" )
 						sBGName = STATIC_BACKGROUND;
+				}
 			}
 			
 			m_aBGChanges.push_back( change );
@@ -323,24 +329,18 @@ void Background::LoadFromSong( Song* pSong )
 		const float fFirstBeat = pSong->m_fFirstBeat;
 		const float fLastBeat = pSong->m_fLastBeat;
 
-		int ctr=0;
-
 		// change BG every 4 bars
 		for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
 		{
-			if( bLoadedAnyRandomBackgrounds )
-			{
-				CString sBGName = RandomBackground( ctr );
-				
-				// Don't fade.  It causes frame rate dip, especially on 
-				// slower machines.
-				bool bFade = false;
-				//bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
-				//	PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
-				
+			// Don't fade.  It causes frame rate dip, especially on 
+			// slower machines.
+			bool bFade = false;
+			//bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
+			//	PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
+			
+			CString sBGName = CreateRandomBGA();
+			if( sBGName != "" )
 				m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
-				ctr = (ctr+1)%PREFSMAN->m_iNumBackgrounds;
-			}
 		}
 
 		// change BG every BPM change that is at the beginning of a measure
@@ -354,11 +354,9 @@ void Background::LoadFromSong( Song* pSong )
 			if( bpmseg.m_fStartBeat < fFirstBeat  || bpmseg.m_fStartBeat > fLastBeat )
 				continue;	// skip
 
-			if( bLoadedAnyRandomBackgrounds )
-			{
-				CString sBGName = RandomBackground( rand()%PREFSMAN->m_iNumBackgrounds );
+			CString sBGName = CreateRandomBGA();
+			if( sBGName != "" )
 				m_aBGChanges.push_back( BackgroundChange(bpmseg.m_fStartBeat,sBGName) );
-			}
 		}
 	}
 

@@ -17,6 +17,7 @@
 #include "ActorFrame.h"
 #include "BGAnimation.h"
 #include "song.h"
+#include <deque>
 class DancingCharacters;
 
 
@@ -52,9 +53,10 @@ protected:
 	BGAnimation		m_DeadPlayer[NUM_PLAYERS];
 
 	BGAnimation* CreateSongBGA(const Song *pSong, CString sBGName) const;
-	BGAnimation* CreateRandomBGA() const;
+	CString CreateRandomBGA();
 
 	map<CString,BGAnimation*> m_BGAnimations;
+	deque<CString> m_RandomBGAnimations;
 	vector<BackgroundChange> m_aBGChanges;
 	int				m_iCurBGChangeIndex;
 	BGAnimation* m_pCurrentBGA;
