@@ -143,13 +143,19 @@ void UtilSetXY( Actor& actor, CString sClassName )
 
 float UtilCommand( Actor& actor, CString sClassName, CString sCommandName )
 {
-	ASSERT( !actor.GetName().empty() );
+	actor.Command( "playcommand," + sCommandName );
 
 	// HACK:  It's very often that we command things to TweenOffScreen 
 	// that we aren't drawing.  We know that an Actor is not being
 	// used if it's name is blank.  So, do nothing on Actors with a blank name.
-	if( sCommandName=="Off" && actor.GetName().empty() )
-		return 0;
+	// (Do "playcommand" anyway; BGAs often have no name.)
+	if( sCommandName=="Off" )
+	{
+		if( actor.GetName().empty() )
+			return 0;
+	} else {
+		ASSERT( !actor.GetName().empty() );
+	}
 
 	return actor.Command( THEME->GetMetric(sClassName,actor.GetName()+sCommandName+"Command") );
 }
