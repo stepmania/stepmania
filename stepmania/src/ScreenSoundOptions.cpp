@@ -27,6 +27,7 @@
 enum {
 //	SO_MASTER_VOLUME,
 	SO_PRELOAD_SOUND,
+	SO_RESAMPLE_QUALITY,
 	NUM_SOUND_OPTIONS_LINES
 };
 OptionRow g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
@@ -37,6 +38,7 @@ OptionRow g_SoundOptionsLines[NUM_SOUND_OPTIONS_LINES] = {
 	 * the options to begin with. */
 //	OptionRow( "Master\nVolume",		"MUTE","20%","40%","60%","80%","100%" ),
 	OptionRow( "Preload\nSounds",		true, "NO","YES" ),
+	OptionRow( "Resampling\nQuality",	true, "FAST","NORMAL","HIGH QUALITY" ),
 };
 
 ScreenSoundOptions::ScreenSoundOptions() :
@@ -61,6 +63,7 @@ void ScreenSoundOptions::ImportOptions()
 //	float fVolPercent = PREFSMAN->m_fSoundVolume;
 //	m_iSelectedOption[0][SO_MASTER_VOLUME] = (int)(PREFSMAN->m_fSoundVolume*5);
 	m_iSelectedOption[0][SO_PRELOAD_SOUND] = PREFSMAN->m_bSoundPreloadAll;
+	m_iSelectedOption[0][SO_RESAMPLE_QUALITY] = PREFSMAN->m_iSoundResampleQuality;
 }
 
 void ScreenSoundOptions::ExportOptions()
@@ -69,6 +72,7 @@ void ScreenSoundOptions::ExportOptions()
 //	SOUNDMAN->SetPrefs(fVolPercent);
 //	PREFSMAN->m_fSoundVolume = fVolPercent;
 	PREFSMAN->m_bSoundPreloadAll = !!m_iSelectedOption[0][SO_PRELOAD_SOUND];
+	PREFSMAN->m_iSoundResampleQuality = m_iSelectedOption[0][SO_RESAMPLE_QUALITY];
 }
 
 void ScreenSoundOptions::GoToPrevState()
