@@ -970,6 +970,22 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\LowLevelWindow\LowLevelWindow_SDL.h">
 					</File>
 				</Filter>
+				<Filter
+					Name="Lights"
+					Filter="">
+					<File
+						RelativePath="arch\Lights\LightsDriver.h">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Null.h">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp">
+					</File>
+					<File
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.h">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="system"
@@ -1102,6 +1118,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="DifficultyDisplay.h">
+			</File>
+			<File
+				RelativePath="DifficultyList.cpp">
+			</File>
+			<File
+				RelativePath="DifficultyList.h">
 			</File>
 			<File
 				RelativePath="DifficultyMeter.cpp">
@@ -1825,6 +1847,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="InputQueue.h">
+			</File>
+			<File
+				RelativePath="LightsManager.cpp">
+			</File>
+			<File
+				RelativePath="LightsManager.h">
 			</File>
 			<File
 				RelativePath="NoteSkinManager.cpp">
