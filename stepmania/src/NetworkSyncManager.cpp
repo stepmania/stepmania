@@ -314,61 +314,6 @@ void NetworkSyncManager::SendSongs()
 	//or do it, please?
 }
 
-
-//I am adding this for Network support
-//Feel free to change the way --course is used
-//I am not building any part of SMOnline specific to this yet.
-
-void ArgStartCourse(CString CourseName)
-{
-	Course * desCourse = SONGMAN->GetCourseFromName(CourseName);
-	LOG->Info ("Course Desied: %s",CourseName.c_str());
-	if (desCourse == 0)
-	{
-		LOG->Info ("Desired Course not found!");
-		SCREENMAN->SystemMessage("Failed to find course");
-		return ;
-	}
-
-
-	/*
-		--PLAYERS=
-			1		-> STYLE_DANCE_SINGLE, (Default)
-			2		-> STYLE_DANCE_SINGLE,
-			VERSUS	-> STYLE_DANCE_VERSUS,
-			DOUBLE	-> STYLE_DANCE_DOUBLE,
-			COUPLE	-> STYLE_DANCE_COUPLE,
-	*/
-	if ((!GAMESTATE->m_bSideIsJoined[PLAYER_1]) && (!GAMESTATE->m_bSideIsJoined[PLAYER_2]))
-	{
-		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-		GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
-		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;	//Default
-			//Also take Default Fail Type
-	}
-
-	GAMESTATE->m_pCurCourse = desCourse;
-
-	GAMESTATE->m_PlayMode = desCourse->GetPlayMode();
-	if (desCourse->IsOni())
-		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BATTERY;
-	else
-		GAMESTATE->m_SongOptions.m_LifeType = SongOptions::LIFE_BAR;
-
-	GAMESTATE->m_SongOptions.m_iBatteryLives = desCourse->m_iLives;
-
-	GAMESTATE->PlayersFinalized();
-
-	//Go to Gameplay Screen
-	SCREENMAN->SetNewScreen(NEXT_SCREEN);
-
-	//Not sure if this is correct, it may make more sense
-	//to have a metric to allow/disallow user options at this point.
-
-	GAMESTATE->BeginGame();
-	GAMESTATE->BeginStage();
-}
-
 	
 void NetworkSyncManager::DisplayStartupStatus()
 {

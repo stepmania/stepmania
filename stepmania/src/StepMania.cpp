@@ -916,24 +916,8 @@ static void ProcessArgsSecond()
 	if( GetCommandlineArgument( "test2" ) )
 		LOG->Info ("Test2");
 
-
-		//--Course=[coursename]
-	
-		//Will start the given course when StepMania 
-		//starts, disallows player options.
-
-		//"ArgStartCourse", is in the NSManager
-		//bacause Networked StepMania will
-		//use it a lot.
-
 	if( GetCommandlineArgument( "netip" ) )
 		NSMAN->DisplayStartupStatus();	//If we're using networking show what happend
-
-	if( GetCommandlineArgument( "course", & Argument ) )
-		ArgStartCourse(Argument);
-
-	if( GetCommandlineArgument( "jumpscreen", & Argument ) )
-		SCREENMAN->SetNewScreen(Argument);
 }
 
 int main(int argc, char* argv[])
