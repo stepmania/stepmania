@@ -30,7 +30,7 @@
 #include "RageLog.h"
 #include "RageException.h"
 
-#include "archutils/win32/tls.h"
+//#include "archutils/win32/tls.h"
 
 #include <stdio.h>
 
