@@ -1007,17 +1007,8 @@ void PlayerMinus::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 			m_pNoteField->DidTapNote( c, TNS_MARVELOUS, false );
 		else
 		{
-			switch( score )
-			{
-			case TNS_GREAT:
-			case TNS_PERFECT:
-			case TNS_MARVELOUS:
-				{
-					bool bBright = g_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-					m_pNoteField->DidTapNote( c, score, bBright );
-				}
-				break;
-			}
+			bool bBright = g_CurStageStats.iCurCombo[m_PlayerNumber]>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+			m_pNoteField->DidTapNote( c, score, bBright );
 		}
 	}
 		
