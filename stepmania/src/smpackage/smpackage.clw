@@ -16,9 +16,9 @@ Resource1=IDR_MAINFRAME
 Resource2=IDD_DIALOG_NAME
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_EXPORTER
+Resource3=IDD_INSTALL
 Class5=EnterName
-Resource4=IDD_INSTALL
+Resource4=IDD_EXPORTER
 Class6=EditInsallations
 Resource5=IDD_EDIT_INSTALLATIONS
 

@@ -180,17 +180,41 @@ void CSMPackageInstallDlg::OnOK()
 		SendMessage( WM_PAINT );
 		UpdateWindow();		// Force the silly thing to hadle WM_PAINT now!
 
+retry_unzip:
 
 		// Extract the files
 		try
 		{	
+			// skip extracting "thumbs.db" files
+			CZipFileHeader fhInfo;
+			if( m_zip.GetFileInfo(fhInfo, (WORD)i) )
+			{
+				CString sFileName = fhInfo.GetFileName();
+				sFileName.MakeLower();
+				if( sFileName.Find("thumbs.db") != -1 )
+					continue;	// skip to next file
+			}
+
 			m_zip.ExtractFile( (WORD)i, sInstallDir, true );	// extract file to current directory
 		}
 		catch (CException* e)
 		{
-			e->ReportError();
+			char szError[4096];
+			e->GetErrorMessage( szError, sizeof(szError) );
 			e->Delete();
-			exit( 1 );
+
+			switch( MessageBox( szError, "Error Extracting File", MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
+			{
+			case IDABORT:
+				exit(1);
+				break;
+			case IDRETRY:
+				goto retry_unzip;
+				break;
+			case IDIGNORE:
+				// do nothing
+				break;
+			}
 		}
 	}
 
