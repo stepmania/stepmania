@@ -53,14 +53,16 @@
 ArchHooks *HOOKS = NULL;
 
 
+#ifdef WIN32
+
 #ifdef DEBUG
 #pragma comment(lib, "SDL-1.2.5/lib/SDLmaind.lib")
 #else
 #pragma comment(lib, "SDL-1.2.5/lib/SDLmain.lib")
 #endif
 
-#ifdef WIN32
 HWND g_hWndMain = NULL;
+
 #endif
 
 static bool g_bHasFocus = true;
