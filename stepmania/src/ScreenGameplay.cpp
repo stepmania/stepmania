@@ -869,14 +869,6 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	GAMESTATE->m_pPlayerState[p]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions;
 }
 
-static int GetMaxSongsPlayed()
-{
-	int SongNumber = 0;
-    FOREACH_EnabledPlayer(p)
-        SongNumber = max( SongNumber, STATSMAN->m_CurStageStats.m_player[p].iSongsPlayed );
-	return SongNumber;
-}
-
 void ScreenGameplay::LoadCourseSongNumber( int SongNumber )
 {
 	if( !GAMESTATE->IsCourseMode() )
@@ -899,7 +891,7 @@ void ScreenGameplay::LoadNextSong()
 		m_textCourseSongNumber[p].SetText( ssprintf("%d", STATSMAN->m_CurStageStats.m_player[p].iSongsPlayed) );
 	}
 
-	LoadCourseSongNumber( GetMaxSongsPlayed() );
+	LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex() );
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
 	iPlaySongIndex %= m_apSongsQueue.size();
@@ -2169,7 +2161,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 				GAMESTATE->m_pCurSong.Set( pCurSong );
 
 				m_NextSongOut.StartTransitioning( SM_LoadNextSong );
-				LoadCourseSongNumber( GetMaxSongsPlayed()+1 );
+				LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
 				COMMAND( m_sprCourseSongNumber, "ChangeIn" );
 				return;
 			}
