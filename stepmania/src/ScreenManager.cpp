@@ -376,7 +376,7 @@ retry:
 	// Load shared BGAnimation
 	CString sNewBGA;
 	if( pNewScreen->UsesBackground() )
-		sNewBGA = THEME->GetPathToB( sScreenName+" background", true );
+		sNewBGA = THEME->GetPathB(sScreenName,"background");
 	if( sNewBGA.empty() )
 	{
 		m_pSharedBGA->Unload();
