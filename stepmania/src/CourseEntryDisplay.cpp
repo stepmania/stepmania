@@ -46,7 +46,7 @@
 
 CourseEntryDisplay::CourseEntryDisplay()
 {
-	m_sprFrame.Load( THEME->GetPathTo("Graphics","select course content bar") );
+	m_sprFrame.Load( THEME->GetPathTo("Graphics","CourseEntryDisplay bar") );
 	this->AddChild( &m_sprFrame );
 
 	m_textNumber.LoadFromFont( THEME->GetPathTo("Fonts","Header2") );
@@ -57,7 +57,7 @@ CourseEntryDisplay::CourseEntryDisplay()
 	m_TextBanner.SetXY( TEXT_BANNER_X, TEXT_BANNER_Y );
 	this->AddChild( &m_TextBanner );
 
-	m_textFoot.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","select music meter 2x1"),"10" );
+	m_textFoot.LoadFromTextureAndChars( THEME->GetPathTo("Graphics","CourseEntryDisplay difficulty 2x1"),"10" );
 	m_textFoot.SetXY( FOOT_X, FOOT_Y );
 	m_textFoot.EnableShadow( false );
 	this->AddChild( &m_textFoot );

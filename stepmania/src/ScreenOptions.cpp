@@ -451,6 +451,9 @@ void ScreenOptions::StartGoToNextState()
 
 void ScreenOptions::MenuStart( PlayerNumber pn )
 {
+	if( m_Menu.IsTransitioning() )
+		return;
+
 	if( PREFSMAN->m_bArcadeOptionsNavigation )
 	{
 		bool bAllOnExit = true;

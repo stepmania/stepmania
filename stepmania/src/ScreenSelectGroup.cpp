@@ -254,6 +254,9 @@ void ScreenSelectGroup::MenuDown( PlayerNumber pn )
 
 void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 {
+	if( m_bChosen )
+		return;
+
 	m_soundSelect.PlayRandom();
 	m_Menu.m_MenuTimer.Stop();
 	m_bChosen = true;

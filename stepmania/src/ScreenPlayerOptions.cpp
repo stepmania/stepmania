@@ -219,10 +219,10 @@ void ScreenPlayerOptions::DrawPrimitives()
 
 void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( type == IET_FIRST_PRESS  &&
-		!m_Menu.m_In.IsTransitioning()  &&
+	if( !m_Menu.m_In.IsTransitioning()  &&
 		MenuI.IsValid()  &&
 		MenuI.button == MENU_BUTTON_START  &&
+		type != IET_RELEASE  &&
 		PREFSMAN->m_bShowSongOptions )
 	{
 		if( m_bAcceptedChoices  &&  !m_bGoToOptions )

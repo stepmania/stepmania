@@ -142,9 +142,7 @@ protected:
 	Sprite				m_sprOniGameOver[NUM_PLAYERS];
 	void				ShowOniGameOver( PlayerNumber pn );
 
-	RandomSample	m_soundFail;
 	RandomSample	m_soundOniDie;
-	RandomSample	m_soundTryExtraStage;
 	RandomSample	m_announcerReady;
 	RandomSample	m_announcerHereWeGo;
 	RandomSample	m_announcerDanger;

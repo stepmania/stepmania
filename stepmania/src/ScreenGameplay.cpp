@@ -470,8 +470,6 @@ ScreenGameplay::ScreenGameplay( bool bDemonstration )
 
 	if( !bDemonstration )	// only load if we're going to use it
 	{
-		m_soundFail.Load(				THEME->GetPathTo("Sounds","ScreenGameplay failed") );
-		m_soundTryExtraStage.Load(		THEME->GetPathTo("Sounds","ScreenGameplay extra") );
 		m_soundOniDie.Load(				THEME->GetPathTo("Sounds","ScreenGameplay oni die") );
 		m_announcerReady.Load(			ANNOUNCER->GetPathTo("gameplay ready") );
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
@@ -1480,7 +1478,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 //		this->SendScreenMessage( SM_GoToScreenAfterFail, 0.2f );
 //		SCREENMAN->SendMessageToTopScreen( SM_PlayFailComment, 1.0f );
 		m_Failed.StartTransitioning( SM_GoToScreenAfterFail );
-		m_soundFail.PlayRandom();
 
 		// make the background invisible so we don't waste power drawing it
 		m_Background.BeginTweening( 1 );
