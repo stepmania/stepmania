@@ -124,7 +124,7 @@ if test "$have_libpng" = "no"; then
   echo "*** it is installed to continue the build process."
   exit 1
 fi
-LIBS="$LIBS -lpng"
+LIBS="$LIBS -lpng -lz -lm"
 
 AC_ARG_WITH(jpeg, AC_HELP_STRING([--without-jpeg], [Disable JPEG support]), with_jpeg=$withval, with_jpeg=yes)
 
