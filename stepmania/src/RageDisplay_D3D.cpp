@@ -698,7 +698,7 @@ void RageDisplay::SetLightDirectional(
 
 void RageDisplay::SetBackfaceCull( bool b )
 {
-	g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, b ? D3DCULL_CCW : D3DCULL_NONE );
+	g_pd3dDevice->SetRenderState( D3DRS_CULLMODE, b ? D3DCULL_CW : D3DCULL_NONE );
 }
 
 void RageDisplay::DeleteTexture( unsigned uTexHandle )
