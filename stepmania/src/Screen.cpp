@@ -13,6 +13,7 @@
 #include "Screen.h"
 #include "GameManager.h"
 #include "GameState.h"
+#include "PrefsManager.h"
 
 Screen::Screen()
 {
