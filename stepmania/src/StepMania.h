@@ -4,7 +4,7 @@
 class Game;
 
 #ifdef _XBOX
-void __cdecl main(char* argv[]);
+void __cdecl main();
 #else
 int SMmain(int argc, char* argv[]);
 #endif
