@@ -55,9 +55,9 @@ static const char *anims[NUM_ANIMATIONS] =
 {
 	"DancePad-DDR.txt",
 	"DancePads-DDR.txt",
-	"BeginnerHelper_step-left.bones.txt",
-	"BeginnerHelper_step-down.bones.txt",
 	"BeginnerHelper_step-up.bones.txt",
+	"BeginnerHelper_step-down.bones.txt",
+	"BeginnerHelper_step-left.bones.txt",
 	"BeginnerHelper_step-right.bones.txt",
 	"BeginnerHelper_step-jumplr.bones.txt"
 };
