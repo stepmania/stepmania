@@ -162,37 +162,7 @@ void Steps::Decompress() const
 
 		int iNewTracks = GameManager::NotesTypeToNumTracks(m_StepsType);
 
-		if( pdata.GetNumTracks() > iNewTracks)
-		{
-			notes->SetNumTracks( pdata.GetNumTracks() );
-			notes->CopyRange( &pdata, 0, pdata.GetLastRow(), 0 );
-
-			const int iOriginalTracks = pdata.GetNumTracks();
-			const bool iUnevenTracks = (iOriginalTracks % iNewTracks) != 0;
-			const int iTracksToOverlap = iOriginalTracks / iNewTracks;
-			if( iTracksToOverlap )
-			{
-				// if we have at least as many tracks in the old mode
-				// as we do in the mode we're going to
-				for (int ix = 0; ix < iNewTracks; ix++)
-				{
-					for (int iy = 0; iy < iTracksToOverlap; iy++)
-					{
-						notes->CombineTracks(ix, (ix + iy * iNewTracks));
-					}
-				}
-				if( iUnevenTracks )
-				{
-					for (int ix = iOriginalTracks - iUnevenTracks; ix < iOriginalTracks; ix++)
-					{
-						// spread out the remaining tracks evenly
-						notes->CombineTracks((ix * iOriginalTracks) % iNewTracks, ix);
-					}
-				}
-			}
-			notes->SetNumTracks( iNewTracks );
-		} else
-			notes->LoadTransformedSlidingWindow( &pdata, iNewTracks );
+		notes->LoadTransformedSlidingWindow( &pdata, iNewTracks );
 
 		NoteDataUtil::FixImpossibleRows( *notes, m_StepsType );
 	}

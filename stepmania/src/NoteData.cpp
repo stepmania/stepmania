@@ -464,10 +464,48 @@ void NoteData::LoadTransformed( const NoteData* pOriginal, int iNewNumTracks, co
 	Convert4sToHoldNotes();
 }
 
+void NoteData::LoadOverlapped( const NoteData* pOriginal, int iNewNumTracks )
+{
+	SetNumTracks( pOriginal->GetNumTracks() );
+	CopyRange( pOriginal, 0, pOriginal->GetLastRow(), 0 );
+
+	const int iOriginalTracks = pOriginal->GetNumTracks();
+	const bool iUnevenTracks = (iOriginalTracks % iNewNumTracks) != 0;
+	const int iTracksToOverlap = iOriginalTracks / iNewNumTracks;
+	if( iTracksToOverlap )
+	{
+		// if we have at least as many tracks in the old mode
+		// as we do in the mode we're going to
+		for (int ix = 0; ix < iNewNumTracks; ix++)
+		{
+			for (int iy = 0; iy < iTracksToOverlap; iy++)
+			{
+				CombineTracks(ix, (ix + iy * iNewNumTracks));
+			}
+		}
+		if( iUnevenTracks )
+		{
+			for (int ix = iOriginalTracks - iUnevenTracks; ix < iOriginalTracks; ix++)
+			{
+				// spread out the remaining tracks evenly
+				CombineTracks((ix * iOriginalTracks) % iNewNumTracks, ix);
+			}
+		}
+	}
+	SetNumTracks( iNewNumTracks );
+}
+
 void NoteData::LoadTransformedSlidingWindow( const NoteData* pOriginal, int iNewNumTracks )
 {
 	// reset all notes
 	Init();
+
+	if( pOriginal->GetNumTracks() > iNewNumTracks )
+	{
+		/* Use a ifferent algorithm for reducing tracks. */
+		LoadOverlapped( pOriginal, iNewNumTracks );
+		return;
+	}
 
 	NoteData Original;
 	Original.To4s( *pOriginal );
