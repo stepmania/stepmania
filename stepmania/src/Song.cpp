@@ -1174,7 +1174,15 @@ bool Song::RouletteDisplayed() const { if(IsTutorial()) return false; return Get
 bool Song::ShowInDemonstrationAndRanking() const { return !IsTutorial() && NormallyDisplayed(); }
 
 
-bool Song::HasMusic() const 		{return m_sMusicFile != ""			&&	IsAFile(GetMusicPath()); }
+/* Hack: see Song::TidyUpData comments. */
+bool Song::HasMusic() const
+{
+	/* If we have keys, we always have music. */
+	if( m_vsKeysoundFile.size() != 0 )
+		return true;
+
+	return m_sMusicFile != "" && IsAFile(GetMusicPath());
+}
 bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBannerPath()); }
 bool Song::HasLyrics() const		{return m_sLyricsFile != ""			&&	IsAFile(GetLyricsPath()); }
 bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); }
