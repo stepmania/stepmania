@@ -18,22 +18,17 @@
 #include "GameState.h"
 #include "AnnouncerManager.h"
 
+#define ACTOR_ON( actor, name )	\
+	actor.SetX( THEME->GetMetricF("ScreenSelectStyle",CString(name)+"X") );	\
+	actor.SetY( THEME->GetMetricF("ScreenSelectStyle",CString(name)+"Y") );	\
+	actor.Command( THEME->GetMetric("ScreenSelectStyle",CString(name)+"OnCommand") )
 
-#define JOINT_PREMIUM_ON_COMMAND	THEME->GetMetric ("ScreenSelectStyle","JointPremiumOnCommand")
-#define JOINT_PREMIUM_OFF_COMMAND	THEME->GetMetric ("ScreenSelectStyle","JointPremiumOffCommand")
-#define ICON_ON_COMMAND( i )		THEME->GetMetric ("ScreenSelectStyle",ssprintf("Icon%dOnCommand",i+1))
-#define ICON_OFF_COMMAND( i )		THEME->GetMetric ("ScreenSelectStyle",ssprintf("Icon%dOffCommand",i+1))
+#define ACTOR_OFF( actor, name )	\
+	actor.Command( THEME->GetMetric("ScreenSelectStyle",CString(name)+"OffCommand") )
+
 #define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconGainFocusCommand")
 #define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetric ("ScreenSelectStyle","IconLoseFocusCommand")
 #define DISABLED_COLOR				THEME->GetMetricC("ScreenSelectStyle","DisabledColor")
-#define EXPLANATION_ON_COMMAND		THEME->GetMetric ("ScreenSelectStyle","ExplanationOnCommand")
-#define EXPLANATION_OFF_COMMAND		THEME->GetMetric ("ScreenSelectStyle","ExplanationOffCommand")
-#define WARNING_ON_COMMAND			THEME->GetMetric ("ScreenSelectStyle","WarningOnCommand")
-#define WARNING_OFF_COMMAND			THEME->GetMetric ("ScreenSelectStyle","WarningOffCommand")
-#define INFO_ON_COMMAND				THEME->GetMetric ("ScreenSelectStyle","InfoOnCommand")
-#define INFO_OFF_COMMAND			THEME->GetMetric ("ScreenSelectStyle","InfoOffCommand")
-#define PICTURE_ON_COMMAND			THEME->GetMetric ("ScreenSelectStyle","PictureOnCommand")
-#define PICTURE_OFF_COMMAND			THEME->GetMetric ("ScreenSelectStyle","PictureOffCommand")
 
 
 ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
@@ -73,7 +68,6 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 		if( sPicturePath != "" )
 		{
 			m_sprPicture[i].Load( sPicturePath );
-//			m_sprPicture[i].Command( PREVIEW_X, PREVIEW_Y );
 			m_sprPicture[i].SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_sprPicture[i] );
 		}
@@ -87,7 +81,6 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 		if( sInfoPath != "" )
 		{
 			m_sprInfo[i].Load( sInfoPath );
-//			m_sprInfo[i].SetXY( INFO_X, INFO_Y );
 			m_sprInfo[i].SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_sprInfo[i] );
 		}
@@ -127,12 +120,12 @@ ScreenSelectStyle::ScreenSelectStyle() : ScreenSelect( "ScreenSelectStyle" )
 	//
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
-		m_textIcon[i].Command( ICON_ON_COMMAND(i) );
-		m_sprIcon[i].Command( ICON_ON_COMMAND(i) );
+		ACTOR_ON( m_textIcon[i], ssprintf("Icon%d",i+1) );
+		ACTOR_ON( m_sprIcon[i], ssprintf("Icon%d",i+1) );
 	}
-	m_sprExplanation.Command( EXPLANATION_ON_COMMAND );
-	m_sprWarning.Command( WARNING_ON_COMMAND );
-	m_sprJointPremium.Command( JOINT_PREMIUM_ON_COMMAND );
+	ACTOR_ON( m_sprExplanation, "Explanation" );
+	ACTOR_ON( m_sprWarning, "Warning" );
+	ACTOR_ON( m_sprJointPremium, "JointPremium" );
 
 	// let AfterChange tween Picture and Info
 }
@@ -199,14 +192,14 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 
 	for( i=0; i<m_aModeChoices.size(); i++ )
 	{
-		m_sprIcon[i].Command( ICON_OFF_COMMAND(i) );
-		m_textIcon[i].Command( ICON_OFF_COMMAND(i) );
+		ACTOR_OFF( m_sprIcon[i], ssprintf("Icon%d",i+1) );
+		ACTOR_OFF( m_textIcon[i], ssprintf("Icon%d",i+1) );
 	}
-	m_sprExplanation.Command( EXPLANATION_OFF_COMMAND );
-	m_sprWarning.Command( WARNING_OFF_COMMAND );
-	m_sprPicture[m_iSelection].Command( PICTURE_OFF_COMMAND );
-	m_sprInfo[m_iSelection].Command( INFO_OFF_COMMAND );
-	m_sprJointPremium.Command( JOINT_PREMIUM_OFF_COMMAND );
+	ACTOR_OFF( m_sprExplanation, "Explanation" );
+	ACTOR_OFF( m_sprWarning, "Warning" );
+	ACTOR_OFF( m_sprPicture[m_iSelection], "Picture" );
+	ACTOR_OFF( m_sprInfo[m_iSelection], "Info" );
+	ACTOR_OFF( m_sprJointPremium, "JointPremium" );
 }
 
 int ScreenSelectStyle::GetSelectionIndex( PlayerNumber pn )
@@ -277,6 +270,6 @@ void ScreenSelectStyle::AfterChange()
 	m_sprInfo[m_iSelection].SetDiffuse( RageColor(1,1,1,1) );
 	m_sprPicture[m_iSelection].SetZoom( 1 );
 	m_sprInfo[m_iSelection].SetZoom( 1 );
-	m_sprPicture[m_iSelection].Command( PICTURE_ON_COMMAND );
-	m_sprInfo[m_iSelection].Command( INFO_ON_COMMAND );
+	ACTOR_ON( m_sprPicture[m_iSelection], "Picture" );
+	ACTOR_ON( m_sprInfo[m_iSelection], "Info" );
 }
