@@ -8,6 +8,7 @@
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #include <unistd.h>
 #include "RageUtil.h"
+#include <sys/time.h>
 
 #if defined(CRASH_HANDLER)
 #include "archutils/Unix/CrashHandler.h"
@@ -132,6 +133,14 @@ void ArchHooks_Unix::SetTime( tm newtime )
 	system( sCommand );
 
 	system( "hwclock --systohc" );
+}
+
+int64_t ArchHooks_Unix::GetMicrosecondsSinceStart()
+{
+	struct timeval tv;
+	gettimeofday( &tv, NULL );
+
+	return int64_t(tv.tv_sec) * 1000000 + int64_t(tv.tv_usec);
 }
 
 /*

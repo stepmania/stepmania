@@ -9,6 +9,7 @@ public:
     void DumpDebugInfo();
 
 	void SetTime( tm newtime );
+	int64_t GetMicrosecondsSinceStart();
 };
 
 #undef ARCH_HOOKS
