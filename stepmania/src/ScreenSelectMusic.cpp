@@ -815,7 +815,12 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		}
 		if( CodeDetector::EnteredSortMenu(GameI.controller) )
 		{
-			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
+			/* Ignore the SortMenu when in course mode.  However, still check for the code, so
+			 * if people try pressing left+right+start in course mode, we don't pick the selected
+			 * course on them. */
+			if( GAMESTATE->IsCourseMode() )
+				; /* nothing */
+			else if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
 			else
 				m_MusicWheel.ChangeSort( SORT_SORT_MENU );
