@@ -828,6 +828,7 @@ int main(int argc, char* argv[])
 	/* Set up alternative filesystem trees. */
 	for( unsigned i=0; i<PREFSMAN->m_asAdditionalSongFolders.size(); i++ )
         FILEMAN->Mount( "dir", PREFSMAN->m_asAdditionalSongFolders[i], "Songs" );
+	FILEMAN->Mount( "dir", PREFSMAN->m_DWIPath, "" );
 
 	GAMEMAN		= new GameManager;
 	THEME		= new ThemeManager;

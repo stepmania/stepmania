@@ -594,6 +594,12 @@ static bool ImageIsLoadable( const CString &sPath )
 /* Songs in BlacklistImages will never be autodetected as song images. */
 void Song::TidyUpData()
 {
+	m_sSongDir.Replace( '\\', '/' );
+	m_sBannerFile.Replace( '\\', '/' );
+	m_sLyricsFile.Replace( '\\', '/' );
+	m_sBackgroundFile.Replace( '\\', '/' );
+	m_sCDTitleFile.Replace( '\\', '/' );
+	
 	if( !HasMusic() )
 	{
 		CStringArray arrayPossibleMusic;
@@ -1530,44 +1536,14 @@ int Song::GetNumTimesPlayed( MemoryCard card ) const
 	return iTotalNumTimesPlayed;
 }
 
-/* Search semantics for all song files:
- *
- * If the path doesn't have any directory separators, it's a filename in the
- * song directory.
- *
- * If it does, it's relative to the top directory of the tree it was loaded
- * from, eg ".\music\stuff\song.ogg".  Most of the time, that's the SM tree,
- * and that's the PWD, so just return it directly.  If the file was originally
- * loaded from the DWIPath, it's relative to that, so prepend it.
- *
- * Some DWI's do have relative paths that don't start with ".\".
- */
-
-/* We only follow this for song files and cdtitles; it's for compatibility
- * with DWI.  We prefer paths relative to the song directory; only support
- * that for all other paths. */
-
-/* Note: Prepending the dwipath is ugly.  The first impression might be to
- * add a Song::TopFilePath, but don't do that--we have too much stuff in there
- * already.  We don't really need it; this is the only place it'd be used.  What
- * we *should* be doing is prepending this path when we first load the song.
- * However, dwipaths are usually like "c:\games\dwi", and we can't store colons
- * in SM's; they'll get interpreted as delimiters.  So:
- * XXX: Add some kind of escape character to SM's.
- *
- * -glenn */
- 
+/* Note that supplying a path relative to the top-level directory is only for compatibility
+ * with DWI.  We prefer paths relative to the song directory. */
 CString Song::GetMusicPath() const
 {
 	/* If there's no path in the music file, the file is in the same directory
 	 * as the song.  (This is the preferred configuration.) */
 	if( m_sMusicFile.Find(SLASH[0]) == -1)
 		return m_sSongDir+m_sMusicFile;
-
-	/* The file has a path.  If it was loaded from the m_DWIPath, it's relative
-	 * to that. */
-	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
-		return PREFSMAN->m_DWIPath+SLASH+m_sMusicFile;
 
 	/* Otherwise, it's relative to the top of the SM directory (the CWD), so
 	 * return it directly. */
@@ -1590,12 +1566,8 @@ CString Song::GetLyricsPath() const
 
 CString Song::GetCDTitlePath() const
 {
-	if( m_sCDTitleFile.Find('/') == -1)
+	if( m_sCDTitleFile.Find(SLASH[0]) != -1 )
 		return m_sSongDir+m_sCDTitleFile;
-
-	if( PREFSMAN->m_DWIPath!="" && m_sSongDir.Left(PREFSMAN->m_DWIPath.GetLength()) == PREFSMAN->m_DWIPath )
-		return PREFSMAN->m_DWIPath+SLASH+m_sCDTitleFile;
-
 	return m_sCDTitleFile;
 }
 

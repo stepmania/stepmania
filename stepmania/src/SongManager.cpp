@@ -146,10 +146,6 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 {
 	RageTimer tm;
 	LoadStepManiaSongDir( SONGS_DIR, ld );
-
-	if( PREFSMAN->m_DWIPath != "" )
-		LoadStepManiaSongDir( PREFSMAN->m_DWIPath + "/Songs", ld );
-
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
 
@@ -1144,9 +1140,6 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 {
 	const CString sCourseSuffix = sPreferredGroup + SLASH + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	CString sCoursePath = SONGS_DIR + sCourseSuffix;
-
-	if( !DoesFileExist(sCoursePath) && PREFSMAN->m_DWIPath.size() )
-		sCoursePath = PREFSMAN->m_DWIPath + SLASH "Songs" SLASH + sCourseSuffix;
 
 	/* Couldn't find course in DWI path or alternative song folders */
 	if( !DoesFileExist(sCoursePath) )
