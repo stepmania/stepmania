@@ -119,9 +119,15 @@ static int retried_write( int fd, const void *buf, size_t count )
 static bool parent_write(int to_child, const void *p, size_t size)
 {
 	size_t ret = retried_write(to_child, p, size);
-	if(ret != size)
+	if( ret == -1 )
 	{
 		safe_print(fileno(stderr), "Unexpected write() result (", strerror(errno), ")\n", NULL);
+		return false;
+	}
+
+	if(ret != size)
+	{
+		safe_print(fileno(stderr), "Unexpected write() result (", itoa(ret), ")\n", NULL);
 		return false;
 	}
 
@@ -160,9 +166,9 @@ static void parent_process( int to_child, const CrashData *crash )
 	for( int i = 0; i < cnt; ++i )
 	{
 		size = strlen(ps[i])+1;
-		if( parent_write(to_child, &size, sizeof(size)) )
+		if( !parent_write(to_child, &size, sizeof(size)) )
 			return;
-		if( parent_write(to_child, ps[i], size) )
+		if( !parent_write(to_child, ps[i], size) )
 			return;
 	}
 
