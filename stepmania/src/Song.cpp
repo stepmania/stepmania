@@ -490,6 +490,7 @@ void Song::TidyUpData()
 	 * their source's values. */
 	ReCalculateRadarValuesAndLastBeat();
 
+	TrimLeft(m_sMainTitle);
 	TrimRight(m_sMainTitle);
 
 	/* Fall back on the song directory name. */
