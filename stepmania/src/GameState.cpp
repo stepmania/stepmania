@@ -222,6 +222,22 @@ void GameState::JoinPlayer( PlayerNumber pn )
 		this->BeginGame();
 }
 
+/*
+ * Game flow:
+ *
+ * BeginGame() - the first player has joined; the game is starting.
+ *
+ * PlayersFinalized() - no more players may join (because the style is set)
+ *
+ * BeginStage() - gameplay is beginning
+ *
+ * optional: CancelStage() - gameplay aborted (Back pressed), undo BeginStage and back up
+ *
+ * FinishStage() - gameplay and evaluation is finished
+ *
+ * EndGame() - the game is finished
+ * 
+ */
 void GameState::BeginGame()
 {
 	m_timeGameStarted.Touch();
@@ -389,6 +405,139 @@ void GameState::EndGame()
 
 	// make sure we don't execute EndGame twice.
 	m_timeGameStarted.SetZero();
+}
+
+static int GetNumStagesForCurrentSong()
+{
+	int iNumStagesOfThisSong = 1;
+	if( GAMESTATE->m_pCurSong )
+		iNumStagesOfThisSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
+	else if( GAMESTATE->m_pCurCourse )
+		iNumStagesOfThisSong = 1;
+	else
+		return -1;
+
+	ASSERT( iNumStagesOfThisSong >= 1 && iNumStagesOfThisSong <= 3 );
+
+	/* Never increment more than one past final stage.  That is, if the current
+	 * stage is the final stage, and we picked a stage that takes two songs, it
+	 * only counts as one stage (so it doesn't bump us all the way to Ex2).
+	 * One case where this happens is a long/marathon extra stage.  Another is
+	 * if a long/marathon song is selected explicitly in the theme with a GameCommand,
+	 * and PREFSMAN->m_iNumArcadeStages is less than the number of stages that
+	 * song takes. */
+	int iNumStagesLeft = PREFSMAN->m_iNumArcadeStages - GAMESTATE->m_iCurrentStageIndex;
+	iNumStagesOfThisSong = min( iNumStagesOfThisSong, iNumStagesLeft );
+	iNumStagesOfThisSong = max( iNumStagesOfThisSong, 1 );
+
+	return iNumStagesOfThisSong;
+}
+
+/* Called by ScreenGameplay.  Set the length of the current song. */
+void GameState::BeginStage()
+{
+	if( m_bDemonstrationOrJukebox )
+		return;
+
+	/* This should only be called once per stage. */
+	if( m_iNumStagesOfThisSong != 0 )
+		LOG->Warn( "XXX: m_iNumStagesOfThisSong == %i?", m_iNumStagesOfThisSong );
+
+	/* Finish the last stage (if any), if we havn't already.  (For example, we might
+	 * have, for some reason, gone from gameplay to evaluation straight back to gameplay.) */
+	FinishStage();
+
+	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
+	ASSERT( m_iNumStagesOfThisSong != -1 );
+}
+
+void GameState::CancelStage()
+{
+	m_iNumStagesOfThisSong = 0;
+}
+
+/* Called by ScreenSelectMusic (etc).  Increment the stage counter if we just played a
+ * song.  Might be called more than once. */
+void GameState::FinishStage()
+{
+	/* If m_iNumStagesOfThisSong is 0, we've been called more than once before calling
+	 * BeginStage.  This can happen when backing out of the player options screen. */
+	if( m_iNumStagesOfThisSong == 0 )
+		return;
+
+	// Increment the stage counter.
+	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
+	const int iOldStageIndex = m_iCurrentStageIndex;
+	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
+
+	m_iNumStagesOfThisSong = 0;
+
+	// The round has ended; change the seed.
+	GAMESTATE->m_iRoundSeed = rand();
+
+	if( m_bDemonstrationOrJukebox )
+		return;
+
+	//
+	// Add step totals.  Use radarActual, since the player might have failed part way
+	// through the song, in which case we don't want to give credit for the rest of the
+	// song.
+	//
+	FOREACH_HumanPlayer( pn )
+	{
+		int iNumTapsAndHolds	= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
+		int iNumJumps			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
+		int iNumHolds			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
+		int iNumMines			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
+		int iNumHands			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
+		float fCaloriesBurned	= STATSMAN->m_CurStageStats.m_player[pn].fCaloriesBurned;
+		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands, fCaloriesBurned );
+	}
+
+
+	// Update profile stats
+	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
+
+	int iGameplaySeconds = (int)truncf(STATSMAN->m_CurStageStats.fGameplaySeconds);
+
+	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+	pMachineProfile->m_iCurrentCombo = 0;
+
+	CHECKPOINT;
+	FOREACH_HumanPlayer( pn )
+	{
+		CHECKPOINT;
+
+		Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
+		if( pPlayerProfile )
+		{
+			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
+			pPlayerProfile->m_iCurrentCombo = 
+				PREFSMAN->m_bComboContinuesBetweenSongs ? 
+				STATSMAN->m_CurStageStats.m_player[pn].iCurCombo : 
+				0;
+		}
+
+		const StageStats& ss = STATSMAN->m_CurStageStats;
+		AddPlayerStatsToProfile( pMachineProfile, ss, pn );
+
+		if( pPlayerProfile )
+			AddPlayerStatsToProfile( pPlayerProfile, ss, pn );
+
+		CHECKPOINT;
+	}
+
+
+
+	if( GAMESTATE->GetEventMode() )
+	{
+		const int iSaveProfileEvery = 3;
+		if( iOldStageIndex/iSaveProfileEvery < m_iCurrentStageIndex/iSaveProfileEvery )
+		{
+			LOG->Trace( "Played %i stages; saving profiles ...", iSaveProfileEvery );
+			PROFILEMAN->SaveAllProfiles();
+		}
+	}
 }
 
 void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
@@ -578,139 +727,6 @@ float GameState::GetSongPercent( float beat ) const
 {
 	/* 0 = first step; 1 = last step */
 	return (beat - m_pCurSong->m_fFirstBeat) / m_pCurSong->m_fLastBeat;
-}
-
-static int GetNumStagesForCurrentSong()
-{
-	int iNumStagesOfThisSong = 1;
-	if( GAMESTATE->m_pCurSong )
-		iNumStagesOfThisSong = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
-	else if( GAMESTATE->m_pCurCourse )
-		iNumStagesOfThisSong = 1;
-	else
-		return -1;
-
-	ASSERT( iNumStagesOfThisSong >= 1 && iNumStagesOfThisSong <= 3 );
-
-	/* Never increment more than one past final stage.  That is, if the current
-	 * stage is the final stage, and we picked a stage that takes two songs, it
-	 * only counts as one stage (so it doesn't bump us all the way to Ex2).
-	 * One case where this happens is a long/marathon extra stage.  Another is
-	 * if a long/marathon song is selected explicitly in the theme with a GameCommand,
-	 * and PREFSMAN->m_iNumArcadeStages is less than the number of stages that
-	 * song takes. */
-	int iNumStagesLeft = PREFSMAN->m_iNumArcadeStages - GAMESTATE->m_iCurrentStageIndex;
-	iNumStagesOfThisSong = min( iNumStagesOfThisSong, iNumStagesLeft );
-	iNumStagesOfThisSong = max( iNumStagesOfThisSong, 1 );
-
-	return iNumStagesOfThisSong;
-}
-
-/* Called by ScreenGameplay.  Set the length of the current song. */
-void GameState::BeginStage()
-{
-	if( m_bDemonstrationOrJukebox )
-		return;
-
-	/* This should only be called once per stage. */
-	if( m_iNumStagesOfThisSong != 0 )
-		LOG->Warn( "XXX: m_iNumStagesOfThisSong == %i?", m_iNumStagesOfThisSong );
-
-	/* Finish the last stage (if any), if we havn't already.  (For example, we might
-	 * have, for some reason, gone from gameplay to evaluation straight back to gameplay.) */
-	FinishStage();
-
-	m_iNumStagesOfThisSong = GetNumStagesForCurrentSong();
-	ASSERT( m_iNumStagesOfThisSong != -1 );
-}
-
-void GameState::CancelStage()
-{
-	m_iNumStagesOfThisSong = 0;
-}
-
-/* Called by ScreenSelectMusic (etc).  Increment the stage counter if we just played a
- * song.  Might be called more than once. */
-void GameState::FinishStage()
-{
-	/* If m_iNumStagesOfThisSong is 0, we've been called more than once before calling
-	 * BeginStage.  This can happen when backing out of the player options screen. */
-	if( m_iNumStagesOfThisSong == 0 )
-		return;
-
-	// Increment the stage counter.
-	ASSERT( m_iNumStagesOfThisSong >= 1 && m_iNumStagesOfThisSong <= 3 );
-	const int iOldStageIndex = m_iCurrentStageIndex;
-	m_iCurrentStageIndex += m_iNumStagesOfThisSong;
-
-	m_iNumStagesOfThisSong = 0;
-
-	// The round has ended; change the seed.
-	GAMESTATE->m_iRoundSeed = rand();
-
-	if( m_bDemonstrationOrJukebox )
-		return;
-
-	//
-	// Add step totals.  Use radarActual, since the player might have failed part way
-	// through the song, in which case we don't want to give credit for the rest of the
-	// song.
-	//
-	FOREACH_HumanPlayer( pn )
-	{
-		int iNumTapsAndHolds	= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
-		int iNumJumps			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
-		int iNumHolds			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
-		int iNumMines			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
-		int iNumHands			= (int) STATSMAN->m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
-		float fCaloriesBurned	= STATSMAN->m_CurStageStats.m_player[pn].fCaloriesBurned;
-		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumMines, iNumHands, fCaloriesBurned );
-	}
-
-
-	// Update profile stats
-	Profile* pMachineProfile = PROFILEMAN->GetMachineProfile();
-
-	int iGameplaySeconds = (int)truncf(STATSMAN->m_CurStageStats.fGameplaySeconds);
-
-	pMachineProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-	pMachineProfile->m_iCurrentCombo = 0;
-
-	CHECKPOINT;
-	FOREACH_HumanPlayer( pn )
-	{
-		CHECKPOINT;
-
-		Profile* pPlayerProfile = PROFILEMAN->GetProfile( pn );
-		if( pPlayerProfile )
-		{
-			pPlayerProfile->m_iTotalGameplaySeconds += iGameplaySeconds;
-			pPlayerProfile->m_iCurrentCombo = 
-				PREFSMAN->m_bComboContinuesBetweenSongs ? 
-				STATSMAN->m_CurStageStats.m_player[pn].iCurCombo : 
-				0;
-		}
-
-		const StageStats& ss = STATSMAN->m_CurStageStats;
-		AddPlayerStatsToProfile( pMachineProfile, ss, pn );
-
-		if( pPlayerProfile )
-			AddPlayerStatsToProfile( pPlayerProfile, ss, pn );
-
-		CHECKPOINT;
-	}
-
-
-
-	if( GAMESTATE->GetEventMode() )
-	{
-		const int iSaveProfileEvery = 3;
-		if( iOldStageIndex/iSaveProfileEvery < m_iCurrentStageIndex/iSaveProfileEvery )
-		{
-			LOG->Trace( "Played %i stages; saving profiles ...", iSaveProfileEvery );
-			PROFILEMAN->SaveAllProfiles();
-		}
-	}
 }
 
 int GameState::GetStageIndex() const
