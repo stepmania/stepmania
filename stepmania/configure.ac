@@ -73,6 +73,8 @@ if test x$enable_gtk2 = xyes; then
 fi
 
 AC_CHECK_HEADER(linux/soundcard.h, [AC_DEFINE(HAVE_OSS, 1, [OSS support available])])
+AC_CHECK_HEADERS([inttypes.h])
+
 AM_CONDITIONAL(HAVE_ALSA, test x$alsa != xfalse )
 AM_CONDITIONAL(HAVE_GTK, test "$enable_gtk2" != "no" )
 AM_CONDITIONAL(HAVE_OSS, test x$ac_cv_header_linux_soundcard_h = xyes )
