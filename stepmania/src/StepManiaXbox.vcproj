@@ -2516,16 +2516,6 @@ cl                                                                              
 				</File>
 			</Filter>
 		</Filter>
-		<Filter
-			Name="Xbox Compilance"
-			Filter="">
-			<File
-				RelativePath="xbox compilance\stdafx.cpp">
-			</File>
-			<File
-				RelativePath="xbox compilance\stdafx.h">
-			</File>
-		</Filter>
 		<File
 			RelativePath="archutils\Win32\DialogCrashHeader.bmp">
 		</File>
