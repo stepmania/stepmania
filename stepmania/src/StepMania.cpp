@@ -439,10 +439,6 @@ int main(int argc, char* argv[])
 	 * Do it after ChangeToDirOfExecutable, so the log ends up in the right place. */
 	LOG			= new RageLog();
 
-#ifdef DEBUG
-	LOG->ShowConsole();
-#endif
-
 	/* Whew--we should be able to crash safely now! */
 
 	atexit(SDL_Quit);   /* Clean up on exit */
@@ -473,6 +469,10 @@ int main(int argc, char* argv[])
 	//
 	GAMESTATE	= new GameState;
 	PREFSMAN	= new PrefsManager;
+
+	if( PREFSMAN->m_bShowConsole )
+		LOG->ShowConsole();
+
 	CheckSettings();
 
 	GAMEMAN		= new GameManager;

@@ -81,6 +81,7 @@ public:
 	bool			m_bFirstRun;
 	bool			m_bAutoMapJoysticks;
 	float			m_fGlobalOffsetSeconds;
+	bool			m_bShowConsole;
 	bool			m_bTenFooterInRed;
 
 	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
