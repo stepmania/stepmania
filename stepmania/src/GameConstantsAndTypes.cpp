@@ -37,7 +37,8 @@ const static CString EMPTY_STRING;
 	{	\
 		CString s2 = s;	\
 		s2.MakeLower();	\
-		for( unsigned i = 0; i < ARRAYSIZE(X##Names); ++i )	\
+        unsigned i; \
+		for( i = 0; i < ARRAYSIZE(X##Names); ++i )	\
 			if( !s2.CompareNoCase(X##Names[i]) )	\
 				return (X)i;	\
 		return (X)(i+1); /*invalid*/	\
