@@ -1,8 +1,8 @@
 #include "global.h"
-#include "SDL_utils.h"
 #include "InputHandler_DirectInputHelper.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "StepMania.h"
 
 #pragma comment(lib, "dinput.lib")
 #if defined(_WINDOWS)
@@ -12,7 +12,6 @@ LPDIRECTINPUT dinput = NULL;
 
 static int ConvertScancodeToKey( int scancode );
 static BOOL CALLBACK DIJoystick_EnumDevObjectsProc(LPCDIDEVICEOBJECTINSTANCE dev, LPVOID data);
-static HWND GetHwnd();
 
 DIDevice::DIDevice()
 {
@@ -50,7 +49,7 @@ bool DIDevice::Open()
 	if( type == KEYBOARD )
 		coop = DISCL_FOREGROUND|DISCL_NONEXCLUSIVE;
 
-	hr = IDirectInputDevice2_SetCooperativeLevel( Device, GetHwnd(), coop );
+	hr = IDirectInputDevice2_SetCooperativeLevel( Device, g_hWndMain, coop );
 	if ( hr != DI_OK )
 	{
 		LOG->Info( hr_ssprintf(hr, "OpenDevice(%s): IDirectInputDevice2_SetCooperativeLevel", JoystickInst.tszProductName) );
@@ -299,16 +298,6 @@ static int ConvertScancodeToKey( int scancode )
 	case DIK_APPS: return KEY_MENU;
 	default: return '?';
 	};
-}
-
-static HWND GetHwnd()
-{
-	SDL_SysWMinfo info;
-	SDL_VERSION(&info.version);
-	if( SDL_GetWMInfo(&info) < 0 ) 
-		RageException::Throw( "SDL_GetWMInfo failed" );
-
-	return info.window;
 }
 
 /*
