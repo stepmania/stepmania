@@ -591,14 +591,11 @@ void RageSurfaceUtils::Blit( RageSurface *src, RageSurface *dst, int width, int 
 	width = min(src->w, dst->w);
 	height = min(src->h, dst->h);
 
-	/* Types of blits:
-	 * RGBA->RGBA, same format without colorkey
-	 * RGBA->RGBA, same format with colorkey
-	 * PAL->PAL; ignore colorkey flag
-	 * RGBA->RGBA different format without colorkey
-	 * RGBA->RGBA different format with colorkey
-	 * PAL->RGBA with colorkey
-	 * PAL->RGBA without colorkey
+	/*
+	 * Types of blits:
+	 * RGBA->RGBA or PAL->PAL, same format (possibly different pitch)
+	 * RGBA->RGBA different formats
+	 * PAL->RGBA
 	 */
 	if( src->format->BytesPerPixel == dst->format->BytesPerPixel &&
 		src->format->Rmask == dst->format->Rmask &&
