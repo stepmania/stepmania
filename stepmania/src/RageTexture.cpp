@@ -26,6 +26,16 @@ void RageTextureID::Init()
 	 * this gives more bits for color values. (0, 1 or 4) */
 	iAlphaBits = 4;
 
+	/* If this is greater than -1, then the image will be loaded as a luma/alpha
+	 * map, eg. I4A4.  At most 8 bits per pixel will be used  This only actually happens
+	 * when paletted textures are supported.
+	 *
+	 * If the sum of alpha and grayscale bits is <= 4, and the system supports 4-bit
+	 * palettes, then the image will be loaded with 4bpp.
+	 *
+	 * This may be set to 0, resulting in an alpha map with all pixels white. */
+	iGrayscaleBits = -1;
+
 	/* If true and color precision is being lost, dither. (slow) */
 	bDither = false;
 	/* If true, resize the image to fill the internal texture. (slow) */
@@ -47,6 +57,7 @@ bool RageTextureID::operator<(const RageTextureID &rhs) const
 	COMP(iMaxSize);
 	COMP(iMipMaps);
 	COMP(iAlphaBits);
+	COMP(iGrayscaleBits);
 	COMP(iColorDepth);
 	COMP(bDither);
 	COMP(bStretch);
@@ -63,6 +74,7 @@ bool RageTextureID::operator==(const RageTextureID &rhs) const
 		EQUAL(iMaxSize) &&
 		EQUAL(iMipMaps) &&
 		EQUAL(iAlphaBits) &&
+		EQUAL(iGrayscaleBits) &&
 		EQUAL(iColorDepth) &&
 		EQUAL(bDither) &&
 		EQUAL(bStretch) &&

@@ -25,6 +25,7 @@ struct RageTextureID
 	int iMaxSize;
 	int iMipMaps;
 	int iAlphaBits;
+	int iGrayscaleBits;
 	int iColorDepth;
 	bool bDither;
 	bool bStretch;
