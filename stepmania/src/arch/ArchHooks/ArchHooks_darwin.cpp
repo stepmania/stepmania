@@ -2,7 +2,6 @@
 #include "ArchHooks_darwin.h"
 #include "RageLog.h"
 #include "RageThreads.h"
-#include "RageUtil.h"
 #include "RageTimer.h"
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
@@ -23,8 +22,10 @@ enum
     kMacOSX_10_3 = 0x1030
 };
 
+#if 0 // Time critical stuff
 static thread_time_constraint_policy g_oldttcpolicy;
 static float g_fStartedTimeCritAt;
+#endif
 
 static bool IsFatalSignal( int signal )
 {
