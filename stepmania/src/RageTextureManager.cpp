@@ -183,10 +183,32 @@ void RageTextureManager::ReloadAll()
 	}
 }
 
-void RageTextureManager::SetPrefs( int iTextureColorDepth, int iSecondsBeforeUnload )
+/* In some cases, changing the display mode will reset the rendering context,
+ * releasing all textures.  We don't want to reload immediately if that happens,
+ * since we might be changing texture preferences too, which also may have to reload
+ * textures.  Instead, tell all textures that their texutre ID is invalid, so it
+ * doesn't try to free it later when we really do reload (since that ID might be
+ * associated with a different texture).  Ack. */
+void RageTextureManager::InvalidateTextures()
 {
+	for( std::map<CString, RageTexture*>::iterator i = m_mapPathToTexture.begin();
+		i != m_mapPathToTexture.end(); ++i)
+	{
+		RageTexture* pTexture = i->second;
+		pTexture->Invalidate();
+	}
+}
+
+bool RageTextureManager::SetPrefs( int iTextureColorDepth, int iSecondsBeforeUnload )
+{
+	bool need_reload = false;
+	if(m_iSecondsBeforeUnload != iSecondsBeforeUnload ||
+		m_iTextureColorDepth != iTextureColorDepth)
+		need_reload = true;
+
 	m_iSecondsBeforeUnload = iSecondsBeforeUnload;
 	m_iTextureColorDepth = iTextureColorDepth;
+	
 	ASSERT( m_iTextureColorDepth==16 || m_iTextureColorDepth==32 );
-	ReloadAll(); 
+	return need_reload;
 }

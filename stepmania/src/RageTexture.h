@@ -61,6 +61,8 @@ public:
 	int		m_iRefCount;
 	int		m_iTimeOfLastUnload;
 
+	/* only called by RageTextureManager::InvalidateTextures */
+	virtual void Invalidate() { }
 	virtual unsigned int GetGLTextureID() = 0;	// accessed by RageDisplay
 
 protected:

@@ -27,9 +27,11 @@ public:
 	void UnloadTexture( CString sTexturePath );
 	void ReloadAll();
 
-	void SetPrefs( int iTextureColorDepth, int iSecsBeforeUnload );
+	bool SetPrefs( int iTextureColorDepth, int iSecsBeforeUnload );
 	int GetTextureColorDepth() { return m_iTextureColorDepth; };
 	int GetSecsBeforeUnload() { return m_iSecondsBeforeUnload; };
+
+	void InvalidateTextures();
 
 protected:
 	void GCTextures();
