@@ -35,7 +35,12 @@ void SongCacheIndex::ReadCacheIndex()
 	CStringArray asCacheFileNames;
 	GetDirListing( "Cache/*", asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
+	{
+		if (0 == stricmp( asCacheFileNames[i], ".cvsignore" ))	// don't delete .cvsignore files
+			continue;
+
 		remove( "Cache/" + asCacheFileNames[i] );
+	}
 	CacheIndex.Reset();
 }
 
