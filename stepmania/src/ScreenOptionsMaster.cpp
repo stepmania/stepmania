@@ -21,8 +21,9 @@
 #include "RageSoundManager.h"
 #include "ProfileManager.h"
 
+#define LINE_NAMES				THEME->GetMetric (m_sName,"LineNames")
 #define OPTION_MENU_FLAGS		THEME->GetMetric (m_sName,"OptionMenuFlags")
-#define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
+#define LINE(sLineName)			THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 
 #define ENTRY(s)				THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_NAME(s)			THEME->GetMetric ("OptionNames", s)
@@ -217,19 +218,22 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	if( MusicPath != "" )
 		SOUND->PlayMusic( MusicPath );
 
+	CStringArray asLineNames;
+	split( LINE_NAMES, ",", asLineNames );
+	if( asLineNames.empty() )
+		RageException::Throw( "%s::LineNames is empty.", m_sName.c_str() );
+
+
 	CStringArray Flags;
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
 	InputMode im = INPUTMODE_INDIVIDUAL;
 	bool Explanations = false;
-	int NumRows = -1;
-
+	
 	unsigned i;
 	for( i = 0; i < Flags.size(); ++i )
 	{
 		Flags[i].MakeLower();
 
-		if( sscanf( Flags[i], "rows,%i", &NumRows ) == 1 )
-			continue;
 		if( Flags[i] == "together" )
 			im = INPUTMODE_TOGETHER;
 		if( Flags[i] == "explanations" )
@@ -246,15 +250,14 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 			SetNavigation( NAV_FIRST_CHOICE_GOES_DOWN );
 	}
 
-	if( NumRows == -1 )
-		RageException::Throw( "%s::OptionMenuFlags is missing \"rows\" field", m_sName.c_str() );
-
-	m_OptionRowAlloc = new OptionRowData[NumRows];
-	for( i = 0; (int) i < NumRows; ++i )
+	m_OptionRowAlloc = new OptionRowData[asLineNames.size()];
+	for( i = 0; (int) i < asLineNames.size(); ++i )
 	{
+		CString sLineName = asLineNames[i];
+
 		OptionRowData &row = m_OptionRowAlloc[i];
 		
-		CString sRowCommands = ROW_LINE(i);
+		CString sRowCommands = LINE(sLineName);
 		
 		vector<ParsedCommand> vCommands;
 		ParseCommands( sRowCommands, vCommands );
@@ -310,9 +313,9 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 		OptionRowHandlers.push_back( hand );
 	}
 
-	ASSERT( (int) OptionRowHandlers.size() == NumRows );
+	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	Init( im, m_OptionRowAlloc, NumRows );
+	Init( im, m_OptionRowAlloc, asLineNames.size() );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
