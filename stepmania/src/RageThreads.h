@@ -61,6 +61,7 @@ public:
 	CString GetName() const { return m_sName; }
 	void SetName( const CString &s ) { m_sName = s; }
 	void Lock();
+	bool TryLock();
 	void Unlock();
 	bool IsLockedByThisThread() const;
 
@@ -90,6 +91,7 @@ public:
 	void Unlock();
 };
 
+
 /* Double-abstracting __LINE__ lets us append it to other text, to generate
  * locally unique variable names.  (Otherwise we get "LocalLock__LINE__".) I'm
  * not sure why this works, but it does, in both VC and GCC. */
@@ -116,6 +118,24 @@ public:
 #else
 #define LockMut(m) LockMutex LocalLock(m, __FUNCTION__, __LINE__)
 #endif
+
+class SemaImpl;
+class RageSemaphore
+{
+public:
+	RageSemaphore( CString sName, int iInitialValue = 0 );
+	~RageSemaphore();
+
+	CString GetName() const { return m_sName; }
+	int GetValue() const;
+	void Post();
+	void Wait();
+	bool TryWait();
+
+private:
+	SemaImpl *m_pSema;
+	CString m_sName;
+};
 
 #endif
 

@@ -547,6 +547,22 @@ void RageMutex::Lock()
 //	MarkLockedMutex();
 }
 
+bool RageMutex::TryLock()
+{
+	if( m_LockedBy == (uint64_t) GetThisThreadId() )
+	{
+		++m_LockCnt;
+		return true;
+	}
+
+	if( !m_pMutex->TryLock() )
+		return false;
+
+	m_LockedBy = GetThisThreadId();
+
+	return true;
+}
+
 void RageMutex::Unlock()
 {
 	if( m_LockCnt )
@@ -595,6 +611,51 @@ void LockMutex::Unlock()
 			LOG->Trace( "Lock at %s:%i took %f", file, line, dur );
 	}
 }
+
+RageSemaphore::RageSemaphore( CString sName, int iInitialValue ):
+	m_sName( sName )
+{
+	m_pSema = MakeSemaphore( iInitialValue );
+}
+
+RageSemaphore::~RageSemaphore()
+{
+	delete m_pSema;
+}
+
+int RageSemaphore::GetValue() const
+{
+	return m_pSema->GetValue();
+}
+
+void RageSemaphore::Post()
+{
+	m_pSema->Post();
+}
+
+void RageSemaphore::Wait()
+{
+	if( m_pSema->Wait() )
+		return;
+
+	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't
+	 * tell which thread we're stuck on. */
+#if defined(CRASH_HANDLER)
+	const ThreadSlot *ThisSlot = GetThreadSlotFromID( GetThisThreadId() );
+	const CString sReason = ssprintf( "Semaphore timeout on mutex %s on thread %s",
+		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName(): "(???" ")" ); // stupid trigraph warnings
+
+	ForceCrashHandler( sReason );
+#else
+	RageException::Throw( "%s", sReason.c_str() );
+#endif
+}
+
+bool RageSemaphore::TryWait()
+{
+	return m_pSema->TryWait();
+}
+
 
 /*
  * Copyright (c) 2001-2004 Glenn Maynard
