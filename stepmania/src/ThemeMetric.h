@@ -3,7 +3,6 @@
 #ifndef THEME_METRIC_H
 #define THEME_METRIC_H
 
-#include "IniFile.h"
 #include "ThemeManager.h"
 
 class IThemeMetric
