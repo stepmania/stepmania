@@ -1,6 +1,6 @@
-#include "../../global.h"
+#include "global.h"
 
-#include <SDL.h>
+#include "SDL_utils.h"
 #include "SDL_image.h"
 #include "LoadingWindow_SDL.h"
 #include "loading.xpm"
