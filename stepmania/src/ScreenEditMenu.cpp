@@ -52,6 +52,8 @@ ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName 
 	m_textExplanation.SetZoom( 0.7f );
 	this->AddChild( &m_textExplanation );
 
+	this->SortByDrawOrder();
+
 	SOUND->PlayMusic( THEME->GetPathToS("ScreenEditMenu music") );
 }
 
