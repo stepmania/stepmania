@@ -164,3 +164,4 @@ void ScreenEnding::HandleScreenMessage( const ScreenMessage SM )
 {
 	ScreenAttract::HandleScreenMessage( SM );
 }
+
