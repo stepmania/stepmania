@@ -248,6 +248,7 @@
 // Turn off browser references
 // Turn off unavoidable compiler warnings
 
+
 #if defined(_MSC_VER) && (_MSC_VER > 1100)
 	#pragma once
 	#pragma component(browser, off, references, "CStdString")
@@ -260,6 +261,8 @@
 
 #ifndef STDSTRING_H
 #define STDSTRING_H
+
+#define SS_NO_CONVERSION
 
 //#define SS_NOLOCALE	// prevents use/inclusion of <locale> header
 //#define SS_UNSIGNED	// add CString ctor/assign op. for usigned characters
@@ -292,6 +295,7 @@
 // MIN and MAX.  The Standard C++ template versions go by so many names (at
 // at least in the MS implementation) that you never know what's available 
 // -----------------------------------------------------------------------------
+
 template<class Type>
 inline const Type& SSMIN(const Type& arg1, const Type& arg2)
 {
@@ -1946,15 +1950,21 @@ public:
 
 	// addition operators -- global friend functions.
 
-	friend	MYTYPE	operator+<>(const MYTYPE& str1,	const MYTYPE& str2);
-	friend	MYTYPE	operator+<>(const MYTYPE& str,	CT t);
-	friend	MYTYPE	operator+<>(const MYTYPE& str,	PCSTR sz);
-	friend	MYTYPE	operator+<>(const MYTYPE& str,	PCWSTR sz);
-	friend	MYTYPE	operator+<>(PCSTR pA,				const MYTYPE& str);
-	friend	MYTYPE	operator+<>(PCWSTR pW,			const MYTYPE& str);
+#if _MSC_VER < 1300 /* VC6, not VC7 */
+/* work around another stupid vc6 bug */
+#define EMP_TEMP
+#else
+#define EMP_TEMP <>
+#endif
+	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str1,	const MYTYPE& str2);
+	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	CT t);
+	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	PCSTR sz);
+	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	PCWSTR sz);
+	friend	MYTYPE	operator+ EMP_TEMP(PCSTR pA,				const MYTYPE& str);
+	friend	MYTYPE	operator+ EMP_TEMP(PCWSTR pW,			const MYTYPE& str);
 #ifdef SS_INC_COMDEF
-	friend	MYTYPE	operator+<>(const _bstr_t& bstr,	const MYTYPE& str);
-	friend	MYTYPE	operator+<>(const MYTYPE& str,	const _bstr_t& bstr);
+	friend	MYTYPE	operator+ EMP_TEMP(const _bstr_t& bstr,	const MYTYPE& str);
+	friend	MYTYPE	operator+ EMP_TEMP(const MYTYPE& str,	const _bstr_t& bstr);
 #endif
 
 	// -------------------------------------------------------------------------
