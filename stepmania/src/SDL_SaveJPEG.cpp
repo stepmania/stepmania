@@ -1,5 +1,6 @@
 #include "global.h"
 #include "SDL.h"
+#include "SDL_utils.h"
 
 #undef FAR /* fix for VC */
 namespace jpeg
@@ -109,8 +110,13 @@ static void jpeg_SDL_RW_dest(jpeg::j_compress_ptr cinfo, SDL_RWops *ctx)
 }
 
 /* Save a JPEG to a file.  cjpeg.c and example.c from jpeglib were helpful in writing this. */
-void IMG_SaveJPG_RW( const SDL_Surface *surface, SDL_RWops *dest )
+void IMG_SaveJPG_RW( SDL_Surface *surface, SDL_RWops *dest )
 {
+	SDL_Surface *dst_surface;
+	if( ConvertSDLSurface( surface, dst_surface,
+		surface->w, surface->h, 24, mySDL_Swap24(0xFF0000), mySDL_Swap24(0x00FF00), mySDL_Swap24(0x0000FF), 0 ) )
+		surface = dst_surface;
+
   struct jpeg::jpeg_compress_struct cinfo;
 
   /* Step 1: allocate and initialize JPEG compression object */
@@ -190,5 +196,7 @@ void IMG_SaveJPG_RW( const SDL_Surface *surface, SDL_RWops *dest )
   jpeg::jpeg_destroy_compress(&cinfo);
 
   /* And we're done! */
+	if( dst_surface )
+		SDL_FreeSurface( dst_surface );
 }
 
