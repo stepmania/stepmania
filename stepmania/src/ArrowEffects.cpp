@@ -351,7 +351,7 @@ static float ArrowGetPercentVisible( PlayerNumber pn, int iCol, float fYOffset, 
 	}
 
 	if( fAppearances[PlayerOptions::APPEARANCE_STEALTH] > 0 )
-		fVisibleAdjust *= (1 - fAppearances[PlayerOptions::APPEARANCE_STEALTH]);
+		fVisibleAdjust -= fAppearances[PlayerOptions::APPEARANCE_STEALTH];
 	if( fAppearances[PlayerOptions::APPEARANCE_BLINK] > 0 )
 	{
 		float f = sinf(RageTimer::GetTimeSinceStart()*10);
