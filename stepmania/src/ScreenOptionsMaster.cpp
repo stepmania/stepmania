@@ -25,8 +25,8 @@
 #define ROW_LINE(i)				THEME->GetMetric (m_sName,ssprintf("Line%i",(i+1)))
 
 #define ENTRY(s)				THEME->GetMetric ("ScreenOptionsMaster",s)
+#define ENTRY_NAME(s)			THEME->GetMetric ("OptionNames", s)
 #define ENTRY_MODE(s,i)			THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
-#define ENTRY_NAME(s,i)			THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%sName,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)		THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 
@@ -76,12 +76,15 @@ void ScreenOptionsMaster::SetList( OptionRow &row, OptionRowHandler &hand, CStri
 	{
 		ModeChoice mc;
 		mc.Load( 0, ENTRY_MODE(ListName, col) );
+		if( mc.m_sName == "" )
+			RageException::Throw( "List \"%s\", col %i has no name", ListName.c_str(), col );
 
 		if( !mc.IsPlayable() )
 			continue;
 
 		hand.ListEntries.push_back( mc );
-		row.choices.push_back( ENTRY_NAME(ListName, col) );
+
+		row.choices.push_back( ENTRY_NAME(mc.m_sName) );
 	}
 }
 
@@ -99,9 +102,9 @@ void ScreenOptionsMaster::SetStep( OptionRow &row, OptionRowHandler &hand )
 	else if( GAMESTATE->m_pCurCourse )   // playing a course
 	{
 		row.bOneChoiceForAllPlayers = true;
-		row.choices.push_back( "REGULAR" );
+		row.choices.push_back( ENTRY_NAME("RegularCourses") );
 		if( GAMESTATE->m_pCurCourse->HasDifficult( GAMESTATE->GetCurrentStyleDef()->m_StepsType ) )
-			row.choices.push_back( "DIFFICULT" );
+			row.choices.push_back( ENTRY_NAME("DifficultCourses") );
 	}
 	else if( GAMESTATE->m_pCurSong )	// playing a song
 	{
@@ -122,7 +125,7 @@ void ScreenOptionsMaster::SetStep( OptionRow &row, OptionRowHandler &hand )
 	}
 	else
 	{
-		row.choices.push_back( "N/A" );
+		row.choices.push_back( ENTRY_NAME("N/A") );
 	}
 }
 
@@ -148,7 +151,7 @@ void ScreenOptionsMaster::SetCharacter( OptionRow &row, OptionRowHandler &hand )
 {
 	hand.type = ROW_CHARACTER;
 	row.bOneChoiceForAllPlayers = false;
-	row.choices.push_back( "OFF" );
+	row.choices.push_back( ENTRY_NAME("Off") );
 	vector<Character*> apCharacters;
 	GAMESTATE->GetCharacters( apCharacters );
 	for( unsigned i=0; i<apCharacters.size(); i++ )
@@ -164,8 +167,8 @@ void ScreenOptionsMaster::SetSaveToProfile( OptionRow &row, OptionRowHandler &ha
 {
 	hand.type = ROW_SAVE_TO_PROFILE;
 	row.bOneChoiceForAllPlayers = false;
-	row.choices.push_back( "DON'T SAVE" );
-	row.choices.push_back( "SAVE TO PROFILE" );
+	row.choices.push_back( ENTRY_NAME("Don'tSave") );
+	row.choices.push_back( ENTRY_NAME("SaveToProfile") );
 }
 
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):

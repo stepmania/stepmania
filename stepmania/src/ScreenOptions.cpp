@@ -388,7 +388,7 @@ CString ScreenOptions::GetExplanationTitle( int iRow ) const
 	sLineName.Replace("\n-","");
 	sLineName.Replace("\n","");
 	sLineName.Replace(" ","");
-	CString sTitle = THEME->GetMetric( "OptionExplanations", sLineName+"Title" );
+	CString sTitle = THEME->GetMetric( "OptionTitles", sLineName+"Title" );
 
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )
@@ -965,7 +965,10 @@ void ScreenOptions::ChangeValue( PlayerNumber pn, int iDelta, bool Repeat )
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumOptions <= 1 )	// 1 or 0
 	{
 		/* There are no other options on the row; move up or down instead of left and right.
-		 * This allows navigating the options menu with left/right/start. */
+		 * This allows navigating the options menu with left/right/start. 
+		 *
+		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise, holding both
+		 * directions will repeat in place continuously, which is weird. */
 		Move( pn, iDelta, Repeat );
 		return;
 	}
