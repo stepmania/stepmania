@@ -387,7 +387,7 @@ static Menu g_AreaMenu(
 	MenuRow( ScreenEdit::turn,					"Turn",								true, true, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
 	MenuRow( ScreenEdit::transform,				"Transform",						true, true, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads" ),
 	MenuRow( ScreenEdit::alter,					"Alter",							true, true, 0, "Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
-	MenuRow( ScreenEdit::tempo,					"Tempo",							true, true, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
+	MenuRow( ScreenEdit::tempo,					"Tempo",							true, false, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
 	MenuRow( ScreenEdit::play,					"Play selection",					true, true, 0, NULL ),
 	MenuRow( ScreenEdit::record,				"Record in selection",				true, true, 0, NULL ),
 	MenuRow( ScreenEdit::insert_and_shift,		"Insert beat and shift down",		true, true, 0, NULL ),
