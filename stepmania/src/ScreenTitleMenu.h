@@ -55,7 +55,7 @@ public:
 			"EDIT COURSES",
 			"JUKEBOX",
 			#ifdef DEBUG
-			"NETWORK PLAY",
+//			"NETWORK PLAY",
 			"SANDBOX",
 			#endif
 			"EXIT"
