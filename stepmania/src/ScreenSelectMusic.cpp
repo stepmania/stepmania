@@ -48,7 +48,6 @@ const int NUM_SCORE_DIGITS	=	9;
 #define CODES								THEME->GetMetric (m_sName,"Codes")
 
 static const ScreenMessage	SM_AllowOptionsMenuRepeat	= ScreenMessage(SM_User+1);
-const ScreenMessage SM_NET_SelectSong		= ScreenMessage(SM_User+2);
 CString g_sFallbackCDTitlePath;
 
 ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -1021,9 +1020,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_LoseFocus:
 		CodeDetector::RefreshCacheItems(); /* reset for other screens */
-		break;
-	case SM_NET_SelectSong:
-		//Code will be added shortly
 		break;
 	}
 

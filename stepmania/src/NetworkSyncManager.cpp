@@ -33,7 +33,8 @@ bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 #include "ScreenMessage.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
 
-const ScreenMessage SM_NET_SelectSong		= ScreenMessage(SM_User+2);
+const ScreenMessage	SM_AddToChat	= ScreenMessage(SM_User+4);
+const ScreenMessage SM_ChangeSong	= ScreenMessage(SM_User+5);
 
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
@@ -475,9 +476,6 @@ void NetworkSyncManager::ProcessInput()
 				CString SysMSG = m_packet.ReadNT();
 				SCREENMAN->SystemMessage(SysMSG);
 			}
-			break;
-		case 7:
-			SCREENMAN->SendMessageToTopScreen(SM_NET_SelectSong);
 			break;
 		}
 		m_packet.ClearPacket();
