@@ -213,7 +213,7 @@ float BGAnimation::GetTweenTimeLeft() const
 {
 	float tot = 0;
 
-	for( unsigned i=0; i<m_TweenInfo.size(); ++i )
+	for( unsigned i=0; i<m_Layers.size(); ++i )
 		tot += m_Layers[i]->GetMaxTweenTimeLeft();
 
 	return tot;
