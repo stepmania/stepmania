@@ -305,6 +305,8 @@ bool Profile::LoadAllFromDir( CString sDir )
 	FOR_ONCE
 	{
 		CString fn = sDir + EDITABLE_XML;
+		if( !IsAFile(fn) )
+			break;
 
 		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
 
@@ -338,6 +340,8 @@ bool Profile::LoadAllFromDir( CString sDir )
 	FOR_ONCE
 	{
 		CString fn = sDir + STATS_XML;
+		if( !IsAFile(fn) )
+			break;
 
 		LOG->Trace( "Reading profile data '%s'", fn.c_str() );
 
