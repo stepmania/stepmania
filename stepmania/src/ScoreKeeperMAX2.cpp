@@ -164,7 +164,7 @@ static int GetScore(int p, int B, int S, int n)
 
 }
 
-void ScoreKeeperMAX2::AddScore( TapNoteScore score, bool failed)
+void ScoreKeeperMAX2::AddScore( TapNoteScore score )
 {
 /*
   http://www.aaroninjapan.com/ddr2.html
@@ -198,7 +198,11 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score, bool failed)
 	int iScoreMultiplier = (m_iMaxPossiblePoints / (10*sum));
 	ASSERT( iScoreMultiplier >= 0 );
 
-	if (failed)
+	// What does this do?  "Don't use a multiplier if 
+	// the player has failed"?
+	// Also, why does this switch on score again instead
+	// of just adding p?  -Chris
+	if( GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber] )
 		switch( score )
 		{
 			case TNS_MARVELOUS:	m_iScore += 10;		break;
@@ -213,7 +217,8 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score, bool failed)
 
 	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_PERFECT )
 	{
-		if (!failed) m_iScore += m_iPointBonus;
+		if (!GAMESTATE->m_CurStageStats.bFailed[m_PlayerNumber])
+			m_iScore += m_iPointBonus;
 		if ( m_bIsLastSongInCourse )
 		{
 			m_iScore += 100000000 - m_iMaxScoreSoFar;
@@ -231,7 +236,7 @@ void ScoreKeeperMAX2::AddScore( TapNoteScore score, bool failed)
 	GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber] = m_iScore;
 }
 
-void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, bool failed )
+void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow )
 {
 	ASSERT( iNumTapsInRow >= 1 );
 
@@ -276,7 +281,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
   Note: if you got all Perfect on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible 
   score for any song is the number of feet difficulty X 10,000,000. 
 */
-	AddScore( scoreOfLastTap, failed );		// only score once per row
+	AddScore( scoreOfLastTap );		// only score once per row
 
 
 	//
@@ -394,14 +399,14 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 }
 
 
-void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore, bool failed)
+void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 {
 	// update dance points totals
 	GAMESTATE->m_CurStageStats.iHoldNoteScores[m_PlayerNumber][holdScore] ++;
 	GAMESTATE->m_CurStageStats.iActualDancePoints[m_PlayerNumber] += HoldNoteScoreToDancePoints( holdScore );
 
 	if( holdScore == HNS_OK )
-		AddScore( TNS_MARVELOUS , failed);
+		AddScore( TNS_MARVELOUS );
 }
 
 

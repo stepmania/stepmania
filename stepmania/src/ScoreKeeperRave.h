@@ -23,8 +23,8 @@ public:
 	ScoreKeeperRave(PlayerNumber pn);
 	virtual void Update( float fDelta );
 	virtual void OnNextSong( int iSongInCourseIndex, Notes* pNotes );	// before a song plays (called multiple times if course)
-	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow, bool failed);
-	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore, bool failed );
+	virtual void HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTapsInRow );
+	virtual void HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore );
 	virtual int TapNoteScoreToDancePoints( TapNoteScore tns ) { return 0; };
 	virtual int HoldNoteScoreToDancePoints( HoldNoteScore hns ) { return 0; };
 	virtual int	GetPossibleDancePoints( const NoteData* pNoteData ) { return 0; };

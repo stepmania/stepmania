@@ -665,10 +665,10 @@ void Player::HandleTapRowScore( unsigned row )
 		return;
 
 	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pLifeMeter->FailedEarlier() );
+		m_pPrimaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 
 	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow, m_pLifeMeter->FailedEarlier() );
+		m_pSecondaryScoreKeeper->HandleTapRowScore(scoreOfLastTap, iNumTapsInRow );
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
@@ -698,9 +698,9 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 		return;
 
 	if(m_pPrimaryScoreKeeper)
-		m_pPrimaryScoreKeeper->HandleHoldScore(holdScore, tapScore, m_pLifeMeter->FailedEarlier());
+		m_pPrimaryScoreKeeper->HandleHoldScore(holdScore, tapScore );
 	if(m_pSecondaryScoreKeeper)
-		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore, m_pLifeMeter->FailedEarlier());
+		m_pSecondaryScoreKeeper->HandleHoldScore(holdScore, tapScore );
 
 	if (m_pScore)
 		m_pScore->SetScore(GAMESTATE->m_CurStageStats.iScore[m_PlayerNumber]);
