@@ -39,6 +39,10 @@
 /* And vector: */
 #include <vector>
 
+#if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
+#include <stdint.h>
+#endif
+
 #if defined(NEED_MINMAX_TEMPLATES)
 /* Some old <algorithm>s don't actually define min and max. */
 template<class T>
