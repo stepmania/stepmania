@@ -490,15 +490,19 @@ void Song::TidyUpData()
 	 * their source's values. */
 	ReCalculateRadarValuesAndLastBeat();
 
-	TrimLeft(m_sMainTitle);
-	TrimRight(m_sMainTitle);
+	TrimLeft( m_sMainTitle );
+	TrimRight( m_sMainTitle );
+	TrimLeft( m_sSubTitle );
+	TrimRight( m_sSubTitle );
+	TrimLeft( m_sArtist );
+	TrimRight( m_sArtist );
 
 	/* Fall back on the song directory name. */
 	if( m_sMainTitle == "" )
 		NotesLoader::GetMainAndSubTitlesFromFullTitle( Basename(this->GetSongDir()), m_sMainTitle, m_sSubTitle );
 
-	TrimRight(m_sSubTitle);
-	if( m_sArtist == "" )		m_sArtist = "Unknown artist";
+	if( m_sArtist == "" )
+		m_sArtist = "Unknown artist";
 	TranslateTitles();
 
 	if( m_Timing.m_BPMSegments.empty() )
