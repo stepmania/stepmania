@@ -135,6 +135,10 @@ static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		  0x0000FF,
 		  0x000000 }
 	}, {
+		/* Paletted */
+		8,
+		{ 0,0,0,0 } /* N/A */
+	}, {
 		/* B8G8R8A8 */
 		24,
 		{ 0x0000FF,
@@ -142,9 +146,12 @@ static PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		  0xFF0000,
 		  0x000000 }
 	}, {
-		/* Paletted */
-		8,
-		{ 0,0,0,0 } /* N/A */
+		/* A1B5G5R5 */
+		16,
+		{ 0x7C00,
+		  0x03E0,
+		  0x001F,
+		  0x8000 },
 	}
 };
 
@@ -179,15 +186,20 @@ struct GLPixFmtInfo_t {
 		GL_RGB,
 		GL_UNSIGNED_BYTE,
 	}, {
+		/* Paletted */
+		GL_COLOR_INDEX8_EXT,
+		GL_COLOR_INDEX,
+		GL_UNSIGNED_BYTE,
+	}, {
 		/* B8G8R8 */
 		GL_RGB8,
 		GL_BGR,
 		GL_UNSIGNED_BYTE,
 	}, {
-		/* Paletted */
-		GL_COLOR_INDEX8_EXT,
-		GL_COLOR_INDEX,
-		GL_UNSIGNED_BYTE,
+		/* A1R5G5B5 (matches D3DFMT_A1R5G5B5) */
+		GL_RGB5_A1,
+		GL_BGRA,
+		GL_UNSIGNED_SHORT_1_5_5_5_REV,
 	}
 };
 
@@ -528,6 +540,7 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt )
 	case FMT_PAL:
 		return GLExt::glColorTableEXT && GLExt::glGetColorTableParameterivEXT;
 	case FMT_BGR8:
+	case FMT_A1BGR5:
 		return g_bGL_EXT_bgra;
 	default:
 		return true;	// No way to query this in OGL.  You pass it a format and hope it doesn't have to convert.

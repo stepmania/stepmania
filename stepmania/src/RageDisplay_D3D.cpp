@@ -167,12 +167,15 @@ static const PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PIX_FORMATS] = {
 		  0x0000FF,
 		  0x000000 }
 	}, {
-		/* BGRA (N/A; OpenGL only) */
-		0, { 0,0,0,0 }
-	}, {
 		/* Paletted */
 		8,
 		{ 0,0,0,0 } /* N/A */
+	}, {
+		/* BGR (N/A; OpenGL only) */
+		0, { 0,0,0,0 }
+	}, {
+		/* ABGR (N/A; OpenGL only) */
+		0, { 0,0,0,0 }
 	}
 };
 
@@ -187,8 +190,9 @@ static D3DFORMAT D3DFORMATS[NUM_PIX_FORMATS] =
 #else
 	D3DFMT_A8R8G8B8,
 #endif
+	D3DFMT_P8,
 	D3DFMT_UNKNOWN, /* no BGR */
-	D3DFMT_P8
+	D3DFMT_UNKNOWN /* no ABGR */
 };
 
 const PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const

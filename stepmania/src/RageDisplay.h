@@ -43,9 +43,12 @@ enum PixelFormat {
 	FMT_RGB5A1,
 	FMT_RGB5,
 	FMT_RGB8,
-	/* This may not be as well-supported as RGBA; it's used to speed up DirectShow. */
-	FMT_BGR8,
 	FMT_PAL,
+	/* The above formats differ between OpenGL and D3D. These are provided as
+	 * alternatives for OpenGL that match some format in D3D.  Don't use them
+	 * directly; they'll be matched automatically by FindPixelFormat. */
+	FMT_BGR8,
+	FMT_A1BGR5,
 	NUM_PIX_FORMATS
 };
 
