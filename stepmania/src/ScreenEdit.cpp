@@ -277,6 +277,7 @@ ScreenEdit::ScreenEdit( CString sName ) : Screen( sName )
 
 
 	m_EditMode = MODE_EDITING;
+	GAMESTATE->m_bPastHereWeGo = false;
 
 	GAMESTATE->m_bEditing = true;
 
@@ -1288,6 +1289,7 @@ void ScreenEdit::TransitionToEdit()
 	m_Foreground.Unload();
 
 	m_EditMode = MODE_EDITING;
+	GAMESTATE->m_bPastHereWeGo = false;
 	m_soundMusic.StopPlaying();
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 	m_rectRecordBack.StopTweening();
@@ -1848,6 +1850,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_PLAYING;
+				GAMESTATE->m_bPastHereWeGo = true;
 
 				/* Reset the note skin, in case preferences have changed. */
 				GAMESTATE->ResetNoteSkins();
@@ -1896,6 +1899,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, int* iAnswers )
 				SOUND->PlayMusic("");
 
 				m_EditMode = MODE_RECORDING;
+				GAMESTATE->m_bPastHereWeGo = true;
 
 				/* Reset the note skin, in case preferences have changed. */
 				GAMESTATE->ResetNoteSkins();
