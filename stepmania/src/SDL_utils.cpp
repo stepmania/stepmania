@@ -1106,7 +1106,48 @@ SDL_Surface *mySDL_Palettize( SDL_Surface *src_surf, int GrayBits, int AlphaBits
 	return dst_surf;
 }
 
+int RWRageFile_Seek( struct SDL_RWops *context, int offset, int whence )
+{
+	RageFile *f = (RageFile *) context->hidden.unknown.data1;
+	return f->Seek( (int) offset, whence );
+}
+
+int RWRageFile_Read( struct SDL_RWops *context, void *ptr, int size, int nmemb )
+{
+	RageFile *f = (RageFile *) context->hidden.unknown.data1;
+	return f->Read( ptr, size, nmemb );
+}
+
+int RWRageFile_Write( struct SDL_RWops *context, const void *ptr, int size, int nmemb )
+{
+	RageFile *f = (RageFile *) context->hidden.unknown.data1;
+	return f->Write( ptr, size, nmemb );
+}
+
+/* Close and free an allocated SDL_FSops structure */
+int RWRageFile_Close(struct SDL_RWops *context)
+{
+	RageFile *f = (RageFile *) context->hidden.unknown.data1;
+	delete f;
+	return 0;
+}
+
 SDL_Surface *SDL_LoadImage( const CString &sPath )
 {
-	return IMG_Load( sPath );
+	SDL_RWops *rw = SDL_AllocRW();
+
+	RageFile *f = new RageFile;
+	if( !f->Open(sPath) )
+	{
+		delete f;
+		return NULL;
+	}
+
+	rw->hidden.unknown.data1 = f;
+	rw->seek = RWRageFile_Seek;
+	rw->read = RWRageFile_Read;
+	rw->write = RWRageFile_Write;
+	rw->close = RWRageFile_Close;
+
+	return IMG_LoadTyped_RW( rw, true, (char *) GetExtension(sPath).c_str() );
 }
