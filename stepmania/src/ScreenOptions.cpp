@@ -476,6 +476,10 @@ void ScreenOptions::UpdateText( PlayerNumber player_no, int iRow )
 	const OptionRow &row = m_OptionRow[iRow];
 
 	unsigned item_no = row.bOneChoiceForAllPlayers?0:player_no;
+
+	/* If player_no is 2 and there is no player 1: */
+	item_no = min( item_no, m_textItems[iRow].size()-1 );
+
 	m_textItems[iRow][item_no]->SetText( m_OptionRow[iRow].choices[iChoiceInRow] );
 }
 
