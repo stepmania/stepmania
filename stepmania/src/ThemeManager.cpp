@@ -5,7 +5,6 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
-#include "GameState.h"
 #include "Game.h"
 #include "IniFile.h"
 #include "RageTimer.h"
