@@ -4,7 +4,6 @@
 #include "Screen.h"
 #include "Sprite.h"
 #include "Transition.h"
-#include "BGAnimation.h"
 #include "ActorUtil.h"
 #include "RageSound.h"
 #include "MemoryCardDisplay.h"

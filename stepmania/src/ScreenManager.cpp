@@ -99,6 +99,7 @@ void ScreenManager::ThemeChanged()
 	
 	// reload shared BGA
 	m_pSharedBGA->LoadFromAniDir( m_sLastLoadedBackgroundPath );
+	m_pSharedBGA->PlayCommand( "On" );
 }
 
 void ScreenManager::EmptyDeleteQueue()
@@ -376,6 +377,7 @@ retry:
 		// any common textures loaded.
 		BGAnimation *pNewBGA = new BGAnimation;
 		pNewBGA->LoadFromAniDir( sNewBGA );
+		pNewBGA->PlayCommand( "On" );
 		SAFE_DELETE( m_pSharedBGA );
 		m_pSharedBGA = pNewBGA;
 

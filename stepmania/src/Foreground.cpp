@@ -40,6 +40,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 		LoadedBGA bga;
 		bga.m_bga = new BGAnimation;
 		bga.m_bga->LoadFromAniDir( sAniDir );
+		bga.m_bga->PlayCommand( "On" );
 		bga.m_fStartBeat = change.m_fStartBeat;
 
 		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( bga.m_fStartBeat );

@@ -265,6 +265,7 @@ void ConditionalBGA::Load(CString szScreenName)
 		{
 			LOG->Info("Best Match BGA Was: %s",bganimtouse.c_str());
 			bganim.LoadFromAniDir( THEME->GetPathToB(bganimtouse) );
+			bganim.PlayCommand( "On" );
 		}
 
 	}

@@ -238,9 +238,6 @@ void BGAnimation::LoadFromNode( const CString &sDir, const XNode& node )
 	cmd.Load( "PlayCommand,Init" );
 	this->RunCommandOnChildren( cmd );
 
-	if( !m_bGeneric )
-		PlayCommand( "On" );
-
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
 	 * actor that sleeps for the given length of time.  This will extend GetTweenTimeLeft. */
 	float fLengthSeconds = 0;

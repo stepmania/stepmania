@@ -250,6 +250,7 @@ CString Background::CreateRandomBGA()
 	case PrefsManager::BGMODE_MOVIEVIS:		ret->LoadFromVisualization( file ); break;
 	case PrefsManager::BGMODE_RANDOMMOVIES:	ret->LoadFromMovie( file ); break;
 	}
+	ret->PlayCommand( "On" );
 
 	m_BGAnimations[file] = ret;
 	m_RandomBGAnimations.push_back( file );
@@ -326,7 +327,10 @@ void Background::LoadFromSong( const Song* pSong )
 			{
 				BGAnimation *pTempBGA = CreateSongBGA( sBGName );
 				if( pTempBGA )
+				{
+					pTempBGA->PlayCommand( "On" );
 					m_BGAnimations[sBGName] = pTempBGA;
+				}
 				else // the background was not found.  Use a random one instead
 				{
 					sBGName = CreateRandomBGA();
@@ -365,6 +369,7 @@ void Background::LoadFromSong( const Song* pSong )
 		CString sSongBGPath = pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathToG("Common fallback background");
 		BGAnimation *pTempBGA = new BGAnimation;
 		pTempBGA->LoadFromStaticGraphic( sSongBGPath );
+		pTempBGA->PlayCommand( "On" );
 		m_BGAnimations[STATIC_BACKGROUND] = pTempBGA;
 	}
 

@@ -30,6 +30,7 @@ ScreenPrompt::ScreenPrompt( CString sText, bool bYesNoPrompt, bool bDefaultAnswe
 	m_pCallbackData = pCallbackData;
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenPrompt background") );
+	m_Background.PlayCommand("On");
 	this->AddChild( &m_Background );
 
 	m_textQuestion.LoadFromFont( THEME->GetPathToF("Common normal") );

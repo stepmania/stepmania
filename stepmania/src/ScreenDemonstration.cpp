@@ -45,6 +45,7 @@ void ScreenDemonstration::Init()
 
 
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenDemonstration overlay") );
+	m_Overlay.PlayCommand( "On" );
 	this->AddChild( &m_Overlay );
 
 	this->MoveToTail( &m_In );

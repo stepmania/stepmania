@@ -32,6 +32,7 @@ ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB(m_sName + " "+GAMESTATE->GetStageText()) ); 	 
 	m_Background.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING ); 	 
+	m_Background.PlayCommand( "On" );
 	this->AddChild( &m_Background );
 
 	m_Overlay.SetName( "Overlay" );

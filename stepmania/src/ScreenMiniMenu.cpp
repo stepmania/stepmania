@@ -41,6 +41,7 @@ ScreenMiniMenu::ScreenMiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMes
 
 
 	m_Background.LoadFromAniDir( THEME->GetPathToB("ScreenMiniMenu background") );
+	m_Background.PlayCommand("On");
 	this->AddChild( &m_Background );
 
 	float fHeightOfAll = min( SCREEN_HEIGHT-80, (m_Def.rows.size()-1)*SPACING_Y );

@@ -252,13 +252,13 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	}
 
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenCredits overlay") );
+	m_Overlay.PlayCommand( "On" );
 	this->AddChild( &m_Overlay );
 
 	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
 	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
 
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
-	LOG->Trace("XXXXXXXXX %f", fTime);
 	this->PostScreenMessage( SM_BeginFadingOut, fTime );
 //	this->PostScreenMessage( SM_BeginFadingOut, m_Background.GetLengthSeconds() );
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );

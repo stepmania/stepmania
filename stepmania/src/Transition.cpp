@@ -18,6 +18,7 @@ void Transition::Load( CString sBGAniDir )
 		sBGAniDir += "/";
 
 	m_BGAnimation.LoadFromAniDir( sBGAniDir );
+	m_BGAnimation.PlayCommand( "On" );
 	m_fLengthSeconds = m_BGAnimation.GetTweenTimeLeft();
 
 	m_State = waiting;

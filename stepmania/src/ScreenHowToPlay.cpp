@@ -80,6 +80,7 @@ ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 	m_Out.Load( THEME->GetPathToB("ScreenHowToPlay out") );
 
 	m_Overlay.LoadFromAniDir( THEME->GetPathToB("ScreenHowToPlay overlay") );
+	m_Overlay.PlayCommand("On");
 	this->AddChild( &m_Overlay );
 
 	if( (bool)USEPAD && DoesFileExist( GetAnimPath(ANIM_DANCE_PAD) ) )
