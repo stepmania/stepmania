@@ -58,8 +58,7 @@ protected:
 	void SkipSongPartTweens();
 	void SkipCoursePartTweens();
 
-	void EasierDifficulty( PlayerNumber pn );
-	void HarderDifficulty( PlayerNumber pn );
+	void ChangeDifficulty( PlayerNumber pn, int dir );
 
 	void AfterNotesChange( PlayerNumber pn );
 	void SwitchToPreferredDifficulty();

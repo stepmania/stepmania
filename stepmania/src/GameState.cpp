@@ -1578,6 +1578,21 @@ bool GameState::IsTimeToPlayAttractSounds()
 	return false;
 }
 
+bool GameState::DifficultiesLocked()
+{
+ 	return GAMESTATE->m_PlayMode == PLAY_MODE_RAVE;
+}
+
+bool GameState::ChangeDifficulty( PlayerNumber pn, Difficulty dc )
+{
+	this->m_PreferredDifficulty[pn] = dc;
+	if( DifficultiesLocked() )
+		for( int p = 0; p < NUM_PLAYERS; ++p )
+			m_PreferredDifficulty[p] = m_PreferredDifficulty[pn];
+
+	return true;
+}
+
 bool GameState::ChangeDifficulty( PlayerNumber pn, int dir )
 {
 	// FIXME: This clamps to between the min and the max difficulty, but
@@ -1598,16 +1613,11 @@ bool GameState::ChangeDifficulty( PlayerNumber pn, int dir )
 	}
 
 	Difficulty diff = (Difficulty)(m_PreferredDifficulty[pn]+dir);
+
 	if( diff < mind || diff > maxd )
 		return false;
 
-	this->m_PreferredDifficulty[pn] = diff;
-	bool bLockDifficulties = m_PlayMode == PLAY_MODE_RAVE;
-	if( bLockDifficulties )
-		for( int p = 0; p < NUM_PLAYERS; ++p )
-			m_PreferredDifficulty[p] = m_PreferredDifficulty[pn];
-
-	return true;
+	return ChangeDifficulty( pn, diff );
 }
 
 bool GameState::ChangeCourseDifficulty( PlayerNumber pn, int dir )

@@ -61,6 +61,8 @@ public:
 	PlayerNumber		m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool				m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
 	CourseDifficulty	m_PreferredCourseDifficulty[NUM_PLAYERS]; // used in nonstop
+	bool DifficultiesLocked();
+	bool ChangeDifficulty( PlayerNumber pn, Difficulty dc );
 	bool ChangeDifficulty( PlayerNumber pn, int dir );
 	bool ChangeCourseDifficulty( PlayerNumber pn, int dir );
 	RageTimer			m_timeGameStarted;	// from the moment the first player pressed Start

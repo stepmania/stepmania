@@ -828,7 +828,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
 			else
-				EasierDifficulty( pn );
+				ChangeDifficulty( pn, -1 );
 			return;
 		}
 		if( CodeDetector::EnteredHarderDifficulty(GameI.controller) )
@@ -836,7 +836,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
 			else
-				HarderDifficulty( pn );
+				ChangeDifficulty( pn, +1 );
 			return;
 		}
 		if( CodeDetector::EnteredSortMenu(GameI.controller) )
@@ -882,10 +882,9 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	}
 }
 
-
-void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
+void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 {
-	LOG->Trace( "ScreenSelectMusic::EasierDifficulty( %d )", pn );
+	LOG->Trace( "ScreenSelectMusic::ChangeDifficulty( %d, %d )", pn, dir );
 
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
@@ -893,22 +892,40 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 	switch( m_MusicWheel.GetSelectedType() )
 	{
 	case TYPE_SONG:
-		if( m_iSelection[pn] == 0 )
+		if( dir > 0 && m_iSelection[pn] == int(m_arrayNotes.size()-1) )
+			return;
+		if( dir < 0 && m_iSelection[pn] == 0 )
 			return;
 
-		m_iSelection[pn]--;
+		m_iSelection[pn] += dir;
+		
 		// the user explicity switched difficulties.  Update the preferred difficulty
-		GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
+		GAMESTATE->ChangeDifficulty( pn, m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty() );
 
-		m_soundDifficultyEasier.Play();
+		if( dir < 0 )
+			m_soundDifficultyEasier.Play();
+		else
+			m_soundDifficultyHarder.Play();
 
-		AfterNotesChange( pn );
+		{
+			FOREACH_HumanPlayer( p )
+			{
+				if( pn == p || GAMESTATE->DifficultiesLocked() )
+				{
+					m_iSelection[p] = m_iSelection[pn];
+					AfterNotesChange( p );
+				}
+			}
+		}
 		break;
 
 	case TYPE_COURSE:
-		if( GAMESTATE->ChangeCourseDifficulty( pn, -1 ) )
+		if( GAMESTATE->ChangeCourseDifficulty( pn, dir ) )
 		{
-			m_soundDifficultyEasier.Play();
+			if( dir < 0 )
+				m_soundDifficultyEasier.Play();
+			else
+				m_soundDifficultyHarder.Play();
 			AfterMusicChange();
 		}
 		break;
@@ -916,51 +933,12 @@ void ScreenSelectMusic::EasierDifficulty( PlayerNumber pn )
 	case TYPE_RANDOM:
 	case TYPE_ROULETTE:
 	case TYPE_LEAP:
-		if( GAMESTATE->ChangeDifficulty( pn, -1 ) )
+		if( GAMESTATE->ChangeDifficulty( pn, dir ) )
 		{
-			m_soundDifficultyEasier.Play();
-			AfterMusicChange();
-		}
-		break;
-	}
-}
-
-void ScreenSelectMusic::HarderDifficulty( PlayerNumber pn )
-{
-	LOG->Trace( "ScreenSelectMusic::HarderDifficulty( %d )", pn );
-
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return;
-
-	switch( m_MusicWheel.GetSelectedType() )
-	{
-	case TYPE_SONG:
-		if( m_iSelection[pn] == int(m_arrayNotes.size()-1) )
-			return;
-
-		m_iSelection[pn]++;
-		// the user explicity switched difficulties.  Update the preferred difficulty
-		GAMESTATE->m_PreferredDifficulty[pn] = m_arrayNotes[ m_iSelection[pn] ]->GetDifficulty();
-
-		m_soundDifficultyHarder.Play();
-
-		AfterNotesChange( pn );
-		break;
-
-	case TYPE_COURSE:
-		if( GAMESTATE->ChangeCourseDifficulty( pn, +1 ) )
-		{
-			m_soundDifficultyHarder.Play();
-			AfterMusicChange();
-		}
-		break;
-
-	case TYPE_RANDOM:
-	case TYPE_ROULETTE:
-	case TYPE_LEAP:
-		if( GAMESTATE->ChangeDifficulty( pn, +1 ) )
-		{
-			m_soundDifficultyHarder.Play();
+			if( dir < 0 )
+				m_soundDifficultyEasier.Play();
+			else
+				m_soundDifficultyHarder.Play();
 			AfterMusicChange();
 		}
 		break;
@@ -1270,6 +1248,17 @@ void ScreenSelectMusic::AfterMusicChange()
 {
 	if( !m_MusicWheel.IsRouletting() )
 		m_MenuTimer->Stall();
+
+	// lock difficulties.  When switching from arcade to rave, we need to 
+	// enforce that all players are at the same difficulty.
+	if( GAMESTATE->DifficultiesLocked() )
+	{
+		FOREACH_HumanPlayer( p )
+		{
+			m_iSelection[p] = m_iSelection[0];
+			GAMESTATE->m_PreferredDifficulty[p] = GAMESTATE->m_PreferredDifficulty[0];
+		}
+	}
 
 	Song* pSong = m_MusicWheel.GetSelectedSong();
 	GAMESTATE->m_pCurSong = pSong;
