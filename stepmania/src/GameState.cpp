@@ -359,14 +359,13 @@ void GameState::EndGame()
 		CHECKPOINT;
 	}
 	BOOKKEEPER->WriteToDisk();
-	PROFILEMAN->SaveMachineProfile();
+	PROFILEMAN->SaveAllProfiles();
 
 	FOREACH_HumanPlayer( pn )
 	{
 		if( !PROFILEMAN->IsUsingProfile(pn) )
 			continue;
 
-		PROFILEMAN->SaveProfile( pn );
 		PROFILEMAN->UnloadProfile( pn );
 	}
 

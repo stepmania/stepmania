@@ -190,6 +190,19 @@ bool ProfileManager::LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadNames
 	return false;
 }
 
+void ProfileManager::SaveAllProfiles() const
+{
+	this->SaveMachineProfile();
+
+	FOREACH_HumanPlayer( pn )
+	{
+		if( !this->IsUsingProfile(pn) )
+			continue;
+
+		this->SaveProfile( pn );
+	}
+}
+
 bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 {
 	if( m_sProfileDir[pn].empty() )
@@ -294,12 +307,12 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 	return FILEMAN->Remove( sProfileDir );
 }
 
-void ProfileManager::SaveMachineProfile()
+void ProfileManager::SaveMachineProfile() const
 {
 	// If the machine name has changed, make sure we use the new name.
 	// It's important that this name be applied before the Player profiles 
 	// are saved, so that the Player's profiles show the right machine name.
-	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
+	const_cast<ProfileManager *> (this)->m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
 
 	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
 }

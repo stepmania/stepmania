@@ -27,6 +27,7 @@ public:
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn, bool bLoadNamesOnly );	// memory card or local profile
 	bool LoadProfileFromMemoryCard( PlayerNumber pn, bool bLoadNamesOnly );
+	void SaveAllProfiles() const;
 	bool SaveProfile( PlayerNumber pn ) const;
 	void UnloadProfile( PlayerNumber pn );
 	
@@ -41,7 +42,7 @@ public:
 	// High scores
 	//
 	void LoadMachineProfile();
-	void SaveMachineProfile();
+	void SaveMachineProfile() const;
 
 	bool IsUsingProfile( PlayerNumber pn ) const { return !m_sProfileDir[pn].empty(); }
 	bool IsUsingProfile( ProfileSlot slot ) const;
