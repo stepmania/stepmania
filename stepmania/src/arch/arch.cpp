@@ -68,7 +68,7 @@ void MakeInputHandlers(vector<InputHandler *> &Add)
 	Add.push_back(new InputHandler_Win32_Pump);
 //	Add.push_back(new InputHandler_Win32_Para);
 #elif defined(_XBOX)
-	// Add.push_back(new InputHandler_DInput);
+	Add.push_back(new InputHandler_Xbox);
 #endif
 
 #if defined(SUPPORT_SDL_INPUT)
