@@ -72,8 +72,8 @@ NotesLoaderSM.cpp NotesLoaderSM.h NotesWriterDWI.cpp NotesWriterDWI.h NotesWrite
 PlayerAI.cpp PlayerAI.h PlayerNumber.cpp PlayerNumber.h PlayerOptions.cpp PlayerOptions.h Profile.cpp Profile.h ProfileHtml.cpp ProfileHtml.h RandomSample.cpp RandomSample.h \
 ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h ScoreKeeperRave.cpp ScoreKeeperRave.h \
 Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h SongOptions.cpp SongOptions.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
-Style.h StyleDef.cpp StyleDef.h StyleInput.h Time.cpp Time.h TimingData.cpp TimingData.h TitleSubstitution.cpp TitleSubstitution.h \
-LuaHelpers.cpp LuaHelpers.h LuaFunctions.h
+Style.h StyleDef.cpp StyleDef.h StyleInput.h TimeConstants.cpp TimeConstants.h Time.h TimingData.cpp TimingData.h \
+TitleSubstitution.cpp TitleSubstitution.h LuaHelpers.cpp LuaHelpers.h LuaFunctions.h
 
 FileTypes = IniFile.cpp IniFile.h MsdFile.cpp MsdFile.h XmlFile.cpp XmlFile.h
 
