@@ -635,10 +635,12 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
 	m_ScreensToDelete.push_back( pScreenToPop );
 
-	// post to the new top
-	PostMessageToTopScreen( SM, 0 );
-	PostMessageToTopScreen( SM_GainFocus, 0 );
-	PostMessageToTopScreen( m_MessageSendOnPop, 0 );
+	/* Post to the new top.  This must be done now; otherwise, we'll have a single
+	 * frame between popping and these messages, which can result in a frame where eg.
+	 * input is accepted where it shouldn't be. */
+	SendMessageToTopScreen( SM );
+	SendMessageToTopScreen( SM_GainFocus );
+	SendMessageToTopScreen( m_MessageSendOnPop );
 	m_MessageSendOnPop = SM_None;
 }
 
