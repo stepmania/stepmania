@@ -851,7 +851,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 		ASSERT_M( ret != -1, ssprintf("%s, %s", SDL_GetError(), strerror(errno)) );
 
 		/* If the frame wasn't used, then we must be shutting down. */
-		ASSERT( !m_ImageWaiting || m_State == DECODER_QUIT, ssprintf("%i", m_State) );
+		ASSERT_M( !m_ImageWaiting || m_State == DECODER_QUIT, ssprintf("%i", m_State) );
 	}
 	CHECKPOINT;
 }
