@@ -1239,13 +1239,15 @@
 		AA1C655F050D2ABC0073A143 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = InstallerWindowController.h;
+			name = InstallerWindowController.h;
+			path = Installer/InstallerWindowController.h;
 			refType = 4;
 		};
 		AA1C6560050D2ABC0073A143 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = InstallerWindowController.m;
+			name = InstallerWindowController.m;
+			path = Installer/InstallerWindowController.m;
 			refType = 4;
 		};
 		AA1C6561050D2ABC0073A143 = {
