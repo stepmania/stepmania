@@ -232,27 +232,33 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		case SDL_JOYAXISMOTION:
 		{
 #ifdef _XBOX
-			/* XXX: If you want to adjust the screen, use the menu.  Screen
-			 * adjustment code doesn't belong in the input driver. */
-			resolutionChanged = 1;
-			if ( abs(event.jaxis.value) > 15600 )
+			if(PREFSMAN->resizing)
 			{
-				switch ( event.jaxis.axis )
+				/* XXX: If you want to adjust the screen, use the menu.  Screen
+				* adjustment code doesn't belong in the input driver. */
+				/* As far as I can tell, you can't send on the analog values
+				* of the joysticks, so this is probably the only place for it.
+				* This should limit it to the centering screen though */
+				resolutionChanged = 1;
+				if ( abs(event.jaxis.value) > 15600 )
 				{
-				case 0: lastValX1 = event.jaxis.value; break;
-				case 1: lastValY1 = event.jaxis.value; break;
-				case 2: lastValX2 = event.jaxis.value; break;
-				case 3: lastValY2 = event.jaxis.value; break;
+					switch ( event.jaxis.axis )
+					{
+					case 0: lastValX1 = event.jaxis.value; break;
+					case 1: lastValY1 = event.jaxis.value; break;
+					case 2: lastValX2 = event.jaxis.value; break;
+					case 3: lastValY2 = event.jaxis.value; break;
+					}
 				}
-			}
-			else
-			{
-				switch ( event.jaxis.axis )
+				else
 				{
-				case 0: lastValX1 = 0; break;
-				case 1: lastValY1 = 0; break;
-				case 2: lastValX2 = 0; break;
-				case 3: lastValY2 = 0; break;
+					switch ( event.jaxis.axis )
+					{
+					case 0: lastValX1 = 0; break;
+					case 1: lastValY1 = 0; break;
+					case 2: lastValX2 = 0; break;
+					case 3: lastValY2 = 0; break;
+					}
 				}
 			}
 #else
