@@ -290,11 +290,12 @@ void Model::DrawCelShaded()
 	this->SetDiffuseAlpha(0);
 	DISPLAY->SetPolygonMode( POLYGON_LINE );
 	DISPLAY->SetLineWidth( 4 );
+	this->SetZWrite( false );
 	this->Draw();
 	this->SetDiffuseAlpha(1);
-	DISPLAY->ClearZBuffer();
 	this->SetGlow(RageColor(1,1,1,0));
 	DISPLAY->SetPolygonMode( POLYGON_FILL );
+	this->SetZWrite( true );
 	this->Draw();
 }
 
