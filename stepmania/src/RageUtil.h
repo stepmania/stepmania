@@ -13,7 +13,6 @@
 */
 
 #include <map>
-#include "RageUtil_FileDB.h"
 
 //-----------------------------------------------------------------------------
 // SAFE_ Macros
@@ -175,9 +174,6 @@ void split( const wstring &Source, const wstring &Deliminator, vector<wstring> &
 CString join(const CString &Deliminator, const CStringArray& Source);
 
 CString GetCwd();
-bool CreateDirectories( CString Path );
-bool Rename( const char *oldname, const char *newname );
-void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 
 unsigned int GetHashForString( CString s );
 unsigned int GetHashForFile( CString sPath );
@@ -279,5 +275,17 @@ struct char_traits_char_nocase: public char_traits<char>
     }
 };
 typedef basic_string<char,char_traits_char_nocase> istring;
+
+/* Compatibility/convenience shortcuts.  These are actually defined in RageFileManager.h, but
+ * declared here since they're used in many places. */
+void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
+bool DoesFileExist( const CString &sPath );
+bool IsAFile( const CString &sPath );
+bool IsADirectory( const CString &sPath );
+bool ResolvePath(CString &path);
+unsigned GetFileSizeInBytes( const CString &sFilePath );
+int GetFileModTime( const CString &sPath );
+void FlushDirCache();
+
 
 #endif

@@ -301,7 +301,7 @@ CString GetExtension( CString sPath )
 CString GetCwd()
 {
 #ifdef _XBOX
-	return "D:\\" ;
+	return SYS_BASE_PATH;
 #else
 	char buf[PATH_MAX];
 	bool ret = getcwd(buf, PATH_MAX) != NULL;
@@ -309,54 +309,6 @@ CString GetCwd()
 	return buf;
 #endif
 }
-
-/* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
-bool CreateDirectories( CString Path )
-{
-	CStringArray parts;
-	CString curpath;
-	split(Path, SLASH, parts);
-
-	for(unsigned i = 0; i < parts.size(); ++i)
-	{
-		curpath += parts[i] + SLASH;
-		if( mkdir(curpath, 0755) == 0 )
-			continue;
-
-		if(errno == EEXIST)
-			continue;		// we expect to see this error
-
-		// Log the error, but continue on.
-		/* When creating a directory that already exists over Samba, Windows is
-		 * returning ENOENT instead of EEXIST. */
-		/* On Win32 when Path is only a drive letter (e.g. "i:\"), the result is 
-		 * EINVAL. */
-		if( LOG )
-			LOG->Warn("Couldn't create %s: %s", curpath.c_str(), strerror(errno) );
-
-		/* Make sure it's a directory. */
-		FlushDirCache();
-		if( !IsADirectory(curpath) )
-		{
-			if( LOG )
-				LOG->Warn("Couldn't create %s: path exists and is not a directory", curpath.c_str() );
-			
-			// HACK: IsADirectory doesn't work if Path contains a drive letter.
-			// So, ignore IsADirectory's result and continue trying to create
-			// directories anyway.  This shouldn't change behavior, but 
-			// is inefficient because we don't bail early on an error.
-			//return false;
-		}
-	}
-	
-	return true;
-}
-
-bool Rename( const char *oldname, const char *newname )
-{
-	return 0 == rename( oldname, newname );
-}
-
 
 /* Reference: http://www.theorem.com/java/CRC32.java, rewritten by Glenn Maynard.
  * Public domain. */
