@@ -123,10 +123,10 @@ ScreenEdit::ScreenEdit()
 
 	GAMESTATE->m_bEditing = true;
 
-	m_fBeat = 0.0f;
-	GAMESTATE->m_fSongBeat = m_fBeat;
+	GAMESTATE->m_fSongBeat = 0;
+	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
-	m_fMusicRate = 1;
+	GAMESTATE->m_SongOptions.m_fMusicRate = 1;
 	
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_fArrowScrollSpeed = 1;
 	GAMESTATE->m_PlayerOptions[PLAYER_1].m_ColorType = PlayerOptions::COLOR_NOTE;
@@ -208,11 +208,19 @@ void ScreenEdit::Update( float fDeltaTime )
 	bool bFreeze;
 	m_pSong->GetBeatAndBPSFromElapsedTime( fPositionSeconds, fSongBeat, fBPS, bFreeze );
 
+
+	// update the global music statistics for other classes to access
+	GAMESTATE->m_fMusicSeconds = fPositionSeconds;
+//	GAMESTATE->m_fSongBeat = fSongBeat;
+	GAMESTATE->m_fCurBPS = fBPS;
+	GAMESTATE->m_bFreeze = bFreeze;
+
+
 	if( m_EditMode == MODE_RECORDING  ||  m_EditMode == MODE_PLAYING )
 	{
-		m_fBeat = fSongBeat;
+		GAMESTATE->m_fSongBeat = fSongBeat;
 
-		if( m_fBeat > m_NoteFieldEdit.m_fEndMarker )
+		if( GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
 		{
 			if( m_EditMode == MODE_RECORDING )
 			{
@@ -255,12 +263,11 @@ void ScreenEdit::Update( float fDeltaTime )
 
 
 	// Update trailing beat
-	float fDelta = m_fBeat - GAMESTATE->m_fSongBeat;
-
+	float fDelta = GAMESTATE->m_fSongBeat - m_fTrailingBeat;
 
 	if( fabsf(fDelta) < 0.01 )
 	{
-		GAMESTATE->m_fSongBeat = m_fBeat;	// snap
+		m_fTrailingBeat = GAMESTATE->m_fSongBeat;	// snap
 	}
 	else
 	{
@@ -268,10 +275,10 @@ void ScreenEdit::Update( float fDeltaTime )
 		float fMoveDelta = fSign*fDeltaTime*40;
 		if( fabsf(fMoveDelta) > fabsf(fDelta) )
 			fMoveDelta = fDelta;
-		GAMESTATE->m_fSongBeat += fMoveDelta;
+		m_fTrailingBeat += fMoveDelta;
 
 		if( fabsf(fDelta) > 10 )
-			GAMESTATE->m_fSongBeat += fDelta * fDeltaTime*5;
+			m_fTrailingBeat += fDelta * fDeltaTime*5;
 	}
 
 
@@ -285,7 +292,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	m_NoteFieldEdit.Update( fDeltaTime );
 
-	int iIndexNow = BeatToNoteRowNotRounded( m_fBeat );	
+	int iIndexNow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat );	
 
 
 	CString sNoteType;
@@ -319,9 +326,9 @@ void ScreenEdit::Update( float fDeltaTime )
 		"MusicOffsetSeconds: %.2f\n"
 		"Preview start: %.2f, length = %.2f\n",
 		sNoteType,
-		m_fBeat,
+		GAMESTATE->m_fSongBeat,
 		m_NoteFieldEdit.m_fBeginMarker,	m_NoteFieldEdit.m_fEndMarker,
-		m_fMusicRate,
+		GAMESTATE->m_SongOptions.m_fMusicRate,
 		DifficultyClassToString( m_pNotes->m_DifficultyClass ),
 		GAMESTATE->m_pCurNotes[PLAYER_1] ? GAMESTATE->m_pCurNotes[PLAYER_1]->m_sDescription : "no description",
 		iNumTapNotes, iNumHoldNotes,
@@ -337,7 +344,13 @@ void ScreenEdit::DrawPrimitives()
 	m_GranularityIndicator.Draw();
 	m_GrayArrowRowEdit.Draw();
 	m_textHelp.Draw();
+
+	// HACK:  Make NoteFieldEdit draw using the trailing beat
+	float fSongBeat = GAMESTATE->m_fSongBeat;	// save song beat
+	GAMESTATE->m_fSongBeat = m_fTrailingBeat;	// put trailing beat in effect
 	m_NoteFieldEdit.Draw();
+	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
+
 	m_textInfo.Draw();
 	m_Fade.Draw();
 
@@ -397,7 +410,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					break;	// We only care about first presses
 
 				int iCol = DeviceI.button - DIK_1;
-				const int iNoteIndex = BeatToNoteRow( m_fBeat );
+				const int iNoteIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 
 				if( iCol >= m_NoteFieldEdit.m_iNumTracks )	// this button is not in the range of columns for this StyleDef
 					break;
@@ -471,8 +484,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 						fBeatsToMove *= -1;
 				}
 
-				const int iStartIndex = BeatToNoteRow(m_fBeat);
-				const int iEndIndex = BeatToNoteRow(m_fBeat + fBeatsToMove);
+				const int iStartIndex = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				const int iEndIndex = BeatToNoteRow(GAMESTATE->m_fSongBeat + fBeatsToMove);
 
 				// check to see if they're holding a button
 				for( int col=0; col<m_NoteFieldEdit.m_iNumTracks && col<=10; col++ )
@@ -491,18 +504,18 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					}
 				}
 
-				m_fBeat += fBeatsToMove;
-				m_fBeat = clamp( m_fBeat, 0, MAX_BEATS-1 );
-				m_fBeat = froundf( m_fBeat, NoteTypeToBeat(m_GranularityIndicator.GetSnapMode()) );
+				GAMESTATE->m_fSongBeat += fBeatsToMove;
+				GAMESTATE->m_fSongBeat = clamp( GAMESTATE->m_fSongBeat, 0, MAX_BEATS-1 );
+				GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_GranularityIndicator.GetSnapMode()) );
 				m_soundChangeLine.Play();
 			}
 			break;
 		case DIK_HOME:
-			m_fBeat = 0;
+			GAMESTATE->m_fSongBeat = 0;
 			m_soundChangeLine.Play();
 			break;
 		case DIK_END:
-			m_fBeat = m_NoteFieldEdit.GetLastBeat();
+			GAMESTATE->m_fSongBeat = m_NoteFieldEdit.GetLastBeat();
 			m_soundChangeLine.Play();
 			break;
 		case DIK_RIGHT:
@@ -514,26 +527,26 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			OnSnapModeChange();
 			break;
 		case DIK_RETURN:
-			if( m_NoteFieldEdit.m_fEndMarker != -1  &&  m_fBeat > m_NoteFieldEdit.m_fEndMarker )
+			if( m_NoteFieldEdit.m_fEndMarker != -1  &&  GAMESTATE->m_fSongBeat > m_NoteFieldEdit.m_fEndMarker )
 			{
 				// invalid!  The begin maker must be placed before the end marker
 				m_soundInvalid.Play();
 			}
 			else
 			{
-				m_NoteFieldEdit.m_fBeginMarker = m_fBeat;
+				m_NoteFieldEdit.m_fBeginMarker = GAMESTATE->m_fSongBeat;
 				m_soundMarker.Play();
 			}
 			break;
 		case DIK_SPACE:
-			if( m_NoteFieldEdit.m_fBeginMarker != -1  &&  m_fBeat < m_NoteFieldEdit.m_fBeginMarker )
+			if( m_NoteFieldEdit.m_fBeginMarker != -1  &&  GAMESTATE->m_fSongBeat < m_NoteFieldEdit.m_fBeginMarker )
 			{
 				// invalid!  The end maker must be placed after the begin marker
 				m_soundInvalid.Play();
 			}
 			else
 			{
-				m_NoteFieldEdit.m_fEndMarker = m_fBeat;
+				m_NoteFieldEdit.m_fEndMarker = GAMESTATE->m_fSongBeat;
 				m_soundMarker.Play();
 			}
 			break;
@@ -573,8 +586,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					break;
 				}
 
-				m_fBeat = m_NoteFieldEdit.m_fBeginMarker;
-
 				m_EditMode = MODE_PLAYING;
 
 				m_Player.Load( PLAYER_1, (NoteData*)&m_NoteFieldEdit, NULL, NULL );
@@ -582,10 +593,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
 
-				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(m_fBeat) );
+				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker;
+				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 				m_soundMusic.SetPositionSeconds( fElapsedSeconds );
 				m_soundMusic.Play();
-				m_soundMusic.SetPlaybackRate( m_fMusicRate );
+				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 			}
 			break;
 		case DIK_R:
@@ -595,8 +607,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 					m_soundInvalid.Play();
 					break;
 				}
-
-				m_fBeat = m_NoteFieldEdit.m_fBeginMarker;
 
 				// initialize m_NoteFieldRecord
 				m_NoteFieldRecord.ClearAll();
@@ -609,22 +619,23 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_rectRecordBack.BeginTweening( 0.5f );
 				m_rectRecordBack.SetTweenDiffuseColor( D3DXCOLOR(0,0,0,0.5f) );
 
-				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(m_fBeat) );
+				GAMESTATE->m_fSongBeat = m_NoteFieldEdit.m_fBeginMarker;
+				float fElapsedSeconds = max( 0, m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) );
 				m_soundMusic.SetPositionSeconds( fElapsedSeconds );
 				m_soundMusic.Play();
-				m_soundMusic.SetPlaybackRate( m_fMusicRate );
+				m_soundMusic.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 			}
 			break;
 		case DIK_T:
-			if(     m_fMusicRate == 1.0f )		m_fMusicRate = 0.9f;
-			else if( m_fMusicRate == 0.9f )		m_fMusicRate = 0.8f;
-			else if( m_fMusicRate == 0.8f )		m_fMusicRate = 0.7f;
-			else if( m_fMusicRate == 0.7f )		m_fMusicRate = 1.5f;
-			else if( m_fMusicRate == 1.5f )		m_fMusicRate = 1.4f;
-			else if( m_fMusicRate == 1.4f )		m_fMusicRate = 1.3f;
-			else if( m_fMusicRate == 1.3f )		m_fMusicRate = 1.2f;
-			else if( m_fMusicRate == 1.2f )		m_fMusicRate = 1.1f;
-			else if( m_fMusicRate == 1.1f )		m_fMusicRate = 1.0f;
+			if(     GAMESTATE->m_SongOptions.m_fMusicRate == 1.0f )		GAMESTATE->m_SongOptions.m_fMusicRate = 0.9f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.9f )		GAMESTATE->m_SongOptions.m_fMusicRate = 0.8f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.8f )		GAMESTATE->m_SongOptions.m_fMusicRate = 0.7f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 0.7f )		GAMESTATE->m_SongOptions.m_fMusicRate = 1.5f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.5f )		GAMESTATE->m_SongOptions.m_fMusicRate = 1.4f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.4f )		GAMESTATE->m_SongOptions.m_fMusicRate = 1.3f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.3f )		GAMESTATE->m_SongOptions.m_fMusicRate = 1.2f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.2f )		GAMESTATE->m_SongOptions.m_fMusicRate = 1.1f;
+			else if( GAMESTATE->m_SongOptions.m_fMusicRate == 1.1f )		GAMESTATE->m_SongOptions.m_fMusicRate = 1.0f;
 			break;
 		case DIK_INSERT:
 		case DIK_DELETE:
@@ -636,12 +647,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				switch( DeviceI.button )
 				{
 				case DIK_INSERT:
-					iTakeFromRow = BeatToNoteRow( m_fBeat );
-					iPasteAtRow = BeatToNoteRow( m_fBeat+1 );
+					iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+					iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
 					break;
 				case DIK_DELETE:
-					iTakeFromRow = BeatToNoteRow( m_fBeat+1 );
-					iPasteAtRow = BeatToNoteRow( m_fBeat );
+					iTakeFromRow = BeatToNoteRow( GAMESTATE->m_fSongBeat+1 );
+					iPasteAtRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 					break;
 				}
 				temp.CopyRange( &m_NoteFieldEdit, iTakeFromRow, MAX_TAP_NOTE_ROWS );
@@ -680,7 +691,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			{
 				int iSrcFirstRow = 0;
 				int iSrcLastRow  = BeatToNoteRow( m_Clipboard.GetLastBeat() );
-				int iDestFirstRow = BeatToNoteRow( m_fBeat );
+				int iDestFirstRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 
 				m_NoteFieldEdit.CopyRange( &m_Clipboard, iSrcFirstRow, iSrcLastRow, iDestFirstRow );
 			}
@@ -696,7 +707,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		case DIK_F7:
 		case DIK_F8:
 			{
-				float fBPM = m_pSong->GetBPMAtBeat( m_fBeat );
+				float fBPM = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
 				float fDeltaBPM;
 				switch( DeviceI.button )
 				{
@@ -712,13 +723,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				float fNewBPM = fBPM + fDeltaBPM;
 
 				for( int i=0; i<m_pSong->m_BPMSegments.GetSize(); i++ )
-					if( m_pSong->m_BPMSegments[i].m_fStartBeat == m_fBeat )
+					if( m_pSong->m_BPMSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 						break;
 
 				if( i == m_pSong->m_BPMSegments.GetSize() )	// there is no BPMSegment at the current beat
 				{
 					// create a new BPMSegment
-					m_pSong->AddBPMSegment( BPMSegment(m_fBeat, fNewBPM) );
+					m_pSong->AddBPMSegment( BPMSegment(GAMESTATE->m_fSongBeat, fNewBPM) );
 				}
 				else	// BPMSegment being modified is m_BPMSegments[i]
 				{
@@ -747,7 +758,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 				for( int i=0; i<m_pSong->m_StopSegments.GetSize(); i++ )
 				{
-					if( m_pSong->m_StopSegments[i].m_fStartBeat == m_fBeat )
+					if( m_pSong->m_StopSegments[i].m_fStartBeat == GAMESTATE->m_fSongBeat )
 						break;
 				}
 
@@ -755,7 +766,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				{
 					// create a new StopSegment
 					if( fFreezeDelta > 0 )
-						m_pSong->AddStopSegment( StopSegment(m_fBeat, fFreezeDelta) );
+						m_pSong->AddStopSegment( StopSegment(GAMESTATE->m_fSongBeat, fFreezeDelta) );
 				}
 				else	// StopSegment being modified is m_StopSegments[i]
 				{
@@ -848,12 +859,12 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			iCol = StyleI.col;
 		
 			int iNoteIndex;
-			iNoteIndex = BeatToNoteRow( m_fBeat );
+			iNoteIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 
 			if( type == IET_FIRST_PRESS )
 			{
 				m_NoteFieldRecord.m_TapNotes[iCol][iNoteIndex] = '1';
-				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_12TH, NOTE_16TH, max(0,m_fBeat-1), m_fBeat+1);
+				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_12TH, NOTE_16TH, max(0,GAMESTATE->m_fSongBeat-1), GAMESTATE->m_fSongBeat+1);
 				m_GrayArrowRowRecord.Step( iCol );
 			}
 			else
@@ -876,7 +887,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 				newHN.m_iEndIndex = iEndIndex;
 
 				m_NoteFieldRecord.AddHoldNote( newHN );
-				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_12TH, NOTE_16TH, max(0,m_fBeat-2), m_fBeat+2);
+				m_NoteFieldRecord.SnapToNearestNoteType( NOTE_12TH, NOTE_16TH, max(0,GAMESTATE->m_fSongBeat-2), GAMESTATE->m_fSongBeat+2);
 			}
 			break;
 	}
@@ -895,15 +906,10 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 			m_EditMode = MODE_EDITING;
 			m_soundMusic.Stop();
 
-			m_fBeat = froundf( m_fBeat, NoteTypeToBeat(m_GranularityIndicator.GetSnapMode()) );
+			GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_GranularityIndicator.GetSnapMode()) );
 			break;
 		}
 	}
-
-	float fSongBeat, fBPS;
-	bool bFreeze;
-	m_pSong->GetBeatAndBPSFromElapsedTime( m_soundMusic.GetPositionSeconds(), fSongBeat, fBPS, bFreeze );
-	const float fMaxBeatDifference = fBPS * PREFSMAN->m_fJudgeWindow / GAMESTATE->m_SongOptions.m_fMusicRate;
 
 	switch( StyleI.player )
 	{
@@ -928,7 +934,7 @@ void ScreenEdit::TransitionToEditFromRecord()
 
 	m_NoteFieldEdit.CopyRange( (NoteData*)&m_NoteFieldRecord, iNoteIndexBegin, iNoteIndexEnd );
 
-	m_fBeat = froundf( m_fBeat, NoteTypeToBeat(m_GranularityIndicator.GetSnapMode()) );
+	GAMESTATE->m_fSongBeat = froundf( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_GranularityIndicator.GetSnapMode()) );
 }
 
 
@@ -952,8 +958,8 @@ void ScreenEdit::OnSnapModeChange()
 	m_soundChangeSnap.Play();
 			
 	NoteType nt = m_GranularityIndicator.GetSnapMode();
-	int iStepIndex = BeatToNoteRow( m_fBeat );
+	int iStepIndex = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 	int iElementsPerNoteType = BeatToNoteRow( NoteTypeToBeat(nt) );
 	int iStepIndexHangover = iStepIndex % iElementsPerNoteType;
-	m_fBeat -= NoteRowToBeat( iStepIndexHangover );
+	GAMESTATE->m_fSongBeat -= NoteRowToBeat( iStepIndexHangover );
 }

@@ -197,7 +197,9 @@ void GameDef::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] )
 	for( int i=0; i<iNumSidesUsing; i++ )
 	{
 		for( int j=0; j<iNumButtonsUsing; j++ )
-		GameIout[i*2+j].controller = controller[i];
-		GameIout[i*2+j].button = button[j];
+		{
+			GameIout[i*2+j].controller = controller[i];
+			GameIout[i*2+j].button = button[j];
+		}
 	}
 }

@@ -18,6 +18,7 @@
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageException.h"
+#include "GameState.h"
 
 
 
@@ -507,93 +508,88 @@ void NoteData::RemoveHoldNotes()
 
 void NoteData::Turn( PlayerOptions::TurnType tt )
 {
-	// transform the NoteData
-	int oldColToNewCol[12][2];	// 0 is old Step, 1 is new Step mapping
-	oldColToNewCol[0][0] = 0;		oldColToNewCol[0][1] = 0;
-	oldColToNewCol[1][0] = 1;		oldColToNewCol[1][1] = 1;
-	oldColToNewCol[2][0] = 2;		oldColToNewCol[2][1] = 2;
-	oldColToNewCol[3][0] = 3;		oldColToNewCol[3][1] = 3;
-	oldColToNewCol[4][0] = 4;		oldColToNewCol[4][1] = 4;
-	oldColToNewCol[5][0] = 5;		oldColToNewCol[5][1] = 5;
-	oldColToNewCol[6][0] = 6;		oldColToNewCol[6][1] = 6;
-	oldColToNewCol[7][0] = 7;		oldColToNewCol[7][1] = 7;
-	oldColToNewCol[8][0] = 8;		oldColToNewCol[8][1] = 8;
-	oldColToNewCol[9][0] = 9;		oldColToNewCol[9][1] = 9;
-	oldColToNewCol[10][0]= 10;	oldColToNewCol[10][1]= 10;
-	oldColToNewCol[11][0]= 11;	oldColToNewCol[11][1]= 11;
+	int iTakeFromTrack[MAX_NOTE_TRACKS];	// New track "t" will take from old track iTakeFromTrack[t]
 
 	switch( tt )
 	{
 	case PlayerOptions::TURN_NONE:
-		break;
+		return;		// nothing to do
 	case PlayerOptions::TURN_MIRROR:
-		oldColToNewCol[0][1] = 3;
-		oldColToNewCol[2][1] = 2;
-		oldColToNewCol[3][1] = 1;
-		oldColToNewCol[5][1] = 0;
-		oldColToNewCol[6][1] = 7;
-		oldColToNewCol[8][1] = 6;
-		oldColToNewCol[9][1] = 5;
-		oldColToNewCol[11][1]= 4;
+		for( int t=0; t<m_iNumTracks; t++ )
+			iTakeFromTrack[t] = m_iNumTracks-t-1;
 		break;
 	case PlayerOptions::TURN_LEFT:
-		oldColToNewCol[0][1] = 1;
-		oldColToNewCol[2][1] = 3;
-		oldColToNewCol[3][1] = 0;
-		oldColToNewCol[5][1] = 2;
-		oldColToNewCol[6][1] = 5;
-		oldColToNewCol[8][1] = 7;
-		oldColToNewCol[9][1] = 4;
-		oldColToNewCol[11][1]= 6;
-		break;
-	case PlayerOptions::TURN_RIGHT:
-		oldColToNewCol[0][1] = 3;
-		oldColToNewCol[2][1] = 0;
-		oldColToNewCol[3][1] = 4;
-		oldColToNewCol[5][1] = 1;
-		oldColToNewCol[6][1] = 6;
-		oldColToNewCol[8][1] = 4;
-		oldColToNewCol[9][1] = 7;
-		oldColToNewCol[11][1]= 5;
+	case PlayerOptions::TURN_RIGHT:		// HACK: TurnRight does the same thing as TurnLeft.  I'll fix this later...
+		// Chris: Handling each NotesType case is a terrible way to do this, but oh well...
+		switch( GAMESTATE->GetCurrentStyleDef()->m_NotesType )
+		{
+		case NOTES_TYPE_DANCE_SINGLE:
+		case NOTES_TYPE_DANCE_DOUBLE:
+		case NOTES_TYPE_DANCE_COUPLE:
+			iTakeFromTrack[0] = 2;
+			iTakeFromTrack[1] = 0;
+			iTakeFromTrack[2] = 3;
+			iTakeFromTrack[3] = 1;
+			iTakeFromTrack[4] = 6;
+			iTakeFromTrack[5] = 4;
+			iTakeFromTrack[6] = 7;
+			iTakeFromTrack[7] = 5;
+			break;
+		case NOTES_TYPE_DANCE_SOLO:
+			iTakeFromTrack[0] = 5;
+			iTakeFromTrack[1] = 4;
+			iTakeFromTrack[2] = 0;
+			iTakeFromTrack[3] = 3;
+			iTakeFromTrack[4] = 1;
+			iTakeFromTrack[5] = 2;
+			break;
+		case NOTES_TYPE_PUMP_SINGLE:
+		case NOTES_TYPE_PUMP_DOUBLE:
+			iTakeFromTrack[0] = 1;
+			iTakeFromTrack[1] = 3;
+			iTakeFromTrack[2] = 2;
+			iTakeFromTrack[3] = 4;
+			iTakeFromTrack[4] = 0;
+			iTakeFromTrack[5] = 6;
+			iTakeFromTrack[6] = 8;
+			iTakeFromTrack[7] = 7;
+			iTakeFromTrack[8] = 9;
+			iTakeFromTrack[9] = 5;
+			break;
+		case NOTES_TYPE_EZ2_SINGLE:
+		case NOTES_TYPE_EZ2_SINGLE_HARD:
+		case NOTES_TYPE_EZ2_DOUBLE:
+		case NOTES_TYPE_EZ2_REAL:
+		case NOTES_TYPE_EZ2_SINGLE_VERSUS:
+		case NOTES_TYPE_EZ2_SINGLE_HARD_VERSUS:
+		case NOTES_TYPE_EZ2_REAL_VERSUS:
+			// identity transform.  What should we do here?
+			iTakeFromTrack[0] = 0;
+			iTakeFromTrack[1] = 1;
+			iTakeFromTrack[2] = 2;
+			iTakeFromTrack[3] = 3;
+			iTakeFromTrack[4] = 4;
+			iTakeFromTrack[5] = 5;
+			iTakeFromTrack[6] = 6;
+			iTakeFromTrack[7] = 7;
+			iTakeFromTrack[8] = 8;
+			iTakeFromTrack[9] = 9;
+			iTakeFromTrack[10]= 10;
+			iTakeFromTrack[11]= 11;
+			break;
+		}
 		break;
 	case PlayerOptions::TURN_SHUFFLE:
-		bool bAlreadyMapped[12];
-		for( int i=0; i<12; i++ )
-			bAlreadyMapped[i] = false;
+		CArray<int,int> aiTracksLeftToMap;
+		for( int t=0; t<m_iNumTracks; t++ )
+			aiTracksLeftToMap.Add( t );
 		
-		// hack: don't shuffle the Up+... NoteData
-		bAlreadyMapped[1] = true;
-		bAlreadyMapped[4] = true;
-		bAlreadyMapped[7] = true;
-		bAlreadyMapped[10] = true;
-
-		// shuffle left side
-		for( i=0; i<6; i++ )
+		for( int t=0; t<m_iNumTracks; t++ )
 		{
-			if( i == 1  ||  i == 4 )
-				continue;
-
-			int iMapsTo;
-			do {
-				iMapsTo = rand()%6;
-			} while( bAlreadyMapped[iMapsTo] );
-			bAlreadyMapped[iMapsTo] = true;
-
-			oldColToNewCol[i][1] = oldColToNewCol[iMapsTo][0];
-		}
-		// shuffle right side
-		for( i=6; i<12; i++ )
-		{
-			if( i == 7  ||  i == 10 )
-				continue;
-
-			int iMapsTo;
-			do {
-				iMapsTo = rand()%6+6;
-			} while( bAlreadyMapped[iMapsTo] );
-			bAlreadyMapped[iMapsTo] = true;
-
-			oldColToNewCol[i][1] = oldColToNewCol[iMapsTo][0];
+			int iRandTrackIndex = rand()%aiTracksLeftToMap.GetSize();
+			int iRandTrack = aiTracksLeftToMap[iRandTrackIndex];
+			aiTracksLeftToMap.RemoveAt( iRandTrackIndex );
+			iTakeFromTrack[t] = iRandTrack;
 		}
 		break;
 	}
@@ -601,40 +597,15 @@ void NoteData::Turn( PlayerOptions::TurnType tt )
 	NoteData tempNoteData;	// write into here as we tranform
 	tempNoteData.m_iNumTracks = m_iNumTracks;
 
-	// transform m_TapNotes 
-	for( int i=0; i<MAX_TAP_NOTE_ROWS; i++ ) 
-	{
-		for( int j=0; j<12; j++ )
-		{
-			int iOldCol = oldColToNewCol[j][0];
-			int iNewCol = oldColToNewCol[j][1];
-			
-			tempNoteData.m_TapNotes[iNewCol][i] = m_TapNotes[iOldCol][i];
-		}
-	}
+	this->ConvertHoldNotesTo2sAnd3s();
 
-	// transform m_HoldNotes 
-	for( i=0; i<m_iNumHoldNotes; i++ ) 
-	{
-		for( int j=0; j<12; j++ )
-		{
-			HoldNote &hn = m_HoldNotes[i];
+	// transform notes
+	for( int t=0; t<m_iNumTracks; t++ )
+		for( int r=0; r<MAX_TAP_NOTE_ROWS; r++ ) 			
+			tempNoteData.m_TapNotes[t][r] = m_TapNotes[iTakeFromTrack[t]][r];
 
-			int iOldCol = oldColToNewCol[j][0];
-			int iNewCol = oldColToNewCol[j][1];
-			
-			if( hn.m_iTrack == iOldCol )
-			{
-				HoldNote newHN = { iNewCol, hn.m_iStartIndex, hn.m_iEndIndex };
-				tempNoteData.AddHoldNote( newHN );
-			}
-		}
-	}
-
-	//
-	// copy note data from newData back into this
-	//
-	(*this) = tempNoteData;
+	this->CopyAll( &tempNoteData );		// copy note data from newData back into this
+	this->Convert2sAnd3sToHoldNotes();
 }
 
 void NoteData::MakeLittle()

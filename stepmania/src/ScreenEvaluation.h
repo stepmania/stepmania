@@ -47,6 +47,7 @@ protected:
 	MenuElements		m_Menu;
 
 	BannerWithFrame		m_BannerWithFrame[STAGES_TO_SHOW_IN_SUMMARY];
+	BitmapText			m_textStage;
 
 	Sprite				m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];

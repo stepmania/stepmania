@@ -57,11 +57,9 @@ protected:
 	BitmapText				m_textHelp;
 
 	// keep track of where we are and what we're doing
-	float				m_fBeat;	// make GAMESTATE->m_fSongBeat approach this
+	float				m_fTrailingBeat;	// this approaches GAMESTATE->m_fSongBeat, which is the actual beat
 
 	NoteData			m_Clipboard;
-
-	float				m_fMusicRate;
 
 	RageSoundSample		m_soundChangeLine;
 	RageSoundSample		m_soundChangeSnap;

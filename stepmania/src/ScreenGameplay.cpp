@@ -1198,6 +1198,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			this->SendScreenMessage( SM_GoToScreenAfterBack, 0 );
 		else if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 			SCREENMAN->SetNewScreen( new ScreenEvaluation(true) );
+		else if( GAMESTATE->m_PlayMode == PLAY_MODE_ONI  ||  GAMESTATE->m_PlayMode == PLAY_MODE_ENDLESS )
+			SCREENMAN->SetNewScreen( new ScreenEvaluation(false) );
 		else
 			SCREENMAN->SetNewScreen( new ScreenGameOver );
 		break;

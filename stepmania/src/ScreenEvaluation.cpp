@@ -29,6 +29,9 @@
 const float BANNER_X					= CENTER_X;
 const float BANNER_Y					= SCREEN_TOP + 100;
 
+const float STAGE_X						= BANNER_X;
+const float STAGE_Y						= BANNER_Y-40;
+
 const float GRADE_X[NUM_PLAYERS]		= { CENTER_X-226, CENTER_X+226 };
 const float GRADE_Y						=	BANNER_Y;
 
@@ -143,9 +146,17 @@ ScreenEvaluation::ScreenEvaluation( bool bSummary )
 		switch( m_ResultMode )
 		{
 		case RM_ARCADE_STAGE:
-			m_BannerWithFrame[0].LoadFromSong( GAMESTATE->m_pCurSong );
+			m_BannerWithFrame[0].LoadFromSongAndNotes( GAMESTATE->m_pCurSong, GAMESTATE->m_pCurNotes );
 			m_BannerWithFrame[0].SetXY( BANNER_X, BANNER_Y );
 			this->AddSubActor( &m_BannerWithFrame[0] );
+
+			m_textStage.Load( THEME->GetPathTo(FONT_HEADER1) );
+			m_textStage.TurnShadowOff();
+			m_textStage.SetXY( STAGE_X, STAGE_Y );
+			m_textStage.SetZoom( 0.5f );
+			m_textStage.SetText( GAMESTATE->GetStageText() + " Stage" );
+			this->AddSubActor( &m_textStage );
+
 			break;
 		case RM_ARCADE_SUMMARY:
 			{
@@ -560,6 +571,10 @@ void ScreenEvaluation::TweenOnScreen()
 		m_BannerWithFrame[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
 		m_BannerWithFrame[i].SetTweenY( fOriginalY );
 	}
+	
+	fOriginalY = m_textStage.GetY();
+	m_textStage.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_BEGIN );
+	m_textStage.SetTweenY( fOriginalY );
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{
@@ -641,6 +656,9 @@ void ScreenEvaluation::TweenOffScreen()
 		m_BannerWithFrame[i].BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
 		m_BannerWithFrame[i].SetTweenZoomY( 0 );
 	}
+
+	m_textStage.BeginTweeningQueued( MENU_ELEMENTS_TWEEN_TIME, Actor::TWEEN_BIAS_END );
+	m_textStage.SetTweenZoomY( 0 );
 
 	for( i=0; i<NUM_JUDGE_LINES; i++ ) 
 	{

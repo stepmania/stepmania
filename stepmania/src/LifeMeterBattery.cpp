@@ -37,8 +37,6 @@ LifeMeterBattery::LifeMeterBattery()
 	
 	m_soundGainLife.Load( THEME->GetPathTo(SOUND_GAMEPLAY_ONI_GAIN_LIFE) );
 	m_soundLoseLife.Load( THEME->GetPathTo(SOUND_GAMEPLAY_ONI_LOSE_LIFE) );
-
-	Refresh();
 }
 
 void LifeMeterBattery::Load( PlayerNumber pn )
@@ -81,6 +79,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	m_textPercent.SetDiffuseColor( PlayerToColor(pn) );	// light blue
 
+	Refresh();
 }
 
 void LifeMeterBattery::SongEnded()

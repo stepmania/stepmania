@@ -1,7 +1,7 @@
 #pragma once
 /*
 -----------------------------------------------------------------------------
- Course: SongOptions
+ Class: SongOptions
 
  Desc: Per-song options that are not saved between sessions.  These are options
 	that should probably be disabled in a coin-operated machine.

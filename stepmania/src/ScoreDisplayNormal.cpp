@@ -29,10 +29,14 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	Load( THEME->GetPathTo(FONT_SCORE_NUMBERS) );
 	TurnShadowOff();
 
+	m_fScore = 0;
 	m_fTrailingScore = 0;
+	m_fScoreVelocity = 0;
 
-	SetScore( 0 );
-	Update(0);
+	CString s;
+	for( int i=0; i<NUM_SCORE_DIGITS; i++ )
+		s += '0';
+	SetText( s );
 }
 
 

@@ -98,6 +98,15 @@ void Course::CreateEndlessCourseFromGroupAndDifficultyClass( CString sGroupName,
 	m_bRepeat = true;
 	m_bRandomize = true;
 	m_iLives = -1;
+
+	CStringArray asPossibleBannerPaths;
+	GetDirListing( "Songs\\" + sGroupName + "\\banner.png", asPossibleBannerPaths, false, true );
+	GetDirListing( "Songs\\" + sGroupName + "\\banner.jpg", asPossibleBannerPaths, false, true );
+	GetDirListing( "Songs\\" + sGroupName + "\\banner.gif", asPossibleBannerPaths, false, true );
+	GetDirListing( "Songs\\" + sGroupName + "\\banner.bmp", asPossibleBannerPaths, false, true );
+	if( asPossibleBannerPaths.GetSize() > 0 )
+		m_sBannerPath = asPossibleBannerPaths[0];
+
 	CString sShortGroupName = SONGMAN->ShortenGroupName( sGroupName );	
 
 	m_sName = sShortGroupName + " ";
@@ -136,7 +145,7 @@ Notes* Course::GetNotesForStage( int iStage )
 	for( i=0; i<pSong->m_apNotes.GetSize(); i++ )
 	{
 		Notes* pNotes = pSong->m_apNotes[i];
-		if( pNotes->m_DifficultyClass == dc )
+		if( pNotes->m_DifficultyClass == dc  &&  pNotes->m_NotesType == GAMESTATE->GetCurrentStyleDef()->m_NotesType )
 			return pNotes;
 	}
 

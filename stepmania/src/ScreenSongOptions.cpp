@@ -1,11 +1,12 @@
 #include "stdafx.h"
 /*
 -----------------------------------------------------------------------------
- File: ScreenSongOptions.h
+ Class: ScreenSongOptions
 
- Desc: Select a song.
+ Desc: See header.
 
  Copyright (c) 2001-2002 by the person(s) listed below.  All rights reserved.
+	Chris Danford
 -----------------------------------------------------------------------------
 */
 
@@ -21,6 +22,7 @@
 #include "ScreenPlayerOptions.h"
 #include "RageLog.h"
 #include "GameState.h"
+#include "ScreenStage.h"
 
 
 enum {
@@ -112,7 +114,7 @@ void ScreenSongOptions::GoToNextState()
 {
 	MUSIC->Stop();
 
-	SCREENMAN->SetNewScreen( new ScreenGameplay );
+	SCREENMAN->SetNewScreen( new ScreenStage );
 }
 
 

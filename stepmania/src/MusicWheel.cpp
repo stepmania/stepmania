@@ -565,30 +565,34 @@ void MusicWheel::BuildWheelItemDatas( CArray<WheelItemData, WheelItemData&> &arr
 		}
 		break;
 	case PLAY_MODE_ONI:
-		{
-			CArray<Course*,Course*> apCourses;
-			for( int i=0; i<SONGMAN->m_aOniCourses.GetSize(); i++ )
-				apCourses.Add( &SONGMAN->m_aOniCourses[i] );
-
-			SortCoursePointerArrayByDifficulty( apCourses );
-
-			for( int c=0; c<apCourses.GetSize(); c++ )	// foreach course
-			{
-				Course* pCourse = apCourses[c];
-				arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
-			}
-		}
-		break;
 	case PLAY_MODE_ENDLESS:
 		{
 			CArray<Course*,Course*> apCourses;
-			for( int i=0; i<SONGMAN->m_aEndlessCourses.GetSize(); i++ )
-				apCourses.Add( &SONGMAN->m_aEndlessCourses[i] );
+			switch( GAMESTATE->m_PlayMode )
+			{
+			case PLAY_MODE_ONI:
+				for( int i=0; i<SONGMAN->m_aOniCourses.GetSize(); i++ )
+					apCourses.Add( &SONGMAN->m_aOniCourses[i] );
+				SortCoursePointerArrayByDifficulty( apCourses );
+				break;
+			case PLAY_MODE_ENDLESS:
+				for( int i=0; i<SONGMAN->m_aEndlessCourses.GetSize(); i++ )
+					apCourses.Add( &SONGMAN->m_aEndlessCourses[i] );
+				break;
+			}
 
 			for( int c=0; c<apCourses.GetSize(); c++ )	// foreach course
 			{
 				Course* pCourse = apCourses[c];
-				arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
+
+				// check that this course has at least one song playable in the current style
+				CArray<Song*,Song*> apSongs;
+				CArray<Notes*,Notes*> apNotes;
+				CStringArray asModifiers;
+				pCourse->GetSongAndNotesForCurrentStyle( apSongs, apNotes, asModifiers );
+
+				if( apNotes.GetSize() > 0 )
+					arrayWheelItemDatas.Add( WheelItemData(TYPE_COURSE, NULL, "", pCourse, pCourse->GetColor()) );
 			}
 		}
 		break;
