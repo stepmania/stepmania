@@ -18,6 +18,7 @@
 #include "Foreach.h"
 #include "ThemeMetric.h"
 #include "LuaHelpers.h"
+#include "ScreenDimensions.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -267,10 +268,36 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 	/* Lua globals can use metrics which are cached, and vice versa.  Update Lua
 	 * globals first; it's Lua's job to explicitly update cached metrics that it
 	 * uses. */
-	Lua::UpdateGlobals();
+	UpdateLuaGlobals();
 
 	// reload subscribers
 	FOREACH( IThemeMetric*, *g_pvpSubscribers, p ) (*p)->Read();
+}
+
+void ThemeManager::UpdateLuaGlobals()
+{
+	/* Important: explicitly refresh cached metrics that we use. */
+	THEME_SCREEN_WIDTH.Read();
+	THEME_SCREEN_HEIGHT.Read();
+
+	lua_State *L = Lua::GetGlobalState();
+
+	Lua::PushStack( L, (int) SCREEN_WIDTH );
+	Lua::SetGlobal( L, "SCREEN_WIDTH" );
+	Lua::PushStack( L, (int) SCREEN_HEIGHT );
+	Lua::SetGlobal( L, "SCREEN_HEIGHT" );
+	Lua::PushStack( L, (int) SCREEN_LEFT );
+	Lua::SetGlobal( L, "SCREEN_LEFT" );
+	Lua::PushStack( L, (int) SCREEN_RIGHT );
+	Lua::SetGlobal( L, "SCREEN_RIGHT" );
+	Lua::PushStack( L, (int) SCREEN_TOP );
+	Lua::SetGlobal( L, "SCREEN_TOP" );
+	Lua::PushStack( L, (int) SCREEN_BOTTOM );
+	Lua::SetGlobal( L, "SCREEN_BOTTOM" );
+	Lua::PushStack( L, (int) SCREEN_CENTER_X );
+	Lua::SetGlobal( L, "SCREEN_CENTER_X" );
+	Lua::PushStack( L, (int) SCREEN_CENTER_Y );
+	Lua::SetGlobal( L, "SCREEN_CENTER_Y" );
 }
 
 CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )

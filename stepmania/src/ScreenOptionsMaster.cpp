@@ -538,7 +538,7 @@ void ScreenOptionsMaster::ExportOptions()
 
 	if( ChangeMask & OPT_APPLY_ASPECT_RATIO )
 	{
-		Lua::UpdateGlobals();	// This needs to be done before resetting the projection matrix below
+		THEME->UpdateLuaGlobals();	// This needs to be done before resetting the projection matrix below
 		SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
 	}
 

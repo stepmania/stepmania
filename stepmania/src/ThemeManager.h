@@ -27,6 +27,7 @@ public:
 	void GetLanguages( CStringArray& AddTo );
 	bool DoesLanguageExist( const CString &sLanguage );
 	void SwitchThemeAndLanguage( const CString &sThemeName, const CString &sLanguage );
+	void UpdateLuaGlobals();
 	CString GetCurThemeName() { return m_sCurThemeName; };
 	CString GetCurLanguage() { return m_sCurLanguage; };
 	CString GetCurThemeDir() { return GetThemeDirFromName(m_sCurThemeName); };

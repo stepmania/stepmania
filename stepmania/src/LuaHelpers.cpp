@@ -3,7 +3,6 @@
 #include "LuaFunctions.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "ScreenDimensions.h"
 #include "arch/Dialog/Dialog.h"
 
 #include <csetjmp>
@@ -98,6 +97,10 @@ bool Lua::GetStack( lua_State *L, int pos, int &out )
 	return true;
 }
 
+void Lua::SetGlobal( lua_State *L, const CString &sName )
+{
+	lua_setglobal( L, sName );
+}
 
 
 
@@ -145,33 +148,11 @@ void CloseLua()
 	L = NULL;
 }
 
-void Lua::UpdateGlobals()
+lua_State *Lua::GetGlobalState()
 {
 	if( L == NULL )
 		OpenLua();
-
-	ASSERT( L );
-
-	/* Important: explicitly refresh cached metrics that we use. */
-	THEME_SCREEN_WIDTH.Read();
-	THEME_SCREEN_HEIGHT.Read();
-
-	lua_pushnumber( L, SCREEN_WIDTH );
-	lua_setglobal( L, "SCREEN_WIDTH" );
-	lua_pushnumber( L, SCREEN_HEIGHT );
-	lua_setglobal( L, "SCREEN_HEIGHT" );
-	lua_pushnumber( L, SCREEN_LEFT );
-	lua_setglobal( L, "SCREEN_LEFT" );
-	lua_pushnumber( L, SCREEN_RIGHT );
-	lua_setglobal( L, "SCREEN_RIGHT" );
-	lua_pushnumber( L, SCREEN_TOP );
-	lua_setglobal( L, "SCREEN_TOP" );
-	lua_pushnumber( L, SCREEN_BOTTOM );
-	lua_setglobal( L, "SCREEN_BOTTOM" );
-	lua_pushnumber( L, SCREEN_CENTER_X );
-	lua_setglobal( L, "SCREEN_CENTER_X" );
-	lua_pushnumber( L, SCREEN_CENTER_Y );
-	lua_setglobal( L, "SCREEN_CENTER_Y" );
+	return L;
 }
 
 void Lua::PrepareExpression( CString &sInOut )
