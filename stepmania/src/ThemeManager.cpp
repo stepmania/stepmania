@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "global.h"
 /*
 -----------------------------------------------------------------------------
  Class: ThemeManager
@@ -147,7 +147,7 @@ try_element_again:
 						"Verify that this redirect is correct.",
 						asPossibleElementFilePaths[0].GetString(), sNewFilePath.GetString());
 
-#ifdef DEBUG
+#if defined(DEBUG) && defined(WIN32) // XXX arch?
 			if( MessageBox(NULL, message.GetString(), "ThemeManager", MB_RETRYCANCEL ) == IDRETRY)
 				goto try_element_again;
 #endif
@@ -224,7 +224,7 @@ try_element_again:
 	if( !ret.empty() )	// we found something
 		return ret;
 
-#ifdef DEBUG
+#if defined(DEBUG) && defined(WIN32)
 	CString sMessage = ssprintf("The theme element %s/%s is missing.",sAssetCategory.GetString(),sFileName.GetString());
 	switch( MessageBox(NULL, sMessage, "ThemeManager", MB_RETRYCANCEL ) )
 	{
@@ -292,7 +292,7 @@ try_metric_again:
 		return sValue;
 	}
 
-#ifdef DEBUG
+#if defined(DEBUG) && defined(WIN32)
 	if( IDRETRY == MessageBox(NULL,ssprintf("The theme metric %s-%s is missing.  Correct this and click Retry, or Cancel to break.",sClassName.GetString(),sValueName.GetString()),"ThemeManager",MB_RETRYCANCEL ) )
 		goto try_metric_again;
 #endif
