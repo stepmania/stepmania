@@ -54,7 +54,7 @@ static bool TestWrite( CCStringRef sDrive )
 	return true;
 }
 
-void MemoryCardDriverThreaded_Windows::MountThreadReset()
+void MemoryCardDriverThreaded_Windows::ResetUsbStorage()
 {
 	m_dwLastLogicalDrives = 0;
 }

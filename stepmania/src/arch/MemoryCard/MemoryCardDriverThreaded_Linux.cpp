@@ -135,7 +135,7 @@ MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
 	this->StartThread();
 }
 
-void MemoryCardDriverThreaded_Linux::MountThreadReset()
+void MemoryCardDriverThreaded_Linux::ResetUsbStorage()
 {
 	//
 	// if usb-storage gets in a bad state, resetting usb-storage will sometimes fix it.
@@ -158,6 +158,8 @@ void MemoryCardDriverThreaded_Linux::MountThreadReset()
 	
 	m_vDevicesLastSeen.clear();
 	m_bForceRedetect = true;
+
+	MountThreadDoOneUpdate();
 }
 
 void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
@@ -167,7 +169,7 @@ void MemoryCardDriverThreaded_Linux::MountThreadDoOneUpdate()
 	
 	if( m_bForceRedetect )
 	{
-	  m_bForceRedetect = false;
+		m_bForceRedetect = false;
 		// fall through
 	}
 	else

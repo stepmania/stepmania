@@ -25,7 +25,6 @@ MemoryCardDriverThreaded::MemoryCardDriverThreaded() :
 	m_mutexStorageDevices("StorageDevices")
 {
 	m_bShutdownNextUpdate = false;
-	m_bResetNextUpdate = false;
 	m_bStorageDevicesChanged = false;
 }
 
@@ -64,11 +63,6 @@ void MemoryCardDriverThreaded::MountThreadMain()
 	while( !m_bShutdownNextUpdate )
 	{      
 		LockMut( m_mutexPause );	// wait until we're unpaused
-		if( m_bResetNextUpdate )
-		{
-			this->MountThreadReset();
-			m_bResetNextUpdate = false;
-		}
 		this->MountThreadDoOneUpdate();
 	}
 }
@@ -110,11 +104,6 @@ bool MemoryCardDriverThreaded::MountAndTestWrite( UsbStorageDevice* pDevice, CSt
 
 	this->Mount( pDevice, sMountPoint );
 	return true;
-}
-
-void MemoryCardDriverThreaded::ResetUsbStorage()
-{
-	m_bResetNextUpdate = true;
 }
 
 /*

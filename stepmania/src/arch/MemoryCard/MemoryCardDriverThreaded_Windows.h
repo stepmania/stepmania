@@ -13,7 +13,7 @@ public:
 	virtual void Flush( UsbStorageDevice* pDevice );
 protected:
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint );
-	virtual void MountThreadReset();
+    virtual void ResetUsbStorage();
 	virtual void MountThreadDoOneUpdate();
 
 	DWORD m_dwLastLogicalDrives;

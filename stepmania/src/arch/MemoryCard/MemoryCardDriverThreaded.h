@@ -25,7 +25,6 @@ public:
 	virtual bool StorageDevicesChanged();
 	virtual void GetStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
 	virtual bool MountAndTestWrite( UsbStorageDevice* pDevice, CString sMountPoint );
-    virtual void ResetUsbStorage();
 	virtual void PauseMountingThread();
 	virtual void UnPauseMountingThread();
 
@@ -35,7 +34,6 @@ private:
 
 	RageThread m_threadMemoryCardMount;
 	bool m_bShutdownNextUpdate;
-	bool m_bResetNextUpdate;
 
 	// Aquire this before detecting devices or reading/writing devices.
 	// Calling Pause() and Unpause will lock/unlock this so that the mounting thread 
@@ -44,7 +42,6 @@ private:
 
 protected:
 	void StartThread();	// call this in the derived constructor to start the mounting thread
-	virtual void MountThreadReset() = 0;
 	virtual void MountThreadDoOneUpdate() = 0;	// this will get called as fast as possible
 	virtual void Mount( UsbStorageDevice* pDevice, CString sMountPoint ) = 0;
 
