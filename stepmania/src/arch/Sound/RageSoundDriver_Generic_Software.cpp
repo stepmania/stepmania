@@ -208,8 +208,8 @@ void RageSound_Generic_Software::DecodeThread()
 				{
 					/* Don't write more than two chunks worth of data in one
 					 * iteration.  Since we delay for one chunk period per loop,
-					 * this means we'll fill at no more than 2x realtime. */
-					if( frames_filled >= chunksize()*2 )
+					 * this means we'll fill at no more than ealtime. */
+					if( frames_filled >= chunksize()*4 )
 						break;
 				}
 
