@@ -71,3 +71,22 @@ void AddStepManiaInstallDir( CString sNewInstallDir )
 }
 
 
+bool GetPref( CString name, bool &val )
+{
+	CRegistry Reg;
+	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
+	Reg.SetKey("Software\\StepMania\\smpackage", FALSE);	// don't create if not already present
+	return Reg.Read( name, val );
+}
+
+bool SetPref( CString name, bool val )
+{
+	CRegistry Reg;
+	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
+	Reg.SetKey("Software\\StepMania\\smpackage", TRUE);	// don't create if not already present
+	Reg.WriteBool( name, val );
+	return false;
+
+}
+
+
