@@ -8,6 +8,9 @@ Fixed crashes on song reload.
 Fixed edits causing malformed DWI tags to be written.
 Fixed doubles premium.
 Fixed blending artifacts on paletted images.
+Fixed player options menu if START is pressed quickly.
+Fixed "Foo BG.png" not always detected as a background.
+Fixed song graphic search aborting early.
 Disabled memory card reading by default.
 Optimized Catalog.xml writing.
 Changing course difficulties no longer retweens the course entry list.
@@ -18,6 +21,7 @@ Linux: Fixed signal handling in 2.6 kernels when LinuxThreads is in use.
 Linux: Fixed linking against libjpeg.
 Editor: Fixed spurious assist ticks at start of Play.
 Editor: Fixed "m" not rewinding the sample music.
+Editor: Fixed crash when a button is held during the lead-in while recording.
 SMMAX2: Fixed course selection music.
 Added TournaMix 5 transliterations.
 Theme changes:
