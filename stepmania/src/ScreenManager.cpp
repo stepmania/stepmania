@@ -224,10 +224,12 @@ void ScreenSystemLayer::RefreshCreditsMessages()
 				break;
 			case COIN_PAY:
 				{
+					int Credits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 					int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
-					sCredits = ssprintf("%s %d", CREDITS_CREDITS.c_str(), GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit);
-					if (Coins)
-						sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
+					sCredits = CREDITS_CREDITS;
+					if( Credits > 0 )
+						sCredits += ssprintf("  %d", Credits);
+					sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit );
 				}
 				break;
 			case COIN_FREE:
