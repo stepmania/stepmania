@@ -62,6 +62,8 @@ public:
 	 * if successful, false if no song could be found. */
 	bool ChooseRandomSong();
 
+	Song* GetSongFromPath( const CString &sSongPath );
+
 protected:
 	void LoadStepManiaSongDir( CString sDir, void(*callback)() );
 	void LoadDWISongDir( CString sDir );

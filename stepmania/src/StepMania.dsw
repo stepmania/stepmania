@@ -15,33 +15,6 @@ Package=<4>
 
 ###############################################################################
 
-Project: "ZipArchive"=.\smpackage\ZipArchive\ZipArchive.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "smpackage"=.\smpackage\smpackage.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-    Begin Project Dependency
-    Project_Dep_Name ZipArchive
-    End Project Dependency
-}}}
-
-###############################################################################
-
 Global:
 
 Package=<5>

@@ -16,13 +16,13 @@
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "Quad.h"
+#include "RageNetwork.h"
 
 
 ScreenSandbox::ScreenSandbox()
 {	
 	m_text.LoadFromFont( THEME->GetPathTo("Fonts","normal") );
 	m_text.SetXY( CENTER_X, CENTER_Y );
-	m_text.SetText( "Press Left to Become Server\nRight to become Client." );
 	this->AddChild( &m_text );
 
 //	m_Menu.Load( 	
@@ -41,6 +41,13 @@ ScreenSandbox::ScreenSandbox()
 void ScreenSandbox::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
+
+	CArray<Packet,Packet> aPackets;
+	NETWORK->Recv( aPackets );
+	for( unsigned int i=0; i<aPackets.size(); i++ )
+	{
+		m_text.SetText( "Message received." );	
+	}
 }
 
 void ScreenSandbox::DrawPrimitives()
@@ -59,10 +66,7 @@ void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type
 		switch( DeviceI.button )
 		{
 		case DIK_LEFT:
-			m_text.SetText( "You are the server." );
-			break;
-		case DIK_RIGHT:
-			m_text.SetText( "You are the client." );
+			m_text.SetText( "Message sent." );
 			break;
 		case DIK_T:
 			break;

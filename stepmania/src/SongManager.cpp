@@ -635,3 +635,12 @@ bool SongManager::ChooseRandomSong()
 
 	return false;
 }
+
+Song* SongManager::GetSongFromPath( const CString &sSongPath )
+{
+	for( unsigned int i=0; i<m_pSongs.size(); i++ )
+		if( sSongPath.CompareNoCase(m_pSongs[i]->GetSongFilePath()) == 0 )
+			return m_pSongs[i];
+
+	return NULL;
+}

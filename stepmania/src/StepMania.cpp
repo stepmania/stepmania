@@ -85,6 +85,14 @@ HANDLE		g_hMutex;		// Used to check if an instance of our app is already
 const DWORD g_dwWindowStyle = WS_POPUP|WS_CAPTION|WS_MINIMIZEBOX|WS_MAXIMIZEBOX|WS_SYSMENU;
 BOOL		g_bIsActive		= FALSE;	// Whether the focus is on our app
 
+// command line arguments
+CString		g_sSongPath = "";
+bool		g_bBeClient = false;
+bool		g_bBeServer = false;
+CString		g_sServerIP = "";
+int			g_iNumClients = 0;
+
+const int SM_PORT = 26573;	// Quake port + "Ko" + "na" + "mitsu"
 
 //-----------------------------------------------------------------------------
 // Function prototypes
@@ -139,11 +147,13 @@ void StructuredExceptionHandler(unsigned int uCode,
 	}
 	throw std::exception(msg);
 }
-void SplitCommandLine(const char *lpCmdLine, CStringArray &aCmds) {
+void SplitCommandLine(const char *lpCmdLine, CStringArray &aCmds) 
+{
     const char *s = lpCmdLine;
 
 	/* Split a string on whitespace, but never between quotes. */
-    while(*s) {
+    while(*s) 
+	{
 		CString cmd;
 
 		while( isspace(*s) ) s++;
@@ -181,9 +191,41 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR CmdLine, int nCmdShow 
 
 	CStringArray Cmds;
 	SplitCommandLine(CmdLine, Cmds);
-	for(unsigned i = 0; i < Cmds.size(); ++i)
+	for(unsigned i = 0; i < Cmds.size(); )
 	{
-		if(Cmds[i] == "--fsck") { crash(); exit( 0 ); }
+		if(Cmds[i] == "--fsck")
+		{ 
+			crash(); 
+			exit( 0 );
+		}
+		else if(Cmds[i] == "--song")
+		{
+			++i;
+			g_sSongPath = Cmds[i];
+			++i;
+		}
+		else if(Cmds[i] == "--client")
+		{
+			++i;
+			g_bBeClient = true;
+		}
+		else if(Cmds[i] == "--server")
+		{
+			++i;
+			g_bBeServer = true;
+		}
+		else if(Cmds[i] == "--ip")
+		{
+			++i;
+			g_sServerIP = Cmds[i];
+			++i;
+		}
+		else if(Cmds[i] == "--numclients")
+		{
+			++i;
+			g_iNumClients = atoi(Cmds[i]);
+			++i;
+		}
 	}
 
 #ifndef _DEBUG
@@ -742,8 +784,35 @@ HRESULT CreateObjects( HWND hWnd )
 	BringWindowToTop( hWnd );
 	SetForegroundWindow( hWnd );
 
-	SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
-//	SCREENMAN->SetNewScreen( "ScreenSandbox" );
+	if( g_bBeClient )
+	{
+		// immediately try to connect to server
+		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromPath( g_sSongPath );
+		if( GAMESTATE->m_pCurSong == NULL )
+			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath );
+		NETWORK->Init( false );
+		if( !NETWORK->Connect( (const char*)g_sServerIP, SM_PORT ) )
+			throw RageException( "Could not connect to server '%s'", g_sServerIP );
+		SCREENMAN->SetNewScreen( "ScreenSandbox" );
+	}
+	else if( g_bBeServer )
+	{
+		// wait for clients to connect
+		GAMESTATE->m_pCurSong = SONGMAN->GetSongFromPath( g_sSongPath );
+		if( GAMESTATE->m_pCurSong == NULL )
+			throw RageException( "The song '%s' is required to play this network game.", g_sSongPath );
+		NETWORK->Init( true );
+		if( !NETWORK->Listen( SM_PORT ) )
+			throw RageException( "Could not connect to server '%s'", g_sServerIP );
+		SCREENMAN->SetNewScreen( "ScreenSandbox" );
+	}
+	else
+	{
+		// normal game
+		SCREENMAN->SetNewScreen( "ScreenTitleMenu" );
+//		SCREENMAN->SetNewScreen( "ScreenSandbox" );
+	}
+
 
 	return S_OK;
 }
