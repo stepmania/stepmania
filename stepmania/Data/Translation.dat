@@ -220,6 +220,27 @@ TitleTo: ちょっときいてな
 TitleFrom: The Strong Jaeger
 TitleTo: 合体せよ！ストロングイェーガー！！
 *
+# TM:
+ArtistFrom: (Masahiro Andoh)|(Andoh Masahiro)
+ArtistTo: 安藤まさひろ
+*
+TitleFrom: Sakura Saku
+TitleTo: 桜咲く
+*
+# Theme from Excel Saga: 愛(忠誠心)
+# http://www.jvcmusic.co.jp/m-serve/tv/excel/index.html
+ArtistFrom: (Toshio Masuda)|(Masuda Toshio)
+ArtistTo: 舛田利雄
+*
+ArtistFrom: (Tsuneo Imahori)|(Imahori Tsuneo)
+ArtistTo: 今堀恒雄
+*
+# TM2:
+# http://www.web-konami.com/products/ps2/castlevania/
+ArtistFrom: (Michuri Yamane)|(Yamane Michuri)
+ArtistTransTo: Michiru Yamane
+ArtistTo: 山根ミチル
+*
 # TM3:
 TitleFrom: Tsugaru Kaikyou no Onna
 TitleTo: 津軽海峡の女
@@ -227,6 +248,13 @@ ArtistTo: ソニン
 *
 TitleFrom: Kaniyuuutsu
 TitleTo: 甘いユウウツ
+*
+TitleFrom: Negai
+TitleTo: 願い
+*
+# http://www.avexnet.or.jp/avexdb/morinaga/
+ArtistFrom: (Hatsumi Morinaga)|(Morinaga Hatsumi)
+ArtistTo: 守永初美
 *
 # TM4:
 TitleFrom: Akumajo Dracula MEDLEY
@@ -326,6 +354,14 @@ ArtistTransTo: Des-ROW and KUMI
 *
 ArtistFrom: Aaron Kwok
 ArtistTo: 郭富城
+*
+# LIGHTNING STAR (Sonic the Hedgehog)
+ArtistFrom: (Yuzo Koshiro)|(Koshiro Yuzo)
+ArtistTo: 古代祐三
+*
+# VLAD
+ArtistFrom: Jaurim
+ArtistTo: 자우림
 *
 # TM4+:
 ArtistFrom: Gwashi
@@ -516,6 +552,9 @@ TitleTo: なんて恋したんだろ
 *
 TitleFrom: Ureshii! Tanoshii! Daisuki!
 TitleTo: うれしい！ たのしい！ 大好き！
+*
+TitleFrom: Mirai Yosouzu II
+TitleTo: 未来予想図II
 *
 # OHA:
 ArtistFrom: War[ui]jiennu
@@ -803,6 +842,11 @@ TitleTo: 恋愛レボリューション21
 SubtitleFrom: ~Ai no Big Band~
 SubtitleTo: ~愛のビッグバンドｰ~
 *
+# CHOP CHOP, MASTER ONION'S RAP (PaRappa the Rapper)
+ArtistFrom: (Masaya Matsuura)|(Matsuura Masaya)
+ArtistTo: 松浦雅也
+*
+
 # Fanboy bonus:
 
 ArtistFrom: (Megumi Hayashibara)|(Hayashibara Megumi)
