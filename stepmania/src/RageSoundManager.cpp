@@ -270,7 +270,7 @@ void SoundMixBuffer::write( const Sint16 *buf, unsigned size, float volume, int 
 	if( bufsize < realsize )
 	{
 		mixbuf = (Sint32 *) realloc( mixbuf, sizeof(Sint32) * realsize );
-		bufsize = size;
+		bufsize = realsize;
 	}
 
 	if( used < realsize )
