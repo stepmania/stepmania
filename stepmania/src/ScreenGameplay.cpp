@@ -695,7 +695,7 @@ void ScreenGameplay::Init()
 		}
 	}
 
-	FOREACH_PlayerNumber(pn)
+	FOREACH_EnabledPlayer(pn)
 		m_Player[pn].Init( 
 			PLAYER_TYPE,
 			GAMESTATE->m_pPlayerState[pn], 
@@ -866,9 +866,6 @@ void ScreenGameplay::SetupSong( PlayerNumber p, int iSongIndex )
 	// UGLY: Force updating the BeatToNoteSkin mapping and cache NoteSkins now, or else 
 	// we'll do it on the first update and skip.
 	m_Player[p].ApplyWaitingTransforms();
-
-	/* Now that course options are applied, load any needed note skins and unload old ones. */
-	m_Player[p].CacheAllUsedNoteSkins();
 
 	/* Update attack bOn flags. */
 	GAMESTATE->Update(0);

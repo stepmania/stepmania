@@ -55,8 +55,6 @@ public:
 
 	static float GetMaxStepDistanceSeconds();
 
-	void CacheAllUsedNoteSkins();
-
 	NoteData m_NoteData;
 
 protected:

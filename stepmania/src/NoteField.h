@@ -32,7 +32,6 @@ public:
 	int	m_iBeginMarker, m_iEndMarker;	// only used with MODE_EDIT
 
 	void FadeToFail();
-	void CacheAllUsedNoteSkins();
 	void CacheNoteSkin( CString skin );
 
 	void Step( int iCol, TapNoteScore score );
@@ -43,6 +42,8 @@ public:
 	void RefreshBeatToNoteSkin();
 
 protected:
+	void CacheAllUsedNoteSkins();
+
 	void DrawBeatBar( const float fBeat );
 	void DrawMarkerBar( int fBeat );
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );

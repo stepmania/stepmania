@@ -1394,11 +1394,6 @@ float Player::GetMaxStepDistanceSeconds()
 	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW(Boo);
 }
 
-void Player::CacheAllUsedNoteSkins()
-{
-	m_pNoteField->CacheAllUsedNoteSkins();
-}
-
 void Player::FadeToFail()
 {
 	if( m_pNoteField )
